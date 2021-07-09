@@ -1,0 +1,543 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="label32.ToolTip" xml:space="preserve">
+    <value>Ctrl-G は、厳密に言うと、「出力文字列の採取ブロッカー設定」です。
+Ctrl-G を押すと、ミニバッファがクリアされ、それまでに出力した
+文字列が採取できなくなります。
+したがって、履歴検索の他にも、交ぜ書き変換や(後置)カタカナ変換にも
+効いてきます。
+「ブロッカー」は Ctrl-G の他に Enter キーでも設定されます。
+
+この「ブロッカー」は Ctrl-Shift-G で解除することができます。
+また「Ctrl-Space」は、このブロッカーを解除してから履歴検索を行います。
+</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="textBox_historyFile.ToolTip" xml:space="preserve">
+    <value>入力履歴ファイルの設定
+
+ファイル名部分には「*」を含むように設定してください。
+* を {entry,recent,exclude}に置換した3ファイルが使用されます。
+
+entry ファイルは、履歴検索の対象となるエントリを保存します。
+recent ファイルは、直近に使用した履歴を保存します。
+exclude ファイルは、履歴検索および履歴登録の対象外となる文字列を保存します。
+
+各ファイルとも1行に1定義の形で記述します。
+
+各ファイルは、漢直WinSの終了時に内容が上書きされるので、ファイルの内容を
+エディタ等で編集する場合は、漢直WinSを終了させてから行ってください。
+</value>
+  </data>
+  <data name="textBox_mazegakiFile.ToolTip" xml:space="preserve">
+    <value>交ぜ書き辞書ファイルの設定
+
+ファイル名部分には「*」を含むように設定してください。
+* を「user」に置換したものをユーザー辞書として用います。
+(* が含まれない場合は kwmase.user.dic がユーザー辞書となります)
+
+ユーザー辞書ファイルは漢直WinS終了時に自動的に内容が上書きされるので、
+このファイルをエディタ等で編集する場合は漢直を終了させてから行ってください。
+
+交ぜ書き辞書ファイルは、1行に1エントリの形で記述します。
+フォーマットについては、「ドキュメント」または、「辞書登録」タブの「交ぜ書き」
+テキストボックスのツールチップを参照してください。</value>
+  </data>
+  <data name="textBox_bushuCompFile.ToolTip" xml:space="preserve">
+    <value>部首合成の定義を記述したファイルを設定
+
+部首合成の定義は、各行に3文字または2文字が記述されます。
+
+記述フォーマットについては、「ドキュメント」または「辞書登録」タブの
+「部首合成」テキストボックスのツールチップを参照してください。
+
+「辞書登録」タブで部首合成定義を登録した場合、漢直WinSの終了時にファイル内容が
+上書きされるので、ファイルをエディタ等で編集する場合は、漢直WinSを終了させてから
+行ってください。</value>
+  </data>
+  <data name="textBox_keyboardFile.ToolTip" xml:space="preserve">
+    <value>キーボードファイルには、ホットキーIDの順に16進表記の仮想キーコードを
+並べたものを記述します。
+
+文字打鍵用のホットキーには、0 ～ 49 (シフト用に 50～99)が
+割り振られています。
+
+106キーボードの場合だと、以下のようなホットキーIDになります。
+最上段： 「1」= 0, 「2」=1, ..., 「0」=9、
+　上段： 「q」=10, ..., 「p」=19、
+　中段： 「a」=20, ..., 「;」=29,
+　下段： 「z」=30, ..., 「/」=39
+スペースキー=40
+「-」=41, 「^」=42, 「￥」=43, 「@」=44, 「[」=45, 「:」=46, 「]」=47, 「\」=48
+</value>
+  </data>
+  <data name="comboBox_modifiedToggleKey.ToolTip" xml:space="preserve">
+    <value>Ctrlキーの修飾有りで漢直モードと英字モードを切り替えるためのキーの指定
+
+使用するキーの仮想キーコードを16進数で指定します。
+仮想キーコードについては「windows 仮想キーコード 一覧」でググると見つかります。
+主なキーについては候補を用意してあるので、それを選択してください。
+
+「Ctrlキー修飾有りOFF」が設定された場合は、このキーは「漢直モードON」のための
+キーとなります。
+
+キーを使用しない場合は、ComboBoxの内容を削除して空白にしてください。</value>
+  </data>
+  <data name="comboBox_unmodifiedToggleKey.ToolTip" xml:space="preserve">
+    <value>Ctrlキーの修飾なしで漢直モードと英字モードを切り替えるためのキーの指定
+
+使用するキーの仮想キーコードを16進数で指定します。
+仮想キーコードについては「windows 仮想キーコード 一覧」でググると見つかります。
+主なキーについては候補を用意してあるので、それを選択してください。
+
+「Ctrlキー修飾なしOFF」が設定された場合は、このキーは「漢直モードON」のための
+キーとなります。
+
+キーを使用しない場合は、ComboBoxの内容を削除して空白にしてください。</value>
+  </data>
+  <data name="textBox_verticalFont.ToolTip" xml:space="preserve">
+    <value>縦列鍵盤に表示する文字のフォント
+
+以下のフォーマットでフォントを設定できます。
+フォント名とサイズについては、「選択...」ボタンをクリックして
+フォントダイアログから選択することもできます。
+
+フォント名 | サイズ(pt) | 左余白(px) | 上余白(px)
+
+フォントは縦書のもの(@が付いてるもの)を選んでください。
+
+セル内での表示位置を「左余白」と「上余白」で調整できます。
+余白を指定しない場合(または-99 を指定した場合)、
+MS ゴシック、メイリオ、游ゴシックについては、ある程度、自動で
+調整しますが、それが気に入らない場合は、適当にピクセル数を
+設定してください。
+</value>
+  </data>
+  <data name="textBox_centerFont.ToolTip" xml:space="preserve">
+    <value>中央鍵盤に表示する文字のフォント
+
+以下のフォーマットでフォントを設定できます。
+フォント名とサイズについては、「選択...」ボタンをクリックして
+フォントダイアログから選択することもできます。
+
+フォント名 | サイズ(pt) | 左余白(px) | 上余白(px)
+
+フォントは縦書のもの(@が付いてるもの)を選んでください。
+
+セル内での表示位置を「左余白」と「上余白」で調整できます。
+余白を指定しない場合(または-99 を指定した場合)、
+MS ゴシック、メイリオ、游ゴシックについては、ある程度、自動で
+調整しますが、それが気に入らない場合は、適当にピクセル数を
+設定してください。
+</value>
+  </data>
+  <data name="textBox_normalFont.ToolTip" xml:space="preserve">
+    <value>通常鍵盤に表示する文字のフォント
+
+以下のフォーマットでフォントを設定できます。
+フォント名とサイズについては、「選択...」ボタンをクリックして
+フォントダイアログから選択することもできます。
+
+フォント名 | サイズ(pt) | 左余白(px) | 上余白(px)
+
+セル内での表示位置を「左余白」と「上余白」で調整できます。
+余白を指定しない場合(または-99 を指定した場合)、
+MS ゴシック、メイリオ、游ゴシックについては、ある程度、自動で
+調整しますが、それが気に入らない場合は、適当にピクセル数を
+設定してください。</value>
+  </data>
+  <data name="textBox_hotkeyInfiniteLoopDetectCount.ToolTip" xml:space="preserve">
+    <value>HotKey呼び出しの無限ループ検出回数
+
+keybd_event でキー入力をエミュレートする際には、そのキーに割り当てている
+HotKey定義を解除していますが、何らかの問題によりその解除ができていないと
+同じホットキーの呼び出しが無限ループになる可能性があります。
+
+万一、無限ループに陥った場合にそれを検出するための呼び出し回数を設定します。
+同じホットキーの呼び出しがここで設定した回数だけ連続したら、強制的に漢直WinSを
+終了させます。</value>
+  </data>
+  <data name="textBox_preWmCharGuardMillisec.ToolTip" xml:space="preserve">
+    <value>WM_CHAR による文字送出前の待ち時間(ミリ秒)
+
+部首合成時や履歴選択時など、Backspaceを送出した後に少し待ってから
+WM_CHARによる文字送出をしないと、Backspaceの前にWM_CHARが
+処理されたりすることがあるので、少し待ち時間が必要です。
+
+Backspace送出後から次の文字送出までの待ち時間は以下の式で算出します。
+
+{Backspace 送出数} ^ 0.7 * {ここで設定した待ち時間}
+
+たとえば、設定した待ち時間を 25 ms とし、Backspace の送出数が 10個だとすると、
+文字送出前に 10 ^ 0.7 * 25 ≒ 5.0 * 25 = 125 ms 待つことになります。
+
+文字出力が乱れたり、逆に遅く感じられたりする場合は、この値を調整してください。
+
+もし指数(デフォルト 0.7)を変更したい場合は、 kanchoku.ini または kanchoku.user.ini に
+reductionExponent=0.9
+などと記述してください。</value>
+  </data>
+  <data name="textBox_ctrlKeyDownGuardMillisec.ToolTip" xml:space="preserve">
+    <value>keybd_event による Ctrl キーの DOWN 前の待ち時間(ミリ秒)
+
+詳細については 「Ctrlキーの UP 後の待ち時」を参照してください。
+
+この時間をあまり長くするとユーザーが実際に Ctrlキーを離した後に
+プログラムによって Ctrlキーの KEY_DOWN が実行されてしまい、
+Ctrlキーが押されっ放しの状態になる可能性が高まります。
+(その場合は、Ctrlキーを押して離せば直ります)</value>
+  </data>
+  <data name="textBox_ctrlKeyUpGuardMillisec.ToolTip" xml:space="preserve">
+    <value>keybd_event による Ctrl キーの KEY_UP 後の待ち時間(ミリ秒)
+
+Backspace と Ctrl+Backspace を区別しているアプリや、Ctrlキーが押下されていると
+WM_CHAR を受け付けないアプリなどに対応するため、キーや文字を送出する前に
+keybd_event によりCtrlキーを一時的に KEY_UP しています。
+
+その際、キーや文字の送出前後に少し待ち時間を入れないと Ctrlキーが押下されていると
+誤認するアプリがあるので、それに対応するための待ち時間です。たとえば 
+「Ctrl-H ⇒ Backspace 変換を有効にしていて、Ctrl-H を押したときに1単語削除された」
+ というような場合は、待ち時間を長くしてみてください。
+
+ただし、この待ち時間を長く設定すると、キーリピート入力をしている際に処理が滞留するのを
+防ぐため、受信したHotKeyを無視することがあります。
+(キーリピートの間隔が長くなったように感じられる)</value>
+  </data>
+  <data name="textBox_dateStringFormat.ToolTip" xml:space="preserve">
+    <value>Ctrl+; および Ctrl+Shift+; で出力する日付のフォーマットを設定します。
+
+1行1エントリで、複数のフォーマットを設定できます。
+フォーマットが複数ある場合、Ctrl+; (Ctrl+Shift+;) を連続して打鍵すると、
+使用するフォーマットが次々と切り替わります。
+Ctrl+; の場合は1つめから正順に、 Ctrl+Shift+; の場合は末尾から逆順に使用します。
+Ctrl+; の直後に Ctlrl+Shift+; を打つと取り消しになります。(逆も同じ)
+
+フォーマット文字：
+yyyy: 4桁の年
+yy: 2桁の年
+r: 令和の年
+MM: 2桁の月
+M: 1～2桁の月
+dd: 2桁の日
+d: 1～2桁の日
+HH: 時
+mm: 分
+ss: 秒
+
+例：
+yyyy/MM/DD
+令和r年M月d日
+
+と設定した場合、
+Ctrl+; ⇒ 2021/09/23
+Ctrl+Shift+; ⇒ 令和3年9月23日
+となります。</value>
+  </data>
+  <data name="checkBox_CtrlSemicolon.ToolTip" xml:space="preserve">
+    <value>Ctrl+; (セミコロン) および Ctrl+Shift+; で今日の日付を出力する
+
+この設定は、下記のウィンドウClassNameリストを無視して、
+すべてのウィンドウに対して有効となります。
+
+Ctrl+; を3秒以内に続けて打鍵すると、「日付フォーマット」で設定した
+フォーマットを1つめから切り替えながら使用します。
+
+Ctrl+Shift+; を3秒以内に続けて打鍵すると、「日付フォーマット」で設定した
+フォーマットを末尾から逆順に切り替えながら使用します。
+
+Ctrl+; の直後に Ctlrl+Shift+; を打つと取り消しになります。(逆も同じ)
+
+たまに Shift+Backspace を受け付けないアプリがあります。
+その場合、前回の出力が消去されませんのでご注意を。</value>
+  </data>
+  <data name="textBox_histKanjiWordMinLengthEx.ToolTip" xml:space="preserve">
+    <value>難打鍵文字を含む場合の自動履歴登録最小長を設定します。
+
+難打鍵文字とは、「基本設定」タブの「容易打鍵文字」ファイルで
+定義された文字以外のものです。
+
+2と設定されている場合、たとえば「憂鬱」を交ぜ書き変換で入力すると、
+これは自動で履歴登録されます。
+
+「『憂鬱』が履歴に入ったとして、肝心の『憂』をどうやって出すんだ」という
+場合は、「優=憂」という部首連想定義をしておくとよいかと思います。
+いったん「優－人⇒憂」という部首合成を実行すると、自動的に「優=憂」
+という連想が登録されます。</value>
+  </data>
+  <data name="checkBox_selectFirstCandByEnter.ToolTip" xml:space="preserve">
+    <value>自動履歴検索で横列表示された候補の先頭候補をEnterキーで選択するかを
+設定します。
+
+当設定をOFFに設定してあるのに、つい選択するつもりでEnterを押してしまった
+場合は、出力先ウィンドウでEnter前の位置にカレットを移動させてから
+Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
+
+なお、履歴候補が縦列表示されている状態では、先頭候補がEnterキーで
+選択されます。</value>
+  </data>
+  <data name="button_restartWithNoSave.ToolTip" xml:space="preserve">
+    <value>デコーダが保持している辞書内容をファイルに保存せずに再起動します。
+
+エディタなどで辞書ファイルを編集したい場合は、まず「一括保存」で、
+デコーダが保持している辞書内容をファイルに反映させます。
+
+その後、辞書ファイルを編集し、当ボタンをクリックしてください。
+
+漢直窓Sは終了時に辞書内容を自動的にファイルに新規保存します。
+(既存ファイルは *.back に名前が変更されます)
+辞書ファイルを編集したい場合は、ここに記述した手順に従うか、
+または漢直窓Sを終了させてから行ってください。
+</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="textBox_bushuComp.ToolTip" xml:space="preserve">
+    <value>部首合成の登録を行います。
+
+部首合成の定義は、3文字または2文字で記述されます。
+
+3文字(ABC)の場合：
+B と C を合成(足し算)して A に変換できることを表します。
+逆に A が B と C に分解できることも表します。この場合、
+A と C から B に変換することができます(引き算)。
+
+2文字(AB)の場合：
+A と B が等価文字であることを表します。
+「DAC」という定義があったら、A のかわりに B を使って、
+B + C ⇒ D という足し算も可能になります。</value>
+  </data>
+  <data name="textBox_bushuAssoc.ToolTip" xml:space="preserve">
+    <value>部首連想の登録を行います。次のフォーマットで記述します。
+
+A=BC...
+
+例えば、「恋=戀変」という記述があると、「恋」から「戀」や「変」への変換が
+可能になります。選択された変換文字は、先頭に移動し、漢直WinSの
+終了時に辞書ファイルに書き込まれます。
+
+変換ターゲット文字列の途中に「|」があると、ターゲットの先頭から「|」までは
+順序が固定され、「|」以降の文字が選択された場合は「|」の直後に移動します。
+
+なお、すでに同じ文字に対する連想文字列が登録されている場合は、
+ここで登録した文字列がマージされます。既存の文字列が削除されることは
+ありません。</value>
+  </data>
+  <data name="textBox_mazegaki.ToolTip" xml:space="preserve">
+    <value>交ぜ書きユーザー辞書に登録するエントリを次のフォーマットで記述します。
+
+読み　/変換形/...
+
+読みの末尾には「/{ひらがな}[:数字]」の形で活用型を指定することもできます。
+
+例1： あ/う  /会/逢/遭/
+これは、「ワ行五段活用」の動詞「あう」を読みとして、その変換形が
+「会う」「逢う」「遭う」であるという定義になっています。「ワ行五段」
+なので、たとえば「あった」にはマッチしますが「あく」にはマッチしません。
+
+例2： かえ/る:1 /変え/替え/換え/
+例3： かえ/る:5 /返/帰/
+
+例2は、「一段活用」の動詞「かえる」を読みとして、その変換形が
+「変える」「替える」「換える」であるという定義になっています。
+
+例3は、「ラ行五段活用」の動詞「かえる」を読みとして、その変換形が
+「返る」「帰る」であるという定義になっています。
+
+イ段・エ段で語尾が「る」の場合は、プログラムに内蔵しているルールによって
+変換形の漢字からそれが一段か五段かを判断していますが、その判断が誤って
+いるような場合は、上記のように「:数字」を付加してください。
+
+例4： うつくし/い  /美し
+例5： ゆううつ/な /憂鬱/
+例6： ほんとう/の /本当/
+
+例4は形容詞の定義例、例5は「な」型の形容動詞、例6は「の」型の形容動詞です。
+</value>
+  </data>
+  <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>114, 17</value>
+  </metadata>
+  <data name="textBox_backFileRotationGeneration.ToolTip" xml:space="preserve">
+    <value>辞書ファイルの保存世代数を設定します。
+
+アプリ終了時（または辞書内容を保存て再起動時）には、既存の辞書
+ファイルが back ディレクトリにバックアップファイルとして保存されます。
+
+バックアップファイルは、ここで設定した世代数にわたって保存されます。
+
+バックアップファイルの名前には、末尾に世代を表す数字が付加されます。
+たとえば、履歴ファイルであれば、 back\\kwhist.user.txt.1 のような名前で
+保存されます。古い世代ほど、末尾の数字が大きくなります。
+</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="label69.Text" xml:space="preserve">
+    <value>機能を呼び出すための打鍵列を設定します。
+
+打鍵列は、漢直キーコード(00～48)をカンマ
+区切りで並べたものとなります。キーコードに
+ついては、ここにマウスポインタを置いて表示
+されるツールチップを参照してください。
+
+例：(カッコ内は 106 key による打鍵文字)
+交ぜ書き変換 「23,26」  (f j)
+全角変換(モード) 「42」 (^)
+カタカナ変換(一括) 「47」 (])</value>
+  </data>
+  <data name="label69.ToolTip" xml:space="preserve">
+    <value>106 (qwerty) でのコード表
+
+1=00, 2=01, 3=02, 4=03, 5=04, 6=05, 7=06, 8=07, 9=08, 0=09
+q=10, w=11, e=12, r=13, t=14, y=15, u=16, i=17, o=18, p=19
+a=20, s=21, d=22, f=23, g=24, h=25, j=26, k=27, l=28, ;=29,
+z=30, x=31, c=32, v=33, b=34, n=35, m=36, ,=37, .=38, /=39,
+SP=40, -=41, ^=42, ￥=43, @=44, [=45, :=46, ]=47, ＼=48
+</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAEAICAQAAAAAADoAgAAFgAAACgAAAAgAAAAQAAAAAEABAAAAAAAgAIAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAwMDAAICAgAAAAP8AAP8AAAD//wD/AAAA/wD/AP//
+        AAD///8AAAAAAAAAAAAAAAAAAAAAAA+IiIiIiIiIiIiIiIiIiIAPd3d3d3d3d3d3d3d3d3eAD3ZmdwB3
+        cAB3d3d3AHd3gA92ZnAAB3cAB3d3cAB3d4APdmZwAAd3cAB3dwAAd3eAD3ZmdwAAcAAAAAAAAAAHgA92
+        ZmdwAHAAAAAAAAAAB4APdmZmcAB3dwAHd3d3d3eAD3ZmZnAABwAAAAAAAAB3gA92ZmZ3AAcAAAAAAAAA
+        d4APdmZmZwAHd3AAd3d3d3eAD3ZmZncAdwAAAAAAAAB3gA92ZmdwAHcAAAAAAAAAd4APdmZ3AAB3AHcA
+        B3dwAHeAD3ZmcAAHdwB3AAB3cAB3gA92ZncAd3cAAAAAAAAAd4APdmZnd3d3AAAAAAAAAHeAD3ZmZ3AH
+        d3cAB3cAB3d3gA92ZmcAAHd3AAd3AAd3d4APdmZnAABwAAAAAAAAAAeAD3ZmZwAHcAAAAAAAAAAHgA92
+        Zmdwd3d3AAd3AAd3d4APdmZmd3Z3dwAHdwAHd3eAD3ZmZmZmd3d3d3d3d3d3gA92ZmZmZnd3d3d3d3d3
+        d4APdmZmZmZ3d3d3d3d3d3eAD3ZmZmZmd3d3d3d3d3d3gA92ZmZmZnd3d3d3d3d3d4APd3d3d3d3d3d3
+        d3d3d3eAD///////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==
+</value>
+  </data>
+</root>
