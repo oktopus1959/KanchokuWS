@@ -40,7 +40,7 @@ Windows 10 および .NET Framework 4.8
 
 ## インストールとアンインストール
 ### インストール
-zip ファイルをダウンロードして、適当なフォルダに展開してください。
+[zip ファイル](https://github.com/oktopus1959/KanchokuWS/releases/KanchokuWS-v1.0.0.zip)をダウンロードして、適当なフォルダに展開してください。
 以下のようなファイルが格納されています。以下、このフォルダを「ルートフォルダ」と呼称します。
 
 ![Tree](image/tree.png)
