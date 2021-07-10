@@ -226,11 +226,17 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
 
+        //// 第1打鍵でSpaceが入力された時の処理
+        //void handleSpaceKey() {
+        //    LOG_DEBUG(_T("CALLED: %s: outString = MSTR_SPACE"), NAME_PTR);
+        //    STATE_COMMON->SetOrigString(' '); // 空白文字を返す
+        //    StrokeTableState::handleSpaceKey();
+        //}
+
         // 第1打鍵でSpaceが入力された時の処理
         void handleSpaceKey() {
-            LOG_DEBUG(_T("CALLED: %s: outString = MSTR_SPACE"), NAME_PTR);
-            STATE_COMMON->SetOrigString(' '); // 空白文字を返す
-            StrokeTableState::handleSpaceKey();
+            LOG_DEBUG(_T("CALLED: %"), NAME_PTR);
+            handleStrokeKeys(HOTKEY_STROKE_SPACE);
         }
 
         void handleBS() {

@@ -508,11 +508,11 @@ namespace {
             LOG_DEBUG(_T("LEAVE"));
         }
 
-        void handleSpaceKey() {
-            LOG_DEBUG(_T("CALLED"));
-            STATE_COMMON->OutputOrigString();
-            handleKeyPostProc();
-        }
+        //void handleSpaceKey() {
+        //    LOG_DEBUG(_T("CALLED"));
+        //    STATE_COMMON->OutputOrigString();
+        //    handleKeyPostProc();
+        //}
 
         // 機能キーだったときの一括処理(false を返すと、この後、個々の機能キーのハンドラが呼ばれる)
         bool handleFunctionKeys(int hotkey) {

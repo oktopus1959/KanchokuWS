@@ -56,6 +56,8 @@ namespace KanchokuWS
             this.textBox_keyboardFile = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.textBox_vkbShowStrokeCount = new System.Windows.Forms.TextBox();
+            this.label59 = new System.Windows.Forms.Label();
             this.radioButton_modeMarker = new System.Windows.Forms.RadioButton();
             this.radioButton_normalVkb = new System.Windows.Forms.RadioButton();
             this.button_Reload = new System.Windows.Forms.Button();
@@ -67,47 +69,28 @@ namespace KanchokuWS
             this.button_basicClose = new System.Windows.Forms.Button();
             this.button_basicEnter = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.comboBox_modifiedOffKey = new System.Windows.Forms.ComboBox();
+            this.comboBox_unmodifiedOffKey = new System.Windows.Forms.ComboBox();
             this.comboBox_modifiedToggleKey = new System.Windows.Forms.ComboBox();
+            this.comboBox_unmodifiedToggleKey = new System.Windows.Forms.ComboBox();
+            this.label55 = new System.Windows.Forms.Label();
+            this.label56 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.comboBox_unmodifiedToggleKey = new System.Windows.Forms.ComboBox();
-            this.tabPage_fontColor = new System.Windows.Forms.TabPage();
-            this.groupBox25 = new System.Windows.Forms.GroupBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.groupBox24 = new System.Windows.Forms.GroupBox();
-            this.label52 = new System.Windows.Forms.Label();
-            this.label51 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.groupBox21 = new System.Windows.Forms.GroupBox();
-            this.button_normalDlg = new System.Windows.Forms.Button();
-            this.button_minibufDlg = new System.Windows.Forms.Button();
-            this.button_horizontalDlg = new System.Windows.Forms.Button();
-            this.button_verticalDlg = new System.Windows.Forms.Button();
-            this.button_centerDlg = new System.Windows.Forms.Button();
-            this.textBox_minibufFont = new System.Windows.Forms.TextBox();
-            this.label50 = new System.Windows.Forms.Label();
-            this.textBox_horizontalFont = new System.Windows.Forms.TextBox();
-            this.label49 = new System.Windows.Forms.Label();
-            this.textBox_verticalFont = new System.Windows.Forms.TextBox();
-            this.textBox_centerFont = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label48 = new System.Windows.Forms.Label();
-            this.textBox_normalFont = new System.Windows.Forms.TextBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label37 = new System.Windows.Forms.Label();
-            this.label36 = new System.Windows.Forms.Label();
-            this.label35 = new System.Windows.Forms.Label();
-            this.label34 = new System.Windows.Forms.Label();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label30 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label_okResultFontColor = new System.Windows.Forms.Label();
-            this.button_fontColorClose = new System.Windows.Forms.Button();
-            this.button_fontColorEnter = new System.Windows.Forms.Button();
             this.tabPage_advanced = new System.Windows.Forms.TabPage();
+            this.groupBox28 = new System.Windows.Forms.GroupBox();
+            this.textBox_backFileRotationGeneration = new System.Windows.Forms.TextBox();
+            this.label57 = new System.Windows.Forms.Label();
+            this.groupBox20 = new System.Windows.Forms.GroupBox();
+            this.textBox_vkbOffsetY = new System.Windows.Forms.TextBox();
+            this.textBox_vkbOffsetX = new System.Windows.Forms.TextBox();
+            this.label40 = new System.Windows.Forms.Label();
+            this.label39 = new System.Windows.Forms.Label();
+            this.label38 = new System.Windows.Forms.Label();
+            this.textBox_alphaModeShowTime = new System.Windows.Forms.TextBox();
+            this.textBox_kanjiModeInterval = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
             this.groupBox26 = new System.Windows.Forms.GroupBox();
             this.textBox_minLeghthViaClipboard = new System.Windows.Forms.TextBox();
             this.label53 = new System.Windows.Forms.Label();
@@ -135,6 +118,86 @@ namespace KanchokuWS
             this.textBox_ctrlKeyUpGuardMillisec = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.checkBox_hideTopText = new System.Windows.Forms.CheckBox();
+            this.tabPage_fontColor = new System.Windows.Forms.TabPage();
+            this.groupBox25 = new System.Windows.Forms.GroupBox();
+            this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
+            this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.groupBox24 = new System.Windows.Forms.GroupBox();
+            this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
+            this.textBox_onMazegaki = new KanchokuWS.ColorTextBox();
+            this.textBox_on2ndStrokeBackColor = new KanchokuWS.ColorTextBox();
+            this.label52 = new System.Windows.Forms.Label();
+            this.label51 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.groupBox21 = new System.Windows.Forms.GroupBox();
+            this.button_normalDlg = new System.Windows.Forms.Button();
+            this.button_minibufDlg = new System.Windows.Forms.Button();
+            this.button_horizontalDlg = new System.Windows.Forms.Button();
+            this.button_verticalDlg = new System.Windows.Forms.Button();
+            this.button_centerDlg = new System.Windows.Forms.Button();
+            this.textBox_minibufFont = new System.Windows.Forms.TextBox();
+            this.label50 = new System.Windows.Forms.Label();
+            this.textBox_horizontalFont = new System.Windows.Forms.TextBox();
+            this.label49 = new System.Windows.Forms.Label();
+            this.textBox_verticalFont = new System.Windows.Forms.TextBox();
+            this.textBox_centerFont = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label48 = new System.Windows.Forms.Label();
+            this.textBox_normalFont = new System.Windows.Forms.TextBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.textBox_middleLevelBackColor = new KanchokuWS.ColorTextBox();
+            this.textBox_highLowLevelBackColor = new KanchokuWS.ColorTextBox();
+            this.textBox_centerSideBackColor = new KanchokuWS.ColorTextBox();
+            this.textBox_topLevelBackColor = new KanchokuWS.ColorTextBox();
+            this.label37 = new System.Windows.Forms.Label();
+            this.label36 = new System.Windows.Forms.Label();
+            this.label35 = new System.Windows.Forms.Label();
+            this.label34 = new System.Windows.Forms.Label();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
+            this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
+            this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label_okResultFontColor = new System.Windows.Forms.Label();
+            this.button_fontColorClose = new System.Windows.Forms.Button();
+            this.button_fontColorEnter = new System.Windows.Forms.Button();
+            this.tabPage_keyAssign = new System.Windows.Forms.TabPage();
+            this.groupBox32 = new System.Windows.Forms.GroupBox();
+            this.label71 = new System.Windows.Forms.Label();
+            this.groupBox31 = new System.Windows.Forms.GroupBox();
+            this.label69 = new System.Windows.Forms.Label();
+            this.label_okResultKeyAssign = new System.Windows.Forms.Label();
+            this.button_keyAssignClose = new System.Windows.Forms.Button();
+            this.button_keyAssignEnter = new System.Windows.Forms.Button();
+            this.groupBox30 = new System.Windows.Forms.GroupBox();
+            this.textBox_historyOneCharKeySeq = new System.Windows.Forms.TextBox();
+            this.label66 = new System.Windows.Forms.Label();
+            this.textBox_katakanaOneShotKeySeq = new System.Windows.Forms.TextBox();
+            this.label65 = new System.Windows.Forms.Label();
+            this.textBox_bushuAssocDirectKeySeq = new System.Windows.Forms.TextBox();
+            this.label63 = new System.Windows.Forms.Label();
+            this.textBox_bushuAssocKeySeq = new System.Windows.Forms.TextBox();
+            this.label62 = new System.Windows.Forms.Label();
+            this.textBox_bushuCompKeySeq = new System.Windows.Forms.TextBox();
+            this.label61 = new System.Windows.Forms.Label();
+            this.textBox_mazegakiKeySeq = new System.Windows.Forms.TextBox();
+            this.label60 = new System.Windows.Forms.Label();
+            this.textBox_historyKeySeq = new System.Windows.Forms.TextBox();
+            this.label58 = new System.Windows.Forms.Label();
+            this.groupBox29 = new System.Windows.Forms.GroupBox();
+            this.textBox_nextThroughKeySeq = new System.Windows.Forms.TextBox();
+            this.label70 = new System.Windows.Forms.Label();
+            this.textBox_katakanaModeKeySeq = new System.Windows.Forms.TextBox();
+            this.label68 = new System.Windows.Forms.Label();
+            this.textBox_zenkakuOneCharKeySeq = new System.Windows.Forms.TextBox();
+            this.label67 = new System.Windows.Forms.Label();
+            this.textBox_zenkakuModeKeySeq = new System.Windows.Forms.TextBox();
+            this.label64 = new System.Windows.Forms.Label();
             this.tabPage_ctrlKeys = new System.Windows.Forms.TabPage();
             this.groupBox18 = new System.Windows.Forms.GroupBox();
             this.textBox_dateStringFormat = new System.Windows.Forms.TextBox();
@@ -232,86 +295,30 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
-            this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
-            this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
-            this.textBox_onMazegaki = new KanchokuWS.ColorTextBox();
-            this.textBox_on2ndStrokeBackColor = new KanchokuWS.ColorTextBox();
-            this.textBox_middleLevelBackColor = new KanchokuWS.ColorTextBox();
-            this.textBox_highLowLevelBackColor = new KanchokuWS.ColorTextBox();
-            this.textBox_centerSideBackColor = new KanchokuWS.ColorTextBox();
-            this.textBox_topLevelBackColor = new KanchokuWS.ColorTextBox();
-            this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
-            this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
-            this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.groupBox20 = new System.Windows.Forms.GroupBox();
-            this.textBox_alphaModeShowTime = new System.Windows.Forms.TextBox();
-            this.textBox_kanjiModeInterval = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.comboBox_modifiedOffKey = new System.Windows.Forms.ComboBox();
-            this.label55 = new System.Windows.Forms.Label();
-            this.label56 = new System.Windows.Forms.Label();
-            this.comboBox_unmodifiedOffKey = new System.Windows.Forms.ComboBox();
-            this.groupBox28 = new System.Windows.Forms.GroupBox();
-            this.textBox_backFileRotationGeneration = new System.Windows.Forms.TextBox();
-            this.label57 = new System.Windows.Forms.Label();
-            this.textBox_vkbOffsetY = new System.Windows.Forms.TextBox();
-            this.textBox_vkbOffsetX = new System.Windows.Forms.TextBox();
-            this.label40 = new System.Windows.Forms.Label();
-            this.label39 = new System.Windows.Forms.Label();
-            this.label38 = new System.Windows.Forms.Label();
-            this.textBox_vkbShowStrokeCount = new System.Windows.Forms.TextBox();
-            this.label59 = new System.Windows.Forms.Label();
-            this.tabPage_keyAssign = new System.Windows.Forms.TabPage();
-            this.groupBox29 = new System.Windows.Forms.GroupBox();
-            this.groupBox30 = new System.Windows.Forms.GroupBox();
-            this.label58 = new System.Windows.Forms.Label();
-            this.textBox_historyKeySeq = new System.Windows.Forms.TextBox();
-            this.textBox_mazegakiKeySeq = new System.Windows.Forms.TextBox();
-            this.label60 = new System.Windows.Forms.Label();
-            this.textBox_bushuCompKeySeq = new System.Windows.Forms.TextBox();
-            this.label61 = new System.Windows.Forms.Label();
-            this.textBox_bushuAssocKeySeq = new System.Windows.Forms.TextBox();
-            this.label62 = new System.Windows.Forms.Label();
-            this.textBox_bushuAssocDirectKeySeq = new System.Windows.Forms.TextBox();
-            this.label63 = new System.Windows.Forms.Label();
-            this.textBox_zenkakuModeKeySeq = new System.Windows.Forms.TextBox();
-            this.label64 = new System.Windows.Forms.Label();
-            this.textBox_katakanaOneShotKeySeq = new System.Windows.Forms.TextBox();
-            this.label65 = new System.Windows.Forms.Label();
-            this.textBox_historyOneCharKeySeq = new System.Windows.Forms.TextBox();
-            this.label66 = new System.Windows.Forms.Label();
-            this.textBox_zenkakuOneCharKeySeq = new System.Windows.Forms.TextBox();
-            this.label67 = new System.Windows.Forms.Label();
-            this.textBox_katakanaModeKeySeq = new System.Windows.Forms.TextBox();
-            this.label68 = new System.Windows.Forms.Label();
-            this.label_okResultKeyAssign = new System.Windows.Forms.Label();
-            this.button_keyAssignClose = new System.Windows.Forms.Button();
-            this.button_keyAssignEnter = new System.Windows.Forms.Button();
-            this.groupBox31 = new System.Windows.Forms.GroupBox();
-            this.label69 = new System.Windows.Forms.Label();
-            this.textBox_nextThroughKeySeq = new System.Windows.Forms.TextBox();
-            this.label70 = new System.Windows.Forms.Label();
-            this.groupBox32 = new System.Windows.Forms.GroupBox();
-            this.label71 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox13.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tabPage_advanced.SuspendLayout();
+            this.groupBox28.SuspendLayout();
+            this.groupBox20.SuspendLayout();
+            this.groupBox26.SuspendLayout();
+            this.groupBox15.SuspendLayout();
+            this.groupBox16.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.tabPage_fontColor.SuspendLayout();
             this.groupBox25.SuspendLayout();
             this.groupBox24.SuspendLayout();
             this.groupBox21.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.tabPage_advanced.SuspendLayout();
-            this.groupBox26.SuspendLayout();
-            this.groupBox15.SuspendLayout();
-            this.groupBox16.SuspendLayout();
-            this.groupBox6.SuspendLayout();
+            this.tabPage_keyAssign.SuspendLayout();
+            this.groupBox32.SuspendLayout();
+            this.groupBox31.SuspendLayout();
+            this.groupBox30.SuspendLayout();
+            this.groupBox29.SuspendLayout();
             this.tabPage_ctrlKeys.SuspendLayout();
             this.groupBox18.SuspendLayout();
             this.groupBox22.SuspendLayout();
@@ -331,13 +338,6 @@ namespace KanchokuWS
             this.groupBox7.SuspendLayout();
             this.tabPage_about.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).BeginInit();
-            this.groupBox20.SuspendLayout();
-            this.groupBox28.SuspendLayout();
-            this.tabPage_keyAssign.SuspendLayout();
-            this.groupBox29.SuspendLayout();
-            this.groupBox30.SuspendLayout();
-            this.groupBox31.SuspendLayout();
-            this.groupBox32.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -663,6 +663,28 @@ namespace KanchokuWS
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "仮想鍵盤表示";
             // 
+            // textBox_vkbShowStrokeCount
+            // 
+            this.textBox_vkbShowStrokeCount.Enabled = false;
+            this.textBox_vkbShowStrokeCount.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_vkbShowStrokeCount.Location = new System.Drawing.Point(106, 17);
+            this.textBox_vkbShowStrokeCount.Name = "textBox_vkbShowStrokeCount";
+            this.textBox_vkbShowStrokeCount.Size = new System.Drawing.Size(21, 23);
+            this.textBox_vkbShowStrokeCount.TabIndex = 4;
+            this.textBox_vkbShowStrokeCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this.textBox_vkbShowStrokeCount, "標準の仮想鍵盤表示までの打鍵数を設定します。\r\n\r\n「0」を設定すると仮想鍵盤は表示されなくなります。\r\n(Ctrl-T または Ctrl-Shift-T で一時" +
+        "的に表示することは可能)\r\n\r\n「1」を設定すると常時仮想鍵盤が表示されます。\r\n\r\n「2」を設定すると最初はモード標識が表示され、1打鍵後に\r\n2打鍵目用のヘ" +
+        "ルプが表示されます。\r\n\r\n「3」以降も同様です。");
+            // 
+            // label59
+            // 
+            this.label59.AutoSize = true;
+            this.label59.Location = new System.Drawing.Point(126, 21);
+            this.label59.Name = "label59";
+            this.label59.Size = new System.Drawing.Size(74, 15);
+            this.label59.TabIndex = 5;
+            this.label59.Text = "打鍵から表示";
+            // 
             // radioButton_modeMarker
             // 
             this.radioButton_modeMarker.AutoSize = true;
@@ -804,6 +826,64 @@ namespace KanchokuWS
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "漢直モードトグル/OFFキー";
             // 
+            // comboBox_modifiedOffKey
+            // 
+            this.comboBox_modifiedOffKey.FormattingEnabled = true;
+            this.comboBox_modifiedOffKey.Items.AddRange(new object[] {
+            "ba (：＊)",
+            "bb (；＋)",
+            "bc (，＜)",
+            "bd (－=)",
+            "be (．＞)",
+            "bf (／？)",
+            "c0 (＠｀)",
+            "db (［｛)",
+            "dc (￥｜)",
+            "dd (］｝)",
+            "de (＾～)",
+            "e2 (＼＿)",
+            "f3 (半角/全角)",
+            "1c (変換)",
+            "1d (無変換)",
+            "f2 (かな/カナ)",
+            "20 (Space)"});
+            this.comboBox_modifiedOffKey.Location = new System.Drawing.Point(134, 93);
+            this.comboBox_modifiedOffKey.Name = "comboBox_modifiedOffKey";
+            this.comboBox_modifiedOffKey.Size = new System.Drawing.Size(105, 23);
+            this.comboBox_modifiedOffKey.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.comboBox_modifiedOffKey, "Ctrlキーの修飾有りで漢直モードをOFFにするためのキーの指定\r\n\r\n使用するキーの仮想キーコードを16進数で指定します。\r\n仮想キーコードについては「wind" +
+        "ows 仮想キーコード 一覧」でググると見つかります。\r\n主なキーについては候補を用意してあるので、それを選択してください。\r\n\r\nキーを使用しない場合は、Co" +
+        "mboBoxの内容を削除して空白にしてください。");
+            // 
+            // comboBox_unmodifiedOffKey
+            // 
+            this.comboBox_unmodifiedOffKey.FormattingEnabled = true;
+            this.comboBox_unmodifiedOffKey.Items.AddRange(new object[] {
+            "ba (：＊)",
+            "bb (；＋)",
+            "bc (，＜)",
+            "bd (－=)",
+            "be (．＞)",
+            "bf (／？)",
+            "c0 (＠｀)",
+            "db (［｛)",
+            "dc (￥｜)",
+            "dd (］｝)",
+            "de (＾～)",
+            "e2 (＼＿)",
+            "f3 (半角/全角)",
+            "1c (変換)",
+            "1d (無変換)",
+            "f2 (かな/カナ)",
+            "20 (Space)"});
+            this.comboBox_unmodifiedOffKey.Location = new System.Drawing.Point(134, 67);
+            this.comboBox_unmodifiedOffKey.Name = "comboBox_unmodifiedOffKey";
+            this.comboBox_unmodifiedOffKey.Size = new System.Drawing.Size(105, 23);
+            this.comboBox_unmodifiedOffKey.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.comboBox_unmodifiedOffKey, "Ctrlキーの修飾なしで漢直モードをOFFにするためのキーの指定\r\n\r\n使用するキーの仮想キーコードを16進数で指定します。\r\n仮想キーコードについては「wind" +
+        "ows 仮想キーコード 一覧」でググると見つかります。\r\n主なキーについては候補を用意してあるので、それを選択してください。\r\n\r\nキーを使用しない場合は、Co" +
+        "mboBoxの内容を削除して空白にしてください。");
+            // 
             // comboBox_modifiedToggleKey
             // 
             this.comboBox_modifiedToggleKey.FormattingEnabled = true;
@@ -830,24 +910,6 @@ namespace KanchokuWS
             this.comboBox_modifiedToggleKey.Size = new System.Drawing.Size(105, 23);
             this.comboBox_modifiedToggleKey.TabIndex = 1;
             this.toolTip1.SetToolTip(this.comboBox_modifiedToggleKey, resources.GetString("comboBox_modifiedToggleKey.ToolTip"));
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(15, 19);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(119, 15);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "CTRLキー修飾なしトグル";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(15, 45);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(121, 15);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "CTRLキー修飾有りトグル";
             // 
             // comboBox_unmodifiedToggleKey
             // 
@@ -876,395 +938,41 @@ namespace KanchokuWS
             this.comboBox_unmodifiedToggleKey.TabIndex = 0;
             this.toolTip1.SetToolTip(this.comboBox_unmodifiedToggleKey, resources.GetString("comboBox_unmodifiedToggleKey.ToolTip"));
             // 
-            // tabPage_fontColor
-            // 
-            this.tabPage_fontColor.Controls.Add(this.groupBox25);
-            this.tabPage_fontColor.Controls.Add(this.groupBox24);
-            this.tabPage_fontColor.Controls.Add(this.groupBox21);
-            this.tabPage_fontColor.Controls.Add(this.groupBox3);
-            this.tabPage_fontColor.Controls.Add(this.groupBox5);
-            this.tabPage_fontColor.Controls.Add(this.label_okResultFontColor);
-            this.tabPage_fontColor.Controls.Add(this.button_fontColorClose);
-            this.tabPage_fontColor.Controls.Add(this.button_fontColorEnter);
-            this.tabPage_fontColor.Location = new System.Drawing.Point(4, 24);
-            this.tabPage_fontColor.Name = "tabPage_fontColor";
-            this.tabPage_fontColor.Size = new System.Drawing.Size(581, 333);
-            this.tabPage_fontColor.TabIndex = 7;
-            this.tabPage_fontColor.Text = "フォントと色";
-            this.tabPage_fontColor.UseVisualStyleBackColor = true;
-            // 
-            // groupBox25
-            // 
-            this.groupBox25.Controls.Add(this.textBox_onSelectedBackColor);
-            this.groupBox25.Controls.Add(this.textBox_firstCandidateBackColor);
-            this.groupBox25.Controls.Add(this.label13);
-            this.groupBox25.Controls.Add(this.label12);
-            this.groupBox25.Location = new System.Drawing.Point(298, 213);
-            this.groupBox25.Name = "groupBox25";
-            this.groupBox25.Size = new System.Drawing.Size(243, 72);
-            this.groupBox25.TabIndex = 4;
-            this.groupBox25.TabStop = false;
-            this.groupBox25.Text = "縦列・横列鍵盤背景色";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(20, 48);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(78, 15);
-            this.label13.TabIndex = 8;
-            this.label13.Text = "選択済み候補";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(20, 23);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(79, 15);
-            this.label12.TabIndex = 7;
-            this.label12.Text = "優先選択候補";
-            // 
-            // groupBox24
-            // 
-            this.groupBox24.Controls.Add(this.textBox_onHistAssoc);
-            this.groupBox24.Controls.Add(this.textBox_onMazegaki);
-            this.groupBox24.Controls.Add(this.textBox_on2ndStrokeBackColor);
-            this.groupBox24.Controls.Add(this.label52);
-            this.groupBox24.Controls.Add(this.label51);
-            this.groupBox24.Controls.Add(this.label11);
-            this.groupBox24.Location = new System.Drawing.Point(298, 107);
-            this.groupBox24.Name = "groupBox24";
-            this.groupBox24.Size = new System.Drawing.Size(243, 100);
-            this.groupBox24.TabIndex = 3;
-            this.groupBox24.TabStop = false;
-            this.groupBox24.Text = "中央鍵盤背景色";
-            // 
-            // label52
-            // 
-            this.label52.AutoSize = true;
-            this.label52.Location = new System.Drawing.Point(20, 73);
-            this.label52.Name = "label52";
-            this.label52.Size = new System.Drawing.Size(61, 15);
-            this.label52.TabIndex = 9;
-            this.label52.Text = "履歴・連想";
-            // 
-            // label51
-            // 
-            this.label51.AutoSize = true;
-            this.label51.Location = new System.Drawing.Point(20, 48);
-            this.label51.Name = "label51";
-            this.label51.Size = new System.Drawing.Size(74, 15);
-            this.label51.TabIndex = 7;
-            this.label51.Text = "交ぜ書き変換";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(20, 23);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(70, 15);
-            this.label11.TabIndex = 5;
-            this.label11.Text = "第2打鍵待ち";
-            // 
-            // groupBox21
-            // 
-            this.groupBox21.Controls.Add(this.button_normalDlg);
-            this.groupBox21.Controls.Add(this.button_minibufDlg);
-            this.groupBox21.Controls.Add(this.button_horizontalDlg);
-            this.groupBox21.Controls.Add(this.button_verticalDlg);
-            this.groupBox21.Controls.Add(this.button_centerDlg);
-            this.groupBox21.Controls.Add(this.textBox_minibufFont);
-            this.groupBox21.Controls.Add(this.label50);
-            this.groupBox21.Controls.Add(this.textBox_horizontalFont);
-            this.groupBox21.Controls.Add(this.label49);
-            this.groupBox21.Controls.Add(this.textBox_verticalFont);
-            this.groupBox21.Controls.Add(this.textBox_centerFont);
-            this.groupBox21.Controls.Add(this.label8);
-            this.groupBox21.Controls.Add(this.label9);
-            this.groupBox21.Controls.Add(this.label48);
-            this.groupBox21.Controls.Add(this.textBox_normalFont);
-            this.groupBox21.Location = new System.Drawing.Point(8, 4);
-            this.groupBox21.Name = "groupBox21";
-            this.groupBox21.Size = new System.Drawing.Size(284, 146);
-            this.groupBox21.TabIndex = 0;
-            this.groupBox21.TabStop = false;
-            this.groupBox21.Text = "仮想鍵盤フォント";
-            // 
-            // button_normalDlg
-            // 
-            this.button_normalDlg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_normalDlg.Location = new System.Drawing.Point(232, 20);
-            this.button_normalDlg.Name = "button_normalDlg";
-            this.button_normalDlg.Size = new System.Drawing.Size(50, 23);
-            this.button_normalDlg.TabIndex = 1;
-            this.button_normalDlg.Text = "選択...";
-            this.button_normalDlg.UseVisualStyleBackColor = true;
-            this.button_normalDlg.Click += new System.EventHandler(this.button_normalDlg_Click);
-            // 
-            // button_minibufDlg
-            // 
-            this.button_minibufDlg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_minibufDlg.Location = new System.Drawing.Point(231, 116);
-            this.button_minibufDlg.Name = "button_minibufDlg";
-            this.button_minibufDlg.Size = new System.Drawing.Size(50, 23);
-            this.button_minibufDlg.TabIndex = 9;
-            this.button_minibufDlg.Text = "選択...";
-            this.button_minibufDlg.UseVisualStyleBackColor = true;
-            this.button_minibufDlg.Click += new System.EventHandler(this.button_minibufDlg_Click);
-            // 
-            // button_horizontalDlg
-            // 
-            this.button_horizontalDlg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_horizontalDlg.Location = new System.Drawing.Point(231, 92);
-            this.button_horizontalDlg.Name = "button_horizontalDlg";
-            this.button_horizontalDlg.Size = new System.Drawing.Size(50, 23);
-            this.button_horizontalDlg.TabIndex = 7;
-            this.button_horizontalDlg.Text = "選択...";
-            this.button_horizontalDlg.UseVisualStyleBackColor = true;
-            this.button_horizontalDlg.Click += new System.EventHandler(this.button_horizontalDlg_Click);
-            // 
-            // button_verticalDlg
-            // 
-            this.button_verticalDlg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_verticalDlg.Location = new System.Drawing.Point(231, 68);
-            this.button_verticalDlg.Name = "button_verticalDlg";
-            this.button_verticalDlg.Size = new System.Drawing.Size(50, 23);
-            this.button_verticalDlg.TabIndex = 5;
-            this.button_verticalDlg.Text = "選択...";
-            this.button_verticalDlg.UseVisualStyleBackColor = true;
-            this.button_verticalDlg.Click += new System.EventHandler(this.button_verticalDlg_Click);
-            // 
-            // button_centerDlg
-            // 
-            this.button_centerDlg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_centerDlg.Location = new System.Drawing.Point(231, 44);
-            this.button_centerDlg.Name = "button_centerDlg";
-            this.button_centerDlg.Size = new System.Drawing.Size(50, 23);
-            this.button_centerDlg.TabIndex = 3;
-            this.button_centerDlg.Text = "選択...";
-            this.button_centerDlg.UseVisualStyleBackColor = true;
-            this.button_centerDlg.Click += new System.EventHandler(this.button_centerDlg_Click);
-            // 
-            // textBox_minibufFont
-            // 
-            this.textBox_minibufFont.Location = new System.Drawing.Point(80, 116);
-            this.textBox_minibufFont.Name = "textBox_minibufFont";
-            this.textBox_minibufFont.Size = new System.Drawing.Size(148, 23);
-            this.textBox_minibufFont.TabIndex = 8;
-            this.toolTip1.SetToolTip(this.textBox_minibufFont, "ミニバッファ(仮想鍵盤上部)に表示する文字のフォント\r\n\r\n以下のフォーマットでフォントを設定できます。\r\nフォント名とサイズについては、「選択...」ボタンをク" +
-        "リックして\r\nフォントダイアログから選択することもできます。\r\n\r\nフォント名 | サイズ(pt)\r\n");
-            // 
-            // label50
-            // 
-            this.label50.AutoSize = true;
-            this.label50.Location = new System.Drawing.Point(14, 121);
-            this.label50.Name = "label50";
-            this.label50.Size = new System.Drawing.Size(56, 15);
-            this.label50.TabIndex = 18;
-            this.label50.Text = "ミニバッファ";
-            // 
-            // textBox_horizontalFont
-            // 
-            this.textBox_horizontalFont.Location = new System.Drawing.Point(80, 92);
-            this.textBox_horizontalFont.Name = "textBox_horizontalFont";
-            this.textBox_horizontalFont.Size = new System.Drawing.Size(148, 23);
-            this.textBox_horizontalFont.TabIndex = 6;
-            this.toolTip1.SetToolTip(this.textBox_horizontalFont, "横列鍵盤に表示する文字のフォント\r\n\r\n以下のフォーマットでフォントを設定できます。\r\nフォント名とサイズについては、「選択...」ボタンをクリックして\r\nフォン" +
-        "トダイアログから選択することもできます。\r\n\r\nフォント名 | サイズ(pt)\r\n");
-            // 
-            // label49
-            // 
-            this.label49.AutoSize = true;
-            this.label49.Location = new System.Drawing.Point(14, 97);
-            this.label49.Name = "label49";
-            this.label49.Size = new System.Drawing.Size(55, 15);
-            this.label49.TabIndex = 16;
-            this.label49.Text = "横列鍵盤";
-            // 
-            // textBox_verticalFont
-            // 
-            this.textBox_verticalFont.Location = new System.Drawing.Point(80, 68);
-            this.textBox_verticalFont.Name = "textBox_verticalFont";
-            this.textBox_verticalFont.Size = new System.Drawing.Size(148, 23);
-            this.textBox_verticalFont.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.textBox_verticalFont, resources.GetString("textBox_verticalFont.ToolTip"));
-            // 
-            // textBox_centerFont
-            // 
-            this.textBox_centerFont.Location = new System.Drawing.Point(80, 44);
-            this.textBox_centerFont.Name = "textBox_centerFont";
-            this.textBox_centerFont.Size = new System.Drawing.Size(148, 23);
-            this.textBox_centerFont.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_centerFont, resources.GetString("textBox_centerFont.ToolTip"));
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(14, 73);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(55, 15);
-            this.label8.TabIndex = 13;
-            this.label8.Text = "縦列鍵盤";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(14, 48);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(55, 15);
-            this.label9.TabIndex = 12;
-            this.label9.Text = "中央鍵盤";
-            // 
-            // label48
-            // 
-            this.label48.AutoSize = true;
-            this.label48.Location = new System.Drawing.Point(14, 24);
-            this.label48.Name = "label48";
-            this.label48.Size = new System.Drawing.Size(55, 15);
-            this.label48.TabIndex = 11;
-            this.label48.Text = "通常鍵盤";
-            // 
-            // textBox_normalFont
-            // 
-            this.textBox_normalFont.Location = new System.Drawing.Point(80, 20);
-            this.textBox_normalFont.Name = "textBox_normalFont";
-            this.textBox_normalFont.Size = new System.Drawing.Size(148, 23);
-            this.textBox_normalFont.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_normalFont, resources.GetString("textBox_normalFont.ToolTip"));
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.textBox_middleLevelBackColor);
-            this.groupBox3.Controls.Add(this.textBox_highLowLevelBackColor);
-            this.groupBox3.Controls.Add(this.textBox_centerSideBackColor);
-            this.groupBox3.Controls.Add(this.textBox_topLevelBackColor);
-            this.groupBox3.Controls.Add(this.label37);
-            this.groupBox3.Controls.Add(this.label36);
-            this.groupBox3.Controls.Add(this.label35);
-            this.groupBox3.Controls.Add(this.label34);
-            this.groupBox3.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox3.Location = new System.Drawing.Point(8, 159);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(255, 126);
-            this.groupBox3.TabIndex = 1;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "通常鍵盤背景色";
-            // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(20, 97);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(51, 15);
-            this.label37.TabIndex = 10;
-            this.label37.Text = "中段セル";
-            // 
-            // label36
-            // 
-            this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(20, 72);
-            this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(63, 15);
-            this.label36.TabIndex = 8;
-            this.label36.Text = "上下段セル";
-            // 
-            // label35
-            // 
-            this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(20, 47);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(71, 15);
-            this.label35.TabIndex = 6;
-            this.label35.Text = "中央寄りセル";
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(20, 23);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(63, 15);
-            this.label34.TabIndex = 4;
-            this.label34.Text = "最上段セル";
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.textBox_alphaModeForeColor);
-            this.groupBox5.Controls.Add(this.textBox_2ndStrokeForeColor);
-            this.groupBox5.Controls.Add(this.textBox_modeForeColor);
-            this.groupBox5.Controls.Add(this.label30);
-            this.groupBox5.Controls.Add(this.label25);
-            this.groupBox5.Controls.Add(this.label17);
-            this.groupBox5.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox5.Location = new System.Drawing.Point(298, 4);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(243, 97);
-            this.groupBox5.TabIndex = 2;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "モード標識文字色";
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(19, 69);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(62, 15);
-            this.label30.TabIndex = 10;
-            this.label30.Text = "デコーダOFF";
-            // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(19, 46);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(70, 15);
-            this.label25.TabIndex = 8;
-            this.label25.Text = "第2打鍵待ち";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(19, 21);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(70, 15);
-            this.label17.TabIndex = 6;
-            this.label17.Text = "第1打鍵待ち";
-            // 
-            // label_okResultFontColor
-            // 
-            this.label_okResultFontColor.AutoSize = true;
-            this.label_okResultFontColor.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultFontColor.Location = new System.Drawing.Point(499, 285);
-            this.label_okResultFontColor.Name = "label_okResultFontColor";
-            this.label_okResultFontColor.Size = new System.Drawing.Size(65, 15);
-            this.label_okResultFontColor.TabIndex = 11;
-            this.label_okResultFontColor.Text = "設定しました";
-            this.label_okResultFontColor.Visible = false;
-            this.label_okResultFontColor.VisibleChanged += new System.EventHandler(this.label_okResultFontColor_VisibleChanged);
-            // 
-            // button_fontColorClose
-            // 
-            this.button_fontColorClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_fontColorClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_fontColorClose.Location = new System.Drawing.Point(385, 303);
-            this.button_fontColorClose.Name = "button_fontColorClose";
-            this.button_fontColorClose.Size = new System.Drawing.Size(80, 23);
-            this.button_fontColorClose.TabIndex = 5;
-            this.button_fontColorClose.Text = "閉じる(&C)";
-            this.button_fontColorClose.UseVisualStyleBackColor = true;
-            this.button_fontColorClose.Click += new System.EventHandler(this.button_fileClose_Click);
-            // 
-            // button_fontColorEnter
-            // 
-            this.button_fontColorEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_fontColorEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_fontColorEnter.Location = new System.Drawing.Point(493, 303);
-            this.button_fontColorEnter.Name = "button_fontColorEnter";
-            this.button_fontColorEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_fontColorEnter.TabIndex = 6;
-            this.button_fontColorEnter.Text = "設定(&E)";
-            this.toolTip1.SetToolTip(this.button_fontColorEnter, "設定内容を kanchoku.user.ini に書き込みます");
-            this.button_fontColorEnter.UseVisualStyleBackColor = true;
-            this.button_fontColorEnter.Click += new System.EventHandler(this.button_fileEnter_Click);
+            // label55
+            // 
+            this.label55.AutoSize = true;
+            this.label55.Location = new System.Drawing.Point(15, 71);
+            this.label55.Name = "label55";
+            this.label55.Size = new System.Drawing.Size(113, 15);
+            this.label55.TabIndex = 10;
+            this.label55.Text = "CTRLキー修飾なしOFF";
+            // 
+            // label56
+            // 
+            this.label56.AutoSize = true;
+            this.label56.Location = new System.Drawing.Point(15, 97);
+            this.label56.Name = "label56";
+            this.label56.Size = new System.Drawing.Size(115, 15);
+            this.label56.TabIndex = 9;
+            this.label56.Text = "CTRLキー修飾有りOFF";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(15, 19);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(119, 15);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "CTRLキー修飾なしトグル";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(15, 45);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(121, 15);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "CTRLキー修飾有りトグル";
             // 
             // tabPage_advanced
             // 
@@ -1284,6 +992,136 @@ namespace KanchokuWS
             this.tabPage_advanced.TabIndex = 3;
             this.tabPage_advanced.Text = "詳細設定";
             this.tabPage_advanced.UseVisualStyleBackColor = true;
+            // 
+            // groupBox28
+            // 
+            this.groupBox28.Controls.Add(this.textBox_backFileRotationGeneration);
+            this.groupBox28.Controls.Add(this.label57);
+            this.groupBox28.Location = new System.Drawing.Point(304, 64);
+            this.groupBox28.Name = "groupBox28";
+            this.groupBox28.Size = new System.Drawing.Size(246, 47);
+            this.groupBox28.TabIndex = 4;
+            this.groupBox28.TabStop = false;
+            this.groupBox28.Text = "辞書ファイル";
+            // 
+            // textBox_backFileRotationGeneration
+            // 
+            this.textBox_backFileRotationGeneration.Location = new System.Drawing.Point(186, 18);
+            this.textBox_backFileRotationGeneration.Name = "textBox_backFileRotationGeneration";
+            this.textBox_backFileRotationGeneration.Size = new System.Drawing.Size(45, 23);
+            this.textBox_backFileRotationGeneration.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_backFileRotationGeneration, resources.GetString("textBox_backFileRotationGeneration.ToolTip"));
+            // 
+            // label57
+            // 
+            this.label57.AutoSize = true;
+            this.label57.Location = new System.Drawing.Point(19, 21);
+            this.label57.Name = "label57";
+            this.label57.Size = new System.Drawing.Size(101, 15);
+            this.label57.TabIndex = 6;
+            this.label57.Text = "ファイル保存世代数";
+            // 
+            // groupBox20
+            // 
+            this.groupBox20.Controls.Add(this.textBox_vkbOffsetY);
+            this.groupBox20.Controls.Add(this.textBox_vkbOffsetX);
+            this.groupBox20.Controls.Add(this.label40);
+            this.groupBox20.Controls.Add(this.label39);
+            this.groupBox20.Controls.Add(this.label38);
+            this.groupBox20.Controls.Add(this.textBox_alphaModeShowTime);
+            this.groupBox20.Controls.Add(this.textBox_kanjiModeInterval);
+            this.groupBox20.Controls.Add(this.label16);
+            this.groupBox20.Controls.Add(this.label14);
+            this.groupBox20.Location = new System.Drawing.Point(7, 12);
+            this.groupBox20.Name = "groupBox20";
+            this.groupBox20.Size = new System.Drawing.Size(287, 99);
+            this.groupBox20.TabIndex = 0;
+            this.groupBox20.TabStop = false;
+            this.groupBox20.Text = "仮想鍵盤・モード標識";
+            // 
+            // textBox_vkbOffsetY
+            // 
+            this.textBox_vkbOffsetY.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_vkbOffsetY.Location = new System.Drawing.Point(214, 19);
+            this.textBox_vkbOffsetY.Name = "textBox_vkbOffsetY";
+            this.textBox_vkbOffsetY.Size = new System.Drawing.Size(25, 23);
+            this.textBox_vkbOffsetY.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_vkbOffsetY, "仮想鍵盤の表示位置(Y軸)\r\n\r\n文字送出の対象となるアクティブウィンドウのカレットの\r\n右下端位置からの相対位置として設定します。\r\n");
+            // 
+            // textBox_vkbOffsetX
+            // 
+            this.textBox_vkbOffsetX.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_vkbOffsetX.Location = new System.Drawing.Point(173, 19);
+            this.textBox_vkbOffsetX.Name = "textBox_vkbOffsetX";
+            this.textBox_vkbOffsetX.Size = new System.Drawing.Size(25, 23);
+            this.textBox_vkbOffsetX.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_vkbOffsetX, "仮想鍵盤の表示位置(X軸)\r\n\r\n文字送出の対象となるアクティブウィンドウのカレットの\r\n右下端位置からの相対位置として設定します。");
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(160, 23);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(14, 15);
+            this.label40.TabIndex = 22;
+            this.label40.Text = "X";
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(201, 23);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(14, 15);
+            this.label39.TabIndex = 21;
+            this.label39.Text = "Y";
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(19, 23);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(142, 15);
+            this.label38.TabIndex = 20;
+            this.label38.Text = "カレットからの相対表示位置";
+            // 
+            // textBox_alphaModeShowTime
+            // 
+            this.textBox_alphaModeShowTime.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_alphaModeShowTime.Location = new System.Drawing.Point(190, 72);
+            this.textBox_alphaModeShowTime.Name = "textBox_alphaModeShowTime";
+            this.textBox_alphaModeShowTime.Size = new System.Drawing.Size(48, 23);
+            this.textBox_alphaModeShowTime.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.textBox_alphaModeShowTime, "英字モードに入ったときに表示されるモード標識の表示時間(ミリ秒)\r\n\r\nここで指定した時間が経過すると英字モード標識は自動的に消えます。\r\n0 を指定すると最初か" +
+        "ら英字モード標識を表示しません。\r\n");
+            // 
+            // textBox_kanjiModeInterval
+            // 
+            this.textBox_kanjiModeInterval.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_kanjiModeInterval.Location = new System.Drawing.Point(190, 48);
+            this.textBox_kanjiModeInterval.Name = "textBox_kanjiModeInterval";
+            this.textBox_kanjiModeInterval.Size = new System.Drawing.Size(48, 23);
+            this.textBox_kanjiModeInterval.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_kanjiModeInterval, "無打鍵時に漢直モード標識を再表示するまでの時間(秒)\r\n\r\n漢直モード標識は、何か打鍵があると自動的に消えます。その後、無打鍵\r\n状態がここで指定した時間続いた場" +
+        "合にモード標識を再表示します。\r\n\r\n0 を指定すると、何か打鍵があってもモード標識を消しません。\r\n-1 を指定すると、最初からモード標識を表示しません。(再" +
+        "表示もしない)\r\n");
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(19, 76);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(163, 15);
+            this.label16.TabIndex = 17;
+            this.label16.Text = "英字モード標識表示時間(ミリ秒)";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(19, 52);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(160, 15);
+            this.label14.TabIndex = 16;
+            this.label14.Text = "漢直モード標識再表示間隔(秒)";
             // 
             // groupBox26
             // 
@@ -1575,6 +1413,865 @@ namespace KanchokuWS
         "す。");
             this.checkBox_hideTopText.UseVisualStyleBackColor = true;
             this.checkBox_hideTopText.Visible = false;
+            // 
+            // tabPage_fontColor
+            // 
+            this.tabPage_fontColor.Controls.Add(this.groupBox25);
+            this.tabPage_fontColor.Controls.Add(this.groupBox24);
+            this.tabPage_fontColor.Controls.Add(this.groupBox21);
+            this.tabPage_fontColor.Controls.Add(this.groupBox3);
+            this.tabPage_fontColor.Controls.Add(this.groupBox5);
+            this.tabPage_fontColor.Controls.Add(this.label_okResultFontColor);
+            this.tabPage_fontColor.Controls.Add(this.button_fontColorClose);
+            this.tabPage_fontColor.Controls.Add(this.button_fontColorEnter);
+            this.tabPage_fontColor.Location = new System.Drawing.Point(4, 24);
+            this.tabPage_fontColor.Name = "tabPage_fontColor";
+            this.tabPage_fontColor.Size = new System.Drawing.Size(581, 333);
+            this.tabPage_fontColor.TabIndex = 7;
+            this.tabPage_fontColor.Text = "フォントと色";
+            this.tabPage_fontColor.UseVisualStyleBackColor = true;
+            // 
+            // groupBox25
+            // 
+            this.groupBox25.Controls.Add(this.textBox_onSelectedBackColor);
+            this.groupBox25.Controls.Add(this.textBox_firstCandidateBackColor);
+            this.groupBox25.Controls.Add(this.label13);
+            this.groupBox25.Controls.Add(this.label12);
+            this.groupBox25.Location = new System.Drawing.Point(298, 213);
+            this.groupBox25.Name = "groupBox25";
+            this.groupBox25.Size = new System.Drawing.Size(243, 72);
+            this.groupBox25.TabIndex = 4;
+            this.groupBox25.TabStop = false;
+            this.groupBox25.Text = "縦列・横列鍵盤背景色";
+            // 
+            // textBox_onSelectedBackColor
+            // 
+            this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_onSelectedBackColor.ForBackColor = true;
+            this.textBox_onSelectedBackColor.Location = new System.Drawing.Point(103, 44);
+            this.textBox_onSelectedBackColor.Name = "textBox_onSelectedBackColor";
+            this.textBox_onSelectedBackColor.ReadOnly = true;
+            this.textBox_onSelectedBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_onSelectedBackColor.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_onSelectedBackColor, "縦列または横列鍵盤での選択済み候補の背景色\r\n\r\n履歴選択や交ぜ書き変換などで、縦列または横列鍵盤が\r\n表示されている時、選択された候補(出力済み候補)の\r\n背景" +
+        "色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_firstCandidateBackColor
+            // 
+            this.textBox_firstCandidateBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_firstCandidateBackColor.ForBackColor = true;
+            this.textBox_firstCandidateBackColor.Location = new System.Drawing.Point(103, 19);
+            this.textBox_firstCandidateBackColor.Name = "textBox_firstCandidateBackColor";
+            this.textBox_firstCandidateBackColor.ReadOnly = true;
+            this.textBox_firstCandidateBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_firstCandidateBackColor.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_firstCandidateBackColor, "縦列または横列鍵盤で優先的に選択される候補の背景色\r\n\r\n履歴選択や交ぜ書き変換などで、縦列または横列鍵盤が\r\n表示されている時、Enterキーで選択できる優先候" +
+        "補の\r\n背景色を設定します。\r\n\r\nただし履歴選択については、Enterで優先候補を選択するか\r\nどうかは「履歴・交ぜ書き」タブで設定します。\r\n（ここをクリッ" +
+        "クすると設定ダイアログが開きます。）");
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(20, 48);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(78, 15);
+            this.label13.TabIndex = 8;
+            this.label13.Text = "選択済み候補";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(20, 23);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(79, 15);
+            this.label12.TabIndex = 7;
+            this.label12.Text = "優先選択候補";
+            // 
+            // groupBox24
+            // 
+            this.groupBox24.Controls.Add(this.textBox_onHistAssoc);
+            this.groupBox24.Controls.Add(this.textBox_onMazegaki);
+            this.groupBox24.Controls.Add(this.textBox_on2ndStrokeBackColor);
+            this.groupBox24.Controls.Add(this.label52);
+            this.groupBox24.Controls.Add(this.label51);
+            this.groupBox24.Controls.Add(this.label11);
+            this.groupBox24.Location = new System.Drawing.Point(298, 107);
+            this.groupBox24.Name = "groupBox24";
+            this.groupBox24.Size = new System.Drawing.Size(243, 100);
+            this.groupBox24.TabIndex = 3;
+            this.groupBox24.TabStop = false;
+            this.groupBox24.Text = "中央鍵盤背景色";
+            // 
+            // textBox_onHistAssoc
+            // 
+            this.textBox_onHistAssoc.BackColor = System.Drawing.Color.White;
+            this.textBox_onHistAssoc.ForBackColor = true;
+            this.textBox_onHistAssoc.Location = new System.Drawing.Point(103, 69);
+            this.textBox_onHistAssoc.Name = "textBox_onHistAssoc";
+            this.textBox_onHistAssoc.ReadOnly = true;
+            this.textBox_onHistAssoc.Size = new System.Drawing.Size(132, 23);
+            this.textBox_onHistAssoc.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_onHistAssoc, "履歴選択・部首連想選択時の中央鍵盤背景色\r\n\r\n縦列鍵盤による履歴候補選択や部首連想での文字選択時の\r\n中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設" +
+        "定ダイアログが開きます。）");
+            // 
+            // textBox_onMazegaki
+            // 
+            this.textBox_onMazegaki.BackColor = System.Drawing.Color.White;
+            this.textBox_onMazegaki.ForBackColor = true;
+            this.textBox_onMazegaki.Location = new System.Drawing.Point(103, 44);
+            this.textBox_onMazegaki.Name = "textBox_onMazegaki";
+            this.textBox_onMazegaki.ReadOnly = true;
+            this.textBox_onMazegaki.Size = new System.Drawing.Size(132, 23);
+            this.textBox_onMazegaki.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_onMazegaki, "交ぜ書き変換時の中央鍵盤背景色\r\n\r\n交ぜ書き変換時の中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_on2ndStrokeBackColor
+            // 
+            this.textBox_on2ndStrokeBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_on2ndStrokeBackColor.ForBackColor = true;
+            this.textBox_on2ndStrokeBackColor.Location = new System.Drawing.Point(103, 19);
+            this.textBox_on2ndStrokeBackColor.Name = "textBox_on2ndStrokeBackColor";
+            this.textBox_on2ndStrokeBackColor.ReadOnly = true;
+            this.textBox_on2ndStrokeBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_on2ndStrokeBackColor.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_on2ndStrokeBackColor, "第2打鍵待ちの時の中央鍵盤背景色\r\n\r\n第2打鍵の入力を待っている時の中央鍵盤の\r\n背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // label52
+            // 
+            this.label52.AutoSize = true;
+            this.label52.Location = new System.Drawing.Point(20, 73);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(61, 15);
+            this.label52.TabIndex = 9;
+            this.label52.Text = "履歴・連想";
+            // 
+            // label51
+            // 
+            this.label51.AutoSize = true;
+            this.label51.Location = new System.Drawing.Point(20, 48);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(74, 15);
+            this.label51.TabIndex = 7;
+            this.label51.Text = "交ぜ書き変換";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(20, 23);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(70, 15);
+            this.label11.TabIndex = 5;
+            this.label11.Text = "第2打鍵待ち";
+            // 
+            // groupBox21
+            // 
+            this.groupBox21.Controls.Add(this.button_normalDlg);
+            this.groupBox21.Controls.Add(this.button_minibufDlg);
+            this.groupBox21.Controls.Add(this.button_horizontalDlg);
+            this.groupBox21.Controls.Add(this.button_verticalDlg);
+            this.groupBox21.Controls.Add(this.button_centerDlg);
+            this.groupBox21.Controls.Add(this.textBox_minibufFont);
+            this.groupBox21.Controls.Add(this.label50);
+            this.groupBox21.Controls.Add(this.textBox_horizontalFont);
+            this.groupBox21.Controls.Add(this.label49);
+            this.groupBox21.Controls.Add(this.textBox_verticalFont);
+            this.groupBox21.Controls.Add(this.textBox_centerFont);
+            this.groupBox21.Controls.Add(this.label8);
+            this.groupBox21.Controls.Add(this.label9);
+            this.groupBox21.Controls.Add(this.label48);
+            this.groupBox21.Controls.Add(this.textBox_normalFont);
+            this.groupBox21.Location = new System.Drawing.Point(8, 4);
+            this.groupBox21.Name = "groupBox21";
+            this.groupBox21.Size = new System.Drawing.Size(284, 146);
+            this.groupBox21.TabIndex = 0;
+            this.groupBox21.TabStop = false;
+            this.groupBox21.Text = "仮想鍵盤フォント";
+            // 
+            // button_normalDlg
+            // 
+            this.button_normalDlg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_normalDlg.Location = new System.Drawing.Point(232, 20);
+            this.button_normalDlg.Name = "button_normalDlg";
+            this.button_normalDlg.Size = new System.Drawing.Size(50, 23);
+            this.button_normalDlg.TabIndex = 1;
+            this.button_normalDlg.Text = "選択...";
+            this.button_normalDlg.UseVisualStyleBackColor = true;
+            this.button_normalDlg.Click += new System.EventHandler(this.button_normalDlg_Click);
+            // 
+            // button_minibufDlg
+            // 
+            this.button_minibufDlg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_minibufDlg.Location = new System.Drawing.Point(231, 116);
+            this.button_minibufDlg.Name = "button_minibufDlg";
+            this.button_minibufDlg.Size = new System.Drawing.Size(50, 23);
+            this.button_minibufDlg.TabIndex = 9;
+            this.button_minibufDlg.Text = "選択...";
+            this.button_minibufDlg.UseVisualStyleBackColor = true;
+            this.button_minibufDlg.Click += new System.EventHandler(this.button_minibufDlg_Click);
+            // 
+            // button_horizontalDlg
+            // 
+            this.button_horizontalDlg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_horizontalDlg.Location = new System.Drawing.Point(231, 92);
+            this.button_horizontalDlg.Name = "button_horizontalDlg";
+            this.button_horizontalDlg.Size = new System.Drawing.Size(50, 23);
+            this.button_horizontalDlg.TabIndex = 7;
+            this.button_horizontalDlg.Text = "選択...";
+            this.button_horizontalDlg.UseVisualStyleBackColor = true;
+            this.button_horizontalDlg.Click += new System.EventHandler(this.button_horizontalDlg_Click);
+            // 
+            // button_verticalDlg
+            // 
+            this.button_verticalDlg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_verticalDlg.Location = new System.Drawing.Point(231, 68);
+            this.button_verticalDlg.Name = "button_verticalDlg";
+            this.button_verticalDlg.Size = new System.Drawing.Size(50, 23);
+            this.button_verticalDlg.TabIndex = 5;
+            this.button_verticalDlg.Text = "選択...";
+            this.button_verticalDlg.UseVisualStyleBackColor = true;
+            this.button_verticalDlg.Click += new System.EventHandler(this.button_verticalDlg_Click);
+            // 
+            // button_centerDlg
+            // 
+            this.button_centerDlg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_centerDlg.Location = new System.Drawing.Point(231, 44);
+            this.button_centerDlg.Name = "button_centerDlg";
+            this.button_centerDlg.Size = new System.Drawing.Size(50, 23);
+            this.button_centerDlg.TabIndex = 3;
+            this.button_centerDlg.Text = "選択...";
+            this.button_centerDlg.UseVisualStyleBackColor = true;
+            this.button_centerDlg.Click += new System.EventHandler(this.button_centerDlg_Click);
+            // 
+            // textBox_minibufFont
+            // 
+            this.textBox_minibufFont.Location = new System.Drawing.Point(80, 116);
+            this.textBox_minibufFont.Name = "textBox_minibufFont";
+            this.textBox_minibufFont.Size = new System.Drawing.Size(148, 23);
+            this.textBox_minibufFont.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.textBox_minibufFont, "ミニバッファ(仮想鍵盤上部)に表示する文字のフォント\r\n\r\n以下のフォーマットでフォントを設定できます。\r\nフォント名とサイズについては、「選択...」ボタンをク" +
+        "リックして\r\nフォントダイアログから選択することもできます。\r\n\r\nフォント名 | サイズ(pt)\r\n");
+            // 
+            // label50
+            // 
+            this.label50.AutoSize = true;
+            this.label50.Location = new System.Drawing.Point(14, 121);
+            this.label50.Name = "label50";
+            this.label50.Size = new System.Drawing.Size(56, 15);
+            this.label50.TabIndex = 18;
+            this.label50.Text = "ミニバッファ";
+            // 
+            // textBox_horizontalFont
+            // 
+            this.textBox_horizontalFont.Location = new System.Drawing.Point(80, 92);
+            this.textBox_horizontalFont.Name = "textBox_horizontalFont";
+            this.textBox_horizontalFont.Size = new System.Drawing.Size(148, 23);
+            this.textBox_horizontalFont.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.textBox_horizontalFont, "横列鍵盤に表示する文字のフォント\r\n\r\n以下のフォーマットでフォントを設定できます。\r\nフォント名とサイズについては、「選択...」ボタンをクリックして\r\nフォン" +
+        "トダイアログから選択することもできます。\r\n\r\nフォント名 | サイズ(pt)\r\n");
+            // 
+            // label49
+            // 
+            this.label49.AutoSize = true;
+            this.label49.Location = new System.Drawing.Point(14, 97);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(55, 15);
+            this.label49.TabIndex = 16;
+            this.label49.Text = "横列鍵盤";
+            // 
+            // textBox_verticalFont
+            // 
+            this.textBox_verticalFont.Location = new System.Drawing.Point(80, 68);
+            this.textBox_verticalFont.Name = "textBox_verticalFont";
+            this.textBox_verticalFont.Size = new System.Drawing.Size(148, 23);
+            this.textBox_verticalFont.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.textBox_verticalFont, resources.GetString("textBox_verticalFont.ToolTip"));
+            // 
+            // textBox_centerFont
+            // 
+            this.textBox_centerFont.Location = new System.Drawing.Point(80, 44);
+            this.textBox_centerFont.Name = "textBox_centerFont";
+            this.textBox_centerFont.Size = new System.Drawing.Size(148, 23);
+            this.textBox_centerFont.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_centerFont, resources.GetString("textBox_centerFont.ToolTip"));
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(14, 73);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(55, 15);
+            this.label8.TabIndex = 13;
+            this.label8.Text = "縦列鍵盤";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(14, 48);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(55, 15);
+            this.label9.TabIndex = 12;
+            this.label9.Text = "中央鍵盤";
+            // 
+            // label48
+            // 
+            this.label48.AutoSize = true;
+            this.label48.Location = new System.Drawing.Point(14, 24);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(55, 15);
+            this.label48.TabIndex = 11;
+            this.label48.Text = "通常鍵盤";
+            // 
+            // textBox_normalFont
+            // 
+            this.textBox_normalFont.Location = new System.Drawing.Point(80, 20);
+            this.textBox_normalFont.Name = "textBox_normalFont";
+            this.textBox_normalFont.Size = new System.Drawing.Size(148, 23);
+            this.textBox_normalFont.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_normalFont, resources.GetString("textBox_normalFont.ToolTip"));
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.textBox_middleLevelBackColor);
+            this.groupBox3.Controls.Add(this.textBox_highLowLevelBackColor);
+            this.groupBox3.Controls.Add(this.textBox_centerSideBackColor);
+            this.groupBox3.Controls.Add(this.textBox_topLevelBackColor);
+            this.groupBox3.Controls.Add(this.label37);
+            this.groupBox3.Controls.Add(this.label36);
+            this.groupBox3.Controls.Add(this.label35);
+            this.groupBox3.Controls.Add(this.label34);
+            this.groupBox3.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.groupBox3.Location = new System.Drawing.Point(8, 159);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(255, 126);
+            this.groupBox3.TabIndex = 1;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "通常鍵盤背景色";
+            // 
+            // textBox_middleLevelBackColor
+            // 
+            this.textBox_middleLevelBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_middleLevelBackColor.ForBackColor = true;
+            this.textBox_middleLevelBackColor.Location = new System.Drawing.Point(104, 93);
+            this.textBox_middleLevelBackColor.Name = "textBox_middleLevelBackColor";
+            this.textBox_middleLevelBackColor.ReadOnly = true;
+            this.textBox_middleLevelBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_middleLevelBackColor.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.textBox_middleLevelBackColor, "中段セルの背景色\r\n\r\n通常鍵盤の中段(asd...)セルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_highLowLevelBackColor
+            // 
+            this.textBox_highLowLevelBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_highLowLevelBackColor.ForBackColor = true;
+            this.textBox_highLowLevelBackColor.Location = new System.Drawing.Point(104, 68);
+            this.textBox_highLowLevelBackColor.Name = "textBox_highLowLevelBackColor";
+            this.textBox_highLowLevelBackColor.ReadOnly = true;
+            this.textBox_highLowLevelBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_highLowLevelBackColor.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_highLowLevelBackColor, "上下段セルの背景色\r\n\r\n通常鍵盤の上下段(qwe.../zxc...)セルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_centerSideBackColor
+            // 
+            this.textBox_centerSideBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_centerSideBackColor.ForBackColor = true;
+            this.textBox_centerSideBackColor.Location = new System.Drawing.Point(104, 43);
+            this.textBox_centerSideBackColor.Name = "textBox_centerSideBackColor";
+            this.textBox_centerSideBackColor.ReadOnly = true;
+            this.textBox_centerSideBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_centerSideBackColor.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_centerSideBackColor, "中央鍵盤寄りセルの背景色\r\n\r\n通常鍵盤の中央鍵盤寄り(tgb/yhn)セルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_topLevelBackColor
+            // 
+            this.textBox_topLevelBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_topLevelBackColor.ForBackColor = true;
+            this.textBox_topLevelBackColor.Location = new System.Drawing.Point(104, 18);
+            this.textBox_topLevelBackColor.Name = "textBox_topLevelBackColor";
+            this.textBox_topLevelBackColor.ReadOnly = true;
+            this.textBox_topLevelBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_topLevelBackColor.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_topLevelBackColor, "最上段セルの背景色\r\n\r\n通常鍵盤の最上段(数字キー)のセルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(20, 97);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(51, 15);
+            this.label37.TabIndex = 10;
+            this.label37.Text = "中段セル";
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(20, 72);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(63, 15);
+            this.label36.TabIndex = 8;
+            this.label36.Text = "上下段セル";
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(20, 47);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(71, 15);
+            this.label35.TabIndex = 6;
+            this.label35.Text = "中央寄りセル";
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(20, 23);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(63, 15);
+            this.label34.TabIndex = 4;
+            this.label34.Text = "最上段セル";
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.textBox_alphaModeForeColor);
+            this.groupBox5.Controls.Add(this.textBox_2ndStrokeForeColor);
+            this.groupBox5.Controls.Add(this.textBox_modeForeColor);
+            this.groupBox5.Controls.Add(this.label30);
+            this.groupBox5.Controls.Add(this.label25);
+            this.groupBox5.Controls.Add(this.label17);
+            this.groupBox5.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.groupBox5.Location = new System.Drawing.Point(298, 4);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(243, 97);
+            this.groupBox5.TabIndex = 2;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "モード標識文字色";
+            // 
+            // textBox_alphaModeForeColor
+            // 
+            this.textBox_alphaModeForeColor.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox_alphaModeForeColor.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_alphaModeForeColor.ForBackColor = false;
+            this.textBox_alphaModeForeColor.Location = new System.Drawing.Point(103, 67);
+            this.textBox_alphaModeForeColor.Name = "textBox_alphaModeForeColor";
+            this.textBox_alphaModeForeColor.ReadOnly = true;
+            this.textBox_alphaModeForeColor.Size = new System.Drawing.Size(132, 20);
+            this.textBox_alphaModeForeColor.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_alphaModeForeColor, "デコーダOFF時のモード標識の文字色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\nデコーダをOFFにして漢直モードから抜けた時の文字色を設定します。" +
+        "\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_2ndStrokeForeColor
+            // 
+            this.textBox_2ndStrokeForeColor.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox_2ndStrokeForeColor.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_2ndStrokeForeColor.ForBackColor = false;
+            this.textBox_2ndStrokeForeColor.Location = new System.Drawing.Point(103, 43);
+            this.textBox_2ndStrokeForeColor.Name = "textBox_2ndStrokeForeColor";
+            this.textBox_2ndStrokeForeColor.ReadOnly = true;
+            this.textBox_2ndStrokeForeColor.Size = new System.Drawing.Size(132, 20);
+            this.textBox_2ndStrokeForeColor.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_2ndStrokeForeColor, "第2打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第2打鍵(以降)を待っている時の文字色を設定します。\r\n（ここをクリ" +
+        "ックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_modeForeColor
+            // 
+            this.textBox_modeForeColor.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox_modeForeColor.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_modeForeColor.ForBackColor = false;
+            this.textBox_modeForeColor.Location = new System.Drawing.Point(103, 18);
+            this.textBox_modeForeColor.Name = "textBox_modeForeColor";
+            this.textBox_modeForeColor.ReadOnly = true;
+            this.textBox_modeForeColor.Size = new System.Drawing.Size(132, 20);
+            this.textBox_modeForeColor.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
+        "と設定ダイアログが開きます。）");
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(19, 69);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(62, 15);
+            this.label30.TabIndex = 10;
+            this.label30.Text = "デコーダOFF";
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(19, 46);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(70, 15);
+            this.label25.TabIndex = 8;
+            this.label25.Text = "第2打鍵待ち";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(19, 21);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(70, 15);
+            this.label17.TabIndex = 6;
+            this.label17.Text = "第1打鍵待ち";
+            // 
+            // label_okResultFontColor
+            // 
+            this.label_okResultFontColor.AutoSize = true;
+            this.label_okResultFontColor.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_okResultFontColor.Location = new System.Drawing.Point(499, 285);
+            this.label_okResultFontColor.Name = "label_okResultFontColor";
+            this.label_okResultFontColor.Size = new System.Drawing.Size(65, 15);
+            this.label_okResultFontColor.TabIndex = 11;
+            this.label_okResultFontColor.Text = "設定しました";
+            this.label_okResultFontColor.Visible = false;
+            this.label_okResultFontColor.VisibleChanged += new System.EventHandler(this.label_okResultFontColor_VisibleChanged);
+            // 
+            // button_fontColorClose
+            // 
+            this.button_fontColorClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_fontColorClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_fontColorClose.Location = new System.Drawing.Point(385, 303);
+            this.button_fontColorClose.Name = "button_fontColorClose";
+            this.button_fontColorClose.Size = new System.Drawing.Size(80, 23);
+            this.button_fontColorClose.TabIndex = 5;
+            this.button_fontColorClose.Text = "閉じる(&C)";
+            this.button_fontColorClose.UseVisualStyleBackColor = true;
+            this.button_fontColorClose.Click += new System.EventHandler(this.button_fileClose_Click);
+            // 
+            // button_fontColorEnter
+            // 
+            this.button_fontColorEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_fontColorEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_fontColorEnter.Location = new System.Drawing.Point(493, 303);
+            this.button_fontColorEnter.Name = "button_fontColorEnter";
+            this.button_fontColorEnter.Size = new System.Drawing.Size(75, 23);
+            this.button_fontColorEnter.TabIndex = 6;
+            this.button_fontColorEnter.Text = "設定(&E)";
+            this.toolTip1.SetToolTip(this.button_fontColorEnter, "設定内容を kanchoku.user.ini に書き込みます");
+            this.button_fontColorEnter.UseVisualStyleBackColor = true;
+            this.button_fontColorEnter.Click += new System.EventHandler(this.button_fileEnter_Click);
+            // 
+            // tabPage_keyAssign
+            // 
+            this.tabPage_keyAssign.Controls.Add(this.label_okResultKeyAssign);
+            this.tabPage_keyAssign.Controls.Add(this.groupBox32);
+            this.tabPage_keyAssign.Controls.Add(this.groupBox31);
+            this.tabPage_keyAssign.Controls.Add(this.button_keyAssignClose);
+            this.tabPage_keyAssign.Controls.Add(this.button_keyAssignEnter);
+            this.tabPage_keyAssign.Controls.Add(this.groupBox30);
+            this.tabPage_keyAssign.Controls.Add(this.groupBox29);
+            this.tabPage_keyAssign.Location = new System.Drawing.Point(4, 24);
+            this.tabPage_keyAssign.Name = "tabPage_keyAssign";
+            this.tabPage_keyAssign.Size = new System.Drawing.Size(581, 333);
+            this.tabPage_keyAssign.TabIndex = 8;
+            this.tabPage_keyAssign.Text = "機能キー割当";
+            this.tabPage_keyAssign.UseVisualStyleBackColor = true;
+            // 
+            // groupBox32
+            // 
+            this.groupBox32.Controls.Add(this.label71);
+            this.groupBox32.Location = new System.Drawing.Point(10, 216);
+            this.groupBox32.Name = "groupBox32";
+            this.groupBox32.Size = new System.Drawing.Size(475, 71);
+            this.groupBox32.TabIndex = 15;
+            this.groupBox32.TabStop = false;
+            this.groupBox32.Text = "注意";
+            // 
+            // label71
+            // 
+            this.label71.AutoSize = true;
+            this.label71.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label71.Location = new System.Drawing.Point(3, 19);
+            this.label71.Name = "label71";
+            this.label71.Size = new System.Drawing.Size(444, 45);
+            this.label71.TabIndex = 1;
+            this.label71.Text = "※テーブルファイルによって既に文字が割り当てられている打鍵列には再割り当てできません。\r\n※割り当て可能なのは、未割り当てか、他の機能呼び出しが割り当てられている" +
+    "打鍵列です。\r\n※いったん上書きされたキー割り当てを元に戻した場合は、再起動が必要となります。";
+            // 
+            // groupBox31
+            // 
+            this.groupBox31.Controls.Add(this.label69);
+            this.groupBox31.Location = new System.Drawing.Point(357, 5);
+            this.groupBox31.Name = "groupBox31";
+            this.groupBox31.Size = new System.Drawing.Size(219, 205);
+            this.groupBox31.TabIndex = 14;
+            this.groupBox31.TabStop = false;
+            this.groupBox31.Text = "説明";
+            // 
+            // label69
+            // 
+            this.label69.AutoSize = true;
+            this.label69.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label69.Location = new System.Drawing.Point(3, 19);
+            this.label69.Name = "label69";
+            this.label69.Size = new System.Drawing.Size(217, 165);
+            this.label69.TabIndex = 1;
+            this.label69.Text = "機能を呼び出すための打鍵列を設定します。\n\n打鍵列は、漢直キーコード(00～48)をカンマ\n区切りで並べたものとなります。キーコードに\nついては、ここにマウスポイ" +
+    "ンタを置いて表示\nされるツールチップを参照してください。\n\n例：(カッコ内は 106 key による打鍵文字)\n交ぜ書き変換 「23,26」  (f j)\n全角" +
+    "変換(モード) 「42」 (^)\nカタカナ変換(一括) 「47」 (])";
+            this.toolTip1.SetToolTip(this.label69, resources.GetString("label69.ToolTip"));
+            // 
+            // label_okResultKeyAssign
+            // 
+            this.label_okResultKeyAssign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label_okResultKeyAssign.AutoSize = true;
+            this.label_okResultKeyAssign.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_okResultKeyAssign.Location = new System.Drawing.Point(499, 285);
+            this.label_okResultKeyAssign.Name = "label_okResultKeyAssign";
+            this.label_okResultKeyAssign.Size = new System.Drawing.Size(65, 15);
+            this.label_okResultKeyAssign.TabIndex = 13;
+            this.label_okResultKeyAssign.Text = "設定しました";
+            this.label_okResultKeyAssign.Visible = false;
+            // 
+            // button_keyAssignClose
+            // 
+            this.button_keyAssignClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_keyAssignClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_keyAssignClose.Location = new System.Drawing.Point(385, 303);
+            this.button_keyAssignClose.Name = "button_keyAssignClose";
+            this.button_keyAssignClose.Size = new System.Drawing.Size(80, 23);
+            this.button_keyAssignClose.TabIndex = 2;
+            this.button_keyAssignClose.Text = "閉じる(&C)";
+            this.button_keyAssignClose.UseVisualStyleBackColor = true;
+            this.button_keyAssignClose.Click += new System.EventHandler(this.button_keyAssignClose_Click);
+            // 
+            // button_keyAssignEnter
+            // 
+            this.button_keyAssignEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_keyAssignEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_keyAssignEnter.Location = new System.Drawing.Point(493, 303);
+            this.button_keyAssignEnter.Name = "button_keyAssignEnter";
+            this.button_keyAssignEnter.Size = new System.Drawing.Size(75, 23);
+            this.button_keyAssignEnter.TabIndex = 3;
+            this.button_keyAssignEnter.Text = "設定(&E)";
+            this.toolTip1.SetToolTip(this.button_keyAssignEnter, "設定内容を kanchoku.user.ini に書き込みます");
+            this.button_keyAssignEnter.UseVisualStyleBackColor = true;
+            this.button_keyAssignEnter.Click += new System.EventHandler(this.button_keyAssignEnter_Click);
+            // 
+            // groupBox30
+            // 
+            this.groupBox30.Controls.Add(this.textBox_historyOneCharKeySeq);
+            this.groupBox30.Controls.Add(this.label66);
+            this.groupBox30.Controls.Add(this.textBox_katakanaOneShotKeySeq);
+            this.groupBox30.Controls.Add(this.label65);
+            this.groupBox30.Controls.Add(this.textBox_bushuAssocDirectKeySeq);
+            this.groupBox30.Controls.Add(this.label63);
+            this.groupBox30.Controls.Add(this.textBox_bushuAssocKeySeq);
+            this.groupBox30.Controls.Add(this.label62);
+            this.groupBox30.Controls.Add(this.textBox_bushuCompKeySeq);
+            this.groupBox30.Controls.Add(this.label61);
+            this.groupBox30.Controls.Add(this.textBox_mazegakiKeySeq);
+            this.groupBox30.Controls.Add(this.label60);
+            this.groupBox30.Controls.Add(this.textBox_historyKeySeq);
+            this.groupBox30.Controls.Add(this.label58);
+            this.groupBox30.Location = new System.Drawing.Point(182, 5);
+            this.groupBox30.Name = "groupBox30";
+            this.groupBox30.Size = new System.Drawing.Size(168, 205);
+            this.groupBox30.TabIndex = 1;
+            this.groupBox30.TabStop = false;
+            this.groupBox30.Text = "後置呼び出し機能";
+            // 
+            // textBox_historyOneCharKeySeq
+            // 
+            this.textBox_historyOneCharKeySeq.Location = new System.Drawing.Point(105, 45);
+            this.textBox_historyOneCharKeySeq.Name = "textBox_historyOneCharKeySeq";
+            this.textBox_historyOneCharKeySeq.Size = new System.Drawing.Size(56, 23);
+            this.textBox_historyOneCharKeySeq.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_historyOneCharKeySeq, "入力履歴のうち、1文字だけの候補を表示します。");
+            // 
+            // label66
+            // 
+            this.label66.AutoSize = true;
+            this.label66.Location = new System.Drawing.Point(7, 49);
+            this.label66.Name = "label66";
+            this.label66.Size = new System.Drawing.Size(93, 15);
+            this.label66.TabIndex = 12;
+            this.label66.Text = "履歴検索(1文字)";
+            // 
+            // textBox_katakanaOneShotKeySeq
+            // 
+            this.textBox_katakanaOneShotKeySeq.Location = new System.Drawing.Point(105, 175);
+            this.textBox_katakanaOneShotKeySeq.Name = "textBox_katakanaOneShotKeySeq";
+            this.textBox_katakanaOneShotKeySeq.Size = new System.Drawing.Size(56, 23);
+            this.textBox_katakanaOneShotKeySeq.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.textBox_katakanaOneShotKeySeq, "直前に出力したひらがな列をカタカナに置換します。\r\n\r\n連続するひらがな列の途中から変換することはできません。\r\nあらかじめ Ctrl-G などでミニバッファをク" +
+        "リアしておいてから\r\nカタカナ変換したいひらがな列を入力してください。");
+            // 
+            // label65
+            // 
+            this.label65.AutoSize = true;
+            this.label65.Location = new System.Drawing.Point(7, 179);
+            this.label65.Name = "label65";
+            this.label65.Size = new System.Drawing.Size(99, 15);
+            this.label65.TabIndex = 10;
+            this.label65.Text = "カタカナ変換(一括)";
+            // 
+            // textBox_bushuAssocDirectKeySeq
+            // 
+            this.textBox_bushuAssocDirectKeySeq.Location = new System.Drawing.Point(105, 149);
+            this.textBox_bushuAssocDirectKeySeq.Name = "textBox_bushuAssocDirectKeySeq";
+            this.textBox_bushuAssocDirectKeySeq.Size = new System.Drawing.Size(56, 23);
+            this.textBox_bushuAssocDirectKeySeq.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.textBox_bushuAssocDirectKeySeq, "直前の文字に対して、その連想文字候補の\r\n先頭のもので置換します。\r\n\r\nなお、部首合成の直後に当機能を呼び出すと、\r\n次の部首合成候補出力となります。");
+            // 
+            // label63
+            // 
+            this.label63.AutoSize = true;
+            this.label63.Location = new System.Drawing.Point(7, 153);
+            this.label63.Name = "label63";
+            this.label63.Size = new System.Drawing.Size(79, 15);
+            this.label63.TabIndex = 8;
+            this.label63.Text = "連想直接変換";
+            // 
+            // textBox_bushuAssocKeySeq
+            // 
+            this.textBox_bushuAssocKeySeq.Location = new System.Drawing.Point(105, 123);
+            this.textBox_bushuAssocKeySeq.Name = "textBox_bushuAssocKeySeq";
+            this.textBox_bushuAssocKeySeq.Size = new System.Drawing.Size(56, 23);
+            this.textBox_bushuAssocKeySeq.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.textBox_bushuAssocKeySeq, "直前の文字に対する連想文字候補を表示します。");
+            // 
+            // label62
+            // 
+            this.label62.AutoSize = true;
+            this.label62.Location = new System.Drawing.Point(7, 127);
+            this.label62.Name = "label62";
+            this.label62.Size = new System.Drawing.Size(79, 15);
+            this.label62.TabIndex = 6;
+            this.label62.Text = "連想文字検索";
+            // 
+            // textBox_bushuCompKeySeq
+            // 
+            this.textBox_bushuCompKeySeq.Location = new System.Drawing.Point(105, 97);
+            this.textBox_bushuCompKeySeq.Name = "textBox_bushuCompKeySeq";
+            this.textBox_bushuCompKeySeq.Size = new System.Drawing.Size(56, 23);
+            this.textBox_bushuCompKeySeq.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.textBox_bushuCompKeySeq, "部首合成機能を呼び出します。");
+            // 
+            // label61
+            // 
+            this.label61.AutoSize = true;
+            this.label61.Location = new System.Drawing.Point(7, 101);
+            this.label61.Name = "label61";
+            this.label61.Size = new System.Drawing.Size(55, 15);
+            this.label61.TabIndex = 4;
+            this.label61.Text = "部首合成";
+            // 
+            // textBox_mazegakiKeySeq
+            // 
+            this.textBox_mazegakiKeySeq.Location = new System.Drawing.Point(105, 71);
+            this.textBox_mazegakiKeySeq.Name = "textBox_mazegakiKeySeq";
+            this.textBox_mazegakiKeySeq.Size = new System.Drawing.Size(56, 23);
+            this.textBox_mazegakiKeySeq.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_mazegakiKeySeq, "交ぜ書き変換機能を呼び出します。");
+            // 
+            // label60
+            // 
+            this.label60.AutoSize = true;
+            this.label60.Location = new System.Drawing.Point(7, 75);
+            this.label60.Name = "label60";
+            this.label60.Size = new System.Drawing.Size(74, 15);
+            this.label60.TabIndex = 2;
+            this.label60.Text = "交ぜ書き変換";
+            // 
+            // textBox_historyKeySeq
+            // 
+            this.textBox_historyKeySeq.Location = new System.Drawing.Point(105, 19);
+            this.textBox_historyKeySeq.Name = "textBox_historyKeySeq";
+            this.textBox_historyKeySeq.Size = new System.Drawing.Size(56, 23);
+            this.textBox_historyKeySeq.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_historyKeySeq, "履歴検索を実行して縦列鍵盤表示します。\r\n\r\n候補の選択の他に、削除などの操作が可能です。");
+            // 
+            // label58
+            // 
+            this.label58.AutoSize = true;
+            this.label58.Location = new System.Drawing.Point(7, 23);
+            this.label58.Name = "label58";
+            this.label58.Size = new System.Drawing.Size(55, 15);
+            this.label58.TabIndex = 0;
+            this.label58.Text = "履歴検索";
+            // 
+            // groupBox29
+            // 
+            this.groupBox29.Controls.Add(this.textBox_nextThroughKeySeq);
+            this.groupBox29.Controls.Add(this.label70);
+            this.groupBox29.Controls.Add(this.textBox_katakanaModeKeySeq);
+            this.groupBox29.Controls.Add(this.label68);
+            this.groupBox29.Controls.Add(this.textBox_zenkakuOneCharKeySeq);
+            this.groupBox29.Controls.Add(this.label67);
+            this.groupBox29.Controls.Add(this.textBox_zenkakuModeKeySeq);
+            this.groupBox29.Controls.Add(this.label64);
+            this.groupBox29.Location = new System.Drawing.Point(9, 5);
+            this.groupBox29.Name = "groupBox29";
+            this.groupBox29.Size = new System.Drawing.Size(167, 131);
+            this.groupBox29.TabIndex = 0;
+            this.groupBox29.TabStop = false;
+            this.groupBox29.Text = "前置呼び出し機能";
+            // 
+            // textBox_nextThroughKeySeq
+            // 
+            this.textBox_nextThroughKeySeq.Location = new System.Drawing.Point(105, 97);
+            this.textBox_nextThroughKeySeq.Name = "textBox_nextThroughKeySeq";
+            this.textBox_nextThroughKeySeq.Size = new System.Drawing.Size(56, 23);
+            this.textBox_nextThroughKeySeq.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.textBox_nextThroughKeySeq, "次に打鍵する1文字をそのまま出力します。");
+            // 
+            // label70
+            // 
+            this.label70.AutoSize = true;
+            this.label70.Location = new System.Drawing.Point(7, 101);
+            this.label70.Name = "label70";
+            this.label70.Size = new System.Drawing.Size(70, 15);
+            this.label70.TabIndex = 8;
+            this.label70.Text = "次打鍵スルー";
+            // 
+            // textBox_katakanaModeKeySeq
+            // 
+            this.textBox_katakanaModeKeySeq.Location = new System.Drawing.Point(105, 71);
+            this.textBox_katakanaModeKeySeq.Name = "textBox_katakanaModeKeySeq";
+            this.textBox_katakanaModeKeySeq.Size = new System.Drawing.Size(56, 23);
+            this.textBox_katakanaModeKeySeq.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_katakanaModeKeySeq, "カタカナ変換モードに移行します。\r\n\r\nカタカナ変換モードでは、打鍵入力されたひらがなを\r\nカタカナに変換して出力します。\r\n\r\nカタカナ変換モードから更けるには" +
+        "、 もう一度、当打鍵列を\r\n入力してください。");
+            // 
+            // label68
+            // 
+            this.label68.AutoSize = true;
+            this.label68.Location = new System.Drawing.Point(7, 75);
+            this.label68.Name = "label68";
+            this.label68.Size = new System.Drawing.Size(100, 15);
+            this.label68.TabIndex = 6;
+            this.label68.Text = "カタカナ変換(モード)";
+            // 
+            // textBox_zenkakuOneCharKeySeq
+            // 
+            this.textBox_zenkakuOneCharKeySeq.Location = new System.Drawing.Point(105, 45);
+            this.textBox_zenkakuOneCharKeySeq.Name = "textBox_zenkakuOneCharKeySeq";
+            this.textBox_zenkakuOneCharKeySeq.Size = new System.Drawing.Size(56, 23);
+            this.textBox_zenkakuOneCharKeySeq.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_zenkakuOneCharKeySeq, "次に打鍵する1文字を全角変換して出力します。");
+            // 
+            // label67
+            // 
+            this.label67.AutoSize = true;
+            this.label67.Location = new System.Drawing.Point(7, 49);
+            this.label67.Name = "label67";
+            this.label67.Size = new System.Drawing.Size(93, 15);
+            this.label67.TabIndex = 4;
+            this.label67.Text = "全角変換(1文字)";
+            // 
+            // textBox_zenkakuModeKeySeq
+            // 
+            this.textBox_zenkakuModeKeySeq.Location = new System.Drawing.Point(105, 19);
+            this.textBox_zenkakuModeKeySeq.Name = "textBox_zenkakuModeKeySeq";
+            this.textBox_zenkakuModeKeySeq.Size = new System.Drawing.Size(56, 23);
+            this.textBox_zenkakuModeKeySeq.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_zenkakuModeKeySeq, "全角変換モードに移行します。\r\n\r\n全角変換モードでは、英数字記号と空白文字が、\r\nShift打鍵も含めて全角文字に変換されて出力されます。\r\n\r\n全角変換モード" +
+        "から更けるには、 Esc または Ctrl-G を\r\n押してください。");
+            // 
+            // label64
+            // 
+            this.label64.AutoSize = true;
+            this.label64.Location = new System.Drawing.Point(7, 23);
+            this.label64.Name = "label64";
+            this.label64.Size = new System.Drawing.Size(88, 15);
+            this.label64.TabIndex = 2;
+            this.label64.Text = "全角変換(モード)";
             // 
             // tabPage_ctrlKeys
             // 
@@ -2702,701 +3399,6 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // textBox_onSelectedBackColor
-            // 
-            this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_onSelectedBackColor.ForBackColor = true;
-            this.textBox_onSelectedBackColor.Location = new System.Drawing.Point(103, 44);
-            this.textBox_onSelectedBackColor.Name = "textBox_onSelectedBackColor";
-            this.textBox_onSelectedBackColor.ReadOnly = true;
-            this.textBox_onSelectedBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_onSelectedBackColor.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_onSelectedBackColor, "縦列または横列鍵盤での選択済み候補の背景色\r\n\r\n履歴選択や交ぜ書き変換などで、縦列または横列鍵盤が\r\n表示されている時、選択された候補(出力済み候補)の\r\n背景" +
-        "色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_firstCandidateBackColor
-            // 
-            this.textBox_firstCandidateBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_firstCandidateBackColor.ForBackColor = true;
-            this.textBox_firstCandidateBackColor.Location = new System.Drawing.Point(103, 19);
-            this.textBox_firstCandidateBackColor.Name = "textBox_firstCandidateBackColor";
-            this.textBox_firstCandidateBackColor.ReadOnly = true;
-            this.textBox_firstCandidateBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_firstCandidateBackColor.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_firstCandidateBackColor, "縦列または横列鍵盤で優先的に選択される候補の背景色\r\n\r\n履歴選択や交ぜ書き変換などで、縦列または横列鍵盤が\r\n表示されている時、Enterキーで選択できる優先候" +
-        "補の\r\n背景色を設定します。\r\n\r\nただし履歴選択については、Enterで優先候補を選択するか\r\nどうかは「履歴・交ぜ書き」タブで設定します。\r\n（ここをクリッ" +
-        "クすると設定ダイアログが開きます。）");
-            // 
-            // textBox_onHistAssoc
-            // 
-            this.textBox_onHistAssoc.BackColor = System.Drawing.Color.White;
-            this.textBox_onHistAssoc.ForBackColor = true;
-            this.textBox_onHistAssoc.Location = new System.Drawing.Point(103, 69);
-            this.textBox_onHistAssoc.Name = "textBox_onHistAssoc";
-            this.textBox_onHistAssoc.ReadOnly = true;
-            this.textBox_onHistAssoc.Size = new System.Drawing.Size(132, 23);
-            this.textBox_onHistAssoc.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_onHistAssoc, "履歴選択・部首連想選択時の中央鍵盤背景色\r\n\r\n縦列鍵盤による履歴候補選択や部首連想での文字選択時の\r\n中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設" +
-        "定ダイアログが開きます。）");
-            // 
-            // textBox_onMazegaki
-            // 
-            this.textBox_onMazegaki.BackColor = System.Drawing.Color.White;
-            this.textBox_onMazegaki.ForBackColor = true;
-            this.textBox_onMazegaki.Location = new System.Drawing.Point(103, 44);
-            this.textBox_onMazegaki.Name = "textBox_onMazegaki";
-            this.textBox_onMazegaki.ReadOnly = true;
-            this.textBox_onMazegaki.Size = new System.Drawing.Size(132, 23);
-            this.textBox_onMazegaki.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_onMazegaki, "交ぜ書き変換時の中央鍵盤背景色\r\n\r\n交ぜ書き変換時の中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_on2ndStrokeBackColor
-            // 
-            this.textBox_on2ndStrokeBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_on2ndStrokeBackColor.ForBackColor = true;
-            this.textBox_on2ndStrokeBackColor.Location = new System.Drawing.Point(103, 19);
-            this.textBox_on2ndStrokeBackColor.Name = "textBox_on2ndStrokeBackColor";
-            this.textBox_on2ndStrokeBackColor.ReadOnly = true;
-            this.textBox_on2ndStrokeBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_on2ndStrokeBackColor.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_on2ndStrokeBackColor, "第2打鍵待ちの時の中央鍵盤背景色\r\n\r\n第2打鍵の入力を待っている時の中央鍵盤の\r\n背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_middleLevelBackColor
-            // 
-            this.textBox_middleLevelBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_middleLevelBackColor.ForBackColor = true;
-            this.textBox_middleLevelBackColor.Location = new System.Drawing.Point(104, 93);
-            this.textBox_middleLevelBackColor.Name = "textBox_middleLevelBackColor";
-            this.textBox_middleLevelBackColor.ReadOnly = true;
-            this.textBox_middleLevelBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_middleLevelBackColor.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.textBox_middleLevelBackColor, "中段セルの背景色\r\n\r\n通常鍵盤の中段(asd...)セルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_highLowLevelBackColor
-            // 
-            this.textBox_highLowLevelBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_highLowLevelBackColor.ForBackColor = true;
-            this.textBox_highLowLevelBackColor.Location = new System.Drawing.Point(104, 68);
-            this.textBox_highLowLevelBackColor.Name = "textBox_highLowLevelBackColor";
-            this.textBox_highLowLevelBackColor.ReadOnly = true;
-            this.textBox_highLowLevelBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_highLowLevelBackColor.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_highLowLevelBackColor, "上下段セルの背景色\r\n\r\n通常鍵盤の上下段(qwe.../zxc...)セルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_centerSideBackColor
-            // 
-            this.textBox_centerSideBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_centerSideBackColor.ForBackColor = true;
-            this.textBox_centerSideBackColor.Location = new System.Drawing.Point(104, 43);
-            this.textBox_centerSideBackColor.Name = "textBox_centerSideBackColor";
-            this.textBox_centerSideBackColor.ReadOnly = true;
-            this.textBox_centerSideBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_centerSideBackColor.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_centerSideBackColor, "中央鍵盤寄りセルの背景色\r\n\r\n通常鍵盤の中央鍵盤寄り(tgb/yhn)セルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_topLevelBackColor
-            // 
-            this.textBox_topLevelBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_topLevelBackColor.ForBackColor = true;
-            this.textBox_topLevelBackColor.Location = new System.Drawing.Point(104, 18);
-            this.textBox_topLevelBackColor.Name = "textBox_topLevelBackColor";
-            this.textBox_topLevelBackColor.ReadOnly = true;
-            this.textBox_topLevelBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_topLevelBackColor.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_topLevelBackColor, "最上段セルの背景色\r\n\r\n通常鍵盤の最上段(数字キー)のセルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_alphaModeForeColor
-            // 
-            this.textBox_alphaModeForeColor.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox_alphaModeForeColor.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_alphaModeForeColor.ForBackColor = false;
-            this.textBox_alphaModeForeColor.Location = new System.Drawing.Point(103, 67);
-            this.textBox_alphaModeForeColor.Name = "textBox_alphaModeForeColor";
-            this.textBox_alphaModeForeColor.ReadOnly = true;
-            this.textBox_alphaModeForeColor.Size = new System.Drawing.Size(132, 20);
-            this.textBox_alphaModeForeColor.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_alphaModeForeColor, "デコーダOFF時のモード標識の文字色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\nデコーダをOFFにして漢直モードから抜けた時の文字色を設定します。" +
-        "\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_2ndStrokeForeColor
-            // 
-            this.textBox_2ndStrokeForeColor.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox_2ndStrokeForeColor.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_2ndStrokeForeColor.ForBackColor = false;
-            this.textBox_2ndStrokeForeColor.Location = new System.Drawing.Point(103, 43);
-            this.textBox_2ndStrokeForeColor.Name = "textBox_2ndStrokeForeColor";
-            this.textBox_2ndStrokeForeColor.ReadOnly = true;
-            this.textBox_2ndStrokeForeColor.Size = new System.Drawing.Size(132, 20);
-            this.textBox_2ndStrokeForeColor.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_2ndStrokeForeColor, "第2打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第2打鍵(以降)を待っている時の文字色を設定します。\r\n（ここをクリ" +
-        "ックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_modeForeColor
-            // 
-            this.textBox_modeForeColor.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox_modeForeColor.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_modeForeColor.ForBackColor = false;
-            this.textBox_modeForeColor.Location = new System.Drawing.Point(103, 18);
-            this.textBox_modeForeColor.Name = "textBox_modeForeColor";
-            this.textBox_modeForeColor.ReadOnly = true;
-            this.textBox_modeForeColor.Size = new System.Drawing.Size(132, 20);
-            this.textBox_modeForeColor.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
-        "と設定ダイアログが開きます。）");
-            // 
-            // groupBox20
-            // 
-            this.groupBox20.Controls.Add(this.textBox_vkbOffsetY);
-            this.groupBox20.Controls.Add(this.textBox_vkbOffsetX);
-            this.groupBox20.Controls.Add(this.label40);
-            this.groupBox20.Controls.Add(this.label39);
-            this.groupBox20.Controls.Add(this.label38);
-            this.groupBox20.Controls.Add(this.textBox_alphaModeShowTime);
-            this.groupBox20.Controls.Add(this.textBox_kanjiModeInterval);
-            this.groupBox20.Controls.Add(this.label16);
-            this.groupBox20.Controls.Add(this.label14);
-            this.groupBox20.Location = new System.Drawing.Point(7, 12);
-            this.groupBox20.Name = "groupBox20";
-            this.groupBox20.Size = new System.Drawing.Size(287, 99);
-            this.groupBox20.TabIndex = 0;
-            this.groupBox20.TabStop = false;
-            this.groupBox20.Text = "仮想鍵盤・モード標識";
-            // 
-            // textBox_alphaModeShowTime
-            // 
-            this.textBox_alphaModeShowTime.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_alphaModeShowTime.Location = new System.Drawing.Point(190, 72);
-            this.textBox_alphaModeShowTime.Name = "textBox_alphaModeShowTime";
-            this.textBox_alphaModeShowTime.Size = new System.Drawing.Size(48, 23);
-            this.textBox_alphaModeShowTime.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.textBox_alphaModeShowTime, "英字モードに入ったときに表示されるモード標識の表示時間(ミリ秒)\r\n\r\nここで指定した時間が経過すると英字モード標識は自動的に消えます。\r\n0 を指定すると最初か" +
-        "ら英字モード標識を表示しません。\r\n");
-            // 
-            // textBox_kanjiModeInterval
-            // 
-            this.textBox_kanjiModeInterval.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_kanjiModeInterval.Location = new System.Drawing.Point(190, 48);
-            this.textBox_kanjiModeInterval.Name = "textBox_kanjiModeInterval";
-            this.textBox_kanjiModeInterval.Size = new System.Drawing.Size(48, 23);
-            this.textBox_kanjiModeInterval.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_kanjiModeInterval, "無打鍵時に漢直モード標識を再表示するまでの時間(秒)\r\n\r\n漢直モード標識は、何か打鍵があると自動的に消えます。その後、無打鍵\r\n状態がここで指定した時間続いた場" +
-        "合にモード標識を再表示します。\r\n\r\n0 を指定すると、何か打鍵があってもモード標識を消しません。\r\n-1 を指定すると、最初からモード標識を表示しません。(再" +
-        "表示もしない)\r\n");
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(19, 76);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(163, 15);
-            this.label16.TabIndex = 17;
-            this.label16.Text = "英字モード標識表示時間(ミリ秒)";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(19, 52);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(160, 15);
-            this.label14.TabIndex = 16;
-            this.label14.Text = "漢直モード標識再表示間隔(秒)";
-            // 
-            // comboBox_modifiedOffKey
-            // 
-            this.comboBox_modifiedOffKey.FormattingEnabled = true;
-            this.comboBox_modifiedOffKey.Items.AddRange(new object[] {
-            "ba (：＊)",
-            "bb (；＋)",
-            "bc (，＜)",
-            "bd (－=)",
-            "be (．＞)",
-            "bf (／？)",
-            "c0 (＠｀)",
-            "db (［｛)",
-            "dc (￥｜)",
-            "dd (］｝)",
-            "de (＾～)",
-            "e2 (＼＿)",
-            "f3 (半角/全角)",
-            "1c (変換)",
-            "1d (無変換)",
-            "f2 (かな/カナ)",
-            "20 (Space)"});
-            this.comboBox_modifiedOffKey.Location = new System.Drawing.Point(134, 93);
-            this.comboBox_modifiedOffKey.Name = "comboBox_modifiedOffKey";
-            this.comboBox_modifiedOffKey.Size = new System.Drawing.Size(105, 23);
-            this.comboBox_modifiedOffKey.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.comboBox_modifiedOffKey, "Ctrlキーの修飾有りで漢直モードをOFFにするためのキーの指定\r\n\r\n使用するキーの仮想キーコードを16進数で指定します。\r\n仮想キーコードについては「wind" +
-        "ows 仮想キーコード 一覧」でググると見つかります。\r\n主なキーについては候補を用意してあるので、それを選択してください。\r\n\r\nキーを使用しない場合は、Co" +
-        "mboBoxの内容を削除して空白にしてください。");
-            // 
-            // label55
-            // 
-            this.label55.AutoSize = true;
-            this.label55.Location = new System.Drawing.Point(15, 71);
-            this.label55.Name = "label55";
-            this.label55.Size = new System.Drawing.Size(113, 15);
-            this.label55.TabIndex = 10;
-            this.label55.Text = "CTRLキー修飾なしOFF";
-            // 
-            // label56
-            // 
-            this.label56.AutoSize = true;
-            this.label56.Location = new System.Drawing.Point(15, 97);
-            this.label56.Name = "label56";
-            this.label56.Size = new System.Drawing.Size(115, 15);
-            this.label56.TabIndex = 9;
-            this.label56.Text = "CTRLキー修飾有りOFF";
-            // 
-            // comboBox_unmodifiedOffKey
-            // 
-            this.comboBox_unmodifiedOffKey.FormattingEnabled = true;
-            this.comboBox_unmodifiedOffKey.Items.AddRange(new object[] {
-            "ba (：＊)",
-            "bb (；＋)",
-            "bc (，＜)",
-            "bd (－=)",
-            "be (．＞)",
-            "bf (／？)",
-            "c0 (＠｀)",
-            "db (［｛)",
-            "dc (￥｜)",
-            "dd (］｝)",
-            "de (＾～)",
-            "e2 (＼＿)",
-            "f3 (半角/全角)",
-            "1c (変換)",
-            "1d (無変換)",
-            "f2 (かな/カナ)",
-            "20 (Space)"});
-            this.comboBox_unmodifiedOffKey.Location = new System.Drawing.Point(134, 67);
-            this.comboBox_unmodifiedOffKey.Name = "comboBox_unmodifiedOffKey";
-            this.comboBox_unmodifiedOffKey.Size = new System.Drawing.Size(105, 23);
-            this.comboBox_unmodifiedOffKey.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.comboBox_unmodifiedOffKey, "Ctrlキーの修飾なしで漢直モードをOFFにするためのキーの指定\r\n\r\n使用するキーの仮想キーコードを16進数で指定します。\r\n仮想キーコードについては「wind" +
-        "ows 仮想キーコード 一覧」でググると見つかります。\r\n主なキーについては候補を用意してあるので、それを選択してください。\r\n\r\nキーを使用しない場合は、Co" +
-        "mboBoxの内容を削除して空白にしてください。");
-            // 
-            // groupBox28
-            // 
-            this.groupBox28.Controls.Add(this.textBox_backFileRotationGeneration);
-            this.groupBox28.Controls.Add(this.label57);
-            this.groupBox28.Location = new System.Drawing.Point(304, 64);
-            this.groupBox28.Name = "groupBox28";
-            this.groupBox28.Size = new System.Drawing.Size(246, 47);
-            this.groupBox28.TabIndex = 4;
-            this.groupBox28.TabStop = false;
-            this.groupBox28.Text = "辞書ファイル";
-            // 
-            // textBox_backFileRotationGeneration
-            // 
-            this.textBox_backFileRotationGeneration.Location = new System.Drawing.Point(186, 18);
-            this.textBox_backFileRotationGeneration.Name = "textBox_backFileRotationGeneration";
-            this.textBox_backFileRotationGeneration.Size = new System.Drawing.Size(45, 23);
-            this.textBox_backFileRotationGeneration.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_backFileRotationGeneration, resources.GetString("textBox_backFileRotationGeneration.ToolTip"));
-            // 
-            // label57
-            // 
-            this.label57.AutoSize = true;
-            this.label57.Location = new System.Drawing.Point(19, 21);
-            this.label57.Name = "label57";
-            this.label57.Size = new System.Drawing.Size(101, 15);
-            this.label57.TabIndex = 6;
-            this.label57.Text = "ファイル保存世代数";
-            // 
-            // textBox_vkbOffsetY
-            // 
-            this.textBox_vkbOffsetY.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_vkbOffsetY.Location = new System.Drawing.Point(214, 19);
-            this.textBox_vkbOffsetY.Name = "textBox_vkbOffsetY";
-            this.textBox_vkbOffsetY.Size = new System.Drawing.Size(25, 23);
-            this.textBox_vkbOffsetY.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_vkbOffsetY, "仮想鍵盤の表示位置(Y軸)\r\n\r\n文字送出の対象となるアクティブウィンドウのカレットの\r\n右下端位置からの相対位置として設定します。\r\n");
-            // 
-            // textBox_vkbOffsetX
-            // 
-            this.textBox_vkbOffsetX.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_vkbOffsetX.Location = new System.Drawing.Point(173, 19);
-            this.textBox_vkbOffsetX.Name = "textBox_vkbOffsetX";
-            this.textBox_vkbOffsetX.Size = new System.Drawing.Size(25, 23);
-            this.textBox_vkbOffsetX.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_vkbOffsetX, "仮想鍵盤の表示位置(X軸)\r\n\r\n文字送出の対象となるアクティブウィンドウのカレットの\r\n右下端位置からの相対位置として設定します。");
-            // 
-            // label40
-            // 
-            this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(160, 23);
-            this.label40.Name = "label40";
-            this.label40.Size = new System.Drawing.Size(14, 15);
-            this.label40.TabIndex = 22;
-            this.label40.Text = "X";
-            // 
-            // label39
-            // 
-            this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(201, 23);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(14, 15);
-            this.label39.TabIndex = 21;
-            this.label39.Text = "Y";
-            // 
-            // label38
-            // 
-            this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(19, 23);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(142, 15);
-            this.label38.TabIndex = 20;
-            this.label38.Text = "カレットからの相対表示位置";
-            // 
-            // textBox_vkbShowStrokeCount
-            // 
-            this.textBox_vkbShowStrokeCount.Enabled = false;
-            this.textBox_vkbShowStrokeCount.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_vkbShowStrokeCount.Location = new System.Drawing.Point(106, 17);
-            this.textBox_vkbShowStrokeCount.Name = "textBox_vkbShowStrokeCount";
-            this.textBox_vkbShowStrokeCount.Size = new System.Drawing.Size(21, 23);
-            this.textBox_vkbShowStrokeCount.TabIndex = 4;
-            this.textBox_vkbShowStrokeCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.toolTip1.SetToolTip(this.textBox_vkbShowStrokeCount, "標準の仮想鍵盤表示までの打鍵数を設定します。\r\n\r\n「0」を設定すると仮想鍵盤は表示されなくなります。\r\n(Ctrl-T または Ctrl-Shift-T で一時" +
-        "的に表示することは可能)\r\n\r\n「1」を設定すると常時仮想鍵盤が表示されます。\r\n\r\n「2」を設定すると最初はモード標識が表示され、1打鍵後に\r\n2打鍵目用のヘ" +
-        "ルプが表示されます。\r\n\r\n「3」以降も同様です。");
-            // 
-            // label59
-            // 
-            this.label59.AutoSize = true;
-            this.label59.Location = new System.Drawing.Point(126, 21);
-            this.label59.Name = "label59";
-            this.label59.Size = new System.Drawing.Size(74, 15);
-            this.label59.TabIndex = 5;
-            this.label59.Text = "打鍵から表示";
-            // 
-            // tabPage_keyAssign
-            // 
-            this.tabPage_keyAssign.Controls.Add(this.groupBox32);
-            this.tabPage_keyAssign.Controls.Add(this.groupBox31);
-            this.tabPage_keyAssign.Controls.Add(this.label_okResultKeyAssign);
-            this.tabPage_keyAssign.Controls.Add(this.button_keyAssignClose);
-            this.tabPage_keyAssign.Controls.Add(this.button_keyAssignEnter);
-            this.tabPage_keyAssign.Controls.Add(this.groupBox30);
-            this.tabPage_keyAssign.Controls.Add(this.groupBox29);
-            this.tabPage_keyAssign.Location = new System.Drawing.Point(4, 24);
-            this.tabPage_keyAssign.Name = "tabPage_keyAssign";
-            this.tabPage_keyAssign.Size = new System.Drawing.Size(581, 333);
-            this.tabPage_keyAssign.TabIndex = 8;
-            this.tabPage_keyAssign.Text = "機能キー割当";
-            this.tabPage_keyAssign.UseVisualStyleBackColor = true;
-            // 
-            // groupBox29
-            // 
-            this.groupBox29.Controls.Add(this.textBox_nextThroughKeySeq);
-            this.groupBox29.Controls.Add(this.label70);
-            this.groupBox29.Controls.Add(this.textBox_katakanaModeKeySeq);
-            this.groupBox29.Controls.Add(this.label68);
-            this.groupBox29.Controls.Add(this.textBox_zenkakuOneCharKeySeq);
-            this.groupBox29.Controls.Add(this.label67);
-            this.groupBox29.Controls.Add(this.textBox_zenkakuModeKeySeq);
-            this.groupBox29.Controls.Add(this.label64);
-            this.groupBox29.Location = new System.Drawing.Point(9, 5);
-            this.groupBox29.Name = "groupBox29";
-            this.groupBox29.Size = new System.Drawing.Size(167, 131);
-            this.groupBox29.TabIndex = 0;
-            this.groupBox29.TabStop = false;
-            this.groupBox29.Text = "前置呼び出し機能";
-            // 
-            // groupBox30
-            // 
-            this.groupBox30.Controls.Add(this.textBox_historyOneCharKeySeq);
-            this.groupBox30.Controls.Add(this.label66);
-            this.groupBox30.Controls.Add(this.textBox_katakanaOneShotKeySeq);
-            this.groupBox30.Controls.Add(this.label65);
-            this.groupBox30.Controls.Add(this.textBox_bushuAssocDirectKeySeq);
-            this.groupBox30.Controls.Add(this.label63);
-            this.groupBox30.Controls.Add(this.textBox_bushuAssocKeySeq);
-            this.groupBox30.Controls.Add(this.label62);
-            this.groupBox30.Controls.Add(this.textBox_bushuCompKeySeq);
-            this.groupBox30.Controls.Add(this.label61);
-            this.groupBox30.Controls.Add(this.textBox_mazegakiKeySeq);
-            this.groupBox30.Controls.Add(this.label60);
-            this.groupBox30.Controls.Add(this.textBox_historyKeySeq);
-            this.groupBox30.Controls.Add(this.label58);
-            this.groupBox30.Location = new System.Drawing.Point(182, 5);
-            this.groupBox30.Name = "groupBox30";
-            this.groupBox30.Size = new System.Drawing.Size(168, 205);
-            this.groupBox30.TabIndex = 1;
-            this.groupBox30.TabStop = false;
-            this.groupBox30.Text = "後置呼び出し機能";
-            // 
-            // label58
-            // 
-            this.label58.AutoSize = true;
-            this.label58.Location = new System.Drawing.Point(7, 23);
-            this.label58.Name = "label58";
-            this.label58.Size = new System.Drawing.Size(55, 15);
-            this.label58.TabIndex = 0;
-            this.label58.Text = "履歴検索";
-            // 
-            // textBox_historyKeySeq
-            // 
-            this.textBox_historyKeySeq.Location = new System.Drawing.Point(105, 19);
-            this.textBox_historyKeySeq.Name = "textBox_historyKeySeq";
-            this.textBox_historyKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_historyKeySeq.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_historyKeySeq, "履歴検索を実行して縦列鍵盤表示します。\r\n\r\n候補の選択の他に、削除などの操作が可能です。");
-            // 
-            // textBox_mazegakiKeySeq
-            // 
-            this.textBox_mazegakiKeySeq.Location = new System.Drawing.Point(105, 71);
-            this.textBox_mazegakiKeySeq.Name = "textBox_mazegakiKeySeq";
-            this.textBox_mazegakiKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_mazegakiKeySeq.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_mazegakiKeySeq, "交ぜ書き変換機能を呼び出します。");
-            // 
-            // label60
-            // 
-            this.label60.AutoSize = true;
-            this.label60.Location = new System.Drawing.Point(7, 75);
-            this.label60.Name = "label60";
-            this.label60.Size = new System.Drawing.Size(74, 15);
-            this.label60.TabIndex = 2;
-            this.label60.Text = "交ぜ書き変換";
-            // 
-            // textBox_bushuCompKeySeq
-            // 
-            this.textBox_bushuCompKeySeq.Location = new System.Drawing.Point(105, 97);
-            this.textBox_bushuCompKeySeq.Name = "textBox_bushuCompKeySeq";
-            this.textBox_bushuCompKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_bushuCompKeySeq.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.textBox_bushuCompKeySeq, "部首合成機能を呼び出します。");
-            // 
-            // label61
-            // 
-            this.label61.AutoSize = true;
-            this.label61.Location = new System.Drawing.Point(7, 101);
-            this.label61.Name = "label61";
-            this.label61.Size = new System.Drawing.Size(55, 15);
-            this.label61.TabIndex = 4;
-            this.label61.Text = "部首合成";
-            // 
-            // textBox_bushuAssocKeySeq
-            // 
-            this.textBox_bushuAssocKeySeq.Location = new System.Drawing.Point(105, 123);
-            this.textBox_bushuAssocKeySeq.Name = "textBox_bushuAssocKeySeq";
-            this.textBox_bushuAssocKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_bushuAssocKeySeq.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.textBox_bushuAssocKeySeq, "直前の文字に対する連想文字候補を表示します。");
-            // 
-            // label62
-            // 
-            this.label62.AutoSize = true;
-            this.label62.Location = new System.Drawing.Point(7, 127);
-            this.label62.Name = "label62";
-            this.label62.Size = new System.Drawing.Size(79, 15);
-            this.label62.TabIndex = 6;
-            this.label62.Text = "連想文字検索";
-            // 
-            // textBox_bushuAssocDirectKeySeq
-            // 
-            this.textBox_bushuAssocDirectKeySeq.Location = new System.Drawing.Point(105, 149);
-            this.textBox_bushuAssocDirectKeySeq.Name = "textBox_bushuAssocDirectKeySeq";
-            this.textBox_bushuAssocDirectKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_bushuAssocDirectKeySeq.TabIndex = 5;
-            this.toolTip1.SetToolTip(this.textBox_bushuAssocDirectKeySeq, "直前の文字に対して、その連想文字候補の\r\n先頭のもので置換します。\r\n\r\nなお、部首合成の直後に当機能を呼び出すと、\r\n次の部首合成候補出力となります。");
-            // 
-            // label63
-            // 
-            this.label63.AutoSize = true;
-            this.label63.Location = new System.Drawing.Point(7, 153);
-            this.label63.Name = "label63";
-            this.label63.Size = new System.Drawing.Size(79, 15);
-            this.label63.TabIndex = 8;
-            this.label63.Text = "連想直接変換";
-            // 
-            // textBox_zenkakuModeKeySeq
-            // 
-            this.textBox_zenkakuModeKeySeq.Location = new System.Drawing.Point(105, 19);
-            this.textBox_zenkakuModeKeySeq.Name = "textBox_zenkakuModeKeySeq";
-            this.textBox_zenkakuModeKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_zenkakuModeKeySeq.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_zenkakuModeKeySeq, "全角変換モードに移行します。\r\n\r\n全角変換モードでは、英数字記号と空白文字が、\r\nShift打鍵も含めて全角文字に変換されて出力されます。\r\n\r\n全角変換モード" +
-        "から更けるには、 Esc または Ctrl-G を\r\n押してください。");
-            // 
-            // label64
-            // 
-            this.label64.AutoSize = true;
-            this.label64.Location = new System.Drawing.Point(7, 23);
-            this.label64.Name = "label64";
-            this.label64.Size = new System.Drawing.Size(88, 15);
-            this.label64.TabIndex = 2;
-            this.label64.Text = "全角変換(モード)";
-            // 
-            // textBox_katakanaOneShotKeySeq
-            // 
-            this.textBox_katakanaOneShotKeySeq.Location = new System.Drawing.Point(105, 175);
-            this.textBox_katakanaOneShotKeySeq.Name = "textBox_katakanaOneShotKeySeq";
-            this.textBox_katakanaOneShotKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_katakanaOneShotKeySeq.TabIndex = 6;
-            this.toolTip1.SetToolTip(this.textBox_katakanaOneShotKeySeq, "直前に出力したひらがな列をカタカナに置換します。\r\n\r\n連続するひらがな列の途中から変換することはできません。\r\nあらかじめ Ctrl-G などでミニバッファをク" +
-        "リアしておいてから\r\nカタカナ変換したいひらがな列を入力してください。");
-            // 
-            // label65
-            // 
-            this.label65.AutoSize = true;
-            this.label65.Location = new System.Drawing.Point(7, 179);
-            this.label65.Name = "label65";
-            this.label65.Size = new System.Drawing.Size(99, 15);
-            this.label65.TabIndex = 10;
-            this.label65.Text = "カタカナ変換(一括)";
-            // 
-            // textBox_historyOneCharKeySeq
-            // 
-            this.textBox_historyOneCharKeySeq.Location = new System.Drawing.Point(105, 45);
-            this.textBox_historyOneCharKeySeq.Name = "textBox_historyOneCharKeySeq";
-            this.textBox_historyOneCharKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_historyOneCharKeySeq.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_historyOneCharKeySeq, "入力履歴のうち、1文字だけの候補を表示します。");
-            // 
-            // label66
-            // 
-            this.label66.AutoSize = true;
-            this.label66.Location = new System.Drawing.Point(7, 49);
-            this.label66.Name = "label66";
-            this.label66.Size = new System.Drawing.Size(93, 15);
-            this.label66.TabIndex = 12;
-            this.label66.Text = "履歴検索(1文字)";
-            // 
-            // textBox_zenkakuOneCharKeySeq
-            // 
-            this.textBox_zenkakuOneCharKeySeq.Location = new System.Drawing.Point(105, 45);
-            this.textBox_zenkakuOneCharKeySeq.Name = "textBox_zenkakuOneCharKeySeq";
-            this.textBox_zenkakuOneCharKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_zenkakuOneCharKeySeq.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_zenkakuOneCharKeySeq, "次に打鍵する1文字を全角変換して出力します。");
-            // 
-            // label67
-            // 
-            this.label67.AutoSize = true;
-            this.label67.Location = new System.Drawing.Point(7, 49);
-            this.label67.Name = "label67";
-            this.label67.Size = new System.Drawing.Size(93, 15);
-            this.label67.TabIndex = 4;
-            this.label67.Text = "全角変換(1文字)";
-            // 
-            // textBox_katakanaModeKeySeq
-            // 
-            this.textBox_katakanaModeKeySeq.Location = new System.Drawing.Point(105, 71);
-            this.textBox_katakanaModeKeySeq.Name = "textBox_katakanaModeKeySeq";
-            this.textBox_katakanaModeKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_katakanaModeKeySeq.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_katakanaModeKeySeq, "カタカナ変換モードに移行します。\r\n\r\nカタカナ変換モードでは、打鍵入力されたひらがなを\r\nカタカナに変換して出力します。\r\n\r\nカタカナ変換モードから更けるには" +
-        "、 もう一度、当打鍵列を\r\n入力してください。");
-            // 
-            // label68
-            // 
-            this.label68.AutoSize = true;
-            this.label68.Location = new System.Drawing.Point(7, 75);
-            this.label68.Name = "label68";
-            this.label68.Size = new System.Drawing.Size(100, 15);
-            this.label68.TabIndex = 6;
-            this.label68.Text = "カタカナ変換(モード)";
-            // 
-            // label_okResultKeyAssign
-            // 
-            this.label_okResultKeyAssign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label_okResultKeyAssign.AutoSize = true;
-            this.label_okResultKeyAssign.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultKeyAssign.Location = new System.Drawing.Point(499, 285);
-            this.label_okResultKeyAssign.Name = "label_okResultKeyAssign";
-            this.label_okResultKeyAssign.Size = new System.Drawing.Size(65, 15);
-            this.label_okResultKeyAssign.TabIndex = 13;
-            this.label_okResultKeyAssign.Text = "設定しました";
-            this.label_okResultKeyAssign.Visible = false;
-            // 
-            // button_keyAssignClose
-            // 
-            this.button_keyAssignClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_keyAssignClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_keyAssignClose.Location = new System.Drawing.Point(385, 303);
-            this.button_keyAssignClose.Name = "button_keyAssignClose";
-            this.button_keyAssignClose.Size = new System.Drawing.Size(80, 23);
-            this.button_keyAssignClose.TabIndex = 2;
-            this.button_keyAssignClose.Text = "閉じる(&C)";
-            this.button_keyAssignClose.UseVisualStyleBackColor = true;
-            this.button_keyAssignClose.Click += new System.EventHandler(this.button_keyAssignClose_Click);
-            // 
-            // button_keyAssignEnter
-            // 
-            this.button_keyAssignEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_keyAssignEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_keyAssignEnter.Location = new System.Drawing.Point(493, 303);
-            this.button_keyAssignEnter.Name = "button_keyAssignEnter";
-            this.button_keyAssignEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_keyAssignEnter.TabIndex = 3;
-            this.button_keyAssignEnter.Text = "設定(&E)";
-            this.toolTip1.SetToolTip(this.button_keyAssignEnter, "設定内容を kanchoku.user.ini に書き込みます");
-            this.button_keyAssignEnter.UseVisualStyleBackColor = true;
-            this.button_keyAssignEnter.Click += new System.EventHandler(this.button_keyAssignEnter_Click);
-            // 
-            // groupBox31
-            // 
-            this.groupBox31.Controls.Add(this.label69);
-            this.groupBox31.Location = new System.Drawing.Point(357, 5);
-            this.groupBox31.Name = "groupBox31";
-            this.groupBox31.Size = new System.Drawing.Size(219, 205);
-            this.groupBox31.TabIndex = 14;
-            this.groupBox31.TabStop = false;
-            this.groupBox31.Text = "説明";
-            // 
-            // label69
-            // 
-            this.label69.AutoSize = true;
-            this.label69.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label69.Location = new System.Drawing.Point(3, 19);
-            this.label69.Name = "label69";
-            this.label69.Size = new System.Drawing.Size(217, 165);
-            this.label69.TabIndex = 1;
-            this.label69.Text = resources.GetString("label69.Text");
-            this.toolTip1.SetToolTip(this.label69, resources.GetString("label69.ToolTip"));
-            // 
-            // textBox_nextThroughKeySeq
-            // 
-            this.textBox_nextThroughKeySeq.Location = new System.Drawing.Point(105, 97);
-            this.textBox_nextThroughKeySeq.Name = "textBox_nextThroughKeySeq";
-            this.textBox_nextThroughKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_nextThroughKeySeq.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.textBox_nextThroughKeySeq, "次に打鍵する1文字をそのまま出力します。");
-            // 
-            // label70
-            // 
-            this.label70.AutoSize = true;
-            this.label70.Location = new System.Drawing.Point(7, 101);
-            this.label70.Name = "label70";
-            this.label70.Size = new System.Drawing.Size(70, 15);
-            this.label70.TabIndex = 8;
-            this.label70.Text = "次打鍵スルー";
-            // 
-            // groupBox32
-            // 
-            this.groupBox32.Controls.Add(this.label71);
-            this.groupBox32.Location = new System.Drawing.Point(10, 216);
-            this.groupBox32.Name = "groupBox32";
-            this.groupBox32.Size = new System.Drawing.Size(566, 59);
-            this.groupBox32.TabIndex = 15;
-            this.groupBox32.TabStop = false;
-            this.groupBox32.Text = "注意";
-            // 
-            // label71
-            // 
-            this.label71.AutoSize = true;
-            this.label71.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label71.Location = new System.Drawing.Point(3, 19);
-            this.label71.Name = "label71";
-            this.label71.Size = new System.Drawing.Size(444, 30);
-            this.label71.TabIndex = 1;
-            this.label71.Text = "※テーブルファイルによって既に文字が割り当てられている打鍵列には再割り当てできません。\r\n※割り当て可能なのは、未割り当てか、他の機能呼び出しが割り当てられている" +
-    "打鍵列です。";
-            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -3423,6 +3425,20 @@ namespace KanchokuWS
             this.groupBox13.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.tabPage_advanced.ResumeLayout(false);
+            this.tabPage_advanced.PerformLayout();
+            this.groupBox28.ResumeLayout(false);
+            this.groupBox28.PerformLayout();
+            this.groupBox20.ResumeLayout(false);
+            this.groupBox20.PerformLayout();
+            this.groupBox26.ResumeLayout(false);
+            this.groupBox26.PerformLayout();
+            this.groupBox15.ResumeLayout(false);
+            this.groupBox15.PerformLayout();
+            this.groupBox16.ResumeLayout(false);
+            this.groupBox16.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.tabPage_fontColor.ResumeLayout(false);
             this.tabPage_fontColor.PerformLayout();
             this.groupBox25.ResumeLayout(false);
@@ -3435,16 +3451,16 @@ namespace KanchokuWS
             this.groupBox3.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            this.tabPage_advanced.ResumeLayout(false);
-            this.tabPage_advanced.PerformLayout();
-            this.groupBox26.ResumeLayout(false);
-            this.groupBox26.PerformLayout();
-            this.groupBox15.ResumeLayout(false);
-            this.groupBox15.PerformLayout();
-            this.groupBox16.ResumeLayout(false);
-            this.groupBox16.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
+            this.tabPage_keyAssign.ResumeLayout(false);
+            this.tabPage_keyAssign.PerformLayout();
+            this.groupBox32.ResumeLayout(false);
+            this.groupBox32.PerformLayout();
+            this.groupBox31.ResumeLayout(false);
+            this.groupBox31.PerformLayout();
+            this.groupBox30.ResumeLayout(false);
+            this.groupBox30.PerformLayout();
+            this.groupBox29.ResumeLayout(false);
+            this.groupBox29.PerformLayout();
             this.tabPage_ctrlKeys.ResumeLayout(false);
             this.tabPage_ctrlKeys.PerformLayout();
             this.groupBox18.ResumeLayout(false);
@@ -3481,20 +3497,6 @@ namespace KanchokuWS
             this.groupBox7.PerformLayout();
             this.tabPage_about.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).EndInit();
-            this.groupBox20.ResumeLayout(false);
-            this.groupBox20.PerformLayout();
-            this.groupBox28.ResumeLayout(false);
-            this.groupBox28.PerformLayout();
-            this.tabPage_keyAssign.ResumeLayout(false);
-            this.tabPage_keyAssign.PerformLayout();
-            this.groupBox29.ResumeLayout(false);
-            this.groupBox29.PerformLayout();
-            this.groupBox30.ResumeLayout(false);
-            this.groupBox30.PerformLayout();
-            this.groupBox31.ResumeLayout(false);
-            this.groupBox31.PerformLayout();
-            this.groupBox32.ResumeLayout(false);
-            this.groupBox32.PerformLayout();
             this.ResumeLayout(false);
 
         }

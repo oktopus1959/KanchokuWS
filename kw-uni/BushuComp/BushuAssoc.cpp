@@ -195,11 +195,11 @@ namespace {
             EX_NODE->PrevAssoc = utils::safe_front(word);
         }
 
-        void handleSpaceKey() {
-            LOG_DEBUG(_T("CALLED"));
-            STATE_COMMON->OutputOrigString();
-            handleKeyPostProc();
-        }
+        //void handleSpaceKey() {
+        //    LOG_DEBUG(_T("CALLED"));
+        //    STATE_COMMON->OutputOrigString();
+        //    handleKeyPostProc();
+        //}
 
         //// Ctrl-Space の処理 -- 第1候補を返す
         //void handleCtrlSpace() {
