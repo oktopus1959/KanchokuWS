@@ -120,21 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="label32.ToolTip" xml:space="preserve">
-    <value>Ctrl-G は、厳密に言うと、「出力文字列の採取ブロッカー設定」です。
-Ctrl-G を押すと、ミニバッファがクリアされ、それまでに出力した
-文字列が採取できなくなります。
-したがって、履歴検索の他にも、交ぜ書き変換や(後置)カタカナ変換にも
-効いてきます。
-「ブロッカー」は Ctrl-G の他に Enter キーでも設定されます。
-
-この「ブロッカー」は Ctrl-Shift-G で解除することができます。
-また「Ctrl-Space」は、このブロッカーを解除してから履歴検索を行います。
-</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -147,8 +132,8 @@ exclude ファイルは、履歴検索および履歴登録の対象外となる
 
 各ファイルとも1行に1定義の形で記述します。
 
-各ファイルは、漢直WinSの終了時に内容が上書きされるので、ファイルの内容を
-エディタ等で編集する場合は、漢直WinSを終了させてから行ってください。
+各ファイルは、漢直窓Sの終了時に内容が上書きされるので、ファイルの内容を
+エディタ等で編集する場合は、漢直窓Sを終了させてから行ってください。
 </value>
   </data>
   <data name="textBox_mazegakiFile.ToolTip" xml:space="preserve">
@@ -158,7 +143,7 @@ exclude ファイルは、履歴検索および履歴登録の対象外となる
 * を「user」に置換したものをユーザー辞書として用います。
 (* が含まれない場合は kwmase.user.dic がユーザー辞書となります)
 
-ユーザー辞書ファイルは漢直WinS終了時に自動的に内容が上書きされるので、
+ユーザー辞書ファイルは漢直窓S終了時に自動的に内容が上書きされるので、
 このファイルをエディタ等で編集する場合は漢直を終了させてから行ってください。
 
 交ぜ書き辞書ファイルは、1行に1エントリの形で記述します。
@@ -173,8 +158,8 @@ exclude ファイルは、履歴検索および履歴登録の対象外となる
 記述フォーマットについては、「ドキュメント」または「辞書登録」タブの
 「部首合成」テキストボックスのツールチップを参照してください。
 
-「辞書登録」タブで部首合成定義を登録した場合、漢直WinSの終了時にファイル内容が
-上書きされるので、ファイルをエディタ等で編集する場合は、漢直WinSを終了させてから
+「辞書登録」タブで部首合成定義を登録した場合、漢直窓Sの終了時にファイル内容が
+上書きされるので、ファイルをエディタ等で編集する場合は、漢直窓Sを終了させてから
 行ってください。</value>
   </data>
   <data name="textBox_keyboardFile.ToolTip" xml:space="preserve">
@@ -217,56 +202,18 @@ exclude ファイルは、履歴検索および履歴登録の対象外となる
 
 キーを使用しない場合は、ComboBoxの内容を削除して空白にしてください。</value>
   </data>
-  <data name="textBox_verticalFont.ToolTip" xml:space="preserve">
-    <value>縦列鍵盤に表示する文字のフォント
+  <data name="textBox_backFileRotationGeneration.ToolTip" xml:space="preserve">
+    <value>辞書ファイルの保存世代数を設定します。
 
-以下のフォーマットでフォントを設定できます。
-フォント名とサイズについては、「選択...」ボタンをクリックして
-フォントダイアログから選択することもできます。
+アプリ終了時（または辞書内容を保存て再起動時）には、既存の辞書
+ファイルが back ディレクトリにバックアップファイルとして保存されます。
 
-フォント名 | サイズ(pt) | 左余白(px) | 上余白(px)
+バックアップファイルは、ここで設定した世代数にわたって保存されます。
 
-フォントは縦書のもの(@が付いてるもの)を選んでください。
-
-セル内での表示位置を「左余白」と「上余白」で調整できます。
-余白を指定しない場合(または-99 を指定した場合)、
-MS ゴシック、メイリオ、游ゴシックについては、ある程度、自動で
-調整しますが、それが気に入らない場合は、適当にピクセル数を
-設定してください。
+バックアップファイルの名前には、末尾に世代を表す数字が付加されます。
+たとえば、履歴ファイルであれば、 back\\kwhist.user.txt.1 のような名前で
+保存されます。古い世代ほど、末尾の数字が大きくなります。
 </value>
-  </data>
-  <data name="textBox_centerFont.ToolTip" xml:space="preserve">
-    <value>中央鍵盤に表示する文字のフォント
-
-以下のフォーマットでフォントを設定できます。
-フォント名とサイズについては、「選択...」ボタンをクリックして
-フォントダイアログから選択することもできます。
-
-フォント名 | サイズ(pt) | 左余白(px) | 上余白(px)
-
-フォントは縦書のもの(@が付いてるもの)を選んでください。
-
-セル内での表示位置を「左余白」と「上余白」で調整できます。
-余白を指定しない場合(または-99 を指定した場合)、
-MS ゴシック、メイリオ、游ゴシックについては、ある程度、自動で
-調整しますが、それが気に入らない場合は、適当にピクセル数を
-設定してください。
-</value>
-  </data>
-  <data name="textBox_normalFont.ToolTip" xml:space="preserve">
-    <value>通常鍵盤に表示する文字のフォント
-
-以下のフォーマットでフォントを設定できます。
-フォント名とサイズについては、「選択...」ボタンをクリックして
-フォントダイアログから選択することもできます。
-
-フォント名 | サイズ(pt) | 左余白(px) | 上余白(px)
-
-セル内での表示位置を「左余白」と「上余白」で調整できます。
-余白を指定しない場合(または-99 を指定した場合)、
-MS ゴシック、メイリオ、游ゴシックについては、ある程度、自動で
-調整しますが、それが気に入らない場合は、適当にピクセル数を
-設定してください。</value>
   </data>
   <data name="textBox_hotkeyInfiniteLoopDetectCount.ToolTip" xml:space="preserve">
     <value>HotKey呼び出しの無限ループ検出回数
@@ -325,6 +272,80 @@ keybd_event によりCtrlキーを一時的に KEY_UP しています。
 防ぐため、受信したHotKeyを無視することがあります。
 (キーリピートの間隔が長くなったように感じられる)</value>
   </data>
+  <data name="textBox_verticalFont.ToolTip" xml:space="preserve">
+    <value>縦列鍵盤に表示する文字のフォント
+
+以下のフォーマットでフォントを設定できます。
+フォント名とサイズについては、「選択...」ボタンをクリックして
+フォントダイアログから選択することもできます。
+
+フォント名 | サイズ(pt) | 左余白(px) | 上余白(px)
+
+フォントは縦書のもの(@が付いてるもの)を選んでください。
+
+セル内での表示位置を「左余白」と「上余白」で調整できます。
+余白を指定しない場合(または-99 を指定した場合)、
+MS ゴシック、メイリオ、游ゴシックについては、ある程度、自動で
+調整しますが、それが気に入らない場合は、適当にピクセル数を
+設定してください。
+</value>
+  </data>
+  <data name="textBox_centerFont.ToolTip" xml:space="preserve">
+    <value>中央鍵盤に表示する文字のフォント
+
+以下のフォーマットでフォントを設定できます。
+フォント名とサイズについては、「選択...」ボタンをクリックして
+フォントダイアログから選択することもできます。
+
+フォント名 | サイズ(pt) | 左余白(px) | 上余白(px)
+
+フォントは縦書のもの(@が付いてるもの)を選んでください。
+
+セル内での表示位置を「左余白」と「上余白」で調整できます。
+余白を指定しない場合(または-99 を指定した場合)、
+MS ゴシック、メイリオ、游ゴシックについては、ある程度、自動で
+調整しますが、それが気に入らない場合は、適当にピクセル数を
+設定してください。
+</value>
+  </data>
+  <data name="textBox_normalFont.ToolTip" xml:space="preserve">
+    <value>通常鍵盤に表示する文字のフォント
+
+以下のフォーマットでフォントを設定できます。
+フォント名とサイズについては、「選択...」ボタンをクリックして
+フォントダイアログから選択することもできます。
+
+フォント名 | サイズ(pt) | 左余白(px) | 上余白(px)
+
+セル内での表示位置を「左余白」と「上余白」で調整できます。
+余白を指定しない場合(または-99 を指定した場合)、
+MS ゴシック、メイリオ、游ゴシックについては、ある程度、自動で
+調整しますが、それが気に入らない場合は、適当にピクセル数を
+設定してください。</value>
+  </data>
+  <data name="label69.Text" xml:space="preserve">
+    <value>機能を呼び出すための打鍵列を設定します。
+
+打鍵列は、漢直キーコード(00～48)をカンマ
+区切りで並べたものとなります。キーコードに
+ついては、ここにマウスポインタを置いて表示
+されるツールチップを参照してください。
+
+例：(カッコ内は 106 key による打鍵文字)
+交ぜ書き変換 「23,26」  (f j)
+全角変換(モード) 「42」 (^)
+カタカナ変換(一括) 「47」 (])</value>
+  </data>
+  <data name="label69.ToolTip" xml:space="preserve">
+    <value>106 (qwerty) でのコード表
+
+1=00, 2=01, 3=02, 4=03, 5=04, 6=05, 7=06, 8=07, 9=08, 0=09
+q=10, w=11, e=12, r=13, t=14, y=15, u=16, i=17, o=18, p=19
+a=20, s=21, d=22, f=23, g=24, h=25, j=26, k=27, l=28, ;=29,
+z=30, x=31, c=32, v=33, b=34, n=35, m=36, ,=37, .=38, /=39,
+SP=40, -=41, ^=42, ￥=43, @=44, [=45, :=46, ]=47, ＼=48
+</value>
+  </data>
   <data name="textBox_dateStringFormat.ToolTip" xml:space="preserve">
     <value>Ctrl+; および Ctrl+Shift+; で出力する日付のフォーマットを設定します。
 
@@ -354,6 +375,18 @@ yyyy/MM/DD
 Ctrl+; ⇒ 2021/09/23
 Ctrl+Shift+; ⇒ 令和3年9月23日
 となります。</value>
+  </data>
+  <data name="label32.ToolTip" xml:space="preserve">
+    <value>Ctrl-G は、厳密に言うと、「出力文字列の採取ブロッカー設定」です。
+Ctrl-G を押すと、ミニバッファがクリアされ、それまでに出力した
+文字列が採取できなくなります。
+したがって、履歴検索の他にも、交ぜ書き変換や(後置)カタカナ変換にも
+効いてきます。
+「ブロッカー」は Ctrl-G の他に Enter キーでも設定されます。
+
+この「ブロッカー」は Ctrl-Shift-G で解除することができます。
+また「Ctrl-Space」は、このブロッカーを解除してから履歴検索を行います。
+</value>
   </data>
   <data name="checkBox_CtrlSemicolon.ToolTip" xml:space="preserve">
     <value>Ctrl+; (セミコロン) および Ctrl+Shift+; で今日の日付を出力する
@@ -411,9 +444,6 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 または漢直窓Sを終了させてから行ってください。
 </value>
   </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_bushuComp.ToolTip" xml:space="preserve">
     <value>部首合成の登録を行います。
 
@@ -480,48 +510,6 @@ A=BC...
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>114, 17</value>
   </metadata>
-  <data name="textBox_backFileRotationGeneration.ToolTip" xml:space="preserve">
-    <value>辞書ファイルの保存世代数を設定します。
-
-アプリ終了時（または辞書内容を保存て再起動時）には、既存の辞書
-ファイルが back ディレクトリにバックアップファイルとして保存されます。
-
-バックアップファイルは、ここで設定した世代数にわたって保存されます。
-
-バックアップファイルの名前には、末尾に世代を表す数字が付加されます。
-たとえば、履歴ファイルであれば、 back\\kwhist.user.txt.1 のような名前で
-保存されます。古い世代ほど、末尾の数字が大きくなります。
-</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="label69.Text" xml:space="preserve">
-    <value>機能を呼び出すための打鍵列を設定します。
-
-打鍵列は、漢直キーコード(00～48)をカンマ
-区切りで並べたものとなります。キーコードに
-ついては、ここにマウスポインタを置いて表示
-されるツールチップを参照してください。
-
-例：(カッコ内は 106 key による打鍵文字)
-交ぜ書き変換 「23,26」  (f j)
-全角変換(モード) 「42」 (^)
-カタカナ変換(一括) 「47」 (])</value>
-  </data>
-  <data name="label69.ToolTip" xml:space="preserve">
-    <value>106 (qwerty) でのコード表
-
-1=00, 2=01, 3=02, 4=03, 5=04, 6=05, 7=06, 8=07, 9=08, 0=09
-q=10, w=11, e=12, r=13, t=14, y=15, u=16, i=17, o=18, p=19
-a=20, s=21, d=22, f=23, g=24, h=25, j=26, k=27, l=28, ;=29,
-z=30, x=31, c=32, v=33, b=34, n=35, m=36, ,=37, .=38, /=39,
-SP=40, -=41, ^=42, ￥=43, @=44, [=45, :=46, ]=47, ＼=48
-</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

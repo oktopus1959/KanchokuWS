@@ -473,7 +473,7 @@ namespace KanchokuWS
             this.textBox_strokeHelpFile.Size = new System.Drawing.Size(175, 23);
             this.textBox_strokeHelpFile.TabIndex = 4;
             this.toolTip1.SetToolTip(this.textBox_strokeHelpFile, "仮想鍵盤に表示する打鍵ヘルプ表を定義するファイル\r\n\r\n仮想鍵盤が第1打鍵待ちになっている状態で表示される\r\n打鍵表を定義します。\r\n\r\n複数のパターンを定義でき" +
-        "ます。それらは Ctrl-Shift-T または\r\nマウスホイール操作によって切り替えることができます。");
+        "ます。それらは Ctrl-T または\r\nCtrl-Shift-T によって切り替えることができます。");
             // 
             // label47
             // 
@@ -515,7 +515,7 @@ namespace KanchokuWS
             this.textBox_tableFile.Size = new System.Drawing.Size(175, 23);
             this.textBox_tableFile.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_tableFile, "打鍵から文字への変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることによ" +
-        "り、複数打鍵に対する文字定義が\r\n可能です。\r\n\r\n詳細については「ドキュメント」を参照ください。");
+        "り、複数打鍵に対する文字定義が\r\n可能です。\r\n");
             // 
             // label18
             // 

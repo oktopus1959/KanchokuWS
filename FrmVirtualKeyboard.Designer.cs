@@ -33,15 +33,15 @@ namespace KanchokuWS
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.Restart_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RestartWithSave_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RestartWithDiscard_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.終了ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.pictureBox_Main = new System.Windows.Forms.PictureBox();
+            this.topTextBox = new Utils.TextBoxRO();
             this.dgvHorizontal = new System.Windows.Forms.DataGridView();
             this.pictureBox_measureFontSize = new System.Windows.Forms.PictureBox();
-            this.topTextBox = new Utils.TextBoxRO();
-            this.RestartWithSave_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.RestartWithDiscard_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Main)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvHorizontal)).BeginInit();
@@ -57,19 +57,19 @@ namespace KanchokuWS
             this.toolStripSeparator1,
             this.終了ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 104);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(111, 82);
             // 
             // 設定ToolStripMenuItem
             // 
             this.設定ToolStripMenuItem.Name = "設定ToolStripMenuItem";
-            this.設定ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.設定ToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.設定ToolStripMenuItem.Text = "設定";
             this.設定ToolStripMenuItem.Click += new System.EventHandler(this.Settings_ToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(107, 6);
             // 
             // Restart_ToolStripMenuItem
             // 
@@ -77,18 +77,32 @@ namespace KanchokuWS
             this.RestartWithSave_ToolStripMenuItem,
             this.RestartWithDiscard_ToolStripMenuItem});
             this.Restart_ToolStripMenuItem.Name = "Restart_ToolStripMenuItem";
-            this.Restart_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.Restart_ToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.Restart_ToolStripMenuItem.Text = "再起動";
+            // 
+            // RestartWithSave_ToolStripMenuItem
+            // 
+            this.RestartWithSave_ToolStripMenuItem.Name = "RestartWithSave_ToolStripMenuItem";
+            this.RestartWithSave_ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.RestartWithSave_ToolStripMenuItem.Text = "辞書内容を保存して再起動";
+            this.RestartWithSave_ToolStripMenuItem.Click += new System.EventHandler(this.RestartWithSave_ToolStripMenuItem_Click);
+            // 
+            // RestartWithDiscard_ToolStripMenuItem
+            // 
+            this.RestartWithDiscard_ToolStripMenuItem.Name = "RestartWithDiscard_ToolStripMenuItem";
+            this.RestartWithDiscard_ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.RestartWithDiscard_ToolStripMenuItem.Text = "辞書内容を破棄して再起動";
+            this.RestartWithDiscard_ToolStripMenuItem.Click += new System.EventHandler(this.RestartWithDiscard_ToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(107, 6);
             // 
             // 終了ToolStripMenuItem
             // 
             this.終了ToolStripMenuItem.Name = "終了ToolStripMenuItem";
-            this.終了ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.終了ToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.終了ToolStripMenuItem.Text = "終了";
             this.終了ToolStripMenuItem.Click += new System.EventHandler(this.Exit_ToolStripMenuItem_Click);
             // 
@@ -105,8 +119,20 @@ namespace KanchokuWS
             this.pictureBox_Main.Size = new System.Drawing.Size(201, 111);
             this.pictureBox_Main.TabIndex = 31;
             this.pictureBox_Main.TabStop = false;
-            this.toolTip1.SetToolTip(this.pictureBox_Main, "左クリックするとデコーダをOFFにします。\r\n右クリックでコンテキストメニューを表示します。\r\nまた、ホイール操作によりストロークテーブルが切り替わります。");
+            this.toolTip1.SetToolTip(this.pictureBox_Main, "左クリックするとデコーダをOFFにします。\r\n右クリックでコンテキストメニューを表示します。\r\nまた、Ctrl-T/Ctrl-Shift-Tによりストロークテーブ" +
+        "ルが切り替わります。");
             this.pictureBox_Main.Click += new System.EventHandler(this.pictureBox_Main_Click);
+            // 
+            // topTextBox
+            // 
+            this.topTextBox.actionOnPaste = null;
+            this.topTextBox.Location = new System.Drawing.Point(1, 1);
+            this.topTextBox.Name = "topTextBox";
+            this.topTextBox.Size = new System.Drawing.Size(201, 19);
+            this.topTextBox.TabIndex = 29;
+            this.topTextBox.TabStop = false;
+            this.toolTip1.SetToolTip(this.topTextBox, "ここに文字列をペーストすると以下のアクションを実行します。\r\n　1文字：ストロークヘルプの表示\r\n　■=□□…：■に対して□□…部首連想(エイリアス)を定義\r\n　" +
+        "上記以外の文字列：入力履歴への強制登録(削除マークを無視)");
             // 
             // dgvHorizontal
             // 
@@ -128,31 +154,6 @@ namespace KanchokuWS
             this.pictureBox_measureFontSize.TabIndex = 33;
             this.pictureBox_measureFontSize.TabStop = false;
             this.pictureBox_measureFontSize.Visible = false;
-            // 
-            // topTextBox
-            // 
-            this.topTextBox.actionOnPaste = null;
-            this.topTextBox.Location = new System.Drawing.Point(1, 1);
-            this.topTextBox.Name = "topTextBox";
-            this.topTextBox.Size = new System.Drawing.Size(201, 19);
-            this.topTextBox.TabIndex = 29;
-            this.topTextBox.TabStop = false;
-            this.toolTip1.SetToolTip(this.topTextBox, "ここに文字列をペーストすると以下のアクションを実行します。\r\n　1文字：ストロークヘルプの表示\r\n　■=□□…：■に対して□□…部首連想(エイリアス)を定義\r\n　" +
-        "上記以外の文字列：入力履歴への強制登録(削除マークを無視)");
-            // 
-            // RestartWithSave_ToolStripMenuItem
-            // 
-            this.RestartWithSave_ToolStripMenuItem.Name = "RestartWithSave_ToolStripMenuItem";
-            this.RestartWithSave_ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.RestartWithSave_ToolStripMenuItem.Text = "辞書内容を保存して再起動";
-            this.RestartWithSave_ToolStripMenuItem.Click += new System.EventHandler(this.RestartWithSave_ToolStripMenuItem_Click);
-            // 
-            // RestartWithDiscard_ToolStripMenuItem
-            // 
-            this.RestartWithDiscard_ToolStripMenuItem.Name = "RestartWithDiscard_ToolStripMenuItem";
-            this.RestartWithDiscard_ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.RestartWithDiscard_ToolStripMenuItem.Text = "辞書内容を破棄して再起動";
-            this.RestartWithDiscard_ToolStripMenuItem.Click += new System.EventHandler(this.RestartWithDiscard_ToolStripMenuItem_Click);
             // 
             // FrmVirtualKeyboard
             // 
