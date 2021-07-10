@@ -592,7 +592,7 @@ namespace {
                 std::vector<HistResult> pastList;
                 if (key.size() > 4) {
                     std::set<MString> st = utils::filter(histDic4.GetSet(key.substr(0, 4)), [key](const auto& s) {return utils::startsWith(s, key);});
-                    extract_and_copy(4, st, pastList, len);
+                    extract_and_copy(key.size(), st, pastList, len);
                 }
 
                 if (resultList.empty() && pastList.empty()) {
