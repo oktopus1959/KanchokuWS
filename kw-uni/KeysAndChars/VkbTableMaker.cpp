@@ -2,7 +2,7 @@
 #include "file_utils.h"
 #include "StrokeTable.h"
 #include "StringNode.h"
-
+#include "MyPrevChar.h"
 #include "HotKeyToChars.h"
 
 #define OUT_TABLE_SIZE 200
@@ -124,20 +124,26 @@ namespace VkbTableMaker {
             if (blk) {
                 if (blk->isStrokeTableNode()) {
                     reorderByFirstStrokePosition(table, (StrokeTableNode*)blk, orderedChars, charSet, firstLevelIdx, depth + 1);
-                } else if (blk->isStringNode()) {
-                    auto iter = charSet.find((wchar_t)blk->getString()[0]);
-                    if (iter != charSet.end()) {
+                } else if (blk->isStringNode() || (depth == 0 && blk->isFunctionNode() && (dynamic_cast<MyCharNode*>(blk) || dynamic_cast<PrevCharNode*>(blk)))) {
+                    wchar_t ch = 0;
+                    if (blk->isStringNode()) {
+                        auto iter = charSet.find((wchar_t)blk->getString()[0]);
+                        if (iter != charSet.end()) ch = *iter;
+                    } else {
+                        ch = HOTKEY_TO_CHARS->GetCharFromHotkey(i);
+                    }
+                    if (ch != 0) {
                         // 見つかった第1打鍵位置に格納
                         if (table[firstLevelIdx * 2] != 0) {
                             // 既に格納済みなら、優先順の高いものと入れ替える
                             wchar_t buf[3];
-                            buf[0] = *iter;
+                            buf[0] = ch;
                             buf[1] = table[firstLevelIdx * 2];
                             buf[2] = 0;
                             size_t pos = orderedChars.find_first_of(buf);
                             if (pos != wstring::npos) table[firstLevelIdx * 2] = orderedChars[pos];
                         } else {
-                            table[firstLevelIdx * 2] = *iter;
+                            table[firstLevelIdx * 2] = ch;
                         }
                     }
                 }

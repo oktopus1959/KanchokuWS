@@ -193,7 +193,8 @@ namespace KanchokuWS
                         var items = line.Trim()._reReplace("  +", " ")._split(' ');
                         if (items._notEmpty() && items[0]._notEmpty() && !items[0].StartsWith("#")) {
                             var cmd = items[0]._toLower();
-                            logger.InfoH(() => $"cmd={cmd}, param={items._getNth(1)}");
+                            var chars = items.Length > 1 ? items.Skip(1)._join(" ") : "";
+                            logger.InfoH(() => $"cmd={cmd}, param={chars}");
                             if (cmd == "initialtable") {
                                 // 初期表示を追加(初期表示は事前に作成されている)
                                 StrokeTables.Add(new StrokeTableDef {
@@ -211,13 +212,13 @@ namespace KanchokuWS
                                 makeVkbStrokeTable("makeStrokeKeysTable", kanaOutChars[2], true, true);
                             } else if (cmd == "katakanakey2") {
                                 makeVkbStrokeTable("makeStrokeKeysTable", kanaOutChars[3], true, true);
-                            } else if (items.Length == 2 && items[1]._notEmpty()) {
+                            } else if (chars._notEmpty()) {
                                 if (cmd == "strokeposition") {
-                                    makeVkbStrokeTable("reorderByFirstStrokePosition", items[1]);
+                                    makeVkbStrokeTable("reorderByFirstStrokePosition", chars);
                                 } else if (cmd == "strokepositionfixed") {
-                                    makeVkbStrokeTableFixed(items[1]);
+                                    makeVkbStrokeTableFixed(chars);
                                 } else if (cmd == "strokekey") {
-                                    makeVkbStrokeTable("makeStrokeKeysTable", items[1], true, false);
+                                    makeVkbStrokeTable("makeStrokeKeysTable", chars, true, false);
                                 }
                             }
                         }
