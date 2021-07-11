@@ -502,6 +502,7 @@ namespace KanchokuWS
             checkBox_bushuDicLogEnabled.Checked = Settings.BushuDicLogEnabled;
             checkBox_loggingActiveWindowInfo.Checked = Settings.LoggingActiveWindowInfo;
             checkBox_delayAfterProcessHotkey.Checked = Settings.DelayAfterProcessHotkey;
+            checkBox_multiAppEnabled.Checked = Settings.MultiAppEnabled;
 
             //checkBox_autoOffWhenBurstKeyIn.Checked = Settings.GetString("autoOffWhenBurstKeyIn")._parseBool();
         }
@@ -540,6 +541,7 @@ namespace KanchokuWS
             checkerAdvanced.Add(checkBox_bushuDicLogEnabled);
             checkerAdvanced.Add(checkBox_loggingActiveWindowInfo);
             checkerAdvanced.Add(checkBox_delayAfterProcessHotkey);
+            checkerAdvanced.Add(checkBox_multiAppEnabled);
 
             //checkerAdvanced.Add(checkBox_autoOffWhenBurstKeyIn);
 
@@ -585,6 +587,7 @@ namespace KanchokuWS
             //Settings.SetUserIni("loggingActiveWindowInfo", checkBox_loggingActiveWindowInfo.Checked);
             Settings.LoggingActiveWindowInfo = checkBox_loggingActiveWindowInfo.Checked;
             Settings.SetUserIni("delayAfterProcessHotkey", checkBox_delayAfterProcessHotkey.Checked);
+            Settings.SetUserIni("multiAppEnabled", checkBox_multiAppEnabled.Checked);
 
             //Settings.SetUserIni("autoOffWhenBurstKeyIn", checkBox_autoOffWhenBurstKeyIn.Checked);
 

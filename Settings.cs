@@ -62,6 +62,9 @@ namespace KanchokuWS
         /// <summary>ホットキー処理後にウェイトを入れる(開発用; バグ等により処理対象ホットキーを keybd_event で送出することによる無限ループに対応する時間をかせぐ)</summary>
         public static bool DelayAfterProcessHotkey { get; private set; } = false;
 
+        /// <summary>二重起動を許可する</summary>
+        public static bool MultiAppEnabled { get; private set; } = false;
+
         //-------------------------------------------------------------------------------------
         // フォントと色
         public static string NormalVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
@@ -378,6 +381,11 @@ namespace KanchokuWS
             return GetString("logLevel")._parseInt(Logger.LogLevelWarn)._lowLimit(0)._highLimit(Logger.LogLevelTrace);   // デフォルトは WARN
         }
 
+        public static bool IsMultiAppEnabled()
+        {
+            return GetString("multiAppEnabled")._parseBool();   // デフォルトは false
+        }
+
         private static string[] GetSectionNames()
         {
             var set = UserKanchokuIni.Singleton.GetSectionNames().ToHashSet();
@@ -467,6 +475,7 @@ namespace KanchokuWS
             LoggingHotKeyInfo = GetString("loggingHotKeyInfo")._parseBool();
             //LoggingActiveWindowInfo = GetString("loggingActiveWindowInfo")._parseBool();
             DelayAfterProcessHotkey = GetString("delayAfterProcessHotkey")._parseBool();
+            MultiAppEnabled = IsMultiAppEnabled();
 
             //-------------------------------------------------------------------------------------
             // ファイル設定

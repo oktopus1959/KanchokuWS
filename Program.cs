@@ -9,6 +9,8 @@ namespace KanchokuWS
 {
     static class Program
     {
+        static string mutexName = "KanchokuWS-4C1B35AB-0759-41C0-9109-FFFDCE2A0621";
+
         /// <summary>
         /// アプリケーションのメイン エントリ ポイントです。
         /// </summary>
@@ -33,9 +35,33 @@ namespace KanchokuWS
                     Logger.EnableError();
                 }
             }
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmKanchoku());
+
+            System.Threading.Mutex mutex = null;
+            if (!Settings.IsMultiAppEnabled()) {
+                //Mutexオブジェクトを作成する
+                bool createdNew;
+                mutex = new System.Threading.Mutex(true, mutexName, out createdNew);
+
+                //ミューテックスの初期所有権が付与されたか調べる
+                if (createdNew == false) {
+                    //されなかった場合は、すでに起動していると判断して終了
+                    MessageBox.Show("多重起動はできません。");
+                    mutex.Close();
+                    return;
+                }
+            }
+
+            try {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new FrmKanchoku());
+            } finally {
+                if (mutex != null) {
+                    //ミューテックスを解放する
+                    mutex.ReleaseMutex();
+                    mutex.Close();
+                }
+            }
         }
     }
 }
