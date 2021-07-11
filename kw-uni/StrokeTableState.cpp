@@ -82,12 +82,13 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
 
-        void handleSpaceKey() {
-            LOG_DEBUG(_T("CALLED: %s, origString=\"%s\""), NAME_PTR, MAKE_WPTR(STATE_COMMON->OrigString()));
-            setToRemoveAllStroke();
-            STATE_COMMON->OutputOrigString();
-            HISTORY_STAY_STATE->AddNewHistEntryOnSomeChar();
-        }
+        // これがあると、TUT-Code など、第2打鍵のSpaceキーが記号に割り当てられているコード系で問題になる
+        //void handleSpaceKey() {
+        //    LOG_DEBUG(_T("CALLED: %s, origString=\"%s\""), NAME_PTR, MAKE_WPTR(STATE_COMMON->OrigString()));
+        //    setToRemoveAllStroke();
+        //    STATE_COMMON->OutputOrigString();
+        //    HISTORY_STAY_STATE->AddNewHistEntryOnSomeChar();
+        //}
 
         void handleBS() {
             LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
