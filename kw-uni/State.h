@@ -253,6 +253,9 @@ protected:
     // Shift+Space ハンドラ
     virtual void handleShiftSpace();
 
+    // Shift+Space AsNoramlSpace ハンドラ
+    virtual void handleShiftSpaceAsNormalSpace();
+
     // Ctrl+Space ハンドラ
     virtual void handleCtrlSpace();
 

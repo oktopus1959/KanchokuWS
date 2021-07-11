@@ -220,7 +220,10 @@ bool State::isShiftedKey(int hotkey) {
 
 // HOTKEY はストロークキーまたはShift飾修か
 bool State::isStrokeKeyOrShiftedKey(int hotkey) {
-    return isStrokeKey(hotkey) || (isShiftedKey(hotkey) && (!SETTINGS->histSearchByShiftSpace || hotkey != SHIFT_SPACE_HOTKEY));
+    return isStrokeKey(hotkey)
+        || (isShiftedKey(hotkey)
+            && (hotkey != SHIFT_SPACE_HOTKEY
+                || (!SETTINGS->histSearchByShiftSpace && SETTINGS->handleShiftSpaceAsNormalSpace)));
 }
 
 // ストロークテーブルチェインの長さ(テーブルのレベル)
@@ -539,21 +542,27 @@ void State::handleQuestion() { handleShiftKeys(QUESTION_HOTKEY); }
 void State::handleSpecialKeys(int /*hotkey*/) { setThroughHotkeyFlag(); }
 
 // Shift+Space ハンドラ
-//void State::handleShiftSpace() { LOG_DEBUG(_T("Shift+Space")); handleShiftKeys(SHIFT_SPACE_HOTKEY);}
-//void State::handleShiftSpace() { LOG_DEBUG(_T("Shift+Space")); handleSpecialKeys(SHIFT_SPACE_HOTKEY);}
+// isStrokeKeyOrShiftedKey() にも注意すること
 void State::handleShiftSpace() {
-    LOG_DEBUG(_T("Shift+Space"));
+    _LOG_DEBUGH(_T("Shift+Space"));
     if (SETTINGS->histSearchByShiftSpace) {
         handleNextCandTrigger();
+    } else if (SETTINGS->handleShiftSpaceAsNormalSpace) {
+        handleShiftSpaceAsNormalSpace();
     } else {
         handleSpecialKeys(SHIFT_SPACE_HOTKEY);
     }
 }
 
+void State::handleShiftSpaceAsNormalSpace() {
+    _LOG_DEBUGH(_T("ShiftSpaceAsNormalSpace"));
+    STATE_COMMON->SetOutString(' ');
+}
+
 // Ctrl+Space ハンドラ
 //void State::handleCtrlSpace() { LOG_DEBUG(_T("Ctrl+Space")); handleSpecialKeys(CTRL_SPACE_HOTKEY);}
 void State::handleCtrlSpace() {
-    LOG_DEBUG(_T("Ctrl+Space"));
+    _LOG_DEBUGH(_T("Ctrl+Space"));
     if (SETTINGS->histSearchByCtrlSpace) {
         handleNextCandTrigger();
     } else {
@@ -564,7 +573,7 @@ void State::handleCtrlSpace() {
 // Ctrl+Shift+Space ハンドラ
 //void State::handleCtrlShiftSpace() { LOG_DEBUG(_T("Ctrl+Shift+Space")); handleSpecialKeys(CTRL_SHIFT_SPACE_HOTKEY);}
 void State::handleCtrlShiftSpace() {
-    LOG_DEBUG(_T("Ctrl+Shift+Space"));
+    _LOG_DEBUGH(_T("Ctrl+Shift+Space"));
     if (SETTINGS->histSearchByCtrlSpace || SETTINGS->histSearchByShiftSpace) {
         handlePrevCandTrigger();
     } else {

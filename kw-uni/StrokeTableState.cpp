@@ -226,6 +226,13 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
 
+        // Shift+Space を通常Spaceとして扱う
+        void handleShiftSpaceAsNormalSpace() {
+            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            bUnnecessary = true;            // これをやらないと、RootStrokeTable が残ってしまう
+            State::handleShiftKeys(SHIFT_SPACE_HOTKEY);
+        }
+
         //// 第1打鍵でSpaceが入力された時の処理
         //void handleSpaceKey() {
         //    LOG_DEBUG(_T("CALLED: %s: outString = MSTR_SPACE"), NAME_PTR);

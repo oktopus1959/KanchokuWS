@@ -293,6 +293,10 @@ namespace KanchokuWS
         public static int HistNumHotkeyId { get; private set; } = 0;
 
         public static bool UseArrowKeyToSelectCandidate { get; set; } = true;
+        public static bool HandleShiftSpaceAsNormalSpace { get; set; } = true;
+
+        public static bool UseCtrlSpaceKey => HistSearchByCtrlSpace;
+        public static bool UseShiftSpaceKey => HistSearchByShiftSpace || HandleShiftSpaceAsNormalSpace;
 
         //------------------------------------------------------------------------------
         // 交ぜ書き
@@ -597,6 +601,7 @@ namespace KanchokuWS
             HistNumHotkeyId = addDecoderSetting("histNumHotkeyId", 45, 41);                     // 履歴文字数指定を呼び出すHotKeyのID
             HistAllowFromMiddleChar = addDecoderSetting("histAllowFromMiddleChar", true);       // 出力漢字列やカタカナ列の途中からでも自動履歴検索を行う(@TODO)
             UseArrowKeyToSelectCandidate = addDecoderSetting("useArrowKeyToSelectCandidate", true);    // 矢印キーで履歴候補選択を行う
+            HandleShiftSpaceAsNormalSpace = addDecoderSetting("handleShiftSpaceAsNormalSpace", true);  // Shift+Space を通常 Space しとて扱う(HistSearchByShiftSpaceがfalseの場合)
 
             MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 3, 0);                         // 交ぜ書きの語尾の最大長

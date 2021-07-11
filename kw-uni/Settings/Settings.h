@@ -37,6 +37,7 @@ struct Settings {
     int histNumHotkeyId = 45;               // 履歴文字数指定のHotKeyID
 
     bool useArrowKeyToSelectCandidate = true;   // 矢印キーで履歴候補選択を行う
+    bool handleShiftSpaceAsNormalSpace = true;    // Shift-Space を通常の Space として扱う (ただし histSearchByShiftSpace が優先)
 
     size_t mazeYomiMaxLen = 10;             // 交ぜ書き変換時の最長入力読み長
     size_t mazeGobiMaxLen = 3;              // 語尾あり交ぜ書きの最長語尾長
