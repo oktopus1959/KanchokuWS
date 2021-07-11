@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace Utils
@@ -224,6 +225,34 @@ namespace Utils
                 }
             } catch (Exception e) {
                 sb.Append(e._getErrorMsgShort());
+            }
+        }
+
+        // cf. https://www.it-swarm-ja.com/ja/c%23/%E3%83%93%E3%83%AB%E3%83%89%E6%97%A5%E3%82%92%E8%A1%A8%E7%A4%BA%E3%81%99%E3%82%8B/968877930/
+        public static DateTime _getLinkerTime(this Assembly assembly, TimeZoneInfo target = null)
+        {
+            try {
+                var filePath = assembly.Location;
+                const int c_PeHeaderOffset = 60;
+                const int c_LinkerTimestampOffset = 8;
+
+                var buffer = new byte[2048];
+
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                    stream.Read(buffer, 0, 2048);
+
+                var offset = BitConverter.ToInt32(buffer, c_PeHeaderOffset);
+                var secondsSince1970 = BitConverter.ToInt32(buffer, offset + c_LinkerTimestampOffset);
+                var Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+                var linkTimeUtc = Epoch.AddSeconds(secondsSince1970);
+
+                var tz = target ?? TimeZoneInfo.Local;
+                var localTime = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tz);
+
+                return localTime;
+            } catch {
+                return DateTime.MinValue;
             }
         }
     }

@@ -160,7 +160,8 @@ namespace KanchokuWS
             dgvAbout.Rows[iRow].Cells[0].Value = "ドキュメント";
             dgvAbout.Rows[iRow++].Cells[1] = new DataGridViewLinkCell() { Value = Settings.DocumentUrl };
             dgvAbout.Rows[iRow].Cells[0].Value = "最終更新日";
-            dgvAbout.Rows[iRow++].Cells[1].Value = "2021年7月10日";
+            //dgvAbout.Rows[iRow++].Cells[1].Value = "2021年7月10日";
+            dgvAbout.Rows[iRow++].Cells[1].Value = Assembly.GetExecutingAssembly()._getLinkerTime().ToString("yyyy年M月d日");
             dgvAbout.Rows[iRow].Cells[0].Value = "初回公開日";
             dgvAbout.Rows[iRow++].Cells[1].Value = "2021年7月10日";
             dgvAbout.Rows[iRow].Cells[0].Value = "作者";
