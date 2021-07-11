@@ -227,36 +227,41 @@ namespace {
             setAssocTarget(cb, tgt);
         }
 
+#define _LOG_INFOH(...) if (SETTINGS->bushuDicLogEnabled || SETTINGS->debughBushu) logger.InfoH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
     public:
         // a と b を組み合わせてできる合成文字を探す。
         // prev != 0 なら、まず prev を探し、さらにその次の合成文字を探してそれを返す(やり直し用)。
         // 見つからなかった場合は 0 を返す。
         // ここでは元祖漢直窓の山辺アルゴリズムを基本として、いくつか改良を加えてある。
         mchar_t FindComposite(mchar_t ca, mchar_t cb, mchar_t prev) {
-            _LOG_DEBUGH(_T("ENTER: ca=%c, cb=%c, prev=%c"), ca, cb, prev);
+            _LOG_INFOH(_T("ENTER: ca=%c, cb=%c, prev=%c"), ca, cb, prev);
             mchar_t c = findCompSub((wchar_t)ca, (wchar_t)cb, prev);
             if (c == 0 && prev != 0) c = findCompSub((wchar_t)ca, (wchar_t)cb, 0);    // retry from the beginning
             if (c != 0) setAssocTarget(ca, cb, c);
-            _LOG_DEBUGH(_T("LEAVE: result=%c"), c);
+            _LOG_INFOH(_T("LEAVE: result=%c"), c);
             return c;
         }
 
     private:
         mchar_t findCompSub(wchar_t ca, wchar_t cb, mchar_t prev) {
 
+            std::set<mchar_t> skipChars;
+
             bool bFound = prev == 0;
 
             mchar_t r;
 
+#define _NC(x) (x?x:20)
 #define CHECK_AND_RETURN(tag, x) {\
         r = (x);\
         if (r != 0 && r != ca && r != cb) { \
             if (r == prev) { \
                 bFound = true; \
-            } else if (bFound) { \
-                LOG_DEBUGH(_T(tag ## "result=%s"), MAKE_WPTR(r)); \
+            } else if (bFound && skipChars.find(r) == skipChars.end()) { \
+                _LOG_INFOH(_T(tag ## "result=%s"), MAKE_WPTR(r)); \
                 return (mchar_t)r; \
             } \
+            skipChars.insert(r); \
         }\
     }
 
@@ -297,15 +302,38 @@ namespace {
             }
 
             // YAMANOBE_ADD
-#define YAMANOBE_ADD_A(tag, x, y, z) \
-            if ((r = findComp(x, z)) != 0) CHECK_AND_RETURN(tag ## "-Y-AA1", findComp(r, y)); /* A = A1 + A2 のとき、 (A1 + B) + A2 を出したい */ \
-            if ((r = findComp(y, z)) != 0) CHECK_AND_RETURN(tag ## "-Y-AA2", findComp(x, r)); /* A = A1 + A2 のとき、 A1 + (A2 + B) を出したい */
-#define YAMANOBE_ADD_B(tag, x, y, z) \
-            if ((r = findComp(x, y)) != 0) CHECK_AND_RETURN(tag ## "-Y-AB1", findComp(r, z)); /* B = B1 + B2 のとき、 (A + B1) + B2 を出したい */ \
-            if ((r = findComp(x, z)) != 0) CHECK_AND_RETURN(tag ## "-Y-AB2", findComp(y, r)); /* B = B1 + B2 のとき、 B1 + (A + B2) を出したい */ 
+            // たとえば、準 = 淮十、隼 = 隹十 のとき、シ隼 ⇒ 準 を出したい
+#define YAMANOBE_ADD_A(tag, x1, x2, y) { \
+            _LOG_INFOH(_T(tag ## "1-Y-ADD: x1=%c, x2=%c, y=%c"), _NC(x1), _NC(x2), _NC(y)); \
+            mchar_t z; \
+            if ((z = findComp(x1, y)) != 0) { \
+                _LOG_INFOH(_T(tag ## "1-Y-ADD(x1+y)=%c"), z); \
+                CHECK_AND_RETURN(tag ## "1-Y-ADD((x1+y)+x2):", findComp(z, x2)); /* X = X1 + X2 のとき、 (X1 + Y) + X2 を出したい */ \
+                CHECK_AND_RETURN(tag ## "1-Y-ADD(x2+(x1+y)):", findComp(x2, z)); /* X = X1 + X2 のとき、 X2 + (X1 + Y) を出したい */ \
+            } \
+            if ((z = findComp(x2, y)) != 0) { \
+                _LOG_INFOH(_T(tag ## "1-Y-ADD(x2+y)=%c"), z); \
+                CHECK_AND_RETURN(tag ## "1-Y-ADD(x1+(x2+y)):", findComp(x1, z)); /* X = X1 + X2 のとき、 X1 + (X2 + Y) を出したい */ \
+                CHECK_AND_RETURN(tag ## "1-Y-ADD((x2+y)+x1):", findComp(z, x1)); /* X = X1 + X2 のとき、 (X2 + Y) + X1 を出したい */ \
+            } \
+        }
+#define YAMANOBE_ADD_B(tag, x, y1, y2) { \
+            _LOG_INFOH(_T(tag ## "2-Y-ADD: x=%c, y1=%c, y2=%c"), _NC(x), _NC(y1), _NC(y2)); \
+            mchar_t z; \
+            if ((z = findComp(x, y1)) != 0) { \
+                _LOG_INFOH(_T(tag ## "2-Y-ADD(x+y1)=%c"), z); \
+                CHECK_AND_RETURN(tag ## "2-Y-ADD((x+y1)+y2):", findComp(z, y2)); /* Y = Y1 + Y2 のとき、 (X + Y1) + Y2 を出したい */ \
+                CHECK_AND_RETURN(tag ## "2-Y-ADD(y2+(x+y1)):", findComp(y2, z)); /* Y = Y1 + Y2 のとき、 Y2 + (X + Y1) を出したい */ \
+            } \
+            if ((z = findComp(x, y2)) != 0) { \
+                _LOG_INFOH(_T(tag ## "2-Y-ADD(x+y2)=%c"), z); \
+                CHECK_AND_RETURN(tag ## "2-Y-ADD(y1+(x+y2)):", findComp(y1, z)); /* Y = Y1 + Y2 のとき、 Y1 + (X + Y2) を出したい */ \
+                CHECK_AND_RETURN(tag ## "2-Y-ADD((x+y2)+y1):", findComp(z, y1)); /* Y = Y1 + Y2 のとき、 (X + Y2) + Y1 を出したい */ \
+            } \
+        }
 
             if (a1 && a2) {
-                YAMANOBE_ADD_A("D", a1, a2, cb);   // (A1 + B) + A2 または A1 + (A2 + B)
+                YAMANOBE_ADD_A("D", a1, a2, cb);   // (A1 + B) + A2 または A1 + (A2 + B) または A2 + (
             }
             if (b1 && b2) {
                 YAMANOBE_ADD_B("D", ca, b1, b2);   // (A + B1) + B2 または B1 + (A + B2)
@@ -321,10 +349,11 @@ namespace {
             // YAMANOBE_SUBTRACT
             // たとえば、準 = 淮十、隼 = 隹十 のとき、シ準 ⇒ 隼 を出したい
 #define YAMANOBE_SUBTRACT(tag, x, x1, x2, y, y1, y2, z1, z2) \
-            if ((z1 != 0 && x2 == z1) || (z2 != 0 && x2 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB1", findComp(x1, y));  /* A := (X1 + X2) + Y && X2 == B ならば X1 + Y (= A - X2) を出したい */ \
-            if ((z1 != 0 && x1 == z1) || (z2 != 0 && x1 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB2", findComp(x2, y));  /* A := (X1 + X2) + Y && X1 == B ならば X2 + Y (= A - X1) を出したい */ \
-            if ((z1 != 0 && y2 == z1) || (z2 != 0 && y2 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB3", findComp(x, y1));  /* A := X + (Y1 + Y2) && Y2 == B ならば X + Y1 (= A - Y2) を出したい */ \
-            if ((z1 != 0 && y1 == z1) || (z2 != 0 && y1 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB4", findComp(x, y2));  /* A := X + (Y1 + Y2) && Y1 == B ならば X + Y2 (= A - Y1) を出したい */
+            _LOG_INFOH(_T(tag ## "-Y-SUB: x=%c, x1=%c, x2=%c, y=%c, y1=%c, y2=%c, z1=%c, z2=%c"), _NC(x), _NC(x1), _NC(x2), _NC(y), _NC(y1), _NC(y2), _NC(z1), _NC(z2)); \
+            if ((z1 != 0 && x2 == z1) || (z2 != 0 && x2 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x1,y):", findComp(x1, y));  /* A := (X1 + X2) + Y && X2 == B ならば X1 + Y (= A - X2) を出したい */ \
+            if ((z1 != 0 && x1 == z1) || (z2 != 0 && x1 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x2,y):", findComp(x2, y));  /* A := (X1 + X2) + Y && X1 == B ならば X2 + Y (= A - X1) を出したい */ \
+            if ((z1 != 0 && y2 == z1) || (z2 != 0 && y2 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x,y1):", findComp(x, y1));  /* A := X + (Y1 + Y2) && Y2 == B ならば X + Y1 (= A - Y2) を出したい */ \
+            if ((z1 != 0 && y1 == z1) || (z2 != 0 && y1 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x,y2):", findComp(x, y2));  /* A := X + (Y1 + Y2) && Y1 == B ならば X + Y2 (= A - Y1) を出したい */
 
             if (a1 && a2) {
                 wchar_t a11, a12, a21, a22;
@@ -433,35 +462,58 @@ namespace {
             // (瞳=目+童 という定義があるとき、目+立 または 目+里 で 瞳 を合成する)
             // ただし、等価文字およびひらがな部品は除く
 #define ADD_BY_COMPOSITE(tag, cz, z, x) \
-            CHECK_AND_RETURN(tag ## "1", findComp(cz, x)); \
-            CHECK_AND_RETURN(tag ## "2", findComp(z, x)); \
-            CHECK_AND_RETURN(tag ## "3", findComp(x, cz)); \
-            CHECK_AND_RETURN(tag ## "4", findComp(x, z))
+            _LOG_INFOH(_T(tag ## ": cz=%c, z=%c, x=%c"), _NC(cz), _NC(z), _NC(x)); \
+            if (cz) CHECK_AND_RETURN(tag ## "(cz,x)", findComp(cz, x)); \
+            if (z && z != cz) CHECK_AND_RETURN(tag ## "(z,x)", findComp(z, x)); \
+            if (cz) CHECK_AND_RETURN(tag ## "(x,cz)", findComp(x, cz)); \
+            if (z && z != cz) CHECK_AND_RETURN(tag ## "(x,z)", findComp(x, z))
 
-            if (!utils::is_hiragana(cb)) {
+#define _PARTS_MAX 64
+
+            if (!utils::is_hiragana(cb) && getBodies(cb).size() <= _PARTS_MAX) {
                 for (auto x : getBodies(cb)) {
-                    ADD_BY_COMPOSITE("T", ca, eqa, x);
-                    ADD_BY_COMPOSITE("T", a1, a2, x);   // Aの部品との合成を試す
+                    ADD_BY_COMPOSITE("T1", ca, eqa, x);
                 }
             }
-            if (eqb && !utils::is_hiragana(eqb)) {
+            if (eqb && eqb != cb && !utils::is_hiragana(eqb) && getBodies(eqb).size() <= _PARTS_MAX) {
                 for (auto x : getBodies(eqb)) {
-                    ADD_BY_COMPOSITE("T", ca, eqa, x);
-                    ADD_BY_COMPOSITE("T", a1, a2, x);   // Aの部品との合成を試す
+                    ADD_BY_COMPOSITE("T2", ca, eqa, x);
                 }
             }
 
             // 同、逆順
-            if (!utils::is_hiragana(ca)) {
+            if (!utils::is_hiragana(ca) && getBodies(ca).size() <= _PARTS_MAX) {
                 for (auto x : getBodies(ca)) {
-                    ADD_BY_COMPOSITE("U", cb, eqb, x);
-                    ADD_BY_COMPOSITE("T", b1, b2, x);   // Bの部品との合成を試す
+                    ADD_BY_COMPOSITE("T3", cb, eqb, x);
                 }
             }
-            if (eqa && !utils::is_hiragana(eqa)) {
+            if (eqa && eqa != ca && !utils::is_hiragana(eqa) && getBodies(eqa).size() <= _PARTS_MAX) {
                 for (auto x : getBodies(eqa)) {
-                    ADD_BY_COMPOSITE("U", cb, eqb, x);
-                    ADD_BY_COMPOSITE("T", b1, b2, x);   // Bの部品との合成を試す
+                    ADD_BY_COMPOSITE("T4", cb, eqb, x);
+                }
+            }
+
+            // 部品との合成を試す
+            if (!utils::is_hiragana(cb) && getBodies(cb).size() <= _PARTS_MAX) {
+                for (auto x : getBodies(cb)) {
+                    ADD_BY_COMPOSITE("U1", a1, a2, x);   // Aの部品との合成を試す
+                }
+            }
+            if (eqb && eqb != cb && !utils::is_hiragana(eqb) && getBodies(eqb).size() <= _PARTS_MAX) {
+                for (auto x : getBodies(eqb)) {
+                    ADD_BY_COMPOSITE("U2", a1, a2, x);   // Aの部品との合成を試す
+                }
+            }
+
+            // 同、逆順
+            if (!utils::is_hiragana(ca) && getBodies(ca).size() <= _PARTS_MAX) {
+                for (auto x : getBodies(ca)) {
+                    ADD_BY_COMPOSITE("U3", b1, b2, x);   // Bの部品との合成を試す
+                }
+            }
+            if (eqa && eqa != ca && !utils::is_hiragana(eqa) && getBodies(eqa).size() <= _PARTS_MAX) {
+                for (auto x : getBodies(eqa)) {
+                    ADD_BY_COMPOSITE("U4", b1, b2, x);   // Bの部品との合成を試す
                 }
             }
 
@@ -471,6 +523,8 @@ namespace {
             LOG_DEBUGH(_T("result: NULL"));
             return 0;
         }
+#undef _NC
+#undef _LOG_INFOH
 #undef CHECK_AND_RETURN
 #undef YAMANOBE_ADD_A
 #undef YAMANOBE_ADD_B

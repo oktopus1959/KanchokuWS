@@ -91,6 +91,8 @@ namespace KanchokuWS
 
         public static int BackFileRotationGeneration { get; private set; } = 3;
 
+        public static bool BushuDicLogEnabled { get; private set; }
+
         //-------------------------------------------------------------------------------------
         /// <summary> 文字送出時にコピー&ペーストを行う文字数の閾値 </summary>
         public static int MinLeghthViaClipboard { get; set; } = 5;
@@ -631,6 +633,7 @@ namespace KanchokuWS
             addDecoderSetting("debughBushu", false);
             addDecoderSetting("debughZenkaku", false);
             addDecoderSetting("debughKatakana", false);
+            BushuDicLogEnabled = addDecoderSetting("bushuDicLogEnabled", false);
 
             return true;
         }

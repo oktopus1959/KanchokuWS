@@ -499,6 +499,7 @@ namespace KanchokuWS
             // 開発者用
             comboBox_logLevel.SelectedIndex = Settings.GetLogLevel();
             checkBox_loggingHotKeyInfo.Checked = Settings.GetString("loggingHotKeyInfo")._parseBool();
+            checkBox_bushuDicLogEnabled.Checked = Settings.BushuDicLogEnabled;
             checkBox_loggingActiveWindowInfo.Checked = Settings.LoggingActiveWindowInfo;
             checkBox_delayAfterProcessHotkey.Checked = Settings.DelayAfterProcessHotkey;
 
@@ -536,6 +537,7 @@ namespace KanchokuWS
             // 開発者用
             checkerAdvanced.Add(comboBox_logLevel);
             checkerAdvanced.Add(checkBox_loggingHotKeyInfo);
+            checkerAdvanced.Add(checkBox_bushuDicLogEnabled);
             checkerAdvanced.Add(checkBox_loggingActiveWindowInfo);
             checkerAdvanced.Add(checkBox_delayAfterProcessHotkey);
 
@@ -579,6 +581,7 @@ namespace KanchokuWS
             Settings.SetUserIni("logLevel", comboBox_logLevel.SelectedIndex);
             Logger.LogLevel = comboBox_logLevel.SelectedIndex;
             Settings.SetUserIni("loggingHotKeyInfo", checkBox_loggingHotKeyInfo.Checked);
+            Settings.SetUserIni("bushuDicLogEnabled", checkBox_bushuDicLogEnabled.Checked);
             //Settings.SetUserIni("loggingActiveWindowInfo", checkBox_loggingActiveWindowInfo.Checked);
             Settings.LoggingActiveWindowInfo = checkBox_loggingActiveWindowInfo.Checked;
             Settings.SetUserIni("delayAfterProcessHotkey", checkBox_delayAfterProcessHotkey.Checked);

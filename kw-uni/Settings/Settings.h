@@ -55,6 +55,7 @@ struct Settings {
     bool debughZenkaku = false;             // Zenkaku モジュールで DebugH を有効にする
     bool debughKatakana = false;            // Katakana モジュールで DebugH を有効にする
     bool debughMyPrevChar = false;          // MyChar/PrevChar モジュールで DebugH を有効にする
+    bool bushuDicLogEnabled = false;        // bushuDic で InfoH を有効にする
 
 public:
     void SetValues(const std::map<tstring, tstring>&);
