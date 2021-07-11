@@ -102,6 +102,11 @@ namespace {
             setToRemoveAllStroke();
         }
 
+        void handleEsc() {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            handleFullEscape();
+        }
+
         void handleCtrlU() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             handleFullEscape();
