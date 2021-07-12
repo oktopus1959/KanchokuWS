@@ -108,11 +108,11 @@ namespace {
             handleFullEscape();
         }
 
-        void handleCtrlU() {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            handleFullEscape();
-            State::handleCtrlU();
-        }
+        //void handleCtrlU() {
+        //    _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+        //    handleFullEscape();
+        //    State::handleCtrlU();
+        //}
 
         //void handleCtrlH() {
         //    LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);

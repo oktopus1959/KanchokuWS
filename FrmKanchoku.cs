@@ -704,8 +704,8 @@ namespace KanchokuWS
                 Settings.VirtualKeyboardShowStrokeCountTemp = 0;
                 frmVkb.DrawInitailVkb();
                 HotKeyHandler.RegisterDeactivateHotKeys();
-                HotKeyHandler.RegisterSpecialHotKeys();
-                HotKeyHandler.RegisterDecoderHotKeys();
+                HotKeyHandler.RegisterDecoderSpecialHotKeys();
+                HotKeyHandler.RegisterDecoderStrokeHotKeys();
                 //Text = "漢直窓S - ON";
                 notifyIcon1.Icon = Properties.Resources.kanmini1;
                 // 仮想鍵盤を移動させる
@@ -728,8 +728,8 @@ namespace KanchokuWS
                 notifyIcon1.Icon = Properties.Resources.kanmini0;
                 //HotKeyHandler.UnregisterCandSelectHotKeys();        // 候補選択中に漢直モードをOFFにする可能性があるため
                 handleArrowKeys(true);                          // 候補選択中に漢直モードをOFFにする可能性があるため、強制的に Unreg しておく
-                HotKeyHandler.UnregisterSpecialHotKeys();
-                HotKeyHandler.UnregisterDecoderHotKeys();
+                HotKeyHandler.UnregisterDecoderSpecialHotKeys();
+                HotKeyHandler.UnregisterDecoderStrokeHotKeys();
                 HotKeyHandler.RegisterActivateHotKeys();
                 //Text = "漢直窓S - OFF";
                 frmMode.SetKanjiMode();

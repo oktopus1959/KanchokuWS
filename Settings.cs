@@ -228,6 +228,14 @@ namespace KanchokuWS
         /// <summary>カタカナ変換(一括)を呼び出す打鍵列</summary>
         public static string KatakanaOneShotKeySeq { get; set; }
 
+        /// <summary>全エスケープおよび出力文字列検索ブロッカー設定</summary>
+        public static string FullEscapeKey { get; set; }
+
+        /// <summary>ストロークヘルプローテーション</summary>
+        public static string StrokeHelpRotationKey { get; set; }
+
+        public static HashSet<int> DecoderSpecialHotkeys = new HashSet<int>();
+
         //-------------------------------------------------------------------------------------
         // Ctrlキー
         /// <summary>グローバルなコントロールキーを有効にするか </summary>
@@ -622,6 +630,12 @@ namespace KanchokuWS
             ConvertJaComma = addDecoderSetting("convertJaComma", false);                        // 「、」と「，」の相互変換
 
             // キー割当
+            DecoderSpecialHotkeys.Clear();
+            DecoderSpecialHotkeys.Add(HotKeys.CTRL_G_HOTKEY);
+            DecoderSpecialHotkeys.Add(HotKeys.CTRL_SHIFT_G_HOTKEY);
+            DecoderSpecialHotkeys.Add(HotKeys.CTRL_T_HOTKEY);
+            DecoderSpecialHotkeys.Add(HotKeys.CTRL_SHIFT_T_HOTKEY);
+
             ZenkakuModeKeySeq = addDecoderSetting("zenkakuModeKeySeq");
             ZenkakuOneCharKeySeq = addDecoderSetting("zenkakuOneCharKeySeq");
             NextThroughKeySeq = addDecoderSetting("nextThroughKeySeq");

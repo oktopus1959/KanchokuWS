@@ -24,8 +24,11 @@ namespace KanchokuWS
 
         private static bool bDestroyed = false;
 
-        // グローバルに登録されて特殊ストロークキー
-        private static HashSet<int> globalSpecialStrokeHotkeys = new HashSet<int>();
+        // グローバルに登録された特殊ストロークキー
+        private static HashSet<int> globalSpecialHotkeys = new HashSet<int>();
+
+        // デコーダON時に登録された特殊ストロークキー
+        private static HashSet<int> decoderSpecialHotkeys = new HashSet<int>();
 
         private static bool[] hotkeyRegistered = new bool[HotKeys.GLOBAL_HOTKEY_ID_END];
         private static bool[] hotkeyUnregisteredTemporary = new bool[HotKeys.GLOBAL_HOTKEY_ID_END];
@@ -104,25 +107,26 @@ namespace KanchokuWS
         {
             logger.Info($"hWnd={hwnd:x}H");
             hWnd = hwnd;
-            EnableGlobalHotKeys();
+            enableGlobalHotKeys();
         }
 
+        /// <summary>
+        /// 終了
+        /// </summary>
         public static void Destroy()
         {
             if (!bDestroyed) {
                 bDestroyed = true;
                 UnregisterCandSelectHotKeys();
-                UnregisterSpecialHotKeys();
-                UnregisterDecoderHotKeys();
-                DisableGlobalHotKeys();
+                UnregisterDecoderSpecialHotKeys();
+                UnregisterDecoderStrokeHotKeys();
+                disableGlobalHotKeys();
                 logger.Info("Disposed");
             }
         }
 
-        /// <summary>
-        /// グローバルホットキーの登録
-        /// </summary>
-        public static void EnableGlobalHotKeys()
+        /// <summary> グローバルホットキーの登録 </summary>
+        private static void enableGlobalHotKeys()
         {
             logger.InfoH("ENTER");
             if (Settings.ActiveKey > 0) registerHotKey(HotKeys.ACTIVE_HOTKEY, 0, Settings.ActiveKey);
@@ -132,10 +136,8 @@ namespace KanchokuWS
             logger.InfoH("LEAVE");
         }
 
-        /// <summary>
-        /// グローバルホットキーの解除
-        /// </summary>
-        public static void DisableGlobalHotKeys()
+        /// <summary> グローバルホットキーの解除 </summary>
+        private static void disableGlobalHotKeys()
         {
             logger.InfoH("CALLED");
             unregisterHotKey(HotKeys.ACTIVE_HOTKEY);
@@ -148,7 +150,7 @@ namespace KanchokuWS
 
 
         /// <summary>
-        /// デコーダON用のグローバルホットキーの登録
+        /// デコーダON用のグローバルホットキーの登録 (デコーダがOFFになった時に呼ばれる)
         /// </summary>
         public static void RegisterActivateHotKeys()
         {
@@ -161,7 +163,7 @@ namespace KanchokuWS
         }
 
         /// <summary>
-        /// デコーダOFF用のグローバルホットキーの登録
+        /// デコーダOFF用のグローバルホットキーの登録 (デコーダがONになったときに呼ばれる)
         /// </summary>
         public static void RegisterDeactivateHotKeys()
         {
@@ -184,33 +186,33 @@ namespace KanchokuWS
             //registerHotKey(HotKeys.CTRL_G_HOTKEY);
             //registerHotKey(HotKeys.CTRL_SHIFT_G_HOTKEY);
 
-            globalSpecialStrokeHotkeys.Clear();
+            globalSpecialHotkeys.Clear();
 
             if (Settings.ConvertCtrlAtoHomeEffective) {
-                globalSpecialStrokeHotkeys.Add(HotKeys.HOTKEY_A);
+                globalSpecialHotkeys.Add(HotKeys.HOTKEY_A);
                 registerHotKey(HotKeys.HOTKEY_A);
                 registerHotKey(HotKeys.CTRL_A_HOTKEY);
             }
             if (Settings.ConvertCtrlDtoDeleteEffective) {
-                globalSpecialStrokeHotkeys.Add(HotKeys.HOTKEY_D);
+                globalSpecialHotkeys.Add(HotKeys.HOTKEY_D);
                 registerHotKey(HotKeys.HOTKEY_D);
                 registerHotKey(HotKeys.CTRL_D_HOTKEY);
             }
             if (Settings.ConvertCtrlEtoEndEffective) {
-                globalSpecialStrokeHotkeys.Add(HotKeys.HOTKEY_E);
+                globalSpecialHotkeys.Add(HotKeys.HOTKEY_E);
                 registerHotKey(HotKeys.HOTKEY_E);
                 registerHotKey(HotKeys.CTRL_E_HOTKEY);
             }
             if (Settings.ConvertCtrlHtoBackSpaceEffective) {
-                globalSpecialStrokeHotkeys.Add(HotKeys.HOTKEY_H);
+                globalSpecialHotkeys.Add(HotKeys.HOTKEY_H);
                 registerHotKey(HotKeys.HOTKEY_H);
                 registerHotKey(HotKeys.CTRL_H_HOTKEY);
             }
             if (Settings.ConvertCtrlBFNPtoArrowKeyEffective) {
-                globalSpecialStrokeHotkeys.Add(HotKeys.HOTKEY_B);
-                globalSpecialStrokeHotkeys.Add(HotKeys.HOTKEY_F);
-                globalSpecialStrokeHotkeys.Add(HotKeys.HOTKEY_N);
-                globalSpecialStrokeHotkeys.Add(HotKeys.HOTKEY_P);
+                globalSpecialHotkeys.Add(HotKeys.HOTKEY_B);
+                globalSpecialHotkeys.Add(HotKeys.HOTKEY_F);
+                globalSpecialHotkeys.Add(HotKeys.HOTKEY_N);
+                globalSpecialHotkeys.Add(HotKeys.HOTKEY_P);
                 registerHotKey(HotKeys.HOTKEY_B);
                 registerHotKey(HotKeys.HOTKEY_F);
                 registerHotKey(HotKeys.HOTKEY_N);
@@ -263,14 +265,14 @@ namespace KanchokuWS
         }
 
         /// <summary>
-        /// デコーダ用の HotKey を登録する
+        /// デコーダ用のストローク HotKey を登録する
         /// </summary>
-        public static void RegisterDecoderHotKeys()
+        public static void RegisterDecoderStrokeHotKeys()
         {
             logger.InfoH("CALLED");
             for (int id = 0; id < HotKeys.NUM_STROKE_HOTKEY; ++id) {
                 // 登録済みのグローバル特殊ホットキーは登録しない
-                if (!globalSpecialStrokeHotkeys.Contains(id)) registerHotKey(id);
+                if (!globalSpecialHotkeys.Contains(id)) registerHotKey(id);
 
                 int idShifted = id + HotKeys.SHIFT_FUNC_HOTKEY_ID_BASE;
                 // SHIFT+SPACE は特殊キー扱いなのでここでは登録しない
@@ -279,14 +281,14 @@ namespace KanchokuWS
         }
 
         /// <summary>
-        /// デコーダ用の HotKey 登録を解除する
+        /// デコーダ用のストローク HotKey 登録を解除する
         /// </summary>
-        public static void UnregisterDecoderHotKeys()
+        public static void UnregisterDecoderStrokeHotKeys()
         {
             logger.InfoH("CALLED");
             for (int id = 0; id < HotKeys.NUM_STROKE_HOTKEY; ++id) {
                 // 登録済みのグローバル特殊ホットキーは解除しない
-                if (!globalSpecialStrokeHotkeys.Contains(id)) unregisterHotKey(id);
+                if (!globalSpecialHotkeys.Contains(id)) unregisterHotKey(id);
 
                 int idShifted = id + HotKeys.SHIFT_FUNC_HOTKEY_ID_BASE;
                 // SHIFT+SPACE は特殊キー扱いなのでここでは解除しない
@@ -298,18 +300,18 @@ namespace KanchokuWS
         private static int ArrowHotkeysRegisterCount = 0;
 
         /// <summary>
-        /// BS や Ctrl-G などの特殊キーの登録
+        /// BS や Ctrl-G などのデコーダ用特殊キーの登録
         /// </summary>
-        public static void RegisterSpecialHotKeys()
+        public static void RegisterDecoderSpecialHotKeys()
         {
-            registerHotKey(HotKeys.CTRL_G_HOTKEY);
-            registerHotKey(HotKeys.CTRL_SHIFT_G_HOTKEY);
+            //registerHotKey(HotKeys.CTRL_G_HOTKEY);
+            //registerHotKey(HotKeys.CTRL_SHIFT_G_HOTKEY);
             //registerSpecialHotKey(HotKeys.CTRL_H_HOTKEY);
             if (Settings.UseCtrlJasEnter) registerHotKey(HotKeys.CTRL_J_HOTKEY);
             if (Settings.UseCtrlMasEnter) registerHotKey(HotKeys.CTRL_M_HOTKEY);
-            registerHotKey(HotKeys.CTRL_T_HOTKEY);
-            registerHotKey(HotKeys.CTRL_SHIFT_T_HOTKEY);
-            registerHotKey(HotKeys.CTRL_U_HOTKEY);
+            //registerHotKey(HotKeys.CTRL_T_HOTKEY);
+            //registerHotKey(HotKeys.CTRL_SHIFT_T_HOTKEY);
+            //registerHotKey(HotKeys.CTRL_U_HOTKEY);
             registerHotKey(HotKeys.ENTER_HOTKEY);
             registerHotKey(HotKeys.ESC_HOTKEY);
             registerHotKey(HotKeys.BS_HOTKEY);
@@ -318,23 +320,30 @@ namespace KanchokuWS
             if (Settings.UseCtrlSpaceKey) registerHotKey(HotKeys.CTRL_SPACE_HOTKEY);
             if (Settings.UseCtrlSpaceKey || Settings.UseShiftSpaceKey) registerHotKey(HotKeys.CTRL_SHIFT_SPACE_HOTKEY);
             //RegisterArrowHotKeys();   // 常に必要? 候補選択時だけでよくない?
+
+            decoderSpecialHotkeys.Clear();
+            foreach (int hk in Settings.DecoderSpecialHotkeys) {
+                decoderSpecialHotkeys.Add(hk);
+                registerHotKey(hk);
+            }
+
             logger.InfoH("Special Hotkeys Registered");
         }
 
 
         /// <summary>
-        /// BS や Ctrl-G などの特殊キーの解除
+        /// BS や Ctrl-G などのデコーダ用特殊キーの解除
         /// </summary>
-        public static void UnregisterSpecialHotKeys()
+        public static void UnregisterDecoderSpecialHotKeys()
         {
-            unregisterHotKey(HotKeys.CTRL_G_HOTKEY);
-            unregisterHotKey(HotKeys.CTRL_SHIFT_G_HOTKEY);
+            //unregisterHotKey(HotKeys.CTRL_G_HOTKEY);
+            //unregisterHotKey(HotKeys.CTRL_SHIFT_G_HOTKEY);
             //unregisterHotKey(HotKeys.CTRL_H_HOTKEY);
             unregisterHotKey(HotKeys.CTRL_J_HOTKEY);
             unregisterHotKey(HotKeys.CTRL_M_HOTKEY);
-            unregisterHotKey(HotKeys.CTRL_T_HOTKEY);
-            unregisterHotKey(HotKeys.CTRL_SHIFT_T_HOTKEY);
-            unregisterHotKey(HotKeys.CTRL_U_HOTKEY);
+            //unregisterHotKey(HotKeys.CTRL_T_HOTKEY);
+            //unregisterHotKey(HotKeys.CTRL_SHIFT_T_HOTKEY);
+            //unregisterHotKey(HotKeys.CTRL_U_HOTKEY);
             unregisterHotKey(HotKeys.ENTER_HOTKEY);
             unregisterHotKey(HotKeys.ESC_HOTKEY);
             unregisterHotKey(HotKeys.BS_HOTKEY);
@@ -343,6 +352,10 @@ namespace KanchokuWS
             if (Settings.UseCtrlSpaceKey) unregisterHotKey(HotKeys.CTRL_SPACE_HOTKEY);
             if (Settings.UseCtrlSpaceKey || Settings.UseShiftSpaceKey) unregisterHotKey(HotKeys.CTRL_SHIFT_SPACE_HOTKEY);
             //UnregisterArrowHotKeys();   // 常に必要? 候補選択時だけでよくない?
+
+            foreach (int hk in decoderSpecialHotkeys) {
+                unregisterHotKey(hk);
+            }
             logger.InfoH("Special Hotkeys Unregistered");
         }
 

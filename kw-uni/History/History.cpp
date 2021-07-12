@@ -1062,12 +1062,12 @@ namespace {
             }
         }
 
-        // Ctrl-U
-        void handleCtrlU() {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            STATE_COMMON->SetBothHistoryBlockFlag();
-            State::handleCtrlU();
-        }
+        //// Ctrl-U
+        //void handleCtrlU() {
+        //    _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+        //    STATE_COMMON->SetBothHistoryBlockFlag();
+        //    State::handleCtrlU();
+        //}
 
     private:
         // 次の候補を返す処理
