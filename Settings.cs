@@ -561,7 +561,7 @@ namespace KanchokuWS
             UseCtrlJasEnter = GetString("useCtrlJasEnter")._parseBool(true);
             UseCtrlMasEnter = GetString("useCtrlMasEnter")._parseBool(true);
 
-            ConvertCtrlSemiColonToDate = GetString("convertCtrlSemicolonToDate")._parseBool(false);
+            ConvertCtrlSemiColonToDate = GetString("convertCtrlSemicolonToDate")._parseBool(true);
             DateStringFormat = GetString("dateStringFormat", "yyyy/M/d|yyyyMMdd");
 
             //-------------------------------------------------------------------------------------

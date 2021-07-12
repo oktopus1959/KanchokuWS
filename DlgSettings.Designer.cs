@@ -283,6 +283,8 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.checkBox_multiAppEnabled = new System.Windows.Forms.CheckBox();
+            this.checkBox_bushuDicLogEnabled = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -295,8 +297,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.checkBox_multiAppEnabled = new System.Windows.Forms.CheckBox();
-            this.checkBox_bushuDicLogEnabled = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -2256,8 +2256,7 @@ namespace KanchokuWS
             this.checkBox_globalCtrlKeysEnabled.Size = new System.Drawing.Size(210, 19);
             this.checkBox_globalCtrlKeysEnabled.TabIndex = 0;
             this.checkBox_globalCtrlKeysEnabled.Text = "Ctrl修飾キー変換 (漢直/英字両モード)";
-            this.toolTip1.SetToolTip(this.checkBox_globalCtrlKeysEnabled, "漢直モード／英字モードの両方で有効なグローバルなCtrlキー変換を設定します。\r\n\r\nチェックをOFFにすると、すべてのグローバルなCtrlキー変換が無効になりま" +
-        "す。\r\n");
+            this.toolTip1.SetToolTip(this.checkBox_globalCtrlKeysEnabled, resources.GetString("checkBox_globalCtrlKeysEnabled.ToolTip"));
             this.checkBox_globalCtrlKeysEnabled.UseVisualStyleBackColor = true;
             this.checkBox_globalCtrlKeysEnabled.CheckedChanged += new System.EventHandler(this.checkBox_globalCtrlKeysEnabled_CheckedChanged);
             // 
@@ -2304,6 +2303,8 @@ namespace KanchokuWS
             this.checkBox_useLeftCtrl.Size = new System.Drawing.Size(106, 19);
             this.checkBox_useLeftCtrl.TabIndex = 0;
             this.checkBox_useLeftCtrl.Text = "左Controlを使う";
+            this.toolTip1.SetToolTip(this.checkBox_useLeftCtrl, "左Ctrlキーが押されている場合に変換を有効にします。\r\n\r\nチェックを外すと、左Ctrlキーが押された場合、本来の\r\nCtrlコードが対象アプリに渡ります。\r\n" +
+        "\r\n左右のCtrlキーを使い分けたい場合に設定してください。");
             this.checkBox_useLeftCtrl.UseVisualStyleBackColor = true;
             // 
             // checkBox_useRightCtrl
@@ -2314,6 +2315,8 @@ namespace KanchokuWS
             this.checkBox_useRightCtrl.Size = new System.Drawing.Size(106, 19);
             this.checkBox_useRightCtrl.TabIndex = 1;
             this.checkBox_useRightCtrl.Text = "右Controlを使う";
+            this.toolTip1.SetToolTip(this.checkBox_useRightCtrl, "右Ctrlキーが押されている場合に変換を有効にします。\r\n\r\nチェックを外すと、右Ctrlキーが押された場合、本来の\r\nCtrlコードが対象アプリに渡ります。\r\n" +
+        "\r\n左右のCtrlキーを使い分けたい場合に設定してください。");
             this.checkBox_useRightCtrl.UseVisualStyleBackColor = true;
             // 
             // textBox_targetClassNames
@@ -3261,6 +3264,26 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // checkBox_multiAppEnabled
+            // 
+            this.checkBox_multiAppEnabled.AutoSize = true;
+            this.checkBox_multiAppEnabled.Location = new System.Drawing.Point(21, 128);
+            this.checkBox_multiAppEnabled.Name = "checkBox_multiAppEnabled";
+            this.checkBox_multiAppEnabled.Size = new System.Drawing.Size(126, 19);
+            this.checkBox_multiAppEnabled.TabIndex = 4;
+            this.checkBox_multiAppEnabled.Text = "二重起動を許可する";
+            this.checkBox_multiAppEnabled.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_bushuDicLogEnabled
+            // 
+            this.checkBox_bushuDicLogEnabled.AutoSize = true;
+            this.checkBox_bushuDicLogEnabled.Location = new System.Drawing.Point(21, 88);
+            this.checkBox_bushuDicLogEnabled.Name = "checkBox_bushuDicLogEnabled";
+            this.checkBox_bushuDicLogEnabled.Size = new System.Drawing.Size(168, 19);
+            this.checkBox_bushuDicLogEnabled.TabIndex = 2;
+            this.checkBox_bushuDicLogEnabled.Text = "部首合成結果をログ出力する";
+            this.checkBox_bushuDicLogEnabled.UseVisualStyleBackColor = true;
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -3402,26 +3425,6 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // checkBox_multiAppEnabled
-            // 
-            this.checkBox_multiAppEnabled.AutoSize = true;
-            this.checkBox_multiAppEnabled.Location = new System.Drawing.Point(21, 128);
-            this.checkBox_multiAppEnabled.Name = "checkBox_multiAppEnabled";
-            this.checkBox_multiAppEnabled.Size = new System.Drawing.Size(126, 19);
-            this.checkBox_multiAppEnabled.TabIndex = 4;
-            this.checkBox_multiAppEnabled.Text = "二重起動を許可する";
-            this.checkBox_multiAppEnabled.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_bushuDicLogEnabled
-            // 
-            this.checkBox_bushuDicLogEnabled.AutoSize = true;
-            this.checkBox_bushuDicLogEnabled.Location = new System.Drawing.Point(21, 88);
-            this.checkBox_bushuDicLogEnabled.Name = "checkBox_bushuDicLogEnabled";
-            this.checkBox_bushuDicLogEnabled.Size = new System.Drawing.Size(168, 19);
-            this.checkBox_bushuDicLogEnabled.TabIndex = 2;
-            this.checkBox_bushuDicLogEnabled.Text = "部首合成結果をログ出力する";
-            this.checkBox_bushuDicLogEnabled.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
