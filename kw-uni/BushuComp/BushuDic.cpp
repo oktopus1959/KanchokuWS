@@ -468,7 +468,7 @@ namespace {
             if (cz) CHECK_AND_RETURN(tag ## "(x,cz)", findComp(x, cz)); \
             if (z && z != cz) CHECK_AND_RETURN(tag ## "(x,z)", findComp(x, z))
 
-#define _PARTS_MAX 64
+#define _PARTS_MAX 100
 
             if (!utils::is_hiragana(cb) && getBodies(cb).size() <= _PARTS_MAX) {
                 for (auto x : getBodies(cb)) {
