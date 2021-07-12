@@ -804,7 +804,7 @@ KanchokuWS では、辞書読み込み時に部品としての使用頻度を計
 - C# によるプログラミングでは、[DOBON.NET]()のコードスニペットを多数利用させていただいています。
 - その他、キーポイントとなる箇所にはソース中に参照したページのURLを記しています。
 - 本稿中のいくつかの図は、元祖漢直窓の[ドキュメント](https://github.com/kanchoku/kw/tree/master/doc) から引用させていただいています。
-- kwbushu.rev は元祖漢直窓の kwbushu.dic を改編したものです。
+- kwbushu.rev は元祖漢直窓の kwbushu.rev を改編したものです。
 - kwmaze.{slim,inflex}.dic は元祖漢直窓の kwmaze.dic を改編したものです。
 - kwmaze.ipa.dic は NAIST 松本研で作成された mecab-ipadic を改編したものです。
   - mecab-ipadic のライセンスについては COPYING.mecab-ipadic を参照ください。
