@@ -294,5 +294,10 @@ namespace KanchokuWS
             frmMain.Restart(true);
             logger.Debug("LEAVE");
         }
+
+        private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMain.ReloadBushuDic();
+        }
     }
 }

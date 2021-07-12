@@ -34,12 +34,13 @@
             this.設定画面ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.Restart_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RestartWithSave_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RestartWithDiscard_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.終了ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.RestartWithSave_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.RestartWithDiscard_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ReadBushuDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,24 +55,25 @@
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.設定画面ToolStripMenuItem,
+            this.ReadBushuDic_ToolStripMenuItem,
             this.toolStripSeparator1,
             this.Restart_ToolStripMenuItem,
             this.toolStripMenuItem1,
             this.終了ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 104);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(183, 126);
             // 
             // 設定画面ToolStripMenuItem
             // 
             this.設定画面ToolStripMenuItem.Name = "設定画面ToolStripMenuItem";
-            this.設定画面ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.設定画面ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.設定画面ToolStripMenuItem.Text = "設定画面";
             this.設定画面ToolStripMenuItem.Click += new System.EventHandler(this.Settings_ToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(179, 6);
             // 
             // Restart_ToolStripMenuItem
             // 
@@ -79,18 +81,32 @@
             this.RestartWithSave_ToolStripMenuItem,
             this.RestartWithDiscard_ToolStripMenuItem});
             this.Restart_ToolStripMenuItem.Name = "Restart_ToolStripMenuItem";
-            this.Restart_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.Restart_ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.Restart_ToolStripMenuItem.Text = "再起動";
+            // 
+            // RestartWithSave_ToolStripMenuItem
+            // 
+            this.RestartWithSave_ToolStripMenuItem.Name = "RestartWithSave_ToolStripMenuItem";
+            this.RestartWithSave_ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.RestartWithSave_ToolStripMenuItem.Text = "辞書内容を保存して再起動";
+            this.RestartWithSave_ToolStripMenuItem.Click += new System.EventHandler(this.RestartWithSave_ToolStripMenuItem_Click);
+            // 
+            // RestartWithDiscard_ToolStripMenuItem
+            // 
+            this.RestartWithDiscard_ToolStripMenuItem.Name = "RestartWithDiscard_ToolStripMenuItem";
+            this.RestartWithDiscard_ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.RestartWithDiscard_ToolStripMenuItem.Text = "辞書内容を破棄して再起動";
+            this.RestartWithDiscard_ToolStripMenuItem.Click += new System.EventHandler(this.RestartWithDiscard_ToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(179, 6);
             // 
             // 終了ToolStripMenuItem
             // 
             this.終了ToolStripMenuItem.Name = "終了ToolStripMenuItem";
-            this.終了ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.終了ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.終了ToolStripMenuItem.Text = "終了";
             this.終了ToolStripMenuItem.Click += new System.EventHandler(this.Exit_ToolStripMenuItem_Click);
             // 
@@ -109,19 +125,12 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // RestartWithSave_ToolStripMenuItem
+            // ReadBushuDic_ToolStripMenuItem
             // 
-            this.RestartWithSave_ToolStripMenuItem.Name = "RestartWithSave_ToolStripMenuItem";
-            this.RestartWithSave_ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.RestartWithSave_ToolStripMenuItem.Text = "辞書内容を保存して再起動";
-            this.RestartWithSave_ToolStripMenuItem.Click += new System.EventHandler(this.RestartWithSave_ToolStripMenuItem_Click);
-            // 
-            // RestartWithDiscard_ToolStripMenuItem
-            // 
-            this.RestartWithDiscard_ToolStripMenuItem.Name = "RestartWithDiscard_ToolStripMenuItem";
-            this.RestartWithDiscard_ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.RestartWithDiscard_ToolStripMenuItem.Text = "辞書内容を破棄して再起動";
-            this.RestartWithDiscard_ToolStripMenuItem.Click += new System.EventHandler(this.RestartWithDiscard_ToolStripMenuItem_Click);
+            this.ReadBushuDic_ToolStripMenuItem.Name = "ReadBushuDic_ToolStripMenuItem";
+            this.ReadBushuDic_ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.ReadBushuDic_ToolStripMenuItem.Text = "部首合成辞書再読込";
+            this.ReadBushuDic_ToolStripMenuItem.Click += new System.EventHandler(this.ReadBushuDic_ToolStripMenuItem_Click);
             // 
             // FrmKanchoku
             // 
@@ -157,6 +166,7 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolStripMenuItem RestartWithSave_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem RestartWithDiscard_ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ReadBushuDic_ToolStripMenuItem;
     }
 }
 

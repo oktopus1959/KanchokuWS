@@ -131,6 +131,7 @@ namespace KanchokuWS
             // 再起動
             if (bRestart) {
                 logger.InfoH("RESTART");
+                MultiAppChecker.Release();
                 Logger.Close();
                 Helper.StartProcess(SystemHelper.GetExePath(), null);
             }
@@ -1094,6 +1095,19 @@ namespace KanchokuWS
             logger.Debug("ENTER");
             Restart(true);
             logger.Debug("LEAVE");
+        }
+
+        // 部首合成辞書をリロードする
+        public void ReloadBushuDic()
+        {
+            if (SystemHelper.OKCancelDialog("部首合成辞書ファイルを再読み込みします。\r\n現在デコーダが保持している辞書内容は失われます。\r\nよろしいですか。")) {
+                ExecCmdDecoder("readBushuDic", null);
+            }
+        }
+
+        private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ReloadBushuDic();
         }
     }
 }

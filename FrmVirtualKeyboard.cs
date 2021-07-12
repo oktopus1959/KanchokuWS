@@ -1221,11 +1221,6 @@ namespace KanchokuWS
             }
         }
 
-        private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmMain.ExecCmdDecoder("readBushuDic", null);
-        }
-
         private void dgvHorizontal_SelectionChanged(object sender, EventArgs e)
         {
             dgvHorizontal.CurrentCell = null;   // どのセルも選択されていない状態に戻す
@@ -1251,6 +1246,11 @@ namespace KanchokuWS
             logger.Debug("ENTER");
             frmMain.Restart(true);
             logger.Debug("LEAVE");
+        }
+
+        private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMain.ReloadBushuDic();
         }
     }
 }
