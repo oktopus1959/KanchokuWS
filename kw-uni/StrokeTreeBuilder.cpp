@@ -266,20 +266,23 @@ void StrokeTableNode::AssignFucntion(const tstring& keys, const tstring& name) {
     size_t key = 0;
     while (idx < keyCodes.size()) {
         key = keyCodes[idx++];
-        if (key >= pNode->numChildren()) return;        // 子ノード数の範囲外ならばエラー
+        if (key >= pNode->numChildren()) break;        // 子ノード数の範囲外ならばエラー
         Node* p = pNode->getNth(key);
-        if (p == 0 || p->isFunctionNode()) break;       // 未割り当て、または機能ノードならばOK
+        if (p == 0 || p->isFunctionNode()) {
+            // 未割り当て、または機能ノードならばOK
+            if (idx == keyCodes.size()) {
+                // 打鍵列の最後まで行った
+                LOG_INFOH(_T("RESET: depth=%d, key=%d, name=%s"), idx, key, name.c_str());
+                pNode->setNth(key, FunctionNodeManager::CreateFunctionNodeByName(name));
+            }
+            break;
+        }
         if (p->isStrokeTableNode()) {
             pNode = dynamic_cast<StrokeTableNode*>(pNode->getNth(key));
             if (pNode != 0) continue;                   // 子ノードに
         }
-        return;     // エラー
+        break;     // エラー
     }
-    if (idx == keyCodes.size() && pNode != 0) {
-        LOG_INFOH(_T("RESET: depth=%d, key=%d, name=%s"), idx, key, name.c_str());
-        pNode->setNth(key, FunctionNodeManager::CreateFunctionNodeByName(name));
-    }
-
 }
 
 // ストローク木を作成してそのルートを返す
