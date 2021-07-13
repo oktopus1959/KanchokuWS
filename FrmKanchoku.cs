@@ -1100,7 +1100,7 @@ namespace KanchokuWS
         // 部首合成辞書をリロードする
         public void ReloadBushuDic()
         {
-            if (SystemHelper.OKCancelDialog("部首合成辞書ファイルを再読み込みします。\r\n現在デコーダが保持している辞書内容は失われます。\r\nよろしいですか。")) {
+            if (SystemHelper.OKCancelDialog("部首合成辞書ファイルを再読み込みします。\r\n現在デコーダが保持している部首合成辞書の内容は失われます。\r\nよろしいですか。")) {
                 ExecCmdDecoder("readBushuDic", null);
             }
         }
