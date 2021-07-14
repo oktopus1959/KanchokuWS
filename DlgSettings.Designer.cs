@@ -95,6 +95,8 @@ namespace KanchokuWS
             this.textBox_minLeghthViaClipboard = new System.Windows.Forms.TextBox();
             this.label53 = new System.Windows.Forms.Label();
             this.groupBox15 = new System.Windows.Forms.GroupBox();
+            this.checkBox_bushuDicLogEnabled = new System.Windows.Forms.CheckBox();
+            this.checkBox_multiAppEnabled = new System.Windows.Forms.CheckBox();
             this.checkBox_delayAfterProcessHotkey = new System.Windows.Forms.CheckBox();
             this.checkBox_loggingHotKeyInfo = new System.Windows.Forms.CheckBox();
             this.checkBox_loggingActiveWindowInfo = new System.Windows.Forms.CheckBox();
@@ -155,11 +157,11 @@ namespace KanchokuWS
             this.button_fontColorClose = new System.Windows.Forms.Button();
             this.button_fontColorEnter = new System.Windows.Forms.Button();
             this.tabPage_keyAssign = new System.Windows.Forms.TabPage();
+            this.label_okResultKeyAssign = new System.Windows.Forms.Label();
             this.groupBox32 = new System.Windows.Forms.GroupBox();
             this.label71 = new System.Windows.Forms.Label();
             this.groupBox31 = new System.Windows.Forms.GroupBox();
             this.label69 = new System.Windows.Forms.Label();
-            this.label_okResultKeyAssign = new System.Windows.Forms.Label();
             this.button_keyAssignClose = new System.Windows.Forms.Button();
             this.button_keyAssignEnter = new System.Windows.Forms.Button();
             this.groupBox30 = new System.Windows.Forms.GroupBox();
@@ -190,8 +192,6 @@ namespace KanchokuWS
             this.groupBox18 = new System.Windows.Forms.GroupBox();
             this.textBox_dateStringFormat = new System.Windows.Forms.TextBox();
             this.groupBox22 = new System.Windows.Forms.GroupBox();
-            this.groupBox23 = new System.Windows.Forms.GroupBox();
-            this.label32 = new System.Windows.Forms.Label();
             this.checkBox_ctrlMasEnter = new System.Windows.Forms.CheckBox();
             this.checkBox_ctrlJasEnter = new System.Windows.Forms.CheckBox();
             this.groupBox_globalCtrlKeys = new System.Windows.Forms.GroupBox();
@@ -283,8 +283,8 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.checkBox_multiAppEnabled = new System.Windows.Forms.CheckBox();
-            this.checkBox_bushuDicLogEnabled = new System.Windows.Forms.CheckBox();
+            this.label32 = new System.Windows.Forms.Label();
+            this.comboBox_fullEscapeKey = new System.Windows.Forms.ComboBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -324,7 +324,6 @@ namespace KanchokuWS
             this.tabPage_ctrlKeys.SuspendLayout();
             this.groupBox18.SuspendLayout();
             this.groupBox22.SuspendLayout();
-            this.groupBox23.SuspendLayout();
             this.groupBox_globalCtrlKeys.SuspendLayout();
             this.groupBox11.SuspendLayout();
             this.tabPage_history.SuspendLayout();
@@ -538,7 +537,8 @@ namespace KanchokuWS
             this.textBox_hotkeyCharsFile.Size = new System.Drawing.Size(175, 23);
             this.textBox_hotkeyCharsFile.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox_hotkeyCharsFile, "HotKeyから文字への変換を定義するファイル\r\n\r\n打鍵されたキーを文字に変換してそのまま出力する場合に必要となる、\r\nHotKey⇒文字のマッピング定義ファイ" +
-        "ルを指定します。\r\n\r\nファイルの指定がない場合は、106キーボードの定義が使用されます。");
+        "ルを指定します。\r\n\r\nファイルの指定がない場合は、キーボードファイルと同種の定義ファイルが\r\n使用されます。\r\n例：キーボードファイルが 106.key なら" +
+        " chars.106.txt が使われる。");
             // 
             // label10
             // 
@@ -1171,6 +1171,26 @@ namespace KanchokuWS
             this.groupBox15.TabIndex = 5;
             this.groupBox15.TabStop = false;
             this.groupBox15.Text = "開発者用設定";
+            // 
+            // checkBox_bushuDicLogEnabled
+            // 
+            this.checkBox_bushuDicLogEnabled.AutoSize = true;
+            this.checkBox_bushuDicLogEnabled.Location = new System.Drawing.Point(21, 88);
+            this.checkBox_bushuDicLogEnabled.Name = "checkBox_bushuDicLogEnabled";
+            this.checkBox_bushuDicLogEnabled.Size = new System.Drawing.Size(168, 19);
+            this.checkBox_bushuDicLogEnabled.TabIndex = 2;
+            this.checkBox_bushuDicLogEnabled.Text = "部首合成結果をログ出力する";
+            this.checkBox_bushuDicLogEnabled.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_multiAppEnabled
+            // 
+            this.checkBox_multiAppEnabled.AutoSize = true;
+            this.checkBox_multiAppEnabled.Location = new System.Drawing.Point(21, 128);
+            this.checkBox_multiAppEnabled.Name = "checkBox_multiAppEnabled";
+            this.checkBox_multiAppEnabled.Size = new System.Drawing.Size(126, 19);
+            this.checkBox_multiAppEnabled.TabIndex = 4;
+            this.checkBox_multiAppEnabled.Text = "二重起動を許可する";
+            this.checkBox_multiAppEnabled.UseVisualStyleBackColor = true;
             // 
             // checkBox_delayAfterProcessHotkey
             // 
@@ -1824,6 +1844,18 @@ namespace KanchokuWS
             this.tabPage_keyAssign.Text = "機能キー割当";
             this.tabPage_keyAssign.UseVisualStyleBackColor = true;
             // 
+            // label_okResultKeyAssign
+            // 
+            this.label_okResultKeyAssign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label_okResultKeyAssign.AutoSize = true;
+            this.label_okResultKeyAssign.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_okResultKeyAssign.Location = new System.Drawing.Point(499, 285);
+            this.label_okResultKeyAssign.Name = "label_okResultKeyAssign";
+            this.label_okResultKeyAssign.Size = new System.Drawing.Size(65, 15);
+            this.label_okResultKeyAssign.TabIndex = 13;
+            this.label_okResultKeyAssign.Text = "設定しました";
+            this.label_okResultKeyAssign.Visible = false;
+            // 
             // groupBox32
             // 
             this.groupBox32.Controls.Add(this.label71);
@@ -1867,18 +1899,6 @@ namespace KanchokuWS
     "ンタを置いて表示\nされるツールチップを参照してください。\n\n例：(カッコ内は 106 key による打鍵文字)\n交ぜ書き変換 「23,26」  (f j)\n全角" +
     "変換(モード) 「42」 (^)\nカタカナ変換(一括) 「47」 (])";
             this.toolTip1.SetToolTip(this.label69, resources.GetString("label69.ToolTip"));
-            // 
-            // label_okResultKeyAssign
-            // 
-            this.label_okResultKeyAssign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label_okResultKeyAssign.AutoSize = true;
-            this.label_okResultKeyAssign.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultKeyAssign.Location = new System.Drawing.Point(499, 285);
-            this.label_okResultKeyAssign.Name = "label_okResultKeyAssign";
-            this.label_okResultKeyAssign.Size = new System.Drawing.Size(65, 15);
-            this.label_okResultKeyAssign.TabIndex = 13;
-            this.label_okResultKeyAssign.Text = "設定しました";
-            this.label_okResultKeyAssign.Visible = false;
             // 
             // button_keyAssignClose
             // 
@@ -2174,7 +2194,8 @@ namespace KanchokuWS
             // 
             // groupBox22
             // 
-            this.groupBox22.Controls.Add(this.groupBox23);
+            this.groupBox22.Controls.Add(this.comboBox_fullEscapeKey);
+            this.groupBox22.Controls.Add(this.label32);
             this.groupBox22.Controls.Add(this.checkBox_ctrlMasEnter);
             this.groupBox22.Controls.Add(this.checkBox_ctrlJasEnter);
             this.groupBox22.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
@@ -2185,35 +2206,10 @@ namespace KanchokuWS
             this.groupBox22.TabStop = false;
             this.groupBox22.Text = "漢直モードでのその他のCtrl修飾キー";
             // 
-            // groupBox23
-            // 
-            this.groupBox23.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox23.Controls.Add(this.label32);
-            this.groupBox23.Location = new System.Drawing.Point(8, 69);
-            this.groupBox23.Name = "groupBox23";
-            this.groupBox23.Size = new System.Drawing.Size(254, 81);
-            this.groupBox23.TabIndex = 2;
-            this.groupBox23.TabStop = false;
-            this.groupBox23.Text = "補足";
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label32.Location = new System.Drawing.Point(7, 14);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(239, 60);
-            this.label32.TabIndex = 0;
-            this.label32.Text = "他に以下の Ctrl修飾キーが使われます：\r\n・Ctrl-T : 仮想鍵盤表示、打鍵ヘルプ切り替え\r\n・Ctrl-Shift-T : 同上、打鍵ヘルプの逆順切り替" +
-    "え\r\n・Ctrl-G : 各種取消動作、履歴検索のブロック\r\n";
-            this.toolTip1.SetToolTip(this.label32, resources.GetString("label32.ToolTip"));
-            // 
             // checkBox_ctrlMasEnter
             // 
             this.checkBox_ctrlMasEnter.AutoSize = true;
-            this.checkBox_ctrlMasEnter.Location = new System.Drawing.Point(16, 41);
+            this.checkBox_ctrlMasEnter.Location = new System.Drawing.Point(8, 129);
             this.checkBox_ctrlMasEnter.Name = "checkBox_ctrlMasEnter";
             this.checkBox_ctrlMasEnter.Size = new System.Drawing.Size(188, 19);
             this.checkBox_ctrlMasEnter.TabIndex = 1;
@@ -2223,7 +2219,7 @@ namespace KanchokuWS
             // checkBox_ctrlJasEnter
             // 
             this.checkBox_ctrlJasEnter.AutoSize = true;
-            this.checkBox_ctrlJasEnter.Location = new System.Drawing.Point(16, 19);
+            this.checkBox_ctrlJasEnter.Location = new System.Drawing.Point(8, 107);
             this.checkBox_ctrlJasEnter.Name = "checkBox_ctrlJasEnter";
             this.checkBox_ctrlJasEnter.Size = new System.Drawing.Size(181, 19);
             this.checkBox_ctrlJasEnter.TabIndex = 0;
@@ -3264,25 +3260,23 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // checkBox_multiAppEnabled
+            // label32
             // 
-            this.checkBox_multiAppEnabled.AutoSize = true;
-            this.checkBox_multiAppEnabled.Location = new System.Drawing.Point(21, 128);
-            this.checkBox_multiAppEnabled.Name = "checkBox_multiAppEnabled";
-            this.checkBox_multiAppEnabled.Size = new System.Drawing.Size(126, 19);
-            this.checkBox_multiAppEnabled.TabIndex = 4;
-            this.checkBox_multiAppEnabled.Text = "二重起動を許可する";
-            this.checkBox_multiAppEnabled.UseVisualStyleBackColor = true;
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(8, 23);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(159, 15);
+            this.label32.TabIndex = 2;
+            this.label32.Text = "取消、履歴ブロッカー設定  Ctrl-";
             // 
-            // checkBox_bushuDicLogEnabled
+            // comboBox_fullEscapeKey
             // 
-            this.checkBox_bushuDicLogEnabled.AutoSize = true;
-            this.checkBox_bushuDicLogEnabled.Location = new System.Drawing.Point(21, 88);
-            this.checkBox_bushuDicLogEnabled.Name = "checkBox_bushuDicLogEnabled";
-            this.checkBox_bushuDicLogEnabled.Size = new System.Drawing.Size(168, 19);
-            this.checkBox_bushuDicLogEnabled.TabIndex = 2;
-            this.checkBox_bushuDicLogEnabled.Text = "部首合成結果をログ出力する";
-            this.checkBox_bushuDicLogEnabled.UseVisualStyleBackColor = true;
+            this.comboBox_fullEscapeKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_fullEscapeKey.FormattingEnabled = true;
+            this.comboBox_fullEscapeKey.Location = new System.Drawing.Point(164, 20);
+            this.comboBox_fullEscapeKey.Name = "comboBox_fullEscapeKey";
+            this.comboBox_fullEscapeKey.Size = new System.Drawing.Size(49, 23);
+            this.comboBox_fullEscapeKey.TabIndex = 3;
             // 
             // textBox_onSelectedBackColor
             // 
@@ -3494,8 +3488,6 @@ namespace KanchokuWS
             this.groupBox18.PerformLayout();
             this.groupBox22.ResumeLayout(false);
             this.groupBox22.PerformLayout();
-            this.groupBox23.ResumeLayout(false);
-            this.groupBox23.PerformLayout();
             this.groupBox_globalCtrlKeys.ResumeLayout(false);
             this.groupBox_globalCtrlKeys.PerformLayout();
             this.groupBox11.ResumeLayout(false);
@@ -3607,8 +3599,6 @@ namespace KanchokuWS
         private System.Windows.Forms.RadioButton radioButton_includeFollowings;
         private System.Windows.Forms.RadioButton radioButton_excludeFollowings;
         private System.Windows.Forms.GroupBox groupBox22;
-        private System.Windows.Forms.GroupBox groupBox23;
-        private System.Windows.Forms.Label label32;
         private System.Windows.Forms.CheckBox checkBox_ctrlMasEnter;
         private System.Windows.Forms.CheckBox checkBox_ctrlJasEnter;
         private System.Windows.Forms.GroupBox groupBox_globalCtrlKeys;
@@ -3797,5 +3787,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label71;
         private System.Windows.Forms.CheckBox checkBox_bushuDicLogEnabled;
         private System.Windows.Forms.CheckBox checkBox_multiAppEnabled;
+        private System.Windows.Forms.ComboBox comboBox_fullEscapeKey;
+        private System.Windows.Forms.Label label32;
     }
 }

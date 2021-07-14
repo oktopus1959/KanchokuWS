@@ -117,36 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="checkBox_globalCtrlKeysEnabled.ToolTip" xml:space="preserve">
-    <value>漢直モード／英字モードの両方で有効なグローバルなCtrlキー変換を設定します。
-
-チェックをOFFにすると、すべてのグローバルなCtrlキー変換が無効になります。
-
-グローバルなCtrlキー変換では、常時、Ctrl修飾されたキーと無修飾キーの両方を
-横取りし、漢直窓Sから再度 keybd_event でキーの送出を行っています。
-そのため、出力先アプリによってはキーを受け取れないものもあります。
-その場合は、いったん、当設定をOFFにしてください。</value>
-  </data>
-  <data name="checkBox_CtrlSemicolon.ToolTip" xml:space="preserve">
-    <value>Ctrl+; (セミコロン) および Ctrl+Shift+; で今日の日付を出力する
-
-この設定は、下記のウィンドウClassNameリストを無視して、
-すべてのウィンドウに対して有効となります。
-
-Ctrl+; を3秒以内に続けて打鍵すると、「日付フォーマット」で設定した
-フォーマットを1つめから切り替えながら使用します。
-
-Ctrl+Shift+; を3秒以内に続けて打鍵すると、「日付フォーマット」で設定した
-フォーマットを末尾から逆順に切り替えながら使用します。
-
-Ctrl+; の直後に Ctlrl+Shift+; を打つと取り消しになります。(逆も同じ)
-
-たまに Shift+Backspace を受け付けないアプリがあります。
-その場合、前回の出力が消去されませんのでご注意を。</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
@@ -393,17 +363,32 @@ Ctrl+; ⇒ 2021/09/23
 Ctrl+Shift+; ⇒ 令和3年9月23日
 となります。</value>
   </data>
-  <data name="label32.ToolTip" xml:space="preserve">
-    <value>Ctrl-G は、厳密に言うと、「出力文字列の採取ブロッカー設定」です。
-Ctrl-G を押すと、ミニバッファがクリアされ、それまでに出力した
-文字列が採取できなくなります。
-したがって、履歴検索の他にも、交ぜ書き変換や(後置)カタカナ変換にも
-効いてきます。
-「ブロッカー」は Ctrl-G の他に Enter キーでも設定されます。
+  <data name="checkBox_globalCtrlKeysEnabled.ToolTip" xml:space="preserve">
+    <value>漢直モード／英字モードの両方で有効なグローバルなCtrlキー変換を設定します。
 
-この「ブロッカー」は Ctrl-Shift-G で解除することができます。
-また「Ctrl-Space」は、このブロッカーを解除してから履歴検索を行います。
-</value>
+チェックをOFFにすると、すべてのグローバルなCtrlキー変換が無効になります。
+
+グローバルなCtrlキー変換では、常時、Ctrl修飾されたキーと無修飾キーの両方を
+横取りし、漢直窓Sから再度 keybd_event でキーの送出を行っています。
+そのため、出力先アプリによってはキーを受け取れないものもあります。
+その場合は、いったん、当設定をOFFにしてください。</value>
+  </data>
+  <data name="checkBox_CtrlSemicolon.ToolTip" xml:space="preserve">
+    <value>Ctrl+; (セミコロン) および Ctrl+Shift+; で今日の日付を出力する
+
+この設定は、下記のウィンドウClassNameリストを無視して、
+すべてのウィンドウに対して有効となります。
+
+Ctrl+; を3秒以内に続けて打鍵すると、「日付フォーマット」で設定した
+フォーマットを1つめから切り替えながら使用します。
+
+Ctrl+Shift+; を3秒以内に続けて打鍵すると、「日付フォーマット」で設定した
+フォーマットを末尾から逆順に切り替えながら使用します。
+
+Ctrl+; の直後に Ctlrl+Shift+; を打つと取り消しになります。(逆も同じ)
+
+たまに Shift+Backspace を受け付けないアプリがあります。
+その場合、前回の出力が消去されませんのでご注意を。</value>
   </data>
   <data name="textBox_histKanjiWordMinLengthEx.ToolTip" xml:space="preserve">
     <value>難打鍵文字を含む場合の自動履歴登録最小長を設定します。

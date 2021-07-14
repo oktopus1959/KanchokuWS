@@ -234,7 +234,7 @@ namespace KanchokuWS
         /// <summary>ストロークヘルプローテーション</summary>
         public static string StrokeHelpRotationKey { get; set; }
 
-        public static HashSet<int> DecoderSpecialHotkeys = new HashSet<int>();
+        public static HashSet<int> DecoderSpecialHotkeys { get; set; } = new HashSet<int>();
 
         //-------------------------------------------------------------------------------------
         // Ctrlキー
@@ -594,7 +594,7 @@ namespace KanchokuWS
             DecoderSettings["firstUse"] = $"{!UserKanchokuIni.Singleton.IsIniFileExist}";
             BushuAssocFile = addDecoderSetting("bushuAssocFile", "kwassoc.txt");
             BushuFile = addDecoderSetting("bushuFile", "bushu", "kwbushu.rev");
-            CharsDefFile = addDecoderSetting("charsDefFile", "chars.106.txt");
+            CharsDefFile = addDecoderSetting("charsDefFile", $"chars.{KeyboardFile._split('.')._getNth(0)._orElse("106")}.txt");
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
             TableFile = addDecoderSetting("tableFile", "t.tbl");
             //addDecoderSetting("strokeHelpFile");
@@ -630,11 +630,16 @@ namespace KanchokuWS
             ConvertJaComma = addDecoderSetting("convertJaComma", false);                        // 「、」と「，」の相互変換
 
             // キー割当
+            FullEscapeKey = GetString("fullEscapeKey", "G").Trim();
+            VirtualKeys.AddCtrlHotkey(FullEscapeKey, HotKeys.FULL_ESCAPE_HOTKEY, HotKeys.UNBLOCK_HOTKEY);
+            StrokeHelpRotationKey = GetString("strokeHelpRotationKey", "T");
+            VirtualKeys.AddCtrlHotkey(StrokeHelpRotationKey, HotKeys.STROKE_HELP_ROTATION_HOTKEY, HotKeys.STROKE_HELP_UNROTATION_HOTKEY);
+
             DecoderSpecialHotkeys.Clear();
-            DecoderSpecialHotkeys.Add(HotKeys.CTRL_G_HOTKEY);
-            DecoderSpecialHotkeys.Add(HotKeys.CTRL_SHIFT_G_HOTKEY);
-            DecoderSpecialHotkeys.Add(HotKeys.CTRL_T_HOTKEY);
-            DecoderSpecialHotkeys.Add(HotKeys.CTRL_SHIFT_T_HOTKEY);
+            DecoderSpecialHotkeys.Add(HotKeys.FULL_ESCAPE_HOTKEY);
+            DecoderSpecialHotkeys.Add(HotKeys.UNBLOCK_HOTKEY);
+            DecoderSpecialHotkeys.Add(HotKeys.STROKE_HELP_ROTATION_HOTKEY);
+            DecoderSpecialHotkeys.Add(HotKeys.STROKE_HELP_UNROTATION_HOTKEY);
 
             ZenkakuModeKeySeq = addDecoderSetting("zenkakuModeKeySeq");
             ZenkakuOneCharKeySeq = addDecoderSetting("zenkakuOneCharKeySeq");

@@ -50,6 +50,51 @@ namespace KanchokuWS
             return strokeVKeys._getNth(hotkey);
         }
 
+        private static Dictionary<string, uint> faceToVkey = new Dictionary<string, uint>() {
+            {"A", (uint)Keys.A },
+            {"B", (uint)Keys.B },
+            {"C", (uint)Keys.C },
+            {"D", (uint)Keys.D },
+            {"E", (uint)Keys.E },
+            {"F", (uint)Keys.F },
+            {"G", (uint)Keys.G },
+            {"H", (uint)Keys.H },
+            {"I", (uint)Keys.I },
+            {"J", (uint)Keys.J },
+            {"K", (uint)Keys.K },
+            {"L", (uint)Keys.L },
+            {"M", (uint)Keys.M },
+            {"N", (uint)Keys.N },
+            {"O", (uint)Keys.O },
+            {"P", (uint)Keys.P },
+            {"Q", (uint)Keys.Q },
+            {"R", (uint)Keys.R },
+            {"S", (uint)Keys.S },
+            {"T", (uint)Keys.T },
+            {"U", (uint)Keys.U },
+            {"V", (uint)Keys.V },
+            {"W", (uint)Keys.W },
+            {"X", (uint)Keys.X },
+            {"Y", (uint)Keys.Y },
+            {"Z", (uint)Keys.Z },
+            {":*", (uint)Keys.Oem1 },           // ba/106
+            {";:", (uint)Keys.Oem1 },           // ba/101
+            {";+", (uint)Keys.Oemplus },        // bb/106
+            {",<", (uint)Keys.Oemcomma },       // bc
+            {"-=", (uint)Keys.OemMinus },       // bd/106
+            {"-_", (uint)Keys.OemMinus },       // bd/101
+            {".>", (uint)Keys.OemPeriod },      // be
+            {"/?", (uint)Keys.Oem2 },           // bf
+            {"@`", (uint)Keys.Oem3 },           // c0/106
+            {"[{", (uint)Keys.Oem4 },           // db
+            {"\\|", (uint)Keys.Oem5 },          // dc
+            {"]}", (uint)Keys.Oem6 },           // dd
+            {"^~", (uint)Keys.Oem7 },           // de/106
+            {"'\"", (uint)Keys.Oem7 },          // de/101
+            {"\\_", (uint)Keys.Oem102 },        // e2/106
+            {"\\ ", (uint)Keys.Oem102 },        // e2/101
+        };
+
         public static VKeyCombo EmptyCombo = new VKeyCombo(0, 0);
 
         /// <summary>
@@ -147,6 +192,15 @@ namespace KanchokuWS
             addHotkeyAndCombo(HotKeys.CTRL_SHIFT_SEMICOLON_HOTKEY, KeyModifiers.MOD_CONTROL|KeyModifiers.MOD_SHIFT, (uint)Keys.Oemplus);
             addHotkeyAndCombo(HotKeys.CTRL_COLON_HOTKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Oem1);
             addHotkeyAndCombo(HotKeys.CTRL_SHIFT_COLON_HOTKEY, KeyModifiers.MOD_CONTROL|KeyModifiers.MOD_SHIFT, (uint)Keys.Oem1);
+        }
+
+        public static void AddCtrlHotkey(string faces, int ctrlHotkey, int ctrlShiftHotkey)
+        {
+            uint vkey = faceToVkey._safeGet(faces);
+            if (vkey != 0) {
+                if (ctrlHotkey > 0) addHotkeyAndCombo(ctrlHotkey, KeyModifiers.MOD_CONTROL, vkey);
+                if (ctrlShiftHotkey > 0) addHotkeyAndCombo(ctrlShiftHotkey, KeyModifiers.MOD_CONTROL|KeyModifiers.MOD_SHIFT, vkey);
+            }
         }
 
         /// <summary>

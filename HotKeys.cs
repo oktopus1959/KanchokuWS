@@ -87,8 +87,11 @@ namespace KanchokuWS
         public const int FULL_ESCAPE_HOTKEY = ACTIVEIME_HOTKEY + 1;     // モードを抜けたり、履歴ブロックをしたりする
         public const int UNBLOCK_HOTKEY = FULL_ESCAPE_HOTKEY + 1;       // 改行コード除去と履歴ブロックの解除
 
-        public const int NEXT_CAND_TRIGGER_HOTKEY = UNBLOCK_HOTKEY + 1;             // 履歴検索開始&次の候補選択
-        public const int PREV_CAND_TRIGGER_HOTKEY = NEXT_CAND_TRIGGER_HOTKEY + 1;   // 履歴検索開始&前の候補選択
+        public const int STROKE_HELP_ROTATION_HOTKEY = UNBLOCK_HOTKEY + 1;                  // 打鍵ヘルプローテーションキー
+        public const int STROKE_HELP_UNROTATION_HOTKEY = STROKE_HELP_ROTATION_HOTKEY + 1;   // 打鍵ヘルプ逆ローテーションキー
+
+        public const int NEXT_CAND_TRIGGER_HOTKEY = STROKE_HELP_UNROTATION_HOTKEY + 1;  // 履歴検索開始&次の候補選択
+        public const int PREV_CAND_TRIGGER_HOTKEY = NEXT_CAND_TRIGGER_HOTKEY + 1;       // 履歴検索開始&前の候補選択
 
         public const int DATE_STRING_HOTKEY1 = PREV_CAND_TRIGGER_HOTKEY + 1;    // 今日の日付文字列を出力
         public const int DATE_STRING_HOTKEY2 = DATE_STRING_HOTKEY1 + 1;         // 今日の日付文字列を出力

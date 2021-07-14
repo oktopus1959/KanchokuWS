@@ -215,7 +215,7 @@ namespace KanchokuWS
 
             // ファイル
             textBox_keyboardFile.Text = Settings.KeyboardFile;      // Settings.GetString("keyboard", Settings.KeyboardFile);
-            textBox_hotkeyCharsFile.Text = Settings.CharsDefFile;   // Settings.GetString("charsDefFile");
+            textBox_hotkeyCharsFile.Text = Settings.GetString("charsDefFile");
             textBox_easyCharsFile.Text = Settings.EasyCharsFile;    // Settings.GetString("easyCharsFile");
             textBox_tableFile.Text = Settings.TableFile;            // Settings.GetString("tableFile");
             textBox_strokeHelpFile.Text = Settings.StrokeHelpFile;  // Settings.GetString("strokeHelpFile", Settings.StrokeHelpFile);
@@ -711,6 +711,9 @@ namespace KanchokuWS
 
             checkBox_ctrlJasEnter.Checked = Settings.UseCtrlJasEnter;
             checkBox_ctrlMasEnter.Checked = Settings.UseCtrlMasEnter;
+
+            comboBox_key_setItems(comboBox_fullEscapeKey);
+            comboBox_fullEscapeKey._selectItem(" " + Settings.FullEscapeKey);
         }
 
         private void setCtrlKeysStatusChecker()
@@ -739,6 +742,8 @@ namespace KanchokuWS
 
             checkerCtrlKeys.Add(checkBox_ctrlJasEnter);
             checkerCtrlKeys.Add(checkBox_ctrlMasEnter);
+
+            checkerCtrlKeys.Add(comboBox_fullEscapeKey);
 
             checkerAll.Add(checkerCtrlKeys);
         }
@@ -769,6 +774,8 @@ namespace KanchokuWS
 
             Settings.SetUserIni("useCtrlJasEnter", checkBox_ctrlJasEnter.Checked);
             Settings.SetUserIni("useCtrlMasEnter", checkBox_ctrlMasEnter.Checked);
+
+            Settings.SetUserIni("fullEscapeKey", comboBox_fullEscapeKey.Text.Trim());
 
             Settings.ReadIniFile();
 
@@ -1275,6 +1282,29 @@ namespace KanchokuWS
             textBox_vkbShowStrokeCount.Enabled = radioButton_normalVkb.Checked;
         }
 
+        private string[] ctrlKeyItems;
+
+        private string[] getCtrlKeyItems()
+        {
+            if (ctrlKeyItems._isEmpty()) {
+                var items = new List<string>(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" });
+                char[] data = frmMain.CallDecoderFunc("getCharsOrderedByHotkey", null);
+                if (data._notEmpty()) {
+                    for (int i = 0; i < HotKeys.NUM_STROKE_HOTKEY; ++i) {
+                        if ((data[i] > ' ' && data[i] < '0') || (data[i] > '9' && data[i] < 'A') || (data[i] > 'Z' && data[i] < 'a') || data[i] > 'z') {
+                            items.Add($"{data[i]}{data[i+HotKeys.NUM_STROKE_HOTKEY]}");
+                        }
+                    }
+                }
+                ctrlKeyItems = items.Select(x => " " + x).ToArray();
+            }
+            return ctrlKeyItems;
+        }
+
+        private void comboBox_key_setItems(ComboBox comboBox)
+        {
+            if (comboBox.Items.Count == 0) comboBox.Items.AddRange(getCtrlKeyItems());
+        }
     }
 }
 

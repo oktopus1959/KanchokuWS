@@ -295,6 +295,9 @@ public:
             } else if (cmd == _T("makeKatakanaTable")) {
                 // カタカナ50音図の作成
                 makeKatakanaTable(outParams);
+            } else if (cmd == _T("getCharsOrderedByHotkey")) {
+                // Hotkey順に並んだ通常文字列とシフト文字列を返す
+                getCharsOrderedByHotkey(outParams);
             } else if (cmd == _T("reloadSettings")) {
                 // 設定の再読み込み
                 if (items.size() > 1 && !items[1].empty()) reloadSettings(items[1]);
@@ -529,6 +532,11 @@ public:
     // カタカナ50音図配列を作成する (アカサタナハマヤラワ、ァガザダバパャヮ)
     void makeKatakanaTable(DecoderOutParams* outParam) {
         VkbTableMaker::MakeVkbKatakanaTable(outParam->faceStrings);
+    }
+
+    // Hotkey順に並んだ通常文字列とシフト文字列を返す
+    void getCharsOrderedByHotkey(DecoderOutParams* outParam) {
+        HOTKEY_TO_CHARS->GetCharsOrderedByHotkey(outParam->faceStrings);
     }
 
     void makeBushuCompHelp(wchar_t ch) {

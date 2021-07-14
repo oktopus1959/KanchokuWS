@@ -41,6 +41,19 @@ public:
         }
         return HOTKEY_NAME_FROM_ID(hotkeyId);
     }
+
+    // Hotkey順に並んだ通常文字列とシフト文字列を返す
+    void GetCharsOrderedByHotkey(wchar_t* table) {
+        LOG_INFO(_T("CALLED"));
+        std::map<wchar_t, size_t> indexMap;
+
+        for (size_t i = 0; i < NUM_STROKE_HOTKEY; ++i) {
+            table[i] = normalChars[i];
+            table[i + NUM_STROKE_HOTKEY] = shiftedChars[i];
+        }
+    }
+
+
 };
 #define HOTKEY_TO_CHARS (HotkeyToChars::Singleton)
 
