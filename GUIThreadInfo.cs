@@ -133,9 +133,12 @@ namespace KanchokuWS
         /// <returns></returns>
         public void GetScreenCaretPos(ref Rectangle rect)
         {
+            RECT rt;
+            GetForegroundWindowRect(out rt);
+
             if (hwndFocus != IntPtr.Zero) {
                 // IAccessible を使ってカレット位置を取得する
-                getCaretPos(hwndFocus, ref rect);
+                getCaretPos(hwndFocus, ref rect, rt, Settings.ScreenDpiRate);
                 if (Logger.IsDebugEnabled) {
                     logger.Debug($"prev: left={prevCaretRect.iLeft}, top={prevCaretRect.iTop}, right={prevCaretRect.iRight}, bottom={prevCaretRect.iBottom}");
                     logger.Debug($"curr: left={rect.Left}, top={rect.Top}, right={rect.Right}, bottom={rect.Bottom}");
@@ -163,9 +166,8 @@ namespace KanchokuWS
                     }
                 }
             }
+
             // カレット位置が取得できなかったか、何回か同じ位置にあったら、ウィンドウ右下に位置させる
-            RECT rt;
-            GetForegroundWindowRect(out rt);
             rect.X = rt.iRight - 250;
             rect.Y = rt.iBottom - 40;
             rect.Width = 2;
@@ -218,7 +220,7 @@ namespace KanchokuWS
         /// <param name="handle"></param>
         /// <param name="rect"></param>
         /// <returns></returns>
-        private static bool getCaretPos(IntPtr handle, ref Rectangle rect)
+        private static bool getCaretPos(IntPtr handle, ref Rectangle rect, RECT winRect, double dpiRate)
         {
             logger.Debug($"Check Caret for {(int)handle:x}");
             Guid guidIAccessible = new Guid("{618736E0-3C3D-11CF-810C-00AA00389B71}");
@@ -237,8 +239,8 @@ namespace KanchokuWS
             iAccessible.accLocation(out left, out top, out width, out height, varCaret);
 
             logger.Debug(() => $"left={left}, top={top}, width={width}, height={height}");
-            rect.X = left;
-            rect.Y = top;
+            rect.X = winRect.iLeft + (int)((left - winRect.iLeft) / dpiRate);
+            rect.Y = winRect.iTop + (int)((top - winRect.iTop) / dpiRate);
             rect.Width = width;
             rect.Height = height;
 

@@ -438,13 +438,23 @@ namespace KanchokuWS
 
         private List<Rectangle> screenRects = new List<Rectangle>();
 
+        private List<double> screenXDpiRates = new List<double>();
+        //private List<Tuple<double,double>> screenDpiRates = new List<Tuple<double,double>>();
+
         public void GetScreenInfo()
         {
             screenRects = Screen.AllScreens.Select(s => new Rectangle(s.Bounds.X, s.Bounds.Y, s.Bounds.Width, s.Bounds.Height)).ToList();
-            if (Settings.LoggingActiveWindowInfo) {
+            //screenDpiRates = Screen.AllScreens.Select(s => {
+            //    uint x, y;
+            //    s.GetDpi(DpiType.Angular, out x, out y);
+            //    return new Tuple<double, double>( x / 96.0,  y / 96.0);
+            //}).ToList();
+            if (Logger.IsInfoHEnabled) {
                 int i = 0;
                 foreach (var r in screenRects) {
                     logger.InfoH($"Screen {i}: X={r.X}, Y={r.Y}, W={r.Width}, H={r.Height}");
+                    //logger.InfoH($"Screen {i}: X={r.X}, Y={r.Y}, W={r.Width}, H={r.Height}, dpiXRates={screenDpiRates[i].Item1:f3}, dpiYRates={screenDpiRates[i].Item2:f3}");
+                    ++i;
                 }
             }
         }
@@ -517,18 +527,22 @@ namespace KanchokuWS
                    ) {
                     int xOffset = (ActiveWinSettings?.CaretOffset)._getNth(0, Settings.VirtualKeyboardOffsetX);
                     int yOffset = (ActiveWinSettings?.CaretOffset)._getNth(1, Settings.VirtualKeyboardOffsetY);
+                    //double dpiRatio = 1.0; //FrmVkb.GetDeviceDpiRatio();
                     if (bLog) logger.InfoH($"CaretPos.X={ActiveWinCaretPos.X}, CaretPos.Y={ActiveWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}");
                     if (ActiveWinCaretPos.X >= 0) {
+                        int cX = ActiveWinCaretPos.X;
+                        int cY = ActiveWinCaretPos.Y;
+                        int cW = ActiveWinCaretPos.Width;
+                        int cH = ActiveWinCaretPos.Height;
                         if (bLog) {
-                            logger.InfoH($"MOVE: X={ActiveWinCaretPos.X}, Y={ActiveWinCaretPos.Y}, W={ActiveWinCaretPos.Width}, H={ActiveWinCaretPos.Height}, OX={xOffset}, OY={yOffset}");
+                            logger.InfoH($"MOVE: X={cX}, Y={cY}, W={cW}, H={cH}, OX={xOffset}, OY={yOffset}");
                             int sw = screenRects._notEmpty() ? screenRects[0].Width : 0;
                             int sh = screenRects._notEmpty() ? screenRects[0].Height : 0;
-                            FrmVkb.SetTopText($"SW={sw},SH={sh},CX={ActiveWinCaretPos.X},CY={ActiveWinCaretPos.Y},CW={ActiveWinCaretPos.Width},CH={ActiveWinCaretPos.Height},OX={xOffset},OY={yOffset}");
+                            //FrmVkb.SetTopText($"SW={sw},SH={sh},DR={dpiRatio:f3},CX={cX},CY={cY},CW={cW},CH={cH},OX={xOffset},OY={yOffset}");
+                            FrmVkb.SetTopText($"CX={cX},CY={cY},CW={cW},CH={cH},OX={xOffset},OY={yOffset}");
                         }
                         Action<Form> moveAction = (Form frm) => {
-                            int cX = ActiveWinCaretPos.X;
-                            int cY = ActiveWinCaretPos.Y;
-                            int cBottom = cY + ActiveWinCaretPos.Height;
+                            int cBottom = cY + cH;
                             int fX = cX + xOffset;
                             int fY = cBottom + yOffset;
                             int fW = frm.Size.Width;
@@ -625,5 +639,32 @@ namespace KanchokuWS
             if (bLog) logger.InfoH(() => $"LEAVE: ActiveWinClassName={ActiveWinClassName}");
         }
 
+    }
+
+    // https://stackoverflow.com/questions/29438430/how-to-get-dpi-scale-for-all-screens
+    public static class ScreenExtensions
+    {
+        public static void GetDpi(this System.Windows.Forms.Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
+        {
+            var pnt = new System.Drawing.Point(screen.Bounds.Left + 1, screen.Bounds.Top + 1);
+            var mon = MonitorFromPoint(pnt, 2/*MONITOR_DEFAULTTONEAREST*/);
+            GetDpiForMonitor(mon, dpiType, out dpiX, out dpiY);
+        }
+
+        //https://msdn.microsoft.com/en-us/library/windows/desktop/dd145062(v=vs.85).aspx
+        [DllImport("User32.dll")]
+        private static extern IntPtr MonitorFromPoint([In] System.Drawing.Point pt, [In] uint dwFlags);
+
+        //https://msdn.microsoft.com/en-us/library/windows/desktop/dn280510(v=vs.85).aspx
+        [DllImport("Shcore.dll")]
+        private static extern IntPtr GetDpiForMonitor([In] IntPtr hmonitor, [In] DpiType dpiType, [Out] out uint dpiX, [Out] out uint dpiY);
+    }
+
+    //https://msdn.microsoft.com/en-us/library/windows/desktop/dn280511(v=vs.85).aspx
+    public enum DpiType
+    {
+        Effective = 0,
+        Angular = 1,
+        Raw = 2,
     }
 }

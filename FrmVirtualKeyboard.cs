@@ -125,6 +125,14 @@ namespace KanchokuWS
             dgv.Rows.Add(nRow);
         }
 
+        /// <summary>
+        /// 仮想鍵盤が表示されているディスプレイのDPIを取得し、デフォルトDPI(96)との比を返す
+        /// </summary>
+        public double GetDeviceDpiRatio()
+        {
+            return DeviceDpi / 96.0;
+        }
+
         //-----------------------------------------------------------------------------------------
         // 第1打鍵待ちのときに表示されるストロークテーブル
         public class StrokeTableDef

@@ -11,7 +11,7 @@ namespace KanchokuWS
     {
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.0.4";
+        public static string Version => "1.0.5";
 
         /// <summary> ドキュメントへのURL </summary>
         public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
@@ -137,6 +137,9 @@ namespace KanchokuWS
 
         /// <summary>カレットと仮想鍵盤の相対位置: Y方向</summary>
         public static int VirtualKeyboardOffsetY { get; private set; } = 2;
+
+        /// <summary>ディスプレイのDPI比(標準96dpiとの比)</summary>
+        public static double ScreenDpiRate { get; private set; } = 1.0;
 
         /// <summary>仮想鍵盤の最上段セルの背景色</summary>
         public static string BgColorTopLevelCells { get; private set; } = "GhostWhite";
@@ -519,6 +522,7 @@ namespace KanchokuWS
             //-------------------------------------------------------------------------------------
             VirtualKeyboardOffsetX = GetString("vkbOffsetX")._parseInt(2)._lowLimit(0);
             VirtualKeyboardOffsetY = GetString("vkbOffsetY")._parseInt(2)._lowLimit(0);
+            ScreenDpiRate = GetString("screenDpiRate")._parseDouble(1.0)._lowLimit(1.0);
 
             BgColorTopLevelCells = GetString("bgColorTopLevelCells", "GhostWhite");
             BgColorCenterSideCells = GetString("bgColorCenterSideCells", "FloralWhite");
