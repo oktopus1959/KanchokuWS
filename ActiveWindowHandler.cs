@@ -521,7 +521,7 @@ namespace KanchokuWS
                     if (ActiveWinCaretPos.X >= 0) {
                         if (bLog) {
                             logger.InfoH($"MOVE: X={ActiveWinCaretPos.X}, Y={ActiveWinCaretPos.Y}, W={ActiveWinCaretPos.Width}, H={ActiveWinCaretPos.Height}, OX={xOffset}, OY={yOffset}");
-                            FrmVkb.SetTopText($"CX={ActiveWinCaretPos.X}, CY={ActiveWinCaretPos.Y}, CW={ActiveWinCaretPos.Width}, CH={ActiveWinCaretPos.Height}, OX={xOffset}, OY={yOffset}");
+                            FrmVkb.SetTopText($"CX={ActiveWinCaretPos.X},CY={ActiveWinCaretPos.Y},CW={ActiveWinCaretPos.Width},CH={ActiveWinCaretPos.Height},OX={xOffset},OY={yOffset}");
                         }
                         Action<Form> moveAction = (Form frm) => {
                             int cX = ActiveWinCaretPos.X;
