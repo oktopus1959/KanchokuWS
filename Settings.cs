@@ -566,8 +566,8 @@ namespace KanchokuWS
             UseClassNameListAsInclusion = GetString("useClassNameListAsInclusion")._parseBool(false);
             CtrlKeyTargetClassNames = new HashSet<string>(GetString("ctrlKeyTargetlassNames").Trim()._toLower()._split('|'));
 
-            UseCtrlJasEnter = GetString("useCtrlJasEnter")._parseBool(true);
-            UseCtrlMasEnter = GetString("useCtrlMasEnter")._parseBool(true);
+            UseCtrlJasEnter = GetString("useCtrlJasEnter")._parseBool(false);
+            UseCtrlMasEnter = GetString("useCtrlMasEnter")._parseBool(false);
 
             ConvertCtrlSemiColonToDate = GetString("convertCtrlSemicolonToDate")._parseBool(true);
             DateStringFormat = GetString("dateStringFormat", "yyyy/M/d|yyyyMMdd");

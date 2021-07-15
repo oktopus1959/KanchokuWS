@@ -540,6 +540,8 @@ namespace KanchokuWS
             bool bCtrlDConvert = ctrlKeyAndTargetOn && Settings.ConvertCtrlDtoDeleteEffective;
             bool bCtrlEConvert = ctrlKeyAndTargetOn && Settings.ConvertCtrlEtoEndEffective;
             bool bCtrlGConvert = ctrlKeyAndTargetOn && Settings.ConvertCtrlGtoEscape;
+            bool bCtrlJConvert = ctrlKeyAndTargetOn && Settings.UseCtrlJasEnter;
+            bool bCtrlMConvert = ctrlKeyAndTargetOn && Settings.UseCtrlMasEnter;
             bool bCtrlSemiColonConvert = ctrlKeyOn && Settings.ConvertCtrlSemiColonToDateEffective;
 
             if (Settings.LoggingHotKeyInfo && Logger.IsInfoEnabled) {
@@ -556,6 +558,8 @@ namespace KanchokuWS
                 logger.InfoH($"ctrlD={bCtrlDConvert} (ConvertCtrlDtoDelete={Settings.ConvertCtrlDtoDeleteEffective})");
                 logger.InfoH($"ctrlE={bCtrlEConvert} (ConvertCtrlEtoEnd={Settings.ConvertCtrlEtoEndEffective})");
                 logger.InfoH($"ctrlG={bCtrlGConvert} (ConvertCtrlGtoEscape={Settings.ConvertCtrlGtoEscape})");
+                logger.InfoH($"ctrlJ={bCtrlJConvert} (ConvertCtrlJtoEscape={Settings.UseCtrlJasEnter})");
+                logger.InfoH($"ctrlM={bCtrlMConvert} (ConvertCtrlMtoEscape={Settings.UseCtrlMasEnter})");
                 logger.InfoH($"ctrlSemi={bCtrlSemiColonConvert} (ConvertCtrlEtoEnd={Settings.ConvertCtrlEtoEndEffective})");
             }
 
@@ -590,6 +594,12 @@ namespace KanchokuWS
                 //case HotKeys.CTRL_SHIFT_G_HOTKEY:
                 //    if (bCtrlGConvert) hotkey = HotKeys.UNBLOCK_HOTKEY;
                 //    break;
+                case HotKeys.CTRL_J_HOTKEY:
+                    if (bCtrlJConvert) hotkey = HotKeys.ENTER_HOTKEY;
+                    break;
+                case HotKeys.CTRL_M_HOTKEY:
+                    if (bCtrlMConvert) hotkey = HotKeys.ENTER_HOTKEY;
+                    break;
                 case HotKeys.CTRL_SEMICOLON_HOTKEY:         // 日付フォーマットの切り替え
                 case HotKeys.CTRL_SHIFT_SEMICOLON_HOTKEY:   // 日付フォーマットの切り替え(2つめのフォーマットから)
                 case HotKeys.CTRL_COLON_HOTKEY:             // 日付のインクリメント
