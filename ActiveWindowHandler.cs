@@ -580,7 +580,7 @@ namespace KanchokuWS
 
         public void GetActiveWindowInfo()
         {
-            GetActiveWindowInfo(MoveWinType.MoveIfAny, Settings.LoggingActiveWindowInfo && Logger.IsDebugEnabled);
+            GetActiveWindowInfo(MoveWinType.MoveIfAny, Settings.LoggingActiveWindowInfo /*&& Logger.IsDebugEnabled*/);
         }
 
         public void GetActiveWindowInfo(MoveWinType moveWin, bool bLog = true)

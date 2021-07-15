@@ -461,15 +461,8 @@ namespace KanchokuWS
                                     // Decoder ON
                                     // 入力標識の消去
                                     frmMode.Vanish();
-                                    if (hotkey == HotKeys.CTRL_T_HOTKEY || hotkey == HotKeys.CTRL_SHIFT_T_HOTKEY) {
-                                        // 仮想鍵盤のヘルプ表示の切り替え(モード標識表示時なら一時的に仮想鍵盤表示)
-                                        int effectiveCnt = Settings.VirtualKeyboardShowStrokeCountEffective;
-                                        Settings.VirtualKeyboardShowStrokeCountTemp = 1;
-                                        frmVkb.RotateStrokeTable(decoderOutput, effectiveCnt != 1 ? 0 : hotkey == HotKeys.CTRL_T_HOTKEY ? 1 : -1);
-                                    } else {
-                                        // 通常のストロークキーまたは機能キー(BSとか矢印キーとかCttrl-Hとか)
-                                        handleKeyDecoder(hotkey);
-                                    }
+                                    // 通常のストロークキーまたは機能キー(BSとか矢印キーとかCttrl-Hとか)
+                                    handleKeyDecoder(hotkey);
                                 } else {
                                     // Decoder OFF
                                     if (hotkey == HotKeys.FULL_ESCAPE_HOTKEY) {
@@ -498,6 +491,20 @@ namespace KanchokuWS
                                 case HotKeys.INACTIVE_HOTKEY:
                                 case HotKeys.INACTIVE2_HOTKEY:
                                     ToggleActiveState();
+                                    break;
+                                case HotKeys.DATE_STRING_HOTKEY1:
+                                case HotKeys.DATE_STRING_HOTKEY2:
+                                    // Ctrl+; -- 日付の出力
+                                    postTodayDate(hotkey);
+                                    break;
+                                case HotKeys.STROKE_HELP_ROTATION_HOTKEY:
+                                case HotKeys.STROKE_HELP_UNROTATION_HOTKEY:
+                                    // 入力標識の消去
+                                    frmMode.Vanish();
+                                    // 仮想鍵盤のヘルプ表示の切り替え(モード標識表示時なら一時的に仮想鍵盤表示)
+                                    int effectiveCnt = Settings.VirtualKeyboardShowStrokeCountEffective;
+                                    Settings.VirtualKeyboardShowStrokeCountTemp = 1;
+                                    frmVkb.RotateStrokeTable(decoderOutput, effectiveCnt != 1 ? 0 : hotkey == HotKeys.STROKE_HELP_ROTATION_HOTKEY ? 1 : -1);
                                     break;
                             }
                         }

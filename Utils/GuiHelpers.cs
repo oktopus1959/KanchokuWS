@@ -426,11 +426,13 @@ namespace Utils
                 if (cmb.Items.Count > 0 && item != null) {
                     var key = item + " ";
                     for (int idx = 0; idx < cmb.Items.Count; ++idx) {
-                        if (((string)cmb.Items[idx]).StartsWith(key)) {
+                        var tgt = (string)cmb.Items[idx];
+                        if (tgt._equalsTo(item) || tgt.StartsWith(key)) {
                             cmb.SelectedIndex = idx;
                             return;
                         }
                     }
+                    // 選択肢に含まれず
                     if (bSelectFirstIfUnmatched)
                         cmb.SelectedIndex = 0;
                     else

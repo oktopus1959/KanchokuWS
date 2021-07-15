@@ -712,8 +712,10 @@ namespace KanchokuWS
             checkBox_ctrlJasEnter.Checked = Settings.UseCtrlJasEnter;
             checkBox_ctrlMasEnter.Checked = Settings.UseCtrlMasEnter;
 
-            comboBox_key_setItems(comboBox_fullEscapeKey);
-            comboBox_fullEscapeKey._selectItem(" " + Settings.FullEscapeKey);
+            comboBox_ctrlKey_setItems(comboBox_fullEscapeKey);
+            comboBox_fullEscapeKey._selectItemStartsWith(Settings.FullEscapeKey);
+            comboBox_ctrlKey_setItems(comboBox_strokeHelpRotationKey);
+            comboBox_strokeHelpRotationKey._selectItemStartsWith(Settings.StrokeHelpRotationKey);
         }
 
         private void setCtrlKeysStatusChecker()
@@ -744,6 +746,7 @@ namespace KanchokuWS
             checkerCtrlKeys.Add(checkBox_ctrlMasEnter);
 
             checkerCtrlKeys.Add(comboBox_fullEscapeKey);
+            checkerCtrlKeys.Add(comboBox_strokeHelpRotationKey);
 
             checkerAll.Add(checkerCtrlKeys);
         }
@@ -775,7 +778,8 @@ namespace KanchokuWS
             Settings.SetUserIni("useCtrlJasEnter", checkBox_ctrlJasEnter.Checked);
             Settings.SetUserIni("useCtrlMasEnter", checkBox_ctrlMasEnter.Checked);
 
-            Settings.SetUserIni("fullEscapeKey", comboBox_fullEscapeKey.Text.Trim());
+            Settings.SetUserIni("fullEscapeKey", comboBox_fullEscapeKey._getSelectedItemSplittedFirst("G"));
+            Settings.SetUserIni("strokeHelpRotationKey", comboBox_strokeHelpRotationKey._getSelectedItemSplittedFirst("T"));
 
             Settings.ReadIniFile();
 
@@ -1282,26 +1286,45 @@ namespace KanchokuWS
             textBox_vkbShowStrokeCount.Enabled = radioButton_normalVkb.Checked;
         }
 
-        private string[] ctrlKeyItems;
+        /// <summary>
+        /// Ctrlキー割り当てで、ドロップダウンに使われる項目
+        /// </summary>
+        private string[] ctrlKeyItems = new string[] {
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+            "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
+            "U", "V", "W", "X", "Y", "Z",
+            "COLON (:)",    // ba
+            "PLUS (+)",     // bb
+            "COMMA (,)",    // bc
+            "MINUS (-)",    // bd
+            "PERIOD (.)",   // be
+            "SLASH (/)",    // bf
+            "BQUOTE (`)",   // c0/106
+            "OEM4 ([)",     // db
+            "OEM5 (|)",     // dc
+            "OEM6 (]})",    // dd
+            "OEM7 (^ ')",   // de
+            "OEM102 (\\)",  // e2/106
+        };
 
         private string[] getCtrlKeyItems()
         {
-            if (ctrlKeyItems._isEmpty()) {
-                var items = new List<string>(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" });
-                char[] data = frmMain.CallDecoderFunc("getCharsOrderedByHotkey", null);
-                if (data._notEmpty()) {
-                    for (int i = 0; i < HotKeys.NUM_STROKE_HOTKEY; ++i) {
-                        if ((data[i] > ' ' && data[i] < '0') || (data[i] > '9' && data[i] < 'A') || (data[i] > 'Z' && data[i] < 'a') || data[i] > 'z') {
-                            items.Add($"{data[i]}{data[i+HotKeys.NUM_STROKE_HOTKEY]}");
-                        }
-                    }
-                }
-                ctrlKeyItems = items.Select(x => " " + x).ToArray();
-            }
+            //if (ctrlKeyItems._isEmpty()) {
+            //    var items = new List<string>(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" });
+            //    char[] data = frmMain.CallDecoderFunc("getCharsOrderedByHotkey", null);
+            //    if (data._notEmpty()) {
+            //        for (int i = 0; i < HotKeys.NUM_STROKE_HOTKEY; ++i) {
+            //            if ((data[i] > ' ' && data[i] < '0') || (data[i] > '9' && data[i] < 'A') || (data[i] > 'Z' && data[i] < 'a') || data[i] > 'z') {
+            //                items.Add($"{data[i]}{data[i+HotKeys.NUM_STROKE_HOTKEY]}");
+            //            }
+            //        }
+            //    }
+            //    ctrlKeyItems = items.Select(x => " " + x).ToArray();
+            //}
             return ctrlKeyItems;
         }
 
-        private void comboBox_key_setItems(ComboBox comboBox)
+        private void comboBox_ctrlKey_setItems(ComboBox comboBox)
         {
             if (comboBox.Items.Count == 0) comboBox.Items.AddRange(getCtrlKeyItems());
         }

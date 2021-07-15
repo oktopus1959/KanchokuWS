@@ -84,16 +84,10 @@ namespace KanchokuWS
         public const int INACTIVE2_HOTKEY = INACTIVE_HOTKEY + 1;        // OFF への切り替えキー、その2
         public const int ACTIVEIME_HOTKEY = INACTIVE2_HOTKEY + 1;       // IME連動による ON/OFF の切り替え (漢直Winが従)
 
-        public const int FULL_ESCAPE_HOTKEY = ACTIVEIME_HOTKEY + 1;     // モードを抜けたり、履歴ブロックをしたりする
-        public const int UNBLOCK_HOTKEY = FULL_ESCAPE_HOTKEY + 1;       // 改行コード除去と履歴ブロックの解除
-
-        public const int STROKE_HELP_ROTATION_HOTKEY = UNBLOCK_HOTKEY + 1;                  // 打鍵ヘルプローテーションキー
+        public const int STROKE_HELP_ROTATION_HOTKEY = ACTIVEIME_HOTKEY + 1;                  // 打鍵ヘルプローテーションキー
         public const int STROKE_HELP_UNROTATION_HOTKEY = STROKE_HELP_ROTATION_HOTKEY + 1;   // 打鍵ヘルプ逆ローテーションキー
 
-        public const int NEXT_CAND_TRIGGER_HOTKEY = STROKE_HELP_UNROTATION_HOTKEY + 1;  // 履歴検索開始&次の候補選択
-        public const int PREV_CAND_TRIGGER_HOTKEY = NEXT_CAND_TRIGGER_HOTKEY + 1;       // 履歴検索開始&前の候補選択
-
-        public const int DATE_STRING_HOTKEY1 = PREV_CAND_TRIGGER_HOTKEY + 1;    // 今日の日付文字列を出力
+        public const int DATE_STRING_HOTKEY1 = STROKE_HELP_UNROTATION_HOTKEY + 1;    // 今日の日付文字列を出力
         public const int DATE_STRING_HOTKEY2 = DATE_STRING_HOTKEY1 + 1;         // 今日の日付文字列を出力
 
         public const int GLOBAL_HOTKEY_ID_END = DATE_STRING_HOTKEY2 + 1;
@@ -162,7 +156,13 @@ namespace KanchokuWS
         public const int CTRL_COLON_HOTKEY = CTRL_SHIFT_SEMICOLON_HOTKEY + 1;       // Ctrl+:
         public const int CTRL_SHIFT_COLON_HOTKEY = CTRL_COLON_HOTKEY + 1;           // Ctrl+Shift+:
 
-        public const int SPECIAL_HOTKEY_ID_END = CTRL_SHIFT_COLON_HOTKEY + 1;
+        public const int FULL_ESCAPE_HOTKEY = CTRL_SHIFT_COLON_HOTKEY + 1;          // モードを抜けたり、履歴ブロックをしたりする
+        public const int UNBLOCK_HOTKEY = FULL_ESCAPE_HOTKEY + 1;                   // 改行コード除去と履歴ブロックの解除
+
+        public const int NEXT_CAND_TRIGGER_HOTKEY = UNBLOCK_HOTKEY + 1;             // 履歴検索開始&次の候補選択
+        public const int PREV_CAND_TRIGGER_HOTKEY = NEXT_CAND_TRIGGER_HOTKEY + 1;   // 履歴検索開始&前の候補選択
+
+        public const int SPECIAL_HOTKEY_ID_END = PREV_CAND_TRIGGER_HOTKEY + 1;
 
         public const int FUNCTION_HOTKEY_ID_END = SPECIAL_HOTKEY_ID_END;
     }

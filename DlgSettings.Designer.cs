@@ -285,6 +285,10 @@ namespace KanchokuWS
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.label32 = new System.Windows.Forms.Label();
             this.comboBox_fullEscapeKey = new System.Windows.Forms.ComboBox();
+            this.comboBox_strokeHelpRotationKey = new System.Windows.Forms.ComboBox();
+            this.label72 = new System.Windows.Forms.Label();
+            this.label73 = new System.Windows.Forms.Label();
+            this.label74 = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -2194,14 +2198,18 @@ namespace KanchokuWS
             // 
             // groupBox22
             // 
+            this.groupBox22.Controls.Add(this.comboBox_strokeHelpRotationKey);
+            this.groupBox22.Controls.Add(this.label74);
             this.groupBox22.Controls.Add(this.comboBox_fullEscapeKey);
+            this.groupBox22.Controls.Add(this.label73);
+            this.groupBox22.Controls.Add(this.label72);
             this.groupBox22.Controls.Add(this.label32);
             this.groupBox22.Controls.Add(this.checkBox_ctrlMasEnter);
             this.groupBox22.Controls.Add(this.checkBox_ctrlJasEnter);
             this.groupBox22.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox22.Location = new System.Drawing.Point(301, 9);
             this.groupBox22.Name = "groupBox22";
-            this.groupBox22.Size = new System.Drawing.Size(266, 156);
+            this.groupBox22.Size = new System.Drawing.Size(266, 134);
             this.groupBox22.TabIndex = 1;
             this.groupBox22.TabStop = false;
             this.groupBox22.Text = "漢直モードでのその他のCtrl修飾キー";
@@ -2209,20 +2217,20 @@ namespace KanchokuWS
             // checkBox_ctrlMasEnter
             // 
             this.checkBox_ctrlMasEnter.AutoSize = true;
-            this.checkBox_ctrlMasEnter.Location = new System.Drawing.Point(8, 129);
+            this.checkBox_ctrlMasEnter.Location = new System.Drawing.Point(11, 107);
             this.checkBox_ctrlMasEnter.Name = "checkBox_ctrlMasEnter";
             this.checkBox_ctrlMasEnter.Size = new System.Drawing.Size(188, 19);
-            this.checkBox_ctrlMasEnter.TabIndex = 1;
+            this.checkBox_ctrlMasEnter.TabIndex = 3;
             this.checkBox_ctrlMasEnter.Text = "Ctrl-M で Enter と同じ動作をする";
             this.checkBox_ctrlMasEnter.UseVisualStyleBackColor = true;
             // 
             // checkBox_ctrlJasEnter
             // 
             this.checkBox_ctrlJasEnter.AutoSize = true;
-            this.checkBox_ctrlJasEnter.Location = new System.Drawing.Point(8, 107);
+            this.checkBox_ctrlJasEnter.Location = new System.Drawing.Point(11, 85);
             this.checkBox_ctrlJasEnter.Name = "checkBox_ctrlJasEnter";
             this.checkBox_ctrlJasEnter.Size = new System.Drawing.Size(181, 19);
-            this.checkBox_ctrlJasEnter.TabIndex = 0;
+            this.checkBox_ctrlJasEnter.TabIndex = 2;
             this.checkBox_ctrlJasEnter.Text = "Ctrl-J で Enter と同じ動作をする";
             this.checkBox_ctrlJasEnter.UseVisualStyleBackColor = true;
             // 
@@ -3265,18 +3273,58 @@ namespace KanchokuWS
             this.label32.AutoSize = true;
             this.label32.Location = new System.Drawing.Point(8, 23);
             this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(159, 15);
+            this.label32.Size = new System.Drawing.Size(142, 15);
             this.label32.TabIndex = 2;
-            this.label32.Text = "取消、履歴ブロッカー設定  Ctrl-";
+            this.label32.Text = "全取消、履歴ブロッカー設定";
             // 
             // comboBox_fullEscapeKey
             // 
             this.comboBox_fullEscapeKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_fullEscapeKey.FormattingEnabled = true;
-            this.comboBox_fullEscapeKey.Location = new System.Drawing.Point(164, 20);
+            this.comboBox_fullEscapeKey.Location = new System.Drawing.Point(178, 20);
             this.comboBox_fullEscapeKey.Name = "comboBox_fullEscapeKey";
-            this.comboBox_fullEscapeKey.Size = new System.Drawing.Size(49, 23);
-            this.comboBox_fullEscapeKey.TabIndex = 3;
+            this.comboBox_fullEscapeKey.Size = new System.Drawing.Size(79, 23);
+            this.comboBox_fullEscapeKey.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.comboBox_fullEscapeKey, "全取消や履歴ブロッカー設定するキーを設定します。\r\n\r\n指定したキーの Ctrl修飾および Ctrl-Shift 修飾が使われます。\r\nCtrl修飾されたキーで全" +
+        "取消および履歴ブロッカー設定となります。\r\nCtrl-Shift修飾されたキーで、履歴ブロッカーの解除となります。");
+            // 
+            // comboBox_strokeHelpRotationKey
+            // 
+            this.comboBox_strokeHelpRotationKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_strokeHelpRotationKey.FormattingEnabled = true;
+            this.comboBox_strokeHelpRotationKey.Location = new System.Drawing.Point(178, 49);
+            this.comboBox_strokeHelpRotationKey.Name = "comboBox_strokeHelpRotationKey";
+            this.comboBox_strokeHelpRotationKey.Size = new System.Drawing.Size(79, 23);
+            this.comboBox_strokeHelpRotationKey.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.comboBox_strokeHelpRotationKey, "打鍵ヘルプ画面のローテーションキーを設定します。\r\n\r\n指定したキーの Ctrl修飾および Ctrl-Shift 修飾が使われます。\r\nCtrl修飾されたキーで順" +
+        "方向のローテーション、\r\nCtrl-Shift修飾されたキーで逆方向のローテーションとなります。\r\n");
+            // 
+            // label72
+            // 
+            this.label72.AutoSize = true;
+            this.label72.Location = new System.Drawing.Point(8, 52);
+            this.label72.Name = "label72";
+            this.label72.Size = new System.Drawing.Size(120, 15);
+            this.label72.TabIndex = 4;
+            this.label72.Text = "打鍵ヘルプローテーション";
+            // 
+            // label73
+            // 
+            this.label73.AutoSize = true;
+            this.label73.Location = new System.Drawing.Point(151, 23);
+            this.label73.Name = "label73";
+            this.label73.Size = new System.Drawing.Size(30, 15);
+            this.label73.TabIndex = 6;
+            this.label73.Text = "Ctrl-";
+            // 
+            // label74
+            // 
+            this.label74.AutoSize = true;
+            this.label74.Location = new System.Drawing.Point(151, 52);
+            this.label74.Name = "label74";
+            this.label74.Size = new System.Drawing.Size(30, 15);
+            this.label74.TabIndex = 7;
+            this.label74.Text = "Ctrl-";
             // 
             // textBox_onSelectedBackColor
             // 
@@ -3789,5 +3837,9 @@ namespace KanchokuWS
         private System.Windows.Forms.CheckBox checkBox_multiAppEnabled;
         private System.Windows.Forms.ComboBox comboBox_fullEscapeKey;
         private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.ComboBox comboBox_strokeHelpRotationKey;
+        private System.Windows.Forms.Label label74;
+        private System.Windows.Forms.Label label73;
+        private System.Windows.Forms.Label label72;
     }
 }

@@ -77,22 +77,35 @@ namespace KanchokuWS
             {"X", (uint)Keys.X },
             {"Y", (uint)Keys.Y },
             {"Z", (uint)Keys.Z },
-            {":*", (uint)Keys.Oem1 },           // ba/106
-            {";:", (uint)Keys.Oem1 },           // ba/101
-            {";+", (uint)Keys.Oemplus },        // bb/106
-            {",<", (uint)Keys.Oemcomma },       // bc
-            {"-=", (uint)Keys.OemMinus },       // bd/106
-            {"-_", (uint)Keys.OemMinus },       // bd/101
-            {".>", (uint)Keys.OemPeriod },      // be
-            {"/?", (uint)Keys.Oem2 },           // bf
-            {"@`", (uint)Keys.Oem3 },           // c0/106
-            {"[{", (uint)Keys.Oem4 },           // db
-            {"\\|", (uint)Keys.Oem5 },          // dc
-            {"]}", (uint)Keys.Oem6 },           // dd
-            {"^~", (uint)Keys.Oem7 },           // de/106
-            {"'\"", (uint)Keys.Oem7 },          // de/101
-            {"\\_", (uint)Keys.Oem102 },        // e2/106
-            {"\\ ", (uint)Keys.Oem102 },        // e2/101
+            { "COLON", (uint)Keys.Oem1 },       // ba
+            { "PLUS", (uint)Keys.Oemplus },     // bb
+            { "COMMA", (uint)Keys.Oemcomma },   // bc
+            { "MINUS", (uint)Keys.OemMinus },   // bd
+            { "PERIOD", (uint)Keys.OemPeriod }, // be
+            { "SLASH", (uint)Keys.Oem2 },       // bf
+            { "BQUOTE", (uint)Keys.Oem3 },      // c0/106
+            { "OEM4", (uint)Keys.Oem4 },        // db
+            { "OEM5", (uint)Keys.Oem5 },        // dc
+            { "OEM6", (uint)Keys.Oem6 },        // dd
+            { "OEM7", (uint)Keys.Oem7 },        // de
+            { "OEM8", (uint)Keys.Oem8 },        // df
+            { "OEM102", (uint)Keys.Oem102 },    // e2/106
+            //{":*", (uint)Keys.Oem1 },           // ba/106
+            //{";:", (uint)Keys.Oem1 },           // ba/101
+            //{";+", (uint)Keys.Oemplus },        // bb/106
+            //{",<", (uint)Keys.Oemcomma },       // bc
+            //{"-=", (uint)Keys.OemMinus },       // bd/106
+            //{"-_", (uint)Keys.OemMinus },       // bd/101
+            //{".>", (uint)Keys.OemPeriod },      // be
+            //{"/?", (uint)Keys.Oem2 },           // bf
+            //{"@`", (uint)Keys.Oem3 },           // c0/106
+            //{"[{", (uint)Keys.Oem4 },           // db
+            //{"\\|", (uint)Keys.Oem5 },          // dc
+            //{"]}", (uint)Keys.Oem6 },           // dd
+            //{"^~", (uint)Keys.Oem7 },           // de/106
+            //{"'\"", (uint)Keys.Oem7 },          // de/101
+            //{"\\_", (uint)Keys.Oem102 },        // e2/106
+            //{"\\ ", (uint)Keys.Oem102 },        // e2/101
         };
 
         public static VKeyCombo EmptyCombo = new VKeyCombo(0, 0);

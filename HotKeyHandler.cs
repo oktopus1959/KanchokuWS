@@ -35,7 +35,7 @@ namespace KanchokuWS
 
         private static bool registerHotKey(int id, uint mod, uint vk)
         {
-            //if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"id={id:x}H({id}), mod={mod:x}H, vk={vk:x}H({vk})");
+            if (id >= HotKeys.GLOBAL_HOTKEY_ID_BASE) logger.InfoH(() => $"CALLD: id={id:x}H({id}), mod={mod:x}H, vk={vk:x}H({vk})");
             bool result = false;
             if (id >= 0 && id < hotkeyRegistered.Length) {
                 if (vk != 0) {
@@ -323,6 +323,7 @@ namespace KanchokuWS
 
             decoderSpecialHotkeys.Clear();
             foreach (int hk in Settings.DecoderSpecialHotkeys) {
+                logger.InfoH(() => $"SPECIAL: {hk:x}H({hk})");
                 decoderSpecialHotkeys.Add(hk);
                 registerHotKey(hk);
             }
@@ -354,6 +355,7 @@ namespace KanchokuWS
             //UnregisterArrowHotKeys();   // 常に必要? 候補選択時だけでよくない?
 
             foreach (int hk in decoderSpecialHotkeys) {
+                logger.InfoH(() => $"SPECIAL: {hk:x}H({hk})");
                 unregisterHotKey(hk);
             }
             logger.InfoH("Special Hotkeys Unregistered");
