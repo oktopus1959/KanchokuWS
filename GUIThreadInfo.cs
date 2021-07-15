@@ -138,7 +138,7 @@ namespace KanchokuWS
 
             if (hwndFocus != IntPtr.Zero) {
                 // IAccessible を使ってカレット位置を取得する
-                getCaretPos(hwndFocus, ref rect, rt, Settings.ScreenDpiRate);
+                getCaretPos(hwndFocus, ref rect, rt, Settings.DisplayScale);
                 if (Logger.IsDebugEnabled) {
                     logger.Debug($"prev: left={prevCaretRect.iLeft}, top={prevCaretRect.iTop}, right={prevCaretRect.iRight}, bottom={prevCaretRect.iBottom}");
                     logger.Debug($"curr: left={rect.Left}, top={rect.Top}, right={rect.Right}, bottom={rect.Bottom}");

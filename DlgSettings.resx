@@ -120,20 +120,18 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="comboBox_fullEscapeKey.ToolTip" xml:space="preserve">
-    <value>操作の全取消や出力文字列採取ブロッカー設定を行うキーを設定します。
+  <data name="textBox_displayScale.ToolTip" xml:space="preserve">
+    <value>ディスプレイの表示スケールを設定します。
 
-指定したキーの Ctrl修飾および Ctrl-Shift 修飾が使われます。
-Ctrl修飾されたキーで全取消およびブロッカー設定となります。
-Ctrl-Shift修飾されたキーで、ブロッカーの解除となります。
+カレット位置と仮想鍵盤の表示位置がずれるというような場合は、
+この数値を調整してみてください。
+スケール値は、 1.25 などの浮動小数点数で入力してください。
 
-出力文字列採取ブロッカー設定を行うと、見た目ではミニバッファが
-クリアされますが、実際には出力文字列の末尾に採取ブロッカーを
-設定しています。内部的には、そのブロッカーを遡って出力文字列を
-採取しないようになります。
-
-これは、履歴検索、交ぜ書き変換、部首合成など、後置式の機能
-全般に影響します。</value>
+この数値を変更しても表示位置のずれが解消されない場合は、
+個々のウィンドウごとにカレットからの相対位置を調整してください。
+設定方法については README の「相対位置の個別設定」を
+参照ください。
+</value>
   </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
@@ -380,6 +378,21 @@ yyyy/MM/DD
 Ctrl+; ⇒ 2021/09/23
 Ctrl+Shift+; ⇒ 令和3年9月23日
 となります。</value>
+  </data>
+  <data name="comboBox_fullEscapeKey.ToolTip" xml:space="preserve">
+    <value>操作の全取消や出力文字列採取ブロッカー設定を行うキーを設定します。
+
+指定したキーの Ctrl修飾および Ctrl-Shift 修飾が使われます。
+Ctrl修飾されたキーで全取消およびブロッカー設定となります。
+Ctrl-Shift修飾されたキーで、ブロッカーの解除となります。
+
+出力文字列採取ブロッカー設定を行うと、見た目ではミニバッファが
+クリアされますが、実際には出力文字列の末尾に採取ブロッカーを
+設定しています。内部的には、そのブロッカーを遡って出力文字列を
+採取しないようになります。
+
+これは、履歴検索、交ぜ書き変換、部首合成など、後置式の機能
+全般に影響します。</value>
   </data>
   <data name="checkBox_globalCtrlKeysEnabled.ToolTip" xml:space="preserve">
     <value>漢直モード／英字モードの両方で有効なグローバルなCtrlキー変換を設定します。

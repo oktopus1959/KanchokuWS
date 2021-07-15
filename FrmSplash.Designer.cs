@@ -41,7 +41,8 @@ namespace KanchokuWS
             // 
             // buttonOK
             // 
-            this.buttonOK.Location = new System.Drawing.Point(40, 102);
+            this.buttonOK.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.buttonOK.Location = new System.Drawing.Point(39, 102);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(50, 21);
             this.buttonOK.TabIndex = 10;
@@ -53,25 +54,28 @@ namespace KanchokuWS
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(73, 79);
+            this.label4.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label4.Location = new System.Drawing.Point(66, 79);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(54, 12);
+            this.label4.Size = new System.Drawing.Size(65, 12);
             this.label4.TabIndex = 9;
             this.label4.Text = "or Spoiler";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(36, 62);
+            this.label3.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label3.Location = new System.Drawing.Point(37, 62);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(123, 12);
+            this.label3.Size = new System.Drawing.Size(143, 12);
             this.label3.TabIndex = 8;
-            this.label3.Text = "Shin, Second, Sharp, ... ,";
+            this.label3.Text = "Shin, Second, Sharp, ..";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(76, 44);
+            this.label2.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label2.Location = new System.Drawing.Point(75, 44);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(47, 12);
             this.label2.TabIndex = 7;
@@ -80,18 +84,20 @@ namespace KanchokuWS
             // label_version
             // 
             this.label_version.AutoSize = true;
-            this.label_version.Location = new System.Drawing.Point(48, 18);
+            this.label_version.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_version.Location = new System.Drawing.Point(45, 18);
             this.label_version.Name = "label_version";
-            this.label_version.Size = new System.Drawing.Size(72, 12);
+            this.label_version.Size = new System.Drawing.Size(77, 12);
             this.label_version.TabIndex = 6;
             this.label_version.Text = "漢直窓S Ver.";
             // 
             // label_initializing
             // 
             this.label_initializing.AutoSize = true;
-            this.label_initializing.Location = new System.Drawing.Point(30, 106);
+            this.label_initializing.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_initializing.Location = new System.Drawing.Point(20, 106);
             this.label_initializing.Name = "label_initializing";
-            this.label_initializing.Size = new System.Drawing.Size(136, 12);
+            this.label_initializing.Size = new System.Drawing.Size(167, 12);
             this.label_initializing.TabIndex = 11;
             this.label_initializing.Text = "辞書ファイルを読み込み中...";
             // 
@@ -101,7 +107,8 @@ namespace KanchokuWS
             // 
             // buttonSettings
             // 
-            this.buttonSettings.Location = new System.Drawing.Point(105, 102);
+            this.buttonSettings.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.buttonSettings.Location = new System.Drawing.Point(106, 102);
             this.buttonSettings.Name = "buttonSettings";
             this.buttonSettings.Size = new System.Drawing.Size(50, 21);
             this.buttonSettings.TabIndex = 12;

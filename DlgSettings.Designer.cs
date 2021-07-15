@@ -289,6 +289,8 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.label75 = new System.Windows.Forms.Label();
+            this.textBox_displayScale = new System.Windows.Forms.TextBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -472,10 +474,10 @@ namespace KanchokuWS
             // 
             this.textBox_strokeHelpFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_strokeHelpFile.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_strokeHelpFile.Location = new System.Drawing.Point(129, 111);
+            this.textBox_strokeHelpFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_strokeHelpFile.Location = new System.Drawing.Point(129, 113);
             this.textBox_strokeHelpFile.Name = "textBox_strokeHelpFile";
-            this.textBox_strokeHelpFile.Size = new System.Drawing.Size(175, 23);
+            this.textBox_strokeHelpFile.Size = new System.Drawing.Size(175, 19);
             this.textBox_strokeHelpFile.TabIndex = 4;
             this.toolTip1.SetToolTip(this.textBox_strokeHelpFile, "仮想鍵盤に表示する打鍵ヘルプ表を定義するファイル\r\n\r\n仮想鍵盤が第1打鍵待ちになっている状態で表示される\r\n打鍵表を定義します。\r\n\r\n複数のパターンを定義でき" +
         "ます。それらは Ctrl-T または\r\nCtrl-Shift-T によって切り替えることができます。");
@@ -493,10 +495,10 @@ namespace KanchokuWS
             // 
             this.textBox_easyCharsFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_easyCharsFile.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_easyCharsFile.Location = new System.Drawing.Point(129, 87);
+            this.textBox_easyCharsFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_easyCharsFile.Location = new System.Drawing.Point(129, 89);
             this.textBox_easyCharsFile.Name = "textBox_easyCharsFile";
-            this.textBox_easyCharsFile.Size = new System.Drawing.Size(175, 23);
+            this.textBox_easyCharsFile.Size = new System.Drawing.Size(175, 19);
             this.textBox_easyCharsFile.TabIndex = 3;
             this.toolTip1.SetToolTip(this.textBox_easyCharsFile, "容易に打鍵できる文字を定義するファイル\r\n\r\n容易に打鍵できる短い文字列を履歴登録しない\r\nようにするために使われます。\r\nそれ以外にも打鍵ヘルプの表示などでも利" +
         "用されます。");
@@ -514,10 +516,10 @@ namespace KanchokuWS
             // 
             this.textBox_tableFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_tableFile.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_tableFile.Location = new System.Drawing.Point(129, 39);
+            this.textBox_tableFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_tableFile.Location = new System.Drawing.Point(129, 41);
             this.textBox_tableFile.Name = "textBox_tableFile";
-            this.textBox_tableFile.Size = new System.Drawing.Size(175, 23);
+            this.textBox_tableFile.Size = new System.Drawing.Size(175, 19);
             this.textBox_tableFile.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_tableFile, "打鍵から文字への変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることによ" +
         "り、複数打鍵に対する文字定義が\r\n可能です。\r\n");
@@ -535,10 +537,10 @@ namespace KanchokuWS
             // 
             this.textBox_hotkeyCharsFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_hotkeyCharsFile.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_hotkeyCharsFile.Location = new System.Drawing.Point(129, 63);
+            this.textBox_hotkeyCharsFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_hotkeyCharsFile.Location = new System.Drawing.Point(129, 65);
             this.textBox_hotkeyCharsFile.Name = "textBox_hotkeyCharsFile";
-            this.textBox_hotkeyCharsFile.Size = new System.Drawing.Size(175, 23);
+            this.textBox_hotkeyCharsFile.Size = new System.Drawing.Size(175, 19);
             this.textBox_hotkeyCharsFile.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox_hotkeyCharsFile, "HotKeyから文字への変換を定義するファイル\r\n\r\n打鍵されたキーを文字に変換してそのまま出力する場合に必要となる、\r\nHotKey⇒文字のマッピング定義ファイ" +
         "ルを指定します。\r\n\r\nファイルの指定がない場合は、キーボードファイルと同種の定義ファイルが\r\n使用されます。\r\n例：キーボードファイルが 106.key なら" +
@@ -557,10 +559,10 @@ namespace KanchokuWS
             // 
             this.textBox_historyFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_historyFile.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_historyFile.Location = new System.Drawing.Point(129, 207);
+            this.textBox_historyFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_historyFile.Location = new System.Drawing.Point(129, 209);
             this.textBox_historyFile.Name = "textBox_historyFile";
-            this.textBox_historyFile.Size = new System.Drawing.Size(175, 23);
+            this.textBox_historyFile.Size = new System.Drawing.Size(175, 19);
             this.textBox_historyFile.TabIndex = 8;
             this.toolTip1.SetToolTip(this.textBox_historyFile, resources.GetString("textBox_historyFile.ToolTip"));
             // 
@@ -577,10 +579,10 @@ namespace KanchokuWS
             // 
             this.textBox_mazegakiFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_mazegakiFile.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_mazegakiFile.Location = new System.Drawing.Point(129, 183);
+            this.textBox_mazegakiFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_mazegakiFile.Location = new System.Drawing.Point(129, 185);
             this.textBox_mazegakiFile.Name = "textBox_mazegakiFile";
-            this.textBox_mazegakiFile.Size = new System.Drawing.Size(175, 23);
+            this.textBox_mazegakiFile.Size = new System.Drawing.Size(175, 19);
             this.textBox_mazegakiFile.TabIndex = 7;
             this.toolTip1.SetToolTip(this.textBox_mazegakiFile, resources.GetString("textBox_mazegakiFile.ToolTip"));
             // 
@@ -597,10 +599,10 @@ namespace KanchokuWS
             // 
             this.textBox_bushuAssocFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_bushuAssocFile.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_bushuAssocFile.Location = new System.Drawing.Point(129, 159);
+            this.textBox_bushuAssocFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_bushuAssocFile.Location = new System.Drawing.Point(129, 161);
             this.textBox_bushuAssocFile.Name = "textBox_bushuAssocFile";
-            this.textBox_bushuAssocFile.Size = new System.Drawing.Size(175, 23);
+            this.textBox_bushuAssocFile.Size = new System.Drawing.Size(175, 19);
             this.textBox_bushuAssocFile.TabIndex = 6;
             this.toolTip1.SetToolTip(this.textBox_bushuAssocFile, "部首連想の定義を記述したファイルを設定\r\n\r\n部首連想辞書ファイルは漢直窓S終了時に自動的に内容が上書きされるので、\r\nこのファイルをエディタ等で編集する場合は漢" +
         "直を終了させてから行ってください。\r\n\r\n記述フォーマットについては、「ドキュメント」または「辞書登録」タブの「部首連想」\r\nテキストボックスのツールチップを参" +
@@ -619,10 +621,10 @@ namespace KanchokuWS
             // 
             this.textBox_bushuCompFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_bushuCompFile.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_bushuCompFile.Location = new System.Drawing.Point(129, 135);
+            this.textBox_bushuCompFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_bushuCompFile.Location = new System.Drawing.Point(129, 137);
             this.textBox_bushuCompFile.Name = "textBox_bushuCompFile";
-            this.textBox_bushuCompFile.Size = new System.Drawing.Size(175, 23);
+            this.textBox_bushuCompFile.Size = new System.Drawing.Size(175, 19);
             this.textBox_bushuCompFile.TabIndex = 5;
             this.toolTip1.SetToolTip(this.textBox_bushuCompFile, resources.GetString("textBox_bushuCompFile.ToolTip"));
             // 
@@ -639,10 +641,10 @@ namespace KanchokuWS
             // 
             this.textBox_keyboardFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_keyboardFile.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_keyboardFile.Location = new System.Drawing.Point(129, 15);
+            this.textBox_keyboardFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_keyboardFile.Location = new System.Drawing.Point(129, 17);
             this.textBox_keyboardFile.Name = "textBox_keyboardFile";
-            this.textBox_keyboardFile.Size = new System.Drawing.Size(175, 23);
+            this.textBox_keyboardFile.Size = new System.Drawing.Size(175, 19);
             this.textBox_keyboardFile.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_keyboardFile, resources.GetString("textBox_keyboardFile.ToolTip"));
             // 
@@ -672,10 +674,10 @@ namespace KanchokuWS
             // textBox_vkbShowStrokeCount
             // 
             this.textBox_vkbShowStrokeCount.Enabled = false;
-            this.textBox_vkbShowStrokeCount.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_vkbShowStrokeCount.Location = new System.Drawing.Point(106, 17);
+            this.textBox_vkbShowStrokeCount.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_vkbShowStrokeCount.Location = new System.Drawing.Point(106, 19);
             this.textBox_vkbShowStrokeCount.Name = "textBox_vkbShowStrokeCount";
-            this.textBox_vkbShowStrokeCount.Size = new System.Drawing.Size(21, 23);
+            this.textBox_vkbShowStrokeCount.Size = new System.Drawing.Size(21, 19);
             this.textBox_vkbShowStrokeCount.TabIndex = 4;
             this.textBox_vkbShowStrokeCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_vkbShowStrokeCount, "標準の仮想鍵盤表示までの打鍵数を設定します。\r\n\r\n「0」を設定すると仮想鍵盤は表示されなくなります。\r\n(Ctrl-T または Ctrl-Shift-T で一時" +
@@ -772,10 +774,10 @@ namespace KanchokuWS
             // 
             // textBox_splashWindowShowDuration
             // 
-            this.textBox_splashWindowShowDuration.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_splashWindowShowDuration.Location = new System.Drawing.Point(168, 17);
+            this.textBox_splashWindowShowDuration.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_splashWindowShowDuration.Location = new System.Drawing.Point(168, 19);
             this.textBox_splashWindowShowDuration.Name = "textBox_splashWindowShowDuration";
-            this.textBox_splashWindowShowDuration.Size = new System.Drawing.Size(45, 23);
+            this.textBox_splashWindowShowDuration.Size = new System.Drawing.Size(45, 19);
             this.textBox_splashWindowShowDuration.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_splashWindowShowDuration, "起動時のスプラッシュウィンドウの表示時間(秒)を設定します。\r\n\r\nスプラッシュウィンドウは、「OK」ボンをクリックするか、デコーダをONにするか、\r\nまたはここ" +
         "で設定した時間が経過すると非表示になります。\r\n\r\n0 を設定するとスプラッシュウィンドウを表示しません。");
@@ -834,6 +836,7 @@ namespace KanchokuWS
             // 
             // comboBox_modifiedOffKey
             // 
+            this.comboBox_modifiedOffKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.comboBox_modifiedOffKey.FormattingEnabled = true;
             this.comboBox_modifiedOffKey.Items.AddRange(new object[] {
             "ba (：＊)",
@@ -853,9 +856,9 @@ namespace KanchokuWS
             "1d (無変換)",
             "f2 (かな/カナ)",
             "20 (Space)"});
-            this.comboBox_modifiedOffKey.Location = new System.Drawing.Point(134, 93);
+            this.comboBox_modifiedOffKey.Location = new System.Drawing.Point(134, 95);
             this.comboBox_modifiedOffKey.Name = "comboBox_modifiedOffKey";
-            this.comboBox_modifiedOffKey.Size = new System.Drawing.Size(105, 23);
+            this.comboBox_modifiedOffKey.Size = new System.Drawing.Size(105, 20);
             this.comboBox_modifiedOffKey.TabIndex = 3;
             this.toolTip1.SetToolTip(this.comboBox_modifiedOffKey, "Ctrlキーの修飾有りで漢直モードをOFFにするためのキーの指定\r\n\r\n使用するキーの仮想キーコードを16進数で指定します。\r\n仮想キーコードについては「wind" +
         "ows 仮想キーコード 一覧」でググると見つかります。\r\n主なキーについては候補を用意してあるので、それを選択してください。\r\n\r\nキーを使用しない場合は、Co" +
@@ -863,6 +866,7 @@ namespace KanchokuWS
             // 
             // comboBox_unmodifiedOffKey
             // 
+            this.comboBox_unmodifiedOffKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.comboBox_unmodifiedOffKey.FormattingEnabled = true;
             this.comboBox_unmodifiedOffKey.Items.AddRange(new object[] {
             "ba (：＊)",
@@ -882,9 +886,9 @@ namespace KanchokuWS
             "1d (無変換)",
             "f2 (かな/カナ)",
             "20 (Space)"});
-            this.comboBox_unmodifiedOffKey.Location = new System.Drawing.Point(134, 67);
+            this.comboBox_unmodifiedOffKey.Location = new System.Drawing.Point(134, 69);
             this.comboBox_unmodifiedOffKey.Name = "comboBox_unmodifiedOffKey";
-            this.comboBox_unmodifiedOffKey.Size = new System.Drawing.Size(105, 23);
+            this.comboBox_unmodifiedOffKey.Size = new System.Drawing.Size(105, 20);
             this.comboBox_unmodifiedOffKey.TabIndex = 2;
             this.toolTip1.SetToolTip(this.comboBox_unmodifiedOffKey, "Ctrlキーの修飾なしで漢直モードをOFFにするためのキーの指定\r\n\r\n使用するキーの仮想キーコードを16進数で指定します。\r\n仮想キーコードについては「wind" +
         "ows 仮想キーコード 一覧」でググると見つかります。\r\n主なキーについては候補を用意してあるので、それを選択してください。\r\n\r\nキーを使用しない場合は、Co" +
@@ -892,6 +896,7 @@ namespace KanchokuWS
             // 
             // comboBox_modifiedToggleKey
             // 
+            this.comboBox_modifiedToggleKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.comboBox_modifiedToggleKey.FormattingEnabled = true;
             this.comboBox_modifiedToggleKey.Items.AddRange(new object[] {
             "ba (：＊)",
@@ -911,14 +916,15 @@ namespace KanchokuWS
             "1d (無変換)",
             "f2 (かな/カナ)",
             "20 (Space)"});
-            this.comboBox_modifiedToggleKey.Location = new System.Drawing.Point(134, 41);
+            this.comboBox_modifiedToggleKey.Location = new System.Drawing.Point(134, 43);
             this.comboBox_modifiedToggleKey.Name = "comboBox_modifiedToggleKey";
-            this.comboBox_modifiedToggleKey.Size = new System.Drawing.Size(105, 23);
+            this.comboBox_modifiedToggleKey.Size = new System.Drawing.Size(105, 20);
             this.comboBox_modifiedToggleKey.TabIndex = 1;
             this.toolTip1.SetToolTip(this.comboBox_modifiedToggleKey, resources.GetString("comboBox_modifiedToggleKey.ToolTip"));
             // 
             // comboBox_unmodifiedToggleKey
             // 
+            this.comboBox_unmodifiedToggleKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.comboBox_unmodifiedToggleKey.FormattingEnabled = true;
             this.comboBox_unmodifiedToggleKey.Items.AddRange(new object[] {
             "ba (：＊)",
@@ -938,9 +944,9 @@ namespace KanchokuWS
             "1d (無変換)",
             "f2 (かな/カナ)",
             "20 (Space)"});
-            this.comboBox_unmodifiedToggleKey.Location = new System.Drawing.Point(134, 15);
+            this.comboBox_unmodifiedToggleKey.Location = new System.Drawing.Point(134, 17);
             this.comboBox_unmodifiedToggleKey.Name = "comboBox_unmodifiedToggleKey";
-            this.comboBox_unmodifiedToggleKey.Size = new System.Drawing.Size(105, 23);
+            this.comboBox_unmodifiedToggleKey.Size = new System.Drawing.Size(105, 20);
             this.comboBox_unmodifiedToggleKey.TabIndex = 0;
             this.toolTip1.SetToolTip(this.comboBox_unmodifiedToggleKey, resources.GetString("comboBox_unmodifiedToggleKey.ToolTip"));
             // 
@@ -1012,9 +1018,10 @@ namespace KanchokuWS
             // 
             // textBox_backFileRotationGeneration
             // 
-            this.textBox_backFileRotationGeneration.Location = new System.Drawing.Point(186, 18);
+            this.textBox_backFileRotationGeneration.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_backFileRotationGeneration.Location = new System.Drawing.Point(186, 19);
             this.textBox_backFileRotationGeneration.Name = "textBox_backFileRotationGeneration";
-            this.textBox_backFileRotationGeneration.Size = new System.Drawing.Size(45, 23);
+            this.textBox_backFileRotationGeneration.Size = new System.Drawing.Size(45, 19);
             this.textBox_backFileRotationGeneration.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_backFileRotationGeneration, resources.GetString("textBox_backFileRotationGeneration.ToolTip"));
             // 
@@ -1029,6 +1036,8 @@ namespace KanchokuWS
             // 
             // groupBox20
             // 
+            this.groupBox20.Controls.Add(this.textBox_displayScale);
+            this.groupBox20.Controls.Add(this.label75);
             this.groupBox20.Controls.Add(this.textBox_vkbOffsetY);
             this.groupBox20.Controls.Add(this.textBox_vkbOffsetX);
             this.groupBox20.Controls.Add(this.label40);
@@ -1040,33 +1049,35 @@ namespace KanchokuWS
             this.groupBox20.Controls.Add(this.label14);
             this.groupBox20.Location = new System.Drawing.Point(7, 12);
             this.groupBox20.Name = "groupBox20";
-            this.groupBox20.Size = new System.Drawing.Size(287, 99);
+            this.groupBox20.Size = new System.Drawing.Size(287, 112);
             this.groupBox20.TabIndex = 0;
             this.groupBox20.TabStop = false;
             this.groupBox20.Text = "仮想鍵盤・モード標識";
             // 
             // textBox_vkbOffsetY
             // 
-            this.textBox_vkbOffsetY.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_vkbOffsetY.Location = new System.Drawing.Point(214, 19);
+            this.textBox_vkbOffsetY.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_vkbOffsetY.Location = new System.Drawing.Point(235, 17);
             this.textBox_vkbOffsetY.Name = "textBox_vkbOffsetY";
-            this.textBox_vkbOffsetY.Size = new System.Drawing.Size(25, 23);
+            this.textBox_vkbOffsetY.Size = new System.Drawing.Size(25, 19);
             this.textBox_vkbOffsetY.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_vkbOffsetY, "仮想鍵盤の表示位置(Y軸)\r\n\r\n文字送出の対象となるアクティブウィンドウのカレットの\r\n右下端位置からの相対位置として設定します。\r\n");
+            this.toolTip1.SetToolTip(this.textBox_vkbOffsetY, "仮想鍵盤の表示位置(Y軸)\r\n\r\n文字送出の対象となるアクティブウィンドウのカレットの\r\n右下端位置からの相対位置として設定します。\r\n\r\n相対位置は、ウィンドウ" +
+        "ごとに個別に設定することもできます。\r\n設定方法については README の「相対位置の個別設定」を\r\n参照ください。");
             // 
             // textBox_vkbOffsetX
             // 
-            this.textBox_vkbOffsetX.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_vkbOffsetX.Location = new System.Drawing.Point(173, 19);
+            this.textBox_vkbOffsetX.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_vkbOffsetX.Location = new System.Drawing.Point(190, 17);
             this.textBox_vkbOffsetX.Name = "textBox_vkbOffsetX";
-            this.textBox_vkbOffsetX.Size = new System.Drawing.Size(25, 23);
+            this.textBox_vkbOffsetX.Size = new System.Drawing.Size(25, 19);
             this.textBox_vkbOffsetX.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_vkbOffsetX, "仮想鍵盤の表示位置(X軸)\r\n\r\n文字送出の対象となるアクティブウィンドウのカレットの\r\n右下端位置からの相対位置として設定します。");
+            this.toolTip1.SetToolTip(this.textBox_vkbOffsetX, "仮想鍵盤の表示位置(X軸)\r\n\r\n文字送出の対象となるアクティブウィンドウのカレットの\r\n右下端位置からの相対位置として設定します。\r\n\r\n相対位置は、ウィンドウ" +
+        "ごとに個別に設定することもできます。\r\n設定方法については README の「相対位置の個別設定」を\r\n参照ください。");
             // 
             // label40
             // 
             this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(160, 23);
+            this.label40.Location = new System.Drawing.Point(176, 19);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(14, 15);
             this.label40.TabIndex = 22;
@@ -1075,7 +1086,7 @@ namespace KanchokuWS
             // label39
             // 
             this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(201, 23);
+            this.label39.Location = new System.Drawing.Point(222, 19);
             this.label39.Name = "label39";
             this.label39.Size = new System.Drawing.Size(14, 15);
             this.label39.TabIndex = 21;
@@ -1084,7 +1095,7 @@ namespace KanchokuWS
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(19, 23);
+            this.label38.Location = new System.Drawing.Point(19, 19);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(142, 15);
             this.label38.TabIndex = 20;
@@ -1092,21 +1103,21 @@ namespace KanchokuWS
             // 
             // textBox_alphaModeShowTime
             // 
-            this.textBox_alphaModeShowTime.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_alphaModeShowTime.Location = new System.Drawing.Point(190, 72);
+            this.textBox_alphaModeShowTime.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_alphaModeShowTime.Location = new System.Drawing.Point(190, 87);
             this.textBox_alphaModeShowTime.Name = "textBox_alphaModeShowTime";
-            this.textBox_alphaModeShowTime.Size = new System.Drawing.Size(48, 23);
-            this.textBox_alphaModeShowTime.TabIndex = 3;
+            this.textBox_alphaModeShowTime.Size = new System.Drawing.Size(48, 19);
+            this.textBox_alphaModeShowTime.TabIndex = 4;
             this.toolTip1.SetToolTip(this.textBox_alphaModeShowTime, "英字モードに入ったときに表示されるモード標識の表示時間(ミリ秒)\r\n\r\nここで指定した時間が経過すると英字モード標識は自動的に消えます。\r\n0 を指定すると最初か" +
         "ら英字モード標識を表示しません。\r\n");
             // 
             // textBox_kanjiModeInterval
             // 
-            this.textBox_kanjiModeInterval.Font = new System.Drawing.Font("Microsoft NeoGothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_kanjiModeInterval.Location = new System.Drawing.Point(190, 48);
+            this.textBox_kanjiModeInterval.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_kanjiModeInterval.Location = new System.Drawing.Point(190, 66);
             this.textBox_kanjiModeInterval.Name = "textBox_kanjiModeInterval";
-            this.textBox_kanjiModeInterval.Size = new System.Drawing.Size(48, 23);
-            this.textBox_kanjiModeInterval.TabIndex = 2;
+            this.textBox_kanjiModeInterval.Size = new System.Drawing.Size(48, 19);
+            this.textBox_kanjiModeInterval.TabIndex = 3;
             this.toolTip1.SetToolTip(this.textBox_kanjiModeInterval, "無打鍵時に漢直モード標識を再表示するまでの時間(秒)\r\n\r\n漢直モード標識は、何か打鍵があると自動的に消えます。その後、無打鍵\r\n状態がここで指定した時間続いた場" +
         "合にモード標識を再表示します。\r\n\r\n0 を指定すると、何か打鍵があってもモード標識を消しません。\r\n-1 を指定すると、最初からモード標識を表示しません。(再" +
         "表示もしない)\r\n");
@@ -1114,7 +1125,7 @@ namespace KanchokuWS
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(19, 76);
+            this.label16.Location = new System.Drawing.Point(19, 89);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(163, 15);
             this.label16.TabIndex = 17;
@@ -1123,7 +1134,7 @@ namespace KanchokuWS
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(19, 52);
+            this.label14.Location = new System.Drawing.Point(19, 68);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(160, 15);
             this.label14.TabIndex = 16;
@@ -1143,9 +1154,10 @@ namespace KanchokuWS
             // 
             // textBox_minLeghthViaClipboard
             // 
-            this.textBox_minLeghthViaClipboard.Location = new System.Drawing.Point(186, 16);
+            this.textBox_minLeghthViaClipboard.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_minLeghthViaClipboard.Location = new System.Drawing.Point(186, 17);
             this.textBox_minLeghthViaClipboard.Name = "textBox_minLeghthViaClipboard";
-            this.textBox_minLeghthViaClipboard.Size = new System.Drawing.Size(45, 23);
+            this.textBox_minLeghthViaClipboard.Size = new System.Drawing.Size(45, 19);
             this.textBox_minLeghthViaClipboard.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_minLeghthViaClipboard, "クリップボード経由で文字を送出する場合の最小文字数を設定します。\r\n\r\n対象ウィンドウへに送出される文字列の文字数がこの数より小さい場合は、\r\nWM_CHAR に" +
         "よる送出となります。\r\n\r\n0 を設定すると、クリップボード経由による送出を行いません。");
@@ -1229,6 +1241,7 @@ namespace KanchokuWS
             // comboBox_logLevel
             // 
             this.comboBox_logLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_logLevel.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.comboBox_logLevel.FormattingEnabled = true;
             this.comboBox_logLevel.Items.AddRange(new object[] {
             "NONE",
@@ -1239,9 +1252,9 @@ namespace KanchokuWS
             "DEBUGH",
             "DEBUG",
             "TRACE"});
-            this.comboBox_logLevel.Location = new System.Drawing.Point(77, 18);
+            this.comboBox_logLevel.Location = new System.Drawing.Point(77, 19);
             this.comboBox_logLevel.Name = "comboBox_logLevel";
-            this.comboBox_logLevel.Size = new System.Drawing.Size(91, 23);
+            this.comboBox_logLevel.Size = new System.Drawing.Size(91, 20);
             this.comboBox_logLevel.TabIndex = 0;
             this.toolTip1.SetToolTip(this.comboBox_logLevel, "ログ出力レベルを選択\r\n\r\n漢直窓S は実行プログラムのあるディレクトリに実行時ログを出力します。\r\nここではそのログ出力レベルを選択します。\r\n\r\n通常は WA" +
         "RN 以下に設定してください。\r\nINFO以上に設定すると、動作がかなり遅くなります。");
@@ -1260,7 +1273,7 @@ namespace KanchokuWS
             this.groupBox16.Controls.Add(this.textBox_hotkeyInfiniteLoopDetectCount);
             this.groupBox16.Controls.Add(this.label33);
             this.groupBox16.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox16.Location = new System.Drawing.Point(7, 277);
+            this.groupBox16.Location = new System.Drawing.Point(7, 266);
             this.groupBox16.Name = "groupBox16";
             this.groupBox16.Size = new System.Drawing.Size(287, 45);
             this.groupBox16.TabIndex = 2;
@@ -1269,9 +1282,10 @@ namespace KanchokuWS
             // 
             // textBox_hotkeyInfiniteLoopDetectCount
             // 
-            this.textBox_hotkeyInfiniteLoopDetectCount.Location = new System.Drawing.Point(234, 16);
+            this.textBox_hotkeyInfiniteLoopDetectCount.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_hotkeyInfiniteLoopDetectCount.Location = new System.Drawing.Point(234, 17);
             this.textBox_hotkeyInfiniteLoopDetectCount.Name = "textBox_hotkeyInfiniteLoopDetectCount";
-            this.textBox_hotkeyInfiniteLoopDetectCount.Size = new System.Drawing.Size(45, 23);
+            this.textBox_hotkeyInfiniteLoopDetectCount.Size = new System.Drawing.Size(45, 19);
             this.textBox_hotkeyInfiniteLoopDetectCount.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_hotkeyInfiniteLoopDetectCount, resources.GetString("textBox_hotkeyInfiniteLoopDetectCount.ToolTip"));
             // 
@@ -1335,9 +1349,9 @@ namespace KanchokuWS
             this.groupBox6.Controls.Add(this.textBox_ctrlKeyUpGuardMillisec);
             this.groupBox6.Controls.Add(this.label15);
             this.groupBox6.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox6.Location = new System.Drawing.Point(7, 118);
+            this.groupBox6.Location = new System.Drawing.Point(7, 130);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(287, 153);
+            this.groupBox6.Size = new System.Drawing.Size(287, 130);
             this.groupBox6.TabIndex = 1;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "各種待ち時間";
@@ -1345,7 +1359,7 @@ namespace KanchokuWS
             // label54
             // 
             this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(19, 45);
+            this.label54.Location = new System.Drawing.Point(19, 41);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(200, 15);
             this.label54.TabIndex = 16;
@@ -1354,7 +1368,7 @@ namespace KanchokuWS
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(19, 123);
+            this.label19.Location = new System.Drawing.Point(19, 107);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(202, 15);
             this.label19.TabIndex = 15;
@@ -1362,25 +1376,27 @@ namespace KanchokuWS
             // 
             // textBox_activeWinInfoIntervalMillisec
             // 
-            this.textBox_activeWinInfoIntervalMillisec.Location = new System.Drawing.Point(239, 120);
+            this.textBox_activeWinInfoIntervalMillisec.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_activeWinInfoIntervalMillisec.Location = new System.Drawing.Point(239, 105);
             this.textBox_activeWinInfoIntervalMillisec.Name = "textBox_activeWinInfoIntervalMillisec";
-            this.textBox_activeWinInfoIntervalMillisec.Size = new System.Drawing.Size(40, 23);
+            this.textBox_activeWinInfoIntervalMillisec.Size = new System.Drawing.Size(40, 19);
             this.textBox_activeWinInfoIntervalMillisec.TabIndex = 4;
             this.toolTip1.SetToolTip(this.textBox_activeWinInfoIntervalMillisec, "アクティブウィンドウ取得ループ間隔(ミリ秒)\r\n\r\nここで指定した時間間隔でアクティブウィンドウの情報\r\n(カレット位置やClassName)の取得処理を実行しま" +
         "す。\r\n\r\n設定できる最小値は 100 ミリ秒です。");
             // 
             // textBox_preWmCharGuardMillisec
             // 
-            this.textBox_preWmCharGuardMillisec.Location = new System.Drawing.Point(239, 68);
+            this.textBox_preWmCharGuardMillisec.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_preWmCharGuardMillisec.Location = new System.Drawing.Point(239, 61);
             this.textBox_preWmCharGuardMillisec.Name = "textBox_preWmCharGuardMillisec";
-            this.textBox_preWmCharGuardMillisec.Size = new System.Drawing.Size(40, 23);
+            this.textBox_preWmCharGuardMillisec.Size = new System.Drawing.Size(40, 19);
             this.textBox_preWmCharGuardMillisec.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox_preWmCharGuardMillisec, resources.GetString("textBox_preWmCharGuardMillisec.ToolTip"));
             // 
             // label31
             // 
             this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(19, 71);
+            this.label31.Location = new System.Drawing.Point(19, 63);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(157, 15);
             this.label31.TabIndex = 13;
@@ -1388,24 +1404,26 @@ namespace KanchokuWS
             // 
             // textBox_ctrlKeyDownGuardMillisec
             // 
-            this.textBox_ctrlKeyDownGuardMillisec.Location = new System.Drawing.Point(239, 42);
+            this.textBox_ctrlKeyDownGuardMillisec.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_ctrlKeyDownGuardMillisec.Location = new System.Drawing.Point(239, 39);
             this.textBox_ctrlKeyDownGuardMillisec.Name = "textBox_ctrlKeyDownGuardMillisec";
-            this.textBox_ctrlKeyDownGuardMillisec.Size = new System.Drawing.Size(40, 23);
+            this.textBox_ctrlKeyDownGuardMillisec.Size = new System.Drawing.Size(40, 19);
             this.textBox_ctrlKeyDownGuardMillisec.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_ctrlKeyDownGuardMillisec, resources.GetString("textBox_ctrlKeyDownGuardMillisec.ToolTip"));
             // 
             // textBox_vkbMoveGuardMillisec
             // 
-            this.textBox_vkbMoveGuardMillisec.Location = new System.Drawing.Point(239, 94);
+            this.textBox_vkbMoveGuardMillisec.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_vkbMoveGuardMillisec.Location = new System.Drawing.Point(239, 83);
             this.textBox_vkbMoveGuardMillisec.Name = "textBox_vkbMoveGuardMillisec";
-            this.textBox_vkbMoveGuardMillisec.Size = new System.Drawing.Size(40, 23);
+            this.textBox_vkbMoveGuardMillisec.Size = new System.Drawing.Size(40, 19);
             this.textBox_vkbMoveGuardMillisec.TabIndex = 3;
             this.toolTip1.SetToolTip(this.textBox_vkbMoveGuardMillisec, "キー入力後に仮想鍵盤を移動するまでの待ち時間(ミリ秒)\r\n\r\n漢直入力中に頻繁に仮想鍵盤が移動するのが鬱陶しい場合は、\r\nこの待ち時間を長くしてみてください。");
             // 
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(19, 97);
+            this.label20.Location = new System.Drawing.Point(19, 85);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(216, 15);
             this.label20.TabIndex = 10;
@@ -1413,9 +1431,10 @@ namespace KanchokuWS
             // 
             // textBox_ctrlKeyUpGuardMillisec
             // 
-            this.textBox_ctrlKeyUpGuardMillisec.Location = new System.Drawing.Point(239, 16);
+            this.textBox_ctrlKeyUpGuardMillisec.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_ctrlKeyUpGuardMillisec.Location = new System.Drawing.Point(239, 17);
             this.textBox_ctrlKeyUpGuardMillisec.Name = "textBox_ctrlKeyUpGuardMillisec";
-            this.textBox_ctrlKeyUpGuardMillisec.Size = new System.Drawing.Size(40, 23);
+            this.textBox_ctrlKeyUpGuardMillisec.Size = new System.Drawing.Size(40, 19);
             this.textBox_ctrlKeyUpGuardMillisec.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_ctrlKeyUpGuardMillisec, resources.GetString("textBox_ctrlKeyUpGuardMillisec.ToolTip"));
             // 
@@ -3325,6 +3344,24 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // label75
+            // 
+            this.label75.AutoSize = true;
+            this.label75.Location = new System.Drawing.Point(19, 43);
+            this.label75.Name = "label75";
+            this.label75.Size = new System.Drawing.Size(119, 15);
+            this.label75.TabIndex = 23;
+            this.label75.Text = "ディスプレイ表示スケール";
+            // 
+            // textBox_displayScale
+            // 
+            this.textBox_displayScale.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_displayScale.Location = new System.Drawing.Point(190, 42);
+            this.textBox_displayScale.Name = "textBox_displayScale";
+            this.textBox_displayScale.Size = new System.Drawing.Size(48, 19);
+            this.textBox_displayScale.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_displayScale, resources.GetString("textBox_displayScale.ToolTip"));
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -3840,5 +3877,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label74;
         private System.Windows.Forms.Label label73;
         private System.Windows.Forms.Label label72;
+        private System.Windows.Forms.TextBox textBox_displayScale;
+        private System.Windows.Forms.Label label75;
     }
 }

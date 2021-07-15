@@ -139,7 +139,7 @@ namespace KanchokuWS
         public static int VirtualKeyboardOffsetY { get; private set; } = 2;
 
         /// <summary>ディスプレイのDPI比(標準96dpiとの比)</summary>
-        public static double ScreenDpiRate { get; private set; } = 1.0;
+        public static double DisplayScale { get; private set; } = 1.0;
 
         /// <summary>仮想鍵盤の最上段セルの背景色</summary>
         public static string BgColorTopLevelCells { get; private set; } = "GhostWhite";
@@ -522,7 +522,7 @@ namespace KanchokuWS
             //-------------------------------------------------------------------------------------
             VirtualKeyboardOffsetX = GetString("vkbOffsetX")._parseInt(2)._lowLimit(0);
             VirtualKeyboardOffsetY = GetString("vkbOffsetY")._parseInt(2)._lowLimit(0);
-            ScreenDpiRate = GetString("screenDpiRate")._parseDouble(1.0)._lowLimit(1.0);
+            DisplayScale = GetString("displayScale")._parseDouble(1.0)._lowLimit(1.0);
 
             BgColorTopLevelCells = GetString("bgColorTopLevelCells", "GhostWhite");
             BgColorCenterSideCells = GetString("bgColorCenterSideCells", "FloralWhite");
