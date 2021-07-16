@@ -18,6 +18,8 @@ namespace KanchokuWS
 
         public static List<double> ScreenDpiRates { get; private set; } = new List<double>();
 
+        public static double PrimaryScreenDpiRate => ScreenDpiRates._getFirst();
+
         public static void GetScreenInfo()
         {
             ScreenRects = Screen.AllScreens.Select(s => new Rectangle(s.Bounds.X, s.Bounds.Y, s.Bounds.Width, s.Bounds.Height)).ToList();

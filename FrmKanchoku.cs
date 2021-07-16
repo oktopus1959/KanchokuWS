@@ -73,6 +73,9 @@ namespace KanchokuWS
         {
             logger.WriteLog("INFO", $"\n\n==== KANCHOKU WS START (LogLevel={Logger.LogLevel}) ====");
 
+            // スクリーン情報の取得
+            ScreenInfo.GetScreenInfo();
+
             // 仮想鍵盤フォームの作成
             frmVkb = new FrmVirtualKeyboard(this);
             frmVkb.Opacity = 0;
@@ -810,9 +813,6 @@ namespace KanchokuWS
         private async Task initializeKanchoku()
         {
             logger.Info("ENTER");
-
-            // スクリーン情報の取得
-            ScreenInfo.GetScreenInfo();
 
             // アクティブなウィンドウのハンドラ作成
             actWinHandler = new ActiveWindowHandler(this, frmVkb, frmMode);

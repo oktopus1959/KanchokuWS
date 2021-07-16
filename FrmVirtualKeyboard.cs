@@ -19,29 +19,55 @@ namespace KanchokuWS
 
         private FrmKanchoku frmMain;
 
-        private const int VkbNormalWidth = 201;       // = Vkb5x10CellWidth * 10 + 1 = VkbCellWidth * 10 + VkbCenterWidth + 1
+        private static float VkbNormalWidth = 201;       // = Vkb5x10CellWidth * 10 + 1 = VkbCellWidth * 10 + VkbCenterWidth + 1
+        private static float Vkb5x10Width = 201;       // = Vkb5x10CellWidth * 10 + 1 = VkbCellWidth * 10 + VkbCenterWidth + 1
 
-        private const int VkbCellHeight = 18;
-        private const int VkbCellWidth = 18;
-        private const int VkbCenterWidth = 20;
-        private const int VkbBottomOffset = VkbCenterWidth / 2;
+        private static float VkbCellHeight = 18;
+        private static float VkbCellWidth = 18;
+        private static float VkbCenterWidth = 20;
+        private static float VkbBottomOffset = VkbCenterWidth / 2;
 
-        private const int Vkb5x10CellWidth = 20;
-        private const int Vkb5x10CellHeight = 37;
-        private const int Vkb5x10FaceYOffset = 3;
-        private const int Vkb5x10KeyYOffset = Vkb5x10CellHeight - 18;
+        private static float Vkb5x10CellWidth = 20;
+        private static float Vkb5x10CellHeight = 37;
+        private static float Vkb5x10FaceYOffset = 3;
+        private static float Vkb5x10KeyYOffset = Vkb5x10CellHeight - 18;
 
-        private const int VkbPictureBoxHeight_Normal = VkbCellHeight * 5 + 1;
-        private const int VkbPictureBoxHeight_5x10Table = Vkb5x10CellHeight * 5 + 1;
+        private static float VkbPictureBoxHeight_Normal = VkbCellHeight * 5 + 1;
+        private static float VkbPictureBoxHeight_5x10Table = Vkb5x10CellHeight * 5 + 1;
 
-        private const int VkbCenterBoxHeight_Normal = VkbCellHeight * 4;
-        private const int VkbCenterBoxHeight_5x10Table = VkbPictureBoxHeight_5x10Table;
+        private static float VkbCenterBoxHeight_Normal = VkbCellHeight * 4;
+        private static float VkbCenterBoxHeight_5x10Table = VkbPictureBoxHeight_5x10Table;
 
         private const int LongVkeyNum = 10;
         private const int LongVkeyCharSize = 20;
 
         private const int MinVerticalChars = 2;
         private const int MinCenterChars = 2;
+
+        /// <summary> 縦列鍵盤ボックス </summary>
+        public struct VerticalBox
+        {
+            public float X;
+            public float Y;
+            public float Width;
+            public float Height;
+            public Color BackColor;
+        }
+
+        private VerticalBox[] verticalBoxes = new VerticalBox[LongVkeyNum];
+        private VerticalBox centerBox;
+
+        /// <summary> ストローク文字横書きフォント </summary>
+        private Font strokeCharFont;
+        /// <summary> ストロークキー横書きフォント </summary>
+        private Font strokeKeyFont;
+
+        /// <summary> 中央鍵盤フォント情報 </summary>
+        private VerticalFontInfo centerFontInfo = new VerticalFontInfo() {
+            CharHeight = 15,
+            FontSizeThreshold1 = 10.5f,
+            FontSizeThreshold2 = 11.5f,
+        };
 
         [DllImport("user32.dll")]
         private static extern void ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -59,6 +85,28 @@ namespace KanchokuWS
         public FrmVirtualKeyboard(FrmKanchoku form)
         {
             frmMain = form;
+
+            float dpiRate = (float)ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
+            Func<float, float> mulRate = (float x) => (int)(x * dpiRate);
+
+            VkbCellHeight = mulRate(18);
+            VkbCellWidth = mulRate(18);
+            VkbCenterWidth = mulRate(20);
+            VkbBottomOffset = VkbCenterWidth / 2;
+
+            Vkb5x10CellWidth = mulRate(20);
+            Vkb5x10CellHeight = mulRate(37);
+            Vkb5x10FaceYOffset = mulRate(3);
+            Vkb5x10KeyYOffset = Vkb5x10CellHeight - VkbCellHeight;
+
+            VkbNormalWidth = VkbCellWidth * 10 + VkbCenterWidth + 1;
+            Vkb5x10Width = Vkb5x10CellWidth * 10 + 1; // = VkbCellWidth * 10 + VkbCenterWidth + 1
+
+            VkbPictureBoxHeight_Normal = VkbCellHeight * 5 + 1;
+            VkbPictureBoxHeight_5x10Table = Vkb5x10CellHeight * 5 + 1;
+
+            VkbCenterBoxHeight_Normal = VkbCellHeight * 4;
+            VkbCenterBoxHeight_5x10Table = VkbPictureBoxHeight_5x10Table;
 
             InitializeComponent();
 
@@ -96,9 +144,9 @@ namespace KanchokuWS
             // focus move
             topTextBox.actionOnPaste = sendWord;        // 上部出力文字列に何かをペーストされたときのアクション
 
-            this.Width = VkbNormalWidth + 2;
-            topTextBox.Width = VkbNormalWidth;
-            pictureBox_Main.Width = VkbNormalWidth;
+            this.Width = (int)(VkbNormalWidth + 2);
+            topTextBox.Width = (int)(VkbNormalWidth);
+            pictureBox_Main.Width = (int)(VkbNormalWidth);
             pictureBox_Main.BackColor = Color.White;
 
             // 横書き鍵盤の初期化
@@ -114,8 +162,8 @@ namespace KanchokuWS
         // 横列鍵盤用グリッドの表示
         private void drawHorizontalKeyboard(DataGridView dgv, int nRow, int cellWidth)
         {
-            dgv.Height = nRow * VkbCellHeight + 1;
-            dgv._defaultSetup(0, VkbCellHeight);       // headerHeight=0 -> ヘッダーを表示しない
+            dgv.Height = (int)(nRow * VkbCellHeight + 1);
+            dgv._defaultSetup(0, (int)VkbCellHeight);       // headerHeight=0 -> ヘッダーを表示しない
             dgv._setSelectionColorReadOnly();
             dgv._setDefaultFont(DgvHelpers.FontUIG9);
             //dgv._setDefaultFont(DgvHelpers.FontMSG8);
@@ -123,6 +171,35 @@ namespace KanchokuWS
             dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly("horizontal", "", cellWidth)._setUnresizable());
 
             dgv.Rows.Add(nRow);
+        }
+
+        /// <summary> 縦書き用オブジェクトの生成 </summary>
+        private void createObjectsForDrawingVerticalChars()
+        {
+            strokeCharFont = new Font("MS UI Gothic", 12);
+            strokeKeyFont = new Font("MS Gothic", 12);
+
+            float verticalBoxHeight = verticalFontInfo.CharHeight * 7 + 3;
+            for (int i = 0; i < 5; ++i) {
+                verticalBoxes[i] = new VerticalBox {
+                    X = VkbCellWidth * i,
+                    Y = 0,
+                    Width = VkbCellWidth,
+                    Height = verticalBoxHeight,
+                    BackColor = i < 4 ? SystemColors.Window : SystemColors.ButtonFace
+                };
+            }
+            for (int i = 5; i < 10; ++i) {
+                verticalBoxes[i] = new VerticalBox {
+                    X = VkbCenterWidth + VkbCellWidth * i,
+                    Y = 0,
+                    Width = VkbCellWidth,
+                    Height = verticalBoxHeight,
+                    BackColor = i > 5 ? SystemColors.Window : SystemColors.ButtonFace
+                };
+            }
+
+            centerBox = new VerticalBox { X = VkbCellWidth * 5, Y = 0, Width = VkbCenterWidth, Height = VkbCellHeight * 4, BackColor = Color.White };
         }
 
         /// <summary>
@@ -330,7 +407,7 @@ namespace KanchokuWS
 
         private void drawNormalVkb(string[] strokeTable)
         {
-            resetVkbControls("", VkbPictureBoxHeight_Normal, VkbCenterBoxHeight_Normal);
+            resetVkbControls("", VkbNormalWidth, VkbPictureBoxHeight_Normal, VkbCenterBoxHeight_Normal);
             using (PictureBoxDrawer drawer = new PictureBoxDrawer(pictureBox_Main)) {
                 drawNormalVkbFrame(drawer.Gfx);
                 drawCenterChars(drawer.Gfx);
@@ -341,7 +418,7 @@ namespace KanchokuWS
 
         private void drawVkb5x10Table(StrokeTableDef def)
         {
-            resetVkbControls("", VkbPictureBoxHeight_5x10Table, VkbCenterBoxHeight_5x10Table);
+            resetVkbControls("", Vkb5x10Width, VkbPictureBoxHeight_5x10Table, VkbCenterBoxHeight_5x10Table);
             using (PictureBoxDrawer drawer = new PictureBoxDrawer(pictureBox_Main)) {
                 drawVkb5x10TableFrame(drawer.Gfx);
                 //drawCenterChars(drawer.Gfx);
@@ -400,14 +477,14 @@ namespace KanchokuWS
 
             if (decoderOutput.layout >= (int)VkbLayout.Horizontal && decoderOutput.layout < (int)VkbLayout.Normal) {
                 // 10件横列配列
-                resetVkbControls(topText, 0, 0);
+                resetVkbControls(topText, 0, 0, 0);
                 int nRow = 0;
                 for (int i = 0; i < LongVkeyNum; ++i) {
                     //logger.InfoH(decoderOutput.faceStrings.Skip(i*20).Take(20).Select(c => c.ToString())._join(""));
                     if (drawHorizontalCandidateCharsWithColor(decoderOutput, i, decoderOutput.faceStrings)) ++nRow;
                 }
                 dgvHorizontal.CurrentCell = null;   // どのセルも選択されていない状態にする
-                dgvHorizontal.Height = VkbCellHeight * nRow + 1;
+                dgvHorizontal.Height = (int)(VkbCellHeight * nRow + 1);
                 changeFormHeight(dgvHorizontal.Top + dgvHorizontal.Height + 1);
                 showNonActive();
                 return;
@@ -421,9 +498,9 @@ namespace KanchokuWS
                 renewCandidateVerticalFont();
                 renewCenterVerticalFont();
                 var candArray = getCandidateStrings(decoderOutput.faceStrings);
-                int height = (int)(candArray.Select(s => calcCharsAsFullwide(s)).Max()._lowLimit(MinVerticalChars) * verticalFontInfo.CharHeight) + 5;
-                int centerHeight = height._max(CommonState.CenterString._safeLength()._lowLimit(MinCenterChars) * centerFontInfo.CharHeight + 5);
-                resetVkbControls(topText, height, centerHeight);
+                float height = (int)(candArray.Select(s => calcCharsAsFullwide(s)).Max()._lowLimit(MinVerticalChars) * verticalFontInfo.CharHeight) + 5;
+                float centerHeight = height._max(CommonState.CenterString._safeLength()._lowLimit(MinCenterChars) * centerFontInfo.CharHeight + 5);
+                resetVkbControls(topText, VkbNormalWidth, height, centerHeight);
                 using (PictureBoxDrawer drawer = new PictureBoxDrawer(pictureBox_Main)) {
                     drawVerticalVkbFrame(drawer.Gfx);
                     drawCenterCharsWithColor(drawer.Gfx, decoderOutput);
@@ -438,7 +515,7 @@ namespace KanchokuWS
             if (decoderOutput.layout >= (int)VkbLayout.Normal && decoderOutput.layout < (int)VkbLayout.KanaTable) {
                 // 2打鍵目以降の通常配列
                 if (frmMain.IsVkbShown) {
-                    resetVkbControls(topText, VkbPictureBoxHeight_Normal, VkbCenterBoxHeight_Normal);
+                    resetVkbControls(topText, VkbNormalWidth, VkbPictureBoxHeight_Normal, VkbCenterBoxHeight_Normal);
                     using (PictureBoxDrawer drawer = new PictureBoxDrawer(pictureBox_Main)) {
                         topTextBox.Show();
                         SetTopText(topText, true);
@@ -536,7 +613,7 @@ namespace KanchokuWS
         /// <summary>
         /// 仮想鍵盤を構成するコントロールの再配置
         /// </summary>
-        private void resetVkbControls(string topText, int picBoxHeight, int centerHeight)
+        private void resetVkbControls(string topText, float picBoxWidth, float picBoxHeight, float centerHeight)
         {
             renewMinibufFont();
             topTextBox.Show();
@@ -544,9 +621,10 @@ namespace KanchokuWS
             pictureBox_Main.Top = topTextBox.Height;
             dgvHorizontal.Top = topTextBox.Height;
 
-            if (picBoxHeight > 0) {
-                int height = picBoxHeight._max(centerHeight);
-                pictureBox_Main.Height = height;
+            if (picBoxWidth > 0 && picBoxHeight > 0) {
+                pictureBox_Main.Width = (int)picBoxWidth;
+                var height = picBoxHeight._max(centerHeight);
+                pictureBox_Main.Height = (int)height;
                 pictureBox_Main.Show();
                 dgvHorizontal.Hide();
                 setVerticalBoxHeight(height, centerHeight);
@@ -563,8 +641,8 @@ namespace KanchokuWS
         private string normalFontSpec = "";
         private Font normalFont = null;
 
-        int normalFontLeftPadding = 2;
-        int normalFontTopPadding = 4;
+        float normalFontLeftPadding = 2;
+        float normalFontTopPadding = 4;
 
         // フォントのピクセルサイズを計測する
         private (int, int) measureFontSize(Font font)
@@ -620,7 +698,7 @@ namespace KanchokuWS
                     }
                     normalFontTopPadding = VkbCellHeight - fh_  - 2;  // 2～4 になるようにする
                 }
-                logger.InfoH(() => $"new normalFont Width={fw}, Height={fh}, padLeft={normalFontLeftPadding}, padTop={normalFontTopPadding}");
+                logger.InfoH(() => $"new normalFont Width={fw}, Height={fh}, padLeft={normalFontLeftPadding:f3}, padTop={normalFontTopPadding:f3}");
             }
         }
 
@@ -636,17 +714,17 @@ namespace KanchokuWS
             // 通常ストローク
             for (int i = 0; i < 4; ++i) {
                 for (int j = 0; j < 10; ++j) {
-                    int x = VkbCellWidth * j + normalFontLeftPadding + (j >= 5 ? VkbCenterWidth : 0);
-                    int y = VkbCellHeight * i + normalFontTopPadding;
-                    g.DrawString(nthString(i * 10 + j), normalFont, Brushes.Black, x, y);
+                    float x = VkbCellWidth * j + normalFontLeftPadding + (j >= 5 ? VkbCenterWidth : 0);
+                    float y = VkbCellHeight * i + normalFontTopPadding;
+                    g.DrawString(nthString(i * 10 + j), normalFont, Brushes.Black, (float)x, (float)y);
                 }
             }
             // 下端機能キー
             for (int j = 0; j < 10; ++j) {
-                int x = VkbBottomOffset + VkbCellWidth * j + normalFontLeftPadding;
-                int y = VkbCellHeight * 4 + normalFontTopPadding;
+                float x = VkbBottomOffset + VkbCellWidth * j + normalFontLeftPadding;
+                float y = VkbCellHeight * 4 + normalFontTopPadding;
                 var face = bFirst ? initialVkbChars[40 + j] : nthString(40 + j);
-                g.DrawString(face, normalFont, Brushes.Black, x, y);
+                g.DrawString(face, normalFont, Brushes.Black, (float)x, (float)y);
             }
         }
 
@@ -669,30 +747,30 @@ namespace KanchokuWS
             var bgColorMiddle = getColor(Settings.BgColorMiddleLevelCells);
 
             Brush b1 = new SolidBrush(bgColorTop);
-            g.FillRectangle(b1, 1, 1, VkbCellWidth * 10 + VkbCenterWidth - 1, VkbCellHeight - 1);
+            g.FillRectangle(b1, 1, 1, (float)(VkbCellWidth * 10 + VkbCenterWidth - 1), (float)(VkbCellHeight - 1));
             b1.Dispose();
             b1 = new SolidBrush(bgColorHighLow);
-            g.FillRectangle(b1, 1, VkbCellHeight + 1, VkbCellWidth * 10 + VkbCenterWidth - 1, VkbCellHeight * 3 - 1);
+            g.FillRectangle(b1, 1, (float)(VkbCellHeight + 1), (float)(VkbCellWidth * 10 + VkbCenterWidth - 1), (float)(VkbCellHeight * 3 - 1));
             b1.Dispose();
             b1 = new SolidBrush(bgColorMiddle);
-            g.FillRectangle(b1, 1, VkbCellHeight * 2 + 1, VkbCellWidth * 10 + VkbCenterWidth - 1, VkbCellHeight - 1);
+            g.FillRectangle(b1, 1, (float)(VkbCellHeight * 2 + 1), (float)(VkbCellWidth * 10 + VkbCenterWidth - 1), (float)(VkbCellHeight - 1));
             b1.Dispose();
             b1 = new SolidBrush(bgColorCenter);
-            g.FillRectangle(b1, VkbCellWidth * 4 + 1, VkbCellHeight + 1, VkbCellWidth * 2 + VkbCenterWidth - 1, VkbCellHeight * 3 - 1);
+            g.FillRectangle(b1, (float)(VkbCellWidth * 4 + 1), (float)(VkbCellHeight + 1), (float)(VkbCellWidth * 2 + VkbCenterWidth - 1), (float)(VkbCellHeight * 3 - 1));
             b1.Dispose();
 
             // 中央鍵盤
-            g.FillRectangle(Brushes.White, VkbCellWidth * 5 + 1, 1, VkbCenterWidth - 1, VkbCellHeight * 4 - 1);
+            g.FillRectangle(Brushes.White, (float)(VkbCellWidth * 5 + 1), 1, (float)(VkbCenterWidth - 1), (float)(VkbCellHeight * 4 - 1));
 
             // 下部拡張部
-            g.FillRectangle(Brushes.WhiteSmoke, VkbBottomOffset + 1, VkbCellHeight * 4 + 1, VkbCellWidth * 10 - 1, VkbCellHeight - 1);
+            g.FillRectangle(Brushes.WhiteSmoke, (float)(VkbBottomOffset + 1), (float)(VkbCellHeight * 4 + 1), (float)(VkbCellWidth * 10 - 1), (float)(VkbCellHeight - 1));
 
             // 枠線
             Pen pen = Pens.DarkGray;
 
             // 上端横線
-            int x1 = 0, y1 = 0, y2 = 0;
-            int x2 = pictureBox_Main.Width;
+            float x1 = 0, y1 = 0, y2 = 0;
+            float x2 = pictureBox_Main.Width;
             g.DrawLine(pen, x1, y1, x2, y2);
 
             // 左側横線
@@ -753,8 +831,8 @@ namespace KanchokuWS
         /// <param name="g"></param>
         private void drawVkb5x10TableFrame(Graphics g)
         {
-            int width = pictureBox_Main.Width;
-            int height = pictureBox_Main.Height;
+            float width = pictureBox_Main.Width;
+            float height = pictureBox_Main.Height;
 
             // 1段おきの背景色
             g.FillRectangle(Brushes.AliceBlue, 1, Vkb5x10CellHeight, width - 1, Vkb5x10CellHeight);
@@ -763,15 +841,15 @@ namespace KanchokuWS
             // 枠線と縦横線の描画
             Pen pen = Pens.DarkGray;
             // 横線 
-            int x1 = 0;
-            int x2 = width - 1;
-            for (int y = 0; y < height; y += Vkb5x10CellHeight) {
+            float x1 = 0;
+            float x2 = width - 1;
+            for (float y = 0; y < height; y += Vkb5x10CellHeight) {
                 g.DrawLine(pen, x1, y, x2, y);
             }
             // 縦線 
-            int y1 = 0;
-            int y2 = height - 1;
-            for (int x = 0; x < width; x += Vkb5x10CellWidth) {
+            float y1 = 0;
+            float y2 = height - 1;
+            for (float x = 0; x < width; x += Vkb5x10CellWidth) {
                 g.DrawLine(pen, x, y1, x, y2);
             }
         }
@@ -850,18 +928,18 @@ namespace KanchokuWS
             /// <summary> フォント指定 </summary>
             public string FontSpec = "";
             /// <summary> 縦書き時の左余白 </summary>
-            public int LeftPadding = 2;
+            public float LeftPadding = 2;
             /// <summary> 縦書き時の上部余白 </summary>
-            public int TopPadding = 3;
+            public float TopPadding = 3;
             /// <summary> 縦書きフォントの高さ </summary>
-            public int CharHeight = 13;
+            public float CharHeight = 13;
 
             public float FontSizeThreshold1 = 9.5f;
             public float FontSizeThreshold2 = 11.0f;
 
-            public int AdjustedLeftPadding(string str)
+            public float AdjustedLeftPadding(string str)
             {
-                int leftPadding = LeftPadding;
+                float leftPadding = LeftPadding;
                 if (str._safeLength() == 1) {
                     leftPadding = VerticalFont.Size >= FontSizeThreshold2 ? 0 : VerticalFont.Size >= FontSizeThreshold1 ? 1 : 2;
                 }
@@ -876,36 +954,12 @@ namespace KanchokuWS
 
         }
 
-        /// <summary> ストローク文字横書きフォント </summary>
-        private Font strokeCharFont;
-        /// <summary> ストロークキー横書きフォント </summary>
-        private Font strokeKeyFont;
-
-        /// <summary> 中央鍵盤フォント情報 </summary>
-        private VerticalFontInfo centerFontInfo = new VerticalFontInfo() {
-            CharHeight = 15,
-            FontSizeThreshold1 = 10.5f,
-            FontSizeThreshold2 = 11.5f,
-        };
-
         /// <summary> 縦列鍵盤フォント情報 </summary>
         private VerticalFontInfo verticalFontInfo = new VerticalFontInfo() {
             CharHeight = 13,
             FontSizeThreshold1 = 9.5f,
             FontSizeThreshold2 = 11.0f,
         };
-
-        /// <summary> 縦列鍵盤ボックス </summary>
-        public struct VerticalBox
-        {
-            public int X;
-            public int Y;
-            public int Width;
-            public int Height;
-            public Color BackColor;
-        }
-        VerticalBox[] verticalBoxes = new VerticalBox[LongVkeyNum];
-        VerticalBox centerBox = new VerticalBox { X = VkbCellWidth * 5, Y = 0, Width = VkbCenterWidth, Height = VkbCellHeight * 4, BackColor = Color.White };
 
         // 縦列中央鍵盤用フォントの更新
         private void renewCenterVerticalFont()
@@ -920,7 +974,7 @@ namespace KanchokuWS
         }
 
         // 縦列鍵盤用フォントの更新
-        private void renewVerticalFont(string newSpec, int boxWidth, VerticalFontInfo info)
+        private void renewVerticalFont(string newSpec, float boxWidth, VerticalFontInfo info)
         {
             if (info.VerticalFont == null || info.FontSpec._ne(newSpec)) {
                 logger.InfoH(() => $"CALLED: new fontSpec={newSpec}");
@@ -954,35 +1008,8 @@ namespace KanchokuWS
             }
         }
 
-        /// <summary> 縦書き用オブジェクトの生成 </summary>
-        private void createObjectsForDrawingVerticalChars()
-        {
-            strokeCharFont = new Font("MS UI Gothic", 12);
-            strokeKeyFont = new Font("MS Gothic", 12);
-
-            int verticalBoxHeight = verticalFontInfo.CharHeight * 7 + 3;
-            for (int i = 0; i < 5; ++i) {
-                verticalBoxes[i] = new VerticalBox {
-                    X = VkbCellWidth * i,
-                    Y = 0,
-                    Width = VkbCellWidth,
-                    Height = verticalBoxHeight,
-                    BackColor = i < 4 ? SystemColors.Window : SystemColors.ButtonFace
-                };
-            }
-            for (int i = 5; i < 10; ++i) {
-                verticalBoxes[i] = new VerticalBox {
-                    X = VkbCenterWidth + VkbCellWidth * i,
-                    Y = 0,
-                    Width = VkbCellWidth,
-                    Height = verticalBoxHeight,
-                    BackColor = i > 5 ? SystemColors.Window : SystemColors.ButtonFace
-                };
-            }
-        }
-
         /// <summary> 出力文字数に応じて縦列鍵盤の高さを設定</summary>
-        private void setVerticalBoxHeight(int height, int centerHeight)
+        private void setVerticalBoxHeight(float height, float centerHeight)
         {
             for (int i = 0; i < 10; ++i) {
                 verticalBoxes[i].Height = height;
@@ -1007,8 +1034,8 @@ namespace KanchokuWS
             Pen pen = Pens.DarkGray;
 
             // 上端横線
-            int x1 = 0, y1 = 0, y2 = 0;
-            int x2 = pictureBox_Main.Width - 1;
+            float x1 = 0, y1 = 0, y2 = 0;
+            float x2 = pictureBox_Main.Width - 1;
             g.DrawLine(pen, x1, y1, x2, y2);
 
             // 下端横線
@@ -1143,7 +1170,7 @@ namespace KanchokuWS
             //StringFormatを作成
             StringFormat sf = new StringFormat();
             Font font = info.HorizontalFont;
-            int topPadding = info.TopPadding;
+            float topPadding = info.TopPadding;
             if (drawStr._safeLength() > 1) {
                 //2文字以上なら縦書きにする
                 sf.FormatFlags = StringFormatFlags.DirectionVertical;

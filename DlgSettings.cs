@@ -128,7 +128,9 @@ namespace KanchokuWS
 
         private void initializeAboutDgv()
         {
-            int rowHeight = 20;
+            double dpiRate = ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
+            //if (dpiRate > 1.0) dpiRate *= 1.05;
+            int rowHeight = (int)(20 * dpiRate);
             dgvAbout._defaultSetup(0, rowHeight, false, true);  // headerHeight=0 -> ヘッダーを表示しない, 複数セル選択OK
             dgvAbout._setAutoHeightSize(true);                  // 複数行の場合にセルの高さを自動的に変更する
             //dgvAbout._setSelectionColorSmoke();                 // 選択時の色をスモーク色にする
@@ -136,13 +138,13 @@ namespace KanchokuWS
             dgvAbout._setDefaultFont(DgvHelpers.FontYUG9);
             //dgvAbout._setDefaultFont(DgvHelpers.FontMSG8);
             //dgvAbout._disableToolTips();
-            int itemWidth = 150;
+            int itemWidth = (int)(150 * dpiRate);
             dgvAbout.Columns.Add(dgvAbout._makeTextBoxColumn_ReadOnly("itemName", "", itemWidth)._setUnresizable());
-            int descWidth = 400;
+            int descWidth = (int)(400 * dpiRate);
             dgvAbout.Columns.Add(dgvAbout._makeTextBoxColumn_ReadOnly("description", "", descWidth)._setUnresizable()._setWrapMode());
 
             int nRow = 10;
-            dgvAbout.Height = nRow * rowHeight + 29;        // 末尾行が複数行になっていることを考慮
+            dgvAbout.Height = nRow * rowHeight + (int)(10 * dpiRate) + 19;        // 末尾行が複数行になっていることを考慮
             dgvAbout.Width = itemWidth + descWidth + 1;
             dgvAbout.Rows.Add(nRow);
 

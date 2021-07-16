@@ -56,8 +56,9 @@ namespace KanchokuWS
 
         private void DlgColorSelector_Load(object sender, EventArgs e)
         {
-            int cellWidth = 100;
-            int cellHeight = 20;
+            double dpiRate = ScreenInfo.PrimaryScreenDpiRate;
+            int cellWidth = (int)(100 * dpiRate);
+            int cellHeight = (int)(20 * dpiRate);
             var dgv = dataGridView1;
             dgv.Width = NumColumns * cellWidth + 3;
             dgv.Height = numRows * cellHeight + 3;
