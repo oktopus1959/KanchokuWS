@@ -138,7 +138,7 @@ namespace KanchokuWS
 
             if (hwndFocus != IntPtr.Zero) {
                 // IAccessible を使ってカレット位置を取得する
-                getCaretPos(hwndFocus, ref rect, rt, Settings.DisplayScale);
+                getCaretPos(hwndFocus, ref rect, rt);
                 if (Logger.IsDebugEnabled) {
                     logger.Debug($"prev: left={prevCaretRect.iLeft}, top={prevCaretRect.iTop}, right={prevCaretRect.iRight}, bottom={prevCaretRect.iBottom}");
                     logger.Debug($"curr: left={rect.Left}, top={rect.Top}, right={rect.Right}, bottom={rect.Bottom}");
@@ -220,7 +220,7 @@ namespace KanchokuWS
         /// <param name="handle"></param>
         /// <param name="rect"></param>
         /// <returns></returns>
-        private static bool getCaretPos(IntPtr handle, ref Rectangle rect, RECT winRect, double dpiRate)
+        private static bool getCaretPos(IntPtr handle, ref Rectangle rect, RECT winRect)
         {
             logger.Debug($"Check Caret for {(int)handle:x}");
             Guid guidIAccessible = new Guid("{618736E0-3C3D-11CF-810C-00AA00389B71}");
@@ -238,7 +238,10 @@ namespace KanchokuWS
 
             iAccessible.accLocation(out left, out top, out width, out height, varCaret);
 
-            logger.Debug(() => $"left={left}, top={top}, width={width}, height={height}");
+            // Effective Dpi を使ってみたが、Per-Momitor HiRes が true の場合は、dpiRate に応じた位置が返ってくるようなので、調整は不要のようだ
+            //double dpiRate = ScreenInfo.GetScreenDpiRate(left, top);
+            double dpiRate = 1.0;
+            logger.Debug(() => $"left={left}, top={top}, width={width}, height={height}, dpiRate={dpiRate:f3}");
             rect.X = winRect.iLeft + (int)((left - winRect.iLeft) / dpiRate);
             rect.Y = winRect.iTop + (int)((top - winRect.iTop) / dpiRate);
             rect.Width = width;

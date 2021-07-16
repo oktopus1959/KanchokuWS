@@ -811,9 +811,11 @@ namespace KanchokuWS
         {
             logger.Info("ENTER");
 
-            actWinHandler = new ActiveWindowHandler(this, frmVkb, frmMode);
             // スクリーン情報の取得
-            actWinHandler.GetScreenInfo();
+            ScreenInfo.GetScreenInfo();
+
+            // アクティブなウィンドウのハンドラ作成
+            actWinHandler = new ActiveWindowHandler(this, frmVkb, frmMode);
 
             Settings.ReadIniFile();
             //frmVkb.SetNormalCellBackColors();
