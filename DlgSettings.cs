@@ -477,7 +477,7 @@ namespace KanchokuWS
             // モード標識
             textBox_vkbOffsetX.Text = $"{Settings.VirtualKeyboardOffsetX}";
             textBox_vkbOffsetY.Text = $"{Settings.VirtualKeyboardOffsetY}";
-            textBox_displayScale.Text = $"{Settings.DisplayScale:f3}";
+            //textBox_displayScale.Text = $"{Settings.DisplayScale:f3}";
             textBox_kanjiModeInterval.Text = $"{Settings.KanjiModeMarkerShowIntervalSec}";
             textBox_alphaModeShowTime.Text = $"{Settings.AlphaModeMarkerShowMillisec}";
 
@@ -517,7 +517,7 @@ namespace KanchokuWS
             // モード標識
             checkerAdvanced.Add(textBox_vkbOffsetX);
             checkerAdvanced.Add(textBox_vkbOffsetY);
-            checkerAdvanced.Add(textBox_displayScale);
+            //checkerAdvanced.Add(textBox_displayScale);
             checkerAdvanced.Add(textBox_kanjiModeInterval);
             checkerAdvanced.Add(textBox_alphaModeShowTime);
 
@@ -562,7 +562,7 @@ namespace KanchokuWS
             // モード標識表示時間
             Settings.SetUserIni("vkbOffsetX", textBox_vkbOffsetX.Text.Trim());
             Settings.SetUserIni("vkbOffsetY", textBox_vkbOffsetY.Text.Trim());
-            Settings.SetUserIni("displayScale", textBox_displayScale.Text.Trim());
+            //Settings.SetUserIni("displayScale", textBox_displayScale.Text.Trim());
             Settings.SetUserIni("kanjiModeMarkerShowIntervalSec", textBox_kanjiModeInterval.Text.Trim());
             Settings.SetUserIni("alphaModeMarkerShowMillisec", textBox_alphaModeShowTime.Text.Trim());
 

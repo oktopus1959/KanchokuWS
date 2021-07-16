@@ -289,8 +289,6 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.label75 = new System.Windows.Forms.Label();
-            this.textBox_displayScale = new System.Windows.Forms.TextBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -1036,8 +1034,6 @@ namespace KanchokuWS
             // 
             // groupBox20
             // 
-            this.groupBox20.Controls.Add(this.textBox_displayScale);
-            this.groupBox20.Controls.Add(this.label75);
             this.groupBox20.Controls.Add(this.textBox_vkbOffsetY);
             this.groupBox20.Controls.Add(this.textBox_vkbOffsetX);
             this.groupBox20.Controls.Add(this.label40);
@@ -1049,7 +1045,7 @@ namespace KanchokuWS
             this.groupBox20.Controls.Add(this.label14);
             this.groupBox20.Location = new System.Drawing.Point(7, 12);
             this.groupBox20.Name = "groupBox20";
-            this.groupBox20.Size = new System.Drawing.Size(287, 112);
+            this.groupBox20.Size = new System.Drawing.Size(287, 99);
             this.groupBox20.TabIndex = 0;
             this.groupBox20.TabStop = false;
             this.groupBox20.Text = "仮想鍵盤・モード標識";
@@ -1104,7 +1100,7 @@ namespace KanchokuWS
             // textBox_alphaModeShowTime
             // 
             this.textBox_alphaModeShowTime.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_alphaModeShowTime.Location = new System.Drawing.Point(190, 87);
+            this.textBox_alphaModeShowTime.Location = new System.Drawing.Point(190, 71);
             this.textBox_alphaModeShowTime.Name = "textBox_alphaModeShowTime";
             this.textBox_alphaModeShowTime.Size = new System.Drawing.Size(48, 19);
             this.textBox_alphaModeShowTime.TabIndex = 4;
@@ -1114,7 +1110,7 @@ namespace KanchokuWS
             // textBox_kanjiModeInterval
             // 
             this.textBox_kanjiModeInterval.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_kanjiModeInterval.Location = new System.Drawing.Point(190, 66);
+            this.textBox_kanjiModeInterval.Location = new System.Drawing.Point(190, 50);
             this.textBox_kanjiModeInterval.Name = "textBox_kanjiModeInterval";
             this.textBox_kanjiModeInterval.Size = new System.Drawing.Size(48, 19);
             this.textBox_kanjiModeInterval.TabIndex = 3;
@@ -1125,7 +1121,7 @@ namespace KanchokuWS
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(19, 89);
+            this.label16.Location = new System.Drawing.Point(19, 73);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(163, 15);
             this.label16.TabIndex = 17;
@@ -1134,7 +1130,7 @@ namespace KanchokuWS
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(19, 68);
+            this.label14.Location = new System.Drawing.Point(19, 52);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(160, 15);
             this.label14.TabIndex = 16;
@@ -1273,7 +1269,7 @@ namespace KanchokuWS
             this.groupBox16.Controls.Add(this.textBox_hotkeyInfiniteLoopDetectCount);
             this.groupBox16.Controls.Add(this.label33);
             this.groupBox16.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox16.Location = new System.Drawing.Point(7, 266);
+            this.groupBox16.Location = new System.Drawing.Point(7, 259);
             this.groupBox16.Name = "groupBox16";
             this.groupBox16.Size = new System.Drawing.Size(287, 45);
             this.groupBox16.TabIndex = 2;
@@ -1349,7 +1345,7 @@ namespace KanchokuWS
             this.groupBox6.Controls.Add(this.textBox_ctrlKeyUpGuardMillisec);
             this.groupBox6.Controls.Add(this.label15);
             this.groupBox6.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox6.Location = new System.Drawing.Point(7, 130);
+            this.groupBox6.Location = new System.Drawing.Point(7, 118);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(287, 130);
             this.groupBox6.TabIndex = 1;
@@ -3344,24 +3340,6 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // label75
-            // 
-            this.label75.AutoSize = true;
-            this.label75.Location = new System.Drawing.Point(19, 43);
-            this.label75.Name = "label75";
-            this.label75.Size = new System.Drawing.Size(119, 15);
-            this.label75.TabIndex = 23;
-            this.label75.Text = "ディスプレイ表示スケール";
-            // 
-            // textBox_displayScale
-            // 
-            this.textBox_displayScale.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_displayScale.Location = new System.Drawing.Point(190, 42);
-            this.textBox_displayScale.Name = "textBox_displayScale";
-            this.textBox_displayScale.Size = new System.Drawing.Size(48, 19);
-            this.textBox_displayScale.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_displayScale, resources.GetString("textBox_displayScale.ToolTip"));
-            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -3877,7 +3855,5 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label74;
         private System.Windows.Forms.Label label73;
         private System.Windows.Forms.Label label72;
-        private System.Windows.Forms.TextBox textBox_displayScale;
-        private System.Windows.Forms.Label label75;
     }
 }

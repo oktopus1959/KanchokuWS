@@ -120,22 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="textBox_displayScale.ToolTip" xml:space="preserve">
-    <value>ディスプレイの表示スケールを設定します。
-
-カレット位置と仮想鍵盤の表示位置がずれるというような場合は、
-この数値を調整してみてください。
-スケール値は、 1.25 などの浮動小数点数で入力してください。
-
-この数値を変更しても表示位置のずれが解消されない場合は、
-個々のウィンドウごとにカレットからの相対位置を調整してください。
-設定方法については README の「相対位置の個別設定」を
-参照ください。
-</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
