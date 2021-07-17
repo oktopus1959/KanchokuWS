@@ -52,6 +52,9 @@ namespace KanchokuWS
         /// </summary>
         public FrmKanchoku()
         {
+            // スクリーン情報の取得
+            ScreenInfo.GetScreenInfo();
+
             showSplash();
 
             InitializeComponent();
@@ -79,9 +82,6 @@ namespace KanchokuWS
         private async void DlgKanchoku_Load(object sender, EventArgs e)
         {
             logger.WriteLog("INFO", $"\n\n==== KANCHOKU WS START (LogLevel={Logger.LogLevel}) ====");
-
-            // スクリーン情報の取得
-            ScreenInfo.GetScreenInfo();
 
             // 仮想鍵盤フォームの作成
             frmVkb = new FrmVirtualKeyboard(this);

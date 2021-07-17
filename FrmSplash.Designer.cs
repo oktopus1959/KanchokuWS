@@ -55,7 +55,7 @@ namespace KanchokuWS
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label4.Location = new System.Drawing.Point(66, 79);
+            this.label4.Location = new System.Drawing.Point(57, 79);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(65, 12);
             this.label4.TabIndex = 9;
