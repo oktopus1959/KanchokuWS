@@ -43,10 +43,15 @@ namespace Utils
             {
                 var path = GetExeDirectory();
                 var basename = path._getFileName().ToUpper();
-                if (basename == "DEBUG" || basename == "RELEASE")
-                    s_KanchokuRootDir = path._getDirPath()._getDirPath()._getDirPath()._joinPath("test");
-                else
+                if (basename == "DEBUG" || basename == "RELEASE") {
+                    var dirPath = path._getDirPath()._getDirPath()._getDirPath();
+                    if (GetExePath()._getFileName()._toLower().EndsWith("settings.exe")) {
+                        dirPath = dirPath._getDirPath();
+                    }
+                    s_KanchokuRootDir = dirPath._joinPath("test");
+                } else {
                     s_KanchokuRootDir = path._getDirPath();
+                }
             }
             return s_KanchokuRootDir;
         }

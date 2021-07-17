@@ -58,6 +58,9 @@ namespace KanchokuWS
             frmMain = form;
             frmVkb = vkb;
             frmMode = mode;
+
+            ScreenInfo.GetScreenInfo();
+
             InitializeComponent();
         }
 

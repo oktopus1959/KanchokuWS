@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kw-uni", "kw-uni\kw-uni.vcxproj", "{FD80C5CF-AE17-4882-92DA-8820A8FC027C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsWS", "SettingsWS\SettingsWS.csproj", "{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,18 @@ Global
 		{FD80C5CF-AE17-4882-92DA-8820A8FC027C}.Release|x64.Build.0 = Release|x64
 		{FD80C5CF-AE17-4882-92DA-8820A8FC027C}.Release|x86.ActiveCfg = Release|Win32
 		{FD80C5CF-AE17-4882-92DA-8820A8FC027C}.Release|x86.Build.0 = Release|Win32
+		{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}.Debug|x64.Build.0 = Debug|Any CPU
+		{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}.Debug|x86.Build.0 = Debug|Any CPU
+		{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}.Release|x64.ActiveCfg = Release|Any CPU
+		{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}.Release|x64.Build.0 = Release|Any CPU
+		{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}.Release|x86.ActiveCfg = Release|Any CPU
+		{D2DCFB0C-36DC-4FAE-89B7-8E758C302C75}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
