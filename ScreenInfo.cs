@@ -16,31 +16,32 @@ namespace KanchokuWS
 
         public static List<Rectangle> ScreenRects { get; private set; } = new List<Rectangle>();
 
-        public static List<double> ScreenDpiRates { get; private set; } = new List<double>();
+        public static List<int> ScreenDpi { get; private set; } = new List<int>();
 
-        public static double PrimaryScreenDpiRate => ScreenDpiRates._getFirst();
+        public static double PrimaryScreenDpiRate => ScreenDpi._getFirst() / 96.0;
+
+        public static int PrimaryScreenDpi => ScreenDpi._getFirst();
 
         public static void GetScreenInfo()
         {
             ScreenRects = Screen.AllScreens.Select(s => new Rectangle(s.Bounds.X, s.Bounds.Y, s.Bounds.Width, s.Bounds.Height)).ToList();
-            ScreenDpiRates = Screen.AllScreens.Select(s => {
+            ScreenDpi = Screen.AllScreens.Select(s => {
                 uint x, y;
                 s.GetDpi(DpiType.Effective, out x, out y);
-                return x / 96.0;
+                return (int)x;
             }).ToList();
             if (Logger.IsInfoHEnabled) {
                 int i = 0;
                 foreach (var r in ScreenRects) {
                     //logger.InfoH($"Screen {i}: X={r.X}, Y={r.Y}, W={r.Width}, H={r.Height}");
-                    logger.InfoH($"Screen {i}: X={r.X}, Y={r.Y}, W={r.Width}, H={r.Height}, dpiRates={ScreenDpiRates[i]:f3}");
+                    logger.InfoH($"Screen {i}: X={r.X}, Y={r.Y}, W={r.Width}, H={r.Height}, dpi={ScreenDpi[i]}");
                     ++i;
                 }
             }
         }
 
         /// <summary>
-        /// (x, y) を含むスクリーンの位置・サイズと dpi rate を返す。
-        /// スクリーンが取れなかったら、0 を返す
+        /// (x, y) を含むスクリーンの位置・サイズを返す。
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -53,7 +54,7 @@ namespace KanchokuWS
 
         public static double GetScreenDpiRate(int x, int y)
         {
-            return ScreenDpiRates[findContaingScreenIdx(x, y)];
+            return ScreenDpi[findContaingScreenIdx(x, y)] / 96.0;
         }
 
         private static int findContaingScreenIdx(int x, int y)

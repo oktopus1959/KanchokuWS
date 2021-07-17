@@ -77,7 +77,9 @@ namespace KanchokuWS
 
         private void showNonActive()
         {
+            //topTextBox.Width = (int)(VkbNormalWidth);
             ShowWindow(this.Handle, SW_SHOWNA);   // NonActive
+            logger.InfoH($"LEAVE: this.Width={this.Width}, this.Height={this.Height}, tex.Height={topTextBox.Height}, pic.top={pictureBox_Main.Top}");
         }
 
         /// <summary> コンストラクタ </summary>
@@ -86,28 +88,6 @@ namespace KanchokuWS
         {
             frmMain = form;
 
-            float dpiRate = (float)ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
-            Func<float, float> mulRate = (float x) => (int)(x * dpiRate);
-
-            VkbCellHeight = mulRate(18);
-            VkbCellWidth = mulRate(18);
-            VkbCenterWidth = mulRate(20);
-            VkbBottomOffset = VkbCenterWidth / 2;
-
-            Vkb5x10CellWidth = mulRate(20);
-            Vkb5x10CellHeight = mulRate(37);
-            Vkb5x10FaceYOffset = mulRate(3);
-            Vkb5x10KeyYOffset = Vkb5x10CellHeight - VkbCellHeight;
-
-            VkbNormalWidth = VkbCellWidth * 10 + VkbCenterWidth + 1;
-            Vkb5x10Width = Vkb5x10CellWidth * 10 + 1; // = VkbCellWidth * 10 + VkbCenterWidth + 1
-
-            VkbPictureBoxHeight_Normal = VkbCellHeight * 5 + 1;
-            VkbPictureBoxHeight_5x10Table = Vkb5x10CellHeight * 5 + 1;
-
-            VkbCenterBoxHeight_Normal = VkbCellHeight * 4;
-            VkbCenterBoxHeight_5x10Table = VkbPictureBoxHeight_5x10Table;
-
             InitializeComponent();
 
             // タイトルバーを消す
@@ -115,6 +95,12 @@ namespace KanchokuWS
 
             // マウスホイール
             //pictureBox_Main.MouseWheel += new System.Windows.Forms.MouseEventHandler(pictureBox_Main_MouseWheel);
+
+            // 各種パラメータの初期化
+            resetDrawParameters(ScreenInfo.PrimaryScreenDpi);
+
+            // モニタが切り替わった
+            DpiChanged += dpiChangedHandler;
         }
 
         const int CS_DROPSHADOW = 0x00020000;
@@ -145,12 +131,9 @@ namespace KanchokuWS
             topTextBox.actionOnPaste = sendWord;        // 上部出力文字列に何かをペーストされたときのアクション
 
             this.Width = (int)(VkbNormalWidth + 2);
-            topTextBox.Width = (int)(VkbNormalWidth);
-            pictureBox_Main.Width = (int)(VkbNormalWidth);
-            pictureBox_Main.BackColor = Color.White;
 
-            // 横書き鍵盤の初期化
-            drawHorizontalKeyboard(dgvHorizontal, LongVkeyNum, pictureBox_Main.Width - 1);
+            // 横列鍵盤用グリッドの初期化
+            initializeHorizontalKeyboard(pictureBox_Main.Width - 1);
 
             // 縦書き用オブジェクトの生成
             createObjectsForDrawingVerticalChars();
@@ -159,10 +142,10 @@ namespace KanchokuWS
             DrawInitailVkb();
         }
 
-        // 横列鍵盤用グリッドの表示
-        private void drawHorizontalKeyboard(DataGridView dgv, int nRow, int cellWidth)
+        // 横列鍵盤用グリッドの初期化
+        private void initializeHorizontalKeyboard(int cellWidth)
         {
-            dgv.Height = (int)(nRow * VkbCellHeight + 1);
+            var dgv = dgvHorizontal;
             dgv._defaultSetup(0, (int)VkbCellHeight);       // headerHeight=0 -> ヘッダーを表示しない
             dgv._setSelectionColorReadOnly();
             dgv._setDefaultFont(DgvHelpers.FontUIG9);
@@ -170,15 +153,40 @@ namespace KanchokuWS
             dgv._disableToolTips();
             dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly("horizontal", "", cellWidth)._setUnresizable());
 
-            dgv.Rows.Add(nRow);
+            //dgv.Rows.Add(nRow);
+
+            renewHorizontalKeyboard();
+        }
+
+        private void renewHorizontalKeyboard()
+        {
+            var dgv = dgvHorizontal;
+            int cellWidth = (int)VkbNormalWidth - 1;
+            int cellHeight = (int)VkbCellHeight;
+            dgv.RowTemplate.Height = cellHeight;
+            if (dgv.Columns.Count > 0) dgv.Columns[0].Width = cellWidth;
+            //dgv.Top = topTextBox.Top + topTextBox.Height - 1;
+            dgv.Width = cellWidth + 1;
+            //dgv.Height = dgv.Rows.Count * cellHeight + 1;
+
+            if (dgv.Rows.Count == 0) dgv.Rows.Add(LongVkeyNum);
+
+            logger.InfoH($"dgv.Top={dgv.Top}, dgv.Width={dgv.Width}, cellHeight={cellHeight}, cellWidth={cellWidth}");
+                
         }
 
         /// <summary> 縦書き用オブジェクトの生成 </summary>
         private void createObjectsForDrawingVerticalChars()
         {
-            strokeCharFont = new Font("MS UI Gothic", 12);
-            strokeKeyFont = new Font("MS Gothic", 12);
+            if (strokeCharFont == null) strokeCharFont = new Font("MS UI Gothic", 12);
+            if (strokeKeyFont == null) strokeKeyFont = new Font("MS Gothic", 12);
 
+            renewObjectsForDrawingVerticalChars();
+        }
+
+        /// <summary> 縦書き用オブジェクトの再作成 </summary>
+        private void renewObjectsForDrawingVerticalChars()
+        {
             float verticalBoxHeight = verticalFontInfo.CharHeight * 7 + 3;
             for (int i = 0; i < 5; ++i) {
                 verticalBoxes[i] = new VerticalBox {
@@ -208,6 +216,82 @@ namespace KanchokuWS
         public double GetDeviceDpiRatio()
         {
             return DeviceDpi / 96.0;
+        }
+
+        /// <summary>
+        /// モニタが切り替わってDPIが変化したときに呼ばれる
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dpiChangedHandler(object sender, DpiChangedEventArgs e)
+        {
+            logger.InfoH($"\nCALLED: new dpi={e.DeviceDpiNew}");
+
+            if (frmMain.IsDecoderActive) {
+                this.Hide();
+                frmMain.DeactivateDecoder();
+            }
+
+            dgvHorizontal.Rows.Clear();
+
+            resetDrawParameters(e.DeviceDpiNew);
+
+            redrawVkb();
+        }
+
+        private void resetDrawParameters(int dpi)
+        {
+            logger.InfoH($"CALLED: dpi={dpi}");
+            //float rate = (float)ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
+            float rate = dpi / 96.0f;
+
+            Func<float, float> mulRate = (float x) => (int)(x * rate);
+
+            VkbCellHeight = mulRate(18);
+            VkbCellWidth = mulRate(18);
+            VkbCenterWidth = mulRate(20);
+            VkbBottomOffset = VkbCenterWidth / 2;
+
+            Vkb5x10CellWidth = mulRate(20);
+            Vkb5x10CellHeight = mulRate(37);
+            Vkb5x10FaceYOffset = mulRate(3);
+            Vkb5x10KeyYOffset = Vkb5x10CellHeight - VkbCellHeight;
+
+            VkbNormalWidth = VkbCellWidth * 10 + VkbCenterWidth + 1;
+            Vkb5x10Width = Vkb5x10CellWidth * 10 + 1; // = VkbCellWidth * 10 + VkbCenterWidth + 1
+
+            VkbPictureBoxHeight_Normal = VkbCellHeight * 5 + 1;
+            VkbPictureBoxHeight_5x10Table = Vkb5x10CellHeight * 5 + 1;
+
+            VkbCenterBoxHeight_Normal = VkbCellHeight * 4;
+            VkbCenterBoxHeight_5x10Table = VkbPictureBoxHeight_5x10Table;
+
+            this.Width = (int)(VkbNormalWidth + 2);
+            logger.InfoH($"LEAVE: this.Width={this.Width}");
+        }
+
+        /// <summary>
+        /// 仮想鍵盤の再描画
+        /// </summary>
+        private void redrawVkb()
+        {
+            logger.InfoH($"CALLED: VkbNormalWidth={VkbNormalWidth}, VkbCellHeight={VkbCellHeight}");
+
+            //this.Width = (int)(VkbNormalWidth + 2);
+            //topTextBox.Width = (int)(VkbNormalWidth);
+            //topTextBox.Height = (int)(VkbCellHeight + 1);
+            //logger.InfoH($"topTextBox.Width={topTextBox.Width}, topTextBox.Height={topTextBox.Height}");
+            pictureBox_Main.Width = (int)(VkbNormalWidth);
+            pictureBox_Main.BackColor = Color.White;
+
+            // 横書き鍵盤の再初期化
+            //renewHorizontalKeyboard();
+
+            // 縦書き用オブジェクトの再作成
+            renewObjectsForDrawingVerticalChars();
+
+            // 仮想鍵盤の再描画
+            if (frmMain.IsDecoderActive) DrawVirtualKeyboardChars();
         }
 
         //-----------------------------------------------------------------------------------------
@@ -388,6 +472,7 @@ namespace KanchokuWS
         /// <summary> 第1打鍵待ち状態の仮想キーボード表示 </summary>
         public void DrawInitailVkb()
         {
+            logger.InfoH(() => $"CALLED: EffectiveCount={Settings.VirtualKeyboardShowStrokeCountEffective}");
             if (Settings.VirtualKeyboardShowStrokeCountEffective == 1) {
                 if (StrokeTables._isEmpty()) {
                     drawNormalVkb(initialVkbChars);
@@ -430,7 +515,7 @@ namespace KanchokuWS
         /// <summary> 仮想キーボードの上部出力領域に文字列を出力する </summary>        
         public void SetTopText(string text, bool bRightAlign = false)
         {
-            topTextBox.Text = text;
+            if (text != null) topTextBox.Text = text;
             if (bRightAlign) {
                 topTextBox.SelectionStart = text._safeLength();
                 topTextBox.SelectionLength = 0;
@@ -438,13 +523,12 @@ namespace KanchokuWS
         }
 
         /// <summary> 第1打鍵待ち受け時に表示するストロークテーブルの切り替え </summary>
-        /// <param name="decoderOutput"></param>
-        public void RotateStrokeTable(DecoderOutParams decoderOutput, int delta = 1)
+        public void RotateStrokeTable(int delta = 1)
         {
             if (StrokeTables._notEmpty()) {
                 if (delta < 0) delta = StrokeTables.Count - ((-delta) % StrokeTables.Count);
                 selectedTable = (selectedTable + delta) % StrokeTables.Count;
-                DrawVirtualKeyboardChars(decoderOutput);
+                DrawVirtualKeyboardChars();
             }
         }
 
@@ -457,9 +541,13 @@ namespace KanchokuWS
         }
 
         /// <summary> 仮想キーボードにヘルプや文字候補を表示 </summary>
-        public void DrawVirtualKeyboardChars(DecoderOutParams decoderOutput)
+        public void DrawVirtualKeyboardChars()
         {
+            var decoderOutput = frmMain.DecoderOutput;
+
             logger.Info(() => $"CALLED: layout={decoderOutput.layout}, center={CommonState.CenterString}");
+
+            if (decoderOutput.topString._isEmpty()) return;
 
             const int maxTopLen = LongVkeyCharSize - 2;
 
@@ -544,12 +632,15 @@ namespace KanchokuWS
         // 仮想鍵盤の高さを変更し、必要ならウィンドウを移動する
         private void changeFormHeight(int newHeight)
         {
+            logger.InfoH($"ENTER: oldHeight={this.Height}, newHeight={newHeight}");
             int oldHeight = this.Height;
+            this.Invalidate();
             this.Height = newHeight;
             if (newHeight != oldHeight) {
                 // ウィンドウ位置の再取得を行わずに移動するので正しくない場所に表示される可能性はあるが、たいていの場合は大丈夫だろう
                 frmMain.MoveFormVirtualKeyboard();
             }
+            logger.InfoH($"LEAVE: this.Width={this.Width}, this.Height={this.Height}");
         }
 
         public class PictureBoxDrawer : IDisposable
@@ -615,13 +706,17 @@ namespace KanchokuWS
         /// </summary>
         private void resetVkbControls(string topText, float picBoxWidth, float picBoxHeight, float centerHeight)
         {
+            logger.InfoH($"picBoxWidth={picBoxWidth:f3}, picBoxHeight={picBoxHeight:f3}, centerHeight={centerHeight:f3}");
             renewMinibufFont();
+            topTextBox.Width = (int)(VkbNormalWidth);
             topTextBox.Show();
             SetTopText(topText, true);
-            pictureBox_Main.Top = topTextBox.Height;
-            dgvHorizontal.Top = topTextBox.Height;
+            logger.InfoH($"topTextBox.Width={topTextBox.Width}, topTextBox.Height={topTextBox.Height}");
+            renewHorizontalKeyboard();
+            //dgvHorizontal.Top = topTextBox.Height;
 
             if (picBoxWidth > 0 && picBoxHeight > 0) {
+                pictureBox_Main.Top = topTextBox.Height;
                 pictureBox_Main.Width = (int)picBoxWidth;
                 var height = picBoxHeight._max(centerHeight);
                 pictureBox_Main.Height = (int)height;
@@ -630,8 +725,15 @@ namespace KanchokuWS
                 setVerticalBoxHeight(height, centerHeight);
             } else {
                 pictureBox_Main.Hide();
+                dgvHorizontal.Top = topTextBox.Height;
+                //dgvHorizontal.Width = topTextBox.Width;
+                dgvHorizontal.Width = (int)VkbNormalWidth;
                 dgvHorizontal.Show();
+                //dgvHorizontal.Top = topTextBox.Height;
+                logger.InfoH($"dgv.Top={dgvHorizontal.Top}, dgv.Width={dgvHorizontal.Width}");
             }
+            this.Width = (int)(VkbNormalWidth + 2);
+            logger.InfoH($"LEAVE: this.Width={this.Width}, topText.Width={topTextBox.Width}");
         }
 
         //-------------------------------------------------------------------------------

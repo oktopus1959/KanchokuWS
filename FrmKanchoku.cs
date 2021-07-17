@@ -61,6 +61,13 @@ namespace KanchokuWS
             Height = 1;
             WindowState = FormWindowState.Minimized;
             Opacity = 0;
+
+            DpiChanged += dpiChangedHandler;
+        }
+
+        private void dpiChangedHandler(object sender, DpiChangedEventArgs e)
+        {
+            logger.InfoH($"CALLED: new dpi={e.DeviceDpiNew}");
         }
 
         //------------------------------------------------------------------
@@ -282,6 +289,8 @@ namespace KanchokuWS
 
         /// <summary> デコーダからの出力情報を保持する構造体インスタンス </summary>
         DecoderOutParams decoderOutput;
+
+        public DecoderOutParams DecoderOutput => decoderOutput;
 
         /// <summary>仮想鍵盤を移動させないか(仮想鍵盤自身がアクティブになっているなど)</summary>
         public bool IsVirtualKeyboardFreezed => decoderOutput.IsVirtualKeyboardFreezed();
@@ -507,7 +516,7 @@ namespace KanchokuWS
                                     // 仮想鍵盤のヘルプ表示の切り替え(モード標識表示時なら一時的に仮想鍵盤表示)
                                     int effectiveCnt = Settings.VirtualKeyboardShowStrokeCountEffective;
                                     Settings.VirtualKeyboardShowStrokeCountTemp = 1;
-                                    frmVkb.RotateStrokeTable(decoderOutput, effectiveCnt != 1 ? 0 : hotkey == HotKeys.STROKE_HELP_ROTATION_HOTKEY ? 1 : -1);
+                                    frmVkb.RotateStrokeTable(effectiveCnt != 1 ? 0 : hotkey == HotKeys.STROKE_HELP_ROTATION_HOTKEY ? 1 : -1);
                                     break;
                             }
                         }
@@ -778,7 +787,7 @@ namespace KanchokuWS
             ExecCmdDecoder("showStrokeHelp", w);
             // 仮想キーボードにヘルプや文字候補を表示
             getCenterString();
-            frmVkb.DrawVirtualKeyboardChars(decoderOutput);
+            frmVkb.DrawVirtualKeyboardChars();
         }
 
         /// <summary> 仮想鍵盤のストローク表を切り替える </summary>
@@ -787,7 +796,7 @@ namespace KanchokuWS
         {
             logger.InfoH(() => $"CALLED: delta={delta}");
             if (delta == 0) delta = 1;
-            frmVkb.RotateStrokeTable(decoderOutput, delta);
+            frmVkb.RotateStrokeTable(delta);
         }
 
         public void ReregisterSpecialGlobalHotkeys()
@@ -954,7 +963,7 @@ namespace KanchokuWS
             actWinHandler.PostStringViaClipboardIfNeeded(decoderOutput.outString, nPreKeys);
 
             // 仮想キーボードにヘルプや文字候補を表示
-            frmVkb.DrawVirtualKeyboardChars(decoderOutput);
+            frmVkb.DrawVirtualKeyboardChars();
 
             // 候補選択が必要なら矢印キーをホットキーにする
             handleArrowKeys();

@@ -514,8 +514,8 @@ namespace KanchokuWS
                         if (bLog) {
                             logger.InfoH($"MOVE: X={cX}, Y={cY}, W={cW}, H={cH}, OX={xOffset}, OY={yOffset}");
                             if (Settings.LoggingActiveWindowInfo) {
-                                var dpiRates = ScreenInfo.ScreenDpiRates.Select(x => $"{x:f3}")._join(", ");
-                                FrmVkb.SetTopText($"DR={dpiRates}, CX={cX},CY={cY},CW={cW},CH={cH},OX={xOffset},OY={yOffset}");
+                                var dpis = ScreenInfo.ScreenDpi.Select(x => $"{x}")._join(", ");
+                                FrmVkb.SetTopText($"DR={dpis}, CX={cX},CY={cY},CW={cW},CH={cH},OX={xOffset},OY={yOffset}");
                             }
                         }
                         Action<Form> moveAction = (Form frm) => {

@@ -31,6 +31,7 @@ namespace KanchokuWS
             this.components = new System.ComponentModel.Container();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ReadBushuDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.Restart_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RestartWithSave_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -42,7 +43,6 @@ namespace KanchokuWS
             this.topTextBox = new Utils.TextBoxRO();
             this.dgvHorizontal = new System.Windows.Forms.DataGridView();
             this.pictureBox_measureFontSize = new System.Windows.Forms.PictureBox();
-            this.ReadBushuDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Main)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvHorizontal)).BeginInit();
@@ -51,6 +51,7 @@ namespace KanchokuWS
             // 
             // contextMenuStrip1
             // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.設定ToolStripMenuItem,
             this.ReadBushuDic_ToolStripMenuItem,
@@ -59,7 +60,7 @@ namespace KanchokuWS
             this.toolStripSeparator1,
             this.終了ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(183, 126);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(183, 104);
             // 
             // 設定ToolStripMenuItem
             // 
@@ -67,6 +68,13 @@ namespace KanchokuWS
             this.設定ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.設定ToolStripMenuItem.Text = "設定";
             this.設定ToolStripMenuItem.Click += new System.EventHandler(this.Settings_ToolStripMenuItem_Click);
+            // 
+            // ReadBushuDic_ToolStripMenuItem
+            // 
+            this.ReadBushuDic_ToolStripMenuItem.Name = "ReadBushuDic_ToolStripMenuItem";
+            this.ReadBushuDic_ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.ReadBushuDic_ToolStripMenuItem.Text = "部首合成辞書再読込";
+            this.ReadBushuDic_ToolStripMenuItem.Click += new System.EventHandler(this.ReadBushuDic_ToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -157,18 +165,11 @@ namespace KanchokuWS
             this.pictureBox_measureFontSize.TabStop = false;
             this.pictureBox_measureFontSize.Visible = false;
             // 
-            // ReadBushuDic_ToolStripMenuItem
-            // 
-            this.ReadBushuDic_ToolStripMenuItem.Name = "ReadBushuDic_ToolStripMenuItem";
-            this.ReadBushuDic_ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.ReadBushuDic_ToolStripMenuItem.Text = "部首合成辞書再読込";
-            this.ReadBushuDic_ToolStripMenuItem.Click += new System.EventHandler(this.ReadBushuDic_ToolStripMenuItem_Click);
-            // 
             // FrmVirtualKeyboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(203, 112);
+            this.ClientSize = new System.Drawing.Size(253, 140);
             this.Controls.Add(this.pictureBox_Main);
             this.Controls.Add(this.topTextBox);
             this.Controls.Add(this.dgvHorizontal);
