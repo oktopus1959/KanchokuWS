@@ -68,6 +68,11 @@ namespace KanchokuWS
             }
             return 0;
         }
+
+        public static int GetScreenIndexByDpi(int dpi)
+        {
+            return ScreenDpi.IndexOf(dpi)._lowLimit(0);
+        }
     }
 
     // https://stackoverflow.com/questions/29438430/how-to-get-dpi-scale-for-all-screens

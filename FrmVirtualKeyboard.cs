@@ -19,6 +19,8 @@ namespace KanchokuWS
 
         private FrmKanchoku frmMain;
 
+        public static int CurrentScreen = 0;
+
         private static float VkbNormalWidth = 201;       // = Vkb5x10CellWidth * 10 + 1 = VkbCellWidth * 10 + VkbCenterWidth + 1
         private static float Vkb5x10Width = 201;       // = Vkb5x10CellWidth * 10 + 1 = VkbCellWidth * 10 + VkbCenterWidth + 1
 
@@ -44,6 +46,177 @@ namespace KanchokuWS
         private const int MinVerticalChars = 2;
         private const int MinCenterChars = 2;
 
+        /// <summary> ストローク文字横書きフォント </summary>
+        private Font strokeCharFont;
+        /// <summary> ストロークキー横書きフォント </summary>
+        private Font strokeKeyFont;
+
+        //------------------------------------------------------------------------------------
+        /// <summary>
+        /// フォント情報
+        /// </summary>
+        public class FontInfo : IDisposable
+        {
+            private string myName;
+
+            private bool useVertical = false;
+            private bool usePadding = false;
+
+            private string currentFontSpec;
+
+            /// <summary> 横書き用フォント </summary>
+            public Font HorizontalFont = null;
+            /// <summary> 縦書き用フォント </summary>
+            public Font VerticalFont = null;
+            /// <summary> 縦書きフォントの高さ </summary>
+            public float CharHeight = 13;
+
+            public Font MyFont => useVertical ? VerticalFont : HorizontalFont;
+
+            /// <summary> 縦書きフォントの余白 </summary>
+            public struct Padding
+            {
+                public float Left;
+                public float Top;
+
+                public Padding(float left, float top)
+                {
+                    Left = left;
+                    Top = top;
+                }
+            }
+
+            /// <summary> 縦書き時の左・上の余白 </summary>
+            private List<Padding> paddings { get; set; } = new List<Padding>();
+
+            public Padding GetNthPadding(int nth)
+            {
+                if (paddings.Count == 0) return new Padding(0, 0);
+                return paddings[nth._highLimit(paddings.Count - 1)];
+            }
+
+            // コンストラクタ
+            public FontInfo(string name, bool vertical, bool padding)
+            {
+                myName = name;
+                this.useVertical = vertical;
+                this.usePadding = padding;
+            }
+
+            public bool RenewFontSpec(string fontSpec, float cellWidth, float cellHeight, PictureBox picBox)
+            {
+                if (MyFont != null && fontSpec._equalsTo(currentFontSpec)) return false;    // 同じフォント指定なので、何もしない
+
+                currentFontSpec = fontSpec;
+
+                HorizontalFont?.Dispose();
+                VerticalFont?.Dispose();
+                paddings.Clear();
+
+                var fontItems = fontSpec._split('|').Select(x => x._strip()).ToArray();
+                string fontName = fontItems._getNth(0)._orElse(useVertical ? "@MS Gothic" : "MS UI Gothic");
+                int fontSize = fontItems._getNth(1)._parseInt(9)._lowLimit(8);
+                if (useVertical) {
+                    VerticalFont = new Font(fontName, fontSize);
+                }
+                fontName = fontName._safeReplace("@", "");          // 先頭の @ を削除しておく
+                HorizontalFont = new Font(fontName, fontSize);
+
+                if (usePadding) {
+                    (float fw, float fh) = measureFontSize(MyFont, picBox);
+
+                    CharHeight = fh + 1;
+
+                    Padding makePadding(int n)
+                    {
+                        if (Logger.IsInfoHEnabled) logger.InfoH($"new {myName} Font Name={fontName}, Size={fontSize}, useVertical={useVertical}, cw={cellWidth:f1}, ch={cellHeight:f1},fw={fw:f1}, fh={fh:f1}");
+                        float fw_ = fw;
+                        if (fontName._startsWith("Yu ") || fontName._startsWith("游")) {
+                            fw_ = fw <= 16 ? 18 : 16;
+                        } else if (fontName._startsWith("Meiryo") || fontName._startsWith("メイリオ")) {
+                            if (useVertical)
+                                fw_ = fw + 8;
+                            else
+                                fw_ = fw + 3;
+                        } else {
+                            // MS Gothic と想定
+                            fw_ = fw < 13 ? fw : (fw <= 13 ? 14 : 16);
+                        }
+
+                        float leftPadding = fontItems._getNth(n)._parseInt(-999);
+                        if (leftPadding < -50) {
+                            leftPadding = (cellWidth - fw_) / 2;
+                        }
+
+                        float topPadding = fontItems._getNth(n + 1)._parseInt(-999);
+                        if (topPadding < -50) {
+                            float fh_ = (fh - fw_) / 2;
+                            if (useVertical) {
+                                topPadding = fh_._lowLimit(2.0f);
+                            } else {
+                                if (fontName._startsWith("Yu ") || fontName._startsWith("游")) {
+                                    fh_ = fh <= 16 ? 14 : 15;
+                                    topPadding = cellHeight - fh_ - 2;  // 2～4 になるようにする
+                                } else if (fontName._startsWith("Meiryo") || fontName._startsWith("メイリオ")) {
+                                    fh_ = fw_;
+                                    topPadding = (cellHeight - fh_) / 2;
+                                } else {
+                                    // MS Gothic と想定
+                                    fh_ = fh < 13 ? fh : (fw <= 13 ? 13 : 14);
+                                    topPadding = (cellHeight - fh_) / 2;
+                                }
+                            }
+                        }
+                        if (Logger.IsInfoHEnabled) logger.InfoH($"new {myName} Font Width={fw:f3}, Height={fh:f3}, charHeight={CharHeight}, padLeft={leftPadding:f3}, padTop={topPadding:f3}");
+                        return new Padding(leftPadding, topPadding);
+                    }
+
+                    paddings.Add(makePadding(2));
+                    for (int n = 4; n < fontItems.Length; n += 2) {
+                        paddings.Add(makePadding(n));
+                    }
+                }
+
+                return true;
+            }
+
+            public void Dispose()
+            {
+                HorizontalFont?.Dispose();
+                VerticalFont?.Dispose();
+            }
+
+            // フォントのピクセルサイズを計測する
+            private (float, float) measureFontSize(Font font, PictureBox picBox)
+            {
+                //表示する文字
+                string s = "亜";
+
+                picBox.Width = 50;
+                picBox.Height = 50;
+                using (Bitmap canvas = new Bitmap(picBox.Width, picBox.Height)) {
+                    using (Graphics g = Graphics.FromImage(canvas)) {
+                        using (StringFormat sf = new StringFormat()) {
+                            g.DrawString(s, font, Brushes.Black, 0, 0, sf);
+                            //計測する文字の範囲を指定する
+                            sf.SetMeasurableCharacterRanges(Helper.Array(new CharacterRange(0, 1)));
+                            Region[] stringRegions = g.MeasureCharacterRanges(s, font, new RectangleF(1, 0, 50, 50), sf);
+                            if (stringRegions.Length > 0) {
+                                var rect = stringRegions[0].GetBounds(g);
+                                return (rect.Width, rect.Height);
+                            }
+                            return (0, 0);
+                        }
+                    }
+                }
+            }
+        }
+        private bool renewFontInfo(FontInfo fontInfo, string fontSpec)
+        {
+            return fontInfo.RenewFontSpec(fontSpec, VkbCellWidth, VkbCellHeight, pictureBox_measureFontSize);
+        }
+
+        // 縦列鍵盤サポート
         /// <summary> 縦列鍵盤ボックス </summary>
         public struct VerticalBox
         {
@@ -57,17 +230,63 @@ namespace KanchokuWS
         private VerticalBox[] verticalBoxes = new VerticalBox[LongVkeyNum];
         private VerticalBox centerBox;
 
-        /// <summary> ストローク文字横書きフォント </summary>
-        private Font strokeCharFont;
-        /// <summary> ストロークキー横書きフォント </summary>
-        private Font strokeKeyFont;
+        /// <summary> 縦列鍵盤で用いるフォント情報 </summary>
+        public class VerticalFontInfo : IDisposable
+        {
+            /// <summary> フォント情報 </summary>
+            private FontInfo fontInfo;
 
-        /// <summary> 中央鍵盤フォント情報 </summary>
-        private VerticalFontInfo centerFontInfo = new VerticalFontInfo() {
-            CharHeight = 15,
-            FontSizeThreshold1 = 10.5f,
-            FontSizeThreshold2 = 11.5f,
-        };
+            /// <summary> 横書き用フォント </summary>
+            public Font HorizontalFont => fontInfo?.HorizontalFont;
+
+            /// <summary> 縦書き用フォント </summary>
+            public Font VerticalFont => fontInfo?.VerticalFont;
+
+            ///// <summary> フォント指定 </summary>
+            //public string FontSpec = "";
+
+            /// <summary> 縦書き時の左余白 </summary>
+            public float LeftPadding => fontInfo?.GetNthPadding(CurrentScreen).Left ?? 0f;
+
+            /// <summary> 縦書き時の上部余白 </summary>
+            public float TopPadding => fontInfo?.GetNthPadding(CurrentScreen).Top ?? 0f;
+
+            private float _charHeight = 13;
+            /// <summary> 縦書きフォントの高さ </summary>
+            public float CharHeight {
+                get { return fontInfo?.CharHeight ?? _charHeight; }
+                set { _charHeight = value; }
+            }
+
+            public float FontSizeThreshold1 = 9.5f;
+            public float FontSizeThreshold2 = 11.0f;
+
+            public VerticalFontInfo(string name)
+            {
+                fontInfo = new FontInfo(name, true, true);
+            }
+
+            // 縦列鍵盤用フォントの更新
+            public void renewFontInfo(string newSpec, float boxWidth, PictureBox picBox)
+            {
+                fontInfo.RenewFontSpec(newSpec, boxWidth, 18, picBox);
+            }
+
+            public float AdjustedLeftPadding(string str)
+            {
+                float leftPadding = LeftPadding;
+                if (str._safeLength() == 1) {
+                    leftPadding = VerticalFont.Size >= FontSizeThreshold2 ? 0 : VerticalFont.Size >= FontSizeThreshold1 ? 1 : 2;
+                }
+                return leftPadding;
+            }
+
+            public void Dispose()
+            {
+                fontInfo?.Dispose();
+            }
+
+        }
 
         [DllImport("user32.dll")]
         private static extern void ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -82,6 +301,7 @@ namespace KanchokuWS
             logger.InfoH($"LEAVE: this.Width={this.Width}, this.Height={this.Height}, tex.Height={topTextBox.Height}, pic.top={pictureBox_Main.Top}");
         }
 
+        //------------------------------------------------------------------------------------
         /// <summary> コンストラクタ </summary>
         /// <param name="form"></param>
         public FrmVirtualKeyboard(FrmKanchoku form)
@@ -99,7 +319,7 @@ namespace KanchokuWS
             // 各種パラメータの初期化
             resetDrawParameters(ScreenInfo.PrimaryScreenDpi);
 
-            // モニタが切り替わった
+            // モニタのDPIが変化したたときに呼ばれるハンドラを登録
             DpiChanged += dpiChangedHandler;
         }
 
@@ -117,9 +337,11 @@ namespace KanchokuWS
         /// <summary>フォームのクローズ</summary>
         private void FrmVirtualKeyboard_FormClosing(object sender, FormClosingEventArgs e)
         {
-            normalFont?.Dispose();
+            normalFontInfo?.Dispose();
             centerFontInfo.Dispose();
             verticalFontInfo.Dispose();
+            horizontalFontInfo?.Dispose();
+            minibufFontInfo?.Dispose();
             strokeCharFont?.Dispose();
             strokeKeyFont?.Dispose();
         }
@@ -142,13 +364,29 @@ namespace KanchokuWS
             DrawInitailVkb();
         }
 
+        /// <summary> 中央鍵盤フォント情報 </summary>
+        private VerticalFontInfo centerFontInfo = new VerticalFontInfo("Center") {
+            CharHeight = 15,
+            FontSizeThreshold1 = 10.5f,
+            FontSizeThreshold2 = 11.5f,
+        };
+
+        /// <summary> 横列鍵盤用フォント情報 </summary>
+        private FontInfo horizontalFontInfo = new FontInfo("Horizontal", false, false);
+
+        private bool renewHorizontalFontInfo()
+        {
+            return renewFontInfo(horizontalFontInfo, Settings.HorizontalVkbFontSpec);
+        }
+
         // 横列鍵盤用グリッドの初期化
         private void initializeHorizontalKeyboard(int cellWidth)
         {
             var dgv = dgvHorizontal;
             dgv._defaultSetup(0, (int)VkbCellHeight);       // headerHeight=0 -> ヘッダーを表示しない
             dgv._setSelectionColorReadOnly();
-            dgv._setDefaultFont(DgvHelpers.FontUIG9);
+            renewHorizontalFontInfo();
+            dgv._setDefaultFont(horizontalFontInfo.MyFont);
             //dgv._setDefaultFont(DgvHelpers.FontMSG8);
             dgv._disableToolTips();
             dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly("horizontal", "", cellWidth)._setUnresizable());
@@ -164,7 +402,8 @@ namespace KanchokuWS
             int cellWidth = (int)VkbNormalWidth - 1;
             int cellHeight = (int)VkbCellHeight;
             dgv.RowTemplate.Height = cellHeight;
-            if (dgv.Columns.Count > 0) dgv.Columns[0].Width = cellWidth;
+            if (dgv.Columns.Count > 0) { dgv.Columns[0].Width = cellWidth; }
+            if (renewHorizontalFontInfo()) { dgv._setDefaultFont(horizontalFontInfo.MyFont); }
             //dgv.Top = topTextBox.Top + topTextBox.Height - 1;
             dgv.Width = cellWidth + 1;
             //dgv.Height = dgv.Rows.Count * cellHeight + 1;
@@ -226,6 +465,8 @@ namespace KanchokuWS
         private void dpiChangedHandler(object sender, DpiChangedEventArgs e)
         {
             logger.InfoH($"\nCALLED: new dpi={e.DeviceDpiNew}");
+
+            CurrentScreen = ScreenInfo.GetScreenIndexByDpi(e.DeviceDpiNew);
 
             if (frmMain.IsDecoderActive) {
                 this.Hide();
@@ -682,23 +923,25 @@ namespace KanchokuWS
         }
 
         /// <summary> ミニバッファフォント </summary>
-        private string minibufFontSpec = "";
-        private Font minibufFont = null;
+        private FontInfo minibufFontInfo = new FontInfo("MiniBuf", false, false);
 
-        // 通常仮想鍵盤用フォントの更新
+        // ミニバッフ用フォントの更新
         private void renewMinibufFont()
         {
-            logger.InfoH(() => $"CALLED: new minibufFontSpec={Settings.MiniBufVkbFontSpec}, old={minibufFontSpec}");
-            if (minibufFont == null || minibufFontSpec._ne(Settings.MiniBufVkbFontSpec)) {
-                minibufFontSpec = Settings.MiniBufVkbFontSpec;
-                var fontItems = minibufFontSpec._split('|').Select(x => x._strip()).ToArray();
-                minibufFont?.Dispose();
-                string fontName = fontItems._getNth(0)._orElse("MS UI Gothic");
-                int fontSize = fontItems._getNth(1)._parseInt(9)._lowLimit(8);
-                minibufFont = new Font(fontName, fontSize);
-                topTextBox.Font = new Font(fontName, fontSize);
-                logger.InfoH(() => $"new minibufFont={fontName}|{fontSize}");
+            if (renewFontInfo(minibufFontInfo, Settings.MiniBufVkbFontSpec)) {
+                topTextBox.Font = minibufFontInfo.MyFont;
             }
+            //logger.InfoH(() => $"CALLED: new minibufFontSpec={Settings.MiniBufVkbFontSpec}, old={minibufFontSpec}");
+            //if (minibufFont == null || minibufFontSpec._ne(Settings.MiniBufVkbFontSpec)) {
+            //    minibufFontSpec = Settings.MiniBufVkbFontSpec;
+            //    var fontItems = minibufFontSpec._split('|').Select(x => x._strip()).ToArray();
+            //    minibufFont?.Dispose();
+            //    string fontName = fontItems._getNth(0)._orElse("MS UI Gothic");
+            //    int fontSize = fontItems._getNth(1)._parseInt(9)._lowLimit(8);
+            //    minibufFont = new Font(fontName, fontSize);
+            //    topTextBox.Font = new Font(fontName, fontSize);
+            //    logger.InfoH(() => $"new minibufFont={fontName}|{fontSize}");
+            //}
         }
 
         /// <summary>
@@ -740,68 +983,19 @@ namespace KanchokuWS
         // 通常仮想鍵盤サポート
 
         /// <summary> 通常鍵盤横書きフォント </summary>
-        private string normalFontSpec = "";
-        private Font normalFont = null;
+        private FontInfo normalFontInfo = new FontInfo("Normal", false, true);
 
-        float normalFontLeftPadding = 2;
-        float normalFontTopPadding = 4;
+        //private string normalFontSpec = "";
+        private Font normalFont => normalFontInfo.MyFont;
 
-        // フォントのピクセルサイズを計測する
-        private (int, int) measureFontSize(Font font)
-        {
-            //表示する文字
-            string s = "亜";
-
-            pictureBox_measureFontSize.Width = 50;
-            pictureBox_measureFontSize.Height = 50;
-            using (Bitmap canvas = new Bitmap(pictureBox_measureFontSize.Width, pictureBox_measureFontSize.Height)) {
-                using (Graphics g = Graphics.FromImage(canvas)) {
-                    using (StringFormat sf = new StringFormat()) {
-                        g.DrawString(s, font, Brushes.Black, 0, 0, sf);
-                        //計測する文字の範囲を指定する
-                        sf.SetMeasurableCharacterRanges(Helper.Array(new CharacterRange(0, 1)));
-                        Region[] stringRegions = g.MeasureCharacterRanges(s, font, new RectangleF(1, 0, 50, 50), sf);
-                        if (stringRegions.Length > 0) {
-                            var rect = stringRegions[0].GetBounds(g);
-                            return ((int)rect.Width, (int)rect.Height);
-                        }
-                        return (0, 0);
-                    }
-                }
-            }
-        }
+        //float normalFontLeftPadding = 2;
+        //float normalFontTopPadding = 4;
 
         // 通常仮想鍵盤用フォントの更新
-        private void renewNormalFont()
+        private FontInfo.Padding renewNormalFont()
         {
-            if (normalFont == null || normalFontSpec._ne(Settings.NormalVkbFontSpec)) {
-                logger.InfoH(() => $"CALLED: new normalFontSpec={Settings.NormalVkbFontSpec}");
-                normalFontSpec = Settings.NormalVkbFontSpec;
-                var fontItems = normalFontSpec._split('|').Select(x => x._strip()).ToArray();
-                normalFont?.Dispose();
-                string fontName = fontItems._getNth(0)._orElse("MS Gothic");
-                normalFont = new Font(fontName, fontItems._getNth(1)._parseInt(9)._lowLimit(8));
-                // MS Gothic(9) -> (13, 12), Meiryo(9) -> (13, 18), Yu Gothic(9) -> (13, 16)
-                (int fw, int fh) = measureFontSize(normalFont);
-                normalFontLeftPadding = fontItems._getNth(2)._parseInt(-999);
-                if (normalFontLeftPadding < -50) {
-                    normalFontLeftPadding = (VkbCellWidth - fw - 1) / 2;            // 2 になるようにする
-                }
-                normalFontTopPadding = fontItems._getNth(3)._parseInt(-999);
-                if (normalFontTopPadding < -50) {
-                    int fh_;
-                    if (fontName._startsWith("Yu ") || fontName._startsWith("游")) {
-                        fh_ = fh <= 16 ? 14 : 15;
-                    } else if (fontName._startsWith("Meiryo") || fontName._startsWith("メイリオ")) {
-                        fh_ = fh <= 18 ? 15 : 16;
-                    } else {
-                        // MS Gothic と想定
-                        fh_ = fh < 13 ? fh : (fw <= 13 ? 13 : 14);
-                    }
-                    normalFontTopPadding = VkbCellHeight - fh_  - 2;  // 2～4 になるようにする
-                }
-                logger.InfoH(() => $"new normalFont Width={fw}, Height={fh}, padLeft={normalFontLeftPadding:f3}, padTop={normalFontTopPadding:f3}");
-            }
+            renewFontInfo(normalFontInfo, Settings.NormalVkbFontSpec);
+            return normalFontInfo.GetNthPadding(CurrentScreen);
         }
 
         /// <summary>
@@ -811,20 +1005,20 @@ namespace KanchokuWS
         private void drawNormalVkbStrings(Graphics g, Func<int, string> nthString, bool bFirst)
         {
             // フォントの更新
-            renewNormalFont();
+            var paddings = renewNormalFont();
 
             // 通常ストローク
             for (int i = 0; i < 4; ++i) {
                 for (int j = 0; j < 10; ++j) {
-                    float x = VkbCellWidth * j + normalFontLeftPadding + (j >= 5 ? VkbCenterWidth : 0);
-                    float y = VkbCellHeight * i + normalFontTopPadding;
+                    float x = VkbCellWidth * j + paddings.Left + (j >= 5 ? VkbCenterWidth : 0);
+                    float y = VkbCellHeight * i + paddings.Top;
                     g.DrawString(nthString(i * 10 + j), normalFont, Brushes.Black, (float)x, (float)y);
                 }
             }
             // 下端機能キー
             for (int j = 0; j < 10; ++j) {
-                float x = VkbBottomOffset + VkbCellWidth * j + normalFontLeftPadding;
-                float y = VkbCellHeight * 4 + normalFontTopPadding;
+                float x = VkbBottomOffset + VkbCellWidth * j + paddings.Left;
+                float y = VkbCellHeight * 4 + paddings.Top;
                 var face = bFirst ? initialVkbChars[40 + j] : nthString(40 + j);
                 g.DrawString(face, normalFont, Brushes.Black, (float)x, (float)y);
             }
@@ -1019,45 +1213,8 @@ namespace KanchokuWS
 
 
         //--------------------------------------------------------------------------------------
-        // 縦列鍵盤サポート
-        /// <summary> 縦列鍵盤で用いるフォント情報 </summary>
-        public class VerticalFontInfo : IDisposable
-        {
-            /// <summary> 横書き用フォント </summary>
-            public Font HorizontalFont = null;
-            /// <summary> 縦書き用フォント </summary>
-            public Font VerticalFont = null;
-            /// <summary> フォント指定 </summary>
-            public string FontSpec = "";
-            /// <summary> 縦書き時の左余白 </summary>
-            public float LeftPadding = 2;
-            /// <summary> 縦書き時の上部余白 </summary>
-            public float TopPadding = 3;
-            /// <summary> 縦書きフォントの高さ </summary>
-            public float CharHeight = 13;
-
-            public float FontSizeThreshold1 = 9.5f;
-            public float FontSizeThreshold2 = 11.0f;
-
-            public float AdjustedLeftPadding(string str)
-            {
-                float leftPadding = LeftPadding;
-                if (str._safeLength() == 1) {
-                    leftPadding = VerticalFont.Size >= FontSizeThreshold2 ? 0 : VerticalFont.Size >= FontSizeThreshold1 ? 1 : 2;
-                }
-                return leftPadding;
-            }
-
-            public void Dispose()
-            {
-                HorizontalFont?.Dispose(); HorizontalFont = null;
-                VerticalFont?.Dispose(); VerticalFont = null;
-            }
-
-        }
-
         /// <summary> 縦列鍵盤フォント情報 </summary>
-        private VerticalFontInfo verticalFontInfo = new VerticalFontInfo() {
+        private VerticalFontInfo verticalFontInfo = new VerticalFontInfo("Vertical") {
             CharHeight = 13,
             FontSizeThreshold1 = 9.5f,
             FontSizeThreshold2 = 11.0f,
@@ -1066,48 +1223,49 @@ namespace KanchokuWS
         // 縦列中央鍵盤用フォントの更新
         private void renewCenterVerticalFont()
         {
-            renewVerticalFont(Settings.CenterVkbFontSpec, VkbCenterWidth, centerFontInfo);
+            centerFontInfo.renewFontInfo(Settings.CenterVkbFontSpec, VkbCenterWidth, pictureBox_measureFontSize);
         }
 
         // 縦列候補鍵盤用フォントの更新
         private void renewCandidateVerticalFont()
         {
-            renewVerticalFont(Settings.VerticalVkbFontSpec, VkbCellWidth, verticalFontInfo);
+            verticalFontInfo.renewFontInfo(Settings.VerticalVkbFontSpec, VkbCellWidth, pictureBox_measureFontSize);
         }
 
         // 縦列鍵盤用フォントの更新
         private void renewVerticalFont(string newSpec, float boxWidth, VerticalFontInfo info)
         {
-            if (info.VerticalFont == null || info.FontSpec._ne(newSpec)) {
-                logger.InfoH(() => $"CALLED: new fontSpec={newSpec}");
-                info.FontSpec = newSpec;
-                var fontItems = info.FontSpec._split('|').Select(x => x._strip()).ToArray();
-                info.VerticalFont?.Dispose();
-                info.HorizontalFont?.Dispose();
-                string fontName = fontItems._getNth(0)._orElse("@MS Gothic");
-                info.VerticalFont = new Font(fontName, fontItems._getNth(1)._parseInt(9)._lowLimit(8));
-                fontName = fontName._safeReplace("@", "");          // 先頭の @ を削除しておく
-                info.HorizontalFont = new Font(fontName, fontItems._getNth(1)._parseInt(9)._lowLimit(8));
-                // MS Gothic(9) -> (13, 12), Meiryo(9) -> (13, 18), Yu Gothic(9) -> (13, 16)
-                (int fh, int fw) = measureFontSize(info.VerticalFont);
-                info.CharHeight = fh + 1;
-                info.LeftPadding = fontItems._getNth(2)._parseInt(-999);
-                if (info.LeftPadding < -50) {
-                    info.LeftPadding = (boxWidth - fw - (fw >= 15 ? 3 : fw == 14 ? 2 : 0)) / 2;
-                }
-                info.TopPadding = fontItems._getNth(3)._parseInt(-999);
-                if (info.TopPadding < -50) {
-                    if (fontName._startsWith("Yu ") || fontName._startsWith("游")) {
-                        info.TopPadding = fh <= 16 ? 2 : 1;
-                    } else if (fontName._startsWith("Meiryo") || fontName._startsWith("メイリオ")) {
-                        info.TopPadding = fh <= 18 ? 1 : 0;
-                    } else {
-                        // MS Gothic と想定
-                        info.TopPadding = fh < 13 ? 3 : (fw <= 13 ? 3 : 2);
-                    }
-                }
-                if (Logger.IsInfoHEnabled) logger.InfoH($"new verticalFont Width={fw}, Height={fh}, charHeight={info.CharHeight}, padLeft={info.LeftPadding}, padTop={info.TopPadding}");
-            }
+            info.renewFontInfo(newSpec, boxWidth, pictureBox_measureFontSize);
+            //if (info.VerticalFont == null || info.FontSpec._ne(newSpec)) {
+            //    logger.InfoH(() => $"CALLED: new fontSpec={newSpec}");
+            //    info.FontSpec = newSpec;
+            //    var fontItems = info.FontSpec._split('|').Select(x => x._strip()).ToArray();
+            //    info.VerticalFont?.Dispose();
+            //    info.HorizontalFont?.Dispose();
+            //    string fontName = fontItems._getNth(0)._orElse("@MS Gothic");
+            //    info.VerticalFont = new Font(fontName, fontItems._getNth(1)._parseInt(9)._lowLimit(8));
+            //    fontName = fontName._safeReplace("@", "");          // 先頭の @ を削除しておく
+            //    info.HorizontalFont = new Font(fontName, fontItems._getNth(1)._parseInt(9)._lowLimit(8));
+            //    // MS Gothic(9) -> (13, 12), Meiryo(9) -> (13, 18), Yu Gothic(9) -> (13, 16)
+            //    (int fh, int fw) = measureFontSize(info.VerticalFont);
+            //    info.CharHeight = fh + 1;
+            //    info.LeftPadding = fontItems._getNth(2)._parseInt(-999);
+            //    if (info.LeftPadding < -50) {
+            //        info.LeftPadding = (boxWidth - fw - (fw >= 15 ? 3 : fw == 14 ? 2 : 0)) / 2;
+            //    }
+            //    info.TopPadding = fontItems._getNth(3)._parseInt(-999);
+            //    if (info.TopPadding < -50) {
+            //        if (fontName._startsWith("Yu ") || fontName._startsWith("游")) {
+            //            info.TopPadding = fh <= 16 ? 2 : 1;
+            //        } else if (fontName._startsWith("Meiryo") || fontName._startsWith("メイリオ")) {
+            //            info.TopPadding = fh <= 18 ? 1 : 0;
+            //        } else {
+            //            // MS Gothic と想定
+            //            info.TopPadding = fh < 13 ? 3 : (fw <= 13 ? 3 : 2);
+            //        }
+            //    }
+            //    if (Logger.IsInfoHEnabled) logger.InfoH($"new verticalFont Width={fw}, Height={fh}, charHeight={info.CharHeight}, padLeft={info.LeftPadding}, padTop={info.TopPadding}");
+            //}
         }
 
         /// <summary> 出力文字数に応じて縦列鍵盤の高さを設定</summary>
