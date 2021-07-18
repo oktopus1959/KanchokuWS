@@ -92,8 +92,13 @@ namespace {
 
         void handleBS() {
             LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
-            // 自ステートだけを削除(上位のストロークステートは残す)
-            bUnnecessary = true;
+            if (SETTINGS->removeOneStrokeByBackspace) {
+                // 自ステートだけを削除(上位のストロークステートは残す)
+                bUnnecessary = true;
+            } else {
+                // 全打鍵の取り消し
+                setToRemoveAllStroke();
+            }
         }
 
         // FullEscapeの処理 -- 履歴検索文字列の遡及ブロッカーをセット
@@ -105,7 +110,7 @@ namespace {
 
         void handleEsc() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            handleFullEscape();
+            setToRemoveAllStroke();
         }
 
         //void handleCtrlU() {

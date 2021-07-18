@@ -46,6 +46,8 @@ struct Settings {
     bool convertJaPeriod = false;           // 「。」と「．」を相互変換する
     bool convertJaComma = false;            // 「、」と「，」を相互変換する
 
+    bool removeOneStrokeByBackspace = false; // BS で直前打鍵のみを取り消す
+
     // for Debug
     bool debughState = false;               // State モジュールで DebugH を有効にする
     bool debughMazegaki = false;            // mazegaki モジュールで DebugH を有効にする

@@ -62,6 +62,8 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_BOOL_VALUE(convertJaPeriod);
     SET_BOOL_VALUE(convertJaComma);
 
+    SET_BOOL_VALUE(removeOneStrokeByBackspace);
+
     RESET_STROKE_FUNC("zenkakuMode");
     RESET_STROKE_FUNC("zenkakuOneChar");
     RESET_STROKE_FUNC("nextThrough");

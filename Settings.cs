@@ -328,6 +328,9 @@ namespace KanchokuWS
         // 「、」⇔「，」
         public static bool ConvertJaComma { get; set; } = false;
 
+        // BS で全打鍵を取り消すか
+        public static bool RemoveOneStrokeByBackspace { get; set; } = true;
+
         //------------------------------------------------------------------------------
         // ウィンドウClassNameごとの設定
         public class WindowsClassSettings
@@ -632,6 +635,8 @@ namespace KanchokuWS
             ConvertShiftedHiraganaToKatakana = addDecoderSetting("convertShiftedHiraganaToKatakana", "shiftKana", false);  // 平仮名をカタカナに変換する
             ConvertJaPeriod = addDecoderSetting("convertJaPeriod", false);                      // 「。」と「．」の相互変換
             ConvertJaComma = addDecoderSetting("convertJaComma", false);                        // 「、」と「，」の相互変換
+
+            RemoveOneStrokeByBackspace = addDecoderSetting("removeOneStrokeByBackspace", "weakBS", false);  // BS で直前打鍵のみを取り消すか
 
             // キー割当
             FullEscapeKey = GetString("fullEscapeKey", "G").Trim();

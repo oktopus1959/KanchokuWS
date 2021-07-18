@@ -289,6 +289,7 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.checkBox_removeOneStrokeByBackspace = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -2549,15 +2550,16 @@ namespace KanchokuWS
             // 
             // groupBox27
             // 
+            this.groupBox27.Controls.Add(this.checkBox_removeOneStrokeByBackspace);
             this.groupBox27.Controls.Add(this.checkBox_convertJaComma);
             this.groupBox27.Controls.Add(this.checkBox_convertJaPeriod);
             this.groupBox27.Controls.Add(this.checkBox_convertShiftedHiraganaToKatakana);
-            this.groupBox27.Location = new System.Drawing.Point(312, 197);
+            this.groupBox27.Location = new System.Drawing.Point(312, 174);
             this.groupBox27.Name = "groupBox27";
-            this.groupBox27.Size = new System.Drawing.Size(261, 85);
+            this.groupBox27.Size = new System.Drawing.Size(261, 108);
             this.groupBox27.TabIndex = 4;
             this.groupBox27.TabStop = false;
-            this.groupBox27.Text = "その他変換";
+            this.groupBox27.Text = "その他変換・機能";
             // 
             // checkBox_convertJaComma
             // 
@@ -2565,7 +2567,7 @@ namespace KanchokuWS
             this.checkBox_convertJaComma.Location = new System.Drawing.Point(23, 62);
             this.checkBox_convertJaComma.Name = "checkBox_convertJaComma";
             this.checkBox_convertJaComma.Size = new System.Drawing.Size(137, 19);
-            this.checkBox_convertJaComma.TabIndex = 3;
+            this.checkBox_convertJaComma.TabIndex = 2;
             this.checkBox_convertJaComma.Text = "「、」と「，」の相互変換";
             this.toolTip1.SetToolTip(this.checkBox_convertJaComma, "打鍵入力された「、」と「，」を相互に入れ替えて出力します。");
             this.checkBox_convertJaComma.UseVisualStyleBackColor = true;
@@ -2576,7 +2578,7 @@ namespace KanchokuWS
             this.checkBox_convertJaPeriod.Location = new System.Drawing.Point(23, 41);
             this.checkBox_convertJaPeriod.Name = "checkBox_convertJaPeriod";
             this.checkBox_convertJaPeriod.Size = new System.Drawing.Size(137, 19);
-            this.checkBox_convertJaPeriod.TabIndex = 2;
+            this.checkBox_convertJaPeriod.TabIndex = 1;
             this.checkBox_convertJaPeriod.Text = "「。」と「．」の相互変換";
             this.toolTip1.SetToolTip(this.checkBox_convertJaPeriod, "打鍵入力された「。」と「．」を相互に入れ替えて出力します。");
             this.checkBox_convertJaPeriod.UseVisualStyleBackColor = true;
@@ -2587,7 +2589,7 @@ namespace KanchokuWS
             this.checkBox_convertShiftedHiraganaToKatakana.Location = new System.Drawing.Point(23, 20);
             this.checkBox_convertShiftedHiraganaToKatakana.Name = "checkBox_convertShiftedHiraganaToKatakana";
             this.checkBox_convertShiftedHiraganaToKatakana.Size = new System.Drawing.Size(235, 19);
-            this.checkBox_convertShiftedHiraganaToKatakana.TabIndex = 1;
+            this.checkBox_convertShiftedHiraganaToKatakana.TabIndex = 0;
             this.checkBox_convertShiftedHiraganaToKatakana.Text = "Shift入力された平仮名をカタカナに変換する";
             this.toolTip1.SetToolTip(this.checkBox_convertShiftedHiraganaToKatakana, "Shiftキーを押しながら平仮名を入力すると、\r\n対応するカタカナに変換します。");
             this.checkBox_convertShiftedHiraganaToKatakana.UseVisualStyleBackColor = true;
@@ -2599,9 +2601,9 @@ namespace KanchokuWS
             this.groupBox19.Controls.Add(this.label45);
             this.groupBox19.Controls.Add(this.textBox_mazeYomiMaxLen);
             this.groupBox19.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox19.Location = new System.Drawing.Point(312, 114);
+            this.groupBox19.Location = new System.Drawing.Point(312, 102);
             this.groupBox19.Name = "groupBox19";
-            this.groupBox19.Size = new System.Drawing.Size(261, 76);
+            this.groupBox19.Size = new System.Drawing.Size(261, 66);
             this.groupBox19.TabIndex = 3;
             this.groupBox19.TabStop = false;
             this.groupBox19.Text = "交ぜ書き検索";
@@ -2609,7 +2611,7 @@ namespace KanchokuWS
             // label46
             // 
             this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(20, 49);
+            this.label46.Location = new System.Drawing.Point(20, 44);
             this.label46.Name = "label46";
             this.label46.Size = new System.Drawing.Size(77, 15);
             this.label46.TabIndex = 26;
@@ -2617,9 +2619,10 @@ namespace KanchokuWS
             // 
             // textBox_mazeGobiMaxLen
             // 
-            this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(131, 45);
+            this.textBox_mazeGobiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(131, 41);
             this.textBox_mazeGobiMaxLen.Name = "textBox_mazeGobiMaxLen";
-            this.textBox_mazeGobiMaxLen.Size = new System.Drawing.Size(42, 23);
+            this.textBox_mazeGobiMaxLen.Size = new System.Drawing.Size(42, 19);
             this.textBox_mazeGobiMaxLen.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_mazeGobiMaxLen, "交ぜ書き変換時の語尾の最大長\r\n\r\n活用語尾を持つ交ぜ書きエントリに対して、語尾を最大何文字まで\r\n与えるかを指定します。\r\n0 を設定すると、活用語尾を持つエン" +
         "トリは検索の対象になりません。\r\n\r\n例：\r\n 最大語尾長を2と設定した場合は、「あ/う /会/」というエントリに対して\r\n「あった」は「会った」に変換できます" +
@@ -2628,7 +2631,7 @@ namespace KanchokuWS
             // label45
             // 
             this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(20, 25);
+            this.label45.Location = new System.Drawing.Point(20, 22);
             this.label45.Name = "label45";
             this.label45.Size = new System.Drawing.Size(100, 15);
             this.label45.TabIndex = 24;
@@ -2636,9 +2639,10 @@ namespace KanchokuWS
             // 
             // textBox_mazeYomiMaxLen
             // 
-            this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(131, 21);
+            this.textBox_mazeYomiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(131, 19);
             this.textBox_mazeYomiMaxLen.Name = "textBox_mazeYomiMaxLen";
-            this.textBox_mazeYomiMaxLen.Size = new System.Drawing.Size(42, 23);
+            this.textBox_mazeYomiMaxLen.Size = new System.Drawing.Size(42, 19);
             this.textBox_mazeYomiMaxLen.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_mazeYomiMaxLen, "交ぜ書き変換時の読み入力の最大長\r\n\r\n交ぜ書き変換時に入力として扱う読みの長さの\r\n最大文字数を指定します。");
             // 
@@ -2736,7 +2740,7 @@ namespace KanchokuWS
             this.groupBox14.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox14.Location = new System.Drawing.Point(312, 10);
             this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(261, 98);
+            this.groupBox14.Size = new System.Drawing.Size(261, 86);
             this.groupBox14.TabIndex = 2;
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "履歴登録";
@@ -2744,7 +2748,7 @@ namespace KanchokuWS
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(20, 44);
+            this.label27.Location = new System.Drawing.Point(20, 41);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(180, 15);
             this.label27.TabIndex = 24;
@@ -2752,9 +2756,10 @@ namespace KanchokuWS
             // 
             // textBox_histKanjiWordMinLengthEx
             // 
-            this.textBox_histKanjiWordMinLengthEx.Location = new System.Drawing.Point(208, 40);
+            this.textBox_histKanjiWordMinLengthEx.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_histKanjiWordMinLengthEx.Location = new System.Drawing.Point(208, 38);
             this.textBox_histKanjiWordMinLengthEx.Name = "textBox_histKanjiWordMinLengthEx";
-            this.textBox_histKanjiWordMinLengthEx.Size = new System.Drawing.Size(42, 23);
+            this.textBox_histKanjiWordMinLengthEx.Size = new System.Drawing.Size(42, 19);
             this.textBox_histKanjiWordMinLengthEx.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_histKanjiWordMinLengthEx, resources.GetString("textBox_histKanjiWordMinLengthEx.ToolTip"));
             // 
@@ -2769,9 +2774,10 @@ namespace KanchokuWS
             // 
             // textBox_histKanjiWordMinLength
             // 
-            this.textBox_histKanjiWordMinLength.Location = new System.Drawing.Point(208, 15);
+            this.textBox_histKanjiWordMinLength.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_histKanjiWordMinLength.Location = new System.Drawing.Point(208, 16);
             this.textBox_histKanjiWordMinLength.Name = "textBox_histKanjiWordMinLength";
-            this.textBox_histKanjiWordMinLength.Size = new System.Drawing.Size(42, 23);
+            this.textBox_histKanjiWordMinLength.Size = new System.Drawing.Size(42, 19);
             this.textBox_histKanjiWordMinLength.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_histKanjiWordMinLength, "自動履歴登録する漢字文字列の最小長を設定します。\r\n\r\nたとえば 5 と設定すると、4文字までの漢字文字列は\r\n自動登録の対象外となります。\r\nこの場合、4文字以" +
         "下の漢字文字を登録するのは、\r\n仮想鍵盤のミニバッファにコピペするか「辞書登録」を\r\n行ってください。");
@@ -2779,7 +2785,7 @@ namespace KanchokuWS
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(20, 69);
+            this.label28.Location = new System.Drawing.Point(20, 63);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(153, 15);
             this.label28.TabIndex = 22;
@@ -2787,9 +2793,10 @@ namespace KanchokuWS
             // 
             // textBox_histKatakanaWordMinLength
             // 
-            this.textBox_histKatakanaWordMinLength.Location = new System.Drawing.Point(208, 65);
+            this.textBox_histKatakanaWordMinLength.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_histKatakanaWordMinLength.Location = new System.Drawing.Point(208, 60);
             this.textBox_histKatakanaWordMinLength.Name = "textBox_histKatakanaWordMinLength";
-            this.textBox_histKatakanaWordMinLength.Size = new System.Drawing.Size(42, 23);
+            this.textBox_histKatakanaWordMinLength.Size = new System.Drawing.Size(42, 19);
             this.textBox_histKatakanaWordMinLength.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox_histKatakanaWordMinLength, "自動履歴登録するカタカナ文字列の最小長を設定します。\r\n\r\nたとえば 5 と設定すると、4文字までのカタカナ文字列は\r\n自動登録の対象外となります。\r\nこの場合、" +
         "4文字以下のカタカナ文字を登録するには、\r\n仮想鍵盤のミニバッファにコピペするか「辞書登録」を\r\n行ってください。\r\n");
@@ -3340,6 +3347,18 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // checkBox_removeOneStrokeByBackspace
+            // 
+            this.checkBox_removeOneStrokeByBackspace.AutoSize = true;
+            this.checkBox_removeOneStrokeByBackspace.Location = new System.Drawing.Point(23, 83);
+            this.checkBox_removeOneStrokeByBackspace.Name = "checkBox_removeOneStrokeByBackspace";
+            this.checkBox_removeOneStrokeByBackspace.Size = new System.Drawing.Size(169, 19);
+            this.checkBox_removeOneStrokeByBackspace.TabIndex = 3;
+            this.checkBox_removeOneStrokeByBackspace.Text = "BSで直前打鍵のみを取り消す";
+            this.toolTip1.SetToolTip(this.checkBox_removeOneStrokeByBackspace, "BS で直前のストロークのみを取り消します。\r\n\r\nチェックを外すと、第1打鍵からの全ストロークが取り消されます。\r\nT-Code のような2ストローク系の場合は" +
+        "どちらでも同じになりますが、\r\nTUT-Code などの多ストローク系の場合は、ストロークの途中で\r\nBS を押したときの挙動を切り替えることができます。\r\n");
+            this.checkBox_removeOneStrokeByBackspace.UseVisualStyleBackColor = true;
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -3855,5 +3874,6 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label74;
         private System.Windows.Forms.Label label73;
         private System.Windows.Forms.Label label72;
+        private System.Windows.Forms.CheckBox checkBox_removeOneStrokeByBackspace;
     }
 }

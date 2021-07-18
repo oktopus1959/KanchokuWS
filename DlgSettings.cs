@@ -832,6 +832,7 @@ namespace KanchokuWS
             checkBox_convertShiftedHiraganaToKatakana.Checked = Settings.ConvertShiftedHiraganaToKatakana;
             checkBox_convertJaPeriod.Checked = Settings.ConvertJaPeriod;
             checkBox_convertJaComma.Checked = Settings.ConvertJaComma;
+            checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
         }
 
         private void setHistoryStatusChecker()
@@ -863,6 +864,7 @@ namespace KanchokuWS
             checkerHistory.Add(checkBox_convertShiftedHiraganaToKatakana);
             checkerHistory.Add(checkBox_convertJaPeriod);
             checkerHistory.Add(checkBox_convertJaComma);
+            checkerHistory.Add(checkBox_removeOneStrokeByBackspace);
 
             checkerAll.Add(checkerHistory);
         }
@@ -896,6 +898,7 @@ namespace KanchokuWS
             Settings.SetUserIni("convertShiftedHiraganaToKatakana", checkBox_convertShiftedHiraganaToKatakana.Checked);
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
             Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
+            Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);
 
             Settings.ReadIniFile();
 
