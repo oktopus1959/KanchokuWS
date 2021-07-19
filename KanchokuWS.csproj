@@ -81,6 +81,12 @@
     <Compile Include="DlgColorSelector.Designer.cs">
       <DependentUpon>DlgColorSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="DlgPaddingsDesc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DlgPaddingsDesc.Designer.cs">
+      <DependentUpon>DlgPaddingsDesc.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmKanchoku.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -144,6 +150,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DlgColorSelector.resx">
       <DependentUpon>DlgColorSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DlgPaddingsDesc.resx">
+      <DependentUpon>DlgPaddingsDesc.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmKanchoku.resx">
       <DependentUpon>FrmKanchoku.cs</DependentUpon>

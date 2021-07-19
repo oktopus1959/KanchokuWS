@@ -11,7 +11,7 @@ namespace KanchokuWS
     {
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.0.5";
+        public static string Version => "1.0.6";
 
         /// <summary> ドキュメントへのURL </summary>
         public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
@@ -65,6 +65,11 @@ namespace KanchokuWS
         /// <summary>二重起動を許可する</summary>
         public static bool MultiAppEnabled { get; private set; } = false;
 
+        /// <summary>部首合成ログを有効にする</summary>
+        public static bool BushuDicLogEnabled { get; private set; }
+
+        public static bool IsAnyDevFlagEnabled => LogLevel > 2 || LoggingHotKeyInfo || LoggingActiveWindowInfo || DelayAfterProcessHotkey || BushuDicLogEnabled;
+
         //-------------------------------------------------------------------------------------
         // フォントと色
         public static string NormalVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
@@ -93,8 +98,6 @@ namespace KanchokuWS
         public static string MazegakiFile { get; private set; }
 
         public static int BackFileRotationGeneration { get; private set; } = 3;
-
-        public static bool BushuDicLogEnabled { get; private set; }
 
         //-------------------------------------------------------------------------------------
         /// <summary> 文字送出時にコピー&ペーストを行う文字数の閾値 </summary>

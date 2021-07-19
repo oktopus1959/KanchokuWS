@@ -1339,6 +1339,13 @@ namespace KanchokuWS
         {
             if (comboBox.Items.Count == 0) comboBox.Items.AddRange(getCtrlKeyItems());
         }
+
+        private void button_showPaddingsDesc_Click(object sender, EventArgs e)
+        {
+            var dlg = new DlgPaddingsDesc(frmVkb.GetPaddingsDesc());
+            dlg.ShowDialog();
+            dlg.Dispose();
+        }
     }
 }
 

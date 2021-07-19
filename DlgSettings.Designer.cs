@@ -290,6 +290,7 @@ namespace KanchokuWS
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.checkBox_removeOneStrokeByBackspace = new System.Windows.Forms.CheckBox();
+            this.button_showPaddingsDesc = new System.Windows.Forms.Button();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -1550,6 +1551,7 @@ namespace KanchokuWS
             // 
             // groupBox21
             // 
+            this.groupBox21.Controls.Add(this.button_showPaddingsDesc);
             this.groupBox21.Controls.Add(this.button_normalDlg);
             this.groupBox21.Controls.Add(this.button_minibufDlg);
             this.groupBox21.Controls.Add(this.button_horizontalDlg);
@@ -1567,7 +1569,7 @@ namespace KanchokuWS
             this.groupBox21.Controls.Add(this.textBox_normalFont);
             this.groupBox21.Location = new System.Drawing.Point(8, 4);
             this.groupBox21.Name = "groupBox21";
-            this.groupBox21.Size = new System.Drawing.Size(284, 146);
+            this.groupBox21.Size = new System.Drawing.Size(284, 178);
             this.groupBox21.TabIndex = 0;
             this.groupBox21.TabStop = false;
             this.groupBox21.Text = "仮想鍵盤フォント";
@@ -1725,7 +1727,7 @@ namespace KanchokuWS
             this.groupBox3.Controls.Add(this.label35);
             this.groupBox3.Controls.Add(this.label34);
             this.groupBox3.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox3.Location = new System.Drawing.Point(8, 159);
+            this.groupBox3.Location = new System.Drawing.Point(8, 194);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(255, 126);
             this.groupBox3.TabIndex = 1;
@@ -3359,6 +3361,16 @@ namespace KanchokuWS
         "どちらでも同じになりますが、\r\nTUT-Code などの多ストローク系の場合は、ストロークの途中で\r\nBS を押したときの挙動を切り替えることができます。\r\n");
             this.checkBox_removeOneStrokeByBackspace.UseVisualStyleBackColor = true;
             // 
+            // button_showPaddingsDesc
+            // 
+            this.button_showPaddingsDesc.Location = new System.Drawing.Point(80, 147);
+            this.button_showPaddingsDesc.Name = "button_showPaddingsDesc";
+            this.button_showPaddingsDesc.Size = new System.Drawing.Size(92, 23);
+            this.button_showPaddingsDesc.TabIndex = 10;
+            this.button_showPaddingsDesc.Text = "余白情報表示";
+            this.button_showPaddingsDesc.UseVisualStyleBackColor = true;
+            this.button_showPaddingsDesc.Click += new System.EventHandler(this.button_showPaddingsDesc_Click);
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -3875,5 +3887,6 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label73;
         private System.Windows.Forms.Label label72;
         private System.Windows.Forms.CheckBox checkBox_removeOneStrokeByBackspace;
+        private System.Windows.Forms.Button button_showPaddingsDesc;
     }
 }

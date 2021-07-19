@@ -55,7 +55,7 @@ namespace KanchokuWS
         /// <summary>
         /// フォント情報
         /// </summary>
-        public class FontInfo : IDisposable
+        public class CFontInfo : IDisposable
         {
             private string myName;
 
@@ -89,6 +89,8 @@ namespace KanchokuWS
             /// <summary> 縦書き時の左・上の余白 </summary>
             private List<Padding> paddings { get; set; } = new List<Padding>();
 
+            public int PaddingsNum => paddings.Count;
+
             public Padding GetNthPadding(int nth)
             {
                 if (paddings.Count == 0) return new Padding(0, 0);
@@ -96,7 +98,7 @@ namespace KanchokuWS
             }
 
             // コンストラクタ
-            public FontInfo(string name, bool vertical, bool padding)
+            public CFontInfo(string name, bool vertical, bool padding)
             {
                 myName = name;
                 this.useVertical = vertical;
@@ -211,7 +213,7 @@ namespace KanchokuWS
                 }
             }
         }
-        private bool renewFontInfo(FontInfo fontInfo, string fontSpec)
+        private bool renewFontInfo(CFontInfo fontInfo, string fontSpec)
         {
             return fontInfo.RenewFontSpec(fontSpec, VkbCellWidth, VkbCellHeight, pictureBox_measureFontSize);
         }
@@ -234,27 +236,27 @@ namespace KanchokuWS
         public class VerticalFontInfo : IDisposable
         {
             /// <summary> フォント情報 </summary>
-            private FontInfo fontInfo;
+            public CFontInfo FontInfo { get; private set; }
 
             /// <summary> 横書き用フォント </summary>
-            public Font HorizontalFont => fontInfo?.HorizontalFont;
+            public Font HorizontalFont => FontInfo?.HorizontalFont;
 
             /// <summary> 縦書き用フォント </summary>
-            public Font VerticalFont => fontInfo?.VerticalFont;
+            public Font VerticalFont => FontInfo?.VerticalFont;
 
             ///// <summary> フォント指定 </summary>
             //public string FontSpec = "";
 
             /// <summary> 縦書き時の左余白 </summary>
-            public float LeftPadding => fontInfo?.GetNthPadding(CurrentScreen).Left ?? 0f;
+            public float LeftPadding => FontInfo?.GetNthPadding(CurrentScreen).Left ?? 0f;
 
             /// <summary> 縦書き時の上部余白 </summary>
-            public float TopPadding => fontInfo?.GetNthPadding(CurrentScreen).Top ?? 0f;
+            public float TopPadding => FontInfo?.GetNthPadding(CurrentScreen).Top ?? 0f;
 
             private float _charHeight = 13;
             /// <summary> 縦書きフォントの高さ </summary>
             public float CharHeight {
-                get { return fontInfo?.CharHeight ?? _charHeight; }
+                get { return FontInfo?.CharHeight ?? _charHeight; }
                 set { _charHeight = value; }
             }
 
@@ -263,13 +265,13 @@ namespace KanchokuWS
 
             public VerticalFontInfo(string name)
             {
-                fontInfo = new FontInfo(name, true, true);
+                FontInfo = new CFontInfo(name, true, true);
             }
 
             // 縦列鍵盤用フォントの更新
             public void renewFontInfo(string newSpec, float boxWidth, PictureBox picBox)
             {
-                fontInfo.RenewFontSpec(newSpec, boxWidth, 18, picBox);
+                FontInfo.RenewFontSpec(newSpec, boxWidth, 18, picBox);
             }
 
             public float AdjustedLeftPadding(string str)
@@ -283,7 +285,7 @@ namespace KanchokuWS
 
             public void Dispose()
             {
-                fontInfo?.Dispose();
+                FontInfo?.Dispose();
             }
 
         }
@@ -364,6 +366,41 @@ namespace KanchokuWS
             DrawInitailVkb();
         }
 
+        /// <summary>通常・中央・縦列鍵盤の余白情報を文字列として取得</summary>
+        /// <returns></returns>
+        public string GetPaddingsDesc()
+        {
+            string makePaddings(CFontInfo info, int n)
+            {
+                var paddings = info.GetNthPadding(n);
+                return $"(左={paddings.Left}, 上={paddings.Top})";
+            }
+
+            string makePaddingsDesc(CFontInfo info)
+            {
+                if (info.PaddingsNum < 1) {
+                    return "まだ一度も表示されていないので情報がありません";
+                }
+                var _sb = new StringBuilder();
+                _sb.Append(makePaddings(info, 0));
+                for (int n = 1; n < info.PaddingsNum; ++n) {
+                    _sb.Append(" | ").Append(makePaddings(info, n));
+                }
+                return _sb.ToString();
+            }
+
+            renewNormalFont();
+            renewCenterVerticalFont();
+            renewCandidateVerticalFont();
+
+            var sb = new StringBuilder();
+            sb.Append("通常鍵盤: ").Append(makePaddingsDesc(normalFontInfo)).Append("\r\n");
+            sb.Append("中央鍵盤: ").Append(makePaddingsDesc(centerFontInfo.FontInfo)).Append("\r\n");
+            sb.Append("縦列鍵盤: ").Append(makePaddingsDesc(verticalFontInfo.FontInfo));
+
+            return sb.ToString();
+        }
+
         /// <summary> 中央鍵盤フォント情報 </summary>
         private VerticalFontInfo centerFontInfo = new VerticalFontInfo("Center") {
             CharHeight = 15,
@@ -372,7 +409,7 @@ namespace KanchokuWS
         };
 
         /// <summary> 横列鍵盤用フォント情報 </summary>
-        private FontInfo horizontalFontInfo = new FontInfo("Horizontal", false, false);
+        private CFontInfo horizontalFontInfo = new CFontInfo("Horizontal", false, false);
 
         private bool renewHorizontalFontInfo()
         {
@@ -923,7 +960,7 @@ namespace KanchokuWS
         }
 
         /// <summary> ミニバッファフォント </summary>
-        private FontInfo minibufFontInfo = new FontInfo("MiniBuf", false, false);
+        private CFontInfo minibufFontInfo = new CFontInfo("MiniBuf", false, false);
 
         // ミニバッフ用フォントの更新
         private void renewMinibufFont()
@@ -983,7 +1020,7 @@ namespace KanchokuWS
         // 通常仮想鍵盤サポート
 
         /// <summary> 通常鍵盤横書きフォント </summary>
-        private FontInfo normalFontInfo = new FontInfo("Normal", false, true);
+        private CFontInfo normalFontInfo = new CFontInfo("Normal", false, true);
 
         //private string normalFontSpec = "";
         private Font normalFont => normalFontInfo.MyFont;
@@ -992,7 +1029,7 @@ namespace KanchokuWS
         //float normalFontTopPadding = 4;
 
         // 通常仮想鍵盤用フォントの更新
-        private FontInfo.Padding renewNormalFont()
+        private CFontInfo.Padding renewNormalFont()
         {
             renewFontInfo(normalFontInfo, Settings.NormalVkbFontSpec);
             return normalFontInfo.GetNthPadding(CurrentScreen);

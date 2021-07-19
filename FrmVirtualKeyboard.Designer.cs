@@ -169,7 +169,7 @@ namespace KanchokuWS
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(253, 140);
+            this.ClientSize = new System.Drawing.Size(203, 130);
             this.Controls.Add(this.pictureBox_Main);
             this.Controls.Add(this.topTextBox);
             this.Controls.Add(this.dgvHorizontal);
