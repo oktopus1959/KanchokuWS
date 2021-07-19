@@ -758,7 +758,7 @@ namespace KanchokuWS
                 }
                 if (Settings.IsAnyDevFlagEnabled) {
                     if (devFlagsOnWarningCount <= 0) {
-                        devFlagsOnWarningCount = 10;
+                        devFlagsOnWarningCount = 2;
                     } else {
                         --devFlagsOnWarningCount;
                         if (devFlagsOnWarningCount == 0) {
@@ -768,7 +768,8 @@ namespace KanchokuWS
                             } else {
                                 msg = "開発者用の設定が有効になっています。";
                             }
-                            SystemHelper.ShowWarningMessageBox(msg);
+                            //SystemHelper.ShowWarningMessageBox(msg);
+                            frmVkb.SetTopText(msg);
                         }
                     }
                 }
