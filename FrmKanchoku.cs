@@ -83,6 +83,9 @@ namespace KanchokuWS
         {
             logger.WriteLog("INFO", $"\n\n==== KANCHOKU WS START (LogLevel={Logger.LogLevel}) ====");
 
+            // 設定ファイルの読み込み
+            Settings.ReadIniFile();
+
             // 仮想鍵盤フォームの作成
             frmVkb = new FrmVirtualKeyboard(this);
             frmVkb.Opacity = 0;
@@ -720,6 +723,9 @@ namespace KanchokuWS
             return HotKeys.DATE_STRING_HOTKEY1;
         }
 
+        // 開発者用の設定がONになっているとき、漢直モードのON/OFFを10回繰り返したら警告を出す
+        private int devFlagsOnWarningCount = 0;
+
         // アクティブと非アクティブを切り替える
         public void ToggleActiveState(bool bForceOff = false)
         {
@@ -749,6 +755,22 @@ namespace KanchokuWS
                     ShowFrmVkb();       // Show NonActive
                                         //} else if (Settings.ModeMarkerShowIntervalSec > 0) {
                                         //    ShowFrmMode();      // Show NonActive
+                }
+                if (Settings.IsAnyDevFlagEnabled) {
+                    if (devFlagsOnWarningCount <= 0) {
+                        devFlagsOnWarningCount = 10;
+                    } else {
+                        --devFlagsOnWarningCount;
+                        if (devFlagsOnWarningCount == 0) {
+                            string msg = "";
+                            if (Logger.LogLevel > 2) {
+                                msg = "ログレベルが INFOH 以上になっています。";
+                            } else {
+                                msg = "開発者用の設定が有効になっています。";
+                            }
+                            SystemHelper.ShowWarningMessageBox(msg);
+                        }
+                    }
                 }
             } else {
                 handleKeyDecoder(HotKeys.ACTIVE_HOTKEY);   // DecoderOff の処理をやる
@@ -826,7 +848,7 @@ namespace KanchokuWS
             // アクティブなウィンドウのハンドラ作成
             actWinHandler = new ActiveWindowHandler(this, frmVkb, frmMode);
 
-            Settings.ReadIniFile();
+            //Settings.ReadIniFile();
             //frmVkb.SetNormalCellBackColors();
 
             //// 文字出力カウントファイルの読み込み
