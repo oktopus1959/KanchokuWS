@@ -1,5 +1,6 @@
 //#include "pch.h"
 
+#include "hotkey_id_defs.h"
 #include "Reporting/Logger.h"
 #include "Node.h"
 
@@ -11,6 +12,7 @@ class StrokeTableNode : public Node {
 public:
     // コンストラクタ
     StrokeTableNode(int depth) : _depth(depth) {
+        children.resize(NUM_STROKE_HOTKEY);
     }
 
     // デストラクタ
@@ -33,13 +35,13 @@ public:
         return n < children.size() ? children[n].get() : 0;
     }
 
-    // 新しい子ノードを追加する
-    inline void addNode(Node* node) {
-        children.push_back(std::unique_ptr<Node>(node));
-    }
+    //// 新しい子ノードを追加する
+    //inline void addNode(Node* node) {
+    //    children.push_back(std::unique_ptr<Node>(node));
+    //}
 
     // n番目の子ノードをセットする
-    inline void setNth(size_t n, Node* node) {
+    inline void setNthChild(size_t n, Node* node) {
         if (n < children.size()) children[n].reset(node);
     }
 

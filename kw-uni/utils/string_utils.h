@@ -27,6 +27,10 @@ namespace {
         return ch >= 0x20 && ch <= 0x7f;
     }
 
+    inline bool is_numeral(wchar_t ch) {
+        return ch >= '0' && ch <= '9';
+    }
+
     inline bool is_high_surrogate(wchar_t ch) {
         return ch >= 0xd800 && ch <= 0xdbff;
     }

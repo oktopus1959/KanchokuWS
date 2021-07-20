@@ -75,6 +75,7 @@ namespace {
 
         TOKEN currentToken = TOKEN::END;   // 最後に読んだトークン
         tstring currentStr;                 // 文字列トークン
+        int arrowIndex = -1;                // ARROWインデックス
         size_t lineNumber = 0;              // 今読んでる行数
 
         tstring currentLine;                // 現在解析中の行
@@ -89,48 +90,124 @@ namespace {
         // ストローク木を作成する
         // エラーがあったら例外を投げる
         StrokeTableNode* CreateStrokeTree() {
-            readNextToken();
-            checkCurrentToken(TOKEN::LBRACE);         // 最初の '{'
-            return createSubTree(0, 0);
-        }
-
-        StrokeTableNode* createSubTree(int depth, int nth) {
-            StrokeTableNode* node = new StrokeTableNode(depth);
-            size_t numComma = 0;
+            // トップレベルはちょっと特殊
+            // ブロックの外側に書かれている ARROW をブロックの内側にあるものとして扱う
+            // つまり、
+            // -n>... { ... } -m>...
+            // を、
+            // { -n>..., ..., -m>... }
+            // として扱うということ。
+            // なので、先に treeNode(テーブルノード)を作成しておく
+            StrokeTableNode* tblNode = new StrokeTableNode(0);
+            int treeCount = 0;
             readNextToken();
             while (currentToken != TOKEN::END) {
-                // '}' が来たら部分木の終わり
-                if (currentToken == TOKEN::RBRACE) break;
-
                 switch (currentToken) {
                 case TOKEN::LBRACE:
-                    node->addNode(createSubTree(depth + 1, node->numChildren()));
-                    break;
-                case TOKEN::COMMA:             // ',' が来たら次のトークン
-                case TOKEN::SLASH:             // '/' が来ても次のトークン
-                    ++numComma;
-                    LOG_TRACE(_T("COMMA: numChildren=%d, numComma=%d"), node->numChildren(), numComma);
-                    if (node->numChildren() < numComma) {
-                        // 前トークンが空だった
-                        LOG_TRACE(_T("COMMA: previous token is null: numChildren=%d, numComma=%d"), node->numChildren(), numComma);
-                        node->addNode(0);
+                    ++treeCount;
+                    if (treeCount > 1) {
+                        // 現在のところ、トップレベルで2つ以上のブロックは許可していない
+                        parseError();
+                        break;
                     }
-                    numComma = node->numChildren();
+                    makeSubTree(tblNode, 0, 0);
                     break;
-                case TOKEN::STRING:            // "str" : 文字列ノード
-                    LOG_TRACE(_T("%d:%d=%s"), lineNumber, numComma, currentStr.c_str());
-                    node->addNode(new StringNode(currentStr));
+
+                case TOKEN::ARROW:
+                    createNodePositionedByArrow(tblNode, 0, arrowIndex);
                     break;
-                case TOKEN::FUNCTION:          // @c : 機能ノード
-                    node->addNode(createFunctionNode(currentStr, nth, node->numChildren()));
+
+                case TOKEN::COMMA:             // ',' が来たら次のトークン待ち
+                case TOKEN::SLASH:             // '/' が来ても次のトークン待ち
                     break;
-                default:                // 途中でファイルが終わったりした場合 : エラー
+
+                default:
                     parseError();
                     break;
                 }
                 readNextToken();
             }
-            return node;
+            return tblNode;
+        }
+
+        StrokeTableNode* makeSubTree(StrokeTableNode* tblNode, int depth, int prevNth) {
+            if (tblNode == 0) tblNode = new StrokeTableNode(depth);
+            int n = 0;
+            bool isPrevEmpty = true;
+            readNextToken();
+            while (currentToken != TOKEN::RBRACE) { // '}' でブロックの終わり
+                switch (currentToken) {
+                case TOKEN::ARROW:
+                    createNodePositionedByArrow(tblNode, prevNth, arrowIndex);
+                    break;
+
+                case TOKEN::LBRACE:
+                case TOKEN::STRING:             // "str" : 文字列ノード
+                case TOKEN::FUNCTION:           // @c : 機能ノード
+                    tblNode->setNthChild(n, createNode(currentToken, depth + 1, prevNth, n));
+                    ++n;
+                    isPrevEmpty = false;
+                    break;
+
+                case TOKEN::COMMA:              // 次のトークン待ち
+                case TOKEN::SLASH:              // 次のトークン待ち
+                    if (isPrevEmpty) ++n;
+                    isPrevEmpty = true;
+                    break;
+
+                default:                        // 途中でファイルが終わったりした場合 : エラー
+                    parseError();
+                    break;
+                }
+
+                readNextToken();
+            }
+            return tblNode;
+        }
+
+        void createNodePositionedByArrow(StrokeTableNode* tblNode, int prevNth, int idx) {
+            int nextDepth = tblNode->depth() + 1;
+            LOG_INFOH(_T("CALLED: depth=%d, idx=%d, prevN=%d"), nextDepth, idx, prevNth);
+            Node* node = tblNode->getNth(idx);
+            if (node && node->isStrokeTableNode()) {
+                createNodePositionedByArrowSub(dynamic_cast<StrokeTableNode*>(node), nextDepth, prevNth, idx);
+            } else {
+                tblNode->setNthChild(idx, createNodePositionedByArrowSub(0, nextDepth, prevNth, idx));
+            }
+        }
+
+        Node* createNodePositionedByArrowSub(StrokeTableNode* tblNode, int depth, int prevNth, int nth) {
+            readNextToken();
+            if (currentToken == TOKEN::ARROW) {
+                if (tblNode == 0) tblNode = new StrokeTableNode(depth);
+                createNodePositionedByArrow(tblNode, nth, arrowIndex);
+                return tblNode;
+            }
+            return createNode(currentToken, depth, prevNth, nth);
+        }
+
+        Node* createNode(TOKEN token, int depth, int prevNth, int nth) {
+            switch (token) {
+            case TOKEN::LBRACE:
+                return makeSubTree(0, depth, nth);
+            case TOKEN::RBRACE:
+            case TOKEN::COMMA:             // ',' が来たら次のトークン
+            case TOKEN::SLASH:             // '/' が来ても次のトークン
+                return 0;
+            case TOKEN::STRING:            // "str" : 文字列ノード
+                LOG_TRACE(_T("%d:%d=%s"), lineNumber, nth, currentStr.c_str());
+                return new StringNode(currentStr);
+            case TOKEN::FUNCTION:          // @c : 機能ノード
+                return createFunctionNode(currentStr, prevNth, nth);
+            default:                // 途中でファイルが終わったりした場合 : エラー
+                parseError();
+                return 0;
+            }
+        }
+
+        // 現在のトークンをチェックする
+        bool isCurrentToken(TOKEN target) {
+            return (currentToken == target);
         }
 
         // 現在のトークンをチェックする
@@ -148,6 +225,7 @@ namespace {
         // トークンを読む
         TOKEN getToken() {
             currentStr.clear();
+            arrowIndex = -1;
             while (true) {
                 switch (getNextChar()) {
                 case '#':
@@ -177,6 +255,10 @@ namespace {
                     // 文字列
                     readString();
                     return TOKEN::STRING;
+
+                case '-':
+                    parseArrow();
+                    return TOKEN::ARROW;
 
                 case 0:
                     // ファイルの終わり
@@ -211,6 +293,20 @@ namespace {
                 }
                 currentStr.append(1, c);
             }
+        }
+
+        // ARROW
+        void parseArrow() {
+            char_t c = getNextChar();
+            if (!is_numeral(c)) parseError();
+            arrowIndex = c - '0';
+            c = getNextChar();
+            while (is_numeral(c)) {
+                arrowIndex = arrowIndex * 10 + c - '0';
+                c = getNextChar();
+            }
+            if (arrowIndex >= NUM_STROKE_HOTKEY) parseError();
+            if (c != '>') parseError();
         }
 
         char_t getNextChar() {
@@ -273,7 +369,7 @@ void StrokeTableNode::AssignFucntion(const tstring& keys, const tstring& name) {
             if (idx == keyCodes.size()) {
                 // 打鍵列の最後まで行った
                 LOG_INFOH(_T("RESET: depth=%d, key=%d, name=%s"), idx, key, name.c_str());
-                pNode->setNth(key, FunctionNodeManager::CreateFunctionNodeByName(name));
+                pNode->setNthChild(key, FunctionNodeManager::CreateFunctionNodeByName(name));
             }
             break;
         }
