@@ -898,7 +898,7 @@ namespace KanchokuWS
                 if (!ExecCmdDecoder(null, Settings.SerializedDecoderSettings, true)) {
                     logger.Error($"CLOSE: Decoder initialize error");
                     //PostMessage(this.Handle, WM_Defs.WM_CLOSE, 0, 0);
-                    this.Close();
+                    this._invoke(() => this.Close());
                     return false;
                 }
 

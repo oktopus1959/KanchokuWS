@@ -782,7 +782,7 @@ int HistoryDic::CreateHistoryDic(const tstring& histFile) {
             ERROR_HANDLER->Warn(utils::format(_T("入力履歴ファイル(%s)はワイルドード文字(*)を含む形式である必要があります。\r\nデフォルトのファイル名パターン 'kwhist.*.txt' を使用します。"), filename.c_str()));
             filename = _T("kwhist.*.txt");
         }
-        auto path = utils::joinPath(SETTINGS->workDir, filename);
+        auto path = utils::joinPath(SETTINGS->rootDir, filename);
         LOG_INFO(_T("open history file: %s"), path.c_str());
 
         size_t pos = path.find(_T("*"));
@@ -799,7 +799,7 @@ int HistoryDic::CreateHistoryDic(const tstring& histFile) {
 void HistoryDic::WriteHistoryDic(const tstring& histFile) {
     LOG_INFO(_T("CALLED: path=%s"), histFile.c_str());
     if (Singleton) {
-        auto path = utils::joinPath(SETTINGS->workDir, utils::contains(histFile, _T("*")) ? histFile : _T("kwhist.*.txt"));
+        auto path = utils::joinPath(SETTINGS->rootDir, utils::contains(histFile, _T("*")) ? histFile : _T("kwhist.*.txt"));
         size_t pos = path.find(_T("*"));
         if (!Singleton->IsHistDicEmpty() || SETTINGS->firstUse) {
             auto pathEntry = replaceStar(path, pos, _T("entry"));

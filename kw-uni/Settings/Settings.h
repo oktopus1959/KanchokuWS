@@ -5,7 +5,7 @@
 struct Settings {
     bool firstUse;              // 最初の起動か
 
-    tstring workDir;            // 作業ディレクトリ
+    tstring rootDir;            // ルートフォルダ
     tstring tableFile;          // ストロークテーブル
     tstring charsDefFile;       // Hotkey から文字への変換
     tstring easyCharsFile;      // 簡易打鍵文字ファイル

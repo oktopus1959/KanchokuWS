@@ -17,14 +17,14 @@ namespace {
 void Settings::SetValues(const std::map<tstring, tstring>& dict) {
 
 #define SET_KEY_VALUE(k) k = utils::safe_get(dict, tstring(_T(#k))); LOG_INFO(_T(#k ## "=%s"), k.c_str())
-#define SET_FILE_PATH(k) k = make_path(SETTINGS->workDir, utils::safe_get(dict, tstring(_T(#k)))); LOG_INFO(_T(#k ## "=%s"), k.c_str())
+#define SET_FILE_PATH(k) k = make_path(SETTINGS->rootDir, utils::safe_get(dict, tstring(_T(#k)))); LOG_INFO(_T(#k ## "=%s"), k.c_str())
 #define SET_INT_VALUE(k) k = utils::strToInt(utils::safe_get(dict, tstring(_T(#k)))); LOG_INFO(_T(#k ## "=%d"), k)
 #define SET_BOOL_VALUE(k) k = utils::strToBool(utils::safe_get(dict, tstring(_T(#k)))); LOG_INFO(_T(#k ## "=%s"), utils::boolToString(k).c_str())
 #define RESET_STROKE_FUNC(k) StrokeTableNode::AssignFucntion(utils::safe_get(dict, tstring(_T(k ## "KeySeq"))), _T(k))
 
     SET_BOOL_VALUE(firstUse);
 
-    SET_KEY_VALUE(workDir);
+    SET_KEY_VALUE(rootDir);
     SET_FILE_PATH(tableFile);
     SET_FILE_PATH(charsDefFile);
     SET_FILE_PATH(easyCharsFile);

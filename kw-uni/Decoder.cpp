@@ -181,7 +181,8 @@ public:
 
         utils::IfstreamReader reader(tableFile);
         if (reader.success()) {
-            auto lines = utils::IfstreamReader(tableFile).getAllLines();
+            //auto lines = utils::IfstreamReader(tableFile).getAllLines();
+            auto lines = reader.getAllLines();
             // ストロークノード木の構築
             StrokeTableNode::CreateStrokeTree(lines);
             LOG_INFO(_T("close table file: %s"), tableFile.c_str());

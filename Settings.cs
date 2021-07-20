@@ -600,7 +600,7 @@ namespace KanchokuWS
             // デコーダ設定
             DecoderSettings.Clear();
             DecoderSettings["logLevel"] = LogLevel.ToString();
-            DecoderSettings["workDir"] = KanchokuIni.Singleton.KanchokuDir;
+            DecoderSettings["rootDir"] = KanchokuIni.Singleton.KanchokuDir;
             DecoderSettings["firstUse"] = $"{!UserKanchokuIni.Singleton.IsIniFileExist}";
             BushuAssocFile = addDecoderSetting("bushuAssocFile", "kwassoc.txt");
             BushuFile = addDecoderSetting("bushuFile", "bushu", "kwbushu.rev");

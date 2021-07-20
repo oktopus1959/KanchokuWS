@@ -709,7 +709,7 @@ int MazegakiDic::CreateMazegakiDic(const tstring& mazeFile) {
 
         bool bUser = utils::toLower(name).find(_T(".user.")) != wstring::npos;  // ユーザ辞書か
 
-        auto path = utils::joinPath(SETTINGS->workDir, name);
+        auto path = utils::joinPath(SETTINGS->rootDir, name);
         LOG_INFO(_T("open maze file: %s"), path.c_str());
 
         utils::IfstreamReader reader(path);
@@ -763,7 +763,7 @@ void MazegakiDic::WriteMazegakiDic() {
                 }
             }
         }
-        auto path = utils::joinPath(SETTINGS->workDir, userDic);
+        auto path = utils::joinPath(SETTINGS->rootDir, userDic);
         LOG_INFO(_T("save user maze file: %s"), path.c_str());
         WriteMazegakiDic(path);
     }

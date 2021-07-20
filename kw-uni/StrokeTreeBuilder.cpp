@@ -3,8 +3,11 @@
 // このソースのかなりの部分は、オリジナル漢直Winの parser.c のソースコードを流用しています
 
 #include "string_utils.h"
+#include "file_utils.h"
+#include "path_utils.h"
 #include "Logger.h"
 #include "ErrorHandler.h"
+#include "Settings.h"
 
 #include "Node.h"
 #include "StrokeTable.h"
@@ -228,9 +231,30 @@ namespace {
             arrowIndex = -1;
             while (true) {
                 switch (getNextChar()) {
-                case '#':
+                case '#': {
+                    // '#include' または '#' 以降、行末までコメント
+                    wstring filename;
+                    readWord();
+                    if (currentStr == _T("include")) {
+                        currentStr.clear();
+                        char_t c = skipSpace();
+                        if (c > ' ') {
+                            if (c == '"')
+                                readString();
+                            else
+                                readWord();
+                            filename = currentStr;
+                        }
+                    }
+                    currentStr.clear();
+                    skipToEndOfLine();
+                    if (!filename.empty()) {
+                        readFile(filename);
+                    }
+                }
+                    break;
                 case ';':
-                    // '#' または ';' 以降、行末までコメント
+                    // ';' 以降、行末までコメント
                     skipToEndOfLine();
                     break;
 
@@ -295,6 +319,28 @@ namespace {
             }
         }
 
+        // 次の空白文字までを読み込んで、currentStr に格納。
+        void readWord() {
+            currentStr.clear();
+            char_t c = skipSpace();
+            if (c <= ' ') return;
+
+            currentStr.append(1, c);
+            while (true) {
+                c = getNextChar();
+                if (c <= ' ') return;
+                currentStr.append(1, c);
+            }
+        }
+
+        // 空白文字を読み飛ばす
+        char_t skipSpace() {
+            while (true) {
+                char_t c = getNextChar();
+                if (c == '\r' || c == '\n' || c == 0 || c > ' ')  return c;
+            }
+        }
+
         // ARROW
         void parseArrow() {
             char_t c = getNextChar();
@@ -328,6 +374,14 @@ namespace {
 
         void skipToEndOfLine() {
             currentPos = currentLine.size();
+        }
+
+        void readFile(wstring filename) {
+            auto reader = utils::IfstreamReader(utils::joinPath(SETTINGS->rootDir, filename));
+            if (reader.success()) {
+                auto lines = reader.getAllLines();
+                tableLines.insert(tableLines.begin() + lineNumber, lines.begin(), lines.end());
+            }
         }
 
         // 読みこみに失敗した場合

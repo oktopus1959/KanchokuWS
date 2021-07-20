@@ -77,12 +77,14 @@ namespace utils {
         // 全行を読み込んで1行ずつ vector に push_back する。行末に NL は付かない。
         inline std::vector<tstring> getAllLines() {
             std::vector<tstring> result;
-            while (true) {
-                tstring ts;
-                bool eof;
-                std::tie(ts, eof) = getLine();
-                if (eof) break;
-                result.push_back(ts);
+            if (success()) {
+                while (true) {
+                    tstring ts;
+                    bool eof;
+                    std::tie(ts, eof) = getLine();
+                    if (eof) break;
+                    result.push_back(ts);
+                }
             }
             return result;
         }
