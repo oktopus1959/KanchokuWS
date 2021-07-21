@@ -3,6 +3,7 @@
 #include "hotkey_id_defs.h"
 #include "Reporting/Logger.h"
 #include "Node.h"
+#include "VkbTableMaker.h"
 
 // -------------------------------------------------------------------
 // StrokeTableNode - ストロークテーブルの連鎖となるノード
@@ -23,7 +24,7 @@ public:
     State* CreateState();
 
     // 表示用文字列を返す
-    MString getString() const { return to_mstr(_T("□")); }
+    MString getString() const { return to_mstr(nodeMarker); }
 
     NodeType getNodeType() const { return _depth == 0 ? NodeType::RootStroke : NodeType::Stroke; }
 
@@ -71,10 +72,26 @@ private:
 
     size_t _depth;
 
+    wstring nodeMarker = _T("□");
+
     // 全ストロークノードが不要になったら true (ステートの作成時にクリアする)
     bool bRemoveAllStroke = false;
 
 public:
+    // ストロークガイドの構築
+    void MakeStrokeGuide(const wstring& targetChars) {
+        std::vector<wchar_t> strokeGuide(VkbTableMaker::OUT_TABLE_SIZE);
+        VkbTableMaker::ReorderByStrokePosition(this, strokeGuide.data(), targetChars);
+        for (size_t i = 0; i * 2 < strokeGuide.size() && i < children.size(); ++i) {
+            auto ch = strokeGuide[i * 2];
+            Node* child = children[i].get();
+            if (ch != 0 && child && child->isStrokeTableNode()) {
+                StrokeTableNode* tblNode = dynamic_cast<StrokeTableNode*>(child);
+                if (tblNode) tblNode->nodeMarker[0] = ch;
+            }
+        }
+    }
+
     // ストローク木を構築する
     static StrokeTableNode* CreateStrokeTree(std::vector<tstring>&);
 

@@ -3,7 +3,12 @@
 #include "string_utils.h"
 #include "misc_utils.h"
 
+class StrokeTableNode;
+
 namespace VkbTableMaker {
+    const size_t OUT_TABLE_SIZE = 200;
+    const size_t VKB_TABLE_SIZE = 50;
+
     // ひらがな50音図配列を作成する (あかさたなはまやらわ、ぁがざだばぱゃ)
     void MakeVkbHiraganaTable(wchar_t* table);
 
@@ -15,6 +20,10 @@ namespace VkbTableMaker {
 
     // 指定の文字配列を第1ストロークの位置に従って並べかえる
     void ReorderByFirstStrokePosition(wchar_t* table, const wchar_t* targetChars);
+
+    // 指定の文字配列をストロークの位置に従って並べかえる
+    // node: ストロークテーブルノード, table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
+    void ReorderByStrokePosition(StrokeTableNode* node, wchar_t* table, const wstring& targetChars);
 
     // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
     void MakeExtraCharsStrokePositionTable(wchar_t* faces);

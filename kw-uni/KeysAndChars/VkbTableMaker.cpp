@@ -5,8 +5,9 @@
 #include "MyPrevChar.h"
 #include "HotKeyToChars.h"
 
-#define OUT_TABLE_SIZE 200
-#define VKB_TABLE_SIZE 50
+#include "VkbTableMaker.h"
+//#define OUT_TABLE_SIZE 200
+//#define VKB_TABLE_SIZE 50
 
 namespace VkbTableMaker {
     DEFINE_NAMESPACE_LOGGER(VkbTableMaker);
@@ -152,6 +153,7 @@ namespace VkbTableMaker {
     }
 
     // 指定の文字配列を第1ストロークの位置に従って並べかえる
+    // table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
     void ReorderByFirstStrokePosition(wchar_t* table, const wchar_t* targetChars) {
         LOG_INFO(_T("CALLED"));
         wstring orderedChars = targetChars;
@@ -160,6 +162,17 @@ namespace VkbTableMaker {
             table[i] = 0;
         }
         reorderByFirstStrokePosition(table, ROOT_STROKE_NODE.get(), orderedChars, charSet, HOTKEY_STROKE_SPACE, 0);
+    }
+
+    // 指定の文字配列をストロークの位置に従って並べかえる
+    // node: ストロークテーブルノード, table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
+    void ReorderByStrokePosition(StrokeTableNode* node, wchar_t* table, const wstring& targetChars) {
+        LOG_INFO(_T("CALLED"));
+        std::set<wchar_t> charSet(targetChars.begin(), targetChars.end());
+        for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
+            table[i] = 0;
+        }
+        reorderByFirstStrokePosition(table, node, targetChars, charSet, HOTKEY_STROKE_SPACE, 0);
     }
 
     //----------------------------------------------------------------------------
@@ -209,7 +222,7 @@ namespace VkbTableMaker {
         for (size_t i = HOTKEY_STROKE_SPACE; i < NUM_STROKE_HOTKEY; ++i) {
             wchar_t ch = _T("・")[0];
             auto blk = ROOT_STROKE_NODE->getNth(i);
-            if (blk && blk->isFunctionNode()) {
+            if (blk /*&& blk->isFunctionNode()*/) {
                 ch = (wchar_t)utils::safe_front(blk->getString());
             }
             set_facestr(ch, faces + i * 2);

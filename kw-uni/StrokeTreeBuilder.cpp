@@ -82,12 +82,27 @@ namespace {
         size_t lineNumber = 0;              // 今読んでる行数
 
         tstring currentLine;                // 現在解析中の行
-        size_t currentPos = 0;              // 次の文字位置
+        size_t nextPos = 0;                 // 次の文字位置
         char_t currentChar = 0;             // 次の文字
+
+        std::map<wstring, wstring> defines; // 定義
+
+        wstring getAndRemoveDefines(const wstring& key) {
+            wstring result;
+            auto iter = defines.find(key);
+            if (iter != defines.end()) {
+                result = iter->second;
+                defines.erase(key);
+            }
+            return result;
+        }
 
     public:
         StrokeTreeBuilder(std::vector<tstring>& lines)
             : tableLines(lines) {
+            if (!tableLines.empty()) {
+                currentLine = tableLines[0];
+            }
         }
 
         // ストローク木を作成する
@@ -134,6 +149,8 @@ namespace {
         }
 
         StrokeTableNode* makeSubTree(StrokeTableNode* tblNode, int depth, int prevNth) {
+            wstring myGuideChars = getAndRemoveDefines(_T("defguide"));
+
             if (tblNode == 0) tblNode = new StrokeTableNode(depth);
             int n = 0;
             bool isPrevEmpty = true;
@@ -165,12 +182,17 @@ namespace {
 
                 readNextToken();
             }
+
+            if (!myGuideChars.empty()) {
+                LOG_INFOH(_T("DEFGUID: %s"), myGuideChars.c_str());
+                tblNode->MakeStrokeGuide(myGuideChars);
+            }
             return tblNode;
         }
 
         void createNodePositionedByArrow(StrokeTableNode* tblNode, int prevNth, int idx) {
             int nextDepth = tblNode->depth() + 1;
-            LOG_INFOH(_T("CALLED: depth=%d, idx=%d, prevN=%d"), nextDepth, idx, prevNth);
+            LOG_INFOH(_T("CALLED: currentLine=%d, depth=%d, idx=%d, prevN=%d"), lineNumber, nextDepth, idx, prevNth);
             Node* node = tblNode->getNth(idx);
             if (node && node->isStrokeTableNode()) {
                 createNodePositionedByArrowSub(dynamic_cast<StrokeTableNode*>(node), nextDepth, prevNth, idx);
@@ -198,7 +220,7 @@ namespace {
             case TOKEN::SLASH:             // '/' が来ても次のトークン
                 return 0;
             case TOKEN::STRING:            // "str" : 文字列ノード
-                LOG_TRACE(_T("%d:%d=%s"), lineNumber, nth, currentStr.c_str());
+                LOG_TRACE(_T("%d:%d=%s"), lineNumber + 1, nth, currentStr.c_str());
                 return new StringNode(currentStr);
             case TOKEN::FUNCTION:          // @c : 機能ノード
                 return createFunctionNode(currentStr, prevNth, nth);
@@ -236,15 +258,21 @@ namespace {
                     wstring filename;
                     readWord();
                     if (currentStr == _T("include")) {
-                        currentStr.clear();
-                        char_t c = skipSpace();
-                        if (c > ' ') {
-                            if (c == '"')
-                                readString();
-                            else
-                                readWord();
-                            filename = currentStr;
+                        readWordOrString();
+                        filename = currentStr;
+                        LOG_INFOH(_T("INCLUDE: lineNum=%d, %s"), lineNumber + 1, filename.c_str());
+                    } else if (currentStr == _T("define")) {
+                        readWord();
+                        if (!currentStr.empty()) {
+                            wstring key = currentStr;
+                            readWordOrString();
+                            defines[key] = currentStr;
+                            LOG_INFOH(_T("DEFINE: lineNum=%d, %s=%s"), lineNumber + 1, key.c_str(), currentStr.c_str());
                         }
+                    } else if (currentStr == _T("strokePosition")) {
+                        readWordOrString();
+                        defines[_T("defguide")] = currentStr;
+                        LOG_INFOH(_T("StrokePosition: %s"), currentStr.c_str());
                     }
                     currentStr.clear();
                     skipToEndOfLine();
@@ -325,11 +353,28 @@ namespace {
             char_t c = skipSpace();
             if (c <= ' ') return;
 
+            readWordSub(c);
+        }
+
+        // 次の空白文字までを読み込んで、currentStr に格納。
+        void readWordSub(wchar_t c) {
             currentStr.append(1, c);
             while (true) {
                 c = getNextChar();
                 if (c <= ' ') return;
                 currentStr.append(1, c);
+            }
+        }
+
+        // 文字列または単語を読み込む
+        void readWordOrString() {
+            currentStr.clear();
+            char_t c = skipSpace();
+            if (c > ' ') {
+                if (c == '"')
+                    readString();
+                else
+                    readWordSub(c);
             }
         }
 
@@ -356,24 +401,25 @@ namespace {
         }
 
         char_t getNextChar() {
-            if (currentPos >= currentLine.size()) {
+            if (nextPos > currentLine.size()) {
                 ++lineNumber;
-                while (lineNumber <= tableLines.size()) {
-                    currentLine = tableLines[lineNumber - 1];
-                    if (!currentLine.empty()) {
-                        currentPos = 0;
-                        LOG_DEBUG(_T("%d: %s"), lineNumber, currentLine.c_str());
-                        break;
-                    }
-                    ++lineNumber;
+                if (lineNumber >= tableLines.size()) {
+                    return currentChar = 0;
                 }
+                currentLine = tableLines[lineNumber];
+                nextPos = 0;
             }
-            currentChar = currentPos < currentLine.size() ? currentLine[currentPos++] : 0;
+            if (nextPos < currentLine.size()) {
+                currentChar = currentLine[nextPos++];
+            } else {
+                ++nextPos;
+                currentChar = '\n';
+            }
             return currentChar;
         }
 
         void skipToEndOfLine() {
-            currentPos = currentLine.size();
+            nextPos = currentLine.size();
         }
 
         void readFile(wstring filename) {
@@ -381,7 +427,7 @@ namespace {
             auto reader = utils::IfstreamReader(utils::joinPath(SETTINGS->rootDir, filename));
             if (reader.success()) {
                 auto lines = reader.getAllLines();
-                tableLines.insert(tableLines.begin() + lineNumber, lines.begin(), lines.end());
+                tableLines.insert(tableLines.begin() + lineNumber + 1, lines.begin(), lines.end());
             } else {
                 LOG_ERROR(_T("Can't open: %s"), filename.c_str());
             }
@@ -389,7 +435,8 @@ namespace {
 
         // 読みこみに失敗した場合
         void parseError() {
-            tstring msg = utils::format(_T("テーブルファイルの %d 行 %d文字目('%c')がまちがっているようです"), lineNumber, currentPos, currentChar);
+            wchar_t buf[2] = { currentChar, 0 };
+            tstring msg = utils::format(_T("テーブルファイルの %d 行 %d文字目('%s')がまちがっているようです"), lineNumber, nextPos, buf);
             LOG_ERROR(msg);
             wstring lines;
             for (size_t i = 10; i > 0; --i) {
