@@ -377,10 +377,13 @@ namespace {
         }
 
         void readFile(wstring filename) {
+            LOG_INFOH(_T("INCLUDE: %s"), filename.c_str());
             auto reader = utils::IfstreamReader(utils::joinPath(SETTINGS->rootDir, filename));
             if (reader.success()) {
                 auto lines = reader.getAllLines();
                 tableLines.insert(tableLines.begin() + lineNumber, lines.begin(), lines.end());
+            } else {
+                LOG_ERROR(_T("Can't open: %s"), filename.c_str());
             }
         }
 
@@ -388,6 +391,15 @@ namespace {
         void parseError() {
             tstring msg = utils::format(_T("テーブルファイルの %d 行 %d文字目('%c')がまちがっているようです"), lineNumber, currentPos, currentChar);
             LOG_ERROR(msg);
+            wstring lines;
+            for (size_t i = 10; i > 0; --i) {
+                if (lineNumber >= i + 2) lines = lines + tableLines[lineNumber - (i + 1)] + _T("\n");
+            }
+            lines = lines + _T(">> ") + currentLine + _T("\n");
+            for (size_t i = 0; i < 10; ++i) {
+                if (lineNumber + i < tableLines.size())lines = lines + tableLines[lineNumber + i] + _T("\n");
+            }
+            LOG_ERROR(_T("lines=\n%s"), lines.c_str());
             // エラーメッセージを投げる
             ERROR_HANDLER->Error(msg);
         }
