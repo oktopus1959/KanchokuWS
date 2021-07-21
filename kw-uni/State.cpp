@@ -489,18 +489,23 @@ bool State::handleFunctionKeys(int
 // Ctrlキー デフォルトハンドラ
 void State::handleCtrlKeys(int /*hotkey*/) { setThroughHotkeyFlag(); }
 
+//(2021/7/21)やっぱり ctrl-B,F,H,N,Pは機能キーに変換しておく
+// ここで Ctrl-B...などが呼ばれるのは、グローバルに Ctrl-B などが有効になっているが、
+// PuTTY など、矢印キーへの変換が無効になっている場合。
+// でも、デコーダ内部では矢印キーとして働くことに問題はない。
+// スルーの場合は元のCtrl-Bなどとしてアプリに渡るので問題ない。
 void State::handleCtrlA() { handleCtrlKeys(CTRL_A_HOTKEY); }
-void State::handleCtrlB() { handleCtrlKeys(CTRL_B_HOTKEY); }
-//void State::handleCtrlB() { handleLeftArrow(); }
+//void State::handleCtrlB() { handleCtrlKeys(CTRL_B_HOTKEY); }
+void State::handleCtrlB() { handleLeftArrow(); }
 void State::handleCtrlC() { handleCtrlKeys(CTRL_C_HOTKEY); }
 void State::handleCtrlD() { handleCtrlKeys(CTRL_D_HOTKEY); }
 void State::handleCtrlE() { handleCtrlKeys(CTRL_E_HOTKEY); }
-void State::handleCtrlF() { handleCtrlKeys(CTRL_F_HOTKEY); }
-//void State::handleCtrlF() { handleRightArrow(); }
+//void State::handleCtrlF() { handleCtrlKeys(CTRL_F_HOTKEY); }
+void State::handleCtrlF() { handleRightArrow(); }
 void State::handleCtrlG() { handleCtrlKeys(CTRL_G_HOTKEY); }
 //void State::handleCtrlG() { handleFullEscape(); }
-void State::handleCtrlH() { handleCtrlKeys(CTRL_H_HOTKEY); }
-//void State::handleCtrlH() { handleBS(); }
+//void State::handleCtrlH() { handleCtrlKeys(CTRL_H_HOTKEY); }
+void State::handleCtrlH() { handleBS(); }
 void State::handleCtrlI() { handleCtrlKeys(CTRL_I_HOTKEY); }
 void State::handleCtrlJ() { handleCtrlKeys(CTRL_J_HOTKEY); }
 //void State::handleCtrlJ() { handleEnter(); }
@@ -508,11 +513,11 @@ void State::handleCtrlK() { handleCtrlKeys(CTRL_K_HOTKEY); }
 void State::handleCtrlL() { handleCtrlKeys(CTRL_L_HOTKEY); }
 void State::handleCtrlM() { handleCtrlKeys(CTRL_M_HOTKEY); }
 //void State::handleCtrlM() { handleEnter(); }
-void State::handleCtrlN() { handleCtrlKeys(CTRL_N_HOTKEY); }
-//void State::handleCtrlN() { handleDownArrow(); }
+//void State::handleCtrlN() { handleCtrlKeys(CTRL_N_HOTKEY); }
+void State::handleCtrlN() { handleDownArrow(); }
 void State::handleCtrlO() { handleCtrlKeys(CTRL_O_HOTKEY); }
-void State::handleCtrlP() { handleCtrlKeys(CTRL_P_HOTKEY); }
-//void State::handleCtrlP() { handleUpArrow(); }
+//void State::handleCtrlP() { handleCtrlKeys(CTRL_P_HOTKEY); }
+void State::handleCtrlP() { handleUpArrow(); }
 void State::handleCtrlQ() { handleCtrlKeys(CTRL_Q_HOTKEY); }
 void State::handleCtrlR() { handleCtrlKeys(CTRL_R_HOTKEY); }
 void State::handleCtrlS() { handleCtrlKeys(CTRL_S_HOTKEY); }
