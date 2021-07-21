@@ -359,7 +359,10 @@ public:
         int strokeTableChainLen = startState->StrokeTableChainLength();
         LOG_DEBUGH(_T("strokeTableChainLen=%d"), strokeTableChainLen);
         STATE_COMMON->SetStrokeCount(max(strokeTableChainLen - 1, 0));
-        if (strokeTableChainLen >= 2) STATE_COMMON->SetWaiting2ndStroke();
+        if (strokeTableChainLen >= 2) {
+            STATE_COMMON->SetWaiting2ndStroke();
+            if (STATE_COMMON->GetLayout() == VkbLayout::None) STATE_COMMON->SetNormalVkbLayout();
+        }
         LOG_DEBUGH(_T("STATE_COMMON->StrokeCount=%d"), STATE_COMMON->GetStrokeCount());
 
         // 最終的な出力履歴が整ったところで呼び出される処理
