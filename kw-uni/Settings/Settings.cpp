@@ -20,6 +20,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
 #define SET_FILE_PATH(k) k = make_path(SETTINGS->rootDir, utils::safe_get(dict, tstring(_T(#k)))); LOG_INFO(_T(#k ## "=%s"), k.c_str())
 #define SET_INT_VALUE(k) k = utils::strToInt(utils::safe_get(dict, tstring(_T(#k)))); LOG_INFO(_T(#k ## "=%d"), k)
 #define SET_BOOL_VALUE(k) k = utils::strToBool(utils::safe_get(dict, tstring(_T(#k)))); LOG_INFO(_T(#k ## "=%s"), utils::boolToString(k).c_str())
+#define GET_BOOL_VALUE(k) utils::strToBool(utils::safe_get(dict, tstring(_T(#k))))
 #define RESET_STROKE_FUNC(k) StrokeTableNode::AssignFucntion(utils::safe_get(dict, tstring(_T(k ## "KeySeq"))), _T(k))
 
     SET_BOOL_VALUE(firstUse);
@@ -75,6 +76,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     RESET_STROKE_FUNC("bushuAssocDirect");
     RESET_STROKE_FUNC("katakanaMode");
     RESET_STROKE_FUNC("katakanaOneShot");
+    if (GET_BOOL_VALUE(mazegakiByShiftSpace)) StrokeTableNode::AssignFucntion(utils::format(_T("%d"), HOTKEY_STROKE_49), _T("mazegaki"));
 
     // for Debug
     SET_BOOL_VALUE(debughState);

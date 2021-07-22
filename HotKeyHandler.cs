@@ -316,9 +316,9 @@ namespace KanchokuWS
             registerHotKey(HotKeys.ESC_HOTKEY);
             registerHotKey(HotKeys.BS_HOTKEY);
             registerHotKey(HotKeys.TAB_HOTKEY);
-            if (Settings.UseShiftSpaceKey) registerHotKey(HotKeys.SHIFT_SPACE_HOTKEY);
+            if (Settings.UseShiftSpaceAsSpecialHotKey) registerHotKey(HotKeys.SHIFT_SPACE_HOTKEY);
             if (Settings.UseCtrlSpaceKey) registerHotKey(HotKeys.CTRL_SPACE_HOTKEY);
-            if (Settings.UseCtrlSpaceKey || Settings.UseShiftSpaceKey) registerHotKey(HotKeys.CTRL_SHIFT_SPACE_HOTKEY);
+            if (Settings.UseCtrlSpaceKey || Settings.UseShiftSpaceAsSpecialHotKey) registerHotKey(HotKeys.CTRL_SHIFT_SPACE_HOTKEY);
             //RegisterArrowHotKeys();   // 常に必要? 候補選択時だけでよくない?
 
             decoderSpecialHotkeys.Clear();
@@ -349,9 +349,9 @@ namespace KanchokuWS
             unregisterHotKey(HotKeys.ESC_HOTKEY);
             unregisterHotKey(HotKeys.BS_HOTKEY);
             unregisterHotKey(HotKeys.TAB_HOTKEY);
-            if (Settings.UseShiftSpaceKey) unregisterHotKey(HotKeys.SHIFT_SPACE_HOTKEY);
+            if (Settings.UseShiftSpaceAsSpecialHotKey) unregisterHotKey(HotKeys.SHIFT_SPACE_HOTKEY);
             if (Settings.UseCtrlSpaceKey) unregisterHotKey(HotKeys.CTRL_SPACE_HOTKEY);
-            if (Settings.UseCtrlSpaceKey || Settings.UseShiftSpaceKey) unregisterHotKey(HotKeys.CTRL_SHIFT_SPACE_HOTKEY);
+            if (Settings.UseCtrlSpaceKey || Settings.UseShiftSpaceAsSpecialHotKey) unregisterHotKey(HotKeys.CTRL_SHIFT_SPACE_HOTKEY);
             //UnregisterArrowHotKeys();   // 常に必要? 候補選択時だけでよくない?
 
             foreach (int hk in decoderSpecialHotkeys) {

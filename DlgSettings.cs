@@ -817,7 +817,7 @@ namespace KanchokuWS
             textBox_histHiraganaKeyLen.Text = $"{Settings.HistHiraganaKeyLength}";
             checkBox_autoHistEnabled.Checked = Settings.AutoHistSearchEnabled;
             checkBox_histSearchByCtrlSpace.Checked = Settings.HistSearchByCtrlSpace;
-            checkBox_histSearchByShiftSpace.Checked = Settings.HistSearchByShiftSpace;
+            //checkBox_histSearchByShiftSpace.Checked = Settings.HistSearchByShiftSpace;
             checkBox_selectFirstCandByEnter.Checked = Settings.SelectFirstCandByEnter;
             //checkBox_autoHistEnabled_CheckedChanged(null, null);
             checkBox_useArrowKeyToSelectCand.Checked = Settings.UseArrowKeyToSelectCandidate;
@@ -825,6 +825,7 @@ namespace KanchokuWS
             comboBox_histNumHotkeyId.SelectedIndex = Settings.HistNumHotkeyId._lowLimit(41)._highLimit(49) - 41;
 
             // 交ぜ書き
+            checkBox_mazegakiByShiftSpace.Checked = Settings.MazegakiByShiftSpace;
             textBox_mazeYomiMaxLen.Text = $"{Settings.MazeYomiMaxLen}";
             textBox_mazeGobiMaxLen.Text = $"{Settings.MazeGobiMaxLen}";
 
@@ -849,7 +850,7 @@ namespace KanchokuWS
             checkerHistory.Add(textBox_histHiraganaKeyLen);
             checkerHistory.Add(checkBox_autoHistEnabled);
             checkerHistory.Add(checkBox_histSearchByCtrlSpace);
-            checkerHistory.Add(checkBox_histSearchByShiftSpace);
+            //checkerHistory.Add(checkBox_histSearchByShiftSpace);
             checkerHistory.Add(checkBox_selectFirstCandByEnter);
             //checkerHistory.Add(checkBox_autoHistEnabled_CheckedChanged);
             checkerHistory.Add(checkBox_useArrowKeyToSelectCand);
@@ -857,6 +858,7 @@ namespace KanchokuWS
             checkerHistory.Add(comboBox_histNumHotkeyId);
 
             // 交ぜ書き
+            checkerHistory.Add(checkBox_mazegakiByShiftSpace);
             checkerHistory.Add(textBox_mazeYomiMaxLen);
             checkerHistory.Add(textBox_mazeGobiMaxLen);
 
@@ -886,12 +888,13 @@ namespace KanchokuWS
             Settings.SetUserIni("histKanjiKeyLength", textBox_histKanjiKeyLen.Text.Trim());
             Settings.SetUserIni("autoHistSearchEnabled", checkBox_autoHistEnabled.Checked);
             Settings.SetUserIni("histSearchByCtrlSpace", checkBox_histSearchByCtrlSpace.Checked);
-            Settings.SetUserIni("histSearchByShiftSpace", checkBox_histSearchByShiftSpace.Checked);
+            //Settings.SetUserIni("histSearchByShiftSpace", checkBox_histSearchByShiftSpace.Checked);
             Settings.SetUserIni("selectFirstCandByEnter", checkBox_selectFirstCandByEnter.Checked);
             Settings.SetUserIni("useArrowKeyToSelectCandidate", checkBox_useArrowKeyToSelectCand.Checked);
             Settings.SetUserIni("histDelHotkeyId", comboBox_histDelHotkeyId.Text.Trim()._substring(0, 2));
             Settings.SetUserIni("histNumHotkeyId", comboBox_histNumHotkeyId.Text.Trim()._substring(0, 2));
 
+            Settings.SetUserIni("mazegakiByShiftSpace", checkBox_mazegakiByShiftSpace.Checked);
             Settings.SetUserIni("mazeGobiMaxLen", textBox_mazeGobiMaxLen.Text.Trim());
             Settings.SetUserIni("mazeYomiMaxLen", textBox_mazeYomiMaxLen.Text.Trim());
 

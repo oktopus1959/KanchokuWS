@@ -246,7 +246,6 @@ namespace KanchokuWS
             this.textBox_histKanjiKeyLen = new System.Windows.Forms.TextBox();
             this.textBox_histKatakanaKeyLen = new System.Windows.Forms.TextBox();
             this.textBox_histHiraganaKeyLen = new System.Windows.Forms.TextBox();
-            this.checkBox_histSearchByShiftSpace = new System.Windows.Forms.CheckBox();
             this.checkBox_histSearchByCtrlSpace = new System.Windows.Forms.CheckBox();
             this.checkBox_autoHistEnabled = new System.Windows.Forms.CheckBox();
             this.label21 = new System.Windows.Forms.Label();
@@ -303,6 +302,8 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.groupBox23 = new System.Windows.Forms.GroupBox();
+            this.checkBox_mazegakiByShiftSpace = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -345,6 +346,7 @@ namespace KanchokuWS
             this.groupBox7.SuspendLayout();
             this.tabPage_about.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).BeginInit();
+            this.groupBox23.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -2535,6 +2537,7 @@ namespace KanchokuWS
             // 
             // tabPage_history
             // 
+            this.tabPage_history.Controls.Add(this.groupBox23);
             this.tabPage_history.Controls.Add(this.groupBox27);
             this.tabPage_history.Controls.Add(this.groupBox19);
             this.tabPage_history.Controls.Add(this.groupBox17);
@@ -2559,7 +2562,7 @@ namespace KanchokuWS
             this.groupBox27.Location = new System.Drawing.Point(312, 174);
             this.groupBox27.Name = "groupBox27";
             this.groupBox27.Size = new System.Drawing.Size(261, 108);
-            this.groupBox27.TabIndex = 4;
+            this.groupBox27.TabIndex = 5;
             this.groupBox27.TabStop = false;
             this.groupBox27.Text = "その他変換・機能";
             // 
@@ -2605,15 +2608,15 @@ namespace KanchokuWS
             this.groupBox19.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox19.Location = new System.Drawing.Point(312, 102);
             this.groupBox19.Name = "groupBox19";
-            this.groupBox19.Size = new System.Drawing.Size(261, 66);
-            this.groupBox19.TabIndex = 3;
+            this.groupBox19.Size = new System.Drawing.Size(261, 64);
+            this.groupBox19.TabIndex = 4;
             this.groupBox19.TabStop = false;
             this.groupBox19.Text = "交ぜ書き検索";
             // 
             // label46
             // 
             this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(20, 44);
+            this.label46.Location = new System.Drawing.Point(20, 41);
             this.label46.Name = "label46";
             this.label46.Size = new System.Drawing.Size(77, 15);
             this.label46.TabIndex = 26;
@@ -2622,7 +2625,7 @@ namespace KanchokuWS
             // textBox_mazeGobiMaxLen
             // 
             this.textBox_mazeGobiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(131, 41);
+            this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(131, 38);
             this.textBox_mazeGobiMaxLen.Name = "textBox_mazeGobiMaxLen";
             this.textBox_mazeGobiMaxLen.Size = new System.Drawing.Size(42, 19);
             this.textBox_mazeGobiMaxLen.TabIndex = 1;
@@ -2633,7 +2636,7 @@ namespace KanchokuWS
             // label45
             // 
             this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(20, 22);
+            this.label45.Location = new System.Drawing.Point(20, 19);
             this.label45.Name = "label45";
             this.label45.Size = new System.Drawing.Size(100, 15);
             this.label45.TabIndex = 24;
@@ -2642,7 +2645,7 @@ namespace KanchokuWS
             // textBox_mazeYomiMaxLen
             // 
             this.textBox_mazeYomiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(131, 19);
+            this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(131, 16);
             this.textBox_mazeYomiMaxLen.Name = "textBox_mazeYomiMaxLen";
             this.textBox_mazeYomiMaxLen.Size = new System.Drawing.Size(42, 19);
             this.textBox_mazeYomiMaxLen.TabIndex = 0;
@@ -2656,9 +2659,9 @@ namespace KanchokuWS
             this.groupBox17.Controls.Add(this.comboBox_histDelHotkeyId);
             this.groupBox17.Controls.Add(this.label42);
             this.groupBox17.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox17.Location = new System.Drawing.Point(11, 196);
+            this.groupBox17.Location = new System.Drawing.Point(11, 159);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(294, 119);
+            this.groupBox17.Size = new System.Drawing.Size(294, 96);
             this.groupBox17.TabIndex = 1;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "履歴選択・削除";
@@ -2677,6 +2680,7 @@ namespace KanchokuWS
             // comboBox_histNumHotkeyId
             // 
             this.comboBox_histNumHotkeyId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_histNumHotkeyId.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
             this.comboBox_histNumHotkeyId.FormattingEnabled = true;
             this.comboBox_histNumHotkeyId.Items.AddRange(new object[] {
             "41 ( - )",
@@ -2687,16 +2691,16 @@ namespace KanchokuWS
             "46 ( : )",
             "47 ( ] )",
             "48 (＼)"});
-            this.comboBox_histNumHotkeyId.Location = new System.Drawing.Point(190, 71);
+            this.comboBox_histNumHotkeyId.Location = new System.Drawing.Point(190, 68);
             this.comboBox_histNumHotkeyId.Name = "comboBox_histNumHotkeyId";
-            this.comboBox_histNumHotkeyId.Size = new System.Drawing.Size(64, 23);
+            this.comboBox_histNumHotkeyId.Size = new System.Drawing.Size(64, 20);
             this.comboBox_histNumHotkeyId.TabIndex = 2;
             this.toolTip1.SetToolTip(this.comboBox_histNumHotkeyId, "履歴候補を文字数で絞るモードに移行するホットキーの\r\nIDを設定します。");
             // 
             // label43
             // 
             this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(17, 75);
+            this.label43.Location = new System.Drawing.Point(17, 72);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(168, 15);
             this.label43.TabIndex = 20;
@@ -2705,6 +2709,7 @@ namespace KanchokuWS
             // comboBox_histDelHotkeyId
             // 
             this.comboBox_histDelHotkeyId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_histDelHotkeyId.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
             this.comboBox_histDelHotkeyId.FormattingEnabled = true;
             this.comboBox_histDelHotkeyId.Items.AddRange(new object[] {
             "41 ( - )",
@@ -2717,7 +2722,7 @@ namespace KanchokuWS
             "48 (＼)"});
             this.comboBox_histDelHotkeyId.Location = new System.Drawing.Point(190, 45);
             this.comboBox_histDelHotkeyId.Name = "comboBox_histDelHotkeyId";
-            this.comboBox_histDelHotkeyId.Size = new System.Drawing.Size(64, 23);
+            this.comboBox_histDelHotkeyId.Size = new System.Drawing.Size(64, 20);
             this.comboBox_histDelHotkeyId.TabIndex = 1;
             this.toolTip1.SetToolTip(this.comboBox_histDelHotkeyId, "縦列表示された履歴候補選択状態のとき、削除モードに\r\n移行するためのホットキーIDを設定します。\r\n\r\n削除モードに入り、縦列鍵盤に対応するキーを押すと、\r\n候補" +
         "が削除されて exclude リストに登録されます。\r\nexclude リストに登録された文字列は、候補に表示されません。");
@@ -2743,7 +2748,7 @@ namespace KanchokuWS
             this.groupBox14.Location = new System.Drawing.Point(312, 10);
             this.groupBox14.Name = "groupBox14";
             this.groupBox14.Size = new System.Drawing.Size(261, 86);
-            this.groupBox14.TabIndex = 2;
+            this.groupBox14.TabIndex = 3;
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "履歴登録";
             // 
@@ -2821,7 +2826,6 @@ namespace KanchokuWS
             this.groupBox12.Controls.Add(this.textBox_histKanjiKeyLen);
             this.groupBox12.Controls.Add(this.textBox_histKatakanaKeyLen);
             this.groupBox12.Controls.Add(this.textBox_histHiraganaKeyLen);
-            this.groupBox12.Controls.Add(this.checkBox_histSearchByShiftSpace);
             this.groupBox12.Controls.Add(this.checkBox_histSearchByCtrlSpace);
             this.groupBox12.Controls.Add(this.checkBox_autoHistEnabled);
             this.groupBox12.Controls.Add(this.label21);
@@ -2831,54 +2835,46 @@ namespace KanchokuWS
             this.groupBox12.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox12.Location = new System.Drawing.Point(11, 10);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(294, 180);
+            this.groupBox12.Size = new System.Drawing.Size(294, 143);
             this.groupBox12.TabIndex = 0;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "履歴検索";
             // 
             // textBox_histKanjiKeyLen
             // 
+            this.textBox_histKanjiKeyLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
             this.textBox_histKanjiKeyLen.Location = new System.Drawing.Point(253, 33);
             this.textBox_histKanjiKeyLen.Name = "textBox_histKanjiKeyLen";
-            this.textBox_histKanjiKeyLen.Size = new System.Drawing.Size(34, 23);
+            this.textBox_histKanjiKeyLen.Size = new System.Drawing.Size(34, 19);
             this.textBox_histKanjiKeyLen.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_histKanjiKeyLen, "自動履歴検索がONの場合、ここで設定した文字数だけ漢字が\r\n入力されたら、履歴を検索します。\r\n\r\nたとえば、2に設定すると、2文字続けて漢字が入力されたら\r\n履" +
         "歴検索が実行されます。漢字1文字だけでは実行されません。");
             // 
             // textBox_histKatakanaKeyLen
             // 
-            this.textBox_histKatakanaKeyLen.Location = new System.Drawing.Point(253, 57);
+            this.textBox_histKatakanaKeyLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.textBox_histKatakanaKeyLen.Location = new System.Drawing.Point(253, 54);
             this.textBox_histKatakanaKeyLen.Name = "textBox_histKatakanaKeyLen";
-            this.textBox_histKatakanaKeyLen.Size = new System.Drawing.Size(34, 23);
+            this.textBox_histKatakanaKeyLen.Size = new System.Drawing.Size(34, 19);
             this.textBox_histKatakanaKeyLen.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox_histKatakanaKeyLen, "自動履歴検索がONの場合、ここで設定した文字数だけカタカナが\r\n入力されたら、履歴を検索します。\r\n\r\nたとえば、2に設定すると、2文字続けてカタカナが入力された" +
         "ら\r\n履歴検索が実行されます。カタカナ1文字だけでは実行されません。\r\n");
             // 
             // textBox_histHiraganaKeyLen
             // 
-            this.textBox_histHiraganaKeyLen.Location = new System.Drawing.Point(253, 81);
+            this.textBox_histHiraganaKeyLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.textBox_histHiraganaKeyLen.Location = new System.Drawing.Point(253, 75);
             this.textBox_histHiraganaKeyLen.Name = "textBox_histHiraganaKeyLen";
-            this.textBox_histHiraganaKeyLen.Size = new System.Drawing.Size(34, 23);
+            this.textBox_histHiraganaKeyLen.Size = new System.Drawing.Size(34, 19);
             this.textBox_histHiraganaKeyLen.TabIndex = 3;
             this.toolTip1.SetToolTip(this.textBox_histHiraganaKeyLen, "自動履歴検索がONの場合、ここで設定した文字数だけひらがなが\r\n入力されたら、履歴を検索します。\r\n\r\nたとえば、2に設定すると、2文字続けてひらがなが入力された" +
         "ら\r\n履歴検索が実行されます。ひらがな1文字だけでは実行されません。\r\n\r\nなお、ひらがなを含む文字列は自動的な履歴登録の対象外です。\r\n「辞書登録」タブで登録" +
         "するか、仮想鍵盤のミニバッファに文字列を\r\nコピペすることで登録できます。\r\n");
             // 
-            // checkBox_histSearchByShiftSpace
-            // 
-            this.checkBox_histSearchByShiftSpace.AutoSize = true;
-            this.checkBox_histSearchByShiftSpace.Location = new System.Drawing.Point(20, 153);
-            this.checkBox_histSearchByShiftSpace.Name = "checkBox_histSearchByShiftSpace";
-            this.checkBox_histSearchByShiftSpace.Size = new System.Drawing.Size(220, 19);
-            this.checkBox_histSearchByShiftSpace.TabIndex = 6;
-            this.checkBox_histSearchByShiftSpace.Text = "Shift-Space で履歴検索・候補選択する";
-            this.toolTip1.SetToolTip(this.checkBox_histSearchByShiftSpace, "Shift-Space で履歴検索を実行し、同時に先頭候補を選択できるようにします。\r\n\r\n処理の内容は Ctrl-Space の場合と同じです。\r\n");
-            this.checkBox_histSearchByShiftSpace.UseVisualStyleBackColor = true;
-            // 
             // checkBox_histSearchByCtrlSpace
             // 
             this.checkBox_histSearchByCtrlSpace.AutoSize = true;
-            this.checkBox_histSearchByCtrlSpace.Location = new System.Drawing.Point(20, 133);
+            this.checkBox_histSearchByCtrlSpace.Location = new System.Drawing.Point(20, 120);
             this.checkBox_histSearchByCtrlSpace.Name = "checkBox_histSearchByCtrlSpace";
             this.checkBox_histSearchByCtrlSpace.Size = new System.Drawing.Size(214, 19);
             this.checkBox_histSearchByCtrlSpace.TabIndex = 5;
@@ -2906,13 +2902,13 @@ namespace KanchokuWS
             this.label21.Location = new System.Drawing.Point(36, 37);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(195, 15);
-            this.label21.TabIndex = 15;
+            this.label21.TabIndex = 1;
             this.label21.Text = "自動履歴検索に使う漢字キーの最小長";
             // 
             // checkBox_selectFirstCandByEnter
             // 
             this.checkBox_selectFirstCandByEnter.AutoSize = true;
-            this.checkBox_selectFirstCandByEnter.Location = new System.Drawing.Point(40, 107);
+            this.checkBox_selectFirstCandByEnter.Location = new System.Drawing.Point(40, 99);
             this.checkBox_selectFirstCandByEnter.Name = "checkBox_selectFirstCandByEnter";
             this.checkBox_selectFirstCandByEnter.Size = new System.Drawing.Size(180, 19);
             this.checkBox_selectFirstCandByEnter.TabIndex = 4;
@@ -2923,19 +2919,19 @@ namespace KanchokuWS
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(36, 85);
+            this.label23.Location = new System.Drawing.Point(36, 79);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(210, 15);
-            this.label23.TabIndex = 17;
+            this.label23.TabIndex = 3;
             this.label23.Text = "自動履歴検索に使うひらがなキーの最小長";
             // 
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(36, 61);
+            this.label22.Location = new System.Drawing.Point(36, 58);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(207, 15);
-            this.label22.TabIndex = 16;
+            this.label22.TabIndex = 2;
             this.label22.Text = "自動履歴検索に使うカタカナキーの最小長";
             // 
             // button_histClose
@@ -2945,7 +2941,7 @@ namespace KanchokuWS
             this.button_histClose.Location = new System.Drawing.Point(385, 303);
             this.button_histClose.Name = "button_histClose";
             this.button_histClose.Size = new System.Drawing.Size(80, 23);
-            this.button_histClose.TabIndex = 5;
+            this.button_histClose.TabIndex = 6;
             this.button_histClose.Text = "閉じる(&C)";
             this.button_histClose.UseVisualStyleBackColor = true;
             this.button_histClose.Click += new System.EventHandler(this.button_histClose_Click);
@@ -2957,7 +2953,7 @@ namespace KanchokuWS
             this.button_histEnter.Location = new System.Drawing.Point(493, 303);
             this.button_histEnter.Name = "button_histEnter";
             this.button_histEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_histEnter.TabIndex = 6;
+            this.button_histEnter.TabIndex = 7;
             this.button_histEnter.Text = "設定(&E)";
             this.toolTip1.SetToolTip(this.button_histEnter, "設定内容を kanchoku.user.ini に書き込みます");
             this.button_histEnter.UseVisualStyleBackColor = true;
@@ -3513,6 +3509,27 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // groupBox23
+            // 
+            this.groupBox23.Controls.Add(this.checkBox_mazegakiByShiftSpace);
+            this.groupBox23.Location = new System.Drawing.Point(11, 261);
+            this.groupBox23.Name = "groupBox23";
+            this.groupBox23.Size = new System.Drawing.Size(294, 47);
+            this.groupBox23.TabIndex = 2;
+            this.groupBox23.TabStop = false;
+            this.groupBox23.Text = "交ぜ書き変換";
+            // 
+            // checkBox_mazegakiByShiftSpace
+            // 
+            this.checkBox_mazegakiByShiftSpace.AutoSize = true;
+            this.checkBox_mazegakiByShiftSpace.Location = new System.Drawing.Point(20, 20);
+            this.checkBox_mazegakiByShiftSpace.Name = "checkBox_mazegakiByShiftSpace";
+            this.checkBox_mazegakiByShiftSpace.Size = new System.Drawing.Size(185, 19);
+            this.checkBox_mazegakiByShiftSpace.TabIndex = 0;
+            this.checkBox_mazegakiByShiftSpace.Text = "Shift-Space で交ぜ書き変換する";
+            this.toolTip1.SetToolTip(this.checkBox_mazegakiByShiftSpace, "Shift-Space で交ぜ書き変換を実行します。\r\n\r\nチェックを外すと Shift-Space で空白が出力されるようになります。");
+            this.checkBox_mazegakiByShiftSpace.UseVisualStyleBackColor = true;
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -3609,6 +3626,8 @@ namespace KanchokuWS
             this.groupBox7.PerformLayout();
             this.tabPage_about.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).EndInit();
+            this.groupBox23.ResumeLayout(false);
+            this.groupBox23.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -3709,7 +3728,6 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label43;
         private System.Windows.Forms.CheckBox checkBox_confirmOnClose;
         private System.Windows.Forms.CheckBox checkBox_autoHistEnabled;
-        private System.Windows.Forms.CheckBox checkBox_histSearchByShiftSpace;
         private System.Windows.Forms.CheckBox checkBox_histSearchByCtrlSpace;
         private System.Windows.Forms.CheckBox checkBox_CtrlSemicolon;
         private System.Windows.Forms.TextBox textBox_dateStringFormat;
@@ -3888,5 +3906,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label72;
         private System.Windows.Forms.CheckBox checkBox_removeOneStrokeByBackspace;
         private System.Windows.Forms.Button button_showPaddingsDesc;
+        private System.Windows.Forms.GroupBox groupBox23;
+        private System.Windows.Forms.CheckBox checkBox_mazegakiByShiftSpace;
     }
 }

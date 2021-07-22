@@ -305,7 +305,7 @@ namespace KanchokuWS
         public static int HistKanjiKeyLength { get; private set; } = 0;
         public static bool AutoHistSearchEnabled { get; private set; } = false;
         public static bool HistSearchByCtrlSpace { get; private set; } = false;
-        public static bool HistSearchByShiftSpace { get; private set; } = false;
+        //public static bool HistSearchByShiftSpace { get; private set; } = false;
         public static bool SelectFirstCandByEnter { get; private set; } = false;
         public static bool HistAllowFromMiddleChar { get; private set; } = false;
         public static int HistDelHotkeyId { get; private set; } = 0;
@@ -316,12 +316,14 @@ namespace KanchokuWS
 
         //------------------------------------------------------------------------------
         // スペースキー
-        public static bool UseShiftSpaceAsHotkey49 { get; set; } = true;
+        public static bool UseShiftSpaceAsHotkey49 => MazegakiByShiftSpace;
         public static bool UseCtrlSpaceKey => HistSearchByCtrlSpace;
-        public static bool UseShiftSpaceKey => (HistSearchByShiftSpace || HandleShiftSpaceAsNormalSpace) && !UseShiftSpaceAsHotkey49;
+        //public static bool UseShiftSpaceAsSpecialHotKey => (HistSearchByShiftSpace || HandleShiftSpaceAsNormalSpace) && !UseShiftSpaceAsHotkey49;
+        public static bool UseShiftSpaceAsSpecialHotKey => (HandleShiftSpaceAsNormalSpace) && !UseShiftSpaceAsHotkey49;
 
         //------------------------------------------------------------------------------
         // 交ぜ書き
+        public static bool MazegakiByShiftSpace { get; set; } = true;
         public static int MazeYomiMaxLen { get; private set; } = 10;
         public static int MazeGobiMaxLen { get; private set; } = 3;
 
@@ -627,7 +629,7 @@ namespace KanchokuWS
             HistKanjiKeyLength = addDecoderSetting("histKanjiKeyLength", 1, 1);                 // 漢字履歴の検索を行う際のキー長
             AutoHistSearchEnabled = addDecoderSetting("autoHistSearchEnabled", true);           // 自動履歴検索を行う
             HistSearchByCtrlSpace = addDecoderSetting("histSearchByCtrlSpace", true);           // Ctrl-Space で履歴検索を行う
-            HistSearchByShiftSpace = addDecoderSetting("histSearchByShiftSpace", true);         // Shift-Space で履歴検索を行う
+            //HistSearchByShiftSpace = addDecoderSetting("histSearchByShiftSpace", true);         // Shift-Space で履歴検索を行う
             SelectFirstCandByEnter = addDecoderSetting("selectFirstCandByEnter", false);        // Enter で最初の履歴検索候補を選択する
             HistDelHotkeyId = addDecoderSetting("histDelHotkeyId", 41, 41);                     // 履歴削除を呼び出すHotKeyのID
             HistNumHotkeyId = addDecoderSetting("histNumHotkeyId", 45, 41);                     // 履歴文字数指定を呼び出すHotKeyのID
@@ -635,6 +637,7 @@ namespace KanchokuWS
             UseArrowKeyToSelectCandidate = addDecoderSetting("useArrowKeyToSelectCandidate", true);    // 矢印キーで履歴候補選択を行う
             HandleShiftSpaceAsNormalSpace = addDecoderSetting("handleShiftSpaceAsNormalSpace", true);  // Shift+Space を通常 Space しとて扱う(HistSearchByShiftSpaceがfalseの場合)
 
+            MazegakiByShiftSpace  = GetString("mazegakiByShiftSpace  ")._parseBool(true);       // Shift-Space で交ぜ書き変換
             MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 3, 0);                         // 交ぜ書きの語尾の最大長
 
