@@ -10,7 +10,7 @@ namespace KanchokuWS
 {
     /// <summary>
     /// ホットキー定義<br/>
-    /// キー番号 0 〜 48 および 50〜98 (with Shift) が漢直入力に用いるキー。<br/>
+    /// キー番号 0 〜 49 および 50〜98 (with Shift) が漢直入力に用いるキー。<br/>
     /// 0x100以降が機能キーとなっている。<br/>
     /// 衝突しないように気をつけること。
     /// 
@@ -60,7 +60,7 @@ namespace KanchokuWS
         public const int HOTKEY_STROKE_46 = 46;
         public const int HOTKEY_STROKE_47 = 47;
         public const int HOTKEY_STROKE_48 = 48;
-        public const int HOTKEY_STROKE_49 = 49;
+        public const int HOTKEY_STROKE_49 = 49;     // ShiftSpace がこれに割り当てられることあり
 
         // Shift が押されていたら、 上記 ID + NUM_STROKE_HOTKEY の ID となる。
 

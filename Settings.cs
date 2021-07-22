@@ -314,8 +314,11 @@ namespace KanchokuWS
         public static bool UseArrowKeyToSelectCandidate { get; set; } = true;
         public static bool HandleShiftSpaceAsNormalSpace { get; set; } = true;
 
+        //------------------------------------------------------------------------------
+        // スペースキー
+        public static bool UseShiftSpaceAsHotkey49 { get; set; } = true;
         public static bool UseCtrlSpaceKey => HistSearchByCtrlSpace;
-        public static bool UseShiftSpaceKey => HistSearchByShiftSpace || HandleShiftSpaceAsNormalSpace;
+        public static bool UseShiftSpaceKey => (HistSearchByShiftSpace || HandleShiftSpaceAsNormalSpace) && !UseShiftSpaceAsHotkey49;
 
         //------------------------------------------------------------------------------
         // 交ぜ書き

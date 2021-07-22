@@ -264,6 +264,9 @@ namespace KanchokuWS
                 addHotkeyAndCombo(HotKeys.SHIFT_FUNC_HOTKEY_ID_BASE + id, KeyModifiers.MOD_SHIFT, GetVKeyFromHotKey(id));
             }
 
+            // 49番目を Shift+Space として登録しておく
+            addHotkeyAndCombo(49, KeyModifiers.MOD_SHIFT, (uint)Keys.Space);
+
             logger.Info("LEAVE");
             return true;
         }

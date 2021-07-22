@@ -272,7 +272,7 @@ namespace KanchokuWS
             logger.InfoH("CALLED");
             for (int id = 0; id < HotKeys.NUM_STROKE_HOTKEY; ++id) {
                 // 登録済みのグローバル特殊ホットキーは登録しない
-                if (!globalSpecialHotkeys.Contains(id)) registerHotKey(id);
+                if (!globalSpecialHotkeys.Contains(id) && (id != HotKeys.HOTKEY_STROKE_49 || Settings.UseShiftSpaceAsHotkey49)) registerHotKey(id);
 
                 int idShifted = id + HotKeys.SHIFT_FUNC_HOTKEY_ID_BASE;
                 // SHIFT+SPACE は特殊キー扱いなのでここでは登録しない
@@ -288,7 +288,7 @@ namespace KanchokuWS
             logger.InfoH("CALLED");
             for (int id = 0; id < HotKeys.NUM_STROKE_HOTKEY; ++id) {
                 // 登録済みのグローバル特殊ホットキーは解除しない
-                if (!globalSpecialHotkeys.Contains(id)) unregisterHotKey(id);
+                if (!globalSpecialHotkeys.Contains(id) && (id != HotKeys.HOTKEY_STROKE_49 || Settings.UseShiftSpaceAsHotkey49)) unregisterHotKey(id);
 
                 int idShifted = id + HotKeys.SHIFT_FUNC_HOTKEY_ID_BASE;
                 // SHIFT+SPACE は特殊キー扱いなのでここでは解除しない

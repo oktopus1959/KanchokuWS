@@ -172,6 +172,7 @@ namespace {
          // Strokeキー を処理する
         void handleStrokeKeys(int hotkey) {
             _LOG_DEBUGH(_T("CALLED: %s: hotkey=%xH(%d)"), NAME_PTR, hotkey, hotkey);
+            if (hotkey == HOTKEY_STROKE_49) hotkey = 0; // 49が Shift+Spaceの場合を想定
             if (hotkey <= HOTKEY_STROKE_SPACE) {
                 size_t n = (winIdx * LONG_VKEY_NUM) + (hotkey % LONG_VKEY_NUM);
                 const auto& cands = candsByLen.GetMazeCandidates();
