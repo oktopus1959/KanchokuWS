@@ -639,7 +639,7 @@ namespace KanchokuWS
 
             MazegakiByShiftSpace  = GetString("mazegakiByShiftSpace  ")._parseBool(true);       // Shift-Space で交ぜ書き変換
             MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
-            MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 3, 0);                         // 交ぜ書きの語尾の最大長
+            MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
 
             ConvertShiftedHiraganaToKatakana = addDecoderSetting("convertShiftedHiraganaToKatakana", "shiftKana", false);  // 平仮名をカタカナに変換する
             ConvertJaPeriod = addDecoderSetting("convertJaPeriod", false);                      // 「。」と「．」の相互変換

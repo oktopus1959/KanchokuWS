@@ -48,11 +48,12 @@ namespace {
     // 形容詞「い」(美しい)
     mchar_t IFX_I[] = { _WCHAR("い"), _WCHAR("か"), _WCHAR("き"), _WCHAR("く"), _WCHAR("け"), 0 };
     // 形容動詞「な」(静かな)
-    mchar_t IFX_NA[] = { _WCHAR("な"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), STEM_OK, 0 };
+    mchar_t IFX_NA[] = { _WCHAR("な"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), STEM_OK, 0 };
     // 形容詞「の」(本当の)
-    mchar_t IFX_NO[] = { _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), STEM_OK, 0 };
+    mchar_t IFX_NO[] = { _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), STEM_OK, 0 };
     // 無活用
-    mchar_t IFX_NONE[] = { STEM_OK, 0 };
+    //mchar_t IFX_NONE[] = { STEM_OK, 0 };
+    mchar_t IFX_NONE[] = { _WCHAR("が"), _WCHAR("は"), _WCHAR("も"), _WCHAR("を"), _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), STEM_OK, 0 };
 
     inline bool find_gobi(const mchar_t* ifxes, mchar_t mc) {
         while (*ifxes != 0) {
