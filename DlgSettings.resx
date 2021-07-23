@@ -120,34 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="textBox_histKanjiWordMinLengthEx.ToolTip" xml:space="preserve">
-    <value>難打鍵文字を含む場合の自動履歴登録最小長を設定します。
-
-難打鍵文字とは、「基本設定」タブの「容易打鍵文字」ファイルで
-定義された文字以外のものです。
-
-2と設定されている場合、たとえば「憂鬱」を交ぜ書き変換で入力すると、
-これは自動で履歴登録されます。
-
-「『憂鬱』が履歴に入ったとして、肝心の『憂』をどうやって出すんだ」という
-場合は、「優=憂」という部首連想定義をしておくとよいかと思います。
-いったん「優－人⇒憂」という部首合成を実行すると、自動的に「優=憂」
-という連想が登録されます。</value>
-  </data>
-  <data name="checkBox_selectFirstCandByEnter.ToolTip" xml:space="preserve">
-    <value>自動履歴検索で横列表示された候補の先頭候補をEnterキーで選択するかを
-設定します。
-
-当設定をOFFに設定してあるのに、つい選択するつもりでEnterを押してしまった
-場合は、出力先ウィンドウでEnter前の位置にカレットを移動させてから
-Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
-
-なお、履歴候補が縦列表示されている状態では、先頭候補がEnterキーで
-選択されます。</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -447,6 +419,45 @@ Ctrl+; の直後に Ctlrl+Shift+; を打つと取り消しになります。(逆
 
 たまに Shift+Backspace を受け付けないアプリがあります。
 その場合、前回の出力が消去されませんのでご注意を。</value>
+  </data>
+  <data name="comboBox_histNumHotkeyId.ToolTip" xml:space="preserve">
+    <value>履歴検索の縦列鍵盤表示時に、候補を文字数で絞るモードに
+移行するホットキーのIDを設定します。
+
+初期状態では任意長の候補を検索します。
+履歴検索の縦列鍵盤表示時に、ここで指定したホットキーに続けて
+数字キーを押して文字数を指定すると、その長さの候補だけが検索されます。
+(ただし、 0 は任意長、 9は9文字以上)
+
+文字数の指定は、履歴検索の縦列鍵盤表示時に、上下矢印キー(↑↓)
+でも変更できます。
+↓を押すと 1, 2, 3,... と増加し、9 の次に 0 に戻ります。
+↑を押すと、 9, 8, 7, ... と減少します。</value>
+  </data>
+  <data name="textBox_histKanjiWordMinLengthEx.ToolTip" xml:space="preserve">
+    <value>難打鍵文字を含む場合の自動履歴登録最小長を設定します。
+
+難打鍵文字とは、「基本設定」タブの「容易打鍵文字」ファイルで
+定義された文字以外のものです。
+
+2と設定されている場合、たとえば「憂鬱」を交ぜ書き変換で入力すると、
+これは自動で履歴登録されます。
+
+「『憂鬱』が履歴に入ったとして、肝心の『憂』をどうやって出すんだ」という
+場合は、「優=憂」という部首連想定義をしておくとよいかと思います。
+いったん「優－人⇒憂」という部首合成を実行すると、自動的に「優=憂」
+という連想が登録されます。</value>
+  </data>
+  <data name="checkBox_selectFirstCandByEnter.ToolTip" xml:space="preserve">
+    <value>自動履歴検索で横列表示された候補の先頭候補をEnterキーで選択するかを
+設定します。
+
+当設定をOFFに設定してあるのに、つい選択するつもりでEnterを押してしまった
+場合は、出力先ウィンドウでEnter前の位置にカレットを移動させてから
+Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
+
+なお、履歴候補が縦列表示されている状態では、先頭候補がEnterキーで
+選択されます。</value>
   </data>
   <data name="button_restartWithNoSave.ToolTip" xml:space="preserve">
     <value>デコーダが保持している辞書内容をファイルに保存せずに再起動します。

@@ -210,6 +210,7 @@ namespace {
         // 履歴入力候補のリスト
         //HistCandidates histCands;
 
+        size_t candLen = 0;
         size_t candDispVerticalPos = 0;
         size_t candDispHorizontalPos = 0;
 
@@ -414,7 +415,8 @@ namespace {
             }
 
             // 履歴入力候補の取得
-            setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, 0), key);
+            candLen = 0;
+            setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, candLen), key);
             // 未選択状態にセットする
             STATE_COMMON->SetWaitingCandSelect(-1);
 
@@ -464,7 +466,8 @@ namespace {
                     // ひらがな交じりやASCIIもキーとして取得する
                     const auto key = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>();
                     LOG_DEBUG(_T("key=%s"), MAKE_WPTR(key));
-                    HIST_CAND->GetCandidates(key, false, 0);
+                    candLen = 0;
+                    HIST_CAND->GetCandidates(key, false, candLen);
                     LOG_DEBUG(_T("LEAVE DELETE MODE"));
                 }
                 return;
@@ -485,7 +488,8 @@ namespace {
                     candDispHorizontalPos = 0;
                     candDispVerticalPos = 0;
                     auto key = HIST_CAND->GetCurrentKey();
-                    setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, (hotkey + 1) % LONG_KEY_NUM), key);
+                    candLen = (hotkey + 1) % LONG_KEY_NUM;
+                    setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, candLen), key);
                 }
                 LOG_DEBUG(_T("LEAVE: forNum"));
                 return;
@@ -536,14 +540,28 @@ namespace {
         }
 
         void handleDownArrow() {
-            candDispVerticalPos += CAND_DISP_LONG_VKEY_LEN;
+            //candDispVerticalPos += CAND_DISP_LONG_VKEY_LEN;
+            candDispHorizontalPos = 0;
+            candDispVerticalPos = 0;
+            auto key = HIST_CAND->GetCurrentKey();
+            //指定の長さのものだけを残して仮想鍵盤に表示
+            candLen = (candLen + 1) % 10;
+            setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, candLen), key);
+            return;
         }
 
         void handleUpArrow() {
-            if (candDispVerticalPos >= CAND_DISP_LONG_VKEY_LEN)
-                candDispVerticalPos -= CAND_DISP_LONG_VKEY_LEN;
-            else
-                candDispVerticalPos = 0;
+            //if (candDispVerticalPos >= CAND_DISP_LONG_VKEY_LEN)
+            //    candDispVerticalPos -= CAND_DISP_LONG_VKEY_LEN;
+            //else
+            //    candDispVerticalPos = 0;
+            candDispHorizontalPos = 0;
+            candDispVerticalPos = 0;
+            auto key = HIST_CAND->GetCurrentKey();
+            //指定の長さのものだけを残して仮想鍵盤に表示
+            candLen = candLen <= 0 ? 9 : candLen - 1;
+            setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, candLen), key);
+            return;
         }
 
         void handleLeftArrow() {
@@ -641,7 +659,8 @@ namespace {
 
             // 1文字履歴の取得
             MString key;
-            setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, 1), key);
+            candLen = 1;
+            setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, candLen), key);
 
             // 前状態にチェインする
             return true;
