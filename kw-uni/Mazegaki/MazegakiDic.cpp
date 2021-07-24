@@ -18,6 +18,9 @@
 // 語幹のみでもOK
 #define STEM_OK 1
 
+// 無活用の最大語尾長
+#define NO_IFX_MAX_GOBI 2
+
 namespace {
     // -------------------------------------------------------------------
     // 活用語尾
@@ -42,18 +45,18 @@ namespace {
     // 五段活用「う」(会う)
     mchar_t IFX_WU_5[] = { _WCHAR("わ"), _WCHAR("い"), _WCHAR("う"), _WCHAR("え"), _WCHAR("お"), _WCHAR("っ"), 0 };
     // サ変活用「する」(開発する)(達する、愛するは、五段として登録する)
-    mchar_t IFX_SURU[] = { _WCHAR("し"), _WCHAR("す"), STEM_OK, };
+    mchar_t IFX_SURU[] = { STEM_OK, _WCHAR("し"), _WCHAR("す"), 0 };
     // ザ変活用「ずる」(信ずる)
-    mchar_t IFX_ZURU[] = { _WCHAR("じ"), _WCHAR("ず"), _WCHAR("ぜ"), };
+    mchar_t IFX_ZURU[] = { _WCHAR("じ"), _WCHAR("ず"), _WCHAR("ぜ"), 0 };
     // 形容詞「い」(美しい)
     mchar_t IFX_I[] = { _WCHAR("い"), _WCHAR("か"), _WCHAR("き"), _WCHAR("く"), _WCHAR("け"),  _WCHAR("さ"), 0 };
     // 形容動詞「な」(静かな)
-    mchar_t IFX_NA[] = { _WCHAR("な"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), STEM_OK, 0 };
+    mchar_t IFX_NA[] = { STEM_OK, _WCHAR("な"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), 0 };
     // 形容詞「の」(本当の)
-    mchar_t IFX_NO[] = { _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), STEM_OK, 0 };
+    mchar_t IFX_NO[] = { STEM_OK, _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), 0 };
     // 無活用
     //mchar_t IFX_NONE[] = { STEM_OK, 0 };
-    mchar_t IFX_NONE[] = { _WCHAR("が"), _WCHAR("は"), _WCHAR("も"), _WCHAR("を"), _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("こ"), STEM_OK, 0 };
+    mchar_t IFX_NONE[] = { STEM_OK, _WCHAR("が"), _WCHAR("は"), _WCHAR("も"), _WCHAR("を"), _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("こ"), 0 };
 
     inline bool find_gobi(const mchar_t* ifxes, mchar_t mc) {
         while (*ifxes != 0) {
@@ -590,8 +593,8 @@ namespace {
                                         LOG_DEBUGH(_T("No gobi found: %s: STEM_OK in %s, userDic=%s"), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
                                         stock_output(pCands, p, p->xfer);
                                     }
-                                } else {
-                                    // 語尾がある ⇒ 語尾リストに含まれるか
+                                } else if (p->inflexList != IFX_NONE || (key.size() > stemLen && (key.size() - stemLen) <= NO_IFX_MAX_GOBI)) {
+                                    // 語尾がある(無活用語の場合は、語尾長が NO_IFX_MAX_GOBI 以下)⇒ 語尾リストに含まれるか
                                     if (find_gobi(p->inflexList, key[stemLen])) {
                                         LOG_DEBUGH(_T("gobi found: %s: %c in %s, userDic=%s"), MAKE_WPTR(p->xfer), key[stemLen], MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
                                         stock_output(pCands, p, p->xfer + key.substr(stemLen));
