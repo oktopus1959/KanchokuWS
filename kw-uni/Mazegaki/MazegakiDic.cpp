@@ -56,7 +56,9 @@ namespace {
     mchar_t IFX_NO[] = { STEM_OK, _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), 0 };
     // 無活用
     //mchar_t IFX_NONE[] = { STEM_OK, 0 };
-    mchar_t IFX_NONE[] = { STEM_OK, _WCHAR("が"), _WCHAR("は"), _WCHAR("も"), _WCHAR("を"), _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("こ"), 0 };
+    mchar_t IFX_NONE[] = { STEM_OK,
+        _WCHAR("か")/*から*/, _WCHAR("が"), _WCHAR("こ")/*こそ*/, _WCHAR("ご")/*ごと*/, _WCHAR("さ")/*さえ*/, _WCHAR("じ")/*じゃ*/, _WCHAR("す")/*すら*/,
+        _WCHAR("だ"), _WCHAR("で"), _WCHAR("と"), _WCHAR("な")/*なら*/, _WCHAR("に"), _WCHAR("の"), _WCHAR("は"), _WCHAR("へ"), _WCHAR("も"), _WCHAR("を"), 0 };
 
     inline bool find_gobi(const mchar_t* ifxes, mchar_t mc) {
         while (*ifxes != 0) {
