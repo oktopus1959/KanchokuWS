@@ -15,6 +15,9 @@ public:
     // 交ぜ書き辞書インスタンスを生成する
     static int CreateMazegakiDic(const tstring&);
 
+    // 交ぜ書き辞書ファイルを読み込む
+    static void ReadMazegakiDic(const tstring& filename);
+
     // 交ぜ書き辞書ファイルに書き込む(SETTINGS->mazegakiFile)
     static void WriteMazegakiDic();
 
@@ -33,6 +36,9 @@ public:
 
     // 交ぜ書き辞書が空か
     virtual bool IsEmpty() = 0;
+
+    // 交ぜ書き辞書ファイルの読み込み
+    virtual void ReadFile(const std::vector<wstring>& lines, bool bUser) = 0;
 
     // 辞書ファイルの内容の書き出し
     virtual void SaveUserDic(utils::OfstreamWriter&) = 0;

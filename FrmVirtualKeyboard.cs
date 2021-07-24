@@ -1584,5 +1584,10 @@ namespace KanchokuWS
         {
             frmMain.ReloadBushuDic();
         }
+
+        private void ReadMazeWikipediaDic_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMain.ReadMazegakiWikipediaDic();
+        }
     }
 }

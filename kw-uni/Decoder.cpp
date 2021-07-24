@@ -274,6 +274,9 @@ public:
                     // 交ぜ書きエントリの追加
                     MAZEGAKI_DIC->AddMazeDicEntry(items[1], true);
                 }
+            } else if (cmd == _T("readMazegakiDic") && BUSHU_ASSOC_DIC) {
+                // 交ぜ書き辞書の読み込み
+                if (MAZEGAKI_DIC) MAZEGAKI_DIC->ReadMazegakiDic(items[1]);
             } else if (cmd == _T("saveMazegakiDic") && BUSHU_ASSOC_DIC) {
                 // 交ぜ書き辞書の保存
                 if (MAZEGAKI_DIC) MAZEGAKI_DIC->WriteMazegakiDic();

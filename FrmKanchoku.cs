@@ -1156,9 +1156,23 @@ namespace KanchokuWS
             }
         }
 
+        // Wikipedia交ぜ書き辞書を読み込む
+        public void ReadMazegakiWikipediaDic()
+        {
+            if (SystemHelper.OKCancelDialog("Wikipedia交ぜ書き辞書ファイルを読み込みます。\r\n10秒以上かかる場合がありますが、「完了」が表示されるまでは漢直操作をしないでください。\r\nよろしいですか。")) {
+                ExecCmdDecoder("readMazegakiDic", "kwmaze.wiki.txt");
+                SystemHelper.ShowInfoMessageBox("Wkipedia交ぜ書き辞書の読み込みを完了しました。");
+            }
+        }
+
         private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ReloadBushuDic();
+        }
+
+        private void ReadMazeWikipediaDic_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ReadMazegakiWikipediaDic();
         }
     }
 }

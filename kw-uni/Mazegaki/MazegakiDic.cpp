@@ -732,6 +732,22 @@ int MazegakiDic::CreateMazegakiDic(const tstring& mazeFile) {
     return result;
 }
 
+// 交ぜ書き辞書ファイルを読み込む
+void MazegakiDic::ReadMazegakiDic(const tstring& filename) {
+        auto path = utils::joinPath(SETTINGS->rootDir, filename);
+        LOG_INFO(_T("open maze file: %s"), path.c_str());
+
+        utils::IfstreamReader reader(path);
+        if (reader.success()) {
+            Singleton->ReadFile(reader.getAllLines(), false);
+            LOG_INFO(_T("close maze file: %s"), path.c_str());
+        } else if (!SETTINGS->firstUse) {
+            // エラーメッセージを表示
+            LOG_ERROR(_T("Can't read maze file: %s"), path.c_str());
+            ERROR_HANDLER->Warn(utils::format(_T("交ぜ書き辞書ファイル(%s)が開けません"), path.c_str()));
+        }
+}
+
 // 交ぜ書き辞書ファイルに書き込む
 void MazegakiDic::WriteMazegakiDic(const tstring& path) {
     LOG_INFO(_T("CALLED: path=%s"), path.c_str());
