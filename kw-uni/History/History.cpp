@@ -850,7 +850,8 @@ namespace {
                         };
                         if (key != HISTORY_STAY_NODE->prevKey || maybeEditedBySubState || bManual) {
                             _LOG_DEBUGH(_T("PATH 9: different key"));
-                            func(HIST_CAND->GetCandidates(key, !bManual, 0), key);      // bManual = true ならキー長チェックをやらない
+                            bool checkMinKeyLen = !bManual || utils::is_hiragana(key[0]);      // 自動変索か、キー先頭がひらがなならキー長チェックをやる
+                            func(HIST_CAND->GetCandidates(key, checkMinKeyLen, 0), key);
                             // キーが短くなる可能性があるので再取得
                             key = HIST_CAND->GetCurrentKey();
                             _LOG_DEBUGH(_T("currentKey=%s"), MAKE_WPTR(key));
