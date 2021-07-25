@@ -421,6 +421,11 @@ namespace KanchokuWS
             return DecoderSettings[attr] = GetString(attr, defval);
         }
 
+        private static string setDecoderSetting(string attr, string val)
+        {
+            return DecoderSettings[attr] = val;
+        }
+
         // kanchoku.use.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
         private static string addDecoderSettingEx(string attr, string defvalInit, string defval = "")
         {
@@ -664,7 +669,7 @@ namespace KanchokuWS
             NextThroughKeySeq = addDecoderSetting("nextThroughKeySeq");
             HistoryKeySeq = addDecoderSetting("historyKeySeq");
             HistoryOneCharKeySeq = addDecoderSetting("historyOneCharKeySeq");
-            MazegakiKeySeq = addDecoderSetting("mazegakiKeySeq");
+            MazegakiKeySeq = MazegakiByShiftSpace ? setDecoderSetting("mazegakiKeySeq", "49") : addDecoderSetting("mazegakiKeySeq");
             BushuCompKeySeq = addDecoderSetting("bushuCompKeySeq");
             BushuAssocKeySeq = addDecoderSetting("bushuAssocKeySeq");
             BushuAssocDirectKeySeq = addDecoderSetting("bushuAssocDirectKeySeq");
