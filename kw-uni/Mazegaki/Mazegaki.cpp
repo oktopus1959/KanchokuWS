@@ -276,6 +276,11 @@ namespace {
 
     private:
         void outputStringAndPostProc(const MString& str, size_t numBS) {
+            MazegakiNode* pn = dynamic_cast<MazegakiNode*>(pNode);
+            if (pn) {
+                // 今回の結果を元に戻すための情報を保存
+                pn->SetYomiInfo(OUTPUT_STACK->GetLastOutputStackStr(numBS), str.size(), STATE_COMMON->GetTotalHotKeyCount());
+            }
             STATE_COMMON->SetOutString(str, numBS);
             handleKeyPostProc();
             //選択した候補を履歴に登録
@@ -314,6 +319,9 @@ namespace {
 // MazegakiNode - 交ぜ書き機能ノード
 DEFINE_CLASS_LOGGER(MazegakiNode);
 
+// Singleton
+MazegakiNode* MazegakiNode::Singleton = 0;
+
 // コンストラクタ
 MazegakiNode::MazegakiNode() {
     LOG_INFO(_T("CALLED: constructor"));
@@ -347,6 +355,6 @@ Node* MazegakiNodeBuilder::CreateNode() {
     //else {
     //    ERROR_HANDLER->Warn(_T("「mazegaki=(ファイル名)」の設定がまちがっているようです"));
     //}
-    return new MazegakiNode();
+    return MazegakiNode::Singleton = new MazegakiNode();
 }
 

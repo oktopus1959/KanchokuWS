@@ -1072,8 +1072,8 @@ namespace {
             } else {
                 // 一時的にこのフラグを立てることにより、履歴検索を行わないようにする
                 bNoHistTemporary = true;
-                // アクティブウィンドウにEscを送る
-                State::handleEsc();
+                // Esc処理が必要なものがあればそれをやる。なければアクティブウィンドウにEscを送る
+                StayState::handleEsc();
                 //// 何も候補が選択されていない状態なら履歴選択状態から抜ける
                 //STATE_COMMON->SetHistoryBlockFlag();
                 //HistoryStayState::handleEsc();

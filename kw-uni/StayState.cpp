@@ -2,6 +2,7 @@
 
 #include "StrokeTable.h"
 #include "StayState.h"
+#include "Mazegaki/Mazegaki.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
@@ -20,6 +21,21 @@ void StayState::DoHotkeyPreProc(int hotkey) {
     }
     State::DoHotkeyPreProc(hotkey);
     LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
+}
+
+
+// Esc の処理
+void StayState::handleEsc() {
+    if (MAZEGAKI_NODE) {
+        MString prevYomi;
+        size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi, STATE_COMMON->GetTotalHotKeyCount());
+        if (prevXferLen > 0) {
+            STATE_COMMON->SetOutString(prevYomi, prevXferLen);
+            return;
+        }
+    }
+    // アクティブウィンドウにEscを送る
+    State::handleEsc();
 }
 
 DEFINE_CLASS_LOGGER(StayState);

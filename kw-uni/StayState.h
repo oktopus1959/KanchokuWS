@@ -16,5 +16,8 @@ public:
     bool IsStay() const {
         return true;;
     }
+
+    // Esc の処理
+    void handleEsc();
 };
 
