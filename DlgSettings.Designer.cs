@@ -304,6 +304,7 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.checkBox_mazegakiSelectFirstCand = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -2707,10 +2708,11 @@ namespace KanchokuWS
             // 
             // groupBox23
             // 
+            this.groupBox23.Controls.Add(this.checkBox_mazegakiSelectFirstCand);
             this.groupBox23.Controls.Add(this.checkBox_mazegakiByShiftSpace);
             this.groupBox23.Location = new System.Drawing.Point(11, 261);
             this.groupBox23.Name = "groupBox23";
-            this.groupBox23.Size = new System.Drawing.Size(294, 47);
+            this.groupBox23.Size = new System.Drawing.Size(294, 65);
             this.groupBox23.TabIndex = 2;
             this.groupBox23.TabStop = false;
             this.groupBox23.Text = "交ぜ書き変換";
@@ -2718,7 +2720,7 @@ namespace KanchokuWS
             // checkBox_mazegakiByShiftSpace
             // 
             this.checkBox_mazegakiByShiftSpace.AutoSize = true;
-            this.checkBox_mazegakiByShiftSpace.Location = new System.Drawing.Point(20, 20);
+            this.checkBox_mazegakiByShiftSpace.Location = new System.Drawing.Point(20, 18);
             this.checkBox_mazegakiByShiftSpace.Name = "checkBox_mazegakiByShiftSpace";
             this.checkBox_mazegakiByShiftSpace.Size = new System.Drawing.Size(185, 19);
             this.checkBox_mazegakiByShiftSpace.TabIndex = 0;
@@ -3530,6 +3532,18 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // checkBox_mazegakiSelectFirstCand
+            // 
+            this.checkBox_mazegakiSelectFirstCand.AutoSize = true;
+            this.checkBox_mazegakiSelectFirstCand.Location = new System.Drawing.Point(20, 40);
+            this.checkBox_mazegakiSelectFirstCand.Name = "checkBox_mazegakiSelectFirstCand";
+            this.checkBox_mazegakiSelectFirstCand.Size = new System.Drawing.Size(171, 19);
+            this.checkBox_mazegakiSelectFirstCand.TabIndex = 1;
+            this.checkBox_mazegakiSelectFirstCand.Text = "先頭候補を無条件に出力する";
+            this.toolTip1.SetToolTip(this.checkBox_mazegakiSelectFirstCand, "交ぜ書き変換の結果が複数あっても、先頭候補を無条件に出力します。\r\n\r\n変換結果が出力された直後であれば、 Esc キーで変換前の状態に戻せます。\r\nその後交ぜ書" +
+        "き変換を行うと、先頭候補の出力は行わず、複数候補が\r\n表示されるようになります。");
+            this.checkBox_mazegakiSelectFirstCand.UseVisualStyleBackColor = true;
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -3908,5 +3922,6 @@ namespace KanchokuWS
         private System.Windows.Forms.Button button_showPaddingsDesc;
         private System.Windows.Forms.GroupBox groupBox23;
         private System.Windows.Forms.CheckBox checkBox_mazegakiByShiftSpace;
+        private System.Windows.Forms.CheckBox checkBox_mazegakiSelectFirstCand;
     }
 }

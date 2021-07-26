@@ -155,8 +155,9 @@ namespace {
                 _LOG_DEBUGH(_T("LEAVE: no candidate"));
                 return false;
             }
-            if (cands.size() == 1) {
-                // 読みの長さ候補が１つしかなかったのでそれを選択して出力
+            LOG_INFOH(_T("mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
+            if (cands.size() == 1 || (!MAZEGAKI_NODE->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand)) {
+                // 読みの長さ候補が１つしかなかった、または先頭候補の自動出力モードなのでそれを選択して出力
                 outputStringAndPostProc(cands.front(), candsByLen.GetFirstCandidateYomi().size());
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));

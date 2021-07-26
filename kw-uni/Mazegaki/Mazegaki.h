@@ -21,14 +21,20 @@ class MazegakiNode : public FunctionNode {
         prevYomi = yomi;
         prevXferLen = xferLen;
         hotkeyCount = count;
+        selectFirstCandDisabled = false;
     }
 
     size_t GetPrevYomiInfo(MString& yomi, size_t count) {
+        selectFirstCandDisabled = true;
         if (count == hotkeyCount + 1) {
             yomi = prevYomi;
             return prevXferLen;
         }
         return 0;
+    }
+
+    bool IsSelectFirstCandDisabled() {
+        return selectFirstCandDisabled;
     }
 
 private:
@@ -40,6 +46,9 @@ private:
 
     // 前回変換時のホットキーカウント
     size_t hotkeyCount = 0;
+
+    // 先頭候補の自動選択を一時的に中止する
+    bool selectFirstCandDisabled = false;
 
 public:
     static MazegakiNode* Singleton;

@@ -11,7 +11,7 @@ namespace KanchokuWS
     {
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.0.6";
+        public static string Version => "1.0.7";
 
         /// <summary> ドキュメントへのURL </summary>
         public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
@@ -324,6 +324,7 @@ namespace KanchokuWS
         //------------------------------------------------------------------------------
         // 交ぜ書き
         public static bool MazegakiByShiftSpace { get; set; } = true;
+        public static bool MazegakiSelectFirstCand { get; set; } = true;
         public static int MazeYomiMaxLen { get; private set; } = 10;
         public static int MazeGobiMaxLen { get; private set; } = 3;
 
@@ -642,7 +643,8 @@ namespace KanchokuWS
             UseArrowKeyToSelectCandidate = addDecoderSetting("useArrowKeyToSelectCandidate", true);    // 矢印キーで履歴候補選択を行う
             HandleShiftSpaceAsNormalSpace = addDecoderSetting("handleShiftSpaceAsNormalSpace", true);  // Shift+Space を通常 Space しとて扱う(HistSearchByShiftSpaceがfalseの場合)
 
-            MazegakiByShiftSpace  = GetString("mazegakiByShiftSpace  ")._parseBool(true);       // Shift-Space で交ぜ書き変換
+            MazegakiByShiftSpace = GetString("mazegakiByShiftSpace")._parseBool(true);          // Shift-Space で交ぜ書き変換
+            MazegakiSelectFirstCand = addDecoderSetting("mazegakiSelectFirstCand", false);      // 交ぜ書き変換で先頭の候補を自動選択
             MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
 

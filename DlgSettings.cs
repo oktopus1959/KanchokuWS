@@ -826,6 +826,7 @@ namespace KanchokuWS
 
             // 交ぜ書き
             checkBox_mazegakiByShiftSpace.Checked = Settings.MazegakiByShiftSpace;
+            checkBox_mazegakiSelectFirstCand.Checked = Settings.MazegakiSelectFirstCand;
             textBox_mazeYomiMaxLen.Text = $"{Settings.MazeYomiMaxLen}";
             textBox_mazeGobiMaxLen.Text = $"{Settings.MazeGobiMaxLen}";
 
@@ -859,6 +860,7 @@ namespace KanchokuWS
 
             // 交ぜ書き
             checkerHistory.Add(checkBox_mazegakiByShiftSpace);
+            checkerHistory.Add(checkBox_mazegakiSelectFirstCand);
             checkerHistory.Add(textBox_mazeYomiMaxLen);
             checkerHistory.Add(textBox_mazeGobiMaxLen);
 
@@ -895,6 +897,7 @@ namespace KanchokuWS
             Settings.SetUserIni("histNumHotkeyId", comboBox_histNumHotkeyId.Text.Trim()._substring(0, 2));
 
             Settings.SetUserIni("mazegakiByShiftSpace", checkBox_mazegakiByShiftSpace.Checked);
+            Settings.SetUserIni("mazegakiSelectFirstCand", checkBox_mazegakiSelectFirstCand.Checked);
             Settings.SetUserIni("mazeGobiMaxLen", textBox_mazeGobiMaxLen.Text.Trim());
             Settings.SetUserIni("mazeYomiMaxLen", textBox_mazeYomiMaxLen.Text.Trim());
 
