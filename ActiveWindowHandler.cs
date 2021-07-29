@@ -312,26 +312,75 @@ namespace KanchokuWS
         /// <summary>
         /// Ctrlキーの状態を戻す
         /// </summary>
+        /// <param name="bUp">事前操作<</param>
         /// <param name="prevLeftCtrl"></param>
         /// <param name="prevRightCtrl"></param>
-        private int revertCtrlKeyInputs(INPUT[] inputs, int idx, bool prevLeftCtrl, bool prevRightCtrl)
+        private int revertCtrlKeyInputs(INPUT[] inputs, int idx, bool bUp, bool prevLeftCtrl, bool prevRightCtrl)
         {
-            bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-            bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
-            if (Settings.LoggingHotKeyInfo) logger.InfoH($"prevLeftCtrl={prevLeftCtrl}, prevRightCtrl={prevRightCtrl}, leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
+            if (Settings.LoggingHotKeyInfo) logger.InfoH($"bUp={bUp}, prevLeftCtrl={prevLeftCtrl}, prevRightCtrl={prevRightCtrl}");
 
-            if (prevLeftCtrl /*&& !leftCtrl*/) {    // 事前に up を実行しても、なぜか leftCtrl が true になっているので、こちらのチェックは外す
+            if (prevLeftCtrl && bUp) {
                 setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-            } else if (!prevLeftCtrl && leftCtrl) {
+            } else if (!prevLeftCtrl && !bUp) {
                 setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
             }
 
-            if (prevRightCtrl /*&& !rightCtrl*/) {    // 事前に up を実行しても、なぜか rightCtrl が true になっているので、こちらのチェックは外す
+            if (prevRightCtrl && bUp) {
                 setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-            } else if (!prevRightCtrl && rightCtrl) {
+            } else if (!prevRightCtrl && !bUp) {
                 setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
             }
             return idx;
+        }
+
+        /// <summary>
+        /// Ctrlキーの事前上げ下げ (SendInput実行後、Waitあり)
+        /// </summary>
+        /// <param name="bUp">事前操作<</param>
+        /// <param name="leftCtrl"></param>
+        /// <param name="rightCtrl"></param>
+        private void sendInputUpDownCtrlKey(bool bUp, out bool leftCtrl, out bool rightCtrl)
+        {
+            int waitUpMs = (ActiveWinSettings?.CtrlUpWaitMillisec)._value(-1)._geZeroOr(Settings.CtrlKeyUpGuardMillisec);
+            var inputs = new INPUT[2];
+            int idx = upDownCtrlKeyInputs(inputs, 0, bUp, out leftCtrl, out rightCtrl);
+            if (idx > 0) {
+                SendInput((uint)idx, inputs, Marshal.SizeOf(typeof(INPUT)));
+                if (Settings.LoggingHotKeyInfo) logger.InfoH($"Ctrl Up/Down and Wait {waitUpMs} millisec");
+                if (waitUpMs > 0) {
+                    Task.Delay(waitUpMs).Wait();            // やはりこれが無いと Ctrlが有効なままBSが渡ったりする
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ctrlキーの事前上げ (SendInput 実行、Waitあり)
+        /// </summary>
+        /// <param name="leftCtrl"></param>
+        /// <param name="rightCtrl"></param>
+        private void sendInputUpCtrlKey(out bool leftCtrl, out bool rightCtrl)
+        {
+            sendInputUpDownCtrlKey(true, out leftCtrl, out rightCtrl);
+        }
+
+        /// <summary>
+        /// Ctrlキーの状態を戻す
+        /// </summary>
+        /// <param name="bUp">事前操作<</param>
+        /// <param name="prevLeftCtrl"></param>
+        /// <param name="prevRightCtrl"></param>
+        private void sendInputRevertCtrlKey(bool bUp, bool prevLeftCtrl, bool prevRightCtrl)
+        {
+            var inputs = new INPUT[2];
+            int idx = revertCtrlKeyInputs(inputs, 0, bUp, prevLeftCtrl, prevRightCtrl);
+            if (idx > 0) {
+                SendInput((uint)idx, inputs, Marshal.SizeOf(typeof(INPUT)));
+                int waitDownMs = (ActiveWinSettings?.CtrlDownWaitMillisec)._value(-1)._geZeroOr(Settings.CtrlKeyDownGuardMillisec);
+                if (Settings.LoggingHotKeyInfo) logger.InfoH($"Revert Ctrl and Wait {waitDownMs} millisec");
+                if (waitDownMs > 0) {
+                    Task.Delay(waitDownMs).Wait();
+                }
+            }
         }
 
         private int setVkeyInputs(ushort vkey, INPUT[] inputs, int idx)
@@ -406,6 +455,7 @@ namespace KanchokuWS
             // Ctrl上げ
             idx = upCtrlKeyInputs(inputs, idx, out leftCtrl, out rightCtrl);
             if (loggingFlag) logger.InfoH($"upCtrl: idx={idx}");
+            //sendInputUpCtrlKey(out leftCtrl, out rightCtrl);      // StikyNote など、Waitを入れても状況が変わらない
 
             // Backspace
             for (int i = 0; i < numBS; ++i) {
@@ -418,7 +468,7 @@ namespace KanchokuWS
             if (loggingFlag) logger.InfoH($"str: idx={idx}");
 
             // Ctrl戻し
-            idx = revertCtrlKeyInputs(inputs, idx, leftCtrl, rightCtrl);
+            idx = revertCtrlKeyInputs(inputs, idx, true, leftCtrl, rightCtrl);
             if (loggingFlag) logger.InfoH($"revert: idx={idx}");
 
             // 送出
@@ -444,6 +494,7 @@ namespace KanchokuWS
                     bool leftCtrl = false, rightCtrl = false;
                     bool bUp = (combo.modifier & KeyModifiers.MOD_CONTROL) == 0;
                     idx = upDownCtrlKeyInputs(inputs, idx, bUp, out leftCtrl, out rightCtrl);
+                    //sendInputUpDownCtrlKey(bUp, out leftCtrl, out rightCtrl);         // StikyNote など、Waitを入れても状況が変わらない
 
                     // Backspace
                     for (int i = 0; i < numBS; ++i) {
@@ -458,7 +509,7 @@ namespace KanchokuWS
                     PostVirtualKey(combo.vkey, n, false);
 
                     // Ctrl戻し
-                    idx = revertCtrlKeyInputs(inputs, idx, leftCtrl, rightCtrl);
+                    idx = revertCtrlKeyInputs(inputs, idx, bUp, leftCtrl, rightCtrl);
 
                     // 送出
                     sendInputs((uint)idx, inputs, combo.vkey);
@@ -597,7 +648,7 @@ namespace KanchokuWS
         /// <summary>
         /// アクティブウィンドウに文字列を送出する<br/>
         /// 文字送出前に numBSだけBackspaceを送る<br/>
-        /// 必要ならクリップボード経由で送り付ける
+        /// 必要ならクリップボードにコピーする
         /// </summary>
         public void SendStringViaClipboardIfNeeded(char[] str, int numBS)
         {
@@ -613,7 +664,14 @@ namespace KanchokuWS
                     // クリップボードにコピー
                     Clipboard.SetText(new string(str, 0, len));
                     // Ctrl-V を送る (PostVirtualKeys の中でも upDownCtrlKey/revertCtrlKey をやっている)
-                    SendVirtualKeys(VirtualKeys.GetVKeyComboFromHotKey(HotKeys.CTRL_V_HOTKEY).Value, 1, numBS);
+                    //SendVirtualKeys(VirtualKeys.GetVKeyComboFromHotKey(HotKeys.CTRL_V_HOTKEY).Value, 1, numBS);
+                    SendString(null, 0, numBS);
+                    if (numBS > 0 && Settings.PreWmCharGuardMillisec > 0) {
+                        int waitMs = (int)(Math.Pow(numBS, Settings.ReductionExponet._lowLimit(0.5)) * Settings.PreWmCharGuardMillisec);
+                        if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
+                        Helper.WaitMilliSeconds(waitMs);
+                    }
+                    PostVirtualKeys(VirtualKeys.GetVKeyComboFromHotKey(HotKeys.CTRL_V_HOTKEY).Value, 1);
                 }
 
                 lastOutputDt = DateTime.Now;
