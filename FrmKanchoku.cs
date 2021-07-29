@@ -972,18 +972,19 @@ namespace KanchokuWS
             // 中央鍵盤文字列の取得
             getCenterString();
 
-            // BS送出(もしあれば)
-            int nPreKeys = decoderOutput.numBackSpaces;     // この後の文字送出時のwaitを決めるファクタ
-            actWinHandler.PostBackSpaces(nPreKeys);
-
             // 他のVKey送出(もしあれば)
             if (decoderOutput.IsHotkeyToVkey()) {
                 postVkeyFromHotkey(hotkey);
-                nPreKeys += 1;
+                //nPreKeys += 1;
             }
 
-            // 文字送出(もしあれば)
-            actWinHandler.PostStringViaClipboardIfNeeded(decoderOutput.outString, nPreKeys);
+            //// BS送出(もしあれば)
+            //int nPreKeys = decoderOutput.numBackSpaces;     // この後の文字送出時のwaitを決めるファクタ
+            //actWinHandler.PostBackSpaces(nPreKeys);
+
+            //// 文字送出(もしあれば)
+            //actWinHandler.PostStringViaClipboardIfNeeded(decoderOutput.outString, nPreKeys);
+           actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces);
 
             // 仮想キーボードにヘルプや文字候補を表示
             frmVkb.DrawVirtualKeyboardChars();
@@ -1030,10 +1031,11 @@ namespace KanchokuWS
                 }
                 dtStr = dtNow.AddYears(-diffYear).ToString(fmt);
             }
-            if (prevDateStrLength > 0) actWinHandler.PostBackSpaces(prevDateStrLength);
-            if (dtStr._notEmpty()) {
-                actWinHandler.PostStringViaClipboardIfNeeded(dtStr.ToCharArray(), prevDateStrLength);
-            }
+            //if (prevDateStrLength > 0) actWinHandler.PostBackSpaces(prevDateStrLength);
+            //if (dtStr._notEmpty()) {
+            //    actWinHandler.PostStringViaClipboardIfNeeded(dtStr.ToCharArray(), prevDateStrLength);
+            //}
+            actWinHandler.SendStringViaClipboardIfNeeded(dtStr.ToCharArray(), prevDateStrLength);
             prevDateStrLength = dtStr.Length;
         }
 

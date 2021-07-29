@@ -52,17 +52,93 @@ namespace KanchokuWS
             }
         }
 
-        // cf. https://tomosoft.jp/design/?p=6624
-        //COPYDATASTRUCT構造体 
-        public struct COPYDATASTRUCT
-        {
-            public Int32 dwData;      //送信する32ビット値
-            public Int32 cbData;   //lpDataのバイト数
-            public string lpData;   //送信するデータへのポインタ(0も可能)
-        }
+        // cf. http://pgcenter.web.fc2.com/contents/csharp_sendinput.html
+        // cf. https://www.pinvoke.net/default.aspx/user32.sendinput
 
-        //[DllImport("User32.dll", EntryPoint = "PostMessageW")]
-        //private static extern Int32 PostMessageW(IntPtr hWnd, uint Msg, uint wParam, ref COPYDATASTRUCT lParam);
+        // マウスイベント(mouse_eventの引数と同様のデータ)
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MOUSEINPUT
+        {
+            public int dx;
+            public int dy;
+            public int mouseData;
+            public int dwFlags;
+            public int time;
+            public int dwExtraInfo;
+        };
+
+        // キーボードイベント(keybd_eventの引数と同様のデータ)
+        [StructLayout(LayoutKind.Sequential)]
+        private struct KEYBDINPUT
+        {
+            public ushort wVk;
+            public ushort wScan;
+            public int dwFlags;
+            public int time;
+            public int dwExtraInfo;
+        };
+
+        // ハードウェアイベント
+        [StructLayout(LayoutKind.Sequential)]
+        private struct HARDWAREINPUT
+        {
+            public int uMsg;
+            public ushort wParamL;
+            public ushort wParamH;
+        };
+
+        // 各種イベント(SendInputの引数データ)
+        [StructLayout(LayoutKind.Explicit)]
+        private struct INPUT
+        {
+            [FieldOffset(0)] public int type;
+            [FieldOffset(4)] public MOUSEINPUT mi;
+            [FieldOffset(4)] public KEYBDINPUT ki;
+            [FieldOffset(4)] public HARDWAREINPUT hi;
+        };
+
+        //// キー操作、マウス操作をシミュレート(擬似的に操作する)
+        //[DllImport("user32.dll")]
+        //private extern static void SendInput(
+        //    int nInputs, ref INPUT pInputs, int cbsize);
+
+        /// <summary>
+        /// Synthesizes keystrokes, mouse motions, and button clicks.
+        /// </summary>
+        [DllImport("user32.dll")]
+        private static extern uint SendInput(uint nInputs,
+           [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs,
+           int cbSize);
+
+        // 仮想キーコードをスキャンコードに変換
+        [DllImport("user32.dll", EntryPoint = "MapVirtualKeyA")]
+        private extern static int MapVirtualKey(
+            int wCode, int wMapType);
+
+        private const int INPUT_MOUSE = 0;                  // マウスイベント
+        private const int INPUT_KEYBOARD = 1;               // キーボードイベント
+        private const int INPUT_HARDWARE = 2;               // ハードウェアイベント
+
+        private const int MOUSEEVENTF_MOVE = 0x1;           // マウスを移動する
+        private const int MOUSEEVENTF_ABSOLUTE = 0x8000;    // 絶対座標指定
+        private const int MOUSEEVENTF_LEFTDOWN = 0x2;       // 左　ボタンを押す
+        private const int MOUSEEVENTF_LEFTUP = 0x4;         // 左　ボタンを離す
+        private const int MOUSEEVENTF_RIGHTDOWN = 0x8;      // 右　ボタンを押す
+        private const int MOUSEEVENTF_RIGHTUP = 0x10;       // 右　ボタンを離す
+        private const int MOUSEEVENTF_MIDDLEDOWN = 0x20;    // 中央ボタンを押す
+        private const int MOUSEEVENTF_MIDDLEUP = 0x40;      // 中央ボタンを離す
+        private const int MOUSEEVENTF_WHEEL = 0x800;        // ホイールを回転する
+        private const int WHEEL_DELTA = 120;                // ホイール回転値
+
+        private const int KEYEVENTF_KEYDOWN = 0x0;          // キーを押す
+        private const int KEYEVENTF_EXTENDEDKEY = 0x1;      // 拡張コード
+        private const int KEYEVENTF_KEYUP = 0x2;            // キーを離す
+        private const int KEYEVENTF_UNICODE = 0x4;
+
+        private const int VK_BACK = 8;                      // Backspaceキー
+        private const int VK_SHIFT = 0x10;                  // SHIFTキー
+        private const int VK_CONTROL = 0x11;                // Ctrlキー
+
 
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
         private static extern Int32 PostMessageW(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
@@ -73,13 +149,7 @@ namespace KanchokuWS
         [DllImport("user32.dll")]
         private static extern uint keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 
-        [DllImport("user32.dll", EntryPoint = "MapVirtualKeyA")]
-        private extern static uint MapVirtualKey(uint wCode, uint wMapType);
-
         private const uint MAPVK_VK_TO_VSC = 0;
-        private const uint KEYEVENTF_KEYDOWN = 0;
-        private const uint KEYEVENTF_EXTENDEDKEY = 1;
-        private const uint KEYEVENTF_KEYUP = 2;
 
         private void keybdEvent(uint vkey, uint eventFlags, bool bExt = false)
         {
@@ -173,49 +243,239 @@ namespace KanchokuWS
             }
         }
 
-        /// <summary>出力文字カウント辞書</summary>
-        public Dictionary<char, int> CharCountDic { get; private set; } = new Dictionary<char, int>();
-
-        public void ReadCharCountFile(string filename)
+        private void initializeKeyboardInput(ref INPUT input)
         {
-            logger.InfoH(() => $"CALLED: filename={filename}");
-            if (Helper.FileExists(filename)) {
-                try {
-                    foreach (var line in System.IO.File.ReadAllLines(filename)) {
-                        var items = line.Trim()._split('\t');
-                        if (items._length() == 2 && items[0]._notEmpty() && items[1]._notEmpty()) {
-                            CharCountDic[items[0][0]] = items[1]._parseInt();
-                        }
+            input.type = INPUT_KEYBOARD;
+            input.ki.wVk = 0;
+            input.ki.wScan = 0;
+            input.ki.dwFlags = 0;
+            input.ki.time = 0;
+            input.ki.dwExtraInfo = 0;
+        }
+
+        private void setLeftCtrlInput(ref INPUT input, int keyEventFlag)
+        {
+            initializeKeyboardInput(ref input);
+            input.ki.wVk = VK_CONTROL;
+            input.ki.dwFlags = keyEventFlag;
+        }
+
+        private void setRightCtrlInput(ref INPUT input, int keyEventFlag)
+        {
+            setLeftCtrlInput(ref input, keyEventFlag);
+            input.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;
+        }
+
+        /// <summary>
+        /// Ctrlキーの事前上げ下げ
+        /// </summary>
+        /// <param name="leftCtrl"></param>
+        /// <param name="rightCtrl"></param>
+        private int upDownCtrlKeyInputs(INPUT[] inputs, int idx, bool bUp, out bool leftCtrl, out bool rightCtrl)
+        {
+            leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
+            rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            if (Settings.LoggingHotKeyInfo) logger.InfoH($"bUp={bUp}, leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
+
+            if (bUp && (leftCtrl || rightCtrl)) {
+                // 両方一諸に上げる
+                setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+                setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            } else if (!bUp && !(leftCtrl || rightCtrl)) {
+                // 両方一諸に下げる
+                setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            }
+            return idx;
+        }
+
+        /// <summary>
+        /// Ctrlキーの事前上げ
+        /// </summary>
+        /// <param name="leftCtrl"></param>
+        /// <param name="rightCtrl"></param>
+        private int upCtrlKeyInputs(INPUT[] inputs, int idx, out bool leftCtrl, out bool rightCtrl)
+        {
+            return upDownCtrlKeyInputs(inputs, idx, true, out leftCtrl, out rightCtrl);
+        }
+
+        /// <summary>
+        /// Ctrlキーの事前下げ
+        /// </summary>
+        /// <param name="leftCtrl"></param>
+        /// <param name="rightCtrl"></param>
+        private int downCtrlKeyInputs(INPUT[] inputs, int idx, out bool leftCtrl, out bool rightCtrl)
+        {
+            return upDownCtrlKeyInputs(inputs, idx, false, out leftCtrl, out rightCtrl);
+        }
+
+        /// <summary>
+        /// Ctrlキーの状態を戻す
+        /// </summary>
+        /// <param name="prevLeftCtrl"></param>
+        /// <param name="prevRightCtrl"></param>
+        private int revertCtrlKeyInputs(INPUT[] inputs, int idx, bool prevLeftCtrl, bool prevRightCtrl)
+        {
+            bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
+            bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            if (Settings.LoggingHotKeyInfo) logger.InfoH($"prevLeftCtrl={prevLeftCtrl}, prevRightCtrl={prevRightCtrl}, leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
+
+            if (prevLeftCtrl /*&& !leftCtrl*/) {    // 事前に up を実行しても、なぜか leftCtrl が true になっているので、こちらのチェックは外す
+                setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            } else if (!prevLeftCtrl && leftCtrl) {
+                setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            }
+
+            if (prevRightCtrl /*&& !rightCtrl*/) {    // 事前に up を実行しても、なぜか rightCtrl が true になっているので、こちらのチェックは外す
+                setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            } else if (!prevRightCtrl && rightCtrl) {
+                setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            }
+            return idx;
+        }
+
+        private int setVkeyInputs(ushort vkey, INPUT[] inputs, int idx)
+        {
+            initializeKeyboardInput(ref inputs[idx]);
+            inputs[idx].ki.wVk = vkey;
+            inputs[idx].ki.dwFlags = KEYEVENTF_KEYDOWN;
+            ++idx;
+            initializeKeyboardInput(ref inputs[idx]);
+            inputs[idx].ki.wVk = vkey;
+            inputs[idx].ki.dwFlags = KEYEVENTF_KEYUP;
+            ++idx;
+            return idx;
+        }
+
+        private int setStringInputs(char[] str, int strLen, INPUT[] inputs, int idx)
+        {
+            if (strLen > inputs._safeLength()) strLen = inputs._safeLength();
+            for (int i = 0; i < strLen * 2; ++i) {
+                initializeKeyboardInput(ref inputs[idx]);
+                inputs[idx].ki.wScan = str[i / 2];
+                inputs[idx].ki.dwFlags = (i % 2) == 0 ? KEYEVENTF_UNICODE : KEYEVENTF_KEYUP;
+                ++idx;
+            }
+            return idx;
+        }
+
+        private void sendInputs(uint len, INPUT[] inputs, uint vkey)
+        {
+            if (Settings.LoggingHotKeyInfo) logger.InfoH($"CALLED: len={len}, vkey={vkey}");
+
+            int hotkey = 0;
+            int ctrlHotkey = 0;
+            if (vkey > 0) {
+                // まずホットキーの解除
+                hotkey = VirtualKeys.GetHotKeyFromCombo(0, vkey);
+                ctrlHotkey = VirtualKeys.GetHotKeyFromCombo(KeyModifiers.MOD_CONTROL, vkey);
+                HotKeyHandler.UnregisterHotKeyTemporary(hotkey);
+                HotKeyHandler.UnregisterHotKeyTemporary(ctrlHotkey);
+            }
+
+            if (len > 0) SendInput(len, inputs, Marshal.SizeOf(typeof(INPUT)));
+
+            if (vkey > 0) {
+                // ホットキーの再登録
+                HotKeyHandler.ResumeHotKey(hotkey);
+                HotKeyHandler.ResumeHotKey(ctrlHotkey);
+            }
+        }
+
+        /// <summary>
+        /// キーボード入力をエミュレートして文字列を送出する
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="numBS"></param>
+        public void SendString(char[] str, int strLen, int numBS)
+        {
+            bool loggingFlag = Settings.LoggingHotKeyInfo;
+            if (loggingFlag) logger.InfoH($"CALLED: str={(str._isEmpty() ? "" : new string(str, 0, strLen._lowLimit(0)))}, numBS={numBS}");
+
+            if (numBS < 0) numBS = 0;
+            if (strLen < 0) strLen = 0;
+            int numCtrlKeys = 2;            // leftCtrl と rightCtrl
+            int inputsLen = strLen + numBS + numCtrlKeys * 2;
+
+            var inputs = new INPUT[inputsLen * 2];
+
+            int idx = 0;
+
+            bool leftCtrl = false, rightCtrl = false;
+
+            // Ctrl上げ
+            idx = upCtrlKeyInputs(inputs, idx, out leftCtrl, out rightCtrl);
+            if (loggingFlag) logger.InfoH($"upCtrl: idx={idx}");
+
+            // Backspace
+            for (int i = 0; i < numBS; ++i) {
+                idx = setVkeyInputs(VK_BACK, inputs, idx);
+            }
+            if (loggingFlag) logger.InfoH($"bs: idx={idx}");
+
+            // 文字列
+            idx = setStringInputs(str, strLen, inputs, idx);
+            if (loggingFlag) logger.InfoH($"str: idx={idx}");
+
+            // Ctrl戻し
+            idx = revertCtrlKeyInputs(inputs, idx, leftCtrl, rightCtrl);
+            if (loggingFlag) logger.InfoH($"revert: idx={idx}");
+
+            // 送出
+            sendInputs((uint)idx, inputs, VK_BACK);
+        }
+
+        public void SendVirtualKeys(VKeyCombo combo, int n, int numBS = 0)
+        {
+            bool loggingFlag = Settings.LoggingHotKeyInfo;
+            if (loggingFlag) logger.InfoH($"CALLED: combo=({combo.modifier:x}H:{combo.vkey:x}H), numKeys={n}");
+            if (syncPostVkey.BusyCheck()) {
+                if (loggingFlag) logger.InfoH($"IGNORED: numKeys={n}");
+                return;
+            }
+            using (syncPostVkey) {
+                lock (syncPostVkey) {
+                    int numCtrlKeys = 2;            // leftCtrl と rightCtrl
+                    var inputs = new INPUT[(n + numBS + numCtrlKeys * 2) * 2];
+
+                    int idx = 0;
+
+                    // Ctrl上げ(または下げ)
+                    bool leftCtrl = false, rightCtrl = false;
+                    bool bUp = (combo.modifier & KeyModifiers.MOD_CONTROL) == 0;
+                    idx = upDownCtrlKeyInputs(inputs, idx, bUp, out leftCtrl, out rightCtrl);
+
+                    // Backspace
+                    for (int i = 0; i < numBS; ++i) {
+                        idx = setVkeyInputs(VK_BACK, inputs, idx);
                     }
-                } catch (Exception e) {
-                    logger.Error($"Cannot read file: {filename}: {e.Message}");
+
+                    // Vkey
+                    for (int i = 0; i < n; ++i) {
+                        idx = setVkeyInputs((ushort)combo.vkey, inputs, idx);
+                    }
+
+                    PostVirtualKey(combo.vkey, n, false);
+
+                    // Ctrl戻し
+                    idx = revertCtrlKeyInputs(inputs, idx, leftCtrl, rightCtrl);
+
+                    // 送出
+                    sendInputs((uint)idx, inputs, combo.vkey);
                 }
             }
         }
 
-        //public void WriteCharCountFile(string filename)
+        ///// <summary>
+        ///// アクティブウィンドウに文字を送出する
+        ///// </summary>
+        ///// <param name="ch"></param>
+        //public void PostChar(char ch)
         //{
-        //    logger.InfoH(() => $"CALLED: filename={filename}");
-        //    if (filename._notEmpty()) {
-        //        try {
-        //            System.IO.File.WriteAllText(filename,
-        //                CharCountDic.OrderByDescending(p => p.Value).Select(p => $"{p.Key}\t{p.Value}")._join("\n"));
-        //        } catch (Exception e) {
-        //            logger.Error($"Cannot write file: {filename}: {e.Message}");
-        //        }
-        //    }
+        //    PostMessageW(ActiveWinHandle, WM_Defs.WM_CHAR, ch, 1);
+        //    //PostMessageW(ActiveWinHandle, WM_Defs.WM_IME_CHAR, ch, 1);
+        //    //if (ch >= 0x100) CharCountDic[ch] = CharCountDic._safeGet(ch) + 1;
         //}
-
-        /// <summary>
-        /// アクティブウィンドウに文字を送出する
-        /// </summary>
-        /// <param name="ch"></param>
-        public void PostChar(char ch)
-        {
-            PostMessageW(ActiveWinHandle, WM_Defs.WM_CHAR, ch, 1);
-            //PostMessageW(ActiveWinHandle, WM_Defs.WM_IME_CHAR, ch, 1);
-            //if (ch >= 0x100) CharCountDic[ch] = CharCountDic._safeGet(ch) + 1;
-        }
 
         /// <summary>
         /// アクティブウィンドウに仮想キーを送出する<br/>
@@ -282,54 +542,78 @@ namespace KanchokuWS
             }
         }
 
-        /// <summary>
-        /// アクティブウィンドウにBSを送出する
-        /// </summary>
-        /// <param name="n">BSの数</param>
-        public void PostBackSpaces(int n)
-        {
-            if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, n={n}");
-            if (n > 0) PostVirtualKeys(new VKeyCombo(0, (uint)Keys.Back), n);
-        }
+        ///// <summary>
+        ///// アクティブウィンドウにBSを送出する
+        ///// </summary>
+        ///// <param name="n">BSの数</param>
+        //public void PostBackSpaces(int n)
+        //{
+        //    if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, n={n}");
+        //    if (n > 0) PostVirtualKeys(new VKeyCombo(0, (uint)Keys.Back), n);
+        //}
+
+        ///// <summary>
+        ///// アクティブウィンドウに文字列を送出する<br/>
+        ///// 文字送出前に nPreKeys * PreWmCharGuardMillisec だけ、wait を入れる。<br/>
+        ///// 必要ならクリップボード経由で送り付ける
+        ///// </summary>
+        //public void PostStringViaClipboardIfNeeded(char[] str, int nPreKeys)
+        //{
+        //    if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, WM_CHAR={WM_Defs.WM_CHAR:x}H, str=\"{str._toString()}\"");
+
+        //    if (ActiveWinHandle != IntPtr.Zero && str.Length > 0 && str[0] != 0) {
+        //        // Backspace の送出があった場合、すぐに PostMessage を呼ぶと、Backspace との順序が入れ替わることがあるっぽい？ので、少し wait を入れてみる
+        //        // オリジナルの漢直Winでは、waitではなくWaitForInputIdle()を呼んでいた。
+        //        // しかしオリジナル漢直では文字送出とBackspaceの入れ替わりがあったことを考えると、やはり一定時間 wait すべきではないかと考える。
+        //        if (nPreKeys > 0 && Settings.PreWmCharGuardMillisec > 0) {
+        //            int waitMs = (int)(Math.Pow(nPreKeys, Settings.ReductionExponet._lowLimit(0.5)) * Settings.PreWmCharGuardMillisec);
+        //            if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, nPreKeys={nPreKeys}, reductionExp={Settings.ReductionExponet}");
+        //            Helper.WaitMilliSeconds(waitMs);
+        //        }
+
+        //        int len = str._findIndex(x => x == 0);
+        //        if (Settings.MinLeghthViaClipboard <= 0 || len < Settings.MinLeghthViaClipboard) {
+        //            // 自前で送出
+        //            bool leftCtrl, rightCtrl;
+        //            upDownCtrlKey(true, out leftCtrl, out rightCtrl);
+
+        //            foreach (char ch in str) {
+        //                if (ch == 0) break;
+        //                PostChar(ch);
+        //            }
+
+        //            revertCtrlKey(leftCtrl, rightCtrl);
+        //        } else {
+        //            // クリップボードにコピー
+        //            Clipboard.SetText(new string(str, 0, len));
+        //            // Ctrl-V を送る (PostVirtualKeys の中でも upDownCtrlKey/revertCtrlKey をやっている)
+        //            PostVirtualKeys(VirtualKeys.GetVKeyComboFromHotKey(HotKeys.CTRL_V_HOTKEY).Value, 1);
+        //        }
+
+        //        lastOutputDt = DateTime.Now;
+        //    }
+        //}
 
         /// <summary>
         /// アクティブウィンドウに文字列を送出する<br/>
-        /// 文字送出前に nPreKeys * PreWmCharGuardMillisec だけ、wait を入れる。<br/>
+        /// 文字送出前に numBSだけBackspaceを送る<br/>
         /// 必要ならクリップボード経由で送り付ける
         /// </summary>
-        public void PostStringViaClipboardIfNeeded(char[] str, int nPreKeys)
+        public void SendStringViaClipboardIfNeeded(char[] str, int numBS)
         {
-            if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, WM_CHAR={WM_Defs.WM_CHAR:x}H, str=\"{str._toString()}\"");
+            if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}");
 
-            if (ActiveWinHandle != IntPtr.Zero && str.Length > 0 && str[0] != 0) {
-                // Backspace の送出があった場合、すぐに PostMessage を呼ぶと、Backspace との順序が入れ替わることがあるっぽい？ので、少し wait を入れてみる
-                // オリジナルの漢直Winでは、waitではなくWaitForInputIdle()を呼んでいた。
-                // しかしオリジナル漢直では文字送出とBackspaceの入れ替わりがあったことを考えると、やはり一定時間 wait すべきではないかと考える。
-                if (nPreKeys > 0 && Settings.PreWmCharGuardMillisec > 0) {
-                    int waitMs = (int)(Math.Pow(nPreKeys, Settings.ReductionExponet._lowLimit(0.5)) * Settings.PreWmCharGuardMillisec);
-                    if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, nPreKeys={nPreKeys}, reductionExp={Settings.ReductionExponet}");
-                    //Task.Delay(Settings.PreWmCharGuardMillisec * nPreKeys).Wait(); // ⇒こちらだと自身の設定ダイアログなどに向けた出力処理でBSの処理が後回しになってしまうようだ
-                    //Helper.WaitMilliSeconds(Settings.PreWmCharGuardMillisec * nPreKeys);
-                    Helper.WaitMilliSeconds(waitMs);
-                }
-
-                int len = str._findIndex(x => x == 0);
+            if (ActiveWinHandle != IntPtr.Zero && ((str._notEmpty() && str[0] != 0) || numBS > 0)) {
+                int len = str._isEmpty() ? 0 : str._findIndex(x => x == 0);
+                if (len < 0) len = str._safeLength();
                 if (Settings.MinLeghthViaClipboard <= 0 || len < Settings.MinLeghthViaClipboard) {
                     // 自前で送出
-                    bool leftCtrl, rightCtrl;
-                    upDownCtrlKey(true, out leftCtrl, out rightCtrl);
-
-                    foreach (char ch in str) {
-                        if (ch == 0) break;
-                        PostChar(ch);
-                    }
-
-                    revertCtrlKey(leftCtrl, rightCtrl);
+                    SendString(str, len, numBS);
                 } else {
                     // クリップボードにコピー
                     Clipboard.SetText(new string(str, 0, len));
                     // Ctrl-V を送る (PostVirtualKeys の中でも upDownCtrlKey/revertCtrlKey をやっている)
-                    PostVirtualKeys(VirtualKeys.GetVKeyComboFromHotKey(HotKeys.CTRL_V_HOTKEY).Value, 1);
+                    SendVirtualKeys(VirtualKeys.GetVKeyComboFromHotKey(HotKeys.CTRL_V_HOTKEY).Value, 1, numBS);
                 }
 
                 lastOutputDt = DateTime.Now;
