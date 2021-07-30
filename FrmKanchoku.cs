@@ -484,11 +484,6 @@ namespace KanchokuWS
                                         // ここではとくに何もしない(この後 prevHotkey が FULL_ESCAPE_HOTKEY になることで、DATE_STRING などの処理は初期化されるため)
                                     } else {
                                         switch (hotkey) {
-                                            //case HotKeys.HOTKEY_B: actWinHandler.PostVirtualKey((uint)Keys.B, 1, false); break;
-                                            //case HotKeys.HOTKEY_F: actWinHandler.PostVirtualKey((uint)Keys.F, 1, false); break;
-                                            //case HotKeys.HOTKEY_H: actWinHandler.PostVirtualKey((uint)Keys.H, 1, false); break;
-                                            //case HotKeys.HOTKEY_N: actWinHandler.PostVirtualKey((uint)Keys.N, 1, false); break;
-                                            //case HotKeys.HOTKEY_P: actWinHandler.PostVirtualKey((uint)Keys.P, 1, false); break;
                                             case HotKeys.HOTKEY_B: actWinHandler.SendVirtualKey((uint)Keys.B, 1); break;
                                             case HotKeys.HOTKEY_F: actWinHandler.SendVirtualKey((uint)Keys.F, 1); break;
                                             case HotKeys.HOTKEY_H: actWinHandler.SendVirtualKey((uint)Keys.H, 1); break;
@@ -983,12 +978,7 @@ namespace KanchokuWS
                 //nPreKeys += 1;
             }
 
-            //// BS送出(もしあれば)
-            //int nPreKeys = decoderOutput.numBackSpaces;     // この後の文字送出時のwaitを決めるファクタ
-            //actWinHandler.PostBackSpaces(nPreKeys);
-
-            //// 文字送出(もしあれば)
-            //actWinHandler.PostStringViaClipboardIfNeeded(decoderOutput.outString, nPreKeys);
+            // BSと文字送出(もしあれば)
            actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces);
 
             // 仮想キーボードにヘルプや文字候補を表示
@@ -1005,10 +995,8 @@ namespace KanchokuWS
             var combo = VirtualKeys.GetVKeyComboFromHotKey(hotkey);
             if (combo != null) {
                 if (hotkey < HotKeys.FUNCTIONAL_HOTKEY_ID_BASE) {
-                    //actWinHandler.PostVirtualKey(combo.Value.vkey, 1, false);
                     actWinHandler.SendVirtualKey(combo.Value.vkey, 1);
                 } else {
-                    //actWinHandler.PostVirtualKeys(combo.Value, 1);
                     actWinHandler.SendVirtualKeys(combo.Value, 1);
                 }
             }
@@ -1039,19 +1027,9 @@ namespace KanchokuWS
                 }
                 dtStr = dtNow.AddYears(-diffYear).ToString(fmt);
             }
-            //if (prevDateStrLength > 0) actWinHandler.PostBackSpaces(prevDateStrLength);
-            //if (dtStr._notEmpty()) {
-            //    actWinHandler.PostStringViaClipboardIfNeeded(dtStr.ToCharArray(), prevDateStrLength);
-            //}
             actWinHandler.SendStringViaClipboardIfNeeded(dtStr.ToCharArray(), prevDateStrLength);
             prevDateStrLength = dtStr.Length;
         }
-
-        //// Ctrlキーの上げ下げのために空のVkeyを送る
-        //private void postEmptyCombo()
-        //{
-        //    actWinHandler.PostVirtualKeys(VirtualKeys.EmptyCombo, 0);
-        //}
 
         // 候補選択のための矢印キーをホットキーにする
         private bool AreArrowKeysHotKey = false;

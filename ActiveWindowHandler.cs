@@ -151,97 +151,7 @@ namespace KanchokuWS
 
         private const uint MAPVK_VK_TO_VSC = 0;
 
-        //private void keybdEvent(uint vkey, uint eventFlags, bool bExt = false)
-        //{
-        //    // これは不要のようだ
-        //    //uint sc = MapVirtualKey(Vkeys.LCONTROL, MAPVK_VK_TO_VSC);
-        //    uint sc = 0;
-
-        //    if (bExt) eventFlags |= KEYEVENTF_EXTENDEDKEY;
-        //    keybd_event((byte)vkey, (byte)sc, eventFlags, UIntPtr.Zero);
-        //}
-
-        //private void keybd_up(uint vkey, bool bExt = false)
-        //{
-        //    keybdEvent(vkey, KEYEVENTF_KEYUP, bExt);
-        //}
-
-        //private void keybd_down(uint vkey, bool bExt = false)
-        //{
-        //    keybdEvent(vkey, KEYEVENTF_KEYDOWN, bExt);
-        //}
-
         private DateTime lastOutputDt;
-
-        ///// <summary>
-        ///// Ctrlキーの事前上げ下げ
-        ///// </summary>
-        ///// <param name="leftCtrl"></param>
-        ///// <param name="rightCtrl"></param>
-        //private void upDownCtrlKey(bool bUp, out bool leftCtrl, out bool rightCtrl)
-        //{
-        //    bool loggingFlag = Settings.LoggingHotKeyInfo;
-        //    int waitUpMs = (ActiveWinSettings?.CtrlUpWaitMillisec)._value(-1)._geZeroOr(Settings.CtrlKeyUpGuardMillisec);
-        //    leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-        //    rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
-        //    if (bUp && (leftCtrl || rightCtrl)) {
-        //        // 両方一諸に上げるようにした
-        //        keybd_up(VirtualKeys.CONTROL);              // extended を付けないと LCONTROL 扱いのようだ
-        //        keybd_up(VirtualKeys.CONTROL, true);        // extended を付けると RCONTROL 扱いのようだ
-        //        if (loggingFlag) logger.InfoH($"Ctrl Up and wait {waitUpMs} millisec");
-        //        if (waitUpMs > 0) {
-        //            Task.Delay(waitUpMs).Wait();            // やはりこれが無いと Ctrlが有効なままBSが渡ったりする
-        //        }
-        //    } else if (!bUp && !(leftCtrl || rightCtrl)) {
-        //        keybd_down(VirtualKeys.CONTROL);              // extended を付けないと LCONTROL 扱いのようだ
-        //        keybd_down(VirtualKeys.CONTROL, true);        // extended を付けると RCONTROL 扱いのようだ
-        //        if (loggingFlag) logger.InfoH($"Ctrl Down and wait {waitUpMs} millisec");
-        //        if (waitUpMs > 0) {
-        //            Task.Delay(waitUpMs).Wait();            // やはりこれが無いと Ctrlが有効なままBSが渡ったりする
-        //        }
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Ctrlキーの状態を戻す
-        ///// </summary>
-        ///// <param name="prevLeftCtrl"></param>
-        ///// <param name="prevRightCtrl"></param>
-        //private void revertCtrlKey(bool prevLeftCtrl, bool prevRightCtrl)
-        //{
-        //    bool loggingFlag = Settings.LoggingHotKeyInfo;
-        //    int waitDownMs = (ActiveWinSettings?.CtrlDownWaitMillisec)._value(-1)._geZeroOr(Settings.CtrlKeyDownGuardMillisec);
-
-        //    bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-        //    if (prevLeftCtrl && !leftCtrl) {
-        //        if (loggingFlag) logger.InfoH($"LeftCtrl Down after waiting {waitDownMs} millisec");
-        //        if (waitDownMs > 0) {
-        //            Task.Delay(waitDownMs).Wait();
-        //        }
-        //        keybd_down(VirtualKeys.CONTROL);            // extended を付けないと LCONTROL 扱いのようだ
-        //    } else if (!prevLeftCtrl && leftCtrl) {
-        //        if (loggingFlag) logger.InfoH($"LeftCtrl Up after waiting {waitDownMs} millisec");
-        //        if (waitDownMs > 0) {
-        //            Task.Delay(waitDownMs).Wait();
-        //        }
-        //        keybd_up(VirtualKeys.CONTROL);            // extended を付けないと LCONTROL 扱いのようだ
-        //    }
-
-        //    bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
-        //    if (prevRightCtrl && !rightCtrl) {
-        //        if (loggingFlag) logger.InfoH($"RightCtrl Down after waiting {waitDownMs} millisec");
-        //        if (waitDownMs > 0) {
-        //            Task.Delay(waitDownMs).Wait();
-        //        }
-        //        keybd_down(VirtualKeys.CONTROL, true);      // extended を付けると RCONTROL 扱いのようだ
-        //    } else if (!prevRightCtrl && rightCtrl) {
-        //        if (loggingFlag) logger.InfoH($"RightCtrl Up after waiting {waitDownMs} millisec");
-        //        if (waitDownMs > 0) {
-        //            Task.Delay(waitDownMs).Wait();
-        //        }
-        //        keybd_up(VirtualKeys.CONTROL, true);      // extended を付けると RCONTROL 扱いのようだ
-        //    }
-        //}
 
         private void initializeKeyboardInput(ref INPUT input)
         {
@@ -480,6 +390,10 @@ namespace KanchokuWS
 
         BoolObject syncPostVkey = new BoolObject();
 
+        /// <summary>
+        /// 仮想キーComboを送出する<br/>
+        /// </summary>
+        /// <param name="n">キーダウンの数</param>
         public void SendVirtualKeys(VKeyCombo combo, int n)
         {
             bool loggingFlag = Settings.LoggingHotKeyInfo;
@@ -536,136 +450,10 @@ namespace KanchokuWS
             sendInputsWithHandlingHotkey((uint)idx, inputs, vkey);
         }
 
-        ///// <summary>
-        ///// アクティブウィンドウに文字を送出する
-        ///// </summary>
-        ///// <param name="ch"></param>
-        //public void PostChar(char ch)
-        //{
-        //    PostMessageW(ActiveWinHandle, WM_Defs.WM_CHAR, ch, 1);
-        //    //PostMessageW(ActiveWinHandle, WM_Defs.WM_IME_CHAR, ch, 1);
-        //    //if (ch >= 0x100) CharCountDic[ch] = CharCountDic._safeGet(ch) + 1;
-        //}
-
-        ///// <summary>
-        ///// アクティブウィンドウに仮想キーを送出する<br/>
-        ///// bCheckCtrl == true なら、 Ctrlキーが立っている場合は、何もせず戻る
-        ///// </summary>
-        ///// <param name="n">キーダウンの数</param>
-        //public void PostVirtualKey(uint vkey, int n, bool bCheckCtrl)
-        //{
-        //    if (Settings.LoggingHotKeyInfo) logger.InfoH($"vkey={vkey:x}H, n={n}");
-
-        //    if (bCheckCtrl) {
-        //        if ((GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0) {
-        //            if (Settings.LoggingHotKeyInfo) logger.InfoH("LeftCtrl ON; return");
-        //            return;
-        //        }
-        //        if ((GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0) {
-        //            if (Settings.LoggingHotKeyInfo) logger.InfoH("RightCtrl ON; return");
-        //            return;
-        //        }
-        //    }
-
-        //    // まずホットキーの解除
-        //    int hotkey = VirtualKeys.GetHotKeyFromCombo(0, vkey);
-        //    int ctrlHotkey = VirtualKeys.GetHotKeyFromCombo(KeyModifiers.MOD_CONTROL, vkey);
-        //    HotKeyHandler.UnregisterHotKeyTemporary(hotkey);
-        //    HotKeyHandler.UnregisterHotKeyTemporary(ctrlHotkey);
-        //    // キーの Down/Up
-        //    for (int i = 0; i < n; ++i) {
-        //        keybd_down(vkey);
-        //        keybd_up(vkey);
-        //    }
-        //    // ホットキーの再登録
-        //    HotKeyHandler.ResumeHotKey(hotkey);
-        //    HotKeyHandler.ResumeHotKey(ctrlHotkey);
-
-        //    // Enterキーだったら、すぐに仮想鍵盤を移動するように MinValue とする
-        //    lastOutputDt = vkey == (uint)Keys.Enter ? DateTime.MinValue : DateTime.Now;
-        //}
-
-        ///// <summary>
-        ///// アクティブウィンドウにVkeyを送出する
-        ///// </summary>
-        ///// <param name="n">vkeyの数</param>
-        //public void PostVirtualKeys(VKeyCombo combo, int n)
-        //{
-        //    bool loggingFlag = Settings.LoggingHotKeyInfo;
-        //    if (loggingFlag) logger.InfoH($"CALLED: combo=({combo.modifier:x}H:{combo.vkey:x}H), numKeys={n}");
-        //    if (syncPostVkey.BusyCheck()) {
-        //        if (loggingFlag) logger.InfoH($"IGNORED: numKeys={n}");
-        //        return;
-        //    }
-        //    using (syncPostVkey) {
-        //        lock (syncPostVkey) {
-        //            bool leftCtrl = false, rightCtrl = false;
-        //            bool bUp = (combo.modifier & KeyModifiers.MOD_CONTROL) == 0;
-        //            upDownCtrlKey(bUp, out leftCtrl, out rightCtrl);
-
-        //            PostVirtualKey(combo.vkey, n, false);
-
-        //            revertCtrlKey(leftCtrl, rightCtrl);
-        //        }
-        //    }
-        //}
-
-        ///// <summary>
-        ///// アクティブウィンドウにBSを送出する
-        ///// </summary>
-        ///// <param name="n">BSの数</param>
-        //public void PostBackSpaces(int n)
-        //{
-        //    if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, n={n}");
-        //    if (n > 0) PostVirtualKeys(new VKeyCombo(0, (uint)Keys.Back), n);
-        //}
-
-        ///// <summary>
-        ///// アクティブウィンドウに文字列を送出する<br/>
-        ///// 文字送出前に nPreKeys * PreWmCharGuardMillisec だけ、wait を入れる。<br/>
-        ///// 必要ならクリップボード経由で送り付ける
-        ///// </summary>
-        //public void PostStringViaClipboardIfNeeded(char[] str, int nPreKeys)
-        //{
-        //    if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, WM_CHAR={WM_Defs.WM_CHAR:x}H, str=\"{str._toString()}\"");
-
-        //    if (ActiveWinHandle != IntPtr.Zero && str.Length > 0 && str[0] != 0) {
-        //        // Backspace の送出があった場合、すぐに PostMessage を呼ぶと、Backspace との順序が入れ替わることがあるっぽい？ので、少し wait を入れてみる
-        //        // オリジナルの漢直Winでは、waitではなくWaitForInputIdle()を呼んでいた。
-        //        // しかしオリジナル漢直では文字送出とBackspaceの入れ替わりがあったことを考えると、やはり一定時間 wait すべきではないかと考える。
-        //        if (nPreKeys > 0 && Settings.PreWmCharGuardMillisec > 0) {
-        //            int waitMs = (int)(Math.Pow(nPreKeys, Settings.ReductionExponet._lowLimit(0.5)) * Settings.PreWmCharGuardMillisec);
-        //            if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, nPreKeys={nPreKeys}, reductionExp={Settings.ReductionExponet}");
-        //            Helper.WaitMilliSeconds(waitMs);
-        //        }
-
-        //        int len = str._findIndex(x => x == 0);
-        //        if (Settings.MinLeghthViaClipboard <= 0 || len < Settings.MinLeghthViaClipboard) {
-        //            // 自前で送出
-        //            bool leftCtrl, rightCtrl;
-        //            upDownCtrlKey(true, out leftCtrl, out rightCtrl);
-
-        //            foreach (char ch in str) {
-        //                if (ch == 0) break;
-        //                PostChar(ch);
-        //            }
-
-        //            revertCtrlKey(leftCtrl, rightCtrl);
-        //        } else {
-        //            // クリップボードにコピー
-        //            Clipboard.SetText(new string(str, 0, len));
-        //            // Ctrl-V を送る (PostVirtualKeys の中でも upDownCtrlKey/revertCtrlKey をやっている)
-        //            PostVirtualKeys(VirtualKeys.GetVKeyComboFromHotKey(HotKeys.CTRL_V_HOTKEY).Value, 1);
-        //        }
-
-        //        lastOutputDt = DateTime.Now;
-        //    }
-        //}
-
         /// <summary>
-        /// アクティブウィンドウに文字列を送出する<br/>
+        /// 文字列を送出する<br/>
         /// 文字送出前に numBSだけBackspaceを送る<br/>
-        /// 必要ならクリップボードにコピーする
+        /// 必要ならクリップボードにコピーしてから Ctrl-V を送る
         /// </summary>
         public void SendStringViaClipboardIfNeeded(char[] str, int numBS)
         {
@@ -680,15 +468,13 @@ namespace KanchokuWS
                 } else {
                     // クリップボードにコピー
                     Clipboard.SetText(new string(str, 0, len));
-                    // Ctrl-V を送る (PostVirtualKeys の中でも upDownCtrlKey/revertCtrlKey をやっている)
-                    //SendVirtualKeys(VirtualKeys.GetVKeyComboFromHotKey(HotKeys.CTRL_V_HOTKEY).Value, 1, numBS);
+                    // Ctrl-V を送る (SendVirtualKeys の中でも upDownCtrlKey/revertCtrlKey をやっている)
                     SendString(null, 0, numBS);
                     if (numBS > 0 && Settings.PreWmCharGuardMillisec > 0) {
                         int waitMs = (int)(Math.Pow(numBS, Settings.ReductionExponet._lowLimit(0.5)) * Settings.PreWmCharGuardMillisec);
                         if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
                         Helper.WaitMilliSeconds(waitMs);
                     }
-                    //PostVirtualKeys(VirtualKeys.GetVKeyComboFromHotKey(HotKeys.CTRL_V_HOTKEY).Value, 1);
                     SendVirtualKeys(VirtualKeys.GetVKeyComboFromHotKey(HotKeys.CTRL_V_HOTKEY).Value, 1);
                 }
 
