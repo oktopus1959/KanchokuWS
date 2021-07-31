@@ -178,6 +178,7 @@
     <ClInclude Include="History\HistoryDic.h" />
     <ClInclude Include="History\HistoryStayState.h" />
     <ClInclude Include="KeysAndChars\EasyChars.h" />
+    <ClInclude Include="KeysAndChars\HankakuKatakanaOneShot.h" />
     <ClInclude Include="KeysAndChars\HotkeyToChars.h" />
     <ClInclude Include="KeysAndChars\hotkey_id_defs.h" />
     <ClInclude Include="KeysAndChars\Katakana.h" />
@@ -226,6 +227,7 @@
     <ClCompile Include="History\History.cpp" />
     <ClCompile Include="History\HistoryDic.cpp" />
     <ClCompile Include="KeysAndChars\EasyChars.cpp" />
+    <ClCompile Include="KeysAndChars\HankakuKatakanaOneShotState.cpp" />
     <ClCompile Include="KeysAndChars\HotkeyToChars.cpp" />
     <ClCompile Include="KeysAndChars\hotkey_id_defs.cpp" />
     <ClCompile Include="KeysAndChars\KatakanaOneShotState.cpp" />

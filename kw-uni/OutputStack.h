@@ -186,6 +186,12 @@ public:
         return utils::find_tail_kanji_or_katakana_str(backStringUpto(len, OutputStack::FLAG_NEW_LINE));
     }
 
+    // 改行以降で、出力履歴の末尾から len 文字までのカタカナ文字列を取得する
+    template<typename T>
+    inline T GetLastKatakanaStr(size_t len = 20) const {
+        return utils::find_tail_katakana_str(backStringUpto(len, OutputStack::FLAG_NEW_LINE));
+    }
+
     // 改行以降で、出力履歴の末尾から len 文字までの日本語文字列を取得する
     template<typename T>
     inline T GetLastJapaneseStr(size_t len) const {
