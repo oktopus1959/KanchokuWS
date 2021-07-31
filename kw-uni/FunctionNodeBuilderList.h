@@ -17,6 +17,7 @@
 
 void FunctionNodeManager::AddFunctionNodeBuilders() {
     // 以下に新しい機能のためのビルダーとその指定子を追加
+    // ここで指定する名前は、Settings.cpp の機能へのキー割り当ての変更で使われる
     addFunctionNodeBuilder(_T("^"), _T("myChar"), new MyCharNodeBuilder());
     addFunctionNodeBuilder(_T("v"), _T("prevChar"), new PrevCharNodeBuilder());
     addFunctionNodeBuilder(_T("B"), _T("bushuComp"), new BushuCompNodeBuilder());

@@ -66,6 +66,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
 
     SET_BOOL_VALUE(removeOneStrokeByBackspace);
 
+    // 機能へのキー割り当ての変更
     RESET_STROKE_FUNC("zenkakuMode");
     RESET_STROKE_FUNC("zenkakuOneChar");
     RESET_STROKE_FUNC("nextThrough");
@@ -77,6 +78,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     RESET_STROKE_FUNC("bushuAssocDirect");
     RESET_STROKE_FUNC("katakanaMode");
     RESET_STROKE_FUNC("katakanaOneShot");
+    RESET_STROKE_FUNC("hankakuKatakanaOneShot");
     if (GET_BOOL_VALUE(mazegakiByShiftSpace)) StrokeTableNode::AssignFucntion(utils::format(_T("%d"), HOTKEY_STROKE_49), _T("mazegaki"));
 
     // for Debug
