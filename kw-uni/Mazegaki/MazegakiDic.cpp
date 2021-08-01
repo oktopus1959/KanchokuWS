@@ -579,10 +579,11 @@ namespace {
                             LOG_DEBUGH(_T("keyStem=%s, stem=%s, xfer=%s, ifx=%s, user=%s, deleted=%s"),
                                 MAKE_WPTR(keyStem), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
                             if (p->deleted) continue;
+                            if (keyStem == p->xfer) continue;   // 読み語幹が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケース)
 
                             candidates_t* pCands = 0;
                             if (keyStem == p->stem) {
-                                // 語幹が完全一致
+                                // 読み語幹が完全一致
                                 pCands = &cands1;
                             } else if (mazeSearch && order_matched(keyStem, p)) {
                                 // key に漢字が含まれている場合は、ひらがな・漢字の出現順序の一致を確認
