@@ -3,9 +3,13 @@
 #include "string_type.h"
 
 namespace {
+    wchar_t TOTEN = 0x3001;     // 、
+
+    wchar_t KUTEN = 0x3002;     // 。
+
     wchar_t NAKAGURO = 0x30fb;  // '・'
 
-    wchar_t CHOON = 0x30fc;  // 'ー'
+    wchar_t CHOON = 0x30fc;     // 'ー'
 
     inline MString to_mstr(mchar_t x) {
         return x != 0 ? MString(1, x) : MString();
@@ -455,6 +459,14 @@ namespace utils
         return is_hirakana(ch);
     }
 
+    inline bool is_punct(mchar_t ch) {
+        return ch == TOTEN || ch == KUTEN;
+    }
+
+    inline bool is_hiragana_or_punct(mchar_t ch) {
+        return is_hiragana(ch) || is_punct(ch);
+    }
+
     // 中黒・長音も含むひらがなか
     inline bool is_hiragana_or_etc(mchar_t ch) {
         return is_hirakana(ch) || ch == NAKAGURO || ch == CHOON;
@@ -541,6 +553,16 @@ namespace utils
     inline size_t count_tail_hiragana(const T& s) {
         size_t pos = s.size();
         while (pos > 0 && is_hiragana(s[pos - 1])) {
+            --pos;
+        }
+        return s.size() - pos;
+    }
+
+    // 末尾のひらがな部分の長さを取得(句読点を含む)
+    template<typename T>
+    inline size_t count_tail_hiragana_including_punct(const T& s) {
+        size_t pos = s.size();
+        while (pos > 0 && is_hiragana_or_punct(s[pos - 1])) {
             --pos;
         }
         return s.size() - pos;

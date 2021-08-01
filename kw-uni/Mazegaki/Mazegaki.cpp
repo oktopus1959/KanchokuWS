@@ -38,7 +38,7 @@ namespace {
     public:
         // 読みに対する全交ぜ書き候補を取得する
         const std::vector<MString>& GetAllCandidates(const MString& yomiFull) {
-            LOG_INFO(_T("ENTER: yomiFull=%s"), MAKE_WPTR(yomiFull));
+            LOG_INFOH(_T("ENTER: yomiFull=%s"), MAKE_WPTR(yomiFull));
             mazeCandidates.clear();
             cand2len.clear();
             firstCandYomi.clear();

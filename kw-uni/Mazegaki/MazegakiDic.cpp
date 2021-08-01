@@ -45,20 +45,21 @@ namespace {
     // 五段活用「う」(会う)
     mchar_t IFX_WU_5[] = { _WCHAR("わ"), _WCHAR("い"), _WCHAR("う"), _WCHAR("え"), _WCHAR("お"), _WCHAR("っ"), 0 };
     // サ変活用「する」(開発する)(達する、愛するは、五段として登録する)
-    mchar_t IFX_SURU[] = { STEM_OK, _WCHAR("し"), _WCHAR("す"), 0 };
+    mchar_t IFX_SURU[] = { STEM_OK, _WCHAR("し"), _WCHAR("す"), _WCHAR("、"), _WCHAR("。"), 0 };
     // ザ変活用「ずる」(信ずる)
     mchar_t IFX_ZURU[] = { _WCHAR("じ"), _WCHAR("ず"), _WCHAR("ぜ"), 0 };
     // 形容詞「い」(美しい)
     mchar_t IFX_I[] = { _WCHAR("い"), _WCHAR("か"), _WCHAR("き"), _WCHAR("く"), _WCHAR("け"),  _WCHAR("さ"), 0 };
     // 形容動詞「な」(静かな)
-    mchar_t IFX_NA[] = { STEM_OK, _WCHAR("な"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), 0 };
+    mchar_t IFX_NA[] = { STEM_OK, _WCHAR("な"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("、"), _WCHAR("。"), 0 };
     // 形容詞「の」(本当の)
-    mchar_t IFX_NO[] = { STEM_OK, _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), 0 };
+    mchar_t IFX_NO[] = { STEM_OK, _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("、"), _WCHAR("。"), 0 };
     // 無活用
     //mchar_t IFX_NONE[] = { STEM_OK, 0 };
     mchar_t IFX_NONE[] = { STEM_OK,
         _WCHAR("か")/*から*/, _WCHAR("が"), _WCHAR("こ")/*こそ*/, _WCHAR("ご")/*ごと*/, _WCHAR("さ")/*さえ*/, _WCHAR("じ")/*じゃ*/, _WCHAR("す")/*すら*/,
-        _WCHAR("だ"), _WCHAR("で"), _WCHAR("と"), _WCHAR("な")/*なら*/, _WCHAR("に"), _WCHAR("の"), _WCHAR("は"), _WCHAR("へ"), _WCHAR("も"), _WCHAR("を"), 0 };
+        _WCHAR("だ"), _WCHAR("で"), _WCHAR("と"), _WCHAR("な")/*なら*/, _WCHAR("に"), _WCHAR("の"), _WCHAR("は"), _WCHAR("へ"), _WCHAR("も"), _WCHAR("を"),
+        _WCHAR("、"), _WCHAR("。"), 0 };
 
     inline bool find_gobi(const mchar_t* ifxes, mchar_t mc) {
         while (*ifxes != 0) {
@@ -539,7 +540,7 @@ namespace {
             if (!key.empty()) {
                 size_t stemMinLen = count_head_wildcard(key) + 1;   // 読みの部分にはワイルドカード以外の文字が少なくとも1文字は必要
                 if (stemMinLen <= key.size()) {
-                    size_t tailHiraganaLen = min(utils::count_tail_hiragana(key), key.size() - stemMinLen);
+                    size_t tailHiraganaLen = min(utils::count_tail_hiragana_including_punct(key), key.size() - stemMinLen);
                     size_t gobiMaxLen = min(tailHiraganaLen, SETTINGS->mazeGobiMaxLen);
                     stemMinLen = key.size() > gobiMaxLen ? key.size() - gobiMaxLen : 1;
                     std::set<const MazeEntry*> entrySet;

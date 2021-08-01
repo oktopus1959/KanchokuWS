@@ -166,6 +166,7 @@ public:
 
     inline MString GetLastOutputStackStrUptoNL(size_t len) const { return GetLastOutputStackStr(len, OutputStack::FLAG_NEW_LINE); }
 
+    // ブロッカーを反映した文字列を取得
     inline MString OutputStackBackStrWithFlagUpto(size_t len) const { return backStringWithFlagUpto(len); }
 
     inline bool isLastOutputStackCharBlocker() const {
