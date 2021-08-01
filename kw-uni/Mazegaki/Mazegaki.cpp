@@ -148,8 +148,14 @@ namespace {
 
             if (!MAZEGAKI_DIC) return false;
 
+            // 直前に変換していたか
+            MString prevYomi;
+            size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi, STATE_COMMON->GetTotalHotKeyCount());
+
             // 最大読み長までの長さの読みに対する交ぜ書き候補を全て取得する
-            const auto& cands = candsByLen.GetAllCandidates(OUTPUT_STACK->BackStringUptoNewLine(SETTINGS->mazeYomiMaxLen));
+            const auto& cands = candsByLen.GetAllCandidates(
+                (!prevYomi.empty() && prevXferLen > 0) ? prevYomi
+                : OUTPUT_STACK->BackStringUptoHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen));
             if (cands.empty()) {
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: no candidate"));
@@ -162,6 +168,10 @@ namespace {
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));
                 return false;
+            }
+            // 直前の変換があればそれを取り消す
+            if (!prevYomi.empty() && prevXferLen > 0) {
+                STATE_COMMON->SetOutString(prevYomi, prevXferLen);
             }
             // 候補があったので仮想鍵盤に表示
             setCandidatesVKB();

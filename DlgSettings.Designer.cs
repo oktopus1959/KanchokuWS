@@ -2585,8 +2585,8 @@ namespace KanchokuWS
             this.checkBox_mazegakiSelectFirstCand.Size = new System.Drawing.Size(171, 19);
             this.checkBox_mazegakiSelectFirstCand.TabIndex = 1;
             this.checkBox_mazegakiSelectFirstCand.Text = "先頭候補を無条件に出力する";
-            this.toolTip1.SetToolTip(this.checkBox_mazegakiSelectFirstCand, "交ぜ書き変換の結果が複数あっても、先頭候補を無条件に出力します。\r\n\r\n変換結果が出力された直後であれば、 Esc キーで変換前の状態に戻せます。\r\nその後交ぜ書" +
-        "き変換を行うと、先頭候補の出力は行わず、複数候補が\r\n表示されるようになります。");
+            this.toolTip1.SetToolTip(this.checkBox_mazegakiSelectFirstCand, "交ぜ書き変換の結果が複数あっても、先頭候補を無条件に出力します。\r\n\r\n変換結果が出力された直後であれば、 再度交ぜ書き変換を呼び出すことで\r\n（複数候補があれば" +
+        "）縦列鍵盤表示になります。\r\nまた、Esc キーで変換前の状態に戻せます。\r\nその後交ぜ書き変換を行うと、縦列鍵盤表示となります。");
             this.checkBox_mazegakiSelectFirstCand.UseVisualStyleBackColor = true;
             // 
             // checkBox_mazegakiByShiftSpace

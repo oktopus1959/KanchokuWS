@@ -124,6 +124,26 @@ public:
         return size() - pos;
     }
 
+    // 改行を含まない末尾部分で、句読点の直後までの長さ(ただし末尾句読点は含める)
+    inline size_t tail_size_upto_flag_or_punct(unsigned short flag) const {
+        if (size() == 0) return 0;
+        bool otherThanPunct = false;
+        size_t pos = size();
+        while (pos > 0) {
+            auto m = stack[pos - 1];
+            if (m.chr == '\n' || (m.flag & flag) != 0) break;
+
+            if (utils::is_punct(m.chr)) {
+                if (otherThanPunct) break;     // 句読点以外のものが存在し、再び句読点が見つかったので、ここで終わり
+                // 初めに見つかたった(つまり末尾の)句読点はスルー
+            } else {
+                otherThanPunct = true;
+            }
+            --pos;
+        }
+        return size() - pos;
+    }
+
     // 改行を含まない末尾部分の長さ
     inline size_t tail_size() const {
         return tail_size_upto(0);
@@ -132,6 +152,11 @@ public:
     // 改行を含まない末尾部分(最大長maxlen)を返す
     inline MString BackStringUptoNewLine(size_t maxlen) const {
         return tail_string(maxlen, tail_size());
+    }
+
+    // 改行を含まない末尾部分(最大長maxlen)で、履歴ブロッカーまたは句読点までの部分文字列を返す(末尾の句読点は含める)
+    inline MString BackStringUptoHistBlockerOrPunct(size_t maxlen) const {
+        return tail_string(maxlen, tail_size_upto_flag_or_punct(OutputStack::FLAG_BLOCK_HIST));
     }
 
     // 改行を含まない末尾部分(最大長maxlen)で、指定の flag の直後までの部分文字列を返す

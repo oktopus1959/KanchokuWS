@@ -117,32 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label69.Text" xml:space="preserve">
-    <value>機能を呼び出すための打鍵列を設定します。
-
-打鍵列は、漢直キーコード(00～49)をカンマ
-区切りで並べたものとなります。キーコードに
-ついては、ここにマウスポインタを置いて表示
-されるツールチップを参照してください。
-
-例：(カッコ内は 106 key による打鍵文字)
-交ぜ書き変換 「23,26」  (f j)
-全角変換(モード) 「42」 (^)
-カタカナ変換(一括) 「47」 (])</value>
-  </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="label69.ToolTip" xml:space="preserve">
-    <value>106 (qwerty) でのコード表
-
-1=00, 2=01, 3=02, 4=03, 5=04, 6=05, 7=06, 8=07, 9=08, 0=09
-q=10, w=11, e=12, r=13, t=14, y=15, u=16, i=17, o=18, p=19
-a=20, s=21, d=22, f=23, g=24, h=25, j=26, k=27, l=28, ;=29,
-z=30, x=31, c=32, v=33, b=34, n=35, m=36, ,=37, .=38, /=39,
-SP=40, -=41, ^=42, ￥=43, @=44, [=45, :=46, ]=47, ＼=48,
-Shift+Space=49</value>
-  </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
@@ -363,6 +340,29 @@ MS ゴシック、メイリオ、游ゴシックについては、ある程度�
 できます。
 
 </value>
+  </data>
+  <data name="label69.Text" xml:space="preserve">
+    <value>機能を呼び出すための打鍵列を設定します。
+
+打鍵列は、漢直キーコード(00～49)をカンマ
+区切りで並べたものとなります。キーコードに
+ついては、ここにマウスポインタを置いて表示
+されるツールチップを参照してください。
+
+例：(カッコ内は 106 key による打鍵文字)
+交ぜ書き変換 「23,26」  (f j)
+全角変換(モード) 「42」 (^)
+カタカナ変換(一括) 「47」 (])</value>
+  </data>
+  <data name="label69.ToolTip" xml:space="preserve">
+    <value>106 (qwerty) でのコード表
+
+1=00, 2=01, 3=02, 4=03, 5=04, 6=05, 7=06, 8=07, 9=08, 0=09
+q=10, w=11, e=12, r=13, t=14, y=15, u=16, i=17, o=18, p=19
+a=20, s=21, d=22, f=23, g=24, h=25, j=26, k=27, l=28, ;=29,
+z=30, x=31, c=32, v=33, b=34, n=35, m=36, ,=37, .=38, /=39,
+SP=40, -=41, ^=42, ￥=43, @=44, [=45, :=46, ]=47, ＼=48,
+Shift+Space=49</value>
   </data>
   <data name="textBox_dateStringFormat.ToolTip" xml:space="preserve">
     <value>Ctrl+; および Ctrl+Shift+; で出力する日付のフォーマットを設定します。

@@ -25,11 +25,12 @@ class MazegakiNode : public FunctionNode {
     }
 
     size_t GetPrevYomiInfo(MString& yomi, size_t count) {
-        selectFirstCandDisabled = true;
         if (count == hotkeyCount + 1) {
+            selectFirstCandDisabled = true;
             yomi = prevYomi;
             return prevXferLen;
         }
+        selectFirstCandDisabled = false;
         return 0;
     }
 
