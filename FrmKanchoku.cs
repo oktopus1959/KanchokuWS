@@ -419,6 +419,9 @@ namespace KanchokuWS
         /// <summary> Decoder処理中に受信した WM_HOTKEY を無視するためのフラグ </summary>
         private bool busyFlag = false;
 
+        /// <summary> busy時に受信したホットキー </summary>
+        private int busyHotkey = -1;
+
         public bool IsVkbShown => Settings.VirtualKeyboardShowStrokeCountEffective > 0 && Settings.VirtualKeyboardShowStrokeCountEffective <= decoderOutput.GetStrokeCount() + 1;
 
         /// <summary>
@@ -462,74 +465,83 @@ namespace KanchokuWS
                 }
 
                 if (!busyFlag) {
-                    // ホットキーの処理中ではない
                     busyFlag = true;
-                    try {
-                        if (hotkey >= 0 && hotkey < HotKeys.GLOBAL_HOTKEY_ID_BASE) {
-                            // hotkey の変換
-                            hotkey = convertSpecificHotkey(hotkey);
-                            if (hotkey >= 0) {
-                                if (hotkey == HotKeys.DATE_STRING_HOTKEY1 || hotkey == HotKeys.DATE_STRING_HOTKEY2) {
-                                    // Ctrl+; -- 日付の出力
-                                    postTodayDate(hotkey);
-                                } else if (IsDecoderActive) {
-                                    // Decoder ON
-                                    // 入力標識の消去
-                                    frmMode.Vanish();
-                                    // 通常のストロークキーまたは機能キー(BSとか矢印キーとかCttrl-Hとか)
-                                    handleKeyDecoder(hotkey);
-                                } else {
-                                    // Decoder OFF
-                                    if (hotkey == HotKeys.FULL_ESCAPE_HOTKEY) {
-                                        // ここではとくに何もしない(この後 prevHotkey が FULL_ESCAPE_HOTKEY になることで、DATE_STRING などの処理は初期化されるため)
+                    while (busyFlag) {
+                        // ホットキーの処理中ではない
+                        try {
+                            if (hotkey >= 0 && hotkey < HotKeys.GLOBAL_HOTKEY_ID_BASE) {
+                                // hotkey の変換
+                                hotkey = convertSpecificHotkey(hotkey);
+                                if (hotkey >= 0) {
+                                    if (hotkey == HotKeys.DATE_STRING_HOTKEY1 || hotkey == HotKeys.DATE_STRING_HOTKEY2) {
+                                        // Ctrl+; -- 日付の出力
+                                        postTodayDate(hotkey);
+                                    } else if (IsDecoderActive) {
+                                        // Decoder ON
+                                        // 入力標識の消去
+                                        frmMode.Vanish();
+                                        // 通常のストロークキーまたは機能キー(BSとか矢印キーとかCttrl-Hとか)
+                                        handleKeyDecoder(hotkey);
                                     } else {
-                                        switch (hotkey) {
-                                            case HotKeys.HOTKEY_B: actWinHandler.SendVirtualKey((uint)Keys.B, 1); break;
-                                            case HotKeys.HOTKEY_F: actWinHandler.SendVirtualKey((uint)Keys.F, 1); break;
-                                            case HotKeys.HOTKEY_H: actWinHandler.SendVirtualKey((uint)Keys.H, 1); break;
-                                            case HotKeys.HOTKEY_N: actWinHandler.SendVirtualKey((uint)Keys.N, 1); break;
-                                            case HotKeys.HOTKEY_P: actWinHandler.SendVirtualKey((uint)Keys.P, 1); break;
-                                            default: postVkeyFromHotkey(hotkey); break;
+                                        // Decoder OFF
+                                        if (hotkey == HotKeys.FULL_ESCAPE_HOTKEY) {
+                                            // ここではとくに何もしない(この後 prevHotkey が FULL_ESCAPE_HOTKEY になることで、DATE_STRING などの処理は初期化されるため)
+                                        } else {
+                                            switch (hotkey) {
+                                                case HotKeys.HOTKEY_B: actWinHandler.SendVirtualKey((uint)Keys.B, 1); break;
+                                                case HotKeys.HOTKEY_F: actWinHandler.SendVirtualKey((uint)Keys.F, 1); break;
+                                                case HotKeys.HOTKEY_H: actWinHandler.SendVirtualKey((uint)Keys.H, 1); break;
+                                                case HotKeys.HOTKEY_N: actWinHandler.SendVirtualKey((uint)Keys.N, 1); break;
+                                                case HotKeys.HOTKEY_P: actWinHandler.SendVirtualKey((uint)Keys.P, 1); break;
+                                                default: postVkeyFromHotkey(hotkey); break;
+                                            }
                                         }
                                     }
+                                    if (Settings.DelayAfterProcessHotkey) {
+                                        //Task.Delay(1000).Wait();
+                                        Helper.WaitMilliSeconds(1000);
+                                        logger.InfoH("OK");
+                                    }
                                 }
-                                if (Settings.DelayAfterProcessHotkey) {
-                                    //Task.Delay(1000).Wait();
-                                    Helper.WaitMilliSeconds(1000);
-                                    logger.InfoH("OK");
+                            } else {
+                                switch (hotkey) {
+                                    case HotKeys.ACTIVE_HOTKEY:
+                                    case HotKeys.ACTIVE2_HOTKEY:
+                                    case HotKeys.INACTIVE_HOTKEY:
+                                    case HotKeys.INACTIVE2_HOTKEY:
+                                        ToggleActiveState();
+                                        break;
+                                    case HotKeys.DATE_STRING_HOTKEY1:
+                                    case HotKeys.DATE_STRING_HOTKEY2:
+                                        // Ctrl+; -- 日付の出力
+                                        postTodayDate(hotkey);
+                                        break;
+                                    case HotKeys.STROKE_HELP_ROTATION_HOTKEY:
+                                    case HotKeys.STROKE_HELP_UNROTATION_HOTKEY:
+                                        // 入力標識の消去
+                                        frmMode.Vanish();
+                                        // 仮想鍵盤のヘルプ表示の切り替え(モード標識表示時なら一時的に仮想鍵盤表示)
+                                        int effectiveCnt = Settings.VirtualKeyboardShowStrokeCountEffective;
+                                        Settings.VirtualKeyboardShowStrokeCountTemp = 1;
+                                        frmVkb.RotateStrokeTable(effectiveCnt != 1 ? 0 : hotkey == HotKeys.STROKE_HELP_ROTATION_HOTKEY ? 1 : -1);
+                                        break;
                                 }
                             }
-                        } else {
-                            switch (hotkey) {
-                                case HotKeys.ACTIVE_HOTKEY:
-                                case HotKeys.ACTIVE2_HOTKEY:
-                                case HotKeys.INACTIVE_HOTKEY:
-                                case HotKeys.INACTIVE2_HOTKEY:
-                                    ToggleActiveState();
-                                    break;
-                                case HotKeys.DATE_STRING_HOTKEY1:
-                                case HotKeys.DATE_STRING_HOTKEY2:
-                                    // Ctrl+; -- 日付の出力
-                                    postTodayDate(hotkey);
-                                    break;
-                                case HotKeys.STROKE_HELP_ROTATION_HOTKEY:
-                                case HotKeys.STROKE_HELP_UNROTATION_HOTKEY:
-                                    // 入力標識の消去
-                                    frmMode.Vanish();
-                                    // 仮想鍵盤のヘルプ表示の切り替え(モード標識表示時なら一時的に仮想鍵盤表示)
-                                    int effectiveCnt = Settings.VirtualKeyboardShowStrokeCountEffective;
-                                    Settings.VirtualKeyboardShowStrokeCountTemp = 1;
-                                    frmVkb.RotateStrokeTable(effectiveCnt != 1 ? 0 : hotkey == HotKeys.STROKE_HELP_ROTATION_HOTKEY ? 1 : -1);
-                                    break;
+                        } finally {
+                            if (busyHotkey >= 0) {
+                                hotkey = busyHotkey;
+                                busyHotkey = -1;
+                                logger.InfoH($"Handle busyHotkey={hotkey}");
+                            } else {
+                                busyFlag = false;
                             }
                         }
-                    } finally {
-                        busyFlag = false;
+                        prevProcEndDt = DateTime.Now;
                     }
-                    prevProcEndDt = DateTime.Now;
                 } else {
                     // ホットキーの処理中なので、スキップする
-                    logger.InfoH($"HOTKEY BUSY");
+                    logger.InfoH($"HOTKEY BUSY: hotkey={hotkey}");
+                    busyHotkey = hotkey;
                 }
                 logger.InfoH($"LEAVE");
             }
@@ -730,7 +742,7 @@ namespace KanchokuWS
         public void ToggleActiveState(bool bForceOff = false)
         {
             IsDecoderActive = bForceOff ? false : !IsDecoderActive;
-            logger.Info(() => $"\nENTER: Now Decoder is {(IsDecoderActive ? "ACTIVE" : "INACTIVE")}");
+            logger.InfoH(() => $"\nENTER: Now Decoder is {(IsDecoderActive ? "ACTIVE" : "INACTIVE")}");
             if (IsDecoderActive) {
                 if (frmSplash != null) closeSplash();
                 if (decoderPtr != IntPtr.Zero) ResetDecoder(decoderPtr);
@@ -747,8 +759,8 @@ namespace KanchokuWS
                 MoveFormVirtualKeyboard();
                 Hide();
                 frmMode.Hide();
-                // ウィンドウが移動する時間をかせいでから画面を表示する
-                Helper.WaitMilliSeconds(50);
+                // ウィンドウが移動する時間をかせいでから画面を表示する ⇒ これは不要か？とりあえず待ち時間を短くしておく(50ms⇒20ms)(2021/8/2)
+                Helper.WaitMilliSeconds(20);
                 frmMode.SetKanjiMode();
                 if (Settings.VirtualKeyboardShowStrokeCount == 1) {
                     frmVkb.SetTopText(actWinHandler.ActiveWinClassName);
@@ -789,7 +801,7 @@ namespace KanchokuWS
                     frmMode.SetAlphaMode();
                 }
             }
-            logger.Info("LEAVE");
+            logger.InfoH("LEAVE");
         }
 
         /// <summary>仮想鍵盤の表示位置を移動する</summary>
