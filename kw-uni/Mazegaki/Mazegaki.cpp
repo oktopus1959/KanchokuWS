@@ -152,10 +152,11 @@ namespace {
             MString prevYomi;
             size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi, STATE_COMMON->GetTotalHotKeyCount());
 
+            bool prevXfered = !prevYomi.empty() && prevXferLen > 0;
+
             // 最大読み長までの長さの読みに対する交ぜ書き候補を全て取得する
             const auto& cands = candsByLen.GetAllCandidates(
-                (!prevYomi.empty() && prevXferLen > 0) ? prevYomi
-                : OUTPUT_STACK->BackStringUptoHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen));
+                prevXfered ? prevYomi : OUTPUT_STACK->BackStringUptoHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen));
             if (cands.empty()) {
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: no candidate"));
@@ -164,13 +165,13 @@ namespace {
             LOG_INFOH(_T("mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
             if (cands.size() == 1 || (!MAZEGAKI_NODE->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand)) {
                 // 読みの長さ候補が１つしかなかった、または先頭候補の自動出力モードなのでそれを選択して出力
-                outputStringAndPostProc(cands.front(), candsByLen.GetFirstCandidateYomi().size());
+                outputStringAndPostProc(cands.front(), prevXfered ? prevXferLen : candsByLen.GetFirstCandidateYomi().size());
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));
                 return false;
             }
             // 直前の変換があればそれを取り消す
-            if (!prevYomi.empty() && prevXferLen > 0) {
+            if (prevXfered) {
                 STATE_COMMON->SetOutString(prevYomi, prevXferLen);
             }
             // 候補があったので仮想鍵盤に表示
