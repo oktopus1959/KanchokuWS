@@ -20,6 +20,8 @@ class State {
     // これは状態生成の時に一時的に使用されるだけ
     Node* pTemporaryNextNode= 0;
 
+    friend class ModeState;
+
 protected:
     // 不要フラグ
     bool bUnnecessary = false;

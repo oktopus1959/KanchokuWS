@@ -35,14 +35,7 @@ DEFINE_CLASS_LOGGER(StrokeTranslationState);
 // HOTKEY処理の前半部
 void StrokeTranslationState::DoHotkeyPreProc(int hotkey) {
     LOG_DEBUG(_T("ENTER: %s: hotkey=%xH(%d)"), NAME_PTR, hotkey, hotkey);
-    // まだ後続状態が無く、自身が StrokeState ではなく、hotkey はストロークキーである場合は、ルートストローク状態を生成して後続させる
-    if (!pNext) {
-        if ((!pNode || !pNode->isStrokeTableNode()) && isStrokeKeyOrShiftedKey(hotkey)) {
-            pNext = ROOT_STROKE_NODE->CreateState();
-            pNext->SetPrevState(this);
-        }
-    }
-    State::DoHotkeyPreProc(hotkey);
+    ModeState::DoHotkeyPreProc(hotkey);
     LOG_DEBUG(_T("LEAVE: %s"), NAME_PTR);
 }
 

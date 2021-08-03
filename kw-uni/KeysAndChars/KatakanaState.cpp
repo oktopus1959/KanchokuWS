@@ -31,7 +31,7 @@ namespace {
     public:
         // コンストラクタ
         KatakanaState(KatakanaNode* pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFO(_T("CALLED: CONSTRUCTOR"));
             Initialize(logger.ClassNameT(), pN);
         }
 

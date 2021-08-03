@@ -2,25 +2,20 @@
 
 #include "Logger.h"
 #include "State.h"
-#include "ModeState.h"
 
-// 常駐状態のベースクラス
-class StayState : public State, public ModeState {
+// モード状態のMix-Inクラス
+class ModeState {
     DECLARE_CLASS_LOGGER;
 
+    State* pFriendState = 0;
+
 public:
-    // コンストラクタ
-    StayState() : ModeState(this) {
+    ModeState(State* pState) : pFriendState(pState) {
         LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
     }
 
     // HOTKEY処理の前半部
     void DoHotkeyPreProc(int hotkey);
-
-    // 常駐状態か
-    bool IsStay() const {
-        return true;;
-    }
 
     // Esc の処理
     void handleEsc();

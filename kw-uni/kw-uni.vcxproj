@@ -189,6 +189,7 @@
     <ClInclude Include="KeysAndChars\Zenkaku.h" />
     <ClInclude Include="Mazegaki\Mazegaki.h" />
     <ClInclude Include="Mazegaki\MazegakiDic.h" />
+    <ClInclude Include="ModeState.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="OutputStack.h" />
     <ClInclude Include="Reporting\ErrorHandler.h" />
@@ -238,6 +239,7 @@
     <ClCompile Include="KeysAndChars\ZenkakuState.cpp" />
     <ClCompile Include="Mazegaki\Mazegaki.cpp" />
     <ClCompile Include="Mazegaki\MazegakiDic.cpp" />
+    <ClCompile Include="ModeState.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="OutputStack.cpp" />
     <ClCompile Include="Reporting\ErrorHandler.cpp" />
