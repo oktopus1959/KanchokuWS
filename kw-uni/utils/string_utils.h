@@ -9,7 +9,11 @@ namespace {
 
     wchar_t NAKAGURO = 0x30fb;  // '・'
 
+    wchar_t HAN_NAKAGURO = 0xff65;  // '・'
+
     wchar_t CHOON = 0x30fc;     // 'ー'
+
+    wchar_t HAN_CHOON = 0xff70; // 'ー'
 
     inline MString to_mstr(mchar_t x) {
         return x != 0 ? MString(1, x) : MString();
@@ -480,6 +484,10 @@ namespace utils
         return ch >= 0x30a1 && ch <= 0x30fc;    // 'ァ' 〜 'ヺ'、'・'、'ー'
     }
 
+    inline bool is_hankaku_katakana(mchar_t ch) {
+        return ch >= 0xff65 && ch <= 0xff9f;    // '・' 〜 'ﾟ'
+    }
+
     inline bool is_kanji(mchar_t ch) {
         return ch >= 0x4e00 && ch <= 0x9fff || ch == 0x3005 /*々*/;
     }
@@ -579,17 +587,33 @@ namespace utils
         return T();
     }
 
-    /// <summary> 末尾のカタカナ連鎖を取得 (前後の中黒は削除する)</summary>
+    /// <summary> 末尾のカタカナ連鎖を取得 (先頭の中黒は削除する)</summary>
     template<typename T>
-    inline T find_tail_katakana_str(const T& s) {
+    inline T find_tail_katakana_str(const T& s, bool excludeTailNakaguro = false) {
         if (!s.empty()) {
             size_t len = s.size();
-            if (len > 0 && s[len - 1] == NAKAGURO) --len;
+            if (excludeTailNakaguro && len > 0 && s[len - 1] == NAKAGURO) --len;
             size_t i = len;
             for (; i > 0; --i) {
                 if (!is_katakana(s[i - 1])) break;
             }
             if (i < len && s[i] == NAKAGURO) ++i;
+            if (i < len) return s.substr(i, len - i);
+        }
+        return T();
+    }
+
+    /// <summary> 末尾の半角カタカナ連鎖を取得 (先頭の中黒は削除する)</summary>
+    template<typename T>
+    inline T find_tail_hankaku_katakana_str(const T& s) {
+        if (!s.empty()) {
+            size_t len = s.size();
+            //if (len > 0 && s[len - 1] == HAN_NAKAGURO) --len;
+            size_t i = len;
+            for (; i > 0; --i) {
+                if (!is_hankaku_katakana(s[i - 1])) break;
+            }
+            if (i < len && s[i] == HAN_NAKAGURO) ++i;
             if (i < len) return s.substr(i, len - i);
         }
         return T();
