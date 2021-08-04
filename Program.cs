@@ -51,6 +51,7 @@ namespace KanchokuWS
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new FrmKanchoku());
             } finally {
+                KeyboardHookHandler.ReleaseKeyboardHook();
                 MultiAppChecker.Release();
             }
         }

@@ -70,7 +70,7 @@ namespace KanchokuWS
 
         private void dpiChangedHandler(object sender, DpiChangedEventArgs e)
         {
-            logger.InfoH($"CALLED: new dpi={e.DeviceDpiNew}");
+            logger.InfoH(() => $"CALLED: new dpi={e.DeviceDpiNew}");
         }
 
         //------------------------------------------------------------------
@@ -95,6 +95,8 @@ namespace KanchokuWS
             frmMode = new FrmModeMarker(this, frmVkb);
             frmMode.Show();
             frmMode.Hide();
+
+            KeyboardHookHandler.InstallKeyboardHook(this);
 
             // 漢直初期化処理
             await initializeKanchoku();
@@ -425,6 +427,32 @@ namespace KanchokuWS
         public bool IsVkbShown => Settings.VirtualKeyboardShowStrokeCountEffective > 0 && Settings.VirtualKeyboardShowStrokeCountEffective <= decoderOutput.GetStrokeCount() + 1;
 
         /// <summary>
+        /// キーボードダウンイベントハンドラ<br/>
+        /// キーを処理した場合は true を返す。システムにキーの処理をさせる場合は false を返す。
+        /// </summary>
+        /// <param name="vkey"></param>
+        /// <param name="extraInfo"></param>
+        /// <returns></returns>
+        public bool OnKeyboardDownHandler(int vkey, int extraInfo)
+        {
+            logger.DebugH(() => $"CALLED: vkey={vkey}, extraInfo={extraInfo}");
+            return false;
+        }
+
+        /// <summary>
+        /// キーボードアップイベントハンドラ<br/>
+        /// キーを処理した場合は true を返す。システムにキーの処理をさせる場合は false を返す。
+        /// </summary>
+        /// <param name="vkey"></param>
+        /// <param name="extraInfo"></param>
+        /// <returns></returns>
+        public bool OnKeyboardUpHandler(int vkey, int extraInfo)
+        {
+            logger.DebugH(() => $"CALLED: vkey={vkey}, extraInfo={extraInfo}");
+            return false;
+        }
+
+        /// <summary>
         /// WndProc のオーバーライド<br/>
         ///  - WM_HOTKEY などを処理する
         /// </summary>
@@ -531,7 +559,7 @@ namespace KanchokuWS
                             if (busyHotkey >= 0) {
                                 hotkey = busyHotkey;
                                 busyHotkey = -1;
-                                logger.InfoH($"Handle busyHotkey={hotkey}");
+                                logger.InfoH(() => $"Handle busyHotkey={hotkey}");
                             } else {
                                 busyFlag = false;
                             }
@@ -540,7 +568,7 @@ namespace KanchokuWS
                     }
                 } else {
                     // ホットキーの処理中なので、スキップする
-                    logger.InfoH($"HOTKEY BUSY: hotkey={hotkey}");
+                    logger.InfoH(() => $"HOTKEY BUSY: hotkey={hotkey}");
                     busyHotkey = hotkey;
                 }
                 logger.InfoH($"LEAVE");
@@ -1173,6 +1201,38 @@ namespace KanchokuWS
         private void ReadMazeWikipediaDic_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ReadMazegakiWikipediaDic();
+        }
+    }
+
+    public static class KeyboardHookHandler
+    {
+        private static Logger logger = Logger.GetLogger();
+
+        private static FrmKanchoku frmMain { get; set; }
+
+        public static void InstallKeyboardHook(FrmKanchoku frm)
+        {
+            frmMain = frm;
+            KeyboardHook.OnKeyDownEvent = onKeyboardDownHandler;
+            KeyboardHook.OnKeyUpEvent = onKeyboardUpHandler;
+            KeyboardHook.Hook();
+            logger.InfoH($"LEAVE");
+        }
+
+        public static void ReleaseKeyboardHook()
+        {
+            KeyboardHook.UnHook();
+            logger.InfoH($"LEAVE");
+        }
+
+        private static bool onKeyboardDownHandler(int vkey, int extraInfo)
+        {
+            return frmMain.OnKeyboardDownHandler(vkey, extraInfo);
+        }
+
+        private static bool onKeyboardUpHandler(int vkey, int extraInfo)
+        {
+            return frmMain.OnKeyboardUpHandler(vkey, extraInfo);
         }
     }
 }
