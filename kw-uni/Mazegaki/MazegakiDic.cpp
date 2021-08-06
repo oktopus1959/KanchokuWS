@@ -577,10 +577,10 @@ namespace {
                         candidates_t cands2;                         // 読みと変換形でマッチしたもの用
                         auto keyStem = key.substr(0, stemLen);
                         for (auto p : entrySet) {
-                            LOG_DEBUGH(_T("keyStem=%s, stem=%s, xfer=%s, ifx=%s, user=%s, deleted=%s"),
+                            LOG_DEBUG(_T("keyStem=%s, stem=%s, xfer=%s, ifx=%s, user=%s, deleted=%s"),
                                 MAKE_WPTR(keyStem), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
                             if (p->deleted) continue;
-                            if (keyStem == p->xfer) continue;   // 読み語幹が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケース)
+                            if (utils::startsWith(keyStem, p->xfer)) continue;   // 読み語幹の先頭部が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケースや「経い」→「経」のケース)
 
                             candidates_t* pCands = 0;
                             if (keyStem == p->stem) {
