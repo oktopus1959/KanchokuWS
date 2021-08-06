@@ -427,7 +427,7 @@ namespace KanchokuWS
         public bool IsVkbShown => Settings.VirtualKeyboardShowStrokeCountEffective > 0 && Settings.VirtualKeyboardShowStrokeCountEffective <= decoderOutput.GetStrokeCount() + 1;
 
         /// <summary>
-        /// キーボードダウンイベントハンドラ<br/>
+        /// KeyboardHookから呼び出されるキーボードダウンイベントハンドラ<br/>
         /// キーを処理した場合は true を返す。システムにキーの処理をさせる場合は false を返す。
         /// </summary>
         /// <param name="vkey"></param>
@@ -440,7 +440,7 @@ namespace KanchokuWS
         }
 
         /// <summary>
-        /// キーボードアップイベントハンドラ<br/>
+        /// KeyboardHookから呼び出されるキーボードアップイベントハンドラ<br/>
         /// キーを処理した場合は true を返す。システムにキーの処理をさせる場合は false を返す。
         /// </summary>
         /// <param name="vkey"></param>
