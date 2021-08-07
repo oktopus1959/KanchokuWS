@@ -120,9 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -218,7 +215,7 @@ exclude ファイルは、履歴検索および履歴登録の対象外となる
 保存されます。古い世代ほど、末尾の数字が大きくなります。
 </value>
   </data>
-  <data name="textBox_hotkeyInfiniteLoopDetectCount.ToolTip" xml:space="preserve">
+  <data name="textBox_deckeyInfiniteLoopDetectCount.ToolTip" xml:space="preserve">
     <value>HotKey呼び出しの無限ループ検出回数
 
 keybd_event でキー入力をエミュレートする際には、そのキーに割り当てている
@@ -345,12 +342,14 @@ MS ゴシック、メイリオ、游ゴシックについては、ある程度�
     <value>機能を呼び出すための打鍵列を設定します。
 
 打鍵列は、漢直キーコード(00～49)をカンマ
-区切りで並べたものとなります。キーコードに
-ついては、ここにマウスポインタを置いて表示
-されるツールチップを参照してください。
+区切りで並べたものとなります。コードに 'S' ま
+たは 's' を前接させるとシフトコードになります。
+キーコードについては、ここにマウスポインタを置
+いて表示されるツールチップを参照してください。
 
 例：(カッコ内は 106 key による打鍵文字)
-交ぜ書き変換 「23,26」  (f j)
+交ぜ書き変換 「S40」  (Shift+Spacej)
+部首合成 「26,23」  ( jf)
 全角変換(モード) 「42」 (^)
 カタカナ変換(一括) 「47」 (])</value>
   </data>
@@ -362,7 +361,9 @@ q=10, w=11, e=12, r=13, t=14, y=15, u=16, i=17, o=18, p=19
 a=20, s=21, d=22, f=23, g=24, h=25, j=26, k=27, l=28, ;=29,
 z=30, x=31, c=32, v=33, b=34, n=35, m=36, ,=37, .=38, /=39,
 SP=40, -=41, ^=42, ￥=43, @=44, [=45, :=46, ]=47, ＼=48,
-Shift+Space=49</value>
+Shift+Space=S40
+
+コードに 'S' または 's' を前接させるとシフトコードになります。</value>
   </data>
   <data name="textBox_dateStringFormat.ToolTip" xml:space="preserve">
     <value>Ctrl+; および Ctrl+Shift+; で出力する日付のフォーマットを設定します。
@@ -436,7 +437,7 @@ Ctrl+; の直後に Ctlrl+Shift+; を打つと取り消しになります。(逆
 たまに Shift+Backspace を受け付けないアプリがあります。
 その場合、前回の出力が消去されませんのでご注意を。</value>
   </data>
-  <data name="comboBox_histNumHotkeyId.ToolTip" xml:space="preserve">
+  <data name="comboBox_histNumDeckeyId.ToolTip" xml:space="preserve">
     <value>履歴検索の縦列鍵盤表示時に、候補を文字数で絞るモードに
 移行するホットキーのIDを設定します。
 
@@ -554,9 +555,6 @@ A=BC...
   </data>
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>114, 17</value>
-  </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
