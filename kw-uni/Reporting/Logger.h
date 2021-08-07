@@ -161,7 +161,7 @@ public:
 #define LOG_TRACE(...)      if (Logger::IsTraceEnabled()) logger.Trace(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define LOG_DEBUG(...)      if (Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define LOG_DEBUGH(...)     if (Logger::IsDebugEnabledH()) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
-#define _LOG_DEBUGH(...)     if (Logger::IsDebugEnabledH() && _LOG_DEBUGH_FLAG) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__); \
+#define _LOG_DEBUGH(...)    if (Logger::IsDebugEnabledH() && _LOG_DEBUGH_FLAG) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__); \
                             else if (Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #endif
 

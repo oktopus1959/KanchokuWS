@@ -30,7 +30,7 @@ namespace {
     public:
         // コンストラクタ
         MyCharState(MyCharNode* pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -56,7 +56,7 @@ namespace {
 
     public:
         PrevCharState(PrevCharNode* pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -86,17 +86,17 @@ DEFINE_CLASS_LOGGER(MyCharNode);
 
 // コンストラクタ
 MyCharNode::MyCharNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
 MyCharNode::~MyCharNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
 State* MyCharNode::CreateState() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     return new MyCharState(this);
 }
 
@@ -106,17 +106,17 @@ DEFINE_CLASS_LOGGER(PrevCharNode);
 
 // コンストラクタ
 PrevCharNode::PrevCharNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
 PrevCharNode::~PrevCharNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
 State* PrevCharNode::CreateState() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     return new PrevCharState(this);
 }
 
@@ -126,7 +126,7 @@ State* PrevCharNode::CreateState() {
 DEFINE_CLASS_LOGGER(MyCharNodeBuilder);
 
 Node* MyCharNodeBuilder::CreateNode() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     return new MyCharNode();
 }
 
@@ -136,7 +136,7 @@ Node* MyCharNodeBuilder::CreateNode() {
 DEFINE_CLASS_LOGGER(PrevCharNodeBuilder);
 
 Node* PrevCharNodeBuilder::CreateNode() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     return new PrevCharNode();
 }
 

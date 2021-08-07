@@ -231,8 +231,9 @@ namespace {
                 shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
                 handleStrokeKeys(UNSHIFT_DECKEY(deckey));
             } else {
-                bUnnecessary = true;            // これをやらないと、RootStrokeTable が残ってしまう
-                State::handleShiftKeys(deckey);
+                //bUnnecessary = true;            // これをやらないと、RootStrokeTable が残ってしまう
+                //State::handleShiftKeys(deckey);
+                StrokeTableState::handleStrokeKeys(deckey);
             }
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }

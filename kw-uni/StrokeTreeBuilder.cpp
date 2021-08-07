@@ -15,6 +15,7 @@
 #include "FunctionNodeManager.h"
 #include "DeckeyToChars.h"
 #include "deckey_id_defs.h"
+#include "MyPrevChar.h"
 
 namespace {
     DEFINE_NAMESPACE_LOGGER(StrokeTreeBuilder);
@@ -119,6 +120,7 @@ namespace {
             // なので、先に treeNode(テーブルノード)を作成しておく
             // RootStrokeTable は機能キーやCtrl修飾も含めたテーブルとする
             StrokeTableNode* tblNode = new StrokeTableNode(0, TOTAL_DECKEY_NUM);
+            setupShiftedKeyFunction(tblNode);
             int treeCount = 0;
             readNextToken();
             while (currentToken != TOKEN::END) {
@@ -148,6 +150,12 @@ namespace {
                 readNextToken();
             }
             return tblNode;
+        }
+
+        void setupShiftedKeyFunction(StrokeTableNode* tblNode) {
+            for (size_t i = 0; i < SHIFT_DECKEY_NUM; ++i) {
+                tblNode->setNthChild(i + SHIFT_DECKEY_START, new MyCharNode());
+            }
         }
 
         StrokeTableNode* makeSubTree(StrokeTableNode* tblNode, int depth, int prevNth) {

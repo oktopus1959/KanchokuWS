@@ -289,7 +289,8 @@ void State::dispatchDeckey(int deckey) {
                 handleQuestion();
                 break;
             case SHIFT_SPACE_DECKEY:
-                handleShiftSpace();
+                //handleShiftSpace();
+                handleShiftKeys(deckey);
                 break;
             default:
                 handleShiftKeys(deckey);
