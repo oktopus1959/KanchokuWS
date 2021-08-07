@@ -7,7 +7,7 @@ struct Settings {
 
     tstring rootDir;            // ルートフォルダ
     tstring tableFile;          // ストロークテーブル
-    tstring charsDefFile;       // Hotkey から文字への変換
+    tstring charsDefFile;       // Deckey から文字への変換
     tstring easyCharsFile;      // 簡易打鍵文字ファイル
     tstring bushuFile;          // 部首合成辞書
     tstring bushuAssocFile;     // 部首連想辞書
@@ -33,8 +33,8 @@ struct Settings {
     bool histSearchByCtrlSpace = false;     // Ctrl-Space で履歴検索を行う
     bool histSearchByShiftSpace = false;    // Shift-Space で履歴検索を行う
     bool selectFirstCandByEnter = false;    // 履歴の第1候補をEnterキーで選択する
-    int histDelHotkeyId = 41;               // 履歴削除のHotKeyID
-    int histNumHotkeyId = 45;               // 履歴文字数指定のHotKeyID
+    int histDelDeckeyId = 41;               // 履歴削除のDecKeyID
+    int histNumDeckeyId = 45;               // 履歴文字数指定のDecKeyID
 
     bool useArrowKeyToSelectCandidate = true;   // 矢印キーで履歴候補選択を行う
     bool handleShiftSpaceAsNormalSpace = true;    // Shift-Space を通常の Space として扱う (ただし histSearchByShiftSpace が優先)

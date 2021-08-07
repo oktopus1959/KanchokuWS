@@ -584,7 +584,7 @@ namespace KanchokuWS
         private int selectedTable = 0;
         private List<StrokeTableDef> StrokeTables = new List<StrokeTableDef>();
 
-        private string[] initialVkbChars = new string[HotKeys.NUM_STROKE_HOTKEY] {
+        private string[] initialVkbChars = new string[DecoderKeys.NORMAL_DECKEY_NUM] {
             "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
             "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
             "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
@@ -600,28 +600,28 @@ namespace KanchokuWS
         };
 
         //private string[][] kanaVkbChars = {
-        //    new string[HotKeys.NUM_STROKE_HOTKEY] {
+        //    new string[DecoderKeys.NUM_STROKE_DECKEY] {
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "・", "・", "・", "・", "・", "・", "・", "・", "・", "・",
         //    },
-        //    new string[HotKeys.NUM_STROKE_HOTKEY] {
+        //    new string[DecoderKeys.NUM_STROKE_DECKEY] {
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "・", "・", "・", "・", "・", "・", "・", "・", "・", "・",
         //    },
-        //    new string[HotKeys.NUM_STROKE_HOTKEY] {
+        //    new string[DecoderKeys.NUM_STROKE_DECKEY] {
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "・", "・", "・", "・", "・", "・", "・", "・", "・", "・",
         //    },
-        //    new string[HotKeys.NUM_STROKE_HOTKEY] {
+        //    new string[DecoderKeys.NUM_STROKE_DECKEY] {
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
         //        "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
@@ -681,7 +681,7 @@ namespace KanchokuWS
         {
             var result = frmMain.CallDecoderFunc(cmd, faces);
             if (result != null) {
-                var charOrKeys = new string[HotKeys.NUM_STROKE_HOTKEY];
+                var charOrKeys = new string[DecoderKeys.NORMAL_DECKEY_NUM];
                 for (int i = 0; i < charOrKeys.Length; ++i) {
                     charOrKeys[i] = makeMultiCharStr(result, i * 2);
                 }
@@ -695,7 +695,7 @@ namespace KanchokuWS
 
         private void makeVkbStrokeTableFixed(string faces)
         {
-            var charOrKeys = new string[HotKeys.NUM_STROKE_HOTKEY];
+            var charOrKeys = new string[DecoderKeys.NORMAL_DECKEY_NUM];
             for (int i = 0; i < charOrKeys.Length; ++i) {
                 charOrKeys[i] = faces._safeSubstring(i, 1);
             }

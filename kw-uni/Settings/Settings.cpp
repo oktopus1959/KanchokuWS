@@ -51,8 +51,8 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_BOOL_VALUE(histSearchByCtrlSpace);
     SET_BOOL_VALUE(histSearchByShiftSpace);
     SET_BOOL_VALUE(selectFirstCandByEnter);
-    SET_INT_VALUE(histDelHotkeyId);
-    SET_INT_VALUE(histNumHotkeyId);
+    SET_INT_VALUE(histDelDeckeyId);
+    SET_INT_VALUE(histNumDeckeyId);
 
     SET_BOOL_VALUE(useArrowKeyToSelectCandidate);
 
@@ -79,7 +79,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     RESET_STROKE_FUNC("katakanaMode");
     RESET_STROKE_FUNC("katakanaOneShot");
     RESET_STROKE_FUNC("hankakuKatakanaOneShot");
-    if (GET_BOOL_VALUE(mazegakiByShiftSpace)) StrokeTableNode::AssignFucntion(utils::format(_T("%d"), HOTKEY_STROKE_49), _T("mazegaki"));
+    //if (GET_BOOL_VALUE(mazegakiByShiftSpace)) StrokeTableNode::AssignFucntion(utils::format(_T("%d"), DECKEY_STROKE_49), _T("mazegaki"));
 
     // for Debug
     SET_BOOL_VALUE(debughState);

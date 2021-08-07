@@ -2,7 +2,7 @@
 #include "string_utils.h"
 #include "path_utils.h"
 
-#include "hotkey_id_defs.h"
+#include "deckey_id_defs.h"
 #include "ErrorHandler.h"
 #include "KanchokuIni.h"
 #include "Settings.h"
@@ -144,11 +144,11 @@ namespace {
         bool DoProcOnCreated() {
             _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
 
-            size_t totalCnt = STATE_COMMON->GetTotalHotKeyCount();
+            size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
             mchar_t outChar = OUTPUT_STACK->isLastOutputStackCharBlocker() ? 0 : OUTPUT_STACK->LastOutStackChar();
 
             // 直前の出力文字と比較して、部首連想のやり直しをする
-            _LOG_DEBUGH(_T("HotkeyCount=%d, PrevTotalCount=%d, AssocCount=%d, outChar=%c, PrevAssoc=%c, PrevKey=%c"), totalCnt, EX_NODE->PrevTotalCount, EX_NODE->Count, SAFE_CHAR(outChar), SAFE_CHAR(EX_NODE->PrevAssoc), SAFE_CHAR(EX_NODE->PrevKey));
+            _LOG_DEBUGH(_T("DeckeyCount=%d, PrevTotalCount=%d, AssocCount=%d, outChar=%c, PrevAssoc=%c, PrevKey=%c"), totalCnt, EX_NODE->PrevTotalCount, EX_NODE->Count, SAFE_CHAR(outChar), SAFE_CHAR(EX_NODE->PrevAssoc), SAFE_CHAR(EX_NODE->PrevKey));
             if (EX_NODE->PrevKey != 0 && totalCnt <= EX_NODE->PrevTotalCount + 2 && EX_NODE->PrevAssoc == outChar) {
                 outChar = EX_NODE->PrevKey;
                 STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す
@@ -171,18 +171,18 @@ namespace {
         }
 
         // Strokeキー を処理する
-        void handleStrokeKeys(int hotkey) {
-            _LOG_DEBUGH(_T("CALLED: %s: hotkey=%xH(%d)"), NAME_PTR, hotkey, hotkey);
+        void handleStrokeKeys(int deckey) {
+            _LOG_DEBUGH(_T("CALLED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
             //EX_NODE->PrevAssocSec = utils::getSecondsFromEpochTime();
-            EX_NODE->PrevTotalCount = STATE_COMMON->GetTotalHotKeyCount();
+            EX_NODE->PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
             EX_NODE->Count = 10;    // 10 は最大値の意味で使っている
-            //const MString& word = currentList.SelectNthTarget(hotkey >= HOTKEY_STROKE_SPACE ? 0 : hotkey);    // スペース以上なら先頭を選択
-            if (hotkey >= HOTKEY_STROKE_SPACE) {
+            //const MString& word = currentList.SelectNthTarget(deckey >= STROKE_SPACE_DECKEY ? 0 : deckey);    // スペース以上なら先頭を選択
+            if (deckey >= STROKE_SPACE_DECKEY) {
                 // スペース以上ならそのまま
                 setVkbCandidatesList();
                 return;
             }
-            MString word = currentList.SelectNthTarget(hotkey);
+            MString word = currentList.SelectNthTarget(deckey);
             STATE_COMMON->SetOutString(word);
             if (!word.empty()) {
                 STATE_COMMON->SetBackspaceNum(1);
@@ -276,11 +276,11 @@ namespace {
             handleKeyPostProc();
         }
 
-        void handleCtrlKeys(int /*hotkey*/) {
+        void handleCtrlKeys(int /*deckey*/) {
             setVkbCandidatesList();
         }
 
-        void handleSpecialKeys(int /*hotkey*/) {
+        void handleSpecialKeys(int /*deckey*/) {
             setVkbCandidatesList();
         }
 
@@ -337,18 +337,18 @@ namespace {
         // 機能状態に対して生成時処理を実行する
         bool DoProcOnCreated() {
             _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
-            size_t totalCnt = STATE_COMMON->GetTotalHotKeyCount();
+            size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
             //_LOG_DEBUGH(_T("ENTER: %s, count=%d"), NAME_PTR, cnt);
 
             mchar_t outChar = OUTPUT_STACK->isLastOutputStackCharBlocker() ? 0 : OUTPUT_STACK->LastOutStackChar();
 
             if (outChar < 0x100) {
-                STATE_COMMON->OutputHotkeyChar();                 // 自分自身を出力
+                STATE_COMMON->OutputDeckeyChar();                 // 自分自身を出力
                 //if (outChar == ' ') STATE_COMMON->SetBackspaceNum(1);   // 直前文字がスペースの場合は、それを削除する ⇒やめた。Ctrl-Gまたは'\'の後に':'を打てばよい(2021/6/3)
             } else {
                 // 直前の部首合成文字と比較して、やり直しをする
                 //time_t now = utils::getSecondsFromEpochTime();
-                if (BUSHU_COMP_NODE) _LOG_DEBUGH(_T("HotkeyCount=%d, PrevTotalCount=%d, outChar=%c, PrevComp=%c"), totalCnt, BUSHU_COMP_NODE->PrevTotalCount, SAFE_CHAR(outChar), SAFE_CHAR(BUSHU_COMP_NODE->PrevComp));
+                if (BUSHU_COMP_NODE) _LOG_DEBUGH(_T("DeckeyCount=%d, PrevTotalCount=%d, outChar=%c, PrevComp=%c"), totalCnt, BUSHU_COMP_NODE->PrevTotalCount, SAFE_CHAR(outChar), SAFE_CHAR(BUSHU_COMP_NODE->PrevComp));
                 if (BUSHU_COMP_NODE && totalCnt <= BUSHU_COMP_NODE->PrevTotalCount + 2 && BUSHU_COMP_NODE->PrevComp == outChar) {
                     mchar_t m1 = BUSHU_COMP_NODE->PrevBushu1;
                     mchar_t m2 = BUSHU_COMP_NODE->PrevBushu2;
@@ -365,7 +365,7 @@ namespace {
                 }
 
                 // 直前の出力文字と比較して、部首連想のやり直しをする
-                _LOG_DEBUGH(_T("HotkeyCount=%d, PrevTotalCount=%d, AssocCount=%d, outChar=%c, PrevAssoc=%c, PrevKey=%c"), totalCnt, EX_NODE->PrevTotalCount, EX_NODE->Count, SAFE_CHAR(outChar), SAFE_CHAR(EX_NODE->PrevAssoc), SAFE_CHAR(EX_NODE->PrevKey));
+                _LOG_DEBUGH(_T("DeckeyCount=%d, PrevTotalCount=%d, AssocCount=%d, outChar=%c, PrevAssoc=%c, PrevKey=%c"), totalCnt, EX_NODE->PrevTotalCount, EX_NODE->Count, SAFE_CHAR(outChar), SAFE_CHAR(EX_NODE->PrevAssoc), SAFE_CHAR(EX_NODE->PrevKey));
                 if (EX_NODE->PrevKey != 0 && totalCnt <= EX_NODE->PrevTotalCount + 2 && EX_NODE->PrevAssoc == outChar) {
                     outChar = EX_NODE->PrevKey;
                 } else {
@@ -402,10 +402,10 @@ namespace {
         }
 
         //// Strokeキー を処理する
-        //void handleStrokeKeys(int hotkey) {
-        //    _LOG_DEBUGH(_T("CALLED: %s: hotkey=%xH(%d)"), NAME_PTR, hotkey, hotkey);
+        //void handleStrokeKeys(int deckey) {
+        //    _LOG_DEBUGH(_T("CALLED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
         //    //bool bRetry = EX_NODE->PrevKey == currentList.GetKey();
-        //    //const MString& word = currentList.SelectNthTarget(hotkey >= HOTKEY_STROKE_SPACE ? (bRetry ? 1 : 0) : hotkey);    // スペース以上なら先頭を選択
+        //    //const MString& word = currentList.SelectNthTarget(deckey >= STROKE_SPACE_DECKEY ? (bRetry ? 1 : 0) : deckey);    // スペース以上なら先頭を選択
         //    //STATE_COMMON->SetOutString(word);
         //    //if (!word.empty()) {
         //    //    STATE_COMMON->SetBackspaceNum(1);

@@ -7,7 +7,7 @@
 
 #include "KanchokuIni.h"
 #include "Constants.h"
-#include "hotkey_id_defs.h"
+#include "deckey_id_defs.h"
 #include "Settings.h"
 #include "ErrorHandler.h"
 #include "Node.h"
@@ -233,7 +233,7 @@ namespace {
             LOG_DEBUG(_T("CALLED: %s"), BASE_NAME_PTR);
             STATE_COMMON->SetAppendBackspaceStopperFlag();
             STATE_COMMON->SetHistoryBlockFlag();
-            STATE_COMMON->ClearHotKeyCount();
+            STATE_COMMON->ClearDecKeyCount();
         }
 
         // 選択された履歴候補を出力 (abbrev なら true を返す)
@@ -446,9 +446,9 @@ namespace {
         }
 
          // Strokeキー を処理する
-        void handleStrokeKeys(int hotkey) {
-            LOG_DEBUG(_T("ENTER: %s: hotkey=%xH(%d)"), NAME_PTR, hotkey, hotkey);
-            if (hotkey == SETTINGS->histDelHotkeyId) {
+        void handleStrokeKeys(int deckey) {
+            LOG_DEBUG(_T("ENTER: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+            if (deckey == SETTINGS->histDelDeckeyId) {
                 // 削除モードに入る
                 LOG_DEBUG(_T("LEAVE: DELETE MODE"));
                 bDeleteMode = true;
@@ -456,11 +456,11 @@ namespace {
             }
             if (bDeleteMode) {
                 // 削除モードのとき
-                if (hotkey == SETTINGS->histDelHotkeyId) {
+                if (deckey == SETTINGS->histDelDeckeyId) {
                     bDeleteMode = false;
                     LOG_DEBUG(_T("LEAVE DELETE MODE"));
-                } else if (hotkey < HOTKEY_STROKE_SPACE) {
-                    HIST_CAND->DeleteNth((hotkey % LONG_KEY_NUM) + candDispHorizontalPos);
+                } else if (deckey < STROKE_SPACE_DECKEY) {
+                    HIST_CAND->DeleteNth((deckey % LONG_KEY_NUM) + candDispHorizontalPos);
                     bDeleteMode = false;
                     //const wstring key = STATE_COMMON->GetLastKanjiOrKatakanaKey();
                     // ひらがな交じりやASCIIもキーとして取得する
@@ -472,7 +472,7 @@ namespace {
                 }
                 return;
             }
-            if (hotkey == SETTINGS->histNumHotkeyId) {
+            if (deckey == SETTINGS->histNumDeckeyId) {
                 // 履歴文字数指定
                 LOG_DEBUG(_T("ENTER: NUM MODE"));
                 bWaitingForNum = true;
@@ -481,28 +481,28 @@ namespace {
             if (bWaitingForNum) {
                 // 履歴文字数指定のとき
                 bWaitingForNum = false;
-                if (hotkey >= 0 && hotkey < 10) {
+                if (deckey >= 0 && deckey < 10) {
                     // '1'〜'0' (1〜10文字のものだけを表示)
                     LOG_DEBUG(_T("ENTER JUST LEN MODE"));
                     //指定の長さのものだけを残して仮想鍵盤に表示
                     candDispHorizontalPos = 0;
                     candDispVerticalPos = 0;
                     auto key = HIST_CAND->GetCurrentKey();
-                    candLen = (hotkey + 1) % LONG_KEY_NUM;
+                    candLen = (deckey + 1) % LONG_KEY_NUM;
                     setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, candLen), key);
                 }
                 LOG_DEBUG(_T("LEAVE: forNum"));
                 return;
             }
             // 下記は不要。いったん出力履歴バッファをクリアしてから履歴入力を行えばよいため
-            //if (hotkey == HOTKEY_STROKE_44) {
+            //if (deckey == DECKEY_STROKE_44) {
             //    // '@' : 全使用リストから取得する
             //    //setCandidatesVKB(HIST_CAND->GetCandidates(_T("")), _T(""));
             //    HIST_CAND->GetCandidates(_T(""));
             //    return;
             //}
             // 候補の選択
-            const auto& result = HIST_CAND->SelectNth((hotkey >= HOTKEY_STROKE_SPACE ? 0 : hotkey % LONG_KEY_NUM) + candDispHorizontalPos);
+            const auto& result = HIST_CAND->SelectNth((deckey >= STROKE_SPACE_DECKEY ? 0 : deckey % LONG_KEY_NUM) + candDispHorizontalPos);
             LOG_DEBUG(_T("result.Word=%s, result.KeyLen=%d"), MAKE_WPTR(result.Word), result.KeyLen);
             if (!result.Word.empty()) {
                 setOutString(result);
@@ -519,13 +519,13 @@ namespace {
         //}
 
         // 機能キーだったときの一括処理(false を返すと、この後、個々の機能キーのハンドラが呼ばれる)
-        bool handleFunctionKeys(int hotkey) {
+        bool handleFunctionKeys(int deckey) {
             _LOG_DEBUGH(_T("CALLED"));
-            switch (hotkey) {
-            case LEFT_ARROW_HOTKEY:
-            case RIGHT_ARROW_HOTKEY:
-            case UP_ARROW_HOTKEY:
-            case DOWN_ARROW_HOTKEY:
+            switch (deckey) {
+            case LEFT_ARROW_DECKEY:
+            case RIGHT_ARROW_DECKEY:
+            case UP_ARROW_DECKEY:
+            case DOWN_ARROW_DECKEY:
                 return false;
             default:
                 if (bDeleteMode || bWaitingForNum) {
@@ -676,15 +676,15 @@ namespace {
 
         //MString prevKey;
 
-        int candSelectHotkey = -1;
+        int candSelectDeckey = -1;
 
 
         /// 今回の履歴候補選択ホットキーを保存
         /// これにより、DoOutStringProc() で継続的な候補選択のほうに処理が倒れる
-        void setCandSelectIsCalled() { candSelectHotkey = STATE_COMMON->GetHotkey(); }
+        void setCandSelectIsCalled() { candSelectDeckey = STATE_COMMON->GetDeckey(); }
 
         // 状態管理のほうで記録している最新ホットキーと比較し、今回が履歴候補選択キーだったか
-        bool wasCandSelectCalled() { return candSelectHotkey >= 0 && candSelectHotkey == STATE_COMMON->GetHotkey(); }
+        bool wasCandSelectCalled() { return candSelectDeckey >= 0 && candSelectDeckey == STATE_COMMON->GetDeckey(); }
 
         // 後続状態で出力スタックが変更された可能性あり
         bool maybeEditedBySubState = false;
@@ -771,10 +771,10 @@ namespace {
         }
 
     public:
-        // HOTKEY処理の前半部
-        // 自前で HOTKEY 処理をやる場合にはオーバーライドしてもよい
-        void DoHotkeyPreProc(int hotkey) {
-            _LOG_DEBUGH(_T("ENTER: %s: hotkey=%xH(%d)"), NAME_PTR, hotkey, hotkey);
+        // DECKEY処理の前半部
+        // 自前で DECKEY 処理をやる場合にはオーバーライドしてもよい
+        void DoDeckeyPreProc(int deckey) {
+            _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
             maybeEditedBySubState = false;
             // 常駐モード
             if (pNext && pNext->GetName().find(_T("History")) == wstring::npos) {
@@ -783,7 +783,7 @@ namespace {
                 _LOG_DEBUGH(_T("Set Reinitialized=true"));
                 maybeEditedBySubState = true;
             }
-            StayState::DoHotkeyPreProc(hotkey);
+            StayState::DoDeckeyPreProc(deckey);
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
 
@@ -798,7 +798,7 @@ namespace {
         // 直前キーが空でなく、候補が1つ以上あり、第1候補または第2候補がキー文字列から始まっていて、かつ同じではないか
         // たとえば、直前に「竈門」を交ぜ書きで出力したような場合で、これまでの出力履歴が「竈門」だけなら履歴候補の表示はやらない。
         // 他にも「竈門炭治郎」の出力履歴があるなら、履歴候補の表示をする。
-        bool isHotCandidateReady(const MString& prevKey, const std::vector<MString>& cands) {
+        bool isDecCandidateReady(const MString& prevKey, const std::vector<MString>& cands) {
             bool result = (!prevKey.empty() &&
                            ((cands.size() > 0 && utils::startsWith(cands[0], prevKey) && cands[0] != prevKey) ||
                             (cands.size() > 1 && utils::startsWith(cands[1], prevKey) && cands[1] != prevKey)));
@@ -874,7 +874,7 @@ namespace {
                 HISTORY_STAY_NODE->prevKey.clear();
             }
             // この処理は、GUI側で候補の背景色を変更するために必要
-            if (isHotCandidateReady(HISTORY_STAY_NODE->prevKey, HIST_CAND->GetCandidates())) {
+            if (isDecCandidateReady(HISTORY_STAY_NODE->prevKey, HIST_CAND->GetCandidates())) {
                 _LOG_DEBUGH(_T("PATH 14"));
                 // 何がしかの文字出力があり、それをキーとする履歴候補があった場合 -- 未選択状態にセットする
                 STATE_COMMON->SetWaitingCandSelect(-1);
@@ -977,7 +977,7 @@ namespace {
                 setCandSelectIsCalled();
                 getNextCandidate();
             } else {
-                _LOG_DEBUGH(_T("candSelectHotkey=%x"), candSelectHotkey);
+                _LOG_DEBUGH(_T("candSelectDeckey=%x"), candSelectDeckey);
                 HistoryStayState::handleDownArrow();
             }
         }
@@ -989,7 +989,7 @@ namespace {
                 setCandSelectIsCalled();
                 getPrevCandidate();
             } else {
-                _LOG_DEBUGH(_T("candSelectHotkey=%x"), candSelectHotkey);
+                _LOG_DEBUGH(_T("candSelectDeckey=%x"), candSelectDeckey);
                 HistoryStayState::handleUpArrow();
             }
         }

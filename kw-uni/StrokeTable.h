@@ -1,6 +1,6 @@
 //#include "pch.h"
 
-#include "hotkey_id_defs.h"
+#include "deckey_id_defs.h"
 #include "Reporting/Logger.h"
 #include "Node.h"
 #include "VkbTableMaker.h"
@@ -13,7 +13,11 @@ class StrokeTableNode : public Node {
 public:
     // コンストラクタ
     StrokeTableNode(int depth) : _depth(depth) {
-        children.resize(NUM_STROKE_HOTKEY);
+        children.resize(STROKE_DECKEY_NUM);     // normalキーとshift修飾キーの両方のキーの分を確保しておく
+    }
+
+    StrokeTableNode(int depth, size_t numChildren) : _depth(depth) {
+        children.resize(numChildren);
     }
 
     // デストラクタ

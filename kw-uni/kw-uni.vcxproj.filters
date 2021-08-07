@@ -114,12 +114,6 @@
     <ClInclude Include="KeysAndChars\EasyChars.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="KeysAndChars\hotkey_id_defs.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="KeysAndChars\HotkeyToChars.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Settings\IniAccessor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -169,6 +163,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="ModeState.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KeysAndChars\deckey_id_defs.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KeysAndChars\DeckeyToChars.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -242,9 +242,6 @@
     <ClCompile Include="StayState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="KeysAndChars\HotkeyToChars.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="EscapeState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -266,9 +263,6 @@
     <ClCompile Include="KeysAndChars\VkbTableMaker.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="KeysAndChars\hotkey_id_defs.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="TranslationState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -285,6 +279,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="ModeState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="KeysAndChars\deckey_id_defs.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="KeysAndChars\DeckeyToChars.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

@@ -32,6 +32,6 @@ namespace VkbTableMaker {
     void MakeInitialVkbTable(wchar_t* faces);
 
     // ひらがなに到る第1打鍵集合を取得する
-    const std::set<int>& GetHiraganaFirstHotkeys();
+    const std::set<int>& GetHiraganaFirstDeckeys();
 }
 

@@ -10,8 +10,8 @@
 #include "KanchokuIni.h"
 
 #include "Decoder.h"
-#include "hotkey_id_defs.h"
-#include "KeysAndChars/HotkeyToChars.h"
+#include "deckey_id_defs.h"
+#include "KeysAndChars/DeckeyToChars.h"
 #include "KeysAndChars/VkbTableMaker.h"
 #include "ErrorHandler.h"
 #include "Settings.h"
@@ -88,8 +88,8 @@ public:
         // GUIから送られてきた settings を読み込んで Settings::Singleton を構築
         createSettings(params->inOutData);
 
-        // Hotkey から文字への変換インスタンスの構築
-        createHotkeyToCharsInstance();
+        // Deckey から文字への変換インスタンスの構築
+        createDeckeyToCharsInstance();
 
         // ストローク木の構築
         createStrokeTree();
@@ -153,15 +153,15 @@ public:
         LOG_INFO(_T("LEAVE"));
     }
 
-    // Hotkey から文字への変換インスタンスの構築
-    void createHotkeyToCharsInstance() {
+    // Deckey から文字への変換インスタンスの構築
+    void createDeckeyToCharsInstance() {
 
         auto filePath = SETTINGS->charsDefFile;
         LOG_INFO(_T("charsDefFile=%s"), filePath.c_str());
         //if (filePath.empty()) {
         //    ErrorHandler::Error(_T("「charsDefFile=(ファイル名)」の設定がまちがっているようです"));
         //}
-        HotkeyToChars::CreateSingleton(filePath);
+        DeckeyToChars::CreateSingleton(filePath);
     }
 
     // テーブルファイルを読み込んでストローク木を作成する
@@ -299,9 +299,9 @@ public:
             } else if (cmd == _T("makeKatakanaTable")) {
                 // カタカナ50音図の作成
                 makeKatakanaTable(outParams);
-            } else if (cmd == _T("getCharsOrderedByHotkey")) {
-                // Hotkey順に並んだ通常文字列とシフト文字列を返す
-                getCharsOrderedByHotkey(outParams);
+            } else if (cmd == _T("getCharsOrderedByDeckey")) {
+                // Deckey順に並んだ通常文字列とシフト文字列を返す
+                getCharsOrderedByDeckey(outParams);
             } else if (cmd == _T("reloadSettings")) {
                 // 設定の再読み込み
                 if (items.size() > 1 && !items[1].empty()) reloadSettings(items[1]);
@@ -315,9 +315,9 @@ public:
         }
     }
 
-    // HOTKEY処理
-    void HandleHotkey(int keyId, DecoderOutParams* params) {
-        LOG_INFOH(_T("\nENTER: keyId=%xH(%d=%s)"), keyId, keyId, HOTKEY_TO_CHARS->GetHotkeyNameFromId(keyId));
+    // DECKEY処理
+    void HandleDeckey(int keyId, DecoderOutParams* params) {
+        LOG_INFOH(_T("\nENTER: keyId=%xH(%d=%s)"), keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId));
         OutParams = params;
         initializeOutParams();
 
@@ -325,10 +325,10 @@ public:
 
         // 各種状態を初期化してから
         STATE_COMMON->ClearStateInfo();
-        STATE_COMMON->IncrementTotalHotKeyCount();
-        STATE_COMMON->CountSameHotKey(keyId);
-        // HotKey処理を呼ぶ
-        startState->HandleHotkey(keyId);
+        STATE_COMMON->IncrementTotalDecKeyCount();
+        STATE_COMMON->CountSameDecKey(keyId);
+        // DecKey処理を呼ぶ
+        startState->HandleDeckey(keyId);
 
         LOG_DEBUGH(_T("OUTPUT: outString=\"%s\", origString=\"%s\", flags=%x, numBS=%d"), \
             MAKE_WPTR(STATE_COMMON->OutString()), MAKE_WPTR(STATE_COMMON->OrigString()), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetBackspaceNum());
@@ -338,8 +338,8 @@ public:
         size_t cpyLen = copy_mstr(STATE_COMMON->OutString(), OutParams->outString, maxLen - 1);
         OutParams->resultFlags = STATE_COMMON->GetResultFlags();
         if (startState->ChainLength() > 1) {
-            // 始状態に何か他の状態が後続していれば、Ctrl-Hなどの特殊キーをHOTKEY化する
-            OutParams->resultFlags |= (UINT32)ResultFlags::SpecialHotkeyRequired;
+            // 始状態に何か他の状態が後続していれば、Ctrl-Hなどの特殊キーをDECKEY化する
+            OutParams->resultFlags |= (UINT32)ResultFlags::SpecialDeckeyRequired;
         }
         OutParams->numBackSpaces = STATE_COMMON->GetBackspaceNum();
 
@@ -541,9 +541,9 @@ public:
         VkbTableMaker::MakeVkbKatakanaTable(outParam->faceStrings);
     }
 
-    // Hotkey順に並んだ通常文字列とシフト文字列を返す
-    void getCharsOrderedByHotkey(DecoderOutParams* outParam) {
-        HOTKEY_TO_CHARS->GetCharsOrderedByHotkey(outParam->faceStrings);
+    // Deckey順に並んだ通常文字列とシフト文字列を返す
+    void getCharsOrderedByDeckey(DecoderOutParams* outParam) {
+        DECKEY_TO_CHARS->GetCharsOrderedByDeckey(outParam->faceStrings);
     }
 
     void makeBushuCompHelp(wchar_t ch) {
@@ -674,10 +674,10 @@ int MakeInitialVkbTableDecoder(void* pDecoder, DecoderOutParams* table) {
     return invokeDecoderMethod(method_call, nullptr);
 }
 
-// HOTKEYハンドラ
-// 引数: keyId = HOTKEY ID
-int HandleHotkeyDecoder(void* pDecoder, int keyId, DecoderOutParams* params) {
-    auto method_call = [pDecoder, keyId, params]() { ((Decoder*)pDecoder)->HandleHotkey(keyId, params); };
+// DECKEYハンドラ
+// 引数: keyId = DECKEY ID
+int HandleDeckeyDecoder(void* pDecoder, int keyId, DecoderOutParams* params) {
+    auto method_call = [pDecoder, keyId, params]() { ((Decoder*)pDecoder)->HandleDeckey(keyId, params); };
     return invokeDecoderMethod(method_call, nullptr);
 }
 

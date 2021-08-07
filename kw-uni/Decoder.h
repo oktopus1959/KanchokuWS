@@ -22,13 +22,13 @@ struct DecoderCommandParams {
 };
 
 // -------------------------------------------------------------------
-// デコーダでのHOTKEY処理の結果をUI側に送信するために用いる構造体
+// デコーダでのDECKEY処理の結果をUI側に送信するために用いる構造体
 struct DecoderOutParams
 {
     // アクティブウィンドウに対して文字列を送信する前に送りつけるBSの数
     int numBackSpaces;
 
-    // HOTKEYを仮想キーに変換してアクティブウィンドウに対して送信する場合は 1
+    // DECKEYを仮想キーに変換してアクティブウィンドウに対して送信する場合は 1
     UINT32 resultFlags;
 
     // 次の入力で期待されるキー (第2ストローク、履歴入力でのEnter、など)
@@ -93,8 +93,8 @@ public:
     // コマンド実行
     virtual void ExecCmd(DecoderCommandParams*, DecoderOutParams*) = 0;
 
-    // HOTKEY処理
-    virtual void HandleHotkey(int, DecoderOutParams*) = 0;
+    // DECKEY処理
+    virtual void HandleDeckey(int, DecoderOutParams*) = 0;
 
 }; // class Decoder
 
@@ -107,7 +107,7 @@ extern "C" {
     __declspec(dllexport) int ResetDecoder(void*);
     __declspec(dllexport) int SaveDictsDecoder(void*);
     __declspec(dllexport) int MakeInitialVkbTableDecoder(void* decoder, DecoderOutParams* table);
-    __declspec(dllexport) int HandleHotkeyDecoder(void*, int, DecoderOutParams*);
+    __declspec(dllexport) int HandleDeckeyDecoder(void*, int, DecoderOutParams*);
     __declspec(dllexport) int ExecCmdDecoder(void*, DecoderCommandParams*, DecoderOutParams*);
 }
 

@@ -3,7 +3,7 @@
 #include "StrokeTable.h"
 #include "StringNode.h"
 
-#include "hotkey_id_defs.h"
+#include "deckey_id_defs.h"
 #include "StrokeHelp.h"
 
 #define STROKE_HELP_ARRAY_SIZE 10000
@@ -32,7 +32,7 @@ void StrokeHelp::GatherStrokeHelp() {
 }
 
 size_t StrokeHelp::gatherStrokeHelp(StrokeTableNode* pNode, size_t pos, size_t depth) {
-    for (size_t i = 0; i < HOTKEY_STROKE_SPACE; ++i) {
+    for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
         Node* blk = pNode->getNth(i);
         if (blk) {
             if (blk->isStrokeTableNode()) {

@@ -6,7 +6,7 @@
 
 #include "KanchokuIni.h"
 #include "Constants.h"
-#include "hotkey_id_defs.h"
+#include "deckey_id_defs.h"
 #include "Settings.h"
 #include "ErrorHandler.h"
 #include "Node.h"
@@ -150,7 +150,7 @@ namespace {
 
             // 直前に変換していたか
             MString prevYomi;
-            size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi, STATE_COMMON->GetTotalHotKeyCount());
+            size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi, STATE_COMMON->GetTotalDecKeyCount());
 
             bool prevXfered = !prevYomi.empty() && prevXferLen > 0;
 
@@ -182,11 +182,11 @@ namespace {
         }
 
          // Strokeキー を処理する
-        void handleStrokeKeys(int hotkey) {
-            _LOG_DEBUGH(_T("CALLED: %s: hotkey=%xH(%d)"), NAME_PTR, hotkey, hotkey);
-            if (hotkey == HOTKEY_STROKE_49) hotkey = 0; // 49が Shift+Spaceの場合を想定
-            if (hotkey <= HOTKEY_STROKE_SPACE) {
-                size_t n = (winIdx * LONG_VKEY_NUM) + (hotkey % LONG_VKEY_NUM);
+        void handleStrokeKeys(int deckey) {
+            _LOG_DEBUGH(_T("CALLED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+            if (deckey == SHIFT_SPACE_DECKEY) deckey = 0; // Shift+Spaceの場合を想定
+            if (deckey <= STROKE_SPACE_DECKEY) {
+                size_t n = (winIdx * LONG_VKEY_NUM) + (deckey % LONG_VKEY_NUM);
                 const auto& cands = candsByLen.GetMazeCandidates();
                 if (n < cands.size()) {
                     outputStringAndPostProc(cands[n], candsByLen.GetYomiLen(cands[n]));
@@ -198,10 +198,10 @@ namespace {
         }
 
          // Shiftキーで修飾されたキー -- キャンセル
-        void handleShiftKeys(int hotkey) {
-            _LOG_DEBUGH(_T("CALLED: %s: hotkey=%xH(%d), char=%c"), NAME_PTR, hotkey, hotkey);
+        void handleShiftKeys(int deckey) {
+            _LOG_DEBUGH(_T("CALLED: %s: deckey=%xH(%d), char=%c"), NAME_PTR, deckey, deckey);
             handleKeyPostProc();
-            State::handleShiftKeys(hotkey);
+            State::handleShiftKeys(deckey);
         }
 
         void handleLeftArrow() {
@@ -277,12 +277,12 @@ namespace {
         }
 
         // その他のCtrlキー -- 処理のキャンセル
-        void handleCtrlKeys(int /*hotkey*/) {
+        void handleCtrlKeys(int /*deckey*/) {
             handleKeyPostProc();
         }
 
         // その他の特殊キー -- 処理のキャンセル
-        void handleSpecialKeys(int /*hotkey*/) {
+        void handleSpecialKeys(int /*deckey*/) {
             handleKeyPostProc();
         }
 
@@ -291,7 +291,7 @@ namespace {
             MazegakiNode* pn = dynamic_cast<MazegakiNode*>(pNode);
             if (pn) {
                 // 今回の結果を元に戻すための情報を保存
-                pn->SetYomiInfo(OUTPUT_STACK->GetLastOutputStackStr(numBS), str.size(), STATE_COMMON->GetTotalHotKeyCount());
+                pn->SetYomiInfo(OUTPUT_STACK->GetLastOutputStackStr(numBS), str.size(), STATE_COMMON->GetTotalDecKeyCount());
             }
             STATE_COMMON->SetOutString(str, numBS);
             handleKeyPostProc();

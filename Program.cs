@@ -46,13 +46,14 @@ namespace KanchokuWS
                 }
             }
 
-            try {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new FrmKanchoku());
-            } finally {
-                KeyboardHookHandler.ReleaseKeyboardHook();
-                MultiAppChecker.Release();
+            using (var keDispatcher = new KeyboardEventDispatcher()) {
+                try {
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new FrmKanchoku(keDispatcher));
+                } finally {
+                    MultiAppChecker.Release();
+                }
             }
         }
     }

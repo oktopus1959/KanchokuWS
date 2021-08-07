@@ -14,8 +14,8 @@ public:
         LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
     }
 
-    // HOTKEY処理の前半部
-    void DoHotkeyPreProc(int hotkey);
+    // DECKEY処理の前半部
+    void DoDeckeyPreProc(int deckey);
 
     // Esc の処理
     void handleEsc();

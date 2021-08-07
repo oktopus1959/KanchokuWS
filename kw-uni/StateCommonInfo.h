@@ -3,8 +3,8 @@
 #include "string_type.h"
 #include "Logger.h"
 
-#include "hotkey_id_defs.h"
-#include "HotkeyToChars.h"
+#include "deckey_id_defs.h"
+#include "DeckeyToChars.h"
 #include "OutputStack.h"
 
 class State;
@@ -23,11 +23,11 @@ enum class VkbLayout {
 // resultFlags の詳細
 enum class ResultFlags
 {
-    // HOTKEYを仮想キーに変換してアクティブウィンドウに対して送信する
-    HotkeyToVkey = 1,
+    // DECKEYを仮想キーに変換してアクティブウィンドウに対して送信する
+    DeckeyToVkey = 1,
 
-    // Ctrl-H や BS などの特殊キーをHOTKEYで受け取る必要あり
-    SpecialHotkeyRequired = 2,
+    // Ctrl-H や BS などの特殊キーをDECKEYで受け取る必要あり
+    SpecialDeckeyRequired = 2,
 
     // 全角モード標識の表示が必要
     ShowZenkakuModeMarker = 4,
@@ -90,18 +90,18 @@ class StateCommonInfo {
     DECLARE_CLASS_LOGGER;
 
     // 打鍵されたホットキーの総カウント
-    size_t totalHotKeyCount = 0;
+    size_t totalDecKeyCount = 0;
 
     // 直前のホットキー
-    int prevHotKey = -1;
+    int prevDecKey = -1;
 
     // 同じホットキーが続けて入力された回数
-    size_t sameHotKeyCount = 0;
+    size_t sameDecKeyCount = 0;
 
     // 送信するBSの数(1 for surrogate pair)
     size_t numBackSpaces = 0;
 
-    // 様々な結果フラグ (1 なら入力された HOTKEY をVKEYに変換してアクティブWinに送る)
+    // 様々な結果フラグ (1 なら入力された DECKEY をVKEYに変換してアクティブWinに送る)
     UINT32 resultFlags = 0;
 
     // 次の入力で期待されるキー (第2ストローク、履歴入力でのEnter、など)
@@ -113,7 +113,7 @@ class StateCommonInfo {
     // 次の選択候補位置
     int nextSelectPos = 0;
 
-    // HOTKEYを発行した元の文字キーの列 (打鍵途中でスペースが打たれた時に送られる)
+    // DECKEYを発行した元の文字キーの列 (打鍵途中でスペースが打たれた時に送られる)
     MString origString;
 
     // 出力文字列 (UI側に送られる)
@@ -124,7 +124,7 @@ class StateCommonInfo {
 
     // 仮想鍵盤に出力される文字(列)
     wstring centerString;
-    mchar_t faces[NUM_STROKE_HOTKEY] = { 0 };
+    mchar_t faces[NORMAL_DECKEY_NUM] = { 0 };
     std::vector<wstring> longVkeyCandidates;
 
 public:
@@ -134,41 +134,41 @@ public:
         longVkeyCandidates.resize(LONG_VKEY_NUM);
     }
 
-    inline void IncrementTotalHotKeyCount() {
-        ++totalHotKeyCount;
+    inline void IncrementTotalDecKeyCount() {
+        ++totalDecKeyCount;
     }
 
-    inline size_t GetTotalHotKeyCount() {
-        return totalHotKeyCount;
+    inline size_t GetTotalDecKeyCount() {
+        return totalDecKeyCount;
     }
 
-    void CountSameHotKey(int hotKeyId) {
-        if (prevHotKey == hotKeyId) {
-            ++sameHotKeyCount;
+    void CountSameDecKey(int decKeyId) {
+        if (prevDecKey == decKeyId) {
+            ++sameDecKeyCount;
         } else {
-            sameHotKeyCount = 1;
-            prevHotKey = hotKeyId;
+            sameDecKeyCount = 1;
+            prevDecKey = decKeyId;
         }
     }
 
-    void ClearHotKeyCount() {
-        sameHotKeyCount = 0;
-        prevHotKey = -1;
+    void ClearDecKeyCount() {
+        sameDecKeyCount = 0;
+        prevDecKey = -1;
     }
 
-    inline size_t GetSameHotKeyCount() {
-        return sameHotKeyCount;
+    inline size_t GetSameDecKeyCount() {
+        return sameDecKeyCount;
     }
 
-    int GetHotkey() {
-        return prevHotKey;
+    int GetDeckey() {
+        return prevDecKey;
     }
 
-    wchar_t GetHotkeyChar() {
-        return HOTKEY_TO_CHARS->GetCharFromHotkey(prevHotKey);
+    wchar_t GetDeckeyChar() {
+        return DECKEY_TO_CHARS->GetCharFromDeckey(prevDecKey);
     }
 
-    // HOTKEY 処理ごとに呼び出される初期化
+    // DECKEY 処理ごとに呼び出される初期化
     void ClearStateInfo() {
         numBackSpaces = 0;
         resultFlags = 0;
@@ -186,8 +186,8 @@ public:
     void ClearAllStateInfo() {
         ClearRunningStates();
         ClearStateInfo();
-        ClearHotKeyCount();
-        IncrementTotalHotKeyCount();
+        ClearDecKeyCount();
+        IncrementTotalDecKeyCount();
     }
 
     void ClearFaces() {
@@ -205,8 +205,8 @@ public:
     inline void SetResultFlag(ResultFlags flag) { resultFlags |= (UINT32)flag; }
     inline void ResetResultFlag(ResultFlags flag) { resultFlags &= ~(UINT32)flag; }
     inline void SetResultFlag(UINT32 flag) { resultFlags |= flag; }
-    inline void SetHotkeyToVkeyFlag() { SetResultFlag(ResultFlags::HotkeyToVkey); }
-    inline void SetSpecialHotkeyRequiredFlag() { SetResultFlag(ResultFlags::SpecialHotkeyRequired); }
+    inline void SetDeckeyToVkeyFlag() { SetResultFlag(ResultFlags::DeckeyToVkey); }
+    inline void SetSpecialDeckeyRequiredFlag() { SetResultFlag(ResultFlags::SpecialDeckeyRequired); }
     inline void SetZenkakuModeMarkerShowFlag() { SetResultFlag(ResultFlags::ShowZenkakuModeMarker); }
     inline void SetZenkakuModeMarkerClearFlag() { ResetResultFlag(ResultFlags::ShowZenkakuModeMarker); SetResultFlag(ResultFlags::ClearZenkakuModeMarker); }
     inline void SetKatakanaModeMarkerShowFlag() { SetResultFlag(ResultFlags::ShowKatakanaModeMarker); }
@@ -235,8 +235,8 @@ public:
 
     inline bool IsResultFlagOn(ResultFlags flag) const { return (resultFlags & (UINT32)flag) != 0; }
     inline bool IsResultFlagOn(UINT32 flag) const { return (resultFlags & flag) != 0; }
-    inline bool IsHotkeyToVkey() const { return IsResultFlagOn(ResultFlags::HotkeyToVkey); }
-    inline bool IsSpecialHotkeyRequired() const { return IsResultFlagOn(ResultFlags::SpecialHotkeyRequired); }
+    inline bool IsDeckeyToVkey() const { return IsResultFlagOn(ResultFlags::DeckeyToVkey); }
+    inline bool IsSpecialDeckeyRequired() const { return IsResultFlagOn(ResultFlags::SpecialDeckeyRequired); }
     inline bool IsAppendBackspaceStopper() const { return IsResultFlagOn(ResultFlags::AppendBackspaceStopper); }
     inline bool IsSetHistoryBlockFlag() const { return IsResultFlagOn(ResultFlags::SetHistoryBlockFlag); }
     inline bool IsSetEitherHistoryBlockFlag() const { return IsResultFlagOn((UINT32)ResultFlags::AppendBackspaceStopper | (UINT32)ResultFlags::SetHistoryBlockFlag); }
@@ -260,7 +260,7 @@ public:
     inline mchar_t GetFirstOutChar() const { return outString.empty() ? 0 : outString[0]; }
     inline mchar_t GetLastOutChar() const { return outString.empty() ? 0 : outString.back(); }
 
-    inline void OutputHotkeyChar(/*int numBS = -1*/) { SetOutString(GetHotkeyChar()); }
+    inline void OutputDeckeyChar(/*int numBS = -1*/) { SetOutString(GetDeckeyChar()); }
     //inline void OutputOrigChar(int numBS = -1) { SetOutString(origString, numBS); }
     inline void OutputOrigString(int numBS = -1) { SetOutString(origString, numBS); }
 

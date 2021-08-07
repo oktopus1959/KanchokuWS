@@ -23,7 +23,7 @@ void StateCommonInfo::setCenterString(mchar_t center) {
 void StateCommonInfo::setVirtualKeyboardStrings(VkbLayout lo, const mchar_t* fcs) {
     LOG_DEBUG(_T("layout=%d"), lo);
     SetVkbLayout(lo);
-    for (int i = 0; i < NUM_STROKE_HOTKEY; ++i) faces[i] = fcs ? fcs[i] : 0;
+    for (int i = 0; i < NORMAL_DECKEY_NUM; ++i) faces[i] = fcs ? fcs[i] : 0;
     for (auto& s : longVkeyCandidates) s.clear();
 }
 
@@ -32,7 +32,7 @@ void StateCommonInfo::setVirtualKeyboardStrings(VkbLayout lo, const mchar_t* fcs
 void StateCommonInfo::setVirtualKeyboardStrings(VkbLayout lo, const std::vector<MString>& verticals, size_t pos) {
     LOG_DEBUG(_T("layout=%d"), lo);
     SetVkbLayout(lo);
-    for (int i = 0; i < NUM_STROKE_HOTKEY; ++i) faces[i] = 0;
+    for (int i = 0; i < NORMAL_DECKEY_NUM; ++i) faces[i] = 0;
     for (size_t n = 0; n < longVkeyCandidates.size(); ++n) {
         if (pos + n < verticals.size())
             longVkeyCandidates[n] = to_wstr(verticals[pos + n]);

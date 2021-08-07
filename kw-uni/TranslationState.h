@@ -15,7 +15,7 @@ public:
     }
 
     // その他の特殊キー
-    void handleSpecialKeys(int hotkey);
+    void handleSpecialKeys(int deckey);
 
     // 最終的な出力履歴が整ったところで呼び出される処理
     void DoOutStringProc();
@@ -32,8 +32,8 @@ public:
     }
 
 protected:
-    // HOTKEY処理の前半部
-    void DoHotkeyPreProc(int hotkey);
+    // DECKEY処理の前半部
+    void DoDeckeyPreProc(int deckey);
 
 };
 

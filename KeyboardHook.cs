@@ -61,9 +61,13 @@ namespace KanchokuWS
         private static IntPtr hookId = IntPtr.Zero;
         #endregion
 
-        public static Func<int, int, bool> OnKeyDownEvent { get; set; }
+        public delegate bool DelegateOnKeyDownEvent(int vkey, int extraInfo);
 
-        public static Func<int, int, bool> OnKeyUpEvent { get; set; }
+        public delegate bool DelegateOnKeyUpEvent(int vkey, int extraInfo);
+
+        public static DelegateOnKeyDownEvent OnKeyDownEvent { get; set; }
+
+        public static DelegateOnKeyUpEvent OnKeyUpEvent { get; set; }
 
         public static void Hook()
         {
@@ -96,16 +100,24 @@ namespace KanchokuWS
             }
         }
 
+        private static IntPtr IntPtrDone = new IntPtr(1);
+
         public static IntPtr HookProcedure(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && (wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN)) {
                 var kb = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
                 var vkCode = (int)kb.vkCode;
-                if (!(OnKeyDownEvent?.Invoke(vkCode, (int)kb.dwExtraInfo) ?? false)) return IntPtr.Zero;
+                if (OnKeyDownEvent?.Invoke(vkCode, (int)kb.dwExtraInfo) ?? false) {
+                    // 呼び出し先で処理が行われたので、システム側ではキー入力を破棄
+                    return IntPtrDone;
+                }
             } else if (nCode >= 0 && (wParam == (IntPtr)WM_KEYUP || wParam == (IntPtr)WM_SYSKEYUP)) {
                 var kb = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
                 var vkCode = (int)kb.vkCode;
-                if (!(OnKeyUpEvent?.Invoke(vkCode, (int)kb.dwExtraInfo) ?? false)) return IntPtr.Zero;
+                if (OnKeyUpEvent?.Invoke(vkCode, (int)kb.dwExtraInfo) ?? false) {
+                    // 呼び出し先で処理が行われたので、システム側ではキー入力を破棄
+                    return IntPtrDone;
+                }
             }
 
             return CallNextHookEx(hookId, nCode, wParam, lParam);

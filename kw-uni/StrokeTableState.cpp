@@ -9,7 +9,7 @@
 #include "VkbTableMaker.h"
 #include "Settings.h"
 
-#include "HotkeyToChars.h"
+#include "DeckeyToChars.h"
 #include "History/HistoryStayState.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
@@ -58,12 +58,12 @@ namespace {
 #define NAME_PTR (Name.c_str())
 
         // StrokeTableNode を処理する
-        void handleStrokeKeys(int hotkey) {
-            wchar_t myChar = shiftedOrigChar != 0 ? shiftedOrigChar : HOTKEY_TO_CHARS->GetCharFromHotkey(hotkey);
-            LOG_DEBUG(_T("CALLED: %s: hotkey=%xH(%d), face=%c, nodeDepth=%d"), NAME_PTR, hotkey, hotkey, myChar, DEPTH);
+        void handleStrokeKeys(int deckey) {
+            wchar_t myChar = shiftedOrigChar != 0 ? shiftedOrigChar : DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+            LOG_DEBUG(_T("CALLED: %s: deckey=%xH(%d), face=%c, nodeDepth=%d"), NAME_PTR, deckey, deckey, myChar, DEPTH);
             STATE_COMMON->AppendOrigString(myChar); // RootStrokeTableState が作成されたときに OrigString はクリアされている
 
-            SetTemporaryNextNode(NEXT_NODE(hotkey));
+            SetTemporaryNextNode(NEXT_NODE(deckey));
             if (!TemporaryNextNode() || !TemporaryNextNode()->isStrokeTableNode()) {
                 LOG_DEBUG(_T("%s: Next node="), NAME_PTR, NODE_NAME_PTR(TemporaryNextNode()));
                 setToRemoveAllStroke();
@@ -71,13 +71,13 @@ namespace {
         }
 
         // Shift飾修されたキー
-        void handleShiftKeys(int hotkey) {
-            _LOG_DEBUGH(_T("ENTER: %s, hotkey=%x(%d)"), NAME_PTR, hotkey, hotkey);
+        void handleShiftKeys(int deckey) {
+            _LOG_DEBUGH(_T("ENTER: %s, deckey=%x(%d)"), NAME_PTR, deckey, deckey);
             if (IsRootKeyUnshifted()) {
-                shiftedOrigChar = HOTKEY_TO_CHARS->GetCharFromHotkey(hotkey);
-                handleStrokeKeys(UNSHIFT_HOTKEY(hotkey));
+                shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+                handleStrokeKeys(UNSHIFT_DECKEY(deckey));
             } else {
-                State::handleShiftKeys(hotkey);
+                State::handleShiftKeys(deckey);
             }
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
@@ -132,7 +132,7 @@ namespace {
             return bUnnecessary || myNode()->isToRemoveAllStroke();
         }
 
-        // 次状態をチェックして、自身の状態を変更させるのに使う。HOTKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
+        // 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
         void CheckNextState() {
             LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
             if (pNext) {
@@ -217,22 +217,22 @@ namespace {
         }
 
         // StrokeTableNode を処理する
-        void handleStrokeKeys(int hotkey) {
+        void handleStrokeKeys(int deckey) {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            StrokeTableState::handleStrokeKeys(hotkey);
+            StrokeTableState::handleStrokeKeys(deckey);
         }
 
         // Shift飾修されたキー
-        void handleShiftKeys(int hotkey) {
-            _LOG_DEBUGH(_T("ENTER: %s, hotkey=%xH(%d), hiraConv=%s"), NAME_PTR, hotkey, hotkey, BOOL_TO_WPTR(SETTINGS->convertShiftedHiraganaToKatakana));
-            if (SETTINGS->convertShiftedHiraganaToKatakana && utils::contains(VkbTableMaker::GetHiraganaFirstHotkeys(), UNSHIFT_HOTKEY(hotkey))) {
+        void handleShiftKeys(int deckey) {
+            _LOG_DEBUGH(_T("ENTER: %s, deckey=%xH(%d), hiraConv=%s"), NAME_PTR, deckey, deckey, BOOL_TO_WPTR(SETTINGS->convertShiftedHiraganaToKatakana));
+            if (SETTINGS->convertShiftedHiraganaToKatakana && utils::contains(VkbTableMaker::GetHiraganaFirstDeckeys(), UNSHIFT_DECKEY(deckey))) {
                 // 後でShift入力された平仮名をカタカナに変換する
                 bUnshifted = true;
-                shiftedOrigChar = HOTKEY_TO_CHARS->GetCharFromHotkey(hotkey);
-                handleStrokeKeys(UNSHIFT_HOTKEY(hotkey));
+                shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+                handleStrokeKeys(UNSHIFT_DECKEY(deckey));
             } else {
                 bUnnecessary = true;            // これをやらないと、RootStrokeTable が残ってしまう
-                State::handleShiftKeys(hotkey);
+                State::handleShiftKeys(deckey);
             }
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
@@ -241,7 +241,7 @@ namespace {
         void handleShiftSpaceAsNormalSpace() {
             LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
             bUnnecessary = true;            // これをやらないと、RootStrokeTable が残ってしまう
-            State::handleShiftKeys(SHIFT_SPACE_HOTKEY);
+            State::handleShiftKeys(SHIFT_SPACE_DECKEY);
         }
 
         //// 第1打鍵でSpaceが入力された時の処理
@@ -254,7 +254,7 @@ namespace {
         // 第1打鍵でSpaceが入力された時の処理
         void handleSpaceKey() {
             LOG_DEBUG(_T("CALLED: %"), NAME_PTR);
-            handleStrokeKeys(HOTKEY_STROKE_SPACE);
+            handleStrokeKeys(STROKE_SPACE_DECKEY);
         }
 
         void handleBS() {
@@ -263,7 +263,7 @@ namespace {
             bUnnecessary = true;
         }
 
-        // 次状態をチェックして、自身の状態を変更させるのに使う。HOTKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
+        // 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
         void CheckNextState() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             StrokeTableState::CheckNextState();

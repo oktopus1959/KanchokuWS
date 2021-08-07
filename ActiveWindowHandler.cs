@@ -14,6 +14,8 @@ namespace KanchokuWS
     {
         private static Logger logger = Logger.GetLogger();
 
+        public const int MyMagicNumber = 1959;
+
         public FrmKanchoku FrmMain { get; set; }
         public FrmVirtualKeyboard FrmVkb { get; set; }
         public FrmModeMarker FrmMode { get; set; }
@@ -160,7 +162,7 @@ namespace KanchokuWS
             input.ki.wScan = 0;
             input.ki.dwFlags = 0;
             input.ki.time = 0;
-            input.ki.dwExtraInfo = 0;
+            input.ki.dwExtraInfo = MyMagicNumber;
         }
 
         private void setLeftCtrlInput(ref INPUT input, int keyEventFlag)
@@ -185,7 +187,7 @@ namespace KanchokuWS
         {
             leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
             rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
-            if (Settings.LoggingHotKeyInfo) logger.InfoH($"bUp={bUp}, leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
 
             if (bUp && (leftCtrl || rightCtrl)) {
                 // 両方一諸に上げる
@@ -227,7 +229,7 @@ namespace KanchokuWS
         /// <param name="prevRightCtrl"></param>
         private int revertCtrlKeyInputs(INPUT[] inputs, int idx, bool bUp, bool prevLeftCtrl, bool prevRightCtrl)
         {
-            if (Settings.LoggingHotKeyInfo) logger.InfoH($"bUp={bUp}, prevLeftCtrl={prevLeftCtrl}, prevRightCtrl={prevRightCtrl}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, prevLeftCtrl={prevLeftCtrl}, prevRightCtrl={prevRightCtrl}");
 
             if (prevLeftCtrl && bUp) {
                 setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
@@ -256,7 +258,7 @@ namespace KanchokuWS
             int idx = upDownCtrlKeyInputs(inputs, 0, bUp, out leftCtrl, out rightCtrl);
             if (idx > 0) {
                 SendInput((uint)idx, inputs, Marshal.SizeOf(typeof(INPUT)));
-                if (Settings.LoggingHotKeyInfo) logger.InfoH($"Ctrl Up/Down and Wait {waitUpMs} millisec");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH($"Ctrl Up/Down and Wait {waitUpMs} millisec");
                 if (waitUpMs > 0) {
                     Task.Delay(waitUpMs).Wait();            // やはりこれが無いと Ctrlが有効なままBSが渡ったりする
                 }
@@ -286,7 +288,7 @@ namespace KanchokuWS
             if (idx > 0) {
                 SendInput((uint)idx, inputs, Marshal.SizeOf(typeof(INPUT)));
                 int waitDownMs = (ActiveWinSettings?.CtrlDownWaitMillisec)._value(-1)._geZeroOr(Settings.CtrlKeyDownGuardMillisec);
-                if (Settings.LoggingHotKeyInfo) logger.InfoH($"Revert Ctrl and Wait {waitDownMs} millisec");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH($"Revert Ctrl and Wait {waitDownMs} millisec");
                 if (waitDownMs > 0) {
                     Task.Delay(waitDownMs).Wait();
                 }
@@ -318,26 +320,26 @@ namespace KanchokuWS
             return idx;
         }
 
-        private void sendInputsWithHandlingHotkey(uint len, INPUT[] inputs, uint vkey)
+        private void sendInputsWithHandlingDeckey(uint len, INPUT[] inputs, uint vkey)
         {
-            if (Settings.LoggingHotKeyInfo) logger.InfoH($"CALLED: len={len}, vkey={vkey}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: len={len}, vkey={vkey}");
 
-            int hotkey = 0;
-            int ctrlHotkey = 0;
+            int deckey = 0;
+            int ctrlDeckey = 0;
             if (vkey > 0) {
                 // まずホットキーの解除
-                hotkey = VirtualKeys.GetHotKeyFromCombo(0, vkey);
-                ctrlHotkey = VirtualKeys.GetHotKeyFromCombo(KeyModifiers.MOD_CONTROL, vkey);
-                HotKeyHandler.UnregisterHotKeyTemporary(hotkey);
-                HotKeyHandler.UnregisterHotKeyTemporary(ctrlHotkey);
+                deckey = VirtualKeys.GetDecKeyFromCombo(0, vkey);
+                ctrlDeckey = VirtualKeys.GetDecKeyFromCombo(KeyModifiers.MOD_CONTROL, vkey);
+                //HHHKeyHandler.UnregisterHHHKeyTemporary(deckey);
+                //HHHKeyHandler.UnregisterHHHKeyTemporary(ctrlDeckey);
             }
 
             if (len > 0) SendInput(len, inputs, Marshal.SizeOf(typeof(INPUT)));
 
             if (vkey > 0) {
                 // ホットキーの再登録
-                HotKeyHandler.ResumeHotKey(hotkey);
-                HotKeyHandler.ResumeHotKey(ctrlHotkey);
+                //HHHKeyHandler.ResumeHHHKey(deckey);
+                //HHHKeyHandler.ResumeHHHKey(ctrlDeckey);
             }
 
             // Enterキーだったら、すぐに仮想鍵盤を移動するように MinValue とする
@@ -351,7 +353,7 @@ namespace KanchokuWS
         /// <param name="numBS"></param>
         public void SendString(char[] str, int strLen, int numBS)
         {
-            bool loggingFlag = Settings.LoggingHotKeyInfo;
+            bool loggingFlag = Settings.LoggingDecKeyInfo;
             if (loggingFlag) logger.InfoH($"CALLED: str={(str._isEmpty() ? "" : new string(str, 0, strLen._lowLimit(0)))}, numBS={numBS}");
 
             if (numBS < 0) numBS = 0;
@@ -385,7 +387,7 @@ namespace KanchokuWS
             if (loggingFlag) logger.InfoH($"revert: idx={idx}");
 
             // 送出
-            sendInputsWithHandlingHotkey((uint)idx, inputs, VK_BACK);
+            sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
         }
 
         BoolObject syncPostVkey = new BoolObject();
@@ -396,7 +398,7 @@ namespace KanchokuWS
         /// <param name="n">キーダウンの数</param>
         public void SendVirtualKeys(VKeyCombo combo, int n)
         {
-            bool loggingFlag = Settings.LoggingHotKeyInfo;
+            bool loggingFlag = Settings.LoggingDecKeyInfo;
             if (loggingFlag) logger.InfoH($"CALLED: combo=({combo.modifier:x}H:{combo.vkey:x}H), numKeys={n}");
             if (syncPostVkey.BusyCheck()) {
                 if (loggingFlag) logger.InfoH($"IGNORED: numKeys={n}");
@@ -424,7 +426,7 @@ namespace KanchokuWS
                     idx = revertCtrlKeyInputs(inputs, idx, bUp, leftCtrl, rightCtrl);
 
                     // 送出
-                    sendInputsWithHandlingHotkey((uint)idx, inputs, combo.vkey);
+                    sendInputsWithHandlingDeckey((uint)idx, inputs, combo.vkey);
                 }
             }
         }
@@ -435,7 +437,7 @@ namespace KanchokuWS
         /// <param name="n">キーダウンの数</param>
         public void SendVirtualKey(uint vkey, int n)
         {
-            if (Settings.LoggingHotKeyInfo) logger.InfoH($"vkey={vkey:x}H, n={n}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"vkey={vkey:x}H, n={n}");
 
             var inputs = new INPUT[n * 2];
 
@@ -447,7 +449,7 @@ namespace KanchokuWS
             }
 
             // 送出
-            sendInputsWithHandlingHotkey((uint)idx, inputs, vkey);
+            sendInputsWithHandlingDeckey((uint)idx, inputs, vkey);
         }
 
         /// <summary>
@@ -457,7 +459,7 @@ namespace KanchokuWS
         /// </summary>
         public void SendStringViaClipboardIfNeeded(char[] str, int numBS)
         {
-            if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}");
 
             if (ActiveWinHandle != IntPtr.Zero && ((str._notEmpty() && str[0] != 0) || numBS > 0)) {
                 int len = str._isEmpty() ? 0 : str._findIndex(x => x == 0);
@@ -472,10 +474,10 @@ namespace KanchokuWS
                     SendString(null, 0, numBS);
                     if (numBS > 0 && Settings.PreWmCharGuardMillisec > 0) {
                         int waitMs = (int)(Math.Pow(numBS, Settings.ReductionExponet._lowLimit(0.5)) * Settings.PreWmCharGuardMillisec);
-                        if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
                         Helper.WaitMilliSeconds(waitMs);
                     }
-                    SendVirtualKeys(VirtualKeys.GetVKeyComboFromHotKey(HotKeys.CTRL_V_HOTKEY).Value, 1);
+                    SendVirtualKeys(VirtualKeys.GetVKeyComboFromDecKey(DecoderKeys.CTRL_V_DECKEY).Value, 1);
                 }
 
                 lastOutputDt = DateTime.Now;

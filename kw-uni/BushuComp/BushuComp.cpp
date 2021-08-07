@@ -82,7 +82,7 @@ MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
         PrevBushu2 = m2;
         PrevComp = m;
         //PrevCompSec = utils::getSecondsFromEpochTime();
-        PrevTotalCount = STATE_COMMON->GetTotalHotKeyCount();
+        PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
         return to_mstr(m);
     }
     return EMPTY_MSTR;

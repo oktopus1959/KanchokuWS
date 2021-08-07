@@ -31,8 +31,8 @@ namespace KanchokuWS
         public static uint DeactiveKeyWithCtrlEffective => DeactiveKeyWithCtrl != 0 ? DeactiveKeyWithCtrl : ActiveKeyWithCtrl;
 
         //-------------------------------------------------------------------------------------
-        /// <summary>HotKeyの無限ループを検出する回数</summary>
-        public static int HotkeyInfiniteLoopDetectCount { get; private set; } = 1000;
+        /// <summary>DecKeyの無限ループを検出する回数</summary>
+        public static int DeckeyInfiniteLoopDetectCount { get; private set; } = 1000;
 
         /// <summary>キーリピートが発生したことを認識するまでの時間(ミリ秒)</summary>
         public static int KeyRepeatDetectMillisec { get; private set; } = 100;
@@ -53,14 +53,14 @@ namespace KanchokuWS
         /// <summary>ログレベル</summary> 
         public static int LogLevel { get; private set; } = 0;
 
-        /// <summary>true の場合、入力されたホットキーに関する情報を Warn レベルでログ出力する</summary>
-        public static bool LoggingHotKeyInfo { get; private set; }
+        /// <summary>true の場合、入力されたDecoderキーに関する情報を Warn レベルでログ出力する</summary>
+        public static bool LoggingDecKeyInfo { get; private set; }
 
         /// <summary>true の場合、アクティブウィンドウに関する情報を Warn レベルでログ出力する</summary>
         public static bool LoggingActiveWindowInfo { get; set; } = false;
 
-        /// <summary>ホットキー処理後にウェイトを入れる(開発用; バグ等により処理対象ホットキーを keybd_event で送出することによる無限ループに対応する時間をかせぐ)</summary>
-        public static bool DelayAfterProcessHotkey { get; private set; } = false;
+        /// <summary>Decoderキー処理後にウェイトを入れる(開発用; バグ等により処理対象ホットキーを keybd_event で送出することによる無限ループに対応する時間をかせぐ)</summary>
+        public static bool DelayAfterProcessDeckey { get; private set; } = false;
 
         /// <summary>二重起動を許可する</summary>
         public static bool MultiAppEnabled { get; private set; } = false;
@@ -68,7 +68,7 @@ namespace KanchokuWS
         /// <summary>部首合成ログを有効にする</summary>
         public static bool BushuDicLogEnabled { get; private set; }
 
-        public static bool IsAnyDevFlagEnabled => LogLevel > 2 || LoggingHotKeyInfo || LoggingActiveWindowInfo || DelayAfterProcessHotkey || BushuDicLogEnabled;
+        public static bool IsAnyDevFlagEnabled => LogLevel > 2 || LoggingDecKeyInfo || LoggingActiveWindowInfo || DelayAfterProcessDeckey || BushuDicLogEnabled;
 
         //-------------------------------------------------------------------------------------
         // フォントと色
@@ -242,7 +242,7 @@ namespace KanchokuWS
         /// <summary>ストロークヘルプローテーション</summary>
         public static string StrokeHelpRotationKey { get; set; }
 
-        public static HashSet<int> DecoderSpecialHotkeys { get; set; } = new HashSet<int>();
+        public static HashSet<int> DecoderSpecialDeckeys { get; set; } = new HashSet<int>();
 
         //-------------------------------------------------------------------------------------
         // Ctrlキー
@@ -310,18 +310,18 @@ namespace KanchokuWS
         //public static bool HistSearchByShiftSpace { get; private set; } = false;
         public static bool SelectFirstCandByEnter { get; private set; } = false;
         public static bool HistAllowFromMiddleChar { get; private set; } = false;
-        public static int HistDelHotkeyId { get; private set; } = 0;
-        public static int HistNumHotkeyId { get; private set; } = 0;
+        public static int HistDelDeckeyId { get; private set; } = 0;
+        public static int HistNumDeckeyId { get; private set; } = 0;
 
         public static bool UseArrowKeyToSelectCandidate { get; set; } = true;
         public static bool HandleShiftSpaceAsNormalSpace { get; set; } = true;
 
         //------------------------------------------------------------------------------
         // スペースキー
-        public static bool UseShiftSpaceAsHotkey49 => MazegakiByShiftSpace;
+        //public static bool UseShiftSpaceAsDeckey49 => MazegakiByShiftSpace;
         public static bool UseCtrlSpaceKey => HistSearchByCtrlSpace;
-        //public static bool UseShiftSpaceAsSpecialHotKey => (HistSearchByShiftSpace || HandleShiftSpaceAsNormalSpace) && !UseShiftSpaceAsHotkey49;
-        public static bool UseShiftSpaceAsSpecialHotKey => (HandleShiftSpaceAsNormalSpace) && !UseShiftSpaceAsHotkey49;
+        //public static bool UseShiftSpaceAsSpecialDecKey => (HistSearchByShiftSpace || HandleShiftSpaceAsNormalSpace) && !UseShiftSpaceAsDeckey49;
+        //public static bool UseShiftSpaceAsSpecialDecKey => (HandleShiftSpaceAsNormalSpace) && !UseShiftSpaceAsDeckey49;
 
         //------------------------------------------------------------------------------
         // 交ぜ書き
@@ -387,13 +387,13 @@ namespace KanchokuWS
 
         public static string GetString(string attr, string attrOld, string defval)
         {
-            return UserKanchokuIni.Singleton.GetString(attr)._orElse(() => KanchokuIni.Singleton.GetString(attrOld, defval));
+            return UserKanchokuIni.Singleton.GetString(attr)._orElse(() => UserKanchokuIni.Singleton.GetString(attrOld))._orElse(() => KanchokuIni.Singleton.GetString(attrOld, defval));
         }
 
         // kanchoku.use.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
         public static string GetStringEx(string attr, string attrOld, string defvalInit, string defval)
         {
-            return UserKanchokuIni.Singleton.GetStringEx(attr, defvalInit)._orElse(() => KanchokuIni.Singleton.GetString(attrOld, defval));
+            return UserKanchokuIni.Singleton.GetStringEx(attr, defvalInit)._orElse(() => UserKanchokuIni.Singleton.GetStringEx(attrOld, defvalInit))._orElse(() => KanchokuIni.Singleton.GetString(attrOld, defval));
         }
 
         public static string GetStringFromSection(string section, string attr, string defval = "")
@@ -453,6 +453,13 @@ namespace KanchokuWS
             return result;
         }
 
+        private static int addDecoderSetting(string attr, string attrOld, int defval, int lowLimit = 0)
+        {
+            int result = GetString(attr, attrOld, "")._parseInt(defval)._lowLimit(lowLimit);
+            DecoderSettings[attr] = GetString(attr, $"{result}");
+            return result;
+        }
+
         private static bool addDecoderSetting(string attr, bool defval)
         {
             bool result = GetString(attr)._parseBool(defval);
@@ -494,7 +501,7 @@ namespace KanchokuWS
         {
             //-------------------------------------------------------------------------------------
             // 基本設定
-            HotkeyInfiniteLoopDetectCount = GetString("hotkeyInfiniteLoopDetectCount")._parseInt(1000)._lowLimit(100);
+            DeckeyInfiniteLoopDetectCount = GetString("deckeyInfiniteLoopDetectCount")._parseInt(1000)._lowLimit(100);
             KeyRepeatDetectMillisec = GetString("keyRepeatDetectMillisec")._parseInt(100)._lowLimit(50);
             //AutoOffWhenBurstKeyIn = GetString("autoOffWhenBurstKeyIn")._parseBool();
             SplashWindowShowDuration = GetString("splashWindowShowDuration")._parseInt(60)._lowLimit(0);
@@ -502,9 +509,9 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             LogLevel = GetLogLevel();
-            LoggingHotKeyInfo = GetString("loggingHotKeyInfo")._parseBool();
+            LoggingDecKeyInfo = GetString("loggingDecKeyInfo")._parseBool();
             //LoggingActiveWindowInfo = GetString("loggingActiveWindowInfo")._parseBool();
-            DelayAfterProcessHotkey = GetString("delayAfterProcessHotkey")._parseBool();
+            DelayAfterProcessDeckey = GetString("delayAfterProcessDeckey")._parseBool();
             MultiAppEnabled = IsMultiAppEnabled();
 
             //-------------------------------------------------------------------------------------
@@ -639,8 +646,8 @@ namespace KanchokuWS
             HistSearchByCtrlSpace = addDecoderSetting("histSearchByCtrlSpace", true);           // Ctrl-Space で履歴検索を行う
             //HistSearchByShiftSpace = addDecoderSetting("histSearchByShiftSpace", true);         // Shift-Space で履歴検索を行う
             SelectFirstCandByEnter = addDecoderSetting("selectFirstCandByEnter", false);        // Enter で最初の履歴検索候補を選択する
-            HistDelHotkeyId = addDecoderSetting("histDelHotkeyId", 41, 41);                     // 履歴削除を呼び出すHotKeyのID
-            HistNumHotkeyId = addDecoderSetting("histNumHotkeyId", 45, 41);                     // 履歴文字数指定を呼び出すHotKeyのID
+            HistDelDeckeyId = addDecoderSetting("histDelDeckeyId", "histDelHotkeyId", 41, 41);  // 履歴削除を呼び出すDecKeyのID
+            HistNumDeckeyId = addDecoderSetting("histNumDeckeyId", "histNumHotkeyId", 45, 41);  // 履歴文字数指定を呼び出すDecKeyのID
             HistAllowFromMiddleChar = addDecoderSetting("histAllowFromMiddleChar", true);       // 出力漢字列やカタカナ列の途中からでも自動履歴検索を行う(@TODO)
             UseArrowKeyToSelectCandidate = addDecoderSetting("useArrowKeyToSelectCandidate", true);    // 矢印キーで履歴候補選択を行う
             HandleShiftSpaceAsNormalSpace = addDecoderSetting("handleShiftSpaceAsNormalSpace", true);  // Shift+Space を通常 Space しとて扱う(HistSearchByShiftSpaceがfalseの場合)
@@ -658,22 +665,23 @@ namespace KanchokuWS
 
             // キー割当
             FullEscapeKey = GetString("fullEscapeKey", "G").Trim();
-            VirtualKeys.AddCtrlHotkey(FullEscapeKey, HotKeys.FULL_ESCAPE_HOTKEY, HotKeys.UNBLOCK_HOTKEY);
+            VirtualKeys.AddCtrlDeckey(FullEscapeKey, DecoderKeys.FULL_ESCAPE_DECKEY, DecoderKeys.UNBLOCK_DECKEY);
             StrokeHelpRotationKey = GetString("strokeHelpRotationKey", "T");
-            VirtualKeys.AddCtrlHotkey(StrokeHelpRotationKey, HotKeys.STROKE_HELP_ROTATION_HOTKEY, HotKeys.STROKE_HELP_UNROTATION_HOTKEY);
+            VirtualKeys.AddCtrlDeckey(StrokeHelpRotationKey, DecoderKeys.STROKE_HELP_ROTATION_DECKEY, DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
 
-            DecoderSpecialHotkeys.Clear();
-            DecoderSpecialHotkeys.Add(HotKeys.FULL_ESCAPE_HOTKEY);
-            DecoderSpecialHotkeys.Add(HotKeys.UNBLOCK_HOTKEY);
-            DecoderSpecialHotkeys.Add(HotKeys.STROKE_HELP_ROTATION_HOTKEY);
-            DecoderSpecialHotkeys.Add(HotKeys.STROKE_HELP_UNROTATION_HOTKEY);
+            DecoderSpecialDeckeys.Clear();
+            DecoderSpecialDeckeys.Add(DecoderKeys.FULL_ESCAPE_DECKEY);
+            DecoderSpecialDeckeys.Add(DecoderKeys.UNBLOCK_DECKEY);
+            DecoderSpecialDeckeys.Add(DecoderKeys.STROKE_HELP_ROTATION_DECKEY);
+            DecoderSpecialDeckeys.Add(DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
 
             ZenkakuModeKeySeq = addDecoderSetting("zenkakuModeKeySeq");
             ZenkakuOneCharKeySeq = addDecoderSetting("zenkakuOneCharKeySeq");
             NextThroughKeySeq = addDecoderSetting("nextThroughKeySeq");
             HistoryKeySeq = addDecoderSetting("historyKeySeq");
             HistoryOneCharKeySeq = addDecoderSetting("historyOneCharKeySeq");
-            MazegakiKeySeq = MazegakiByShiftSpace ? setDecoderSetting("mazegakiKeySeq", "49") : addDecoderSetting("mazegakiKeySeq");
+            //MazegakiKeySeq = MazegakiByShiftSpace ? setDecoderSetting("mazegakiKeySeq", "49") : addDecoderSetting("mazegakiKeySeq");
+            MazegakiKeySeq = addDecoderSetting("mazegakiKeySeq");
             BushuCompKeySeq = addDecoderSetting("bushuCompKeySeq");
             BushuAssocKeySeq = addDecoderSetting("bushuAssocKeySeq");
             BushuAssocDirectKeySeq = addDecoderSetting("bushuAssocDirectKeySeq");

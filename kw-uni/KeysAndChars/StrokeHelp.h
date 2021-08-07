@@ -31,7 +31,7 @@ public:
 
     ~StrokeHelp();
 
-    // 文字に対するストローク(HotkeyId)列を返す
+    // 文字に対するストローク(DeckeyId)列を返す
     inline int* GetStrokeHelp(mchar_t ch) {
         auto iter = strokeHelpMap.find(ch);
         if (iter != strokeHelpMap.end())

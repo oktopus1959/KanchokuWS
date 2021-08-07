@@ -220,7 +220,7 @@ namespace KanchokuWS
 
             // ファイル
             textBox_keyboardFile.Text = Settings.KeyboardFile;      // Settings.GetString("keyboard", Settings.KeyboardFile);
-            textBox_hotkeyCharsFile.Text = Settings.GetString("charsDefFile");
+            textBox_deckeyCharsFile.Text = Settings.GetString("charsDefFile");
             textBox_easyCharsFile.Text = Settings.EasyCharsFile;    // Settings.GetString("easyCharsFile");
             textBox_tableFile.Text = Settings.TableFile;            // Settings.GetString("tableFile");
             textBox_strokeHelpFile.Text = Settings.StrokeHelpFile;  // Settings.GetString("strokeHelpFile", Settings.StrokeHelpFile);
@@ -267,7 +267,7 @@ namespace KanchokuWS
 
             // ファイル
             checkerBasic.Add(textBox_keyboardFile);
-            checkerBasic.Add(textBox_hotkeyCharsFile);
+            checkerBasic.Add(textBox_deckeyCharsFile);
             checkerBasic.Add(textBox_easyCharsFile);
             checkerBasic.Add(textBox_tableFile);
             checkerBasic.Add(textBox_strokeHelpFile);
@@ -304,7 +304,7 @@ namespace KanchokuWS
 
             // ファイル
             Settings.SetUserIni("keyboard", textBox_keyboardFile.Text.Trim());
-            Settings.SetUserIni("charsDefFile", textBox_hotkeyCharsFile.Text.Trim());
+            Settings.SetUserIni("charsDefFile", textBox_deckeyCharsFile.Text.Trim());
             Settings.SetUserIni("easyCharsFile", textBox_easyCharsFile.Text.Trim());
             Settings.SetUserIni("tableFile", textBox_tableFile.Text.Trim());
             Settings.SetUserIni("strokeHelpFile", textBox_strokeHelpFile.Text.Trim());
@@ -494,7 +494,7 @@ namespace KanchokuWS
             textBox_vkbMoveGuardMillisec.Text = $"{Settings.VirtualKeyboardMoveGuardMillisec}";
 
             // 無限ループ対策
-            textBox_hotkeyInfiniteLoopDetectCount.Text = $"{Settings.HotkeyInfiniteLoopDetectCount}";
+            textBox_deckeyInfiniteLoopDetectCount.Text = $"{Settings.DeckeyInfiniteLoopDetectCount}";
 
             // クリップボード経由
             textBox_minLeghthViaClipboard.Text = $"{Settings.MinLeghthViaClipboard}";
@@ -504,10 +504,10 @@ namespace KanchokuWS
 
             // 開発者用
             comboBox_logLevel.SelectedIndex = Settings.GetLogLevel();
-            checkBox_loggingHotKeyInfo.Checked = Settings.GetString("loggingHotKeyInfo")._parseBool();
+            checkBox_loggingDecKeyInfo.Checked = Settings.GetString("loggingDecKeyInfo")._parseBool();
             checkBox_bushuDicLogEnabled.Checked = Settings.BushuDicLogEnabled;
             checkBox_loggingActiveWindowInfo.Checked = Settings.LoggingActiveWindowInfo;
-            checkBox_delayAfterProcessHotkey.Checked = Settings.DelayAfterProcessHotkey;
+            checkBox_delayAfterProcessDeckey.Checked = Settings.DelayAfterProcessDeckey;
             checkBox_multiAppEnabled.Checked = Settings.MultiAppEnabled;
 
             //checkBox_autoOffWhenBurstKeyIn.Checked = Settings.GetString("autoOffWhenBurstKeyIn")._parseBool();
@@ -534,7 +534,7 @@ namespace KanchokuWS
             checkerAdvanced.Add(textBox_vkbMoveGuardMillisec);
 
             // 無限ループ対策
-            checkerAdvanced.Add(textBox_hotkeyInfiniteLoopDetectCount);
+            checkerAdvanced.Add(textBox_deckeyInfiniteLoopDetectCount);
 
             // クリップボード経由
             checkerAdvanced.Add(textBox_minLeghthViaClipboard);
@@ -544,10 +544,10 @@ namespace KanchokuWS
 
             // 開発者用
             checkerAdvanced.Add(comboBox_logLevel);
-            checkerAdvanced.Add(checkBox_loggingHotKeyInfo);
+            checkerAdvanced.Add(checkBox_loggingDecKeyInfo);
             checkerAdvanced.Add(checkBox_bushuDicLogEnabled);
             checkerAdvanced.Add(checkBox_loggingActiveWindowInfo);
-            checkerAdvanced.Add(checkBox_delayAfterProcessHotkey);
+            checkerAdvanced.Add(checkBox_delayAfterProcessDeckey);
             checkerAdvanced.Add(checkBox_multiAppEnabled);
 
             //checkerAdvanced.Add(checkBox_autoOffWhenBurstKeyIn);
@@ -579,7 +579,7 @@ namespace KanchokuWS
             Settings.SetUserIni("virtualKeyboardMoveGuardMillisec", textBox_vkbMoveGuardMillisec.Text.Trim());
 
             // 無限ループ対策
-            Settings.SetUserIni("hotkeyInfiniteLoopDetectCount", textBox_hotkeyInfiniteLoopDetectCount.Text.Trim());
+            Settings.SetUserIni("deckeyInfiniteLoopDetectCount", textBox_deckeyInfiniteLoopDetectCount.Text.Trim());
 
             // クリップボード経由
             Settings.SetUserIni("minLeghthViaClipboard", textBox_minLeghthViaClipboard.Text.Trim());
@@ -590,11 +590,11 @@ namespace KanchokuWS
             // 開発者用
             Settings.SetUserIni("logLevel", comboBox_logLevel.SelectedIndex);
             Logger.LogLevel = comboBox_logLevel.SelectedIndex;
-            Settings.SetUserIni("loggingHotKeyInfo", checkBox_loggingHotKeyInfo.Checked);
+            Settings.SetUserIni("loggingDecKeyInfo", checkBox_loggingDecKeyInfo.Checked);
             Settings.SetUserIni("bushuDicLogEnabled", checkBox_bushuDicLogEnabled.Checked);
             //Settings.SetUserIni("loggingActiveWindowInfo", checkBox_loggingActiveWindowInfo.Checked);
             Settings.LoggingActiveWindowInfo = checkBox_loggingActiveWindowInfo.Checked;
-            Settings.SetUserIni("delayAfterProcessHotkey", checkBox_delayAfterProcessHotkey.Checked);
+            Settings.SetUserIni("delayAfterProcessDeckey", checkBox_delayAfterProcessDeckey.Checked);
             Settings.SetUserIni("multiAppEnabled", checkBox_multiAppEnabled.Checked);
 
             //Settings.SetUserIni("autoOffWhenBurstKeyIn", checkBox_autoOffWhenBurstKeyIn.Checked);
@@ -797,7 +797,7 @@ namespace KanchokuWS
             readSettings_tabCtrlKeys();
             checkerCtrlKeys.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
-            frmMain.ReregisterSpecialGlobalHotkeys();
+            frmMain.ReregisterSpecialGlobalDeckeys();
 
             label_okResultCtrlKeys.Show();
         }
@@ -824,8 +824,8 @@ namespace KanchokuWS
             checkBox_selectFirstCandByEnter.Checked = Settings.SelectFirstCandByEnter;
             //checkBox_autoHistEnabled_CheckedChanged(null, null);
             checkBox_useArrowKeyToSelectCand.Checked = Settings.UseArrowKeyToSelectCandidate;
-            comboBox_histDelHotkeyId.SelectedIndex = Settings.HistDelHotkeyId._lowLimit(41)._highLimit(49) - 41;
-            comboBox_histNumHotkeyId.SelectedIndex = Settings.HistNumHotkeyId._lowLimit(41)._highLimit(49) - 41;
+            comboBox_histDelDeckeyId.SelectedIndex = Settings.HistDelDeckeyId._lowLimit(41)._highLimit(48) - 41;
+            comboBox_histNumDeckeyId.SelectedIndex = Settings.HistNumDeckeyId._lowLimit(41)._highLimit(48) - 41;
 
             // 交ぜ書き
             checkBox_mazegakiByShiftSpace.Checked = Settings.MazegakiByShiftSpace;
@@ -858,8 +858,8 @@ namespace KanchokuWS
             checkerHistory.Add(checkBox_selectFirstCandByEnter);
             //checkerHistory.Add(checkBox_autoHistEnabled_CheckedChanged);
             checkerHistory.Add(checkBox_useArrowKeyToSelectCand);
-            checkerHistory.Add(comboBox_histDelHotkeyId);
-            checkerHistory.Add(comboBox_histNumHotkeyId);
+            checkerHistory.Add(comboBox_histDelDeckeyId);
+            checkerHistory.Add(comboBox_histNumDeckeyId);
 
             // 交ぜ書き
             checkerHistory.Add(checkBox_mazegakiByShiftSpace);
@@ -896,8 +896,8 @@ namespace KanchokuWS
             //Settings.SetUserIni("histSearchByShiftSpace", checkBox_histSearchByShiftSpace.Checked);
             Settings.SetUserIni("selectFirstCandByEnter", checkBox_selectFirstCandByEnter.Checked);
             Settings.SetUserIni("useArrowKeyToSelectCandidate", checkBox_useArrowKeyToSelectCand.Checked);
-            Settings.SetUserIni("histDelHotkeyId", comboBox_histDelHotkeyId.Text.Trim()._substring(0, 2));
-            Settings.SetUserIni("histNumHotkeyId", comboBox_histNumHotkeyId.Text.Trim()._substring(0, 2));
+            Settings.SetUserIni("histDelDeckeyId", comboBox_histDelDeckeyId.Text.Trim()._substring(0, 2));
+            Settings.SetUserIni("histNumDeckeyId", comboBox_histNumDeckeyId.Text.Trim()._substring(0, 2));
 
             Settings.SetUserIni("mazegakiByShiftSpace", checkBox_mazegakiByShiftSpace.Checked);
             Settings.SetUserIni("mazegakiSelectFirstCand", checkBox_mazegakiSelectFirstCand.Checked);
@@ -1331,11 +1331,11 @@ namespace KanchokuWS
         {
             //if (ctrlKeyItems._isEmpty()) {
             //    var items = new List<string>(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" });
-            //    char[] data = frmMain.CallDecoderFunc("getCharsOrderedByHotkey", null);
+            //    char[] data = frmMain.CallDecoderFunc("getCharsOrderedByDeckey", null);
             //    if (data._notEmpty()) {
-            //        for (int i = 0; i < HotKeys.NUM_STROKE_HOTKEY; ++i) {
+            //        for (int i = 0; i < DecoderKeys.NUM_STROKE_DECKEY; ++i) {
             //            if ((data[i] > ' ' && data[i] < '0') || (data[i] > '9' && data[i] < 'A') || (data[i] > 'Z' && data[i] < 'a') || data[i] > 'z') {
-            //                items.Add($"{data[i]}{data[i+HotKeys.NUM_STROKE_HOTKEY]}");
+            //                items.Add($"{data[i]}{data[i+DecoderKeys.NUM_STROKE_DECKEY]}");
             //            }
             //        }
             //    }

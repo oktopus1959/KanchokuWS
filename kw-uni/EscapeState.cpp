@@ -3,7 +3,7 @@
 #include "EscapeNode.h"
 #include "State.h"
 
-#include "HotkeyToChars.h"
+#include "DeckeyToChars.h"
 
 namespace {
     // エスケープ状態
@@ -29,9 +29,9 @@ namespace {
             return true;
         }
 
-        void handleStrokeKeys(int hotkey) {
-            wchar_t myChar = HOTKEY_TO_CHARS->GetCharFromHotkey(hotkey);
-            LOG_DEBUG(_T("CALLED: %s: hotkey=%xH(%d), face=%c"), NAME_PTR, hotkey, hotkey, myChar);
+        void handleStrokeKeys(int deckey) {
+            wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+            LOG_DEBUG(_T("CALLED: %s: deckey=%xH(%d), face=%c"), NAME_PTR, deckey, deckey, myChar);
             STATE_COMMON->SetOutString(myChar);
             bUnncessary = true;
         }

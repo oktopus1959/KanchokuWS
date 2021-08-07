@@ -5,7 +5,7 @@
 
 #include "KanchokuIni.h"
 #include "Constants.h"
-#include "HotkeyToChars.h"
+#include "DeckeyToChars.h"
 #include "Settings.h"
 #include "ErrorHandler.h"
 #include "Node.h"
@@ -46,9 +46,9 @@ namespace {
         }
 
          // Strokeキー を処理する
-        void handleStrokeKeys(int hotkey) {
-            LOG_DEBUG(_T("CALLED: %s: hotkey=%xH(%d)"), NAME_PTR, hotkey, hotkey);
-            STATE_COMMON->SetOutString(make_fullwide_char(HOTKEY_TO_CHARS->GetCharFromHotkey(hotkey)), 0);
+        void handleStrokeKeys(int deckey) {
+            LOG_DEBUG(_T("CALLED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+            STATE_COMMON->SetOutString(make_fullwide_char(DECKEY_TO_CHARS->GetCharFromDeckey(deckey)), 0);
         }
 
         // Esc の処理 -- 処理のキャンセル

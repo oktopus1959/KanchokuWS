@@ -20,12 +20,12 @@ class MazegakiNode : public FunctionNode {
     void SetYomiInfo(const MString& yomi, size_t xferLen, size_t count) {
         prevYomi = yomi;
         prevXferLen = xferLen;
-        hotkeyCount = count;
+        deckeyCount = count;
         selectFirstCandDisabled = false;
     }
 
     size_t GetPrevYomiInfo(MString& yomi, size_t count) {
-        if (count == hotkeyCount + 1) {
+        if (count == deckeyCount + 1) {
             selectFirstCandDisabled = true;
             yomi = prevYomi;
             return prevXferLen;
@@ -46,7 +46,7 @@ private:
     size_t prevXferLen = 0;
 
     // 前回変換時のホットキーカウント
-    size_t hotkeyCount = 0;
+    size_t deckeyCount = 0;
 
     // 先頭候補の自動選択を一時的に中止する
     bool selectFirstCandDisabled = false;

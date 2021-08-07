@@ -5,7 +5,7 @@
 
 #include "KanchokuIni.h"
 #include "Constants.h"
-#include "HotkeyToChars.h"
+#include "DeckeyToChars.h"
 #include "Settings.h"
 #include "ErrorHandler.h"
 #include "Node.h"
@@ -52,17 +52,17 @@ namespace {
         }
 
          // Strokeキー を処理する
-        void handleStrokeKeys(int hotkey) {
-            LOG_DEBUG(_T("CALLED: %s: hotkey=%xH(%d)"), NAME_PTR, hotkey, hotkey);
+        void handleStrokeKeys(int deckey) {
+            LOG_DEBUG(_T("CALLED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
             STATE_COMMON->ClearOrigString();
-            outputZenkakuCharFromHotkey(hotkey);
+            outputZenkakuCharFromDeckey(deckey);
         }
 
          // Shiftキーで修飾されたキーを処理する
-        void handleShiftKeys(int hotkey) {
-            LOG_DEBUG(_T("CALLED: %s: hotkey=%xH(%d), char=%c"), NAME_PTR, hotkey, hotkey);
+        void handleShiftKeys(int deckey) {
+            LOG_DEBUG(_T("CALLED: %s: deckey=%xH(%d), char=%c"), NAME_PTR, deckey, deckey);
             STATE_COMMON->ClearOrigString();
-            outputZenkakuCharFromHotkey(hotkey);
+            outputZenkakuCharFromDeckey(deckey);
         }
 
         // Space キーの処理 -- origChar を出力してキャンセル
@@ -89,12 +89,12 @@ namespace {
         }
 
     protected:
-        void outputZenkakuCharFromHotkey(int hotkey) {
+        void outputZenkakuCharFromDeckey(int deckey) {
             wchar_t wch = 0;
-            if (hotkey == HOTKEY_TO_CHARS->GetYenPos()) {
+            if (deckey == DECKEY_TO_CHARS->GetYenPos()) {
                 wch = 0xffe5;
             } else {
-                wchar_t ch = HOTKEY_TO_CHARS->GetCharFromHotkey(hotkey);
+                wchar_t ch = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
                 if (ch > 0) wch = make_fullwide_char(ch);
             }
             STATE_COMMON->SetZenkakuModeMarkerShowFlag();
@@ -119,18 +119,18 @@ namespace {
     public:
         ZenkakuOneState(ZenkakuOneNode* pN) : ZenkakuState(pN) { }
 
-        void DoHotkeyPreProc(int hotkey) {
+        void DoDeckeyPreProc(int deckey) {
             _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
-            State::DoHotkeyPreProc(hotkey);
+            State::DoDeckeyPreProc(deckey);
             // 1文字処理したら自状態は不要になる
             cancelMe();
         }
 
-        //void DoHotkeyPostProc() {
+        //void DoDeckeyPostProc() {
         //    _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
         //    // 1文字処理したら抜ける
         //    cancelMe();
-        //    State::DoHotkeyPostProc();
+        //    State::DoDeckeyPostProc();
         //}
 
         // Space キーの処理 -- origChar を出力してキャンセル

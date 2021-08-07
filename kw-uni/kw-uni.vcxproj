@@ -177,10 +177,10 @@
     <ClInclude Include="History\History.h" />
     <ClInclude Include="History\HistoryDic.h" />
     <ClInclude Include="History\HistoryStayState.h" />
+    <ClInclude Include="KeysAndChars\DeckeyToChars.h" />
+    <ClInclude Include="KeysAndChars\deckey_id_defs.h" />
     <ClInclude Include="KeysAndChars\EasyChars.h" />
     <ClInclude Include="KeysAndChars\HankakuKatakanaOneShot.h" />
-    <ClInclude Include="KeysAndChars\HotkeyToChars.h" />
-    <ClInclude Include="KeysAndChars\hotkey_id_defs.h" />
     <ClInclude Include="KeysAndChars\Katakana.h" />
     <ClInclude Include="KeysAndChars\KatakanaOneShot.h" />
     <ClInclude Include="KeysAndChars\MyPrevChar.h" />
@@ -227,10 +227,10 @@
     <ClCompile Include="FunctionNodeManager.cpp" />
     <ClCompile Include="History\History.cpp" />
     <ClCompile Include="History\HistoryDic.cpp" />
+    <ClCompile Include="KeysAndChars\DeckeyToChars.cpp" />
+    <ClCompile Include="KeysAndChars\deckey_id_defs.cpp" />
     <ClCompile Include="KeysAndChars\EasyChars.cpp" />
     <ClCompile Include="KeysAndChars\HankakuKatakanaOneShotState.cpp" />
-    <ClCompile Include="KeysAndChars\HotkeyToChars.cpp" />
-    <ClCompile Include="KeysAndChars\hotkey_id_defs.cpp" />
     <ClCompile Include="KeysAndChars\KatakanaOneShotState.cpp" />
     <ClCompile Include="KeysAndChars\KatakanaState.cpp" />
     <ClCompile Include="KeysAndChars\MyPrevCharState.cpp" />

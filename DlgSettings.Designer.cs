@@ -43,7 +43,7 @@ namespace KanchokuWS
             this.label44 = new System.Windows.Forms.Label();
             this.textBox_tableFile = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
-            this.textBox_hotkeyCharsFile = new System.Windows.Forms.TextBox();
+            this.textBox_deckeyCharsFile = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.textBox_historyFile = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -97,13 +97,13 @@ namespace KanchokuWS
             this.groupBox15 = new System.Windows.Forms.GroupBox();
             this.checkBox_bushuDicLogEnabled = new System.Windows.Forms.CheckBox();
             this.checkBox_multiAppEnabled = new System.Windows.Forms.CheckBox();
-            this.checkBox_delayAfterProcessHotkey = new System.Windows.Forms.CheckBox();
-            this.checkBox_loggingHotKeyInfo = new System.Windows.Forms.CheckBox();
+            this.checkBox_delayAfterProcessDeckey = new System.Windows.Forms.CheckBox();
+            this.checkBox_loggingDecKeyInfo = new System.Windows.Forms.CheckBox();
             this.checkBox_loggingActiveWindowInfo = new System.Windows.Forms.CheckBox();
             this.comboBox_logLevel = new System.Windows.Forms.ComboBox();
             this.label29 = new System.Windows.Forms.Label();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
-            this.textBox_hotkeyInfiniteLoopDetectCount = new System.Windows.Forms.TextBox();
+            this.textBox_deckeyInfiniteLoopDetectCount = new System.Windows.Forms.TextBox();
             this.label33 = new System.Windows.Forms.Label();
             this.label_okResultAdvanced = new System.Windows.Forms.Label();
             this.button_advancedClose = new System.Windows.Forms.Button();
@@ -235,9 +235,9 @@ namespace KanchokuWS
             this.textBox_mazeYomiMaxLen = new System.Windows.Forms.TextBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.checkBox_useArrowKeyToSelectCand = new System.Windows.Forms.CheckBox();
-            this.comboBox_histNumHotkeyId = new System.Windows.Forms.ComboBox();
+            this.comboBox_histNumDeckeyId = new System.Windows.Forms.ComboBox();
             this.label43 = new System.Windows.Forms.Label();
-            this.comboBox_histDelHotkeyId = new System.Windows.Forms.ComboBox();
+            this.comboBox_histDelDeckeyId = new System.Windows.Forms.ComboBox();
             this.label42 = new System.Windows.Forms.Label();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
             this.label27 = new System.Windows.Forms.Label();
@@ -455,7 +455,7 @@ namespace KanchokuWS
             this.groupBox2.Controls.Add(this.label44);
             this.groupBox2.Controls.Add(this.textBox_tableFile);
             this.groupBox2.Controls.Add(this.label18);
-            this.groupBox2.Controls.Add(this.textBox_hotkeyCharsFile);
+            this.groupBox2.Controls.Add(this.textBox_deckeyCharsFile);
             this.groupBox2.Controls.Add(this.label10);
             this.groupBox2.Controls.Add(this.textBox_historyFile);
             this.groupBox2.Controls.Add(this.label7);
@@ -540,14 +540,14 @@ namespace KanchokuWS
             // 
             // textBox_hotkeyCharsFile
             // 
-            this.textBox_hotkeyCharsFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBox_deckeyCharsFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_hotkeyCharsFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_hotkeyCharsFile.Location = new System.Drawing.Point(129, 65);
-            this.textBox_hotkeyCharsFile.Name = "textBox_hotkeyCharsFile";
-            this.textBox_hotkeyCharsFile.Size = new System.Drawing.Size(175, 19);
-            this.textBox_hotkeyCharsFile.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_hotkeyCharsFile, "HotKeyから文字への変換を定義するファイル\r\n\r\n打鍵されたキーを文字に変換してそのまま出力する場合に必要となる、\r\nHotKey⇒文字のマッピング定義ファイ" +
+            this.textBox_deckeyCharsFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_deckeyCharsFile.Location = new System.Drawing.Point(129, 65);
+            this.textBox_deckeyCharsFile.Name = "textBox_hotkeyCharsFile";
+            this.textBox_deckeyCharsFile.Size = new System.Drawing.Size(175, 19);
+            this.textBox_deckeyCharsFile.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_deckeyCharsFile, "HotKeyから文字への変換を定義するファイル\r\n\r\n打鍵されたキーを文字に変換してそのまま出力する場合に必要となる、\r\nHotKey⇒文字のマッピング定義ファイ" +
         "ルを指定します。\r\n\r\nファイルの指定がない場合は、キーボードファイルと同種の定義ファイルが\r\n使用されます。\r\n例：キーボードファイルが 106.key なら" +
         " chars.106.txt が使われる。");
             // 
@@ -1178,8 +1178,8 @@ namespace KanchokuWS
             // 
             this.groupBox15.Controls.Add(this.checkBox_bushuDicLogEnabled);
             this.groupBox15.Controls.Add(this.checkBox_multiAppEnabled);
-            this.groupBox15.Controls.Add(this.checkBox_delayAfterProcessHotkey);
-            this.groupBox15.Controls.Add(this.checkBox_loggingHotKeyInfo);
+            this.groupBox15.Controls.Add(this.checkBox_delayAfterProcessDeckey);
+            this.groupBox15.Controls.Add(this.checkBox_loggingDecKeyInfo);
             this.groupBox15.Controls.Add(this.checkBox_loggingActiveWindowInfo);
             this.groupBox15.Controls.Add(this.comboBox_logLevel);
             this.groupBox15.Controls.Add(this.label29);
@@ -1213,23 +1213,23 @@ namespace KanchokuWS
             // 
             // checkBox_delayAfterProcessHotkey
             // 
-            this.checkBox_delayAfterProcessHotkey.AutoSize = true;
-            this.checkBox_delayAfterProcessHotkey.Location = new System.Drawing.Point(21, 108);
-            this.checkBox_delayAfterProcessHotkey.Name = "checkBox_delayAfterProcessHotkey";
-            this.checkBox_delayAfterProcessHotkey.Size = new System.Drawing.Size(194, 19);
-            this.checkBox_delayAfterProcessHotkey.TabIndex = 3;
-            this.checkBox_delayAfterProcessHotkey.Text = "HotKeyの処理後にウェイトを入れる";
-            this.checkBox_delayAfterProcessHotkey.UseVisualStyleBackColor = true;
+            this.checkBox_delayAfterProcessDeckey.AutoSize = true;
+            this.checkBox_delayAfterProcessDeckey.Location = new System.Drawing.Point(21, 108);
+            this.checkBox_delayAfterProcessDeckey.Name = "checkBox_delayAfterProcessHotkey";
+            this.checkBox_delayAfterProcessDeckey.Size = new System.Drawing.Size(194, 19);
+            this.checkBox_delayAfterProcessDeckey.TabIndex = 3;
+            this.checkBox_delayAfterProcessDeckey.Text = "HotKeyの処理後にウェイトを入れる";
+            this.checkBox_delayAfterProcessDeckey.UseVisualStyleBackColor = true;
             // 
             // checkBox_loggingHotKeyInfo
             // 
-            this.checkBox_loggingHotKeyInfo.AutoSize = true;
-            this.checkBox_loggingHotKeyInfo.Location = new System.Drawing.Point(21, 48);
-            this.checkBox_loggingHotKeyInfo.Name = "checkBox_loggingHotKeyInfo";
-            this.checkBox_loggingHotKeyInfo.Size = new System.Drawing.Size(215, 19);
-            this.checkBox_loggingHotKeyInfo.TabIndex = 0;
-            this.checkBox_loggingHotKeyInfo.Text = "入力されたホットキー情報をログ出力する";
-            this.checkBox_loggingHotKeyInfo.UseVisualStyleBackColor = true;
+            this.checkBox_loggingDecKeyInfo.AutoSize = true;
+            this.checkBox_loggingDecKeyInfo.Location = new System.Drawing.Point(21, 48);
+            this.checkBox_loggingDecKeyInfo.Name = "checkBox_loggingHotKeyInfo";
+            this.checkBox_loggingDecKeyInfo.Size = new System.Drawing.Size(215, 19);
+            this.checkBox_loggingDecKeyInfo.TabIndex = 0;
+            this.checkBox_loggingDecKeyInfo.Text = "入力されたホットキー情報をログ出力する";
+            this.checkBox_loggingDecKeyInfo.UseVisualStyleBackColor = true;
             // 
             // checkBox_loggingActiveWindowInfo
             // 
@@ -1273,7 +1273,7 @@ namespace KanchokuWS
             // 
             // groupBox16
             // 
-            this.groupBox16.Controls.Add(this.textBox_hotkeyInfiniteLoopDetectCount);
+            this.groupBox16.Controls.Add(this.textBox_deckeyInfiniteLoopDetectCount);
             this.groupBox16.Controls.Add(this.label33);
             this.groupBox16.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox16.Location = new System.Drawing.Point(7, 259);
@@ -1285,12 +1285,12 @@ namespace KanchokuWS
             // 
             // textBox_hotkeyInfiniteLoopDetectCount
             // 
-            this.textBox_hotkeyInfiniteLoopDetectCount.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_hotkeyInfiniteLoopDetectCount.Location = new System.Drawing.Point(234, 17);
-            this.textBox_hotkeyInfiniteLoopDetectCount.Name = "textBox_hotkeyInfiniteLoopDetectCount";
-            this.textBox_hotkeyInfiniteLoopDetectCount.Size = new System.Drawing.Size(45, 19);
-            this.textBox_hotkeyInfiniteLoopDetectCount.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_hotkeyInfiniteLoopDetectCount, resources.GetString("textBox_hotkeyInfiniteLoopDetectCount.ToolTip"));
+            this.textBox_deckeyInfiniteLoopDetectCount.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_deckeyInfiniteLoopDetectCount.Location = new System.Drawing.Point(234, 17);
+            this.textBox_deckeyInfiniteLoopDetectCount.Name = "textBox_hotkeyInfiniteLoopDetectCount";
+            this.textBox_deckeyInfiniteLoopDetectCount.Size = new System.Drawing.Size(45, 19);
+            this.textBox_deckeyInfiniteLoopDetectCount.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_deckeyInfiniteLoopDetectCount, resources.GetString("textBox_hotkeyInfiniteLoopDetectCount.ToolTip"));
             // 
             // label33
             // 
@@ -2713,9 +2713,9 @@ namespace KanchokuWS
             // groupBox17
             // 
             this.groupBox17.Controls.Add(this.checkBox_useArrowKeyToSelectCand);
-            this.groupBox17.Controls.Add(this.comboBox_histNumHotkeyId);
+            this.groupBox17.Controls.Add(this.comboBox_histNumDeckeyId);
             this.groupBox17.Controls.Add(this.label43);
-            this.groupBox17.Controls.Add(this.comboBox_histDelHotkeyId);
+            this.groupBox17.Controls.Add(this.comboBox_histDelDeckeyId);
             this.groupBox17.Controls.Add(this.label42);
             this.groupBox17.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox17.Location = new System.Drawing.Point(11, 159);
@@ -2738,10 +2738,10 @@ namespace KanchokuWS
             // 
             // comboBox_histNumHotkeyId
             // 
-            this.comboBox_histNumHotkeyId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_histNumHotkeyId.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.comboBox_histNumHotkeyId.FormattingEnabled = true;
-            this.comboBox_histNumHotkeyId.Items.AddRange(new object[] {
+            this.comboBox_histNumDeckeyId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_histNumDeckeyId.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.comboBox_histNumDeckeyId.FormattingEnabled = true;
+            this.comboBox_histNumDeckeyId.Items.AddRange(new object[] {
             "41 ( - )",
             "42 ( ^ )",
             "43 ( \\ )",
@@ -2750,11 +2750,11 @@ namespace KanchokuWS
             "46 ( : )",
             "47 ( ] )",
             "48 (＼)"});
-            this.comboBox_histNumHotkeyId.Location = new System.Drawing.Point(190, 68);
-            this.comboBox_histNumHotkeyId.Name = "comboBox_histNumHotkeyId";
-            this.comboBox_histNumHotkeyId.Size = new System.Drawing.Size(64, 20);
-            this.comboBox_histNumHotkeyId.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.comboBox_histNumHotkeyId, resources.GetString("comboBox_histNumHotkeyId.ToolTip"));
+            this.comboBox_histNumDeckeyId.Location = new System.Drawing.Point(190, 68);
+            this.comboBox_histNumDeckeyId.Name = "comboBox_histNumHotkeyId";
+            this.comboBox_histNumDeckeyId.Size = new System.Drawing.Size(64, 20);
+            this.comboBox_histNumDeckeyId.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.comboBox_histNumDeckeyId, resources.GetString("comboBox_histNumHotkeyId.ToolTip"));
             // 
             // label43
             // 
@@ -2767,10 +2767,10 @@ namespace KanchokuWS
             // 
             // comboBox_histDelHotkeyId
             // 
-            this.comboBox_histDelHotkeyId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_histDelHotkeyId.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.comboBox_histDelHotkeyId.FormattingEnabled = true;
-            this.comboBox_histDelHotkeyId.Items.AddRange(new object[] {
+            this.comboBox_histDelDeckeyId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_histDelDeckeyId.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.comboBox_histDelDeckeyId.FormattingEnabled = true;
+            this.comboBox_histDelDeckeyId.Items.AddRange(new object[] {
             "41 ( - )",
             "42 ( ^ )",
             "43 ( \\ )",
@@ -2779,11 +2779,11 @@ namespace KanchokuWS
             "46 ( : )",
             "47 ( ] )",
             "48 (＼)"});
-            this.comboBox_histDelHotkeyId.Location = new System.Drawing.Point(190, 45);
-            this.comboBox_histDelHotkeyId.Name = "comboBox_histDelHotkeyId";
-            this.comboBox_histDelHotkeyId.Size = new System.Drawing.Size(64, 20);
-            this.comboBox_histDelHotkeyId.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.comboBox_histDelHotkeyId, "縦列表示された履歴候補選択状態のとき、削除モードに\r\n移行するためのホットキーIDを設定します。\r\n\r\n削除モードに入り、縦列鍵盤に対応するキーを押すと、\r\n候補" +
+            this.comboBox_histDelDeckeyId.Location = new System.Drawing.Point(190, 45);
+            this.comboBox_histDelDeckeyId.Name = "comboBox_histDelHotkeyId";
+            this.comboBox_histDelDeckeyId.Size = new System.Drawing.Size(64, 20);
+            this.comboBox_histDelDeckeyId.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.comboBox_histDelDeckeyId, "縦列表示された履歴候補選択状態のとき、削除モードに\r\n移行するためのホットキーIDを設定します。\r\n\r\n削除モードに入り、縦列鍵盤に対応するキーを押すと、\r\n候補" +
         "が削除されて exclude リストに登録されます。\r\nexclude リストに登録された文字列は、候補に表示されません。");
             // 
             // label42
@@ -3755,9 +3755,9 @@ namespace KanchokuWS
         private System.Windows.Forms.CheckBox checkBox_useLeftCtrl;
         private System.Windows.Forms.CheckBox checkBox_useRightCtrl;
         private System.Windows.Forms.GroupBox groupBox17;
-        private System.Windows.Forms.ComboBox comboBox_histDelHotkeyId;
+        private System.Windows.Forms.ComboBox comboBox_histDelDeckeyId;
         private System.Windows.Forms.Label label42;
-        private System.Windows.Forms.ComboBox comboBox_histNumHotkeyId;
+        private System.Windows.Forms.ComboBox comboBox_histNumDeckeyId;
         private System.Windows.Forms.Label label43;
         private System.Windows.Forms.CheckBox checkBox_confirmOnClose;
         private System.Windows.Forms.CheckBox checkBox_autoHistEnabled;
@@ -3781,13 +3781,13 @@ namespace KanchokuWS
         private System.Windows.Forms.Button button_fontColorClose;
         private System.Windows.Forms.Button button_fontColorEnter;
         private System.Windows.Forms.GroupBox groupBox15;
-        private System.Windows.Forms.CheckBox checkBox_delayAfterProcessHotkey;
-        private System.Windows.Forms.CheckBox checkBox_loggingHotKeyInfo;
+        private System.Windows.Forms.CheckBox checkBox_delayAfterProcessDeckey;
+        private System.Windows.Forms.CheckBox checkBox_loggingDecKeyInfo;
         private System.Windows.Forms.CheckBox checkBox_loggingActiveWindowInfo;
         private System.Windows.Forms.ComboBox comboBox_logLevel;
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.GroupBox groupBox16;
-        private System.Windows.Forms.TextBox textBox_hotkeyInfiniteLoopDetectCount;
+        private System.Windows.Forms.TextBox textBox_deckeyInfiniteLoopDetectCount;
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.DataGridView dgvAbout;
         private System.Windows.Forms.TextBox textBox_normalFont;
@@ -3798,7 +3798,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.TextBox textBox_tableFile;
         private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.TextBox textBox_hotkeyCharsFile;
+        private System.Windows.Forms.TextBox textBox_deckeyCharsFile;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox textBox_historyFile;
         private System.Windows.Forms.Label label7;

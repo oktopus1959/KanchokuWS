@@ -14,18 +14,18 @@ DEFINE_CLASS_LOGGER(ModeState);
 
 #define NAME_PTR    pFriendState->Name.c_str()
 
-// HOTKEY処理の前半部
-void ModeState::DoHotkeyPreProc(int hotkey) {
-    LOG_DEBUGH(_T("ENTER: %s: hotkey=%xH(%d)"), NAME_PTR, hotkey, hotkey);
-    // まだ後続状態が無く、自身が StrokeState ではなく、hotkey はストロークキーである場合は、ルートストローク状態を生成して後続させる
+// DECKEY処理の前半部
+void ModeState::DoDeckeyPreProc(int deckey) {
+    LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+    // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
     if (!pFriendState->pNext) {
-        if ((!pFriendState->pNode || !pFriendState->pNode->isStrokeTableNode()) && pFriendState->isStrokeKeyOrShiftedKey(hotkey)) {
+        if ((!pFriendState->pNode || !pFriendState->pNode->isStrokeTableNode()) && pFriendState->isStrokeKeyOrShiftedKey(deckey)) {
             LOG_DEBUGH(_T("CREATE: RootStrokeNode"));
             pFriendState->pNext = ROOT_STROKE_NODE->CreateState();
             pFriendState->pNext->SetPrevState(pFriendState);
         }
     }
-    pFriendState->State::DoHotkeyPreProc(hotkey);
+    pFriendState->State::DoDeckeyPreProc(deckey);
     LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
 }
 
@@ -35,7 +35,7 @@ void ModeState::handleEsc() {
     LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
     if (MAZEGAKI_NODE) {
         MString prevYomi;
-        size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi, STATE_COMMON->GetTotalHotKeyCount());
+        size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi, STATE_COMMON->GetTotalDecKeyCount());
         if (prevXferLen > 0) {
             STATE_COMMON->SetOutString(prevYomi, prevXferLen);
             return;

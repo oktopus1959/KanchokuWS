@@ -12,13 +12,13 @@
 DEFINE_CLASS_LOGGER(TranslationState);
 
 // その他の特殊キー
-void TranslationState::handleSpecialKeys(int hotkey) {
-    LOG_DEBUG(_T("CALLED: %s, hotkey=%d"), NAME_PTR, hotkey);
+void TranslationState::handleSpecialKeys(int deckey) {
+    LOG_DEBUG(_T("CALLED: %s, deckey=%d"), NAME_PTR, deckey);
     if (HISTORY_STAY_STATE) {
         // 常駐の履歴機能があればそれを呼び出す
-        HISTORY_STAY_STATE->dispatchHotkey(hotkey);
+        HISTORY_STAY_STATE->dispatchDeckey(deckey);
     } else {
-        State::handleSpecialKeys(hotkey);
+        State::handleSpecialKeys(deckey);
     }
 }
 
@@ -32,10 +32,10 @@ void TranslationState::DoOutStringProc() {
 // ストローク状態が後続する変換系状態のベースクラス
 DEFINE_CLASS_LOGGER(StrokeTranslationState);
 
-// HOTKEY処理の前半部
-void StrokeTranslationState::DoHotkeyPreProc(int hotkey) {
-    LOG_DEBUG(_T("ENTER: %s: hotkey=%xH(%d)"), NAME_PTR, hotkey, hotkey);
-    ModeState::DoHotkeyPreProc(hotkey);
+// DECKEY処理の前半部
+void StrokeTranslationState::DoDeckeyPreProc(int deckey) {
+    LOG_DEBUG(_T("ENTER: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+    ModeState::DoDeckeyPreProc(deckey);
     LOG_DEBUG(_T("LEAVE: %s"), NAME_PTR);
 }
 

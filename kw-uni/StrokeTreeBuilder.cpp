@@ -13,7 +13,8 @@
 #include "StrokeTable.h"
 #include "StringNode.h"
 #include "FunctionNodeManager.h"
-#include "HotkeyToChars.h"
+#include "DeckeyToChars.h"
+#include "deckey_id_defs.h"
 
 namespace {
     DEFINE_NAMESPACE_LOGGER(StrokeTreeBuilder);
@@ -55,15 +56,15 @@ namespace {
         LOG_DEBUG(_T("marker=%s, prevNum=%d, myNum=%d"), marker.c_str(), prevNum, 0);
         switch (utils::safe_front(marker)) {
         //case BuiltInMarker::MyChar:
-        //    return new StringNode(HOTKEY_TO_CHARS->GetCharFromHotkey(myNum));
+        //    return new StringNode(DECKEY_TO_CHARS->GetCharFromDeckey(myNum));
         //case BuiltInMarker::PrevChar:
-        //    return new StringNode(HOTKEY_TO_CHARS->GetCharFromHotkey(prevNum));
+        //    return new StringNode(DECKEY_TO_CHARS->GetCharFromDeckey(prevNum));
         case BuiltInMarker::NumberInCircle:
             return new StringNode(makeNumberInCircle(prevNum));
         case BuiltInMarker::WidePrevChar:
-            return new StringNode(makeFullWideChar(HOTKEY_TO_CHARS->GetCharFromHotkey(prevNum)));
+            return new StringNode(makeFullWideChar(DECKEY_TO_CHARS->GetCharFromDeckey(prevNum)));
         case BuiltInMarker::WideShiftPrevChar:
-            return new StringNode(makeFullWideChar(HOTKEY_TO_CHARS->GetCharFromHotkey(prevNum + NUM_STROKE_HOTKEY)));
+            return new StringNode(makeFullWideChar(DECKEY_TO_CHARS->GetCharFromDeckey(prevNum + SHIFT_DECKEY_START)));
         default:
             return FunctionNodeManager::CreateFunctionNode(marker);
         }
@@ -116,7 +117,8 @@ namespace {
             // { -n>..., ..., -m>... }
             // として扱うということ。
             // なので、先に treeNode(テーブルノード)を作成しておく
-            StrokeTableNode* tblNode = new StrokeTableNode(0);
+            // RootStrokeTable は機能キーやCtrl修飾も含めたテーブルとする
+            StrokeTableNode* tblNode = new StrokeTableNode(0, TOTAL_DECKEY_NUM);
             int treeCount = 0;
             readNextToken();
             while (currentToken != TOKEN::END) {
@@ -396,7 +398,7 @@ namespace {
                 arrowIndex = arrowIndex * 10 + c - '0';
                 c = getNextChar();
             }
-            if (arrowIndex >= NUM_STROKE_HOTKEY) parseError();
+            if (arrowIndex >= NORMAL_DECKEY_NUM) parseError();
             if (c != '>') parseError();
         }
 
@@ -464,10 +466,15 @@ void StrokeTableNode::AssignFucntion(const tstring& keys, const tstring& name) {
     if (keys.empty()) return;
 
     std::vector<size_t> keyCodes;
-    std::wregex reDigits(_T("^[0-9]+$"));
+    std::wregex reDigits(_T("^[Ss]?[0-9]+$"));
     for (auto k : utils::split(keys, ',')) {
         if (k.empty() || !std::regex_match(k, reDigits)) return;    // 10進数でなければエラー
-        keyCodes.push_back((size_t)utils::strToInt(k, -1));
+        int shiftOffset = 0;
+        if (k[0] == 'S' || k[0] == 's') {
+            shiftOffset = SHIFT_DECKEY_START;
+            k = k.substr(1);
+        }
+        keyCodes.push_back((size_t)utils::strToInt(k, -1) + shiftOffset);
     }
     StrokeTableNode* pNode = RootStrokeNode.get();
     if (pNode == 0) return;

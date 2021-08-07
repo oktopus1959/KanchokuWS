@@ -5,7 +5,7 @@
 
 #include "KanchokuIni.h"
 #include "Constants.h"
-#include "HotkeyToChars.h"
+#include "DeckeyToChars.h"
 #include "Settings.h"
 #include "ErrorHandler.h"
 #include "Node.h"

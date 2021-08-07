@@ -93,10 +93,10 @@ namespace KanchokuWS
     /// </summary>
     public static class ResultFlags
     {
-        /// <summary> HOTKEYを仮想キーに変換してアクティブウィンドウに対して送信する</summary>
-        public const uint HotkeyToVkey = 1;
-        /// <summary> Ctrl-H や BS などの特殊キーをHOTKEYで受け取る必要あり</summary>
-        public const uint SpecialHotkeyRequired = 2;
+        /// <summary> DECKEYを仮想キーに変換してアクティブウィンドウに対して送信する</summary>
+        public const uint DeckeyToVkey = 1;
+        /// <summary> Ctrl-H や BS などの特殊キーをDECKEYで受け取る必要あり</summary>
+        public const uint SpecialDeckeyRequired = 2;
         /// <summary> 全角モード標識の表示が必要</summary>
         public const uint ShowZenkakuModeMarker = 4;
         /// <summary> 全角モード標識の表示をやめる</summary>
@@ -128,9 +128,9 @@ namespace KanchokuWS
         /// <summary>矢印キーの要求されるレイアウトか</summary>
         public static bool IsArrowKeysRequired(this DecoderOutParams output) { return output.layout >= (int)VkbLayout.Vertical && output.layout <= (int)VkbLayout.Horizontal; }
 
-        /// <summary>HotKeyを仮想キーに戻して出力するか</summary>
-        public static bool IsHotkeyToVkey(this DecoderOutParams output) { return (output.resultFlags & ResultFlags.HotkeyToVkey) != 0; }
-        //private bool isSpecialHotkeyRequired(this DecoderOutParams output) { return (output.resultFlags &  ResultFlags.SpecialHotkeyRequired) != 0; }
+        /// <summary>DecKeyを仮想キーに戻して出力するか</summary>
+        public static bool IsDeckeyToVkey(this DecoderOutParams output) { return (output.resultFlags & ResultFlags.DeckeyToVkey) != 0; }
+        //private bool isSpecialDeckeyRequired(this DecoderOutParams output) { return (output.resultFlags &  ResultFlags.SpecialDeckeyRequired) != 0; }
 
         /// <summary>全角モード標識を表示するか</summary>
         public static bool IsZenkakuModeMarkerShow(this DecoderOutParams output) { return (output.resultFlags & ResultFlags.ShowZenkakuModeMarker) != 0; }

@@ -46,12 +46,16 @@ namespace KanchokuWS
 
         private const int timerInterval = 100;
 
+        private KeyboardEventDispatcher keDispatcher { get; set; }
+
         //------------------------------------------------------------------
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public FrmKanchoku()
+        public FrmKanchoku(KeyboardEventDispatcher dispatcher)
         {
+            keDispatcher = dispatcher;
+
             // スクリーン情報の取得
             ScreenInfo.GetScreenInfo();
 
@@ -86,6 +90,9 @@ namespace KanchokuWS
             // 設定ファイルの読み込み
             Settings.ReadIniFile();
 
+            // キーボードファイルの読み込みと各種キーテーブルの初期化
+            readKeyboardFileAndSetupKeyTables();
+
             // 仮想鍵盤フォームの作成
             frmVkb = new FrmVirtualKeyboard(this);
             frmVkb.Opacity = 0;
@@ -95,8 +102,6 @@ namespace KanchokuWS
             frmMode = new FrmModeMarker(this, frmVkb);
             frmMode.Show();
             frmMode.Hide();
-
-            KeyboardHookHandler.InstallKeyboardHook(this);
 
             // 漢直初期化処理
             await initializeKanchoku();
@@ -113,6 +118,9 @@ namespace KanchokuWS
             timer1.Interval = timerInterval;
             timer1.Start();
             logger.Info("Timer Started");
+
+            // キーボードイベントのディスパッチ開始
+            initializeKeyboardEventDispatcher();
         }
 
         //------------------------------------------------------------------
@@ -137,7 +145,7 @@ namespace KanchokuWS
             //actWinHandler.WriteCharCountFile(CharCountFile);
 
             // この後は各種終了処理
-            HotKeyHandler.Destroy();
+            //DecKeyHandler.Destroy();
             actWinHandler.Dispose();
             finalizeDecoder();
             frmMode.Close();
@@ -279,10 +287,10 @@ namespace KanchokuWS
         [DllImport("kw-uni.dll", CallingConvention = CallingConvention.Cdecl)]
         static extern void MakeInitialVkbTableDecoder(IntPtr decoder, ref DecoderOutParams table);
 
-        /// <summary> Decoder へ入力HOTKEYキーを送信する </summary>
+        /// <summary> Decoder へ入力DECKEYキーを送信する </summary>
         /// <param name="decoder"></param>
         [DllImport("kw-uni.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern void HandleHotkeyDecoder(IntPtr decoder, int keyId, ref DecoderOutParams outParams);
+        static extern void HandleDeckeyDecoder(IntPtr decoder, int keyId, ref DecoderOutParams outParams);
 
         /// <summary> Decoder へ各種データを送信する </summary>
         [DllImport("kw-uni.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -398,16 +406,16 @@ namespace KanchokuWS
         private static extern ushort GetAsyncKeyState(uint vkey);
 
         //------------------------------------------------------------------
-        private int hotkeyTotalCount = 0;
+        private int deckeyTotalCount = 0;
 
-        private int prevRawHotkey = -1;
-        private int rawHotkeyRepeatCount = 0;
+        private int prevRawDeckey = -1;
+        private int rawDeckeyRepeatCount = 0;
 
-        private int prevHotkey = -1;
-        private DateTime prevHotDt;
+        private int prevDeckey = -1;
+        private DateTime prevDecDt;
 
-        //private int prevDateHotkeyCount = 0;
-        private int dateStrHotkeyCount = 0;
+        //private int prevDateDeckeyCount = 0;
+        private int dateStrDeckeyCount = 0;
         private int dayOffset = 0;
         private int prevDateStrLength = 0;
 
@@ -418,11 +426,11 @@ namespace KanchokuWS
         /// <summary> Decoder の ON/OFF 状態 </summary>
         public bool IsDecoderActive { get; private set; } = false;
 
-        /// <summary> Decoder処理中に受信した WM_HOTKEY を無視するためのフラグ </summary>
-        private bool busyFlag = false;
+        /// <summary> Decoderのactivate処理中フラグ </summary>
+        private bool decoderActivating = false;
 
-        /// <summary> busy時に受信したホットキー </summary>
-        private int busyHotkey = -1;
+        /// <summary> busy時に受信した DecoderKey </summary>
+        private int busyDeckey = -1;
 
         public bool IsVkbShown => Settings.VirtualKeyboardShowStrokeCountEffective > 0 && Settings.VirtualKeyboardShowStrokeCountEffective <= decoderOutput.GetStrokeCount() + 1;
 
@@ -436,7 +444,7 @@ namespace KanchokuWS
         public bool OnKeyboardDownHandler(int vkey, int extraInfo)
         {
             logger.DebugH(() => $"CALLED: vkey={vkey}, extraInfo={extraInfo}");
-            return false;
+            return IsDecoderActive;
         }
 
         /// <summary>
@@ -449,133 +457,125 @@ namespace KanchokuWS
         public bool OnKeyboardUpHandler(int vkey, int extraInfo)
         {
             logger.DebugH(() => $"CALLED: vkey={vkey}, extraInfo={extraInfo}");
+            return IsDecoderActive;
+        }
+
+        private void initializeKeyboardEventDispatcher()
+        {
+            logger.InfoH("ENTER");
+
+            keDispatcher.OnKeyDown = OnKeyboardDownHandler;
+            keDispatcher.OnKeyUp = OnKeyboardUpHandler;
+            keDispatcher.ToggleDecoder = ToggleDecoder;
+            keDispatcher.ActivateDecoder = ActivateDecoder;
+            keDispatcher.DeactivateDecoder = DeactivateDecoder;
+            keDispatcher.RotateStrokeHelp = rotateStrokeHelp;
+            keDispatcher.RotateReverseStrokeHelp = rotateReverseStrokeHelp;
+            keDispatcher.RotateDateString = rotateDateString;
+            keDispatcher.RotateReverseDateString = rotateReverseDateString;
+            keDispatcher.InvokeDecoder = InvokeDecoder;
+
+            // キーボードイベントのディスパッチ開始
+            keDispatcher.InstallKeyboardHook();
+            logger.InfoH("LEAVE");
+        }
+
+        private bool rotateStrokeHelp()
+        {
+            return false;
+        }
+
+        private bool rotateReverseStrokeHelp()
+        {
             return false;
         }
 
         /// <summary>
         /// WndProc のオーバーライド<br/>
-        ///  - WM_HOTKEY などを処理する
         /// </summary>
         /// <param name="m"></param>
-        protected override void WndProc(ref Message m)
+        //protected override void WndProc(ref Message m)
+        private void wndProc(ref Message m)
         {
-            base.WndProc(ref m);
             int msg = m.Msg;
             //if (Logger.IsTraceEnabled) {
             //    logger.Trace($"Msg={msg:x}H, wParam={(int)m.WParam:x}H({(int)m.WParam:x}H)");
             //}
-            if (msg == WM_Defs.WM_HOTKEY) {
-                int hotkey = (int)m.WParam;
-                ++hotkeyTotalCount;
-                logger.InfoH(() => $"\nRECEIVED hotkey={(hotkey < HotKeys.CTRL_FUNC_HOTKEY_ID_BASE ? $"{hotkey}" : $"{hotkey:x}H")}, totalCount={hotkeyTotalCount}");
-
-                // HotKey 無限ループの検出
-                if (Settings.HotkeyInfiniteLoopDetectCount > 0) {
-                    if (hotkey == prevRawHotkey) {
-                        ++rawHotkeyRepeatCount;
-                        if ((rawHotkeyRepeatCount % 100) == 0) logger.InfoH(() => $"rawHotkeyRepeatCount={rawHotkeyRepeatCount}");
-                        if (rawHotkeyRepeatCount > Settings.HotkeyInfiniteLoopDetectCount) {
-                            logger.Error($"rawHotkeyRepeatCount exceeded threshold: hotkey={hotkey:x}H({hotkey}), count={rawHotkeyRepeatCount}, threshold={Settings.HotkeyInfiniteLoopDetectCount}");
-                            logger.Warn("Force close");
-                            this.Close();
+            if (msg == -1) {
+                int deckey = (int)m.WParam;
+                try {
+                    if (deckey >= 0 && deckey < DecoderKeys.GLOBAL_DECKEY_ID_BASE) {
+                        // deckey の変換
+                        deckey = convertSpecificDeckey(deckey);
+                        if (deckey >= 0) {
+                            if (deckey == DecoderKeys.DATE_STRING_ROTATION_DECKEY || deckey == DecoderKeys.DATE_STRING_UNROTATION_DECKEY) {
+                                // Ctrl+; -- 日付の出力
+                                postTodayDate(deckey);
+                            } else if (IsDecoderActive) {
+                                // Decoder ON
+                                // 入力標識の消去
+                                frmMode.Vanish();
+                                // 通常のストロークキーまたは機能キー(BSとか矢印キーとかCttrl-Hとか)
+                                handleKeyDecoder(deckey);
+                            } else {
+                                // Decoder OFF
+                                if (deckey == DecoderKeys.FULL_ESCAPE_DECKEY) {
+                                    // ここではとくに何もしない(この後 prevDeckey が FULL_ESCAPE_DECKEY になることで、DATE_STRING などの処理は初期化されるため)
+                                } else {
+                                    switch (deckey) {
+                                        case DecoderKeys.DECKEY_B: actWinHandler.SendVirtualKey((uint)Keys.B, 1); break;
+                                        case DecoderKeys.DECKEY_F: actWinHandler.SendVirtualKey((uint)Keys.F, 1); break;
+                                        case DecoderKeys.DECKEY_H: actWinHandler.SendVirtualKey((uint)Keys.H, 1); break;
+                                        case DecoderKeys.DECKEY_N: actWinHandler.SendVirtualKey((uint)Keys.N, 1); break;
+                                        case DecoderKeys.DECKEY_P: actWinHandler.SendVirtualKey((uint)Keys.P, 1); break;
+                                        default: postVkeyFromDeckey(deckey); break;
+                                    }
+                                }
+                            }
+                            if (Settings.DelayAfterProcessDeckey) {
+                                //Task.Delay(1000).Wait();
+                                Helper.WaitMilliSeconds(1000);
+                                logger.InfoH("OK");
+                            }
                         }
                     } else {
-                        prevRawHotkey = hotkey;
-                        rawHotkeyRepeatCount = 0;
-                    }
-                }
-
-                // 前回がCtrlキー修飾されたHotKeyで、その処理終了時刻の5ミリ秒以内に次のキーがきたら、それを無視する。
-                // そうしないと、キー入力が滞留して、CtrlキーのプログラムによるUP/DOWN処理とユーザー操作によるそれとがコンフリクトする可能性が高まる
-                if (prevHotkey >= HotKeys.CTRL_FUNC_HOTKEY_ID_BASE && prevProcEndDt.AddMilliseconds(5) >= DateTime.Now) {
-                    logger.InfoH("SKIP");
-                    return;
-                }
-
-                if (!busyFlag) {
-                    busyFlag = true;
-                    while (busyFlag) {
-                        // ホットキーの処理中ではない
-                        try {
-                            if (hotkey >= 0 && hotkey < HotKeys.GLOBAL_HOTKEY_ID_BASE) {
-                                // hotkey の変換
-                                hotkey = convertSpecificHotkey(hotkey);
-                                if (hotkey >= 0) {
-                                    if (hotkey == HotKeys.DATE_STRING_HOTKEY1 || hotkey == HotKeys.DATE_STRING_HOTKEY2) {
-                                        // Ctrl+; -- 日付の出力
-                                        postTodayDate(hotkey);
-                                    } else if (IsDecoderActive) {
-                                        // Decoder ON
-                                        // 入力標識の消去
-                                        frmMode.Vanish();
-                                        // 通常のストロークキーまたは機能キー(BSとか矢印キーとかCttrl-Hとか)
-                                        handleKeyDecoder(hotkey);
-                                    } else {
-                                        // Decoder OFF
-                                        if (hotkey == HotKeys.FULL_ESCAPE_HOTKEY) {
-                                            // ここではとくに何もしない(この後 prevHotkey が FULL_ESCAPE_HOTKEY になることで、DATE_STRING などの処理は初期化されるため)
-                                        } else {
-                                            switch (hotkey) {
-                                                case HotKeys.HOTKEY_B: actWinHandler.SendVirtualKey((uint)Keys.B, 1); break;
-                                                case HotKeys.HOTKEY_F: actWinHandler.SendVirtualKey((uint)Keys.F, 1); break;
-                                                case HotKeys.HOTKEY_H: actWinHandler.SendVirtualKey((uint)Keys.H, 1); break;
-                                                case HotKeys.HOTKEY_N: actWinHandler.SendVirtualKey((uint)Keys.N, 1); break;
-                                                case HotKeys.HOTKEY_P: actWinHandler.SendVirtualKey((uint)Keys.P, 1); break;
-                                                default: postVkeyFromHotkey(hotkey); break;
-                                            }
-                                        }
-                                    }
-                                    if (Settings.DelayAfterProcessHotkey) {
-                                        //Task.Delay(1000).Wait();
-                                        Helper.WaitMilliSeconds(1000);
-                                        logger.InfoH("OK");
-                                    }
-                                }
-                            } else {
-                                switch (hotkey) {
-                                    case HotKeys.ACTIVE_HOTKEY:
-                                    case HotKeys.ACTIVE2_HOTKEY:
-                                    case HotKeys.INACTIVE_HOTKEY:
-                                    case HotKeys.INACTIVE2_HOTKEY:
-                                        ToggleActiveState();
-                                        break;
-                                    case HotKeys.DATE_STRING_HOTKEY1:
-                                    case HotKeys.DATE_STRING_HOTKEY2:
-                                        // Ctrl+; -- 日付の出力
-                                        postTodayDate(hotkey);
-                                        break;
-                                    case HotKeys.STROKE_HELP_ROTATION_HOTKEY:
-                                    case HotKeys.STROKE_HELP_UNROTATION_HOTKEY:
-                                        // 入力標識の消去
-                                        frmMode.Vanish();
-                                        // 仮想鍵盤のヘルプ表示の切り替え(モード標識表示時なら一時的に仮想鍵盤表示)
-                                        int effectiveCnt = Settings.VirtualKeyboardShowStrokeCountEffective;
-                                        Settings.VirtualKeyboardShowStrokeCountTemp = 1;
-                                        frmVkb.RotateStrokeTable(effectiveCnt != 1 ? 0 : hotkey == HotKeys.STROKE_HELP_ROTATION_HOTKEY ? 1 : -1);
-                                        break;
-                                }
-                            }
-                        } finally {
-                            if (busyHotkey >= 0) {
-                                hotkey = busyHotkey;
-                                busyHotkey = -1;
-                                logger.InfoH(() => $"Handle busyHotkey={hotkey}");
-                            } else {
-                                busyFlag = false;
-                            }
+                        switch (deckey) {
+                            case DecoderKeys.ACTIVE_DECKEY:
+                            case DecoderKeys.ACTIVE2_DECKEY:
+                            case DecoderKeys.DEACTIVE_DECKEY:
+                            case DecoderKeys.DEACTIVE2_DECKEY:
+                                ToggleActiveState();
+                                break;
+                            case DecoderKeys.DATE_STRING_ROTATION_DECKEY:
+                            case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
+                                // Ctrl+; -- 日付の出力
+                                postTodayDate(deckey);
+                                break;
+                            case DecoderKeys.STROKE_HELP_ROTATION_DECKEY:
+                            case DecoderKeys.STROKE_HELP_UNROTATION_DECKEY:
+                                // 入力標識の消去
+                                frmMode.Vanish();
+                                // 仮想鍵盤のヘルプ表示の切り替え(モード標識表示時なら一時的に仮想鍵盤表示)
+                                int effectiveCnt = Settings.VirtualKeyboardShowStrokeCountEffective;
+                                Settings.VirtualKeyboardShowStrokeCountTemp = 1;
+                                frmVkb.RotateStrokeTable(effectiveCnt != 1 ? 0 : deckey == DecoderKeys.STROKE_HELP_ROTATION_DECKEY ? 1 : -1);
+                                break;
                         }
-                        prevProcEndDt = DateTime.Now;
                     }
-                } else {
-                    // ホットキーの処理中なので、スキップする
-                    logger.InfoH(() => $"HOTKEY BUSY: hotkey={hotkey}");
-                    busyHotkey = hotkey;
+                } finally {
+                    if (busyDeckey >= 0) {
+                        deckey = busyDeckey;
+                        busyDeckey = -1;
+                        logger.InfoH(() => $"Handle busyDeckey={deckey}");
+                    } else {
+                        decoderActivating = false;
+                    }
                 }
-                logger.InfoH($"LEAVE");
+                prevProcEndDt = DateTime.Now;
             }
         }
 
-        private int convertSpecificHotkey(int hotkey)
+        private int convertSpecificDeckey(int deckey)
         {
             string activeWinClassName = actWinHandler.ActiveWinClassName._toLower();
             bool contained = activeWinClassName._notEmpty() && Settings.CtrlKeyTargetClassNames._notEmpty() && Settings.CtrlKeyTargetClassNames.Any(name => name._notEmpty() && activeWinClassName.StartsWith(name));
@@ -599,7 +599,7 @@ namespace KanchokuWS
             bool bCtrlMConvert = ctrlKeyAndTargetOn && Settings.UseCtrlMasEnter;
             bool bCtrlSemiColonConvert = ctrlKeyOn && Settings.ConvertCtrlSemiColonToDateEffective;
 
-            if (Settings.LoggingHotKeyInfo && Logger.IsInfoEnabled) {
+            if (Settings.LoggingDecKeyInfo && Logger.IsInfoEnabled) {
                 logger.InfoH($"activeWindowClassName={activeWinClassName}");
                 logger.InfoH($"CtrlKeyTargetClassNames={Settings.CtrlKeyTargetClassNames._join(",")}");
                 logger.InfoH($"ctrlTarget={ctrlTarget} (=!({Settings.UseClassNameListAsInclusion}(Inclusion) XOR {contained} (ContainedInList)");
@@ -618,102 +618,102 @@ namespace KanchokuWS
                 logger.InfoH($"ctrlSemi={bCtrlSemiColonConvert} (ConvertCtrlEtoEnd={Settings.ConvertCtrlEtoEndEffective})");
             }
 
-            switch (hotkey) {
-                case HotKeys.CTRL_H_HOTKEY:
-                    if (bCtrlHConvert) hotkey = HotKeys.BS_HOTKEY;
+            switch (deckey) {
+                case DecoderKeys.CTRL_H_DECKEY:
+                    if (bCtrlHConvert) deckey = DecoderKeys.BS_DECKEY;
                     break;
-                case HotKeys.CTRL_B_HOTKEY:
-                    if (bCtrlBFNPConvert) hotkey = HotKeys.LEFT_ARROW_HOTKEY;
+                case DecoderKeys.CTRL_B_DECKEY:
+                    if (bCtrlBFNPConvert) deckey = DecoderKeys.LEFT_ARROW_DECKEY;
                     break;
-                case HotKeys.CTRL_F_HOTKEY:
-                    if (bCtrlBFNPConvert) hotkey = HotKeys.RIGHT_ARROW_HOTKEY;
+                case DecoderKeys.CTRL_F_DECKEY:
+                    if (bCtrlBFNPConvert) deckey = DecoderKeys.RIGHT_ARROW_DECKEY;
                     break;
-                case HotKeys.CTRL_N_HOTKEY:
-                    if (bCtrlBFNPConvert) hotkey = HotKeys.DOWN_ARROW_HOTKEY;
+                case DecoderKeys.CTRL_N_DECKEY:
+                    if (bCtrlBFNPConvert) deckey = DecoderKeys.DOWN_ARROW_DECKEY;
                     break;
-                case HotKeys.CTRL_P_HOTKEY:
-                    if (bCtrlBFNPConvert) hotkey = HotKeys.UP_ARROW_HOTKEY;
+                case DecoderKeys.CTRL_P_DECKEY:
+                    if (bCtrlBFNPConvert) deckey = DecoderKeys.UP_ARROW_DECKEY;
                     break;
-                case HotKeys.CTRL_A_HOTKEY:
-                    if (bCtrlAConvert) hotkey = HotKeys.HOME_HOTKEY;
+                case DecoderKeys.CTRL_A_DECKEY:
+                    if (bCtrlAConvert) deckey = DecoderKeys.HOME_DECKEY;
                     break;
-                case HotKeys.CTRL_D_HOTKEY:
-                    if (bCtrlDConvert) hotkey = HotKeys.DEL_HOTKEY;
+                case DecoderKeys.CTRL_D_DECKEY:
+                    if (bCtrlDConvert) deckey = DecoderKeys.DEL_DECKEY;
                     break;
-                case HotKeys.CTRL_E_HOTKEY:
-                    if (bCtrlEConvert) hotkey = HotKeys.END_HOTKEY;
+                case DecoderKeys.CTRL_E_DECKEY:
+                    if (bCtrlEConvert) deckey = DecoderKeys.END_DECKEY;
                     break;
-                //case HotKeys.CTRL_G_HOTKEY:
-                //    if (bCtrlGConvert) hotkey = HotKeys.FULL_ESCAPE_HOTKEY;
+                //case DecoderKeys.CTRL_G_DECKEY:
+                //    if (bCtrlGConvert) deckey = DecoderKeys.FULL_ESCAPE_DECKEY;
                 //    break;
-                //case HotKeys.CTRL_SHIFT_G_HOTKEY:
-                //    if (bCtrlGConvert) hotkey = HotKeys.UNBLOCK_HOTKEY;
+                //case DecoderKeys.CTRL_SHIFT_G_DECKEY:
+                //    if (bCtrlGConvert) deckey = DecoderKeys.UNBLOCK_DECKEY;
                 //    break;
-                case HotKeys.CTRL_J_HOTKEY:
-                    if (bCtrlJConvert) hotkey = HotKeys.ENTER_HOTKEY;
+                case DecoderKeys.CTRL_J_DECKEY:
+                    if (bCtrlJConvert) deckey = DecoderKeys.ENTER_DECKEY;
                     break;
-                case HotKeys.CTRL_M_HOTKEY:
-                    if (bCtrlMConvert) hotkey = HotKeys.ENTER_HOTKEY;
+                case DecoderKeys.CTRL_M_DECKEY:
+                    if (bCtrlMConvert) deckey = DecoderKeys.ENTER_DECKEY;
                     break;
-                case HotKeys.CTRL_SEMICOLON_HOTKEY:         // 日付フォーマットの切り替え
-                case HotKeys.CTRL_SHIFT_SEMICOLON_HOTKEY:   // 日付フォーマットの切り替え(2つめのフォーマットから)
-                case HotKeys.CTRL_COLON_HOTKEY:             // 日付のインクリメント
-                case HotKeys.CTRL_SHIFT_COLON_HOTKEY:       // 日付のデクリメント
-                    if (bCtrlSemiColonConvert) {
-                        hotkey = convertDateStringHotkey(hotkey);
-                        if (Settings.LoggingHotKeyInfo) logger.InfoH($"Convert Hotkey-Ctrl-(Shift)-(Semi)Colorn to Hotkey{hotkey:x}");
-                    }
-                    break;
+                //case DecoderKeys.CTRL_SEMICOLON_DECKEY:         // 日付フォーマットの切り替え
+                //case DecoderKeys.CTRL_SHIFT_SEMICOLON_DECKEY:   // 日付フォーマットの切り替え(2つめのフォーマットから)
+                //case DecoderKeys.CTRL_COLON_DECKEY:             // 日付のインクリメント
+                //case DecoderKeys.CTRL_SHIFT_COLON_DECKEY:       // 日付のデクリメント
+                //    if (bCtrlSemiColonConvert) {
+                //        deckey = convertDateStringDeckey(deckey);
+                //        if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-Ctrl-(Shift)-(Semi)Colorn to Deckey{deckey:x}");
+                //    }
+                //    break;
             }
-            // 連続的に Ctrlキー(Ctrl-Hなど)または特殊キー(BSなど)(これは AutoHotKey などにより Ctrl-H がBSに変換されていることを想定)が送りつけられている時に
-            if ((prevHotkey >= HotKeys.CTRL_FUNC_HOTKEY_ID_BASE) && DateTime.Now < prevHotDt.AddMilliseconds(Settings.KeyRepeatDetectMillisec)) {
-                switch (hotkey) {
-                    case HotKeys.HOTKEY_H:
-                    case HotKeys.BS_HOTKEY:
-                        if (hotkey != HotKeys.BS_HOTKEY) {
-                            if (Settings.LoggingHotKeyInfo) logger.InfoH($"Convert Hotkey-H or Ctrl-H to Hotkey-BS");
-                            if (bCtrlHConvert) hotkey = HotKeys.BS_HOTKEY;
+            // 連続的に Ctrlキー(Ctrl-Hなど)または特殊キー(BSなど)(これは AutoDecKey などにより Ctrl-H がBSに変換されていることを想定)が送りつけられている時に
+            if ((prevDeckey >= DecoderKeys.CTRL_FUNC_DECKEY_ID_BASE) && DateTime.Now < prevDecDt.AddMilliseconds(Settings.KeyRepeatDetectMillisec)) {
+                switch (deckey) {
+                    case DecoderKeys.DECKEY_H:
+                    case DecoderKeys.BS_DECKEY:
+                        if (deckey != DecoderKeys.BS_DECKEY) {
+                            if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-H or Ctrl-H to Deckey-BS");
+                            if (bCtrlHConvert) deckey = DecoderKeys.BS_DECKEY;
                         }
                         if (!BackspaceBlockerSent) {
                             // Backspace だったら、デコーダに対して BackspaceBlocker を送る
-                            if (Settings.LoggingHotKeyInfo) logger.InfoH("setBackspaceBlocker");
+                            if (Settings.LoggingDecKeyInfo) logger.InfoH("setBackspaceBlocker");
                             ExecCmdDecoder("setBackspaceBlocker", null);
                             BackspaceBlockerSent = true;
                         }
                         break;
-                    case HotKeys.HOTKEY_B: // B
-                        if (Settings.LoggingHotKeyInfo) logger.InfoH($"Convert Hotkey-B or Ctrl-B to Hotkey-LeftArrow");
-                        if (bCtrlBFNPConvert) hotkey = HotKeys.LEFT_ARROW_HOTKEY;
+                    case DecoderKeys.DECKEY_B: // B
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-B or Ctrl-B to Deckey-LeftArrow");
+                        if (bCtrlBFNPConvert) deckey = DecoderKeys.LEFT_ARROW_DECKEY;
                         break;
-                    case HotKeys.HOTKEY_F: // F
-                        if (Settings.LoggingHotKeyInfo) logger.InfoH($"Convert Hotkey-F or Ctrl-F to Hotkey-RightArrow");
-                        if (bCtrlBFNPConvert) hotkey = HotKeys.RIGHT_ARROW_HOTKEY;
+                    case DecoderKeys.DECKEY_F: // F
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-F or Ctrl-F to Deckey-RightArrow");
+                        if (bCtrlBFNPConvert) deckey = DecoderKeys.RIGHT_ARROW_DECKEY;
                         break;
-                    case HotKeys.HOTKEY_N: // N
-                        if (Settings.LoggingHotKeyInfo) logger.InfoH($"Convert Hotkey-N or Ctrl-N to Hotkey-DownArrow");
-                        if (bCtrlBFNPConvert) hotkey = HotKeys.DOWN_ARROW_HOTKEY;
+                    case DecoderKeys.DECKEY_N: // N
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-N or Ctrl-N to Deckey-DownArrow");
+                        if (bCtrlBFNPConvert) deckey = DecoderKeys.DOWN_ARROW_DECKEY;
                         break;
-                    case HotKeys.HOTKEY_P: // P
-                        if (Settings.LoggingHotKeyInfo) logger.InfoH($"Convert Hotkey-P or Ctrl-P to Hotkey-UpArrow");
-                        if (bCtrlBFNPConvert) hotkey = HotKeys.UP_ARROW_HOTKEY;
+                    case DecoderKeys.DECKEY_P: // P
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-P or Ctrl-P to Deckey-UpArrow");
+                        if (bCtrlBFNPConvert) deckey = DecoderKeys.UP_ARROW_DECKEY;
                         break;
-                    case HotKeys.HOTKEY_A: // A
-                        if (Settings.LoggingHotKeyInfo) logger.InfoH($"Convert Hotkey-A or Ctrl-A to Hotkey-Home");
-                        if (bCtrlAConvert) hotkey = HotKeys.HOME_HOTKEY;
+                    case DecoderKeys.DECKEY_A: // A
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-A or Ctrl-A to Deckey-Home");
+                        if (bCtrlAConvert) deckey = DecoderKeys.HOME_DECKEY;
                         break;
-                    case HotKeys.HOTKEY_D: // D
-                        if (Settings.LoggingHotKeyInfo) logger.InfoH($"Convert Hotkey-D or Ctrl-D to Hotkey-Delete");
-                        if (bCtrlDConvert) hotkey = HotKeys.DEL_HOTKEY;
+                    case DecoderKeys.DECKEY_D: // D
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-D or Ctrl-D to Deckey-Delete");
+                        if (bCtrlDConvert) deckey = DecoderKeys.DEL_DECKEY;
                         break;
-                    case HotKeys.HOTKEY_E: // E
-                        if (Settings.LoggingHotKeyInfo) logger.InfoH($"Convert Hotkey-E or Ctrl-E to Hotkey-End");
-                        if (bCtrlEConvert) hotkey = HotKeys.END_HOTKEY;
+                    case DecoderKeys.DECKEY_E: // E
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-E or Ctrl-E to Deckey-End");
+                        if (bCtrlEConvert) deckey = DecoderKeys.END_DECKEY;
                         break;
                     default:
-                        if (hotkey < HotKeys.CTRL_FUNC_HOTKEY_ID_BASE) {
+                        if (deckey < DecoderKeys.CTRL_FUNC_DECKEY_ID_BASE) {
                             // その他のストロークキーは、AHKなどの変換間違いの可能性が高いので無視する
-                            if (Settings.LoggingHotKeyInfo) logger.InfoH($"IGNORE: {(hotkey < HotKeys.CTRL_FUNC_HOTKEY_ID_BASE ? $"{hotkey}" : $"{hotkey:x}H")}");
-                            hotkey = -1;
+                            if (Settings.LoggingDecKeyInfo) logger.InfoH($"IGNORE: {(deckey < DecoderKeys.CTRL_FUNC_DECKEY_ID_BASE ? $"{deckey}" : $"{deckey:x}H")}");
+                            deckey = -1;
                         }
                         // コントロールキーや特殊キーはそのままデコーダに送る(矢印キーなどは候補選択に使うはずなので)
                         break;
@@ -722,65 +722,93 @@ namespace KanchokuWS
                 BackspaceBlockerSent = false;
             }
 
-            prevHotkey = hotkey;
-            prevHotDt = DateTime.Now;
-            return hotkey;
+            prevDeckey = deckey;
+            prevDecDt = DateTime.Now;
+            return deckey;
         }
 
-        private int convertDateStringHotkey(int hotkey)
+        private bool rotateDateString()
         {
-            if (Settings.LoggingHotKeyInfo) logger.InfoH($"CALLED: hotkey={hotkey:x}");
-            bool bFirst = prevHotkey != HotKeys.DATE_STRING_HOTKEY1 || DateTime.Now > prevHotDt.AddSeconds(3);
-            if (bFirst) {
-                if (Settings.LoggingHotKeyInfo) logger.InfoH($"bFirst={bFirst}");
-                dateStrHotkeyCount = 0;     // 0 は初期状態
-                prevDateStrLength = 0;
-                dayOffset = 0;
-            }
-            switch (hotkey) {
-                case HotKeys.CTRL_SEMICOLON_HOTKEY:         // 日付フォーマットの切り替え
-                    if (Settings.LoggingHotKeyInfo) logger.InfoH($"CTRL_SEMICOLON_HOTKEY");
-                    // 次の日付フォーマット
-                    ++dateStrHotkeyCount;
-                    break;
-                case HotKeys.CTRL_SHIFT_SEMICOLON_HOTKEY:   // 日付フォーマットの切り替え(最後のフォーマットから)
-                    if (Settings.LoggingHotKeyInfo) logger.InfoH($"CTRL_SHIFT_SEMICOLON_HOTKEY");
-                    // 前の日付フォーマット
-                    --dateStrHotkeyCount;
-                    break;
-                case HotKeys.CTRL_COLON_HOTKEY:             // 日付のインクリメント
-                    if (Settings.LoggingHotKeyInfo) logger.InfoH($"CTRL_COLON_HOTKEY");
-                    // 日付のインクリメント
-                    ++dayOffset;
-                    break;
-                case HotKeys.CTRL_SHIFT_COLON_HOTKEY:       // 日付のデクリメント
-                    if (Settings.LoggingHotKeyInfo) logger.InfoH($"CTRL_SHIFT_COLON_HOTKEY");
-                    // 日付のデクリメント
-                    --dayOffset;
-                    break;
-            }
-            if (Settings.LoggingHotKeyInfo) logger.InfoH($"LEAVE: new hotkey={HotKeys.DATE_STRING_HOTKEY1:x}, dateStrHotkeyCount={dateStrHotkeyCount}, prevDateStrLength={prevDateStrLength}, dayOffset={dayOffset}");
-            return HotKeys.DATE_STRING_HOTKEY1;
+            //postTodayDate(deckey);
+            return false;
         }
+
+        private bool rotateReverseDateString()
+        {
+            return false;
+        }
+
+        //private int convertDateStringDeckey(int deckey)
+        //{
+        //    if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}");
+        //    bool bFirst = prevDeckey != DecoderKeys.DATE_STRING_ROTATION_DECKEY || DateTime.Now > prevDecDt.AddSeconds(3);
+        //    if (bFirst) {
+        //        if (Settings.LoggingDecKeyInfo) logger.InfoH($"bFirst={bFirst}");
+        //        dateStrDeckeyCount = 0;     // 0 は初期状態
+        //        prevDateStrLength = 0;
+        //        dayOffset = 0;
+        //    }
+        //    switch (deckey) {
+        //        case DecoderKeys.CTRL_SEMICOLON_DECKEY:         // 日付フォーマットの切り替え
+        //            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CTRL_SEMICOLON_DECKEY");
+        //            // 次の日付フォーマット
+        //            ++dateStrDeckeyCount;
+        //            break;
+        //        case DecoderKeys.CTRL_SHIFT_SEMICOLON_DECKEY:   // 日付フォーマットの切り替え(最後のフォーマットから)
+        //            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CTRL_SHIFT_SEMICOLON_DECKEY");
+        //            // 前の日付フォーマット
+        //            --dateStrDeckeyCount;
+        //            break;
+        //        case DecoderKeys.CTRL_COLON_DECKEY:             // 日付のインクリメント
+        //            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CTRL_COLON_DECKEY");
+        //            // 日付のインクリメント
+        //            ++dayOffset;
+        //            break;
+        //        case DecoderKeys.CTRL_SHIFT_COLON_DECKEY:       // 日付のデクリメント
+        //            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CTRL_SHIFT_COLON_DECKEY");
+        //            // 日付のデクリメント
+        //            --dayOffset;
+        //            break;
+        //    }
+        //    if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: new deckey={DecoderKeys.DATE_STRING_ROTATION_DECKEY:x}, dateStrDeckeyCount={dateStrDeckeyCount}, prevDateStrLength={prevDateStrLength}, dayOffset={dayOffset}");
+        //    return DecoderKeys.DATE_STRING_ROTATION_DECKEY;
+        //}
 
         // 開発者用の設定がONになっているとき、漢直モードのON/OFFを10回繰り返したら警告を出す
         private int devFlagsOnWarningCount = 0;
 
+        private void ToggleDecoder()
+        {
+            ToggleActiveState();
+        }
+
         // アクティブと非アクティブを切り替える
         public void ToggleActiveState(bool bForceOff = false)
         {
-            IsDecoderActive = bForceOff ? false : !IsDecoderActive;
-            logger.InfoH(() => $"\nENTER: Now Decoder is {(IsDecoderActive ? "ACTIVE" : "INACTIVE")}");
-            if (IsDecoderActive) {
+            logger.InfoH(() => $"ENTER");
+            if (!bForceOff && !IsDecoderActive) {
+                ActivateDecoder();
+            } else {
+                DeactivateDecoder();
+            }
+            logger.InfoH("LEAVE");
+        }
+
+        private void ActivateDecoder()
+        {
+            logger.InfoH(() => $"\nENTER");
+            IsDecoderActive = true;
+            try {
+                decoderActivating = true;
                 if (frmSplash != null) closeSplash();
                 if (decoderPtr != IntPtr.Zero) ResetDecoder(decoderPtr);
                 decoderOutput.layout = 0;   // None にリセットしておく。これをやらないと仮想鍵盤モードを切り替えたときに以前の履歴選択状態が残ったりする
                 CommonState.CenterString = "";
                 Settings.VirtualKeyboardShowStrokeCountTemp = 0;
                 frmVkb.DrawInitailVkb();
-                HotKeyHandler.RegisterDeactivateHotKeys();
-                HotKeyHandler.RegisterDecoderSpecialHotKeys();
-                HotKeyHandler.RegisterDecoderStrokeHotKeys();
+                //DecKeyHandler.RegisterDeactivateDecoderKeys();
+                //DecKeyHandler.RegisterDecoderSpecialDecoderKeys();
+                //DecKeyHandler.RegisterDecoderStrokeDecoderKeys();
                 //Text = "漢直窓S - ON";
                 notifyIcon1.Icon = Properties.Resources.kanmini1;
                 // 仮想鍵盤を移動させる
@@ -813,21 +841,30 @@ namespace KanchokuWS
                         }
                     }
                 }
-            } else {
-                handleKeyDecoder(HotKeys.ACTIVE_HOTKEY);   // DecoderOff の処理をやる
-                frmVkb.Hide();
-                frmMode.Hide();
-                notifyIcon1.Icon = Properties.Resources.kanmini0;
-                //HotKeyHandler.UnregisterCandSelectHotKeys();        // 候補選択中に漢直モードをOFFにする可能性があるため
-                handleArrowKeys(true);                          // 候補選択中に漢直モードをOFFにする可能性があるため、強制的に Unreg しておく
-                HotKeyHandler.UnregisterDecoderSpecialHotKeys();
-                HotKeyHandler.UnregisterDecoderStrokeHotKeys();
-                HotKeyHandler.RegisterActivateHotKeys();
-                //Text = "漢直窓S - OFF";
-                frmMode.SetKanjiMode();
-                if (Settings.VirtualKeyboardShowStrokeCount != 1) {
-                    frmMode.SetAlphaMode();
-                }
+            } finally {
+                decoderActivating = false;
+            }
+            logger.InfoH("LEAVE");
+        }
+
+        // デコーダをOFFにする
+        public void DeactivateDecoder()
+        {
+            logger.InfoH(() => $"\nENTER");
+            IsDecoderActive = false;
+            handleKeyDecoder(DecoderKeys.ACTIVE_DECKEY);   // DecoderOff の処理をやる
+            frmVkb.Hide();
+            frmMode.Hide();
+            notifyIcon1.Icon = Properties.Resources.kanmini0;
+            //DecKeyHandler.UnregisterCandSelectDecoderKeys();        // 候補選択中に漢直モードをOFFにする可能性があるため
+            handleArrowKeys(true);                          // 候補選択中に漢直モードをOFFにする可能性があるため、強制的に Unreg しておく
+                                                            //DecKeyHandler.UnregisterDecoderSpecialDecoderKeys();
+                                                            //DecKeyHandler.UnregisterDecoderStrokeDecoderKeys();
+                                                            //DecKeyHandler.RegisterActivateDecoderKeys();
+                                                            //Text = "漢直窓S - OFF";
+            frmMode.SetKanjiMode();
+            if (Settings.VirtualKeyboardShowStrokeCount != 1) {
+                frmMode.SetAlphaMode();
             }
             logger.InfoH("LEAVE");
         }
@@ -837,12 +874,6 @@ namespace KanchokuWS
         {
             logger.InfoH("CALLED");
             actWinHandler?.MoveWindow();
-        }
-
-        // デコーダをOFFにする
-        public void DeactivateDecoder()
-        {
-            ToggleActiveState(true);
         }
 
         public void ShowStrokeHelp(string w)
@@ -862,12 +893,12 @@ namespace KanchokuWS
             frmVkb.RotateStrokeTable(delta);
         }
 
-        public void ReregisterSpecialGlobalHotkeys()
+        public void ReregisterSpecialGlobalDeckeys()
         {
             logger.InfoH("CALLED");
             DeactivateDecoder();
-            HotKeyHandler.UnregisterSpecialGlobalHotKeys();
-            HotKeyHandler.RegisterSpecialGlobalHotKeys();
+            //DecKeyHandler.UnregisterSpecialGlobalDecoderKeys();
+            //DecKeyHandler.RegisterSpecialGlobalDecoderKeys();
         }
 
         /// <summary> 辞書ファイルなどの保存 </summary>
@@ -896,33 +927,37 @@ namespace KanchokuWS
             //CharCountFile = KanchokuIni.Singleton.MakeFullPath("char_count.txt");
             //actWinHandler.ReadCharCountFile(CharCountFile);
 
-            // キーボードファイルを読み込む
-            if (readKeyboardFile()) {
-                // デコーダの初期化
-                if (await initializeDecoder()) {
-                    // 初期打鍵表(下端機能キー以外は空白)の作成
-                    makeInitialVkbTable();
-                    // 打鍵テーブルの作成
-                    frmVkb.MakeStrokeTables(Settings.StrokeHelpFile);
-                    // HotKeyハンドラの初期化
-                    HotKeyHandler.Initialize(this.Handle);
-                }
+            // デコーダの初期化
+            if (await initializeDecoder()) {
+                // 初期打鍵表(下端機能キー以外は空白)の作成
+                makeInitialVkbTable();
+                // 打鍵テーブルの作成
+                frmVkb.MakeStrokeTables(Settings.StrokeHelpFile);
+                // DecKeyハンドラの初期化
+                //DecKeyHandler.Initialize(this.Handle);
             }
+
             logger.Info("LEAVE");
         }
 
-        private bool readKeyboardFile()
+        /// <summary>キーボードファイルの読み込みと各種キーテーブルの初期化</summary>
+        /// <returns></returns>
+        private bool readKeyboardFileAndSetupKeyTables()
         {
             logger.Info("ENTER");
-            // キーボードファイルを読み込む
-            if (!VirtualKeys.ReadKeyboardFile()) {
-                // 読み込めなかったので終了する
+            // キーボードイベントディスパッチャのキーテーブル初期化
+            if (!keDispatcher.SetupKeycodeTable(true)) {
+                // キーボードファイルを読み込めなかったので終了する
                 logger.Error($"CLOSE: Can't read keyboard file");
-                //HotKeyHandler.Destroy();
+                //DecKeyHandler.Destroy();
                 //PostMessage(this.Handle, WM_Defs.WM_CLOSE, 0, 0);
                 this.Close();
                 return false;
             }
+
+            // Vkey テーブルの初期化
+            VirtualKeys.SetupDecKeyAndComboTable(keDispatcher);
+
             logger.Info("LEAVE");
             return true;
         }
@@ -995,14 +1030,71 @@ namespace KanchokuWS
         //}
 
         /// <summary>
+        /// デコーダ呼び出し
+        /// </summary>
+        /// <param name="deckey"></param>
+        /// <returns></returns>
+        private bool InvokeDecoder(int deckey)
+        {
+            if (IsDecoderActive) {
+                ++deckeyTotalCount;
+                logger.InfoH(() => $"\nRECEIVED deckey={(deckey < DecoderKeys.CTRL_FUNC_DECKEY_ID_BASE ? $"{deckey}" : $"{deckey:x}H")}, totalCount={deckeyTotalCount}");
+
+                // DecKey 無限ループの検出
+                if (Settings.DeckeyInfiniteLoopDetectCount > 0) {
+                    if (deckey == prevRawDeckey) {
+                        ++rawDeckeyRepeatCount;
+                        if ((rawDeckeyRepeatCount % 100) == 0) logger.InfoH(() => $"rawDeckeyRepeatCount={rawDeckeyRepeatCount}");
+                        if (rawDeckeyRepeatCount > Settings.DeckeyInfiniteLoopDetectCount) {
+                            logger.Error($"rawDeckeyRepeatCount exceeded threshold: deckey={deckey:x}H({deckey}), count={rawDeckeyRepeatCount}, threshold={Settings.DeckeyInfiniteLoopDetectCount}");
+                            logger.Warn("Force close");
+                            this.Close();
+                        }
+                    } else {
+                        prevRawDeckey = deckey;
+                        rawDeckeyRepeatCount = 0;
+                    }
+                }
+
+                // 前回がCtrlキー修飾されたDecKeyで、その処理終了時刻の5ミリ秒以内に次のキーがきたら、それを無視する。
+                // そうしないと、キー入力が滞留して、CtrlキーのプログラムによるUP/DOWN処理とユーザー操作によるそれとがコンフリクトする可能性が高まる
+                if (prevDeckey >= DecoderKeys.CTRL_FUNC_DECKEY_ID_BASE && prevProcEndDt.AddMilliseconds(5) >= DateTime.Now) {
+                    logger.InfoH("SKIP");
+                    return false;
+                }
+
+                if (!decoderActivating) {
+                    // ActivateDecoderの処理中ではない
+                    // 入力標識の消去
+                    frmMode.Vanish();
+                    // デコーダのActivate中に呼ばれたキーがあればそれを処理する
+                    if (busyDeckey >= 0) {
+                        handleKeyDecoder(busyDeckey);
+                        busyDeckey = -1;
+                    }
+                    // 通常のストロークキーまたは機能キー(BSとか矢印キーとかCttrl-Hとか)
+                    handleKeyDecoder(deckey);
+                    prevProcEndDt = DateTime.Now;
+                } else {
+                    // ActivateDecoderの処理中なので、スキップする
+                    logger.InfoH(() => $"ACTIVATION BUSY: deckey={deckey}");
+                    busyDeckey = deckey;
+                }
+                logger.InfoH($"LEAVE");
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// デコーダの呼び出し
         /// </summary>
-        private void handleKeyDecoder(int hotkey)
+        private void handleKeyDecoder(int deckey)
         {
-            if (Settings.LoggingHotKeyInfo) logger.InfoH(() => $"ENTER: hotkey={hotkey:x}H({hotkey})");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey})");
 
             // デコーダの呼び出し
-            HandleHotkeyDecoder(decoderPtr, hotkey, ref decoderOutput);
+            HandleDeckeyDecoder(decoderPtr, deckey, ref decoderOutput);
 
             logger.Info(() => $"layout={decoderOutput.layout}, numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}");
 
@@ -1013,8 +1105,8 @@ namespace KanchokuWS
             getCenterString();
 
             // 他のVKey送出(もしあれば)
-            if (decoderOutput.IsHotkeyToVkey()) {
-                postVkeyFromHotkey(hotkey);
+            if (decoderOutput.IsDeckeyToVkey()) {
+                postVkeyFromDeckey(deckey);
                 //nPreKeys += 1;
             }
 
@@ -1027,14 +1119,14 @@ namespace KanchokuWS
             // 候補選択が必要なら矢印キーをホットキーにする
             handleArrowKeys();
 
-            if (Settings.LoggingHotKeyInfo) logger.InfoH($"LEAVE");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE");
         }
 
-        private void postVkeyFromHotkey(int hotkey)
+        private void postVkeyFromDeckey(int deckey)
         {
-            var combo = VirtualKeys.GetVKeyComboFromHotKey(hotkey);
+            var combo = VirtualKeys.GetVKeyComboFromDecKey(deckey);
             if (combo != null) {
-                if (hotkey < HotKeys.FUNCTIONAL_HOTKEY_ID_BASE) {
+                if (deckey < DecoderKeys.FUNCTIONAL_DECKEY_ID_BASE) {
                     actWinHandler.SendVirtualKey(combo.Value.vkey, 1);
                 } else {
                     actWinHandler.SendVirtualKeys(combo.Value, 1);
@@ -1043,20 +1135,20 @@ namespace KanchokuWS
         }
 
         /// <summary> 今日の日付文字列を出力する </summary>
-        private void postTodayDate(int hotkey)
+        private void postTodayDate(int deckey)
         {
-            if (Settings.LoggingHotKeyInfo) logger.InfoH($"CALLED: hotkey={hotkey:x}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}");
             var items = Settings.DateStringFormat._split('|');
             if (items._isEmpty()) return;
-            if (dateStrHotkeyCount < 0)
-                dateStrHotkeyCount += items.Length + 1;
+            if (dateStrDeckeyCount < 0)
+                dateStrDeckeyCount += items.Length + 1;
             else
-                dateStrHotkeyCount %= items.Length + 1;
+                dateStrDeckeyCount %= items.Length + 1;
             var dtStr = "";
-            if (dateStrHotkeyCount > 0) {
+            if (dateStrDeckeyCount > 0) {
                 var dtNow = DateTime.Now.AddDays(dayOffset);
-                var fmt = items._getNth(dateStrHotkeyCount - 1)._strip();
-                if (Settings.LoggingHotKeyInfo) logger.InfoH($"count={dateStrHotkeyCount}, fmt={fmt}");
+                var fmt = items._getNth(dateStrDeckeyCount - 1)._strip();
+                if (Settings.LoggingDecKeyInfo) logger.InfoH($"count={dateStrDeckeyCount}, fmt={fmt}");
                 if (fmt._isEmpty()) return;
 
                 int diffYear = 0;
@@ -1072,7 +1164,7 @@ namespace KanchokuWS
         }
 
         // 候補選択のための矢印キーをホットキーにする
-        private bool AreArrowKeysHotKey = false;
+        private bool AreArrowKeysDecKey = false;
 
         // UIスレッドから呼び出す必要あり
         private void handleArrowKeys(bool bForceUnreg = false)
@@ -1083,18 +1175,18 @@ namespace KanchokuWS
             if (bForceUnreg) {
                 unregFlag = true;
             } else if (decoderOutput.IsArrowKeysRequired()) {
-                regFlag = !AreArrowKeysHotKey;
+                regFlag = !AreArrowKeysDecKey;
             } else {
-                unregFlag = AreArrowKeysHotKey;
+                unregFlag = AreArrowKeysDecKey;
             }
 
             if (regFlag) {
-                HotKeyHandler.RegisterCandSelectHotKeys();
-                AreArrowKeysHotKey = true;
+                //DecKeyHandler.RegisterCandSelectDecoderKeys();
+                AreArrowKeysDecKey = true;
                 logger.Info("Register Arrow Keys");
             } else if (unregFlag) {
-                HotKeyHandler.UnregisterCandSelectHotKeys();
-                AreArrowKeysHotKey = false;
+                //DecKeyHandler.UnregisterCandSelectDecoderKeys();
+                AreArrowKeysDecKey = false;
                 logger.Info("Unregister Arrow Keys");
             }
         }
@@ -1204,35 +1296,4 @@ namespace KanchokuWS
         }
     }
 
-    public static class KeyboardHookHandler
-    {
-        private static Logger logger = Logger.GetLogger();
-
-        private static FrmKanchoku frmMain { get; set; }
-
-        public static void InstallKeyboardHook(FrmKanchoku frm)
-        {
-            frmMain = frm;
-            KeyboardHook.OnKeyDownEvent = onKeyboardDownHandler;
-            KeyboardHook.OnKeyUpEvent = onKeyboardUpHandler;
-            KeyboardHook.Hook();
-            logger.InfoH($"LEAVE");
-        }
-
-        public static void ReleaseKeyboardHook()
-        {
-            KeyboardHook.UnHook();
-            logger.InfoH($"LEAVE");
-        }
-
-        private static bool onKeyboardDownHandler(int vkey, int extraInfo)
-        {
-            return frmMain.OnKeyboardDownHandler(vkey, extraInfo);
-        }
-
-        private static bool onKeyboardUpHandler(int vkey, int extraInfo)
-        {
-            return frmMain.OnKeyboardUpHandler(vkey, extraInfo);
-        }
-    }
 }

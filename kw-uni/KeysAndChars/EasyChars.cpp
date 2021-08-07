@@ -4,7 +4,7 @@
 #include "StringNode.h"
 #include "ErrorHandler.h"
 
-#include "hotkey_id_defs.h"
+#include "deckey_id_defs.h"
 #include "Settings/Settings.h"
 #include "EasyChars.h"
 
@@ -59,10 +59,10 @@ void EasyChars::GatherEasyChars() {
 // 最上段を使わないレベル1(900文字)を追加
 void EasyChars::includeFirstLevel() {
     LOG_INFO(_T("ENTER"));
-    for (size_t i = 10; i < HOTKEY_STROKE_SPACE; ++i) {
+    for (size_t i = 10; i < STROKE_SPACE_DECKEY; ++i) {
         auto blk = ROOT_STROKE_NODE->getNth(i);
         if (blk && blk->isStrokeTableNode()) {
-            for (int j = 10; j < HOTKEY_STROKE_SPACE; ++j) {
+            for (int j = 10; j < STROKE_SPACE_DECKEY; ++j) {
                 Node* sb = ((StrokeTableNode*)blk)->getNth(j);
                 if (sb && sb->isStringNode()) {
                     EASY_CHARS->chars.push_back(utils::safe_front(sb->getString()));
