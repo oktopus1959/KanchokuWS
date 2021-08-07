@@ -237,10 +237,13 @@ namespace KanchokuWS
         public static string HankakuKatakanaOneShotKeySeq { get; set; }
 
         /// <summary>全エスケープおよび出力文字列検索ブロッカー設定</summary>
-        public static string FullEscapeKey { get; set; }
+        public static int FullEscapeKey { get; set; }
 
         /// <summary>ストロークヘルプローテーション</summary>
-        public static string StrokeHelpRotationKey { get; set; }
+        public static int StrokeHelpRotationKey { get; set; }
+
+        /// <summary>日付文字列出力ローテーション</summary>
+        public static int DateStringRotationKey { get; set; }
 
         public static HashSet<int> DecoderSpecialDeckeys { get; set; } = new HashSet<int>();
 
@@ -530,6 +533,20 @@ namespace KanchokuWS
             DeactiveKey = (uint)GetString("unmodifiedOffHotKey")._parseHex(0)._lowLimit(0);
             DeactiveKeyWithCtrl = (uint)GetString("offHotKey")._parseHex(0)._lowLimit(0);
 
+            // デコーダON/OFF系機能の呼び出し
+            if (DeactiveKey == 0) {
+                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.TOGGLE_DECKEY, 0 , ActiveKey);
+            } else {
+                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, 0 , ActiveKey);
+                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, 0 , DeactiveKey);
+            }
+            if (DeactiveKeyWithCtrl == 0) {
+                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.TOGGLE_DECKEY, KeyModifiers.MOD_CONTROL , ActiveKeyWithCtrl);
+            } else {
+                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , ActiveKeyWithCtrl);
+                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DeactiveKeyWithCtrl);
+            }
+
             //-------------------------------------------------------------------------------------
             // 文字送出時にコピー&ペーストを行う文字数の閾値
             MinLeghthViaClipboard = GetString("minLeghthViaClipboard")._parseInt(0)._lowLimit(0);
@@ -664,10 +681,13 @@ namespace KanchokuWS
             RemoveOneStrokeByBackspace = addDecoderSetting("removeOneStrokeByBackspace", "weakBS", false);  // BS で直前打鍵のみを取り消すか
 
             // キー割当
-            FullEscapeKey = GetString("fullEscapeKey", "G").Trim();
+            //FullEscapeKey = GetString("fullEscapeKey", "G").Trim();
+            FullEscapeKey = GetString("fullEscapeKey").Trim()._parseInt(24);        // G
             VirtualKeys.AddCtrlDeckey(FullEscapeKey, DecoderKeys.FULL_ESCAPE_DECKEY, DecoderKeys.UNBLOCK_DECKEY);
-            StrokeHelpRotationKey = GetString("strokeHelpRotationKey", "T");
+            StrokeHelpRotationKey = GetString("strokeHelpRotationKey")._parseInt(14);   // T
             VirtualKeys.AddCtrlDeckey(StrokeHelpRotationKey, DecoderKeys.STROKE_HELP_ROTATION_DECKEY, DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
+            DateStringRotationKey = GetString("dateStringRotationKey")._parseInt(-1);   // ;
+            VirtualKeys.AddCtrlDeckey(DateStringRotationKey, DecoderKeys.DATE_STRING_ROTATION_DECKEY, DecoderKeys.DATE_STRING_UNROTATION_DECKEY);
 
             DecoderSpecialDeckeys.Clear();
             DecoderSpecialDeckeys.Add(DecoderKeys.FULL_ESCAPE_DECKEY);

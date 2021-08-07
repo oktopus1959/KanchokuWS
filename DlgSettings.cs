@@ -724,9 +724,9 @@ namespace KanchokuWS
             checkBox_ctrlMasEnter.Checked = Settings.UseCtrlMasEnter;
 
             comboBox_ctrlKey_setItems(comboBox_fullEscapeKey);
-            comboBox_fullEscapeKey._selectItemStartsWith(Settings.FullEscapeKey);
+            comboBox_fullEscapeKey._selectItemStartsWith($"{Settings.FullEscapeKey}");
             comboBox_ctrlKey_setItems(comboBox_strokeHelpRotationKey);
-            comboBox_strokeHelpRotationKey._selectItemStartsWith(Settings.StrokeHelpRotationKey);
+            comboBox_strokeHelpRotationKey._selectItemStartsWith($"{Settings.StrokeHelpRotationKey}");
         }
 
         private void setCtrlKeysStatusChecker()

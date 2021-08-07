@@ -131,7 +131,7 @@ namespace KanchokuWS
 
                     Padding makePadding(int n)
                     {
-                        if (Logger.IsInfoHEnabled) logger.InfoH($"new {myName} Font Name={fontName}, Size={fontSize}, useVertical={useVertical}, cw={cellWidth:f1}, ch={cellHeight:f1},fw={fw:f1}, fh={fh:f1}");
+                        if (Logger.IsInfoHEnabled) logger.Info($"new {myName} Font Name={fontName}, Size={fontSize}, useVertical={useVertical}, cw={cellWidth:f1}, ch={cellHeight:f1},fw={fw:f1}, fh={fh:f1}");
                         float fw_ = fw;
                         if (fontName._startsWith("Yu ") || fontName._startsWith("游")) {
                             fw_ = fw <= 16 ? 18 : 16;
@@ -169,7 +169,7 @@ namespace KanchokuWS
                                 }
                             }
                         }
-                        if (Logger.IsInfoHEnabled) logger.InfoH($"new {myName} Font Width={fw:f3}, Height={fh:f3}, charHeight={CharHeight}, padLeft={leftPadding:f3}, padTop={topPadding:f3}");
+                        if (Logger.IsInfoHEnabled) logger.Info($"new {myName} Font Width={fw:f3}, Height={fh:f3}, charHeight={CharHeight}, padLeft={leftPadding:f3}, padTop={topPadding:f3}");
                         return new Padding(leftPadding, topPadding);
                     }
 
@@ -300,7 +300,7 @@ namespace KanchokuWS
         {
             //topTextBox.Width = (int)(VkbNormalWidth);
             ShowWindow(this.Handle, SW_SHOWNA);   // NonActive
-            logger.InfoH($"LEAVE: this.Width={this.Width}, this.Height={this.Height}, tex.Height={topTextBox.Height}, pic.top={pictureBox_Main.Top}");
+            logger.Info($"LEAVE: this.Width={this.Width}, this.Height={this.Height}, tex.Height={topTextBox.Height}, pic.top={pictureBox_Main.Top}");
         }
 
         //------------------------------------------------------------------------------------
@@ -447,7 +447,7 @@ namespace KanchokuWS
 
             if (dgv.Rows.Count == 0) dgv.Rows.Add(LongVkeyNum);
 
-            logger.InfoH($"dgv.Top={dgv.Top}, dgv.Width={dgv.Width}, cellHeight={cellHeight}, cellWidth={cellWidth}");
+            logger.Info($"dgv.Top={dgv.Top}, dgv.Width={dgv.Width}, cellHeight={cellHeight}, cellWidth={cellWidth}");
                 
         }
 
@@ -501,7 +501,7 @@ namespace KanchokuWS
         /// <param name="e"></param>
         private void dpiChangedHandler(object sender, DpiChangedEventArgs e)
         {
-            logger.InfoH($"\nCALLED: new dpi={e.DeviceDpiNew}");
+            logger.Info($"\nCALLED: new dpi={e.DeviceDpiNew}");
 
             CurrentScreen = ScreenInfo.GetScreenIndexByDpi(e.DeviceDpiNew);
 
@@ -519,7 +519,7 @@ namespace KanchokuWS
 
         private void resetDrawParameters(int dpi)
         {
-            logger.InfoH($"CALLED: dpi={dpi}");
+            logger.Info($"CALLED: dpi={dpi}");
             //float rate = (float)ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
             float rate = dpi / 96.0f;
 
@@ -545,7 +545,7 @@ namespace KanchokuWS
             VkbCenterBoxHeight_5x10Table = VkbPictureBoxHeight_5x10Table;
 
             this.Width = (int)(VkbNormalWidth + 2);
-            logger.InfoH($"LEAVE: this.Width={this.Width}");
+            logger.Info($"LEAVE: this.Width={this.Width}");
         }
 
         /// <summary>
@@ -553,12 +553,12 @@ namespace KanchokuWS
         /// </summary>
         private void redrawVkb()
         {
-            logger.InfoH($"CALLED: VkbNormalWidth={VkbNormalWidth}, VkbCellHeight={VkbCellHeight}");
+            logger.Info($"CALLED: VkbNormalWidth={VkbNormalWidth}, VkbCellHeight={VkbCellHeight}");
 
             //this.Width = (int)(VkbNormalWidth + 2);
             //topTextBox.Width = (int)(VkbNormalWidth);
             //topTextBox.Height = (int)(VkbCellHeight + 1);
-            //logger.InfoH($"topTextBox.Width={topTextBox.Width}, topTextBox.Height={topTextBox.Height}");
+            //logger.Info($"topTextBox.Width={topTextBox.Width}, topTextBox.Height={topTextBox.Height}");
             pictureBox_Main.Width = (int)(VkbNormalWidth);
             pictureBox_Main.BackColor = Color.White;
 
@@ -633,7 +633,7 @@ namespace KanchokuWS
         public void MakeStrokeTables(string defFile)
         {
             var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(defFile);
-            logger.InfoH(() => $"ENTER: filePath={filePath}");
+            logger.Info(() => $"ENTER: filePath={filePath}");
             if (Helper.FileExists(filePath)) {
                 try {
                     foreach (var line in System.IO.File.ReadAllLines(filePath)) {
@@ -641,7 +641,7 @@ namespace KanchokuWS
                         if (items._notEmpty() && items[0]._notEmpty() && !items[0].StartsWith("#")) {
                             var cmd = items[0]._toLower();
                             var chars = items.Length > 1 ? items.Skip(1)._join(" ") : "";
-                            logger.InfoH(() => $"cmd={cmd}, param={chars}");
+                            logger.Info(() => $"cmd={cmd}, param={chars}");
                             if (cmd == "initialtable") {
                                 // 初期表示を追加(初期表示は事前に作成されている)
                                 StrokeTables.Add(new StrokeTableDef {
@@ -674,7 +674,7 @@ namespace KanchokuWS
                     logger.Error($"Cannot read file: {filePath}: {e.Message}");
                 }
             }
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         private void makeVkbStrokeTable(string cmd, string faces, bool drawFaces = false, bool kana = false)
@@ -718,7 +718,7 @@ namespace KanchokuWS
 
         public void CopyInitialVkbTable(char[] table)
         {
-            logger.InfoH($"CALLED");
+            logger.Info($"CALLED");
             int len = Math.Min(table.Length / 2, initialVkbChars.Length);
             for (int i = 0; i < len; ++i) {
                 initialVkbChars[i] = makeMultiCharStr(table, i * 2);
@@ -750,7 +750,7 @@ namespace KanchokuWS
         /// <summary> 第1打鍵待ち状態の仮想キーボード表示 </summary>
         public void DrawInitailVkb()
         {
-            logger.InfoH(() => $"CALLED: EffectiveCount={Settings.VirtualKeyboardShowStrokeCountEffective}");
+            logger.Info(() => $"CALLED: EffectiveCount={Settings.VirtualKeyboardShowStrokeCountEffective}");
             if (Settings.VirtualKeyboardShowStrokeCountEffective == 1) {
                 if (StrokeTables._isEmpty()) {
                     drawNormalVkb(initialVkbChars);
@@ -846,7 +846,7 @@ namespace KanchokuWS
                 resetVkbControls(topText, 0, 0, 0);
                 int nRow = 0;
                 for (int i = 0; i < LongVkeyNum; ++i) {
-                    //logger.InfoH(decoderOutput.faceStrings.Skip(i*20).Take(20).Select(c => c.ToString())._join(""));
+                    //logger.Info(decoderOutput.faceStrings.Skip(i*20).Take(20).Select(c => c.ToString())._join(""));
                     if (drawHorizontalCandidateCharsWithColor(decoderOutput, i, decoderOutput.faceStrings)) ++nRow;
                 }
                 dgvHorizontal.CurrentCell = null;   // どのセルも選択されていない状態にする
@@ -910,7 +910,7 @@ namespace KanchokuWS
         // 仮想鍵盤の高さを変更し、必要ならウィンドウを移動する
         private void changeFormHeight(int newHeight)
         {
-            logger.InfoH($"ENTER: oldHeight={this.Height}, newHeight={newHeight}");
+            logger.Info($"ENTER: oldHeight={this.Height}, newHeight={newHeight}");
             int oldHeight = this.Height;
             this.Invalidate();
             this.Height = newHeight;
@@ -918,7 +918,7 @@ namespace KanchokuWS
                 // ウィンドウ位置の再取得を行わずに移動するので正しくない場所に表示される可能性はあるが、たいていの場合は大丈夫だろう
                 frmMain.MoveFormVirtualKeyboard();
             }
-            logger.InfoH($"LEAVE: this.Width={this.Width}, this.Height={this.Height}");
+            logger.Info($"LEAVE: this.Width={this.Width}, this.Height={this.Height}");
         }
 
         public class PictureBoxDrawer : IDisposable
@@ -968,7 +968,7 @@ namespace KanchokuWS
             if (renewFontInfo(minibufFontInfo, Settings.MiniBufVkbFontSpec)) {
                 topTextBox.Font = minibufFontInfo.MyFont;
             }
-            //logger.InfoH(() => $"CALLED: new minibufFontSpec={Settings.MiniBufVkbFontSpec}, old={minibufFontSpec}");
+            //logger.Info(() => $"CALLED: new minibufFontSpec={Settings.MiniBufVkbFontSpec}, old={minibufFontSpec}");
             //if (minibufFont == null || minibufFontSpec._ne(Settings.MiniBufVkbFontSpec)) {
             //    minibufFontSpec = Settings.MiniBufVkbFontSpec;
             //    var fontItems = minibufFontSpec._split('|').Select(x => x._strip()).ToArray();
@@ -977,7 +977,7 @@ namespace KanchokuWS
             //    int fontSize = fontItems._getNth(1)._parseInt(9)._lowLimit(8);
             //    minibufFont = new Font(fontName, fontSize);
             //    topTextBox.Font = new Font(fontName, fontSize);
-            //    logger.InfoH(() => $"new minibufFont={fontName}|{fontSize}");
+            //    logger.Info(() => $"new minibufFont={fontName}|{fontSize}");
             //}
         }
 
@@ -986,12 +986,12 @@ namespace KanchokuWS
         /// </summary>
         private void resetVkbControls(string topText, float picBoxWidth, float picBoxHeight, float centerHeight)
         {
-            logger.InfoH($"picBoxWidth={picBoxWidth:f3}, picBoxHeight={picBoxHeight:f3}, centerHeight={centerHeight:f3}");
+            logger.Info($"picBoxWidth={picBoxWidth:f3}, picBoxHeight={picBoxHeight:f3}, centerHeight={centerHeight:f3}");
             renewMinibufFont();
             topTextBox.Width = (int)(VkbNormalWidth);
             topTextBox.Show();
             SetTopText(topText, true);
-            logger.InfoH($"topTextBox.Width={topTextBox.Width}, topTextBox.Height={topTextBox.Height}");
+            logger.Info($"topTextBox.Width={topTextBox.Width}, topTextBox.Height={topTextBox.Height}");
             renewHorizontalKeyboard();
             //dgvHorizontal.Top = topTextBox.Height;
 
@@ -1010,10 +1010,10 @@ namespace KanchokuWS
                 dgvHorizontal.Width = (int)VkbNormalWidth;
                 dgvHorizontal.Show();
                 //dgvHorizontal.Top = topTextBox.Height;
-                logger.InfoH($"dgv.Top={dgvHorizontal.Top}, dgv.Width={dgvHorizontal.Width}");
+                logger.Info($"dgv.Top={dgvHorizontal.Top}, dgv.Width={dgvHorizontal.Width}");
             }
             this.Width = (int)(VkbNormalWidth + 2);
-            logger.InfoH($"LEAVE: this.Width={this.Width}, topText.Width={topTextBox.Width}");
+            logger.Info($"LEAVE: this.Width={this.Width}, topText.Width={topTextBox.Width}");
         }
 
         //-------------------------------------------------------------------------------
@@ -1231,14 +1231,14 @@ namespace KanchokuWS
                 return Color.GhostWhite;
             }
 
-            //logger.InfoH($"chars.Length={chars.Length}, rows={dgvHorizontal._rowsCount()}");
+            //logger.Info($"chars.Length={chars.Length}, rows={dgvHorizontal._rowsCount()}");
             if (nth >= 0 && nth < dgvHorizontal._rowsCount()) {
                 int pos = nth * LongVkeyCharSize;
                 int len = chars._findIndex(pos, pos + LongVkeyCharSize, x => x == 0) - pos;
                 if (len < 0) len = LongVkeyCharSize;
                 StringBuilder sb = new StringBuilder();
                 sb.Append((nth + 1) % 10).Append(' ').Append(chars, pos, len);
-                //logger.InfoH($"drawString={drawString}, nth={nth}, pos={pos}, len={len}");
+                //logger.Info($"drawString={drawString}, nth={nth}, pos={pos}, len={len}");
                 if (sb.Length > 2) {
                     dgvHorizontal.Rows[nth].Cells[0].Value = sb.ToString();
                     dgvHorizontal.Rows[nth].Cells[0].Style.BackColor = makeSpecifiedColor();
@@ -1274,7 +1274,7 @@ namespace KanchokuWS
         {
             info.renewFontInfo(newSpec, boxWidth, pictureBox_measureFontSize);
             //if (info.VerticalFont == null || info.FontSpec._ne(newSpec)) {
-            //    logger.InfoH(() => $"CALLED: new fontSpec={newSpec}");
+            //    logger.Info(() => $"CALLED: new fontSpec={newSpec}");
             //    info.FontSpec = newSpec;
             //    var fontItems = info.FontSpec._split('|').Select(x => x._strip()).ToArray();
             //    info.VerticalFont?.Dispose();
@@ -1301,7 +1301,7 @@ namespace KanchokuWS
             //            info.TopPadding = fh < 13 ? 3 : (fw <= 13 ? 3 : 2);
             //        }
             //    }
-            //    if (Logger.IsInfoHEnabled) logger.InfoH($"new verticalFont Width={fw}, Height={fh}, charHeight={info.CharHeight}, padLeft={info.LeftPadding}, padTop={info.TopPadding}");
+            //    if (Logger.IsInfoHEnabled) logger.Info($"new verticalFont Width={fw}, Height={fh}, charHeight={info.CharHeight}, padLeft={info.LeftPadding}, padTop={info.TopPadding}");
             //}
         }
 
@@ -1497,7 +1497,7 @@ namespace KanchokuWS
 
         private void pictureBox_Main_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            //logger.InfoH($"CALLED: e.Delta={e.Delta}, scrollLines={SystemInformation.MouseWheelScrollLines}");
+            //logger.Info($"CALLED: e.Delta={e.Delta}, scrollLines={SystemInformation.MouseWheelScrollLines}");
             //frmMain.RotateStrokeTable(e.Delta * SystemInformation.MouseWheelScrollLines / 120);
             frmMain.RotateStrokeTable(-e.Delta / 120);
         }

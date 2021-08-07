@@ -9,6 +9,21 @@ using Utils;
 
 namespace KanchokuWS
 {
+    public static class KeyModifiers
+    {
+        // VKEY に対する modifier ALT
+        public const uint MOD_ALT = 0x0001;
+
+        // VKEY に対する modifier CTRL
+        public const uint MOD_CONTROL = 0x0002;
+
+        // VKEY に対する modifier SHIFT
+        public const uint MOD_SHIFT = 0x0004;
+
+        // VKEY に対する modifier WIN
+        public const uint MOD_WIN = 0x0008;
+    }
+
     /// <summary>
     /// 修飾キーと仮想キーの組み合わせ
     /// </summary>
@@ -22,7 +37,12 @@ namespace KanchokuWS
             vkey = vk;
         }
 
-        public uint SerialValue => ((modifier & 0xffff) << 16) + (vkey & 0xffff);
+        public uint SerialValue => CalcSerialValue(modifier, vkey);
+
+        public static uint CalcSerialValue(uint mod, uint vkey)
+        {
+            return ((mod & 0xffff) << 16) + (vkey & 0xffff);
+        }
     }
 
     public static class VirtualKeys
@@ -36,21 +56,46 @@ namespace KanchokuWS
         public const uint LCONTROL = 0xa2;
         public const uint RCONTROL = 0xa3;
 
-        ///// <summary> 打鍵で使われる仮想キー配列(DecKeyId順に並んでいる) </summary>
-        //private static uint[] strokeVKeys;
+        /// <summary> 打鍵で使われる仮想キー配列(DecKeyId順に並んでいる) </summary>
+        private static uint[] strokeVKeys;
 
-        //private static uint[] VKeyArray106 = new uint[] {
-        //    0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30,
-        //    0x51, 0x57, 0x45, 0x52, 0x54, 0x59, 0x55, 0x49, 0x4f, 0x50,
-        //    0x41, 0x53, 0x44, 0x46, 0x47, 0x48, 0x4a, 0x4b, 0x4c, 0xbb,
-        //    0x5a, 0x58, 0x43, 0x56, 0x42, 0x4e, 0x4d, 0xbc, 0xbe, 0xbf,
-        //    0x20, 0xbd, 0xde, 0xdc, 0xc0, 0xdb, 0xba, 0xdd, 0xe2, 0x00,
-        //};
+        private static uint[] VKeyArray106 = new uint[] {
+            0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30,
+            0x51, 0x57, 0x45, 0x52, 0x54, 0x59, 0x55, 0x49, 0x4f, 0x50,
+            0x41, 0x53, 0x44, 0x46, 0x47, 0x48, 0x4a, 0x4b, 0x4c, 0xbb,
+            0x5a, 0x58, 0x43, 0x56, 0x42, 0x4e, 0x4d, 0xbc, 0xbe, 0xbf,
+            0x20, 0xbd, 0xde, 0xdc, 0xc0, 0xdb, 0xba, 0xdd, 0xe2, 0x00,
+        };
 
-        //public static uint GetVKeyFromDecKey(int deckey)
-        //{
-        //    return strokeVKeys._getNth(deckey);
-        //}
+        /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)</summary>
+        private static uint[] vkeyArrayFuncKeys = {
+            /*Esc*/ 0x1b, /*半/全*/ 0xf3, /*Tab*/ 0x09, /*Caps*/ 0x14, /*英数*/ 0xf0, /*無変換*/ 0x1d, /*変換*/ 0x1c, /*かな*/ 0xf2, /*BS*/ 0x08, /*Enter*/ 0x0d,
+            /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21, /*PgDn*/ 0x22, /*↑*/ 0x26, /*↓*/ 0x28, /*←*/ 0x25, /*→*/ 0x27
+        };
+
+        private static uint getVKeyFromDecKey(int deckey)
+        {
+            if (deckey < 0) return 0;
+
+            bool bFunc = false;
+            if (deckey >= DecoderKeys.SHIFT_DECKEY_START && deckey < DecoderKeys.FUNC_DECKEY_START) {
+                deckey -= DecoderKeys.SHIFT_DECKEY_START;
+            }  else if (deckey >= DecoderKeys.FUNC_DECKEY_START && deckey < DecoderKeys.CTRL_DECKEY_START) {
+                deckey -= DecoderKeys.FUNC_DECKEY_START;
+                bFunc = true;
+            }  else if (deckey >= DecoderKeys.CTRL_DECKEY_START && deckey < DecoderKeys.CTRL_FUNC_DECKEY_START) {
+                deckey -= DecoderKeys.CTRL_DECKEY_START;
+            }  else if (deckey >= DecoderKeys.CTRL_FUNC_DECKEY_START && deckey < DecoderKeys.CTRL_SHIFT_DECKEY_START) {
+                deckey -= DecoderKeys.CTRL_FUNC_DECKEY_START;
+                bFunc = true;
+            }  else if (deckey >= DecoderKeys.CTRL_SHIFT_DECKEY_START && deckey < DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START) {
+                deckey -= DecoderKeys.CTRL_SHIFT_DECKEY_START;
+            }  else if (deckey >= DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START && deckey < DecoderKeys.TOTAL_DECKEY_NUM) {
+                deckey -= DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START;
+                bFunc = true;
+            }
+            return bFunc ? vkeyArrayFuncKeys._getNth(deckey) : strokeVKeys._getNth(deckey);
+        }
 
         private static Dictionary<string, uint> faceToVkey = new Dictionary<string, uint>() {
             {"A", (uint)Keys.A },
@@ -127,7 +172,7 @@ namespace KanchokuWS
         /// </summary>
         private static Dictionary<uint, int> DecKeyFromVKeyCombo;
 
-        private static void addDecKeyAndCombo(int deckey, uint mod, uint vkey)
+        public static void AddDecKeyAndCombo(int deckey, uint mod, uint vkey)
         {
             logger.Debug(() => $"deckey={deckey:x}H({deckey}), mod={mod:x}H, vkey={vkey:x}H({vkey})");
             var combo = new VKeyCombo(mod, (uint)vkey);
@@ -135,19 +180,36 @@ namespace KanchokuWS
             DecKeyFromVKeyCombo[combo.SerialValue] = deckey;
         }
 
-        public static void SetupDecKeyAndComboTable(KeyboardEventDispatcher dispatcher)
+        private static void setupDecKeyAndComboTable()
         {
+            // ストロークキー
             for (int id = 0; id < DecoderKeys.NORMAL_DECKEY_NUM; ++id) {
+                uint vkey = getVKeyFromDecKey(id);
                 // Normal
-                addDecKeyAndCombo(id, 0, dispatcher.GetVKeyFromDecKey(id));
+                AddDecKeyAndCombo(id, 0, vkey);
                 // Shifted
-                addDecKeyAndCombo(DecoderKeys.SHIFT_DECKEY_START + id, KeyModifiers.MOD_SHIFT, dispatcher.GetVKeyFromDecKey(id));
+                AddDecKeyAndCombo(DecoderKeys.SHIFT_DECKEY_START + id, KeyModifiers.MOD_SHIFT, vkey);
+                // Ctrl
+                AddDecKeyAndCombo(DecoderKeys.CTRL_DECKEY_START + id, KeyModifiers.MOD_CONTROL, vkey);
+                // Ctrl+Shift
+                AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, vkey);
+            }
+
+            // 機能キー
+            for (int id = 0; id < DecoderKeys.FUNC_DECKEY_NUM; ++id) {
+                uint vkey = getVKeyFromDecKey(DecoderKeys.FUNC_DECKEY_START + id);
+                // Normal
+                AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, 0, vkey);
+                // Ctrl
+                AddDecKeyAndCombo(DecoderKeys.CTRL_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL, vkey);
+                // Ctrl+Shifted
+                AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, vkey);
             }
         }
 
         public static int GetDecKeyFromCombo(uint mod, uint vkey)
         {
-            return DecKeyFromVKeyCombo._safeGet(new VKeyCombo(mod, vkey).SerialValue, -1);
+            return DecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
         }
 
         // 静的コンストラクタ
@@ -156,60 +218,60 @@ namespace KanchokuWS
             VKeyComboFromDecKey = new VKeyCombo?[DecoderKeys.GLOBAL_DECKEY_ID_END];
             DecKeyFromVKeyCombo = new Dictionary<uint, int>();
 
-            addDecKeyAndCombo(DecoderKeys.CTRL_A_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.A);
-            addDecKeyAndCombo(DecoderKeys.CTRL_B_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.B);
-            addDecKeyAndCombo(DecoderKeys.CTRL_C_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.C);
-            addDecKeyAndCombo(DecoderKeys.CTRL_D_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.D);
-            addDecKeyAndCombo(DecoderKeys.CTRL_E_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.E);
-            addDecKeyAndCombo(DecoderKeys.CTRL_F_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.F);
-            addDecKeyAndCombo(DecoderKeys.CTRL_G_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.G);
-            addDecKeyAndCombo(DecoderKeys.CTRL_H_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.H);
-            addDecKeyAndCombo(DecoderKeys.CTRL_I_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.I);
-            addDecKeyAndCombo(DecoderKeys.CTRL_J_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.J);
-            addDecKeyAndCombo(DecoderKeys.CTRL_K_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.K);
-            addDecKeyAndCombo(DecoderKeys.CTRL_L_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.L);
-            addDecKeyAndCombo(DecoderKeys.CTRL_M_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.M);
-            addDecKeyAndCombo(DecoderKeys.CTRL_N_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.N);
-            addDecKeyAndCombo(DecoderKeys.CTRL_O_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.O);
-            addDecKeyAndCombo(DecoderKeys.CTRL_P_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.P);
-            addDecKeyAndCombo(DecoderKeys.CTRL_Q_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Q);
-            addDecKeyAndCombo(DecoderKeys.CTRL_R_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.R);
-            addDecKeyAndCombo(DecoderKeys.CTRL_S_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.S);
-            addDecKeyAndCombo(DecoderKeys.CTRL_T_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.T);
-            addDecKeyAndCombo(DecoderKeys.CTRL_U_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.U);
-            addDecKeyAndCombo(DecoderKeys.CTRL_V_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.V);
-            addDecKeyAndCombo(DecoderKeys.CTRL_W_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.W);
-            addDecKeyAndCombo(DecoderKeys.CTRL_X_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.X);
-            addDecKeyAndCombo(DecoderKeys.CTRL_Y_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Y);
-            addDecKeyAndCombo(DecoderKeys.CTRL_Z_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Z);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_A_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.A);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_B_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.B);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_C_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.C);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_D_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.D);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_E_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.E);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_F_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.F);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_G_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.G);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_H_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.H);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_I_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.I);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_J_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.J);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_K_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.K);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_L_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.L);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_M_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.M);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_N_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.N);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_O_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.O);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_P_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.P);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_Q_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Q);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_R_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.R);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_S_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.S);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_T_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.T);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_U_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.U);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_V_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.V);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_W_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.W);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_X_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.X);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_Y_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Y);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_Z_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Z);
 
-            addDecKeyAndCombo(DecoderKeys.LEFT_TRIANGLE_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Oemcomma);
-            addDecKeyAndCombo(DecoderKeys.RIGHT_TRIANGLE_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.OemPeriod);
-            addDecKeyAndCombo(DecoderKeys.QUESTION_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.OemQuestion);
+            AddDecKeyAndCombo(DecoderKeys.LEFT_TRIANGLE_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Oemcomma);
+            AddDecKeyAndCombo(DecoderKeys.RIGHT_TRIANGLE_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.OemPeriod);
+            AddDecKeyAndCombo(DecoderKeys.QUESTION_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.OemQuestion);
 
-            addDecKeyAndCombo(DecoderKeys.SHIFT_SPACE_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Space);
+            AddDecKeyAndCombo(DecoderKeys.SHIFT_SPACE_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Space);
 
-            addDecKeyAndCombo(DecoderKeys.ENTER_DECKEY, 0, (uint)Keys.Enter);
-            addDecKeyAndCombo(DecoderKeys.ESC_DECKEY, 0, (uint)Keys.Escape);
-            addDecKeyAndCombo(DecoderKeys.BS_DECKEY, 0, (uint)Keys.Back);
-            addDecKeyAndCombo(DecoderKeys.TAB_DECKEY, 0, (uint)Keys.Tab);
-            addDecKeyAndCombo(DecoderKeys.DEL_DECKEY, 0, (uint)Keys.Delete);
-            addDecKeyAndCombo(DecoderKeys.HOME_DECKEY, 0, (uint)Keys.Home);
-            addDecKeyAndCombo(DecoderKeys.END_DECKEY, 0, (uint)Keys.End);
-            addDecKeyAndCombo(DecoderKeys.PAGE_UP_DECKEY, 0, (uint)Keys.PageUp);
-            addDecKeyAndCombo(DecoderKeys.PAGE_DOWN_DECKEY, 0, (uint)Keys.PageDown);
-            addDecKeyAndCombo(DecoderKeys.LEFT_ARROW_DECKEY, 0, (uint)Keys.Left);
-            addDecKeyAndCombo(DecoderKeys.RIGHT_ARROW_DECKEY, 0, (uint)Keys.Right);
-            addDecKeyAndCombo(DecoderKeys.UP_ARROW_DECKEY, 0, (uint)Keys.Up);
-            addDecKeyAndCombo(DecoderKeys.DOWN_ARROW_DECKEY, 0, (uint)Keys.Down);
+            AddDecKeyAndCombo(DecoderKeys.ENTER_DECKEY, 0, (uint)Keys.Enter);
+            AddDecKeyAndCombo(DecoderKeys.ESC_DECKEY, 0, (uint)Keys.Escape);
+            AddDecKeyAndCombo(DecoderKeys.BS_DECKEY, 0, (uint)Keys.Back);
+            AddDecKeyAndCombo(DecoderKeys.TAB_DECKEY, 0, (uint)Keys.Tab);
+            AddDecKeyAndCombo(DecoderKeys.DEL_DECKEY, 0, (uint)Keys.Delete);
+            AddDecKeyAndCombo(DecoderKeys.HOME_DECKEY, 0, (uint)Keys.Home);
+            AddDecKeyAndCombo(DecoderKeys.END_DECKEY, 0, (uint)Keys.End);
+            AddDecKeyAndCombo(DecoderKeys.PAGE_UP_DECKEY, 0, (uint)Keys.PageUp);
+            AddDecKeyAndCombo(DecoderKeys.PAGE_DOWN_DECKEY, 0, (uint)Keys.PageDown);
+            AddDecKeyAndCombo(DecoderKeys.LEFT_ARROW_DECKEY, 0, (uint)Keys.Left);
+            AddDecKeyAndCombo(DecoderKeys.RIGHT_ARROW_DECKEY, 0, (uint)Keys.Right);
+            AddDecKeyAndCombo(DecoderKeys.UP_ARROW_DECKEY, 0, (uint)Keys.Up);
+            AddDecKeyAndCombo(DecoderKeys.DOWN_ARROW_DECKEY, 0, (uint)Keys.Down);
 
-            addDecKeyAndCombo(DecoderKeys.CTRL_LEFT_ARROW_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Left);
-            addDecKeyAndCombo(DecoderKeys.CTRL_RIGHT_ARROW_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Right);
-            addDecKeyAndCombo(DecoderKeys.CTRL_UP_ARROW_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Up);
-            addDecKeyAndCombo(DecoderKeys.CTRL_DOWN_ARROW_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Down);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_LEFT_ARROW_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Left);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_RIGHT_ARROW_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Right);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_UP_ARROW_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Up);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_DOWN_ARROW_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Down);
 
-            addDecKeyAndCombo(DecoderKeys.CTRL_SPACE_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Space);
-            addDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_SPACE_DECKEY, KeyModifiers.MOD_CONTROL|KeyModifiers.MOD_SHIFT, (uint)Keys.Space);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_SPACE_DECKEY, KeyModifiers.MOD_CONTROL, (uint)Keys.Space);
+            AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_SPACE_DECKEY, KeyModifiers.MOD_CONTROL|KeyModifiers.MOD_SHIFT, (uint)Keys.Space);
             //addDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_G_DECKEY, KeyModifiers.MOD_CONTROL|KeyModifiers.MOD_SHIFT, (uint)Keys.G);
             //addDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_T_DECKEY, KeyModifiers.MOD_CONTROL|KeyModifiers.MOD_SHIFT, (uint)Keys.T);
 
@@ -223,65 +285,70 @@ namespace KanchokuWS
         {
             uint vkey = faceToVkey._safeGet(faces);
             if (vkey != 0) {
-                if (ctrlDeckey > 0) addDecKeyAndCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, vkey);
-                if (ctrlShiftDeckey > 0) addDecKeyAndCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL|KeyModifiers.MOD_SHIFT, vkey);
+                if (ctrlDeckey > 0) AddDecKeyAndCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, vkey);
+                if (ctrlShiftDeckey > 0) AddDecKeyAndCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL|KeyModifiers.MOD_SHIFT, vkey);
             }
         }
 
-        ///// <summary>
-        ///// 仮想キーコードからなるキーボードファイル(106.keyとか)を読み込んで、仮想キーコードの配列を作成する<br/>
-        ///// 仮想キーコードはDecKeyId順に並んでいる必要がある。
-        ///// </summary>
-        ///// <returns></returns>
-        //public static bool ReadKeyboardFile()
-        //{
-        //    logger.Info("ENTER");
+        public static void AddCtrlDeckey(int deckey, int ctrlDeckey, int ctrlShiftDeckey)
+        {
+            if (deckey >= 0) {
+                uint vkey = getVKeyFromDecKey(deckey);
+                if (vkey != 0) {
+                    if (ctrlDeckey > 0) AddDecKeyAndCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, vkey);
+                    if (ctrlShiftDeckey > 0) AddDecKeyAndCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, vkey);
+                }
+            }
+        }
 
-        //    var array = VKeyArray106;
+        /// <summary>
+        /// 仮想キーコードからなるキーボードファイル(106.keyとか)を読み込んで、仮想キーコードの配列を作成する<br/>
+        /// 仮想キーコードはDecKeyId順に並んでいる必要がある。
+        /// </summary>
+        /// <returns></returns>
+        public static bool ReadKeyboardFile()
+        {
+            logger.Info("ENTER");
 
-        //    var ini = KanchokuIni.Singleton;
-        //    var filePath = ini.KanchokuDir._joinPath(Settings.KeyboardFile);
-        //    if (filePath._notEmpty()) {
-        //        logger.Info($"keyboard file path={filePath}");
-        //        var vkeys = Helper.GetFileContent(filePath, Encoding.UTF8);
-        //        if (vkeys == null) {
-        //            logger.Error($"Can't read keyboard file: {filePath}");
-        //            SystemHelper.ShowErrorMessageBox($"キーボード定義ファイル({filePath}の読み込みに失敗しました。");
-        //            return false;
-        //        }
-        //        var items = vkeys._split('\n').Select(line => line.Trim().Replace(" ", "")).
-        //            Where(line => line._notEmpty() && line[0] != '#' && line[0] != ';')._join("").TrimEnd(',')._split(',').ToArray();
+            var array = VKeyArray106;
 
-        //        array = items.Select(x => (uint)x._parseHex(0)).ToArray();
-        //        int idx = array._findIndex(x => x < 0);
-        //        if (idx >= 0 && idx < array.Length) {
-        //            logger.Warn($"Invalid keyboard def: file={filePath}, {idx}th: {items[idx]}");
-        //            SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}の{idx}番目のキー定義({items[idx]})が誤っています。");
-        //            return false;
-        //        }
-        //        if (array.Length < DecoderKeys.NORMAL_DECKEY_NUM) {
-        //            logger.Warn($"No sufficient keyboard def: file={filePath}, total {array.Length} defs");
-        //            SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}のキー定義の数({array.Length})が不足しています。");
-        //            return false;
-        //        }
-        //    }
-        //    logger.Info(() => $"keyboard keyNum={array.Length}, array={array.Select(x=>x.ToString("x"))._join(", ")}");
+            var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.GetString("keyboard", "106.key"));
+            if (filePath._notEmpty()) {
+                logger.Info($"keyboard file path={filePath}");
+                var vkeys = Helper.GetFileContent(filePath, Encoding.UTF8);
+                if (vkeys == null) {
+                    logger.Error($"Can't read keyboard file: {filePath}");
+                    SystemHelper.ShowErrorMessageBox($"キーボード定義ファイル({filePath}の読み込みに失敗しました。");
+                    return false;
+                }
+                var items = vkeys._split('\n').Select(line => line.Trim().Replace(" ", "")).
+                    Where(line => line._notEmpty() && line[0] != '#' && line[0] != ';')._join("").TrimEnd(',')._split(',').ToArray();
 
-        //    strokeVKeys = array;
+                array = items.Select(x => (uint)x._parseHex(0)).ToArray();
+                int idx = array._findIndex(x => x < 0);
+                if (idx >= 0 && idx < array.Length) {
+                    logger.Warn($"Invalid keyboard def: file={filePath}, {idx}th: {items[idx]}");
+                    SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}の{idx}番目のキー定義({items[idx]})が誤っています。");
+                    return false;
+                }
+                if (array.Length < DecoderKeys.NORMAL_DECKEY_NUM) {
+                    logger.Warn($"No sufficient keyboard def: file={filePath}, total {array.Length} defs");
+                    SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}のキー定義の数({array.Length})が不足しています。");
+                    return false;
+                }
+            }
+            logger.Info(() => $"keyboard keyNum={array.Length}, array={array.Select(x => x.ToString("x"))._join(", ")}");
 
-        //    for (int id = 0; id < DecoderKeys.NORMAL_DECKEY_NUM; ++id) {
-        //        // Normal
-        //        addDecKeyAndCombo(id, 0, GetVKeyFromDecKey(id));
-        //        // Shifted
-        //        addDecKeyAndCombo(DecoderKeys.SHIFT_DECKEY_START + id, KeyModifiers.MOD_SHIFT, GetVKeyFromDecKey(id));
-        //    }
+            strokeVKeys = array;
 
-        //    //// 49番目を Shift+Space として登録しておく
-        //    //addDeckeyAndCombo(49, KeyModifiers.MOD_SHIFT, (uint)Keys.Space);
+            setupDecKeyAndComboTable();
 
-        //    logger.Info("LEAVE");
-        //    return true;
-        //}
+            //// 49番目を Shift+Space として登録しておく
+            //addDeckeyAndCombo(49, KeyModifiers.MOD_SHIFT, (uint)Keys.Space);
+
+            logger.Info("LEAVE");
+            return true;
+        }
 
     }
 }
