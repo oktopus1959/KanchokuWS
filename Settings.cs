@@ -53,11 +53,14 @@ namespace KanchokuWS
         /// <summary>ログレベル</summary> 
         public static int LogLevel { get; private set; } = 0;
 
-        /// <summary>true の場合、入力されたDecoderキーに関する情報を Warn レベルでログ出力する</summary>
+        /// <summary>true の場合、入力されたDecoderキーに関する情報をログ出力する</summary>
         public static bool LoggingDecKeyInfo { get; private set; }
 
-        /// <summary>true の場合、アクティブウィンドウに関する情報を Warn レベルでログ出力する</summary>
+        /// <summary>true の場合、アクティブウィンドウに関する情報をログ出力する</summary>
         public static bool LoggingActiveWindowInfo { get; set; } = false;
+
+        /// <summary>true の場合、仮想キーボードに関する情報をログ出力する</summary>
+        public static bool LoggingVirtualKeyboardInfo { get; set; } = false;
 
         /// <summary>Decoderキー処理後にウェイトを入れる(開発用; バグ等により処理対象ホットキーを keybd_event で送出することによる無限ループに対応する時間をかせぐ)</summary>
         public static bool DelayAfterProcessDeckey { get; private set; } = false;

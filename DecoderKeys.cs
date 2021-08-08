@@ -21,41 +21,68 @@ namespace KanchokuWS
         // 通常ストロークに使われるDECKEYの数
         public const int NORMAL_DECKEY_NUM = 50;
 
+        // 通常ストロークに使われるDECKEYの終わり(の次)
+        public const int NORMAL_DECKEY_END = NORMAL_DECKEY_START + NORMAL_DECKEY_NUM;
+
         // SHIFT修飾DECKEYの始まり
-        public const int SHIFT_DECKEY_START = NORMAL_DECKEY_NUM;
+        public const int SHIFT_DECKEY_START = NORMAL_DECKEY_END;
 
         // SHIFT修飾DECKEYの数
         public const int SHIFT_DECKEY_NUM = 50;
 
+        // SHIFT修飾DECKEYの終わり(の次)
+        public const int SHIFT_DECKEY_END = SHIFT_DECKEY_START + SHIFT_DECKEY_NUM;
+
         // ストロークキーの数
         public const int STROKE_DECKEY_NUM = NORMAL_DECKEY_NUM + SHIFT_DECKEY_NUM;
 
+        // ストロークキーの終わり(の次)
+        public const int STROKE_DECKEY_END = SHIFT_DECKEY_END;
+
         // 機能キーとして使われるDECKEYの始まり
-        public const int FUNC_DECKEY_START = SHIFT_DECKEY_START + SHIFT_DECKEY_NUM;
+        public const int FUNC_DECKEY_START = STROKE_DECKEY_END;
 
         // 機能キーとして使われるDECKEYの数
         public const int FUNC_DECKEY_NUM = 20;
 
+        // 機能キーとして使われるDECKEYの終わり(の次)
+        public const int FUNC_DECKEY_END = FUNC_DECKEY_START + FUNC_DECKEY_NUM;
+
+        // 修飾なしキーの数
+        public const int UNMODIFIED_DECKEY_NUM = NORMAL_DECKEY_NUM + SHIFT_DECKEY_NUM + FUNC_DECKEY_NUM;
+
         // Ctrl修飾DECKEYの始まり
-        public const int CTRL_DECKEY_START = FUNC_DECKEY_START + FUNC_DECKEY_NUM;
+        public const int CTRL_DECKEY_START = FUNC_DECKEY_END;
+
+        // Ctrl修飾DECKEYの終わり(の次)
+        public const int CTRL_DECKEY_END = CTRL_DECKEY_START + NORMAL_DECKEY_NUM;
 
         // Ctrl修飾機能DECKEYの始まり
-        public const int CTRL_FUNC_DECKEY_START = CTRL_DECKEY_START + NORMAL_DECKEY_NUM;
+        public const int CTRL_FUNC_DECKEY_START = CTRL_DECKEY_END;
+
+        // Ctrl修飾機能DECKEYの終わり(の次)
+        public const int CTRL_FUNC_DECKEY_END = CTRL_FUNC_DECKEY_START + FUNC_DECKEY_NUM;
 
         // Ctrl修飾DECKEYの数
         public const int CTRL_DECKEY_NUM = NORMAL_DECKEY_NUM + FUNC_DECKEY_NUM;
 
         // Ctrl+Shift修飾DECKEYの始まり
-        public const int CTRL_SHIFT_DECKEY_START = CTRL_FUNC_DECKEY_START + FUNC_DECKEY_NUM;
+        public const int CTRL_SHIFT_DECKEY_START = CTRL_FUNC_DECKEY_END;
+
+        // Ctrl+Shift修飾DECKEYの終わり(の次)
+        public const int CTRL_SHIFT_DECKEY_END = CTRL_SHIFT_DECKEY_START + NORMAL_DECKEY_NUM;
 
         // Ctrl+Shift修飾機能DECKEYの始まり
-        public const int CTRL_SHIFT_FUNC_DECKEY_START = CTRL_SHIFT_DECKEY_START + NORMAL_DECKEY_NUM;
+        public const int CTRL_SHIFT_FUNC_DECKEY_START = CTRL_SHIFT_DECKEY_END;
+
+        // Ctrl+Shift修飾機能DECKEYの終わり(の次)
+        public const int CTRL_SHIFT_FUNC_DECKEY_END = CTRL_SHIFT_FUNC_DECKEY_START + FUNC_DECKEY_NUM;
 
         // Ctrl+Shift修飾DECKEYの数
         public const int CTRL_SHIFT_DECKEY_NUM = NORMAL_DECKEY_NUM + FUNC_DECKEY_NUM;
 
         // DECKEYの総数
-        public const int TOTAL_DECKEY_NUM = NORMAL_DECKEY_NUM + SHIFT_DECKEY_NUM + FUNC_DECKEY_NUM + CTRL_DECKEY_NUM + CTRL_SHIFT_DECKEY_NUM;
+        public const int TOTAL_DECKEY_NUM = UNMODIFIED_DECKEY_NUM + CTRL_DECKEY_NUM + CTRL_SHIFT_DECKEY_NUM;
 
         // 上記は、ストロークテーブルの第1打鍵に含まれる
         // ストロークテーブルの第2打鍵以降には、NORMAL と SHIFT修飾だけが含まれる

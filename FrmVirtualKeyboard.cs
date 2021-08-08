@@ -131,7 +131,7 @@ namespace KanchokuWS
 
                     Padding makePadding(int n)
                     {
-                        if (Logger.IsInfoHEnabled) logger.Info($"new {myName} Font Name={fontName}, Size={fontSize}, useVertical={useVertical}, cw={cellWidth:f1}, ch={cellHeight:f1},fw={fw:f1}, fh={fh:f1}");
+                        if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"new {myName} Font Name={fontName}, Size={fontSize}, useVertical={useVertical}, cw={cellWidth:f1}, ch={cellHeight:f1},fw={fw:f1}, fh={fh:f1}");
                         float fw_ = fw;
                         if (fontName._startsWith("Yu ") || fontName._startsWith("游")) {
                             fw_ = fw <= 16 ? 18 : 16;
@@ -169,7 +169,7 @@ namespace KanchokuWS
                                 }
                             }
                         }
-                        if (Logger.IsInfoHEnabled) logger.Info($"new {myName} Font Width={fw:f3}, Height={fh:f3}, charHeight={CharHeight}, padLeft={leftPadding:f3}, padTop={topPadding:f3}");
+                        if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"new {myName} Font Width={fw:f3}, Height={fh:f3}, charHeight={CharHeight}, padLeft={leftPadding:f3}, padTop={topPadding:f3}");
                         return new Padding(leftPadding, topPadding);
                     }
 
@@ -447,7 +447,7 @@ namespace KanchokuWS
 
             if (dgv.Rows.Count == 0) dgv.Rows.Add(LongVkeyNum);
 
-            logger.Info($"dgv.Top={dgv.Top}, dgv.Width={dgv.Width}, cellHeight={cellHeight}, cellWidth={cellWidth}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"dgv.Top={dgv.Top}, dgv.Width={dgv.Width}, cellHeight={cellHeight}, cellWidth={cellWidth}");
                 
         }
 
@@ -519,7 +519,7 @@ namespace KanchokuWS
 
         private void resetDrawParameters(int dpi)
         {
-            logger.Info($"CALLED: dpi={dpi}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"CALLED: dpi={dpi}");
             //float rate = (float)ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
             float rate = dpi / 96.0f;
 
@@ -545,7 +545,7 @@ namespace KanchokuWS
             VkbCenterBoxHeight_5x10Table = VkbPictureBoxHeight_5x10Table;
 
             this.Width = (int)(VkbNormalWidth + 2);
-            logger.Info($"LEAVE: this.Width={this.Width}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"LEAVE: this.Width={this.Width}");
         }
 
         /// <summary>
@@ -553,7 +553,7 @@ namespace KanchokuWS
         /// </summary>
         private void redrawVkb()
         {
-            logger.Info($"CALLED: VkbNormalWidth={VkbNormalWidth}, VkbCellHeight={VkbCellHeight}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"CALLED: VkbNormalWidth={VkbNormalWidth}, VkbCellHeight={VkbCellHeight}");
 
             //this.Width = (int)(VkbNormalWidth + 2);
             //topTextBox.Width = (int)(VkbNormalWidth);
@@ -633,7 +633,7 @@ namespace KanchokuWS
         public void MakeStrokeTables(string defFile)
         {
             var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(defFile);
-            logger.Info(() => $"ENTER: filePath={filePath}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"ENTER: filePath={filePath}");
             if (Helper.FileExists(filePath)) {
                 try {
                     foreach (var line in System.IO.File.ReadAllLines(filePath)) {
@@ -641,7 +641,7 @@ namespace KanchokuWS
                         if (items._notEmpty() && items[0]._notEmpty() && !items[0].StartsWith("#")) {
                             var cmd = items[0]._toLower();
                             var chars = items.Length > 1 ? items.Skip(1)._join(" ") : "";
-                            logger.Info(() => $"cmd={cmd}, param={chars}");
+                            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"cmd={cmd}, param={chars}");
                             if (cmd == "initialtable") {
                                 // 初期表示を追加(初期表示は事前に作成されている)
                                 StrokeTables.Add(new StrokeTableDef {
@@ -674,7 +674,7 @@ namespace KanchokuWS
                     logger.Error($"Cannot read file: {filePath}: {e.Message}");
                 }
             }
-            logger.Info("LEAVE");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info("LEAVE");
         }
 
         private void makeVkbStrokeTable(string cmd, string faces, bool drawFaces = false, bool kana = false)
@@ -718,7 +718,7 @@ namespace KanchokuWS
 
         public void CopyInitialVkbTable(char[] table)
         {
-            logger.Info($"CALLED");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"CALLED");
             int len = Math.Min(table.Length / 2, initialVkbChars.Length);
             for (int i = 0; i < len; ++i) {
                 initialVkbChars[i] = makeMultiCharStr(table, i * 2);
@@ -750,7 +750,7 @@ namespace KanchokuWS
         /// <summary> 第1打鍵待ち状態の仮想キーボード表示 </summary>
         public void DrawInitailVkb()
         {
-            logger.Info(() => $"CALLED: EffectiveCount={Settings.VirtualKeyboardShowStrokeCountEffective}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"CALLED: EffectiveCount={Settings.VirtualKeyboardShowStrokeCountEffective}");
             if (Settings.VirtualKeyboardShowStrokeCountEffective == 1) {
                 if (StrokeTables._isEmpty()) {
                     drawNormalVkb(initialVkbChars);
@@ -823,7 +823,7 @@ namespace KanchokuWS
         {
             var decoderOutput = frmMain.DecoderOutput;
 
-            logger.Info(() => $"CALLED: layout={decoderOutput.layout}, center={CommonState.CenterString}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"CALLED: layout={decoderOutput.layout}, center={CommonState.CenterString}");
 
             if (decoderOutput.topString._isEmpty()) return;
 
@@ -910,7 +910,7 @@ namespace KanchokuWS
         // 仮想鍵盤の高さを変更し、必要ならウィンドウを移動する
         private void changeFormHeight(int newHeight)
         {
-            logger.Info($"ENTER: oldHeight={this.Height}, newHeight={newHeight}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"ENTER: oldHeight={this.Height}, newHeight={newHeight}");
             int oldHeight = this.Height;
             this.Invalidate();
             this.Height = newHeight;
@@ -918,7 +918,7 @@ namespace KanchokuWS
                 // ウィンドウ位置の再取得を行わずに移動するので正しくない場所に表示される可能性はあるが、たいていの場合は大丈夫だろう
                 frmMain.MoveFormVirtualKeyboard();
             }
-            logger.Info($"LEAVE: this.Width={this.Width}, this.Height={this.Height}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"LEAVE: this.Width={this.Width}, this.Height={this.Height}");
         }
 
         public class PictureBoxDrawer : IDisposable
@@ -986,12 +986,12 @@ namespace KanchokuWS
         /// </summary>
         private void resetVkbControls(string topText, float picBoxWidth, float picBoxHeight, float centerHeight)
         {
-            logger.Info($"picBoxWidth={picBoxWidth:f3}, picBoxHeight={picBoxHeight:f3}, centerHeight={centerHeight:f3}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"picBoxWidth={picBoxWidth:f3}, picBoxHeight={picBoxHeight:f3}, centerHeight={centerHeight:f3}");
             renewMinibufFont();
             topTextBox.Width = (int)(VkbNormalWidth);
             topTextBox.Show();
             SetTopText(topText, true);
-            logger.Info($"topTextBox.Width={topTextBox.Width}, topTextBox.Height={topTextBox.Height}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"topTextBox.Width={topTextBox.Width}, topTextBox.Height={topTextBox.Height}");
             renewHorizontalKeyboard();
             //dgvHorizontal.Top = topTextBox.Height;
 
@@ -1010,10 +1010,10 @@ namespace KanchokuWS
                 dgvHorizontal.Width = (int)VkbNormalWidth;
                 dgvHorizontal.Show();
                 //dgvHorizontal.Top = topTextBox.Height;
-                logger.Info($"dgv.Top={dgvHorizontal.Top}, dgv.Width={dgvHorizontal.Width}");
+                if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"dgv.Top={dgvHorizontal.Top}, dgv.Width={dgvHorizontal.Width}");
             }
             this.Width = (int)(VkbNormalWidth + 2);
-            logger.Info($"LEAVE: this.Width={this.Width}, topText.Width={topTextBox.Width}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"LEAVE: this.Width={this.Width}, topText.Width={topTextBox.Width}");
         }
 
         //-------------------------------------------------------------------------------
@@ -1391,7 +1391,7 @@ namespace KanchokuWS
         /// <summary> 指定の背景色で中央鍵盤に文字列を出力する</summary>
         private void drawCenterChars(Graphics g, Color bgColor)
         {
-            logger.Debug(() => $"center={CommonState.CenterString}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Debug(() => $"center={CommonState.CenterString}");
             renewCenterVerticalFont();
             //int leftPadding = centerFontInfo.LeftPadding;
             //if (CommonState.CenterString._safeLength() == 1) {
@@ -1485,13 +1485,13 @@ namespace KanchokuWS
         //------------------------------------------------------------------
         private void pictureBox_Main_Click(object sender, EventArgs e)
         {
-            logger.Debug("CALLED");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("CALLED");
             if (((MouseEventArgs)e).Button == MouseButtons.Right) {
                 contextMenuStrip1.Show(Cursor.Position);
-                logger.Debug("ContextMenu Shown");
+                if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("ContextMenu Shown");
             } else {
                 frmMain.ToggleActiveState();
-                logger.Debug("ToggleActiveState");
+                if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("ToggleActiveState");
             }
         }
 
@@ -1505,7 +1505,7 @@ namespace KanchokuWS
         // 終了
         private void Exit_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            logger.Debug("ENTER");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("ENTER");
             //frmMain.DeactivateDecoder();
             //logger.Debug("Decoder OFF");
             //if (!Settings.ConfirmOnClose || SystemHelper.OKCancelDialog("漢直窓を終了します。\r\nよろしいですか。")) {
@@ -1515,7 +1515,7 @@ namespace KanchokuWS
             //    logger.Debug("Main.Closed");
             //}
             frmMain.Terminate();
-            logger.Debug("LEAVE");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("LEAVE");
         }
 
         private void BushuAssocReload_ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1567,17 +1567,17 @@ namespace KanchokuWS
         // 辞書内容を保存して再起動
         private void RestartWithSave_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            logger.Debug("ENTER");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("ENTER");
             frmMain.Restart(false);
-            logger.Debug("LEAVE");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("LEAVE");
         }
 
         // 辞書内容を破棄して再起動
         private void RestartWithDiscard_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            logger.Debug("ENTER");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("ENTER");
             frmMain.Restart(true);
-            logger.Debug("LEAVE");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("LEAVE");
         }
 
         private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)

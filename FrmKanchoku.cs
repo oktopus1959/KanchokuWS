@@ -426,8 +426,6 @@ namespace KanchokuWS
         private int dayOffset = 0;
         private int prevDateStrLength = 0;
 
-        private bool BackspaceBlockerSent = false;
-
         /// <summary> Decoder の ON/OFF 状態 </summary>
         public bool IsDecoderActive { get; private set; } = false;
 
@@ -533,83 +531,18 @@ namespace KanchokuWS
             return false;
         }
 
-        ///// <summary>
-        ///// WndProc のオーバーライド<br/>
-        ///// </summary>
-        ///// <param name="m"></param>
-        ////protected override void WndProc(ref Message m)
-        //private void wndProc(ref Message m)
-        //{
-        //    int msg = m.Msg;
-        //    //if (Logger.IsTraceEnabled) {
-        //    //    logger.Trace($"Msg={msg:x}H, wParam={(int)m.WParam:x}H({(int)m.WParam:x}H)");
-        //    //}
-        //    if (msg == -1) {
-        //        int deckey = (int)m.WParam;
-        //        try {
-        //            if (deckey >= 0 && deckey < DecoderKeys.GLOBAL_DECKEY_ID_BASE) {
-        //                // deckey の変換
-        //                deckey = convertSpecificDeckey(deckey);
-        //                if (deckey >= 0) {
-        //                    if (deckey == DecoderKeys.DATE_STRING_ROTATION_DECKEY || deckey == DecoderKeys.DATE_STRING_UNROTATION_DECKEY) {
-        //                        // Ctrl+; -- 日付の出力
-        //                        postTodayDate(deckey);
-        //                    } else if (IsDecoderActive) {
-        //                        // Decoder ON
-        //                        // 入力標識の消去
-        //                        frmMode.Vanish();
-        //                        // 通常のストロークキーまたは機能キー(BSとか矢印キーとかCttrl-Hとか)
-        //                        handleKeyDecoder(deckey);
-        //                    } else {
-        //                        // Decoder OFF
-        //                        if (deckey == DecoderKeys.FULL_ESCAPE_DECKEY) {
-        //                            // ここではとくに何もしない(この後 prevDeckey が FULL_ESCAPE_DECKEY になることで、DATE_STRING などの処理は初期化されるため)
-        //                        } else {
-        //                            switch (deckey) {
-        //                                case DecoderKeys.DECKEY_B: actWinHandler.SendVirtualKey((uint)Keys.B, 1); break;
-        //                                case DecoderKeys.DECKEY_F: actWinHandler.SendVirtualKey((uint)Keys.F, 1); break;
-        //                                case DecoderKeys.DECKEY_H: actWinHandler.SendVirtualKey((uint)Keys.H, 1); break;
-        //                                case DecoderKeys.DECKEY_N: actWinHandler.SendVirtualKey((uint)Keys.N, 1); break;
-        //                                case DecoderKeys.DECKEY_P: actWinHandler.SendVirtualKey((uint)Keys.P, 1); break;
-        //                                default: postVkeyFromDeckey(deckey); break;
-        //                            }
-        //                        }
-        //                    }
-        //                    if (Settings.DelayAfterProcessDeckey) {
-        //                        //Task.Delay(1000).Wait();
-        //                        Helper.WaitMilliSeconds(1000);
-        //                        logger.InfoH("OK");
-        //                    }
-        //                }
-        //            } else {
-        //                switch (deckey) {
-        //                    case DecoderKeys.ACTIVE_DECKEY:
-        //                    case DecoderKeys.ACTIVE2_DECKEY:
-        //                    case DecoderKeys.DEACTIVE_DECKEY:
-        //                    case DecoderKeys.DEACTIVE2_DECKEY:
-        //                        ToggleActiveState();
-        //                        break;
-        //                    case DecoderKeys.DATE_STRING_ROTATION_DECKEY:
-        //                    case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
-        //                        // Ctrl+; -- 日付の出力
-        //                        postTodayDate(deckey);
-        //                        break;
-        //                    case DecoderKeys.STROKE_HELP_ROTATION_DECKEY:
-        //                    case DecoderKeys.STROKE_HELP_UNROTATION_DECKEY:
-        //                        // 入力標識の消去
-        //                        frmMode.Vanish();
-        //                        // 仮想鍵盤のヘルプ表示の切り替え(モード標識表示時なら一時的に仮想鍵盤表示)
-        //                        int effectiveCnt = Settings.VirtualKeyboardShowStrokeCountEffective;
-        //                        Settings.VirtualKeyboardShowStrokeCountTemp = 1;
-        //                        frmVkb.RotateStrokeTable(effectiveCnt != 1 ? 0 : deckey == DecoderKeys.STROKE_HELP_ROTATION_DECKEY ? 1 : -1);
-        //                        break;
-        //                }
-        //            }
-        //        } finally {
-        //        }
-        //        prevProcEndDt = DateTime.Now;
-        //    }
-        //}
+        private bool isCtrlKeyConversionEffectiveWindow()
+        {
+            string activeWinClassName = actWinHandler.ActiveWinClassName._toLower();
+            bool contained = activeWinClassName._notEmpty()
+                && Settings.CtrlKeyTargetClassNames._notEmpty()
+                && Settings.CtrlKeyTargetClassNames.Any(name => name._notEmpty() && activeWinClassName.StartsWith(name));
+            bool ctrlTarget = !(Settings.UseClassNameListAsInclusion ^ contained);
+            if (Settings.LoggingDecKeyInfo && Logger.IsInfoEnabled) {
+                logger.InfoH($"ctrlTarget={ctrlTarget} (=!({Settings.UseClassNameListAsInclusion} (Inclusion) XOR {contained} (ContainedInList)");
+            }
+            return ctrlTarget;
+        }
 
         //private int convertSpecificDeckey(int deckey)
         //{
@@ -1085,15 +1018,24 @@ namespace KanchokuWS
 
         private bool sendVkeyFromDeckey(int deckey)
         {
-            var combo = VirtualKeys.GetVKeyComboFromDecKey(deckey);
-            if (combo != null) {
-                //if (deckey < DecoderKeys.FUNCTIONAL_DECKEY_ID_BASE) {
-                //    actWinHandler.SendVirtualKey(combo.Value.vkey, 1);
-                //} else {
-                //    actWinHandler.SendVKeyCombo(combo.Value, 1);
-                //}
-                actWinHandler.SendVKeyCombo(combo.Value, 1);
-                return true;
+            if (isCtrlKeyConversionEffectiveWindow()
+                || deckey < DecoderKeys.FUNC_DECKEY_START
+                || deckey >= DecoderKeys.FUNC_DECKEY_END && deckey < DecoderKeys.CTRL_FUNC_DECKEY_START
+                || deckey >= DecoderKeys.CTRL_FUNC_DECKEY_END && deckey < DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START
+                || deckey >= DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_END) {
+
+                if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET");
+                var combo = VirtualKeys.GetVKeyComboFromDecKey(deckey);
+                if (combo != null) {
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"SEND: vkey={combo.Value.vkey:x}H({combo.Value.vkey}), ctrl={(combo.Value.modifier & KeyModifiers.MOD_CONTROL) != 0}");
+                    //if (deckey < DecoderKeys.FUNCTIONAL_DECKEY_ID_BASE) {
+                    //    actWinHandler.SendVirtualKey(combo.Value.vkey, 1);
+                    //} else {
+                    //    actWinHandler.SendVKeyCombo(combo.Value, 1);
+                    //}
+                    actWinHandler.SendVKeyCombo(combo.Value, 1);
+                    return true;
+                }
             }
             return false;
         }

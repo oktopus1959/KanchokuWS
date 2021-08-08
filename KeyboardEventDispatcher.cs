@@ -13,7 +13,10 @@ namespace KanchokuWS
     {
         private static Logger logger = Logger.GetLogger();
 
-        /// <summary>キーダウン</summary>
+        /// <summary>Ctrlキー変換の有効なウィンドウクラスか</summary>
+        public delegate bool DelegateCtrlConversionEffectiveChecker();
+
+        /// <summary>キーイベント</summary>
         public delegate bool DelegateOnKeyEvent(int vkey, int extraInfo);
 
         /// <summary>デコーダ ON/OFF </summary>
@@ -43,10 +46,13 @@ namespace KanchokuWS
         ///// <summary>デコーダキーに変換してデコーダを呼び出す<br/>デコーダ呼び出しを行わない場合は false を返す</summary>
         //public delegate bool DelegateInvokeDecoder(int decKey);
 
+        ///// <summary>Ctrlキー変換の有効なウィンドウクラスか</summary>
+        //public DelegateCtrlConversionEffectiveChecker CtrlConversionEffectiveChecker { get; set; }
+
         /// <summary>キーダウン</summary>
         public DelegateOnKeyEvent OnKeyDown { get; set; }
 
-        /// <summary>キーダウン</summary>
+        /// <summary>キーアップ</summary>
         public DelegateOnKeyEvent OnKeyUp { get; set; }
 
         /// <summary>デコーダ ON/OFF </summary>
@@ -157,7 +163,8 @@ namespace KanchokuWS
         }
         private bool ctrlKeyPressed()
         {
-            return (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            return (Settings.UseLeftControlToConversion && (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0)
+                || (Settings.UseRightControlToConversion && (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0);
         }
 
         private bool shiftKeyPressed()
@@ -171,20 +178,24 @@ namespace KanchokuWS
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool onKeyboardDownHandler(int vkey, int extraInfo)
         {
-            logger.DebugH(() => $"CALLED: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"\nCALLED: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
             if (isEffectiveVkey(vkey, extraInfo)) {
-                bool ctrl = ctrlKeyPressed();
+                bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
+                bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+                bool ctrl = leftCtrl || rightCtrl;
                 bool shift = shiftKeyPressed();
                 uint mod = KeyModifiers.MakeModifier(ctrl, shift);
-                int kanchokuCode = VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
+                int kanchokuCode = (Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl)
+                    ? VirtualKeys.GetCtrlConvertedDecKeyFromCombo(mod, (uint)vkey)
+                    : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
 
-                logger.DebugH(() => $"kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
+                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
                 // どうやら KeyboardHook で CallNextHookEx を呼ばないと次のキー入力の処理に移らないみたいだが、
                 // 将来必要になるかもしれないので、下記処理を残しておく
                 if (busyFlag) {
                     if (vkeyQueue.Count < vkeyQueueMaxSize) {
                         vkeyQueue.Enqueue(vkey);
-                        logger.DebugH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
+                        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
                     }
                     return true;
                 }
@@ -209,7 +220,7 @@ namespace KanchokuWS
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool onKeyboardUpHandler(int vkey, int extraInfo)
         {
-            logger.DebugH(() => $"CALLED: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CALLED: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
             if (isEffectiveVkey(vkey, extraInfo)) {
                 // キーアップ時はなにもしない
                 return OnKeyUp?.Invoke(vkey, extraInfo) ?? false;
@@ -219,7 +230,7 @@ namespace KanchokuWS
 
         private bool invokeHandler(int kanchokuCode)
         {
-            logger.DebugH(() => $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode})");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode})");
             busyFlag = true;
             try {
                 switch (kanchokuCode) {
@@ -248,7 +259,7 @@ namespace KanchokuWS
                 }
             } finally {
                 busyFlag = false;
-                logger.DebugH(() => $"LEAVE");
+                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE");
             }
         }
 
