@@ -175,7 +175,7 @@ namespace KanchokuWS
             if (isEffectiveVkey(vkey, extraInfo)) {
                 bool ctrl = ctrlKeyPressed();
                 bool shift = shiftKeyPressed();
-                uint mod = (ctrl ? KeyModifiers.MOD_CONTROL : 0) + (shift ? KeyModifiers.MOD_SHIFT : 0);
+                uint mod = KeyModifiers.MakeModifier(ctrl, shift);
                 int kanchokuCode = VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
 
                 logger.DebugH(() => $"kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");

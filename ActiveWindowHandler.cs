@@ -396,7 +396,7 @@ namespace KanchokuWS
         /// 仮想キーComboを送出する<br/>
         /// </summary>
         /// <param name="n">キーダウンの数</param>
-        public void SendVirtualKeys(VKeyCombo combo, int n)
+        public void SendVKeyCombo(VKeyCombo combo, int n)
         {
             bool loggingFlag = Settings.LoggingDecKeyInfo;
             if (loggingFlag) logger.InfoH($"CALLED: combo=({combo.modifier:x}H:{combo.vkey:x}H), numKeys={n}");
@@ -477,7 +477,7 @@ namespace KanchokuWS
                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
                         Helper.WaitMilliSeconds(waitMs);
                     }
-                    SendVirtualKeys(VirtualKeys.GetVKeyComboFromDecKey(DecoderKeys.CTRL_V_DECKEY).Value, 1);
+                    SendVKeyCombo(VirtualKeys.CtrlV_VKeyCombo, 1);
                 }
 
                 lastOutputDt = DateTime.Now;

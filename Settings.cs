@@ -683,11 +683,19 @@ namespace KanchokuWS
             // キー割当
             //FullEscapeKey = GetString("fullEscapeKey", "G").Trim();
             FullEscapeKey = GetString("fullEscapeKey").Trim()._parseInt(24);        // G
-            VirtualKeys.AddCtrlDeckey(FullEscapeKey, DecoderKeys.FULL_ESCAPE_DECKEY, DecoderKeys.UNBLOCK_DECKEY);
+            VirtualKeys.AddCtrlDeckeyAndCombo(FullEscapeKey, DecoderKeys.FULL_ESCAPE_DECKEY, DecoderKeys.UNBLOCK_DECKEY);
             StrokeHelpRotationKey = GetString("strokeHelpRotationKey")._parseInt(14);   // T
-            VirtualKeys.AddCtrlDeckey(StrokeHelpRotationKey, DecoderKeys.STROKE_HELP_ROTATION_DECKEY, DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
+            VirtualKeys.AddCtrlDeckeyAndCombo(StrokeHelpRotationKey, DecoderKeys.STROKE_HELP_ROTATION_DECKEY, DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
             DateStringRotationKey = GetString("dateStringRotationKey")._parseInt(-1);   // ;
-            VirtualKeys.AddCtrlDeckey(DateStringRotationKey, DecoderKeys.DATE_STRING_ROTATION_DECKEY, DecoderKeys.DATE_STRING_UNROTATION_DECKEY);
+            VirtualKeys.AddCtrlDeckeyAndCombo(DateStringRotationKey, DecoderKeys.DATE_STRING_ROTATION_DECKEY, DecoderKeys.DATE_STRING_UNROTATION_DECKEY);
+
+            VirtualKeys.AddCtrlDeckeyFromCombo(25, DecoderKeys.BS_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(34, DecoderKeys.LEFT_ARROW_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(23, DecoderKeys.RIGHT_ARROW_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(35, DecoderKeys.DOWN_ARROW_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(19, DecoderKeys.UP_ARROW_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(20, DecoderKeys.HOME_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(12, DecoderKeys.END_DECKEY, 0);
 
             DecoderSpecialDeckeys.Clear();
             DecoderSpecialDeckeys.Add(DecoderKeys.FULL_ESCAPE_DECKEY);

@@ -218,6 +218,11 @@ bool State::isShiftedKey(int deckey) {
     return deckey >= SHIFT_DECKEY_START && deckey < STROKE_DECKEY_NUM;
 }
 
+// DECKEY はCtrl飾修キーか
+bool State::isCtrledKey(int deckey) {
+    return deckey >= CTRL_DECKEY_START && deckey < TOTAL_DECKEY_NUM;
+}
+
 // DECKEY はストロークキーまたはShift飾修か
 bool State::isStrokeKeyOrShiftedKey(int deckey) {
     return isStrokeKey(deckey)
@@ -277,176 +282,181 @@ void State::dispatchDeckey(int deckey) {
     } else {
         if (handleFunctionKeys(deckey)) return;
 
-        if (isShiftedKey(deckey)) {
-            switch (deckey) {
-            case LEFT_TRIANGLE_DECKEY:
-                handleLeftTriangle();
-                break;
-            case RIGHT_TRIANGLE_DECKEY:
-                handleRightTriangle();
-                break;
-            case QUESTION_DECKEY:
-                handleQuestion();
-                break;
-            case SHIFT_SPACE_DECKEY:
-                //handleShiftSpace();
+        switch (deckey) {
+        case LEFT_TRIANGLE_DECKEY:
+            handleLeftTriangle();
+            break;
+        case RIGHT_TRIANGLE_DECKEY:
+            handleRightTriangle();
+            break;
+        case QUESTION_DECKEY:
+            handleQuestion();
+            break;
+        case SHIFT_SPACE_DECKEY:
+            //handleShiftSpace();
+            handleShiftKeys(deckey);
+            break;
+        case ENTER_DECKEY:
+            handleEnter();
+            break;
+        case ESC_DECKEY:
+            handleEsc();
+            break;
+        case BS_DECKEY:
+            handleBS();
+            break;
+        case TAB_DECKEY:
+            handleTab();
+            break;
+        case DEL_DECKEY:
+            handleDelete();
+            break;
+        case HOME_DECKEY:
+            handleHome();
+            break;
+        case END_DECKEY:
+            handleEnd();
+            break;
+        case PAGE_UP_DECKEY:
+            handlePageUp();
+            break;
+        case PAGE_DOWN_DECKEY:
+            handlePageDown();
+            break;
+        case LEFT_ARROW_DECKEY:
+            handleLeftArrow();
+            break;
+        case RIGHT_ARROW_DECKEY:
+            handleRightArrow();
+            break;
+        case UP_ARROW_DECKEY:
+            handleUpArrow();
+            break;
+        case DOWN_ARROW_DECKEY:
+            handleDownArrow();
+            break;
+        case CTRL_LEFT_ARROW_DECKEY:
+            handleCtrlLeftArrow();
+            break;
+        case CTRL_RIGHT_ARROW_DECKEY:
+            handleCtrlRightArrow();
+            break;
+        case CTRL_UP_ARROW_DECKEY:
+            handleCtrlLeftArrow();
+            break;
+        case CTRL_DOWN_ARROW_DECKEY:
+            handleCtrlRightArrow();
+            break;
+        case CTRL_SPACE_DECKEY:
+            handleCtrlSpace();
+            break;
+        case CTRL_SHIFT_SPACE_DECKEY:
+            handleCtrlShiftSpace();
+            break;
+        default:
+            if (isShiftedKey(deckey)) {
                 handleShiftKeys(deckey);
                 break;
-            default:
-                handleShiftKeys(deckey);
-                break;
-            }
-        } else if (deckey >= CTRL_FUNC_DECKEY_ID_BASE && deckey <= CTRL_FUNC_DECKEY_ID_END) {
-            switch (deckey) {
-            case CTRL_A_DECKEY:
-                handleCtrlA();
-                break;
-            case CTRL_B_DECKEY:
-                handleCtrlB();
-                break;
-            case CTRL_C_DECKEY:
-                handleCtrlC();
-                break;
-            case CTRL_D_DECKEY:
-                handleCtrlD();
-                break;
-            case CTRL_E_DECKEY:
-                handleCtrlE();
-                break;
-            case CTRL_F_DECKEY:
-                handleCtrlF();
-                break;
-            case CTRL_G_DECKEY:
-                handleCtrlG();
-                break;
-            case CTRL_H_DECKEY:
-                handleCtrlH();
-                break;
-            case CTRL_I_DECKEY:
-                handleCtrlI();
-                break;
-            case CTRL_J_DECKEY:
-                handleCtrlJ();
-                break;
-            case CTRL_K_DECKEY:
-                handleCtrlK();
-                break;
-            case CTRL_L_DECKEY:
-                handleCtrlL();
-                break;
-            case CTRL_M_DECKEY:
-                handleCtrlM();
-                break;
-            case CTRL_N_DECKEY:
-                handleCtrlN();
-                break;
-            case CTRL_O_DECKEY:
-                handleCtrlO();
-                break;
-            case CTRL_P_DECKEY:
-                handleCtrlP();
-                break;
-            case CTRL_Q_DECKEY:
-                handleCtrlQ();
-                break;
-            case CTRL_R_DECKEY:
-                handleCtrlR();
-                break;
-            case CTRL_S_DECKEY:
-                handleCtrlS();
-                break;
-            case CTRL_T_DECKEY:
-                handleCtrlT();
-                break;
-            case CTRL_U_DECKEY:
-                handleCtrlU();
-                break;
-            case CTRL_V_DECKEY:
-                handleCtrlV();
-                break;
-            case CTRL_W_DECKEY:
-                handleCtrlW();
-                break;
-            case CTRL_X_DECKEY:
-                handleCtrlX();
-                break;
-            case CTRL_Y_DECKEY:
-                handleCtrlY();
-                break;
-            case CTRL_Z_DECKEY:
-                handleCtrlZ();
-                break;
-            default:
+            } else if (isCtrledKey(deckey)) {
                 handleCtrlKeys(deckey);
-                break;
             }
-        } else {
-            switch (deckey) {
-            case ENTER_DECKEY:
-                handleEnter();
-                break;
-            case ESC_DECKEY:
-                handleEsc();
-                break;
-            case BS_DECKEY:
-                handleBS();
-                break;
-            case TAB_DECKEY:
-                handleTab();
-                break;
-            case DEL_DECKEY:
-                handleDelete();
-                break;
-            case HOME_DECKEY:
-                handleHome();
-                break;
-            case END_DECKEY:
-                handleEnd();
-                break;
-            case PAGE_UP_DECKEY:
-                handlePageUp();
-                break;
-            case PAGE_DOWN_DECKEY:
-                handlePageDown();
-                break;
-            case LEFT_ARROW_DECKEY:
-                handleLeftArrow();
-                break;
-            case RIGHT_ARROW_DECKEY:
-                handleRightArrow();
-                break;
-            case UP_ARROW_DECKEY:
-                handleUpArrow();
-                break;
-            case DOWN_ARROW_DECKEY:
-                handleDownArrow();
-                break;
-            case CTRL_LEFT_ARROW_DECKEY:
-                handleCtrlLeftArrow();
-                break;
-            case CTRL_RIGHT_ARROW_DECKEY:
-                handleCtrlRightArrow();
-                break;
-            case CTRL_UP_ARROW_DECKEY:
-                handleCtrlLeftArrow();
-                break;
-            case CTRL_DOWN_ARROW_DECKEY:
-                handleCtrlRightArrow();
-                break;
-            case CTRL_SPACE_DECKEY:
-                handleCtrlSpace();
-                break;
-            case CTRL_SHIFT_SPACE_DECKEY:
-                handleCtrlShiftSpace();
-                break;
-            //case CTRL_SHIFT_G_DECKEY:
-            //    handleUnblock();
-            //    break;
-
-            default:
-                break;
-            }
+            break;
         }
+        //else if (deckey >= CTRL_DECKEY_START && deckey < TOTAL_DECKEY_NUM) {
+            //switch (deckey) {
+            //case CTRL_A_DECKEY:
+            //    handleCtrlA();
+            //    break;
+            //case CTRL_B_DECKEY:
+            //    handleCtrlB();
+            //    break;
+            //case CTRL_C_DECKEY:
+            //    handleCtrlC();
+            //    break;
+            //case CTRL_D_DECKEY:
+            //    handleCtrlD();
+            //    break;
+            //case CTRL_E_DECKEY:
+            //    handleCtrlE();
+            //    break;
+            //case CTRL_F_DECKEY:
+            //    handleCtrlF();
+            //    break;
+            //case CTRL_G_DECKEY:
+            //    handleCtrlG();
+            //    break;
+            //case CTRL_H_DECKEY:
+            //    handleCtrlH();
+            //    break;
+            //case CTRL_I_DECKEY:
+            //    handleCtrlI();
+            //    break;
+            //case CTRL_J_DECKEY:
+            //    handleCtrlJ();
+            //    break;
+            //case CTRL_K_DECKEY:
+            //    handleCtrlK();
+            //    break;
+            //case CTRL_L_DECKEY:
+            //    handleCtrlL();
+            //    break;
+            //case CTRL_M_DECKEY:
+            //    handleCtrlM();
+            //    break;
+            //case CTRL_N_DECKEY:
+            //    handleCtrlN();
+            //    break;
+            //case CTRL_O_DECKEY:
+            //    handleCtrlO();
+            //    break;
+            //case CTRL_P_DECKEY:
+            //    handleCtrlP();
+            //    break;
+            //case CTRL_Q_DECKEY:
+            //    handleCtrlQ();
+            //    break;
+            //case CTRL_R_DECKEY:
+            //    handleCtrlR();
+            //    break;
+            //case CTRL_S_DECKEY:
+            //    handleCtrlS();
+            //    break;
+            //case CTRL_T_DECKEY:
+            //    handleCtrlT();
+            //    break;
+            //case CTRL_U_DECKEY:
+            //    handleCtrlU();
+            //    break;
+            //case CTRL_V_DECKEY:
+            //    handleCtrlV();
+            //    break;
+            //case CTRL_W_DECKEY:
+            //    handleCtrlW();
+            //    break;
+            //case CTRL_X_DECKEY:
+            //    handleCtrlX();
+            //    break;
+            //case CTRL_Y_DECKEY:
+            //    handleCtrlY();
+            //    break;
+            //case CTRL_Z_DECKEY:
+            //    handleCtrlZ();
+            //    break;
+            //default:
+            //    handleCtrlKeys(deckey);
+            //    break;
+            //}
+        //    handleCtrlKeys(deckey);
+        //} else {
+        //    switch (deckey) {
+        //    //case CTRL_SHIFT_G_DECKEY:
+        //    //    handleUnblock();
+        //    //    break;
+
+        //    default:
+        //        break;
+        //    }
+        //}
     }
 }
 
@@ -490,45 +500,45 @@ bool State::handleFunctionKeys(int
 // Ctrlキー デフォルトハンドラ
 void State::handleCtrlKeys(int /*deckey*/) { setThroughDeckeyFlag(); }
 
-//(2021/7/21)やっぱり ctrl-B,F,H,N,Pは機能キーに変換しておく
-// ここで Ctrl-B...などが呼ばれるのは、グローバルに Ctrl-B などが有効になっているが、
-// PuTTY など、矢印キーへの変換が無効になっている場合。
-// でも、デコーダ内部では矢印キーとして働くことに問題はない。
-// スルーの場合は元のCtrl-Bなどとしてアプリに渡るので問題ない。
-void State::handleCtrlA() { handleCtrlKeys(CTRL_A_DECKEY); }
-//void State::handleCtrlB() { handleCtrlKeys(CTRL_B_DECKEY); }
-void State::handleCtrlB() { handleLeftArrow(); }
-void State::handleCtrlC() { handleCtrlKeys(CTRL_C_DECKEY); }
-void State::handleCtrlD() { handleCtrlKeys(CTRL_D_DECKEY); }
-void State::handleCtrlE() { handleCtrlKeys(CTRL_E_DECKEY); }
-//void State::handleCtrlF() { handleCtrlKeys(CTRL_F_DECKEY); }
-void State::handleCtrlF() { handleRightArrow(); }
-void State::handleCtrlG() { handleCtrlKeys(CTRL_G_DECKEY); }
-//void State::handleCtrlG() { handleFullEscape(); }
-//void State::handleCtrlH() { handleCtrlKeys(CTRL_H_DECKEY); }
-void State::handleCtrlH() { handleBS(); }
-void State::handleCtrlI() { handleCtrlKeys(CTRL_I_DECKEY); }
-void State::handleCtrlJ() { handleCtrlKeys(CTRL_J_DECKEY); }
-//void State::handleCtrlJ() { handleEnter(); }
-void State::handleCtrlK() { handleCtrlKeys(CTRL_K_DECKEY); }
-void State::handleCtrlL() { handleCtrlKeys(CTRL_L_DECKEY); }
-void State::handleCtrlM() { handleCtrlKeys(CTRL_M_DECKEY); }
-//void State::handleCtrlM() { handleEnter(); }
-//void State::handleCtrlN() { handleCtrlKeys(CTRL_N_DECKEY); }
-void State::handleCtrlN() { handleDownArrow(); }
-void State::handleCtrlO() { handleCtrlKeys(CTRL_O_DECKEY); }
-//void State::handleCtrlP() { handleCtrlKeys(CTRL_P_DECKEY); }
-void State::handleCtrlP() { handleUpArrow(); }
-void State::handleCtrlQ() { handleCtrlKeys(CTRL_Q_DECKEY); }
-void State::handleCtrlR() { handleCtrlKeys(CTRL_R_DECKEY); }
-void State::handleCtrlS() { handleCtrlKeys(CTRL_S_DECKEY); }
-void State::handleCtrlT() { handleCtrlKeys(CTRL_T_DECKEY); }
-void State::handleCtrlU() { handleCtrlKeys(CTRL_U_DECKEY); }
-void State::handleCtrlV() { handleCtrlKeys(CTRL_V_DECKEY); }
-void State::handleCtrlW() { handleCtrlKeys(CTRL_W_DECKEY); }
-void State::handleCtrlX() { handleCtrlKeys(CTRL_X_DECKEY); }
-void State::handleCtrlY() { handleCtrlKeys(CTRL_Y_DECKEY); }
-void State::handleCtrlZ() { handleCtrlKeys(CTRL_Z_DECKEY); }
+////(2021/7/21)やっぱり ctrl-B,F,H,N,Pは機能キーに変換しておく
+//// ここで Ctrl-B...などが呼ばれるのは、グローバルに Ctrl-B などが有効になっているが、
+//// PuTTY など、矢印キーへの変換が無効になっている場合。
+//// でも、デコーダ内部では矢印キーとして働くことに問題はない。
+//// スルーの場合は元のCtrl-Bなどとしてアプリに渡るので問題ない。
+//void State::handleCtrlA() { handleCtrlKeys(CTRL_A_DECKEY); }
+////void State::handleCtrlB() { handleCtrlKeys(CTRL_B_DECKEY); }
+//void State::handleCtrlB() { handleLeftArrow(); }
+//void State::handleCtrlC() { handleCtrlKeys(CTRL_C_DECKEY); }
+//void State::handleCtrlD() { handleCtrlKeys(CTRL_D_DECKEY); }
+//void State::handleCtrlE() { handleCtrlKeys(CTRL_E_DECKEY); }
+////void State::handleCtrlF() { handleCtrlKeys(CTRL_F_DECKEY); }
+//void State::handleCtrlF() { handleRightArrow(); }
+//void State::handleCtrlG() { handleCtrlKeys(CTRL_G_DECKEY); }
+////void State::handleCtrlG() { handleFullEscape(); }
+////void State::handleCtrlH() { handleCtrlKeys(CTRL_H_DECKEY); }
+//void State::handleCtrlH() { handleBS(); }
+//void State::handleCtrlI() { handleCtrlKeys(CTRL_I_DECKEY); }
+//void State::handleCtrlJ() { handleCtrlKeys(CTRL_J_DECKEY); }
+////void State::handleCtrlJ() { handleEnter(); }
+//void State::handleCtrlK() { handleCtrlKeys(CTRL_K_DECKEY); }
+//void State::handleCtrlL() { handleCtrlKeys(CTRL_L_DECKEY); }
+//void State::handleCtrlM() { handleCtrlKeys(CTRL_M_DECKEY); }
+////void State::handleCtrlM() { handleEnter(); }
+////void State::handleCtrlN() { handleCtrlKeys(CTRL_N_DECKEY); }
+//void State::handleCtrlN() { handleDownArrow(); }
+//void State::handleCtrlO() { handleCtrlKeys(CTRL_O_DECKEY); }
+////void State::handleCtrlP() { handleCtrlKeys(CTRL_P_DECKEY); }
+//void State::handleCtrlP() { handleUpArrow(); }
+//void State::handleCtrlQ() { handleCtrlKeys(CTRL_Q_DECKEY); }
+//void State::handleCtrlR() { handleCtrlKeys(CTRL_R_DECKEY); }
+//void State::handleCtrlS() { handleCtrlKeys(CTRL_S_DECKEY); }
+//void State::handleCtrlT() { handleCtrlKeys(CTRL_T_DECKEY); }
+//void State::handleCtrlU() { handleCtrlKeys(CTRL_U_DECKEY); }
+//void State::handleCtrlV() { handleCtrlKeys(CTRL_V_DECKEY); }
+//void State::handleCtrlW() { handleCtrlKeys(CTRL_W_DECKEY); }
+//void State::handleCtrlX() { handleCtrlKeys(CTRL_X_DECKEY); }
+//void State::handleCtrlY() { handleCtrlKeys(CTRL_Y_DECKEY); }
+//void State::handleCtrlZ() { handleCtrlKeys(CTRL_Z_DECKEY); }
 
 //-----------------------------------------------------------------------
 // Shiftキー デフォルトハンドラ

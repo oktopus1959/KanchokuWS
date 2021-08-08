@@ -172,6 +172,9 @@ protected:
     // DECKEY はShift飾修キーか
     virtual bool isShiftedKey(int deckey);
 
+    // DECKEY はCtrl飾修キーか
+    virtual bool isCtrledKey(int deckey);
+
     // DECKEY はストロークキーまたはShift飾修か
     virtual bool isStrokeKeyOrShiftedKey(int deckey);
 
@@ -208,35 +211,34 @@ protected:
     // DecoderOff ハンドラ
     virtual void handleDecoderOff();
 
-    // Ctrl-A ～ Ctrl-Zハンドラ
-
+    //// Ctrl-A ～ Ctrl-Zハンドラ
     virtual void handleCtrlKeys(int deckey);
-    virtual void handleCtrlA();
-    virtual void handleCtrlB();
-    virtual void handleCtrlC();
-    virtual void handleCtrlD();
-    virtual void handleCtrlE();
-    virtual void handleCtrlF();
-    virtual void handleCtrlG();
-    virtual void handleCtrlH();
-    virtual void handleCtrlI();
-    virtual void handleCtrlJ();
-    virtual void handleCtrlK();
-    virtual void handleCtrlL();
-    virtual void handleCtrlM();
-    virtual void handleCtrlN();
-    virtual void handleCtrlO();
-    virtual void handleCtrlP();
-    virtual void handleCtrlQ();
-    virtual void handleCtrlR();
-    virtual void handleCtrlS();
-    virtual void handleCtrlT();
-    virtual void handleCtrlU();
-    virtual void handleCtrlV();
-    virtual void handleCtrlW();
-    virtual void handleCtrlX();
-    virtual void handleCtrlY();
-    virtual void handleCtrlZ();
+    //virtual void handleCtrlA();
+    //virtual void handleCtrlB();
+    //virtual void handleCtrlC();
+    //virtual void handleCtrlD();
+    //virtual void handleCtrlE();
+    //virtual void handleCtrlF();
+    //virtual void handleCtrlG();
+    //virtual void handleCtrlH();
+    //virtual void handleCtrlI();
+    //virtual void handleCtrlJ();
+    //virtual void handleCtrlK();
+    //virtual void handleCtrlL();
+    //virtual void handleCtrlM();
+    //virtual void handleCtrlN();
+    //virtual void handleCtrlO();
+    //virtual void handleCtrlP();
+    //virtual void handleCtrlQ();
+    //virtual void handleCtrlR();
+    //virtual void handleCtrlS();
+    //virtual void handleCtrlT();
+    //virtual void handleCtrlU();
+    //virtual void handleCtrlV();
+    //virtual void handleCtrlW();
+    //virtual void handleCtrlX();
+    //virtual void handleCtrlY();
+    //virtual void handleCtrlZ();
 
     // Shiftキー ハンドラ
     virtual void handleShiftKeys(int deckey);
