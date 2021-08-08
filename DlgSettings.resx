@@ -410,6 +410,19 @@ Ctrl-Shift修飾されたキーで、ブロッカーの解除となります。
 これは、履歴検索、交ぜ書き変換、部首合成など、後置式の機能
 全般に影響します。</value>
   </data>
+  <data name="comboBox_dateStringKey.ToolTip" xml:space="preserve">
+    <value>今日の日付を出力する Ctrlキーの設定
+
+「日付フォーマット」で設定したフォーマットをに従って今日の日付を出力します。
+設定したCtrlキーを続けて打鍵すると、フォーマットを切り替えながら使用します。
+
+Ctrl+Shift 打鍵の場合は、「日付フォーマット」を末尾から逆順に切り替えます。
+
+Ctrl打鍵の直後に Ctlrl+Shift 打鍵すると取り消しになります。(逆も同じ)
+
+たまに Shift+Backspace を受け付けないアプリがあります。
+その場合、前回の出力が消去されませんのでご注意を。</value>
+  </data>
   <data name="checkBox_globalCtrlKeysEnabled.ToolTip" xml:space="preserve">
     <value>漢直モード／英字モードの両方で有効なグローバルなCtrlキー変換を設定します。
 
