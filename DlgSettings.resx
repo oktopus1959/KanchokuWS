@@ -120,23 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="checkBox_selectFirstCandByEnter.ToolTip" xml:space="preserve">
-    <value>自動履歴検索で横列表示された候補の先頭候補をEnterキーで選択するかを
-設定します。
-
-当設定をOFFに設定してあるのに、つい選択するつもりでEnterを押してしまった
-場合は、出力先ウィンドウでEnter前の位置にカレットを移動させてから
-Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
-
-なお、履歴候補が縦列表示されている状態では、先頭候補がEnterキーで
-選択されます。</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -361,6 +344,7 @@ MS ゴシック、メイリオ、游ゴシックについては、ある程度�
 打鍵列は、漢直キーコード(00～49)をカンマ
 区切りで並べたものとなります。コードに 'S' ま
 たは 's' を前接させるとシフトコードになります。
+'X'または'x'を前接させると特殊キーになります。
 キーコードについては、ここにマウスポインタを置
 いて表示されるツールチップを参照してください。
 
@@ -368,6 +352,7 @@ MS ゴシック、メイリオ、游ゴシックについては、ある程度�
 交ぜ書き変換 「S40」  (Shift+Spacej)
 部首合成 「26,23」  ( jf)
 全角変換(モード) 「42」 (^)
+カタカナ変換(モード) 「x7」 (ひらがな)
 カタカナ変換(一括) 「47」 (])</value>
   </data>
   <data name="label69.ToolTip" xml:space="preserve">
@@ -379,8 +364,10 @@ a=20, s=21, d=22, f=23, g=24, h=25, j=26, k=27, l=28, ;=29,
 z=30, x=31, c=32, v=33, b=34, n=35, m=36, ,=37, .=38, /=39,
 SP=40, -=41, ^=42, ￥=43, @=44, [=45, :=46, ]=47, ＼=48,
 Shift+Space=S40
+(コードに 'S' または 's' を前接させるとシフトコードになります。)
 
-コードに 'S' または 's' を前接させるとシフトコードになります。</value>
+半/全=X1, Caps=X3, 英数=X4, 無変換=X5, 変換=X6, ひらがな=X7
+(コードに 'X' または 'x' を前接させると特殊キーになります。)</value>
   </data>
   <data name="textBox_dateStringFormat.ToolTip" xml:space="preserve">
     <value>Ctrl+; および Ctrl+Shift+; で出力する日付のフォーマットを設定します。
@@ -477,6 +464,17 @@ Ctrl打鍵の直後に Ctlrl+Shift 打鍵すると取り消しになります。
 場合は、「優=憂」という部首連想定義をしておくとよいかと思います。
 いったん「優－人⇒憂」という部首合成を実行すると、自動的に「優=憂」
 という連想が登録されます。</value>
+  </data>
+  <data name="checkBox_selectFirstCandByEnter.ToolTip" xml:space="preserve">
+    <value>自動履歴検索で横列表示された候補の先頭候補をEnterキーで選択するかを
+設定します。
+
+当設定をOFFに設定してあるのに、つい選択するつもりでEnterを押してしまった
+場合は、出力先ウィンドウでEnter前の位置にカレットを移動させてから
+Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
+
+なお、履歴候補が縦列表示されている状態では、先頭候補がEnterキーで
+選択されます。</value>
   </data>
   <data name="button_restartWithNoSave.ToolTip" xml:space="preserve">
     <value>デコーダが保持している辞書内容をファイルに保存せずに再起動します。

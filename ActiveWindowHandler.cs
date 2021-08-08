@@ -399,7 +399,7 @@ namespace KanchokuWS
         public void SendVKeyCombo(VKeyCombo combo, int n)
         {
             bool loggingFlag = Settings.LoggingDecKeyInfo;
-            if (loggingFlag) logger.InfoH($"CALLED: combo=({combo.modifier:x}H:{combo.vkey:x}H), numKeys={n}");
+            if (loggingFlag) logger.InfoH($"CALLED: combo=(mod={combo.modifier:x}H, vkey={combo.vkey:x}H), numKeys={n}");
             if (syncPostVkey.BusyCheck()) {
                 if (loggingFlag) logger.InfoH($"IGNORED: numKeys={n}");
                 return;

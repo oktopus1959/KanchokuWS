@@ -169,14 +169,17 @@ protected:
     // DECKEY はストロークキーか
     virtual bool isStrokeKey(int deckey);
 
-    // DECKEY はShift飾修キーか
+    // DECKEY はShift修飾キーか
     virtual bool isShiftedKey(int deckey);
 
-    // DECKEY はCtrl飾修キーか
+    // DECKEY はCtrl修飾キーか
     virtual bool isCtrledKey(int deckey);
 
-    // DECKEY はストロークキーまたはShift飾修か
-    virtual bool isStrokeKeyOrShiftedKey(int deckey);
+    // DECKEY は機能キーか
+    virtual bool isModeFuncKey(int deckey);
+
+    // DECKEY はストロークキーまたはShift修飾かまたは機能キーか
+    virtual bool isStrokeKeyOrShiftedKeyOrModeFuncKey(int deckey);
 
 public:
     // 入力された DECKEY をディスパッチする

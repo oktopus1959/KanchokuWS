@@ -474,12 +474,15 @@ void StrokeTableNode::AssignFucntion(const tstring& keys, const tstring& name) {
     if (keys.empty()) return;
 
     std::vector<size_t> keyCodes;
-    std::wregex reDigits(_T("^[Ss]?[0-9]+$"));
+    std::wregex reDigits(_T("^[SsXx]?[0-9]+$"));
     for (auto k : utils::split(keys, ',')) {
         if (k.empty() || !std::regex_match(k, reDigits)) return;    // 10進数でなければエラー
         int shiftOffset = 0;
         if (k[0] == 'S' || k[0] == 's') {
             shiftOffset = SHIFT_DECKEY_START;
+            k = k.substr(1);
+        } else if (k[0] == 'X' || k[0] == 'x') {
+            shiftOffset = FUNC_DECKEY_START;
             k = k.substr(1);
         }
         keyCodes.push_back((size_t)utils::strToInt(k, -1) + shiftOffset);

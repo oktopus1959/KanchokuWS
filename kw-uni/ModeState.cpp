@@ -19,7 +19,7 @@ void ModeState::DoDeckeyPreProc(int deckey) {
     LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
     // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
     if (!pFriendState->pNext) {
-        if ((!pFriendState->pNode || !pFriendState->pNode->isStrokeTableNode()) && pFriendState->isStrokeKeyOrShiftedKey(deckey)) {
+        if ((!pFriendState->pNode || !pFriendState->pNode->isStrokeTableNode()) && pFriendState->isStrokeKeyOrShiftedKeyOrModeFuncKey(deckey)) {
             LOG_DEBUGH(_T("CREATE: RootStrokeNode"));
             pFriendState->pNext = ROOT_STROKE_NODE->CreateState();
             pFriendState->pNext->SetPrevState(pFriendState);

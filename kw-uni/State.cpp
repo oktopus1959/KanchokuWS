@@ -213,9 +213,25 @@ bool State::isStrokeKey(int deckey) {
     return deckey >= 0 && deckey < NORMAL_DECKEY_NUM;
 }
 
-// DECKEY はShift飾修キーか
+// DECKEY はShift修飾キーか
 bool State::isShiftedKey(int deckey) {
-    return deckey >= SHIFT_DECKEY_START && deckey < STROKE_DECKEY_NUM;
+    return deckey >= SHIFT_DECKEY_START && deckey < SHIFT_DECKEY_END;
+}
+
+// DECKEY はモード機能キーか
+bool State::isModeFuncKey(int deckey) {
+    switch (deckey) {
+    case HANZEN_DECKEY:
+    case CAPS_DECKEY:
+    case ALNUM_DECKEY:
+    case NFER_DECKEY:
+    case XFER_DECKEY:
+    case KANA_DECKEY:
+        return true;
+    default:
+        return false;
+    }
+    //return deckey >= FUNC_DECKEY_START && deckey < FUNC_DECKEY_END;
 }
 
 // DECKEY はCtrl飾修キーか
@@ -223,9 +239,9 @@ bool State::isCtrledKey(int deckey) {
     return deckey >= CTRL_DECKEY_START && deckey < TOTAL_DECKEY_NUM;
 }
 
-// DECKEY はストロークキーまたはShift飾修か
-bool State::isStrokeKeyOrShiftedKey(int deckey) {
-    return isStrokeKey(deckey) || isShiftedKey(deckey);
+// DECKEY はストロークキーまたはShift修飾かまたは機能キーか
+bool State::isStrokeKeyOrShiftedKeyOrModeFuncKey(int deckey) {
+    return isStrokeKey(deckey) || isShiftedKey(deckey) || isModeFuncKey(deckey);
         //|| (isShiftedKey(deckey)
         //    && (deckey != SHIFT_SPACE_DECKEY
         //        || (!SETTINGS->histSearchByShiftSpace && SETTINGS->handleShiftSpaceAsNormalSpace)));
@@ -359,6 +375,9 @@ void State::dispatchDeckey(int deckey) {
                 break;
             } else if (isCtrledKey(deckey)) {
                 handleCtrlKeys(deckey);
+            } else {
+                // 半全, 英数/Caps, 無変換, 変換, ひらがな
+                handleStrokeKeys(deckey);
             }
             break;
         }
