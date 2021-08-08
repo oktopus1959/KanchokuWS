@@ -155,6 +155,8 @@ namespace KanchokuWS
                     : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
 
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
+                if (kanchokuCode < 0) return false;
+
                 // どうやら KeyboardHook で CallNextHookEx を呼ばないと次のキー入力の処理に移らないみたいだが、
                 // 将来必要になるかもしれないので、下記処理を残しておく
                 if (busyFlag) {
