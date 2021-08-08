@@ -671,6 +671,7 @@ namespace KanchokuWS
             HistKanjiKeyLength = addDecoderSetting("histKanjiKeyLength", 1, 1);                 // 漢字履歴の検索を行う際のキー長
             AutoHistSearchEnabled = addDecoderSetting("autoHistSearchEnabled", true);           // 自動履歴検索を行う
             HistSearchByCtrlSpace = addDecoderSetting("histSearchByCtrlSpace", true);           // Ctrl-Space で履歴検索を行う
+            VirtualKeys.AddCtrlDeckeyAndCombo(" ", DecoderKeys.CTRL_SPACE_DECKEY, 0);           // 登録
             //HistSearchByShiftSpace = addDecoderSetting("histSearchByShiftSpace", true);         // Shift-Space で履歴検索を行う
             SelectFirstCandByEnter = addDecoderSetting("selectFirstCandByEnter", false);        // Enter で最初の履歴検索候補を選択する
             HistDelDeckeyId = addDecoderSetting("histDelDeckeyId", "histDelHotkeyId", 41, 41);  // 履歴削除を呼び出すDecKeyのID
