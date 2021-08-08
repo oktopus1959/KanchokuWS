@@ -225,10 +225,10 @@ bool State::isCtrledKey(int deckey) {
 
 // DECKEY はストロークキーまたはShift飾修か
 bool State::isStrokeKeyOrShiftedKey(int deckey) {
-    return isStrokeKey(deckey)
-        || (isShiftedKey(deckey)
-            && (deckey != SHIFT_SPACE_DECKEY
-                || (!SETTINGS->histSearchByShiftSpace && SETTINGS->handleShiftSpaceAsNormalSpace)));
+    return isStrokeKey(deckey) || isShiftedKey(deckey);
+        //|| (isShiftedKey(deckey)
+        //    && (deckey != SHIFT_SPACE_DECKEY
+        //        || (!SETTINGS->histSearchByShiftSpace && SETTINGS->handleShiftSpaceAsNormalSpace)));
 }
 
 // ストロークテーブルチェインの長さ(テーブルのレベル)
@@ -275,9 +275,9 @@ void State::dispatchDeckey(int deckey) {
         handleFullEscape();
     } else if (deckey == UNBLOCK_DECKEY) {
         handleUnblock();
-    } else if (deckey == NEXT_CAND_TRIGGER_DECKEY) {
+    } else if (deckey == HISTORY_NEXT_SEARCH_DECKEY) {
         handleNextCandTrigger();
-    } else if (deckey == PREV_CAND_TRIGGER_DECKEY) {
+    } else if (deckey == HISTORY_PREV_SEARCH_DECKEY) {
         handlePrevCandTrigger();
     } else {
         if (handleFunctionKeys(deckey)) return;
@@ -292,10 +292,10 @@ void State::dispatchDeckey(int deckey) {
         case QUESTION_DECKEY:
             handleQuestion();
             break;
-        case SHIFT_SPACE_DECKEY:
-            //handleShiftSpace();
-            handleShiftKeys(deckey);
-            break;
+        //case SHIFT_SPACE_DECKEY:
+        //    //handleShiftSpace();
+        //    handleShiftKeys(deckey);
+        //    break;
         case ENTER_DECKEY:
             handleEnter();
             break;
@@ -347,12 +347,12 @@ void State::dispatchDeckey(int deckey) {
         case CTRL_DOWN_ARROW_DECKEY:
             handleCtrlRightArrow();
             break;
-        case CTRL_SPACE_DECKEY:
-            handleCtrlSpace();
-            break;
-        case CTRL_SHIFT_SPACE_DECKEY:
-            handleCtrlShiftSpace();
-            break;
+        //case CTRL_SPACE_DECKEY:
+        //    handleCtrlSpace();
+        //    break;
+        //case CTRL_SHIFT_SPACE_DECKEY:
+        //    handleCtrlShiftSpace();
+        //    break;
         default:
             if (isShiftedKey(deckey)) {
                 handleShiftKeys(deckey);
@@ -422,45 +422,45 @@ void State::handleQuestion() { handleShiftKeys(QUESTION_DECKEY); }
 // 特殊キーデフォルトハンドラ
 void State::handleSpecialKeys(int /*deckey*/) { setThroughDeckeyFlag(); }
 
-// Shift+Space ハンドラ
-// isStrokeKeyOrShiftedKey() にも注意すること
-void State::handleShiftSpace() {
-    _LOG_DEBUGH(_T("Shift+Space"));
-    if (SETTINGS->histSearchByShiftSpace) {
-        handleNextCandTrigger();
-    } else if (SETTINGS->handleShiftSpaceAsNormalSpace) {
-        handleShiftSpaceAsNormalSpace();
-    } else {
-        handleSpecialKeys(SHIFT_SPACE_DECKEY);
-    }
-}
+//// Shift+Space ハンドラ
+//// isStrokeKeyOrShiftedKey() にも注意すること
+//void State::handleShiftSpace() {
+//    _LOG_DEBUGH(_T("Shift+Space"));
+//    if (SETTINGS->histSearchByShiftSpace) {
+//        handleNextCandTrigger();
+//    } else if (SETTINGS->handleShiftSpaceAsNormalSpace) {
+//        handleShiftSpaceAsNormalSpace();
+//    } else {
+//        handleSpecialKeys(SHIFT_SPACE_DECKEY);
+//    }
+//}
 
-void State::handleShiftSpaceAsNormalSpace() {
-    _LOG_DEBUGH(_T("ShiftSpaceAsNormalSpace"));
-    STATE_COMMON->SetOutString(' ');
-}
+//void State::handleShiftSpaceAsNormalSpace() {
+//    _LOG_DEBUGH(_T("ShiftSpaceAsNormalSpace"));
+//    STATE_COMMON->SetOutString(' ');
+//}
 
-// Ctrl+Space ハンドラ
-//void State::handleCtrlSpace() { LOG_DEBUG(_T("Ctrl+Space")); handleSpecialKeys(CTRL_SPACE_DECKEY);}
-void State::handleCtrlSpace() {
-    _LOG_DEBUGH(_T("Ctrl+Space"));
-    if (SETTINGS->histSearchByCtrlSpace) {
-        handleNextCandTrigger();
-    } else {
-        handleSpecialKeys(CTRL_SPACE_DECKEY);
-    }
-}
+//// Ctrl+Space ハンドラ
+////void State::handleCtrlSpace() { LOG_DEBUG(_T("Ctrl+Space")); handleSpecialKeys(CTRL_SPACE_DECKEY);}
+//void State::handleCtrlSpace() {
+//    _LOG_DEBUGH(_T("Ctrl+Space"));
+//    if (SETTINGS->histSearchByCtrlSpace) {
+//        handleNextCandTrigger();
+//    } else {
+//        handleSpecialKeys(CTRL_SPACE_DECKEY);
+//    }
+//}
 
 // Ctrl+Shift+Space ハンドラ
 //void State::handleCtrlShiftSpace() { LOG_DEBUG(_T("Ctrl+Shift+Space")); handleSpecialKeys(CTRL_SHIFT_SPACE_DECKEY);}
-void State::handleCtrlShiftSpace() {
-    _LOG_DEBUGH(_T("Ctrl+Shift+Space"));
-    if (SETTINGS->histSearchByCtrlSpace || SETTINGS->histSearchByShiftSpace) {
-        handlePrevCandTrigger();
-    } else {
-        handleSpecialKeys(CTRL_SHIFT_SPACE_DECKEY);
-    }
-}
+//void State::handleCtrlShiftSpace() {
+//    _LOG_DEBUGH(_T("Ctrl+Shift+Space"));
+//    if (SETTINGS->histSearchByCtrlSpace || SETTINGS->histSearchByShiftSpace) {
+//        handlePrevCandTrigger();
+//    } else {
+//        handleSpecialKeys(CTRL_SHIFT_SPACE_DECKEY);
+//    }
+//}
 
 // RET/Enter ハンドラ
 void State::handleEnter() {

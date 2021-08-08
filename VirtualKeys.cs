@@ -105,6 +105,7 @@ namespace KanchokuWS
 
         private static Dictionary<string, uint> faceToVkey = new Dictionary<string, uint>() {
             {" ", (uint)Keys.Space },
+            {"SPACE", (uint)Keys.Space },
             {"A", (uint)Keys.A },
             {"B", (uint)Keys.B },
             {"C", (uint)Keys.C },

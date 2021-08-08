@@ -718,25 +718,25 @@ namespace KanchokuWS
             //comboBox_ctrlKey_setItems(comboBox_fullEscapeKey);
             //comboBox_ctrlKey_setItems(comboBox_strokeHelpRotationKey);
 
-            checkBox_backSpaceKey.Checked = !Settings.CtrlKeyConvertedToBackSpace.StartsWith("#");
-            checkBox_deleteKey.Checked = !Settings.CtrlKeyConvertedToDelete.StartsWith("#");
-            checkBox_leftArrowKey.Checked = !Settings.CtrlKeyConvertedToLeftArrow.StartsWith("#");
-            checkBox_rightArrowKey.Checked = !Settings.CtrlKeyConvertedToRightArrow.StartsWith("#");
-            checkBox_upArrowKey.Checked = !Settings.CtrlKeyConvertedToUpArrow.StartsWith("#");
-            checkBox_downArrowKey.Checked = !Settings.CtrlKeyConvertedToDownArrow.StartsWith("#");
-            checkBox_homeKey.Checked = !Settings.CtrlKeyConvertedToHome.StartsWith("#");
-            checkBox_endKey.Checked = !Settings.CtrlKeyConvertedToEnd.StartsWith("#");
-            checkBox_dateStringKey.Checked = !Settings.CtrlKeyConvertedToDateString.StartsWith("#");
+            checkBox_backSpaceKey.Checked = Settings.CtrlKeyConvertedToBackSpace._notEmpty() && !Settings.CtrlKeyConvertedToBackSpace.StartsWith("#");
+            checkBox_deleteKey.Checked = Settings.CtrlKeyConvertedToDelete._notEmpty() && !Settings.CtrlKeyConvertedToDelete.StartsWith("#");
+            checkBox_leftArrowKey.Checked = Settings.CtrlKeyConvertedToLeftArrow._notEmpty() && !Settings.CtrlKeyConvertedToLeftArrow.StartsWith("#");
+            checkBox_rightArrowKey.Checked = Settings.CtrlKeyConvertedToRightArrow._notEmpty() && !Settings.CtrlKeyConvertedToRightArrow.StartsWith("#");
+            checkBox_upArrowKey.Checked = Settings.CtrlKeyConvertedToUpArrow._notEmpty() && !Settings.CtrlKeyConvertedToUpArrow.StartsWith("#");
+            checkBox_downArrowKey.Checked = Settings.CtrlKeyConvertedToDownArrow._notEmpty() && !Settings.CtrlKeyConvertedToDownArrow.StartsWith("#");
+            checkBox_homeKey.Checked = Settings.CtrlKeyConvertedToHome._notEmpty() && !Settings.CtrlKeyConvertedToHome.StartsWith("#");
+            checkBox_endKey.Checked = Settings.CtrlKeyConvertedToEnd._notEmpty() && !Settings.CtrlKeyConvertedToEnd.StartsWith("#");
+            checkBox_dateStringKey.Checked = Settings.CtrlKeyConvertedToDateString._notEmpty() && !Settings.CtrlKeyConvertedToDateString.StartsWith("#");
 
-            comboBox_backSpaceKey._selectItemStartsWith($"{Settings.CtrlKeyConvertedToBackSpace.Replace("#", "")}");
-            comboBox_deleteKey._selectItemStartsWith($"{Settings.CtrlKeyConvertedToDelete.Replace("#", "")}");
-            comboBox_leftArrowKey._selectItemStartsWith($"{Settings.CtrlKeyConvertedToLeftArrow.Replace("#", "")}");
-            comboBox_rightArrowKey._selectItemStartsWith($"{Settings.CtrlKeyConvertedToRightArrow.Replace("#", "")}");
-            comboBox_upArrowKey._selectItemStartsWith($"{Settings.CtrlKeyConvertedToUpArrow.Replace("#", "")}");
-            comboBox_downArrowKey._selectItemStartsWith($"{Settings.CtrlKeyConvertedToDownArrow.Replace("#", "")}");
-            comboBox_homeKey._selectItemStartsWith($"{Settings.CtrlKeyConvertedToHome.Replace("#", "")}");
-            comboBox_endKey._selectItemStartsWith($"{Settings.CtrlKeyConvertedToEnd.Replace("#", "")}");
-            comboBox_dateStringKey._selectItemStartsWith($"{Settings.CtrlKeyConvertedToDateString.Replace("#", "")}");
+            comboBox_selectCtrlKeyItem(comboBox_backSpaceKey, $"{Settings.CtrlKeyConvertedToBackSpace.Replace("#", "")}");
+            comboBox_selectCtrlKeyItem(comboBox_deleteKey, $"{Settings.CtrlKeyConvertedToDelete.Replace("#", "")}");
+            comboBox_selectCtrlKeyItem(comboBox_leftArrowKey, $"{Settings.CtrlKeyConvertedToLeftArrow.Replace("#", "")}");
+            comboBox_selectCtrlKeyItem(comboBox_rightArrowKey, $"{Settings.CtrlKeyConvertedToRightArrow.Replace("#", "")}");
+            comboBox_selectCtrlKeyItem(comboBox_upArrowKey, $"{Settings.CtrlKeyConvertedToUpArrow.Replace("#", "")}");
+            comboBox_selectCtrlKeyItem(comboBox_downArrowKey, $"{Settings.CtrlKeyConvertedToDownArrow.Replace("#", "")}");
+            comboBox_selectCtrlKeyItem(comboBox_homeKey, $"{Settings.CtrlKeyConvertedToHome.Replace("#", "")}");
+            comboBox_selectCtrlKeyItem(comboBox_endKey, $"{Settings.CtrlKeyConvertedToEnd.Replace("#", "")}");
+            comboBox_selectCtrlKeyItem(comboBox_dateStringKey, $"{Settings.CtrlKeyConvertedToDateString.Replace("#", "")}");
             textBox_dateStringFormat.Text = Settings.DateStringFormat._reReplace(@"\|", "\r\n");
 
             checkBox_useLeftCtrl.Checked = Settings.UseLeftControlToConversion;
@@ -750,8 +750,8 @@ namespace KanchokuWS
             checkBox_ctrlJasEnter.Checked = Settings.UseCtrlJasEnter;
             checkBox_ctrlMasEnter.Checked = Settings.UseCtrlMasEnter;
 
-            comboBox_fullEscapeKey._selectItemStartsWith($"{Settings.FullEscapeKey}");
-            comboBox_strokeHelpRotationKey._selectItemStartsWith($"{Settings.StrokeHelpRotationKey}");
+            comboBox_selectCtrlKeyItem(comboBox_fullEscapeKey, $"{Settings.FullEscapeKey}");
+            comboBox_selectCtrlKeyItem(comboBox_strokeHelpRotationKey, $"{Settings.StrokeHelpRotationKey}");
         }
 
         private void setCtrlKeysStatusChecker()
@@ -761,6 +761,16 @@ namespace KanchokuWS
             checkerCtrlKeys.ControlEnabler = button_ctrlClose_textChange;
 
             checkerCtrlKeys.Add(checkBox_globalCtrlKeysEnabled);
+
+            checkerCtrlKeys.Add(checkBox_backSpaceKey);
+            checkerCtrlKeys.Add(checkBox_deleteKey);
+            checkerCtrlKeys.Add(checkBox_leftArrowKey);
+            checkerCtrlKeys.Add(checkBox_rightArrowKey);
+            checkerCtrlKeys.Add(checkBox_upArrowKey);
+            checkerCtrlKeys.Add(checkBox_downArrowKey);
+            checkerCtrlKeys.Add(checkBox_homeKey);
+            checkerCtrlKeys.Add(checkBox_endKey);
+            checkerCtrlKeys.Add(checkBox_dateStringKey);
 
             checkerCtrlKeys.Add(comboBox_backSpaceKey);
             checkerCtrlKeys.Add(comboBox_deleteKey);
@@ -795,16 +805,16 @@ namespace KanchokuWS
             button_ctrlClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
         }
 
+        private string makeCtrlKeyConversion(CheckBox checkBox, ComboBox comboBox)
+        {
+            return $"{(checkBox.Checked ? "" : "#")}{comboBox._getSelectedItemSplittedFirst()}";
+        }
+
         private void button_ctrlEnter_Click(object sender, EventArgs e)
         {
             frmMain.DeactivateDecoder();
 
             Settings.SetUserIni("globalCtrlKeysEnabled", checkBox_globalCtrlKeysEnabled.Checked);
-
-            string makeCtrlKeyConversion(CheckBox checkBox, ComboBox comboBox)
-            {
-                return $"{(checkBox.Checked ? "" : "#")}{comboBox._getSelectedItemSplittedFirst()}";
-            }
 
             Settings.SetUserIni("ctrlKeyToBackSpace", makeCtrlKeyConversion(checkBox_backSpaceKey, comboBox_backSpaceKey));
             Settings.SetUserIni("ctrlKeyToDelete", makeCtrlKeyConversion(checkBox_deleteKey, comboBox_deleteKey));
@@ -855,7 +865,9 @@ namespace KanchokuWS
             textBox_histKatakanaKeyLen.Text = $"{Settings.HistKatakanaKeyLength}";
             textBox_histHiraganaKeyLen.Text = $"{Settings.HistHiraganaKeyLength}";
             checkBox_autoHistEnabled.Checked = Settings.AutoHistSearchEnabled;
-            checkBox_histSearchByCtrlSpace.Checked = Settings.HistSearchByCtrlSpace;
+            comboBox_historySearchKey.Enabled = checkBox_historySearchKey.Checked;
+            checkBox_historySearchKey.Checked = Settings.HistorySearchCtrlKey._notEmpty() && !Settings.HistorySearchCtrlKey.StartsWith("#");
+            comboBox_selectCtrlKeyItem(comboBox_historySearchKey, $"{Settings.HistorySearchCtrlKey.Replace("#", "")}");
             //checkBox_histSearchByShiftSpace.Checked = Settings.HistSearchByShiftSpace;
             checkBox_selectFirstCandByEnter.Checked = Settings.SelectFirstCandByEnter;
             //checkBox_autoHistEnabled_CheckedChanged(null, null);
@@ -889,7 +901,8 @@ namespace KanchokuWS
             checkerHistory.Add(textBox_histKatakanaKeyLen);
             checkerHistory.Add(textBox_histHiraganaKeyLen);
             checkerHistory.Add(checkBox_autoHistEnabled);
-            checkerHistory.Add(checkBox_histSearchByCtrlSpace);
+            checkerHistory.Add(checkBox_historySearchKey);
+            checkerHistory.Add(comboBox_historySearchKey);
             //checkerHistory.Add(checkBox_histSearchByShiftSpace);
             checkerHistory.Add(checkBox_selectFirstCandByEnter);
             //checkerHistory.Add(checkBox_autoHistEnabled_CheckedChanged);
@@ -928,7 +941,7 @@ namespace KanchokuWS
             Settings.SetUserIni("histKatakanaKeyLength", textBox_histKatakanaKeyLen.Text.Trim());
             Settings.SetUserIni("histKanjiKeyLength", textBox_histKanjiKeyLen.Text.Trim());
             Settings.SetUserIni("autoHistSearchEnabled", checkBox_autoHistEnabled.Checked);
-            Settings.SetUserIni("histSearchByCtrlSpace", checkBox_histSearchByCtrlSpace.Checked);
+            Settings.SetUserIni("histSearchCtrlKey", makeCtrlKeyConversion(checkBox_historySearchKey, comboBox_historySearchKey));
             //Settings.SetUserIni("histSearchByShiftSpace", checkBox_histSearchByShiftSpace.Checked);
             Settings.SetUserIni("selectFirstCandByEnter", checkBox_selectFirstCandByEnter.Checked);
             Settings.SetUserIni("useArrowKeyToSelectCandidate", checkBox_useArrowKeyToSelectCand.Checked);
@@ -1349,6 +1362,7 @@ namespace KanchokuWS
         /// Ctrlキー割り当てで、ドロップダウンに使われる項目
         /// </summary>
         private string[] ctrlKeyItems = new string[] {
+            "SPACE",
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
             "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
             "U", "V", "W", "X", "Y", "Z",
@@ -1389,7 +1403,22 @@ namespace KanchokuWS
             if (comboBox.Items.Count < 2) {
                 comboBox.Items.Clear();
                 comboBox.Items.AddRange(getCtrlKeyItems());
-                if (text._notEmpty()) comboBox._selectItemStartsWith(text);
+                if (text._notEmpty()) comboBox_selectCtrlKeyItem(comboBox, text);
+            }
+        }
+
+        private void comboBox_selectCtrlKeyItem(ComboBox combo, string key)
+        {
+            for (int idx = 0; idx < ctrlKeyItems.Length; ++idx) {
+                var item = ctrlKeyItems[idx];
+                if (item.StartsWith(key) && (item.Length == key.Length || item[key.Length] == ' ')) {
+                    if (combo.Items.Count > idx) {
+                        combo.SelectedIndex = idx;
+                    } else {
+                        combo.Items.Add(item);
+                        combo.SelectedIndex = 0;
+                    }
+                }
             }
         }
 
@@ -1511,6 +1540,16 @@ namespace KanchokuWS
         private void comboBox_strokeHelpRotationKey_DropDown(object sender, EventArgs e)
         {
             comboBox_ctrlKey_setItems(comboBox_strokeHelpRotationKey);
+        }
+
+        private void comboBox_historySearchKey_DropDown(object sender, EventArgs e)
+        {
+            comboBox_ctrlKey_setItems(comboBox_historySearchKey);
+        }
+
+        private void checkBox_historySearchKey_CheckedChanged(object sender, EventArgs e)
+        {
+            comboBox_historySearchKey.Enabled = checkBox_historySearchKey.Checked;
         }
     }
 }

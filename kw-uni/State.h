@@ -254,17 +254,17 @@ protected:
     // ? ハンドラ
     virtual void handleQuestion();
 
-    // Shift+Space ハンドラ
-    virtual void handleShiftSpace();
+    //// Shift+Space ハンドラ
+    //virtual void handleShiftSpace();
 
-    // Shift+Space AsNoramlSpace ハンドラ
-    virtual void handleShiftSpaceAsNormalSpace();
+    //// Shift+Space AsNoramlSpace ハンドラ
+    //virtual void handleShiftSpaceAsNormalSpace();
 
-    // Ctrl+Space ハンドラ
-    virtual void handleCtrlSpace();
+    //// Ctrl+Space ハンドラ
+    //virtual void handleCtrlSpace();
 
-    // Ctrl+Shift+Space ハンドラ
-    virtual void handleCtrlShiftSpace();
+    //// Ctrl+Shift+Space ハンドラ
+    //virtual void handleCtrlShiftSpace();
 
     // RET/Enter ハンドラ
     virtual void handleEnter();

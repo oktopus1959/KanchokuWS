@@ -306,7 +306,7 @@ namespace KanchokuWS
         public static int HistKatakanaKeyLength { get; private set; } = 0;
         public static int HistKanjiKeyLength { get; private set; } = 0;
         public static bool AutoHistSearchEnabled { get; private set; } = false;
-        public static bool HistSearchByCtrlSpace { get; private set; } = false;
+        //public static bool HistSearchByCtrlSpace { get; private set; } = false;
         //public static bool HistSearchByShiftSpace { get; private set; } = false;
         public static bool SelectFirstCandByEnter { get; private set; } = false;
         public static bool HistAllowFromMiddleChar { get; private set; } = false;
@@ -314,7 +314,10 @@ namespace KanchokuWS
         public static int HistNumDeckeyId { get; private set; } = 0;
 
         public static bool UseArrowKeyToSelectCandidate { get; set; } = true;
-        public static bool HandleShiftSpaceAsNormalSpace { get; set; } = true;
+        //public static bool HandleShiftSpaceAsNormalSpace { get; set; } = true;
+
+        /// <summary>履歴検索&選択するCtrlキー </summary>
+        public static string HistorySearchCtrlKey { get; private set; }
 
         //------------------------------------------------------------------------------
         // スペースキー
@@ -670,15 +673,15 @@ namespace KanchokuWS
             HistKatakanaKeyLength = addDecoderSetting("histKatakanaKeyLength", 2, 1);           // カタカナ履歴の検索を行う際のキー長
             HistKanjiKeyLength = addDecoderSetting("histKanjiKeyLength", 1, 1);                 // 漢字履歴の検索を行う際のキー長
             AutoHistSearchEnabled = addDecoderSetting("autoHistSearchEnabled", true);           // 自動履歴検索を行う
-            HistSearchByCtrlSpace = addDecoderSetting("histSearchByCtrlSpace", true);           // Ctrl-Space で履歴検索を行う
-            VirtualKeys.AddCtrlDeckeyAndCombo(" ", DecoderKeys.CTRL_SPACE_DECKEY, 0);           // 登録
+            //HistSearchByCtrlSpace = addDecoderSetting("histSearchByCtrlSpace", true);           // Ctrl-Space で履歴検索を行う
+            //VirtualKeys.AddCtrlDeckeyAndCombo(" ", DecoderKeys.CTRL_SPACE_DECKEY, 0);           // 登録
             //HistSearchByShiftSpace = addDecoderSetting("histSearchByShiftSpace", true);         // Shift-Space で履歴検索を行う
             SelectFirstCandByEnter = addDecoderSetting("selectFirstCandByEnter", false);        // Enter で最初の履歴検索候補を選択する
             HistDelDeckeyId = addDecoderSetting("histDelDeckeyId", "histDelHotkeyId", 41, 41);  // 履歴削除を呼び出すDecKeyのID
             HistNumDeckeyId = addDecoderSetting("histNumDeckeyId", "histNumHotkeyId", 45, 41);  // 履歴文字数指定を呼び出すDecKeyのID
             HistAllowFromMiddleChar = addDecoderSetting("histAllowFromMiddleChar", true);       // 出力漢字列やカタカナ列の途中からでも自動履歴検索を行う(@TODO)
             UseArrowKeyToSelectCandidate = addDecoderSetting("useArrowKeyToSelectCandidate", true);    // 矢印キーで履歴候補選択を行う
-            HandleShiftSpaceAsNormalSpace = addDecoderSetting("handleShiftSpaceAsNormalSpace", true);  // Shift+Space を通常 Space しとて扱う(HistSearchByShiftSpaceがfalseの場合)
+            //HandleShiftSpaceAsNormalSpace = addDecoderSetting("handleShiftSpaceAsNormalSpace", true);  // Shift+Space を通常 Space しとて扱う(HistSearchByShiftSpaceがfalseの場合)
 
             //MazegakiByShiftSpace = GetString("mazegakiByShiftSpace")._parseBool(true);          // Shift-Space で交ぜ書き変換
             MazegakiSelectFirstCand = addDecoderSetting("mazegakiSelectFirstCand", false);      // 交ぜ書き変換で先頭の候補を自動選択
@@ -692,6 +695,8 @@ namespace KanchokuWS
             RemoveOneStrokeByBackspace = addDecoderSetting("removeOneStrokeByBackspace", "weakBS", false);  // BS で直前打鍵のみを取り消すか
 
             // キー割当
+            HistorySearchCtrlKey = GetString("histSearchCtrlKey");                              // 履歴検索&選択を行うCtrlキー
+            VirtualKeys.AddCtrlDeckeyAndCombo(HistorySearchCtrlKey, DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY, DecoderKeys.HISTORY_PREV_SEARCH_DECKEY);   // 登録
             FullEscapeKey = GetString("fullEscapeKey", "G").Trim();
             VirtualKeys.AddCtrlDeckeyAndCombo(FullEscapeKey, DecoderKeys.FULL_ESCAPE_DECKEY, DecoderKeys.UNBLOCK_DECKEY);
             StrokeHelpRotationKey = GetString("strokeHelpRotationKey", "T").Trim();   // T

@@ -112,9 +112,9 @@ namespace KanchokuWS
         public const int QUESTION_DECKEY = SHIFT_DECKEY_START + 39;          // "?"
 
         // Ctrl+Shift+スペースキーに割り当てられたDecKeyId
-        public const int SHIFT_SPACE_DECKEY = SHIFT_DECKEY_START + STROKE_SPACE_DECKEY;             // Shift+Space
-        public const int CTRL_SPACE_DECKEY = CTRL_DECKEY_START + STROKE_SPACE_DECKEY;               // Ctrl+Space
-        public const int CTRL_SHIFT_SPACE_DECKEY = CTRL_SHIFT_DECKEY_START + STROKE_SPACE_DECKEY;   // Ctrl+Shift+Space
+        //public const int SHIFT_SPACE_DECKEY = SHIFT_DECKEY_START + STROKE_SPACE_DECKEY;             // Shift+Space
+        //public const int CTRL_SPACE_DECKEY = CTRL_DECKEY_START + STROKE_SPACE_DECKEY;               // Ctrl+Space
+        //public const int CTRL_SHIFT_SPACE_DECKEY = CTRL_SHIFT_DECKEY_START + STROKE_SPACE_DECKEY;   // Ctrl+Shift+Space
 
         /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)</summary>
         public const int ESC_DECKEY = FUNC_DECKEY_START;
@@ -178,8 +178,11 @@ namespace KanchokuWS
         public const int FULL_ESCAPE_DECKEY = DATE_STRING_UNROTATION_DECKEY + 1;    // モードを抜けたり、履歴ブロックをしたりする
         public const int UNBLOCK_DECKEY = FULL_ESCAPE_DECKEY + 1;                   // 改行コード除去と履歴ブロックの解除
 
-        public const int NEXT_CAND_TRIGGER_DECKEY = UNBLOCK_DECKEY + 1;             // 履歴検索開始&次の候補選択
-        public const int PREV_CAND_TRIGGER_DECKEY = NEXT_CAND_TRIGGER_DECKEY + 1;   // 履歴検索開始&前の候補選択
+        public const int HISTORY_NEXT_SEARCH_DECKEY = UNBLOCK_DECKEY + 1;                // 履歴検索実行&次候補選択キー
+        public const int HISTORY_PREV_SEARCH_DECKEY = HISTORY_NEXT_SEARCH_DECKEY + 1;    // 履歴検索実行&前候補選択キー
+
+        //public const int NEXT_CAND_TRIGGER_DECKEY = HISTORY_SEARCH_DECKEY + 1;      // 履歴検索開始&次の候補選択
+        //public const int PREV_CAND_TRIGGER_DECKEY = NEXT_CAND_TRIGGER_DECKEY + 1;   // 履歴検索開始&前の候補選択
 
         public const int GLOBAL_DECKEY_ID_END = GLOBAL_DECKEY_ID_BASE + 100;
 

@@ -30,14 +30,14 @@ struct Settings {
     size_t abbrevKeyMaxLength = 16;         // 短縮履歴キーの最大長
 
     bool autoHistSearchEnabled = false;     // 自動履歴検索を行う
-    bool histSearchByCtrlSpace = false;     // Ctrl-Space で履歴検索を行う
-    bool histSearchByShiftSpace = false;    // Shift-Space で履歴検索を行う
+    //bool histSearchByCtrlSpace = false;     // Ctrl-Space で履歴検索を行う
+    //bool histSearchByShiftSpace = false;    // Shift-Space で履歴検索を行う
     bool selectFirstCandByEnter = false;    // 履歴の第1候補をEnterキーで選択する
     int histDelDeckeyId = 41;               // 履歴削除のDecKeyID
     int histNumDeckeyId = 45;               // 履歴文字数指定のDecKeyID
 
     bool useArrowKeyToSelectCandidate = true;   // 矢印キーで履歴候補選択を行う
-    bool handleShiftSpaceAsNormalSpace = true;    // Shift-Space を通常の Space として扱う (ただし histSearchByShiftSpace が優先)
+    //bool handleShiftSpaceAsNormalSpace = true;    // Shift-Space を通常の Space として扱う (ただし histSearchByShiftSpace が優先)
 
     //bool mazegakiByShiftSpace = true;       // Shift-Space で交ぜ書き変換
     bool mazegakiSelectFirstCand = false;   // 交ぜ書き変換で先頭の候補を自動選択

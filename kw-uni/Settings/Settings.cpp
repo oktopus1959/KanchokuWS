@@ -48,8 +48,8 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_INT_VALUE(histKanjiKeyLength);
 
     SET_BOOL_VALUE(autoHistSearchEnabled);
-    SET_BOOL_VALUE(histSearchByCtrlSpace);
-    SET_BOOL_VALUE(histSearchByShiftSpace);
+    //SET_BOOL_VALUE(histSearchByCtrlSpace);
+    //SET_BOOL_VALUE(histSearchByShiftSpace);
     SET_BOOL_VALUE(selectFirstCandByEnter);
     SET_INT_VALUE(histDelDeckeyId);
     SET_INT_VALUE(histNumDeckeyId);

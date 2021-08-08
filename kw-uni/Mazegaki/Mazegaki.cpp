@@ -184,7 +184,7 @@ namespace {
          // Strokeキー を処理する
         void handleStrokeKeys(int deckey) {
             _LOG_DEBUGH(_T("CALLED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
-            if (deckey == SHIFT_SPACE_DECKEY) deckey = 0; // Shift+Spaceの場合を想定
+            //if (deckey == SHIFT_SPACE_DECKEY) deckey = 0; // Shift+Spaceの場合を想定
             if (deckey <= STROKE_SPACE_DECKEY) {
                 size_t n = (winIdx * LONG_VKEY_NUM) + (deckey % LONG_VKEY_NUM);
                 const auto& cands = candsByLen.GetMazeCandidates();

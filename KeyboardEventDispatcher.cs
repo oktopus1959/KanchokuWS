@@ -156,7 +156,10 @@ namespace KanchokuWS
 
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
                 if (kanchokuCode < 0) return false;
-                if (kanchokuCode == DecoderKeys.CTRL_SPACE_DECKEY && !Settings.HistSearchByCtrlSpace) return false;
+                if (kanchokuCode == DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY && kanchokuCode != VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"=historySearchCtrlKey={Settings.HistorySearchCtrlKey}, kanchokuCode={VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)}");
+                    return false;
+                }
 
                 // どうやら KeyboardHook で CallNextHookEx を呼ばないと次のキー入力の処理に移らないみたいだが、
                 // 将来必要になるかもしれないので、下記処理を残しておく
