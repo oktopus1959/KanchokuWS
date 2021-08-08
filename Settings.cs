@@ -11,7 +11,7 @@ namespace KanchokuWS
     {
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.0.8";
+        public static string Version => "1.1.0";
 
         /// <summary> ドキュメントへのURL </summary>
         public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
@@ -71,7 +71,7 @@ namespace KanchokuWS
         /// <summary>部首合成ログを有効にする</summary>
         public static bool BushuDicLogEnabled { get; private set; }
 
-        public static bool IsAnyDevFlagEnabled => LogLevel > 2 || LoggingDecKeyInfo || LoggingActiveWindowInfo || DelayAfterProcessDeckey || BushuDicLogEnabled;
+        public static bool IsAnyDevFlagEnabled => LogLevel > 2 || LoggingDecKeyInfo || LoggingActiveWindowInfo || LoggingVirtualKeyboardInfo || BushuDicLogEnabled;
 
         //-------------------------------------------------------------------------------------
         // フォントと色
@@ -240,13 +240,13 @@ namespace KanchokuWS
         public static string HankakuKatakanaOneShotKeySeq { get; set; }
 
         /// <summary>全エスケープおよび出力文字列検索ブロッカー設定</summary>
-        public static int FullEscapeKey { get; set; }
+        public static string FullEscapeKey { get; set; }
 
         /// <summary>ストロークヘルプローテーション</summary>
-        public static int StrokeHelpRotationKey { get; set; }
+        public static string StrokeHelpRotationKey { get; set; }
 
-        /// <summary>日付文字列出力ローテーション</summary>
-        public static int DateStringRotationKey { get; set; }
+        ///// <summary>日付文字列出力ローテーション</summary>
+        //public static string DateStringRotationKey { get; set; }
 
         public static HashSet<int> DecoderSpecialDeckeys { get; set; } = new HashSet<int>();
 
@@ -261,28 +261,23 @@ namespace KanchokuWS
         /// <summary>右コントロールキーを変換に使う</summary>
         public static bool UseRightControlToConversion { get; private set; } = false;
 
-        /// <summary>Ctrl-H を BackSpace に変換する </summary>
-        public static bool ConvertCtrlHtoBackSpace { get; private set; } = false;
-        public static bool ConvertCtrlHtoBackSpaceEffective => ConvertCtrlHtoBackSpace && GlobalCtrlKeysEnabled;
+        /// <summary>BackSpace に変換するCtrlキー </summary>
+        public static string CtrlKeyConvertedToBackSpace { get; private set; }
 
-        /// <summary>Ctrl-B,F,N,P を矢印キーに変換する </summary>
-        public static bool ConvertCtrlBFNPtoArrowKey { get; private set; } = false;
-        public static bool ConvertCtrlBFNPtoArrowKeyEffective => ConvertCtrlBFNPtoArrowKey && GlobalCtrlKeysEnabled;
+        /// <summary>Delete に変換するCtrlキー </summary>
+        public static string CtrlKeyConvertedToDelete { get; private set; }
 
-        /// <summary>Ctrl-A を Home に変換する </summary>
-        public static bool ConvertCtrlAtoHome { get; private set; } = false;
-        public static bool ConvertCtrlAtoHomeEffective => ConvertCtrlAtoHome && GlobalCtrlKeysEnabled;
+        /// <summary>矢印キーに変換するCtrlキー </summary>
+        public static string CtrlKeyConvertedToLeftArrow { get; private set; }
+        public static string CtrlKeyConvertedToRightArrow { get; private set; }
+        public static string CtrlKeyConvertedToUpArrow { get; private set; }
+        public static string CtrlKeyConvertedToDownArrow { get; private set; }
 
-        /// <summary>Ctrl-D を Delete に変換する </summary>
-        public static bool ConvertCtrlDtoDelete { get; private set; } = false;
-        public static bool ConvertCtrlDtoDeleteEffective => ConvertCtrlDtoDelete && GlobalCtrlKeysEnabled;
+        /// <summary>Homeキーに変換するCtrlキー </summary>
+        public static string CtrlKeyConvertedToHome { get; private set; }
 
-        /// <summary>Ctrl-E を End に変換する </summary>
-        public static bool ConvertCtrlEtoEnd { get; private set; } = false;
-        public static bool ConvertCtrlEtoEndEffective => ConvertCtrlEtoEnd && GlobalCtrlKeysEnabled;
-
-        /// <summary>Ctrl-G を FullEscape に変換する </summary>
-        public static bool ConvertCtrlGtoEscape { get; private set; } = false;
+        /// <summary>Endキーに変換するCtrlキー </summary>
+        public static string CtrlKeyConvertedToEnd { get; private set; }
 
         /// <summary>ウィンドウClassNameリストを対象リストとして扱うか</summary>
         public static bool UseClassNameListAsInclusion { get; private set; } = false;
@@ -296,11 +291,10 @@ namespace KanchokuWS
         /// <summary>Ctrl-M を Enter と同じように扱う </summary>
         public static bool UseCtrlMasEnter { get; private set; } = false;
 
-        /// <summary>Ctrl-Shift-Semicolon で今日の日付を出力する </summary>
-        public static bool ConvertCtrlSemiColonToDate { get; private set; } = false;
-        public static bool ConvertCtrlSemiColonToDateEffective => ConvertCtrlSemiColonToDate && GlobalCtrlKeysEnabled;
+        /// <summary>日付に変換するCtrlキー </summary>
+        public static string CtrlKeyConvertedToDateString { get; private set; }
 
-        /// <summary>Ctrl-Semicolon で今日の日付を出力する </summary>
+        /// <summary>今日の日付を出力フォーマット </summary>
         public static string DateStringFormat { get; private set; } = "yyyy/M/d";
 
         //------------------------------------------------------------------------------
@@ -325,13 +319,13 @@ namespace KanchokuWS
         //------------------------------------------------------------------------------
         // スペースキー
         //public static bool UseShiftSpaceAsDeckey49 => MazegakiByShiftSpace;
-        public static bool UseCtrlSpaceKey => HistSearchByCtrlSpace;
+        //public static bool UseCtrlSpaceKey => HistSearchByCtrlSpace;
         //public static bool UseShiftSpaceAsSpecialDecKey => (HistSearchByShiftSpace || HandleShiftSpaceAsNormalSpace) && !UseShiftSpaceAsDeckey49;
         //public static bool UseShiftSpaceAsSpecialDecKey => (HandleShiftSpaceAsNormalSpace) && !UseShiftSpaceAsDeckey49;
 
         //------------------------------------------------------------------------------
         // 交ぜ書き
-        public static bool MazegakiByShiftSpace { get; set; } = true;
+        //public static bool MazegakiByShiftSpace { get; set; } = true;
         public static bool MazegakiSelectFirstCand { get; set; } = true;
         public static int MazeYomiMaxLen { get; private set; } = 10;
         public static int MazeGobiMaxLen { get; private set; } = 3;
@@ -517,7 +511,7 @@ namespace KanchokuWS
             LogLevel = GetLogLevel();
             LoggingDecKeyInfo = GetString("loggingDecKeyInfo")._parseBool();
             //LoggingActiveWindowInfo = GetString("loggingActiveWindowInfo")._parseBool();
-            DelayAfterProcessDeckey = GetString("delayAfterProcessDeckey")._parseBool();
+            LoggingVirtualKeyboardInfo = GetString("loggingVirtualKeyboardInfo")._parseBool();
             MultiAppEnabled = IsMultiAppEnabled();
 
             //-------------------------------------------------------------------------------------
@@ -604,12 +598,25 @@ namespace KanchokuWS
             // Ctrlキー変換
             GlobalCtrlKeysEnabled = GetString("globalCtrlKeysEnabled")._parseBool(false);
 
-            ConvertCtrlHtoBackSpace = GetString("convertCtrlHtoBackSpace")._parseBool(true);
-            ConvertCtrlBFNPtoArrowKey = GetString("convertCtrlBFNPtoArrowKey")._parseBool(true);
-            ConvertCtrlAtoHome = GetString("convertCtrlAtoHome")._parseBool(true);
-            ConvertCtrlDtoDelete = GetString("convertCtrlDtoDelete")._parseBool(true);
-            ConvertCtrlEtoEnd = GetString("convertCtrlEtoEnd")._parseBool(true);
-            ConvertCtrlGtoEscape = true;
+            CtrlKeyConvertedToBackSpace = GetString("ctrlKeyToBackSpace", "#");
+            CtrlKeyConvertedToDelete = GetString("ctrlKeyToDelete", "#");
+            CtrlKeyConvertedToLeftArrow = GetString("ctrlKeyToLeftArrowKey", "#");
+            CtrlKeyConvertedToRightArrow = GetString("ctrlKeyToRightArrowKey", "#");
+            CtrlKeyConvertedToUpArrow = GetString("ctrlKeyToUpArrowKey", "#");
+            CtrlKeyConvertedToDownArrow = GetString("ctrlKeyToDownArrowKey", "#");
+            CtrlKeyConvertedToHome = GetString("ctrlKeyToHome", "#");
+            CtrlKeyConvertedToEnd = GetString("ctrlKeyToEnd", "#");
+            CtrlKeyConvertedToDateString = GetString("ctrlKeyToDateString", "#");
+
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToBackSpace, DecoderKeys.BS_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDelete, DecoderKeys.DEL_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToLeftArrow, DecoderKeys.LEFT_ARROW_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToRightArrow, DecoderKeys.RIGHT_ARROW_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToUpArrow, DecoderKeys.UP_ARROW_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDownArrow, DecoderKeys.DOWN_ARROW_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToHome, DecoderKeys.HOME_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEnd, DecoderKeys.END_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDateString, DecoderKeys.DATE_STRING_ROTATION_DECKEY, DecoderKeys.DATE_STRING_UNROTATION_DECKEY);
 
             UseLeftControlToConversion = GetString("useLeftControlToConversion")._parseBool(true);
             UseRightControlToConversion = GetString("useRightControlToConversion")._parseBool(false);
@@ -619,7 +626,7 @@ namespace KanchokuWS
             UseCtrlJasEnter = GetString("useCtrlJasEnter")._parseBool(false);
             UseCtrlMasEnter = GetString("useCtrlMasEnter")._parseBool(false);
 
-            ConvertCtrlSemiColonToDate = GetString("convertCtrlSemicolonToDate")._parseBool(true);
+            //ConvertCtrlSemiColonToDate = GetString("convertCtrlSemicolonToDate")._parseBool(true);
             DateStringFormat = GetString("dateStringFormat", "yyyy/M/d|yyyyMMdd");
 
             //-------------------------------------------------------------------------------------
@@ -672,7 +679,7 @@ namespace KanchokuWS
             UseArrowKeyToSelectCandidate = addDecoderSetting("useArrowKeyToSelectCandidate", true);    // 矢印キーで履歴候補選択を行う
             HandleShiftSpaceAsNormalSpace = addDecoderSetting("handleShiftSpaceAsNormalSpace", true);  // Shift+Space を通常 Space しとて扱う(HistSearchByShiftSpaceがfalseの場合)
 
-            MazegakiByShiftSpace = GetString("mazegakiByShiftSpace")._parseBool(true);          // Shift-Space で交ぜ書き変換
+            //MazegakiByShiftSpace = GetString("mazegakiByShiftSpace")._parseBool(true);          // Shift-Space で交ぜ書き変換
             MazegakiSelectFirstCand = addDecoderSetting("mazegakiSelectFirstCand", false);      // 交ぜ書き変換で先頭の候補を自動選択
             MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
@@ -684,21 +691,10 @@ namespace KanchokuWS
             RemoveOneStrokeByBackspace = addDecoderSetting("removeOneStrokeByBackspace", "weakBS", false);  // BS で直前打鍵のみを取り消すか
 
             // キー割当
-            //FullEscapeKey = GetString("fullEscapeKey", "G").Trim();
-            FullEscapeKey = GetString("fullEscapeKey").Trim()._parseInt(24);        // G
+            FullEscapeKey = GetString("fullEscapeKey", "G").Trim();
             VirtualKeys.AddCtrlDeckeyAndCombo(FullEscapeKey, DecoderKeys.FULL_ESCAPE_DECKEY, DecoderKeys.UNBLOCK_DECKEY);
-            StrokeHelpRotationKey = GetString("strokeHelpRotationKey")._parseInt(14);   // T
+            StrokeHelpRotationKey = GetString("strokeHelpRotationKey", "T").Trim();   // T
             VirtualKeys.AddCtrlDeckeyAndCombo(StrokeHelpRotationKey, DecoderKeys.STROKE_HELP_ROTATION_DECKEY, DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
-            DateStringRotationKey = GetString("dateStringRotationKey")._parseInt(-1);   // ;
-            VirtualKeys.AddCtrlDeckeyAndCombo(DateStringRotationKey, DecoderKeys.DATE_STRING_ROTATION_DECKEY, DecoderKeys.DATE_STRING_UNROTATION_DECKEY);
-
-            VirtualKeys.AddCtrlDeckeyFromCombo(25, DecoderKeys.BS_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(34, DecoderKeys.LEFT_ARROW_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(23, DecoderKeys.RIGHT_ARROW_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(35, DecoderKeys.DOWN_ARROW_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(19, DecoderKeys.UP_ARROW_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(20, DecoderKeys.HOME_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(12, DecoderKeys.END_DECKEY, 0);
 
             DecoderSpecialDeckeys.Clear();
             DecoderSpecialDeckeys.Add(DecoderKeys.FULL_ESCAPE_DECKEY);
@@ -711,7 +707,6 @@ namespace KanchokuWS
             NextThroughKeySeq = addDecoderSetting("nextThroughKeySeq");
             HistoryKeySeq = addDecoderSetting("historyKeySeq");
             HistoryOneCharKeySeq = addDecoderSetting("historyOneCharKeySeq");
-            //MazegakiKeySeq = MazegakiByShiftSpace ? setDecoderSetting("mazegakiKeySeq", "49") : addDecoderSetting("mazegakiKeySeq");
             MazegakiKeySeq = addDecoderSetting("mazegakiKeySeq");
             BushuCompKeySeq = addDecoderSetting("bushuCompKeySeq");
             BushuAssocKeySeq = addDecoderSetting("bushuAssocKeySeq");

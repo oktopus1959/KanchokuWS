@@ -423,22 +423,27 @@ namespace Utils
         public static void _selectItemStartsWith(this ComboBox cmb, string item, bool bSelectFirstIfUnmatched = true)
         {
             try {
-                if (cmb.Items.Count > 0 && item != null) {
-                    var key = item + " ";
-                    for (int idx = 0; idx < cmb.Items.Count; ++idx) {
-                        var tgt = (string)cmb.Items[idx];
-                        if (tgt._equalsTo(item) || tgt.StartsWith(key)) {
-                            cmb.SelectedIndex = idx;
+                if (item != null) {
+                    if (cmb.Items.Count > 0) {
+                        var key = item + " ";
+                        for (int idx = 0; idx < cmb.Items.Count; ++idx) {
+                            var tgt = (string)cmb.Items[idx];
+                            if (tgt._equalsTo(item) || tgt.StartsWith(key)) {
+                                cmb.SelectedIndex = idx;
+                                return;
+                            }
+                        }
+                        // 選択肢に含まれず
+                        if (bSelectFirstIfUnmatched) {
+                            cmb.SelectedIndex = 0;
                             return;
                         }
-                    }
-                    // 選択肢に含まれず
-                    if (bSelectFirstIfUnmatched)
+                    } else {
+                        cmb.Items.Add(item);
                         cmb.SelectedIndex = 0;
-                    else
-                        cmb.Text = item;
+                    }
                 }
-            } catch (Exception) { }
+            } catch { }
         }
 
         /// <summary>

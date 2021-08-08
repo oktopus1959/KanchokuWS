@@ -420,23 +420,6 @@ Ctrl-Shift修飾されたキーで、ブロッカーの解除となります。
 そのため、出力先アプリによってはキーを受け取れないものもあります。
 その場合は、いったん、当設定をOFFにしてください。</value>
   </data>
-  <data name="checkBox_CtrlSemicolon.ToolTip" xml:space="preserve">
-    <value>Ctrl+; (セミコロン) および Ctrl+Shift+; で今日の日付を出力する
-
-この設定は、下記のウィンドウClassNameリストを無視して、
-すべてのウィンドウに対して有効となります。
-
-Ctrl+; を3秒以内に続けて打鍵すると、「日付フォーマット」で設定した
-フォーマットを1つめから切り替えながら使用します。
-
-Ctrl+Shift+; を3秒以内に続けて打鍵すると、「日付フォーマット」で設定した
-フォーマットを末尾から逆順に切り替えながら使用します。
-
-Ctrl+; の直後に Ctlrl+Shift+; を打つと取り消しになります。(逆も同じ)
-
-たまに Shift+Backspace を受け付けないアプリがあります。
-その場合、前回の出力が消去されませんのでご注意を。</value>
-  </data>
   <data name="comboBox_histNumDeckeyId.ToolTip" xml:space="preserve">
     <value>履歴検索の縦列鍵盤表示時に、候補を文字数で絞るモードに
 移行するホットキーのIDを設定します。

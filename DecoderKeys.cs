@@ -89,38 +89,6 @@ namespace KanchokuWS
         // 履歴検索や交ぜ書きなどの状態呼び出しは、ストロークテーブルで定義する
         // つまり、DECKEYコードのままデコーダを呼び出すことにより、ストロークテーブルを経て、そこに定義された状態が呼び出される
 
-        // 以下、編集機能や日付入力などの特殊機能のキーコード定義
-        // 特殊機能は、それに対応するキーコードに変換されてからデコーダが呼び出される
-        // デコーダ側では、ストロークテーブルを経由することなく、キーコードにより直接特殊機能を呼び出す
-
-        // B, F, H, N, P
-        //public const int DECKEY_A = 20;
-        //public const int DECKEY_B = 34;
-        //public const int DECKEY_C = 32;
-        //public const int DECKEY_D = 22;
-        //public const int DECKEY_E = 12;
-        //public const int DECKEY_F = 23;
-        //public const int DECKEY_G = 24;
-        //public const int DECKEY_H = 25;
-        //public const int DECKEY_I = 17;
-        //public const int DECKEY_J = 26;
-        //public const int DECKEY_K = 27;
-        //public const int DECKEY_L = 28;
-        //public const int DECKEY_M = 36;
-        //public const int DECKEY_N = 35;
-        //public const int DECKEY_O = 18;
-        //public const int DECKEY_P = 19;
-        //public const int DECKEY_Q = 10;
-        //public const int DECKEY_R = 13;
-        //public const int DECKEY_S = 21;
-        //public const int DECKEY_T = 14;
-        //public const int DECKEY_U = 16;
-        //public const int DECKEY_V = 33;
-        //public const int DECKEY_W = 11;
-        //public const int DECKEY_X = 31;
-        //public const int DECKEY_Y = 15;
-        //public const int DECKEY_Z = 30;
-
         // スペースキーに割り当てられたDecKeyId
         public const int STROKE_SPACE_DECKEY = 40;
 
@@ -133,6 +101,10 @@ namespace KanchokuWS
         public const int DECKEY_STROKE_46 = 46;
         public const int DECKEY_STROKE_47 = 47;
         public const int DECKEY_STROKE_48 = 48;
+
+        // 以下、編集機能や日付入力などの特殊機能のキーコード定義
+        // 特殊機能は、それに対応するキーコードに変換されてからデコーダが呼び出される
+        // デコーダ側では、ストロークテーブルを経由することなく、キーコードにより直接特殊機能を呼び出す
 
         // Shift が押されていたら、 上記 ID + NUM_STROKE_DECKEY の ID となる。
         public const int LEFT_TRIANGLE_DECKEY = SHIFT_DECKEY_START + 37;     // "<"
@@ -187,18 +159,6 @@ namespace KanchokuWS
         public const int CTRL_LEFT_ARROW_DECKEY = CTRL_DOWN_ARROW_DECKEY + 1;
         public const int CTRL_RIGHT_ARROW_DECKEY = CTRL_LEFT_ARROW_DECKEY + 1;
 
-        //public const int CTRL_SHIFT_G_DECKEY = CTRL_SHIFT_SPACE_DECKEY + 1;         // Ctrl+Shift+G
-        //public const int CTRL_SHIFT_T_DECKEY = CTRL_SHIFT_G_DECKEY + 1;             // Ctrl+Shift+T
-
-        //public const int CTRL_SEMICOLON_DECKEY = CTRL_SHIFT_T_DECKEY + 1;           // Ctrl+;
-        //public const int CTRL_SHIFT_SEMICOLON_DECKEY = CTRL_SEMICOLON_DECKEY + 1;   // Ctrl+Shift+;
-        //public const int CTRL_COLON_DECKEY = CTRL_SHIFT_SEMICOLON_DECKEY + 1;       // Ctrl+:
-        //public const int CTRL_SHIFT_COLON_DECKEY = CTRL_COLON_DECKEY + 1;           // Ctrl+Shift+:
-
-        //public const int SPECIAL_DECKEY_ID_END = PREV_CAND_TRIGGER_DECKEY + 1;
-
-        //public const int FUNCTION_DECKEY_ID_END = SPECIAL_DECKEY_ID_END;
-
         // デコーダには渡されないDECKEY
         // FUNCTIONAL_DECKEY_ID_BASE よりも大きな値にする必要がある
         public const int GLOBAL_DECKEY_ID_BASE = 0x200;
@@ -222,41 +182,6 @@ namespace KanchokuWS
         public const int PREV_CAND_TRIGGER_DECKEY = NEXT_CAND_TRIGGER_DECKEY + 1;   // 履歴検索開始&前の候補選択
 
         public const int GLOBAL_DECKEY_ID_END = GLOBAL_DECKEY_ID_BASE + 100;
-
-        //// デコーダ内部で使われる Ctrlキーや特殊キーのDECKEY_IDの定義
-        //// 0 ～ 0xff まではデコーダのストローク用に確保
-        //public const int FUNCTIONAL_DECKEY_ID_BASE = 0x100;
-
-        //public const int CTRL_FUNC_DECKEY_ID_BASE = FUNCTIONAL_DECKEY_ID_BASE;
-        //public const int CTRL_A_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 1;
-        //public const int CTRL_B_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 2;
-        //public const int CTRL_C_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 3;
-        //public const int CTRL_D_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 4;
-        //public const int CTRL_E_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 5;
-        //public const int CTRL_F_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 6;
-        //public const int CTRL_G_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 7;
-        //public const int CTRL_H_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 8;
-        //public const int CTRL_I_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 9;
-        //public const int CTRL_J_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 10;
-        //public const int CTRL_K_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 11;
-        //public const int CTRL_L_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 12;
-        //public const int CTRL_M_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 13;
-        //public const int CTRL_N_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 14;
-        //public const int CTRL_O_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 15;
-        //public const int CTRL_P_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 16;
-        //public const int CTRL_Q_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 17;
-        //public const int CTRL_R_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 18;
-        //public const int CTRL_S_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 19;
-        //public const int CTRL_T_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 20;
-        //public const int CTRL_U_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 21;
-        //public const int CTRL_V_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 22;
-        //public const int CTRL_W_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 23;
-        //public const int CTRL_X_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 24;
-        //public const int CTRL_Y_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 25;
-        //public const int CTRL_Z_DECKEY = CTRL_FUNC_DECKEY_ID_BASE + 26;
-        //public const int CTRL_FUNC_DECKEY_ID_END = CTRL_Z_DECKEY + 1;
-
-        //public const int SPECIAL_DECKEY_ID_BASE = CTRL_FUNC_DECKEY_ID_END;
 
     }
 }

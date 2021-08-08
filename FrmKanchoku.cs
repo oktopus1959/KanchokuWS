@@ -972,6 +972,11 @@ namespace KanchokuWS
                     return false;
                 }
 
+                // Ctrl-J と Ctrl-M
+                if ((Settings.UseCtrlJasEnter && VirtualKeys.GetCtrlDecKeyOf("J") == deckey) || (Settings.UseCtrlMasEnter && VirtualKeys.GetCtrlDecKeyOf("M") == deckey)) {
+                    deckey = DecoderKeys.ENTER_DECKEY;
+                }
+
                 // ActivateDecoderの処理中ではない
                 // 入力標識の消去
                 frmMode.Vanish();

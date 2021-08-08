@@ -97,7 +97,7 @@ namespace KanchokuWS
             this.groupBox15 = new System.Windows.Forms.GroupBox();
             this.checkBox_bushuDicLogEnabled = new System.Windows.Forms.CheckBox();
             this.checkBox_multiAppEnabled = new System.Windows.Forms.CheckBox();
-            this.checkBox_delayAfterProcessDeckey = new System.Windows.Forms.CheckBox();
+            this.checkBox_loggingVirtualKeyboardInfo = new System.Windows.Forms.CheckBox();
             this.checkBox_loggingDecKeyInfo = new System.Windows.Forms.CheckBox();
             this.checkBox_loggingActiveWindowInfo = new System.Windows.Forms.CheckBox();
             this.comboBox_logLevel = new System.Windows.Forms.ComboBox();
@@ -122,14 +122,9 @@ namespace KanchokuWS
             this.checkBox_hideTopText = new System.Windows.Forms.CheckBox();
             this.tabPage_fontColor = new System.Windows.Forms.TabPage();
             this.groupBox25 = new System.Windows.Forms.GroupBox();
-            this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
-            this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.groupBox24 = new System.Windows.Forms.GroupBox();
-            this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
-            this.textBox_onMazegaki = new KanchokuWS.ColorTextBox();
-            this.textBox_on2ndStrokeBackColor = new KanchokuWS.ColorTextBox();
             this.label52 = new System.Windows.Forms.Label();
             this.label51 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
@@ -151,18 +146,11 @@ namespace KanchokuWS
             this.label48 = new System.Windows.Forms.Label();
             this.textBox_normalFont = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.textBox_middleLevelBackColor = new KanchokuWS.ColorTextBox();
-            this.textBox_highLowLevelBackColor = new KanchokuWS.ColorTextBox();
-            this.textBox_centerSideBackColor = new KanchokuWS.ColorTextBox();
-            this.textBox_topLevelBackColor = new KanchokuWS.ColorTextBox();
             this.label37 = new System.Windows.Forms.Label();
             this.label36 = new System.Windows.Forms.Label();
             this.label35 = new System.Windows.Forms.Label();
             this.label34 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
-            this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
-            this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
             this.label30 = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
@@ -217,7 +205,6 @@ namespace KanchokuWS
             this.checkBox_ctrlJasEnter = new System.Windows.Forms.CheckBox();
             this.groupBox_globalCtrlKeys = new System.Windows.Forms.GroupBox();
             this.checkBox_globalCtrlKeysEnabled = new System.Windows.Forms.CheckBox();
-            this.checkBox_CtrlSemicolon = new System.Windows.Forms.CheckBox();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.label41 = new System.Windows.Forms.Label();
             this.checkBox_useLeftCtrl = new System.Windows.Forms.CheckBox();
@@ -225,18 +212,12 @@ namespace KanchokuWS
             this.textBox_targetClassNames = new System.Windows.Forms.TextBox();
             this.radioButton_excludeFollowings = new System.Windows.Forms.RadioButton();
             this.radioButton_includeFollowings = new System.Windows.Forms.RadioButton();
-            this.checkBox_CtrlE = new System.Windows.Forms.CheckBox();
-            this.checkBox_CtrlD = new System.Windows.Forms.CheckBox();
-            this.checkBox_CtrlH = new System.Windows.Forms.CheckBox();
-            this.checkBox_CtrlA = new System.Windows.Forms.CheckBox();
-            this.checkBox_CtrlBFNP = new System.Windows.Forms.CheckBox();
             this.label_okResultCtrlKeys = new System.Windows.Forms.Label();
             this.button_ctrlClose = new System.Windows.Forms.Button();
             this.button_ctrlEnter = new System.Windows.Forms.Button();
             this.tabPage_history = new System.Windows.Forms.TabPage();
             this.groupBox23 = new System.Windows.Forms.GroupBox();
             this.checkBox_mazegakiSelectFirstCand = new System.Windows.Forms.CheckBox();
-            this.checkBox_mazegakiByShiftSpace = new System.Windows.Forms.CheckBox();
             this.groupBox27 = new System.Windows.Forms.GroupBox();
             this.checkBox_removeOneStrokeByBackspace = new System.Windows.Forms.CheckBox();
             this.checkBox_convertJaComma = new System.Windows.Forms.CheckBox();
@@ -307,6 +288,45 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.comboBox_backSpaceKey = new System.Windows.Forms.ComboBox();
+            this.label76 = new System.Windows.Forms.Label();
+            this.comboBox_leftArrowKey = new System.Windows.Forms.ComboBox();
+            this.label78 = new System.Windows.Forms.Label();
+            this.comboBox_rightArrowKey = new System.Windows.Forms.ComboBox();
+            this.label80 = new System.Windows.Forms.Label();
+            this.comboBox_upArrowKey = new System.Windows.Forms.ComboBox();
+            this.label82 = new System.Windows.Forms.Label();
+            this.comboBox_downArrowKey = new System.Windows.Forms.ComboBox();
+            this.label84 = new System.Windows.Forms.Label();
+            this.comboBox_deleteKey = new System.Windows.Forms.ComboBox();
+            this.label86 = new System.Windows.Forms.Label();
+            this.comboBox_endKey = new System.Windows.Forms.ComboBox();
+            this.label88 = new System.Windows.Forms.Label();
+            this.comboBox_homeKey = new System.Windows.Forms.ComboBox();
+            this.label90 = new System.Windows.Forms.Label();
+            this.comboBox_dateStringKey = new System.Windows.Forms.ComboBox();
+            this.label92 = new System.Windows.Forms.Label();
+            this.checkBox_backSpaceKey = new System.Windows.Forms.CheckBox();
+            this.checkBox_deleteKey = new System.Windows.Forms.CheckBox();
+            this.checkBox_leftArrowKey = new System.Windows.Forms.CheckBox();
+            this.checkBox_rightArrowKey = new System.Windows.Forms.CheckBox();
+            this.checkBox_upArrowKey = new System.Windows.Forms.CheckBox();
+            this.checkBox_downArrowKey = new System.Windows.Forms.CheckBox();
+            this.checkBox_homeKey = new System.Windows.Forms.CheckBox();
+            this.checkBox_endKey = new System.Windows.Forms.CheckBox();
+            this.checkBox_dateStringKey = new System.Windows.Forms.CheckBox();
+            this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
+            this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
+            this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
+            this.textBox_onMazegaki = new KanchokuWS.ColorTextBox();
+            this.textBox_on2ndStrokeBackColor = new KanchokuWS.ColorTextBox();
+            this.textBox_middleLevelBackColor = new KanchokuWS.ColorTextBox();
+            this.textBox_highLowLevelBackColor = new KanchokuWS.ColorTextBox();
+            this.textBox_centerSideBackColor = new KanchokuWS.ColorTextBox();
+            this.textBox_topLevelBackColor = new KanchokuWS.ColorTextBox();
+            this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
+            this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
+            this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1178,7 +1198,7 @@ namespace KanchokuWS
             // 
             this.groupBox15.Controls.Add(this.checkBox_bushuDicLogEnabled);
             this.groupBox15.Controls.Add(this.checkBox_multiAppEnabled);
-            this.groupBox15.Controls.Add(this.checkBox_delayAfterProcessDeckey);
+            this.groupBox15.Controls.Add(this.checkBox_loggingVirtualKeyboardInfo);
             this.groupBox15.Controls.Add(this.checkBox_loggingDecKeyInfo);
             this.groupBox15.Controls.Add(this.checkBox_loggingActiveWindowInfo);
             this.groupBox15.Controls.Add(this.comboBox_logLevel);
@@ -1194,10 +1214,10 @@ namespace KanchokuWS
             // checkBox_bushuDicLogEnabled
             // 
             this.checkBox_bushuDicLogEnabled.AutoSize = true;
-            this.checkBox_bushuDicLogEnabled.Location = new System.Drawing.Point(21, 88);
+            this.checkBox_bushuDicLogEnabled.Location = new System.Drawing.Point(21, 106);
             this.checkBox_bushuDicLogEnabled.Name = "checkBox_bushuDicLogEnabled";
             this.checkBox_bushuDicLogEnabled.Size = new System.Drawing.Size(168, 19);
-            this.checkBox_bushuDicLogEnabled.TabIndex = 2;
+            this.checkBox_bushuDicLogEnabled.TabIndex = 4;
             this.checkBox_bushuDicLogEnabled.Text = "部首合成結果をログ出力する";
             this.checkBox_bushuDicLogEnabled.UseVisualStyleBackColor = true;
             // 
@@ -1207,28 +1227,28 @@ namespace KanchokuWS
             this.checkBox_multiAppEnabled.Location = new System.Drawing.Point(21, 128);
             this.checkBox_multiAppEnabled.Name = "checkBox_multiAppEnabled";
             this.checkBox_multiAppEnabled.Size = new System.Drawing.Size(126, 19);
-            this.checkBox_multiAppEnabled.TabIndex = 4;
+            this.checkBox_multiAppEnabled.TabIndex = 5;
             this.checkBox_multiAppEnabled.Text = "二重起動を許可する";
             this.checkBox_multiAppEnabled.UseVisualStyleBackColor = true;
             // 
-            // checkBox_delayAfterProcessDeckey
+            // checkBox_loggingVirtualKeyboardInfo
             // 
-            this.checkBox_delayAfterProcessDeckey.AutoSize = true;
-            this.checkBox_delayAfterProcessDeckey.Location = new System.Drawing.Point(21, 108);
-            this.checkBox_delayAfterProcessDeckey.Name = "checkBox_delayAfterProcessDeckey";
-            this.checkBox_delayAfterProcessDeckey.Size = new System.Drawing.Size(194, 19);
-            this.checkBox_delayAfterProcessDeckey.TabIndex = 3;
-            this.checkBox_delayAfterProcessDeckey.Text = "HotKeyの処理後にウェイトを入れる";
-            this.checkBox_delayAfterProcessDeckey.UseVisualStyleBackColor = true;
+            this.checkBox_loggingVirtualKeyboardInfo.AutoSize = true;
+            this.checkBox_loggingVirtualKeyboardInfo.Location = new System.Drawing.Point(21, 87);
+            this.checkBox_loggingVirtualKeyboardInfo.Name = "checkBox_loggingVirtualKeyboardInfo";
+            this.checkBox_loggingVirtualKeyboardInfo.Size = new System.Drawing.Size(187, 19);
+            this.checkBox_loggingVirtualKeyboardInfo.TabIndex = 3;
+            this.checkBox_loggingVirtualKeyboardInfo.Text = "仮想キーボード情報をログ出口する";
+            this.checkBox_loggingVirtualKeyboardInfo.UseVisualStyleBackColor = true;
             // 
             // checkBox_loggingDecKeyInfo
             // 
             this.checkBox_loggingDecKeyInfo.AutoSize = true;
             this.checkBox_loggingDecKeyInfo.Location = new System.Drawing.Point(21, 48);
             this.checkBox_loggingDecKeyInfo.Name = "checkBox_loggingDecKeyInfo";
-            this.checkBox_loggingDecKeyInfo.Size = new System.Drawing.Size(215, 19);
-            this.checkBox_loggingDecKeyInfo.TabIndex = 0;
-            this.checkBox_loggingDecKeyInfo.Text = "入力されたホットキー情報をログ出力する";
+            this.checkBox_loggingDecKeyInfo.Size = new System.Drawing.Size(189, 19);
+            this.checkBox_loggingDecKeyInfo.TabIndex = 1;
+            this.checkBox_loggingDecKeyInfo.Text = "入力されたキー情報をログ出力する";
             this.checkBox_loggingDecKeyInfo.UseVisualStyleBackColor = true;
             // 
             // checkBox_loggingActiveWindowInfo
@@ -1237,7 +1257,7 @@ namespace KanchokuWS
             this.checkBox_loggingActiveWindowInfo.Location = new System.Drawing.Point(21, 68);
             this.checkBox_loggingActiveWindowInfo.Name = "checkBox_loggingActiveWindowInfo";
             this.checkBox_loggingActiveWindowInfo.Size = new System.Drawing.Size(205, 19);
-            this.checkBox_loggingActiveWindowInfo.TabIndex = 1;
+            this.checkBox_loggingActiveWindowInfo.TabIndex = 2;
             this.checkBox_loggingActiveWindowInfo.Text = "アクティブウィンドウ情報をログ出力する";
             this.checkBox_loggingActiveWindowInfo.UseVisualStyleBackColor = true;
             // 
@@ -1494,31 +1514,6 @@ namespace KanchokuWS
             this.groupBox25.TabStop = false;
             this.groupBox25.Text = "縦列・横列鍵盤背景色";
             // 
-            // textBox_onSelectedBackColor
-            // 
-            this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_onSelectedBackColor.ForBackColor = true;
-            this.textBox_onSelectedBackColor.Location = new System.Drawing.Point(103, 44);
-            this.textBox_onSelectedBackColor.Name = "textBox_onSelectedBackColor";
-            this.textBox_onSelectedBackColor.ReadOnly = true;
-            this.textBox_onSelectedBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_onSelectedBackColor.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_onSelectedBackColor, "縦列または横列鍵盤での選択済み候補の背景色\r\n\r\n履歴選択や交ぜ書き変換などで、縦列または横列鍵盤が\r\n表示されている時、選択された候補(出力済み候補)の\r\n背景" +
-        "色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_firstCandidateBackColor
-            // 
-            this.textBox_firstCandidateBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_firstCandidateBackColor.ForBackColor = true;
-            this.textBox_firstCandidateBackColor.Location = new System.Drawing.Point(103, 19);
-            this.textBox_firstCandidateBackColor.Name = "textBox_firstCandidateBackColor";
-            this.textBox_firstCandidateBackColor.ReadOnly = true;
-            this.textBox_firstCandidateBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_firstCandidateBackColor.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_firstCandidateBackColor, "縦列または横列鍵盤で優先的に選択される候補の背景色\r\n\r\n履歴選択や交ぜ書き変換などで、縦列または横列鍵盤が\r\n表示されている時、Enterキーで選択できる優先候" +
-        "補の\r\n背景色を設定します。\r\n\r\nただし履歴選択については、Enterで優先候補を選択するか\r\nどうかは「履歴・交ぜ書き」タブで設定します。\r\n（ここをクリッ" +
-        "クすると設定ダイアログが開きます。）");
-            // 
             // label13
             // 
             this.label13.AutoSize = true;
@@ -1551,40 +1546,6 @@ namespace KanchokuWS
             this.groupBox24.TabIndex = 3;
             this.groupBox24.TabStop = false;
             this.groupBox24.Text = "中央鍵盤背景色";
-            // 
-            // textBox_onHistAssoc
-            // 
-            this.textBox_onHistAssoc.BackColor = System.Drawing.Color.White;
-            this.textBox_onHistAssoc.ForBackColor = true;
-            this.textBox_onHistAssoc.Location = new System.Drawing.Point(103, 69);
-            this.textBox_onHistAssoc.Name = "textBox_onHistAssoc";
-            this.textBox_onHistAssoc.ReadOnly = true;
-            this.textBox_onHistAssoc.Size = new System.Drawing.Size(132, 23);
-            this.textBox_onHistAssoc.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_onHistAssoc, "履歴選択・部首連想選択時の中央鍵盤背景色\r\n\r\n縦列鍵盤による履歴候補選択や部首連想での文字選択時の\r\n中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設" +
-        "定ダイアログが開きます。）");
-            // 
-            // textBox_onMazegaki
-            // 
-            this.textBox_onMazegaki.BackColor = System.Drawing.Color.White;
-            this.textBox_onMazegaki.ForBackColor = true;
-            this.textBox_onMazegaki.Location = new System.Drawing.Point(103, 44);
-            this.textBox_onMazegaki.Name = "textBox_onMazegaki";
-            this.textBox_onMazegaki.ReadOnly = true;
-            this.textBox_onMazegaki.Size = new System.Drawing.Size(132, 23);
-            this.textBox_onMazegaki.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_onMazegaki, "交ぜ書き変換時の中央鍵盤背景色\r\n\r\n交ぜ書き変換時の中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_on2ndStrokeBackColor
-            // 
-            this.textBox_on2ndStrokeBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_on2ndStrokeBackColor.ForBackColor = true;
-            this.textBox_on2ndStrokeBackColor.Location = new System.Drawing.Point(103, 19);
-            this.textBox_on2ndStrokeBackColor.Name = "textBox_on2ndStrokeBackColor";
-            this.textBox_on2ndStrokeBackColor.ReadOnly = true;
-            this.textBox_on2ndStrokeBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_on2ndStrokeBackColor.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_on2ndStrokeBackColor, "第2打鍵待ちの時の中央鍵盤背景色\r\n\r\n第2打鍵の入力を待っている時の中央鍵盤の\r\n背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
             // 
             // label52
             // 
@@ -1808,50 +1769,6 @@ namespace KanchokuWS
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "通常鍵盤背景色";
             // 
-            // textBox_middleLevelBackColor
-            // 
-            this.textBox_middleLevelBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_middleLevelBackColor.ForBackColor = true;
-            this.textBox_middleLevelBackColor.Location = new System.Drawing.Point(104, 93);
-            this.textBox_middleLevelBackColor.Name = "textBox_middleLevelBackColor";
-            this.textBox_middleLevelBackColor.ReadOnly = true;
-            this.textBox_middleLevelBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_middleLevelBackColor.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.textBox_middleLevelBackColor, "中段セルの背景色\r\n\r\n通常鍵盤の中段(asd...)セルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_highLowLevelBackColor
-            // 
-            this.textBox_highLowLevelBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_highLowLevelBackColor.ForBackColor = true;
-            this.textBox_highLowLevelBackColor.Location = new System.Drawing.Point(104, 68);
-            this.textBox_highLowLevelBackColor.Name = "textBox_highLowLevelBackColor";
-            this.textBox_highLowLevelBackColor.ReadOnly = true;
-            this.textBox_highLowLevelBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_highLowLevelBackColor.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_highLowLevelBackColor, "上下段セルの背景色\r\n\r\n通常鍵盤の上下段(qwe.../zxc...)セルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_centerSideBackColor
-            // 
-            this.textBox_centerSideBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_centerSideBackColor.ForBackColor = true;
-            this.textBox_centerSideBackColor.Location = new System.Drawing.Point(104, 43);
-            this.textBox_centerSideBackColor.Name = "textBox_centerSideBackColor";
-            this.textBox_centerSideBackColor.ReadOnly = true;
-            this.textBox_centerSideBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_centerSideBackColor.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_centerSideBackColor, "中央鍵盤寄りセルの背景色\r\n\r\n通常鍵盤の中央鍵盤寄り(tgb/yhn)セルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_topLevelBackColor
-            // 
-            this.textBox_topLevelBackColor.BackColor = System.Drawing.Color.White;
-            this.textBox_topLevelBackColor.ForBackColor = true;
-            this.textBox_topLevelBackColor.Location = new System.Drawing.Point(104, 18);
-            this.textBox_topLevelBackColor.Name = "textBox_topLevelBackColor";
-            this.textBox_topLevelBackColor.ReadOnly = true;
-            this.textBox_topLevelBackColor.Size = new System.Drawing.Size(132, 23);
-            this.textBox_topLevelBackColor.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_topLevelBackColor, "最上段セルの背景色\r\n\r\n通常鍵盤の最上段(数字キー)のセルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
             // label37
             // 
             this.label37.AutoSize = true;
@@ -1903,45 +1820,6 @@ namespace KanchokuWS
             this.groupBox5.TabIndex = 2;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "モード標識文字色";
-            // 
-            // textBox_alphaModeForeColor
-            // 
-            this.textBox_alphaModeForeColor.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox_alphaModeForeColor.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_alphaModeForeColor.ForBackColor = false;
-            this.textBox_alphaModeForeColor.Location = new System.Drawing.Point(103, 67);
-            this.textBox_alphaModeForeColor.Name = "textBox_alphaModeForeColor";
-            this.textBox_alphaModeForeColor.ReadOnly = true;
-            this.textBox_alphaModeForeColor.Size = new System.Drawing.Size(132, 20);
-            this.textBox_alphaModeForeColor.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_alphaModeForeColor, "デコーダOFF時のモード標識の文字色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\nデコーダをOFFにして漢直モードから抜けた時の文字色を設定します。" +
-        "\r\n（ここをクリックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_2ndStrokeForeColor
-            // 
-            this.textBox_2ndStrokeForeColor.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox_2ndStrokeForeColor.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_2ndStrokeForeColor.ForBackColor = false;
-            this.textBox_2ndStrokeForeColor.Location = new System.Drawing.Point(103, 43);
-            this.textBox_2ndStrokeForeColor.Name = "textBox_2ndStrokeForeColor";
-            this.textBox_2ndStrokeForeColor.ReadOnly = true;
-            this.textBox_2ndStrokeForeColor.Size = new System.Drawing.Size(132, 20);
-            this.textBox_2ndStrokeForeColor.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_2ndStrokeForeColor, "第2打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第2打鍵(以降)を待っている時の文字色を設定します。\r\n（ここをクリ" +
-        "ックすると設定ダイアログが開きます。）");
-            // 
-            // textBox_modeForeColor
-            // 
-            this.textBox_modeForeColor.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox_modeForeColor.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_modeForeColor.ForBackColor = false;
-            this.textBox_modeForeColor.Location = new System.Drawing.Point(103, 18);
-            this.textBox_modeForeColor.Name = "textBox_modeForeColor";
-            this.textBox_modeForeColor.ReadOnly = true;
-            this.textBox_modeForeColor.Size = new System.Drawing.Size(132, 20);
-            this.textBox_modeForeColor.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
-        "と設定ダイアログが開きます。）");
             // 
             // label30
             // 
@@ -2416,6 +2294,7 @@ namespace KanchokuWS
             this.comboBox_strokeHelpRotationKey.TabIndex = 1;
             this.toolTip1.SetToolTip(this.comboBox_strokeHelpRotationKey, "第1打鍵ヘルプ画面のローテーションキーを設定します。\r\n\r\n指定したキーの Ctrl修飾および Ctrl-Shift 修飾が使われます。\r\nCtrl修飾されたキー" +
         "で順方向のローテーション、\r\nCtrl-Shift修飾されたキーで逆方向のローテーションとなります。\r\n");
+            this.comboBox_strokeHelpRotationKey.DropDown += new System.EventHandler(this.comboBox_strokeHelpRotationKey_DropDown);
             // 
             // label74
             // 
@@ -2435,6 +2314,7 @@ namespace KanchokuWS
             this.comboBox_fullEscapeKey.Size = new System.Drawing.Size(89, 23);
             this.comboBox_fullEscapeKey.TabIndex = 0;
             this.toolTip1.SetToolTip(this.comboBox_fullEscapeKey, resources.GetString("comboBox_fullEscapeKey.ToolTip"));
+            this.comboBox_fullEscapeKey.DropDown += new System.EventHandler(this.comboBox_fullEscapeKey_DropDown);
             // 
             // label73
             // 
@@ -2485,18 +2365,39 @@ namespace KanchokuWS
             // 
             // groupBox_globalCtrlKeys
             // 
+            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_dateStringKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_endKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_homeKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_downArrowKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_upArrowKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_rightArrowKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_leftArrowKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_deleteKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_backSpaceKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.comboBox_dateStringKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.label92);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.comboBox_endKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.label88);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.comboBox_homeKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.label90);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.comboBox_deleteKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.label86);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.comboBox_downArrowKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.label84);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.comboBox_upArrowKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.label82);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.comboBox_rightArrowKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.label80);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.comboBox_leftArrowKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.label78);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.comboBox_backSpaceKey);
+            this.groupBox_globalCtrlKeys.Controls.Add(this.label76);
             this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_globalCtrlKeysEnabled);
-            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_CtrlSemicolon);
             this.groupBox_globalCtrlKeys.Controls.Add(this.groupBox11);
-            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_CtrlE);
-            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_CtrlD);
-            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_CtrlH);
-            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_CtrlA);
-            this.groupBox_globalCtrlKeys.Controls.Add(this.checkBox_CtrlBFNP);
             this.groupBox_globalCtrlKeys.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox_globalCtrlKeys.Location = new System.Drawing.Point(7, 9);
+            this.groupBox_globalCtrlKeys.Location = new System.Drawing.Point(7, 4);
             this.groupBox_globalCtrlKeys.Name = "groupBox_globalCtrlKeys";
-            this.groupBox_globalCtrlKeys.Size = new System.Drawing.Size(288, 317);
+            this.groupBox_globalCtrlKeys.Size = new System.Drawing.Size(288, 327);
             this.groupBox_globalCtrlKeys.TabIndex = 0;
             this.groupBox_globalCtrlKeys.TabStop = false;
             this.groupBox_globalCtrlKeys.Text = "　　　　　　　　　　　　　　　　　";
@@ -2504,7 +2405,7 @@ namespace KanchokuWS
             // checkBox_globalCtrlKeysEnabled
             // 
             this.checkBox_globalCtrlKeysEnabled.AutoSize = true;
-            this.checkBox_globalCtrlKeysEnabled.Location = new System.Drawing.Point(9, 1);
+            this.checkBox_globalCtrlKeysEnabled.Location = new System.Drawing.Point(9, -2);
             this.checkBox_globalCtrlKeysEnabled.Name = "checkBox_globalCtrlKeysEnabled";
             this.checkBox_globalCtrlKeysEnabled.Size = new System.Drawing.Size(210, 19);
             this.checkBox_globalCtrlKeysEnabled.TabIndex = 0;
@@ -2512,17 +2413,6 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.checkBox_globalCtrlKeysEnabled, resources.GetString("checkBox_globalCtrlKeysEnabled.ToolTip"));
             this.checkBox_globalCtrlKeysEnabled.UseVisualStyleBackColor = true;
             this.checkBox_globalCtrlKeysEnabled.CheckedChanged += new System.EventHandler(this.checkBox_globalCtrlKeysEnabled_CheckedChanged);
-            // 
-            // checkBox_CtrlSemicolon
-            // 
-            this.checkBox_CtrlSemicolon.AutoSize = true;
-            this.checkBox_CtrlSemicolon.Location = new System.Drawing.Point(20, 129);
-            this.checkBox_CtrlSemicolon.Name = "checkBox_CtrlSemicolon";
-            this.checkBox_CtrlSemicolon.Size = new System.Drawing.Size(140, 19);
-            this.checkBox_CtrlSemicolon.TabIndex = 6;
-            this.checkBox_CtrlSemicolon.Text = "Ctrl-; を日付に変換する";
-            this.toolTip1.SetToolTip(this.checkBox_CtrlSemicolon, resources.GetString("checkBox_CtrlSemicolon.ToolTip"));
-            this.checkBox_CtrlSemicolon.UseVisualStyleBackColor = true;
             // 
             // groupBox11
             // 
@@ -2532,17 +2422,17 @@ namespace KanchokuWS
             this.groupBox11.Controls.Add(this.textBox_targetClassNames);
             this.groupBox11.Controls.Add(this.radioButton_excludeFollowings);
             this.groupBox11.Controls.Add(this.radioButton_includeFollowings);
-            this.groupBox11.Location = new System.Drawing.Point(0, 157);
+            this.groupBox11.Location = new System.Drawing.Point(0, 204);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(314, 160);
-            this.groupBox11.TabIndex = 7;
+            this.groupBox11.Size = new System.Drawing.Size(314, 132);
+            this.groupBox11.TabIndex = 19;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "詳細";
             // 
             // label41
             // 
             this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(18, 46);
+            this.label41.Location = new System.Drawing.Point(18, 34);
             this.label41.Name = "label41";
             this.label41.Size = new System.Drawing.Size(168, 15);
             this.label41.TabIndex = 6;
@@ -2551,7 +2441,7 @@ namespace KanchokuWS
             // checkBox_useLeftCtrl
             // 
             this.checkBox_useLeftCtrl.AutoSize = true;
-            this.checkBox_useLeftCtrl.Location = new System.Drawing.Point(20, 18);
+            this.checkBox_useLeftCtrl.Location = new System.Drawing.Point(20, 14);
             this.checkBox_useLeftCtrl.Name = "checkBox_useLeftCtrl";
             this.checkBox_useLeftCtrl.Size = new System.Drawing.Size(106, 19);
             this.checkBox_useLeftCtrl.TabIndex = 0;
@@ -2563,7 +2453,7 @@ namespace KanchokuWS
             // checkBox_useRightCtrl
             // 
             this.checkBox_useRightCtrl.AutoSize = true;
-            this.checkBox_useRightCtrl.Location = new System.Drawing.Point(139, 18);
+            this.checkBox_useRightCtrl.Location = new System.Drawing.Point(139, 14);
             this.checkBox_useRightCtrl.Name = "checkBox_useRightCtrl";
             this.checkBox_useRightCtrl.Size = new System.Drawing.Size(106, 19);
             this.checkBox_useRightCtrl.TabIndex = 1;
@@ -2574,11 +2464,11 @@ namespace KanchokuWS
             // 
             // textBox_targetClassNames
             // 
-            this.textBox_targetClassNames.Location = new System.Drawing.Point(19, 84);
+            this.textBox_targetClassNames.Location = new System.Drawing.Point(19, 70);
             this.textBox_targetClassNames.Multiline = true;
             this.textBox_targetClassNames.Name = "textBox_targetClassNames";
             this.textBox_targetClassNames.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox_targetClassNames.Size = new System.Drawing.Size(262, 70);
+            this.textBox_targetClassNames.Size = new System.Drawing.Size(262, 50);
             this.textBox_targetClassNames.TabIndex = 4;
             this.toolTip1.SetToolTip(this.textBox_targetClassNames, "ここに変換対象(または対象外)となるウィンドウのClassNameを列挙します。\r\n1行1エントリで記述します。\r\n\r\nウィンドウのClassNameの先頭部分が" +
         "ここのリストのどれかと一致すれば、\r\nそれを対象(または対象外)と判断します。\r\n\r\nウィンドウのClassNameは、漢直モードに入り、仮想鍵盤を表示して、\r" +
@@ -2589,7 +2479,7 @@ namespace KanchokuWS
             // radioButton_excludeFollowings
             // 
             this.radioButton_excludeFollowings.AutoSize = true;
-            this.radioButton_excludeFollowings.Location = new System.Drawing.Point(32, 62);
+            this.radioButton_excludeFollowings.Location = new System.Drawing.Point(32, 50);
             this.radioButton_excludeFollowings.Name = "radioButton_excludeFollowings";
             this.radioButton_excludeFollowings.Size = new System.Drawing.Size(73, 19);
             this.radioButton_excludeFollowings.TabIndex = 2;
@@ -2600,74 +2490,13 @@ namespace KanchokuWS
             // radioButton_includeFollowings
             // 
             this.radioButton_includeFollowings.AutoSize = true;
-            this.radioButton_includeFollowings.Location = new System.Drawing.Point(109, 62);
+            this.radioButton_includeFollowings.Location = new System.Drawing.Point(109, 50);
             this.radioButton_includeFollowings.Name = "radioButton_includeFollowings";
             this.radioButton_includeFollowings.Size = new System.Drawing.Size(70, 19);
             this.radioButton_includeFollowings.TabIndex = 3;
             this.radioButton_includeFollowings.TabStop = true;
             this.radioButton_includeFollowings.Text = "下記のみ";
             this.radioButton_includeFollowings.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_CtrlE
-            // 
-            this.checkBox_CtrlE.AutoSize = true;
-            this.checkBox_CtrlE.Location = new System.Drawing.Point(20, 107);
-            this.checkBox_CtrlE.Name = "checkBox_CtrlE";
-            this.checkBox_CtrlE.Size = new System.Drawing.Size(145, 19);
-            this.checkBox_CtrlE.TabIndex = 5;
-            this.checkBox_CtrlE.Text = "Ctrl-E を End に変換する";
-            this.toolTip1.SetToolTip(this.checkBox_CtrlE, "Ctrl-E を End キーに変換する\r\n\r\nこの設定は、デコーダOFF時も有効になります。\r\n対象となるCtrlキーと相手先ウィンドウのクラス名は「詳細」で設" +
-        "定します。\r\n");
-            this.checkBox_CtrlE.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_CtrlD
-            // 
-            this.checkBox_CtrlD.AutoSize = true;
-            this.checkBox_CtrlD.Location = new System.Drawing.Point(20, 85);
-            this.checkBox_CtrlD.Name = "checkBox_CtrlD";
-            this.checkBox_CtrlD.Size = new System.Drawing.Size(160, 19);
-            this.checkBox_CtrlD.TabIndex = 4;
-            this.checkBox_CtrlD.Text = "Ctrl-D を Delete に変換する";
-            this.toolTip1.SetToolTip(this.checkBox_CtrlD, "Ctrl-D を Delete キーに変換する\r\n\r\nこの設定は、デコーダOFF時も有効になります。\r\n対象となるCtrlキーと相手先ウィンドウのクラス名は「詳細" +
-        "」で設定します。\r\n");
-            this.checkBox_CtrlD.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_CtrlH
-            // 
-            this.checkBox_CtrlH.AutoSize = true;
-            this.checkBox_CtrlH.Location = new System.Drawing.Point(20, 19);
-            this.checkBox_CtrlH.Name = "checkBox_CtrlH";
-            this.checkBox_CtrlH.Size = new System.Drawing.Size(184, 19);
-            this.checkBox_CtrlH.TabIndex = 1;
-            this.checkBox_CtrlH.Text = "Ctrl-H を BackSpace に変換する";
-            this.toolTip1.SetToolTip(this.checkBox_CtrlH, "Ctrl-H を Back Space キーに変換する\r\n\r\nこの設定は、デコーダOFF時も有効になります。\r\n対象となるCtrlキーと相手先ウィンドウのクラス名" +
-        "は「詳細」で設定します。");
-            this.checkBox_CtrlH.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_CtrlA
-            // 
-            this.checkBox_CtrlA.AutoSize = true;
-            this.checkBox_CtrlA.Location = new System.Drawing.Point(20, 63);
-            this.checkBox_CtrlA.Name = "checkBox_CtrlA";
-            this.checkBox_CtrlA.Size = new System.Drawing.Size(159, 19);
-            this.checkBox_CtrlA.TabIndex = 3;
-            this.checkBox_CtrlA.Text = "Ctrl-A を Home に変換する";
-            this.toolTip1.SetToolTip(this.checkBox_CtrlA, "Ctrl-A を Home キーに変換する\r\n\r\nこの設定は、デコーダOFF時も有効になります。\r\n対象となるCtrlキーと相手先ウィンドウのクラス名は「詳細」で" +
-        "設定します。\r\n");
-            this.checkBox_CtrlA.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_CtrlBFNP
-            // 
-            this.checkBox_CtrlBFNP.AutoSize = true;
-            this.checkBox_CtrlBFNP.Location = new System.Drawing.Point(20, 41);
-            this.checkBox_CtrlBFNP.Name = "checkBox_CtrlBFNP";
-            this.checkBox_CtrlBFNP.Size = new System.Drawing.Size(190, 19);
-            this.checkBox_CtrlBFNP.TabIndex = 2;
-            this.checkBox_CtrlBFNP.Text = "Ctrl-B,F,N,P を矢印キーに変換する";
-            this.toolTip1.SetToolTip(this.checkBox_CtrlBFNP, "Ctrl-B,F,N,P を矢印キーに変換する\r\n\r\n以下のようなキー変換を行います。\r\nCtrl-B : ← キー\r\nCtrl-F : → キー\r\nCtrl-N" +
-        " : ↓ キー\r\nCtrl-P : ↑ キー\r\n\r\nこの設定は、デコーダOFF時も有効になります。\r\n対象となるCtrlキーと相手先ウィンドウのクラス名は「詳細" +
-        "」で設定します。\r\n\r\n");
-            this.checkBox_CtrlBFNP.UseVisualStyleBackColor = true;
             // 
             // label_okResultCtrlKeys
             // 
@@ -2728,10 +2557,9 @@ namespace KanchokuWS
             // groupBox23
             // 
             this.groupBox23.Controls.Add(this.checkBox_mazegakiSelectFirstCand);
-            this.groupBox23.Controls.Add(this.checkBox_mazegakiByShiftSpace);
             this.groupBox23.Location = new System.Drawing.Point(11, 261);
             this.groupBox23.Name = "groupBox23";
-            this.groupBox23.Size = new System.Drawing.Size(294, 65);
+            this.groupBox23.Size = new System.Drawing.Size(294, 49);
             this.groupBox23.TabIndex = 2;
             this.groupBox23.TabStop = false;
             this.groupBox23.Text = "交ぜ書き変換";
@@ -2739,7 +2567,7 @@ namespace KanchokuWS
             // checkBox_mazegakiSelectFirstCand
             // 
             this.checkBox_mazegakiSelectFirstCand.AutoSize = true;
-            this.checkBox_mazegakiSelectFirstCand.Location = new System.Drawing.Point(20, 40);
+            this.checkBox_mazegakiSelectFirstCand.Location = new System.Drawing.Point(20, 21);
             this.checkBox_mazegakiSelectFirstCand.Name = "checkBox_mazegakiSelectFirstCand";
             this.checkBox_mazegakiSelectFirstCand.Size = new System.Drawing.Size(171, 19);
             this.checkBox_mazegakiSelectFirstCand.TabIndex = 1;
@@ -2747,17 +2575,6 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.checkBox_mazegakiSelectFirstCand, "交ぜ書き変換の結果が複数あっても、先頭候補を無条件に出力します。\r\n\r\n変換結果が出力された直後であれば、 再度交ぜ書き変換を呼び出すことで\r\n（複数候補があれば" +
         "）縦列鍵盤表示になります。\r\nまた、Esc キーで変換前の状態に戻せます。\r\nその後交ぜ書き変換を行うと、縦列鍵盤表示となります。");
             this.checkBox_mazegakiSelectFirstCand.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_mazegakiByShiftSpace
-            // 
-            this.checkBox_mazegakiByShiftSpace.AutoSize = true;
-            this.checkBox_mazegakiByShiftSpace.Location = new System.Drawing.Point(20, 18);
-            this.checkBox_mazegakiByShiftSpace.Name = "checkBox_mazegakiByShiftSpace";
-            this.checkBox_mazegakiByShiftSpace.Size = new System.Drawing.Size(185, 19);
-            this.checkBox_mazegakiByShiftSpace.TabIndex = 0;
-            this.checkBox_mazegakiByShiftSpace.Text = "Shift-Space で交ぜ書き変換する";
-            this.toolTip1.SetToolTip(this.checkBox_mazegakiByShiftSpace, "Shift-Space で交ぜ書き変換を実行します。\r\n\r\nチェックを外すと Shift-Space で空白が出力されるようになります。");
-            this.checkBox_mazegakiByShiftSpace.UseVisualStyleBackColor = true;
             // 
             // groupBox27
             // 
@@ -3563,6 +3380,436 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // comboBox_backSpaceKey
+            // 
+            this.comboBox_backSpaceKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_backSpaceKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.comboBox_backSpaceKey.FormattingEnabled = true;
+            this.comboBox_backSpaceKey.Location = new System.Drawing.Point(186, 18);
+            this.comboBox_backSpaceKey.Name = "comboBox_backSpaceKey";
+            this.comboBox_backSpaceKey.Size = new System.Drawing.Size(89, 20);
+            this.comboBox_backSpaceKey.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.comboBox_backSpaceKey, "BackSpace キーに変換する Ctrlキーを選択します");
+            this.comboBox_backSpaceKey.DropDown += new System.EventHandler(this.comboBox_backSpaceKey_DropDown);
+            // 
+            // label76
+            // 
+            this.label76.AutoSize = true;
+            this.label76.Location = new System.Drawing.Point(159, 20);
+            this.label76.Name = "label76";
+            this.label76.Size = new System.Drawing.Size(30, 15);
+            this.label76.TabIndex = 10;
+            this.label76.Text = "Ctrl-";
+            // 
+            // comboBox_leftArrowKey
+            // 
+            this.comboBox_leftArrowKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_leftArrowKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.comboBox_leftArrowKey.FormattingEnabled = true;
+            this.comboBox_leftArrowKey.Location = new System.Drawing.Point(186, 60);
+            this.comboBox_leftArrowKey.Name = "comboBox_leftArrowKey";
+            this.comboBox_leftArrowKey.Size = new System.Drawing.Size(89, 20);
+            this.comboBox_leftArrowKey.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.comboBox_leftArrowKey, "BackSpace キーに変換する Ctrlキーを選択します");
+            this.comboBox_leftArrowKey.DropDown += new System.EventHandler(this.comboBox_leftArrowKey_DropDown);
+            // 
+            // label78
+            // 
+            this.label78.AutoSize = true;
+            this.label78.Location = new System.Drawing.Point(159, 62);
+            this.label78.Name = "label78";
+            this.label78.Size = new System.Drawing.Size(30, 15);
+            this.label78.TabIndex = 13;
+            this.label78.Text = "Ctrl-";
+            // 
+            // comboBox_rightArrowKey
+            // 
+            this.comboBox_rightArrowKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_rightArrowKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.comboBox_rightArrowKey.FormattingEnabled = true;
+            this.comboBox_rightArrowKey.Location = new System.Drawing.Point(186, 81);
+            this.comboBox_rightArrowKey.Name = "comboBox_rightArrowKey";
+            this.comboBox_rightArrowKey.Size = new System.Drawing.Size(89, 20);
+            this.comboBox_rightArrowKey.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.comboBox_rightArrowKey, "BackSpace キーに変換する Ctrlキーを選択します");
+            this.comboBox_rightArrowKey.DropDown += new System.EventHandler(this.comboBox_rightArrowKey_DropDown);
+            // 
+            // label80
+            // 
+            this.label80.AutoSize = true;
+            this.label80.Location = new System.Drawing.Point(159, 83);
+            this.label80.Name = "label80";
+            this.label80.Size = new System.Drawing.Size(30, 15);
+            this.label80.TabIndex = 16;
+            this.label80.Text = "Ctrl-";
+            // 
+            // comboBox_upArrowKey
+            // 
+            this.comboBox_upArrowKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_upArrowKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.comboBox_upArrowKey.FormattingEnabled = true;
+            this.comboBox_upArrowKey.Location = new System.Drawing.Point(186, 102);
+            this.comboBox_upArrowKey.Name = "comboBox_upArrowKey";
+            this.comboBox_upArrowKey.Size = new System.Drawing.Size(89, 20);
+            this.comboBox_upArrowKey.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.comboBox_upArrowKey, "BackSpace キーに変換する Ctrlキーを選択します");
+            this.comboBox_upArrowKey.DropDown += new System.EventHandler(this.comboBox_upArrowKey_DropDown);
+            // 
+            // label82
+            // 
+            this.label82.AutoSize = true;
+            this.label82.Location = new System.Drawing.Point(159, 104);
+            this.label82.Name = "label82";
+            this.label82.Size = new System.Drawing.Size(30, 15);
+            this.label82.TabIndex = 19;
+            this.label82.Text = "Ctrl-";
+            // 
+            // comboBox_downArrowKey
+            // 
+            this.comboBox_downArrowKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_downArrowKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.comboBox_downArrowKey.FormattingEnabled = true;
+            this.comboBox_downArrowKey.Location = new System.Drawing.Point(186, 123);
+            this.comboBox_downArrowKey.Name = "comboBox_downArrowKey";
+            this.comboBox_downArrowKey.Size = new System.Drawing.Size(89, 20);
+            this.comboBox_downArrowKey.TabIndex = 12;
+            this.toolTip1.SetToolTip(this.comboBox_downArrowKey, "BackSpace キーに変換する Ctrlキーを選択します");
+            this.comboBox_downArrowKey.DropDown += new System.EventHandler(this.comboBox_downArrowKey_DropDown);
+            // 
+            // label84
+            // 
+            this.label84.AutoSize = true;
+            this.label84.Location = new System.Drawing.Point(159, 125);
+            this.label84.Name = "label84";
+            this.label84.Size = new System.Drawing.Size(30, 15);
+            this.label84.TabIndex = 22;
+            this.label84.Text = "Ctrl-";
+            // 
+            // comboBox_deleteKey
+            // 
+            this.comboBox_deleteKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_deleteKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.comboBox_deleteKey.FormattingEnabled = true;
+            this.comboBox_deleteKey.Location = new System.Drawing.Point(186, 39);
+            this.comboBox_deleteKey.Name = "comboBox_deleteKey";
+            this.comboBox_deleteKey.Size = new System.Drawing.Size(89, 20);
+            this.comboBox_deleteKey.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.comboBox_deleteKey, "BackSpace キーに変換する Ctrlキーを選択します");
+            this.comboBox_deleteKey.DropDown += new System.EventHandler(this.comboBox_deleteKey_DropDown);
+            // 
+            // label86
+            // 
+            this.label86.AutoSize = true;
+            this.label86.Location = new System.Drawing.Point(159, 41);
+            this.label86.Name = "label86";
+            this.label86.Size = new System.Drawing.Size(30, 15);
+            this.label86.TabIndex = 25;
+            this.label86.Text = "Ctrl-";
+            // 
+            // comboBox_endKey
+            // 
+            this.comboBox_endKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_endKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.comboBox_endKey.FormattingEnabled = true;
+            this.comboBox_endKey.Location = new System.Drawing.Point(186, 165);
+            this.comboBox_endKey.Name = "comboBox_endKey";
+            this.comboBox_endKey.Size = new System.Drawing.Size(89, 20);
+            this.comboBox_endKey.TabIndex = 16;
+            this.toolTip1.SetToolTip(this.comboBox_endKey, "BackSpace キーに変換する Ctrlキーを選択します");
+            this.comboBox_endKey.DropDown += new System.EventHandler(this.comboBox_endKey_DropDown);
+            // 
+            // label88
+            // 
+            this.label88.AutoSize = true;
+            this.label88.Location = new System.Drawing.Point(159, 167);
+            this.label88.Name = "label88";
+            this.label88.Size = new System.Drawing.Size(30, 15);
+            this.label88.TabIndex = 31;
+            this.label88.Text = "Ctrl-";
+            // 
+            // comboBox_homeKey
+            // 
+            this.comboBox_homeKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_homeKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.comboBox_homeKey.FormattingEnabled = true;
+            this.comboBox_homeKey.Location = new System.Drawing.Point(186, 144);
+            this.comboBox_homeKey.Name = "comboBox_homeKey";
+            this.comboBox_homeKey.Size = new System.Drawing.Size(89, 20);
+            this.comboBox_homeKey.TabIndex = 14;
+            this.toolTip1.SetToolTip(this.comboBox_homeKey, "BackSpace キーに変換する Ctrlキーを選択します");
+            this.comboBox_homeKey.DropDown += new System.EventHandler(this.comboBox_homeKey_DropDown);
+            // 
+            // label90
+            // 
+            this.label90.AutoSize = true;
+            this.label90.Location = new System.Drawing.Point(159, 146);
+            this.label90.Name = "label90";
+            this.label90.Size = new System.Drawing.Size(30, 15);
+            this.label90.TabIndex = 28;
+            this.label90.Text = "Ctrl-";
+            // 
+            // comboBox_dateStringKey
+            // 
+            this.comboBox_dateStringKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_dateStringKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.comboBox_dateStringKey.FormattingEnabled = true;
+            this.comboBox_dateStringKey.Location = new System.Drawing.Point(186, 186);
+            this.comboBox_dateStringKey.Name = "comboBox_dateStringKey";
+            this.comboBox_dateStringKey.Size = new System.Drawing.Size(89, 20);
+            this.comboBox_dateStringKey.TabIndex = 18;
+            this.toolTip1.SetToolTip(this.comboBox_dateStringKey, "BackSpace キーに変換する Ctrlキーを選択します");
+            this.comboBox_dateStringKey.DropDown += new System.EventHandler(this.comboBox_dateStringKey_DropDown);
+            // 
+            // label92
+            // 
+            this.label92.AutoSize = true;
+            this.label92.Location = new System.Drawing.Point(159, 188);
+            this.label92.Name = "label92";
+            this.label92.Size = new System.Drawing.Size(30, 15);
+            this.label92.TabIndex = 34;
+            this.label92.Text = "Ctrl-";
+            // 
+            // checkBox_backSpaceKey
+            // 
+            this.checkBox_backSpaceKey.AutoSize = true;
+            this.checkBox_backSpaceKey.Location = new System.Drawing.Point(18, 19);
+            this.checkBox_backSpaceKey.Name = "checkBox_backSpaceKey";
+            this.checkBox_backSpaceKey.Size = new System.Drawing.Size(135, 19);
+            this.checkBox_backSpaceKey.TabIndex = 1;
+            this.checkBox_backSpaceKey.Text = "BackSpace キーに変換";
+            this.checkBox_backSpaceKey.UseVisualStyleBackColor = true;
+            this.checkBox_backSpaceKey.CheckedChanged += new System.EventHandler(this.checkBox_backSpaceKey_CheckedChanged);
+            // 
+            // checkBox_deleteKey
+            // 
+            this.checkBox_deleteKey.AutoSize = true;
+            this.checkBox_deleteKey.Location = new System.Drawing.Point(18, 40);
+            this.checkBox_deleteKey.Name = "checkBox_deleteKey";
+            this.checkBox_deleteKey.Size = new System.Drawing.Size(112, 19);
+            this.checkBox_deleteKey.TabIndex = 3;
+            this.checkBox_deleteKey.Text = "Delete キーに変換";
+            this.checkBox_deleteKey.UseVisualStyleBackColor = true;
+            this.checkBox_deleteKey.CheckedChanged += new System.EventHandler(this.checkBox_deleteKey_CheckedChanged);
+            // 
+            // checkBox_leftArrowKey
+            // 
+            this.checkBox_leftArrowKey.AutoSize = true;
+            this.checkBox_leftArrowKey.Location = new System.Drawing.Point(18, 61);
+            this.checkBox_leftArrowKey.Name = "checkBox_leftArrowKey";
+            this.checkBox_leftArrowKey.Size = new System.Drawing.Size(132, 19);
+            this.checkBox_leftArrowKey.TabIndex = 5;
+            this.checkBox_leftArrowKey.Text = "左矢印(←)キーに変換";
+            this.checkBox_leftArrowKey.UseVisualStyleBackColor = true;
+            this.checkBox_leftArrowKey.CheckedChanged += new System.EventHandler(this.checkBox_leftArrowKey_CheckedChanged);
+            // 
+            // checkBox_rightArrowKey
+            // 
+            this.checkBox_rightArrowKey.AutoSize = true;
+            this.checkBox_rightArrowKey.Location = new System.Drawing.Point(18, 82);
+            this.checkBox_rightArrowKey.Name = "checkBox_rightArrowKey";
+            this.checkBox_rightArrowKey.Size = new System.Drawing.Size(132, 19);
+            this.checkBox_rightArrowKey.TabIndex = 7;
+            this.checkBox_rightArrowKey.Text = "右矢印(→)キーに変換";
+            this.checkBox_rightArrowKey.UseVisualStyleBackColor = true;
+            this.checkBox_rightArrowKey.CheckedChanged += new System.EventHandler(this.checkBox_rightArrowKey_CheckedChanged);
+            // 
+            // checkBox_upArrowKey
+            // 
+            this.checkBox_upArrowKey.AutoSize = true;
+            this.checkBox_upArrowKey.Location = new System.Drawing.Point(18, 103);
+            this.checkBox_upArrowKey.Name = "checkBox_upArrowKey";
+            this.checkBox_upArrowKey.Size = new System.Drawing.Size(132, 19);
+            this.checkBox_upArrowKey.TabIndex = 9;
+            this.checkBox_upArrowKey.Text = "上矢印(↑)キーに変換";
+            this.checkBox_upArrowKey.UseVisualStyleBackColor = true;
+            this.checkBox_upArrowKey.CheckedChanged += new System.EventHandler(this.checkBox_upArrowKey_CheckedChanged);
+            // 
+            // checkBox_downArrowKey
+            // 
+            this.checkBox_downArrowKey.AutoSize = true;
+            this.checkBox_downArrowKey.Location = new System.Drawing.Point(18, 124);
+            this.checkBox_downArrowKey.Name = "checkBox_downArrowKey";
+            this.checkBox_downArrowKey.Size = new System.Drawing.Size(132, 19);
+            this.checkBox_downArrowKey.TabIndex = 11;
+            this.checkBox_downArrowKey.Text = "下矢印(↓)キーに変換";
+            this.checkBox_downArrowKey.UseVisualStyleBackColor = true;
+            this.checkBox_downArrowKey.CheckedChanged += new System.EventHandler(this.checkBox_downArrowKey_CheckedChanged);
+            // 
+            // checkBox_homeKey
+            // 
+            this.checkBox_homeKey.AutoSize = true;
+            this.checkBox_homeKey.Location = new System.Drawing.Point(18, 145);
+            this.checkBox_homeKey.Name = "checkBox_homeKey";
+            this.checkBox_homeKey.Size = new System.Drawing.Size(111, 19);
+            this.checkBox_homeKey.TabIndex = 13;
+            this.checkBox_homeKey.Text = "Home キーに変換";
+            this.checkBox_homeKey.UseVisualStyleBackColor = true;
+            this.checkBox_homeKey.CheckedChanged += new System.EventHandler(this.checkBox_homeKey_CheckedChanged);
+            // 
+            // checkBox_endKey
+            // 
+            this.checkBox_endKey.AutoSize = true;
+            this.checkBox_endKey.Location = new System.Drawing.Point(18, 166);
+            this.checkBox_endKey.Name = "checkBox_endKey";
+            this.checkBox_endKey.Size = new System.Drawing.Size(99, 19);
+            this.checkBox_endKey.TabIndex = 15;
+            this.checkBox_endKey.Text = "End キーに変換";
+            this.checkBox_endKey.UseVisualStyleBackColor = true;
+            this.checkBox_endKey.CheckedChanged += new System.EventHandler(this.checkBox_endKey_CheckedChanged);
+            // 
+            // checkBox_dateStringKey
+            // 
+            this.checkBox_dateStringKey.AutoSize = true;
+            this.checkBox_dateStringKey.Location = new System.Drawing.Point(18, 187);
+            this.checkBox_dateStringKey.Name = "checkBox_dateStringKey";
+            this.checkBox_dateStringKey.Size = new System.Drawing.Size(83, 19);
+            this.checkBox_dateStringKey.TabIndex = 17;
+            this.checkBox_dateStringKey.Text = "日付に変換";
+            this.checkBox_dateStringKey.UseVisualStyleBackColor = true;
+            this.checkBox_dateStringKey.CheckedChanged += new System.EventHandler(this.checkBox_dateStringKey_CheckedChanged);
+            // 
+            // textBox_onSelectedBackColor
+            // 
+            this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_onSelectedBackColor.ForBackColor = true;
+            this.textBox_onSelectedBackColor.Location = new System.Drawing.Point(103, 44);
+            this.textBox_onSelectedBackColor.Name = "textBox_onSelectedBackColor";
+            this.textBox_onSelectedBackColor.ReadOnly = true;
+            this.textBox_onSelectedBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_onSelectedBackColor.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_onSelectedBackColor, "縦列または横列鍵盤での選択済み候補の背景色\r\n\r\n履歴選択や交ぜ書き変換などで、縦列または横列鍵盤が\r\n表示されている時、選択された候補(出力済み候補)の\r\n背景" +
+        "色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_firstCandidateBackColor
+            // 
+            this.textBox_firstCandidateBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_firstCandidateBackColor.ForBackColor = true;
+            this.textBox_firstCandidateBackColor.Location = new System.Drawing.Point(103, 19);
+            this.textBox_firstCandidateBackColor.Name = "textBox_firstCandidateBackColor";
+            this.textBox_firstCandidateBackColor.ReadOnly = true;
+            this.textBox_firstCandidateBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_firstCandidateBackColor.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_firstCandidateBackColor, "縦列または横列鍵盤で優先的に選択される候補の背景色\r\n\r\n履歴選択や交ぜ書き変換などで、縦列または横列鍵盤が\r\n表示されている時、Enterキーで選択できる優先候" +
+        "補の\r\n背景色を設定します。\r\n\r\nただし履歴選択については、Enterで優先候補を選択するか\r\nどうかは「履歴・交ぜ書き」タブで設定します。\r\n（ここをクリッ" +
+        "クすると設定ダイアログが開きます。）");
+            // 
+            // textBox_onHistAssoc
+            // 
+            this.textBox_onHistAssoc.BackColor = System.Drawing.Color.White;
+            this.textBox_onHistAssoc.ForBackColor = true;
+            this.textBox_onHistAssoc.Location = new System.Drawing.Point(103, 69);
+            this.textBox_onHistAssoc.Name = "textBox_onHistAssoc";
+            this.textBox_onHistAssoc.ReadOnly = true;
+            this.textBox_onHistAssoc.Size = new System.Drawing.Size(132, 23);
+            this.textBox_onHistAssoc.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_onHistAssoc, "履歴選択・部首連想選択時の中央鍵盤背景色\r\n\r\n縦列鍵盤による履歴候補選択や部首連想での文字選択時の\r\n中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設" +
+        "定ダイアログが開きます。）");
+            // 
+            // textBox_onMazegaki
+            // 
+            this.textBox_onMazegaki.BackColor = System.Drawing.Color.White;
+            this.textBox_onMazegaki.ForBackColor = true;
+            this.textBox_onMazegaki.Location = new System.Drawing.Point(103, 44);
+            this.textBox_onMazegaki.Name = "textBox_onMazegaki";
+            this.textBox_onMazegaki.ReadOnly = true;
+            this.textBox_onMazegaki.Size = new System.Drawing.Size(132, 23);
+            this.textBox_onMazegaki.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_onMazegaki, "交ぜ書き変換時の中央鍵盤背景色\r\n\r\n交ぜ書き変換時の中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_on2ndStrokeBackColor
+            // 
+            this.textBox_on2ndStrokeBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_on2ndStrokeBackColor.ForBackColor = true;
+            this.textBox_on2ndStrokeBackColor.Location = new System.Drawing.Point(103, 19);
+            this.textBox_on2ndStrokeBackColor.Name = "textBox_on2ndStrokeBackColor";
+            this.textBox_on2ndStrokeBackColor.ReadOnly = true;
+            this.textBox_on2ndStrokeBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_on2ndStrokeBackColor.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_on2ndStrokeBackColor, "第2打鍵待ちの時の中央鍵盤背景色\r\n\r\n第2打鍵の入力を待っている時の中央鍵盤の\r\n背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_middleLevelBackColor
+            // 
+            this.textBox_middleLevelBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_middleLevelBackColor.ForBackColor = true;
+            this.textBox_middleLevelBackColor.Location = new System.Drawing.Point(104, 93);
+            this.textBox_middleLevelBackColor.Name = "textBox_middleLevelBackColor";
+            this.textBox_middleLevelBackColor.ReadOnly = true;
+            this.textBox_middleLevelBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_middleLevelBackColor.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.textBox_middleLevelBackColor, "中段セルの背景色\r\n\r\n通常鍵盤の中段(asd...)セルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_highLowLevelBackColor
+            // 
+            this.textBox_highLowLevelBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_highLowLevelBackColor.ForBackColor = true;
+            this.textBox_highLowLevelBackColor.Location = new System.Drawing.Point(104, 68);
+            this.textBox_highLowLevelBackColor.Name = "textBox_highLowLevelBackColor";
+            this.textBox_highLowLevelBackColor.ReadOnly = true;
+            this.textBox_highLowLevelBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_highLowLevelBackColor.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_highLowLevelBackColor, "上下段セルの背景色\r\n\r\n通常鍵盤の上下段(qwe.../zxc...)セルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_centerSideBackColor
+            // 
+            this.textBox_centerSideBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_centerSideBackColor.ForBackColor = true;
+            this.textBox_centerSideBackColor.Location = new System.Drawing.Point(104, 43);
+            this.textBox_centerSideBackColor.Name = "textBox_centerSideBackColor";
+            this.textBox_centerSideBackColor.ReadOnly = true;
+            this.textBox_centerSideBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_centerSideBackColor.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_centerSideBackColor, "中央鍵盤寄りセルの背景色\r\n\r\n通常鍵盤の中央鍵盤寄り(tgb/yhn)セルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_topLevelBackColor
+            // 
+            this.textBox_topLevelBackColor.BackColor = System.Drawing.Color.White;
+            this.textBox_topLevelBackColor.ForBackColor = true;
+            this.textBox_topLevelBackColor.Location = new System.Drawing.Point(104, 18);
+            this.textBox_topLevelBackColor.Name = "textBox_topLevelBackColor";
+            this.textBox_topLevelBackColor.ReadOnly = true;
+            this.textBox_topLevelBackColor.Size = new System.Drawing.Size(132, 23);
+            this.textBox_topLevelBackColor.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_topLevelBackColor, "最上段セルの背景色\r\n\r\n通常鍵盤の最上段(数字キー)のセルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_alphaModeForeColor
+            // 
+            this.textBox_alphaModeForeColor.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox_alphaModeForeColor.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_alphaModeForeColor.ForBackColor = false;
+            this.textBox_alphaModeForeColor.Location = new System.Drawing.Point(103, 67);
+            this.textBox_alphaModeForeColor.Name = "textBox_alphaModeForeColor";
+            this.textBox_alphaModeForeColor.ReadOnly = true;
+            this.textBox_alphaModeForeColor.Size = new System.Drawing.Size(132, 20);
+            this.textBox_alphaModeForeColor.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_alphaModeForeColor, "デコーダOFF時のモード標識の文字色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\nデコーダをOFFにして漢直モードから抜けた時の文字色を設定します。" +
+        "\r\n（ここをクリックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_2ndStrokeForeColor
+            // 
+            this.textBox_2ndStrokeForeColor.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox_2ndStrokeForeColor.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_2ndStrokeForeColor.ForBackColor = false;
+            this.textBox_2ndStrokeForeColor.Location = new System.Drawing.Point(103, 43);
+            this.textBox_2ndStrokeForeColor.Name = "textBox_2ndStrokeForeColor";
+            this.textBox_2ndStrokeForeColor.ReadOnly = true;
+            this.textBox_2ndStrokeForeColor.Size = new System.Drawing.Size(132, 20);
+            this.textBox_2ndStrokeForeColor.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_2ndStrokeForeColor, "第2打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第2打鍵(以降)を待っている時の文字色を設定します。\r\n（ここをクリ" +
+        "ックすると設定ダイアログが開きます。）");
+            // 
+            // textBox_modeForeColor
+            // 
+            this.textBox_modeForeColor.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox_modeForeColor.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_modeForeColor.ForBackColor = false;
+            this.textBox_modeForeColor.Location = new System.Drawing.Point(103, 18);
+            this.textBox_modeForeColor.Name = "textBox_modeForeColor";
+            this.textBox_modeForeColor.ReadOnly = true;
+            this.textBox_modeForeColor.Size = new System.Drawing.Size(132, 20);
+            this.textBox_modeForeColor.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
+        "と設定ダイアログが開きます。）");
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -3735,10 +3982,8 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox textBox_activeWinInfoIntervalMillisec;
         private System.Windows.Forms.TabPage tabPage_ctrlKeys;
-        private System.Windows.Forms.CheckBox checkBox_CtrlBFNP;
         private System.Windows.Forms.Label label_okResultCtrlKeys;
         private System.Windows.Forms.TextBox textBox_targetClassNames;
-        private System.Windows.Forms.CheckBox checkBox_CtrlH;
         private System.Windows.Forms.Button button_ctrlClose;
         private System.Windows.Forms.Button button_ctrlEnter;
         private System.Windows.Forms.RadioButton radioButton_includeFollowings;
@@ -3747,9 +3992,6 @@ namespace KanchokuWS
         private System.Windows.Forms.CheckBox checkBox_ctrlMasEnter;
         private System.Windows.Forms.CheckBox checkBox_ctrlJasEnter;
         private System.Windows.Forms.GroupBox groupBox_globalCtrlKeys;
-        private System.Windows.Forms.CheckBox checkBox_CtrlE;
-        private System.Windows.Forms.CheckBox checkBox_CtrlD;
-        private System.Windows.Forms.CheckBox checkBox_CtrlA;
         private System.Windows.Forms.GroupBox groupBox11;
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.CheckBox checkBox_useLeftCtrl;
@@ -3762,7 +4004,6 @@ namespace KanchokuWS
         private System.Windows.Forms.CheckBox checkBox_confirmOnClose;
         private System.Windows.Forms.CheckBox checkBox_autoHistEnabled;
         private System.Windows.Forms.CheckBox checkBox_histSearchByCtrlSpace;
-        private System.Windows.Forms.CheckBox checkBox_CtrlSemicolon;
         private System.Windows.Forms.TextBox textBox_dateStringFormat;
         private System.Windows.Forms.GroupBox groupBox18;
         private System.Windows.Forms.GroupBox groupBox19;
@@ -3781,7 +4022,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Button button_fontColorClose;
         private System.Windows.Forms.Button button_fontColorEnter;
         private System.Windows.Forms.GroupBox groupBox15;
-        private System.Windows.Forms.CheckBox checkBox_delayAfterProcessDeckey;
+        private System.Windows.Forms.CheckBox checkBox_loggingVirtualKeyboardInfo;
         private System.Windows.Forms.CheckBox checkBox_loggingDecKeyInfo;
         private System.Windows.Forms.CheckBox checkBox_loggingActiveWindowInfo;
         private System.Windows.Forms.ComboBox comboBox_logLevel;
@@ -3940,9 +4181,35 @@ namespace KanchokuWS
         private System.Windows.Forms.CheckBox checkBox_removeOneStrokeByBackspace;
         private System.Windows.Forms.Button button_showPaddingsDesc;
         private System.Windows.Forms.GroupBox groupBox23;
-        private System.Windows.Forms.CheckBox checkBox_mazegakiByShiftSpace;
         private System.Windows.Forms.CheckBox checkBox_mazegakiSelectFirstCand;
         private System.Windows.Forms.TextBox textBox_hankakuKatakanaOneShotKeySeq;
         private System.Windows.Forms.Label label75;
+        private System.Windows.Forms.ComboBox comboBox_dateStringKey;
+        private System.Windows.Forms.Label label92;
+        private System.Windows.Forms.ComboBox comboBox_endKey;
+        private System.Windows.Forms.Label label88;
+        private System.Windows.Forms.ComboBox comboBox_homeKey;
+        private System.Windows.Forms.Label label90;
+        private System.Windows.Forms.ComboBox comboBox_deleteKey;
+        private System.Windows.Forms.Label label86;
+        private System.Windows.Forms.ComboBox comboBox_downArrowKey;
+        private System.Windows.Forms.Label label84;
+        private System.Windows.Forms.ComboBox comboBox_upArrowKey;
+        private System.Windows.Forms.Label label82;
+        private System.Windows.Forms.ComboBox comboBox_rightArrowKey;
+        private System.Windows.Forms.Label label80;
+        private System.Windows.Forms.ComboBox comboBox_leftArrowKey;
+        private System.Windows.Forms.Label label78;
+        private System.Windows.Forms.ComboBox comboBox_backSpaceKey;
+        private System.Windows.Forms.Label label76;
+        private System.Windows.Forms.CheckBox checkBox_dateStringKey;
+        private System.Windows.Forms.CheckBox checkBox_endKey;
+        private System.Windows.Forms.CheckBox checkBox_homeKey;
+        private System.Windows.Forms.CheckBox checkBox_downArrowKey;
+        private System.Windows.Forms.CheckBox checkBox_upArrowKey;
+        private System.Windows.Forms.CheckBox checkBox_rightArrowKey;
+        private System.Windows.Forms.CheckBox checkBox_leftArrowKey;
+        private System.Windows.Forms.CheckBox checkBox_deleteKey;
+        private System.Windows.Forms.CheckBox checkBox_backSpaceKey;
     }
 }
