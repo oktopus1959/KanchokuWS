@@ -77,6 +77,8 @@ namespace KanchokuWS
             AcceptButton = button_basicEnter;
             CancelButton = button_basicClose;
 
+            button_showPaddingsDesc.Enabled = frmVkb != null;
+
             tabControl1.SelectedIndex = SelectedTabIndex;
             changeGlobalCtrlKeysCheckBoxState();
 
@@ -286,7 +288,7 @@ namespace KanchokuWS
 
         private void button_basicEnter_Click(object sender, EventArgs e)
         {
-            frmMain.DeactivateDecoder();
+            frmMain?.DeactivateDecoder();
 
             // スプラッシュウィンドウ
             Settings.SetUserIni("splashWindowShowDuration", textBox_splashWindowShowDuration.Text.Trim());
@@ -319,7 +321,7 @@ namespace KanchokuWS
 
             checkerBasic.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
-            frmMain.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             //SystemHelper.ShowInfoMessageBox("設定しました");
             label_okResultBasic.Show();
@@ -341,7 +343,7 @@ namespace KanchokuWS
 
             checkerAll.Reinitialize();
 
-            frmMain.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             //SystemHelper.ShowInfoMessageBox("設定しました");
             label_reloadBasic.Show();
@@ -423,7 +425,7 @@ namespace KanchokuWS
 
         private void button_fileEnter_Click(object sender, EventArgs e)
         {
-            frmMain.DeactivateDecoder();
+            frmMain?.DeactivateDecoder();
 
             // フォント
             Settings.SetUserIni("normalFont", textBox_normalFont.Text.Trim());
@@ -459,7 +461,7 @@ namespace KanchokuWS
 
             checkerFontColor.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
-            frmMain.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             label_okResultFontColor.Show();
 
@@ -562,7 +564,7 @@ namespace KanchokuWS
 
         private void button_advancedEnter_Click(object sender, EventArgs e)
         {
-            frmMain.DeactivateDecoder();
+            frmMain?.DeactivateDecoder();
 
             // モード標識表示時間
             Settings.SetUserIni("vkbOffsetX", textBox_vkbOffsetX.Text.Trim());
@@ -607,7 +609,7 @@ namespace KanchokuWS
             //frmVkb?.SetNormalCellBackColors();
             frmMode?.ShowImmediately();
 
-            frmMain.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             label_okResultAdvanced.Show();
         }
@@ -666,7 +668,7 @@ namespace KanchokuWS
 
         private void button_keyAssignEnter_Click(object sender, EventArgs e)
         {
-            frmMain.DeactivateDecoder();
+            frmMain?.DeactivateDecoder();
 
             Settings.SetUserIni("zenkakuModeKeySeq", textBox_zenkakuModeKeySeq.Text);
             Settings.SetUserIni("zenkakuOneCharKeySeq", textBox_zenkakuOneCharKeySeq.Text);
@@ -690,8 +692,8 @@ namespace KanchokuWS
             //frmVkb?.SetNormalCellBackColors();
             frmMode?.ShowImmediately();
 
-            frmMain.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
-            frmMain.MakeInitialVkbTable();
+            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            frmMain?.MakeInitialVkbTable();
 
             label_okResultAdvanced.Show();
         }
@@ -816,7 +818,7 @@ namespace KanchokuWS
 
         private void button_ctrlEnter_Click(object sender, EventArgs e)
         {
-            frmMain.DeactivateDecoder();
+            frmMain?.DeactivateDecoder();
 
             Settings.SetUserIni("globalCtrlKeysEnabled", checkBox_globalCtrlKeysEnabled.Checked);
 
@@ -847,7 +849,7 @@ namespace KanchokuWS
             readSettings_tabCtrlKeys();
             checkerCtrlKeys.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
-            frmMain.ReregisterSpecialGlobalDeckeys();
+            frmMain?.ReregisterSpecialGlobalDeckeys();
 
             label_okResultCtrlKeys.Show();
         }
@@ -938,7 +940,7 @@ namespace KanchokuWS
 
         private void button_histEnter_Click(object sender, EventArgs e)
         {
-            frmMain.DeactivateDecoder();
+            frmMain?.DeactivateDecoder();
 
             Settings.SetUserIni("histKatakanaWordMinLength", textBox_histKatakanaWordMinLength.Text.Trim());
             Settings.SetUserIni("histKanjiWordMinLength", textBox_histKanjiWordMinLength.Text.Trim());
@@ -970,7 +972,7 @@ namespace KanchokuWS
             readSettings_tabHistory();
             checkerHistory.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
-            frmMain.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             label_okResultHist.Show();
         }
@@ -1049,7 +1051,7 @@ namespace KanchokuWS
         {
             var line = textBox_history.Text.Trim().Replace(" ", "");
             if (line._notEmpty()) {
-                frmMain.ExecCmdDecoder("addHistEntry", line);
+                frmMain?.ExecCmdDecoder("addHistEntry", line);
                 label_saveHist.Hide();
                 label_history.Show();
                 dicRegLabelCount = dicRegLabelCountMax;
@@ -1058,7 +1060,7 @@ namespace KanchokuWS
 
         private void button_saveHistoryFile_Click(object sender, EventArgs e)
         {
-            frmMain.ExecCmdDecoder("saveHistoryDic", null);
+            frmMain?.ExecCmdDecoder("saveHistoryDic", null);
             label_history.Hide();
             label_saveHist.Show();
             dicRegLabelCount = dicRegLabelCountMax;
@@ -1075,7 +1077,7 @@ namespace KanchokuWS
         {
             var line = textBox_mazegaki.Text.Trim()._reReplace(@" +", " ");
             if (line._reMatch(@"^[^ ]+ ")) {
-                frmMain.ExecCmdDecoder("addMazegakiEntry", line);
+                frmMain?.ExecCmdDecoder("addMazegakiEntry", line);
                 label_saveMaze.Hide();
                 label_mazegaki.Show();
                 dicRegLabelCount = dicRegLabelCountMax;
@@ -1086,7 +1088,7 @@ namespace KanchokuWS
 
         private void button_saveMazegakiFile_Click(object sender, EventArgs e)
         {
-            frmMain.ExecCmdDecoder("saveMazegakiDic", null);
+            frmMain?.ExecCmdDecoder("saveMazegakiDic", null);
             label_mazegaki.Hide();
             label_saveMaze.Show();
             dicRegLabelCount = dicRegLabelCountMax;
@@ -1104,7 +1106,7 @@ namespace KanchokuWS
         {
             var line = textBox_bushuAssoc.Text.Trim().Replace(" ", "");
             if (line._reMatch(@"^[^=]=.")) {
-                frmMain.ExecCmdDecoder("mergeBushuAssocEntry", line);
+                frmMain?.ExecCmdDecoder("mergeBushuAssocEntry", line);
                 label_saveAssoc.Hide();
                 label_bushuAssoc.Show();
                 dicRegLabelCount = dicRegLabelCountMax;
@@ -1115,7 +1117,7 @@ namespace KanchokuWS
 
         private void button_saveBushuAssocFile_Click(object sender, EventArgs e)
         {
-            frmMain.ExecCmdDecoder("saveBushuAssocDic", null);
+            frmMain?.ExecCmdDecoder("saveBushuAssocDic", null);
             label_bushuAssoc.Hide();
             label_saveAssoc.Show();
             dicRegLabelCount = dicRegLabelCountMax;
@@ -1137,7 +1139,7 @@ namespace KanchokuWS
                 ++n;
             }
             if (n == 2 || n == 3) {
-                frmMain.ExecCmdDecoder("addBushuEntry", line);
+                frmMain?.ExecCmdDecoder("addBushuEntry", line);
                 label_saveBushu.Hide();
                 label_bushuComp.Show();
                 dicRegLabelCount = dicRegLabelCountMax;
@@ -1148,7 +1150,7 @@ namespace KanchokuWS
 
         private void button_saveBushuCompFile_Click(object sender, EventArgs e)
         {
-            frmMain.ExecCmdDecoder("saveBushuDic", null);
+            frmMain?.ExecCmdDecoder("saveBushuDic", null);
             label_bushuComp.Hide();
             label_saveBushu.Show();
             dicRegLabelCount = dicRegLabelCountMax;
@@ -1249,7 +1251,7 @@ namespace KanchokuWS
 
         private void button_saveAll_Click(object sender, EventArgs e)
         {
-            frmMain.SaveAllFiles();
+            frmMain?.SaveAllFiles();
             label_execResultFile.Show();
         }
 
@@ -1391,7 +1393,7 @@ namespace KanchokuWS
         {
             //if (ctrlKeyItems._isEmpty()) {
             //    var items = new List<string>(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" });
-            //    char[] data = frmMain.CallDecoderFunc("getCharsOrderedByDeckey", null);
+            //    char[] data = frmMain?.CallDecoderFunc("getCharsOrderedByDeckey", null);
             //    if (data._notEmpty()) {
             //        for (int i = 0; i < DecoderKeys.NUM_STROKE_DECKEY; ++i) {
             //            if ((data[i] > ' ' && data[i] < '0') || (data[i] > '9' && data[i] < 'A') || (data[i] > 'Z' && data[i] < 'a') || data[i] > 'z') {
@@ -1431,9 +1433,11 @@ namespace KanchokuWS
 
         private void button_showPaddingsDesc_Click(object sender, EventArgs e)
         {
-            var dlg = new DlgPaddingsDesc(frmVkb.GetPaddingsDesc());
-            dlg.ShowDialog();
-            dlg.Dispose();
+            if (frmVkb != null) {
+                var dlg = new DlgPaddingsDesc(frmVkb.GetPaddingsDesc());
+                dlg.ShowDialog();
+                dlg.Dispose();
+            }
         }
 
         private void initializeCtrlKeyConversionComboBox()

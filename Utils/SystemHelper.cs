@@ -45,7 +45,7 @@ namespace Utils
                 var basename = path._getFileName().ToUpper();
                 if (basename == "DEBUG" || basename == "RELEASE") {
                     var dirPath = path._getDirPath()._getDirPath()._getDirPath();
-                    if (GetExePath()._getFileName()._toLower().EndsWith("settings.exe")) {
+                    if (GetExePath()._getFileName()._toLower().EndsWith("settingsws.exe")) {
                         dirPath = dirPath._getDirPath();
                     }
                     s_KanchokuRootDir = dirPath._joinPath("test");
