@@ -43,6 +43,12 @@ namespace {
             if (!outStr.empty()) {
                 // カタカナに変換して置換する
                 STATE_COMMON->SetOutString(utils::convert_hiragana_to_katakana(outStr), outStr.size());
+            } else {
+                outStr = OUTPUT_STACK->GetLastKatakanaStr<MString>();
+                if (!outStr.empty()) {
+                    // ひらがなに変換して置換する
+                    STATE_COMMON->SetOutString(utils::convert_katakana_to_hiragana(outStr), outStr.size());
+                }
             }
 
             // チェイン不要
