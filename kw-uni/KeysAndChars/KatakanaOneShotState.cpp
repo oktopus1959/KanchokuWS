@@ -43,6 +43,7 @@ namespace {
             if (!outStr.empty()) {
                 // カタカナに変換して置換する
                 STATE_COMMON->SetOutString(utils::convert_hiragana_to_katakana(outStr), outStr.size());
+                OUTPUT_STACK->setHistBlockerAt(outStr.size());
             } else {
                 outStr = OUTPUT_STACK->GetLastKatakanaStr<MString>();
                 if (!outStr.empty()) {

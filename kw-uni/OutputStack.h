@@ -106,6 +106,12 @@ public:
         }
     }
 
+    inline void setHistBlockerAt(size_t lastNth) {
+        if (stack.size() > lastNth) {
+            stack[stack.size() - lastNth - 1].flag |= FLAG_BLOCK_HIST;
+        }
+    }
+
     inline void setFlag(unsigned short flag) {
         if (!stack.empty()) {
             stack.back().flag |= flag;
@@ -231,16 +237,16 @@ public:
         return utils::find_tail_kanji_or_katakana_str(backStringUpto(len, OutputStack::FLAG_NEW_LINE));
     }
 
-    // 改行以降で、出力履歴の末尾から len 文字までのカタカナ文字列を取得する
+    // ブロッカー以降で、出力履歴の末尾から len 文字までのカタカナ文字列を取得する
     template<typename T>
     inline T GetLastKatakanaStr(size_t len = 20) const {
-        return utils::find_tail_katakana_str(backStringUpto(len, OutputStack::FLAG_NEW_LINE));
+        return utils::find_tail_katakana_str(backStringUpto(len, OutputStack::FLAG_BLOCK_HIST));
     }
 
-    // 改行以降で、出力履歴の末尾から len 文字までの半角カタカナ文字列を取得する
+    // ブロッカー以降で、出力履歴の末尾から len 文字までの半角カタカナ文字列を取得する
     template<typename T>
     inline T GetLastHankakuKatakanaStr(size_t len = 20) const {
-        return utils::find_tail_hankaku_katakana_str(backStringUpto(len, OutputStack::FLAG_NEW_LINE));
+        return utils::find_tail_hankaku_katakana_str(backStringUpto(len, OutputStack::FLAG_BLOCK_HIST));
     }
 
     // 改行以降で、出力履歴の末尾から len 文字までの日本語文字列を取得する

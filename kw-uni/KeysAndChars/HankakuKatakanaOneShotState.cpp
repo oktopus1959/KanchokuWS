@@ -253,10 +253,11 @@ namespace {
             if (!outStr.empty()) {
                 // 全角を半角カタカナに置換
                 STATE_COMMON->SetOutString(convert_zenkaku_to_hankaku(outStr), outStr.size());
+                OUTPUT_STACK->setHistBlockerAt(outStr.size());
             } else {
                 outStr = OUTPUT_STACK->GetLastHankakuKatakanaStr<MString>();
                 if (!outStr.empty()) {
-                    // 半角を店角カタカナに置換
+                    // 半角を全角カタカナに置換
                     STATE_COMMON->SetOutString(convert_hankaku_to_zenkaku(outStr), outStr.size());
                 }
             }
