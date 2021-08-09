@@ -392,17 +392,20 @@ void State::handleStrokeKeys(int hk) { LOG_INFO(_T("CALLED: deckey=%xH(%d)"), hk
 void State::handleSpaceKey() { LOG_INFO(_T("CALLED")); handleStrokeKeys(STROKE_SPACE_DECKEY); }
 
 //-----------------------------------------------------------------------
+// 特殊キーデフォルトハンドラ
+void State::handleSpecialKeys(int /*deckey*/) { setThroughDeckeyFlag(); }
+
 // FullEscape デフォルトハンドラ
-void State::handleFullEscape() { LOG_INFOH(_T("CALLED")); setThroughDeckeyFlag(); }
+void State::handleFullEscape() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(FULL_ESCAPE_DECKEY); }
 
 // Unblock デフォルトハンドラ
-void State::handleUnblock() { LOG_INFOH(_T("CALLED")); setThroughDeckeyFlag(); }
+void State::handleUnblock() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(UNBLOCK_DECKEY); }
 
 // handleNextCandTrigger デフォルトハンドラ
-void State::handleNextCandTrigger() { LOG_INFOH(_T("CALLED")); setThroughDeckeyFlag(); }
+void State::handleNextCandTrigger() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(HISTORY_NEXT_SEARCH_DECKEY); }
 
 // handlePrevCandTrigger デフォルトハンドラ
-void State::handlePrevCandTrigger() { LOG_INFOH(_T("CALLED")); setThroughDeckeyFlag(); }
+void State::handlePrevCandTrigger() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(HISTORY_PREV_SEARCH_DECKEY); }
 
 //-----------------------------------------------------------------------
 // DecoderOff デフォルトハンドラ
@@ -438,9 +441,6 @@ void State::handleRightTriangle() { handleShiftKeys(RIGHT_TRIANGLE_DECKEY); }
 void State::handleQuestion() { handleShiftKeys(QUESTION_DECKEY); }
 
 //-----------------------------------------------------------------------
-// 特殊キーデフォルトハンドラ
-void State::handleSpecialKeys(int /*deckey*/) { setThroughDeckeyFlag(); }
-
 //// Shift+Space ハンドラ
 //// isStrokeKeyOrShiftedKey() にも注意すること
 //void State::handleShiftSpace() {
