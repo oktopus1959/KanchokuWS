@@ -87,6 +87,25 @@ public:
         return back() == '\n' || (getFlag() & (FLAG_NEW_LINE | FLAG_BLOCK_HIST)) != 0;
     }
 
+    inline bool isLastHistBlocker() const {
+        return (getFlag() & FLAG_BLOCK_HIST) != 0;
+    }
+
+    inline void clearLastHistBlocker() {
+        if (!stack.empty()) {
+            stack.back().flag &= ~FLAG_BLOCK_HIST;
+        }
+    }
+
+    inline void toggleLastHistBlocker() {
+        if (!stack.empty()) {
+            if (isLastHistBlocker())
+                stack.back().flag &= ~FLAG_BLOCK_HIST;
+            else
+                stack.back().flag |= FLAG_BLOCK_HIST;
+        }
+    }
+
     inline void setFlag(unsigned short flag) {
         if (!stack.empty()) {
             stack.back().flag |= flag;

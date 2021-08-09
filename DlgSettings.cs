@@ -632,7 +632,8 @@ namespace KanchokuWS
             textBox_bushuAssocKeySeq.Text = Settings.BushuAssocKeySeq;
             textBox_bushuAssocDirectKeySeq.Text = Settings.BushuAssocDirectKeySeq;
             textBox_katakanaOneShotKeySeq.Text = Settings.KatakanaOneShotKeySeq;
-            textBox_hankakuKatakanaOneShotKeySeq.Text = Settings.KatakanaOneShotKeySeq;
+            textBox_hankakuKatakanaOneShotKeySeq.Text = Settings.HankakuKatakanaOneShotKeySeq;
+            textBox_blockerSetterOneShotKeySeq.Text = Settings.BlockerSetterOneShotKeySeq;
         }
 
         private void setKeyAssignStatusChecker()
@@ -653,6 +654,7 @@ namespace KanchokuWS
             checkerKeyAssign.Add(textBox_bushuAssocDirectKeySeq);
             checkerKeyAssign.Add(textBox_katakanaOneShotKeySeq);
             checkerKeyAssign.Add(textBox_hankakuKatakanaOneShotKeySeq);
+            checkerKeyAssign.Add(textBox_blockerSetterOneShotKeySeq);
 
             checkerAll.Add(checkerKeyAssign);
         }
@@ -678,6 +680,7 @@ namespace KanchokuWS
             Settings.SetUserIni("bushuAssocDirectKeySeq", textBox_bushuAssocDirectKeySeq.Text);
             Settings.SetUserIni("katakanaOneShotKeySeq", textBox_katakanaOneShotKeySeq.Text);
             Settings.SetUserIni("hankakuKatakanaOneShotKeySeq", textBox_hankakuKatakanaOneShotKeySeq.Text);
+            Settings.SetUserIni("blockerSetterOneShotKeySeq", textBox_blockerSetterOneShotKeySeq.Text);
 
             Settings.ReadIniFile();
 
@@ -688,6 +691,7 @@ namespace KanchokuWS
             frmMode?.ShowImmediately();
 
             frmMain.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            frmMain.MakeInitialVkbTable();
 
             label_okResultAdvanced.Show();
         }

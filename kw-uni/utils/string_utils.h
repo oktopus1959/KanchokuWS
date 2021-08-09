@@ -480,8 +480,16 @@ namespace utils
         return ch + 0x0060;
     }
 
+    inline mchar_t katakana_to_hiragana(mchar_t ch) {
+        return ch - 0x0060;
+    }
+
     inline bool is_katakana(mchar_t ch) {
         return ch >= 0x30a1 && ch <= 0x30fc;    // 'ァ' 〜 'ヺ'、'・'、'ー'
+    }
+
+    inline bool is_pure_katakana(mchar_t ch) {
+        return ch >= 0x30a1 && ch <= 0x30f6;    // 'ァ' 〜 'ヶ'
     }
 
     inline bool is_hankaku_katakana(mchar_t ch) {
@@ -542,6 +550,14 @@ namespace utils
         MString result;
         for (auto mc : mstr) {
             result.push_back(is_hiragana(mc) ? hiragana_to_katakana(mc) : mc);
+        }
+        return result;
+    }
+
+    inline MString convert_katakana_to_hiragana(const MString& mstr) {
+        MString result;
+        for (auto mc : mstr) {
+            result.push_back(is_pure_katakana(mc) ? katakana_to_hiragana(mc) : mc);
         }
         return result;
     }

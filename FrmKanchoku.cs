@@ -861,7 +861,7 @@ namespace KanchokuWS
             // デコーダの初期化
             if (await initializeDecoder()) {
                 // 初期打鍵表(下端機能キー以外は空白)の作成
-                makeInitialVkbTable();
+                MakeInitialVkbTable();
                 // 打鍵テーブルの作成
                 frmVkb.MakeStrokeTables(Settings.StrokeHelpFile);
                 // DecKeyハンドラの初期化
@@ -912,7 +912,7 @@ namespace KanchokuWS
         }
 
         /// <summary>初期打鍵表(下端機能キー以外は空白)の作成</summary>
-        private void makeInitialVkbTable()
+        public void MakeInitialVkbTable()
         {
             logger.Info("ENTER");
             if (decoderPtr != IntPtr.Zero) {

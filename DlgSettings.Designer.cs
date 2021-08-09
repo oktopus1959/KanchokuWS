@@ -272,6 +272,9 @@ namespace KanchokuWS
             this.textBox_histKatakanaWordMinLength = new System.Windows.Forms.TextBox();
             this.label_okResultHist = new System.Windows.Forms.Label();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.textBox_histHorizontalCandMax = new System.Windows.Forms.TextBox();
+            this.label79 = new System.Windows.Forms.Label();
+            this.comboBox_historySearchKey = new System.Windows.Forms.ComboBox();
             this.textBox_histKanjiKeyLen = new System.Windows.Forms.TextBox();
             this.textBox_histKatakanaKeyLen = new System.Windows.Forms.TextBox();
             this.textBox_histHiraganaKeyLen = new System.Windows.Forms.TextBox();
@@ -317,7 +320,8 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.comboBox_historySearchKey = new System.Windows.Forms.ComboBox();
+            this.textBox_blockerSetterOneShotKeySeq = new System.Windows.Forms.TextBox();
+            this.label81 = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -330,8 +334,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.textBox_histHorizontalCandMax = new System.Windows.Forms.TextBox();
-            this.label79 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1925,7 +1927,7 @@ namespace KanchokuWS
             // groupBox32
             // 
             this.groupBox32.Controls.Add(this.label71);
-            this.groupBox32.Location = new System.Drawing.Point(9, 261);
+            this.groupBox32.Location = new System.Drawing.Point(9, 265);
             this.groupBox32.Name = "groupBox32";
             this.groupBox32.Size = new System.Drawing.Size(456, 64);
             this.groupBox32.TabIndex = 15;
@@ -1948,7 +1950,7 @@ namespace KanchokuWS
             this.groupBox31.Controls.Add(this.label69);
             this.groupBox31.Location = new System.Drawing.Point(357, 5);
             this.groupBox31.Name = "groupBox31";
-            this.groupBox31.Size = new System.Drawing.Size(219, 251);
+            this.groupBox31.Size = new System.Drawing.Size(219, 255);
             this.groupBox31.TabIndex = 14;
             this.groupBox31.TabStop = false;
             this.groupBox31.Text = "説明";
@@ -1991,6 +1993,8 @@ namespace KanchokuWS
             // 
             // groupBox30
             // 
+            this.groupBox30.Controls.Add(this.textBox_blockerSetterOneShotKeySeq);
+            this.groupBox30.Controls.Add(this.label81);
             this.groupBox30.Controls.Add(this.textBox_hankakuKatakanaOneShotKeySeq);
             this.groupBox30.Controls.Add(this.label75);
             this.groupBox30.Controls.Add(this.textBox_historyOneCharKeySeq);
@@ -2009,7 +2013,7 @@ namespace KanchokuWS
             this.groupBox30.Controls.Add(this.label58);
             this.groupBox30.Location = new System.Drawing.Point(182, 5);
             this.groupBox30.Name = "groupBox30";
-            this.groupBox30.Size = new System.Drawing.Size(168, 230);
+            this.groupBox30.Size = new System.Drawing.Size(168, 255);
             this.groupBox30.TabIndex = 1;
             this.groupBox30.TabStop = false;
             this.groupBox30.Text = "後置呼び出し機能";
@@ -3196,6 +3200,36 @@ namespace KanchokuWS
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "履歴検索";
             // 
+            // textBox_histHorizontalCandMax
+            // 
+            this.textBox_histHorizontalCandMax.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.textBox_histHorizontalCandMax.Location = new System.Drawing.Point(151, 144);
+            this.textBox_histHorizontalCandMax.Name = "textBox_histHorizontalCandMax";
+            this.textBox_histHorizontalCandMax.Size = new System.Drawing.Size(34, 19);
+            this.textBox_histHorizontalCandMax.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.textBox_histHorizontalCandMax, "履歴候補を横列表示する際の最大候補数\r\n\r\n最小値は 1、 最大値は 10 です。");
+            // 
+            // label79
+            // 
+            this.label79.AutoSize = true;
+            this.label79.Location = new System.Drawing.Point(17, 146);
+            this.label79.Name = "label79";
+            this.label79.Size = new System.Drawing.Size(125, 15);
+            this.label79.TabIndex = 8;
+            this.label79.Text = "横列候補表示の最大数";
+            // 
+            // comboBox_historySearchKey
+            // 
+            this.comboBox_historySearchKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_historySearchKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.comboBox_historySearchKey.FormattingEnabled = true;
+            this.comboBox_historySearchKey.Location = new System.Drawing.Point(199, 119);
+            this.comboBox_historySearchKey.Name = "comboBox_historySearchKey";
+            this.comboBox_historySearchKey.Size = new System.Drawing.Size(89, 20);
+            this.comboBox_historySearchKey.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.comboBox_historySearchKey, "履歴検索および選択を実行する Ctrlキーを選択します");
+            this.comboBox_historySearchKey.DropDown += new System.EventHandler(this.comboBox_historySearchKey_DropDown);
+            // 
             // textBox_histKanjiKeyLen
             // 
             this.textBox_histKanjiKeyLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
@@ -3703,17 +3737,23 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // comboBox_historySearchKey
+            // textBox_blockerSetterOneShotKeySeq
             // 
-            this.comboBox_historySearchKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_historySearchKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.comboBox_historySearchKey.FormattingEnabled = true;
-            this.comboBox_historySearchKey.Location = new System.Drawing.Point(199, 119);
-            this.comboBox_historySearchKey.Name = "comboBox_historySearchKey";
-            this.comboBox_historySearchKey.Size = new System.Drawing.Size(89, 20);
-            this.comboBox_historySearchKey.TabIndex = 6;
-            this.toolTip1.SetToolTip(this.comboBox_historySearchKey, "履歴検索および選択を実行する Ctrlキーを選択します");
-            this.comboBox_historySearchKey.DropDown += new System.EventHandler(this.comboBox_historySearchKey_DropDown);
+            this.textBox_blockerSetterOneShotKeySeq.Location = new System.Drawing.Point(105, 227);
+            this.textBox_blockerSetterOneShotKeySeq.Name = "textBox_blockerSetterOneShotKeySeq";
+            this.textBox_blockerSetterOneShotKeySeq.Size = new System.Drawing.Size(56, 23);
+            this.textBox_blockerSetterOneShotKeySeq.TabIndex = 15;
+            this.toolTip1.SetToolTip(this.textBox_blockerSetterOneShotKeySeq, "末尾文字のブロッカーを設定または解除します。\r\n\r\nブロッカーを設定すると、ミニバッファに縦線(\'|\')が表示され、\r\n履歴や交ぜ書きの際の文字列採取がそこでブロ" +
+        "ックされます。\r\nもう一度呼び出すとブロッカーが解除されます。");
+            // 
+            // label81
+            // 
+            this.label81.AutoSize = true;
+            this.label81.Location = new System.Drawing.Point(7, 231);
+            this.label81.Name = "label81";
+            this.label81.Size = new System.Drawing.Size(74, 15);
+            this.label81.TabIndex = 16;
+            this.label81.Text = "ブロッカー設定";
             // 
             // textBox_onSelectedBackColor
             // 
@@ -3856,24 +3896,6 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // textBox_histHorizontalCanMax
-            // 
-            this.textBox_histHorizontalCandMax.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_histHorizontalCandMax.Location = new System.Drawing.Point(151, 144);
-            this.textBox_histHorizontalCandMax.Name = "textBox_histHorizontalCanMax";
-            this.textBox_histHorizontalCandMax.Size = new System.Drawing.Size(34, 19);
-            this.textBox_histHorizontalCandMax.TabIndex = 7;
-            this.toolTip1.SetToolTip(this.textBox_histHorizontalCandMax, "履歴候補を横列表示する際の最大候補数\r\n\r\n最小値は 1、 最大値は 10 です。");
-            // 
-            // label79
-            // 
-            this.label79.AutoSize = true;
-            this.label79.Location = new System.Drawing.Point(17, 146);
-            this.label79.Name = "label79";
-            this.label79.Size = new System.Drawing.Size(125, 15);
-            this.label79.TabIndex = 8;
-            this.label79.Text = "横列候補表示の最大数";
             // 
             // DlgSettings
             // 
@@ -4283,5 +4305,7 @@ namespace KanchokuWS
         private System.Windows.Forms.ComboBox comboBox_historySearchKey;
         private System.Windows.Forms.TextBox textBox_histHorizontalCandMax;
         private System.Windows.Forms.Label label79;
+        private System.Windows.Forms.TextBox textBox_blockerSetterOneShotKeySeq;
+        private System.Windows.Forms.Label label81;
     }
 }

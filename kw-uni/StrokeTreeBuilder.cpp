@@ -310,7 +310,7 @@ namespace {
 
                 case '@':
                     // 機能
-                    currentStr.append(1, getNextChar());
+                    readMarker();
                     return TOKEN::FUNCTION;
 
                 case '"':
@@ -352,6 +352,18 @@ namespace {
                 if (c == '\\') {
                     // 最初の「\」は、単に読みとばす
                     c = getNextChar();
+                }
+                currentStr.append(1, c);
+            }
+        }
+
+        // 空白またはカンマが来るまで読みこんで、currentStr に格納。
+        void readMarker() {
+            while (true) {
+                char_t c = getNextChar();
+                if (c <= ' ' || c == ',') {
+                    if (currentStr.empty()) parseError();
+                    return;
                 }
                 currentStr.append(1, c);
             }

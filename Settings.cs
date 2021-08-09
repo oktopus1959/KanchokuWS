@@ -239,6 +239,9 @@ namespace KanchokuWS
         /// <summary>半角カタカナ変換(一括)を呼び出す打鍵列</summary>
         public static string HankakuKatakanaOneShotKeySeq { get; set; }
 
+        /// <summary>ブロッカー設定を呼び出す打鍵列</summary>
+        public static string BlockerSetterOneShotKeySeq { get; set; }
+
         /// <summary>全エスケープおよび出力文字列検索ブロッカー設定</summary>
         public static string FullEscapeKey { get; set; }
 
@@ -730,6 +733,7 @@ namespace KanchokuWS
             KatakanaModeKeySeq = addDecoderSetting("katakanaModeKeySeq");
             KatakanaOneShotKeySeq = addDecoderSetting("katakanaOneShotKeySeq");
             HankakuKatakanaOneShotKeySeq = addDecoderSetting("hankakuKatakanaOneShotKeySeq");
+            BlockerSetterOneShotKeySeq = addDecoderSetting("blockerSetterOneShotKeySeq");
 
             // for Debug
             addDecoderSetting("debughState", false);

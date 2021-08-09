@@ -171,6 +171,9 @@
     <ClInclude Include="KeysAndChars\DeckeyToChars.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="OneShot\OneShot.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -285,6 +288,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="KeysAndChars\DeckeyToChars.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="OneShot\OneShotState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

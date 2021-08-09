@@ -81,6 +81,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     RESET_STROKE_FUNC("katakanaMode");
     RESET_STROKE_FUNC("katakanaOneShot");
     RESET_STROKE_FUNC("hankakuKatakanaOneShot");
+    RESET_STROKE_FUNC("blockerSetterOneShot");
     //if (GET_BOOL_VALUE(mazegakiByShiftSpace)) StrokeTableNode::AssignFucntion(utils::format(_T("%d"), DECKEY_STROKE_49), _T("mazegaki"));
 
     // for Debug
