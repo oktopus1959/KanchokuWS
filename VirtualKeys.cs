@@ -79,6 +79,8 @@ namespace KanchokuWS
             /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21, /*PgDn*/ 0x22, /*↑*/ 0x26, /*↓*/ 0x28, /*←*/ 0x25, /*→*/ 0x27
         };
 
+        private const uint capsVkeyWithShift = 0x14;    // 日本語キーボードだと Shift + 0x14 で CapsLock になる
+
         private static uint getVKeyFromDecKey(int deckey)
         {
             if (deckey < 0) return 0;
@@ -214,6 +216,8 @@ namespace KanchokuWS
                 uint vkey = getVKeyFromDecKey(DecoderKeys.FUNC_DECKEY_START + id);
                 // Normal
                 AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, 0, vkey);
+                // Shift
+                if (vkey == capsVkeyWithShift) AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, KeyModifiers.MOD_SHIFT, vkey);
                 // Ctrl
                 //AddDecKeyAndCombo(DecoderKeys.CTRL_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL, vkey);
                 // Ctrl+Shifted
