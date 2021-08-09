@@ -296,7 +296,7 @@ namespace {
             STATE_COMMON->SetOutString(str, numBS);
             handleKeyPostProc();
             //選択した候補を履歴に登録
-            if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(str);
+            if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::strip(str, _T("、。")));
         }
 
         void handleKeyPostProc() {

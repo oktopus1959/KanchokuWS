@@ -781,6 +781,20 @@ namespace utils
         return result;
     }
 
+    inline MString strip(const MString& s, const wstring& delims)
+    {
+        MString result;
+
+        auto msDelims = to_mstr(delims);
+        auto left = s.find_first_not_of(msDelims);
+        if (left != MString::npos) {
+            // 左側にデリミタ以外の文字が見つかった
+            auto right = s.find_last_not_of(msDelims);
+            result = s.substr(left, right - left + 1);
+        }
+        return result;
+    }
+
     inline MString strip(const MString& s)
     {
         MString result;
