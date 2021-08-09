@@ -864,6 +864,7 @@ namespace KanchokuWS
             textBox_histKanjiKeyLen.Text = $"{Settings.HistKanjiKeyLength}";
             textBox_histKatakanaKeyLen.Text = $"{Settings.HistKatakanaKeyLength}";
             textBox_histHiraganaKeyLen.Text = $"{Settings.HistHiraganaKeyLength}";
+            textBox_histHorizontalCandMax.Text = $"{Settings.HistHorizontalCandMax}";
             checkBox_autoHistEnabled.Checked = Settings.AutoHistSearchEnabled;
             comboBox_historySearchKey.Enabled = checkBox_historySearchKey.Checked;
             checkBox_historySearchKey.Checked = Settings.HistorySearchCtrlKey._notEmpty() && !Settings.HistorySearchCtrlKey.StartsWith("#");
@@ -900,6 +901,7 @@ namespace KanchokuWS
             checkerHistory.Add(textBox_histKanjiKeyLen);
             checkerHistory.Add(textBox_histKatakanaKeyLen);
             checkerHistory.Add(textBox_histHiraganaKeyLen);
+            checkerHistory.Add(textBox_histHorizontalCandMax);
             checkerHistory.Add(checkBox_autoHistEnabled);
             checkerHistory.Add(checkBox_historySearchKey);
             checkerHistory.Add(comboBox_historySearchKey);
@@ -938,6 +940,7 @@ namespace KanchokuWS
             Settings.SetUserIni("histKanjiWordMinLength", textBox_histKanjiWordMinLength.Text.Trim());
             Settings.SetUserIni("histKanjiWordMinLengthEx", textBox_histKanjiWordMinLengthEx.Text.Trim());
             Settings.SetUserIni("histHiraganaKeyLength", textBox_histHiraganaKeyLen.Text.Trim());
+            Settings.SetUserIni("histHorizontalCandMax", textBox_histHorizontalCandMax.Text.Trim());
             Settings.SetUserIni("histKatakanaKeyLength", textBox_histKatakanaKeyLen.Text.Trim());
             Settings.SetUserIni("histKanjiKeyLength", textBox_histKanjiKeyLen.Text.Trim());
             Settings.SetUserIni("autoHistSearchEnabled", checkBox_autoHistEnabled.Checked);

@@ -25,6 +25,8 @@
 // 縦列鍵盤または横列鍵盤の数
 #define LONG_KEY_NUM 10
 
+#define CAND_LEN_THRESHOLD 10
+
 namespace {
     // -------------------------------------------------------------------
     // 履歴入力リストのクラス
@@ -53,21 +55,24 @@ namespace {
 
         inline void setSelectPos(size_t n) const {
             //selectPos = n >= 0 && n < histCands.size() ? n : -1;
-            size_t x = min(histCands.size(), LONG_KEY_NUM);
+            //size_t x = min(histCands.size(), LONG_KEY_NUM);
+            size_t x = min(histCands.size(), SETTINGS->histHorizontalCandMax);
             selectPos = n >= 0 && n < x ? n : -1;
         }
 
         // 選択位置をインクリメント //(一周したら未選択状態に戻る)
         inline void incSelectPos() const {
             //selectPos = selectPos < 0 ? 0 : (selectPos + 1) % histCands.size();
-            size_t x = min(histCands.size(), LONG_KEY_NUM);
+            //size_t x = min(histCands.size(), LONG_KEY_NUM);
+            size_t x = min(histCands.size(), SETTINGS->histHorizontalCandMax);
             selectPos = selectPos < 0 ? 0 : x <= 0 ? -1 : (selectPos + 1) % x;
         }
 
         // 選択位置をデクリメント //(一周したら未選択状態に戻る)
         inline void decSelectPos() const {
             //selectPos = selectPos <= 0 ? histCands.size() - 1 : (selectPos - 1) % histCands.size();
-            int x = min((int)histCands.size(), LONG_KEY_NUM);
+            //int x = min((int)histCands.size(), LONG_KEY_NUM);
+            int x = min((int)histCands.size(), SETTINGS->histHorizontalCandMax);
             selectPos = selectPos <= 0 ? x - 1 : x <=0 ? -1 : (selectPos - 1) % x;
         }
 
@@ -81,7 +86,8 @@ namespace {
 
         inline const HistResult& getSelectedHist() const {
             int n = getSelectPos();
-            int x = min((int)histCands.size(), LONG_KEY_NUM);
+            //int x = min((int)histCands.size(), LONG_KEY_NUM);
+            int x = min((int)histCands.size(), SETTINGS->histHorizontalCandMax);
             //return n >= 0 && n < (int)histCands.size() ? histCands[n] : emptyResult;
             return n >= 0 && n < x ? histCands[n] : emptyResult;
         }
@@ -328,7 +334,7 @@ namespace {
                 p = p >= LONG_KEY_NUM ? p - LONG_KEY_NUM : 0;
                 candDispHorizontalPos = p;
             }
-            size_t q = p + LONG_KEY_NUM;
+            size_t q = p + (layout == VkbLayout::Horizontal ? SETTINGS->histHorizontalCandMax : LONG_KEY_NUM);
             if (q > cands.size()) q = cands.size();
 
             _LOG_DEBUGH(_T("p=%d, q=%d, candDispVerticalPos=%d, candDispHorizontalPos=%d"), p, q, candDispVerticalPos, candDispHorizontalPos);
@@ -481,7 +487,7 @@ namespace {
             if (bWaitingForNum) {
                 // 履歴文字数指定のとき
                 bWaitingForNum = false;
-                if (deckey >= 0 && deckey < 10) {
+                if (deckey >= 0 && deckey < CAND_LEN_THRESHOLD) {
                     // '1'〜'0' (1〜10文字のものだけを表示)
                     LOG_DEBUG(_T("ENTER JUST LEN MODE"));
                     //指定の長さのものだけを残して仮想鍵盤に表示
@@ -545,7 +551,7 @@ namespace {
             candDispVerticalPos = 0;
             auto key = HIST_CAND->GetCurrentKey();
             //指定の長さのものだけを残して仮想鍵盤に表示
-            candLen = (candLen + 1) % 10;
+            candLen = (candLen + 1) % CAND_LEN_THRESHOLD;
             setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, candLen), key);
             return;
         }
@@ -798,7 +804,7 @@ namespace {
         // 直前キーが空でなく、候補が1つ以上あり、第1候補または第2候補がキー文字列から始まっていて、かつ同じではないか
         // たとえば、直前に「竈門」を交ぜ書きで出力したような場合で、これまでの出力履歴が「竈門」だけなら履歴候補の表示はやらない。
         // 他にも「竈門炭治郎」の出力履歴があるなら、履歴候補の表示をする。
-        bool isDecCandidateReady(const MString& prevKey, const std::vector<MString>& cands) {
+        bool isHotCandidateReady(const MString& prevKey, const std::vector<MString>& cands) {
             bool result = (!prevKey.empty() &&
                            ((cands.size() > 0 && utils::startsWith(cands[0], prevKey) && cands[0] != prevKey) ||
                             (cands.size() > 1 && utils::startsWith(cands[1], prevKey) && cands[1] != prevKey)));
@@ -874,7 +880,7 @@ namespace {
                 HISTORY_STAY_NODE->prevKey.clear();
             }
             // この処理は、GUI側で候補の背景色を変更するために必要
-            if (isDecCandidateReady(HISTORY_STAY_NODE->prevKey, HIST_CAND->GetCandidates())) {
+            if (isHotCandidateReady(HISTORY_STAY_NODE->prevKey, HIST_CAND->GetCandidates())) {
                 _LOG_DEBUGH(_T("PATH 14"));
                 // 何がしかの文字出力があり、それをキーとする履歴候補があった場合 -- 未選択状態にセットする
                 STATE_COMMON->SetWaitingCandSelect(-1);

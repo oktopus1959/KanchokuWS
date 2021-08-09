@@ -330,6 +330,8 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.textBox_histHorizontalCandMax = new System.Windows.Forms.TextBox();
+            this.label79 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -3010,9 +3012,9 @@ namespace KanchokuWS
             this.groupBox17.Controls.Add(this.comboBox_histDelDeckeyId);
             this.groupBox17.Controls.Add(this.label42);
             this.groupBox17.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox17.Location = new System.Drawing.Point(11, 159);
+            this.groupBox17.Location = new System.Drawing.Point(11, 182);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(294, 96);
+            this.groupBox17.Size = new System.Drawing.Size(294, 92);
             this.groupBox17.TabIndex = 1;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "履歴選択・削除";
@@ -3020,7 +3022,7 @@ namespace KanchokuWS
             // checkBox_useArrowKeyToSelectCand
             // 
             this.checkBox_useArrowKeyToSelectCand.AutoSize = true;
-            this.checkBox_useArrowKeyToSelectCand.Location = new System.Drawing.Point(20, 22);
+            this.checkBox_useArrowKeyToSelectCand.Location = new System.Drawing.Point(20, 20);
             this.checkBox_useArrowKeyToSelectCand.Name = "checkBox_useArrowKeyToSelectCand";
             this.checkBox_useArrowKeyToSelectCand.Size = new System.Drawing.Size(211, 19);
             this.checkBox_useArrowKeyToSelectCand.TabIndex = 0;
@@ -3042,7 +3044,7 @@ namespace KanchokuWS
             "46 ( : )",
             "47 ( ] )",
             "48 (＼)"});
-            this.comboBox_histNumDeckeyId.Location = new System.Drawing.Point(194, 68);
+            this.comboBox_histNumDeckeyId.Location = new System.Drawing.Point(194, 66);
             this.comboBox_histNumDeckeyId.Name = "comboBox_histNumDeckeyId";
             this.comboBox_histNumDeckeyId.Size = new System.Drawing.Size(64, 20);
             this.comboBox_histNumDeckeyId.TabIndex = 2;
@@ -3051,7 +3053,7 @@ namespace KanchokuWS
             // label43
             // 
             this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(17, 72);
+            this.label43.Location = new System.Drawing.Point(17, 70);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(168, 15);
             this.label43.TabIndex = 20;
@@ -3071,7 +3073,7 @@ namespace KanchokuWS
             "46 ( : )",
             "47 ( ] )",
             "48 (＼)"});
-            this.comboBox_histDelDeckeyId.Location = new System.Drawing.Point(194, 45);
+            this.comboBox_histDelDeckeyId.Location = new System.Drawing.Point(194, 43);
             this.comboBox_histDelDeckeyId.Name = "comboBox_histDelDeckeyId";
             this.comboBox_histDelDeckeyId.Size = new System.Drawing.Size(64, 20);
             this.comboBox_histDelDeckeyId.TabIndex = 1;
@@ -3081,7 +3083,7 @@ namespace KanchokuWS
             // label42
             // 
             this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(17, 49);
+            this.label42.Location = new System.Drawing.Point(17, 47);
             this.label42.Name = "label42";
             this.label42.Size = new System.Drawing.Size(132, 15);
             this.label42.TabIndex = 18;
@@ -3096,7 +3098,7 @@ namespace KanchokuWS
             this.groupBox14.Controls.Add(this.label28);
             this.groupBox14.Controls.Add(this.textBox_histKatakanaWordMinLength);
             this.groupBox14.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox14.Location = new System.Drawing.Point(11, 261);
+            this.groupBox14.Location = new System.Drawing.Point(11, 280);
             this.groupBox14.Name = "groupBox14";
             this.groupBox14.Size = new System.Drawing.Size(294, 86);
             this.groupBox14.TabIndex = 2;
@@ -3174,6 +3176,8 @@ namespace KanchokuWS
             // 
             // groupBox12
             // 
+            this.groupBox12.Controls.Add(this.textBox_histHorizontalCandMax);
+            this.groupBox12.Controls.Add(this.label79);
             this.groupBox12.Controls.Add(this.comboBox_historySearchKey);
             this.groupBox12.Controls.Add(this.textBox_histKanjiKeyLen);
             this.groupBox12.Controls.Add(this.textBox_histKatakanaKeyLen);
@@ -3187,7 +3191,7 @@ namespace KanchokuWS
             this.groupBox12.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox12.Location = new System.Drawing.Point(11, 10);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(294, 143);
+            this.groupBox12.Size = new System.Drawing.Size(294, 167);
             this.groupBox12.TabIndex = 0;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "履歴検索";
@@ -3853,6 +3857,24 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // textBox_histHorizontalCanMax
+            // 
+            this.textBox_histHorizontalCandMax.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.textBox_histHorizontalCandMax.Location = new System.Drawing.Point(151, 144);
+            this.textBox_histHorizontalCandMax.Name = "textBox_histHorizontalCanMax";
+            this.textBox_histHorizontalCandMax.Size = new System.Drawing.Size(34, 19);
+            this.textBox_histHorizontalCandMax.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.textBox_histHorizontalCandMax, "履歴候補を横列表示する際の最大候補数\r\n\r\n最小値は 1、 最大値は 10 です。");
+            // 
+            // label79
+            // 
+            this.label79.AutoSize = true;
+            this.label79.Location = new System.Drawing.Point(17, 146);
+            this.label79.Name = "label79";
+            this.label79.Size = new System.Drawing.Size(125, 15);
+            this.label79.TabIndex = 8;
+            this.label79.Text = "横列候補表示の最大数";
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -4259,5 +4281,7 @@ namespace KanchokuWS
         private System.Windows.Forms.GroupBox groupBox33;
         private System.Windows.Forms.Label label77;
         private System.Windows.Forms.ComboBox comboBox_historySearchKey;
+        private System.Windows.Forms.TextBox textBox_histHorizontalCandMax;
+        private System.Windows.Forms.Label label79;
     }
 }

@@ -35,6 +35,7 @@ struct Settings {
     bool selectFirstCandByEnter = false;    // 履歴の第1候補をEnterキーで選択する
     int histDelDeckeyId = 41;               // 履歴削除のDecKeyID
     int histNumDeckeyId = 45;               // 履歴文字数指定のDecKeyID
+    size_t histHorizontalCandMax = 5;       // 履歴候補の横列鍵盤表示の際の最大数
 
     bool useArrowKeyToSelectCandidate = true;   // 矢印キーで履歴候補選択を行う
     //bool handleShiftSpaceAsNormalSpace = true;    // Shift-Space を通常の Space として扱う (ただし histSearchByShiftSpace が優先)
