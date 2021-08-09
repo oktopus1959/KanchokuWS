@@ -54,6 +54,12 @@ namespace {
          // Strokeキー を処理する
         void handleStrokeKeys(int deckey) {
             LOG_DEBUG(_T("CALLED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+            if (deckey >= FUNC_DECKEY_START) {
+                // 機能キーだったら処理をキャンセルする
+                LOG_DEBUG(_T("CANCELED"));
+                cancelMe();
+                return;
+            }
             STATE_COMMON->ClearOrigString();
             outputZenkakuCharFromDeckey(deckey);
         }
