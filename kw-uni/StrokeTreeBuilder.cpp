@@ -410,7 +410,15 @@ namespace {
 
         // ARROW
         void parseArrow() {
+            int shiftOffset = 0;
             char_t c = getNextChar();
+            if (c == 'S' || c == 's') {
+                shiftOffset = SHIFT_DECKEY_START;
+                c = getNextChar();
+            } else if (c == 'X' || c == 'x') {
+                shiftOffset = FUNC_DECKEY_START;
+                c = getNextChar();
+            }
             if (!is_numeral(c)) parseError();
             arrowIndex = c - '0';
             c = getNextChar();
@@ -418,7 +426,8 @@ namespace {
                 arrowIndex = arrowIndex * 10 + c - '0';
                 c = getNextChar();
             }
-            if (arrowIndex >= NORMAL_DECKEY_NUM) parseError();
+            arrowIndex += shiftOffset;
+            if (arrowIndex >= FUNC_DECKEY_END) parseError();
             if (c != '>') parseError();
         }
 
