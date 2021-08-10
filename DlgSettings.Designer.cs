@@ -343,6 +343,7 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.radioButton_noVkb = new System.Windows.Forms.RadioButton();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -702,6 +703,7 @@ namespace KanchokuWS
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.radioButton_noVkb);
             this.groupBox4.Controls.Add(this.textBox_vkbShowStrokeCount);
             this.groupBox4.Controls.Add(this.label59);
             this.groupBox4.Controls.Add(this.radioButton_modeMarker);
@@ -709,7 +711,7 @@ namespace KanchokuWS
             this.groupBox4.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox4.Location = new System.Drawing.Point(7, 139);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(244, 73);
+            this.groupBox4.Size = new System.Drawing.Size(244, 97);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "仮想鍵盤表示";
@@ -797,7 +799,7 @@ namespace KanchokuWS
             this.groupBox13.Controls.Add(this.textBox_splashWindowShowDuration);
             this.groupBox13.Controls.Add(this.label24);
             this.groupBox13.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox13.Location = new System.Drawing.Point(7, 221);
+            this.groupBox13.Location = new System.Drawing.Point(7, 242);
             this.groupBox13.Name = "groupBox13";
             this.groupBox13.Size = new System.Drawing.Size(244, 71);
             this.groupBox13.TabIndex = 2;
@@ -2032,7 +2034,7 @@ namespace KanchokuWS
             this.textBox_blockerSetterOneShotKeySeq.Location = new System.Drawing.Point(105, 227);
             this.textBox_blockerSetterOneShotKeySeq.Name = "textBox_blockerSetterOneShotKeySeq";
             this.textBox_blockerSetterOneShotKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_blockerSetterOneShotKeySeq.TabIndex = 15;
+            this.textBox_blockerSetterOneShotKeySeq.TabIndex = 8;
             this.toolTip1.SetToolTip(this.textBox_blockerSetterOneShotKeySeq, "末尾文字のブロッカーを設定または解除します。\r\n\r\nブロッカーを設定すると、ミニバッファに縦線(\'|\')が表示され、\r\n履歴や交ぜ書きの際の文字列採取がそこでブロ" +
         "ックされます。\r\nもう一度呼び出すとブロッカーが解除されます。");
             // 
@@ -2050,7 +2052,7 @@ namespace KanchokuWS
             this.textBox_hankakuKatakanaOneShotKeySeq.Location = new System.Drawing.Point(105, 201);
             this.textBox_hankakuKatakanaOneShotKeySeq.Name = "textBox_hankakuKatakanaOneShotKeySeq";
             this.textBox_hankakuKatakanaOneShotKeySeq.Size = new System.Drawing.Size(56, 23);
-            this.textBox_hankakuKatakanaOneShotKeySeq.TabIndex = 13;
+            this.textBox_hankakuKatakanaOneShotKeySeq.TabIndex = 7;
             this.toolTip1.SetToolTip(this.textBox_hankakuKatakanaOneShotKeySeq, "直前に出力したカタカナ列を半角カタカナに置換します。");
             // 
             // label75
@@ -2318,7 +2320,7 @@ namespace KanchokuWS
             this.groupBox18.Location = new System.Drawing.Point(293, 145);
             this.groupBox18.Name = "groupBox18";
             this.groupBox18.Size = new System.Drawing.Size(283, 102);
-            this.groupBox18.TabIndex = 2;
+            this.groupBox18.TabIndex = 3;
             this.groupBox18.TabStop = false;
             this.groupBox18.Text = "日時変換とフォーマット";
             // 
@@ -2328,7 +2330,7 @@ namespace KanchokuWS
             this.checkBox_dateStringKey.Location = new System.Drawing.Point(11, 22);
             this.checkBox_dateStringKey.Name = "checkBox_dateStringKey";
             this.checkBox_dateStringKey.Size = new System.Drawing.Size(83, 19);
-            this.checkBox_dateStringKey.TabIndex = 35;
+            this.checkBox_dateStringKey.TabIndex = 0;
             this.checkBox_dateStringKey.Text = "日時に変換";
             this.checkBox_dateStringKey.UseVisualStyleBackColor = true;
             this.checkBox_dateStringKey.CheckedChanged += new System.EventHandler(this.checkBox_dateStringKey_CheckedChanged);
@@ -2341,7 +2343,7 @@ namespace KanchokuWS
             this.comboBox_dateStringKey.Location = new System.Drawing.Point(179, 21);
             this.comboBox_dateStringKey.Name = "comboBox_dateStringKey";
             this.comboBox_dateStringKey.Size = new System.Drawing.Size(89, 20);
-            this.comboBox_dateStringKey.TabIndex = 36;
+            this.comboBox_dateStringKey.TabIndex = 1;
             this.toolTip1.SetToolTip(this.comboBox_dateStringKey, resources.GetString("comboBox_dateStringKey.ToolTip"));
             // 
             // label92
@@ -2360,7 +2362,7 @@ namespace KanchokuWS
             this.textBox_dateStringFormat.Name = "textBox_dateStringFormat";
             this.textBox_dateStringFormat.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox_dateStringFormat.Size = new System.Drawing.Size(271, 52);
-            this.textBox_dateStringFormat.TabIndex = 27;
+            this.textBox_dateStringFormat.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox_dateStringFormat, resources.GetString("textBox_dateStringFormat.ToolTip"));
             this.textBox_dateStringFormat.Enter += new System.EventHandler(this.textBox_dateStringFormat_Enter);
             this.textBox_dateStringFormat.Leave += new System.EventHandler(this.textBox_dateStringFormat_Leave);
@@ -2501,7 +2503,7 @@ namespace KanchokuWS
             this.checkBox_endKey.Location = new System.Drawing.Point(18, 239);
             this.checkBox_endKey.Name = "checkBox_endKey";
             this.checkBox_endKey.Size = new System.Drawing.Size(99, 19);
-            this.checkBox_endKey.TabIndex = 38;
+            this.checkBox_endKey.TabIndex = 21;
             this.checkBox_endKey.Text = "End キーに変換";
             this.checkBox_endKey.UseVisualStyleBackColor = true;
             this.checkBox_endKey.CheckedChanged += new System.EventHandler(this.checkBox_endKey_CheckedChanged);
@@ -2514,7 +2516,7 @@ namespace KanchokuWS
             this.comboBox_endKey.Location = new System.Drawing.Point(186, 238);
             this.comboBox_endKey.Name = "comboBox_endKey";
             this.comboBox_endKey.Size = new System.Drawing.Size(89, 20);
-            this.comboBox_endKey.TabIndex = 39;
+            this.comboBox_endKey.TabIndex = 22;
             this.toolTip1.SetToolTip(this.comboBox_endKey, "End キーに変換する Ctrlキーを選択します");
             this.comboBox_endKey.DropDown += new System.EventHandler(this.comboBox_endKey_DropDown_1);
             // 
@@ -2533,7 +2535,7 @@ namespace KanchokuWS
             this.checkBox_homeKey.Location = new System.Drawing.Point(18, 217);
             this.checkBox_homeKey.Name = "checkBox_homeKey";
             this.checkBox_homeKey.Size = new System.Drawing.Size(111, 19);
-            this.checkBox_homeKey.TabIndex = 35;
+            this.checkBox_homeKey.TabIndex = 19;
             this.checkBox_homeKey.Text = "Home キーに変換";
             this.checkBox_homeKey.UseVisualStyleBackColor = true;
             this.checkBox_homeKey.CheckedChanged += new System.EventHandler(this.checkBox_homeKey_CheckedChanged);
@@ -2546,7 +2548,7 @@ namespace KanchokuWS
             this.comboBox_homeKey.Location = new System.Drawing.Point(186, 216);
             this.comboBox_homeKey.Name = "comboBox_homeKey";
             this.comboBox_homeKey.Size = new System.Drawing.Size(89, 20);
-            this.comboBox_homeKey.TabIndex = 36;
+            this.comboBox_homeKey.TabIndex = 20;
             this.toolTip1.SetToolTip(this.comboBox_homeKey, "Home キーに変換する Ctrlキーを選択します");
             this.comboBox_homeKey.DropDown += new System.EventHandler(this.comboBox_homeKey_DropDown_1);
             // 
@@ -2565,7 +2567,7 @@ namespace KanchokuWS
             this.checkBox_enterKey.Location = new System.Drawing.Point(18, 195);
             this.checkBox_enterKey.Name = "checkBox_enterKey";
             this.checkBox_enterKey.Size = new System.Drawing.Size(106, 19);
-            this.checkBox_enterKey.TabIndex = 32;
+            this.checkBox_enterKey.TabIndex = 17;
             this.checkBox_enterKey.Text = "Enter キーに変換";
             this.checkBox_enterKey.UseVisualStyleBackColor = true;
             this.checkBox_enterKey.CheckedChanged += new System.EventHandler(this.checkBox_enterKey_CheckedChanged);
@@ -2578,7 +2580,7 @@ namespace KanchokuWS
             this.comboBox_enterKey.Location = new System.Drawing.Point(186, 194);
             this.comboBox_enterKey.Name = "comboBox_enterKey";
             this.comboBox_enterKey.Size = new System.Drawing.Size(89, 20);
-            this.comboBox_enterKey.TabIndex = 33;
+            this.comboBox_enterKey.TabIndex = 18;
             this.toolTip1.SetToolTip(this.comboBox_enterKey, "Enter キーに変換する Ctrlキーを選択します");
             this.comboBox_enterKey.DropDown += new System.EventHandler(this.comboBox_enterKey_DropDown);
             // 
@@ -2879,7 +2881,7 @@ namespace KanchokuWS
             this.button_ctrlClose.Location = new System.Drawing.Point(385, 343);
             this.button_ctrlClose.Name = "button_ctrlClose";
             this.button_ctrlClose.Size = new System.Drawing.Size(80, 23);
-            this.button_ctrlClose.TabIndex = 3;
+            this.button_ctrlClose.TabIndex = 4;
             this.button_ctrlClose.Text = "閉じる(&C)";
             this.button_ctrlClose.UseVisualStyleBackColor = true;
             this.button_ctrlClose.Click += new System.EventHandler(this.button_ctrlClose_Click);
@@ -2890,7 +2892,7 @@ namespace KanchokuWS
             this.checkBox_ctrlMasEnter.Location = new System.Drawing.Point(301, 351);
             this.checkBox_ctrlMasEnter.Name = "checkBox_ctrlMasEnter";
             this.checkBox_ctrlMasEnter.Size = new System.Drawing.Size(188, 19);
-            this.checkBox_ctrlMasEnter.TabIndex = 3;
+            this.checkBox_ctrlMasEnter.TabIndex = 6;
             this.checkBox_ctrlMasEnter.Text = "Ctrl-M で Enter と同じ動作をする";
             this.checkBox_ctrlMasEnter.UseVisualStyleBackColor = true;
             this.checkBox_ctrlMasEnter.Visible = false;
@@ -2902,7 +2904,7 @@ namespace KanchokuWS
             this.button_ctrlEnter.Location = new System.Drawing.Point(493, 343);
             this.button_ctrlEnter.Name = "button_ctrlEnter";
             this.button_ctrlEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_ctrlEnter.TabIndex = 4;
+            this.button_ctrlEnter.TabIndex = 5;
             this.button_ctrlEnter.Text = "設定(&E)";
             this.toolTip1.SetToolTip(this.button_ctrlEnter, "設定内容を kanchoku.user.ini に書き込みます");
             this.button_ctrlEnter.UseVisualStyleBackColor = true;
@@ -2919,7 +2921,7 @@ namespace KanchokuWS
             this.groupBox11.Location = new System.Drawing.Point(293, 4);
             this.groupBox11.Name = "groupBox11";
             this.groupBox11.Size = new System.Drawing.Size(283, 136);
-            this.groupBox11.TabIndex = 19;
+            this.groupBox11.TabIndex = 2;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Ctrl修飾キー変換の詳細";
             // 
@@ -4015,6 +4017,18 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // radioButton_noVkb
+            // 
+            this.radioButton_noVkb.AutoSize = true;
+            this.radioButton_noVkb.Location = new System.Drawing.Point(17, 67);
+            this.radioButton_noVkb.Name = "radioButton_noVkb";
+            this.radioButton_noVkb.Size = new System.Drawing.Size(61, 19);
+            this.radioButton_noVkb.TabIndex = 6;
+            this.radioButton_noVkb.TabStop = true;
+            this.radioButton_noVkb.Text = "無表示";
+            this.toolTip1.SetToolTip(this.radioButton_noVkb, "漢直モードに入っても何も表示しません。\r\n\r\n第1打鍵ヘルプローテーションキーにより、一時的に\r\n標準鍵盤を表示することができます。");
+            this.radioButton_noVkb.UseVisualStyleBackColor = true;
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -4434,5 +4448,6 @@ namespace KanchokuWS
         private System.Windows.Forms.CheckBox checkBox_homeKey;
         private System.Windows.Forms.ComboBox comboBox_homeKey;
         private System.Windows.Forms.Label label85;
+        private System.Windows.Forms.RadioButton radioButton_noVkb;
     }
 }

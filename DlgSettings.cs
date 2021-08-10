@@ -210,8 +210,9 @@ namespace KanchokuWS
             selectModeToggleKeyItem(comboBox_modifiedOffKey, Settings.GetString("offHotKey"));
 
             // 仮想鍵盤表示
-            radioButton_normalVkb.Checked = Settings.VirtualKeyboardShowStrokeCount > 0;
-            radioButton_modeMarker.Checked = !radioButton_normalVkb.Checked;
+            radioButton_noVkb.Checked = !Settings.ShowVkbOrMaker;
+            radioButton_normalVkb.Checked = Settings.ShowVkbOrMaker && Settings.VirtualKeyboardShowStrokeCount > 0;
+            radioButton_modeMarker.Checked = Settings.ShowVkbOrMaker && !radioButton_normalVkb.Checked;
             textBox_vkbShowStrokeCount.Text = $"{Math.Abs(Settings.VirtualKeyboardShowStrokeCount)}";
             //checkBox_hideTopText.Checked = Settings.GetString("topBoxMode")._toLower()._equalsTo("hideonselect");
             //checkBox_hideTopText.Enabled = radioButton_modeMarker.Checked;
@@ -260,6 +261,7 @@ namespace KanchokuWS
             // 仮想鍵盤表示
             checkerBasic.Add(radioButton_normalVkb);
             checkerBasic.Add(radioButton_modeMarker);
+            checkerBasic.Add(radioButton_noVkb);
             checkerBasic.Add(textBox_vkbShowStrokeCount);
             //checkerBasic.Add(checkBox_hideTopText);
 
@@ -302,6 +304,7 @@ namespace KanchokuWS
 
             // 仮想鍵盤表示
             Settings.SetUserIni("vkbShowStrokeCount", $"{textBox_vkbShowStrokeCount.Text._parseInt(1)._lowLimit(0) * (radioButton_normalVkb.Checked ? 1 : -1)}");
+            Settings.SetUserIni("showVkbOrMaker", !radioButton_noVkb.Checked);
             //Settings.SetUserIni("topBoxMode", checkBox_hideTopText.Checked ? "hideOnSelect" : "showAlways");
 
             // ファイル

@@ -330,7 +330,7 @@ namespace KanchokuWS
                 frmMode.SetZenkakuMode();
             } else if (decoderOutput.IsZenkakuModeMarkerClear()) {
                 frmMode.SetKanjiMode();
-            } else if (Settings.KanjiModeMarkerShowIntervalSec == 0) {
+            } else if (Settings.EffectiveKanjiModeMarkerShowIntervalSec == 0) {
                 // モード標識を常時表示なら、2ストローク待ちか否かを通知する
                 frmMode.SetWait2ndStrokeMode(decoderOutput.IsWaiting2ndStroke());
             }

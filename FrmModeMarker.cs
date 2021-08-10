@@ -79,17 +79,17 @@ namespace KanchokuWS
 
         private void resetCount()
         {
-            remainingCount = Settings.KanjiModeMarkerShowIntervalSec * (1000 / Settings.ModeMarkerProcLoopPollingMillisec);
+            remainingCount = Settings.EffectiveKanjiModeMarkerShowIntervalSec * (1000 / Settings.ModeMarkerProcLoopPollingMillisec);
         }
 
         private void decrementCount()
         {
-            if (Settings.KanjiModeMarkerShowIntervalSec > 0 && remainingCount >= 0) --remainingCount;
+            if (Settings.EffectiveKanjiModeMarkerShowIntervalSec > 0 && remainingCount >= 0) --remainingCount;
         }
 
         private bool isCountZero()
         {
-            return Settings.KanjiModeMarkerShowIntervalSec <= 0 || remainingCount == 0;
+            return Settings.EffectiveKanjiModeMarkerShowIntervalSec <= 0 || remainingCount == 0;
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace KanchokuWS
         /// </summary>
         public void Vanish()
         {
-            if (Settings.KanjiModeMarkerShowIntervalSec > 0) {
+            if (Settings.EffectiveKanjiModeMarkerShowIntervalSec > 0) {
                 this.Hide();
                 resetCount();
             }
@@ -124,7 +124,7 @@ namespace KanchokuWS
         {
             foreColorChanged = waiting2ndStroke;
             waiting2ndStroke = false;
-            if (Settings.AlphaModeMarkerShowMillisec > 0) {
+            if (Settings.EffectiveAlphaModeMarkerShowMillisec > 0) {
                 newFaceLabel = alphaModeFace;
                 iAlphaMode = 1;
                 changeShowState();
@@ -145,7 +145,7 @@ namespace KanchokuWS
         public void SetWait2ndStrokeMode(bool flag)
         {
             logger.Debug($"CALLED: flag={flag}");
-            if (Settings.KanjiModeMarkerShowIntervalSec == 0) {
+            if (Settings.EffectiveKanjiModeMarkerShowIntervalSec == 0) {
                 newFaceLabel = kanchokuModeFace;
                 faceLabel = alphaModeFace;
                 iAlphaMode = 0;
@@ -180,8 +180,8 @@ namespace KanchokuWS
         {
             if (bTerminated) return;
 
-            if ((iAlphaMode == 0 && Settings.KanjiModeMarkerShowIntervalSec >= 0) ||
-                (iAlphaMode > 0 && Settings.AlphaModeMarkerShowMillisec > 0)) {
+            if ((iAlphaMode == 0 && Settings.EffectiveKanjiModeMarkerShowIntervalSec >= 0) ||
+                (iAlphaMode > 0 && Settings.EffectiveAlphaModeMarkerShowMillisec > 0)) {
                 frmMain.ShowFrmMode();
             } else {
                 // モード標識を非表示の場合
@@ -203,7 +203,7 @@ namespace KanchokuWS
                 if (iAlphaMode == 1) {
                     iAlphaMode = 2;
                     showMyForm();
-                    alphaModeHideDt = DateTime.Now.AddMilliseconds((Settings.AlphaModeMarkerShowMillisec > 0 ? Settings.AlphaModeMarkerShowMillisec : 1000) - 20);
+                    alphaModeHideDt = DateTime.Now.AddMilliseconds((Settings.EffectiveAlphaModeMarkerShowMillisec > 0 ? Settings.EffectiveAlphaModeMarkerShowMillisec : 1000) - 20);
                 } else if (alphaModeHideDt < DateTime.Now) {
                     iAlphaMode = 0;
                     this.Hide();

@@ -115,6 +115,9 @@ namespace KanchokuWS
             /// <summary>何らかの選択状態にあるときのみ表示する</summary>
             OnSelect,
         }
+        /// <summary>仮想鍵盤またはモード標識を表示する</summary>
+        public static bool ShowVkbOrMaker { get; set; } = true;
+
         /// <summary>N打鍵目に仮想鍵盤を表示する(0なら仮想鍵盤を表示しない)</summary>
         public static int VirtualKeyboardShowStrokeCount { get; set; } = 1;
         public static int VirtualKeyboardShowStrokeCountTemp { get; set; } = 0;
@@ -182,12 +185,14 @@ namespace KanchokuWS
         public static string AlphaModeForeColor { get; private set; } = "Blue";
 
         /// <summary>入力モードの標識の表示までのインターバル秒数</summary>
-        public static int KanjiModeMarkerShowIntervalSec { get; private set; } = 5;
+        public static int EffectiveKanjiModeMarkerShowIntervalSec => ShowVkbOrMaker ? KanjiModeMarkerShowIntervalSec : -1;
+        public static int KanjiModeMarkerShowIntervalSec { get; private set; } = 0;
 
         ///// <summary>漢直モード標識表示のミリ秒</summary>
         //public static int KanjiModeMarkerShowMillisec { get; private set; } = -1;
 
         /// <summary>英字モード標識表示のミリ秒</summary>
+        public static int EffectiveAlphaModeMarkerShowMillisec => ShowVkbOrMaker ? AlphaModeMarkerShowMillisec : 0;
         public static int AlphaModeMarkerShowMillisec { get; private set; } = 1000;
 
         /// <summary>モード標識表示のためのループ処理におけるポーリングインターバルミリ秒 (1000固定)</summary>
@@ -581,6 +586,7 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             VirtualKeyboardShowStrokeCount = GetString("vkbShowStrokeCount")._parseInt(1);
+            ShowVkbOrMaker = GetString("showVkbOrMaker")._parseBool(true);
 
             //-------------------------------------------------------------------------------------
             VirtualKeyboardOffsetX = GetString("vkbOffsetX")._parseInt(2)._lowLimit(0);
