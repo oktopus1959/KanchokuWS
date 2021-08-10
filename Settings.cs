@@ -282,6 +282,14 @@ namespace KanchokuWS
         /// <summary>Endキーに変換するCtrlキー </summary>
         public static string CtrlKeyConvertedToEnd { get; private set; }
 
+        /// <summary>その他の特殊キーに変換するCtrlキー </summary>
+        public static string CtrlKeyConvertedToEsc { get; private set; }
+        public static string CtrlKeyConvertedToTab { get; private set; }
+        public static string CtrlKeyConvertedToEnter { get; private set; }
+        public static string CtrlKeyConvertedToInsert { get; private set; }
+        public static string CtrlKeyConvertedToPageUp { get; private set; }
+        public static string CtrlKeyConvertedToPageDown { get; private set; }
+
         /// <summary>ウィンドウClassNameリストを対象リストとして扱うか</summary>
         public static bool UseClassNameListAsInclusion { get; private set; } = false;
 
@@ -291,8 +299,8 @@ namespace KanchokuWS
         /// <summary>Ctrl-J を Enter と同じように扱う </summary>
         public static bool UseCtrlJasEnter { get; private set; } = false;
 
-        /// <summary>Ctrl-M を Enter と同じように扱う </summary>
-        public static bool UseCtrlMasEnter { get; private set; } = false;
+        ///// <summary>Ctrl-M を Enter と同じように扱う </summary>
+        //public static bool UseCtrlMasEnter { get; private set; } = false;
 
         /// <summary>日付に変換するCtrlキー </summary>
         public static string CtrlKeyConvertedToDateString { get; private set; }
@@ -621,6 +629,12 @@ namespace KanchokuWS
             CtrlKeyConvertedToDownArrow = GetString("ctrlKeyToDownArrowKey", "#");
             CtrlKeyConvertedToHome = GetString("ctrlKeyToHome", "#");
             CtrlKeyConvertedToEnd = GetString("ctrlKeyToEnd", "#");
+            CtrlKeyConvertedToEsc = GetString("ctrlKeyToEsc", "#");
+            CtrlKeyConvertedToTab = GetString("ctrlKeyToTab", "#");
+            CtrlKeyConvertedToEnter = GetString("ctrlKeyToEnter", "#");
+            CtrlKeyConvertedToInsert = GetString("ctrlKeyToInsert", "#");
+            CtrlKeyConvertedToPageUp = GetString("ctrlKeyToPageUp", "#");
+            CtrlKeyConvertedToPageDown = GetString("ctrlKeyToPageDown", "#");
             CtrlKeyConvertedToDateString = GetString("ctrlKeyToDateString", "#");
 
             VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToBackSpace, DecoderKeys.BS_DECKEY, 0);
@@ -631,6 +645,12 @@ namespace KanchokuWS
             VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDownArrow, DecoderKeys.DOWN_ARROW_DECKEY, 0);
             VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToHome, DecoderKeys.HOME_DECKEY, 0);
             VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEnd, DecoderKeys.END_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEsc, DecoderKeys.ESC_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToTab, DecoderKeys.TAB_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEnter, DecoderKeys.ENTER_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToInsert, DecoderKeys.INS_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToPageUp, DecoderKeys.PAGE_UP_DECKEY, 0);
+            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToPageDown, DecoderKeys.PAGE_DOWN_DECKEY, 0);
             VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDateString, DecoderKeys.DATE_STRING_ROTATION_DECKEY, DecoderKeys.DATE_STRING_UNROTATION_DECKEY);
 
             UseLeftControlToConversion = GetString("useLeftControlToConversion")._parseBool(true);
@@ -639,7 +659,7 @@ namespace KanchokuWS
             CtrlKeyTargetClassNames = new HashSet<string>(GetString("ctrlKeyTargetlassNames").Trim()._toLower()._split('|'));
 
             UseCtrlJasEnter = GetString("useCtrlJasEnter")._parseBool(false);
-            UseCtrlMasEnter = GetString("useCtrlMasEnter")._parseBool(false);
+            //UseCtrlMasEnter = GetString("useCtrlMasEnter")._parseBool(false);
 
             //ConvertCtrlSemiColonToDate = GetString("convertCtrlSemicolonToDate")._parseBool(true);
             DateStringFormat = GetString("dateStringFormat", "yyyy/M/d|yyyyMMdd");

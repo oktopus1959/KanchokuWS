@@ -973,7 +973,7 @@ namespace KanchokuWS
                 }
 
                 // Ctrl-J と Ctrl-M
-                if ((Settings.UseCtrlJasEnter && VirtualKeys.GetCtrlDecKeyOf("J") == deckey) || (Settings.UseCtrlMasEnter && VirtualKeys.GetCtrlDecKeyOf("M") == deckey)) {
+                if ((Settings.UseCtrlJasEnter && VirtualKeys.GetCtrlDecKeyOf("J") == deckey) /*|| (Settings.UseCtrlMasEnter && VirtualKeys.GetCtrlDecKeyOf("M") == deckey)*/) {
                     deckey = DecoderKeys.ENTER_DECKEY;
                 }
 

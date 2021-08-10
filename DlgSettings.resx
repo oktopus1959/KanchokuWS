@@ -369,14 +369,40 @@ Shift+Space=S40
 半/全=X1, Caps=X3, 英数=X4, 無変換=X5, 変換=X6, ひらがな=X7
 (コードに 'X' または 'x' を前接させると特殊キーになります。)</value>
   </data>
+  <data name="label77.ToolTip" xml:space="preserve">
+    <value>Insert, PageUp, PageDown キーへの変換は
+kanchoku.user.ini (または kanchoku.ini) に
+以下のような記述を追記します。
+(以下は一例です)
+
+ctrlKeyToInsert=OEM6
+ctrlKeyToPageUp=U
+ctrlKeyToPageDown=PERIOD
+
+"=" の後の名前は、ドロップダウンで表示されるものを設定します。</value>
+  </data>
+  <data name="comboBox_dateStringKey.ToolTip" xml:space="preserve">
+    <value>現在の日時を出力する Ctrlキーの設定
+
+「日時フォーマット」で設定したフォーマットに従って現在の日時を出力します。
+設定したCtrlキーを続けて打鍵すると、フォーマットを切り替えながら使用します。
+
+Ctrl+Shift 打鍵の場合は、「日時フォーマット」を末尾から逆順に切り替えます。
+
+Ctrl打鍵の直後に Ctlrl+Shift 打鍵すると取り消しになります。(逆も同じ)
+
+たまに Shift+Backspace を受け付けないアプリがあります。
+その場合、前回の出力が消去されませんのでご注意を。</value>
+  </data>
   <data name="textBox_dateStringFormat.ToolTip" xml:space="preserve">
-    <value>Ctrl+; および Ctrl+Shift+; で出力する日付のフォーマットを設定します。
+    <value>日時変換キーで出力する日時のフォーマットを設定します。
 
 1行1エントリで、複数のフォーマットを設定できます。
-フォーマットが複数ある場合、Ctrl+; (Ctrl+Shift+;) を連続して打鍵すると、
+フォーマットが複数ある場合、 Ctrlキー (Ctrl+Shiftキー) を連続して打鍵すると、
 使用するフォーマットが次々と切り替わります。
-Ctrl+; の場合は1つめから正順に、 Ctrl+Shift+; の場合は末尾から逆順に使用します。
-Ctrl+; の直後に Ctlrl+Shift+; を打つと取り消しになります。(逆も同じ)
+Ctrlキー の場合は1つめから正順に、 Ctrl+Shiftキー の場合は末尾から逆順に
+使用します。
+Ctrlキー の直後に Ctrl+Shiftキー を打つと取り消しになります。(逆も同じ)
 
 フォーマット文字：
 yyyy: 4桁の年
@@ -395,8 +421,8 @@ yyyy/MM/DD
 令和r年M月d日
 
 と設定した場合、
-Ctrl+; ⇒ 2021/09/23
-Ctrl+Shift+; ⇒ 令和3年9月23日
+Ctrlキー ⇒ 2021/09/23
+Ctrl+Shiftキー ⇒ 令和3年9月23日
 となります。</value>
   </data>
   <data name="comboBox_fullEscapeKey.ToolTip" xml:space="preserve">
@@ -413,19 +439,6 @@ Ctrl-Shift修飾されたキーで、ブロッカーの解除となります。
 
 これは、履歴検索、交ぜ書き変換、部首合成など、後置式の機能
 全般に影響します。</value>
-  </data>
-  <data name="comboBox_dateStringKey.ToolTip" xml:space="preserve">
-    <value>今日の日付を出力する Ctrlキーの設定
-
-「日付フォーマット」で設定したフォーマットをに従って今日の日付を出力します。
-設定したCtrlキーを続けて打鍵すると、フォーマットを切り替えながら使用します。
-
-Ctrl+Shift 打鍵の場合は、「日付フォーマット」を末尾から逆順に切り替えます。
-
-Ctrl打鍵の直後に Ctlrl+Shift 打鍵すると取り消しになります。(逆も同じ)
-
-たまに Shift+Backspace を受け付けないアプリがあります。
-その場合、前回の出力が消去されませんのでご注意を。</value>
   </data>
   <data name="checkBox_globalCtrlKeysEnabled.ToolTip" xml:space="preserve">
     <value>漢直モード／英字モードの両方で有効なグローバルなCtrlキー変換を設定します。

@@ -730,6 +730,9 @@ namespace KanchokuWS
             checkBox_rightArrowKey.Checked = Settings.CtrlKeyConvertedToRightArrow._notEmpty() && !Settings.CtrlKeyConvertedToRightArrow.StartsWith("#");
             checkBox_upArrowKey.Checked = Settings.CtrlKeyConvertedToUpArrow._notEmpty() && !Settings.CtrlKeyConvertedToUpArrow.StartsWith("#");
             checkBox_downArrowKey.Checked = Settings.CtrlKeyConvertedToDownArrow._notEmpty() && !Settings.CtrlKeyConvertedToDownArrow.StartsWith("#");
+            checkBox_escKey.Checked = Settings.CtrlKeyConvertedToEsc._notEmpty() && !Settings.CtrlKeyConvertedToEsc.StartsWith("#");
+            checkBox_tabKey.Checked = Settings.CtrlKeyConvertedToTab._notEmpty() && !Settings.CtrlKeyConvertedToTab.StartsWith("#");
+            checkBox_enterKey.Checked = Settings.CtrlKeyConvertedToEnter._notEmpty() && !Settings.CtrlKeyConvertedToEnter.StartsWith("#");
             checkBox_homeKey.Checked = Settings.CtrlKeyConvertedToHome._notEmpty() && !Settings.CtrlKeyConvertedToHome.StartsWith("#");
             checkBox_endKey.Checked = Settings.CtrlKeyConvertedToEnd._notEmpty() && !Settings.CtrlKeyConvertedToEnd.StartsWith("#");
             checkBox_dateStringKey.Checked = Settings.CtrlKeyConvertedToDateString._notEmpty() && !Settings.CtrlKeyConvertedToDateString.StartsWith("#");
@@ -740,6 +743,9 @@ namespace KanchokuWS
             comboBox_selectCtrlKeyItem(comboBox_rightArrowKey, $"{Settings.CtrlKeyConvertedToRightArrow.Replace("#", "")}");
             comboBox_selectCtrlKeyItem(comboBox_upArrowKey, $"{Settings.CtrlKeyConvertedToUpArrow.Replace("#", "")}");
             comboBox_selectCtrlKeyItem(comboBox_downArrowKey, $"{Settings.CtrlKeyConvertedToDownArrow.Replace("#", "")}");
+            comboBox_selectCtrlKeyItem(comboBox_escKey, $"{Settings.CtrlKeyConvertedToEsc.Replace("#", "")}");
+            comboBox_selectCtrlKeyItem(comboBox_tabKey, $"{Settings.CtrlKeyConvertedToTab.Replace("#", "")}");
+            comboBox_selectCtrlKeyItem(comboBox_enterKey, $"{Settings.CtrlKeyConvertedToEnter.Replace("#", "")}");
             comboBox_selectCtrlKeyItem(comboBox_homeKey, $"{Settings.CtrlKeyConvertedToHome.Replace("#", "")}");
             comboBox_selectCtrlKeyItem(comboBox_endKey, $"{Settings.CtrlKeyConvertedToEnd.Replace("#", "")}");
             comboBox_selectCtrlKeyItem(comboBox_dateStringKey, $"{Settings.CtrlKeyConvertedToDateString.Replace("#", "")}");
@@ -754,7 +760,7 @@ namespace KanchokuWS
             textBox_targetClassNames.Text = Settings.GetString("ctrlKeyTargetlassNames").Trim()._reReplace(@"\|", "\r\n");
 
             checkBox_ctrlJasEnter.Checked = Settings.UseCtrlJasEnter;
-            checkBox_ctrlMasEnter.Checked = Settings.UseCtrlMasEnter;
+            //checkBox_ctrlMasEnter.Checked = Settings.UseCtrlMasEnter;
 
             comboBox_selectCtrlKeyItem(comboBox_fullEscapeKey, $"{Settings.FullEscapeKey}");
             comboBox_selectCtrlKeyItem(comboBox_strokeHelpRotationKey, $"{Settings.StrokeHelpRotationKey}");
@@ -774,6 +780,9 @@ namespace KanchokuWS
             checkerCtrlKeys.Add(checkBox_rightArrowKey);
             checkerCtrlKeys.Add(checkBox_upArrowKey);
             checkerCtrlKeys.Add(checkBox_downArrowKey);
+            checkerCtrlKeys.Add(checkBox_escKey);
+            checkerCtrlKeys.Add(checkBox_tabKey);
+            checkerCtrlKeys.Add(checkBox_enterKey);
             checkerCtrlKeys.Add(checkBox_homeKey);
             checkerCtrlKeys.Add(checkBox_endKey);
             checkerCtrlKeys.Add(checkBox_dateStringKey);
@@ -784,6 +793,9 @@ namespace KanchokuWS
             checkerCtrlKeys.Add(comboBox_rightArrowKey);
             checkerCtrlKeys.Add(comboBox_upArrowKey);
             checkerCtrlKeys.Add(comboBox_downArrowKey);
+            checkerCtrlKeys.Add(comboBox_escKey);
+            checkerCtrlKeys.Add(comboBox_tabKey);
+            checkerCtrlKeys.Add(comboBox_enterKey);
             checkerCtrlKeys.Add(comboBox_homeKey);
             checkerCtrlKeys.Add(comboBox_endKey);
             checkerCtrlKeys.Add(comboBox_dateStringKey);
@@ -798,7 +810,7 @@ namespace KanchokuWS
             checkerCtrlKeys.Add(textBox_targetClassNames);
 
             checkerCtrlKeys.Add(checkBox_ctrlJasEnter);
-            checkerCtrlKeys.Add(checkBox_ctrlMasEnter);
+            //checkerCtrlKeys.Add(checkBox_ctrlMasEnter);
 
             checkerCtrlKeys.Add(comboBox_fullEscapeKey);
             checkerCtrlKeys.Add(comboBox_strokeHelpRotationKey);
@@ -828,6 +840,9 @@ namespace KanchokuWS
             Settings.SetUserIni("ctrlKeyToRightArrowKey", makeCtrlKeyConversion(checkBox_rightArrowKey, comboBox_rightArrowKey));
             Settings.SetUserIni("ctrlKeyToUpArrowKey", makeCtrlKeyConversion(checkBox_upArrowKey, comboBox_upArrowKey));
             Settings.SetUserIni("ctrlKeyToDownArrowKey", makeCtrlKeyConversion(checkBox_downArrowKey, comboBox_downArrowKey));
+            Settings.SetUserIni("ctrlKeyToEsc", makeCtrlKeyConversion(checkBox_escKey, comboBox_escKey));
+            Settings.SetUserIni("ctrlKeyToTab", makeCtrlKeyConversion(checkBox_tabKey, comboBox_tabKey));
+            Settings.SetUserIni("ctrlKeyToEnter", makeCtrlKeyConversion(checkBox_enterKey, comboBox_enterKey));
             Settings.SetUserIni("ctrlKeyToHome", makeCtrlKeyConversion(checkBox_homeKey, comboBox_homeKey));
             Settings.SetUserIni("ctrlKeyToEnd", makeCtrlKeyConversion(checkBox_endKey, comboBox_endKey));
             Settings.SetUserIni("ctrlKeyToDateString", makeCtrlKeyConversion(checkBox_dateStringKey, comboBox_dateStringKey));
@@ -839,7 +854,7 @@ namespace KanchokuWS
             Settings.SetUserIni("ctrlKeyTargetlassNames", textBox_targetClassNames.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
 
             Settings.SetUserIni("useCtrlJasEnter", checkBox_ctrlJasEnter.Checked);
-            Settings.SetUserIni("useCtrlMasEnter", checkBox_ctrlMasEnter.Checked);
+            //Settings.SetUserIni("useCtrlMasEnter", checkBox_ctrlMasEnter.Checked);
 
             Settings.SetUserIni("fullEscapeKey", comboBox_fullEscapeKey._getSelectedItemSplittedFirst("G"));
             Settings.SetUserIni("strokeHelpRotationKey", comboBox_strokeHelpRotationKey._getSelectedItemSplittedFirst("T"));
@@ -1352,6 +1367,9 @@ namespace KanchokuWS
             checkBox_rightArrowKey.Enabled = comboBox_rightArrowKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
             checkBox_upArrowKey.Enabled = comboBox_upArrowKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
             checkBox_downArrowKey.Enabled = comboBox_downArrowKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
+            checkBox_escKey.Enabled = comboBox_escKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
+            checkBox_tabKey.Enabled = comboBox_tabKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
+            checkBox_enterKey.Enabled = comboBox_enterKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
             checkBox_homeKey.Enabled = comboBox_homeKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
             checkBox_endKey.Enabled = comboBox_endKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
             checkBox_dateStringKey.Enabled = comboBox_dateStringKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
@@ -1448,6 +1466,9 @@ namespace KanchokuWS
             comboBox_rightArrowKey.Enabled = checkBox_rightArrowKey.Checked;
             comboBox_upArrowKey.Enabled = checkBox_upArrowKey.Checked;
             comboBox_downArrowKey.Enabled = checkBox_downArrowKey.Checked;
+            comboBox_escKey.Enabled = checkBox_escKey.Checked;
+            comboBox_tabKey.Enabled = checkBox_tabKey.Checked;
+            comboBox_enterKey.Enabled = checkBox_enterKey.Checked;
             comboBox_homeKey.Enabled = checkBox_homeKey.Checked;
             comboBox_endKey.Enabled = checkBox_endKey.Checked;
             comboBox_dateStringKey.Enabled = checkBox_dateStringKey.Checked;
@@ -1481,6 +1502,21 @@ namespace KanchokuWS
         private void checkBox_downArrowKey_CheckedChanged(object sender, EventArgs e)
         {
             comboBox_downArrowKey.Enabled = checkBox_downArrowKey.Checked;
+        }
+
+        private void checkBox_escKey_CheckedChanged(object sender, EventArgs e)
+        {
+            comboBox_escKey.Enabled = checkBox_escKey.Checked;
+        }
+
+        private void checkBox_tabKey_CheckedChanged(object sender, EventArgs e)
+        {
+            comboBox_tabKey.Enabled = checkBox_tabKey.Checked;
+        }
+
+        private void checkBox_enterKey_CheckedChanged(object sender, EventArgs e)
+        {
+            comboBox_enterKey.Enabled = checkBox_enterKey.Checked;
         }
 
         private void checkBox_homeKey_CheckedChanged(object sender, EventArgs e)
@@ -1530,10 +1566,25 @@ namespace KanchokuWS
 
         private void comboBox_homeKey_DropDown(object sender, EventArgs e)
         {
-            comboBox_ctrlKey_setItems(comboBox_homeKey);
+            comboBox_ctrlKey_setItems(comboBox_escKey);
         }
 
         private void comboBox_endKey_DropDown(object sender, EventArgs e)
+        {
+            comboBox_ctrlKey_setItems(comboBox_tabKey);
+        }
+
+        private void comboBox_enterKey_DropDown(object sender, EventArgs e)
+        {
+            comboBox_ctrlKey_setItems(comboBox_enterKey);
+        }
+
+        private void comboBox_homeKey_DropDown_1(object sender, EventArgs e)
+        {
+            comboBox_ctrlKey_setItems(comboBox_homeKey);
+        }
+
+        private void comboBox_endKey_DropDown_1(object sender, EventArgs e)
         {
             comboBox_ctrlKey_setItems(comboBox_endKey);
         }
