@@ -150,7 +150,7 @@ namespace KanchokuWS
                 bool ctrl = leftCtrl || rightCtrl;
                 bool shift = shiftKeyPressed();
                 uint mod = KeyModifiers.MakeModifier(ctrl, shift);
-                int kanchokuCode = (Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl)
+                int kanchokuCode = Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))
                     ? VirtualKeys.GetCtrlConvertedDecKeyFromCombo(mod, (uint)vkey)
                     : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
 
