@@ -63,9 +63,10 @@ namespace {
             LOG_DEBUG(_T("CALLED: %s: deckey=%xH(%d), face=%c, nodeDepth=%d"), NAME_PTR, deckey, deckey, myChar, DEPTH);
             STATE_COMMON->AppendOrigString(myChar); // RootStrokeTableState が作成されたときに OrigString はクリアされている
 
-            SetTemporaryNextNode(NEXT_NODE(deckey));
-            if (!TemporaryNextNode() || !TemporaryNextNode()->isStrokeTableNode()) {
-                LOG_DEBUG(_T("%s: Next node="), NAME_PTR, NODE_NAME_PTR(TemporaryNextNode()));
+            SetNextNodeMaybe(NEXT_NODE(deckey));
+            if (!NextNodeMaybe() || !NextNodeMaybe()->isStrokeTableNode()) {
+                // 次ノードがストロークノードでなければ、全ストロークを削除対象とする
+                LOG_DEBUG(_T("%s: Next node="), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
                 setToRemoveAllStroke();
             }
         }

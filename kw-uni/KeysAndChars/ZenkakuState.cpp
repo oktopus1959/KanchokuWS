@@ -132,13 +132,6 @@ namespace {
             cancelMe();
         }
 
-        //void DoDeckeyPostProc() {
-        //    _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
-        //    // 1文字処理したら抜ける
-        //    cancelMe();
-        //    State::DoDeckeyPostProc();
-        //}
-
         // Space キーの処理 -- origChar を出力してキャンセル
         void handleSpaceKey() {
             STATE_COMMON->OutputOrigString();

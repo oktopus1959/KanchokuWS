@@ -18,7 +18,7 @@ class State {
 
     // 次の状態を生成する元となるノード
     // これは状態生成の時に一時的に使用されるだけ
-    Node* pTemporaryNextNode= 0;
+    Node* pNextNodeMaybe= 0;
 
     friend class ModeState;
 
@@ -73,14 +73,26 @@ public:
         }
     }
 
-    // 状態の再アクティブ化
-    virtual void Reactivate();
+public:
+    // カスタマイズ不可なメソッド
 
     // 入力された DECKEY を処理する(これは全状態で共通の処理)
-    Node* HandleDeckey(int deckey);
+    void HandleDeckey(int deckey);
 
     // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
     void DoOutStringProcChain();
+
+    // DECKEY処理の後半部
+    void DoDeckeyPostProc();
+
+public:
+    // カスタマイズ可能なメソッド
+
+    // DECKEY処理の前半部
+    virtual void DoDeckeyPreProc(int deckey);
+
+    // 状態の再アクティブ化
+    virtual void Reactivate();
 
     // 最終的な出力履歴が整ったところで呼び出される処理
     virtual void DoOutStringProc();
@@ -119,16 +131,12 @@ public:
 
 protected:
     // 次の処理のためのノードをセットする
-    void SetTemporaryNextNode(Node* pN) { pTemporaryNextNode= pN; }
+    void SetNextNodeMaybe(Node* pN) { pNextNodeMaybe= pN; }
+
+    void ClearNextNodeMaybe() { pNextNodeMaybe= nullptr; }
 
     // 次の処理のためのノードを取得する
-    Node* TemporaryNextNode() const { return pTemporaryNextNode; }
-
-    // DECKEY処理の前半部 (処理をカスタマイズする場合はこれをオーバーライドする)
-    virtual void DoDeckeyPreProc(int deckey);
-
-    // DECKEY処理の後半部 (処理をカスタマイズする場合はこれをオーバーライドする)
-    virtual void DoDeckeyPostProc();
+    Node* NextNodeMaybe() const { return pNextNodeMaybe; }
 
     // 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
     // 例：ストロークの末尾まで到達して、ストロークチェイン全体が不要になった

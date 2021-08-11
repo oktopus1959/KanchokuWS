@@ -33,44 +33,48 @@ void State::Reactivate() {
 
 // DECKEY 処理の流れ
 // 新ノードが未処理の場合は、ここで NULL 以外が返されるので、親状態で処理する
-Node* State::HandleDeckey(int deckey) {
-    _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), NextNode=%s"), NAME_PTR, deckey, deckey, NODE_NAME_PTR(TemporaryNextNode()));
+void State::HandleDeckey(int deckey) {
+    _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), NextNode=%s"), NAME_PTR, deckey, deckey, NODE_NAME_PTR(NextNodeMaybe()));
     // 前処理
     DoDeckeyPreProc(deckey);
     // 後処理
     DoDeckeyPostProc();
-    _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(TemporaryNextNode()));
-    return pTemporaryNextNode;
+    _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
+    //return pNextNodeMaybe;
 }
 
 // DECKEY処理の前半部のデフォルト処理。
 // 後続状態があればそちらに移譲。なければここでホットキーをディスパッチ。
 // 自前で DECKEY 処理をやる場合にはオーバーライドしてもよい
 void State::DoDeckeyPreProc(int deckey) {
-    _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), NextNode=%s"), NAME_PTR, deckey, deckey, NODE_NAME_PTR(TemporaryNextNode()));
-    pTemporaryNextNode = nullptr;
+    _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), NextNode=%s"), NAME_PTR, deckey, deckey, NODE_NAME_PTR(NextNodeMaybe()));
+    //pNextNodeMaybe = nullptr;
+    ClearNextNodeMaybe();
     if (pNext) {
-        // 後続状態があれば、そちらを呼び出す ⇒ 新しい後続ノードが生成されたらそれを一時的に記憶しておく(後半部で処理する)
-        pTemporaryNextNode = pNext->HandleDeckey(deckey);
+        // 後続状態があれば、そちらを呼び出す ⇒ 新しい後続ノードがあればそれを一時的に記憶しておく(後半部で処理する)
+        //pNextNodeMaybe = pNext->HandleDeckey(deckey);
+        pNext->HandleDeckey(deckey);
+        SetNextNodeMaybe(pNext->NextNodeMaybe());
     } else {
-        // 後続状態がなく、ストロークキー以外であれば、ここでDECKEYをディスパッチする
+        // 後続状態がなければ、ここでDECKEYをディスパッチする
         dispatchDeckey(deckey);
     }
-    _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(TemporaryNextNode()));
+    _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
 }
 
 // DECKEY処理の後半部のデフォルト処理。
 // 不要になった後続状態の削除と、新しい後続状態の生成とチェイン。
 // 自前で DECKEY 処理をやる場合にはオーバーライドしてもよい
 void State::DoDeckeyPostProc() {
-    _LOG_DEBUGH(_T("ENTER: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(TemporaryNextNode()));
+    _LOG_DEBUGH(_T("ENTER: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
     // 不要な後続状態を削除
     DeleteUnnecessarySuccessorState();
-    if (pTemporaryNextNode && !IsUnnecessary()) {
-        // 新しい後続ノードが生成されており、自身が不要状態でない
-        LOG_DEBUG(_T("nextNode: %s"), NODE_NAME_PTR(pTemporaryNextNode));
+    if (NextNodeMaybe() && !IsUnnecessary()) {
+        // 新しい後続ノードが生成されており、自身が不要状態でないならば、ここで後続ノードの処理を行う
+        // (自身が不要状態ならば、この後、前接状態に戻り、そこで後続ノードが処理される)
+        LOG_DEBUG(_T("nextNode: %s"), NODE_NAME_PTR(NextNodeMaybe()));
         // 後続状態を作成
-        auto ps = pTemporaryNextNode->CreateState();
+        auto ps = NextNodeMaybe()->CreateState();
         // 状態が生成されたときに処理を実行
         // ストロークノード以外は、ここで何らかの出力処理をするはず
         if (ps->DoProcOnCreated()) {
@@ -79,9 +83,10 @@ void State::DoDeckeyPostProc() {
             pNext = ps;
             ps->pPrev = this;
         }
-        pTemporaryNextNode = nullptr;   // 新ノードを処理したので、親には渡さない。参照をクリアしておく
+        //pNextNodeMaybe = nullptr;   // 新ノードを処理したので、親には渡さない。参照をクリアしておく
+        ClearNextNodeMaybe();       // 新ノードを処理したので、親には渡さない。参照をクリアしておく
     }
-    _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(TemporaryNextNode()));
+    _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
 }
 
 // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
@@ -113,7 +118,7 @@ void State::DoOutStringProc() {
 
 // ノードから生成した状態を後接させ、その状態を常駐させる
 void State::ChainAndStay(Node* np) {
-    _LOG_DEBUGH(_T("ENTER: %s, nextNode: %s"), NAME_PTR, NODE_NAME_PTR(pTemporaryNextNode));
+    _LOG_DEBUGH(_T("ENTER: %s, nextNode: %s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
     if (np) {
         if (pNext) {
             pNext->ChainAndStay(np);
