@@ -80,14 +80,21 @@ public:
     // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
     void DoOutStringProcChain();
 
+private:
+    // DECKEY処理の前半部
+    void DoDeckeyPreProc(int deckey);
+
     // DECKEY処理の後半部
     void DoDeckeyPostProc();
 
 public:
     // カスタマイズ可能なメソッド
 
-    // DECKEY処理の前半部
-    virtual void DoDeckeyPreProc(int deckey);
+    // 事前チェック
+    virtual void DoPreCheck() { }
+
+    // 中間チェック
+    virtual void DoIntermediateCheck() { }
 
     // 状態の再アクティブ化
     virtual void Reactivate();

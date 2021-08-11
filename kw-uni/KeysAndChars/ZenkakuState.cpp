@@ -127,9 +127,9 @@ namespace {
             Name = logger.ClassNameT();
         }
 
-        void DoDeckeyPreProc(int deckey) {
+        // 不要な状態になったか
+        void DoIntermediateCheck() {
             _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
-            State::DoDeckeyPreProc(deckey);
             // 1文字処理したら自状態は不要になる
             cancelMe();
         }

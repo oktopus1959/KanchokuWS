@@ -36,8 +36,12 @@ void State::Reactivate() {
 // 新ノードが未処理の場合は、ここで NULL 以外が返されるので、親状態で処理する
 void State::HandleDeckey(int deckey) {
     _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), NextNode=%s"), NAME_PTR, deckey, deckey, NODE_NAME_PTR(NextNodeMaybe()));
+    // 事前チェック
+    DoPreCheck();
     // 前処理
     DoDeckeyPreProc(deckey);
+    // 中間チェック
+    DoIntermediateCheck();
     // 後処理
     DoDeckeyPostProc();
     _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));

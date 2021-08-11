@@ -776,11 +776,10 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
 
-    public:
-        // DECKEY処理の前半部
-        // 自前で DECKEY 処理をやる場合にはオーバーライドしてもよい
-        void DoDeckeyPreProc(int deckey) {
-            _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+    protected:
+        // 事前チェック
+        void DoPreCheck() {
+            _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
             maybeEditedBySubState = false;
             // 常駐モード
             if (pNext && pNext->GetName().find(_T("History")) == wstring::npos) {
@@ -789,7 +788,6 @@ namespace {
                 _LOG_DEBUGH(_T("Set Reinitialized=true"));
                 maybeEditedBySubState = true;
             }
-            StayState::DoDeckeyPreProc(deckey);
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
 
