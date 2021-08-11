@@ -56,6 +56,19 @@ public:
 };
 #define MAZEGAKI_NODE (MazegakiNode::Singleton)
 
+#define HANDLE_ESC_FOR_MAZEGAKI() \
+    LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR); \
+    if (MAZEGAKI_NODE) { \
+        LOG_DEBUGH(_T("MAZEGAKI ESC")); \
+        MString prevYomi; \
+        size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi, STATE_COMMON->GetTotalDecKeyCount()); \
+        if (prevXferLen > 0) { \
+            STATE_COMMON->SetOutString(prevYomi, prevXferLen); \
+            return; \
+        } \
+    } \
+    State::handleEsc();
+
 // -------------------------------------------------------------------
 // MazegakiNodeBuilder - 交ぜ書き機能ノードビルダ
 #include "FunctionNodeBuilder.h"

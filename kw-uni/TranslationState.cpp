@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "History/HistoryStayState.h"
 #include "StrokeTable.h"
+#include "Mazegaki/Mazegaki.h"
 
 #include "TranslationState.h"
 
@@ -10,6 +11,11 @@
 
 // 変換系状態のベースクラス
 DEFINE_CLASS_LOGGER(TranslationState);
+
+// Esc の処理
+void TranslationState::handleEsc() {
+    HANDLE_ESC_FOR_MAZEGAKI();
+}
 
 // その他の特殊キー
 void TranslationState::handleSpecialKeys(int deckey) {
@@ -31,11 +37,4 @@ void TranslationState::DoOutStringProc() {
 
 // ストローク状態が後続する変換系状態のベースクラス
 DEFINE_CLASS_LOGGER(StrokeTranslationState);
-
-// DECKEY処理の前半部
-void StrokeTranslationState::DoDeckeyPreProc(int deckey) {
-    LOG_DEBUG(_T("ENTER: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
-    ModeState::DoDeckeyPreProc(deckey);
-    LOG_DEBUG(_T("LEAVE: %s"), NAME_PTR);
-}
 

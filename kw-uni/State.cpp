@@ -9,6 +9,7 @@
 #include "History/HistoryDic.h"
 #include "StrokeHelp.h"
 #include "Settings.h"
+#include "StrokeTable.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
@@ -48,6 +49,17 @@ void State::HandleDeckey(int deckey) {
 // 自前で DECKEY 処理をやる場合にはオーバーライドしてもよい
 void State::DoDeckeyPreProc(int deckey) {
     _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), NextNode=%s"), NAME_PTR, deckey, deckey, NODE_NAME_PTR(NextNodeMaybe()));
+    if (IsModeState()) {
+        // モード状態(HistoryStayState や TranslationState など)のための前処理
+        // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
+        if (!pNext) {
+            if ((!pNode || !pNode->isStrokeTableNode()) && isStrokeKeyOrShiftedKeyOrModeFuncKey(deckey)) {
+                LOG_DEBUGH(_T("CREATE: RootStrokeNode"));
+                pNext = ROOT_STROKE_NODE->CreateState();
+                pNext->SetPrevState(this);
+            }
+        }
+    }
     //pNextNodeMaybe = nullptr;
     ClearNextNodeMaybe();
     if (pNext) {

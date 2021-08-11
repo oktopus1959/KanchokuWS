@@ -2,20 +2,16 @@
 
 #include "Logger.h"
 #include "State.h"
-#include "ModeState.h"
 
 // 常駐状態のベースクラス
-class StayState : public State, public ModeState {
+class StayState : public State {
     DECLARE_CLASS_LOGGER;
 
 public:
     // コンストラクタ
-    StayState() : ModeState(this) {
+    StayState() {
         LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
     }
-
-    // DECKEY処理の前半部
-    void DoDeckeyPreProc(int deckey);
 
     // 常駐状態か
     bool IsStay() const {
@@ -24,5 +20,10 @@ public:
 
     // Esc の処理
     void handleEsc();
+
+protected:
+    // モード状態か
+    bool IsModeState() { return true; }
+
 };
 

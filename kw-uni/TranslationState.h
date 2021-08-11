@@ -2,17 +2,19 @@
 
 #include "Logger.h"
 #include "State.h"
-#include "ModeState.h"
 
 // 変換系状態のベースクラス
-class TranslationState : public State, public ModeState {
+class TranslationState : public State {
     DECLARE_CLASS_LOGGER;
 
 public:
     // コンストラクタ
-    TranslationState() : ModeState(this) {
+    TranslationState() {
         LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
     }
+
+    // Esc の処理
+    void handleEsc();
 
     // その他の特殊キー
     void handleSpecialKeys(int deckey);
@@ -32,8 +34,8 @@ public:
     }
 
 protected:
-    // DECKEY処理の前半部
-    void DoDeckeyPreProc(int deckey);
+    // モード状態か
+    bool IsModeState() { return true; }
 
 };
 

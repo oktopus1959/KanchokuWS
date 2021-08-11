@@ -162,9 +162,6 @@
     <ClInclude Include="KeysAndChars\HankakuKatakanaOneShot.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ModeState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="KeysAndChars\deckey_id_defs.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -279,9 +276,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="KeysAndChars\HankakuKatakanaOneShotState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="ModeState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="KeysAndChars\deckey_id_defs.cpp">

@@ -20,8 +20,6 @@ class State {
     // これは状態生成の時に一時的に使用されるだけ
     Node* pNextNodeMaybe= 0;
 
-    friend class ModeState;
-
 protected:
     // 不要フラグ
     bool bUnnecessary = false;
@@ -130,6 +128,9 @@ public:
     virtual mchar_t GetModeMarker();
 
 protected:
+    // モード状態か
+    virtual bool IsModeState() { return false; }
+
     // 次の処理のためのノードをセットする
     void SetNextNodeMaybe(Node* pN) { pNextNodeMaybe= pN; }
 

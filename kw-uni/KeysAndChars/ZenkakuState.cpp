@@ -123,7 +123,9 @@ namespace {
         DECLARE_CLASS_LOGGER;
 
     public:
-        ZenkakuOneState(ZenkakuOneNode* pN) : ZenkakuState(pN) { }
+        ZenkakuOneState(ZenkakuOneNode* pN) : ZenkakuState(pN) {
+            Name = logger.ClassNameT();
+        }
 
         void DoDeckeyPreProc(int deckey) {
             _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
