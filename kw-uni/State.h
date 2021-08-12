@@ -141,7 +141,7 @@ protected:
     // 次の処理のためのノードをセットする
     void SetNextNodeMaybe(Node* pN) { pNextNodeMaybe= pN; }
 
-    void ClearNextNodeMaybe() { pNextNodeMaybe= nullptr; }
+    void ClearNextNodeMaybe() { pNextNodeMaybe = nullptr; }
 
     // 次の処理のためのノードを取得する
     Node* NextNodeMaybe() const { return pNextNodeMaybe; }

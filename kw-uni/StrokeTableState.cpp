@@ -137,8 +137,9 @@ namespace {
         void CheckNextState() {
             LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
             if (pNext) {
-                if (((StrokeTableState*)pNext)->isToRemoveAllStroke()) {
-                    // ストローククテーブルチェイン全体の削除
+                auto ps = dynamic_cast<StrokeTableState*>(pNext);
+                if (ps && ps->isToRemoveAllStroke()) {
+                    // ストロークテーブルチェイン全体の削除
                     setToRemoveAllStroke();
                     _LOG_DEBUGH(_T("REMOVE ALL: %s"), NAME_PTR);
                 } else if (pNext->IsUnnecessary()) {
@@ -217,11 +218,11 @@ namespace {
             STATE_COMMON->ClearOrigString();
         }
 
-        // StrokeTableNode を処理する
-        void handleStrokeKeys(int deckey) {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            StrokeTableState::handleStrokeKeys(deckey);
-        }
+        //// StrokeTableNode を処理する
+        //void handleStrokeKeys(int deckey) {
+        //    _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+        //    StrokeTableState::handleStrokeKeys(deckey);
+        //}
 
         // Shift飾修されたキー
         void handleShiftKeys(int deckey) {
