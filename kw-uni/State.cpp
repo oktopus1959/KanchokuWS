@@ -90,7 +90,7 @@ void State::DoDeckeyPostProc() {
         // (自身が不要状態ならば、この後、前接状態に戻り、そこで後続ノードが処理される)
         LOG_DEBUG(_T("nextNode: %s"), NODE_NAME_PTR(NextNodeMaybe()));
         // 後続状態を作成
-        auto ps = NextNodeMaybe()->CreateState();
+        State* ps = NextNodeMaybe()->CreateState();
         // 状態が生成されたときに処理を実行
         // ストロークノード以外は、ここで何らかの出力処理をするはず
         if (ps->DoProcOnCreated()) {
@@ -98,6 +98,8 @@ void State::DoDeckeyPostProc() {
             LOG_DEBUG(_T("%s: appendSuccessorState: %s"), NAME_PTR, ps->NAME_PTR);
             pNext = ps;
             ps->pPrev = this;
+        } else {
+            delete ps;
         }
         //pNextNodeMaybe = nullptr;   // 新ノードを処理したので、親には渡さない。参照をクリアしておく
         ClearNextNodeMaybe();       // 新ノードを処理したので、親には渡さない。参照をクリアしておく
