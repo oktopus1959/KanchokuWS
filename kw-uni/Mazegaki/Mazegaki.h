@@ -3,6 +3,8 @@
 
 #include "FunctionNode.h"
 
+#include "StateCommonInfo.h"
+
 // -------------------------------------------------------------------
 // MazegakiNode - 交ぜ書き機能ノード
 class MazegakiNode : public FunctionNode {
@@ -17,15 +19,16 @@ class MazegakiNode : public FunctionNode {
 
     MString getString() const { return to_mstr(_T("○")); }
 
-    void SetYomiInfo(const MString& yomi, size_t xferLen, size_t count) {
+    void SetYomiInfo(const MString& yomi, size_t xferLen) {
         prevYomi = yomi;
         prevXferLen = xferLen;
-        deckeyCount = count;
+        shiftedYomiLen = yomi.size();
+        deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
         selectFirstCandDisabled = false;
     }
 
-    size_t GetPrevYomiInfo(MString& yomi, size_t count) {
-        if (count == deckeyCount + 1) {
+    size_t GetPrevYomiInfo(MString& yomi) {
+        if (STATE_COMMON->GetTotalDecKeyCount() == deckeyCount + 1) {
             selectFirstCandDisabled = true;
             yomi = prevYomi;
             return prevXferLen;
@@ -36,6 +39,37 @@ class MazegakiNode : public FunctionNode {
 
     bool IsSelectFirstCandDisabled() {
         return selectFirstCandDisabled;
+    }
+
+    // シフトされた読み長の取得
+    size_t GetShiftedYomiLen() {
+        if (shiftedYomiLen < prevYomi.size()) selectFirstCandDisabled = false;
+        return shiftedYomiLen;
+    }
+
+    // 読み長を長くする(読み開始位置を右にシフトする) (前回の変換の直後でなければ false を返す)
+    bool LeftShiftYomiStartPos() {
+        if (IsJustAfterPrevXfer()) {
+            ++shiftedYomiLen;
+            return true;
+        }
+        shiftedYomiLen = 1000;
+        return false;
+    }
+
+    // 読み長を短くする(読み開始位置を左にシフトする) (前回の変換の直後でなければ false を返す)
+    bool RightShiftYomiStartPos() {
+        if (IsJustAfterPrevXfer()) {
+            if (shiftedYomiLen > 1) --shiftedYomiLen;
+            return true;
+        }
+        shiftedYomiLen = 1000;
+        return false;
+    }
+
+    // 前回の実行時の直後か
+    bool IsJustAfterPrevXfer() {
+        return STATE_COMMON->GetTotalDecKeyCount() == deckeyCount + 1;
     }
 
 private:
@@ -51,6 +85,9 @@ private:
     // 先頭候補の自動選択を一時的に中止する
     bool selectFirstCandDisabled = false;
 
+    // シフトされた読み長
+    size_t shiftedYomiLen = 0;
+
 public:
     static MazegakiNode* Singleton;
 };
@@ -61,7 +98,7 @@ public:
     if (MAZEGAKI_NODE) { \
         LOG_DEBUGH(_T("MAZEGAKI ESC")); \
         MString prevYomi; \
-        size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi, STATE_COMMON->GetTotalDecKeyCount()); \
+        size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi); \
         if (prevXferLen > 0) { \
             STATE_COMMON->SetOutString(prevYomi, prevXferLen); \
             return; \

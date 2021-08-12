@@ -54,6 +54,7 @@ struct Settings {
     // for Debug
     bool debughState = false;               // State モジュールで DebugH を有効にする
     bool debughMazegaki = false;            // mazegaki モジュールで DebugH を有効にする
+    bool debughMazegakiDic = false;         // mazegakiDic モジュールで DebugH を有効にする
     bool debughHistory = false;             // history モジュールで DebugH を有効にする
     bool debughStrokeTable = false;         // strokeTable モジュールで DebugH を有効にする
     bool debughBushu = false;               // bushuComp/bushuAssoc モジュールで DebugH を有効にする

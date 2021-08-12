@@ -764,6 +764,7 @@ namespace KanchokuWS
             // for Debug
             addDecoderSetting("debughState", false);
             addDecoderSetting("debughMazegaki", false);
+            addDecoderSetting("debughMazegakiDic", false);
             addDecoderSetting("debughHistory", false);
             addDecoderSetting("debughStrokeTable", false);
             addDecoderSetting("debughBushu", false);

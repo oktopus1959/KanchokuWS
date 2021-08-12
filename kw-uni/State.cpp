@@ -10,6 +10,7 @@
 #include "StrokeHelp.h"
 #include "Settings.h"
 #include "StrokeTable.h"
+#include "Mazegaki/Mazegaki.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
@@ -57,8 +58,15 @@ void State::DoDeckeyPreProc(int deckey) {
         // モード状態(HistoryStayState や TranslationState など)のための前処理
         // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
         if (!pNext) {
+            if (deckey == RIGHT_TRIANGLE_DECKEY) {
+                if (MAZEGAKI_NODE->RightShiftYomiStartPos()) {
+                    _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE"));
+                    SetNextNodeMaybe(MAZEGAKI_NODE);
+                    return;
+                }
+            }
             if ((!pNode || !pNode->isStrokeTableNode()) && isStrokeKeyOrShiftedKeyOrModeFuncKey(deckey)) {
-                LOG_DEBUGH(_T("CREATE: RootStrokeNode"));
+                _LOG_DEBUGH(_T("CREATE: RootStrokeState"));
                 pNext = ROOT_STROKE_NODE->CreateState();
                 pNext->SetPrevState(this);
             }

@@ -11,6 +11,8 @@
 #include "OutputStack.h"
 #include "MazegakiDic.h"
 
+#define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegakiDic)
+
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
 #define _WCHAR(ws)  (_T(ws)[0])
@@ -269,7 +271,7 @@ namespace {
                     } else {
                         iter->second.insert(pEntry);
                     }
-                    LOG_DEBUGH(_T("mazeDic.size()=%d"), mazeDic.size());
+                    _LOG_DEBUGH(_T("mazeDic.size()=%d"), mazeDic.size());
                 }
             }
         }
@@ -310,7 +312,7 @@ namespace {
 
         // 一行の辞書ソース文字列を解析して辞書に登録する
         bool AddMazeDicEntry(const wstring& line, bool bUser) {
-            LOG_DEBUGH(_T("ENTER: line=%s"), line.c_str());
+            _LOG_DEBUGH(_T("ENTER: line=%s"), line.c_str());
             auto items = utils::filter_not_empty(utils::split(utils::strip(line), ' '));
             // 「見出し<空白>/?登録語/...」という形式でなければ、何もしない (登録語列の先頭は '/' でなくてもよい)
             if (items.size() != 2 || items[0].empty() || items[1].empty() /*|| items[1][0] != '/'*/) return false;
@@ -348,32 +350,32 @@ namespace {
         // 入力文字列中の部分ひらがな列または漢字列について、読みまたは変換形の中の一致する部分を探す
         // 「*」は任意長の文字列、「?」は任意の1文字とマッチする
         bool matcher(const MString& keyStem, size_t pos, size_t len, const MString& ms, size_t& mpos) {
-            LOG_DEBUGH(_T("ENTER: keyStem=%s, pos=%d, len=%d, ms=%s, mpos=%d"), MAKE_WPTR(keyStem), pos, len, MAKE_WPTR(ms), mpos);
+            _LOG_DEBUGH(_T("ENTER: keyStem=%s, pos=%d, len=%d, ms=%s, mpos=%d"), MAKE_WPTR(keyStem), pos, len, MAKE_WPTR(ms), mpos);
             if (pos + len >= keyStem.size()) {
                 // 末尾のマッチングの場合
                 bool tailStar = pos < keyStem.size() && keyStem.find('*', pos) != MString::npos;
                 size_t tlen = len - (tailStar ? 1 : 0);
                 if (mpos + tlen > ms.size()) return false;   // 読み(変換形)の文字数が足りないので不一致とする
                 if (!tailStar) mpos = ms.size() - len;
-                LOG_DEBUGH(_T("tailStar=%s, pos=%d, tlen=%d, mpos=%d"), BOOL_TO_WPTR(tailStar), pos, tlen, mpos);
+                _LOG_DEBUGH(_T("tailStar=%s, pos=%d, tlen=%d, mpos=%d"), BOOL_TO_WPTR(tailStar), pos, tlen, mpos);
                 if (pos == 0 && mpos > 0) {
                     // 先頭マッチングでもあるが、長さが合わず、末尾マッチングによる移動でmsの比較先頭位置ずれた
-                    LOG_DEBUGH(_T("LEAVE: UNMATCH-1: pos=%d, mpos=%d"), pos, mpos);
+                    _LOG_DEBUGH(_T("LEAVE: UNMATCH-1: pos=%d, mpos=%d"), pos, mpos);
                     return false;
                 }
             }
 
             size_t mpos1 = mpos;
             while (mpos < ms.length()) {
-                LOG_DEBUGH(_T("LOOP-1: mpos=%d, len=%d"), mpos, len);
+                _LOG_DEBUGH(_T("LOOP-1: mpos=%d, len=%d"), mpos, len);
                 size_t i = 0;
                 for (; i < len; ++i) {
                     auto kch = keyStem[pos + i];
-                    LOG_DEBUGH(_T("LOOP-2: i=%d, pos=%d, kch=%c"), i, pos, kch);
+                    _LOG_DEBUGH(_T("LOOP-2: i=%d, pos=%d, kch=%c"), i, pos, kch);
                     if (kch == '*') {
                         size_t next_pos = pos + i + 1;
                         if (next_pos >= pos + len) {
-                            LOG_DEBUGH(_T("LEAVE: MATCHED KEY-SEGMENT"));
+                            _LOG_DEBUGH(_T("LEAVE: MATCHED KEY-SEGMENT"));
                             return true;  // このキーセグメントの終わり
                         }
                         // キーセグメントの残りをやる
@@ -382,27 +384,27 @@ namespace {
                     }
                     ++mpos;
                     if (mpos > ms.length()) {
-                        LOG_DEBUGH(_T("OVERRUN: mpos=%d, ms.length()=%d"), mpos, ms.length());
+                        _LOG_DEBUGH(_T("OVERRUN: mpos=%d, ms.length()=%d"), mpos, ms.length());
                         break;
                     }
-                    LOG_DEBUGH(_T("CHECK: kch=%c, mpos=%d, ms[%d]=%c"), kch, mpos, mpos - 1, ms[mpos - 1]);
+                    _LOG_DEBUGH(_T("CHECK: kch=%c, mpos=%d, ms[%d]=%c"), kch, mpos, mpos - 1, ms[mpos - 1]);
                     if (kch == '?' || kch == ms[mpos - 1]) continue; // 一致したので次の文字へ
                     // 不一致だった
-                    LOG_DEBUGH(_T("UNMATCHED: pos=%d"), pos);
+                    _LOG_DEBUGH(_T("UNMATCHED: pos=%d"), pos);
                     if (pos == 0) {
-                        LOG_DEBUGH(_T("LEAVE: UNMATCH-2"));
+                        _LOG_DEBUGH(_T("LEAVE: UNMATCH-2"));
                         return false;     // 先頭の場合は、位置移動不可なので、不一致とする
                     }
                     break;  // 先頭でなければ位置を移動させてよい
                 }
                 if (i == len) {
-                    LOG_DEBUGH(_T("LEAVE: MATCHED ALL"));
+                    _LOG_DEBUGH(_T("LEAVE: MATCHED ALL"));
                     return true;  // 全文字について一致した
                 }
                 // 次の文字へ(mposを巻き戻す)
                 mpos = ++mpos1;
             }
-            LOG_DEBUGH(_T("LEAVE: UNMATCH-3"));
+            _LOG_DEBUGH(_T("LEAVE: UNMATCH-3"));
             return false;
         }
 
@@ -569,7 +571,7 @@ namespace {
 
                     size_t stemLen = stemMinLen;    // 最短語幹から始める
                     while (!entrySet.empty()) {
-                        LOG_DEBUGH(_T("entrySet.size()=%d"), entrySet.size());
+                        _LOG_DEBUGH(_T("entrySet.size()=%d"), entrySet.size());
                         // 長い語幹にマッチしたほうを優先
                         // 同じ語幹長の場合は、エントリの読みの短いほうが優先
                         // 同じ読みなら、ユーザー辞書を優先
@@ -594,13 +596,13 @@ namespace {
                                 if (key.size() == stemLen) {
                                     // 語尾がない⇒無活用または語幹OKの活用型か
                                     if (find_gobi(p->inflexList, STEM_OK)) {
-                                        LOG_DEBUGH(_T("No gobi found: %s: STEM_OK in %s, userDic=%s"), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
+                                        _LOG_DEBUGH(_T("No gobi found: %s: STEM_OK in %s, userDic=%s"), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
                                         stock_output(pCands, p, p->xfer);
                                     }
                                 } else if (p->inflexList != IFX_NONE || (key.size() > stemLen && (key.size() - stemLen) <= NO_IFX_MAX_GOBI)) {
                                     // 語尾がある(無活用語の場合は、語尾長が NO_IFX_MAX_GOBI 以下)⇒ 語尾リストに含まれるか
                                     if (find_gobi(p->inflexList, key[stemLen])) {
-                                        LOG_DEBUGH(_T("gobi found: %s: %c in %s, userDic=%s"), MAKE_WPTR(p->xfer), key[stemLen], MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
+                                        _LOG_DEBUGH(_T("gobi found: %s: %c in %s, userDic=%s"), MAKE_WPTR(p->xfer), key[stemLen], MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
                                         stock_output(pCands, p, p->xfer + key.substr(stemLen));
                                     }
                                 }

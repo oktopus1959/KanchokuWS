@@ -150,13 +150,16 @@ namespace {
 
             // 直前に変換していたか
             MString prevYomi;
-            size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi, STATE_COMMON->GetTotalDecKeyCount());
+            size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi);
 
             bool prevXfered = !prevYomi.empty() && prevXferLen > 0;
 
+            size_t shiftedYomiLen = prevXfered ? MAZEGAKI_NODE->GetShiftedYomiLen() : 1000;
+            _LOG_DEBUGH(_T("prevYomi=%s, prevXferLen=%d, shiftedYomiLen=%d"), MAKE_WPTR(prevYomi), prevXferLen, shiftedYomiLen);
+
             // 最大読み長までの長さの読みに対する交ぜ書き候補を全て取得する
             const auto& cands = candsByLen.GetAllCandidates(
-                prevXfered ? prevYomi : OUTPUT_STACK->BackStringUptoHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen));
+                prevXfered ? utils::tail_substr(prevYomi, shiftedYomiLen) : OUTPUT_STACK->BackStringUptoHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen));
             if (cands.empty()) {
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: no candidate"));
@@ -165,7 +168,10 @@ namespace {
             LOG_INFOH(_T("mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
             if (cands.size() == 1 || (!MAZEGAKI_NODE->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand)) {
                 // 読みの長さ候補が１つしかなかった、または先頭候補の自動出力モードなのでそれを選択して出力
-                outputStringAndPostProc(cands.front(), prevXfered ? prevXferLen : candsByLen.GetFirstCandidateYomi().size());
+                if (prevXfered)
+                    outputStringAndPostProc(prevYomi.substr(0, prevYomi.size() - shiftedYomiLen) + cands.front(), prevXferLen);
+                else
+                    outputStringAndPostProc(cands.front(), candsByLen.GetFirstCandidateYomi().size());
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));
                 return false;
@@ -291,7 +297,7 @@ namespace {
             MazegakiNode* pn = dynamic_cast<MazegakiNode*>(pNode);
             if (pn) {
                 // 今回の結果を元に戻すための情報を保存
-                pn->SetYomiInfo(OUTPUT_STACK->GetLastOutputStackStr(numBS), str.size(), STATE_COMMON->GetTotalDecKeyCount());
+                pn->SetYomiInfo(OUTPUT_STACK->GetLastOutputStackStr(numBS), str.size());
             }
             STATE_COMMON->SetOutString(str, numBS);
             handleKeyPostProc();
