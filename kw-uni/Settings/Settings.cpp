@@ -90,6 +90,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_BOOL_VALUE(debughHistory);
     SET_BOOL_VALUE(debughStrokeTable);
     SET_BOOL_VALUE(debughBushu);
+    SET_BOOL_VALUE(debughString);
     SET_BOOL_VALUE(debughZenkaku);
     SET_BOOL_VALUE(debughKatakana);
     SET_BOOL_VALUE(debughMyPrevChar);

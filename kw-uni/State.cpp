@@ -83,8 +83,10 @@ void State::DoDeckeyPreProc(int deckey) {
 // 自前で DECKEY 処理をやる場合にはオーバーライドしてもよい
 void State::DoDeckeyPostProc() {
     _LOG_DEBUGH(_T("ENTER: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
-    // 不要な後続状態を削除
-    DeleteUnnecessarySuccessorState();
+    // 後続状態チェインに対して事後チェック
+    DoPostCheckChain();
+    //// 不要な後続状態を削除
+    //DeleteUnnecessarySuccessorState();
     if (NextNodeMaybe() && !IsUnnecessary()) {
         // 新しい後続ノードが生成されており、自身が不要状態でないならば、ここで後続ノードの処理を行う
         // (自身が不要状態ならば、この後、前接状態に戻り、そこで後続ノードが処理される)
@@ -105,6 +107,19 @@ void State::DoDeckeyPostProc() {
         ClearNextNodeMaybe();       // 新ノードを処理したので、親には渡さない。参照をクリアしておく
     }
     _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
+}
+
+// 後続状態チェインに対して事後チェック
+void State::DoPostCheckChain() {
+    _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
+    if (pNext) {
+        pNext->DoPostCheckChain();
+        CheckNextState();
+        DeleteUnnecessarySuccessorState();
+    } else if (_LOG_DEBUGH_FLAG) {
+        _LOG_DEBUGH(_T("STOP: %s"), NAME_PTR);
+    }
+    _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
 }
 
 // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
@@ -199,15 +214,15 @@ void State::CheckNextState() {
 
 // 不要とマークされた後続状態を削除する
 void State::DeleteUnnecessarySuccessorState() {
-    LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+    _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
     if (pNext) {
-        pNext->DeleteUnnecessarySuccessorState();
-        CheckNextState();
         if (pNext->IsUnnecessary()) {
+            _LOG_DEBUGH(_T("DELTE NEXT: %s"), pNext->Name.c_str());
             delete pNext;
             pNext = nullptr;
         }
     }
+    _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
 }
 
 // 入力・変換モード標識を連結して返す

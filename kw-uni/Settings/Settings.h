@@ -57,6 +57,7 @@ struct Settings {
     bool debughHistory = false;             // history モジュールで DebugH を有効にする
     bool debughStrokeTable = false;         // strokeTable モジュールで DebugH を有効にする
     bool debughBushu = false;               // bushuComp/bushuAssoc モジュールで DebugH を有効にする
+    bool debughString = false;              // String モジュールで DebugH を有効にする
     bool debughZenkaku = false;             // Zenkaku モジュールで DebugH を有効にする
     bool debughKatakana = false;            // Katakana モジュールで DebugH を有効にする
     bool debughMyPrevChar = false;          // MyChar/PrevChar モジュールで DebugH を有効にする

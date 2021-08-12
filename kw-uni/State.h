@@ -87,6 +87,12 @@ private:
     // DECKEY処理の後半部
     void DoDeckeyPostProc();
 
+    // 後続状態チェインに対して事後チェック
+    void DoPostCheckChain();
+
+    // 不要とマークされた後続状態を削除する (HandleDeckeyから呼ばれる)
+    void DeleteUnnecessarySuccessorState();
+
 public:
     // カスタマイズ可能なメソッド
 
@@ -162,9 +168,6 @@ protected:
 
     // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
     virtual bool DoProcOnCreated();
-
-    // 不要とマークされた後続状態を削除する (HandleDeckeyから呼ばれる)
-    void DeleteUnnecessarySuccessorState();
 
     // 文字削除をリザルト情報にセットする
     // 引数は、削除する文字数

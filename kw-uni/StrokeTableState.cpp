@@ -153,10 +153,10 @@ namespace {
 
         // ストローク状態に対して生成時処理を実行する
         bool DoProcOnCreated() {
-            LOG_DEBUG(_T("ENTER: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
             // 打鍵ヘルプをセットする
             setNormalStrokeHelpVkb();
-            LOG_DEBUG(_T("LEAVE: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
             // 前状態にチェインする
             return true;
         }
@@ -270,10 +270,13 @@ namespace {
         void CheckNextState() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             StrokeTableState::CheckNextState();
+            if (bUnshifted) {
+                _LOG_DEBUGH(_T("SET SHIFTED HIRAGANA: %s"), NAME_PTR);
+                STATE_COMMON->SetShiftedHiraganaToKatakana();   // Shift入力された平仮名だった
+            }
             if (pNext && pNext->IsUnnecessary()) {
                 // 次状態が不要になったらルートストロークテーブルも不要
                 bUnnecessary = true;
-                if (bUnshifted) STATE_COMMON->SetShiftedHiraganaToKatakana();   // Shift入力された平仮名だった
                 _LOG_DEBUGH(_T("REMOVE ALL: %s"), NAME_PTR);
             }
         }

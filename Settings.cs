@@ -767,6 +767,7 @@ namespace KanchokuWS
             addDecoderSetting("debughHistory", false);
             addDecoderSetting("debughStrokeTable", false);
             addDecoderSetting("debughBushu", false);
+            addDecoderSetting("debughString", false);
             addDecoderSetting("debughZenkaku", false);
             addDecoderSetting("debughKatakana", false);
             BushuDicLogEnabled = addDecoderSetting("bushuDicLogEnabled", false);

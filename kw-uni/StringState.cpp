@@ -7,6 +7,8 @@
 #include "State.h"
 #include "History/HistoryStayState.h"
 
+#define _LOG_DEBUGH_FLAG (SETTINGS->debughString)
+
 namespace {
     void convertZenkakuPeriod(MString& ms) {
         for (size_t i = 0; i < ms.size(); ++i) {
@@ -45,9 +47,9 @@ public:
 
     // 文字列状態に対して生成時処理を実行する
     bool DoProcOnCreated() {
-        LOG_DEBUG(_T("ENTER: StringState: str=%s"), MAKE_WPTR(myNode()->getString()));
+        _LOG_DEBUGH(_T("ENTER: StringState: str=%s"), MAKE_WPTR(myNode()->getString()));
         HISTORY_STAY_STATE->SetTranslatedOutString(xlat(myNode()->getString()));
-        LOG_DEBUG(_T("LEAVE: StringState"));
+        _LOG_DEBUGH(_T("LEAVE: StringState"));
         // チェイン不要
         return false;
     }
