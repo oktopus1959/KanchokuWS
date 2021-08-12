@@ -331,6 +331,7 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.radioButton_noVkb = new System.Windows.Forms.RadioButton();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -343,7 +344,8 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.radioButton_noVkb = new System.Windows.Forms.RadioButton();
+            this.label89 = new System.Windows.Forms.Label();
+            this.textBox_mazeNoIfxGobiMaxLen = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -3040,7 +3042,7 @@ namespace KanchokuWS
             this.groupBox27.Controls.Add(this.checkBox_convertJaComma);
             this.groupBox27.Controls.Add(this.checkBox_convertJaPeriod);
             this.groupBox27.Controls.Add(this.checkBox_convertShiftedHiraganaToKatakana);
-            this.groupBox27.Location = new System.Drawing.Point(312, 147);
+            this.groupBox27.Location = new System.Drawing.Point(312, 166);
             this.groupBox27.Name = "groupBox27";
             this.groupBox27.Size = new System.Drawing.Size(261, 108);
             this.groupBox27.TabIndex = 5;
@@ -3094,6 +3096,8 @@ namespace KanchokuWS
             // 
             // groupBox19
             // 
+            this.groupBox19.Controls.Add(this.label89);
+            this.groupBox19.Controls.Add(this.textBox_mazeNoIfxGobiMaxLen);
             this.groupBox19.Controls.Add(this.label46);
             this.groupBox19.Controls.Add(this.textBox_mazeGobiMaxLen);
             this.groupBox19.Controls.Add(this.label45);
@@ -3101,7 +3105,7 @@ namespace KanchokuWS
             this.groupBox19.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox19.Location = new System.Drawing.Point(312, 68);
             this.groupBox19.Name = "groupBox19";
-            this.groupBox19.Size = new System.Drawing.Size(261, 64);
+            this.groupBox19.Size = new System.Drawing.Size(261, 88);
             this.groupBox19.TabIndex = 4;
             this.groupBox19.TabStop = false;
             this.groupBox19.Text = "交ぜ書き検索";
@@ -3118,7 +3122,7 @@ namespace KanchokuWS
             // textBox_mazeGobiMaxLen
             // 
             this.textBox_mazeGobiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(131, 38);
+            this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(137, 38);
             this.textBox_mazeGobiMaxLen.Name = "textBox_mazeGobiMaxLen";
             this.textBox_mazeGobiMaxLen.Size = new System.Drawing.Size(42, 19);
             this.textBox_mazeGobiMaxLen.TabIndex = 1;
@@ -3138,7 +3142,7 @@ namespace KanchokuWS
             // textBox_mazeYomiMaxLen
             // 
             this.textBox_mazeYomiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(131, 16);
+            this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(137, 16);
             this.textBox_mazeYomiMaxLen.Name = "textBox_mazeYomiMaxLen";
             this.textBox_mazeYomiMaxLen.Size = new System.Drawing.Size(42, 19);
             this.textBox_mazeYomiMaxLen.TabIndex = 0;
@@ -3875,6 +3879,18 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // radioButton_noVkb
+            // 
+            this.radioButton_noVkb.AutoSize = true;
+            this.radioButton_noVkb.Location = new System.Drawing.Point(17, 67);
+            this.radioButton_noVkb.Name = "radioButton_noVkb";
+            this.radioButton_noVkb.Size = new System.Drawing.Size(61, 19);
+            this.radioButton_noVkb.TabIndex = 6;
+            this.radioButton_noVkb.TabStop = true;
+            this.radioButton_noVkb.Text = "無表示";
+            this.toolTip1.SetToolTip(this.radioButton_noVkb, "漢直モードに入っても何も表示しません。\r\n\r\n第1打鍵ヘルプローテーションキーにより、一時的に\r\n標準鍵盤を表示することができます。");
+            this.radioButton_noVkb.UseVisualStyleBackColor = true;
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -4017,17 +4033,25 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
-            // radioButton_noVkb
+            // label89
             // 
-            this.radioButton_noVkb.AutoSize = true;
-            this.radioButton_noVkb.Location = new System.Drawing.Point(17, 67);
-            this.radioButton_noVkb.Name = "radioButton_noVkb";
-            this.radioButton_noVkb.Size = new System.Drawing.Size(61, 19);
-            this.radioButton_noVkb.TabIndex = 6;
-            this.radioButton_noVkb.TabStop = true;
-            this.radioButton_noVkb.Text = "無表示";
-            this.toolTip1.SetToolTip(this.radioButton_noVkb, "漢直モードに入っても何も表示しません。\r\n\r\n第1打鍵ヘルプローテーションキーにより、一時的に\r\n標準鍵盤を表示することができます。");
-            this.radioButton_noVkb.UseVisualStyleBackColor = true;
+            this.label89.AutoSize = true;
+            this.label89.Location = new System.Drawing.Point(20, 63);
+            this.label89.Name = "label89";
+            this.label89.Size = new System.Drawing.Size(113, 15);
+            this.label89.TabIndex = 28;
+            this.label89.Text = "無活用語尾の最大長";
+            // 
+            // textBox_mazeNoIfxGobiMaxLen
+            // 
+            this.textBox_mazeNoIfxGobiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_mazeNoIfxGobiMaxLen.Location = new System.Drawing.Point(137, 60);
+            this.textBox_mazeNoIfxGobiMaxLen.Name = "textBox_mazeNoIfxGobiMaxLen";
+            this.textBox_mazeNoIfxGobiMaxLen.Size = new System.Drawing.Size(42, 19);
+            this.textBox_mazeNoIfxGobiMaxLen.TabIndex = 27;
+            this.toolTip1.SetToolTip(this.textBox_mazeNoIfxGobiMaxLen, "交ぜ書き変換時の語尾の最大長\r\n\r\n活用語尾を持つ交ぜ書きエントリに対して、語尾を最大何文字まで\r\n与えるかを指定します。\r\n0 を設定すると、活用語尾を持つエン" +
+        "トリは検索の対象になりません。\r\n\r\n例：\r\n 最大語尾長を2と設定した場合は、「あ/う /会/」というエントリに対して\r\n「あった」は「会った」に変換できます" +
+        "が、「会わせる」は変換対象外と\r\nなります。");
             // 
             // DlgSettings
             // 
@@ -4449,5 +4473,7 @@ namespace KanchokuWS
         private System.Windows.Forms.ComboBox comboBox_homeKey;
         private System.Windows.Forms.Label label85;
         private System.Windows.Forms.RadioButton radioButton_noVkb;
+        private System.Windows.Forms.Label label89;
+        private System.Windows.Forms.TextBox textBox_mazeNoIfxGobiMaxLen;
     }
 }

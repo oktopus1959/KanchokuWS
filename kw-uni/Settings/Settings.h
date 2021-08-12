@@ -44,6 +44,7 @@ struct Settings {
     bool mazegakiSelectFirstCand = false;   // 交ぜ書き変換で先頭の候補を自動選択
     size_t mazeYomiMaxLen = 10;             // 交ぜ書き変換時の最長入力読み長
     size_t mazeGobiMaxLen = 3;              // 語尾あり交ぜ書きの最長語尾長
+    size_t mazeNoIfxGobiMaxLen = 4;         // 交ぜ書きでの無活用語の語尾の最大長
 
     bool convertShiftedHiraganaToKatakana = false; // Shift入力された平仮名をカタカナに変換する
     bool convertJaPeriod = false;           // 「。」と「．」を相互変換する

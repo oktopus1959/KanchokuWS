@@ -21,7 +21,7 @@
 #define STEM_OK 1
 
 // 無活用の最大語尾長
-#define NO_IFX_MAX_GOBI 2
+//#define NO_IFX_MAX_GOBI 2
 
 namespace {
     // -------------------------------------------------------------------
@@ -599,8 +599,8 @@ namespace {
                                         _LOG_DEBUGH(_T("No gobi found: %s: STEM_OK in %s, userDic=%s"), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
                                         stock_output(pCands, p, p->xfer);
                                     }
-                                } else if (p->inflexList != IFX_NONE || (key.size() > stemLen && (key.size() - stemLen) <= NO_IFX_MAX_GOBI)) {
-                                    // 語尾がある(無活用語の場合は、語尾長が NO_IFX_MAX_GOBI 以下)⇒ 語尾リストに含まれるか
+                                } else if (p->inflexList != IFX_NONE || (key.size() > stemLen && (key.size() - stemLen) <= SETTINGS->mazeNoIfxGobiMaxLen)) {
+                                    // 語尾がある(無活用語の場合は、語尾長が mazeNoIfxGobiMaxLen 以下)⇒ 語尾リストに含まれるか
                                     if (find_gobi(p->inflexList, key[stemLen])) {
                                         _LOG_DEBUGH(_T("gobi found: %s: %c in %s, userDic=%s"), MAKE_WPTR(p->xfer), key[stemLen], MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
                                         stock_output(pCands, p, p->xfer + key.substr(stemLen));

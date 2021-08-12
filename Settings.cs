@@ -350,6 +350,7 @@ namespace KanchokuWS
         public static bool MazegakiSelectFirstCand { get; set; } = true;
         public static int MazeYomiMaxLen { get; private set; } = 10;
         public static int MazeGobiMaxLen { get; private set; } = 3;
+        public static int MazeNoIfxGobiMaxLen { get; private set; } = 3;
 
         //------------------------------------------------------------------------------
         // 各種変換
@@ -726,6 +727,7 @@ namespace KanchokuWS
             MazegakiSelectFirstCand = addDecoderSetting("mazegakiSelectFirstCand", false);      // 交ぜ書き変換で先頭の候補を自動選択
             MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
+            MazeNoIfxGobiMaxLen = addDecoderSetting("mazeNoIfxGobiMaxLen", 5, 0);               // 交ぜ書きでの無活用語の語尾の最大長
 
             ConvertShiftedHiraganaToKatakana = addDecoderSetting("convertShiftedHiraganaToKatakana", "shiftKana", false);  // 平仮名をカタカナに変換する
             ConvertJaPeriod = addDecoderSetting("convertJaPeriod", false);                      // 「。」と「．」の相互変換
