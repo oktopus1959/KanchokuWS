@@ -47,7 +47,7 @@ namespace {
     // 五段活用「う」(会う)
     mchar_t IFX_WU_5[] = { _WCHAR("わ"), _WCHAR("い"), _WCHAR("う"), _WCHAR("え"), _WCHAR("お"), _WCHAR("っ"), 0 };
     // サ変活用「する」(開発する)(達する、愛するは、五段として登録する)
-    mchar_t IFX_SURU[] = { STEM_OK, _WCHAR("し"), _WCHAR("す"), _WCHAR("、"), _WCHAR("。"), 0 };
+    mchar_t IFX_SURU[] = { STEM_OK, _WCHAR("さ"), _WCHAR("し"), _WCHAR("す"), _WCHAR("せ"), _WCHAR("、"), _WCHAR("。"), 0 };
     // ザ変活用「ずる」(信ずる)
     mchar_t IFX_ZURU[] = { _WCHAR("じ"), _WCHAR("ず"), _WCHAR("ぜ"), 0 };
     // 形容詞「い」(美しい)
