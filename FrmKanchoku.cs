@@ -981,9 +981,9 @@ namespace KanchokuWS
                 // 入力標識の消去
                 frmMode.Vanish();
                 // 通常のストロークキーまたは機能キー(BSとか矢印キーとかCttrl-Hとか)
-                handleKeyDecoder(deckey);
+                bool flag = handleKeyDecoder(deckey);
                 logger.InfoH($"LEAVE");
-                return true;
+                return flag;
             }
             return false;
         }
@@ -991,7 +991,7 @@ namespace KanchokuWS
         /// <summary>
         /// デコーダの呼び出し
         /// </summary>
-        private void handleKeyDecoder(int deckey)
+        private bool handleKeyDecoder(int deckey)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey})");
 
@@ -1006,9 +1006,10 @@ namespace KanchokuWS
             // 中央鍵盤文字列の取得
             getCenterString();
 
+            bool flag = true;
             // 他のVKey送出(もしあれば)
             if (decoderOutput.IsDeckeyToVkey()) {
-                sendVkeyFromDeckey(deckey);
+                flag = sendVkeyFromDeckey(deckey);
                 //nPreKeys += 1;
             }
 
@@ -1019,6 +1020,8 @@ namespace KanchokuWS
             frmVkb.DrawVirtualKeyboardChars();
 
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE");
+
+            return flag;
         }
 
         private bool sendVkeyFromDeckey(int deckey)
