@@ -17,7 +17,7 @@ wstring OutputStack::OutputStackBackStrForDebug(size_t len) const {
     return std::regex_replace(to_wstr(OUTPUT_STACK->OutputStackBackStr(len)), std::wregex(_T("\n")), _T("|"));
 }
 
-void OutputStack::resize() {
+void OutputStack::_resize() {
     if (stack.size() > OUTPUT_STACK_MAXSIZE) {
         // 前半の1/4を削除する
         size_t len = (OUTPUT_STACK_MAXSIZE / 4) * 3;

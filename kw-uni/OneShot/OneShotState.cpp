@@ -37,7 +37,7 @@ namespace {
 
             // ブロッカーをセット/リセットする
             //STATE_COMMON->SetHistoryBlockFlag();
-            OUTPUT_STACK->toggleLastHistBlocker();
+            OUTPUT_STACK->toggleLastBlocker();
 
             // チェイン不要
             LOG_DEBUG(_T("LEAVE: NO CHAIN"));

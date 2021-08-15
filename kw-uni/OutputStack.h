@@ -13,6 +13,7 @@ class OutputStack {
 public:
     static const unsigned short FLAG_NEW_LINE = 1;
     static const unsigned short FLAG_BLOCK_HIST = 2;
+    static const unsigned short FLAG_BLOCK_MAZE = 4;
 
 private:
     struct Moji {
@@ -27,7 +28,7 @@ private:
 public:
     inline void push(const MString& str) {
         utils::transform_append(str, stack, [](mchar_t ch) { return Moji(ch);});
-        resize();
+        _resize();
     }
 
     inline void push(const mchar_t* str) {
@@ -44,7 +45,7 @@ public:
 
     inline void push(mchar_t ch) {
         stack.push_back(Moji(ch));
-        resize();
+        _resize();
     }
 
     // 改行は、全ブロッカーとなる
@@ -83,26 +84,22 @@ public:
         return stack.empty() ? 0 : (unsigned short)stack.back().flag;
     }
 
-    inline bool isLastBlocker() const {
-        return back() == '\n' || (getFlag() & (FLAG_NEW_LINE | FLAG_BLOCK_HIST)) != 0;
-    }
+    //inline void clearLastHistBlocker() {
+    //    if (!stack.empty()) {
+    //        stack.back().flag &= ~FLAG_BLOCK_HIST;
+    //    }
+    //}
 
-    inline bool isLastHistBlocker() const {
-        return (getFlag() & FLAG_BLOCK_HIST) != 0;
-    }
-
-    inline void clearLastHistBlocker() {
+    inline void toggleLastBlocker() {
         if (!stack.empty()) {
-            stack.back().flag &= ~FLAG_BLOCK_HIST;
-        }
-    }
-
-    inline void toggleLastHistBlocker() {
-        if (!stack.empty()) {
-            if (isLastHistBlocker())
+            if (_isLastHistBlocker())
                 stack.back().flag &= ~FLAG_BLOCK_HIST;
             else
                 stack.back().flag |= FLAG_BLOCK_HIST;
+            if (_isLastMazeBlocker())
+                stack.back().flag &= ~FLAG_BLOCK_MAZE;
+            else
+                stack.back().flag |= FLAG_BLOCK_MAZE;
         }
     }
 
@@ -110,6 +107,24 @@ public:
         if (stack.size() > lastNth) {
             stack[stack.size() - lastNth - 1].flag |= FLAG_BLOCK_HIST;
         }
+    }
+
+    inline void setHistBlocker() {
+        setFlag(FLAG_BLOCK_HIST);
+    }
+
+    inline void setMazeBlocker(size_t lastNth) {
+        if (stack.size() > lastNth) {
+            stack[stack.size() - lastNth - 1].flag |= FLAG_BLOCK_MAZE;
+        }
+    }
+
+    inline void setMazeBlocker() {
+        setFlag(FLAG_BLOCK_MAZE);
+    }
+
+    inline void unsetMazeBlocker() {
+        unsetFlag(FLAG_BLOCK_MAZE);
     }
 
     inline void setFlag(unsigned short flag) {
@@ -132,7 +147,7 @@ public:
 
     // 末尾文字のブロックフラグをクリアし、さらに改行だったらそれを除去する
     inline void clearFlagAndPopNewLine() {
-        while (isLastBlocker()) {
+        while (_isLastBlocker()) {
             clearFlag();
             popNewLine();
         }
@@ -184,6 +199,11 @@ public:
         return tail_string(maxlen, tail_size_upto_flag_or_punct(OutputStack::FLAG_BLOCK_HIST));
     }
 
+    // 改行を含まない末尾部分(最大長maxlen)で、交ぜ書きor履歴ブロッカーまたは句読点までの部分文字列を返す(末尾の句読点は含める)
+    inline MString BackStringUptoMazeOrHistBlockerOrPunct(size_t maxlen) const {
+        return tail_string(maxlen, tail_size_upto_flag_or_punct(OutputStack::FLAG_BLOCK_HIST | OutputStack::FLAG_BLOCK_MAZE));
+    }
+
     // 改行を含まない末尾部分(最大長maxlen)で、指定の flag の直後までの部分文字列を返す
     inline MString backStringUpto(size_t maxlen, unsigned short flag) const {
         return tail_string(maxlen, tail_size_upto(flag));
@@ -220,7 +240,7 @@ public:
     inline MString OutputStackBackStrWithFlagUpto(size_t len) const { return backStringWithFlagUpto(len); }
 
     inline bool isLastOutputStackCharBlocker() const {
-        return isLastBlocker();
+        return _isLastBlocker();
     }
 
     inline bool isLastOutputStackCharHirakana() const {
@@ -294,7 +314,19 @@ public:
 private:
     std::vector<Moji> stack;
 
-    void resize();
+    void _resize();
+
+    inline bool _isLastBlocker() const {
+        return back() == '\n' || (getFlag() & (FLAG_NEW_LINE | FLAG_BLOCK_HIST)) != 0;
+    }
+
+    inline bool _isLastHistBlocker() const {
+        return (getFlag() & FLAG_BLOCK_HIST) != 0;
+    }
+
+    inline bool _isLastMazeBlocker() const {
+        return (getFlag() & FLAG_BLOCK_MAZE) != 0;
+    }
 
     // stackの末尾から、tailMaxlen の範囲で、tailLen の長さの文字列を取得する
     // 例: stack="fooBarHoge", tailLen=4, tailMaxLen=7 なら "Hoge" を返す

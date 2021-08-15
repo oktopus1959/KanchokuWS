@@ -355,8 +355,13 @@ public:
         if (STATE_COMMON->IsAppendBackspaceStopper()) { OUTPUT_STACK->pushNewLine(); }
         // 出力履歴に HistoryBlock を反映
         if (STATE_COMMON->IsSetHistoryBlockFlag()) {
-            OUTPUT_STACK->setFlag(OutputStack::FLAG_BLOCK_HIST);
-            LOG_DEBUGH(_T("OUTPUT_STACK->setFlag(OutputStack::FLAG_BLOCK_HIST): %s"), MAKE_WPTR(OUTPUT_STACK->backStringWithFlagUpto(20)));
+            OUTPUT_STACK->setHistBlocker();
+            LOG_DEBUGH(_T("OUTPUT_STACK->setHistBlocker(): %s"), MAKE_WPTR(OUTPUT_STACK->backStringWithFlagUpto(20)));
+        }
+        // 出力履歴に MazeBlock を反映
+        if (STATE_COMMON->IsSetMazegakiBlockFlag()) {
+            OUTPUT_STACK->setMazeBlocker();
+            LOG_DEBUGH(_T("OUTPUT_STACK->setMazeBlocker(): %s"), MAKE_WPTR(OUTPUT_STACK->backStringWithFlagUpto(20)));
         }
 
         int strokeTableChainLen = startState->StrokeTableChainLength();
@@ -386,7 +391,7 @@ public:
     void setBackspaceBlocker() {
         STATE_COMMON->SetBothHistoryBlockFlag();
         OUTPUT_STACK->pushNewLine();
-        OUTPUT_STACK->setFlag(OutputStack::FLAG_BLOCK_HIST);
+        OUTPUT_STACK->setHistBlocker();
     }
 
     // ヘルプや候補文字列

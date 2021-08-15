@@ -158,8 +158,9 @@ namespace {
             _LOG_DEBUGH(_T("prevYomi=%s, prevXferLen=%d, shiftedYomiLen=%d"), MAKE_WPTR(prevYomi), prevXferLen, shiftedYomiLen);
 
             // 最大読み長までの長さの読みに対する交ぜ書き候補を全て取得する
+            OUTPUT_STACK->unsetMazeBlocker();
             const auto& cands = candsByLen.GetAllCandidates(
-                prevXfered ? utils::tail_substr(prevYomi, shiftedYomiLen) : OUTPUT_STACK->BackStringUptoHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen));
+                prevXfered ? utils::tail_substr(prevYomi, shiftedYomiLen) : OUTPUT_STACK->BackStringUptoMazeOrHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen));
             if (cands.empty()) {
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: no candidate"));
@@ -169,9 +170,9 @@ namespace {
             if (cands.size() == 1 || (!MAZEGAKI_NODE->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand)) {
                 // 読みの長さ候補が１つしかなかった、または先頭候補の自動出力モードなのでそれを選択して出力
                 if (prevXfered)
-                    outputStringAndPostProc(prevYomi.substr(0, prevYomi.size() - shiftedYomiLen) + cands.front(), prevXferLen);
+                    outputStringAndPostProc(prevYomi.substr(0, prevYomi.size() - shiftedYomiLen) + cands.front(), prevXferLen, &prevYomi);
                 else
-                    outputStringAndPostProc(cands.front(), candsByLen.GetFirstCandidateYomi().size());
+                    outputStringAndPostProc(cands.front(), candsByLen.GetFirstCandidateYomi().size(), 0);
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));
                 return false;
@@ -195,7 +196,7 @@ namespace {
                 size_t n = (winIdx * LONG_VKEY_NUM) + (deckey % LONG_VKEY_NUM);
                 const auto& cands = candsByLen.GetMazeCandidates();
                 if (n < cands.size()) {
-                    outputStringAndPostProc(cands[n], candsByLen.GetYomiLen(cands[n]));
+                    outputStringAndPostProc(cands[n], candsByLen.GetYomiLen(cands[n]), 0);
                     candsByLen.SelectNth(n);
                     return;
                 }
@@ -203,11 +204,12 @@ namespace {
             setCandidatesVKB();
         }
 
-         // Shiftキーで修飾されたキー -- キャンセル
+         // Shiftキーで修飾されたキー
         void handleShiftKeys(int deckey) {
             _LOG_DEBUGH(_T("CALLED: %s: deckey=%xH(%d), char=%c"), NAME_PTR, deckey, deckey);
-            handleKeyPostProc();
-            State::handleShiftKeys(deckey);
+            //handleKeyPostProc();
+            //State::handleShiftKeys(deckey);
+            handleStrokeKeys(UNSHIFT_DECKEY(deckey));
         }
 
         void handleLeftArrow() {
@@ -293,13 +295,15 @@ namespace {
         }
 
     private:
-        void outputStringAndPostProc(const MString& str, size_t numBS) {
+        void outputStringAndPostProc(const MString& str, size_t numBS, const MString* prevYomi) {
             MazegakiNode* pn = dynamic_cast<MazegakiNode*>(pNode);
             if (pn) {
                 // 今回の結果を元に戻すための情報を保存
-                pn->SetYomiInfo(OUTPUT_STACK->GetLastOutputStackStr(numBS), str.size());
+                // prevYomi は、再変換をしたときの元の読み
+                pn->SetYomiInfo(prevYomi ? *prevYomi : OUTPUT_STACK->GetLastOutputStackStr(numBS), str.size());
             }
             STATE_COMMON->SetOutString(str, numBS);
+            STATE_COMMON->SetMazegakiBlockFlag();
             handleKeyPostProc();
             //選択した候補を履歴に登録
             if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::strip(str, _T("、。")));
