@@ -176,10 +176,25 @@ namespace {
             LOG_INFOH(_T("mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
             if (cands.size() == 1 || (!MAZEGAKI_NODE->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand)) {
                 // 読みの長さ候補が１つしかなかった、または先頭候補の自動出力モードなのでそれを選択して出力
-                if (prevXfered)
-                    outputStringAndPostProc(prevYomi.substr(0, prevYomi.size() - shiftedYomiLen), cands.front(), prevXferLen, &prevYomi);
-                else
-                    outputStringAndPostProc(EMPTY_MSTR, cands.front(), candsByLen.GetFirstCandidateYomi().size(), 0);
+                const auto& cand = cands.front();
+                size_t candLen = cand.resultStr.size();
+                size_t candYlen = candsByLen.GetFirstCandidateYomi().size();
+                if (prevXfered) {
+                    MString lead = prevYomi.substr(0, prevYomi.size() - candYlen);
+                    MString yomi = utils::last_substr(prevYomi, candYlen);
+                    // 「がかなる」⇒「画家なる」⇒">"⇒「がか奈留」のケース
+                    // prevYomi=がかなる
+                    // shiftedYomiLen=3 (かなる)
+                    // candYlen = 2 (なる)
+                    // leadStr=がか
+                    // candStr=奈留
+                    // numBS=prevXferLen=4 (画家なる)
+                    // 今回の読み=なる
+                    // candLen=2
+                    outputStringAndPostProc(lead, cand, prevXferLen, &yomi, candLen);
+                } else {
+                    outputStringAndPostProc(EMPTY_MSTR, cand, candYlen, nullptr, 0);
+                }
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));
                 return false;
@@ -203,7 +218,7 @@ namespace {
                 size_t n = (winIdx * LONG_VKEY_NUM) + (deckey % LONG_VKEY_NUM);
                 const auto& cands = candsByLen.GetMazeCandidates();
                 if (n < cands.size()) {
-                    outputStringAndPostProc(EMPTY_MSTR, cands[n], candsByLen.GetYomiLen(cands[n].resultStr), 0);
+                    outputStringAndPostProc(EMPTY_MSTR, cands[n], candsByLen.GetYomiLen(cands[n].resultStr), nullptr, 0);
                     candsByLen.SelectNth(n);
                     return;
                 }
@@ -302,14 +317,16 @@ namespace {
         }
 
     private:
-        void outputStringAndPostProc(const MString& leadStr, const MazeResult& mazeResult, size_t numBS, const MString* prevYomi) {
+        void outputStringAndPostProc(const MString& leadStr, const MazeResult& mazeResult, size_t numBS, const MString* yomi, size_t xferLen) {
+            _LOG_DEBUGH(_T("CALLED: leadStr=%s, resultStr=%s, resultXlen=%d, numBS=%d, yomi=%s, xferLen=%d"), MAKE_WPTR(leadStr), MAKE_WPTR(mazeResult.resultStr), mazeResult.xferLen, numBS, yomi ? MAKE_WPTR(*yomi) : _T("null"), xferLen);
             MString outStr = leadStr + mazeResult.resultStr;
             MazegakiNode* pn = dynamic_cast<MazegakiNode*>(pNode);
             if (pn) {
                 // 今回の結果を元に戻すための情報を保存
-                // prevYomi は、再変換をしたときの元の読み
-                _LOG_DEBUGH(_T("SET_YOMI_INFO: %s, len=%d"), MAKE_WPTR(prevYomi ? *prevYomi : OUTPUT_STACK->GetLastOutputStackStr(numBS)), outStr.size());
-                pn->SetYomiInfo(prevYomi ? *prevYomi : OUTPUT_STACK->GetLastOutputStackStr(numBS), outStr.size());
+                // yomi は、再変換をする際の元の読みになる
+                if (xferLen == 0) xferLen = outStr.size();
+                _LOG_DEBUGH(_T("SET_YOMI_INFO: %s, xferLen=%d"), MAKE_WPTR(yomi ? *yomi : OUTPUT_STACK->GetLastOutputStackStr(numBS)), xferLen);
+                pn->SetYomiInfo(yomi ? *yomi : OUTPUT_STACK->GetLastOutputStackStr(numBS), xferLen);
             }
             _LOG_DEBUGH(_T("SET_OUT_STRING: %s, numBS=%d"), MAKE_WPTR(outStr), numBS);
             STATE_COMMON->SetOutString(outStr, numBS);
