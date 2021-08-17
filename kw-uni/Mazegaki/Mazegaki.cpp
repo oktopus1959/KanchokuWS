@@ -303,9 +303,12 @@ namespace {
             if (pn) {
                 // 今回の結果を元に戻すための情報を保存
                 // prevYomi は、再変換をしたときの元の読み
+                _LOG_DEBUGH(_T("SET_YOMI_INFO: %s, len=%d"), MAKE_WPTR(prevYomi ? *prevYomi : OUTPUT_STACK->GetLastOutputStackStr(numBS)), outStr.size());
                 pn->SetYomiInfo(prevYomi ? *prevYomi : OUTPUT_STACK->GetLastOutputStackStr(numBS), outStr.size());
             }
+            _LOG_DEBUGH(_T("SET_OUT_STRING: %s, numBS=%d"), MAKE_WPTR(outStr), numBS);
             STATE_COMMON->SetOutString(outStr, numBS);
+            _LOG_DEBUGH(_T("SET_MAZE_BLOCKER: pos=%d"), SETTINGS->mazeBlockerTail ? 0 : outStr.size() - (leadStr.size() + mazeResult.xferLen));
             STATE_COMMON->SetMazegakiBlockerPosition(SETTINGS->mazeBlockerTail ? 0 : outStr.size() - (leadStr.size() + mazeResult.xferLen));
             handleKeyPostProc();
             //選択した候補を履歴に登録
@@ -367,19 +370,22 @@ State* MazegakiNode::CreateState() {
 DEFINE_CLASS_LOGGER(MazegakiNodeBuilder);
 
 Node* MazegakiNodeBuilder::CreateNode() {
-    // 交ぜ書き辞書ファイル名
-    auto mazeFile = SETTINGS->mazegakiFile;
-    LOG_INFO(_T("mazeFile=%s"), mazeFile.c_str());
-    if (!mazeFile.empty()) {
-        // 交ぜ書き辞書の読み込み
-        LOG_INFO(_T("CALLED: mazegaiFile=%s"), mazeFile.c_str());
+    if (MazegakiNode::Singleton == 0) {
+        // 交ぜ書き辞書ファイル名
+        auto mazeFile = SETTINGS->mazegakiFile;
+        LOG_INFO(_T("mazeFile=%s"), mazeFile.c_str());
         if (!mazeFile.empty()) {
-            MazegakiDic::CreateMazegakiDic(mazeFile);
+            // 交ぜ書き辞書の読み込み
+            LOG_INFO(_T("CALLED: mazegakiFile=%s"), mazeFile.c_str());
+            if (!mazeFile.empty()) {
+                MazegakiDic::CreateMazegakiDic(mazeFile);
+            }
         }
+        //else {
+        //    ERROR_HANDLER->Warn(_T("「mazegaki=(ファイル名)」の設定がまちがっているようです"));
+        //}
+        MazegakiNode::Singleton = new MazegakiNode();
     }
-    //else {
-    //    ERROR_HANDLER->Warn(_T("「mazegaki=(ファイル名)」の設定がまちがっているようです"));
-    //}
-    return MazegakiNode::Singleton = new MazegakiNode();
+    return MazegakiNode::Singleton;
 }
 
