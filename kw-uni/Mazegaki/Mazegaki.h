@@ -9,6 +9,22 @@
 // MazegakiNode - 交ぜ書き機能ノード
 class MazegakiNode : public FunctionNode {
     DECLARE_CLASS_LOGGER;
+private:
+    // 変換結果を元に戻すための変換前の読み
+    static MString prevYomi;
+
+    // 変換結果を元に戻すための変換形の長さ
+    static size_t prevXferLen;
+
+    // 前回変換時のホットキーカウント
+    static size_t deckeyCount;
+
+    // 先頭候補の自動選択を一時的に中止する
+    static bool selectFirstCandDisabled;
+
+    // シフトされた読み長
+    static size_t shiftedYomiLen;
+
  public:
      MazegakiNode();
 
@@ -19,7 +35,7 @@ class MazegakiNode : public FunctionNode {
 
     MString getString() const { return to_mstr(_T("○")); }
 
-    void SetYomiInfo(const MString& yomi, size_t xferLen) {
+    static void SetYomiInfo(const MString& yomi, size_t xferLen) {
         prevYomi = yomi;
         prevXferLen = xferLen;
         shiftedYomiLen = yomi.size();
@@ -29,7 +45,7 @@ class MazegakiNode : public FunctionNode {
 
     // n打鍵によるMaze呼び出し用(4ストロークまでOK)
     size_t GetPrevYomiInfo(MString& yomi) {
-        if (STATE_COMMON->GetTotalDecKeyCount() == deckeyCount + 4) {
+        if (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) {
             selectFirstCandDisabled = true;
             yomi = prevYomi;
             return prevXferLen;
@@ -40,7 +56,7 @@ class MazegakiNode : public FunctionNode {
 
     // Esc用
     size_t GetPrevYomiInfoIfJustAfterMaze(MString& yomi) {
-        if (STATE_COMMON->GetTotalDecKeyCount() == deckeyCount + 1) {
+        if (IsJustAfterPrevXfer()) {
             selectFirstCandDisabled = true;
             yomi = prevYomi;
             return prevXferLen;
@@ -83,22 +99,6 @@ class MazegakiNode : public FunctionNode {
     bool IsJustAfterPrevXfer() {
         return STATE_COMMON->GetTotalDecKeyCount() == deckeyCount + 1;
     }
-
-private:
-    // 変換結果を元に戻すための変換前の読み
-    MString prevYomi;
-
-    // 変換結果を元に戻すための変換形の長さ
-    size_t prevXferLen = 0;
-
-    // 前回変換時のホットキーカウント
-    size_t deckeyCount = 0;
-
-    // 先頭候補の自動選択を一時的に中止する
-    bool selectFirstCandDisabled = false;
-
-    // シフトされた読み長
-    size_t shiftedYomiLen = 0;
 
 public:
     static MazegakiNode* Singleton;

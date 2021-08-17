@@ -58,9 +58,11 @@ void State::DoDeckeyPreProc(int deckey) {
         // モード状態(HistoryStayState や TranslationState など)のための前処理
         // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
         if (!pNext) {
+            // TODO: AD HOC
             if (deckey == RIGHT_TRIANGLE_DECKEY) {
                 if (MAZEGAKI_NODE->RightShiftYomiStartPos()) {
                     _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE"));
+                    OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
                     SetNextNodeMaybe(MAZEGAKI_NODE);
                     return;
                 }

@@ -352,6 +352,21 @@ namespace {
 // MazegakiNode - 交ぜ書き機能ノード
 DEFINE_CLASS_LOGGER(MazegakiNode);
 
+// 変換結果を元に戻すための変換前の読み
+MString MazegakiNode::prevYomi;
+
+// 変換結果を元に戻すための変換形の長さ
+size_t MazegakiNode::prevXferLen = 0;
+
+// 前回変換時のホットキーカウント
+size_t MazegakiNode::deckeyCount = 0;
+
+// 先頭候補の自動選択を一時的に中止する
+bool MazegakiNode::selectFirstCandDisabled = false;
+
+// シフトされた読み長
+size_t MazegakiNode::shiftedYomiLen = 0;
+
 // Singleton
 MazegakiNode* MazegakiNode::Singleton = 0;
 
@@ -389,8 +404,9 @@ Node* MazegakiNodeBuilder::CreateNode() {
         //else {
         //    ERROR_HANDLER->Warn(_T("「mazegaki=(ファイル名)」の設定がまちがっているようです"));
         //}
-        MazegakiNode::Singleton = new MazegakiNode();
+        return MazegakiNode::Singleton = new MazegakiNode();
     }
-    return MazegakiNode::Singleton;
+    // StrokeTable では unique_ptr で保持しているため、Singleton を返すことはできない。
+    return new MazegakiNode();
 }
 
