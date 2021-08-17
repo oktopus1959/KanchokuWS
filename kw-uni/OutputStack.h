@@ -96,7 +96,7 @@ public:
                 stack.back().flag &= ~FLAG_BLOCK_HIST;
             else
                 stack.back().flag |= FLAG_BLOCK_HIST;
-            if (_isLastMazeBlocker())
+            if (isLastMazeBlocker())
                 stack.back().flag &= ~FLAG_BLOCK_MAZE;
             else
                 stack.back().flag |= FLAG_BLOCK_MAZE;
@@ -125,6 +125,10 @@ public:
 
     inline void unsetMazeBlocker() {
         unsetFlag(FLAG_BLOCK_MAZE);
+    }
+
+    inline bool isLastMazeBlocker() const {
+        return (getFlag() & FLAG_BLOCK_MAZE) != 0;
     }
 
     inline void setFlag(unsigned short flag) {
@@ -322,10 +326,6 @@ private:
 
     inline bool _isLastHistBlocker() const {
         return (getFlag() & FLAG_BLOCK_HIST) != 0;
-    }
-
-    inline bool _isLastMazeBlocker() const {
-        return (getFlag() & FLAG_BLOCK_MAZE) != 0;
     }
 
     // stackの末尾から、tailMaxlen の範囲で、tailLen の長さの文字列を取得する

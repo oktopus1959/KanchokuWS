@@ -27,7 +27,19 @@ class MazegakiNode : public FunctionNode {
         selectFirstCandDisabled = false;
     }
 
+    // n打鍵によるMaze呼び出し用(4ストロークまでOK)
     size_t GetPrevYomiInfo(MString& yomi) {
+        if (STATE_COMMON->GetTotalDecKeyCount() == deckeyCount + 4) {
+            selectFirstCandDisabled = true;
+            yomi = prevYomi;
+            return prevXferLen;
+        }
+        selectFirstCandDisabled = false;
+        return 0;
+    }
+
+    // Esc用
+    size_t GetPrevYomiInfoIfJustAfterMaze(MString& yomi) {
         if (STATE_COMMON->GetTotalDecKeyCount() == deckeyCount + 1) {
             selectFirstCandDisabled = true;
             yomi = prevYomi;
@@ -97,7 +109,7 @@ public:
     LOG_DEBUGH(_T("HANDLE_ESC_FOR_MAZEGAKI: %s"), NAME_PTR); \
     if (MAZEGAKI_NODE) { \
         MString prevYomi; \
-        size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi); \
+        size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfoIfJustAfterMaze(prevYomi); \
         LOG_DEBUGH(_T("MAZEGAKI ESC: prevYomi=%s, prevXferLen=%d"), MAKE_WPTR(prevYomi), prevXferLen); \
         if (prevXferLen > 0) { \
             STATE_COMMON->SetOutString(prevYomi, prevXferLen); \

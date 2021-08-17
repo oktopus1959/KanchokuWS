@@ -152,9 +152,14 @@ namespace {
 
             // 直前に変換していたか
             MString prevYomi;
-            size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi);
+            size_t prevXferLen = 0;
+            bool prevXfered = false;
 
-            bool prevXfered = !prevYomi.empty() && prevXferLen > 0;
+            // 末尾がブロッカーなら、直前の変換をやり直す
+            if (OUTPUT_STACK->isLastMazeBlocker()) {
+                prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfo(prevYomi);
+                prevXfered = !prevYomi.empty() && prevXferLen > 0;
+            }
 
             size_t shiftedYomiLen = prevXfered ? MAZEGAKI_NODE->GetShiftedYomiLen() : 1000;
             _LOG_DEBUGH(_T("prevYomi=%s, prevXferLen=%d, shiftedYomiLen=%d"), MAKE_WPTR(prevYomi), prevXferLen, shiftedYomiLen);
