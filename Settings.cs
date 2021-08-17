@@ -352,6 +352,8 @@ namespace KanchokuWS
         public static int MazeGobiMaxLen { get; private set; } = 3;
         public static int MazeNoIfxGobiMaxLen { get; private set; } = 3;
 
+        public static bool MazeBlockerTail { get; set; } = false;
+
         //------------------------------------------------------------------------------
         // 各種変換
         // 平仮名⇒カタカナ変換
@@ -725,6 +727,7 @@ namespace KanchokuWS
 
             //MazegakiByShiftSpace = GetString("mazegakiByShiftSpace")._parseBool(true);          // Shift-Space で交ぜ書き変換
             MazegakiSelectFirstCand = addDecoderSetting("mazegakiSelectFirstCand", false);      // 交ぜ書き変換で先頭の候補を自動選択
+            MazeBlockerTail = addDecoderSetting("mazeBlockerTail", true);                       // 交ぜ書き変換で、変換後のブロッカーの位置
             MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
             MazeNoIfxGobiMaxLen = addDecoderSetting("mazeNoIfxGobiMaxLen", 5, 0);               // 交ぜ書きでの無活用語の語尾の最大長

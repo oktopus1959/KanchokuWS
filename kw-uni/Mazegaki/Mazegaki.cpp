@@ -306,7 +306,7 @@ namespace {
                 pn->SetYomiInfo(prevYomi ? *prevYomi : OUTPUT_STACK->GetLastOutputStackStr(numBS), outStr.size());
             }
             STATE_COMMON->SetOutString(outStr, numBS);
-            STATE_COMMON->SetMazegakiBlockerPosition(outStr.size() - (leadStr.size() + mazeResult.xferLen));
+            STATE_COMMON->SetMazegakiBlockerPosition(SETTINGS->mazeBlockerTail ? 0 : outStr.size() - (leadStr.size() + mazeResult.xferLen));
             handleKeyPostProc();
             //選択した候補を履歴に登録
             if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::strip(outStr, _T("、。")));

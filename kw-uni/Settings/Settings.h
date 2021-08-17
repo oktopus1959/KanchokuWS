@@ -42,6 +42,7 @@ struct Settings {
 
     //bool mazegakiByShiftSpace = true;       // Shift-Space で交ぜ書き変換
     bool mazegakiSelectFirstCand = false;   // 交ぜ書き変換で先頭の候補を自動選択
+    bool mazeBlockerTail = true;            // 交ぜ書き変換で、変換後のブロッカーの位置
     size_t mazeYomiMaxLen = 10;             // 交ぜ書き変換時の最長入力読み長
     size_t mazeGobiMaxLen = 3;              // 語尾あり交ぜ書きの最長語尾長
     size_t mazeNoIfxGobiMaxLen = 4;         // 交ぜ書きでの無活用語の語尾の最大長

@@ -59,6 +59,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_BOOL_VALUE(useArrowKeyToSelectCandidate);
 
     SET_BOOL_VALUE(mazegakiSelectFirstCand);
+    SET_BOOL_VALUE(mazeBlockerTail);
     SET_INT_VALUE(mazeYomiMaxLen);
     SET_INT_VALUE(mazeGobiMaxLen);
     SET_INT_VALUE(mazeNoIfxGobiMaxLen);

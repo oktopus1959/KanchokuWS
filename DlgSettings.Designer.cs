@@ -346,6 +346,7 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.checkBox_mazeBlockerTail = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -3018,10 +3019,11 @@ namespace KanchokuWS
             // 
             // groupBox23
             // 
+            this.groupBox23.Controls.Add(this.checkBox_mazeBlockerTail);
             this.groupBox23.Controls.Add(this.checkBox_mazegakiSelectFirstCand);
             this.groupBox23.Location = new System.Drawing.Point(312, 10);
             this.groupBox23.Name = "groupBox23";
-            this.groupBox23.Size = new System.Drawing.Size(261, 49);
+            this.groupBox23.Size = new System.Drawing.Size(261, 73);
             this.groupBox23.TabIndex = 3;
             this.groupBox23.TabStop = false;
             this.groupBox23.Text = "交ぜ書き変換";
@@ -3044,7 +3046,7 @@ namespace KanchokuWS
             this.groupBox27.Controls.Add(this.checkBox_convertJaComma);
             this.groupBox27.Controls.Add(this.checkBox_convertJaPeriod);
             this.groupBox27.Controls.Add(this.checkBox_convertShiftedHiraganaToKatakana);
-            this.groupBox27.Location = new System.Drawing.Point(312, 140);
+            this.groupBox27.Location = new System.Drawing.Point(312, 179);
             this.groupBox27.Name = "groupBox27";
             this.groupBox27.Size = new System.Drawing.Size(261, 108);
             this.groupBox27.TabIndex = 5;
@@ -3103,7 +3105,7 @@ namespace KanchokuWS
             this.groupBox19.Controls.Add(this.label45);
             this.groupBox19.Controls.Add(this.textBox_mazeYomiMaxLen);
             this.groupBox19.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox19.Location = new System.Drawing.Point(312, 68);
+            this.groupBox19.Location = new System.Drawing.Point(312, 107);
             this.groupBox19.Name = "groupBox19";
             this.groupBox19.Size = new System.Drawing.Size(261, 64);
             this.groupBox19.TabIndex = 4;
@@ -4055,6 +4057,17 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // checkBox_mazeBlockerTail
+            // 
+            this.checkBox_mazeBlockerTail.AutoSize = true;
+            this.checkBox_mazeBlockerTail.Location = new System.Drawing.Point(20, 46);
+            this.checkBox_mazeBlockerTail.Name = "checkBox_mazeBlockerTail";
+            this.checkBox_mazeBlockerTail.Size = new System.Drawing.Size(224, 19);
+            this.checkBox_mazeBlockerTail.TabIndex = 4;
+            this.checkBox_mazeBlockerTail.Text = "変換形＋活用語尾の後にブロッカーを置く";
+            this.toolTip1.SetToolTip(this.checkBox_mazeBlockerTail, resources.GetString("checkBox_mazeBlockerTail.ToolTip"));
+            this.checkBox_mazeBlockerTail.UseVisualStyleBackColor = true;
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -4477,5 +4490,6 @@ namespace KanchokuWS
         private System.Windows.Forms.RadioButton radioButton_noVkb;
         private System.Windows.Forms.Label label89;
         private System.Windows.Forms.TextBox textBox_mazeNoIfxGobiMaxLen;
+        private System.Windows.Forms.CheckBox checkBox_mazeBlockerTail;
     }
 }

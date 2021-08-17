@@ -120,9 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -452,6 +449,19 @@ Ctrl-Shift修飾されたキーで、ブロッカーの解除となります。
 横取りし、漢直窓Sから再度 keybd_event でキーの送出を行っています。
 そのため、出力先アプリによってはキーを受け取れないものもあります。
 その場合は、いったん、当設定をOFFにしてください。</value>
+  </data>
+  <data name="checkBox_mazeBlockerTail.ToolTip" xml:space="preserve">
+    <value>ONにすると、交ぜ書き変換後に、変換形＋活用語尾の後に
+交ぜ書きブロッカーを置きます。
+OFFにすると、変換文字列全体の末尾にブロッカーを置きます。
+
+交ぜ書きブロッカーがあると、そこで交ぜ書き用の読みの採取が
+ブロックされます。
+
+例：「ぜんりょくをあげて」を変換した場合、それぞれ、
+・ONなら「全力|をあげて」のように「全力」の後にブロッカー
+・OFFなら「全力をあげて|」のように、末尾にブロッカー
+が置かれます。</value>
   </data>
   <data name="comboBox_histNumDeckeyId.ToolTip" xml:space="preserve">
     <value>履歴検索の縦列鍵盤表示時に、候補を文字数で絞るモードに
