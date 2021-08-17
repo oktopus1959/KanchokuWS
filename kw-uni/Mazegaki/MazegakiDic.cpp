@@ -64,8 +64,13 @@ namespace {
         _WCHAR("、"), _WCHAR("。"), 0 };
 
     inline bool find_gobi(const mchar_t* ifxes, mchar_t mc) {
-        while (*ifxes != 0) {
-            if (*ifxes++ == mc) return true;
+        auto pIfx = ifxes;
+        while (*pIfx != 0) {
+            if (*pIfx++ == mc) return true;
+        }
+        if (ifxes == IFX_NONE) {
+            // 無活用の場合はひらがな以外を後接できる
+            if (!utils::is_hiragana(mc)) return true;
         }
         return false;
     }
@@ -545,6 +550,13 @@ namespace {
                     size_t tailHiraganaLen = min(utils::count_tail_hiragana_including_punct(key), key.size() - stemMinLen);
                     size_t gobiMaxLen = min(tailHiraganaLen, SETTINGS->mazeGobiMaxLen);
                     stemMinLen = key.size() > gobiMaxLen ? key.size() - gobiMaxLen : 1;
+                    // やはり語尾にひらがな以外も含めてしまうと多々問題が生じるので、語尾はひらがなに限ることにする
+                    // 「だいひょう /代表/」しかエントリがない場合の「だいひょう者」のような読みについては、
+                    // ①ひらがな部分がエントリの読みと一致し、
+                    // ②読みの末尾が漢字・カタカナのみ、
+                    // という場合に「エントリの変換形」＋「読みの末尾漢字列」という形で返すようにする
+                    //stemMinLen = key.size() > SETTINGS->mazeGobiMaxLen ? key.size() - SETTINGS->mazeGobiMaxLen : 1;
+                    _LOG_DEBUGH(_T("stemMinLen=%d"), stemMinLen);
                     std::set<const MazeEntry*> entrySet;
                     bool mazeSearch = false;
                     
@@ -571,7 +583,7 @@ namespace {
 
                     size_t stemLen = stemMinLen;    // 最短語幹から始める
                     while (!entrySet.empty()) {
-                        _LOG_DEBUGH(_T("entrySet.size()=%d"), entrySet.size());
+                        _LOG_DEBUGH(_T("entrySet.size()=%d, stemLen=%d, mazeSearch=%s"), entrySet.size(), stemLen, BOOL_TO_WPTR(mazeSearch));
                         // 長い語幹にマッチしたほうを優先
                         // 同じ語幹長の場合は、エントリの読みの短いほうが優先
                         // 同じ読みなら、ユーザー辞書を優先
@@ -579,17 +591,19 @@ namespace {
                         candidates_t cands2;                         // 読みと変換形でマッチしたもの用
                         auto keyStem = key.substr(0, stemLen);
                         for (auto p : entrySet) {
-                            LOG_DEBUG(_T("keyStem=%s, stem=%s, xfer=%s, ifx=%s, user=%s, deleted=%s"),
-                                MAKE_WPTR(keyStem), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
+                            _LOG_DEBUGH(_T("key=%s, keyStem=%s, mazeSearch=%s, p->stem=%s, p->xfer=%s, ifx=%s, user=%s, deleted=%s"),
+                                MAKE_WPTR(key), MAKE_WPTR(keyStem), BOOL_TO_WPTR(mazeSearch), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
                             if (p->deleted) continue;
                             if (utils::startsWith(keyStem, p->xfer)) continue;   // 読み語幹の先頭部が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケースや「経い」→「経」のケース)
 
                             candidates_t* pCands = 0;
                             if (keyStem == p->stem) {
                                 // 読み語幹が完全一致
+                                _LOG_DEBUGH(_T("MATCH-A"));
                                 pCands = &cands1;
                             } else if (mazeSearch && order_matched(keyStem, p)) {
                                 // key に漢字が含まれている場合は、ひらがな・漢字の出現順序の一致を確認
+                                _LOG_DEBUGH(_T("MATCH-B"));
                                 pCands = &cands2;
                             }
                             if (pCands) {
