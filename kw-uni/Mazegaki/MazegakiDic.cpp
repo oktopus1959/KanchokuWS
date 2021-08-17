@@ -565,6 +565,14 @@ namespace {
                     // ②読みの末尾が漢字・カタカナのみ、
                     // という場合に「エントリの変換形」＋「読みの末尾漢字列」という形で返すようにする
                     //stemMinLen = key.size() > SETTINGS->mazeGobiMaxLen ? key.size() - SETTINGS->mazeGobiMaxLen : 1;
+
+                    // 2文字目がひらがななら、読み語幹をそこまで延ばす
+                    // ①「がいる」⇒「我いる」にしたくない
+                    // ②「我いる」⇒もう漢字になっているから先頭1文字だけを変換する必要はない
+                    // ③「*いる」⇒ワイルドカードだけの読みは不可
+                    if (stemMinLen == 1 && key.size() > 1 && utils::is_hiragana(key[1])) {
+                        ++stemMinLen;
+                    }
                     _LOG_DEBUGH(_T("stemMinLen=%d"), stemMinLen);
                     std::set<const MazeEntry*> entrySet;
                     bool mazeSearch = false;

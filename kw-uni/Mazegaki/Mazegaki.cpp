@@ -317,7 +317,8 @@ namespace {
             STATE_COMMON->SetMazegakiBlockerPosition(SETTINGS->mazeBlockerTail ? 0 : outStr.size() - (leadStr.size() + mazeResult.xferLen));
             handleKeyPostProc();
             //選択した候補を履歴に登録
-            if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::strip(outStr, _T("、。")));
+            // いったん無効にしておく
+            //if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::strip(outStr, _T("、。")));
         }
 
         void handleKeyPostProc() {
