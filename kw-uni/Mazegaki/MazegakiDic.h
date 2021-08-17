@@ -1,6 +1,26 @@
 #include "Logger.h"
 
 // -------------------------------------------------------------------
+struct MazeResult {
+    // 交ぜ書き変換結果文字列
+    MString resultStr;
+
+    // 結果文字列の先頭の変換形文字列＋活用語尾の長さ
+    size_t xferLen = 0;
+
+public:
+    MazeResult() { }
+
+    MazeResult(const MString& str, size_t len) : resultStr(str), xferLen(len) { }
+
+
+    static std::vector<MString> ToMStringVector(const std::vector<MazeResult>& results) {
+        std::vector<MString> strvec;
+        std::transform(results.begin(), results.end(), std::back_inserter(strvec), [](const MazeResult& mz) { return mz.resultStr;});
+        return strvec;
+    }
+};
+
 // 交ぜ書き辞書クラス
 class MazegakiDic{
     DECLARE_CLASS_LOGGER;
@@ -26,7 +46,7 @@ public:
     virtual bool AddMazeDicEntry(const wstring& line, bool bUser) = 0;
 
     // 指定の見出し語に対する変換候補のセットを取得する
-    virtual const std::vector<MString>& GetCandidates(const MString& key) = 0;
+    virtual const std::vector<MazeResult>& GetCandidates(const MString& key) = 0;
 
     // GetCandidates() が返した候補のうち target を持つものを選択してユーザー辞書にコピー
     virtual void SelectCadidate(const MString& target) = 0;

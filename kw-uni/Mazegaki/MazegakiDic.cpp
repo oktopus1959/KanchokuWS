@@ -27,7 +27,7 @@ namespace {
     // -------------------------------------------------------------------
     // 活用語尾
     // 一段活用
-    mchar_t IFX_RU_1[] = { _WCHAR("る"), _WCHAR("れ"), _WCHAR("よ"), _WCHAR("な"), _WCHAR("た"), _WCHAR("て"), _WCHAR("ま"), _WCHAR("ら"), STEM_OK, 0 };
+    mchar_t IFX_RU_1[] = { STEM_OK, _WCHAR("る"), _WCHAR("れ"), _WCHAR("よ"), _WCHAR("な"), _WCHAR("た"), _WCHAR("て"), _WCHAR("ま"), _WCHAR("ら"), 0 };
     // 五段活用「く」(書く)
     mchar_t IFX_KU_5[] = { _WCHAR("か"), _WCHAR("き"), _WCHAR("く"), _WCHAR("け"), _WCHAR("こ"), _WCHAR("い"), 0 };
     // 五段活用「ぐ」(漕ぐ)
@@ -51,11 +51,11 @@ namespace {
     // ザ変活用「ずる」(信ずる)
     mchar_t IFX_ZURU[] = { _WCHAR("じ"), _WCHAR("ず"), _WCHAR("ぜ"), 0 };
     // 形容詞「い」(美しい)
-    mchar_t IFX_I[] = { _WCHAR("い"), _WCHAR("か"), _WCHAR("き"), _WCHAR("く"), _WCHAR("け"),  _WCHAR("さ"), 0 };
+    mchar_t IFX_KYI[] = { _WCHAR("い"), _WCHAR("か"), _WCHAR("き"), _WCHAR("く"), _WCHAR("け"),  _WCHAR("さ"), 0 };
     // 形容動詞「な」(静かな)
-    mchar_t IFX_NA[] = { STEM_OK, _WCHAR("な"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("、"), _WCHAR("。"), 0 };
+    mchar_t IFX_KDNA[] = { STEM_OK, _WCHAR("な"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("、"), _WCHAR("。"), 0 };
     // 形容詞「の」(本当の)
-    mchar_t IFX_NO[] = { STEM_OK, _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("、"), _WCHAR("。"), 0 };
+    mchar_t IFX_KDNO[] = { STEM_OK, _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("、"), _WCHAR("。"), 0 };
     // 無活用
     //mchar_t IFX_NONE[] = { STEM_OK, 0 };
     mchar_t IFX_NONE[] = { STEM_OK,
@@ -91,9 +91,9 @@ namespace {
         { _T("う"), IFX_WU_5 },
         { _T("する"), IFX_SURU },
         { _T("ずる"), IFX_ZURU },
-        { _T("い"), IFX_I },
-        { _T("な"), IFX_NA },
-        { _T("の"), IFX_NO },
+        { _T("い"), IFX_KYI },
+        { _T("な"), IFX_KDNA },
+        { _T("の"), IFX_KDNO },
     };
 
     // 上一段、下一段
@@ -163,6 +163,15 @@ namespace {
             }
         }
 
+        // 変換形＋活用語尾の長さを返す
+        size_t GetXferPlusGobiLen(const MString& resultStr) const {
+            size_t xferLen = min(xfer.size(), resultStr.size());
+            if (inflexList != IFX_NONE && xferLen < resultStr.size()) {
+                // 活用語で、語尾がある場合
+                if (find_gobi(inflexList, resultStr[xferLen])) ++xferLen;
+            }
+            return xferLen;
+        }
     };
 
     // 交ぜ書きエントリの全リストのクラス
@@ -262,7 +271,7 @@ namespace {
         std::vector<CandidateEntry> mazeCandidates;
 
         // 上記から生成された変換後文字列のリスト
-        std::vector<MString> mazeResult;
+        std::vector<MazeResult> mazeResult;
 
         std::vector<MString> emptyResult;
 
@@ -540,7 +549,7 @@ namespace {
     public:
         // 指定の見出し語に対する変換候補のセットを取得する
         // 「か山」⇒「火山」より先に「海山」や「影山」が出てきてしまうのを防ぐ ⇒ 読みの短いほうを優先することで「火山」を先に出せる
-        const std::vector<MString>& GetCandidates(const MString& key) {
+        const std::vector<MazeResult>& GetCandidates(const MString& key) {
             LOG_INFO(_T("ENTER: key=%s"), MAKE_WPTR(key));
             mazeCandidates.clear();
             mazeResult.clear();
@@ -637,7 +646,9 @@ namespace {
                 }
             }
             // 結果を返す
-            for (const auto& c : mazeCandidates) mazeResult.push_back(c.output);
+            for (const auto& c : mazeCandidates) {
+                mazeResult.push_back(MazeResult(c.output, c.EntryPtr ? c.EntryPtr->GetXferPlusGobiLen(c.output) : c.output.size()));
+            }
             LOG_INFO(_T("LEAVE: maze entries=%d"), mazeResult.size());
             return mazeResult;
         }

@@ -360,7 +360,7 @@ public:
         }
         // 出力履歴に MazeBlock を反映
         if (STATE_COMMON->IsSetMazegakiBlockFlag()) {
-            OUTPUT_STACK->setMazeBlocker();
+            OUTPUT_STACK->setMazeBlocker(STATE_COMMON->GetMazegakiBlockerPosition());
             LOG_DEBUGH(_T("OUTPUT_STACK->setMazeBlocker(): %s"), MAKE_WPTR(OUTPUT_STACK->backStringWithFlagUpto(20)));
         }
 

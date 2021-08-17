@@ -29,7 +29,7 @@ namespace {
         DECLARE_CLASS_LOGGER;
 
         // 全候補リスト
-        std::vector<MString> mazeCandidates;
+        std::vector<MazeResult> mazeCandidates;
 
         std::map<MString, size_t> cand2len;
 
@@ -37,7 +37,7 @@ namespace {
 
     public:
         // 読みに対する全交ぜ書き候補を取得する
-        const std::vector<MString>& GetAllCandidates(const MString& yomiFull) {
+        const std::vector<MazeResult>& GetAllCandidates(const MString& yomiFull) {
             LOG_INFOH(_T("ENTER: yomiFull=%s"), MAKE_WPTR(yomiFull));
             mazeCandidates.clear();
             cand2len.clear();
@@ -67,9 +67,9 @@ namespace {
                     //    firstCandYomi.assign(yomi);
                     //}
                     for (const auto& w : MAZEGAKI_DIC->GetCandidates(yomi)) {
-                        if (utils::find(mazeCandidates, w) == 0) {
+                        if (utils::find(mazeCandidates, [w](auto c) {return c.resultStr == w.resultStr;}) == 0) {
                             mazeCandidates.push_back(w);
-                            cand2len[w] = len;
+                            cand2len[w.resultStr] = len;
                             if (firstCandYomi.empty()) firstCandYomi.assign(yomi);
                         }
                     }
@@ -78,12 +78,14 @@ namespace {
                     if (bWild) break;
                 }
             }
-            _LOG_DEBUGH(_T("LEAVE: mazeCandidates=%s"), MAKE_WPTR(utils::join(mazeCandidates, '/')));
+            if (_LOG_DEBUGH_FLAG) {
+                _LOG_DEBUGH(_T("LEAVE: mazeCandidates=%s"), MAKE_WPTR(utils::join(MazeResult::ToMStringVector(mazeCandidates), '/')));
+            }
             return mazeCandidates;
         }
 
         // 取得済みの交ぜ書き候補リストを返す
-        inline const std::vector<MString>& GetMazeCandidates() const {
+        inline const std::vector<MazeResult>& GetMazeCandidates() const {
             return mazeCandidates;
         }
 
@@ -106,12 +108,12 @@ namespace {
         // n番目の候補を選択 ⇒ 必要ならユーザー辞書に追加
         void SelectNth(size_t n) {
             if (n > 0 && n < mazeCandidates.size()) {
-                size_t len = GetYomiLen(mazeCandidates[n]);
-                if (GetYomiLen(mazeCandidates[n - 1]) == len) {
+                size_t len = GetYomiLen(mazeCandidates[n].resultStr);
+                if (GetYomiLen(mazeCandidates[n - 1].resultStr) == len) {
                     // 直前の候補と読み長が同じ、つまり、同じ読みの中で先頭ではなかった
                     // 再検索して、ユーザー辞書に追加する
                     MAZEGAKI_DIC->GetCandidates(utils::last_substr(firstCandYomi, len));
-                    MAZEGAKI_DIC->SelectCadidate(mazeCandidates[n]);
+                    MAZEGAKI_DIC->SelectCadidate(mazeCandidates[n].resultStr);
                 }
             }
         }
@@ -170,9 +172,9 @@ namespace {
             if (cands.size() == 1 || (!MAZEGAKI_NODE->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand)) {
                 // 読みの長さ候補が１つしかなかった、または先頭候補の自動出力モードなのでそれを選択して出力
                 if (prevXfered)
-                    outputStringAndPostProc(prevYomi.substr(0, prevYomi.size() - shiftedYomiLen) + cands.front(), prevXferLen, &prevYomi);
+                    outputStringAndPostProc(prevYomi.substr(0, prevYomi.size() - shiftedYomiLen), cands.front(), prevXferLen, &prevYomi);
                 else
-                    outputStringAndPostProc(cands.front(), candsByLen.GetFirstCandidateYomi().size(), 0);
+                    outputStringAndPostProc(EMPTY_MSTR, cands.front(), candsByLen.GetFirstCandidateYomi().size(), 0);
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));
                 return false;
@@ -196,7 +198,7 @@ namespace {
                 size_t n = (winIdx * LONG_VKEY_NUM) + (deckey % LONG_VKEY_NUM);
                 const auto& cands = candsByLen.GetMazeCandidates();
                 if (n < cands.size()) {
-                    outputStringAndPostProc(cands[n], candsByLen.GetYomiLen(cands[n]), 0);
+                    outputStringAndPostProc(EMPTY_MSTR, cands[n], candsByLen.GetYomiLen(cands[n].resultStr), 0);
                     candsByLen.SelectNth(n);
                     return;
                 }
@@ -295,18 +297,19 @@ namespace {
         }
 
     private:
-        void outputStringAndPostProc(const MString& str, size_t numBS, const MString* prevYomi) {
+        void outputStringAndPostProc(const MString& leadStr, const MazeResult& mazeResult, size_t numBS, const MString* prevYomi) {
+            MString outStr = leadStr + mazeResult.resultStr;
             MazegakiNode* pn = dynamic_cast<MazegakiNode*>(pNode);
             if (pn) {
                 // 今回の結果を元に戻すための情報を保存
                 // prevYomi は、再変換をしたときの元の読み
-                pn->SetYomiInfo(prevYomi ? *prevYomi : OUTPUT_STACK->GetLastOutputStackStr(numBS), str.size());
+                pn->SetYomiInfo(prevYomi ? *prevYomi : OUTPUT_STACK->GetLastOutputStackStr(numBS), outStr.size());
             }
-            STATE_COMMON->SetOutString(str, numBS);
-            STATE_COMMON->SetMazegakiBlockFlag();
+            STATE_COMMON->SetOutString(outStr, numBS);
+            STATE_COMMON->SetMazegakiBlockerPosition(outStr.size() - (leadStr.size() + mazeResult.xferLen));
             handleKeyPostProc();
             //選択した候補を履歴に登録
-            if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::strip(str, _T("、。")));
+            if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::strip(outStr, _T("、。")));
         }
 
         void handleKeyPostProc() {
@@ -320,7 +323,7 @@ namespace {
             auto center = pNode->getString() + candsByLen.GetFirstCandidateYomi();
             const auto& cands = candsByLen.GetMazeCandidates();
             if (!cands.empty()) {
-                STATE_COMMON->SetVirtualKeyboardStrings(VkbLayout::Vertical, center, cands, winIdx * 10);
+                STATE_COMMON->SetVirtualKeyboardStrings(VkbLayout::Vertical, center, MazeResult::ToMStringVector(cands), winIdx * 10);
                 // 「交ぜ書き変換」の色で中央鍵盤の色付け
                 STATE_COMMON->SetMazeCandSelecting();
                 // 未選択状態にセットし、矢印キーを有効にする

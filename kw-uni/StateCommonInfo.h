@@ -130,6 +130,9 @@ class StateCommonInfo {
     mchar_t faces[NORMAL_DECKEY_NUM] = { 0 };
     std::vector<wstring> longVkeyCandidates;
 
+    // 交ぜ書きブロッカーの設定位置(末尾からのオフセット; SetMazegakiBlockFlag とともに用いられる)
+    size_t mazeBlockerPos = 0;
+
 public:
     StateCommonInfo()
         : layout(VkbLayout::None)
@@ -216,7 +219,7 @@ public:
     inline void SetKatakanaModeMarkerClearFlag() { ResetResultFlag(ResultFlags::ShowKatakanaModeMarker); SetResultFlag(ResultFlags::ClearKatakanaModeMarker); }
     inline void SetAppendBackspaceStopperFlag() { SetResultFlag(ResultFlags::AppendBackspaceStopper); }
     inline void SetHistoryBlockFlag() { SetResultFlag(ResultFlags::SetHistoryBlockFlag); }
-    inline void SetMazegakiBlockFlag() { SetResultFlag(ResultFlags::SetMazegakiBlockFlag); }
+    //inline void SetMazegakiBlockFlag() { SetResultFlag(ResultFlags::SetMazegakiBlockFlag); }
     inline void SetBothHistoryBlockFlag() { SetResultFlag((UINT32)ResultFlags::AppendBackspaceStopper | (UINT32)ResultFlags::SetHistoryBlockFlag); }
     //inline void SetToggleInitialStrokeHelp() { SetResultFlag(ResultFlags::ToggleInitialStrokeHelp); }
     inline void SetDontMoveVirtualKeyboard() { SetResultFlag(ResultFlags::DontMoveVirtualKeyboard); }
@@ -228,6 +231,15 @@ public:
     inline void SetOtherStatus() { nextExpectedKeyType = ExpectedKeyType::OtherStatus; }
 
     inline void SetStrokeCount(int cnt) { strokeCount = cnt; }
+
+    inline void SetMazegakiBlockerPosition(size_t pos) {
+        SetResultFlag(ResultFlags::SetMazegakiBlockFlag);
+        mazeBlockerPos = pos;
+    }
+
+    inline size_t GetMazegakiBlockerPosition() {
+        return mazeBlockerPos;
+    }
 
     // 次の選択位置として pos を設定する。
     // pos < 0 なら未選択状態。ただし Horizontal なら先頭候補を優先候補として色付け
