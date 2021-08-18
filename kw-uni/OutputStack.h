@@ -177,6 +177,12 @@ public:
             auto m = stack[pos - 1];
             if (m.chr == '\n' || (m.flag & flag) != 0) break;
 
+            if (m.chr == ' ') {
+                // 空白なら、それを含む
+                --pos;
+                break;
+            }
+
             if (utils::is_punct(m.chr)) {
                 if (otherThanPunct) break;     // 句読点以外のものが存在し、再び句読点が見つかったので、ここで終わり
                 // 初めに見つかたった(つまり末尾の)句読点はスルー
@@ -203,7 +209,7 @@ public:
         return tail_string(maxlen, tail_size_upto_flag_or_punct(OutputStack::FLAG_BLOCK_HIST));
     }
 
-    // 改行を含まない末尾部分(最大長maxlen)で、交ぜ書きor履歴ブロッカーまたは句読点までの部分文字列を返す(末尾の句読点は含める)
+    // 改行を含まない末尾部分(最大長maxlen)で、交ぜ書きor履歴ブロッカーまたは句読点までの部分文字列を返す(先頭の空白と末尾の句読点は含める)
     inline MString BackStringUptoMazeOrHistBlockerOrPunct(size_t maxlen) const {
         return tail_string(maxlen, tail_size_upto_flag_or_punct(OutputStack::FLAG_BLOCK_HIST | OutputStack::FLAG_BLOCK_MAZE));
     }

@@ -35,6 +35,8 @@ namespace {
 
         MString firstCandYomi;
 
+        MString fullYomi;
+
     public:
         // 読みに対する全交ぜ書き候補を取得する
         const std::vector<MazeResult>& GetAllCandidates(const MString& yomiFull) {
@@ -42,6 +44,7 @@ namespace {
             mazeCandidates.clear();
             cand2len.clear();
             firstCandYomi.clear();
+            fullYomi = yomiFull;
 
             size_t maxlen = yomiFull.size();
             if (maxlen > 0) {
@@ -93,6 +96,11 @@ namespace {
         //inline const std::vector<MString>& GetMazeCandidatesByWindow(size_t n) const {
         //    return mazeCandidates;
         //}
+
+        // 全読みを返す
+        inline const MString& GetFullYomi() const {
+            return fullYomi;
+        }
 
         // 最初の候補に対する読みを返す
         inline const MString& GetFirstCandidateYomi() const {
@@ -166,8 +174,9 @@ namespace {
 
             // 最大読み長までの長さの読みに対する交ぜ書き候補を全て取得する
             OUTPUT_STACK->unsetMazeBlocker();
-            const auto& cands = candsByLen.GetAllCandidates(
-                prevXfered ? utils::tail_substr(prevYomi, shiftedYomiLen) : OUTPUT_STACK->BackStringUptoMazeOrHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen));
+            MString fullYomi = prevXfered ? utils::tail_substr(prevYomi, shiftedYomiLen) : OUTPUT_STACK->BackStringUptoMazeOrHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen);
+            _LOG_DEBUGH(_T("fullYomi='%s'"), MAKE_WPTR(fullYomi));
+            const auto& cands = candsByLen.GetAllCandidates(fullYomi);
             if (cands.empty()) {
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: no candidate"));
@@ -179,6 +188,7 @@ namespace {
                 const auto& cand = cands.front();
                 size_t candLen = cand.resultStr.size();
                 size_t candYlen = candsByLen.GetFirstCandidateYomi().size();
+                _LOG_DEBUGH(_T("candLen=%d, candYlen=%d"), candLen, candYlen);
                 if (prevXfered) {
                     MString lead = prevYomi.substr(0, prevYomi.size() - candYlen);
                     MString yomi = utils::last_substr(prevYomi, candYlen);
@@ -191,9 +201,19 @@ namespace {
                     // numBS=prevXferLen=4 (画家なる)
                     // 今回の読み=なる
                     // candLen=2
+                    _LOG_DEBUGH(_T("PREV_XFERED"));
                     outputStringAndPostProc(lead, cand, prevXferLen, &yomi, candLen);
                 } else {
-                    outputStringAndPostProc(EMPTY_MSTR, cand, candYlen, nullptr, 0);
+                    if (SETTINGS->mazeRemoveHeadSpace && fullYomi[0] == ' ') {
+                        // 全読みの先頭の空白を削除
+                        _LOG_DEBUGH(_T("REMOVE_HEAD_SPACE: one cand or select first"));
+                        MString leadStr;
+                        if ((1 + candYlen) < fullYomi.size()) leadStr = fullYomi.substr(1, fullYomi.size() - (1 + candYlen));
+                        outputStringAndPostProc(leadStr, cand, fullYomi.size(), nullptr, 0);
+                    } else {
+                        _LOG_DEBUGH(_T("CANDS_SIZE=%d, SELECT_FIRST=%s"), cands.size(), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
+                        outputStringAndPostProc(EMPTY_MSTR, cand, candYlen, nullptr, 0);
+                    }
                 }
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));
@@ -218,7 +238,20 @@ namespace {
                 size_t n = (winIdx * LONG_VKEY_NUM) + (deckey % LONG_VKEY_NUM);
                 const auto& cands = candsByLen.GetMazeCandidates();
                 if (n < cands.size()) {
-                    outputStringAndPostProc(EMPTY_MSTR, cands[n], candsByLen.GetYomiLen(cands[n].resultStr), nullptr, 0);
+                    const auto& cand = cands[n];
+                    const MString& fullYomi = candsByLen.GetFullYomi();
+                    size_t candYlen = candsByLen.GetYomiLen(cand.resultStr);
+                    _LOG_DEBUGH(_T("fullYomi='%s', candYlen=%d"), MAKE_WPTR(fullYomi), candYlen);
+                    if (SETTINGS->mazeRemoveHeadSpace && fullYomi[0] == ' ') {
+                        // 全読みの先頭の空白を削除
+                        _LOG_DEBUGH(_T("REMOVE_HEAD_SPACE: multi cands && don't select first"));
+                        MString leadStr;
+                        if ((1 + candYlen) < fullYomi.size()) leadStr = fullYomi.substr(1, fullYomi.size() - (1 + candYlen));
+                        outputStringAndPostProc(leadStr, cand, fullYomi.size(), nullptr, 0);
+                    } else {
+                        _LOG_DEBUGH(_T("CANDS_SIZE=%d, SELECT_FIRST=%s"), cands.size(), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
+                        outputStringAndPostProc(EMPTY_MSTR, cand, candYlen, nullptr, 0);
+                    }
                     candsByLen.SelectNth(n);
                     return;
                 }
