@@ -60,7 +60,7 @@ namespace {
     //mchar_t IFX_NONE[] = { STEM_OK, 0 };
     mchar_t IFX_NONE[] = { STEM_OK,
         _WCHAR("か")/*から*/, _WCHAR("が"), _WCHAR("こ")/*こそ*/, _WCHAR("ご")/*ごと*/, _WCHAR("さ")/*さえ*/, _WCHAR("じ")/*じゃ*/, _WCHAR("す")/*すら*/,
-        _WCHAR("た"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("と"), _WCHAR("な")/*なら*/, _WCHAR("に"), _WCHAR("の"), _WCHAR("は"), _WCHAR("へ"), _WCHAR("も"), _WCHAR("を"),
+        _WCHAR("た")/*たり*/, _WCHAR("だ"), _WCHAR("で"), _WCHAR("と"), _WCHAR("な")/*なら*/, _WCHAR("に"), _WCHAR("の"), _WCHAR("は"), _WCHAR("へ"), _WCHAR("も"), _WCHAR("を"),
         _WCHAR("、"), _WCHAR("。"), 0 };
 
     inline bool find_gobi(const mchar_t* ifxes, mchar_t mc) {
@@ -566,13 +566,6 @@ namespace {
                     // という場合に「エントリの変換形」＋「読みの末尾漢字列」という形で返すようにする
                     //stemMinLen = key.size() > SETTINGS->mazeGobiMaxLen ? key.size() - SETTINGS->mazeGobiMaxLen : 1;
 
-                    // 2文字目がひらがななら、読み語幹をそこまで延ばす
-                    // ①「がいる」⇒「我いる」にしたくない
-                    // ②「我いる」⇒もう漢字になっているから先頭1文字だけを変換する必要はない
-                    // ③「*いる」⇒ワイルドカードだけの読みは不可
-                    if (stemMinLen == 1 && key.size() > 1 && utils::is_hiragana(key[1])) {
-                        ++stemMinLen;
-                    }
                     _LOG_DEBUGH(_T("stemMinLen=%d"), stemMinLen);
                     std::set<const MazeEntry*> entrySet;
                     bool mazeSearch = false;
@@ -630,8 +623,8 @@ namespace {
                                         _LOG_DEBUGH(_T("No gobi found: %s: STEM_OK in %s, userDic=%s"), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
                                         stock_output(pCands, p, p->xfer);
                                     }
-                                } else /*if (p->inflexList != IFX_NONE || (key.size() > stemLen && (key.size() - stemLen) <= SETTINGS->mazeNoIfxGobiMaxLen))*/ {
-                                    // 語尾がある(無活用語についても活用語と同じような語尾処理を行う)
+                                } else if (p->inflexList != IFX_NONE || stemLen > 1) {
+                                    // 語尾がある(ただし、語幹が1文字の無活用語は採用しない;「がいる」が「我いる」になったりしないようにする)
                                     if (find_gobi(p->inflexList, key[stemLen])) {
                                         _LOG_DEBUGH(_T("gobi found: %s: %c in %s, userDic=%s"), MAKE_WPTR(p->xfer), key[stemLen], MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
                                         stock_output(pCands, p, p->xfer + key.substr(stemLen));
