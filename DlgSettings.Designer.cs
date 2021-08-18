@@ -334,6 +334,7 @@ namespace KanchokuWS
             this.radioButton_noVkb = new System.Windows.Forms.RadioButton();
             this.label89 = new System.Windows.Forms.Label();
             this.textBox_mazeNoIfxGobiMaxLen = new System.Windows.Forms.TextBox();
+            this.checkBox_mazeBlockerTail = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -346,7 +347,7 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.checkBox_mazeBlockerTail = new System.Windows.Forms.CheckBox();
+            this.checkBox_mazeRemoveHeadSpace = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -3019,11 +3020,12 @@ namespace KanchokuWS
             // 
             // groupBox23
             // 
+            this.groupBox23.Controls.Add(this.checkBox_mazeRemoveHeadSpace);
             this.groupBox23.Controls.Add(this.checkBox_mazeBlockerTail);
             this.groupBox23.Controls.Add(this.checkBox_mazegakiSelectFirstCand);
             this.groupBox23.Location = new System.Drawing.Point(312, 10);
             this.groupBox23.Name = "groupBox23";
-            this.groupBox23.Size = new System.Drawing.Size(261, 73);
+            this.groupBox23.Size = new System.Drawing.Size(261, 88);
             this.groupBox23.TabIndex = 3;
             this.groupBox23.TabStop = false;
             this.groupBox23.Text = "交ぜ書き変換";
@@ -3915,6 +3917,17 @@ namespace KanchokuWS
         "が、「会わせる」は変換対象外と\r\nなります。");
             this.textBox_mazeNoIfxGobiMaxLen.Visible = false;
             // 
+            // checkBox_mazeBlockerTail
+            // 
+            this.checkBox_mazeBlockerTail.AutoSize = true;
+            this.checkBox_mazeBlockerTail.Location = new System.Drawing.Point(20, 42);
+            this.checkBox_mazeBlockerTail.Name = "checkBox_mazeBlockerTail";
+            this.checkBox_mazeBlockerTail.Size = new System.Drawing.Size(224, 19);
+            this.checkBox_mazeBlockerTail.TabIndex = 4;
+            this.checkBox_mazeBlockerTail.Text = "変換形＋活用語尾の後にブロッカーを置く";
+            this.toolTip1.SetToolTip(this.checkBox_mazeBlockerTail, resources.GetString("checkBox_mazeBlockerTail.ToolTip"));
+            this.checkBox_mazeBlockerTail.UseVisualStyleBackColor = true;
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -4057,16 +4070,16 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
-            // checkBox_mazeBlockerTail
+            // checkBox_mazeRemoveHeadSpace
             // 
-            this.checkBox_mazeBlockerTail.AutoSize = true;
-            this.checkBox_mazeBlockerTail.Location = new System.Drawing.Point(20, 46);
-            this.checkBox_mazeBlockerTail.Name = "checkBox_mazeBlockerTail";
-            this.checkBox_mazeBlockerTail.Size = new System.Drawing.Size(224, 19);
-            this.checkBox_mazeBlockerTail.TabIndex = 4;
-            this.checkBox_mazeBlockerTail.Text = "変換形＋活用語尾の後にブロッカーを置く";
-            this.toolTip1.SetToolTip(this.checkBox_mazeBlockerTail, resources.GetString("checkBox_mazeBlockerTail.ToolTip"));
-            this.checkBox_mazeBlockerTail.UseVisualStyleBackColor = true;
+            this.checkBox_mazeRemoveHeadSpace.AutoSize = true;
+            this.checkBox_mazeRemoveHeadSpace.Location = new System.Drawing.Point(20, 63);
+            this.checkBox_mazeRemoveHeadSpace.Name = "checkBox_mazeRemoveHeadSpace";
+            this.checkBox_mazeRemoveHeadSpace.Size = new System.Drawing.Size(183, 19);
+            this.checkBox_mazeRemoveHeadSpace.TabIndex = 5;
+            this.checkBox_mazeRemoveHeadSpace.Text = "空白文字を変換開始位置とする";
+            this.toolTip1.SetToolTip(this.checkBox_mazeRemoveHeadSpace, resources.GetString("checkBox_mazeRemoveHeadSpace.ToolTip"));
+            this.checkBox_mazeRemoveHeadSpace.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
@@ -4491,5 +4504,6 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label89;
         private System.Windows.Forms.TextBox textBox_mazeNoIfxGobiMaxLen;
         private System.Windows.Forms.CheckBox checkBox_mazeBlockerTail;
+        private System.Windows.Forms.CheckBox checkBox_mazeRemoveHeadSpace;
     }
 }

@@ -904,6 +904,7 @@ namespace KanchokuWS
             //checkBox_mazegakiByShiftSpace.Checked = Settings.MazegakiByShiftSpace;
             checkBox_mazegakiSelectFirstCand.Checked = Settings.MazegakiSelectFirstCand;
             checkBox_mazeBlockerTail.Checked = !Settings.MazeBlockerTail;
+            checkBox_mazeRemoveHeadSpace.Checked = Settings.MazeRemoveHeadSpace;
             textBox_mazeYomiMaxLen.Text = $"{Settings.MazeYomiMaxLen}";
             textBox_mazeGobiMaxLen.Text = $"{Settings.MazeGobiMaxLen}";
             //textBox_mazeNoIfxGobiMaxLen.Text = $"{Settings.MazeNoIfxGobiMaxLen}";
@@ -942,6 +943,7 @@ namespace KanchokuWS
             //checkerHistory.Add(checkBox_mazegakiByShiftSpace);
             checkerHistory.Add(checkBox_mazegakiSelectFirstCand);
             checkerHistory.Add(checkBox_mazeBlockerTail);
+            checkerHistory.Add(checkBox_mazeRemoveHeadSpace);
             checkerHistory.Add(textBox_mazeYomiMaxLen);
             checkerHistory.Add(textBox_mazeGobiMaxLen);
             //checkerHistory.Add(textBox_mazeNoIfxGobiMaxLen);
@@ -982,6 +984,7 @@ namespace KanchokuWS
             //Settings.SetUserIni("mazegakiByShiftSpace", checkBox_mazegakiByShiftSpace.Checked);
             Settings.SetUserIni("mazegakiSelectFirstCand", checkBox_mazegakiSelectFirstCand.Checked);
             Settings.SetUserIni("mazeBlockerTail", !checkBox_mazeBlockerTail.Checked);
+            Settings.SetUserIni("mazeRemoveHeadSpace", checkBox_mazeRemoveHeadSpace.Checked);
             Settings.SetUserIni("mazeGobiMaxLen", textBox_mazeGobiMaxLen.Text.Trim());
             //Settings.SetUserIni("mazeNoIfxGobiMaxLen", textBox_mazeNoIfxGobiMaxLen.Text.Trim());
             Settings.SetUserIni("mazeYomiMaxLen", textBox_mazeYomiMaxLen.Text.Trim());
