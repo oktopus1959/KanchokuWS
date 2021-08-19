@@ -60,7 +60,7 @@ namespace {
     //mchar_t IFX_NONE[] = { STEM_OK, 0 };
     mchar_t IFX_NONE[] = { STEM_OK,
         _WCHAR("か")/*から*/, _WCHAR("が"), _WCHAR("こ")/*こそ*/, _WCHAR("ご")/*ごと*/, _WCHAR("さ")/*さえ*/, _WCHAR("じ")/*じゃ*/, _WCHAR("す")/*すら*/,
-        _WCHAR("た")/*たり*/, _WCHAR("だ"), _WCHAR("で"), _WCHAR("と"), _WCHAR("な")/*なら*/, _WCHAR("に"), _WCHAR("の"), _WCHAR("は"), _WCHAR("へ"), _WCHAR("も"), _WCHAR("を"),
+        _WCHAR("だ"), _WCHAR("で"), _WCHAR("と"), _WCHAR("な")/*なら*/, _WCHAR("に"), _WCHAR("の"), _WCHAR("は"), _WCHAR("へ"), _WCHAR("も"), _WCHAR("を"),
         _WCHAR("、"), _WCHAR("。"), 0 };
 
     inline bool find_gobi(const mchar_t* ifxes, mchar_t mc) {
@@ -604,7 +604,7 @@ namespace {
                             _LOG_DEBUGH(_T("key=%s, keyStem=%s, mazeSearch=%s, p->stem=%s, p->xfer=%s, ifx=%s, user=%s, deleted=%s"),
                                 MAKE_WPTR(key), MAKE_WPTR(keyStem), BOOL_TO_WPTR(mazeSearch), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
                             if (p->deleted) continue;
-                            if (utils::startsWith(keyStem, p->xfer)) continue;   // 読み語幹の先頭部が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケースや「経い」→「経」のケース)
+                            if (key != p->xfer && utils::startsWith(keyStem, p->xfer)) continue;   // 読み語幹の先頭部が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケースや「経い」→「経」のケース)
 
                             candidates_t* pCands = 0;
                             if (keyStem == p->stem) {
