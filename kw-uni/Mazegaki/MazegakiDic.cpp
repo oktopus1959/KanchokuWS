@@ -163,11 +163,11 @@ namespace {
             }
         }
 
-        // 変換形＋活用語尾の長さを返す
+        // 変換形＋活用語尾の長さを返す(後でブロッカーの設定位置になる)
         size_t GetXferPlusGobiLen(const MString& resultStr) const {
             size_t xferLen = min(xfer.size(), resultStr.size());
-            if (inflexList != IFX_NONE && xferLen < resultStr.size()) {
-                // 活用語で、語尾がある場合
+            if ((inflexList != IFX_NONE && inflexList != IFX_SURU) && xferLen < resultStr.size()) {
+                // サ変以外の活用語で、語尾がある場合は、その語尾も変換形に含める
                 if (find_gobi(inflexList, resultStr[xferLen])) ++xferLen;
             }
             return xferLen;

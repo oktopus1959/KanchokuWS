@@ -361,8 +361,10 @@ namespace {
                 _LOG_DEBUGH(_T("SET_YOMI_INFO: %s, xferLen=%d"), MAKE_WPTR(yomi ? *yomi : OUTPUT_STACK->GetLastOutputStackStr(numBS)), xferLen);
                 pn->SetYomiInfo(yomi ? *yomi : OUTPUT_STACK->GetLastOutputStackStr(numBS), xferLen);
             }
+            // 変換形の出力
             _LOG_DEBUGH(_T("SET_OUT_STRING: %s, numBS=%d"), MAKE_WPTR(outStr), numBS);
             STATE_COMMON->SetOutString(outStr, numBS);
+            // ブロッカー設定
             _LOG_DEBUGH(_T("SET_MAZE_BLOCKER: pos=%d"), SETTINGS->mazeBlockerTail ? 0 : outStr.size() - (leadStr.size() + mazeResult.xferLen));
             STATE_COMMON->SetMazegakiBlockerPosition(SETTINGS->mazeBlockerTail ? 0 : outStr.size() - (leadStr.size() + mazeResult.xferLen));
             handleKeyPostProc();
