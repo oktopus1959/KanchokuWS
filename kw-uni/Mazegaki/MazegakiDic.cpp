@@ -20,6 +20,12 @@
 // 語幹のみでもOK
 #define STEM_OK 1
 
+// 孤立OK 
+#define ISOLATABLE 2
+
+// 任意の語尾OK
+#define ANY_OK 3
+
 // 無活用の最大語尾長
 //#define NO_IFX_MAX_GOBI 2
 
@@ -54,8 +60,10 @@ namespace {
     mchar_t IFX_KYI[] = { _WCHAR("い"), _WCHAR("か"), _WCHAR("き"), _WCHAR("く"), _WCHAR("け"),  _WCHAR("さ"), 0 };
     // 形容動詞「な」(静かな)
     mchar_t IFX_KDNA[] = { STEM_OK, _WCHAR("な"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("、"), _WCHAR("。"), 0 };
-    // 形容詞「の」(本当の)
+    // 形容動詞「の」(本当の)
     mchar_t IFX_KDNO[] = { STEM_OK, _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("、"), _WCHAR("。"), 0 };
+    // 副詞
+    mchar_t IFX_ADV[] = { STEM_OK, ISOLATABLE, ANY_OK, 0 };
     // 無活用
     //mchar_t IFX_NONE[] = { STEM_OK, 0 };
     mchar_t IFX_NONE[] = { STEM_OK,
@@ -66,6 +74,7 @@ namespace {
     inline bool find_gobi(const mchar_t* ifxes, mchar_t mc) {
         auto pIfx = ifxes;
         while (*pIfx != 0) {
+            if (*pIfx == ANY_OK) return true;
             if (*pIfx++ == mc) return true;
         }
         if (ifxes == IFX_NONE) {
@@ -94,6 +103,7 @@ namespace {
         { _T("い"), IFX_KYI },
         { _T("な"), IFX_KDNA },
         { _T("の"), IFX_KDNO },
+        { _T("副"), IFX_ADV },
     };
 
     // 上一段、下一段
@@ -166,7 +176,7 @@ namespace {
         // 変換形＋活用語尾の長さを返す(後でブロッカーの設定位置になる)
         size_t GetXferPlusGobiLen(const MString& resultStr) const {
             size_t xferLen = min(xfer.size(), resultStr.size());
-            if ((inflexList != IFX_NONE && inflexList != IFX_SURU) && xferLen < resultStr.size()) {
+            if ((inflexList != IFX_NONE && inflexList != IFX_ADV && inflexList != IFX_SURU) && xferLen < resultStr.size()) {
                 // サ変以外の活用語で、語尾がある場合は、その語尾も変換形に含める
                 if (find_gobi(inflexList, resultStr[xferLen])) ++xferLen;
             }
@@ -604,7 +614,7 @@ namespace {
                             _LOG_DEBUGH(_T("key=%s, keyStem=%s, mazeSearch=%s, p->stem=%s, p->xfer=%s, ifx=%s, user=%s, deleted=%s"),
                                 MAKE_WPTR(key), MAKE_WPTR(keyStem), BOOL_TO_WPTR(mazeSearch), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
                             if (p->deleted) continue;
-                            if (key != p->xfer && utils::startsWith(keyStem, p->xfer)) continue;   // 読み語幹の先頭部が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケースや「経い」→「経」のケース)
+                            if (keyStem != p->xfer && utils::startsWith(keyStem, p->xfer)) continue;   // 読み語幹の先頭部が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケースや「経い」→「経」のケース)
 
                             candidates_t* pCands = 0;
                             if (keyStem == p->stem) {
