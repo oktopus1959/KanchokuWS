@@ -623,8 +623,9 @@ namespace {
                                         _LOG_DEBUGH(_T("No gobi found: %s: STEM_OK in %s, userDic=%s"), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
                                         stock_output(pCands, p, p->xfer);
                                     }
-                                } else if (p->inflexList != IFX_NONE || stemLen > 1) {
-                                    // 語尾がある(ただし、語幹が1文字の無活用語は採用しない;「がいる」が「我いる」になったりしないようにする)
+                                } else /* if (p->inflexList != IFX_NONE || stemLen > 1) */ {
+                                    // 語尾がある
+                                    // (「がいる」が「我いる」になったりしないようにするために,語幹が1文字の無活用語は採用しないようにしてみたが、やはり目とか手とかあるので、いったん様子見)
                                     if (find_gobi(p->inflexList, key[stemLen])) {
                                         _LOG_DEBUGH(_T("gobi found: %s: %c in %s, userDic=%s"), MAKE_WPTR(p->xfer), key[stemLen], MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
                                         stock_output(pCands, p, p->xfer + key.substr(stemLen));
