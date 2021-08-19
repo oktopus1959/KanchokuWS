@@ -61,11 +61,11 @@ void State::DoDeckeyPreProc(int deckey) {
             // TODO: AD HOC
             if (MAZEGAKI_NODE) {
                 if (deckey == RIGHT_TRIANGLE_DECKEY) {
-                    if (MAZEGAKI_NODE->IsBlockerShifted() && MAZEGAKI_NODE->RightShiftBlocker()) {
+                    if ((MAZEGAKI_NODE->IsBlockerShifted() || !SETTINGS->mazeRightShiftYomiPos) && MAZEGAKI_NODE->RightShiftBlocker()) {
                         _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE: right shift blocker"));
                         SetNextNodeMaybe(MAZEGAKI_NODE);
                         return;
-                    } else if (MAZEGAKI_NODE->RightShiftYomiStartPos()) {
+                    } else if (SETTINGS->mazeRightShiftYomiPos && MAZEGAKI_NODE->RightShiftYomiStartPos()) {
                         _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE: yomi start pos right shifted"));
                         OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
                         MAZEGAKI_NODE->ClearBlockerShiftFlag();

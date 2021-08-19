@@ -11,7 +11,7 @@ namespace KanchokuWS
     {
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.1.0";
+        public static string Version => "1.1.1";
 
         /// <summary> ドキュメントへのURL </summary>
         public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
@@ -354,6 +354,8 @@ namespace KanchokuWS
 
         public static bool MazeBlockerTail { get; set; } = false;
         public static bool MazeRemoveHeadSpace { get; set; } = false;
+
+        public static bool MazeRightShiftYomiPos { get; set; } = false;
 
         //------------------------------------------------------------------------------
         // 各種変換
@@ -730,6 +732,7 @@ namespace KanchokuWS
             MazegakiSelectFirstCand = addDecoderSetting("mazegakiSelectFirstCand", false);      // 交ぜ書き変換で先頭の候補を自動選択
             MazeBlockerTail = addDecoderSetting("mazeBlockerTail", true);                       // 交ぜ書き変換で、変換後のブロッカーの位置
             MazeRemoveHeadSpace = addDecoderSetting("mazeRemoveHeadSpace", true);               // 交ぜ書き変換で、空白文字を変換開始位置とする
+            MazeRightShiftYomiPos = addDecoderSetting("mazeRightShiftYomiPos", false);          // 交ぜ書き変換で、読みの開始位置を右移動する
             MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
             MazeNoIfxGobiMaxLen = addDecoderSetting("mazeNoIfxGobiMaxLen", 5, 0);               // 交ぜ書きでの無活用語の語尾の最大長(使わない)
