@@ -131,6 +131,44 @@ public:
         return (getFlag() & FLAG_BLOCK_MAZE) != 0;
     }
 
+    inline void leftShiftMazeBlocker() {
+        if (!stack.empty()) {
+            size_t pos = 1;
+            for (; pos < stack.size(); ++pos) {
+                Moji& elem = stack[stack.size() - pos];
+                auto flag = elem.flag & (FLAG_BLOCK_HIST | FLAG_BLOCK_MAZE);
+                if (!utils::is_hiragana(elem.chr)) {
+                    // 交ぜ書きブロッカーが見からなかった場合は、末尾にブロッカーをセット
+                    if (pos > 1 && flag == 0) setMazeBlocker();
+                    return;
+                }
+                if (flag != 0) {
+                    Moji& elem1 = stack[stack.size() - (pos + 1)];
+                    elem.flag &= ~(FLAG_BLOCK_HIST | FLAG_BLOCK_MAZE);
+                    elem1.flag |= (flag | FLAG_BLOCK_MAZE);
+                    return;
+                }
+            }
+        }
+    }
+
+    inline void rightShiftMazeBlocker() {
+        if (!stack.empty()) {
+            for (size_t pos = 1; pos < stack.size(); ++pos) {
+                Moji& elem = stack[stack.size() - pos];
+                auto flag = elem.flag & (FLAG_BLOCK_HIST | FLAG_BLOCK_MAZE);
+                if (elem.chr < 0x20 || flag != 0) {
+                    if (pos > 1) {
+                        Moji& elem1 = stack[stack.size() - (pos - 1)];
+                        elem.flag &= ~(FLAG_BLOCK_HIST | FLAG_BLOCK_MAZE);
+                        elem1.flag |= (flag | FLAG_BLOCK_MAZE);
+                    }
+                    return;
+                }
+            }
+        }
+    }
+
     inline void setFlag(unsigned short flag) {
         if (!stack.empty()) {
             stack.back().flag |= flag;

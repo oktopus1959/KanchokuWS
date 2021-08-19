@@ -59,14 +59,27 @@ void State::DoDeckeyPreProc(int deckey) {
         // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
         if (!pNext) {
             // TODO: AD HOC
-            if (deckey == RIGHT_TRIANGLE_DECKEY) {
-                if (MAZEGAKI_NODE->RightShiftYomiStartPos()) {
-                    _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE"));
-                    OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
+            if (MAZEGAKI_NODE) {
+                if (deckey == RIGHT_TRIANGLE_DECKEY) {
+                    if (MAZEGAKI_NODE->IsBlockerShifted() && MAZEGAKI_NODE->RightShiftBlocker()) {
+                        _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE: right shift blocker"));
+                        SetNextNodeMaybe(MAZEGAKI_NODE);
+                        return;
+                    } else if (MAZEGAKI_NODE->RightShiftYomiStartPos()) {
+                        _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE: yomi start pos right shifted"));
+                        OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
+                        MAZEGAKI_NODE->ClearBlockerShiftFlag();
+                        SetNextNodeMaybe(MAZEGAKI_NODE);
+                        return;
+                    }
+                } else if (deckey == LEFT_TRIANGLE_DECKEY && MAZEGAKI_NODE->LeftShiftBlocker()) {
+                    _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE: left shift blocker"));
                     SetNextNodeMaybe(MAZEGAKI_NODE);
                     return;
                 }
+                MAZEGAKI_NODE->ClearBlockerShiftFlag();
             }
+
             if ((!pNode || !pNode->isStrokeTableNode()) && isStrokeKeyOrShiftedKeyOrModeFuncKey(deckey)) {
                 _LOG_DEBUGH(_T("CREATE: RootStrokeState"));
                 pNext = ROOT_STROKE_NODE->CreateState();
@@ -346,6 +359,7 @@ void State::dispatchDeckey(int deckey) {
     } else {
         if (handleFunctionKeys(deckey)) return;
 
+        _LOG_DEBUGH(_T("DISPATH FUNCTION KEY: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
         switch (deckey) {
         case LEFT_TRIANGLE_DECKEY:
             handleLeftTriangle();

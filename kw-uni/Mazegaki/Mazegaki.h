@@ -25,6 +25,9 @@ private:
     // シフトされた読み長
     static size_t shiftedYomiLen;
 
+    // ブロッカーがシフトされた
+    static bool blockerShifted;
+
  public:
      MazegakiNode();
 
@@ -35,7 +38,35 @@ private:
 
     MString getString() const { return to_mstr(_T("○")); }
 
-    static void SetYomiInfo(const MString& yomi, size_t xferLen) {
+    void ClearBlockerShiftFlag() {
+        blockerShifted = false;
+    }
+
+    // ブロッカーを左シフトする
+    bool LeftShiftBlocker() {
+        blockerShifted = IsJustAfterPrevXfer();
+        if (blockerShifted) OUTPUT_STACK->leftShiftMazeBlocker();
+        return blockerShifted;
+    }
+
+    // ブロッカーを右シフトする
+    bool RightShiftBlocker() {
+        blockerShifted = IsJustAfterPrevXfer();
+        if (blockerShifted) OUTPUT_STACK->rightShiftMazeBlocker();
+        return blockerShifted;
+    }
+
+    // ブロッカーがシフトされたか
+    bool IsBlockerShifted() {
+        bool shifted = IsJustAfterPrevXfer() && blockerShifted;
+        if (shifted) {
+            // 続けてシフトできるようにするため、次も交ぜ書き変換直後という扱いにする
+            deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
+        }
+        return shifted;
+    }
+
+    void SetYomiInfo(const MString& yomi, size_t xferLen) {
         prevYomi = yomi;
         prevXferLen = xferLen;
         shiftedYomiLen = yomi.size();
@@ -85,7 +116,7 @@ private:
         return false;
     }
 
-    // 読み長を短くする(読み開始位置を左にシフトする) (前回の変換の直後でなければ false を返す)
+    // 読み開始位置を右にシフトする (前回の変換の直後でなければ false を返す)
     bool RightShiftYomiStartPos() {
         if (IsJustAfterPrevXfer()) {
             if (shiftedYomiLen > 1) --shiftedYomiLen;
@@ -97,7 +128,12 @@ private:
 
     // 前回の実行時の直後か
     bool IsJustAfterPrevXfer() {
-        return STATE_COMMON->GetTotalDecKeyCount() == deckeyCount + 1;
+        return STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 1;
+    }
+
+    // 交ぜ書き実行時の直後状態にセット
+    void SetJustAfterPrevXfer() {
+        deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
     }
 
 public:
@@ -112,6 +148,7 @@ public:
         size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfoIfJustAfterMaze(prevYomi); \
         LOG_DEBUGH(_T("MAZEGAKI ESC: prevYomi=%s, prevXferLen=%d"), MAKE_WPTR(prevYomi), prevXferLen); \
         if (prevXferLen > 0) { \
+            MAZEGAKI_NODE->SetJustAfterPrevXfer(); /* 続けて交ぜ書き関連の操作を受け付けるようにする */ \
             STATE_COMMON->SetOutString(prevYomi, prevXferLen); \
             return; \
         } \

@@ -158,6 +158,12 @@ namespace {
 
             if (!MAZEGAKI_DIC) return false;
 
+            // ブロッカーがシフトされた直後か
+            if (MAZEGAKI_NODE->IsBlockerShifted()) {
+                _LOG_DEBUGH(_T("JUST AFTER BLOCKER SHIFTED"));
+                return false;
+            }
+
             // 直前に変換していたか
             MString prevYomi;
             size_t prevXferLen = 0;
@@ -180,6 +186,7 @@ namespace {
             if (cands.empty()) {
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: no candidate"));
+                MAZEGAKI_NODE->SetJustAfterPrevXfer();
                 return false;
             }
             LOG_INFOH(_T("mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
@@ -419,6 +426,9 @@ bool MazegakiNode::selectFirstCandDisabled = false;
 
 // シフトされた読み長
 size_t MazegakiNode::shiftedYomiLen = 0;
+
+// ブロッカーがシフトされた
+bool MazegakiNode::blockerShifted = false;
 
 // Singleton
 MazegakiNode* MazegakiNode::Singleton = 0;
