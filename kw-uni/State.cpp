@@ -139,7 +139,7 @@ void State::DoPostCheckChain() {
         pNext->DoPostCheckChain();
         CheckNextState();
         DeleteUnnecessarySuccessorState();
-    } else if (_LOG_DEBUGH_FLAG) {
+    } else if (IS_LOG_DEBUGH_ENABLED) {
         _LOG_DEBUGH(_T("STOP: %s"), NAME_PTR);
     }
     _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);

@@ -81,9 +81,7 @@ namespace {
                     if (bWild) break;
                 }
             }
-            if (_LOG_DEBUGH_FLAG) {
-                _LOG_DEBUGH(_T("LEAVE: mazeCandidates=%s"), MAKE_WPTR(utils::join(MazeResult::ToMStringVector(mazeCandidates), '/')));
-            }
+            _LOG_DEBUGH(_T("LEAVE: mazeCandidates=%s"), MAKE_WPTR(utils::join(MazeResult::ToMStringVector(mazeCandidates), '/')));
             return mazeCandidates;
         }
 

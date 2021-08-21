@@ -38,27 +38,27 @@ namespace {
     // 一段活用
     wchar_t const * IFX_RU_1[] = { STEM_OK, _T("る"), _T("れ"), _T("よ"), _T("ざ"), _T("ず"), _T("な"), _T("にゃ"), _T("ね"), _T("た"), _T("て"), _T("ま"), _T("ら"), 0 };
     // 五段活用「く」(書く)
-    wchar_t const * IFX_KU_5[] = { _T("かれ"), _T("かな"), _T("かにゃ"), _T("かね"), _T("かざ"), _T("かず"), _T("き"), _T("く"), _T("け"), _T("こ"), _T("いた"), _T("いちゃ"), _T("いて"), _T("い"), 0 };
+    wchar_t const * IFX_KU_5[] = { _T("かれた"), _T("かれて"), _T("かれ"), _T("か"), _T("き"), _T("く"), _T("け"), _T("こ"), _T("いた"), _T("いちゃ"), _T("いて"), _T("い"), 0 };
     // 五段活用「ぐ」(漕ぐ)
-    wchar_t const * IFX_GU_5[] = { _T("がれ"), _T("がな"), _T("がにゃ"), _T("がね"), _T("がざ"), _T("がず"), _T("ぎ"), _T("ぐ"), _T("げ"), _T("ご"), _T("いだ"), _T("いじゃ"), _T("いで"), _T("い"), 0 };
+    wchar_t const * IFX_GU_5[] = { _T("がれた"), _T("がれて"), _T("がれ"), _T("が"), _T("ぎ"), _T("ぐ"), _T("げ"), _T("ご"), _T("いだ"), _T("いじゃ"), _T("いで"), _T("い"), 0 };
     // 五段活用「す」(話す)
-    wchar_t const * IFX_SU_5[] = { _T("され"), _T("さな"), _T("さにゃ"), _T("さね"), _T("さざ"), _T("さず"), _T("した"), _T("して"), _T("し"), _T("す"), _T("せ"), _T("そ"), 0 };
-    // 五段活用「つ」(立つ)
-    wchar_t const * IFX_TU_5[] = { _T("たれ"), _T("たな"), _T("たにゃ"), _T("たね"), _T("たざ"), _T("たず"), _T("ち"), _T("つ"), _T("て"), _T("と"), _T("った"), _T("っちゃ"), _T("って"), _T("っ"), 0 };
+    wchar_t const * IFX_SU_5[] = { _T("された"), _T("されて"), _T("され"), _T("さ"), _T("した"), _T("して"), _T("し"), _T("す"), _T("せ"), _T("そ"), 0 };
+    // 五段活用「つ」(立つた)
+    wchar_t const * IFX_TU_5[] = { _T("たれた"), _T("たれて"), _T("たれ"), _T("た"), _T("ち"), _T("つ"), _T("て"), _T("と"), _T("った"), _T("っちゃ"), _T("って"), _T("っ"), 0 };
     // 五段活用「ぬ」(死ぬ)
-    wchar_t const * IFX_NU_5[] = { _T("なれ"), _T("なな"), _T("なにゃ"), _T("なね"), _T("なざ"), _T("なず"), _T("に"), _T("ぬ"), _T("ね"), _T("の"), _T("んだ"), _T("んじゃ"), _T("んで"), _T("ん"), 0 };
+    wchar_t const * IFX_NU_5[] = { _T("なれた"), _T("なれて"), _T("なれ"), _T("な"), _T("に"), _T("ぬ"), _T("ね"), _T("の"), _T("んだ"), _T("んじゃ"), _T("んで"), _T("ん"), 0 };
     // 五段活用「ぶ」(飛ぶ)
-    wchar_t const * IFX_BU_5[] = { _T("ばれ"), _T("ばな"), _T("ばにゃ"), _T("ばね"), _T("ばざ"), _T("ばず"), _T("び"), _T("ぶ"), _T("べ"), _T("ぼ"), _T("んだ"), _T("んじゃ"), _T("んで"), _T("ん"), 0 };
+    wchar_t const * IFX_BU_5[] = { _T("ばれた"), _T("ばれて"), _T("ばれ"), _T("ば"), _T("び"), _T("ぶ"), _T("べ"), _T("ぼ"), _T("んだ"), _T("んじゃ"), _T("んで"), _T("ん"), 0 };
     // 五段活用「む」(生む)
-    wchar_t const * IFX_MU_5[] = { _T("まれ"), _T("まな"), _T("まにゃ"), _T("まね"), _T("まざ"), _T("まず"), _T("み"), _T("む"), _T("め"), _T("も"), _T("んだ"), _T("んじゃ"), _T("んで"), _T("ん"), 0 };
+    wchar_t const * IFX_MU_5[] = { _T("まれた"), _T("まれて"), _T("まれ"), _T("ま"), _T("み"), _T("む"), _T("め"), _T("も"), _T("んだ"), _T("んじゃ"), _T("んで"), _T("ん"), 0 };
     // 五段活用「る」(振る)
-    wchar_t const * IFX_RU_5[] = { _T("られ"), _T("らな"), _T("らにゃ"), _T("らね"), _T("らざ"), _T("らず"), _T("り"), _T("る"), _T("れ"), _T("ろ"), _T("った"), _T("っちゃ"), _T("って"), _T("っ"), 0 };
+    wchar_t const * IFX_RU_5[] = { _T("られた"), _T("られて"), _T("られ"), _T("ら"), _T("り"), _T("る"), _T("れ"), _T("ろ"), _T("った"), _T("っちゃ"), _T("って"), _T("っ"), 0 };
     // 五段活用「う」(会う)
-    wchar_t const * IFX_WU_5[] = { _T("われ"), _T("わな"), _T("わにゃ"), _T("わね"), _T("わざ"), _T("わず"), _T("い"), _T("う"), _T("え"), _T("お"), _T("った"), _T("っちゃ"), _T("って"), _T("っ"), 0 };
+    wchar_t const * IFX_WU_5[] = { _T("われた"), _T("われて"), _T("われ"), _T("わ"), _T("い"), _T("う"), _T("え"), _T("お"), _T("った"), _T("っちゃ"), _T("って"), _T("っ"), 0 };
     // サ変活用「する」(開発する)(達する、愛するは、五段として登録する)
-    wchar_t const * IFX_SURU[] = { STEM_OK, _T("され"), _T("さ"), _T("した"), _T("して"), _T("しな"), _T("し"), _T("す"), _T("せ"), _T("、"), _T("。"), 0 };
+    wchar_t const * IFX_SURU[] = { STEM_OK, _T("された"), _T("されて"), _T("され"), _T("さ"), _T("した"), _T("して"), _T("しない"), _T("しな"), _T("し"), _T("する"), _T("す"), _T("せ"), _T("、"), _T("。"), 0 };
     // ザ変活用「ずる」(信ずる)
-    wchar_t const * IFX_ZURU[] = { _T("じた"), _T("じて"), _T("じな"), _T("じら"), _T("じ"), _T("ず"), _T("ぜ"), 0 };
+    wchar_t const * IFX_ZURU[] = { _T("じた"), _T("じて"), _T("じない"), _T("じな"), _T("じられた"), _T("じられて"), _T("じられ"), _T("じら"), _T("じ"), _T("ずる"), _T("ず"), _T("ぜ"), 0 };
     // 形容詞「い」(美しい)
     wchar_t const * IFX_KYI[] = { _T("い"), _T("かった"), _T("か"), _T("き"), _T("く"), _T("けれ"), _T("け"), _T("さ"), 0 };
     // 形容動詞「な」(静かな)
@@ -70,8 +70,8 @@ namespace {
     // 無活用
     //wchar_t const * IFX_NONE[] = { STEM_OK, 0 };
     wchar_t const * IFX_NONE[] = { STEM_OK,
-        _T("か")/*から*/, _T("が"), _T("こ")/*こそ*/, _T("ご")/*ごと*/, _T("さ")/*さえ*/, _T("じ")/*じゃ*/, _T("す")/*すら*/,
-        _T("だ"), _T("で"), _T("と"), _T("な")/*なら*/, _T("に"), _T("の"), _T("は"), _T("へ"), _T("も"), _T("を"),
+        _T("が"), _T("だ"), _T("で"), _T("と"), _T("なら"), _T("に"), _T("の"), _T("は"), _T("へ"), _T("も"), _T("を"),
+        _T("から"), _T("こそ"), _T("ごと"), _T("さえ"), _T("じゃ"), _T("すら"),
         _T("、"), _T("。"), 0 };
 
     inline int find_gobi(const wchar_t** ifxes, int id) {
@@ -648,7 +648,9 @@ namespace {
 #undef CAND_ENTRY
 
             void SerializeEntries(std::vector<CandidateEntry>& outCands) {
+                _LOG_DEBUGH(_T("fullMatchEntrie: syomi=%s"), MAKE_WPTR(yomi));
                 serializeEntries(fullMatchEntries, outCands);
+                _LOG_DEBUGH(_T("otherEntries: syomi=%s"), MAKE_WPTR(yomi));
                 serializeEntries(otherEntries, outCands);
             }
 
@@ -656,14 +658,13 @@ namespace {
             void serializeEntries(const std::vector<CandidateEntry>& entries, std::vector<CandidateEntry>& outCands) {
                 // 優先辞書を探す
                 const auto& primXfer = PrimaryEntries.FindEntry(yomi);
-                _LOG_DEBUGH(_T("yomi=%s, primXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(primXfer));
                 bool primInserted = false;
                 for (const auto& ent : entries) {
                     if (!primXfer.empty() && utils::startsWith(ent.output, primXfer)) {
                         // 同じ変換形のものは先頭に挿入
                         outCands.insert(outCands.begin(), ent);
                         primInserted = true;
-                        _LOG_DEBUGH(_T("PRIM_YOMI: yomi=%s, xfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(primXfer));
+                        _LOG_DEBUGH(_T("INSERT: PRIM_YOMI: yomi=%s, xfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(primXfer));
                     } else {
                         if (!primInserted) {
                             const auto* pEnt = ent.EntryPtr;
@@ -671,11 +672,12 @@ namespace {
                             if (!origXfer.empty() && origXfer == pEnt->xfer) {
                                 // 元の読み(語尾あり)が優先辞書に登録されていれば、その変換形を先頭に挿入
                                 outCands.insert(outCands.begin(), ent);
-                                _LOG_DEBUGH(_T("ORIG_YOMI: yomi=%s, xfer=%s"), pEnt->origYomi.c_str(), MAKE_WPTR(origXfer));
+                                _LOG_DEBUGH(_T("INSERT: ORIG_YOMI: yomi=%s, xfer=%s"), pEnt->origYomi.c_str(), MAKE_WPTR(origXfer));
                                 continue;
                             }
                         }
                         outCands.push_back(ent);
+                        _LOG_DEBUGH(_T("PUSH_BACK: yomi=%s, primXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(ent.EntryPtr->xfer));
                     }
                 }
             };
@@ -706,7 +708,10 @@ namespace {
             void SerializeOutput(std::vector<CandidateEntry>& mazeCands) {
                 // 長い読みから順にやる
                 for (std::map<MString, candidates_t>::reverse_iterator ri = candidates.rbegin(); ri != candidates.rend(); ++ri) {
-                    ri->second.SerializeEntries(mazeCands);
+                    _LOG_DEBUGH(_T("yomi=%s"), MAKE_WPTR(ri->first));
+                    std::vector<CandidateEntry> outCands;
+                    ri->second.SerializeEntries(outCands);
+                    mazeCands.insert(mazeCands.end(), outCands.begin(), outCands.end());
                 }
             }
         };
@@ -812,6 +817,13 @@ namespace {
             for (const auto& c : mazeCandidates) {
                 mazeResult.push_back(MazeResult(c.output, c.EntryPtr ? c.EntryPtr->GetXferPlusGobiLen(c.output) : c.output.size()));
             }
+#ifdef _DEBUG
+            if (IS_LOG_DEBUGH_ENABLED) {
+                std::vector<wstring> xfers;
+                std::transform(mazeResult.begin(), mazeResult.end(), std::back_inserter(xfers), [](const MazeResult& r) { return to_wstr(r.resultStr);});
+                _LOG_DEBUGH(_T("maze results: %s"), utils::join(xfers, _T(",")).c_str());
+            }
+#endif
             LOG_INFO(_T("LEAVE: maze entries=%d"), mazeResult.size());
             return mazeResult;
         }

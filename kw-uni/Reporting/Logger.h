@@ -152,6 +152,8 @@ public:
 #define DEFINE_LOCAL_LOGGER(name)   Logger logger = Logger::GetLogger("LOCAL." ## #name, _T("LOCAL." ## #name))
 #define DEFINE_NAMESPACE_LOGGER(name)   Logger logger = Logger::GetLogger("NAMESPACE." ## #name, _T("NAMESPACE." ## #name))
 
+#define IS_LOG_DEBUGH_ENABLED   (Logger::IsDebugEnabledH() && _LOG_DEBUGH_FLAG) 
+
 #ifndef _DEBUG
 #define LOG_TRACE(...)      {}
 #define LOG_DEBUG(...)      {}
