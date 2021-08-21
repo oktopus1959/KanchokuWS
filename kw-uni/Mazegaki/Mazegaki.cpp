@@ -357,16 +357,16 @@ namespace {
         }
 
     private:
-        void outputStringAndPostProc(const MString& leadStr, const MazeResult& mazeResult, size_t numBS, const MString* yomi, size_t xferLen) {
-            _LOG_DEBUGH(_T("CALLED: leadStr=%s, resultStr=%s, resultXlen=%d, numBS=%d, yomi=%s, xferLen=%d"), MAKE_WPTR(leadStr), MAKE_WPTR(mazeResult.resultStr), mazeResult.xferLen, numBS, yomi ? MAKE_WPTR(*yomi) : _T("null"), xferLen);
+        void outputStringAndPostProc(const MString& leadStr, const MazeResult& mazeResult, size_t numBS, const MString* yomi, size_t outputLen) {
+            _LOG_DEBUGH(_T("CALLED: leadStr=%s, resultStr=%s, resultXlen=%d, numBS=%d, yomi=%s, outputLen=%d"), MAKE_WPTR(leadStr), MAKE_WPTR(mazeResult.resultStr), mazeResult.xferLen, numBS, yomi ? MAKE_WPTR(*yomi) : _T("null"), outputLen);
             MString outStr = leadStr + mazeResult.resultStr;
             MazegakiNode* pn = dynamic_cast<MazegakiNode*>(pNode);
             if (pn) {
                 // 今回の結果を元に戻すための情報を保存
                 // yomi は、再変換をする際の元の読みになる
-                if (xferLen == 0) xferLen = outStr.size();
-                _LOG_DEBUGH(_T("SET_YOMI_INFO: %s, xferLen=%d"), MAKE_WPTR(yomi ? *yomi : OUTPUT_STACK->GetLastOutputStackStr(numBS)), xferLen);
-                pn->SetYomiInfo(yomi ? *yomi : OUTPUT_STACK->GetLastOutputStackStr(numBS), xferLen);
+                if (outputLen == 0) outputLen = outStr.size();
+                _LOG_DEBUGH(_T("SET_YOMI_INFO: %s, outputLen=%d"), MAKE_WPTR(yomi ? *yomi : OUTPUT_STACK->GetLastOutputStackStr(numBS)), outputLen);
+                pn->SetYomiInfo(yomi ? *yomi : OUTPUT_STACK->GetLastOutputStackStr(numBS), outputLen);
             }
             // 変換形の出力
             _LOG_DEBUGH(_T("SET_OUT_STRING: %s, numBS=%d"), MAKE_WPTR(outStr), numBS);
@@ -416,7 +416,7 @@ DEFINE_CLASS_LOGGER(MazegakiNode);
 MString MazegakiNode::prevYomi;
 
 // 変換結果を元に戻すための変換形の長さ
-size_t MazegakiNode::prevXferLen = 0;
+size_t MazegakiNode::prevOutputLen = 0;
 
 // 前回変換時のホットキーカウント
 size_t MazegakiNode::deckeyCount = 0;

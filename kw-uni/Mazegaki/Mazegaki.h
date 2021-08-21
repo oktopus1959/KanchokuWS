@@ -13,8 +13,8 @@ private:
     // 変換結果を元に戻すための変換前の読み
     static MString prevYomi;
 
-    // 変換結果を元に戻すための変換形の長さ
-    static size_t prevXferLen;
+    // 変換結果を元に戻すための出力文字列の長さ
+    static size_t prevOutputLen;
 
     // 前回変換時のホットキーカウント
     static size_t deckeyCount;
@@ -66,9 +66,9 @@ private:
         return shifted;
     }
 
-    void SetYomiInfo(const MString& yomi, size_t xferLen) {
+    void SetYomiInfo(const MString& yomi, size_t outputLen) {
         prevYomi = yomi;
-        prevXferLen = xferLen;
+        prevOutputLen = outputLen;
         shiftedYomiLen = yomi.size();
         deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
         selectFirstCandDisabled = false;
@@ -79,7 +79,7 @@ private:
         if (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) {
             selectFirstCandDisabled = true;
             yomi = prevYomi;
-            return prevXferLen;
+            return prevOutputLen;
         }
         selectFirstCandDisabled = false;
         return 0;
@@ -90,8 +90,8 @@ private:
         if (IsJustAfterPrevXfer()) {
             selectFirstCandDisabled = true;
             yomi = prevYomi;
-            size_t resultLen = prevXferLen;
-            prevXferLen = 0;
+            size_t resultLen = prevOutputLen;
+            prevOutputLen = 0;
             return resultLen;
         }
         selectFirstCandDisabled = false;
@@ -147,11 +147,11 @@ public:
     LOG_DEBUGH(_T("HANDLE_ESC_FOR_MAZEGAKI: %s"), NAME_PTR); \
     if (MAZEGAKI_NODE) { \
         MString prevYomi; \
-        size_t prevXferLen = MAZEGAKI_NODE->GetPrevYomiInfoIfJustAfterMaze(prevYomi); \
-        LOG_DEBUGH(_T("MAZEGAKI ESC: prevYomi=%s, prevXferLen=%d"), MAKE_WPTR(prevYomi), prevXferLen); \
-        if (prevXferLen > 0) { \
+        size_t prevOutLen = MAZEGAKI_NODE->GetPrevYomiInfoIfJustAfterMaze(prevYomi); \
+        LOG_DEBUGH(_T("MAZEGAKI ESC: prevYomi=%s, prevOutLen=%d"), MAKE_WPTR(prevYomi), prevOutLen); \
+        if (prevOutLen > 0) { \
             MAZEGAKI_NODE->SetJustAfterPrevXfer(); /* 続けて交ぜ書き関連の操作を受け付けるようにする */ \
-            STATE_COMMON->SetOutString(prevYomi, prevXferLen); \
+            STATE_COMMON->SetOutString(prevYomi, prevOutLen); \
             return; \
         } \
     } \
