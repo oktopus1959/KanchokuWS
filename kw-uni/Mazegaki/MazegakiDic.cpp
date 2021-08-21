@@ -18,13 +18,16 @@
 #define _WCHAR(ws)  (_T(ws)[0])
 
 // 語幹のみでもOK
-#define STEM_OK 1
+#define STEM_OK (wchar_t*)1
 
 // 孤立OK 
-#define ISOLATABLE 2
+#define ISOLATABLE (wchar_t*)2
 
 // 任意の語尾OK
-#define ANY_OK 3
+#define ANY_OK (wchar_t*)3
+
+// 特殊の終わり
+#define INF_SPECIAL_END (wchar_t*)9
 
 // 無活用の最大語尾長
 //#define NO_IFX_MAX_GOBI 2
@@ -33,59 +36,73 @@ namespace {
     // -------------------------------------------------------------------
     // 活用語尾
     // 一段活用
-    mchar_t IFX_RU_1[] = { STEM_OK, _WCHAR("る"), _WCHAR("れ"), _WCHAR("よ"), _WCHAR("な"), _WCHAR("た"), _WCHAR("て"), _WCHAR("ま"), _WCHAR("ら"), 0 };
+    wchar_t const * IFX_RU_1[] = { STEM_OK, _T("る"), _T("れ"), _T("よ"), _T("ざ"), _T("ず"), _T("な"), _T("にゃ"), _T("ね"), _T("た"), _T("て"), _T("ま"), _T("ら"), 0 };
     // 五段活用「く」(書く)
-    mchar_t IFX_KU_5[] = { _WCHAR("か"), _WCHAR("き"), _WCHAR("く"), _WCHAR("け"), _WCHAR("こ"), _WCHAR("い"), 0 };
+    wchar_t const * IFX_KU_5[] = { _T("かれ"), _T("かな"), _T("かにゃ"), _T("かね"), _T("かざ"), _T("かず"), _T("き"), _T("く"), _T("け"), _T("こ"), _T("いた"), _T("いちゃ"), _T("いて"), _T("い"), 0 };
     // 五段活用「ぐ」(漕ぐ)
-    mchar_t IFX_GU_5[] = { _WCHAR("が"), _WCHAR("ぎ"), _WCHAR("ぐ"), _WCHAR("げ"), _WCHAR("ご"), _WCHAR("い"), 0 };
+    wchar_t const * IFX_GU_5[] = { _T("がれ"), _T("がな"), _T("がにゃ"), _T("がね"), _T("がざ"), _T("がず"), _T("ぎ"), _T("ぐ"), _T("げ"), _T("ご"), _T("いだ"), _T("いじゃ"), _T("いで"), _T("い"), 0 };
     // 五段活用「す」(話す)
-    mchar_t IFX_SU_5[] = { _WCHAR("さ"), _WCHAR("し"), _WCHAR("す"), _WCHAR("せ"), _WCHAR("そ"), 0 };
+    wchar_t const * IFX_SU_5[] = { _T("され"), _T("さな"), _T("さにゃ"), _T("さね"), _T("さざ"), _T("さず"), _T("した"), _T("して"), _T("し"), _T("す"), _T("せ"), _T("そ"), 0 };
     // 五段活用「つ」(立つ)
-    mchar_t IFX_TU_5[] = { _WCHAR("た"), _WCHAR("ち"), _WCHAR("つ"), _WCHAR("て"), _WCHAR("と"), _WCHAR("っ"), 0 };
+    wchar_t const * IFX_TU_5[] = { _T("たれ"), _T("たな"), _T("たにゃ"), _T("たね"), _T("たざ"), _T("たず"), _T("ち"), _T("つ"), _T("て"), _T("と"), _T("った"), _T("っちゃ"), _T("って"), _T("っ"), 0 };
     // 五段活用「ぬ」(死ぬ)
-    mchar_t IFX_NU_5[] = { _WCHAR("な"), _WCHAR("に"), _WCHAR("ぬ"), _WCHAR("ね"), _WCHAR("の"), _WCHAR("ん"), 0 };
+    wchar_t const * IFX_NU_5[] = { _T("なれ"), _T("なな"), _T("なにゃ"), _T("なね"), _T("なざ"), _T("なず"), _T("に"), _T("ぬ"), _T("ね"), _T("の"), _T("んだ"), _T("んじゃ"), _T("んで"), _T("ん"), 0 };
     // 五段活用「ぶ」(飛ぶ)
-    mchar_t IFX_BU_5[] = { _WCHAR("ば"), _WCHAR("び"), _WCHAR("ぶ"), _WCHAR("べ"), _WCHAR("ぼ"), _WCHAR("ん"), 0 };
+    wchar_t const * IFX_BU_5[] = { _T("ばれ"), _T("ばな"), _T("ばにゃ"), _T("ばね"), _T("ばざ"), _T("ばず"), _T("び"), _T("ぶ"), _T("べ"), _T("ぼ"), _T("んだ"), _T("んじゃ"), _T("んで"), _T("ん"), 0 };
     // 五段活用「む」(生む)
-    mchar_t IFX_MU_5[] = { _WCHAR("ま"), _WCHAR("み"), _WCHAR("む"), _WCHAR("め"), _WCHAR("も"), _WCHAR("ん"), 0 };
+    wchar_t const * IFX_MU_5[] = { _T("まれ"), _T("まな"), _T("まにゃ"), _T("まね"), _T("まざ"), _T("まず"), _T("み"), _T("む"), _T("め"), _T("も"), _T("んだ"), _T("んじゃ"), _T("んで"), _T("ん"), 0 };
     // 五段活用「る」(振る)
-    mchar_t IFX_RU_5[] = { _WCHAR("ら"), _WCHAR("り"), _WCHAR("る"), _WCHAR("れ"), _WCHAR("ろ"), _WCHAR("っ"), _WCHAR("ん"), 0 };
+    wchar_t const * IFX_RU_5[] = { _T("られ"), _T("らな"), _T("らにゃ"), _T("らね"), _T("らざ"), _T("らず"), _T("り"), _T("る"), _T("れ"), _T("ろ"), _T("った"), _T("っちゃ"), _T("って"), _T("っ"), 0 };
     // 五段活用「う」(会う)
-    mchar_t IFX_WU_5[] = { _WCHAR("わ"), _WCHAR("い"), _WCHAR("う"), _WCHAR("え"), _WCHAR("お"), _WCHAR("っ"), 0 };
+    wchar_t const * IFX_WU_5[] = { _T("われ"), _T("わな"), _T("わにゃ"), _T("わね"), _T("わざ"), _T("わず"), _T("い"), _T("う"), _T("え"), _T("お"), _T("った"), _T("っちゃ"), _T("って"), _T("っ"), 0 };
     // サ変活用「する」(開発する)(達する、愛するは、五段として登録する)
-    mchar_t IFX_SURU[] = { STEM_OK, _WCHAR("さ"), _WCHAR("し"), _WCHAR("す"), _WCHAR("せ"), _WCHAR("、"), _WCHAR("。"), 0 };
+    wchar_t const * IFX_SURU[] = { STEM_OK, _T("され"), _T("さ"), _T("した"), _T("して"), _T("しな"), _T("し"), _T("す"), _T("せ"), _T("、"), _T("。"), 0 };
     // ザ変活用「ずる」(信ずる)
-    mchar_t IFX_ZURU[] = { _WCHAR("じ"), _WCHAR("ず"), _WCHAR("ぜ"), 0 };
+    wchar_t const * IFX_ZURU[] = { _T("じた"), _T("じて"), _T("じな"), _T("じら"), _T("じ"), _T("ず"), _T("ぜ"), 0 };
     // 形容詞「い」(美しい)
-    mchar_t IFX_KYI[] = { _WCHAR("い"), _WCHAR("か"), _WCHAR("き"), _WCHAR("く"), _WCHAR("け"),  _WCHAR("さ"), 0 };
+    wchar_t const * IFX_KYI[] = { _T("い"), _T("かった"), _T("か"), _T("き"), _T("く"), _T("けれ"), _T("け"), _T("さ"), 0 };
     // 形容動詞「な」(静かな)
-    mchar_t IFX_KDNA[] = { STEM_OK, _WCHAR("な"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("、"), _WCHAR("。"), 0 };
+    wchar_t const * IFX_KDNA[] = { STEM_OK, _T("な"), _T("に"), _T("だ"), _T("で"), _T("じ"), _T("さ"), _T("、"), _T("。"), 0 };
     // 形容動詞「の」(本当の)
-    mchar_t IFX_KDNO[] = { STEM_OK, _WCHAR("な"), _WCHAR("の"), _WCHAR("に"), _WCHAR("だ"), _WCHAR("で"), _WCHAR("じ"), _WCHAR("さ"), _WCHAR("、"), _WCHAR("。"), 0 };
+    wchar_t const * IFX_KDNO[] = { STEM_OK, _T("な"), _T("の"), _T("に"), _T("だ"), _T("で"), _T("じ"), _T("さ"), _T("、"), _T("。"), 0 };
     // 副詞
-    mchar_t IFX_ADV[] = { STEM_OK, ISOLATABLE, ANY_OK, 0 };
+    wchar_t const * IFX_ADV[] = { STEM_OK, ISOLATABLE, ANY_OK, 0 };
     // 無活用
-    //mchar_t IFX_NONE[] = { STEM_OK, 0 };
-    mchar_t IFX_NONE[] = { STEM_OK,
-        _WCHAR("か")/*から*/, _WCHAR("が"), _WCHAR("こ")/*こそ*/, _WCHAR("ご")/*ごと*/, _WCHAR("さ")/*さえ*/, _WCHAR("じ")/*じゃ*/, _WCHAR("す")/*すら*/,
-        _WCHAR("だ"), _WCHAR("で"), _WCHAR("と"), _WCHAR("な")/*なら*/, _WCHAR("に"), _WCHAR("の"), _WCHAR("は"), _WCHAR("へ"), _WCHAR("も"), _WCHAR("を"),
-        _WCHAR("、"), _WCHAR("。"), 0 };
+    //wchar_t const * IFX_NONE[] = { STEM_OK, 0 };
+    wchar_t const * IFX_NONE[] = { STEM_OK,
+        _T("か")/*から*/, _T("が"), _T("こ")/*こそ*/, _T("ご")/*ごと*/, _T("さ")/*さえ*/, _T("じ")/*じゃ*/, _T("す")/*すら*/,
+        _T("だ"), _T("で"), _T("と"), _T("な")/*なら*/, _T("に"), _T("の"), _T("は"), _T("へ"), _T("も"), _T("を"),
+        _T("、"), _T("。"), 0 };
 
-    inline bool find_gobi(const mchar_t* ifxes, mchar_t mc) {
-        auto pIfx = ifxes;
-        while (*pIfx != 0) {
-            if (*pIfx == ANY_OK) return true;
-            if (*pIfx++ == mc) return true;
+    inline int find_gobi(const wchar_t** ifxes, int id) {
+        auto ppIfx = ifxes;
+        while (*ppIfx != 0) {
+            if (*ppIfx == (wchar_t*)id) return 0;
+            ++ppIfx;
         }
-        if (ifxes == IFX_NONE) {
-            // 無活用の場合はひらがな以外を後接できる
-            if (!utils::is_hiragana(mc)) return true;
+        return -1;
+    }
+
+    // 後接可能な語尾を探し、その長さを返す
+    inline int find_gobi(const wchar_t** ifxes, const mchar_t* pms) {
+        auto ppIfx = ifxes;
+        while (*ppIfx != 0) {
+            wchar_t const* pIfx = *ppIfx++;
+            if (pIfx == ANY_OK) return 0;
+            if (pIfx <= INF_SPECIAL_END) continue;
+            int i = 0;
+            while (pIfx[i] != 0 && pIfx[i] == pms[i]) ++i;
+            if (i > 0 && pIfx[i] == 0) return i;
         }
-        return false;
+        //if (ifxes == IFX_NONE) {
+        //    // 無活用の場合はひらがな以外を後接できる
+        //    if (!utils::is_hiragana(mc)) return true;
+        //}
+        return -1;
     }
 
     // 活用型->活用語尾のマップ
-    std::map<wstring, const mchar_t*> gobiMap = {
+    std::map<wstring, const wchar_t**> gobiMap = {
         { _T("一"), IFX_RU_1 },
         { _T("る:1"), IFX_RU_1 },
         { _T("く"), IFX_KU_5 },
@@ -138,13 +155,16 @@ namespace {
     inline bool is_xfer_char_or_wildcard(mchar_t mch) { return is_wildcard(mch) || is_xfer_char(mch); }
 
     // -------------------------------------------------------------------
+    // 活用型の段型を表す :N を削除するための正規表現
+    std::wregex DanPattern(_T(":.*$"));
+
     // 交ぜ書き辞書のエントリ
     class MazeEntry {
     public:
         MString stem;               // 読み(語幹)(「たべ」)
         MString xfer;               // 変換形(語幹)(「食べ」)
-        const mchar_t* inflexList;  // 語尾リスト
-        wstring yomi;               // 元の読み形(語尾情報含む)
+        const wchar_t** inflexList; // 語尾リスト
+        wstring origYomi;           // 元の読み形(語尾情報含む)
         bool userDic;               // ユーザ辞書由来
         bool deleted;               // 削除フラグ
 
@@ -178,9 +198,15 @@ namespace {
             size_t xferLen = min(xfer.size(), resultStr.size());
             if ((inflexList != IFX_NONE && inflexList != IFX_ADV && inflexList != IFX_SURU) && xferLen < resultStr.size()) {
                 // サ変以外の活用語で、語尾がある場合は、その語尾も変換形に含める
-                if (find_gobi(inflexList, resultStr[xferLen])) ++xferLen;
+                int gobiLen = find_gobi(inflexList, resultStr.c_str() + xferLen);
+                if (gobiLen > 0) xferLen += gobiLen;
             }
             return xferLen;
+        }
+
+        // :N を削除した読み形を返す
+        MString GetTrimmedYomi() const {
+            return to_mstr(std::regex_replace(origYomi, DanPattern, _T("")));
         }
     };
 
@@ -226,7 +252,17 @@ namespace {
 
         std::vector<const MazeEntry*> emptyList;
 
+        bool bDirty = false;
+
     public:
+        void ClearDirtyFlag() {
+            bDirty = false;
+        }
+
+        bool IsDirty() {
+            return bDirty;
+        }
+
         void AddUserEntries(const wstring& yomi, const std::vector<const MazeEntry*>& entries) {
             auto iter = userEntries.find(yomi);
             if (iter == userEntries.end()) {
@@ -234,6 +270,7 @@ namespace {
             } else {
                 iter->second.insert(iter->second.begin(), entries.begin(), entries.end());
             }
+            bDirty = true;
         }
 
         const std::vector<const MazeEntry*>& FindEntries(const wstring& yomi) {
@@ -247,17 +284,66 @@ namespace {
 
         void DeleteEntry(const wstring& yomi, const MString& xfer) {
             for (auto p : FindEntries(yomi)) {
-                if (p->xfer == xfer) ((MazeEntry*)p)->deleted = true;
+                if (p->xfer == xfer) {
+                    ((MazeEntry*)p)->deleted = true;
+                    bDirty = true;
+                }
             }
         }
 
         void DeleteEntry(const MazeEntry* pEntry) {
-            DeleteEntry(pEntry->yomi, pEntry->xfer);
+            DeleteEntry(pEntry->origYomi, pEntry->xfer);
         }
     };
 
     // ユーザー辞書エントリのリスト
     UserDicEntries UserEntries;
+
+    // 優先辞書エントリのリストのクラス
+    class PrimaryDicEntries {
+        DECLARE_CLASS_LOGGER;
+
+        std::map<MString, MString> entries;
+
+        bool bDirty = false;
+
+    public:
+        void ClearDirtyFlag() {
+            bDirty = false;
+        }
+
+        bool IsDirty() {
+            return bDirty;
+        }
+
+        void AddPrimaryEntry(const wstring& yomi, const wstring& xfer) {
+            entries[to_mstr(yomi)] = to_mstr(xfer);
+            bDirty = true;
+        }
+
+        void AddPrimaryEntry(const MString& yomi, const MString& xfer) {
+            entries[yomi] = xfer;
+            bDirty = true;
+        }
+
+        void DeletePrimaryEntry(const MString& yomi) {
+            entries.erase(yomi);
+        }
+
+        const MString& FindEntry(const MString& yomi) {
+            auto iter = entries.find(yomi);
+            _LOG_DEBUGH(_T("yomi=%s, found=%s"), MAKE_WPTR(yomi), BOOL_TO_WPTR(iter == entries.end()));
+            return iter == entries.end() ? EMPTY_MSTR : iter->second;
+        }
+
+        const std::map<MString, MString>& GetAllEntries() const {
+            return entries;
+        }
+    };
+    DEFINE_CLASS_LOGGER(PrimaryDicEntries);
+
+    // 優先辞書エントリのリストのクラス
+    PrimaryDicEntries PrimaryEntries;
 
     // -------------------------------------------------------------------
     // 交ぜ書き辞書(読み、または変換形に含まれる1文字から、もとのエントリを集めたsetへのマップ)
@@ -271,10 +357,12 @@ namespace {
         // 交ぜ書き辞書インスタンス
         MazeDictionary mazeDic;
 
-        // 検索されたエントリとそれから生成された変換形
+        // 検索されたエントリとそれから生成された出力形
         struct CandidateEntry {
             const MazeEntry* EntryPtr;
-            MString output;             // 生成された変換形
+            MString yomi;               // 候補の読み
+            MString outXfer;            // 生成された変換形＋語尾
+            MString output;             // 生成された出力形(変換形+語尾～入力末尾まで)
         };
 
         // 検索された候補のリスト
@@ -323,19 +411,20 @@ namespace {
         }
 
         // UTF8で書かれた辞書ソースを読み込む
-        void ReadFile(const std::vector<wstring>& lines, bool bUser) {
+        void ReadFile(const std::vector<wstring>& lines, bool bUser, bool bPrim) {
             LOG_INFO(_T("ENTER: lines.size()=%d, mazeDic.size()=%d, MazeEntries.size()=%d"), lines.size(), mazeDic.size(), MazeEntries.GetList().size());
             Logger::SaveAndSetLevel(Logger::LogLevelWarn);
             //Logger::SaveAndSetLevel(Logger::LogLevelInfoH);
             for (const auto& line : lines) {
-                AddMazeDicEntry(line, bUser);
+                AddMazeDicEntry(line, bUser, bPrim);
             }
             Logger::RestoreLevel();
+            UserEntries.ClearDirtyFlag();   // ファイルから読み込んだ場合はダーティフラグをクリアしておく
             LOG_INFO(_T("LEAVE: mazeDic.size()=%d, MazeEntries.size()=%d"), mazeDic.size(), MazeEntries.GetList().size());
         }
 
         // 一行の辞書ソース文字列を解析して辞書に登録する
-        bool AddMazeDicEntry(const wstring& line, bool bUser) {
+        bool AddMazeDicEntry(const wstring& line, bool bUser, bool bPrim) {
             _LOG_DEBUGH(_T("ENTER: line=%s"), line.c_str());
             auto items = utils::filter_not_empty(utils::split(utils::strip(line), ' '));
             // 「見出し<空白>/?登録語/...」という形式でなければ、何もしない (登録語列の先頭は '/' でなくてもよい)
@@ -348,7 +437,11 @@ namespace {
 
             if (!list.empty()) {
                 // 登録内容がある場合のみ登録する
-                addEntries(key, list, bUser);
+                if (bPrim) {
+                    PrimaryEntries.AddPrimaryEntry(key, list[0]);
+                } else {
+                    addEntries(key, list, bUser);
+                }
                 return true;
             }
             return false;
@@ -492,69 +585,129 @@ namespace {
             return true;
         }
 
-#define UNDEF_LEN 100000000
-#define CAND_ENTRY (CandidateEntry{ pEntry, output })
         struct candidates_t {
-            std::vector<CandidateEntry> entries;    // 検索された候補
-            size_t headYomiLen;                     // 先頭候補の読み長
-            size_t headSameCnt;                     // 同じ読み長さの候補数
+            MString yomi;
+            bool mazeSearch;
+            std::vector<CandidateEntry> fullMatchEntries;   // 漢字交じりで読みが完全一致した候補
+            std::vector<CandidateEntry> otherEntries;       // その他の候補
 
             candidates_t() :
-                headYomiLen(UNDEF_LEN),            // 初期値としてありえない長さを設定
-                headSameCnt(0) { }
-        };
+                mazeSearch(false)
+            { }
 
-        // 出力された変換形を蓄積しておく
-        void stock_output(candidates_t* pCands, const MazeEntry* pEntry, const MString& output) {
-            size_t len = pEntry->stem.size();
-            if (/*!starContained &&*/ len < pCands->headYomiLen) {
-                // 読みの短いほうを優先する
-                utils::insert_front(pCands->entries, CAND_ENTRY);
-                pCands->headYomiLen = len;
-                pCands->headSameCnt = 1;
-            //} else if (starContained && (pCands->headYomiLen == UNDEF_LEN || len > pCands->headYomiLen)) {
-            //    // 読みの長いほうを優先する
-            //    utils::insert_front(pCands->entries, CAND_ENTRY);
-            //    pCands->headYomiLen = len;
-            //    pCands->headSameCnt = 1;
-            } else if (len == pCands->headYomiLen) {
-                // 読みの長さが同じなら、ユーザー辞書にあるものを優先
-                auto iter = pCands->entries.begin();
-                for (; iter != pCands->entries.end(); ++iter) { if (iter->output == output) break; }
+            candidates_t(const MString& y, bool maze) :
+                yomi(y),
+                mazeSearch(maze) { }
+
+            // 出力された変換形を蓄積しておく
+            void StockOutput(const MazeEntry* pEntry, const MString& output, const MString& outXfer) {
+                _LOG_DEBUGH(_T("stemlen=%d, stem=%s, output=%s, outXfer=%s"), \
+                    pEntry->stem.size(), MAKE_WPTR(pEntry->stem), BOOL_TO_WPTR(pEntry->userDic), MAKE_WPTR(output), MAKE_WPTR(outXfer));
+
+                std::vector<CandidateEntry>* pEntries = mazeSearch ? &fullMatchEntries : &otherEntries;
+
+                // 同じ出力形のものを探す
+                auto iter = pEntries->begin();
+                for (; iter != pEntries->end(); ++iter) { if (iter->output == output) break; }
+
+#define CAND_ENTRY (CandidateEntry{ pEntry, yomi, outXfer, output })
                 if (pEntry->userDic) {
-                    if (iter != pCands->entries.end()) {
-                        pCands->entries.erase(iter); // erase entry with same output
-                        pCands->headSameCnt -= 1;
+                    // ユーザー辞書由来のものは先頭に挿入
+                    if (iter != pEntries->end()) {
+                        // 同形の出力があったので、それを削除
+                        pEntries->erase(iter); // erase entry with same output
                     }
-                    auto users = UserEntries.FindEntries(pEntry->yomi);
-                    // ユーザー辞書中での位置を取得
-                    auto finder = [users](const MString& xfer) {
-                        size_t n = 0;
-                        for (auto p : users) {
-                            if (p->xfer == xfer) return n;
-                            ++n;
-                        }
-                        return n;
-                    };
-                    size_t nth = finder(pEntry->xfer);
-                    iter = pCands->entries.begin();
-                    // ユーザー辞書順に並べる
-                    while (iter != pCands->entries.end() && iter->EntryPtr->userDic && finder(iter->EntryPtr->xfer) < nth) ++iter;
-                    pCands->entries.insert(iter, CAND_ENTRY);
-                    pCands->headSameCnt += 1;
+                    pEntries->insert(pEntries->begin(), CAND_ENTRY);
+                    _LOG_DEBUGH(_T("USER: yomi=%s, outXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
                 } else {
-                    if (iter == pCands->entries.end()) {
-                        // 同じ読み長さ候補群の末尾に追加
-                        utils::insert_at(pCands->entries, pCands->headSameCnt, CAND_ENTRY);
-                        pCands->headSameCnt += 1;
+                    if (iter == pEntries->end()) {
+                        // 同じ出力のものがないので、追加
+                        size_t stemLen = pEntry->stem.size();
+                        if (mazeSearch && !pEntries->empty() && stemLen <= pEntries->front().EntryPtr->stem.size()) {
+                            // 漢字交じり読みの場合は、語幹の短い方を優先
+                            _LOG_DEBUGH(_T("SHORTER: stem=%s, yomi=%s, outXfer=%s"), MAKE_WPTR(pEntry->stem), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
+                            auto it = pEntries->begin();
+                            for (; it != pEntries->end(); ++it) { if (stemLen < it->EntryPtr->stem.size()) break; }
+                            pEntries->insert(it, CAND_ENTRY);
+                        } else if (!mazeSearch && !pEntries->empty() && stemLen >= pEntries->front().EntryPtr->stem.size()) {
+                            // ひらがなだけなら、語幹の長い方を優先
+                            _LOG_DEBUGH(_T("LONGER: stem=%s, yomi=%s, outXfer=%s"), MAKE_WPTR(pEntry->stem), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
+                            auto it = pEntries->begin();
+                            for (; it != pEntries->end(); ++it) { if (stemLen > it->EntryPtr->stem.size()) break; }
+                            pEntries->insert(it, CAND_ENTRY);
+                        } else {
+                            //それ以外は末尾に追加
+                            _LOG_DEBUGH(_T("PUSH_BACK: yomi=%s, outXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
+                            pEntries->push_back(CAND_ENTRY);
+                        }
                     }
                 }
-            } else {
-                pCands->entries.push_back(CAND_ENTRY);
             }
-        }
 #undef CAND_ENTRY
-#undef UNDEF_LEN
+
+            void SerializeEntries(std::vector<CandidateEntry>& outCands) {
+                serializeEntries(fullMatchEntries, outCands);
+                serializeEntries(otherEntries, outCands);
+            }
+
+        private:
+            void serializeEntries(const std::vector<CandidateEntry>& entries, std::vector<CandidateEntry>& outCands) {
+                // 優先辞書を探す
+                const auto& primXfer = PrimaryEntries.FindEntry(yomi);
+                _LOG_DEBUGH(_T("yomi=%s, primXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(primXfer));
+                bool primInserted = false;
+                for (const auto& ent : entries) {
+                    if (!primXfer.empty() && utils::startsWith(ent.output, primXfer)) {
+                        // 同じ変換形のものは先頭に挿入
+                        outCands.insert(outCands.begin(), ent);
+                        primInserted = true;
+                        _LOG_DEBUGH(_T("PRIM_YOMI: yomi=%s, xfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(primXfer));
+                    } else {
+                        if (!primInserted) {
+                            const auto* pEnt = ent.EntryPtr;
+                            const auto& origXfer = PrimaryEntries.FindEntry(pEnt->GetTrimmedYomi());
+                            if (!origXfer.empty() && origXfer == pEnt->xfer) {
+                                // 元の読み(語尾あり)が優先辞書に登録されていれば、その変換形を先頭に挿入
+                                outCands.insert(outCands.begin(), ent);
+                                _LOG_DEBUGH(_T("ORIG_YOMI: yomi=%s, xfer=%s"), pEnt->origYomi.c_str(), MAKE_WPTR(origXfer));
+                                continue;
+                            }
+                        }
+                        outCands.push_back(ent);
+                    }
+                }
+            };
+        };
+
+        class MazeCandidates {
+            std::map<MString, candidates_t> candidates;
+
+            candidates_t& find_or_new(const MString& yomi, bool maze) {
+                auto iter = candidates.find(yomi);
+                if (iter == candidates.end()) {
+                    return candidates[yomi] = candidates_t(yomi, maze);
+                    //return candidates[yomi];
+                } else {
+                    return iter->second;
+                }
+            }
+
+        public:
+            // 出力された変換形を蓄積しておく
+            void StockOutput(const MString& yomi, bool mazeSearch, const MazeEntry* pEntry, const MString& output, const MString& outXfer) {
+                _LOG_DEBUGH(_T("yomi=%s, mazeSearch=%s, stem=%s, userDic=%s, output=%s, outXfer=%s"), \
+                    MAKE_WPTR(yomi), BOOL_TO_WPTR(mazeSearch), MAKE_WPTR(pEntry->stem), BOOL_TO_WPTR(pEntry->userDic), MAKE_WPTR(output), MAKE_WPTR(outXfer));
+
+                find_or_new(yomi, mazeSearch).StockOutput(pEntry, output, outXfer);
+            }
+
+            void SerializeOutput(std::vector<CandidateEntry>& mazeCands) {
+                // 長い読みから順にやる
+                for (std::map<MString, candidates_t>::reverse_iterator ri = candidates.rbegin(); ri != candidates.rend(); ++ri) {
+                    ri->second.SerializeEntries(mazeCands);
+                }
+            }
+        };
 
     public:
         // 指定の見出し語に対する変換候補のセットを取得する
@@ -563,6 +716,10 @@ namespace {
             LOG_INFO(_T("ENTER: key=%s"), MAKE_WPTR(key));
             mazeCandidates.clear();
             mazeResult.clear();
+            // 読み語幹＋語尾の長さごとに候補を保持しておくためのベクトル
+            //std::vector<std::vector<CandidateEntry>> mazeCands;
+            // 「読み語幹＋語尾」ごとに候補を保持しておくためのマップ
+            MazeCandidates mazeCands;
             if (!key.empty()) {
                 size_t stemMinLen = count_head_wildcard(key) + 1;   // 読みの部分にはワイルドカード以外の文字が少なくとも1文字は必要
                 if (stemMinLen <= key.size()) {
@@ -607,46 +764,33 @@ namespace {
                         // 長い語幹にマッチしたほうを優先
                         // 同じ語幹長の場合は、エントリの読みの短いほうが優先
                         // 同じ読みなら、ユーザー辞書を優先
-                        candidates_t cands1;                         // 読みが完全一致したもの用
-                        candidates_t cands2;                         // 読みと変換形でマッチしたもの用
                         auto keyStem = key.substr(0, stemLen);
                         for (auto p : entrySet) {
-                            _LOG_DEBUGH(_T("key=%s, keyStem=%s, mazeSearch=%s, p->stem=%s, p->xfer=%s, ifx=%s, user=%s, deleted=%s"),
-                                MAKE_WPTR(key), MAKE_WPTR(keyStem), BOOL_TO_WPTR(mazeSearch), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
+                            _LOG_DEBUGH(_T("key=%s, keyStem=%s, mazeSearch=%s, p->stem=%s, p->xfer=%s, user=%s, deleted=%s"),
+                                MAKE_WPTR(key), MAKE_WPTR(keyStem), BOOL_TO_WPTR(mazeSearch), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
                             if (p->deleted) continue;
-                            if (keyStem != p->xfer && utils::startsWith(keyStem, p->xfer)) continue;   // 読み語幹の先頭部が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケースや「経い」→「経」のケース)
+                            if (/*keyStem != p->xfer &&*/ utils::startsWith(keyStem, p->xfer)) continue;   // 読み語幹の先頭部が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケースや「経い」→「経」のケース)
 
-                            candidates_t* pCands = 0;
-                            if (keyStem == p->stem) {
-                                // 読み語幹が完全一致
-                                _LOG_DEBUGH(_T("MATCH-A"));
-                                pCands = &cands1;
-                            } else if (mazeSearch && order_matched(keyStem, p)) {
-                                // key に漢字が含まれている場合は、ひらがな・漢字の出現順序の一致を確認
-                                _LOG_DEBUGH(_T("MATCH-B"));
-                                pCands = &cands2;
-                            }
-                            if (pCands) {
+                            if (keyStem == p->stem || mazeSearch && order_matched(keyStem, p)) {
+                                // 読み語幹が完全一致、または key に漢字が含まれている場合は、ひらがな・漢字の出現順序の一致を確認
                                 if (key.size() == stemLen) {
                                     // 語尾がない⇒無活用または語幹OKの活用型か
-                                    if (find_gobi(p->inflexList, STEM_OK)) {
-                                        _LOG_DEBUGH(_T("No gobi found: %s: STEM_OK in %s, userDic=%s"), MAKE_WPTR(p->xfer), MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
-                                        stock_output(pCands, p, p->xfer);
+                                    if (find_gobi(p->inflexList, (int)STEM_OK) == 0) {
+                                        _LOG_DEBUGH(_T("No gobi found: %s: STEM_OK, userDic=%s"), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic));
+                                        mazeCands.StockOutput(key, mazeSearch, p, p->xfer, p->xfer);
                                     }
-                                } else /* if (p->inflexList != IFX_NONE || stemLen > 1) */ {
+                                } else {
                                     // 語尾がある
                                     // (「がいる」が「我いる」になったりしないようにするために,語幹が1文字の無活用語は採用しないようにしてみたが、やはり目とか手とかあるので、いったん様子見)
-                                    if (find_gobi(p->inflexList, key[stemLen])) {
-                                        _LOG_DEBUGH(_T("gobi found: %s: %c in %s, userDic=%s"), MAKE_WPTR(p->xfer), key[stemLen], MAKE_WPTR(p->inflexList), BOOL_TO_WPTR(p->userDic));
-                                        stock_output(pCands, p, p->xfer + key.substr(stemLen));
+                                    int gobiLen = find_gobi(p->inflexList, key.c_str() + stemLen);
+                                    if (gobiLen >= 0) {
+                                        _LOG_DEBUGH(_T("gobi found: %s: %c, gobiLen=%d, userDic=%s"), MAKE_WPTR(p->xfer), key[stemLen], gobiLen, BOOL_TO_WPTR(p->userDic));
+                                        size_t yomiLen = stemLen + gobiLen;
+                                        mazeCands.StockOutput(key.substr(0, yomiLen), mazeSearch, p, p->xfer + key.substr(stemLen), p->xfer + key.substr(stemLen, gobiLen));
                                     }
                                 }
                             }
                         }
-                        // まず、動的交ぜ書きで一致したもの -- 読みの長いほうが後から処理されるので、先頭部に挿入
-                        if (!cands2.entries.empty()) utils::insert_front(mazeCandidates, cands2.entries);
-                        // 読みが完全一致したものを先頭のほうに挿入
-                        if (!cands1.entries.empty()) utils::insert_front(mazeCandidates, cands1.entries);
 
                         // 語幹長を延ばす
                         if (stemLen >= key.size()) break;
@@ -657,6 +801,9 @@ namespace {
                     
                 }
             }
+            // 結果を集める
+            mazeCands.SerializeOutput(mazeCandidates);
+
             // 結果を返す
             for (const auto& c : mazeCandidates) {
                 mazeResult.push_back(MazeResult(c.output, c.EntryPtr ? c.EntryPtr->GetXferPlusGobiLen(c.output) : c.output.size()));
@@ -665,21 +812,22 @@ namespace {
             return mazeResult;
         }
 
-        // GetCandidates() が返した候補のうち output を持つものを選択してユーザー辞書にコピー
-        void SelectCadidate(const MString& output) {
-            for (size_t n = 1; n < mazeCandidates.size(); ++n) {
-                if (mazeCandidates[n].output == output) {
-                    auto nthPtr = mazeCandidates[n].EntryPtr;
-                    if (mazeCandidates[n - 1].EntryPtr->yomi == nthPtr->yomi) {
-                        LOG_INFO(_T("ADD: yomi=%s, xfer=%s"), nthPtr->yomi.c_str(), MAKE_WPTR(nthPtr->xfer));
-                        // 1つ前の候補と同じ読みだった、つまり同じ読み群の中で先頭でなかったら、ユーザー辞書にコピーする
-                        // 新しいユーザーエントリを作成して登録する
-                        const MazeEntry* pEntry = MazeEntries.AddEntry(nthPtr->yomi, to_wstr(nthPtr->xfer), true);
-                        InsertEntry(pEntry);
-                        // 同一のエントリがあればそれを削除
-                        UserEntries.DeleteEntry(pEntry);
-                        // 同一読みの先頭に追加
-                        UserEntries.AddUserEntries(pEntry->yomi, utils::make_one_element_vector(pEntry));
+        // GetCandidates() が返した候補のうち output を持つものを選択して優先辞書にコピー
+        void SelectCandidate(const MString& output) {
+            _LOG_DEBUGH(_T("CALLED: output=%s"), MAKE_WPTR(output));
+            if (!mazeCandidates.empty()) {
+                const MString& firstYomi = mazeCandidates[0].yomi;
+                _LOG_DEBUGH(_T("firstYomi=%s"), MAKE_WPTR(firstYomi));
+                for (size_t n = 1; n < mazeCandidates.size(); ++n) {
+                    _LOG_DEBUGH(_T("%d: yomi=%s, output=%s"), n, MAKE_WPTR(mazeCandidates[n].yomi), MAKE_WPTR(mazeCandidates[n].output));
+                    if (mazeCandidates[n].output == output) {
+                        // 2つ目以降で見つかったら、それを優先辞書に登録する
+                        const MString& myYomi = mazeCandidates[n].yomi;
+                        MString origYomi = mazeCandidates[n].EntryPtr->GetTrimmedYomi();
+                        LOG_INFO(_T("firstYomi=%s, myYomi=%s, origYomi=%s"), MAKE_WPTR(firstYomi), MAKE_WPTR(myYomi), MAKE_WPTR(origYomi));
+                        PrimaryEntries.AddPrimaryEntry(origYomi, mazeCandidates[n].EntryPtr->xfer);
+                        if (myYomi != origYomi) PrimaryEntries.DeletePrimaryEntry(myYomi);
+                        break;
                     }
                 }
             }
@@ -694,8 +842,14 @@ namespace {
             return mazeDic.empty();
         }
 
+        bool IsUserDicDirty() {
+            return UserEntries.IsDirty();
+        }
+
         // ユーザー辞書ファイルへの保存
         void SaveUserDic(utils::OfstreamWriter& writer) {
+            if (!UserEntries.IsDirty()) return;
+
             std::set<MString> xfers;    // 同じ変換形のチェック用
             for (const auto& pair : UserEntries.GetAllEntries()) {
                 wstring line;
@@ -718,6 +872,25 @@ namespace {
                     // 書き込み
                     writer.writeLine(utils::utf8_encode(line));
                 }
+            }
+        }
+
+        bool IsPrimaryDicDirty() {
+            return PrimaryEntries.IsDirty();
+        }
+
+        // 優先辞書ファイルへの保存
+        void SavePrimaryDic(utils::OfstreamWriter& writer) {
+            if (!PrimaryEntries.IsDirty()) return;
+
+            std::set<MString> xfers;    // 同じ変換形のチェック用
+            for (const auto& pair : PrimaryEntries.GetAllEntries()) {
+                wstring line;
+                line.append(to_wstr(pair.first));                // 読み
+                line.append(_T(" /"));
+                line.append(to_wstr(pair.second));  // 変換形
+                line.append(_T("/"));
+                writer.writeLine(utils::utf8_encode(line));
             }
         }
 
@@ -755,6 +928,7 @@ int MazegakiDic::CreateMazegakiDic(const tstring& mazeFile) {
         if (name.find(_T(".*.")) != wstring::npos) continue;    // パターンファイルは無視
 
         bool bUser = utils::toLower(name).find(_T(".user.")) != wstring::npos;  // ユーザ辞書か
+        bool bPrim = utils::toLower(name).find(_T(".prim.")) != wstring::npos;  // 優先辞書か
 
         auto path = utils::joinPath(SETTINGS->rootDir, name);
         LOG_INFO(_T("open maze file: %s"), path.c_str());
@@ -762,7 +936,7 @@ int MazegakiDic::CreateMazegakiDic(const tstring& mazeFile) {
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             //pImpl->ReadFile(utils::IfstreamReader(path).getAllLines());
-            pImpl->ReadFile(reader.getAllLines(), bUser);
+            pImpl->ReadFile(reader.getAllLines(), bUser, bPrim);
             LOG_INFO(_T("close maze file: %s"), path.c_str());
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
@@ -775,14 +949,14 @@ int MazegakiDic::CreateMazegakiDic(const tstring& mazeFile) {
     return result;
 }
 
-// 交ぜ書き辞書ファイルを読み込む
+// 交ぜ書き辞書ファイルを追加で読み込む(kwmaze.wiki.txtとか)
 void MazegakiDic::ReadMazegakiDic(const tstring& filename) {
         auto path = utils::joinPath(SETTINGS->rootDir, filename);
         LOG_INFO(_T("open maze file: %s"), path.c_str());
 
         utils::IfstreamReader reader(path);
         if (reader.success()) {
-            Singleton->ReadFile(reader.getAllLines(), false);
+            Singleton->ReadFile(reader.getAllLines(), false, false);
             LOG_INFO(_T("close maze file: %s"), path.c_str());
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
@@ -792,14 +966,22 @@ void MazegakiDic::ReadMazegakiDic(const tstring& filename) {
 }
 
 // 交ぜ書き辞書ファイルに書き込む
-void MazegakiDic::WriteMazegakiDic(const tstring& path) {
+void MazegakiDic::WriteMazegakiDic(const tstring& path, bool bUser, bool bPrim) {
     LOG_INFO(_T("CALLED: path=%s"), path.c_str());
-    if (!path.empty() && Singleton) {
-        if (!Singleton->IsEmpty()) {
-            if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
-                utils::OfstreamWriter writer(path);
-                if (writer.success()) {
-                    Singleton->SaveUserDic(writer);
+    if (bUser || bPrim) {
+        if (!path.empty() && Singleton) {
+            if (!Singleton->IsEmpty()) {
+                if ((bUser && Singleton->IsUserDicDirty()) || (bPrim && Singleton->IsPrimaryDicDirty())) {
+                    if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
+                        utils::OfstreamWriter writer(path);
+                        if (writer.success()) {
+                            if (bPrim) {
+                                Singleton->SavePrimaryDic(writer);
+                            } else if (bUser) {
+                                Singleton->SaveUserDic(writer);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -809,10 +991,16 @@ void MazegakiDic::WriteMazegakiDic(const tstring& path) {
 // 交ぜ書き辞書ファイルに書き込む
 void MazegakiDic::WriteMazegakiDic() {
     if (!SETTINGS->mazegakiFile.empty()) {
+        wstring primDic = _T("kwmaze.prim.dic");       // デフォルトの優先辞書名
         wstring userDic = _T("kwmaze.user.dic");       // デフォルトのユーザー辞書名
         for (const auto& nm : utils::split(SETTINGS->mazegakiFile, '|')) {
             auto lname = utils::toLower(nm);
-            if (lname.find(_T(".user.")) != wstring::npos) {
+            if (lname.find(_T(".prim.")) != wstring::npos) {
+                // 指定の優先辞書名があった
+                primDic = nm;
+                LOG_INFO(_T("primary maze filename found: %s"), primDic.c_str());
+                break;
+            } else if (lname.find(_T(".user.")) != wstring::npos) {
                 // 指定のユーザ辞書名があった
                 userDic = nm;
                 LOG_INFO(_T("user maze filename found: %s"), userDic.c_str());
@@ -821,13 +1009,20 @@ void MazegakiDic::WriteMazegakiDic() {
                 // パターンファイル(xxx.*.yyy) があれば xxx.user.yyy に変える
                 size_t pos = lname.find(_T(".*."));
                 if (pos != wstring::npos) {
+                    primDic = nm.substr(0, pos + 1) + _T("prim") + nm.substr(pos + 2);
                     userDic = nm.substr(0, pos + 1) + _T("user") + nm.substr(pos + 2);
+                    LOG_INFO(_T("replaced primary maze filename: %s"), primDic.c_str());
                     LOG_INFO(_T("replaced user maze filename: %s"), userDic.c_str());
                 }
             }
         }
+
         auto path = utils::joinPath(SETTINGS->rootDir, userDic);
         LOG_INFO(_T("save user maze file: %s"), path.c_str());
-        WriteMazegakiDic(path);
+        WriteMazegakiDic(path, true, false);
+
+        path = utils::joinPath(SETTINGS->rootDir, primDic);
+        LOG_INFO(_T("save primary maze file: %s"), path.c_str());
+        WriteMazegakiDic(path, false, true);
     }
 }

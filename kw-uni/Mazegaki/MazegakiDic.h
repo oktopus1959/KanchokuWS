@@ -41,15 +41,15 @@ public:
     // 交ぜ書き辞書ファイルに書き込む(SETTINGS->mazegakiFile)
     static void WriteMazegakiDic();
 
-    static void WriteMazegakiDic(const tstring&);
+    static void WriteMazegakiDic(const tstring&, bool, bool);
 
-    virtual bool AddMazeDicEntry(const wstring& line, bool bUser) = 0;
+    virtual bool AddMazeDicEntry(const wstring& line, bool bUser, bool bPrim) = 0;
 
     // 指定の見出し語に対する変換候補のセットを取得する
     virtual const std::vector<MazeResult>& GetCandidates(const MString& key) = 0;
 
     // GetCandidates() が返した候補のうち target を持つものを選択してユーザー辞書にコピー
-    virtual void SelectCadidate(const MString& target) = 0;
+    virtual void SelectCandidate(const MString& target) = 0;
 
     // 指定の読みと変換形を持つユーザー辞書エントリを削除
     virtual void DeleteEntry(const wstring& yomi, const MString& xfer) = 0;
@@ -58,9 +58,18 @@ public:
     virtual bool IsEmpty() = 0;
 
     // 交ぜ書き辞書ファイルの読み込み
-    virtual void ReadFile(const std::vector<wstring>& lines, bool bUser) = 0;
+    virtual void ReadFile(const std::vector<wstring>& lines, bool bUser, bool bPrim) = 0;
 
-    // 辞書ファイルの内容の書き出し
+    // 優先辞書が書き換えられたか
+    virtual bool IsPrimaryDicDirty() = 0;
+
+    // 優先辞書ファイルの内容の書き出し
+    virtual void SavePrimaryDic(utils::OfstreamWriter&) = 0;
+
+    // 優先辞書が書き換えられたか
+    virtual bool IsUserDicDirty() = 0;
+
+    // ユーザ辞書ファイルの内容の書き出し
     virtual void SaveUserDic(utils::OfstreamWriter&) = 0;
 };
 

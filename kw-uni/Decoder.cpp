@@ -272,7 +272,7 @@ public:
                 LOG_DEBUGH(_T("addMazegakiEntry: %s"), items.size() >= 2 && !items[1].empty() ? items[1].c_str() : _T("none"));
                 if (MAZEGAKI_DIC && items.size() >= 2 && !items[1].empty()) {
                     // 交ぜ書きエントリの追加
-                    MAZEGAKI_DIC->AddMazeDicEntry(items[1], true);
+                    MAZEGAKI_DIC->AddMazeDicEntry(items[1], true, false);
                 }
             } else if (cmd == _T("readMazegakiDic") && BUSHU_ASSOC_DIC) {
                 // 交ぜ書き辞書の読み込み

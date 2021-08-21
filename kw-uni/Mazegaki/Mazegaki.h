@@ -90,7 +90,9 @@ private:
         if (IsJustAfterPrevXfer()) {
             selectFirstCandDisabled = true;
             yomi = prevYomi;
-            return prevXferLen;
+            size_t resultLen = prevXferLen;
+            prevXferLen = 0;
+            return resultLen;
         }
         selectFirstCandDisabled = false;
         return 0;

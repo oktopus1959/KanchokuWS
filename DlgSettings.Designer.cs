@@ -336,6 +336,7 @@ namespace KanchokuWS
             this.textBox_mazeNoIfxGobiMaxLen = new System.Windows.Forms.TextBox();
             this.checkBox_mazeBlockerTail = new System.Windows.Forms.CheckBox();
             this.checkBox_mazeRemoveHeadSpace = new System.Windows.Forms.CheckBox();
+            this.checkBox_mazeRightShiftYomiPos = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -348,7 +349,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.checkBox_mazeRightShiftYomiPos = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -3943,6 +3943,17 @@ namespace KanchokuWS
         "の間に空白を入れてから変換すると、「彼女に逢う」\r\nのように変換されます。");
             this.checkBox_mazeRemoveHeadSpace.UseVisualStyleBackColor = true;
             // 
+            // checkBox_mazeRightShiftYomiPos
+            // 
+            this.checkBox_mazeRightShiftYomiPos.AutoSize = true;
+            this.checkBox_mazeRightShiftYomiPos.Location = new System.Drawing.Point(20, 84);
+            this.checkBox_mazeRightShiftYomiPos.Name = "checkBox_mazeRightShiftYomiPos";
+            this.checkBox_mazeRightShiftYomiPos.Size = new System.Drawing.Size(201, 19);
+            this.checkBox_mazeRightShiftYomiPos.TabIndex = 3;
+            this.checkBox_mazeRightShiftYomiPos.Text = "「>」で変換開始位置を右に移動する";
+            this.toolTip1.SetToolTip(this.checkBox_mazeRightShiftYomiPos, resources.GetString("checkBox_mazeRightShiftYomiPos.ToolTip"));
+            this.checkBox_mazeRightShiftYomiPos.UseVisualStyleBackColor = true;
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -4084,17 +4095,6 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // checkBox_mazeRightShiftYomiPos
-            // 
-            this.checkBox_mazeRightShiftYomiPos.AutoSize = true;
-            this.checkBox_mazeRightShiftYomiPos.Location = new System.Drawing.Point(20, 84);
-            this.checkBox_mazeRightShiftYomiPos.Name = "checkBox_mazeRightShiftYomiPos";
-            this.checkBox_mazeRightShiftYomiPos.Size = new System.Drawing.Size(201, 19);
-            this.checkBox_mazeRightShiftYomiPos.TabIndex = 3;
-            this.checkBox_mazeRightShiftYomiPos.Text = "「>」で変換開始位置を右に移動する";
-            this.toolTip1.SetToolTip(this.checkBox_mazeRightShiftYomiPos, resources.GetString("checkBox_mazeRightShiftYomiPos.ToolTip"));
-            this.checkBox_mazeRightShiftYomiPos.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 

@@ -121,7 +121,7 @@ namespace {
                     // 直前の候補と読み長が同じ、つまり、同じ読みの中で先頭ではなかった
                     // 再検索して、ユーザー辞書に追加する
                     MAZEGAKI_DIC->GetCandidates(utils::last_substr(firstCandYomi, len));
-                    MAZEGAKI_DIC->SelectCadidate(mazeCandidates[n].resultStr);
+                    MAZEGAKI_DIC->SelectCandidate(mazeCandidates[n].resultStr);
                 }
             }
         }
