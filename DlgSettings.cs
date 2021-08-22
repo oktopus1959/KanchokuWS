@@ -908,7 +908,7 @@ namespace KanchokuWS
             checkBox_mazeRightShiftYomiPos.Checked = Settings.MazeRightShiftYomiPos;
             textBox_mazeYomiMaxLen.Text = $"{Settings.MazeYomiMaxLen}";
             textBox_mazeGobiMaxLen.Text = $"{Settings.MazeGobiMaxLen}";
-            //textBox_mazeNoIfxGobiMaxLen.Text = $"{Settings.MazeNoIfxGobiMaxLen}";
+            textBox_mazeGobiLikeTailLen.Text = $"{Settings.MazeGobiLikeTailLen}";
 
             // その他変換
             checkBox_convertShiftedHiraganaToKatakana.Checked = Settings.ConvertShiftedHiraganaToKatakana;
@@ -948,7 +948,7 @@ namespace KanchokuWS
             checkerHistory.Add(checkBox_mazeRightShiftYomiPos);
             checkerHistory.Add(textBox_mazeYomiMaxLen);
             checkerHistory.Add(textBox_mazeGobiMaxLen);
-            //checkerHistory.Add(textBox_mazeNoIfxGobiMaxLen);
+            checkerHistory.Add(textBox_mazeGobiLikeTailLen);
 
             // その他変換
             checkerHistory.Add(checkBox_convertShiftedHiraganaToKatakana);
@@ -989,8 +989,8 @@ namespace KanchokuWS
             Settings.SetUserIni("mazeRemoveHeadSpace", checkBox_mazeRemoveHeadSpace.Checked);
             Settings.SetUserIni("mazeRightShiftYomiPos", checkBox_mazeRightShiftYomiPos.Checked);
             Settings.SetUserIni("mazeGobiMaxLen", textBox_mazeGobiMaxLen.Text.Trim());
-            //Settings.SetUserIni("mazeNoIfxGobiMaxLen", textBox_mazeNoIfxGobiMaxLen.Text.Trim());
             Settings.SetUserIni("mazeYomiMaxLen", textBox_mazeYomiMaxLen.Text.Trim());
+            Settings.SetUserIni("mazeGobiLikeTailLen", textBox_mazeGobiLikeTailLen.Text.Trim());
 
             Settings.SetUserIni("convertShiftedHiraganaToKatakana", checkBox_convertShiftedHiraganaToKatakana.Checked);
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);

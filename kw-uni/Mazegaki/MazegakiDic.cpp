@@ -203,6 +203,9 @@ namespace {
                 int gobiLen = find_gobi(inflexList, resultStr.c_str() + xferLen);
                 if (gobiLen > 0) xferLen += gobiLen;
             }
+            //return xferLen;
+            // 末尾の残りの長さがN文字以下なら、それも語尾に含めてしまう
+            if (xferLen + SETTINGS->mazeGobiLikeTailLen >= resultStr.size()) xferLen = resultStr.size();
             return xferLen;
         }
 

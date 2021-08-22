@@ -351,6 +351,7 @@ namespace KanchokuWS
         public static int MazeYomiMaxLen { get; private set; } = 10;
         public static int MazeGobiMaxLen { get; private set; } = 3;
         public static int MazeNoIfxGobiMaxLen { get; private set; } = 3;
+        public static int MazeGobiLikeTailLen { get; private set; } = 2;
 
         public static bool MazeBlockerTail { get; set; } = false;
         public static bool MazeRemoveHeadSpace { get; set; } = false;
@@ -735,7 +736,7 @@ namespace KanchokuWS
             MazeRightShiftYomiPos = addDecoderSetting("mazeRightShiftYomiPos", false);          // 交ぜ書き変換で、読みの開始位置を右移動する
             MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
-            MazeNoIfxGobiMaxLen = addDecoderSetting("mazeNoIfxGobiMaxLen", 5, 0);               // 交ぜ書きでの無活用語の語尾の最大長(使わない)
+            MazeGobiLikeTailLen = addDecoderSetting("mazeGobiLikeTailLen", 2, 0);               // 交ぜ書き変換で、語尾に含めてしまう末尾の長さ
 
             ConvertShiftedHiraganaToKatakana = addDecoderSetting("convertShiftedHiraganaToKatakana", "shiftKana", false);  // 平仮名をカタカナに変換する
             ConvertJaPeriod = addDecoderSetting("convertJaPeriod", false);                      // 「。」と「．」の相互変換
