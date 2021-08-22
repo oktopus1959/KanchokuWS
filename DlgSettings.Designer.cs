@@ -3060,7 +3060,7 @@ namespace KanchokuWS
             this.textBox_mazeGobiLikeTailLen.Location = new System.Drawing.Point(137, 151);
             this.textBox_mazeGobiLikeTailLen.Name = "textBox_mazeGobiLikeTailLen";
             this.textBox_mazeGobiLikeTailLen.Size = new System.Drawing.Size(42, 19);
-            this.textBox_mazeGobiLikeTailLen.TabIndex = 27;
+            this.textBox_mazeGobiLikeTailLen.TabIndex = 6;
             this.toolTip1.SetToolTip(this.textBox_mazeGobiLikeTailLen, resources.GetString("textBox_mazeGobiLikeTailLen.ToolTip"));
             // 
             // label46
@@ -3078,7 +3078,7 @@ namespace KanchokuWS
             this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(137, 129);
             this.textBox_mazeGobiMaxLen.Name = "textBox_mazeGobiMaxLen";
             this.textBox_mazeGobiMaxLen.Size = new System.Drawing.Size(42, 19);
-            this.textBox_mazeGobiMaxLen.TabIndex = 28;
+            this.textBox_mazeGobiMaxLen.TabIndex = 5;
             this.toolTip1.SetToolTip(this.textBox_mazeGobiMaxLen, "交ぜ書き変換時の語尾の最大長\r\n\r\n交ぜ書き変換時に、変換形に対して語尾を最大何文字まで与えるかを\r\n指定します。\r\n0 を設定すると、活用語尾を持つエントリは検" +
         "索の対象になりません。\r\n\r\n例：\r\n 最大語尾長を2と設定した場合は、「あ/う /会/」というエントリに対して\r\n「あった」は「会った」に変換できますが、「会" +
         "わせる」は変換対象外と\r\nなります。");
@@ -3098,7 +3098,7 @@ namespace KanchokuWS
             this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(137, 107);
             this.textBox_mazeYomiMaxLen.Name = "textBox_mazeYomiMaxLen";
             this.textBox_mazeYomiMaxLen.Size = new System.Drawing.Size(42, 19);
-            this.textBox_mazeYomiMaxLen.TabIndex = 27;
+            this.textBox_mazeYomiMaxLen.TabIndex = 4;
             this.toolTip1.SetToolTip(this.textBox_mazeYomiMaxLen, "交ぜ書き変換時の読み入力の最大長\r\n\r\n交ぜ書き変換時に入力として扱う読みの長さの\r\n最大文字数を指定します。");
             // 
             // checkBox_mazeRightShiftYomiPos
@@ -3155,7 +3155,7 @@ namespace KanchokuWS
             this.groupBox27.Location = new System.Drawing.Point(312, 197);
             this.groupBox27.Name = "groupBox27";
             this.groupBox27.Size = new System.Drawing.Size(261, 108);
-            this.groupBox27.TabIndex = 5;
+            this.groupBox27.TabIndex = 4;
             this.groupBox27.TabStop = false;
             this.groupBox27.Text = "その他変換・機能";
             // 
@@ -3530,7 +3530,7 @@ namespace KanchokuWS
             this.button_histClose.Location = new System.Drawing.Point(385, 343);
             this.button_histClose.Name = "button_histClose";
             this.button_histClose.Size = new System.Drawing.Size(80, 23);
-            this.button_histClose.TabIndex = 6;
+            this.button_histClose.TabIndex = 5;
             this.button_histClose.Text = "閉じる(&C)";
             this.button_histClose.UseVisualStyleBackColor = true;
             this.button_histClose.Click += new System.EventHandler(this.button_histClose_Click);
@@ -3542,7 +3542,7 @@ namespace KanchokuWS
             this.button_histEnter.Location = new System.Drawing.Point(493, 343);
             this.button_histEnter.Name = "button_histEnter";
             this.button_histEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_histEnter.TabIndex = 7;
+            this.button_histEnter.TabIndex = 6;
             this.button_histEnter.Text = "設定(&E)";
             this.toolTip1.SetToolTip(this.button_histEnter, "設定内容を kanchoku.user.ini に書き込みます");
             this.button_histEnter.UseVisualStyleBackColor = true;
