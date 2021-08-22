@@ -776,12 +776,18 @@ namespace {
                         // 同じ読みなら、ユーザー辞書を優先
                         auto keyStem = key.substr(0, stemLen);
                         for (auto p : entrySet) {
-                            _LOG_DEBUGH(_T("key=%s, keyStem=%s, mazeSearch=%s, p->stem=%s, p->xfer=%s, user=%s, deleted=%s"),
-                                MAKE_WPTR(key), MAKE_WPTR(keyStem), BOOL_TO_WPTR(mazeSearch), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
+#ifdef _DEBUG
+                            if (entrySet.size() < 20) {
+                                _LOG_DEBUGH(_T("key=%s, keyStem=%s, mazeSearch=%s, p->stem=%s, p->xfer=%s, user=%s, deleted=%s"),
+                                    MAKE_WPTR(key), MAKE_WPTR(keyStem), BOOL_TO_WPTR(mazeSearch), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
+                            }
+#endif
                             if (p->deleted) continue;
                             // 読み語幹の先頭部が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケースや「経い」→「経」のケース)
+                            // 「けい /経/」と「けいい /経緯/」があって、「経い」を変換したときに「経」が候補として採用されることを防ぐ
+                            // また、かりに「けい /緯/」という登録があったとして「け緯」⇒「緯」も防ぎたい
                             // ただし、「国民は」の「国民」は通す必要あり。そうしないと「国民派」に変換されてしまう
-                            if (keyStem != p->xfer && utils::startsWith(keyStem, p->xfer)) continue;
+                            if (keyStem != p->xfer && (utils::startsWith(keyStem, p->xfer) || utils::endsWith(keyStem, p->xfer))) continue;
 
                             if (keyStem == p->stem || mazeSearch && order_matched(keyStem, p)) {
                                 // 読み語幹が完全一致、または key に漢字が含まれている場合は、ひらがな・漢字の出現順序の一致を確認
