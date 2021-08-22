@@ -242,7 +242,7 @@ public:
         return tail_string(maxlen, tail_size());
     }
 
-    // 改行を含まない末尾部分(最大長maxlen)で、履歴ブロッカーまたは句読点までの部分文字列を返す(末尾の句読点は含める)
+    // 改行を含まない末尾部分(最大長maxlen)で、履歴ブロッカーまたは句読点までの部分文字列を返す(先頭の空白と末尾の句読点は含める)
     inline MString BackStringUptoHistBlockerOrPunct(size_t maxlen) const {
         return tail_string(maxlen, tail_size_upto_flag_or_punct(OutputStack::FLAG_BLOCK_HIST));
     }
@@ -329,10 +329,10 @@ public:
         return utils::find_tail_kanji_or_katakana_str(backStringUpto(20, OutputStack::FLAG_BLOCK_HIST));
     }
 
-    // ブロッカー以降で、出力履歴の末尾から len 文字までの平仮名文字列を取得する
+    // ブロッカー以降で、出力履歴の末尾から len 文字までの平仮名文字列を取得する (bHeadSpace=trueなら先頭の空白も含む)
     template<typename T>
-    inline T GetLastHiraganaStr() const {
-        return utils::find_tail_hiragana_str(backStringUpto(20, OutputStack::FLAG_BLOCK_HIST));
+    inline T GetLastHiraganaStr(bool bHeadSpace = false) const {
+        return utils::find_tail_hiragana_str(backStringUpto(20, OutputStack::FLAG_BLOCK_HIST), bHeadSpace);
     }
 
     // ブロッカー以降で、出力履歴の末尾から len 文字までの日本語文字列を取得する

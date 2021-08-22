@@ -14,6 +14,8 @@
 
 #include "KatakanaOneShot.h"
 
+#define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegaki)
+
 namespace {
 
 #define MAX_YOMI_LEN 10
@@ -37,23 +39,32 @@ namespace {
 
         // 機能状態に対して生成時処理を実行する
         bool DoProcOnCreated() {
-            LOG_DEBUG(_T("ENTER"));
+            _LOG_DEBUGH(_T("ENTER"));
 
-            auto outStr = OUTPUT_STACK->GetLastHiraganaStr<MString>();
+            auto outStr = OUTPUT_STACK->GetLastHiraganaStr<MString>(true);
+            size_t numBS = outStr.size();
+            _LOG_DEBUGH(_T("H->K: outStr=%s, numBS=%d"), MAKE_WPTR(outStr), numBS);
+            if (SETTINGS->mazeRemoveHeadSpace && numBS > 0 && outStr[0] == ' ') {
+                // 全読みの先頭の空白を削除
+                _LOG_DEBUGH(_T("REMOVE_HEAD_SPACE"));
+                outStr = outStr.substr(1);
+            }
             if (!outStr.empty()) {
                 // カタカナに変換して置換する
-                STATE_COMMON->SetOutString(utils::convert_hiragana_to_katakana(outStr), outStr.size());
+                STATE_COMMON->SetOutString(utils::convert_hiragana_to_katakana(outStr), numBS);
                 OUTPUT_STACK->setHistBlockerAt(outStr.size());
             } else {
                 outStr = OUTPUT_STACK->GetLastKatakanaStr<MString>();
+                numBS = outStr.size();
+                _LOG_DEBUGH(_T("K->H: outStr=%s, numBS=%d"), MAKE_WPTR(outStr), numBS);
                 if (!outStr.empty()) {
                     // ひらがなに変換して置換する
-                    STATE_COMMON->SetOutString(utils::convert_katakana_to_hiragana(outStr), outStr.size());
+                    STATE_COMMON->SetOutString(utils::convert_katakana_to_hiragana(outStr), numBS);
                 }
             }
 
             // チェイン不要
-            LOG_DEBUG(_T("LEAVE: NO CHAIN"));
+            _LOG_DEBUGH(_T("LEAVE: NO CHAIN"));
 
             return false;
         }

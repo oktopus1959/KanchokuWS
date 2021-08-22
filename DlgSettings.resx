@@ -120,42 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="checkBox_mazeRightShiftYomiPos.ToolTip" xml:space="preserve">
-    <value>ONにすると、「&gt;」で交ぜ書き読みの開始位置を右に移動します。
-
-「&gt;」は交ぜ書きブロッカーの右移動にも割り当てられていますが、
-この設定をONにすると、交ぜ書き読みの開始位置の移動のほうが
-優先されます。
-
-いったん、「&lt;」で交ぜ書きブロッカーを左移動させると、その次からは
-「&gt;」は交ぜ書きブロッカーの右移動となります。
-
-例：当設定がONで、「彼女にあう」を変換して「彼女似合う」となった場合は、
-変換直後に「&gt;」を入力すると変換開始位置が右にシフトするので、
-「彼女に逢う」と変換されます。
-
-当設定がOFFの場合は、いったん Esc で読みに戻してから "&gt;" でブロッカーを
-右移動して再変換を実行してください。
-
-また、ブロッカーを右端に移動させてから、さらに "&gt;" を打鍵した場合も
-変換開始位置の右移動になります。</value>
-  </data>
-  <data name="checkBox_mazeBlockerTail.ToolTip" xml:space="preserve">
-    <value>ONにすると、交ぜ書き変換後に、変換形＋活用語尾の後に
-交ぜ書きブロッカーを置きます。
-OFFにすると、変換文字列全体の末尾にブロッカーを置きます。
-
-交ぜ書きブロッカーがあると、そこで交ぜ書き用の読みの採取が
-ブロックされます。
-
-例：「ぜんりょくをあげて」を変換した場合、それぞれ、
-・ONなら「全力|をあげて」のように「全力」の後にブロッカー
-・OFFなら「全力をあげて|」のように、末尾にブロッカー
-が置かれます。</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -485,6 +449,50 @@ Ctrl-Shift修飾されたキーで、ブロッカーの解除となります。
 横取りし、漢直窓Sから再度 keybd_event でキーの送出を行っています。
 そのため、出力先アプリによってはキーを受け取れないものもあります。
 その場合は、いったん、当設定をOFFにしてください。</value>
+  </data>
+  <data name="checkBox_mazeRightShiftYomiPos.ToolTip" xml:space="preserve">
+    <value>ONにすると、「&gt;」で交ぜ書き読みの開始位置を右に移動します。
+
+「&gt;」は交ぜ書きブロッカーの右移動にも割り当てられていますが、
+この設定をONにすると、交ぜ書き読みの開始位置の移動のほうが
+優先されます。
+
+いったん、「&lt;」で交ぜ書きブロッカーを左移動させると、その次からは
+「&gt;」は交ぜ書きブロッカーの右移動となります。
+
+例：当設定がONで、「彼女にあう」を変換して「彼女似合う」となった場合は、
+変換直後に「&gt;」を入力すると変換開始位置が右にシフトするので、
+「彼女に逢う」と変換されます。
+
+当設定がOFFの場合は、いったん Esc で読みに戻してから "&gt;" でブロッカーを
+右移動して再変換を実行してください。
+
+また、ブロッカーを右端に移動させてから、さらに "&gt;" を打鍵した場合も
+変換開始位置の右移動になります。</value>
+  </data>
+  <data name="checkBox_mazeRemoveHeadSpace.ToolTip" xml:space="preserve">
+    <value>ONにすると、半角空白文字を交ぜ書き変換の開始位置にします。
+交ぜ書き変換後、空白文字は除去されます。
+（ひらがな⇒カタカナ変換時にも適用されます）
+
+例：「明日彼女にあう」の「あう」を「逢う」に変換したい場合、
+「彼女にあう」を変換すると「彼女似合う」になってしまいます。
+これを避けるには、当項目をONにして、「彼女に あう」のように
+「に」と「あう」の間に空白を入れてから変換すると、「彼女に逢う」
+のように変換されます。</value>
+  </data>
+  <data name="checkBox_mazeBlockerTail.ToolTip" xml:space="preserve">
+    <value>ONにすると、交ぜ書き変換後に、変換形＋活用語尾の後に
+交ぜ書きブロッカーを置きます。
+OFFにすると、変換文字列全体の末尾にブロッカーを置きます。
+
+交ぜ書きブロッカーがあると、そこで交ぜ書き用の読みの採取が
+ブロックされます。
+
+例：「ぜんりょくをあげて」を変換した場合、それぞれ、
+・ONなら「全力|をあげて」のように「全力」の後にブロッカー
+・OFFなら「全力をあげて|」のように、末尾にブロッカー
+が置かれます。</value>
   </data>
   <data name="comboBox_histNumDeckeyId.ToolTip" xml:space="preserve">
     <value>履歴検索の縦列鍵盤表示時に、候補を文字数で絞るモードに

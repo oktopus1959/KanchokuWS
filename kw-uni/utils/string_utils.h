@@ -592,13 +592,14 @@ namespace utils
         return s.size() - pos;
     }
 
-    /// <summary> 末尾の平仮名連鎖を取得(中黒・長音を含む</summary>
+    /// <summary> 末尾の平仮名連鎖を取得(中黒・長音を含む; bHeadSpace==trueなら先頭の空白も含む)</summary>
     template<typename T>
-    inline T find_tail_hiragana_str(const T& s) {
+    inline T find_tail_hiragana_str(const T& s, bool bHeadSpace = false) {
         size_t pos = s.size();
         while (pos > 0 && is_hiragana_or_etc(s[pos - 1])) {
             --pos;
         }
+        if (bHeadSpace && pos > 0 && s[pos - 1] == ' ') --pos;
         if (pos < s.size()) return s.substr(pos);
         return T();
     }
