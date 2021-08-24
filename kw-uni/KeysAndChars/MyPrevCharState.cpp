@@ -120,6 +120,15 @@ State* PrevCharNode::CreateState() {
     return new PrevCharState(this);
 }
 
+PrevCharNode* PrevCharNode::Singleton() {
+    if (!_singleton) {
+        _singleton.reset(new PrevCharNode());
+    }
+    return _singleton.get();
+}
+
+std::unique_ptr<PrevCharNode> PrevCharNode::_singleton;
+
 // -------------------------------------------------------------------
 // MyCharNodeBuilder - ノードビルダー
 

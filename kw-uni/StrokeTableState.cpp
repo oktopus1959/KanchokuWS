@@ -8,6 +8,7 @@
 #include "StrokeTable.h"
 #include "VkbTableMaker.h"
 #include "Settings.h"
+#include "KeysAndChars/MyPrevChar.h"
 
 #include "DeckeyToChars.h"
 #include "History/HistoryStayState.h"
@@ -78,7 +79,10 @@ namespace {
                 shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
                 handleStrokeKeys(UNSHIFT_DECKEY(deckey));
             } else {
-                State::handleShiftKeys(deckey);
+                //State::handleShiftKeys(deckey);
+                // 自身を捨てて前打鍵を出力
+                SetNextNodeMaybe(PrevCharNode::Singleton());
+                setToRemoveAllStroke();
             }
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
