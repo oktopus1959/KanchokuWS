@@ -28,6 +28,9 @@ namespace VkbTableMaker {
     // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
     void MakeExtraCharsStrokePositionTable(wchar_t* faces);
 
+    // シフトキー文字を集めたストローク表を作成する
+    void MakeShiftKeyCharsStrokePositionTable(wchar_t* faces);
+
     // 初期打鍵表(下端機能キー以外は空白)の作成
     void MakeInitialVkbTable(wchar_t* faces);
 

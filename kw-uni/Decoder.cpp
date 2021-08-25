@@ -287,6 +287,9 @@ public:
             } else if (cmd == _T("makeExtraCharsStrokePositionTable")) {
                 // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
                 VkbTableMaker::MakeExtraCharsStrokePositionTable(outParams->faceStrings);
+            } else if (cmd == _T("makeShiftStrokePosition")) {
+                // シフトキー文字配列をストロークの位置に従って並べる
+                VkbTableMaker::MakeShiftKeyCharsStrokePositionTable(outParams->faceStrings);
             } else if (cmd == _T("makeStrokeKeysTable") && items.size() >= 2 && !items[1].empty()) {
                 // 指定の文字配列をストロークキー配列に変換
                 VkbTableMaker::MakeStrokeKeysTable(outParams->faceStrings, items[1].c_str());
