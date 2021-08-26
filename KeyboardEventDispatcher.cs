@@ -161,30 +161,32 @@ namespace KanchokuWS
         {
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"\nCALLED: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
             if (isEffectiveVkey(vkey, extraInfo)) {
-                if (vkey == (int)Keys.Space) {
-                    if (IsDecoderActivated?.Invoke() ?? false) {
+                if (Settings.SandSEnabled) {
+                    if (vkey == (int)Keys.Space) {
+                        if (IsDecoderActivated?.Invoke() ?? false) {
+                            if (spaceKeyState == SpaceKeyState.PRESSED) {
+                                // スペースキーが押下されている状態なら、シフト状態に遷移する
+                                spaceKeyState = SpaceKeyState.SHIFTED;
+                                return true;
+                            }
+                            if (spaceKeyState == SpaceKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+                                                                                     // RELEASED
+                            if (!ctrlKeyPressed() && !shiftKeyPressed()) {
+                                // 1回目の押下で Ctrl も Shift も押されてない
+                                spaceKeyState = SpaceKeyState.PRESSED;
+                                return true;
+                            }
+                            if (shiftKeyPressed()) {
+                                spaceKeyState = SpaceKeyState.SHIFTED;
+                                return true;
+                            }
+                            // 上記以外はスペース入力として扱う
+                        }
+                    } else {
                         if (spaceKeyState == SpaceKeyState.PRESSED) {
-                            // スペースキーが押下されている状態なら、シフト状態に遷移する
+                            // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
                             spaceKeyState = SpaceKeyState.SHIFTED;
-                            return true;
                         }
-                        if (spaceKeyState == SpaceKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
-                                                                                 // RELEASED
-                        if (!ctrlKeyPressed() && !shiftKeyPressed()) {
-                            // 1回目の押下で Ctrl も Shift も押されてない
-                            spaceKeyState = SpaceKeyState.PRESSED;
-                            return true;
-                        }
-                        if (shiftKeyPressed()) {
-                            spaceKeyState = SpaceKeyState.SHIFTED;
-                            return true;
-                        }
-                        // 上記以外はスペース入力として扱う
-                    }
-                } else {
-                    if (spaceKeyState == SpaceKeyState.PRESSED) {
-                        // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                        spaceKeyState = SpaceKeyState.SHIFTED;
                     }
                 }
                 return keyboardDownHandler(vkey);
@@ -244,13 +246,15 @@ namespace KanchokuWS
         {
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CALLED: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
             if (isEffectiveVkey(vkey, extraInfo)) {
-                if (vkey == (int)Keys.Space) {
-                    var state = spaceKeyState;
-                    spaceKeyState = SpaceKeyState.RELEASED;
-                    if (state == SpaceKeyState.SHIFTED) {
-                        return true;
-                    } else if (state == SpaceKeyState.PRESSED) {
-                        return keyboardDownHandler(vkey);
+                if (Settings.SandSEnabled) {
+                    if (vkey == (int)Keys.Space) {
+                        var state = spaceKeyState;
+                        spaceKeyState = SpaceKeyState.RELEASED;
+                        if (state == SpaceKeyState.SHIFTED) {
+                            return true;
+                        } else if (state == SpaceKeyState.PRESSED) {
+                            return keyboardDownHandler(vkey);
+                        }
                     }
                 }
                 // キーアップ時はなにもしない

@@ -348,6 +348,7 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.checkBox_SandSEnabled = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -3148,13 +3149,14 @@ namespace KanchokuWS
             // 
             // groupBox27
             // 
+            this.groupBox27.Controls.Add(this.checkBox_SandSEnabled);
             this.groupBox27.Controls.Add(this.checkBox_removeOneStrokeByBackspace);
             this.groupBox27.Controls.Add(this.checkBox_convertJaComma);
             this.groupBox27.Controls.Add(this.checkBox_convertJaPeriod);
             this.groupBox27.Controls.Add(this.checkBox_convertShiftedHiraganaToKatakana);
             this.groupBox27.Location = new System.Drawing.Point(312, 197);
             this.groupBox27.Name = "groupBox27";
-            this.groupBox27.Size = new System.Drawing.Size(261, 108);
+            this.groupBox27.Size = new System.Drawing.Size(261, 119);
             this.groupBox27.TabIndex = 4;
             this.groupBox27.TabStop = false;
             this.groupBox27.Text = "その他変換・機能";
@@ -3162,7 +3164,7 @@ namespace KanchokuWS
             // checkBox_removeOneStrokeByBackspace
             // 
             this.checkBox_removeOneStrokeByBackspace.AutoSize = true;
-            this.checkBox_removeOneStrokeByBackspace.Location = new System.Drawing.Point(23, 83);
+            this.checkBox_removeOneStrokeByBackspace.Location = new System.Drawing.Point(23, 77);
             this.checkBox_removeOneStrokeByBackspace.Name = "checkBox_removeOneStrokeByBackspace";
             this.checkBox_removeOneStrokeByBackspace.Size = new System.Drawing.Size(169, 19);
             this.checkBox_removeOneStrokeByBackspace.TabIndex = 3;
@@ -3174,7 +3176,7 @@ namespace KanchokuWS
             // checkBox_convertJaComma
             // 
             this.checkBox_convertJaComma.AutoSize = true;
-            this.checkBox_convertJaComma.Location = new System.Drawing.Point(23, 62);
+            this.checkBox_convertJaComma.Location = new System.Drawing.Point(23, 58);
             this.checkBox_convertJaComma.Name = "checkBox_convertJaComma";
             this.checkBox_convertJaComma.Size = new System.Drawing.Size(137, 19);
             this.checkBox_convertJaComma.TabIndex = 2;
@@ -3185,7 +3187,7 @@ namespace KanchokuWS
             // checkBox_convertJaPeriod
             // 
             this.checkBox_convertJaPeriod.AutoSize = true;
-            this.checkBox_convertJaPeriod.Location = new System.Drawing.Point(23, 41);
+            this.checkBox_convertJaPeriod.Location = new System.Drawing.Point(23, 39);
             this.checkBox_convertJaPeriod.Name = "checkBox_convertJaPeriod";
             this.checkBox_convertJaPeriod.Size = new System.Drawing.Size(137, 19);
             this.checkBox_convertJaPeriod.TabIndex = 1;
@@ -4077,6 +4079,17 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // checkBox_SandSEnabled
+            // 
+            this.checkBox_SandSEnabled.AutoSize = true;
+            this.checkBox_SandSEnabled.Location = new System.Drawing.Point(23, 95);
+            this.checkBox_SandSEnabled.Name = "checkBox_SandSEnabled";
+            this.checkBox_SandSEnabled.Size = new System.Drawing.Size(198, 19);
+            this.checkBox_SandSEnabled.TabIndex = 4;
+            this.checkBox_SandSEnabled.Text = "デコーダON時に SandS を有効にする";
+            this.toolTip1.SetToolTip(this.checkBox_SandSEnabled, resources.GetString("checkBox_SandSEnabled.ToolTip"));
+            this.checkBox_SandSEnabled.UseVisualStyleBackColor = true;
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -4499,5 +4512,6 @@ namespace KanchokuWS
         private System.Windows.Forms.TextBox textBox_mazeGobiMaxLen;
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.TextBox textBox_mazeYomiMaxLen;
+        private System.Windows.Forms.CheckBox checkBox_SandSEnabled;
     }
 }

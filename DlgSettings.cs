@@ -915,6 +915,7 @@ namespace KanchokuWS
             checkBox_convertJaPeriod.Checked = Settings.ConvertJaPeriod;
             checkBox_convertJaComma.Checked = Settings.ConvertJaComma;
             checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
+            checkBox_SandSEnabled.Checked = Settings.SandSEnabled;
         }
 
         private void setHistoryStatusChecker()
@@ -955,6 +956,7 @@ namespace KanchokuWS
             checkerHistory.Add(checkBox_convertJaPeriod);
             checkerHistory.Add(checkBox_convertJaComma);
             checkerHistory.Add(checkBox_removeOneStrokeByBackspace);
+            checkerHistory.Add(checkBox_SandSEnabled);
 
             checkerAll.Add(checkerHistory);
         }
@@ -996,6 +998,7 @@ namespace KanchokuWS
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
             Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
             Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);
+            Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
 
             Settings.ReadIniFile();
 

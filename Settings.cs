@@ -370,6 +370,9 @@ namespace KanchokuWS
         // BS で全打鍵を取り消すか
         public static bool RemoveOneStrokeByBackspace { get; set; } = true;
 
+        // BS で全打鍵を取り消すか
+        public static bool SandSEnabled { get; set; } = false;
+
         //------------------------------------------------------------------------------
         // ウィンドウClassNameごとの設定
         public class WindowsClassSettings
@@ -676,6 +679,10 @@ namespace KanchokuWS
 
             //ConvertCtrlSemiColonToDate = GetString("convertCtrlSemicolonToDate")._parseBool(true);
             DateStringFormat = GetString("dateStringFormat", "yyyy/M/d|yyyyMMdd");
+
+            //-------------------------------------------------------------------------------------
+            // その他変換・機能
+            SandSEnabled = GetString("sandsEnabled")._parseBool(false);         // SandS を有効にするか
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

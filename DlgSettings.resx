@@ -515,6 +515,18 @@ OFFにすると、変換文字列全体の末尾にブロッカーを置きま�
 なお、交ぜ書き変換直後であれば、"&lt;" および "&gt;" でブロッカーを
 移動することができます。</value>
   </data>
+  <data name="checkBox_SandSEnabled.ToolTip" xml:space="preserve">
+    <value>デコーダがONのときに SandS 方式を有効にします。
+
+SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを
+押すと、スペースキーがシフトキーとして働くようになります。
+
+スペースを入力したい場合は、オートリピートが始まる前にスペースキーを
+離してください。
+
+SandS を有効にすると Shift+Space は有効なキーではなく、たんなる
+シフトキーとして扱われます。</value>
+  </data>
   <data name="comboBox_histNumDeckeyId.ToolTip" xml:space="preserve">
     <value>履歴検索の縦列鍵盤表示時に、候補を文字数で絞るモードに
 移行するホットキーのIDを設定します。
