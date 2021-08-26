@@ -429,6 +429,11 @@ namespace KanchokuWS
         /// <summary> Decoder の ON/OFF 状態 </summary>
         public bool IsDecoderActive { get; private set; } = false;
 
+        private bool isDecoderActivated()
+        {
+            return IsDecoderActive;
+        }
+
         public bool IsVkbShown => Settings.VirtualKeyboardShowStrokeCountEffective > 0 && Settings.VirtualKeyboardShowStrokeCountEffective <= decoderOutput.GetStrokeCount() + 1;
 
         /// <summary>
@@ -466,6 +471,7 @@ namespace KanchokuWS
             keDispatcher.ToggleDecoder = ToggleDecoder;
             keDispatcher.ActivateDecoder = ActivateDecoder;
             keDispatcher.DeactivateDecoder = DeactivateDecoder;
+            keDispatcher.IsDecoderActivated = isDecoderActivated;
             keDispatcher.FuncDispatcher = FuncDispatcher;
             //keDispatcher.RotateReverseStrokeHelp = rotateReverseStrokeHelp;
             //keDispatcher.RotateDateString = rotateDateString;

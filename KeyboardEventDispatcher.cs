@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 using Utils;
 
@@ -27,6 +28,9 @@ namespace KanchokuWS
 
         /// <summary>デコーダ OFF </summary>
         public delegate void DelegateDeactivateDecoder();
+
+        /// <summary>デコーダが ON か</summary>
+        public delegate bool DelegateIsDecoderActivated();
 
         /// <summary>デコーダ機能のディスパッチ</summary>
         public delegate bool DelegateDecoderFuncDispatcher(int deckey);
@@ -63,6 +67,9 @@ namespace KanchokuWS
 
         /// <summary>デコーダ OFF </summary>
         public DelegateDeactivateDecoder DeactivateDecoder { get; set; }
+
+        /// <summary>デコーダが ON か</summary>
+        public DelegateIsDecoderActivated IsDecoderActivated { get; set; }
 
         /// <summary>デコーダ機能のディスパッチ</summary>
         public DelegateDecoderFuncDispatcher FuncDispatcher { get; set; }
@@ -134,8 +141,17 @@ namespace KanchokuWS
 
         private bool shiftKeyPressed()
         {
-            return (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
+            return spaceKeyState == SpaceKeyState.SHIFTED || (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
         }
+
+        /// <summary> スペースキーの押下状態</summary>
+        enum SpaceKeyState {
+            RELEASED,
+            PRESSED,
+            SHIFTED,
+        }
+        /// <summary> スペースキーの押下状態</summary>
+        private SpaceKeyState spaceKeyState = SpaceKeyState.RELEASED;
 
         /// <summary>キーボード押下時のハンドラ</summary>
         /// <param name="vkey"></param>
@@ -145,38 +161,73 @@ namespace KanchokuWS
         {
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"\nCALLED: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
             if (isEffectiveVkey(vkey, extraInfo)) {
-                bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-                bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
-                bool ctrl = leftCtrl || rightCtrl;
-                bool shift = shiftKeyPressed();
-                uint mod = KeyModifiers.MakeModifier(ctrl, shift);
-                int kanchokuCode = Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))
-                    ? VirtualKeys.GetCtrlConvertedDecKeyFromCombo(mod, (uint)vkey)
-                    : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
-
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
-                if (kanchokuCode < 0) return false;
-                if (kanchokuCode == DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY && kanchokuCode != VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)) {
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"=historySearchCtrlKey={Settings.HistorySearchCtrlKey}, kanchokuCode={VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)}");
-                    return false;
-                }
-
-                // どうやら KeyboardHook で CallNextHookEx を呼ばないと次のキー入力の処理に移らないみたいだが、
-                // 将来必要になるかもしれないので、下記処理を残しておく
-                if (busyFlag) {
-                    if (vkeyQueue.Count < vkeyQueueMaxSize) {
-                        vkeyQueue.Enqueue(vkey);
-                        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
+                if (vkey == (int)Keys.Space) {
+                    if (IsDecoderActivated?.Invoke() ?? false) {
+                        if (spaceKeyState == SpaceKeyState.PRESSED) {
+                            // スペースキーが押下されている状態なら、シフト状態に遷移する
+                            spaceKeyState = SpaceKeyState.SHIFTED;
+                            return true;
+                        }
+                        if (spaceKeyState == SpaceKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+                                                                                 // RELEASED
+                        if (!ctrlKeyPressed() && !shiftKeyPressed()) {
+                            // 1回目の押下で Ctrl も Shift も押されてない
+                            spaceKeyState = SpaceKeyState.PRESSED;
+                            return true;
+                        }
+                        if (shiftKeyPressed()) {
+                            spaceKeyState = SpaceKeyState.SHIFTED;
+                            return true;
+                        }
+                        // 上記以外はスペース入力として扱う
                     }
-                    return true;
+                } else {
+                    if (spaceKeyState == SpaceKeyState.PRESSED) {
+                        // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                        spaceKeyState = SpaceKeyState.SHIFTED;
+                    }
                 }
-                while (true) {
-                    bool result = invokeHandler(kanchokuCode);
-                    if (vkeyQueue.Count == 0) return result;
-                    kanchokuCode = vkeyQueue.Dequeue();
-                }
+                return keyboardDownHandler(vkey);
             }
             return false;
+        }
+
+        /// <summary>キーボード押下時のハンドラ</summary>
+        /// <param name="vkey"></param>
+        /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
+        private bool keyboardDownHandler(int vkey)
+        {
+            bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
+            bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            bool ctrl = leftCtrl || rightCtrl;
+            bool shift = shiftKeyPressed();
+            uint mod = KeyModifiers.MakeModifier(ctrl, shift);
+            int kanchokuCode = Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))
+                ? VirtualKeys.GetCtrlConvertedDecKeyFromCombo(mod, (uint)vkey)
+                : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
+
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
+            if (kanchokuCode < 0) return false;
+
+            if (kanchokuCode == DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY && kanchokuCode != VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)) {
+                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"=historySearchCtrlKey={Settings.HistorySearchCtrlKey}, kanchokuCode={VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)}");
+                return false;
+            }
+
+            // どうやら KeyboardHook で CallNextHookEx を呼ばないと次のキー入力の処理に移らないみたいだが、
+            // 将来必要になるかもしれないので、下記処理を残しておく
+            if (busyFlag) {
+                if (vkeyQueue.Count < vkeyQueueMaxSize) {
+                    vkeyQueue.Enqueue(vkey);
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
+                }
+                return true;
+            }
+            while (true) {
+                bool result = invokeHandler(kanchokuCode);
+                if (vkeyQueue.Count == 0) return result;
+                kanchokuCode = vkeyQueue.Dequeue();
+            }
         }
 
         private bool busyFlag = false;
@@ -185,7 +236,7 @@ namespace KanchokuWS
 
         private Queue<int> vkeyQueue = new Queue<int>();
 
-        /// <summary>キーボード離上時のハンドラ</summary>
+        /// <summary>キーアップ時のハンドラ</summary>
         /// <param name="vkey"></param>
         /// <param name="extraInfo"></param>
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
@@ -193,6 +244,15 @@ namespace KanchokuWS
         {
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CALLED: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
             if (isEffectiveVkey(vkey, extraInfo)) {
+                if (vkey == (int)Keys.Space) {
+                    var state = spaceKeyState;
+                    spaceKeyState = SpaceKeyState.RELEASED;
+                    if (state == SpaceKeyState.SHIFTED) {
+                        return true;
+                    } else if (state == SpaceKeyState.PRESSED) {
+                        return keyboardDownHandler(vkey);
+                    }
+                }
                 // キーアップ時はなにもしない
                 return OnKeyUp?.Invoke(vkey, extraInfo) ?? false;
             }
