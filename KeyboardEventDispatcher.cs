@@ -139,9 +139,9 @@ namespace KanchokuWS
                 || (Settings.UseRightControlToConversion && (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0);
         }
 
-        private bool shiftKeyPressed()
+        private bool shiftKeyPressed(bool bCtrl)
         {
-            return spaceKeyState == SpaceKeyState.SHIFTED || (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
+            return (!bCtrl && spaceKeyState == SpaceKeyState.SHIFTED) || (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
         }
 
         /// <summary> スペースキーの押下状態</summary>
@@ -171,12 +171,12 @@ namespace KanchokuWS
                             }
                             if (spaceKeyState == SpaceKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
                                                                                      // RELEASED
-                            if (!ctrlKeyPressed() && !shiftKeyPressed()) {
+                            if (!ctrlKeyPressed() && !shiftKeyPressed(false)) {
                                 // 1回目の押下で Ctrl も Shift も押されてない
                                 spaceKeyState = SpaceKeyState.PRESSED;
                                 return true;
                             }
-                            if (shiftKeyPressed()) {
+                            if (shiftKeyPressed(false)) {
                                 spaceKeyState = SpaceKeyState.SHIFTED;
                                 return true;
                             }
@@ -202,7 +202,7 @@ namespace KanchokuWS
             bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
             bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
             bool ctrl = leftCtrl || rightCtrl;
-            bool shift = shiftKeyPressed();
+            bool shift = shiftKeyPressed(ctrl);
             uint mod = KeyModifiers.MakeModifier(ctrl, shift);
             int kanchokuCode = Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))
                 ? VirtualKeys.GetCtrlConvertedDecKeyFromCombo(mod, (uint)vkey)
