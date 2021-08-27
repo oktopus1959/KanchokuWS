@@ -14,6 +14,7 @@ public:
     static const unsigned short FLAG_NEW_LINE = 1;
     static const unsigned short FLAG_BLOCK_HIST = 2;
     static const unsigned short FLAG_BLOCK_MAZE = 4;
+    static const unsigned short FLAG_BLOCK_KATA = 8;
 
 private:
     struct Moji {
@@ -113,14 +114,28 @@ public:
         setFlag(FLAG_BLOCK_HIST);
     }
 
+    inline void setKataBlocker() {
+        setFlag(FLAG_BLOCK_KATA);
+    }
+
+    inline void unsetKataBlocker() {
+        unsetFlag(FLAG_BLOCK_KATA);
+    }
+
+    inline bool isLastKataBlocker() const {
+        return (getFlag() & FLAG_BLOCK_KATA) != 0;
+    }
+
     inline void setMazeBlocker(size_t lastNth) {
         if (stack.size() > lastNth) {
             stack[stack.size() - lastNth - 1].flag |= FLAG_BLOCK_MAZE;
         }
+        setKataBlocker();
     }
 
     inline void setMazeBlocker() {
         setFlag(FLAG_BLOCK_MAZE);
+        setKataBlocker();
     }
 
     inline void unsetMazeBlocker() {
@@ -332,7 +347,7 @@ public:
     // ブロッカー以降で、出力履歴の末尾から len 文字までの平仮名文字列を取得する (bHeadSpace=trueなら先頭の空白も含む)
     template<typename T>
     inline T GetLastHiraganaStr(bool bHeadSpace = false) const {
-        return utils::find_tail_hiragana_str(backStringUpto(20, OutputStack::FLAG_BLOCK_HIST), bHeadSpace);
+        return utils::find_tail_hiragana_str(backStringUpto(20, OutputStack::FLAG_BLOCK_HIST + OutputStack::FLAG_BLOCK_KATA), bHeadSpace);
     }
 
     // ブロッカー以降で、出力履歴の末尾から len 文字までの日本語文字列を取得する

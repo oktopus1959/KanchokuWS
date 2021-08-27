@@ -40,7 +40,7 @@ MString OutputStack::tail_string(size_t tailLen, size_t tailMaxlen, bool bWithFl
     size_t i = 0;
     while (i < OUTPUT_STACK_MAXSIZE && pos < stackSize) {
         buf[i++] = stack[pos].chr;
-        if (bWithFlag && stack[pos].flag != 0) buf[i++] = '|';
+        if (bWithFlag && (stack[pos].flag & ~FLAG_BLOCK_KATA) != 0) buf[i++] = '|';
         ++pos;
     }
     buf[i] = 0;
