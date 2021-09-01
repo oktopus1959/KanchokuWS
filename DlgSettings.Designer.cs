@@ -269,6 +269,7 @@ namespace KanchokuWS
             this.checkBox_mazeBlockerTail = new System.Windows.Forms.CheckBox();
             this.checkBox_mazegakiSelectFirstCand = new System.Windows.Forms.CheckBox();
             this.groupBox27 = new System.Windows.Forms.GroupBox();
+            this.checkBox_SandSEnabled = new System.Windows.Forms.CheckBox();
             this.checkBox_removeOneStrokeByBackspace = new System.Windows.Forms.CheckBox();
             this.checkBox_convertJaComma = new System.Windows.Forms.CheckBox();
             this.checkBox_convertJaPeriod = new System.Windows.Forms.CheckBox();
@@ -348,7 +349,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.checkBox_SandSEnabled = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -528,7 +528,7 @@ namespace KanchokuWS
             this.textBox_strokeHelpFile.Size = new System.Drawing.Size(175, 19);
             this.textBox_strokeHelpFile.TabIndex = 4;
             this.toolTip1.SetToolTip(this.textBox_strokeHelpFile, "仮想鍵盤に表示する打鍵ヘルプ表を定義するファイル\r\n\r\n仮想鍵盤が第1打鍵待ちになっている状態で表示される\r\n打鍵表を定義します。\r\n\r\n複数のパターンを定義でき" +
-        "ます。それらは Ctrl-T または\r\nCtrl-Shift-T によって切り替えることができます。");
+        "ます。\r\nそれらは第1打鍵ヘルプローテーションキー(Ctrl-Tなど)によって\r\n切り替えることができます。");
             // 
             // label47
             // 
@@ -729,7 +729,7 @@ namespace KanchokuWS
             this.radioButton_noVkb.TabIndex = 6;
             this.radioButton_noVkb.TabStop = true;
             this.radioButton_noVkb.Text = "無表示";
-            this.toolTip1.SetToolTip(this.radioButton_noVkb, "漢直モードに入っても何も表示しません。\r\n\r\n第1打鍵ヘルプローテーションキーにより、一時的に\r\n標準鍵盤を表示することができます。");
+            this.toolTip1.SetToolTip(this.radioButton_noVkb, "漢直モードに入っても何も表示しません。\r\n\r\n第1打鍵ヘルプローテーションキー(Ctrl-Tなど)により、一時的に\r\n標準鍵盤を表示することができます。");
             this.radioButton_noVkb.UseVisualStyleBackColor = true;
             // 
             // textBox_vkbShowStrokeCount
@@ -763,8 +763,8 @@ namespace KanchokuWS
             this.radioButton_modeMarker.TabIndex = 1;
             this.radioButton_modeMarker.TabStop = true;
             this.radioButton_modeMarker.Text = "モード標識";
-            this.toolTip1.SetToolTip(this.radioButton_modeMarker, "漢直モードに入ったときにモード標識を表示します。\r\n\r\n「標準鍵盤を第0打鍵から表示」という設定と同じ動きになります。\r\nCtrl-T (または Ctrl-Shi" +
-        "ft-T) により、一時的に標準鍵盤表示になります。");
+            this.toolTip1.SetToolTip(this.radioButton_modeMarker, "漢直モードに入ったときにモード標識を表示します。\r\n\r\n「標準鍵盤を第0打鍵から表示」という設定と同じ動きになります。\r\n第1打鍵ヘルプローテーションキー(Ctr" +
+        "l-Tなど)により、一時的に\r\n標準鍵盤表示になります。");
             this.radioButton_modeMarker.UseVisualStyleBackColor = true;
             // 
             // radioButton_normalVkb
@@ -2324,7 +2324,9 @@ namespace KanchokuWS
             this.label77.Size = new System.Drawing.Size(269, 45);
             this.label77.TabIndex = 2;
             this.label77.Text = "変更前の設定をクリアするには漢直WSを再起動してくだ\r\nさい。また、その他の特殊キーへの変換設定については、\r\nここのツールチップを参照してください。";
-            this.toolTip1.SetToolTip(this.label77, resources.GetString("label77.ToolTip"));
+            this.toolTip1.SetToolTip(this.label77, "Insert, PageUp, PageDown キーへの変換は\nkanchoku.user.ini (または kanchoku.ini) に\n以下のような記述を" +
+        "追記します。\n(以下は一例です)\n\nctrlKeyToInsert=OEM6\nctrlKeyToPageUp=U\nctrlKeyToPageDown=PERIO" +
+        "D\n\n\"=\" の後の名前は、ドロップダウンで表示されるものを設定します。");
             // 
             // groupBox18
             // 
@@ -3160,6 +3162,19 @@ namespace KanchokuWS
             this.groupBox27.TabIndex = 4;
             this.groupBox27.TabStop = false;
             this.groupBox27.Text = "その他変換・機能";
+            // 
+            // checkBox_SandSEnabled
+            // 
+            this.checkBox_SandSEnabled.AutoSize = true;
+            this.checkBox_SandSEnabled.Location = new System.Drawing.Point(23, 95);
+            this.checkBox_SandSEnabled.Name = "checkBox_SandSEnabled";
+            this.checkBox_SandSEnabled.Size = new System.Drawing.Size(198, 19);
+            this.checkBox_SandSEnabled.TabIndex = 4;
+            this.checkBox_SandSEnabled.Text = "デコーダON時に SandS を有効にする";
+            this.toolTip1.SetToolTip(this.checkBox_SandSEnabled, "デコーダがONのときに SandS 方式を有効にします。\n\nSandS 方式を有効にすると、スペースキーを押しながら何か別のキーを\n押すと、スペースキーがシフトキ" +
+        "ーとして働くようになります。\n\nスペースを入力したい場合は、オートリピートが始まる前にスペースキーを\n離してください。\n\nSandS を有効にすると Shift" +
+        "+Space は有効なキーではなく、たんなる\nシフトキーとして扱われます。");
+            this.checkBox_SandSEnabled.UseVisualStyleBackColor = true;
             // 
             // checkBox_removeOneStrokeByBackspace
             // 
@@ -4078,17 +4093,6 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // checkBox_SandSEnabled
-            // 
-            this.checkBox_SandSEnabled.AutoSize = true;
-            this.checkBox_SandSEnabled.Location = new System.Drawing.Point(23, 95);
-            this.checkBox_SandSEnabled.Name = "checkBox_SandSEnabled";
-            this.checkBox_SandSEnabled.Size = new System.Drawing.Size(198, 19);
-            this.checkBox_SandSEnabled.TabIndex = 4;
-            this.checkBox_SandSEnabled.Text = "デコーダON時に SandS を有効にする";
-            this.toolTip1.SetToolTip(this.checkBox_SandSEnabled, resources.GetString("checkBox_SandSEnabled.ToolTip"));
-            this.checkBox_SandSEnabled.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 

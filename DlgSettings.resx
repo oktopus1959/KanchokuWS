@@ -141,7 +141,7 @@ exclude ファイルは、履歴検索および履歴登録の対象外となる
 
 ファイル名部分には「*」を含むように設定してください。
 * を「user」に置換したものをユーザー辞書として用います。
-(* が含まれない場合は kwmase.user.dic がユーザー辞書となります)
+(* が含まれない場合は kwmaze.user.dic がユーザー辞書となります)
 
 ユーザー辞書ファイルは漢直窓S終了時に自動的に内容が上書きされるので、
 このファイルをエディタ等で編集する場合は漢直を終了させてから行ってください。
@@ -369,18 +369,6 @@ Shift+Space=S40
 半/全=X1, Caps=X3, 英数=X4, 無変換=X5, 変換=X6, ひらがな=X7
 (コードに 'X' または 'x' を前接させると特殊キーになります。)</value>
   </data>
-  <data name="label77.ToolTip" xml:space="preserve">
-    <value>Insert, PageUp, PageDown キーへの変換は
-kanchoku.user.ini (または kanchoku.ini) に
-以下のような記述を追記します。
-(以下は一例です)
-
-ctrlKeyToInsert=OEM6
-ctrlKeyToPageUp=U
-ctrlKeyToPageDown=PERIOD
-
-"=" の後の名前は、ドロップダウンで表示されるものを設定します。</value>
-  </data>
   <data name="comboBox_dateStringKey.ToolTip" xml:space="preserve">
     <value>現在の日時を出力する Ctrlキーの設定
 
@@ -514,18 +502,6 @@ OFFにすると、変換文字列全体の末尾にブロッカーを置きま�
 
 なお、交ぜ書き変換直後であれば、"&lt;" および "&gt;" でブロッカーを
 移動することができます。</value>
-  </data>
-  <data name="checkBox_SandSEnabled.ToolTip" xml:space="preserve">
-    <value>デコーダがONのときに SandS 方式を有効にします。
-
-SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを
-押すと、スペースキーがシフトキーとして働くようになります。
-
-スペースを入力したい場合は、オートリピートが始まる前にスペースキーを
-離してください。
-
-SandS を有効にすると Shift+Space は有効なキーではなく、たんなる
-シフトキーとして扱われます。</value>
   </data>
   <data name="comboBox_histNumDeckeyId.ToolTip" xml:space="preserve">
     <value>履歴検索の縦列鍵盤表示時に、候補を文字数で絞るモードに
