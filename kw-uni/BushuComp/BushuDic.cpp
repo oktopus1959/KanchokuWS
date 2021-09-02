@@ -251,7 +251,7 @@ namespace {
 
             mchar_t r;
 
-#define _NC(x) (x?x:20)
+#define _NC(x) (x?x:0x20)
 #define CHECK_AND_RETURN(tag, x) {\
         r = (x);\
         if (r != 0 && r != ca && r != cb) { \
@@ -273,6 +273,8 @@ namespace {
             CHECK_AND_RETURN("A1", findComp(ca, cb));
             CHECK_AND_RETURN("A2", findComp(cb, ca));
 
+            _LOG_INFOH(_T("EQUIV: eqa=%c, eqb=%c"), eqa, eqb);
+
             // 等価文字を使って足し算
             if (eqb != cb) CHECK_AND_RETURN("B1", findComp(ca, eqb));
             if (eqa != ca) CHECK_AND_RETURN("B2", findComp(eqa, cb));
@@ -288,7 +290,7 @@ namespace {
             decompose(ca, a1, a2);       // a := a1 + a2
             decompose(cb, b1, b2);       // b := b1 + b2
 
-            LOG_DEBUGH(L"ca=\"%c\", cb=\"%c\", eqa=\"%c\", eqb=\"%c\", a1=\"%c\", a2=\"%c\", b1=\"%c\", b2=\"%c\"\n", ca, cb, eqa, eqb, a1, a2, b1, b2);
+            _LOG_INFOH(L"PARTS: a1=%c, a2=%c, b1=%c, b2=%c", _NC(a1), _NC(a2), _NC(b1), _NC(b2));
 
             // 引き算
             if (a1 && a2) {
@@ -370,31 +372,30 @@ namespace {
 
             }
 
-            // 一方が部品による足し算
+            // 一方が部品による足し算(直後に逆順をやる)
             CHECK_AND_RETURN("J1", findComp(ca, b1));
-            CHECK_AND_RETURN("J2", findComp(ca, b2));
-
-            CHECK_AND_RETURN("J3", findComp(eqa, b1));
-            CHECK_AND_RETURN("J4", findComp(eqa, b2));
-
-            CHECK_AND_RETURN("J5", findComp(a1, cb));
-            CHECK_AND_RETURN("J6", findComp(a2, cb));
-
-            CHECK_AND_RETURN("J7", findComp(a1, eqb));
-            CHECK_AND_RETURN("J8", findComp(a2, eqb));
-
-            // 一方が部品による足し算(逆順)
-            CHECK_AND_RETURN("K1", findComp(cb, a1));
-            CHECK_AND_RETURN("K2", findComp(cb, a2));
-
-            CHECK_AND_RETURN("K3", findComp(eqb, a1));
-            CHECK_AND_RETURN("K4", findComp(eqb, a2));
-
             CHECK_AND_RETURN("K5", findComp(b1, ca));
+
+            CHECK_AND_RETURN("J2", findComp(ca, b2));
             CHECK_AND_RETURN("K6", findComp(b2, ca));
 
+            CHECK_AND_RETURN("J3", findComp(eqa, b1));
             CHECK_AND_RETURN("K7", findComp(b1, eqa));
+
+            CHECK_AND_RETURN("J4", findComp(eqa, b2));
             CHECK_AND_RETURN("K8", findComp(b2, eqa));
+
+            CHECK_AND_RETURN("J5", findComp(a1, cb));
+            CHECK_AND_RETURN("K1", findComp(cb, a1));
+
+            CHECK_AND_RETURN("J6", findComp(a2, cb));
+            CHECK_AND_RETURN("K2", findComp(cb, a2));
+
+            CHECK_AND_RETURN("J7", findComp(a1, eqb));
+            CHECK_AND_RETURN("K3", findComp(eqb, a1));
+
+            CHECK_AND_RETURN("J8", findComp(a2, eqb));
+            CHECK_AND_RETURN("K4", findComp(eqb, a2));
 
             // YAMANOBE_ADD (Bが部品)
             if (a1 && a2 && b1) {
@@ -423,16 +424,17 @@ namespace {
                 YAMANOBE_ADD_B("M4", b2, a1, a2);   // (B2 + A1) + A2 または A1 + (B2 + A2)
             }
 
-            // 両方が部品による足し算
+            // 両方が部品による足し算(直後に逆順をやる)
             CHECK_AND_RETURN("N1", findComp(a1, b1));
-            CHECK_AND_RETURN("N1", findComp(a1, b2));
-            CHECK_AND_RETURN("N1", findComp(a2, b1));
-            CHECK_AND_RETURN("N1", findComp(a2, b2));
-
-            // 両方が部品による足し算(逆順)
             CHECK_AND_RETURN("O1", findComp(b1, a1));
-            CHECK_AND_RETURN("O1", findComp(b1, a2));
+
+            CHECK_AND_RETURN("N1", findComp(a1, b2));
             CHECK_AND_RETURN("O1", findComp(b2, a1));
+
+            CHECK_AND_RETURN("N1", findComp(a2, b1));
+            CHECK_AND_RETURN("O1", findComp(b1, a2));
+
+            CHECK_AND_RETURN("N1", findComp(a2, b2));
             CHECK_AND_RETURN("O1", findComp(b2, a2));
 
             // 部品による引き算
