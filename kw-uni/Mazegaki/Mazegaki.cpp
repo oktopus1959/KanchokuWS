@@ -428,8 +428,8 @@ size_t MazegakiNode::shiftedYomiLen = 0;
 // ブロッカーがシフトされた
 bool MazegakiNode::blockerShifted = false;
 
-// Singleton
-MazegakiNode* MazegakiNode::Singleton = 0;
+// CommonNode
+MazegakiNode* MazegakiNode::CommonNode = 0;
 
 // コンストラクタ
 MazegakiNode::MazegakiNode() {
@@ -451,7 +451,7 @@ State* MazegakiNode::CreateState() {
 DEFINE_CLASS_LOGGER(MazegakiNodeBuilder);
 
 Node* MazegakiNodeBuilder::CreateNode() {
-    if (MazegakiNode::Singleton == 0) {
+    if (MazegakiNode::CommonNode == 0) {
         // 交ぜ書き辞書ファイル名
         auto mazeFile = SETTINGS->mazegakiFile;
         LOG_INFO(_T("mazeFile=%s"), mazeFile.c_str());
@@ -465,9 +465,10 @@ Node* MazegakiNodeBuilder::CreateNode() {
         //else {
         //    ERROR_HANDLER->Warn(_T("「mazegaki=(ファイル名)」の設定がまちがっているようです"));
         //}
-        return MazegakiNode::Singleton = new MazegakiNode();
+        // 一発目は共有ノードを生成して返す
+        return MazegakiNode::CommonNode = new MazegakiNode();
     }
-    // StrokeTable では unique_ptr で保持しているため、Singleton を返すことはできない。
+    // StrokeTable では unique_ptr で保持しているため、別のダミーノードを生成して返す
     return new MazegakiNode();
 }
 

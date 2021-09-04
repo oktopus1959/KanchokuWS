@@ -139,9 +139,10 @@ private:
     }
 
 public:
-    static MazegakiNode* Singleton;
+    // 全 MazegakiState から参照される共有ノード
+    static MazegakiNode* CommonNode;
 };
-#define MAZEGAKI_NODE (MazegakiNode::Singleton)
+#define MAZEGAKI_NODE (MazegakiNode::CommonNode)
 
 #define HANDLE_ESC_FOR_MAZEGAKI() \
     LOG_DEBUGH(_T("HANDLE_ESC_FOR_MAZEGAKI: %s"), NAME_PTR); \
