@@ -201,13 +201,13 @@ namespace KanchokuWS
         void readSettings_tabBasic()
         {
             // 漢直モードトグル/OFFキー
-            selectModeToggleKeyItem(comboBox_unmodifiedToggleKey, Settings.GetString("unmodifiedHotKey"));
-            selectModeToggleKeyItem(comboBox_modifiedToggleKey, Settings.GetString("hotKey"));
+            selectModeToggleKeyItem(comboBox_unmodifiedToggleKey, Settings.GetString("unmodifiedHotKey").Replace("X", ""));
+            selectModeToggleKeyItem(comboBox_modifiedToggleKey, Settings.GetString("hotKey").Replace("X", ""));
             if (comboBox_unmodifiedToggleKey.Text._isEmpty() && comboBox_modifiedToggleKey.Text._isEmpty()) {
                 selectModeToggleKeyItem(comboBox_modifiedToggleKey, "dc");
             }
-            selectModeToggleKeyItem(comboBox_unmodifiedOffKey, Settings.GetString("unmodifiedOffHotKey"));
-            selectModeToggleKeyItem(comboBox_modifiedOffKey, Settings.GetString("offHotKey"));
+            selectModeToggleKeyItem(comboBox_unmodifiedOffKey, Settings.GetString("unmodifiedOffHotKey").Replace("X", ""));
+            selectModeToggleKeyItem(comboBox_modifiedOffKey, Settings.GetString("offHotKey").Replace("X", ""));
 
             // 仮想鍵盤表示
             radioButton_noVkb.Checked = !Settings.ShowVkbOrMaker;
@@ -297,10 +297,10 @@ namespace KanchokuWS
             Settings.SetUserIni("confirmOnClose", checkBox_confirmOnClose.Checked);
 
             // 漢直モードトグルキー
-            Settings.SetUserIni("unmodifiedHotKey", comboBox_unmodifiedToggleKey.Text.Trim()._reReplace(" .*", ""));
-            Settings.SetUserIni("hotKey", comboBox_modifiedToggleKey.Text.Trim()._reReplace(" .*", ""));
-            Settings.SetUserIni("unmodifiedOffHotKey", comboBox_unmodifiedOffKey.Text.Trim()._reReplace(" .*", ""));
-            Settings.SetUserIni("offHotKey", comboBox_modifiedOffKey.Text.Trim()._reReplace(" .*", ""));
+            Settings.SetUserIni("unmodifiedHotKey", comboBox_unmodifiedToggleKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));
+            Settings.SetUserIni("hotKey", comboBox_modifiedToggleKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));
+            Settings.SetUserIni("unmodifiedOffHotKey", comboBox_unmodifiedOffKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));
+            Settings.SetUserIni("offHotKey", comboBox_modifiedOffKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));
 
             // 仮想鍵盤表示
             Settings.SetUserIni("vkbShowStrokeCount", $"{textBox_vkbShowStrokeCount.Text._parseInt(1)._lowLimit(0) * (radioButton_normalVkb.Checked ? 1 : -1)}");
