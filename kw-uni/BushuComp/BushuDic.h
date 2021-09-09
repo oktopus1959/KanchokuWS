@@ -29,6 +29,7 @@ public:
     static void WriteBushuDic(const tstring& path);
     static void WriteBushuDic();
 
+    // 部首合成エントリの追加
     virtual void AddBushuEntry(const wstring&) = 0;
     virtual void MakeStrokableMap() = 0;
 
@@ -36,6 +37,18 @@ public:
     virtual mchar_t FindComposite(mchar_t ca, mchar_t cb, mchar_t prev = 0) = 0;
 
     virtual void GatherDerivedMoji(mchar_t m, std::vector<mchar_t>& list) = 0;
+
+    // 部首合成辞書を読み込む
+    static void ReadAutoBushuDic(const tstring&);
+
+    // 部首合成辞書ファイルに書き込む
+    static void WriteAutoBushuDic(const tstring& path);
+
+    // 自動部首合成エントリの追加
+    virtual void AddAutoBushuEntry(const wstring&) = 0;
+
+    // a と b を組み合わせてできる自動合成文字を探す。
+    virtual mchar_t FindAutoComposite(mchar_t ca, mchar_t cb) = 0;
 
     //仮想鍵盤に部首合成ヘルプの情報を設定する
     virtual bool CopyBushuCompHelpToVkbFaces(mchar_t ch, wchar_t* faces, size_t kbLen, size_t kbNum, bool bSetAssoc = false) = 0;

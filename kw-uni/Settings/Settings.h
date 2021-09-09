@@ -10,6 +10,7 @@ struct Settings {
     tstring charsDefFile;       // Deckey から文字への変換
     tstring easyCharsFile;      // 簡易打鍵文字ファイル
     tstring bushuFile;          // 部首合成辞書
+    tstring autoBushuFile;      // 自動部首合成辞書
     tstring bushuAssocFile;     // 部首連想辞書
     tstring mazegakiFile;       // 交ぜ書き辞書
     tstring historyFile;        // 履歴
@@ -55,6 +56,8 @@ struct Settings {
     bool convertJaComma = false;            // 「、」と「，」を相互変換する
 
     bool removeOneStrokeByBackspace = false; // BS で直前打鍵のみを取り消す
+
+    bool autoBushuComp = false;             // 自動部首合成を行う
 
     // for Debug
     bool debughState = false;               // State モジュールで DebugH を有効にする

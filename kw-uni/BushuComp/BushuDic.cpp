@@ -76,6 +76,12 @@ namespace {
         // 文字リスト用(文字リストから除外する文字の集合)
         std::set<wchar_t> firstLevel;
 
+        // 自動部首合成用辞書
+        std::map<MString, mchar_t> autoBushuDict;
+
+        // 自動部首合成用辞書が修正された
+        bool bAutoDirty = false;
+
         // 当文字を構成する部品に分解する
         inline parts_t findParts(mchar_t c) {
             auto it = entries.find(c);
@@ -150,6 +156,37 @@ namespace {
             return !addedEntries.empty();
         }
 
+        // 自動部首合成用辞書の読み込み
+        void ReadAutoDicFile(const std::vector<wstring>& lines) {
+            LOG_INFO(_T("ENTER: lines num=%d"), lines.size());
+
+            // 作業領域
+            std::wregex reComment(_T("^# "));
+
+            // 各マップをクリアしておく(再読み込みのため)
+            autoBushuDict.clear();
+            bAutoDirty = false;
+
+            for (auto& line : lines) {
+                if (line.empty() || std::regex_match(line, reComment)) continue;   // 空行や "# " で始まる行は読み飛ばす
+                addAutoBushuEntry(line);
+            }
+
+            LOG_INFO(_T("LEAVE"));
+        }
+
+        // 自動合成辞書内容の保存
+        void WriteAutoDicFile(utils::OfstreamWriter& writer) {
+            LOG_INFO(_T("CALLED: autoBushuDict.size()=%d"), autoBushuDict.size());
+            for (const auto& pair : autoBushuDict) {
+                writer.writeLine(utils::utf8_encode(to_wstr(MString(1, pair.second) + pair.first)));
+            }
+        }
+
+        bool IsAutoDirty() {
+            return bAutoDirty;
+        }
+
         void MakeStrokableMap() {
             for (auto pair : partsBodiesMap) {
                 strokableMap[pair.first] = STROKE_HELP->Find(pair.first);
@@ -160,6 +197,28 @@ namespace {
         void AddBushuEntry(const wstring& line) {
             addedEntries.push_back(line);
             addBushuEntry(line);
+        }
+
+        // 1自動エントリの追加 (ここで追加したエントリは、保存時に辞書ファイルに追記される)
+        void AddAutoBushuEntry(const wstring& line) {
+            bAutoDirty = true;
+            addAutoBushuEntry(line);
+        }
+
+        // a と b を組み合わせてできる自動合成文字を探す。
+        mchar_t FindAutoComposite(mchar_t ca, mchar_t cb) {
+            auto finder = [this](mchar_t a, mchar_t b) {
+                MString key;
+                key.push_back(a);
+                key.push_back(b);
+                _LOG_DEBUGH(_T("key=%s"), MAKE_WPTR(key));
+                auto iter = autoBushuDict.find(key);
+                _LOG_DEBUGH(_T("iter->second=%c"), ((iter != autoBushuDict.end()) ? iter->second : 0x20));
+                return (iter != autoBushuDict.end()) ? iter->second : 0;
+            };
+            mchar_t result = finder(ca, cb);
+            if (result != 0) return result;
+            return finder(cb, ca);
         }
 
     private:
@@ -189,6 +248,25 @@ namespace {
                     compMap[comp] = c;
                     addBody(b, c);
                 }
+            }
+        }
+
+        // 自動エントリの追加
+        void addAutoBushuEntry(const wstring& line) {
+            auto mline = to_mstr(line);
+            if (mline.size() >= 3) {
+                autoBushuDict[mline.substr(1)] = mline[0];
+            }
+        }
+
+        void addAutoBushuEntry(mchar_t a, mchar_t b, mchar_t c) {
+            if (a != 0 && b != 0 && c != 0) {
+                bAutoDirty = true;
+                MString key(2, 0);
+                key[0] = a;
+                key[1] = b;
+                _LOG_DEBUGH(_T("key=%s, val=%c"), MAKE_WPTR(key), c);
+                autoBushuDict[key] = c;
             }
         }
 
@@ -237,7 +315,10 @@ namespace {
             _LOG_INFOH(_T("ENTER: ca=%c, cb=%c, prev=%c"), ca, cb, prev);
             mchar_t c = findCompSub((wchar_t)ca, (wchar_t)cb, prev);
             if (c == 0 && prev != 0) c = findCompSub((wchar_t)ca, (wchar_t)cb, 0);    // retry from the beginning
-            if (c != 0) setAssocTarget(ca, cb, c);
+            if (c != 0) {
+                setAssocTarget(ca, cb, c);
+                addAutoBushuEntry(ca, cb, c);
+            }
             _LOG_INFOH(_T("LEAVE: result=%c"), c);
             return c;
         }
@@ -695,6 +776,37 @@ namespace {
         }
         return false;
     }
+
+    bool readAutoBushuFile(const tstring& path, BushuDicImpl* pDic) {
+        LOG_INFO(_T("open auto bushu file: %s"), path.c_str());
+        utils::IfstreamReader reader(path);
+        if (reader.success()) {
+            pDic->ReadAutoDicFile(reader.getAllLines());
+            LOG_INFO(_T("close bushu file: %s"), path.c_str());
+        } else if (!SETTINGS->firstUse) {
+            // エラーメッセージを表示
+            LOG_WARN(_T("Can't read auto bushu file: %s"), path.c_str());
+            ERROR_HANDLER->Warn(utils::format(_T("自動部首合成入力辞書ファイル(%s)が開けません"), path.c_str()));
+            return false;
+        }
+        return true;
+    }
+
+    bool writeAutoBushuFile(const tstring& path, BushuDicImpl* pDic) {
+        LOG_INFO(_T("write auto bushu file: %s, dirty=%s"), path.c_str(), BOOL_TO_WPTR(pDic && pDic->IsAutoDirty()));
+        if (!path.empty() && pDic) {
+            if (pDic->IsAutoDirty()) {
+                if (utils::copyFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
+                    utils::OfstreamWriter writer(path, true);
+                    if (writer.success()) {
+                        pDic->WriteAutoDicFile(writer);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
 
 // 部首合成辞書を作成する(ファイルが指定されていなくても作成する)
@@ -730,6 +842,20 @@ void BushuDic::ReadBushuDic(const tstring& path) {
 
 // 部首合成辞書ファイルに書き込む
 void BushuDic::WriteBushuDic(const tstring& path) {
+    LOG_INFO(_T("CALLED: path=%s"), path.c_str());
+    writeBushuFile(path, (BushuDicImpl*)Singleton.get());
+}
+
+// 自動部首合成辞書を読み込む
+void BushuDic::ReadAutoBushuDic(const tstring& path) {
+    LOG_INFO(_T("CALLED: path=%s"), path.c_str());
+    if (!path.empty() && Singleton) {
+        readBushuFile(path, (BushuDicImpl*)Singleton.get());
+    }
+}
+
+// 自動部首合成辞書ファイルに書き込む
+void BushuDic::WriteAutoBushuDic(const tstring& path) {
     LOG_INFO(_T("CALLED: path=%s"), path.c_str());
     writeBushuFile(path, (BushuDicImpl*)Singleton.get());
 }

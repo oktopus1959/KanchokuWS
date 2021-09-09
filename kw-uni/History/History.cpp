@@ -14,6 +14,7 @@
 #include "StayState.h"
 #include "OutputStack.h"
 #include "StrokeHelp.h"
+#include "BushuComp/BushuComp.h"
 
 #include "History.h"
 #include "HistoryDic.h"
@@ -769,6 +770,8 @@ namespace {
             _LOG_DEBUGH(_T("ENTER: %s: outStr=%s"), NAME_PTR, MAKE_WPTR(outStr));
             if (pNext) {
                 STATE_COMMON->SetOutString(pNext->TranslateString(outStr));
+            } else if (SETTINGS->autoBushuComp) {
+                BUSHU_COMP_NODE->ReduceByAutoBushu(outStr);
             } else {
                 STATE_COMMON->SetOutString(outStr);
             }

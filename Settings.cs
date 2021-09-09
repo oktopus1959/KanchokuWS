@@ -370,8 +370,11 @@ namespace KanchokuWS
         // BS で全打鍵を取り消すか
         public static bool RemoveOneStrokeByBackspace { get; set; } = true;
 
-        // BS で全打鍵を取り消すか
+        // SandS を有効にするか
         public static bool SandSEnabled { get; set; } = false;
+
+        // 自動首部合成を有効にするか
+        public static bool AutoBushuComp { get; set; } = false;
 
         //------------------------------------------------------------------------------
         // ウィンドウClassNameごとの設定
@@ -750,6 +753,8 @@ namespace KanchokuWS
             ConvertJaComma = addDecoderSetting("convertJaComma", false);                        // 「、」と「，」の相互変換
 
             RemoveOneStrokeByBackspace = addDecoderSetting("removeOneStrokeByBackspace", "weakBS", false);  // BS で直前打鍵のみを取り消すか
+
+            AutoBushuComp = addDecoderSetting("autoBushuComp", false);                          // 自動首部合成を有効にするか
 
             // キー割当
             HistorySearchCtrlKey = GetString("histSearchCtrlKey");                              // 履歴検索&選択を行うCtrlキー

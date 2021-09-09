@@ -370,6 +370,12 @@ public:
 
     inline void SetShiftedHiraganaToKatakana() { convertShiftedHiraganaToKatakana = true; }
 
+public:
+    //仮想鍵盤にストロークヘルプの情報を設定する
+    void CopyStrokeHelpToVkbFaces(wchar_t ch);
+
+    //仮想鍵盤にストロークヘルプの情報を設定する(outStringの先頭文字)
+    void CopyStrokeHelpToVkbFaces();
 
 public:
     static std::unique_ptr<StateCommonInfo> Singleton;

@@ -57,3 +57,24 @@ bool StateCommonInfo::AddOrEraseRunningState(const wstring& stateName, State* pS
         return true;
     }
 }
+
+#include "StrokeHelp.h"
+
+//仮想鍵盤にストロークヘルプの情報を設定する
+void StateCommonInfo::CopyStrokeHelpToVkbFaces(wchar_t ch) {
+    SetCenterString(ch);
+    ClearFaces();
+    if (STROKE_HELP->copyStrokeHelpToVkbFacesStateCommon(ch, GetFaces())) {
+        SetStrokeHelpVkbLayout();
+    } else {
+        ClearVkbLayout();
+    }
+}
+
+//仮想鍵盤にストロークヘルプの情報を設定する(outStringの先頭文字)
+void StateCommonInfo::CopyStrokeHelpToVkbFaces() {
+    if (!OutString().empty()) {
+        CopyStrokeHelpToVkbFaces((wchar_t)GetFirstOutChar());
+    }
+}
+

@@ -88,6 +88,31 @@ MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
     return EMPTY_MSTR;
 }
 
+// 自動部首合成の実行
+void BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
+    if (BUSHU_DIC && !mstr.empty()) {
+        LOG_INFO(_T("CALLED: mstr=%s"), MAKE_WPTR(mstr));
+        mchar_t m1 = OUTPUT_STACK->LastOutStackChar(0);
+        mchar_t m2 = mstr[0];
+        mchar_t m = BUSHU_DIC->FindAutoComposite(m1, m2);
+        PrevBushu1 = m1;
+        PrevBushu2 = m2;
+        PrevComp = m;
+        //PrevCompSec = utils::getSecondsFromEpochTime();
+        PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
+        if (m != 0) {
+            MString ms = to_mstr(m);
+            STATE_COMMON->SetOutString(ms);
+            STATE_COMMON->SetBackspaceNum(1);
+            STATE_COMMON->CopyStrokeHelpToVkbFaces();
+            //合成した文字を履歴に登録
+            if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(ms);
+            return;
+        }
+    }
+    STATE_COMMON->SetOutString(mstr);
+}
+
 // 後置部首合成機能ノードのSingleton
 // unique_ptr による管理は下記 BushuCompNodeBuilder の呼び出し側で行う
 BushuCompNode* BushuCompNode::Singleton;

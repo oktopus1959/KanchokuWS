@@ -31,6 +31,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_FILE_PATH(charsDefFile);
     SET_FILE_PATH(easyCharsFile);
     SET_FILE_PATH(bushuFile);
+    SET_FILE_PATH(autoBushuFile);
     SET_FILE_PATH(bushuAssocFile);
     //SET_FILE_PATH(mazegakiFile);
     SET_KEY_VALUE(mazegakiFile);
@@ -72,6 +73,8 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_BOOL_VALUE(convertJaComma);
 
     SET_BOOL_VALUE(removeOneStrokeByBackspace);
+
+    SET_BOOL_VALUE(autoBushuComp);
 
     // 機能へのキー割り当ての変更
     RESET_STROKE_FUNC("zenkakuMode");

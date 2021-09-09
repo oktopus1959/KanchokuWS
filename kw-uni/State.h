@@ -171,17 +171,17 @@ protected:
 
     // 文字削除をリザルト情報にセットする
     // 引数は、削除する文字数
-    void setCharDeleteInfo(int numDelete) {
+    static void setCharDeleteInfo(int numDelete) {
         STATE_COMMON->SetBackspaceNum(numDelete);
     }
 
     // 入力されたDECKEYをそのままGUI返す
-    void setThroughDeckeyFlag() {
+    static void setThroughDeckeyFlag() {
         STATE_COMMON->SetDeckeyToVkeyFlag();
     }
 
     // 特殊キーをDECKEYとして登録する必要あり
-    void setSpecialDeckeys() {
+    static void setSpecialDeckeys() {
         STATE_COMMON->SetSpecialDeckeyRequiredFlag();
     }
 
