@@ -169,7 +169,7 @@ namespace {
 
             for (auto& line : lines) {
                 if (line.empty() || std::regex_match(line, reComment)) continue;   // 空行や "# " で始まる行は読み飛ばす
-                addAutoBushuEntry(line);
+                addAutoBushuEntry(line, false);
             }
 
             LOG_INFO(_T("LEAVE"));
@@ -206,7 +206,7 @@ namespace {
         // 1自動エントリの追加 (ここで追加したエントリは、保存時に辞書ファイルに追記される)
         void AddAutoBushuEntry(const wstring& line) {
             bAutoDirty = true;
-            addAutoBushuEntry(line);
+            addAutoBushuEntry(line, true);
         }
 
         // a と b を組み合わせてできる自動合成文字を探す。
@@ -257,14 +257,18 @@ namespace {
             }
         }
 
+        bool isInvalidAutoBushuKey(const MString& key) {
+            auto iter = autoBushuDict.find(key);
+            return iter != autoBushuDict.end() && iter->second == '-';
+        }
+
         // 自動エントリの追加 (形式は CAB)
-        void addAutoBushuEntry(const wstring& line) {
+        void addAutoBushuEntry(const wstring& line, bool bForce) {
             auto mline = to_mstr(line);
             if (mline.size() >= 3) {
                 auto key = mline.substr(1);
-                auto iter = autoBushuDict.find(key);
-                if (iter == autoBushuDict.end() || iter->second != '-') {
-                    // ターゲットが '-' である組み合わせは、再登録しない(無視される)
+                if (bForce || !isInvalidAutoBushuKey(key)) {
+                    // 強制またはターゲットが '-' でない組み合わせの場合に再登録する
                     autoBushuDict[key] = mline[0];
                 }
             }
@@ -276,8 +280,7 @@ namespace {
                 key[0] = a;
                 key[1] = b;
                 _LOG_DEBUGH(_T("key=%s, val=%c"), MAKE_WPTR(key), c);
-                auto iter = autoBushuDict.find(key);
-                if (iter == autoBushuDict.end() || iter->second != '-') {
+                if (!isInvalidAutoBushuKey(key)) {
                     // ターゲットが '-' である組み合わせは、再登録しない(無視される)
                     autoBushuDict[key] = c;
                     bAutoDirty = true;
