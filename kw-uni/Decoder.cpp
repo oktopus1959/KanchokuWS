@@ -217,7 +217,10 @@ public:
     // デコーダが扱う辞書を保存する
     void SaveDicts() {
         LOG_INFO(_T("CALLED"));
-        if (BUSHU_DIC) BUSHU_DIC->WriteBushuDic();
+        if (BUSHU_DIC) {
+            BUSHU_DIC->WriteBushuDic();
+            BUSHU_DIC->WriteAutoBushuDic();
+        }
         if (BUSHU_ASSOC_DIC) BUSHU_ASSOC_DIC->WriteBushuAssocDic();
         if (MAZEGAKI_DIC) MAZEGAKI_DIC->WriteMazegakiDic();
         if (HISTORY_DIC) {
@@ -257,6 +260,9 @@ public:
             } else if (cmd == _T("addBushuEntry") && BUSHU_DIC && items.size() >= 2 && !items[1].empty()) {
                 // 部首合成エントリの追加
                 BUSHU_DIC->AddBushuEntry(items[1]);
+            } else if (cmd == _T("readAutoBushuDic") && BUSHU_DIC) {
+                // 自動部首合成辞書の再読み込み
+                BushuDic::ReadAutoBushuDic(SETTINGS->autoBushuFile);
             } else if (cmd == _T("mergeBushuAssoc") && BUSHU_ASSOC_DIC) {
                 // 部首連想辞書マージ
                 BushuAssocDic::MergeBushuAssocDic(SETTINGS->bushuAssocFile);

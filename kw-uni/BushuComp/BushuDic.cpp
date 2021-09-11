@@ -251,7 +251,7 @@ namespace {
             }
         }
 
-        // 自動エントリの追加
+        // 自動エントリの追加 (形式は CAB)
         void addAutoBushuEntry(const wstring& line) {
             auto mline = to_mstr(line);
             if (mline.size() >= 3) {
@@ -783,11 +783,6 @@ namespace {
         if (reader.success()) {
             pDic->ReadAutoDicFile(reader.getAllLines());
             LOG_INFO(_T("close bushu file: %s"), path.c_str());
-        } else if (!SETTINGS->firstUse) {
-            // エラーメッセージを表示
-            LOG_WARN(_T("Can't read auto bushu file: %s"), path.c_str());
-            ERROR_HANDLER->Warn(utils::format(_T("自動部首合成入力辞書ファイル(%s)が開けません"), path.c_str()));
-            return false;
         }
         return true;
     }
@@ -796,8 +791,8 @@ namespace {
         LOG_INFO(_T("write auto bushu file: %s, dirty=%s"), path.c_str(), BOOL_TO_WPTR(pDic && pDic->IsAutoDirty()));
         if (!path.empty() && pDic) {
             if (pDic->IsAutoDirty()) {
-                if (utils::copyFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
-                    utils::OfstreamWriter writer(path, true);
+                if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
+                    utils::OfstreamWriter writer(path);
                     if (writer.success()) {
                         pDic->WriteAutoDicFile(writer);
                         return true;
@@ -811,7 +806,7 @@ namespace {
 
 // 部首合成辞書を作成する(ファイルが指定されていなくても作成する)
 // エラーがあったら例外を投げる
-int BushuDic::CreateBushuDic(const tstring& bushuFile) {
+int BushuDic::CreateBushuDic(const tstring& bushuFile, const tstring& autoBushuFile) {
     LOG_INFO(_T("ENTER"));
 
     if (Singleton != 0) {
@@ -822,7 +817,7 @@ int BushuDic::CreateBushuDic(const tstring& bushuFile) {
     int result = 0;
 
     auto pImpl = new BushuDicImpl();
-    if (bushuFile.empty() || readBushuFile(bushuFile, pImpl)) {
+    if ((bushuFile.empty() || readBushuFile(bushuFile, pImpl)) && (autoBushuFile.empty() || readAutoBushuFile(autoBushuFile, pImpl))) {
         Singleton.reset(pImpl);
     } else {
         result = -1;
@@ -850,18 +845,23 @@ void BushuDic::WriteBushuDic(const tstring& path) {
 void BushuDic::ReadAutoBushuDic(const tstring& path) {
     LOG_INFO(_T("CALLED: path=%s"), path.c_str());
     if (!path.empty() && Singleton) {
-        readBushuFile(path, (BushuDicImpl*)Singleton.get());
+        readAutoBushuFile(path, (BushuDicImpl*)Singleton.get());
     }
 }
 
 // 自動部首合成辞書ファイルに書き込む
 void BushuDic::WriteAutoBushuDic(const tstring& path) {
     LOG_INFO(_T("CALLED: path=%s"), path.c_str());
-    writeBushuFile(path, (BushuDicImpl*)Singleton.get());
+    writeAutoBushuFile(path, (BushuDicImpl*)Singleton.get());
 }
 
 // 部首合成辞書ファイルに書き込む
 void BushuDic::WriteBushuDic() {
     WriteBushuDic(SETTINGS->bushuFile);
+}
+
+// 部首合成辞書ファイルに書き込む
+void BushuDic::WriteAutoBushuDic() {
+    WriteAutoBushuDic(SETTINGS->autoBushuFile);
 }
 

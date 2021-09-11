@@ -91,6 +91,7 @@ namespace KanchokuWS
         // 各種辞書ファイル
         public static string BushuAssocFile { get; private set; }
         public static string BushuFile { get; private set; }
+        public static string AutoBushuFile { get; private set; }
         public static string CharsDefFile { get; private set; }
         public static string EasyCharsFile { get; private set; }
         public static string TableFile { get; private set; }
@@ -709,6 +710,7 @@ namespace KanchokuWS
             DecoderSettings["firstUse"] = $"{!UserKanchokuIni.Singleton.IsIniFileExist}";
             BushuAssocFile = addDecoderSetting("bushuAssocFile", "kwassoc.txt");
             BushuFile = addDecoderSetting("bushuFile", "bushu", "kwbushu.rev");
+            AutoBushuFile = addDecoderSetting("autoBushuFile", "bushuAuto", "kwbushu.aut");
             CharsDefFile = addDecoderSetting("charsDefFile", $"chars.{KeyboardFile._split('.')._getNth(0)._orElse("106")}.txt");
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
             TableFile = addDecoderSetting("tableFile", "t.tbl");

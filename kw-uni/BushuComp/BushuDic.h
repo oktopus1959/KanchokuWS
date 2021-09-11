@@ -20,7 +20,7 @@ public:
     static std::unique_ptr<BushuDic> Singleton;
 
     // 部首合成辞書インスタンスを生成する
-    static int CreateBushuDic(const tstring&);
+    static int CreateBushuDic(const tstring&, const tstring&);
 
     // 部首合成辞書を読み込む
     static void ReadBushuDic(const tstring&);
@@ -38,11 +38,12 @@ public:
 
     virtual void GatherDerivedMoji(mchar_t m, std::vector<mchar_t>& list) = 0;
 
-    // 部首合成辞書を読み込む
+    // 自動部首合成辞書を読み込む
     static void ReadAutoBushuDic(const tstring&);
 
-    // 部首合成辞書ファイルに書き込む
+    // 自動部首合成辞書ファイルに書き込む
     static void WriteAutoBushuDic(const tstring& path);
+    static void WriteAutoBushuDic();
 
     // 自動部首合成エントリの追加
     virtual void AddAutoBushuEntry(const wstring&) = 0;

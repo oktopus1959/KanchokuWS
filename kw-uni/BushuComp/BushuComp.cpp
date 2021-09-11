@@ -126,12 +126,13 @@ Node* BushuCompNodeBuilder::CreateNode() {
     // 部首合成辞書の読み込み(ファイルが指定されていなくても、辞書は構築する)
     // 部首合成辞書ファイル名
     auto bushuFile = SETTINGS->bushuFile;
-    LOG_INFO(_T("bushuFile=%s"), bushuFile.c_str());
+    auto auotBushuFile = SETTINGS->autoBushuFile;
+    LOG_INFO(_T("bushuFile=%s, autoBushuFile=%s"), bushuFile.c_str(), auotBushuFile.c_str());
 
     //if (bushuFile.empty()) {
     //    ERROR_HANDLER->Warn(_T("「bushu=(ファイル名)」の設定がまちがっているようです"));
     //}
-    BushuDic::CreateBushuDic(bushuFile);
+    BushuDic::CreateBushuDic(bushuFile, auotBushuFile);
 
     BUSHU_COMP_NODE = new BushuCompNode();
     return BUSHU_COMP_NODE;
