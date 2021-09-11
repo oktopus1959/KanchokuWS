@@ -497,9 +497,9 @@ namespace KanchokuWS
                     case DecoderKeys.STROKE_HELP_UNROTATION_DECKEY:
                         return rotateStrokeHelp(-1);
                     case DecoderKeys.DATE_STRING_ROTATION_DECKEY:
-                        return rotateDateString(1);
+                        return !isActiveWinExcel() && rotateDateString(1);
                     case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
-                        return rotateDateString(-1);
+                        return !isActiveWinExcel() && rotateDateString(-1);
                     default:
                         if (IsDecoderActive) {
                             return InvokeDecoder(deckey);
@@ -548,6 +548,11 @@ namespace KanchokuWS
                 logger.InfoH($"ctrlTarget={ctrlTarget} (=!({Settings.UseClassNameListAsInclusion} (Inclusion) XOR {contained} (ContainedInList)");
             }
             return ctrlTarget;
+        }
+
+        private bool isActiveWinExcel()
+        {
+            return actWinHandler.ActiveWinClassName._startsWith("EXCEL");
         }
 
         //private int convertSpecificDeckey(int deckey)
