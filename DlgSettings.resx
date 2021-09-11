@@ -120,6 +120,23 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="button_restartWithNoSave.ToolTip" xml:space="preserve">
+    <value>デコーダが保持している辞書内容をファイルに保存せずに再起動します。
+
+エディタなどで辞書ファイルを編集したい場合は、まず「一括保存」で、
+デコーダが保持している辞書内容をファイルに反映させます。
+
+その後、辞書ファイルを編集し、当ボタンをクリックしてください。
+
+漢直窓Sは終了時に辞書内容を自動的にファイルに新規保存します。
+(既存ファイルは *.back に名前が変更されます)
+辞書ファイルを編集したい場合は、ここに記述した手順に従うか、
+または漢直窓Sを終了させてから行ってください。
+</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -541,20 +558,6 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 
 なお、履歴候補が縦列表示されている状態では、先頭候補がEnterキーで
 選択されます。</value>
-  </data>
-  <data name="button_restartWithNoSave.ToolTip" xml:space="preserve">
-    <value>デコーダが保持している辞書内容をファイルに保存せずに再起動します。
-
-エディタなどで辞書ファイルを編集したい場合は、まず「一括保存」で、
-デコーダが保持している辞書内容をファイルに反映させます。
-
-その後、辞書ファイルを編集し、当ボタンをクリックしてください。
-
-漢直窓Sは終了時に辞書内容を自動的にファイルに新規保存します。
-(既存ファイルは *.back に名前が変更されます)
-辞書ファイルを編集したい場合は、ここに記述した手順に従うか、
-または漢直窓Sを終了させてから行ってください。
-</value>
   </data>
   <data name="textBox_bushuComp.ToolTip" xml:space="preserve">
     <value>部首合成の登録を行います。

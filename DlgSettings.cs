@@ -44,6 +44,7 @@ namespace KanchokuWS
         private GuiStatusChecker checkerKeyAssign;
         private GuiStatusChecker checkerCtrlKeys;
         private GuiStatusChecker checkerHistory;
+        private GuiStatusChecker checkerMiscSettings;
 
         private const int timerInterval = 200;
 
@@ -93,6 +94,7 @@ namespace KanchokuWS
             checkerKeyAssign = new GuiStatusChecker("KeyAssign");
             checkerCtrlKeys = new GuiStatusChecker("CtrlKeys");
             checkerHistory = new GuiStatusChecker("History");
+            checkerMiscSettings = new GuiStatusChecker("MiscSettings");
 
             readSettings_tabBasic();
             setBasicStatusChecker();
@@ -111,6 +113,9 @@ namespace KanchokuWS
 
             readSettings_tabHistory();
             setHistoryStatusChecker();
+
+            readSettings_tabMiscSettings();
+            setMiscSettingsStatusChecker();
 
             checkerAll.Reinitialize();
 
@@ -343,6 +348,7 @@ namespace KanchokuWS
             readSettings_tabKeyAssign();
             readSettings_tabCtrlKeys();
             readSettings_tabHistory();
+            readSettings_tabMiscSettings();
 
             checkerAll.Reinitialize();
 
@@ -878,7 +884,7 @@ namespace KanchokuWS
         }
 
         //-----------------------------------------------------------------------------------
-        /// <summary> 履歴・交ぜ書き・その他変換関連 </summary>
+        /// <summary> 履歴・交ぜ書き </summary>
         void readSettings_tabHistory()
         {
             // 履歴関連
@@ -909,13 +915,6 @@ namespace KanchokuWS
             textBox_mazeYomiMaxLen.Text = $"{Settings.MazeYomiMaxLen}";
             textBox_mazeGobiMaxLen.Text = $"{Settings.MazeGobiMaxLen}";
             textBox_mazeGobiLikeTailLen.Text = $"{Settings.MazeGobiLikeTailLen}";
-
-            // その他変換
-            checkBox_convertShiftedHiraganaToKatakana.Checked = Settings.ConvertShiftedHiraganaToKatakana;
-            checkBox_convertJaPeriod.Checked = Settings.ConvertJaPeriod;
-            checkBox_convertJaComma.Checked = Settings.ConvertJaComma;
-            checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
-            checkBox_SandSEnabled.Checked = Settings.SandSEnabled;
         }
 
         private void setHistoryStatusChecker()
@@ -950,13 +949,6 @@ namespace KanchokuWS
             checkerHistory.Add(textBox_mazeYomiMaxLen);
             checkerHistory.Add(textBox_mazeGobiMaxLen);
             checkerHistory.Add(textBox_mazeGobiLikeTailLen);
-
-            // その他変換
-            checkerHistory.Add(checkBox_convertShiftedHiraganaToKatakana);
-            checkerHistory.Add(checkBox_convertJaPeriod);
-            checkerHistory.Add(checkBox_convertJaComma);
-            checkerHistory.Add(checkBox_removeOneStrokeByBackspace);
-            checkerHistory.Add(checkBox_SandSEnabled);
 
             checkerAll.Add(checkerHistory);
         }
@@ -994,12 +986,6 @@ namespace KanchokuWS
             Settings.SetUserIni("mazeYomiMaxLen", textBox_mazeYomiMaxLen.Text.Trim());
             Settings.SetUserIni("mazeGobiLikeTailLen", textBox_mazeGobiLikeTailLen.Text.Trim());
 
-            Settings.SetUserIni("convertShiftedHiraganaToKatakana", checkBox_convertShiftedHiraganaToKatakana.Checked);
-            Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
-            Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
-            Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);
-            Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
-
             Settings.ReadIniFile();
 
             readSettings_tabHistory();
@@ -1022,6 +1008,65 @@ namespace KanchokuWS
         }
 
         //-----------------------------------------------------------------------------------
+        /// <summary> その他設定 </summary>
+        void readSettings_tabMiscSettings()
+        {
+            // その他変換
+            checkBox_autoBushuComp.Checked = Settings.AutoBushuComp;
+            checkBox_convertShiftedHiraganaToKatakana.Checked = Settings.ConvertShiftedHiraganaToKatakana;
+            checkBox_convertJaPeriod.Checked = Settings.ConvertJaPeriod;
+            checkBox_convertJaComma.Checked = Settings.ConvertJaComma;
+            checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
+            checkBox_SandSEnabled.Checked = Settings.SandSEnabled;
+        }
+
+        private void setMiscSettingsStatusChecker()
+        {
+            // その他変換
+            button_miscEnter.Enabled = false;
+            checkerMiscSettings.CtlToBeEnabled = button_miscEnter;
+            checkerMiscSettings.ControlEnabler = button_miscClose_textChange;
+            checkerMiscSettings.Add(checkBox_autoBushuComp);
+            checkerMiscSettings.Add(checkBox_convertShiftedHiraganaToKatakana);
+            checkerMiscSettings.Add(checkBox_convertJaPeriod);
+            checkerMiscSettings.Add(checkBox_convertJaComma);
+            checkerMiscSettings.Add(checkBox_removeOneStrokeByBackspace);
+            checkerMiscSettings.Add(checkBox_SandSEnabled);
+
+            checkerAll.Add(checkerMiscSettings);
+        }
+
+        private void button_miscClose_textChange(bool flag)
+        {
+            button_miscClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+        }
+
+        private void button_miscEnter_Click(object sender, EventArgs e)
+        {
+            Settings.SetUserIni("autoBushuComp", checkBox_autoBushuComp.Checked);
+            Settings.SetUserIni("convertShiftedHiraganaToKatakana", checkBox_convertShiftedHiraganaToKatakana.Checked);
+            Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
+            Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
+            Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);
+            Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
+
+            Settings.ReadIniFile();
+
+            readSettings_tabMiscSettings();
+            checkerMiscSettings.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+
+            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+
+            label_okResultMisc.Show();
+        }
+
+        /// <summary> 閉じる </summary>
+        private void button_miscClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        //-----------------------------------------------------------------------------------
         // 一定時間後にOKリザルトラベルを非表示にする
         int okResultCount = 0;
 
@@ -1038,6 +1083,7 @@ namespace KanchokuWS
                     label_okResultAdvanced.Hide();
                     label_okResultHist.Hide();
                     label_okResultCtrlKeys.Hide();
+                    label_okResultMisc.Hide();
                     label_execResultFile.Hide();
                 }
             }
@@ -1074,6 +1120,11 @@ namespace KanchokuWS
         }
         
         private void label_execResultFile_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_okResultMisc_VisibleChanged(object sender, EventArgs e)
         {
             okResultCount = okResultCountMax;
         }
@@ -1195,12 +1246,6 @@ namespace KanchokuWS
             label_bushuComp.Hide();
         }
 
-        /// <summary> 閉じる </summary>
-        private void button_regClose_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
         // 一定時間後にOKリザルトラベルを非表示にする
         int dicRegLabelCount = 0;
 
@@ -1264,8 +1309,8 @@ namespace KanchokuWS
                     CancelButton = button_histClose;
                     break;
                 case "tabPage_register":
-                    AcceptButton = null;
-                    CancelButton = button_regClose;
+                    AcceptButton = button_miscEnter;
+                    CancelButton = button_miscClose;
                     break;
                 case "tabPage_about":
                     AcceptButton = button_aboutClose;
