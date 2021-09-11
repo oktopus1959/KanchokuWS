@@ -47,6 +47,7 @@ public:
 
     // 自動部首合成エントリの追加
     virtual void AddAutoBushuEntry(const wstring&) = 0;
+    virtual void AddAutoBushuEntry(mchar_t a, mchar_t b, mchar_t c) = 0;
 
     // a と b を組み合わせてできる自動合成文字を探す。
     virtual mchar_t FindAutoComposite(mchar_t ca, mchar_t cb) = 0;

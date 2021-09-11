@@ -270,7 +270,7 @@ namespace {
             }
         }
 
-        void addAutoBushuEntry(mchar_t a, mchar_t b, mchar_t c) {
+        void AddAutoBushuEntry(mchar_t a, mchar_t b, mchar_t c) {
             if (a != 0 && b != 0 && c != 0) {
                 MString key(2, 0);
                 key[0] = a;
@@ -334,7 +334,7 @@ namespace {
                 setAssocTarget(ca, cb, c);
                 if (!((utils::is_hiragana(ca) && utils::is_hiragana(cb)) || (utils::is_katakana(ca) && utils::is_katakana(cb)))) {
                     // 平仮名同士または片仮名同士でない場合は、自動部首合成登録を行う
-                    addAutoBushuEntry(ca, cb, c);
+                    AddAutoBushuEntry(ca, cb, c);
                 }
             }
             _LOG_INFOH(_T("LEAVE: result=%c"), c);

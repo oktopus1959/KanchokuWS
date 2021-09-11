@@ -38,14 +38,22 @@ namespace {
         bool DoProcOnCreated() {
             wchar_t m1 = (wchar_t)OUTPUT_STACK->LastOutStackChar(1);
             wchar_t m2 = (wchar_t)OUTPUT_STACK->LastOutStackChar(0);
-            MString comp = BUSHU_COMP_NODE->ReduceByBushu(m1, m2);
-            LOG_DEBUG(_T("COMP: %s"), MAKE_WPTR(comp));
-            STATE_COMMON->SetOutString(comp);
-            if (!comp.empty()) {
-                setCharDeleteInfo(2);
-                copyStrokeHelpToVkbFaces();
-                //合成した文字を履歴に登録
-                if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(comp, 1));
+            if (m1 == '-' || m1 == ' ') {
+                // 先頭文字が '-' なら、その前の文字と直前の文字との組合せに対して自動部首合成を無効化する
+                if (BUSHU_DIC) {
+                    wchar_t m0 = (wchar_t)OUTPUT_STACK->LastOutStackChar(2);
+                    if (m0 != 0) BUSHU_DIC->AddAutoBushuEntry(m0, m2, '-');
+                }
+            } else {
+                MString comp = BUSHU_COMP_NODE->ReduceByBushu(m1, m2);
+                LOG_DEBUG(_T("COMP: %s"), MAKE_WPTR(comp));
+                STATE_COMMON->SetOutString(comp);
+                if (!comp.empty()) {
+                    setCharDeleteInfo(2);
+                    copyStrokeHelpToVkbFaces();
+                    //合成した文字を履歴に登録
+                    if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(comp, 1));
+                }
             }
             // チェイン不要
             return false;
