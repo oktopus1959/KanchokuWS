@@ -178,8 +178,12 @@ namespace {
         // 自動合成辞書内容の保存
         void WriteAutoDicFile(utils::OfstreamWriter& writer) {
             LOG_INFO(_T("CALLED: autoBushuDict.size()=%d"), autoBushuDict.size());
+            std::set<wstring> set_;
             for (const auto& pair : autoBushuDict) {
-                writer.writeLine(utils::utf8_encode(to_wstr(MString(1, pair.second) + pair.first)));
+                set_.insert(to_wstr(MString(1, pair.second) + pair.first));
+            }
+            for (const auto& s : set_) {
+                writer.writeLine(utils::utf8_encode(s));
             }
         }
 
@@ -214,7 +218,7 @@ namespace {
                 _LOG_DEBUGH(_T("key=%s"), MAKE_WPTR(key));
                 auto iter = autoBushuDict.find(key);
                 _LOG_DEBUGH(_T("iter->second=%c"), ((iter != autoBushuDict.end()) ? iter->second : 0x20));
-                return (iter != autoBushuDict.end()) ? iter->second : 0;
+                return (iter != autoBushuDict.end() && iter->second != '-') ? iter->second : 0; // ターゲットが '-' なら変換しない
             };
             //mchar_t result = finder(ca, cb);
             //if (result != 0) return result;
@@ -257,18 +261,27 @@ namespace {
         void addAutoBushuEntry(const wstring& line) {
             auto mline = to_mstr(line);
             if (mline.size() >= 3) {
-                autoBushuDict[mline.substr(1)] = mline[0];
+                auto key = mline.substr(1);
+                auto iter = autoBushuDict.find(key);
+                if (iter == autoBushuDict.end() || iter->second != '-') {
+                    // ターゲットが '-' である組み合わせは、再登録しない(無視される)
+                    autoBushuDict[key] = mline[0];
+                }
             }
         }
 
         void addAutoBushuEntry(mchar_t a, mchar_t b, mchar_t c) {
             if (a != 0 && b != 0 && c != 0) {
-                bAutoDirty = true;
                 MString key(2, 0);
                 key[0] = a;
                 key[1] = b;
                 _LOG_DEBUGH(_T("key=%s, val=%c"), MAKE_WPTR(key), c);
-                autoBushuDict[key] = c;
+                auto iter = autoBushuDict.find(key);
+                if (iter == autoBushuDict.end() || iter->second != '-') {
+                    // ターゲットが '-' である組み合わせは、再登録しない(無視される)
+                    autoBushuDict[key] = c;
+                    bAutoDirty = true;
+                }
             }
         }
 
