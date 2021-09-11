@@ -216,9 +216,11 @@ namespace {
                 _LOG_DEBUGH(_T("iter->second=%c"), ((iter != autoBushuDict.end()) ? iter->second : 0x20));
                 return (iter != autoBushuDict.end()) ? iter->second : 0;
             };
-            mchar_t result = finder(ca, cb);
-            if (result != 0) return result;
-            return finder(cb, ca);
+            //mchar_t result = finder(ca, cb);
+            //if (result != 0) return result;
+            //return finder(cb, ca);
+            // 正順だけをやる
+            return finder(ca, cb);
         }
 
     private:
@@ -317,7 +319,10 @@ namespace {
             if (c == 0 && prev != 0) c = findCompSub((wchar_t)ca, (wchar_t)cb, 0);    // retry from the beginning
             if (c != 0) {
                 setAssocTarget(ca, cb, c);
-                addAutoBushuEntry(ca, cb, c);
+                if (!((utils::is_hiragana(ca) && utils::is_hiragana(cb)) || (utils::is_katakana(ca) && utils::is_katakana(cb)))) {
+                    // 平仮名同士または片仮名同士でない場合は、自動部首合成登録を行う
+                    addAutoBushuEntry(ca, cb, c);
+                }
             }
             _LOG_INFOH(_T("LEAVE: result=%c"), c);
             return c;
