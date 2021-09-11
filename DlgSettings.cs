@@ -1246,6 +1246,39 @@ namespace KanchokuWS
             label_bushuComp.Hide();
         }
 
+        /// <summary> 自動部首合成辞書登録 </summary>
+        private void button_enterAutoBushu_Click(object sender, EventArgs e)
+        {
+            var line = textBox_autoBushuComp.Text.Trim().Replace(" ", "");
+            int n = 0;
+            foreach (var ch in line) {
+                if (Char.IsHighSurrogate(ch)) continue;
+                ++n;
+            }
+            if (n == 3) {
+                frmMain?.ExecCmdDecoder("addAutoBushuEntry", line);
+                label_saveAutoBushu.Hide();
+                label_autoBushuComp.Show();
+                dicRegLabelCount = dicRegLabelCountMax;
+            } else {
+                SystemHelper.ShowWarningMessageBox("形式が間違っています。\r\n3文字で入力してください。");
+            }
+        }
+
+        private void button_saveAutoBushuCompFile_Click(object sender, EventArgs e)
+        {
+            frmMain?.ExecCmdDecoder("saveAutoBushuDic", null);
+            label_autoBushuComp.Hide();
+            label_saveAutoBushu.Show();
+            dicRegLabelCount = dicRegLabelCountMax;
+        }
+
+        private void textBox_autoBushuComp_TextChanged(object sender, EventArgs e)
+        {
+            label_saveAutoBushu.Hide();
+            label_autoBushuComp.Hide();
+        }
+
         // 一定時間後にOKリザルトラベルを非表示にする
         int dicRegLabelCount = 0;
 
@@ -1264,6 +1297,8 @@ namespace KanchokuWS
                     label_bushuAssoc.Hide();
                     label_saveBushu.Hide();
                     label_bushuComp.Hide();
+                    label_saveAutoBushu.Hide();
+                    label_autoBushuComp.Hide();
                 }
             }
         }

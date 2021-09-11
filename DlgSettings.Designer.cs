@@ -298,6 +298,15 @@ namespace KanchokuWS
             this.button_histClose = new System.Windows.Forms.Button();
             this.button_histEnter = new System.Windows.Forms.Button();
             this.tabPage_register = new System.Windows.Forms.TabPage();
+            this.label_okResultMisc = new System.Windows.Forms.Label();
+            this.button_miscEnter = new System.Windows.Forms.Button();
+            this.groupBox27 = new System.Windows.Forms.GroupBox();
+            this.checkBox_autoBushuComp = new System.Windows.Forms.CheckBox();
+            this.checkBox_SandSEnabled = new System.Windows.Forms.CheckBox();
+            this.checkBox_removeOneStrokeByBackspace = new System.Windows.Forms.CheckBox();
+            this.checkBox_convertJaComma = new System.Windows.Forms.CheckBox();
+            this.checkBox_convertJaPeriod = new System.Windows.Forms.CheckBox();
+            this.checkBox_convertShiftedHiraganaToKatakana = new System.Windows.Forms.CheckBox();
             this.button_restartWithNoSave = new System.Windows.Forms.Button();
             this.label_execResultFile = new System.Windows.Forms.Label();
             this.button_saveAll = new System.Windows.Forms.Button();
@@ -331,6 +340,12 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.groupBox19 = new System.Windows.Forms.GroupBox();
+            this.label_saveAutoBushu = new System.Windows.Forms.Label();
+            this.button_saveAutoBushuCompFile = new System.Windows.Forms.Button();
+            this.label_autoBushuComp = new System.Windows.Forms.Label();
+            this.textBox_autoBushuComp = new System.Windows.Forms.TextBox();
+            this.button_enterAutoBushu = new System.Windows.Forms.Button();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -343,15 +358,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.groupBox27 = new System.Windows.Forms.GroupBox();
-            this.checkBox_SandSEnabled = new System.Windows.Forms.CheckBox();
-            this.checkBox_removeOneStrokeByBackspace = new System.Windows.Forms.CheckBox();
-            this.checkBox_convertJaComma = new System.Windows.Forms.CheckBox();
-            this.checkBox_convertJaPeriod = new System.Windows.Forms.CheckBox();
-            this.checkBox_convertShiftedHiraganaToKatakana = new System.Windows.Forms.CheckBox();
-            this.checkBox_autoBushuComp = new System.Windows.Forms.CheckBox();
-            this.label_okResultMisc = new System.Windows.Forms.Label();
-            this.button_miscEnter = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -388,13 +394,14 @@ namespace KanchokuWS
             this.groupBox14.SuspendLayout();
             this.groupBox12.SuspendLayout();
             this.tabPage_register.SuspendLayout();
+            this.groupBox27.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.tabPage_about.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).BeginInit();
-            this.groupBox27.SuspendLayout();
+            this.groupBox19.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -3497,6 +3504,7 @@ namespace KanchokuWS
             // 
             // tabPage_register
             // 
+            this.tabPage_register.Controls.Add(this.groupBox19);
             this.tabPage_register.Controls.Add(this.label_okResultMisc);
             this.tabPage_register.Controls.Add(this.button_miscEnter);
             this.tabPage_register.Controls.Add(this.groupBox27);
@@ -3515,6 +3523,116 @@ namespace KanchokuWS
             this.tabPage_register.TabIndex = 0;
             this.tabPage_register.Text = "辞書登録・その他";
             this.tabPage_register.UseVisualStyleBackColor = true;
+            // 
+            // label_okResultMisc
+            // 
+            this.label_okResultMisc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label_okResultMisc.AutoSize = true;
+            this.label_okResultMisc.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_okResultMisc.Location = new System.Drawing.Point(499, 325);
+            this.label_okResultMisc.Name = "label_okResultMisc";
+            this.label_okResultMisc.Size = new System.Drawing.Size(65, 15);
+            this.label_okResultMisc.TabIndex = 21;
+            this.label_okResultMisc.Text = "設定しました";
+            this.label_okResultMisc.Visible = false;
+            this.label_okResultMisc.VisibleChanged += new System.EventHandler(this.label_okResultMisc_VisibleChanged);
+            // 
+            // button_miscEnter
+            // 
+            this.button_miscEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_miscEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_miscEnter.Location = new System.Drawing.Point(493, 343);
+            this.button_miscEnter.Name = "button_miscEnter";
+            this.button_miscEnter.Size = new System.Drawing.Size(75, 23);
+            this.button_miscEnter.TabIndex = 8;
+            this.button_miscEnter.Text = "設定(&E)";
+            this.toolTip1.SetToolTip(this.button_miscEnter, "設定内容を kanchoku.user.ini に書き込みます");
+            this.button_miscEnter.UseVisualStyleBackColor = true;
+            this.button_miscEnter.Click += new System.EventHandler(this.button_miscEnter_Click);
+            // 
+            // groupBox27
+            // 
+            this.groupBox27.Controls.Add(this.checkBox_autoBushuComp);
+            this.groupBox27.Controls.Add(this.checkBox_SandSEnabled);
+            this.groupBox27.Controls.Add(this.checkBox_removeOneStrokeByBackspace);
+            this.groupBox27.Controls.Add(this.checkBox_convertJaComma);
+            this.groupBox27.Controls.Add(this.checkBox_convertJaPeriod);
+            this.groupBox27.Controls.Add(this.checkBox_convertShiftedHiraganaToKatakana);
+            this.groupBox27.Location = new System.Drawing.Point(314, 6);
+            this.groupBox27.Name = "groupBox27";
+            this.groupBox27.Size = new System.Drawing.Size(261, 143);
+            this.groupBox27.TabIndex = 5;
+            this.groupBox27.TabStop = false;
+            this.groupBox27.Text = "その他変換・機能";
+            // 
+            // checkBox_autoBushuComp
+            // 
+            this.checkBox_autoBushuComp.AutoSize = true;
+            this.checkBox_autoBushuComp.Location = new System.Drawing.Point(19, 20);
+            this.checkBox_autoBushuComp.Name = "checkBox_autoBushuComp";
+            this.checkBox_autoBushuComp.Size = new System.Drawing.Size(159, 19);
+            this.checkBox_autoBushuComp.TabIndex = 0;
+            this.checkBox_autoBushuComp.Text = "自動部首合成を有効にする";
+            this.toolTip1.SetToolTip(this.checkBox_autoBushuComp, "ある2文字の組み合わせで一度部首合成を実行すると、\r\n次からはその2文字を入力した時点で自動的に部首合成を\r\n実行します。");
+            this.checkBox_autoBushuComp.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_SandSEnabled
+            // 
+            this.checkBox_SandSEnabled.AutoSize = true;
+            this.checkBox_SandSEnabled.Location = new System.Drawing.Point(19, 115);
+            this.checkBox_SandSEnabled.Name = "checkBox_SandSEnabled";
+            this.checkBox_SandSEnabled.Size = new System.Drawing.Size(198, 19);
+            this.checkBox_SandSEnabled.TabIndex = 5;
+            this.checkBox_SandSEnabled.Text = "デコーダON時に SandS を有効にする";
+            this.toolTip1.SetToolTip(this.checkBox_SandSEnabled, "デコーダがONのときに SandS 方式を有効にします。\n\nSandS 方式を有効にすると、スペースキーを押しながら何か別のキーを\n押すと、スペースキーがシフトキ" +
+        "ーとして働くようになります。\n\nスペースを入力したい場合は、オートリピートが始まる前にスペースキーを\n離してください。\n\nSandS を有効にすると Shift" +
+        "+Space は有効なキーではなく、たんなる\nシフトキーとして扱われます。");
+            this.checkBox_SandSEnabled.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_removeOneStrokeByBackspace
+            // 
+            this.checkBox_removeOneStrokeByBackspace.AutoSize = true;
+            this.checkBox_removeOneStrokeByBackspace.Location = new System.Drawing.Point(19, 96);
+            this.checkBox_removeOneStrokeByBackspace.Name = "checkBox_removeOneStrokeByBackspace";
+            this.checkBox_removeOneStrokeByBackspace.Size = new System.Drawing.Size(169, 19);
+            this.checkBox_removeOneStrokeByBackspace.TabIndex = 4;
+            this.checkBox_removeOneStrokeByBackspace.Text = "BSで直前打鍵のみを取り消す";
+            this.toolTip1.SetToolTip(this.checkBox_removeOneStrokeByBackspace, "BS で直前のストロークのみを取り消します。\r\n\r\nチェックを外すと、第1打鍵からの全ストロークが取り消されます。\r\nT-Code のような2ストローク系の場合は" +
+        "どちらでも同じになりますが、\r\nTUT-Code などの多ストローク系の場合は、ストロークの途中で\r\nBS を押したときの挙動を切り替えることができます。\r\n");
+            this.checkBox_removeOneStrokeByBackspace.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_convertJaComma
+            // 
+            this.checkBox_convertJaComma.AutoSize = true;
+            this.checkBox_convertJaComma.Location = new System.Drawing.Point(19, 77);
+            this.checkBox_convertJaComma.Name = "checkBox_convertJaComma";
+            this.checkBox_convertJaComma.Size = new System.Drawing.Size(137, 19);
+            this.checkBox_convertJaComma.TabIndex = 3;
+            this.checkBox_convertJaComma.Text = "「、」と「，」の相互変換";
+            this.toolTip1.SetToolTip(this.checkBox_convertJaComma, "打鍵入力された「、」と「，」を相互に入れ替えて出力します。");
+            this.checkBox_convertJaComma.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_convertJaPeriod
+            // 
+            this.checkBox_convertJaPeriod.AutoSize = true;
+            this.checkBox_convertJaPeriod.Location = new System.Drawing.Point(19, 58);
+            this.checkBox_convertJaPeriod.Name = "checkBox_convertJaPeriod";
+            this.checkBox_convertJaPeriod.Size = new System.Drawing.Size(137, 19);
+            this.checkBox_convertJaPeriod.TabIndex = 2;
+            this.checkBox_convertJaPeriod.Text = "「。」と「．」の相互変換";
+            this.toolTip1.SetToolTip(this.checkBox_convertJaPeriod, "打鍵入力された「。」と「．」を相互に入れ替えて出力します。");
+            this.checkBox_convertJaPeriod.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_convertShiftedHiraganaToKatakana
+            // 
+            this.checkBox_convertShiftedHiraganaToKatakana.AutoSize = true;
+            this.checkBox_convertShiftedHiraganaToKatakana.Location = new System.Drawing.Point(19, 39);
+            this.checkBox_convertShiftedHiraganaToKatakana.Name = "checkBox_convertShiftedHiraganaToKatakana";
+            this.checkBox_convertShiftedHiraganaToKatakana.Size = new System.Drawing.Size(235, 19);
+            this.checkBox_convertShiftedHiraganaToKatakana.TabIndex = 1;
+            this.checkBox_convertShiftedHiraganaToKatakana.Text = "Shift入力された平仮名をカタカナに変換する";
+            this.toolTip1.SetToolTip(this.checkBox_convertShiftedHiraganaToKatakana, "Shiftキーを押しながら平仮名を入力すると、\r\n対応するカタカナに変換します。");
+            this.checkBox_convertShiftedHiraganaToKatakana.UseVisualStyleBackColor = true;
             // 
             // button_restartWithNoSave
             // 
@@ -3564,7 +3682,7 @@ namespace KanchokuWS
             this.button_miscClose.Location = new System.Drawing.Point(385, 343);
             this.button_miscClose.Name = "button_miscClose";
             this.button_miscClose.Size = new System.Drawing.Size(80, 23);
-            this.button_miscClose.TabIndex = 5;
+            this.button_miscClose.TabIndex = 7;
             this.button_miscClose.Text = "閉じる(&C)";
             this.button_miscClose.UseVisualStyleBackColor = true;
             this.button_miscClose.Click += new System.EventHandler(this.button_miscClose_Click);
@@ -3885,6 +4003,79 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // groupBox19
+            // 
+            this.groupBox19.Controls.Add(this.label_saveAutoBushu);
+            this.groupBox19.Controls.Add(this.button_saveAutoBushuCompFile);
+            this.groupBox19.Controls.Add(this.label_autoBushuComp);
+            this.groupBox19.Controls.Add(this.textBox_autoBushuComp);
+            this.groupBox19.Controls.Add(this.button_enterAutoBushu);
+            this.groupBox19.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.groupBox19.Location = new System.Drawing.Point(314, 246);
+            this.groupBox19.Name = "groupBox19";
+            this.groupBox19.Size = new System.Drawing.Size(261, 74);
+            this.groupBox19.TabIndex = 4;
+            this.groupBox19.TabStop = false;
+            this.groupBox19.Text = "自動部首合成登録";
+            // 
+            // label_saveAutoBushu
+            // 
+            this.label_saveAutoBushu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label_saveAutoBushu.AutoSize = true;
+            this.label_saveAutoBushu.Location = new System.Drawing.Point(87, 51);
+            this.label_saveAutoBushu.Name = "label_saveAutoBushu";
+            this.label_saveAutoBushu.Size = new System.Drawing.Size(65, 15);
+            this.label_saveAutoBushu.TabIndex = 14;
+            this.label_saveAutoBushu.Text = "保存しました";
+            this.label_saveAutoBushu.Visible = false;
+            // 
+            // button_saveAutoBushuCompFile
+            // 
+            this.button_saveAutoBushuCompFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_saveAutoBushuCompFile.Location = new System.Drawing.Point(14, 47);
+            this.button_saveAutoBushuCompFile.Name = "button_saveAutoBushuCompFile";
+            this.button_saveAutoBushuCompFile.Size = new System.Drawing.Size(60, 21);
+            this.button_saveAutoBushuCompFile.TabIndex = 2;
+            this.button_saveAutoBushuCompFile.TabStop = false;
+            this.button_saveAutoBushuCompFile.Text = "保存";
+            this.toolTip1.SetToolTip(this.button_saveAutoBushuCompFile, "デコーダが保持している自動部首合成辞書の内容をファイルに保存します。\r\nただし、利用者による登録がない場合は、保存は行いません。\r\n\r\n保存の際、現在のファイルを" +
+        " .1 という拡張子を付加して\r\nback フォルダに移動します。");
+            this.button_saveAutoBushuCompFile.UseVisualStyleBackColor = true;
+            this.button_saveAutoBushuCompFile.Click += new System.EventHandler(this.button_saveAutoBushuCompFile_Click);
+            // 
+            // label_autoBushuComp
+            // 
+            this.label_autoBushuComp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label_autoBushuComp.AutoSize = true;
+            this.label_autoBushuComp.Location = new System.Drawing.Point(112, 51);
+            this.label_autoBushuComp.Name = "label_autoBushuComp";
+            this.label_autoBushuComp.Size = new System.Drawing.Size(65, 15);
+            this.label_autoBushuComp.TabIndex = 11;
+            this.label_autoBushuComp.Text = "登録しました";
+            this.label_autoBushuComp.Visible = false;
+            // 
+            // textBox_autoBushuComp
+            // 
+            this.textBox_autoBushuComp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_autoBushuComp.Location = new System.Drawing.Point(16, 18);
+            this.textBox_autoBushuComp.Name = "textBox_autoBushuComp";
+            this.textBox_autoBushuComp.Size = new System.Drawing.Size(237, 23);
+            this.textBox_autoBushuComp.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_autoBushuComp, resources.GetString("textBox_autoBushuComp.ToolTip"));
+            this.textBox_autoBushuComp.TextChanged += new System.EventHandler(this.textBox_autoBushuComp_TextChanged);
+            // 
+            // button_enterAutoBushu
+            // 
+            this.button_enterAutoBushu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_enterAutoBushu.Location = new System.Drawing.Point(186, 47);
+            this.button_enterAutoBushu.Name = "button_enterAutoBushu";
+            this.button_enterAutoBushu.Size = new System.Drawing.Size(67, 21);
+            this.button_enterAutoBushu.TabIndex = 1;
+            this.button_enterAutoBushu.Text = "登録";
+            this.button_enterAutoBushu.UseVisualStyleBackColor = true;
+            this.button_enterAutoBushu.Click += new System.EventHandler(this.button_enterAutoBushu_Click);
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -4027,116 +4218,6 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
-            // groupBox27
-            // 
-            this.groupBox27.Controls.Add(this.checkBox_autoBushuComp);
-            this.groupBox27.Controls.Add(this.checkBox_SandSEnabled);
-            this.groupBox27.Controls.Add(this.checkBox_removeOneStrokeByBackspace);
-            this.groupBox27.Controls.Add(this.checkBox_convertJaComma);
-            this.groupBox27.Controls.Add(this.checkBox_convertJaPeriod);
-            this.groupBox27.Controls.Add(this.checkBox_convertShiftedHiraganaToKatakana);
-            this.groupBox27.Location = new System.Drawing.Point(314, 6);
-            this.groupBox27.Name = "groupBox27";
-            this.groupBox27.Size = new System.Drawing.Size(261, 143);
-            this.groupBox27.TabIndex = 4;
-            this.groupBox27.TabStop = false;
-            this.groupBox27.Text = "その他変換・機能";
-            // 
-            // checkBox_SandSEnabled
-            // 
-            this.checkBox_SandSEnabled.AutoSize = true;
-            this.checkBox_SandSEnabled.Location = new System.Drawing.Point(19, 115);
-            this.checkBox_SandSEnabled.Name = "checkBox_SandSEnabled";
-            this.checkBox_SandSEnabled.Size = new System.Drawing.Size(198, 19);
-            this.checkBox_SandSEnabled.TabIndex = 5;
-            this.checkBox_SandSEnabled.Text = "デコーダON時に SandS を有効にする";
-            this.toolTip1.SetToolTip(this.checkBox_SandSEnabled, "デコーダがONのときに SandS 方式を有効にします。\n\nSandS 方式を有効にすると、スペースキーを押しながら何か別のキーを\n押すと、スペースキーがシフトキ" +
-        "ーとして働くようになります。\n\nスペースを入力したい場合は、オートリピートが始まる前にスペースキーを\n離してください。\n\nSandS を有効にすると Shift" +
-        "+Space は有効なキーではなく、たんなる\nシフトキーとして扱われます。");
-            this.checkBox_SandSEnabled.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_removeOneStrokeByBackspace
-            // 
-            this.checkBox_removeOneStrokeByBackspace.AutoSize = true;
-            this.checkBox_removeOneStrokeByBackspace.Location = new System.Drawing.Point(19, 96);
-            this.checkBox_removeOneStrokeByBackspace.Name = "checkBox_removeOneStrokeByBackspace";
-            this.checkBox_removeOneStrokeByBackspace.Size = new System.Drawing.Size(169, 19);
-            this.checkBox_removeOneStrokeByBackspace.TabIndex = 4;
-            this.checkBox_removeOneStrokeByBackspace.Text = "BSで直前打鍵のみを取り消す";
-            this.toolTip1.SetToolTip(this.checkBox_removeOneStrokeByBackspace, "BS で直前のストロークのみを取り消します。\r\n\r\nチェックを外すと、第1打鍵からの全ストロークが取り消されます。\r\nT-Code のような2ストローク系の場合は" +
-        "どちらでも同じになりますが、\r\nTUT-Code などの多ストローク系の場合は、ストロークの途中で\r\nBS を押したときの挙動を切り替えることができます。\r\n");
-            this.checkBox_removeOneStrokeByBackspace.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_convertJaComma
-            // 
-            this.checkBox_convertJaComma.AutoSize = true;
-            this.checkBox_convertJaComma.Location = new System.Drawing.Point(19, 77);
-            this.checkBox_convertJaComma.Name = "checkBox_convertJaComma";
-            this.checkBox_convertJaComma.Size = new System.Drawing.Size(137, 19);
-            this.checkBox_convertJaComma.TabIndex = 3;
-            this.checkBox_convertJaComma.Text = "「、」と「，」の相互変換";
-            this.toolTip1.SetToolTip(this.checkBox_convertJaComma, "打鍵入力された「、」と「，」を相互に入れ替えて出力します。");
-            this.checkBox_convertJaComma.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_convertJaPeriod
-            // 
-            this.checkBox_convertJaPeriod.AutoSize = true;
-            this.checkBox_convertJaPeriod.Location = new System.Drawing.Point(19, 58);
-            this.checkBox_convertJaPeriod.Name = "checkBox_convertJaPeriod";
-            this.checkBox_convertJaPeriod.Size = new System.Drawing.Size(137, 19);
-            this.checkBox_convertJaPeriod.TabIndex = 2;
-            this.checkBox_convertJaPeriod.Text = "「。」と「．」の相互変換";
-            this.toolTip1.SetToolTip(this.checkBox_convertJaPeriod, "打鍵入力された「。」と「．」を相互に入れ替えて出力します。");
-            this.checkBox_convertJaPeriod.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_convertShiftedHiraganaToKatakana
-            // 
-            this.checkBox_convertShiftedHiraganaToKatakana.AutoSize = true;
-            this.checkBox_convertShiftedHiraganaToKatakana.Location = new System.Drawing.Point(19, 39);
-            this.checkBox_convertShiftedHiraganaToKatakana.Name = "checkBox_convertShiftedHiraganaToKatakana";
-            this.checkBox_convertShiftedHiraganaToKatakana.Size = new System.Drawing.Size(235, 19);
-            this.checkBox_convertShiftedHiraganaToKatakana.TabIndex = 1;
-            this.checkBox_convertShiftedHiraganaToKatakana.Text = "Shift入力された平仮名をカタカナに変換する";
-            this.toolTip1.SetToolTip(this.checkBox_convertShiftedHiraganaToKatakana, "Shiftキーを押しながら平仮名を入力すると、\r\n対応するカタカナに変換します。");
-            this.checkBox_convertShiftedHiraganaToKatakana.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_autoBushuComp
-            // 
-            this.checkBox_autoBushuComp.AutoSize = true;
-            this.checkBox_autoBushuComp.Location = new System.Drawing.Point(19, 20);
-            this.checkBox_autoBushuComp.Name = "checkBox_autoBushuComp";
-            this.checkBox_autoBushuComp.Size = new System.Drawing.Size(159, 19);
-            this.checkBox_autoBushuComp.TabIndex = 0;
-            this.checkBox_autoBushuComp.Text = "自動部首合成を有効にする";
-            this.toolTip1.SetToolTip(this.checkBox_autoBushuComp, "ある2文字の組み合わせで一度部首合成を実行すると、\r\n次からはその2文字を入力した時点で自動的に部首合成を\r\n実行します。");
-            this.checkBox_autoBushuComp.UseVisualStyleBackColor = true;
-            // 
-            // label_okResultMisc
-            // 
-            this.label_okResultMisc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label_okResultMisc.AutoSize = true;
-            this.label_okResultMisc.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultMisc.Location = new System.Drawing.Point(499, 325);
-            this.label_okResultMisc.Name = "label_okResultMisc";
-            this.label_okResultMisc.Size = new System.Drawing.Size(65, 15);
-            this.label_okResultMisc.TabIndex = 21;
-            this.label_okResultMisc.Text = "設定しました";
-            this.label_okResultMisc.Visible = false;
-            this.label_okResultMisc.VisibleChanged += new System.EventHandler(this.label_okResultMisc_VisibleChanged);
-            // 
-            // button_miscEnter
-            // 
-            this.button_miscEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_miscEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_miscEnter.Location = new System.Drawing.Point(493, 343);
-            this.button_miscEnter.Name = "button_miscEnter";
-            this.button_miscEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_miscEnter.TabIndex = 20;
-            this.button_miscEnter.Text = "設定(&E)";
-            this.toolTip1.SetToolTip(this.button_miscEnter, "設定内容を kanchoku.user.ini に書き込みます");
-            this.button_miscEnter.UseVisualStyleBackColor = true;
-            this.button_miscEnter.Click += new System.EventHandler(this.button_miscEnter_Click);
-            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -4223,6 +4304,8 @@ namespace KanchokuWS
             this.groupBox12.PerformLayout();
             this.tabPage_register.ResumeLayout(false);
             this.tabPage_register.PerformLayout();
+            this.groupBox27.ResumeLayout(false);
+            this.groupBox27.PerformLayout();
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
             this.groupBox9.ResumeLayout(false);
@@ -4233,8 +4316,8 @@ namespace KanchokuWS
             this.groupBox7.PerformLayout();
             this.tabPage_about.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).EndInit();
-            this.groupBox27.ResumeLayout(false);
-            this.groupBox27.PerformLayout();
+            this.groupBox19.ResumeLayout(false);
+            this.groupBox19.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -4563,5 +4646,11 @@ namespace KanchokuWS
         private System.Windows.Forms.CheckBox checkBox_convertShiftedHiraganaToKatakana;
         private System.Windows.Forms.Label label_okResultMisc;
         private System.Windows.Forms.Button button_miscEnter;
+        private System.Windows.Forms.GroupBox groupBox19;
+        private System.Windows.Forms.Label label_saveAutoBushu;
+        private System.Windows.Forms.Button button_saveAutoBushuCompFile;
+        private System.Windows.Forms.Label label_autoBushuComp;
+        private System.Windows.Forms.TextBox textBox_autoBushuComp;
+        private System.Windows.Forms.Button button_enterAutoBushu;
     }
 }
