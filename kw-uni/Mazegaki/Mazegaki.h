@@ -66,12 +66,18 @@ private:
         return shifted;
     }
 
+    // 今回の結果を元に戻すための情報を保存 (yomi は、再変換をする際の元の読みになる)
     void SetYomiInfo(const MString& yomi, size_t outputLen) {
         prevYomi = yomi;
         prevOutputLen = outputLen;
         shiftedYomiLen = yomi.size();
         deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
         selectFirstCandDisabled = false;
+    }
+
+    // 前回の出力長を返す
+    size_t GetPrevOutputLen() {
+        return (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) ? prevOutputLen : 0;
     }
 
     // n打鍵によるMaze呼び出し用に情報をセットする(4ストロークまでOK)⇒前回の出力長を返す

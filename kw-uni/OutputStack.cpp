@@ -30,17 +30,20 @@ void OutputStack::_resize() {
 // stackの末尾から、tailMaxlen の範囲で、tailLen の長さの文字列を取得する
 // 例: stack="fooBarHoge", tailLen=4, tailMaxLen=7 なら "Hoge" を返す
 // bWithFlag = true なら、FLAG のセットしてある文字の後に "|" を付加する
-MString OutputStack::tail_string(size_t tailLen, size_t tailMaxlen, bool bWithFlag) const {
+// extraBarPos > 0 なら、末尾から extraBarPos位置に "|" を付加する
+MString OutputStack::tail_string(size_t tailLen, size_t tailMaxlen, bool bWithFlag, size_t extraBarPos) const {
     mchar_t buf[OUTPUT_STACK_MAXSIZE + 2];
     size_t stackSize = size();
     if (tailLen > OUTPUT_STACK_MAXSIZE) tailLen = OUTPUT_STACK_MAXSIZE;
     if (tailLen > tailMaxlen) tailLen = tailMaxlen;
     if (tailLen > stackSize) tailLen = stackSize;
     size_t pos = stackSize - tailLen;
+    size_t extraPos = stackSize - extraBarPos;
     size_t i = 0;
     while (i < OUTPUT_STACK_MAXSIZE && pos < stackSize) {
+        if (bWithFlag && pos == extraPos && i > 0 && buf[i - 1] != '|') buf[i++] = '|';
         buf[i++] = stack[pos].chr;
-        if (bWithFlag && (stack[pos].flag & ~FLAG_BLOCK_KATA) != 0) buf[i++] = '|';
+        if (bWithFlag && ((stack[pos].flag & ~FLAG_BLOCK_KATA) != 0)) buf[i++] = '|';
         ++pos;
     }
     buf[i] = 0;

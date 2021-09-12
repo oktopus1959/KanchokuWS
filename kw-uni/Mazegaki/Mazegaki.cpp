@@ -199,7 +199,14 @@ namespace {
                         // 先頭候補の変換形が読みと一致していた、つまり変化していなかった ⇒ 変換形の(語尾を含んだ)長さのところから再変換する
                         _LOG_DEBUGH(_T("SAME XFER as yomi: '%s'"), MAKE_WPTR(cand.resultStr));
                         fullYomi = fullYomi.substr(cand.xferLen);
-                        prevXfered = false;
+                        if (fullYomi.empty()) {
+                            if (prevXfered) {
+                                // 変換位置をずらした別の変換形が得られなかった場合でも、再変換のときはそれを採用する
+                                // 例：「ひどい目にあう」⇒「ひど色目にあう」⇒ '>' ⇒「ひど色|目にあう」<- いまココ
+                                //      なので、「目にあう」を採用し、「ひどい|目にあう」に直す必要あり
+                                break;
+                            }
+                        }
                         continue;
                     }
                 }

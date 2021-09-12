@@ -114,6 +114,7 @@ public:
         setFlag(FLAG_BLOCK_HIST);
     }
 
+    // 末尾にカタカナ変換用の平仮名採取ブロッカーをセット
     inline void setKataBlocker() {
         setFlag(FLAG_BLOCK_KATA);
     }
@@ -133,6 +134,7 @@ public:
         setKataBlocker();
     }
 
+    // 末尾に交ぜ書きブロッカーとカタカナブロッカーをセットする
     inline void setMazeBlocker() {
         setFlag(FLAG_BLOCK_MAZE);
         setKataBlocker();
@@ -275,8 +277,8 @@ public:
     }
 
     // 改行を含まない末尾部分(最大長maxlen)で、何かflagがあれば | を付加した部分文字列を返す
-    inline MString backStringWithFlagUpto(size_t maxlen) const {
-        return tail_string(maxlen, tail_size(), true);
+    inline MString backStringWithFlagUpto(size_t maxlen, size_t extraBarPos = 0) const {
+        return tail_string(maxlen, tail_size(), true, extraBarPos);
     }
 
     inline MString backStringFull(size_t maxlen) const {
@@ -302,7 +304,7 @@ public:
     inline MString GetLastOutputStackStrUptoNL(size_t len) const { return GetLastOutputStackStr(len, OutputStack::FLAG_NEW_LINE); }
 
     // ブロッカーを反映した文字列を取得
-    inline MString OutputStackBackStrWithFlagUpto(size_t len) const { return backStringWithFlagUpto(len); }
+    inline MString OutputStackBackStrWithFlagUpto(size_t len, size_t extraBarPos = 0) const { return backStringWithFlagUpto(len, extraBarPos); }
 
     inline bool isLastOutputStackCharBlocker() const {
         return _isLastBlocker();
@@ -392,7 +394,7 @@ private:
     // stackの末尾から、tailMaxlen の範囲で、tailLen の長さの文字列を取得する
     // 例: stack="fooBarHoge", tailLen=4, tailMaxLen=7 なら "Hoge" を返す
     // bWithFlag = true なら、FLAG のセットしてある文字の後に "|" を付加する
-    MString tail_string(size_t tailLen, size_t tailMaxlen, bool bWithFlag = false) const;
+    MString tail_string(size_t tailLen, size_t tailMaxlen, bool bWithFlag = false, size_t extraBarPos = 0) const;
 
 public:
     static std::unique_ptr<OutputStack> Singleton;
