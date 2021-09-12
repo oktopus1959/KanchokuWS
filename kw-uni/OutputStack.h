@@ -138,6 +138,7 @@ public:
         setKataBlocker();
     }
 
+    // 末尾の交ぜ書きブロッカーをリセットする
     inline void unsetMazeBlocker() {
         unsetFlag(FLAG_BLOCK_MAZE);
     }
@@ -190,6 +191,7 @@ public:
         }
     }
 
+    // 末尾のフラグをリセットする
     inline void unsetFlag(unsigned short flag) {
         if (!stack.empty()) {
             stack.back().flag &= ~flag;

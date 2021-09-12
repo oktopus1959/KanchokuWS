@@ -74,7 +74,7 @@ private:
         selectFirstCandDisabled = false;
     }
 
-    // n打鍵によるMaze呼び出し用(4ストロークまでOK)
+    // n打鍵によるMaze呼び出し用に情報をセットする(4ストロークまでOK)⇒前回の出力長を返す
     size_t GetPrevYomiInfo(MString& yomi) {
         if (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) {
             selectFirstCandDisabled = true;
@@ -98,6 +98,7 @@ private:
         return 0;
     }
 
+    // 先頭候補の自動選択が一時的に中止されているか
     bool IsSelectFirstCandDisabled() {
         return selectFirstCandDisabled;
     }

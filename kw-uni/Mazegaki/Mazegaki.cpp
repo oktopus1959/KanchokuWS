@@ -33,8 +33,10 @@ namespace {
 
         std::map<MString, size_t> cand2len;
 
+        // 最初の変換候補に対する読み
         MString firstCandYomi;
 
+        // 読みの全体
         MString fullYomi;
 
     public:
@@ -162,10 +164,9 @@ namespace {
                 return false;
             }
 
-            // 直前に変換していたか
-            MString prevYomi;
-            size_t prevXferLen = 0;
-            bool prevXfered = false;
+            bool prevXfered = false;    // 直前に変換していたか
+            MString prevYomi;           // 直前の変換の時の読み
+            size_t prevXferLen = 0;     // 直前の変換形の長さ
 
             // 末尾がブロッカーなら、直前の変換をやり直す
             if (OUTPUT_STACK->isLastMazeBlocker()) {
@@ -180,17 +181,33 @@ namespace {
             OUTPUT_STACK->unsetMazeBlocker();
             MString fullYomi = prevXfered ? utils::tail_substr(prevYomi, shiftedYomiLen) : OUTPUT_STACK->BackStringUptoMazeOrHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen);
             _LOG_DEBUGH(_T("fullYomi='%s'"), MAKE_WPTR(fullYomi));
-            const auto& cands = candsByLen.GetAllCandidates(fullYomi);
-            if (cands.empty()) {
-                // チェイン不要
-                _LOG_DEBUGH(_T("LEAVE: no candidate"));
-                MAZEGAKI_NODE->SetJustAfterPrevXfer();
-                return false;
+            const std::vector<MazeResult>* pCands = nullptr;
+            while (true) {
+                _LOG_DEBUGH(_T("fullYomi='%s'"), MAKE_WPTR(fullYomi));
+                pCands = &candsByLen.GetAllCandidates(fullYomi);
+                if (pCands->empty()) {
+                    // チェイン不要
+                    _LOG_DEBUGH(_T("LEAVE: no candidate"));
+                    MAZEGAKI_NODE->SetJustAfterPrevXfer();
+                    return false;
+                }
+                LOG_INFOH(_T("mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
+                if (!MAZEGAKI_NODE->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand) {
+                    // 先頭候補の自動出力モードの場合
+                    const auto& cand = pCands->front();
+                    if (!cand.resultStr.empty() && cand.resultStr == fullYomi.substr(0, cand.resultStr.size())) {
+                        // 先頭候補の変換形が読みと一致していた、つまり変化していなかった ⇒ 変換形の(語尾を含んだ)長さのところから再変換する
+                        _LOG_DEBUGH(_T("SAME XFER as yomi: '%s'"), MAKE_WPTR(cand.resultStr));
+                        fullYomi = fullYomi.substr(cand.xferLen);
+                        prevXfered = false;
+                        continue;
+                    }
+                }
+                break;
             }
-            LOG_INFOH(_T("mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
-            if (cands.size() == 1 || (!MAZEGAKI_NODE->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand)) {
+            if (pCands->size() == 1 || (!MAZEGAKI_NODE->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand)) {
                 // 読みの長さ候補が１つしかなかった、または先頭候補の自動出力モードなのでそれを選択して出力
-                const auto& cand = cands.front();
+                const auto& cand = pCands->front();
                 size_t candLen = cand.resultStr.size();
                 size_t candYlen = candsByLen.GetFirstCandidateYomi().size();
                 _LOG_DEBUGH(_T("candLen=%d, candYlen=%d"), candLen, candYlen);
@@ -216,7 +233,7 @@ namespace {
                         if ((1 + candYlen) < fullYomi.size()) leadStr = fullYomi.substr(1, fullYomi.size() - (1 + candYlen));
                         outputStringAndPostProc(leadStr, cand, fullYomi.size(), nullptr, 0);
                     } else {
-                        _LOG_DEBUGH(_T("CANDS_SIZE=%d, SELECT_FIRST=%s"), cands.size(), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
+                        _LOG_DEBUGH(_T("CANDS_SIZE=%d, SELECT_FIRST=%s"), pCands->size(), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
                         outputStringAndPostProc(EMPTY_MSTR, cand, candYlen, nullptr, 0);
                     }
                 }
@@ -231,7 +248,7 @@ namespace {
             // 候補があったので仮想鍵盤に表示
             setCandidatesVKB();
             // 前状態にチェインする
-            _LOG_DEBUGH(_T("LEAVE: %d candidates"), cands.size());
+            _LOG_DEBUGH(_T("LEAVE: %d candidates"), pCands->size());
             return true;
         }
 
