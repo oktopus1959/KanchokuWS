@@ -358,6 +358,8 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.groupBox34 = new System.Windows.Forms.GroupBox();
+            this.label91 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -402,6 +404,7 @@ namespace KanchokuWS
             this.tabPage_about.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).BeginInit();
             this.groupBox19.SuspendLayout();
+            this.groupBox34.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -481,9 +484,10 @@ namespace KanchokuWS
             this.label_initialMsg.ForeColor = System.Drawing.Color.DarkRed;
             this.label_initialMsg.Location = new System.Drawing.Point(268, 253);
             this.label_initialMsg.Name = "label_initialMsg";
-            this.label_initialMsg.Size = new System.Drawing.Size(296, 30);
+            this.label_initialMsg.Size = new System.Drawing.Size(304, 60);
             this.label_initialMsg.TabIndex = 10;
-            this.label_initialMsg.Text = "本体アイコンはタスクトレイに格納されています\r\nこのダイアログは本体アイコンの右クリックメニューからも開けます";
+            this.label_initialMsg.Text = "本体アイコンはタスクトレイに格納されています。\r\nこのダイアログは本体アイコンの右クリックメニューからも開けます。\r\nテキストボックス、ドロップダウン、チェックボ" +
+    "ックスなどの上に\r\nマウスポインタを置くとツールチップが表示されます。";
             this.label_initialMsg.Visible = false;
             // 
             // button_restart
@@ -3024,6 +3028,7 @@ namespace KanchokuWS
             // 
             // tabPage_history
             // 
+            this.tabPage_history.Controls.Add(this.groupBox34);
             this.tabPage_history.Controls.Add(this.groupBox23);
             this.tabPage_history.Controls.Add(this.groupBox17);
             this.tabPage_history.Controls.Add(this.groupBox14);
@@ -3116,10 +3121,10 @@ namespace KanchokuWS
             // checkBox_mazeRightShiftYomiPos
             // 
             this.checkBox_mazeRightShiftYomiPos.AutoSize = true;
-            this.checkBox_mazeRightShiftYomiPos.Location = new System.Drawing.Point(20, 84);
+            this.checkBox_mazeRightShiftYomiPos.Location = new System.Drawing.Point(20, 63);
             this.checkBox_mazeRightShiftYomiPos.Name = "checkBox_mazeRightShiftYomiPos";
             this.checkBox_mazeRightShiftYomiPos.Size = new System.Drawing.Size(201, 19);
-            this.checkBox_mazeRightShiftYomiPos.TabIndex = 3;
+            this.checkBox_mazeRightShiftYomiPos.TabIndex = 2;
             this.checkBox_mazeRightShiftYomiPos.Text = "「>」で変換開始位置を右に移動する";
             this.toolTip1.SetToolTip(this.checkBox_mazeRightShiftYomiPos, resources.GetString("checkBox_mazeRightShiftYomiPos.ToolTip"));
             this.checkBox_mazeRightShiftYomiPos.UseVisualStyleBackColor = true;
@@ -3127,10 +3132,10 @@ namespace KanchokuWS
             // checkBox_mazeRemoveHeadSpace
             // 
             this.checkBox_mazeRemoveHeadSpace.AutoSize = true;
-            this.checkBox_mazeRemoveHeadSpace.Location = new System.Drawing.Point(20, 63);
+            this.checkBox_mazeRemoveHeadSpace.Location = new System.Drawing.Point(20, 84);
             this.checkBox_mazeRemoveHeadSpace.Name = "checkBox_mazeRemoveHeadSpace";
             this.checkBox_mazeRemoveHeadSpace.Size = new System.Drawing.Size(183, 19);
-            this.checkBox_mazeRemoveHeadSpace.TabIndex = 2;
+            this.checkBox_mazeRemoveHeadSpace.TabIndex = 3;
             this.checkBox_mazeRemoveHeadSpace.Text = "空白文字を変換開始位置とする";
             this.toolTip1.SetToolTip(this.checkBox_mazeRemoveHeadSpace, resources.GetString("checkBox_mazeRemoveHeadSpace.ToolTip"));
             this.checkBox_mazeRemoveHeadSpace.UseVisualStyleBackColor = true;
@@ -4218,6 +4223,28 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // groupBox34
+            // 
+            this.groupBox34.Controls.Add(this.label91);
+            this.groupBox34.Location = new System.Drawing.Point(312, 193);
+            this.groupBox34.Name = "groupBox34";
+            this.groupBox34.Size = new System.Drawing.Size(261, 100);
+            this.groupBox34.TabIndex = 26;
+            this.groupBox34.TabStop = false;
+            this.groupBox34.Text = "交ぜ書きブロッカーとは";
+            // 
+            // label91
+            // 
+            this.label91.AutoSize = true;
+            this.label91.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label91.Location = new System.Drawing.Point(5, 17);
+            this.label91.Name = "label91";
+            this.label91.Size = new System.Drawing.Size(254, 75);
+            this.label91.TabIndex = 2;
+            this.label91.Text = "ミニバッファ(直前の出力内容)から交ぜ書き変換ため\r\nの読みを取得する際に、出力の末尾から見ていって、\r\n「ここで取得をストップする」というフラグのことです。\r\n" +
+    "詳細は、ここにマウスポインタを置いてツールチップを参\r\n照してください。";
+            this.toolTip1.SetToolTip(this.label91, resources.GetString("label91.ToolTip"));
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -4318,6 +4345,8 @@ namespace KanchokuWS
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).EndInit();
             this.groupBox19.ResumeLayout(false);
             this.groupBox19.PerformLayout();
+            this.groupBox34.ResumeLayout(false);
+            this.groupBox34.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -4652,5 +4681,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label_autoBushuComp;
         private System.Windows.Forms.TextBox textBox_autoBushuComp;
         private System.Windows.Forms.Button button_enterAutoBushu;
+        private System.Windows.Forms.GroupBox groupBox34;
+        private System.Windows.Forms.Label label91;
     }
 }
