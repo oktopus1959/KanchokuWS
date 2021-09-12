@@ -142,8 +142,11 @@ namespace {
         _T("め湿"), 
     };
 
+    // '*' か
+    inline bool is_wild_star(mchar_t mch) { return mch == '*'; }
+
     // 読みの文字 (ひらがな or '*')
-    inline bool is_yomi_char(mchar_t mch) { return mch == '*' || utils::is_hiragana(mch); }
+    inline bool is_yomi_char(mchar_t mch) { return is_wild_star(mch) || utils::is_hiragana(mch); }
 
     // 変換形の文字か(ひらがな以外かつ'*'以外)
     inline bool is_xfer_char(mchar_t mch) { return !is_yomi_char(mch); }
@@ -746,11 +749,13 @@ namespace {
                     _LOG_DEBUGH(_T("stemMinLen=%d"), stemMinLen);
                     std::set<const MazeEntry*> entrySet;
                     bool mazeSearch = false;
+                    bool mazeStar = false;
                     
                     // 交ぜ書き辞書からエントリを集める (読みが全てワイルドカードの場合は entrySet が empty になるので、無視される)
                     for (size_t i = 0; i < stemMinLen; ++i) {
                         mchar_t kch = key[i];
                         mazeSearch = mazeSearch || is_xfer_char_or_wildcard(kch);
+                        mazeStar = mazeStar || is_wild_star(kch);
                         if (is_wildcard(kch)) continue;     // ワイルドカードは無視
                         auto iter = mazeDic.find(kch);
                         if (iter == mazeDic.end()) {
@@ -789,8 +794,8 @@ namespace {
                             // ただし、「国民は」の「国民」は通す必要あり。そうしないと「国民派」に変換されてしまう
                             if (keyStem != p->xfer && (utils::startsWith(keyStem, p->xfer) || utils::endsWith(keyStem, p->xfer))) continue;
 
-                            if (keyStem == p->stem || mazeSearch && order_matched(keyStem, p)) {
-                                // 読み語幹が完全一致、または key に漢字が含まれている場合は、ひらがな・漢字の出現順序の一致を確認
+                            if (keyStem == p->stem || mazeSearch && (mazeStar || p->xfer.size() <= keyStem.size()) && order_matched(keyStem, p)) {
+                                // 読み語幹が完全一致、または key に漢字が含まれている場合は、'*' を含むか変換形長 <= key長、かつ、ひらがな・漢字の出現順序の一致を確認
                                 if (key.size() == stemLen) {
                                     // 語尾がない⇒無活用または語幹OKの活用型か
                                     if (find_gobi(p->inflexList, (int)STEM_OK) == 0) {
