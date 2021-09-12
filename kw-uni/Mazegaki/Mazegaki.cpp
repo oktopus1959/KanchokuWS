@@ -212,6 +212,7 @@ namespace {
                 }
                 break;
             }
+
             if (pCands->size() == 1 || (!MAZEGAKI_NODE->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand)) {
                 // 読みの長さ候補が１つしかなかった、または先頭候補の自動出力モードなのでそれを選択して出力
                 const auto& cand = pCands->front();
@@ -453,7 +454,7 @@ size_t MazegakiNode::shiftedYomiLen = 0;
 bool MazegakiNode::blockerShifted = false;
 
 // CommonNode
-MazegakiNode* MazegakiNode::CommonNode = 0;
+std::unique_ptr<MazegakiNode> MazegakiNode::CommonNode;
 
 // コンストラクタ
 MazegakiNode::MazegakiNode() {
@@ -489,8 +490,8 @@ Node* MazegakiNodeBuilder::CreateNode() {
         //else {
         //    ERROR_HANDLER->Warn(_T("「mazegaki=(ファイル名)」の設定がまちがっているようです"));
         //}
-        // 一発目は共有ノードを生成して返す
-        return MazegakiNode::CommonNode = new MazegakiNode();
+        // 共有ノードを生成する(このノードは、終了時に delete される)
+        MazegakiNode::CommonNode.reset(new MazegakiNode());
     }
     // StrokeTable では unique_ptr で保持しているため、別のダミーノードを生成して返す
     return new MazegakiNode();

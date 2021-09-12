@@ -147,7 +147,7 @@ private:
 
 public:
     // 全 MazegakiState から参照される共有ノード
-    static MazegakiNode* CommonNode;
+    static std::unique_ptr<MazegakiNode> CommonNode;
 };
 #define MAZEGAKI_NODE (MazegakiNode::CommonNode)
 
