@@ -89,6 +89,7 @@ MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
         PrevBushu1 = m1;
         PrevBushu2 = m2;
         PrevComp = m;
+        IsPrevAuto = false;
         //PrevCompSec = utils::getSecondsFromEpochTime();
         PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
         return to_mstr(m);
@@ -106,6 +107,7 @@ void BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
         PrevBushu1 = m1;
         PrevBushu2 = m2;
         PrevComp = m;
+        IsPrevAuto = true;
         //PrevCompSec = utils::getSecondsFromEpochTime();
         PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
         if (m != 0) {

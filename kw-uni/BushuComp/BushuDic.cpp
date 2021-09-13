@@ -276,9 +276,7 @@ namespace {
 
         void AddAutoBushuEntry(mchar_t a, mchar_t b, mchar_t c) {
             if (a != 0 && b != 0 && c != 0) {
-                MString key(2, 0);
-                key[0] = a;
-                key[1] = b;
+                MString key = make_mstring(a, b);
                 _LOG_DEBUGH(_T("key=%s, val=%c"), MAKE_WPTR(key), c);
                 if (!isInvalidAutoBushuKey(key)) {
                     // ターゲットが '-' である組み合わせは、再登録しない(無視される)

@@ -352,15 +352,23 @@ namespace {
                 if (BUSHU_COMP_NODE && totalCnt <= BUSHU_COMP_NODE->PrevTotalCount + 2 && BUSHU_COMP_NODE->PrevComp == outChar) {
                     mchar_t m1 = BUSHU_COMP_NODE->PrevBushu1;
                     mchar_t m2 = BUSHU_COMP_NODE->PrevBushu2;
-                    MString cs = BUSHU_COMP_NODE->ReduceByBushu(m1, m2, outChar);   // outChar を探し、さらにその次の候補を返す
-                    if (!cs.empty()) {
+                    if (BUSHU_COMP_NODE->IsPrevAuto) {
+                        // 直前の処理は自動部首合成だったので、合成元の2文字に戻す
                         // 出力文字列と削除文字のセット
-                        STATE_COMMON->SetOutString(cs, 1);
-                        copyStrokeHelpToVkbFaces();
-                        //やり直し合成した文字を履歴に登録
-                        if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(cs, 1));
-                        _LOG_DEBUGH(_T("LEAVE: %s: Reduce by using swapped bushu"), NAME_PTR);
+                        STATE_COMMON->SetOutString(make_mstring(m1, m2), 1);
+                        // チェインなし
                         return false;
+                    } else {
+                        MString cs = BUSHU_COMP_NODE->ReduceByBushu(m1, m2, outChar);   // outChar を探し、さらにその次の候補を返す
+                        if (!cs.empty()) {
+                            // 出力文字列と削除文字のセット
+                            STATE_COMMON->SetOutString(cs, 1);
+                            copyStrokeHelpToVkbFaces();
+                            //やり直し合成した文字を履歴に登録
+                            if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(cs, 1));
+                            _LOG_DEBUGH(_T("LEAVE: %s: Reduce by using swapped bushu"), NAME_PTR);
+                            return false;
+                        }
                     }
                 }
 

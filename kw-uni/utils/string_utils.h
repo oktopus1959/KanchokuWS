@@ -218,6 +218,19 @@ namespace {
         return append_wstr(to_wstr(mch), wp, 2);
     }
 
+    wstring make_wstring(wchar_t a, wchar_t b) {
+        wstring result(2, 0);
+        result[0] = a;
+        result[1] = b;
+        return result;
+    }
+
+    MString make_mstring(mchar_t a, mchar_t b) {
+        MString result(2, 0);
+        result[0] = a;
+        result[1] = b;
+        return result;
+    }
 } // namespace
 
 namespace utils

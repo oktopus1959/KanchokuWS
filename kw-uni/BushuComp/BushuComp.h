@@ -18,11 +18,12 @@ class BushuCompNode : public FunctionNode {
     MString getString() const { return to_mstr(_T("●")); }
 
 public:
-    mchar_t PrevBushu1 = 0;    // 直前の部首合成で使われた第1部首
-    mchar_t PrevBushu2 = 0;    // 直前の部首合成で使われた第2部首
-    mchar_t PrevComp = 0;      // 直前の部首合成の結果
+    mchar_t PrevBushu1 = 0;     // 直前の部首合成で使われた第1部首
+    mchar_t PrevBushu2 = 0;     // 直前の部首合成で使われた第2部首
+    mchar_t PrevComp = 0;       // 直前の部首合成の結果
+    bool IsPrevAuto = false;    // 直前に実行されたのは自動部首合成か
     //time_t PrevCompSec = 0;     // 直前の部首合成実行の時刻
-    size_t PrevTotalCount = 0; // 直前の部首合成実行時のトータルカウント
+    size_t PrevTotalCount = 0;  // 直前の部首合成実行時のトータルカウント
 
     // 部首合成の実行
     MString ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev = 0);
