@@ -23,6 +23,18 @@ namespace KanchokuWS
         // VKEY に対する modifier WIN
         public const uint MOD_WIN = 0x0008;
 
+        // VKEY に対する modifier ZENKAKU
+        public const uint MOD_ZENKAKU = 0x0100;
+
+        // VKEY に対する modifier NFER
+        public const uint MOD_NFER = 0x0200;
+
+        // VKEY に対する modifier XFER
+        public const uint MOD_XFER = 0x0400;
+
+        // VKEY に対する modifier KANA
+        public const uint MOD_KANA = 0x0800;
+
         public static uint MakeModifier(bool ctrl, bool shift)
         {
             return (ctrl ? MOD_CONTROL : 0) + (shift ? MOD_SHIFT : 0);
@@ -77,6 +89,7 @@ namespace KanchokuWS
         public const uint Xfer = 0x1c;
         public const uint Hiragana = 0xf2;
         public const uint Zenkaku = 0xf3;
+        public const uint Kanji = 0xf4;
 
         /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)</summary>
         private static uint[] vkeyArrayFuncKeys = {
@@ -183,9 +196,9 @@ namespace KanchokuWS
         private static Dictionary<uint, int> DecKeyFromVKeyCombo;
 
         /// <summary>
-        /// 仮想キーコンビネーションのSerial値から左右の別ありCtrlキー変換されたDECKEY を得るための辞書
+        /// 仮想キーコンビネーションのSerial値からModキーによるシフト変換されたDECKEY を得るための辞書
         /// </summary>
-        private static Dictionary<uint, int> CtrlConvertedDecKeyFromVKeyCombo;
+        private static Dictionary<uint, int> ModConvertedDecKeyFromVKeyCombo;
 
         public static void AddDecKeyAndCombo(int deckey, uint mod, uint vkey)
         {
@@ -195,10 +208,10 @@ namespace KanchokuWS
             DecKeyFromVKeyCombo[combo.SerialValue] = deckey;
         }
 
-        private static void addCtrlConvertedDecKeyFromCombo(int deckey, uint mod, uint vkey)
+        public static void AddModConvertedDecKeyFromCombo(int deckey, uint mod, uint vkey)
         {
             logger.Debug(() => $"deckey={deckey:x}H({deckey}), mod={mod:x}H, vkey={vkey:x}H({vkey})");
-            CtrlConvertedDecKeyFromVKeyCombo[VKeyCombo.CalcSerialValue(mod, vkey)] = deckey;
+            ModConvertedDecKeyFromVKeyCombo[VKeyCombo.CalcSerialValue(mod, vkey)] = deckey;
         }
 
         private static void setupDecKeyAndComboTable()
@@ -237,7 +250,7 @@ namespace KanchokuWS
 
         public static int GetCtrlConvertedDecKeyFromCombo(uint mod, uint vkey)
         {
-            int deckey = CtrlConvertedDecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
+            int deckey = ModConvertedDecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
             return deckey > 0 ? deckey : DecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
         }
 
@@ -252,15 +265,15 @@ namespace KanchokuWS
         {
             VKeyComboFromDecKey = new VKeyCombo?[DecoderKeys.GLOBAL_DECKEY_ID_END];
             DecKeyFromVKeyCombo = new Dictionary<uint, int>();
-            CtrlConvertedDecKeyFromVKeyCombo = new Dictionary<uint, int>();
+            ModConvertedDecKeyFromVKeyCombo = new Dictionary<uint, int>();
         }
 
         public static void AddCtrlDeckeyFromCombo(string keyFace, int ctrlDeckey, int ctrlShiftDeckey)
         {
             var combo = GetVKeyComboFromFaceString(keyFace, false, false);
             if (combo != null) {
-                if (ctrlDeckey > 0) addCtrlConvertedDecKeyFromCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, combo.Value.vkey);
-                if (ctrlShiftDeckey > 0) addCtrlConvertedDecKeyFromCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, combo.Value.vkey);
+                if (ctrlDeckey > 0) AddModConvertedDecKeyFromCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, combo.Value.vkey);
+                if (ctrlShiftDeckey > 0) AddModConvertedDecKeyFromCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, combo.Value.vkey);
             }
         }
 

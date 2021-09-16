@@ -141,17 +141,38 @@ namespace KanchokuWS
 
         private bool shiftKeyPressed(bool bCtrl)
         {
-            return (!bCtrl && spaceKeyState == SpaceKeyState.SHIFTED) || (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
+            return (!bCtrl && spaceKeyState == SpecialKeyState.SHIFTED) || (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
         }
 
-        /// <summary> スペースキーの押下状態</summary>
-        enum SpaceKeyState {
+        /// <summary> 特殊キーの押下状態</summary>
+        enum SpecialKeyState {
             RELEASED,
             PRESSED,
             SHIFTED,
         }
         /// <summary> スペースキーの押下状態</summary>
-        private SpaceKeyState spaceKeyState = SpaceKeyState.RELEASED;
+        private SpecialKeyState spaceKeyState = SpecialKeyState.RELEASED;
+
+        /// <summary> 全角キーの押下状態</summary>
+        private SpecialKeyState zenkakuKeyState = SpecialKeyState.RELEASED;
+
+        /// <summary> 無変換キーの押下状態</summary>
+        private SpecialKeyState nferKeyState = SpecialKeyState.RELEASED;
+
+        /// <summary> 変換キーの押下状態</summary>
+        private SpecialKeyState xferKeyState = SpecialKeyState.RELEASED;
+
+        /// <summary> かなキーの押下状態</summary>
+        private SpecialKeyState kanaKeyState = SpecialKeyState.RELEASED;
+
+        private uint getShiftedSpecialModKey()
+        {
+            if (zenkakuKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_ZENKAKU;
+            if (nferKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_NFER;
+            if (xferKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_XFER;
+            if (kanaKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_KANA;
+            return 0;
+        }
 
         /// <summary>キーボード押下時のハンドラ</summary>
         /// <param name="vkey"></param>
@@ -164,31 +185,57 @@ namespace KanchokuWS
                 if (Settings.SandSEnabled) {
                     if (vkey == (int)Keys.Space) {
                         if (IsDecoderActivated?.Invoke() ?? false) {
-                            if (spaceKeyState == SpaceKeyState.PRESSED) {
+                            if (spaceKeyState == SpecialKeyState.PRESSED) {
                                 // スペースキーが押下されている状態なら、シフト状態に遷移する
-                                spaceKeyState = SpaceKeyState.SHIFTED;
+                                spaceKeyState = SpecialKeyState.SHIFTED;
                                 return true;
                             }
-                            if (spaceKeyState == SpaceKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+                            if (spaceKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
                                                                                      // RELEASED
                             if (!ctrlKeyPressed() && !shiftKeyPressed(false)) {
                                 // 1回目の押下で Ctrl も Shift も押されてない
-                                spaceKeyState = SpaceKeyState.PRESSED;
+                                spaceKeyState = SpecialKeyState.PRESSED;
                                 return true;
                             }
                             if (shiftKeyPressed(false)) {
-                                spaceKeyState = SpaceKeyState.SHIFTED;
+                                spaceKeyState = SpecialKeyState.SHIFTED;
                                 return true;
                             }
                             // 上記以外はスペース入力として扱う
                         }
                     } else {
-                        if (spaceKeyState == SpaceKeyState.PRESSED) {
+                        if (spaceKeyState == SpecialKeyState.PRESSED) {
                             // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                            spaceKeyState = SpaceKeyState.SHIFTED;
+                            spaceKeyState = SpecialKeyState.SHIFTED;
                         }
                     }
                 }
+                if (vkey == (int)VirtualKeys.Nfer) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"NferKey Pressed");
+                    if (nferKeyState == SpecialKeyState.PRESSED) {
+                        // 全角キーが押下されている状態なら、シフト状態に遷移する
+                        nferKeyState = SpecialKeyState.SHIFTED;
+                        return true;
+                    }
+                    if (nferKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+                                                                                 // RELEASED
+                    if (!ctrlKeyPressed() && !shiftKeyPressed(false)) {
+                        // 1回目の押下で Ctrl も Shift も押されてない
+                        nferKeyState = SpecialKeyState.PRESSED;
+                        return true;
+                    }
+                    if (shiftKeyPressed(false)) {
+                        nferKeyState = SpecialKeyState.SHIFTED;
+                        return true;
+                    }
+                    // 上記以外は全角キーとして扱う
+                } else {
+                    if (nferKeyState == SpecialKeyState.PRESSED) {
+                        // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                        nferKeyState = SpecialKeyState.SHIFTED;
+                    }
+                }
+                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"nferKeyState={nferKeyState}");
                 return keyboardDownHandler(vkey);
             }
             return false;
@@ -204,7 +251,9 @@ namespace KanchokuWS
             bool ctrl = leftCtrl || rightCtrl;
             bool shift = shiftKeyPressed(ctrl);
             uint mod = KeyModifiers.MakeModifier(ctrl, shift);
-            int kanchokuCode = Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))
+            if (mod == 0) mod = getShiftedSpecialModKey();
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"mod={mod:x}H({mod}), vkey={vkey:x}H({vkey})");
+            int kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || mod != 0
                 ? VirtualKeys.GetCtrlConvertedDecKeyFromCombo(mod, (uint)vkey)
                 : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
 
@@ -249,12 +298,21 @@ namespace KanchokuWS
                 if (Settings.SandSEnabled) {
                     if (vkey == (int)Keys.Space) {
                         var state = spaceKeyState;
-                        spaceKeyState = SpaceKeyState.RELEASED;
-                        if (state == SpaceKeyState.SHIFTED) {
+                        spaceKeyState = SpecialKeyState.RELEASED;
+                        if (state == SpecialKeyState.SHIFTED) {
                             return true;
-                        } else if (state == SpaceKeyState.PRESSED) {
+                        } else if (state == SpecialKeyState.PRESSED) {
                             return keyboardDownHandler(vkey);
                         }
+                    }
+                }
+                if (vkey == (int)VirtualKeys.Nfer) {
+                    var state = nferKeyState;
+                    nferKeyState = SpecialKeyState.RELEASED;
+                    if (state == SpecialKeyState.SHIFTED) {
+                        return true;
+                    } else if (state == SpecialKeyState.PRESSED) {
+                        return keyboardDownHandler(vkey);
                     }
                 }
                 // キーアップ時はなにもしない
