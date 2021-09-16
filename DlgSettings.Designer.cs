@@ -257,6 +257,8 @@ namespace KanchokuWS
             this.radioButton_excludeFollowings = new System.Windows.Forms.RadioButton();
             this.radioButton_includeFollowings = new System.Windows.Forms.RadioButton();
             this.tabPage_history = new System.Windows.Forms.TabPage();
+            this.groupBox34 = new System.Windows.Forms.GroupBox();
+            this.label91 = new System.Windows.Forms.Label();
             this.groupBox23 = new System.Windows.Forms.GroupBox();
             this.label89 = new System.Windows.Forms.Label();
             this.textBox_mazeGobiLikeTailLen = new System.Windows.Forms.TextBox();
@@ -298,6 +300,12 @@ namespace KanchokuWS
             this.button_histClose = new System.Windows.Forms.Button();
             this.button_histEnter = new System.Windows.Forms.Button();
             this.tabPage_register = new System.Windows.Forms.TabPage();
+            this.groupBox19 = new System.Windows.Forms.GroupBox();
+            this.label_saveAutoBushu = new System.Windows.Forms.Label();
+            this.button_saveAutoBushuCompFile = new System.Windows.Forms.Button();
+            this.label_autoBushuComp = new System.Windows.Forms.Label();
+            this.textBox_autoBushuComp = new System.Windows.Forms.TextBox();
+            this.button_enterAutoBushu = new System.Windows.Forms.Button();
             this.label_okResultMisc = new System.Windows.Forms.Label();
             this.button_miscEnter = new System.Windows.Forms.Button();
             this.groupBox27 = new System.Windows.Forms.GroupBox();
@@ -340,12 +348,8 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.groupBox19 = new System.Windows.Forms.GroupBox();
-            this.label_saveAutoBushu = new System.Windows.Forms.Label();
-            this.button_saveAutoBushuCompFile = new System.Windows.Forms.Button();
-            this.label_autoBushuComp = new System.Windows.Forms.Label();
-            this.textBox_autoBushuComp = new System.Windows.Forms.TextBox();
-            this.button_enterAutoBushu = new System.Windows.Forms.Button();
+            this.textBox_modConversionFile = new System.Windows.Forms.TextBox();
+            this.label93 = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
@@ -358,8 +362,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.groupBox34 = new System.Windows.Forms.GroupBox();
-            this.label91 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -391,11 +393,13 @@ namespace KanchokuWS
             this.groupBox_globalCtrlKeys.SuspendLayout();
             this.groupBox11.SuspendLayout();
             this.tabPage_history.SuspendLayout();
+            this.groupBox34.SuspendLayout();
             this.groupBox23.SuspendLayout();
             this.groupBox17.SuspendLayout();
             this.groupBox14.SuspendLayout();
             this.groupBox12.SuspendLayout();
             this.tabPage_register.SuspendLayout();
+            this.groupBox19.SuspendLayout();
             this.groupBox27.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.groupBox9.SuspendLayout();
@@ -403,8 +407,6 @@ namespace KanchokuWS
             this.groupBox7.SuspendLayout();
             this.tabPage_about.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).BeginInit();
-            this.groupBox19.SuspendLayout();
-            this.groupBox34.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -3043,6 +3045,28 @@ namespace KanchokuWS
             this.tabPage_history.Text = "履歴・交ぜ書き";
             this.tabPage_history.UseVisualStyleBackColor = true;
             // 
+            // groupBox34
+            // 
+            this.groupBox34.Controls.Add(this.label91);
+            this.groupBox34.Location = new System.Drawing.Point(312, 193);
+            this.groupBox34.Name = "groupBox34";
+            this.groupBox34.Size = new System.Drawing.Size(261, 100);
+            this.groupBox34.TabIndex = 26;
+            this.groupBox34.TabStop = false;
+            this.groupBox34.Text = "交ぜ書きブロッカーとは";
+            // 
+            // label91
+            // 
+            this.label91.AutoSize = true;
+            this.label91.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label91.Location = new System.Drawing.Point(5, 17);
+            this.label91.Name = "label91";
+            this.label91.Size = new System.Drawing.Size(254, 75);
+            this.label91.TabIndex = 2;
+            this.label91.Text = "ミニバッファ(直前の出力内容)から交ぜ書き変換ため\r\nの読みを取得する際に、出力の末尾から見ていって、\r\n「ここで取得をストップする」というフラグのことです。\r\n" +
+    "詳細は、ここにマウスポインタを置いてツールチップを参\r\n照してください。";
+            this.toolTip1.SetToolTip(this.label91, resources.GetString("label91.ToolTip"));
+            // 
             // groupBox23
             // 
             this.groupBox23.Controls.Add(this.label89);
@@ -3529,6 +3553,79 @@ namespace KanchokuWS
             this.tabPage_register.Text = "辞書登録・その他";
             this.tabPage_register.UseVisualStyleBackColor = true;
             // 
+            // groupBox19
+            // 
+            this.groupBox19.Controls.Add(this.label_saveAutoBushu);
+            this.groupBox19.Controls.Add(this.button_saveAutoBushuCompFile);
+            this.groupBox19.Controls.Add(this.label_autoBushuComp);
+            this.groupBox19.Controls.Add(this.textBox_autoBushuComp);
+            this.groupBox19.Controls.Add(this.button_enterAutoBushu);
+            this.groupBox19.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.groupBox19.Location = new System.Drawing.Point(314, 246);
+            this.groupBox19.Name = "groupBox19";
+            this.groupBox19.Size = new System.Drawing.Size(261, 74);
+            this.groupBox19.TabIndex = 4;
+            this.groupBox19.TabStop = false;
+            this.groupBox19.Text = "自動部首合成登録";
+            // 
+            // label_saveAutoBushu
+            // 
+            this.label_saveAutoBushu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label_saveAutoBushu.AutoSize = true;
+            this.label_saveAutoBushu.Location = new System.Drawing.Point(87, 51);
+            this.label_saveAutoBushu.Name = "label_saveAutoBushu";
+            this.label_saveAutoBushu.Size = new System.Drawing.Size(65, 15);
+            this.label_saveAutoBushu.TabIndex = 14;
+            this.label_saveAutoBushu.Text = "保存しました";
+            this.label_saveAutoBushu.Visible = false;
+            // 
+            // button_saveAutoBushuCompFile
+            // 
+            this.button_saveAutoBushuCompFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_saveAutoBushuCompFile.Location = new System.Drawing.Point(14, 47);
+            this.button_saveAutoBushuCompFile.Name = "button_saveAutoBushuCompFile";
+            this.button_saveAutoBushuCompFile.Size = new System.Drawing.Size(60, 21);
+            this.button_saveAutoBushuCompFile.TabIndex = 2;
+            this.button_saveAutoBushuCompFile.TabStop = false;
+            this.button_saveAutoBushuCompFile.Text = "保存";
+            this.toolTip1.SetToolTip(this.button_saveAutoBushuCompFile, "デコーダが保持している自動部首合成辞書の内容をファイルに保存します。\r\nただし、利用者による登録がない場合は、保存は行いません。\r\n\r\n保存の際、現在のファイルを" +
+        " .1 という拡張子を付加して\r\nback フォルダに移動します。");
+            this.button_saveAutoBushuCompFile.UseVisualStyleBackColor = true;
+            this.button_saveAutoBushuCompFile.Click += new System.EventHandler(this.button_saveAutoBushuCompFile_Click);
+            // 
+            // label_autoBushuComp
+            // 
+            this.label_autoBushuComp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label_autoBushuComp.AutoSize = true;
+            this.label_autoBushuComp.Location = new System.Drawing.Point(112, 51);
+            this.label_autoBushuComp.Name = "label_autoBushuComp";
+            this.label_autoBushuComp.Size = new System.Drawing.Size(65, 15);
+            this.label_autoBushuComp.TabIndex = 11;
+            this.label_autoBushuComp.Text = "登録しました";
+            this.label_autoBushuComp.Visible = false;
+            // 
+            // textBox_autoBushuComp
+            // 
+            this.textBox_autoBushuComp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_autoBushuComp.Location = new System.Drawing.Point(16, 18);
+            this.textBox_autoBushuComp.Name = "textBox_autoBushuComp";
+            this.textBox_autoBushuComp.Size = new System.Drawing.Size(237, 23);
+            this.textBox_autoBushuComp.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_autoBushuComp, resources.GetString("textBox_autoBushuComp.ToolTip"));
+            this.textBox_autoBushuComp.TextChanged += new System.EventHandler(this.textBox_autoBushuComp_TextChanged);
+            // 
+            // button_enterAutoBushu
+            // 
+            this.button_enterAutoBushu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_enterAutoBushu.Location = new System.Drawing.Point(186, 47);
+            this.button_enterAutoBushu.Name = "button_enterAutoBushu";
+            this.button_enterAutoBushu.Size = new System.Drawing.Size(67, 21);
+            this.button_enterAutoBushu.TabIndex = 1;
+            this.button_enterAutoBushu.Text = "登録";
+            this.button_enterAutoBushu.UseVisualStyleBackColor = true;
+            this.button_enterAutoBushu.Click += new System.EventHandler(this.button_enterAutoBushu_Click);
+            // 
             // label_okResultMisc
             // 
             this.label_okResultMisc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -3557,6 +3654,8 @@ namespace KanchokuWS
             // 
             // groupBox27
             // 
+            this.groupBox27.Controls.Add(this.textBox_modConversionFile);
+            this.groupBox27.Controls.Add(this.label93);
             this.groupBox27.Controls.Add(this.checkBox_autoBushuComp);
             this.groupBox27.Controls.Add(this.checkBox_SandSEnabled);
             this.groupBox27.Controls.Add(this.checkBox_removeOneStrokeByBackspace);
@@ -3565,7 +3664,7 @@ namespace KanchokuWS
             this.groupBox27.Controls.Add(this.checkBox_convertShiftedHiraganaToKatakana);
             this.groupBox27.Location = new System.Drawing.Point(314, 6);
             this.groupBox27.Name = "groupBox27";
-            this.groupBox27.Size = new System.Drawing.Size(261, 143);
+            this.groupBox27.Size = new System.Drawing.Size(261, 168);
             this.groupBox27.TabIndex = 5;
             this.groupBox27.TabStop = false;
             this.groupBox27.Text = "その他変換・機能";
@@ -3573,7 +3672,7 @@ namespace KanchokuWS
             // checkBox_autoBushuComp
             // 
             this.checkBox_autoBushuComp.AutoSize = true;
-            this.checkBox_autoBushuComp.Location = new System.Drawing.Point(19, 20);
+            this.checkBox_autoBushuComp.Location = new System.Drawing.Point(11, 20);
             this.checkBox_autoBushuComp.Name = "checkBox_autoBushuComp";
             this.checkBox_autoBushuComp.Size = new System.Drawing.Size(159, 19);
             this.checkBox_autoBushuComp.TabIndex = 0;
@@ -3584,7 +3683,7 @@ namespace KanchokuWS
             // checkBox_SandSEnabled
             // 
             this.checkBox_SandSEnabled.AutoSize = true;
-            this.checkBox_SandSEnabled.Location = new System.Drawing.Point(19, 115);
+            this.checkBox_SandSEnabled.Location = new System.Drawing.Point(11, 115);
             this.checkBox_SandSEnabled.Name = "checkBox_SandSEnabled";
             this.checkBox_SandSEnabled.Size = new System.Drawing.Size(198, 19);
             this.checkBox_SandSEnabled.TabIndex = 5;
@@ -3597,7 +3696,7 @@ namespace KanchokuWS
             // checkBox_removeOneStrokeByBackspace
             // 
             this.checkBox_removeOneStrokeByBackspace.AutoSize = true;
-            this.checkBox_removeOneStrokeByBackspace.Location = new System.Drawing.Point(19, 96);
+            this.checkBox_removeOneStrokeByBackspace.Location = new System.Drawing.Point(11, 96);
             this.checkBox_removeOneStrokeByBackspace.Name = "checkBox_removeOneStrokeByBackspace";
             this.checkBox_removeOneStrokeByBackspace.Size = new System.Drawing.Size(169, 19);
             this.checkBox_removeOneStrokeByBackspace.TabIndex = 4;
@@ -3609,7 +3708,7 @@ namespace KanchokuWS
             // checkBox_convertJaComma
             // 
             this.checkBox_convertJaComma.AutoSize = true;
-            this.checkBox_convertJaComma.Location = new System.Drawing.Point(19, 77);
+            this.checkBox_convertJaComma.Location = new System.Drawing.Point(11, 77);
             this.checkBox_convertJaComma.Name = "checkBox_convertJaComma";
             this.checkBox_convertJaComma.Size = new System.Drawing.Size(137, 19);
             this.checkBox_convertJaComma.TabIndex = 3;
@@ -3620,7 +3719,7 @@ namespace KanchokuWS
             // checkBox_convertJaPeriod
             // 
             this.checkBox_convertJaPeriod.AutoSize = true;
-            this.checkBox_convertJaPeriod.Location = new System.Drawing.Point(19, 58);
+            this.checkBox_convertJaPeriod.Location = new System.Drawing.Point(11, 58);
             this.checkBox_convertJaPeriod.Name = "checkBox_convertJaPeriod";
             this.checkBox_convertJaPeriod.Size = new System.Drawing.Size(137, 19);
             this.checkBox_convertJaPeriod.TabIndex = 2;
@@ -3631,7 +3730,7 @@ namespace KanchokuWS
             // checkBox_convertShiftedHiraganaToKatakana
             // 
             this.checkBox_convertShiftedHiraganaToKatakana.AutoSize = true;
-            this.checkBox_convertShiftedHiraganaToKatakana.Location = new System.Drawing.Point(19, 39);
+            this.checkBox_convertShiftedHiraganaToKatakana.Location = new System.Drawing.Point(11, 39);
             this.checkBox_convertShiftedHiraganaToKatakana.Name = "checkBox_convertShiftedHiraganaToKatakana";
             this.checkBox_convertShiftedHiraganaToKatakana.Size = new System.Drawing.Size(235, 19);
             this.checkBox_convertShiftedHiraganaToKatakana.TabIndex = 1;
@@ -4008,78 +4107,26 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // groupBox19
+            // textBox_modConversionFile
             // 
-            this.groupBox19.Controls.Add(this.label_saveAutoBushu);
-            this.groupBox19.Controls.Add(this.button_saveAutoBushuCompFile);
-            this.groupBox19.Controls.Add(this.label_autoBushuComp);
-            this.groupBox19.Controls.Add(this.textBox_autoBushuComp);
-            this.groupBox19.Controls.Add(this.button_enterAutoBushu);
-            this.groupBox19.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox19.Location = new System.Drawing.Point(314, 246);
-            this.groupBox19.Name = "groupBox19";
-            this.groupBox19.Size = new System.Drawing.Size(261, 74);
-            this.groupBox19.TabIndex = 4;
-            this.groupBox19.TabStop = false;
-            this.groupBox19.Text = "自動部首合成登録";
-            // 
-            // label_saveAutoBushu
-            // 
-            this.label_saveAutoBushu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label_saveAutoBushu.AutoSize = true;
-            this.label_saveAutoBushu.Location = new System.Drawing.Point(87, 51);
-            this.label_saveAutoBushu.Name = "label_saveAutoBushu";
-            this.label_saveAutoBushu.Size = new System.Drawing.Size(65, 15);
-            this.label_saveAutoBushu.TabIndex = 14;
-            this.label_saveAutoBushu.Text = "保存しました";
-            this.label_saveAutoBushu.Visible = false;
-            // 
-            // button_saveAutoBushuCompFile
-            // 
-            this.button_saveAutoBushuCompFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button_saveAutoBushuCompFile.Location = new System.Drawing.Point(14, 47);
-            this.button_saveAutoBushuCompFile.Name = "button_saveAutoBushuCompFile";
-            this.button_saveAutoBushuCompFile.Size = new System.Drawing.Size(60, 21);
-            this.button_saveAutoBushuCompFile.TabIndex = 2;
-            this.button_saveAutoBushuCompFile.TabStop = false;
-            this.button_saveAutoBushuCompFile.Text = "保存";
-            this.toolTip1.SetToolTip(this.button_saveAutoBushuCompFile, "デコーダが保持している自動部首合成辞書の内容をファイルに保存します。\r\nただし、利用者による登録がない場合は、保存は行いません。\r\n\r\n保存の際、現在のファイルを" +
-        " .1 という拡張子を付加して\r\nback フォルダに移動します。");
-            this.button_saveAutoBushuCompFile.UseVisualStyleBackColor = true;
-            this.button_saveAutoBushuCompFile.Click += new System.EventHandler(this.button_saveAutoBushuCompFile_Click);
-            // 
-            // label_autoBushuComp
-            // 
-            this.label_autoBushuComp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label_autoBushuComp.AutoSize = true;
-            this.label_autoBushuComp.Location = new System.Drawing.Point(112, 51);
-            this.label_autoBushuComp.Name = "label_autoBushuComp";
-            this.label_autoBushuComp.Size = new System.Drawing.Size(65, 15);
-            this.label_autoBushuComp.TabIndex = 11;
-            this.label_autoBushuComp.Text = "登録しました";
-            this.label_autoBushuComp.Visible = false;
-            // 
-            // textBox_autoBushuComp
-            // 
-            this.textBox_autoBushuComp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBox_modConversionFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_autoBushuComp.Location = new System.Drawing.Point(16, 18);
-            this.textBox_autoBushuComp.Name = "textBox_autoBushuComp";
-            this.textBox_autoBushuComp.Size = new System.Drawing.Size(237, 23);
-            this.textBox_autoBushuComp.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_autoBushuComp, resources.GetString("textBox_autoBushuComp.ToolTip"));
-            this.textBox_autoBushuComp.TextChanged += new System.EventHandler(this.textBox_autoBushuComp_TextChanged);
+            this.textBox_modConversionFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_modConversionFile.Location = new System.Drawing.Point(115, 140);
+            this.textBox_modConversionFile.Name = "textBox_modConversionFile";
+            this.textBox_modConversionFile.Size = new System.Drawing.Size(141, 19);
+            this.textBox_modConversionFile.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.textBox_modConversionFile, "修飾キー変換定義ファイルの設定\r\n\r\nCapsLock、英数、無変換、変換、およびカタカナ／ひらがなキーを\r\n修飾キーとして使用する際のキー変換定義ファイルを指定" +
+        "します。\r\n\r\n定義ファイルの例として、 mod-conversion.txt というファイルを\r\n用意してあります。記述方法は同ファイルを参照してください。");
             // 
-            // button_enterAutoBushu
+            // label93
             // 
-            this.button_enterAutoBushu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_enterAutoBushu.Location = new System.Drawing.Point(186, 47);
-            this.button_enterAutoBushu.Name = "button_enterAutoBushu";
-            this.button_enterAutoBushu.Size = new System.Drawing.Size(67, 21);
-            this.button_enterAutoBushu.TabIndex = 1;
-            this.button_enterAutoBushu.Text = "登録";
-            this.button_enterAutoBushu.UseVisualStyleBackColor = true;
-            this.button_enterAutoBushu.Click += new System.EventHandler(this.button_enterAutoBushu_Click);
+            this.label93.AutoSize = true;
+            this.label93.Location = new System.Drawing.Point(8, 142);
+            this.label93.Name = "label93";
+            this.label93.Size = new System.Drawing.Size(106, 15);
+            this.label93.TabIndex = 10;
+            this.label93.Text = "修飾キー変換ファイル";
             // 
             // textBox_onSelectedBackColor
             // 
@@ -4223,28 +4270,6 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
-            // groupBox34
-            // 
-            this.groupBox34.Controls.Add(this.label91);
-            this.groupBox34.Location = new System.Drawing.Point(312, 193);
-            this.groupBox34.Name = "groupBox34";
-            this.groupBox34.Size = new System.Drawing.Size(261, 100);
-            this.groupBox34.TabIndex = 26;
-            this.groupBox34.TabStop = false;
-            this.groupBox34.Text = "交ぜ書きブロッカーとは";
-            // 
-            // label91
-            // 
-            this.label91.AutoSize = true;
-            this.label91.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label91.Location = new System.Drawing.Point(5, 17);
-            this.label91.Name = "label91";
-            this.label91.Size = new System.Drawing.Size(254, 75);
-            this.label91.TabIndex = 2;
-            this.label91.Text = "ミニバッファ(直前の出力内容)から交ぜ書き変換ため\r\nの読みを取得する際に、出力の末尾から見ていって、\r\n「ここで取得をストップする」というフラグのことです。\r\n" +
-    "詳細は、ここにマウスポインタを置いてツールチップを参\r\n照してください。";
-            this.toolTip1.SetToolTip(this.label91, resources.GetString("label91.ToolTip"));
-            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -4321,6 +4346,8 @@ namespace KanchokuWS
             this.groupBox11.PerformLayout();
             this.tabPage_history.ResumeLayout(false);
             this.tabPage_history.PerformLayout();
+            this.groupBox34.ResumeLayout(false);
+            this.groupBox34.PerformLayout();
             this.groupBox23.ResumeLayout(false);
             this.groupBox23.PerformLayout();
             this.groupBox17.ResumeLayout(false);
@@ -4331,6 +4358,8 @@ namespace KanchokuWS
             this.groupBox12.PerformLayout();
             this.tabPage_register.ResumeLayout(false);
             this.tabPage_register.PerformLayout();
+            this.groupBox19.ResumeLayout(false);
+            this.groupBox19.PerformLayout();
             this.groupBox27.ResumeLayout(false);
             this.groupBox27.PerformLayout();
             this.groupBox10.ResumeLayout(false);
@@ -4343,10 +4372,6 @@ namespace KanchokuWS
             this.groupBox7.PerformLayout();
             this.tabPage_about.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).EndInit();
-            this.groupBox19.ResumeLayout(false);
-            this.groupBox19.PerformLayout();
-            this.groupBox34.ResumeLayout(false);
-            this.groupBox34.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -4683,5 +4708,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Button button_enterAutoBushu;
         private System.Windows.Forms.GroupBox groupBox34;
         private System.Windows.Forms.Label label91;
+        private System.Windows.Forms.TextBox textBox_modConversionFile;
+        private System.Windows.Forms.Label label93;
     }
 }

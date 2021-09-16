@@ -153,8 +153,11 @@ namespace KanchokuWS
         /// <summary> スペースキーの押下状態</summary>
         private SpecialKeyState spaceKeyState = SpecialKeyState.RELEASED;
 
-        /// <summary> 全角キーの押下状態</summary>
-        private SpecialKeyState zenkakuKeyState = SpecialKeyState.RELEASED;
+        /// <summary> CapsLockキーの押下状態</summary>
+        private SpecialKeyState capsKeyState = SpecialKeyState.RELEASED;
+
+        /// <summary> 英数キーの押下状態</summary>
+        private SpecialKeyState alnumKeyState = SpecialKeyState.RELEASED;
 
         /// <summary> 無変換キーの押下状態</summary>
         private SpecialKeyState nferKeyState = SpecialKeyState.RELEASED;
@@ -167,7 +170,8 @@ namespace KanchokuWS
 
         private uint getShiftedSpecialModKey()
         {
-            if (zenkakuKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_ZENKAKU;
+            if (capsKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_CAPS;
+            if (alnumKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_ALNUM;
             if (nferKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_NFER;
             if (xferKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_XFER;
             if (kanaKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_KANA;
@@ -210,32 +214,108 @@ namespace KanchokuWS
                         }
                     }
                 }
+                // CapsLock
+                if (vkey == (int)VirtualKeys.CapsLock) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CapsLockKey Pressed");
+                    if (capsKeyState == SpecialKeyState.PRESSED) {
+                        // Capsキーが押下されている状態なら、シフト状態に遷移する
+                        capsKeyState = SpecialKeyState.SHIFTED;
+                        return true;
+                    }
+                    if (capsKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+
+                    // RELEASED
+                    capsKeyState = SpecialKeyState.PRESSED;
+                    return true;
+                } else {
+                    if (capsKeyState == SpecialKeyState.PRESSED) {
+                        // Capsキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                        capsKeyState = SpecialKeyState.SHIFTED;
+                    }
+                }
+                // AlphaNum
+                if (vkey == (int)VirtualKeys.AlphaNum) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"AlpahNumKey Pressed");
+                    if (alnumKeyState == SpecialKeyState.PRESSED) {
+                        // 英数キーが押下されている状態なら、シフト状態に遷移する
+                        alnumKeyState = SpecialKeyState.SHIFTED;
+                        return true;
+                    }
+                    if (alnumKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+
+                    // RELEASED
+                    alnumKeyState = SpecialKeyState.PRESSED;
+                    return true;
+                } else {
+                    if (alnumKeyState == SpecialKeyState.PRESSED) {
+                        // 英数キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                        alnumKeyState = SpecialKeyState.SHIFTED;
+                    }
+                }
+                // Nfer
                 if (vkey == (int)VirtualKeys.Nfer) {
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"NferKey Pressed");
                     if (nferKeyState == SpecialKeyState.PRESSED) {
-                        // 全角キーが押下されている状態なら、シフト状態に遷移する
+                        // 無変換キーが押下されている状態なら、シフト状態に遷移する
                         nferKeyState = SpecialKeyState.SHIFTED;
                         return true;
                     }
                     if (nferKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
-                                                                                 // RELEASED
-                    if (!ctrlKeyPressed() && !shiftKeyPressed(false)) {
-                        // 1回目の押下で Ctrl も Shift も押されてない
-                        nferKeyState = SpecialKeyState.PRESSED;
-                        return true;
-                    }
-                    if (shiftKeyPressed(false)) {
-                        nferKeyState = SpecialKeyState.SHIFTED;
-                        return true;
-                    }
-                    // 上記以外は全角キーとして扱う
+
+                    // RELEASED
+                    nferKeyState = SpecialKeyState.PRESSED;
+                    return true;
                 } else {
                     if (nferKeyState == SpecialKeyState.PRESSED) {
-                        // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                        // 無変換キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
                         nferKeyState = SpecialKeyState.SHIFTED;
                     }
                 }
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"nferKeyState={nferKeyState}");
+                // Xfer
+                if (vkey == (int)VirtualKeys.Xfer) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"XferKey Pressed");
+                    if (xferKeyState == SpecialKeyState.PRESSED) {
+                        // 変換キーが押下されている状態なら、シフト状態に遷移する
+                        xferKeyState = SpecialKeyState.SHIFTED;
+                        return true;
+                    }
+                    if (xferKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+
+                    // RELEASED
+                    xferKeyState = SpecialKeyState.PRESSED;
+                    return true;
+                } else {
+                    if (xferKeyState == SpecialKeyState.PRESSED) {
+                        // 変換キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                        xferKeyState = SpecialKeyState.SHIFTED;
+                    }
+                }
+                // Kana
+                if (vkey == (int)VirtualKeys.Hiragana) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"HiraganaKey Pressed");
+                    if (kanaKeyState == SpecialKeyState.PRESSED) {
+                        // かなキーが押下されている状態なら、シフト状態に遷移する
+                        kanaKeyState = SpecialKeyState.SHIFTED;
+                        return true;
+                    }
+                    if (kanaKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+
+                    // RELEASED
+                    kanaKeyState = SpecialKeyState.PRESSED;
+                    return true;
+                } else {
+                    if (kanaKeyState == SpecialKeyState.PRESSED) {
+                        // かなキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                        kanaKeyState = SpecialKeyState.SHIFTED;
+                    }
+                }
+                if (Settings.LoggingDecKeyInfo) {
+                    logger.DebugH(() => $"capsKeyState={capsKeyState}");
+                    logger.DebugH(() => $"alnumKeyState={alnumKeyState}");
+                    logger.DebugH(() => $"nferKeyState={nferKeyState}");
+                    logger.DebugH(() => $"xferKeyState={xferKeyState}");
+                    logger.DebugH(() => $"kanaKeyState={kanaKeyState}");
+                }
                 return keyboardDownHandler(vkey);
             }
             return false;
@@ -306,9 +386,45 @@ namespace KanchokuWS
                         }
                     }
                 }
+                if (vkey == (int)VirtualKeys.CapsLock) {
+                    var state = capsKeyState;
+                    capsKeyState = SpecialKeyState.RELEASED;
+                    if (state == SpecialKeyState.SHIFTED) {
+                        return true;
+                    } else if (state == SpecialKeyState.PRESSED) {
+                        return keyboardDownHandler(vkey);
+                    }
+                }
+                if (vkey == (int)VirtualKeys.AlphaNum) {
+                    var state = alnumKeyState;
+                    alnumKeyState = SpecialKeyState.RELEASED;
+                    if (state == SpecialKeyState.SHIFTED) {
+                        return true;
+                    } else if (state == SpecialKeyState.PRESSED) {
+                        return keyboardDownHandler(vkey);
+                    }
+                }
                 if (vkey == (int)VirtualKeys.Nfer) {
                     var state = nferKeyState;
                     nferKeyState = SpecialKeyState.RELEASED;
+                    if (state == SpecialKeyState.SHIFTED) {
+                        return true;
+                    } else if (state == SpecialKeyState.PRESSED) {
+                        return keyboardDownHandler(vkey);
+                    }
+                }
+                if (vkey == (int)VirtualKeys.Xfer) {
+                    var state = xferKeyState;
+                    xferKeyState = SpecialKeyState.RELEASED;
+                    if (state == SpecialKeyState.SHIFTED) {
+                        return true;
+                    } else if (state == SpecialKeyState.PRESSED) {
+                        return keyboardDownHandler(vkey);
+                    }
+                }
+                if (vkey == (int)VirtualKeys.Hiragana) {
+                    var state = kanaKeyState;
+                    kanaKeyState = SpecialKeyState.RELEASED;
                     if (state == SpecialKeyState.SHIFTED) {
                         return true;
                     } else if (state == SpecialKeyState.PRESSED) {

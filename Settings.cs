@@ -88,6 +88,9 @@ namespace KanchokuWS
         /// <summary>打鍵ヘルプ定義ファイル</summary>
         public static string StrokeHelpFile { get; private set; }
 
+        /// <summary> 修飾キー定義ファイル</summary>
+        public static string ModConversionFile { get; private set; }
+
         // 各種辞書ファイル
         public static string BushuAssocFile { get; private set; }
         public static string BushuFile { get; private set; }
@@ -562,6 +565,8 @@ namespace KanchokuWS
 
             StrokeHelpFile = GetString("strokeHelpFile", "stroke-help.txt");
 
+            ModConversionFile = GetString("modConversionFile");
+
             //-------------------------------------------------------------------------------------
             // 漢直モードトグルキー
             ActiveKey = (uint)GetString("unmodifiedHotKey")._parseHex(0)._lowLimit(0);
@@ -672,18 +677,6 @@ namespace KanchokuWS
             VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToPageUp, DecoderKeys.PAGE_UP_DECKEY, 0);
             VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToPageDown, DecoderKeys.PAGE_DOWN_DECKEY, 0);
             VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDateString, DecoderKeys.DATE_STRING_ROTATION_DECKEY, DecoderKeys.DATE_STRING_UNROTATION_DECKEY);
-
-            VirtualKeys.AddModConvertedDecKeyFromCombo(DecoderKeys.BS_DECKEY, KeyModifiers.MOD_NFER, 0x48);
-            VirtualKeys.AddModConvertedDecKeyFromCombo(DecoderKeys.DEL_DECKEY, KeyModifiers.MOD_NFER, 0x44);
-            VirtualKeys.AddModConvertedDecKeyFromCombo(DecoderKeys.LEFT_ARROW_DECKEY, KeyModifiers.MOD_NFER, 0x4a);
-            VirtualKeys.AddModConvertedDecKeyFromCombo(DecoderKeys.RIGHT_ARROW_DECKEY, KeyModifiers.MOD_NFER, 0x4c);
-            VirtualKeys.AddModConvertedDecKeyFromCombo(DecoderKeys.UP_ARROW_DECKEY, KeyModifiers.MOD_NFER, 0x49);
-            VirtualKeys.AddModConvertedDecKeyFromCombo(DecoderKeys.DOWN_ARROW_DECKEY, KeyModifiers.MOD_NFER, 0x4b);
-            VirtualKeys.AddModConvertedDecKeyFromCombo(DecoderKeys.HOME_DECKEY, KeyModifiers.MOD_NFER, 0x41);
-            VirtualKeys.AddModConvertedDecKeyFromCombo(DecoderKeys.END_DECKEY, KeyModifiers.MOD_NFER, 0x45);
-            VirtualKeys.AddModConvertedDecKeyFromCombo(DecoderKeys.ENTER_DECKEY, KeyModifiers.MOD_NFER, 0x4d);
-            VirtualKeys.AddModConvertedDecKeyFromCombo(DecoderKeys.PAGE_UP_DECKEY, KeyModifiers.MOD_NFER, 0x4f);    // O
-            VirtualKeys.AddModConvertedDecKeyFromCombo(DecoderKeys.PAGE_DOWN_DECKEY, KeyModifiers.MOD_NFER, 0xbe);  // .
 
             UseLeftControlToConversion = GetString("useLeftControlToConversion")._parseBool(true);
             UseRightControlToConversion = GetString("useRightControlToConversion")._parseBool(false);

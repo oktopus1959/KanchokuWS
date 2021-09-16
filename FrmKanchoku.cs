@@ -100,6 +100,11 @@ namespace KanchokuWS
             // 設定ファイルの読み込み
             Settings.ReadIniFile();
 
+            // 追加の修飾キー定義ファイルの読み込み
+            if (Settings.ModConversionFile._notEmpty()) {
+                VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
+            }
+
             // 仮想鍵盤フォームの作成
             frmVkb = new FrmVirtualKeyboard(this);
             frmVkb.Opacity = 0;

@@ -23,17 +23,20 @@ namespace KanchokuWS
         // VKEY に対する modifier WIN
         public const uint MOD_WIN = 0x0008;
 
-        // VKEY に対する modifier ZENKAKU
-        public const uint MOD_ZENKAKU = 0x0100;
+        // VKEY に対する modifier CapsLock
+        public const uint MOD_CAPS = 0x0100;
+
+        // VKEY に対する modifier 英数
+        public const uint MOD_ALNUM = 0x0200;
 
         // VKEY に対する modifier NFER
-        public const uint MOD_NFER = 0x0200;
+        public const uint MOD_NFER = 0x0400;
 
         // VKEY に対する modifier XFER
-        public const uint MOD_XFER = 0x0400;
+        public const uint MOD_XFER = 0x0800;
 
         // VKEY に対する modifier KANA
-        public const uint MOD_KANA = 0x0800;
+        public const uint MOD_KANA = 0x1000;
 
         public static uint MakeModifier(bool ctrl, bool shift)
         {
@@ -85,6 +88,8 @@ namespace KanchokuWS
             0x20, 0xbd, 0xde, 0xdc, 0xc0, 0xdb, 0xba, 0xdd, 0xe2, 0x00,
         };
 
+        public const uint CapsLock = 0x14;
+        public const uint AlphaNum = 0xf0;
         public const uint Nfer = 0x1d;
         public const uint Xfer = 0x1c;
         public const uint Hiragana = 0xf2;
@@ -332,5 +337,78 @@ namespace KanchokuWS
             return true;
         }
 
+        private static Dictionary<string, uint> modifierKeysFromName = new Dictionary<string, uint>() {
+            {"caps", KeyModifiers.MOD_CAPS },
+            {"alnum", KeyModifiers.MOD_ALNUM },
+            {"nfer", KeyModifiers.MOD_NFER },
+            {"xfer", KeyModifiers.MOD_XFER },
+            {"cana", KeyModifiers.MOD_KANA },
+        };
+
+        private static Dictionary<string, int> specialDecKeysFromName = new Dictionary<string, int>() {
+            {"bs", DecoderKeys.BS_DECKEY },
+            {"backspace", DecoderKeys.BS_DECKEY },
+            {"del", DecoderKeys.DEL_DECKEY},
+            {"delete", DecoderKeys.DEL_DECKEY},
+            {"left", DecoderKeys.LEFT_ARROW_DECKEY},
+            {"leftarrow", DecoderKeys.LEFT_ARROW_DECKEY},
+            {"right", DecoderKeys.RIGHT_ARROW_DECKEY},
+            {"rightarrow", DecoderKeys.RIGHT_ARROW_DECKEY},
+            {"up", DecoderKeys.UP_ARROW_DECKEY},
+            {"uparrow", DecoderKeys.UP_ARROW_DECKEY},
+            {"down", DecoderKeys.DOWN_ARROW_DECKEY},
+            {"downarrow", DecoderKeys.DOWN_ARROW_DECKEY},
+            {"home", DecoderKeys.HOME_DECKEY},
+            {"end", DecoderKeys.END_DECKEY},
+            {"esc", DecoderKeys.ESC_DECKEY},
+            {"escape", DecoderKeys.ESC_DECKEY},
+            {"tab", DecoderKeys.TAB_DECKEY},
+            {"enter", DecoderKeys.ENTER_DECKEY},
+            {"ins", DecoderKeys.INS_DECKEY},
+            {"insert", DecoderKeys.INS_DECKEY},
+            {"pgup", DecoderKeys.PAGE_UP_DECKEY},
+            {"pageup", DecoderKeys.PAGE_UP_DECKEY},
+            {"pgdn", DecoderKeys.PAGE_DOWN_DECKEY},
+            {"pagedown", DecoderKeys.PAGE_DOWN_DECKEY},
+        };
+
+        /// <summary>
+        /// 追加の modifier 変換表を読み込む
+        /// </summary>
+        public static bool ReadExtraModConversionFile(string filename)
+        {
+            logger.Info("ENTER");
+            if (filename._notEmpty()) {
+                var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
+                logger.Info($"modConversion file path={filePath}");
+                var lines = Helper.GetFileContent(filePath, Encoding.UTF8);
+                if (lines == null) {
+                    logger.Error($"Can't read modConversion file: {filePath}");
+                    SystemHelper.ShowErrorMessageBox($"修飾キー変換定義ファイル({filePath}の読み込みに失敗しました。");
+                    return false;
+                }
+                int nl = 0;
+                foreach (var rawLine in lines._split('\n')) {
+                    ++nl;
+                    var line = rawLine._reReplace("#.*", "").Trim().Replace(" ", "")._toLower();
+                    if (line._notEmpty() && line[0] != '#') {
+                        var items = line._split(':');
+                        if (items._length() == 3) {
+                            uint mod = modifierKeysFromName._safeGet(items[0]);
+                            uint vkey = getVKeyFromDecKey(items[1]._parseInt(-1, -1));
+                            int deckey = specialDecKeysFromName._safeGet(items[2]);
+                            if (mod != 0 && vkey > 0 && deckey > 0) {
+                                logger.DebugH(() => $"AddModConvertedDecKeyFromCombo: deckey={deckey}, mod={mod}, vkey={vkey}, rawLine={rawLine}");
+                                AddModConvertedDecKeyFromCombo(deckey, mod, vkey);
+                                continue;
+                            }
+                        }
+                        logger.Warn($"Invalid line({nl}): {rawLine}");
+                    }
+                }
+            }
+            logger.Info("LEAVE");
+            return true;
+        }
     }
 }
