@@ -566,158 +566,6 @@ namespace KanchokuWS
             return actWinHandler.ActiveWinClassName._startsWith("EXCEL");
         }
 
-        //private int convertSpecificDeckey(int deckey)
-        //{
-        //    string activeWinClassName = actWinHandler.ActiveWinClassName._toLower();
-        //    bool contained = activeWinClassName._notEmpty() && Settings.CtrlKeyTargetClassNames._notEmpty() && Settings.CtrlKeyTargetClassNames.Any(name => name._notEmpty() && activeWinClassName.StartsWith(name));
-        //    bool ctrlTarget = !(Settings.UseClassNameListAsInclusion ^ contained);
-
-        //    bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-        //    bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
-
-        //    bool leftCtrlOn = leftCtrl && Settings.UseLeftControlToConversion;
-        //    bool rightCtrlOn = rightCtrl && Settings.UseRightControlToConversion;
-        //    bool ctrlKeyOn = leftCtrlOn || rightCtrlOn;
-        //    bool ctrlKeyAndTargetOn = ctrlTarget && ctrlKeyOn;
-
-        //    bool bCtrlHConvert = ctrlKeyAndTargetOn && Settings.ConvertCtrlHtoBackSpaceEffective;
-        //    bool bCtrlBFNPConvert = ctrlKeyAndTargetOn && Settings.ConvertCtrlBFNPtoArrowKeyEffective;
-        //    bool bCtrlAConvert = ctrlKeyAndTargetOn && Settings.ConvertCtrlAtoHomeEffective;
-        //    bool bCtrlDConvert = ctrlKeyAndTargetOn && Settings.ConvertCtrlDtoDeleteEffective;
-        //    bool bCtrlEConvert = ctrlKeyAndTargetOn && Settings.ConvertCtrlEtoEndEffective;
-        //    bool bCtrlGConvert = ctrlKeyAndTargetOn && Settings.ConvertCtrlGtoEscape;
-        //    bool bCtrlJConvert = ctrlKeyAndTargetOn && Settings.UseCtrlJasEnter;
-        //    bool bCtrlMConvert = ctrlKeyAndTargetOn && Settings.UseCtrlMasEnter;
-        //    bool bCtrlSemiColonConvert = ctrlKeyOn && Settings.ConvertCtrlSemiColonToDateEffective;
-
-        //    if (Settings.LoggingDecKeyInfo && Logger.IsInfoEnabled) {
-        //        logger.InfoH($"activeWindowClassName={activeWinClassName}");
-        //        logger.InfoH($"CtrlKeyTargetClassNames={Settings.CtrlKeyTargetClassNames._join(",")}");
-        //        logger.InfoH($"ctrlTarget={ctrlTarget} (=!({Settings.UseClassNameListAsInclusion}(Inclusion) XOR {contained} (ContainedInList)");
-        //        logger.InfoH($"leftCtrlOn={leftCtrlOn} (={leftCtrl}(leftCtrl) AND {Settings.UseLeftControlToConversion}(UseLeftCtrl))");
-        //        logger.InfoH($"rightCtrlOn={rightCtrlOn} (={rightCtrl}(rightCtrl) AND {Settings.UseRightControlToConversion}(UseRightCtrl))");
-        //        logger.InfoH($"ctrlKeyOn={ctrlKeyOn}");
-        //        logger.InfoH($"ctrlKeyAndTargetOn={ctrlKeyAndTargetOn} (={ctrlTarget}(ctrlTarget) AND {ctrlKeyOn}(ctrlKeyOn))");
-        //        logger.InfoH($"ctrlH={bCtrlHConvert} (ConvertCtrlHtoBackSpace={Settings.ConvertCtrlHtoBackSpaceEffective})");
-        //        logger.InfoH($"ctrlBFNP={bCtrlBFNPConvert} (ConvertCtrlBFNPtoArrowKey={Settings.ConvertCtrlBFNPtoArrowKeyEffective})");
-        //        logger.InfoH($"ctrlA={bCtrlAConvert} (ConvertCtrlAtoHome={Settings.ConvertCtrlAtoHomeEffective})");
-        //        logger.InfoH($"ctrlD={bCtrlDConvert} (ConvertCtrlDtoDelete={Settings.ConvertCtrlDtoDeleteEffective})");
-        //        logger.InfoH($"ctrlE={bCtrlEConvert} (ConvertCtrlEtoEnd={Settings.ConvertCtrlEtoEndEffective})");
-        //        logger.InfoH($"ctrlG={bCtrlGConvert} (ConvertCtrlGtoEscape={Settings.ConvertCtrlGtoEscape})");
-        //        logger.InfoH($"ctrlJ={bCtrlJConvert} (ConvertCtrlJtoEscape={Settings.UseCtrlJasEnter})");
-        //        logger.InfoH($"ctrlM={bCtrlMConvert} (ConvertCtrlMtoEscape={Settings.UseCtrlMasEnter})");
-        //        logger.InfoH($"ctrlSemi={bCtrlSemiColonConvert} (ConvertCtrlEtoEnd={Settings.ConvertCtrlEtoEndEffective})");
-        //    }
-
-        //    //switch (deckey) {
-        //    //    case DecoderKeys.CTRL_H_DECKEY:
-        //    //        if (bCtrlHConvert) deckey = DecoderKeys.BS_DECKEY;
-        //    //        break;
-        //    //    case DecoderKeys.CTRL_B_DECKEY:
-        //    //        if (bCtrlBFNPConvert) deckey = DecoderKeys.LEFT_ARROW_DECKEY;
-        //    //        break;
-        //    //    case DecoderKeys.CTRL_F_DECKEY:
-        //    //        if (bCtrlBFNPConvert) deckey = DecoderKeys.RIGHT_ARROW_DECKEY;
-        //    //        break;
-        //    //    case DecoderKeys.CTRL_N_DECKEY:
-        //    //        if (bCtrlBFNPConvert) deckey = DecoderKeys.DOWN_ARROW_DECKEY;
-        //    //        break;
-        //    //    case DecoderKeys.CTRL_P_DECKEY:
-        //    //        if (bCtrlBFNPConvert) deckey = DecoderKeys.UP_ARROW_DECKEY;
-        //    //        break;
-        //    //    case DecoderKeys.CTRL_A_DECKEY:
-        //    //        if (bCtrlAConvert) deckey = DecoderKeys.HOME_DECKEY;
-        //    //        break;
-        //    //    case DecoderKeys.CTRL_D_DECKEY:
-        //    //        if (bCtrlDConvert) deckey = DecoderKeys.DEL_DECKEY;
-        //    //        break;
-        //    //    case DecoderKeys.CTRL_E_DECKEY:
-        //    //        if (bCtrlEConvert) deckey = DecoderKeys.END_DECKEY;
-        //    //        break;
-        //    //    //case DecoderKeys.CTRL_G_DECKEY:
-        //    //    //    if (bCtrlGConvert) deckey = DecoderKeys.FULL_ESCAPE_DECKEY;
-        //    //    //    break;
-        //    //    //case DecoderKeys.CTRL_SHIFT_G_DECKEY:
-        //    //    //    if (bCtrlGConvert) deckey = DecoderKeys.UNBLOCK_DECKEY;
-        //    //    //    break;
-        //    //    case DecoderKeys.CTRL_J_DECKEY:
-        //    //        if (bCtrlJConvert) deckey = DecoderKeys.ENTER_DECKEY;
-        //    //        break;
-        //    //    case DecoderKeys.CTRL_M_DECKEY:
-        //    //        if (bCtrlMConvert) deckey = DecoderKeys.ENTER_DECKEY;
-        //    //        break;
-        //    //    //case DecoderKeys.CTRL_SEMICOLON_DECKEY:         // 日付フォーマットの切り替え
-        //    //    //case DecoderKeys.CTRL_SHIFT_SEMICOLON_DECKEY:   // 日付フォーマットの切り替え(2つめのフォーマットから)
-        //    //    //case DecoderKeys.CTRL_COLON_DECKEY:             // 日付のインクリメント
-        //    //    //case DecoderKeys.CTRL_SHIFT_COLON_DECKEY:       // 日付のデクリメント
-        //    //    //    if (bCtrlSemiColonConvert) {
-        //    //    //        deckey = convertDateStringDeckey(deckey);
-        //    //    //        if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-Ctrl-(Shift)-(Semi)Colorn to Deckey{deckey:x}");
-        //    //    //    }
-        //    //    //    break;
-        //    //}
-        //    // 連続的に Ctrlキー(Ctrl-Hなど)または特殊キー(BSなど)(これは AutoDecKey などにより Ctrl-H がBSに変換されていることを想定)が送りつけられている時に
-        //    if ((prevDeckey >= DecoderKeys.CTRL_FUNC_DECKEY_ID_BASE) && DateTime.Now < prevDecDt.AddMilliseconds(Settings.KeyRepeatDetectMillisec)) {
-        //        switch (deckey) {
-        //            case DecoderKeys.DECKEY_H:
-        //            case DecoderKeys.BS_DECKEY:
-        //                if (deckey != DecoderKeys.BS_DECKEY) {
-        //                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-H or Ctrl-H to Deckey-BS");
-        //                    if (bCtrlHConvert) deckey = DecoderKeys.BS_DECKEY;
-        //                }
-        //                if (!BackspaceBlockerSent) {
-        //                    // Backspace だったら、デコーダに対して BackspaceBlocker を送る
-        //                    if (Settings.LoggingDecKeyInfo) logger.InfoH("setBackspaceBlocker");
-        //                    ExecCmdDecoder("setBackspaceBlocker", null);
-        //                    BackspaceBlockerSent = true;
-        //                }
-        //                break;
-        //            case DecoderKeys.DECKEY_B: // B
-        //                if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-B or Ctrl-B to Deckey-LeftArrow");
-        //                if (bCtrlBFNPConvert) deckey = DecoderKeys.LEFT_ARROW_DECKEY;
-        //                break;
-        //            case DecoderKeys.DECKEY_F: // F
-        //                if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-F or Ctrl-F to Deckey-RightArrow");
-        //                if (bCtrlBFNPConvert) deckey = DecoderKeys.RIGHT_ARROW_DECKEY;
-        //                break;
-        //            case DecoderKeys.DECKEY_N: // N
-        //                if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-N or Ctrl-N to Deckey-DownArrow");
-        //                if (bCtrlBFNPConvert) deckey = DecoderKeys.DOWN_ARROW_DECKEY;
-        //                break;
-        //            case DecoderKeys.DECKEY_P: // P
-        //                if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-P or Ctrl-P to Deckey-UpArrow");
-        //                if (bCtrlBFNPConvert) deckey = DecoderKeys.UP_ARROW_DECKEY;
-        //                break;
-        //            case DecoderKeys.DECKEY_A: // A
-        //                if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-A or Ctrl-A to Deckey-Home");
-        //                if (bCtrlAConvert) deckey = DecoderKeys.HOME_DECKEY;
-        //                break;
-        //            case DecoderKeys.DECKEY_D: // D
-        //                if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-D or Ctrl-D to Deckey-Delete");
-        //                if (bCtrlDConvert) deckey = DecoderKeys.DEL_DECKEY;
-        //                break;
-        //            case DecoderKeys.DECKEY_E: // E
-        //                if (Settings.LoggingDecKeyInfo) logger.InfoH($"Convert Deckey-E or Ctrl-E to Deckey-End");
-        //                if (bCtrlEConvert) deckey = DecoderKeys.END_DECKEY;
-        //                break;
-        //            default:
-        //                if (deckey < DecoderKeys.CTRL_FUNC_DECKEY_ID_BASE) {
-        //                    // その他のストロークキーは、AHKなどの変換間違いの可能性が高いので無視する
-        //                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"IGNORE: {(deckey < DecoderKeys.CTRL_FUNC_DECKEY_ID_BASE ? $"{deckey}" : $"{deckey:x}H")}");
-        //                    deckey = -1;
-        //                }
-        //                // コントロールキーや特殊キーはそのままデコーダに送る(矢印キーなどは候補選択に使うはずなので)
-        //                break;
-        //        }
-        //    } else {
-        //        BackspaceBlockerSent = false;
-        //    }
-
-        //    prevDeckey = deckey;
-        //    prevDecDt = DateTime.Now;
-        //    return deckey;
-        //}
-
         private bool rotateDateString(int direction)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: direction={direction}");
@@ -766,9 +614,6 @@ namespace KanchokuWS
                 CommonState.CenterString = "";
                 Settings.VirtualKeyboardShowStrokeCountTemp = 0;
                 frmVkb.DrawInitailVkb();
-                //DecKeyHandler.RegisterDeactivateDecoderKeys();
-                //DecKeyHandler.RegisterDecoderSpecialDecoderKeys();
-                //DecKeyHandler.RegisterDecoderStrokeDecoderKeys();
                 //Text = "漢直窓S - ON";
                 notifyIcon1.Icon = Properties.Resources.kanmini1;
                 // 仮想鍵盤を移動させる
@@ -844,14 +689,6 @@ namespace KanchokuWS
             logger.InfoH(() => $"CALLED: delta={delta}");
             if (delta == 0) delta = 1;
             frmVkb.RotateStrokeTable(delta);
-        }
-
-        public void ReregisterSpecialGlobalDeckeys()
-        {
-            logger.InfoH("CALLED");
-            DeactivateDecoder();
-            //DecKeyHandler.UnregisterSpecialGlobalDecoderKeys();
-            //DecKeyHandler.RegisterSpecialGlobalDecoderKeys();
         }
 
         /// <summary> 辞書ファイルなどの保存 </summary>

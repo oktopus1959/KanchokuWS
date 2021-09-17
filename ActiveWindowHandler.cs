@@ -404,23 +404,7 @@ namespace KanchokuWS
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: len={len}, vkey={vkey}");
 
-            int deckey = 0;
-            int ctrlDeckey = 0;
-            if (vkey > 0) {
-                // まずホットキーの解除
-                deckey = VirtualKeys.GetDecKeyFromCombo(0, vkey);
-                ctrlDeckey = VirtualKeys.GetDecKeyFromCombo(KeyModifiers.MOD_CONTROL, vkey);
-                //HHHKeyHandler.UnregisterHHHKeyTemporary(deckey);
-                //HHHKeyHandler.UnregisterHHHKeyTemporary(ctrlDeckey);
-            }
-
             if (len > 0) SendInput(len, inputs, Marshal.SizeOf(typeof(INPUT)));
-
-            if (vkey > 0) {
-                // ホットキーの再登録
-                //HHHKeyHandler.ResumeHHHKey(deckey);
-                //HHHKeyHandler.ResumeHHHKey(ctrlDeckey);
-            }
 
             // Enterキーだったら、すぐに仮想鍵盤を移動するように MinValue とする
             lastOutputDt = vkey == (uint)Keys.Enter ? DateTime.MinValue : DateTime.Now;

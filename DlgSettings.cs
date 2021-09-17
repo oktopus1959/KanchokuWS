@@ -873,8 +873,6 @@ namespace KanchokuWS
             readSettings_tabCtrlKeys();
             checkerCtrlKeys.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
-            frmMain?.ReregisterSpecialGlobalDeckeys();
-
             label_okResultCtrlKeys.Show();
         }
 
