@@ -382,11 +382,16 @@ namespace KanchokuWS
         public static bool AutoBushuComp { get; set; } = false;
 
         //------------------------------------------------------------------------------
+        // 仮想鍵盤の固定表示位置
+        public static int[] VkbFixedPos { get; set; } = new int[2] { -1, -1 };
+
+        //------------------------------------------------------------------------------
         // ウィンドウClassNameごとの設定
         public class WindowsClassSettings
         {
             public int[] ValidCaretMargin;
             public int[] CaretOffset;
+            public int[] VkbFixedPos;
             public int CtrlUpWaitMillisec = -1;
             public int CtrlDownWaitMillisec = -1;
         }
@@ -703,6 +708,7 @@ namespace KanchokuWS
                     winClassSettings[name._toLower()] = new WindowsClassSettings() {
                         ValidCaretMargin = GetStringFromSection(name, "validCaretMargin", "").Trim()._split(',').Select(x => x._parseInt(0)._lowLimit(0)).ToArray(),
                         CaretOffset = GetStringFromSection(name, "caretOffset", "").Trim()._split(',').Select(x => x._parseInt(0)._lowLimit(0)).ToArray(),
+                        VkbFixedPos = GetStringFromSection(name, "vkbFixedPos", "").Trim()._split(',').Select(x => x._parseInt(0)._lowLimit(0)).ToArray(),
                         CtrlUpWaitMillisec = GetStringFromSection(name, "ctrlUpWaitMillisec", "-1")._parseInt(-1),
                         CtrlDownWaitMillisec = GetStringFromSection(name, "ctrlDownWaitMillisec", "-1")._parseInt(-1),
                     };

@@ -678,6 +678,10 @@ namespace KanchokuWS
                 if (caretOffset != null) {
                     logger.InfoH($"caretOffset=({caretOffset.Select(m => m.ToString())._join(",")})");
                 }
+                var vkbFixedPos = ActiveWinSettings?.VkbFixedPos;
+                if (vkbFixedPos != null) {
+                    logger.InfoH($"vkbFixedPos=({vkbFixedPos.Select(m => m.ToString())._join(",")})");
+                }
             }
         }
 
@@ -724,6 +728,8 @@ namespace KanchokuWS
                    ) {
                     int xOffset = (ActiveWinSettings?.CaretOffset)._getNth(0, Settings.VirtualKeyboardOffsetX);
                     int yOffset = (ActiveWinSettings?.CaretOffset)._getNth(1, Settings.VirtualKeyboardOffsetY);
+                    int xFixed = (ActiveWinSettings?.VkbFixedPos)._getNth(0, -1);
+                    int yFixed = (ActiveWinSettings?.VkbFixedPos)._getNth(1, -1);
                     //double dpiRatio = 1.0; //FrmVkb.GetDeviceDpiRatio();
                     if (bLog) logger.InfoH($"CaretPos.X={ActiveWinCaretPos.X}, CaretPos.Y={ActiveWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}");
                     if (ActiveWinCaretPos.X >= 0) {
@@ -739,16 +745,23 @@ namespace KanchokuWS
                             }
                         }
                         Action<Form> moveAction = (Form frm) => {
-                            int cBottom = cY + cH;
-                            int fX = cX + xOffset;
-                            int fY = cBottom + yOffset;
+                            int fX = 0;
+                            int fY = 0;
                             int fW = frm.Size.Width;
                             int fH = frm.Size.Height;
-                            int fRight = fX + fW;
-                            int fBottom = fY + fH;
-                            Rectangle rect = ScreenInfo.GetScreenContaining(cX, cY);
-                            if (fRight >= rect.X + rect.Width) fX = cX - fW - xOffset;
-                            if (fBottom >= rect.Y + rect.Height) fY = cY - fH - yOffset;
+                            if (xFixed >= 0 && yFixed >= 0) {
+                                fX = xFixed;
+                                fY = yFixed;
+                            } else {
+                                int cBottom = cY + cH;
+                                fX = cX + xOffset;
+                                fY = cBottom + yOffset;
+                                int fRight = fX + fW;
+                                int fBottom = fY + fH;
+                                Rectangle rect = ScreenInfo.GetScreenContaining(cX, cY);
+                                if (fRight >= rect.X + rect.Width) fX = cX - fW - xOffset;
+                                if (fBottom >= rect.Y + rect.Height) fY = cY - fH - yOffset;
+                            }
                             MoveWindow(frm.Handle, fX, fY, fW, fH, true);
                         };
                         // 仮想鍵盤の移動
