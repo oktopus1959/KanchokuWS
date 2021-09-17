@@ -100,6 +100,11 @@ namespace KanchokuWS
             // 設定ファイルの読み込み
             Settings.ReadIniFile();
 
+            // 文字定義ファイルの読み込み
+            if (Settings.CharsDefFile._notEmpty()) {
+                DecoderKeyToChar.ReadCharsDefFile(Settings.CharsDefFile);
+            }
+
             // 追加の修飾キー定義ファイルの読み込み
             if (Settings.ModConversionFile._notEmpty()) {
                 VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
@@ -478,6 +483,7 @@ namespace KanchokuWS
             keDispatcher.DeactivateDecoder = DeactivateDecoder;
             keDispatcher.IsDecoderActivated = isDecoderActivated;
             keDispatcher.FuncDispatcher = FuncDispatcher;
+            keDispatcher.SendInputVkeyWithMod = SendInputVkeyWithMod;
             //keDispatcher.RotateReverseStrokeHelp = rotateReverseStrokeHelp;
             //keDispatcher.RotateDateString = rotateDateString;
             //keDispatcher.RotateReverseDateString = rotateReverseDateString;
@@ -1030,7 +1036,7 @@ namespace KanchokuWS
             }
 
             // BSと文字送出(もしあれば)
-           actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces);
+            actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces);
 
             // 仮想キーボードにヘルプや文字候補を表示
             frmVkb.DrawVirtualKeyboardChars();
@@ -1048,7 +1054,7 @@ namespace KanchokuWS
                 || deckey >= DecoderKeys.CTRL_FUNC_DECKEY_END && deckey < DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START
                 || deckey >= DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_END) {
 
-                if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET WINDOW");
                 var combo = VirtualKeys.GetVKeyComboFromDecKey(deckey);
                 if (combo != null) {
                     if (Settings.LoggingDecKeyInfo) logger.InfoH($"SEND: vkey={combo.Value.vkey:x}H({combo.Value.vkey}), ctrl={(combo.Value.modifier & KeyModifiers.MOD_CONTROL) != 0}");
@@ -1062,6 +1068,14 @@ namespace KanchokuWS
                 }
             }
             return false;
+        }
+
+        /// <summary>修飾キー付きvkeyをSendInputする</summary>
+        private bool SendInputVkeyWithMod(uint mod, uint vkey)
+        {
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: mod={mod}H({mod}), vkey={vkey}H({vkey})");
+            actWinHandler.SendVKeyCombo(new VKeyCombo(mod, vkey), 1);
+            return true;
         }
 
         /// <summary> 今日の日付文字列を出力する </summary>

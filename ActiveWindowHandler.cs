@@ -295,6 +295,86 @@ namespace KanchokuWS
             }
         }
 
+        private void setLeftShiftInput(ref INPUT input, int keyEventFlag)
+        {
+            initializeKeyboardInput(ref input);
+            input.ki.wVk = VK_SHIFT;
+            input.ki.dwFlags = keyEventFlag;
+        }
+
+        private void setRightShiftInput(ref INPUT input, int keyEventFlag)
+        {
+            setLeftShiftInput(ref input, keyEventFlag);
+            input.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;
+        }
+
+        /// <summary>
+        /// Shiftキーの事前上げ下げ
+        /// </summary>
+        /// <param name="leftShift"></param>
+        /// <param name="rightShift"></param>
+        private int upDownShiftKeyInputs(INPUT[] inputs, int idx, bool bUp, out bool leftShift, out bool rightShift)
+        {
+            leftShift = (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0;
+            rightShift = (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, leftShift={leftShift}, rightShift={rightShift}");
+
+            if (bUp && (leftShift || rightShift)) {
+                // 両方一諸に上げる
+                setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+                setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            } else if (!bUp && !(leftShift || rightShift)) {
+                // 両方一諸に下げる
+                setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            }
+            return idx;
+        }
+
+        /// <summary>
+        /// Shiftキーの事前上げ
+        /// </summary>
+        /// <param name="leftShift"></param>
+        /// <param name="rightShift"></param>
+        private int upShiftKeyInputs(INPUT[] inputs, int idx, out bool leftShift, out bool rightShift)
+        {
+            return upDownShiftKeyInputs(inputs, idx, true, out leftShift, out rightShift);
+        }
+
+        /// <summary>
+        /// Shiftキーの事前下げ
+        /// </summary>
+        /// <param name="leftShift"></param>
+        /// <param name="rightShift"></param>
+        private int downShiftKeyInputs(INPUT[] inputs, int idx, out bool leftShift, out bool rightShift)
+        {
+            return upDownShiftKeyInputs(inputs, idx, false, out leftShift, out rightShift);
+        }
+
+        /// <summary>
+        /// Shiftキーの状態を戻す
+        /// </summary>
+        /// <param name="bUp">事前操作<</param>
+        /// <param name="prevLeftShift"></param>
+        /// <param name="prevRightShift"></param>
+        private int revertShiftKeyInputs(INPUT[] inputs, int idx, bool bUp, bool prevLeftShift, bool prevRightShift)
+        {
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, prevLeftShift={prevLeftShift}, prevRightShift={prevRightShift}");
+
+            if (prevLeftShift && bUp) {
+                setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            } else if (!prevLeftShift && !bUp) {
+                setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            }
+
+            if (prevRightShift && bUp) {
+                setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            } else if (!prevRightShift && !bUp) {
+                setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            }
+            return idx;
+        }
+
         private int setVkeyInputs(ushort vkey, INPUT[] inputs, int idx)
         {
             initializeKeyboardInput(ref inputs[idx]);
@@ -417,10 +497,18 @@ namespace KanchokuWS
                     idx = upDownCtrlKeyInputs(inputs, idx, bUp, out leftCtrl, out rightCtrl);
                     //sendInputUpDownCtrlKey(bUp, out leftCtrl, out rightCtrl);         // StikyNote など、Waitを入れても状況が変わらない
 
+                    // Shift上げ(または下げ)
+                    bool leftShift = false, rightShift = false;
+                    bool bShiftUp = (combo.modifier & KeyModifiers.MOD_SHIFT) == 0;
+                    idx = upDownShiftKeyInputs(inputs, idx, bShiftUp, out leftShift, out rightShift);
+
                     // Vkey
                     for (int i = 0; i < n; ++i) {
                         idx = setVkeyInputs((ushort)combo.vkey, inputs, idx);
                     }
+
+                    // Shift戻し
+                    idx = revertShiftKeyInputs(inputs, idx, bShiftUp, leftShift, rightShift);
 
                     // Ctrl戻し
                     idx = revertCtrlKeyInputs(inputs, idx, bUp, leftCtrl, rightCtrl);

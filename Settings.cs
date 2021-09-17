@@ -11,7 +11,7 @@ namespace KanchokuWS
     {
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.1.3";
+        public static string Version => "1.1.4";
 
         /// <summary> ドキュメントへのURL </summary>
         public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
@@ -376,6 +376,7 @@ namespace KanchokuWS
 
         // SandS を有効にするか
         public static bool SandSEnabled { get; set; } = false;
+        public static bool SandSEnabledWhenOffMode { get; set; } = false;
 
         // 自動首部合成を有効にするか
         public static bool AutoBushuComp { get; set; } = false;
@@ -692,6 +693,7 @@ namespace KanchokuWS
             //-------------------------------------------------------------------------------------
             // その他変換・機能
             SandSEnabled = GetString("sandsEnabled")._parseBool(false);         // SandS を有効にするか
+            SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);         // 漢直OFFの時もSandS を有効にするか
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

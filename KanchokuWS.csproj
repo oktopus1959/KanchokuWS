@@ -76,6 +76,7 @@
     </Compile>
     <Compile Include="CommonState.cs" />
     <Compile Include="DecoderKeys.cs" />
+    <Compile Include="DecoderKeyToChar.cs" />
     <Compile Include="DecoderOutParams.cs" />
     <Compile Include="DlgColorSelector.cs">
       <SubType>Form</SubType>

@@ -35,6 +35,9 @@ namespace KanchokuWS
         /// <summary>デコーダ機能のディスパッチ</summary>
         public delegate bool DelegateDecoderFuncDispatcher(int deckey);
 
+        /// <summary>修飾キー付きvkeyをSendInputする</summary>
+        public delegate bool DelegateSendInputVkeyWithMod(uint mod, uint vkey);
+
         ///// <summary>打鍵ヘルプのローテーション<br/>ローテーションを行わない場合は false を返す</summary>
         //public delegate bool DelegateRotateStrokeHelp();
 
@@ -73,6 +76,9 @@ namespace KanchokuWS
 
         /// <summary>デコーダ機能のディスパッチ</summary>
         public DelegateDecoderFuncDispatcher FuncDispatcher { get; set; }
+
+        /// <summary>修飾キー付きvkeyをSendInputする</summary>
+        public DelegateSendInputVkeyWithMod SendInputVkeyWithMod { get; set; }
 
         ///// <summary>打鍵ヘルプのローテーション<br/>ローテーションを行わない場合は false を返す</summary>
         //public DelegateRotateStrokeHelp RotateStrokeHelp { get; set; }
@@ -186,27 +192,26 @@ namespace KanchokuWS
         {
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"\nCALLED: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
             if (isEffectiveVkey(vkey, extraInfo)) {
-                if (Settings.SandSEnabled) {
+                bool decoderActivated = IsDecoderActivated?.Invoke() ?? false;
+                if ((Settings.SandSEnabled && decoderActivated) || (Settings.SandSEnabledWhenOffMode && !decoderActivated)) {
                     if (vkey == (int)Keys.Space) {
-                        if (IsDecoderActivated?.Invoke() ?? false) {
-                            if (spaceKeyState == SpecialKeyState.PRESSED) {
-                                // スペースキーが押下されている状態なら、シフト状態に遷移する
-                                spaceKeyState = SpecialKeyState.SHIFTED;
-                                return true;
-                            }
-                            if (spaceKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
-                                                                                     // RELEASED
-                            if (!ctrlKeyPressed() && !shiftKeyPressed(false)) {
-                                // 1回目の押下で Ctrl も Shift も押されてない
-                                spaceKeyState = SpecialKeyState.PRESSED;
-                                return true;
-                            }
-                            if (shiftKeyPressed(false)) {
-                                spaceKeyState = SpecialKeyState.SHIFTED;
-                                return true;
-                            }
-                            // 上記以外はスペース入力として扱う
+                        if (spaceKeyState == SpecialKeyState.PRESSED) {
+                            // スペースキーが押下されている状態なら、シフト状態に遷移する
+                            spaceKeyState = SpecialKeyState.SHIFTED;
+                            return true;
                         }
+                        if (spaceKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+                                                                                   // RELEASED
+                        if (!ctrlKeyPressed() && !shiftKeyPressed(false)) {
+                            // 1回目の押下で Ctrl も Shift も押されてない
+                            spaceKeyState = SpecialKeyState.PRESSED;
+                            return true;
+                        }
+                        if (shiftKeyPressed(false)) {
+                            spaceKeyState = SpecialKeyState.SHIFTED;
+                            return true;
+                        }
+                        // 上記以外はスペース入力として扱う
                     } else {
                         if (spaceKeyState == SpecialKeyState.PRESSED) {
                             // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
@@ -310,6 +315,7 @@ namespace KanchokuWS
                     }
                 }
                 if (Settings.LoggingDecKeyInfo) {
+                    logger.DebugH(() => $"spaceKeyState={spaceKeyState}");
                     logger.DebugH(() => $"capsKeyState={capsKeyState}");
                     logger.DebugH(() => $"alnumKeyState={alnumKeyState}");
                     logger.DebugH(() => $"nferKeyState={nferKeyState}");
@@ -334,11 +340,17 @@ namespace KanchokuWS
             if (mod == 0) mod = getShiftedSpecialModKey();
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"mod={mod:x}H({mod}), vkey={vkey:x}H({vkey})");
             int kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || mod != 0
-                ? VirtualKeys.GetCtrlConvertedDecKeyFromCombo(mod, (uint)vkey)
+                ? VirtualKeys.GetModConvertedDecKeyFromCombo(mod, (uint)vkey)
                 : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
 
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
-            if (kanchokuCode < 0) return false;
+            if (kanchokuCode < 0) {
+                if (spaceKeyState == SpecialKeyState.SHIFTED) {
+                    // SandS により Shift モードになっている場合は、SendInput で Shift down をエミュレートする
+                    return SendInputVkeyWithMod?.Invoke(mod, (uint)vkey) ?? false;
+                }
+                return false;
+            }
 
             if (kanchokuCode == DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY && kanchokuCode != VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)) {
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"=historySearchCtrlKey={Settings.HistorySearchCtrlKey}, kanchokuCode={VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)}");
@@ -375,7 +387,7 @@ namespace KanchokuWS
         {
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CALLED: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
             if (isEffectiveVkey(vkey, extraInfo)) {
-                if (Settings.SandSEnabled) {
+                if (Settings.SandSEnabled || Settings.SandSEnabledWhenOffMode) {
                     if (vkey == (int)Keys.Space) {
                         var state = spaceKeyState;
                         spaceKeyState = SpecialKeyState.RELEASED;

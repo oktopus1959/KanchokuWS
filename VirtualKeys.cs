@@ -23,20 +23,23 @@ namespace KanchokuWS
         // VKEY に対する modifier WIN
         public const uint MOD_WIN = 0x0008;
 
+        // VKEY に対する modifier Space
+        public const uint MOD_SPACE = 0x0100;
+
         // VKEY に対する modifier CapsLock
-        public const uint MOD_CAPS = 0x0100;
+        public const uint MOD_CAPS = 0x0200;
 
         // VKEY に対する modifier 英数
-        public const uint MOD_ALNUM = 0x0200;
+        public const uint MOD_ALNUM = 0x0400;
 
         // VKEY に対する modifier NFER
-        public const uint MOD_NFER = 0x0400;
+        public const uint MOD_NFER = 0x0800;
 
         // VKEY に対する modifier XFER
-        public const uint MOD_XFER = 0x0800;
+        public const uint MOD_XFER = 0x1000;
 
         // VKEY に対する modifier KANA
-        public const uint MOD_KANA = 0x1000;
+        public const uint MOD_KANA = 0x2000;
 
         public static uint MakeModifier(bool ctrl, bool shift)
         {
@@ -253,16 +256,17 @@ namespace KanchokuWS
             return DecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
         }
 
-        public static int GetCtrlConvertedDecKeyFromCombo(uint mod, uint vkey)
+        public static int GetModConvertedDecKeyFromCombo(uint mod, uint vkey)
         {
             int deckey = ModConvertedDecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
-            return deckey > 0 ? deckey : DecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
+            //return deckey > 0 ? deckey : DecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
+            return deckey > 0 ? deckey : GetDecKeyFromCombo(mod, vkey);
         }
 
         public static int GetCtrlDecKeyOf(string face)
         {
             uint vkey = faceToVkey._safeGet(face);
-            return (vkey > 0) ? GetCtrlConvertedDecKeyFromCombo(KeyModifiers.MOD_CONTROL, vkey) : -1;
+            return (vkey > 0) ? GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_CONTROL, vkey) : -1;
         }
 
         // 静的コンストラクタ
