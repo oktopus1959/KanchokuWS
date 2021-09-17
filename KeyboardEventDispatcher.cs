@@ -33,7 +33,7 @@ namespace KanchokuWS
         public delegate bool DelegateIsDecoderActivated();
 
         /// <summary>デコーダ機能のディスパッチ</summary>
-        public delegate bool DelegateDecoderFuncDispatcher(int deckey);
+        public delegate bool DelegateDecoderFuncDispatcher(int deckey, uint mod);
 
         /// <summary>修飾キー付きvkeyをSendInputする</summary>
         public delegate bool DelegateSendInputVkeyWithMod(uint mod, uint vkey);
@@ -174,6 +174,7 @@ namespace KanchokuWS
         /// <summary> かなキーの押下状態</summary>
         private SpecialKeyState kanaKeyState = SpecialKeyState.RELEASED;
 
+        /// <summary> SandS以外の修飾キーの押下状態を得る</summary>
         private uint getShiftedSpecialModKey()
         {
             if (capsKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_CAPS;
@@ -337,13 +338,22 @@ namespace KanchokuWS
             bool ctrl = leftCtrl || rightCtrl;
             bool shift = shiftKeyPressed(ctrl);
             uint mod = KeyModifiers.MakeModifier(ctrl, shift);
-            if (mod == 0) mod = getShiftedSpecialModKey();
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"mod={mod:x}H({mod}), vkey={vkey:x}H({vkey})");
-            int kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || mod != 0
-                ? VirtualKeys.GetModConvertedDecKeyFromCombo(mod, (uint)vkey)
-                : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
+            uint modEx = getShiftedSpecialModKey();
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey})");
 
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
+            int kanchokuCode = -1;
+            if (modEx != 0) {
+                kanchokuCode = VirtualKeys.GetModConvertedDecKeyFromCombo(modEx, (uint)vkey);
+                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
+            }
+            if (kanchokuCode < 0) {
+                kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || mod != 0
+                    ? VirtualKeys.GetModConvertedDecKeyFromCombo(mod, (uint)vkey)
+                    : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
+                if (kanchokuCode >= 0) mod = 0;     // 何かのコードに変換されたら、 Ctrl や Shift の修飾は無かったことにしておく
+                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
+            }
+
             if (kanchokuCode < 0) {
                 if (spaceKeyState == SpecialKeyState.SHIFTED) {
                     // SandS により Shift モードになっている場合は、SendInput で Shift down をエミュレートする
@@ -367,7 +377,7 @@ namespace KanchokuWS
                 return true;
             }
             while (true) {
-                bool result = invokeHandler(kanchokuCode);
+                bool result = invokeHandler(kanchokuCode, mod);
                 if (vkeyQueue.Count == 0) return result;
                 kanchokuCode = vkeyQueue.Dequeue();
             }
@@ -449,9 +459,9 @@ namespace KanchokuWS
             return false;
         }
 
-        private bool invokeHandler(int kanchokuCode)
+        private bool invokeHandler(int kanchokuCode, uint mod)
         {
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode})");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), mod={mod:x}H({mod})");
             busyFlag = true;
             try {
                 switch (kanchokuCode) {
@@ -475,7 +485,7 @@ namespace KanchokuWS
                     //case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
                     //    return RotateReverseDateString?.Invoke() ?? false;
                     default:
-                        if (kanchokuCode >= 0) return FuncDispatcher?.Invoke(kanchokuCode) ?? false;
+                        if (kanchokuCode >= 0) return FuncDispatcher?.Invoke(kanchokuCode, mod) ?? false;
                         return false;
                 }
             } finally {

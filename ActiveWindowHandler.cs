@@ -460,10 +460,10 @@ namespace KanchokuWS
         /// 仮想キーComboを送出する<br/>
         /// </summary>
         /// <param name="n">キーダウンの数</param>
-        public void SendVKeyCombo(VKeyCombo combo, int n)
+        public void SendVKeyCombo(uint modifier, uint vkey, int n)
         {
             bool loggingFlag = Settings.LoggingDecKeyInfo;
-            if (loggingFlag) logger.InfoH($"CALLED: combo=(mod={combo.modifier:x}H, vkey={combo.vkey:x}H), numKeys={n}");
+            if (loggingFlag) logger.InfoH($"CALLED: modifier={modifier:x}H, vkey={vkey:x}H, numKeys={n}");
             if (syncPostVkey.BusyCheck()) {
                 if (loggingFlag) logger.InfoH($"IGNORED: numKeys={n}");
                 return;
@@ -477,18 +477,18 @@ namespace KanchokuWS
 
                     // Ctrl上げ(または下げ)
                     bool leftCtrl = false, rightCtrl = false;
-                    bool bUp = (combo.modifier & KeyModifiers.MOD_CONTROL) == 0;
+                    bool bUp = (modifier & KeyModifiers.MOD_CONTROL) == 0;
                     idx = upDownCtrlKeyInputs(inputs, idx, bUp, out leftCtrl, out rightCtrl);
                     //sendInputUpDownCtrlKey(bUp, out leftCtrl, out rightCtrl);         // StikyNote など、Waitを入れても状況が変わらない
 
                     // Shift上げ(または下げ)
                     bool leftShift = false, rightShift = false;
-                    bool bShiftUp = (combo.modifier & KeyModifiers.MOD_SHIFT) == 0;
+                    bool bShiftUp = (modifier & KeyModifiers.MOD_SHIFT) == 0;
                     idx = upDownShiftKeyInputs(inputs, idx, bShiftUp, out leftShift, out rightShift);
 
                     // Vkey
                     for (int i = 0; i < n; ++i) {
-                        idx = setVkeyInputs((ushort)combo.vkey, inputs, idx);
+                        idx = setVkeyInputs((ushort)vkey, inputs, idx);
                     }
 
                     // Shift戻し
@@ -498,7 +498,7 @@ namespace KanchokuWS
                     idx = revertCtrlKeyInputs(inputs, idx, bUp, leftCtrl, rightCtrl);
 
                     // 送出
-                    sendInputsWithHandlingDeckey((uint)idx, inputs, combo.vkey);
+                    sendInputsWithHandlingDeckey((uint)idx, inputs, vkey);
                 }
             }
         }
@@ -549,7 +549,7 @@ namespace KanchokuWS
                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
                         Helper.WaitMilliSeconds(waitMs);
                     }
-                    SendVKeyCombo(VirtualKeys.CtrlV_VKeyCombo, 1);
+                    SendVKeyCombo(VirtualKeys.CtrlV_VKeyCombo.modifier, VirtualKeys.CtrlV_VKeyCombo.vkey, 1);
                 }
 
                 lastOutputDt = DateTime.Now;

@@ -499,7 +499,7 @@ namespace KanchokuWS
         /// </summary>
         /// <param name="deckey"></param>
         /// <returns></returns>
-        private bool FuncDispatcher(int deckey)
+        private bool FuncDispatcher(int deckey, uint mod)
         {
             try {
                 switch (deckey) {
@@ -513,9 +513,9 @@ namespace KanchokuWS
                         return !isActiveWinExcel() && rotateDateString(-1);
                     default:
                         if (IsDecoderActive) {
-                            return InvokeDecoder(deckey);
+                            return InvokeDecoder(deckey, mod);
                         } else {
-                            return sendVkeyFromDeckey(deckey);
+                            return sendVkeyFromDeckey(deckey, mod);
                         }
                 }
             } finally {
@@ -656,7 +656,7 @@ namespace KanchokuWS
         {
             logger.InfoH(() => $"\nENTER");
             IsDecoderActive = false;
-            handleKeyDecoder(DecoderKeys.ACTIVE_DECKEY);   // DecoderOff の処理をやる
+            handleKeyDecoder(DecoderKeys.ACTIVE_DECKEY, 0);   // DecoderOff の処理をやる
             frmVkb.Hide();
             frmMode.Hide();
             notifyIcon1.Icon = Properties.Resources.kanmini0;
@@ -802,7 +802,7 @@ namespace KanchokuWS
         /// </summary>
         /// <param name="deckey"></param>
         /// <returns></returns>
-        private bool InvokeDecoder(int deckey)
+        private bool InvokeDecoder(int deckey, uint mod)
         {
             if (IsDecoderActive) {
                 ++deckeyTotalCount;
@@ -840,7 +840,7 @@ namespace KanchokuWS
                 // 入力標識の消去
                 frmMode.Vanish();
                 // 通常のストロークキーまたは機能キー(BSとか矢印キーとかCttrl-Hとか)
-                bool flag = handleKeyDecoder(deckey);
+                bool flag = handleKeyDecoder(deckey, mod);
                 logger.InfoH($"LEAVE");
                 return flag;
             }
@@ -850,7 +850,7 @@ namespace KanchokuWS
         /// <summary>
         /// デコーダの呼び出し
         /// </summary>
-        private bool handleKeyDecoder(int deckey)
+        private bool handleKeyDecoder(int deckey, uint mod)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey})");
 
@@ -868,7 +868,7 @@ namespace KanchokuWS
             bool flag = true;
             // 他のVKey送出(もしあれば)
             if (decoderOutput.IsDeckeyToVkey()) {
-                flag = sendVkeyFromDeckey(deckey);
+                flag = sendVkeyFromDeckey(deckey, mod);
                 //nPreKeys += 1;
             }
 
@@ -883,7 +883,7 @@ namespace KanchokuWS
             return flag;
         }
 
-        private bool sendVkeyFromDeckey(int deckey)
+        private bool sendVkeyFromDeckey(int deckey, uint mod)
         {
             if (isCtrlKeyConversionEffectiveWindow()
                 || deckey < DecoderKeys.FUNC_DECKEY_START
@@ -894,13 +894,13 @@ namespace KanchokuWS
                 if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET WINDOW");
                 var combo = VirtualKeys.GetVKeyComboFromDecKey(deckey);
                 if (combo != null) {
-                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"SEND: vkey={combo.Value.vkey:x}H({combo.Value.vkey}), ctrl={(combo.Value.modifier & KeyModifiers.MOD_CONTROL) != 0}");
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"SEND: combo.modifier={combo.Value.modifier:x}H({combo.Value.modifier}), combo.vkey={combo.Value.vkey:x}H({combo.Value.vkey}), ctrl={(combo.Value.modifier & KeyModifiers.MOD_CONTROL) != 0}, mod={mod:x}H({mod})");
                     //if (deckey < DecoderKeys.FUNCTIONAL_DECKEY_ID_BASE) {
                     //    actWinHandler.SendVirtualKey(combo.Value.vkey, 1);
                     //} else {
                     //    actWinHandler.SendVKeyCombo(combo.Value, 1);
                     //}
-                    actWinHandler.SendVKeyCombo(combo.Value, 1);
+                    actWinHandler.SendVKeyCombo((combo.Value.modifier != 0 ? combo.Value.modifier : mod), combo.Value.vkey, 1);
                     return true;
                 }
             }
@@ -911,7 +911,7 @@ namespace KanchokuWS
         private bool SendInputVkeyWithMod(uint mod, uint vkey)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: mod={mod}H({mod}), vkey={vkey}H({vkey})");
-            actWinHandler.SendVKeyCombo(new VKeyCombo(mod, vkey), 1);
+            actWinHandler.SendVKeyCombo(mod, vkey, 1);
             return true;
         }
 
