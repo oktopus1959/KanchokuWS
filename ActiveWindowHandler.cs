@@ -608,7 +608,7 @@ namespace KanchokuWS
         /// </summary>
         private void GetActiveWindowHandle(bool bLog = true)
         {
-            if (bLog) logger.InfoH("ENTER");
+            if (bLog) logger.Info("ENTER");
 
             IntPtr fgHan = IntPtr.Zero;
             IntPtr focusHan = IntPtr.Zero;
@@ -626,10 +626,10 @@ namespace KanchokuWS
                 fgHan = guiThreadInfo.hwndForeground;
                 ActiveWinClassName = guiThreadInfo.className;
                 focusHan = guiThreadInfo.hwndFocus;
-                if (bLog) logger.InfoH(() => $"fgHan={(int)fgHan:x}H, focusHan={(int)focusHan:x}H");
+                if (bLog) logger.Info(() => $"fgHan={(int)fgHan:x}H, focusHan={(int)focusHan:x}H");
 
                 guiThreadInfo.GetScreenCaretPos(ref ActiveWinCaretPos);
-                if (bLog) logger.InfoH(() => $"WndClass={ActiveWinClassName}: focus caret pos=({ActiveWinCaretPos.X}, {ActiveWinCaretPos.Y})");
+                if (bLog) logger.Info(() => $"WndClass={ActiveWinClassName}: focus caret pos=({ActiveWinCaretPos.X}, {ActiveWinCaretPos.Y})");
 
                 if (focusHan != IntPtr.Zero || ActiveWinClassName._equalsTo("ConsoleWindowClass")) break;  // CMD Prompt の場合は Focus が取れないっぽい?
                 if (bLog || Logger.IsInfoEnabled) logger.Warn($"RETRY: count={count + 1}");
@@ -640,7 +640,7 @@ namespace KanchokuWS
             }
             ActiveWinHandle = (focusHan == IntPtr.Zero) ? fgHan : focusHan;
 
-            if (bLog) logger.InfoH(() => $"LEAVE: ActiveWinHandle={(int)ActiveWinHandle:x}H");
+            if (bLog) logger.Info(() => $"LEAVE: ActiveWinHandle={(int)ActiveWinHandle:x}H");
         }
 
         private string getWindowClassName(IntPtr hwnd)
@@ -708,6 +708,8 @@ namespace KanchokuWS
             moveWindow(false, true, true);
         }
 
+        private bool bFirstMove = true;
+
         /// <summary>
         /// 仮想鍵盤をカレットの近くに移動する (仮想鍵盤自身がアクティブの場合は移動しない)<br/>
         /// これが呼ばれるのはデコーダがONのときだけ
@@ -715,23 +717,23 @@ namespace KanchokuWS
         private void moveWindow(bool bDiffWin, bool bMoveMandatory, bool bLog)
         {
             ActiveWinSettings = Settings.GetWinClassSettings(ActiveWinClassName);
-            if (bLog) {
-                logger.InfoH($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}");
+            if (bLog || bFirstMove) {
+                logger.InfoH($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}, firstMove={bFirstMove}");
                 loggingCaretInfo();
             }
 
-            if (!FrmMain.IsVirtualKeyboardFreezed && !ActiveWinClassName.EndsWith(DlgVkbClassNameHash) && ActiveWinClassName._ne("SysShadow")) {
-                if (bMoveMandatory ||
+            if (bFirstMove || (!FrmMain.IsVirtualKeyboardFreezed && !ActiveWinClassName.EndsWith(DlgVkbClassNameHash) && ActiveWinClassName._ne("SysShadow"))) {
+                if (bFirstMove || bMoveMandatory ||
                     ((Math.Abs(ActiveWinCaretPos.X) >= NoMoveOffset || Math.Abs(ActiveWinCaretPos.Y) >= NoMoveOffset) &&
                      (Math.Abs(ActiveWinCaretPos.X - prevCaretPos.X) >= NoMoveOffset || Math.Abs(ActiveWinCaretPos.Y - prevCaretPos.Y) >= NoMoveOffset) &&
                      isInValidCaretMargin(ActiveWinSettings))
                    ) {
                     int xOffset = (ActiveWinSettings?.CaretOffset)._getNth(0, Settings.VirtualKeyboardOffsetX);
                     int yOffset = (ActiveWinSettings?.CaretOffset)._getNth(1, Settings.VirtualKeyboardOffsetY);
-                    int xFixed = (ActiveWinSettings?.VkbFixedPos)._getNth(0, -1);
-                    int yFixed = (ActiveWinSettings?.VkbFixedPos)._getNth(1, -1);
+                    int xFixed = (ActiveWinSettings?.VkbFixedPos)._getNth(0, -1)._geZeroOr(Settings.VirtualKeyboardFixedPosX);
+                    int yFixed = (ActiveWinSettings?.VkbFixedPos)._getNth(1, -1)._geZeroOr(Settings.VirtualKeyboardFixedPosY);
                     //double dpiRatio = 1.0; //FrmVkb.GetDeviceDpiRatio();
-                    if (bLog) logger.InfoH($"CaretPos.X={ActiveWinCaretPos.X}, CaretPos.Y={ActiveWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}");
+                    if (bLog || bFirstMove) logger.InfoH($"CaretPos.X={ActiveWinCaretPos.X}, CaretPos.Y={ActiveWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}, xFixed={xFixed}, yFixed={yFixed}");
                     if (ActiveWinCaretPos.X >= 0) {
                         int cX = ActiveWinCaretPos.X;
                         int cY = ActiveWinCaretPos.Y;
@@ -776,6 +778,7 @@ namespace KanchokuWS
                         prevCaretPos = ActiveWinCaretPos;
                     }
                 }
+                bFirstMove = false;
             } else {
                 logger.Debug(() => $"ActiveWinClassName={ActiveWinClassName}, VkbClassName={DlgVkbClassNameHash}");
             }

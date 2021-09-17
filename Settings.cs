@@ -151,6 +151,12 @@ namespace KanchokuWS
         /// <summary>カレットと仮想鍵盤の相対位置: Y方向</summary>
         public static int VirtualKeyboardOffsetY { get; private set; } = 2;
 
+        /// <summary>仮想鍵盤の固定位置: X方向</summary>
+        public static int VirtualKeyboardFixedPosX { get; private set; } = -1;
+
+        /// <summary>仮想鍵盤の固定位置: Y方向</summary>
+        public static int VirtualKeyboardFixedPosY { get; private set; } = -1;
+
         ///// <summary>ディスプレイのDPI比(標準96dpiとの比)</summary>
         //public static double DisplayScale { get; private set; } = 1.0;
 
@@ -380,10 +386,6 @@ namespace KanchokuWS
 
         // 自動首部合成を有効にするか
         public static bool AutoBushuComp { get; set; } = false;
-
-        //------------------------------------------------------------------------------
-        // 仮想鍵盤の固定表示位置
-        public static int[] VkbFixedPos { get; set; } = new int[2] { -1, -1 };
 
         //------------------------------------------------------------------------------
         // ウィンドウClassNameごとの設定
@@ -616,6 +618,11 @@ namespace KanchokuWS
             //-------------------------------------------------------------------------------------
             VirtualKeyboardOffsetX = GetString("vkbOffsetX")._parseInt(2)._lowLimit(0);
             VirtualKeyboardOffsetY = GetString("vkbOffsetY")._parseInt(2)._lowLimit(0);
+
+            var fixedPos = GetString("vkbFixedPos").Trim()._split(',').Select(x => x._parseInt(-1, -1)).ToArray();
+            VirtualKeyboardFixedPosX = fixedPos._getNth(0, -1);
+            VirtualKeyboardFixedPosY = fixedPos._getNth(1, -1);
+
             //DisplayScale = GetString("displayScale")._parseDouble(1.0)._lowLimit(1.0);
 
             BgColorTopLevelCells = GetString("bgColorTopLevelCells", "GhostWhite");

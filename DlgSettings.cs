@@ -490,10 +490,16 @@ namespace KanchokuWS
         /// <summary> 詳細設定</summary>
         void readSettings_tabAdvanced()
         {
-            // モード標識
+            // 仮想鍵盤表示位置 
             textBox_vkbOffsetX.Text = $"{Settings.VirtualKeyboardOffsetX}";
             textBox_vkbOffsetY.Text = $"{Settings.VirtualKeyboardOffsetY}";
+            textBox_vkbFixedPosX.Text = $"{Math.Abs(Settings.VirtualKeyboardFixedPosX)}";
+            textBox_vkbFixedPosY.Text = $"{Math.Abs(Settings.VirtualKeyboardFixedPosY)}";
+            radioButton_vkbRelativePos.Checked = Settings.VirtualKeyboardFixedPosX < 0 || Settings.VirtualKeyboardFixedPosY < 0;
+            radioButton_vkbFixedPos.Checked = !radioButton_vkbRelativePos.Checked;
+
             //textBox_displayScale.Text = $"{Settings.DisplayScale:f3}";
+            // モード標識
             textBox_kanjiModeInterval.Text = $"{Settings.KanjiModeMarkerShowIntervalSec}";
             textBox_alphaModeShowTime.Text = $"{Settings.AlphaModeMarkerShowMillisec}";
 
@@ -533,6 +539,10 @@ namespace KanchokuWS
             // モード標識
             checkerAdvanced.Add(textBox_vkbOffsetX);
             checkerAdvanced.Add(textBox_vkbOffsetY);
+            checkerAdvanced.Add(textBox_vkbFixedPosX);
+            checkerAdvanced.Add(textBox_vkbFixedPosY);
+            checkerAdvanced.Add(radioButton_vkbRelativePos);
+            checkerAdvanced.Add(radioButton_vkbFixedPos);
             //checkerAdvanced.Add(textBox_displayScale);
             checkerAdvanced.Add(textBox_kanjiModeInterval);
             checkerAdvanced.Add(textBox_alphaModeShowTime);
@@ -566,6 +576,14 @@ namespace KanchokuWS
             checkerAll.Add(checkerAdvanced);
         }
 
+        private void radioButton_vkbRelativePos_CheckedChanged(object sender, EventArgs e)
+        {
+            textBox_vkbOffsetX.Enabled = radioButton_vkbRelativePos.Checked;
+            textBox_vkbOffsetY.Enabled = radioButton_vkbRelativePos.Checked;
+            textBox_vkbFixedPosX.Enabled = !radioButton_vkbRelativePos.Checked;
+            textBox_vkbFixedPosY.Enabled = !radioButton_vkbRelativePos.Checked;
+        }
+
         private void button_advancedClose_textChange(bool flag)
         {
             button_advancedClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
@@ -578,6 +596,8 @@ namespace KanchokuWS
             // モード標識表示時間
             Settings.SetUserIni("vkbOffsetX", textBox_vkbOffsetX.Text.Trim());
             Settings.SetUserIni("vkbOffsetY", textBox_vkbOffsetY.Text.Trim());
+            int factor = radioButton_vkbFixedPos.Checked ? 1 : -1;
+            Settings.SetUserIni("vkbFixedPos", $"{textBox_vkbFixedPosX.Text.Trim()._parseInt(-1, -1) * factor},{textBox_vkbFixedPosY.Text.Trim()._parseInt(-1, -1) * factor}");
             //Settings.SetUserIni("displayScale", textBox_displayScale.Text.Trim());
             Settings.SetUserIni("kanjiModeMarkerShowIntervalSec", textBox_kanjiModeInterval.Text.Trim());
             Settings.SetUserIni("alphaModeMarkerShowMillisec", textBox_alphaModeShowTime.Text.Trim());
