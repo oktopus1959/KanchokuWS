@@ -587,6 +587,18 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 「-可欠」で登録すると、「可欠」と入力したときに「歌」への自動変換を
 実行しません。（以前に「可欠」で部首合成を実行していたとしても）</value>
   </data>
+  <data name="textBox_modConversionFile.ToolTip" xml:space="preserve">
+    <value>修飾キー変換定義ファイルの設定
+
+CapsLock、英数、無変換、変換、およびカタカナ／ひらがなキーを
+修飾キーとして使用する際のキー変換定義ファイルを指定します。
+
+定義ファイルの例として、 mod-conversion.txt というファイルを
+用意してあります。記述方法は同ファイルを参照してください。
+
+定義ファイルを修正した場合は、漢直窓Sを再起動するか、または
+「基本設定」タブの「再読込」をクリックしてください。</value>
+  </data>
   <data name="button_restartWithNoSave.ToolTip" xml:space="preserve">
     <value>デコーダが保持している辞書内容をファイルに保存せずに再起動します。
 

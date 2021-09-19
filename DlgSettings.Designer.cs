@@ -3681,8 +3681,7 @@ namespace KanchokuWS
             this.textBox_modConversionFile.Name = "textBox_modConversionFile";
             this.textBox_modConversionFile.Size = new System.Drawing.Size(141, 19);
             this.textBox_modConversionFile.TabIndex = 7;
-            this.toolTip1.SetToolTip(this.textBox_modConversionFile, "修飾キー変換定義ファイルの設定\r\n\r\nCapsLock、英数、無変換、変換、およびカタカナ／ひらがなキーを\r\n修飾キーとして使用する際のキー変換定義ファイルを指定" +
-        "します。\r\n\r\n定義ファイルの例として、 mod-conversion.txt というファイルを\r\n用意してあります。記述方法は同ファイルを参照してください。");
+            this.toolTip1.SetToolTip(this.textBox_modConversionFile, resources.GetString("textBox_modConversionFile.ToolTip"));
             // 
             // label93
             // 

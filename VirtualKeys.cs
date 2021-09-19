@@ -415,6 +415,17 @@ namespace KanchokuWS
             {"pageup", DecoderKeys.PAGE_UP_DECKEY},
             {"pgdn", DecoderKeys.PAGE_DOWN_DECKEY},
             {"pagedown", DecoderKeys.PAGE_DOWN_DECKEY},
+            {"modetoggle", DecoderKeys.TOGGLE_DECKEY},
+            {"activate", DecoderKeys.ACTIVE_DECKEY},
+            {"deactivate", DecoderKeys.DEACTIVE_DECKEY},
+            {"fullescape", DecoderKeys.FULL_ESCAPE_DECKEY},
+            {"unblock", DecoderKeys.UNBLOCK_DECKEY},
+            {"helprotate", DecoderKeys.STROKE_HELP_ROTATION_DECKEY},
+            {"helpunrotate", DecoderKeys.STROKE_HELP_UNROTATION_DECKEY},
+            {"daterotate", DecoderKeys.DATE_STRING_ROTATION_DECKEY},
+            {"dateunrotate", DecoderKeys.DATE_STRING_UNROTATION_DECKEY},
+            {"histnext", DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY},
+            {"histprev", DecoderKeys.HISTORY_PREV_SEARCH_DECKEY},
         };
 
         /// <summary>

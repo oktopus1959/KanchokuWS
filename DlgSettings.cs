@@ -352,6 +352,10 @@ namespace KanchokuWS
 
             checkerAll.Reinitialize();
 
+            // 追加の修飾キー定義ファイルの読み込み
+            if (Settings.ModConversionFile._notEmpty()) {
+                VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
+            }
             frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             //SystemHelper.ShowInfoMessageBox("設定しました");
