@@ -73,7 +73,7 @@ namespace KanchokuWS
     {
         private static Logger logger = Logger.GetLogger();
 
-        public const uint BACK = 0x08;
+        //public const uint BACK = 0x08;
         public const uint CONTROL = 0x11;
         public const uint LSHIFT = 0xa0;
         public const uint RSHIFT = 0xa1;
@@ -91,17 +91,17 @@ namespace KanchokuWS
             0x20, 0xbd, 0xde, 0xdc, 0xc0, 0xdb, 0xba, 0xdd, 0xe2, 0x00,
         };
 
-        public const uint CapsLock = 0x14;
-        public const uint AlphaNum = 0xf0;
-        public const uint Nfer = 0x1d;
-        public const uint Xfer = 0x1c;
-        public const uint Hiragana = 0xf2;
-        public const uint Zenkaku = 0xf3;
-        public const uint Kanji = 0xf4;
+        public static uint CapsLock => vkeyArrayFuncKeys[3];
+        public static uint AlphaNum => vkeyArrayFuncKeys[4];
+        public static uint Nfer => vkeyArrayFuncKeys[5];
+        public static uint Xfer => vkeyArrayFuncKeys[6];
+        public static uint Hiragana => vkeyArrayFuncKeys[7];
+        public static uint Zenkaku => vkeyArrayFuncKeys[1];
+        public static uint Kanji = 0xf4;
 
         /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)</summary>
         private static uint[] vkeyArrayFuncKeys = {
-            /*Esc*/ 0x1b, /*半/全*/ Zenkaku, /*Tab*/ 0x09, /*Caps*/ 0x14, /*英数*/ 0xf0, /*無変換*/ Nfer, /*変換*/ Xfer, /*かな*/ Hiragana, /*BS*/ 0x08, /*Enter*/ 0x0d,
+            /*Esc*/ 0x1b, /*半/全*/ 0xf3, /*Tab*/ 0x09, /*Caps*/ 0x14, /*英数*/ 0xf0, /*無変換*/ 0x1d, /*変換*/ 0x1c, /*かな*/ 0xf2, /*BS*/ 0x08, /*Enter*/ 0x0d,
             /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21, /*PgDn*/ 0x22, /*↑*/ 0x26, /*↓*/ 0x28, /*←*/ 0x25, /*→*/ 0x27
         };
 
@@ -315,14 +315,15 @@ namespace KanchokuWS
                     SystemHelper.ShowErrorMessageBox($"キーボード定義ファイル({filePath}の読み込みに失敗しました。");
                     return false;
                 }
-                var items = vkeys._split('\n').Select(line => line.Trim().Replace(" ", "")).
-                    Where(line => line._notEmpty() && line[0] != '#' && line[0] != ';')._join("").TrimEnd(',')._split(',').ToArray();
+                var lines = vkeys._split('\n').Select(line => line.Trim().Replace(" ", "")).Where(line => line._notEmpty() && line[0] != '#' && line[0] != ';').ToArray();
 
-                array = items.Select(x => (uint)x._parseHex(0)).ToArray();
-                int idx = array._findIndex(x => x < 0);
+                // ストロークキーの仮想キーコードを得る
+                var hexes = lines.  Where(line => line.IndexOf('=') < 0)._join("").TrimEnd(',')._split(',').ToArray();
+                array = hexes.Select(x => (uint)x._parseHex(0)).ToArray();
+                int idx = array._findIndex(x => x < 0 || x >= 0x100);
                 if (idx >= 0 && idx < array.Length) {
-                    logger.Warn($"Invalid keyboard def: file={filePath}, {idx}th: {items[idx]}");
-                    SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}の{idx}番目のキー定義({items[idx]})が誤っています。");
+                    logger.Warn($"Invalid keyboard def: file={filePath}, {idx}th: {hexes[idx]}");
+                    SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}の{idx}番目のキー定義({hexes[idx]})が誤っています。");
                     return false;
                 }
                 if (array.Length < DecoderKeys.NORMAL_DECKEY_NUM) {
@@ -330,6 +331,46 @@ namespace KanchokuWS
                     SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}のキー定義の数({array.Length})が不足しています。");
                     return false;
                 }
+                // 機能キー(Esc, BS, Enter, 矢印キーなど)の仮想キーコード定義を得る
+                foreach (var line in lines) {
+                    var items = line._toLower()._split('=');
+                    if (items._safeLength() == 2 && items[0]._notEmpty() && items[1]._notEmpty()) {
+                        int n = -1;
+                        int vk = items[1]._parseHex();
+                        if (vk >= 0 && vk < 0x100) {
+                            switch (items[0]) {
+                                case "esc": case "escape": n = 0; break;
+                                case "zenkaku": n = 1; break;
+                                case "tab": n = 2; break;
+                                case "caps": case "capslock": n = 3; break;
+                                case "alnum": case "alphanum": case "eisu": n = 4; break;
+                                case "nfer": n = 5; break;
+                                case "xfer": n = 6; break;
+                                case "kana": case "hiragana": n = 7; break;
+                                case "bs": case "back": case "backspace": n = 8; break;
+                                case "enter": n = 9; break;
+                                case "ins": case "insert": n = 10; break;
+                                case "del": case "delete": n = 11; break;
+                                case "home": n = 12; break;
+                                case "end": n = 13; break;
+                                case "pgup": case "pageup": n = 14; break;
+                                case "pgdn": case "pagedown": n = 15; break;
+                                case "up": case "uparrow": n = 16; break;
+                                case "down": case "downarrow": n = 17; break;
+                                case "left": case "leftarrow": n = 18; break;
+                                case "right": case "rightarrow": n = 19; break;
+                                default: n = -1; break;
+                            }
+                        }
+                        if (n < 0 || n >= vkeyArrayFuncKeys.Length) {
+                            logger.Warn($"Invalid functional key def: file={filePath}, line: {line}");
+                            SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}の行 {line} が誤っています。");
+                            return false;
+                        }
+                        vkeyArrayFuncKeys[n] = (uint)vk;
+                    }
+                }
+
             }
             logger.Info(() => $"keyboard keyNum={array.Length}, array={array.Select(x => x.ToString("x"))._join(", ")}");
 

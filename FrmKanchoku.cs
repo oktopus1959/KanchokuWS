@@ -163,10 +163,10 @@ namespace KanchokuWS
 
             // この後は各種終了処理
             //DecKeyHandler.Destroy();
-            actWinHandler.Dispose();
+            actWinHandler?.Dispose();
             finalizeDecoder();
-            frmMode.Close();
-            frmVkb.Close();
+            frmMode?.Close();
+            frmVkb?.Close();
 
             // 再起動
             if (bRestart) {
