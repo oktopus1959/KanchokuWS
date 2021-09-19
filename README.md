@@ -28,6 +28,7 @@ Windows 用の漢字直接入力ツールです。
     - [テーブルファイル](#テーブルファイル)
         - [矢印記法](#矢印記法)
         - [外部ファイルのインクルード](#外部ファイルのインクルード)
+    - [キーボードファイルによる機能キーの仮想キーコード定義](#キーボードファイルによる機能キーの仮想キーコード定義)
     - [辞書バックアップファイルの世代管理](#辞書バックアップファイルの世代管理)
 - [補助入力機能](#補助入力機能)
     - [打鍵列への割り当て](#打鍵列への割り当て)
@@ -363,7 +364,32 @@ nfer=eb
 #right=27
 ```
 
-どのキーを押したときにどのような仮想キーボードが発生するかは、開発者用設定を以下のように設定して、
+機能キーと keyName の対応は下記のようになります。keyName は大文字・小文字を区別しません。
+
+|機能キー|keyName|
+|-|-|
+|エスケープ|Esc, Escape|
+|半角／全角|Zenkaku|
+|タブ|Tab|
+|CapsLock|Caps, CapsLock|
+|英数|Alnum, AlphaNum, Eisu|
+|無変換|Nfer|
+|変換|Xfer|
+|ひらがな|Kana, Hiragana|
+|BackSpace| BS, Back, BackSpace|
+|Enter|Enter|
+|Insert|Ins, Insert|
+|Delete|Del, Delete|
+|Home|Home|
+|End|End|
+|Page Up|PgUp, PageUp|
+|Page Down|PgDn, PageDown|
+|↑|Up, UpArrow|
+|↓|Down, DownArrow|
+|←|Left, LeftArrow|
+|→|Right, RightArrow|
+
+どのキーを押したときにどのような仮想キーコードが発生するかは、開発者用設定を以下のように設定して、
 bin\KanchokuWS.log の出力を観察してください。
 
 ![Debug](image/debug.png)
