@@ -137,9 +137,13 @@ bin\KanchokuWS.exe を実行します。CMDプロンプトから実行しても�
 
 ![Kw Uni Error](image/kw-uni-error.png)
 
-`bin\vcredist\VC_redist.x86.exe` を実行して、不足している実行環境をインストールしてください。
-これは VC++ で作成されたプログラムを実行する際に必要となるもので、マイクロソフト社が提供しているものです。
+この場合は、「vc_redist.x86 download」で検索をしてヒットする Microsoft のサイト
+（2021年9月19日現在だと「[最新のサポートされる Visual C++ のダウンロード](https://support.microsoft.com/ja-jp/topic/%E6%9C%80%E6%96%B0%E3%81%AE%E3%82%B5%E3%83%9D%E3%83%BC%E3%83%88%E3%81%95%E3%82%8C%E3%82%8B-visual-c-%E3%81%AE%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89-2647da03-1eea-4433-9aff-95f26a218cc0)」）
+から、x86用の Visual C++ 再頒布可能パッケージ (vc_redist.x86.exe)をダウンロードして、
+インストールしてください。
+これは VC++ で作成されたプログラムを実行する際に必要となるもので、Microsoft社が提供しているものです。
 
+![Vc Redist.X86](image/vc_redist.x86.png)
 
 ### 起動画面と設定ダイアログ
 起動すると起動画面(スプラッシュウィンドウ)が表示されます。
