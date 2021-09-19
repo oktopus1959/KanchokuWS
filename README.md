@@ -1182,8 +1182,8 @@ Esc, Tab, BackSpace, Enter, Insert, Delete, Home, End, PageUp, PageDown, UpArrow
 |HistPrev|履歴を末尾から選択|
 |helpRotate|ストロークヘルプの正順回転|
 |helpUnRotate|ストロークヘルプの逆順回転|
-|DateRotate|日付の正順入力|
-|DateUnrotate|日付の逆順入力|
+|DateRotate|日時変換の正順入力|
+|DateUnrotate|日時変換の逆順入力|
 
 この機能を使用する場合は、下図のように「辞書登録・その他」-「その他変換・機能」で「修飾キー変換ファイル」に
 修飾キー変換の定義ファイル名を設定してください。
