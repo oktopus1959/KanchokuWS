@@ -426,6 +426,7 @@ namespace KanchokuWS
             {"dateunrotate", DecoderKeys.DATE_STRING_UNROTATION_DECKEY},
             {"histnext", DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY},
             {"histprev", DecoderKeys.HISTORY_PREV_SEARCH_DECKEY},
+            {"bushucomphelp", DecoderKeys.BUSHU_COMP_HELP},
         };
 
         /// <summary>

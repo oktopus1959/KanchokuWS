@@ -184,6 +184,8 @@ namespace KanchokuWS
         //public const int NEXT_CAND_TRIGGER_DECKEY = HISTORY_SEARCH_DECKEY + 1;      // 履歴検索開始&次の候補選択
         //public const int PREV_CAND_TRIGGER_DECKEY = NEXT_CAND_TRIGGER_DECKEY + 1;   // 履歴検索開始&前の候補選択
 
+        public const int BUSHU_COMP_HELP = HISTORY_PREV_SEARCH_DECKEY + 1;          // 部首合成ヘルプ
+
         public const int GLOBAL_DECKEY_ID_END = GLOBAL_DECKEY_ID_BASE + 100;
 
     }

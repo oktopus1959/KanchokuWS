@@ -511,6 +511,9 @@ namespace KanchokuWS
                         return !isActiveWinExcel() && rotateDateString(1);
                     case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
                         return !isActiveWinExcel() && rotateDateString(-1);
+                    case DecoderKeys.BUSHU_COMP_HELP:
+                        ShowBushuCompHelp();
+                        return true;
                     default:
                         if (IsDecoderActive) {
                             return InvokeDecoder(deckey, mod);
@@ -677,6 +680,14 @@ namespace KanchokuWS
         public void ShowStrokeHelp(string w)
         {
             ExecCmdDecoder("showStrokeHelp", w);
+            // 仮想キーボードにヘルプや文字候補を表示
+            getCenterString();
+            frmVkb.DrawVirtualKeyboardChars();
+        }
+
+        public void ShowBushuCompHelp()
+        {
+            ExecCmdDecoder("showBushuCompHelp", CommonState.CenterString);
             // 仮想キーボードにヘルプや文字候補を表示
             getCenterString();
             frmVkb.DrawVirtualKeyboardChars();

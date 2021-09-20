@@ -845,6 +845,7 @@ namespace KanchokuWS
 
             if (decoderOutput.layout >= (int)VkbLayout.Horizontal && decoderOutput.layout < (int)VkbLayout.Normal) {
                 // 10件横列配列
+                CommonState.CenterString = "";  // 中央鍵盤文字列をクリアしておく(後で部首合成ヘルプのときに関係ない文字を拾ったりしないように)
                 resetVkbControls(topText, 0, 0, 0);
                 int nRow = 0;
                 for (int i = 0; i < LongVkeyNum; ++i) {

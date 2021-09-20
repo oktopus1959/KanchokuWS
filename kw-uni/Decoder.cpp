@@ -243,7 +243,7 @@ public:
         auto items = utils::split(cmdParams->inOutData, '\t');
         if (!items.empty()) {
             const auto& cmd = items[0];
-            LOG_INFO(_T("cmd=%s"), cmd.c_str());
+            LOG_INFO(_T("cmd=%s, items.size()=%d"), cmd.c_str(), items.size());
             if (cmd == _T("addHistEntry") && HISTORY_DIC) {
                 // 履歴登録
                 if (items.size() >= 2 && !items[1].empty()) {
@@ -299,6 +299,10 @@ public:
                 // ストロークヘルプの表示
                 OutParams = outParams;
                 makeStrokeHelp(items[1]);
+            } else if (cmd == _T("showBushuCompHelp") && BUSHU_DIC) {
+                // 部首合成ヘルプの表示
+                OutParams = outParams;
+                makeBushuCompHelp(items.size() > 1 ? items[1] : _T(""));
             } else if (cmd == _T("makeExtraCharsStrokePositionTable")) {
                 // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
                 VkbTableMaker::MakeExtraCharsStrokePositionTable(outParams->faceStrings);
@@ -550,22 +554,24 @@ public:
     }
 
     void makeStrokeHelp(const wstring& ws, bool bBushuComp) {
-        LOG_DEBUG(_T("ENTER: %s, bushuComp=%s"), ws.c_str(), BOOL_TO_WPTR(bBushuComp));
-        auto ms = to_mstr(ws);
-        OutParams->layout = (int)VkbLayout::StrokeHelp;
-        copyToCenterString(ws);
-        clearKeyFaces();
+        LOG_INFO(_T("ENTER: %s, bushuComp=%s"), ws.c_str(), BOOL_TO_WPTR(bBushuComp));
+        auto ms = !ws.empty() ? to_mstr(ws) : OUTPUT_STACK->OutputStackBackStr(1);
         if (!ms.empty()) {
-            if (bBushuComp || !STROKE_HELP->copyStrokeHelpToVkbFacesOutParams(ms[0], OutParams->faceStrings)) {
-                if (BUSHU_DIC) {
-                    if (BUSHU_DIC->CopyBushuCompHelpToVkbFaces(ms[0], OutParams->faceStrings, LONG_VKEY_CHAR_SIZE, LONG_VKEY_NUM, true)) {
-                        OutParams->layout = (int)VkbLayout::BushuCompHelp;
-                        OutParams->nextExpectedKeyType = (int)ExpectedKeyType::BushuCompHelp;
+            OutParams->layout = (int)VkbLayout::StrokeHelp;
+            copyToCenterString(to_wstr(ms));
+            clearKeyFaces();
+            if (!ms.empty()) {
+                if (bBushuComp || !STROKE_HELP->copyStrokeHelpToVkbFacesOutParams(ms[0], OutParams->faceStrings)) {
+                    if (BUSHU_DIC) {
+                        if (BUSHU_DIC->CopyBushuCompHelpToVkbFaces(ms[0], OutParams->faceStrings, LONG_VKEY_CHAR_SIZE, LONG_VKEY_NUM, true)) {
+                            OutParams->layout = (int)VkbLayout::BushuCompHelp;
+                            OutParams->nextExpectedKeyType = (int)ExpectedKeyType::BushuCompHelp;
+                        }
                     }
                 }
             }
         }
-        LOG_DEBUG(_T("LEAVE: layout=%d"), OutParams->layout);
+        LOG_INFO(_T("LEAVE: layout=%d"), OutParams->layout);
     }
 
     // ひらがな50音図配列を作成する (あかさたなはまやらわ、ぁがざだばぱゃ)
