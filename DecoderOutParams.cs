@@ -84,8 +84,11 @@ namespace KanchokuWS
         /// <summary> 連想候補選択中</summary>
         public const int AssocCandSelecting = 4;
 
+        /// <summary>部首合成ヘルプ</summary>
+        public const int BushuCompHelp = 5;
+
         /// <summary> その他の状態</summary>
-        public const int OtherStatus = 5;
+        public const int OtherStatus = 6;
     }
 
     /// <summary>
@@ -122,7 +125,10 @@ namespace KanchokuWS
         /// <summary>連想候補選択中か</summary>
         public static bool IsAssocCandSelecting(this DecoderOutParams output) { return output.nextExpectedKeyType == ExpectedKeyType.AssocCandSelecting; }
 
-        /// <summary>連想候補選択中か</summary>
+        /// <summary>部首合成ヘルプか</summary>
+        public static bool IsBushuCompHelp(this DecoderOutParams output) { return output.nextExpectedKeyType == ExpectedKeyType.BushuCompHelp; }
+
+        /// <summary>その他の状態か</summary>
         public static bool IsOtherStatus(this DecoderOutParams output) { return output.nextExpectedKeyType == ExpectedKeyType.OtherStatus; }
 
         /// <summary>矢印キーの要求されるレイアウトか</summary>

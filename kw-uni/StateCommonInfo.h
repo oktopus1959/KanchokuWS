@@ -78,8 +78,11 @@ enum class ExpectedKeyType
     // 連想候補選択中
     AssocCandSelecting = 4,
 
+    // 部首合成ヘルプ
+    BushuCompHelp = 5,
+
     // その他の状態
-    OtherStatus = 5,
+    OtherStatus = 6,
 
 };
 

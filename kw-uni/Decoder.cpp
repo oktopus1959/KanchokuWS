@@ -29,6 +29,8 @@
 #include "Mazegaki/Mazegaki.h"
 #include "Mazegaki/MazegakiDic.h"
 
+#define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
+
 // -------------------------------------------------------------------
 namespace {
     inline void set_facestr(mchar_t m, wchar_t* faces) {
@@ -467,6 +469,7 @@ public:
             if ((STATE_COMMON->GetBackspaceNum() > 0 && STATE_COMMON->OutString().size() == 1)) {
                 if (BUSHU_DIC && BUSHU_DIC->CopyBushuCompHelpToVkbFaces(lastChar, OutParams->faceStrings, LONG_VKEY_CHAR_SIZE, LONG_VKEY_NUM, false)) {
                     OutParams->layout = (int)VkbLayout::BushuCompHelp;
+                    OutParams->nextExpectedKeyType = (int)ExpectedKeyType::BushuCompHelp;
                     OutParams->centerString[0] = (wchar_t)lastChar;
                     OutParams->centerString[1] = 0;
                 }
@@ -536,21 +539,33 @@ public:
         return lastChar;
     }
 
+    // ストロークヘルプの作成
     void makeStrokeHelp(const wstring& ws) {
-        LOG_DEBUG(_T("CALLED: %s"), ws.c_str());
+        makeStrokeHelp(ws, false);
+    }
+
+    // 部首合成ヘルプの作成
+    void makeBushuCompHelp(const wstring& ws) {
+        makeStrokeHelp(ws, true);
+    }
+
+    void makeStrokeHelp(const wstring& ws, bool bBushuComp) {
+        LOG_DEBUG(_T("ENTER: %s, bushuComp=%s"), ws.c_str(), BOOL_TO_WPTR(bBushuComp));
         auto ms = to_mstr(ws);
         OutParams->layout = (int)VkbLayout::StrokeHelp;
         copyToCenterString(ws);
         clearKeyFaces();
         if (!ms.empty()) {
-            if (!STROKE_HELP->copyStrokeHelpToVkbFacesOutParams(ms[0], OutParams->faceStrings)) {
+            if (bBushuComp || !STROKE_HELP->copyStrokeHelpToVkbFacesOutParams(ms[0], OutParams->faceStrings)) {
                 if (BUSHU_DIC) {
                     if (BUSHU_DIC->CopyBushuCompHelpToVkbFaces(ms[0], OutParams->faceStrings, LONG_VKEY_CHAR_SIZE, LONG_VKEY_NUM, true)) {
                         OutParams->layout = (int)VkbLayout::BushuCompHelp;
+                        OutParams->nextExpectedKeyType = (int)ExpectedKeyType::BushuCompHelp;
                     }
                 }
             }
         }
+        LOG_DEBUG(_T("LEAVE: layout=%d"), OutParams->layout);
     }
 
     // ひらがな50音図配列を作成する (あかさたなはまやらわ、ぁがざだばぱゃ)
@@ -566,18 +581,6 @@ public:
     // Deckey順に並んだ通常文字列とシフト文字列を返す
     void getCharsOrderedByDeckey(DecoderOutParams* outParam) {
         DECKEY_TO_CHARS->GetCharsOrderedByDeckey(outParam->faceStrings);
-    }
-
-    void makeBushuCompHelp(wchar_t ch) {
-        LOG_DEBUG(_T("ENTER: %c"), ch);
-        copyToCenterString(ch);
-        clearKeyFaces();
-        if (BUSHU_DIC) {
-            if (BUSHU_DIC->CopyBushuCompHelpToVkbFaces(ch, OutParams->faceStrings, LONG_VKEY_CHAR_SIZE, LONG_VKEY_NUM, true)) {
-                OutParams->layout = (int)VkbLayout::BushuCompHelp;
-            }
-        }
-        LOG_DEBUG(_T("LEAVE: layout=%d"), OutParams->layout);
     }
 
     void clearKeyFaces() {

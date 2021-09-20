@@ -184,6 +184,9 @@ namespace KanchokuWS
         /// <summary>選択された候補の背景色</summary>
         public static string BgColorOnSelected { get; private set; }
 
+        /// <summary>部首合成ヘルプの中央鍵盤背景色 </summary>
+        public static string BgColorForBushuCompHelp { get; private set; }
+
         //-------------------------------------------------------------------------------------
         /// <summary>漢直モード標識の文字色</summary>
         public static string KanjiModeMarkerForeColor { get; private set; }
@@ -635,6 +638,7 @@ namespace KanchokuWS
             BgColorForHistOrAssoc = GetString("bgColorForHistOrAssoc", "PaleTurquoise");
             BgColorForFirstCandidate = GetString("bgColorForFirstCandidate", "PaleGreen");
             BgColorOnSelected = GetString("bgColorOnSelected", "LightPink");
+            BgColorForBushuCompHelp = GetString("bgColorForBushuCompHelp", "LightCyan");
 
             //-------------------------------------------------------------------------------------
             KanjiModeMarkerForeColor = GetString("kanjiModeMarkerForeColor", "Blue");

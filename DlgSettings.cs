@@ -393,6 +393,7 @@ namespace KanchokuWS
             textBox_on2ndStrokeBackColor.Text= Settings.BgColorOnWaiting2ndStroke;
             textBox_onMazegaki.Text= Settings.BgColorForMazegaki;
             textBox_onHistAssoc.Text= Settings.BgColorForHistOrAssoc;
+            textBox_onBushuCompHelp.Text= Settings.BgColorForBushuCompHelp;
 
             // 縦列・横列鍵盤背景色
             textBox_firstCandidateBackColor.Text = Settings.BgColorForFirstCandidate;
@@ -428,6 +429,7 @@ namespace KanchokuWS
             checkerFontColor.Add(textBox_on2ndStrokeBackColor);
             checkerFontColor.Add(textBox_onMazegaki);
             checkerFontColor.Add(textBox_onHistAssoc);
+            checkerFontColor.Add(textBox_onBushuCompHelp);
 
             // 縦列・横列鍵盤背景色
             checkerFontColor.Add(textBox_firstCandidateBackColor);
@@ -462,6 +464,7 @@ namespace KanchokuWS
             Settings.SetUserIni("bgColorOnWaiting2ndStroke", textBox_on2ndStrokeBackColor.Text.Trim());
             Settings.SetUserIni("bgColorForMazegaki", textBox_onMazegaki.Text.Trim());
             Settings.SetUserIni("bgColorForHistOrAssoc", textBox_onHistAssoc.Text.Trim());
+            Settings.SetUserIni("bgColorForBushuCompHelp", textBox_onBushuCompHelp.Text.Trim());
 
             // 縦列・横列鍵盤背景色
             Settings.SetUserIni("bgColorForFirstCandidate", textBox_firstCandidateBackColor.Text.Trim());

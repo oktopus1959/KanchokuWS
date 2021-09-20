@@ -368,6 +368,8 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.textBox_onBushuCompHelp = new KanchokuWS.ColorTextBox();
+            this.label38 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1562,7 +1564,7 @@ namespace KanchokuWS
             this.groupBox25.Controls.Add(this.textBox_firstCandidateBackColor);
             this.groupBox25.Controls.Add(this.label13);
             this.groupBox25.Controls.Add(this.label12);
-            this.groupBox25.Location = new System.Drawing.Point(298, 213);
+            this.groupBox25.Location = new System.Drawing.Point(298, 237);
             this.groupBox25.Name = "groupBox25";
             this.groupBox25.Size = new System.Drawing.Size(243, 72);
             this.groupBox25.TabIndex = 4;
@@ -1589,6 +1591,8 @@ namespace KanchokuWS
             // 
             // groupBox24
             // 
+            this.groupBox24.Controls.Add(this.textBox_onBushuCompHelp);
+            this.groupBox24.Controls.Add(this.label38);
             this.groupBox24.Controls.Add(this.textBox_onHistAssoc);
             this.groupBox24.Controls.Add(this.textBox_onMazegaki);
             this.groupBox24.Controls.Add(this.textBox_on2ndStrokeBackColor);
@@ -1597,7 +1601,7 @@ namespace KanchokuWS
             this.groupBox24.Controls.Add(this.label11);
             this.groupBox24.Location = new System.Drawing.Point(298, 107);
             this.groupBox24.Name = "groupBox24";
-            this.groupBox24.Size = new System.Drawing.Size(243, 100);
+            this.groupBox24.Size = new System.Drawing.Size(243, 124);
             this.groupBox24.TabIndex = 3;
             this.groupBox24.TabStop = false;
             this.groupBox24.Text = "中央鍵盤背景色";
@@ -4346,6 +4350,27 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // textBox_onBushuCompHelp
+            // 
+            this.textBox_onBushuCompHelp.BackColor = System.Drawing.Color.White;
+            this.textBox_onBushuCompHelp.ForBackColor = true;
+            this.textBox_onBushuCompHelp.Location = new System.Drawing.Point(103, 94);
+            this.textBox_onBushuCompHelp.Name = "textBox_onBushuCompHelp";
+            this.textBox_onBushuCompHelp.ReadOnly = true;
+            this.textBox_onBushuCompHelp.Size = new System.Drawing.Size(132, 23);
+            this.textBox_onBushuCompHelp.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.textBox_onBushuCompHelp, "履歴選択・部首連想選択時の中央鍵盤背景色\r\n\r\n縦列鍵盤による履歴候補選択や部首連想での文字選択時の\r\n中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設" +
+        "定ダイアログが開きます。）");
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(20, 98);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(84, 15);
+            this.label38.TabIndex = 11;
+            this.label38.Text = "部首合成ヘルプ";
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -4792,5 +4817,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label94;
         private System.Windows.Forms.Label label95;
         private System.Windows.Forms.RadioButton radioButton_vkbRelativePos;
+        private ColorTextBox textBox_onBushuCompHelp;
+        private System.Windows.Forms.Label label38;
     }
 }

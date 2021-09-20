@@ -1371,6 +1371,8 @@ namespace KanchokuWS
                     name = Settings.BgColorForHistOrAssoc;
                 } else if (decoderOutput.IsAssocCandSelecting()) {
                     name = Settings.BgColorForHistOrAssoc;
+                } else if (decoderOutput.IsBushuCompHelp()) {
+                    name = Settings.BgColorForBushuCompHelp;
                 } else if (decoderOutput.IsOtherStatus()) {
                     name = "Yellow";    // とりあえず Yellow 固定
                 }
