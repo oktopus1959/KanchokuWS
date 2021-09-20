@@ -91,6 +91,9 @@ namespace KanchokuWS
         /// <summary> 修飾キー定義ファイル</summary>
         public static string ModConversionFile { get; private set; }
 
+        /// <summary> 漢字読みファイル</summary>
+        public static string KanjiYomiFile { get; private set; }
+
         // 各種辞書ファイル
         public static string BushuAssocFile { get; private set; }
         public static string BushuFile { get; private set; }
@@ -577,6 +580,8 @@ namespace KanchokuWS
             StrokeHelpFile = GetString("strokeHelpFile", "stroke-help.txt");
 
             ModConversionFile = GetString("modConversionFile");
+
+            KanjiYomiFile = GetString("kanjiYomiFile", "joyo-kanji.txt");
 
             //-------------------------------------------------------------------------------------
             // 漢直モードトグルキー

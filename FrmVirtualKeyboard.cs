@@ -770,6 +770,18 @@ namespace KanchokuWS
             }
         }
 
+        public void DrawStrokeHelp(char[] chars)
+        {
+            var result = frmMain.CallDecoderFunc("reorderByFirstStrokePosition", chars._toString());
+            if (result != null) {
+                var charOrKeys = new string[DecoderKeys.NORMAL_DECKEY_NUM];
+                for (int i = 0; i < charOrKeys.Length; ++i) {
+                    charOrKeys[i] = makeMultiCharStr(result, i * 2);
+                }
+                drawNormalVkb(charOrKeys);
+            }
+        }
+
         private void drawNormalVkb(string[] strokeTable)
         {
             resetVkbControls("", VkbNormalWidth, VkbPictureBoxHeight_Normal, VkbCenterBoxHeight_Normal);

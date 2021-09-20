@@ -110,6 +110,11 @@ namespace KanchokuWS
                 VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
             }
 
+            // 漢字読みファイルの読み込み
+            if (Settings.KanjiYomiFile._notEmpty()) {
+                KanjiYomiTable.ReadKanjiYomiFile(Settings.KanjiYomiFile);
+            }
+
             // 仮想鍵盤フォームの作成
             frmVkb = new FrmVirtualKeyboard(this);
             frmVkb.Opacity = 0;
@@ -858,6 +863,8 @@ namespace KanchokuWS
             return false;
         }
 
+        private StringBuilder romanStr = new StringBuilder();
+
         /// <summary>
         /// デコーダの呼び出し
         /// </summary>
@@ -883,11 +890,19 @@ namespace KanchokuWS
                 //nPreKeys += 1;
             }
 
-            // BSと文字送出(もしあれば)
-            actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces);
+            // ローマ字?
+            if (decoderOutput.numBackSpaces == 0 && decoderOutput.outString[0] >= 'A' && decoderOutput.outString[0] <= 'Z' && decoderOutput.outString[1] == 0) {
+                romanStr.Append(decoderOutput.outString[0]);
+                frmVkb.DrawStrokeHelp(KanjiYomiTable.GetCandidatesFromRoman(romanStr.ToString()));
+            } else {
+                romanStr.Clear();
 
-            // 仮想キーボードにヘルプや文字候補を表示
-            frmVkb.DrawVirtualKeyboardChars();
+                // BSと文字送出(もしあれば)
+                actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces);
+
+                // 仮想キーボードにヘルプや文字候補を表示
+                frmVkb.DrawVirtualKeyboardChars();
+            }
 
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE");
 

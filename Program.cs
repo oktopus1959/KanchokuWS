@@ -84,8 +84,14 @@ namespace KanchokuWS
         {
             if (mutex != null) {
                 //ミューテックスを解放する
-                mutex.ReleaseMutex();
-                mutex.Close();
+                try {
+                    mutex.ReleaseMutex();
+                } finally {
+                    try {
+                        mutex.Close();
+                    } catch {
+                    }
+                }
             }
         }
     }
