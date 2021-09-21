@@ -16,6 +16,7 @@
 #include "DeckeyToChars.h"
 #include "deckey_id_defs.h"
 #include "MyPrevChar.h"
+#include "VkbTableMaker.h"
 
 namespace {
     DEFINE_NAMESPACE_LOGGER(StrokeTreeBuilder);
@@ -99,12 +100,21 @@ namespace {
             return result;
         }
 
+        std::map<mchar_t, std::vector<int>>* strokeSerieses = 0;
+
+        std::vector<int> strokes;
+
+        void addStrokes(wstring s) {
+
+        }
+
     public:
         StrokeTreeBuilder(std::vector<tstring>& lines)
             : tableLines(lines) {
             if (!tableLines.empty()) {
                 currentLine = tableLines[0];
             }
+            strokeSerieses = VkbTableMaker::StrokeSerieses();
         }
 
         // ストローク木を作成する
@@ -197,6 +207,8 @@ namespace {
                 LOG_INFOH(_T("DEFGUID: %s"), myGuideChars.c_str());
                 tblNode->MakeStrokeGuide(myGuideChars);
             }
+
+            strokes.resize(depth);
             return tblNode;
         }
 
@@ -215,7 +227,9 @@ namespace {
             readNextToken();
             if (currentToken == TOKEN::ARROW) {
                 if (tblNode == 0) tblNode = new StrokeTableNode(depth);
+                strokes.push_back(nth);
                 createNodePositionedByArrow(tblNode, nth, arrowIndex);
+                strokes.pop_back();
                 return tblNode;
             }
             return createNode(currentToken, depth, prevNth, nth);
@@ -223,14 +237,30 @@ namespace {
 
         Node* createNode(TOKEN token, int depth, int prevNth, int nth) {
             switch (token) {
-            case TOKEN::LBRACE:
-                return makeSubTree(0, depth, nth);
+            case TOKEN::LBRACE: {
+                strokes.push_back(nth);
+                auto np = makeSubTree(0, depth, nth);
+                strokes.pop_back();
+                return np;
+            }
             case TOKEN::RBRACE:
             case TOKEN::COMMA:             // ',' が来たら次のトークン
             case TOKEN::SLASH:             // '/' が来ても次のトークン
                 return 0;
             case TOKEN::STRING:            // "str" : 文字列ノード
                 LOG_TRACE(_T("%d:%d=%s"), lineNumber + 1, nth, currentStr.c_str());
+                // 文字から、その文字の打鍵列へのマップに追加
+                if (strokeSerieses) {
+                    auto ms = to_mstr(currentStr);
+                    if (ms.size() == 1) {
+                        auto iter = strokeSerieses->find(ms[0]);
+                        if (iter == strokeSerieses->end()) {
+                            strokes.push_back(nth);
+                            (*strokeSerieses)[ms[0]] = strokes;
+                            strokes.pop_back();
+                        }
+                    }
+                }
                 return new StringNode(currentStr);
             case TOKEN::FUNCTION:          // @c : 機能ノード
                 return createFunctionNode(currentStr, prevNth, nth);

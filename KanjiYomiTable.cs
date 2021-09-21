@@ -105,16 +105,19 @@ namespace KanchokuWS
             romanKanaTbl["GO"] = "ご";
             romanKanaTbl["SA"] = "さ";
             romanKanaTbl["SI"] = "し";
+            romanKanaTbl["SHI"] = "し";
             romanKanaTbl["SU"] = "す";
             romanKanaTbl["SE"] = "せ";
             romanKanaTbl["SO"] = "そ";
             romanKanaTbl["ZA"] = "ざ";
             romanKanaTbl["ZI"] = "じ";
+            romanKanaTbl["JI"] = "じ";
             romanKanaTbl["ZU"] = "ず";
             romanKanaTbl["ZE"] = "ぜ";
             romanKanaTbl["ZO"] = "ぞ";
             romanKanaTbl["TA"] = "た";
             romanKanaTbl["TI"] = "ち";
+            romanKanaTbl["CHI"] = "ち";
             romanKanaTbl["TU"] = "つ";
             romanKanaTbl["TE"] = "て";
             romanKanaTbl["TO"] = "と";
@@ -131,6 +134,7 @@ namespace KanchokuWS
             romanKanaTbl["HA"] = "は";
             romanKanaTbl["HI"] = "ひ";
             romanKanaTbl["HU"] = "ふ";
+            romanKanaTbl["FU"] = "ふ";
             romanKanaTbl["HE"] = "へ";
             romanKanaTbl["HO"] = "ほ";
             romanKanaTbl["BA"] = "ば";

@@ -34,8 +34,11 @@ struct DecoderOutParams
     // 次の入力で期待されるキー (第2ストローク、履歴入力でのEnter、など)
     int nextExpectedKeyType;
 
-    // 何か文字を直接入力するための現在の打鍵数
+    // 文字を入力する際の現在の打鍵数
     int strokeCount = 0;
+
+    // 指定文字の次の打鍵位置
+    int nextStrokeDeckey;
 
     // 次の選択候補位置
     int nextSelectPos = 0;
@@ -94,7 +97,7 @@ public:
     virtual void ExecCmd(DecoderCommandParams*, DecoderOutParams*) = 0;
 
     // DECKEY処理
-    virtual void HandleDeckey(int, DecoderOutParams*) = 0;
+    virtual void HandleDeckey(int, mchar_t, DecoderOutParams*) = 0;
 
 }; // class Decoder
 
@@ -107,7 +110,7 @@ extern "C" {
     __declspec(dllexport) int ResetDecoder(void*);
     __declspec(dllexport) int SaveDictsDecoder(void*);
     __declspec(dllexport) int MakeInitialVkbTableDecoder(void* decoder, DecoderOutParams* table);
-    __declspec(dllexport) int HandleDeckeyDecoder(void*, int, DecoderOutParams*);
+    __declspec(dllexport) int HandleDeckeyDecoder(void*, int, mchar_t, DecoderOutParams*);
     __declspec(dllexport) int ExecCmdDecoder(void*, DecoderCommandParams*, DecoderOutParams*);
 }
 

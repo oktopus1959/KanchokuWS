@@ -356,6 +356,10 @@ namespace KanchokuWS
             if (Settings.ModConversionFile._notEmpty()) {
                 VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
             }
+            // 漢字読みファイルの読み込み
+            if (Settings.KanjiYomiFile._notEmpty()) {
+                KanjiYomiTable.ReadKanjiYomiFile(Settings.KanjiYomiFile);
+            }
             frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             //SystemHelper.ShowInfoMessageBox("設定しました");
@@ -383,6 +387,7 @@ namespace KanchokuWS
             textBox_centerSideBackColor.Text = Settings.BgColorCenterSideCells;
             textBox_highLowLevelBackColor.Text = Settings.BgColorHighLowLevelCells;
             textBox_middleLevelBackColor.Text = Settings.BgColorMiddleLevelCells;
+            textBox_nextStrokeBackColor.Text = Settings.BgColorNextStrokeCell;
 
             // モード標識文字色
             textBox_modeForeColor.Text = Settings.KanjiModeMarkerForeColor;
@@ -419,6 +424,7 @@ namespace KanchokuWS
             checkerFontColor.Add(textBox_centerSideBackColor);
             checkerFontColor.Add(textBox_highLowLevelBackColor);
             checkerFontColor.Add(textBox_middleLevelBackColor);
+            checkerFontColor.Add(textBox_nextStrokeBackColor);
 
             // モード標識文字色
             checkerFontColor.Add(textBox_modeForeColor);
@@ -454,6 +460,7 @@ namespace KanchokuWS
             Settings.SetUserIni("bgColorCenterSideCells", textBox_centerSideBackColor.Text.Trim());
             Settings.SetUserIni("bgColorHighLowLevelCells", textBox_highLowLevelBackColor.Text.Trim());
             Settings.SetUserIni("bgColorMiddleLevelCells", textBox_middleLevelBackColor.Text.Trim());
+            Settings.SetUserIni("bgColorNextStrokeCell", textBox_nextStrokeBackColor.Text.Trim());
 
             // モード標識色
             Settings.SetUserIni("kanjiModeMarkerForeColor", textBox_modeForeColor.Text.Trim());
@@ -1045,6 +1052,8 @@ namespace KanchokuWS
             checkBox_SandSEnabled.Checked = Settings.SandSEnabled;
             checkBox_SandSEnabledWhenOffMode.Checked = Settings.SandSEnabledWhenOffMode;
             textBox_modConversionFile.Text = Settings.ModConversionFile;
+            checkBox_romanStrokeGuide.Checked = Settings.RomanStrokeGuide;
+            textBox_kanjiYomiFile.Text = Settings.KanjiYomiFile;
         }
 
         private void setMiscSettingsStatusChecker()
@@ -1061,6 +1070,8 @@ namespace KanchokuWS
             checkerMiscSettings.Add(checkBox_SandSEnabled);
             checkerMiscSettings.Add(checkBox_SandSEnabledWhenOffMode);
             checkerMiscSettings.Add(textBox_modConversionFile);
+            checkerMiscSettings.Add(checkBox_romanStrokeGuide);
+            checkerMiscSettings.Add(textBox_kanjiYomiFile);
 
             checkerAll.Add(checkerMiscSettings);
         }
@@ -1080,6 +1091,8 @@ namespace KanchokuWS
             Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
             Settings.SetUserIni("sandsEnabledWhenOffMode", checkBox_SandSEnabledWhenOffMode.Checked);
             Settings.SetUserIni("modConversionFile", textBox_modConversionFile.Text);
+            Settings.SetUserIni("romanStrokeGuide", checkBox_romanStrokeGuide.Checked);
+            Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
 
             Settings.ReadIniFile();
 

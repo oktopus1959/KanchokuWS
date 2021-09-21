@@ -427,6 +427,7 @@ namespace KanchokuWS
             {"histnext", DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY},
             {"histprev", DecoderKeys.HISTORY_PREV_SEARCH_DECKEY},
             {"bushucomphelp", DecoderKeys.BUSHU_COMP_HELP},
+            {"romanstrokeguide", DecoderKeys.TOGGLE_ROMAN_STROKE_GUID},
         };
 
         /// <summary>

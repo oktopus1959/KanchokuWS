@@ -171,6 +171,8 @@ namespace KanchokuWS
         public static string BgColorHighLowLevelCells { get; private set; } = "LightCyan";
         /// <summary>仮想鍵盤の中段セルの背景色</summary>
         public static string BgColorMiddleLevelCells { get; private set; } = "PaleGreen";
+        /// <summary>次打鍵セルの背景色</summary>
+        public static string BgColorNextStrokeCell { get; private set; } = "LightPink";
 
         /// <summary>第2打鍵以降を待っているときの仮想中央鍵盤の背景色</summary>
         public static string BgColorOnWaiting2ndStroke { get; private set; }
@@ -392,6 +394,9 @@ namespace KanchokuWS
 
         // 自動首部合成を有効にするか
         public static bool AutoBushuComp { get; set; } = false;
+
+        // ローマ字読みによる打鍵ガイドを有効にするか
+        public static bool RomanStrokeGuide { get; set; } = false;
 
         //------------------------------------------------------------------------------
         // ウィンドウClassNameごとの設定
@@ -637,6 +642,7 @@ namespace KanchokuWS
             BgColorCenterSideCells = GetString("bgColorCenterSideCells", "FloralWhite");
             BgColorHighLowLevelCells = GetString("bgColorHighLowLevelCells", "LightCyan");
             BgColorMiddleLevelCells = GetString("bgColorMiddleLevelCells", "PaleGreen");
+            BgColorNextStrokeCell = GetString("bgColorNextStrokeCell", "LightPink");
 
             BgColorOnWaiting2ndStroke = GetString("bgColorOnWaiting2ndStroke", "Yellow");
             BgColorForMazegaki = GetString("bgColorForMazegaki", "Plum");
@@ -713,8 +719,9 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             // その他変換・機能
-            SandSEnabled = GetString("sandsEnabled")._parseBool(false);         // SandS を有効にするか
-            SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);         // 漢直OFFの時もSandS を有効にするか
+            SandSEnabled = GetString("sandsEnabled")._parseBool(false);                         // SandS を有効にするか
+            SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
+            RomanStrokeGuide = GetString("romanStrokeGuide")._parseBool(false);                 // ローマ字読みによるストロークガイドを有効にするか
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

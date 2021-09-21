@@ -338,8 +338,8 @@ public:
     }
 
     // DECKEY処理
-    void HandleDeckey(int keyId, DecoderOutParams* params) {
-        LOG_INFOH(_T("\nENTER: keyId=%xH(%d=%s)"), keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId));
+    void HandleDeckey(int keyId, mchar_t targetChar, DecoderOutParams* params) {
+        LOG_INFOH(_T("\nENTER: keyId=%xH(%d=%s), targetChar=%s"), keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId), to_wstr(targetChar).c_str());
         OutParams = params;
         initializeOutParams();
 
@@ -399,7 +399,7 @@ public:
         if (!STATE_COMMON->IsOutStringProcDone() && !STATE_COMMON->IsWaiting2ndStroke()) startState->DoOutStringProcChain();
 
         // ヘルプや候補文字列
-        setHelpOrCandidates();
+        setHelpOrCandidates(targetChar);
 
         if (Logger::IsInfoHEnabled()) {
             //wstring stack = std::regex_replace(to_wstr(OUTPUT_STACK->OutputStackBackStr(10)), std::wregex(_T("\n")), _T("|"));
@@ -417,7 +417,7 @@ public:
     }
 
     // ヘルプや候補文字列
-    void setHelpOrCandidates() {
+    void setHelpOrCandidates(mchar_t targetChar) {
         //if (startState->StrokeTableChainLength() >= 2) STATE_COMMON->SetWaiting2ndStroke();
         LOG_DEBUG(_T("layout=%d, nextExp=%d"), STATE_COMMON->GetLayoutInt(), (int)STATE_COMMON->GetNextExpectedKeyType());
         OutParams->nextExpectedKeyType = (int)STATE_COMMON->GetNextExpectedKeyType();
@@ -426,6 +426,15 @@ public:
         OutParams->layout = STATE_COMMON->GetLayoutInt();
         copyToCenterString();
         mchar_t lastChar = copyToTopString();
+
+        if (targetChar != 0 && OutParams->strokeCount > 0) {
+            auto iter = VkbTableMaker::StrokeSerieses()->find(targetChar);
+            if (iter != VkbTableMaker::StrokeSerieses()->end()) {
+                if (iter->second.size() > (size_t)OutParams->strokeCount) {
+                    OutParams->nextStrokeDeckey = iter->second[OutParams->strokeCount];
+                }
+            }
+        }
 
         switch (STATE_COMMON->GetLayout()) {
         case VkbLayout::Normal:
@@ -492,6 +501,7 @@ public:
             OutParams->resultFlags = 0;
             OutParams->nextExpectedKeyType = 0;
             OutParams->strokeCount = 0;
+            OutParams->nextStrokeDeckey = -1;
             OutParams->outString[0] = 0;
             OutParams->layout = (int)VkbLayout::None;
             OutParams->centerString[0] = 0;
@@ -706,9 +716,9 @@ int MakeInitialVkbTableDecoder(void* pDecoder, DecoderOutParams* table) {
 }
 
 // DECKEYハンドラ
-// 引数: keyId = DECKEY ID
-int HandleDeckeyDecoder(void* pDecoder, int keyId, DecoderOutParams* params) {
-    auto method_call = [pDecoder, keyId, params]() { ((Decoder*)pDecoder)->HandleDeckey(keyId, params); };
+// 引数: keyId = DECKEY ID, targetChar = 入力しようとしている文字
+int HandleDeckeyDecoder(void* pDecoder, int keyId, mchar_t targetChar, DecoderOutParams* params) {
+    auto method_call = [pDecoder, keyId, targetChar, params]() { ((Decoder*)pDecoder)->HandleDeckey(keyId, targetChar, params); };
     return invokeDecoderMethod(method_call, nullptr);
 }
 

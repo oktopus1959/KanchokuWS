@@ -770,16 +770,17 @@ namespace KanchokuWS
             }
         }
 
-        public void DrawStrokeHelp(char[] chars)
+        public string[] DrawStrokeHelp(char[] chars)
         {
             var result = frmMain.CallDecoderFunc("reorderByFirstStrokePosition", chars._toString());
-            if (result != null) {
-                var charOrKeys = new string[DecoderKeys.NORMAL_DECKEY_NUM];
-                for (int i = 0; i < charOrKeys.Length; ++i) {
-                    charOrKeys[i] = makeMultiCharStr(result, i * 2);
-                }
-                drawNormalVkb(charOrKeys);
+            if (result == null) return null;
+
+            var charOrKeys = new string[DecoderKeys.NORMAL_DECKEY_NUM];
+            for (int i = 0; i < charOrKeys.Length; ++i) {
+                charOrKeys[i] = makeMultiCharStr(result, i * 2);
             }
+            drawNormalVkb(charOrKeys);
+            return charOrKeys;
         }
 
         private void drawNormalVkb(string[] strokeTable)
@@ -814,6 +815,19 @@ namespace KanchokuWS
             }
         }
 
+        public void SetTopText(char[] text)
+        {
+            int maxTopLen = LongVkeyCharSize - 2;
+
+            int i = 0;
+            for (; i < 32; ++i) {
+                if (text[i] == 0) break;
+            }
+
+            int s = i > maxTopLen ? i - maxTopLen : 0;
+            SetTopText(new string(text, s, i - s), true);
+        }
+
         /// <summary> 第1打鍵待ち受け時に表示するストロークテーブルの切り替え </summary>
         public void RotateStrokeTable(int delta = 1)
         {
@@ -837,7 +851,7 @@ namespace KanchokuWS
         {
             var decoderOutput = frmMain.DecoderOutput;
 
-            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"CALLED: layout={decoderOutput.layout}, center={CommonState.CenterString}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"CALLED: layout={decoderOutput.layout}, center={CommonState.CenterString}, nextDeckey={decoderOutput.nextStrokeDeckey}");
 
             if (decoderOutput.topString._isEmpty()) return;
 
@@ -900,7 +914,7 @@ namespace KanchokuWS
                     using (PictureBoxDrawer drawer = new PictureBoxDrawer(pictureBox_Main)) {
                         topTextBox.Show();
                         SetTopText(topText, true);
-                        drawNormalVkbFrame(drawer.Gfx);
+                        drawNormalVkbFrame(drawer.Gfx, decoderOutput.nextStrokeDeckey);
                         drawCenterCharsWithColor(drawer.Gfx, decoderOutput);
                         drawNormalVkbStrings(drawer.Gfx, i => makeMultiCharStr(decoderOutput.faceStrings, i * 2), false);
                     }
@@ -1080,7 +1094,7 @@ namespace KanchokuWS
         /// 通常の仮想鍵盤の枠線と背景色の描画
         /// </summary>
         /// <param name="g"></param>
-        private void drawNormalVkbFrame(Graphics g)
+        private void drawNormalVkbFrame(Graphics g, int nextDeckey = -1)
         {
             // 背景色
             Color getColor(string name)
@@ -1106,6 +1120,15 @@ namespace KanchokuWS
             b1 = new SolidBrush(bgColorCenter);
             g.FillRectangle(b1, (float)(VkbCellWidth * 4 + 1), (float)(VkbCellHeight + 1), (float)(VkbCellWidth * 2 + VkbCenterWidth - 1), (float)(VkbCellHeight * 3 - 1));
             b1.Dispose();
+
+            if (nextDeckey >= 0 && nextDeckey < 40) {
+                int x = nextDeckey % 10;
+                int y = nextDeckey / 10;
+                float xOff = x < 5 ? 0f : VkbCenterWidth;
+                b1 = new SolidBrush(getColor(Settings.BgColorNextStrokeCell));
+                g.FillRectangle(b1, (float)(VkbCellWidth * x + xOff + 1), (float)(VkbCellHeight * y + 1), (float)(VkbCellWidth - 1), (float)(VkbCellHeight - 1));
+                b1.Dispose();
+            }
 
             // 中央鍵盤
             g.FillRectangle(Brushes.White, (float)(VkbCellWidth * 5 + 1), 1, (float)(VkbCenterWidth - 1), (float)(VkbCellHeight * 4 - 1));

@@ -113,7 +113,7 @@ class StateCommonInfo {
     // 次の入力で期待されるキー (第2ストローク、履歴入力でのEnter、など)
     ExpectedKeyType nextExpectedKeyType = ExpectedKeyType::None;
 
-    // 何か文字を直接入力するための現在の打鍵数
+    // 文字入力中の打鍵数
     int strokeCount = 0;
 
     // 次の選択候補位置

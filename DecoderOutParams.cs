@@ -21,8 +21,11 @@ namespace KanchokuWS
         /// <summary> 次の入力で期待されるキー (第2ストローク、履歴入力でのEnter、など)</summary>
         public int nextExpectedKeyType;
 
-        /// <summary> 何か文字を直接入力するための現在の打鍵数</summary>
+        /// <summary> 文字を入力する際の現在の打鍵数</summary>
         public int strokeCount;
+
+        /// <summary> 指定文字の次の打鍵位置</summary>
+        public int nextStrokeDeckey;
 
         /// <summary> 次の選択候補位置</summary>
         public int nextSelectPos;
@@ -148,7 +151,7 @@ namespace KanchokuWS
         /// <summary>仮想鍵盤を移動させないか(仮想鍵盤自身がアクティブになっているなど)</summary>
         public static bool IsVirtualKeyboardFreezed(this DecoderOutParams output) { return (output.resultFlags & ResultFlags.DontMoveVirtualKeyboard) != 0; }
 
-        /// <summary> 何打鍵目か</summary>
+        /// <summary> 当文字の何打鍵目か</summary>
         /// <param name="output"></param>
         /// <returns></returns>
         public static int GetStrokeCount(this DecoderOutParams output) { return output.strokeCount; }

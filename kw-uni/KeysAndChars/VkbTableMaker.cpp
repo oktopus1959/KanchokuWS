@@ -23,6 +23,12 @@ namespace VkbTableMaker {
     }
 
     //----------------------------------------------------------------------------
+    // 文字に到る打鍵列
+    std::map<mchar_t, std::vector<int>> strokeSerieses;
+
+    std::map<mchar_t, std::vector<int>>* StrokeSerieses() { return &strokeSerieses; }
+
+    //----------------------------------------------------------------------------
     wstring hiraganaArray1 = _T("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわ ん を");
 
     wstring hiraganaArray2 = _T("ぁぃぅぇぉがぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょゕ  ゖ ゎゐゔゑ ");

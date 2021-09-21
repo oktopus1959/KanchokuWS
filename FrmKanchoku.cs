@@ -312,7 +312,7 @@ namespace KanchokuWS
         /// <summary> Decoder へ入力DECKEYキーを送信する </summary>
         /// <param name="decoder"></param>
         [DllImport("kw-uni.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern void HandleDeckeyDecoder(IntPtr decoder, int keyId, ref DecoderOutParams outParams);
+        static extern void HandleDeckeyDecoder(IntPtr decoder, int keyId, uint targetChar, ref DecoderOutParams outParams);
 
         /// <summary> Decoder へ各種データを送信する </summary>
         [DllImport("kw-uni.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -519,6 +519,9 @@ namespace KanchokuWS
                     case DecoderKeys.BUSHU_COMP_HELP:
                         ShowBushuCompHelp();
                         return true;
+                    case DecoderKeys.TOGGLE_ROMAN_STROKE_GUID:
+                        Settings.RomanStrokeGuide = !Settings.RomanStrokeGuide;
+                        return true;
                     default:
                         if (IsDecoderActive) {
                             return InvokeDecoder(deckey, mod);
@@ -645,7 +648,7 @@ namespace KanchokuWS
                         if (devFlagsOnWarningCount == 0) {
                             string msg = "";
                             if (Logger.LogLevel > 2) {
-                                msg = "ログレベルが INFOH 以上になっています。";
+                                msg = "ログレベルを確認してください。";
                             } else {
                                 msg = "開発者用の設定が有効になっています。";
                             }
@@ -863,7 +866,23 @@ namespace KanchokuWS
             return false;
         }
 
-        private StringBuilder romanStr = new StringBuilder();
+        private StringBuilder romanStrBuilder = new StringBuilder();
+
+        private string[] candidateChars = null;
+
+        uint targetChar = 0;
+
+        private void getTargetChar(int deckey)
+        {
+            if (targetChar == 0 && candidateChars != null) {
+                var s = candidateChars._getNth(deckey);
+                if (s._notEmpty()) {
+                    logger.Info($"targetChar={s}");
+                    targetChar = s[0];
+                    if (s.Length > 1) targetChar = targetChar << 16 + s[1];
+                }
+            }
+        }
 
         /// <summary>
         /// デコーダの呼び出し
@@ -872,8 +891,10 @@ namespace KanchokuWS
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey})");
 
+            getTargetChar(deckey);
+
             // デコーダの呼び出し
-            HandleDeckeyDecoder(decoderPtr, deckey, ref decoderOutput);
+            HandleDeckeyDecoder(decoderPtr, deckey, targetChar, ref decoderOutput);
 
             logger.Info(() => $"layout={decoderOutput.layout}, numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}");
 
@@ -891,11 +912,18 @@ namespace KanchokuWS
             }
 
             // ローマ字?
-            if (decoderOutput.numBackSpaces == 0 && decoderOutput.outString[0] >= 'A' && decoderOutput.outString[0] <= 'Z' && decoderOutput.outString[1] == 0) {
-                romanStr.Append(decoderOutput.outString[0]);
-                frmVkb.DrawStrokeHelp(KanjiYomiTable.GetCandidatesFromRoman(romanStr.ToString()));
+            if (Settings.RomanStrokeGuide && decoderOutput.numBackSpaces == 0 && decoderOutput.outString[0] >= 'A' && decoderOutput.outString[0] <= 'Z' && decoderOutput.outString[1] == 0) {
+                romanStrBuilder.Append(decoderOutput.outString[0]);
+                var romanStr = romanStrBuilder.ToString();
+                candidateChars = frmVkb.DrawStrokeHelp(KanjiYomiTable.GetCandidatesFromRoman(romanStr));
+                frmVkb.SetTopText(decoderOutput.topString);
+                targetChar = 0;
             } else {
-                romanStr.Clear();
+                romanStrBuilder.Clear();
+                if (decoderOutput.GetStrokeCount() < 1) {
+                    candidateChars = null;
+                    targetChar = 0;
+                }
 
                 // BSと文字送出(もしあれば)
                 actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces);
