@@ -96,8 +96,8 @@ namespace KanchokuWS
         public static uint Nfer => vkeyArrayFuncKeys[5];
         public static uint Xfer => vkeyArrayFuncKeys[6];
         public static uint Hiragana => vkeyArrayFuncKeys[7];
-        public static uint Zenkaku => vkeyArrayFuncKeys[1];
-        public static uint Kanji = 0xf4;
+        //public static uint Zenkaku => vkeyArrayFuncKeys[1];
+        //public static uint Kanji = 0xf4;
 
         /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)</summary>
         private static uint[] vkeyArrayFuncKeys = {
