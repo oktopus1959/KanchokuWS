@@ -173,12 +173,13 @@ namespace {
 
             if (tblNode == 0) tblNode = new StrokeTableNode(depth);
             int n = 0;
-            bool isPrevEmpty = true;
+            bool isPrevDelim = true;
             readNextToken();
             while (currentToken != TOKEN::RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
                 case TOKEN::ARROW:
                     createNodePositionedByArrow(tblNode, prevNth, arrowIndex);
+                    isPrevDelim = false;
                     break;
 
                 case TOKEN::LBRACE:
@@ -186,13 +187,13 @@ namespace {
                 case TOKEN::FUNCTION:           // @c : 機能ノード
                     tblNode->setNthChild(n, createNode(currentToken, depth + 1, prevNth, n));
                     ++n;
-                    isPrevEmpty = false;
+                    isPrevDelim = false;
                     break;
 
                 case TOKEN::COMMA:              // 次のトークン待ち
                 case TOKEN::SLASH:              // 次のトークン待ち
-                    if (isPrevEmpty) ++n;
-                    isPrevEmpty = true;
+                    if (isPrevDelim) ++n;
+                    isPrevDelim = true;
                     break;
 
                 default:                        // 途中でファイルが終わったりした場合 : エラー
@@ -390,11 +391,12 @@ namespace {
         // 空白またはカンマが来るまで読みこんで、currentStr に格納。
         void readMarker() {
             while (true) {
-                char_t c = getNextChar();
+                char_t c = peekNextChar();
                 if (c <= ' ' || c == ',') {
                     if (currentStr.empty()) parseError();
                     return;
                 }
+                getNextChar();
                 currentStr.append(1, c);
             }
         }
@@ -477,6 +479,10 @@ namespace {
                 currentChar = '\n';
             }
             return currentChar;
+        }
+
+        char_t peekNextChar() {
+            return (nextPos < currentLine.size()) ? currentLine[nextPos] : '\0';
         }
 
         void skipToEndOfLine() {
