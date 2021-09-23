@@ -582,7 +582,7 @@ namespace {
         // checkMinKeyLen = false なら、キー長チェックをやらない
         const std::vector<HistResult>& GetCandidates(const MString& key, MString& resultKey, bool checkMinKeyLen, size_t len)
         {
-            LOG_DEBUG(_T("ENTER: key=%s, checkMinKeyLen=%s, len=%d"), MAKE_WPTR(key), BOOL_TO_WPTR(checkMinKeyLen), len);
+            _LOG_DEBUGH(_T("ENTER: key=%s, checkMinKeyLen=%s, len=%d"), MAKE_WPTR(key), BOOL_TO_WPTR(checkMinKeyLen), len);
             resultList.clear();
             size_t resultKeyLen = 0;
             if (key.empty()) {
@@ -646,7 +646,7 @@ namespace {
                 resultList.erase(resultList.begin() + shortestIdx);
                 resultList.insert(resultList.begin() + 1, elem);
             }
-            LOG_DEBUG(_T("LEAVE: resultKey=%s, resultKeyLen=%d"), MAKE_WPTR(resultKey), resultKeyLen);
+            _LOG_DEBUGH(_T("LEAVE: resultKey=%s, resultKeyLen=%d"), MAKE_WPTR(resultKey), resultKeyLen);
             return resultList;
         }
 
