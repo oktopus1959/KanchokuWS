@@ -1528,10 +1528,7 @@ namespace KanchokuWS
         private void pictureBox_Main_Click(object sender, EventArgs e)
         {
             if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("CALLED");
-            if (((MouseEventArgs)e).Button == MouseButtons.Right) {
-                contextMenuStrip1.Show(Cursor.Position);
-                if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("ContextMenu Shown");
-            } else {
+            if (((MouseEventArgs)e).Button == MouseButtons.Left) {
                 frmMain.ToggleActiveState();
                 if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("ToggleActiveState");
             }

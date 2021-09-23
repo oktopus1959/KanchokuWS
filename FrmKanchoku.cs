@@ -72,7 +72,7 @@ namespace KanchokuWS
             DpiChanged += dpiChangedHandler;
         }
 
-        private void dpiChangedHandler(object sender, DpiChangedEventArgs e)
+    private void dpiChangedHandler(object sender, DpiChangedEventArgs e)
         {
             logger.InfoH(() => $"CALLED: new dpi={e.DeviceDpiNew}");
         }
@@ -83,7 +83,7 @@ namespace KanchokuWS
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void DlgKanchoku_Load(object sender, EventArgs e)
+        private async void FrmKanchoku_Load(object sender, EventArgs e)
         {
             logger.WriteLog("INFO", $"\n\n==== KANCHOKU WS START (LogLevel={Logger.LogLevel}) ====");
 
@@ -1052,9 +1052,7 @@ namespace KanchokuWS
         private void notifyIcon1_Click(object sender, EventArgs e)
         {
             logger.Info("CALLED");
-            if (((MouseEventArgs)e).Button == MouseButtons.Right) {
-                contextMenuStrip1.Show(Cursor.Position);
-            } else {
+            if (((MouseEventArgs)e).Button == MouseButtons.Left) {
                 ToggleActiveState();
             }
         }

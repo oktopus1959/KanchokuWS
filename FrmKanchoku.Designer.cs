@@ -48,6 +48,7 @@
             // 
             // notifyIcon1
             // 
+            this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "漢直窓WS";
             this.notifyIcon1.Visible = true;
@@ -84,7 +85,7 @@
             // ReadBushuDic_ToolStripMenuItem
             // 
             this.ReadBushuDic_ToolStripMenuItem.Name = "ReadBushuDic_ToolStripMenuItem";
-            this.ReadBushuDic_ToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.ReadBushuDic_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
             this.ReadBushuDic_ToolStripMenuItem.Text = "部首合成辞書再読込";
             this.ReadBushuDic_ToolStripMenuItem.Click += new System.EventHandler(this.ReadBushuDic_ToolStripMenuItem_Click);
             // 
@@ -165,7 +166,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "漢直窓 WS";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmKanchoku_FormClosing);
-            this.Load += new System.EventHandler(this.DlgKanchoku_Load);
+            this.Load += new System.EventHandler(this.FrmKanchoku_Load);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

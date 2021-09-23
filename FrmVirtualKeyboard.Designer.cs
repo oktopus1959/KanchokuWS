@@ -142,6 +142,7 @@ namespace KanchokuWS
             // 
             // pictureBox_Main
             // 
+            this.pictureBox_Main.ContextMenuStrip = this.contextMenuStrip1;
             this.pictureBox_Main.Location = new System.Drawing.Point(1, 19);
             this.pictureBox_Main.Name = "pictureBox_Main";
             this.pictureBox_Main.Size = new System.Drawing.Size(201, 111);
