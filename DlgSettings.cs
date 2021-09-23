@@ -340,6 +340,13 @@ namespace KanchokuWS
         /// <param name="e"></param>
         private void button_Reload_Click(object sender, EventArgs e)
         {
+            reloadIniFileAndDefFiles();
+            //SystemHelper.ShowInfoMessageBox("設定しました");
+            label_reloadBasic.Show();
+        }
+
+        private void reloadIniFileAndDefFiles()
+        {
             Settings.ReadIniFile();
 
             readSettings_tabBasic();
@@ -361,9 +368,6 @@ namespace KanchokuWS
                 KanjiYomiTable.ReadKanjiYomiFile(Settings.KanjiYomiFile);
             }
             frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
-
-            //SystemHelper.ShowInfoMessageBox("設定しました");
-            label_reloadBasic.Show();
         }
 
         private void button_basicClose_Click(object sender, EventArgs e)
@@ -1104,6 +1108,31 @@ namespace KanchokuWS
             label_okResultMisc.Show();
         }
 
+        private void button_openModConversionFile_Click(object sender, EventArgs e)
+        {
+            try {
+                if (Settings.ModConversionFile._notEmpty()) {
+                    System.Diagnostics.Process.Start(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.ModConversionFile));
+                }
+            } catch { }
+        }
+
+        private void button_openKanjiYomiFile_Click(object sender, EventArgs e)
+        {
+            try {
+                if (Settings.KanjiYomiFile._notEmpty()) {
+                    System.Diagnostics.Process.Start(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KanjiYomiFile));
+                }
+            } catch { }
+        }
+
+
+        private void button_reloadOther_Click(object sender, EventArgs e)
+        {
+            reloadIniFileAndDefFiles();
+            label_reloadMisc.Show();
+        }
+
         /// <summary> 閉じる </summary>
         private void button_miscClose_Click(object sender, EventArgs e)
         {
@@ -1128,6 +1157,7 @@ namespace KanchokuWS
                     label_okResultHist.Hide();
                     label_okResultCtrlKeys.Hide();
                     label_okResultMisc.Hide();
+                    label_reloadMisc.Hide();
                     label_execResultFile.Hide();
                 }
             }
