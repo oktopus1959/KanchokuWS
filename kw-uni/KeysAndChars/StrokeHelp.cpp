@@ -55,6 +55,8 @@ size_t StrokeHelp::gatherStrokeHelp(StrokeTableNode* pNode, size_t pos, size_t d
 }
 
 namespace {
+    wstring strokeMarkers = _T("◎●○△");
+
     //仮想鍵盤にストロークヘルプの情報を設定する (faces は 1セルが 2 wchar で構成されることに注意)
     template<typename T>
     bool copyStrokeHelpToVkbFacesImpl(int* pStroke, T* faces, size_t factor) {
@@ -62,14 +64,15 @@ namespace {
 
         bool bFirst = true;
         size_t count = 0;
-        while (*pStroke >= 0 && count < 3) {
+        while (*pStroke >= 0 && count < strokeMarkers.size()) {
             ++count;
             int strPos = *pStroke++;
             if (strPos == *pStroke) {
-                faces[strPos * factor] = _T("◎")[0];
+                faces[strPos * factor] = strokeMarkers[0];
                 ++pStroke;
+                ++count;
             } else {
-                faces[strPos * factor] = bFirst ? _T("●")[0] : _T("○")[0];
+                faces[strPos * factor] = strokeMarkers[count];
                 bFirst = false;
             }
         }

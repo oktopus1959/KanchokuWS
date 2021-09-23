@@ -38,7 +38,7 @@ struct DecoderOutParams
     int strokeCount = 0;
 
     // 指定文字の次の打鍵位置
-    int nextStrokeDeckey;
+    int nextStrokeDeckey = -1;
 
     // 次の選択候補位置
     int nextSelectPos = 0;
