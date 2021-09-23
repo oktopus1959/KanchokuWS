@@ -772,12 +772,13 @@ namespace KanchokuWS
 
         public string[] DrawStrokeHelp(char[] chars)
         {
-            var result = frmMain.CallDecoderFunc("reorderByFirstStrokePosition", chars._toString());
-            if (result == null) return null;
+            char[] result = chars._isEmpty() ? null : frmMain.CallDecoderFunc("reorderByFirstStrokePosition", chars._toString());
 
             var charOrKeys = new string[DecoderKeys.NORMAL_DECKEY_NUM];
-            for (int i = 0; i < charOrKeys.Length; ++i) {
-                charOrKeys[i] = makeMultiCharStr(result, i * 2);
+            if (result._notEmpty()) {
+                for (int i = 0; i < charOrKeys.Length; ++i) {
+                    charOrKeys[i] = makeMultiCharStr(result, i * 2);
+                }
             }
             drawNormalVkb(charOrKeys);
             return charOrKeys;
@@ -1121,6 +1122,7 @@ namespace KanchokuWS
             g.FillRectangle(b1, (float)(VkbCellWidth * 4 + 1), (float)(VkbCellHeight + 1), (float)(VkbCellWidth * 2 + VkbCenterWidth - 1), (float)(VkbCellHeight * 3 - 1));
             b1.Dispose();
 
+            // 打鍵ガイド
             if (nextDeckey >= 0 && nextDeckey < 40) {
                 int x = nextDeckey % 10;
                 int y = nextDeckey / 10;

@@ -186,7 +186,8 @@ namespace KanchokuWS
 
         public const int BUSHU_COMP_HELP = HISTORY_PREV_SEARCH_DECKEY + 1;          // 部首合成ヘルプ
 
-        public const int TOGGLE_ROMAN_STROKE_GUID = BUSHU_COMP_HELP + 1;            // ローマ字読みによる打鍵ガイドのトグル
+        public const int TOGGLE_UPPER_ROMAN_STROKE_GUID = BUSHU_COMP_HELP + 1;              // 大文字ローマ字読みによる打鍵ガイドのトグル
+        public const int TOGGLE_ROMAN_STROKE_GUID = TOGGLE_UPPER_ROMAN_STROKE_GUID + 1;     // ローマ字読みによる打鍵ガイドのトグル
 
         public const int GLOBAL_DECKEY_ID_END = GLOBAL_DECKEY_ID_BASE + 100;
 

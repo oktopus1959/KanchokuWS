@@ -97,7 +97,7 @@ public:
     virtual void ExecCmd(DecoderCommandParams*, DecoderOutParams*) = 0;
 
     // DECKEY処理
-    virtual void HandleDeckey(int, mchar_t, DecoderOutParams*) = 0;
+    virtual void HandleDeckey(int, mchar_t, bool, DecoderOutParams*) = 0;
 
 }; // class Decoder
 
@@ -110,7 +110,7 @@ extern "C" {
     __declspec(dllexport) int ResetDecoder(void*);
     __declspec(dllexport) int SaveDictsDecoder(void*);
     __declspec(dllexport) int MakeInitialVkbTableDecoder(void* decoder, DecoderOutParams* table);
-    __declspec(dllexport) int HandleDeckeyDecoder(void*, int, mchar_t, DecoderOutParams*);
+    __declspec(dllexport) int HandleDeckeyDecoder(void*, int, mchar_t, bool, DecoderOutParams*);
     __declspec(dllexport) int ExecCmdDecoder(void*, DecoderCommandParams*, DecoderOutParams*);
 }
 

@@ -303,6 +303,9 @@ public:
                 // 部首合成ヘルプの表示
                 OutParams = outParams;
                 makeBushuCompHelp(items.size() > 1 ? items[1] : _T(""));
+            } else if (cmd == _T("clearTailRomanStr")) {
+                // 末尾のローマ字列を削除
+                clearTailRomanStr();
             } else if (cmd == _T("makeExtraCharsStrokePositionTable")) {
                 // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
                 VkbTableMaker::MakeExtraCharsStrokePositionTable(outParams->faceStrings);
@@ -338,8 +341,8 @@ public:
     }
 
     // DECKEY処理
-    void HandleDeckey(int keyId, mchar_t targetChar, DecoderOutParams* params) {
-        LOG_INFOH(_T("\nENTER: keyId=%xH(%d=%s), targetChar=%s"), keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId), to_wstr(targetChar).c_str());
+    void HandleDeckey(int keyId, mchar_t targetChar, bool decodeKeyboardChar, DecoderOutParams* params) {
+        LOG_INFOH(_T("\nENTER: keyId=%xH(%d=%s), targetChar=%s, decodeKeyboardChar=%s"), keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId), to_wstr(targetChar).c_str(), BOOL_TO_WPTR(decodeKeyboardChar));
         OutParams = params;
         initializeOutParams();
 
@@ -349,6 +352,9 @@ public:
         STATE_COMMON->ClearStateInfo();
         STATE_COMMON->IncrementTotalDecKeyCount();
         STATE_COMMON->CountSameDecKey(keyId);
+        if (decodeKeyboardChar) STATE_COMMON->SetDecodeKeyboardCharMode();
+        LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+
         // DecKey処理を呼ぶ
         startState->HandleDeckey(keyId);
 
@@ -414,6 +420,12 @@ public:
         STATE_COMMON->SetBothHistoryBlockFlag();
         OUTPUT_STACK->pushNewLine();
         OUTPUT_STACK->setHistBlocker();
+    }
+
+    // 末尾のローマ字列を削除
+    void clearTailRomanStr() {
+        OUTPUT_STACK->ClearTailAlaphabetStr();
+        LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
     }
 
     // ヘルプや候補文字列
@@ -717,8 +729,8 @@ int MakeInitialVkbTableDecoder(void* pDecoder, DecoderOutParams* table) {
 
 // DECKEYハンドラ
 // 引数: keyId = DECKEY ID, targetChar = 入力しようとしている文字
-int HandleDeckeyDecoder(void* pDecoder, int keyId, mchar_t targetChar, DecoderOutParams* params) {
-    auto method_call = [pDecoder, keyId, targetChar, params]() { ((Decoder*)pDecoder)->HandleDeckey(keyId, targetChar, params); };
+int HandleDeckeyDecoder(void* pDecoder, int keyId, mchar_t targetChar, bool decodeKeyboardChar, DecoderOutParams* params) {
+    auto method_call = [pDecoder, keyId, targetChar, decodeKeyboardChar, params]() { ((Decoder*)pDecoder)->HandleDeckey(keyId, targetChar, decodeKeyboardChar, params); };
     return invokeDecoderMethod(method_call, nullptr);
 }
 

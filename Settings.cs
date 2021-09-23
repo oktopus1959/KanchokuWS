@@ -396,7 +396,7 @@ namespace KanchokuWS
         public static bool AutoBushuComp { get; set; } = false;
 
         // ローマ字読みによる打鍵ガイドを有効にするか
-        public static bool RomanStrokeGuide { get; set; } = false;
+        public static bool UpperRomanStrokeGuide { get; set; } = false;
 
         //------------------------------------------------------------------------------
         // ウィンドウClassNameごとの設定
@@ -721,7 +721,7 @@ namespace KanchokuWS
             // その他変換・機能
             SandSEnabled = GetString("sandsEnabled")._parseBool(false);                         // SandS を有効にするか
             SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
-            RomanStrokeGuide = GetString("romanStrokeGuide")._parseBool(false);                 // ローマ字読みによるストロークガイドを有効にするか
+            UpperRomanStrokeGuide = GetString("upperRomanStrokeGuide")._parseBool(false);       // ローマ字読みによるストロークガイドを有効にするか
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

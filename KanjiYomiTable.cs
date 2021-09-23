@@ -254,7 +254,7 @@ namespace KanchokuWS
 
         public static char[] GetCandidatesFromRoman(string romaYomi)
         {
-            return GetCandidates(romaYomi._hiraganaFromRoman());
+            return GetCandidates(romaYomi._toUpper()._hiraganaFromRoman());
         }
 
         public static bool IsKatakana(char ch)

@@ -378,6 +378,15 @@ public:
         return GetLastAsciiKey<T>(10);
     }
 
+    // 末尾のアルファベット文字列をクリアする
+    inline void ClearTailAlaphabetStr() {
+        size_t pos = 0;
+        for (; pos < stack.size(); ++pos) {
+            if (!is_alphabet(back(pos))) break;
+        }
+        if (pos > 0) pop(pos);
+    }
+
 private:
     std::vector<Moji> stack;
 

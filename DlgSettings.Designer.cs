@@ -358,6 +358,9 @@ namespace KanchokuWS
             this.label95 = new System.Windows.Forms.Label();
             this.label38 = new System.Windows.Forms.Label();
             this.label96 = new System.Windows.Forms.Label();
+            this.textBox_kanjiYomiFile = new System.Windows.Forms.TextBox();
+            this.label97 = new System.Windows.Forms.Label();
+            this.checkBox_upperRomanStrokeGuide = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onBushuCompHelp = new KanchokuWS.ColorTextBox();
@@ -372,9 +375,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.textBox_kanjiYomiFile = new System.Windows.Forms.TextBox();
-            this.label97 = new System.Windows.Forms.Label();
-            this.checkBox_romanStrokeGuide = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -3667,7 +3667,7 @@ namespace KanchokuWS
             // 
             // groupBox27
             // 
-            this.groupBox27.Controls.Add(this.checkBox_romanStrokeGuide);
+            this.groupBox27.Controls.Add(this.checkBox_upperRomanStrokeGuide);
             this.groupBox27.Controls.Add(this.textBox_kanjiYomiFile);
             this.groupBox27.Controls.Add(this.label97);
             this.groupBox27.Controls.Add(this.checkBox_SandSEnabledWhenOffMode);
@@ -4236,6 +4236,38 @@ namespace KanchokuWS
             this.label96.TabIndex = 12;
             this.label96.Text = "次打鍵セル";
             // 
+            // textBox_kanjiYomiFile
+            // 
+            this.textBox_kanjiYomiFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_kanjiYomiFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_kanjiYomiFile.Location = new System.Drawing.Point(115, 201);
+            this.textBox_kanjiYomiFile.Name = "textBox_kanjiYomiFile";
+            this.textBox_kanjiYomiFile.Size = new System.Drawing.Size(141, 19);
+            this.textBox_kanjiYomiFile.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.textBox_kanjiYomiFile, resources.GetString("textBox_kanjiYomiFile.ToolTip"));
+            // 
+            // label97
+            // 
+            this.label97.AutoSize = true;
+            this.label97.Location = new System.Drawing.Point(25, 203);
+            this.label97.Name = "label97";
+            this.label97.Size = new System.Drawing.Size(88, 15);
+            this.label97.TabIndex = 12;
+            this.label97.Text = "漢字読みファイル";
+            // 
+            // checkBox_upperRomanStrokeGuide
+            // 
+            this.checkBox_upperRomanStrokeGuide.AutoSize = true;
+            this.checkBox_upperRomanStrokeGuide.Location = new System.Drawing.Point(11, 180);
+            this.checkBox_upperRomanStrokeGuide.Name = "checkBox_upperRomanStrokeGuide";
+            this.checkBox_upperRomanStrokeGuide.Size = new System.Drawing.Size(201, 19);
+            this.checkBox_upperRomanStrokeGuide.TabIndex = 8;
+            this.checkBox_upperRomanStrokeGuide.Text = "大文字ローマ字読みによる打鍵ガイド";
+            this.toolTip1.SetToolTip(this.checkBox_upperRomanStrokeGuide, "大文字のローマ字入力による打鍵ガイドを有効にします。\r\n\r\n漢直窓の起動後は、「修飾キー変換ファイル」に定義されている\r\nUpperRomanStrokeGuid" +
+        "e を呼び出すことで当打鍵ガイドの\r\nON/OFFができます。");
+            this.checkBox_upperRomanStrokeGuide.UseVisualStyleBackColor = true;
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -4401,39 +4433,6 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // textBox_kanjiYomiFile
-            // 
-            this.textBox_kanjiYomiFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_kanjiYomiFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_kanjiYomiFile.Location = new System.Drawing.Point(115, 201);
-            this.textBox_kanjiYomiFile.Name = "textBox_kanjiYomiFile";
-            this.textBox_kanjiYomiFile.Size = new System.Drawing.Size(141, 19);
-            this.textBox_kanjiYomiFile.TabIndex = 9;
-            this.toolTip1.SetToolTip(this.textBox_kanjiYomiFile, resources.GetString("textBox_kanjiYomiFile.ToolTip"));
-            // 
-            // label97
-            // 
-            this.label97.AutoSize = true;
-            this.label97.Location = new System.Drawing.Point(25, 203);
-            this.label97.Name = "label97";
-            this.label97.Size = new System.Drawing.Size(88, 15);
-            this.label97.TabIndex = 12;
-            this.label97.Text = "漢字読みファイル";
-            // 
-            // checkBox_romanStrokeGuide
-            // 
-            this.checkBox_romanStrokeGuide.AutoSize = true;
-            this.checkBox_romanStrokeGuide.Location = new System.Drawing.Point(11, 180);
-            this.checkBox_romanStrokeGuide.Name = "checkBox_romanStrokeGuide";
-            this.checkBox_romanStrokeGuide.Size = new System.Drawing.Size(226, 19);
-            this.checkBox_romanStrokeGuide.TabIndex = 8;
-            this.checkBox_romanStrokeGuide.Text = "ローマ字読みによる打鍵ガイドを有効にする";
-            this.toolTip1.SetToolTip(this.checkBox_romanStrokeGuide, "デコーダがONのときに SandS 方式を有効にします。\n\nSandS 方式を有効にすると、スペースキーを押しながら何か別のキーを\n押すと、スペースキーがシフトキ" +
-        "ーとして働くようになります。\n\nスペースを入力したい場合は、オートリピートが始まる前にスペースキーを\n離してください。\n\nSandS を有効にすると Shift" +
-        "+Space は有効なキーではなく、たんなる\nシフトキーとして扱われます。");
-            this.checkBox_romanStrokeGuide.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
@@ -4885,7 +4884,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label38;
         private ColorTextBox textBox_nextStrokeBackColor;
         private System.Windows.Forms.Label label96;
-        private System.Windows.Forms.CheckBox checkBox_romanStrokeGuide;
+        private System.Windows.Forms.CheckBox checkBox_upperRomanStrokeGuide;
         private System.Windows.Forms.TextBox textBox_kanjiYomiFile;
         private System.Windows.Forms.Label label97;
     }

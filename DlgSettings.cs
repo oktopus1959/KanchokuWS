@@ -1052,7 +1052,7 @@ namespace KanchokuWS
             checkBox_SandSEnabled.Checked = Settings.SandSEnabled;
             checkBox_SandSEnabledWhenOffMode.Checked = Settings.SandSEnabledWhenOffMode;
             textBox_modConversionFile.Text = Settings.ModConversionFile;
-            checkBox_romanStrokeGuide.Checked = Settings.RomanStrokeGuide;
+            checkBox_upperRomanStrokeGuide.Checked = Settings.UpperRomanStrokeGuide;
             textBox_kanjiYomiFile.Text = Settings.KanjiYomiFile;
         }
 
@@ -1070,7 +1070,7 @@ namespace KanchokuWS
             checkerMiscSettings.Add(checkBox_SandSEnabled);
             checkerMiscSettings.Add(checkBox_SandSEnabledWhenOffMode);
             checkerMiscSettings.Add(textBox_modConversionFile);
-            checkerMiscSettings.Add(checkBox_romanStrokeGuide);
+            checkerMiscSettings.Add(checkBox_upperRomanStrokeGuide);
             checkerMiscSettings.Add(textBox_kanjiYomiFile);
 
             checkerAll.Add(checkerMiscSettings);
@@ -1091,7 +1091,7 @@ namespace KanchokuWS
             Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
             Settings.SetUserIni("sandsEnabledWhenOffMode", checkBox_SandSEnabledWhenOffMode.Checked);
             Settings.SetUserIni("modConversionFile", textBox_modConversionFile.Text);
-            Settings.SetUserIni("romanStrokeGuide", checkBox_romanStrokeGuide.Checked);
+            Settings.SetUserIni("upperRomanStrokeGuide", checkBox_upperRomanStrokeGuide.Checked);
             Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
 
             Settings.ReadIniFile();

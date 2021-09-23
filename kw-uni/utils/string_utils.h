@@ -35,6 +35,10 @@ namespace {
         return ch >= 0x20 && ch <= 0x7f;
     }
 
+    inline bool is_alphabet(mchar_t ch) {
+        return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
+    }
+
     inline bool is_numeral(wchar_t ch) {
         return ch >= '0' && ch <= '9';
     }

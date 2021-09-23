@@ -120,6 +120,47 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="textBox_kanjiYomiFile.ToolTip" xml:space="preserve">
+    <value>修飾キー変換定義ファイルの設定
+
+CapsLock、英数、無変換、変換、およびカタカナ／ひらがなキーを
+修飾キーとして使用する際のキー変換定義ファイルを指定します。
+
+定義ファイルの例として、 mod-conversion.txt というファイルを
+用意してあります。記述方法は同ファイルを参照してください。
+
+定義ファイルを修正した場合は、漢直窓Sを再起動するか、または
+「基本設定」タブの「再読込」をクリックしてください。</value>
+  </data>
+  <data name="textBox_modConversionFile.ToolTip" xml:space="preserve">
+    <value>修飾キー変換定義ファイルの設定
+
+CapsLock、英数、無変換、変換、およびカタカナ／ひらがなキーを
+修飾キーとして使用する際のキー変換定義ファイルを指定します。
+
+定義ファイルの例として、 mod-conversion.txt というファイルを
+用意してあります。記述方法は同ファイルを参照してください。
+
+定義ファイルを修正した場合は、漢直窓Sを再起動するか、または
+「基本設定」タブの「再読込」をクリックしてください。</value>
+  </data>
+  <data name="button_restartWithNoSave.ToolTip" xml:space="preserve">
+    <value>デコーダが保持している辞書内容をファイルに保存せずに再起動します。
+
+エディタなどで辞書ファイルを編集したい場合は、まず「一括保存」で、
+デコーダが保持している辞書内容をファイルに反映させます。
+
+その後、辞書ファイルを編集し、当ボタンをクリックしてください。
+
+漢直窓Sは終了時に辞書内容を自動的にファイルに新規保存します。
+(既存ファイルは *.back に名前が変更されます)
+辞書ファイルを編集したい場合は、ここに記述した手順に従うか、
+または漢直窓Sを終了させてから行ってください。
+</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -586,44 +627,6 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 例2：
 「-可欠」で登録すると、「可欠」と入力したときに「歌」への自動変換を
 実行しません。（以前に「可欠」で部首合成を実行していたとしても）</value>
-  </data>
-  <data name="textBox_kanjiYomiFile.ToolTip" xml:space="preserve">
-    <value>修飾キー変換定義ファイルの設定
-
-CapsLock、英数、無変換、変換、およびカタカナ／ひらがなキーを
-修飾キーとして使用する際のキー変換定義ファイルを指定します。
-
-定義ファイルの例として、 mod-conversion.txt というファイルを
-用意してあります。記述方法は同ファイルを参照してください。
-
-定義ファイルを修正した場合は、漢直窓Sを再起動するか、または
-「基本設定」タブの「再読込」をクリックしてください。</value>
-  </data>
-  <data name="textBox_modConversionFile.ToolTip" xml:space="preserve">
-    <value>修飾キー変換定義ファイルの設定
-
-CapsLock、英数、無変換、変換、およびカタカナ／ひらがなキーを
-修飾キーとして使用する際のキー変換定義ファイルを指定します。
-
-定義ファイルの例として、 mod-conversion.txt というファイルを
-用意してあります。記述方法は同ファイルを参照してください。
-
-定義ファイルを修正した場合は、漢直窓Sを再起動するか、または
-「基本設定」タブの「再読込」をクリックしてください。</value>
-  </data>
-  <data name="button_restartWithNoSave.ToolTip" xml:space="preserve">
-    <value>デコーダが保持している辞書内容をファイルに保存せずに再起動します。
-
-エディタなどで辞書ファイルを編集したい場合は、まず「一括保存」で、
-デコーダが保持している辞書内容をファイルに反映させます。
-
-その後、辞書ファイルを編集し、当ボタンをクリックしてください。
-
-漢直窓Sは終了時に辞書内容を自動的にファイルに新規保存します。
-(既存ファイルは *.back に名前が変更されます)
-辞書ファイルを編集したい場合は、ここに記述した手順に従うか、
-または漢直窓Sを終了させてから行ってください。
-</value>
   </data>
   <data name="textBox_bushuComp.ToolTip" xml:space="preserve">
     <value>部首合成の登録を行います。

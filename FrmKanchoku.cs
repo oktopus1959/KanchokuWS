@@ -312,7 +312,7 @@ namespace KanchokuWS
         /// <summary> Decoder へ入力DECKEYキーを送信する </summary>
         /// <param name="decoder"></param>
         [DllImport("kw-uni.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern void HandleDeckeyDecoder(IntPtr decoder, int keyId, uint targetChar, ref DecoderOutParams outParams);
+        static extern void HandleDeckeyDecoder(IntPtr decoder, int keyId, uint targetChar, bool decodeKeyboardChar, ref DecoderOutParams outParams);
 
         /// <summary> Decoder へ各種データを送信する </summary>
         [DllImport("kw-uni.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -520,7 +520,11 @@ namespace KanchokuWS
                         ShowBushuCompHelp();
                         return true;
                     case DecoderKeys.TOGGLE_ROMAN_STROKE_GUID:
-                        Settings.RomanStrokeGuide = !Settings.RomanStrokeGuide;
+                        bRomanStrokeGuideMode = !bRomanStrokeGuideMode && !bRomanMode;
+                        drawRomanMode(bRomanStrokeGuideMode);
+                        return true;
+                    case DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUID:
+                        Settings.UpperRomanStrokeGuide = !Settings.UpperRomanStrokeGuide;
                         return true;
                     default:
                         if (IsDecoderActive) {
@@ -624,6 +628,7 @@ namespace KanchokuWS
                 decoderOutput.layout = 0;   // None にリセットしておく。これをやらないと仮想鍵盤モードを切り替えたときに以前の履歴選択状態が残ったりする
                 CommonState.CenterString = "";
                 Settings.VirtualKeyboardShowStrokeCountTemp = 0;
+                bRomanStrokeGuideMode = false;
                 frmVkb.DrawInitailVkb();
                 //Text = "漢直窓S - ON";
                 notifyIcon1.Icon = Properties.Resources.kanmini1;
@@ -866,16 +871,22 @@ namespace KanchokuWS
             return false;
         }
 
-        private StringBuilder romanStrBuilder = new StringBuilder();
+        private bool bRomanStrokeGuideMode = false;
 
-        private string[] candidateChars = null;
+        private bool bRomanMode = false;
+
+        private string[] candidateCharStrs = null;
+
+        //private static char[] emptyCharArray = new char[0];
+
+        private char[] candidateChars = null;
 
         uint targetChar = 0;
 
         private void getTargetChar(int deckey)
         {
-            if (targetChar == 0 && candidateChars != null) {
-                var s = candidateChars._getNth(deckey);
+            if (targetChar == 0 && candidateCharStrs != null) {
+                var s = candidateCharStrs._getNth(deckey);
                 if (s._notEmpty()) {
                     logger.Info($"targetChar={s}");
                     targetChar = s[0];
@@ -894,9 +905,9 @@ namespace KanchokuWS
             getTargetChar(deckey);
 
             // デコーダの呼び出し
-            HandleDeckeyDecoder(decoderPtr, deckey, targetChar, ref decoderOutput);
+            HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, ref decoderOutput);
 
-            logger.Info(() => $"layout={decoderOutput.layout}, numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}");
+            logger.Info(() => $"layout={decoderOutput.layout}, numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
 
             // 第1打鍵待ち状態になったら、一時的な仮想鍵盤表示カウントをリセットする
             if (decoderOutput.GetStrokeCount() < 1) Settings.VirtualKeyboardShowStrokeCountTemp = 0;
@@ -904,23 +915,44 @@ namespace KanchokuWS
             // 中央鍵盤文字列の取得
             getCenterString();
 
-            bool flag = true;
-            // 他のVKey送出(もしあれば)
-            if (decoderOutput.IsDeckeyToVkey()) {
-                flag = sendVkeyFromDeckey(deckey, mod);
-                //nPreKeys += 1;
-            }
+            bool sendKeyFlag = true;
 
             // ローマ字?
-            if (Settings.RomanStrokeGuide && decoderOutput.numBackSpaces == 0 && decoderOutput.outString[0] >= 'A' && decoderOutput.outString[0] <= 'Z' && decoderOutput.outString[1] == 0) {
-                romanStrBuilder.Append(decoderOutput.outString[0]);
-                var romanStr = romanStrBuilder.ToString();
-                candidateChars = frmVkb.DrawStrokeHelp(KanjiYomiTable.GetCandidatesFromRoman(romanStr));
+            bool isUpperAlphabet(char ch) => (ch >= 'A' && ch <= 'Z');
+            bool isAlphabet(char ch) => (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
+            string getTailRomanStr()
+            {
+                int pos = 0;
+                for (; pos < decoderOutput.topString.Length; ++pos) {
+                    if (decoderOutput.topString[pos] == '\0') break;
+                }
+                int tailPos = pos;
+                for (;  pos > 0; --pos) {
+                    if (!isAlphabet(decoderOutput.topString[pos - 1])) break;
+                }
+                return new string(decoderOutput.topString.Skip(pos).Take(tailPos - pos).ToArray());
+            }
+            logger.Info(() => $"RomanStrokeGuide={bRomanStrokeGuideMode}, romanMode={bRomanMode}, UpperRomanStrokeGuide={Settings.UpperRomanStrokeGuide}, numBS={decoderOutput.numBackSpaces}, output={decoderOutput.outString._toString()}");
+            if (bRomanStrokeGuideMode ||
+                (bRomanMode && decoderOutput.numBackSpaces > 0) ||
+                (Settings.UpperRomanStrokeGuide && decoderOutput.numBackSpaces == 0 && isUpperAlphabet(decoderOutput.outString[0]) && decoderOutput.outString[1] == 0)) {
+                // ローマ字読みモード
+                var romanStr = getTailRomanStr();
+                logger.Info(() => $"romanStr={romanStr}");
+                CommonState.CenterString = "ローマ字";
+                candidateChars = KanjiYomiTable.GetCandidatesFromRoman(romanStr);
+                candidateCharStrs = frmVkb.DrawStrokeHelp(candidateChars);
                 frmVkb.SetTopText(decoderOutput.topString);
                 targetChar = 0;
+                bRomanMode = true;
             } else {
-                romanStrBuilder.Clear();
+                // 他のVKey送出(もしあれば)
+                if (decoderOutput.IsDeckeyToVkey()) {
+                    sendKeyFlag = sendVkeyFromDeckey(deckey, mod);
+                    //nPreKeys += 1;
+                }
                 if (decoderOutput.GetStrokeCount() < 1) {
+                    candidateCharStrs = null;
                     candidateChars = null;
                     targetChar = 0;
                 }
@@ -930,11 +962,27 @@ namespace KanchokuWS
 
                 // 仮想キーボードにヘルプや文字候補を表示
                 frmVkb.DrawVirtualKeyboardChars();
+
+                if (bRomanMode) {
+                    bRomanMode = false;
+                    ExecCmdDecoder("clearTailRomanStr", null);
+                }
             }
 
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE");
 
-            return flag;
+            return sendKeyFlag;
+        }
+
+        private void drawRomanMode(bool bRoman)
+        {
+            // ローマ字読みモード
+            CommonState.CenterString = bRoman ? "ローマ字" : "";
+            candidateCharStrs = frmVkb.DrawStrokeHelp(candidateChars);
+            if (bRomanMode && !bRoman) {
+                ExecCmdDecoder("clearTailRomanStr", null);
+            }
+            bRomanMode = bRoman;
         }
 
         private bool sendVkeyFromDeckey(int deckey, uint mod)

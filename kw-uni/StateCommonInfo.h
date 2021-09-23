@@ -136,6 +136,9 @@ class StateCommonInfo {
     // 交ぜ書きブロッカーの設定位置(末尾からのオフセット; SetMazegakiBlockFlag とともに用いられる)
     size_t mazeBlockerPos = 0;
 
+    // キーボード文字へのデコードを行う
+    bool decodeKeyboardChar = false;
+
 public:
     StateCommonInfo()
         : layout(VkbLayout::None)
@@ -189,6 +192,7 @@ public:
         centerString.clear();
         outStringProcDone = false;
         convertShiftedHiraganaToKatakana = false;
+        decodeKeyboardChar = false;
     }
 
     // デコーダのON時に呼び出される初期化
@@ -243,6 +247,9 @@ public:
     inline size_t GetMazegakiBlockerPosition() {
         return mazeBlockerPos;
     }
+
+    inline void SetDecodeKeyboardCharMode() { decodeKeyboardChar = true; }
+    inline bool IsDecodeKeyboardCharMode() { return decodeKeyboardChar; }
 
     // 次の選択位置として pos を設定する。
     // pos < 0 なら未選択状態。ただし Horizontal なら先頭候補を優先候補として色付け
