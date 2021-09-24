@@ -2476,6 +2476,7 @@ namespace KanchokuWS
             this.comboBox_dateStringKey.Size = new System.Drawing.Size(89, 20);
             this.comboBox_dateStringKey.TabIndex = 1;
             this.toolTip1.SetToolTip(this.comboBox_dateStringKey, resources.GetString("comboBox_dateStringKey.ToolTip"));
+            this.comboBox_dateStringKey.DropDown += new System.EventHandler(this.comboBox_dateStringKey_DropDown);
             // 
             // label92
             // 

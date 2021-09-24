@@ -782,7 +782,6 @@ namespace KanchokuWS
             checkBox_enterKey.Checked = Settings.CtrlKeyConvertedToEnter._notEmpty() && !Settings.CtrlKeyConvertedToEnter.StartsWith("#");
             checkBox_homeKey.Checked = Settings.CtrlKeyConvertedToHome._notEmpty() && !Settings.CtrlKeyConvertedToHome.StartsWith("#");
             checkBox_endKey.Checked = Settings.CtrlKeyConvertedToEnd._notEmpty() && !Settings.CtrlKeyConvertedToEnd.StartsWith("#");
-            checkBox_dateStringKey.Checked = Settings.CtrlKeyConvertedToDateString._notEmpty() && !Settings.CtrlKeyConvertedToDateString.StartsWith("#");
 
             comboBox_selectCtrlKeyItem(comboBox_backSpaceKey, $"{Settings.CtrlKeyConvertedToBackSpace.Replace("#", "")}");
             comboBox_selectCtrlKeyItem(comboBox_deleteKey, $"{Settings.CtrlKeyConvertedToDelete.Replace("#", "")}");
@@ -795,8 +794,6 @@ namespace KanchokuWS
             comboBox_selectCtrlKeyItem(comboBox_enterKey, $"{Settings.CtrlKeyConvertedToEnter.Replace("#", "")}");
             comboBox_selectCtrlKeyItem(comboBox_homeKey, $"{Settings.CtrlKeyConvertedToHome.Replace("#", "")}");
             comboBox_selectCtrlKeyItem(comboBox_endKey, $"{Settings.CtrlKeyConvertedToEnd.Replace("#", "")}");
-            comboBox_selectCtrlKeyItem(comboBox_dateStringKey, $"{Settings.CtrlKeyConvertedToDateString.Replace("#", "")}");
-            textBox_dateStringFormat.Text = Settings.DateStringFormat._reReplace(@"\|", "\r\n");
 
             checkBox_useLeftCtrl.Checked = Settings.UseLeftControlToConversion;
             checkBox_useRightCtrl.Checked = Settings.UseRightControlToConversion;
@@ -811,6 +808,10 @@ namespace KanchokuWS
 
             comboBox_selectCtrlKeyItem(comboBox_fullEscapeKey, $"{Settings.FullEscapeKey}");
             comboBox_selectCtrlKeyItem(comboBox_strokeHelpRotationKey, $"{Settings.StrokeHelpRotationKey}");
+
+            checkBox_dateStringKey.Checked = Settings.CtrlKeyConvertedToDateString._notEmpty() && !Settings.CtrlKeyConvertedToDateString.StartsWith("#");
+            comboBox_selectCtrlKeyItem(comboBox_dateStringKey, $"{Settings.CtrlKeyConvertedToDateString.Replace("#", "")}");
+            textBox_dateStringFormat.Text = Settings.DateStringFormat._reReplace(@"\|", "\r\n");
         }
 
         private void setCtrlKeysStatusChecker()
@@ -832,7 +833,6 @@ namespace KanchokuWS
             checkerCtrlKeys.Add(checkBox_enterKey);
             checkerCtrlKeys.Add(checkBox_homeKey);
             checkerCtrlKeys.Add(checkBox_endKey);
-            checkerCtrlKeys.Add(checkBox_dateStringKey);
 
             checkerCtrlKeys.Add(comboBox_backSpaceKey);
             checkerCtrlKeys.Add(comboBox_deleteKey);
@@ -845,6 +845,8 @@ namespace KanchokuWS
             checkerCtrlKeys.Add(comboBox_enterKey);
             checkerCtrlKeys.Add(comboBox_homeKey);
             checkerCtrlKeys.Add(comboBox_endKey);
+
+            checkerCtrlKeys.Add(checkBox_dateStringKey);
             checkerCtrlKeys.Add(comboBox_dateStringKey);
             checkerCtrlKeys.Add(textBox_dateStringFormat);
 
@@ -892,6 +894,7 @@ namespace KanchokuWS
             Settings.SetUserIni("ctrlKeyToEnter", makeCtrlKeyConversion(checkBox_enterKey, comboBox_enterKey));
             Settings.SetUserIni("ctrlKeyToHome", makeCtrlKeyConversion(checkBox_homeKey, comboBox_homeKey));
             Settings.SetUserIni("ctrlKeyToEnd", makeCtrlKeyConversion(checkBox_endKey, comboBox_endKey));
+
             Settings.SetUserIni("ctrlKeyToDateString", makeCtrlKeyConversion(checkBox_dateStringKey, comboBox_dateStringKey));
             Settings.SetUserIni("dateStringFormat", textBox_dateStringFormat.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
 
@@ -1544,7 +1547,7 @@ namespace KanchokuWS
             checkBox_enterKey.Enabled = comboBox_enterKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
             checkBox_homeKey.Enabled = comboBox_homeKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
             checkBox_endKey.Enabled = comboBox_endKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
-            checkBox_dateStringKey.Enabled = comboBox_dateStringKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
+            //checkBox_dateStringKey.Enabled = comboBox_dateStringKey.Enabled = checkBox_globalCtrlKeysEnabled.Checked;
         }
 
         private void button_document_Click(object sender, EventArgs e)
@@ -1761,11 +1764,6 @@ namespace KanchokuWS
             comboBox_ctrlKey_setItems(comboBox_endKey);
         }
 
-        private void comboBox_dateStringKey_DropDown(object sender, EventArgs e)
-        {
-            comboBox_ctrlKey_setItems(comboBox_dateStringKey);
-        }
-
         private void comboBox_fullEscapeKey_DropDown(object sender, EventArgs e)
         {
             comboBox_ctrlKey_setItems(comboBox_fullEscapeKey);
@@ -1784,6 +1782,11 @@ namespace KanchokuWS
         private void checkBox_historySearchKey_CheckedChanged(object sender, EventArgs e)
         {
             comboBox_historySearchKey.Enabled = checkBox_historySearchKey.Checked;
+        }
+
+        private void comboBox_dateStringKey_DropDown(object sender, EventArgs e)
+        {
+            comboBox_ctrlKey_setItems(comboBox_dateStringKey);
         }
     }
 }

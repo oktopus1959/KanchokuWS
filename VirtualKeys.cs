@@ -222,6 +222,14 @@ namespace KanchokuWS
             ModConvertedDecKeyFromVKeyCombo[VKeyCombo.CalcSerialValue(mod, vkey)] = deckey;
         }
 
+        public static void RemoveModConvertedDecKeyFromCombo(uint mod, uint vkey)
+        {
+            logger.Debug(() => $"mod={mod:x}H, vkey={vkey:x}H({vkey})");
+            try {
+                ModConvertedDecKeyFromVKeyCombo.Remove(VKeyCombo.CalcSerialValue(mod, vkey));
+            } catch { }
+        }
+
         private static void setupDecKeyAndComboTable()
         {
             // ストロークキー
@@ -279,10 +287,20 @@ namespace KanchokuWS
 
         public static void AddCtrlDeckeyFromCombo(string keyFace, int ctrlDeckey, int ctrlShiftDeckey)
         {
+            bool bRemove = false;
+            if (keyFace._startsWith("#")) {
+                bRemove = true;
+                keyFace = keyFace.Replace("#", "");
+            }
             var combo = GetVKeyComboFromFaceString(keyFace, false, false);
             if (combo != null) {
-                if (ctrlDeckey > 0) AddModConvertedDecKeyFromCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, combo.Value.vkey);
-                if (ctrlShiftDeckey > 0) AddModConvertedDecKeyFromCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, combo.Value.vkey);
+                if (bRemove) {
+                    if (ctrlDeckey > 0) RemoveModConvertedDecKeyFromCombo(KeyModifiers.MOD_CONTROL, combo.Value.vkey);
+                    if (ctrlShiftDeckey > 0) RemoveModConvertedDecKeyFromCombo(KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, combo.Value.vkey);
+                } else {
+                    if (ctrlDeckey > 0) AddModConvertedDecKeyFromCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, combo.Value.vkey);
+                    if (ctrlShiftDeckey > 0) AddModConvertedDecKeyFromCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, combo.Value.vkey);
+                }
             }
         }
 
