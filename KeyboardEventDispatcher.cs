@@ -351,7 +351,7 @@ namespace KanchokuWS
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-A: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
             }
             if (kanchokuCode < 0) {
-                kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || mod != 0
+                kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || shift
                     ? VirtualKeys.GetModConvertedDecKeyFromCombo(mod, (uint)vkey)
                     : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
                 if (kanchokuCode >= 0) mod = 0;     // 何かのコードに変換されたら、 Ctrl や Shift の修飾は無かったことにしておく
