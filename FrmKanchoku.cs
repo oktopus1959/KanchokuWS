@@ -519,12 +519,13 @@ namespace KanchokuWS
                     case DecoderKeys.BUSHU_COMP_HELP:
                         ShowBushuCompHelp();
                         return true;
-                    case DecoderKeys.TOGGLE_ROMAN_STROKE_GUID:
+                    case DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE:
                         bRomanStrokeGuideMode = !bRomanStrokeGuideMode && !bRomanMode;
                         drawRomanMode(bRomanStrokeGuideMode);
                         return true;
-                    case DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUID:
-                        Settings.UpperRomanStrokeGuide = !Settings.UpperRomanStrokeGuide;
+                    case DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE:
+                        bUpperRomanStrokeGuideMode = !bUpperRomanStrokeGuideMode && !bRomanMode;
+                        if (!bRomanMode) drawRomanMode(bUpperRomanStrokeGuideMode);
                         return true;
                     default:
                         if (IsDecoderActive) {
@@ -873,6 +874,8 @@ namespace KanchokuWS
 
         private bool bRomanStrokeGuideMode = false;
 
+        private bool bUpperRomanStrokeGuideMode = false;
+
         private bool bRomanMode = false;
 
         private string[] candidateCharStrs = null;
@@ -932,10 +935,10 @@ namespace KanchokuWS
                 }
                 return new string(decoderOutput.topString.Skip(pos).Take(tailPos - pos).ToArray());
             }
-            logger.Info(() => $"RomanStrokeGuide={bRomanStrokeGuideMode}, romanMode={bRomanMode}, UpperRomanStrokeGuide={Settings.UpperRomanStrokeGuide}, numBS={decoderOutput.numBackSpaces}, output={decoderOutput.outString._toString()}");
+            logger.Info(() => $"RomanStrokeGuide={bRomanStrokeGuideMode}, UpperRomanStrokeGuide={bUpperRomanStrokeGuideMode}, romanMode={bRomanMode}, Settings.UpperRomanStrokeGuide={Settings.UpperRomanStrokeGuide}, numBS={decoderOutput.numBackSpaces}, output={decoderOutput.outString._toString()}");
             if (bRomanStrokeGuideMode ||
                 (bRomanMode && decoderOutput.numBackSpaces > 0) ||
-                (Settings.UpperRomanStrokeGuide && decoderOutput.numBackSpaces == 0 && isUpperAlphabet(decoderOutput.outString[0]) && decoderOutput.outString[1] == 0)) {
+                ((Settings.UpperRomanStrokeGuide || bUpperRomanStrokeGuideMode) && decoderOutput.numBackSpaces == 0 && isUpperAlphabet(decoderOutput.outString[0]) && decoderOutput.outString[1] == 0)) {
                 // ローマ字読みモード
                 var romanStr = getTailRomanStr();
                 logger.Info(() => $"romanStr={romanStr}");
@@ -963,8 +966,9 @@ namespace KanchokuWS
                 // 仮想キーボードにヘルプや文字候補を表示
                 frmVkb.DrawVirtualKeyboardChars();
 
-                if (bRomanMode) {
+                if (bRomanMode || bUpperRomanStrokeGuideMode) {
                     bRomanMode = false;
+                    bUpperRomanStrokeGuideMode = false;
                     ExecCmdDecoder("clearTailRomanStr", null);
                 }
             }
