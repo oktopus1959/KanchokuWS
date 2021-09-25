@@ -102,6 +102,11 @@ namespace KanchokuWS
         public const int DECKEY_STROKE_47 = 47;
         public const int DECKEY_STROKE_48 = 48;
 
+        // Ctrl-A
+        public const int DECKEY_CTRL_A = CTRL_DECKEY_START;
+        // Ctrl-Z
+        public const int DECKEY_CTRL_Z = DECKEY_CTRL_A + 25;
+
         // 以下、編集機能や日付入力などの特殊機能のキーコード定義
         // 特殊機能は、それに対応するキーコードに変換されてからデコーダが呼び出される
         // デコーダ側では、ストロークテーブルを経由することなく、キーコードにより直接特殊機能を呼び出す

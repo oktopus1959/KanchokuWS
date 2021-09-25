@@ -528,7 +528,7 @@ namespace KanchokuWS
                         if (!bRomanMode) drawRomanMode(bUpperRomanStrokeGuideMode);
                         return true;
                     default:
-                        if (IsDecoderActive) {
+                        if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
                             return InvokeDecoder(deckey, mod);
                         } else {
                             return sendVkeyFromDeckey(deckey, mod);

@@ -195,7 +195,9 @@ namespace KanchokuWS
 
         public static VKeyCombo? GetVKeyComboFromDecKey(int deckey)
         {
-            return VKeyComboFromDecKey._getNth(deckey);
+            var combo = VKeyComboFromDecKey._getNth(deckey);
+            logger.DebugH(() => $"deckey={deckey:x}H({deckey}), combo.mod={(combo.HasValue ? combo.Value.modifier : 0):x}, combo.vkey={(combo.HasValue ? combo.Value.vkey : 0)}");
+            return combo;
         }
 
         /// <summary>
@@ -207,6 +209,13 @@ namespace KanchokuWS
         /// 仮想キーコンビネーションのSerial値からModキーによるシフト変換されたDECKEY を得るための辞書
         /// </summary>
         private static Dictionary<uint, int> ModConvertedDecKeyFromVKeyCombo;
+
+        public static void AddModifiedDeckey(int deckey, uint mod, uint vkey)
+        {
+            logger.DebugH(() => $"deckey={deckey:x}H({deckey}), mod={mod:x}H, vkey={vkey:x}H({vkey})");
+            var combo = new VKeyCombo(mod, vkey);
+            VKeyComboFromDecKey[deckey] = combo;
+        }
 
         public static void AddDecKeyAndCombo(int deckey, uint mod, uint vkey)
         {
@@ -447,6 +456,7 @@ namespace KanchokuWS
             {"bushucomphelp", DecoderKeys.BUSHU_COMP_HELP},
             {"romanstrokeguide", DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE},
             {"upperromanstrokeguide", DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE},
+            //{"^a", DecoderKeys.CTRL_},
         };
 
         /// <summary>
@@ -473,7 +483,22 @@ namespace KanchokuWS
                         if (items._length() == 3) {
                             uint mod = modifierKeysFromName._safeGet(items[0]);
                             uint vkey = getVKeyFromDecKey(items[1]._parseInt(-1, -1));
-                            int deckey = specialDecKeysFromName._safeGet(items[2]);
+                            bool ctrl = items[2]._startsWith("^");
+                            var name = items[2].Replace("^", "");
+                            int deckey = specialDecKeysFromName._safeGet(name);
+                            if (ctrl) {
+                                logger.DebugH(() => $"deckey={deckey:x}H({deckey}), ctrl={ctrl}");
+                                uint decVkey = 0;
+                                if (name._safeLength() == 1 && name._ge("a") && name._le("z")) {
+                                    decVkey = faceToVkey._safeGet(name._toUpper());
+                                    deckey = DecoderKeys.DECKEY_CTRL_A + name[0] - 'a';
+                                } else if (deckey >= DecoderKeys.FUNC_DECKEY_START && deckey < DecoderKeys.FUNC_DECKEY_END) {
+                                    decVkey = getVKeyFromDecKey(deckey);
+                                    deckey += DecoderKeys.CTRL_FUNC_DECKEY_START - DecoderKeys.FUNC_DECKEY_START;
+                                }
+                                logger.DebugH(() => $"deckey={deckey:x}H({deckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
+                                if (deckey > 0) AddModifiedDeckey(deckey, KeyModifiers.MOD_CONTROL, decVkey);
+                            }
                             if (mod != 0 && vkey > 0 && deckey > 0) {
                                 logger.DebugH(() => $"AddModConvertedDecKeyFromCombo: deckey={deckey}, mod={mod}, vkey={vkey}, rawLine={rawLine}");
                                 AddModConvertedDecKeyFromCombo(deckey, mod, vkey);
