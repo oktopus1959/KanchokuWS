@@ -17,7 +17,11 @@ public:
     // 当機能を表す文字を設定
     MString getString() const { return to_mstr(_T("全")); }
 
+    static void CreateSingleton();
+
+    static std::unique_ptr<ZenkakuNode> Singleton;
 };
+#define ZENKAKU_NODE (ZenkakuNode::Singleton)
 
 // -------------------------------------------------------------------
 // ZenkakuOneNode - ノードのテンプレート

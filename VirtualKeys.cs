@@ -454,6 +454,8 @@ namespace KanchokuWS
             {"histnext", DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY},
             {"histprev", DecoderKeys.HISTORY_PREV_SEARCH_DECKEY},
             {"bushucomphelp", DecoderKeys.BUSHU_COMP_HELP},
+            {"zenkakuconvert", DecoderKeys.TOGGLE_ZENKAKU_CONVERSION},
+            {"zenkakuconversion", DecoderKeys.TOGGLE_ZENKAKU_CONVERSION},
             {"romanstrokeguide", DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE},
             {"upperromanstrokeguide", DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE},
             //{"^a", DecoderKeys.CTRL_},

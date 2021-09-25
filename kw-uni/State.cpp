@@ -11,6 +11,7 @@
 #include "Settings.h"
 #include "StrokeTable.h"
 #include "Mazegaki/Mazegaki.h"
+#include "KeysAndChars/Zenkaku.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
@@ -49,9 +50,8 @@ void State::HandleDeckey(int deckey) {
     //return pNextNodeMaybe;
 }
 
-// DECKEY処理の前半部のデフォルト処理。
+// DECKEY処理の前半部の処理。
 // 後続状態があればそちらに移譲。なければここでホットキーをディスパッチ。
-// 自前で DECKEY 処理をやる場合にはオーバーライドしてもよい
 void State::DoDeckeyPreProc(int deckey) {
     _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), NextNode=%s"), NAME_PTR, deckey, deckey, NODE_NAME_PTR(NextNodeMaybe()));
     if (IsModeState()) {
@@ -80,7 +80,12 @@ void State::DoDeckeyPreProc(int deckey) {
                 MAZEGAKI_NODE->ClearBlockerShiftFlag();
             }
 
-            if ((!pNode || !pNode->isStrokeTableNode()) && isStrokeKeyOrShiftedKeyOrModeFuncKey(deckey)) {
+            if (pNode && dynamic_cast<ZenkakuNode*>(pNode) == 0 && deckey == TOGGLE_ZENKAKU_CONVERSION) {
+                _LOG_DEBUGH(_T("CREATE: ZenkakuState"));
+                pNext = ZENKAKU_NODE->CreateState();
+                pNext->SetPrevState(this);
+                deckey = -1;    // この後は dekcey の処理をやらない
+            } else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokeKeyOrShiftedKeyOrModeFuncKey(deckey)) {
                 _LOG_DEBUGH(_T("CREATE: RootStrokeState"));
                 pNext = ROOT_STROKE_NODE->CreateState();
                 pNext->SetPrevState(this);
@@ -101,9 +106,8 @@ void State::DoDeckeyPreProc(int deckey) {
     _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
 }
 
-// DECKEY処理の後半部のデフォルト処理。
+// DECKEY処理の後半部の処理。
 // 不要になった後続状態の削除と、新しい後続状態の生成とチェイン。
-// 自前で DECKEY 処理をやる場合にはオーバーライドしてもよい
 void State::DoDeckeyPostProc() {
     _LOG_DEBUGH(_T("ENTER: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
     // 後続状態チェインに対して事後チェック
@@ -356,6 +360,8 @@ void State::dispatchDeckey(int deckey) {
         handleNextCandTrigger();
     } else if (deckey == HISTORY_PREV_SEARCH_DECKEY) {
         handlePrevCandTrigger();
+    } else if (deckey == TOGGLE_ZENKAKU_CONVERSION) {
+        handleZenkakuConversion();
     } else {
         if (handleFunctionKeys(deckey)) return;
 
@@ -468,6 +474,9 @@ void State::handleNextCandTrigger() { LOG_INFOH(_T("CALLED")); handleSpecialKeys
 
 // handlePrevCandTrigger デフォルトハンドラ
 void State::handlePrevCandTrigger() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(HISTORY_PREV_SEARCH_DECKEY); }
+
+// handleZenkakuConversion デフォルトハンドラ
+void State::handleZenkakuConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(TOGGLE_ZENKAKU_CONVERSION); }
 
 //-----------------------------------------------------------------------
 // DecoderOff デフォルトハンドラ

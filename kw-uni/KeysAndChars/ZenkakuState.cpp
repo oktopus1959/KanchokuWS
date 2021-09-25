@@ -89,6 +89,12 @@ namespace {
             cancelMe();
         }
 
+        // ZenkakuConversionの処理 - 処理のキャンセル
+        void handleZenkakuConversion() {
+            LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            cancelMe();
+        }
+
         // モード標識文字を返す
         mchar_t GetModeMarker() {
             return utils::safe_front(MY_NODE->getString());
@@ -162,7 +168,16 @@ ZenkakuNode::~ZenkakuNode() {
 // 当ノードを処理する State インスタンスを作成する
 State* ZenkakuNode::CreateState() {
     LOG_INFO(_T("CALLED"));
-    return new ZenkakuState(this);
+    return new ZenkakuState(ZenkakuNode::Singleton.get());
+}
+
+std::unique_ptr<ZenkakuNode> ZenkakuNode::Singleton;
+
+void ZenkakuNode::CreateSingleton() {
+    LOG_INFO(_T("CALLED"));
+    if (ZenkakuNode::Singleton == 0) {
+        ZenkakuNode::Singleton.reset(new ZenkakuNode());
+    }
 }
 
 // -------------------------------------------------------------------
@@ -192,6 +207,7 @@ DEFINE_CLASS_LOGGER(ZenkakuNodeBuilder);
 
 Node* ZenkakuNodeBuilder::CreateNode() {
     LOG_INFO(_T("CALLED"));
+    ZenkakuNode::CreateSingleton();
     return new ZenkakuNode();
 }
 

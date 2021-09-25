@@ -13,5 +13,10 @@ void StayState::handleEsc() {
     HANDLE_ESC_FOR_MAZEGAKI();
 }
 
+// ZenkakuConversionの処理
+void handleZenkakuConversion() {
+
+}
+
 DEFINE_CLASS_LOGGER(StayState);
 

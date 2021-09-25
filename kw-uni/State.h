@@ -230,6 +230,9 @@ protected:
     // PrevCandTrigger ハンドラ
     virtual void handlePrevCandTrigger();
 
+    // ZenkakuConversion ハンドラ
+    virtual void handleZenkakuConversion();
+
     // DecoderOff ハンドラ
     virtual void handleDecoderOff();
 

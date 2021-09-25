@@ -13,6 +13,7 @@
 #include "deckey_id_defs.h"
 #include "KeysAndChars/DeckeyToChars.h"
 #include "KeysAndChars/VkbTableMaker.h"
+#include "KeysAndChars/Zenkaku.h"
 #include "ErrorHandler.h"
 #include "Settings.h"
 #include "State.h"
@@ -107,6 +108,9 @@ public:
         // 履歴入力機能を生成して常駐させる
         startState->ChainAndStay(HistoryStayNode::CreateNode());
         // 必要があれば、ここにその他の常駐機能を追加する
+        
+        // 全角変換ノードのSingleton生成
+        ZenkakuNode::CreateSingleton();
 
         // 簡易打鍵文字を集める
         EasyChars::GatherEasyChars();
