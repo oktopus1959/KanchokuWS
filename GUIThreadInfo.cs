@@ -161,7 +161,7 @@ namespace KanchokuWS
                     } else {
                         // 何回か同じ位置にカレットがある場合は仮想鍵盤をウィンドウ右下に位置させる 
                         ++sameCount;
-                        logger.Debug($"sameCount={sameCount}");
+                        logger.Debug(() => $"sameCount={sameCount}");
                         if (sameCountMax == 0 || sameCount < sameCountMax) return;
                     }
                 }
@@ -222,7 +222,7 @@ namespace KanchokuWS
         /// <returns></returns>
         private static bool getCaretPos(IntPtr handle, ref Rectangle rect, RECT winRect)
         {
-            logger.Debug($"Check Caret for {(int)handle:x}");
+            logger.Debug(() => $"Check Caret for {(int)handle:x}");
             Guid guidIAccessible = new Guid("{618736E0-3C3D-11CF-810C-00AA00389B71}");
             object obj = null;
             int retVal = AccessibleObjectFromWindow(handle, (uint)OBJID.CARET, ref guidIAccessible, ref obj);
