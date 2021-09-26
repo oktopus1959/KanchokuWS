@@ -742,7 +742,7 @@ namespace KanchokuWS
             frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
             frmMain?.MakeInitialVkbTable();
 
-            label_okResultAdvanced.Show();
+            label_okResultKeyAssign.Show();
         }
 
         private void button_keyAssignClose_Click(object sender, EventArgs e)
@@ -1158,6 +1158,7 @@ namespace KanchokuWS
                     label_okResultFontColor.Hide();
                     label_okResultAdvanced.Hide();
                     label_okResultHist.Hide();
+                    label_okResultKeyAssign.Hide();
                     label_okResultCtrlKeys.Hide();
                     label_okResultMisc.Hide();
                     label_reloadMisc.Hide();
@@ -1186,6 +1187,11 @@ namespace KanchokuWS
             okResultCount = okResultCountMax;
         }
 
+        private void label_okResultKeyAssign_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
         private void label_okResultHistory_VisibleChanged(object sender, EventArgs e)
         {
             okResultCount = okResultCountMax;
@@ -1197,6 +1203,11 @@ namespace KanchokuWS
         }
         
         private void label_execResultFile_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_reloadMisc_VisibleChanged(object sender, EventArgs e)
         {
             okResultCount = okResultCountMax;
         }
