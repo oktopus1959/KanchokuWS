@@ -378,12 +378,16 @@ namespace KanchokuWS
         private int setVkeyInputs(ushort vkey, INPUT[] inputs, int idx)
         {
             initializeKeyboardInput(ref inputs[idx]);
+            ushort wScan = (ushort)MapVirtualKey(vkey, 0);
+            int extendedFlag = vkey >= (ushort)Keys.PageUp && vkey <= (ushort)Keys.Down || vkey == (ushort)Keys.Insert || vkey == (ushort)Keys.Delete ? KEYEVENTF_EXTENDEDKEY : 0;
             inputs[idx].ki.wVk = vkey;
-            inputs[idx].ki.dwFlags = KEYEVENTF_KEYDOWN;
+            inputs[idx].ki.wScan = wScan;
+            inputs[idx].ki.dwFlags = KEYEVENTF_KEYDOWN | extendedFlag;
             ++idx;
             initializeKeyboardInput(ref inputs[idx]);
             inputs[idx].ki.wVk = vkey;
-            inputs[idx].ki.dwFlags = KEYEVENTF_KEYUP;
+            inputs[idx].ki.wScan = wScan;
+            inputs[idx].ki.dwFlags = KEYEVENTF_KEYUP | extendedFlag;
             ++idx;
             return idx;
         }
