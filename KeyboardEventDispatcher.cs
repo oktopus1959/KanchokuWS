@@ -186,6 +186,12 @@ namespace KanchokuWS
             return 0;
         }
 
+        /// <summary> extraInfo=0 の時のキー押下時のリザルトフラグ </summary>
+        private bool normalInfoKeyDownResult = false;
+
+        /// <summary> キーボードハンドラの処理中か </summary>
+        private bool bHandlerBusy = false;
+
         /// <summary>キーボード押下時のハンドラ</summary>
         /// <param name="vkey"></param>
         /// <param name="extraInfo"></param>
@@ -193,143 +199,153 @@ namespace KanchokuWS
         private bool onKeyboardDownHandler(int vkey, int extraInfo)
         {
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"\nENTER: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
-            if (!isEffectiveVkey(vkey, extraInfo)) {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result=False, not EffectiveVkey");
-                return false;
-            }
-            bool decoderActivated = IsDecoderActivated?.Invoke() ?? false;
-            if ((Settings.SandSEnabled && decoderActivated) || (Settings.SandSEnabledWhenOffMode && !decoderActivated)) {
-                if (vkey == (int)Keys.Space) {
-                    if (spaceKeyState == SpecialKeyState.PRESSED) {
-                        // スペースキーが押下されている状態なら、シフト状態に遷移する
-                        spaceKeyState = SpecialKeyState.SHIFTED;
-                        return true;
+
+            normalInfoKeyDownResult = false;
+
+            void handleKeyDown()
+            {
+                if (!isEffectiveVkey(vkey, extraInfo)) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"not EffectiveVkey");
+                    return;
+                }
+                normalInfoKeyDownResult = true;
+                bool decoderActivated = IsDecoderActivated?.Invoke() ?? false;
+                if ((Settings.SandSEnabled && decoderActivated) || (Settings.SandSEnabledWhenOffMode && !decoderActivated)) {
+                    if (vkey == (int)Keys.Space) {
+                        if (spaceKeyState == SpecialKeyState.PRESSED) {
+                            // スペースキーが押下されている状態なら、シフト状態に遷移する
+                            spaceKeyState = SpecialKeyState.SHIFTED;
+                            return;
+                        }
+                        if (spaceKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
+                                                                                   // RELEASED
+                        if (!ctrlKeyPressed() && !shiftKeyPressed(false)) {
+                            // 1回目の押下で Ctrl も Shift も押されてない
+                            spaceKeyState = SpecialKeyState.PRESSED;
+                            return;
+                        }
+                        if (shiftKeyPressed(false)) {
+                            spaceKeyState = SpecialKeyState.SHIFTED;
+                            return;
+                        }
+                        // 上記以外はスペース入力として扱う
+                    } else {
+                        if (spaceKeyState == SpecialKeyState.PRESSED) {
+                            // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                            spaceKeyState = SpecialKeyState.SHIFTED;
+                        }
                     }
-                    if (spaceKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
-                                                                               // RELEASED
-                    if (!ctrlKeyPressed() && !shiftKeyPressed(false)) {
-                        // 1回目の押下で Ctrl も Shift も押されてない
-                        spaceKeyState = SpecialKeyState.PRESSED;
-                        return true;
+                }
+                // CapsLock
+                if (vkey == (int)VirtualKeys.CapsLock) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CapsLockKey Pressed");
+                    if (capsKeyState == SpecialKeyState.PRESSED) {
+                        // Capsキーが押下されている状態なら、シフト状態に遷移する
+                        capsKeyState = SpecialKeyState.SHIFTED;
+                        return;
                     }
-                    if (shiftKeyPressed(false)) {
-                        spaceKeyState = SpecialKeyState.SHIFTED;
-                        return true;
-                    }
-                    // 上記以外はスペース入力として扱う
+                    if (capsKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
+
+                    // RELEASED
+                    capsKeyState = SpecialKeyState.PRESSED;
+                    return;
                 } else {
-                    if (spaceKeyState == SpecialKeyState.PRESSED) {
-                        // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                        spaceKeyState = SpecialKeyState.SHIFTED;
+                    if (capsKeyState == SpecialKeyState.PRESSED) {
+                        // Capsキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                        capsKeyState = SpecialKeyState.SHIFTED;
                     }
                 }
-            }
-            // CapsLock
-            if (vkey == (int)VirtualKeys.CapsLock) {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CapsLockKey Pressed");
-                if (capsKeyState == SpecialKeyState.PRESSED) {
-                    // Capsキーが押下されている状態なら、シフト状態に遷移する
-                    capsKeyState = SpecialKeyState.SHIFTED;
-                    return true;
-                }
-                if (capsKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+                // AlphaNum
+                if (vkey == (int)VirtualKeys.AlphaNum) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"AlpahNumKey Pressed");
+                    if (alnumKeyState == SpecialKeyState.PRESSED) {
+                        // 英数キーが押下されている状態なら、シフト状態に遷移する
+                        alnumKeyState = SpecialKeyState.SHIFTED;
+                        return;
+                    }
+                    if (alnumKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
 
-                // RELEASED
-                capsKeyState = SpecialKeyState.PRESSED;
-                return true;
-            } else {
-                if (capsKeyState == SpecialKeyState.PRESSED) {
-                    // Capsキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                    capsKeyState = SpecialKeyState.SHIFTED;
+                    // RELEASED
+                    alnumKeyState = SpecialKeyState.PRESSED;
+                    return;
+                } else {
+                    if (alnumKeyState == SpecialKeyState.PRESSED) {
+                        // 英数キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                        alnumKeyState = SpecialKeyState.SHIFTED;
+                    }
                 }
-            }
-            // AlphaNum
-            if (vkey == (int)VirtualKeys.AlphaNum) {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"AlpahNumKey Pressed");
-                if (alnumKeyState == SpecialKeyState.PRESSED) {
-                    // 英数キーが押下されている状態なら、シフト状態に遷移する
-                    alnumKeyState = SpecialKeyState.SHIFTED;
-                    return true;
-                }
-                if (alnumKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+                // Nfer
+                if (vkey == (int)VirtualKeys.Nfer) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"NferKey Pressed");
+                    if (nferKeyState == SpecialKeyState.PRESSED) {
+                        // 無変換キーが押下されている状態なら、シフト状態に遷移する
+                        nferKeyState = SpecialKeyState.SHIFTED;
+                        return;
+                    }
+                    if (nferKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
 
-                // RELEASED
-                alnumKeyState = SpecialKeyState.PRESSED;
-                return true;
-            } else {
-                if (alnumKeyState == SpecialKeyState.PRESSED) {
-                    // 英数キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                    alnumKeyState = SpecialKeyState.SHIFTED;
+                    // RELEASED
+                    nferKeyState = SpecialKeyState.PRESSED;
+                    return;
+                } else {
+                    if (nferKeyState == SpecialKeyState.PRESSED) {
+                        // 無変換キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                        nferKeyState = SpecialKeyState.SHIFTED;
+                    }
                 }
-            }
-            // Nfer
-            if (vkey == (int)VirtualKeys.Nfer) {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"NferKey Pressed");
-                if (nferKeyState == SpecialKeyState.PRESSED) {
-                    // 無変換キーが押下されている状態なら、シフト状態に遷移する
-                    nferKeyState = SpecialKeyState.SHIFTED;
-                    return true;
-                }
-                if (nferKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+                // Xfer
+                if (vkey == (int)VirtualKeys.Xfer) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"XferKey Pressed");
+                    if (xferKeyState == SpecialKeyState.PRESSED) {
+                        // 変換キーが押下されている状態なら、シフト状態に遷移する
+                        xferKeyState = SpecialKeyState.SHIFTED;
+                        return;
+                    }
+                    if (xferKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
 
-                // RELEASED
-                nferKeyState = SpecialKeyState.PRESSED;
-                return true;
-            } else {
-                if (nferKeyState == SpecialKeyState.PRESSED) {
-                    // 無変換キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                    nferKeyState = SpecialKeyState.SHIFTED;
+                    // RELEASED
+                    xferKeyState = SpecialKeyState.PRESSED;
+                    return;
+                } else {
+                    if (xferKeyState == SpecialKeyState.PRESSED) {
+                        // 変換キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                        xferKeyState = SpecialKeyState.SHIFTED;
+                    }
                 }
-            }
-            // Xfer
-            if (vkey == (int)VirtualKeys.Xfer) {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"XferKey Pressed");
-                if (xferKeyState == SpecialKeyState.PRESSED) {
-                    // 変換キーが押下されている状態なら、シフト状態に遷移する
-                    xferKeyState = SpecialKeyState.SHIFTED;
-                    return true;
-                }
-                if (xferKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
+                // Kana
+                if (vkey == (int)VirtualKeys.Hiragana) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"HiraganaKey Pressed");
+                    if (kanaKeyState == SpecialKeyState.PRESSED) {
+                        // かなキーが押下されている状態なら、シフト状態に遷移する
+                        kanaKeyState = SpecialKeyState.SHIFTED;
+                        return;
+                    }
+                    if (kanaKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
 
-                // RELEASED
-                xferKeyState = SpecialKeyState.PRESSED;
-                return true;
-            } else {
-                if (xferKeyState == SpecialKeyState.PRESSED) {
-                    // 変換キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                    xferKeyState = SpecialKeyState.SHIFTED;
+                    // RELEASED
+                    kanaKeyState = SpecialKeyState.PRESSED;
+                    return;
+                } else {
+                    if (kanaKeyState == SpecialKeyState.PRESSED) {
+                        // かなキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                        kanaKeyState = SpecialKeyState.SHIFTED;
+                    }
                 }
-            }
-            // Kana
-            if (vkey == (int)VirtualKeys.Hiragana) {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"HiraganaKey Pressed");
-                if (kanaKeyState == SpecialKeyState.PRESSED) {
-                    // かなキーが押下されている状態なら、シフト状態に遷移する
-                    kanaKeyState = SpecialKeyState.SHIFTED;
-                    return true;
+                if (Settings.LoggingDecKeyInfo) {
+                    logger.DebugH(() => $"spaceKeyState={spaceKeyState}");
+                    logger.DebugH(() => $"capsKeyState={capsKeyState}");
+                    logger.DebugH(() => $"alnumKeyState={alnumKeyState}");
+                    logger.DebugH(() => $"nferKeyState={nferKeyState}");
+                    logger.DebugH(() => $"xferKeyState={xferKeyState}");
+                    logger.DebugH(() => $"kanaKeyState={kanaKeyState}");
                 }
-                if (kanaKeyState == SpecialKeyState.SHIFTED) return true; // SHIFT状態なら何もしない
 
-                // RELEASED
-                kanaKeyState = SpecialKeyState.PRESSED;
-                return true;
-            } else {
-                if (kanaKeyState == SpecialKeyState.PRESSED) {
-                    // かなキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                    kanaKeyState = SpecialKeyState.SHIFTED;
-                }
+                normalInfoKeyDownResult = keyboardDownHandler(vkey);
             }
-            if (Settings.LoggingDecKeyInfo) {
-                logger.DebugH(() => $"spaceKeyState={spaceKeyState}");
-                logger.DebugH(() => $"capsKeyState={capsKeyState}");
-                logger.DebugH(() => $"alnumKeyState={alnumKeyState}");
-                logger.DebugH(() => $"nferKeyState={nferKeyState}");
-                logger.DebugH(() => $"xferKeyState={xferKeyState}");
-                logger.DebugH(() => $"kanaKeyState={kanaKeyState}");
-            }
-            bool result = keyboardDownHandler(vkey);
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={result}");
-            return result;
+
+            handleKeyDown();
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={normalInfoKeyDownResult}, vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
+            return normalInfoKeyDownResult;
         }
 
         /// <summary>キーボード押下時のハンドラ</summary>
@@ -363,7 +379,12 @@ namespace KanchokuWS
                 if (spaceKeyState == SpecialKeyState.SHIFTED) {
                     // SandS により Shift モードになっている場合は、SendInput で Shift down をエミュレートする
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS");
-                    result = SendInputVkeyWithMod?.Invoke(mod, (uint)vkey) ?? false;
+                    try {
+                        bHandlerBusy = true;
+                        result = SendInputVkeyWithMod?.Invoke(mod, (uint)vkey) ?? false;
+                    } finally {
+                        bHandlerBusy = false;
+                    }
                 }
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-A: result={result}");
                 return result;
@@ -376,7 +397,7 @@ namespace KanchokuWS
 
             // どうやら KeyboardHook で CallNextHookEx を呼ばないと次のキー入力の処理に移らないみたいだが、
             // 将来必要になるかもしれないので、下記処理を残しておく
-            if (busyFlag) {
+            if (bHandlerBusy) {
                 if (vkeyQueue.Count < vkeyQueueMaxSize) {
                     vkeyQueue.Enqueue(vkey);
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
@@ -393,8 +414,6 @@ namespace KanchokuWS
                 kanchokuCode = vkeyQueue.Dequeue();
             }
         }
-
-        private bool busyFlag = false;
 
         private const int vkeyQueueMaxSize = 4;
 
@@ -469,7 +488,13 @@ namespace KanchokuWS
                 }
             }
             // キーアップ時はなにもしない
-            result = OnKeyUp?.Invoke(vkey, extraInfo) ?? false;
+            try {
+                bHandlerBusy = true;
+                //result = OnKeyUp?.Invoke(vkey, extraInfo) ?? false;
+                result = normalInfoKeyDownResult;
+            } finally {
+                bHandlerBusy = false;
+            }
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={result}");
             return result;
         }
@@ -477,7 +502,7 @@ namespace KanchokuWS
         private bool invokeHandler(int kanchokuCode, uint mod)
         {
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), mod={mod:x}H({mod})");
-            busyFlag = true;
+            bHandlerBusy = true;
             try {
                 switch (kanchokuCode) {
                     case DecoderKeys.TOGGLE_DECKEY:
@@ -504,7 +529,7 @@ namespace KanchokuWS
                         return false;
                 }
             } finally {
-                busyFlag = false;
+                bHandlerBusy = false;
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE");
             }
         }
