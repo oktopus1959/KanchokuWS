@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Utils;
 
 namespace KanchokuWS
 {
@@ -10,6 +11,8 @@ namespace KanchokuWS
     /// </summary>
     public static class KeyboardHook
     {
+        private static Logger logger = Logger.GetLogger();
+
         private const int WH_KEYBOARD_LL = 0x000D;
         private const int WM_KEYDOWN = 0x0100;
         private const int WM_KEYUP = 0x0101;
@@ -61,9 +64,9 @@ namespace KanchokuWS
         private static IntPtr hookId = IntPtr.Zero;
         #endregion
 
-        public delegate bool DelegateOnKeyDownEvent(int vkey, int extraInfo);
+        public delegate bool DelegateOnKeyDownEvent(int vkey, int scanCode, int extraInfo);
 
-        public delegate bool DelegateOnKeyUpEvent(int vkey, int extraInfo);
+        public delegate bool DelegateOnKeyUpEvent(int vkey, int scanCode, int extraInfo);
 
         public static DelegateOnKeyDownEvent OnKeyDownEvent { get; set; }
 
@@ -106,15 +109,17 @@ namespace KanchokuWS
         {
             if (nCode >= 0 && (wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN)) {
                 var kb = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"\nKeyDown: vkCode={kb.vkCode:x}H({kb.vkCode}), Scan={kb.scanCode:x}({kb.scanCode}), flag={kb.flags:x}, time={kb.time}, extraInfo={kb.dwExtraInfo}");
                 var vkCode = (int)kb.vkCode;
-                if (OnKeyDownEvent?.Invoke(vkCode, (int)kb.dwExtraInfo) ?? false) {
+                if (OnKeyDownEvent?.Invoke(vkCode, (int)kb.scanCode, (int)kb.dwExtraInfo) ?? false) {
                     // 呼び出し先で処理が行われたので、システム側ではキー入力を破棄
                     return IntPtrDone;
                 }
             } else if (nCode >= 0 && (wParam == (IntPtr)WM_KEYUP || wParam == (IntPtr)WM_SYSKEYUP)) {
                 var kb = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"\nKeyUp: vkCode={kb.vkCode:x}H({kb.vkCode}), Scan={kb.scanCode:x}({kb.scanCode}), flag={kb.flags:x}, time={kb.time}, extraInfo={kb.dwExtraInfo}");
                 var vkCode = (int)kb.vkCode;
-                if (OnKeyUpEvent?.Invoke(vkCode, (int)kb.dwExtraInfo) ?? false) {
+                if (OnKeyUpEvent?.Invoke(vkCode, (int)kb.scanCode, (int)kb.dwExtraInfo) ?? false) {
                     // 呼び出し先で処理が行われたので、システム側ではキー入力を破棄
                     return IntPtrDone;
                 }

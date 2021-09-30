@@ -187,7 +187,7 @@ namespace KanchokuWS
         {
             leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
             rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"bUp={bUp}, leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
 
             if (bUp && (leftCtrl || rightCtrl)) {
                 // 両方一諸に上げる
@@ -229,7 +229,7 @@ namespace KanchokuWS
         /// <param name="prevRightCtrl"></param>
         private int revertCtrlKeyInputs(INPUT[] inputs, int idx, bool bUp, bool prevLeftCtrl, bool prevRightCtrl)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, prevLeftCtrl={prevLeftCtrl}, prevRightCtrl={prevRightCtrl}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"bUp={bUp}, prevLeftCtrl={prevLeftCtrl}, prevRightCtrl={prevRightCtrl}");
 
             if (prevLeftCtrl && bUp) {
                 setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
@@ -258,7 +258,7 @@ namespace KanchokuWS
         //    int idx = upDownCtrlKeyInputs(inputs, 0, bUp, out leftCtrl, out rightCtrl);
         //    if (idx > 0) {
         //        SendInput((uint)idx, inputs, Marshal.SizeOf(typeof(INPUT)));
-        //        if (Settings.LoggingDecKeyInfo) logger.InfoH($"Ctrl Up/Down and Wait {waitUpMs} millisec");
+        //        if (Settings.LoggingDecKeyInfo) logger.Info($"Ctrl Up/Down and Wait {waitUpMs} millisec");
         //        if (waitUpMs > 0) {
         //            Task.Delay(waitUpMs).Wait();            // やはりこれが無いと Ctrlが有効なままBSが渡ったりする
         //        }
@@ -288,7 +288,7 @@ namespace KanchokuWS
         //    if (idx > 0) {
         //        SendInput((uint)idx, inputs, Marshal.SizeOf(typeof(INPUT)));
         //        int waitDownMs = (ActiveWinSettings?.CtrlDownWaitMillisec)._value(-1)._geZeroOr(Settings.CtrlKeyDownGuardMillisec);
-        //        if (Settings.LoggingDecKeyInfo) logger.InfoH($"Revert Ctrl and Wait {waitDownMs} millisec");
+        //        if (Settings.LoggingDecKeyInfo) logger.Info($"Revert Ctrl and Wait {waitDownMs} millisec");
         //        if (waitDownMs > 0) {
         //            Task.Delay(waitDownMs).Wait();
         //        }
@@ -317,7 +317,7 @@ namespace KanchokuWS
         {
             leftShift = (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0;
             rightShift = (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, leftShift={leftShift}, rightShift={rightShift}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"bUp={bUp}, leftShift={leftShift}, rightShift={rightShift}");
 
             if (bUp && (leftShift || rightShift)) {
                 // 両方一諸に上げる
@@ -359,7 +359,7 @@ namespace KanchokuWS
         /// <param name="prevRightShift"></param>
         private int revertShiftKeyInputs(INPUT[] inputs, int idx, bool bUp, bool prevLeftShift, bool prevRightShift)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, prevLeftShift={prevLeftShift}, prevRightShift={prevRightShift}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"bUp={bUp}, prevLeftShift={prevLeftShift}, prevRightShift={prevRightShift}");
 
             if (prevLeftShift && bUp) {
                 setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
@@ -406,7 +406,7 @@ namespace KanchokuWS
 
         private void sendInputsWithHandlingDeckey(uint len, INPUT[] inputs, uint vkey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: len={len}, vkey={vkey}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: len={len}, vkey={vkey}");
 
             if (len > 0) SendInput(len, inputs, Marshal.SizeOf(typeof(INPUT)));
 
@@ -422,7 +422,7 @@ namespace KanchokuWS
         public void SendString(char[] str, int strLen, int numBS)
         {
             bool loggingFlag = Settings.LoggingDecKeyInfo;
-            if (loggingFlag) logger.InfoH($"CALLED: str={(str._isEmpty() ? "" : new string(str, 0, strLen._lowLimit(0)))}, numBS={numBS}");
+            if (loggingFlag) logger.Info($"CALLED: str={(str._isEmpty() ? "" : new string(str, 0, strLen._lowLimit(0)))}, numBS={numBS}");
 
             if (numBS < 0) numBS = 0;
             if (strLen < 0) strLen = 0;
@@ -437,22 +437,22 @@ namespace KanchokuWS
 
             // Ctrl上げ
             idx = upCtrlKeyInputs(inputs, idx, out leftCtrl, out rightCtrl);
-            if (loggingFlag) logger.InfoH($"upCtrl: idx={idx}");
+            if (loggingFlag) logger.Info($"upCtrl: idx={idx}");
             //sendInputUpCtrlKey(out leftCtrl, out rightCtrl);      // StikyNote など、Waitを入れても状況が変わらない
 
             // Backspace
             for (int i = 0; i < numBS; ++i) {
                 idx = setVkeyInputs(VK_BACK, inputs, idx);
             }
-            if (loggingFlag) logger.InfoH($"bs: idx={idx}");
+            if (loggingFlag) logger.Info($"bs: idx={idx}");
 
             // 文字列
             idx = setStringInputs(str, strLen, inputs, idx);
-            if (loggingFlag) logger.InfoH($"str: idx={idx}");
+            if (loggingFlag) logger.Info($"str: idx={idx}");
 
             // Ctrl戻し
             idx = revertCtrlKeyInputs(inputs, idx, true, leftCtrl, rightCtrl);
-            if (loggingFlag) logger.InfoH($"revert: idx={idx}");
+            if (loggingFlag) logger.Info($"revert: idx={idx}");
 
             // 送出
             sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
@@ -467,9 +467,9 @@ namespace KanchokuWS
         public void SendVKeyCombo(uint modifier, uint vkey, int n)
         {
             bool loggingFlag = Settings.LoggingDecKeyInfo;
-            if (loggingFlag) logger.InfoH($"CALLED: modifier={modifier:x}H, vkey={vkey:x}H, numKeys={n}");
+            if (loggingFlag) logger.Info($"CALLED: modifier={modifier:x}H, vkey={vkey:x}H, numKeys={n}");
             if (syncPostVkey.BusyCheck()) {
-                if (loggingFlag) logger.InfoH($"IGNORED: numKeys={n}");
+                if (loggingFlag) logger.Info($"IGNORED: numKeys={n}");
                 return;
             }
             using (syncPostVkey) {
@@ -513,7 +513,7 @@ namespace KanchokuWS
         /// <param name="n">キーダウンの数</param>
         //public void SendVirtualKey(uint vkey, int n)
         //{
-        //    if (Settings.LoggingDecKeyInfo) logger.InfoH($"vkey={vkey:x}H, n={n}");
+        //    if (Settings.LoggingDecKeyInfo) logger.Info($"vkey={vkey:x}H, n={n}");
 
         //    var inputs = new INPUT[n * 2];
 
@@ -535,7 +535,7 @@ namespace KanchokuWS
         /// </summary>
         public void SendStringViaClipboardIfNeeded(char[] str, int numBS)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}");
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}");
 
             if (ActiveWinHandle != IntPtr.Zero && ((str._notEmpty() && str[0] != 0) || numBS > 0)) {
                 int len = str._isEmpty() ? 0 : str._findIndex(x => x == 0);
@@ -550,7 +550,7 @@ namespace KanchokuWS
                     SendString(null, 0, numBS);
                     if (numBS > 0 && Settings.PreWmCharGuardMillisec > 0) {
                         int waitMs = (int)(Math.Pow(numBS, Settings.ReductionExponet._lowLimit(0.5)) * Settings.PreWmCharGuardMillisec);
-                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
+                        if (Settings.LoggingDecKeyInfo) logger.Info(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
                         Helper.WaitMilliSeconds(waitMs);
                     }
                     SendVKeyCombo(VirtualKeys.CtrlV_VKeyCombo.modifier, VirtualKeys.CtrlV_VKeyCombo.vkey, 1);
@@ -670,7 +670,7 @@ namespace KanchokuWS
                 if (caretMargin != null) {
                     GUIThreadInfo.RECT rect;
                     guiThreadInfo.GetForegroundWindowRect(out rect);
-                    logger.InfoH($"caretPos=(X:{ActiveWinCaretPos.X}, Y:{ActiveWinCaretPos.Y}), " +
+                    logger.Info($"caretPos=(X:{ActiveWinCaretPos.X}, Y:{ActiveWinCaretPos.Y}), " +
                         $"validCaretMargin=({caretMargin.Select(m => m.ToString())._join(",")}), " +
                         $"WinRect=(L:{rect.iLeft}, T:{rect.iTop}, R:{rect.iRight}, B:{rect.iBottom}), " +
                         $"validWinRect=(L:{rect.iLeft + caretMargin._getNth(2)}, " +
@@ -680,11 +680,11 @@ namespace KanchokuWS
                 }
                 var caretOffset = ActiveWinSettings?.CaretOffset;
                 if (caretOffset != null) {
-                    logger.InfoH($"caretOffset=({caretOffset.Select(m => m.ToString())._join(",")})");
+                    logger.Info($"caretOffset=({caretOffset.Select(m => m.ToString())._join(",")})");
                 }
                 var vkbFixedPos = ActiveWinSettings?.VkbFixedPos;
                 if (vkbFixedPos != null) {
-                    logger.InfoH($"vkbFixedPos=({vkbFixedPos.Select(m => m.ToString())._join(",")})");
+                    logger.Info($"vkbFixedPos=({vkbFixedPos.Select(m => m.ToString())._join(",")})");
                 }
             }
         }

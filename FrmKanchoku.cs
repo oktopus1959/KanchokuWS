@@ -997,10 +997,10 @@ namespace KanchokuWS
                 || deckey >= DecoderKeys.CTRL_FUNC_DECKEY_END && deckey < DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START
                 || deckey >= DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_END) {
 
-                if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET WINDOW");
+                if (Settings.LoggingDecKeyInfo) logger.Info($"TARGET WINDOW");
                 var combo = VirtualKeys.GetVKeyComboFromDecKey(deckey);
                 if (combo != null) {
-                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"SEND: combo.modifier={combo.Value.modifier:x}H({combo.Value.modifier}), combo.vkey={combo.Value.vkey:x}H({combo.Value.vkey}), ctrl={(combo.Value.modifier & KeyModifiers.MOD_CONTROL) != 0}, mod={mod:x}H({mod})");
+                    if (Settings.LoggingDecKeyInfo) logger.Info($"SEND: combo.modifier={combo.Value.modifier:x}H({combo.Value.modifier}), combo.vkey={combo.Value.vkey:x}H({combo.Value.vkey}), ctrl={(combo.Value.modifier & KeyModifiers.MOD_CONTROL) != 0}, mod={mod:x}H({mod})");
                     //if (deckey < DecoderKeys.FUNCTIONAL_DECKEY_ID_BASE) {
                     //    actWinHandler.SendVirtualKey(combo.Value.vkey, 1);
                     //} else {

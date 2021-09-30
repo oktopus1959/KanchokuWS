@@ -74,6 +74,11 @@ namespace KanchokuWS
         /// <summary>デコーダが ON か</summary>
         public DelegateIsDecoderActivated IsDecoderActivated { get; set; }
 
+        private bool isDecoderActivated()
+        {
+            return IsDecoderActivated?.Invoke() ?? false;
+        }
+
         /// <summary>デコーダ機能のディスパッチ</summary>
         public DelegateDecoderFuncDispatcher FuncDispatcher { get; set; }
 
@@ -135,11 +140,18 @@ namespace KanchokuWS
 
         private const int vkeyNum = 256;
 
-        private bool isEffectiveVkey(int vkey, int extraInfo)
+        /// <summary>やまぶきRが送ってくる SendInput の scanCode </summary>
+        private const int YamabukiRscanCode = 0x7f;
+
+        private bool isEffectiveVkey(int vkey, int scanCode, int extraInfo)
         {
             // 0xa0 = LSHIFT, 0xa5 = RMENU, 0xf3 = Zenkaku, 0xf4 = Kanji
-            return (vkey >= 0 && vkey < 0xa0 || vkey >= 0xa6 && vkey < 0xf3 || vkey >= 0xf5 && vkey < vkeyNum) && extraInfo != ActiveWindowHandler.MyMagicNumber;
+            return
+                extraInfo != ActiveWindowHandler.MyMagicNumber &&
+                scanCode != 0 && scanCode != YamabukiRscanCode &&
+                ((vkey >= 0 && vkey < 0xa0) || (vkey >= 0xa6 && vkey < 0xf3) || (vkey >= 0xf5 && vkey < vkeyNum));
         }
+
         private bool ctrlKeyPressed()
         {
             return (Settings.UseLeftControlToConversion && (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0)
@@ -196,20 +208,20 @@ namespace KanchokuWS
         /// <param name="vkey"></param>
         /// <param name="extraInfo"></param>
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
-        private bool onKeyboardDownHandler(int vkey, int extraInfo)
+        private bool onKeyboardDownHandler(int vkey, int scanCode, int extraInfo)
         {
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"\nENTER: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
 
             normalInfoKeyDownResult = false;
 
             void handleKeyDown()
             {
-                if (!isEffectiveVkey(vkey, extraInfo)) {
+                if (!isEffectiveVkey(vkey, scanCode, extraInfo)) {
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"not EffectiveVkey");
                     return;
                 }
                 normalInfoKeyDownResult = true;
-                bool decoderActivated = IsDecoderActivated?.Invoke() ?? false;
+                bool decoderActivated = isDecoderActivated();
                 if ((Settings.SandSEnabled && decoderActivated) || (Settings.SandSEnabledWhenOffMode && !decoderActivated)) {
                     if (vkey == (int)Keys.Space) {
                         if (spaceKeyState == SpecialKeyState.PRESSED) {
@@ -423,10 +435,10 @@ namespace KanchokuWS
         /// <param name="vkey"></param>
         /// <param name="extraInfo"></param>
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
-        private bool onKeyboardUpHandler(int vkey, int extraInfo)
+        private bool onKeyboardUpHandler(int vkey, int scanCode, int extraInfo)
         {
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"\nENTER: vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
-            if (!isEffectiveVkey(vkey, extraInfo)) {
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
+            if (!isEffectiveVkey(vkey, scanCode, extraInfo)) {
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result=False, not EffectiveVkey");
                 return false;
             }
