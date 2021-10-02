@@ -304,5 +304,10 @@ namespace KanchokuWS
         {
             frmMain.ReadMazegakiWikipediaDic();
         }
+
+        private void ReloadSettings_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMain.ReloadSettingsAndDefFiles();
+        }
     }
 }

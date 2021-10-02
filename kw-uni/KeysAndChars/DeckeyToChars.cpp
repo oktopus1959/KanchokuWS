@@ -45,7 +45,7 @@ int DeckeyToChars::CreateSingleton(const tstring& filePath) {
         } else {
             // エラーメッセージを表示
             LOG_ERROR(_T("Can't read chars def file: %s"), filePath.c_str());
-            ERROR_HANDLER->Warn(utils::format(_T("ホットキー⇒文字定義ファイル(%s)が開けません"), filePath.c_str()));
+            ERROR_HANDLER->Warn(utils::format(_T("漢直キー⇒文字定義ファイル(%s)が開けません"), filePath.c_str()));
         }
     }
     LOG_INFO(_T("LEAVE"));

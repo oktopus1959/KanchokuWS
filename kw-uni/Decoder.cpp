@@ -95,9 +95,6 @@ public:
         // Deckey から文字への変換インスタンスの構築
         createDeckeyToCharsInstance();
 
-        // ストローク木の構築
-        createStrokeTree();
-
         // ここで機能呼び出しキーの再割り当て
         reloadSettings(params->inOutData);
 
@@ -134,12 +131,27 @@ public:
 
         SETTINGS.reset(new Settings);
 
-        reloadSettings(settings);
+        // settings のロード
+        loadSettings(settings);
 
         LOG_INFO(_T("LEAVE"));
     }
     
+    // settings の再ロードとストローク木の再構築
     void reloadSettings(const wstring & settings) {
+        LOG_INFO(_T("ENTER: settings=%s"), settings.c_str());
+        
+        // ストローク木の構築
+        createStrokeTree();
+
+        // settings の再ロード
+        loadSettings(settings);
+
+        LOG_INFO(_T("LEAVE"));
+    }
+   
+    // settings のロード
+    void loadSettings(const wstring & settings) {
         LOG_INFO(_T("ENTER: settings=%s"), settings.c_str());
         
         std::map<tstring, tstring> key_vals;
@@ -200,6 +212,11 @@ public:
         }
 
         LOG_INFO(_T("LEAVE"));
+    }
+
+    // ストローク木の再構築と
+    void RecreateStrokeTree() {
+
     }
 
     // 初期打鍵表(下端機能キー以外は空白)の作成

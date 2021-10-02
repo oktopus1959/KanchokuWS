@@ -100,20 +100,8 @@ namespace KanchokuWS
             // 設定ファイルの読み込み
             Settings.ReadIniFile();
 
-            // 文字定義ファイルの読み込み
-            if (Settings.CharsDefFile._notEmpty()) {
-                DecoderKeyToChar.ReadCharsDefFile(Settings.CharsDefFile);
-            }
-
-            // 追加の修飾キー定義ファイルの読み込み
-            if (Settings.ModConversionFile._notEmpty()) {
-                VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
-            }
-
-            // 漢字読みファイルの読み込み
-            if (Settings.KanjiYomiFile._notEmpty()) {
-                KanjiYomiTable.ReadKanjiYomiFile(Settings.KanjiYomiFile);
-            }
+            // 各種定義ファイルの読み込み
+            ReadDefFiles();
 
             // 仮想鍵盤フォームの作成
             frmVkb = new FrmVirtualKeyboard(this);
@@ -143,6 +131,25 @@ namespace KanchokuWS
 
             // キーボードイベントのディスパッチ開始
             initializeKeyboardEventDispatcher();
+        }
+
+        /// <summary> 各種定義ファイルの読み込み </summary>
+        public void ReadDefFiles()
+        {
+            // 文字定義ファイルの読み込み
+            if (Settings.CharsDefFile._notEmpty()) {
+                DecoderKeyToChar.ReadCharsDefFile(Settings.CharsDefFile);
+            }
+
+            // 追加の修飾キー定義ファイルの読み込み
+            if (Settings.ModConversionFile._notEmpty()) {
+                VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
+            }
+
+            // 漢字読みファイルの読み込み
+            if (Settings.KanjiYomiFile._notEmpty()) {
+                KanjiYomiTable.ReadKanjiYomiFile(Settings.KanjiYomiFile);
+            }
         }
 
         //------------------------------------------------------------------
@@ -1142,6 +1149,14 @@ namespace KanchokuWS
             }
         }
 
+        // 設定ファイルと各種定義ファイルをリロードする
+        public void ReloadSettingsAndDefFiles()
+        {
+            Settings.ReadIniFile();
+            ReadDefFiles();
+            ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+        }
+
         private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ReloadBushuDic();
@@ -1150,6 +1165,11 @@ namespace KanchokuWS
         private void ReadMazeWikipediaDic_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ReadMazegakiWikipediaDic();
+        }
+
+        private void ReloadSettings_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ReloadSettingsAndDefFiles();
         }
     }
 

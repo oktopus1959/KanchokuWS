@@ -33,6 +33,8 @@ namespace KanchokuWS
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.Settings_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Read_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ReadBushuDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ReadMazeWikipediaDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.Restart_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RestartWithSave_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,8 +42,7 @@ namespace KanchokuWS
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.Exit_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.ReadBushuDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ReadMazeWikipediaDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ReloadSettings_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -79,11 +80,26 @@ namespace KanchokuWS
             // Read_ToolStripMenuItem
             // 
             this.Read_ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ReloadSettings_ToolStripMenuItem,
             this.ReadBushuDic_ToolStripMenuItem,
             this.ReadMazeWikipediaDic_ToolStripMenuItem});
             this.Read_ToolStripMenuItem.Name = "Read_ToolStripMenuItem";
             this.Read_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.Read_ToolStripMenuItem.Text = "辞書読込";
+            this.Read_ToolStripMenuItem.Text = "再読込";
+            // 
+            // ReadBushuDic_ToolStripMenuItem
+            // 
+            this.ReadBushuDic_ToolStripMenuItem.Name = "ReadBushuDic_ToolStripMenuItem";
+            this.ReadBushuDic_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.ReadBushuDic_ToolStripMenuItem.Text = "部首合成辞書再読込";
+            this.ReadBushuDic_ToolStripMenuItem.Click += new System.EventHandler(this.ReadBushuDic_ToolStripMenuItem_Click);
+            // 
+            // ReadMazeWikipediaDic_ToolStripMenuItem
+            // 
+            this.ReadMazeWikipediaDic_ToolStripMenuItem.Name = "ReadMazeWikipediaDic_ToolStripMenuItem";
+            this.ReadMazeWikipediaDic_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.ReadMazeWikipediaDic_ToolStripMenuItem.Text = "Wikipedia交ぜ書き辞書読込";
+            this.ReadMazeWikipediaDic_ToolStripMenuItem.Click += new System.EventHandler(this.ReadMazeWikipediaDic_ToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -129,19 +145,12 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // ReadBushuDic_ToolStripMenuItem
+            // ReloadSettings_ToolStripMenuItem
             // 
-            this.ReadBushuDic_ToolStripMenuItem.Name = "ReadBushuDic_ToolStripMenuItem";
-            this.ReadBushuDic_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-            this.ReadBushuDic_ToolStripMenuItem.Text = "部首合成辞書再読込";
-            this.ReadBushuDic_ToolStripMenuItem.Click += new System.EventHandler(this.ReadBushuDic_ToolStripMenuItem_Click);
-            // 
-            // ReadMazeWikipediaDic_ToolStripMenuItem
-            // 
-            this.ReadMazeWikipediaDic_ToolStripMenuItem.Name = "ReadMazeWikipediaDic_ToolStripMenuItem";
-            this.ReadMazeWikipediaDic_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-            this.ReadMazeWikipediaDic_ToolStripMenuItem.Text = "Wikipedia交ぜ書き辞書読込";
-            this.ReadMazeWikipediaDic_ToolStripMenuItem.Click += new System.EventHandler(this.ReadMazeWikipediaDic_ToolStripMenuItem_Click);
+            this.ReloadSettings_ToolStripMenuItem.Name = "ReloadSettings_ToolStripMenuItem";
+            this.ReloadSettings_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.ReloadSettings_ToolStripMenuItem.Text = "設定の再読込";
+            this.ReloadSettings_ToolStripMenuItem.Click += new System.EventHandler(this.ReloadSettings_ToolStripMenuItem_Click);
             // 
             // FrmModeMarker
             // 
@@ -177,5 +186,6 @@ namespace KanchokuWS
         private System.Windows.Forms.ToolStripMenuItem Read_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ReadBushuDic_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ReadMazeWikipediaDic_ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ReloadSettings_ToolStripMenuItem;
     }
 }

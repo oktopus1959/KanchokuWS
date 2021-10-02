@@ -359,14 +359,9 @@ namespace KanchokuWS
 
             checkerAll.Reinitialize();
 
-            // 追加の修飾キー定義ファイルの読み込み
-            if (Settings.ModConversionFile._notEmpty()) {
-                VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
-            }
-            // 漢字読みファイルの読み込み
-            if (Settings.KanjiYomiFile._notEmpty()) {
-                KanjiYomiTable.ReadKanjiYomiFile(Settings.KanjiYomiFile);
-            }
+            // 各種定義ファイルの読み込み
+            frmMain?.ReadDefFiles();
+
             frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
         }
 
