@@ -81,6 +81,7 @@ Windows 用の漢字直接入力ツールです。
     - [Ctrl-H や Ctrl-B,F,P,Nなどの特殊キーへの変換](#Ctrl-H-や-Ctrl-BFPNなどの特殊キーへの変換)
     - [Spaceキーによる Shift機能をサポート (SandS)](#Spaceキーによる-Shift機能をサポート-SandS)
     - [機能キーを修飾キーとして使う](#機能キーを修飾キーとして使う)
+    - [KeyboardHookMonitor](#KeyboardHookMonitor)
 - [既知のバグ](#既知のバグ)
 - [今後の機能追加予定(順不同)](#今後の機能追加予定順不同)
 - [引用元](#引用元)
@@ -1275,6 +1276,10 @@ Esc, Tab, BackSpace, Enter, Insert, Delete, Home, End, PageUp, PageDown, UpArrow
 ファイル名の変更やファイル内に記述した定義の修正を行った場合は、
 「再読込」をクリックするとそれらの変更・修正が反映されます。
 
+### KeyboardHookMonitor
+Keyboard のグローバルフックを仕掛け、採取したキーボード入力情報を表示するツールです。
+KanchokuWS の動作がおかしいと思ったときに使用してみてください。
+[こちら](https://github.com/oktopus1959/KeyboardHookMonitor#readme)に説明があります。
 
 ## 既知のバグ
 - 設定ダイアログを表示した状態で、アクティブウィンドウへの漢字入力ができなくなることがある
