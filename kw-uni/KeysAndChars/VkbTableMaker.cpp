@@ -134,8 +134,11 @@ namespace VkbTableMaker {
                 } else if (blk->isStringNode() || (depth == 0 && blk->isFunctionNode() && (dynamic_cast<MyCharNode*>(blk) || dynamic_cast<PrevCharNode*>(blk)))) {
                     wchar_t ch = 0;
                     if (blk->isStringNode()) {
-                        auto iter = charSet.find((wchar_t)blk->getString()[0]);
-                        if (iter != charSet.end()) ch = *iter;
+                        auto ms = blk->getString();
+                        if (ms.size() == 1) {
+                            auto iter = charSet.find((wchar_t)ms[0]);
+                            if (iter != charSet.end()) ch = *iter;
+                        }
                     } else {
                         ch = DECKEY_TO_CHARS->GetCharFromDeckey(i);
                     }
@@ -161,7 +164,7 @@ namespace VkbTableMaker {
     // 指定の文字配列を第1ストロークの位置に従って並べかえる
     // table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
     void ReorderByFirstStrokePosition(wchar_t* table, const wchar_t* targetChars) {
-        LOG_INFO(_T("CALLED"));
+        LOG_INFO(_T("CALLED: targetChars=%s"), targetChars);
         wstring orderedChars = targetChars;
         std::set<wchar_t> charSet(orderedChars.begin(), orderedChars.end());
         for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
@@ -173,7 +176,7 @@ namespace VkbTableMaker {
     // 指定の文字配列をストロークの位置に従って並べかえる
     // node: ストロークテーブルノード, table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
     void ReorderByStrokePosition(StrokeTableNode* node, wchar_t* table, const wstring& targetChars) {
-        LOG_INFO(_T("CALLED"));
+        LOG_INFO(_T("CALLED: targetChars=%s"), targetChars.c_str());
         std::set<wchar_t> charSet(targetChars.begin(), targetChars.end());
         for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
             table[i] = 0;
