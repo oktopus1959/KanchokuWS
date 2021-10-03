@@ -18,6 +18,8 @@
 #include "MyPrevChar.h"
 #include "VkbTableMaker.h"
 
+#define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
+
 namespace {
     DEFINE_NAMESPACE_LOGGER(StrokeTreeBuilder);
 
@@ -205,7 +207,7 @@ namespace {
             }
 
             if (!myGuideChars.empty()) {
-                LOG_INFOH(_T("DEFGUID: %s"), myGuideChars.c_str());
+                _LOG_DEBUGH(_T("DEFGUID: %s"), myGuideChars.c_str());
                 tblNode->MakeStrokeGuide(myGuideChars);
             }
 
@@ -215,7 +217,7 @@ namespace {
 
         void createNodePositionedByArrow(StrokeTableNode* tblNode, int prevNth, int idx) {
             int nextDepth = tblNode->depth() + 1;
-            LOG_INFOH(_T("CALLED: currentLine=%d, depth=%d, idx=%d, prevN=%d"), lineNumber, nextDepth, idx, prevNth);
+            _LOG_DEBUGH(_T("CALLED: currentLine=%d, depth=%d, idx=%d, prevN=%d"), lineNumber, nextDepth, idx, prevNth);
             Node* node = tblNode->getNth(idx);
             if (node && node->isStrokeTableNode()) {
                 createNodePositionedByArrowSub(dynamic_cast<StrokeTableNode*>(node), nextDepth, prevNth, idx);
@@ -301,19 +303,19 @@ namespace {
                     if (currentStr == _T("include")) {
                         readWordOrString();
                         filename = currentStr;
-                        LOG_INFOH(_T("INCLUDE: lineNum=%d, %s"), lineNumber + 1, filename.c_str());
+                        _LOG_DEBUGH(_T("INCLUDE: lineNum=%d, %s"), lineNumber + 1, filename.c_str());
                     } else if (currentStr == _T("define")) {
                         readWord();
                         if (!currentStr.empty()) {
                             wstring key = currentStr;
                             readWordOrString();
                             defines[key] = currentStr;
-                            LOG_INFOH(_T("DEFINE: lineNum=%d, %s=%s"), lineNumber + 1, key.c_str(), currentStr.c_str());
+                            _LOG_DEBUGH(_T("DEFINE: lineNum=%d, %s=%s"), lineNumber + 1, key.c_str(), currentStr.c_str());
                         }
                     } else if (currentStr == _T("strokePosition")) {
                         readWordOrString();
                         defines[_T("defguide")] = currentStr;
-                        LOG_INFOH(_T("StrokePosition: %s"), currentStr.c_str());
+                        _LOG_DEBUGH(_T("StrokePosition: %s"), currentStr.c_str());
                     }
                     currentStr.clear();
                     skipToEndOfLine();
@@ -490,7 +492,7 @@ namespace {
         }
 
         void readFile(wstring filename) {
-            LOG_INFOH(_T("INCLUDE: %s"), filename.c_str());
+            _LOG_DEBUGH(_T("INCLUDE: %s"), filename.c_str());
             auto reader = utils::IfstreamReader(utils::joinPath(SETTINGS->rootDir, filename));
             if (reader.success()) {
                 auto lines = reader.getAllLines();
@@ -526,7 +528,7 @@ DEFINE_CLASS_LOGGER(StrokeTableNode);
 
 // 機能の再割り当て
 void StrokeTableNode::AssignFucntion(const tstring& keys, const tstring& name) {
-    LOG_INFOH(_T("CALLED: keys=%s, name=%s"), keys.c_str(), name.c_str());
+    _LOG_DEBUGH(_T("CALLED: keys=%s, name=%s"), keys.c_str(), name.c_str());
 
     if (keys.empty()) return;
 
@@ -556,7 +558,7 @@ void StrokeTableNode::AssignFucntion(const tstring& keys, const tstring& name) {
             // 未割り当て、または機能ノードならばOK
             if (idx == keyCodes.size()) {
                 // 打鍵列の最後まで行った
-                LOG_INFOH(_T("RESET: depth=%d, key=%d, name=%s"), idx, key, name.c_str());
+                _LOG_DEBUGH(_T("RESET: depth=%d, key=%d, name=%s"), idx, key, name.c_str());
                 pNode->setNthChild(key, FunctionNodeManager::CreateFunctionNodeByName(name));
             }
             break;

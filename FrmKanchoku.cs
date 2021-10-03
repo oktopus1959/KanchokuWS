@@ -152,6 +152,23 @@ namespace KanchokuWS
             }
         }
 
+        /// <summary> 各種定義ファイルの読み込み </summary>
+        public void ReloadDefFiles()
+        {
+            // 各種定義ファイルの読み込み
+            ReadDefFiles();
+
+            ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+
+            // 初期打鍵表(下端機能キー以外は空白)の作成
+            MakeInitialVkbTable();
+
+            // 打鍵テーブルの作成
+            if (Settings.StrokeHelpFile._notEmpty()) {
+                frmVkb.MakeStrokeTables(Settings.StrokeHelpFile);
+            }
+        }
+
         //------------------------------------------------------------------
         /// <summary>
         /// Form のクローズ
@@ -891,7 +908,9 @@ namespace KanchokuWS
 
         private char[] candidateChars = null;
 
-        uint targetChar = 0;
+        private uint targetChar = 0;
+
+        private bool bPrevMultiStrokeChar = false;
 
         private void getTargetChar(int deckey)
         {
@@ -942,7 +961,10 @@ namespace KanchokuWS
                 }
                 return new string(decoderOutput.topString.Skip(pos).Take(tailPos - pos).ToArray());
             }
-            logger.Info(() => $"RomanStrokeGuide={bRomanStrokeGuideMode}, UpperRomanStrokeGuide={bUpperRomanStrokeGuideMode}, romanMode={bRomanMode}, Settings.UpperRomanStrokeGuide={Settings.UpperRomanStrokeGuide}, numBS={decoderOutput.numBackSpaces}, output={decoderOutput.outString._toString()}");
+            logger.Info(() =>
+                    $"RomanStrokeGuide={bRomanStrokeGuideMode}, UpperRomanStrokeGuide={bUpperRomanStrokeGuideMode}, romanMode={bRomanMode}, "
+                    + $"Settings.UpperRomanStrokeGuide={Settings.UpperRomanStrokeGuide}, numBS={decoderOutput.numBackSpaces}, "
+                    + $"output={decoderOutput.outString._toString()}, deckey={deckey}, prevMultiChar={bPrevMultiStrokeChar}");
             if (bRomanStrokeGuideMode ||
                 (bRomanMode && decoderOutput.numBackSpaces > 0) ||
                 ((Settings.UpperRomanStrokeGuide || bUpperRomanStrokeGuideMode) && decoderOutput.numBackSpaces == 0 && isUpperAlphabet(decoderOutput.outString[0]) && decoderOutput.outString[1] == 0)) {
@@ -971,7 +993,9 @@ namespace KanchokuWS
                 actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces);
 
                 // 仮想キーボードにヘルプや文字候補を表示
-                frmVkb.DrawVirtualKeyboardChars();
+                frmVkb.DrawVirtualKeyboardChars(Settings.ShowLastStrokeByDiffBackColor && !bPrevMultiStrokeChar ? unshiftDeckey(deckey) : -1);
+
+                bPrevMultiStrokeChar = decoderOutput.outString[0] == 0 && isNormalDeckey(deckey);
 
                 if (bRomanMode || bUpperRomanStrokeGuideMode) {
                     bRomanMode = false;
@@ -983,6 +1007,15 @@ namespace KanchokuWS
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE");
 
             return sendKeyFlag;
+        }
+        private bool isNormalDeckey(int deckey)
+        {
+            return deckey >= DecoderKeys.NORMAL_DECKEY_START && deckey < DecoderKeys.NORMAL_DECKEY_END;
+        }
+
+        private int unshiftDeckey(int deckey)
+        {
+            return deckey >= DecoderKeys.SHIFT_DECKEY_START && deckey < DecoderKeys.SHIFT_DECKEY_END ? deckey - DecoderKeys.SHIFT_DECKEY_START : deckey;
         }
 
         private void drawRomanMode(bool bRoman)
@@ -1153,8 +1186,8 @@ namespace KanchokuWS
         public void ReloadSettingsAndDefFiles()
         {
             Settings.ReadIniFile();
-            ReadDefFiles();
-            ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            ReloadDefFiles();
+            //ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
         }
 
         private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)

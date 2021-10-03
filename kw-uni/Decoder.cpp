@@ -96,7 +96,7 @@ public:
         createDeckeyToCharsInstance();
 
         // ここで機能呼び出しキーの再割り当て
-        reloadSettings(params->inOutData);
+        reloadSettings(params->inOutData, false);
 
         // 始状態
         startNode.reset(new StartNode());
@@ -138,9 +138,12 @@ public:
     }
     
     // settings の再ロードとストローク木の再構築
-    void reloadSettings(const wstring & settings) {
+    void reloadSettings(const wstring & settings, bool bPreLoad = true) {
         LOG_INFO(_T("ENTER: settings=%s"), settings.c_str());
         
+        // settings の事前ロード
+        if (bPreLoad) loadSettings(settings);
+
         // ストローク木の構築
         createStrokeTree();
 

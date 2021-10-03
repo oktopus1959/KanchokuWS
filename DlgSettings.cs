@@ -329,7 +329,10 @@ namespace KanchokuWS
 
             checkerBasic.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
-            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadDefFiles();
+
+            //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             //SystemHelper.ShowInfoMessageBox("設定しました");
             label_okResultBasic.Show();
@@ -359,10 +362,10 @@ namespace KanchokuWS
 
             checkerAll.Reinitialize();
 
-            // 各種定義ファイルの読み込み
-            frmMain?.ReadDefFiles();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadDefFiles();
 
-            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
         }
 
         private void button_basicClose_Click(object sender, EventArgs e)
@@ -483,7 +486,10 @@ namespace KanchokuWS
 
             checkerFontColor.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
-            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadDefFiles();
+
+            //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             label_okResultFontColor.Show();
 
@@ -651,7 +657,10 @@ namespace KanchokuWS
             //frmVkb?.SetNormalCellBackColors();
             frmMode?.ShowImmediately();
 
-            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadDefFiles();
+
+            //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             label_okResultAdvanced.Show();
         }
@@ -734,8 +743,11 @@ namespace KanchokuWS
             //frmVkb?.SetNormalCellBackColors();
             frmMode?.ShowImmediately();
 
-            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
-            frmMain?.MakeInitialVkbTable();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadDefFiles();
+
+            //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            //frmMain?.MakeInitialVkbTable();
 
             label_okResultKeyAssign.Show();
         }
@@ -1025,7 +1037,10 @@ namespace KanchokuWS
             readSettings_tabHistory();
             checkerHistory.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
-            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadDefFiles();
+
+            //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             label_okResultHist.Show();
         }
@@ -1101,7 +1116,10 @@ namespace KanchokuWS
             readSettings_tabMiscSettings();
             checkerMiscSettings.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
-            frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadDefFiles();
+
+            //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             label_okResultMisc.Show();
         }

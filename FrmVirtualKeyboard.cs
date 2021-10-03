@@ -635,6 +635,7 @@ namespace KanchokuWS
             var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(defFile);
             if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"ENTER: filePath={filePath}");
             if (Helper.FileExists(filePath)) {
+                StrokeTables.Clear();
                 try {
                     foreach (var line in System.IO.File.ReadAllLines(filePath)) {
                         var items = line.Trim()._reReplace("  +", " ")._split(' ');
@@ -750,7 +751,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------
         /// <summary> 第1打鍵待ち状態の仮想キーボード表示 </summary>
-        public void DrawInitailVkb()
+        public void DrawInitailVkb(int lastDeckey = -1)
         {
             if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"CALLED: EffectiveCount={Settings.VirtualKeyboardShowStrokeCountEffective}");
             if (Settings.VirtualKeyboardShowStrokeCountEffective == 1) {
@@ -759,7 +760,7 @@ namespace KanchokuWS
                 } else {
                     var def = StrokeTables[selectedTable._lowLimit(0) % StrokeTables.Count];
                     if (def.Faces == null) {
-                        drawNormalVkb(def.CharOrKeys);
+                        drawNormalVkb(def.CharOrKeys, lastDeckey);
                     } else {
                         drawVkb5x10Table(def);
                     }
@@ -784,11 +785,11 @@ namespace KanchokuWS
             return charOrKeys;
         }
 
-        private void drawNormalVkb(string[] strokeTable)
+        private void drawNormalVkb(string[] strokeTable, int lastDeckey = -1)
         {
             resetVkbControls("", VkbNormalWidth, VkbPictureBoxHeight_Normal, VkbCenterBoxHeight_Normal);
             using (PictureBoxDrawer drawer = new PictureBoxDrawer(pictureBox_Main)) {
-                drawNormalVkbFrame(drawer.Gfx);
+                drawNormalVkbFrame(drawer.Gfx, lastDeckey);
                 drawCenterChars(drawer.Gfx);
                 drawNormalVkbStrings(drawer.Gfx, i => strokeTable[i], true);
             }
@@ -848,11 +849,11 @@ namespace KanchokuWS
         }
 
         /// <summary> 仮想キーボードにヘルプや文字候補を表示 </summary>
-        public void DrawVirtualKeyboardChars()
+        public void DrawVirtualKeyboardChars(int lastDeckey = -1)
         {
             var decoderOutput = frmMain.DecoderOutput;
 
-            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"CALLED: layout={decoderOutput.layout}, center={CommonState.CenterString}, nextDeckey={decoderOutput.nextStrokeDeckey}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"CALLED: layout={decoderOutput.layout}, center={CommonState.CenterString}, strokeCount={decoderOutput.strokeCount}, nextDeckey={decoderOutput.nextStrokeDeckey}, lastDeckey={lastDeckey}");
 
             if (decoderOutput.topString._isEmpty()) return;
 
@@ -915,7 +916,7 @@ namespace KanchokuWS
                     using (PictureBoxDrawer drawer = new PictureBoxDrawer(pictureBox_Main)) {
                         topTextBox.Show();
                         SetTopText(topText, true);
-                        drawNormalVkbFrame(drawer.Gfx, decoderOutput.nextStrokeDeckey);
+                        drawNormalVkbFrame(drawer.Gfx, decoderOutput.nextStrokeDeckey._geZeroOr(lastDeckey));
                         drawCenterCharsWithColor(drawer.Gfx, decoderOutput);
                         drawNormalVkbStrings(drawer.Gfx, i => makeMultiCharStr(decoderOutput.faceStrings, i * 2), false);
                     }
@@ -933,7 +934,7 @@ namespace KanchokuWS
             }
 
             // 初期状態に戻す
-            DrawInitailVkb();
+            DrawInitailVkb(lastDeckey);
             SetTopText(topText, true);
         }
 

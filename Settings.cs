@@ -398,6 +398,9 @@ namespace KanchokuWS
         // ローマ字読みによる打鍵ガイドを有効にするか
         public static bool UpperRomanStrokeGuide { get; set; } = false;
 
+        // 前打鍵位置の背景色を変えて表示するか
+        public static bool ShowLastStrokeByDiffBackColor { get; set; } = false;
+
         //------------------------------------------------------------------------------
         // ウィンドウClassNameごとの設定
         public class WindowsClassSettings
@@ -722,6 +725,7 @@ namespace KanchokuWS
             SandSEnabled = GetString("sandsEnabled")._parseBool(false);                         // SandS を有効にするか
             SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
             UpperRomanStrokeGuide = GetString("upperRomanStrokeGuide")._parseBool(false);       // ローマ字読みによるストロークガイドを有効にするか
+            ShowLastStrokeByDiffBackColor = GetString("showLastStrokeByDiffBackColor")._parseBool(false); // 前打鍵位置の背景色を変えて表示するか
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定
