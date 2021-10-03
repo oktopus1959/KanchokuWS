@@ -236,10 +236,10 @@ namespace KanchokuWS
                             spaceKeyState = SpecialKeyState.PRESSED;
                             return;
                         }
-                        if (shiftKeyPressed(false)) {
-                            spaceKeyState = SpecialKeyState.SHIFTED;
-                            return;
-                        }
+                        //if (shiftKeyPressed(false)) {
+                        //    spaceKeyState = SpecialKeyState.SHIFTED;
+                        //    return;
+                        //}
                         // 上記以外はスペース入力として扱う
                     } else {
                         if (spaceKeyState == SpecialKeyState.PRESSED) {
