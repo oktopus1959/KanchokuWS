@@ -224,8 +224,9 @@ namespace KanchokuWS
                 bool decoderActivated = isDecoderActivated();
                 if ((Settings.SandSEnabled && decoderActivated) || (Settings.SandSEnabledWhenOffMode && !decoderActivated)) {
                     if (vkey == (int)Keys.Space) {
+                        // スペースキーが押された
                         if (spaceKeyState == SpecialKeyState.PRESSED) {
-                            // スペースキーが押下されている状態なら、シフト状態に遷移する
+                            // すでにスペースキーが押下されている状態なら、シフト状態に遷移する
                             spaceKeyState = SpecialKeyState.SHIFTED;
                             return;
                         }
@@ -236,10 +237,11 @@ namespace KanchokuWS
                             spaceKeyState = SpecialKeyState.PRESSED;
                             return;
                         }
-                        //if (shiftKeyPressed(false)) {
-                        //    spaceKeyState = SpecialKeyState.SHIFTED;
-                        //    return;
-                        //}
+                        // やはり Shift押下時のSpaceは、Shiftとして扱う
+                        if (shiftKeyPressed(false)) {
+                            spaceKeyState = SpecialKeyState.SHIFTED;
+                            return;
+                        }
                         // 上記以外はスペース入力として扱う
                     } else {
                         if (spaceKeyState == SpecialKeyState.PRESSED) {
