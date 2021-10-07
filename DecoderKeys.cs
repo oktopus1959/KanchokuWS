@@ -91,6 +91,7 @@ namespace KanchokuWS
 
         // スペースキーに割り当てられたDecKeyId
         public const int STROKE_SPACE_DECKEY = 40;
+        public const int SHIFT_SPACE_DECKEY = SHIFT_DECKEY_START + STROKE_SPACE_DECKEY;             // Shift+Space
 
         // スペースキー以降ののDecKeyId
         public const int DECKEY_STROKE_41 = 41;

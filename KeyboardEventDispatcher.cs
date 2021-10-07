@@ -158,9 +158,9 @@ namespace KanchokuWS
                 || (Settings.UseRightControlToConversion && (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0);
         }
 
-        private bool shiftKeyPressed(bool bCtrl)
+        private bool shiftKeyPressed(bool bWithOutCtrl)
         {
-            return (!bCtrl && spaceKeyState == SpecialKeyState.SHIFTED) || (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
+            return (!bWithOutCtrl && spaceKeyState == SpecialKeyState.SHIFTED) || (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
         }
 
         /// <summary> 特殊キーの押下状態</summary>
@@ -222,34 +222,6 @@ namespace KanchokuWS
                 }
                 normalInfoKeyDownResult = true;
                 bool decoderActivated = isDecoderActivated();
-                if ((Settings.SandSEnabled && decoderActivated) || (Settings.SandSEnabledWhenOffMode && !decoderActivated)) {
-                    if (vkey == (int)Keys.Space) {
-                        // スペースキーが押された
-                        if (spaceKeyState == SpecialKeyState.PRESSED) {
-                            // すでにスペースキーが押下されている状態なら、シフト状態に遷移する
-                            spaceKeyState = SpecialKeyState.SHIFTED;
-                            return;
-                        }
-                        if (spaceKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
-                                                                                   // RELEASED
-                        if (!ctrlKeyPressed() && !shiftKeyPressed(false)) {
-                            // 1回目の押下で Ctrl も Shift も押されてない
-                            spaceKeyState = SpecialKeyState.PRESSED;
-                            return;
-                        }
-                        // やはり Shift押下時のSpaceは、Shiftとして扱う
-                        if (shiftKeyPressed(false)) {
-                            spaceKeyState = SpecialKeyState.SHIFTED;
-                            return;
-                        }
-                        // 上記以外はスペース入力として扱う
-                    } else {
-                        if (spaceKeyState == SpecialKeyState.PRESSED) {
-                            // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                            spaceKeyState = SpecialKeyState.SHIFTED;
-                        }
-                    }
-                }
                 // CapsLock
                 if (vkey == (int)VirtualKeys.CapsLock) {
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CapsLockKey Pressed");
@@ -346,19 +318,59 @@ namespace KanchokuWS
                     }
                 }
                 if (Settings.LoggingDecKeyInfo) {
-                    logger.DebugH(() => $"spaceKeyState={spaceKeyState}");
                     logger.DebugH(() => $"capsKeyState={capsKeyState}");
                     logger.DebugH(() => $"alnumKeyState={alnumKeyState}");
                     logger.DebugH(() => $"nferKeyState={nferKeyState}");
                     logger.DebugH(() => $"xferKeyState={xferKeyState}");
                     logger.DebugH(() => $"kanaKeyState={kanaKeyState}");
                 }
+                // SandS
+                if ((Settings.SandSEnabled && decoderActivated) || (Settings.SandSEnabledWhenOffMode && !decoderActivated)) {
+                    if (vkey == (int)Keys.Space) {
+                        // スペースキーが押された
+                        if (spaceKeyState == SpecialKeyState.PRESSED) {
+                            // すでにスペースキーが押下されている状態なら、シフト状態に遷移する
+                            spaceKeyState = SpecialKeyState.SHIFTED;
+                            return;
+                        }
+                        if (spaceKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
+                                                                                   // RELEASED
+                        if (!ctrlKeyPressed() && !shiftKeyPressed(false) && getShiftedSpecialModKey() == 0) {
+                            // 1回目の押下で Ctrl も Shift も他のmodiferも押されてない
+                            spaceKeyState = SpecialKeyState.PRESSED;
+                            return;
+                        }
+                        // やはり 本来のShift押下時のSpaceは、Shiftとして扱う
+                        if (shiftKeyPressed(false)) {
+                            spaceKeyState = SpecialKeyState.SHIFTED;
+                            return;
+                        }
+                        // 上記以外はスペース入力として扱う
+                    } else {
+                        if (spaceKeyState == SpecialKeyState.PRESSED) {
+                            // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                            spaceKeyState = SpecialKeyState.SHIFTED;
+                        }
+                    }
+                }
+                if (Settings.LoggingDecKeyInfo) {
+                    logger.DebugH(() => $"spaceKeyState={spaceKeyState}");
+                }
 
                 normalInfoKeyDownResult = keyboardDownHandler(vkey);
             }
 
+            if (Settings.LoggingDecKeyInfo) {
+                logger.DebugH(() => $"spaceKeyState={spaceKeyState}");
+                logger.DebugH(() => $"spaceKeyState={spaceKeyState}");
+                logger.DebugH(() => $"capsKeyState={capsKeyState}");
+                logger.DebugH(() => $"alnumKeyState={alnumKeyState}");
+                logger.DebugH(() => $"nferKeyState={nferKeyState}");
+                logger.DebugH(() => $"xferKeyState={xferKeyState}");
+                logger.DebugH(() => $"kanaKeyState={kanaKeyState}\n");
+            }
             handleKeyDown();
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={normalInfoKeyDownResult}, vkey={vkey:x}H({vkey}), extraInfo={extraInfo}");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={normalInfoKeyDownResult}, vkey={vkey:x}H({vkey}), extraInfo={extraInfo}, spaceKeyState={spaceKeyState}");
             return normalInfoKeyDownResult;
         }
 

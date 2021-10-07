@@ -442,6 +442,7 @@ namespace KanchokuWS
             {"pageup", DecoderKeys.PAGE_UP_DECKEY},
             {"pgdn", DecoderKeys.PAGE_DOWN_DECKEY},
             {"pagedown", DecoderKeys.PAGE_DOWN_DECKEY},
+            {"shiftspace", DecoderKeys.SHIFT_SPACE_DECKEY},
             {"modetoggle", DecoderKeys.TOGGLE_DECKEY},
             {"activate", DecoderKeys.ACTIVE_DECKEY},
             {"deactivate", DecoderKeys.DEACTIVE_DECKEY},
