@@ -38,6 +38,8 @@ struct Settings {
     int histNumDeckeyId = 45;               // 履歴文字数指定のDecKeyID
     size_t histHorizontalCandMax = 5;       // 履歴候補の横列鍵盤表示の際の最大数
 
+    bool histMoveShortestAt2nd = false;     // 最短長履歴文字列を2番目に表示する
+
     bool useArrowKeyToSelectCandidate = true;   // 矢印キーで履歴候補選択を行う
     //bool handleShiftSpaceAsNormalSpace = true;    // Shift-Space を通常の Space として扱う (ただし histSearchByShiftSpace が優先)
 

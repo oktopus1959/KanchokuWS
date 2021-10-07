@@ -632,19 +632,21 @@ namespace {
                 resultKey = resultKeyLen == 0 ? key : utils::last_substr(key, resultKeyLen);
             }
 
-            // 最短語を少なくとも先から2番目に移動する
-            size_t shortestIdx = 0;
-            size_t shortestLen = size_t(-1);
-            for (size_t i = 0; i < resultList.size(); ++i) {
-                if (resultList[i].Word.size() < shortestLen) {
-                    shortestIdx = i;
-                    shortestLen = resultList[i].Word.size();
+            if (SETTINGS->histMoveShortestAt2nd) {
+                // 最短語を少なくとも先から2番目に移動する
+                size_t shortestIdx = 0;
+                size_t shortestLen = size_t(-1);
+                for (size_t i = 0; i < resultList.size(); ++i) {
+                    if (resultList[i].Word.size() < shortestLen) {
+                        shortestIdx = i;
+                        shortestLen = resultList[i].Word.size();
+                    }
                 }
-            }
-            if (shortestIdx > 1) {
-                auto elem = resultList[shortestIdx];
-                resultList.erase(resultList.begin() + shortestIdx);
-                resultList.insert(resultList.begin() + 1, elem);
+                if (shortestIdx > 1) {
+                    auto elem = resultList[shortestIdx];
+                    resultList.erase(resultList.begin() + shortestIdx);
+                    resultList.insert(resultList.begin() + 1, elem);
+                }
             }
             _LOG_DEBUGH(_T("LEAVE: resultKey=%s, resultKeyLen=%d"), MAKE_WPTR(resultKey), resultKeyLen);
             return resultList;

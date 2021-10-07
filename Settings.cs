@@ -348,6 +348,7 @@ namespace KanchokuWS
         public static int HistNumDeckeyId { get; private set; } = 0;
 
         public static int HistHorizontalCandMax { get; private set; } = 0;
+        public static bool HistMoveShortestAt2nd { get; private set; } = false;
 
         public static bool UseArrowKeyToSelectCandidate { get; set; } = true;
         //public static bool HandleShiftSpaceAsNormalSpace { get; set; } = true;
@@ -777,6 +778,7 @@ namespace KanchokuWS
             HistDelDeckeyId = addDecoderSetting("histDelDeckeyId", "histDelHotkeyId", 41, 41);  // 履歴削除を呼び出すDecKeyのID
             HistNumDeckeyId = addDecoderSetting("histNumDeckeyId", "histNumHotkeyId", 45, 41);  // 履歴文字数指定を呼び出すDecKeyのID
             HistHorizontalCandMax = addDecoderSetting("histHorizontalCandMax", 10, 1, 10);      // 履歴候補の横列鍵盤表示の際の最大候補数
+            HistMoveShortestAt2nd = addDecoderSetting("histMoveShortestAt2nd", false);          // 最短長履歴文字列を2番目に表示する
             HistAllowFromMiddleChar = addDecoderSetting("histAllowFromMiddleChar", true);       // 出力漢字列やカタカナ列の途中からでも自動履歴検索を行う(@TODO)
             UseArrowKeyToSelectCandidate = addDecoderSetting("useArrowKeyToSelectCandidate", true);    // 矢印キーで履歴候補選択を行う
             //HandleShiftSpaceAsNormalSpace = addDecoderSetting("handleShiftSpaceAsNormalSpace", true);  // Shift+Space を通常 Space しとて扱う(HistSearchByShiftSpaceがfalseの場合)
