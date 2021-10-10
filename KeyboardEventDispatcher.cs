@@ -158,9 +158,20 @@ namespace KanchokuWS
                 || (Settings.UseRightControlToConversion && (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0);
         }
 
-        private bool shiftKeyPressed(bool bWithOutCtrl)
+        //private bool shiftKeyPressed(bool bWithOutCtrl)
+        //{
+        //    return (!bWithOutCtrl && spaceKeyState == SpecialKeyState.SHIFTED) || (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
+        //}
+
+        private bool shiftKeyPressed()
         {
-            return (!bWithOutCtrl && spaceKeyState == SpecialKeyState.SHIFTED) || (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
+            return (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
+        }
+
+        private bool isSandSEnabled()
+        {
+            bool decoderActivated = isDecoderActivated();
+            return (Settings.SandSEnabled && decoderActivated) || (Settings.SandSEnabledWhenOffMode && !decoderActivated);
         }
 
         /// <summary> 特殊キーの押下状態</summary>
@@ -187,15 +198,31 @@ namespace KanchokuWS
         /// <summary> かなキーの押下状態</summary>
         private SpecialKeyState kanaKeyState = SpecialKeyState.RELEASED;
 
-        /// <summary> SandS以外の修飾キーの押下状態を得る</summary>
+        /// <summary> 修飾キーの押下状態を得る</summary>
         private uint getShiftedSpecialModKey()
         {
+            if (spaceKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_SPACE;
             if (capsKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_CAPS;
             if (alnumKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_ALNUM;
             if (nferKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_NFER;
             if (xferKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_XFER;
             if (kanaKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_KANA;
             return 0;
+        }
+
+        private VirtualKeys.ShiftPlane getShiftPlane()
+        {
+            if (spaceKeyState == SpecialKeyState.SHIFTED) {
+                var plane = VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_SPACE);
+                if (plane == VirtualKeys.ShiftPlane.NONE && isSandSEnabled()) plane = VirtualKeys.ShiftPlane.NormalPlane;
+                return plane;
+            }
+            if (capsKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_CAPS);
+            if (alnumKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_ALNUM);
+            if (nferKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_NFER);
+            if (xferKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_XFER);
+            if (kanaKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_KANA);
+            return VirtualKeys.ShiftPlane.NONE;
         }
 
         /// <summary> extraInfo=0 の時のキー押下時のリザルトフラグ </summary>
@@ -210,7 +237,15 @@ namespace KanchokuWS
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool onKeyboardDownHandler(int vkey, int scanCode, int extraInfo)
         {
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
+            if (Settings.LoggingDecKeyInfo) {
+                logger.DebugH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}"
+                + $"\nspaceKeyState={spaceKeyState}"
+                + $"\ncapsKeyState={capsKeyState}"
+                + $"\nalnumKeyState={alnumKeyState}"
+                + $"\nnferKeyState={nferKeyState}"
+                + $"\nxferKeyState={xferKeyState}"
+                + $"\nkanaKeyState={kanaKeyState}\n");
+            }
 
             normalInfoKeyDownResult = false;
 
@@ -221,7 +256,6 @@ namespace KanchokuWS
                     return;
                 }
                 normalInfoKeyDownResult = true;
-                bool decoderActivated = isDecoderActivated();
                 // CapsLock
                 if (vkey == (int)VirtualKeys.CapsLock) {
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CapsLockKey Pressed");
@@ -317,15 +351,8 @@ namespace KanchokuWS
                         kanaKeyState = SpecialKeyState.SHIFTED;
                     }
                 }
-                if (Settings.LoggingDecKeyInfo) {
-                    logger.DebugH(() => $"capsKeyState={capsKeyState}");
-                    logger.DebugH(() => $"alnumKeyState={alnumKeyState}");
-                    logger.DebugH(() => $"nferKeyState={nferKeyState}");
-                    logger.DebugH(() => $"xferKeyState={xferKeyState}");
-                    logger.DebugH(() => $"kanaKeyState={kanaKeyState}");
-                }
                 // SandS
-                if ((Settings.SandSEnabled && decoderActivated) || (Settings.SandSEnabledWhenOffMode && !decoderActivated)) {
+                if (isSandSEnabled()) {
                     if (vkey == (int)Keys.Space) {
                         // スペースキーが押された
                         if (spaceKeyState == SpecialKeyState.PRESSED) {
@@ -334,14 +361,15 @@ namespace KanchokuWS
                             return;
                         }
                         if (spaceKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
-                                                                                   // RELEASED
-                        if (!ctrlKeyPressed() && !shiftKeyPressed(false) && getShiftedSpecialModKey() == 0) {
+
+                        // RELEASED
+                        if (!ctrlKeyPressed() && !shiftKeyPressed() && getShiftedSpecialModKey() == 0) {
                             // 1回目の押下で Ctrl も Shift も他のmodiferも押されてない
                             spaceKeyState = SpecialKeyState.PRESSED;
                             return;
                         }
                         // やはり 本来のShift押下時のSpaceは、Shiftとして扱う
-                        if (shiftKeyPressed(false)) {
+                        if (shiftKeyPressed()) {
                             spaceKeyState = SpecialKeyState.SHIFTED;
                             return;
                         }
@@ -353,24 +381,28 @@ namespace KanchokuWS
                         }
                     }
                 }
-                if (Settings.LoggingDecKeyInfo) {
-                    logger.DebugH(() => $"spaceKeyState={spaceKeyState}");
-                }
 
+                if (Settings.LoggingDecKeyInfo) {
+                    logger.DebugH(() => $"CALL: keyboardDownHandler({vkey})\nspaceKeyState={spaceKeyState}"
+                    + $"\ncapsKeyState={capsKeyState}"
+                    + $"\nalnumKeyState={alnumKeyState}"
+                    + $"\nnferKeyState={nferKeyState}"
+                    + $"\nxferKeyState={xferKeyState}"
+                    + $"\nkanaKeyState={kanaKeyState}\n");
+                }
                 normalInfoKeyDownResult = keyboardDownHandler(vkey);
             }
 
-            if (Settings.LoggingDecKeyInfo) {
-                logger.DebugH(() => $"spaceKeyState={spaceKeyState}");
-                logger.DebugH(() => $"spaceKeyState={spaceKeyState}");
-                logger.DebugH(() => $"capsKeyState={capsKeyState}");
-                logger.DebugH(() => $"alnumKeyState={alnumKeyState}");
-                logger.DebugH(() => $"nferKeyState={nferKeyState}");
-                logger.DebugH(() => $"xferKeyState={xferKeyState}");
-                logger.DebugH(() => $"kanaKeyState={kanaKeyState}\n");
-            }
             handleKeyDown();
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={normalInfoKeyDownResult}, vkey={vkey:x}H({vkey}), extraInfo={extraInfo}, spaceKeyState={spaceKeyState}");
+            if (Settings.LoggingDecKeyInfo) {
+                logger.DebugH(() => $"LEAVE: result={normalInfoKeyDownResult}, vkey={vkey:x}H({vkey}), extraInfo={extraInfo}, spaceKeyState={spaceKeyState}"
+                    + $"\nspaceKeyState={spaceKeyState}"
+                    + $"\ncapsKeyState={capsKeyState}"
+                    + $"\nalnumKeyState={alnumKeyState}"
+                    + $"\nnferKeyState={nferKeyState}"
+                    + $"\nxferKeyState={xferKeyState}"
+                    + $"\nkanaKeyState={kanaKeyState}\n");
+            }
             return normalInfoKeyDownResult;
         }
 
@@ -382,7 +414,7 @@ namespace KanchokuWS
             bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
             bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
             bool ctrl = leftCtrl || rightCtrl;
-            bool shift = shiftKeyPressed(ctrl);
+            bool shift = shiftKeyPressed();
             uint mod = KeyModifiers.MakeModifier(ctrl, shift);
             uint modEx = getShiftedSpecialModKey();
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey})");
@@ -390,8 +422,14 @@ namespace KanchokuWS
             int kanchokuCode = -1;
             if (modEx != 0) {
                 kanchokuCode = VirtualKeys.GetModConvertedDecKeyFromCombo(modEx, (uint)vkey);
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-A: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
+                if (kanchokuCode < 0) {
+                    // 拡張シフト面のコードを得る
+                    var shiftPlane = getShiftPlane();
+                    if (shiftPlane != VirtualKeys.ShiftPlane.NONE) kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey) + (int)shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM;
+                }
+                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-A: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), modEx={modEx:x}, ctrl={ctrl}, shift={shift}");
             }
+
             if (kanchokuCode < 0) {
                 kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || shift
                     ? VirtualKeys.GetModConvertedDecKeyFromCombo(mod, (uint)vkey)
@@ -400,21 +438,21 @@ namespace KanchokuWS
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-B: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
             }
 
-            if (kanchokuCode < 0) {
-                bool result = false;
-                if (spaceKeyState == SpecialKeyState.SHIFTED) {
-                    // SandS により Shift モードになっている場合は、SendInput で Shift down をエミュレートする
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS");
-                    try {
-                        bHandlerBusy = true;
-                        result = SendInputVkeyWithMod?.Invoke(mod, (uint)vkey) ?? false;
-                    } finally {
-                        bHandlerBusy = false;
-                    }
-                }
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-A: result={result}");
-                return result;
-            }
+            //if (kanchokuCode < 0) {
+            //    bool result = false;
+            //    if (spaceKeyState == SpecialKeyState.SHIFTED) {
+            //        // SandS により Shift モードになっている場合は、SendInput で Shift down をエミュレートする
+            //        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS");
+            //        try {
+            //            bHandlerBusy = true;
+            //            result = SendInputVkeyWithMod?.Invoke(mod, (uint)vkey) ?? false;
+            //        } finally {
+            //            bHandlerBusy = false;
+            //        }
+            //    }
+            //    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-A: result={result}");
+            //    return result;
+            //}
 
             if (kanchokuCode == DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY && kanchokuCode != VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)) {
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-B: result=False, historySearchCtrlKey={Settings.HistorySearchCtrlKey}, kanchokuCode={VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)}");

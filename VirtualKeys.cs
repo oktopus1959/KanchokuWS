@@ -107,6 +107,23 @@ namespace KanchokuWS
 
         private const uint capsVkeyWithShift = 0x14;    // 日本語キーボードだと Shift + 0x14 で CapsLock になる
 
+        public enum ShiftPlane
+        {
+            NONE = 0,
+            NormalPlane = 1,
+            PlaneA = 2,
+            PlaneB = 3
+        }
+
+        /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, kana) に割り当てるシフト面</summary>
+        private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftFuncKey = new Dictionary<uint, ShiftPlane>();
+
+        /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, kana) に割り当てれたシフト面を得る</summary>
+        public static ShiftPlane GetShiftPlaneForShiftFuncKey(uint funcKey)
+        {
+            return shiftPlaneForShiftFuncKey._safeGet(funcKey, ShiftPlane.NONE);
+        }
+
         private static uint getVKeyFromDecKey(int deckey)
         {
             if (deckey < 0) return 0;
@@ -324,7 +341,8 @@ namespace KanchokuWS
 
         /// <summary>
         /// 仮想キーコードからなるキーボードファイル(106.keyとか)を読み込んで、仮想キーコードの配列を作成する<br/>
-        /// 仮想キーコードはDecKeyId順に並んでいる必要がある。
+        /// 仮想キーコードはDecKeyId順に並んでいる必要がある。<br/>
+        /// NAME=xx の形式で、機能キーの仮想キーコード定義を記述できる
         /// </summary>
         /// <returns></returns>
         public static bool ReadKeyboardFile()
@@ -336,13 +354,13 @@ namespace KanchokuWS
             var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.GetString("keyboard", "106.key"));
             if (filePath._notEmpty()) {
                 logger.Info($"keyboard file path={filePath}");
-                var vkeys = Helper.GetFileContent(filePath, Encoding.UTF8);
-                if (vkeys == null) {
+                var allLines = Helper.GetFileContent(filePath, Encoding.UTF8);
+                if (allLines == null) {
                     logger.Error($"Can't read keyboard file: {filePath}");
                     SystemHelper.ShowErrorMessageBox($"キーボード定義ファイル({filePath}の読み込みに失敗しました。");
                     return false;
                 }
-                var lines = vkeys._split('\n').Select(line => line.Trim().Replace(" ", "")).Where(line => line._notEmpty() && line[0] != '#' && line[0] != ';').ToArray();
+                var lines = allLines._split('\n').Select(line => line.Trim().Replace(" ", "")).Where(line => line._notEmpty() && line[0] != '#' && line[0] != ';').ToArray();
 
                 // ストロークキーの仮想キーコードを得る
                 var hexes = lines.  Where(line => line.IndexOf('=') < 0)._join("").TrimEnd(',')._split(',').ToArray();
@@ -358,7 +376,7 @@ namespace KanchokuWS
                     SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}のキー定義の数({array.Length})が不足しています。");
                     return false;
                 }
-                // 機能キー(Esc, BS, Enter, 矢印キーなど)の仮想キーコード定義を得る
+                // NAME=xx の形式で、機能キー(Esc, BS, Enter, 矢印キーなど)の仮想キーコード定義を得る
                 foreach (var line in lines) {
                     var items = line._toLower()._split('=');
                     if (items._safeLength() == 2 && items[0]._notEmpty() && items[1]._notEmpty()) {
@@ -410,6 +428,7 @@ namespace KanchokuWS
         }
 
         private static Dictionary<string, uint> modifierKeysFromName = new Dictionary<string, uint>() {
+            {"space", KeyModifiers.MOD_SPACE },
             {"caps", KeyModifiers.MOD_CAPS },
             {"alnum", KeyModifiers.MOD_ALNUM },
             {"nfer", KeyModifiers.MOD_NFER },
@@ -482,30 +501,49 @@ namespace KanchokuWS
                     ++nl;
                     var line = rawLine._reReplace("#.*", "").Trim().Replace(" ", "")._toLower();
                     if (line._notEmpty() && line[0] != '#') {
-                        var items = line._split(':');
-                        if (items._length() == 3) {
-                            uint mod = modifierKeysFromName._safeGet(items[0]);
-                            uint vkey = getVKeyFromDecKey(items[1]._parseInt(-1, -1));
-                            bool ctrl = items[2]._startsWith("^");
-                            var name = items[2].Replace("^", "");
-                            int deckey = specialDecKeysFromName._safeGet(name);
-                            if (ctrl) {
-                                logger.DebugH(() => $"deckey={deckey:x}H({deckey}), ctrl={ctrl}");
-                                uint decVkey = 0;
-                                if (name._safeLength() == 1 && name._ge("a") && name._le("z")) {
-                                    decVkey = faceToVkey._safeGet(name._toUpper());
-                                    deckey = DecoderKeys.DECKEY_CTRL_A + name[0] - 'a';
-                                } else if (deckey >= DecoderKeys.FUNC_DECKEY_START && deckey < DecoderKeys.FUNC_DECKEY_END) {
-                                    decVkey = getVKeyFromDecKey(deckey);
-                                    deckey += DecoderKeys.CTRL_FUNC_DECKEY_START - DecoderKeys.FUNC_DECKEY_START;
+                        if (line.IndexOf('=') > 0) {
+                            var items = line._split('=');
+                            if (items._length() == 2) {
+                                uint mod = modifierKeysFromName._safeGet(items[0]);
+                                ShiftPlane shiftPlane = ShiftPlane.NONE;
+                                switch (items[1]) {
+                                    case "shift": shiftPlane = ShiftPlane.NormalPlane; break;
+                                    case "shifta": shiftPlane = ShiftPlane.PlaneA; break;
+                                    case "shiftb": shiftPlane = ShiftPlane.PlaneB; break;
                                 }
-                                logger.DebugH(() => $"deckey={deckey:x}H({deckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
-                                if (deckey > 0) AddModifiedDeckey(deckey, KeyModifiers.MOD_CONTROL, decVkey);
+                                logger.DebugH(() => $"mod={mod:x}H({mod}), shiftPlane={shiftPlane}");
+                                if (mod != 0 && shiftPlane > 0) {
+                                    logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{mod}] = {shiftPlane}");
+                                    shiftPlaneForShiftFuncKey[mod] = shiftPlane;
+                                    continue;
+                                }
                             }
-                            if (mod != 0 && vkey > 0 && deckey > 0) {
-                                logger.DebugH(() => $"AddModConvertedDecKeyFromCombo: deckey={deckey}, mod={mod}, vkey={vkey}, rawLine={rawLine}");
-                                AddModConvertedDecKeyFromCombo(deckey, mod, vkey);
-                                continue;
+                        } else {
+                            var items = line._split(':');
+                            if (items._length() == 3) {
+                                uint mod = modifierKeysFromName._safeGet(items[0]);
+                                uint vkey = getVKeyFromDecKey(items[1]._parseInt(-1, -1));
+                                bool ctrl = items[2]._startsWith("^");
+                                var name = items[2].Replace("^", "");
+                                int deckey = specialDecKeysFromName._safeGet(name);
+                                if (ctrl) {
+                                    logger.DebugH(() => $"deckey={deckey:x}H({deckey}), ctrl={ctrl}");
+                                    uint decVkey = 0;
+                                    if (name._safeLength() == 1 && name._ge("a") && name._le("z")) {
+                                        decVkey = faceToVkey._safeGet(name._toUpper());
+                                        deckey = DecoderKeys.DECKEY_CTRL_A + name[0] - 'a';
+                                    } else if (deckey >= DecoderKeys.FUNC_DECKEY_START && deckey < DecoderKeys.FUNC_DECKEY_END) {
+                                        decVkey = getVKeyFromDecKey(deckey);
+                                        deckey += DecoderKeys.CTRL_FUNC_DECKEY_START - DecoderKeys.FUNC_DECKEY_START;
+                                    }
+                                    logger.DebugH(() => $"deckey={deckey:x}H({deckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
+                                    if (deckey > 0) AddModifiedDeckey(deckey, KeyModifiers.MOD_CONTROL, decVkey);
+                                }
+                                if (mod != 0 && vkey > 0 && deckey > 0) {
+                                    logger.DebugH(() => $"AddModConvertedDecKeyFromCombo: deckey={deckey}, mod={mod}, vkey={vkey}, rawLine={rawLine}");
+                                    AddModConvertedDecKeyFromCombo(deckey, mod, vkey);
+                                    continue;
+                                }
                             }
                         }
                         logger.Warn($"Invalid line({nl}): {rawLine}");

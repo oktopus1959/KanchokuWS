@@ -33,23 +33,38 @@ namespace KanchokuWS
         // SHIFT修飾DECKEYの終わり(の次)
         public const int SHIFT_DECKEY_END = SHIFT_DECKEY_START + SHIFT_DECKEY_NUM;
 
+        // SHIFT_A修飾DECKEYの始まり
+        public const int SHIFT_A_DECKEY_START = SHIFT_DECKEY_END;
+
+        // SHIFT修飾DECKEYの終わり(の次)
+        public const int SHIFT_A_DECKEY_END = SHIFT_A_DECKEY_START + SHIFT_DECKEY_NUM;
+
+        // SHIFT_B修飾DECKEYの始まり
+        public const int SHIFT_B_DECKEY_START = SHIFT_A_DECKEY_END;
+
+        // SHIFT修飾DECKEYの終わり(の次)
+        public const int SHIFT_B_DECKEY_END = SHIFT_B_DECKEY_START + SHIFT_DECKEY_NUM;
+
+        // SHIFTキーの総数
+        public const int TOTAL_SHIFT_DECKEY_NUM = SHIFT_DECKEY_NUM * 3;
+
         // ストロークキーの数
-        public const int STROKE_DECKEY_NUM = NORMAL_DECKEY_NUM + SHIFT_DECKEY_NUM;
+        public const int STROKE_DECKEY_NUM = NORMAL_DECKEY_NUM + TOTAL_SHIFT_DECKEY_NUM;  // シフト面は3面ある
 
         // ストロークキーの終わり(の次)
-        public const int STROKE_DECKEY_END = SHIFT_DECKEY_END;
+        public const int STROKE_DECKEY_END = SHIFT_B_DECKEY_END;
 
         // 機能キーとして使われるDECKEYの始まり
         public const int FUNC_DECKEY_START = STROKE_DECKEY_END;
 
         // 機能キーとして使われるDECKEYの数
-        public const int FUNC_DECKEY_NUM = 20;
+        public const int FUNC_DECKEY_NUM = 30;
 
         // 機能キーとして使われるDECKEYの終わり(の次)
         public const int FUNC_DECKEY_END = FUNC_DECKEY_START + FUNC_DECKEY_NUM;
 
         // 修飾なしキーの数
-        public const int UNMODIFIED_DECKEY_NUM = NORMAL_DECKEY_NUM + SHIFT_DECKEY_NUM + FUNC_DECKEY_NUM;
+        public const int UNMODIFIED_DECKEY_NUM = NORMAL_DECKEY_NUM + TOTAL_SHIFT_DECKEY_NUM + FUNC_DECKEY_NUM;
 
         // Ctrl修飾DECKEYの始まり
         public const int CTRL_DECKEY_START = FUNC_DECKEY_END;
@@ -165,11 +180,11 @@ namespace KanchokuWS
         public const int CTRL_LEFT_ARROW_DECKEY = CTRL_DOWN_ARROW_DECKEY + 1;
         public const int CTRL_RIGHT_ARROW_DECKEY = CTRL_LEFT_ARROW_DECKEY + 1;
 
-        // デコーダには渡されないDECKEY
-        // FUNCTIONAL_DECKEY_ID_BASE よりも大きな値にする必要がある
-        public const int GLOBAL_DECKEY_ID_BASE = 0x200;
+        // 特殊なDECKEY
+        // CTRL_SHIFT_FUNC_DECKEY_END よりも大きな値にする必要がある
+        public const int SPECIAL_DECKEY_ID_BASE = 0x200;
 
-        public const int TOGGLE_DECKEY = GLOBAL_DECKEY_ID_BASE + 1;     // ON/OFF の切り替えキー
+        public const int TOGGLE_DECKEY = SPECIAL_DECKEY_ID_BASE + 1;     // ON/OFF の切り替えキー
         public const int ACTIVE_DECKEY = TOGGLE_DECKEY + 1;             // ON への切り替えキー
         public const int ACTIVE2_DECKEY = ACTIVE_DECKEY + 1;            // ON への切り替えキー、その2
         public const int DEACTIVE_DECKEY = ACTIVE2_DECKEY + 1;          // OFF への切り替えキー
@@ -197,7 +212,7 @@ namespace KanchokuWS
         public const int TOGGLE_UPPER_ROMAN_STROKE_GUIDE = TOGGLE_ZENKAKU_CONVERSION + 1;     // 大文字ローマ字読みによる打鍵ガイドのトグル
         public const int TOGGLE_ROMAN_STROKE_GUIDE = TOGGLE_UPPER_ROMAN_STROKE_GUIDE + 1;     // ローマ字読みによる打鍵ガイドのトグル
 
-        public const int GLOBAL_DECKEY_ID_END = GLOBAL_DECKEY_ID_BASE + 100;
+        public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 
     }
 }

@@ -51,9 +51,9 @@ namespace KanchokuWS
             }
         }
 
-        public static char GetCharFromDecoderKey(int deckey)
-        {
-            return deckey >= DecoderKeys.SHIFT_DECKEY_START && deckey < DecoderKeys.SHIFT_DECKEY_END ? decKeyShiftChars[deckey - DecoderKeys.SHIFT_DECKEY_NUM] : '\0';
-        }
+        //public static char GetCharFromDecoderKey(int deckey)
+        //{
+        //    return deckey >= DecoderKeys.SHIFT_DECKEY_START && deckey < DecoderKeys.SHIFT_DECKEY_END ? decKeyShiftChars[deckey - DecoderKeys.SHIFT_DECKEY_NUM] : '\0';
+        //}
     }
 }

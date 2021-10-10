@@ -61,7 +61,7 @@ namespace {
         // StrokeTableNode を処理する
         void handleStrokeKeys(int deckey) {
             wchar_t myChar = shiftedOrigChar != 0 ? shiftedOrigChar : DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
-            LOG_DEBUG(_T("CALLED: %s: deckey=%xH(%d), face=%c, nodeDepth=%d"), NAME_PTR, deckey, deckey, myChar, DEPTH);
+            _LOG_DEBUGH(_T("CALLED: %s: deckey=%xH(%d), face=%c, nodeDepth=%d"), NAME_PTR, deckey, deckey, myChar, DEPTH);
             STATE_COMMON->AppendOrigString(myChar); // RootStrokeTableState が作成されたときに OrigString はクリアされている
 
             if (STATE_COMMON->IsDecodeKeyboardCharMode()) {
@@ -71,15 +71,16 @@ namespace {
             }
             if (!NextNodeMaybe() || !NextNodeMaybe()->isStrokeTableNode()) {
                 // 次ノードがストロークノードでないか、キーボード文字への変換モードならば、全ストロークを削除対象とする
-                LOG_DEBUG(_T("%s: RemoveAllStroke: Next node=%p, DecodeKeyboardCharMode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()), BOOL_TO_WPTR(STATE_COMMON->IsDecodeKeyboardCharMode()));
+                _LOG_DEBUGH(_T("%s: RemoveAllStroke: Next node=%p, DecodeKeyboardCharMode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()), BOOL_TO_WPTR(STATE_COMMON->IsDecodeKeyboardCharMode()));
                 setToRemoveAllStroke();
             }
         }
 
         // Shift飾修されたキー
         void handleShiftKeys(int deckey) {
-            _LOG_DEBUGH(_T("ENTER: %s, deckey=%x(%d)"), NAME_PTR, deckey, deckey);
+            _LOG_DEBUGH(_T("ENTER: %s, deckey=%x(%d), rootKeyUnshifted=%s"), NAME_PTR, deckey, deckey, BOOL_TO_WPTR(IsRootKeyUnshifted()));
             if (IsRootKeyUnshifted()) {
+                // シフト入力された平仮名を片仮名に変換するモードとかの場合
                 shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
                 handleStrokeKeys(UNSHIFT_DECKEY(deckey));
             } else {

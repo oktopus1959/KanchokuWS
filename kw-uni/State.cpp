@@ -280,7 +280,7 @@ bool State::isStrokeKey(int deckey) {
 
 // DECKEY はShift修飾キーか
 bool State::isShiftedKey(int deckey) {
-    return deckey >= SHIFT_DECKEY_START && deckey < SHIFT_DECKEY_END;
+    return deckey >= SHIFT_DECKEY_START && deckey < SHIFT_B_DECKEY_END;
 }
 
 // DECKEY はモード機能キーか

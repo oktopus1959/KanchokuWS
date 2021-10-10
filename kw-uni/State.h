@@ -9,7 +9,7 @@
 #include "StateCommonInfo.h"
 #include "Node.h"
 
-#define UNSHIFT_DECKEY(x) (x - SHIFT_DECKEY_START)
+#define UNSHIFT_DECKEY(x) (x % SHIFT_DECKEY_NUM)
 
 //-----------------------------------------------------------------------
 // デコーダ状態の基底クラス
@@ -145,7 +145,7 @@ protected:
     virtual bool IsModeState() { return false; }
 
     // 次の処理のためのノードをセットする
-    void SetNextNodeMaybe(Node* pN) { pNextNodeMaybe= pN; }
+    void SetNextNodeMaybe(Node* pN) { pNextNodeMaybe = pN; }
 
     void ClearNextNodeMaybe() { pNextNodeMaybe = nullptr; }
 

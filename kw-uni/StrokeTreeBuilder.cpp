@@ -102,13 +102,12 @@ namespace {
             return result;
         }
 
+        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB の4面
+        int shiftPlane = 0;
+
         std::map<mchar_t, std::vector<int>>* strokeSerieses = 0;
 
         std::vector<int> strokes;
-
-        void addStrokes(wstring s) {
-
-        }
 
     public:
         StrokeTreeBuilder(std::vector<tstring>& lines)
@@ -133,17 +132,17 @@ namespace {
             // RootStrokeTable は機能キーやCtrl修飾も含めたテーブルとする
             StrokeTableNode* tblNode = new StrokeTableNode(0, TOTAL_DECKEY_NUM);
             setupShiftedKeyFunction(tblNode);
-            int treeCount = 0;
+            //int treeCount = 0;
             readNextToken();
             while (currentToken != TOKEN::END) {
                 switch (currentToken) {
                 case TOKEN::LBRACE:
-                    ++treeCount;
-                    if (treeCount > 1) {
-                        // 現在のところ、トップレベルで2つ以上のブロックは許可していない
-                        parseError();
-                        break;
-                    }
+                    //++treeCount;
+                    //if (treeCount > 1) {
+                    //    // 現在のところ、トップレベルで2つ以上のブロックは許可していない
+                    //    parseError();
+                    //    break;
+                    //}
                     makeSubTree(tblNode, 0, 0);
                     break;
 
@@ -164,6 +163,7 @@ namespace {
             return tblNode;
         }
 
+        // デフォルトのシフト面の機能ノードの設定(自身の文字を返す)
         void setupShiftedKeyFunction(StrokeTableNode* tblNode) {
             for (size_t i = 0; i < SHIFT_DECKEY_NUM; ++i) {
                 tblNode->setNthChild(i + SHIFT_DECKEY_START, new MyCharNode());
@@ -174,6 +174,7 @@ namespace {
             wstring myGuideChars = getAndRemoveDefines(_T("defguide"));
 
             if (tblNode == 0) tblNode = new StrokeTableNode(depth);
+            int shiftPlaneOffset = depth == 0 ? shiftPlane * SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルート面だけに適用する
             int n = 0;
             bool isPrevDelim = true;
             readNextToken();
@@ -187,7 +188,7 @@ namespace {
                 case TOKEN::LBRACE:
                 case TOKEN::STRING:             // "str" : 文字列ノード
                 case TOKEN::FUNCTION:           // @c : 機能ノード
-                    tblNode->setNthChild(n, createNode(currentToken, depth + 1, prevNth, n));
+                    tblNode->setNthChild(n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
                     ++n;
                     isPrevDelim = false;
                     break;
@@ -300,11 +301,12 @@ namespace {
                     // '#include' または '#' 以降、行末までコメント
                     wstring filename;
                     readWord();
-                    if (currentStr == _T("include")) {
+                    auto lcStr = utils::toLower(currentStr);
+                    if (lcStr == _T("include")) {
                         readWordOrString();
                         filename = currentStr;
                         _LOG_DEBUGH(_T("INCLUDE: lineNum=%d, %s"), lineNumber + 1, filename.c_str());
-                    } else if (currentStr == _T("define")) {
+                    } else if (lcStr == _T("define")) {
                         readWord();
                         if (!currentStr.empty()) {
                             wstring key = currentStr;
@@ -312,10 +314,18 @@ namespace {
                             defines[key] = currentStr;
                             _LOG_DEBUGH(_T("DEFINE: lineNum=%d, %s=%s"), lineNumber + 1, key.c_str(), currentStr.c_str());
                         }
-                    } else if (currentStr == _T("strokePosition")) {
+                    } else if (lcStr == _T("strokePosition")) {
                         readWordOrString();
                         defines[_T("defguide")] = currentStr;
                         _LOG_DEBUGH(_T("StrokePosition: %s"), currentStr.c_str());
+                    } else if (lcStr == _T("noshift")) {
+                        shiftPlane = 0;
+                    } else if (lcStr == _T("shift")) {
+                        shiftPlane = 1;
+                    } else if (lcStr == _T("shifta")) {
+                        shiftPlane = 2;
+                    } else if (lcStr == _T("shiftb")) {
+                        shiftPlane = 3;
                     }
                     currentStr.clear();
                     skipToEndOfLine();
