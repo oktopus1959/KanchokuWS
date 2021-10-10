@@ -196,7 +196,7 @@ namespace KanchokuWS
         private SpecialKeyState xferKeyState = SpecialKeyState.RELEASED;
 
         /// <summary> かなキーの押下状態</summary>
-        private SpecialKeyState kanaKeyState = SpecialKeyState.RELEASED;
+        //private SpecialKeyState kanaKeyState = SpecialKeyState.RELEASED;
 
         /// <summary> 修飾キーの押下状態を得る</summary>
         private uint getShiftedSpecialModKey()
@@ -206,7 +206,7 @@ namespace KanchokuWS
             if (alnumKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_ALNUM;
             if (nferKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_NFER;
             if (xferKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_XFER;
-            if (kanaKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_KANA;
+            //if (kanaKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_KANA;
             return 0;
         }
 
@@ -221,7 +221,7 @@ namespace KanchokuWS
             if (alnumKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_ALNUM);
             if (nferKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_NFER);
             if (xferKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_XFER);
-            if (kanaKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_KANA);
+            //if (kanaKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_KANA);
             return VirtualKeys.ShiftPlane.NONE;
         }
 
@@ -243,8 +243,8 @@ namespace KanchokuWS
                 + $"\ncapsKeyState={capsKeyState}"
                 + $"\nalnumKeyState={alnumKeyState}"
                 + $"\nnferKeyState={nferKeyState}"
-                + $"\nxferKeyState={xferKeyState}"
-                + $"\nkanaKeyState={kanaKeyState}\n");
+                + $"\nxferKeyState={xferKeyState}\n");
+                //+ $"\nkanaKeyState={kanaKeyState}\n");
             }
 
             normalInfoKeyDownResult = false;
@@ -333,24 +333,24 @@ namespace KanchokuWS
                     }
                 }
                 // Kana
-                if (vkey == (int)VirtualKeys.Hiragana) {
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"HiraganaKey Pressed");
-                    if (kanaKeyState == SpecialKeyState.PRESSED) {
-                        // かなキーが押下されている状態なら、シフト状態に遷移する
-                        kanaKeyState = SpecialKeyState.SHIFTED;
-                        return;
-                    }
-                    if (kanaKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
+                //if (vkey == (int)VirtualKeys.Hiragana) {
+                //    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"HiraganaKey Pressed");
+                //    if (kanaKeyState == SpecialKeyState.PRESSED) {
+                //        // かなキーが押下されている状態なら、シフト状態に遷移する
+                //        kanaKeyState = SpecialKeyState.SHIFTED;
+                //        return;
+                //    }
+                //    if (kanaKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
 
-                    // RELEASED
-                    kanaKeyState = SpecialKeyState.PRESSED;
-                    return;
-                } else {
-                    if (kanaKeyState == SpecialKeyState.PRESSED) {
-                        // かなキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                        kanaKeyState = SpecialKeyState.SHIFTED;
-                    }
-                }
+                //    // RELEASED
+                //    kanaKeyState = SpecialKeyState.PRESSED;
+                //    return;
+                //} else {
+                //    if (kanaKeyState == SpecialKeyState.PRESSED) {
+                //        // かなキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                //        kanaKeyState = SpecialKeyState.SHIFTED;
+                //    }
+                //}
                 // SandS
                 if (isSandSEnabled()) {
                     if (vkey == (int)Keys.Space) {
@@ -387,8 +387,8 @@ namespace KanchokuWS
                     + $"\ncapsKeyState={capsKeyState}"
                     + $"\nalnumKeyState={alnumKeyState}"
                     + $"\nnferKeyState={nferKeyState}"
-                    + $"\nxferKeyState={xferKeyState}"
-                    + $"\nkanaKeyState={kanaKeyState}\n");
+                    + $"\nxferKeyState={xferKeyState}\n");
+                    //+ $"\nkanaKeyState={kanaKeyState}\n");
                 }
                 normalInfoKeyDownResult = keyboardDownHandler(vkey);
             }
@@ -400,8 +400,8 @@ namespace KanchokuWS
                     + $"\ncapsKeyState={capsKeyState}"
                     + $"\nalnumKeyState={alnumKeyState}"
                     + $"\nnferKeyState={nferKeyState}"
-                    + $"\nxferKeyState={xferKeyState}"
-                    + $"\nkanaKeyState={kanaKeyState}\n");
+                    + $"\nxferKeyState={xferKeyState}\n");
+                    //+ $"\nkanaKeyState={kanaKeyState}\n");
             }
             return normalInfoKeyDownResult;
         }
@@ -542,15 +542,15 @@ namespace KanchokuWS
                     return keyboardDownHandler(vkey);
                 }
             }
-            if (vkey == (int)VirtualKeys.Hiragana) {
-                var state = kanaKeyState;
-                kanaKeyState = SpecialKeyState.RELEASED;
-                if (state == SpecialKeyState.SHIFTED) {
-                    return true;
-                } else if (state == SpecialKeyState.PRESSED) {
-                    return keyboardDownHandler(vkey);
-                }
-            }
+            //if (vkey == (int)VirtualKeys.Hiragana) {
+            //    var state = kanaKeyState;
+            //    kanaKeyState = SpecialKeyState.RELEASED;
+            //    if (state == SpecialKeyState.SHIFTED) {
+            //        return true;
+            //    } else if (state == SpecialKeyState.PRESSED) {
+            //        return keyboardDownHandler(vkey);
+            //    }
+            //}
             // キーアップ時はなにもしない
             try {
                 bHandlerBusy = true;

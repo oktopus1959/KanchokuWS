@@ -39,7 +39,7 @@ namespace KanchokuWS
         public const uint MOD_XFER = 0x1000;
 
         // VKEY に対する modifier KANA
-        public const uint MOD_KANA = 0x2000;
+        //public const uint MOD_KANA = 0x2000;
 
         public static uint MakeModifier(bool ctrl, bool shift)
         {
@@ -433,7 +433,7 @@ namespace KanchokuWS
             {"alnum", KeyModifiers.MOD_ALNUM },
             {"nfer", KeyModifiers.MOD_NFER },
             {"xfer", KeyModifiers.MOD_XFER },
-            {"cana", KeyModifiers.MOD_KANA },
+            //{"kana", KeyModifiers.MOD_KANA },
         };
 
         private static Dictionary<string, int> specialDecKeysFromName = new Dictionary<string, int>() {
