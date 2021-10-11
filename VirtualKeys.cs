@@ -309,6 +309,11 @@ namespace KanchokuWS
         // 静的コンストラクタ
         static VirtualKeys()
         {
+            Initialize();
+        }
+
+        public static void Initialize()
+        {
             VKeyComboFromDecKey = new VKeyCombo?[DecoderKeys.GLOBAL_DECKEY_ID_END];
             DecKeyFromVKeyCombo = new Dictionary<uint, int>();
             ModConvertedDecKeyFromVKeyCombo = new Dictionary<uint, int>();

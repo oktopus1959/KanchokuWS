@@ -88,14 +88,7 @@ namespace KanchokuWS
             logger.WriteLog("INFO", $"\n\n==== KANCHOKU WS START (LogLevel={Logger.LogLevel}) ====");
 
             // キーボードファイルの読み込み
-            if (!VirtualKeys.ReadKeyboardFile()) {
-                // キーボードファイルを読み込めなかったので終了する
-                logger.Error($"CLOSE: Can't read keyboard file");
-                //DecKeyHandler.Destroy();
-                //PostMessage(this.Handle, WM_Defs.WM_CLOSE, 0, 0);
-                this.Close();
-                return;
-            }
+            if (!readKeyboardFile()) return;
 
             // 設定ファイルの読み込み
             Settings.ReadIniFile();
@@ -131,6 +124,20 @@ namespace KanchokuWS
 
             // キーボードイベントのディスパッチ開始
             initializeKeyboardEventDispatcher();
+        }
+
+        /// <summary> キーボードファイルの読み込み (成功したら true, 失敗したら false を返す) </summary>
+        private bool readKeyboardFile()
+        {
+            if (!VirtualKeys.ReadKeyboardFile()) {
+                // キーボードファイルを読み込めなかったので終了する
+                logger.Error($"CLOSE: Can't read keyboard file");
+                //DecKeyHandler.Destroy();
+                //PostMessage(this.Handle, WM_Defs.WM_CLOSE, 0, 0);
+                this.Close();
+                return false;
+            }
+            return true;
         }
 
         /// <summary> 各種定義ファイルの読み込み </summary>
@@ -1190,7 +1197,13 @@ namespace KanchokuWS
         // 設定ファイルと各種定義ファイルをリロードする
         public void ReloadSettingsAndDefFiles()
         {
+            // 初期化
+            VirtualKeys.Initialize();
+            // キーボードファイルの読み込み
+            if (!readKeyboardFile()) return;
+            // 設定ファイルの読み込み
             Settings.ReadIniFile();
+            // 各種定義ファイルの読み込み
             ReloadDefFiles();
             //ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
         }
