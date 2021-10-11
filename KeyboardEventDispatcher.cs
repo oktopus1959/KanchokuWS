@@ -421,7 +421,8 @@ namespace KanchokuWS
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey})");
 
             int kanchokuCode = -1;
-            if (modEx != 0) {
+            if (modEx != 0 && !ctrl) {
+                // 拡張シフトが有効なのは、Ctrlキーが押されていない場合とする
                 kanchokuCode = VirtualKeys.GetModConvertedDecKeyFromCombo(modEx, (uint)vkey);
                 if (kanchokuCode < 0) {
                     // 拡張シフト面のコードを得る
