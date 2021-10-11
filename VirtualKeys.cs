@@ -118,10 +118,13 @@ namespace KanchokuWS
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, kana) に割り当てるシフト面</summary>
         private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftFuncKey = new Dictionary<uint, ShiftPlane>();
 
+        /// <summary> DecoderがOffの時のシフト用の機能キー(space, Caps, alnum, nfer, xfer, kana) に割り当てるシフト面</summary>
+        private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftFuncKeyWhenDecoderOff = new Dictionary<uint, ShiftPlane>();
+
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, kana) に割り当てれたシフト面を得る</summary>
-        public static ShiftPlane GetShiftPlaneForShiftFuncKey(uint funcKey)
+        public static ShiftPlane GetShiftPlaneForShiftFuncKey(uint funcKey, bool bDecoderOn)
         {
-            return shiftPlaneForShiftFuncKey._safeGet(funcKey, ShiftPlane.NONE);
+            return bDecoderOn ? shiftPlaneForShiftFuncKey._safeGet(funcKey, ShiftPlane.NONE) : shiftPlaneForShiftFuncKeyWhenDecoderOff._safeGet(funcKey, ShiftPlane.NONE);
         }
 
         private static uint getVKeyFromDecKey(int deckey)
@@ -502,23 +505,36 @@ namespace KanchokuWS
                     var line = rawLine._reReplace("#.*", "").Trim().Replace(" ", "")._toLower();
                     if (line._notEmpty() && line[0] != '#') {
                         if (line.IndexOf('=') > 0) {
+                            // NAME=plane[|plane]...
                             var items = line._split('=');
                             if (items._length() == 2) {
                                 uint mod = modifierKeysFromName._safeGet(items[0]);
+                                var planes = items[1]._split('|');
                                 ShiftPlane shiftPlane = ShiftPlane.NONE;
-                                switch (items[1]) {
+                                switch (planes._getNth(0)) {
                                     case "shift": shiftPlane = ShiftPlane.NormalPlane; break;
                                     case "shifta": shiftPlane = ShiftPlane.PlaneA; break;
                                     case "shiftb": shiftPlane = ShiftPlane.PlaneB; break;
                                 }
-                                logger.DebugH(() => $"mod={mod:x}H({mod}), shiftPlane={shiftPlane}");
+                                var shiftPlaneWhenOff = shiftPlane;
+                                if (planes.Length > 1) {
+                                    switch (planes._getNth(1)) {
+                                        case "shift": shiftPlaneWhenOff = ShiftPlane.NormalPlane; break;
+                                        case "shifta": shiftPlaneWhenOff = ShiftPlane.PlaneA; break;
+                                        case "shiftb": shiftPlaneWhenOff = ShiftPlane.PlaneB; break;
+                                        default: shiftPlaneWhenOff = ShiftPlane.NONE; break;
+                                    }
+                                }
+                                logger.DebugH(() => $"mod={mod:x}H({mod}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
                                 if (mod != 0 && shiftPlane > 0) {
-                                    logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{mod}] = {shiftPlane}");
+                                    logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{mod}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{mod}] = {shiftPlaneWhenOff}");
                                     shiftPlaneForShiftFuncKey[mod] = shiftPlane;
+                                    shiftPlaneForShiftFuncKeyWhenDecoderOff[mod] = shiftPlaneWhenOff;
                                     continue;
                                 }
                             }
                         } else {
+                            // NAME:xx:function
                             var items = line._split(':');
                             if (items._length() == 3) {
                                 uint mod = modifierKeysFromName._safeGet(items[0]);

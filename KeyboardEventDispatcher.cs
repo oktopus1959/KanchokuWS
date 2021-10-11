@@ -212,15 +212,16 @@ namespace KanchokuWS
 
         private VirtualKeys.ShiftPlane getShiftPlane()
         {
+            bool bDecoderOn = isDecoderActivated();
             if (spaceKeyState == SpecialKeyState.SHIFTED) {
-                var plane = VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_SPACE);
+                var plane = VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_SPACE, bDecoderOn);
                 if (plane == VirtualKeys.ShiftPlane.NONE && isSandSEnabled()) plane = VirtualKeys.ShiftPlane.NormalPlane;
                 return plane;
             }
-            if (capsKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_CAPS);
-            if (alnumKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_ALNUM);
-            if (nferKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_NFER);
-            if (xferKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_XFER);
+            if (capsKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_CAPS, bDecoderOn);
+            if (alnumKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_ALNUM, bDecoderOn);
+            if (nferKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_NFER, bDecoderOn);
+            if (xferKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_XFER, bDecoderOn);
             //if (kanaKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_KANA);
             return VirtualKeys.ShiftPlane.NONE;
         }
