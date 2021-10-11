@@ -198,7 +198,7 @@ namespace KanchokuWS
         /// <summary> かなキーの押下状態</summary>
         //private SpecialKeyState kanaKeyState = SpecialKeyState.RELEASED;
 
-        /// <summary> 修飾キーの押下状態を得る</summary>
+        /// <summary> 拡張修飾キーのシフト状態を得る</summary>
         private uint getShiftedSpecialModKey()
         {
             if (spaceKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_SPACE;
@@ -208,6 +208,27 @@ namespace KanchokuWS
             if (xferKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_XFER;
             //if (kanaKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_KANA;
             return 0;
+        }
+
+        /// <summary> 拡張修飾キーの押下またシフト状態を得る</summary>
+        private uint getPressedOrShiftedSpecialModKey()
+        {
+            if (spaceKeyState == SpecialKeyState.PRESSED || spaceKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_SPACE;
+            if (capsKeyState == SpecialKeyState.PRESSED || capsKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_CAPS;
+            if (alnumKeyState == SpecialKeyState.PRESSED || alnumKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_ALNUM;
+            if (nferKeyState == SpecialKeyState.PRESSED || nferKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_NFER;
+            if (xferKeyState == SpecialKeyState.PRESSED || xferKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_XFER;
+            //if (kanaKeyState == SpecialKeyState.SHIFTED) return KeyModifiers.MOD_KANA;
+            return 0;
+        }
+
+        private void makeSpecialModKeyShifted()
+        {
+            if (spaceKeyState == SpecialKeyState.PRESSED) spaceKeyState = SpecialKeyState.SHIFTED;
+            if (capsKeyState == SpecialKeyState.PRESSED) capsKeyState = SpecialKeyState.SHIFTED;
+            if (alnumKeyState == SpecialKeyState.PRESSED) alnumKeyState = SpecialKeyState.SHIFTED;
+            if (nferKeyState == SpecialKeyState.PRESSED) nferKeyState = SpecialKeyState.SHIFTED;
+            if (xferKeyState == SpecialKeyState.PRESSED) xferKeyState = SpecialKeyState.SHIFTED;
         }
 
         private VirtualKeys.ShiftPlane getShiftPlane()
@@ -260,9 +281,10 @@ namespace KanchokuWS
                 // CapsLock
                 if (vkey == (int)VirtualKeys.CapsLock) {
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CapsLockKey Pressed");
-                    if (capsKeyState == SpecialKeyState.PRESSED) {
-                        // Capsキーが押下されている状態なら、シフト状態に遷移する
+                    if (capsKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
+                        // Capsキーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
                         capsKeyState = SpecialKeyState.SHIFTED;
+                        makeSpecialModKeyShifted();
                         return;
                     }
                     if (capsKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
@@ -279,9 +301,10 @@ namespace KanchokuWS
                 // AlphaNum
                 if (vkey == (int)VirtualKeys.AlphaNum) {
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"AlpahNumKey Pressed");
-                    if (alnumKeyState == SpecialKeyState.PRESSED) {
-                        // 英数キーが押下されている状態なら、シフト状態に遷移する
+                    if (alnumKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
+                        // 英数キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
                         alnumKeyState = SpecialKeyState.SHIFTED;
+                        makeSpecialModKeyShifted();
                         return;
                     }
                     if (alnumKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
@@ -298,9 +321,10 @@ namespace KanchokuWS
                 // Nfer
                 if (vkey == (int)VirtualKeys.Nfer) {
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"NferKey Pressed");
-                    if (nferKeyState == SpecialKeyState.PRESSED) {
-                        // 無変換キーが押下されている状態なら、シフト状態に遷移する
+                    if (nferKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
+                        // 無変換キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
                         nferKeyState = SpecialKeyState.SHIFTED;
+                        makeSpecialModKeyShifted();
                         return;
                     }
                     if (nferKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
@@ -317,9 +341,10 @@ namespace KanchokuWS
                 // Xfer
                 if (vkey == (int)VirtualKeys.Xfer) {
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"XferKey Pressed");
-                    if (xferKeyState == SpecialKeyState.PRESSED) {
-                        // 変換キーが押下されている状態なら、シフト状態に遷移する
+                    if (xferKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
+                        // 変換キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
                         xferKeyState = SpecialKeyState.SHIFTED;
+                        makeSpecialModKeyShifted();
                         return;
                     }
                     if (xferKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
@@ -356,21 +381,26 @@ namespace KanchokuWS
                 if (isSandSEnabled()) {
                     if (vkey == (int)Keys.Space) {
                         // スペースキーが押された
-                        if (spaceKeyState == SpecialKeyState.PRESSED) {
-                            // すでにスペースキーが押下されている状態なら、シフト状態に遷移する
+                        if (spaceKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
+                            // すでにスペースキーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
                             spaceKeyState = SpecialKeyState.SHIFTED;
+                            makeSpecialModKeyShifted();
                             return;
                         }
                         if (spaceKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
 
+                        bool bCtrl = ctrlKeyPressed();
+                        bool bShift = shiftKeyPressed();
+                        bool bShiftEx = getShiftedSpecialModKey() != 0;
+
                         // RELEASED
-                        if (!ctrlKeyPressed() && !shiftKeyPressed() && getShiftedSpecialModKey() == 0) {
+                        if (!bCtrl && !bShift && !bShiftEx) {
                             // 1回目の押下で Ctrl も Shift も他のmodiferも押されてない
                             spaceKeyState = SpecialKeyState.PRESSED;
                             return;
                         }
-                        // やはり 本来のShift押下時のSpaceは、Shiftとして扱う
-                        if (shiftKeyPressed()) {
+                        // 本来のShiftまたは拡張シフト押下時のSpaceは、Shiftとして扱う
+                        if (bShift || bShiftEx) {
                             spaceKeyState = SpecialKeyState.SHIFTED;
                             return;
                         }
@@ -501,9 +531,11 @@ namespace KanchokuWS
                 if (vkey == (int)Keys.Space) {
                     var state = spaceKeyState;
                     spaceKeyState = SpecialKeyState.RELEASED;
-                    if (state == SpecialKeyState.SHIFTED) {
+                    if (getShiftedSpecialModKey() != 0) {
+                        // 何か拡張シフト状態だったらSpaceキーは無視
                         return true;
                     } else if (state == SpecialKeyState.PRESSED) {
+                        // Spaceキーが1回押されただけの状態なら、Spaceキーを送出
                         return keyboardDownHandler(vkey);
                     }
                 }
