@@ -33,6 +33,12 @@ namespace VkbTableMaker {
     // シフトキー文字を集めたストローク表を作成する
     void MakeShiftKeyCharsStrokePositionTable(wchar_t* faces);
 
+    // シフトA面キー文字を集めたストローク表を作成する
+    void MakeShiftAKeyCharsStrokePositionTable(wchar_t* faces);
+
+    // シフトB面キー文字を集めたストローク表を作成する
+    void MakeShiftBKeyCharsStrokePositionTable(wchar_t* faces);
+
     // 初期打鍵表(下端機能キー以外は空白)の作成
     void MakeInitialVkbTable(wchar_t* faces);
 

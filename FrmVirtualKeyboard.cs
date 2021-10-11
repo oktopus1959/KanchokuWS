@@ -654,6 +654,10 @@ namespace KanchokuWS
                                 makeVkbStrokeTable("makeExtraCharsStrokePositionTable", null);
                             } else if (cmd == "shiftkeycharsposition") {
                                 makeVkbStrokeTable("makeShiftStrokePosition", null);
+                            } else if (cmd == "shiftakeycharsposition") {
+                                makeVkbStrokeTable("makeShiftAStrokePosition", null);
+                            } else if (cmd == "shiftbkeycharsposition") {
+                                makeVkbStrokeTable("makeShiftBStrokePosition", null);
                             } else if (cmd == "hiraganakey1") {
                                 makeVkbStrokeTable("makeStrokeKeysTable", kanaOutChars[0], true, true);
                             } else if (cmd == "hiraganakey2") {

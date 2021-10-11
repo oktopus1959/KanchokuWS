@@ -241,6 +241,44 @@ namespace VkbTableMaker {
         }
     }
 
+    // シフトA面キー文字を集めたストローク表を作成する
+    void MakeShiftAKeyCharsStrokePositionTable(wchar_t* faces) {
+        LOG_INFO(_T("CALLED"));
+        for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
+            mchar_t ch = 0;
+            auto blk = ROOT_STROKE_NODE->getNth(SHIFT_A_DECKEY_START + i);
+            if (blk) {
+                if (blk->isStrokeTableNode()) {
+                    ch = _T("□")[0];
+                } else if (blk->isStringNode()) {
+                    ch = utils::safe_front(blk->getString());
+                } else {
+                    ch = _T("・")[0];
+                }
+            }
+            set_facestr(ch, faces + i * 2);
+        }
+    }
+
+    // シフトB面キー文字を集めたストローク表を作成する
+    void MakeShiftBKeyCharsStrokePositionTable(wchar_t* faces) {
+        LOG_INFO(_T("CALLED"));
+        for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
+            mchar_t ch = 0;
+            auto blk = ROOT_STROKE_NODE->getNth(SHIFT_B_DECKEY_START + i);
+            if (blk) {
+                if (blk->isStrokeTableNode()) {
+                    ch = _T("□")[0];
+                } else if (blk->isStringNode()) {
+                    ch = utils::safe_front(blk->getString());
+                } else {
+                    ch = _T("・")[0];
+                }
+            }
+            set_facestr(ch, faces + i * 2);
+        }
+    }
+
     //----------------------------------------------------------------------------
     // 初期打鍵表(下端機能キー以外は空白)の作成
     void MakeInitialVkbTable(wchar_t* faces) {
