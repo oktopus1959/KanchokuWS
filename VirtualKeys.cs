@@ -38,8 +38,8 @@ namespace KanchokuWS
         // VKEY に対する modifier XFER
         public const uint MOD_XFER = 0x1000;
 
-        // VKEY に対する modifier KANA
-        //public const uint MOD_KANA = 0x2000;
+        // VKEY に対する modifier RSHIFT
+        public const uint MOD_RSHIFT = 0x2000;
 
         public static uint MakeModifier(bool ctrl, bool shift)
         {
@@ -115,13 +115,13 @@ namespace KanchokuWS
             PlaneB = 3
         }
 
-        /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, kana) に割り当てるシフト面</summary>
+        /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
         private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftFuncKey = new Dictionary<uint, ShiftPlane>();
 
-        /// <summary> DecoderがOffの時のシフト用の機能キー(space, Caps, alnum, nfer, xfer, kana) に割り当てるシフト面</summary>
+        /// <summary> DecoderがOffの時のシフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
         private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftFuncKeyWhenDecoderOff = new Dictionary<uint, ShiftPlane>();
 
-        /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, kana) に割り当てれたシフト面を得る</summary>
+        /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てれたシフト面を得る</summary>
         public static ShiftPlane GetShiftPlaneForShiftFuncKey(uint funcKey, bool bDecoderOn)
         {
             return bDecoderOn ? shiftPlaneForShiftFuncKey._safeGet(funcKey, ShiftPlane.NONE) : shiftPlaneForShiftFuncKeyWhenDecoderOff._safeGet(funcKey, ShiftPlane.NONE);
@@ -442,6 +442,7 @@ namespace KanchokuWS
             {"nfer", KeyModifiers.MOD_NFER },
             {"xfer", KeyModifiers.MOD_XFER },
             //{"kana", KeyModifiers.MOD_KANA },
+            {"rshift", KeyModifiers.MOD_RSHIFT },
         };
 
         private static Dictionary<string, int> specialDecKeysFromName = new Dictionary<string, int>() {
