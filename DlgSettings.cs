@@ -99,7 +99,7 @@ namespace KanchokuWS
             readSettings_tabBasic();
             setBasicStatusChecker();
 
-            readSettings_tabFile();
+            readSettings_tabFontColor();
             setFontColortatusChecker();
 
             readSettings_tabAdvanced();
@@ -353,8 +353,8 @@ namespace KanchokuWS
             Settings.ReadIniFile();
 
             readSettings_tabBasic();
-            readSettings_tabFile();
             readSettings_tabAdvanced();
+            readSettings_tabFontColor();
             readSettings_tabKeyAssign();
             readSettings_tabCtrlKeys();
             readSettings_tabHistory();
@@ -375,7 +375,7 @@ namespace KanchokuWS
 
         //-----------------------------------------------------------------------------------
         /// <summary>フォント・色設定</summary>
-        void readSettings_tabFile()
+        void readSettings_tabFontColor()
         {
             // 仮想鍵盤フォント
             textBox_normalFont.Text = Settings.NormalVkbFontSpec;
@@ -482,7 +482,7 @@ namespace KanchokuWS
 
             Settings.ReadIniFile();
 
-            readSettings_tabFile();
+            readSettings_tabFontColor();
 
             checkerFontColor.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
@@ -1063,11 +1063,18 @@ namespace KanchokuWS
             // その他変換
             checkBox_autoBushuComp.Checked = Settings.AutoBushuComp;
             checkBox_convertShiftedHiraganaToKatakana.Checked = Settings.ConvertShiftedHiraganaToKatakana;
+            switch (Settings.HiraganaToKatakanaShiftPlane) {
+                case 1: radioButton_shiftA.Checked = true; break;
+                case 2: radioButton_shiftB.Checked = true; break;
+                default: radioButton_normalShift.Checked = true; break;
+            }
+            changeShiftPlaneSectionRadioButtonsState();
             checkBox_convertJaPeriod.Checked = Settings.ConvertJaPeriod;
             checkBox_convertJaComma.Checked = Settings.ConvertJaComma;
             checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
             checkBox_SandSEnabled.Checked = Settings.SandSEnabled;
             checkBox_SandSEnabledWhenOffMode.Checked = Settings.SandSEnabledWhenOffMode;
+            checkBox_extraModifiersEnabled.Checked = Settings.ExtraModifiersEnabled;
             textBox_modConversionFile.Text = Settings.ModConversionFile;
             checkBox_upperRomanStrokeGuide.Checked = Settings.UpperRomanStrokeGuide;
             textBox_kanjiYomiFile.Text = Settings.KanjiYomiFile;
@@ -1081,11 +1088,15 @@ namespace KanchokuWS
             checkerMiscSettings.ControlEnabler = button_miscClose_textChange;
             checkerMiscSettings.Add(checkBox_autoBushuComp);
             checkerMiscSettings.Add(checkBox_convertShiftedHiraganaToKatakana);
+            checkerMiscSettings.Add(radioButton_normalShift);
+            checkerMiscSettings.Add(radioButton_shiftA);
+            checkerMiscSettings.Add(radioButton_shiftB);
             checkerMiscSettings.Add(checkBox_convertJaPeriod);
             checkerMiscSettings.Add(checkBox_convertJaComma);
             checkerMiscSettings.Add(checkBox_removeOneStrokeByBackspace);
             checkerMiscSettings.Add(checkBox_SandSEnabled);
             checkerMiscSettings.Add(checkBox_SandSEnabledWhenOffMode);
+            checkerMiscSettings.Add(checkBox_extraModifiersEnabled);
             checkerMiscSettings.Add(textBox_modConversionFile);
             checkerMiscSettings.Add(checkBox_upperRomanStrokeGuide);
             checkerMiscSettings.Add(textBox_kanjiYomiFile);
@@ -1102,11 +1113,13 @@ namespace KanchokuWS
         {
             Settings.SetUserIni("autoBushuComp", checkBox_autoBushuComp.Checked);
             Settings.SetUserIni("convertShiftedHiraganaToKatakana", checkBox_convertShiftedHiraganaToKatakana.Checked);
+            Settings.SetUserIni("hiraganaToKatakanaShiftPlane", radioButton_shiftA.Checked ? 1 : radioButton_shiftB.Checked ? 2 : 0);
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
             Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
             Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);
             Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
             Settings.SetUserIni("sandsEnabledWhenOffMode", checkBox_SandSEnabledWhenOffMode.Checked);
+            Settings.SetUserIni("extraModifiersEnabled", checkBox_extraModifiersEnabled.Checked);
             Settings.SetUserIni("modConversionFile", textBox_modConversionFile.Text);
             Settings.SetUserIni("upperRomanStrokeGuide", checkBox_upperRomanStrokeGuide.Checked);
             Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
@@ -1122,6 +1135,18 @@ namespace KanchokuWS
             //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             label_okResultMisc.Show();
+        }
+
+        private void checkBox_convertShiftedHiraganaToKatakana_CheckedChanged(object sender, EventArgs e)
+        {
+            changeShiftPlaneSectionRadioButtonsState();
+        }
+
+        private void changeShiftPlaneSectionRadioButtonsState()
+        {
+            radioButton_normalShift.Enabled = checkBox_convertShiftedHiraganaToKatakana.Checked;
+            radioButton_shiftA.Enabled = checkBox_convertShiftedHiraganaToKatakana.Checked;
+            radioButton_shiftB.Enabled = checkBox_convertShiftedHiraganaToKatakana.Checked;
         }
 
         private void button_openModConversionFile_Click(object sender, EventArgs e)
@@ -1380,6 +1405,12 @@ namespace KanchokuWS
             label_autoBushuComp.Hide();
         }
 
+        private void button_registerClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        //-----------------------------------------------------------------------------------
         // 一定時間後にOKリザルトラベルを非表示にする
         int dicRegLabelCount = 0;
 
@@ -1444,9 +1475,13 @@ namespace KanchokuWS
                     AcceptButton = button_histEnter;
                     CancelButton = button_histClose;
                     break;
-                case "tabPage_register":
+                case "tabPage_misc":
                     AcceptButton = button_miscEnter;
                     CancelButton = button_miscClose;
+                    break;
+                case "tabPage_register":
+                    AcceptButton = button_registerClose;
+                    CancelButton = button_registerClose;
                     break;
                 case "tabPage_about":
                     AcceptButton = button_aboutClose;
@@ -1812,6 +1847,7 @@ namespace KanchokuWS
         {
             comboBox_ctrlKey_setItems(comboBox_dateStringKey);
         }
+
     }
 }
 
