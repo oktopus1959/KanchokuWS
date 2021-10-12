@@ -143,13 +143,13 @@ namespace KanchokuWS
         /// <summary>やまぶきRが送ってくる SendInput の scanCode </summary>
         private const int YamabukiRscanCode = 0x7f;
 
-        private bool isEffectiveVkey(int vkey, int scanCode, int extraInfo)
+        private bool isEffectiveVkey(int vkey, int scanCode, int extraInfo, bool ctrl)
         {
             // 0xa0 = LSHIFT, 0xa1 = RSHIFT, 0xa5 = RMENU, 0xf3 = Zenkaku, 0xf4 = Kanji
             return
                 extraInfo != ActiveWindowHandler.MyMagicNumber &&
                 scanCode != 0 && scanCode != YamabukiRscanCode &&
-                ((vkey >= 0 && vkey < 0xa0) || (vkey == 0xa1 && isDecoderActivated()) || (vkey >= 0xa6 && vkey < 0xf3) || (vkey >= 0xf5 && vkey < vkeyNum));
+                ((vkey >= 0 && vkey < 0xa0) || (vkey == 0xa1 && !ctrl && isDecoderActivated()) || (vkey >= 0xa6 && vkey < 0xf3) || (vkey >= 0xf5 && vkey < vkeyNum));
         }
 
         private bool ctrlKeyPressed()
@@ -274,7 +274,10 @@ namespace KanchokuWS
 
             void handleKeyDown()
             {
-                if (!isEffectiveVkey(vkey, scanCode, extraInfo)) {
+                bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
+                bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+
+                if (!isEffectiveVkey(vkey, scanCode, extraInfo, leftCtrl || rightCtrl)) {
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"not EffectiveVkey");
                     return;
                 }
@@ -415,14 +418,14 @@ namespace KanchokuWS
                 }
 
                 if (Settings.LoggingDecKeyInfo) {
-                    logger.DebugH(() => $"CALL: keyboardDownHandler({vkey})\nspaceKeyState={spaceKeyState}"
+                    logger.DebugH(() => $"CALL: keyboardDownHandler({vkey}, {leftCtrl}, {rightCtrl})\nspaceKeyState={spaceKeyState}"
                     + $"\ncapsKeyState={capsKeyState}"
                     + $"\nalnumKeyState={alnumKeyState}"
                     + $"\nnferKeyState={nferKeyState}"
                     + $"\nxferKeyState={xferKeyState}"
                     + $"\nrshiftKeyState={rshiftKeyState}\n");
                 }
-                normalInfoKeyDownResult = keyboardDownHandler(vkey);
+                normalInfoKeyDownResult = keyboardDownHandler(vkey, leftCtrl, rightCtrl);
             }
 
             handleKeyDown();
@@ -441,10 +444,10 @@ namespace KanchokuWS
         /// <summary>キーボード押下時のハンドラ</summary>
         /// <param name="vkey"></param>
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
-        private bool keyboardDownHandler(int vkey)
+        private bool keyboardDownHandler(int vkey, bool leftCtrl, bool rightCtrl)
         {
-            bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-            bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            //bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
+            //bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
             bool ctrl = leftCtrl || rightCtrl;
             bool shift = shiftKeyPressed();
             uint mod = KeyModifiers.MakeModifier(ctrl, shift);
@@ -523,7 +526,11 @@ namespace KanchokuWS
         private bool onKeyboardUpHandler(int vkey, int scanCode, int extraInfo)
         {
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
-            if (!isEffectiveVkey(vkey, scanCode, extraInfo)) {
+
+            bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
+            bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+
+            if (!isEffectiveVkey(vkey, scanCode, extraInfo, leftCtrl || rightCtrl)) {
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result=False, not EffectiveVkey");
                 return false;
             }
@@ -537,7 +544,7 @@ namespace KanchokuWS
                         return true;
                     } else if (state == SpecialKeyState.PRESSED) {
                         // Spaceキーが1回押されただけの状態なら、Spaceキーを送出
-                        return keyboardDownHandler(vkey);
+                        return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                     }
                 }
             }
@@ -547,7 +554,7 @@ namespace KanchokuWS
                 if (state == SpecialKeyState.SHIFTED) {
                     return true;
                 } else if (state == SpecialKeyState.PRESSED) {
-                    return keyboardDownHandler(vkey);
+                    return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                 }
             }
             if (vkey == (int)VirtualKeys.AlphaNum) {
@@ -556,7 +563,7 @@ namespace KanchokuWS
                 if (state == SpecialKeyState.SHIFTED) {
                     return true;
                 } else if (state == SpecialKeyState.PRESSED) {
-                    return keyboardDownHandler(vkey);
+                    return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                 }
             }
             if (vkey == (int)VirtualKeys.Nfer) {
@@ -565,7 +572,7 @@ namespace KanchokuWS
                 if (state == SpecialKeyState.SHIFTED) {
                     return true;
                 } else if (state == SpecialKeyState.PRESSED) {
-                    return keyboardDownHandler(vkey);
+                    return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                 }
             }
             if (vkey == (int)VirtualKeys.Xfer) {
@@ -574,7 +581,7 @@ namespace KanchokuWS
                 if (state == SpecialKeyState.SHIFTED) {
                     return true;
                 } else if (state == SpecialKeyState.PRESSED) {
-                    return keyboardDownHandler(vkey);
+                    return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                 }
             }
             if (vkey == (int)VirtualKeys.RSHIFT) {
@@ -583,7 +590,7 @@ namespace KanchokuWS
                 if (state == SpecialKeyState.SHIFTED) {
                     return true;
                 } else if (state == SpecialKeyState.PRESSED) {
-                    return keyboardDownHandler(vkey);
+                    return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                 }
             }
             // キーアップ時はなにもしない
