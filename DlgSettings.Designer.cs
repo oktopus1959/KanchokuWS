@@ -2052,9 +2052,13 @@ namespace KanchokuWS
             // 
             // tabPage_keyAssign
             // 
+            this.tabPage_keyAssign.Controls.Add(this.textBox2);
             this.tabPage_keyAssign.Controls.Add(this.label_okResultKeyAssign);
+            this.tabPage_keyAssign.Controls.Add(this.label100);
             this.tabPage_keyAssign.Controls.Add(this.groupBox32);
+            this.tabPage_keyAssign.Controls.Add(this.textBox1);
             this.tabPage_keyAssign.Controls.Add(this.groupBox31);
+            this.tabPage_keyAssign.Controls.Add(this.label99);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignClose);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignEnter);
             this.tabPage_keyAssign.Controls.Add(this.groupBox30);
@@ -2339,10 +2343,6 @@ namespace KanchokuWS
             // 
             // groupBox29
             // 
-            this.groupBox29.Controls.Add(this.textBox2);
-            this.groupBox29.Controls.Add(this.label100);
-            this.groupBox29.Controls.Add(this.textBox1);
-            this.groupBox29.Controls.Add(this.label99);
             this.groupBox29.Controls.Add(this.textBox_nextThroughKeySeq);
             this.groupBox29.Controls.Add(this.label70);
             this.groupBox29.Controls.Add(this.textBox_katakanaModeKeySeq);
@@ -2353,7 +2353,7 @@ namespace KanchokuWS
             this.groupBox29.Controls.Add(this.label64);
             this.groupBox29.Location = new System.Drawing.Point(9, 5);
             this.groupBox29.Name = "groupBox29";
-            this.groupBox29.Size = new System.Drawing.Size(167, 118);
+            this.groupBox29.Size = new System.Drawing.Size(167, 119);
             this.groupBox29.TabIndex = 0;
             this.groupBox29.TabStop = false;
             this.groupBox29.Text = "前置呼び出し機能";
@@ -4495,7 +4495,7 @@ namespace KanchokuWS
             // textBox1
             // 
             this.textBox1.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox1.Location = new System.Drawing.Point(105, 135);
+            this.textBox1.Location = new System.Drawing.Point(114, 162);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(56, 19);
             this.textBox1.TabIndex = 9;
@@ -4506,7 +4506,7 @@ namespace KanchokuWS
             // label99
             // 
             this.label99.AutoSize = true;
-            this.label99.Location = new System.Drawing.Point(7, 117);
+            this.label99.Location = new System.Drawing.Point(16, 144);
             this.label99.Name = "label99";
             this.label99.Size = new System.Drawing.Size(147, 15);
             this.label99.TabIndex = 10;
@@ -4516,7 +4516,7 @@ namespace KanchokuWS
             // textBox2
             // 
             this.textBox2.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox2.Location = new System.Drawing.Point(105, 179);
+            this.textBox2.Location = new System.Drawing.Point(114, 210);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(56, 19);
             this.textBox2.TabIndex = 11;
@@ -4527,7 +4527,7 @@ namespace KanchokuWS
             // label100
             // 
             this.label100.AutoSize = true;
-            this.label100.Location = new System.Drawing.Point(7, 161);
+            this.label100.Location = new System.Drawing.Point(16, 192);
             this.label100.Name = "label100";
             this.label100.Size = new System.Drawing.Size(148, 15);
             this.label100.TabIndex = 12;
