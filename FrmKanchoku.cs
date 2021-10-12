@@ -149,7 +149,7 @@ namespace KanchokuWS
             }
 
             // 追加の修飾キー定義ファイルの読み込み
-            if (Settings.ModConversionFile._notEmpty()) {
+            if (Settings.ExtraModifiersEnabled && Settings.ModConversionFile._notEmpty()) {
                 VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
             }
 

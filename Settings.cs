@@ -381,6 +381,9 @@ namespace KanchokuWS
         // 各種変換
         // 平仮名⇒カタカナ変換
         public static bool ConvertShiftedHiraganaToKatakana { get; set; } = false;
+
+        public static int HiraganaToKatakanaShiftPlane { get; set; } = 0;
+
         // 「。」⇔「．」
         public static bool ConvertJaPeriod { get; set; } = false;
         // 「、」⇔「，」
@@ -392,6 +395,9 @@ namespace KanchokuWS
         // SandS を有効にするか
         public static bool SandSEnabled { get; set; } = false;
         public static bool SandSEnabledWhenOffMode { get; set; } = false;
+
+        // 拡張修飾キーを有効にするか
+        public static bool ExtraModifiersEnabled { get; set; } = false;
 
         // 自動首部合成を有効にするか
         public static bool AutoBushuComp { get; set; } = false;
@@ -588,7 +594,7 @@ namespace KanchokuWS
 
             StrokeHelpFile = GetString("strokeHelpFile", "stroke-help.txt");
 
-            ModConversionFile = GetString("modConversionFile");
+            ModConversionFile = GetString("modConversionFile", "mod-conversion.txt");
 
             KanjiYomiFile = GetString("kanjiYomiFile", "joyo-kanji.txt");
 
@@ -723,8 +729,10 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             // その他変換・機能
+            HiraganaToKatakanaShiftPlane = GetString("hiraganaToKatakanaShiftPlane")._parseInt(0);  // 平仮名をカタカナに変換する際に使用するシフト面(0:通常、1:A、2:B)
             SandSEnabled = GetString("sandsEnabled")._parseBool(false);                         // SandS を有効にするか
             SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
+            ExtraModifiersEnabled = GetString("extraModifiersEnabled")._parseBool(false);       // 拡張修飾キーを有効にするか
             UpperRomanStrokeGuide = GetString("upperRomanStrokeGuide")._parseBool(false);       // ローマ字読みによるストロークガイドを有効にするか
             ShowLastStrokeByDiffBackColor = GetString("showLastStrokeByDiffBackColor")._parseBool(false); // 前打鍵位置の背景色を変えて表示するか
 
