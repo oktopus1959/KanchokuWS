@@ -88,9 +88,6 @@ namespace KanchokuWS
         /// <summary>打鍵ヘルプ定義ファイル</summary>
         public static string StrokeHelpFile { get; private set; }
 
-        /// <summary> 修飾キー定義ファイル</summary>
-        public static string ModConversionFile { get; private set; }
-
         /// <summary> 漢字読みファイル</summary>
         public static string KanjiYomiFile { get; private set; }
 
@@ -399,6 +396,9 @@ namespace KanchokuWS
         // 拡張修飾キーを有効にするか
         public static bool ExtraModifiersEnabled { get; set; } = false;
 
+        /// <summary> 修飾キー定義ファイル</summary>
+        public static string ModConversionFile { get; private set; }
+
         // 自動首部合成を有効にするか
         public static bool AutoBushuComp { get; set; } = false;
 
@@ -594,8 +594,6 @@ namespace KanchokuWS
 
             StrokeHelpFile = GetString("strokeHelpFile", "stroke-help.txt");
 
-            ModConversionFile = GetString("modConversionFile", "mod-conversion.txt");
-
             KanjiYomiFile = GetString("kanjiYomiFile", "joyo-kanji.txt");
 
             //-------------------------------------------------------------------------------------
@@ -732,7 +730,10 @@ namespace KanchokuWS
             HiraganaToKatakanaShiftPlane = GetString("hiraganaToKatakanaShiftPlane")._parseInt(0);  // 平仮名をカタカナに変換する際に使用するシフト面(0:通常、1:A、2:B)
             SandSEnabled = GetString("sandsEnabled")._parseBool(false);                         // SandS を有効にするか
             SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
-            ExtraModifiersEnabled = GetString("extraModifiersEnabled")._parseBool(false);       // 拡張修飾キーを有効にするか
+            ModConversionFile = GetString("modConversionFile");
+            bool isModConversionFileEmpty = ModConversionFile._isEmpty();
+            if (isModConversionFileEmpty) { ModConversionFile = "mod-conversion.txt"; }
+            ExtraModifiersEnabled = GetString("extraModifiersEnabled")._parseBool(!isModConversionFileEmpty);   // 拡張修飾キーを有効にするか
             UpperRomanStrokeGuide = GetString("upperRomanStrokeGuide")._parseBool(false);       // ローマ字読みによるストロークガイドを有効にするか
             ShowLastStrokeByDiffBackColor = GetString("showLastStrokeByDiffBackColor")._parseBool(false); // 前打鍵位置の背景色を変えて表示するか
 
