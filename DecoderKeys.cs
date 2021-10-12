@@ -209,8 +209,9 @@ namespace KanchokuWS
 
         public const int TOGGLE_ZENKAKU_CONVERSION = BUSHU_COMP_HELP + 1;           // 全角変換のトグル
 
-        public const int TOGGLE_UPPER_ROMAN_STROKE_GUIDE = TOGGLE_ZENKAKU_CONVERSION + 1;     // 大文字ローマ字読みによる打鍵ガイドのトグル
-        public const int TOGGLE_ROMAN_STROKE_GUIDE = TOGGLE_UPPER_ROMAN_STROKE_GUIDE + 1;     // ローマ字読みによる打鍵ガイドのトグル
+        public const int TOGGLE_UPPER_ROMAN_STROKE_GUIDE = TOGGLE_ZENKAKU_CONVERSION + 1;   // 大文字ローマ字読みによる打鍵ガイドのトグル
+        public const int TOGGLE_ROMAN_STROKE_GUIDE = TOGGLE_UPPER_ROMAN_STROKE_GUIDE + 1;   // ローマ字読みによる打鍵ガイドのトグル
+        public const int TOGGLE_HIRAGANA_STROKE_GUIDE = TOGGLE_ROMAN_STROKE_GUIDE + 1;      // ひらがな読みによる打鍵ガイドのトグル
 
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 

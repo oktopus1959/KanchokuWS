@@ -330,6 +330,12 @@ public:
             } else if (cmd == _T("clearTailRomanStr")) {
                 // 末尾のローマ字列を削除
                 clearTailRomanStr();
+            } else if (cmd == _T("clearTailHiraganaStr")) {
+                // 末尾のひらがな列を削除
+                clearTailHiraganaStr();
+            } else if (cmd == _T("setHiraganaBlocker")) {
+                // 末尾にひらがなブロッカーを設定
+                setHiraganaBlocker();
             } else if (cmd == _T("makeExtraCharsStrokePositionTable")) {
                 // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
                 VkbTableMaker::MakeExtraCharsStrokePositionTable(outParams->faceStrings);
@@ -456,6 +462,17 @@ public:
     void clearTailRomanStr() {
         OUTPUT_STACK->ClearTailAlaphabetStr();
         LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+    }
+
+    // 末尾のひらがな列を削除
+    void clearTailHiraganaStr() {
+        OUTPUT_STACK->ClearTailHiraganaStr();
+        LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+    }
+
+    // 末尾にひらがなブロッカーを設定
+    void setHiraganaBlocker() {
+        OUTPUT_STACK->SetHiraganaBlocker();
     }
 
     // ヘルプや候補文字列

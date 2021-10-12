@@ -2353,7 +2353,7 @@ namespace KanchokuWS
             this.groupBox29.Controls.Add(this.label64);
             this.groupBox29.Location = new System.Drawing.Point(9, 5);
             this.groupBox29.Name = "groupBox29";
-            this.groupBox29.Size = new System.Drawing.Size(167, 255);
+            this.groupBox29.Size = new System.Drawing.Size(167, 118);
             this.groupBox29.TabIndex = 0;
             this.groupBox29.TabStop = false;
             this.groupBox29.Text = "前置呼び出し機能";
@@ -4501,6 +4501,7 @@ namespace KanchokuWS
             this.textBox1.TabIndex = 9;
             this.toolTip1.SetToolTip(this.textBox1, "大文字ローマ字入力による打鍵ガイド機能を呼び出します。\r\n\r\n当機能を呼び出すと、シフト打鍵などで英大文字を入力している間は\r\nローマ字入力モードを継続し、何か通" +
         "常打鍵を行うと打鍵ガイドモードに\r\n移動します。");
+            this.textBox1.Visible = false;
             // 
             // label99
             // 
@@ -4510,6 +4511,7 @@ namespace KanchokuWS
             this.label99.Size = new System.Drawing.Size(147, 15);
             this.label99.TabIndex = 10;
             this.label99.Text = "ローマ字入力 漢字打鍵ガイド";
+            this.label99.Visible = false;
             // 
             // textBox2
             // 
@@ -4520,6 +4522,7 @@ namespace KanchokuWS
             this.textBox2.TabIndex = 11;
             this.toolTip1.SetToolTip(this.textBox2, "ひらがな入力による打鍵ガイド機能を呼び出します。\r\n\r\n当機能を呼び出すと、いったんひらがな入力モードになります。\r\nもう一度呼び出すとひらがな入力モードを抜けて" +
         "、打鍵ガイドモードに移動します。");
+            this.textBox2.Visible = false;
             // 
             // label100
             // 
@@ -4529,6 +4532,7 @@ namespace KanchokuWS
             this.label100.Size = new System.Drawing.Size(148, 15);
             this.label100.TabIndex = 12;
             this.label100.Text = "ひらがな入力 漢字打鍵ガイド";
+            this.label100.Visible = false;
             // 
             // textBox_onSelectedBackColor
             // 

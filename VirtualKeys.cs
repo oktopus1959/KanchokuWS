@@ -487,6 +487,7 @@ namespace KanchokuWS
             {"zenkakuconversion", DecoderKeys.TOGGLE_ZENKAKU_CONVERSION},
             {"romanstrokeguide", DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE},
             {"upperromanstrokeguide", DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE},
+            {"hiraganastrokeguide", DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE},
             //{"^a", DecoderKeys.CTRL_},
         };
 

@@ -387,6 +387,21 @@ public:
         if (pos > 0) pop(pos);
     }
 
+    // 末尾にひらがな採取ブロッカーをセットする
+    inline void SetHiraganaBlocker() {
+        setKataBlocker();
+    }
+
+    // 末尾のひらがな文字列をクリアする
+    inline void ClearTailHiraganaStr() {
+        size_t pos = 0;
+        size_t len = tail_size_upto(FLAG_BLOCK_KATA);
+        for (; pos < len; ++pos) {
+            if (!utils::is_hiragana(back(pos))) break;
+        }
+        if (pos > 0) pop(pos);
+    }
+
 private:
     std::vector<Moji> stack;
 

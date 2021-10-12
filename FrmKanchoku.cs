@@ -551,12 +551,29 @@ namespace KanchokuWS
                         ShowBushuCompHelp();
                         return true;
                     case DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE:
-                        bRomanStrokeGuideMode = !bRomanStrokeGuideMode && !bRomanMode;
-                        drawRomanMode(bRomanStrokeGuideMode);
+                        if (IsDecoderActive) {
+                            bRomanStrokeGuideMode = !bRomanStrokeGuideMode && !bRomanMode;
+                            drawRomanOrHiraganaMode(bRomanStrokeGuideMode, false);
+                        }
                         return true;
                     case DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE:
-                        bUpperRomanStrokeGuideMode = !bUpperRomanStrokeGuideMode && !bRomanMode;
-                        if (!bRomanMode) drawRomanMode(bUpperRomanStrokeGuideMode);
+                        if (IsDecoderActive) {
+                            bUpperRomanStrokeGuideMode = !bUpperRomanStrokeGuideMode && !bRomanMode;
+                            if (!bRomanMode) drawRomanOrHiraganaMode(bUpperRomanStrokeGuideMode, false);
+                        }
+                        return true;
+                    case DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE:
+                        if (IsDecoderActive) {
+                            bHiraganaStrokeGuideMode = !bHiraganaStrokeGuideMode;
+                            if (bHiraganaStrokeGuideMode) {
+                                InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);   // やっぱり出力文字列をクリアしておく必要あり
+                                //ExecCmdDecoder("setHiraganaBlocker", null);       // こっちだと、以前のひらがなが出力文字列に残ったりして、それを拾ってしまう
+                            } else {
+                                //HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput); // こっちだと、見えなくなるだけで、ひらがな列が残ってしまう
+                                ExecCmdDecoder("clearTailHiraganaStr", null);   // 物理的に読みのひらがな列を削除しておく必要あり
+                            }
+                            drawRomanOrHiraganaMode(false, bHiraganaStrokeGuideMode);
+                        }
                         return true;
                     default:
                         if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
@@ -660,6 +677,7 @@ namespace KanchokuWS
                 decoderOutput.layout = 0;   // None にリセットしておく。これをやらないと仮想鍵盤モードを切り替えたときに以前の履歴選択状態が残ったりする
                 CommonState.CenterString = "";
                 Settings.VirtualKeyboardShowStrokeCountTemp = 0;
+                bHiraganaStrokeGuideMode = false;
                 bRomanStrokeGuideMode = false;
                 frmVkb.DrawInitailVkb();
                 //Text = "漢直窓S - ON";
@@ -903,10 +921,10 @@ namespace KanchokuWS
             return false;
         }
 
+        private bool bHiraganaStrokeGuideMode = false;
+
         private bool bRomanStrokeGuideMode = false;
-
         private bool bUpperRomanStrokeGuideMode = false;
-
         private bool bRomanMode = false;
 
         private string[] candidateCharStrs = null;
@@ -956,6 +974,7 @@ namespace KanchokuWS
             // ローマ字?
             bool isUpperAlphabet(char ch) => (ch >= 'A' && ch <= 'Z');
             bool isAlphabet(char ch) => (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
+            bool isHiragana(char ch) => (ch >= 'ぁ' && ch <= 'ん');
             string getTailRomanStr()
             {
                 int pos = 0;
@@ -968,8 +987,21 @@ namespace KanchokuWS
                 }
                 return new string(decoderOutput.topString.Skip(pos).Take(tailPos - pos).ToArray());
             }
+            string getTailHiraganaStr()
+            {
+                int pos = 0;
+                for (; pos < decoderOutput.topString.Length; ++pos) {
+                    if (decoderOutput.topString[pos] == '\0') break;
+                }
+                int tailPos = pos;
+                for (;  pos > 0; --pos) {
+                    if (!isHiragana(decoderOutput.topString[pos - 1])) break;
+                }
+                return new string(decoderOutput.topString.Skip(pos).Take(tailPos - pos).ToArray());
+            }
             logger.Info(() =>
                     $"RomanStrokeGuide={bRomanStrokeGuideMode}, UpperRomanStrokeGuide={bUpperRomanStrokeGuideMode}, romanMode={bRomanMode}, "
+                    + $"HiraganaStrokeGuide={bHiraganaStrokeGuideMode}, "
                     + $"Settings.UpperRomanStrokeGuide={Settings.UpperRomanStrokeGuide}, numBS={decoderOutput.numBackSpaces}, "
                     + $"output={decoderOutput.outString._toString()}, deckey={deckey}, prevMultiChar={bPrevMultiStrokeChar}");
             if (bRomanStrokeGuideMode ||
@@ -984,6 +1016,12 @@ namespace KanchokuWS
                 frmVkb.SetTopText(decoderOutput.topString);
                 targetChar = 0;
                 bRomanMode = true;
+            } else if (bHiraganaStrokeGuideMode) {
+                CommonState.CenterString = "ひらがな";
+                candidateChars = KanjiYomiTable.GetCandidates(getTailHiraganaStr());
+                candidateCharStrs = frmVkb.DrawStrokeHelp(candidateChars);
+                frmVkb.SetTopText(decoderOutput.topString);
+                targetChar = 0;
             } else {
                 // 他のVKey送出(もしあれば)
                 if (decoderOutput.IsDeckeyToVkey()) {
@@ -1015,6 +1053,7 @@ namespace KanchokuWS
 
             return sendKeyFlag;
         }
+
         private bool isNormalDeckey(int deckey)
         {
             return deckey >= DecoderKeys.NORMAL_DECKEY_START && deckey < DecoderKeys.NORMAL_DECKEY_END;
@@ -1025,10 +1064,10 @@ namespace KanchokuWS
             return deckey >= DecoderKeys.SHIFT_DECKEY_START && deckey < DecoderKeys.SHIFT_DECKEY_END ? deckey - DecoderKeys.SHIFT_DECKEY_START : deckey;
         }
 
-        private void drawRomanMode(bool bRoman)
+        private void drawRomanOrHiraganaMode(bool bRoman, bool bHiragana)
         {
-            // ローマ字読みモード
-            CommonState.CenterString = bRoman ? "ローマ字" : "";
+            // ローマ字またはひらがな読みモード
+            CommonState.CenterString = bRoman ? "ローマ字" : bHiragana ? "ひらがな" : "";
             candidateCharStrs = frmVkb.DrawStrokeHelp(candidateChars);
             if (bRomanMode && !bRoman) {
                 ExecCmdDecoder("clearTailRomanStr", null);
