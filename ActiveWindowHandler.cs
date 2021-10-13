@@ -336,10 +336,10 @@ namespace KanchokuWS
         /// </summary>
         /// <param name="leftShift"></param>
         /// <param name="rightShift"></param>
-        //private int upShiftKeyInputs(INPUT[] inputs, int idx, out bool leftShift, out bool rightShift)
-        //{
-        //    return upDownShiftKeyInputs(inputs, idx, true, out leftShift, out rightShift);
-        //}
+        private int upShiftKeyInputs(INPUT[] inputs, int idx, out bool leftShift, out bool rightShift)
+        {
+            return upDownShiftKeyInputs(inputs, idx, true, out leftShift, out rightShift);
+        }
 
         /// <summary>
         /// Shiftキーの事前下げ
@@ -412,6 +412,25 @@ namespace KanchokuWS
 
             // Enterキーだったら、すぐに仮想鍵盤を移動するように MinValue とする
             lastOutputDt = vkey == (uint)Keys.Enter ? DateTime.MinValue : DateTime.Now;
+        }
+
+        /// <summary>
+        /// キーボード入力をエミュレートして、CtrlキーとShiftキーをUp状態にする
+        /// </summary>
+        public void UpCtrlAndShftKeys()
+        {
+            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED");
+
+            var inputs = new INPUT[4];
+            int idx = 0;
+            bool left = false, right = false;
+
+            // Ctrl上げ
+            idx = upCtrlKeyInputs(inputs, idx, out left, out right);
+            // Shift上げ
+            idx = upShiftKeyInputs(inputs, idx, out left, out right);
+            // 送出
+            if (idx > 0) SendInput((uint)idx, inputs, Marshal.SizeOf(typeof(INPUT)));
         }
 
         /// <summary>

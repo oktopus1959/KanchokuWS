@@ -722,7 +722,8 @@ namespace KanchokuWS
         {
             logger.InfoH(() => $"\nENTER");
             IsDecoderActive = false;
-            handleKeyDecoder(DecoderKeys.ACTIVE_DECKEY, 0);   // DecoderOff の処理をやる
+            handleKeyDecoder(DecoderKeys.ACTIVE_DECKEY, 0);     // DecoderOff の処理をやる
+            actWinHandler.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
             frmVkb.Hide();
             frmMode.Hide();
             notifyIcon1.Icon = Properties.Resources.kanmini0;
