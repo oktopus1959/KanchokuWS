@@ -651,17 +651,20 @@ namespace KanchokuWS
 
         private void ToggleDecoder()
         {
-            ToggleActiveState();
+            ToggleActiveState(true);
         }
 
         // アクティブと非アクティブを切り替える
-        public void ToggleActiveState(bool bForceOff = false)
+        public void ToggleActiveState(bool bRevertCtrl = false)
         {
             logger.InfoH(() => $"ENTER");
-            if (!bForceOff && !IsDecoderActive) {
+            if (!IsDecoderActive) {
                 ActivateDecoder();
             } else {
+                bool leftCtrl, rightCtrl;
+                actWinHandler.GetCtrlKeyState(out leftCtrl, out rightCtrl);
                 DeactivateDecoder();
+                if (bRevertCtrl) actWinHandler.RevertUpCtrlKey(leftCtrl, rightCtrl);
             }
             logger.InfoH("LEAVE");
         }
@@ -722,7 +725,7 @@ namespace KanchokuWS
         {
             logger.InfoH(() => $"\nENTER");
             IsDecoderActive = false;
-            handleKeyDecoder(DecoderKeys.ACTIVE_DECKEY, 0);     // DecoderOff の処理をやる
+            handleKeyDecoder(DecoderKeys.DEACTIVE_DECKEY, 0);   // DecoderOff の処理をやる
             actWinHandler.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
             frmVkb.Hide();
             frmMode.Hide();

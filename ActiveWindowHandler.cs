@@ -140,6 +140,7 @@ namespace KanchokuWS
         private const int VK_BACK = 8;                      // Backspaceキー
         private const int VK_SHIFT = 0x10;                  // SHIFTキー
         private const int VK_CONTROL = 0x11;                // Ctrlキー
+        private const int VK_PACKET = 0xe7;                 // Unicode 
 
 
         //[DllImport("User32.dll", CharSet = CharSet.Auto)]
@@ -176,6 +177,12 @@ namespace KanchokuWS
         {
             setLeftCtrlInput(ref input, keyEventFlag);
             input.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;
+        }
+
+        public void GetCtrlKeyState(out bool leftCtrl, out bool rightCtrl)
+        {
+            leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
+            rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
         }
 
         /// <summary>
@@ -243,6 +250,20 @@ namespace KanchokuWS
                 setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
             }
             return idx;
+        }
+
+        public void RevertUpCtrlKey(bool prevLeftCtrl, bool prevRightCtrl)
+        {
+            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED");
+
+            var inputs = new INPUT[2];
+            
+            // Ctrl戻し
+            int idx = revertCtrlKeyInputs(inputs, 0, true, prevLeftCtrl, prevRightCtrl);
+            if (Settings.LoggingDecKeyInfo) logger.Info($"revert: idx={idx}");
+
+            // 送出
+            sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
         }
 
         /// <summary>
@@ -397,6 +418,7 @@ namespace KanchokuWS
             if (strLen > inputs._safeLength()) strLen = inputs._safeLength();
             for (int i = 0; i < strLen * 2; ++i) {
                 initializeKeyboardInput(ref inputs[idx]);
+                //inputs[idx].ki.wVk = VK_PACKET;       // SendInput でUniCodeを出力するときは、ここを 0 にしておく
                 inputs[idx].ki.wScan = str[i / 2];
                 inputs[idx].ki.dwFlags = (i % 2) == 0 ? KEYEVENTF_UNICODE : KEYEVENTF_KEYUP;
                 ++idx;
