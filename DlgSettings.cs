@@ -1184,7 +1184,7 @@ namespace KanchokuWS
         // 一定時間後にOKリザルトラベルを非表示にする
         int okResultCount = 0;
 
-        private const int okResultCountMax = 3 * (1000 / timerInterval);    // 3秒
+        private const int okResultCountMax = 5000 / timerInterval;    // 5秒
 
         private void hideOkResultLabel()
         {
@@ -1411,10 +1411,10 @@ namespace KanchokuWS
         }
 
         //-----------------------------------------------------------------------------------
-        // 一定時間後にOKリザルトラベルを非表示にする
+        // 一定時間後にリザルトラベルを非表示にする
         int dicRegLabelCount = 0;
 
-        private const int dicRegLabelCountMax = 3 * (1000 / timerInterval);    // 3秒
+        private const int dicRegLabelCountMax = 5000 / timerInterval;    // 5秒
 
         private void hideDicRegLabel()
         {
