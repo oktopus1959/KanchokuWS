@@ -335,14 +335,16 @@ namespace KanchokuWS
             Settings.SetUserIni("mazegakiFile", textBox_mazegakiFile.Text.Trim());
             Settings.SetUserIni("historyFile", textBox_historyFile.Text.Trim());
 
-            Settings.ReadIniFile();
+            //Settings.ReadIniFile();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
 
             readSettings_tabBasic();
 
             checkerBasic.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
             // 各種定義ファイルの再読み込み
-            frmMain?.ReloadDefFiles();
+            //frmMain?.ReloadDefFiles();
 
             //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
@@ -356,13 +358,14 @@ namespace KanchokuWS
         private void button_Reload_Click(object sender, EventArgs e)
         {
             reloadIniFileAndDefFiles();
-            //SystemHelper.ShowInfoMessageBox("設定しました");
             label_reloadBasic.Show();
         }
 
         private void reloadIniFileAndDefFiles()
         {
-            Settings.ReadIniFile();
+            //Settings.ReadIniFile();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
 
             readSettings_tabBasic();
             readSettings_tabAdvanced();
@@ -375,7 +378,7 @@ namespace KanchokuWS
             checkerAll.Reinitialize();
 
             // 各種定義ファイルの再読み込み
-            frmMain?.ReloadDefFiles();
+            //frmMain?.ReloadDefFiles();
 
             //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
         }
@@ -491,15 +494,16 @@ namespace KanchokuWS
             Settings.SetUserIni("bgColorForFirstCandidate", textBox_firstCandidateBackColor.Text.Trim());
             Settings.SetUserIni("bgColorOnSelected", textBox_onSelectedBackColor.Text.Trim());
 
-
-            Settings.ReadIniFile();
+            //Settings.ReadIniFile();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
 
             readSettings_tabFontColor();
 
             checkerFontColor.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
             // 各種定義ファイルの再読み込み
-            frmMain?.ReloadDefFiles();
+            //frmMain?.ReloadDefFiles();
 
             //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
@@ -661,7 +665,9 @@ namespace KanchokuWS
 
             //Settings.SetUserIni("autoOffWhenBurstKeyIn", checkBox_autoOffWhenBurstKeyIn.Checked);
 
-            Settings.ReadIniFile();
+            //Settings.ReadIniFile();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
 
             readSettings_tabAdvanced();
             checkerAdvanced.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
@@ -670,7 +676,7 @@ namespace KanchokuWS
             frmMode?.ShowImmediately();
 
             // 各種定義ファイルの再読み込み
-            frmMain?.ReloadDefFiles();
+            //frmMain?.ReloadDefFiles();
 
             //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
@@ -748,6 +754,8 @@ namespace KanchokuWS
             Settings.SetUserIni("blockerSetterOneShotKeySeq", textBox_blockerSetterOneShotKeySeq.Text);
 
             Settings.ReadIniFile();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
 
             readSettings_tabKeyAssign();
             checkerKeyAssign.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
@@ -756,7 +764,7 @@ namespace KanchokuWS
             frmMode?.ShowImmediately();
 
             // 各種定義ファイルの再読み込み
-            frmMain?.ReloadDefFiles();
+            //frmMain?.ReloadDefFiles();
 
             //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
             //frmMain?.MakeInitialVkbTable();
@@ -929,6 +937,8 @@ namespace KanchokuWS
             Settings.SetUserIni("strokeHelpRotationKey", comboBox_strokeHelpRotationKey._getSelectedItemSplittedFirst("T"));
 
             Settings.ReadIniFile();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
 
             readSettings_tabCtrlKeys();
             checkerCtrlKeys.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
@@ -1045,12 +1055,14 @@ namespace KanchokuWS
             Settings.SetUserIni("mazeGobiLikeTailLen", textBox_mazeGobiLikeTailLen.Text.Trim());
 
             Settings.ReadIniFile();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
 
             readSettings_tabHistory();
             checkerHistory.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
             // 各種定義ファイルの再読み込み
-            frmMain?.ReloadDefFiles();
+            //frmMain?.ReloadDefFiles();
 
             //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
@@ -1137,12 +1149,14 @@ namespace KanchokuWS
             Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
 
             Settings.ReadIniFile();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
 
             readSettings_tabMiscSettings();
             checkerMiscSettings.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
             // 各種定義ファイルの再読み込み
-            frmMain?.ReloadDefFiles();
+            //frmMain?.ReloadDefFiles();
 
             //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
@@ -1179,8 +1193,7 @@ namespace KanchokuWS
             } catch { }
         }
 
-
-        private void button_reloadOther_Click(object sender, EventArgs e)
+        private void button_reloadMisc_Click(object sender, EventArgs e)
         {
             reloadIniFileAndDefFiles();
             label_reloadMisc.Show();
