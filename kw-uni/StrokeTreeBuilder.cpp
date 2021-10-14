@@ -116,6 +116,7 @@ namespace {
                 currentLine = tableLines[0];
             }
             strokeSerieses = VkbTableMaker::StrokeSerieses();
+            if (strokeSerieses) strokeSerieses->clear();
         }
 
         // ストローク木を作成する
