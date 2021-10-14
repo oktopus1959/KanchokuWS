@@ -741,7 +741,7 @@ namespace KanchokuWS
         {
             ActiveWinSettings = Settings.GetWinClassSettings(ActiveWinClassName);
             if (bLog || bFirstMove) {
-                logger.InfoH($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}, firstMove={bFirstMove}");
+                logger.Info($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}, firstMove={bFirstMove}");
                 loggingCaretInfo();
             }
 
@@ -810,6 +810,10 @@ namespace KanchokuWS
         // 同じスレッドで再入するのを防ぐ
         private BoolObject syncObj = new BoolObject();
 
+        private DateTime lastBusyDt;
+
+        private int busyCount = 0;
+
         public enum MoveWinType
         {
             Freeze = 0,
@@ -824,14 +828,33 @@ namespace KanchokuWS
 
         public void GetActiveWindowInfo(MoveWinType moveWin, bool bLog = true)
         {
-            if (bLog) logger.InfoH($"ENTER: moveWin={moveWin}");
+            if (bLog) logger.Info($"ENTER: moveWin={moveWin}");
 
-            // 同一スレッドでの再入を防ぐ
-            if (syncObj.BusyCheck()) {
-                if (Logger.IsInfoEnabled && !ActiveWinClassName._endsWith(DlgVkbClassNameHash)) {
-                    logger.InfoH("LEAVE: In Progress");
+            // 異スレッドおよび同一スレッドでの再入を防ぐ
+            lock (syncObj) {
+                if (syncObj.BusyCheck()) {
+                    //logger.Warn("LEAVE: In Progress");
+                    // ビジーカウントをインクリメント
+                    ++busyCount;
+                    if (lastBusyDt._notValid()) {
+                        // 初回のビジー
+                        lastBusyDt = DateTime.Now;
+                    } else if (DateTime.Now >= lastBusyDt.AddSeconds(5)) {
+                        // 前回ビジーから5秒経過したら、busyCount をビジー時刻をクリア
+                        lastBusyDt = DateTime.Now;
+                        if (busyCount >= 5) {
+                            // この5秒間にビジーが5回以上あったら、busyFlag をクリアする。
+                            // この間、微妙なタイマー割り込みでbusyFlagがONのままになって、ビジーを繰り返している可能性もあるので。
+                            logger.Warn("RESET: Busy Flag");
+                            syncObj.Reset();
+                        }
+                        busyCount = 0;
+                    }
+                    if (Logger.IsInfoEnabled && !ActiveWinClassName._endsWith(DlgVkbClassNameHash)) {
+                        logger.InfoH("LEAVE: In Progress");
+                    }
+                    return;
                 }
-                return;
             }
 
             bool bOK = false;
@@ -856,7 +879,7 @@ namespace KanchokuWS
                 if (bMandatory || DateTime.Now >= lastOutputDt.AddMilliseconds(Settings.VirtualKeyboardMoveGuardMillisec))
                     moveWindow(bDiffWin, bMandatory, bLog);
             }
-            if (bLog) logger.InfoH(() => $"LEAVE: ActiveWinClassName={ActiveWinClassName}");
+            if (bLog) logger.Info(() => $"LEAVE: ActiveWinClassName={ActiveWinClassName}");
         }
 
     }
