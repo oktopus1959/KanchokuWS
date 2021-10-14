@@ -235,8 +235,10 @@ namespace {
 
         // Shift飾修されたキー
         void handleShiftKeys(int deckey) {
-            _LOG_DEBUGH(_T("ENTER: %s, deckey=%xH(%d), hiraConv=%s"), NAME_PTR, deckey, deckey, BOOL_TO_WPTR(SETTINGS->convertShiftedHiraganaToKatakana));
-            if (SETTINGS->convertShiftedHiraganaToKatakana && utils::contains(VkbTableMaker::GetHiraganaFirstDeckeys(), UNSHIFT_DECKEY(deckey))) {
+            _LOG_DEBUGH(_T("ENTER: %s, deckey=%xH(%d), hiraConvPlane=%d"), NAME_PTR, deckey, deckey, SETTINGS->hiraganaToKatakanaShiftPlane);
+            if (SETTINGS->hiraganaToKatakanaShiftPlane > 0 &&
+                DECKEY_TO_SHIFT_PLANE(deckey) == SETTINGS->hiraganaToKatakanaShiftPlane &&
+                utils::contains(VkbTableMaker::GetHiraganaFirstDeckeys(), UNSHIFT_DECKEY(deckey))) {
                 // 後でShift入力された平仮名をカタカナに変換する
                 bUnshifted = true;
                 shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);

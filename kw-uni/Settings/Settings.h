@@ -53,7 +53,7 @@ struct Settings {
     size_t mazeNoIfxGobiMaxLen = 4;         // 交ぜ書きでの無活用語の語尾の最大長
     size_t mazeGobiLikeTailLen = 2;         // 交ぜ書き変換で、語尾に含めてしまう末尾の長さ
 
-    bool convertShiftedHiraganaToKatakana = false; // Shift入力された平仮名をカタカナに変換する
+    int hiraganaToKatakanaShiftPlane = 0;   // Shift入力された平仮名をカタカナに変換する面
     bool convertJaPeriod = false;           // 「。」と「．」を相互変換する
     bool convertJaComma = false;            // 「、」と「，」を相互変換する
 

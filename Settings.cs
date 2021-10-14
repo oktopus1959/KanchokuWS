@@ -727,7 +727,7 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             // その他変換・機能
-            HiraganaToKatakanaShiftPlane = GetString("hiraganaToKatakanaShiftPlane")._parseInt(0);  // 平仮名をカタカナに変換する際に使用するシフト面(0:通常、1:A、2:B)
+            ConvertShiftedHiraganaToKatakana = GetString("convertShiftedHiraganaToKatakana", "shiftKana", "")._parseBool(false);  // 平仮名をカタカナに変換する
             SandSEnabled = GetString("sandsEnabled")._parseBool(false);                         // SandS を有効にするか
             SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
             ModConversionFile = GetString("modConversionFile");
@@ -801,7 +801,8 @@ namespace KanchokuWS
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
             MazeGobiLikeTailLen = addDecoderSetting("mazeGobiLikeTailLen", 2, 0);               // 交ぜ書き変換で、語尾に含めてしまう末尾の長さ
 
-            ConvertShiftedHiraganaToKatakana = addDecoderSetting("convertShiftedHiraganaToKatakana", "shiftKana", false);  // 平仮名をカタカナに変換する
+            HiraganaToKatakanaShiftPlane = GetString("hiraganaToKatakanaShiftPlane")._parseInt(1);  // 平仮名をカタカナに変換する際に使用するシフト面(0:None, 1:通常、2:A、3:B)
+            DecoderSettings["hiraganaToKatakanaShiftPlane"] = (!ConvertShiftedHiraganaToKatakana ? 0 : HiraganaToKatakanaShiftPlane).ToString();
             ConvertJaPeriod = addDecoderSetting("convertJaPeriod", false);                      // 「。」と「．」の相互変換
             ConvertJaComma = addDecoderSetting("convertJaComma", false);                        // 「、」と「，」の相互変換
 

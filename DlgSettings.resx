@@ -616,7 +616,7 @@ SandS、CapsLock、英数、無変換、変換、および右シフトキーを
 ・「デコーダON時に SandS を有効にする」にチェックを入れる
 ・「拡張修飾キーを有効にする」にチェックを入れる
 ・拡張修飾キー定義ファイルに次の設定を記述する：
-      space=shiftB | shift</value>
+      space=shiftB | none</value>
   </data>
   <data name="textBox_autoBushuComp.ToolTip" xml:space="preserve">
     <value>自動部首合成の登録を行います。

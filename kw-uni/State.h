@@ -10,6 +10,7 @@
 #include "Node.h"
 
 #define UNSHIFT_DECKEY(x) (x % SHIFT_DECKEY_NUM)
+#define DECKEY_TO_SHIFT_PLANE(x) (x / SHIFT_DECKEY_NUM)
 
 //-----------------------------------------------------------------------
 // デコーダ状態の基底クラス

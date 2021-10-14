@@ -201,6 +201,18 @@ namespace KanchokuWS
             System.Diagnostics.Process.Start(Settings.DocumentUrl);
         }
 
+        /// <summary> tabPage に含まれるコントロールをチェッカーに登録する</summary>
+        /// <param name="tabPage"></param>
+        /// <param name="checker"></param>
+        private void addContorlsToChecker(Form tabPage, GuiStatusChecker checker)
+        {
+            foreach (var ctl in tabPage.Controls) {
+                if (ctl is TextBox || ctl is CheckBox || ctl is RadioButton) {
+                    checker.Add((Control)ctl);
+                }
+            }
+        }
+
         //-----------------------------------------------------------------------------------
         /// <summary> 基本設定</summary>
         void readSettings_tabBasic()
@@ -1064,8 +1076,8 @@ namespace KanchokuWS
             checkBox_autoBushuComp.Checked = Settings.AutoBushuComp;
             checkBox_convertShiftedHiraganaToKatakana.Checked = Settings.ConvertShiftedHiraganaToKatakana;
             switch (Settings.HiraganaToKatakanaShiftPlane) {
-                case 1: radioButton_shiftA.Checked = true; break;
-                case 2: radioButton_shiftB.Checked = true; break;
+                case 2: radioButton_shiftA.Checked = true; break;
+                case 3: radioButton_shiftB.Checked = true; break;
                 default: radioButton_normalShift.Checked = true; break;
             }
             changeShiftPlaneSectionRadioButtonsState();
@@ -1113,7 +1125,7 @@ namespace KanchokuWS
         {
             Settings.SetUserIni("autoBushuComp", checkBox_autoBushuComp.Checked);
             Settings.SetUserIni("convertShiftedHiraganaToKatakana", checkBox_convertShiftedHiraganaToKatakana.Checked);
-            Settings.SetUserIni("hiraganaToKatakanaShiftPlane", radioButton_shiftA.Checked ? 1 : radioButton_shiftB.Checked ? 2 : 0);
+            Settings.SetUserIni("hiraganaToKatakanaShiftPlane", radioButton_shiftA.Checked ? 2 : radioButton_shiftB.Checked ? 3 : 1);
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
             Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
             Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);
