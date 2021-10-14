@@ -378,6 +378,7 @@ namespace KanchokuWS
             this.label99 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label100 = new System.Windows.Forms.Label();
+            this.label101 = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onBushuCompHelp = new KanchokuWS.ColorTextBox();
@@ -3713,6 +3714,7 @@ namespace KanchokuWS
             // 
             // groupBox27
             // 
+            this.groupBox27.Controls.Add(this.label101);
             this.groupBox27.Controls.Add(this.checkBox_extraModifiersEnabled);
             this.groupBox27.Controls.Add(this.radioButton_shiftB);
             this.groupBox27.Controls.Add(this.radioButton_shiftA);
@@ -3733,7 +3735,7 @@ namespace KanchokuWS
             this.groupBox27.Controls.Add(this.checkBox_convertShiftedHiraganaToKatakana);
             this.groupBox27.Location = new System.Drawing.Point(7, 10);
             this.groupBox27.Name = "groupBox27";
-            this.groupBox27.Size = new System.Drawing.Size(286, 316);
+            this.groupBox27.Size = new System.Drawing.Size(286, 346);
             this.groupBox27.TabIndex = 0;
             this.groupBox27.TabStop = false;
             this.groupBox27.Text = "その他変換・機能";
@@ -4534,6 +4536,16 @@ namespace KanchokuWS
             this.label100.Text = "ひらがな入力 漢字打鍵ガイド";
             this.label100.Visible = false;
             // 
+            // label101
+            // 
+            this.label101.AutoSize = true;
+            this.label101.Location = new System.Drawing.Point(21, 308);
+            this.label101.Name = "label101";
+            this.label101.Size = new System.Drawing.Size(262, 30);
+            this.label101.TabIndex = 16;
+            this.label101.Text = "※拡張修飾キーを用いて打鍵ガイドを有効にすることも\r\n　できます。（ツールチップによる詳細説明あり）";
+            this.toolTip1.SetToolTip(this.label101, resources.GetString("label101.ToolTip"));
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -5172,5 +5184,6 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label100;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label99;
+        private System.Windows.Forms.Label label101;
     }
 }
