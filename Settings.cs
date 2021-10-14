@@ -11,7 +11,7 @@ namespace KanchokuWS
     {
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.1.8";
+        public static string Version => "1.1.9";
 
         /// <summary> ドキュメントへのURL </summary>
         public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
@@ -594,7 +594,7 @@ namespace KanchokuWS
 
             StrokeHelpFile = GetString("strokeHelpFile", "stroke-help.txt");
 
-            KanjiYomiFile = GetString("kanjiYomiFile", "joyo-kanji.txt");
+            KanjiYomiFile = GetString("kanjiYomiFile", "kanji-yomi.txt");
 
             //-------------------------------------------------------------------------------------
             // 漢直モードトグルキー
