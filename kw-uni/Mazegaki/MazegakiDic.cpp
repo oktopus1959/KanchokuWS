@@ -10,6 +10,7 @@
 #include "ErrorHandler.h"
 #include "OutputStack.h"
 #include "MazegakiDic.h"
+#include "EasyChars.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegakiDic)
 
@@ -794,8 +795,8 @@ namespace {
                             // ただし、「国民は」の「国民」は通す必要あり。そうしないと「国民派」に変換されてしまう
                             if (keyStem != p->xfer && (utils::startsWith(keyStem, p->xfer) || utils::endsWith(keyStem, p->xfer))) continue;
 
-                            if (keyStem == p->stem || mazeSearch && (mazeStar || p->xfer.size() <= keyStem.size()) && order_matched(keyStem, p)) {
-                                // 読み語幹が完全一致、または key に漢字が含まれている場合は、'*' を含むか変換形長 <= key長、かつ、ひらがな・漢字の出現順序の一致を確認
+                            if (!EASY_CHARS->AllContainedIn(p->xfer) && (keyStem == p->stem || mazeSearch && (mazeStar || p->xfer.size() <= keyStem.size()) && order_matched(keyStem, p))) {
+                                // 容易打鍵文字を含まず、読み語幹が完全一致、または key に漢字が含まれている場合は、'*' を含むか変換形長 <= key長、かつ、ひらがな・漢字の出現順序の一致を確認
                                 if (key.size() == stemLen) {
                                     // 語尾がない⇒無活用または語幹OKの活用型か
                                     if (find_gobi(p->inflexList, (int)STEM_OK) == 0) {

@@ -21,10 +21,10 @@ std::unique_ptr<EasyChars> EasyChars::Singleton;
 void EasyChars::GatherEasyChars() {
     LOG_INFO(_T("ENTER"));
 
-    if (Singleton) {
-        LOG_INFO(_T("LEAVE: Already created"));
-        return;
-    }
+    //if (Singleton) {
+    //    LOG_INFO(_T("LEAVE: Already created"));
+    //    return;
+    //}
 
     Singleton.reset(new EasyChars());
 
@@ -44,7 +44,7 @@ void EasyChars::GatherEasyChars() {
                 }
 
                 for (auto ch : ln) {
-                    Singleton->chars.push_back(ch);
+                    Singleton->easyChars.push_back(ch);
                 }
             }
         } else {
@@ -65,7 +65,7 @@ void EasyChars::includeFirstLevel() {
             for (int j = 10; j < STROKE_SPACE_DECKEY; ++j) {
                 Node* sb = ((StrokeTableNode*)blk)->getNth(j);
                 if (sb && sb->isStringNode()) {
-                    EASY_CHARS->chars.push_back(utils::safe_front(sb->getString()));
+                    EASY_CHARS->easyChars.push_back(utils::safe_front(sb->getString()));
                 }
             }
         }

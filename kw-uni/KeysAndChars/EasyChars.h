@@ -11,7 +11,7 @@ class EasyChars {
     DECLARE_CLASS_LOGGER;
 
 private:
-    std::vector<mchar_t> chars;
+    std::vector<mchar_t> easyChars;
 
     void includeFirstLevel();
 
@@ -22,15 +22,15 @@ public:
     // 最上段を使わないレベル1(900文字)とユーザー定義の簡易打鍵文字を集める
     static void GatherEasyChars();
 
-    // 第1レベル文字か
-    inline bool IsFirstLevel(mchar_t ch) {
-        return std::find(chars.begin(), chars.end(), ch) != chars.end();
+    // 容易打鍵文字か
+    inline bool IsEasyChar(mchar_t ch) {
+        return std::find(easyChars.begin(), easyChars.end(), ch) != easyChars.end();
     }
 
-    // 引数の文字列の中の全ての文字は第1レベルの文字である
+    // 引数の文字列の中の全ての文字は容易打鍵文字である
     inline bool AllContainedIn(const MString& w) {
         for (auto ch : w) {
-            if (!IsFirstLevel(ch)) return false;
+            if (!IsEasyChar(ch)) return false;
         }
         return true;
     }

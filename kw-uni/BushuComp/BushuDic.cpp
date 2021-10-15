@@ -688,11 +688,11 @@ namespace {
                 std::vector<wchar_t> temp;
                 for (auto ch : getBodies(x)) {
                     mchar_t c = (mchar_t)ch;
-                    if (EASY_CHARS->IsFirstLevel(c)) {
-                        LOG_DEBUG(_T("FirstLevel: %c"), c);
+                    if (EASY_CHARS->IsEasyChar(c)) {
+                        LOG_DEBUG(_T("EasyChar: %c"), c);
                         result.push_back((wchar_t)c);
                     } else if (STROKE_HELP->Find(c)) {
-                        LOG_DEBUG(_T("SecondLevel: %c"), c);
+                        LOG_DEBUG(_T("SecondLevel Char: %c"), c);
                         temp.push_back((wchar_t)c);
                     }
                 }
@@ -730,7 +730,7 @@ namespace {
             faces[kbLen * rightIn] = b; faces[kbLen * rightIn + 1] = 0;
 
             size_t pos = kbLen * (leftIn - 1);
-            if (!EASY_CHARS->IsFirstLevel(a)) {
+            if (!EASY_CHARS->IsEasyChar(a)) {
                 for (auto c : gatherBodies(a)) {
                     faces[pos] = c; faces[pos + 1] = 0;
                     if (pos == 0) break;
@@ -740,7 +740,7 @@ namespace {
             for (; pos > 0; pos -= kbLen) faces[pos] = 0;
 
             pos = kbLen * (rightIn + 1);
-            if (!EASY_CHARS->IsFirstLevel(b)) {
+            if (!EASY_CHARS->IsEasyChar(b)) {
                 for (auto c : gatherBodies(b)) {
                     faces[pos] = c; faces[pos + 1] = 0;
                     if (pos == numFaces) break;

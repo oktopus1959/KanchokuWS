@@ -109,9 +109,6 @@ public:
         // 全角変換ノードのSingleton生成
         ZenkakuNode::CreateSingleton();
 
-        // 簡易打鍵文字を集める
-        EasyChars::GatherEasyChars();
-
         // ストロークヘルプを求めておく
         StrokeHelp::GatherStrokeHelp();
         // 部首合成の部品について、ストローク可能文字か否かを設定しておく
@@ -149,6 +146,9 @@ public:
 
         // settings の再ロード
         loadSettings(settings);
+
+        // 簡易打鍵文字を集める
+        EasyChars::GatherEasyChars();
 
         LOG_INFO(_T("LEAVE"));
     }
