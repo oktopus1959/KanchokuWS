@@ -120,6 +120,9 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -557,24 +560,6 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 なお、履歴候補が縦列表示されている状態では、先頭候補がEnterキーで
 選択されます。</value>
   </data>
-  <data name="checkBox_convertShiftedHiraganaToKatakana.ToolTip" xml:space="preserve">
-    <value>Shiftキー(または拡張修飾キー)を押しながら平仮名を入力すると、
-対応するカタカナに変換します。
-
-使用するシフト面を「通常シフト面」「シフトA面」「シフトB面」から
-選択します。
-（ひらがなからカタカナへのマッピングは自動的に行われるため、
-使用するシフト面へのカタカナ文字設定は不要です。）
-
-シフト面と対応する拡張修飾キーの組み合わせは、拡張修飾キー
-定義ファイルで設定します。
-
-例：「シフトB面」を選択し、SandS によるシフトを使用する場合
-・「デコーダON時に SandS を有効にする」にチェックを入れる
-・「拡張修飾キーを有効にする」にチェックを入れる
-・拡張修飾キー定義ファイルに次の設定を記述する：
-      space=shiftB | none</value>
-  </data>
   <data name="checkBox_extraModifiersEnabled.ToolTip" xml:space="preserve">
     <value>拡張修飾キーを有効にします。
 
@@ -592,6 +577,18 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 
 詳細については mod-conversion.txt ファイルを参照してください。</value>
   </data>
+  <data name="checkBox_upperRomanStrokeGuide.ToolTip" xml:space="preserve">
+    <value>大文字のローマ字入力による打鍵ガイドを常に有効にします。
+
+大文字のローマ字入力による打鍵ガイドを有効にした場合、英大文字を
+入力するとそれをひらがな(またはカタカナ)に変換して、漢字読みファイルから
+該当する漢字を検索して、その打鍵ガイドを表示します。
+
+英大文字以外のキー入力を行うと、漢直モードに戻り、打鍵ガイドが始まります。
+
+なお、当設定がOFFの場合でも、拡張修飾キーにより、打鍵ガイドを呼び出す
+こともできます。</value>
+  </data>
   <data name="textBox_modConversionFile.ToolTip" xml:space="preserve">
     <value>修飾キー変換定義ファイルの設定
 
@@ -604,30 +601,23 @@ SandS、CapsLock、英数、無変換、変換、および右シフトキーを
 定義ファイルを修正した場合は、漢直窓Sを再起動するか、または
 「基本設定」タブの「再読込」をクリックしてください。</value>
   </data>
-  <data name="label101.ToolTip" xml:space="preserve">
-    <value>「拡張修飾キー定義ファイル」に定義した UpperRomanStrokeGuide を
-呼び出すことで、一時的に大文字ローマ字による打鍵ガイドを有効にできます。
+  <data name="checkBox_convertShiftedHiraganaToKatakana.ToolTip" xml:space="preserve">
+    <value>Shiftキー(または拡張修飾キー)を押しながら平仮名を入力すると、
+対応するカタカナに変換します。
 
-他に RomanStrokeGuide を呼び出すと、小文字も含めたローマ字読み
-打鍵ガイドモードの ON/OFF が行えます。
+使用するシフト面を「通常シフト面」「シフトA面」「シフトB面」から
+選択します。
+（ひらがなからカタカナへのマッピングは自動的に行われるため、
+使用するシフト面へのカタカナ文字設定は不要です。）
 
-また HiraganaStrokeGuide を呼び出すと、ひらがな入力による打鍵ガイド
-モードのON/OFFが行えます。
+シフト面と対応する拡張修飾キーの組み合わせは、拡張修飾キー
+定義ファイルで設定します。
 
-上記2つのモードを使う場合は、いったん当該モードをOFFにして漢直モードに
-復帰すると、打鍵ガイドが始まります。</value>
-  </data>
-  <data name="checkBox_upperRomanStrokeGuide.ToolTip" xml:space="preserve">
-    <value>大文字のローマ字入力による打鍵ガイドを常に有効にします。
-
-大文字のローマ字入力による打鍵ガイドを有効にした場合、英大文字を
-入力するとそれをひらがな(またはカタカナ)に変換して、漢字読みファイルから
-該当する漢字を検索して、その打鍵ガイドを表示します。
-
-英大文字以外のキー入力を行うと、漢直モードに戻り、打鍵ガイドが始まります。
-
-なお、当設定がOFFの場合でも、拡張修飾キーにより、打鍵ガイドを呼び出す
-こともできます。</value>
+例：「シフトB面」を選択し、SandS によるシフトを使用する場合
+・「デコーダON時に SandS を有効にする」にチェックを入れる
+・「拡張修飾キーを有効にする」にチェックを入れる
+・拡張修飾キー定義ファイルに次の設定を記述する：
+      space=shiftB | none</value>
   </data>
   <data name="textBox_autoBushuComp.ToolTip" xml:space="preserve">
     <value>自動部首合成の登録を行います。
@@ -739,6 +729,19 @@ A=BC...
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>114, 17</value>
   </metadata>
+  <data name="label101.ToolTip" xml:space="preserve">
+    <value>「拡張修飾キー定義ファイル」に定義した UpperRomanStrokeGuide を
+呼び出すことで、一時的に大文字ローマ字による打鍵ガイドを有効にできます。
+
+他に RomanStrokeGuide を呼び出すと、小文字も含めたローマ字読み
+打鍵ガイドモードの ON/OFF が行えます。
+
+また HiraganaStrokeGuide を呼び出すと、ひらがな入力による打鍵ガイド
+モードのON/OFFが行えます。
+
+上記2つのモードを使う場合は、いったん当該モードをOFFにして漢直モードに
+復帰すると、打鍵ガイドが始まります。</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
