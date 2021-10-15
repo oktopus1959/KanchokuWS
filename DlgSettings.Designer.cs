@@ -3701,6 +3701,7 @@ namespace KanchokuWS
             this.label_okResultMisc.TabIndex = 25;
             this.label_okResultMisc.Text = "設定しました";
             this.label_okResultMisc.Visible = false;
+            this.label_okResultMisc.VisibleChanged += new System.EventHandler(this.label_okResultMisc_VisibleChanged);
             // 
             // button_miscEnter
             // 
@@ -4589,6 +4590,7 @@ namespace KanchokuWS
             this.label_reloadMisc.TabIndex = 34;
             this.label_reloadMisc.Text = "再読込しました";
             this.label_reloadMisc.Visible = false;
+            this.label_reloadMisc.VisibleChanged += new System.EventHandler(this.label_reloadMisc_VisibleChanged);
             // 
             // button_reloadMisc
             // 
