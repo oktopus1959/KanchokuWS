@@ -81,6 +81,11 @@ namespace KanchokuWS
             yomiKanjiTbl["や"] = new HashSet<char>() { 'や', 'ヤ', 'ゃ', 'ャ' };
             yomiKanjiTbl["ゆ"] = new HashSet<char>() { 'ゆ', 'ユ', 'ゅ', 'ュ' };
             yomiKanjiTbl["よ"] = new HashSet<char>() { 'よ', 'ヨ', 'ょ', 'ョ' };
+            yomiKanjiTbl["ら"] = new HashSet<char>() { 'ら', 'ラ' };
+            yomiKanjiTbl["り"] = new HashSet<char>() { 'り', 'リ' };
+            yomiKanjiTbl["る"] = new HashSet<char>() { 'る', 'ル' };
+            yomiKanjiTbl["れ"] = new HashSet<char>() { 'れ', 'レ' };
+            yomiKanjiTbl["ろ"] = new HashSet<char>() { 'ろ', 'ロ' };
             yomiKanjiTbl["わ"] = new HashSet<char>() { 'わ', 'ワ', 'ゎ', 'ヮ' };
             yomiKanjiTbl["ゐ"] = new HashSet<char>() { 'ゐ', 'ヰ' };
             yomiKanjiTbl["ゔ"] = new HashSet<char>() { 'ゔ', 'ヴ' };
