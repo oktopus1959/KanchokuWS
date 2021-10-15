@@ -121,10 +121,16 @@ namespace KanchokuWS
         /// <summary> DecoderがOffの時のシフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
         private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftFuncKeyWhenDecoderOff = new Dictionary<uint, ShiftPlane>();
 
-        /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てれたシフト面を得る</summary>
+        /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てられたシフト面を得る</summary>
         public static ShiftPlane GetShiftPlaneForShiftFuncKey(uint funcKey, bool bDecoderOn)
         {
             return bDecoderOn ? shiftPlaneForShiftFuncKey._safeGet(funcKey, ShiftPlane.NONE) : shiftPlaneForShiftFuncKeyWhenDecoderOff._safeGet(funcKey, ShiftPlane.NONE);
+        }
+
+        /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) にシフト面が割り当てられているか</summary>
+        public static bool IsShiftPlaneAssignedForShiftFuncKey(uint funcKey, bool bDecoderOn)
+        {
+            return GetShiftPlaneForShiftFuncKey(funcKey, bDecoderOn) != ShiftPlane.NONE;
         }
 
         private static uint getVKeyFromDecKey(int deckey)
@@ -506,6 +512,8 @@ namespace KanchokuWS
                     SystemHelper.ShowErrorMessageBox($"修飾キー変換定義ファイル({filePath}の読み込みに失敗しました。");
                     return false;
                 }
+                shiftPlaneForShiftFuncKey.Clear();
+                shiftPlaneForShiftFuncKeyWhenDecoderOff.Clear();
                 int nl = 0;
                 foreach (var rawLine in lines._split('\n')) {
                     ++nl;

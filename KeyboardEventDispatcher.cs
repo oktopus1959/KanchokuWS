@@ -149,7 +149,10 @@ namespace KanchokuWS
             return
                 extraInfo != ActiveWindowHandler.MyMagicNumber &&
                 scanCode != 0 && scanCode != YamabukiRscanCode &&
-                ((vkey >= 0 && vkey < 0xa0) || (vkey == 0xa1 && !ctrl && isDecoderActivated()) || (vkey >= 0xa6 && vkey < 0xf3) || (vkey >= 0xf5 && vkey < vkeyNum));
+                ((vkey >= 0 && vkey < 0xa0) ||
+                 (vkey == VirtualKeys.RSHIFT && !ctrl && isDecoderActivated() && Settings.ExtraModifiersEnabled) ||
+                 (vkey >= 0xa6 && vkey < 0xf3) ||
+                 (vkey >= 0xf5 && vkey < vkeyNum));
         }
 
         private bool ctrlKeyPressed()
@@ -281,108 +284,122 @@ namespace KanchokuWS
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"not EffectiveVkey");
                     return;
                 }
-                normalInfoKeyDownResult = true;
-                // CapsLock
-                if (vkey == (int)VirtualKeys.CapsLock) {
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CapsLockKey Pressed");
-                    if (capsKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
-                        // Capsキーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
-                        capsKeyState = SpecialKeyState.SHIFTED;
-                        makeSpecialModKeyShifted();
-                        return;
-                    }
-                    if (capsKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
+                if (Settings.ExtraModifiersEnabled) {
+                    normalInfoKeyDownResult = true;
+                    bool bDecoderOn = isDecoderActivated();
+                    // CapsLock
+                    if (vkey == (int)VirtualKeys.CapsLock) {
+                        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CapsLockKey Pressed");
+                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_CAPS, bDecoderOn)) {
+                            if (capsKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
+                                // Capsキーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
+                                capsKeyState = SpecialKeyState.SHIFTED;
+                                makeSpecialModKeyShifted();
+                                return;
+                            }
+                            if (capsKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
 
-                    // RELEASED
-                    capsKeyState = SpecialKeyState.PRESSED;
-                    return;
-                } else {
-                    if (capsKeyState == SpecialKeyState.PRESSED) {
-                        // Capsキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                        capsKeyState = SpecialKeyState.SHIFTED;
+                            // RELEASED
+                            capsKeyState = SpecialKeyState.PRESSED;
+                            return;
+                        }
+                    } else {
+                        if (capsKeyState == SpecialKeyState.PRESSED) {
+                            // Capsキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                            capsKeyState = SpecialKeyState.SHIFTED;
+                        }
                     }
-                }
-                // AlphaNum
-                if (vkey == (int)VirtualKeys.AlphaNum) {
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"AlpahNumKey Pressed");
-                    if (alnumKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
-                        // 英数キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
-                        alnumKeyState = SpecialKeyState.SHIFTED;
-                        makeSpecialModKeyShifted();
-                        return;
-                    }
-                    if (alnumKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
+                    // AlphaNum
+                    if (vkey == (int)VirtualKeys.AlphaNum) {
+                        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"AlpahNumKey Pressed");
+                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_ALNUM, bDecoderOn)) {
+                            if (alnumKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
+                                // 英数キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
+                                alnumKeyState = SpecialKeyState.SHIFTED;
+                                makeSpecialModKeyShifted();
+                                return;
+                            }
+                            if (alnumKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
 
-                    // RELEASED
-                    alnumKeyState = SpecialKeyState.PRESSED;
-                    return;
-                } else {
-                    if (alnumKeyState == SpecialKeyState.PRESSED) {
-                        // 英数キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                        alnumKeyState = SpecialKeyState.SHIFTED;
+                            // RELEASED
+                            alnumKeyState = SpecialKeyState.PRESSED;
+                            return;
+                        }
+                    } else {
+                        if (alnumKeyState == SpecialKeyState.PRESSED) {
+                            // 英数キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                            alnumKeyState = SpecialKeyState.SHIFTED;
+                        }
                     }
-                }
-                // Nfer
-                if (vkey == (int)VirtualKeys.Nfer) {
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"NferKey Pressed");
-                    if (nferKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
-                        // 無変換キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
-                        nferKeyState = SpecialKeyState.SHIFTED;
-                        makeSpecialModKeyShifted();
-                        return;
-                    }
-                    if (nferKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
+                    // Nfer
+                    if (vkey == (int)VirtualKeys.Nfer) {
+                        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"NferKey Pressed");
+                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_NFER, bDecoderOn)) {
+                            if (nferKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
+                                // 無変換キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
+                                nferKeyState = SpecialKeyState.SHIFTED;
+                                makeSpecialModKeyShifted();
+                                return;
+                            }
+                            if (nferKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
 
-                    // RELEASED
-                    nferKeyState = SpecialKeyState.PRESSED;
-                    return;
-                } else {
-                    if (nferKeyState == SpecialKeyState.PRESSED) {
-                        // 無変換キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                        nferKeyState = SpecialKeyState.SHIFTED;
+                            // RELEASED
+                            nferKeyState = SpecialKeyState.PRESSED;
+                            return;
+                        }
+                    } else {
+                        if (nferKeyState == SpecialKeyState.PRESSED) {
+                            // 無変換キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                            nferKeyState = SpecialKeyState.SHIFTED;
+                        }
                     }
-                }
-                // Xfer
-                if (vkey == (int)VirtualKeys.Xfer) {
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"XferKey Pressed");
-                    if (xferKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
-                        // 変換キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
-                        xferKeyState = SpecialKeyState.SHIFTED;
-                        makeSpecialModKeyShifted();
-                        return;
-                    }
-                    if (xferKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
+                    // Xfer
+                    if (vkey == (int)VirtualKeys.Xfer) {
+                        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"XferKey Pressed");
+                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_XFER, bDecoderOn)) {
+                            if (xferKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
+                                // 変換キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
+                                xferKeyState = SpecialKeyState.SHIFTED;
+                                makeSpecialModKeyShifted();
+                                return;
+                            }
+                            if (xferKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
 
-                    // RELEASED
-                    xferKeyState = SpecialKeyState.PRESSED;
-                    return;
-                } else {
-                    if (xferKeyState == SpecialKeyState.PRESSED) {
-                        // 変換キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                        xferKeyState = SpecialKeyState.SHIFTED;
+                            // RELEASED
+                            xferKeyState = SpecialKeyState.PRESSED;
+                            return;
+                        }
+                    } else {
+                        if (xferKeyState == SpecialKeyState.PRESSED) {
+                            // 変換キーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                            xferKeyState = SpecialKeyState.SHIFTED;
+                        }
                     }
-                }
-                // Rshift
-                if (vkey == (int)VirtualKeys.RSHIFT) {
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"RshiftKey Pressed");
-                    if (rshiftKeyState == SpecialKeyState.PRESSED) {
-                        // かなキーが押下されている状態なら、シフト状態に遷移する
-                        rshiftKeyState = SpecialKeyState.SHIFTED;
-                        return;
-                    }
-                    if (rshiftKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
+                    // Rshift
+                    if (vkey == (int)VirtualKeys.RSHIFT) {
+                        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"RshiftKey Pressed");
+                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_RSHIFT, bDecoderOn)) {
+                            if (rshiftKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
+                                // RSHIFTキーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
+                                rshiftKeyState = SpecialKeyState.SHIFTED;
+                                return;
+                            }
+                            if (rshiftKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
 
-                    // RELEASED
-                    rshiftKeyState = SpecialKeyState.PRESSED;
-                    return;
-                } else {
-                    if (rshiftKeyState == SpecialKeyState.PRESSED) {
-                        // かなキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
-                        rshiftKeyState = SpecialKeyState.SHIFTED;
+                            // RELEASED
+                            rshiftKeyState = SpecialKeyState.PRESSED;
+                            return;
+                        }
+                    } else {
+                        if (rshiftKeyState == SpecialKeyState.PRESSED) {
+                            // RSHIFTキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
+                            rshiftKeyState = SpecialKeyState.SHIFTED;
+                        }
                     }
                 }
                 // SandS
                 if (isSandSEnabled()) {
+                    normalInfoKeyDownResult = true;
                     if (vkey == (int)Keys.Space) {
                         // スペースキーが押された
                         if (spaceKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
@@ -534,6 +551,8 @@ namespace KanchokuWS
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result=False, not EffectiveVkey");
                 return false;
             }
+
+            bool bDecoderOn = isDecoderActivated();
             bool result = false;
             if (Settings.SandSEnabled || Settings.SandSEnabledWhenOffMode) {
                 if (vkey == (int)Keys.Space) {
@@ -551,56 +570,66 @@ namespace KanchokuWS
             if (vkey == (int)VirtualKeys.CapsLock) {
                 var state = capsKeyState;
                 capsKeyState = SpecialKeyState.RELEASED;
-                if (state == SpecialKeyState.SHIFTED) {
-                    return true;
-                } else if (state == SpecialKeyState.PRESSED) {
-                    return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_CAPS, bDecoderOn)) {
+                    if (state == SpecialKeyState.SHIFTED) {
+                        return true;
+                    } else if (state == SpecialKeyState.PRESSED) {
+                        return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                    }
                 }
             }
             if (vkey == (int)VirtualKeys.AlphaNum) {
                 var state = alnumKeyState;
                 alnumKeyState = SpecialKeyState.RELEASED;
-                if (state == SpecialKeyState.SHIFTED) {
-                    return true;
-                } else if (state == SpecialKeyState.PRESSED) {
-                    return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_ALNUM, bDecoderOn)) {
+                    if (state == SpecialKeyState.SHIFTED) {
+                        return true;
+                    } else if (state == SpecialKeyState.PRESSED) {
+                        return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                    }
                 }
             }
             if (vkey == (int)VirtualKeys.Nfer) {
                 var state = nferKeyState;
                 nferKeyState = SpecialKeyState.RELEASED;
-                if (state == SpecialKeyState.SHIFTED) {
-                    return true;
-                } else if (state == SpecialKeyState.PRESSED) {
-                    return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_NFER, bDecoderOn)) {
+                    if (state == SpecialKeyState.SHIFTED) {
+                        return true;
+                    } else if (state == SpecialKeyState.PRESSED) {
+                        return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                    }
                 }
             }
             if (vkey == (int)VirtualKeys.Xfer) {
                 var state = xferKeyState;
                 xferKeyState = SpecialKeyState.RELEASED;
-                if (state == SpecialKeyState.SHIFTED) {
-                    return true;
-                } else if (state == SpecialKeyState.PRESSED) {
-                    return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_XFER, bDecoderOn)) {
+                    if (state == SpecialKeyState.SHIFTED) {
+                        return true;
+                    } else if (state == SpecialKeyState.PRESSED) {
+                        return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                    }
                 }
             }
             if (vkey == (int)VirtualKeys.RSHIFT) {
                 var state = rshiftKeyState;
                 rshiftKeyState = SpecialKeyState.RELEASED;
-                if (state == SpecialKeyState.SHIFTED) {
-                    return true;
-                } else if (state == SpecialKeyState.PRESSED) {
-                    return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_RSHIFT, bDecoderOn)) {
+                    if (state == SpecialKeyState.SHIFTED) {
+                        return true;
+                    } else if (state == SpecialKeyState.PRESSED) {
+                        return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                    }
                 }
             }
+
             // キーアップ時はなにもしない
-            try {
-                bHandlerBusy = true;
-                //result = OnKeyUp?.Invoke(vkey, extraInfo) ?? false;
-                result = normalInfoKeyDownResult;
-            } finally {
-                bHandlerBusy = false;
-            }
+            //try {
+            //    bHandlerBusy = true;
+            //    result = OnKeyUp?.Invoke(vkey, extraInfo) ?? false;
+            //} finally {
+            //    bHandlerBusy = false;
+            //}
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={result}");
             return result;
         }

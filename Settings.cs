@@ -376,40 +376,42 @@ namespace KanchokuWS
 
         //------------------------------------------------------------------------------
         // 各種変換
-        // 平仮名⇒カタカナ変換
+        /// <summary>平仮名⇒カタカナ変換</summary>
         public static bool ConvertShiftedHiraganaToKatakana { get; set; } = false;
 
+        /// <summary>平仮名⇒カタカナ変換を実行するシフト面</summary>
         public static int HiraganaToKatakanaShiftPlane { get; set; } = 0;
 
-        // 「。」⇔「．」
+        /// <summary>「。」⇔「．」</summary>
         public static bool ConvertJaPeriod { get; set; } = false;
-        // 「、」⇔「，」
+        /// <summary>「、」⇔「，」</summary>
         public static bool ConvertJaComma { get; set; } = false;
 
-        // BS で全打鍵を取り消すか
+        /// <summary>BS で全打鍵を取り消すか</summary>
         public static bool RemoveOneStrokeByBackspace { get; set; } = true;
 
         // SandS を有効にするか
+        /// <summary></summary>
         public static bool SandSEnabled { get; set; } = false;
         public static bool SandSEnabledWhenOffMode { get; set; } = false;
 
-        // 拡張修飾キーを有効にするか
+        /// <summary> 拡張修飾キーを有効にするか</summary>
         public static bool ExtraModifiersEnabled { get; set; } = false;
 
         /// <summary> 修飾キー定義ファイル</summary>
         public static string ModConversionFile { get; private set; }
 
-        // 自動首部合成を有効にするか
+        /// <summary>自動首部合成を有効にするか</summary>
         public static bool AutoBushuComp { get; set; } = false;
 
-        // ローマ字読みによる打鍵ガイドを有効にするか
+        /// <summary>ローマ字読みによる打鍵ガイドを有効にするか</summary>
         public static bool UpperRomanStrokeGuide { get; set; } = false;
 
-        // 前打鍵位置の背景色を変えて表示するか
+        /// <summary>前打鍵位置の背景色を変えて表示するか</summary>
         public static bool ShowLastStrokeByDiffBackColor { get; set; } = false;
 
         //------------------------------------------------------------------------------
-        // ウィンドウClassNameごとの設定
+        /// <summary>ウィンドウClassNameごとの設定</summary>
         public class WindowsClassSettings
         {
             public int[] ValidCaretMargin;
