@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 using Utils;
 
@@ -119,6 +120,9 @@ namespace KanchokuWS
 
             checkerAll.Reinitialize();
 
+            // ".txt" に関連付けられたプログラムのパスを取得
+            getTxtAssociatedProgramPath();
+
             // フォームタイマーの開始
             timer1.Interval = timerInterval;
             timer1.Start();
@@ -195,6 +199,110 @@ namespace KanchokuWS
                 }
             }
         }
+
+        //----------------------------------------------------------------------------------------
+        // 拡張子に関連付けられたプログラムのパスを取得
+        // cf. https://stackoverflow.com/questions/162331/finding-the-default-application-for-opening-a-particular-file-type-on-windows
+        [DllImport("Shlwapi.dll", CharSet = CharSet.Unicode)]
+        public static extern uint AssocQueryString(
+            AssocF flags,
+            AssocStr str,
+            string pszAssoc,
+            string pszExtra,
+            [Out] StringBuilder pszOut,
+            ref uint pcchOut
+        );
+
+        [Flags]
+        public enum AssocF
+        {
+            None = 0,
+            Init_NoRemapCLSID = 0x1,
+            Init_ByExeName = 0x2,
+            Open_ByExeName = 0x2,
+            Init_DefaultToStar = 0x4,
+            Init_DefaultToFolder = 0x8,
+            NoUserSettings = 0x10,
+            NoTruncate = 0x20,
+            Verify = 0x40,
+            RemapRunDll = 0x80,
+            NoFixUps = 0x100,
+            IgnoreBaseClass = 0x200,
+            Init_IgnoreUnknown = 0x400,
+            Init_Fixed_ProgId = 0x800,
+            Is_Protocol = 0x1000,
+            Init_For_File = 0x2000
+        }
+
+        public enum AssocStr
+        {
+            Command = 1,
+            Executable,
+            FriendlyDocName,
+            FriendlyAppName,
+            NoOpen,
+            ShellNewValue,
+            DDECommand,
+            DDEIfExec,
+            DDEApplication,
+            DDETopic,
+            InfoTip,
+            QuickTip,
+            TileInfo,
+            ContentType,
+            DefaultIcon,
+            ShellExtension,
+            DropTarget,
+            DelegateExecute,
+            Supported_Uri_Protocols,
+            ProgID,
+            AppID,
+            AppPublisher,
+            AppIconReference,
+            Max
+        }
+
+        static string AssocQueryString(AssocStr association, string extension)
+        {
+            const int S_OK = 0;
+            const int S_FALSE = 1;
+
+            uint length = 0;
+            uint ret = AssocQueryString(AssocF.None, association, extension, null, null, ref length);
+            if (ret != S_FALSE) {
+                throw new InvalidOperationException("Could not determine associated string");
+            }
+
+            var sb = new StringBuilder((int)length); // (length-1) will probably work too as the marshaller adds null termination
+            ret = AssocQueryString(AssocF.None, association, extension, null, sb, ref length);
+            if (ret != S_OK) {
+                throw new InvalidOperationException("Could not determine associated string");
+            }
+
+            return sb.ToString();
+        }
+
+        private static string txtAssociatedProgramPath = "";
+
+        private static  void getTxtAssociatedProgramPath()
+        {
+            var path = AssocQueryString(AssocStr.Executable, ".txt");
+            logger.Info($"Txt Associated Program Path={path}");
+            if (path._endsWith(".exe")) {
+                txtAssociatedProgramPath = path;
+            }
+        }
+
+        private void openFileByTxtAssociatedProgram(string filename)
+        {
+            try {
+                if (filename._notEmpty() && txtAssociatedProgramPath._notEmpty()) {
+                    System.Diagnostics.Process.Start(txtAssociatedProgramPath, KanchokuIni.Singleton.KanchokuDir._joinPath(filename));
+                }
+            } catch { }
+        }
+
+        //----------------------------------------------------------------------------------------
 
         private void openDocumentUrl()
         {
@@ -1177,20 +1285,22 @@ namespace KanchokuWS
 
         private void button_openModConversionFile_Click(object sender, EventArgs e)
         {
-            try {
-                if (Settings.ModConversionFile._notEmpty()) {
-                    System.Diagnostics.Process.Start(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.ModConversionFile));
-                }
-            } catch { }
+            //try {
+            //    if (Settings.ModConversionFile._notEmpty()) {
+            //        System.Diagnostics.Process.Start(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.ModConversionFile));
+            //    }
+            //} catch { }
+            openFileByTxtAssociatedProgram(Settings.ModConversionFile);
         }
 
         private void button_openKanjiYomiFile_Click(object sender, EventArgs e)
         {
-            try {
-                if (Settings.KanjiYomiFile._notEmpty()) {
-                    System.Diagnostics.Process.Start(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KanjiYomiFile));
-                }
-            } catch { }
+            //try {
+            //    if (Settings.KanjiYomiFile._notEmpty()) {
+            //        System.Diagnostics.Process.Start(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KanjiYomiFile));
+            //    }
+            //} catch { }
+            openFileByTxtAssociatedProgram(Settings.KanjiYomiFile);
         }
 
         private void button_reloadMisc_Click(object sender, EventArgs e)
@@ -1873,6 +1983,51 @@ namespace KanchokuWS
             comboBox_ctrlKey_setItems(comboBox_dateStringKey);
         }
 
+        private void button_openKeyboardFile_Click(object sender, EventArgs e)
+        {
+            openFileByTxtAssociatedProgram(Settings.KeyboardFile);
+        }
+
+        private void button_openTableFile_Click(object sender, EventArgs e)
+        {
+            openFileByTxtAssociatedProgram(Settings.TableFile);
+        }
+
+        private void button_openKeyCharMapFile_Click(object sender, EventArgs e)
+        {
+            openFileByTxtAssociatedProgram(Settings.CharsDefFile);
+        }
+
+        private void button_openEasyCharsFile_Click(object sender, EventArgs e)
+        {
+            openFileByTxtAssociatedProgram(Settings.EasyCharsFile);
+        }
+
+        private void button_openStrokeHelpFile_Click(object sender, EventArgs e)
+        {
+            openFileByTxtAssociatedProgram(Settings.StrokeHelpFile);
+        }
+
+        private void button_openBushuCompFile_Click(object sender, EventArgs e)
+        {
+            openFileByTxtAssociatedProgram(Settings.BushuFile);
+            openFileByTxtAssociatedProgram(Settings.AutoBushuFile);
+        }
+
+        private void button_bushuAssocFile_Click(object sender, EventArgs e)
+        {
+            openFileByTxtAssociatedProgram(Settings.BushuAssocFile);
+        }
+
+        private void button_openMazeFile_Click(object sender, EventArgs e)
+        {
+            openFileByTxtAssociatedProgram(Settings.MazegakiFile._safeReplace("*", "user"));
+        }
+
+        private void button_openHistoryFile_Click(object sender, EventArgs e)
+        {
+            openFileByTxtAssociatedProgram(Settings.HistoryFile._safeReplace("*", "entry"));
+        }
     }
 }
 
