@@ -9,7 +9,8 @@ namespace VkbTableMaker {
     const size_t OUT_TABLE_SIZE = 200;
     const size_t VKB_TABLE_SIZE = 50;
 
-    std::map<mchar_t, std::vector<int>>* StrokeSerieses();
+    // 文字に到る打鍵列のマップを取得
+    std::map<MString, std::vector<int>>* StrokeSerieses();
 
     // ひらがな50音図配列を作成する (あかさたなはまやらわ、ぁがざだばぱゃ)
     void MakeVkbHiraganaTable(wchar_t* table);
@@ -44,5 +45,8 @@ namespace VkbTableMaker {
 
     // ひらがなに到る第1打鍵集合を取得する
     const std::set<int>& GetHiraganaFirstDeckeys();
+
+    // 打鍵列からローマ字テーブルを作成してファイルに書き出す
+    void SaveRomanStrokeTable();
 }
 

@@ -393,6 +393,8 @@ namespace KanchokuWS
             this.button_bushuAssocFile = new System.Windows.Forms.Button();
             this.button_openMazeFile = new System.Windows.Forms.Button();
             this.button_openHistoryFile = new System.Windows.Forms.Button();
+            this.label_miscRomanOut = new System.Windows.Forms.Label();
+            this.button_saveRomanTableFile = new System.Windows.Forms.Button();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onBushuCompHelp = new KanchokuWS.ColorTextBox();
@@ -407,6 +409,9 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.groupBox40 = new System.Windows.Forms.GroupBox();
+            this.textBox_romanBushuCompPrefix = new System.Windows.Forms.TextBox();
+            this.label102 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -458,6 +463,7 @@ namespace KanchokuWS
             this.groupBox7.SuspendLayout();
             this.tabPage_about.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).BeginInit();
+            this.groupBox40.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -647,7 +653,8 @@ namespace KanchokuWS
             this.textBox_tableFile.Size = new System.Drawing.Size(137, 19);
             this.textBox_tableFile.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox_tableFile, "打鍵から文字への変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることによ" +
-        "り、複数打鍵に対する文字定義が\r\n可能です。\r\n");
+        "り、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\nファイル名を変更したり、テーブルの内容を修正した場合は、「再読込」を\r\n実行すると、その内容が反映されます" +
+        "。");
             // 
             // label18
             // 
@@ -3732,6 +3739,7 @@ namespace KanchokuWS
             // 
             // tabPage_misc
             // 
+            this.tabPage_misc.Controls.Add(this.groupBox40);
             this.tabPage_misc.Controls.Add(this.label_reloadMisc);
             this.tabPage_misc.Controls.Add(this.button_reloadMisc);
             this.tabPage_misc.Controls.Add(this.groupBox39);
@@ -3770,7 +3778,7 @@ namespace KanchokuWS
             this.button_reloadMisc.Location = new System.Drawing.Point(261, 343);
             this.button_reloadMisc.Name = "button_reloadMisc";
             this.button_reloadMisc.Size = new System.Drawing.Size(80, 23);
-            this.button_reloadMisc.TabIndex = 6;
+            this.button_reloadMisc.TabIndex = 7;
             this.button_reloadMisc.Text = "再読込(&R)";
             this.toolTip1.SetToolTip(this.button_reloadMisc, "各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
             this.button_reloadMisc.UseVisualStyleBackColor = true;
@@ -4040,7 +4048,7 @@ namespace KanchokuWS
             this.button_miscEnter.Location = new System.Drawing.Point(493, 343);
             this.button_miscEnter.Name = "button_miscEnter";
             this.button_miscEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_miscEnter.TabIndex = 8;
+            this.button_miscEnter.TabIndex = 9;
             this.button_miscEnter.Text = "設定(&E)";
             this.toolTip1.SetToolTip(this.button_miscEnter, "設定内容を kanchoku.user.ini に書き込みます");
             this.button_miscEnter.UseVisualStyleBackColor = true;
@@ -4053,7 +4061,7 @@ namespace KanchokuWS
             this.button_miscClose.Location = new System.Drawing.Point(385, 343);
             this.button_miscClose.Name = "button_miscClose";
             this.button_miscClose.Size = new System.Drawing.Size(80, 23);
-            this.button_miscClose.TabIndex = 7;
+            this.button_miscClose.TabIndex = 8;
             this.button_miscClose.Text = "閉じる(&C)";
             this.button_miscClose.UseVisualStyleBackColor = true;
             this.button_miscClose.Click += new System.EventHandler(this.button_miscClose_Click);
@@ -4643,7 +4651,8 @@ namespace KanchokuWS
             this.button_openTableFile.Size = new System.Drawing.Size(34, 23);
             this.button_openTableFile.TabIndex = 3;
             this.button_openTableFile.Text = "開く";
-            this.toolTip1.SetToolTip(this.button_openTableFile, "テーブルファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n");
+            this.toolTip1.SetToolTip(this.button_openTableFile, "テーブルファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行すると" +
+        "、\r\nその内容が反映されます。\r\n");
             this.button_openTableFile.UseVisualStyleBackColor = true;
             this.button_openTableFile.Click += new System.EventHandler(this.button_openTableFile_Click);
             // 
@@ -4667,7 +4676,8 @@ namespace KanchokuWS
             this.button_openEasyCharsFile.Size = new System.Drawing.Size(34, 23);
             this.button_openEasyCharsFile.TabIndex = 7;
             this.button_openEasyCharsFile.Text = "開く";
-            this.toolTip1.SetToolTip(this.button_openEasyCharsFile, "容易打鍵文字ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。");
+            this.toolTip1.SetToolTip(this.button_openEasyCharsFile, "容易打鍵文字ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行す" +
+        "ると、\r\nその内容が反映されます。");
             this.button_openEasyCharsFile.UseVisualStyleBackColor = true;
             this.button_openEasyCharsFile.Click += new System.EventHandler(this.button_openEasyCharsFile_Click);
             // 
@@ -4679,7 +4689,8 @@ namespace KanchokuWS
             this.button_openStrokeHelpFile.Size = new System.Drawing.Size(34, 23);
             this.button_openStrokeHelpFile.TabIndex = 9;
             this.button_openStrokeHelpFile.Text = "開く";
-            this.toolTip1.SetToolTip(this.button_openStrokeHelpFile, "打鍵ヘルプファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。");
+            this.toolTip1.SetToolTip(this.button_openStrokeHelpFile, "打鍵ヘルプファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行する" +
+        "と、\r\nその内容が反映されます。");
             this.button_openStrokeHelpFile.UseVisualStyleBackColor = true;
             this.button_openStrokeHelpFile.Click += new System.EventHandler(this.button_openStrokeHelpFile_Click);
             // 
@@ -4730,6 +4741,33 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.button_openHistoryFile, "入力履歴(entry)ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n");
             this.button_openHistoryFile.UseVisualStyleBackColor = true;
             this.button_openHistoryFile.Click += new System.EventHandler(this.button_openHistoryFile_Click);
+            // 
+            // label_miscRomanOut
+            // 
+            this.label_miscRomanOut.AutoSize = true;
+            this.label_miscRomanOut.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_miscRomanOut.Location = new System.Drawing.Point(186, 2);
+            this.label_miscRomanOut.Name = "label_miscRomanOut";
+            this.label_miscRomanOut.Size = new System.Drawing.Size(65, 15);
+            this.label_miscRomanOut.TabIndex = 36;
+            this.label_miscRomanOut.Text = "出力しました";
+            this.label_miscRomanOut.Visible = false;
+            this.label_miscRomanOut.VisibleChanged += new System.EventHandler(this.label_miscRomanOut_VisibleChanged);
+            // 
+            // button_saveRomanTableFile
+            // 
+            this.button_saveRomanTableFile.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_saveRomanTableFile.Location = new System.Drawing.Point(186, 20);
+            this.button_saveRomanTableFile.Name = "button_saveRomanTableFile";
+            this.button_saveRomanTableFile.Size = new System.Drawing.Size(67, 23);
+            this.button_saveRomanTableFile.TabIndex = 1;
+            this.button_saveRomanTableFile.TabStop = false;
+            this.button_saveRomanTableFile.Text = "出力(&T)";
+            this.toolTip1.SetToolTip(this.button_saveRomanTableFile, "ローマ字テーブルを作成してファイル出力します。\r\n\r\nストローク表からローマ字テーブルを作成して roman-stroke-table.txt と\r\nいう名前のフ" +
+        "ァイルに出力します。出力先は漢直WSのルートフォルダです。\r\n\r\n出力されたファイルは Google 日本語入力のローマ字テーブルとして\r\nインポートすることが" +
+        "できます。");
+            this.button_saveRomanTableFile.UseVisualStyleBackColor = true;
+            this.button_saveRomanTableFile.Click += new System.EventHandler(this.button_saveRomanTableFile_Click);
             // 
             // textBox_onSelectedBackColor
             // 
@@ -4897,6 +4935,40 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // groupBox40
+            // 
+            this.groupBox40.Controls.Add(this.label102);
+            this.groupBox40.Controls.Add(this.textBox_romanBushuCompPrefix);
+            this.groupBox40.Controls.Add(this.button_saveRomanTableFile);
+            this.groupBox40.Controls.Add(this.label_miscRomanOut);
+            this.groupBox40.Location = new System.Drawing.Point(309, 233);
+            this.groupBox40.Name = "groupBox40";
+            this.groupBox40.Size = new System.Drawing.Size(259, 51);
+            this.groupBox40.TabIndex = 6;
+            this.groupBox40.TabStop = false;
+            this.groupBox40.Text = "ローマ字テーブルファイル出力";
+            // 
+            // textBox_romanBushuCompPrefix
+            // 
+            this.textBox_romanBushuCompPrefix.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_romanBushuCompPrefix.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_romanBushuCompPrefix.Location = new System.Drawing.Point(130, 21);
+            this.textBox_romanBushuCompPrefix.Name = "textBox_romanBushuCompPrefix";
+            this.textBox_romanBushuCompPrefix.Size = new System.Drawing.Size(43, 19);
+            this.textBox_romanBushuCompPrefix.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_romanBushuCompPrefix, "部首合成用ローマ字出力時のプレフィックス\r\n\r\n他の文字用のローマ字列と重ならない文字列を設定します。\r\n(たとえば、前置部首合成用の打鍵列など)");
+            // 
+            // label102
+            // 
+            this.label102.AutoSize = true;
+            this.label102.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label102.Location = new System.Drawing.Point(14, 23);
+            this.label102.Name = "label102";
+            this.label102.Size = new System.Drawing.Size(114, 15);
+            this.label102.TabIndex = 38;
+            this.label102.Text = "部首合成プレフィックス";
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -5011,6 +5083,8 @@ namespace KanchokuWS
             this.groupBox7.PerformLayout();
             this.tabPage_about.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).EndInit();
+            this.groupBox40.ResumeLayout(false);
+            this.groupBox40.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -5394,5 +5468,10 @@ namespace KanchokuWS
         private System.Windows.Forms.Button button_openKeyCharMapFile;
         private System.Windows.Forms.Button button_openTableFile;
         private System.Windows.Forms.Button button_openKeyboardFile;
+        private System.Windows.Forms.Label label_miscRomanOut;
+        private System.Windows.Forms.Button button_saveRomanTableFile;
+        private System.Windows.Forms.GroupBox groupBox40;
+        private System.Windows.Forms.Label label102;
+        private System.Windows.Forms.TextBox textBox_romanBushuCompPrefix;
     }
 }

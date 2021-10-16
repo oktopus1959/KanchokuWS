@@ -372,6 +372,8 @@ public:
             } else if (cmd == _T("setBackspaceBlocker")) {
                 // Backspace Blocker のセット
                 setBackspaceBlocker();
+            } else if (cmd == _T("SaveRomanStrokeTable")) {
+                VkbTableMaker::SaveRomanStrokeTable();
             }
         }
     }
@@ -487,7 +489,7 @@ public:
         mchar_t lastChar = copyToTopString();
 
         if (targetChar != 0 && OutParams->strokeCount > 0) {
-            auto iter = VkbTableMaker::StrokeSerieses()->find(targetChar);
+            auto iter = VkbTableMaker::StrokeSerieses()->find(to_mstr(targetChar));
             if (iter != VkbTableMaker::StrokeSerieses()->end()) {
                 if (iter->second.size() > (size_t)OutParams->strokeCount) {
                     OutParams->nextStrokeDeckey = iter->second[OutParams->strokeCount];

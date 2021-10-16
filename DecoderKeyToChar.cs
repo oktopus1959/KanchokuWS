@@ -7,6 +7,7 @@ using Utils;
 
 namespace KanchokuWS
 {
+    // 現状、未使用
     public static class DecoderKeyToChar
     {
         private static Logger logger = Logger.GetLogger();

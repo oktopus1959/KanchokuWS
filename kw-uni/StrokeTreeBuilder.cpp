@@ -105,8 +105,10 @@ namespace {
         // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB の4面
         int shiftPlane = 0;
 
-        std::map<mchar_t, std::vector<int>>* strokeSerieses = 0;
+        // 打鍵マップ
+        std::map<MString, std::vector<int>>* strokeSerieses = 0;
 
+        // 打鍵列
         std::vector<int> strokes;
 
     public:
@@ -257,13 +259,17 @@ namespace {
                 // 文字から、その文字の打鍵列へのマップに追加
                 if (strokeSerieses) {
                     auto ms = to_mstr(currentStr);
-                    if (ms.size() == 1) {
-                        auto iter = strokeSerieses->find(ms[0]);
-                        if (iter == strokeSerieses->end()) {
-                            strokes.push_back(nth);
-                            (*strokeSerieses)[ms[0]] = strokes;
-                            strokes.pop_back();
+                    if (!ms.empty()) {
+                        for (int k = 0; k < 10; ++k) {
+                            auto iter = strokeSerieses->find(ms);
+                            if (iter != strokeSerieses->end()) {
+                                // すでに同じものがあったら、末尾に TAB を追加しておく(後でローマ字テーブルを出力するときに複数の打鍵列も出力できるようにするため)
+                                ms.push_back('\t');
+                            }
                         }
+                        strokes.push_back(nth);
+                        (*strokeSerieses)[ms] = strokes;
+                        strokes.pop_back();
                     }
                 }
                 return new StringNode(currentStr);

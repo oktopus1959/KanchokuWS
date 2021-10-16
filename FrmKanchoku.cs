@@ -144,9 +144,9 @@ namespace KanchokuWS
         public void ReadDefFiles()
         {
             // 文字定義ファイルの読み込み
-            if (Settings.CharsDefFile._notEmpty()) {
-                DecoderKeyToChar.ReadCharsDefFile(Settings.CharsDefFile);
-            }
+            //if (Settings.CharsDefFile._notEmpty()) {
+            //    DecoderKeyToChar.ReadCharsDefFile(Settings.CharsDefFile);
+            //}
 
             // 追加の修飾キー定義ファイルの読み込み
             if (Settings.ExtraModifiersEnabled && Settings.ModConversionFile._notEmpty()) {

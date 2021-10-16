@@ -1,9 +1,11 @@
 // StrokeTableMaker
 #include "file_utils.h"
+#include "path_utils.h"
 #include "StrokeTable.h"
 #include "StringNode.h"
 #include "MyPrevChar.h"
 #include "DecKeyToChars.h"
+#include "Settings/Settings.h"
 
 #include "VkbTableMaker.h"
 //#define OUT_TABLE_SIZE 200
@@ -24,9 +26,9 @@ namespace VkbTableMaker {
 
     //----------------------------------------------------------------------------
     // 文字に到る打鍵列
-    std::map<mchar_t, std::vector<int>> strokeSerieses;
+    std::map<MString, std::vector<int>> strokeSerieses;
 
-    std::map<mchar_t, std::vector<int>>* StrokeSerieses() { return &strokeSerieses; }
+    std::map<MString, std::vector<int>>* StrokeSerieses() { return &strokeSerieses; }
 
     //----------------------------------------------------------------------------
     wstring hiraganaArray1 = _T("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわ ん を");
@@ -293,6 +295,60 @@ namespace VkbTableMaker {
                 ch = (wchar_t)utils::safe_front(blk->getString());
             }
             set_facestr(ch, faces + i * 2);
+        }
+    }
+
+    //----------------------------------------------------------------------------
+    std::vector<wstring> readBushuFile() {
+        utils::IfstreamReader reader(SETTINGS->bushuFile);
+        if (reader.success()) {
+            return reader.getAllLines();
+        }
+        return std::vector<wstring>();
+    }
+
+    wstring convDeckeysToWstring(std::vector<int> deckeys) {
+        wstring result;
+        for (auto deckey : deckeys) {
+            wchar_t ch = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+            if (ch == 0) break;
+            result.push_back(ch);
+        }
+        return result;
+    }
+
+    // ローマ字テーブルを作成してファイルに書き出す
+    void SaveRomanStrokeTable() {
+        auto path = utils::joinPath(SETTINGS->rootDir, _T("roman-stroke-table.txt"));
+        utils::OfstreamWriter writer(path);
+        if (writer.success()) {
+            // テーブルファイルから
+            for (const auto& pair : strokeSerieses) {
+                if (pair.first.length() > 1) {
+                    LOG_DEBUGH(_T("str=%s, strokeLen=%d"), MAKE_WPTR(pair.first), pair.second.size());
+                }
+                if (!pair.first.empty() && !pair.second.empty()) {
+                    // 重複した出力文字(列)の場合は末尾にTABが付加されているのでそれを除去してから書き出し
+                    writer.writeLine(utils::utf8_encode(
+                        utils::format(_T("%s\t%s"), convDeckeysToWstring(pair.second).c_str(), MAKE_WPTR(utils::strip(pair.first, _T("\t"))))));
+                }
+            }
+            // 部首合成から
+            for (const auto& line : readBushuFile()) {
+                if (line.size() == 3) {
+                    auto iter1 = strokeSerieses.find(to_mstr(line.substr(1, 1)));
+                    auto iter2 = strokeSerieses.find(to_mstr(line.substr(2, 1)));
+                    if (iter1 != strokeSerieses.end() && iter2 != strokeSerieses.end()) {
+                        writer.writeLine(utils::utf8_encode(
+                            utils::format(_T("%s%s%s\t%s"),
+                                SETTINGS->romanBushuCompPrefix.c_str(),
+                                convDeckeysToWstring(iter1->second).c_str(),
+                                convDeckeysToWstring(iter2->second).c_str(),
+                                line.substr(0, 1).c_str())));
+                    }
+                }
+
+            }
         }
     }
 

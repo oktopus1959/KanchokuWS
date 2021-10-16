@@ -410,6 +410,9 @@ namespace KanchokuWS
         /// <summary>前打鍵位置の背景色を変えて表示するか</summary>
         public static bool ShowLastStrokeByDiffBackColor { get; set; } = false;
 
+        /// <summary>ローマ字テーブル出力時の部首合成用プレフィックス</summary>
+        public static string RomanBushuCompPrefix { get; set; }
+
         //------------------------------------------------------------------------------
         /// <summary>ウィンドウClassNameごとの設定</summary>
         public class WindowsClassSettings
@@ -811,6 +814,8 @@ namespace KanchokuWS
             RemoveOneStrokeByBackspace = addDecoderSetting("removeOneStrokeByBackspace", "weakBS", false);  // BS で直前打鍵のみを取り消すか
 
             AutoBushuComp = addDecoderSetting("autoBushuComp", false);                          // 自動首部合成を有効にするか
+
+            RomanBushuCompPrefix = addDecoderSetting("romanBushuCompPrefix", "jf");             // ローマ字テーブル出力時の部首合成用プレフィックス
 
             // キー割当
             HistorySearchCtrlKey = GetString("histSearchCtrlKey");                              // 履歴検索&選択を行うCtrlキー

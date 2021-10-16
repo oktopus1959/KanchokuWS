@@ -61,6 +61,8 @@ struct Settings {
 
     bool autoBushuComp = false;             // 自動部首合成を行う
 
+    tstring romanBushuCompPrefix;           // ローマ字テーブル出力時の部首合成用プレフィックス
+
     // for Debug
     bool debughState = false;               // State モジュールで DebugH を有効にする
     bool debughMazegaki = false;            // mazegaki モジュールで DebugH を有効にする

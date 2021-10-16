@@ -1210,6 +1210,7 @@ namespace KanchokuWS
             textBox_modConversionFile.Text = Settings.ModConversionFile;
             checkBox_upperRomanStrokeGuide.Checked = Settings.UpperRomanStrokeGuide;
             textBox_kanjiYomiFile.Text = Settings.KanjiYomiFile;
+            textBox_romanBushuCompPrefix.Text = Settings.RomanBushuCompPrefix;
         }
 
         private void setMiscSettingsStatusChecker()
@@ -1217,7 +1218,7 @@ namespace KanchokuWS
             // その他変換
             button_miscEnter.Enabled = false;
             checkerMiscSettings.CtlToBeEnabled = button_miscEnter;
-            checkerMiscSettings.ControlEnabler = button_miscClose_textChange;
+            checkerMiscSettings.ControlEnabler = miscTabStatusChanged;
             checkerMiscSettings.Add(checkBox_autoBushuComp);
             checkerMiscSettings.Add(checkBox_convertShiftedHiraganaToKatakana);
             checkerMiscSettings.Add(radioButton_normalShift);
@@ -1232,13 +1233,15 @@ namespace KanchokuWS
             checkerMiscSettings.Add(textBox_modConversionFile);
             checkerMiscSettings.Add(checkBox_upperRomanStrokeGuide);
             checkerMiscSettings.Add(textBox_kanjiYomiFile);
+            checkerMiscSettings.Add(textBox_romanBushuCompPrefix);
 
             checkerAll.Add(checkerMiscSettings);
         }
 
-        private void button_miscClose_textChange(bool flag)
+        private void miscTabStatusChanged(bool flag)
         {
             button_miscClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+            button_saveRomanTableFile.Enabled = !flag;
         }
 
         private void button_miscEnter_Click(object sender, EventArgs e)
@@ -1255,6 +1258,7 @@ namespace KanchokuWS
             Settings.SetUserIni("modConversionFile", textBox_modConversionFile.Text);
             Settings.SetUserIni("upperRomanStrokeGuide", checkBox_upperRomanStrokeGuide.Checked);
             Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
+            Settings.SetUserIni("romanBushuCompPrefix", textBox_romanBushuCompPrefix.Text);
 
             Settings.ReadIniFile();
             // 各種定義ファイルの再読み込み
@@ -1309,6 +1313,12 @@ namespace KanchokuWS
             label_reloadMisc.Show();
         }
 
+        private void button_saveRomanTableFile_Click(object sender, EventArgs e)
+        {
+            frmMain?.ExecCmdDecoder("SaveRomanStrokeTable", null);
+            label_miscRomanOut.Show();
+        }
+
         /// <summary> 閉じる </summary>
         private void button_miscClose_Click(object sender, EventArgs e)
         {
@@ -1334,6 +1344,7 @@ namespace KanchokuWS
                     label_okResultKeyAssign.Hide();
                     label_okResultCtrlKeys.Hide();
                     label_okResultMisc.Hide();
+                    label_miscRomanOut.Hide();
                     label_reloadMisc.Hide();
                     label_execResultFile.Hide();
                 }
@@ -1381,6 +1392,11 @@ namespace KanchokuWS
         }
 
         private void label_reloadMisc_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_miscRomanOut_VisibleChanged(object sender, EventArgs e)
         {
             okResultCount = okResultCountMax;
         }
@@ -2028,6 +2044,7 @@ namespace KanchokuWS
         {
             openFileByTxtAssociatedProgram(Settings.HistoryFile._safeReplace("*", "entry"));
         }
+
     }
 }
 
