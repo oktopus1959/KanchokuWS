@@ -659,6 +659,9 @@ namespace KanchokuWS
             // クリップボード経由
             textBox_minLeghthViaClipboard.Text = $"{Settings.MinLeghthViaClipboard}";
 
+            // 自身以外のキーボードフックツールからの出力を無視する
+            checkBox_ignoreOtherHooker.Checked = Settings.IgnoreOtherHooker;
+
             // ファイル保存世代数
             textBox_backFileRotationGeneration.Text = $"{Settings.BackFileRotationGeneration}";
 
@@ -702,6 +705,9 @@ namespace KanchokuWS
 
             // クリップボード経由
             checkerAdvanced.Add(textBox_minLeghthViaClipboard);
+
+            // 自身以外のキーボードフックツールからの出力を無視する
+            checkerAdvanced.Add(checkBox_ignoreOtherHooker);
 
             // ファイル保存世代数
             checkerAdvanced.Add(textBox_backFileRotationGeneration);
@@ -757,6 +763,9 @@ namespace KanchokuWS
 
             // クリップボード経由
             Settings.SetUserIni("minLeghthViaClipboard", textBox_minLeghthViaClipboard.Text.Trim());
+
+            // 自身以外のキーボードフックツールからの出力を無視する
+            Settings.SetUserIni("ignoreOtherHooker", checkBox_ignoreOtherHooker.Checked);
 
             // ファイル保存世代数
             Settings.SetUserIni("backFileRotationGeneration", textBox_backFileRotationGeneration.Text.Trim());

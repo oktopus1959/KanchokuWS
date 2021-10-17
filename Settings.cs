@@ -11,7 +11,7 @@ namespace KanchokuWS
     {
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.1.9";
+        public static string Version => "1.1.10";
 
         /// <summary> ドキュメントへのURL </summary>
         public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
@@ -104,7 +104,11 @@ namespace KanchokuWS
         //public static string HistoryNgramFile {get; private set; }
         public static string MazegakiFile { get; private set; }
 
+        /// <summary>ファイル保存世代数</summary>
         public static int BackFileRotationGeneration { get; private set; } = 3;
+
+        /// <summary>自身以外のキーボードフックツールからの出力を無視する</summary>
+        public static bool IgnoreOtherHooker { get; private set; } = true;
 
         //-------------------------------------------------------------------------------------
         /// <summary> 文字送出時にコピー&ペーストを行う文字数の閾値 </summary>
@@ -626,8 +630,13 @@ namespace KanchokuWS
             }
 
             //-------------------------------------------------------------------------------------
+            // 詳細設定
+
             // 文字送出時にコピー&ペーストを行う文字数の閾値
             MinLeghthViaClipboard = GetString("minLeghthViaClipboard")._parseInt(0)._lowLimit(0);
+
+            // 自身以外のキーボードフックツールからの出力を無視する
+            IgnoreOtherHooker = GetString("ignoreOtherHooker")._parseBool(false);
 
             //-------------------------------------------------------------------------------------
             // フォントと色の設定

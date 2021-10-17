@@ -412,6 +412,8 @@ namespace KanchokuWS
             this.groupBox40 = new System.Windows.Forms.GroupBox();
             this.textBox_romanBushuCompPrefix = new System.Windows.Forms.TextBox();
             this.label102 = new System.Windows.Forms.Label();
+            this.groupBox41 = new System.Windows.Forms.GroupBox();
+            this.checkBox_ignoreOtherHooker = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -464,6 +466,7 @@ namespace KanchokuWS
             this.tabPage_about.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).BeginInit();
             this.groupBox40.SuspendLayout();
+            this.groupBox41.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -1132,6 +1135,7 @@ namespace KanchokuWS
             // 
             // tabPage_advanced
             // 
+            this.tabPage_advanced.Controls.Add(this.groupBox41);
             this.tabPage_advanced.Controls.Add(this.groupBox28);
             this.tabPage_advanced.Controls.Add(this.groupBox20);
             this.tabPage_advanced.Controls.Add(this.groupBox26);
@@ -1153,9 +1157,9 @@ namespace KanchokuWS
             // 
             this.groupBox28.Controls.Add(this.textBox_backFileRotationGeneration);
             this.groupBox28.Controls.Add(this.label57);
-            this.groupBox28.Location = new System.Drawing.Point(304, 64);
+            this.groupBox28.Location = new System.Drawing.Point(304, 61);
             this.groupBox28.Name = "groupBox28";
-            this.groupBox28.Size = new System.Drawing.Size(246, 47);
+            this.groupBox28.Size = new System.Drawing.Size(246, 44);
             this.groupBox28.TabIndex = 4;
             this.groupBox28.TabStop = false;
             this.groupBox28.Text = "辞書ファイル";
@@ -1163,7 +1167,7 @@ namespace KanchokuWS
             // textBox_backFileRotationGeneration
             // 
             this.textBox_backFileRotationGeneration.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_backFileRotationGeneration.Location = new System.Drawing.Point(186, 19);
+            this.textBox_backFileRotationGeneration.Location = new System.Drawing.Point(186, 17);
             this.textBox_backFileRotationGeneration.Name = "textBox_backFileRotationGeneration";
             this.textBox_backFileRotationGeneration.Size = new System.Drawing.Size(45, 19);
             this.textBox_backFileRotationGeneration.TabIndex = 0;
@@ -1172,7 +1176,7 @@ namespace KanchokuWS
             // label57
             // 
             this.label57.AutoSize = true;
-            this.label57.Location = new System.Drawing.Point(19, 21);
+            this.label57.Location = new System.Drawing.Point(19, 19);
             this.label57.Name = "label57";
             this.label57.Size = new System.Drawing.Size(101, 15);
             this.label57.TabIndex = 6;
@@ -1346,7 +1350,7 @@ namespace KanchokuWS
             this.groupBox26.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox26.Location = new System.Drawing.Point(304, 12);
             this.groupBox26.Name = "groupBox26";
-            this.groupBox26.Size = new System.Drawing.Size(246, 47);
+            this.groupBox26.Size = new System.Drawing.Size(246, 43);
             this.groupBox26.TabIndex = 3;
             this.groupBox26.TabStop = false;
             this.groupBox26.Text = "文字送出";
@@ -1354,7 +1358,7 @@ namespace KanchokuWS
             // textBox_minLeghthViaClipboard
             // 
             this.textBox_minLeghthViaClipboard.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_minLeghthViaClipboard.Location = new System.Drawing.Point(186, 17);
+            this.textBox_minLeghthViaClipboard.Location = new System.Drawing.Point(186, 16);
             this.textBox_minLeghthViaClipboard.Name = "textBox_minLeghthViaClipboard";
             this.textBox_minLeghthViaClipboard.Size = new System.Drawing.Size(45, 19);
             this.textBox_minLeghthViaClipboard.TabIndex = 0;
@@ -1364,7 +1368,7 @@ namespace KanchokuWS
             // label53
             // 
             this.label53.AutoSize = true;
-            this.label53.Location = new System.Drawing.Point(19, 19);
+            this.label53.Location = new System.Drawing.Point(19, 18);
             this.label53.Name = "label53";
             this.label53.Size = new System.Drawing.Size(161, 15);
             this.label53.TabIndex = 4;
@@ -1380,7 +1384,7 @@ namespace KanchokuWS
             this.groupBox15.Controls.Add(this.comboBox_logLevel);
             this.groupBox15.Controls.Add(this.label29);
             this.groupBox15.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox15.Location = new System.Drawing.Point(304, 118);
+            this.groupBox15.Location = new System.Drawing.Point(304, 163);
             this.groupBox15.Name = "groupBox15";
             this.groupBox15.Size = new System.Drawing.Size(246, 153);
             this.groupBox15.TabIndex = 5;
@@ -4969,6 +4973,27 @@ namespace KanchokuWS
             this.label102.TabIndex = 38;
             this.label102.Text = "部首合成プレフィックス";
             // 
+            // groupBox41
+            // 
+            this.groupBox41.Controls.Add(this.checkBox_ignoreOtherHooker);
+            this.groupBox41.Location = new System.Drawing.Point(304, 111);
+            this.groupBox41.Name = "groupBox41";
+            this.groupBox41.Size = new System.Drawing.Size(246, 44);
+            this.groupBox41.TabIndex = 11;
+            this.groupBox41.TabStop = false;
+            this.groupBox41.Text = "他のキーボードフックツールとの競合解消";
+            // 
+            // checkBox_ignoreOtherHooker
+            // 
+            this.checkBox_ignoreOtherHooker.AutoSize = true;
+            this.checkBox_ignoreOtherHooker.Location = new System.Drawing.Point(22, 21);
+            this.checkBox_ignoreOtherHooker.Name = "checkBox_ignoreOtherHooker";
+            this.checkBox_ignoreOtherHooker.Size = new System.Drawing.Size(158, 19);
+            this.checkBox_ignoreOtherHooker.TabIndex = 2;
+            this.checkBox_ignoreOtherHooker.Text = "extraInfo == 0 のみを処理";
+            this.toolTip1.SetToolTip(this.checkBox_ignoreOtherHooker, resources.GetString("checkBox_ignoreOtherHooker.ToolTip"));
+            this.checkBox_ignoreOtherHooker.UseVisualStyleBackColor = true;
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -5085,6 +5110,8 @@ namespace KanchokuWS
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).EndInit();
             this.groupBox40.ResumeLayout(false);
             this.groupBox40.PerformLayout();
+            this.groupBox41.ResumeLayout(false);
+            this.groupBox41.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -5473,5 +5500,7 @@ namespace KanchokuWS
         private System.Windows.Forms.GroupBox groupBox40;
         private System.Windows.Forms.Label label102;
         private System.Windows.Forms.TextBox textBox_romanBushuCompPrefix;
+        private System.Windows.Forms.GroupBox groupBox41;
+        private System.Windows.Forms.CheckBox checkBox_ignoreOtherHooker;
     }
 }

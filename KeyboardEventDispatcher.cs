@@ -147,8 +147,7 @@ namespace KanchokuWS
         {
             // 0xa0 = LSHIFT, 0xa1 = RSHIFT, 0xa5 = RMENU, 0xf3 = Zenkaku, 0xf4 = Kanji
             return
-                //extraInfo != ActiveWindowHandler.MyMagicNumber &&
-                extraInfo == 0 &&
+                (Settings.IgnoreOtherHooker ? extraInfo == 0 : extraInfo != ActiveWindowHandler.MyMagicNumber) &&
                 scanCode != 0 && scanCode != YamabukiRscanCode &&
                 ((vkey >= 0 && vkey < 0xa0) ||
                  (vkey == VirtualKeys.RSHIFT && !ctrl && isDecoderActivated() && Settings.ExtraModifiersEnabled) ||
