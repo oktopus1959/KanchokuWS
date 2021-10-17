@@ -573,6 +573,11 @@ namespace KanchokuWS
                                 if (mod != 0 && vkey > 0 && deckey > 0) {
                                     logger.DebugH(() => $"AddModConvertedDecKeyFromCombo: deckey={deckey}, mod={mod}, vkey={vkey}, rawLine={rawLine}");
                                     AddModConvertedDecKeyFromCombo(deckey, mod, vkey);
+                                    if (!shiftPlaneForShiftFuncKey.ContainsKey(mod)) {
+                                        // mod に対する ShiftPlane が設定されていない場合は、拡張シフトB面を割り当てる
+                                        shiftPlaneForShiftFuncKey[mod] = ShiftPlane.PlaneB;
+                                        shiftPlaneForShiftFuncKeyWhenDecoderOff[mod] = ShiftPlane.PlaneB;
+                                    }
                                     continue;
                                 }
                             }
