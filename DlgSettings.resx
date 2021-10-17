@@ -578,17 +578,14 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 選択されます。</value>
   </data>
   <data name="checkBox_ignoreSpaceUpOnSandS.ToolTip" xml:space="preserve">
-    <value>デコーダがOFFのときに SandS 方式を有効にします。
+    <value>SandS有効時に、Space単打で空白を入力しないようにします。
 
-SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを
-押すと、スペースキーがシフトキーとして働くようになります。
-
-スペースを入力したい場合は、オートリピートが始まる前にスペースキーを
-離してください。
-
-SandS を有効にすると SandS と同じシフト面を使う
-Shift (または拡張修飾キー)+Space は有効なキーではなく、たんなる
-シフトキーとして扱われます。</value>
+これをONにすると、ほぼ通常のSHIFTキーと同等の使い方ができるようになります。
+空白を入力するには、
+・Ctrl+Space (履歴検索に割りり当てていない場合)
+・SandSに割り当てたシフト面のどこかの打鍵に空白を定義する
+・拡張修飾キーによる変換定義で適当なキーを Space に変換する
+などの方法があります。</value>
   </data>
   <data name="checkBox_SandSEnabledWhenOffMode.ToolTip" xml:space="preserve">
     <value>デコーダがOFFのときに SandS 方式を有効にします。

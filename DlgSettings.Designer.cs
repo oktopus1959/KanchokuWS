@@ -395,6 +395,12 @@ namespace KanchokuWS
             this.button_openHistoryFile = new System.Windows.Forms.Button();
             this.label_miscRomanOut = new System.Windows.Forms.Label();
             this.button_saveRomanTableFile = new System.Windows.Forms.Button();
+            this.groupBox40 = new System.Windows.Forms.GroupBox();
+            this.textBox_romanBushuCompPrefix = new System.Windows.Forms.TextBox();
+            this.label102 = new System.Windows.Forms.Label();
+            this.groupBox41 = new System.Windows.Forms.GroupBox();
+            this.checkBox_ignoreOtherHooker = new System.Windows.Forms.CheckBox();
+            this.checkBox_ignoreSpaceUpOnSandS = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onBushuCompHelp = new KanchokuWS.ColorTextBox();
@@ -409,12 +415,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.groupBox40 = new System.Windows.Forms.GroupBox();
-            this.textBox_romanBushuCompPrefix = new System.Windows.Forms.TextBox();
-            this.label102 = new System.Windows.Forms.Label();
-            this.groupBox41 = new System.Windows.Forms.GroupBox();
-            this.checkBox_ignoreOtherHooker = new System.Windows.Forms.CheckBox();
-            this.checkBox_ignoreSpaceUpOnSandS = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -4771,6 +4771,72 @@ namespace KanchokuWS
             this.button_saveRomanTableFile.UseVisualStyleBackColor = true;
             this.button_saveRomanTableFile.Click += new System.EventHandler(this.button_saveRomanTableFile_Click);
             // 
+            // groupBox40
+            // 
+            this.groupBox40.Controls.Add(this.label102);
+            this.groupBox40.Controls.Add(this.textBox_romanBushuCompPrefix);
+            this.groupBox40.Controls.Add(this.button_saveRomanTableFile);
+            this.groupBox40.Controls.Add(this.label_miscRomanOut);
+            this.groupBox40.Location = new System.Drawing.Point(309, 253);
+            this.groupBox40.Name = "groupBox40";
+            this.groupBox40.Size = new System.Drawing.Size(259, 51);
+            this.groupBox40.TabIndex = 6;
+            this.groupBox40.TabStop = false;
+            this.groupBox40.Text = "ローマ字テーブルファイル出力";
+            // 
+            // textBox_romanBushuCompPrefix
+            // 
+            this.textBox_romanBushuCompPrefix.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_romanBushuCompPrefix.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_romanBushuCompPrefix.Location = new System.Drawing.Point(130, 21);
+            this.textBox_romanBushuCompPrefix.Name = "textBox_romanBushuCompPrefix";
+            this.textBox_romanBushuCompPrefix.Size = new System.Drawing.Size(43, 19);
+            this.textBox_romanBushuCompPrefix.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_romanBushuCompPrefix, "部首合成用ローマ字出力時のプレフィックス\r\n\r\n他の文字用のローマ字列と重ならない文字列を設定します。\r\n(たとえば、前置部首合成用の打鍵列など)");
+            // 
+            // label102
+            // 
+            this.label102.AutoSize = true;
+            this.label102.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label102.Location = new System.Drawing.Point(14, 23);
+            this.label102.Name = "label102";
+            this.label102.Size = new System.Drawing.Size(114, 15);
+            this.label102.TabIndex = 38;
+            this.label102.Text = "部首合成プレフィックス";
+            // 
+            // groupBox41
+            // 
+            this.groupBox41.Controls.Add(this.checkBox_ignoreOtherHooker);
+            this.groupBox41.Location = new System.Drawing.Point(304, 111);
+            this.groupBox41.Name = "groupBox41";
+            this.groupBox41.Size = new System.Drawing.Size(246, 44);
+            this.groupBox41.TabIndex = 5;
+            this.groupBox41.TabStop = false;
+            this.groupBox41.Text = "他のキー変換ツールとの競合解消";
+            // 
+            // checkBox_ignoreOtherHooker
+            // 
+            this.checkBox_ignoreOtherHooker.AutoSize = true;
+            this.checkBox_ignoreOtherHooker.Location = new System.Drawing.Point(22, 21);
+            this.checkBox_ignoreOtherHooker.Name = "checkBox_ignoreOtherHooker";
+            this.checkBox_ignoreOtherHooker.Size = new System.Drawing.Size(158, 19);
+            this.checkBox_ignoreOtherHooker.TabIndex = 0;
+            this.checkBox_ignoreOtherHooker.Text = "extraInfo == 0 のみを処理";
+            this.toolTip1.SetToolTip(this.checkBox_ignoreOtherHooker, resources.GetString("checkBox_ignoreOtherHooker.ToolTip"));
+            this.checkBox_ignoreOtherHooker.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_ignoreSpaceUpOnSandS
+            // 
+            this.checkBox_ignoreSpaceUpOnSandS.AutoSize = true;
+            this.checkBox_ignoreSpaceUpOnSandS.Location = new System.Drawing.Point(11, 60);
+            this.checkBox_ignoreSpaceUpOnSandS.Name = "checkBox_ignoreSpaceUpOnSandS";
+            this.checkBox_ignoreSpaceUpOnSandS.Size = new System.Drawing.Size(253, 19);
+            this.checkBox_ignoreSpaceUpOnSandS.TabIndex = 2;
+            this.checkBox_ignoreSpaceUpOnSandS.Text = "SandS有効時にSpace単打で空白を入力しない";
+            this.toolTip1.SetToolTip(this.checkBox_ignoreSpaceUpOnSandS, resources.GetString("checkBox_ignoreSpaceUpOnSandS.ToolTip"));
+            this.checkBox_ignoreSpaceUpOnSandS.UseVisualStyleBackColor = true;
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -4936,72 +5002,6 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // groupBox40
-            // 
-            this.groupBox40.Controls.Add(this.label102);
-            this.groupBox40.Controls.Add(this.textBox_romanBushuCompPrefix);
-            this.groupBox40.Controls.Add(this.button_saveRomanTableFile);
-            this.groupBox40.Controls.Add(this.label_miscRomanOut);
-            this.groupBox40.Location = new System.Drawing.Point(309, 253);
-            this.groupBox40.Name = "groupBox40";
-            this.groupBox40.Size = new System.Drawing.Size(259, 51);
-            this.groupBox40.TabIndex = 6;
-            this.groupBox40.TabStop = false;
-            this.groupBox40.Text = "ローマ字テーブルファイル出力";
-            // 
-            // textBox_romanBushuCompPrefix
-            // 
-            this.textBox_romanBushuCompPrefix.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_romanBushuCompPrefix.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_romanBushuCompPrefix.Location = new System.Drawing.Point(130, 21);
-            this.textBox_romanBushuCompPrefix.Name = "textBox_romanBushuCompPrefix";
-            this.textBox_romanBushuCompPrefix.Size = new System.Drawing.Size(43, 19);
-            this.textBox_romanBushuCompPrefix.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_romanBushuCompPrefix, "部首合成用ローマ字出力時のプレフィックス\r\n\r\n他の文字用のローマ字列と重ならない文字列を設定します。\r\n(たとえば、前置部首合成用の打鍵列など)");
-            // 
-            // label102
-            // 
-            this.label102.AutoSize = true;
-            this.label102.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label102.Location = new System.Drawing.Point(14, 23);
-            this.label102.Name = "label102";
-            this.label102.Size = new System.Drawing.Size(114, 15);
-            this.label102.TabIndex = 38;
-            this.label102.Text = "部首合成プレフィックス";
-            // 
-            // groupBox41
-            // 
-            this.groupBox41.Controls.Add(this.checkBox_ignoreOtherHooker);
-            this.groupBox41.Location = new System.Drawing.Point(304, 111);
-            this.groupBox41.Name = "groupBox41";
-            this.groupBox41.Size = new System.Drawing.Size(246, 44);
-            this.groupBox41.TabIndex = 5;
-            this.groupBox41.TabStop = false;
-            this.groupBox41.Text = "他のキー変換ツールとの競合解消";
-            // 
-            // checkBox_ignoreOtherHooker
-            // 
-            this.checkBox_ignoreOtherHooker.AutoSize = true;
-            this.checkBox_ignoreOtherHooker.Location = new System.Drawing.Point(22, 21);
-            this.checkBox_ignoreOtherHooker.Name = "checkBox_ignoreOtherHooker";
-            this.checkBox_ignoreOtherHooker.Size = new System.Drawing.Size(158, 19);
-            this.checkBox_ignoreOtherHooker.TabIndex = 0;
-            this.checkBox_ignoreOtherHooker.Text = "extraInfo == 0 のみを処理";
-            this.toolTip1.SetToolTip(this.checkBox_ignoreOtherHooker, resources.GetString("checkBox_ignoreOtherHooker.ToolTip"));
-            this.checkBox_ignoreOtherHooker.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_ignoreSpaceUpOnSandS
-            // 
-            this.checkBox_ignoreSpaceUpOnSandS.AutoSize = true;
-            this.checkBox_ignoreSpaceUpOnSandS.Location = new System.Drawing.Point(11, 60);
-            this.checkBox_ignoreSpaceUpOnSandS.Name = "checkBox_ignoreSpaceUpOnSandS";
-            this.checkBox_ignoreSpaceUpOnSandS.Size = new System.Drawing.Size(253, 19);
-            this.checkBox_ignoreSpaceUpOnSandS.TabIndex = 2;
-            this.checkBox_ignoreSpaceUpOnSandS.Text = "SandS有効時にSpace単打で空白を入力しない";
-            this.toolTip1.SetToolTip(this.checkBox_ignoreSpaceUpOnSandS, resources.GetString("checkBox_ignoreSpaceUpOnSandS.ToolTip"));
-            this.checkBox_ignoreSpaceUpOnSandS.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
