@@ -577,6 +577,7 @@ namespace KanchokuWS
         public class StrokeTableDef
         {
             public bool KanaAlign;
+            public bool ShiftPlane;
             public string Faces;
             public string[] CharOrKeys;
         }
@@ -653,11 +654,11 @@ namespace KanchokuWS
                             } else if (cmd == "extracharsposition") {
                                 makeVkbStrokeTable("makeExtraCharsStrokePositionTable", null);
                             } else if (cmd == "shiftkeycharsposition") {
-                                makeVkbStrokeTable("makeShiftStrokePosition", null);
+                                makeVkbStrokeTable("makeShiftStrokePosition", null, false, false, true);
                             } else if (cmd == "shiftakeycharsposition") {
-                                makeVkbStrokeTable("makeShiftAStrokePosition", null);
+                                makeVkbStrokeTable("makeShiftAStrokePosition", null, false, false, true);
                             } else if (cmd == "shiftbkeycharsposition") {
-                                makeVkbStrokeTable("makeShiftBStrokePosition", null);
+                                makeVkbStrokeTable("makeShiftBStrokePosition", null, false, false, true);
                             } else if (cmd == "hiraganakey1") {
                                 makeVkbStrokeTable("makeStrokeKeysTable", kanaOutChars[0], true, true);
                             } else if (cmd == "hiraganakey2") {
@@ -684,7 +685,7 @@ namespace KanchokuWS
             if (Settings.LoggingVirtualKeyboardInfo) logger.Info("LEAVE");
         }
 
-        private void makeVkbStrokeTable(string cmd, string faces, bool drawFaces = false, bool kana = false)
+        private void makeVkbStrokeTable(string cmd, string faces, bool drawFaces = false, bool kana = false, bool shiftPlane = false)
         {
             var result = frmMain.CallDecoderFunc(cmd, faces);
             if (result != null) {
@@ -694,6 +695,7 @@ namespace KanchokuWS
                 }
                 StrokeTables.Add(new StrokeTableDef {
                     KanaAlign = kana,
+                    ShiftPlane = shiftPlane,
                     Faces = drawFaces ? faces : null,
                     CharOrKeys = charOrKeys,
                 });
@@ -760,11 +762,11 @@ namespace KanchokuWS
             if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"CALLED: EffectiveCount={Settings.VirtualKeyboardShowStrokeCountEffective}");
             if (Settings.VirtualKeyboardShowStrokeCountEffective == 1) {
                 if (StrokeTables._isEmpty()) {
-                    drawNormalVkb(initialVkbChars);
+                    drawNormalVkb(initialVkbChars, true);
                 } else {
                     var def = StrokeTables[selectedTable._lowLimit(0) % StrokeTables.Count];
                     if (def.Faces == null) {
-                        drawNormalVkb(def.CharOrKeys, lastDeckey);
+                        drawNormalVkb(def.CharOrKeys, !def.ShiftPlane, lastDeckey);
                     } else {
                         drawVkb5x10Table(def);
                     }
@@ -785,17 +787,17 @@ namespace KanchokuWS
                     charOrKeys[i] = makeMultiCharStr(result, i * 2);
                 }
             }
-            drawNormalVkb(charOrKeys);
+            drawNormalVkb(charOrKeys, false);
             return charOrKeys;
         }
 
-        private void drawNormalVkb(string[] strokeTable, int lastDeckey = -1)
+        private void drawNormalVkb(string[] strokeTable, bool bNormalPlane, int lastDeckey = -1)
         {
             resetVkbControls("", VkbNormalWidth, VkbPictureBoxHeight_Normal, VkbCenterBoxHeight_Normal);
             using (PictureBoxDrawer drawer = new PictureBoxDrawer(pictureBox_Main)) {
                 drawNormalVkbFrame(drawer.Gfx, lastDeckey);
                 drawCenterChars(drawer.Gfx);
-                drawNormalVkbStrings(drawer.Gfx, i => strokeTable[i], true);
+                drawNormalVkbStrings(drawer.Gfx, i => strokeTable[i], bNormalPlane);
             }
             changeFormHeight(pictureBox_Main.Top + pictureBox_Main.Height + 1);
         }
@@ -1074,7 +1076,7 @@ namespace KanchokuWS
         /// 通常仮想鍵盤文字列の表示<br/>
         /// nthString は全角1文字分だけを返すこと。
         /// </summary>
-        private void drawNormalVkbStrings(Graphics g, Func<int, string> nthString, bool bFirst)
+        private void drawNormalVkbStrings(Graphics g, Func<int, string> nthString, bool bFirstStrokeAndNormalPlane)
         {
             // フォントの更新
             var paddings = renewNormalFont();
@@ -1091,7 +1093,7 @@ namespace KanchokuWS
             for (int j = 0; j < 10; ++j) {
                 float x = VkbBottomOffset + VkbCellWidth * j + paddings.Left;
                 float y = VkbCellHeight * 4 + paddings.Top;
-                var face = bFirst ? initialVkbChars[40 + j] : nthString(40 + j);
+                var face = bFirstStrokeAndNormalPlane ? initialVkbChars[40 + j] : nthString(40 + j);
                 g.DrawString(face, normalFont, Brushes.Black, (float)x, (float)y);
             }
         }

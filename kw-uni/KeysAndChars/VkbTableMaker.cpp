@@ -246,7 +246,7 @@ namespace VkbTableMaker {
     // シフトA面キー文字を集めたストローク表を作成する
     void MakeShiftAKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
+        for (size_t i = 0; i < SHIFT_DECKEY_NUM; ++i) {
             mchar_t ch = 0;
             auto blk = ROOT_STROKE_NODE->getNth(SHIFT_A_DECKEY_START + i);
             if (blk) {
@@ -265,7 +265,7 @@ namespace VkbTableMaker {
     // シフトB面キー文字を集めたストローク表を作成する
     void MakeShiftBKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
+        for (size_t i = 0; i < SHIFT_DECKEY_NUM; ++i) {
             mchar_t ch = 0;
             auto blk = ROOT_STROKE_NODE->getNth(SHIFT_B_DECKEY_START + i);
             if (blk) {
