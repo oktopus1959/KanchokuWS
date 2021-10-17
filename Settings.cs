@@ -11,7 +11,7 @@ namespace KanchokuWS
     {
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.1.10";
+        public static string Version => "1.1.11";
 
         /// <summary> ドキュメントへのURL </summary>
         public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
@@ -394,10 +394,12 @@ namespace KanchokuWS
         /// <summary>BS で全打鍵を取り消すか</summary>
         public static bool RemoveOneStrokeByBackspace { get; set; } = true;
 
-        // SandS を有効にするか
-        /// <summary></summary>
+        /// <summary>SandS を有効にするか</summary>
         public static bool SandSEnabled { get; set; } = false;
         public static bool SandSEnabledWhenOffMode { get; set; } = false;
+
+        /// <summary>SandS 時の Space KeyUP を無視するか (Space単打による空白入力をやらない)</summary>
+        public static bool IgnoreSpaceUpOnSandS { get; set; } = false;
 
         /// <summary> 拡張修飾キーを有効にするか</summary>
         public static bool ExtraModifiersEnabled { get; set; } = false;
@@ -744,6 +746,7 @@ namespace KanchokuWS
             ConvertShiftedHiraganaToKatakana = GetString("convertShiftedHiraganaToKatakana", "shiftKana", "")._parseBool(false);  // 平仮名をカタカナに変換する
             SandSEnabled = GetString("sandsEnabled")._parseBool(false);                         // SandS を有効にするか
             SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
+            IgnoreSpaceUpOnSandS= GetString("ignoreSpaceUpOnSandS")._parseBool(false);          // SandS 時の Space KeyUP を無視するか (Space単打による空白入力をやらない)
             ModConversionFile = GetString("modConversionFile");
             bool isModConversionFileEmpty = ModConversionFile._isEmpty();
             if (isModConversionFileEmpty) { ModConversionFile = "mod-conversion.txt"; }

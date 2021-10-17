@@ -1333,6 +1333,8 @@ Esc, Tab, BackSpace, Enter, Insert, Delete, Home, End, PageUp, PageDown, UpArrow
 |UpperRomanStrokeGuide|英大文字ローマ字による読み打鍵ガイドモード|
 |HiraganaStrokeGuide|ひながな入力による読み打鍵ガイドモード|
 |ZenkakuConversion|全角変換入力モードのON/OFF|
+|Space|Space に変換|
+|ShiftSpace|Shift+Space に変換|
 
 この機能を使用する場合は、下図のように「その他設定」-「拡張修飾キー」で
 「拡張修飾キーを有効にする」にチェックを入れ、修飾キー変換の定義ファイル名を設定してください。

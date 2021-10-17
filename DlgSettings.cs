@@ -1215,6 +1215,7 @@ namespace KanchokuWS
             checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
             checkBox_SandSEnabled.Checked = Settings.SandSEnabled;
             checkBox_SandSEnabledWhenOffMode.Checked = Settings.SandSEnabledWhenOffMode;
+            checkBox_ignoreSpaceUpOnSandS.Checked = Settings.IgnoreSpaceUpOnSandS;
             checkBox_extraModifiersEnabled.Checked = Settings.ExtraModifiersEnabled;
             textBox_modConversionFile.Text = Settings.ModConversionFile;
             checkBox_upperRomanStrokeGuide.Checked = Settings.UpperRomanStrokeGuide;
@@ -1238,6 +1239,7 @@ namespace KanchokuWS
             checkerMiscSettings.Add(checkBox_removeOneStrokeByBackspace);
             checkerMiscSettings.Add(checkBox_SandSEnabled);
             checkerMiscSettings.Add(checkBox_SandSEnabledWhenOffMode);
+            checkerMiscSettings.Add(checkBox_ignoreSpaceUpOnSandS);
             checkerMiscSettings.Add(checkBox_extraModifiersEnabled);
             checkerMiscSettings.Add(textBox_modConversionFile);
             checkerMiscSettings.Add(checkBox_upperRomanStrokeGuide);
@@ -1263,6 +1265,7 @@ namespace KanchokuWS
             Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);
             Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
             Settings.SetUserIni("sandsEnabledWhenOffMode", checkBox_SandSEnabledWhenOffMode.Checked);
+            Settings.SetUserIni("ignoreSpaceUpOnSandS", checkBox_ignoreSpaceUpOnSandS.Checked);
             Settings.SetUserIni("extraModifiersEnabled", checkBox_extraModifiersEnabled.Checked);
             Settings.SetUserIni("modConversionFile", textBox_modConversionFile.Text);
             Settings.SetUserIni("upperRomanStrokeGuide", checkBox_upperRomanStrokeGuide.Checked);

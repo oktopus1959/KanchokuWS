@@ -553,10 +553,10 @@ namespace KanchokuWS
             //    return result;
             //}
 
-            if (kanchokuCode == DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY && kanchokuCode != VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)) {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-B: result=False, historySearchCtrlKey={Settings.HistorySearchCtrlKey}, kanchokuCode={VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)}");
-                return false;
-            }
+            //if (kanchokuCode == DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY && kanchokuCode != VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)) {
+            //    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-B: result=False, historySearchCtrlKey={Settings.HistorySearchCtrlKey}, kanchokuCode={VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)}");
+            //    return false;
+            //}
 
             // どうやら KeyboardHook で CallNextHookEx を呼ばないと次のキー入力の処理に移らないみたいだが、
             // 将来必要になるかもしれないので、下記処理を残しておく
@@ -604,8 +604,8 @@ namespace KanchokuWS
                 if (vkey == (int)Keys.Space) {
                     var state = spaceKeyState;
                     spaceKeyState = SpecialKeyState.RELEASED;
-                    if (getShiftedSpecialModKey() != 0) {
-                        // 何か拡張シフト状態だったらSpaceキーは無視
+                    if (Settings.IgnoreSpaceUpOnSandS || getShiftedSpecialModKey() != 0) {
+                        // SandS時のSpaceUpを無視する設定か、何か拡張シフト状態だったらSpaceキーは無視
                         return true;
                     } else if (state == SpecialKeyState.PRESSED) {
                         // Spaceキーが1回押されただけの状態なら、Spaceキーを送出

@@ -414,6 +414,7 @@ namespace KanchokuWS
             this.label102 = new System.Windows.Forms.Label();
             this.groupBox41 = new System.Windows.Forms.GroupBox();
             this.checkBox_ignoreOtherHooker = new System.Windows.Forms.CheckBox();
+            this.checkBox_ignoreSpaceUpOnSandS = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1387,7 +1388,7 @@ namespace KanchokuWS
             this.groupBox15.Location = new System.Drawing.Point(304, 163);
             this.groupBox15.Name = "groupBox15";
             this.groupBox15.Size = new System.Drawing.Size(246, 153);
-            this.groupBox15.TabIndex = 5;
+            this.groupBox15.TabIndex = 6;
             this.groupBox15.TabStop = false;
             this.groupBox15.Text = "開発者用設定";
             // 
@@ -1521,7 +1522,7 @@ namespace KanchokuWS
             this.button_advancedClose.Location = new System.Drawing.Point(385, 343);
             this.button_advancedClose.Name = "button_advancedClose";
             this.button_advancedClose.Size = new System.Drawing.Size(80, 23);
-            this.button_advancedClose.TabIndex = 6;
+            this.button_advancedClose.TabIndex = 7;
             this.button_advancedClose.Text = "閉じる(&C)";
             this.button_advancedClose.UseVisualStyleBackColor = true;
             this.button_advancedClose.Click += new System.EventHandler(this.button_advancedClose_Click);
@@ -1533,7 +1534,7 @@ namespace KanchokuWS
             this.button_advancedEnter.Location = new System.Drawing.Point(493, 343);
             this.button_advancedEnter.Name = "button_advancedEnter";
             this.button_advancedEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_advancedEnter.TabIndex = 7;
+            this.button_advancedEnter.TabIndex = 8;
             this.button_advancedEnter.Text = "設定(&E)";
             this.toolTip1.SetToolTip(this.button_advancedEnter, "設定内容を kanchoku.user.ini に書き込みます");
             this.button_advancedEnter.UseVisualStyleBackColor = true;
@@ -3790,11 +3791,12 @@ namespace KanchokuWS
             // 
             // groupBox39
             // 
+            this.groupBox39.Controls.Add(this.checkBox_ignoreSpaceUpOnSandS);
             this.groupBox39.Controls.Add(this.checkBox_SandSEnabledWhenOffMode);
             this.groupBox39.Controls.Add(this.checkBox_SandSEnabled);
             this.groupBox39.Location = new System.Drawing.Point(309, 66);
             this.groupBox39.Name = "groupBox39";
-            this.groupBox39.Size = new System.Drawing.Size(259, 64);
+            this.groupBox39.Size = new System.Drawing.Size(259, 84);
             this.groupBox39.TabIndex = 4;
             this.groupBox39.TabStop = false;
             this.groupBox39.Text = "SandS (Space and Shift)";
@@ -4071,7 +4073,7 @@ namespace KanchokuWS
             this.groupBox27.Controls.Add(this.checkBox_removeOneStrokeByBackspace);
             this.groupBox27.Controls.Add(this.checkBox_convertJaComma);
             this.groupBox27.Controls.Add(this.checkBox_convertJaPeriod);
-            this.groupBox27.Location = new System.Drawing.Point(309, 136);
+            this.groupBox27.Location = new System.Drawing.Point(309, 156);
             this.groupBox27.Name = "groupBox27";
             this.groupBox27.Size = new System.Drawing.Size(259, 91);
             this.groupBox27.TabIndex = 5;
@@ -4941,7 +4943,7 @@ namespace KanchokuWS
             this.groupBox40.Controls.Add(this.textBox_romanBushuCompPrefix);
             this.groupBox40.Controls.Add(this.button_saveRomanTableFile);
             this.groupBox40.Controls.Add(this.label_miscRomanOut);
-            this.groupBox40.Location = new System.Drawing.Point(309, 233);
+            this.groupBox40.Location = new System.Drawing.Point(309, 253);
             this.groupBox40.Name = "groupBox40";
             this.groupBox40.Size = new System.Drawing.Size(259, 51);
             this.groupBox40.TabIndex = 6;
@@ -4975,7 +4977,7 @@ namespace KanchokuWS
             this.groupBox41.Location = new System.Drawing.Point(304, 111);
             this.groupBox41.Name = "groupBox41";
             this.groupBox41.Size = new System.Drawing.Size(246, 44);
-            this.groupBox41.TabIndex = 11;
+            this.groupBox41.TabIndex = 5;
             this.groupBox41.TabStop = false;
             this.groupBox41.Text = "他のキー変換ツールとの競合解消";
             // 
@@ -4985,10 +4987,21 @@ namespace KanchokuWS
             this.checkBox_ignoreOtherHooker.Location = new System.Drawing.Point(22, 21);
             this.checkBox_ignoreOtherHooker.Name = "checkBox_ignoreOtherHooker";
             this.checkBox_ignoreOtherHooker.Size = new System.Drawing.Size(158, 19);
-            this.checkBox_ignoreOtherHooker.TabIndex = 2;
+            this.checkBox_ignoreOtherHooker.TabIndex = 0;
             this.checkBox_ignoreOtherHooker.Text = "extraInfo == 0 のみを処理";
             this.toolTip1.SetToolTip(this.checkBox_ignoreOtherHooker, resources.GetString("checkBox_ignoreOtherHooker.ToolTip"));
             this.checkBox_ignoreOtherHooker.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_ignoreSpaceUpOnSandS
+            // 
+            this.checkBox_ignoreSpaceUpOnSandS.AutoSize = true;
+            this.checkBox_ignoreSpaceUpOnSandS.Location = new System.Drawing.Point(11, 60);
+            this.checkBox_ignoreSpaceUpOnSandS.Name = "checkBox_ignoreSpaceUpOnSandS";
+            this.checkBox_ignoreSpaceUpOnSandS.Size = new System.Drawing.Size(253, 19);
+            this.checkBox_ignoreSpaceUpOnSandS.TabIndex = 2;
+            this.checkBox_ignoreSpaceUpOnSandS.Text = "SandS有効時にSpace単打で空白を入力しない";
+            this.toolTip1.SetToolTip(this.checkBox_ignoreSpaceUpOnSandS, resources.GetString("checkBox_ignoreSpaceUpOnSandS.ToolTip"));
+            this.checkBox_ignoreSpaceUpOnSandS.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
@@ -5498,5 +5511,6 @@ namespace KanchokuWS
         private System.Windows.Forms.TextBox textBox_romanBushuCompPrefix;
         private System.Windows.Forms.GroupBox groupBox41;
         private System.Windows.Forms.CheckBox checkBox_ignoreOtherHooker;
+        private System.Windows.Forms.CheckBox checkBox_ignoreSpaceUpOnSandS;
     }
 }
