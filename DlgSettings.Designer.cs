@@ -4977,7 +4977,7 @@ namespace KanchokuWS
             this.groupBox41.Size = new System.Drawing.Size(246, 44);
             this.groupBox41.TabIndex = 11;
             this.groupBox41.TabStop = false;
-            this.groupBox41.Text = "他のキーボードフックツールとの競合解消";
+            this.groupBox41.Text = "他のキー変換ツールとの競合解消";
             // 
             // checkBox_ignoreOtherHooker
             // 
