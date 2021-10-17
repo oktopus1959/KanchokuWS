@@ -1331,6 +1331,12 @@ namespace KanchokuWS
             label_miscRomanOut.Show();
         }
 
+        private void button_saveEelllJsTableFile_Click(object sender, EventArgs e)
+        {
+            frmMain?.ExecCmdDecoder("SaveEelllJsTable", null);
+            label_miscEelllJsOut.Show();
+        }
+
         /// <summary> 閉じる </summary>
         private void button_miscClose_Click(object sender, EventArgs e)
         {
@@ -1357,6 +1363,7 @@ namespace KanchokuWS
                     label_okResultCtrlKeys.Hide();
                     label_okResultMisc.Hide();
                     label_miscRomanOut.Hide();
+                    label_miscEelllJsOut.Hide();
                     label_reloadMisc.Hide();
                     label_execResultFile.Hide();
                 }
@@ -1409,6 +1416,11 @@ namespace KanchokuWS
         }
 
         private void label_miscRomanOut_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_miscEelllJsOut_VisibleChanged(object sender, EventArgs e)
         {
             okResultCount = okResultCountMax;
         }

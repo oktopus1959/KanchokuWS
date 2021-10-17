@@ -415,6 +415,9 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.groupBox42 = new System.Windows.Forms.GroupBox();
+            this.button_saveEelllJsTableFile = new System.Windows.Forms.Button();
+            this.label_miscEelllJsOut = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -468,6 +471,7 @@ namespace KanchokuWS
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).BeginInit();
             this.groupBox40.SuspendLayout();
             this.groupBox41.SuspendLayout();
+            this.groupBox42.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -3744,6 +3748,7 @@ namespace KanchokuWS
             // 
             // tabPage_misc
             // 
+            this.tabPage_misc.Controls.Add(this.groupBox42);
             this.tabPage_misc.Controls.Add(this.groupBox40);
             this.tabPage_misc.Controls.Add(this.label_reloadMisc);
             this.tabPage_misc.Controls.Add(this.button_reloadMisc);
@@ -3783,7 +3788,7 @@ namespace KanchokuWS
             this.button_reloadMisc.Location = new System.Drawing.Point(261, 343);
             this.button_reloadMisc.Name = "button_reloadMisc";
             this.button_reloadMisc.Size = new System.Drawing.Size(80, 23);
-            this.button_reloadMisc.TabIndex = 7;
+            this.button_reloadMisc.TabIndex = 8;
             this.button_reloadMisc.Text = "再読込(&R)";
             this.toolTip1.SetToolTip(this.button_reloadMisc, "各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
             this.button_reloadMisc.UseVisualStyleBackColor = true;
@@ -3797,7 +3802,7 @@ namespace KanchokuWS
             this.groupBox39.Location = new System.Drawing.Point(309, 66);
             this.groupBox39.Name = "groupBox39";
             this.groupBox39.Size = new System.Drawing.Size(259, 84);
-            this.groupBox39.TabIndex = 4;
+            this.groupBox39.TabIndex = 5;
             this.groupBox39.TabStop = false;
             this.groupBox39.Text = "SandS (Space and Shift)";
             // 
@@ -3829,7 +3834,7 @@ namespace KanchokuWS
             this.groupBox38.Location = new System.Drawing.Point(309, 12);
             this.groupBox38.Name = "groupBox38";
             this.groupBox38.Size = new System.Drawing.Size(259, 47);
-            this.groupBox38.TabIndex = 3;
+            this.groupBox38.TabIndex = 4;
             this.groupBox38.TabStop = false;
             this.groupBox38.Text = "自動部首合成";
             // 
@@ -4050,7 +4055,7 @@ namespace KanchokuWS
             this.button_miscEnter.Location = new System.Drawing.Point(493, 343);
             this.button_miscEnter.Name = "button_miscEnter";
             this.button_miscEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_miscEnter.TabIndex = 9;
+            this.button_miscEnter.TabIndex = 10;
             this.button_miscEnter.Text = "設定(&E)";
             this.toolTip1.SetToolTip(this.button_miscEnter, "設定内容を kanchoku.user.ini に書き込みます");
             this.button_miscEnter.UseVisualStyleBackColor = true;
@@ -4063,7 +4068,7 @@ namespace KanchokuWS
             this.button_miscClose.Location = new System.Drawing.Point(385, 343);
             this.button_miscClose.Name = "button_miscClose";
             this.button_miscClose.Size = new System.Drawing.Size(80, 23);
-            this.button_miscClose.TabIndex = 8;
+            this.button_miscClose.TabIndex = 9;
             this.button_miscClose.Text = "閉じる(&C)";
             this.button_miscClose.UseVisualStyleBackColor = true;
             this.button_miscClose.Click += new System.EventHandler(this.button_miscClose_Click);
@@ -4076,7 +4081,7 @@ namespace KanchokuWS
             this.groupBox27.Location = new System.Drawing.Point(309, 156);
             this.groupBox27.Name = "groupBox27";
             this.groupBox27.Size = new System.Drawing.Size(259, 91);
-            this.groupBox27.TabIndex = 5;
+            this.groupBox27.TabIndex = 6;
             this.groupBox27.TabStop = false;
             this.groupBox27.Text = "その他変換・機能";
             // 
@@ -4748,7 +4753,7 @@ namespace KanchokuWS
             // 
             this.label_miscRomanOut.AutoSize = true;
             this.label_miscRomanOut.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_miscRomanOut.Location = new System.Drawing.Point(186, 2);
+            this.label_miscRomanOut.Location = new System.Drawing.Point(214, 1);
             this.label_miscRomanOut.Name = "label_miscRomanOut";
             this.label_miscRomanOut.Size = new System.Drawing.Size(65, 15);
             this.label_miscRomanOut.TabIndex = 36;
@@ -4759,11 +4764,10 @@ namespace KanchokuWS
             // button_saveRomanTableFile
             // 
             this.button_saveRomanTableFile.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_saveRomanTableFile.Location = new System.Drawing.Point(186, 20);
+            this.button_saveRomanTableFile.Location = new System.Drawing.Point(214, 19);
             this.button_saveRomanTableFile.Name = "button_saveRomanTableFile";
             this.button_saveRomanTableFile.Size = new System.Drawing.Size(67, 23);
             this.button_saveRomanTableFile.TabIndex = 1;
-            this.button_saveRomanTableFile.TabStop = false;
             this.button_saveRomanTableFile.Text = "出力(&T)";
             this.toolTip1.SetToolTip(this.button_saveRomanTableFile, "ローマ字テーブルを作成してファイル出力します。\r\n\r\nストローク表からローマ字テーブルを作成して roman-stroke-table.txt と\r\nいう名前のフ" +
         "ァイルに出力します。出力先は漢直WSのルートフォルダです。\r\n\r\n出力されたファイルは Google 日本語入力のローマ字テーブルとして\r\nインポートすることが" +
@@ -4777,10 +4781,10 @@ namespace KanchokuWS
             this.groupBox40.Controls.Add(this.textBox_romanBushuCompPrefix);
             this.groupBox40.Controls.Add(this.button_saveRomanTableFile);
             this.groupBox40.Controls.Add(this.label_miscRomanOut);
-            this.groupBox40.Location = new System.Drawing.Point(309, 253);
+            this.groupBox40.Location = new System.Drawing.Point(7, 274);
             this.groupBox40.Name = "groupBox40";
-            this.groupBox40.Size = new System.Drawing.Size(259, 51);
-            this.groupBox40.TabIndex = 6;
+            this.groupBox40.Size = new System.Drawing.Size(290, 51);
+            this.groupBox40.TabIndex = 3;
             this.groupBox40.TabStop = false;
             this.groupBox40.Text = "ローマ字テーブルファイル出力";
             // 
@@ -4791,7 +4795,7 @@ namespace KanchokuWS
             this.textBox_romanBushuCompPrefix.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.textBox_romanBushuCompPrefix.Location = new System.Drawing.Point(130, 21);
             this.textBox_romanBushuCompPrefix.Name = "textBox_romanBushuCompPrefix";
-            this.textBox_romanBushuCompPrefix.Size = new System.Drawing.Size(43, 19);
+            this.textBox_romanBushuCompPrefix.Size = new System.Drawing.Size(50, 19);
             this.textBox_romanBushuCompPrefix.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_romanBushuCompPrefix, "部首合成用ローマ字出力時のプレフィックス\r\n\r\n他の文字用のローマ字列と重ならない文字列を設定します。\r\n(たとえば、前置部首合成用の打鍵列など)");
             // 
@@ -5003,6 +5007,43 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // groupBox42
+            // 
+            this.groupBox42.Controls.Add(this.button_saveEelllJsTableFile);
+            this.groupBox42.Controls.Add(this.label_miscEelllJsOut);
+            this.groupBox42.Location = new System.Drawing.Point(309, 253);
+            this.groupBox42.Name = "groupBox42";
+            this.groupBox42.Size = new System.Drawing.Size(259, 51);
+            this.groupBox42.TabIndex = 7;
+            this.groupBox42.TabStop = false;
+            this.groupBox42.Text = "eelll/JS テーブルファイル出力";
+            // 
+            // button_saveEelllJsTableFile
+            // 
+            this.button_saveEelllJsTableFile.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_saveEelllJsTableFile.Location = new System.Drawing.Point(174, 18);
+            this.button_saveEelllJsTableFile.Name = "button_saveEelllJsTableFile";
+            this.button_saveEelllJsTableFile.Size = new System.Drawing.Size(67, 23);
+            this.button_saveEelllJsTableFile.TabIndex = 0;
+            this.button_saveEelllJsTableFile.Text = "出力(&L)";
+            this.toolTip1.SetToolTip(this.button_saveEelllJsTableFile, "eelll/JS用のテーブルを作成してファイル出力します。\r\n\r\nストローク表から eelll/JS 用のテーブルを作成して eelll-js-table.txt" +
+        " と\r\nいう名前のファイルに出力します。出力先は漢直WSのルートフォルダです。\r\n\r\n出力されたファイルの内を eelll/Js の「入力方式」-「ユーザ定義」" +
+        "のところに\r\nコピペしてください。");
+            this.button_saveEelllJsTableFile.UseVisualStyleBackColor = true;
+            this.button_saveEelllJsTableFile.Click += new System.EventHandler(this.button_saveEelllJsTableFile_Click);
+            // 
+            // label_miscEelllJsOut
+            // 
+            this.label_miscEelllJsOut.AutoSize = true;
+            this.label_miscEelllJsOut.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_miscEelllJsOut.Location = new System.Drawing.Point(103, 22);
+            this.label_miscEelllJsOut.Name = "label_miscEelllJsOut";
+            this.label_miscEelllJsOut.Size = new System.Drawing.Size(65, 15);
+            this.label_miscEelllJsOut.TabIndex = 36;
+            this.label_miscEelllJsOut.Text = "出力しました";
+            this.label_miscEelllJsOut.Visible = false;
+            this.label_miscEelllJsOut.VisibleChanged += new System.EventHandler(this.label_miscEelllJsOut_VisibleChanged);
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -5121,6 +5162,8 @@ namespace KanchokuWS
             this.groupBox40.PerformLayout();
             this.groupBox41.ResumeLayout(false);
             this.groupBox41.PerformLayout();
+            this.groupBox42.ResumeLayout(false);
+            this.groupBox42.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -5512,5 +5555,8 @@ namespace KanchokuWS
         private System.Windows.Forms.GroupBox groupBox41;
         private System.Windows.Forms.CheckBox checkBox_ignoreOtherHooker;
         private System.Windows.Forms.CheckBox checkBox_ignoreSpaceUpOnSandS;
+        private System.Windows.Forms.GroupBox groupBox42;
+        private System.Windows.Forms.Button button_saveEelllJsTableFile;
+        private System.Windows.Forms.Label label_miscEelllJsOut;
     }
 }

@@ -48,5 +48,8 @@ namespace VkbTableMaker {
 
     // 打鍵列からローマ字テーブルを作成してファイルに書き出す
     void SaveRomanStrokeTable();
+
+    // eelll/JS用テーブルを作成してファイルに書き出す
+    void SaveEelllJsTable();
 }
 

@@ -257,8 +257,8 @@ namespace {
                 return 0;
             case TOKEN::STRING:            // "str" : 文字列ノード
                 LOG_TRACE(_T("%d:%d=%s"), lineNumber + 1, nth, currentStr.c_str());
-                // 文字から、その文字の打鍵列へのマップに追加
-                if (strokeSerieses) {
+                // 文字から、その文字の打鍵列へのマップに追加 (通常面のみ)
+                if (strokeSerieses && shiftPlane == 0) {
                     auto ms = to_mstr(currentStr);
                     if (!ms.empty()) {
                         for (int k = 0; k < 10; ++k) {

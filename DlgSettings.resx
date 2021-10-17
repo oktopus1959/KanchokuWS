@@ -120,6 +120,9 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -201,26 +204,6 @@ exclude ファイルは、履歴検索および履歴登録の対象外となる
 キーとなります。
 
 キーを使用しない場合は、ComboBoxの内容を削除して空白にしてください。</value>
-  </data>
-  <data name="checkBox_ignoreOtherHooker.ToolTip" xml:space="preserve">
-    <value>他のキー変換ツールとの競合を解消します。
-
-当ツールはキーボードフックを利用して文字コードの変換処理を行っています。
-通常、キーボードフックが呼び出されるときは、パラメータの一つである
-extraInfo には 0 が設定されています。
-
-当ツールで文字コード変換した場合は、 extraInfo に 0 以外の値を設定して、
-SendInput を呼び出しています。そして、無限ループにならないようにするため、
-自身が設定した extraInfo を伴ってキーボードフックが呼び出された場合は、
-それを無視するようにしています。
-
-当ツール以外にも同様の処理を行っているツールを利用する場合に、
-extraInfo の値が当ツールの設定したものだけを無視するようにしていると、
-そのツールと当ツールとの間で呼び出しのループが発生することがあります。
-
-そのような場合は、当項目にチェックを入れることで、競合を解消することが
-できます。ただし、元々競合していなかったツールからの出力を、当ツールが
-無視することになる可能性もあるので、試行しながら設定してください。</value>
   </data>
   <data name="textBox_backFileRotationGeneration.ToolTip" xml:space="preserve">
     <value>辞書ファイルの保存世代数を設定します。
@@ -577,16 +560,6 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 なお、履歴候補が縦列表示されている状態では、先頭候補がEnterキーで
 選択されます。</value>
   </data>
-  <data name="checkBox_ignoreSpaceUpOnSandS.ToolTip" xml:space="preserve">
-    <value>SandS有効時に、Space単打で空白を入力しないようにします。
-
-これをONにすると、ほぼ通常のSHIFTキーと同等の使い方ができるようになります。
-空白を入力するには、
-・Ctrl+Space (履歴検索に割りり当てていない場合)
-・SandSに割り当てたシフト面のどこかの打鍵に空白を定義する
-・拡張修飾キーによる変換定義で適当なキーを Space に変換する
-などの方法があります。</value>
-  </data>
   <data name="checkBox_SandSEnabledWhenOffMode.ToolTip" xml:space="preserve">
     <value>デコーダがOFFのときに SandS 方式を有効にします。
 
@@ -795,6 +768,36 @@ A=BC...
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>114, 17</value>
   </metadata>
+  <data name="checkBox_ignoreOtherHooker.ToolTip" xml:space="preserve">
+    <value>他のキー変換ツールとの競合を解消します。
+
+当ツールはキーボードフックを利用して文字コードの変換処理を行っています。
+通常、キーボードフックが呼び出されるときは、パラメータの一つである
+extraInfo には 0 が設定されています。
+
+当ツールで文字コード変換した場合は、 extraInfo に 0 以外の値を設定して、
+SendInput を呼び出しています。そして、無限ループにならないようにするため、
+自身が設定した extraInfo を伴ってキーボードフックが呼び出された場合は、
+それを無視するようにしています。
+
+当ツール以外にも同様の処理を行っているツールを利用する場合に、
+extraInfo の値が当ツールの設定したものだけを無視するようにしていると、
+そのツールと当ツールとの間で呼び出しのループが発生することがあります。
+
+そのような場合は、当項目にチェックを入れることで、競合を解消することが
+できます。ただし、元々競合していなかったツールからの出力を、当ツールが
+無視することになる可能性もあるので、試行しながら設定してください。</value>
+  </data>
+  <data name="checkBox_ignoreSpaceUpOnSandS.ToolTip" xml:space="preserve">
+    <value>SandS有効時に、Space単打で空白を入力しないようにします。
+
+これをONにすると、ほぼ通常のSHIFTキーと同等の使い方ができるようになります。
+空白を入力するには、
+・Ctrl+Space (履歴検索に割りり当てていない場合)
+・SandSに割り当てたシフト面のどこかの打鍵に空白を定義する
+・拡張修飾キーによる変換定義で適当なキーを Space に変換する
+などの方法があります。</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

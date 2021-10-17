@@ -324,9 +324,9 @@ namespace VkbTableMaker {
         if (writer.success()) {
             // テーブルファイルから
             for (const auto& pair : strokeSerieses) {
-                if (pair.first.length() > 1) {
-                    LOG_DEBUGH(_T("str=%s, strokeLen=%d"), MAKE_WPTR(pair.first), pair.second.size());
-                }
+                //if (pair.first.length() > 1) {
+                //    LOG_DEBUGH(_T("str=%s, strokeLen=%d"), MAKE_WPTR(pair.first), pair.second.size());
+                //}
                 if (!pair.first.empty() && !pair.second.empty()) {
                     // 重複した出力文字(列)の場合は末尾にTABが付加されているのでそれを除去してから書き出し
                     writer.writeLine(utils::utf8_encode(
@@ -347,7 +347,22 @@ namespace VkbTableMaker {
                                 line.substr(0, 1).c_str())));
                     }
                 }
+            }
+        }
+    }
 
+    // eelll/JS用テーブルを作成してファイルに書き出す
+    void SaveEelllJsTable() {
+        auto path = utils::joinPath(SETTINGS->rootDir, _T("eelll-js-table.txt"));
+        utils::OfstreamWriter writer(path);
+        if (writer.success()) {
+            // テーブルファイルから
+            for (const auto& pair : strokeSerieses) {
+                if (!pair.first.empty() && !pair.second.empty()) {
+                    // 重複した出力文字(列)の場合は末尾にTABが付加されているのでそれを除去してから書き出し
+                    writer.writeLine(utils::utf8_encode(
+                        utils::format(_T("%s=%s"), MAKE_WPTR(utils::strip(pair.first, _T("\t"))), convDeckeysToWstring(pair.second).c_str())));
+                }
             }
         }
     }

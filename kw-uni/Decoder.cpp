@@ -374,6 +374,8 @@ public:
                 setBackspaceBlocker();
             } else if (cmd == _T("SaveRomanStrokeTable")) {
                 VkbTableMaker::SaveRomanStrokeTable();
+            } else if (cmd == _T("SaveEelllJsTable")) {
+                VkbTableMaker::SaveEelllJsTable();
             }
         }
     }
