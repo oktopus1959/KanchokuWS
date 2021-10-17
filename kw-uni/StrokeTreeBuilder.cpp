@@ -102,6 +102,7 @@ namespace {
             return result;
         }
 
+#define NUM_SHIFT_PLANE  4
         // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB の4面
         int shiftPlane = 0;
 
@@ -369,8 +370,9 @@ namespace {
                     return TOKEN::STRING;
 
                 case '-':
-                    parseArrow();
-                    return TOKEN::ARROW;
+                    // 矢印記法
+                    if (parseArrow()) return TOKEN::ARROW;
+                    break;
 
                 case 0:
                     // ファイルの終わり
@@ -459,15 +461,19 @@ namespace {
             }
         }
 
-        // ARROW
-        void parseArrow() {
+        // ARROW: /-[SsXxPp]?[0-9]+>/
+        bool parseArrow() {
             int shiftOffset = 0;
+            bool bShiftPlane = false;
             char_t c = getNextChar();
             if (c == 'S' || c == 's') {
                 shiftOffset = SHIFT_DECKEY_START;
                 c = getNextChar();
             } else if (c == 'X' || c == 'x') {
                 shiftOffset = FUNC_DECKEY_START;
+                c = getNextChar();
+            } else if (c == 'P' || c == 'P') {
+                bShiftPlane = true;
                 c = getNextChar();
             }
             if (!is_numeral(c)) parseError();
@@ -477,9 +483,16 @@ namespace {
                 arrowIndex = arrowIndex * 10 + c - '0';
                 c = getNextChar();
             }
-            arrowIndex += shiftOffset;
-            if (arrowIndex >= FUNC_DECKEY_END) parseError();
+            if (!bShiftPlane) {
+                arrowIndex += shiftOffset;
+                if (arrowIndex >= FUNC_DECKEY_END) parseError();
+            } else {
+                shiftPlane = arrowIndex;
+                if (arrowIndex >= NUM_SHIFT_PLANE) parseError();
+                return false;
+            }
             if (c != '>') parseError();
+            return true;
         }
 
         char_t getNextChar() {
