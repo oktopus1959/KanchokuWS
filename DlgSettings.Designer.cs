@@ -3807,9 +3807,7 @@ namespace KanchokuWS
             this.checkBox_SandSEnabledWhenOffMode.Size = new System.Drawing.Size(201, 19);
             this.checkBox_SandSEnabledWhenOffMode.TabIndex = 1;
             this.checkBox_SandSEnabledWhenOffMode.Text = "デコーダOFF時に SandS を有効にする";
-            this.toolTip1.SetToolTip(this.checkBox_SandSEnabledWhenOffMode, "デコーダがONのときに SandS 方式を有効にします。\n\nSandS 方式を有効にすると、スペースキーを押しながら何か別のキーを\n押すと、スペースキーがシフトキ" +
-        "ーとして働くようになります。\n\nスペースを入力したい場合は、オートリピートが始まる前にスペースキーを\n離してください。\n\nSandS を有効にすると Shift" +
-        "+Space は有効なキーではなく、たんなる\nシフトキーとして扱われます。");
+            this.toolTip1.SetToolTip(this.checkBox_SandSEnabledWhenOffMode, resources.GetString("checkBox_SandSEnabledWhenOffMode.ToolTip"));
             this.checkBox_SandSEnabledWhenOffMode.UseVisualStyleBackColor = true;
             // 
             // checkBox_SandSEnabled
@@ -3820,9 +3818,7 @@ namespace KanchokuWS
             this.checkBox_SandSEnabled.Size = new System.Drawing.Size(198, 19);
             this.checkBox_SandSEnabled.TabIndex = 0;
             this.checkBox_SandSEnabled.Text = "デコーダON時に SandS を有効にする";
-            this.toolTip1.SetToolTip(this.checkBox_SandSEnabled, "デコーダがONのときに SandS 方式を有効にします。\n\nSandS 方式を有効にすると、スペースキーを押しながら何か別のキーを\n押すと、スペースキーがシフトキ" +
-        "ーとして働くようになります。\n\nスペースを入力したい場合は、オートリピートが始まる前にスペースキーを\n離してください。\n\nSandS を有効にすると Shift" +
-        "+Space は有効なキーではなく、たんなる\nシフトキーとして扱われます。");
+            this.toolTip1.SetToolTip(this.checkBox_SandSEnabled, resources.GetString("checkBox_SandSEnabled.ToolTip"));
             this.checkBox_SandSEnabled.UseVisualStyleBackColor = true;
             // 
             // groupBox38

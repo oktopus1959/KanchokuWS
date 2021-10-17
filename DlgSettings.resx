@@ -578,6 +578,32 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 なお、履歴候補が縦列表示されている状態では、先頭候補がEnterキーで
 選択されます。</value>
   </data>
+  <data name="checkBox_SandSEnabledWhenOffMode.ToolTip" xml:space="preserve">
+    <value>デコーダがOFFのときに SandS 方式を有効にします。
+
+SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを
+押すと、スペースキーがシフトキーとして働くようになります。
+
+スペースを入力したい場合は、オートリピートが始まる前にスペースキーを
+離してください。
+
+SandS を有効にすると SandS と同じシフト面を使う
+Shift (または拡張修飾キー)+Space は有効なキーではなく、たんなる
+シフトキーとして扱われます。</value>
+  </data>
+  <data name="checkBox_SandSEnabled.ToolTip" xml:space="preserve">
+    <value>デコーダがONのときに SandS 方式を有効にします。
+
+SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを
+押すと、スペースキーがシフトキーとして働くようになります。
+
+スペースを入力したい場合は、オートリピートが始まる前にスペースキーを
+離してください。
+
+SandS を有効にすると SandS と同じシフト面を使う
+Shift (または拡張修飾キー)+Space は有効なキーではなく、たんなる
+シフトキーとして扱われます。</value>
+  </data>
   <data name="checkBox_convertShiftedHiraganaToKatakana.ToolTip" xml:space="preserve">
     <value>Shiftキー(または拡張修飾キー)を押しながら平仮名を入力すると、
 対応するカタカナに変換します。
