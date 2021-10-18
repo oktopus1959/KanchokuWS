@@ -392,7 +392,7 @@ public:
         STATE_COMMON->ClearStateInfo();
         STATE_COMMON->IncrementTotalDecKeyCount();
         STATE_COMMON->CountSameDecKey(keyId);
-        if (decodeKeyboardChar) STATE_COMMON->SetDecodeKeyboardCharMode();
+        if (decodeKeyboardChar) STATE_COMMON->SetDecodeKeyboardCharMode();  // キーボードフェイス文字を返すモード
         LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
 
         // DecKey処理を呼ぶ

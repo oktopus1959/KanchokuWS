@@ -65,12 +65,13 @@ namespace {
             STATE_COMMON->AppendOrigString(myChar); // RootStrokeTableState が作成されたときに OrigString はクリアされている
 
             if (STATE_COMMON->IsDecodeKeyboardCharMode()) {
+                // キーボードフェイス文字を返すモード
                 STATE_COMMON->SetOutString(myChar, 0);
             } else {
                 SetNextNodeMaybe(NEXT_NODE(deckey));
             }
             if (!NextNodeMaybe() || !NextNodeMaybe()->isStrokeTableNode()) {
-                // 次ノードがストロークノードでないか、キーボード文字への変換モードならば、全ストロークを削除対象とする
+                // 次ノードがストロークノードでないか、キーボードフェイス文字を返すモードならば、全ストロークを削除対象とする
                 _LOG_DEBUGH(_T("%s: RemoveAllStroke: Next node=%p, DecodeKeyboardCharMode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()), BOOL_TO_WPTR(STATE_COMMON->IsDecodeKeyboardCharMode()));
                 setToRemoveAllStroke();
             }
@@ -85,9 +86,11 @@ namespace {
                 handleStrokeKeys(UNSHIFT_DECKEY(deckey));
             } else {
                 //State::handleShiftKeys(deckey);
-                // 自身を捨てて前打鍵を出力
-                SetNextNodeMaybe(PrevCharNode::Singleton());
-                setToRemoveAllStroke();
+                //// 自身を捨てて前打鍵を出力
+                //SetNextNodeMaybe(PrevCharNode::Singleton());
+                //setToRemoveAllStroke();
+                // 2打鍵目以降は、Unshiftして処理する
+                handleStrokeKeys(UNSHIFT_DECKEY(deckey));
             }
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
