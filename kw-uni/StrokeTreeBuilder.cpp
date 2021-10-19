@@ -306,7 +306,7 @@ namespace {
             while (true) {
                 switch (getNextChar()) {
                 case '#': {
-                    // '#include' または '#' 以降、行末までコメント
+                    // '#include', '#define', '#strokePosition', '#*shift*', または '#' 以降、行末までコメント
                     wstring filename;
                     readWord();
                     auto lcStr = utils::toLower(currentStr);

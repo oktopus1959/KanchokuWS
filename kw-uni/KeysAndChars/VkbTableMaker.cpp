@@ -318,7 +318,7 @@ namespace VkbTableMaker {
     }
 
     // ローマ字テーブルを作成してファイルに書き出す
-    void SaveRomanStrokeTable() {
+    void SaveRomanStrokeTable(const wchar_t* prefix) {
         auto path = utils::joinPath(SETTINGS->rootDir, _T("roman-stroke-table.txt"));
         utils::OfstreamWriter writer(path);
         if (writer.success()) {
@@ -341,7 +341,7 @@ namespace VkbTableMaker {
                     if (iter1 != strokeSerieses.end() && iter2 != strokeSerieses.end()) {
                         writer.writeLine(utils::utf8_encode(
                             utils::format(_T("%s%s%s\t%s"),
-                                SETTINGS->romanBushuCompPrefix.c_str(),
+                                prefix && wcslen(prefix) > 0 ? prefix : SETTINGS->romanBushuCompPrefix.c_str(),
                                 convDeckeysToWstring(iter1->second).c_str(),
                                 convDeckeysToWstring(iter2->second).c_str(),
                                 line.substr(0, 1).c_str())));

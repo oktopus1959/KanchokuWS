@@ -47,7 +47,7 @@ namespace VkbTableMaker {
     const std::set<int>& GetHiraganaFirstDeckeys();
 
     // 打鍵列からローマ字テーブルを作成してファイルに書き出す
-    void SaveRomanStrokeTable();
+    void SaveRomanStrokeTable(const wchar_t* = 0);
 
     // eelll/JS用テーブルを作成してファイルに書き出す
     void SaveEelllJsTable();

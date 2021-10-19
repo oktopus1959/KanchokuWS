@@ -1252,7 +1252,7 @@ namespace KanchokuWS
         private void miscTabStatusChanged(bool flag)
         {
             button_miscClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
-            button_saveRomanTableFile.Enabled = !flag;
+            //button_saveRomanTableFile.Enabled = !flag;
         }
 
         private void button_miscEnter_Click(object sender, EventArgs e)
@@ -1327,7 +1327,7 @@ namespace KanchokuWS
 
         private void button_saveRomanTableFile_Click(object sender, EventArgs e)
         {
-            frmMain?.ExecCmdDecoder("SaveRomanStrokeTable", null);
+            frmMain?.ExecCmdDecoder("SaveRomanStrokeTable", textBox_romanBushuCompPrefix.Text);
             label_miscRomanOut.Show();
         }
 
