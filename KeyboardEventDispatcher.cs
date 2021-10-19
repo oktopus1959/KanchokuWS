@@ -329,8 +329,9 @@ namespace KanchokuWS
             {
                 bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
                 bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+                bool bCtrl = leftCtrl || rightCtrl;
 
-                if (!isEffectiveVkey(vkey, scanCode, extraInfo, leftCtrl || rightCtrl)) {
+                if (!isEffectiveVkey(vkey, scanCode, extraInfo, bCtrl)) {
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"not EffectiveVkey");
                     return;
                 }
@@ -460,6 +461,11 @@ namespace KanchokuWS
                             spaceKeyState = SpecialKeyState.SHIFTED;
                             return;
                         }
+                        if (Settings.IgnoreSpaceUpOnSandS && bCtrl) {
+                            // SandS時に1回目のSpace単打を無視する設定の場合は、Ctrl+Space をシフト状態に遷移させる
+                            spaceKeyState = SpecialKeyState.SHIFTED;
+                            return;
+                        }
                         if (spaceKeyState == SpecialKeyState.PRESSED) {
                             // すでにスペースキーが押下されている
                             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"prevSpaceUpDt={prevSpaceUpDt}.{prevSpaceUpDt:fff}");
@@ -475,7 +481,6 @@ namespace KanchokuWS
 
                         if (spaceKeyState != SpecialKeyState.REPEATED) {
                             // RELEASED
-                            bool bCtrl = ctrlKeyPressed();
                             bool bShift = shiftKeyPressed();
                             bool bShiftEx = getShiftedSpecialModKey() != 0;
                             if (!bCtrl && !bShift && !bShiftEx) {
