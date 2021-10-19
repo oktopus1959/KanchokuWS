@@ -616,14 +616,14 @@ namespace KanchokuWS
         //private const uint WINEVENT_OUTOFCONTEXT = 0;
         //private const uint EVENT_SYSTEM_FOREGROUND = 3;
 
-        //[DllImport("user32.dll")]
-        //static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
+        [DllImport("user32.dll")]
+        static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
 
-        //[DllImport("kernel32.dll")]
-        //static extern uint GetCurrentThreadId();
+        [DllImport("kernel32.dll")]
+        static extern uint GetCurrentThreadId();
 
-        //[DllImport("user32.dll")]
-        //static extern uint GetWindowThreadProcessId(IntPtr hWnd, int ProcessId);
+        [DllImport("user32.dll")]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, int ProcessId);
 
         //[DllImport("user32.dll")]
         //static extern IntPtr GetForegroundWindow();
@@ -637,11 +637,11 @@ namespace KanchokuWS
         [DllImport("user32.dll")]
         private static extern int GetClassName(IntPtr hWnd, StringBuilder text, int count);
 
-        //[DllImport("user32.dll")]
-        //private static extern bool GetCaretPos(out Point lpPoint);
+        [DllImport("user32.dll")]
+        private static extern bool GetCaretPos(out Point lpPoint);
 
-        //[DllImport("user32.dll")]
-        //private static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
+        [DllImport("user32.dll")]
+        private static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
 
         [DllImport("user32.dll")]
         private static extern bool MoveWindow(IntPtr handle, int x, int y, int width, int height, bool redraw);
@@ -673,7 +673,9 @@ namespace KanchokuWS
                 focusHan = guiThreadInfo.hwndFocus;
                 if (bLog) logger.Info(() => $"fgHan={(int)fgHan:x}H, focusHan={(int)focusHan:x}H");
 
+                // カレットのスクリーン座標を取得
                 guiThreadInfo.GetScreenCaretPos(ref ActiveWinCaretPos);
+                //getScreenCaretPosByOriginalWay(fgHan, ref ActiveWinCaretPos, bLog);   // やっぱりこのやり方だとうまく取れない場合あり
                 if (bLog) logger.Info(() => $"WndClass={ActiveWinClassName}: focus caret pos=({ActiveWinCaretPos.X}, {ActiveWinCaretPos.Y})");
 
                 if (focusHan != IntPtr.Zero || ActiveWinClassName._equalsTo("ConsoleWindowClass")) break;  // CMD Prompt の場合は Focus が取れないっぽい?
@@ -686,6 +688,33 @@ namespace KanchokuWS
             ActiveWinHandle = (focusHan == IntPtr.Zero) ? fgHan : focusHan;
 
             if (bLog) logger.Info(() => $"LEAVE: ActiveWinHandle={(int)ActiveWinHandle:x}H");
+        }
+
+        // 従来のやり方でカレットのスクリーン座標を取得(やはりうまくいかない)
+        private void getScreenCaretPosByOriginalWay(IntPtr fgHan, ref Rectangle rect, bool bLog = false)
+        {
+            uint targetThread = GetWindowThreadProcessId(fgHan, 0);
+            uint selfThread = GetCurrentThreadId();
+
+            //AttachTrheadInput is needed so we can get the handle of a focused window in another app
+            AttachThreadInput(selfThread, targetThread, true);
+
+            ////Get the handle of a focused window
+            //focusHan = GetFocus();
+            //if (bLog) logger.Debug(() => $"focusHan={(int)focusHan:x}");
+
+            Point caretPos;
+            GetCaretPos(out caretPos);
+            ClientToScreen(fgHan, ref caretPos);
+            if (bLog) logger.Info(() => $"focus caret pos=({caretPos.X}, {caretPos.Y})");
+
+            //Now detach since we got the focused handle
+            AttachThreadInput(selfThread, targetThread, false);
+
+            rect.X = caretPos.X;
+            rect.Y = caretPos.Y;
+            rect.Width = 2;
+            rect.Height = 20;
         }
 
         private string getWindowClassName(IntPtr hwnd)
