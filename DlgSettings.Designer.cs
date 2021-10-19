@@ -401,6 +401,9 @@ namespace KanchokuWS
             this.groupBox41 = new System.Windows.Forms.GroupBox();
             this.checkBox_ignoreOtherHooker = new System.Windows.Forms.CheckBox();
             this.checkBox_ignoreSpaceUpOnSandS = new System.Windows.Forms.CheckBox();
+            this.groupBox42 = new System.Windows.Forms.GroupBox();
+            this.button_saveEelllJsTableFile = new System.Windows.Forms.Button();
+            this.label_miscEelllJsOut = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onBushuCompHelp = new KanchokuWS.ColorTextBox();
@@ -415,9 +418,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.groupBox42 = new System.Windows.Forms.GroupBox();
-            this.button_saveEelllJsTableFile = new System.Windows.Forms.Button();
-            this.label_miscEelllJsOut = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -4841,6 +4841,43 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.checkBox_ignoreSpaceUpOnSandS, resources.GetString("checkBox_ignoreSpaceUpOnSandS.ToolTip"));
             this.checkBox_ignoreSpaceUpOnSandS.UseVisualStyleBackColor = true;
             // 
+            // groupBox42
+            // 
+            this.groupBox42.Controls.Add(this.button_saveEelllJsTableFile);
+            this.groupBox42.Controls.Add(this.label_miscEelllJsOut);
+            this.groupBox42.Location = new System.Drawing.Point(309, 253);
+            this.groupBox42.Name = "groupBox42";
+            this.groupBox42.Size = new System.Drawing.Size(259, 51);
+            this.groupBox42.TabIndex = 7;
+            this.groupBox42.TabStop = false;
+            this.groupBox42.Text = "eelll/JS テーブルファイル出力";
+            // 
+            // button_saveEelllJsTableFile
+            // 
+            this.button_saveEelllJsTableFile.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_saveEelllJsTableFile.Location = new System.Drawing.Point(174, 18);
+            this.button_saveEelllJsTableFile.Name = "button_saveEelllJsTableFile";
+            this.button_saveEelllJsTableFile.Size = new System.Drawing.Size(67, 23);
+            this.button_saveEelllJsTableFile.TabIndex = 0;
+            this.button_saveEelllJsTableFile.Text = "出力(&L)";
+            this.toolTip1.SetToolTip(this.button_saveEelllJsTableFile, "eelll/JS用のテーブルを作成してファイル出力します。\r\n\r\nストローク表から eelll/JS 用のテーブルを作成して eelll-js-table.txt" +
+        " と\r\nいう名前のファイルに出力します。出力先は漢直WSのルートフォルダです。\r\n\r\n出力されたファイルの内を eelll/Js の「入力方式」-「ユーザ定義」" +
+        "のところに\r\nコピペしてください。");
+            this.button_saveEelllJsTableFile.UseVisualStyleBackColor = true;
+            this.button_saveEelllJsTableFile.Click += new System.EventHandler(this.button_saveEelllJsTableFile_Click);
+            // 
+            // label_miscEelllJsOut
+            // 
+            this.label_miscEelllJsOut.AutoSize = true;
+            this.label_miscEelllJsOut.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_miscEelllJsOut.Location = new System.Drawing.Point(103, 22);
+            this.label_miscEelllJsOut.Name = "label_miscEelllJsOut";
+            this.label_miscEelllJsOut.Size = new System.Drawing.Size(65, 15);
+            this.label_miscEelllJsOut.TabIndex = 36;
+            this.label_miscEelllJsOut.Text = "出力しました";
+            this.label_miscEelllJsOut.Visible = false;
+            this.label_miscEelllJsOut.VisibleChanged += new System.EventHandler(this.label_miscEelllJsOut_VisibleChanged);
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -5006,43 +5043,6 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // groupBox42
-            // 
-            this.groupBox42.Controls.Add(this.button_saveEelllJsTableFile);
-            this.groupBox42.Controls.Add(this.label_miscEelllJsOut);
-            this.groupBox42.Location = new System.Drawing.Point(309, 253);
-            this.groupBox42.Name = "groupBox42";
-            this.groupBox42.Size = new System.Drawing.Size(259, 51);
-            this.groupBox42.TabIndex = 7;
-            this.groupBox42.TabStop = false;
-            this.groupBox42.Text = "eelll/JS テーブルファイル出力";
-            // 
-            // button_saveEelllJsTableFile
-            // 
-            this.button_saveEelllJsTableFile.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_saveEelllJsTableFile.Location = new System.Drawing.Point(174, 18);
-            this.button_saveEelllJsTableFile.Name = "button_saveEelllJsTableFile";
-            this.button_saveEelllJsTableFile.Size = new System.Drawing.Size(67, 23);
-            this.button_saveEelllJsTableFile.TabIndex = 0;
-            this.button_saveEelllJsTableFile.Text = "出力(&L)";
-            this.toolTip1.SetToolTip(this.button_saveEelllJsTableFile, "eelll/JS用のテーブルを作成してファイル出力します。\r\n\r\nストローク表から eelll/JS 用のテーブルを作成して eelll-js-table.txt" +
-        " と\r\nいう名前のファイルに出力します。出力先は漢直WSのルートフォルダです。\r\n\r\n出力されたファイルの内を eelll/Js の「入力方式」-「ユーザ定義」" +
-        "のところに\r\nコピペしてください。");
-            this.button_saveEelllJsTableFile.UseVisualStyleBackColor = true;
-            this.button_saveEelllJsTableFile.Click += new System.EventHandler(this.button_saveEelllJsTableFile_Click);
-            // 
-            // label_miscEelllJsOut
-            // 
-            this.label_miscEelllJsOut.AutoSize = true;
-            this.label_miscEelllJsOut.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_miscEelllJsOut.Location = new System.Drawing.Point(103, 22);
-            this.label_miscEelllJsOut.Name = "label_miscEelllJsOut";
-            this.label_miscEelllJsOut.Size = new System.Drawing.Size(65, 15);
-            this.label_miscEelllJsOut.TabIndex = 36;
-            this.label_miscEelllJsOut.Text = "出力しました";
-            this.label_miscEelllJsOut.Visible = false;
-            this.label_miscEelllJsOut.VisibleChanged += new System.EventHandler(this.label_miscEelllJsOut_VisibleChanged);
             // 
             // DlgSettings
             // 

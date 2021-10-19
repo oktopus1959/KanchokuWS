@@ -120,6 +120,43 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="checkBox_ignoreSpaceUpOnSandS.ToolTip" xml:space="preserve">
+    <value>SandS有効時に、Space単打で空白を入力しないようにします。
+ただし、1秒以内にもう一度Spaceを単打すると空白が入力されます。
+
+これをONにすると、ほぼ通常のSHIFTキーと同等の使い方ができるようになります。
+空白を入力するには、上記の連続単打の他に、
+・Ctrl+Space (履歴検索に割りり当てていない場合)
+・SandSに割り当てたシフト面のどこかの打鍵に空白を定義する
+・拡張修飾キーによる変換定義で適当なキーを Space に変換する
+などの方法があります。</value>
+  </data>
+  <data name="checkBox_SandSEnabledWhenOffMode.ToolTip" xml:space="preserve">
+    <value>デコーダがOFFのときに SandS 方式を有効にします。
+
+SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを
+押すと、スペースキーがシフトキーとして働くようになります。
+
+スペースを入力したい場合は、オートリピートが始まる前にスペースキーを
+離してください。
+
+SandS を有効にすると SandS と同じシフト面を使う
+Shift (または拡張修飾キー)+Space は有効なキーではなく、たんなる
+シフトキーとして扱われます。</value>
+  </data>
+  <data name="checkBox_SandSEnabled.ToolTip" xml:space="preserve">
+    <value>デコーダがONのときに SandS 方式を有効にします。
+
+SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを
+押すと、スペースキーがシフトキーとして働くようになります。
+
+スペースを入力したい場合は、オートリピートが始まる前にスペースキーを
+離してください。
+
+SandS を有効にすると SandS と同じシフト面を使う
+Shift (または拡張修飾キー)+Space は有効なキーではなく、たんなる
+シフトキーとして扱われます。</value>
+  </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
@@ -560,32 +597,6 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 なお、履歴候補が縦列表示されている状態では、先頭候補がEnterキーで
 選択されます。</value>
   </data>
-  <data name="checkBox_SandSEnabledWhenOffMode.ToolTip" xml:space="preserve">
-    <value>デコーダがOFFのときに SandS 方式を有効にします。
-
-SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを
-押すと、スペースキーがシフトキーとして働くようになります。
-
-スペースを入力したい場合は、オートリピートが始まる前にスペースキーを
-離してください。
-
-SandS を有効にすると SandS と同じシフト面を使う
-Shift (または拡張修飾キー)+Space は有効なキーではなく、たんなる
-シフトキーとして扱われます。</value>
-  </data>
-  <data name="checkBox_SandSEnabled.ToolTip" xml:space="preserve">
-    <value>デコーダがONのときに SandS 方式を有効にします。
-
-SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを
-押すと、スペースキーがシフトキーとして働くようになります。
-
-スペースを入力したい場合は、オートリピートが始まる前にスペースキーを
-離してください。
-
-SandS を有効にすると SandS と同じシフト面を使う
-Shift (または拡張修飾キー)+Space は有効なキーではなく、たんなる
-シフトキーとして扱われます。</value>
-  </data>
   <data name="checkBox_convertShiftedHiraganaToKatakana.ToolTip" xml:space="preserve">
     <value>Shiftキー(または拡張修飾キー)を押しながら平仮名を入力すると、
 対応するカタカナに変換します。
@@ -787,16 +798,6 @@ extraInfo の値が当ツールの設定したものだけを無視するよう�
 そのような場合は、当項目にチェックを入れることで、競合を解消することが
 できます。ただし、元々競合していなかったツールからの出力を、当ツールが
 無視することになる可能性もあるので、試行しながら設定してください。</value>
-  </data>
-  <data name="checkBox_ignoreSpaceUpOnSandS.ToolTip" xml:space="preserve">
-    <value>SandS有効時に、Space単打で空白を入力しないようにします。
-
-これをONにすると、ほぼ通常のSHIFTキーと同等の使い方ができるようになります。
-空白を入力するには、
-・Ctrl+Space (履歴検索に割りり当てていない場合)
-・SandSに割り当てたシフト面のどこかの打鍵に空白を定義する
-・拡張修飾キーによる変換定義で適当なキーを Space に変換する
-などの方法があります。</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

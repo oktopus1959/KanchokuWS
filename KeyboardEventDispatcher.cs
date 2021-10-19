@@ -582,6 +582,8 @@ namespace KanchokuWS
 
         private Queue<int> vkeyQueue = new Queue<int>();
 
+        private DateTime prevSpaceUpDt = DateTime.MinValue;
+
         /// <summary>キーアップ時のハンドラ</summary>
         /// <param name="vkey"></param>
         /// <param name="extraInfo"></param>
@@ -604,8 +606,11 @@ namespace KanchokuWS
                 if (vkey == (int)Keys.Space) {
                     var state = spaceKeyState;
                     spaceKeyState = SpecialKeyState.RELEASED;
-                    if (Settings.IgnoreSpaceUpOnSandS || getShiftedSpecialModKey() != 0) {
-                        // SandS時のSpaceUpを無視する設定か、何か拡張シフト状態だったらSpaceキーは無視
+                    var dtPrev = prevSpaceUpDt;
+                    var dtNow = DateTime.Now;
+                    if (state == SpecialKeyState.PRESSED) prevSpaceUpDt = dtNow;
+                    if ((Settings.IgnoreSpaceUpOnSandS && dtNow > dtPrev.AddMilliseconds(1000)) || getShiftedSpecialModKey() != 0) {
+                        // SandS時のSpaceUpを無視する設定で前回のSpace打鍵から1000ms以上経過していたか、または何か拡張シフト状態だったら、Spaceキーは無視
                         return true;
                     } else if (state == SpecialKeyState.PRESSED) {
                         // Spaceキーが1回押されただけの状態なら、Spaceキーを送出
