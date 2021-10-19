@@ -329,8 +329,12 @@ namespace VkbTableMaker {
                 //}
                 if (!pair.first.empty() && !pair.second.empty()) {
                     // 重複した出力文字(列)の場合は末尾にTABが付加されているのでそれを除去してから書き出し
-                    writer.writeLine(utils::utf8_encode(
-                        utils::format(_T("%s\t%s"), convDeckeysToWstring(pair.second).c_str(), MAKE_WPTR(utils::strip(pair.first, _T("\t"))))));
+                    wstring str = convDeckeysToWstring(pair.second);
+                    if (str.find(' ') == wstring::npos) {
+                        // 空白文字を含まないものだけを対象とする
+                        writer.writeLine(utils::utf8_encode(
+                            utils::format(_T("%s\t%s"), str.c_str(), MAKE_WPTR(utils::strip(pair.first, _T("\t"))))));
+                    }
                 }
             }
             // 部首合成から
