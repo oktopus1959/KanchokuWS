@@ -418,6 +418,8 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.textBox_SandSEnableSpaceOrRepeatMillisec = new System.Windows.Forms.TextBox();
+            this.label103 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -3796,12 +3798,14 @@ namespace KanchokuWS
             // 
             // groupBox39
             // 
+            this.groupBox39.Controls.Add(this.textBox_SandSEnableSpaceOrRepeatMillisec);
+            this.groupBox39.Controls.Add(this.label103);
             this.groupBox39.Controls.Add(this.checkBox_ignoreSpaceUpOnSandS);
             this.groupBox39.Controls.Add(this.checkBox_SandSEnabledWhenOffMode);
             this.groupBox39.Controls.Add(this.checkBox_SandSEnabled);
             this.groupBox39.Location = new System.Drawing.Point(309, 66);
             this.groupBox39.Name = "groupBox39";
-            this.groupBox39.Size = new System.Drawing.Size(259, 84);
+            this.groupBox39.Size = new System.Drawing.Size(264, 108);
             this.groupBox39.TabIndex = 5;
             this.groupBox39.TabStop = false;
             this.groupBox39.Text = "SandS (Space and Shift)";
@@ -3809,7 +3813,7 @@ namespace KanchokuWS
             // checkBox_SandSEnabledWhenOffMode
             // 
             this.checkBox_SandSEnabledWhenOffMode.AutoSize = true;
-            this.checkBox_SandSEnabledWhenOffMode.Location = new System.Drawing.Point(11, 41);
+            this.checkBox_SandSEnabledWhenOffMode.Location = new System.Drawing.Point(11, 42);
             this.checkBox_SandSEnabledWhenOffMode.Name = "checkBox_SandSEnabledWhenOffMode";
             this.checkBox_SandSEnabledWhenOffMode.Size = new System.Drawing.Size(201, 19);
             this.checkBox_SandSEnabledWhenOffMode.TabIndex = 1;
@@ -3833,7 +3837,7 @@ namespace KanchokuWS
             this.groupBox38.Controls.Add(this.checkBox_autoBushuComp);
             this.groupBox38.Location = new System.Drawing.Point(309, 12);
             this.groupBox38.Name = "groupBox38";
-            this.groupBox38.Size = new System.Drawing.Size(259, 47);
+            this.groupBox38.Size = new System.Drawing.Size(264, 47);
             this.groupBox38.TabIndex = 4;
             this.groupBox38.TabStop = false;
             this.groupBox38.Text = "自動部首合成";
@@ -4078,9 +4082,9 @@ namespace KanchokuWS
             this.groupBox27.Controls.Add(this.checkBox_removeOneStrokeByBackspace);
             this.groupBox27.Controls.Add(this.checkBox_convertJaComma);
             this.groupBox27.Controls.Add(this.checkBox_convertJaPeriod);
-            this.groupBox27.Location = new System.Drawing.Point(309, 156);
+            this.groupBox27.Location = new System.Drawing.Point(309, 180);
             this.groupBox27.Name = "groupBox27";
-            this.groupBox27.Size = new System.Drawing.Size(259, 91);
+            this.groupBox27.Size = new System.Drawing.Size(264, 88);
             this.groupBox27.TabIndex = 6;
             this.groupBox27.TabStop = false;
             this.groupBox27.Text = "その他変換・機能";
@@ -4783,7 +4787,7 @@ namespace KanchokuWS
             this.groupBox40.Controls.Add(this.label_miscRomanOut);
             this.groupBox40.Location = new System.Drawing.Point(7, 274);
             this.groupBox40.Name = "groupBox40";
-            this.groupBox40.Size = new System.Drawing.Size(290, 51);
+            this.groupBox40.Size = new System.Drawing.Size(290, 48);
             this.groupBox40.TabIndex = 3;
             this.groupBox40.TabStop = false;
             this.groupBox40.Text = "ローマ字テーブルファイル出力";
@@ -4833,7 +4837,7 @@ namespace KanchokuWS
             // checkBox_ignoreSpaceUpOnSandS
             // 
             this.checkBox_ignoreSpaceUpOnSandS.AutoSize = true;
-            this.checkBox_ignoreSpaceUpOnSandS.Location = new System.Drawing.Point(11, 60);
+            this.checkBox_ignoreSpaceUpOnSandS.Location = new System.Drawing.Point(11, 62);
             this.checkBox_ignoreSpaceUpOnSandS.Name = "checkBox_ignoreSpaceUpOnSandS";
             this.checkBox_ignoreSpaceUpOnSandS.Size = new System.Drawing.Size(253, 19);
             this.checkBox_ignoreSpaceUpOnSandS.TabIndex = 2;
@@ -4845,9 +4849,9 @@ namespace KanchokuWS
             // 
             this.groupBox42.Controls.Add(this.button_saveEelllJsTableFile);
             this.groupBox42.Controls.Add(this.label_miscEelllJsOut);
-            this.groupBox42.Location = new System.Drawing.Point(309, 253);
+            this.groupBox42.Location = new System.Drawing.Point(309, 275);
             this.groupBox42.Name = "groupBox42";
-            this.groupBox42.Size = new System.Drawing.Size(259, 51);
+            this.groupBox42.Size = new System.Drawing.Size(264, 47);
             this.groupBox42.TabIndex = 7;
             this.groupBox42.TabStop = false;
             this.groupBox42.Text = "eelll/JS テーブルファイル出力";
@@ -5043,6 +5047,30 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
+            // 
+            // textBox_SandSEnableSpaceOrRepeatMillisec
+            // 
+            this.textBox_SandSEnableSpaceOrRepeatMillisec.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_SandSEnableSpaceOrRepeatMillisec.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_SandSEnableSpaceOrRepeatMillisec.Location = new System.Drawing.Point(11, 82);
+            this.textBox_SandSEnableSpaceOrRepeatMillisec.Name = "textBox_SandSEnableSpaceOrRepeatMillisec";
+            this.textBox_SandSEnableSpaceOrRepeatMillisec.Size = new System.Drawing.Size(36, 19);
+            this.textBox_SandSEnableSpaceOrRepeatMillisec.TabIndex = 3;
+            this.textBox_SandSEnableSpaceOrRepeatMillisec.Text = "500";
+            this.toolTip1.SetToolTip(this.textBox_SandSEnableSpaceOrRepeatMillisec, "SandS有効時に、空白の入力またはリピート入力を有効に\r\nするまでの時間(ミリ秒)を設定します。\r\n\r\n前回のSpaceキーアップ時から、設定した時間内にSpa" +
+        "ceを\r\n再打鍵すると、空白の入力またはリピート入力を有効にします。\r\n\r\nここの設定は、上記の「Space単打で空白を入力しない」が\r\nONの場合でも有効です" +
+        "。\r\n\r\n無効にするには 0 を設定してください。");
+            // 
+            // label103
+            // 
+            this.label103.AutoSize = true;
+            this.label103.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label103.Location = new System.Drawing.Point(46, 84);
+            this.label103.Name = "label103";
+            this.label103.Size = new System.Drawing.Size(220, 15);
+            this.label103.TabIndex = 39;
+            this.label103.Text = "ms以内の再打鍵で単打またはリピートを有効";
             // 
             // DlgSettings
             // 
@@ -5558,5 +5586,7 @@ namespace KanchokuWS
         private System.Windows.Forms.GroupBox groupBox42;
         private System.Windows.Forms.Button button_saveEelllJsTableFile;
         private System.Windows.Forms.Label label_miscEelllJsOut;
+        private System.Windows.Forms.TextBox textBox_SandSEnableSpaceOrRepeatMillisec;
+        private System.Windows.Forms.Label label103;
     }
 }

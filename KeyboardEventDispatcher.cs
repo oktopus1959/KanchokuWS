@@ -187,6 +187,7 @@ namespace KanchokuWS
             RELEASED,
             PRESSED,
             SHIFTED,
+            REPEATED,
         }
         /// <summary> スペースキーの押下状態</summary>
         private SpecialKeyState spaceKeyState = SpecialKeyState.RELEASED;
@@ -300,6 +301,11 @@ namespace KanchokuWS
 
         /// <summary> キーボードハンドラの処理中か </summary>
         private bool bHandlerBusy = false;
+
+        /// <summary> 前回のSpace打鍵UP時刻 </summary>
+        private DateTime prevSpaceUpDt = DateTime.MinValue;
+
+        private const int KEY_REPEAT_INTERVAL = 500;
 
         /// <summary>キーボード押下時のハンドラ</summary>
         /// <param name="vkey"></param>
@@ -449,28 +455,40 @@ namespace KanchokuWS
                         // スペースキーが押された
                         // SandSと同じシフト面を使う左Shiftまたは拡張修飾キーがシフト状態か(何か(拡張)シフトキーが Pressed だったら、Spaceキーが押されたことで Shifted に移行しているはず)
                         bool bShiftOnSamePlane = isSameShiftKeyAsSandSShifted(bDecoderOn);
-                        if (spaceKeyState == SpecialKeyState.PRESSED || bShiftOnSamePlane) {
-                            // すでにスペースキーが押下されている、またはSandSと同じシフト面を使う拡張修飾キーがシフト状態なら、シフト状態に遷移する
+                        if (bShiftOnSamePlane) {
+                            // SandSと同じシフト面を使う拡張修飾キーがシフト状態なら、シフト状態に遷移する
                             spaceKeyState = SpecialKeyState.SHIFTED;
-                            makeSpecialModKeyShifted();
                             return;
+                        }
+                        if (spaceKeyState == SpecialKeyState.PRESSED) {
+                            // すでにスペースキーが押下されている
+                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"prevSpaceUpDt={prevSpaceUpDt}.{prevSpaceUpDt:fff}");
+                            if (Settings.SandSEnableSpaceOrRepeatMillisec <= 0 ||
+                                DateTime.Now > prevSpaceUpDt.AddMilliseconds(Settings.SandSEnableSpaceOrRepeatMillisec + KEY_REPEAT_INTERVAL)) {
+                                spaceKeyState = SpecialKeyState.SHIFTED;
+                                //makeSpecialModKeyShifted();
+                                return;
+                            }
+                            spaceKeyState = SpecialKeyState.REPEATED;
                         }
                         if (spaceKeyState == SpecialKeyState.SHIFTED) return; // SHIFT状態なら何もしない
 
-                        // RELEASED
-                        bool bCtrl = ctrlKeyPressed();
-                        bool bShift = shiftKeyPressed();
-                        bool bShiftEx = getShiftedSpecialModKey() != 0;
-                        if (!bCtrl && !bShift && !bShiftEx) {
-                            // 1回目の押下で Ctrl も Shift も他のmodiferも押されてない場合は、PRESSED に移行
-                            spaceKeyState = SpecialKeyState.PRESSED;
-                            return;
+                        if (spaceKeyState != SpecialKeyState.REPEATED) {
+                            // RELEASED
+                            bool bCtrl = ctrlKeyPressed();
+                            bool bShift = shiftKeyPressed();
+                            bool bShiftEx = getShiftedSpecialModKey() != 0;
+                            if (!bCtrl && !bShift && !bShiftEx) {
+                                // 1回目の押下で Ctrl も Shift も他のmodiferも押されてない場合は、PRESSED に移行
+                                spaceKeyState = SpecialKeyState.PRESSED;
+                                return;
+                            }
+                            //// シフト面が同一である本来のShiftまたは拡張シフト押下時のSpaceは、Shiftとして扱う
+                            //if (bShiftOnSamePlane) {
+                            //    spaceKeyState = SpecialKeyState.SHIFTED;
+                            //    return;
+                            //}
                         }
-                        //// シフト面が同一である本来のShiftまたは拡張シフト押下時のSpaceは、Shiftとして扱う
-                        //if (bShiftOnSamePlane) {
-                        //    spaceKeyState = SpecialKeyState.SHIFTED;
-                        //    return;
-                        //}
                         // 上記以外はスペース入力として扱う
                     } else {
                         if (spaceKeyState == SpecialKeyState.PRESSED) {
@@ -582,8 +600,6 @@ namespace KanchokuWS
 
         private Queue<int> vkeyQueue = new Queue<int>();
 
-        private DateTime prevSpaceUpDt = DateTime.MinValue;
-
         /// <summary>キーアップ時のハンドラ</summary>
         /// <param name="vkey"></param>
         /// <param name="extraInfo"></param>
@@ -606,11 +622,11 @@ namespace KanchokuWS
                 if (vkey == (int)Keys.Space) {
                     var state = spaceKeyState;
                     spaceKeyState = SpecialKeyState.RELEASED;
-                    var dtPrev = prevSpaceUpDt;
+                    var dtLimit = prevSpaceUpDt.AddMilliseconds(Settings.SandSEnableSpaceOrRepeatMillisec);
                     var dtNow = DateTime.Now;
                     if (state == SpecialKeyState.PRESSED) prevSpaceUpDt = dtNow;
-                    if ((Settings.IgnoreSpaceUpOnSandS && dtNow > dtPrev.AddMilliseconds(1000)) || getShiftedSpecialModKey() != 0) {
-                        // SandS時のSpaceUpを無視する設定で前回のSpace打鍵から1000ms以上経過していたか、または何か拡張シフト状態だったら、Spaceキーは無視
+                    if ((Settings.IgnoreSpaceUpOnSandS && dtNow > dtLimit) || getShiftedSpecialModKey() != 0) {
+                        // SandS時のSpaceUpを無視する設定で前回のSpace打鍵から指定のms以上経過していたか、または何か拡張シフト状態だったら、Spaceキーは無視
                         return true;
                     } else if (state == SpecialKeyState.PRESSED) {
                         // Spaceキーが1回押されただけの状態なら、Spaceキーを送出
