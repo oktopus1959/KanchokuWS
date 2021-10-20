@@ -1279,11 +1279,7 @@ zip には、"kanji-yomi.txt" というファイルを同梱してあります�
 
 ![Ctrl Key Conversion](image/ctrl-key-conversion.png)
 
-AutoHotKey によるキー変換機能に満足できない方、具体的には
-- Ctrl-H を BS に変換してリピート入力していると、時々、変換されずに「h」が入力される
-- とくに困るのが Ctrl-P で、上矢印に変換しているのに、いきなり印刷になってしまう
-
-というような方は試してみてください。
+AutoHotKey 等に頼らずとも簡易に Ctrl修飾キーの変換が行えます。
 
 ### Spaceキーによる Shift機能をサポート (SandS)
 漢直モードの時に、スペースキーを押しながら何か他のキーを押すとスペースキーがShiftキーの働きをするという、
