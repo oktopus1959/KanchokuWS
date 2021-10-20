@@ -190,7 +190,7 @@ namespace KanchokuWS
             // 
             this.ReloadSettings_ToolStripMenuItem.Name = "ReloadSettings_ToolStripMenuItem";
             this.ReloadSettings_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-            this.ReloadSettings_ToolStripMenuItem.Text = "設定の再読込";
+            this.ReloadSettings_ToolStripMenuItem.Text = "設定と定義の再読込";
             this.ReloadSettings_ToolStripMenuItem.Click += new System.EventHandler(this.ReloadSettings_ToolStripMenuItem_Click);
             // 
             // FrmVirtualKeyboard
