@@ -299,6 +299,7 @@ KanchokuWS はサロゲートペアもサポートしています。
 |tt.tbl|TT-Code|T-Code + 多ストローク (fj/jf で拡張面に移動)|
 |g.tbl|G-Code|多ストローク、カタカナあり|
 |phoenix.tbl|phoenix|多ストローク、ひらがなが左右逆順も同文字、カタカナなし|
+|try.tbl|Try-Code|T-Code + 多ストローク (スペースをプレフィックスとする3打鍵)|
 |okt.tbl|OKT-Code|作者個人用(T-Codeから派生)|
 
 T-Code 以外は、ひらがな（カタカナ）が覚えやすい配置になっているものがほとんどです
