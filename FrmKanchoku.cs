@@ -1065,7 +1065,7 @@ namespace KanchokuWS
 
         private int unshiftDeckey(int deckey)
         {
-            return deckey >= DecoderKeys.SHIFT_DECKEY_START && deckey < DecoderKeys.SHIFT_DECKEY_END ? deckey - DecoderKeys.SHIFT_DECKEY_START : deckey;
+            return deckey < DecoderKeys.SHIFT_B_DECKEY_END ? deckey % DecoderKeys.SHIFT_DECKEY_NUM : deckey;
         }
 
         private void drawRomanOrHiraganaMode(bool bRoman, bool bHiragana)
