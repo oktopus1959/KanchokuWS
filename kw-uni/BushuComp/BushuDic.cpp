@@ -333,8 +333,8 @@ namespace {
             if (c == 0 && prev != 0) c = findCompSub((wchar_t)ca, (wchar_t)cb, 0);    // retry from the beginning
             if (c != 0) {
                 setAssocTarget(ca, cb, c);
-                if (!((utils::is_hiragana(ca) && utils::is_hiragana(cb)) || (utils::is_katakana(ca) && utils::is_katakana(cb)))) {
-                    // 平仮名同士または片仮名同士でない場合は、自動部首合成登録を行う
+                if (!(utils::is_punct(ca) || utils::is_punct(cb) || (utils::is_hiragana(ca) && utils::is_hiragana(cb)) || (utils::is_katakana(ca) && utils::is_katakana(cb)))) {
+                    // 句読点、平仮名同士または片仮名同士でない場合は、自動部首合成登録を行う
                     AddAutoBushuEntry(ca, cb, c);
                 }
             }
