@@ -1027,19 +1027,21 @@ namespace KanchokuWS
                 frmVkb.SetTopText(decoderOutput.topString);
                 targetChar = 0;
             } else {
-                // 他のVKey送出(もしあれば)
-                if (decoderOutput.IsDeckeyToVkey()) {
-                    sendKeyFlag = sendVkeyFromDeckey(deckey, mod);
-                    //nPreKeys += 1;
-                }
                 if (decoderOutput.GetStrokeCount() < 1) {
+                    // 第1打鍵待ちになった時のみ
+                    // 他のVKey送出(もしあれば)
+                    if (decoderOutput.IsDeckeyToVkey()) {
+                        sendKeyFlag = sendVkeyFromDeckey(deckey, mod);
+                        //nPreKeys += 1;
+                    }
+
                     candidateCharStrs = null;
                     candidateChars = null;
                     targetChar = 0;
-                }
 
-                // BSと文字送出(もしあれば)
-                actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces);
+                    // BSと文字送出(もしあれば)
+                    actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces);
+                }
 
                 // 仮想キーボードにヘルプや文字候補を表示
                 frmVkb.DrawVirtualKeyboardChars(Settings.ShowLastStrokeByDiffBackColor && !bPrevMultiStrokeChar ? unshiftDeckey(deckey) : -1);
