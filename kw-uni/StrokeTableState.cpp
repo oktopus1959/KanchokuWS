@@ -126,6 +126,11 @@ namespace {
             setToRemoveAllStroke();
         }
 
+        void handleEnter() {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            setToRemoveAllStroke();
+        }
+
         //void handleCtrlU() {
         //    _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
         //    handleFullEscape();
