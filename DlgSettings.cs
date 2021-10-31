@@ -131,13 +131,30 @@ namespace KanchokuWS
 
         private void DlgSettings_FormClosing(object sender, FormClosingEventArgs e)
         {
-            logger.InfoH("ENTER");
-            timer1.Stop();
-            logger.Info("Timer Stopped");
-            ShownDlg = null;
-            checkerAll.Dispose();
-            Helper.WaitMilliSeconds(100);       // 微妙なタイミングで invoke されるのを防ぐ
-            logger.InfoH("LEAVE");
+            if (CancelButton == null) {
+                // CancelButton が null のときは閉じない
+                e.Cancel = true;
+            } else {
+                logger.InfoH("ENTER");
+                timer1.Stop();
+                logger.Info("Timer Stopped");
+                ShownDlg = null;
+                checkerAll.Dispose();
+                Helper.WaitMilliSeconds(100);       // 微妙なタイミングで invoke されるのを防ぐ
+                logger.InfoH("LEAVE");
+            }
+        }
+
+        private IButtonControl prevCancelButton = null;
+
+        private void changeCancelButton(bool flag, Button button)
+        {
+            if (flag && CancelButton == button) {
+                prevCancelButton = button;
+                CancelButton = null;
+            } else if (!flag && CancelButton == null && prevCancelButton == button) {
+                CancelButton = button;
+            }
         }
 
         private void initializeAboutDgv()
@@ -375,7 +392,7 @@ namespace KanchokuWS
         {
             button_basicEnter.Enabled = false;
             checkerBasic.CtlToBeEnabled = button_basicEnter;
-            checkerBasic.ControlEnabler = button_basicClose_textChange;
+            checkerBasic.ControlEnabler = tabBasicStatusChanged;
 
             // 漢直モードトグルキー
             checkerBasic.Add(comboBox_unmodifiedToggleKey);
@@ -408,9 +425,10 @@ namespace KanchokuWS
             checkerAll.Add(checkerBasic);
         }
 
-        private void button_basicClose_textChange(bool flag)
+        private void tabBasicStatusChanged(bool flag)
         {
             button_basicClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+            changeCancelButton(flag, button_basicClose);
         }
 
         private void button_basicEnter_Click(object sender, EventArgs e)
@@ -493,7 +511,12 @@ namespace KanchokuWS
 
         private void button_basicClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            if (button_basicClose.Text.StartsWith("閉")) {
+                this.Close();
+            } else {
+                readSettings_tabBasic();
+                checkerBasic.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+            }
         }
 
         //-----------------------------------------------------------------------------------
@@ -535,7 +558,7 @@ namespace KanchokuWS
         {
             button_fontColorEnter.Enabled = false;
             checkerFontColor.CtlToBeEnabled = button_fontColorEnter;
-            checkerFontColor.ControlEnabler = button_fileClose_textChange;
+            checkerFontColor.ControlEnabler = tabFontColorStatusChanged;
 
             // フォント
             checkerFontColor.Add(textBox_normalFont);
@@ -569,7 +592,7 @@ namespace KanchokuWS
             checkerAll.Add(checkerFontColor);
         }
 
-        private void button_fileEnter_Click(object sender, EventArgs e)
+        private void button_fontColrEnter_Click(object sender, EventArgs e)
         {
             frmMain?.DeactivateDecoder();
 
@@ -619,14 +642,20 @@ namespace KanchokuWS
 
         }
 
-        private void button_fileClose_textChange(bool flag)
+        private void tabFontColorStatusChanged(bool flag)
         {
             button_fontColorClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+            changeCancelButton(flag, button_fontColorClose);
         }
 
-        private void button_fileClose_Click(object sender, EventArgs e)
+        private void button_fontColorClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            if (button_fontColorClose.Text.StartsWith("閉")) {
+                this.Close();
+            } else {
+                readSettings_tabFontColor();
+                checkerFontColor.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+            }
         }
 
         //-----------------------------------------------------------------------------------
@@ -680,7 +709,7 @@ namespace KanchokuWS
         {
             button_advancedEnter.Enabled = false;
             checkerAdvanced.CtlToBeEnabled = button_advancedEnter;
-            checkerAdvanced.ControlEnabler = button_advancedClose_textChange;
+            checkerAdvanced.ControlEnabler = tabAdvancedStatusChanged;
 
             // モード標識
             checkerAdvanced.Add(textBox_vkbOffsetX);
@@ -733,9 +762,10 @@ namespace KanchokuWS
             textBox_vkbFixedPosY.Enabled = !radioButton_vkbRelativePos.Checked;
         }
 
-        private void button_advancedClose_textChange(bool flag)
+        private void tabAdvancedStatusChanged(bool flag)
         {
             button_advancedClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+            changeCancelButton(flag, button_advancedClose);
         }
 
         private void button_advancedEnter_Click(object sender, EventArgs e)
@@ -802,7 +832,12 @@ namespace KanchokuWS
 
         private void button_advancedClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            if (button_advancedClose.Text.StartsWith("閉")) {
+                this.Close();
+            } else {
+                readSettings_tabAdvanced();
+                checkerAdvanced.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+            }
         }
 
         //-----------------------------------------------------------------------------------
@@ -828,7 +863,7 @@ namespace KanchokuWS
         {
             button_keyAssignEnter.Enabled = false;
             checkerKeyAssign.CtlToBeEnabled = button_keyAssignEnter;
-            checkerKeyAssign.ControlEnabler = button_keyAssignClose_textChange;
+            checkerKeyAssign.ControlEnabler = tabKeyAssignStatusChanged;
 
             checkerKeyAssign.Add(textBox_zenkakuModeKeySeq);
             checkerKeyAssign.Add(textBox_zenkakuOneCharKeySeq);
@@ -847,9 +882,10 @@ namespace KanchokuWS
             checkerAll.Add(checkerKeyAssign);
         }
 
-        private void button_keyAssignClose_textChange(bool flag)
+        private void tabKeyAssignStatusChanged(bool flag)
         {
             button_keyAssignClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+            changeCancelButton(flag, button_keyAssignClose);
         }
 
         private void button_keyAssignEnter_Click(object sender, EventArgs e)
@@ -891,7 +927,12 @@ namespace KanchokuWS
 
         private void button_keyAssignClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            if (button_keyAssignClose.Text.StartsWith("閉")) {
+                this.Close();
+            } else {
+                readSettings_tabKeyAssign();
+                checkerKeyAssign.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+            }
         }
 
         //-----------------------------------------------------------------------------------
@@ -962,7 +1003,7 @@ namespace KanchokuWS
         {
             button_ctrlEnter.Enabled = false;
             checkerCtrlKeys.CtlToBeEnabled = button_ctrlEnter;
-            checkerCtrlKeys.ControlEnabler = button_ctrlClose_textChange;
+            checkerCtrlKeys.ControlEnabler = tabCtrlKeyStatusChanged;
 
             checkerCtrlKeys.Add(checkBox_globalCtrlKeysEnabled);
 
@@ -1011,9 +1052,10 @@ namespace KanchokuWS
             checkerAll.Add(checkerCtrlKeys);
         }
 
-        private void button_ctrlClose_textChange(bool flag)
+        private void tabCtrlKeyStatusChanged(bool flag)
         {
             button_ctrlClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+            changeCancelButton(flag, button_ctrlClose);
         }
 
         private string makeCtrlKeyConversion(CheckBox checkBox, ComboBox comboBox)
@@ -1065,7 +1107,12 @@ namespace KanchokuWS
 
         private void button_ctrlClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            if (button_ctrlClose.Text.StartsWith("閉")) {
+                this.Close();
+            } else {
+                readSettings_tabCtrlKeys();
+                checkerCtrlKeys.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+            }
         }
 
         //-----------------------------------------------------------------------------------
@@ -1107,7 +1154,7 @@ namespace KanchokuWS
             // 履歴関連
             button_histEnter.Enabled = false;
             checkerHistory.CtlToBeEnabled = button_histEnter;
-            checkerHistory.ControlEnabler = button_histClose_textChange;
+            checkerHistory.ControlEnabler = tabHistoryStatusChanged;
             checkerHistory.Add(textBox_histKanjiWordMinLength);
             checkerHistory.Add(textBox_histKanjiWordMinLengthEx);
             checkerHistory.Add(textBox_histKatakanaWordMinLength);
@@ -1138,9 +1185,10 @@ namespace KanchokuWS
             checkerAll.Add(checkerHistory);
         }
 
-        private void button_histClose_textChange(bool flag)
+        private void tabHistoryStatusChanged(bool flag)
         {
             button_histClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+            changeCancelButton(flag, button_histClose);
         }
 
         private void button_histEnter_Click(object sender, EventArgs e)
@@ -1188,7 +1236,12 @@ namespace KanchokuWS
 
         private void button_histClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            if (button_histClose.Text.StartsWith("閉")) {
+                this.Close();
+            } else {
+                readSettings_tabHistory();
+                checkerHistory.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+            }
         }
 
         private void checkBox_autoHistEnabled_CheckedChanged(object sender, EventArgs e)
@@ -1229,7 +1282,7 @@ namespace KanchokuWS
             // その他変換
             button_miscEnter.Enabled = false;
             checkerMiscSettings.CtlToBeEnabled = button_miscEnter;
-            checkerMiscSettings.ControlEnabler = miscTabStatusChanged;
+            checkerMiscSettings.ControlEnabler = tabMiscStatusChanged;
             checkerMiscSettings.Add(checkBox_autoBushuComp);
             checkerMiscSettings.Add(checkBox_convertShiftedHiraganaToKatakana);
             checkerMiscSettings.Add(radioButton_normalShift);
@@ -1251,9 +1304,10 @@ namespace KanchokuWS
             checkerAll.Add(checkerMiscSettings);
         }
 
-        private void miscTabStatusChanged(bool flag)
+        private void tabMiscStatusChanged(bool flag)
         {
             button_miscClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+            changeCancelButton(flag, button_miscClose);
             //button_saveRomanTableFile.Enabled = !flag;
         }
 
@@ -1343,7 +1397,12 @@ namespace KanchokuWS
         /// <summary> 閉じる </summary>
         private void button_miscClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            if (button_miscClose.Text.StartsWith("閉")) {
+                this.Close();
+            } else {
+                readSettings_tabMiscSettings();
+                checkerMiscSettings.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+            }
         }
 
         //-----------------------------------------------------------------------------------

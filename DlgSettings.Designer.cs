@@ -2212,7 +2212,7 @@ namespace KanchokuWS
             this.button_fontColorClose.TabIndex = 5;
             this.button_fontColorClose.Text = "閉じる(&C)";
             this.button_fontColorClose.UseVisualStyleBackColor = true;
-            this.button_fontColorClose.Click += new System.EventHandler(this.button_fileClose_Click);
+            this.button_fontColorClose.Click += new System.EventHandler(this.button_fontColorClose_Click);
             // 
             // button_fontColorEnter
             // 
@@ -2225,7 +2225,7 @@ namespace KanchokuWS
             this.button_fontColorEnter.Text = "設定(&E)";
             this.toolTip1.SetToolTip(this.button_fontColorEnter, "設定内容を kanchoku.user.ini に書き込みます");
             this.button_fontColorEnter.UseVisualStyleBackColor = true;
-            this.button_fontColorEnter.Click += new System.EventHandler(this.button_fileEnter_Click);
+            this.button_fontColorEnter.Click += new System.EventHandler(this.button_fontColrEnter_Click);
             // 
             // tabPage_keyAssign
             // 
