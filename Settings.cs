@@ -161,6 +161,9 @@ namespace KanchokuWS
         /// <summary>仮想鍵盤の固定位置: Y方向</summary>
         public static int VirtualKeyboardFixedPosY { get; private set; } = -1;
 
+        /// <summary>仮想鍵盤の位置を一時的に固定する</summary>
+        public static bool VirtualKeyboardPosFixedTemporarily { get; set; } = false;
+
         ///// <summary>ディスプレイのDPI比(標準96dpiとの比)</summary>
         //public static double DisplayScale { get; private set; } = 1.0;
 

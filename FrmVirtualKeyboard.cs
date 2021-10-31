@@ -1532,12 +1532,37 @@ namespace KanchokuWS
         //------------------------------------------------------------------
         // イベントハンドラ
         //------------------------------------------------------------------
+        private Point mousePoint = new Point();
+
         private void pictureBox_Main_Click(object sender, EventArgs e)
         {
-            if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("CALLED");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH("CALLED");
             if (((MouseEventArgs)e).Button == MouseButtons.Left) {
-                frmMain.ToggleActiveState();
-                if (Settings.LoggingVirtualKeyboardInfo) logger.Debug("ToggleActiveState");
+                if (!Settings.VirtualKeyboardPosFixedTemporarily) {
+                    frmMain.ToggleActiveState();
+                    if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH("ToggleActiveState");
+                }
+            }
+        }
+
+        private void pictureBox_Main_MouseDown(object sender, MouseEventArgs e)
+        {
+            //if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH($"\nMouseDown: X={e.X}, Y={e.Y}");
+            if ((e.Button & MouseButtons.Left) == MouseButtons.Left) {
+                //位置を記憶する
+                mousePoint.X = e.X;
+                mousePoint.Y = e.Y;
+                Settings.VirtualKeyboardPosFixedTemporarily = false;
+            }
+        }
+
+        private void pictureBox_Main_MouseMove(object sender, MouseEventArgs e)
+        {
+            if ((e.Button & MouseButtons.Left) == MouseButtons.Left) {
+                if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH($"\nMouseMovePos: X={e.X}, Y={e.Y}");
+                this.Left += e.X - mousePoint.X;
+                this.Top += e.Y - mousePoint.Y;
+                Settings.VirtualKeyboardPosFixedTemporarily = true;
             }
         }
 
@@ -1639,6 +1664,11 @@ namespace KanchokuWS
         private void ReloadSettings_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             frmMain.ReloadSettingsAndDefFiles();
+        }
+
+        private void FollowCaret_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Settings.VirtualKeyboardPosFixedTemporarily = false;
         }
     }
 }

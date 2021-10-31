@@ -796,6 +796,8 @@ namespace KanchokuWS
                 loggingCaretInfo();
             }
 
+            if (Settings.VirtualKeyboardPosFixedTemporarily) return;    // 一時的に固定されている
+
             if (bFirstMove || (!FrmMain.IsVirtualKeyboardFreezed && !ActiveWinClassName.EndsWith(DlgVkbClassNameHash) && ActiveWinClassName._ne("SysShadow"))) {
                 if (bFirstMove || bMoveMandatory ||
                     ((Math.Abs(ActiveWinCaretPos.X) >= NoMoveOffset || Math.Abs(ActiveWinCaretPos.Y) >= NoMoveOffset) &&
