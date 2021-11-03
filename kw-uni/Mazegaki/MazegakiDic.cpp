@@ -596,9 +596,9 @@ namespace {
 
         struct candidates_t {
             MString yomi;
-            bool mazeSearch;
-            std::vector<CandidateEntry> fullMatchEntries;   // 漢字交じりで読みが完全一致した候補
-            std::vector<CandidateEntry> otherEntries;       // その他の候補
+            bool mazeSearch;    // 読みに漢字が交じっているか
+            std::vector<CandidateEntry> difficultEntries;   // 容易打鍵文字以外も含む候補
+            std::vector<CandidateEntry> easyEntries;        // 容易打鍵の候補
 
             candidates_t() :
                 mazeSearch(false)
@@ -613,22 +613,33 @@ namespace {
                 _LOG_DEBUGH(_T("stemlen=%d, stem=%s, output=%s, outXfer=%s"), \
                     pEntry->stem.size(), MAKE_WPTR(pEntry->stem), BOOL_TO_WPTR(pEntry->userDic), MAKE_WPTR(output), MAKE_WPTR(outXfer));
 
-                std::vector<CandidateEntry>* pEntries = mazeSearch ? &fullMatchEntries : &otherEntries;
-
                 // 同じ出力形のものを探す
-                auto iter = pEntries->begin();
-                for (; iter != pEntries->end(); ++iter) { if (iter->output == output) break; }
+                auto sameFinder = [output](const std::vector<CandidateEntry>& entries) {
+                    auto _iter = entries.begin();
+                    for (; _iter != entries.end(); ++_iter) { if (_iter->output == output) break; }
+                    return _iter;
+                };
 
 #define CAND_ENTRY (CandidateEntry{ pEntry, yomi, outXfer, output })
                 if (pEntry->userDic) {
-                    // ユーザー辞書由来のものは先頭に挿入
-                    if (iter != pEntries->end()) {
+                    // ユーザー辞書由来のものは難打鍵の先頭に挿入
+                    auto iter1 = sameFinder(difficultEntries);
+                    if (iter1 != difficultEntries.end()) {
                         // 同形の出力があったので、それを削除
-                        pEntries->erase(iter); // erase entry with same output
+                        difficultEntries.erase(iter1); // erase entry with same output
                     }
-                    pEntries->insert(pEntries->begin(), CAND_ENTRY);
+                    auto iter2 = sameFinder(easyEntries);
+                    if (iter2 != easyEntries.end()) {
+                        // 同形の出力があったので、それを削除
+                        easyEntries.erase(iter2); // erase entry with same output
+                    }
+                    difficultEntries.insert(difficultEntries.begin(), CAND_ENTRY);
                     _LOG_DEBUGH(_T("USER: yomi=%s, outXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
                 } else {
+                    bool bAllEasy = EASY_CHARS->AllContainedIn(pEntry->xfer);
+                    // 全て容易打鍵文字なら easyEntries を使う
+                    std::vector<CandidateEntry>* pEntries = bAllEasy ? &easyEntries : &difficultEntries;
+                    auto iter = sameFinder(*pEntries);
                     if (iter == pEntries->end()) {
                         // 同じ出力のものがないので、追加
                         size_t stemLen = pEntry->stem.size();
@@ -655,10 +666,10 @@ namespace {
 #undef CAND_ENTRY
 
             void SerializeEntries(std::vector<CandidateEntry>& outCands) {
-                _LOG_DEBUGH(_T("fullMatchEntrie: syomi=%s"), MAKE_WPTR(yomi));
-                serializeEntries(fullMatchEntries, outCands);
-                _LOG_DEBUGH(_T("otherEntries: syomi=%s"), MAKE_WPTR(yomi));
-                serializeEntries(otherEntries, outCands);
+                _LOG_DEBUGH(_T("fullMatchEntrie: syomi=%s, num=%d"), MAKE_WPTR(yomi), difficultEntries.size());
+                serializeEntries(difficultEntries, outCands);
+                _LOG_DEBUGH(_T("easyEntries: syomi=%s, num=%d"), MAKE_WPTR(yomi), easyEntries.size());
+                serializeEntries(easyEntries, outCands);
             }
 
         private:
@@ -795,8 +806,8 @@ namespace {
                             // ただし、「国民は」の「国民」は通す必要あり。そうしないと「国民派」に変換されてしまう
                             if (keyStem != p->xfer && (utils::startsWith(keyStem, p->xfer) || utils::endsWith(keyStem, p->xfer))) continue;
 
-                            if (!EASY_CHARS->AllContainedIn(p->xfer) && (keyStem == p->stem || mazeSearch && (mazeStar || p->xfer.size() <= keyStem.size()) && order_matched(keyStem, p))) {
-                                // 容易打鍵文字を含まず、読み語幹が完全一致、または key に漢字が含まれている場合は、'*' を含むか変換形長 <= key長、かつ、ひらがな・漢字の出現順序の一致を確認
+                            if (keyStem == p->stem || mazeSearch && (mazeStar || p->xfer.size() <= keyStem.size()) && order_matched(keyStem, p)) {
+                                // 読み語幹が完全一致、または key に漢字が含まれている場合は、'*' を含むか変換形長 <= key長、かつ、ひらがな・漢字の出現順序の一致を確認
                                 if (key.size() == stemLen) {
                                     // 語尾がない⇒無活用または語幹OKの活用型か
                                     if (find_gobi(p->inflexList, (int)STEM_OK) == 0) {
