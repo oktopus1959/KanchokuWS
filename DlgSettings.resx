@@ -577,6 +577,31 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 なお、履歴候補が縦列表示されている状態では、先頭候補がEnterキーで
 選択されます。</value>
   </data>
+  <data name="button_saveEelllJsTableFile.ToolTip" xml:space="preserve">
+    <value>eelll/JS用のテーブルを作成してファイル出力します。
+
+ストローク表から eelll/JS 用のテーブルを作成して eelll-js-table.txt と
+いう名前のファイルに出力します。出力先は漢直WSのルートフォルダです。
+
+出力されたファイルの内を eelll/Js の「入力方式」-「ユーザ定義」のところに
+コピペしてください。
+
+なお、ローマ字テーブルとは異なり、こちらは打鍵列に空白文字を含むものも
+出力されます。</value>
+  </data>
+  <data name="button_saveRomanTableFile.ToolTip" xml:space="preserve">
+    <value>ローマ字テーブルを作成してファイル出力します。
+
+ストローク表からローマ字テーブルを作成して roman-stroke-table.txt と
+いう名前のファイルに出力します。出力先は漢直WSのルートフォルダです。
+
+出力されたファイルは Google 日本語入力のローマ字テーブルとして
+インポートすることができます。
+
+なお、打鍵列に空白文字を含むものは出力されません。
+(TUT-Code の2打鍵目スペースによる記号入力や、 Try-Code での
+1打鍵目空白による漢字入力など)</value>
+  </data>
   <data name="checkBox_ignoreSpaceUpOnSandS.ToolTip" xml:space="preserve">
     <value>SandS有効時に、Space単打で空白を入力しないようにします。
 
