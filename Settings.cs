@@ -11,7 +11,7 @@ namespace KanchokuWS
     {
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.1.11";
+        public static string Version => "1.1.12";
 
         /// <summary> ドキュメントへのURL </summary>
         public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
