@@ -254,12 +254,13 @@ namespace {
         // usedList に含まれるものから下記を満たすものを返す(最大 n 個)
         // ・単語長が len に一致する
         // ・len == 0 なら単語長 >= 2
+        // ・1 <= len <= 3 なら難打鍵文字を含まないものを除外
         // ・len >= 9 なら単語長 >= 9
         void ExtractUsedWords(std::vector<HistResult>& outvec, size_t n, size_t len = 0) {
             LOG_DEBUG(_T("CALLED: size=%d, len=%d"), n, len);
             size_t i = 0;
             for (const auto& w : usedList) {
-                if (w.size() == len || (len == 0 && w.size() >= 2) || (len >= 9 && w.size() > 9)) {
+                if ((w.size() == len && (len > 3 || !EASY_CHARS->AllContainedIn(w))) || (len == 0 && w.size() >= 2) || (len >= 9 && w.size() > 9)) {
                     outvec.push_back(HistResult{ 0, w });
                     if (++i >= n) break;
                 }
