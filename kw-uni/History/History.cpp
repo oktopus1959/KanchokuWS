@@ -245,7 +245,7 @@ namespace {
 
         // 選択された履歴候補を出力 (abbrev なら true を返す)
         bool setOutString(const HistResult& result, size_t numBS = 0) {
-            LOG_DEBUG(_T("CALLED: word=%s, keyLen=%d, numBS=%d"), MAKE_WPTR(result.Word), result.KeyLen, numBS);
+            _LOG_DEBUGH(_T("CALLED: word=%s, keyLen=%d, numBS=%d"), MAKE_WPTR(result.Word), result.KeyLen, numBS);
             bool flag = false;
             size_t pos = result.Word.find('|');
             if (pos < SETTINGS->abbrevKeyMaxLength) {
@@ -809,10 +809,10 @@ namespace {
             bool result = (!prevKey.empty() &&
                            ((cands.size() > 0 && utils::startsWith(cands[0], prevKey) && cands[0] != prevKey) ||
                             (cands.size() > 1 && utils::startsWith(cands[1], prevKey) && cands[1] != prevKey)));
-            if (Logger::IsDebugEnabled()) {
+            if (IS_LOG_DEBUGH_ENABLED) {
                 size_t candsSize = cands.size();
                 MString cands0 = candsSize > 0 ? cands[0] : MString();
-                LOG_DEBUG(_T("RESULT=%s, prevKey=%s, cands.size=%d, cands[0]=%s"), BOOL_TO_WPTR(result), MAKE_WPTR(prevKey), candsSize, MAKE_WPTR(cands0));
+                LOG_DEBUGH(_T("RESULT=%s, prevKey=%s, cands.size=%d, cands[0]=%s"), BOOL_TO_WPTR(result), MAKE_WPTR(prevKey), candsSize, MAKE_WPTR(cands0));
             }
             return result;
         }

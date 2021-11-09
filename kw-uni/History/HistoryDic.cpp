@@ -98,6 +98,7 @@ namespace {
             }
         }
 
+        // key の末尾N文字を含む文字列集合を取得する
         std::set<MString> GetSet(const MString& key) {
             std::set<MString> result;
             if (key.size() >= N) {
@@ -556,7 +557,7 @@ namespace {
         }
 
     private:
-        // resultList に最近使ったものから取得した候補を、pasts にそれ以外の候補を格納する
+        // resultList に最近使ったものから取得した候補を格納し、pasts には st に含まれるものでそれ以外の候補を格納する
         // wlen > 0 なら、その長さの候補だけを返す
         void extract_and_copy(size_t klen, std::set<MString>& st, std::vector<HistResult>& pasts, size_t wlen = 0) {
             usedList.ExtractUsedWords(klen, resultList, st, wlen);
@@ -567,6 +568,15 @@ namespace {
                     pasts.push_back(HistResult{ klen, s });
                 }
             }
+        }
+
+        void extract_and_copy_for_longer_than_4(const MString& key, size_t len, size_t pos, std::vector<HistResult>& pastList) {
+            auto subStr = key.substr(pos);
+            auto subKey = subStr.substr(0, 4);
+            std::set<MString> st = utils::filter(histDic4.GetSet(subKey), [subStr](const auto& s) {return utils::startsWith(s, subStr);});
+            _LOG_DEBUGH(_T("extract_and_copy(keyLen=%d, set=filter(histDic4.GetSet(%s)), pastList=(empty), len=%d"), subStr.size(), MAKE_WPTR(subKey), len);
+            extract_and_copy(subStr.size(), st, pastList, len);
+            _LOG_DEBUGH(_T("filter(histDic4, %d-4): resultList.size()=%d, pastList.size()=%d"), pos, resultList.size(), pastList.size());
         }
 
         template<size_t N>
@@ -591,11 +601,28 @@ namespace {
                 resultKey = key;
             } else {
                 std::vector<HistResult> pastList;
-                if (key.size() > 4) {
-                    std::set<MString> st = utils::filter(histDic4.GetSet(key.substr(0, 4)), [key](const auto& s) {return utils::startsWith(s, key);});
-                    extract_and_copy(key.size(), st, pastList, len);
+                // Phase-A
+                size_t keySize = key.size();
+                // keyが5文字以上の場合に、先頭の4文字についても試す(末尾4文字は、この後の Phase-B で試される
+                if (keySize >= 5) {
+                    extract_and_copy_for_longer_than_4(key, len, 0, pastList);
+                }
+                // keyが6文字の場合に、中間の4文字についても試す(末尾4文字は、この後の Phase-B で試される
+                if (resultList.empty() && pastList.empty() && keySize == 6) {
+                    resultKeyLen = 5;
+                    extract_and_copy_for_longer_than_4(key, len, 1, pastList);
+                }
+                // keyが7文字以上の場合に、末尾側の中間の4文字についても試す(最末尾4文字は、この後の Phase-B で試される
+                if (resultList.empty() && pastList.empty() && keySize >= 7) {
+                    resultKeyLen = 6;
+                    extract_and_copy_for_longer_than_4(key, len, keySize - 6, pastList);
+                    if (resultList.empty() && pastList.empty()) {
+                        resultKeyLen = 5;
+                        extract_and_copy_for_longer_than_4(key, len, keySize - 5, pastList);
+                    }
                 }
 
+                // Phase-B
                 if (resultList.empty() && pastList.empty()) {
                     size_t minKana = SETTINGS->histHiraganaKeyLength;
                     size_t minKata = SETTINGS->histKatakanaKeyLength;
@@ -609,21 +636,29 @@ namespace {
                     };
 
                     resultKeyLen = 4;
+                    _LOG_DEBUGH(_T("histDic4: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), len);
                     get_extract_and_copy(key, histDic4, pastList, len);
+                    _LOG_DEBUGH(_T("histDic4: resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
                     if (resultList.empty() && pastList.empty()) {
                         if (checkFunc(3)) {
                             resultKeyLen = 3;
+                            _LOG_DEBUGH(_T("histDic3: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), len);
                             get_extract_and_copy(key, histDic3, pastList, len);
+                            _LOG_DEBUGH(_T("histDic3: resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
                         }
                         if (resultList.empty() && pastList.empty()) {
                             if (checkFunc(2)) {
                                 resultKeyLen = 2;
+                                _LOG_DEBUGH(_T("histDic2: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), len);
                                 get_extract_and_copy(key, histDic2, pastList, len);
+                                _LOG_DEBUGH(_T("histDic2: resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
                             }
                             if (resultList.empty() && pastList.empty()) {
                                 if (checkFunc(1)) {
                                     resultKeyLen = 1;
+                                    _LOG_DEBUGH(_T("histDic1: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), len);
                                     get_extract_and_copy(key, histDic1, pastList, len);
+                                    _LOG_DEBUGH(_T("histDic1: resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
                                 }
                             }
                         }
@@ -631,6 +666,7 @@ namespace {
                 }
                 utils::append(resultList, pastList);  // 最近使ったもの以外を追加する
                 resultKey = resultKeyLen == 0 ? key : utils::last_substr(key, resultKeyLen);
+                _LOG_DEBUGH(_T("resultKey=%s, resultList.size()=%d"), MAKE_WPTR(resultKey), resultList.size());
             }
 
             if (SETTINGS->histMoveShortestAt2nd) {
