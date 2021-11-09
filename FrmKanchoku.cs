@@ -372,6 +372,8 @@ namespace KanchokuWS
             }
             CommonState.CenterString = new string(decoderOutput.centerString, 0, len) + tail;
             logger.Info(() => $"center={CommonState.CenterString}, mode.Face={frmMode.FaceString}");
+
+            // TODO: 外出しする
             if (decoderOutput.IsZenkakuModeMarkerShow()) {
                 frmMode.SetZenkakuMode();
             } else if (decoderOutput.IsZenkakuModeMarkerClear()) {
@@ -968,7 +970,7 @@ namespace KanchokuWS
             logger.Info(() => $"layout={decoderOutput.layout}, numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
 
             // 第1打鍵待ち状態になったら、一時的な仮想鍵盤表示カウントをリセットする
-            if (decoderOutput.GetStrokeCount() < 1) Settings.VirtualKeyboardShowStrokeCountTemp = 0;
+            //if (decoderOutput.GetStrokeCount() < 1) Settings.VirtualKeyboardShowStrokeCountTemp = 0;
 
             // 中央鍵盤文字列の取得
             getCenterString();
@@ -1029,6 +1031,9 @@ namespace KanchokuWS
             } else {
                 if (decoderOutput.GetStrokeCount() < 1) {
                     // 第1打鍵待ちになった時のみ
+                    // 一時的な仮想鍵盤表示カウントをリセットする
+                    Settings.VirtualKeyboardShowStrokeCountTemp = 0;
+
                     // 他のVKey送出(もしあれば)
                     if (decoderOutput.IsDeckeyToVkey()) {
                         sendKeyFlag = sendVkeyFromDeckey(deckey, mod);
