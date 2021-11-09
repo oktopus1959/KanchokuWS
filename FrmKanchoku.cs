@@ -554,18 +554,21 @@ namespace KanchokuWS
                         return true;
                     case DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE:
                         if (IsDecoderActive) {
+                            rotateStrokeHelp(0);
                             bRomanStrokeGuideMode = !bRomanStrokeGuideMode && !bRomanMode;
                             drawRomanOrHiraganaMode(bRomanStrokeGuideMode, false);
                         }
                         return true;
                     case DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE:
                         if (IsDecoderActive) {
+                            rotateStrokeHelp(0);
                             bUpperRomanStrokeGuideMode = !bUpperRomanStrokeGuideMode && !bRomanMode;
                             if (!bRomanMode) drawRomanOrHiraganaMode(bUpperRomanStrokeGuideMode, false);
                         }
                         return true;
                     case DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE:
                         if (IsDecoderActive) {
+                            rotateStrokeHelp(0);
                             bHiraganaStrokeGuideMode = !bHiraganaStrokeGuideMode;
                             if (bHiraganaStrokeGuideMode) {
                                 InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);   // やっぱり出力文字列をクリアしておく必要あり
