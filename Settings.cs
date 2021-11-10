@@ -98,6 +98,7 @@ namespace KanchokuWS
         public static string CharsDefFile { get; private set; }
         public static string EasyCharsFile { get; private set; }
         public static string TableFile { get; private set; }
+        public static string TableFile2 { get; private set; }
         public static string HistoryFile { get; private set; }
         //public static string HistoryUsedFile {get; private set; }
         //public static string HistoryExcludeFile {get; private set; }
@@ -788,6 +789,7 @@ namespace KanchokuWS
             CharsDefFile = addDecoderSetting("charsDefFile", $"chars.{KeyboardFile._split('.')._getNth(0)._orElse("106")}.txt");
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
             TableFile = addDecoderSetting("tableFile", "t.tbl");
+            TableFile2 = addDecoderSetting("tableFile2", "");
             //addDecoderSetting("strokeHelpFile");
             HistoryFile = addDecoderSetting("historyFile", "kwhist.*.txt");
             //addDecoderSetting("historyUsedFile");

@@ -80,7 +80,7 @@ namespace VkbTableMaker {
         for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
             table[i] = 0;
         }
-        makeStrokeKeysTable(table, nullptr, ROOT_STROKE_NODE.get(), indexMap, STROKE_SPACE_DECKEY, STROKE_SPACE_DECKEY, 0);
+        makeStrokeKeysTable(table, nullptr, ROOT_STROKE_NODE, indexMap, STROKE_SPACE_DECKEY, STROKE_SPACE_DECKEY, 0);
     }
 
     void setIndexMap(std::map<wchar_t, size_t>& map, const wstring& kanaArray1, const wstring& kanaArray2) {
@@ -100,7 +100,7 @@ namespace VkbTableMaker {
             table[i] = 0;
         }
 
-        makeStrokeKeysTable(table, nullptr, ROOT_STROKE_NODE.get(), indexMap, 0, 0, 0);
+        makeStrokeKeysTable(table, nullptr, ROOT_STROKE_NODE, indexMap, 0, 0, 0);
     }
 
     // ひらがな50音図配列を作成する (あかさたなはまやらわ、ぁがざだばぱゃ)
@@ -120,7 +120,7 @@ namespace VkbTableMaker {
         if (hiraganaFirstIndexes.empty()) {
             std::map<wchar_t, size_t> indexMap;
             setIndexMap(indexMap, hiraganaArray1, hiraganaArray2);
-            makeStrokeKeysTable(nullptr, &hiraganaFirstIndexes, ROOT_STROKE_NODE.get(), indexMap, 0, 0, 0);
+            makeStrokeKeysTable(nullptr, &hiraganaFirstIndexes, ROOT_STROKE_NODE, indexMap, 0, 0, 0);
         }
         return hiraganaFirstIndexes;
     }
@@ -172,7 +172,7 @@ namespace VkbTableMaker {
         for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
             table[i] = 0;
         }
-        reorderByFirstStrokePosition(table, ROOT_STROKE_NODE.get(), orderedChars, charSet, STROKE_SPACE_DECKEY, 0);
+        reorderByFirstStrokePosition(table, ROOT_STROKE_NODE, orderedChars, charSet, STROKE_SPACE_DECKEY, 0);
     }
 
     // 指定の文字配列をストロークの位置に従って並べかえる

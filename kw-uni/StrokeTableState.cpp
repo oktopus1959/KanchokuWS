@@ -317,5 +317,7 @@ State* StrokeTableNode::CreateState() {
 }
 
 // -------------------------------------------------------------------
-std::unique_ptr<StrokeTableNode> StrokeTableNode::RootStrokeNode;
+std::unique_ptr<StrokeTableNode> StrokeTableNode::RootStrokeNode1;
+std::unique_ptr<StrokeTableNode> StrokeTableNode::RootStrokeNode2;
+StrokeTableNode* StrokeTableNode::RootStrokeNode;
 

@@ -364,15 +364,16 @@ namespace KanchokuWS
             checkBox_confirmOnClose.Checked = Settings.ConfirmOnClose;
 
             // ファイル
-            textBox_keyboardFile.Text = Settings.KeyboardFile;      // Settings.GetString("keyboard", Settings.KeyboardFile);
+            textBox_keyboardFile.Text = Settings.KeyboardFile;
             textBox_deckeyCharsFile.Text = Settings.GetString("charsDefFile");
-            textBox_easyCharsFile.Text = Settings.EasyCharsFile;    // Settings.GetString("easyCharsFile");
-            textBox_tableFile.Text = Settings.TableFile;            // Settings.GetString("tableFile");
-            textBox_strokeHelpFile.Text = Settings.StrokeHelpFile;  // Settings.GetString("strokeHelpFile", Settings.StrokeHelpFile);
-            textBox_bushuCompFile.Text = Settings.BushuFile;        // Settings.GetString("bushuFile");
-            textBox_bushuAssocFile.Text = Settings.BushuAssocFile;  // Settings.GetString("bushuAssocFile");
-            textBox_mazegakiFile.Text = Settings.MazegakiFile;      // Settings.GetString("mazegakiFile");
-            textBox_historyFile.Text = Settings.HistoryFile;        // Settings.GetString("historyFile");
+            textBox_easyCharsFile.Text = Settings.EasyCharsFile;
+            textBox_tableFile.Text = Settings.TableFile;
+            textBox_tableFile2.Text = Settings.TableFile2;
+            textBox_strokeHelpFile.Text = Settings.StrokeHelpFile;
+            textBox_bushuCompFile.Text = Settings.BushuFile;
+            textBox_bushuAssocFile.Text = Settings.BushuAssocFile;
+            textBox_mazegakiFile.Text = Settings.MazegakiFile;
+            textBox_historyFile.Text = Settings.HistoryFile;
         }
 
         private void selectModeToggleKeyItem(ComboBox cbx, string hex)
@@ -416,6 +417,7 @@ namespace KanchokuWS
             checkerBasic.Add(textBox_deckeyCharsFile);
             checkerBasic.Add(textBox_easyCharsFile);
             checkerBasic.Add(textBox_tableFile);
+            checkerBasic.Add(textBox_tableFile2);
             checkerBasic.Add(textBox_strokeHelpFile);
             checkerBasic.Add(textBox_bushuCompFile);
             checkerBasic.Add(textBox_bushuAssocFile);
@@ -434,6 +436,8 @@ namespace KanchokuWS
         private void button_basicEnter_Click(object sender, EventArgs e)
         {
             frmMain?.DeactivateDecoder();
+
+            label_initialMsg.Hide();
 
             // スプラッシュウィンドウ
             Settings.SetUserIni("splashWindowShowDuration", textBox_splashWindowShowDuration.Text.Trim());
@@ -455,6 +459,7 @@ namespace KanchokuWS
             Settings.SetUserIni("charsDefFile", textBox_deckeyCharsFile.Text.Trim());
             Settings.SetUserIni("easyCharsFile", textBox_easyCharsFile.Text.Trim());
             Settings.SetUserIni("tableFile", textBox_tableFile.Text.Trim());
+            Settings.SetUserIni("tableFile2", textBox_tableFile2.Text.Trim());
             Settings.SetUserIni("strokeHelpFile", textBox_strokeHelpFile.Text.Trim());
             Settings.SetUserIni("bushuFile", textBox_bushuCompFile.Text.Trim());
             Settings.SetUserIni("bushuAssocFile", textBox_bushuAssocFile.Text.Trim());
@@ -483,6 +488,8 @@ namespace KanchokuWS
         /// <param name="e"></param>
         private void button_Reload_Click(object sender, EventArgs e)
         {
+            label_initialMsg.Hide();
+
             reloadIniFileAndDefFiles();
             label_reloadBasic.Show();
         }
@@ -2093,6 +2100,11 @@ namespace KanchokuWS
         private void button_openTableFile_Click(object sender, EventArgs e)
         {
             openFileByTxtAssociatedProgram(Settings.TableFile);
+        }
+
+        private void button_openTableFile2_Click(object sender, EventArgs e)
+        {
+            openFileByTxtAssociatedProgram(Settings.TableFile2);
         }
 
         private void button_openKeyCharMapFile_Click(object sender, EventArgs e)

@@ -99,10 +99,15 @@ public:
     // ストローク木を構築する
     static StrokeTableNode* CreateStrokeTree(std::vector<tstring>&);
 
+    // ストローク木2を構築する
+    static StrokeTableNode* CreateStrokeTree2(std::vector<tstring>&);
+
     // 機能の再割り当て
     static void AssignFucntion(const tstring& keys, const tstring& name);
 
-    static std::unique_ptr<StrokeTableNode> RootStrokeNode;
+    static std::unique_ptr<StrokeTableNode> RootStrokeNode1;
+    static std::unique_ptr<StrokeTableNode> RootStrokeNode2;
+    static StrokeTableNode* RootStrokeNode;
 };
 
 #define ROOT_STROKE_NODE (StrokeTableNode::RootStrokeNode)
