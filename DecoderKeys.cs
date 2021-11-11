@@ -213,6 +213,8 @@ namespace KanchokuWS
         public const int TOGGLE_ROMAN_STROKE_GUIDE = TOGGLE_UPPER_ROMAN_STROKE_GUIDE + 1;   // ローマ字読みによる打鍵ガイドのトグル
         public const int TOGGLE_HIRAGANA_STROKE_GUIDE = TOGGLE_ROMAN_STROKE_GUIDE + 1;      // ひらがな読みによる打鍵ガイドのトグル
 
+        public const int EXCHANGE_CODE_TABLE = TOGGLE_HIRAGANA_STROKE_GUIDE + 1;     // 漢直コード系(通常コード系と代替コード系)の入れ替え
+
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 
     }

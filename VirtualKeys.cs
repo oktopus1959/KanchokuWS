@@ -107,6 +107,35 @@ namespace KanchokuWS
 
         private const uint capsVkeyWithShift = 0x14;    // 日本語キーボードだと Shift + 0x14 で CapsLock になる
 
+        public static uint GetFuncVkeyByName(string name)
+        {
+            int n = -1;
+            switch (name._toLower()) {
+                case "esc": case "escape": n = 0; break;
+                case "zenkaku": n = 1; break;
+                case "tab": n = 2; break;
+                case "caps": case "capslock": n = 3; break;
+                case "alnum": case "alphanum": case "eisu": n = 4; break;
+                case "nfer": n = 5; break;
+                case "xfer": n = 6; break;
+                case "kana": case "hiragana": n = 7; break;
+                case "bs": case "back": case "backspace": n = 8; break;
+                case "enter": n = 9; break;
+                case "ins": case "insert": n = 10; break;
+                case "del": case "delete": n = 11; break;
+                case "home": n = 12; break;
+                case "end": n = 13; break;
+                case "pgup": case "pageup": n = 14; break;
+                case "pgdn": case "pagedown": n = 15; break;
+                case "up": case "uparrow": n = 16; break;
+                case "down": case "downarrow": n = 17; break;
+                case "left": case "leftarrow": n = 18; break;
+                case "right": case "rightarrow": n = 19; break;
+                default: n = -1; break;
+            }
+            return n >= 0 ? vkeyArrayFuncKeys[n] : 0;
+        }
+
         public enum ShiftPlane
         {
             NONE = 0,
@@ -495,6 +524,7 @@ namespace KanchokuWS
             {"romanstrokeguide", DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE},
             {"upperromanstrokeguide", DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE},
             {"hiraganastrokeguide", DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE},
+            {"exchangecodetable", DecoderKeys.EXCHANGE_CODE_TABLE},
             //{"^a", DecoderKeys.CTRL_},
         };
 
@@ -555,6 +585,10 @@ namespace KanchokuWS
                             if (items._length() == 3) {
                                 uint mod = modifierKeysFromName._safeGet(items[0]);
                                 uint vkey = getVKeyFromDecKey(items[1]._parseInt(-1, -1));
+                                if (mod != 0 && vkey == 0) {
+                                    mod = 0;
+                                    vkey = GetFuncVkeyByName(items[0]);  // 被修飾キーが指定されていない場合は、修飾キーの単打とみなす
+                                }
                                 bool ctrl = items[2]._startsWith("^");
                                 var name = items[2].Replace("^", "");
                                 int deckey = specialDecKeysFromName._safeGet(name);
@@ -571,9 +605,13 @@ namespace KanchokuWS
                                     logger.DebugH(() => $"deckey={deckey:x}H({deckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
                                     if (deckey > 0) AddModifiedDeckey(deckey, KeyModifiers.MOD_CONTROL, decVkey);
                                 }
-                                if (mod != 0 && vkey > 0 && deckey > 0) {
+                                if (vkey > 0 && deckey > 0) {
                                     logger.DebugH(() => $"AddModConvertedDecKeyFromCombo: deckey={deckey}, mod={mod}, vkey={vkey}, rawLine={rawLine}");
-                                    AddModConvertedDecKeyFromCombo(deckey, mod, vkey);
+                                    if (mod == 0) {
+                                        AddDecKeyAndCombo(deckey, 0, vkey);
+                                    } else {
+                                        AddModConvertedDecKeyFromCombo(deckey, mod, vkey);
+                                    }
                                     if (!shiftPlaneForShiftFuncKey.ContainsKey(mod)) {
                                         // mod に対する ShiftPlane が設定されていない場合は、拡張シフトB面を割り当てる
                                         shiftPlaneForShiftFuncKey[mod] = ShiftPlane.PlaneB;
