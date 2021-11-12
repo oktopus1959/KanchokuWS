@@ -338,6 +338,12 @@ public:
             } else if (cmd == _T("makeExtraCharsStrokePositionTable")) {
                 // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
                 VkbTableMaker::MakeExtraCharsStrokePositionTable(outParams->faceStrings);
+            } else if (cmd == _T("makeStrokePosition")) {
+                // アンシフトキー文字配列をストロークの位置に従って並べる
+                VkbTableMaker::MakeKeyCharsStrokePositionTable(outParams->faceStrings);
+            } else if (cmd == _T("makeStrokePosition2")) {
+                // 第2テーブルから、アンシフトキー文字配列をストロークの位置に従って並べる
+                VkbTableMaker::MakeKeyCharsStrokePositionTable2(outParams->faceStrings);
             } else if (cmd == _T("makeShiftStrokePosition")) {
                 // シフトキー文字配列をストロークの位置に従って並べる
                 VkbTableMaker::MakeShiftKeyCharsStrokePositionTable(outParams->faceStrings);
@@ -352,7 +358,13 @@ public:
                 VkbTableMaker::MakeStrokeKeysTable(outParams->faceStrings, items[1].c_str());
             } else if (cmd == _T("reorderByFirstStrokePosition") && items.size() >= 2 && !items[1].empty()) {
                 // 指定の文字配列を第1ストロークの位置に従って並べかえる
-                VkbTableMaker::ReorderByFirstStrokePosition(outParams->faceStrings, items[1].c_str());
+                VkbTableMaker::ReorderByFirstStrokePosition(outParams->faceStrings, items[1].c_str(), 0);
+            } else if (cmd == _T("reorderByFirstStrokePosition1") && items.size() >= 2 && !items[1].empty()) {
+                // 指定の文字配列を第1ストロークの位置に従って並べかえる
+                VkbTableMaker::ReorderByFirstStrokePosition(outParams->faceStrings, items[1].c_str(), 1);
+            } else if (cmd == _T("reorderByFirstStrokePosition2") && items.size() >= 2 && !items[1].empty()) {
+                // 指定の文字配列を第1ストロークの位置に従って並べかえる
+                VkbTableMaker::ReorderByFirstStrokePosition(outParams->faceStrings, items[1].c_str(), 2);
             } else if (cmd == _T("makeHiraganaTable")) {
                 // ひらがな50音図の作成
                 makeHiraganaTable(outParams);

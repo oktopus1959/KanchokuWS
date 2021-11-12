@@ -22,7 +22,7 @@ namespace VkbTableMaker {
     void MakeStrokeKeysTable(wchar_t* table, const wchar_t* targetChars);
 
     // 指定の文字配列を第1ストロークの位置に従って並べかえる
-    void ReorderByFirstStrokePosition(wchar_t* table, const wchar_t* targetChars);
+    void ReorderByFirstStrokePosition(wchar_t* table, const wchar_t* targetChars, int tableId);
 
     // 指定の文字配列をストロークの位置に従って並べかえる
     // node: ストロークテーブルノード, table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
@@ -30,6 +30,12 @@ namespace VkbTableMaker {
 
     // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
     void MakeExtraCharsStrokePositionTable(wchar_t* faces);
+
+    // アンシフトキー文字を集めたストローク表を作成する
+    void MakeKeyCharsStrokePositionTable(wchar_t* faces);
+
+    // 第2テーブルからアンシフトキー文字を集めたストローク表を作成する
+    void MakeKeyCharsStrokePositionTable2(wchar_t* faces);
 
     // シフトキー文字を集めたストローク表を作成する
     void MakeShiftKeyCharsStrokePositionTable(wchar_t* faces);

@@ -165,14 +165,15 @@ namespace VkbTableMaker {
 
     // 指定の文字配列を第1ストロークの位置に従って並べかえる
     // table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
-    void ReorderByFirstStrokePosition(wchar_t* table, const wchar_t* targetChars) {
+    void ReorderByFirstStrokePosition(wchar_t* table, const wchar_t* targetChars, int tableId) {
         LOG_INFO(_T("CALLED: targetChars=%s"), targetChars);
         wstring orderedChars = targetChars;
         std::set<wchar_t> charSet(orderedChars.begin(), orderedChars.end());
         for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
             table[i] = 0;
         }
-        reorderByFirstStrokePosition(table, ROOT_STROKE_NODE, orderedChars, charSet, STROKE_SPACE_DECKEY, 0);
+        StrokeTableNode* node = tableId == 1 ? StrokeTableNode::RootStrokeNode1.get() : tableId == 2 ? StrokeTableNode::RootStrokeNode2.get() : ROOT_STROKE_NODE;
+        reorderByFirstStrokePosition(table, node, orderedChars, charSet, STROKE_SPACE_DECKEY, 0);
     }
 
     // 指定の文字配列をストロークの位置に従って並べかえる
@@ -224,61 +225,64 @@ namespace VkbTableMaker {
     }
 
     //----------------------------------------------------------------------------
-    // シフトキー文字を集めたストローク表を作成する
-    void MakeShiftKeyCharsStrokePositionTable(wchar_t* faces) {
-        LOG_INFO(_T("CALLED"));
-        for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
+    // キー文字を集めたストローク表を作成する
+    void makeKeyCharsStrokePositionTable(StrokeTableNode* rootStrokeNode, wchar_t* faces, size_t start, size_t num) {
+        for (size_t i = 0; i < num; ++i) {
             mchar_t ch = 0;
-            auto blk = ROOT_STROKE_NODE->getNth(SHIFT_DECKEY_START + i);
-            if (blk) {
-                if (blk->isStrokeTableNode()) {
-                    ch = _T("□")[0];
-                } else if (blk->isStringNode()) {
-                    ch = utils::safe_front(blk->getString());
-                } else {
-                    ch = _T("・")[0];
+            if (rootStrokeNode) {
+                auto blk = rootStrokeNode->getNth(start + i);
+                if (blk) {
+                    if (blk->isStrokeTableNode()) {
+                        ch = _T("□")[0];
+                    } else if (blk->isStringNode()) {
+                        ch = utils::safe_front(blk->getString());
+                    } else {
+                        ch = _T("・")[0];
+                    }
                 }
             }
             set_facestr(ch, faces + i * 2);
         }
+    }
+
+    // キー文字を集めたストローク表を作成する
+    void makeKeyCharsStrokePositionTable1(wchar_t* faces, size_t start, size_t num) {
+        makeKeyCharsStrokePositionTable(StrokeTableNode::RootStrokeNode1.get(), faces, start, num);
+    }
+
+    // キー文字を集めたストローク表を作成する
+    void makeKeyCharsStrokePositionTable2(wchar_t* faces, size_t start, size_t num) {
+        makeKeyCharsStrokePositionTable(StrokeTableNode::RootStrokeNode2.get(), faces, start, num);
+    }
+
+    // アンシフトキー文字を集めたストローク表を作成する
+    void MakeKeyCharsStrokePositionTable(wchar_t* faces) {
+        LOG_INFO(_T("CALLED"));
+        makeKeyCharsStrokePositionTable1(faces, 0, NORMAL_DECKEY_NUM);
+    }
+
+    // 第2テーブルからアンシフトキー文字を集めたストローク表を作成する
+    void MakeKeyCharsStrokePositionTable2(wchar_t* faces) {
+        LOG_INFO(_T("CALLED"));
+        makeKeyCharsStrokePositionTable2(faces, 0, NORMAL_DECKEY_NUM);
+    }
+
+    // シフトキー文字を集めたストローク表を作成する
+    void MakeShiftKeyCharsStrokePositionTable(wchar_t* faces) {
+        LOG_INFO(_T("CALLED"));
+        makeKeyCharsStrokePositionTable1(faces, SHIFT_DECKEY_START, STROKE_SPACE_DECKEY);
     }
 
     // シフトA面キー文字を集めたストローク表を作成する
     void MakeShiftAKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        for (size_t i = 0; i < SHIFT_DECKEY_NUM; ++i) {
-            mchar_t ch = 0;
-            auto blk = ROOT_STROKE_NODE->getNth(SHIFT_A_DECKEY_START + i);
-            if (blk) {
-                if (blk->isStrokeTableNode()) {
-                    ch = _T("□")[0];
-                } else if (blk->isStringNode()) {
-                    ch = utils::safe_front(blk->getString());
-                } else {
-                    ch = _T("・")[0];
-                }
-            }
-            set_facestr(ch, faces + i * 2);
-        }
+        makeKeyCharsStrokePositionTable1(faces, SHIFT_A_DECKEY_START, SHIFT_DECKEY_NUM);
     }
 
     // シフトB面キー文字を集めたストローク表を作成する
     void MakeShiftBKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        for (size_t i = 0; i < SHIFT_DECKEY_NUM; ++i) {
-            mchar_t ch = 0;
-            auto blk = ROOT_STROKE_NODE->getNth(SHIFT_B_DECKEY_START + i);
-            if (blk) {
-                if (blk->isStrokeTableNode()) {
-                    ch = _T("□")[0];
-                } else if (blk->isStringNode()) {
-                    ch = utils::safe_front(blk->getString());
-                } else {
-                    ch = _T("・")[0];
-                }
-            }
-            set_facestr(ch, faces + i * 2);
-        }
+        makeKeyCharsStrokePositionTable1(faces, SHIFT_B_DECKEY_START, SHIFT_DECKEY_NUM);
     }
 
     //----------------------------------------------------------------------------
