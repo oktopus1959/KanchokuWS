@@ -195,8 +195,8 @@ public:
         } else {
             createStrokeTree(SETTINGS->tableFile, [](std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree(lines);});
 
-            if (SETTINGS->tableFile2.empty()) {
-                createStrokeTree(SETTINGS->tableFile2, [](std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree(lines);});
+            if (!SETTINGS->tableFile2.empty()) {
+                createStrokeTree(SETTINGS->tableFile2, [](std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree2(lines);});
             }
         }
     }
@@ -375,6 +375,8 @@ public:
                 VkbTableMaker::SaveRomanStrokeTable(items.size() >= 2 ? items[1].c_str() : 0);
             } else if (cmd == _T("SaveEelllJsTable")) {
                 VkbTableMaker::SaveEelllJsTable();
+            } else if (cmd == _T("exchangeCodeTable")) {
+                outParams->strokeTableNum = StrokeTableNode::ExchangeStrokeTable();
             }
         }
     }
@@ -409,6 +411,7 @@ public:
             OutParams->resultFlags |= (UINT32)ResultFlags::SpecialDeckeyRequired;
         }
         OutParams->numBackSpaces = STATE_COMMON->GetBackspaceNum();
+        OutParams->strokeTableNum = StrokeTableNode::GetCurrentStrokeTableNum();
 
         // 出力履歴に BackSpaces を反映
         OUTPUT_STACK->pop(OutParams->numBackSpaces);

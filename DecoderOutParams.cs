@@ -30,6 +30,9 @@ namespace KanchokuWS
         /// <summary> 次の選択候補位置</summary>
         public int nextSelectPos;
 
+        /// <summary> 使用中のストロークテーブルの番号(1 or 2)</summary>
+        public int strokeTableNum;
+
         /// <summary> アクティブウィンドウに送信する文字列(または制御キー)<br/>
         /// '\0' 終端であること </summary>
         [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U2, SizeConst = 100)]
@@ -116,6 +119,9 @@ namespace KanchokuWS
     /// <summary> 拡張メソッド</summary>
     public static class DecoderOutParamsExtension
     {
+        /// <summary>第1ストローク待ちか</summary>
+        public static bool IsWaitingFirstStroke(this DecoderOutParams output) { return output.GetStrokeCount() < 1; }
+
         /// <summary>第2ストローク待ちか</summary>
         public static bool IsWaiting2ndStroke(this DecoderOutParams output) { return output.nextExpectedKeyType == ExpectedKeyType.SecondStroke; }
 
@@ -155,6 +161,9 @@ namespace KanchokuWS
         /// <param name="output"></param>
         /// <returns></returns>
         public static int GetStrokeCount(this DecoderOutParams output) { return output.strokeCount; }
+
+        /// <summary> 1番目のストロークテーブルか</summary>
+        public static bool IsCurrentStrokeTablePrimary(this DecoderOutParams output) { return output.strokeTableNum != 2; }
     }
 
 }

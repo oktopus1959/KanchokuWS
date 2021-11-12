@@ -1425,7 +1425,7 @@ namespace KanchokuWS
                     var color = Color.FromName(name);
                     if (!color.IsEmpty) return color;
                 }
-                return SystemColors.Window;
+                return decoderOutput.IsCurrentStrokeTablePrimary() ? SystemColors.Window : Color.FromName(Settings.BgColorForSecondaryTable);
             }
 
             drawCenterChars(g, makeSpecifiedColor());
@@ -1434,7 +1434,8 @@ namespace KanchokuWS
         /// <summary> デフォルト背景色で中央鍵盤に文字列を出力する</summary>
         private void drawCenterChars(Graphics g)
         {
-            drawCenterChars(g, SystemColors.Window);
+            //drawCenterChars(g, SystemColors.Window);
+            drawCenterCharsWithColor(g, frmMain.DecoderOutput);
         }
 
         /// <summary> 指定の背景色で中央鍵盤に文字列を出力する</summary>

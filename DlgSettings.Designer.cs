@@ -423,6 +423,8 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.textBox_onSecondaryTable = new KanchokuWS.ColorTextBox();
+            this.label105 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1832,7 +1834,7 @@ namespace KanchokuWS
             this.groupBox25.Controls.Add(this.textBox_firstCandidateBackColor);
             this.groupBox25.Controls.Add(this.label13);
             this.groupBox25.Controls.Add(this.label12);
-            this.groupBox25.Location = new System.Drawing.Point(302, 242);
+            this.groupBox25.Location = new System.Drawing.Point(302, 264);
             this.groupBox25.Name = "groupBox25";
             this.groupBox25.Size = new System.Drawing.Size(243, 72);
             this.groupBox25.TabIndex = 4;
@@ -1859,6 +1861,8 @@ namespace KanchokuWS
             // 
             // groupBox24
             // 
+            this.groupBox24.Controls.Add(this.textBox_onSecondaryTable);
+            this.groupBox24.Controls.Add(this.label105);
             this.groupBox24.Controls.Add(this.textBox_onBushuCompHelp);
             this.groupBox24.Controls.Add(this.label38);
             this.groupBox24.Controls.Add(this.textBox_onHistAssoc);
@@ -1869,7 +1873,7 @@ namespace KanchokuWS
             this.groupBox24.Controls.Add(this.label11);
             this.groupBox24.Location = new System.Drawing.Point(302, 107);
             this.groupBox24.Name = "groupBox24";
-            this.groupBox24.Size = new System.Drawing.Size(243, 124);
+            this.groupBox24.Size = new System.Drawing.Size(243, 149);
             this.groupBox24.TabIndex = 3;
             this.groupBox24.TabStop = false;
             this.groupBox24.Text = "中央鍵盤背景色";
@@ -2200,7 +2204,7 @@ namespace KanchokuWS
             this.label_okResultFontColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_okResultFontColor.AutoSize = true;
             this.label_okResultFontColor.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultFontColor.Location = new System.Drawing.Point(499, 325);
+            this.label_okResultFontColor.Location = new System.Drawing.Point(299, 347);
             this.label_okResultFontColor.Name = "label_okResultFontColor";
             this.label_okResultFontColor.Size = new System.Drawing.Size(65, 15);
             this.label_okResultFontColor.TabIndex = 11;
@@ -5108,6 +5112,27 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // textBox_onSecondaryTable
+            // 
+            this.textBox_onSecondaryTable.BackColor = System.Drawing.Color.White;
+            this.textBox_onSecondaryTable.ForBackColor = true;
+            this.textBox_onSecondaryTable.Location = new System.Drawing.Point(103, 119);
+            this.textBox_onSecondaryTable.Name = "textBox_onSecondaryTable";
+            this.textBox_onSecondaryTable.ReadOnly = true;
+            this.textBox_onSecondaryTable.Size = new System.Drawing.Size(132, 23);
+            this.textBox_onSecondaryTable.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.textBox_onSecondaryTable, "履歴選択・部首連想選択時の中央鍵盤背景色\r\n\r\n縦列鍵盤による履歴候補選択や部首連想での文字選択時の\r\n中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設" +
+        "定ダイアログが開きます。）");
+            // 
+            // label105
+            // 
+            this.label105.AutoSize = true;
+            this.label105.Location = new System.Drawing.Point(20, 123);
+            this.label105.Name = "label105";
+            this.label105.Size = new System.Drawing.Size(67, 15);
+            this.label105.TabIndex = 13;
+            this.label105.Text = "代替テーブル";
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -5627,5 +5652,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Button button_openTableFile2;
         private System.Windows.Forms.TextBox textBox_tableFile2;
         private System.Windows.Forms.Label label104;
+        private ColorTextBox textBox_onSecondaryTable;
+        private System.Windows.Forms.Label label105;
     }
 }

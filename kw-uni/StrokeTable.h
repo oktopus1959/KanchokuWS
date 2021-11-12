@@ -105,6 +105,12 @@ public:
     // 機能の再割り当て
     static void AssignFucntion(const tstring& keys, const tstring& name);
 
+    // ストローク木の入れ替え
+    static int ExchangeStrokeTable();
+
+    // 現在のストローク木の番号
+    static int GetCurrentStrokeTableNum();
+
     static std::unique_ptr<StrokeTableNode> RootStrokeNode1;
     static std::unique_ptr<StrokeTableNode> RootStrokeNode2;
     static StrokeTableNode* RootStrokeNode;

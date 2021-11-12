@@ -582,7 +582,10 @@ namespace KanchokuWS
                         return true;
                     case DecoderKeys.EXCHANGE_CODE_TABLE:
                         logger.Info("EXCHANGE_CODE_TABLE");
-                        ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
+                        if (IsDecoderActive && DecoderOutput.IsWaitingFirstStroke()) {
+                            ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
+                            frmVkb.DrawVirtualKeyboardChars();
+                        }
                         return true;
                     default:
                         if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {

@@ -317,6 +317,21 @@ State* StrokeTableNode::CreateState() {
 }
 
 // -------------------------------------------------------------------
+// ストローク木の入れ替え
+int StrokeTableNode::ExchangeStrokeTable() {
+    if (RootStrokeNode == RootStrokeNode1.get()) {
+        if (RootStrokeNode2.get() != nullptr) RootStrokeNode = RootStrokeNode2.get();
+    } else {
+        RootStrokeNode = RootStrokeNode1.get();
+    }
+    return GetCurrentStrokeTableNum();
+}
+
+// 現在のストローク木の番号
+int StrokeTableNode::GetCurrentStrokeTableNum() { 
+    return RootStrokeNode == RootStrokeNode2.get() ? 2 : 1;
+}
+
 std::unique_ptr<StrokeTableNode> StrokeTableNode::RootStrokeNode1;
 std::unique_ptr<StrokeTableNode> StrokeTableNode::RootStrokeNode2;
 StrokeTableNode* StrokeTableNode::RootStrokeNode;

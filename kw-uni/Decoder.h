@@ -43,6 +43,9 @@ struct DecoderOutParams
     // 次の選択候補位置
     int nextSelectPos = 0;
 
+    // 使用中のストロークテーブルの番号(1 or 2)
+    int strokeTableNum;
+
     // アクティブウィンドウに送信する文字列(または制御キー)
     // '\\0' 終端であること
     // [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U2, SizeConst = 100)]
