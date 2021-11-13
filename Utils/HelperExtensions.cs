@@ -114,6 +114,17 @@ namespace Utils
         }
 
         /// <summary>
+        /// 0 より大きければ自身を返し、0 以下なら defval を返す
+        /// </summary>
+        /// <param name="val"></param>
+        /// <param name="defval"></param>
+        /// <returns></returns>
+        public static int _gtZeroOr(this int val, Func<int> deffun)
+        {
+            return val > 0 ? val : deffun?.Invoke() ?? 0;
+        }
+
+        /// <summary>
         /// 0 以上ならば自身を返し、0 未満なら defval を返す
         /// </summary>
         /// <param name="val"></param>
@@ -122,6 +133,17 @@ namespace Utils
         public static int _geZeroOr(this int val, int defval)
         {
             return val > 0 ? val : defval;
+        }
+
+        /// <summary>
+        /// 0 以上ならば自身を返し、0 未満なら defval を返す
+        /// </summary>
+        /// <param name="val"></param>
+        /// <param name="defval"></param>
+        /// <returns></returns>
+        public static int _geZeroOr(this int val, Func<int> deffun)
+        {
+            return val > 0 ? val : deffun?.Invoke() ?? 0;
         }
 
         /// <summary>
