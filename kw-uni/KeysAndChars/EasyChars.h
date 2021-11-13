@@ -11,9 +11,7 @@ class EasyChars {
     DECLARE_CLASS_LOGGER;
 
 private:
-    std::vector<mchar_t> easyChars;
-
-    void includeFirstLevel();
+    std::set<mchar_t> easyChars;
 
 public:
     static std::unique_ptr<EasyChars> Singleton;
@@ -22,9 +20,15 @@ public:
     // 最上段を使わないレベル1(900文字)とユーザー定義の簡易打鍵文字を集める
     static void GatherEasyChars();
 
+    // 容易打鍵文字を追加
+    inline void AddEasyChar(mchar_t ch) {
+        easyChars.insert(ch);
+    }
+
     // 容易打鍵文字か
     inline bool IsEasyChar(mchar_t ch) {
-        return std::find(easyChars.begin(), easyChars.end(), ch) != easyChars.end();
+        //return std::find(easyChars.begin(), easyChars.end(), ch) != easyChars.end();
+        return easyChars.find(ch) != easyChars.end();
     }
 
     // 引数の文字列の中の全ての文字は容易打鍵文字である

@@ -9,7 +9,25 @@
 #include "EasyChars.h"
 
 namespace {
+    DEFINE_NAMESPACE_LOGGER(EasyChars);
 
+    // Nストローク文字を追加
+    void addNStrokeChars(StrokeTableNode* node, size_t start, size_t deckeyNum, size_t depth) {
+        for (size_t i = start; i < deckeyNum; ++i) {
+            auto blk = node->getNth(i);
+            if (blk && blk->isStringNode()) {
+                EASY_CHARS->AddEasyChar(utils::safe_front(blk->getString()));
+            } else if (depth > 1 && blk && blk->isStrokeTableNode()) {
+                addNStrokeChars((StrokeTableNode*)blk, start, deckeyNum, depth - 1);
+            }
+        }
+    }
+
+    // Nストローク文字を追加
+    void addNStrokeChars(size_t start, size_t deckeyNum, size_t depth) {
+        LOG_INFO(_T("start=%d, deckeyNum=%d, depth=%d"), start, deckeyNum, depth);
+        addNStrokeChars(ROOT_STROKE_NODE, start, deckeyNum, depth);
+    }
 }
 
 DEFINE_CLASS_LOGGER(EasyChars);
@@ -17,7 +35,7 @@ DEFINE_CLASS_LOGGER(EasyChars);
 // Decoder.cpp で生成される
 std::unique_ptr<EasyChars> EasyChars::Singleton;
 
-// 最上段を使わないレベル1(900文字)とユーザー定義の簡易打鍵文字を集める
+// 簡易打鍵文字(最上段を使わないレベル1(900文字)、2ストローク文字、全ストローク文字、およびユーザー定義の簡易打鍵文字)を集める
 void EasyChars::GatherEasyChars() {
     LOG_INFO(_T("ENTER"));
 
@@ -38,13 +56,27 @@ void EasyChars::GatherEasyChars() {
                 auto ln = utils::strip(line);
                 if (ln.empty() || ln[0] == '#') continue;
 
+                // 最上段を使わないレベル1の2ストローク
                 if (utils::toLower(ln) == _T("includefirstlevel")) {
-                    Singleton->includeFirstLevel();
+                    addNStrokeChars(10, NORMAL_DECKEY_NUM, 2);
                     continue;
                 }
 
+                // 全2ストローク文字
+                if (utils::toLower(ln) == _T("include2strokechars")) {
+                    addNStrokeChars(0, NORMAL_DECKEY_NUM, 2);
+                    continue;
+                }
+
+                // 全ストローク文字
+                if (utils::toLower(ln) == _T("includeallstrokechars")) {
+                    addNStrokeChars(0, NORMAL_DECKEY_NUM, 9);
+                    continue;
+                }
+
+                // ユーザー定義の容易打鍵文字
                 for (auto ch : ln) {
-                    Singleton->easyChars.push_back(ch);
+                    Singleton->AddEasyChar(ch);
                 }
             }
         } else {
@@ -56,19 +88,3 @@ void EasyChars::GatherEasyChars() {
     LOG_INFO(_T("LEAVE"));
 }
 
-// 最上段を使わないレベル1(900文字)を追加
-void EasyChars::includeFirstLevel() {
-    LOG_INFO(_T("ENTER"));
-    for (size_t i = 10; i < STROKE_SPACE_DECKEY; ++i) {
-        auto blk = ROOT_STROKE_NODE->getNth(i);
-        if (blk && blk->isStrokeTableNode()) {
-            for (int j = 10; j < STROKE_SPACE_DECKEY; ++j) {
-                Node* sb = ((StrokeTableNode*)blk)->getNth(j);
-                if (sb && sb->isStringNode()) {
-                    EASY_CHARS->easyChars.push_back(utils::safe_front(sb->getString()));
-                }
-            }
-        }
-    }
-    LOG_INFO(_T("LEAVE"));
-}
