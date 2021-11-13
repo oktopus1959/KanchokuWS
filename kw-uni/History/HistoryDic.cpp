@@ -255,13 +255,25 @@ namespace {
         // usedList に含まれるものから下記を満たすものを返す(最大 n 個)
         // ・単語長が len に一致する
         // ・len == 0 なら単語長 >= 2
-        // ・1 <= len <= 3 なら難打鍵文字を含まないものを除外
+        // ・1 <= len <= 3 なら難打鍵文字を含むものだけ
+        // ・len < 0 なら、単語長 <= abs(len) で難打鍵文字を含むものだけ
         // ・len >= 9 なら単語長 >= 9
-        void ExtractUsedWords(std::vector<HistResult>& outvec, size_t n, size_t len = 0) {
+        void ExtractUsedWords(std::vector<HistResult>& outvec, size_t n, int len = 0) {
             LOG_DEBUG(_T("CALLED: size=%d, len=%d"), n, len);
+            size_t zlen = (size_t)abs(len);
+            auto checkCond = [len, zlen](const MString& w) {
+                if (len < 0) {
+                    if (w.size() <= zlen && !EASY_CHARS->AllContainedIn(w)) return true;
+                } else {
+                    if (w.size() == zlen && (len > 3 || !EASY_CHARS->AllContainedIn(w))) return true;
+                    if (len == 0 && w.size() >= 2) return true;
+                    if (len >= 9 && w.size() > 9) return true;
+                }
+                return false;
+            };
             size_t i = 0;
             for (const auto& w : usedList) {
-                if ((w.size() == len && (len > 3 || !EASY_CHARS->AllContainedIn(w))) || (len == 0 && w.size() >= 2) || (len >= 9 && w.size() > 9)) {
+                if (checkCond(w)) {
                     outvec.push_back(HistResult{ 0, w });
                     if (++i >= n) break;
                 }
@@ -586,39 +598,42 @@ namespace {
         }
 
     public:
-        // 指定の部分文字列に対する変換候補のリストを取得する (len > 0 なら指定の長さの候補だけを取得)
+        // 指定の部分文字列に対する変換候補のリストを取得する (len > 0 なら指定の長さの候補だけを取得, len < 0 なら Abs(len)以下の長さの候補を取得)
         // key.size() == 0 なら 最近使用した単語列を返す
         // key.size() == 1 なら 2文字以上の候補列を返す
         // key.size() >= 2 なら key.size() 文字以上の候補を返す
         // checkMinKeyLen = false なら、キー長チェックをやらない
-        const std::vector<HistResult>& GetCandidates(const MString& key, MString& resultKey, bool checkMinKeyLen, size_t len)
+        const std::vector<HistResult>& GetCandidates(const MString& key, MString& resultKey, bool checkMinKeyLen, int len)
         {
             _LOG_DEBUGH(_T("ENTER: key=%s, checkMinKeyLen=%s, len=%d"), MAKE_WPTR(key), BOOL_TO_WPTR(checkMinKeyLen), len);
             resultList.clear();
             size_t resultKeyLen = 0;
             if (key.empty()) {
+                // ここでは len < 0 の場合も考慮
                 usedList.ExtractUsedWords(resultList, 100, len);
                 resultKey = key;
             } else {
+                // ここでは len < 0 の場合は考慮しない
+                size_t zlen = len < 0 ? 0 : (size_t)len;
                 std::vector<HistResult> pastList;
                 // Phase-A
                 size_t keySize = key.size();
                 // keyが5文字以上の場合に、先頭の4文字についても試す(末尾4文字は、この後の Phase-B で試される
                 if (keySize >= 5) {
-                    extract_and_copy_for_longer_than_4(key, len, 0, pastList);
+                    extract_and_copy_for_longer_than_4(key, zlen, 0, pastList);
                 }
                 // keyが6文字の場合に、中間の4文字についても試す(末尾4文字は、この後の Phase-B で試される
                 if (resultList.empty() && pastList.empty() && keySize == 6) {
                     resultKeyLen = 5;
-                    extract_and_copy_for_longer_than_4(key, len, 1, pastList);
+                    extract_and_copy_for_longer_than_4(key, zlen, 1, pastList);
                 }
                 // keyが7文字以上の場合に、末尾側の中間の4文字についても試す(最末尾4文字は、この後の Phase-B で試される
                 if (resultList.empty() && pastList.empty() && keySize >= 7) {
                     resultKeyLen = 6;
-                    extract_and_copy_for_longer_than_4(key, len, keySize - 6, pastList);
+                    extract_and_copy_for_longer_than_4(key, zlen, keySize - 6, pastList);
                     if (resultList.empty() && pastList.empty()) {
                         resultKeyLen = 5;
-                        extract_and_copy_for_longer_than_4(key, len, keySize - 5, pastList);
+                        extract_and_copy_for_longer_than_4(key, zlen, keySize - 5, pastList);
                     }
                 }
 
@@ -636,28 +651,28 @@ namespace {
                     };
 
                     resultKeyLen = 4;
-                    _LOG_DEBUGH(_T("histDic4: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), len);
-                    get_extract_and_copy(key, histDic4, pastList, len);
+                    _LOG_DEBUGH(_T("histDic4: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), zlen);
+                    get_extract_and_copy(key, histDic4, pastList, zlen);
                     _LOG_DEBUGH(_T("histDic4: resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
                     if (resultList.empty() && pastList.empty()) {
                         if (checkFunc(3)) {
                             resultKeyLen = 3;
-                            _LOG_DEBUGH(_T("histDic3: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), len);
-                            get_extract_and_copy(key, histDic3, pastList, len);
+                            _LOG_DEBUGH(_T("histDic3: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), zlen);
+                            get_extract_and_copy(key, histDic3, pastList, zlen);
                             _LOG_DEBUGH(_T("histDic3: resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
                         }
                         if (resultList.empty() && pastList.empty()) {
                             if (checkFunc(2)) {
                                 resultKeyLen = 2;
-                                _LOG_DEBUGH(_T("histDic2: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), len);
-                                get_extract_and_copy(key, histDic2, pastList, len);
+                                _LOG_DEBUGH(_T("histDic2: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), zlen);
+                                get_extract_and_copy(key, histDic2, pastList, zlen);
                                 _LOG_DEBUGH(_T("histDic2: resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
                             }
                             if (resultList.empty() && pastList.empty()) {
                                 if (checkFunc(1)) {
                                     resultKeyLen = 1;
-                                    _LOG_DEBUGH(_T("histDic1: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), len);
-                                    get_extract_and_copy(key, histDic1, pastList, len);
+                                    _LOG_DEBUGH(_T("histDic1: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), zlen);
+                                    get_extract_and_copy(key, histDic1, pastList, zlen);
                                     _LOG_DEBUGH(_T("histDic1: resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
                                 }
                             }

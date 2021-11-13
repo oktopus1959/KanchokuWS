@@ -32,11 +32,14 @@ namespace KanchokuWS
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DlgSettings));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_basic = new System.Windows.Forms.TabPage();
+            this.label_initialMsg = new System.Windows.Forms.Label();
             this.label_reloadBasic = new System.Windows.Forms.Label();
             this.button_document = new System.Windows.Forms.Button();
-            this.label_initialMsg = new System.Windows.Forms.Label();
             this.button_restart = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button_openTableFile2 = new System.Windows.Forms.Button();
+            this.textBox_tableFile2 = new System.Windows.Forms.TextBox();
+            this.label104 = new System.Windows.Forms.Label();
             this.button_openHistoryFile = new System.Windows.Forms.Button();
             this.button_openMazeFile = new System.Windows.Forms.Button();
             this.button_bushuAssocFile = new System.Windows.Forms.Button();
@@ -142,6 +145,7 @@ namespace KanchokuWS
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.groupBox24 = new System.Windows.Forms.GroupBox();
+            this.label105 = new System.Windows.Forms.Label();
             this.label38 = new System.Windows.Forms.Label();
             this.label52 = new System.Windows.Forms.Label();
             this.label51 = new System.Windows.Forms.Label();
@@ -406,11 +410,11 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button_openTableFile2 = new System.Windows.Forms.Button();
-            this.textBox_tableFile2 = new System.Windows.Forms.TextBox();
-            this.label104 = new System.Windows.Forms.Label();
+            this.textBox_historyFewCharsKeySeq = new System.Windows.Forms.TextBox();
+            this.label106 = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
+            this.textBox_onSecondaryTable = new KanchokuWS.ColorTextBox();
             this.textBox_onBushuCompHelp = new KanchokuWS.ColorTextBox();
             this.textBox_onHistAssoc = new KanchokuWS.ColorTextBox();
             this.textBox_onMazegaki = new KanchokuWS.ColorTextBox();
@@ -423,8 +427,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.textBox_onSecondaryTable = new KanchokuWS.ColorTextBox();
-            this.label105 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -525,6 +527,19 @@ namespace KanchokuWS
             this.tabPage_basic.Text = "基本設定";
             this.tabPage_basic.UseVisualStyleBackColor = true;
             // 
+            // label_initialMsg
+            // 
+            this.label_initialMsg.AutoSize = true;
+            this.label_initialMsg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_initialMsg.ForeColor = System.Drawing.Color.DarkRed;
+            this.label_initialMsg.Location = new System.Drawing.Point(264, 270);
+            this.label_initialMsg.Name = "label_initialMsg";
+            this.label_initialMsg.Size = new System.Drawing.Size(304, 60);
+            this.label_initialMsg.TabIndex = 10;
+            this.label_initialMsg.Text = "本体アイコンはタスクトレイに格納されています。\r\nこのダイアログは本体アイコンの右クリックメニューからも開けます。\r\nテキストボックス、ドロップダウン、チェックボ" +
+    "ックスなどの上に\r\nマウスポインタを置くとツールチップが表示されます。";
+            this.label_initialMsg.Visible = false;
+            // 
             // label_reloadBasic
             // 
             this.label_reloadBasic.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -551,19 +566,6 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.button_document, "ドキュメントのURLをブラウザで開きます");
             this.button_document.UseVisualStyleBackColor = true;
             this.button_document.Click += new System.EventHandler(this.button_document_Click);
-            // 
-            // label_initialMsg
-            // 
-            this.label_initialMsg.AutoSize = true;
-            this.label_initialMsg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_initialMsg.ForeColor = System.Drawing.Color.DarkRed;
-            this.label_initialMsg.Location = new System.Drawing.Point(264, 270);
-            this.label_initialMsg.Name = "label_initialMsg";
-            this.label_initialMsg.Size = new System.Drawing.Size(304, 60);
-            this.label_initialMsg.TabIndex = 10;
-            this.label_initialMsg.Text = "本体アイコンはタスクトレイに格納されています。\r\nこのダイアログは本体アイコンの右クリックメニューからも開けます。\r\nテキストボックス、ドロップダウン、チェックボ" +
-    "ックスなどの上に\r\nマウスポインタを置くとツールチップが表示されます。";
-            this.label_initialMsg.Visible = false;
             // 
             // button_restart
             // 
@@ -618,6 +620,41 @@ namespace KanchokuWS
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "ファイル";
+            // 
+            // button_openTableFile2
+            // 
+            this.button_openTableFile2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_openTableFile2.Location = new System.Drawing.Point(271, 61);
+            this.button_openTableFile2.Name = "button_openTableFile2";
+            this.button_openTableFile2.Size = new System.Drawing.Size(34, 23);
+            this.button_openTableFile2.TabIndex = 5;
+            this.button_openTableFile2.Text = "開く";
+            this.toolTip1.SetToolTip(this.button_openTableFile2, "テーブルファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行すると" +
+        "、\r\nその内容が反映されます。\r\n");
+            this.button_openTableFile2.UseVisualStyleBackColor = true;
+            this.button_openTableFile2.Click += new System.EventHandler(this.button_openTableFile2_Click);
+            // 
+            // textBox_tableFile2
+            // 
+            this.textBox_tableFile2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_tableFile2.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_tableFile2.Location = new System.Drawing.Point(129, 63);
+            this.textBox_tableFile2.Name = "textBox_tableFile2";
+            this.textBox_tableFile2.Size = new System.Drawing.Size(137, 19);
+            this.textBox_tableFile2.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.textBox_tableFile2, "打鍵から文字への変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることによ" +
+        "り、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\nファイル名を変更したり、テーブルの内容を修正した場合は、「再読込」を\r\n実行すると、その内容が反映されます" +
+        "。");
+            // 
+            // label104
+            // 
+            this.label104.AutoSize = true;
+            this.label104.Location = new System.Drawing.Point(15, 65);
+            this.label104.Name = "label104";
+            this.label104.Size = new System.Drawing.Size(83, 15);
+            this.label104.TabIndex = 35;
+            this.label104.Text = "テーブルファイル2";
             // 
             // button_openHistoryFile
             // 
@@ -1878,6 +1915,15 @@ namespace KanchokuWS
             this.groupBox24.TabStop = false;
             this.groupBox24.Text = "中央鍵盤背景色";
             // 
+            // label105
+            // 
+            this.label105.AutoSize = true;
+            this.label105.Location = new System.Drawing.Point(20, 123);
+            this.label105.Name = "label105";
+            this.label105.Size = new System.Drawing.Size(67, 15);
+            this.label105.TabIndex = 13;
+            this.label105.Text = "代替テーブル";
+            // 
             // label38
             // 
             this.label38.AutoSize = true;
@@ -2245,7 +2291,9 @@ namespace KanchokuWS
             this.tabPage_keyAssign.Controls.Add(this.groupBox32);
             this.tabPage_keyAssign.Controls.Add(this.textBox1);
             this.tabPage_keyAssign.Controls.Add(this.groupBox31);
+            this.tabPage_keyAssign.Controls.Add(this.textBox_historyOneCharKeySeq);
             this.tabPage_keyAssign.Controls.Add(this.label99);
+            this.tabPage_keyAssign.Controls.Add(this.label66);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignClose);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignEnter);
             this.tabPage_keyAssign.Controls.Add(this.groupBox30);
@@ -2381,12 +2429,12 @@ namespace KanchokuWS
             // 
             // groupBox30
             // 
+            this.groupBox30.Controls.Add(this.textBox_historyFewCharsKeySeq);
+            this.groupBox30.Controls.Add(this.label106);
             this.groupBox30.Controls.Add(this.textBox_blockerSetterOneShotKeySeq);
             this.groupBox30.Controls.Add(this.label81);
             this.groupBox30.Controls.Add(this.textBox_hankakuKatakanaOneShotKeySeq);
             this.groupBox30.Controls.Add(this.label75);
-            this.groupBox30.Controls.Add(this.textBox_historyOneCharKeySeq);
-            this.groupBox30.Controls.Add(this.label66);
             this.groupBox30.Controls.Add(this.textBox_katakanaOneShotKeySeq);
             this.groupBox30.Controls.Add(this.label65);
             this.groupBox30.Controls.Add(this.textBox_bushuAssocDirectKeySeq);
@@ -2446,20 +2494,22 @@ namespace KanchokuWS
             // textBox_historyOneCharKeySeq
             // 
             this.textBox_historyOneCharKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_historyOneCharKeySeq.Location = new System.Drawing.Point(105, 43);
+            this.textBox_historyOneCharKeySeq.Location = new System.Drawing.Point(115, 230);
             this.textBox_historyOneCharKeySeq.Name = "textBox_historyOneCharKeySeq";
             this.textBox_historyOneCharKeySeq.Size = new System.Drawing.Size(56, 19);
             this.textBox_historyOneCharKeySeq.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_historyOneCharKeySeq, "入力履歴のうち、1文字だけの候補を表示します。");
+            this.toolTip1.SetToolTip(this.textBox_historyOneCharKeySeq, "入力履歴のうち、1～3文字だけの候補を表示します。");
+            this.textBox_historyOneCharKeySeq.Visible = false;
             // 
             // label66
             // 
             this.label66.AutoSize = true;
-            this.label66.Location = new System.Drawing.Point(7, 45);
+            this.label66.Location = new System.Drawing.Point(17, 232);
             this.label66.Name = "label66";
-            this.label66.Size = new System.Drawing.Size(93, 15);
+            this.label66.Size = new System.Drawing.Size(99, 15);
             this.label66.TabIndex = 12;
-            this.label66.Text = "履歴検索(1文字)";
+            this.label66.Text = "履歴検索(数文字)";
+            this.label66.Visible = false;
             // 
             // textBox_katakanaOneShotKeySeq
             // 
@@ -4911,40 +4961,23 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // button_openTableFile2
+            // textBox_historyFewCharsKeySeq
             // 
-            this.button_openTableFile2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openTableFile2.Location = new System.Drawing.Point(271, 61);
-            this.button_openTableFile2.Name = "button_openTableFile2";
-            this.button_openTableFile2.Size = new System.Drawing.Size(34, 23);
-            this.button_openTableFile2.TabIndex = 5;
-            this.button_openTableFile2.Text = "開く";
-            this.toolTip1.SetToolTip(this.button_openTableFile2, "テーブルファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行すると" +
-        "、\r\nその内容が反映されます。\r\n");
-            this.button_openTableFile2.UseVisualStyleBackColor = true;
-            this.button_openTableFile2.Click += new System.EventHandler(this.button_openTableFile2_Click);
+            this.textBox_historyFewCharsKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.textBox_historyFewCharsKeySeq.Location = new System.Drawing.Point(105, 43);
+            this.textBox_historyFewCharsKeySeq.Name = "textBox_historyFewCharsKeySeq";
+            this.textBox_historyFewCharsKeySeq.Size = new System.Drawing.Size(56, 19);
+            this.textBox_historyFewCharsKeySeq.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_historyFewCharsKeySeq, "入力履歴のうち、1～3文字だけの候補を表示します。");
             // 
-            // textBox_tableFile2
+            // label106
             // 
-            this.textBox_tableFile2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_tableFile2.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_tableFile2.Location = new System.Drawing.Point(129, 63);
-            this.textBox_tableFile2.Name = "textBox_tableFile2";
-            this.textBox_tableFile2.Size = new System.Drawing.Size(137, 19);
-            this.textBox_tableFile2.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.textBox_tableFile2, "打鍵から文字への変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることによ" +
-        "り、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\nファイル名を変更したり、テーブルの内容を修正した場合は、「再読込」を\r\n実行すると、その内容が反映されます" +
-        "。");
-            // 
-            // label104
-            // 
-            this.label104.AutoSize = true;
-            this.label104.Location = new System.Drawing.Point(15, 65);
-            this.label104.Name = "label104";
-            this.label104.Size = new System.Drawing.Size(83, 15);
-            this.label104.TabIndex = 35;
-            this.label104.Text = "テーブルファイル2";
+            this.label106.AutoSize = true;
+            this.label106.Location = new System.Drawing.Point(7, 45);
+            this.label106.Name = "label106";
+            this.label106.Size = new System.Drawing.Size(99, 15);
+            this.label106.TabIndex = 18;
+            this.label106.Text = "履歴検索(数文字)";
             // 
             // textBox_onSelectedBackColor
             // 
@@ -4970,6 +5003,18 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_firstCandidateBackColor, "縦列または横列鍵盤で優先的に選択される候補の背景色\r\n\r\n履歴選択や交ぜ書き変換などで、縦列または横列鍵盤が\r\n表示されている時、Enterキーで選択できる優先候" +
         "補の\r\n背景色を設定します。\r\n\r\nただし履歴選択については、Enterで優先候補を選択するか\r\nどうかは「履歴・交ぜ書き」タブで設定します。\r\n（ここをクリッ" +
         "クすると設定ダイアログが開きます。）");
+            // 
+            // textBox_onSecondaryTable
+            // 
+            this.textBox_onSecondaryTable.BackColor = System.Drawing.Color.White;
+            this.textBox_onSecondaryTable.ForBackColor = true;
+            this.textBox_onSecondaryTable.Location = new System.Drawing.Point(103, 119);
+            this.textBox_onSecondaryTable.Name = "textBox_onSecondaryTable";
+            this.textBox_onSecondaryTable.ReadOnly = true;
+            this.textBox_onSecondaryTable.Size = new System.Drawing.Size(132, 23);
+            this.textBox_onSecondaryTable.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.textBox_onSecondaryTable, "履歴選択・部首連想選択時の中央鍵盤背景色\r\n\r\n縦列鍵盤による履歴候補選択や部首連想での文字選択時の\r\n中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設" +
+        "定ダイアログが開きます。）");
             // 
             // textBox_onBushuCompHelp
             // 
@@ -5111,27 +5156,6 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // textBox_onSecondaryTable
-            // 
-            this.textBox_onSecondaryTable.BackColor = System.Drawing.Color.White;
-            this.textBox_onSecondaryTable.ForBackColor = true;
-            this.textBox_onSecondaryTable.Location = new System.Drawing.Point(103, 119);
-            this.textBox_onSecondaryTable.Name = "textBox_onSecondaryTable";
-            this.textBox_onSecondaryTable.ReadOnly = true;
-            this.textBox_onSecondaryTable.Size = new System.Drawing.Size(132, 23);
-            this.textBox_onSecondaryTable.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.textBox_onSecondaryTable, "履歴選択・部首連想選択時の中央鍵盤背景色\r\n\r\n縦列鍵盤による履歴候補選択や部首連想での文字選択時の\r\n中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設" +
-        "定ダイアログが開きます。）");
-            // 
-            // label105
-            // 
-            this.label105.AutoSize = true;
-            this.label105.Location = new System.Drawing.Point(20, 123);
-            this.label105.Name = "label105";
-            this.label105.Size = new System.Drawing.Size(67, 15);
-            this.label105.TabIndex = 13;
-            this.label105.Text = "代替テーブル";
             // 
             // DlgSettings
             // 
@@ -5654,5 +5678,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label104;
         private ColorTextBox textBox_onSecondaryTable;
         private System.Windows.Forms.Label label105;
+        private System.Windows.Forms.TextBox textBox_historyFewCharsKeySeq;
+        private System.Windows.Forms.Label label106;
     }
 }

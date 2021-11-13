@@ -27,6 +27,7 @@ void FunctionNodeManager::AddFunctionNodeBuilders() {
     addFunctionNodeBuilder(_T("M"), _T("mazegaki"), new MazegakiNodeBuilder());
     addFunctionNodeBuilder(_T("!"), _T("history"), new HistoryNodeBuilder());
     addFunctionNodeBuilder(_T("1"), _T("historyOneChar"), new HistoryOneCharNodeBuilder());
+    addFunctionNodeBuilder(_T("?"), _T("historyFewChars"), new HistoryFewCharsNodeBuilder());
     addFunctionNodeBuilder(_T("\\"), _T("nextThrough"), new EscapeNodeBuilder());
     addFunctionNodeBuilder(_T("Z"), _T("zenkakuMode"), new ZenkakuNodeBuilder());
     addFunctionNodeBuilder(_T("z"), _T("zenkakuOneChar"), new ZenkakuOneNodeBuilder());

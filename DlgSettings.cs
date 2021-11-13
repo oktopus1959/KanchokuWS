@@ -860,6 +860,7 @@ namespace KanchokuWS
             textBox_nextThroughKeySeq.Text = Settings.NextThroughKeySeq;
             textBox_historyKeySeq.Text = Settings.HistoryKeySeq;
             textBox_historyOneCharKeySeq.Text = Settings.HistoryOneCharKeySeq;
+            textBox_historyFewCharsKeySeq.Text = Settings.HistoryFewCharsKeySeq;
             textBox_mazegakiKeySeq.Text = Settings.MazegakiKeySeq;
             textBox_bushuCompKeySeq.Text = Settings.BushuCompKeySeq;
             textBox_bushuAssocKeySeq.Text = Settings.BushuAssocKeySeq;
@@ -881,6 +882,7 @@ namespace KanchokuWS
             checkerKeyAssign.Add(textBox_nextThroughKeySeq);
             checkerKeyAssign.Add(textBox_historyKeySeq);
             checkerKeyAssign.Add(textBox_historyOneCharKeySeq);
+            checkerKeyAssign.Add(textBox_historyFewCharsKeySeq);
             checkerKeyAssign.Add(textBox_mazegakiKeySeq);
             checkerKeyAssign.Add(textBox_bushuCompKeySeq);
             checkerKeyAssign.Add(textBox_bushuAssocKeySeq);
@@ -908,6 +910,7 @@ namespace KanchokuWS
             Settings.SetUserIni("nextThroughKeySeq", textBox_nextThroughKeySeq.Text);
             Settings.SetUserIni("historyKeySeq", textBox_historyKeySeq.Text);
             Settings.SetUserIni("historyOneCharKeySeq", textBox_historyOneCharKeySeq.Text);
+            Settings.SetUserIni("historyFewCharsKeySeq", textBox_historyFewCharsKeySeq.Text);
             Settings.SetUserIni("mazegakiKeySeq", textBox_mazegakiKeySeq.Text);
             Settings.SetUserIni("bushuCompKeySeq", textBox_bushuCompKeySeq.Text);
             Settings.SetUserIni("bushuAssocKeySeq", textBox_bushuAssocKeySeq.Text);

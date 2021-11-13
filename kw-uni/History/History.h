@@ -35,6 +35,31 @@ public:
 };
 
 // -------------------------------------------------------------------
+// HistoryFewCharsNode - 1～3文字履歴機能ノード
+class HistoryFewCharsNode : public HistoryNode {
+    DECLARE_CLASS_LOGGER;
+ public:
+     HistoryFewCharsNode();
+
+     ~HistoryFewCharsNode();
+
+    // 当ノードを処理する State インスタンスを作成する
+     State* CreateState();
+
+    MString getString() const { return to_mstr(_T("◇")); }
+};
+
+// -------------------------------------------------------------------
+// HistoryFewCharsNodeBuilder - 1～3文字履歴機能ノードビルダ
+#include "FunctionNodeBuilder.h"
+
+class HistoryFewCharsNodeBuilder : public FunctionNodeBuilder {
+    DECLARE_CLASS_LOGGER;
+public:
+    Node* CreateNode();
+};
+
+// -------------------------------------------------------------------
 // HistoryOneCharNode - 1文字履歴機能ノード
 class HistoryOneCharNode : public HistoryNode {
     DECLARE_CLASS_LOGGER;

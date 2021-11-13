@@ -50,7 +50,7 @@ public:
     virtual void DeleteEntry(const MString& word) = 0;
 
     // 指定の見出し文字に対する変換候補のセットを取得する
-    virtual const std::vector<HistResult>& GetCandidates(const MString& key, MString&, bool checkMinKeyLen, size_t n) = 0;
+    virtual const std::vector<HistResult>& GetCandidates(const MString& key, MString&, bool checkMinKeyLen, int len) = 0;
 
     // 単語の使用
     virtual void UseWord(const MString& word) = 0;

@@ -44,7 +44,7 @@ namespace {
 
         MString currentKey;
 
-        size_t currentLen = 0;
+        int currentLen = 0;
 
         // 選択位置 -- -1 は未選択状態を表す
         mutable int selectPos = -1;
@@ -99,8 +99,8 @@ namespace {
         }
 
     public:
-        // 指定のキーで始まる候補を取得する (len > 0 なら指定の長さの候補だけを取得)
-        const std::vector<MString>& GetCandidates(const MString& key, bool checkMinKeyLen, size_t len) {
+        // 指定のキーで始まる候補を取得する (len > 0 なら指定の長さの候補だけを取得, len < 0 なら Abs(len)以下の長さの候補を取得)
+        const std::vector<MString>& GetCandidates(const MString& key, bool checkMinKeyLen, int len) {
             PushFrontSelectedWord();
             currentLen = len;
             histCands = HISTORY_DIC->GetCandidates(key, currentKey, checkMinKeyLen, len);
@@ -217,7 +217,7 @@ namespace {
         // 履歴入力候補のリスト
         //HistCandidates histCands;
 
-        size_t candLen = 0;
+        int candLen = 0;
         size_t candDispVerticalPos = 0;
         size_t candDispHorizontalPos = 0;
 
@@ -552,7 +552,7 @@ namespace {
             candDispVerticalPos = 0;
             auto key = HIST_CAND->GetCurrentKey();
             //指定の長さのものだけを残して仮想鍵盤に表示
-            candLen = (candLen + 1) % CAND_LEN_THRESHOLD;
+            candLen = candLen < 0 ? abs(candLen) : (candLen + 1) % CAND_LEN_THRESHOLD;
             setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, candLen), key);
             return;
         }
@@ -566,7 +566,7 @@ namespace {
             candDispVerticalPos = 0;
             auto key = HIST_CAND->GetCurrentKey();
             //指定の長さのものだけを残して仮想鍵盤に表示
-            candLen = candLen <= 0 ? 9 : candLen - 1;
+            candLen = candLen < 0 ? abs(candLen) - 1 : (candLen == 0 ? CAND_LEN_THRESHOLD : candLen) - 1;
             setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, candLen), key);
             return;
         }
@@ -644,6 +644,37 @@ namespace {
 
     };
     DEFINE_CLASS_LOGGER(HistoryState);
+
+    // -------------------------------------------------------------------
+    // 1～3文字履歴機能状態クラス
+    class HistoryFewCharsState : public HistoryState {
+        DECLARE_CLASS_LOGGER;
+    public:
+        // コンストラクタ
+        HistoryFewCharsState(HistoryFewCharsNode* pN) : HistoryState(pN) {
+            LOG_INFO(_T("CALLED"));
+            Name = logger.ClassNameT();
+        }
+
+        ~HistoryFewCharsState() { };
+
+        // 機能状態に対して生成時処理を実行する
+        bool DoProcOnCreated() {
+            _LOG_DEBUGH(_T("CALLED"));
+
+            if (!HISTORY_DIC) return false;
+
+            // 1～3文字履歴の取得
+            MString key;
+            candLen = -3;
+            setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, candLen), key);
+
+            // 前状態にチェインする
+            return true;
+        }
+
+    };
+    DEFINE_CLASS_LOGGER(HistoryFewCharsState);
 
     // -------------------------------------------------------------------
     // 1文字履歴機能状態クラス
@@ -1177,6 +1208,32 @@ Node* HistoryNodeBuilder::CreateNode() {
 
     HISTORY_NODE = new HistoryNode();
     return HISTORY_NODE;
+}
+
+// -------------------------------------------------------------------
+// HistoryFewCharsNode - 1～3文字履歴機能ノード
+DEFINE_CLASS_LOGGER(HistoryFewCharsNode);
+
+// コンストラクタ
+HistoryFewCharsNode::HistoryFewCharsNode() {
+    LOG_INFO(_T("CALLED: constructor"));
+}
+
+// デストラクタ
+HistoryFewCharsNode::~HistoryFewCharsNode() {
+}
+
+// 当ノードを処理する State インスタンスを作成する
+State* HistoryFewCharsNode::CreateState() {
+    return new HistoryFewCharsState(this);
+}
+
+// -------------------------------------------------------------------
+// HistoryFewCharsNodeBuilder - 1～3文字履歴機能ノードビルダー
+DEFINE_CLASS_LOGGER(HistoryFewCharsNodeBuilder);
+
+Node* HistoryFewCharsNodeBuilder::CreateNode() {
+    return new HistoryFewCharsNode();
 }
 
 // -------------------------------------------------------------------

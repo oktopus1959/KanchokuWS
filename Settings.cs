@@ -255,6 +255,8 @@ namespace KanchokuWS
         public static string HistoryKeySeq { get; set; }
         /// <summary>履歴検索(1文字)を呼び出す打鍵列</summary>
         public static string HistoryOneCharKeySeq { get; set; }
+        /// <summary>履歴検索(1～3文字)を呼び出す打鍵列</summary>
+        public static string HistoryFewCharsKeySeq { get; set; }
         /// <summary>交ぜ書きを呼び出す打鍵列</summary>
         public static string MazegakiKeySeq { get; set; }
         /// <summary>部首合成を呼び出す打鍵列</summary>
@@ -861,6 +863,7 @@ namespace KanchokuWS
             NextThroughKeySeq = addDecoderSetting("nextThroughKeySeq");
             HistoryKeySeq = addDecoderSetting("historyKeySeq");
             HistoryOneCharKeySeq = addDecoderSetting("historyOneCharKeySeq");
+            HistoryFewCharsKeySeq = addDecoderSetting("historyFewCharsKeySeq");
             MazegakiKeySeq = addDecoderSetting("mazegakiKeySeq");
             BushuCompKeySeq = addDecoderSetting("bushuCompKeySeq");
             BushuAssocKeySeq = addDecoderSetting("bushuAssocKeySeq");
