@@ -591,6 +591,7 @@ namespace KanchokuWS
                                 }
                                 bool ctrl = items[2]._startsWith("^");
                                 var name = items[2].Replace("^", "");
+                                //int deckey = items[2]._parseInt(-1, -1)._geZeroOr(() => specialDecKeysFromName._safeGet(name)); // 数字による直接定義もOK ⇒ と思ったが、mod の拡張面で定義すればよいだけ
                                 int deckey = specialDecKeysFromName._safeGet(name);
                                 if (ctrl) {
                                     logger.DebugH(() => $"deckey={deckey:x}H({deckey}), ctrl={ctrl}");
