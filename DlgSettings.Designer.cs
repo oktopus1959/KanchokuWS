@@ -1992,6 +1992,7 @@ namespace KanchokuWS
             this.button_showPaddingsDesc.Size = new System.Drawing.Size(92, 23);
             this.button_showPaddingsDesc.TabIndex = 10;
             this.button_showPaddingsDesc.Text = "余白情報表示";
+            this.toolTip1.SetToolTip(this.button_showPaddingsDesc, "通常鍵盤、中央鍵盤、縦列鍵盤の現在の余白値を表示します。");
             this.button_showPaddingsDesc.UseVisualStyleBackColor = true;
             this.button_showPaddingsDesc.Click += new System.EventHandler(this.button_showPaddingsDesc_Click);
             // 
