@@ -2291,9 +2291,7 @@ namespace KanchokuWS
             this.tabPage_keyAssign.Controls.Add(this.groupBox32);
             this.tabPage_keyAssign.Controls.Add(this.textBox1);
             this.tabPage_keyAssign.Controls.Add(this.groupBox31);
-            this.tabPage_keyAssign.Controls.Add(this.textBox_historyOneCharKeySeq);
             this.tabPage_keyAssign.Controls.Add(this.label99);
-            this.tabPage_keyAssign.Controls.Add(this.label66);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignClose);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignEnter);
             this.tabPage_keyAssign.Controls.Add(this.groupBox30);
@@ -2435,8 +2433,10 @@ namespace KanchokuWS
             this.groupBox30.Controls.Add(this.label81);
             this.groupBox30.Controls.Add(this.textBox_hankakuKatakanaOneShotKeySeq);
             this.groupBox30.Controls.Add(this.label75);
+            this.groupBox30.Controls.Add(this.textBox_historyOneCharKeySeq);
             this.groupBox30.Controls.Add(this.textBox_katakanaOneShotKeySeq);
             this.groupBox30.Controls.Add(this.label65);
+            this.groupBox30.Controls.Add(this.label66);
             this.groupBox30.Controls.Add(this.textBox_bushuAssocDirectKeySeq);
             this.groupBox30.Controls.Add(this.label63);
             this.groupBox30.Controls.Add(this.textBox_bushuAssocKeySeq);
@@ -2457,17 +2457,17 @@ namespace KanchokuWS
             // textBox_blockerSetterOneShotKeySeq
             // 
             this.textBox_blockerSetterOneShotKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_blockerSetterOneShotKeySeq.Location = new System.Drawing.Point(105, 211);
+            this.textBox_blockerSetterOneShotKeySeq.Location = new System.Drawing.Point(105, 217);
             this.textBox_blockerSetterOneShotKeySeq.Name = "textBox_blockerSetterOneShotKeySeq";
             this.textBox_blockerSetterOneShotKeySeq.Size = new System.Drawing.Size(56, 19);
-            this.textBox_blockerSetterOneShotKeySeq.TabIndex = 8;
+            this.textBox_blockerSetterOneShotKeySeq.TabIndex = 9;
             this.toolTip1.SetToolTip(this.textBox_blockerSetterOneShotKeySeq, "末尾文字のブロッカーを設定または解除します。\r\n\r\nブロッカーを設定すると、ミニバッファに縦線(\'|\')が表示され、\r\n履歴や交ぜ書きの際の文字列採取がそこでブロ" +
         "ックされます。\r\nもう一度呼び出すとブロッカーが解除されます。");
             // 
             // label81
             // 
             this.label81.AutoSize = true;
-            this.label81.Location = new System.Drawing.Point(7, 213);
+            this.label81.Location = new System.Drawing.Point(7, 219);
             this.label81.Name = "label81";
             this.label81.Size = new System.Drawing.Size(74, 15);
             this.label81.TabIndex = 16;
@@ -2476,16 +2476,16 @@ namespace KanchokuWS
             // textBox_hankakuKatakanaOneShotKeySeq
             // 
             this.textBox_hankakuKatakanaOneShotKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_hankakuKatakanaOneShotKeySeq.Location = new System.Drawing.Point(105, 187);
+            this.textBox_hankakuKatakanaOneShotKeySeq.Location = new System.Drawing.Point(105, 195);
             this.textBox_hankakuKatakanaOneShotKeySeq.Name = "textBox_hankakuKatakanaOneShotKeySeq";
             this.textBox_hankakuKatakanaOneShotKeySeq.Size = new System.Drawing.Size(56, 19);
-            this.textBox_hankakuKatakanaOneShotKeySeq.TabIndex = 7;
+            this.textBox_hankakuKatakanaOneShotKeySeq.TabIndex = 8;
             this.toolTip1.SetToolTip(this.textBox_hankakuKatakanaOneShotKeySeq, "直前に出力したカタカナ列を半角カタカナに置換します。");
             // 
             // label75
             // 
             this.label75.AutoSize = true;
-            this.label75.Location = new System.Drawing.Point(7, 189);
+            this.label75.Location = new System.Drawing.Point(7, 197);
             this.label75.Name = "label75";
             this.label75.Size = new System.Drawing.Size(79, 15);
             this.label75.TabIndex = 14;
@@ -2494,37 +2494,35 @@ namespace KanchokuWS
             // textBox_historyOneCharKeySeq
             // 
             this.textBox_historyOneCharKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_historyOneCharKeySeq.Location = new System.Drawing.Point(115, 230);
+            this.textBox_historyOneCharKeySeq.Location = new System.Drawing.Point(105, 41);
             this.textBox_historyOneCharKeySeq.Name = "textBox_historyOneCharKeySeq";
             this.textBox_historyOneCharKeySeq.Size = new System.Drawing.Size(56, 19);
             this.textBox_historyOneCharKeySeq.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_historyOneCharKeySeq, "入力履歴のうち、1～3文字だけの候補を表示します。");
-            this.textBox_historyOneCharKeySeq.Visible = false;
+            this.toolTip1.SetToolTip(this.textBox_historyOneCharKeySeq, "入力履歴のうち、1文字だけの候補を表示します。");
             // 
             // label66
             // 
             this.label66.AutoSize = true;
-            this.label66.Location = new System.Drawing.Point(17, 232);
+            this.label66.Location = new System.Drawing.Point(7, 43);
             this.label66.Name = "label66";
-            this.label66.Size = new System.Drawing.Size(99, 15);
+            this.label66.Size = new System.Drawing.Size(93, 15);
             this.label66.TabIndex = 12;
-            this.label66.Text = "履歴検索(数文字)";
-            this.label66.Visible = false;
+            this.label66.Text = "履歴検索(1文字)";
             // 
             // textBox_katakanaOneShotKeySeq
             // 
             this.textBox_katakanaOneShotKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_katakanaOneShotKeySeq.Location = new System.Drawing.Point(105, 163);
+            this.textBox_katakanaOneShotKeySeq.Location = new System.Drawing.Point(105, 173);
             this.textBox_katakanaOneShotKeySeq.Name = "textBox_katakanaOneShotKeySeq";
             this.textBox_katakanaOneShotKeySeq.Size = new System.Drawing.Size(56, 19);
-            this.textBox_katakanaOneShotKeySeq.TabIndex = 6;
+            this.textBox_katakanaOneShotKeySeq.TabIndex = 7;
             this.toolTip1.SetToolTip(this.textBox_katakanaOneShotKeySeq, "直前に出力したひらがな列をカタカナに置換します。\r\n\r\n連続するひらがな列の途中から変換することはできません。\r\nあらかじめ Ctrl-G などでミニバッファをク" +
         "リアしておいてから\r\nカタカナ変換したいひらがな列を入力してください。");
             // 
             // label65
             // 
             this.label65.AutoSize = true;
-            this.label65.Location = new System.Drawing.Point(7, 165);
+            this.label65.Location = new System.Drawing.Point(7, 175);
             this.label65.Name = "label65";
             this.label65.Size = new System.Drawing.Size(99, 15);
             this.label65.TabIndex = 10;
@@ -2533,16 +2531,16 @@ namespace KanchokuWS
             // textBox_bushuAssocDirectKeySeq
             // 
             this.textBox_bushuAssocDirectKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_bushuAssocDirectKeySeq.Location = new System.Drawing.Point(105, 139);
+            this.textBox_bushuAssocDirectKeySeq.Location = new System.Drawing.Point(105, 151);
             this.textBox_bushuAssocDirectKeySeq.Name = "textBox_bushuAssocDirectKeySeq";
             this.textBox_bushuAssocDirectKeySeq.Size = new System.Drawing.Size(56, 19);
-            this.textBox_bushuAssocDirectKeySeq.TabIndex = 5;
+            this.textBox_bushuAssocDirectKeySeq.TabIndex = 6;
             this.toolTip1.SetToolTip(this.textBox_bushuAssocDirectKeySeq, "直前の文字に対して、その連想文字候補の\r\n先頭のもので置換します。\r\n\r\nなお、部首合成の直後に当機能を呼び出すと、\r\n次の部首合成候補出力となります。");
             // 
             // label63
             // 
             this.label63.AutoSize = true;
-            this.label63.Location = new System.Drawing.Point(7, 141);
+            this.label63.Location = new System.Drawing.Point(7, 153);
             this.label63.Name = "label63";
             this.label63.Size = new System.Drawing.Size(79, 15);
             this.label63.TabIndex = 8;
@@ -2551,16 +2549,16 @@ namespace KanchokuWS
             // textBox_bushuAssocKeySeq
             // 
             this.textBox_bushuAssocKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_bushuAssocKeySeq.Location = new System.Drawing.Point(105, 115);
+            this.textBox_bushuAssocKeySeq.Location = new System.Drawing.Point(105, 129);
             this.textBox_bushuAssocKeySeq.Name = "textBox_bushuAssocKeySeq";
             this.textBox_bushuAssocKeySeq.Size = new System.Drawing.Size(56, 19);
-            this.textBox_bushuAssocKeySeq.TabIndex = 4;
+            this.textBox_bushuAssocKeySeq.TabIndex = 5;
             this.toolTip1.SetToolTip(this.textBox_bushuAssocKeySeq, "直前の文字に対する連想文字候補を表示します。");
             // 
             // label62
             // 
             this.label62.AutoSize = true;
-            this.label62.Location = new System.Drawing.Point(7, 117);
+            this.label62.Location = new System.Drawing.Point(7, 131);
             this.label62.Name = "label62";
             this.label62.Size = new System.Drawing.Size(79, 15);
             this.label62.TabIndex = 6;
@@ -2569,16 +2567,16 @@ namespace KanchokuWS
             // textBox_bushuCompKeySeq
             // 
             this.textBox_bushuCompKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_bushuCompKeySeq.Location = new System.Drawing.Point(105, 91);
+            this.textBox_bushuCompKeySeq.Location = new System.Drawing.Point(105, 107);
             this.textBox_bushuCompKeySeq.Name = "textBox_bushuCompKeySeq";
             this.textBox_bushuCompKeySeq.Size = new System.Drawing.Size(56, 19);
-            this.textBox_bushuCompKeySeq.TabIndex = 3;
+            this.textBox_bushuCompKeySeq.TabIndex = 4;
             this.toolTip1.SetToolTip(this.textBox_bushuCompKeySeq, "部首合成機能を呼び出します。");
             // 
             // label61
             // 
             this.label61.AutoSize = true;
-            this.label61.Location = new System.Drawing.Point(7, 93);
+            this.label61.Location = new System.Drawing.Point(7, 109);
             this.label61.Name = "label61";
             this.label61.Size = new System.Drawing.Size(55, 15);
             this.label61.TabIndex = 4;
@@ -2587,16 +2585,16 @@ namespace KanchokuWS
             // textBox_mazegakiKeySeq
             // 
             this.textBox_mazegakiKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_mazegakiKeySeq.Location = new System.Drawing.Point(105, 67);
+            this.textBox_mazegakiKeySeq.Location = new System.Drawing.Point(105, 85);
             this.textBox_mazegakiKeySeq.Name = "textBox_mazegakiKeySeq";
             this.textBox_mazegakiKeySeq.Size = new System.Drawing.Size(56, 19);
-            this.textBox_mazegakiKeySeq.TabIndex = 2;
+            this.textBox_mazegakiKeySeq.TabIndex = 3;
             this.toolTip1.SetToolTip(this.textBox_mazegakiKeySeq, "交ぜ書き変換機能を呼び出します。");
             // 
             // label60
             // 
             this.label60.AutoSize = true;
-            this.label60.Location = new System.Drawing.Point(7, 69);
+            this.label60.Location = new System.Drawing.Point(7, 87);
             this.label60.Name = "label60";
             this.label60.Size = new System.Drawing.Size(74, 15);
             this.label60.TabIndex = 2;
@@ -2644,7 +2642,7 @@ namespace KanchokuWS
             this.textBox_nextThroughKeySeq.Name = "textBox_nextThroughKeySeq";
             this.textBox_nextThroughKeySeq.Size = new System.Drawing.Size(56, 19);
             this.textBox_nextThroughKeySeq.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.textBox_nextThroughKeySeq, "次に打鍵する1文字をそのまま出力します。");
+            this.toolTip1.SetToolTip(this.textBox_nextThroughKeySeq, "次に打鍵するキー文字をそのまま出力します。");
             // 
             // label70
             // 
@@ -4964,16 +4962,16 @@ namespace KanchokuWS
             // textBox_historyFewCharsKeySeq
             // 
             this.textBox_historyFewCharsKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_historyFewCharsKeySeq.Location = new System.Drawing.Point(105, 43);
+            this.textBox_historyFewCharsKeySeq.Location = new System.Drawing.Point(105, 63);
             this.textBox_historyFewCharsKeySeq.Name = "textBox_historyFewCharsKeySeq";
             this.textBox_historyFewCharsKeySeq.Size = new System.Drawing.Size(56, 19);
-            this.textBox_historyFewCharsKeySeq.TabIndex = 1;
+            this.textBox_historyFewCharsKeySeq.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox_historyFewCharsKeySeq, "入力履歴のうち、1～3文字だけの候補を表示します。");
             // 
             // label106
             // 
             this.label106.AutoSize = true;
-            this.label106.Location = new System.Drawing.Point(7, 45);
+            this.label106.Location = new System.Drawing.Point(7, 65);
             this.label106.Name = "label106";
             this.label106.Size = new System.Drawing.Size(99, 15);
             this.label106.TabIndex = 18;
