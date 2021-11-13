@@ -629,8 +629,8 @@ namespace KanchokuWS
             this.button_openTableFile2.Size = new System.Drawing.Size(34, 23);
             this.button_openTableFile2.TabIndex = 5;
             this.button_openTableFile2.Text = "開く";
-            this.toolTip1.SetToolTip(this.button_openTableFile2, "テーブルファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行すると" +
-        "、\r\nその内容が反映されます。\r\n");
+            this.toolTip1.SetToolTip(this.button_openTableFile2, "副テーブルファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行する" +
+        "と、\r\nその内容が反映されます。\r\n");
             this.button_openTableFile2.UseVisualStyleBackColor = true;
             this.button_openTableFile2.Click += new System.EventHandler(this.button_openTableFile2_Click);
             // 
@@ -643,18 +643,17 @@ namespace KanchokuWS
             this.textBox_tableFile2.Name = "textBox_tableFile2";
             this.textBox_tableFile2.Size = new System.Drawing.Size(137, 19);
             this.textBox_tableFile2.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.textBox_tableFile2, "打鍵から文字への変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることによ" +
-        "り、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\nファイル名を変更したり、テーブルの内容を修正した場合は、「再読込」を\r\n実行すると、その内容が反映されます" +
-        "。");
+            this.toolTip1.SetToolTip(this.textBox_tableFile2, "打鍵から文字への副変換テーブルファイルの設定\r\n\r\nファイルの内容は主テーブルファイルと同様です。\r\n切り替えコマンドにより、主・副テーブルファイルを切り替えるこ" +
+        "とができます。");
             // 
             // label104
             // 
             this.label104.AutoSize = true;
             this.label104.Location = new System.Drawing.Point(15, 65);
             this.label104.Name = "label104";
-            this.label104.Size = new System.Drawing.Size(83, 15);
+            this.label104.Size = new System.Drawing.Size(89, 15);
             this.label104.TabIndex = 35;
-            this.label104.Text = "テーブルファイル2";
+            this.label104.Text = "副テーブルファイル";
             // 
             // button_openHistoryFile
             // 
@@ -750,8 +749,8 @@ namespace KanchokuWS
             this.button_openTableFile.Size = new System.Drawing.Size(34, 23);
             this.button_openTableFile.TabIndex = 3;
             this.button_openTableFile.Text = "開く";
-            this.toolTip1.SetToolTip(this.button_openTableFile, "テーブルファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行すると" +
-        "、\r\nその内容が反映されます。\r\n");
+            this.toolTip1.SetToolTip(this.button_openTableFile, "主テーブルファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行する" +
+        "と、\r\nその内容が反映されます。\r\n");
             this.button_openTableFile.UseVisualStyleBackColor = true;
             this.button_openTableFile.Click += new System.EventHandler(this.button_openTableFile_Click);
             // 
@@ -818,18 +817,18 @@ namespace KanchokuWS
             this.textBox_tableFile.Name = "textBox_tableFile";
             this.textBox_tableFile.Size = new System.Drawing.Size(137, 19);
             this.textBox_tableFile.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_tableFile, "打鍵から文字への変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることによ" +
-        "り、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\nファイル名を変更したり、テーブルの内容を修正した場合は、「再読込」を\r\n実行すると、その内容が反映されます" +
-        "。");
+            this.toolTip1.SetToolTip(this.textBox_tableFile, "打鍵から文字への主変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることに" +
+        "より、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\nファイル名を変更したり、テーブルの内容を修正した場合は、「再読込」を\r\n実行すると、その内容が反映されま" +
+        "す。");
             // 
             // label18
             // 
             this.label18.AutoSize = true;
             this.label18.Location = new System.Drawing.Point(15, 41);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(83, 15);
+            this.label18.Size = new System.Drawing.Size(89, 15);
             this.label18.TabIndex = 16;
-            this.label18.Text = "テーブルファイル1";
+            this.label18.Text = "主テーブルファイル";
             // 
             // textBox_deckeyCharsFile
             // 
