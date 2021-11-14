@@ -208,6 +208,13 @@ bin\KanchokuWS.exe を実行します。CMDプロンプトから実行しても�
 
 ![Kanchoku Mode Key](image/kanchoku-mode-key.png)
 
+キーの指定は、仮想キーコード(16進表記)で行います。
+主なキーについてはあらかじめコンボボックスに用意してありますが、
+環境によっては別の仮想キーコードに変更されていることがあります。
+実際にキーに割り当てられている仮想キーコードを確認するには、
+同梱されている `KeyboardHookMonitor` を利用してください。
+[こちら](https://github.com/oktopus1959/KeyboardHookMonitor#readme)に説明があります。
+
 設定の詳細については、キー選択コンボボックスのツールチップを参照してください。
 
 ### 仮想鍵盤とモード標識
