@@ -553,9 +553,19 @@ namespace KanchokuWS
             }
 
             if (kanchokuCode < 0) {
-                kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || shift
-                    ? VirtualKeys.GetModConvertedDecKeyFromCombo(mod, (uint)vkey)
-                    : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
+                if (leftCtrl) {
+                    // mod-conversion.txt で lctrl に定義されているものを検索
+                    kanchokuCode = VirtualKeys.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_LCTRL, (uint)vkey);
+                }
+                if (kanchokuCode < 0 && rightCtrl) {
+                    // mod-conversion.txt で rctrl に定義されているものを検索
+                    kanchokuCode = VirtualKeys.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_RCTRL, (uint)vkey);
+                }
+                if (kanchokuCode < 0) {
+                    kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || shift
+                        ? VirtualKeys.GetModConvertedDecKeyFromCombo(mod, (uint)vkey)
+                        : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
+                }
                 if (kanchokuCode >= 0) mod = 0;     // 何かのコードに変換されたら、 Ctrl や Shift の修飾は無かったことにしておく
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-B: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
             }

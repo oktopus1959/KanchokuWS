@@ -60,7 +60,7 @@ void State::DoDeckeyPreProc(int deckey) {
         if (!pNext) {
             // TODO: AD HOC
             if (MAZEGAKI_NODE) {
-                if (deckey == RIGHT_TRIANGLE_DECKEY) {
+                if (deckey == RIGHT_TRIANGLE_DECKEY || deckey == RIGHT_SHIFT_BLOCKER_DECKEY) {
                     if ((SETTINGS->mazeRightShiftYomiPos || OUTPUT_STACK->isLastMazeBlocker()) && MAZEGAKI_NODE->RightShiftYomiStartPos()) {
                         _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE: yomi start pos right shifted"));
                         OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
@@ -72,7 +72,7 @@ void State::DoDeckeyPreProc(int deckey) {
                         SetNextNodeMaybe(MAZEGAKI_NODE.get());
                         return;
                     }
-                } else if (deckey == LEFT_TRIANGLE_DECKEY && MAZEGAKI_NODE->LeftShiftBlocker()) {
+                } else if ((deckey == LEFT_TRIANGLE_DECKEY || deckey == LEFT_SHIFT_BLOCKER_DECKEY) && MAZEGAKI_NODE->LeftShiftBlocker()) {
                     _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE: left shift blocker"));
                     SetNextNodeMaybe(MAZEGAKI_NODE.get());
                     return;

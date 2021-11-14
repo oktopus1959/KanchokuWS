@@ -580,7 +580,7 @@ namespace KanchokuWS
                             drawRomanOrHiraganaMode(false, bHiraganaStrokeGuideMode);
                         }
                         return true;
-                    case DecoderKeys.EXCHANGE_CODE_TABLE:
+                    case DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY:
                         logger.Info("EXCHANGE_CODE_TABLE");
                         if (IsDecoderActive && DecoderOutput.IsWaitingFirstStroke()) {
                             ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え

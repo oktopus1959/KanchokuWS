@@ -41,6 +41,15 @@ namespace KanchokuWS
         // VKEY に対する modifier RSHIFT
         public const uint MOD_RSHIFT = 0x2000;
 
+        // VKEY に対する modifier LCTRL
+        public const uint MOD_LCTRL = 0x4000;
+
+        // VKEY に対する modifier RCTRL
+        public const uint MOD_RCTRL = 0x8000;
+
+        // 単打用キー
+        public const uint MOD_SINGLE = 0x10000;
+
         public static uint MakeModifier(bool ctrl, bool shift)
         {
             return (ctrl ? MOD_CONTROL : 0) + (shift ? MOD_SHIFT : 0);
@@ -476,9 +485,20 @@ namespace KanchokuWS
             {"alnum", KeyModifiers.MOD_ALNUM },
             {"nfer", KeyModifiers.MOD_NFER },
             {"xfer", KeyModifiers.MOD_XFER },
-            //{"kana", KeyModifiers.MOD_KANA },
+            {"kana", KeyModifiers.MOD_SINGLE },
+            {"lctrl", KeyModifiers.MOD_LCTRL },
+            {"rctrl", KeyModifiers.MOD_RCTRL },
             {"rshift", KeyModifiers.MOD_RSHIFT },
+            {"zenkaku", KeyModifiers.MOD_SINGLE },
         };
+
+        /// <summary>(拡張)シフト面に割り当てられる拡張修飾キーか (kana, lctrl, rctrl 以外)</summary>
+        /// <param name="mod"></param>
+        /// <returns></returns>
+        private static bool isPlaneMappedModifier(uint mod)
+        {
+            return (mod & (KeyModifiers.MOD_SINGLE | KeyModifiers.MOD_LCTRL | KeyModifiers.MOD_RCTRL)) == 0;
+        }
 
         private static Dictionary<string, int> specialDecKeysFromName = new Dictionary<string, int>() {
             {"bs", DecoderKeys.BS_DECKEY },
@@ -524,7 +544,9 @@ namespace KanchokuWS
             {"romanstrokeguide", DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE},
             {"upperromanstrokeguide", DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE},
             {"hiraganastrokeguide", DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE},
-            {"exchangecodetable", DecoderKeys.EXCHANGE_CODE_TABLE},
+            {"exchangecodetable", DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY},
+            {"leftshiftblocker", DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY},
+            {"rightshiftblocker", DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY},
             //{"^a", DecoderKeys.CTRL_},
         };
 
@@ -593,8 +615,8 @@ namespace KanchokuWS
                                 var name = items[2].Replace("^", "");
                                 //int deckey = items[2]._parseInt(-1, -1)._geZeroOr(() => specialDecKeysFromName._safeGet(name)); // 数字による直接定義もOK ⇒ と思ったが、mod の拡張面で定義すればよいだけ
                                 int deckey = specialDecKeysFromName._safeGet(name);
+                                logger.DebugH(() => $"mod={mod:x}H, vkey={vkey:x}H, deckey={deckey:x}H({deckey}), ctrl={ctrl}, name={name}, rawLine={rawLine}");
                                 if (ctrl) {
-                                    logger.DebugH(() => $"deckey={deckey:x}H({deckey}), ctrl={ctrl}");
                                     uint decVkey = 0;
                                     if (name._safeLength() == 1 && name._ge("a") && name._le("z")) {
                                         decVkey = faceToVkey._safeGet(name._toUpper());
@@ -607,16 +629,16 @@ namespace KanchokuWS
                                     if (deckey > 0) AddModifiedDeckey(deckey, KeyModifiers.MOD_CONTROL, decVkey);
                                 }
                                 if (vkey > 0 && deckey > 0) {
-                                    logger.DebugH(() => $"AddModConvertedDecKeyFromCombo: deckey={deckey}, mod={mod}, vkey={vkey}, rawLine={rawLine}");
+                                    logger.DebugH(() => $"AddModConvertedDecKeyFromCombo: deckey={deckey}, mod={mod}, vkey={vkey}");
                                     if (mod == 0) {
                                         AddDecKeyAndCombo(deckey, 0, vkey);
                                     } else {
                                         AddModConvertedDecKeyFromCombo(deckey, mod, vkey);
-                                    }
-                                    if (!shiftPlaneForShiftFuncKey.ContainsKey(mod)) {
-                                        // mod に対する ShiftPlane が設定されていない場合は、拡張シフトB面を割り当てる
-                                        shiftPlaneForShiftFuncKey[mod] = ShiftPlane.PlaneB;
-                                        shiftPlaneForShiftFuncKeyWhenDecoderOff[mod] = ShiftPlane.PlaneB;
+                                        if (isPlaneMappedModifier(mod) && !shiftPlaneForShiftFuncKey.ContainsKey(mod)) {
+                                            // mod に対する ShiftPlane が設定されていない場合は、拡張シフトB面を割り当てる
+                                            shiftPlaneForShiftFuncKey[mod] = ShiftPlane.PlaneB;
+                                            shiftPlaneForShiftFuncKeyWhenDecoderOff[mod] = ShiftPlane.PlaneB;
+                                        }
                                     }
                                     continue;
                                 }
