@@ -469,6 +469,12 @@ namespace {
             if (c == 'S' || c == 's') {
                 shiftOffset = SHIFT_DECKEY_START;
                 c = getNextChar();
+            } else if (c == 'A' || c == 'a') {
+                shiftOffset = SHIFT_A_DECKEY_START;
+                c = getNextChar();
+            } else if (c == 'B' || c == 'b') {
+                shiftOffset = SHIFT_B_DECKEY_START;
+                c = getNextChar();
             } else if (c == 'X' || c == 'x') {
                 shiftOffset = FUNC_DECKEY_START;
                 c = getNextChar();
@@ -563,12 +569,18 @@ void StrokeTableNode::AssignFucntion(const tstring& keys, const tstring& name) {
     if (keys.empty()) return;
 
     std::vector<size_t> keyCodes;
-    std::wregex reDigits(_T("^[SsXx]?[0-9]+$"));
+    std::wregex reDigits(_T("^[SsAaBbXx]?[0-9]+$"));
     for (auto k : utils::split(keys, ',')) {
         if (k.empty() || !std::regex_match(k, reDigits)) return;    // 10進数でなければエラー
         int shiftOffset = 0;
         if (k[0] == 'S' || k[0] == 's') {
             shiftOffset = SHIFT_DECKEY_START;
+            k = k.substr(1);
+        } else if (k[0] == 'A' || k[0] == 'a') {
+            shiftOffset = SHIFT_A_DECKEY_START;
+            k = k.substr(1);
+        } else if (k[0] == 'B' || k[0] == 'b') {
+            shiftOffset = SHIFT_B_DECKEY_START;
             k = k.substr(1);
         } else if (k[0] == 'X' || k[0] == 'x') {
             shiftOffset = FUNC_DECKEY_START;

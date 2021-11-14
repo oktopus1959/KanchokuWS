@@ -2340,7 +2340,7 @@ namespace KanchokuWS
             // groupBox32
             // 
             this.groupBox32.Controls.Add(this.label71);
-            this.groupBox32.Location = new System.Drawing.Point(9, 265);
+            this.groupBox32.Location = new System.Drawing.Point(9, 273);
             this.groupBox32.Name = "groupBox32";
             this.groupBox32.Size = new System.Drawing.Size(456, 64);
             this.groupBox32.TabIndex = 15;
@@ -2374,7 +2374,7 @@ namespace KanchokuWS
             this.groupBox31.Controls.Add(this.label69);
             this.groupBox31.Location = new System.Drawing.Point(357, 5);
             this.groupBox31.Name = "groupBox31";
-            this.groupBox31.Size = new System.Drawing.Size(219, 255);
+            this.groupBox31.Size = new System.Drawing.Size(219, 265);
             this.groupBox31.TabIndex = 14;
             this.groupBox31.TabStop = false;
             this.groupBox31.Text = "説明";
@@ -2385,7 +2385,7 @@ namespace KanchokuWS
             this.label69.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label69.Location = new System.Drawing.Point(1, 19);
             this.label69.Name = "label69";
-            this.label69.Size = new System.Drawing.Size(224, 225);
+            this.label69.Size = new System.Drawing.Size(223, 240);
             this.label69.TabIndex = 1;
             this.label69.Text = resources.GetString("label69.Text");
             this.toolTip1.SetToolTip(this.label69, resources.GetString("label69.ToolTip"));
@@ -2449,7 +2449,7 @@ namespace KanchokuWS
             this.groupBox30.Controls.Add(this.label58);
             this.groupBox30.Location = new System.Drawing.Point(182, 5);
             this.groupBox30.Name = "groupBox30";
-            this.groupBox30.Size = new System.Drawing.Size(168, 255);
+            this.groupBox30.Size = new System.Drawing.Size(168, 245);
             this.groupBox30.TabIndex = 1;
             this.groupBox30.TabStop = false;
             this.groupBox30.Text = "後置呼び出し機能";
@@ -2467,11 +2467,11 @@ namespace KanchokuWS
             // label81
             // 
             this.label81.AutoSize = true;
-            this.label81.Location = new System.Drawing.Point(7, 219);
+            this.label81.Location = new System.Drawing.Point(4, 219);
             this.label81.Name = "label81";
-            this.label81.Size = new System.Drawing.Size(74, 15);
+            this.label81.Size = new System.Drawing.Size(103, 15);
             this.label81.TabIndex = 16;
-            this.label81.Text = "ブロッカー設定";
+            this.label81.Text = "ブロッカー設定/解除";
             // 
             // textBox_hankakuKatakanaOneShotKeySeq
             // 
