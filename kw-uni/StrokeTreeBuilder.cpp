@@ -137,7 +137,7 @@ namespace {
             StrokeTableNode* tblNode = new StrokeTableNode(0, TOTAL_DECKEY_NUM);
             setupShiftedKeyFunction(tblNode);
             //int treeCount = 0;
-            readNextToken();
+            readNextToken(0);
             while (currentToken != TOKEN::END) {
                 switch (currentToken) {
                 case TOKEN::LBRACE:
@@ -162,7 +162,7 @@ namespace {
                     parseError();
                     break;
                 }
-                readNextToken();
+                readNextToken(0);
             }
             return tblNode;
         }
@@ -178,10 +178,10 @@ namespace {
             wstring myGuideChars = getAndRemoveDefines(_T("defguide"));
 
             if (tblNode == 0) tblNode = new StrokeTableNode(depth);
-            int shiftPlaneOffset = depth == 0 ? shiftPlane * SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルート面だけに適用する
+            int shiftPlaneOffset = depth == 0 ? shiftPlane * SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートだけに適用する
             int n = 0;
             bool isPrevDelim = true;
-            readNextToken();
+            readNextToken(depth);
             while (currentToken != TOKEN::RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
                 case TOKEN::ARROW:
@@ -208,7 +208,7 @@ namespace {
                     break;
                 }
 
-                readNextToken();
+                readNextToken(depth);
             }
 
             if (!myGuideChars.empty()) {
@@ -232,7 +232,7 @@ namespace {
         }
 
         Node* createNodePositionedByArrowSub(StrokeTableNode* tblNode, int depth, int prevNth, int nth) {
-            readNextToken();
+            readNextToken(depth);
             if (currentToken == TOKEN::ARROW) {
                 if (tblNode == 0) tblNode = new StrokeTableNode(depth);
                 strokes.push_back(nth);
@@ -295,12 +295,12 @@ namespace {
         }
 
         // トークンひとつ読んで currentToken にセット
-        void readNextToken() {
-            currentToken = getToken();
+        void readNextToken(int depth) {
+            currentToken = getToken(depth);
         }
 
         // トークンを読む
-        TOKEN getToken() {
+        TOKEN getToken(int depth) {
             currentStr.clear();
             arrowIndex = -1;
             while (true) {
@@ -371,7 +371,7 @@ namespace {
 
                 case '-':
                     // 矢印記法
-                    if (parseArrow()) return TOKEN::ARROW;
+                    if (parseArrow(depth)) return TOKEN::ARROW;
                     break;
 
                 case 0:
@@ -462,7 +462,7 @@ namespace {
         }
 
         // ARROW: /-[SsXxPp]?[0-9]+>/
-        bool parseArrow() {
+        bool parseArrow(int depth) {
             int shiftOffset = 0;
             bool bShiftPlane = false;
             char_t c = getNextChar();
@@ -490,6 +490,8 @@ namespace {
                 c = getNextChar();
             }
             if (!bShiftPlane) {
+                // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
+                if (shiftPlane > 0 && depth == 0 && shiftOffset == 0) shiftOffset = shiftPlane * SHIFT_DECKEY_NUM;
                 arrowIndex += shiftOffset;
                 if (arrowIndex >= FUNC_DECKEY_END) parseError();
             } else {
