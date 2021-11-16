@@ -463,10 +463,13 @@ namespace {
 
         // ARROW: /-[SsXxPp]?[0-9]+>/
         bool parseArrow(int depth) {
-            int shiftOffset = 0;
+            int shiftOffset = -1;
             bool bShiftPlane = false;
             char_t c = getNextChar();
-            if (c == 'S' || c == 's') {
+            if (c == 'N' || c == 'n') {
+                shiftOffset = 0;
+                c = getNextChar();
+            } else if (c == 'S' || c == 's') {
                 shiftOffset = SHIFT_DECKEY_START;
                 c = getNextChar();
             } else if (c == 'A' || c == 'a') {
@@ -490,8 +493,10 @@ namespace {
                 c = getNextChar();
             }
             if (!bShiftPlane) {
-                // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
-                if (shiftPlane > 0 && depth == 0 && shiftOffset == 0) shiftOffset = shiftPlane * SHIFT_DECKEY_NUM;
+                if (shiftOffset < 0) {
+                    // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
+                    shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftOffset = shiftPlane * SHIFT_DECKEY_NUM : 0;
+                }
                 arrowIndex += shiftOffset;
                 if (arrowIndex >= FUNC_DECKEY_END) parseError();
             } else {
