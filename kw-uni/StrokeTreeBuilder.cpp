@@ -34,6 +34,7 @@ namespace {
         FUNCTION,       // @?
         SLASH,          // /
         ARROW,          // -n>
+        ARROW_BUNDLE,   // -*>-n>
     };
 
     // ビルトイン機能
@@ -136,22 +137,19 @@ namespace {
             // RootStrokeTable は機能キーやCtrl修飾も含めたテーブルとする
             StrokeTableNode* tblNode = new StrokeTableNode(0, TOTAL_DECKEY_NUM);
             setupShiftedKeyFunction(tblNode);
-            //int treeCount = 0;
             readNextToken(0);
             while (currentToken != TOKEN::END) {
                 switch (currentToken) {
                 case TOKEN::LBRACE:
-                    //++treeCount;
-                    //if (treeCount > 1) {
-                    //    // 現在のところ、トップレベルで2つ以上のブロックは許可していない
-                    //    parseError();
-                    //    break;
-                    //}
                     makeSubTree(tblNode, 0, 0);
                     break;
 
                 case TOKEN::ARROW:
                     createNodePositionedByArrow(tblNode, 0, arrowIndex);
+                    break;
+
+                case TOKEN::ARROW_BUNDLE:
+                    allocateArrowBundle(tblNode, 0, arrowIndex);
                     break;
 
                 case TOKEN::COMMA:             // ',' が来たら次のトークン待ち
@@ -167,7 +165,7 @@ namespace {
             return tblNode;
         }
 
-        // デフォルトのシフト面の機能ノードの設定(自身の文字を返す)
+        // デフォルトのシフト面の機能(自身の文字を返す)ノードの設定
         void setupShiftedKeyFunction(StrokeTableNode* tblNode) {
             for (size_t i = 0; i < SHIFT_DECKEY_NUM; ++i) {
                 tblNode->setNthChild(i + SHIFT_DECKEY_START, new MyCharNode());
@@ -178,7 +176,7 @@ namespace {
             wstring myGuideChars = getAndRemoveDefines(_T("defguide"));
 
             if (tblNode == 0) tblNode = new StrokeTableNode(depth);
-            int shiftPlaneOffset = depth == 0 ? shiftPlane * SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートだけに適用する
+            int shiftPlaneOffset = depth == 0 ? shiftPlane * SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             int n = 0;
             bool isPrevDelim = true;
             readNextToken(depth);
@@ -187,6 +185,10 @@ namespace {
                 case TOKEN::ARROW:
                     createNodePositionedByArrow(tblNode, prevNth, arrowIndex);
                     isPrevDelim = false;
+                    break;
+
+                case TOKEN::ARROW_BUNDLE:
+                    allocateArrowBundle(tblNode, 0, arrowIndex);
                     break;
 
                 case TOKEN::LBRACE:
@@ -222,7 +224,7 @@ namespace {
 
         void createNodePositionedByArrow(StrokeTableNode* tblNode, int prevNth, int idx) {
             int nextDepth = tblNode->depth() + 1;
-            _LOG_DEBUGH(_T("CALLED: currentLine=%d, depth=%d, idx=%d, prevN=%d"), lineNumber, nextDepth, idx, prevNth);
+            _LOG_DEBUGH(_T("CALLED: currentLine=%d, nextDepth=%d, idx=%d, prevN=%d"), lineNumber, nextDepth, idx, prevNth);
             Node* node = tblNode->getNth(idx);
             if (node && node->isStrokeTableNode()) {
                 createNodePositionedByArrowSub(dynamic_cast<StrokeTableNode*>(node), nextDepth, prevNth, idx);
@@ -241,6 +243,63 @@ namespace {
                 return tblNode;
             }
             return createNode(currentToken, depth, prevNth, nth);
+        }
+
+        // 矢印束記法(-*>-nn>)を第1打鍵位置に従って配置する
+        void allocateArrowBundle(StrokeTableNode* tblNode, int depth, int nextArrowIdx) {
+            _LOG_DEBUGH(_T("tblNode=%p, depth=%d, nextArrowIdx=%d"), tblNode, depth, nextArrowIdx);
+
+            if (!tblNode) return;
+
+            int shiftPlaneOffset = depth == 0 ? shiftPlane * SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
+            int n = 0;
+            bool isPrevDelim = true;
+            readNextToken(depth);
+            if (currentToken != TOKEN::LBRACE) { // 直後は '{' でブロックの始まりである必要がある
+                parseError();
+                return;
+            }
+            readNextToken(depth);
+            while (currentToken != TOKEN::RBRACE) { // '}' でブロックの終わり
+                switch (currentToken) {
+                case TOKEN::ARROW:
+                    createNodePositionedByArrow(getNodePositionedByArrowBundle(tblNode, arrowIndex), 0, nextArrowIdx);
+                    isPrevDelim = false;
+                    break;
+
+                case TOKEN::LBRACE:
+                case TOKEN::STRING:             // "str" : 文字列ノード
+                case TOKEN::FUNCTION:           // @c : 機能ノード
+                    getNodePositionedByArrowBundle(tblNode, n + shiftPlaneOffset)->setNthChild(nextArrowIdx, createNode(currentToken, depth + 2, 0, nextArrowIdx));
+                    ++n;
+                    isPrevDelim = false;
+                    break;
+
+                case TOKEN::COMMA:              // 次のトークン待ち
+                case TOKEN::SLASH:              // 次のトークン待ち
+                    if (isPrevDelim) ++n;
+                    isPrevDelim = true;
+                    break;
+
+                default:                        // 途中でファイルが終わったりした場合 : エラー
+                    parseError();
+                    break;
+                }
+
+                readNextToken(depth);
+            }
+
+            strokes.resize(depth);
+        }
+
+        StrokeTableNode* getNodePositionedByArrowBundle(StrokeTableNode* tblNode, int idx) {
+            _LOG_DEBUGH(_T("CALLED: currentLine=%d, idx=%d"), lineNumber, idx);
+            Node* node = tblNode->getNth(idx);
+            if (node && node->isStrokeTableNode()) return dynamic_cast<StrokeTableNode*>(node);
+
+            StrokeTableNode* stNode = new StrokeTableNode(tblNode->depth() + 1);
+            tblNode->setNthChild(idx, stNode);
+            return stNode;
         }
 
         Node* createNode(TOKEN token, int depth, int prevNth, int nth) {
@@ -369,9 +428,16 @@ namespace {
                     readString();
                     return TOKEN::STRING;
 
-                case '-':
-                    // 矢印記法
-                    if (parseArrow(depth)) return TOKEN::ARROW;
+                case '-': {
+                    char_t c = getNextChar();
+                    if (c == '*') {
+                        // 矢印束記法
+                        if (parseArrowBundle()) return TOKEN::ARROW_BUNDLE;
+                    } else {
+                        // 矢印記法
+                        if (parseArrow(depth, c)) return TOKEN::ARROW;
+                    }
+                }
                     break;
 
                 case 0:
@@ -462,10 +528,10 @@ namespace {
         }
 
         // ARROW: /-[SsXxPp]?[0-9]+>/
-        bool parseArrow(int depth) {
+        bool parseArrow(int depth, char_t c) {
             int shiftOffset = -1;
             bool bShiftPlane = false;
-            char_t c = getNextChar();
+            //char_t c = getNextChar();
             if (c == 'N' || c == 'n') {
                 shiftOffset = 0;
                 c = getNextChar();
@@ -504,6 +570,25 @@ namespace {
                 if (arrowIndex >= NUM_SHIFT_PLANE) parseError();
                 return false;
             }
+            if (c != '>') parseError();
+            return true;
+        }
+
+        // ARROW_BUNLE: -*>-nn>
+        bool parseArrowBundle() {
+            char_t c = getNextChar();
+            if (c != '>') parseError();
+            c = getNextChar();
+            if (c != '-') parseError();
+            c = getNextChar();
+            if (!is_numeral(c)) parseError();
+            arrowIndex = c - '0';
+            c = getNextChar();
+            while (is_numeral(c)) {
+                arrowIndex = arrowIndex * 10 + c - '0';
+                c = getNextChar();
+            }
+            if (arrowIndex >= NORMAL_DECKEY_NUM) parseError();
             if (c != '>') parseError();
             return true;
         }
