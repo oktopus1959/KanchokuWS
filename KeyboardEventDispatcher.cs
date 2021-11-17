@@ -473,6 +473,9 @@ namespace KanchokuWS
                                 DateTime.Now > prevSpaceUpDt.AddMilliseconds(Settings.SandSEnableSpaceOrRepeatMillisec + KEY_REPEAT_INTERVAL)) {
                                 spaceKeyState = SpecialKeyState.SHIFTED;
                                 //makeSpecialModKeyShifted();
+                                // 疑似スペースキーを送出する
+                                invokeHandler(DecoderKeys.PSEUDO_SPACE_DECKEY, 0);
+                                normalInfoKeyDownResult = true;
                                 return;
                             }
                             spaceKeyState = SpecialKeyState.REPEATED;
@@ -499,6 +502,9 @@ namespace KanchokuWS
                         if (spaceKeyState == SpecialKeyState.PRESSED) {
                             // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
                             spaceKeyState = SpecialKeyState.SHIFTED;
+                            // 疑似スペースキーを送出する
+                            invokeHandler(DecoderKeys.PSEUDO_SPACE_DECKEY, 0);
+                            normalInfoKeyDownResult = true;
                         }
                     }
                 }

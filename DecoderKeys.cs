@@ -180,8 +180,10 @@ namespace KanchokuWS
         public const int CTRL_LEFT_ARROW_DECKEY = CTRL_DOWN_ARROW_DECKEY + 1;
         public const int CTRL_RIGHT_ARROW_DECKEY = CTRL_LEFT_ARROW_DECKEY + 1;
 
-        // 特殊なDECKEY
-        // CTRL_SHIFT_FUNC_DECKEY_END よりも大きな値にする必要がある
+        /// <summary> 
+        /// 特殊なDECKEY<br/>
+        /// CTRL_SHIFT_FUNC_DECKEY_END よりも大きな値にする必要がある
+        /// </summary>
         public const int SPECIAL_DECKEY_ID_BASE = 0x200;
 
         public const int TOGGLE_DECKEY = SPECIAL_DECKEY_ID_BASE + 1;     // ON/OFF の切り替えキー
@@ -217,6 +219,8 @@ namespace KanchokuWS
 
         public const int LEFT_SHIFT_BLOCKER_DECKEY = EXCHANGE_CODE_TABLE_DECKEY + 1;        // ブロッカーを左シフトする
         public const int RIGHT_SHIFT_BLOCKER_DECKEY = LEFT_SHIFT_BLOCKER_DECKEY + 1;        // ブロッカーを右シフトする
+
+        public const int PSEUDO_SPACE_DECKEY = RIGHT_SHIFT_BLOCKER_DECKEY + 1;              // 疑似スペースキー
 
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 

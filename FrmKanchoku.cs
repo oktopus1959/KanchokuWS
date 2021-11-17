@@ -539,6 +539,7 @@ namespace KanchokuWS
         /// <returns></returns>
         private bool FuncDispatcher(int deckey, uint mod)
         {
+            bool bPrevDtUpdate = false;
             try {
                 switch (deckey) {
                     case DecoderKeys.STROKE_HELP_ROTATION_DECKEY:
@@ -587,7 +588,16 @@ namespace KanchokuWS
                             frmVkb.DrawVirtualKeyboardChars();
                         }
                         return true;
+                    case DecoderKeys.PSEUDO_SPACE_DECKEY:
+                        logger.Info(() => $"PSEUDO_SPACE_DECKEY: strokeCount={decoderOutput.GetStrokeCount()}");
+                        deckey = DecoderKeys.STROKE_SPACE_DECKEY;
+                        if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
+                            // 第2打鍵待ちなら、スペースを出力
+                            InvokeDecoder(deckey, 0);
+                        }
+                        return true;
                     default:
+                        bPrevDtUpdate = true;
                         if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
                             return InvokeDecoder(deckey, mod);
                         } else {
@@ -596,7 +606,7 @@ namespace KanchokuWS
                 }
             } finally {
                 prevDeckey = deckey;
-                prevDecDt = DateTime.Now;
+                if (bPrevDtUpdate) prevDecDt = DateTime.Now;
             }
         }
 
