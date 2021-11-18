@@ -4102,9 +4102,7 @@ namespace KanchokuWS
             this.textBox_SandSEnableSpaceOrRepeatMillisec.Size = new System.Drawing.Size(36, 19);
             this.textBox_SandSEnableSpaceOrRepeatMillisec.TabIndex = 3;
             this.textBox_SandSEnableSpaceOrRepeatMillisec.Text = "500";
-            this.toolTip1.SetToolTip(this.textBox_SandSEnableSpaceOrRepeatMillisec, "SandS有効時に、空白の入力またはリピート入力を有効に\r\nするまでの時間(ミリ秒)を設定します。\r\n\r\n前回のSpaceキーアップ時から、設定した時間内にSpa" +
-        "ceを\r\n再打鍵すると、空白の入力またはリピート入力を有効にします。\r\n\r\nここの設定は、上記の「Space単打で空白を入力しない」が\r\nONの場合でも有効です" +
-        "。\r\n\r\n無効にするには 0 を設定してください。");
+            this.toolTip1.SetToolTip(this.textBox_SandSEnableSpaceOrRepeatMillisec, resources.GetString("textBox_SandSEnableSpaceOrRepeatMillisec.ToolTip"));
             // 
             // label103
             // 

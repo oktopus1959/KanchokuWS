@@ -610,6 +610,18 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 (TUT-Code の2打鍵目スペースによる記号入力や、 Try-Code での
 1打鍵目空白による漢字入力など)</value>
   </data>
+  <data name="textBox_SandSEnableSpaceOrRepeatMillisec.ToolTip" xml:space="preserve">
+    <value>SandS有効時に Space キーを連続打鍵した時、空白の入力または
+リピート入力を有効にするまでの時間(ミリ秒)を設定します。
+
+1回目のSpaceキー打鍵のキーアップ時から、設定した時間内にSpaceを
+再打鍵すると、空白の入力またはリピート入力を有効にします。
+
+ここの設定は、上記の「Space単打で空白を入力しない」が
+ONの場合でも有効です。
+
+無効にするには 0 を設定してください。</value>
+  </data>
   <data name="checkBox_ignoreSpaceUpOnSandS.ToolTip" xml:space="preserve">
     <value>SandS有効時に、Space単打で空白を入力しないようにします。
 
