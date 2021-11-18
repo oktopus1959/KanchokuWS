@@ -114,13 +114,15 @@ namespace {
         std::vector<int> strokes;
 
     public:
-        StrokeTreeBuilder(std::vector<tstring>& lines)
+        StrokeTreeBuilder(std::vector<tstring>& lines, bool bMakeStrokeSerieses)
             : tableLines(lines) {
             if (!tableLines.empty()) {
                 currentLine = tableLines[0];
             }
-            strokeSerieses = VkbTableMaker::StrokeSerieses();
-            if (strokeSerieses) strokeSerieses->clear();
+            if (bMakeStrokeSerieses) {
+                strokeSerieses = VkbTableMaker::StrokeSerieses();
+                if (strokeSerieses) strokeSerieses->clear();
+            }
         }
 
         // ストローク木を作成する
@@ -707,7 +709,7 @@ void StrokeTableNode::AssignFucntion(const tstring& keys, const tstring& name) {
 
 // ストローク木を作成してそのルートを返す
 StrokeTableNode* StrokeTableNode::CreateStrokeTree(std::vector<tstring>& lines) {
-    auto ptr = std::make_unique<StrokeTreeBuilder>(lines);
+    auto ptr = std::make_unique<StrokeTreeBuilder>(lines, true);
     RootStrokeNode1.reset(ptr->CreateStrokeTree());
     ROOT_STROKE_NODE = RootStrokeNode1.get();
     return ROOT_STROKE_NODE;
@@ -715,7 +717,7 @@ StrokeTableNode* StrokeTableNode::CreateStrokeTree(std::vector<tstring>& lines) 
 
 // ストローク木2を作成してそのルートを返す
 StrokeTableNode* StrokeTableNode::CreateStrokeTree2(std::vector<tstring>& lines) {
-    auto ptr = std::make_unique<StrokeTreeBuilder>(lines);
+    auto ptr = std::make_unique<StrokeTreeBuilder>(lines, false);
     RootStrokeNode2.reset(ptr->CreateStrokeTree());
     return RootStrokeNode2.get();
 }

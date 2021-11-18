@@ -961,14 +961,15 @@ namespace KanchokuWS
 
         private uint targetChar = 0;
 
+        /// <summary>直前は複数打鍵文字の始まりだったか </summary>
         private bool bPrevMultiStrokeChar = false;
 
         private void getTargetChar(int deckey)
         {
             if (targetChar == 0 && candidateCharStrs != null) {
                 var s = candidateCharStrs._getNth(deckey);
+                logger.Info(() => $"targetChar={s}");
                 if (s._notEmpty()) {
-                    logger.Info($"targetChar={s}");
                     targetChar = s[0];
                     if (s.Length > 1) targetChar = targetChar << 16 + s[1];
                 }

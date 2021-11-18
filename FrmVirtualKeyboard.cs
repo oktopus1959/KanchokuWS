@@ -300,7 +300,7 @@ namespace KanchokuWS
         {
             //topTextBox.Width = (int)(VkbNormalWidth);
             ShowWindow(this.Handle, SW_SHOWNA);   // NonActive
-            logger.Info($"LEAVE: this.Width={this.Width}, this.Height={this.Height}, tex.Height={topTextBox.Height}, pic.top={pictureBox_Main.Top}");
+            logger.Info(() => $"LEAVE: this.Width={this.Width}, this.Height={this.Height}, tex.Height={topTextBox.Height}, pic.top={pictureBox_Main.Top}");
         }
 
         //------------------------------------------------------------------------------------
@@ -501,7 +501,7 @@ namespace KanchokuWS
         /// <param name="e"></param>
         private void dpiChangedHandler(object sender, DpiChangedEventArgs e)
         {
-            logger.Info($"\nCALLED: new dpi={e.DeviceDpiNew}");
+            logger.Info(() => $"\nCALLED: new dpi={e.DeviceDpiNew}");
 
             CurrentScreen = ScreenInfo.GetScreenIndexByDpi(e.DeviceDpiNew);
 
@@ -826,6 +826,8 @@ namespace KanchokuWS
 
         private void drawNormalVkb(string[] strokeTable, bool bNormalPlane, int lastDeckey = -1)
         {
+            if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH($"\nlastDeckey={lastDeckey}");
+
             resetVkbControls("", VkbNormalWidth, VkbPictureBoxHeight_Normal, VkbCenterBoxHeight_Normal);
             using (PictureBoxDrawer drawer = new PictureBoxDrawer(pictureBox_Main)) {
                 drawNormalVkbFrame(drawer.Gfx, lastDeckey);
@@ -1137,6 +1139,8 @@ namespace KanchokuWS
         /// <param name="g"></param>
         private void drawNormalVkbFrame(Graphics g, int nextDeckey = -1)
         {
+            if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH($"\nnextDecke={nextDeckey}");
+
             // 背景色
             Color getColor(string name)
             {
