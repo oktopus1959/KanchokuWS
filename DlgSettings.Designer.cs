@@ -427,6 +427,7 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.checkBox_SandSEnablePseudoSpace = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -3963,9 +3964,9 @@ namespace KanchokuWS
             // 
             this.groupBox42.Controls.Add(this.button_saveEelllJsTableFile);
             this.groupBox42.Controls.Add(this.label_miscEelllJsOut);
-            this.groupBox42.Location = new System.Drawing.Point(309, 275);
+            this.groupBox42.Location = new System.Drawing.Point(7, 300);
             this.groupBox42.Name = "groupBox42";
-            this.groupBox42.Size = new System.Drawing.Size(264, 47);
+            this.groupBox42.Size = new System.Drawing.Size(240, 47);
             this.groupBox42.TabIndex = 7;
             this.groupBox42.TabStop = false;
             this.groupBox42.Text = "eelll/JS テーブルファイル出力";
@@ -3973,7 +3974,7 @@ namespace KanchokuWS
             // button_saveEelllJsTableFile
             // 
             this.button_saveEelllJsTableFile.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_saveEelllJsTableFile.Location = new System.Drawing.Point(174, 18);
+            this.button_saveEelllJsTableFile.Location = new System.Drawing.Point(164, 18);
             this.button_saveEelllJsTableFile.Name = "button_saveEelllJsTableFile";
             this.button_saveEelllJsTableFile.Size = new System.Drawing.Size(67, 23);
             this.button_saveEelllJsTableFile.TabIndex = 0;
@@ -3986,7 +3987,7 @@ namespace KanchokuWS
             // 
             this.label_miscEelllJsOut.AutoSize = true;
             this.label_miscEelllJsOut.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_miscEelllJsOut.Location = new System.Drawing.Point(103, 22);
+            this.label_miscEelllJsOut.Location = new System.Drawing.Point(93, 22);
             this.label_miscEelllJsOut.Name = "label_miscEelllJsOut";
             this.label_miscEelllJsOut.Size = new System.Drawing.Size(65, 15);
             this.label_miscEelllJsOut.TabIndex = 36;
@@ -4000,7 +4001,7 @@ namespace KanchokuWS
             this.groupBox40.Controls.Add(this.textBox_romanBushuCompPrefix);
             this.groupBox40.Controls.Add(this.button_saveRomanTableFile);
             this.groupBox40.Controls.Add(this.label_miscRomanOut);
-            this.groupBox40.Location = new System.Drawing.Point(7, 274);
+            this.groupBox40.Location = new System.Drawing.Point(7, 246);
             this.groupBox40.Name = "groupBox40";
             this.groupBox40.Size = new System.Drawing.Size(290, 48);
             this.groupBox40.TabIndex = 3;
@@ -4080,6 +4081,7 @@ namespace KanchokuWS
             // 
             // groupBox39
             // 
+            this.groupBox39.Controls.Add(this.checkBox_SandSEnablePseudoSpace);
             this.groupBox39.Controls.Add(this.textBox_SandSEnableSpaceOrRepeatMillisec);
             this.groupBox39.Controls.Add(this.label103);
             this.groupBox39.Controls.Add(this.checkBox_ignoreSpaceUpOnSandS);
@@ -4087,7 +4089,7 @@ namespace KanchokuWS
             this.groupBox39.Controls.Add(this.checkBox_SandSEnabled);
             this.groupBox39.Location = new System.Drawing.Point(309, 66);
             this.groupBox39.Name = "groupBox39";
-            this.groupBox39.Size = new System.Drawing.Size(264, 108);
+            this.groupBox39.Size = new System.Drawing.Size(264, 130);
             this.groupBox39.TabIndex = 5;
             this.groupBox39.TabStop = false;
             this.groupBox39.Text = "SandS (Space and Shift)";
@@ -4111,7 +4113,7 @@ namespace KanchokuWS
             this.label103.Location = new System.Drawing.Point(46, 84);
             this.label103.Name = "label103";
             this.label103.Size = new System.Drawing.Size(220, 15);
-            this.label103.TabIndex = 39;
+            this.label103.TabIndex = 5;
             this.label103.Text = "ms以内の再打鍵で単打またはリピートを有効";
             // 
             // checkBox_ignoreSpaceUpOnSandS
@@ -4175,7 +4177,7 @@ namespace KanchokuWS
             this.groupBox37.Controls.Add(this.checkBox_convertShiftedHiraganaToKatakana);
             this.groupBox37.Controls.Add(this.radioButton_shiftA);
             this.groupBox37.Controls.Add(this.radioButton_normalShift);
-            this.groupBox37.Location = new System.Drawing.Point(7, 198);
+            this.groupBox37.Location = new System.Drawing.Point(7, 170);
             this.groupBox37.Name = "groupBox37";
             this.groupBox37.Size = new System.Drawing.Size(290, 70);
             this.groupBox37.TabIndex = 2;
@@ -4229,13 +4231,13 @@ namespace KanchokuWS
             // 
             // groupBox36
             // 
+            this.groupBox36.Controls.Add(this.textBox_modConversionFile);
             this.groupBox36.Controls.Add(this.checkBox_extraModifiersEnabled);
             this.groupBox36.Controls.Add(this.label93);
-            this.groupBox36.Controls.Add(this.textBox_modConversionFile);
             this.groupBox36.Controls.Add(this.button_openModConversionFile);
             this.groupBox36.Location = new System.Drawing.Point(7, 12);
             this.groupBox36.Name = "groupBox36";
-            this.groupBox36.Size = new System.Drawing.Size(290, 74);
+            this.groupBox36.Size = new System.Drawing.Size(290, 47);
             this.groupBox36.TabIndex = 0;
             this.groupBox36.TabStop = false;
             this.groupBox36.Text = "拡張修飾キー";
@@ -4243,18 +4245,18 @@ namespace KanchokuWS
             // checkBox_extraModifiersEnabled
             // 
             this.checkBox_extraModifiersEnabled.AutoSize = true;
-            this.checkBox_extraModifiersEnabled.Location = new System.Drawing.Point(6, 22);
+            this.checkBox_extraModifiersEnabled.Location = new System.Drawing.Point(6, 20);
             this.checkBox_extraModifiersEnabled.Name = "checkBox_extraModifiersEnabled";
-            this.checkBox_extraModifiersEnabled.Size = new System.Drawing.Size(152, 19);
+            this.checkBox_extraModifiersEnabled.Size = new System.Drawing.Size(50, 19);
             this.checkBox_extraModifiersEnabled.TabIndex = 0;
-            this.checkBox_extraModifiersEnabled.Text = "拡張修飾キーを有効にする";
+            this.checkBox_extraModifiersEnabled.Text = "有効";
             this.toolTip1.SetToolTip(this.checkBox_extraModifiersEnabled, resources.GetString("checkBox_extraModifiersEnabled.ToolTip"));
             this.checkBox_extraModifiersEnabled.UseVisualStyleBackColor = true;
             // 
             // label93
             // 
             this.label93.AutoSize = true;
-            this.label93.Location = new System.Drawing.Point(22, 47);
+            this.label93.Location = new System.Drawing.Point(60, 21);
             this.label93.Name = "label93";
             this.label93.Size = new System.Drawing.Size(65, 15);
             this.label93.TabIndex = 10;
@@ -4265,16 +4267,16 @@ namespace KanchokuWS
             this.textBox_modConversionFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_modConversionFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_modConversionFile.Location = new System.Drawing.Point(88, 45);
+            this.textBox_modConversionFile.Location = new System.Drawing.Point(124, 19);
             this.textBox_modConversionFile.Name = "textBox_modConversionFile";
-            this.textBox_modConversionFile.Size = new System.Drawing.Size(160, 19);
+            this.textBox_modConversionFile.Size = new System.Drawing.Size(124, 19);
             this.textBox_modConversionFile.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_modConversionFile, resources.GetString("textBox_modConversionFile.ToolTip"));
             // 
             // button_openModConversionFile
             // 
             this.button_openModConversionFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openModConversionFile.Location = new System.Drawing.Point(252, 43);
+            this.button_openModConversionFile.Location = new System.Drawing.Point(252, 17);
             this.button_openModConversionFile.Name = "button_openModConversionFile";
             this.button_openModConversionFile.Size = new System.Drawing.Size(34, 23);
             this.button_openModConversionFile.TabIndex = 8;
@@ -4291,7 +4293,7 @@ namespace KanchokuWS
             this.groupBox35.Controls.Add(this.textBox_kanjiYomiFile);
             this.groupBox35.Controls.Add(this.checkBox_upperRomanStrokeGuide);
             this.groupBox35.Controls.Add(this.button_openKanjiYomiFile);
-            this.groupBox35.Location = new System.Drawing.Point(7, 92);
+            this.groupBox35.Location = new System.Drawing.Point(7, 66);
             this.groupBox35.Name = "groupBox35";
             this.groupBox35.Size = new System.Drawing.Size(290, 100);
             this.groupBox35.TabIndex = 1;
@@ -4397,7 +4399,7 @@ namespace KanchokuWS
             this.groupBox27.Controls.Add(this.checkBox_removeOneStrokeByBackspace);
             this.groupBox27.Controls.Add(this.checkBox_convertJaComma);
             this.groupBox27.Controls.Add(this.checkBox_convertJaPeriod);
-            this.groupBox27.Location = new System.Drawing.Point(309, 180);
+            this.groupBox27.Location = new System.Drawing.Point(309, 206);
             this.groupBox27.Name = "groupBox27";
             this.groupBox27.Size = new System.Drawing.Size(264, 88);
             this.groupBox27.TabIndex = 6;
@@ -5153,6 +5155,17 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // checkBox_SandSEnablePseudoSpace
+            // 
+            this.checkBox_SandSEnablePseudoSpace.AutoSize = true;
+            this.checkBox_SandSEnablePseudoSpace.Location = new System.Drawing.Point(11, 105);
+            this.checkBox_SandSEnablePseudoSpace.Name = "checkBox_SandSEnablePseudoSpace";
+            this.checkBox_SandSEnablePseudoSpace.Size = new System.Drawing.Size(134, 19);
+            this.checkBox_SandSEnablePseudoSpace.TabIndex = 4;
+            this.checkBox_SandSEnablePseudoSpace.Text = "疑似同時打鍵サポート";
+            this.toolTip1.SetToolTip(this.checkBox_SandSEnablePseudoSpace, resources.GetString("checkBox_SandSEnablePseudoSpace.ToolTip"));
+            this.checkBox_SandSEnablePseudoSpace.UseVisualStyleBackColor = true;
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -5676,5 +5689,6 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label105;
         private System.Windows.Forms.TextBox textBox_historyFewCharsKeySeq;
         private System.Windows.Forms.Label label106;
+        private System.Windows.Forms.CheckBox checkBox_SandSEnablePseudoSpace;
     }
 }

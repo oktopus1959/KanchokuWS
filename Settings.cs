@@ -413,6 +413,9 @@ namespace KanchokuWS
         /// <summary>SandS 時の空白入力またはリピート入力までの時間</summary>
         public static int SandSEnableSpaceOrRepeatMillisec { get; set; } = 500;
 
+        /// <summary>SandS 時の疑似スペース出力(疑似同時打鍵サポート)</summary>
+        public static bool SandSEnablePseudoSpace { get; set; } = false;
+
         /// <summary> 拡張修飾キーを有効にするか</summary>
         public static bool ExtraModifiersEnabled { get; set; } = false;
 
@@ -761,6 +764,7 @@ namespace KanchokuWS
             SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
             IgnoreSpaceUpOnSandS= GetString("ignoreSpaceUpOnSandS")._parseBool(false);          // SandS 時の Space KeyUP を無視するか (Space単打による空白入力をやらない)
             SandSEnableSpaceOrRepeatMillisec = GetString("sandsEnableSpaceOrRepeatMillisec")._parseInt(500);    // SandS 時の空白入力またはリピート入力までの時間
+            SandSEnablePseudoSpace = GetString("sandsEnablePseudoSpace")._parseBool(false);     // SandS 時の疑似スペース出力(疑似同時打鍵サポート)
             ModConversionFile = GetString("modConversionFile");
             bool isModConversionFileEmpty = ModConversionFile._isEmpty();
             if (isModConversionFileEmpty) { ModConversionFile = "mod-conversion.txt"; }

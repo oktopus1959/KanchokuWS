@@ -474,7 +474,7 @@ namespace KanchokuWS
                                 spaceKeyState = SpecialKeyState.SHIFTED;
                                 //makeSpecialModKeyShifted();
                                 // 疑似スペースキーを送出する
-                                invokeHandler(DecoderKeys.PSEUDO_SPACE_DECKEY, 0);
+                                if (Settings.SandSEnablePseudoSpace) invokeHandler(DecoderKeys.PSEUDO_SPACE_DECKEY, 0);
                                 normalInfoKeyDownResult = true;
                                 return;
                             }
@@ -503,7 +503,7 @@ namespace KanchokuWS
                             // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
                             spaceKeyState = SpecialKeyState.SHIFTED;
                             // 疑似スペースキーを送出する
-                            invokeHandler(DecoderKeys.PSEUDO_SPACE_DECKEY, 0);
+                            if (Settings.SandSEnablePseudoSpace) invokeHandler(DecoderKeys.PSEUDO_SPACE_DECKEY, 0);
                             normalInfoKeyDownResult = true;
                         }
                     }
