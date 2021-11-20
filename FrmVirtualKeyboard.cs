@@ -790,19 +790,21 @@ namespace KanchokuWS
         {
             if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"CALLED: EffectiveCount={Settings.VirtualKeyboardShowStrokeCountEffective}");
             if (Settings.VirtualKeyboardShowStrokeCountEffective == 1) {
-                StrokeTableDef def = null;
+                // 第1打鍵待ちである
+                StrokeTableDef tblDef = null;
+                // 主コードテーブルか
                 bool isPrimary = frmMain.DecoderOutput.IsCurrentStrokeTablePrimary();
                 if ((isPrimary && StrokeTables._isEmpty()) || (!isPrimary && StrokeTables2 == null)) {
-                    def = null;
+                    tblDef = null;
                 } else {
-                    def = isPrimary ? StrokeTables[selectedTable._lowLimit(0) % StrokeTables.Count] : StrokeTables2;
+                    tblDef = isPrimary ? StrokeTables[selectedTable._lowLimit(0) % StrokeTables.Count] : StrokeTables2;
                 }
-                if (def == null) {
+                if (tblDef == null) {
                     drawNormalVkb(initialVkbChars, true);
-                } else if (def.Faces == null) {
-                    drawNormalVkb(def.CharOrKeys, isPrimary && !def.ShiftPlane, lastDeckey);
+                } else if (tblDef.Faces == null) {
+                    drawNormalVkb(tblDef.CharOrKeys, isPrimary && !tblDef.ShiftPlane, lastDeckey);
                 } else {
-                    drawVkb5x10Table(def);
+                    drawVkb5x10Table(tblDef);
                 }
                 showNonActive();
             } else {
