@@ -318,6 +318,7 @@ namespace {
                 return 0;
             case TOKEN::STRING:            // "str" : 文字列ノード
                 LOG_TRACE(_T("%d:%d=%s"), lineNumber + 1, nth, currentStr.c_str());
+                if (currentStr.empty()) return 0;
                 // 文字から、その文字の打鍵列へのマップに追加 (通常面のみ)
                 if (strokeSerieses && shiftPlane == 0) {
                     auto ms = to_mstr(currentStr);
