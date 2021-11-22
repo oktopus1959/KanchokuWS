@@ -150,7 +150,7 @@ namespace KanchokuWS
                 (Settings.IgnoreOtherHooker ? extraInfo == 0 : extraInfo != ActiveWindowHandler.MyMagicNumber) &&
                 scanCode != 0 && scanCode != YamabukiRscanCode &&
                 ((vkey >= 0 && vkey < 0xa0) ||
-                 (vkey == VirtualKeys.RSHIFT && !ctrl && isDecoderActivated() && Settings.ExtraModifiersEnabled) ||
+                 (vkey == VirtualKeys.RSHIFT && !ctrl && (Settings.ActiveKey == (uint)vkey || isDecoderActivated()) && Settings.ExtraModifiersEnabled) ||
                  (vkey >= 0xa6 && vkey < 0xf3) ||
                  (vkey >= 0xf5 && vkey < vkeyNum));
         }
@@ -166,9 +166,9 @@ namespace KanchokuWS
         //    return (!bWithOutCtrl && spaceKeyState == SpecialKeyState.SHIFTED) || (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
         //}
 
-        private bool shiftKeyPressed()
+        private bool shiftKeyPressed(uint vkey)
         {
-            return (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
+            return (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (vkey != VirtualKeys.RSHIFT && (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0);
         }
 
         private bool isLshiftKeyPressed()
@@ -336,6 +336,11 @@ namespace KanchokuWS
                     return;
                 }
 
+                if ((uint)vkey == VirtualKeys.RSHIFT && Settings.ActiveKey == (uint)vkey) {
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"RShift is ActiveKey");
+                    rshiftKeyState = SpecialKeyState.PRESSED;
+                    return;
+                }
                 bool bDecoderOn = isDecoderActivated();
                 if (Settings.ExtraModifiersEnabled) {
                     normalInfoKeyDownResult = true;
@@ -484,7 +489,7 @@ namespace KanchokuWS
 
                         if (spaceKeyState != SpecialKeyState.REPEATED) {
                             // RELEASED
-                            bool bShift = shiftKeyPressed();
+                            bool bShift = shiftKeyPressed((uint)vkey);
                             bool bShiftEx = getShiftedSpecialModKey() != 0;
                             if (!bCtrl && !bShift && !bShiftEx) {
                                 // 1回目の押下で Ctrl も Shift も他のmodiferも押されてない場合は、PRESSED に移行
@@ -541,10 +546,10 @@ namespace KanchokuWS
             //bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
             //bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
             bool ctrl = leftCtrl || rightCtrl;
-            bool shift = shiftKeyPressed();
+            bool shift = shiftKeyPressed((uint)vkey);
             uint mod = KeyModifiers.MakeModifier(ctrl, shift);
             uint modEx = getShiftedSpecialModKey();
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey})");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
 
             int kanchokuCode = -1;
             if (modEx != 0 && !ctrl) {
@@ -653,6 +658,7 @@ namespace KanchokuWS
                         // Spaceキーが1回押されただけの状態なら、Spaceキーを送出
                         return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                     }
+                    return false;
                 }
             }
             if (vkey == (int)VirtualKeys.CapsLock) {
@@ -681,34 +687,31 @@ namespace KanchokuWS
                 var state = nferKeyState;
                 nferKeyState = SpecialKeyState.RELEASED;
                 if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_NFER, bDecoderOn)) {
-                    if (state == SpecialKeyState.SHIFTED) {
-                        return true;
-                    } else if (state == SpecialKeyState.PRESSED) {
-                        return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                    if (state == SpecialKeyState.PRESSED) {
+                        keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                     }
                 }
+                return false;
             }
             if (vkey == (int)VirtualKeys.Xfer) {
                 var state = xferKeyState;
                 xferKeyState = SpecialKeyState.RELEASED;
                 if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_XFER, bDecoderOn)) {
-                    if (state == SpecialKeyState.SHIFTED) {
-                        return true;
-                    } else if (state == SpecialKeyState.PRESSED) {
-                        return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                    if (state == SpecialKeyState.PRESSED) {
+                        keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                     }
                 }
+                return false;
             }
             if (vkey == (int)VirtualKeys.RSHIFT) {
                 var state = rshiftKeyState;
                 rshiftKeyState = SpecialKeyState.RELEASED;
-                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_RSHIFT, bDecoderOn)) {
-                    if (state == SpecialKeyState.SHIFTED) {
-                        return true;
-                    } else if (state == SpecialKeyState.PRESSED) {
-                        return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                if (Settings.ActiveKey == (uint)vkey || (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_RSHIFT, bDecoderOn))) {
+                    if (state == SpecialKeyState.PRESSED) {
+                        keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                     }
                 }
+                return false;
             }
 
             // キーアップ時はなにもしない

@@ -412,6 +412,7 @@ namespace KanchokuWS
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.textBox_historyFewCharsKeySeq = new System.Windows.Forms.TextBox();
             this.label106 = new System.Windows.Forms.Label();
+            this.checkBox_SandSEnablePseudoSpace = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onSecondaryTable = new KanchokuWS.ColorTextBox();
@@ -427,7 +428,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.checkBox_SandSEnablePseudoSpace = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1195,6 +1195,7 @@ namespace KanchokuWS
             "1c (変換)",
             "1d (無変換)",
             "f2 (かな/カナ)",
+            "a1 (右シフト)",
             "20 (Space)"});
             this.comboBox_unmodifiedOffKey.Location = new System.Drawing.Point(134, 69);
             this.comboBox_unmodifiedOffKey.Name = "comboBox_unmodifiedOffKey";
@@ -1253,6 +1254,7 @@ namespace KanchokuWS
             "1c (変換)",
             "1d (無変換)",
             "f2 (かな/カナ)",
+            "a1 (右シフト)",
             "20 (Space)"});
             this.comboBox_unmodifiedToggleKey.Location = new System.Drawing.Point(134, 17);
             this.comboBox_unmodifiedToggleKey.Name = "comboBox_unmodifiedToggleKey";
@@ -4977,6 +4979,17 @@ namespace KanchokuWS
             this.label106.TabIndex = 18;
             this.label106.Text = "履歴検索(数文字)";
             // 
+            // checkBox_SandSEnablePseudoSpace
+            // 
+            this.checkBox_SandSEnablePseudoSpace.AutoSize = true;
+            this.checkBox_SandSEnablePseudoSpace.Location = new System.Drawing.Point(11, 105);
+            this.checkBox_SandSEnablePseudoSpace.Name = "checkBox_SandSEnablePseudoSpace";
+            this.checkBox_SandSEnablePseudoSpace.Size = new System.Drawing.Size(134, 19);
+            this.checkBox_SandSEnablePseudoSpace.TabIndex = 4;
+            this.checkBox_SandSEnablePseudoSpace.Text = "疑似同時打鍵サポート";
+            this.toolTip1.SetToolTip(this.checkBox_SandSEnablePseudoSpace, resources.GetString("checkBox_SandSEnablePseudoSpace.ToolTip"));
+            this.checkBox_SandSEnablePseudoSpace.UseVisualStyleBackColor = true;
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -5154,17 +5167,6 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // checkBox_SandSEnablePseudoSpace
-            // 
-            this.checkBox_SandSEnablePseudoSpace.AutoSize = true;
-            this.checkBox_SandSEnablePseudoSpace.Location = new System.Drawing.Point(11, 105);
-            this.checkBox_SandSEnablePseudoSpace.Name = "checkBox_SandSEnablePseudoSpace";
-            this.checkBox_SandSEnablePseudoSpace.Size = new System.Drawing.Size(134, 19);
-            this.checkBox_SandSEnablePseudoSpace.TabIndex = 4;
-            this.checkBox_SandSEnablePseudoSpace.Text = "疑似同時打鍵サポート";
-            this.toolTip1.SetToolTip(this.checkBox_SandSEnablePseudoSpace, resources.GetString("checkBox_SandSEnablePseudoSpace.ToolTip"));
-            this.checkBox_SandSEnablePseudoSpace.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
