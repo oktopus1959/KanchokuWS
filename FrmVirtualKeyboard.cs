@@ -812,6 +812,9 @@ namespace KanchokuWS
             }
         }
 
+        /// <summary>chars に含まれる文字を、その第1打鍵位置に表示する</summary>
+        /// <param name="chars"></param>
+        /// <returns>実際に表示された文字の集まり</returns>
         public string[] DrawStrokeHelp(char[] chars)
         {
             char[] result = chars._isEmpty() ? null : frmMain.CallDecoderFunc("reorderByFirstStrokePosition", chars._toString());
