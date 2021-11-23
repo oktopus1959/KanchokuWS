@@ -875,7 +875,17 @@ namespace KanchokuWS
             KatakanaModeKeySeq = addDecoderSetting("katakanaModeKeySeq");
             KatakanaOneShotKeySeq = addDecoderSetting("katakanaOneShotKeySeq");
             HankakuKatakanaOneShotKeySeq = addDecoderSetting("hankakuKatakanaOneShotKeySeq");
-            BlockerSetterOneShotKeySeq = addDecoderSetting("blockerSetterOneShotKeySeq");
+            {
+                var attr = "blockerSetterOneShotKeySeq";
+                var keyseq = GetString(attr);
+                BlockerSetterOneShotKeySeq = keyseq;
+                int idx = VirtualKeys.GetFuncKeyIndexByName(keyseq);
+                if (idx >= 0) {
+                    // "nfer" や "xfer" などの名前も使用可能とする
+                    keyseq = $"X{idx}";
+                }
+                setDecoderSetting(attr, keyseq);
+            }
 
             // for Debug
             addDecoderSetting("debughState", false);

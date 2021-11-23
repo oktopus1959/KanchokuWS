@@ -116,7 +116,10 @@ namespace KanchokuWS
 
         private const uint capsVkeyWithShift = 0x14;    // 日本語キーボードだと Shift + 0x14 で CapsLock になる
 
-        public static uint GetFuncVkeyByName(string name)
+        /// <summary>機能キーのインデックスを得る (-1なら該当せず)</summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static int GetFuncKeyIndexByName(string name)
         {
             int n = -1;
             switch (name._toLower()) {
@@ -142,7 +145,18 @@ namespace KanchokuWS
                 case "right": case "rightarrow": n = 19; break;
                 default: n = -1; break;
             }
-            return n >= 0 ? vkeyArrayFuncKeys[n] : 0;
+            return n;
+        }
+
+        public static int GetFuncDeckeyByName(string name)
+        {
+            int dk = GetFuncKeyIndexByName(name);
+            return dk >= 0 ? DecoderKeys.FUNC_DECKEY_START + dk : -1;
+        }
+
+        public static uint GetFuncVkeyByName(string name)
+        {
+            return vkeyArrayFuncKeys._getNth(GetFuncKeyIndexByName(name));
         }
 
         public enum ShiftPlane
@@ -435,29 +449,7 @@ namespace KanchokuWS
                         int n = -1;
                         int vk = items[1]._parseHex();
                         if (vk >= 0 && vk < 0x100) {
-                            switch (items[0]) {
-                                case "esc": case "escape": n = 0; break;
-                                case "zenkaku": n = 1; break;
-                                case "tab": n = 2; break;
-                                case "caps": case "capslock": n = 3; break;
-                                case "alnum": case "alphanum": case "eisu": n = 4; break;
-                                case "nfer": n = 5; break;
-                                case "xfer": n = 6; break;
-                                case "kana": case "hiragana": n = 7; break;
-                                case "bs": case "back": case "backspace": n = 8; break;
-                                case "enter": n = 9; break;
-                                case "ins": case "insert": n = 10; break;
-                                case "del": case "delete": n = 11; break;
-                                case "home": n = 12; break;
-                                case "end": n = 13; break;
-                                case "pgup": case "pageup": n = 14; break;
-                                case "pgdn": case "pagedown": n = 15; break;
-                                case "up": case "uparrow": n = 16; break;
-                                case "down": case "downarrow": n = 17; break;
-                                case "left": case "leftarrow": n = 18; break;
-                                case "right": case "rightarrow": n = 19; break;
-                                default: n = -1; break;
-                            }
+                            n = GetFuncKeyIndexByName(items[0]);
                         }
                         if (n < 0 || n >= vkeyArrayFuncKeys.Length) {
                             logger.Warn($"Invalid functional key def: file={filePath}, line: {line}");
