@@ -636,7 +636,7 @@ namespace {
         // 読みこみに失敗した場合
         void parseError() {
             wchar_t buf[2] = { currentChar, 0 };
-            tstring msg = utils::format(_T("テーブルファイルの %d 行 %d文字目('%s')がまちがっているようです"), lineNumber, nextPos, buf);
+            tstring msg = utils::format(_T("テーブルファイルの %d 行 %d文字目('%s')がまちがっているようです：\r\n> %s ..."), lineNumber, nextPos, buf, currentLine.substr(0, 50).c_str());
             LOG_ERROR(msg);
             wstring lines;
             for (size_t i = 10; i > 0; --i) {
