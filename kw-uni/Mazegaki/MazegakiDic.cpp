@@ -72,7 +72,7 @@ namespace {
     //wchar_t const * IFX_NONE[] = { STEM_OK, 0 };
     wchar_t const * IFX_NONE[] = { STEM_OK,
         _T("が"), _T("だ"), _T("で"), _T("と"), _T("な"), _T("に"), _T("の"), _T("は"), _T("へ"), _T("も"), _T("を"),
-        _T("から"), _T("こそ"), _T("ごと"), _T("さえ"), _T("じゃ"), _T("すら"),
+        _T("から"), _T("こそ"), _T("ごと"), _T("さえ"), _T("じゃ"), _T("すら"),_T("まで"),_T("たち"),_T("や"),_T("よ"),_T("ゆえ"),
         _T("、"), _T("。"), 0 };
 
     inline int find_gobi(const wchar_t** ifxes, int id) {
