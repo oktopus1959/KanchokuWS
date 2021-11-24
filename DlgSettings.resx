@@ -117,50 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label69.Text" xml:space="preserve">
-    <value>機能を呼び出すための打鍵列を設定します。
-
-打鍵列は、漢直キーコード(00～49)をカンマ
-区切りで並べたものとなります。
-コードに S/s/A/a/B/b を前接させるとシフト
-(拡張シフト)コードになります。
-また X/x を前接させると特殊キーになります。
-キーコードについては、ここにマウスポインタを置
-いて表示されるツールチップを参照してください。
-
-例：(カッコ内は 106 key による打鍵文字)
-交ぜ書き変換 「S40」  (Shift+Space)
-部首合成 「26,23」  ( jf)
-全角変換(モード) 「X3」  (CapsLock)
-カタカナ変換(モード) 「kana」 (ひらがな)
-カタカナ変換(一括) 「47」 (])</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="label69.ToolTip" xml:space="preserve">
-    <value>106 (qwerty) でのコード表
-
-1=00, 2=01, 3=02, 4=03, 5=04, 6=05, 7=06, 8=07, 9=08, 0=09
-q=10, w=11, e=12, r=13, t=14, y=15, u=16, i=17, o=18, p=19
-a=20, s=21, d=22, f=23, g=24, h=25, j=26, k=27, l=28, ;=29,
-z=30, x=31, c=32, v=33, b=34, n=35, m=36, ,=37, .=38, /=39,
-SP=40, -=41, ^=42, ￥=43, @=44, [=45, :=46, ]=47, ＼=48,
-Shift+Space=S40
-(コードに 'S' または 's' を前接させるとシフトコードになります。)
-
-拡張シフトA面の'a'=A20
-拡張シフトB面のSpace=B40
-(A/a または B/b を前接させると拡張シフト面のコードとなります。)
-
-半/全=X1, Caps=X3, 英数=X4, 無変換=X5, 変換=X6, ひらがな=X7
-(コードに 'X' または 'x' を前接させると特殊キーになります。)
-
-特殊キーは次のように名前で指定することもできます。
-半/全=zenkaku, Caps=caps, 英数=alnum,
-無変換=xfer, 変換=nfer, ひらがな=kana
-</value>
-  </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
@@ -405,6 +361,47 @@ MS ゴシック、メイリオ、游ゴシックについては、ある程度�
 
 </value>
   </data>
+  <data name="label69.Text" xml:space="preserve">
+    <value>機能を呼び出すための打鍵列を設定します。
+
+打鍵列は、漢直キーコード(00～49)をカンマ
+区切りで並べたものとなります。
+コードに S/s/A/a/B/b を前接させるとシフト
+(拡張シフト)コードになります。
+また X/x を前接させると特殊キーになります。
+キーコードについては、ここにマウスポインタを置
+いて表示されるツールチップを参照してください。
+
+例：(カッコ内は 106 key による打鍵文字)
+交ぜ書き変換 「S40」  (Shift+Space)
+部首合成 「26,23」  ( jf)
+全角変換(モード) 「X3」  (CapsLock)
+カタカナ変換(モード) 「kana」 (ひらがな)
+カタカナ変換(一括) 「47」 (])</value>
+  </data>
+  <data name="label69.ToolTip" xml:space="preserve">
+    <value>106 (qwerty) でのコード表
+
+1=00, 2=01, 3=02, 4=03, 5=04, 6=05, 7=06, 8=07, 9=08, 0=09
+q=10, w=11, e=12, r=13, t=14, y=15, u=16, i=17, o=18, p=19
+a=20, s=21, d=22, f=23, g=24, h=25, j=26, k=27, l=28, ;=29,
+z=30, x=31, c=32, v=33, b=34, n=35, m=36, ,=37, .=38, /=39,
+SP=40, -=41, ^=42, ￥=43, @=44, [=45, :=46, ]=47, ＼=48,
+Shift+Space=S40
+(コードに 'S' または 's' を前接させるとシフトコードになります。)
+
+拡張シフトA面の'a'=A20
+拡張シフトB面のSpace=B40
+(A/a または B/b を前接させると拡張シフト面のコードとなります。)
+
+半/全=X1, Caps=X3, 英数=X4, 無変換=X5, 変換=X6, ひらがな=X7
+(コードに 'X' または 'x' を前接させると特殊キーになります。)
+
+特殊キーは次のように名前で指定することもできます。
+半/全=zenkaku, Caps=caps, 英数=alnum,
+無変換=xfer, 変換=nfer, ひらがな=kana
+</value>
+  </data>
   <data name="comboBox_dateStringKey.ToolTip" xml:space="preserve">
     <value>現在の日時を出力する Ctrlキーの設定
 
@@ -618,6 +615,23 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 (TUT-Code の2打鍵目スペースによる記号入力や、 Try-Code での
 1打鍵目空白による漢字入力など)</value>
   </data>
+  <data name="checkBox_SandSEnablePseudoSpace.ToolTip" xml:space="preserve">
+    <value>SandS有効時に、疑似同時打鍵のサポートを有効にします。
+
+これを有効にすると SandS で Space キー押下がシフト状態になった時に
+疑似的な空白コードをデコーダに送信します。
+
+デコーダは、第2打鍵(以降の)待ちのときに疑似空白を受信すると、それを
+通常の空白コードとして扱います。第1打鍵待ちのときはそれを無視します。
+
+これにより、 Shift+A と A→空白の両方に同じ文字を割り当てておけば、
+A, Space(押したまま), B という順序で打鍵した時に、Space が Shift 状態
+に変化する時点で疑似空白コードが発生し、 A→空白という打鍵列に
+相当する文字 (Shift+A と同じ文字)が出力されることになります。
+
+なお、矢印束記法(-*&gt;-nn&gt;) を用いると、Shift面に割り当てる文字集合と
+第2打鍵空白となる第1打鍵文字集合を簡単に定義できるようになります。</value>
+  </data>
   <data name="textBox_SandSEnableSpaceOrRepeatMillisec.ToolTip" xml:space="preserve">
     <value>SandS有効時に Space キーを連続打鍵した時、空白の入力または
 リピート入力を有効にするまでの時間(ミリ秒)を設定します。
@@ -687,6 +701,18 @@ Shift (または拡張修飾キー)+Space は有効なキーではなく、た�
 ・拡張修飾キー定義ファイルに次の設定を記述する：
       space=shiftB | none</value>
   </data>
+  <data name="textBox_modConversionFile.ToolTip" xml:space="preserve">
+    <value>修飾キー変換定義ファイルの設定
+
+SandS、CapsLock、英数、無変換、変換、および右シフトキーを
+修飾キーとして使用する際のキー変換定義ファイルを指定します。
+
+定義ファイルの例として、 mod-conversion.txt というファイルを
+用意してあります。記述方法は同ファイルを参照してください。
+
+定義ファイルを修正した場合は、漢直窓Sを再起動するか、または
+「基本設定」タブの「再読込」をクリックしてください。</value>
+  </data>
   <data name="checkBox_extraModifiersEnabled.ToolTip" xml:space="preserve">
     <value>拡張修飾キーを有効にします。
 
@@ -703,18 +729,6 @@ Shift (または拡張修飾キー)+Space は有効なキーではなく、た�
 機能割り当てが有効になります。
 
 詳細については mod-conversion.txt ファイルを参照してください。</value>
-  </data>
-  <data name="textBox_modConversionFile.ToolTip" xml:space="preserve">
-    <value>修飾キー変換定義ファイルの設定
-
-SandS、CapsLock、英数、無変換、変換、および右シフトキーを
-修飾キーとして使用する際のキー変換定義ファイルを指定します。
-
-定義ファイルの例として、 mod-conversion.txt というファイルを
-用意してあります。記述方法は同ファイルを参照してください。
-
-定義ファイルを修正した場合は、漢直窓Sを再起動するか、または
-「基本設定」タブの「再読込」をクリックしてください。</value>
   </data>
   <data name="label101.ToolTip" xml:space="preserve">
     <value>「拡張修飾キー定義ファイル」に定義した UpperRomanStrokeGuide を
@@ -851,23 +865,6 @@ A=BC...
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>114, 17</value>
   </metadata>
-  <data name="checkBox_SandSEnablePseudoSpace.ToolTip" xml:space="preserve">
-    <value>SandS有効時に、疑似同時打鍵のサポートを有効にします。
-
-これを有効にすると SandS で Space キー押下がシフト状態になった時に
-疑似的な空白コードをデコーダに送信します。
-
-デコーダは、第2打鍵(以降の)待ちのときに疑似空白を受信すると、それを
-通常の空白コードとして扱います。第1打鍵待ちのときはそれを無視します。
-
-これにより、 Shift+A と A→空白の両方に同じ文字を割り当てておけば、
-A, Space(押したまま), B という順序で打鍵した時に、Space が Shift 状態
-に変化する時点で疑似空白コードが発生し、 A→空白という打鍵列に
-相当する文字 (Shift+A と同じ文字)が出力されることになります。
-
-なお、矢印束記法(-*&gt;-nn&gt;) を用いると、Shift面に割り当てる文字集合と
-第2打鍵空白となる第1打鍵文字集合を簡単に定義できるようになります。</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

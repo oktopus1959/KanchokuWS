@@ -1922,9 +1922,9 @@ namespace KanchokuWS
             this.label105.AutoSize = true;
             this.label105.Location = new System.Drawing.Point(20, 123);
             this.label105.Name = "label105";
-            this.label105.Size = new System.Drawing.Size(67, 15);
+            this.label105.Size = new System.Drawing.Size(79, 15);
             this.label105.TabIndex = 13;
-            this.label105.Text = "代替テーブル";
+            this.label105.Text = "副変換テーブル";
             // 
             // label38
             // 
@@ -2519,8 +2519,8 @@ namespace KanchokuWS
             this.textBox_katakanaOneShotKeySeq.Name = "textBox_katakanaOneShotKeySeq";
             this.textBox_katakanaOneShotKeySeq.Size = new System.Drawing.Size(56, 19);
             this.textBox_katakanaOneShotKeySeq.TabIndex = 7;
-            this.toolTip1.SetToolTip(this.textBox_katakanaOneShotKeySeq, "直前に出力したひらがな列をカタカナに置換します。\r\n\r\n連続するひらがな列の途中から変換することはできません。\r\nあらかじめ Ctrl-G などでミニバッファをク" +
-        "リアしておいてから\r\nカタカナ変換したいひらがな列を入力してください。");
+            this.toolTip1.SetToolTip(this.textBox_katakanaOneShotKeySeq, "直前に出力したひらがな列をカタカナに置換します。\r\n\r\n連続するひらがな列の途中から変換することはできません。\r\nあらかじめ\r\n・Ctrl-G などでミニバッファ" +
+        "をクリアしておく\r\n・ブロッカーを設定しておく\r\n・空白を入力しておく\r\nなどをしてからカタカナ変換したいひらがな列を入力してください。");
             // 
             // label65
             // 
@@ -5024,8 +5024,8 @@ namespace KanchokuWS
             this.textBox_onSecondaryTable.ReadOnly = true;
             this.textBox_onSecondaryTable.Size = new System.Drawing.Size(132, 23);
             this.textBox_onSecondaryTable.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.textBox_onSecondaryTable, "履歴選択・部首連想選択時の中央鍵盤背景色\r\n\r\n縦列鍵盤による履歴候補選択や部首連想での文字選択時の\r\n中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設" +
-        "定ダイアログが開きます。）");
+            this.toolTip1.SetToolTip(this.textBox_onSecondaryTable, "副変換テーブル使用時の中央鍵盤背景色\r\n\r\n副変換テーブルに切り替えた場合の中央鍵盤の\r\n背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。" +
+        "）");
             // 
             // textBox_onBushuCompHelp
             // 
@@ -5036,8 +5036,7 @@ namespace KanchokuWS
             this.textBox_onBushuCompHelp.ReadOnly = true;
             this.textBox_onBushuCompHelp.Size = new System.Drawing.Size(132, 23);
             this.textBox_onBushuCompHelp.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.textBox_onBushuCompHelp, "履歴選択・部首連想選択時の中央鍵盤背景色\r\n\r\n縦列鍵盤による履歴候補選択や部首連想での文字選択時の\r\n中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設" +
-        "定ダイアログが開きます。）");
+            this.toolTip1.SetToolTip(this.textBox_onBushuCompHelp, "部首ヘルプ表示時の中央鍵盤背景色\r\n\r\n部首ヘルプ表示時の中央鍵盤の背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開きます。）");
             // 
             // textBox_onHistAssoc
             // 
@@ -5082,7 +5081,7 @@ namespace KanchokuWS
             this.textBox_nextStrokeBackColor.ReadOnly = true;
             this.textBox_nextStrokeBackColor.Size = new System.Drawing.Size(132, 23);
             this.textBox_nextStrokeBackColor.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.textBox_nextStrokeBackColor, "次打鍵セルの背景色\r\n\r\n打鍵ヘルプに表示された文字を打鍵している時の\r\n次の打鍵位置となるセルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開" +
+            this.toolTip1.SetToolTip(this.textBox_nextStrokeBackColor, "次打鍵セルの背景色\r\n\r\n打鍵ガイドに表示された文字を打鍵している時の\r\n次の打鍵位置となるセルの背景色を設定します。\r\n（ここをクリックすると設定ダイアログが開" +
         "きます。）");
             // 
             // textBox_middleLevelBackColor
