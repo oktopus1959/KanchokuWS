@@ -734,6 +734,10 @@ namespace KanchokuWS
                     case DecoderKeys.TOGGLE_DECKEY:
                         ToggleDecoder?.Invoke();
                         return true;
+                    case DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY:
+                        Settings.VirtualKeyboardPosFixedTemporarily = false;
+                        ToggleDecoder?.Invoke();
+                        return true;
                     case DecoderKeys.ACTIVE_DECKEY:
                     case DecoderKeys.ACTIVE2_DECKEY:
                         ActivateDecoder?.Invoke();

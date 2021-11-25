@@ -520,6 +520,7 @@ namespace KanchokuWS
             {"space", DecoderKeys.STROKE_SPACE_DECKEY},
             {"shiftspace", DecoderKeys.SHIFT_SPACE_DECKEY},
             {"modetoggle", DecoderKeys.TOGGLE_DECKEY},
+            {"modetogglefollowcaret", DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY},
             {"activate", DecoderKeys.ACTIVE_DECKEY},
             {"deactivate", DecoderKeys.DEACTIVE_DECKEY},
             {"fullescape", DecoderKeys.FULL_ESCAPE_DECKEY},

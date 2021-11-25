@@ -222,6 +222,8 @@ namespace KanchokuWS
 
         public const int PSEUDO_SPACE_DECKEY = RIGHT_SHIFT_BLOCKER_DECKEY + 1;              // 疑似スペースキー
 
+        public const int MODE_TOGGLE_FOLLOW_CARET_DECKEY = PSEUDO_SPACE_DECKEY + 1;         // 仮想鍵盤をカレットに再追従させて、漢直モードのトグル
+
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 
     }
