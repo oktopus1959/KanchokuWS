@@ -27,6 +27,9 @@
 // 任意の語尾OK
 #define ANY_OK (wchar_t*)3
 
+// 漢字の語尾OK
+#define KANJI_OK (wchar_t*)4
+
 // 特殊の終わり
 #define INF_SPECIAL_END (wchar_t*)9
 
@@ -57,7 +60,7 @@ namespace {
     // 五段活用「う」(会う)
     wchar_t const * IFX_WU_5[] = { _T("われた"), _T("われて"), _T("われ"), _T("わ"), _T("い"), _T("う"), _T("え"), _T("お"), _T("った"), _T("っちゃ"), _T("って"), _T("っ"), 0 };
     // サ変活用「する」(開発する)(達する、愛するは、五段として登録する)
-    wchar_t const * IFX_SURU[] = { STEM_OK, _T("された"), _T("されて"), _T("され"), _T("さ"), _T("した"), _T("して"), _T("しない"), _T("しな"), _T("し"), _T("する"), _T("す"), _T("せ"), _T("を"),_T("、"), _T("。"), 0 };
+    wchar_t const * IFX_SURU[] = { STEM_OK, KANJI_OK, _T("された"), _T("されて"), _T("され"), _T("さ"), _T("した"), _T("して"), _T("しない"), _T("しな"), _T("し"), _T("する"), _T("す"), _T("せ"), _T("を"),_T("、"), _T("。"), 0 };
     // ザ変活用「ずる」(信ずる)
     wchar_t const * IFX_ZURU[] = { _T("じた"), _T("じて"), _T("じない"), _T("じな"), _T("じられた"), _T("じられて"), _T("じられ"), _T("じら"), _T("じ"), _T("ずる"), _T("ず"), _T("ぜ"), 0 };
     // 形容詞「い」(美しい)
@@ -70,7 +73,7 @@ namespace {
     wchar_t const * IFX_ADV[] = { STEM_OK, ISOLATABLE, ANY_OK, 0 };
     // 無活用
     //wchar_t const * IFX_NONE[] = { STEM_OK, 0 };
-    wchar_t const * IFX_NONE[] = { STEM_OK,
+    wchar_t const * IFX_NONE[] = { STEM_OK, KANJI_OK,
         _T("が"), _T("だ"), _T("で"), _T("と"), _T("な"), _T("に"), _T("の"), _T("は"), _T("へ"), _T("も"), _T("を"),
         _T("から"), _T("こそ"), _T("ごと"), _T("さえ"), _T("じゃ"), _T("すら"),_T("まで"),_T("たち"),_T("や"),_T("よ"),_T("ゆえ"),
         _T("、"), _T("。"), 0 };
@@ -90,6 +93,7 @@ namespace {
         while (*ppIfx != 0) {
             wchar_t const* pIfx = *ppIfx++;
             if (pIfx == ANY_OK) return 0;
+            if (pIfx == KANJI_OK && utils::is_kanji(pms[0])) return 0;  // 漢字後接もOKの場合
             if (pIfx <= INF_SPECIAL_END) continue;
             int i = 0;
             while (pIfx[i] != 0 && pIfx[i] == pms[i]) ++i;
@@ -752,11 +756,15 @@ namespace {
                     size_t gobiMaxLen = min(tailHiraganaLen, SETTINGS->mazeGobiMaxLen);
                     stemMinLen = key.size() > gobiMaxLen ? key.size() - gobiMaxLen : 1;
                     // やはり語尾にひらがな以外も含めてしまうと多々問題が生じるので、語尾はひらがなに限ることにする
-                    // 「だいひょう /代表/」しかエントリがない場合の「だいひょう者」のような読みについては、
-                    // ①ひらがな部分がエントリの読みと一致し、
-                    // ②読みの末尾が漢字・カタカナのみ、
-                    // という場合に「エントリの変換形」＋「読みの末尾漢字列」という形で返すようにする
-                    //stemMinLen = key.size() > SETTINGS->mazeGobiMaxLen ? key.size() - SETTINGS->mazeGobiMaxLen : 1;
+                    // (2021/11/27)
+                    // ⇒と思ったが、「ぶんき /分岐/」しか登録がないときに「分き点」も変換できるようにしたい
+                    // ⇒漢字で終わる読みの長さが4文字以下で、末尾漢字列が2文字以下、stemが2文字以上残る場合のみ、末尾漢字列も語尾に含める
+                    if (stemMinLen >= 3 && stemMinLen <= 4) {
+                        size_t tailKanjiLen = utils::count_tail_kanji(key.substr(0, stemMinLen));
+                        if (tailKanjiLen > 0 && tailKanjiLen <= stemMinLen - 2) {
+                            stemMinLen -= tailKanjiLen;
+                        }
+                    }
 
                     _LOG_DEBUGH(_T("stemMinLen=%d"), stemMinLen);
                     std::set<const MazeEntry*> entrySet;
