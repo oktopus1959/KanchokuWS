@@ -20,6 +20,8 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
 
+#define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
+
 namespace {
     DEFINE_NAMESPACE_LOGGER(StrokeTreeBuilder);
 
@@ -112,6 +114,14 @@ namespace {
 
         // 打鍵列
         std::vector<int> strokes;
+
+        // 漢字置換マップ
+        std::map<tstring, tstring> kanjiConvMap;
+
+        const tstring& conv_kanji(const tstring& k) {
+            auto iter = kanjiConvMap.find(k);
+            return iter == kanjiConvMap.end() ? k : iter->second;
+        }
 
     public:
         StrokeTreeBuilder(std::vector<tstring>& lines, bool bMakeStrokeSerieses)
@@ -335,7 +345,7 @@ namespace {
                         strokes.pop_back();
                     }
                 }
-                return new StringNode(currentStr);
+                return new StringNode(conv_kanji(currentStr));
             case TOKEN::FUNCTION:          // @c : 機能ノード
                 return createFunctionNode(currentStr, prevNth, nth);
             default:                // 途中でファイルが終わったりした場合 : エラー
@@ -368,7 +378,7 @@ namespace {
             while (true) {
                 switch (getNextChar()) {
                 case '#': {
-                    // '#include', '#define', '#strokePosition', '#*shift*', または '#' 以降、行末までコメント
+                    // '#include', '#define', '#strokePosition', '#*shift*', '#yomiConvert', または '#' 以降、行末までコメント
                     wstring filename;
                     readWord();
                     auto lcStr = utils::toLower(currentStr);
@@ -383,6 +393,23 @@ namespace {
                             readWordOrString();
                             defines[key] = currentStr;
                             _LOG_DEBUGH(_T("DEFINE: lineNum=%d, %s=%s"), lineNumber + 1, key.c_str(), currentStr.c_str());
+                        }
+                    } else if (utils::startsWith(lcStr, _T("yomiconv"))) {
+                        readWord();
+                        auto keyword = currentStr;
+                        _LOG_DEBUGH(_T("YomiConversion: keyword=%s"), keyword.c_str());
+                        if (keyword == _T("clear") || keyword == _T("end")) {
+                            kanjiConvMap.clear();
+                        } else {
+                            _LOG_DEBUGH(_T("YomiConversion: %s"), SETTINGS->kanjiYomiFile.c_str());
+                            if (!SETTINGS->kanjiYomiFile.empty()) readKanjiConvFile(SETTINGS->kanjiYomiFile, true);
+                            if (keyword == _T("with")) {
+                                readWordOrString();
+                                if (!currentStr.empty()) {
+                                    _LOG_DEBUGH(_T("YomiConversion: %s"), currentStr.c_str());
+                                    readKanjiConvFile(currentStr, false);
+                                }
+                            }
                         }
                     } else if (lcStr == _T("strokePosition")) {
                         readWordOrString();
@@ -622,12 +649,59 @@ namespace {
             nextPos = currentLine.size();
         }
 
-        void readFile(wstring filename) {
+        void readFile(const wstring& filename) {
             _LOG_DEBUGH(_T("INCLUDE: %s"), filename.c_str());
             auto reader = utils::IfstreamReader(utils::joinPath(SETTINGS->rootDir, filename));
             if (reader.success()) {
                 auto lines = reader.getAllLines();
                 tableLines.insert(tableLines.begin() + lineNumber + 1, lines.begin(), lines.end());
+            } else {
+                LOG_ERROR(_T("Can't open: %s"), filename.c_str());
+            }
+        }
+
+        // 漢字置換ファイルを読み込む
+        // 一行の形式は「漢字 [<TAB>|Space]+ 読みの並び('|'区切り)」
+        // 読みの並びの優先順は以下のとおり:
+        // ①2文字以上のカタカナ
+        // ②2文字以上のひらがな
+        // ③漢字
+        // bOnlyYomi == true なら、エントリの上書き禁止
+        void readKanjiConvFile(const wstring& filename, bool bOnlyYomi) {
+            std::wregex reComment(_T("#.*"));
+            std::wregex reBlank(_T("[\\t ]+"));
+            std::wregex reKatakanaMulti(_T("[ァ-ン]{2,}"));
+            std::wregex reHiraganaMulti(_T("[ぁ-ん]{2,}"));
+            _LOG_DEBUGH(_T("filename: %s, bOnlyYomi=%s"), filename.c_str(), BOOL_TO_WPTR(bOnlyYomi));
+            auto reader = utils::IfstreamReader(utils::joinPath(SETTINGS->rootDir, filename));
+            if (reader.success()) {
+                auto lines = reader.getAllLines();
+                _LOG_DEBUGH(_T("lines.size(): %d"), lines.size());
+                for (auto line : lines) {
+                    auto items = utils::split(utils::strip(std::regex_replace(std::regex_replace(line, reComment, _T("")), reBlank, _T(" "))), ' ');
+                    if (items.size() >= 2) {
+                        auto kanji = items[0];
+                        if (!kanji.empty() && !items[1].empty()) {
+                            if (!bOnlyYomi || kanjiConvMap.find(kanji) == kanjiConvMap.end()) {
+                                std::wsmatch results;
+                                if (std::regex_search(items[1], results, reKatakanaMulti)) {
+                                    auto yomi = utils::convert_katakana_to_hiragana(results.str());
+                                    if (!yomi.empty()) kanjiConvMap[kanji] = yomi;
+                                } else if (std::regex_search(items[1], results, reHiraganaMulti)) {
+                                    auto yomi = results.str();
+                                    if (!yomi.empty()) kanjiConvMap[kanji] = yomi;
+                                } else if (!bOnlyYomi) {
+                                    auto yomi = items[1];
+                                    if (!yomi.empty()) {
+                                        kanjiConvMap[kanji] = yomi;
+                                        kanjiConvMap[yomi] = kanji;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                _LOG_DEBUGH(_T("kanjiConvMap.size(): %d"), kanjiConvMap.size());
             } else {
                 LOG_ERROR(_T("Can't open: %s"), filename.c_str());
             }

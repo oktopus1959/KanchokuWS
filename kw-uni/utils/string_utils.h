@@ -571,10 +571,26 @@ namespace utils
         return result;
     }
 
+    inline wstring convert_hiragana_to_katakana(const wstring& wstr) {
+        wstring result;
+        for (auto wc : wstr) {
+            result.push_back((wchar_t)(is_hiragana(wc) ? hiragana_to_katakana(wc) : wc));
+        }
+        return result;
+    }
+
     inline MString convert_katakana_to_hiragana(const MString& mstr) {
         MString result;
         for (auto mc : mstr) {
             result.push_back(is_pure_katakana(mc) ? katakana_to_hiragana(mc) : mc);
+        }
+        return result;
+    }
+
+    inline wstring convert_katakana_to_hiragana(const wstring& wstr) {
+        wstring result;
+        for (auto wc : wstr) {
+            result.push_back((wchar_t)(is_pure_katakana(wc) ? katakana_to_hiragana(wc) : wc));
         }
         return result;
     }

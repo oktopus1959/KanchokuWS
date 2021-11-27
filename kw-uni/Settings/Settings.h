@@ -10,6 +10,7 @@ struct Settings {
     tstring tableFile2;         // ストロークテーブル2
     tstring charsDefFile;       // Deckey から文字への変換
     tstring easyCharsFile;      // 簡易打鍵文字ファイル
+    tstring kanjiYomiFile;      // 漢字読みファイル
     tstring bushuFile;          // 部首合成辞書
     tstring autoBushuFile;      // 自動部首合成辞書
     tstring bushuAssocFile;     // 部首連想辞書

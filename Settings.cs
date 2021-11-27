@@ -620,8 +620,6 @@ namespace KanchokuWS
 
             StrokeHelpFile = GetString("strokeHelpFile", "stroke-help.txt");
 
-            KanjiYomiFile = GetString("kanjiYomiFile", "kanji-yomi.txt");
-
             //-------------------------------------------------------------------------------------
             // 漢直モードトグルキー
             ActiveKey = (uint)GetString("unmodifiedHotKey")._parseHex(0)._lowLimit(0);
@@ -800,6 +798,7 @@ namespace KanchokuWS
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
             TableFile = addDecoderSetting("tableFile", "t.tbl");
             TableFile2 = addDecoderSetting("tableFile2", "");
+            KanjiYomiFile = addDecoderSetting("kanjiYomiFile", "kanji-yomi.txt");
             //addDecoderSetting("strokeHelpFile");
             HistoryFile = addDecoderSetting("historyFile", "kwhist.*.txt");
             //addDecoderSetting("historyUsedFile");

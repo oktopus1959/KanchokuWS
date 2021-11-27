@@ -31,6 +31,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_FILE_PATH(tableFile2);
     SET_FILE_PATH(charsDefFile);
     SET_FILE_PATH(easyCharsFile);
+    SET_FILE_PATH(kanjiYomiFile);
     SET_FILE_PATH(bushuFile);
     SET_FILE_PATH(autoBushuFile);
     SET_FILE_PATH(bushuAssocFile);
