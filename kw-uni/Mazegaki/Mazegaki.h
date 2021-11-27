@@ -115,7 +115,7 @@ private:
         return shiftedYomiLen;
     }
 
-    // 読み長を長くする(読み開始位置を右にシフトする) (前回の変換の直後でなければ false を返す)
+    // 読み長を長くする(読み開始位置を左にシフトする) (前回の変換の直後でなければ false を返す)
     bool LeftShiftYomiStartPos() {
         if (IsJustAfterPrevXfer()) {
             ++shiftedYomiLen;

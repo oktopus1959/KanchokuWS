@@ -758,10 +758,10 @@ namespace {
                     // やはり語尾にひらがな以外も含めてしまうと多々問題が生じるので、語尾はひらがなに限ることにする
                     // (2021/11/27)
                     // ⇒と思ったが、「ぶんき /分岐/」しか登録がないときに「分き点」も変換できるようにしたい
-                    // ⇒漢字で終わる読みの長さが4文字以下で、末尾漢字列が2文字以下、stemが2文字以上残る場合のみ、末尾漢字列も語尾に含める
+                    // ⇒漢字で終わる読みの長さが4文字以下で、末尾漢字列が2文字以下、stemが2文字以上残って漢字を含む場合のみ、末尾漢字列も語尾に含める
                     if (stemMinLen >= 3 && stemMinLen <= 4) {
                         size_t tailKanjiLen = utils::count_tail_kanji(key.substr(0, stemMinLen));
-                        if (tailKanjiLen > 0 && tailKanjiLen <= stemMinLen - 2) {
+                        if (tailKanjiLen > 0 && tailKanjiLen <= stemMinLen - 2 && utils::contains_kanji(key.substr(0, stemMinLen - tailKanjiLen))) {
                             stemMinLen -= tailKanjiLen;
                         }
                     }
