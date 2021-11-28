@@ -540,6 +540,8 @@ namespace KanchokuWS
             {"exchangecodetable", DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY},
             {"leftshiftblocker", DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY},
             {"rightshiftblocker", DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY},
+            {"leftshiftmazestartpos", DecoderKeys.LEFT_SHIFT_MAZE_START_POS_DECKEY},
+            {"rightshiftmazestartpos", DecoderKeys.RIGHT_SHIFT_MAZE_START_POS_DECKEY},
             //{"^a", DecoderKeys.CTRL_},
         };
 

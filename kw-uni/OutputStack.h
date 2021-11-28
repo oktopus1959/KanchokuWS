@@ -266,9 +266,14 @@ public:
         return tail_string(maxlen, tail_size_upto_flag_or_punct(OutputStack::FLAG_BLOCK_HIST));
     }
 
+    // 改行を含まない末尾部分の長さ(最大長maxlen)で、交ぜ書きor履歴ブロッカーまたは句読点までの部分文字列を返す(先頭の空白と末尾の句読点は含める)
+    inline size_t TailSizeUptoMazeOrHistBlockerOrPunct() const {
+        return tail_size_upto_flag_or_punct(OutputStack::FLAG_BLOCK_HIST | OutputStack::FLAG_BLOCK_MAZE);
+    }
+
     // 改行を含まない末尾部分(最大長maxlen)で、交ぜ書きor履歴ブロッカーまたは句読点までの部分文字列を返す(先頭の空白と末尾の句読点は含める)
     inline MString BackStringUptoMazeOrHistBlockerOrPunct(size_t maxlen) const {
-        return tail_string(maxlen, tail_size_upto_flag_or_punct(OutputStack::FLAG_BLOCK_HIST | OutputStack::FLAG_BLOCK_MAZE));
+        return tail_string(maxlen, TailSizeUptoMazeOrHistBlockerOrPunct());
     }
 
     // 改行を含まない末尾部分(最大長maxlen)で、指定の flag の直後までの部分文字列を返す

@@ -619,7 +619,7 @@ public:
         // 打鍵途中なら打鍵中のキー文字列も表示する
         if (STATE_COMMON->IsWaiting2ndStroke()) origLen = STATE_COMMON->OrigString().size();
         size_t topLen = utils::array_length(OutParams->topString);
-        size_t prevMazeLen = MAZEGAKI_NODE ? MAZEGAKI_NODE->GetPrevOutputLen() : 0;
+        size_t prevMazeLen = MAZEGAKI_NODE && !MAZEGAKI_NODE->IsSelectFirstCandDisabled() ? MAZEGAKI_NODE->GetPrevOutputLen() : 0;
         LOG_DEBUGH(_T("origLen=%d, prevMazeLen=%d"), origLen, prevMazeLen);
         auto s = OUTPUT_STACK->OutputStackBackStrWithFlagUpto(topLen - origLen - 1, prevMazeLen);        // ブロッカーを反映した文字列を取得
         LOG_DEBUGH(_T("OutputStackBackStrWithFlagUpto(%d)=%s"), (topLen - origLen - 1), MAKE_WPTR(s));

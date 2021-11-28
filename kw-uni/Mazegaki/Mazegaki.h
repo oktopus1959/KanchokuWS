@@ -13,6 +13,10 @@ private:
     // 変換結果を元に戻すための変換前の読み
     static MString prevYomi;
 
+    // 変換結果を元に戻すためのリード文字列の長さ
+    // 「ひど|い目にあった」⇒「ひどい目に|遭った」のときの「い目に」の長さ)
+    static size_t prevLeadLen;
+
     // 変換結果を元に戻すための出力文字列の長さ
     static size_t prevOutputLen;
 
@@ -67,8 +71,9 @@ private:
     }
 
     // 今回の結果を元に戻すための情報を保存 (yomi は、再変換をする際の元の読みになる)
-    void SetYomiInfo(const MString& yomi, size_t outputLen) {
+    void SetYomiInfo(const MString& yomi, size_t leadLen, size_t outputLen) {
         prevYomi = yomi;
+        prevLeadLen = leadLen;
         prevOutputLen = outputLen;
         shiftedYomiLen = yomi.size();
         deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
@@ -80,14 +85,19 @@ private:
         return (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) ? prevOutputLen : 0;
     }
 
+    // 前回のリード部長を返す
+    size_t GetPrevLeadLen() {
+        return (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) ? prevLeadLen : 0;
+    }
+
     // n打鍵によるMaze呼び出し用に情報をセットする(4ストロークまでOK)⇒前回の出力長を返す
     size_t GetPrevYomiInfo(MString& yomi) {
         if (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) {
-            selectFirstCandDisabled = true;
+            //selectFirstCandDisabled = true;
             yomi = prevYomi;
             return prevOutputLen;
         }
-        selectFirstCandDisabled = false;
+        //selectFirstCandDisabled = false;
         return 0;
     }
 
@@ -96,9 +106,10 @@ private:
         if (IsJustAfterPrevXfer()) {
             selectFirstCandDisabled = true;
             yomi = prevYomi;
-            size_t resultLen = prevOutputLen;
+            size_t prevOutLen = prevOutputLen;
+            prevLeadLen = 0;
             prevOutputLen = 0;
-            return resultLen;
+            return prevOutLen;
         }
         selectFirstCandDisabled = false;
         return 0;
@@ -111,7 +122,7 @@ private:
 
     // シフトされた読み長の取得
     size_t GetShiftedYomiLen() {
-        if (shiftedYomiLen < prevYomi.size()) selectFirstCandDisabled = false;
+        //if (shiftedYomiLen < prevYomi.size()) selectFirstCandDisabled = false;
         return shiftedYomiLen;
     }
 

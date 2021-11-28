@@ -615,6 +615,15 @@ namespace utils
         return s.size() - pos;
     }
 
+    // 漢字を含むか
+    template<typename T>
+    inline bool contains_kanji(const T& s) {
+        for (size_t pos = 0; pos < s.size(); ++pos) {
+            if (is_kanji(s[pos])) return true;
+        }
+        return false;
+    }
+
     // 末尾のひらがな部分の長さを取得
     template<typename T>
     inline size_t count_tail_hiragana(const T& s) {
