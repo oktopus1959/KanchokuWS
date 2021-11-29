@@ -93,11 +93,11 @@ private:
     // n打鍵によるMaze呼び出し用に情報をセットする(4ストロークまでOK)⇒前回の出力長を返す
     size_t GetPrevYomiInfo(MString& yomi) {
         if (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) {
-            //selectFirstCandDisabled = true;
+            selectFirstCandDisabled = true; // これは再変換のときに縦列候補表示にするために必要
             yomi = prevYomi;
             return prevOutputLen;
         }
-        //selectFirstCandDisabled = false;
+        selectFirstCandDisabled = false;
         return 0;
     }
 
