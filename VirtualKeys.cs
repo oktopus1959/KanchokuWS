@@ -174,15 +174,15 @@ namespace KanchokuWS
         private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftFuncKeyWhenDecoderOff = new Dictionary<uint, ShiftPlane>();
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てられたシフト面を得る</summary>
-        public static ShiftPlane GetShiftPlaneForShiftFuncKey(uint funcKey, bool bDecoderOn)
+        public static ShiftPlane GetShiftPlaneFromShiftFuncKeyModFlag(uint funcKey, bool bDecoderOn)
         {
             return bDecoderOn ? shiftPlaneForShiftFuncKey._safeGet(funcKey, ShiftPlane.NONE) : shiftPlaneForShiftFuncKeyWhenDecoderOff._safeGet(funcKey, ShiftPlane.NONE);
         }
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) にシフト面が割り当てられているか</summary>
-        public static bool IsShiftPlaneAssignedForShiftFuncKey(uint funcKey, bool bDecoderOn)
+        public static bool IsShiftPlaneAssignedForShiftFuncKeyByModFlag(uint funcKey, bool bDecoderOn)
         {
-            return GetShiftPlaneForShiftFuncKey(funcKey, bDecoderOn) != ShiftPlane.NONE;
+            return GetShiftPlaneFromShiftFuncKeyModFlag(funcKey, bDecoderOn) != ShiftPlane.NONE;
         }
 
         private static uint getVKeyFromDecKey(int deckey)

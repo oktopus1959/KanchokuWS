@@ -245,15 +245,15 @@ namespace KanchokuWS
         {
             bool bDecoderOn = isDecoderActivated();
             if (spaceKeyState == SpecialKeyState.SHIFTED) {
-                var plane = VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_SPACE, bDecoderOn);
+                var plane = VirtualKeys.GetShiftPlaneFromShiftFuncKeyModFlag(KeyModifiers.MOD_SPACE, bDecoderOn);
                 if (plane == VirtualKeys.ShiftPlane.NONE && isSandSEnabled()) plane = VirtualKeys.ShiftPlane.NormalPlane;
                 return plane;
             }
-            if (capsKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_CAPS, bDecoderOn);
-            if (alnumKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_ALNUM, bDecoderOn);
-            if (nferKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_NFER, bDecoderOn);
-            if (xferKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_XFER, bDecoderOn);
-            if (rshiftKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_RSHIFT, bDecoderOn);
+            if (capsKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneFromShiftFuncKeyModFlag(KeyModifiers.MOD_CAPS, bDecoderOn);
+            if (alnumKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneFromShiftFuncKeyModFlag(KeyModifiers.MOD_ALNUM, bDecoderOn);
+            if (nferKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneFromShiftFuncKeyModFlag(KeyModifiers.MOD_NFER, bDecoderOn);
+            if (xferKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneFromShiftFuncKeyModFlag(KeyModifiers.MOD_XFER, bDecoderOn);
+            if (rshiftKeyState == SpecialKeyState.SHIFTED) return VirtualKeys.GetShiftPlaneFromShiftFuncKeyModFlag(KeyModifiers.MOD_RSHIFT, bDecoderOn);
             return VirtualKeys.ShiftPlane.NONE;
         }
 
@@ -264,9 +264,9 @@ namespace KanchokuWS
         private bool isSameShiftKeyAsSandS(uint fkey, bool bDecoderOn)
         {
             if (Settings.LoggingDecKeyInfo) logger.DebugH($"fkey={fkey:x}H");
-            var plane_sands = VirtualKeys.GetShiftPlaneForShiftFuncKey(KeyModifiers.MOD_SPACE, bDecoderOn);
+            var plane_sands = VirtualKeys.GetShiftPlaneFromShiftFuncKeyModFlag(KeyModifiers.MOD_SPACE, bDecoderOn);
             if (fkey != 0) {
-                var plane_fkey = VirtualKeys.GetShiftPlaneForShiftFuncKey(fkey, bDecoderOn);
+                var plane_fkey = VirtualKeys.GetShiftPlaneFromShiftFuncKeyModFlag(fkey, bDecoderOn);
                 if (Settings.LoggingDecKeyInfo) logger.DebugH($"plane_fkey={plane_fkey}, plane_sands={plane_sands}");
                 return plane_fkey == plane_sands;
             }
@@ -294,6 +294,26 @@ namespace KanchokuWS
         private bool isSameShiftKeyAsSandSShifted(bool bDecoderOn)
         {
             return isSameShiftKeyAsSandS(getShiftedSpecialModKey(), bDecoderOn);;
+        }
+
+        private int getShiftPlaneDeckeyForSandS(bool bDecoderOn)
+        {
+            switch (VirtualKeys.GetShiftPlaneFromShiftFuncKeyModFlag(KeyModifiers.MOD_SPACE, bDecoderOn)) {
+                case VirtualKeys.ShiftPlane.NormalPlane:
+                    return DecoderKeys.POST_NORMAL_SHIFT_DECKEY;
+                case VirtualKeys.ShiftPlane.PlaneA:
+                    return DecoderKeys.POST_PLANE_A_SHIFT_DECKEY;
+                case VirtualKeys.ShiftPlane.PlaneB:
+                    return DecoderKeys.POST_PLANE_B_SHIFT_DECKEY;
+                default:
+                    return 0;
+            }
+        }
+
+        private void invokeHandlerForPostSandSKey()
+        {
+            int deckey = getShiftPlaneDeckeyForSandS(true);
+            if (deckey > 0) invokeHandler(deckey, 0);
         }
 
         /// <summary> extraInfo=0 の時のキー押下時のリザルトフラグ </summary>
@@ -347,7 +367,7 @@ namespace KanchokuWS
                     // CapsLock
                     if (vkey == (int)VirtualKeys.CapsLock) {
                         if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CapsLockKey Pressed");
-                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_CAPS, bDecoderOn)) {
+                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKeyByModFlag(KeyModifiers.MOD_CAPS, bDecoderOn)) {
                             if (capsKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
                                 // Capsキーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
                                 capsKeyState = SpecialKeyState.SHIFTED;
@@ -369,7 +389,7 @@ namespace KanchokuWS
                     // AlphaNum
                     if (vkey == (int)VirtualKeys.AlphaNum) {
                         if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"AlpahNumKey Pressed");
-                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_ALNUM, bDecoderOn)) {
+                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKeyByModFlag(KeyModifiers.MOD_ALNUM, bDecoderOn)) {
                             if (alnumKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
                                 // 英数キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
                                 alnumKeyState = SpecialKeyState.SHIFTED;
@@ -391,7 +411,7 @@ namespace KanchokuWS
                     // Nfer
                     if (vkey == (int)VirtualKeys.Nfer) {
                         if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"NferKey Pressed");
-                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_NFER, bDecoderOn)) {
+                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKeyByModFlag(KeyModifiers.MOD_NFER, bDecoderOn)) {
                             if (nferKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
                                 // 無変換キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
                                 nferKeyState = SpecialKeyState.SHIFTED;
@@ -413,7 +433,7 @@ namespace KanchokuWS
                     // Xfer
                     if (vkey == (int)VirtualKeys.Xfer) {
                         if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"XferKey Pressed");
-                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_XFER, bDecoderOn)) {
+                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKeyByModFlag(KeyModifiers.MOD_XFER, bDecoderOn)) {
                             if (xferKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
                                 // 変換キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
                                 xferKeyState = SpecialKeyState.SHIFTED;
@@ -435,7 +455,7 @@ namespace KanchokuWS
                     // Rshift
                     if (vkey == (int)VirtualKeys.RSHIFT) {
                         if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"RshiftKey Pressed");
-                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_RSHIFT, bDecoderOn)) {
+                        if (VirtualKeys.IsShiftPlaneAssignedForShiftFuncKeyByModFlag(KeyModifiers.MOD_RSHIFT, bDecoderOn)) {
                             if (rshiftKeyState == SpecialKeyState.PRESSED || getPressedOrShiftedSpecialModKey() != 0) {
                                 // RSHIFTキーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、シフト状態に遷移する
                                 rshiftKeyState = SpecialKeyState.SHIFTED;
@@ -478,8 +498,8 @@ namespace KanchokuWS
                                 DateTime.Now > prevSpaceUpDt.AddMilliseconds(Settings.SandSEnableSpaceOrRepeatMillisec + KEY_REPEAT_INTERVAL)) {
                                 spaceKeyState = SpecialKeyState.SHIFTED;
                                 //makeSpecialModKeyShifted();
-                                // 疑似スペースキーを送出する
-                                if (Settings.SandSEnablePseudoSpace) invokeHandler(DecoderKeys.PSEUDO_SPACE_DECKEY, 0);
+                                // 後置シフトキーを送出する
+                                if (Settings.SandSEnablePostShift && bDecoderOn) invokeHandlerForPostSandSKey();
                                 normalInfoKeyDownResult = true;
                                 return;
                             }
@@ -507,8 +527,8 @@ namespace KanchokuWS
                         if (spaceKeyState == SpecialKeyState.PRESSED) {
                             // スペースキーが押下されている状態でその他のキーが押されたら、シフト状態に遷移する
                             spaceKeyState = SpecialKeyState.SHIFTED;
-                            // 疑似スペースキーを送出する
-                            if (Settings.SandSEnablePseudoSpace) invokeHandler(DecoderKeys.PSEUDO_SPACE_DECKEY, 0);
+                            // 後置シフトキーを送出する
+                            if (Settings.SandSEnablePostShift && bDecoderOn) invokeHandlerForPostSandSKey();
                             normalInfoKeyDownResult = true;
                         }
                     }
@@ -664,7 +684,7 @@ namespace KanchokuWS
             if (vkey == (int)VirtualKeys.CapsLock) {
                 var state = capsKeyState;
                 capsKeyState = SpecialKeyState.RELEASED;
-                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_CAPS, bDecoderOn)) {
+                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKeyByModFlag(KeyModifiers.MOD_CAPS, bDecoderOn)) {
                     if (state == SpecialKeyState.SHIFTED) {
                         return true;
                     } else if (state == SpecialKeyState.PRESSED) {
@@ -675,7 +695,7 @@ namespace KanchokuWS
             if (vkey == (int)VirtualKeys.AlphaNum) {
                 var state = alnumKeyState;
                 alnumKeyState = SpecialKeyState.RELEASED;
-                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_ALNUM, bDecoderOn)) {
+                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKeyByModFlag(KeyModifiers.MOD_ALNUM, bDecoderOn)) {
                     if (state == SpecialKeyState.SHIFTED) {
                         return true;
                     } else if (state == SpecialKeyState.PRESSED) {
@@ -686,7 +706,7 @@ namespace KanchokuWS
             if (vkey == (int)VirtualKeys.Nfer) {
                 var state = nferKeyState;
                 nferKeyState = SpecialKeyState.RELEASED;
-                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_NFER, bDecoderOn)) {
+                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKeyByModFlag(KeyModifiers.MOD_NFER, bDecoderOn)) {
                     if (state == SpecialKeyState.PRESSED) {
                         keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                     }
@@ -696,7 +716,7 @@ namespace KanchokuWS
             if (vkey == (int)VirtualKeys.Xfer) {
                 var state = xferKeyState;
                 xferKeyState = SpecialKeyState.RELEASED;
-                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_XFER, bDecoderOn)) {
+                if (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKeyByModFlag(KeyModifiers.MOD_XFER, bDecoderOn)) {
                     if (state == SpecialKeyState.PRESSED) {
                         keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                     }
@@ -706,7 +726,7 @@ namespace KanchokuWS
             if (vkey == (int)VirtualKeys.RSHIFT) {
                 var state = rshiftKeyState;
                 rshiftKeyState = SpecialKeyState.RELEASED;
-                if (Settings.ActiveKey == (uint)vkey || (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKey(KeyModifiers.MOD_RSHIFT, bDecoderOn))) {
+                if (Settings.ActiveKey == (uint)vkey || (Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftFuncKeyByModFlag(KeyModifiers.MOD_RSHIFT, bDecoderOn))) {
                     if (state == SpecialKeyState.PRESSED) {
                         keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                     }

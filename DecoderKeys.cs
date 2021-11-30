@@ -223,9 +223,12 @@ namespace KanchokuWS
         public const int LEFT_SHIFT_MAZE_START_POS_DECKEY = RIGHT_SHIFT_BLOCKER_DECKEY + 1;         // 交ぜ書き開始位置を左シフトする
         public const int RIGHT_SHIFT_MAZE_START_POS_DECKEY = LEFT_SHIFT_MAZE_START_POS_DECKEY + 1;  // 交ぜ書き開始位置を右シフトする
 
-        public const int PSEUDO_SPACE_DECKEY = RIGHT_SHIFT_MAZE_START_POS_DECKEY + 1;              // 疑似スペースキー
+        public const int PSEUDO_SPACE_DECKEY = RIGHT_SHIFT_MAZE_START_POS_DECKEY + 1;       // 疑似スペースキー
+        public const int POST_NORMAL_SHIFT_DECKEY = PSEUDO_SPACE_DECKEY + 1;                // 後置通常シフトキー
+        public const int POST_PLANE_A_SHIFT_DECKEY = POST_NORMAL_SHIFT_DECKEY + 1;          // 後置拡張シフトAキー
+        public const int POST_PLANE_B_SHIFT_DECKEY = POST_PLANE_A_SHIFT_DECKEY + 1;         // 後置拡張シフトBキー
 
-        public const int MODE_TOGGLE_FOLLOW_CARET_DECKEY = PSEUDO_SPACE_DECKEY + 1;         // 仮想鍵盤をカレットに再追従させて、漢直モードのトグル
+        public const int MODE_TOGGLE_FOLLOW_CARET_DECKEY = POST_PLANE_B_SHIFT_DECKEY + 1;   // 仮想鍵盤をカレットに再追従させて、漢直モードのトグル
 
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 

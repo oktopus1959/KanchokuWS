@@ -596,6 +596,17 @@ namespace KanchokuWS
                             InvokeDecoder(deckey, 0);
                         }
                         return true;
+                    case DecoderKeys.POST_NORMAL_SHIFT_DECKEY:
+                    case DecoderKeys.POST_PLANE_A_SHIFT_DECKEY:
+                    case DecoderKeys.POST_PLANE_B_SHIFT_DECKEY:
+                        logger.Info(() => $"POST_PLANE_X_SHIFT_DECKEY:{deckey}, strokeCount={decoderOutput.GetStrokeCount()}");
+                        if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
+                            // 第2打鍵待ちなら、いったんBSを出力してからシフトされたコードを出力
+                            InvokeDecoder(DecoderKeys.BS_DECKEY, 0);
+                            deckey = (prevDeckey % DecoderKeys.NORMAL_DECKEY_NUM) + (deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY + 1) * DecoderKeys.SHIFT_DECKEY_NUM;
+                            InvokeDecoder(deckey, 0);
+                        }
+                        return true;
                     default:
                         bPrevDtUpdate = true;
                         if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {

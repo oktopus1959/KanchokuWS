@@ -412,7 +412,7 @@ namespace KanchokuWS
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.textBox_historyFewCharsKeySeq = new System.Windows.Forms.TextBox();
             this.label106 = new System.Windows.Forms.Label();
-            this.checkBox_SandSEnablePseudoSpace = new System.Windows.Forms.CheckBox();
+            this.checkBox_SandSEnablePostShift = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onSecondaryTable = new KanchokuWS.ColorTextBox();
@@ -4083,7 +4083,7 @@ namespace KanchokuWS
             // 
             // groupBox39
             // 
-            this.groupBox39.Controls.Add(this.checkBox_SandSEnablePseudoSpace);
+            this.groupBox39.Controls.Add(this.checkBox_SandSEnablePostShift);
             this.groupBox39.Controls.Add(this.textBox_SandSEnableSpaceOrRepeatMillisec);
             this.groupBox39.Controls.Add(this.label103);
             this.groupBox39.Controls.Add(this.checkBox_ignoreSpaceUpOnSandS);
@@ -4979,16 +4979,18 @@ namespace KanchokuWS
             this.label106.TabIndex = 18;
             this.label106.Text = "履歴検索(数文字)";
             // 
-            // checkBox_SandSEnablePseudoSpace
+            // checkBox_SandSEnablePostShift
             // 
-            this.checkBox_SandSEnablePseudoSpace.AutoSize = true;
-            this.checkBox_SandSEnablePseudoSpace.Location = new System.Drawing.Point(11, 105);
-            this.checkBox_SandSEnablePseudoSpace.Name = "checkBox_SandSEnablePseudoSpace";
-            this.checkBox_SandSEnablePseudoSpace.Size = new System.Drawing.Size(134, 19);
-            this.checkBox_SandSEnablePseudoSpace.TabIndex = 4;
-            this.checkBox_SandSEnablePseudoSpace.Text = "疑似同時打鍵サポート";
-            this.toolTip1.SetToolTip(this.checkBox_SandSEnablePseudoSpace, resources.GetString("checkBox_SandSEnablePseudoSpace.ToolTip"));
-            this.checkBox_SandSEnablePseudoSpace.UseVisualStyleBackColor = true;
+            this.checkBox_SandSEnablePostShift.AutoSize = true;
+            this.checkBox_SandSEnablePostShift.Location = new System.Drawing.Point(11, 105);
+            this.checkBox_SandSEnablePostShift.Name = "checkBox_SandSEnablePostShift";
+            this.checkBox_SandSEnablePostShift.Size = new System.Drawing.Size(134, 19);
+            this.checkBox_SandSEnablePostShift.TabIndex = 4;
+            this.checkBox_SandSEnablePostShift.Text = "疑似同時打鍵サポート";
+            this.toolTip1.SetToolTip(this.checkBox_SandSEnablePostShift, "SandS有効時に、疑似同時打鍵のサポートを有効にします。\r\n\r\nこれを有効にすると SandS で Space キー押下がシフト状態になった時に\r\n後置シフトコ" +
+        "ードをデコーダに送信します。\r\n\r\nデコーダは、第1打鍵待ちのときは後置シフトを無視します。\r\n第2打鍵(以降の)待ちのときは、直前の入力をいったんキャンセルし" +
+        "た後、\r\nその入力をシフトさせて再入力します。");
+            this.checkBox_SandSEnablePostShift.UseVisualStyleBackColor = true;
             // 
             // textBox_onSelectedBackColor
             // 
@@ -5690,6 +5692,6 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label105;
         private System.Windows.Forms.TextBox textBox_historyFewCharsKeySeq;
         private System.Windows.Forms.Label label106;
-        private System.Windows.Forms.CheckBox checkBox_SandSEnablePseudoSpace;
+        private System.Windows.Forms.CheckBox checkBox_SandSEnablePostShift;
     }
 }
