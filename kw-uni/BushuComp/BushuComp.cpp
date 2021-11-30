@@ -85,14 +85,19 @@ State* BushuCompNode::CreateState() {
 // 部首合成の実行
 MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
     if (BUSHU_DIC) {
-        mchar_t m = BUSHU_DIC->FindComposite(m1, m2, prev);
-        PrevBushu1 = m1;
-        PrevBushu2 = m2;
-        PrevComp = m;
-        IsPrevAuto = false;
-        //PrevCompSec = utils::getSecondsFromEpochTime();
-        PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
-        return to_mstr(m);
+        size_t prevCnt = PrevTotalCount;
+        size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
+        PrevTotalCount = totalCnt;
+        mchar_t outChar = OUTPUT_STACK->isLastOutputStackCharBlocker() ? 0 : OUTPUT_STACK->LastOutStackChar();
+        if (!IsPrevAuto || totalCnt > prevCnt + 2 || outChar == 0 || outChar != PrevComp) {
+            mchar_t m = BUSHU_DIC->FindComposite(m1, m2, prev);
+            PrevBushu1 = m1;
+            PrevBushu2 = m2;
+            PrevComp = m;
+            IsPrevAuto = false;
+            //PrevCompSec = utils::getSecondsFromEpochTime();
+            return to_mstr(m);
+        }
     }
     return EMPTY_MSTR;
 }
