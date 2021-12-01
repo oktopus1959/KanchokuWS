@@ -666,7 +666,8 @@ namespace {
         // ①2文字以上のカタカナ
         // ②2文字以上のひらがな
         // ③漢字
-        // bOnlyYomi == true なら、エントリの上書き禁止
+        // bOnlyYomi == true なら、エントリの上書き禁止でカタカナをひらがなに変換
+        // bOnlyYomi == false なら、エントリの上書きOKで、カタカナはそのまま
         void readKanjiConvFile(const wstring& filename, bool bOnlyYomi) {
             std::wregex reComment(_T("#.*"));
             std::wregex reBlank(_T("[\\t ]+"));
@@ -683,18 +684,20 @@ namespace {
                         auto kanji = items[0];
                         if (!kanji.empty() && !items[1].empty()) {
                             if (!bOnlyYomi || kanjiConvMap.find(kanji) == kanjiConvMap.end()) {
-                                std::wsmatch results;
-                                if (std::regex_search(items[1], results, reKatakanaMulti)) {
-                                    auto yomi = utils::convert_katakana_to_hiragana(results.str());
-                                    if (!yomi.empty()) kanjiConvMap[kanji] = yomi;
-                                } else if (std::regex_search(items[1], results, reHiraganaMulti)) {
-                                    auto yomi = results.str();
-                                    if (!yomi.empty()) kanjiConvMap[kanji] = yomi;
-                                } else if (!bOnlyYomi) {
+                                if (!bOnlyYomi) {
                                     auto yomi = items[1];
                                     if (!yomi.empty()) {
                                         kanjiConvMap[kanji] = yomi;
                                         kanjiConvMap[yomi] = kanji;
+                                    }
+                                } else {
+                                    std::wsmatch results;
+                                    if (std::regex_search(items[1], results, reKatakanaMulti)) {
+                                        auto yomi = utils::convert_katakana_to_hiragana(results.str());
+                                        if (!yomi.empty()) kanjiConvMap[kanji] = yomi;
+                                    } else if (std::regex_search(items[1], results, reHiraganaMulti)) {
+                                        auto yomi = results.str();
+                                        if (!yomi.empty()) kanjiConvMap[kanji] = yomi;
                                     }
                                 }
                             }
