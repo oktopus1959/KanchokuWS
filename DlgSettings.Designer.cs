@@ -2538,7 +2538,7 @@ namespace KanchokuWS
             this.textBox_bushuAssocDirectKeySeq.Name = "textBox_bushuAssocDirectKeySeq";
             this.textBox_bushuAssocDirectKeySeq.Size = new System.Drawing.Size(56, 19);
             this.textBox_bushuAssocDirectKeySeq.TabIndex = 6;
-            this.toolTip1.SetToolTip(this.textBox_bushuAssocDirectKeySeq, "直前の文字に対して、その連想文字候補の\r\n先頭のもので置換します。\r\n\r\nなお、部首合成の直後に当機能を呼び出すと、\r\n次の部首合成候補出力となります。");
+            this.toolTip1.SetToolTip(this.textBox_bushuAssocDirectKeySeq, resources.GetString("textBox_bushuAssocDirectKeySeq.ToolTip"));
             // 
             // label63
             // 

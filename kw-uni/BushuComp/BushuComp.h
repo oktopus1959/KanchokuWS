@@ -22,6 +22,7 @@ public:
     mchar_t PrevBushu2 = 0;     // 直前の部首合成で使われた第2部首
     mchar_t PrevComp = 0;       // 直前の部首合成の結果
     bool IsPrevAuto = false;    // 直前に実行されたのは自動部首合成か
+    bool IsPrevAutoCancel = false;    // 直前に実行されたのは自動部首合成のキャンセルか
     //time_t PrevCompSec = 0;     // 直前の部首合成実行の時刻
     size_t PrevTotalCount = 0;  // 直前の部首合成実行時のトータルカウント
 

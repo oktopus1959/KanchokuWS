@@ -9,6 +9,7 @@
 #include "OutputStack.h"
 #include "State.h"
 #include "BushuComp.h"
+#include "BushuDic.h"
 #include "BushuAssoc.h"
 #include "BushuAssocDic.h"
 #include "History/HistoryDic.h"
@@ -348,26 +349,40 @@ namespace {
             } else {
                 // 直前の部首合成文字と比較して、やり直しをする
                 //time_t now = utils::getSecondsFromEpochTime();
-                if (BUSHU_COMP_NODE) _LOG_DEBUGH(_T("DeckeyCount=%d, PrevTotalCount=%d, outChar=%c, PrevComp=%c"), totalCnt, BUSHU_COMP_NODE->PrevTotalCount, SAFE_CHAR(outChar), SAFE_CHAR(BUSHU_COMP_NODE->PrevComp));
-                if (BUSHU_COMP_NODE && totalCnt <= BUSHU_COMP_NODE->PrevTotalCount + 2 && BUSHU_COMP_NODE->PrevComp == outChar) {
-                    mchar_t m1 = BUSHU_COMP_NODE->PrevBushu1;
-                    mchar_t m2 = BUSHU_COMP_NODE->PrevBushu2;
-                    if (BUSHU_COMP_NODE->IsPrevAuto) {
-                        // 直前の処理は自動部首合成だったので、合成元の2文字に戻す
-                        // 出力文字列と削除文字のセット
-                        STATE_COMMON->SetOutString(make_mstring(m1, m2), 1);
-                        // チェインなし
-                        return false;
-                    } else {
-                        MString cs = BUSHU_COMP_NODE->ReduceByBushu(m1, m2, outChar);   // outChar を探し、さらにその次の候補を返す
-                        if (!cs.empty()) {
-                            // 出力文字列と削除文字のセット
-                            STATE_COMMON->SetOutString(cs, 1);
-                            copyStrokeHelpToVkbFaces();
-                            //やり直し合成した文字を履歴に登録
-                            if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(cs, 1));
-                            _LOG_DEBUGH(_T("LEAVE: %s: Reduce by using swapped bushu"), NAME_PTR);
+                if (BUSHU_COMP_NODE) {
+                    _LOG_DEBUGH(_T("DeckeyCount=%d, PrevTotalCount=%d, outChar=%c, PrevComp=%c"), totalCnt, BUSHU_COMP_NODE->PrevTotalCount, SAFE_CHAR(outChar), SAFE_CHAR(BUSHU_COMP_NODE->PrevComp));
+                    if (totalCnt <= BUSHU_COMP_NODE->PrevTotalCount + 2) {
+                        mchar_t m1 = BUSHU_COMP_NODE->PrevBushu1;
+                        mchar_t m2 = BUSHU_COMP_NODE->PrevBushu2;
+                        if (BUSHU_COMP_NODE->IsPrevAutoCancel && outChar == m2 && OUTPUT_STACK->LastOutStackChar(1) == m1) {
+                            // 直前が自動部首合成のキャンセルで、現在の出力文字がキャンセルされた自動部首合成の元文字だったら、その自動部首合成の定義を無効にする
+                            if (m1 != 0 && m2 != 0) BUSHU_DIC->AddAutoBushuEntry(m1, m2, '-');
+                            BUSHU_COMP_NODE->PrevTotalCount = totalCnt;
+                            // チェインなし
                             return false;
+                        } else if (BUSHU_COMP_NODE->PrevComp == outChar) {
+                            if (BUSHU_COMP_NODE->IsPrevAuto) {
+                                // 直前の処理は自動部首合成だったので、合成元の2文字に戻す
+                                // 出力文字列と削除文字のセット
+                                STATE_COMMON->SetOutString(make_mstring(m1, m2), 1);
+                                BUSHU_COMP_NODE->PrevTotalCount = totalCnt;
+                                BUSHU_COMP_NODE->IsPrevAuto = false;
+                                BUSHU_COMP_NODE->IsPrevAutoCancel = true;
+                                // チェインなし
+                                return false;
+                            } else {
+                                // outChar を探し、さらにその次の候補を返す
+                                MString cs = BUSHU_COMP_NODE->ReduceByBushu(m1, m2, outChar);
+                                if (!cs.empty()) {
+                                    // 出力文字列と削除文字のセット
+                                    STATE_COMMON->SetOutString(cs, 1);
+                                    copyStrokeHelpToVkbFaces();
+                                    //やり直し合成した文字を履歴に登録
+                                    if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(cs, 1));
+                                    _LOG_DEBUGH(_T("LEAVE: %s: Reduce by using swapped bushu"), NAME_PTR);
+                                    return false;
+                                }
+                            }
                         }
                     }
                 }

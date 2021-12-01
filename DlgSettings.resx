@@ -402,6 +402,20 @@ Shift+Space=S40
 無変換=xfer, 変換=nfer, ひらがな=kana
 </value>
   </data>
+  <data name="textBox_bushuAssocDirectKeySeq.ToolTip" xml:space="preserve">
+    <value>直前の文字に対して、その連想文字候補の先頭のもので置換します。
+
+なお、(手動)部首合成の直後に当機能を呼び出すと、
+次の部首合成候補出力となります。
+
+また、自動部首合成の直後に当機能を呼び出すと、
+自動部首合成のキャンセルになります。
+(自動合成された文字が削除され、合成元文字が出力されます)
+
+自動部首合成のキャンセル後にもう一度呼び出すと、
+自動部首合成の無効登録になります。
+(再度有効にするには、辞書登録をしてください)</value>
+  </data>
   <data name="comboBox_dateStringKey.ToolTip" xml:space="preserve">
     <value>現在の日時を出力する Ctrlキーの設定
 
