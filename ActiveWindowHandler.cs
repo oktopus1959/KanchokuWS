@@ -413,15 +413,40 @@ namespace KanchokuWS
             return idx;
         }
 
+        private int setFuncKeyInputs(char[] str, ref int pos, int strLen, INPUT[] inputs, int idx)
+        {
+            var sb = new StringBuilder();
+            while (pos < strLen) {
+                var ch = str[pos];
+                if (ch == '}') break;
+                sb.Append(ch);
+                ++pos;
+            }
+            if (sb.Length > 0) {
+                uint vkey = VirtualKeys.GetFuncVkeyByName(sb.ToString());
+                if (vkey > 0) {
+                    return setVkeyInputs((ushort)vkey, inputs, idx);
+                }
+            }
+            return idx;
+        }
+
         private int setStringInputs(char[] str, int strLen, INPUT[] inputs, int idx)
         {
             if (strLen > inputs._safeLength()) strLen = inputs._safeLength();
-            for (int i = 0; i < strLen * 2; ++i) {
-                initializeKeyboardInput(ref inputs[idx]);
-                //inputs[idx].ki.wVk = VK_PACKET;       // SendInput でUniCodeを出力するときは、ここを 0 にしておく
-                inputs[idx].ki.wScan = str[i / 2];
-                inputs[idx].ki.dwFlags = (i % 2) == 0 ? KEYEVENTF_UNICODE : KEYEVENTF_KEYUP;
-                ++idx;
+            for (int i = 0; i < strLen; ++i) {
+                for (int j = 0; j < 2; ++j) {
+                    if (j == 0 && str[i] == '!' && (i + 1) < strLen && str[i + 1] == '{') {
+                        i += 2;
+                        idx = setFuncKeyInputs(str, ref i, strLen, inputs, idx);
+                    } else {
+                        initializeKeyboardInput(ref inputs[idx]);
+                        //inputs[idx].ki.wVk = VK_PACKET;       // SendInput でUniCodeを出力するときは、ここを 0 にしておく
+                        inputs[idx].ki.wScan = str[i];
+                        inputs[idx].ki.dwFlags = j == 0 ? KEYEVENTF_UNICODE : KEYEVENTF_KEYUP;
+                        ++idx;
+                    }
+                }
             }
             return idx;
         }
@@ -581,7 +606,7 @@ namespace KanchokuWS
             if (ActiveWinHandle != IntPtr.Zero && ((str._notEmpty() && str[0] != 0) || numBS > 0)) {
                 int len = str._isEmpty() ? 0 : str._findIndex(x => x == 0);
                 if (len < 0) len = str._safeLength();
-                if (Settings.MinLeghthViaClipboard <= 0 || len < Settings.MinLeghthViaClipboard) {
+                if (Settings.MinLeghthViaClipboard <= 0 || len < Settings.MinLeghthViaClipboard || str._toString().IndexOf("!{") >= 0) {
                     // 自前で送出
                     SendString(str, len, numBS);
                 } else {
