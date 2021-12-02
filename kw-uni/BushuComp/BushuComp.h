@@ -38,6 +38,34 @@ public:
 };
 #define BUSHU_COMP_NODE (BushuCompNode::Singleton)
 
+// 直前の自動部首合成文字と比較して、やり直しをする
+#define HANDLE_ESC_FOR_AUTO_COMP() \
+    if (BUSHU_DIC && BUSHU_COMP_NODE && (BUSHU_COMP_NODE->IsPrevAuto || BUSHU_COMP_NODE->IsPrevAutoCancel)) { \
+        LOG_DEBUGH(_T("HANDLE_ESC_FOR_AUTO_COMP: %s"), NAME_PTR); \
+        size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount(); \
+        if (totalCnt <= BUSHU_COMP_NODE->PrevTotalCount + 2) { \
+            mchar_t outChar = OUTPUT_STACK->isLastOutputStackCharBlocker() ? 0 : OUTPUT_STACK->LastOutStackChar(); \
+            mchar_t m1 = BUSHU_COMP_NODE->PrevBushu1; \
+            mchar_t m2 = BUSHU_COMP_NODE->PrevBushu2; \
+            if (BUSHU_COMP_NODE->IsPrevAutoCancel && outChar == m2 && OUTPUT_STACK->LastOutStackChar(1) == m1) { \
+                /* 直前が自動部首合成のキャンセルで、現在の出力文字がキャンセルされた自動部首合成の元文字だったら、その自動部首合成の定義を無効にする */ \
+                if (m1 != 0 && m2 != 0) BUSHU_DIC->AddAutoBushuEntry(m1, m2, '-'); \
+                BUSHU_COMP_NODE->PrevTotalCount = totalCnt; \
+                return; \
+            } else if (BUSHU_COMP_NODE->PrevComp == outChar) { \
+                if (BUSHU_COMP_NODE->IsPrevAuto) { \
+                    /* 直前の処理は自動部首合成だったので、合成元の2文字に戻す \
+                       出力文字列と削除文字のセット */ \
+                    STATE_COMMON->SetOutString(make_mstring(m1, m2), 1); \
+                    BUSHU_COMP_NODE->PrevTotalCount = totalCnt; \
+                    BUSHU_COMP_NODE->IsPrevAuto = false; \
+                    BUSHU_COMP_NODE->IsPrevAutoCancel = true; \
+                    return; \
+                } \
+            } \
+        } \
+    }
+
 // -------------------------------------------------------------------
 // BushuCompNodeBuilder - 後置部首合成機能ノードビルダー
 #include "FunctionNodeBuilder.h"

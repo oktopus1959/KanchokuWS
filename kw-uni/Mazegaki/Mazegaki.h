@@ -173,8 +173,7 @@ public:
             STATE_COMMON->SetOutString(prevYomi, prevOutLen); \
             return; \
         } \
-    } \
-    State::handleEsc();
+    }
 
 // -------------------------------------------------------------------
 // MazegakiNodeBuilder - 交ぜ書き機能ノードビルダ

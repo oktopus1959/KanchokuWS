@@ -4169,8 +4169,7 @@ namespace KanchokuWS
             this.checkBox_autoBushuComp.Size = new System.Drawing.Size(159, 19);
             this.checkBox_autoBushuComp.TabIndex = 0;
             this.checkBox_autoBushuComp.Text = "自動部首合成を有効にする";
-            this.toolTip1.SetToolTip(this.checkBox_autoBushuComp, "ある2文字の組み合わせで一度部首合成を実行すると、\r\n次からはその2文字を入力した時点で自動的に部首合成を\r\n実行します。\r\n\r\n詳細については「辞書登録」-「自" +
-        "動部首合成登録」のところの\r\nツールチップを参照ください。");
+            this.toolTip1.SetToolTip(this.checkBox_autoBushuComp, resources.GetString("checkBox_autoBushuComp.ToolTip"));
             this.checkBox_autoBushuComp.UseVisualStyleBackColor = true;
             // 
             // groupBox37
