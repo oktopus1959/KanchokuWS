@@ -1076,8 +1076,14 @@ namespace KanchokuWS
                     candidateChars = null;
                     targetChar = 0;
 
+                    // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
+                    bool bFuncVkeyContained = decoderOutput.outString._toString().IndexOf("!{") >= 0;
                     // BSと文字送出(もしあれば)
-                    actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces);
+                    actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
+                    if (bFuncVkeyContained) {
+                        // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
+                        HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput);
+                    }
                 }
 
                 // 仮想キーボードにヘルプや文字候補を表示

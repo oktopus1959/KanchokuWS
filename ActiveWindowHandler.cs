@@ -595,25 +595,26 @@ namespace KanchokuWS
         //}
 
         /// <summary>
-        /// 文字列を送出する<br/>
+        /// 文字列を送出する (str は \0 終端文字)<br/>
         /// 文字送出前に numBSだけBackspaceを送る<br/>
         /// 必要ならクリップボードにコピーしてから Ctrl-V を送る
         /// </summary>
-        public void SendStringViaClipboardIfNeeded(char[] str, int numBS)
+        public void SendStringViaClipboardIfNeeded(char[] str, int numBS, bool bForceString = false)
         {
             if (Settings.LoggingDecKeyInfo) logger.Info(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}");
 
             if (ActiveWinHandle != IntPtr.Zero && ((str._notEmpty() && str[0] != 0) || numBS > 0)) {
-                int len = str._isEmpty() ? 0 : str._findIndex(x => x == 0);
+                int len = str._isEmpty() ? 0 : str._findIndex(x => x == 0);     // 終端までの長さを取得
                 if (len < 0) len = str._safeLength();
-                if (Settings.MinLeghthViaClipboard <= 0 || len < Settings.MinLeghthViaClipboard || str._toString().IndexOf("!{") >= 0) {
+                if (bForceString || Settings.MinLeghthViaClipboard <= 0 || len < Settings.MinLeghthViaClipboard) {
                     // 自前で送出
                     SendString(str, len, numBS);
                 } else {
                     // クリップボードにコピー
                     Clipboard.SetText(new string(str, 0, len));
-                    // Ctrl-V を送る (SendVirtualKeys の中でも upDownCtrlKey/revertCtrlKey をやっている)
+                    // BSを送る
                     SendString(null, 0, numBS);
+                    // Ctrl-V を送る (SendVirtualKeys の中でも upDownCtrlKey/revertCtrlKey をやっている)
                     if (numBS > 0 && Settings.PreWmCharGuardMillisec > 0) {
                         int waitMs = (int)(Math.Pow(numBS, Settings.ReductionExponet._lowLimit(0.5)) * Settings.PreWmCharGuardMillisec);
                         if (Settings.LoggingDecKeyInfo) logger.Info(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
