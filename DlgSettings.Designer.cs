@@ -4986,9 +4986,9 @@ namespace KanchokuWS
             this.checkBox_SandSEnablePostShift.Size = new System.Drawing.Size(134, 19);
             this.checkBox_SandSEnablePostShift.TabIndex = 4;
             this.checkBox_SandSEnablePostShift.Text = "疑似同時打鍵サポート";
-            this.toolTip1.SetToolTip(this.checkBox_SandSEnablePostShift, "SandS有効時に、疑似同時打鍵のサポートを有効にします。\r\n\r\nこれを有効にすると SandS で Space キー押下がシフト状態になった時に\r\n後置シフトコ" +
-        "ードをデコーダに送信します。\r\n\r\nデコーダは、第1打鍵待ちのときは後置シフトを無視します。\r\n第2打鍵(以降の)待ちのときは、直前の入力をいったんキャンセルし" +
-        "た後、\r\nその入力をシフトさせて再入力します。");
+            this.toolTip1.SetToolTip(this.checkBox_SandSEnablePostShift, "SandS有効時に、多ストローク入力に対して疑似同時打鍵を有効にします。\r\n\r\n具体的には第2打鍵が SandS によるシフト状態だった場合に、\r\n第1打鍵も強制" +
+        "的にシフト状態に移行させることで実現しています。\r\n\r\nしたがって、第1打鍵のキーがシフトなしで押下された後でも、\r\n第2打鍵を SandS でシフト状態にして" +
+        "打鍵すれば、第1打鍵が\r\nシフト状態で押下されたものとして処理が行われます。");
             this.checkBox_SandSEnablePostShift.UseVisualStyleBackColor = true;
             // 
             // textBox_onSelectedBackColor
