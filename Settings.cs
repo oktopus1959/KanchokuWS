@@ -452,7 +452,9 @@ namespace KanchokuWS
             if (name._notEmpty()) {
                 var lowerName = name._toLower();
                 foreach (var pair in winClassSettings) {
-                    if (lowerName.StartsWith(pair.Key)) {
+                    if (pair.Key._notEmpty() &&
+                        ((pair.Key.EndsWith("$") && lowerName == pair.Key.TrimEnd(Helper.Array('$'))) ||
+                        lowerName.StartsWith(pair.Key))) {
                         return pair.Value;
                     }
                 }
