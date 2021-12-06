@@ -524,6 +524,20 @@ namespace KanchokuWS
             return DecoderSettings[attr] = val;
         }
 
+        // KeySeq 設定
+        private static string addDecoderKeySeqSetting(string attr)
+        {
+            var keyseq = GetString(attr);
+            var origKeySeq = keyseq;
+            int idx = VirtualKeys.GetFuncKeyIndexByName(keyseq);
+            if (idx >= 0) {
+                // "nfer" や "xfer" などの名前も使用可能とする
+                keyseq = $"X{idx}";
+            }
+            setDecoderSetting(attr, keyseq);
+            return origKeySeq;
+        }
+
         // kanchoku.use.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
         private static string addDecoderSettingEx(string attr, string defvalInit, string defval = "")
         {
@@ -863,30 +877,20 @@ namespace KanchokuWS
             DecoderSpecialDeckeys.Add(DecoderKeys.STROKE_HELP_ROTATION_DECKEY);
             DecoderSpecialDeckeys.Add(DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
 
-            ZenkakuModeKeySeq = addDecoderSetting("zenkakuModeKeySeq");
-            ZenkakuOneCharKeySeq = addDecoderSetting("zenkakuOneCharKeySeq");
-            NextThroughKeySeq = addDecoderSetting("nextThroughKeySeq");
-            HistoryKeySeq = addDecoderSetting("historyKeySeq");
-            HistoryOneCharKeySeq = addDecoderSetting("historyOneCharKeySeq");
-            HistoryFewCharsKeySeq = addDecoderSetting("historyFewCharsKeySeq");
-            MazegakiKeySeq = addDecoderSetting("mazegakiKeySeq");
-            BushuCompKeySeq = addDecoderSetting("bushuCompKeySeq");
-            BushuAssocKeySeq = addDecoderSetting("bushuAssocKeySeq");
-            BushuAssocDirectKeySeq = addDecoderSetting("bushuAssocDirectKeySeq");
-            KatakanaModeKeySeq = addDecoderSetting("katakanaModeKeySeq");
-            KatakanaOneShotKeySeq = addDecoderSetting("katakanaOneShotKeySeq");
-            HankakuKatakanaOneShotKeySeq = addDecoderSetting("hankakuKatakanaOneShotKeySeq");
-            {
-                var attr = "blockerSetterOneShotKeySeq";
-                var keyseq = GetString(attr);
-                BlockerSetterOneShotKeySeq = keyseq;
-                int idx = VirtualKeys.GetFuncKeyIndexByName(keyseq);
-                if (idx >= 0) {
-                    // "nfer" や "xfer" などの名前も使用可能とする
-                    keyseq = $"X{idx}";
-                }
-                setDecoderSetting(attr, keyseq);
-            }
+            ZenkakuModeKeySeq = addDecoderKeySeqSetting("zenkakuModeKeySeq");
+            ZenkakuOneCharKeySeq = addDecoderKeySeqSetting("zenkakuOneCharKeySeq");
+            NextThroughKeySeq = addDecoderKeySeqSetting("nextThroughKeySeq");
+            HistoryKeySeq = addDecoderKeySeqSetting("historyKeySeq");
+            HistoryOneCharKeySeq = addDecoderKeySeqSetting("historyOneCharKeySeq");
+            HistoryFewCharsKeySeq = addDecoderKeySeqSetting("historyFewCharsKeySeq");
+            MazegakiKeySeq = addDecoderKeySeqSetting("mazegakiKeySeq");
+            BushuCompKeySeq = addDecoderKeySeqSetting("bushuCompKeySeq");
+            BushuAssocKeySeq = addDecoderKeySeqSetting("bushuAssocKeySeq");
+            BushuAssocDirectKeySeq = addDecoderKeySeqSetting("bushuAssocDirectKeySeq");
+            KatakanaModeKeySeq = addDecoderKeySeqSetting("katakanaModeKeySeq");
+            KatakanaOneShotKeySeq = addDecoderKeySeqSetting("katakanaOneShotKeySeq");
+            HankakuKatakanaOneShotKeySeq = addDecoderKeySeqSetting("hankakuKatakanaOneShotKeySeq");
+            BlockerSetterOneShotKeySeq = addDecoderKeySeqSetting("blockerSetterOneShotKeySeq");
 
             // for Debug
             addDecoderSetting("debughState", false);
