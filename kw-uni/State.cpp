@@ -298,6 +298,7 @@ bool State::isModeFuncKey(int deckey) {
     case NFER_DECKEY:
     case XFER_DECKEY:
     case KANA_DECKEY:
+    case RIGHT_SHIFT_DECKEY:
         return true;
     default:
         return false;

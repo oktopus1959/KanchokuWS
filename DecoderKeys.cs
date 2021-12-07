@@ -158,6 +158,7 @@ namespace KanchokuWS
         public const int DOWN_ARROW_DECKEY = UP_ARROW_DECKEY + 1;
         public const int LEFT_ARROW_DECKEY = DOWN_ARROW_DECKEY + 1;
         public const int RIGHT_ARROW_DECKEY = LEFT_ARROW_DECKEY + 1;
+        public const int RIGHT_SHIFT_DECKEY = RIGHT_ARROW_DECKEY + 1;
 
         public const int CTRL_ESC_DECKEY = CTRL_FUNC_DECKEY_START;
         public const int CTRL_HANZEN_DECKEY = CTRL_ESC_DECKEY + 1;

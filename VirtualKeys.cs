@@ -111,7 +111,7 @@ namespace KanchokuWS
         /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)</summary>
         private static uint[] vkeyArrayFuncKeys = {
             /*Esc*/ 0x1b, /*半/全*/ 0xf3, /*Tab*/ 0x09, /*Caps*/ 0x14, /*英数*/ 0xf0, /*無変換*/ 0x1d, /*変換*/ 0x1c, /*かな*/ 0xf2, /*BS*/ 0x08, /*Enter*/ 0x0d,
-            /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21, /*PgDn*/ 0x22, /*↑*/ 0x26, /*↓*/ 0x28, /*←*/ 0x25, /*→*/ 0x27
+            /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21, /*PgDn*/ 0x22, /*↑*/ 0x26, /*↓*/ 0x28, /*←*/ 0x25, /*→*/ 0x27, /*Rshift*/ RSHIFT
         };
 
         private const uint capsVkeyWithShift = 0x14;    // 日本語キーボードだと Shift + 0x14 で CapsLock になる
@@ -143,6 +143,7 @@ namespace KanchokuWS
                 case "down": case "downarrow": n = 17; break;
                 case "left": case "leftarrow": n = 18; break;
                 case "right": case "rightarrow": n = 19; break;
+                case "rshift": n = 20; break;
                 default: n = -1; break;
             }
             return n;
@@ -493,10 +494,34 @@ namespace KanchokuWS
         }
 
         private static Dictionary<string, int> specialDecKeysFromName = new Dictionary<string, int>() {
+            {"esc", DecoderKeys.ESC_DECKEY},
+            {"escape", DecoderKeys.ESC_DECKEY},
+            {"zenkaku", DecoderKeys.HANZEN_DECKEY },
+            {"hanzen", DecoderKeys.HANZEN_DECKEY },
+            {"tab", DecoderKeys.TAB_DECKEY},
+            {"caps", DecoderKeys.CAPS_DECKEY },
+            {"capslock", DecoderKeys.CAPS_DECKEY },
+            {"alnum", DecoderKeys.ALNUM_DECKEY },
+            {"alphanum", DecoderKeys.ALNUM_DECKEY },
+            {"eisu", DecoderKeys.ALNUM_DECKEY },
+            {"nfer", DecoderKeys.NFER_DECKEY },
+            {"xfer", DecoderKeys.XFER_DECKEY },
+            {"kana", DecoderKeys.KANA_DECKEY },
+            {"hiragana", DecoderKeys.KANA_DECKEY },
             {"bs", DecoderKeys.BS_DECKEY },
+            {"back", DecoderKeys.BS_DECKEY },
             {"backspace", DecoderKeys.BS_DECKEY },
+            {"enter", DecoderKeys.ENTER_DECKEY},
+            {"ins", DecoderKeys.INS_DECKEY},
+            {"insert", DecoderKeys.INS_DECKEY},
             {"del", DecoderKeys.DEL_DECKEY},
             {"delete", DecoderKeys.DEL_DECKEY},
+            {"home", DecoderKeys.HOME_DECKEY},
+            {"end", DecoderKeys.END_DECKEY},
+            {"pgup", DecoderKeys.PAGE_UP_DECKEY},
+            {"pageup", DecoderKeys.PAGE_UP_DECKEY},
+            {"pgdn", DecoderKeys.PAGE_DOWN_DECKEY},
+            {"pagedown", DecoderKeys.PAGE_DOWN_DECKEY},
             {"left", DecoderKeys.LEFT_ARROW_DECKEY},
             {"leftarrow", DecoderKeys.LEFT_ARROW_DECKEY},
             {"right", DecoderKeys.RIGHT_ARROW_DECKEY},
@@ -505,18 +530,7 @@ namespace KanchokuWS
             {"uparrow", DecoderKeys.UP_ARROW_DECKEY},
             {"down", DecoderKeys.DOWN_ARROW_DECKEY},
             {"downarrow", DecoderKeys.DOWN_ARROW_DECKEY},
-            {"home", DecoderKeys.HOME_DECKEY},
-            {"end", DecoderKeys.END_DECKEY},
-            {"esc", DecoderKeys.ESC_DECKEY},
-            {"escape", DecoderKeys.ESC_DECKEY},
-            {"tab", DecoderKeys.TAB_DECKEY},
-            {"enter", DecoderKeys.ENTER_DECKEY},
-            {"ins", DecoderKeys.INS_DECKEY},
-            {"insert", DecoderKeys.INS_DECKEY},
-            {"pgup", DecoderKeys.PAGE_UP_DECKEY},
-            {"pageup", DecoderKeys.PAGE_UP_DECKEY},
-            {"pgdn", DecoderKeys.PAGE_DOWN_DECKEY},
-            {"pagedown", DecoderKeys.PAGE_DOWN_DECKEY},
+            {"rshift", DecoderKeys.RIGHT_SHIFT_DECKEY},
             {"space", DecoderKeys.STROKE_SPACE_DECKEY},
             {"shiftspace", DecoderKeys.SHIFT_SPACE_DECKEY},
             {"modetoggle", DecoderKeys.TOGGLE_DECKEY},
