@@ -535,6 +535,10 @@ namespace KanchokuWS
                 keyseq = $"X{idx}";
             }
             setDecoderSetting(attr, keyseq);
+            if (keyseq._safeLength() > 1 && (keyseq[0] == 'X' || keyseq[0] == 'x')) {
+                int ix = keyseq._safeSubstring(1)._parseInt(-1, -1);
+                if (ix >= 0) VirtualKeys.AddExModVkeyAssignedForDecoderFuncByIndex(ix);
+            }
             return origKeySeq;
         }
 

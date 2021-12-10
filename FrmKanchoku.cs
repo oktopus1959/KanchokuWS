@@ -1285,6 +1285,8 @@ namespace KanchokuWS
         // 設定ファイルと各種定義ファイルをリロードする
         public void ReloadSettingsAndDefFiles()
         {
+            // キーボードハンドラの再初期化
+            keDispatcher.Reinitialize();
             // 初期化
             VirtualKeys.Initialize();
             // キーボードファイルの読み込み

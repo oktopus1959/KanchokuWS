@@ -88,6 +88,7 @@ namespace KanchokuWS
         public const uint RSHIFT = 0xa1;
         public const uint LCONTROL = 0xa2;
         public const uint RCONTROL = 0xa3;
+        public const uint SPACE = (uint)Keys.Space;
 
         /// <summary> 打鍵で使われる仮想キー配列(DecKeyId順に並んでいる) </summary>
         private static uint[] strokeVKeys;
@@ -168,22 +169,38 @@ namespace KanchokuWS
             PlaneB = 3
         }
 
+        /// <summary> デコーダ機能に割り当てられた拡張修飾キー(space, Caps, alnum, nfer, xfer, Rshift)のVkeyを集めた集合 </summary>
+        private static HashSet<uint> decoderFuncAssignedExModKeys = new HashSet<uint>();
+
+        /// <summary> インデックスで指定される拡張修飾キー(space, Caps, alnum, nfer, xfer, Rshift)をデコーダ機能に割り当てられたキーの集合に追加 </summary>
+        public static void AddExModVkeyAssignedForDecoderFuncByIndex(int idx)
+        {
+            if (idx >= 0 && idx < vkeyArrayFuncKeys.Length)
+            decoderFuncAssignedExModKeys.Add(vkeyArrayFuncKeys[idx]);
+        }
+
+        /// <summary> 拡張修飾キー(space, Caps, alnum, nfer, xfer, Rshift)がデコーダ機能に割り当てられているか </summary>
+        public static bool IsExModKeyIndexAssignedForDecoderFunc(uint vkey)
+        {
+            return decoderFuncAssignedExModKeys.Contains(vkey);
+        }
+
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
-        private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftFuncKey = new Dictionary<uint, ShiftPlane>();
+        private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftModFlag = new Dictionary<uint, ShiftPlane>();
 
         /// <summary> DecoderがOffの時のシフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
-        private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftFuncKeyWhenDecoderOff = new Dictionary<uint, ShiftPlane>();
+        private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftModFlagWhenDecoderOff = new Dictionary<uint, ShiftPlane>();
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てられたシフト面を得る</summary>
-        public static ShiftPlane GetShiftPlaneFromShiftFuncKeyModFlag(uint funcKey, bool bDecoderOn)
+        public static ShiftPlane GetShiftPlaneFromShiftModFlag(uint modFlag, bool bDecoderOn)
         {
-            return bDecoderOn ? shiftPlaneForShiftFuncKey._safeGet(funcKey, ShiftPlane.NONE) : shiftPlaneForShiftFuncKeyWhenDecoderOff._safeGet(funcKey, ShiftPlane.NONE);
+            return bDecoderOn ? shiftPlaneForShiftModFlag._safeGet(modFlag, ShiftPlane.NONE) : shiftPlaneForShiftModFlagWhenDecoderOff._safeGet(modFlag, ShiftPlane.NONE);
         }
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) にシフト面が割り当てられているか</summary>
-        public static bool IsShiftPlaneAssignedForShiftFuncKeyByModFlag(uint funcKey, bool bDecoderOn)
+        public static bool IsShiftPlaneAssignedForShiftModFlag(uint modFlag, bool bDecoderOn)
         {
-            return GetShiftPlaneFromShiftFuncKeyModFlag(funcKey, bDecoderOn) != ShiftPlane.NONE;
+            return GetShiftPlaneFromShiftModFlag(modFlag, bDecoderOn) != ShiftPlane.NONE;
         }
 
         private static uint getVKeyFromDecKey(int deckey)
@@ -333,7 +350,7 @@ namespace KanchokuWS
                 //AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, vkey);
             }
 
-            // 機能キー
+            // 機能キー(RSHFTも登録される)
             for (int id = 0; id < DecoderKeys.FUNC_DECKEY_NUM; ++id) {
                 uint vkey = getVKeyFromDecKey(DecoderKeys.FUNC_DECKEY_START + id);
                 // Normal
@@ -373,6 +390,7 @@ namespace KanchokuWS
 
         public static void Initialize()
         {
+            decoderFuncAssignedExModKeys = new HashSet<uint>();
             VKeyComboFromDecKey = new VKeyCombo?[DecoderKeys.GLOBAL_DECKEY_ID_END];
             DecKeyFromVKeyCombo = new Dictionary<uint, int>();
             ModConvertedDecKeyFromVKeyCombo = new Dictionary<uint, int>();
@@ -574,8 +592,8 @@ namespace KanchokuWS
                     SystemHelper.ShowErrorMessageBox($"修飾キー変換定義ファイル({filePath}の読み込みに失敗しました。");
                     return false;
                 }
-                shiftPlaneForShiftFuncKey.Clear();
-                shiftPlaneForShiftFuncKeyWhenDecoderOff.Clear();
+                shiftPlaneForShiftModFlag.Clear();
+                shiftPlaneForShiftModFlagWhenDecoderOff.Clear();
                 int nl = 0;
                 foreach (var rawLine in lines._split('\n')) {
                     ++nl;
@@ -605,8 +623,8 @@ namespace KanchokuWS
                                 logger.DebugH(() => $"mod={mod:x}H({mod}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
                                 if (mod != 0 && shiftPlane > 0) {
                                     logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{mod}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{mod}] = {shiftPlaneWhenOff}");
-                                    shiftPlaneForShiftFuncKey[mod] = shiftPlane;
-                                    shiftPlaneForShiftFuncKeyWhenDecoderOff[mod] = shiftPlaneWhenOff;
+                                    shiftPlaneForShiftModFlag[mod] = shiftPlane;
+                                    shiftPlaneForShiftModFlagWhenDecoderOff[mod] = shiftPlaneWhenOff;
                                     continue;
                                 }
                             }
@@ -617,6 +635,7 @@ namespace KanchokuWS
                                 uint mod = modifierKeysFromName._safeGet(items[0]);
                                 uint vkey = getVKeyFromDecKey(items[1]._parseInt(-1, -1));
                                 if (mod != 0 && vkey == 0) {
+                                    // 拡張修飾キー単打の場合
                                     mod = 0;
                                     vkey = GetFuncVkeyByName(items[0]);  // 被修飾キーが指定されていない場合は、修飾キーの単打とみなす
                                 }
@@ -640,13 +659,14 @@ namespace KanchokuWS
                                 if (vkey > 0 && deckey > 0) {
                                     logger.DebugH(() => $"AddModConvertedDecKeyFromCombo: deckey={deckey}, mod={mod}, vkey={vkey}");
                                     if (mod == 0) {
+                                        // 拡張修飾キー単打の場合は、キーの登録だけで、拡張シフトB面の割り当てはやらない
                                         AddDecKeyAndCombo(deckey, 0, vkey);
                                     } else {
                                         AddModConvertedDecKeyFromCombo(deckey, mod, vkey);
-                                        if (isPlaneMappedModifier(mod) && !shiftPlaneForShiftFuncKey.ContainsKey(mod)) {
+                                        if (isPlaneMappedModifier(mod) && !shiftPlaneForShiftModFlag.ContainsKey(mod)) {
                                             // mod に対する ShiftPlane が設定されていない場合は、拡張シフトB面を割り当てる
-                                            shiftPlaneForShiftFuncKey[mod] = ShiftPlane.PlaneB;
-                                            shiftPlaneForShiftFuncKeyWhenDecoderOff[mod] = ShiftPlane.PlaneB;
+                                            shiftPlaneForShiftModFlag[mod] = ShiftPlane.PlaneB;
+                                            shiftPlaneForShiftModFlagWhenDecoderOff[mod] = ShiftPlane.PlaneB;
                                         }
                                     }
                                     continue;
