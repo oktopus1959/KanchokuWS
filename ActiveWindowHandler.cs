@@ -140,6 +140,8 @@ namespace KanchokuWS
         private const int VK_BACK = 8;                      // Backspaceキー
         private const int VK_SHIFT = 0x10;                  // SHIFTキー
         private const int VK_CONTROL = 0x11;                // Ctrlキー
+        private const int VK_LSHIFT = 0xa0;                 // LSHIFTキー
+        private const int VK_RSHIFT = 0xa1;                 // RSHIFTキー
         private const int VK_PACKET = 0xe7;                 // Unicode 
 
 
@@ -176,7 +178,7 @@ namespace KanchokuWS
         private void setRightCtrlInput(ref INPUT input, int keyEventFlag)
         {
             setLeftCtrlInput(ref input, keyEventFlag);
-            input.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;
+            input.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;  // 右Ctrlは、0xa3 ではなく、EXTENTED を設定する必要あり
         }
 
         public void GetCtrlKeyState(out bool leftCtrl, out bool rightCtrl)
@@ -196,14 +198,16 @@ namespace KanchokuWS
             rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
             if (Settings.LoggingDecKeyInfo) logger.Info($"bUp={bUp}, leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
 
-            if (bUp && (leftCtrl || rightCtrl)) {
-                // 両方一諸に上げる
-                setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-                setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-            } else if (!bUp && !(leftCtrl || rightCtrl)) {
-                // 両方一諸に下げる
-                setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-                setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            if (bUp) {
+                // DOWNしているほうだけ上げる
+                if (leftCtrl) setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+                if (rightCtrl) setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            } else {
+                if (!leftCtrl && !rightCtrl) {
+                    // leftだけ下げる
+                    setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                    //setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                }
             }
             return idx;
         }
@@ -219,16 +223,6 @@ namespace KanchokuWS
         }
 
         /// <summary>
-        /// Ctrlキーの事前下げ
-        /// </summary>
-        /// <param name="leftCtrl"></param>
-        /// <param name="rightCtrl"></param>
-        //private int downCtrlKeyInputs(INPUT[] inputs, int idx, out bool leftCtrl, out bool rightCtrl)
-        //{
-        //    return upDownCtrlKeyInputs(inputs, idx, false, out leftCtrl, out rightCtrl);
-        //}
-
-        /// <summary>
         /// Ctrlキーの状態を戻す
         /// </summary>
         /// <param name="bUp">事前操作<</param>
@@ -238,16 +232,13 @@ namespace KanchokuWS
         {
             if (Settings.LoggingDecKeyInfo) logger.Info($"bUp={bUp}, prevLeftCtrl={prevLeftCtrl}, prevRightCtrl={prevRightCtrl}");
 
-            if (prevLeftCtrl && bUp) {
-                setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-            } else if (!prevLeftCtrl && !bUp) {
-                setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-            }
-
-            if (prevRightCtrl && bUp) {
-                setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-            } else if (!prevRightCtrl && !bUp) {
-                setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            if (bUp) {
+                // 事前操作がUPだった
+                if (prevLeftCtrl) setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                if (prevRightCtrl) setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            } else {
+                // 事前操作がDOWNだった⇒左Ctrlだけを上げる
+                if (!prevLeftCtrl && !prevRightCtrl) setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
             }
             return idx;
         }
@@ -266,67 +257,18 @@ namespace KanchokuWS
             sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
         }
 
-        /// <summary>
-        /// Ctrlキーの事前上げ下げ (SendInput実行後、Waitあり)
-        /// </summary>
-        /// <param name="bUp">事前操作<</param>
-        /// <param name="leftCtrl"></param>
-        /// <param name="rightCtrl"></param>
-        //private void sendInputUpDownCtrlKey(bool bUp, out bool leftCtrl, out bool rightCtrl)
-        //{
-        //    int waitUpMs = (ActiveWinSettings?.CtrlUpWaitMillisec)._value(-1)._geZeroOr(Settings.CtrlKeyUpGuardMillisec);
-        //    var inputs = new INPUT[2];
-        //    int idx = upDownCtrlKeyInputs(inputs, 0, bUp, out leftCtrl, out rightCtrl);
-        //    if (idx > 0) {
-        //        SendInput((uint)idx, inputs, Marshal.SizeOf(typeof(INPUT)));
-        //        if (Settings.LoggingDecKeyInfo) logger.Info($"Ctrl Up/Down and Wait {waitUpMs} millisec");
-        //        if (waitUpMs > 0) {
-        //            Task.Delay(waitUpMs).Wait();            // やはりこれが無いと Ctrlが有効なままBSが渡ったりする
-        //        }
-        //    }
-        //}
-
-        /// <summary>
-        /// Ctrlキーの事前上げ (SendInput 実行、Waitあり)
-        /// </summary>
-        /// <param name="leftCtrl"></param>
-        /// <param name="rightCtrl"></param>
-        //private void sendInputUpCtrlKey(out bool leftCtrl, out bool rightCtrl)
-        //{
-        //    sendInputUpDownCtrlKey(true, out leftCtrl, out rightCtrl);
-        //}
-
-        /// <summary>
-        /// Ctrlキーの状態を戻す
-        /// </summary>
-        /// <param name="bUp">事前操作<</param>
-        /// <param name="prevLeftCtrl"></param>
-        /// <param name="prevRightCtrl"></param>
-        //private void sendInputRevertCtrlKey(bool bUp, bool prevLeftCtrl, bool prevRightCtrl)
-        //{
-        //    var inputs = new INPUT[2];
-        //    int idx = revertCtrlKeyInputs(inputs, 0, bUp, prevLeftCtrl, prevRightCtrl);
-        //    if (idx > 0) {
-        //        SendInput((uint)idx, inputs, Marshal.SizeOf(typeof(INPUT)));
-        //        int waitDownMs = (ActiveWinSettings?.CtrlDownWaitMillisec)._value(-1)._geZeroOr(Settings.CtrlKeyDownGuardMillisec);
-        //        if (Settings.LoggingDecKeyInfo) logger.Info($"Revert Ctrl and Wait {waitDownMs} millisec");
-        //        if (waitDownMs > 0) {
-        //            Task.Delay(waitDownMs).Wait();
-        //        }
-        //    }
-        //}
-
         private void setLeftShiftInput(ref INPUT input, int keyEventFlag)
         {
             initializeKeyboardInput(ref input);
-            input.ki.wVk = VK_SHIFT;
+            input.ki.wVk = VK_LSHIFT;           // 右シフトは EXTENTED ではなく、0xa1 を設定する必要あり
             input.ki.dwFlags = keyEventFlag;
         }
 
         private void setRightShiftInput(ref INPUT input, int keyEventFlag)
         {
-            setLeftShiftInput(ref input, keyEventFlag);
-            input.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;
+            initializeKeyboardInput(ref input);
+            input.ki.wVk = VK_RSHIFT;
+            input.ki.dwFlags = keyEventFlag;
         }
 
         /// <summary>
@@ -340,14 +282,16 @@ namespace KanchokuWS
             rightShift = (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
             if (Settings.LoggingDecKeyInfo) logger.Info($"bUp={bUp}, leftShift={leftShift}, rightShift={rightShift}");
 
-            if (bUp && (leftShift || rightShift)) {
-                // 両方一諸に上げる
-                setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-                setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-            } else if (!bUp && !(leftShift || rightShift)) {
-                // 両方一諸に下げる
-                setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-                setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            if (bUp) {
+                // 下がっているほうだけ上げる
+                if (leftShift) setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+                if (rightShift) setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            } else {
+                if (!leftShift && !rightShift) {
+                    // 左だけ下げる
+                    setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                    //setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                }
             }
             return idx;
         }
@@ -363,16 +307,6 @@ namespace KanchokuWS
         }
 
         /// <summary>
-        /// Shiftキーの事前下げ
-        /// </summary>
-        /// <param name="leftShift"></param>
-        /// <param name="rightShift"></param>
-        //private int downShiftKeyInputs(INPUT[] inputs, int idx, out bool leftShift, out bool rightShift)
-        //{
-        //    return upDownShiftKeyInputs(inputs, idx, false, out leftShift, out rightShift);
-        //}
-
-        /// <summary>
         /// Shiftキーの状態を戻す
         /// </summary>
         /// <param name="bUp">事前操作<</param>
@@ -382,16 +316,13 @@ namespace KanchokuWS
         {
             if (Settings.LoggingDecKeyInfo) logger.Info($"bUp={bUp}, prevLeftShift={prevLeftShift}, prevRightShift={prevRightShift}");
 
-            if (prevLeftShift && bUp) {
-                setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-            } else if (!prevLeftShift && !bUp) {
-                setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-            }
-
-            if (prevRightShift && bUp) {
-                setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-            } else if (!prevRightShift && !bUp) {
-                setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            if (bUp) {
+                // 事前操作がUPだった
+                if (prevLeftShift) setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                if (prevRightShift) setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            } else {
+                // 事前操作がDOWNだった⇒左Shiftだけを上げる
+                if (!prevLeftShift && !prevRightShift) setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
             }
             return idx;
         }
@@ -572,27 +503,6 @@ namespace KanchokuWS
                 }
             }
         }
-
-        /// <summary>
-        /// 仮想キーを送出する<br/>
-        /// </summary>
-        /// <param name="n">キーダウンの数</param>
-        //public void SendVirtualKey(uint vkey, int n)
-        //{
-        //    if (Settings.LoggingDecKeyInfo) logger.Info($"vkey={vkey:x}H, n={n}");
-
-        //    var inputs = new INPUT[n * 2];
-
-        //    int idx = 0;
-
-        //    // Vkey
-        //    for (int i = 0; i < n; ++i) {
-        //        idx = setVkeyInputs((ushort)vkey, inputs, idx);
-        //    }
-
-        //    // 送出
-        //    sendInputsWithHandlingDeckey((uint)idx, inputs, vkey);
-        //}
 
         /// <summary>
         /// 文字列を送出する (str は \0 終端文字)<br/>
