@@ -235,37 +235,6 @@ extraInfo の値が当ツールの設定したものだけを無視するよう�
 保存されます。古い世代ほど、末尾の数字が大きくなります。
 </value>
   </data>
-  <data name="textBox_deckeyInfiniteLoopDetectCount.ToolTip" xml:space="preserve">
-    <value>HotKey呼び出しの無限ループ検出回数
-
-keybd_event でキー入力をエミュレートする際には、そのキーに割り当てている
-HotKey定義を解除していますが、何らかの問題によりその解除ができていないと
-同じホットキーの呼び出しが無限ループになる可能性があります。
-
-万一、無限ループに陥った場合にそれを検出するための呼び出し回数を設定します。
-同じホットキーの呼び出しがここで設定した回数だけ連続したら、強制的に漢直WinSを
-終了させます。</value>
-  </data>
-  <data name="textBox_preWmCharGuardMillisec.ToolTip" xml:space="preserve">
-    <value>WM_CHAR による文字送出前の待ち時間(ミリ秒)
-
-部首合成時や履歴選択時など、Backspaceを送出した後に少し待ってから
-WM_CHARによる文字送出をしないと、Backspaceの前にWM_CHARが
-処理されたりすることがあるので、少し待ち時間が必要です。
-
-Backspace送出後から次の文字送出までの待ち時間は以下の式で算出します。
-
-{Backspace 送出数} ^ 0.7 * {ここで設定した待ち時間}
-
-たとえば、設定した待ち時間を 25 ms とし、Backspace の送出数が 10個だとすると、
-文字送出前に 10 ^ 0.7 * 25 ≒ 5.0 * 25 = 125 ms 待つことになります。
-
-文字出力が乱れたり、逆に遅く感じられたりする場合は、この値を調整してください。
-
-もし指数(デフォルト 0.7)を変更したい場合は、 kanchoku.ini または kanchoku.user.ini に
-reductionExponent=0.9
-などと記述してください。</value>
-  </data>
   <data name="textBox_ctrlKeyDownGuardMillisec.ToolTip" xml:space="preserve">
     <value>keybd_event による Ctrl キーの DOWN 前の待ち時間(ミリ秒)
 
@@ -275,6 +244,16 @@ reductionExponent=0.9
 プログラムによって Ctrlキーの KEY_DOWN が実行されてしまい、
 Ctrlキーが押されっ放しの状態になる可能性が高まります。
 (その場合は、Ctrlキーを押して離せば直ります)</value>
+  </data>
+  <data name="textBox_deckeyInfiniteLoopDetectCount.ToolTip" xml:space="preserve">
+    <value>キーボードフックの無限ループ検出回数
+
+キーボードフックで処理されたキー入力は、当アプリ独自の extraInfo を設定してから
+SendInput を呼び出すようにして、無限ループに陥ることのないようにしています。
+
+万一、無限ループに陥った場合にそれを検出するための呼び出し回数を設定します。
+同じキーの呼び出しがここで設定した回数だけ連続したら、強制的に漢直WinSを
+終了させます。</value>
   </data>
   <data name="textBox_ctrlKeyUpGuardMillisec.ToolTip" xml:space="preserve">
     <value>keybd_event による Ctrl キーの KEY_UP 後の待ち時間(ミリ秒)

@@ -1302,15 +1302,19 @@ namespace KanchokuWS
             // 
             // tabPage_advanced
             // 
+            this.tabPage_advanced.Controls.Add(this.label54);
             this.tabPage_advanced.Controls.Add(this.groupBox41);
             this.tabPage_advanced.Controls.Add(this.groupBox28);
             this.tabPage_advanced.Controls.Add(this.groupBox20);
             this.tabPage_advanced.Controls.Add(this.groupBox26);
             this.tabPage_advanced.Controls.Add(this.groupBox15);
+            this.tabPage_advanced.Controls.Add(this.textBox_ctrlKeyDownGuardMillisec);
             this.tabPage_advanced.Controls.Add(this.groupBox16);
             this.tabPage_advanced.Controls.Add(this.label_okResultAdvanced);
             this.tabPage_advanced.Controls.Add(this.button_advancedClose);
+            this.tabPage_advanced.Controls.Add(this.textBox_ctrlKeyUpGuardMillisec);
             this.tabPage_advanced.Controls.Add(this.button_advancedEnter);
+            this.tabPage_advanced.Controls.Add(this.label15);
             this.tabPage_advanced.Controls.Add(this.groupBox6);
             this.tabPage_advanced.Controls.Add(this.checkBox_hideTopText);
             this.tabPage_advanced.Location = new System.Drawing.Point(4, 24);
@@ -1323,9 +1327,9 @@ namespace KanchokuWS
             // groupBox41
             // 
             this.groupBox41.Controls.Add(this.checkBox_ignoreOtherHooker);
-            this.groupBox41.Location = new System.Drawing.Point(304, 111);
+            this.groupBox41.Location = new System.Drawing.Point(304, 63);
             this.groupBox41.Name = "groupBox41";
-            this.groupBox41.Size = new System.Drawing.Size(246, 44);
+            this.groupBox41.Size = new System.Drawing.Size(268, 44);
             this.groupBox41.TabIndex = 5;
             this.groupBox41.TabStop = false;
             this.groupBox41.Text = "他のキー変換ツールとの競合解消";
@@ -1345,17 +1349,18 @@ namespace KanchokuWS
             // 
             this.groupBox28.Controls.Add(this.textBox_backFileRotationGeneration);
             this.groupBox28.Controls.Add(this.label57);
-            this.groupBox28.Location = new System.Drawing.Point(304, 61);
+            this.groupBox28.Location = new System.Drawing.Point(7, 277);
             this.groupBox28.Name = "groupBox28";
-            this.groupBox28.Size = new System.Drawing.Size(246, 44);
-            this.groupBox28.TabIndex = 4;
+            this.groupBox28.Size = new System.Drawing.Size(287, 44);
+            this.groupBox28.TabIndex = 3;
             this.groupBox28.TabStop = false;
             this.groupBox28.Text = "辞書ファイル";
             // 
             // textBox_backFileRotationGeneration
             // 
+            this.textBox_backFileRotationGeneration.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_backFileRotationGeneration.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_backFileRotationGeneration.Location = new System.Drawing.Point(186, 17);
+            this.textBox_backFileRotationGeneration.Location = new System.Drawing.Point(231, 17);
             this.textBox_backFileRotationGeneration.Name = "textBox_backFileRotationGeneration";
             this.textBox_backFileRotationGeneration.Size = new System.Drawing.Size(45, 19);
             this.textBox_backFileRotationGeneration.TabIndex = 0;
@@ -1535,28 +1540,32 @@ namespace KanchokuWS
             // 
             this.groupBox26.Controls.Add(this.textBox_minLeghthViaClipboard);
             this.groupBox26.Controls.Add(this.label53);
+            this.groupBox26.Controls.Add(this.textBox_preWmCharGuardMillisec);
+            this.groupBox26.Controls.Add(this.label31);
             this.groupBox26.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox26.Location = new System.Drawing.Point(304, 12);
+            this.groupBox26.Location = new System.Drawing.Point(7, 206);
             this.groupBox26.Name = "groupBox26";
-            this.groupBox26.Size = new System.Drawing.Size(246, 43);
-            this.groupBox26.TabIndex = 3;
+            this.groupBox26.Size = new System.Drawing.Size(287, 65);
+            this.groupBox26.TabIndex = 2;
             this.groupBox26.TabStop = false;
-            this.groupBox26.Text = "文字送出";
+            this.groupBox26.Text = "クリップボード経由の文字送出";
             // 
             // textBox_minLeghthViaClipboard
             // 
+            this.textBox_minLeghthViaClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_minLeghthViaClipboard.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_minLeghthViaClipboard.Location = new System.Drawing.Point(186, 16);
+            this.textBox_minLeghthViaClipboard.Location = new System.Drawing.Point(239, 17);
             this.textBox_minLeghthViaClipboard.Name = "textBox_minLeghthViaClipboard";
-            this.textBox_minLeghthViaClipboard.Size = new System.Drawing.Size(45, 19);
+            this.textBox_minLeghthViaClipboard.Size = new System.Drawing.Size(40, 19);
             this.textBox_minLeghthViaClipboard.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_minLeghthViaClipboard, "クリップボード経由で文字を送出する場合の最小文字数を設定します。\r\n\r\n対象ウィンドウへに送出される文字列の文字数がこの数より小さい場合は、\r\nWM_CHAR に" +
-        "よる送出となります。\r\n\r\n0 を設定すると、クリップボード経由による送出を行いません。");
+            this.toolTip1.SetToolTip(this.textBox_minLeghthViaClipboard, "クリップボード経由で文字を送出する場合の最小文字数を設定します。\r\n\r\n対象ウィンドウへに送出される文字列の文字数がこの数より小さい場合は、\r\n文字列全体を Se" +
+        "ndInput により送出します。\r\n\r\n設定された文字数以上の場合は、送出文字列をいったんクリップボードに\r\nコピーした後、Ctrl-V を送出します。\r\n\r" +
+        "\n0 を設定すると、クリップボード経由による送出を行いません。");
             // 
             // label53
             // 
             this.label53.AutoSize = true;
-            this.label53.Location = new System.Drawing.Point(19, 18);
+            this.label53.Location = new System.Drawing.Point(19, 19);
             this.label53.Name = "label53";
             this.label53.Size = new System.Drawing.Size(161, 15);
             this.label53.TabIndex = 4;
@@ -1572,9 +1581,9 @@ namespace KanchokuWS
             this.groupBox15.Controls.Add(this.comboBox_logLevel);
             this.groupBox15.Controls.Add(this.label29);
             this.groupBox15.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox15.Location = new System.Drawing.Point(304, 163);
+            this.groupBox15.Location = new System.Drawing.Point(304, 118);
             this.groupBox15.Name = "groupBox15";
-            this.groupBox15.Size = new System.Drawing.Size(246, 153);
+            this.groupBox15.Size = new System.Drawing.Size(268, 153);
             this.groupBox15.TabIndex = 6;
             this.groupBox15.TabStop = false;
             this.groupBox15.Text = "開発者用設定";
@@ -1664,17 +1673,18 @@ namespace KanchokuWS
             this.groupBox16.Controls.Add(this.textBox_deckeyInfiniteLoopDetectCount);
             this.groupBox16.Controls.Add(this.label33);
             this.groupBox16.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox16.Location = new System.Drawing.Point(7, 271);
+            this.groupBox16.Location = new System.Drawing.Point(304, 12);
             this.groupBox16.Name = "groupBox16";
-            this.groupBox16.Size = new System.Drawing.Size(287, 45);
-            this.groupBox16.TabIndex = 2;
+            this.groupBox16.Size = new System.Drawing.Size(268, 45);
+            this.groupBox16.TabIndex = 4;
             this.groupBox16.TabStop = false;
             this.groupBox16.Text = "無限ループ検出";
             // 
             // textBox_deckeyInfiniteLoopDetectCount
             // 
+            this.textBox_deckeyInfiniteLoopDetectCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_deckeyInfiniteLoopDetectCount.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_deckeyInfiniteLoopDetectCount.Location = new System.Drawing.Point(234, 17);
+            this.textBox_deckeyInfiniteLoopDetectCount.Location = new System.Drawing.Point(216, 17);
             this.textBox_deckeyInfiniteLoopDetectCount.Name = "textBox_deckeyInfiniteLoopDetectCount";
             this.textBox_deckeyInfiniteLoopDetectCount.Size = new System.Drawing.Size(45, 19);
             this.textBox_deckeyInfiniteLoopDetectCount.TabIndex = 0;
@@ -1685,9 +1695,9 @@ namespace KanchokuWS
             this.label33.AutoSize = true;
             this.label33.Location = new System.Drawing.Point(19, 19);
             this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(145, 15);
+            this.label33.Size = new System.Drawing.Size(184, 15);
             this.label33.TabIndex = 4;
-            this.label33.Text = "HotKey無限ループ検出回数";
+            this.label33.Text = "キーボードフックの無限ループ検出回数";
             // 
             // label_okResultAdvanced
             // 
@@ -1729,20 +1739,14 @@ namespace KanchokuWS
             // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.label54);
             this.groupBox6.Controls.Add(this.label19);
             this.groupBox6.Controls.Add(this.textBox_activeWinInfoIntervalMillisec);
-            this.groupBox6.Controls.Add(this.textBox_preWmCharGuardMillisec);
-            this.groupBox6.Controls.Add(this.label31);
-            this.groupBox6.Controls.Add(this.textBox_ctrlKeyDownGuardMillisec);
             this.groupBox6.Controls.Add(this.textBox_vkbMoveGuardMillisec);
             this.groupBox6.Controls.Add(this.label20);
-            this.groupBox6.Controls.Add(this.textBox_ctrlKeyUpGuardMillisec);
-            this.groupBox6.Controls.Add(this.label15);
             this.groupBox6.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox6.Location = new System.Drawing.Point(7, 134);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(287, 130);
+            this.groupBox6.Size = new System.Drawing.Size(287, 66);
             this.groupBox6.TabIndex = 1;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "各種待ち時間";
@@ -1750,16 +1754,17 @@ namespace KanchokuWS
             // label54
             // 
             this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(19, 41);
+            this.label54.Location = new System.Drawing.Point(77, 350);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(200, 15);
             this.label54.TabIndex = 16;
             this.label54.Text = "CTRL KEY_DOWN後の待ち時間(ミリ秒)";
+            this.label54.Visible = false;
             // 
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(19, 107);
+            this.label19.Location = new System.Drawing.Point(19, 41);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(202, 15);
             this.label19.TabIndex = 15;
@@ -1768,26 +1773,27 @@ namespace KanchokuWS
             // textBox_activeWinInfoIntervalMillisec
             // 
             this.textBox_activeWinInfoIntervalMillisec.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_activeWinInfoIntervalMillisec.Location = new System.Drawing.Point(239, 105);
+            this.textBox_activeWinInfoIntervalMillisec.Location = new System.Drawing.Point(239, 39);
             this.textBox_activeWinInfoIntervalMillisec.Name = "textBox_activeWinInfoIntervalMillisec";
             this.textBox_activeWinInfoIntervalMillisec.Size = new System.Drawing.Size(40, 19);
-            this.textBox_activeWinInfoIntervalMillisec.TabIndex = 4;
+            this.textBox_activeWinInfoIntervalMillisec.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_activeWinInfoIntervalMillisec, "アクティブウィンドウ取得ループ間隔(ミリ秒)\r\n\r\nここで指定した時間間隔でアクティブウィンドウの情報\r\n(カレット位置やClassName)の取得処理を実行しま" +
         "す。\r\n\r\n設定できる最小値は 100 ミリ秒です。");
             // 
             // textBox_preWmCharGuardMillisec
             // 
             this.textBox_preWmCharGuardMillisec.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_preWmCharGuardMillisec.Location = new System.Drawing.Point(239, 61);
+            this.textBox_preWmCharGuardMillisec.Location = new System.Drawing.Point(239, 39);
             this.textBox_preWmCharGuardMillisec.Name = "textBox_preWmCharGuardMillisec";
             this.textBox_preWmCharGuardMillisec.Size = new System.Drawing.Size(40, 19);
-            this.textBox_preWmCharGuardMillisec.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_preWmCharGuardMillisec, resources.GetString("textBox_preWmCharGuardMillisec.ToolTip"));
+            this.textBox_preWmCharGuardMillisec.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_preWmCharGuardMillisec, "クリップボード経由で文字を送出する場合の待ち時間(ミリ秒)\r\n\r\nいったん BS で置換前の文字列を削除した後、Ctrl-V を送出する\r\n前の待ち時間を設定しま" +
+        "す。");
             // 
             // label31
             // 
             this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(19, 63);
+            this.label31.Location = new System.Drawing.Point(19, 41);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(157, 15);
             this.label31.TabIndex = 13;
@@ -1796,25 +1802,26 @@ namespace KanchokuWS
             // textBox_ctrlKeyDownGuardMillisec
             // 
             this.textBox_ctrlKeyDownGuardMillisec.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_ctrlKeyDownGuardMillisec.Location = new System.Drawing.Point(239, 39);
+            this.textBox_ctrlKeyDownGuardMillisec.Location = new System.Drawing.Point(297, 348);
             this.textBox_ctrlKeyDownGuardMillisec.Name = "textBox_ctrlKeyDownGuardMillisec";
             this.textBox_ctrlKeyDownGuardMillisec.Size = new System.Drawing.Size(40, 19);
             this.textBox_ctrlKeyDownGuardMillisec.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_ctrlKeyDownGuardMillisec, resources.GetString("textBox_ctrlKeyDownGuardMillisec.ToolTip"));
+            this.textBox_ctrlKeyDownGuardMillisec.Visible = false;
             // 
             // textBox_vkbMoveGuardMillisec
             // 
             this.textBox_vkbMoveGuardMillisec.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_vkbMoveGuardMillisec.Location = new System.Drawing.Point(239, 83);
+            this.textBox_vkbMoveGuardMillisec.Location = new System.Drawing.Point(239, 17);
             this.textBox_vkbMoveGuardMillisec.Name = "textBox_vkbMoveGuardMillisec";
             this.textBox_vkbMoveGuardMillisec.Size = new System.Drawing.Size(40, 19);
-            this.textBox_vkbMoveGuardMillisec.TabIndex = 3;
+            this.textBox_vkbMoveGuardMillisec.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_vkbMoveGuardMillisec, "キー入力後に仮想鍵盤を移動するまでの待ち時間(ミリ秒)\r\n\r\n漢直入力中に頻繁に仮想鍵盤が移動するのが鬱陶しい場合は、\r\nこの待ち時間を長くしてみてください。");
             // 
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(19, 85);
+            this.label20.Location = new System.Drawing.Point(19, 19);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(216, 15);
             this.label20.TabIndex = 10;
@@ -1823,26 +1830,28 @@ namespace KanchokuWS
             // textBox_ctrlKeyUpGuardMillisec
             // 
             this.textBox_ctrlKeyUpGuardMillisec.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_ctrlKeyUpGuardMillisec.Location = new System.Drawing.Point(239, 17);
+            this.textBox_ctrlKeyUpGuardMillisec.Location = new System.Drawing.Point(297, 333);
             this.textBox_ctrlKeyUpGuardMillisec.Name = "textBox_ctrlKeyUpGuardMillisec";
             this.textBox_ctrlKeyUpGuardMillisec.Size = new System.Drawing.Size(40, 19);
             this.textBox_ctrlKeyUpGuardMillisec.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_ctrlKeyUpGuardMillisec, resources.GetString("textBox_ctrlKeyUpGuardMillisec.ToolTip"));
+            this.textBox_ctrlKeyUpGuardMillisec.Visible = false;
             // 
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(19, 19);
+            this.label15.Location = new System.Drawing.Point(77, 335);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(178, 15);
             this.label15.TabIndex = 5;
             this.label15.Text = "CTRL KEY_UP後の待ち時間(ミリ秒)";
+            this.label15.Visible = false;
             // 
             // checkBox_hideTopText
             // 
             this.checkBox_hideTopText.AutoSize = true;
             this.checkBox_hideTopText.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.checkBox_hideTopText.Location = new System.Drawing.Point(134, 343);
+            this.checkBox_hideTopText.Location = new System.Drawing.Point(80, 323);
             this.checkBox_hideTopText.Name = "checkBox_hideTopText";
             this.checkBox_hideTopText.Size = new System.Drawing.Size(218, 19);
             this.checkBox_hideTopText.TabIndex = 2;
