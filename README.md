@@ -1692,6 +1692,7 @@ Esc, Tab, BackSpace, Enter, Insert, Delete, Home, End, PageUp, PageDown, UpArrow
 |RightShiftBlocker|交ぜ書きブロッカーの右移動|
 |LeftShiftMazeStartPos|交ぜ書き開始位置の左移動 （ただし直前の右移動の実行前の状態にのみ戻る）|
 |RightShiftMazeStartPos|交ぜ書き開始位置の右移動|
+|CopySelectionAndSendToDictionary|アクティブウィンドウに Ctrl-C を送りつけて、選択されている部分をクリップボードにコピーし、それをデコーダの辞書に送って登録する。<br/>形式はミニバッファへのコピペによる辞書登録と同じで、履歴、交ぜ書き、連想の3通りの登録が可能|
 
 ※ コマンド名は大文字・小文字を区別しません。
 
