@@ -771,9 +771,9 @@ namespace {
                     // 「ひどい目にあう」⇒「ひ土井目にあう」などと変換されることもあるので注意
                     //size_t tailKanjiKataLen = utils::count_tail_kanji(key.substr(0, stemMinLen));
                     size_t tailKanjiKataLen = utils::count_tail_kanji_or_katakana(key.substr(0, stemMinLen));
-                    _LOG_DEBUGH(_T("tailKanjiLen=%d, stemMinLen=%d, mazeNoIfxConnectKanji=%s, mazeNoIfxConnectAny=%s"), \
+                    _LOG_DEBUGH(_T("tailKanjiKataLen=%d, stemMinLen=%d, mazeNoIfxConnectKanji=%s, mazeNoIfxConnectAny=%s"), \
                         tailKanjiKataLen, stemMinLen, BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectKanji), BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectAny));
-                    if (tailKanjiKataLen > 0 && tailKanjiKataLen <= stemMinLen - 2) {
+                    if (tailKanjiKataLen > 0 && stemMinLen - tailKanjiKataLen >= 2) {
                         if (SETTINGS->mazeNoIfxConnectKanji || SETTINGS->mazeNoIfxConnectAny ||
                             (stemMinLen >= 3 && stemMinLen <= 4 && utils::contains_kanji(key.substr(0, stemMinLen - tailKanjiKataLen)))) {
                             stemMinLen -= tailKanjiKataLen;
@@ -868,10 +868,19 @@ namespace {
                         }
 
                         // 語幹長を延ばす
-                        if (stemLen >= key.size()) break;
-                        auto iter = mazeDic.find(key[stemLen++]);
-                        if (iter == mazeDic.end()) break;
+                        if (stemLen >= key.size()) {
+                            _LOG_DEBUGH(_T("stemLen: %d: END"), stemLen);
+                            break;
+                        }
+                        auto nextCh = key[stemLen++];
+                        auto iter = mazeDic.find(nextCh);
+                        if (iter == mazeDic.end()) {
+                            _LOG_DEBUGH(_T("mazeDic.find(%c): not found"), nextCh);
+                            break;
+                        }
+                        _LOG_DEBUGH(_T("mazeDic.find(%c): found size=%d"), nextCh, iter->second.size());
                         utils::apply_intersection(entrySet, iter->second);
+                        _LOG_DEBUGH(_T("intersection applied entrySet.size=%d"), entrySet.size());
                     }
                     
                 }
