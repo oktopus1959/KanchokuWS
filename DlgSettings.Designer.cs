@@ -3312,7 +3312,8 @@ namespace KanchokuWS
             this.checkBox_globalCtrlKeysEnabled.Size = new System.Drawing.Size(210, 19);
             this.checkBox_globalCtrlKeysEnabled.TabIndex = 0;
             this.checkBox_globalCtrlKeysEnabled.Text = "Ctrl修飾キー変換 (漢直/英字両モード)";
-            this.toolTip1.SetToolTip(this.checkBox_globalCtrlKeysEnabled, resources.GetString("checkBox_globalCtrlKeysEnabled.ToolTip"));
+            this.toolTip1.SetToolTip(this.checkBox_globalCtrlKeysEnabled, "漢直モード／英字モードの両方で有効なグローバルなCtrlキー変換を設定します。\r\n\r\nチェックをOFFにすると、すべてのグローバルなCtrlキー変換が無効になりま" +
+        "す。");
             this.checkBox_globalCtrlKeysEnabled.UseVisualStyleBackColor = true;
             this.checkBox_globalCtrlKeysEnabled.CheckedChanged += new System.EventHandler(this.checkBox_globalCtrlKeysEnabled_CheckedChanged);
             // 
