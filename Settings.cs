@@ -390,6 +390,9 @@ namespace KanchokuWS
         /// <summary>無活用語の語尾に漢字を許可する</summary>
         public static bool MazeNoIfxConnectKanji { get; set; } = false;
 
+        /// <summary>無活用語の語尾に任意文字を許可する</summary>
+        public static bool MazeNoIfxConnectAny { get; set; } = false;
+
         //------------------------------------------------------------------------------
         // 各種変換
         /// <summary>平仮名⇒カタカナ変換</summary>
@@ -856,6 +859,7 @@ namespace KanchokuWS
             MazeRemoveHeadSpace = addDecoderSetting("mazeRemoveHeadSpace", true);               // 交ぜ書き変換で、空白文字を変換開始位置とする
             MazeRightShiftYomiPos = addDecoderSetting("mazeRightShiftYomiPos", false);          // 交ぜ書き変換で、読みの開始位置を右移動する
             MazeNoIfxConnectKanji = addDecoderSetting("mazeNoIfxConnectKanji", true);           // 無活用語の語尾に漢字を許可する
+            MazeNoIfxConnectAny = addDecoderSetting("mazeNoIfxConnectAny", false);              // 無活用語の語尾に任意文字を許可する
             MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
             MazeGobiLikeTailLen = addDecoderSetting("mazeGobiLikeTailLen", 2, 0);               // 交ぜ書き変換で、語尾に含めてしまう末尾の長さ

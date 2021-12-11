@@ -414,6 +414,7 @@ namespace KanchokuWS
             this.label106 = new System.Windows.Forms.Label();
             this.checkBox_SandSEnablePostShift = new System.Windows.Forms.CheckBox();
             this.checkBox_mazeNoIfxConnectKanji = new System.Windows.Forms.CheckBox();
+            this.checkBox_mazeNoIfxConnectAny = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onSecondaryTable = new KanchokuWS.ColorTextBox();
@@ -3459,9 +3460,9 @@ namespace KanchokuWS
             // groupBox34
             // 
             this.groupBox34.Controls.Add(this.label91);
-            this.groupBox34.Location = new System.Drawing.Point(312, 214);
+            this.groupBox34.Location = new System.Drawing.Point(312, 226);
             this.groupBox34.Name = "groupBox34";
-            this.groupBox34.Size = new System.Drawing.Size(261, 100);
+            this.groupBox34.Size = new System.Drawing.Size(261, 97);
             this.groupBox34.TabIndex = 26;
             this.groupBox34.TabStop = false;
             this.groupBox34.Text = "交ぜ書きブロッカーとは";
@@ -3480,6 +3481,7 @@ namespace KanchokuWS
             // 
             // groupBox23
             // 
+            this.groupBox23.Controls.Add(this.checkBox_mazeNoIfxConnectAny);
             this.groupBox23.Controls.Add(this.checkBox_mazeNoIfxConnectKanji);
             this.groupBox23.Controls.Add(this.label89);
             this.groupBox23.Controls.Add(this.textBox_mazeGobiLikeTailLen);
@@ -3493,7 +3495,7 @@ namespace KanchokuWS
             this.groupBox23.Controls.Add(this.checkBox_mazegakiSelectFirstCand);
             this.groupBox23.Location = new System.Drawing.Point(312, 10);
             this.groupBox23.Name = "groupBox23";
-            this.groupBox23.Size = new System.Drawing.Size(261, 198);
+            this.groupBox23.Size = new System.Drawing.Size(261, 210);
             this.groupBox23.TabIndex = 3;
             this.groupBox23.TabStop = false;
             this.groupBox23.Text = "交ぜ書き変換";
@@ -3501,7 +3503,7 @@ namespace KanchokuWS
             // label89
             // 
             this.label89.AutoSize = true;
-            this.label89.Location = new System.Drawing.Point(20, 173);
+            this.label89.Location = new System.Drawing.Point(21, 188);
             this.label89.Name = "label89";
             this.label89.Size = new System.Drawing.Size(107, 15);
             this.label89.TabIndex = 28;
@@ -3510,16 +3512,16 @@ namespace KanchokuWS
             // textBox_mazeGobiLikeTailLen
             // 
             this.textBox_mazeGobiLikeTailLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeGobiLikeTailLen.Location = new System.Drawing.Point(137, 171);
+            this.textBox_mazeGobiLikeTailLen.Location = new System.Drawing.Point(138, 186);
             this.textBox_mazeGobiLikeTailLen.Name = "textBox_mazeGobiLikeTailLen";
             this.textBox_mazeGobiLikeTailLen.Size = new System.Drawing.Size(42, 19);
-            this.textBox_mazeGobiLikeTailLen.TabIndex = 7;
+            this.textBox_mazeGobiLikeTailLen.TabIndex = 8;
             this.toolTip1.SetToolTip(this.textBox_mazeGobiLikeTailLen, resources.GetString("textBox_mazeGobiLikeTailLen.ToolTip"));
             // 
             // label46
             // 
             this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(20, 151);
+            this.label46.Location = new System.Drawing.Point(21, 166);
             this.label46.Name = "label46";
             this.label46.Size = new System.Drawing.Size(77, 15);
             this.label46.TabIndex = 30;
@@ -3528,10 +3530,10 @@ namespace KanchokuWS
             // textBox_mazeGobiMaxLen
             // 
             this.textBox_mazeGobiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(137, 149);
+            this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(138, 164);
             this.textBox_mazeGobiMaxLen.Name = "textBox_mazeGobiMaxLen";
             this.textBox_mazeGobiMaxLen.Size = new System.Drawing.Size(42, 19);
-            this.textBox_mazeGobiMaxLen.TabIndex = 6;
+            this.textBox_mazeGobiMaxLen.TabIndex = 7;
             this.toolTip1.SetToolTip(this.textBox_mazeGobiMaxLen, "交ぜ書き変換時の語尾の最大長\r\n\r\n交ぜ書き変換時に、変換形に対して語尾を最大何文字まで与えるかを\r\n指定します。\r\n0 を設定すると、活用語尾を持つエントリは検" +
         "索の対象になりません。\r\n\r\n例：\r\n 最大語尾長を2と設定した場合は、「あ/う /会/」というエントリに対して\r\n「あった」は「会った」に変換できますが、「会" +
         "わせる」は変換対象外と\r\nなります。");
@@ -3539,7 +3541,7 @@ namespace KanchokuWS
             // label45
             // 
             this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(20, 129);
+            this.label45.Location = new System.Drawing.Point(21, 144);
             this.label45.Name = "label45";
             this.label45.Size = new System.Drawing.Size(100, 15);
             this.label45.TabIndex = 29;
@@ -3548,16 +3550,16 @@ namespace KanchokuWS
             // textBox_mazeYomiMaxLen
             // 
             this.textBox_mazeYomiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(137, 127);
+            this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(138, 142);
             this.textBox_mazeYomiMaxLen.Name = "textBox_mazeYomiMaxLen";
             this.textBox_mazeYomiMaxLen.Size = new System.Drawing.Size(42, 19);
-            this.textBox_mazeYomiMaxLen.TabIndex = 5;
+            this.textBox_mazeYomiMaxLen.TabIndex = 6;
             this.toolTip1.SetToolTip(this.textBox_mazeYomiMaxLen, "交ぜ書き変換時の読み入力の最大長\r\n\r\n交ぜ書き変換時に入力として扱う読みの長さの\r\n最大文字数を指定します。");
             // 
             // checkBox_mazeRightShiftYomiPos
             // 
             this.checkBox_mazeRightShiftYomiPos.AutoSize = true;
-            this.checkBox_mazeRightShiftYomiPos.Location = new System.Drawing.Point(20, 63);
+            this.checkBox_mazeRightShiftYomiPos.Location = new System.Drawing.Point(20, 61);
             this.checkBox_mazeRightShiftYomiPos.Name = "checkBox_mazeRightShiftYomiPos";
             this.checkBox_mazeRightShiftYomiPos.Size = new System.Drawing.Size(201, 19);
             this.checkBox_mazeRightShiftYomiPos.TabIndex = 2;
@@ -3568,7 +3570,7 @@ namespace KanchokuWS
             // checkBox_mazeRemoveHeadSpace
             // 
             this.checkBox_mazeRemoveHeadSpace.AutoSize = true;
-            this.checkBox_mazeRemoveHeadSpace.Location = new System.Drawing.Point(20, 84);
+            this.checkBox_mazeRemoveHeadSpace.Location = new System.Drawing.Point(20, 81);
             this.checkBox_mazeRemoveHeadSpace.Name = "checkBox_mazeRemoveHeadSpace";
             this.checkBox_mazeRemoveHeadSpace.Size = new System.Drawing.Size(183, 19);
             this.checkBox_mazeRemoveHeadSpace.TabIndex = 3;
@@ -3579,7 +3581,7 @@ namespace KanchokuWS
             // checkBox_mazeBlockerTail
             // 
             this.checkBox_mazeBlockerTail.AutoSize = true;
-            this.checkBox_mazeBlockerTail.Location = new System.Drawing.Point(20, 42);
+            this.checkBox_mazeBlockerTail.Location = new System.Drawing.Point(20, 41);
             this.checkBox_mazeBlockerTail.Name = "checkBox_mazeBlockerTail";
             this.checkBox_mazeBlockerTail.Size = new System.Drawing.Size(224, 19);
             this.checkBox_mazeBlockerTail.TabIndex = 1;
@@ -4995,13 +4997,24 @@ namespace KanchokuWS
             // checkBox_mazeNoIfxConnectKanji
             // 
             this.checkBox_mazeNoIfxConnectKanji.AutoSize = true;
-            this.checkBox_mazeNoIfxConnectKanji.Location = new System.Drawing.Point(20, 105);
+            this.checkBox_mazeNoIfxConnectKanji.Location = new System.Drawing.Point(20, 101);
             this.checkBox_mazeNoIfxConnectKanji.Name = "checkBox_mazeNoIfxConnectKanji";
             this.checkBox_mazeNoIfxConnectKanji.Size = new System.Drawing.Size(193, 19);
             this.checkBox_mazeNoIfxConnectKanji.TabIndex = 4;
             this.checkBox_mazeNoIfxConnectKanji.Text = "無活用語には漢字語尾を許可する";
             this.toolTip1.SetToolTip(this.checkBox_mazeNoIfxConnectKanji, resources.GetString("checkBox_mazeNoIfxConnectKanji.ToolTip"));
             this.checkBox_mazeNoIfxConnectKanji.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_mazeNoIfxConnectAny
+            // 
+            this.checkBox_mazeNoIfxConnectAny.AutoSize = true;
+            this.checkBox_mazeNoIfxConnectAny.Location = new System.Drawing.Point(20, 121);
+            this.checkBox_mazeNoIfxConnectAny.Name = "checkBox_mazeNoIfxConnectAny";
+            this.checkBox_mazeNoIfxConnectAny.Size = new System.Drawing.Size(203, 19);
+            this.checkBox_mazeNoIfxConnectAny.TabIndex = 5;
+            this.checkBox_mazeNoIfxConnectAny.Text = "無活用語には任意の語尾を許可する";
+            this.toolTip1.SetToolTip(this.checkBox_mazeNoIfxConnectAny, resources.GetString("checkBox_mazeNoIfxConnectAny.ToolTip"));
+            this.checkBox_mazeNoIfxConnectAny.UseVisualStyleBackColor = true;
             // 
             // textBox_onSelectedBackColor
             // 
@@ -5705,5 +5718,6 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label106;
         private System.Windows.Forms.CheckBox checkBox_SandSEnablePostShift;
         private System.Windows.Forms.CheckBox checkBox_mazeNoIfxConnectKanji;
+        private System.Windows.Forms.CheckBox checkBox_mazeNoIfxConnectAny;
     }
 }

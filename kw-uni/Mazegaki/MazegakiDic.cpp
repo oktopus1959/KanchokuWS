@@ -30,6 +30,9 @@
 // 漢字の語尾OK
 #define KANJI_OK (wchar_t*)4
 
+// 条件付きで任意OK
+#define COND_ANY_OK (wchar_t*)5
+
 // 特殊の終わり
 #define INF_SPECIAL_END (wchar_t*)9
 
@@ -60,7 +63,9 @@ namespace {
     // 五段活用「う」(会う)
     wchar_t const * IFX_WU_5[] = { _T("われた"), _T("われて"), _T("われ"), _T("わ"), _T("い"), _T("う"), _T("え"), _T("お"), _T("った"), _T("っちゃ"), _T("って"), /* _T("っ"), */ 0 };
     // サ変活用「する」(開発する)(達する、愛するは、五段として登録する)
-    wchar_t const * IFX_SURU[] = { STEM_OK, KANJI_OK, _T("された"), _T("されて"), _T("され"), _T("さ"), _T("した"), _T("して"), _T("しない"), _T("しな"), _T("し"), _T("する"), _T("すれ"), _T("せ"), _T("を"),_T("、"), _T("。"), 0 };
+    wchar_t const * IFX_SURU[] = { STEM_OK, KANJI_OK, \
+        _T("された"), _T("されて"), _T("され"), _T("さ"), _T("した"), _T("して"), _T("しない"), _T("しな"), _T("し"), \
+        _T("する"), _T("すれ"), _T("せ"), _T("を"),_T("、"), _T("。"), COND_ANY_OK, 0 };
     // ザ変活用「ずる」(信ずる)
     wchar_t const * IFX_ZURU[] = { _T("じた"), _T("じて"), _T("じない"), _T("じな"), _T("じられた"), _T("じられて"), _T("じられ"), _T("じら"), _T("じ"), _T("ずる"), _T("ずれ"), _T("ぜ"), 0 };
     // 形容詞「い」(美しい)
@@ -76,7 +81,7 @@ namespace {
     wchar_t const * IFX_NONE[] = { STEM_OK, KANJI_OK,
         _T("が"), _T("だ"), _T("で"), _T("と"), _T("な"), _T("に"), _T("の"), _T("は"), _T("へ"), _T("も"), _T("を"),
         _T("から"), _T("こそ"), _T("ごと"), _T("さえ"), _T("じゃ"), _T("すら"),_T("まで"),_T("たち"),_T("や"),_T("よ"),_T("ゆえ"),
-        _T("、"), _T("。"), 0 };
+        _T("、"), _T("。"), COND_ANY_OK, 0 };
 
     inline int find_gobi(const wchar_t** ifxes, int id) {
         auto ppIfx = ifxes;
@@ -88,12 +93,13 @@ namespace {
     }
 
     // 後接可能な語尾を探し、その長さを返す
-    inline int find_gobi(const wchar_t** ifxes, const mchar_t* pms) {
+    inline int find_gobi(const wchar_t** ifxes, size_t xferLen, const mchar_t* pms) {
         auto ppIfx = ifxes;
         while (*ppIfx != 0) {
             wchar_t const* pIfx = *ppIfx++;
             if (pIfx == ANY_OK) return 0;
-            if (pIfx == KANJI_OK && utils::is_kanji(pms[0])) return 0;  // 漢字後接もOKの場合
+            if (pIfx == KANJI_OK && xferLen >= 2 && SETTINGS->mazeNoIfxConnectKanji && utils::is_kanji(pms[0])) return 0;  // 漢字後接もOKの場合
+            if (pIfx == COND_ANY_OK && xferLen >= 2 && SETTINGS->mazeNoIfxConnectAny) return 0;  // 条件付きで任意後接もOKの場合
             if (pIfx <= INF_SPECIAL_END) continue;
             int i = 0;
             while (pIfx[i] != 0 && pIfx[i] == pms[i]) ++i;
@@ -172,6 +178,7 @@ namespace {
         MString stem;               // 読み(語幹)(「たべ」)
         MString xfer;               // 変換形(語幹)(「食べ」)
         const wchar_t** inflexList; // 語尾リスト
+        wstring ifxGobi;            // 活用語尾
         wstring origYomi;           // 元の読み形(語尾情報含む)
         bool userDic;               // ユーザ辞書由来
         bool deleted;               // 削除フラグ
@@ -181,7 +188,7 @@ namespace {
             size_t pos = yomi.find_first_of('/');
             if (pos == wstring::npos) {
                 // 語尾指定がない ⇒ 無活用
-                return new MazeEntry{ to_mstr(yomi), to_mstr(xfer), IFX_NONE, yomi, bUser };
+                return new MazeEntry{ to_mstr(yomi), to_mstr(xfer), IFX_NONE, _T("無"), yomi, bUser };
             } else {
                 // 語尾指定あり
                 wstring gobi = yomi.substr(pos + 1);
@@ -197,18 +204,18 @@ namespace {
                 }
                 auto iter = gobiMap.find(gobi);
                 auto ifxList = iter != gobiMap.end() ? iter->second : IFX_NONE;
-                return new MazeEntry{ to_mstr(yomi.substr(0, pos)), to_mstr(xfer), ifxList, yomi, bUser };
+                return new MazeEntry{ to_mstr(yomi.substr(0, pos)), to_mstr(xfer), ifxList, gobi, yomi, bUser };
             }
         }
 
         // 変換形＋活用語尾の長さを返す(後でブロッカーの設定位置になる)
         size_t GetXferPlusGobiLen(const MString& resultStr) const {
             size_t xferLen = min(xfer.size(), resultStr.size());
-            //if ((inflexList != IFX_NONE && inflexList != IFX_ADV && inflexList != IFX_SURU) && xferLen < resultStr.size()) {
+            //if ((inflexList != IFX_NONE && inflexList != IFX_ADV && inflexList != IFX_SURU) && xferLen < resultStr.size()) { //}
                 //// サ変以外の活用語で、語尾がある場合は、その語尾も変換形に含める
             if (inflexList != IFX_ADV && xferLen < resultStr.size()) {
                 // 副詞以外で、語尾がある場合は、その語尾も変換形に含める
-                int gobiLen = find_gobi(inflexList, resultStr.c_str() + xferLen);
+                int gobiLen = find_gobi(inflexList, xferLen, resultStr.c_str() + xferLen);
                 if (gobiLen > 0) xferLen += gobiLen;
             }
             //return xferLen;
@@ -759,14 +766,17 @@ namespace {
                     // (2021/11/27)
                     // ⇒と思ったが、「ぶんき /分岐/」しか登録がないときに「分き点」も変換できるようにしたい
                     // ⇒漢字で終わる読みの長さが4文字以下で、末尾漢字列が2文字以下、stemが2文字以上残って漢字を含む場合のみ、末尾漢字列も語尾に含める
-                    // (2021/12/10)
-                    // ⇒mazeNoIfxConnectKanji==trueなら、読みの長さ制限と読みに漢字を含む制限を外す
-                    size_t tailKanjiLen = utils::count_tail_kanji(key.substr(0, stemMinLen));
-                    _LOG_DEBUGH(_T("tailKanjiLen=%d, stemMinLen=%d, mazeNoIfxConnectKanji=%s"), tailKanjiLen, stemMinLen, BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectKanji));
-                    if (tailKanjiLen > 0 && tailKanjiLen <= stemMinLen - 2) {
-                        if (SETTINGS->mazeNoIfxConnectKanji ||
-                            (stemMinLen >= 3 && stemMinLen <= 4 && utils::contains_kanji(key.substr(0, stemMinLen - tailKanjiLen)))) {
-                            stemMinLen -= tailKanjiLen;
+                    // (2021/12/11)
+                    // ⇒mazeNoIfxConnectKanji==true or mazeNoIfxConnectAny==trueなら、読みの長さ制限と読みに漢字を含む制限を外す
+                    // 「ひどい目にあう」⇒「ひ土井目にあう」などと変換されることもあるので注意
+                    //size_t tailKanjiKataLen = utils::count_tail_kanji(key.substr(0, stemMinLen));
+                    size_t tailKanjiKataLen = utils::count_tail_kanji_or_katakana(key.substr(0, stemMinLen));
+                    _LOG_DEBUGH(_T("tailKanjiLen=%d, stemMinLen=%d, mazeNoIfxConnectKanji=%s, mazeNoIfxConnectAny=%s"), \
+                        tailKanjiKataLen, stemMinLen, BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectKanji), BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectAny));
+                    if (tailKanjiKataLen > 0 && tailKanjiKataLen <= stemMinLen - 2) {
+                        if (SETTINGS->mazeNoIfxConnectKanji || SETTINGS->mazeNoIfxConnectAny ||
+                            (stemMinLen >= 3 && stemMinLen <= 4 && utils::contains_kanji(key.substr(0, stemMinLen - tailKanjiKataLen)))) {
+                            stemMinLen -= tailKanjiKataLen;
                         }
                     }
 
@@ -807,29 +817,44 @@ namespace {
                         for (auto p : entrySet) {
 #ifdef _DEBUG
                             if (entrySet.size() < 20) {
-                                _LOG_DEBUGH(_T("key=%s, keyStem=%s, mazeSearch=%s, p->stem=%s, p->xfer=%s, user=%s, deleted=%s"),
-                                    MAKE_WPTR(key), MAKE_WPTR(keyStem), BOOL_TO_WPTR(mazeSearch), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
+                                _LOG_DEBUGH(_T("key=%s, keyStem=%s, mazeSearch=%s, p->ifxGobi=%s, p->stem=%s, p->xfer=%s, user=%s, deleted=%s"),
+                                    MAKE_WPTR(key), MAKE_WPTR(keyStem), BOOL_TO_WPTR(mazeSearch), p->ifxGobi.c_str(), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
                             }
 #endif
                             if (p->deleted) continue;
+#ifdef _DEBUG
+                            if (entrySet.size() < 20) _LOG_DEBUGH(_T("CP-A"));
+#endif
                             // 読み語幹の先頭部が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケースや「経い」→「経」のケース)
                             // 「けい /経/」と「けいい /経緯/」があって、「経い」を変換したときに「経」が候補として採用されることを防ぐ
                             // また、かりに「けい /緯/」という登録があったとして「け緯」⇒「緯」も防ぎたい
                             // ただし、「国民は」の「国民」は通す必要あり。そうしないと「国民派」に変換されてしまう
                             if (keyStem != p->xfer && (utils::startsWith(keyStem, p->xfer) || utils::endsWith(keyStem, p->xfer))) continue;
 
+#ifdef _DEBUG
+                            if (entrySet.size() < 20) _LOG_DEBUGH(_T("CP-B"));
+#endif
                             if (keyStem == p->stem || mazeSearch && (mazeStar || p->xfer.size() <= keyStem.size()) && order_matched(keyStem, p)) {
+#ifdef _DEBUG
+                                if (entrySet.size() < 20) _LOG_DEBUGH(_T("CP-C"));
+#endif
                                 // 読み語幹が完全一致、または key に漢字が含まれている場合は、'*' を含むか変換形長 <= key長、かつ、ひらがな・漢字の出現順序の一致を確認
                                 if (key.size() == stemLen) {
+#ifdef _DEBUG
+                                    if (entrySet.size() < 20) _LOG_DEBUGH(_T("CP-D"));
+#endif
                                     // 語尾がない⇒無活用または語幹OKの活用型か
                                     if (find_gobi(p->inflexList, (int)STEM_OK) == 0) {
                                         _LOG_DEBUGH(_T("No gobi found: %s: STEM_OK, userDic=%s"), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic));
                                         mazeCands.StockOutput(key, mazeSearch, p, p->xfer, p->xfer);
                                     }
                                 } else {
+#ifdef _DEBUG
+                                    if (entrySet.size() < 20) _LOG_DEBUGH(_T("CP-E"));
+#endif
                                     // 語尾がある
                                     // (「がいる」が「我いる」になったりしないようにするために,語幹が1文字の無活用語は採用しないようにしてみたが、やはり目とか手とかあるので、いったん様子見)
-                                    int gobiLen = find_gobi(p->inflexList, key.c_str() + stemLen);
+                                    int gobiLen = find_gobi(p->inflexList, stemLen, key.c_str() + stemLen);
                                     if (gobiLen >= 0) {
                                         _LOG_DEBUGH(_T("gobi found: %s: %c, gobiLen=%d, userDic=%s"), MAKE_WPTR(p->xfer), key[stemLen], gobiLen, BOOL_TO_WPTR(p->userDic));
                                         size_t yomiLen = stemLen + gobiLen;
@@ -837,6 +862,9 @@ namespace {
                                     }
                                 }
                             }
+#ifdef _DEBUG
+                            if (entrySet.size() < 20) _LOG_DEBUGH(_T("CP-F"));
+#endif
                         }
 
                         // 語幹長を延ばす

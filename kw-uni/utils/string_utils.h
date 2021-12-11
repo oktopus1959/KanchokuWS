@@ -624,6 +624,16 @@ namespace utils
         return false;
     }
 
+    // 末尾の漢字またはカタカナ部分の長さを取得
+    template<typename T>
+    inline size_t count_tail_kanji_or_katakana(const T& s) {
+        size_t pos = s.size();
+        while (pos > 0 && (is_kanji(s[pos - 1]) || is_katakana(s[pos - 1]))) {
+            --pos;
+        }
+        return s.size() - pos;
+    }
+
     // 末尾のひらがな部分の長さを取得
     template<typename T>
     inline size_t count_tail_hiragana(const T& s) {
