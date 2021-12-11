@@ -273,6 +273,8 @@ namespace KanchokuWS
 
         public static VKeyCombo EmptyCombo = new VKeyCombo(0, 0);
 
+        public static VKeyCombo CtrlC_VKeyCombo = new VKeyCombo(KeyModifiers.MOD_CONTROL, faceToVkey["C"]);
+
         public static VKeyCombo CtrlV_VKeyCombo = new VKeyCombo(KeyModifiers.MOD_CONTROL, faceToVkey["V"]);
 
         public static VKeyCombo? GetVKeyComboFromFaceString(string face, bool ctrl, bool shift)
@@ -574,6 +576,7 @@ namespace KanchokuWS
             {"rightshiftblocker", DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY},
             {"leftshiftmazestartpos", DecoderKeys.LEFT_SHIFT_MAZE_START_POS_DECKEY},
             {"rightshiftmazestartpos", DecoderKeys.RIGHT_SHIFT_MAZE_START_POS_DECKEY},
+            {"copyselectionandsendtodictionary", DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY},
             //{"^a", DecoderKeys.CTRL_},
         };
 

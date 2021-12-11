@@ -1640,18 +1640,7 @@ namespace KanchokuWS
         // 上部出力文字列に何かをペーストされたときのアクション
         private void sendWord(string str)
         {
-            str = str._strip()._reReplace("  +", " ");
-            if (str._notEmpty()) {
-                if (str.Length == 1 || (str.Length == 2 && str._isSurrogatePair())) {
-                    frmMain.ShowStrokeHelp(str);
-                } else if (str[1] == '=') {
-                    frmMain.ExecCmdDecoder("mergeBushuAssocEntry", str);
-                } else if (str._reMatch("^[^ ]+ /")) {
-                    frmMain.ExecCmdDecoder("addMazegakiEntry", str);
-                } else {
-                    frmMain.ExecCmdDecoder("addHistEntry", str);
-                }
-            }
+            frmMain.SendToDictionary(str);
         }
 
         private void Settings_ToolStripMenuItem_Click(object sender, EventArgs e)

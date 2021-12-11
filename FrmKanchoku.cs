@@ -607,6 +607,10 @@ namespace KanchokuWS
                             InvokeDecoder(deckey, 0);
                         }
                         return true;
+                    case DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY:
+                        logger.Info(() => $"COPY_SELECTION_AND_SEND_TO_DICTIONARY:{deckey}");
+                        copySelectionAndSendToDictionary();
+                        return true;
                     default:
                         bPrevDtUpdate = true;
                         if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
@@ -677,6 +681,40 @@ namespace KanchokuWS
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: new deckey={DecoderKeys.DATE_STRING_ROTATION_DECKEY:x}, dateStrDeckeyCount={dateStrDeckeyCount}, prevDateStrLength={prevDateStrLength}, dayOffset={dayOffset}");
             outputTodayDate();
             return true;
+        }
+
+        private void copySelectionAndSendToDictionary()
+        {
+            try {
+                // Ctrl-C を送る
+                actWinHandler.SendVKeyCombo(VirtualKeys.CtrlC_VKeyCombo.modifier, VirtualKeys.CtrlC_VKeyCombo.vkey, 1);
+                Helper.WaitMilliSeconds(100);
+                if (Clipboard.ContainsText()) {
+                    //文字列データがあるときはこれを取得する
+                    //取得できないときは空の文字列（String.Empty）を返す
+                    SendToDictionary(Clipboard.GetText());
+                }
+            } catch (Exception e) {
+                logger.Error(e._getErrorMsg());
+            }
+        }
+
+        /// <summary>文字列をデコーダの辞書に送って登録する </summary>
+        /// <param name="str"></param>
+        public void SendToDictionary(string str)
+        {
+            str = str._strip()._reReplace("  +", " ");
+            if (str._notEmpty()) {
+                if (str.Length == 1 || (str.Length == 2 && str._isSurrogatePair())) {
+                    ShowStrokeHelp(str);
+                } else if (str[1] == '=') {
+                    ExecCmdDecoder("mergeBushuAssocEntry", str);
+                } else if (str._reMatch("^[^ ]+ /")) {
+                    ExecCmdDecoder("addMazegakiEntry", str);
+                } else {
+                    ExecCmdDecoder("addHistEntry", str);
+                }
+            }
         }
 
         // 開発者用の設定がONになっているとき、漢直モードのON/OFFを10回繰り返したら警告を出す
