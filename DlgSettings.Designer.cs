@@ -413,6 +413,7 @@ namespace KanchokuWS
             this.textBox_historyFewCharsKeySeq = new System.Windows.Forms.TextBox();
             this.label106 = new System.Windows.Forms.Label();
             this.checkBox_SandSEnablePostShift = new System.Windows.Forms.CheckBox();
+            this.checkBox_mazeNoIfxConnectKanji = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onSecondaryTable = new KanchokuWS.ColorTextBox();
@@ -428,7 +429,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.checkBox_mazeNoIfxConnectKanji = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -3861,8 +3861,8 @@ namespace KanchokuWS
             this.checkBox_historySearchKey.Size = new System.Drawing.Size(185, 19);
             this.checkBox_historySearchKey.TabIndex = 5;
             this.checkBox_historySearchKey.Text = "履歴検索・候補選択する     Ctrl-";
-            this.toolTip1.SetToolTip(this.checkBox_historySearchKey, "Ctrl-Space で履歴検索を実行し、同時に先頭候補を選択できるようにします。\r\n\r\n連続して押すことで、次の候補を選択することもできます。\r\nこれは自動履歴" +
-        "検索がOFFの場合でも有効です。\r\n\r\nミニバッファ末尾の改行を除去してから履歴検索を実行するので、Enterを押して\r\nしまった後でも処理可能です。");
+            this.toolTip1.SetToolTip(this.checkBox_historySearchKey, "Ctrl修飾キーで履歴検索を実行し、同時に先頭候補を選択できるようにします。\r\n\r\n連続して押すことで、次の候補を選択することもできます。\r\nこれは自動履歴検索が" +
+        "OFFの場合でも有効です。\r\n\r\nミニバッファ末尾の改行を除去してから履歴検索を実行するので、Enterを押して\r\nしまった後でも処理可能です。");
             this.checkBox_historySearchKey.UseVisualStyleBackColor = true;
             this.checkBox_historySearchKey.CheckedChanged += new System.EventHandler(this.checkBox_historySearchKey_CheckedChanged);
             // 
@@ -3874,8 +3874,7 @@ namespace KanchokuWS
             this.checkBox_autoHistEnabled.Size = new System.Drawing.Size(127, 19);
             this.checkBox_autoHistEnabled.TabIndex = 0;
             this.checkBox_autoHistEnabled.Text = "自動履歴検索を行う";
-            this.toolTip1.SetToolTip(this.checkBox_autoHistEnabled, "入力時に自動的に履歴検索を実行する設定\r\n\r\nここにチェックを入れると、文字入力時に自動的に履歴を検索して\r\nマッチしたものを候補として表示します。\r\n\r\n手動で" +
-        "検索することも可能なので、わずらわしい場合はチェックを外してください。\r\n");
+            this.toolTip1.SetToolTip(this.checkBox_autoHistEnabled, resources.GetString("checkBox_autoHistEnabled.ToolTip"));
             this.checkBox_autoHistEnabled.UseVisualStyleBackColor = true;
             this.checkBox_autoHistEnabled.CheckedChanged += new System.EventHandler(this.checkBox_autoHistEnabled_CheckedChanged);
             // 
@@ -4993,6 +4992,17 @@ namespace KanchokuWS
         "打鍵すれば、第1打鍵が\r\nシフト状態で押下されたものとして処理が行われます。");
             this.checkBox_SandSEnablePostShift.UseVisualStyleBackColor = true;
             // 
+            // checkBox_mazeNoIfxConnectKanji
+            // 
+            this.checkBox_mazeNoIfxConnectKanji.AutoSize = true;
+            this.checkBox_mazeNoIfxConnectKanji.Location = new System.Drawing.Point(20, 105);
+            this.checkBox_mazeNoIfxConnectKanji.Name = "checkBox_mazeNoIfxConnectKanji";
+            this.checkBox_mazeNoIfxConnectKanji.Size = new System.Drawing.Size(193, 19);
+            this.checkBox_mazeNoIfxConnectKanji.TabIndex = 4;
+            this.checkBox_mazeNoIfxConnectKanji.Text = "無活用語には漢字語尾を許可する";
+            this.toolTip1.SetToolTip(this.checkBox_mazeNoIfxConnectKanji, resources.GetString("checkBox_mazeNoIfxConnectKanji.ToolTip"));
+            this.checkBox_mazeNoIfxConnectKanji.UseVisualStyleBackColor = true;
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -5169,17 +5179,6 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // checkBox_mazeNoIfxConnectKanji
-            // 
-            this.checkBox_mazeNoIfxConnectKanji.AutoSize = true;
-            this.checkBox_mazeNoIfxConnectKanji.Location = new System.Drawing.Point(20, 105);
-            this.checkBox_mazeNoIfxConnectKanji.Name = "checkBox_mazeNoIfxConnectKanji";
-            this.checkBox_mazeNoIfxConnectKanji.Size = new System.Drawing.Size(193, 19);
-            this.checkBox_mazeNoIfxConnectKanji.TabIndex = 4;
-            this.checkBox_mazeNoIfxConnectKanji.Text = "無活用語には漢字語尾を許可する";
-            this.toolTip1.SetToolTip(this.checkBox_mazeNoIfxConnectKanji, resources.GetString("checkBox_mazeNoIfxConnectKanji.ToolTip"));
-            this.checkBox_mazeNoIfxConnectKanji.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
