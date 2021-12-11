@@ -646,7 +646,7 @@ namespace {
     DEFINE_CLASS_LOGGER(HistoryState);
 
     // -------------------------------------------------------------------
-    // 1～3文字履歴機能状態クラス
+    // 2～3文字履歴機能状態クラス
     class HistoryFewCharsState : public HistoryState {
         DECLARE_CLASS_LOGGER;
     public:
@@ -664,7 +664,7 @@ namespace {
 
             if (!HISTORY_DIC) return false;
 
-            // 1～3文字履歴の取得
+            // 2～3文字履歴の取得
             MString key;
             candLen = -3;
             setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, candLen), key);
@@ -1211,7 +1211,7 @@ Node* HistoryNodeBuilder::CreateNode() {
 }
 
 // -------------------------------------------------------------------
-// HistoryFewCharsNode - 1～3文字履歴機能ノード
+// HistoryFewCharsNode - 2～3文字履歴機能ノード
 DEFINE_CLASS_LOGGER(HistoryFewCharsNode);
 
 // コンストラクタ
@@ -1229,7 +1229,7 @@ State* HistoryFewCharsNode::CreateState() {
 }
 
 // -------------------------------------------------------------------
-// HistoryFewCharsNodeBuilder - 1～3文字履歴機能ノードビルダー
+// HistoryFewCharsNodeBuilder - 2～3文字履歴機能ノードビルダー
 DEFINE_CLASS_LOGGER(HistoryFewCharsNodeBuilder);
 
 Node* HistoryFewCharsNodeBuilder::CreateNode() {

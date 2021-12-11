@@ -35,7 +35,7 @@ public:
 };
 
 // -------------------------------------------------------------------
-// HistoryFewCharsNode - 1～3文字履歴機能ノード
+// HistoryFewCharsNode - 2～3文字履歴機能ノード
 class HistoryFewCharsNode : public HistoryNode {
     DECLARE_CLASS_LOGGER;
  public:
@@ -50,7 +50,7 @@ class HistoryFewCharsNode : public HistoryNode {
 };
 
 // -------------------------------------------------------------------
-// HistoryFewCharsNodeBuilder - 1～3文字履歴機能ノードビルダ
+// HistoryFewCharsNodeBuilder - 2～3文字履歴機能ノードビルダ
 #include "FunctionNodeBuilder.h"
 
 class HistoryFewCharsNodeBuilder : public FunctionNodeBuilder {
