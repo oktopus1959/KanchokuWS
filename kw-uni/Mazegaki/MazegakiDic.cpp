@@ -14,6 +14,11 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegakiDic)
 
+//#define _DEBUG_SENT(x) x
+//#define _DEBUG_FLAG(x) (x)
+//#define _LOG_DEBUGH LOG_INFOH
+//#define _LOG_DEBUGH_COND LOG_INFOH_COND
+
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
 #define _WCHAR(ws)  (_T(ws)[0])
@@ -352,7 +357,7 @@ namespace {
 
         const MString& FindEntry(const MString& yomi) {
             auto iter = entries.find(yomi);
-            _LOG_DEBUGH(_T("yomi=%s, found=%s"), MAKE_WPTR(yomi), BOOL_TO_WPTR(iter == entries.end()));
+            LOG_DEBUG(_T("yomi=%s, found=%s"), MAKE_WPTR(yomi), BOOL_TO_WPTR(iter == entries.end()));
             return iter == entries.end() ? EMPTY_MSTR : iter->second;
         }
 
@@ -486,62 +491,62 @@ namespace {
 
         // 入力文字列中の部分ひらがな列または漢字列について、読みまたは変換形の中の一致する部分を探す
         // 「*」は任意長の文字列、「?」は任意の1文字とマッチする
-        bool matcher(const MString& keyStem, size_t pos, size_t len, const MString& ms, size_t& mpos) {
-            _LOG_DEBUGH(_T("ENTER: keyStem=%s, pos=%d, len=%d, ms=%s, mpos=%d"), MAKE_WPTR(keyStem), pos, len, MAKE_WPTR(ms), mpos);
+        bool matcher(const MString& keyStem, size_t pos, size_t len, const MString& ms, size_t& mpos, bool debugFlag = false) {
+            _LOG_DEBUGH_COND(debugFlag, _T("ENTER: keyStem=%s, pos=%d, len=%d, ms=%s, mpos=%d"), MAKE_WPTR(keyStem), pos, len, MAKE_WPTR(ms), mpos);
             if (pos + len >= keyStem.size()) {
                 // 末尾のマッチングの場合
                 bool tailStar = pos < keyStem.size() && keyStem.find('*', pos) != MString::npos;
                 size_t tlen = len - (tailStar ? 1 : 0);
                 if (mpos + tlen > ms.size()) return false;   // 読み(変換形)の文字数が足りないので不一致とする
                 if (!tailStar) mpos = ms.size() - len;
-                _LOG_DEBUGH(_T("tailStar=%s, pos=%d, tlen=%d, mpos=%d"), BOOL_TO_WPTR(tailStar), pos, tlen, mpos);
+                _LOG_DEBUGH_COND(debugFlag, _T("tailStar=%s, pos=%d, tlen=%d, mpos=%d"), BOOL_TO_WPTR(tailStar), pos, tlen, mpos);
                 if (pos == 0 && mpos > 0) {
                     // 先頭マッチングでもあるが、長さが合わず、末尾マッチングによる移動でmsの比較先頭位置ずれた
-                    _LOG_DEBUGH(_T("LEAVE: UNMATCH-1: pos=%d, mpos=%d"), pos, mpos);
+                    _LOG_DEBUGH_COND(debugFlag, _T("LEAVE: UNMATCH-1: FALSE: pos=%d, mpos=%d"), pos, mpos);
                     return false;
                 }
             }
 
             size_t mpos1 = mpos;
             while (mpos < ms.length()) {
-                _LOG_DEBUGH(_T("LOOP-1: mpos=%d, len=%d"), mpos, len);
+                _LOG_DEBUGH_COND(debugFlag, _T("LOOP-1: mpos=%d, len=%d"), mpos, len);
                 size_t i = 0;
                 for (; i < len; ++i) {
                     auto kch = keyStem[pos + i];
-                    _LOG_DEBUGH(_T("LOOP-2: i=%d, pos=%d, kch=%c"), i, pos, kch);
+                    _LOG_DEBUGH_COND(debugFlag, _T("LOOP-2: i=%d, pos=%d, kch=%c"), i, pos, kch);
                     if (kch == '*') {
                         size_t next_pos = pos + i + 1;
                         if (next_pos >= pos + len) {
-                            _LOG_DEBUGH(_T("LEAVE: MATCHED KEY-SEGMENT"));
+                            _LOG_DEBUGH_COND(debugFlag, _T("LEAVE: MATCHED KEY-SEGMENT"));
                             return true;  // このキーセグメントの終わり
                         }
                         // キーセグメントの残りをやる
                         size_t next_len = pos + len - next_pos;
-                        return matcher(keyStem, next_pos, next_len, ms, mpos);
+                        return matcher(keyStem, next_pos, next_len, ms, mpos, debugFlag);
                     }
                     ++mpos;
                     if (mpos > ms.length()) {
-                        _LOG_DEBUGH(_T("OVERRUN: mpos=%d, ms.length()=%d"), mpos, ms.length());
+                        _LOG_DEBUGH_COND(debugFlag, _T("OVERRUN: mpos=%d, ms.length()=%d"), mpos, ms.length());
                         break;
                     }
-                    _LOG_DEBUGH(_T("CHECK: kch=%c, mpos=%d, ms[%d]=%c"), kch, mpos, mpos - 1, ms[mpos - 1]);
+                    _LOG_DEBUGH_COND(debugFlag, _T("CHECK: kch=%c, mpos=%d, ms[%d]=%c"), kch, mpos, mpos - 1, ms[mpos - 1]);
                     if (kch == '?' || kch == ms[mpos - 1]) continue; // 一致したので次の文字へ
                     // 不一致だった
-                    _LOG_DEBUGH(_T("UNMATCHED: pos=%d"), pos);
+                    _LOG_DEBUGH_COND(debugFlag, _T("UNMATCHED: pos=%d"), pos);
                     if (pos == 0) {
-                        _LOG_DEBUGH(_T("LEAVE: UNMATCH-2"));
+                        _LOG_DEBUGH_COND(debugFlag, _T("LEAVE: UNMATCH-2: FALSE"));
                         return false;     // 先頭の場合は、位置移動不可なので、不一致とする
                     }
                     break;  // 先頭でなければ位置を移動させてよい
                 }
                 if (i == len) {
-                    _LOG_DEBUGH(_T("LEAVE: MATCHED ALL"));
+                    _LOG_DEBUGH_COND(debugFlag, _T("LEAVE: MATCHED ALL"));
                     return true;  // 全文字について一致した
                 }
                 // 次の文字へ(mposを巻き戻す)
                 mpos = ++mpos1;
             }
-            _LOG_DEBUGH(_T("LEAVE: UNMATCH-3"));
+            _LOG_DEBUGH_COND(debugFlag, _T("LEAVE: UNMATCH-3: FALSE"));
             return false;
         }
 
@@ -550,7 +555,7 @@ namespace {
         // '?' は直前の文字種を引き継ぐ
         //   - 先頭の'?'は後続文字種と同じにする
         //   - '?' は同じ文字種にはさまれていないと意味がない(文字種が変わると、そこに'*'が挿入されているのと同じ効果があるため)
-        bool order_matched(const MString& keyStem, const MazeEntry* pEntry) {
+        bool order_matched(const MString& keyStem, const MazeEntry* pEntry, bool debugFlag = false) {
             // ひらがなと漢字が切り替わる位置の配列
             std::vector<size_t> changePoses;
             changePoses.push_back(0);   // 先頭位置を登録しておく
@@ -590,18 +595,29 @@ namespace {
             }
             changePoses.push_back(pos);     // end
 
+            _LOG_DEBUGH_COND(debugFlag, _T("changePoses.size=%d"), changePoses.size());
             size_t xpos = 0;
             size_t ypos = 0;
             for (size_t i = 0; i < changePoses.size() - 1; ++i) {
                 pos = changePoses[i];
                 size_t len = changePoses[i + 1] - pos;
+                _LOG_DEBUGH_COND(debugFlag, _T("bXfer=%s"), BOOL_TO_WPTR(bXfer));
                 if (bXfer) {
-                    if (!matcher(keyStem, pos, len, pEntry->xfer, xpos)) return false;
+                    _LOG_DEBUGH_COND(debugFlag, _T("CALL: matcher(keyStem=%s, pos=%d, len=%d, xfer=%s, xpos=%d)"), MAKE_WPTR(keyStem), pos, len, MAKE_WPTR(pEntry->xfer), xpos);
+                    if (!matcher(keyStem, pos, len, pEntry->xfer, xpos, debugFlag)) {
+                        _LOG_DEBUGH_COND(debugFlag, _T("order_matched=FALSE"));
+                        return false;
+                    }
                 } else {
-                    if (!matcher(keyStem, pos, len, pEntry->stem, ypos)) return false;
+                    _LOG_DEBUGH_COND(debugFlag, _T("CALL: matcher(keyStem=%s, pos=%d, len=%d, stem=%s, ypos=%d)"), MAKE_WPTR(keyStem), pos, len, MAKE_WPTR(pEntry->stem), ypos);
+                    if (!matcher(keyStem, pos, len, pEntry->stem, ypos, debugFlag)) {
+                        _LOG_DEBUGH_COND(debugFlag, _T("order_matched=FALSE"));
+                        return false;
+                    }
                 }
                 bXfer = !bXfer;                       // ひらがなと漢字が切り替わるので、フラグを反転させる
             }
+            _LOG_DEBUGH_COND(debugFlag, _T("order_matched=TRUE"));
             return true;
         }
 
@@ -619,9 +635,11 @@ namespace {
                 yomi(y),
                 mazeSearch(maze) { }
 
+#pragma warning(push)
+#pragma warning(disable:4100)
             // 出力された変換形を蓄積しておく
-            void StockOutput(const MazeEntry* pEntry, const MString& output, const MString& outXfer) {
-                _LOG_DEBUGH(_T("stemlen=%d, stem=%s, output=%s, outXfer=%s"), \
+            void StockOutput(const MazeEntry* pEntry, const MString& output, const MString& outXfer, bool debugFlag = false) {
+                _LOG_DEBUGH_COND(debugFlag, _T("stemlen=%d, stem=%s, output=%s, outXfer=%s"), \
                     pEntry->stem.size(), MAKE_WPTR(pEntry->stem), BOOL_TO_WPTR(pEntry->userDic), MAKE_WPTR(output), MAKE_WPTR(outXfer));
 
                 // 同じ出力形のものを探す
@@ -645,7 +663,7 @@ namespace {
                         easyEntries.erase(iter2); // erase entry with same output
                     }
                     difficultEntries.insert(difficultEntries.begin(), CAND_ENTRY);
-                    _LOG_DEBUGH(_T("USER: yomi=%s, outXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
+                    _LOG_DEBUGH_COND(debugFlag, _T("USER: yomi=%s, outXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
                 } else {
                     bool bAllEasy = EASY_CHARS->AllContainedIn(pEntry->xfer);
                     // 全て容易打鍵文字なら easyEntries を使う
@@ -656,28 +674,29 @@ namespace {
                         size_t stemLen = pEntry->stem.size();
                         if (mazeSearch && !pEntries->empty() && stemLen <= pEntries->front().EntryPtr->stem.size()) {
                             // 漢字交じり読みの場合は、語幹の短い方を優先
-                            _LOG_DEBUGH(_T("SHORTER: stem=%s, yomi=%s, outXfer=%s"), MAKE_WPTR(pEntry->stem), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
+                            _LOG_DEBUGH_COND(debugFlag, _T("SHORTER: stem=%s, yomi=%s, outXfer=%s"), MAKE_WPTR(pEntry->stem), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
                             auto it = pEntries->begin();
                             for (; it != pEntries->end(); ++it) { if (stemLen < it->EntryPtr->stem.size()) break; }
                             pEntries->insert(it, CAND_ENTRY);
                         } else if (!mazeSearch && !pEntries->empty() && stemLen >= pEntries->front().EntryPtr->stem.size()) {
                             // ひらがなだけなら、語幹の長い方を優先
-                            _LOG_DEBUGH(_T("LONGER: stem=%s, yomi=%s, outXfer=%s"), MAKE_WPTR(pEntry->stem), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
+                            _LOG_DEBUGH_COND(debugFlag, _T("LONGER: stem=%s, yomi=%s, outXfer=%s"), MAKE_WPTR(pEntry->stem), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
                             auto it = pEntries->begin();
                             for (; it != pEntries->end(); ++it) { if (stemLen > it->EntryPtr->stem.size()) break; }
                             pEntries->insert(it, CAND_ENTRY);
                         } else {
                             //それ以外は末尾に追加
-                            _LOG_DEBUGH(_T("PUSH_BACK: yomi=%s, outXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
+                            _LOG_DEBUGH_COND(debugFlag, _T("PUSH_BACK: yomi=%s, outXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
                             pEntries->push_back(CAND_ENTRY);
                         }
                     }
                 }
             }
 #undef CAND_ENTRY
+#pragma warning(pop)
 
             void SerializeEntries(std::vector<CandidateEntry>& outCands) {
-                _LOG_DEBUGH(_T("fullMatchEntrie: syomi=%s, num=%d"), MAKE_WPTR(yomi), difficultEntries.size());
+                _LOG_DEBUGH(_T("fullMatchEntries: syomi=%s, num=%d"), MAKE_WPTR(yomi), difficultEntries.size());
                 serializeEntries(difficultEntries, outCands);
                 _LOG_DEBUGH(_T("easyEntries: syomi=%s, num=%d"), MAKE_WPTR(yomi), easyEntries.size());
                 serializeEntries(easyEntries, outCands);
@@ -688,12 +707,13 @@ namespace {
                 // 優先辞書を探す
                 const auto& primXfer = PrimaryEntries.FindEntry(yomi);
                 bool primInserted = false;
+                _DEBUG_SENT(size_t n = 0);
                 for (const auto& ent : entries) {
                     if (!primXfer.empty() && utils::startsWith(ent.output, primXfer)) {
                         // 同じ変換形のものは先頭に挿入
                         outCands.insert(outCands.begin(), ent);
                         primInserted = true;
-                        _LOG_DEBUGH(_T("INSERT: PRIM_YOMI: yomi=%s, xfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(primXfer));
+                        _LOG_DEBUGH_COND(n < 5, _T("INSERT: PRIM_YOMI: yomi=%s, xfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(primXfer));
                     } else {
                         if (!primInserted) {
                             const auto* pEnt = ent.EntryPtr;
@@ -701,13 +721,14 @@ namespace {
                             if (!origXfer.empty() && origXfer == pEnt->xfer) {
                                 // 元の読み(語尾あり)が優先辞書に登録されていれば、その変換形を先頭に挿入
                                 outCands.insert(outCands.begin(), ent);
-                                _LOG_DEBUGH(_T("INSERT: ORIG_YOMI: yomi=%s, xfer=%s"), pEnt->origYomi.c_str(), MAKE_WPTR(origXfer));
+                                _LOG_DEBUGH_COND(n < 5, _T("INSERT: ORIG_YOMI: yomi=%s, xfer=%s"), pEnt->origYomi.c_str(), MAKE_WPTR(origXfer));
                                 continue;
                             }
                         }
                         outCands.push_back(ent);
-                        _LOG_DEBUGH(_T("PUSH_BACK: yomi=%s, primXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(ent.EntryPtr->xfer));
+                        _LOG_DEBUGH_COND(n < 5, _T("PUSH_BACK: yomi=%s, primXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(ent.EntryPtr->xfer));
                     }
+                    _DEBUG_SENT(++n);
                 }
             };
         };
@@ -727,11 +748,11 @@ namespace {
 
         public:
             // 出力された変換形を蓄積しておく
-            void StockOutput(const MString& yomi, bool mazeSearch, const MazeEntry* pEntry, const MString& output, const MString& outXfer) {
-                _LOG_DEBUGH(_T("yomi=%s, mazeSearch=%s, stem=%s, userDic=%s, output=%s, outXfer=%s"), \
+            void StockOutput(const MString& yomi, bool mazeSearch, const MazeEntry* pEntry, const MString& output, const MString& outXfer, bool debugFlag = false) {
+                _LOG_DEBUGH_COND(debugFlag, _T("yomi=%s, mazeSearch=%s, stem=%s, userDic=%s, output=%s, outXfer=%s"), \
                     MAKE_WPTR(yomi), BOOL_TO_WPTR(mazeSearch), MAKE_WPTR(pEntry->stem), BOOL_TO_WPTR(pEntry->userDic), MAKE_WPTR(output), MAKE_WPTR(outXfer));
 
-                find_or_new(yomi, mazeSearch).StockOutput(pEntry, output, outXfer);
+                find_or_new(yomi, mazeSearch).StockOutput(pEntry, output, outXfer, debugFlag);
             }
 
             void SerializeOutput(std::vector<CandidateEntry>& mazeCands) {
@@ -749,7 +770,7 @@ namespace {
         // 指定の見出し語に対する変換候補のセットを取得する
         // 「か山」⇒「火山」より先に「海山」や「影山」が出てきてしまうのを防ぐ ⇒ 読みの短いほうを優先することで「火山」を先に出せる
         const std::vector<MazeResult>& GetCandidates(const MString& key) {
-            LOG_INFO(_T("ENTER: key=%s"), MAKE_WPTR(key));
+            LOG_INFO(_T("\nENTER: key=%s"), MAKE_WPTR(key));
             mazeCandidates.clear();
             mazeResult.clear();
             // 読み語幹＋語尾の長さごとに候補を保持しておくためのベクトル
@@ -809,62 +830,55 @@ namespace {
 
                     size_t stemLen = stemMinLen;    // 最短語幹から始める
                     while (!entrySet.empty()) {
-                        _LOG_DEBUGH(_T("entrySet.size()=%d, stemLen=%d, mazeSearch=%s"), entrySet.size(), stemLen, BOOL_TO_WPTR(mazeSearch));
+                        _LOG_DEBUGH(_T("\nentrySet.size()=%d, stemLen=%d, mazeSearch=%s"), entrySet.size(), stemLen, BOOL_TO_WPTR(mazeSearch));
                         // 長い語幹にマッチしたほうを優先
                         // 同じ語幹長の場合は、エントリの読みの短いほうが優先
                         // 同じ読みなら、ユーザー辞書を優先
                         auto keyStem = key.substr(0, stemLen);
+                        if (stemLen > stemMinLen) {
+                            mchar_t kch = keyStem[stemLen - 1];
+                            mazeSearch = mazeSearch || is_xfer_char_or_wildcard(kch);
+                            mazeStar = mazeStar || is_wild_star(kch);
+                        }
+                        _DEBUG_SENT(int _n = 0);
                         for (auto p : entrySet) {
-#ifdef _DEBUG
-                            if (entrySet.size() < 20) {
-                                _LOG_DEBUGH(_T("key=%s, keyStem=%s, mazeSearch=%s, p->ifxGobi=%s, p->stem=%s, p->xfer=%s, user=%s, deleted=%s"),
-                                    MAKE_WPTR(key), MAKE_WPTR(keyStem), BOOL_TO_WPTR(mazeSearch), p->ifxGobi.c_str(), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
-                            }
-#endif
+                            bool debugFlag = _DEBUG_FLAG(_n < 5);
+                            _LOG_DEBUGH_COND(debugFlag, _T("key=%s, keyStem=%s, mazeSearch=%s, mazeStar=%s, p->ifxGobi=%s, p->stem=%s, p->xfer=%s, user=%s, deleted=%s"),
+                                MAKE_WPTR(key), MAKE_WPTR(keyStem), BOOL_TO_WPTR(mazeSearch), BOOL_TO_WPTR(mazeStar),
+                                p->ifxGobi.c_str(), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
                             if (p->deleted) continue;
-#ifdef _DEBUG
-                            if (entrySet.size() < 20) _LOG_DEBUGH(_T("CP-A"));
-#endif
+                            _LOG_DEBUGH_COND(debugFlag, _T("CP-A"));
                             // 読み語幹の先頭部が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケースや「経い」→「経」のケース)
                             // 「けい /経/」と「けいい /経緯/」があって、「経い」を変換したときに「経」が候補として採用されることを防ぐ
                             // また、かりに「けい /緯/」という登録があったとして「け緯」⇒「緯」も防ぎたい
                             // ただし、「国民は」の「国民」は通す必要あり。そうしないと「国民派」に変換されてしまう
                             if (keyStem != p->xfer && (utils::startsWith(keyStem, p->xfer) || utils::endsWith(keyStem, p->xfer))) continue;
 
-#ifdef _DEBUG
-                            if (entrySet.size() < 20) _LOG_DEBUGH(_T("CP-B"));
-#endif
-                            if (keyStem == p->stem || mazeSearch && (mazeStar || p->xfer.size() <= keyStem.size()) && order_matched(keyStem, p)) {
-#ifdef _DEBUG
-                                if (entrySet.size() < 20) _LOG_DEBUGH(_T("CP-C"));
-#endif
+                            _LOG_DEBUGH_COND(debugFlag, _T("CP-B"));
+                            if (keyStem == p->stem || mazeSearch && (mazeStar || p->xfer.size() <= keyStem.size()) && order_matched(keyStem, p, debugFlag)) {
+                                _LOG_DEBUGH_COND(debugFlag, _T("CP-C"));
                                 // 読み語幹が完全一致、または key に漢字が含まれている場合は、'*' を含むか変換形長 <= key長、かつ、ひらがな・漢字の出現順序の一致を確認
                                 if (key.size() == stemLen) {
-#ifdef _DEBUG
-                                    if (entrySet.size() < 20) _LOG_DEBUGH(_T("CP-D"));
-#endif
+                                    _LOG_DEBUGH_COND(debugFlag, _T("CP-D"));
                                     // 語尾がない⇒無活用または語幹OKの活用型か
                                     if (find_gobi(p->inflexList, (int)STEM_OK) == 0) {
-                                        _LOG_DEBUGH(_T("No gobi found: %s: STEM_OK, userDic=%s"), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic));
-                                        mazeCands.StockOutput(key, mazeSearch, p, p->xfer, p->xfer);
+                                        _LOG_DEBUGH_COND(debugFlag, _T("No gobi found: %s: STEM_OK, userDic=%s"), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic));
+                                        mazeCands.StockOutput(key, mazeSearch, p, p->xfer, p->xfer, debugFlag);
                                     }
                                 } else {
-#ifdef _DEBUG
-                                    if (entrySet.size() < 20) _LOG_DEBUGH(_T("CP-E"));
-#endif
+                                    _LOG_DEBUGH_COND(debugFlag, _T("CP-E"));
                                     // 語尾がある
                                     // (「がいる」が「我いる」になったりしないようにするために,語幹が1文字の無活用語は採用しないようにしてみたが、やはり目とか手とかあるので、いったん様子見)
                                     int gobiLen = find_gobi(p->inflexList, stemLen, key.c_str() + stemLen);
                                     if (gobiLen >= 0) {
-                                        _LOG_DEBUGH(_T("gobi found: %s: %c, gobiLen=%d, userDic=%s"), MAKE_WPTR(p->xfer), key[stemLen], gobiLen, BOOL_TO_WPTR(p->userDic));
+                                        _LOG_DEBUGH_COND(debugFlag, _T("gobi found: %s: %c, gobiLen=%d, userDic=%s"), MAKE_WPTR(p->xfer), key[stemLen], gobiLen, BOOL_TO_WPTR(p->userDic));
                                         size_t yomiLen = stemLen + gobiLen;
-                                        mazeCands.StockOutput(key.substr(0, yomiLen), mazeSearch, p, p->xfer + key.substr(stemLen), p->xfer + key.substr(stemLen, gobiLen));
+                                        mazeCands.StockOutput(key.substr(0, yomiLen), mazeSearch, p, p->xfer + key.substr(stemLen), p->xfer + key.substr(stemLen, gobiLen), debugFlag);
                                     }
                                 }
                             }
-#ifdef _DEBUG
-                            if (entrySet.size() < 20) _LOG_DEBUGH(_T("CP-F"));
-#endif
+                            _LOG_DEBUGH_COND(debugFlag, _T("CP-F"));
+                            _DEBUG_SENT(++_n);
                         }
 
                         // 語幹長を延ばす
@@ -875,13 +889,14 @@ namespace {
                         auto nextCh = key[stemLen++];
                         auto iter = mazeDic.find(nextCh);
                         if (iter == mazeDic.end()) {
-                            _LOG_DEBUGH(_T("mazeDic.find(%c): not found"), nextCh);
+                            _LOG_DEBUGH(_T("mazeDic.find(%c): not found: END"), nextCh);
                             break;
                         }
                         _LOG_DEBUGH(_T("mazeDic.find(%c): found size=%d"), nextCh, iter->second.size());
                         utils::apply_intersection(entrySet, iter->second);
                         _LOG_DEBUGH(_T("intersection applied entrySet.size=%d"), entrySet.size());
                     }
+                    _LOG_DEBUGH(_T("entrySet LOOP: END\n"));
                     
                 }
             }

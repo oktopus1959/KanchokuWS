@@ -159,16 +159,24 @@ public:
 #define LOG_DEBUG(...)      {}
 #define LOG_DEBUGH(...)     {}
 #define _LOG_DEBUGH(...)    {}
+#define _LOG_DEBUGH_COND(flag, ...)    {}
+#define _DEBUG_SENT(x)      {}
+#define _DEBUG_FLAG(x)      false
 #else
 #define LOG_TRACE(...)      if (Logger::IsTraceEnabled()) logger.Trace(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define LOG_DEBUG(...)      if (Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define LOG_DEBUGH(...)     if (Logger::IsDebugHEnabled()) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define _LOG_DEBUGH(...)    if (Logger::IsDebugHEnabled() && _LOG_DEBUGH_FLAG) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__); \
                             else if (Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
+#define _LOG_DEBUGH_COND(flag, ...)  if (flag && Logger::IsDebugHEnabled() && _LOG_DEBUGH_FLAG) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__); \
+                                     else if (flag && Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
+#define _DEBUG_SENT(x)      x
+#define _DEBUG_FLAG(x)      (x)
 #endif
 
 #define LOG_INFO(...)       if (Logger::IsInfoEnabled())  logger.Info(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define LOG_INFOH(...)      if (Logger::IsInfoHEnabled()) logger.InfoH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
+#define LOG_INFOH_COND(flag, ...) if (flag && Logger::IsInfoHEnabled()) logger.InfoH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
 #define LOG_WARN(...)       logger.Warn(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
 #define LOG_ERROR(...)      logger.Error(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
 

@@ -205,6 +205,7 @@ namespace {
             while (true) {
                 _LOG_DEBUGH(_T("fullYomi='%s'"), MAKE_WPTR(fullYomi));
                 pCands = &candsByLen.GetAllCandidates(fullYomi);
+                _LOG_DEBUGH(_T("pCands->size=%d"), pCands->size());
                 if (pCands->empty()) {
                     // チェイン不要
                     _LOG_DEBUGH(_T("LEAVE: no candidate"));
@@ -212,24 +213,24 @@ namespace {
                     return false;
                 }
                 LOG_INFOH(_T("E:IsSelectFirstCandDisabled: %s, mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(MAZEGAKI_NODE->IsSelectFirstCandDisabled()), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
-                if (!MAZEGAKI_NODE->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand) {
-                    // 先頭候補の自動出力モードの場合
-                    const auto& cand = pCands->front();
-                    if (!cand.resultStr.empty() && cand.resultStr == fullYomi.substr(0, cand.resultStr.size())) {
-                        // 先頭候補の変換形が読みと一致していた、つまり変化していなかった ⇒ 変換形の(語尾を含んだ)長さのところから再変換する
-                        _LOG_DEBUGH(_T("SAME XFER as yomi: '%s'"), MAKE_WPTR(cand.resultStr));
-                        fullYomi = fullYomi.substr(cand.xferLen);
-                        if (fullYomi.empty()) {
-                            if (prevXfered) {
-                                // 変換位置をずらした別の変換形が得られなかった場合でも、再変換のときはそれを採用する
-                                // 例：「ひどい目にあう」⇒「ひど色目にあう」⇒ '>' ⇒「ひど色|目にあう」<- いまココ
-                                //      なので、「目にあう」を採用し、「ひどい|目にあう」に直す必要あり
-                                break;
-                            }
-                        }
-                        continue;
-                    }
-                }
+                //if (!MAZEGAKI_NODE->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand) {
+                //    // 先頭候補の自動出力モードの場合
+                //    const auto& cand = pCands->front();
+                //    if (!cand.resultStr.empty() && cand.resultStr == fullYomi.substr(0, cand.resultStr.size())) {
+                //        // 先頭候補の変換形が読みと一致していた、つまり変化していなかった ⇒ 変換形の(語尾を含んだ)長さのところから再変換する
+                //        _LOG_DEBUGH(_T("SAME XFER as yomi: '%s'"), MAKE_WPTR(cand.resultStr));
+                //        fullYomi = fullYomi.substr(cand.xferLen);
+                //        if (fullYomi.empty()) {
+                //            if (prevXfered) {
+                //                // 変換位置をずらした別の変換形が得られなかった場合でも、再変換のときはそれを採用する
+                //                // 例：「ひどい目にあう」⇒「ひど色目にあう」⇒ '>' ⇒「ひど色|目にあう」<- いまココ
+                //                //      なので、「目にあう」を採用し、「ひどい|目にあう」に直す必要あり
+                //                break;
+                //            }
+                //        }
+                //        continue;
+                //    }
+                //}
                 break;
             }
 
