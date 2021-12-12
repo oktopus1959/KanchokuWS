@@ -353,7 +353,7 @@ namespace KanchokuWS
             }
 
             /// <summary> SHIFT状態にある拡張修飾キーの修飾フラグを得る</summary>
-            public uint getShiftedSpecialModKey()
+            public uint getShiftedExModKey()
             {
                 if (spaceKeyInfo.Shifted) return KeyModifiers.MOD_SPACE;
                 if (capsKeyInfo.Shifted) return KeyModifiers.MOD_CAPS;
@@ -400,6 +400,11 @@ namespace KanchokuWS
                 if (xferKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_XFER, bDecoderOn);
                 if (rshiftKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_RSHIFT, bDecoderOn);
                 return VirtualKeys.ShiftPlane.NONE;
+            }
+
+            public bool isSandSShifted()
+            {
+                return spaceKeyInfo.Shifted;
             }
 
             public string modifiersStateStr()
@@ -459,7 +464,7 @@ namespace KanchokuWS
         /// <returns></returns>
         private bool isSameShiftKeyAsSandSShifted(bool bDecoderOn)
         {
-            return isSameShiftKeyAsSandS(keyInfoManager.getShiftedSpecialModKey(), bDecoderOn);;
+            return isSameShiftKeyAsSandS(keyInfoManager.getShiftedExModKey(), bDecoderOn);;
         }
 
         private int getShiftPlaneDeckeyForSandS(bool bDecoderOn)
@@ -527,7 +532,7 @@ namespace KanchokuWS
                         if (isSandSEnabled()) {
                             // SandSと同じシフト面を使う左Shiftまたは拡張修飾キーがシフト状態か(何か(拡張)シフトキーが Pressed だったら、Spaceキーが押されたことで Shifted に移行しているはず)
                             bool bShiftOnSamePlane = isSameShiftKeyAsSandSShifted(bDecoderOn);
-                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS Enabled: ShiftOnSamePlane={bShiftOnSamePlane}");
+                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS Enabled: ShiftOnSamePlane={bShiftOnSamePlane}, SandSEnablePostShift={Settings.SandSEnablePostShift}");
                             if (bShiftOnSamePlane) {
                                 // SandSと同じシフト面を使う拡張修飾キーがシフト状態なら、シフト状態に遷移する
                                 keyInfo.SetShifted();
@@ -561,7 +566,7 @@ namespace KanchokuWS
                             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS: keyState={keyInfo.KeyState}");
                             if (!keyInfo.Repeated) {
                                 // RELEASEDのはず
-                                bool bShiftEx = keyInfoManager.getShiftedSpecialModKey() != 0;
+                                bool bShiftEx = keyInfoManager.getShiftedExModKey() != 0;
                                 if (!bCtrl && !bShift && !bShiftEx) {
                                     // 1回目の押下で Ctrl も Shift も他のmodiferも押されてない場合は、PRESSED に移行
                                     keyInfo.SetPressed();
@@ -637,7 +642,12 @@ namespace KanchokuWS
                     }
                 } else {
                     // 通常キーの場合は、すでに押下状態にある拡張修飾キーをSHIFT状態に遷移させる
+                    bool prevSandSShifted = keyInfoManager.isSandSShifted();
                     keyInfoManager.makeExModKeyShifted(bDecoderOn);
+                    if (!prevSandSShifted && keyInfoManager.isSandSShifted() && bDecoderOn && Settings.SandSEnablePostShift) {
+                        // SandS が PRESSED から SHIFTED に遷移していれば後置シフトキーを送出する
+                        invokeHandlerForPostSandSKey();
+                    }
                 }
                 // keyboardDownHandler()の呼び出し
                 if (Settings.LoggingDecKeyInfo) {
@@ -663,7 +673,7 @@ namespace KanchokuWS
             bool ctrl = leftCtrl || rightCtrl;
             bool shift = shiftKeyPressed((uint)vkey);
             uint mod = KeyModifiers.MakeModifier(ctrl, shift);
-            uint modEx = keyInfoManager.getShiftedSpecialModKey();
+            uint modEx = keyInfoManager.getShiftedExModKey();
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
 
             int kanchokuCode = -1;
@@ -771,7 +781,7 @@ namespace KanchokuWS
                         var dtLimit = prevSpaceUpDt.AddMilliseconds(Settings.SandSEnableSpaceOrRepeatMillisec);
                         var dtNow = DateTime.Now;
                         if (bPrevPressed) prevSpaceUpDt = dtNow;
-                        if ((Settings.IgnoreSpaceUpOnSandS && dtNow > dtLimit) || keyInfoManager.getShiftedSpecialModKey() != 0) {
+                        if ((Settings.IgnoreSpaceUpOnSandS && dtNow > dtLimit) || keyInfoManager.getShiftedExModKey() != 0) {
                             // SandS時のSpaceUpを無視する設定で前回のSpace打鍵から指定のms以上経過していたか、または何か拡張シフト状態だったら、Spaceキーは無視
                             return true;
                         } else if (bPrevPressed) {
