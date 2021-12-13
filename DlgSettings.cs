@@ -701,8 +701,11 @@ namespace KanchokuWS
             // 自身以外のキーボードフックツールからの出力を無視する
             checkBox_ignoreOtherHooker.Checked = Settings.IgnoreOtherHooker;
 
-            // ファイル保存世代数
+            // ファイル保存
             textBox_backFileRotationGeneration.Text = $"{Settings.BackFileRotationGeneration}";
+            checkBox_dictsAutoSaveEnabled.Checked = Settings.SaveDictsIntervalTime > 0;
+            textBox_saveDictsIntervalTime.Text = $"{Math.Abs(Settings.SaveDictsIntervalTime)}";
+            textBox_saveDictsCalmTime.Text = $"{Settings.SaveDictsCalmTime}";
 
             // 開発者用
             comboBox_logLevel.SelectedIndex = Settings.GetLogLevel();
@@ -750,6 +753,9 @@ namespace KanchokuWS
 
             // ファイル保存世代数
             checkerAdvanced.Add(textBox_backFileRotationGeneration);
+            checkerAdvanced.Add(checkBox_dictsAutoSaveEnabled);
+            checkerAdvanced.Add(textBox_saveDictsIntervalTime);
+            checkerAdvanced.Add(textBox_saveDictsCalmTime);
 
             // 開発者用
             checkerAdvanced.Add(comboBox_logLevel);
@@ -770,6 +776,12 @@ namespace KanchokuWS
             textBox_vkbOffsetY.Enabled = radioButton_vkbRelativePos.Checked;
             textBox_vkbFixedPosX.Enabled = !radioButton_vkbRelativePos.Checked;
             textBox_vkbFixedPosY.Enabled = !radioButton_vkbRelativePos.Checked;
+        }
+
+        private void checkBox_dictsAutoSaveEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            textBox_saveDictsIntervalTime.Enabled = checkBox_dictsAutoSaveEnabled.Checked;
+            textBox_saveDictsCalmTime.Enabled = checkBox_dictsAutoSaveEnabled.Checked;
         }
 
         private void tabAdvancedStatusChanged(bool flag)
@@ -809,6 +821,8 @@ namespace KanchokuWS
 
             // ファイル保存世代数
             Settings.SetUserIni("backFileRotationGeneration", textBox_backFileRotationGeneration.Text.Trim());
+            Settings.SetUserIni("saveDictsIntervalTime", (checkBox_dictsAutoSaveEnabled.Checked ? "" : "-") + textBox_saveDictsIntervalTime.Text.Trim());
+            Settings.SetUserIni("saveDictsCalmTime", textBox_saveDictsCalmTime.Text.Trim());
 
             // 開発者用
             Settings.SetUserIni("logLevel", comboBox_logLevel.SelectedIndex);
@@ -2157,7 +2171,6 @@ namespace KanchokuWS
         {
             openFileByTxtAssociatedProgram(Settings.HistoryFile._safeReplace("*", "entry"));
         }
-
     }
 }
 

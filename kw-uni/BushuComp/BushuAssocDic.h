@@ -13,11 +13,11 @@ public:
     // startPos 番から n 個の候補を文字列としてコピーする。list の範囲を超えていたら false を返す
     virtual bool CopySubList(std::vector<MString>&, size_t startPos, size_t n) = 0;
 
-    // 指定された tgt を選択する。存在しなければ末尾に追加する
-    virtual void SelectTarget(mchar_t tgt) = 0;
+    // 指定された tgt を選択する。存在しなければ末尾に追加する。dirtyフラグを返す
+    virtual bool SelectTarget(mchar_t tgt) = 0;
 
     // n番目の文字を選択して返す。選択されたものを固定位置の後の先頭に入れ替える
-    virtual mchar_t SelectNthTarget(size_t n) = 0;
+    virtual mchar_t SelectNthTarget(size_t n, bool* pDirty = 0) = 0;
 
     virtual ~BushuAssocEntry() { }
 };
@@ -53,6 +53,9 @@ public:
 
     // 部首連想辞書が空か
     virtual bool IsEmpty() const = 0;
+
+    // 部首連想辞書が更新されているか
+    virtual bool IsDirty() const = 0;
 
     // 部首連想辞書エントリの取得
     virtual BushuAssocEntry* GetEntry(mchar_t ch) = 0;

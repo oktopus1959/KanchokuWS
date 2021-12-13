@@ -92,39 +92,56 @@ namespace {
             return utils::utf8_encode(line);
         }
 
-        void DeleteSameChars(const BushuAssocEntryImpl* other) {
+        bool DeleteSameChars(const BushuAssocEntryImpl* other) {
+            bool bDirty = false;
             if (other) {
                 for (auto x : other->list) {
                     for (size_t i = 0; i < list.size(); ++i) {
-                        if (list[i] == x) list[i] = 0;
+                        if (list[i] == x) {
+                            list[i] = 0;
+                            bDirty = true;
+                        }
                     }
                 }
             }
+            return bDirty;
         }
 
-        void MergeChars(const BushuAssocEntryImpl* other) {
+        bool MergeChars(const BushuAssocEntryImpl* other) {
+            bool bDirty = false;
             if (other) {
                 for (auto x : other->list) {
-                    if (x != 0) list.push_back(x);
+                    if (x != 0) {
+                        list.push_back(x);
+                        bDirty = true;
+                    }
                 }
             }
+            return bDirty;
         }
 
         // 合成辞書から連想入力リストを集めてくる
-        void GatherDerivedChars() {
+        bool GatherDerivedChars() {
+            bool bDirty = false;
             if (!filled) {
-                if (BUSHU_DIC) BUSHU_DIC->GatherDerivedMoji(key, list);
-                filled = true;
+                if (BUSHU_DIC) {
+                    BUSHU_DIC->GatherDerivedMoji(key, list);
+                    filled = true;
+                    bDirty = true;
+                }
             }
+            return bDirty;
         }
 
         // 指定された tgt を選択する。存在しなければ末尾に追加する
-        void SelectTarget(mchar_t tgt) {
-            SelectNthTarget(findTarget(tgt));
+        bool SelectTarget(mchar_t tgt) {
+            bool bDirty = false;
+            SelectNthTarget(findTarget(tgt), &bDirty);
+            return bDirty;
         }
 
         // n番目の文字を選択して返す。選択されたものを固定位置の後の先頭に入れ替える
-        mchar_t SelectNthTarget(size_t n) {
+        mchar_t SelectNthTarget(size_t n, bool* pDirty) {
             if (n < list.size()) {
                 mchar_t m = list[n];
                 if (n > posFixed) { // 固定位置の直後なら移動の必要なし
@@ -132,6 +149,7 @@ namespace {
                         list[i] = list[i - 1];
                     }
                     list[posFixed] = m;
+                    if (pDirty) *pDirty = true;
                 }
                 return m;
             }
@@ -164,6 +182,8 @@ namespace {
 
         std::map<mchar_t, BushuAssocEntryImpl*> bscEntries;
 
+        bool bDirty = false;
+
     public:
         BushuAssocDicImpl() { }
 
@@ -193,11 +213,17 @@ namespace {
                 entp->ReadLine(line);
                 bscEntries[entp->GetKey()] = entp;
             }
+            // ReadFileの直後ならクリーン状態である(辞書保存は不要)
+            bDirty = false;
         }
 
     public:
         bool IsEmpty() const {
             return bscEntries.empty();
+        }
+
+        bool IsDirty() const {
+            return bDirty;
         }
 
         // 辞書ファイルの内容を既に読み込んだリストにマージする
@@ -215,7 +241,9 @@ namespace {
                 mchar_t m = pair.first;
                 auto iter = tempEntries.find(m);
                 if (iter != tempEntries.end()) {
-                    iter->second->DeleteSameChars(pair.second);
+                    if (iter->second->DeleteSameChars(pair.second)) {
+                        bDirty = true;
+                    }
                 }
             }
             // 残った文字をコピーする
@@ -223,7 +251,9 @@ namespace {
                 mchar_t ch = pair.first;
                 auto iter = bscEntries.find(ch);
                 if (iter != bscEntries.end()) {
-                    iter->second->MergeChars(pair.second);
+                    if (iter->second->MergeChars(pair.second)) {
+                        bDirty = true;
+                    }
                 } else {
                     // ファイルに記述されていないものだったので、戻しておく
                     // @fixme: 本当に削除したいときにどうするか
@@ -233,6 +263,8 @@ namespace {
             }
             // 残ったゴミをクリーンアアップ
             for (const auto& pair : tempEntries) delete pair.second;
+
+            bDirty = true;
         }
 
         // ファイルへの保存
@@ -242,6 +274,7 @@ namespace {
                     writer.writeLine(pair.second->MakeDicLine());
                 }
             }
+            bDirty = false;
         }
 
         // 1エントリのマージ
@@ -259,6 +292,7 @@ namespace {
                 delete iter->second;
                 iter->second = entp;
             }
+            bDirty = true;
         }
 
         BushuAssocEntry* GetEntry(mchar_t k) {
@@ -268,11 +302,14 @@ namespace {
             if (iter == bscEntries.end()) {
                 entp = new BushuAssocEntryImpl(k);
                 bscEntries[k] = entp;
+                bDirty = true;
             } else {
                 entp = iter->second;
             }
             // 合成辞書から連想入力リストを集めてくる
-            entp->GatherDerivedChars();
+            if (entp->GatherDerivedChars()) {
+                bDirty = true;
+            }
 
             return entp;
         }
@@ -281,7 +318,9 @@ namespace {
         void SelectTarget(mchar_t k, mchar_t t) {
             auto entp = GetEntry(k);
             if (entp) {
-                entp->SelectTarget(t);
+                if (entp->SelectTarget(t)) {
+                    bDirty = true;
+                }
             }
         }
     };
@@ -344,7 +383,7 @@ void BushuAssocDic::MergeBushuAssocDic(const tstring& path) {
 void BushuAssocDic::WriteBushuAssocDic(const tstring& path) {
     LOG_INFO(_T("CALLED: path=%s"), path.c_str());
     if (!path.empty() && Singleton) {
-        if (!Singleton->IsEmpty() || SETTINGS->firstUse) {
+        if (Singleton->IsDirty() || SETTINGS->firstUse) {
             if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
                 utils::OfstreamWriter writer(path);
                 if (writer.success()) {

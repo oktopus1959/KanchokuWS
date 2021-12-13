@@ -67,9 +67,9 @@ namespace {
             return result;
         }
 
-        bool IsEmpty() const {
-            return dic.empty();
-        }
+        //bool IsEmpty() const {
+        //    return dic.empty();
+        //}
     };
 
     // インスタンス
@@ -158,6 +158,8 @@ namespace {
 
         std::vector<MString> usedList;
 
+        bool bDirty = false;
+
         // 順序復元用の位置
         size_t revertPos = 0;
 
@@ -180,6 +182,7 @@ namespace {
                     used.insert(w);
                 }
             }
+            bDirty = false;
             LOG_INFO(_T("LEAVE"));
         }
 
@@ -192,6 +195,7 @@ namespace {
                     utils::erase(usedList, word);
                 }
                 usedList.insert(usedList.begin(), word);
+                bDirty = true;
             }
         }
 
@@ -211,6 +215,7 @@ namespace {
                     }
                 }
                 usedList.insert(usedList.begin(), word);
+                bDirty = true;
             }
         }
 
@@ -222,6 +227,7 @@ namespace {
                 LOG_DEBUG(_T("word=%s"), MAKE_WPTR(w));
                 usedList.insert(usedList.begin() + revertPos, w);
                 usedList.erase(usedList.begin());
+                bDirty = true;
             }
             clearRevertPos();
         }
@@ -231,6 +237,7 @@ namespace {
             LOG_DEBUG(_T("CALLED: word=%s"), MAKE_WPTR(word));
             if (!usedList.empty()) {
                 utils::erase(usedList, word);
+                bDirty = true;
             }
         }
 
@@ -284,11 +291,17 @@ namespace {
                     used.insert(word);
                 }
             }
+            bDirty = false;
         }
 
-        // 辞書が空か
-        bool IsEmpty() const {
-            return usedList.empty();
+        //// 辞書が空か
+        //bool IsEmpty() const {
+        //    return usedList.empty();
+        //}
+
+        // 辞書が更新されているか
+        bool IsDirty() const {
+            return bDirty;
         }
 
     };
@@ -300,6 +313,8 @@ namespace {
         DECLARE_CLASS_LOGGER;
         std::set<MString> exclSet;
 
+        bool bDirty = false;
+
     public:
         // UTF8で書かれた辞書ソースを読み込む
         void ReadFile(const std::vector<wstring>& lines) {
@@ -307,16 +322,21 @@ namespace {
             for (const auto& w : lines) {
                 AddEntry(to_mstr(w));
             }
+            bDirty = false;
             LOG_INFO(_T("LEAVE"));
         }
 
         void AddEntry(const MString& word) {
             exclSet.insert(word);
+            bDirty = true;
         }
 
         void RemoveEntry(const MString& word) {
             auto iter = exclSet.find(word);
-            if (iter != exclSet.end()) exclSet.erase(iter);
+            if (iter != exclSet.end()) {
+                exclSet.erase(iter);
+                bDirty = true;
+            }
         }
 
         bool Find(const MString& word) {
@@ -329,13 +349,18 @@ namespace {
             for (const auto& word : exclSet) {
                 writer.writeLine(utils::utf8_encode(to_wstr(word)));
             }
+            bDirty = false;
         }
 
-        // 辞書が空か
-        bool IsEmpty() const {
-            return exclSet.empty();
-        }
+        //// 辞書が空か
+        //bool IsEmpty() const {
+        //    return exclSet.empty();
+        //}
 
+        // 辞書が更新されているか
+        bool IsDirty() const {
+            return bDirty;
+        }
     };
     DEFINE_CLASS_LOGGER(HistExcludeList);
 
@@ -346,6 +371,8 @@ namespace {
         std::map<MString, size_t> ngramFreqMap;
 
         std::set<MString> seenNgrams;
+
+        bool bDirty = false;
 
     public:
         // UTF8で書かれた辞書ソースを読み込む
@@ -361,6 +388,7 @@ namespace {
                     }
                 }
             }
+            bDirty = false;
             LOG_INFO(_T("LEAVE"));
         }
 
@@ -372,11 +400,17 @@ namespace {
                     writer.writeLine(utils::utf8_encode(utils::format(_T("%s,%d"), MAKE_WPTR(pair.first), pair.second)));
                 }
             }
+            bDirty = false;
         }
 
-        // 辞書が空か
-        bool IsEmpty() const {
-            return ngramFreqMap.empty();
+        //// 辞書が空か
+        //bool IsEmpty() const {
+        //    return ngramFreqMap.empty();
+        //}
+
+        // 辞書が更新されているか
+        bool IsDirty() const {
+            return bDirty;
         }
 
 #define NGRAM_FREQ_THRESHOLD 3
@@ -393,6 +427,7 @@ namespace {
             //    count = iter->second + 1;
             //    iter->second = count;
             //}
+            //bDirty = true;
             return count >= NGRAM_FREQ_THRESHOLD;
         }
 #undef NGRAM_FREQ_THRESHOLD
@@ -412,6 +447,7 @@ namespace {
                     if (AddNgramEntry(w))
                         entryTargets.push_back(w);
                 }
+                bDirty = true;
             } else {
                 LOG_DEBUG(_T("word=\"%s\" is already seen."), MAKE_WPTR(word));
             }
@@ -448,6 +484,8 @@ namespace {
 
         NgramFreqDic ngramDic;
 
+        bool bDirty = false;
+
     private:
         // 一行の辞書ソース文字列を解析して辞書に登録する
         bool AddHistDicEntry(const MString& line, size_t minlen = 2, bool bForce = false) {
@@ -464,6 +502,7 @@ namespace {
                 histCharDic.Insert(word);
                 hashToStrMap.Insert(word);
             }
+            bDirty = true;
             return true;
         }
 
@@ -479,6 +518,7 @@ namespace {
             for (const auto& line : lines) {
                 AddHistDicEntry(to_mstr(line), 1);
             }
+            bDirty = false;
             Logger::LogLevel = logLevel;
             LOG_INFO(_T("LEAVE"));
         }
@@ -560,6 +600,7 @@ namespace {
             usedList.RemoveEntry(word);
             hashToStrMap.Remove(word);
             exclList.AddEntry(word);
+            bDirty = true;
         }
 
     private:
@@ -720,11 +761,12 @@ namespace {
             for (const auto& word : hashToStrMap.GetAllWords()) {
                 writer.writeLine(utils::utf8_encode(to_wstr(word)));
             }
+            bDirty = false;
         }
 
         // 辞書が空か
-        bool IsHistDicEmpty() const {
-            return hashToStrMap.IsEmpty();
+        bool IsHistDicDirty() const {
+            return bDirty;
         }
 
         // 使用辞書の読み込み
@@ -739,8 +781,8 @@ namespace {
             usedList.WriteFile(writer);
         }
 
-        bool IsUsedDicEmpty() const {
-            return usedList.IsEmpty();
+        bool IsUsedDicDirty() const {
+            return usedList.IsDirty();
         }
 
         // 除外辞書の読み込み
@@ -755,8 +797,8 @@ namespace {
             exclList.WriteFile(writer);
         }
 
-        bool IsExcludeDicEmpty() const {
-            return exclList.IsEmpty();
+        bool IsExcludeDicDirty() const {
+            return exclList.IsDirty();
         }
 
         // Nグラム辞書の読み込み
@@ -771,8 +813,8 @@ namespace {
             ngramDic.WriteFile(writer);
         }
 
-        bool IsNgramDicEmpty() const {
-            return ngramDic.IsEmpty();
+        bool IsNgramDicDirty() const {
+            return ngramDic.IsDirty();
         }
 
     private:
@@ -865,15 +907,15 @@ void HistoryDic::WriteHistoryDic(const tstring& histFile) {
     if (Singleton) {
         auto path = utils::joinPath(SETTINGS->rootDir, utils::contains(histFile, _T("*")) ? histFile : _T("kwhist.*.txt"));
         size_t pos = path.find(_T("*"));
-        if (!Singleton->IsHistDicEmpty() || SETTINGS->firstUse) {
+        if (Singleton->IsHistDicDirty() || SETTINGS->firstUse) {
             auto pathEntry = replaceStar(path, pos, _T("entry"));
             if (utils::moveFileToBackDirWithRotation(pathEntry, SETTINGS->backFileRotationGeneration)) {
                 writeFile(pathEntry, &HistoryDic::WriteFile);
             }
         }
-        if (!Singleton->IsUsedDicEmpty()) writeFile(replaceStar(path, pos, _T("recent")), &HistoryDic::WriteUsedFile);
-        if (!Singleton->IsExcludeDicEmpty()) writeFile(replaceStar(path, pos, _T("exclude")), &HistoryDic::WriteExcludeFile);
-        if (!Singleton->IsNgramDicEmpty()) writeFile(replaceStar(path, pos, _T("ngram")), &HistoryDic::WriteNgramFile);
+        if (Singleton->IsUsedDicDirty()) writeFile(replaceStar(path, pos, _T("recent")), &HistoryDic::WriteUsedFile);
+        if (Singleton->IsExcludeDicDirty()) writeFile(replaceStar(path, pos, _T("exclude")), &HistoryDic::WriteExcludeFile);
+        //if (Singleton->IsNgramDicDirty()) writeFile(replaceStar(path, pos, _T("ngram")), &HistoryDic::WriteNgramFile);
     }
 }
 

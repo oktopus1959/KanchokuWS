@@ -770,8 +770,8 @@ namespace {
                     // 出力履歴の末尾の漢字列またはカタカナ列を取得して、それを履歴辞書に登録する
                     HISTORY_DIC->AddNewEntry(OUTPUT_STACK->GetLastKanjiOrKatakanaStr<MString>());
                 } else if (OUTPUT_STACK->isLastOutputStackCharHirakana()) {
-                    // 漢字・カタカナ以外なら5〜10文字の範囲でNグラム登録する
-                    HISTORY_DIC->AddNgramEntries(OUTPUT_STACK->GetLastJapaneseStr<MString>(10));
+                    //// 漢字・カタカナ以外なら5〜10文字の範囲でNグラム登録する
+                    //HISTORY_DIC->AddNgramEntries(OUTPUT_STACK->GetLastJapaneseStr<MString>(10));
                 }
             }
         }

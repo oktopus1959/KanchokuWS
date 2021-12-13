@@ -64,7 +64,7 @@ public:
     // 辞書ファイルの内容の書き出し
     virtual void WriteFile(utils::OfstreamWriter& writer) = 0;
 
-    virtual bool IsHistDicEmpty() const = 0;
+    virtual bool IsHistDicDirty() const = 0;
 
     // 使用辞書の読み込み
     virtual void ReadUsedFile(const std::vector<wstring>& lines) = 0;
@@ -72,7 +72,7 @@ public:
     // 使用辞書内容の保存
     virtual void WriteUsedFile(utils::OfstreamWriter& writer) = 0;
 
-    virtual bool IsUsedDicEmpty() const = 0;
+    virtual bool IsUsedDicDirty() const = 0;
 
     // 除外辞書の読み込み
     virtual void ReadExcludeFile(const std::vector<wstring>& lines) = 0;
@@ -80,7 +80,7 @@ public:
     // 除外辞書内容の保存
     virtual void WriteExcludeFile(utils::OfstreamWriter& writer) = 0;
 
-    virtual bool IsExcludeDicEmpty() const = 0;
+    virtual bool IsExcludeDicDirty() const = 0;
 
     // Nグラム辞書の読み込み
     virtual void ReadNgramFile(const std::vector<wstring>& lines) = 0;
@@ -88,7 +88,7 @@ public:
     // Nグラム辞書内容の保存
     virtual void WriteNgramFile(utils::OfstreamWriter& writer) = 0;
 
-    virtual bool IsNgramDicEmpty() const = 0;
+    virtual bool IsNgramDicDirty() const = 0;
 };
 
 #define HISTORY_DIC (HistoryDic::Singleton)

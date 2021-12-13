@@ -108,6 +108,12 @@ namespace KanchokuWS
         /// <summary>ファイル保存世代数</summary>
         public static int BackFileRotationGeneration { get; private set; } = 3;
 
+        /// <summary>辞書保存インターバルタイム(分)</summary>
+        public static int SaveDictsIntervalTime { get; private set; } = 60;
+
+        /// <summary>辞書保存に適した平穏な時間(分)</summary>
+        public static int SaveDictsCalmTime { get; private set; } = 1;
+
         /// <summary>自身以外のキーボードフックツールからの出力を無視する</summary>
         public static bool IgnoreOtherHooker { get; private set; } = true;
 
@@ -795,6 +801,11 @@ namespace KanchokuWS
             ExtraModifiersEnabled = GetString("extraModifiersEnabled")._parseBool(!isModConversionFileEmpty);   // 拡張修飾キーを有効にするか
             UpperRomanStrokeGuide = GetString("upperRomanStrokeGuide")._parseBool(false);       // ローマ字読みによるストロークガイドを有効にするか
             ShowLastStrokeByDiffBackColor = GetString("showLastStrokeByDiffBackColor")._parseBool(false); // 前打鍵位置の背景色を変えて表示するか
+
+            //-------------------------------------------------------------------------------------
+            // 辞書保存時間
+            SaveDictsIntervalTime = GetString("saveDictsIntervalTime")._parseInt(-60, -60);     // 辞書保存インターバルタイム(分)
+            SaveDictsCalmTime = GetString("saveDictsCalmTime")._parseInt(1, 1);                 // 辞書保存に適した平穏な時間(分)
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

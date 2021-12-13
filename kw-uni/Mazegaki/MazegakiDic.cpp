@@ -444,7 +444,12 @@ namespace {
                 AddMazeDicEntry(line, bUser, bPrim);
             }
             Logger::RestoreLevel();
-            UserEntries.ClearDirtyFlag();   // ファイルから読み込んだ場合はダーティフラグをクリアしておく
+            if (bUser) {
+                UserEntries.ClearDirtyFlag();   // ファイルから読み込んだ場合はダーティフラグをクリアしておく
+            }
+            if (bPrim) {
+                PrimaryEntries.ClearDirtyFlag();   // ファイルから読み込んだ場合はダーティフラグをクリアしておく
+            }
             LOG_INFO(_T("LEAVE: mazeDic.size()=%d, MazeEntries.size()=%d"), mazeDic.size(), MazeEntries.GetList().size());
         }
 
@@ -979,6 +984,7 @@ namespace {
                     writer.writeLine(utils::utf8_encode(line));
                 }
             }
+            UserEntries.ClearDirtyFlag();
         }
 
         bool IsPrimaryDicDirty() {
@@ -998,6 +1004,7 @@ namespace {
                 line.append(_T("/"));
                 writer.writeLine(utils::utf8_encode(line));
             }
+            PrimaryEntries.ClearDirtyFlag();
         }
 
     private:
@@ -1073,20 +1080,23 @@ void MazegakiDic::ReadMazegakiDic(const tstring& filename) {
 
 // 交ぜ書き辞書ファイルに書き込む
 void MazegakiDic::WriteMazegakiDic(const tstring& path, bool bUser, bool bPrim) {
-    LOG_INFO(_T("CALLED: path=%s"), path.c_str());
-    if (bUser || bPrim) {
-        if (!path.empty() && Singleton) {
-            if (!Singleton->IsEmpty()) {
-                if ((bUser && Singleton->IsUserDicDirty()) || (bPrim && Singleton->IsPrimaryDicDirty())) {
-                    if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
-                        utils::OfstreamWriter writer(path);
-                        if (writer.success()) {
-                            if (bPrim) {
-                                Singleton->SavePrimaryDic(writer);
-                            } else if (bUser) {
-                                Singleton->SaveUserDic(writer);
-                            }
-                        }
+    LOG_INFO(_T("CALLED: path=%s, bUser=%s, bPrim=%s"), path.c_str(), BOOL_TO_WPTR(bUser), BOOL_TO_WPTR(bPrim));
+    if (!path.empty() && Singleton && !Singleton->IsEmpty()) {
+        if (bPrim) {
+            if (Singleton->IsPrimaryDicDirty()) {
+                if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
+                    utils::OfstreamWriter writer(path);
+                    if (writer.success()) {
+                        Singleton->SavePrimaryDic(writer);
+                    }
+                }
+            }
+        } else if (bUser) {
+            if (Singleton->IsUserDicDirty()) {
+                if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
+                    utils::OfstreamWriter writer(path);
+                    if (writer.success()) {
+                        Singleton->SaveUserDic(writer);
                     }
                 }
             }

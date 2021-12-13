@@ -120,6 +120,59 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="textBox_saveDictsCalmTime.ToolTip" xml:space="preserve">
+    <value>辞書の自動保存時刻になってからの待機時間を設定します(分単位)
+
+辞書の自動保存時刻になってから、漢直モードがONの時に、この待機時間が
+経過するまでキー入力操作が行なければ、実際に辞書の保存を実行します。
+何かキー入力操作が行われた場合は、ここで設定した時間だけ待機時間が
+延長されます。
+
+なお、辞書の自動保存時刻になった時に漢直モードがOFFであるか、あるいは
+その後に漢直モードがOFFになれば、その時点でも辞書の保存が実行されます。</value>
+  </data>
+  <data name="textBox_backFileRotationGeneration.ToolTip" xml:space="preserve">
+    <value>辞書ファイルの保存世代数を設定します。
+
+アプリ終了時（または辞書内容を保存て再起動時）には、既存の辞書
+ファイルが back ディレクトリにバックアップファイルとして保存されます。
+
+バックアップファイルは、ここで設定した世代数にわたって保存されます。
+
+バックアップファイルの名前には、末尾に世代を表す数字が付加されます。
+たとえば、履歴ファイルであれば、 back\\kwhist.user.txt.1 のような名前で
+保存されます。古い世代ほど、末尾の数字が大きくなります。
+</value>
+  </data>
+  <data name="textBox_ctrlKeyDownGuardMillisec.ToolTip" xml:space="preserve">
+    <value>keybd_event による Ctrl キーの DOWN 前の待ち時間(ミリ秒)
+
+詳細については 「Ctrlキーの UP 後の待ち時」を参照してください。
+
+この時間をあまり長くするとユーザーが実際に Ctrlキーを離した後に
+プログラムによって Ctrlキーの KEY_DOWN が実行されてしまい、
+Ctrlキーが押されっ放しの状態になる可能性が高まります。
+(その場合は、Ctrlキーを押して離せば直ります)</value>
+  </data>
+  <data name="textBox_ctrlKeyUpGuardMillisec.ToolTip" xml:space="preserve">
+    <value>keybd_event による Ctrl キーの KEY_UP 後の待ち時間(ミリ秒)
+
+Backspace と Ctrl+Backspace を区別しているアプリや、Ctrlキーが押下されていると
+WM_CHAR を受け付けないアプリなどに対応するため、キーや文字を送出する前に
+keybd_event によりCtrlキーを一時的に KEY_UP しています。
+
+その際、キーや文字の送出前後に少し待ち時間を入れないと Ctrlキーが押下されていると
+誤認するアプリがあるので、それに対応するための待ち時間です。たとえば 
+「Ctrl-H ⇒ Backspace 変換を有効にしていて、Ctrl-H を押したときに1単語削除された」
+ というような場合は、待ち時間を長くしてみてください。
+
+ただし、この待ち時間を長く設定すると、キーリピート入力をしている際に処理が滞留するのを
+防ぐため、受信したHotKeyを無視することがあります。
+(キーリピートの間隔が長くなったように感じられる)</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -222,29 +275,6 @@ extraInfo の値が当ツールの設定したものだけを無視するよう�
 できます。ただし、元々競合していなかったツールからの出力を、当ツールが
 無視することになる可能性もあるので、試行しながら設定してください。</value>
   </data>
-  <data name="textBox_backFileRotationGeneration.ToolTip" xml:space="preserve">
-    <value>辞書ファイルの保存世代数を設定します。
-
-アプリ終了時（または辞書内容を保存て再起動時）には、既存の辞書
-ファイルが back ディレクトリにバックアップファイルとして保存されます。
-
-バックアップファイルは、ここで設定した世代数にわたって保存されます。
-
-バックアップファイルの名前には、末尾に世代を表す数字が付加されます。
-たとえば、履歴ファイルであれば、 back\\kwhist.user.txt.1 のような名前で
-保存されます。古い世代ほど、末尾の数字が大きくなります。
-</value>
-  </data>
-  <data name="textBox_ctrlKeyDownGuardMillisec.ToolTip" xml:space="preserve">
-    <value>keybd_event による Ctrl キーの DOWN 前の待ち時間(ミリ秒)
-
-詳細については 「Ctrlキーの UP 後の待ち時」を参照してください。
-
-この時間をあまり長くするとユーザーが実際に Ctrlキーを離した後に
-プログラムによって Ctrlキーの KEY_DOWN が実行されてしまい、
-Ctrlキーが押されっ放しの状態になる可能性が高まります。
-(その場合は、Ctrlキーを押して離せば直ります)</value>
-  </data>
   <data name="textBox_deckeyInfiniteLoopDetectCount.ToolTip" xml:space="preserve">
     <value>キーボードフックの無限ループ検出回数
 
@@ -254,22 +284,6 @@ SendInput を呼び出すようにして、無限ループに陥ることのな�
 万一、無限ループに陥った場合にそれを検出するための呼び出し回数を設定します。
 同じキーの呼び出しがここで設定した回数だけ連続したら、強制的に漢直WinSを
 終了させます。</value>
-  </data>
-  <data name="textBox_ctrlKeyUpGuardMillisec.ToolTip" xml:space="preserve">
-    <value>keybd_event による Ctrl キーの KEY_UP 後の待ち時間(ミリ秒)
-
-Backspace と Ctrl+Backspace を区別しているアプリや、Ctrlキーが押下されていると
-WM_CHAR を受け付けないアプリなどに対応するため、キーや文字を送出する前に
-keybd_event によりCtrlキーを一時的に KEY_UP しています。
-
-その際、キーや文字の送出前後に少し待ち時間を入れないと Ctrlキーが押下されていると
-誤認するアプリがあるので、それに対応するための待ち時間です。たとえば 
-「Ctrl-H ⇒ Backspace 変換を有効にしていて、Ctrl-H を押したときに1単語削除された」
- というような場合は、待ち時間を長くしてみてください。
-
-ただし、この待ち時間を長く設定すると、キーリピート入力をしている際に処理が滞留するのを
-防ぐため、受信したHotKeyを無視することがあります。
-(キーリピートの間隔が長くなったように感じられる)</value>
   </data>
   <data name="textBox_verticalFont.ToolTip" xml:space="preserve">
     <value>縦列鍵盤に表示する文字のフォント
@@ -470,35 +484,6 @@ Ctrl-Shift修飾されたキーで、ブロッカーの解除となります。
 置かれますが、設定により、出力文字列の末尾に置くようにすることもできます。
 詳細については、「交ぜ書き変換」-「変換形＋活用語尾の後にブロッカーを置く」
 および「『&gt;』で変換開始位置を右に移動する」のツールチップを参照してください。</value>
-  </data>
-  <data name="checkBox_mazeNoIfxConnectAny.ToolTip" xml:space="preserve">
-    <value>名詞やサ変語幹に対して任意の語尾を許可します。
-
-たとえば「かいはつ /開発/」だけが登録されている時に、「かいはつきき」を
-交ぜ書き変換して「開発きき」を得ることができます。
-
-この場合、交ぜ書きブロッカーが末尾(「開発きき|」)に位置するので、
-必要に応じてブロッカーを移動してから次の変換を実行してください。
-
-意図しない変換結果になる場合もあるので、問題が多いようなら、チェックを
-外してください。</value>
-  </data>
-  <data name="checkBox_mazeNoIfxConnectKanji.ToolTip" xml:space="preserve">
-    <value>名詞やサ変語幹に対して漢字語尾を許可します。
-
-たとえば「やまたい /邪馬台/」だけが登録されている時に、「やまたい国」を
-交ぜ書き変換して「邪馬台国」を得ることができます。
-
-ただし、意図しない変換結果になる場合もあるので、問題が多いようなら、
-チェックを外してください。（例：「ひどい目にあう」⇒「ひ土井目にあう」）
-
-チェックを外した場合は、次の場合にのみ、漢字語尾を許可するように
-なります。
-・漢字語尾を除く読みの長さが2～3文字
-・読みの部分に漢字を含む
-例：
-「ぶんき /分岐/」が登録されている時に「分き点」は「分岐点」に変換できるが、
-「ぶんき点」は変換できない。</value>
   </data>
   <data name="textBox_mazeGobiLikeTailLen.ToolTip" xml:space="preserve">
     <value>交ぜ書き変換時に、語尾に含める末尾長を設定
@@ -734,18 +719,6 @@ Shift (または拡張修飾キー)+Space は有効なキーではなく、た�
 ・拡張修飾キー定義ファイルに次の設定を記述する：
       space=shiftB | none</value>
   </data>
-  <data name="textBox_modConversionFile.ToolTip" xml:space="preserve">
-    <value>修飾キー変換定義ファイルの設定
-
-SandS、CapsLock、英数、無変換、変換、および右シフトキーを
-修飾キーとして使用する際のキー変換定義ファイルを指定します。
-
-定義ファイルの例として、 mod-conversion.txt というファイルを
-用意してあります。記述方法は同ファイルを参照してください。
-
-定義ファイルを修正した場合は、漢直窓Sを再起動するか、または
-「基本設定」タブの「再読込」をクリックしてください。</value>
-  </data>
   <data name="checkBox_extraModifiersEnabled.ToolTip" xml:space="preserve">
     <value>拡張修飾キーを有効にします。
 
@@ -762,6 +735,18 @@ SandS、CapsLock、英数、無変換、変換、および右シフトキーを
 機能割り当てが有効になります。
 
 詳細については mod-conversion.txt ファイルを参照してください。</value>
+  </data>
+  <data name="textBox_modConversionFile.ToolTip" xml:space="preserve">
+    <value>修飾キー変換定義ファイルの設定
+
+SandS、CapsLock、英数、無変換、変換、および右シフトキーを
+修飾キーとして使用する際のキー変換定義ファイルを指定します。
+
+定義ファイルの例として、 mod-conversion.txt というファイルを
+用意してあります。記述方法は同ファイルを参照してください。
+
+定義ファイルを修正した場合は、漢直窓Sを再起動するか、または
+「基本設定」タブの「再読込」をクリックしてください。</value>
   </data>
   <data name="label101.ToolTip" xml:space="preserve">
     <value>「拡張修飾キー定義ファイル」に定義した UpperRomanStrokeGuide を
@@ -903,6 +888,35 @@ A=BC...
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>114, 17</value>
   </metadata>
+  <data name="checkBox_mazeNoIfxConnectKanji.ToolTip" xml:space="preserve">
+    <value>名詞やサ変語幹に対して漢字語尾を許可します。
+
+たとえば「やまたい /邪馬台/」だけが登録されている時に、「やまたい国」を
+交ぜ書き変換して「邪馬台国」を得ることができます。
+
+ただし、意図しない変換結果になる場合もあるので、問題が多いようなら、
+チェックを外してください。（例：「ひどい目にあう」⇒「ひ土井目にあう」）
+
+チェックを外した場合は、次の場合にのみ、漢字語尾を許可するように
+なります。
+・漢字語尾を除く読みの長さが2～3文字
+・読みの部分に漢字を含む
+例：
+「ぶんき /分岐/」が登録されている時に「分き点」は「分岐点」に変換できるが、
+「ぶんき点」は変換できない。</value>
+  </data>
+  <data name="checkBox_mazeNoIfxConnectAny.ToolTip" xml:space="preserve">
+    <value>名詞やサ変語幹に対して任意の語尾を許可します。
+
+たとえば「かいはつ /開発/」だけが登録されている時に、「かいはつきき」を
+交ぜ書き変換して「開発きき」を得ることができます。
+
+この場合、交ぜ書きブロッカーが末尾(「開発きき|」)に位置するので、
+必要に応じてブロッカーを移動してから次の変換を実行してください。
+
+意図しない変換結果になる場合もあるので、問題が多いようなら、チェックを
+外してください。</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

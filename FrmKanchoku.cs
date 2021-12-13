@@ -117,6 +117,9 @@ namespace KanchokuWS
 
             if (frmSplash != null) frmSplash.IsKanchokuReady = true;
 
+            // 辞書保存チャレンジ開始時刻の設定
+            reinitializeSaveDictsChallengeDt();
+
             // タイマー開始
             timer1.Interval = timerInterval;
             timer1.Start();
@@ -541,6 +544,9 @@ namespace KanchokuWS
         {
             bool bPrevDtUpdate = false;
             try {
+                if (IsDecoderActive) {
+                    renewSaveDictsPlannedDt();
+                }
                 switch (deckey) {
                     case DecoderKeys.STROKE_HELP_ROTATION_DECKEY:
                         return rotateStrokeHelp(1);
@@ -1272,7 +1278,35 @@ namespace KanchokuWS
 
         private bool initialSettingsDialogOpened = false;
 
+        // アクティブウィンドウの情報を取得する間隔(ミリ秒)
         private int activeWinInfoCount = Settings.GetActiveWindowInfoIntervalMillisec / timerInterval;
+
+        // 辞書保存チャレンジ開始時刻
+        private static DateTime saveDictsChallengeDt = DateTime.MaxValue;
+
+        private void reinitializeSaveDictsChallengeDt()
+        {
+            if (Settings.SaveDictsIntervalTime > 0) {
+                saveDictsChallengeDt = DateTime.Now.AddMinutes(Settings.SaveDictsIntervalTime);
+                saveDictsPlannedDt = saveDictsChallengeDt.AddMinutes(Settings.SaveDictsCalmTime);
+            } else {
+                saveDictsChallengeDt = DateTime.MaxValue;
+                saveDictsPlannedDt = DateTime.MaxValue;
+            }
+            logger.DebugH($"saveDictsChallengeDt={saveDictsChallengeDt}, saveDictsPlannedDt={saveDictsPlannedDt}");
+        }
+
+        // 辞書保存予定時刻
+        private static DateTime saveDictsPlannedDt = DateTime.MaxValue;
+
+        private void renewSaveDictsPlannedDt()
+        {
+            var dtNow = DateTime.Now;
+            if (dtNow >= saveDictsChallengeDt) {
+                saveDictsPlannedDt = dtNow.AddMinutes(Settings.SaveDictsCalmTime);
+                logger.DebugH($"saveDictsPlannedDt={saveDictsPlannedDt}");
+            }
+        }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -1284,6 +1318,14 @@ namespace KanchokuWS
                 }
                 actWinHandler?.GetActiveWindowInfo();
                 activeWinInfoCount = Settings.GetActiveWindowInfoIntervalMillisec / timerInterval;
+            }
+
+            if (DateTime.Now >= saveDictsPlannedDt || (IsDecoderActive && DateTime.Now >= saveDictsChallengeDt)) {
+                reinitializeSaveDictsChallengeDt();
+                if (decoderPtr != IntPtr.Zero) {
+                    logger.InfoH("CALL SaveDictsDecoder");
+                    SaveDictsDecoder(decoderPtr);
+                }
             }
         }
 
@@ -1334,6 +1376,7 @@ namespace KanchokuWS
             // 各種定義ファイルの読み込み
             ReloadDefFiles();
             //ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            reinitializeSaveDictsChallengeDt();
         }
 
         private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)

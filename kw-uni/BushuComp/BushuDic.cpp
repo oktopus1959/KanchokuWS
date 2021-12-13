@@ -150,6 +150,7 @@ namespace {
             for (const auto& line : addedEntries) {
                 writer.writeLine(utils::utf8_encode(line));
             }
+            addedEntries.clear();
         }
 
         bool IsDirty() {
@@ -185,6 +186,7 @@ namespace {
             for (const auto& s : set_) {
                 writer.writeLine(utils::utf8_encode(s));
             }
+            bAutoDirty = false;
         }
 
         bool IsAutoDirty() {
