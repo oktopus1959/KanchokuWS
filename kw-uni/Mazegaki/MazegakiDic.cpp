@@ -14,10 +14,12 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegakiDic)
 
-//#define _DEBUG_SENT(x) x
-//#define _DEBUG_FLAG(x) (x)
-//#define _LOG_DEBUGH LOG_INFOH
-//#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#if 0
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#endif
 
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
@@ -785,9 +787,11 @@ namespace {
             if (!key.empty()) {
                 size_t stemMinLen = count_head_wildcard(key) + 1;   // 読みの部分にはワイルドカード以外の文字が少なくとも1文字は必要
                 if (stemMinLen <= key.size()) {
+                    _LOG_DEBUGH(_T("stemMinLen=%d"), stemMinLen);
                     size_t tailHiraganaLen = min(utils::count_tail_hiragana_including_punct(key), key.size() - stemMinLen);
                     size_t gobiMaxLen = min(tailHiraganaLen, SETTINGS->mazeGobiMaxLen);
                     stemMinLen = key.size() > gobiMaxLen ? key.size() - gobiMaxLen : 1;
+                    _LOG_DEBUGH(_T("tailHiraganaLen=%d, mazeGobiMaxLen=%d, gobiMaxLen=%d, stemMinLen=%d"), tailHiraganaLen, SETTINGS->mazeGobiMaxLen, gobiMaxLen, stemMinLen);
                     // やはり語尾にひらがな以外も含めてしまうと多々問題が生じるので、語尾はひらがなに限ることにする
                     // (2021/11/27)
                     // ⇒と思ったが、「ぶんき /分岐/」しか登録がないときに「分き点」も変換できるようにしたい
@@ -799,6 +803,7 @@ namespace {
                     size_t tailKanjiKataLen = utils::count_tail_kanji_or_katakana(key.substr(0, stemMinLen));
                     _LOG_DEBUGH(_T("tailKanjiKataLen=%d, stemMinLen=%d, mazeNoIfxConnectKanji=%s, mazeNoIfxConnectAny=%s"), \
                         tailKanjiKataLen, stemMinLen, BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectKanji), BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectAny));
+                    if (tailKanjiKataLen == stemMinLen) stemMinLen += 1;
                     if (tailKanjiKataLen > 0 && stemMinLen - tailKanjiKataLen >= 2) {
                         if (SETTINGS->mazeNoIfxConnectKanji || SETTINGS->mazeNoIfxConnectAny ||
                             (stemMinLen >= 3 && stemMinLen <= 4 && utils::contains_kanji(key.substr(0, stemMinLen - tailKanjiKataLen)))) {

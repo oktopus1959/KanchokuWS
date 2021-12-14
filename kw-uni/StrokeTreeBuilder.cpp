@@ -453,6 +453,8 @@ namespace {
                         shiftPlane = 2;
                     } else if (lcStr == _T("shiftb")) {
                         shiftPlane = 3;
+                    } else {
+                        _LOG_DEBUGH(_T("#%s"), currentStr.c_str());
                     }
                     currentStr.clear();
                     skipToEndOfLine();
