@@ -523,10 +523,10 @@ namespace KanchokuWS
                 bool bShift = shiftKeyPressed((uint)vkey);
                 bool bDecoderOn = isDecoderActivated();
                 uint modFlag = ExModiferKeyInfoManager.getModFlagForExModVkey((uint)vkey);
-                uint modPressed = keyInfoManager.getPressedOrShiftedExModFlag();
+                uint modPressedOrShifted = keyInfoManager.getPressedOrShiftedExModFlag();
                 var keyInfo = keyInfoManager.getModiferKeyInfoByVkey((uint)vkey);
                 if (keyInfo != null) {
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"{keyInfo.Name}Key Pressed: ctrl={bCtrl}, shift={bShift}, decoderOn={bDecoderOn}, modFlag={modFlag:x}, modPressed={modPressed:x}");
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"{keyInfo.Name}Key Pressed: ctrl={bCtrl}, shift={bShift}, decoderOn={bDecoderOn}, modFlag={modFlag:x}, modPressedOrShifted={modPressedOrShifted:x}");
                     if ((uint)vkey == VirtualKeys.SPACE) {
                         // Space
                         if (isSandSEnabled()) {
@@ -536,18 +536,18 @@ namespace KanchokuWS
                             if (bShiftOnSamePlane) {
                                 // SandSと同じシフト面を使う拡張修飾キーがシフト状態なら、シフト状態に遷移する
                                 keyInfo.SetShifted();
-                                return true; // keyboardDownHandler() をスキップ、システム側の本来のSHIFT処理もスキップ
+                                return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                             }
                             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS: IgnoreSpaceUpOnSandS={Settings.IgnoreSpaceUpOnSandS}, ctrl={bCtrl}");
                             if (Settings.IgnoreSpaceUpOnSandS && bCtrl) {
                                 // SandS時に1回目のSpace単打を無視する設定の場合は、Ctrl+Space が打鍵されたらそれをシフト状態に遷移させる
                                 keyInfo.SetShifted();
-                                return true; // keyboardDownHandler() をスキップ、システム側の本来のSHIFT処理もスキップ
+                                return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                             }
                             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS: keyInfo.Shifted={keyInfo.Shifted}");
                             if (keyInfo.Shifted) {
                                 // すでにSHIFT状態なら何もしない
-                                return true; // keyboardDownHandler() をスキップ、システム側の本来のSHIFT処理もスキップ
+                                return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                             }
                             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS: keyInfo.Pressed={keyInfo.Pressed}");
                             if (keyInfo.Pressed) {
@@ -558,7 +558,7 @@ namespace KanchokuWS
                                     keyInfo.SetShifted();
                                     // 後置シフトキーを送出する
                                     if (Settings.SandSEnablePostShift && bDecoderOn) invokeHandlerForPostSandSKey();
-                                    return true; // keyboardDownHandler() をスキップ、システム側の本来のSHIFT処理もスキップ
+                                    return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                                 }
                                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS: SetRepeated");
                                 keyInfo.SetRepeated();
@@ -566,11 +566,10 @@ namespace KanchokuWS
                             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS: keyState={keyInfo.KeyState}");
                             if (!keyInfo.Repeated) {
                                 // RELEASEDのはず
-                                bool bShiftEx = keyInfoManager.getShiftedExModKey() != 0;
-                                if (!bCtrl && !bShift && !bShiftEx) {
+                                if (!bCtrl && !bShift && modPressedOrShifted == 0) {
                                     // 1回目の押下で Ctrl も Shift も他のmodiferも押されてない場合は、PRESSED に移行
                                     keyInfo.SetPressed();
-                                    return true; // keyboardDownHandler() をスキップ、システム側の本来のSHIFT処理もスキップ
+                                    return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                                 }
                             }
                             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS: LEAVE");
@@ -581,7 +580,7 @@ namespace KanchokuWS
                         // RSHIFT
                         if (keyInfo.IsShiftPlaneAssigned(bDecoderOn)) {
                             // 拡張シフト面が割り当てられている場合
-                            if (keyInfo.Pressed || modPressed != 0) {
+                            if (keyInfo.Pressed || modPressedOrShifted != 0) {
                                 // 当拡張修飾キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、その他の拡張修飾キーを含めてシフト状態に遷移する
                                 keyInfo.SetShifted();
                                 keyInfoManager.makeExModKeyShifted(bDecoderOn);
@@ -609,7 +608,7 @@ namespace KanchokuWS
                         // Space/RSHIFT 以外
                         if (keyInfo.IsShiftPlaneAssigned(bDecoderOn)) {
                             // 拡張シフト面が割り当てられている拡張修飾キーの場合
-                            if (keyInfo.Pressed || modPressed != 0) {
+                            if (keyInfo.Pressed || modPressedOrShifted != 0) {
                                 // 当拡張修飾キーが押下されている、またはその他の拡張修飾キーが押下orシフト状態なら、その他の拡張修飾キーを含めてシフト状態に遷移する
                                 keyInfo.SetShifted();
                                 keyInfoManager.makeExModKeyShifted(bDecoderOn);
@@ -623,7 +622,7 @@ namespace KanchokuWS
                         } else if (keyInfo.IsSingleShiftHitEffecive()) {
                             // 拡張シフト面が割り当てはないが、単打系ありの場合
                             if (keyInfo.Released) {
-                                if (bCtrl || bShift || modPressed != 0) {
+                                if (bCtrl || bShift || modPressedOrShifted != 0) {
                                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"RELEASED -> PRESSED");
                                     keyInfo.SetPressed();
                                     return true; // keyboardDownHandler() をスキップ、システム側の本来のSHIFT処理もスキップ
