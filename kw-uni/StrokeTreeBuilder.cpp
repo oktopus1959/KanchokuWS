@@ -61,6 +61,7 @@ namespace {
     // 機能ノードの生成
     Node* createFunctionNode(tstring marker, int prevNum, int ) {
         LOG_DEBUG(_T("marker=%s, prevNum=%d, myNum=%d"), marker.c_str(), prevNum, 0);
+        if (prevNum < 0) prevNum = 0;
         switch (utils::safe_front(marker)) {
         //case BuiltInMarker::MyChar:
         //    return new StringNode(DECKEY_TO_CHARS->GetCharFromDeckey(myNum));
@@ -111,6 +112,7 @@ namespace {
 
         // 打鍵マップ
         std::map<MString, std::vector<int>>* strokeSerieses = 0;
+        std::map<MString, std::vector<int>>* strokeSerieses2 = 0;
 
         // 打鍵列
         std::vector<int> strokes;
@@ -132,6 +134,8 @@ namespace {
             if (bMakeStrokeSerieses) {
                 strokeSerieses = VkbTableMaker::StrokeSerieses();
                 if (strokeSerieses) strokeSerieses->clear();
+                strokeSerieses2 = VkbTableMaker::StrokeSerieses2();
+                if (strokeSerieses2) strokeSerieses2->clear();
             }
         }
 
@@ -282,7 +286,7 @@ namespace {
                 case TOKEN::LBRACE:
                 case TOKEN::STRING:             // "str" : 文字列ノード
                 case TOKEN::FUNCTION:           // @c : 機能ノード
-                    getNodePositionedByArrowBundle(tblNode, n + shiftPlaneOffset)->setNthChild(nextArrowIdx, createNode(currentToken, depth + 2, 0, nextArrowIdx));
+                    getNodePositionedByArrowBundle(tblNode, n + shiftPlaneOffset)->setNthChild(nextArrowIdx, createNode(currentToken, depth + 2, n, nextArrowIdx, true));
                     ++n;
                     isPrevDelim = false;
                     break;
@@ -314,7 +318,7 @@ namespace {
             return stNode;
         }
 
-        Node* createNode(TOKEN token, int depth, int prevNth, int nth) {
+        Node* createNode(TOKEN token, int depth, int prevNth, int nth, bool bArrowBundle = false) {
             switch (token) {
             case TOKEN::LBRACE: {
                 strokes.push_back(nth);
@@ -329,23 +333,49 @@ namespace {
             case TOKEN::STRING:            // "str" : 文字列ノード
                 LOG_TRACE(_T("%d:%d=%s"), lineNumber + 1, nth, currentStr.c_str());
                 if (currentStr.empty()) return 0;
-                // 文字から、その文字の打鍵列へのマップに追加 (通常面のみ)
-                if (strokeSerieses && shiftPlane == 0) {
-                    auto ms = to_mstr(currentStr);
-                    if (!ms.empty()) {
-                        for (int k = 0; k < 10; ++k) {
-                            auto iter = strokeSerieses->find(ms);
-                            if (iter != strokeSerieses->end()) {
+                if (kanjiConvMap.empty()) {
+                    if (strokeSerieses && shiftPlane == 0) {
+                        // 文字から、その文字の打鍵列へのマップに追加 (通常面)
+                        auto ms = to_mstr(currentStr);
+                        if (!ms.empty()) {
+                            for (int k = 0; k < 10; ++k) {
+                                auto iter = strokeSerieses->find(ms);
+                                if (iter == strokeSerieses->end()) break;
                                 // すでに同じものがあったら、末尾に TAB を追加しておく(後でローマ字テーブルを出力するときに複数の打鍵列も出力できるようにするため)
                                 ms.push_back('\t');
                             }
+                            if (bArrowBundle) {
+                                LOG_DEBUGH(_T("line=%d, ArrowBundle, strokes.size=%d, strokes[0]=%d, prevNth=%d, nth=%d, str=%s"),
+                                    lineNumber + 1, strokes.size(), strokes.size() > 0 ? strokes[0] : -1, prevNth, nth, currentStr.c_str());
+                                strokes.push_back(prevNth);
+                            }
+                            strokes.push_back(nth);
+                            (*strokeSerieses)[ms] = strokes;
+                            strokes.pop_back();
+                            if (bArrowBundle) strokes.pop_back();
                         }
-                        strokes.push_back(nth);
-                        (*strokeSerieses)[ms] = strokes;
-                        strokes.pop_back();
                     }
+                    return new StringNode(currentStr);
+                } else {
+                    tstring convStr = conv_kanji(currentStr);
+                    if (strokeSerieses2) {
+                        // 文字から、その文字の打鍵列へのマップに追加 (裏面)
+                        auto ms = to_mstr(convStr);
+                        if (!ms.empty()) {
+                            for (int k = 0; k < 10; ++k) {
+                                auto iter = strokeSerieses2->find(ms);
+                                if (iter != strokeSerieses2->end()) {
+                                    // すでに同じものがあったら、末尾に TAB を追加しておく(後でローマ字テーブルを出力するときに複数の打鍵列も出力できるようにするため)
+                                    ms.push_back('\t');
+                                }
+                            }
+                            strokes.push_back(nth);
+                            (*strokeSerieses2)[ms] = strokes;
+                            strokes.pop_back();
+                        }
+                    }
+                    return new StringNode(convStr);
                 }
-                return new StringNode(conv_kanji(currentStr));
             case TOKEN::FUNCTION:          // @c : 機能ノード
                 return createFunctionNode(currentStr, prevNth, nth);
             default:                // 途中でファイルが終わったりした場合 : エラー

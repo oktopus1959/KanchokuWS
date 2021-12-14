@@ -384,7 +384,7 @@ public:
                 // Backspace Blocker のセット
                 setBackspaceBlocker();
             } else if (cmd == _T("SaveRomanStrokeTable")) {
-                VkbTableMaker::SaveRomanStrokeTable(items.size() >= 2 ? items[1].c_str() : 0);
+                VkbTableMaker::SaveRomanStrokeTable(items.size() >= 2 ? items[1].c_str() : 0, items.size() >= 3 ? items[2].c_str() : 0);
             } else if (cmd == _T("SaveEelllJsTable")) {
                 VkbTableMaker::SaveEelllJsTable();
             } else if (cmd == _T("exchangeCodeTable")) {

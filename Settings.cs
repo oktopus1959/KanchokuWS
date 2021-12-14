@@ -446,6 +446,9 @@ namespace KanchokuWS
         /// <summary>ローマ字テーブル出力時の部首合成用プレフィックス</summary>
         public static string RomanBushuCompPrefix { get; set; }
 
+        /// <summary>ローマ字テーブル出力時の裏面定義用プレフィックス</summary>
+        public static string RomanSecPlanePrefix { get; set; }
+
         //------------------------------------------------------------------------------
         /// <summary>ウィンドウClassNameごとの設定</summary>
         public class WindowsClassSettings
@@ -885,6 +888,7 @@ namespace KanchokuWS
             AutoBushuComp = addDecoderSetting("autoBushuComp", false);                          // 自動首部合成を有効にするか
 
             RomanBushuCompPrefix = addDecoderSetting("romanBushuCompPrefix", "jf");             // ローマ字テーブル出力時の部首合成用プレフィックス
+            RomanSecPlanePrefix = addDecoderSetting("romanSecPlanePrefix", ":");                // 裏面定義文字に対するローマ字出力時のプレフィックス
 
             // キー割当
             HistorySearchCtrlKey = GetString("histSearchCtrlKey");                              // 履歴検索&選択を行うCtrlキー

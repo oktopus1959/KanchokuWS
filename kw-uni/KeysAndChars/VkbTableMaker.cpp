@@ -27,8 +27,10 @@ namespace VkbTableMaker {
     //----------------------------------------------------------------------------
     // 文字に到る打鍵列
     std::map<MString, std::vector<int>> strokeSerieses;
+    std::map<MString, std::vector<int>> strokeSerieses2;
 
     std::map<MString, std::vector<int>>* StrokeSerieses() { return &strokeSerieses; }
+    std::map<MString, std::vector<int>>* StrokeSerieses2() { return &strokeSerieses2; }
 
     //----------------------------------------------------------------------------
     wstring hiraganaArray1 = _T("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわ ん を");
@@ -322,7 +324,7 @@ namespace VkbTableMaker {
     }
 
     // ローマ字テーブルを作成してファイルに書き出す
-    void SaveRomanStrokeTable(const wchar_t* prefix) {
+    void SaveRomanStrokeTable(const wchar_t* prefix, const wchar_t* prefix2) {
         auto path = utils::joinPath(SETTINGS->rootDir, _T("roman-stroke-table.txt"));
         utils::OfstreamWriter writer(path);
         if (writer.success()) {
@@ -338,6 +340,24 @@ namespace VkbTableMaker {
                         // 空白文字を含まないものだけを対象とする
                         writer.writeLine(utils::utf8_encode(
                             utils::format(_T("%s\t%s"), str.c_str(), MAKE_WPTR(utils::strip(pair.first, _T("\t"))))));
+                    }
+                }
+            }
+            // テーブルファイルの裏面から
+            for (const auto& pair : strokeSerieses2) {
+                //if (pair.first.length() > 1) {
+                //    LOG_DEBUGH(_T("str=%s, strokeLen=%d"), MAKE_WPTR(pair.first), pair.second.size());
+                //}
+                if (!pair.first.empty() && !pair.second.empty()) {
+                    // 重複した出力文字(列)の場合は末尾にTABが付加されているのでそれを除去してから書き出し
+                    wstring str = convDeckeysToWstring(pair.second);
+                    if (str.find(' ') == wstring::npos) {
+                        // 空白文字を含まないものだけを対象とする
+                        writer.writeLine(utils::utf8_encode(
+                            utils::format(_T("%s%s\t%s"),
+                                prefix2 && wcslen(prefix2) > 0 ? prefix2 : SETTINGS->romanSecPlanePrefix.c_str(),
+                                str.c_str(),
+                                MAKE_WPTR(utils::strip(pair.first, _T("\t"))))));
                     }
                 }
             }

@@ -686,8 +686,6 @@ namespace KanchokuWS
             textBox_alphaModeShowTime.Text = $"{Settings.AlphaModeMarkerShowMillisec}";
 
             // 各種待ち時間
-            textBox_ctrlKeyUpGuardMillisec.Text = $"{Settings.CtrlKeyUpGuardMillisec}";
-            textBox_ctrlKeyDownGuardMillisec.Text = $"{Settings.CtrlKeyDownGuardMillisec}";
             textBox_preWmCharGuardMillisec.Text = $"{Settings.PreWmCharGuardMillisec}";
             textBox_activeWinInfoIntervalMillisec.Text = $"{Settings.GetActiveWindowInfoIntervalMillisec}";
             textBox_vkbMoveGuardMillisec.Text = $"{Settings.VirtualKeyboardMoveGuardMillisec}";
@@ -736,8 +734,6 @@ namespace KanchokuWS
             checkerAdvanced.Add(textBox_alphaModeShowTime);
 
             // 各種待ち時間
-            checkerAdvanced.Add(textBox_ctrlKeyUpGuardMillisec);
-            checkerAdvanced.Add(textBox_ctrlKeyDownGuardMillisec);
             checkerAdvanced.Add(textBox_preWmCharGuardMillisec);
             checkerAdvanced.Add(textBox_activeWinInfoIntervalMillisec);
             checkerAdvanced.Add(textBox_vkbMoveGuardMillisec);
@@ -804,8 +800,6 @@ namespace KanchokuWS
             Settings.SetUserIni("alphaModeMarkerShowMillisec", textBox_alphaModeShowTime.Text.Trim());
 
             // 各種待ち時間
-            Settings.SetUserIni("ctrlKeyUpGuardMillisec", textBox_ctrlKeyUpGuardMillisec.Text.Trim());
-            Settings.SetUserIni("ctrlKeyDownGuardMillisec", textBox_ctrlKeyDownGuardMillisec.Text.Trim());
             Settings.SetUserIni("preWmCharGuardMillisec", textBox_preWmCharGuardMillisec.Text.Trim());
             Settings.SetUserIni("activeWindowInfoIntervalMillisec", textBox_activeWinInfoIntervalMillisec.Text.Trim());
             Settings.SetUserIni("virtualKeyboardMoveGuardMillisec", textBox_vkbMoveGuardMillisec.Text.Trim());
@@ -1309,6 +1303,7 @@ namespace KanchokuWS
             checkBox_upperRomanStrokeGuide.Checked = Settings.UpperRomanStrokeGuide;
             textBox_kanjiYomiFile.Text = Settings.KanjiYomiFile;
             textBox_romanBushuCompPrefix.Text = Settings.RomanBushuCompPrefix;
+            textBox_romanSecPlanePrefix.Text = Settings.RomanSecPlanePrefix;
         }
 
         private void setMiscSettingsStatusChecker()
@@ -1335,6 +1330,7 @@ namespace KanchokuWS
             checkerMiscSettings.Add(checkBox_upperRomanStrokeGuide);
             checkerMiscSettings.Add(textBox_kanjiYomiFile);
             checkerMiscSettings.Add(textBox_romanBushuCompPrefix);
+            checkerMiscSettings.Add(textBox_romanSecPlanePrefix);
 
             checkerAll.Add(checkerMiscSettings);
         }
@@ -1364,6 +1360,7 @@ namespace KanchokuWS
             Settings.SetUserIni("upperRomanStrokeGuide", checkBox_upperRomanStrokeGuide.Checked);
             Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
             Settings.SetUserIni("romanBushuCompPrefix", textBox_romanBushuCompPrefix.Text);
+            Settings.SetUserIni("romanSecPlanePrefix", textBox_romanSecPlanePrefix.Text);
 
             Settings.ReadIniFile();
             // 各種定義ファイルの再読み込み
@@ -1420,7 +1417,7 @@ namespace KanchokuWS
 
         private void button_saveRomanTableFile_Click(object sender, EventArgs e)
         {
-            frmMain?.ExecCmdDecoder("SaveRomanStrokeTable", textBox_romanBushuCompPrefix.Text);
+            frmMain?.ExecCmdDecoder("SaveRomanStrokeTable", $"{textBox_romanBushuCompPrefix.Text}\t{textBox_romanSecPlanePrefix.Text}");
             label_miscRomanOut.Show();
         }
 

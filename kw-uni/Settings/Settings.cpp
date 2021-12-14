@@ -82,6 +82,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_BOOL_VALUE(autoBushuComp);
 
     SET_KEY_VALUE(romanBushuCompPrefix);
+    SET_KEY_VALUE(romanSecPlanePrefix);
 
     // 機能へのキー割り当ての変更
     RESET_STROKE_FUNC("zenkakuMode");
