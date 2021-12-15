@@ -1283,6 +1283,7 @@ namespace KanchokuWS
         {
             // その他変換
             checkBox_autoBushuComp.Checked = Settings.AutoBushuComp;
+            textBox_bushuAssocSelectCount.Text = $"{Settings.BushuAssocSelectCount}";
             checkBox_convertShiftedHiraganaToKatakana.Checked = Settings.ConvertShiftedHiraganaToKatakana;
             switch (Settings.HiraganaToKatakanaShiftPlane) {
                 case 2: radioButton_shiftA.Checked = true; break;
@@ -1313,6 +1314,7 @@ namespace KanchokuWS
             checkerMiscSettings.CtlToBeEnabled = button_miscEnter;
             checkerMiscSettings.ControlEnabler = tabMiscStatusChanged;
             checkerMiscSettings.Add(checkBox_autoBushuComp);
+            checkerMiscSettings.Add(textBox_bushuAssocSelectCount);
             checkerMiscSettings.Add(checkBox_convertShiftedHiraganaToKatakana);
             checkerMiscSettings.Add(radioButton_normalShift);
             checkerMiscSettings.Add(radioButton_shiftA);
@@ -1345,6 +1347,7 @@ namespace KanchokuWS
         private void button_miscEnter_Click(object sender, EventArgs e)
         {
             Settings.SetUserIni("autoBushuComp", checkBox_autoBushuComp.Checked);
+            Settings.SetUserIni("bushuAssocSelectCount", textBox_bushuAssocSelectCount.Text);
             Settings.SetUserIni("convertShiftedHiraganaToKatakana", checkBox_convertShiftedHiraganaToKatakana.Checked);
             Settings.SetUserIni("hiraganaToKatakanaShiftPlane", radioButton_shiftA.Checked ? 2 : radioButton_shiftB.Checked ? 3 : 1);
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);

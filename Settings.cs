@@ -437,6 +437,9 @@ namespace KanchokuWS
         /// <summary>自動首部合成を有効にするか</summary>
         public static bool AutoBushuComp { get; set; } = false;
 
+        /// <summary>部首連想直接出力の回数</summary>
+        public static int BushuAssocSelectCount { get; set; } = 1;
+
         /// <summary>ローマ字読みによる打鍵ガイドを有効にするか</summary>
         public static bool UpperRomanStrokeGuide { get; set; } = false;
 
@@ -886,6 +889,7 @@ namespace KanchokuWS
             RemoveOneStrokeByBackspace = addDecoderSetting("removeOneStrokeByBackspace", "weakBS", false);  // BS で直前打鍵のみを取り消すか
 
             AutoBushuComp = addDecoderSetting("autoBushuComp", false);                          // 自動首部合成を有効にするか
+            BushuAssocSelectCount = addDecoderSetting("bushuAssocSelectCount", 1, 1, 5);        // 部首連想直接出力の回数
 
             RomanBushuCompPrefix = addDecoderSetting("romanBushuCompPrefix", "jf");             // ローマ字テーブル出力時の部首合成用プレフィックス
             RomanSecPlanePrefix = addDecoderSetting("romanSecPlanePrefix", ":");                // 裏面定義文字に対するローマ字出力時のプレフィックス

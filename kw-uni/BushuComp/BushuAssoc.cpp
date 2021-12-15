@@ -16,6 +16,13 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughBushu)
 
+#if 0
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#endif
+
 #define EX_NODE BUSHU_ASSOC_EX_NODE
 #define SAFE_CHAR(ch) (ch > 0 ? ch : ' ')
 
@@ -316,7 +323,7 @@ namespace {
 #undef NAME_PTR
 
     // -------------------------------------------------------------------
-    // 拡長部首連想入力機能状態クラス (最初と2回目までは候補の選択、3回目で一覧表示)
+    // 拡長部首連想入力機能状態クラス (最初とN回目までは候補の選択、N+1回目で一覧表示)
     class BushuAssocExState : public BushuAssocState {
         DECLARE_CLASS_LOGGER;
 
@@ -398,15 +405,20 @@ namespace {
 
                 if (outChar != 0 && currentList.FindEntry(outChar)) {
                     size_t cnt = EX_NODE->Count;
-                    if (cnt < 2) {
+                    // 順序を元に戻す
+                    if (cnt > 0 && cnt < 10) {
+                        for (size_t i = 1; i < cnt; ++i) {
+                            currentList.SelectNthTarget(cnt - 1);         // 後ろに回った文字を選択することで、優先順を元に戻しておく
+                        }
+                    }
+                    if (cnt < SETTINGS->bushuAssocSelectCount) {
                         _LOG_DEBUGH(_T("SELECT HEAD: count=%d"), cnt);
-                        // 2回目までなら先頭または2文字目を返す(この中でカウントが10に設定されしまう)
+                        // N回目までなら先頭またはN文字目を返す
                         handleStrokeKeys(cnt);
                         // カウントを更新
                         EX_NODE->Count = cnt + 1;
                     } else {
                         _LOG_DEBUGH(_T("REVERT: %c"), outChar);
-                        if (EX_NODE->Count == 2) currentList.SelectNthTarget(1);         // 後ろに回った文字を選択することで、優先順を元に戻しておく
                         currentList.FindEntry(outChar);
                         //STATE_COMMON->outString.resize(1);
                         STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す

@@ -73,6 +73,8 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_INT_VALUE(mazeNoIfxGobiMaxLen);
     SET_INT_VALUE(mazeGobiLikeTailLen);
 
+    SET_INT_VALUE(bushuAssocSelectCount);
+
     SET_INT_VALUE(hiraganaToKatakanaShiftPlane);
     SET_BOOL_VALUE(convertJaPeriod);
     SET_BOOL_VALUE(convertJaComma);
