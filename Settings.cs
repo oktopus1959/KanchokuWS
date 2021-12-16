@@ -704,8 +704,8 @@ namespace KanchokuWS
             ShowVkbOrMaker = GetString("showVkbOrMaker")._parseBool(true);
 
             //-------------------------------------------------------------------------------------
-            VirtualKeyboardOffsetX = GetString("vkbOffsetX")._parseInt(2)._lowLimit(0);
-            VirtualKeyboardOffsetY = GetString("vkbOffsetY")._parseInt(2)._lowLimit(0);
+            VirtualKeyboardOffsetX = GetString("vkbOffsetX")._parseInt(2, 2);
+            VirtualKeyboardOffsetY = GetString("vkbOffsetY")._parseInt(2, 2);
 
             var fixedPos = GetString("vkbFixedPos").Trim()._split(',').Select(x => x._parseInt(-1, -1)).ToArray();
             VirtualKeyboardFixedPosX = fixedPos._getNth(0, -1);
@@ -818,10 +818,15 @@ namespace KanchokuWS
             winClassSettings.Clear();
             foreach (var name in GetSectionNames()) {
                 if (name._ne("kanchoku")) {
+                    int[] parseIntArray(string str) {
+                        string s = str._strip();
+                        if (s._isEmpty()) return null;
+                        return s._split(',').Select(x => x._parseInt(0)._lowLimit(0)).ToArray();
+                    }
                     winClassSettings[name._toLower()] = new WindowsClassSettings() {
-                        ValidCaretMargin = GetStringFromSection(name, "validCaretMargin", "").Trim()._split(',').Select(x => x._parseInt(0)._lowLimit(0)).ToArray(),
-                        CaretOffset = GetStringFromSection(name, "caretOffset", "").Trim()._split(',').Select(x => x._parseInt(0)._lowLimit(0)).ToArray(),
-                        VkbFixedPos = GetStringFromSection(name, "vkbFixedPos", "").Trim()._split(',').Select(x => x._parseInt(0)._lowLimit(0)).ToArray(),
+                        ValidCaretMargin = parseIntArray(GetStringFromSection(name, "validCaretMargin", "")),
+                        CaretOffset = parseIntArray(GetStringFromSection(name, "caretOffset", "")),
+                        VkbFixedPos = parseIntArray(GetStringFromSection(name, "vkbFixedPos", "")),
                         CtrlUpWaitMillisec = GetStringFromSection(name, "ctrlUpWaitMillisec", "-1")._parseInt(-1),
                         CtrlDownWaitMillisec = GetStringFromSection(name, "ctrlDownWaitMillisec", "-1")._parseInt(-1),
                     };

@@ -767,14 +767,15 @@ namespace KanchokuWS
                                 fX = xFixed;
                                 fY = yFixed;
                             } else {
-                                int cBottom = cY + cH;
-                                fX = cX + xOffset;
-                                fY = cBottom + yOffset;
+                                fX = cX + (xOffset >= 0 ? cW : -fW) + xOffset ;
+                                if (fX < 0) fX = cX + cW + Math.Abs(xOffset);
+                                fY = cY + (yOffset >= 0 ? cH : -fH) + yOffset;
+                                if (fY < 0) fY = cY + cH + Math.Abs(yOffset);
                                 int fRight = fX + fW;
                                 int fBottom = fY + fH;
                                 Rectangle rect = ScreenInfo.GetScreenContaining(cX, cY);
-                                if (fRight >= rect.X + rect.Width) fX = cX - fW - xOffset;
-                                if (fBottom >= rect.Y + rect.Height) fY = cY - fH - yOffset;
+                                if (fRight >= rect.X + rect.Width) fX = cX - fW - Math.Abs(xOffset);
+                                if (fBottom >= rect.Y + rect.Height) fY = cY - fH - Math.Abs(yOffset);
                             }
                             MoveWindow(frm.Handle, fX, fY, fW, fH, true);
                         };

@@ -1470,7 +1470,7 @@ namespace KanchokuWS
             // textBox_vkbFixedPosY
             // 
             this.textBox_vkbFixedPosY.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_vkbFixedPosY.Location = new System.Drawing.Point(232, 42);
+            this.textBox_vkbFixedPosY.Location = new System.Drawing.Point(240, 42);
             this.textBox_vkbFixedPosY.Name = "textBox_vkbFixedPosY";
             this.textBox_vkbFixedPosY.Size = new System.Drawing.Size(40, 19);
             this.textBox_vkbFixedPosY.TabIndex = 5;
@@ -1479,7 +1479,7 @@ namespace KanchokuWS
             // textBox_vkbFixedPosX
             // 
             this.textBox_vkbFixedPosX.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_vkbFixedPosX.Location = new System.Drawing.Point(169, 42);
+            this.textBox_vkbFixedPosX.Location = new System.Drawing.Point(177, 42);
             this.textBox_vkbFixedPosX.Name = "textBox_vkbFixedPosX";
             this.textBox_vkbFixedPosX.Size = new System.Drawing.Size(40, 19);
             this.textBox_vkbFixedPosX.TabIndex = 4;
@@ -1488,7 +1488,7 @@ namespace KanchokuWS
             // label94
             // 
             this.label94.AutoSize = true;
-            this.label94.Location = new System.Drawing.Point(151, 44);
+            this.label94.Location = new System.Drawing.Point(159, 44);
             this.label94.Name = "label94";
             this.label94.Size = new System.Drawing.Size(14, 15);
             this.label94.TabIndex = 27;
@@ -1497,7 +1497,7 @@ namespace KanchokuWS
             // label95
             // 
             this.label95.AutoSize = true;
-            this.label95.Location = new System.Drawing.Point(218, 44);
+            this.label95.Location = new System.Drawing.Point(226, 44);
             this.label95.Name = "label95";
             this.label95.Size = new System.Drawing.Size(14, 15);
             this.label95.TabIndex = 26;
@@ -1519,9 +1519,9 @@ namespace KanchokuWS
             // textBox_vkbOffsetY
             // 
             this.textBox_vkbOffsetY.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_vkbOffsetY.Location = new System.Drawing.Point(247, 19);
+            this.textBox_vkbOffsetY.Location = new System.Drawing.Point(251, 19);
             this.textBox_vkbOffsetY.Name = "textBox_vkbOffsetY";
-            this.textBox_vkbOffsetY.Size = new System.Drawing.Size(25, 19);
+            this.textBox_vkbOffsetY.Size = new System.Drawing.Size(30, 19);
             this.textBox_vkbOffsetY.TabIndex = 3;
             this.toolTip1.SetToolTip(this.textBox_vkbOffsetY, "仮想鍵盤の表示位置(Y軸)\r\n\r\n文字送出の対象となるアクティブウィンドウのカレットの\r\n右下端位置からの相対位置として設定します。\r\n\r\n相対位置は、ウィンドウ" +
         "ごとに個別に設定することもできます。\r\n設定方法については README の「相対位置の個別設定」を\r\n参照ください。");
@@ -1531,7 +1531,7 @@ namespace KanchokuWS
             this.textBox_vkbOffsetX.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.textBox_vkbOffsetX.Location = new System.Drawing.Point(202, 19);
             this.textBox_vkbOffsetX.Name = "textBox_vkbOffsetX";
-            this.textBox_vkbOffsetX.Size = new System.Drawing.Size(25, 19);
+            this.textBox_vkbOffsetX.Size = new System.Drawing.Size(30, 19);
             this.textBox_vkbOffsetX.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox_vkbOffsetX, "仮想鍵盤の表示位置(X軸)\r\n\r\n文字送出の対象となるアクティブウィンドウのカレットの\r\n右下端位置からの相対位置として設定します。\r\n\r\n相対位置は、ウィンドウ" +
         "ごとに個別に設定することもできます。\r\n設定方法については README の「相対位置の個別設定」を\r\n参照ください。");
@@ -1548,7 +1548,7 @@ namespace KanchokuWS
             // label39
             // 
             this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(234, 21);
+            this.label39.Location = new System.Drawing.Point(238, 21);
             this.label39.Name = "label39";
             this.label39.Size = new System.Drawing.Size(14, 15);
             this.label39.TabIndex = 21;

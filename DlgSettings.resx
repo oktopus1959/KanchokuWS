@@ -120,25 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="textBox_bushuAssocDirectKeySeq.ToolTip" xml:space="preserve">
-    <value>直前の文字に対して、その連想文字候補の先頭のもので置換して出力します。
-
-連続的に呼び出したときに、第5候補まで出するような設定も可能です。
-
-なお、(手動)部首合成の直後に当機能を呼び出すと、
-次の部首合成候補出力となります。
-
-また、自動部首合成の直後に当機能を呼び出すと、
-自動部首合成のキャンセルになります。
-(自動合成された文字が削除され、合成元文字が出力されます)
-
-自動部首合成のキャンセル後にもう一度呼び出すと、
-自動部首合成の無効登録になります。
-(再度有効にするには、辞書登録をしてください)</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -384,6 +365,22 @@ Shift+Space=S40
 半/全=zenkaku, Caps=caps, 英数=alnum,
 無変換=xfer, 変換=nfer, ひらがな=kana,
 右シフト=rshift</value>
+  </data>
+  <data name="textBox_bushuAssocDirectKeySeq.ToolTip" xml:space="preserve">
+    <value>直前の文字に対して、その連想文字候補の先頭のもので置換して出力します。
+
+連続的に呼び出したときに、第5候補まで出するような設定も可能です。
+
+なお、(手動)部首合成の直後に当機能を呼び出すと、
+次の部首合成候補出力となります。
+
+また、自動部首合成の直後に当機能を呼び出すと、
+自動部首合成のキャンセルになります。
+(自動合成された文字が削除され、合成元文字が出力されます)
+
+自動部首合成のキャンセル後にもう一度呼び出すと、
+自動部首合成の無効登録になります。
+(再度有効にするには、辞書登録をしてください)</value>
   </data>
   <data name="comboBox_dateStringKey.ToolTip" xml:space="preserve">
     <value>現在の日時を出力する Ctrlキーの設定
