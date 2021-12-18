@@ -21,6 +21,13 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
+#if 0
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#endif
+
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
 // 縦列鍵盤または横列鍵盤の数
@@ -964,7 +971,7 @@ namespace {
             // 今回、履歴選択用ホットキーだったことを保存
             setCandSelectIsCalled();
 
-            if (!bCandSelectable) {
+            if (!bCandSelectable && !OUTPUT_STACK->isEmpty() && !OUTPUT_STACK->isLastOutputStackCharBlocker()) {
                 // 履歴候補選択可能状態でなければ、前回の履歴検索との比較、新しい履歴検索の開始
                 historySearch(true);
             }
