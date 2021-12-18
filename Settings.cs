@@ -80,6 +80,7 @@ namespace KanchokuWS
         public static string VerticalVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
         public static string HorizontalVkbFontSpec { get; private set; } = "MS Gothic|9";
         public static string MiniBufVkbFontSpec { get; private set; } = "MS Gothic|9";
+        public static float VerticalFontHeightFactor { get; private set; } = 1.0f;
 
         //-------------------------------------------------------------------------------------
         /// <summary>キーボードファイル</summary>
@@ -698,6 +699,10 @@ namespace KanchokuWS
             VerticalVkbFontSpec = GetString("verticalFont", "@MS Gothic | 9");
             HorizontalVkbFontSpec = GetString("horizontalFont", "MS Gothic | 9");
             MiniBufVkbFontSpec = GetString("minibufFont", "MS Gothic | 9");
+            {
+                var factor = GetString("verticalFontHeightFactor", "1.00")._parseDouble();
+                VerticalFontHeightFactor = factor._isNaN() ? 1.0f : (float)factor;
+            }
 
             //-------------------------------------------------------------------------------------
             VirtualKeyboardShowStrokeCount = GetString("vkbShowStrokeCount")._parseInt(1);

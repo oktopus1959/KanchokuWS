@@ -941,8 +941,9 @@ namespace KanchokuWS
                 renewCandidateVerticalFont();
                 renewCenterVerticalFont();
                 var candArray = getCandidateStrings(decoderOutput.faceStrings);
-                float height = (int)(candArray.Select(s => calcCharsAsFullwide(s)).Max()._lowLimit(MinVerticalChars) * verticalFontInfo.CharHeight) + 5;
-                float centerHeight = height._max(CommonState.CenterString._safeLength()._lowLimit(MinCenterChars) * centerFontInfo.CharHeight + 5);
+                //float height = (int)(candArray.Select(s => calcCharsAsFullwide(s)).Max()._lowLimit(MinVerticalChars) * verticalFontInfo.CharHeight * 0.9) + 5;
+                float height = (float)(candArray.Select(s => calcCharsAsFullwide(s)).Max()._lowLimit(MinVerticalChars) * verticalFontInfo.CharHeight * Settings.VerticalFontHeightFactor) + 5;
+                float centerHeight = height._max(CommonState.CenterString._safeLength()._lowLimit(MinCenterChars) * centerFontInfo.CharHeight * Settings.VerticalFontHeightFactor + 5);
                 resetVkbControls(topText, VkbNormalWidth, height, centerHeight);
                 using (PictureBoxDrawer drawer = new PictureBoxDrawer(pictureBox_Main)) {
                     drawVerticalVkbFrame(drawer.Gfx);

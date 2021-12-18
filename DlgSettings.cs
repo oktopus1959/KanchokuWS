@@ -536,6 +536,7 @@ namespace KanchokuWS
             textBox_verticalFont.Text = Settings.VerticalVkbFontSpec;
             textBox_horizontalFont.Text = Settings.HorizontalVkbFontSpec;
             textBox_minibufFont.Text = Settings.MiniBufVkbFontSpec;
+            textBox_verticalFontHeightFactor.Text = $"{Settings.VerticalFontHeightFactor:f2}";
 
             // 通常鍵盤背景色
             textBox_topLevelBackColor.Text = Settings.BgColorTopLevelCells;
@@ -574,6 +575,7 @@ namespace KanchokuWS
             checkerFontColor.Add(textBox_verticalFont);
             checkerFontColor.Add(textBox_horizontalFont);
             checkerFontColor.Add(textBox_minibufFont);
+            checkerFontColor.Add(textBox_verticalFontHeightFactor);
 
             // 通常鍵盤背景色
             checkerFontColor.Add(textBox_topLevelBackColor);
@@ -611,6 +613,7 @@ namespace KanchokuWS
             Settings.SetUserIni("verticalFont", textBox_verticalFont.Text.Trim());
             Settings.SetUserIni("horizontalFont", textBox_horizontalFont.Text.Trim());
             Settings.SetUserIni("minibufFont", textBox_minibufFont.Text.Trim());
+            Settings.SetUserIni("verticalFontHeightFactor", textBox_verticalFontHeightFactor.Text.Trim());
 
             // 通常鍵盤背景色
             Settings.SetUserIni("bgColorTopLevelCells", textBox_topLevelBackColor.Text.Trim());

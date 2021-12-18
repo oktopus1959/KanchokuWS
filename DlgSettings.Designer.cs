@@ -436,6 +436,8 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.textBox_verticalFontHeightFactor = new System.Windows.Forms.TextBox();
+            this.label109 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1978,6 +1980,8 @@ namespace KanchokuWS
             // 
             // groupBox21
             // 
+            this.groupBox21.Controls.Add(this.textBox_verticalFontHeightFactor);
+            this.groupBox21.Controls.Add(this.label109);
             this.groupBox21.Controls.Add(this.button_showPaddingsDesc);
             this.groupBox21.Controls.Add(this.button_normalDlg);
             this.groupBox21.Controls.Add(this.button_minibufDlg);
@@ -2003,11 +2007,11 @@ namespace KanchokuWS
             // 
             // button_showPaddingsDesc
             // 
-            this.button_showPaddingsDesc.Location = new System.Drawing.Point(80, 147);
+            this.button_showPaddingsDesc.Location = new System.Drawing.Point(214, 149);
             this.button_showPaddingsDesc.Name = "button_showPaddingsDesc";
-            this.button_showPaddingsDesc.Size = new System.Drawing.Size(92, 23);
-            this.button_showPaddingsDesc.TabIndex = 10;
-            this.button_showPaddingsDesc.Text = "余白情報表示";
+            this.button_showPaddingsDesc.Size = new System.Drawing.Size(67, 23);
+            this.button_showPaddingsDesc.TabIndex = 11;
+            this.button_showPaddingsDesc.Text = "余白情報";
             this.toolTip1.SetToolTip(this.button_showPaddingsDesc, "通常鍵盤、中央鍵盤、縦列鍵盤の現在の余白値を表示します。");
             this.button_showPaddingsDesc.UseVisualStyleBackColor = true;
             this.button_showPaddingsDesc.Click += new System.EventHandler(this.button_showPaddingsDesc_Click);
@@ -5281,6 +5285,24 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // textBox_verticalFontHeightFactor
+            // 
+            this.textBox_verticalFontHeightFactor.Location = new System.Drawing.Point(129, 150);
+            this.textBox_verticalFontHeightFactor.Name = "textBox_verticalFontHeightFactor";
+            this.textBox_verticalFontHeightFactor.Size = new System.Drawing.Size(44, 23);
+            this.textBox_verticalFontHeightFactor.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.textBox_verticalFontHeightFactor, "縦列鍵盤の高さの計算の調整率を設定します。\r\n\r\n縦列鍵盤の高さは、使用するフォントの幅から自動で計算しますが、\r\nMS  Gothic, 9pt 以外のフォント" +
+        "の場合は、計算がずれる場合があります。\r\nそのような場合には、ここの値を調整してください。");
+            // 
+            // label109
+            // 
+            this.label109.AutoSize = true;
+            this.label109.Location = new System.Drawing.Point(14, 154);
+            this.label109.Name = "label109";
+            this.label109.Size = new System.Drawing.Size(111, 15);
+            this.label109.TabIndex = 20;
+            this.label109.Text = "縦列鍵盤高さ調整率";
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -5813,5 +5835,7 @@ namespace KanchokuWS
         private System.Windows.Forms.TextBox textBox_bushuAssocSelectCount;
         private System.Windows.Forms.Label label_keyAssignReload;
         private System.Windows.Forms.Button button_keyAssignReload;
+        private System.Windows.Forms.TextBox textBox_verticalFontHeightFactor;
+        private System.Windows.Forms.Label label109;
     }
 }
