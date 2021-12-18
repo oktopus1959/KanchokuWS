@@ -120,6 +120,22 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="button_saveRomanTableFile.ToolTip" xml:space="preserve">
+    <value>ローマ字テーブルを作成してファイル出力します。
+
+ストローク表からローマ字テーブルを作成して roman-stroke-table.txt と
+いう名前のファイルに出力します。出力先は漢直WSのルートフォルダです。
+
+出力されたファイルは Google 日本語入力のローマ字テーブルとして
+インポートすることができます。
+
+なお、打鍵列に空白文字を含む場合は、それを「裏面定義プレフィックス」
+で置換します。(TUT-Code の2打鍵目スペースによる記号入力や、
+ Try-Code での1打鍵目空白による漢字入力など)</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -620,19 +636,6 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 
 なお、ローマ字テーブルとは異なり、こちらは打鍵列に空白文字を含むものも
 出力されます。</value>
-  </data>
-  <data name="button_saveRomanTableFile.ToolTip" xml:space="preserve">
-    <value>ローマ字テーブルを作成してファイル出力します。
-
-ストローク表からローマ字テーブルを作成して roman-stroke-table.txt と
-いう名前のファイルに出力します。出力先は漢直WSのルートフォルダです。
-
-出力されたファイルは Google 日本語入力のローマ字テーブルとして
-インポートすることができます。
-
-なお、打鍵列に空白文字を含むものは出力されません。
-(TUT-Code の2打鍵目スペースによる記号入力や、 Try-Code での
-1打鍵目空白による漢字入力など)</value>
   </data>
   <data name="textBox_SandSEnableSpaceOrRepeatMillisec.ToolTip" xml:space="preserve">
     <value>SandS有効時に Space キーを連続打鍵した時、空白の入力または

@@ -335,7 +335,8 @@ namespace VkbTableMaker {
                 //}
                 if (!pair.first.empty() && !pair.second.empty()) {
                     // 重複した出力文字(列)の場合は末尾にTABが付加されているのでそれを除去してから書き出し
-                    wstring str = convDeckeysToWstring(pair.second);
+                    // また、最初に出現する空白はromanSecPlanePrefixで置換
+                    wstring str = utils::replace(convDeckeysToWstring(pair.second), _T(" "), SETTINGS->romanSecPlanePrefix.c_str());
                     if (str.find(' ') == wstring::npos) {
                         // 空白文字を含まないものだけを対象とする
                         writer.writeLine(utils::utf8_encode(
@@ -350,7 +351,8 @@ namespace VkbTableMaker {
                 //}
                 if (!pair.first.empty() && !pair.second.empty()) {
                     // 重複した出力文字(列)の場合は末尾にTABが付加されているのでそれを除去してから書き出し
-                    wstring str = convDeckeysToWstring(pair.second);
+                    // また、最初に出現する空白はromanSecPlanePrefixで置換
+                    wstring str = utils::replace(convDeckeysToWstring(pair.second), _T(" "), SETTINGS->romanSecPlanePrefix.c_str());
                     if (str.find(' ') == wstring::npos) {
                         // 空白文字を含まないものだけを対象とする
                         writer.writeLine(utils::utf8_encode(

@@ -4092,7 +4092,8 @@ namespace KanchokuWS
             this.textBox_romanSecPlanePrefix.Size = new System.Drawing.Size(50, 19);
             this.textBox_romanSecPlanePrefix.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_romanSecPlanePrefix, "裏面定義文字用ローマ字出力時のプレフィックス\r\n\r\nテーブルファイルの yomiConvert で定義した裏面文字に対する\r\nローマ字列を定義する際に、他の文字用" +
-        "のローマ字列と重なら\r\nないようにするためのプレフィックス文字列を設定します。");
+        "のローマ字列と重なら\r\nないようにするためのプレフィックス文字列を設定します。\r\n\r\nまた、 Try-Code のようにストークに空白文字を含む場合も、その\r\n" +
+        "空白文字を設定されたプレフィックス文字で置換します。");
             // 
             // label102
             // 
