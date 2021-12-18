@@ -908,6 +908,12 @@ namespace KanchokuWS
             changeCancelButton(flag, button_keyAssignClose);
         }
 
+        private void button_keyAssignReload_Click(object sender, EventArgs e)
+        {
+            reloadIniFileAndDefFiles();
+            label_keyAssignReload.Show();
+        }
+
         private void button_keyAssignEnter_Click(object sender, EventArgs e)
         {
             frmMain?.DeactivateDecoder();
@@ -1460,6 +1466,7 @@ namespace KanchokuWS
                     label_okResultKeyAssign.Hide();
                     label_okResultCtrlKeys.Hide();
                     label_okResultMisc.Hide();
+                    label_keyAssignReload.Hide();
                     label_miscRomanOut.Hide();
                     label_miscEelllJsOut.Hide();
                     label_reloadMisc.Hide();
@@ -1504,6 +1511,11 @@ namespace KanchokuWS
         }
         
         private void label_execResultFile_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_keyAssignReload_VisibleChanged(object sender, EventArgs e)
         {
             okResultCount = okResultCountMax;
         }
@@ -2171,6 +2183,7 @@ namespace KanchokuWS
         {
             openFileByTxtAssociatedProgram(Settings.HistoryFile._safeReplace("*", "entry"));
         }
+
     }
 }
 

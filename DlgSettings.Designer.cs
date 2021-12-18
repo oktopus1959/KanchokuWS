@@ -419,6 +419,8 @@ namespace KanchokuWS
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.label54 = new System.Windows.Forms.Label();
             this.textBox_bushuAssocSelectCount = new System.Windows.Forms.TextBox();
+            this.label_keyAssignReload = new System.Windows.Forms.Label();
+            this.button_keyAssignReload = new System.Windows.Forms.Button();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onSecondaryTable = new KanchokuWS.ColorTextBox();
@@ -2302,6 +2304,8 @@ namespace KanchokuWS
             // 
             // tabPage_keyAssign
             // 
+            this.tabPage_keyAssign.Controls.Add(this.label_keyAssignReload);
+            this.tabPage_keyAssign.Controls.Add(this.button_keyAssignReload);
             this.tabPage_keyAssign.Controls.Add(this.textBox2);
             this.tabPage_keyAssign.Controls.Add(this.label_okResultKeyAssign);
             this.tabPage_keyAssign.Controls.Add(this.label100);
@@ -2424,7 +2428,7 @@ namespace KanchokuWS
             this.button_keyAssignClose.Location = new System.Drawing.Point(385, 343);
             this.button_keyAssignClose.Name = "button_keyAssignClose";
             this.button_keyAssignClose.Size = new System.Drawing.Size(80, 23);
-            this.button_keyAssignClose.TabIndex = 2;
+            this.button_keyAssignClose.TabIndex = 3;
             this.button_keyAssignClose.Text = "閉じる(&C)";
             this.button_keyAssignClose.UseVisualStyleBackColor = true;
             this.button_keyAssignClose.Click += new System.EventHandler(this.button_keyAssignClose_Click);
@@ -2436,7 +2440,7 @@ namespace KanchokuWS
             this.button_keyAssignEnter.Location = new System.Drawing.Point(493, 343);
             this.button_keyAssignEnter.Name = "button_keyAssignEnter";
             this.button_keyAssignEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_keyAssignEnter.TabIndex = 3;
+            this.button_keyAssignEnter.TabIndex = 4;
             this.button_keyAssignEnter.Text = "設定(&E)";
             this.toolTip1.SetToolTip(this.button_keyAssignEnter, "設定内容を kanchoku.user.ini に書き込みます");
             this.button_keyAssignEnter.UseVisualStyleBackColor = true;
@@ -5075,6 +5079,32 @@ namespace KanchokuWS
             this.textBox_bushuAssocSelectCount.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_bushuAssocSelectCount, "連想直接出力の試行回数を設定します。(最大5回)\r\n\r\n試行回数を超えて繰り返し連想直接出力を呼び出した場合は、\r\n連想文字一覧からの選択画面に遷移します。");
             // 
+            // label_keyAssignReload
+            // 
+            this.label_keyAssignReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label_keyAssignReload.AutoSize = true;
+            this.label_keyAssignReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_keyAssignReload.Location = new System.Drawing.Point(178, 347);
+            this.label_keyAssignReload.Name = "label_keyAssignReload";
+            this.label_keyAssignReload.Size = new System.Drawing.Size(77, 15);
+            this.label_keyAssignReload.TabIndex = 36;
+            this.label_keyAssignReload.Text = "再読込しました";
+            this.label_keyAssignReload.Visible = false;
+            this.label_keyAssignReload.VisibleChanged += new System.EventHandler(this.label_keyAssignReload_VisibleChanged);
+            // 
+            // button_keyAssignReload
+            // 
+            this.button_keyAssignReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_keyAssignReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_keyAssignReload.Location = new System.Drawing.Point(261, 343);
+            this.button_keyAssignReload.Name = "button_keyAssignReload";
+            this.button_keyAssignReload.Size = new System.Drawing.Size(80, 23);
+            this.button_keyAssignReload.TabIndex = 2;
+            this.button_keyAssignReload.Text = "再読込(&R)";
+            this.toolTip1.SetToolTip(this.button_keyAssignReload, "各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
+            this.button_keyAssignReload.UseVisualStyleBackColor = true;
+            this.button_keyAssignReload.Click += new System.EventHandler(this.button_keyAssignReload_Click);
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -5782,5 +5812,7 @@ namespace KanchokuWS
         private System.Windows.Forms.TextBox textBox_romanSecPlanePrefix;
         private System.Windows.Forms.Label label54;
         private System.Windows.Forms.TextBox textBox_bushuAssocSelectCount;
+        private System.Windows.Forms.Label label_keyAssignReload;
+        private System.Windows.Forms.Button button_keyAssignReload;
     }
 }
