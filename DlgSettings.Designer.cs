@@ -1525,8 +1525,7 @@ namespace KanchokuWS
             this.textBox_vkbOffsetY.Name = "textBox_vkbOffsetY";
             this.textBox_vkbOffsetY.Size = new System.Drawing.Size(30, 19);
             this.textBox_vkbOffsetY.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.textBox_vkbOffsetY, "仮想鍵盤の表示位置(Y軸)\r\n\r\n文字送出の対象となるアクティブウィンドウのカレットの\r\n右下端位置からの相対位置として設定します。\r\n\r\n相対位置は、ウィンドウ" +
-        "ごとに個別に設定することもできます。\r\n設定方法については README の「相対位置の個別設定」を\r\n参照ください。");
+            this.toolTip1.SetToolTip(this.textBox_vkbOffsetY, resources.GetString("textBox_vkbOffsetY.ToolTip"));
             // 
             // textBox_vkbOffsetX
             // 
@@ -1535,8 +1534,7 @@ namespace KanchokuWS
             this.textBox_vkbOffsetX.Name = "textBox_vkbOffsetX";
             this.textBox_vkbOffsetX.Size = new System.Drawing.Size(30, 19);
             this.textBox_vkbOffsetX.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_vkbOffsetX, "仮想鍵盤の表示位置(X軸)\r\n\r\n文字送出の対象となるアクティブウィンドウのカレットの\r\n右下端位置からの相対位置として設定します。\r\n\r\n相対位置は、ウィンドウ" +
-        "ごとに個別に設定することもできます。\r\n設定方法については README の「相対位置の個別設定」を\r\n参照ください。");
+            this.toolTip1.SetToolTip(this.textBox_vkbOffsetX, resources.GetString("textBox_vkbOffsetX.ToolTip"));
             // 
             // label40
             // 

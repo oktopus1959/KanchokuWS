@@ -120,22 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="button_saveRomanTableFile.ToolTip" xml:space="preserve">
-    <value>ローマ字テーブルを作成してファイル出力します。
-
-ストローク表からローマ字テーブルを作成して roman-stroke-table.txt と
-いう名前のファイルに出力します。出力先は漢直WSのルートフォルダです。
-
-出力されたファイルは Google 日本語入力のローマ字テーブルとして
-インポートすることができます。
-
-なお、打鍵列に空白文字を含む場合は、それを「裏面定義プレフィックス」
-で置換します。(TUT-Code の2打鍵目スペースによる記号入力や、
- Try-Code での1打鍵目空白による漢字入力など)</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -261,6 +245,34 @@ extraInfo の値が当ツールの設定したものだけを無視するよう�
 そのような場合は、当項目にチェックを入れることで、競合を解消することが
 できます。ただし、元々競合していなかったツールからの出力を、当ツールが
 無視することになる可能性もあるので、試行しながら設定してください。</value>
+  </data>
+  <data name="textBox_vkbOffsetY.ToolTip" xml:space="preserve">
+    <value>仮想鍵盤の表示位置(Y軸)
+
+文字送出の対象となるアクティブウィンドウのカレット位置からの
+相対位置として設定します。
+
+0以上の値を設定した場合は、カレットの右端位置が基準点に、
+また、負の値を設定した場合は、カレットの左端位置が基準点に
+なります。
+
+相対位置は、ウィンドウごとに個別に設定することもできます。
+設定方法については README の「相対位置の個別設定」を
+参照ください。</value>
+  </data>
+  <data name="textBox_vkbOffsetX.ToolTip" xml:space="preserve">
+    <value>仮想鍵盤の表示位置(X軸)
+
+文字送出の対象となるアクティブウィンドウのカレット位置からの
+相対位置として設定します。
+
+0以上の値を設定した場合は、カレットの下端位置が基準点に、
+また、負の値を設定した場合は、カレットの上端位置が基準点に
+なります。
+
+相対位置は、ウィンドウごとに個別に設定することもできます。
+設定方法については README の「相対位置の個別設定」を
+参照ください。</value>
   </data>
   <data name="textBox_deckeyInfiniteLoopDetectCount.ToolTip" xml:space="preserve">
     <value>キーボードフックの無限ループ検出回数
@@ -636,6 +648,19 @@ Ctrl-Space を押してください。(Ctrl-Space が有効な場合)
 
 なお、ローマ字テーブルとは異なり、こちらは打鍵列に空白文字を含むものも
 出力されます。</value>
+  </data>
+  <data name="button_saveRomanTableFile.ToolTip" xml:space="preserve">
+    <value>ローマ字テーブルを作成してファイル出力します。
+
+ストローク表からローマ字テーブルを作成して roman-stroke-table.txt と
+いう名前のファイルに出力します。出力先は漢直WSのルートフォルダです。
+
+出力されたファイルは Google 日本語入力のローマ字テーブルとして
+インポートすることができます。
+
+なお、打鍵列に空白文字を含む場合は、それを「裏面定義プレフィックス」
+で置換します。(TUT-Code の2打鍵目スペースによる記号入力や、
+ Try-Code での1打鍵目空白による漢字入力など)</value>
   </data>
   <data name="textBox_SandSEnableSpaceOrRepeatMillisec.ToolTip" xml:space="preserve">
     <value>SandS有効時に Space キーを連続打鍵した時、空白の入力または
