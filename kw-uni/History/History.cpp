@@ -966,12 +966,12 @@ namespace {
         // (Ctrl or Shift)+Space の処理 -- 履歴検索の開始、次の候補を返す
         void handleNextOrPrevCandTrigger(bool bNext) {
             _LOG_DEBUGH(_T("\nCALLED: %s: selectPos=%d, bNext=%s"), NAME_PTR, HIST_CAND->GetSelectPos(), BOOL_TO_WPTR(bNext));
-            // これにより、前回のEnterによる改行点挿入やFullEscapeによるブロッカーフラグが削除される
-            OUTPUT_STACK->clearFlagAndPopNewLine();
+            // これにより、前回のEnterによる改行点挿入やFullEscapeによるブロッカーフラグが削除される⇒(2021/12/18)workしなくなっていたので、いったん削除
+            //OUTPUT_STACK->clearFlagAndPopNewLine();
             // 今回、履歴選択用ホットキーだったことを保存
             setCandSelectIsCalled();
 
-            if (!bCandSelectable && !OUTPUT_STACK->isEmpty() && !OUTPUT_STACK->isLastOutputStackCharBlocker()) {
+            if (!bCandSelectable) {
                 // 履歴候補選択可能状態でなければ、前回の履歴検索との比較、新しい履歴検索の開始
                 historySearch(true);
             }
