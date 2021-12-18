@@ -50,6 +50,9 @@ namespace KanchokuWS
         // 単打用キー
         public const uint MOD_SINGLE = 0x10000;
 
+        // VKEY に対する modifier LSHIFT
+        public const uint MOD_LSHIFT = 0x20000;
+
         public static uint MakeModifier(bool ctrl, bool shift)
         {
             return (ctrl ? MOD_CONTROL : 0) + (shift ? MOD_SHIFT : 0);
@@ -364,6 +367,9 @@ namespace KanchokuWS
                 // Ctrl+Shifted
                 //AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, vkey);
             }
+
+            // Shift+Tab
+            AddModConvertedDecKeyFromCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Tab);
         }
 
         public static int GetDecKeyFromCombo(uint mod, uint vkey)
@@ -501,6 +507,7 @@ namespace KanchokuWS
             {"kana", KeyModifiers.MOD_SINGLE },
             {"lctrl", KeyModifiers.MOD_LCTRL },
             {"rctrl", KeyModifiers.MOD_RCTRL },
+            {"shift", KeyModifiers.MOD_SHIFT },
             {"rshift", KeyModifiers.MOD_RSHIFT },
             {"zenkaku", KeyModifiers.MOD_SINGLE },
         };
@@ -635,12 +642,13 @@ namespace KanchokuWS
                             // NAME:xx:function
                             var items = line._split(':');
                             if (items._length() == 3) {
-                                uint mod = modifierKeysFromName._safeGet(items[0]);
-                                uint vkey = getVKeyFromDecKey(items[1]._parseInt(-1, -1));
-                                if (mod != 0 && vkey == 0) {
-                                    // 拡張修飾キー単打の場合
-                                    mod = 0;
-                                    vkey = GetFuncVkeyByName(items[0]);  // 被修飾キーが指定されていない場合は、修飾キーの単打とみなす
+                                uint mod = 0;
+                                uint vkey = getVKeyFromDecKey(specialDecKeysFromName._safeGet(items[1])._gtZeroOr(items[1]._parseInt(-1, -1)));
+                                if (vkey == 0) {
+                                    // 拡張修飾キーまたは特殊キー単打の場合
+                                    vkey = GetFuncVkeyByName(items[0]);  // 被修飾キーが指定されていない場合は、修飾キーまたは特殊キーの単打とみなす
+                                } else {
+                                    mod = modifierKeysFromName._safeGet(items[0]);
                                 }
                                 bool ctrl = items[2]._startsWith("^");
                                 var name = items[2].Replace("^", "");
