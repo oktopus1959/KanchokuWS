@@ -304,6 +304,9 @@ protected:
     // TAB ハンドラ
     virtual void handleTab();
 
+    // ShiftTAB ハンドラ
+    virtual void handleShiftTab();
+
     // Delete ハンドラ
     virtual void handleDelete();
 

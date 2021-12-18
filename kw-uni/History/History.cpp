@@ -1049,15 +1049,26 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE"));
         }
 
-        // Tab の処理 -- 履歴選択状態から抜けて、履歴検索文字列の遡及ブロッカーをセット
+        // Tab の処理 -- 次の候補を返す
         void handleTab() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            //HIST_CAND->PushFrontSelectedWord();
-            //HistoryStateBase::setBlocker();
-            //LOG_DEBUG(_T("LEAVE"));
-            // Enter と同じ扱いにする
-            AddNewHistEntryOnEnter();
-            HistoryStayState::handleTab();
+            if (bCandSelectable) {
+                setCandSelectIsCalled();
+                getNextCandidate();
+            } else {
+                HistoryStayState::handleTab();
+            }
+        }
+
+        // ShiftTab の処理 -- 前の候補を返す
+        void handleShiftTab() {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            if (bCandSelectable) {
+                setCandSelectIsCalled();
+                getPrevCandidate();
+            } else {
+                HistoryStayState::handleTab();
+            }
         }
 
         // DecoderOff の処理

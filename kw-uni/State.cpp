@@ -399,6 +399,9 @@ void State::dispatchDeckey(int deckey) {
         case TAB_DECKEY:
             handleTab();
             break;
+        case SHIFT_TAB_DECKEY:
+            handleShiftTab();
+            break;
         case DEL_DECKEY:
             handleDelete();
             break;
@@ -574,6 +577,9 @@ void State::handleBS() { LOG_DEBUG(_T("BackSpace")); setCharDeleteInfo(1); }
 
 // TAB ハンドラ
 void State::handleTab() { handleSpecialKeys(TAB_DECKEY); }
+
+// Shift+TAB ハンドラ
+void State::handleShiftTab() { handleSpecialKeys(SHIFT_TAB_DECKEY); }
 
 // Delete ハンドラ
 void State::handleDelete() { handleSpecialKeys(DEL_DECKEY); }
