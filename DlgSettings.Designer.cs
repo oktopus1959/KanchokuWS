@@ -2484,7 +2484,7 @@ namespace KanchokuWS
             this.textBox_historyFewCharsKeySeq.Name = "textBox_historyFewCharsKeySeq";
             this.textBox_historyFewCharsKeySeq.Size = new System.Drawing.Size(56, 19);
             this.textBox_historyFewCharsKeySeq.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_historyFewCharsKeySeq, "入力履歴のうち、1～3文字だけの候補を表示します。");
+            this.toolTip1.SetToolTip(this.textBox_historyFewCharsKeySeq, "入力履歴のうち、2～3文字だけの候補を表示します。");
             // 
             // label106
             // 
