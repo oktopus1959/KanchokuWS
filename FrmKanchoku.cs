@@ -1036,14 +1036,16 @@ namespace KanchokuWS
         /// </summary>
         private bool handleKeyDecoder(int deckey, uint mod)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey})");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}");
 
             getTargetChar(deckey);
 
             // デコーダの呼び出し
             HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, ref decoderOutput);
 
-            logger.Info(() => $"layout={decoderOutput.layout}, numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
+            logger.Info(() =>
+                $"HandleDeckeyDecoder: RESULT: layout={decoderOutput.layout}, numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, " +
+                $"output={decoderOutput.outString._toString()}, IsDeckeyToVkey={decoderOutput.IsDeckeyToVkey()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
 
             // 第1打鍵待ち状態になったら、一時的な仮想鍵盤表示カウントをリセットする
             //if (decoderOutput.GetStrokeCount() < 1) Settings.VirtualKeyboardShowStrokeCountTemp = 0;

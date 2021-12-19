@@ -244,11 +244,15 @@ namespace {
             STATE_COMMON->ClearOrigString();
         }
 
-        //// StrokeTableNode を処理する
-        //void handleStrokeKeys(int deckey) {
-        //    _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-        //    StrokeTableState::handleStrokeKeys(deckey);
-        //}
+        // StrokeTableNode を処理する
+        void handleStrokeKeys(int deckey) {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            StrokeTableState::handleStrokeKeys(deckey);
+            if (!NextNodeMaybe() && State::isModeFuncKey(deckey)) {
+                // 次ノードがなく、拡張修飾キーの類なら、入力された拡張修飾類キーをそのまま返す
+                setThroughDeckeyFlag();
+            }
+        }
 
         // Shift飾修されたキー
         void handleShiftKeys(int deckey) {

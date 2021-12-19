@@ -188,20 +188,21 @@ protected:
         STATE_COMMON->SetSpecialDeckeyRequiredFlag();
     }
 
+public:
     // DECKEY はストロークキーか
-    virtual bool isStrokeKey(int deckey);
+    static bool isStrokeKey(int deckey);
 
     // DECKEY はShift修飾キーか
-    virtual bool isShiftedKey(int deckey);
+    static bool isShiftedKey(int deckey);
 
     // DECKEY はCtrl修飾キーか
-    virtual bool isCtrledKey(int deckey);
+    static bool isCtrledKey(int deckey);
 
     // DECKEY は機能キーか
-    virtual bool isModeFuncKey(int deckey);
+    static bool isModeFuncKey(int deckey);
 
     // DECKEY はストロークキーまたはShift修飾かまたは機能キーか
-    virtual bool isStrokeKeyOrShiftedKeyOrModeFuncKey(int deckey);
+    static bool isStrokeKeyOrShiftedKeyOrModeFuncKey(int deckey);
 
 public:
     // 入力された DECKEY をディスパッチする
