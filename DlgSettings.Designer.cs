@@ -3923,7 +3923,8 @@ namespace KanchokuWS
             this.checkBox_historySearchKey.TabIndex = 5;
             this.checkBox_historySearchKey.Text = "履歴検索・候補選択する     Ctrl-";
             this.toolTip1.SetToolTip(this.checkBox_historySearchKey, "Ctrl修飾キーで履歴検索を実行し、同時に先頭候補を選択できるようにします。\r\n\r\n連続して押すことで、次の候補を選択することもできます。\r\nこれは自動履歴検索が" +
-        "OFFの場合でも有効です。\r\n\r\nミニバッファ末尾の改行を除去してから履歴検索を実行するので、Enterを押して\r\nしまった後でも処理可能です。");
+        "OFFの場合でも有効です。\r\n\r\n手動による履歴検索・選択は、 mod-conversion.txt で HistNext, HistPrev の\r\n呼び出しを" +
+        "設定することでも可能です。");
             this.checkBox_historySearchKey.UseVisualStyleBackColor = true;
             this.checkBox_historySearchKey.CheckedChanged += new System.EventHandler(this.checkBox_historySearchKey_CheckedChanged);
             // 
