@@ -799,15 +799,20 @@ namespace {
                     // (2021/12/11)
                     // ⇒mazeNoIfxConnectKanji==true or mazeNoIfxConnectAny==trueなら、読みの長さ制限と読みに漢字を含む制限を外す
                     // 「ひどい目にあう」⇒「ひ土井目にあう」などと変換されることもあるので注意
-                    //size_t tailKanjiKataLen = utils::count_tail_kanji(key.substr(0, stemMinLen));
-                    size_t tailKanjiKataLen = utils::count_tail_kanji_or_katakana(key.substr(0, stemMinLen));
-                    _LOG_DEBUGH(_T("tailKanjiKataLen=%d, stemMinLen=%d, mazeNoIfxConnectKanji=%s, mazeNoIfxConnectAny=%s"), \
-                        tailKanjiKataLen, stemMinLen, BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectKanji), BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectAny));
-                    if (tailKanjiKataLen == stemMinLen) stemMinLen += 1;
-                    if (tailKanjiKataLen > 0 && stemMinLen - tailKanjiKataLen >= 2) {
+                    //size_t minStemTailKanjiKataLen = utils::count_tail_kanji(key.substr(0, stemMinLen));
+                    // minStemTailKanjiKataLen:stemMinLenの語幹の末尾漢字・カタカナ文字列長
+                    size_t minStemTailKanjiKataLen = utils::count_tail_kanji_or_katakana(key.substr(0, stemMinLen));
+                    _LOG_DEBUGH(_T("minStemTailKanjiKataLen=%d, stemMinLen=%d, mazeNoIfxConnectKanji=%s, mazeNoIfxConnectAny=%s"), \
+                        minStemTailKanjiKataLen, stemMinLen, BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectKanji), BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectAny));
+                    if (minStemTailKanjiKataLen == stemMinLen) {
+                        // 交ぜ書き変換対象の先頭部が漢字だけだった場合は、stemMinLen をインクリメントして、漢字以外を含める
+                        stemMinLen += 1;
+                    }
+                    if (minStemTailKanjiKataLen > 0 && stemMinLen > minStemTailKanjiKataLen) {
+                        // 語尾に漢字・カタカナががあり、語幹には少なくとも1文字のひらがながある場合⇒従来は2文字以上だったが、1文字以上にしないと「み力的」が変換できない
                         if (SETTINGS->mazeNoIfxConnectKanji || SETTINGS->mazeNoIfxConnectAny ||
-                            (stemMinLen >= 3 && stemMinLen <= 4 && utils::contains_kanji(key.substr(0, stemMinLen - tailKanjiKataLen)))) {
-                            stemMinLen -= tailKanjiKataLen;
+                            (stemMinLen >= 3 && stemMinLen <= 4 && utils::contains_kanji(key.substr(0, stemMinLen - minStemTailKanjiKataLen)))) {
+                            stemMinLen -= minStemTailKanjiKataLen;
                         }
                     }
 
