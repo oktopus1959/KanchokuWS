@@ -12,6 +12,8 @@
 #define UNSHIFT_DECKEY(x) (x % SHIFT_DECKEY_NUM)
 #define DECKEY_TO_SHIFT_PLANE(x) (x / SHIFT_DECKEY_NUM)
 
+#define STATE_NAME_PTR(p) (p == 0 ? _T("None") : p->GetName().c_str())
+
 //-----------------------------------------------------------------------
 // デコーダ状態の基底クラス
 class State {

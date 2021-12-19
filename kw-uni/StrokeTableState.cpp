@@ -15,6 +15,13 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
 
+#if 0
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#endif
+
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
 namespace {

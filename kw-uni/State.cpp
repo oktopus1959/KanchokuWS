@@ -15,6 +15,13 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
+#if 0
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#endif
+
 DEFINE_CLASS_LOGGER(State);
 
 #define NAME_PTR    Name.c_str()
@@ -53,7 +60,7 @@ void State::HandleDeckey(int deckey) {
 // DECKEY処理の前半部の処理。
 // 後続状態があればそちらに移譲。なければここでホットキーをディスパッチ。
 void State::DoDeckeyPreProc(int deckey) {
-    _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), NextNode=%s"), NAME_PTR, deckey, deckey, NODE_NAME_PTR(NextNodeMaybe()));
+    _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), NextState=%s, NextNode=%s"), NAME_PTR, deckey, deckey, STATE_NAME_PTR(pNext), NODE_NAME_PTR(NextNodeMaybe()));
     if (IsModeState()) {
         // モード状態(HistoryStayState や TranslationState など)のための前処理
         // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
@@ -100,6 +107,7 @@ void State::DoDeckeyPreProc(int deckey) {
     }
     //pNextNodeMaybe = nullptr;
     ClearNextNodeMaybe();
+    _LOG_DEBUGH(_T("NextState=%s"), STATE_NAME_PTR(pNext));
     if (pNext) {
         // 後続状態があれば、そちらを呼び出す ⇒ 新しい後続ノードがあればそれを一時的に記憶しておく(後半部で処理する)
         //pNextNodeMaybe = pNext->HandleDeckey(deckey);
@@ -299,6 +307,7 @@ bool State::isModeFuncKey(int deckey) {
     case XFER_DECKEY:
     case KANA_DECKEY:
     case RIGHT_SHIFT_DECKEY:
+    case INS_DECKEY:
         return true;
     default:
         return false;
@@ -496,9 +505,7 @@ void State::handleDecoderOff() { LOG_INFOH(_T("CALLED")); }
 // 機能キー前処理ハンドラ
 // 一括で何かをしたい場合にオーバーライドする。その後、個々の処理を続ける場合は、 false を返すこと
 bool State::handleFunctionKeys(int
-#ifdef _DEBUG
-    hk
-#endif
+_DEBUG_SENT(hk)
 ) {
     _LOG_DEBUGH(_T("CALLED: deckey=%xH(%d)"), hk, hk);
     return false;

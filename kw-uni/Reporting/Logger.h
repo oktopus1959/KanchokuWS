@@ -160,7 +160,7 @@ public:
 #define LOG_DEBUGH(...)     {}
 #define _LOG_DEBUGH(...)    {}
 #define _LOG_DEBUGH_COND(flag, ...)    {}
-#define _DEBUG_SENT(x)      {}
+#define _DEBUG_SENT(x)      
 #define _DEBUG_FLAG(x)      false
 #else
 #define LOG_TRACE(...)      if (Logger::IsTraceEnabled()) logger.Trace(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
