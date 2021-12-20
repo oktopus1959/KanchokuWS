@@ -95,13 +95,16 @@ enum class ExpectedKeyType
 class StateCommonInfo {
     DECLARE_CLASS_LOGGER;
 
-    // 打鍵されたホットキーの総カウント
+    // 打鍵されたデコーダキーの総カウント
     size_t totalDecKeyCount = 0;
 
-    // 直前のホットキー
+    // 第1ストローク時のキーカウント
+    size_t firstStrokeKeyCount = 0;
+
+    // 直前のデコーダキー
     int prevDecKey = -1;
 
-    // 同じホットキーが続けて入力された回数
+    // 同じデコーダキーが続けて入力された回数
     size_t sameDecKeyCount = 0;
 
     // 送信するBSの数(1 for surrogate pair)
@@ -150,8 +153,16 @@ public:
         ++totalDecKeyCount;
     }
 
+    inline void SyncFirstStrokeKeyCount() {
+        firstStrokeKeyCount = totalDecKeyCount;
+    }
+
     inline size_t GetTotalDecKeyCount() {
         return totalDecKeyCount;
+    }
+
+    inline size_t GetFirstStrokeKeyCount() {
+        return firstStrokeKeyCount;
     }
 
     void CountSameDecKey(int decKeyId) {

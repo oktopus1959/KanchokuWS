@@ -78,7 +78,7 @@ namespace {
                 SetNextNodeMaybe(NEXT_NODE(deckey));
             }
             if (!NextNodeMaybe() || !NextNodeMaybe()->isStrokeTableNode()) {
-                // 次ノードがストロークノードでないか、キーボードフェイス文字を返すモードならば、全ストロークを削除対象とする
+                // 次ノードがストロークノードでないか、ストロークテーブルノード以外(文字ノードや機能ノードなど)ならば、全ストロークを削除対象とする
                 _LOG_DEBUGH(_T("%s: RemoveAllStroke: Next node=%p, DecodeKeyboardCharMode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()), BOOL_TO_WPTR(STATE_COMMON->IsDecodeKeyboardCharMode()));
                 setToRemoveAllStroke();
             }
@@ -247,6 +247,7 @@ namespace {
         // StrokeTableNode を処理する
         void handleStrokeKeys(int deckey) {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            STATE_COMMON->SyncFirstStrokeKeyCount();    // 第1ストロークキーカウントの同期
             StrokeTableState::handleStrokeKeys(deckey);
             if (!NextNodeMaybe() && State::isModeFuncKey(deckey)) {
                 // 次ノードがなく、拡張修飾キーの類なら、入力された拡張修飾類キーをそのまま返す
