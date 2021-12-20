@@ -713,6 +713,8 @@ namespace KanchokuWS
             if (str._notEmpty()) {
                 if (str.Length == 1 || (str.Length == 2 && str._isSurrogatePair())) {
                     ShowStrokeHelp(str);
+                } else if (str.Length == 4 && str[2] == '=') {
+                    ExecCmdDecoder("addAutoBushuEntry", str._safeSubstring(3,1) + str._safeSubstring(0,2));
                 } else if (str[1] == '=') {
                     ExecCmdDecoder("mergeBushuAssocEntry", str);
                 } else if (str._reMatch("^[^ ]+ /")) {
