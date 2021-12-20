@@ -2306,6 +2306,7 @@ namespace KanchokuWS
             // 
             // tabPage_keyAssign
             // 
+            this.tabPage_keyAssign.Controls.Add(this.groupBox31);
             this.tabPage_keyAssign.Controls.Add(this.label_keyAssignReload);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignReload);
             this.tabPage_keyAssign.Controls.Add(this.textBox2);
@@ -2313,7 +2314,6 @@ namespace KanchokuWS
             this.tabPage_keyAssign.Controls.Add(this.label100);
             this.tabPage_keyAssign.Controls.Add(this.groupBox32);
             this.tabPage_keyAssign.Controls.Add(this.textBox1);
-            this.tabPage_keyAssign.Controls.Add(this.groupBox31);
             this.tabPage_keyAssign.Controls.Add(this.label99);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignClose);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignEnter);
@@ -2363,9 +2363,9 @@ namespace KanchokuWS
             // groupBox32
             // 
             this.groupBox32.Controls.Add(this.label71);
-            this.groupBox32.Location = new System.Drawing.Point(9, 273);
+            this.groupBox32.Location = new System.Drawing.Point(9, 270);
             this.groupBox32.Name = "groupBox32";
-            this.groupBox32.Size = new System.Drawing.Size(456, 64);
+            this.groupBox32.Size = new System.Drawing.Size(456, 51);
             this.groupBox32.TabIndex = 15;
             this.groupBox32.TabStop = false;
             this.groupBox32.Text = "注意";
@@ -2376,10 +2376,10 @@ namespace KanchokuWS
             this.label71.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label71.Location = new System.Drawing.Point(3, 15);
             this.label71.Name = "label71";
-            this.label71.Size = new System.Drawing.Size(444, 45);
+            this.label71.Size = new System.Drawing.Size(444, 30);
             this.label71.TabIndex = 1;
             this.label71.Text = "※テーブルファイルによって既に文字が割り当てられている打鍵列には再割り当てできません。\r\n※割り当て可能なのは、未割り当てか、他の機能呼び出しが割り当てられている" +
-    "打鍵列です。\r\n※いったん上書きされたキー割り当てを元に戻した場合は、再起動が必要となります。";
+    "打鍵列です。";
             // 
             // textBox1
             // 
@@ -5088,7 +5088,7 @@ namespace KanchokuWS
             this.label_keyAssignReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label_keyAssignReload.AutoSize = true;
             this.label_keyAssignReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_keyAssignReload.Location = new System.Drawing.Point(178, 347);
+            this.label_keyAssignReload.Location = new System.Drawing.Point(262, 325);
             this.label_keyAssignReload.Name = "label_keyAssignReload";
             this.label_keyAssignReload.Size = new System.Drawing.Size(77, 15);
             this.label_keyAssignReload.TabIndex = 36;
