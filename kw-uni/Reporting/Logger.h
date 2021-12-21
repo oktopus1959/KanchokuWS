@@ -154,6 +154,8 @@ public:
 
 #define IS_LOG_DEBUGH_ENABLED   (Logger::IsDebugHEnabled() && _LOG_DEBUGH_FLAG) 
 
+#define _SAFE_CHAR(ch) (ch > 0 ? ch : ' ')
+
 #ifndef _DEBUG
 #define LOG_TRACE(...)      {}
 #define LOG_DEBUG(...)      {}

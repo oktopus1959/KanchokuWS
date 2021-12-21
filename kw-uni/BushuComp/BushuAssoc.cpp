@@ -357,42 +357,31 @@ namespace {
                 // 直前の部首合成文字と比較して、やり直しをする
                 //time_t now = utils::getSecondsFromEpochTime();
                 if (BUSHU_COMP_NODE) {
-                    _LOG_DEBUGH(_T("DeckeyCount=%d, PrevTotalCount=%d, outChar=%c, PrevComp=%c"), totalCnt, BUSHU_COMP_NODE->PrevTotalCount, SAFE_CHAR(outChar), SAFE_CHAR(BUSHU_COMP_NODE->PrevComp));
+                    _LOG_DEBUGH(_T("DeckeyCount=%d, PrevTotalCount=%d, outChar=%c, PrevComp=%c, PrevAuto=%s"), \
+                        totalCnt, BUSHU_COMP_NODE->PrevTotalCount, SAFE_CHAR(outChar), SAFE_CHAR(BUSHU_COMP_NODE->PrevComp), BOOL_TO_WPTR(BUSHU_COMP_NODE->IsPrevAuto));
                     if (totalCnt <= BUSHU_COMP_NODE->PrevTotalCount + 2) {
                         mchar_t m1 = BUSHU_COMP_NODE->PrevBushu1;
                         mchar_t m2 = BUSHU_COMP_NODE->PrevBushu2;
-                        if (BUSHU_COMP_NODE->IsPrevAutoCancel && outChar == m2 && OUTPUT_STACK->LastOutStackChar(1) == m1) {
-                            // 直前が自動部首合成のキャンセルで、現在の出力文字がキャンセルされた自動部首合成の元文字だったら、その自動部首合成の定義を無効にする
-                            if (m1 != 0 && m2 != 0) BUSHU_DIC->AddAutoBushuEntry(m1, m2, '-');
-                            BUSHU_COMP_NODE->PrevTotalCount = totalCnt;
-                            // チェインなし
-                            return false;
-                        } else if (BUSHU_COMP_NODE->PrevComp == outChar) {
-                            if (BUSHU_COMP_NODE->IsPrevAuto) {
-                                // 直前の処理は自動部首合成だったので、合成元の2文字に戻す
+                        if (BUSHU_COMP_NODE->PrevComp == outChar) {
+                            // 末尾の出力文字が直前の部首合成文字と同じ
+                            _LOG_DEBUGH(_T("PATH-A: m1=%c, m2=%c, outChar=%c"), _SAFE_CHAR(m1), _SAFE_CHAR(m2), _SAFE_CHAR(outChar));
+                            // outChar を探し、さらにその次の候補を返す
+                            BUSHU_COMP_NODE->IsPrevAuto = false;
+                            MString cs = BUSHU_COMP_NODE->ReduceByBushu(m1, m2, outChar);
+                            if (!cs.empty()) {
+                                _LOG_DEBUGH(_T("PATH-B"));
                                 // 出力文字列と削除文字のセット
-                                STATE_COMMON->SetOutString(make_mstring(m1, m2), 1);
-                                BUSHU_COMP_NODE->PrevTotalCount = totalCnt;
-                                BUSHU_COMP_NODE->IsPrevAuto = false;
-                                BUSHU_COMP_NODE->IsPrevAutoCancel = true;
-                                // チェインなし
+                                STATE_COMMON->SetOutString(cs, 1);
+                                copyStrokeHelpToVkbFaces();
+                                //やり直し合成した文字を履歴に登録
+                                if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(cs, 1));
+                                _LOG_DEBUGH(_T("LEAVE: %s: Reduce by using swapped bushu"), NAME_PTR);
                                 return false;
-                            } else {
-                                // outChar を探し、さらにその次の候補を返す
-                                MString cs = BUSHU_COMP_NODE->ReduceByBushu(m1, m2, outChar);
-                                if (!cs.empty()) {
-                                    // 出力文字列と削除文字のセット
-                                    STATE_COMMON->SetOutString(cs, 1);
-                                    copyStrokeHelpToVkbFaces();
-                                    //やり直し合成した文字を履歴に登録
-                                    if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(cs, 1));
-                                    _LOG_DEBUGH(_T("LEAVE: %s: Reduce by using swapped bushu"), NAME_PTR);
-                                    return false;
-                                }
                             }
                         }
                     }
                 }
+                _LOG_DEBUGH(_T("PATH-C"));
 
                 // 直前の出力文字と比較して、部首連想のやり直しをする
                 _LOG_DEBUGH(_T("DeckeyCount=%d, PrevTotalCount=%d, AssocCount=%d, outChar=%c, PrevAssoc=%c, PrevKey=%c"), totalCnt, EX_NODE->PrevTotalCount, EX_NODE->Count, SAFE_CHAR(outChar), SAFE_CHAR(EX_NODE->PrevAssoc), SAFE_CHAR(EX_NODE->PrevKey));
@@ -404,6 +393,7 @@ namespace {
                 _LOG_DEBUGH(_T("Count=%d, outChar=%c, "), EX_NODE->Count, SAFE_CHAR(outChar));
 
                 if (outChar != 0 && currentList.FindEntry(outChar)) {
+                    _LOG_DEBUGH(_T("PATH-D"));
                     size_t cnt = EX_NODE->Count;
                     // 順序を元に戻す
                     if (cnt > 0 && cnt < 10) {

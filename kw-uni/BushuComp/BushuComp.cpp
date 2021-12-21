@@ -99,10 +99,12 @@ MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
         size_t prevCnt = PrevTotalCount;
         size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
         PrevTotalCount = totalCnt;
+        bool prevAuto = IsPrevAuto;
+        IsPrevAuto = false;
         mchar_t outChar = OUTPUT_STACK->isLastOutputStackCharBlocker() ? 0 : OUTPUT_STACK->LastOutStackChar();
         _LOG_DEBUGH(_T("CALLED: m1=%c, m2=%c, prev=%c, prevTotalCount=%d, prevCnt=%d, outChar=%c, PrevComp=%c, PrevAuto=%s"), \
-            VALIDATE_CHAR(m1), VALIDATE_CHAR(m2), VALIDATE_CHAR(prev), totalCnt, prevCnt, VALIDATE_CHAR(outChar), VALIDATE_CHAR(PrevComp), BOOL_TO_WPTR(IsPrevAuto));
-        if (!IsPrevAuto || totalCnt > prevCnt + 2 || outChar == 0 || outChar != PrevComp) {
+            VALIDATE_CHAR(m1), VALIDATE_CHAR(m2), VALIDATE_CHAR(prev), totalCnt, prevCnt, VALIDATE_CHAR(outChar), VALIDATE_CHAR(PrevComp), BOOL_TO_WPTR(prevAuto));
+        if (!prevAuto || totalCnt > prevCnt + 2 || outChar == 0 || outChar != PrevComp) {
             mchar_t m = BUSHU_DIC->FindComposite(m1, m2, prev);
             PrevBushu1 = m1;
             PrevBushu2 = m2;
@@ -111,7 +113,6 @@ MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
             //PrevCompSec = utils::getSecondsFromEpochTime();
             return to_mstr(m);
         }
-        IsPrevAuto = false;
     }
     return EMPTY_MSTR;
 }
@@ -130,7 +131,7 @@ void BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
             PrevBushu1 = m1;
             PrevBushu2 = m2;
             PrevComp = m;
-            IsPrevAuto = true;
+            IsPrevAuto = false;
             IsPrevAutoCancel = false;
             //PrevCompSec = utils::getSecondsFromEpochTime();
             _LOG_DEBUGH(_T("m1=%c, m2=%c, m=%c"), m1, m2, m);
@@ -139,6 +140,7 @@ void BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
                 STATE_COMMON->SetOutString(ms);
                 STATE_COMMON->SetBackspaceNum(1);
                 STATE_COMMON->CopyStrokeHelpToVkbFaces();
+                IsPrevAuto = true;
                 //合成した文字を履歴に登録
                 if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(ms);
                 return;
