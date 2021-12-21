@@ -107,11 +107,11 @@ MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
             PrevBushu1 = m1;
             PrevBushu2 = m2;
             PrevComp = m;
-            IsPrevAuto = false;
             IsPrevAutoCancel = false;
             //PrevCompSec = utils::getSecondsFromEpochTime();
             return to_mstr(m);
         }
+        IsPrevAuto = false;
     }
     return EMPTY_MSTR;
 }
