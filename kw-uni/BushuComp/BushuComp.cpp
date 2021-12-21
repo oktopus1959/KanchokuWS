@@ -25,6 +25,8 @@
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
 
+#define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
+
 namespace {
     // -------------------------------------------------------------------
     // 後置部首合成機能状態クラス
@@ -89,6 +91,8 @@ State* BushuCompNode::CreateState() {
     return new BushuCompState(this);
 }
 
+#define VALIDATE_CHAR(c) (c == 0 ? ' ' : c)
+
 // 部首合成の実行
 MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
     if (BUSHU_DIC) {
@@ -96,6 +100,8 @@ MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
         size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
         PrevTotalCount = totalCnt;
         mchar_t outChar = OUTPUT_STACK->isLastOutputStackCharBlocker() ? 0 : OUTPUT_STACK->LastOutStackChar();
+        _LOG_DEBUGH(_T("CALLED: m1=%c, m2=%c, prev=%c, prevTotalCount=%d, prevCnt=%d, outChar=%c, PrevComp=%c, PrevAuto=%s"), \
+            VALIDATE_CHAR(m1), VALIDATE_CHAR(m2), VALIDATE_CHAR(prev), totalCnt, prevCnt, VALIDATE_CHAR(outChar), VALIDATE_CHAR(PrevComp), BOOL_TO_WPTR(IsPrevAuto));
         if (!IsPrevAuto || totalCnt > prevCnt + 2 || outChar == 0 || outChar != PrevComp) {
             mchar_t m = BUSHU_DIC->FindComposite(m1, m2, prev);
             PrevBushu1 = m1;

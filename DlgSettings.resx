@@ -120,6 +120,28 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="checkBox_autoBushuComp.ToolTip" xml:space="preserve">
+    <value>ある2文字の組み合わせで一度部首合成を実行すると、
+次からはその2文字を入力した時点で自動的に部首合成を
+実行します。
+
+たとえば、一度「日」＋「生」で部首合成を実行し、「星」を出力
+したとすると、次に「日生」と入力した時点で自動的に「星」に
+置換されます。
+
+自動合成の直後であれば、 Escキーまたは「連想直接変換」キーを
+押すことで合成をキャンセルして元の2文字に戻すことができます。
+キャンセル後、もう一度、Escキーまたは「連想直接変換」キーを押すと、
+元の2文字の組み合わせに対する自動部首合成を無効にするような
+辞書登録が行われます。
+
+辞書登録の詳細については「辞書登録」-「自動部首合成登録」の
+ところのツールチップを参照ください。
+
+なお、自動部首合成直後は、手動の部首合成を禁止しています。
+何かカーソル移動などの他のキー操作を実行してから手動部首合成を
+実行してくだい。</value>
+  </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
@@ -725,24 +747,6 @@ SandS 方式を有効にすると、スペースキーを押しながら何か�
 SandS を有効にすると SandS と同じシフト面を使う
 Shift (または拡張修飾キー)+Space は有効なキーではなく、たんなる
 シフトキーとして扱われます。</value>
-  </data>
-  <data name="checkBox_autoBushuComp.ToolTip" xml:space="preserve">
-    <value>ある2文字の組み合わせで一度部首合成を実行すると、
-次からはその2文字を入力した時点で自動的に部首合成を
-実行します。
-
-たとえば、一度「日」＋「生」で部首合成を実行し、「星」を出力
-したとすると、次に「日生」と入力した時点で自動的に「星」に
-置換されます。
-
-自動合成の直後であれば、 Escキーまたは「連想直接変換」キーを
-押すことで合成をキャンセルして元の2文字に戻すことができます。
-キャンセル後、もう一度、Escキーまたは「連想直接変換」キーを押すと、
-元の2文字の組み合わせに対する自動部首合成を無効にするような
-辞書登録が行われます。
-
-辞書登録の詳細については「辞書登録」-「自動部首合成登録」の
-ところのツールチップを参照ください。</value>
   </data>
   <data name="checkBox_convertShiftedHiraganaToKatakana.ToolTip" xml:space="preserve">
     <value>Shiftキー(または拡張修飾キー)を押しながら平仮名を入力すると、
