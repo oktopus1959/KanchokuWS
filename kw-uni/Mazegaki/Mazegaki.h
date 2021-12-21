@@ -9,30 +9,7 @@
 // MazegakiNode - 交ぜ書き機能ノード
 class MazegakiNode : public FunctionNode {
     DECLARE_CLASS_LOGGER;
-private:
-    // 変換結果を元に戻すための変換前の読み
-    static MString prevYomi;
-
-    // 変換結果を元に戻すためのリード文字列の長さ
-    // 「ひど|い目にあった」⇒「ひどい目に|遭った」のときの「い目に」の長さ)
-    static size_t prevLeadLen;
-
-    // 変換結果を元に戻すための出力文字列の長さ
-    static size_t prevOutputLen;
-
-    // 前回変換時のホットキーカウント
-    static size_t deckeyCount;
-
-    // 先頭候補の自動選択を一時的に中止する
-    static bool selectFirstCandDisabled;
-
-    // シフトされた読み長
-    static size_t shiftedYomiLen;
-
-    // ブロッカーがシフトされた
-    static bool blockerShifted;
-
- public:
+public:
      MazegakiNode();
 
      ~MazegakiNode();
@@ -41,79 +18,63 @@ private:
      State* CreateState();
 
     MString getString() const { return to_mstr(_T("○")); }
+};
 
+// -------------------------------------------------------------------
+// MazegakiCommonInfo - 交ぜ書き共有情報
+class MazegakiCommonInfo {
+    DECLARE_CLASS_LOGGER;
+private:
+    // 変換結果を元に戻すための変換前の読み
+    MString prevYomi;
+
+    // 変換結果を元に戻すためのリード文字列の長さ
+    // 「ひど|い目にあった」⇒「ひどい目に|遭った」のときの「い目に」の長さ)
+    size_t prevLeadLen = 0;
+
+    // 変換結果を元に戻すための出力文字列の長さ
+    size_t prevOutputLen;
+
+    // 前回変換時のホットキーカウント
+    size_t deckeyCount = 0;
+
+    // 先頭候補の自動選択を一時的に中止する
+    bool selectFirstCandDisabled = false;
+
+    // シフトされた読み長
+    size_t shiftedYomiLen = 0;
+
+    // ブロッカーがシフトされた
+    bool blockerShifted = false;
+
+ public:
     void ClearBlockerShiftFlag() {
         blockerShifted = false;
     }
 
     // ブロッカーを左シフトする
-    bool LeftShiftBlocker() {
-        blockerShifted = IsJustAfterPrevXfer();
-        if (blockerShifted) OUTPUT_STACK->leftShiftMazeBlocker();
-        return blockerShifted;
-    }
+    bool LeftShiftBlocker();
 
     // ブロッカーを右シフトする
-    bool RightShiftBlocker() {
-        blockerShifted = IsJustAfterPrevXfer();
-        if (blockerShifted) OUTPUT_STACK->rightShiftMazeBlocker();
-        return blockerShifted;
-    }
+    bool RightShiftBlocker();
 
     // ブロッカーがシフトされたか
-    bool IsBlockerShifted() {
-        bool shifted = IsJustAfterPrevXfer() && blockerShifted;
-        if (shifted) {
-            // 続けてシフトできるようにするため、次も交ぜ書き変換直後という扱いにする
-            deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
-        }
-        return shifted;
-    }
+    bool IsBlockerShifted();
 
     // 今回の結果を元に戻すための情報を保存 (yomi は、再変換をする際の元の読みになる)
-    void SetYomiInfo(const MString& yomi, size_t leadLen, size_t outputLen) {
-        prevYomi = yomi;
-        prevLeadLen = leadLen;
-        prevOutputLen = outputLen;
-        shiftedYomiLen = yomi.size();
-        deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
-        selectFirstCandDisabled = false;
-    }
+    void SetYomiInfo(const MString& yomi, size_t leadLen, size_t outputLen);
 
     // 前回の出力長を返す
-    size_t GetPrevOutputLen() {
-        return (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) ? prevOutputLen : 0;
-    }
+    size_t GetPrevOutputLen();
 
     // 前回のリード部長を返す
-    size_t GetPrevLeadLen() {
-        return (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) ? prevLeadLen : 0;
-    }
+    size_t GetPrevLeadLen();
 
     // n打鍵によるMaze呼び出し用に情報をセットする(4ストロークまでOK)⇒前回の出力長を返す
-    size_t GetPrevYomiInfo(MString& yomi) {
-        if (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) {
-            selectFirstCandDisabled = true; // これは再変換のときに縦列候補表示にするために必要
-            yomi = prevYomi;
-            return prevOutputLen;
-        }
-        selectFirstCandDisabled = false;
-        return 0;
-    }
+    size_t GetPrevYomiInfo(MString& yomi);
 
     // Esc用
-    size_t GetPrevYomiInfoIfJustAfterMaze(MString& yomi) {
-        if (IsJustAfterPrevXfer()) {
-            selectFirstCandDisabled = true;
-            yomi = prevYomi;
-            size_t prevOutLen = prevOutputLen;
-            prevLeadLen = 0;
-            prevOutputLen = 0;
-            return prevOutLen;
-        }
-        selectFirstCandDisabled = false;
-        return 0;
-    }
+    size_t GetPrevYomiInfoIfJustAfterMaze(MString& yomi);
 
     // 先頭候補の自動選択が一時的に中止されているか
     bool IsSelectFirstCandDisabled() {
@@ -127,49 +88,38 @@ private:
     }
 
     // 読み長を長くする(読み開始位置を左にシフトする) (前回の変換の直後でなければ false を返す)
-    bool LeftShiftYomiStartPos() {
-        if (IsJustAfterPrevXfer()) {
-            ++shiftedYomiLen;
-            return true;
-        }
-        shiftedYomiLen = 1000;
-        return false;
-    }
+    bool LeftShiftYomiStartPos();
 
     // 読み開始位置を右にシフトする (前回の変換の直後でなければ false を返す)
-    bool RightShiftYomiStartPos() {
-        if (IsJustAfterPrevXfer()) {
-            if (shiftedYomiLen > 1) --shiftedYomiLen;
-            return true;
-        }
-        shiftedYomiLen = 1000;
-        return false;
-    }
+    bool RightShiftYomiStartPos();
 
     // 前回の実行時の直後か
-    bool IsJustAfterPrevXfer() {
-        return STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 1;
-    }
+    bool IsJustAfterPrevXfer();
 
     // 交ぜ書き実行時の直後状態にセット
-    void SetJustAfterPrevXfer() {
-        deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
-    }
+    void SetJustAfterPrevXfer();
 
 public:
-    // 全 MazegakiState から参照される共有ノード
-    static std::unique_ptr<MazegakiNode> CommonNode;
+    // 共有ノード
+    std::unique_ptr<MazegakiNode> CommonNode;
+
+    // 共有情報のSingletonインスタンス
+    static std::unique_ptr<MazegakiCommonInfo> CommonInfo;
+
+    // MazegakiCommonInfo - 交ぜ書き共有情報の作成
+    static void CreateCommonInfo();
 };
-#define MAZEGAKI_NODE (MazegakiNode::CommonNode)
+#define MAZEGAKI_INFO (MazegakiCommonInfo::CommonInfo)
+#define MAZEGAKI_NODE_PTR (MAZEGAKI_INFO->CommonNode.get())
 
 #define HANDLE_ESC_FOR_MAZEGAKI() \
     LOG_DEBUGH(_T("HANDLE_ESC_FOR_MAZEGAKI: %s"), NAME_PTR); \
-    if (MAZEGAKI_NODE) { \
+    if (MAZEGAKI_INFO) { \
         MString prevYomi; \
-        size_t prevOutLen = MAZEGAKI_NODE->GetPrevYomiInfoIfJustAfterMaze(prevYomi); \
+        size_t prevOutLen = MAZEGAKI_INFO->GetPrevYomiInfoIfJustAfterMaze(prevYomi); \
         LOG_DEBUGH(_T("MAZEGAKI ESC: prevYomi=%s, prevOutLen=%d"), MAKE_WPTR(prevYomi), prevOutLen); \
         if (prevOutLen > 0) { \
-            MAZEGAKI_NODE->SetJustAfterPrevXfer(); /* 続けて交ぜ書き関連の操作を受け付けるようにする */ \
+            MAZEGAKI_INFO->SetJustAfterPrevXfer(); /* 続けて交ぜ書き関連の操作を受け付けるようにする */ \
             STATE_COMMON->SetOutString(prevYomi, prevOutLen); \
             return; \
         } \

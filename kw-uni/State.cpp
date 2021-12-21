@@ -63,35 +63,41 @@ void State::DoDeckeyPreProc(int deckey) {
     _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), NextState=%s, NextNode=%s"), NAME_PTR, deckey, deckey, STATE_NAME_PTR(pNext), NODE_NAME_PTR(NextNodeMaybe()));
     if (IsModeState()) {
         // モード状態(HistoryStayState や TranslationState など)のための前処理
+        _LOG_DEBUGH(_T("PATH-A"));
         // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
+        // つまり、状態チェーンの末端であって、打鍵中でない場合
         if (!pNext) {
+            _LOG_DEBUGH(_T("PATH-B"));
             // TODO: AD HOC
-            if (MAZEGAKI_NODE) {
+            if (MAZEGAKI_INFO) {
+                _LOG_DEBUGH(_T("PATH-C"));
                 if (deckey == RIGHT_TRIANGLE_DECKEY || deckey == RIGHT_SHIFT_BLOCKER_DECKEY || deckey == RIGHT_SHIFT_MAZE_START_POS_DECKEY) {
-                    if ((SETTINGS->mazeRightShiftYomiPos || OUTPUT_STACK->isLastMazeBlocker() || deckey == RIGHT_SHIFT_MAZE_START_POS_DECKEY) && MAZEGAKI_NODE->RightShiftYomiStartPos()) {
-                        _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE: yomi start pos right shifted"));
+                    if ((SETTINGS->mazeRightShiftYomiPos || OUTPUT_STACK->isLastMazeBlocker() || deckey == RIGHT_SHIFT_MAZE_START_POS_DECKEY) && MAZEGAKI_INFO->RightShiftYomiStartPos()) {
+                        _LOG_DEBUGH(_T("NEXT: MAZEGAKI_INFO: yomi start pos right shifted"));
                         OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
-                        MAZEGAKI_NODE->ClearBlockerShiftFlag();
-                        SetNextNodeMaybe(MAZEGAKI_NODE.get());
+                        MAZEGAKI_INFO->ClearBlockerShiftFlag();
+                        SetNextNodeMaybe(MAZEGAKI_NODE_PTR);
                         return;
-                    } else if ((MAZEGAKI_NODE->IsBlockerShifted() || !SETTINGS->mazeRightShiftYomiPos) && MAZEGAKI_NODE->RightShiftBlocker()) {
-                        _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE: right shift blocker"));
-                        SetNextNodeMaybe(MAZEGAKI_NODE.get());
+                    } else if ((MAZEGAKI_INFO->IsBlockerShifted() || !SETTINGS->mazeRightShiftYomiPos) && MAZEGAKI_INFO->RightShiftBlocker()) {
+                        _LOG_DEBUGH(_T("NEXT: MAZEGAKI_INFO: right shift blocker"));
+                        SetNextNodeMaybe(MAZEGAKI_NODE_PTR);
                         return;
                     }
-                } else if (deckey == LEFT_SHIFT_MAZE_START_POS_DECKEY && MAZEGAKI_NODE->LeftShiftYomiStartPos()) {
-                        _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE: yomi start pos left shifted"));
+                } else if (deckey == LEFT_SHIFT_MAZE_START_POS_DECKEY && MAZEGAKI_INFO->LeftShiftYomiStartPos()) {
+                        _LOG_DEBUGH(_T("NEXT: MAZEGAKI_INFO: yomi start pos left shifted"));
                         OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
-                        MAZEGAKI_NODE->ClearBlockerShiftFlag();
-                        SetNextNodeMaybe(MAZEGAKI_NODE.get());
+                        MAZEGAKI_INFO->ClearBlockerShiftFlag();
+                        SetNextNodeMaybe(MAZEGAKI_NODE_PTR);
                         return;
-                } else if ((deckey == LEFT_TRIANGLE_DECKEY || deckey == LEFT_SHIFT_BLOCKER_DECKEY) && MAZEGAKI_NODE->LeftShiftBlocker()) {
-                    _LOG_DEBUGH(_T("NEXT: MAZEGAKI_NODE: left shift blocker"));
-                    SetNextNodeMaybe(MAZEGAKI_NODE.get());
+                } else if ((deckey == LEFT_TRIANGLE_DECKEY || deckey == LEFT_SHIFT_BLOCKER_DECKEY) && MAZEGAKI_INFO->LeftShiftBlocker()) {
+                    _LOG_DEBUGH(_T("NEXT: MAZEGAKI_INFO: left shift blocker"));
+                    SetNextNodeMaybe(MAZEGAKI_NODE_PTR);
                     return;
                 }
-                MAZEGAKI_NODE->ClearBlockerShiftFlag();
+                _LOG_DEBUGH(_T("PATH-D"));
+                MAZEGAKI_INFO->ClearBlockerShiftFlag();
             }
+            _LOG_DEBUGH(_T("PATH-E"));
 
             if (pNode && dynamic_cast<ZenkakuNode*>(pNode) == 0 && deckey == TOGGLE_ZENKAKU_CONVERSION) {
                 _LOG_DEBUGH(_T("CREATE: ZenkakuState"));
@@ -99,21 +105,25 @@ void State::DoDeckeyPreProc(int deckey) {
                 pNext->SetPrevState(this);
                 deckey = -1;    // この後は dekcey の処理をやらない
             } else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokeKeyOrShiftedKeyOrModeFuncKey(deckey)) {
+                // ルートストロークノードの生成
                 _LOG_DEBUGH(_T("CREATE: RootStrokeState"));
                 pNext = ROOT_STROKE_NODE->CreateState();
                 pNext->SetPrevState(this);
             }
         }
     }
+    _LOG_DEBUGH(_T("PATH-F"));
     //pNextNodeMaybe = nullptr;
     ClearNextNodeMaybe();
     _LOG_DEBUGH(_T("NextState=%s"), STATE_NAME_PTR(pNext));
     if (pNext) {
+        _LOG_DEBUGH(_T("PATH-G"));
         // 後続状態があれば、そちらを呼び出す ⇒ 新しい後続ノードがあればそれを一時的に記憶しておく(後半部で処理する)
         //pNextNodeMaybe = pNext->HandleDeckey(deckey);
         pNext->HandleDeckey(deckey);
         SetNextNodeMaybe(pNext->NextNodeMaybe());
     } else {
+        _LOG_DEBUGH(_T("PATH-H"));
         // 後続状態がなければ、ここでDECKEYをディスパッチする
         dispatchDeckey(deckey);
     }
@@ -527,6 +537,9 @@ void State::handleRightTriangle() { handleShiftKeys(RIGHT_TRIANGLE_DECKEY); }
 
 // ? ハンドラ
 void State::handleQuestion() { handleShiftKeys(QUESTION_DECKEY); }
+
+// left/right maze shift keys
+void State::handleLeftRightMazeShift(int deckey) { LOG_INFO(_T("CALLED: deckey=%xH(%d)"), deckey, deckey); }
 
 //-----------------------------------------------------------------------
 //// Shift+Space ハンドラ

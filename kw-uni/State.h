@@ -283,6 +283,9 @@ protected:
     // ? ハンドラ
     virtual void handleQuestion();
 
+    // left/right maze shift keys
+    virtual void handleLeftRightMazeShift(int deckey);
+
     //// Shift+Space ハンドラ
     //virtual void handleShiftSpace();
 
