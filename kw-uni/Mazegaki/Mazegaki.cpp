@@ -19,7 +19,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegaki)
 
-#if 1
+#if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
@@ -171,6 +171,7 @@ namespace {
             // ブロッカーがシフトされた直後か
             if (MAZEGAKI_INFO->IsBlockerShifted()) {
                 _LOG_DEBUGH(_T("JUST AFTER BLOCKER SHIFTED"));
+                if (!SETTINGS->mazegakiSelectFirstCand || MAZEGAKI_INFO->IsSelectFirstCandDisabled()) setCandidatesVKB();
                 return false;
             }
             _LOG_DEBUGH(_T("B:IsSelectFirstCandDisabled: %s, mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(MAZEGAKI_INFO->IsSelectFirstCandDisabled()), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
@@ -363,42 +364,25 @@ namespace {
         // < ハンドラ
         void handleLeftTriangle() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            handleLeftRightMazeShift(LEFT_TRIANGLE_DECKEY);
+            // 縦列鍵盤が表示されているときは、読み開始位置のシフトとなる
+            handleLeftRightMazeShift(LEFT_SHIFT_MAZE_START_POS_DECKEY);
         }
 
         // > ハンドラ
         void handleRightTriangle() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            handleLeftRightMazeShift(RIGHT_TRIANGLE_DECKEY);
+            // 縦列鍵盤が表示されているときは、読み開始位置のシフトとなる
+            handleLeftRightMazeShift(RIGHT_SHIFT_MAZE_START_POS_DECKEY);
         }
 
         // left/right maze shift keys
         void handleLeftRightMazeShift(int deckey) {
-            _LOG_DEBUGH(_T("CALLED: deckey=%xH(%d)"), deckey, deckey);
-            if (deckey == RIGHT_TRIANGLE_DECKEY || deckey == RIGHT_SHIFT_BLOCKER_DECKEY || deckey == RIGHT_SHIFT_MAZE_START_POS_DECKEY) {
-                if ((SETTINGS->mazeRightShiftYomiPos || OUTPUT_STACK->isLastMazeBlocker() || deckey == RIGHT_SHIFT_MAZE_START_POS_DECKEY) && MAZEGAKI_INFO->RightShiftYomiStartPos()) {
-                    _LOG_DEBUGH(_T("yomi start pos right shifted"));
-                    OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
-                    MAZEGAKI_INFO->ClearBlockerShiftFlag();
-                    DoProcOnCreated();
-                    return;
-                } else if ((MAZEGAKI_INFO->IsBlockerShifted() || !SETTINGS->mazeRightShiftYomiPos) && MAZEGAKI_INFO->RightShiftBlocker()) {
-                    _LOG_DEBUGH(_T("right shift blocker"));
-                    DoProcOnCreated();
-                    return;
-                }
-            } else if (deckey == LEFT_SHIFT_MAZE_START_POS_DECKEY && MAZEGAKI_INFO->LeftShiftYomiStartPos()) {
-                _LOG_DEBUGH(_T("yomi start pos left shifted"));
-                OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
-                MAZEGAKI_INFO->ClearBlockerShiftFlag();
-                DoProcOnCreated();
-                return;
-            } else if ((deckey == LEFT_TRIANGLE_DECKEY || deckey == LEFT_SHIFT_BLOCKER_DECKEY) && MAZEGAKI_INFO->LeftShiftBlocker()) {
-                _LOG_DEBUGH(_T("left shift blocker"));
-                DoProcOnCreated();
-                return;
+            _LOG_DEBUGH(_T("CALLED: %s, deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+            // ブロッカーや読み開始位置を左右にシフト
+            if (!MAZEGAKI_INFO->LeftRightShiftBlockerOrStartPos(deckey, [this]() { DoProcOnCreated();})) {
+                // シフトできなかった場合
+                setCandidatesVKB();
             }
-            setCandidatesVKB();
         }
 
         //// Ctrl-Space の処理 -- 第1候補を返す
@@ -696,6 +680,39 @@ bool MazegakiCommonInfo::IsJustAfterPrevXfer() {
 // 交ぜ書き実行時の直後状態にセット
 void MazegakiCommonInfo::SetJustAfterPrevXfer() {
     deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
+}
+
+// ブロッカーや読み開始位置を左右にシフト -- 左右シフトを実行したら callback を呼んで true を返す。そうでなければ false を返す
+bool MazegakiCommonInfo::LeftRightShiftBlockerOrStartPos(int deckey, std::function<void ()> callback) {
+    _LOG_DEBUGH(_T("CALLED: deckey=%xH(%d)"), deckey, deckey);
+    if (deckey == RIGHT_TRIANGLE_DECKEY || deckey == RIGHT_SHIFT_BLOCKER_DECKEY || deckey == RIGHT_SHIFT_MAZE_START_POS_DECKEY) {
+        if ((SETTINGS->mazeRightShiftYomiPos || OUTPUT_STACK->isLastMazeBlocker() || deckey == RIGHT_SHIFT_MAZE_START_POS_DECKEY) && MAZEGAKI_INFO->RightShiftYomiStartPos()) {
+            _LOG_DEBUGH(_T("yomi START POS right shift"));
+            OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
+            MAZEGAKI_INFO->ClearBlockerShiftFlag();
+            callback();
+            _LOG_DEBUGH(_T("SHIFTED"));
+            return true;
+        } else if ((MAZEGAKI_INFO->IsBlockerShifted() || !SETTINGS->mazeRightShiftYomiPos) && MAZEGAKI_INFO->RightShiftBlocker()) {
+            _LOG_DEBUGH(_T("right shift BLOCKER"));
+            callback();
+            _LOG_DEBUGH(_T("SHIFTED"));
+            return true;
+        }
+    } else if (deckey == LEFT_SHIFT_MAZE_START_POS_DECKEY && MAZEGAKI_INFO->LeftShiftYomiStartPos()) {
+        _LOG_DEBUGH(_T("yomi START POS left shift"));
+        OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
+        MAZEGAKI_INFO->ClearBlockerShiftFlag();
+        callback();
+        _LOG_DEBUGH(_T("SHIFTED"));
+        return true;
+    } else if ((deckey == LEFT_TRIANGLE_DECKEY || deckey == LEFT_SHIFT_BLOCKER_DECKEY) && MAZEGAKI_INFO->LeftShiftBlocker()) {
+        _LOG_DEBUGH(_T("left shift BLOCKER"));
+        callback();
+        _LOG_DEBUGH(_T("SHIFTED"));
+        return true;
+    }
+    return false;
 }
 
 // -------------------------------------------------------------------

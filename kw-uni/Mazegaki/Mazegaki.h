@@ -99,6 +99,9 @@ private:
     // 交ぜ書き実行時の直後状態にセット
     void SetJustAfterPrevXfer();
 
+    // ブロッカーや読み開始位置を左右にシフト -- 左右シフトを実行したら callback を呼んで true を返す。そうでなければ false を返す
+    bool LeftRightShiftBlockerOrStartPos(int deckey, std::function<void ()> callback);
+
 public:
     // 共有ノード
     std::unique_ptr<MazegakiNode> CommonNode;

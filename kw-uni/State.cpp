@@ -71,27 +71,10 @@ void State::DoDeckeyPreProc(int deckey) {
             // TODO: AD HOC
             if (MAZEGAKI_INFO) {
                 _LOG_DEBUGH(_T("PATH-C"));
-                if (deckey == RIGHT_TRIANGLE_DECKEY || deckey == RIGHT_SHIFT_BLOCKER_DECKEY || deckey == RIGHT_SHIFT_MAZE_START_POS_DECKEY) {
-                    if ((SETTINGS->mazeRightShiftYomiPos || OUTPUT_STACK->isLastMazeBlocker() || deckey == RIGHT_SHIFT_MAZE_START_POS_DECKEY) && MAZEGAKI_INFO->RightShiftYomiStartPos()) {
-                        _LOG_DEBUGH(_T("NEXT: MAZEGAKI_INFO: yomi start pos right shifted"));
-                        OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
-                        MAZEGAKI_INFO->ClearBlockerShiftFlag();
-                        SetNextNodeMaybe(MAZEGAKI_NODE_PTR);
-                        return;
-                    } else if ((MAZEGAKI_INFO->IsBlockerShifted() || !SETTINGS->mazeRightShiftYomiPos) && MAZEGAKI_INFO->RightShiftBlocker()) {
-                        _LOG_DEBUGH(_T("NEXT: MAZEGAKI_INFO: right shift blocker"));
-                        SetNextNodeMaybe(MAZEGAKI_NODE_PTR);
-                        return;
-                    }
-                } else if (deckey == LEFT_SHIFT_MAZE_START_POS_DECKEY && MAZEGAKI_INFO->LeftShiftYomiStartPos()) {
-                        _LOG_DEBUGH(_T("NEXT: MAZEGAKI_INFO: yomi start pos left shifted"));
-                        OUTPUT_STACK->setMazeBlocker();     // 変換のやり直しを有効にするため、末尾にブロッカーを設定する
-                        MAZEGAKI_INFO->ClearBlockerShiftFlag();
-                        SetNextNodeMaybe(MAZEGAKI_NODE_PTR);
-                        return;
-                } else if ((deckey == LEFT_TRIANGLE_DECKEY || deckey == LEFT_SHIFT_BLOCKER_DECKEY) && MAZEGAKI_INFO->LeftShiftBlocker()) {
-                    _LOG_DEBUGH(_T("NEXT: MAZEGAKI_INFO: left shift blocker"));
-                    SetNextNodeMaybe(MAZEGAKI_NODE_PTR);
+                // ブロッカーや読み開始位置を左右にシフト
+                if (MAZEGAKI_INFO->LeftRightShiftBlockerOrStartPos(deckey, [this]() {SetNextNodeMaybe(MAZEGAKI_NODE_PTR);})) {
+                    //シフトできた場合
+                    _LOG_DEBUGH(_T("LeftRightShiftBlockerOrStartPos: SUCCEEDED\nLEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
                     return;
                 }
                 _LOG_DEBUGH(_T("PATH-D"));
