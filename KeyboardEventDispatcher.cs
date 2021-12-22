@@ -215,19 +215,19 @@ namespace KanchokuWS
             public static bool IsRepeated(ExModKeyState state) { return state == ExModKeyState.REPEATED; }
 
             public void SetReleased() {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH($"Set RELEASED");
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:Set RELEASED");
                 KeyState = ExModKeyState.RELEASED;
             }
             public void SetPressed() {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH($"Set PRESSED");
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:Set PRESSED");
                 KeyState = ExModKeyState.PRESSED;
             }
             public void SetShifted() {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH($"Set SHIFTED");
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:Set SHIFTED");
                 KeyState = ExModKeyState.SHIFTED;
             }
             public void SetRepeated() {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH($"Set REPEATED");
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:Set REPEATED");
                 KeyState = ExModKeyState.REPEATED;
             }
 
@@ -237,9 +237,9 @@ namespace KanchokuWS
             public bool IsSingleShiftHitEffecive()
             {
                 if (isSingleShiftHitEffecive == null) {
-                    isSingleShiftHitEffecive = Settings.ActiveKey == Vkey || VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc(Vkey) || VirtualKeys.GetDecKeyFromCombo(0, Vkey) >= 0;
+                    isSingleShiftHitEffecive = Settings.ActiveKey == Vkey || VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc(Vkey);
                 }
-                if (Settings.LoggingDecKeyInfo) logger.DebugH($"IsSingleShiftHitEffecive={isSingleShiftHitEffecive}");
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:IsSingleShiftHitEffecive={isSingleShiftHitEffecive}");
                 return isSingleShiftHitEffecive.Value;
             }
 
@@ -257,7 +257,7 @@ namespace KanchokuWS
                 if (bShiftPlaneAssignedOn == null) {
                     bShiftPlaneAssignedOn = Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftModFlag(ModFlag, true);
                 }
-                if (Settings.LoggingDecKeyInfo) logger.DebugH($"decoderOn=True: IsShiftPlaneAssigned={bShiftPlaneAssignedOn}");
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:decoderOn=True: IsShiftPlaneAssigned={bShiftPlaneAssignedOn}");
                 return bShiftPlaneAssignedOn.Value;
             }
 
@@ -266,7 +266,7 @@ namespace KanchokuWS
                 if (bShiftPlaneAssignedOff == null) {
                     bShiftPlaneAssignedOff = Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftModFlag(ModFlag, false);
                 }
-                if (Settings.LoggingDecKeyInfo) logger.DebugH($"decoderOn=False: IsShiftPlaneAssigned={bShiftPlaneAssignedOff}");
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:decoderOn=False: IsShiftPlaneAssigned={bShiftPlaneAssignedOff}");
                 return bShiftPlaneAssignedOff.Value;
             }
 
@@ -729,6 +729,7 @@ namespace KanchokuWS
             // どうやら KeyboardHook で CallNextHookEx を呼ばないと次のキー入力の処理に移らないみたいだが、
             // 将来必要になるかもしれないので、下記処理を残しておく
             if (bHandlerBusy) {
+                 //logger.Warn(() => "bHandlerBusy=True");
                 if (vkeyQueue.Count < vkeyQueueMaxSize) {
                     vkeyQueue.Enqueue(vkey);
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
@@ -792,14 +793,14 @@ namespace KanchokuWS
                     return false;
                 } else if (vkey == (int)VirtualKeys.RSHIFT) {
                     // RSHIFT
-                    if (keyInfo.IsShiftPlaneAssigned(bDecoderOn)) {
-                        // 拡張シフト面が割り当てられている場合
-                        if (bPrevPressed) {
-                            keyboardDownHandler(vkey, leftCtrl, rightCtrl);
-                        }
-                    }
+                    //if (keyInfo.IsShiftPlaneAssigned(bDecoderOn)) {
+                    //    // 拡張シフト面が割り当てられている場合
+                    //    if (bPrevPressed) {
+                    //        keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                    //    }
+                    //}
                     if (keyInfo.IsSingleShiftHitEffecive()) {
-                        // 拡張シフト面が割り当てはないが、単打系ありの場合
+                        // 拡張シフト面が割り当ての有無にかかわらず、単打系ありの場合
                         if (bPrevPressed) {
                             // PRESSED状態だったら、ハンドラを呼び出す
                             keyboardDownHandler(vkey, leftCtrl, rightCtrl);
@@ -811,8 +812,9 @@ namespace KanchokuWS
                     // Space/RSHIFT 以外
                     if (bPrevPressed && keyInfo.IsShiftPlaneAssigned(bDecoderOn) && keyInfo.IsSingleShiftHitEffecive()) {
                         // 拡張シフト面が割り当てられ、かつ単打系がある拡張修飾キーで、それが押下状態の場合
-                        return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                        keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                     }
+                    return false;
                 }
             }
 

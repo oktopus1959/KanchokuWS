@@ -175,6 +175,12 @@ namespace KanchokuWS
         /// <summary> デコーダ機能に割り当てられた拡張修飾キー(space, Caps, alnum, nfer, xfer, Rshift)のVkeyを集めた集合 </summary>
         private static HashSet<uint> decoderFuncAssignedExModKeys = new HashSet<uint>();
 
+        /// <summary> 拡張修飾キー(space, Caps, alnum, nfer, xfer, Rshift)をデコーダ機能に割り当てられたキーの集合に追加 </summary>
+        public static void AddExModVkeyAssignedForDecoderFuncByVkey(uint vkey)
+        {
+            decoderFuncAssignedExModKeys.Add(vkey);
+        }
+
         /// <summary> インデックスで指定される拡張修飾キー(space, Caps, alnum, nfer, xfer, Rshift)をデコーダ機能に割り当てられたキーの集合に追加 </summary>
         public static void AddExModVkeyAssignedForDecoderFuncByIndex(int idx)
         {
@@ -673,6 +679,7 @@ namespace KanchokuWS
                                     if (mod == 0) {
                                         // 拡張修飾キー単打の場合は、キーの登録だけで、拡張シフトB面の割り当てはやらない
                                         AddDecKeyAndCombo(deckey, 0, vkey);
+                                        VirtualKeys.AddExModVkeyAssignedForDecoderFuncByVkey(vkey);
                                     } else {
                                         AddModConvertedDecKeyFromCombo(deckey, mod, vkey);
                                         if (isPlaneMappedModifier(mod) && !shiftPlaneForShiftModFlag.ContainsKey(mod)) {
