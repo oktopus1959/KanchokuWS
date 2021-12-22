@@ -729,9 +729,9 @@ namespace KanchokuWS
             // どうやら KeyboardHook で CallNextHookEx を呼ばないと次のキー入力の処理に移らないみたいだが、
             // 将来必要になるかもしれないので、下記処理を残しておく
             if (bHandlerBusy) {
-                 //logger.Warn(() => "bHandlerBusy=True");
+                logger.Warn(() => "bHandlerBusy=True");
                 if (vkeyQueue.Count < vkeyQueueMaxSize) {
-                    vkeyQueue.Enqueue(vkey);
+                    vkeyQueue.Enqueue(kanchokuCode);
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
                 }
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-C: result=True");
