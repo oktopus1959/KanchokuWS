@@ -258,6 +258,7 @@ namespace {
         // Shift飾修されたキー
         void handleShiftKeys(int deckey) {
             _LOG_DEBUGH(_T("ENTER: %s, deckey=%xH(%d), hiraConvPlane=%d"), NAME_PTR, deckey, deckey, SETTINGS->hiraganaToKatakanaShiftPlane);
+            STATE_COMMON->SyncFirstStrokeKeyCount();    // 第1ストロークキーカウントの同期
             if (SETTINGS->hiraganaToKatakanaShiftPlane > 0 &&
                 DECKEY_TO_SHIFT_PLANE(deckey) == SETTINGS->hiraganaToKatakanaShiftPlane &&
                 utils::contains(VkbTableMaker::GetHiraganaFirstDeckeys(), UNSHIFT_DECKEY(deckey))) {
@@ -266,6 +267,7 @@ namespace {
                 shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
                 handleStrokeKeys(UNSHIFT_DECKEY(deckey));
             } else {
+                // その他の(拡張)シフト
                 //bUnnecessary = true;            // これをやらないと、RootStrokeTable が残ってしまう
                 //State::handleShiftKeys(deckey);
                 StrokeTableState::handleStrokeKeys(deckey);
