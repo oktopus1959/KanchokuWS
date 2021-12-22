@@ -23,8 +23,10 @@ public:
 
     wchar_t GetCharFromDeckey(int deckeyId, wchar_t defChar = 0) {
         if (deckeyId >= 0) {
-            if (deckeyId < NORMAL_DECKEY_NUM) return normalChars[deckeyId];
-            if (deckeyId < STROKE_DECKEY_NUM) return shiftedChars[deckeyId - SHIFT_DECKEY_START];
+            int id = deckeyId;
+            if (id >= 0 && id < NORMAL_DECKEY_NUM) return normalChars[id];
+            id = deckeyId - SHIFT_DECKEY_START;
+            if (id >= 0 && id < SHIFT_DECKEY_NUM) return shiftedChars[id];
         }
         return defChar;
     }
