@@ -5086,7 +5086,8 @@ namespace KanchokuWS
             this.textBox_bushuAssocSelectCount.Name = "textBox_bushuAssocSelectCount";
             this.textBox_bushuAssocSelectCount.Size = new System.Drawing.Size(36, 19);
             this.textBox_bushuAssocSelectCount.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_bushuAssocSelectCount, "連想直接出力の試行回数を設定します。(最大5回)\r\n\r\n試行回数を超えて繰り返し連想直接出力を呼び出した場合は、\r\n連想文字一覧からの選択画面に遷移します。");
+            this.toolTip1.SetToolTip(this.textBox_bushuAssocSelectCount, "連想直接出力の試行回数を設定します。(最大5回)\r\n\r\n連想直接出力機能を連続して呼び出すと、連想文字一覧の\r\n先頭から順に出力文字を取得して置換していきます。\r" +
+        "\n\r\n試行回数を超えて連想直接出力を呼び出した場合は、連想\r\n文字一覧からの選択画面に遷移します。");
             // 
             // label_keyAssignReload
             // 
