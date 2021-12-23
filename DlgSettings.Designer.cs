@@ -2415,7 +2415,7 @@ namespace KanchokuWS
             this.label69.Size = new System.Drawing.Size(323, 90);
             this.label69.TabIndex = 1;
             this.label69.Text = "機能を呼び出すための打鍵列を設定します。\r\n\r\n打鍵列は、漢直キーコード(00～49)をカンマ区切りで並べたもの。\r\nコードに S/s/A/a/B/b を前接させ" +
-    "るとシフト(拡張シフト)コードになる。\r\nまた X/x を前接させると特殊キーになる。\r\nキーコードについては、ここのツールチップを参照。";
+    "るとシフト(拡張シフト)コードになる。\r\nまた X/x を前接させると拡張修飾キーや特殊キーになる。\r\nキーコードについては、ここのツールチップを参照。";
             this.toolTip1.SetToolTip(this.label69, resources.GetString("label69.ToolTip"));
             // 
             // label99
@@ -5329,8 +5329,8 @@ namespace KanchokuWS
             this.label110.Size = new System.Drawing.Size(217, 90);
             this.label110.TabIndex = 2;
             this.label110.Text = "(カッコ内は 106 key による打鍵文字)\r\n交ぜ書き変換　　　「S40」  (Shift+Space)\r\n部首合成　　　　   「26,23」  ( jf)" +
-    "\r\n全角変換(モード)　    「X3」  (CapsLock)\r\nカタカナ変換(モード)　「kana」 (ひらがな)\r\nカタカナ変換(一括)　 「47」 (]" +
-    ")";
+    "\r\n全角変換(モード)　    「X3」  (CapsLock)\r\nカタカナ変換(モード)　「kana」 (ひらがな)\r\nカタカナ変換(一括)    「B27」" +
+    " (シフトB面のK)";
             this.toolTip1.SetToolTip(this.label110, resources.GetString("label110.ToolTip"));
             // 
             // DlgSettings
