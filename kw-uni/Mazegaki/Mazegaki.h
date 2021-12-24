@@ -38,9 +38,6 @@ private:
     // 前回変換時のデコーダキーカウント
     size_t prevDeckeyCount = 0;
 
-    // 先頭候補の自動選択を一時的に中止する
-    bool selectFirstCandDisabled = false;
-
     // シフトされた読み長
     size_t shiftedTailYomiLen = 0;
 
@@ -50,8 +47,8 @@ private:
     // 交ぜ書き中
     bool inMazegakiMode = false;
 
-    // ブロッカーがシフトされた
-    bool blockerShifted = false;
+    // ブロッカーがシフトされたときのデコーダキーカウント
+    size_t blockerShiftedDeckeyCount = 0;
 
     // 再変換モード
     bool reXferMode = false;
@@ -59,6 +56,9 @@ private:
 public:
     // 初期化
     void Initialize(bool bMazegakiMode = false);
+
+    // 交ぜ書き変換中か
+    bool IsInMazegakiMode();
 
     // 交ぜ書き変換終了の直後か
     bool IsJustAfterPrevXfer();
@@ -81,13 +81,16 @@ public:
     // ブロッカーを右シフトする
     bool RightShiftBlocker();
 
-    // ブロッカーがシフトされたか
-    bool IsBlockerShifted();
+    // ブロッカーがシフトされた直後か
+    bool IsJustAfterBlockerShifted();
+
+    // ブロッカーがシフトされた直後の状態にする
+    void SetJustAfterBlockerShifted();
 
     // 今回の結果を元に戻すための情報を保存 (yomi は、再変換をする際の元の読みになる)
     void SetYomiInfo(const MString& yomi, size_t leadLen, size_t outputLen);
 
-    // n打鍵によるMaze呼び出し用に情報をセットする(4ストロークまでOK)⇒前回の出力長を返す
+    // 前回の読みと出力長を返す
     size_t GetPrevYomiInfo(MString& yomi);
 
     // 前回の出力長を返す
@@ -95,12 +98,6 @@ public:
 
     // 前回のリード部長を返す
     size_t GetPrevLeadLen();
-
-    // 先頭候補の自動選択を一時的に中止する
-    void DisableSelectFirstCand();
-
-    // 先頭候補の自動選択が一時的に中止されているか
-    bool IsSelectFirstCandDisabled();
 
     // シフトされた読み長の取得
     size_t GetShiftedTailYomiLen();

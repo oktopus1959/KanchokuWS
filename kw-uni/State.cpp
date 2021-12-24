@@ -69,10 +69,10 @@ void State::DoDeckeyPreProc(int deckey) {
         if (!pNext) {
             _LOG_DEBUGH(_T("PATH-B"));
             // 交ぜ書き状態から抜けた直後にブロッカーや変換開始位置のシフトをやる場合のための処理
-            if (MAZEGAKI_INFO) {
+            if (MAZEGAKI_INFO && !MAZEGAKI_INFO->IsInMazegakiMode()) {
                 _LOG_DEBUGH(_T("PATH-C"));
-                // ブロッカーや読み開始位置を左右にシフト
-                if (MAZEGAKI_INFO->LeftRightShiftBlockerOrStartPos(deckey, [this]() {SetNextNodeMaybe(MAZEGAKI_NODE_PTR);})) {
+                // ブロッカーや読み開始位置を左右にシフト -- 読み位置がシフトされて再変換モードになったら、交ぜ書き状態を生成する
+                if (MAZEGAKI_INFO->LeftRightShiftBlockerOrStartPos(deckey, [this]() {if (MAZEGAKI_INFO->IsReXferMode()) SetNextNodeMaybe(MAZEGAKI_NODE_PTR);})) {
                     //シフトできた場合
                     _LOG_DEBUGH(_T("LeftRightShiftBlockerOrStartPos: SUCCEEDED\nLEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
                     return;
@@ -381,6 +381,12 @@ void State::dispatchDeckey(int deckey) {
             break;
         case RIGHT_TRIANGLE_DECKEY:
             handleRightTriangle();
+            break;
+        case LEFT_SHIFT_BLOCKER_DECKEY:
+        case RIGHT_SHIFT_BLOCKER_DECKEY:
+        case LEFT_SHIFT_MAZE_START_POS_DECKEY:
+        case RIGHT_SHIFT_MAZE_START_POS_DECKEY:
+            handleLeftRightMazeShift(deckey);
             break;
         case QUESTION_DECKEY:
             handleQuestion();
