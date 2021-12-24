@@ -19,7 +19,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegaki)
 
-#if 0
+#if 1
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
@@ -152,9 +152,13 @@ namespace {
         MazegakiState(MazegakiNode* pN) {
             LOG_INFO(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
+            MAZEGAKI_INFO->Initialize(true);
         }
 
-        ~MazegakiState() { };
+        ~MazegakiState() {
+            MAZEGAKI_INFO->Initialize(false);
+            MAZEGAKI_INFO->SetJustAfterPrevXfer();
+        };
 
 #define NAME_PTR (Name.c_str())
 #define MY_NODE ((MazegakiNode*)pNode)
@@ -165,109 +169,100 @@ namespace {
 
             if (!MAZEGAKI_DIC) return false;
 
-            MAZEGAKI_INFO->SetJustAfterPrevXfer();
+            //MAZEGAKI_INFO->SetJustAfterPrevXfer();
 
-            _LOG_DEBUGH(_T("A:IsSelectFirstCandDisabled: %s, mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(MAZEGAKI_INFO->IsSelectFirstCandDisabled()), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
-            // ブロッカーがシフトされた直後か
+            _LOG_DEBUGH(_T("A:ReXferMode: %s, mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(MAZEGAKI_INFO->IsReXferMode()), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
+
+            // ブロッカーがシフトされた直後であれば、変換処理は行わない
             if (MAZEGAKI_INFO->IsBlockerShifted()) {
                 _LOG_DEBUGH(_T("JUST AFTER BLOCKER SHIFTED"));
-                if (!SETTINGS->mazegakiSelectFirstCand || MAZEGAKI_INFO->IsSelectFirstCandDisabled()) setCandidatesVKB();
+                if (!SETTINGS->mazegakiSelectFirstCand || MAZEGAKI_INFO->IsReXferMode()) {
+                    // 先頭候補の直接出力モードでなければ、仮想鍵盤に候補を表示する
+                    setCandidatesVKB();
+                    _LOG_DEBUGH(_T("LEAVE: CHAINED"));
+                    return true;
+                }
+                _LOG_DEBUGH(_T("LEAVE: RELEASED"));
                 return false;
             }
-            _LOG_DEBUGH(_T("B:IsSelectFirstCandDisabled: %s, mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(MAZEGAKI_INFO->IsSelectFirstCandDisabled()), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
+
+            _LOG_DEBUGH(_T("B:IsReXferMode: %s, mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(MAZEGAKI_INFO->IsReXferMode()), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
 
             bool prevXfered = false;    // 直前に変換していたか
             MString prevYomi;           // 直前の変換の時の読み
             size_t prevLeadLen = 0;     // 直前のリード部の長さ
             size_t prevOutLen = 0;      // 直前の出力形の長さ
 
-            // 末尾がブロッカーなら、直前の変換をやり直す
-            if (OUTPUT_STACK->isLastMazeBlocker()) {
+            // 再変換モードなら、直前の変換をやり直す
+            if (MAZEGAKI_INFO->IsReXferMode()) {
                 prevLeadLen = MAZEGAKI_INFO->GetPrevLeadLen();
                 prevOutLen = MAZEGAKI_INFO->GetPrevYomiInfo(prevYomi);
                 prevXfered = !prevYomi.empty() && prevOutLen > 0;
-                _LOG_DEBUGH(_T("LAST MAZE BLOCKER: prevLeadLen=%d, prevOutLen=%d, prevXfered=%s"), prevLeadLen, prevOutLen, BOOL_TO_WPTR(prevXfered));
+                _LOG_DEBUGH(_T("RE XFER MODE: prevLeadLen=%d, prevOutLen=%d, prevXfered=%s"), prevLeadLen, prevOutLen, BOOL_TO_WPTR(prevXfered));
             }
-            _LOG_DEBUGH(_T("C:IsSelectFirstCandDisabled: %s, mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(MAZEGAKI_INFO->IsSelectFirstCandDisabled()), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
+            _LOG_DEBUGH(_T("C:IsReXferMode: %s, mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(MAZEGAKI_INFO->IsReXferMode()), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
 
-            size_t shiftedYomiLen = prevXfered ? MAZEGAKI_INFO->GetShiftedYomiLen() : 1000;
-            _LOG_DEBUGH(_T("prevXfered=%s, prevYomi=%s, prevOutLen=%d, shiftedYomiLen=%d"), BOOL_TO_WPTR(prevXfered), MAKE_WPTR(prevYomi), prevOutLen, shiftedYomiLen);
-            _LOG_DEBUGH(_T("D:IsSelectFirstCandDisabled: %s, mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(MAZEGAKI_INFO->IsSelectFirstCandDisabled()), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
+            size_t tailYomiLen = prevXfered ? MAZEGAKI_INFO->GetShiftedTailYomiLen() : 1000;
+            _LOG_DEBUGH(_T("prevXfered=%s, prevYomi=%s, prevOutLen=%d, tailYomiLen=%d"), BOOL_TO_WPTR(prevXfered), MAKE_WPTR(prevYomi), prevOutLen, tailYomiLen);
+            _LOG_DEBUGH(_T("D:IsReXferMode: %s, mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(MAZEGAKI_INFO->IsReXferMode()), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
 
             // 最大読み長までの長さの読みに対する交ぜ書き候補を全て取得する
             OUTPUT_STACK->unsetMazeBlocker();
-            auto getPrevFullYomi = [prevYomi, prevLeadLen, prevOutLen, shiftedYomiLen]() {
-                if (prevYomi.size() >= shiftedYomiLen) {
-                    return utils::tail_substr(prevYomi, shiftedYomiLen);
+            auto getPrevFullYomi = [prevYomi, prevOutLen, tailYomiLen]() {
+                if (prevYomi.size() >= tailYomiLen) {
+                    return utils::tail_substr(prevYomi, tailYomiLen);
                 } else {
                     if (prevOutLen == 0) return OUTPUT_STACK->BackStringUptoMazeOrHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen);
                     // prevLeadLen が1以上の場合は、直前の状態に戻れる
+                    size_t prevLeadLen = tailYomiLen > prevOutLen ? tailYomiLen - prevOutLen : 0;
                     auto leadYomi = OUTPUT_STACK->BackStringUptoMazeOrHistBlockerOrPunct(prevLeadLen + prevOutLen);
                     _LOG_DEBUGH(_T("prevLeadLen=%d, prevOutLen=%d, leadYomi=%s"), prevLeadLen, prevOutLen, MAKE_WPTR(leadYomi));
                     return leadYomi.substr(0, prevLeadLen) + prevYomi;
                 }
             };
-            MString fullYomi0 = prevXfered ? getPrevFullYomi() : OUTPUT_STACK->BackStringUptoMazeOrHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen);
-            _LOG_DEBUGH(_T("fullYomi0='%s'"), MAKE_WPTR(fullYomi0));
-            if (fullYomi0.size() < shiftedYomiLen) shiftedYomiLen = fullYomi0.size();
+            MString fullYomi = prevXfered ? getPrevFullYomi() : OUTPUT_STACK->BackStringUptoMazeOrHistBlockerOrPunct(SETTINGS->mazeYomiMaxLen);
+            if (fullYomi.size() < tailYomiLen) tailYomiLen = fullYomi.size();
+            _LOG_DEBUGH(_T("fullYomi='%s', tailYomiLen=%d"), MAKE_WPTR(fullYomi), tailYomiLen);
+
+            // 変換候補の取得
             const std::vector<MazeResult>* pCands = nullptr;
-            MString fullYomi = fullYomi0;
-            while (true) {
-                _LOG_DEBUGH(_T("fullYomi='%s'"), MAKE_WPTR(fullYomi));
-                pCands = &candsByLen.GetAllCandidates(fullYomi);
-                _LOG_DEBUGH(_T("pCands->size=%d"), pCands->size());
-                if (pCands->empty()) {
-                    // チェイン不要
-                    _LOG_DEBUGH(_T("LEAVE: no candidate"));
-                    MAZEGAKI_INFO->SetJustAfterPrevXfer();
-                    return false;
-                }
-                LOG_INFOH(_T("E:IsSelectFirstCandDisabled: %s, mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(MAZEGAKI_INFO->IsSelectFirstCandDisabled()), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
-                //if (!MAZEGAKI_INFO->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand) {
-                //    // 先頭候補の自動出力モードの場合
-                //    const auto& cand = pCands->front();
-                //    if (!cand.resultStr.empty() && cand.resultStr == fullYomi.substr(0, cand.resultStr.size())) {
-                //        // 先頭候補の変換形が読みと一致していた、つまり変化していなかった ⇒ 変換形の(語尾を含んだ)長さのところから再変換する
-                //        _LOG_DEBUGH(_T("SAME XFER as yomi: '%s'"), MAKE_WPTR(cand.resultStr));
-                //        fullYomi = fullYomi.substr(cand.xferLen);
-                //        if (fullYomi.empty()) {
-                //            if (prevXfered) {
-                //                // 変換位置をずらした別の変換形が得られなかった場合でも、再変換のときはそれを採用する
-                //                // 例：「ひどい目にあう」⇒「ひど色目にあう」⇒ '>' ⇒「ひど色|目にあう」<- いまココ
-                //                //      なので、「目にあう」を採用し、「ひどい|目にあう」に直す必要あり
-                //                break;
-                //            }
-                //        }
-                //        continue;
-                //    }
-                //}
-                break;
+            pCands = &candsByLen.GetAllCandidates(fullYomi);
+            _LOG_DEBUGH(_T("pCands->size=%d"), pCands->size());
+            if (pCands->empty()) {
+                // 候補が得られなかった
+                // チェイン不要 -- 交ぜ書き変換実行直後状態にセット
+                _LOG_DEBUGH(_T("LEAVE: no candidate"));
+                //MAZEGAKI_INFO->SetJustAfterPrevXfer();
+                return false;
             }
 
-            if (pCands->size() == 1 || (!MAZEGAKI_INFO->IsSelectFirstCandDisabled() && SETTINGS->mazegakiSelectFirstCand)) {
+            // 変換候補の読みの長さ
+            size_t candYlen = candsByLen.GetFirstCandidateYomi().size();
+            if (candYlen > tailYomiLen) candYlen = tailYomiLen;
+            _LOG_DEBUGH(_T("candYlen=%d, tailYomiLen=%d, prevYomi.size=%d"), candYlen, tailYomiLen, prevYomi.size());
+            if (pCands->size() == 1 || (!MAZEGAKI_INFO->IsReXferMode() && SETTINGS->mazegakiSelectFirstCand)) {
                 // 読みの長さ候補が１つしかなかった、または先頭候補の自動出力モードなのでそれを選択して出力
                 const auto& cand = pCands->front();
                 size_t candLen = cand.resultStr.size();
-                size_t candYlen = candsByLen.GetFirstCandidateYomi().size();
-                _LOG_DEBUGH(_T("candLen=%d, candYlen=%d"), candLen, candYlen);
+                _LOG_DEBUGH(_T("candLen=%d"), candLen);
                 if (prevXfered) {
                     MString lead;
                     MString yomi;
                     size_t numBS = prevOutLen;
-                    if (prevYomi.size() >= shiftedYomiLen) {
+                    if (prevYomi.size() >= tailYomiLen) {
                         lead = prevYomi.substr(0, prevYomi.size() - candYlen);
                         yomi = utils::last_substr(prevYomi, candYlen);
                     } else {
-                        yomi = utils::last_substr(fullYomi0, candYlen);
-                        lead = fullYomi0.substr(0, fullYomi0.size() - candYlen);
+                        yomi = utils::last_substr(fullYomi, candYlen);
+                        lead = fullYomi.substr(0, fullYomi.size() - candYlen);
                         numBS += prevLeadLen;
                         size_t maxYomiLen = OUTPUT_STACK->TailSizeUptoMazeOrHistBlockerOrPunct();
-                        _LOG_DEBUGH(_T("yomi=%s, lead=%s, prevYomi=%s, shiftedYomiLen=%d, numBS=%d, prevOutLen=%d"), MAKE_WPTR(yomi), MAKE_WPTR(lead), MAKE_WPTR(prevYomi), shiftedYomiLen, numBS, prevOutLen);
+                        _LOG_DEBUGH(_T("yomi=%s, lead=%s, prevYomi=%s, tailYomiLen=%d, numBS=%d, prevOutLen=%d"), MAKE_WPTR(yomi), MAKE_WPTR(lead), MAKE_WPTR(prevYomi), tailYomiLen, numBS, prevOutLen);
                         if (numBS > maxYomiLen) numBS = maxYomiLen;
                     }
                     // 「がかなる」⇒「画家なる」⇒">"⇒「がか奈留」のケース
                     // prevYomi=がかなる
-                    // shiftedYomiLen=3 (かなる)
+                    // tailYomiLen=3 (かなる)
                     // candYlen = 2 (なる)
                     // leadStr=がか
                     // candStr=奈留
@@ -288,17 +283,23 @@ namespace {
                         outputStringAndPostProc(EMPTY_MSTR, cand, candYlen, nullptr, 0);
                     }
                 }
-                // チェイン不要
+                // チェイン不要 -- 交ぜ書き変換実行直後状態にセット
+                MAZEGAKI_INFO->SetJustAfterPrevXfer();
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));
                 return false;
             }
+
             // 直前の変換があればそれを取り消す
             if (prevXfered) {
                 STATE_COMMON->SetOutString(prevYomi, prevOutLen);
             }
-            // 今回の結果を元に戻すための情報を保存(ブロッカーや読み開始位置のシフトで必要になる)
-            _LOG_DEBUGH(_T("SET_YOMI_INFO: %s, outputLen=%d"), MAKE_WPTR(fullYomi0), fullYomi0.size());
-            MAZEGAKI_INFO->SetYomiInfo(fullYomi0, 0, fullYomi0.size());
+            {
+                // 今回の結果を元に戻すための情報を保存(ブロッカーや読み開始位置のシフトで必要になる)
+                size_t outLen = fullYomi.size() < candYlen ? fullYomi.size() : candYlen;
+                size_t leadLen = fullYomi.size() - outLen;
+                _LOG_DEBUGH(_T("SET_YOMI_INFO: yomi=%s, leadLen=%d, outputLen=%d"), MAKE_WPTR(fullYomi.substr(leadLen)), leadLen, outLen);
+                MAZEGAKI_INFO->SetYomiInfo(fullYomi.substr(leadLen), leadLen, outLen);
+            }
             // 候補があったので仮想鍵盤に表示
             setCandidatesVKB();
             // 前状態にチェインする
@@ -510,30 +511,6 @@ namespace {
 // MazegakiNode - 交ぜ書き機能ノード
 DEFINE_CLASS_LOGGER(MazegakiNode);
 
-#if 0
-// 変換結果を元に戻すための変換前の読み
-MString MazegakiNode::prevYomi;
-
-// 変換結果を元に戻すためのリード文字列の長さ
-// 「ひど|い目にあった」⇒「ひどい目に|遭った」のときの「い目に」の長さ)
-size_t MazegakiNode::prevLeadLen = 0;
-
-// 変換結果を元に戻すための変換形の長さ
-size_t MazegakiNode::prevOutputLen = 0;
-
-// 前回変換時のホットキーカウント
-size_t MazegakiNode::deckeyCount = 0;
-
-// 先頭候補の自動選択を一時的に中止する
-bool MazegakiNode::selectFirstCandDisabled = false;
-
-// シフトされた読み長
-size_t MazegakiNode::shiftedYomiLen = 0;
-
-// ブロッカーがシフトされた
-bool MazegakiNode::blockerShifted = false;
-#endif
-
 // コンストラクタ
 MazegakiNode::MazegakiNode() {
     LOG_INFO(_T("CALLED: constructor"));
@@ -577,30 +554,83 @@ void MazegakiCommonInfo::CreateCommonInfo() {
     }
 }
 
+// 初期化
+void MazegakiCommonInfo::Initialize(bool bMazegakiMode) {
+    inMazegakiMode = bMazegakiMode;
+    blockerShifted = false;
+    shiftedTailYomiLen = 1000;
+    prevShiftedTailYomiLen = 1000;
+    prevDeckeyCount = 0;
+    selectFirstCandDisabled = false;
+    reXferMode = false;
+}
+
+// 交ぜ書き変換終了の直後か
+bool MazegakiCommonInfo::IsJustAfterPrevXfer() {
+    size_t totalDecKeyCount = STATE_COMMON->GetTotalDecKeyCount();
+    size_t firstStrokeCnt = STATE_COMMON->GetFirstStrokeKeyCount();
+    bool result = totalDecKeyCount <= prevDeckeyCount + 1 || firstStrokeCnt == prevDeckeyCount + 1;
+    _LOG_DEBUGH(_T("RESULT=%s: totalDecKeyCount=%d, firstStrokeCnt=%d, prevDeckeyCount=%d"), BOOL_TO_WPTR(result), totalDecKeyCount, firstStrokeCnt, prevDeckeyCount);
+    return result;
+}
+
+// 交ぜ書き変換実行直後状態にセット
+void MazegakiCommonInfo::SetJustAfterPrevXfer() {
+    _LOG_DEBUGH(_T("CALLED: SetJustAfterPrevXfer"));
+    prevDeckeyCount = STATE_COMMON->GetTotalDecKeyCount();
+}
+
+// 再変換モードか
+bool MazegakiCommonInfo::IsReXferMode() {
+    _LOG_DEBUGH(_T("IsReXferMode=%s"), BOOL_TO_WPTR(reXferMode));
+    return reXferMode;
+}
+
+// 再変換モードにセット
+void MazegakiCommonInfo::SetReXferMode() {
+    _LOG_DEBUGH(_T("CALLED: SetReXferMode"));
+    reXferMode = true;
+}
+
+// ブロッカーフラグをクリアする
+void MazegakiCommonInfo::ClearBlockerShiftFlag() {
+    _LOG_DEBUGH(_T("CALLED: ClearBlockerShiftFlag"));
+    blockerShifted = false;
+}
+
 // ブロッカーを左シフトする
 bool MazegakiCommonInfo::LeftShiftBlocker() {
-    blockerShifted = IsJustAfterPrevXfer();
+    //blockerShifted = IsJustAfterPrevXfer();
     _LOG_DEBUGH(_T("LeftShiftBlocker: blockerShifted=%s"), BOOL_TO_WPTR(blockerShifted));
-    if (blockerShifted) OUTPUT_STACK->leftShiftMazeBlocker();
-    return blockerShifted;
+    if (IsJustAfterPrevXfer() || blockerShifted) {
+        OUTPUT_STACK->leftShiftMazeBlocker();
+    } else {
+        // 交ぜ書きで無い状態での左シフトは、末尾から1つ左の位置にブロッカーを置く
+        _LOG_DEBUGH(_T("CALL setMazeBlocker(1)"));
+        OUTPUT_STACK->setMazeBlocker(1);
+    }
+    blockerShifted = true;
+    return IsJustAfterPrevXfer();
 }
 
 // ブロッカーを右シフトする
 bool MazegakiCommonInfo::RightShiftBlocker() {
-    blockerShifted = IsJustAfterPrevXfer();
+    //blockerShifted = IsJustAfterPrevXfer();
     _LOG_DEBUGH(_T("RightShiftBlocker: blockerShifted=%s"), BOOL_TO_WPTR(blockerShifted));
-    if (blockerShifted) OUTPUT_STACK->rightShiftMazeBlocker();
-    return blockerShifted;
+    OUTPUT_STACK->rightShiftMazeBlocker();
+    blockerShifted = true;
+    return IsJustAfterPrevXfer();
 }
 
-// ブロッカーがシフトされたか
+// 交ぜ書き直後または交ぜ書き中で、かつブロッカーがシフトされたか
 bool MazegakiCommonInfo::IsBlockerShifted() {
-    bool shifted = IsJustAfterPrevXfer() && blockerShifted;
-    if (shifted) {
-        // 続けてシフトできるようにするため、次も交ぜ書き変換直後という扱いにする
-        deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
-    }
-    return shifted;
+    _LOG_DEBUGH(_T("inMazegakiMode=%s, IsJustAfterPrevXfer=%s, blockerShifted=%s"), BOOL_TO_WPTR(inMazegakiMode), BOOL_TO_WPTR(IsJustAfterPrevXfer()), BOOL_TO_WPTR(blockerShifted));
+    return (inMazegakiMode || IsJustAfterPrevXfer()) && blockerShifted;
+    //if (shifted) {
+    //    // 続けてシフトできるようにするため、次も交ぜ書き変換直後という扱いにする
+    //    SetJustAfterPrevXfer();
+    //}
+    //return shifted;
 }
 
 // 今回の結果を元に戻すための情報を保存 (yomi は、再変換をする際の元の読みになる)
@@ -608,78 +638,94 @@ void MazegakiCommonInfo::SetYomiInfo(const MString& yomi, size_t leadLen, size_t
     prevYomi = yomi;
     prevLeadLen = leadLen;
     prevOutputLen = outputLen;
-    shiftedYomiLen = yomi.size();
-    deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
+    shiftedTailYomiLen = yomi.size();
+    SetJustAfterPrevXfer();
     selectFirstCandDisabled = false;
+    ClearBlockerShiftFlag();
+    _LOG_DEBUGH(_T("prevYomi=%s, prevLeadLen=%d, prevOutputLen=%d, shiftedTailYomiLen=%d, prevShiftedTailYomiLen=%d"), MAKE_WPTR(prevYomi), prevLeadLen, prevOutputLen, shiftedTailYomiLen, prevShiftedTailYomiLen);
 }
 
 // 前回の出力長を返す
 size_t MazegakiCommonInfo::GetPrevOutputLen() {
-    return (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) ? prevOutputLen : 0;
+    //return (STATE_COMMON->GetTotalDecKeyCount() <= prevDeckeyCount + 4) ? prevOutputLen : 0;
+    return IsJustAfterPrevXfer() ? prevOutputLen : 0;
 }
 
 // 前回のリード部長を返す
 size_t MazegakiCommonInfo::GetPrevLeadLen() {
-    return (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) ? prevLeadLen : 0;
+    //return (STATE_COMMON->GetTotalDecKeyCount() <= prevDeckeyCount + 4) ? prevLeadLen : 0;
+    return IsJustAfterPrevXfer() ? prevLeadLen : 0;
 }
 
-// n打鍵によるMaze呼び出し用に情報をセットする(4ストロークまでOK)⇒前回の出力長を返す
+// 先頭候補の自動選択を一時的に中止する
+void MazegakiCommonInfo::DisableSelectFirstCand() {
+    selectFirstCandDisabled = true;
+}
+
+// 先頭候補の自動選択が一時的に中止されているか
+bool MazegakiCommonInfo::IsSelectFirstCandDisabled() {
+    return selectFirstCandDisabled;
+}
+
+// シフトされた読み長の取得
+size_t MazegakiCommonInfo::GetShiftedTailYomiLen() {
+    //if (shiftedTailYomiLen < prevYomi.size()) selectFirstCandDisabled = false;
+    return shiftedTailYomiLen;
+}
+
+// 前回の読みと出力長を返す
 size_t MazegakiCommonInfo::GetPrevYomiInfo(MString& yomi) {
-    if (STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 4) {
-        selectFirstCandDisabled = true; // これは再変換のときに縦列候補表示にするために必要
+    if (IsJustAfterPrevXfer()) {
+        //DisableSelectFirstCand(); // これは再変換のときに縦列候補表示にするために必要
         yomi = prevYomi;
         return prevOutputLen;
     }
-    selectFirstCandDisabled = false;
+    //selectFirstCandDisabled = false;
     return 0;
 }
 
-// Esc用
+// Esc用 -- 直前の交ぜ書き状態に戻す
 size_t MazegakiCommonInfo::GetPrevYomiInfoIfJustAfterMaze(MString& yomi) {
     if (IsJustAfterPrevXfer()) {
-        selectFirstCandDisabled = true;
+        //selectFirstCandDisabled = true;
         yomi = prevYomi;
         size_t prevOutLen = prevOutputLen;
         prevLeadLen = 0;
         prevOutputLen = 0;
         return prevOutLen;
     }
-    selectFirstCandDisabled = false;
+    //selectFirstCandDisabled = false;
     return 0;
 }
 
 // 読み長を長くする(読み開始位置を左にシフトする) (前回の変換の直後でなければ false を返す)
 bool MazegakiCommonInfo::LeftShiftYomiStartPos() {
     if (IsJustAfterPrevXfer()) {
-        ++shiftedYomiLen;
-        _LOG_DEBUGH(_T("shiftedYomiLen=%d, result=True"), shiftedYomiLen);
+        ++shiftedTailYomiLen;
+        if (shiftedTailYomiLen < prevShiftedTailYomiLen) shiftedTailYomiLen = prevShiftedTailYomiLen;
+        _LOG_DEBUGH(_T("shiftedTailYomiLen=%d, prevShiftedTailYomiLen=%d, result=True"), shiftedTailYomiLen, prevShiftedTailYomiLen);
+        SetReXferMode();
         return true;
     }
-    shiftedYomiLen = 1000;
-    _LOG_DEBUGH(_T("shiftedYomiLen=1000, result=False"));
+    shiftedTailYomiLen = 1000;
+    _LOG_DEBUGH(_T("shiftedTailYomiLen=1000, prevShiftedTailYomiLen=%d, result=False"), prevShiftedTailYomiLen);
     return false;
 }
 
 // 読み開始位置を右にシフトする (前回の変換の直後でなければ false を返す)
 bool MazegakiCommonInfo::RightShiftYomiStartPos() {
     if (IsJustAfterPrevXfer()) {
-        if (shiftedYomiLen > 1) --shiftedYomiLen;
-        _LOG_DEBUGH(_T("shiftedYomiLen=%d, result=True"), shiftedYomiLen);
+        if (shiftedTailYomiLen > 1) {
+            prevShiftedTailYomiLen = prevLeadLen + shiftedTailYomiLen;
+            --shiftedTailYomiLen;
+        }
+        _LOG_DEBUGH(_T("shiftedTailYomiLen=%d, prevShiftedTailYomiLen=%d, result=True"), shiftedTailYomiLen, prevShiftedTailYomiLen);
+        SetReXferMode();
         return true;
     }
-    shiftedYomiLen = 1000;
-    _LOG_DEBUGH(_T("shiftedYomiLen=1000, result=False"));
+    shiftedTailYomiLen = 1000;
+    _LOG_DEBUGH(_T("shiftedTailYomiLen=1000, prevShiftedTailYomiLen=%d, result=False"), prevShiftedTailYomiLen);
     return false;
-}
-
-// 前回の実行時の直後か
-bool MazegakiCommonInfo::IsJustAfterPrevXfer() {
-    return STATE_COMMON->GetTotalDecKeyCount() <= deckeyCount + 1;
-}
-
-// 交ぜ書き実行時の直後状態にセット
-void MazegakiCommonInfo::SetJustAfterPrevXfer() {
-    deckeyCount = STATE_COMMON->GetTotalDecKeyCount();
 }
 
 // ブロッカーや読み開始位置を左右にシフト -- 左右シフトを実行したら callback を呼んで true を返す。そうでなければ false を返す

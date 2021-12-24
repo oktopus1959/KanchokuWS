@@ -134,7 +134,7 @@ public:
         setKataBlocker();
     }
 
-    // 末尾に交ぜ書きブロッカーとカタカナブロッカーをセットする
+    // 末尾に交ぜ書きブロッカーをセットする
     inline void setMazeBlocker() {
         setFlag(FLAG_BLOCK_MAZE);
         setKataBlocker();
@@ -155,11 +155,11 @@ public:
             for (; pos < stack.size(); ++pos) {
                 Moji& elem = stack[stack.size() - pos];
                 auto flag = elem.flag & (FLAG_BLOCK_HIST | FLAG_BLOCK_MAZE);
-                if (!utils::is_hiragana(elem.chr)) {
-                    // 交ぜ書きブロッカーが見からなかった場合は、末尾にブロッカーをセット
-                    if (pos > 1 && flag == 0) setMazeBlocker();
-                    return;
-                }
+                //if (!utils::is_hiragana(elem.chr)) {
+                //    // 交ぜ書きブロッカーが見つからなかった場合は、末尾にブロッカーをセット
+                //    if (pos > 1 && flag == 0) setMazeBlocker();
+                //    return;
+                //}
                 if (flag != 0) {
                     Moji& elem1 = stack[stack.size() - (pos + 1)];
                     elem.flag &= ~(FLAG_BLOCK_HIST | FLAG_BLOCK_MAZE);
@@ -167,6 +167,8 @@ public:
                     return;
                 }
             }
+            // 交ぜ書きブロッカーが見つからなかった場合は、末尾にブロッカーをセット
+            setMazeBlocker();
         }
     }
 

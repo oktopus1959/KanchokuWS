@@ -235,6 +235,7 @@ public:
         STATE_COMMON->ClearAllStateInfo();
         OUTPUT_STACK->pushNewLine();    // 履歴ブロッカーとして改行を追加
         if (startState) startState->Reactivate();
+        MAZEGAKI_INFO->Initialize(false);
         LOG_INFOH(_T("LEAVE: states=%s (len=%d), flags=%u, numBS=%d, outLength=%d, stack=%s\n"),
             startState->JoinedName().c_str(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
             STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5).c_str());

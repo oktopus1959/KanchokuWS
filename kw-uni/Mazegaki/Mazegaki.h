@@ -35,22 +35,45 @@ private:
     // 変換結果を元に戻すための出力文字列の長さ
     size_t prevOutputLen;
 
-    // 前回変換時のホットキーカウント
-    size_t deckeyCount = 0;
+    // 前回変換時のデコーダキーカウント
+    size_t prevDeckeyCount = 0;
 
     // 先頭候補の自動選択を一時的に中止する
     bool selectFirstCandDisabled = false;
 
     // シフトされた読み長
-    size_t shiftedYomiLen = 0;
+    size_t shiftedTailYomiLen = 0;
+
+    // 前回のシフトされた読み長
+    size_t prevShiftedTailYomiLen = 0;
+
+    // 交ぜ書き中
+    bool inMazegakiMode = false;
 
     // ブロッカーがシフトされた
     bool blockerShifted = false;
 
- public:
-    void ClearBlockerShiftFlag() {
-        blockerShifted = false;
-    }
+    // 再変換モード
+    bool reXferMode = false;
+
+public:
+    // 初期化
+    void Initialize(bool bMazegakiMode = false);
+
+    // 交ぜ書き変換終了の直後か
+    bool IsJustAfterPrevXfer();
+
+    // 交ぜ書き変換実行直後状態にセット
+    void SetJustAfterPrevXfer();
+
+    // 再変換モードか
+    bool IsReXferMode();
+
+    // 再変換モードにセット
+    void SetReXferMode();
+
+    // ブロッカーフラグをクリアする
+    void ClearBlockerShiftFlag();
 
     // ブロッカーを左シフトする
     bool LeftShiftBlocker();
@@ -64,28 +87,23 @@ private:
     // 今回の結果を元に戻すための情報を保存 (yomi は、再変換をする際の元の読みになる)
     void SetYomiInfo(const MString& yomi, size_t leadLen, size_t outputLen);
 
+    // n打鍵によるMaze呼び出し用に情報をセットする(4ストロークまでOK)⇒前回の出力長を返す
+    size_t GetPrevYomiInfo(MString& yomi);
+
     // 前回の出力長を返す
     size_t GetPrevOutputLen();
 
     // 前回のリード部長を返す
     size_t GetPrevLeadLen();
 
-    // n打鍵によるMaze呼び出し用に情報をセットする(4ストロークまでOK)⇒前回の出力長を返す
-    size_t GetPrevYomiInfo(MString& yomi);
-
-    // Esc用
-    size_t GetPrevYomiInfoIfJustAfterMaze(MString& yomi);
+    // 先頭候補の自動選択を一時的に中止する
+    void DisableSelectFirstCand();
 
     // 先頭候補の自動選択が一時的に中止されているか
-    bool IsSelectFirstCandDisabled() {
-        return selectFirstCandDisabled;
-    }
+    bool IsSelectFirstCandDisabled();
 
     // シフトされた読み長の取得
-    size_t GetShiftedYomiLen() {
-        //if (shiftedYomiLen < prevYomi.size()) selectFirstCandDisabled = false;
-        return shiftedYomiLen;
-    }
+    size_t GetShiftedTailYomiLen();
 
     // 読み長を長くする(読み開始位置を左にシフトする) (前回の変換の直後でなければ false を返す)
     bool LeftShiftYomiStartPos();
@@ -93,14 +111,11 @@ private:
     // 読み開始位置を右にシフトする (前回の変換の直後でなければ false を返す)
     bool RightShiftYomiStartPos();
 
-    // 前回の実行時の直後か
-    bool IsJustAfterPrevXfer();
-
-    // 交ぜ書き実行時の直後状態にセット
-    void SetJustAfterPrevXfer();
-
     // ブロッカーや読み開始位置を左右にシフト -- 左右シフトを実行したら callback を呼んで true を返す。そうでなければ false を返す
     bool LeftRightShiftBlockerOrStartPos(int deckey, std::function<void ()> callback);
+
+    // Esc用 -- 直前の交ぜ書き状態に戻す
+    size_t GetPrevYomiInfoIfJustAfterMaze(MString& yomi);
 
 public:
     // 共有ノード
@@ -115,6 +130,7 @@ public:
 #define MAZEGAKI_INFO (MazegakiCommonInfo::CommonInfo)
 #define MAZEGAKI_NODE_PTR (MAZEGAKI_INFO->CommonNode.get())
 
+// 交ぜ書き変換結果を元に戻す
 #define HANDLE_ESC_FOR_MAZEGAKI() \
     LOG_DEBUGH(_T("HANDLE_ESC_FOR_MAZEGAKI: %s"), NAME_PTR); \
     if (MAZEGAKI_INFO) { \
@@ -122,6 +138,7 @@ public:
         size_t prevOutLen = MAZEGAKI_INFO->GetPrevYomiInfoIfJustAfterMaze(prevYomi); \
         LOG_DEBUGH(_T("MAZEGAKI ESC: prevYomi=%s, prevOutLen=%d"), MAKE_WPTR(prevYomi), prevOutLen); \
         if (prevOutLen > 0) { \
+            MAZEGAKI_INFO->SetReXferMode(); /* 再変換モードにセット */ \
             MAZEGAKI_INFO->SetJustAfterPrevXfer(); /* 続けて交ぜ書き関連の操作を受け付けるようにする */ \
             STATE_COMMON->SetOutString(prevYomi, prevOutLen); \
             return; \

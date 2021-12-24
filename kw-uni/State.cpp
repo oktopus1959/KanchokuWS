@@ -68,7 +68,7 @@ void State::DoDeckeyPreProc(int deckey) {
         // つまり、状態チェーンの末端であって、打鍵中でない場合
         if (!pNext) {
             _LOG_DEBUGH(_T("PATH-B"));
-            // TODO: AD HOC
+            // 交ぜ書き状態から抜けた直後にブロッカーや変換開始位置のシフトをやる場合のための処理
             if (MAZEGAKI_INFO) {
                 _LOG_DEBUGH(_T("PATH-C"));
                 // ブロッカーや読み開始位置を左右にシフト
@@ -78,7 +78,7 @@ void State::DoDeckeyPreProc(int deckey) {
                     return;
                 }
                 _LOG_DEBUGH(_T("PATH-D"));
-                MAZEGAKI_INFO->ClearBlockerShiftFlag();
+                //MAZEGAKI_INFO->ClearBlockerShiftFlag();
             }
             _LOG_DEBUGH(_T("PATH-E"));
 
