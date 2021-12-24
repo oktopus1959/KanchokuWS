@@ -240,7 +240,7 @@ namespace {
             size_t candYlen = candsByLen.GetFirstCandidateYomi().size();
             if (candYlen > tailYomiLen) candYlen = tailYomiLen;
             _LOG_DEBUGH(_T("candYlen=%d, tailYomiLen=%d, prevYomi.size=%d"), candYlen, tailYomiLen, prevYomi.size());
-            if (pCands->size() == 1 || (!MAZEGAKI_INFO->IsReXferMode() && SETTINGS->mazegakiSelectFirstCand)) {
+            if (pCands->size() == 1 || (!MAZEGAKI_INFO->IsReXferMode() && !MAZEGAKI_INFO->IsJustAfterPrevXfer() && SETTINGS->mazegakiSelectFirstCand)) {
                 // 読みの長さ候補が１つしかなかった、または先頭候補の自動出力モードなのでそれを選択して出力
                 const auto& cand = pCands->front();
                 size_t candLen = cand.resultStr.size();
