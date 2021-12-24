@@ -43,6 +43,7 @@ struct Settings {
     bool histMoveShortestAt2nd = false;     // 最短長履歴文字列を2番目に表示する
 
     bool useArrowKeyToSelectCandidate = true;   // 矢印キーで履歴候補選択を行う
+    bool selectHistCandByTab = true;            // Tabキーで履歴候補選択を行う
     //bool handleShiftSpaceAsNormalSpace = true;    // Shift-Space を通常の Space として扱う (ただし histSearchByShiftSpace が優先)
 
     //bool mazegakiByShiftSpace = true;       // Shift-Space で交ぜ書き変換

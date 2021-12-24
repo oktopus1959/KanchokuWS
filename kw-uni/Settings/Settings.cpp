@@ -61,6 +61,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_BOOL_VALUE(histMoveShortestAt2nd);
 
     SET_BOOL_VALUE(useArrowKeyToSelectCandidate);
+    SET_BOOL_VALUE(selectHistCandByTab);
 
     SET_BOOL_VALUE(mazegakiSelectFirstCand);
     SET_BOOL_VALUE(mazeBlockerTail);

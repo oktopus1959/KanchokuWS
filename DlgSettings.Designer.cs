@@ -440,6 +440,8 @@ namespace KanchokuWS
             this.label109 = new System.Windows.Forms.Label();
             this.groupBox43 = new System.Windows.Forms.GroupBox();
             this.label110 = new System.Windows.Forms.Label();
+            this.label111 = new System.Windows.Forms.Label();
+            this.checkBox_selectHistCandByTab = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -3492,6 +3494,7 @@ namespace KanchokuWS
             this.tabPage_history.Controls.Add(this.groupBox12);
             this.tabPage_history.Controls.Add(this.button_histClose);
             this.tabPage_history.Controls.Add(this.button_histEnter);
+            this.tabPage_history.Controls.Add(this.checkBox_mazeRightShiftYomiPos);
             this.tabPage_history.Location = new System.Drawing.Point(4, 24);
             this.tabPage_history.Name = "tabPage_history";
             this.tabPage_history.Size = new System.Drawing.Size(581, 373);
@@ -3502,7 +3505,7 @@ namespace KanchokuWS
             // groupBox34
             // 
             this.groupBox34.Controls.Add(this.label91);
-            this.groupBox34.Location = new System.Drawing.Point(312, 226);
+            this.groupBox34.Location = new System.Drawing.Point(312, 209);
             this.groupBox34.Name = "groupBox34";
             this.groupBox34.Size = new System.Drawing.Size(261, 97);
             this.groupBox34.TabIndex = 26;
@@ -3531,13 +3534,12 @@ namespace KanchokuWS
             this.groupBox23.Controls.Add(this.textBox_mazeGobiMaxLen);
             this.groupBox23.Controls.Add(this.label45);
             this.groupBox23.Controls.Add(this.textBox_mazeYomiMaxLen);
-            this.groupBox23.Controls.Add(this.checkBox_mazeRightShiftYomiPos);
             this.groupBox23.Controls.Add(this.checkBox_mazeRemoveHeadSpace);
             this.groupBox23.Controls.Add(this.checkBox_mazeBlockerTail);
             this.groupBox23.Controls.Add(this.checkBox_mazegakiSelectFirstCand);
             this.groupBox23.Location = new System.Drawing.Point(312, 10);
             this.groupBox23.Name = "groupBox23";
-            this.groupBox23.Size = new System.Drawing.Size(261, 210);
+            this.groupBox23.Size = new System.Drawing.Size(261, 193);
             this.groupBox23.TabIndex = 3;
             this.groupBox23.TabStop = false;
             this.groupBox23.Text = "交ぜ書き変換";
@@ -3545,7 +3547,7 @@ namespace KanchokuWS
             // checkBox_mazeNoIfxConnectAny
             // 
             this.checkBox_mazeNoIfxConnectAny.AutoSize = true;
-            this.checkBox_mazeNoIfxConnectAny.Location = new System.Drawing.Point(20, 121);
+            this.checkBox_mazeNoIfxConnectAny.Location = new System.Drawing.Point(20, 101);
             this.checkBox_mazeNoIfxConnectAny.Name = "checkBox_mazeNoIfxConnectAny";
             this.checkBox_mazeNoIfxConnectAny.Size = new System.Drawing.Size(203, 19);
             this.checkBox_mazeNoIfxConnectAny.TabIndex = 5;
@@ -3556,7 +3558,7 @@ namespace KanchokuWS
             // checkBox_mazeNoIfxConnectKanji
             // 
             this.checkBox_mazeNoIfxConnectKanji.AutoSize = true;
-            this.checkBox_mazeNoIfxConnectKanji.Location = new System.Drawing.Point(20, 101);
+            this.checkBox_mazeNoIfxConnectKanji.Location = new System.Drawing.Point(20, 81);
             this.checkBox_mazeNoIfxConnectKanji.Name = "checkBox_mazeNoIfxConnectKanji";
             this.checkBox_mazeNoIfxConnectKanji.Size = new System.Drawing.Size(193, 19);
             this.checkBox_mazeNoIfxConnectKanji.TabIndex = 4;
@@ -3567,7 +3569,7 @@ namespace KanchokuWS
             // label89
             // 
             this.label89.AutoSize = true;
-            this.label89.Location = new System.Drawing.Point(21, 188);
+            this.label89.Location = new System.Drawing.Point(21, 168);
             this.label89.Name = "label89";
             this.label89.Size = new System.Drawing.Size(107, 15);
             this.label89.TabIndex = 28;
@@ -3576,7 +3578,7 @@ namespace KanchokuWS
             // textBox_mazeGobiLikeTailLen
             // 
             this.textBox_mazeGobiLikeTailLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeGobiLikeTailLen.Location = new System.Drawing.Point(138, 186);
+            this.textBox_mazeGobiLikeTailLen.Location = new System.Drawing.Point(138, 166);
             this.textBox_mazeGobiLikeTailLen.Name = "textBox_mazeGobiLikeTailLen";
             this.textBox_mazeGobiLikeTailLen.Size = new System.Drawing.Size(42, 19);
             this.textBox_mazeGobiLikeTailLen.TabIndex = 8;
@@ -3585,7 +3587,7 @@ namespace KanchokuWS
             // label46
             // 
             this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(21, 166);
+            this.label46.Location = new System.Drawing.Point(21, 146);
             this.label46.Name = "label46";
             this.label46.Size = new System.Drawing.Size(77, 15);
             this.label46.TabIndex = 30;
@@ -3594,7 +3596,7 @@ namespace KanchokuWS
             // textBox_mazeGobiMaxLen
             // 
             this.textBox_mazeGobiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(138, 164);
+            this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(138, 144);
             this.textBox_mazeGobiMaxLen.Name = "textBox_mazeGobiMaxLen";
             this.textBox_mazeGobiMaxLen.Size = new System.Drawing.Size(42, 19);
             this.textBox_mazeGobiMaxLen.TabIndex = 7;
@@ -3605,7 +3607,7 @@ namespace KanchokuWS
             // label45
             // 
             this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(21, 144);
+            this.label45.Location = new System.Drawing.Point(21, 124);
             this.label45.Name = "label45";
             this.label45.Size = new System.Drawing.Size(100, 15);
             this.label45.TabIndex = 29;
@@ -3614,7 +3616,7 @@ namespace KanchokuWS
             // textBox_mazeYomiMaxLen
             // 
             this.textBox_mazeYomiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(138, 142);
+            this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(138, 122);
             this.textBox_mazeYomiMaxLen.Name = "textBox_mazeYomiMaxLen";
             this.textBox_mazeYomiMaxLen.Size = new System.Drawing.Size(42, 19);
             this.textBox_mazeYomiMaxLen.TabIndex = 6;
@@ -3623,18 +3625,19 @@ namespace KanchokuWS
             // checkBox_mazeRightShiftYomiPos
             // 
             this.checkBox_mazeRightShiftYomiPos.AutoSize = true;
-            this.checkBox_mazeRightShiftYomiPos.Location = new System.Drawing.Point(20, 61);
+            this.checkBox_mazeRightShiftYomiPos.Location = new System.Drawing.Point(311, 312);
             this.checkBox_mazeRightShiftYomiPos.Name = "checkBox_mazeRightShiftYomiPos";
             this.checkBox_mazeRightShiftYomiPos.Size = new System.Drawing.Size(201, 19);
             this.checkBox_mazeRightShiftYomiPos.TabIndex = 2;
             this.checkBox_mazeRightShiftYomiPos.Text = "「>」で変換開始位置を右に移動する";
             this.toolTip1.SetToolTip(this.checkBox_mazeRightShiftYomiPos, resources.GetString("checkBox_mazeRightShiftYomiPos.ToolTip"));
             this.checkBox_mazeRightShiftYomiPos.UseVisualStyleBackColor = true;
+            this.checkBox_mazeRightShiftYomiPos.Visible = false;
             // 
             // checkBox_mazeRemoveHeadSpace
             // 
             this.checkBox_mazeRemoveHeadSpace.AutoSize = true;
-            this.checkBox_mazeRemoveHeadSpace.Location = new System.Drawing.Point(20, 81);
+            this.checkBox_mazeRemoveHeadSpace.Location = new System.Drawing.Point(20, 61);
             this.checkBox_mazeRemoveHeadSpace.Name = "checkBox_mazeRemoveHeadSpace";
             this.checkBox_mazeRemoveHeadSpace.Size = new System.Drawing.Size(183, 19);
             this.checkBox_mazeRemoveHeadSpace.TabIndex = 3;
@@ -3667,15 +3670,18 @@ namespace KanchokuWS
             // 
             // groupBox17
             // 
+            this.groupBox17.Controls.Add(this.checkBox_selectHistCandByTab);
+            this.groupBox17.Controls.Add(this.label111);
             this.groupBox17.Controls.Add(this.checkBox_useArrowKeyToSelectCand);
             this.groupBox17.Controls.Add(this.comboBox_histNumDeckeyId);
             this.groupBox17.Controls.Add(this.label43);
             this.groupBox17.Controls.Add(this.comboBox_histDelDeckeyId);
             this.groupBox17.Controls.Add(this.label42);
+            this.groupBox17.Controls.Add(this.checkBox_selectFirstCandByEnter);
             this.groupBox17.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox17.Location = new System.Drawing.Point(11, 182);
+            this.groupBox17.Location = new System.Drawing.Point(11, 166);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(294, 92);
+            this.groupBox17.Size = new System.Drawing.Size(294, 111);
             this.groupBox17.TabIndex = 1;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "履歴選択・削除";
@@ -3683,11 +3689,11 @@ namespace KanchokuWS
             // checkBox_useArrowKeyToSelectCand
             // 
             this.checkBox_useArrowKeyToSelectCand.AutoSize = true;
-            this.checkBox_useArrowKeyToSelectCand.Location = new System.Drawing.Point(20, 20);
+            this.checkBox_useArrowKeyToSelectCand.Location = new System.Drawing.Point(20, 39);
             this.checkBox_useArrowKeyToSelectCand.Name = "checkBox_useArrowKeyToSelectCand";
-            this.checkBox_useArrowKeyToSelectCand.Size = new System.Drawing.Size(211, 19);
-            this.checkBox_useArrowKeyToSelectCand.TabIndex = 0;
-            this.checkBox_useArrowKeyToSelectCand.Text = "矢印キーで自動履歴候補の選択をする";
+            this.checkBox_useArrowKeyToSelectCand.Size = new System.Drawing.Size(77, 19);
+            this.checkBox_useArrowKeyToSelectCand.TabIndex = 1;
+            this.checkBox_useArrowKeyToSelectCand.Text = "矢印キーで";
             this.toolTip1.SetToolTip(this.checkBox_useArrowKeyToSelectCand, "履歴検索候補が横列表示されている時に、\r\n上下矢印キーで候補の選択をできるようにします。");
             this.checkBox_useArrowKeyToSelectCand.UseVisualStyleBackColor = true;
             // 
@@ -3705,16 +3711,16 @@ namespace KanchokuWS
             "46 ( : )",
             "47 ( ] )",
             "48 (＼)"});
-            this.comboBox_histNumDeckeyId.Location = new System.Drawing.Point(194, 66);
+            this.comboBox_histNumDeckeyId.Location = new System.Drawing.Point(194, 85);
             this.comboBox_histNumDeckeyId.Name = "comboBox_histNumDeckeyId";
             this.comboBox_histNumDeckeyId.Size = new System.Drawing.Size(75, 20);
-            this.comboBox_histNumDeckeyId.TabIndex = 2;
+            this.comboBox_histNumDeckeyId.TabIndex = 4;
             this.toolTip1.SetToolTip(this.comboBox_histNumDeckeyId, resources.GetString("comboBox_histNumDeckeyId.ToolTip"));
             // 
             // label43
             // 
             this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(17, 70);
+            this.label43.Location = new System.Drawing.Point(17, 89);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(166, 15);
             this.label43.TabIndex = 20;
@@ -3734,17 +3740,17 @@ namespace KanchokuWS
             "46 ( : )",
             "47 ( ] )",
             "48 (＼)"});
-            this.comboBox_histDelDeckeyId.Location = new System.Drawing.Point(194, 43);
+            this.comboBox_histDelDeckeyId.Location = new System.Drawing.Point(194, 62);
             this.comboBox_histDelDeckeyId.Name = "comboBox_histDelDeckeyId";
             this.comboBox_histDelDeckeyId.Size = new System.Drawing.Size(75, 20);
-            this.comboBox_histDelDeckeyId.TabIndex = 1;
+            this.comboBox_histDelDeckeyId.TabIndex = 3;
             this.toolTip1.SetToolTip(this.comboBox_histDelDeckeyId, "縦列表示された履歴選択状態のとき、削除モードに移行するキーの\r\n漢直コードを設定します。\r\n\r\n削除モードに入り、縦列鍵盤に対応するキーを押すと、\r\n候補が削除さ" +
         "れて exclude リストに登録されます。\r\nexclude リストに登録された文字列は、候補に表示されません。");
             // 
             // label42
             // 
             this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(17, 47);
+            this.label42.Location = new System.Drawing.Point(17, 66);
             this.label42.Name = "label42";
             this.label42.Size = new System.Drawing.Size(130, 15);
             this.label42.TabIndex = 18;
@@ -3759,7 +3765,7 @@ namespace KanchokuWS
             this.groupBox14.Controls.Add(this.label28);
             this.groupBox14.Controls.Add(this.textBox_histKatakanaWordMinLength);
             this.groupBox14.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox14.Location = new System.Drawing.Point(11, 280);
+            this.groupBox14.Location = new System.Drawing.Point(11, 283);
             this.groupBox14.Name = "groupBox14";
             this.groupBox14.Size = new System.Drawing.Size(294, 86);
             this.groupBox14.TabIndex = 2;
@@ -3846,13 +3852,12 @@ namespace KanchokuWS
             this.groupBox12.Controls.Add(this.checkBox_historySearchKey);
             this.groupBox12.Controls.Add(this.checkBox_autoHistEnabled);
             this.groupBox12.Controls.Add(this.label21);
-            this.groupBox12.Controls.Add(this.checkBox_selectFirstCandByEnter);
             this.groupBox12.Controls.Add(this.label23);
             this.groupBox12.Controls.Add(this.label22);
             this.groupBox12.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox12.Location = new System.Drawing.Point(11, 10);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(294, 167);
+            this.groupBox12.Size = new System.Drawing.Size(294, 150);
             this.groupBox12.TabIndex = 0;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "履歴検索";
@@ -3860,7 +3865,7 @@ namespace KanchokuWS
             // textBox_histHorizontalCandMax
             // 
             this.textBox_histHorizontalCandMax.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_histHorizontalCandMax.Location = new System.Drawing.Point(151, 144);
+            this.textBox_histHorizontalCandMax.Location = new System.Drawing.Point(151, 124);
             this.textBox_histHorizontalCandMax.Name = "textBox_histHorizontalCandMax";
             this.textBox_histHorizontalCandMax.Size = new System.Drawing.Size(34, 19);
             this.textBox_histHorizontalCandMax.TabIndex = 7;
@@ -3869,7 +3874,7 @@ namespace KanchokuWS
             // label79
             // 
             this.label79.AutoSize = true;
-            this.label79.Location = new System.Drawing.Point(17, 146);
+            this.label79.Location = new System.Drawing.Point(17, 126);
             this.label79.Name = "label79";
             this.label79.Size = new System.Drawing.Size(125, 15);
             this.label79.TabIndex = 8;
@@ -3880,7 +3885,7 @@ namespace KanchokuWS
             this.comboBox_historySearchKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_historySearchKey.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
             this.comboBox_historySearchKey.FormattingEnabled = true;
-            this.comboBox_historySearchKey.Location = new System.Drawing.Point(199, 120);
+            this.comboBox_historySearchKey.Location = new System.Drawing.Point(199, 102);
             this.comboBox_historySearchKey.Name = "comboBox_historySearchKey";
             this.comboBox_historySearchKey.Size = new System.Drawing.Size(89, 20);
             this.comboBox_historySearchKey.TabIndex = 6;
@@ -3922,7 +3927,7 @@ namespace KanchokuWS
             // checkBox_historySearchKey
             // 
             this.checkBox_historySearchKey.AutoSize = true;
-            this.checkBox_historySearchKey.Location = new System.Drawing.Point(20, 121);
+            this.checkBox_historySearchKey.Location = new System.Drawing.Point(20, 103);
             this.checkBox_historySearchKey.Name = "checkBox_historySearchKey";
             this.checkBox_historySearchKey.Size = new System.Drawing.Size(185, 19);
             this.checkBox_historySearchKey.TabIndex = 5;
@@ -3957,10 +3962,10 @@ namespace KanchokuWS
             // checkBox_selectFirstCandByEnter
             // 
             this.checkBox_selectFirstCandByEnter.AutoSize = true;
-            this.checkBox_selectFirstCandByEnter.Location = new System.Drawing.Point(40, 99);
+            this.checkBox_selectFirstCandByEnter.Location = new System.Drawing.Point(20, 18);
             this.checkBox_selectFirstCandByEnter.Name = "checkBox_selectFirstCandByEnter";
             this.checkBox_selectFirstCandByEnter.Size = new System.Drawing.Size(180, 19);
-            this.checkBox_selectFirstCandByEnter.TabIndex = 4;
+            this.checkBox_selectFirstCandByEnter.TabIndex = 0;
             this.checkBox_selectFirstCandByEnter.Text = "Enterキーで先頭候補を選択する";
             this.toolTip1.SetToolTip(this.checkBox_selectFirstCandByEnter, resources.GetString("checkBox_selectFirstCandByEnter.ToolTip"));
             this.checkBox_selectFirstCandByEnter.UseVisualStyleBackColor = true;
@@ -5333,6 +5338,26 @@ namespace KanchokuWS
     " (シフトB面のK)";
             this.toolTip1.SetToolTip(this.label110, resources.GetString("label110.ToolTip"));
             // 
+            // label111
+            // 
+            this.label111.AutoSize = true;
+            this.label111.Location = new System.Drawing.Point(151, 40);
+            this.label111.Name = "label111";
+            this.label111.Size = new System.Drawing.Size(141, 15);
+            this.label111.TabIndex = 21;
+            this.label111.Text = "自動履歴候補の選択をする";
+            // 
+            // checkBox_selectHistCandByTab
+            // 
+            this.checkBox_selectHistCandByTab.AutoSize = true;
+            this.checkBox_selectHistCandByTab.Location = new System.Drawing.Point(98, 39);
+            this.checkBox_selectHistCandByTab.Name = "checkBox_selectHistCandByTab";
+            this.checkBox_selectHistCandByTab.Size = new System.Drawing.Size(54, 19);
+            this.checkBox_selectHistCandByTab.TabIndex = 2;
+            this.checkBox_selectHistCandByTab.Text = "Tabで";
+            this.toolTip1.SetToolTip(this.checkBox_selectHistCandByTab, "履歴検索候補が横列表示されている時に、\r\nTab/Shift+Tabキーで候補の選択をできるようにします。");
+            this.checkBox_selectHistCandByTab.UseVisualStyleBackColor = true;
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -5871,5 +5896,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label109;
         private System.Windows.Forms.GroupBox groupBox43;
         private System.Windows.Forms.Label label110;
+        private System.Windows.Forms.CheckBox checkBox_selectHistCandByTab;
+        private System.Windows.Forms.Label label111;
     }
 }

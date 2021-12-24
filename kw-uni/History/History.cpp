@@ -1059,7 +1059,7 @@ namespace {
         // Tab の処理 -- 次の候補を返す
         void handleTab() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            if (bCandSelectable) {
+            if (SETTINGS->selectHistCandByTab && bCandSelectable) {
                 setCandSelectIsCalled();
                 getNextCandidate();
             } else {
@@ -1070,11 +1070,11 @@ namespace {
         // ShiftTab の処理 -- 前の候補を返す
         void handleShiftTab() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            if (bCandSelectable) {
+            if (SETTINGS->selectHistCandByTab && bCandSelectable) {
                 setCandSelectIsCalled();
                 getPrevCandidate();
             } else {
-                HistoryStayState::handleTab();
+                HistoryStayState::handleShiftTab();
             }
         }
 

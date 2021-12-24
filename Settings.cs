@@ -356,9 +356,11 @@ namespace KanchokuWS
         public static int HistHiraganaKeyLength { get; private set; } = 0;
         public static int HistKatakanaKeyLength { get; private set; } = 0;
         public static int HistKanjiKeyLength { get; private set; } = 0;
+        /// <summary>自動履歴検索</summary>
         public static bool AutoHistSearchEnabled { get; private set; } = false;
         //public static bool HistSearchByCtrlSpace { get; private set; } = false;
         //public static bool HistSearchByShiftSpace { get; private set; } = false;
+        /// <summary>Enterで先頭候補を選択</summary>
         public static bool SelectFirstCandByEnter { get; private set; } = false;
         public static bool HistAllowFromMiddleChar { get; private set; } = false;
         public static int HistDelDeckeyId { get; private set; } = 0;
@@ -367,8 +369,11 @@ namespace KanchokuWS
         public static int HistHorizontalCandMax { get; private set; } = 0;
         public static bool HistMoveShortestAt2nd { get; private set; } = false;
 
+        /// <summary>矢印キーで候補を選択</summary>
         public static bool UseArrowKeyToSelectCandidate { get; set; } = true;
         //public static bool HandleShiftSpaceAsNormalSpace { get; set; } = true;
+        /// <summary>Tabで候補を選択</summary>
+        public static bool SelectHistCandByTab { get; private set; } = true;
 
         /// <summary>履歴検索&選択するCtrlキー </summary>
         public static string HistorySearchCtrlKey { get; private set; }
@@ -878,6 +883,7 @@ namespace KanchokuWS
             HistMoveShortestAt2nd = addDecoderSetting("histMoveShortestAt2nd", false);          // 最短長履歴文字列を2番目に表示する
             HistAllowFromMiddleChar = addDecoderSetting("histAllowFromMiddleChar", true);       // 出力漢字列やカタカナ列の途中からでも自動履歴検索を行う(@TODO)
             UseArrowKeyToSelectCandidate = addDecoderSetting("useArrowKeyToSelectCandidate", true);    // 矢印キーで履歴候補選択を行う
+            SelectHistCandByTab = addDecoderSetting("selectHistCandByTab", true);               // Tabキーで履歴候補選択を行う
             //HandleShiftSpaceAsNormalSpace = addDecoderSetting("handleShiftSpaceAsNormalSpace", true);  // Shift+Space を通常 Space しとて扱う(HistSearchByShiftSpaceがfalseの場合)
 
             //MazegakiByShiftSpace = GetString("mazegakiByShiftSpace")._parseBool(true);          // Shift-Space で交ぜ書き変換
