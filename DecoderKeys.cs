@@ -232,7 +232,7 @@ namespace KanchokuWS
 
         public const int MODE_TOGGLE_FOLLOW_CARET_DECKEY = POST_PLANE_B_SHIFT_DECKEY + 1;   // 仮想鍵盤をカレットに再追従させて、漢直モードのトグル
 
-        public const int COPY_SELECTION_AND_SEND_TO_DICTIONARY = MODE_TOGGLE_FOLLOW_CARET_DECKEY + 1; // 文字列をコピーして、それをデコーダの辞書に登録する
+        public const int COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY = MODE_TOGGLE_FOLLOW_CARET_DECKEY + 1; // 文字列をコピーして、それをデコーダの辞書に登録する
 
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 

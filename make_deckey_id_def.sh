@@ -41,9 +41,7 @@ namespace deckey_id_defs {
     std::map<int, const wchar_t*> deckeyId_name_map = {
 EOS
 
-sed -n '/TOGGLE_DECKEY/,$ p' $SRCFILE | \
-    grep '_DECKEY ' | \
-    sed -r 's/^ *public const int *(\w+) *= *([^;]+).*$/        {(\2), _T("\1")},/' >> $TGTFILE1
+sed -n -r 's/^ *public const int *(\w+)_DECKEY *= *([^;]+).*$/        {(\2), _T("\1")},/p' $SRCFILE >> $TGTFILE1
 
 cat <<EOS >> $TGTFILE1
     };

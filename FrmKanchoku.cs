@@ -613,7 +613,7 @@ namespace KanchokuWS
                             InvokeDecoder(deckey, 0);
                         }
                         return true;
-                    case DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY:
+                    case DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY:
                         logger.Info(() => $"COPY_SELECTION_AND_SEND_TO_DICTIONARY:{deckey}");
                         copySelectionAndSendToDictionary();
                         return true;
