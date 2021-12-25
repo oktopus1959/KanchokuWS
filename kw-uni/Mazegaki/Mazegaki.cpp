@@ -19,7 +19,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegaki)
 
-#if 0
+#if 1
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
@@ -169,8 +169,6 @@ namespace {
 
             if (!MAZEGAKI_DIC) return false;
 
-            //MAZEGAKI_INFO->SetJustAfterPrevXfer();
-
             _LOG_DEBUGH(_T("A:ReXferMode: %s, mazegakiSelectFirstCand: %s"), BOOL_TO_WPTR(MAZEGAKI_INFO->IsReXferMode()), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
 
             // ブロッカーがシフトされた直後であれば、変換処理は行わない
@@ -193,6 +191,10 @@ namespace {
             size_t prevLeadLen = 0;     // 直前のリード部の長さ
             size_t prevOutLen = 0;      // 直前の出力形の長さ
 
+            //// 先頭候補出力モードで、交ぜ書き変換直後なら、元に戻して再変換 ⇒ これはやらない(ブロッカー解除には OutputStack の操作が必要だし、Escの後に再変換すればよいので)
+            //if (SETTINGS->mazegakiSelectFirstCand && MAZEGAKI_INFO->IsJustAfterPrevXfer()) {
+            //    MAZEGAKI_INFO->RevertPrevXfer();
+            //}
             // 再変換モードなら、直前の変換をやり直す
             if (MAZEGAKI_INFO->IsReXferMode()) {
                 prevLeadLen = MAZEGAKI_INFO->GetPrevLeadLen();
@@ -230,9 +232,8 @@ namespace {
             _LOG_DEBUGH(_T("pCands->size=%d"), pCands->size());
             if (pCands->empty()) {
                 // 候補が得られなかった
-                // チェイン不要 -- 交ぜ書き変換実行直後状態にセット
+                // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: no candidate"));
-                //MAZEGAKI_INFO->SetJustAfterPrevXfer();
                 return false;
             }
 
@@ -283,8 +284,8 @@ namespace {
                         outputStringAndPostProc(EMPTY_MSTR, cand, candYlen, nullptr, 0);
                     }
                 }
-                // チェイン不要 -- 交ぜ書き変換実行直後状態にセット
-                MAZEGAKI_INFO->SetJustAfterPrevXfer();
+                // チェイン不要
+                //MAZEGAKI_INFO->SetJustAfterPrevXfer();
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));
                 return false;
             }
@@ -638,7 +639,7 @@ bool MazegakiCommonInfo::RightShiftBlocker() {
     return IsJustAfterPrevXfer();
 }
 
-// 交ぜ書き直後または交ぜ書き中で、かつブロッカーがシフトされたか
+// ブロッカーがシフトされた直後か
 bool MazegakiCommonInfo::IsJustAfterBlockerShifted() {
     bool result = STATE_COMMON->GetTotalDecKeyCount() <= blockerShiftedDeckeyCount + 1;
     _LOG_DEBUGH(_T("RESULT=%s: blockerShiftedDeckeyCount=%d, totalDeckeyCount=%d"), BOOL_TO_WPTR(result), blockerShiftedDeckeyCount, STATE_COMMON->GetTotalDecKeyCount());
@@ -686,16 +687,19 @@ size_t MazegakiCommonInfo::GetPrevYomiInfo(MString& yomi) {
     return 0;
 }
 
-// Esc用 -- 直前の交ぜ書き状態に戻す
-size_t MazegakiCommonInfo::GetPrevYomiInfoIfJustAfterMaze(MString& yomi) {
-    if (IsJustAfterPrevXfer()) {
-        yomi = prevYomi;
-        size_t prevOutLen = prevOutputLen;
+// 交ぜ書き変換結果を元に戻す
+bool MazegakiCommonInfo::RevertPrevXfer() {
+    _LOG_DEBUGH(_T("prevYomi=%s, prevOutputLen=%d"), MAKE_WPTR(prevYomi), prevOutputLen);
+    if (IsJustAfterPrevXfer() && prevOutputLen > 0) {
+        MAZEGAKI_INFO->SetReXferMode();         // 再変換モードにセット
+        MAZEGAKI_INFO->SetJustAfterPrevXfer();  // 続けて交ぜ書き関連の操作を受け付けるようにする
+        STATE_COMMON->SetOutString(prevYomi, prevOutputLen);
         prevLeadLen = 0;
         prevOutputLen = 0;
-        return prevOutLen;
+        _LOG_DEBUGH(_T("MAZEGAKI REVERTED"));
+        return true;
     }
-    return 0;
+    return false;
 }
 
 // 読み長を長くする(読み開始位置を左にシフトする) (前回の変換の直後でなければ false を返す)
@@ -734,7 +738,7 @@ bool MazegakiCommonInfo::LeftRightShiftBlockerOrStartPos(int deckey, std::functi
     switch (deckey) {
     case RIGHT_SHIFT_BLOCKER_DECKEY:
         _LOG_DEBUGH(_T("RIGHT_SHIFT_BLOCKER_DECKEY"));
-        if (!SETTINGS->mazegakiSelectFirstCand || IsJustAfterBlockerShifted()) {
+        if (!SETTINGS->mazegakiSelectFirstCand || !IsJustAfterPrevXfer() || IsJustAfterBlockerShifted()) {
             if (MAZEGAKI_INFO->RightShiftBlocker()) {
                 _LOG_DEBUGH(_T("right shift BLOCKER"));
                 callback();
@@ -743,7 +747,7 @@ bool MazegakiCommonInfo::LeftRightShiftBlockerOrStartPos(int deckey, std::functi
             }
             return false;
         }
-        // Through Down: 第1候補出力モードで最初のシフト操作のときは、読み開始位置の右シフトとして扱う
+        // Through Down: 第1候補出力モードで、交ぜ書き直後で、最初のシフト操作のときは、読み開始位置の右シフトとして扱う
     case RIGHT_SHIFT_MAZE_START_POS_DECKEY:
         _LOG_DEBUGH(_T("RIGHT_SHIFT_MAZE_START_POS_DECKEY"));
         if (MAZEGAKI_INFO->RightShiftYomiStartPos()) {

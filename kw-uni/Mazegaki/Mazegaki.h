@@ -111,8 +111,8 @@ public:
     // ブロッカーや読み開始位置を左右にシフト -- 左右シフトを実行したら callback を呼んで true を返す。そうでなければ false を返す
     bool LeftRightShiftBlockerOrStartPos(int deckey, std::function<void ()> callback);
 
-    // Esc用 -- 直前の交ぜ書き状態に戻す
-    size_t GetPrevYomiInfoIfJustAfterMaze(MString& yomi);
+    // 交ぜ書き変換結果を元に戻す
+    bool RevertPrevXfer();
 
 public:
     // 共有ノード
@@ -130,17 +130,7 @@ public:
 // 交ぜ書き変換結果を元に戻す
 #define HANDLE_ESC_FOR_MAZEGAKI() \
     LOG_DEBUGH(_T("HANDLE_ESC_FOR_MAZEGAKI: %s"), NAME_PTR); \
-    if (MAZEGAKI_INFO) { \
-        MString prevYomi; \
-        size_t prevOutLen = MAZEGAKI_INFO->GetPrevYomiInfoIfJustAfterMaze(prevYomi); \
-        LOG_DEBUGH(_T("MAZEGAKI ESC: prevYomi=%s, prevOutLen=%d"), MAKE_WPTR(prevYomi), prevOutLen); \
-        if (prevOutLen > 0) { \
-            MAZEGAKI_INFO->SetReXferMode(); /* 再変換モードにセット */ \
-            MAZEGAKI_INFO->SetJustAfterPrevXfer(); /* 続けて交ぜ書き関連の操作を受け付けるようにする */ \
-            STATE_COMMON->SetOutString(prevYomi, prevOutLen); \
-            return; \
-        } \
-    }
+    if (MAZEGAKI_INFO && MAZEGAKI_INFO->RevertPrevXfer()) return;
 
 // -------------------------------------------------------------------
 // MazegakiNodeBuilder - 交ぜ書き機能ノードビルダ
