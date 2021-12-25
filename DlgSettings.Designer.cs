@@ -3639,9 +3639,9 @@ namespace KanchokuWS
             this.checkBox_mazeRemoveHeadSpace.AutoSize = true;
             this.checkBox_mazeRemoveHeadSpace.Location = new System.Drawing.Point(20, 61);
             this.checkBox_mazeRemoveHeadSpace.Name = "checkBox_mazeRemoveHeadSpace";
-            this.checkBox_mazeRemoveHeadSpace.Size = new System.Drawing.Size(183, 19);
+            this.checkBox_mazeRemoveHeadSpace.Size = new System.Drawing.Size(219, 19);
             this.checkBox_mazeRemoveHeadSpace.TabIndex = 3;
-            this.checkBox_mazeRemoveHeadSpace.Text = "空白文字を変換開始位置とする";
+            this.checkBox_mazeRemoveHeadSpace.Text = "変換後に読みの先頭の空白文字を削除";
             this.toolTip1.SetToolTip(this.checkBox_mazeRemoveHeadSpace, resources.GetString("checkBox_mazeRemoveHeadSpace.ToolTip"));
             this.checkBox_mazeRemoveHeadSpace.UseVisualStyleBackColor = true;
             // 
@@ -3664,8 +3664,8 @@ namespace KanchokuWS
             this.checkBox_mazegakiSelectFirstCand.Size = new System.Drawing.Size(171, 19);
             this.checkBox_mazegakiSelectFirstCand.TabIndex = 0;
             this.checkBox_mazegakiSelectFirstCand.Text = "先頭候補を無条件に出力する";
-            this.toolTip1.SetToolTip(this.checkBox_mazegakiSelectFirstCand, "交ぜ書き変換の結果が複数あっても、先頭候補を無条件に出力します。\r\n\r\n変換結果が出力された直後であれば、 再度交ぜ書き変換を呼び出すことで\r\n（複数候補があれば" +
-        "）縦列鍵盤表示になります。\r\nまた、Esc キーで変換前の状態に戻せます。\r\nその後交ぜ書き変換を行うと、縦列鍵盤表示となります。");
+            this.toolTip1.SetToolTip(this.checkBox_mazegakiSelectFirstCand, "交ぜ書き変換の結果が複数あっても、先頭候補を無条件に出力します。\r\n\r\n他の候補を出力したい場合は、いったん Esc で変換前の文字列に戻してから\r\n再度、交ぜ書" +
+        "き変換を実行すると、縦列鍵盤表示になります。");
             this.checkBox_mazegakiSelectFirstCand.UseVisualStyleBackColor = true;
             // 
             // groupBox17
