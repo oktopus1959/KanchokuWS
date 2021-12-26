@@ -804,40 +804,52 @@ namespace utils
     /**
     * join
     */
-    inline wstring join(const std::vector<wstring>& list, const wstring& delim)
+    inline wstring join(const std::vector<wstring>& list, const wstring& delim, size_t maxElem = 0)
     {
         wstring result;
+        if (maxElem == 0) maxElem = list.size();
+        size_t n = 0;
         for (auto& e : list) {
+            if (n++ >= maxElem) break;
             if (!result.empty()) result.append(delim);
             result.append(e);
         }
         return result;
     }
 
-    inline MString join(const std::vector<MString>& list, mchar_t delim)
+    inline MString join(const std::vector<MString>& list, mchar_t delim, size_t maxElem = 0)
     {
         MString result;
+        if (maxElem == 0) maxElem = list.size();
+        size_t n = 0;
         for (auto& e : list) {
+            if (n++ >= maxElem) break;
             if (!result.empty()) result.push_back(delim);
             result.append(e);
         }
         return result;
     }
 
-    inline wstring join(const std::set<wstring>& list, const wstring& delim)
+    inline wstring join(const std::set<wstring>& list, const wstring& delim, size_t maxElem = 0)
     {
         wstring result;
+        if (maxElem == 0) maxElem = list.size();
+        size_t n = 0;
         for (auto& e : list) {
+            if (n++ >= maxElem) break;
             if (!result.empty()) result.append(delim);
             result.append(e);
         }
         return result;
     }
 
-    inline MString join(const std::set<MString>& list, mchar_t delim)
+    inline MString join(const std::set<MString>& list, mchar_t delim, size_t maxElem = 0)
     {
         MString result;
+        if (maxElem == 0) maxElem = list.size();
+        size_t n = 0;
         for (auto& e : list) {
+            if (n++ >= maxElem) break;
             if (!result.empty()) result.push_back(delim);
             result.append(e);
         }

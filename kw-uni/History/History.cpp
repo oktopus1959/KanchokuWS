@@ -117,6 +117,7 @@ namespace {
             return histWords;
         }
 
+        // 取得済みの候補列を返す
         const std::vector<MString>& GetCandidates() const {
             return histWords;
         }

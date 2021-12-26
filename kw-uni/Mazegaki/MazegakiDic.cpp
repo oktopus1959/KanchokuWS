@@ -926,7 +926,7 @@ namespace {
             if (IS_LOG_DEBUGH_ENABLED) {
                 std::vector<wstring> xfers;
                 std::transform(mazeResult.begin(), mazeResult.end(), std::back_inserter(xfers), [](const MazeResult& r) { return to_wstr(r.resultStr);});
-                _LOG_DEBUGH(_T("maze results: %s"), utils::join(xfers, _T(",")).c_str());
+                _LOG_DEBUGH(_T("maze results: %s"), utils::join(xfers, _T(","), 20).c_str());
             }
 #endif
             LOG_INFO(_T("LEAVE: maze entries=%d"), mazeResult.size());
