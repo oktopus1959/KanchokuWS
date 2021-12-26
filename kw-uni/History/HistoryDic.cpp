@@ -105,8 +105,8 @@ namespace {
                 auto iter = dic.find(utils::last_substr(key, N));
                 if (iter != dic.end()) {
                     for (auto hsh : iter->second) {
-                        const std::set<MString>& st = hashToStrMap.GetSet(hsh);
-                        if (!st.empty()) result.insert(st.begin(), st.end());
+                        const std::set<MString>& set_ = hashToStrMap.GetSet(hsh);
+                        if (!set_.empty()) result.insert(set_.begin(), set_.end());
                     }
                 }
             }
@@ -144,8 +144,8 @@ namespace {
             auto iter = dic.find(key);
             if (iter != dic.end()) {
                 for (auto hsh : iter->second) {
-                    const std::set<MString>& st = hashToStrMap.GetSet(hsh);
-                    if (!st.empty()) result.insert(st.begin(), st.end());
+                    const std::set<MString>& set_ = hashToStrMap.GetSet(hsh);
+                    if (!set_.empty()) result.insert(set_.begin(), set_.end());
                 }
             }
         }
@@ -241,19 +241,21 @@ namespace {
             }
         }
 
-        // list および usedList に含まれるものから下記を満たすものを返す
-        // ・単語長が len に一致する
-        // ・len == 0 なら単語長 >= 2
-        // ・len >= 9 なら単語長 >= 9
+        // set_ および usedList に含まれるものから下記を満たすものを outvec に返す
+        // outvec_ に格納されたものは set_ から取り除く
+        // keylen = キー長
+        // ・単語長が wlen に一致する
+        // ・wlen == 0 なら単語長 >= 2
+        // ・wlen >= 9 なら単語長 >= 9
         // ・ただし、キーが1文字(keylen==1)なら、候補列から1文字単語は除く
-        void ExtractUsedWords(size_t keylen, std::vector<HistResult>& outvec, std::set<MString>& list, size_t wlen = 0) {
+        void ExtractUsedWords(size_t keylen, std::vector<HistResult>& outvec, std::set<MString>& set_, size_t wlen = 0) {
             LOG_DEBUG(_T("CALLED: keylen=%d, wlen=%d"), keylen, wlen);
             for (const auto& w : usedList) {
-                if ((w.size() == wlen || (wlen == 0 && w.size() >= 2) || (wlen >= 9 && w.size() > 9)) && utils::contains(list, w)) {
+                if ((w.size() == wlen || (wlen == 0 && w.size() >= 2) || (wlen >= 9 && w.size() > 9)) && utils::contains(set_, w)) {
                     if (keylen != 1 || w.size() >= 2) {
                         // キーが1文字なら、候補列から1文字単語は除く
                         outvec.push_back(HistResult{ keylen, w });
-                        list.erase(w);
+                        set_.erase(w);
                     }
                 }
             }
@@ -480,6 +482,7 @@ namespace {
 
         HistExcludeList exclList;
 
+        // 結果を保持しておくリスト
         std::vector<HistResult> resultList;
 
         NgramFreqDic ngramDic;
@@ -604,12 +607,12 @@ namespace {
         }
 
     private:
-        // resultList に最近使ったものから取得した候補を格納し、pasts には st に含まれるものでそれ以外の候補を格納する
+        // resultList に最近使ったものから取得した候補を格納し、pasts には set_ に含まれるものでそれ以外の候補を格納する
         // wlen > 0 なら、その長さの候補だけを返す
-        void extract_and_copy(size_t klen, std::set<MString>& st, std::vector<HistResult>& pasts, size_t wlen = 0) {
-            usedList.ExtractUsedWords(klen, resultList, st, wlen);
-            //utils::transform_append(st, pasts, [klen](const auto& s) {return HistResult{ klen, s };});
-            for (const auto& s : st) {
+        void extract_and_copy(size_t klen, std::set<MString>& set_, std::vector<HistResult>& pasts, size_t wlen = 0) {
+            usedList.ExtractUsedWords(klen, resultList, set_, wlen);
+            //utils::transform_append(set_, pasts, [klen](const auto& s) {return HistResult{ klen, s };});
+            for (const auto& s : set_) {
                 // keylen == 1 なら1文字単語は対象外
                 if ((wlen > 0 && s.size() == wlen) || (wlen == 0 && (klen != 1 || s.size() >= 2))) {
                     pasts.push_back(HistResult{ klen, s });
@@ -617,19 +620,24 @@ namespace {
             }
         }
 
-        void extract_and_copy_for_longer_than_4(const MString& key, size_t len, size_t pos, std::vector<HistResult>& pastList) {
+        // key の pos 位置から4文字(i.e., key[pos, pos+4])にマッチする候補の取得
+        // resultList に最近使ったものから取得した候補を格納し、pastList にはそれ以外の候補を格納する
+        // wlen > 0 なら、その長さの候補だけを返す
+        void extract_and_copy_for_longer_than_4(const MString& key, size_t wlen, size_t pos, std::vector<HistResult>& pastList) {
             auto subStr = key.substr(pos);
             auto subKey = subStr.substr(0, 4);
-            std::set<MString> st = utils::filter(histDic4.GetSet(subKey), [subStr](const auto& s) {return utils::startsWith(s, subStr);});
-            _LOG_DEBUGH(_T("extract_and_copy(keyLen=%d, set=filter(histDic4.GetSet(%s)), pastList=(empty), len=%d"), subStr.size(), MAKE_WPTR(subKey), len);
-            extract_and_copy(subStr.size(), st, pastList, len);
+            std::set<MString> set_ = utils::filter(histDic4.GetSet(subKey), [subStr](const auto& s) {return utils::startsWith(s, subStr);});
+            _LOG_DEBUGH(_T("extract_and_copy(keyLen=%d, set=filter(histDic4.GetSet(%s)), pastList=(empty), wlen=%d"), subStr.size(), MAKE_WPTR(subKey), wlen);
+            extract_and_copy(subStr.size(), set_, pastList, wlen);
             _LOG_DEBUGH(_T("filter(histDic4, %d-4): resultList.size()=%d, pastList.size()=%d"), pos, resultList.size(), pastList.size());
         }
 
+        // N文字辞書 dic を用いて、keyの末尾N文字にマッチする候補を取得して out に返す
+        // wlen は候補文字列の長さに関する制約
         template<size_t N>
         void get_extract_and_copy(const MString& key, HistStrDic<N>& dic, std::vector<HistResult>& out, size_t wlen = 0) {
-            std::set<MString> st = dic.GetSet(key);
-            extract_and_copy(N, st, out, wlen);
+            std::set<MString> set_ = dic.GetSet(key);
+            extract_and_copy(N, set_, out, wlen);
         }
 
     public:
@@ -641,6 +649,7 @@ namespace {
         const std::vector<HistResult>& GetCandidates(const MString& key, MString& resultKey, bool checkMinKeyLen, int len)
         {
             _LOG_DEBUGH(_T("ENTER: key=%s, checkMinKeyLen=%s, len=%d"), MAKE_WPTR(key), BOOL_TO_WPTR(checkMinKeyLen), len);
+            // 結果を返すためのリストをクリアしておく
             resultList.clear();
             size_t resultKeyLen = 0;
             size_t minlen = len >= 0 ? len : 2;
@@ -651,6 +660,7 @@ namespace {
                 resultKey = key;
             } else {
                 // ここでは maxlen は無視する
+                // 直近以外の過去に使った履歴のリスト
                 std::vector<HistResult> pastList;
                 // Phase-A
                 size_t keySize = key.size();
