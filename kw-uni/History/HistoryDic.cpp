@@ -119,6 +119,15 @@ namespace {
     class HistCharDic {
         std::map<wchar_t, std::set<HashVal>> dic;
 
+        void insert(wchar_t ch, size_t hsh) {
+            auto iter = dic.find(ch);
+            if (iter == dic.end()) {
+                dic[ch] = utils::make_one_element_set(hsh);
+            } else {
+                iter->second.insert(hsh);
+            }
+        }
+
     public:
         void Insert(const MString& s) {
             if (!hashToStrMap.FindWord(s)) {
@@ -128,14 +137,15 @@ namespace {
                     wchar_t ch = (wchar_t)mch;
                     if (!utils::contains(seen, ch)) {
                         seen.insert(ch);
-                        auto iter = dic.find(ch);
-                        if (iter == dic.end()) {
-                            dic[ch] = utils::make_one_element_set(hsh);
-                        } else {
-                            iter->second.insert(hsh);
-                        }
+                        insert(ch, hsh);
                     }
                 }
+            }
+        }
+
+        void Insert(mchar_t mch, const MString& s) {
+            if (!hashToStrMap.FindWord(s)) {
+                insert((wchar_t)mch, utils::get_hash(s));
             }
         }
 
@@ -476,7 +486,7 @@ namespace {
         HistStrDic<2> histDic2;
         HistStrDic<3> histDic3;
         HistStrDic<4> histDic4;
-        HistCharDic histCharDic;
+        std::vector<HistCharDic> histCharDics;
 
         HistUsedList usedList;
 
@@ -502,7 +512,9 @@ namespace {
                 histDic2.Insert(word);
                 histDic3.Insert(word);
                 histDic4.Insert(word);
-                histCharDic.Insert(word);
+                for (size_t i = 0; i < histCharDics.size() && i < word.size(); ++i) {
+                    histCharDics[i].Insert(word);
+                }
                 hashToStrMap.Insert(word);
             }
             bDirty = true;
@@ -511,6 +523,7 @@ namespace {
 
     public:
         HistoryDicImpl() {
+            histCharDics.resize(4);
         }
 
         // UTF8で書かれた辞書ソースを読み込む
