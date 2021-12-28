@@ -21,7 +21,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 0
+#if 1
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -873,8 +873,8 @@ namespace {
         // 他にも「竈門炭治郎」の出力履歴があるなら、履歴候補の表示をする。
         bool isHotCandidateReady(const MString& prevKey, const std::vector<MString>& cands) {
             bool result = (!prevKey.empty() &&
-                           ((cands.size() > 0 && (utils::startsWith(cands[0], prevKey) || matchWildcardKey(cands[0], prevKey)) && cands[0] != prevKey) ||
-                            (cands.size() > 1 && (utils::startsWith(cands[1], prevKey) || matchWildcardKey(cands[1], prevKey)) && cands[1] != prevKey)));
+                           ((cands.size() > 0 && (utils::startsWithWildKey(cands[0], prevKey) || matchWildcardKey(cands[0], prevKey)) && cands[0] != prevKey) ||
+                            (cands.size() > 1 && (utils::startsWithWildKey(cands[1], prevKey) || matchWildcardKey(cands[1], prevKey)) && cands[1] != prevKey)));
             if (IS_LOG_DEBUGH_ENABLED) {
                 size_t candsSize = cands.size();
                 MString cands0 = candsSize > 0 ? cands[0] : MString();
@@ -904,25 +904,30 @@ namespace {
                 if (prevOut.empty() || maybeEditedBySubState) {
                     _LOG_DEBUGH(_T("PATH 12A: prevOut is Empty"));
                     // 現在の出力文字列は履歴選択したものではなかった
-                    MString key;
-                    // まず、ワイルドカードパターンを試す
-                    {
+                    // キー取得用 lambda
+                    auto keyGetter = []() {
+                        // まず、ワイルドカードパターンを試す
                         auto key9 = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(9);
+                        _LOG_DEBUGH(_T("key9=%s"), MAKE_WPTR(key9));
                         auto items = utils::split(key9, '*');
                         size_t nItems = items.size();
                         if (nItems >= 2) {
                             size_t len0 = items[nItems - 2].size();
                             size_t len1 = items[nItems - 1].size();
                             if (len0 > 0 && len1 > 0 && len1 <= 4) {
-                                key = utils::last_substr(key9, len1 + 5);
+                                return utils::last_substr(key9, len1 + 5);
                             }
                         }
-                    }
-                    if (key.empty()) {
                         // ワイルドカードパターンでなかった
                         // 出力文字から、ひらがな交じりやASCIIもキーとして取得する
-                        key = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>();
-                    }
+                        auto jaKey = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>();
+                        _LOG_DEBUGH(_T("jaKey=%s"), MAKE_WPTR(jaKey));
+                        if (jaKey.size() >= 9) return jaKey;    // 同種の文字列で9文以上取れたので、これをキーとする
+                        // 最終的には末尾8文字をキーとする('*' は含まない。'?' は含んでいる可能性あり)
+                        return utils::tail_substr(key9, 8);
+                    };
+                    // キーの取得
+                    MString key = keyGetter();
                     _LOG_DEBUGH(_T("LastJapaneseKey=%s"), MAKE_WPTR(key));
                     if (!key.empty()) {
                         // キーが取得できた

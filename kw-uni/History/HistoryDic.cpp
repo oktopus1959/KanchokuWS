@@ -14,7 +14,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 0
+#if 1
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
@@ -83,45 +83,6 @@ namespace {
     HashToStrMap hashToStrMap;
 
     // -------------------------------------------------------------------
-    // 先頭N文字から、元文字列のハッシュ値の集合へのマップ
-    // この集合から、さらに HashToStrMap を経由してアグリゲートすると、最終的な文字列集合が得られる
-    template<size_t N>
-    class HistStrDic {
-        std::map<MString, std::set<HashVal>> dic;
-
-    public:
-        void Insert(const MString& s) {
-            if (!hashToStrMap.FindWord(s)) {
-                if (s.size() >= N) {
-                    auto hsh = utils::get_hash(s);
-                    auto ss = s.substr(0, N);
-                    auto iter = dic.find(ss);
-                    if (iter == dic.end()) {
-                        dic[ss] = utils::make_one_element_set(hsh);
-                    } else {
-                        iter->second.insert(hsh);
-                    }
-                }
-            }
-        }
-
-        // key の末尾N文字を含む文字列集合を取得する
-        std::set<MString> GetSet(const MString& key) {
-            std::set<MString> result;
-            if (key.size() >= N) {
-                auto iter = dic.find(utils::last_substr(key, N));
-                if (iter != dic.end()) {
-                    for (auto hsh : iter->second) {
-                        const std::set<MString>& set_ = hashToStrMap.GetSet(hsh);
-                        if (!set_.empty()) result.insert(set_.begin(), set_.end());
-                    }
-                }
-            }
-            return result;
-        }
-    };
-
-    // -------------------------------------------------------------------
     // 単語中の文字から、それを含む文字列のハッシュ値集合へのマップ
     class HistCharDic {
         std::map<mchar_t, std::set<HashVal>> dic;
@@ -173,11 +134,13 @@ namespace {
             }
         }
 
-        // 単語 word の先頭4文字にマッチする文字列集合を取得する('?' も考慮, ただし少なくとも1文字は'?'以外を含む)
-        std::set<MString> GetSet(const MString& word) {
+        // key の末尾n文字にマッチする文字列集合を取得する('?' も考慮, ただし少なくとも1文字は'?'以外を含む)
+        std::set<MString> GetSet(const MString& key, size_t n) {
             std::set<MString> result;
-            for (size_t i = 0; i < histCharDics.size() && i < word.size(); ++i) {
-                auto mch = word[i];
+            size_t start = n >= key.size() ? 0 : key.size() - n;
+            size_t nkey = key.size() - start;
+            for (size_t i = 0; i < histCharDics.size() && i < nkey; ++i) {
+                auto mch = key[start + i];
                 if (mch == '?') continue; // '?' なら全部にマッチするとみなす
                 auto iter = histCharDics[i].GetSet(mch);
                 if (result.empty())
@@ -552,10 +515,6 @@ namespace {
     class HistoryDicImpl : public HistoryDic {
     private:
         DECLARE_CLASS_LOGGER;
-        HistStrDic<1> histDic1;
-        HistStrDic<2> histDic2;
-        HistStrDic<3> histDic3;
-        HistStrDic<4> histDic4;
         // 0～3文字目に指定文字を含む文字列ハッシュ集合のリスト
         Hist4CharsDic hist4CharsDic;
 
@@ -579,10 +538,10 @@ namespace {
             if (word.size() < minlen || (!bForce && (word[0] == '#' || word[0] == ';'))) return false;
 
             if (!hashToStrMap.FindWord(word)) {
-                histDic1.Insert(word);
-                histDic2.Insert(word);
-                histDic3.Insert(word);
-                histDic4.Insert(word);
+                //histDic1.Insert(word);
+                //histDic2.Insert(word);
+                //histDic3.Insert(word);
+                //histDic4.Insert(word);
                 hist4CharsDic.Insert(word);
                 hashToStrMap.Insert(word);
             }
@@ -724,18 +683,17 @@ namespace {
         void extract_and_copy_for_longer_than_4(const MString& key, size_t wlen, size_t pos, std::vector<HistResult>& pastList) {
             auto subStr = key.substr(pos);
             auto subKey = subStr.substr(0, 4);
-            std::set<MString> set_ = utils::filter(histDic4.GetSet(subKey), [subStr](const auto& s) {return utils::startsWith(s, subStr);});
-            _LOG_DEBUGH(_T("extract_and_copy(keyLen=%d, set=filter(histDic4.GetSet(%s)), pastList=(empty), wlen=%d"), subStr.size(), MAKE_WPTR(subKey), wlen);
+            std::set<MString> set_ = utils::filter(hist4CharsDic.GetSet(subKey, 4), [subStr](const auto& s) {return utils::startsWithWildKey(s, subStr);});
+            _LOG_DEBUGH(_T("extract_and_copy(keyLen=%d, set=filter(hist4CharsDic.GetSet(%s, 4)), pastList=(empty), wlen=%d"), subStr.size(), MAKE_WPTR(subKey), wlen);
             extract_and_copy(subStr.size(), set_, pastList, wlen);
-            _LOG_DEBUGH(_T("filter(histDic4, %d-4): resultList.size()=%d, pastList.size()=%d"), pos, resultList.size(), pastList.size());
+            _LOG_DEBUGH(_T("filter(hist4CharsDic, %d-4): resultList.size()=%d, pastList.size()=%d"), pos, resultList.size(), pastList.size());
         }
 
-        // N文字辞書 dic を用いて、keyの末尾N文字にマッチする候補を取得して out に返す
+        // keyの末尾n文字にマッチする候補を取得して out に返す
         // wlen は候補文字列の長さに関する制約
-        template<size_t N>
-        void get_extract_and_copy(const MString& key, HistStrDic<N>& dic, std::vector<HistResult>& out, size_t wlen = 0) {
-            std::set<MString> set_ = dic.GetSet(key);
-            extract_and_copy(N, set_, out, wlen);
+        void get_extract_and_copy(const MString& key, size_t n, std::vector<HistResult>& out, size_t wlen = 0) {
+            std::set<MString> set_ = hist4CharsDic.GetSet(key, n);
+            extract_and_copy(n, set_, out, wlen);
         }
 
     public:
@@ -797,28 +755,28 @@ namespace {
                     };
 
                     resultKeyLen = 4;
-                    _LOG_DEBUGH(_T("histDic4: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), minlen);
-                    get_extract_and_copy(key, histDic4, pastList, minlen);
+                    _LOG_DEBUGH(_T("get_extract_and_copy(key=%s, n=4, len=%d"), MAKE_WPTR(key), minlen);
+                    get_extract_and_copy(key, 4, pastList, minlen);
                     _LOG_DEBUGH(_T("histDic4: resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
                     if (resultList.empty() && pastList.empty()) {
                         if (checkFunc(3)) {
                             resultKeyLen = 3;
-                            _LOG_DEBUGH(_T("histDic3: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), minlen);
-                            get_extract_and_copy(key, histDic3, pastList, minlen);
+                            _LOG_DEBUGH(_T("get_extract_and_copy(key=%s, n=3, len=%d"), MAKE_WPTR(key), minlen);
+                            get_extract_and_copy(key, 3, pastList, minlen);
                             _LOG_DEBUGH(_T("histDic3: resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
                         }
                         if (resultList.empty() && pastList.empty()) {
                             if (checkFunc(2)) {
                                 resultKeyLen = 2;
-                                _LOG_DEBUGH(_T("histDic2: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), minlen);
-                                get_extract_and_copy(key, histDic2, pastList, minlen);
+                                _LOG_DEBUGH(_T("get_extract_and_copy(key=%s, n=2, len=%d"), MAKE_WPTR(key), minlen);
+                                get_extract_and_copy(key, 2, pastList, minlen);
                                 _LOG_DEBUGH(_T("histDic2: resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
                             }
                             if (resultList.empty() && pastList.empty()) {
                                 if (checkFunc(1)) {
                                     resultKeyLen = 1;
-                                    _LOG_DEBUGH(_T("histDic1: get_extract_and_copy(key=%s,len=%d"), MAKE_WPTR(key), minlen);
-                                    get_extract_and_copy(key, histDic1, pastList, minlen);
+                                    _LOG_DEBUGH(_T("get_extract_and_copy(key=%s, n=1, len=%d"), MAKE_WPTR(key), minlen);
+                                    get_extract_and_copy(key, 1, pastList, minlen);
                                     _LOG_DEBUGH(_T("histDic1: resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
                                 }
                             }
@@ -1033,5 +991,4 @@ void HistoryDic::WriteHistoryDic(const tstring& histFile) {
 void HistoryDic::WriteHistoryDic() {
     WriteHistoryDic(SETTINGS->historyFile);
 }
-
 
