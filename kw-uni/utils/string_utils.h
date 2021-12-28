@@ -15,6 +15,8 @@ namespace {
 
     wchar_t HAN_CHOON = 0xff70; // 'ー'
 
+    wchar_t QUESTION_MARK = 0xff1f;   // '？'
+
     inline MString to_mstr(mchar_t x) {
         return x != 0 ? MString(1, x) : MString();
     }
@@ -921,6 +923,39 @@ namespace utils
     inline mchar_t safe_back(const MString& s, size_t n) {
         return s.size() < n ? mchar_t('\0') : s[s.size() - n];
     }
+
+    inline wstring wildcard_to_regex(const wstring& s) {
+        wstring result;
+        for (wchar_t mch : s) {
+            if (mch == '?') {
+                result.append(1, '.');
+            }  else if (mch == '*') {
+                result.append(1, '.');
+                result.append(1, '*');
+            } else {
+                result.append(1, mch);
+            }
+        }
+        return result;
+    }
+
+    inline bool match_key_containing_question(const MString& str, size_t pos, const MString& qKey) {
+        for (size_t i = 0; i < qKey.size(); ++i) {
+            if (i >= str.size()) return false;
+            if (qKey[i] == '?') continue;
+            if (qKey[i] != str[pos + i]) return false;
+        }
+        return true;
+    }
+
+    inline bool startsWithWildKey(const MString& str, const MString qKey) {
+        return str.size() >= qKey.size() && match_key_containing_question(str, 0, qKey);
+    }
+
+    inline bool endsWithWildKey(const MString& str, const MString qKey) {
+        return str.size() >= qKey.size() && match_key_containing_question(str, str.size() - qKey.size(), qKey);
+    }
+
 } // namespace utils
 
 #define MAKE_WPTR(ms) to_wstr(ms).c_str()

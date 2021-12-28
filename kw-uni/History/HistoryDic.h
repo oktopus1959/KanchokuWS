@@ -8,6 +8,7 @@
 struct HistResult {
     size_t KeyLen = 0;
     MString Word;
+    bool WildKey = false;
 };
 
 // -------------------------------------------------------------------

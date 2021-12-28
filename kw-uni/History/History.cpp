@@ -22,6 +22,7 @@
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
 #if 0
+#define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
@@ -253,23 +254,30 @@ namespace {
 
         // 選択された履歴候補を出力 (abbrev なら true を返す)
         bool setOutString(const HistResult& result, size_t numBS = 0) {
-            _LOG_DEBUGH(_T("CALLED: word=%s, keyLen=%d, numBS=%d"), MAKE_WPTR(result.Word), result.KeyLen, numBS);
+            _LOG_DEBUGH(_T("CALLED: word=%s, keyLen=%d, numBS=%d, wildKey=%s"), MAKE_WPTR(result.Word), result.KeyLen, numBS, BOOL_TO_WPTR(result.WildKey));
             bool flag = false;
-            size_t pos = result.Word.find('|');
-            if (pos < SETTINGS->abbrevKeyMaxLength) {
-                // abbrev
-                flag = true;
-                ++pos;                      // '|' まで削除する必要あり
-                numBS += result.KeyLen;     // abbreなのでkeyも削除する必要あり
-                STATE_COMMON->SetOutString(utils::safe_substr(result.Word, pos), numBS);
-                HISTORY_STAY_NODE->prevOutString.clear();
-                HISTORY_STAY_NODE->prevKeyLen = 0;
+            if (result.WildKey) {
+                STATE_COMMON->SetOutString(result.Word, numBS > 0 ? numBS : result.KeyLen);
+                HISTORY_STAY_NODE->prevOutString = result.Word;
+                HISTORY_STAY_NODE->prevKeyLen = -1;     // 負の値で、今回の履歴検索を無効化しておく
                 HISTORY_STAY_NODE->prevKey.clear();
             } else {
-                STATE_COMMON->SetOutString(utils::safe_substr(result.Word, result.KeyLen), numBS);
-                HISTORY_STAY_NODE->prevOutString = result.Word;
-                HISTORY_STAY_NODE->prevKeyLen = (int)result.KeyLen;
-                HISTORY_STAY_NODE->prevKey = utils::safe_substr(result.Word, result.KeyLen);
+                size_t pos = result.Word.find('|');
+                if (pos < SETTINGS->abbrevKeyMaxLength) {
+                    // abbrev
+                    flag = true;
+                    ++pos;                      // '|' まで削除する必要あり
+                    if (numBS == 0) numBS = result.KeyLen;     // abbreなので初回はkeyを全削除
+                    STATE_COMMON->SetOutString(utils::safe_substr(result.Word, pos), numBS);
+                    HISTORY_STAY_NODE->prevOutString.clear();
+                    HISTORY_STAY_NODE->prevKeyLen = -1;     // 負の値で、今回の履歴検索を無効化しておく
+                    HISTORY_STAY_NODE->prevKey.clear();
+                } else {
+                    STATE_COMMON->SetOutString(utils::safe_substr(result.Word, result.KeyLen), numBS);
+                    HISTORY_STAY_NODE->prevOutString = result.Word;
+                    HISTORY_STAY_NODE->prevKeyLen = (int)result.KeyLen;
+                    HISTORY_STAY_NODE->prevKey = utils::safe_substr(result.Word, result.KeyLen);
+                }
             }
             _LOG_DEBUGH(_T("prevOutString=%s, prevKeyLen=%d, numBS=%d"), MAKE_WPTR(HISTORY_STAY_NODE->prevOutString), HISTORY_STAY_NODE->prevKeyLen, numBS);
             return flag;
@@ -363,7 +371,8 @@ namespace {
         void setHistSelectColorAndBackColor() {
             // 「候補選択」の色で中央鍵盤の色付け
             STATE_COMMON->SetHistCandSelecting();
-            // 矢印キーを有効にして、背景色の色付けなし
+            // 矢印キーを有効にして、背景色の色付けあり
+            _LOG_DEBUGH(_T("Set Unselected"));
             STATE_COMMON->SetWaitingCandSelect(-1);
         }
 
@@ -374,6 +383,7 @@ namespace {
             // 「その他の状態」の色で中央鍵盤の色付け
             STATE_COMMON->SetOtherStatus();
             // 矢印キーを有効にして、背景色の色付けなし
+            _LOG_DEBUGH(_T("Set Unselected=-2"));
             STATE_COMMON->SetWaitingCandSelect(-2);
         }
 
@@ -433,6 +443,7 @@ namespace {
             candLen = 0;
             setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandidates(key, false, candLen), key);
             // 未選択状態にセットする
+            _LOG_DEBUGH(_T("Set Unselected"));
             STATE_COMMON->SetWaitingCandSelect(-1);
 
             // 前状態にチェインする
@@ -841,17 +852,33 @@ namespace {
         //}
 
     private:
+        bool matchWildcardKey(const MString& cand, const MString& wildKey) {
+            _LOG_DEBUGH(_T("cand=%s, wildKey=%s"), MAKE_WPTR(cand), MAKE_WPTR(wildKey));
+            auto keys = utils::split(wildKey, '*');
+            if (keys.size() == 2) {
+                const MString& key0 = keys[0];
+                const MString& key1 = keys[1];
+                if (!key0.empty() && !key1.empty()) {
+                    if (cand.size() >= key0.size() + key1.size()) {
+                        _LOG_DEBUGH(_T("startsWithWildKey(%s, %s) && utils::endsWithWildKey(%s, %s)"), MAKE_WPTR(cand), MAKE_WPTR(key0), MAKE_WPTR(cand), MAKE_WPTR(key1));
+                        return utils::startsWithWildKey(cand, key0) && utils::endsWithWildKey(cand, key1);
+                    }
+                }
+            }
+            return false;
+        }
+
         // 直前キーが空でなく、候補が1つ以上あり、第1候補または第2候補がキー文字列から始まっていて、かつ同じではないか
         // たとえば、直前に「竈門」を交ぜ書きで出力したような場合で、これまでの出力履歴が「竈門」だけなら履歴候補の表示はやらない。
         // 他にも「竈門炭治郎」の出力履歴があるなら、履歴候補の表示をする。
         bool isHotCandidateReady(const MString& prevKey, const std::vector<MString>& cands) {
             bool result = (!prevKey.empty() &&
-                           ((cands.size() > 0 && utils::startsWith(cands[0], prevKey) && cands[0] != prevKey) ||
-                            (cands.size() > 1 && utils::startsWith(cands[1], prevKey) && cands[1] != prevKey)));
+                           ((cands.size() > 0 && (utils::startsWith(cands[0], prevKey) || matchWildcardKey(cands[0], prevKey)) && cands[0] != prevKey) ||
+                            (cands.size() > 1 && (utils::startsWith(cands[1], prevKey) || matchWildcardKey(cands[1], prevKey)) && cands[1] != prevKey)));
             if (IS_LOG_DEBUGH_ENABLED) {
                 size_t candsSize = cands.size();
                 MString cands0 = candsSize > 0 ? cands[0] : MString();
-                LOG_DEBUGH(_T("RESULT=%s, prevKey=%s, cands.size=%d, cands[0]=%s"), BOOL_TO_WPTR(result), MAKE_WPTR(prevKey), candsSize, MAKE_WPTR(cands0));
+                _LOG_DEBUGH(_T("RESULT=%s, prevKey=%s, cands.size=%d, cands[0]=%s"), BOOL_TO_WPTR(result), MAKE_WPTR(prevKey), candsSize, MAKE_WPTR(cands0));
             }
             return result;
         }
@@ -877,8 +904,25 @@ namespace {
                 if (prevOut.empty() || maybeEditedBySubState) {
                     _LOG_DEBUGH(_T("PATH 12A: prevOut is Empty"));
                     // 現在の出力文字列は履歴選択したものではなかった
-                    // 出力文字から、ひらがな交じりやASCIIもキーとして取得する
-                    auto key = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>();
+                    MString key;
+                    // まず、ワイルドカードパターンを試す
+                    {
+                        auto key9 = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(9);
+                        auto items = utils::split(key9, '*');
+                        size_t nItems = items.size();
+                        if (nItems >= 2) {
+                            size_t len0 = items[nItems - 2].size();
+                            size_t len1 = items[nItems - 1].size();
+                            if (len0 > 0 && len1 > 0 && len1 <= 4) {
+                                key = utils::last_substr(key9, len1 + 5);
+                            }
+                        }
+                    }
+                    if (key.empty()) {
+                        // ワイルドカードパターンでなかった
+                        // 出力文字から、ひらがな交じりやASCIIもキーとして取得する
+                        key = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>();
+                    }
                     _LOG_DEBUGH(_T("LastJapaneseKey=%s"), MAKE_WPTR(key));
                     if (!key.empty()) {
                         // キーが取得できた
@@ -924,6 +968,7 @@ namespace {
             if (isHotCandidateReady(HISTORY_STAY_NODE->prevKey, HIST_CAND->GetCandidates())) {
                 _LOG_DEBUGH(_T("PATH 14"));
                 // 何がしかの文字出力があり、それをキーとする履歴候補があった場合 -- 未選択状態にセットする
+                _LOG_DEBUGH(_T("Set Unselected"));
                 STATE_COMMON->SetWaitingCandSelect(-1);
                 bCandSelectable = true;
             }
@@ -942,6 +987,7 @@ namespace {
                 if (bCandSelectable) {
                     _LOG_DEBUGH(_T("PATH 4"));
                     // この処理は、GUI側で候補の背景色を変更するのと矢印キーをホットキーにするために必要
+                    _LOG_DEBUGH(_T("Set selectedPos=%d"), HIST_CAND->GetSelectPos());
                     STATE_COMMON->SetWaitingCandSelect(HIST_CAND->GetSelectPos());
                 }
             } else {
@@ -977,7 +1023,7 @@ namespace {
                 historySearch(true);
             }
             if (bCandSelectable) {
-                _LOG_DEBUGH(_T("CandSelectable"));
+                _LOG_DEBUGH(_T("CandSelectable: bNext=%s"), BOOL_TO_WPTR(bNext));
                 if (bNext)
                     getNextCandidate();
                 else
@@ -1177,7 +1223,11 @@ namespace {
                 // emptyの場合は元に戻ったので、ブロッカーを設定してはならない (@TODO: ちょっと意味不明)
                 STATE_COMMON->SetHistoryBlockFlag();
             }
-            if (!bAbbrev) setCandidatesVKB(VkbLayout::Horizontal, HIST_CAND->GetCandidates(), HIST_CAND->GetCurrentKey());
+            if (bAbbrev) {
+                STATE_COMMON->ClearVkbLayout();
+            } else {
+                setCandidatesVKB(VkbLayout::Horizontal, HIST_CAND->GetCandidates(), HIST_CAND->GetCurrentKey());
+            }
 
             _LOG_DEBUGH(_T("LEAVE: prevOut=%s, prevKeyLen=%d, numBS=%d"), MAKE_WPTR(HISTORY_STAY_NODE->prevOutString), HISTORY_STAY_NODE->prevKeyLen, numBS);
         }

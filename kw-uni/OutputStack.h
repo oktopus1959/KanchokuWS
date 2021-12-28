@@ -311,6 +311,7 @@ public:
     inline MString GetLastOutputStackStr(size_t len, unsigned short flag = 0) const { return OutputStackBackStrUpto(len, flag); }
 
     inline MString GetLastOutputStackStrUptoNL(size_t len) const { return GetLastOutputStackStr(len, OutputStack::FLAG_NEW_LINE); }
+    inline MString GetLastOutputStackStrUptoBlocker(size_t len) const { return GetLastOutputStackStr(len, OutputStack::FLAG_NEW_LINE | OutputStack::FLAG_BLOCK_HIST); }
 
     // ブロッカーを反映した文字列を取得
     inline MString OutputStackBackStrWithFlagUpto(size_t len, size_t extraBarPos = 0) const { return backStringWithFlagUpto(len, extraBarPos); }

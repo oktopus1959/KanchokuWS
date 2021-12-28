@@ -14,6 +14,13 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
+#if 0
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#endif
+
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
 namespace {
@@ -117,54 +124,111 @@ namespace {
     // -------------------------------------------------------------------
     // 単語中の文字から、それを含む文字列のハッシュ値集合へのマップ
     class HistCharDic {
-        std::map<wchar_t, std::set<HashVal>> dic;
+        std::map<mchar_t, std::set<HashVal>> dic;
 
-        void insert(wchar_t ch, size_t hsh) {
-            auto iter = dic.find(ch);
+        void insert(mchar_t mch, size_t hsh) {
+            auto iter = dic.find(mch);
             if (iter == dic.end()) {
-                dic[ch] = utils::make_one_element_set(hsh);
+                dic[mch] = utils::make_one_element_set(hsh);
             } else {
                 iter->second.insert(hsh);
             }
         }
 
     public:
-        void Insert(const MString& s) {
-            if (!hashToStrMap.FindWord(s)) {
-                std::set<wchar_t> seen;
-                auto hsh = utils::get_hash(s);
-                for (auto mch : s) {
-                    wchar_t ch = (wchar_t)mch;
-                    if (!utils::contains(seen, ch)) {
-                        seen.insert(ch);
-                        insert(ch, hsh);
-                    }
-                }
-            }
-        }
-
         void Insert(mchar_t mch, const MString& s) {
             if (!hashToStrMap.FindWord(s)) {
-                insert((wchar_t)mch, utils::get_hash(s));
+                insert(mch, utils::get_hash(s));
             }
         }
 
-        std::set<MString> GetSet(wchar_t key) {
+        std::set<MString> GetSet(mchar_t mch) {
             std::set<MString> result;
-            auto iter = dic.find(key);
+            auto iter = dic.find(mch);
             if (iter != dic.end()) {
                 for (auto hsh : iter->second) {
                     const std::set<MString>& set_ = hashToStrMap.GetSet(hsh);
                     if (!set_.empty()) result.insert(set_.begin(), set_.end());
                 }
             }
+            return result;
         }
     };
+
+    // 単語の先頭4文字を含むハッシュ値集合へのマップ
+    class Hist4CharsDic {
+        DECLARE_CLASS_LOGGER;
+
+        // 0～3文字目に指定文字を含む文字列ハッシュ集合のリスト
+        std::vector<HistCharDic> histCharDics;
+
+    public:
+        Hist4CharsDic() {
+            histCharDics.resize(4);
+        }
+
+        void Insert(const MString& word) {
+            for (size_t i = 0; i < histCharDics.size() && i < word.size(); ++i) {
+                histCharDics[i].Insert(word[i], word);
+            }
+        }
+
+        // 単語 word の先頭4文字にマッチする文字列集合を取得する('?' も考慮, ただし少なくとも1文字は'?'以外を含む)
+        std::set<MString> GetSet(const MString& word) {
+            std::set<MString> result;
+            for (size_t i = 0; i < histCharDics.size() && i < word.size(); ++i) {
+                auto mch = word[i];
+                if (mch == '?') continue; // '?' なら全部にマッチするとみなす
+                auto iter = histCharDics[i].GetSet(mch);
+                if (result.empty())
+                    result = histCharDics[i].GetSet(mch);
+                else
+                    utils::apply_intersection(result, histCharDics[i].GetSet(mch));
+                if (result.empty()) break;
+            }
+            _LOG_DEBUGH(_T("result.size=%d"), result.size());
+            return result;
+        }
+
+        // '*' をはさんで、前半部の key1 と後半部の key2 にマッチする文字列集合を取得。key1のうちマッチした部分の長さを返す
+        size_t FindMatchingWords(const MString& key1, const MString& key2, std::set<MString>& result) {
+            std::set<MString> temp_set;
+            auto key0 = utils::last_substr(key1, histCharDics.size());    // 前半キーの末尾4文字(以下)だけをキーとする
+            result.clear();
+            size_t start = 0;
+            while (start < key0.size()) {
+                for (size_t i = 0; i < key0.size() - start; ++i) {
+                    auto mch = key0[start + i];
+                    if (mch == '?') continue; // '?' なら全部にマッチするとみなす
+                    if (temp_set.empty())
+                        temp_set = histCharDics[i].GetSet(mch);
+                    else
+                        utils::apply_intersection(temp_set, histCharDics[i].GetSet(mch));
+                    if (temp_set.empty()) break;
+                }
+                if (!temp_set.empty()) {
+                    result = utils::filter(temp_set, [key2](const MString& w) {return utils::endsWithWildKey(w, key2);});
+                    if (!result.empty()) {
+                        size_t key_size = key0.size() - start;
+                        _LOG_DEBUGH(_T("result.size=%d, keyMatchLen=%d"), result.size(), key_size);
+                        return key_size;
+                    }
+                }
+                ++start;
+            }
+            _LOG_DEBUGH(_T("result.size=0, keyMatchLen=0"));
+            return 0;
+        }
+    };
+    DEFINE_CLASS_LOGGER(Hist4CharsDic);
 
     // -------------------------------------------------------------------
     // 使用された順に並べたリスト
     class HistUsedList {
         DECLARE_CLASS_LOGGER;
+
+        const size_t MAX_SIZE = 10000;
+        const size_t EXTRA_SIZE = 1000;
 
         std::vector<MString> usedList;
 
@@ -190,6 +254,7 @@ namespace {
                 if (!utils::contains(used, w)) {
                     usedList.push_back(to_mstr(w));
                     used.insert(w);
+                    if (usedList.size() >= MAX_SIZE) break;
                 }
             }
             bDirty = false;
@@ -205,6 +270,11 @@ namespace {
                     utils::erase(usedList, word);
                 }
                 usedList.insert(usedList.begin(), word);
+                if (usedList.size() >= MAX_SIZE + EXTRA_SIZE) {
+                    _LOG_DEBUGH(_T("EXTRA entries erasing...: size=%d"), usedList.size());
+                    usedList.erase(usedList.begin() + MAX_SIZE, usedList.end());
+                    _LOG_DEBUGH(_T("EXTRA entries erased: size=%d"), usedList.size());
+                }
                 bDirty = true;
             }
         }
@@ -258,13 +328,13 @@ namespace {
         // ・wlen == 0 なら単語長 >= 2
         // ・wlen >= 9 なら単語長 >= 9
         // ・ただし、キーが1文字(keylen==1)なら、候補列から1文字単語は除く
-        void ExtractUsedWords(size_t keylen, std::vector<HistResult>& outvec, std::set<MString>& set_, size_t wlen = 0) {
+        void ExtractUsedWords(size_t keylen, std::vector<HistResult>& outvec, std::set<MString>& set_, size_t wlen = 0, bool bWild = false) {
             LOG_DEBUG(_T("CALLED: keylen=%d, wlen=%d"), keylen, wlen);
             for (const auto& w : usedList) {
                 if ((w.size() == wlen || (wlen == 0 && w.size() >= 2) || (wlen >= 9 && w.size() > 9)) && utils::contains(set_, w)) {
                     if (keylen != 1 || w.size() >= 2) {
                         // キーが1文字なら、候補列から1文字単語は除く
-                        outvec.push_back(HistResult{ keylen, w });
+                        outvec.push_back(HistResult{ keylen, w, bWild });
                         set_.erase(w);
                     }
                 }
@@ -276,7 +346,7 @@ namespace {
         // ・maxlen == 0 なら単語長 >= 2
         // ・1 <= maxlen <= 3 なら難打鍵文字を含むものだけ
         // ・maxlen >= 9 なら単語長 >= 9
-        void ExtractUsedWords(std::vector<HistResult>& outvec, size_t n, size_t minlen = 0, size_t maxlen = 0) {
+        void ExtractUsedWords(std::vector<HistResult>& outvec, size_t n, size_t minlen = 0, size_t maxlen = 0, bool bWild = false) {
             LOG_DEBUG(_T("CALLED: size=%d, minlen=%d, maxlen=%d"), n, minlen, maxlen);
             auto checkCond = [minlen, maxlen](const MString& w) {
                 if (w.size() >= minlen && w.size() <= maxlen && (maxlen > 3 || !EASY_CHARS->AllContainedIn(w))) return true;
@@ -287,7 +357,7 @@ namespace {
             size_t i = 0;
             for (const auto& w : usedList) {
                 if (checkCond(w)) {
-                    outvec.push_back(HistResult{ 0, w });
+                    outvec.push_back(HistResult{ 0, w, bWild });
                     if (++i >= n) break;
                 }
             }
@@ -486,7 +556,8 @@ namespace {
         HistStrDic<2> histDic2;
         HistStrDic<3> histDic3;
         HistStrDic<4> histDic4;
-        std::vector<HistCharDic> histCharDics;
+        // 0～3文字目に指定文字を含む文字列ハッシュ集合のリスト
+        Hist4CharsDic hist4CharsDic;
 
         HistUsedList usedList;
 
@@ -501,7 +572,7 @@ namespace {
 
     private:
         // 一行の辞書ソース文字列を解析して辞書に登録する
-        bool AddHistDicEntry(const MString& line, size_t minlen = 2, bool bForce = false) {
+        bool addHistDicEntry(const MString& line, size_t minlen = 2, bool bForce = false) {
             LOG_DEBUG(_T("CALLED: %s, minlen=%d"), MAKE_WPTR(line), minlen);
             auto word = utils::strip(line);
             // 空白行または1文字以下、あるいは強制登録でなくて、先頭が '#' or ';' の場合は、何もしない
@@ -512,9 +583,7 @@ namespace {
                 histDic2.Insert(word);
                 histDic3.Insert(word);
                 histDic4.Insert(word);
-                for (size_t i = 0; i < histCharDics.size() && i < word.size(); ++i) {
-                    histCharDics[i].Insert(word);
-                }
+                hist4CharsDic.Insert(word);
                 hashToStrMap.Insert(word);
             }
             bDirty = true;
@@ -523,7 +592,6 @@ namespace {
 
     public:
         HistoryDicImpl() {
-            histCharDics.resize(4);
         }
 
         // UTF8で書かれた辞書ソースを読み込む
@@ -532,7 +600,7 @@ namespace {
             int logLevel = Logger::LogLevel;
             Logger::LogLevel = 0;
             for (const auto& line : lines) {
-                AddHistDicEntry(to_mstr(line), 1);
+                addHistDicEntry(to_mstr(line), 1);
             }
             bDirty = false;
             Logger::LogLevel = logLevel;
@@ -544,14 +612,14 @@ namespace {
             LOG_DEBUG(_T("CALLED: word=%s, bForce=%d"), MAKE_WPTR(word), bForce);
             if (bForce || !exclList.Find(word)) {
                 usedList.PushEntry(word, minlen);
-                AddHistDicEntry(word, minlen, bForce);
+                addHistDicEntry(word, minlen, bForce);
             }
         }
 
         inline void addNewHistDicEntry(const MString& word, bool bForce = false, size_t minlen = 2) {
             LOG_DEBUG(_T("CALLED: word=%s, bForce=%d"), MAKE_WPTR(word), bForce);
             if (bForce || !exclList.Find(word)) {
-                AddHistDicEntry(word, minlen);
+                addHistDicEntry(word, minlen);
             }
         }
 
@@ -622,14 +690,31 @@ namespace {
     private:
         // resultList に最近使ったものから取得した候補を格納し、pasts には set_ に含まれるものでそれ以外の候補を格納する
         // wlen > 0 なら、その長さの候補だけを返す
-        void extract_and_copy(size_t klen, std::set<MString>& set_, std::vector<HistResult>& pasts, size_t wlen = 0) {
-            usedList.ExtractUsedWords(klen, resultList, set_, wlen);
+        void extract_and_copy(size_t klen, std::set<MString>& set_, std::vector<HistResult>& pasts, size_t wlen = 0, bool bWild = false) {
+            usedList.ExtractUsedWords(klen, resultList, set_, wlen, bWild);
             //utils::transform_append(set_, pasts, [klen](const auto& s) {return HistResult{ klen, s };});
             for (const auto& s : set_) {
                 // keylen == 1 なら1文字単語は対象外
                 if ((wlen > 0 && s.size() == wlen) || (wlen == 0 && (klen != 1 || s.size() >= 2))) {
-                    pasts.push_back(HistResult{ klen, s });
+                    pasts.push_back(HistResult{ klen, s, bWild });
                 }
+            }
+        }
+
+        // '*' をはさんで、前半部の key1 と後半部の key2 にマッチする文字列集合を取得
+        // resultList に最近使ったものから取得した候補を格納し、pastList にはそれ以外の候補を格納する
+        void extract_and_copy_for_wildecard_included(const MString& key, std::vector<HistResult>& pastList) {
+            auto items = utils::split(key, '*');
+            size_t itemsSize = items.size();
+            if (itemsSize >= 2 && !items[itemsSize - 1].empty() && items[itemsSize - 1].size() <= 4) {
+                // key が '*' を含み、最後の '*' の後が4文字以下
+                std::set<MString> set_;
+                const MString& key1 = items[itemsSize - 2];
+                const MString& key2 = items[itemsSize - 1];
+                size_t matchLen = hist4CharsDic.FindMatchingWords(key1, key2, set_) + key2.size() + 1;
+                _LOG_DEBUGH(_T("extract_and_copy(keyLen=%d, set=hist4CharsDic.FindMatchingWords(%s, %s), pastList=(empty), wlen=0, bWild=true"), matchLen, MAKE_WPTR(key1), MAKE_WPTR(key2));
+                extract_and_copy(matchLen, set_, pastList, 0, true);
+                _LOG_DEBUGH(_T("resultList.size()=%d, pastList.size()=%d"), resultList.size(), pastList.size());
             }
         }
 
@@ -675,10 +760,12 @@ namespace {
                 // ここでは maxlen は無視する
                 // 直近以外の過去に使った履歴のリスト
                 std::vector<HistResult> pastList;
+                // key が '*' を含んでいる場合にワイルドカードのマッチングを行う
+                extract_and_copy_for_wildecard_included(key, pastList);
                 // Phase-A
                 size_t keySize = key.size();
                 // keyが5文字以上の場合に、先頭の4文字についても試す(末尾4文字は、この後の Phase-B で試される
-                if (keySize >= 5) {
+                if (resultList.empty() && pastList.empty() && keySize >= 5) {
                     extract_and_copy_for_longer_than_4(key, minlen, 0, pastList);
                 }
                 // keyが6文字の場合に、中間の4文字についても試す(末尾4文字は、この後の Phase-B で試される
