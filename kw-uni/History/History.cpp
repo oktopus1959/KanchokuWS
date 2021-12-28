@@ -234,11 +234,13 @@ namespace {
 
         // 選択された履歴候補を出力(予定巻き戻し数(numBS)は更新される)
         // (abbrev など、候補表示をやめて通常表示に戻す場合は true を返す)
-        bool setOutString(const HistResult& result, size_t numBS = 0) {
-            _LOG_DEBUGH(_T("CALLED: word=%s, keyLen=%d, plannedNumBS=%d, wildKey=%s"), MAKE_WPTR(result.Word), result.KeyLen(), numBS, BOOL_TO_WPTR(result.WildKey));
+        bool setOutString(const HistResult& result, size_t plannedNumBS = 0) {
+            _LOG_DEBUGH(_T("CALLED: word=%s, keyLen=%d, plannedNumBS=%d, wildKey=%s"), MAKE_WPTR(result.Word), result.KeyLen(), plannedNumBS, BOOL_TO_WPTR(result.WildKey));
             bool flag = false;
+            size_t numBS = plannedNumBS;
             if (result.WildKey) {
-                STATE_COMMON->SetOutString(result.Word, numBS > 0 ? numBS : result.KeyLen());
+                if (numBS == 0) numBS = result.KeyLen();
+                STATE_COMMON->SetOutString(result.Word, numBS);
                 HISTORY_STAY_NODE->prevOutString = result.Word;
                 HISTORY_STAY_NODE->prevKeyLen = -1;     // 負の値で、今回の履歴検索を無効化しておく
                 HISTORY_STAY_NODE->prevKey = result.Key;
@@ -273,21 +275,28 @@ namespace {
 
             // 前回の履歴検索の出力
             const auto& prevOut = HISTORY_STAY_NODE->prevOutString;
-            size_t prevKeyLen = size_t(HISTORY_STAY_NODE->prevKeyLen > 0 ? HISTORY_STAY_NODE->prevKeyLen : 0);
-            _LOG_DEBUGH(_T("prevOut=%s, prevKeyLen=%d"), MAKE_WPTR(prevOut), prevKeyLen);
+            const auto& prevKey = HISTORY_STAY_NODE->prevKey;
+            _LOG_DEBUGH(_T("prevOut=%s, prevKey=%s"), MAKE_WPTR(prevOut), MAKE_WPTR(prevKey));
 
-            if (prevOut.size() > prevKeyLen) {
-                auto lastJstr = OUTPUT_STACK->GetLastJapaneseStr<MString>(prevOut.size());
+            if (prevOut == prevKey) {
+                key = prevKey;
+                _LOG_DEBUGH(_T("Use prevKey=%s"), MAKE_WPTR(key));
+            } else {
+                auto lastJstr = OUTPUT_STACK->GetLastJapaneseStr<MString>(max(prevOut.size(), prevKey.size()));
                 _LOG_DEBUGH(_T("lastJapaneseStr=%s"), MAKE_WPTR(lastJstr));
                 if (lastJstr == prevOut) {
+                    _LOG_DEBUGH(_T("lastJapaneseStr is same as prevOut"));
                     //前回の履歴検索の出力が、現在の出力と同じであれば、直前の履歴入力に戻す
-                    STATE_COMMON->SetBackspaceNum(prevOut.size() - prevKeyLen);
-                    key = utils::safe_substr(prevOut, 0, prevKeyLen);
+                    STATE_COMMON->SetBackspaceNum(prevOut.size() - prevKey.size());
+                    key = prevKey;
                     _LOG_DEBUGH(_T("REVERT: key=%s"), MAKE_WPTR(key));
+                } else if (lastJstr == prevKey) {
+                    _LOG_DEBUGH(_T("lastJapaneseStr is same as prevKey"));
+                    //前回の履歴検索の出力が、現在のキーと同じであれば、現在の出力をそのまま使う
+                    STATE_COMMON->SetBackspaceNum(0);
+                    key = prevKey;
+                    _LOG_DEBUGH(_T("CURRENT: key=%s"), MAKE_WPTR(key));
                 }
-            } else {
-                key = HISTORY_STAY_NODE->prevKey;
-                _LOG_DEBUGH(_T("Use prevKey=%s"), MAKE_WPTR(key));
             }
 
             _LOG_DEBUGH(_T("last Japanese key=%s"), MAKE_WPTR(key));
@@ -510,7 +519,7 @@ namespace {
             //    return;
             //}
             // 候補の選択
-            const auto& result = HIST_CAND->SelectNth((deckey >= STROKE_SPACE_DECKEY ? 0 : deckey % LONG_KEY_NUM) + candDispHorizontalPos);
+            auto result = HIST_CAND->SelectNth((deckey >= STROKE_SPACE_DECKEY ? 0 : deckey % LONG_KEY_NUM) + candDispHorizontalPos);
             LOG_DEBUG(_T("result.Word=%s, result.KeyLen=%d"), MAKE_WPTR(result.Word), result.KeyLen());
             if (!result.Word.empty()) {
                 setOutString(result);
@@ -876,7 +885,8 @@ namespace {
             // 前回の履歴選択の出力と現在の出力文字列(改行以降)の末尾を比較し、同じであれば前回の履歴選択の出力を取得する
             // たとえば前回「中」で履歴検索し「中納言家持」が履歴出力されており、現在の出力スタックが「・・・中納言家持」なら「中納言持家」が返る
             auto prevOut = getLastHistOutIfSameAsCurrent();
-            LOG_INFOH(_T("PATH 7: prevOut=%s, auto=%s, manual=%s, maybeEditedBySubState=%s"), MAKE_WPTR(prevOut), BOOL_TO_WPTR(SETTINGS->autoHistSearchEnabled), BOOL_TO_WPTR(bManual), BOOL_TO_WPTR(maybeEditedBySubState));
+            LOG_INFOH(_T("PATH 7: prevOut=%s, auto=%s, manual=%s, maybeEditedBySubState=%s"), \
+                MAKE_WPTR(prevOut), BOOL_TO_WPTR(SETTINGS->autoHistSearchEnabled), BOOL_TO_WPTR(bManual), BOOL_TO_WPTR(maybeEditedBySubState));
             // 前回履歴出力が取得できた、つまり出力文字列の末尾が前回の履歴選択と同じ出力だったら、出力文字列をキーとした履歴検索はやらない
             // これは、たとえば「中」で履歴検索し、「中納言家持」を選択した際に、キーとして返される「中納言家持」の末尾の「持」を拾って「持統天皇」を履歴検索してしまうことを防ぐため。
             // ただし、交ぜ書き変換など何か後続状態により出力がなされた場合(maybeEditedBySubState)は、履歴検索を行う。
@@ -942,7 +952,7 @@ namespace {
                     HISTORY_STAY_NODE->prevKey = key;
                     _LOG_DEBUGH(_T("PATH 12B: prevKey=%s"), MAKE_WPTR(key));
                 } else {
-                    _LOG_DEBUGH(_T("PATH 12C: prevOut is same as current out"));
+                    _LOG_DEBUGH(_T("PATH 12C: prevOut is same as current out: prevOut=%s, prevKey=%s"), MAKE_WPTR(prevOut), MAKE_WPTR(HISTORY_STAY_NODE->prevKey));
                 }
             } else {
                 // 履歴検索状態ではないので、前回キーをクリアしておく。

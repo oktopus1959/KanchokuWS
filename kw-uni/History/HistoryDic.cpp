@@ -687,7 +687,7 @@ namespace {
             auto subKey = subStr.substr(0, 4);
             std::set<MString> set_ = utils::filter(hist4CharsDic.GetSet(subKey, 4), [subStr](const auto& s) {return utils::startsWithWildKey(s, subStr);});
             _LOG_DEBUGH(_T("extract_and_copy(keyLen=%d, set=filter(hist4CharsDic.GetSet(%s, 4)), pastList=(empty), wlen=%d"), subStr.size(), MAKE_WPTR(subKey), wlen);
-            extract_and_copy(subStr, subStr.find('?') > 0, set_, pastList, wlen);
+            extract_and_copy(subStr, subStr.find('?') != MString::npos, set_, pastList, wlen);
             _LOG_DEBUGH(_T("filter(hist4CharsDic, %d-4): resultList.size()=%d, pastList.size()=%d"), pos, resultList.Size(), pastList.Size());
         }
 
@@ -696,7 +696,7 @@ namespace {
         void get_extract_and_copy(const MString& key, size_t n, HistResultList& out, size_t wlen = 0) {
             std::set<MString> set_ = hist4CharsDic.GetSet(key, n);
             MString tailKey = utils::last_substr(key, n);
-            extract_and_copy(tailKey, tailKey.find('?') > 0, set_, out, wlen);
+            extract_and_copy(tailKey, tailKey.find('?') != MString::npos, set_, out, wlen);
         }
 
     public:
