@@ -141,12 +141,26 @@ namespace {
             size_t nkey = key.size() - start;
             for (size_t i = 0; i < histCharDics.size() && i < nkey; ++i) {
                 auto mch = key[start + i];
-                if (mch == '?') continue; // '?' なら全部にマッチするとみなす
-                auto iter = histCharDics[i].GetSet(mch);
-                if (result.empty())
+                if (mch == '?') {
+                    // '?' なら全部にマッチするとみなし、長さだけをチェック
+                    if (i > 0 && !result.empty()) {
+                        std::set<MString> newResult;
+                        for (auto w : result) {
+                            if (w.size() > i) newResult.insert(w);
+                        }
+                        if (newResult.empty()) {
+                            result.clear();
+                            break;
+                        }
+                        result = newResult;
+                    }
+                    continue; 
+                }
+                if (result.empty()) {
                     result = histCharDics[i].GetSet(mch);
-                else
+                } else {
                     utils::apply_intersection(result, histCharDics[i].GetSet(mch));
+                }
                 if (result.empty()) break;
             }
             _LOG_DEBUGH(_T("result.size=%d"), result.size());

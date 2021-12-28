@@ -88,7 +88,17 @@ public:
 // HistoryStayNode - 履歴入力機能常駐ノード
 class HistoryStayNode : public FunctionNode {
     DECLARE_CLASS_LOGGER;
- public:
+private:
+    // 履歴選択により文字列出力されたときのキー(デコーダONになったら -1 で初期化)
+    bool isPrevHistKeyUsed = false;
+
+    // 履歴選択により出力された文字列
+    MString prevOutString;
+
+    // 履歴候補表示時に使われたキー(必ずしも履歴出力を必要とはしないので、上記の prevOutStringとprevKeyLenから得られるものとは異なる場合あり)
+    MString prevKey;
+
+public:
      HistoryStayNode();
 
      ~HistoryStayNode();
@@ -96,16 +106,43 @@ class HistoryStayNode : public FunctionNode {
     // 当ノードを処理する State インスタンスを作成する
      State* CreateState();
 
-    MString getString() const { return to_mstr(_T("◇")); }
+    inline MString getString() const { return to_mstr(_T("◇")); }
 
     // 履歴選択により出力された文字列
-    MString prevOutString;
+    inline const MString& GetPrevOutString() const {
+        return prevOutString;
+    }
 
-    // 履歴選択により文字列出力されたときのキー(デコーダONになったら -1 で初期化)
-    int prevKeyLen = -1;
+    // 履歴候補表示時に使われたキー
+    inline const MString GetPrevKey() const {
+        return prevKey;
+    }
 
-    // 履歴候補表示時に使われたキー(必ずしも履歴出力を必要とはしないので、上記の prevOutStringとprevKeyLenから得られるものとは異なる場合あり)
-    MString prevKey;
+    inline size_t PrevKeyLen() const {
+        return isPrevHistKeyUsed ? prevKey.size() : 0;
+    }
+
+    inline bool IsPrevHistKeyUsed() const {
+        return isPrevHistKeyUsed;
+    }
+
+    inline void SetPrevHistState(const MString& outStr, const MString& key, bool bPrevHistKeyUsed = true) {
+        prevOutString = outStr;
+        prevKey = key;
+        isPrevHistKeyUsed = bPrevHistKeyUsed;
+    }
+
+    inline void SetPrevHistKeyState(const MString& key, bool bPrevHistKeyUsed = true) {
+        prevOutString.clear();
+        prevKey = key;
+        isPrevHistKeyUsed = bPrevHistKeyUsed;
+    }
+
+    inline void ClearPrevHistState() {
+        isPrevHistKeyUsed = false;
+        prevOutString.clear();
+        prevKey.clear();
+    }
 
 public:
     // 履歴機能常駐ノードの生成
