@@ -100,6 +100,7 @@ class HistoryStayNode : public FunctionNode {
 
     // 履歴選択により出力された文字列
     MString prevOutString;
+
     // 履歴選択により文字列出力されたときのキー(デコーダONになったら -1 で初期化)
     int prevKeyLen = -1;
 

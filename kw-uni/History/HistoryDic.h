@@ -1,14 +1,77 @@
 #pragma once
 
 #include "file_utils.h"
+#include "misc_utils.h"
 #include "Logger.h"
 
 // -------------------------------------------------------------------
 // 履歴検索の出力クラス
 struct HistResult {
-    size_t KeyLen = 0;
+    MString Key;
     MString Word;
     bool WildKey = false;
+    size_t KeyLen() const { return Key.size(); }
+};
+
+class HistResultList {
+    std::vector<MString> histories;
+    MString histKey;
+    bool isWildKey = false;
+
+    MString emptyStr;
+
+public:
+    void Clear() {
+        histories.clear();
+        histKey.clear();
+        isWildKey = false;
+    }
+
+    void SetKeyInfo(const MString& key, bool bWild = false) {
+        histKey = key;
+        isWildKey = bWild;
+    }
+
+    const std::vector<MString>& GetHistories() const {
+        return histories;
+    }
+
+    void PushHistory(const MString& hist) {
+        histories.push_back(hist);
+    }
+
+    const MString& GetNthWord(size_t n) const {
+        return n < histories.size() ? histories[n] : emptyStr;
+    }
+
+    const HistResult GetNthHist(size_t n) const {
+        return HistResult{ histKey, GetNthWord(n), isWildKey };
+    }
+
+    size_t Size() const { return histories.size(); }
+
+    bool Empty() const { return Size() == 0; }
+
+    void Append(const HistResultList& list) {
+        utils::append(histories, list.histories);
+    }
+
+    // 最短語を少なくとも先頭から2番目に移動する
+    void MoveShortestHistAt2nd() {
+        size_t shortestIdx = 0;
+        size_t shortestLen = size_t(-1);
+        for (size_t i = 0; i < Size(); ++i) {
+            if (histories[i].size() < shortestLen) {
+                shortestIdx = i;
+                shortestLen = histories[i].size();
+            }
+        }
+        if (shortestIdx > 1) {
+            auto elem = histories[shortestIdx];
+            histories.erase(histories.begin() + shortestIdx);
+            histories.insert(histories.begin() + 1, elem);
+        }
+    }
 };
 
 // -------------------------------------------------------------------
@@ -51,7 +114,7 @@ public:
     virtual void DeleteEntry(const MString& word) = 0;
 
     // 指定の見出し文字に対する変換候補のセットを取得する
-    virtual const std::vector<HistResult>& GetCandidates(const MString& key, MString&, bool checkMinKeyLen, int len) = 0;
+    virtual const HistResultList& GetCandidates(const MString& key, MString&, bool checkMinKeyLen, int len) = 0;
 
     // 単語の使用
     virtual void UseWord(const MString& word) = 0;

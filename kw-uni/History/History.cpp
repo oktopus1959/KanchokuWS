@@ -43,7 +43,7 @@ namespace {
         DECLARE_CLASS_LOGGER;
 
         // 履歴入力候補のリスト
-        std::vector<HistResult> histCands;
+        HistResultList histCands;
 
         // 候補単語列
         std::vector<MString> histWords;
@@ -63,25 +63,19 @@ namespace {
         }
 
         inline void setSelectPos(size_t n) const {
-            //selectPos = n >= 0 && n < histCands.size() ? n : -1;
-            //size_t x = min(histCands.size(), LONG_KEY_NUM);
-            size_t x = min(histCands.size(), SETTINGS->histHorizontalCandMax);
+            size_t x = min(histCands.Size(), SETTINGS->histHorizontalCandMax);
             selectPos = n >= 0 && n < x ? n : -1;
         }
 
         // 選択位置をインクリメント //(一周したら未選択状態に戻る)
         inline void incSelectPos() const {
-            //selectPos = selectPos < 0 ? 0 : (selectPos + 1) % histCands.size();
-            //size_t x = min(histCands.size(), LONG_KEY_NUM);
-            size_t x = min(histCands.size(), SETTINGS->histHorizontalCandMax);
+            size_t x = min(histCands.Size(), SETTINGS->histHorizontalCandMax);
             selectPos = selectPos < 0 ? 0 : x <= 0 ? -1 : (selectPos + 1) % x;
         }
 
         // 選択位置をデクリメント //(一周したら未選択状態に戻る)
         inline void decSelectPos() const {
-            //selectPos = selectPos <= 0 ? histCands.size() - 1 : (selectPos - 1) % histCands.size();
-            //int x = min((int)histCands.size(), LONG_KEY_NUM);
-            int x = min((int)histCands.size(), SETTINGS->histHorizontalCandMax);
+            int x = min((int)histCands.Size(), SETTINGS->histHorizontalCandMax);
             selectPos = selectPos <= 0 ? x - 1 : x <=0 ? -1 : (selectPos - 1) % x;
         }
 
@@ -93,12 +87,10 @@ namespace {
             return selectPos > 0 && selectPos < (int)histWords.size();
         }
 
-        inline const HistResult& getSelectedHist() const {
+        inline const HistResult getSelectedHist() const {
             int n = getSelectPos();
-            //int x = min((int)histCands.size(), LONG_KEY_NUM);
-            int x = min((int)histCands.size(), SETTINGS->histHorizontalCandMax);
-            //return n >= 0 && n < (int)histCands.size() ? histCands[n] : emptyResult;
-            return n >= 0 && n < x ? histCands[n] : emptyResult;
+            int x = min((int)histCands.Size(), SETTINGS->histHorizontalCandMax);
+            return n >= 0 && n < x ? histCands.GetNthHist(n) : emptyResult;
         }
 
         inline const MString& getSelectedWord() const {
@@ -113,7 +105,7 @@ namespace {
             currentLen = len;
             histCands = HISTORY_DIC->GetCandidates(key, currentKey, checkMinKeyLen, len);
             histWords.clear();
-            utils::transform_append(histCands, histWords, [](const HistResult& r) { return r.Word;});
+            utils::append(histWords, histCands.GetHistories());
             LOG_INFO(_T("cands num=%d, currentKey=%s"), histWords.size(), MAKE_WPTR(currentKey));
             return histWords;
         }
@@ -127,29 +119,17 @@ namespace {
             return currentKey;
         }
 
-        //// n番目の履歴を選択する (n < 0 なら選択のリセット)
-        //const HistResult& GetNth(int n) const {
-        //    setSelectPos(n);
-        //    return getSelectedHist();
-        //}
-
         // 次の履歴を選択する
-        const HistResult& GetNext() const {
+        const HistResult GetNext() const {
             incSelectPos();
             return getSelectedHist();
         }
 
         // 前の履歴を選択する
-        const HistResult& GetPrev() const {
+        const HistResult GetPrev() const {
             decSelectPos();
             return getSelectedHist();
         }
-
-        //// 選択された履歴を取得する
-        //const HistResult& GetSelectedHist() const {
-        //    LOG_DEBUG(_T("CALLED: selectPos=%d"), selectPos);
-        //    return getSelectedHist();
-        //}
 
         // 選択された単語を取得する
         const MString& GetSelectedWord() const {
@@ -164,7 +144,7 @@ namespace {
         }
 
         // 選択位置を初期化(未選択状態)する
-        const HistResult& ClearSelectPos() {
+        const HistResult ClearSelectPos() {
             LOG_DEBUG(_T("CALLED: nextSelect=%d"), selectPos);
             resetSelectPos();
             return emptyResult;
@@ -180,7 +160,7 @@ namespace {
 
         // 取得済みの履歴入力候補リストから指定位置の候補を返す
         // 選択された候補は使用履歴の先頭に移動する
-        const HistResult& SelectNth(size_t n) {
+        const HistResult SelectNth(size_t n) {
             LOG_DEBUG(_T("CALLED: n=%d, histWords=%d"), n, histWords.size());
             ClearSelectPos();
             if (n >= histWords.size()) {
@@ -189,14 +169,14 @@ namespace {
 
             HISTORY_DIC->UseWord(histWords[n]);
             GetCandidates(currentKey, false, currentLen);
-            return histCands[0];
+            return histCands.GetNthHist(0);
         }
 
         inline void DeleteNth(size_t n) {
             LOG_DEBUG(_T("CALLED"));
             PushFrontSelectedWord();
-            if (n < histCands.size()) {
-                HISTORY_DIC->DeleteEntry(histCands[n].Word);
+            if (n < histCands.Size()) {
+                HISTORY_DIC->DeleteEntry(histCands.GetNthWord(n));
                 GetCandidates(currentKey, false, currentLen);
             }
         }
@@ -252,31 +232,33 @@ namespace {
             STATE_COMMON->ClearDecKeyCount();
         }
 
-        // 選択された履歴候補を出力 (abbrev なら true を返す)
+        // 選択された履歴候補を出力(予定巻き戻し数(numBS)は更新される)
+        // (abbrev など、候補表示をやめて通常表示に戻す場合は true を返す)
         bool setOutString(const HistResult& result, size_t numBS = 0) {
-            _LOG_DEBUGH(_T("CALLED: word=%s, keyLen=%d, numBS=%d, wildKey=%s"), MAKE_WPTR(result.Word), result.KeyLen, numBS, BOOL_TO_WPTR(result.WildKey));
+            _LOG_DEBUGH(_T("CALLED: word=%s, keyLen=%d, plannedNumBS=%d, wildKey=%s"), MAKE_WPTR(result.Word), result.KeyLen(), numBS, BOOL_TO_WPTR(result.WildKey));
             bool flag = false;
             if (result.WildKey) {
-                STATE_COMMON->SetOutString(result.Word, numBS > 0 ? numBS : result.KeyLen);
+                STATE_COMMON->SetOutString(result.Word, numBS > 0 ? numBS : result.KeyLen());
                 HISTORY_STAY_NODE->prevOutString = result.Word;
                 HISTORY_STAY_NODE->prevKeyLen = -1;     // 負の値で、今回の履歴検索を無効化しておく
-                HISTORY_STAY_NODE->prevKey.clear();
+                HISTORY_STAY_NODE->prevKey = result.Key;
             } else {
                 size_t pos = result.Word.find('|');
                 if (pos < SETTINGS->abbrevKeyMaxLength) {
                     // abbrev
-                    flag = true;
+                    flag = true;    // 通常表示に戻す
                     ++pos;                      // '|' まで削除する必要あり
-                    if (numBS == 0) numBS = result.KeyLen;     // abbreなので初回はkeyを全削除
+                    if (numBS == 0) numBS = result.KeyLen();     // abbreなので初回はkeyを全削除
                     STATE_COMMON->SetOutString(utils::safe_substr(result.Word, pos), numBS);
                     HISTORY_STAY_NODE->prevOutString.clear();
                     HISTORY_STAY_NODE->prevKeyLen = -1;     // 負の値で、今回の履歴検索を無効化しておく
                     HISTORY_STAY_NODE->prevKey.clear();
                 } else {
-                    STATE_COMMON->SetOutString(utils::safe_substr(result.Word, result.KeyLen), numBS);
+                    STATE_COMMON->SetOutString(utils::safe_substr(result.Word, result.KeyLen()), numBS);
                     HISTORY_STAY_NODE->prevOutString = result.Word;
-                    HISTORY_STAY_NODE->prevKeyLen = (int)result.KeyLen;
-                    HISTORY_STAY_NODE->prevKey = utils::safe_substr(result.Word, result.KeyLen);
+                    HISTORY_STAY_NODE->prevKeyLen = (int)result.KeyLen();
+                    //HISTORY_STAY_NODE->prevKey = utils::safe_substr(result.Word, result.KeyLen());
+                    HISTORY_STAY_NODE->prevKey = result.Key;
                 }
             }
             _LOG_DEBUGH(_T("prevOutString=%s, prevKeyLen=%d, numBS=%d"), MAKE_WPTR(HISTORY_STAY_NODE->prevOutString), HISTORY_STAY_NODE->prevKeyLen, numBS);
@@ -284,7 +266,7 @@ namespace {
         }
 
         // 前回の履歴検索の出力と現在の出力文字列(改行以降)の末尾を比較し、同じであれば前回の履歴検索のキーを取得する
-        // この時、出力スタックは、キーだけを残し、追加出力部分は巻き戻される(numBackSpacesに値をセット)
+        // この時、出力スタックは、キーだけを残し、追加出力部分は巻き戻し予約される(numBackSpacesに値をセット)
         // 前回が空キーだった場合は、返値も空キーになるので、HISTORY_STAY_NODE->prevKeyLen == 0 かどうかで前回と同じキーであるか否かを判断すること
         MString getLastHistKey() {
             MString key;
@@ -428,7 +410,7 @@ namespace {
                 // 末尾文字がストローク可能文字でなければ登録する
                 HISTORY_DIC->AddNewEntry(ws);
             }
-            // 前回の履歴検索キー取得と出力スタックの巻き戻し(numBackSpacesに値をセット)
+            // 前回の履歴検索キー取得と出力スタックの巻き戻し予約(numBackSpacesに値をセット)
             auto key = getLastHistKey();
 
             if (key.empty() && HISTORY_STAY_NODE->prevKeyLen != 0) {
@@ -529,10 +511,10 @@ namespace {
             //}
             // 候補の選択
             const auto& result = HIST_CAND->SelectNth((deckey >= STROKE_SPACE_DECKEY ? 0 : deckey % LONG_KEY_NUM) + candDispHorizontalPos);
-            LOG_DEBUG(_T("result.Word=%s, result.KeyLen=%d"), MAKE_WPTR(result.Word), result.KeyLen);
+            LOG_DEBUG(_T("result.Word=%s, result.KeyLen=%d"), MAKE_WPTR(result.Word), result.KeyLen());
             if (!result.Word.empty()) {
                 setOutString(result);
-                if (result.KeyLen >= 2) STATE_COMMON->SetHistoryBlockFlag();  // 1文字の場合は履歴検索の対象となる
+                if (result.KeyLen() >= 2) STATE_COMMON->SetHistoryBlockFlag();  // 1文字の場合は履歴検索の対象となる
             }
             handleKeyPostProc();
             LOG_DEBUG(_T("LEAVE"));
@@ -1219,11 +1201,11 @@ namespace {
 
         void outputHistResult(const HistResult& result) {
             _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
-            auto key = getLastHistKey();    // 前回の履歴検索キー取得と出力スタックの巻き戻し(numBackSpacesに値をセット)
-            size_t numBS = STATE_COMMON->GetBackspaceNum();
-            _LOG_DEBUGH(_T("lastHistKey=%s, numBS=%d"), MAKE_WPTR(key), numBS);
+            auto key = getLastHistKey();    // 前回の履歴検索キー取得と出力スタックの巻き戻し予約(numBackSpacesに値をセット)
+            size_t plannedNumBS = STATE_COMMON->GetBackspaceNum();     // 予定された巻き戻し数
+            _LOG_DEBUGH(_T("lastHistKey=%s, plannedNumBS=%d"), MAKE_WPTR(key), plannedNumBS);
 
-            bool bAbbrev = setOutString(result, numBS); // numBackSpaces には getLastHistKey() によって、キー以降の文字長が格納されている
+            bool bAbbrev = setOutString(result, plannedNumBS);
             if (!result.Word.empty()) {
                 // emptyの場合は元に戻ったので、ブロッカーを設定してはならない (@TODO: ちょっと意味不明)
                 STATE_COMMON->SetHistoryBlockFlag();
@@ -1234,7 +1216,7 @@ namespace {
                 setCandidatesVKB(VkbLayout::Horizontal, HIST_CAND->GetCandidates(), HIST_CAND->GetCurrentKey());
             }
 
-            _LOG_DEBUGH(_T("LEAVE: prevOut=%s, prevKeyLen=%d, numBS=%d"), MAKE_WPTR(HISTORY_STAY_NODE->prevOutString), HISTORY_STAY_NODE->prevKeyLen, numBS);
+            _LOG_DEBUGH(_T("LEAVE: prevOut=%s, prevKeyLen=%d, numBS=%d"), MAKE_WPTR(HISTORY_STAY_NODE->prevOutString), HISTORY_STAY_NODE->prevKeyLen, plannedNumBS);
         }
 
     };
