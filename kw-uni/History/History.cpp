@@ -905,6 +905,9 @@ namespace {
                         // まず、ワイルドカードパターンを試す
                         auto key9 = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(9);
                         _LOG_DEBUGH(_T("key9=%s"), MAKE_WPTR(key9));
+                        if (key9.empty() || key9.back() == ' ') {
+                            return EMPTY_MSTR;
+                        }
                         auto items = utils::split(key9, '*');
                         size_t nItems = items.size();
                         if (nItems >= 2) {
