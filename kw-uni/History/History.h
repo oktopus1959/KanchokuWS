@@ -5,6 +5,10 @@
 #include "FunctionNode.h"
 #include "HistoryStayState.h"
 
+#if 0
+#define _LOG_DEBUGH LOG_INFOH
+#endif
+
 // -------------------------------------------------------------------
 // HistoryNode - 履歴入力機能ノード
 class HistoryNode : public FunctionNode {
@@ -114,12 +118,13 @@ public:
     }
 
     // 履歴候補表示時に使われたキー
-    inline const MString GetPrevKey() const {
+    inline const MString& GetPrevKey() const {
         return prevKey;
     }
 
-    inline size_t PrevKeyLen() const {
-        return isPrevHistKeyUsed ? prevKey.size() : 0;
+    inline int PrevKeyLen() const {
+        _LOG_DEBUGH(_T("CALLED: PrevKeyLen=%d"), isPrevHistKeyUsed ? prevKey.size() : -1);
+        return isPrevHistKeyUsed ? prevKey.size() : -1;
     }
 
     inline bool IsPrevHistKeyUsed() const {
@@ -139,6 +144,7 @@ public:
     }
 
     inline void ClearPrevHistState() {
+        _LOG_DEBUGH(_T("CALLED: ClearPrevHistState"));
         isPrevHistKeyUsed = false;
         prevOutString.clear();
         prevKey.clear();

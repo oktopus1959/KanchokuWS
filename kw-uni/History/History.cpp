@@ -21,7 +21,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 1
+#if 0
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -234,25 +234,32 @@ namespace {
 
         // 選択された履歴候補を出力(これが呼ばれた時点で、すでにキーの先頭まで巻き戻されていること)
         void setOutString(const HistResult& result) {
-            _LOG_DEBUGH(_T("CALLED: word=%s, keyLen=%d, wildKey=%s, prevOutStr=%s, plannedNumBS=%d"), \
-                MAKE_WPTR(result.Word), result.KeyLen(), BOOL_TO_WPTR(result.WildKey), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()), STATE_COMMON->GetBackspaceNum());
+            _LOG_DEBUGH(_T("CALLED: result.Word=%s, result.Key=%s, keyLen=%d, wildKey=%s, prevOutStr=%s, prevKey=%s, plannedNumBS=%d"), \
+                MAKE_WPTR(result.Word), MAKE_WPTR(result.Key), result.KeyLen(), BOOL_TO_WPTR(result.WildKey), \
+                MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevKey()), STATE_COMMON->GetBackspaceNum());
 
             MString outStr = result.Word;
+            MString outKey = result.Key;
             size_t pos = outStr.find('|');
             if (pos < SETTINGS->abbrevKeyMaxLength) {
                 // Abbrev候補
                 outStr = utils::safe_substr(outStr, pos + 1);
+            } else if (outStr.empty()) {
+                outKey = HISTORY_STAY_NODE->GetPrevKey();
+                outStr = HISTORY_STAY_NODE->GetPrevOutString();
+                if (outStr.empty()) outStr = outKey;
             }
+            _LOG_DEBUGH(_T("outStr=%s, outKey=%s"), MAKE_WPTR(outStr), MAKE_WPTR(outKey));
 
             STATE_COMMON->SetOutString(outStr);
-            HISTORY_STAY_NODE->SetPrevHistState(outStr, result.Key);
+            HISTORY_STAY_NODE->SetPrevHistState(outStr, outKey);
 
             _LOG_DEBUGH(_T("prevOutString=%s, isPrevHistKeyUsed=%s"), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()), BOOL_TO_WPTR(HISTORY_STAY_NODE->IsPrevHistKeyUsed()));
         }
 
         // 前回の履歴検索の出力と現在の出力文字列(改行以降)の末尾を比較し、同じであれば前回の履歴検索のキーを取得する
         // この時、出力スタックは、キーだけを残し、追加出力部分は巻き戻し予約される(numBackSpacesに値をセット)
-        // 前回が空キーだった場合は、返値も空キーになるので、HISTORY_STAY_NODE->prevKeyLen == 0 かどうかで前回と同じキーであるか否かを判断すること
+        // 前回が空キーだった場合は、返値も空キーになるので、HISTORY_STAY_NODE->PrevKeyLen == 0 かどうかで前回と同じキーであるか否かを判断すること
         // ここに来る場合には、以下の3つの状態がありえる:
         // ①まだ履歴検索がなされていない状態
         // ②検索が実行されたが、出力文字列にはキーだけが表示されている状態
@@ -269,18 +276,18 @@ namespace {
             if (!bPrevHistUsed) {
                 // ①まだ履歴検索がなされていない状態
                 // empty key を返す
-                _LOG_DEBUGH(_T("NO YET HIST USED"));
+                _LOG_DEBUGH(_T("NOT YET HIST USED"));
             } else if (prevOut.empty()) {
                 // ②検索が実行されたが、出力文字列にはキーだけが表示されている状態
                 key = prevKey;
-                STATE_COMMON->SetBackspaceNum(prevKey.size());
-                HISTORY_STAY_NODE->SetPrevHistKeyState(prevKey);
+                STATE_COMMON->SetOutString(prevKey, prevKey.size());
+                HISTORY_STAY_NODE->SetPrevHistState(prevKey, prevKey);
                 _LOG_DEBUGH(_T("CURRENT: key=%s"), MAKE_WPTR(key));
             } else {
                 // ③横列のどれかの候補が選択されて出力文字列に反映されている状態
                 key = prevKey;
-                STATE_COMMON->SetBackspaceNum(prevOut.size());
-                HISTORY_STAY_NODE->SetPrevHistKeyState(prevKey);
+                STATE_COMMON->SetOutString(prevKey, prevOut.size());
+                HISTORY_STAY_NODE->SetPrevHistState(prevKey, prevKey);
                 _LOG_DEBUGH(_T("REVERT: key=%s"), MAKE_WPTR(key));
             }
 
@@ -511,6 +518,7 @@ namespace {
             auto result = HIST_CAND->SelectNth((deckey >= STROKE_SPACE_DECKEY ? 0 : deckey % LONG_KEY_NUM) + candDispHorizontalPos);
             LOG_DEBUG(_T("result.Word=%s, result.KeyLen=%d"), MAKE_WPTR(result.Word), result.KeyLen());
             if (!result.Word.empty()) {
+                getLastHistKeyAndRewindOutput();    // 前回の履歴検索キー取得と出力スタックの巻き戻し予約(numBackSpacesに値をセット)
                 setOutString(result);
                 if (result.KeyLen() >= 2) STATE_COMMON->SetHistoryBlockFlag();  // 1文字の場合は履歴検索の対象となる
             }
@@ -546,6 +554,7 @@ namespace {
         }
 
         void handleDownArrow() {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             //candDispVerticalPos += CAND_DISP_LONG_VKEY_LEN;
             candDispHorizontalPos = 0;
             candDispVerticalPos = 0;
@@ -557,6 +566,7 @@ namespace {
         }
 
         void handleUpArrow() {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             //if (candDispVerticalPos >= CAND_DISP_LONG_VKEY_LEN)
             //    candDispVerticalPos -= CAND_DISP_LONG_VKEY_LEN;
             //else
@@ -571,6 +581,7 @@ namespace {
         }
 
         void handleLeftArrow() {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             if (candDispHorizontalPos >= LONG_KEY_NUM)
                 candDispHorizontalPos -= LONG_KEY_NUM;
             else
@@ -579,6 +590,7 @@ namespace {
         }
 
         void handleRightArrow() {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             candDispHorizontalPos += LONG_KEY_NUM;
             candDispVerticalPos = 0;
         }
@@ -636,6 +648,8 @@ namespace {
 
     protected:
         void handleKeyPostProc() {
+            _LOG_DEBUGH(_T("CALLED: handleKeyPostProc"));
+            HISTORY_STAY_NODE->ClearPrevHistState();
             STATE_COMMON->ClearVkbLayout();
             //STATE_COMMON->RemoveFunctionState();
             bUnnecessary = true;
@@ -753,7 +767,6 @@ namespace {
             // 初期化という意味で、下記のように変更しておく(2021/5/31)
             maybeEditedBySubState = false;
             bCandSelectable = false;
-            //HISTORY_STAY_NODE->prevKeyLen = -1;     // 負の値で、まだ履歴検索が行われていないということを表す
             HISTORY_STAY_NODE->ClearPrevHistState();     // まだ履歴検索が行われていないということを表す
         }
 
@@ -821,6 +834,7 @@ namespace {
                 //prevKey.clear();
                 _LOG_DEBUGH(_T("Set Reinitialized=true"));
                 maybeEditedBySubState = true;
+                HISTORY_STAY_NODE->ClearPrevHistState();    // まだ履歴検索が行われていない状態にしておく
             }
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
@@ -989,8 +1003,16 @@ namespace {
                 }
 
                 // 前回の履歴検索との比較、新しい履歴検索の開始
-                if (!bNoHistTemporary) historySearch(bManualTemporary);
-                bNoHistTemporary = false;
+                if (bNoHistTemporary) {
+                    // 一時的に履歴検索が不可になっている場合は、キーと出力文字列を比較して、異った状態になっていたら可に戻す
+                    MString prevKey = HISTORY_STAY_NODE->GetPrevKey();
+                    MString outStr = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(prevKey.size());
+                    bNoHistTemporary = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(prevKey.size()) == prevKey;
+                    _LOG_DEBUGH(_T("PATH 7: bNoHistTemporary=%s: prevKey=%s, outStr=%s"), BOOL_TO_WPTR(bNoHistTemporary), MAKE_WPTR(prevKey), MAKE_WPTR(outStr));
+                }
+                if (!bNoHistTemporary) {
+                    historySearch(bManualTemporary);
+                }
                 bManualTemporary = false;
             }
 
@@ -1197,6 +1219,7 @@ namespace {
         void resetCandSelect() {
             LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
             outputHistResult(HIST_CAND->ClearSelectPos());
+            STATE_COMMON->SetWaitingCandSelect(-1);
         }
 
         void outputHistResult(const HistResult& result) {
