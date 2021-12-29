@@ -678,7 +678,8 @@ namespace {
 
         // '*' をはさんで、前半部の key1 と後半部の key2 にマッチする文字列集合を取得
         // resultList に最近使ったものから取得した候補を格納し、pastList にはそれ以外の候補を格納する
-        void extract_and_copy_for_wildecard_included(const MString& key, HistResultList& pastList) {
+        size_t extract_and_copy_for_wildecard_included(const MString& key, HistResultList& pastList) {
+            size_t matchLen = 0;
             auto items = utils::split(key, '*');
             size_t itemsSize = items.size();
             if (itemsSize >= 2 && !items[itemsSize - 1].empty() && items[itemsSize - 1].size() <= 4) {
@@ -686,11 +687,12 @@ namespace {
                 std::set<MString> set_;
                 const MString& key1 = items[itemsSize - 2];
                 const MString& key2 = items[itemsSize - 1];
-                size_t matchLen = hist4CharsDic.FindMatchingWords(key1, key2, set_) + key2.size() + 1;
+                matchLen = hist4CharsDic.FindMatchingWords(key1, key2, set_) + key2.size() + 1;
                 _LOG_DEBUGH(_T("extract_and_copy(keyLen=%d, set=hist4CharsDic.FindMatchingWords(%s, %s), pastList=(empty), wlen=0, bWild=true"), matchLen, MAKE_WPTR(key1), MAKE_WPTR(key2));
                 extract_and_copy(utils::last_substr(key, matchLen), true, set_, pastList, 0);
                 _LOG_DEBUGH(_T("resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
             }
+            return matchLen;
         }
 
         // key の pos 位置から4文字(i.e., key[pos, pos+4])にマッチする候補の取得
@@ -707,7 +709,7 @@ namespace {
 
         // keyの末尾n文字にマッチする候補を取得して out に返す
         // wlen は候補文字列の長さに関する制約
-        void get_extract_and_copy(const MString& key, size_t n, HistResultList& out, size_t wlen = 0) {
+        void extract_and_copy_for_tail_n(const MString& key, size_t n, HistResultList& out, size_t wlen = 0) {
             std::set<MString> set_ = hist4CharsDic.GetSet(key, n);
             MString tailKey = utils::last_substr(key, n);
             extract_and_copy(tailKey, tailKey.find('?') != MString::npos, set_, out, wlen);
@@ -724,7 +726,6 @@ namespace {
             _LOG_DEBUGH(_T("ENTER: key=%s, checkMinKeyLen=%s, len=%d"), MAKE_WPTR(key), BOOL_TO_WPTR(checkMinKeyLen), len);
             // 結果を返すためのリストをクリアしておく
             resultList.Clear();
-            size_t resultKeyLen = 0;
             size_t minlen = len >= 0 ? len : 2;
             size_t maxlen = len >= 0 ? len : max(minlen, (size_t)abs(len));
             if (key.empty()) {
@@ -735,19 +736,25 @@ namespace {
                 // ここでは maxlen は無視する
                 // 直近以外の過去に使った履歴のリスト
                 HistResultList pastList;
+
                 // key が '*' を含んでいる場合にワイルドカードのマッチングを行う
-                extract_and_copy_for_wildecard_included(key, pastList);
+                size_t resultKeyLen = extract_and_copy_for_wildecard_included(key, pastList);
+
                 // Phase-A
                 size_t keySize = key.size();
+
                 // keyが5文字以上の場合に、先頭の4文字についても試す(末尾4文字は、この後の Phase-B で試される
                 if (resultList.Empty() && pastList.Empty() && keySize >= 5) {
+                    resultKeyLen = 0;
                     extract_and_copy_for_longer_than_4(key, minlen, 0, pastList);
                 }
+
                 // keyが6文字の場合に、中間の4文字についても試す(末尾4文字は、この後の Phase-B で試される
                 if (resultList.Empty() && pastList.Empty() && keySize == 6) {
                     resultKeyLen = 5;
                     extract_and_copy_for_longer_than_4(key, minlen, 1, pastList);
                 }
+
                 // keyが7文字以上の場合に、末尾側の中間の4文字についても試す(最末尾4文字は、この後の Phase-B で試される
                 if (resultList.Empty() && pastList.Empty() && keySize >= 7) {
                     resultKeyLen = 6;
@@ -764,36 +771,41 @@ namespace {
                     size_t minKata = SETTINGS->histKatakanaKeyLength;
                     size_t minKanj = SETTINGS->histKanjiKeyLength;
                     _LOG_DEBUGH(_T("minKana=%d, minKata=%d, minKanj=%d"), minKana, minKata, minKanj);
+
                     auto checkFunc = [key, checkMinKeyLen, minKana, minKata, minKanj](size_t len) {
-                        return !checkMinKeyLen ||
-                            ((minKana <= len || !utils::is_hirakana(utils::safe_back(key, len))) &&
-                             (minKata <= len || !utils::is_katakana(utils::safe_back(key, len))) &&
-                             (minKanj <= len || !utils::is_kanji(utils::safe_back(key, len))));
+                        _LOG_DEBUGH(_T("checkFunc(key=%s, checkMinKeyLen=%d, len=%d)"), MAKE_WPTR(key), checkMinKeyLen, len);
+                        return key.size() >= len &&
+                            (!checkMinKeyLen ||
+                             ((minKana <= len || !utils::is_hirakana(utils::safe_back(key, len))) &&
+                              (minKata <= len || !utils::is_katakana(utils::safe_back(key, len))) &&
+                              (minKanj <= len || !utils::is_kanji(utils::safe_back(key, len)))));
                     };
 
-                    resultKeyLen = 4;
-                    _LOG_DEBUGH(_T("get_extract_and_copy(key=%s, n=4, len=%d"), MAKE_WPTR(key), minlen);
-                    get_extract_and_copy(key, 4, pastList, minlen);
-                    _LOG_DEBUGH(_T("histDic4: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
+                    if (checkFunc(4)) {
+                        resultKeyLen = 4;
+                        _LOG_DEBUGH(_T("extract_and_copy_for_tail_n(key=%s, n=4, minlen=%d)"), MAKE_WPTR(key), minlen);
+                        extract_and_copy_for_tail_n(key, 4, pastList, minlen);
+                        _LOG_DEBUGH(_T("histDic4: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
+                    }
                     if (resultList.Empty() && pastList.Empty()) {
                         if (checkFunc(3)) {
                             resultKeyLen = 3;
-                            _LOG_DEBUGH(_T("get_extract_and_copy(key=%s, n=3, len=%d"), MAKE_WPTR(key), minlen);
-                            get_extract_and_copy(key, 3, pastList, minlen);
+                            _LOG_DEBUGH(_T("extract_and_copy_for_tail_n(key=%s, n=3, minlen=%d)"), MAKE_WPTR(key), minlen);
+                            extract_and_copy_for_tail_n(key, 3, pastList, minlen);
                             _LOG_DEBUGH(_T("histDic3: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
                         }
                         if (resultList.Empty() && pastList.Empty()) {
                             if (checkFunc(2)) {
                                 resultKeyLen = 2;
-                                _LOG_DEBUGH(_T("get_extract_and_copy(key=%s, n=2, len=%d"), MAKE_WPTR(key), minlen);
-                                get_extract_and_copy(key, 2, pastList, minlen);
+                                _LOG_DEBUGH(_T("extract_and_copy_for_tail_n(key=%s, n=2, minlen=%d)"), MAKE_WPTR(key), minlen);
+                                extract_and_copy_for_tail_n(key, 2, pastList, minlen);
                                 _LOG_DEBUGH(_T("histDic2: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
                             }
                             if (resultList.Empty() && pastList.Empty()) {
                                 if (checkFunc(1)) {
                                     resultKeyLen = 1;
-                                    _LOG_DEBUGH(_T("get_extract_and_copy(key=%s, n=1, len=%d"), MAKE_WPTR(key), minlen);
-                                    get_extract_and_copy(key, 1, pastList, minlen);
+                                    _LOG_DEBUGH(_T("extract_and_copy_for_tail_n(key=%s, n=1, minlen=%d)"), MAKE_WPTR(key), minlen);
+                                    extract_and_copy_for_tail_n(key, 1, pastList, minlen);
                                     _LOG_DEBUGH(_T("histDic1: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
                                 }
                             }
@@ -802,14 +814,15 @@ namespace {
                 }
                 resultList.Append(pastList);  // 最近使ったもの以外を追加する
                 resultKey = resultKeyLen == 0 ? key : utils::last_substr(key, resultKeyLen);
-                _LOG_DEBUGH(_T("resultKey=%s, resultList.size()=%d"), MAKE_WPTR(resultKey), resultList.Size());
+                _LOG_DEBUGH(_T("resultKey=%s, resultKeyLen=%d, resultList.size()=%d"), MAKE_WPTR(resultKey), resultKeyLen, resultList.Size());
             }
 
             if (SETTINGS->histMoveShortestAt2nd) {
                 // 最短語を少なくとも先頭から2番目に移動する
                 resultList.MoveShortestHistAt2nd();
             }
-            _LOG_DEBUGH(_T("LEAVE: resultKey=%s, resultKeyLen=%d"), MAKE_WPTR(resultKey), resultKeyLen);
+
+            _LOG_DEBUGH(_T("LEAVE: resultKey=%s, resultList.size()=%d"), MAKE_WPTR(resultKey), resultList.Size());
             return resultList;
         }
 

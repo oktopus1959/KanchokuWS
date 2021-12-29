@@ -889,7 +889,7 @@ namespace {
                 // 履歴検索可能状態であって
                 _LOG_DEBUGH(_T("PATH 11: Auto or Manual"));
                 if (prevOut.empty() || maybeEditedBySubState) {
-                    _LOG_DEBUGH(_T("PATH 12A: prevOut is Empty"));
+                    _LOG_DEBUGH(_T("PATH 12A: prevOut is Empty or maybeEditedBySubState"));
                     // 現在の出力文字列は履歴選択したものではなかった
                     // キー取得用 lambda
                     auto keyGetter = []() {
@@ -920,13 +920,13 @@ namespace {
                         // キーが取得できた
                         //bool isAscii = is_ascii_char((wchar_t)utils::safe_back(key));
                         _LOG_DEBUGH(_T("PATH 8: key=%s, prevKey=%s, maybeEditedBySubState=%s"), MAKE_WPTR(key), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevKey()), utils::boolToString(maybeEditedBySubState).c_str());
-                        auto func = [this](const std::vector<MString>& words, const MString& ky) {
-                            _LOG_DEBUGH(_T("FUNC: words.size()=%d, key=%s"), words.size(), MAKE_WPTR(ky));
+                        auto histCandsChecker = [this](const std::vector<MString>& words, const MString& ky) {
+                            _LOG_DEBUGH(_T("CANDS CHECKER: words.size()=%d, key=%s"), words.size(), MAKE_WPTR(ky));
                             if (words.empty() || (words.size() == 1 && (words[0].empty() || words[0] == ky))) {
-                                _LOG_DEBUGH(_T("PATH A: cands size <= 1"));
+                                _LOG_DEBUGH(_T("CANDS CHECKER-A: cands size <= 1"));
                                 // 候補が1つだけで、keyに一致するときは履歴選択状態にはしない
                             } else {
-                                _LOG_DEBUGH(_T("PATH B"));
+                                _LOG_DEBUGH(_T("CANDS CHECKER-B"));
                                 setCandidatesVKB(VkbLayout::Horizontal, words, ky);
                             }
                         };
@@ -934,14 +934,14 @@ namespace {
                             _LOG_DEBUGH(_T("PATH 9: different key"));
                             //bool checkMinKeyLen = !bManual && utils::is_hiragana(key[0]);       // 自動検索かつ、キー先頭がひらがなならキー長チェックをやる
                             bool checkMinKeyLen = !bManual;                                     // 自動検索ならキー長チェックをやる
-                            func(HIST_CAND->GetCandidates(key, checkMinKeyLen, 0), key);
+                            histCandsChecker(HIST_CAND->GetCandidates(key, checkMinKeyLen, 0), key);
                             // キーが短くなる可能性があるので再取得
                             key = HIST_CAND->GetCurrentKey();
                             _LOG_DEBUGH(_T("currentKey=%s"), MAKE_WPTR(key));
                         } else {
                             // 前回の履歴検索と同じキーだった
                             _LOG_DEBUGH(_T("PATH 10: Same as prev hist key"));
-                            func(HIST_CAND->GetCandidates(), key);
+                            histCandsChecker(HIST_CAND->GetCandidates(), key);
                         }
                     }
                     HISTORY_STAY_NODE->SetPrevHistKeyState(key);
@@ -1021,7 +1021,7 @@ namespace {
                 else
                     getPrevCandidate();
             } else {
-                //func();
+                _LOG_DEBUGH(_T("NOP"));
             }
         }
 
