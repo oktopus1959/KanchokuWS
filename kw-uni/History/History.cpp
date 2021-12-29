@@ -233,26 +233,21 @@ namespace {
         }
 
         // 選択された履歴候補を出力(これが呼ばれた時点で、すでにキーの先頭まで巻き戻されていること)
-        // (abbrev など、候補表示をやめて通常表示に戻す場合は true を返す)
-        bool setOutString(const HistResult& result) {
-            size_t numBS = STATE_COMMON->GetBackspaceNum();
+        void setOutString(const HistResult& result) {
             _LOG_DEBUGH(_T("CALLED: word=%s, keyLen=%d, wildKey=%s, prevOutStr=%s, plannedNumBS=%d"), \
-                MAKE_WPTR(result.Word), result.KeyLen(), BOOL_TO_WPTR(result.WildKey), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()), numBS);
-            bool flag = false;
-            size_t pos = result.Word.find('|');
-            if (result.WildKey || pos >= SETTINGS->abbrevKeyMaxLength) {
-                // ワイルドカードキー or 通常キー
-                STATE_COMMON->SetOutString(result.Word);
-                HISTORY_STAY_NODE->SetPrevHistState(result.Word, result.Key);
-            } else {
-                // abbrevキー
-                flag = true;    // 通常表示に戻す
-                ++pos;          // '|' まで削除する必要あり
-                STATE_COMMON->SetOutString(utils::safe_substr(result.Word, pos));
-                HISTORY_STAY_NODE->ClearPrevHistState();  // 今回の履歴検索を無効化しておく
+                MAKE_WPTR(result.Word), result.KeyLen(), BOOL_TO_WPTR(result.WildKey), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()), STATE_COMMON->GetBackspaceNum());
+
+            MString outStr = result.Word;
+            size_t pos = outStr.find('|');
+            if (pos < SETTINGS->abbrevKeyMaxLength) {
+                // Abbrev候補
+                outStr = utils::safe_substr(outStr, pos + 1);
             }
-            _LOG_DEBUGH(_T("prevOutString=%s, isPrevHistKeyUsed=%s, numBS=%d"), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()), BOOL_TO_WPTR(HISTORY_STAY_NODE->IsPrevHistKeyUsed()), numBS);
-            return flag;
+
+            STATE_COMMON->SetOutString(outStr);
+            HISTORY_STAY_NODE->SetPrevHistState(outStr, result.Key);
+
+            _LOG_DEBUGH(_T("prevOutString=%s, isPrevHistKeyUsed=%s"), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()), BOOL_TO_WPTR(HISTORY_STAY_NODE->IsPrevHistKeyUsed()));
         }
 
         // 前回の履歴検索の出力と現在の出力文字列(改行以降)の末尾を比較し、同じであれば前回の履歴検索のキーを取得する
@@ -1208,16 +1203,12 @@ namespace {
             _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
             getLastHistKeyAndRewindOutput();    // 前回の履歴検索キー取得と出力スタックの巻き戻し予約(numBackSpacesに値をセット)
 
-            bool bAbbrev = setOutString(result);
+            setOutString(result);
             if (!result.Word.empty()) {
                 // emptyの場合は元に戻ったので、ブロッカーを設定してはならない (@TODO: ちょっと意味不明)
                 STATE_COMMON->SetHistoryBlockFlag();
             }
-            if (bAbbrev) {
-                STATE_COMMON->ClearVkbLayout();
-            } else {
-                setCandidatesVKB(VkbLayout::Horizontal, HIST_CAND->GetCandidates(), HIST_CAND->GetCurrentKey());
-            }
+            setCandidatesVKB(VkbLayout::Horizontal, HIST_CAND->GetCandidates(), HIST_CAND->GetCurrentKey());
 
             _LOG_DEBUGH(_T("LEAVE: prevOut=%s, isPrevHistKeyUsed=%s, numBS=%d"), \
                 MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()), BOOL_TO_WPTR(HISTORY_STAY_NODE->IsPrevHistKeyUsed()), STATE_COMMON->GetBackspaceNum());
