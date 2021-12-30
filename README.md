@@ -931,6 +931,9 @@ DKRED|<span style="color: darkred">
 ```
 簡易な辞書登録のようなものだと思えばよいでしょう。
 
+下記ツイートに短縮形の使用例を動画で投稿していますので、興味のある方は参照ください。<br/>
+https://twitter.com/kanchokker/status/1476483269160243206
+
 ## 交ぜ書き変換
 KanchokuWS では後置式の交ぜ書き変換をサポートしています。
 直前の出力文字列から、
@@ -1067,9 +1070,9 @@ KanchokuWS では後置式の交ぜ書き変換をサポートしています。
 前述の変換開始位置の移動や空白文を変換開始位置とする機能を利用して調節してください。
 
 下記ツイートに動的交ぜ書き変換の様子を動画で投稿していますので、興味のある方は参照ください。<br/>
+https://twitter.com/kanchokker/status/1474935216708145159 <br/>
 https://twitter.com/kanchokker/status/1403533755701026826 <br/>
-https://twitter.com/kanchokker/status/1411910765976506373
-
+https://twitter.com/kanchokker/status/1411910765976506373 <br/>
 
 ### 活用型
 
