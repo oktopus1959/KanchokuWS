@@ -1608,6 +1608,7 @@ namespace KanchokuWS
             var line = textBox_bushuAssoc.Text.Trim().Replace(" ", "");
             if (line._reMatch(@"^[^=]=.")) {
                 frmMain?.ExecCmdDecoder("mergeBushuAssocEntry", line);
+                button_readBushuAssoc.Hide();
                 label_saveAssoc.Hide();
                 label_bushuAssoc.Show();
                 dicRegLabelCount = dicRegLabelCountMax;
@@ -1619,13 +1620,35 @@ namespace KanchokuWS
         private void button_saveBushuAssocFile_Click(object sender, EventArgs e)
         {
             frmMain?.ExecCmdDecoder("saveBushuAssocDic", null);
+            button_readBushuAssoc.Hide();
             label_bushuAssoc.Hide();
             label_saveAssoc.Show();
             dicRegLabelCount = dicRegLabelCountMax;
         }
 
+        /// <summary>連想辞書からエントリを読み出す</summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button_readBushuAssoc_Click(object sender, EventArgs e)
+        {
+            if (textBox_bushuAssoc.Text._notEmpty()) {
+                var s = textBox_bushuAssoc.Text.Substring(0, 1);
+                char[] result = frmMain?.CallDecoderFunc("readBushuAssoc", s);
+                if (result._notEmpty()) {
+                    var sb = new StringBuilder();
+                    sb.Append(s).Append('=');
+                    foreach (var ch in result) {
+                        if (ch == 0) break;
+                        sb.Append(ch);
+                    }
+                    textBox_bushuAssoc.Text = sb.ToString();
+                }
+            }
+        }
+
         private void textBox_bushuAssoc_TextChanged(object sender, EventArgs e)
         {
+            button_readBushuAssoc.Show();
             label_saveAssoc.Hide();
             label_bushuAssoc.Hide();
         }
@@ -1722,6 +1745,7 @@ namespace KanchokuWS
                     label_bushuComp.Hide();
                     label_saveAutoBushu.Hide();
                     label_autoBushuComp.Hide();
+                    button_readBushuAssoc.Show();
                 }
             }
         }

@@ -10,8 +10,8 @@ public:
     // 連想リストの元となるキー文字を返す
     virtual mchar_t GetKey() const = 0;
 
-    // startPos 番から n 個の候補を文字列としてコピーする。list の範囲を超えていたら false を返す
-    virtual bool CopySubList(std::vector<MString>&, size_t startPos, size_t n) = 0;
+    // startPos 番から n 個の候補を文字列としてコピーする。startPos が list の範囲を超えていたら false を返す
+    virtual bool CopySubList(std::vector<MString>&, size_t startPos, size_t n, bool bIncludeBar = false) = 0;
 
     // 指定された tgt を選択する。存在しなければ末尾に追加する。dirtyフラグを返す
     virtual bool SelectTarget(mchar_t tgt) = 0;

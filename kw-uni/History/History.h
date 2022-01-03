@@ -6,7 +6,9 @@
 #include "HistoryStayState.h"
 
 #if 0
-#define _LOG_DEBUGH LOG_INFOH
+#define HIST_LOG_DEBUGH LOG_INFOH
+#else
+#define HIST_LOG_DEBUGH(...) {}
 #endif
 
 // -------------------------------------------------------------------
@@ -123,7 +125,7 @@ public:
     }
 
     inline int PrevKeyLen() const {
-        _LOG_DEBUGH(_T("CALLED: PrevKeyLen=%d"), isPrevHistKeyUsed ? prevKey.size() : -1);
+        HIST_LOG_DEBUGH(_T("CALLED: PrevKeyLen=%d"), isPrevHistKeyUsed ? prevKey.size() : -1);
         return isPrevHistKeyUsed ? prevKey.size() : -1;
     }
 
@@ -144,7 +146,7 @@ public:
     }
 
     inline void ClearPrevHistState() {
-        _LOG_DEBUGH(_T("CALLED: ClearPrevHistState"));
+        HIST_LOG_DEBUGH(_T("CALLED: ClearPrevHistState"));
         isPrevHistKeyUsed = false;
         prevOutString.clear();
         prevKey.clear();
@@ -158,4 +160,3 @@ public:
     static std::unique_ptr<HistoryStayNode> Singleton;
 };
 #define HISTORY_STAY_NODE (HistoryStayNode::Singleton)
-

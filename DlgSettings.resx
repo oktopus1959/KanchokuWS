@@ -117,101 +117,38 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="button_restartWithNoSave.ToolTip" xml:space="preserve">
+    <value>デコーダが保持している辞書内容をファイルに保存せずに再起動します。
+
+エディタなどで辞書ファイルを編集したい場合は、まず「一括保存」で、
+デコーダが保持している辞書内容をファイルに反映させます。
+
+その後、辞書ファイルを編集し、当ボタンをクリックしてください。
+
+漢直窓Sは終了時に辞書内容を自動的にファイルに新規保存します。
+(既存ファイルは *.back に名前が変更されます)
+辞書ファイルを編集したい場合は、ここに記述した手順に従うか、
+または漢直窓Sを終了させてから行ってください。
+</value>
+  </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="checkBox_mazeNoIfxConnectAny.ToolTip" xml:space="preserve">
-    <value>名詞やサ変語幹に対して任意の語尾を許可します。
+  <data name="textBox_bushuAssoc.ToolTip" xml:space="preserve">
+    <value>部首連想の登録を行います。次のフォーマットで記述します。
 
-たとえば「かいはつ /開発/」だけが登録されている時に、「かいはつきき」を
-交ぜ書き変換して「開発きき」を得ることができます。
+A=BC...
 
-この場合、交ぜ書きブロッカーが末尾(「開発きき|」)に位置するので、
-必要に応じてブロッカーを移動してから次の変換を実行してください。
+例えば、「恋=戀変」という記述があると、「恋」から「戀」や「変」への変換が
+可能になります。選択された変換文字は、先頭に移動し、漢直WinSの
+終了時に辞書ファイルに書き込まれます。
 
-意図しない変換結果になる場合もあるので、問題が多いようなら、チェックを
-外してください。</value>
-  </data>
-  <data name="checkBox_mazeNoIfxConnectKanji.ToolTip" xml:space="preserve">
-    <value>名詞やサ変語幹に対して漢字語尾を許可します。
+変換ターゲット文字列の途中に「|」があると、ターゲットの先頭から「|」までは
+順序が固定され、「|」以降の文字が選択された場合は「|」の直後に移動します。
 
-たとえば「やまたい /邪馬台/」だけが登録されている時に、「やまたい国」を
-交ぜ書き変換して「邪馬台国」を得ることができます。
-
-ただし、意図しない変換結果になる場合もあるので、問題が多いようなら、
-チェックを外してください。（例：「ひどい目にあう」⇒「ひ土井目にあう」）
-
-チェックを外した場合は、次の場合にのみ、漢字語尾を許可するように
-なります。
-・漢字語尾を除く読みの長さが2～3文字
-・読みの部分に漢字を含む
-例：
-「ぶんき /分岐/」が登録されている時に「分き点」は「分岐点」に変換できるが、
-「ぶんき点」は変換できない。</value>
-  </data>
-  <data name="textBox_mazeGobiLikeTailLen.ToolTip" xml:space="preserve">
-    <value>交ぜ書き変換時に、語尾に含める末尾長を設定
-
-変換形の(活用)語尾以降の末尾長がここで設定した文字数以下であれば
-それも変換形の語尾に含めます。
-「変換形＋活用語尾の後にブロッカーを置く」の設定がONの場合に
-有効です。
-
-例：末尾長を 2 に設定した場合
-「ぜんりょくをあげて」は「全力を|あげて」になるが、
-「ぜんりょくをあげ」は「全力をあげ|」のようになる。
-本来は「全力を」までが変換形であるが、それ以降の末尾が「あげて」なら
-3文字なのでそのまま末尾として残るが、「あげ」なら2文字なので語尾に
-含まれる。</value>
-  </data>
-  <data name="checkBox_mazeRemoveHeadSpace.ToolTip" xml:space="preserve">
-    <value>ONにすると、交ぜ書き変換後、読みの先頭の空白文字が削除されます。
-（ひらがな⇒カタカナ変換時にも適用されます）
-
-例：「明日彼女にあう」の「あう」を「逢う」に変換したい場合、
-「彼女にあう」を変換すると「彼女似合う」になってしまいます。
-これを避けるには、当項目をONにして、「彼女に あう」のように
-「に」と「あう」の間に空白を入れてから変換すると、「彼女に逢う」
-のように変換されます。</value>
-  </data>
-  <data name="checkBox_mazeBlockerTail.ToolTip" xml:space="preserve">
-    <value>ONにすると、交ぜ書き変換後に、変換形＋活用語尾の後に
-交ぜ書きブロッカーを置きます。
-OFFにすると、変換文字列全体の末尾にブロッカーを置きます。
-
-交ぜ書きブロッカーがあると、そこで交ぜ書き用の読みの採取が
-ブロックされます。
-
-例：「ぜんりょくをあげて」を変換した場合、それぞれ、
-・ONなら「全力を|あげて」のように「全力を」の後にブロッカー
-・OFFなら「全力をあげて|」のように、末尾にブロッカー
-が置かれます。
-
-一度に長い文を入力して後で変換を続けて実行するならONに、
-変換単位ごとに入力するなら OFF に設定するとよいでしょう。
-
-なお、拡張修飾キーコマンドの leftShfitBlocker および
- rightShiftBlocker で交ぜ書きブロッカーを移動することができます。</value>
-  </data>
-  <data name="checkBox_mazeRightShiftYomiPos.ToolTip" xml:space="preserve">
-    <value>ONにすると、「&gt;」で交ぜ書き読みの開始位置を右に移動します。
-
-「&gt;」は交ぜ書きブロッカーの右移動にも割り当てられていますが、
-この設定をONにすると、交ぜ書き読みの開始位置の移動のほうが
-優先されます。
-
-いったん、「&lt;」で交ぜ書きブロッカーを左移動させると、その次からは
-「&gt;」は交ぜ書きブロッカーの右移動となります。
-
-例：当設定がONで、「彼女にあう」を変換して「彼女似合う」となった場合は、
-変換直後に「&gt;」を入力すると変換開始位置が右にシフトするので、
-「彼女に逢う」と変換されます。
-
-当設定がOFFの場合は、いったん Esc で読みに戻してから "&gt;" でブロッカーを
-右移動して再変換を実行してください。
-
-また、ブロッカーを右端に移動させてから、さらに "&gt;" を打鍵した場合も
-変換開始位置の右移動になります。</value>
+なお、すでに同じ文字に対する連想文字列が登録されている場合は、
+ここで登録した文字列がマージされます。既存の文字列が削除されることは
+ありません。</value>
   </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
@@ -449,6 +386,18 @@ MS ゴシック、メイリオ、游ゴシックについては、ある程度�
 
 </value>
   </data>
+  <data name="label110.ToolTip" xml:space="preserve">
+    <value>・「B27」について
+「その他設定」&gt;「拡張修飾キー」を「有効」にし、 mod-conversion.txt で
+「無変換」などの適当な拡張修飾キーを拡張シフトB面に割り当てると、
+「無変換+K」でこの機能を呼び出せるようになります。
+
+・「kana」について
+拡張修飾キーや特殊キーは次のように名前で指定することもできます。
+半/全=zenkaku, CapsLock=caps, 英数=alnum,
+無変換=xfer, 変換=nfer, ひらがな=kana,
+右シフト=rshift, Insert=ins</value>
+  </data>
   <data name="label69.ToolTip" xml:space="preserve">
     <value>106 (qwerty) でのコード表
 
@@ -570,6 +519,79 @@ rightShiftBlocker を呼び出すことで、左右に移動することがで�
 詳細については、「交ぜ書き変換」-「変換形＋活用語尾の後にブロッカーを置く」
 のツールチップを参照してください。</value>
   </data>
+  <data name="checkBox_mazeNoIfxConnectAny.ToolTip" xml:space="preserve">
+    <value>名詞やサ変語幹に対して任意の語尾を許可します。
+
+たとえば「かいはつ /開発/」だけが登録されている時に、「かいはつきき」を
+交ぜ書き変換して「開発きき」を得ることができます。
+
+この場合、交ぜ書きブロッカーが末尾(「開発きき|」)に位置するので、
+必要に応じてブロッカーを移動してから次の変換を実行してください。
+
+意図しない変換結果になる場合もあるので、問題が多いようなら、チェックを
+外してください。</value>
+  </data>
+  <data name="checkBox_mazeNoIfxConnectKanji.ToolTip" xml:space="preserve">
+    <value>名詞やサ変語幹に対して漢字語尾を許可します。
+
+たとえば「やまたい /邪馬台/」だけが登録されている時に、「やまたい国」を
+交ぜ書き変換して「邪馬台国」を得ることができます。
+
+ただし、意図しない変換結果になる場合もあるので、問題が多いようなら、
+チェックを外してください。（例：「ひどい目にあう」⇒「ひ土井目にあう」）
+
+チェックを外した場合は、次の場合にのみ、漢字語尾を許可するように
+なります。
+・漢字語尾を除く読みの長さが2～3文字
+・読みの部分に漢字を含む
+例：
+「ぶんき /分岐/」が登録されている時に「分き点」は「分岐点」に変換できるが、
+「ぶんき点」は変換できない。</value>
+  </data>
+  <data name="textBox_mazeGobiLikeTailLen.ToolTip" xml:space="preserve">
+    <value>交ぜ書き変換時に、語尾に含める末尾長を設定
+
+変換形の(活用)語尾以降の末尾長がここで設定した文字数以下であれば
+それも変換形の語尾に含めます。
+「変換形＋活用語尾の後にブロッカーを置く」の設定がONの場合に
+有効です。
+
+例：末尾長を 2 に設定した場合
+「ぜんりょくをあげて」は「全力を|あげて」になるが、
+「ぜんりょくをあげ」は「全力をあげ|」のようになる。
+本来は「全力を」までが変換形であるが、それ以降の末尾が「あげて」なら
+3文字なのでそのまま末尾として残るが、「あげ」なら2文字なので語尾に
+含まれる。</value>
+  </data>
+  <data name="checkBox_mazeRemoveHeadSpace.ToolTip" xml:space="preserve">
+    <value>ONにすると、交ぜ書き変換後、読みの先頭の空白文字が削除されます。
+（ひらがな⇒カタカナ変換時にも適用されます）
+
+例：「明日彼女にあう」の「あう」を「逢う」に変換したい場合、
+「彼女にあう」を変換すると「彼女似合う」になってしまいます。
+これを避けるには、当項目をONにして、「彼女に あう」のように
+「に」と「あう」の間に空白を入れてから変換すると、「彼女に逢う」
+のように変換されます。</value>
+  </data>
+  <data name="checkBox_mazeBlockerTail.ToolTip" xml:space="preserve">
+    <value>ONにすると、交ぜ書き変換後に、変換形＋活用語尾の後に
+交ぜ書きブロッカーを置きます。
+OFFにすると、変換文字列全体の末尾にブロッカーを置きます。
+
+交ぜ書きブロッカーがあると、そこで交ぜ書き用の読みの採取が
+ブロックされます。
+
+例：「ぜんりょくをあげて」を変換した場合、それぞれ、
+・ONなら「全力を|あげて」のように「全力を」の後にブロッカー
+・OFFなら「全力をあげて|」のように、末尾にブロッカー
+が置かれます。
+
+一度に長い文を入力して後で変換を続けて実行するならONに、
+変換単位ごとに入力するなら OFF に設定するとよいでしょう。
+
+なお、拡張修飾キーコマンドの leftShfitBlocker および
+ rightShiftBlocker で交ぜ書きブロッカーを移動することができます。</value>
+  </data>
   <data name="comboBox_histNumDeckeyId.ToolTip" xml:space="preserve">
     <value>履歴検索の縦列鍵盤表示時に、候補を文字数で絞るモードに
 移行するキーの漢直コードを設定します。
@@ -583,6 +605,18 @@ rightShiftBlocker を呼び出すことで、左右に移動することがで�
 でも変更できます。
 ↓を押すと 1, 2, 3,... と増加し、9 の次に 0 に戻ります。
 ↑を押すと、 9, 8, 7, ... と減少します。</value>
+  </data>
+  <data name="checkBox_selectFirstCandByEnter.ToolTip" xml:space="preserve">
+    <value>自動履歴検索で横列表示された候補の先頭候補を
+Enterキーで選択するかを設定します。
+
+当設定をOFFに設定してあるのに、つい選択するつもりで
+Enterを押してしまった場合は、出力先ウィンドウでEnter前の
+位置にカレットを移動させてからブロッカーを解除して手動で
+履歴検索を実行してください。
+
+なお、履歴候補が縦列表示されている状態では、先頭候補が
+Enterキーで選択されます。</value>
   </data>
   <data name="textBox_histKanjiWordMinLengthEx.ToolTip" xml:space="preserve">
     <value>難打鍵文字を含む場合の自動履歴登録最小長を設定します。
@@ -617,17 +651,25 @@ rightShiftBlocker を呼び出すことで、左右に移動することがで�
 なお、履歴候補を縦列鍵盤形式で表示する機能もあります。
 こちらは「機能キー割当」のところで設定してください。</value>
   </data>
-  <data name="checkBox_selectFirstCandByEnter.ToolTip" xml:space="preserve">
-    <value>自動履歴検索で横列表示された候補の先頭候補を
-Enterキーで選択するかを設定します。
+  <data name="checkBox_mazeRightShiftYomiPos.ToolTip" xml:space="preserve">
+    <value>ONにすると、「&gt;」で交ぜ書き読みの開始位置を右に移動します。
 
-当設定をOFFに設定してあるのに、つい選択するつもりで
-Enterを押してしまった場合は、出力先ウィンドウでEnter前の
-位置にカレットを移動させてからブロッカーを解除して手動で
-履歴検索を実行してください。
+「&gt;」は交ぜ書きブロッカーの右移動にも割り当てられていますが、
+この設定をONにすると、交ぜ書き読みの開始位置の移動のほうが
+優先されます。
 
-なお、履歴候補が縦列表示されている状態では、先頭候補が
-Enterキーで選択されます。</value>
+いったん、「&lt;」で交ぜ書きブロッカーを左移動させると、その次からは
+「&gt;」は交ぜ書きブロッカーの右移動となります。
+
+例：当設定がONで、「彼女にあう」を変換して「彼女似合う」となった場合は、
+変換直後に「&gt;」を入力すると変換開始位置が右にシフトするので、
+「彼女に逢う」と変換されます。
+
+当設定がOFFの場合は、いったん Esc で読みに戻してから "&gt;" でブロッカーを
+右移動して再変換を実行してください。
+
+また、ブロッカーを右端に移動させてから、さらに "&gt;" を打鍵した場合も
+変換開始位置の右移動になります。</value>
   </data>
   <data name="button_saveEelllJsTableFile.ToolTip" xml:space="preserve">
     <value>eelll/JS用のテーブルを作成してファイル出力します。
@@ -833,20 +875,6 @@ SandS、CapsLock、英数、無変換、変換、および右シフトキーを
 「-可欠」で登録すると、「可欠」と入力したときに「歌」への自動変換を実行しません。
 「歌可欠」が既に登録されている場合は、それを上書きします。</value>
   </data>
-  <data name="button_restartWithNoSave.ToolTip" xml:space="preserve">
-    <value>デコーダが保持している辞書内容をファイルに保存せずに再起動します。
-
-エディタなどで辞書ファイルを編集したい場合は、まず「一括保存」で、
-デコーダが保持している辞書内容をファイルに反映させます。
-
-その後、辞書ファイルを編集し、当ボタンをクリックしてください。
-
-漢直窓Sは終了時に辞書内容を自動的にファイルに新規保存します。
-(既存ファイルは *.back に名前が変更されます)
-辞書ファイルを編集したい場合は、ここに記述した手順に従うか、
-または漢直窓Sを終了させてから行ってください。
-</value>
-  </data>
   <data name="textBox_bushuComp.ToolTip" xml:space="preserve">
     <value>部首合成の登録を行います。
 
@@ -861,22 +889,6 @@ A と C から B に変換することができます(引き算)。
 A と B が等価文字であることを表します。
 「DAC」という定義があったら、A のかわりに B を使って、
 B + C ⇒ D という足し算も可能になります。</value>
-  </data>
-  <data name="textBox_bushuAssoc.ToolTip" xml:space="preserve">
-    <value>部首連想の登録を行います。次のフォーマットで記述します。
-
-A=BC...
-
-例えば、「恋=戀変」という記述があると、「恋」から「戀」や「変」への変換が
-可能になります。選択された変換文字は、先頭に移動し、漢直WinSの
-終了時に辞書ファイルに書き込まれます。
-
-変換ターゲット文字列の途中に「|」があると、ターゲットの先頭から「|」までは
-順序が固定され、「|」以降の文字が選択された場合は「|」の直後に移動します。
-
-なお、すでに同じ文字に対する連想文字列が登録されている場合は、
-ここで登録した文字列がマージされます。既存の文字列が削除されることは
-ありません。</value>
   </data>
   <data name="textBox_mazegaki.ToolTip" xml:space="preserve">
     <value>交ぜ書きユーザー辞書に登録するエントリを次のフォーマットで記述します。
@@ -912,21 +924,6 @@ A=BC...
   </data>
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>114, 17</value>
-  </metadata>
-  <data name="label110.ToolTip" xml:space="preserve">
-    <value>・「B27」について
-「その他設定」&gt;「拡張修飾キー」を「有効」にし、 mod-conversion.txt で
-「無変換」などの適当な拡張修飾キーを拡張シフトB面に割り当てると、
-「無変換+K」でこの機能を呼び出せるようになります。
-
-・「kana」について
-拡張修飾キーや特殊キーは次のように名前で指定することもできます。
-半/全=zenkaku, CapsLock=caps, 英数=alnum,
-無変換=xfer, 変換=nfer, ひらがな=kana,
-右シフト=rshift, Insert=ins</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

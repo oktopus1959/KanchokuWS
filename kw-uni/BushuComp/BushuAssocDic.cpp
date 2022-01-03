@@ -157,16 +157,23 @@ namespace {
         }
 
         // startPos 番から n 個の候補を文字列としてコピーする
-        // list の範囲を超えていたら false を返す
-        bool CopySubList(std::vector<MString>& strList, size_t startPos, size_t n) {
+        // startPos が list の範囲を超えていたら false を返す
+        // bIncludeBar = true なら固定位置を示す '|' を挿入する
+        bool CopySubList(std::vector<MString>& strList, size_t startPos, size_t n, bool bIncludeBar) {
             if (startPos >= list.size()) return false;
 
-            for (size_t i = 0; i < n; ++i) {
-                if (startPos + i < list.size()) {
-                    strList[i] = to_mstr(list[startPos + i]);
-                } else {
-                    strList[i].clear();
+            size_t j = 0;
+            for (size_t i = 0; i < n && j < strList.size(); ++i) {
+                if (bIncludeBar && i == posFixed) {
+                    strList[j++] = to_mstr('|');
+                    if (j >= strList.size()) break;
                 }
+                if (startPos + i < list.size()) {
+                    strList[j] = to_mstr(list[startPos + i]);
+                } else {
+                    strList[j].clear();
+                }
+                ++j;
             }
             return true;
         }

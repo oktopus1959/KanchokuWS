@@ -390,6 +390,8 @@ public:
                 VkbTableMaker::SaveEelllJsTable();
             } else if (cmd == _T("exchangeCodeTable")) {
                 outParams->strokeTableNum = StrokeTableNode::ExchangeStrokeTable();
+            } else if (cmd == _T("readBushuAssoc")) {
+                readBushuAssoc(items[1], outParams->faceStrings);
             }
         }
     }
@@ -680,6 +682,30 @@ public:
     void clearKeyFaces() {
         for (size_t i = 0; i < utils::array_length(OutParams->faceStrings); ++i) {
             OutParams->faceStrings[i] = 0;
+        }
+    }
+
+    // 連想辞書から定義文字列を読み出してくる
+    void readBushuAssoc(const wstring& ws, wchar_t* buffer) {
+        LOG_INFOH(_T("CALLED: ws=%s"), ws.c_str());
+        buffer[0] = 0;
+        if (!ws.empty()) {
+            if (BUSHU_ASSOC_DIC) {
+                BushuAssocEntry* entry = BUSHU_ASSOC_DIC->GetEntry(ws[0]);
+                if (entry) {
+                    std::vector<MString> list(11);
+                    entry->CopySubList(list, 0, list.size(), true);
+                    size_t i = 0;
+                    for (auto ms : list) {
+                        if (!ms.empty()) {
+                            auto mp = decomp_mchar(ms[0]);
+                            if (mp.first != 0) buffer[i++] = mp.first;
+                            if (mp.second != 0) buffer[i++] = mp.second;
+                        }
+                    }
+                    buffer[i] = 0;
+                }
+            }
         }
     }
 
