@@ -84,6 +84,8 @@ namespace KanchokuWS
             public RECT rectCaret;
         }
 
+        private static bool bLog = false;
+
         private GUITHREADINFO guiThreadInfo;
 
         public string className { get; private set; }
@@ -95,6 +97,11 @@ namespace KanchokuWS
         {
             guiThreadInfo = new GUITHREADINFO();
             guiThreadInfo.cbSize = Marshal.SizeOf(guiThreadInfo);
+        }
+
+        public static void SetLogFlag(bool bLog)
+        {
+            GUIThreadInfo.bLog = bLog;
         }
 
         public bool GetForegroundWinInfo()
@@ -110,7 +117,7 @@ namespace KanchokuWS
             bool result = GetGUIThreadInfo(threadId, ref guiThreadInfo);
             className = getClassName(result && hwndFocus != IntPtr.Zero ? hwndFocus : hwndForeground);
 
-            logger.Debug(() => $"RESULT: {result}: foreground hWnd={(int)hwndForeground:x}, WndClassName={className}");
+            if (bLog) logger.Debug(() => $"RESULT: {result}: foreground hWnd={(int)hwndForeground:x}, WndClassName={className}");
             return result;
         }
 
@@ -140,8 +147,8 @@ namespace KanchokuWS
                 // IAccessible を使ってカレット位置を取得する
                 getCaretPos(hwndFocus, ref rect, rt);
                 if (Logger.IsDebugEnabled) {
-                    logger.Debug($"prev: left={prevCaretRect.iLeft}, top={prevCaretRect.iTop}, right={prevCaretRect.iRight}, bottom={prevCaretRect.iBottom}");
-                    logger.Debug($"curr: left={rect.Left}, top={rect.Top}, right={rect.Right}, bottom={rect.Bottom}");
+                    if (bLog) logger.Debug($"prev: left={prevCaretRect.iLeft}, top={prevCaretRect.iTop}, right={prevCaretRect.iRight}, bottom={prevCaretRect.iBottom}");
+                    if (bLog) logger.Debug($"curr: left={rect.Left}, top={rect.Top}, right={rect.Right}, bottom={rect.Bottom}");
                 }
                 if (rect.Width == 0 && rect.Height == 0) {
                     ++invalidCaretPosCount;
@@ -161,7 +168,7 @@ namespace KanchokuWS
                     } else {
                         // 何回か同じ位置にカレットがある場合は仮想鍵盤をウィンドウ右下に位置させる 
                         ++sameCount;
-                        logger.Debug(() => $"sameCount={sameCount}");
+                        if (bLog) logger.Debug(() => $"sameCount={sameCount}");
                         if (sameCountMax == 0 || sameCount < sameCountMax) return;
                     }
                 }
@@ -222,13 +229,13 @@ namespace KanchokuWS
         /// <returns></returns>
         private static bool getCaretPos(IntPtr handle, ref Rectangle rect, RECT winRect)
         {
-            logger.Debug(() => $"Check Caret for {(int)handle:x}");
+            if (bLog) logger.Debug(() => $"Check Caret for {(int)handle:x}");
             Guid guidIAccessible = new Guid("{618736E0-3C3D-11CF-810C-00AA00389B71}");
             object obj = null;
             int retVal = AccessibleObjectFromWindow(handle, (uint)OBJID.CARET, ref guidIAccessible, ref obj);
             var iAccessible = (IAccessible)obj;
             if (iAccessible == null) {
-                logger.Debug("iAccessible is null");
+                if (bLog) logger.Debug("iAccessible is null");
                 rect.X = rect.Y = rect.Width = rect.Height = 0;
                 return false;
             }
@@ -241,7 +248,7 @@ namespace KanchokuWS
             // Effective Dpi を使ってみたが、Per-Momitor HiRes が true の場合は、dpiRate に応じた位置が返ってくるようなので、調整は不要のようだ
             //double dpiRate = ScreenInfo.GetScreenDpiRate(left, top);
             double dpiRate = 1.0;
-            logger.Debug(() => $"left={left}, top={top}, width={width}, height={height}, dpiRate={dpiRate:f3}");
+            if (bLog) logger.Debug(() => $"left={left}, top={top}, width={width}, height={height}, dpiRate={dpiRate:f3}");
             rect.X = winRect.iLeft + (int)((left - winRect.iLeft) / dpiRate);
             rect.Y = winRect.iTop + (int)((top - winRect.iTop) / dpiRate);
             rect.Width = width;

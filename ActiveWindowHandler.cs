@@ -346,17 +346,46 @@ namespace KanchokuWS
 
         private int setFuncKeyInputs(char[] str, ref int pos, int strLen, INPUT[] inputs, int idx)
         {
+            bool bLCtrl = false;
+            bool bLShift = false;
             var sb = new StringBuilder();
             while (pos < strLen) {
                 var ch = str[pos];
                 if (ch == '}') break;
-                sb.Append(ch);
+                if (ch == '^') {
+                    // Ctrl
+                    bLCtrl = true;
+                } else if (ch == '+') {
+                    // Shift
+                    bLShift = true;
+                } else {
+                    sb.Append(ch);
+                }
                 ++pos;
             }
             if (sb.Length > 0) {
-                uint vkey = VirtualKeys.GetFuncVkeyByName(sb.ToString());
+                string name = sb.ToString();
+                uint vkey = VirtualKeys.GetFuncVkeyByName(name);
+                if (vkey == 0) vkey = VirtualKeys.GetAlphabetVkeyByName(name);
                 if (vkey > 0) {
-                    return setVkeyInputs((ushort)vkey, inputs, idx);
+                    if (bLCtrl) {
+                        // 左Ctrl下げ
+                        setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                    }
+                    if (bLShift) {
+                        // 左Shift下げ
+                        setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                    }
+                    // キー送出
+                    idx = setVkeyInputs((ushort)vkey, inputs, idx);
+                    if (bLShift) {
+                        // 左Shift戻し
+                        setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+                    }
+                    if (bLCtrl) {
+                        // 左Ctrl戻し
+                        setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+                    }
                 }
             }
             return idx;
@@ -367,7 +396,7 @@ namespace KanchokuWS
             if (strLen > inputs._safeLength()) strLen = inputs._safeLength();
             for (int i = 0; i < strLen; ++i) {
                 for (int j = 0; j < 2; ++j) {
-                    if (j == 0 && str[i] == '!' && (i + 1) < strLen && str[i + 1] == '{') {
+                    if (j == 0 && str[i] == '!' && (i + 1) < strLen && str[i + 1] == '{') {     // "!{"
                         i += 2;
                         idx = setFuncKeyInputs(str, ref i, strLen, inputs, idx);
                     } else {
@@ -511,7 +540,7 @@ namespace KanchokuWS
         /// </summary>
         public void SendStringViaClipboardIfNeeded(char[] str, int numBS, bool bForceString = false)
         {
-            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}");
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}, bForceString={bForceString}");
 
             if (ActiveWinHandle != IntPtr.Zero && ((str._notEmpty() && str[0] != 0) || numBS > 0)) {
                 int len = str._isEmpty() ? 0 : str._findIndex(x => x == 0);     // 終端までの長さを取得
@@ -587,7 +616,7 @@ namespace KanchokuWS
         /// <summary>
         /// アクティブウィンドウハンドルの取得
         /// </summary>
-        private void GetActiveWindowHandle(bool bLog = true)
+        private void GetActiveWindowHandle(bool bLog)
         {
             if (bLog) logger.Info("ENTER");
 
@@ -816,8 +845,10 @@ namespace KanchokuWS
             GetActiveWindowInfo(MoveWinType.MoveIfAny, Settings.LoggingActiveWindowInfo /*&& Logger.IsDebugEnabled*/);
         }
 
-        public void GetActiveWindowInfo(MoveWinType moveWin, bool bLog = true)
+        public void GetActiveWindowInfo(MoveWinType moveWin, bool bLog = false)
         {
+            GUIThreadInfo.SetLogFlag(bLog);
+
             if (bLog) logger.Info($"ENTER: moveWin={moveWin}");
 
             // 異スレッドおよび同一スレッドでの再入を防ぐ
