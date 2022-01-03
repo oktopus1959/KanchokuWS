@@ -54,7 +54,7 @@ namespace KanchokuWS
         // ストロークキーの終わり(の次)
         public const int STROKE_DECKEY_END = SHIFT_B_DECKEY_END;
 
-        // 機能キーとして使われるDECKEYの始まり
+        /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)の始まり</summary>
         public const int FUNC_DECKEY_START = STROKE_DECKEY_END;
 
         // 機能キーとして使われるDECKEYの数
@@ -99,10 +99,13 @@ namespace KanchokuWS
         // DECKEYの総数
         public const int TOTAL_DECKEY_NUM = UNMODIFIED_DECKEY_NUM + CTRL_DECKEY_NUM + CTRL_SHIFT_DECKEY_NUM;
 
-        // 上記は、ストロークテーブルの第1打鍵に含まれる
-        // ストロークテーブルの第2打鍵以降には、NORMAL と SHIFT修飾だけが含まれる
-        // 履歴検索や交ぜ書きなどの状態呼び出しは、ストロークテーブルで定義する
-        // つまり、DECKEYコードのままデコーダを呼び出すことにより、ストロークテーブルを経て、そこに定義された状態が呼び出される
+        // 無条件でデコーダを呼び出すストロークキーに変換するためのオフセット
+        public const int UNCONDITIONAL_DECKEY_OFFSET = CTRL_SHIFT_FUNC_DECKEY_END;
+
+        // 無条件でデコーダを呼び出すストロークキーの終わり
+        public const int UNCONDITIONAL_DECKEY_END = UNCONDITIONAL_DECKEY_OFFSET + STROKE_DECKEY_NUM;
+
+        // 以下、特別なキーの設定
 
         // スペースキーに割り当てられたDecKeyId
         public const int STROKE_SPACE_DECKEY = 40;
@@ -186,7 +189,7 @@ namespace KanchokuWS
         /// 特殊なDECKEY<br/>
         /// CTRL_SHIFT_FUNC_DECKEY_END よりも大きな値にする必要がある
         /// </summary>
-        public const int SPECIAL_DECKEY_ID_BASE = 0x200;
+        public const int SPECIAL_DECKEY_ID_BASE = 0x400;
 
         public const int TOGGLE_DECKEY = SPECIAL_DECKEY_ID_BASE + 1;     // ON/OFF の切り替えキー
         public const int ACTIVE_DECKEY = TOGGLE_DECKEY + 1;             // ON への切り替えキー

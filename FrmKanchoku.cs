@@ -525,6 +525,7 @@ namespace KanchokuWS
             keDispatcher.IsDecoderActivated = isDecoderActivated;
             keDispatcher.FuncDispatcher = FuncDispatcher;
             keDispatcher.SendInputVkeyWithMod = SendInputVkeyWithMod;
+            keDispatcher.InvokeDecoderUnconditionally = InvokeDecoderUnconditionally;
             //keDispatcher.RotateReverseStrokeHelp = rotateReverseStrokeHelp;
             //keDispatcher.RotateDateString = rotateDateString;
             //keDispatcher.RotateReverseDateString = rotateReverseDateString;
@@ -535,6 +536,17 @@ namespace KanchokuWS
             logger.InfoH("LEAVE");
         }
 
+        /// <summary>無条件にデコーダを呼び出す</summary>
+        private bool InvokeDecoderUnconditionally(int deckey, uint mod)
+        {
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey}H({deckey}), mod={mod}H({mod})");
+            if (IsDecoderActive)
+                handleKeyDecoder(deckey, mod);
+            else
+                handleKeyDecoderDirectly(deckey, mod);
+            return true;
+        }
+
         /// <summary>
         /// UI側のハンドラー
         /// </summary>
@@ -542,6 +554,7 @@ namespace KanchokuWS
         /// <returns></returns>
         private bool FuncDispatcher(int deckey, uint mod)
         {
+            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod})");
             bool bPrevDtUpdate = false;
             try {
                 if (IsDecoderActive) {
@@ -1151,6 +1164,26 @@ namespace KanchokuWS
             return sendKeyFlag;
         }
 
+        /// <summary>
+        /// デコーダの直接呼び出し
+        /// </summary>
+        private void handleKeyDecoderDirectly(int deckey, uint mod)
+        {
+            logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}");
+
+            // デコーダの呼び出し
+            HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, ref decoderOutput);
+
+            // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
+            bool bFuncVkeyContained = decoderOutput.outString._toString().IndexOf("!{") >= 0;
+            // BSと文字送出(もしあれば)
+            actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
+            if (bFuncVkeyContained) {
+                // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
+                HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput);
+            }
+        }
+
         private bool isNormalDeckey(int deckey)
         {
             return deckey >= DecoderKeys.NORMAL_DECKEY_START && deckey < DecoderKeys.NORMAL_DECKEY_END;
@@ -1174,6 +1207,7 @@ namespace KanchokuWS
 
         private bool sendVkeyFromDeckey(int deckey, uint mod)
         {
+            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod})");
             if (isCtrlKeyConversionEffectiveWindow()
                 || deckey < DecoderKeys.FUNC_DECKEY_START
                 || deckey >= DecoderKeys.FUNC_DECKEY_END && deckey < DecoderKeys.CTRL_FUNC_DECKEY_START

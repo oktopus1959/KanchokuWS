@@ -164,6 +164,11 @@ namespace KanchokuWS
             return vkeyArrayFuncKeys._getNth(GetFuncKeyIndexByName(name));
         }
 
+        public static uint GetAlphabetVkeyByName(string name)
+        {
+            return (name._safeLength() == 1 && name[0] >= 'A' && name[0] <= 'Z') ? (uint)Keys.A + (uint)(name[0] - 'A') : 0;
+        }
+
         public enum ShiftPlane
         {
             NONE = 0,
@@ -381,14 +386,17 @@ namespace KanchokuWS
 
         public static int GetDecKeyFromCombo(uint mod, uint vkey)
         {
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CALLED: mod={mod:x}H({mod}), vkey={vkey:x}H({vkey})");
             return DecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
         }
 
         public static int GetModConvertedDecKeyFromCombo(uint mod, uint vkey)
         {
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CALLED: mod={mod:x}H({mod}), vkey={vkey:x}H({vkey})");
             int deckey = ModConvertedDecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
-            //return deckey > 0 ? deckey : DecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
-            return deckey > 0 ? deckey : GetDecKeyFromCombo(mod, vkey);
+            if (deckey <= 0) { deckey = GetDecKeyFromCombo(mod, vkey); }
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"deckey={deckey:x}H({deckey})");
+            return deckey;
         }
 
         public static int GetCtrlDecKeyOf(string face)
@@ -595,6 +603,20 @@ namespace KanchokuWS
         };
 
         /// <summary>
+        /// シフト面も含んだ漢直キーコード文字列を解析する("20", "A31", "B11" など)<br/>
+        /// 漢直キーコードでなければ -1 を返す
+        /// </summary>
+        private static int parseShiftPlaneDeckey(string str)
+        {
+            if (str._isEmpty()) return -1;
+            var s = str._toUpper();
+            int offset = s[0] == 'S' ? DecoderKeys.SHIFT_DECKEY_START : s[0] == 'A' ? DecoderKeys.SHIFT_A_DECKEY_START : s[0] == 'B' ? DecoderKeys.SHIFT_B_DECKEY_START : 0;
+            int deckey = offset > 0 ? s._safeSubstring(1)._parseInt(-1, -1) : s._parseInt(-1, -1);
+            if (deckey < 0 || deckey >= DecoderKeys.STROKE_DECKEY_END) return -1;
+            return deckey + offset;
+        }
+
+        /// <summary>
         /// 追加の modifier 変換表を読み込む
         /// </summary>
         public static bool ReadExtraModConversionFile(string filename)
@@ -614,6 +636,7 @@ namespace KanchokuWS
                 int nl = 0;
                 foreach (var rawLine in lines._split('\n')) {
                     ++nl;
+                    logger.DebugH(() => $"line({nl}): {rawLine}");
                     var line = rawLine._reReplace("#.*", "").Trim().Replace(" ", "")._toLower();
                     if (line._notEmpty() && line[0] != '#') {
                         if (line.IndexOf('=') > 0) {
@@ -650,24 +673,34 @@ namespace KanchokuWS
                             var items = line._split(':');
                             if (items._length() == 3) {
                                 uint mod = 0;
+                                // 被修飾キーの仮想キーコード: 特殊キー名(esc, tab, ins, ...)または漢直コード(00～49)から、それに該当する仮想キーコードを得る
                                 uint vkey = getVKeyFromDecKey(specialDecKeysFromName._safeGet(items[1])._gtZeroOr(items[1]._parseInt(-1, -1)));
                                 if (vkey == 0) {
-                                    // 拡張修飾キーまたは特殊キー単打の場合
-                                    vkey = GetFuncVkeyByName(items[0]);  // 被修飾キーが指定されていない場合は、修飾キーまたは特殊キーの単打とみなす
+                                    // 被修飾キーが指定されていない場合は、拡張修飾キーまたは特殊キーの単打とみなす
+                                    vkey = GetFuncVkeyByName(items[0]);  
                                 } else {
+                                    // 被修飾キーが指定されている場合は、拡張修飾キーの修飾フラグを取得
                                     mod = modifierKeysFromName._safeGet(items[0]);
                                 }
                                 bool ctrl = items[2]._startsWith("^");
                                 var name = items[2].Replace("^", "");
-                                //int deckey = items[2]._parseInt(-1, -1)._geZeroOr(() => specialDecKeysFromName._safeGet(name)); // 数字による直接定義もOK ⇒ と思ったが、mod の拡張面で定義すればよいだけ
-                                int deckey = specialDecKeysFromName._safeGet(name);
-                                logger.DebugH(() => $"mod={mod:x}H, vkey={vkey:x}H, deckey={deckey:x}H({deckey}), ctrl={ctrl}, name={name}, rawLine={rawLine}");
+                                int deckey = parseShiftPlaneDeckey(items[2]);
+                                logger.DebugH(() => $"deckey={deckey:x}H({deckey})");
+                                if (deckey >= 0) {
+                                    // targetが漢直コードによる直接定義(nfer:11:B11など)の場合⇒無条件のデコーダ呼び出し(デコーダがOFFの場合も呼び出される)
+                                    deckey += DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET;
+                                } else {
+                                    deckey = specialDecKeysFromName._safeGet(name);
+                                }
+                                logger.DebugH(() => $"mod={mod:x}H, vkey={vkey:x}H, deckey={deckey:x}H({deckey}), ctrl={ctrl}, name={name}");
                                 if (ctrl) {
                                     uint decVkey = 0;
                                     if (name._safeLength() == 1 && name._ge("a") && name._le("z")) {
+                                        // Ctrl-A～Ctrl-Z
                                         decVkey = faceToVkey._safeGet(name._toUpper());
                                         deckey = DecoderKeys.DECKEY_CTRL_A + name[0] - 'a';
                                     } else if (deckey >= DecoderKeys.FUNC_DECKEY_START && deckey < DecoderKeys.FUNC_DECKEY_END) {
+                                        // Ctrl+機能キー(特殊キー)(Ctrl+Tabとか)
                                         decVkey = getVKeyFromDecKey(deckey);
                                         deckey += DecoderKeys.CTRL_FUNC_DECKEY_START - DecoderKeys.FUNC_DECKEY_START;
                                     }

@@ -38,6 +38,9 @@ namespace KanchokuWS
         /// <summary>修飾キー付きvkeyをSendInputする</summary>
         public delegate bool DelegateSendInputVkeyWithMod(uint mod, uint vkey);
 
+        /// <summary>無条件にデコーダを呼び出す</summary>
+        public delegate bool DelegateInvokeDecoderUnconditionally(int deckey, uint mod);
+
         ///// <summary>打鍵ヘルプのローテーション<br/>ローテーションを行わない場合は false を返す</summary>
         //public delegate bool DelegateRotateStrokeHelp();
 
@@ -84,6 +87,9 @@ namespace KanchokuWS
 
         /// <summary>修飾キー付きvkeyをSendInputする</summary>
         public DelegateSendInputVkeyWithMod SendInputVkeyWithMod { get; set; }
+
+        /// <summary>無条件にデコーダを呼び出す</summary>
+        public DelegateInvokeDecoderUnconditionally InvokeDecoderUnconditionally { get; set; }
 
         ///// <summary>打鍵ヘルプのローテーション<br/>ローテーションを行わない場合は false を返す</summary>
         //public DelegateRotateStrokeHelp RotateStrokeHelp { get; set; }
@@ -831,7 +837,7 @@ namespace KanchokuWS
 
         private bool invokeHandler(int kanchokuCode, uint mod)
         {
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), mod={mod:x}H({mod})");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), mod={mod:x}H({mod}), UNCONDITIONAL_DECKEY_OFFSET={DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET}, UNCONDITIONAL_DECKEY_END={DecoderKeys.UNCONDITIONAL_DECKEY_END}");
             bHandlerBusy = true;
             try {
                 switch (kanchokuCode) {
@@ -859,7 +865,12 @@ namespace KanchokuWS
                     //case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
                     //    return RotateReverseDateString?.Invoke() ?? false;
                     default:
-                        if (kanchokuCode >= 0) return FuncDispatcher?.Invoke(kanchokuCode, mod) ?? false;
+                        if (kanchokuCode >= DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET && kanchokuCode < DecoderKeys.UNCONDITIONAL_DECKEY_END) {
+                            return InvokeDecoderUnconditionally?.Invoke(kanchokuCode - DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET, mod) ?? false;
+                        }
+                        if (kanchokuCode >= 0) {
+                            return FuncDispatcher?.Invoke(kanchokuCode, mod) ?? false;
+                        }
                         return false;
                 }
             } finally {
