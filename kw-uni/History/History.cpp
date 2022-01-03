@@ -677,6 +677,9 @@ namespace {
 
             if (!HISTORY_DIC) return false;
 
+            // 前回履歴キーのクリア
+            HISTORY_STAY_NODE->ClearPrevHistState();
+
             // 2～3文字履歴の取得
             MString key;
             candLen = -3;
@@ -707,6 +710,9 @@ namespace {
             _LOG_DEBUGH(_T("CALLED"));
 
             if (!HISTORY_DIC) return false;
+
+            // 前回履歴キーのクリア
+            HISTORY_STAY_NODE->ClearPrevHistState();
 
             // 1文字履歴の取得
             MString key;
