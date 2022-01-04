@@ -443,6 +443,7 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
+            this.checkBox_yamanobeEnabled = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -4275,7 +4276,7 @@ namespace KanchokuWS
             this.groupBox39.Controls.Add(this.checkBox_ignoreSpaceUpOnSandS);
             this.groupBox39.Controls.Add(this.checkBox_SandSEnabledWhenOffMode);
             this.groupBox39.Controls.Add(this.checkBox_SandSEnabled);
-            this.groupBox39.Location = new System.Drawing.Point(309, 85);
+            this.groupBox39.Location = new System.Drawing.Point(309, 110);
             this.groupBox39.Name = "groupBox39";
             this.groupBox39.Size = new System.Drawing.Size(264, 130);
             this.groupBox39.TabIndex = 6;
@@ -4352,21 +4353,22 @@ namespace KanchokuWS
             // 
             // groupBox38
             // 
+            this.groupBox38.Controls.Add(this.checkBox_yamanobeEnabled);
             this.groupBox38.Controls.Add(this.label54);
             this.groupBox38.Controls.Add(this.textBox_bushuAssocSelectCount);
             this.groupBox38.Controls.Add(this.checkBox_autoBushuComp);
             this.groupBox38.Location = new System.Drawing.Point(309, 12);
             this.groupBox38.Name = "groupBox38";
-            this.groupBox38.Size = new System.Drawing.Size(264, 67);
+            this.groupBox38.Size = new System.Drawing.Size(264, 88);
             this.groupBox38.TabIndex = 5;
             this.groupBox38.TabStop = false;
-            this.groupBox38.Text = "自動部首合成・連想直接出力";
+            this.groupBox38.Text = "部首合成・連想直接出力";
             // 
             // label54
             // 
             this.label54.AutoSize = true;
             this.label54.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label54.Location = new System.Drawing.Point(8, 44);
+            this.label54.Location = new System.Drawing.Point(8, 63);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(137, 15);
             this.label54.TabIndex = 40;
@@ -4376,20 +4378,20 @@ namespace KanchokuWS
             // 
             this.textBox_bushuAssocSelectCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_bushuAssocSelectCount.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_bushuAssocSelectCount.Location = new System.Drawing.Point(165, 42);
+            this.textBox_bushuAssocSelectCount.Location = new System.Drawing.Point(165, 61);
             this.textBox_bushuAssocSelectCount.Name = "textBox_bushuAssocSelectCount";
             this.textBox_bushuAssocSelectCount.Size = new System.Drawing.Size(36, 19);
-            this.textBox_bushuAssocSelectCount.TabIndex = 1;
+            this.textBox_bushuAssocSelectCount.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox_bushuAssocSelectCount, "連想直接出力の試行回数を設定します。(最大5回)\r\n\r\n連想直接出力機能を連続して呼び出すと、連想文字一覧の\r\n先頭から順に出力文字を取得して置換していきます。\r" +
         "\n\r\n試行回数を超えて連想直接出力を呼び出した場合は、連想\r\n文字一覧からの選択画面に遷移します。");
             // 
             // checkBox_autoBushuComp
             // 
             this.checkBox_autoBushuComp.AutoSize = true;
-            this.checkBox_autoBushuComp.Location = new System.Drawing.Point(11, 22);
+            this.checkBox_autoBushuComp.Location = new System.Drawing.Point(11, 41);
             this.checkBox_autoBushuComp.Name = "checkBox_autoBushuComp";
             this.checkBox_autoBushuComp.Size = new System.Drawing.Size(159, 19);
-            this.checkBox_autoBushuComp.TabIndex = 0;
+            this.checkBox_autoBushuComp.TabIndex = 1;
             this.checkBox_autoBushuComp.Text = "自動部首合成を有効にする";
             this.toolTip1.SetToolTip(this.checkBox_autoBushuComp, resources.GetString("checkBox_autoBushuComp.ToolTip"));
             this.checkBox_autoBushuComp.UseVisualStyleBackColor = true;
@@ -4622,9 +4624,9 @@ namespace KanchokuWS
             this.groupBox27.Controls.Add(this.checkBox_removeOneStrokeByBackspace);
             this.groupBox27.Controls.Add(this.checkBox_convertJaComma);
             this.groupBox27.Controls.Add(this.checkBox_convertJaPeriod);
-            this.groupBox27.Location = new System.Drawing.Point(309, 225);
+            this.groupBox27.Location = new System.Drawing.Point(309, 246);
             this.groupBox27.Name = "groupBox27";
-            this.groupBox27.Size = new System.Drawing.Size(264, 88);
+            this.groupBox27.Size = new System.Drawing.Size(264, 67);
             this.groupBox27.TabIndex = 7;
             this.groupBox27.TabStop = false;
             this.groupBox27.Text = "その他変換・機能";
@@ -4632,7 +4634,7 @@ namespace KanchokuWS
             // checkBox_removeOneStrokeByBackspace
             // 
             this.checkBox_removeOneStrokeByBackspace.AutoSize = true;
-            this.checkBox_removeOneStrokeByBackspace.Location = new System.Drawing.Point(6, 65);
+            this.checkBox_removeOneStrokeByBackspace.Location = new System.Drawing.Point(6, 42);
             this.checkBox_removeOneStrokeByBackspace.Name = "checkBox_removeOneStrokeByBackspace";
             this.checkBox_removeOneStrokeByBackspace.Size = new System.Drawing.Size(169, 19);
             this.checkBox_removeOneStrokeByBackspace.TabIndex = 2;
@@ -4644,22 +4646,22 @@ namespace KanchokuWS
             // checkBox_convertJaComma
             // 
             this.checkBox_convertJaComma.AutoSize = true;
-            this.checkBox_convertJaComma.Location = new System.Drawing.Point(6, 41);
+            this.checkBox_convertJaComma.Location = new System.Drawing.Point(110, 20);
             this.checkBox_convertJaComma.Name = "checkBox_convertJaComma";
-            this.checkBox_convertJaComma.Size = new System.Drawing.Size(137, 19);
+            this.checkBox_convertJaComma.Size = new System.Drawing.Size(82, 19);
             this.checkBox_convertJaComma.TabIndex = 1;
-            this.checkBox_convertJaComma.Text = "「、」と「，」の相互変換";
+            this.checkBox_convertJaComma.Text = "「、」⇔「，」";
             this.toolTip1.SetToolTip(this.checkBox_convertJaComma, "打鍵入力された「、」と「，」を相互に入れ替えて出力します。");
             this.checkBox_convertJaComma.UseVisualStyleBackColor = true;
             // 
             // checkBox_convertJaPeriod
             // 
             this.checkBox_convertJaPeriod.AutoSize = true;
-            this.checkBox_convertJaPeriod.Location = new System.Drawing.Point(6, 22);
+            this.checkBox_convertJaPeriod.Location = new System.Drawing.Point(6, 20);
             this.checkBox_convertJaPeriod.Name = "checkBox_convertJaPeriod";
-            this.checkBox_convertJaPeriod.Size = new System.Drawing.Size(137, 19);
+            this.checkBox_convertJaPeriod.Size = new System.Drawing.Size(82, 19);
             this.checkBox_convertJaPeriod.TabIndex = 0;
-            this.checkBox_convertJaPeriod.Text = "「。」と「．」の相互変換";
+            this.checkBox_convertJaPeriod.Text = "「。」⇔「．」";
             this.toolTip1.SetToolTip(this.checkBox_convertJaPeriod, "打鍵入力された「。」と「．」を相互に入れ替えて出力します。");
             this.checkBox_convertJaPeriod.UseVisualStyleBackColor = true;
             // 
@@ -5373,6 +5375,17 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // checkBox_yamanobeEnabled
+            // 
+            this.checkBox_yamanobeEnabled.AutoSize = true;
+            this.checkBox_yamanobeEnabled.Location = new System.Drawing.Point(11, 20);
+            this.checkBox_yamanobeEnabled.Name = "checkBox_yamanobeEnabled";
+            this.checkBox_yamanobeEnabled.Size = new System.Drawing.Size(206, 19);
+            this.checkBox_yamanobeEnabled.TabIndex = 0;
+            this.checkBox_yamanobeEnabled.Text = "YAMANOBEアルゴリズムを有効にする";
+            this.toolTip1.SetToolTip(this.checkBox_yamanobeEnabled, resources.GetString("checkBox_yamanobeEnabled.ToolTip"));
+            this.checkBox_yamanobeEnabled.UseVisualStyleBackColor = true;
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -5914,5 +5927,6 @@ namespace KanchokuWS
         private System.Windows.Forms.CheckBox checkBox_selectHistCandByTab;
         private System.Windows.Forms.Label label111;
         private System.Windows.Forms.Button button_readBushuAssoc;
+        private System.Windows.Forms.CheckBox checkBox_yamanobeEnabled;
     }
 }

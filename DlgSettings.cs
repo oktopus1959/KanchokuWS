@@ -1294,6 +1294,7 @@ namespace KanchokuWS
         void readSettings_tabMiscSettings()
         {
             // その他変換
+            checkBox_yamanobeEnabled.Checked = Settings.YamanobeEnabled;
             checkBox_autoBushuComp.Checked = Settings.AutoBushuComp;
             textBox_bushuAssocSelectCount.Text = $"{Settings.BushuAssocSelectCount}";
             checkBox_convertShiftedHiraganaToKatakana.Checked = Settings.ConvertShiftedHiraganaToKatakana;
@@ -1325,6 +1326,7 @@ namespace KanchokuWS
             button_miscEnter.Enabled = false;
             checkerMiscSettings.CtlToBeEnabled = button_miscEnter;
             checkerMiscSettings.ControlEnabler = tabMiscStatusChanged;
+            checkerMiscSettings.Add(checkBox_yamanobeEnabled);
             checkerMiscSettings.Add(checkBox_autoBushuComp);
             checkerMiscSettings.Add(textBox_bushuAssocSelectCount);
             checkerMiscSettings.Add(checkBox_convertShiftedHiraganaToKatakana);
@@ -1358,6 +1360,7 @@ namespace KanchokuWS
 
         private void button_miscEnter_Click(object sender, EventArgs e)
         {
+            Settings.SetUserIni("yamanobeEnabled", checkBox_yamanobeEnabled.Checked);
             Settings.SetUserIni("autoBushuComp", checkBox_autoBushuComp.Checked);
             Settings.SetUserIni("bushuAssocSelectCount", textBox_bushuAssocSelectCount.Text);
             Settings.SetUserIni("convertShiftedHiraganaToKatakana", checkBox_convertShiftedHiraganaToKatakana.Checked);

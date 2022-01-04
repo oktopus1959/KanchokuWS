@@ -117,39 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="button_restartWithNoSave.ToolTip" xml:space="preserve">
-    <value>デコーダが保持している辞書内容をファイルに保存せずに再起動します。
-
-エディタなどで辞書ファイルを編集したい場合は、まず「一括保存」で、
-デコーダが保持している辞書内容をファイルに反映させます。
-
-その後、辞書ファイルを編集し、当ボタンをクリックしてください。
-
-漢直窓Sは終了時に辞書内容を自動的にファイルに新規保存します。
-(既存ファイルは *.back に名前が変更されます)
-辞書ファイルを編集したい場合は、ここに記述した手順に従うか、
-または漢直窓Sを終了させてから行ってください。
-</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="textBox_bushuAssoc.ToolTip" xml:space="preserve">
-    <value>部首連想の登録を行います。次のフォーマットで記述します。
-
-A=BC...
-
-例えば、「恋=戀変」という記述があると、「恋」から「戀」や「変」への変換が
-可能になります。選択された変換文字は、先頭に移動し、漢直WinSの
-終了時に辞書ファイルに書き込まれます。
-
-変換ターゲット文字列の途中に「|」があると、ターゲットの先頭から「|」までは
-順序が固定され、「|」以降の文字が選択された場合は「|」の直後に移動します。
-
-なお、すでに同じ文字に対する連想文字列が登録されている場合は、
-ここで登録した文字列がマージされます。既存の文字列が削除されることは
-ありません。</value>
-  </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
@@ -747,6 +714,27 @@ SandS を有効にすると SandS と同じシフト面を使う
 Shift (または拡張修飾キー)+Space は有効なキーではなく、たんなる
 シフトキーとして扱われます。</value>
   </data>
+  <data name="checkBox_yamanobeEnabled.ToolTip" xml:space="preserve">
+    <value>ある2文字の組み合わせで一度部首合成を実行すると、
+次からはその2文字を入力した時点で自動的に部首合成を
+実行します。
+
+たとえば、一度「日」＋「生」で部首合成を実行し、「星」を出力したと
+すると、次に「日生」と（連続して）入力した時点で自動的に「星」に
+置換されます。
+
+自動合成の直後であれば、 Escキーまたは「連想直接変換」キーを
+押すことで合成をキャンセルして元の2文字に戻すことができます。
+キャンセル後、もう一度、Escキーまたは「連想直接変換」キーを押すと、
+元の2文字の組み合わせに対する自動部首合成を無効にするような
+辞書登録が行われます。
+
+辞書登録の詳細については「辞書登録」-「自動部首合成登録」の
+ところのツールチップを参照ください。
+
+なお、自動部首合成直後は、手動の部首合成を無効にしています。
+その場合は、もう一度手動部首合成を実行すれば、有効になります。</value>
+  </data>
   <data name="checkBox_autoBushuComp.ToolTip" xml:space="preserve">
     <value>ある2文字の組み合わせで一度部首合成を実行すると、
 次からはその2文字を入力した時点で自動的に部首合成を
@@ -875,6 +863,20 @@ SandS、CapsLock、英数、無変換、変換、および右シフトキーを
 「-可欠」で登録すると、「可欠」と入力したときに「歌」への自動変換を実行しません。
 「歌可欠」が既に登録されている場合は、それを上書きします。</value>
   </data>
+  <data name="button_restartWithNoSave.ToolTip" xml:space="preserve">
+    <value>デコーダが保持している辞書内容をファイルに保存せずに再起動します。
+
+エディタなどで辞書ファイルを編集したい場合は、まず「一括保存」で、
+デコーダが保持している辞書内容をファイルに反映させます。
+
+その後、辞書ファイルを編集し、当ボタンをクリックしてください。
+
+漢直窓Sは終了時に辞書内容を自動的にファイルに新規保存します。
+(既存ファイルは *.back に名前が変更されます)
+辞書ファイルを編集したい場合は、ここに記述した手順に従うか、
+または漢直窓Sを終了させてから行ってください。
+</value>
+  </data>
   <data name="textBox_bushuComp.ToolTip" xml:space="preserve">
     <value>部首合成の登録を行います。
 
@@ -889,6 +891,22 @@ A と C から B に変換することができます(引き算)。
 A と B が等価文字であることを表します。
 「DAC」という定義があったら、A のかわりに B を使って、
 B + C ⇒ D という足し算も可能になります。</value>
+  </data>
+  <data name="textBox_bushuAssoc.ToolTip" xml:space="preserve">
+    <value>部首連想の登録を行います。次のフォーマットで記述します。
+
+A=BC...
+
+例えば、「恋=戀変」という記述があると、「恋」から「戀」や「変」への変換が
+可能になります。選択された変換文字は、先頭に移動し、漢直WinSの
+終了時に辞書ファイルに書き込まれます。
+
+変換ターゲット文字列の途中に「|」があると、ターゲットの先頭から「|」までは
+順序が固定され、「|」以降の文字が選択された場合は「|」の直後に移動します。
+
+なお、すでに同じ文字に対する連想文字列が登録されている場合は、
+ここで登録した文字列がマージされます。既存の文字列が削除されることは
+ありません。</value>
   </data>
   <data name="textBox_mazegaki.ToolTip" xml:space="preserve">
     <value>交ぜ書きユーザー辞書に登録するエントリを次のフォーマットで記述します。

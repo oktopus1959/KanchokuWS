@@ -440,6 +440,9 @@ namespace KanchokuWS
         /// <summary> 修飾キー定義ファイル</summary>
         public static string ModConversionFile { get; private set; }
 
+        /// <summary>YAMANOBEアルゴリズムを有効にするか</summary>
+        public static bool YamanobeEnabled { get; set; } = false;
+
         /// <summary>自動首部合成を有効にするか</summary>
         public static bool AutoBushuComp { get; set; } = false;
 
@@ -904,6 +907,7 @@ namespace KanchokuWS
 
             RemoveOneStrokeByBackspace = addDecoderSetting("removeOneStrokeByBackspace", "weakBS", false);  // BS で直前打鍵のみを取り消すか
 
+            YamanobeEnabled = addDecoderSetting("yamanobeEnabled", false);                      // YAMANOBEアルゴリズムを有効にするか
             AutoBushuComp = addDecoderSetting("autoBushuComp", false);                          // 自動首部合成を有効にするか
             BushuAssocSelectCount = addDecoderSetting("bushuAssocSelectCount", 1, 1, 5);        // 部首連想直接出力の回数
 

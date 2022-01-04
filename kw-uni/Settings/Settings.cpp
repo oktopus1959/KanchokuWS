@@ -82,6 +82,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
 
     SET_BOOL_VALUE(removeOneStrokeByBackspace);
 
+    SET_BOOL_VALUE(yamanobeEnabled);
     SET_BOOL_VALUE(autoBushuComp);
 
     SET_KEY_VALUE(romanBushuCompPrefix);

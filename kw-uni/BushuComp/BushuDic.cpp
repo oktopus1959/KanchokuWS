@@ -405,73 +405,75 @@ namespace {
                 if (b1 == ca || b1 == eqa) CHECK_AND_RETURN("G2", b2);     // b2 = cb - ca(eqa)
             }
 
-            // YAMANOBE_ADD
-            // たとえば、準 = 淮十、隼 = 隹十 のとき、シ隼 ⇒ 準 を出したい
+            if (SETTINGS->yamanobeEnabled) {
+                // YAMANOBE_ADD
+                // たとえば、準 = 淮十、隼 = 隹十 のとき、シ隼 ⇒ 準 を出したい
 #define YAMANOBE_ADD_A(tag, x1, x2, y) { \
-            _LOG_INFOH(_T(tag ## "1-Y-ADD: x1=%c, x2=%c, y=%c"), _NC(x1), _NC(x2), _NC(y)); \
-            mchar_t z; \
-            if ((z = findComp(x1, y)) != 0) { \
-                _LOG_INFOH(_T(tag ## "1-Y-ADD(x1+y)=%c"), z); \
-                CHECK_AND_RETURN(tag ## "1-Y-ADD((x1+y)+x2):", findComp(z, x2)); /* X = X1 + X2 のとき、 (X1 + Y) + X2 を出したい */ \
-                CHECK_AND_RETURN(tag ## "1-Y-ADD(x2+(x1+y)):", findComp(x2, z)); /* X = X1 + X2 のとき、 X2 + (X1 + Y) を出したい */ \
-            } \
-            if ((z = findComp(x2, y)) != 0) { \
-                _LOG_INFOH(_T(tag ## "1-Y-ADD(x2+y)=%c"), z); \
-                CHECK_AND_RETURN(tag ## "1-Y-ADD(x1+(x2+y)):", findComp(x1, z)); /* X = X1 + X2 のとき、 X1 + (X2 + Y) を出したい */ \
-                CHECK_AND_RETURN(tag ## "1-Y-ADD((x2+y)+x1):", findComp(z, x1)); /* X = X1 + X2 のとき、 (X2 + Y) + X1 を出したい */ \
-            } \
-        }
+                    _LOG_INFOH(_T(tag ## "1-Y-ADD: x1=%c, x2=%c, y=%c"), _NC(x1), _NC(x2), _NC(y)); \
+                    mchar_t z; \
+                    if ((z = findComp(x1, y)) != 0) { \
+                        _LOG_INFOH(_T(tag ## "1-Y-ADD(x1+y)=%c"), z); \
+                        CHECK_AND_RETURN(tag ## "1-Y-ADD((x1+y)+x2):", findComp(z, x2)); /* X = X1 + X2 のとき、 (X1 + Y) + X2 を出したい */ \
+                        CHECK_AND_RETURN(tag ## "1-Y-ADD(x2+(x1+y)):", findComp(x2, z)); /* X = X1 + X2 のとき、 X2 + (X1 + Y) を出したい */ \
+                    } \
+                    if ((z = findComp(x2, y)) != 0) { \
+                        _LOG_INFOH(_T(tag ## "1-Y-ADD(x2+y)=%c"), z); \
+                        CHECK_AND_RETURN(tag ## "1-Y-ADD(x1+(x2+y)):", findComp(x1, z)); /* X = X1 + X2 のとき、 X1 + (X2 + Y) を出したい */ \
+                        CHECK_AND_RETURN(tag ## "1-Y-ADD((x2+y)+x1):", findComp(z, x1)); /* X = X1 + X2 のとき、 (X2 + Y) + X1 を出したい */ \
+                    } \
+                }
 #define YAMANOBE_ADD_B(tag, x, y1, y2) { \
-            _LOG_INFOH(_T(tag ## "2-Y-ADD: x=%c, y1=%c, y2=%c"), _NC(x), _NC(y1), _NC(y2)); \
-            mchar_t z; \
-            if ((z = findComp(x, y1)) != 0) { \
-                _LOG_INFOH(_T(tag ## "2-Y-ADD(x+y1)=%c"), z); \
-                CHECK_AND_RETURN(tag ## "2-Y-ADD((x+y1)+y2):", findComp(z, y2)); /* Y = Y1 + Y2 のとき、 (X + Y1) + Y2 を出したい */ \
-                CHECK_AND_RETURN(tag ## "2-Y-ADD(y2+(x+y1)):", findComp(y2, z)); /* Y = Y1 + Y2 のとき、 Y2 + (X + Y1) を出したい */ \
-            } \
-            if ((z = findComp(x, y2)) != 0) { \
-                _LOG_INFOH(_T(tag ## "2-Y-ADD(x+y2)=%c"), z); \
-                CHECK_AND_RETURN(tag ## "2-Y-ADD(y1+(x+y2)):", findComp(y1, z)); /* Y = Y1 + Y2 のとき、 Y1 + (X + Y2) を出したい */ \
-                CHECK_AND_RETURN(tag ## "2-Y-ADD((x+y2)+y1):", findComp(z, y1)); /* Y = Y1 + Y2 のとき、 (X + Y2) + Y1 を出したい */ \
-            } \
-        }
+                    _LOG_INFOH(_T(tag ## "2-Y-ADD: x=%c, y1=%c, y2=%c"), _NC(x), _NC(y1), _NC(y2)); \
+                    mchar_t z; \
+                    if ((z = findComp(x, y1)) != 0) { \
+                        _LOG_INFOH(_T(tag ## "2-Y-ADD(x+y1)=%c"), z); \
+                        CHECK_AND_RETURN(tag ## "2-Y-ADD((x+y1)+y2):", findComp(z, y2)); /* Y = Y1 + Y2 のとき、 (X + Y1) + Y2 を出したい */ \
+                        CHECK_AND_RETURN(tag ## "2-Y-ADD(y2+(x+y1)):", findComp(y2, z)); /* Y = Y1 + Y2 のとき、 Y2 + (X + Y1) を出したい */ \
+                    } \
+                    if ((z = findComp(x, y2)) != 0) { \
+                        _LOG_INFOH(_T(tag ## "2-Y-ADD(x+y2)=%c"), z); \
+                        CHECK_AND_RETURN(tag ## "2-Y-ADD(y1+(x+y2)):", findComp(y1, z)); /* Y = Y1 + Y2 のとき、 Y1 + (X + Y2) を出したい */ \
+                        CHECK_AND_RETURN(tag ## "2-Y-ADD((x+y2)+y1):", findComp(z, y1)); /* Y = Y1 + Y2 のとき、 (X + Y2) + Y1 を出したい */ \
+                    } \
+                }
 
-            if (a1 && a2) {
-                YAMANOBE_ADD_A("D", a1, a2, cb);   // (A1 + B) + A2 または A1 + (A2 + B) または A2 + (
-            }
-            if (b1 && b2) {
-                YAMANOBE_ADD_B("D", ca, b1, b2);   // (A + B1) + B2 または B1 + (A + B2)
-            }
-            // YAMANOBE_ADD 逆順
-            if (b1 && b2) {
-                YAMANOBE_ADD_A("E", b1, b2, ca);   // (B1 + A) + B2 または B1 + (B2 + A)
-            }
-            if (a1 && a2) {
-                YAMANOBE_ADD_B("E", cb, a1, a2);   // (B + A1) + A2 または A1 + (B + A2)
-            }
-            
-            // YAMANOBE_SUBTRACT
-            // たとえば、準 = 淮十、隼 = 隹十 のとき、シ準 ⇒ 隼 を出したい
+                if (a1 && a2) {
+                    YAMANOBE_ADD_A("D", a1, a2, cb);   // (A1 + B) + A2 または A1 + (A2 + B) または A2 + (
+                }
+                if (b1 && b2) {
+                    YAMANOBE_ADD_B("D", ca, b1, b2);   // (A + B1) + B2 または B1 + (A + B2)
+                }
+                // YAMANOBE_ADD 逆順
+                if (b1 && b2) {
+                    YAMANOBE_ADD_A("E", b1, b2, ca);   // (B1 + A) + B2 または B1 + (B2 + A)
+                }
+                if (a1 && a2) {
+                    YAMANOBE_ADD_B("E", cb, a1, a2);   // (B + A1) + A2 または A1 + (B + A2)
+                }
+
+                // YAMANOBE_SUBTRACT
+                // たとえば、準 = 淮十、隼 = 隹十 のとき、シ準 ⇒ 隼 を出したい
 #define YAMANOBE_SUBTRACT(tag, x, x1, x2, y, y1, y2, z1, z2) \
-            _LOG_INFOH(_T(tag ## "-Y-SUB: x=%c, x1=%c, x2=%c, y=%c, y1=%c, y2=%c, z1=%c, z2=%c"), _NC(x), _NC(x1), _NC(x2), _NC(y), _NC(y1), _NC(y2), _NC(z1), _NC(z2)); \
-            if ((z1 != 0 && x2 == z1) || (z2 != 0 && x2 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x1,y):", findComp(x1, y));  /* A := (X1 + X2) + Y && X2 == B ならば X1 + Y (= A - X2) を出したい */ \
-            if ((z1 != 0 && x1 == z1) || (z2 != 0 && x1 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x2,y):", findComp(x2, y));  /* A := (X1 + X2) + Y && X1 == B ならば X2 + Y (= A - X1) を出したい */ \
-            if ((z1 != 0 && y2 == z1) || (z2 != 0 && y2 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x,y1):", findComp(x, y1));  /* A := X + (Y1 + Y2) && Y2 == B ならば X + Y1 (= A - Y2) を出したい */ \
-            if ((z1 != 0 && y1 == z1) || (z2 != 0 && y1 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x,y2):", findComp(x, y2));  /* A := X + (Y1 + Y2) && Y1 == B ならば X + Y2 (= A - Y1) を出したい */
+                _LOG_INFOH(_T(tag ## "-Y-SUB: x=%c, x1=%c, x2=%c, y=%c, y1=%c, y2=%c, z1=%c, z2=%c"), _NC(x), _NC(x1), _NC(x2), _NC(y), _NC(y1), _NC(y2), _NC(z1), _NC(z2)); \
+                if ((z1 != 0 && x2 == z1) || (z2 != 0 && x2 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x1,y):", findComp(x1, y));  /* A := (X1 + X2) + Y && X2 == B ならば X1 + Y (= A - X2) を出したい */ \
+                if ((z1 != 0 && x1 == z1) || (z2 != 0 && x1 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x2,y):", findComp(x2, y));  /* A := (X1 + X2) + Y && X1 == B ならば X2 + Y (= A - X1) を出したい */ \
+                if ((z1 != 0 && y2 == z1) || (z2 != 0 && y2 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x,y1):", findComp(x, y1));  /* A := X + (Y1 + Y2) && Y2 == B ならば X + Y1 (= A - Y2) を出したい */ \
+                if ((z1 != 0 && y1 == z1) || (z2 != 0 && y1 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x,y2):", findComp(x, y2));  /* A := X + (Y1 + Y2) && Y1 == B ならば X + Y2 (= A - Y1) を出したい */
 
-            if (a1 && a2) {
-                wchar_t a11, a12, a21, a22;
-                decompose(a1, a11, a12);
-                decompose(a2, a21, a22);
-                YAMANOBE_SUBTRACT("H", a1, a11, a12, a2, a21, a22, cb, 0);
-            }
-            // YAMANOBE_SUBTRACT 逆順
-            if (b1 && b2) {
-                wchar_t b11, b12, b21, b22;
-                decompose(b1, b11, b12);
-                decompose(b2, b21, b22);
-                YAMANOBE_SUBTRACT("I", b1, b11, b12, b2, b21, b22, ca, 0);
+                if (a1 && a2) {
+                    wchar_t a11, a12, a21, a22;
+                    decompose(a1, a11, a12);
+                    decompose(a2, a21, a22);
+                    YAMANOBE_SUBTRACT("H", a1, a11, a12, a2, a21, a22, cb, 0);
+                }
+                // YAMANOBE_SUBTRACT 逆順
+                if (b1 && b2) {
+                    wchar_t b11, b12, b21, b22;
+                    decompose(b1, b11, b12);
+                    decompose(b2, b21, b22);
+                    YAMANOBE_SUBTRACT("I", b1, b11, b12, b2, b21, b22, ca, 0);
 
+                }
             }
 
             // 一方が部品による足し算(直後に逆順をやる)
@@ -499,31 +501,33 @@ namespace {
             CHECK_AND_RETURN("J8", findComp(a2, eqb));
             CHECK_AND_RETURN("K4", findComp(eqb, a2));
 
-            // YAMANOBE_ADD (Bが部品)
-            if (a1 && a2 && b1) {
-                YAMANOBE_ADD_A("L1", a1, a2, b1);   // (A1 + B1) + A2 または A1 + (A2 + B1)
-            }
-            if (a1 && a2 && b2) {
-                YAMANOBE_ADD_A("L2", a1, a2, b2);   // (A1 + B2) + A2 または A1 + (A2 + B2)
-            }
-            if (b1 && b2 && a1) {
-                YAMANOBE_ADD_B("L3", a1, b1, b2);   // (A1 + B1) + B2 または B1 + (A1 + B2)
-            }
-            if (b1 && b2 && a2) {
-                YAMANOBE_ADD_B("L4", a2, b1, b2);   // (A2 + B1) + B2 または B1 + (A2 + B2)
-            }
-            // YAMANOBE_ADD 逆順(Aが部品)
-            if (b1 && b2 && a1) {
-                YAMANOBE_ADD_A("M1", b1, b2, a1);   // (B1 + A1) + B2 または B1 + (B2 + A1)
-            }
-            if (b1 && b2 && a2) {
-                YAMANOBE_ADD_A("M2", b1, b2, a2);   // (B1 + A2) + B2 または B1 + (B2 + A2)
-            }
-            if (a1 && a2 && b1) {
-                YAMANOBE_ADD_B("M3", b1, a1, a2);   // (B1 + A1) + A2 または A1 + (B1 + A2)
-            }
-            if (a1 && a2 && b2) {
-                YAMANOBE_ADD_B("M4", b2, a1, a2);   // (B2 + A1) + A2 または A1 + (B2 + A2)
+            if (SETTINGS->yamanobeEnabled) {
+                // YAMANOBE_ADD (Bが部品)
+                if (a1 && a2 && b1) {
+                    YAMANOBE_ADD_A("L1", a1, a2, b1);   // (A1 + B1) + A2 または A1 + (A2 + B1)
+                }
+                if (a1 && a2 && b2) {
+                    YAMANOBE_ADD_A("L2", a1, a2, b2);   // (A1 + B2) + A2 または A1 + (A2 + B2)
+                }
+                if (b1 && b2 && a1) {
+                    YAMANOBE_ADD_B("L3", a1, b1, b2);   // (A1 + B1) + B2 または B1 + (A1 + B2)
+                }
+                if (b1 && b2 && a2) {
+                    YAMANOBE_ADD_B("L4", a2, b1, b2);   // (A2 + B1) + B2 または B1 + (A2 + B2)
+                }
+                // YAMANOBE_ADD 逆順(Aが部品)
+                if (b1 && b2 && a1) {
+                    YAMANOBE_ADD_A("M1", b1, b2, a1);   // (B1 + A1) + B2 または B1 + (B2 + A1)
+                }
+                if (b1 && b2 && a2) {
+                    YAMANOBE_ADD_A("M2", b1, b2, a2);   // (B1 + A2) + B2 または B1 + (B2 + A2)
+                }
+                if (a1 && a2 && b1) {
+                    YAMANOBE_ADD_B("M3", b1, a1, a2);   // (B1 + A1) + A2 または A1 + (B1 + A2)
+                }
+                if (a1 && a2 && b2) {
+                    YAMANOBE_ADD_B("M4", b2, a1, a2);   // (B2 + A1) + A2 または A1 + (B2 + A2)
+                }
             }
 
             // 両方が部品による足し算(直後に逆順をやる)
@@ -547,19 +551,21 @@ namespace {
             if (b2 == a1 || b2 == a2) CHECK_AND_RETURN("Q1", a1);
             if (b1 == a1 || b1 == a2) CHECK_AND_RETURN("Q1", a2);
 
-            // YAMANOBE_SUBTRACT (Bが部品)
-            if (a1 && a2) {
-                wchar_t a11, a12, a21, a22;
-                decompose(a1, a11, a12);
-                decompose(a2, a21, a22);
-                YAMANOBE_SUBTRACT("R", a1, a11, a12, a2, a21, a22, b1, b2);
-            }
-            // YAMANOBE_SUBTRACT 逆順(Aが部品)
-            if (b1 && b2) {
-                wchar_t b11, b12, b21, b22;
-                decompose(b1, b11, b12);
-                decompose(b2, b21, b22);
-                YAMANOBE_SUBTRACT("S", b1, b11, b12, b2, b21, b22, a1, a2);
+            if (SETTINGS->yamanobeEnabled) {
+                // YAMANOBE_SUBTRACT (Bが部品)
+                if (a1 && a2) {
+                    wchar_t a11, a12, a21, a22;
+                    decompose(a1, a11, a12);
+                    decompose(a2, a21, a22);
+                    YAMANOBE_SUBTRACT("R", a1, a11, a12, a2, a21, a22, b1, b2);
+                }
+                // YAMANOBE_SUBTRACT 逆順(Aが部品)
+                if (b1 && b2) {
+                    wchar_t b11, b12, b21, b22;
+                    decompose(b1, b11, b12);
+                    decompose(b2, b21, b22);
+                    YAMANOBE_SUBTRACT("S", b1, b11, b12, b2, b21, b22, a1, a2);
+                }
             }
 
             // 再帰足し算(一方の文字から合成できる文字を使って足し算)
