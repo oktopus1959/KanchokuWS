@@ -1137,13 +1137,21 @@ namespace KanchokuWS
                     candidateChars = null;
                     targetChar = 0;
 
-                    // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
-                    bool bFuncVkeyContained = decoderOutput.outString._toString().IndexOf("!{") >= 0;
                     // BSと文字送出(もしあれば)
-                    actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
-                    if (bFuncVkeyContained) {
-                        // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
-                        HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput);
+                    var outString = decoderOutput.outString;
+                    int outLen = outString._findIndex(x => x == 0);
+                    if (outLen < 0) outLen = outString._safeLength();
+                    if (outLen >= 0) {
+                        // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
+                        bool bFuncVkeyContained = isFuncVkeyContained(outString);
+                        int numBS = decoderOutput.numBackSpaces;
+                        int leadLen = calcSameLeadingLen(outString, outLen, numBS);
+                        var outStr = leadLen > 0 ? outString.Skip(leadLen).ToArray() : outString;
+                        actWinHandler.SendStringViaClipboardIfNeeded(outStr, numBS - leadLen, bFuncVkeyContained);
+                        if (bFuncVkeyContained) {
+                            // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
+                            HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput);
+                        }
                     }
                 }
 
@@ -1164,6 +1172,30 @@ namespace KanchokuWS
             return sendKeyFlag;
         }
 
+        /// <summary>現出力文字列と同じ先頭部の長さを計算</summary>
+        /// <returns></returns>
+        private int calcSameLeadingLen(char[] outString, int outLen, int numBS)
+        {
+            if (numBS <= 0) return 0;
+
+            var topString = frmVkb.TopText;
+            int topLen = topString._safeLength();
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: topString={topString}, topLen={topLen}, outString={outString._toString()}, outLen={outLen}, numBS={numBS}");
+
+            if (topLen <= 0) return 0;
+
+            int topPos = topLen - numBS;
+            if (topPos < 0) return 0;
+
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"topLen={topLen}, topPos={topPos}, outLen={outLen}");
+            int i = 0;
+            while (topPos + i < topLen && i < outLen && topString[topPos + i] == outString[i]) {
+                ++i;
+            }
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: LeadingLen={i}");
+            return i;
+        }
+
         /// <summary>
         /// デコーダの直接呼び出し
         /// </summary>
@@ -1175,13 +1207,23 @@ namespace KanchokuWS
             HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, ref decoderOutput);
 
             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
-            bool bFuncVkeyContained = decoderOutput.outString._toString().IndexOf("!{") >= 0;
+            bool bFuncVkeyContained = isFuncVkeyContained(decoderOutput.outString);
             // BSと文字送出(もしあれば)
             actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
             if (bFuncVkeyContained) {
                 // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
                 HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput);
             }
+        }
+
+        private bool isFuncVkeyContained(char[] str)
+        {
+            int pos = str._findIndex(x => x == '!');
+            while (pos >= 0 && pos + 1 < str.Length) {
+                if (str[pos + 1] == '{') return true;
+                pos = str._findIndex(pos + 1, x => x == '!');
+            }
+            return false;
         }
 
         private bool isNormalDeckey(int deckey)

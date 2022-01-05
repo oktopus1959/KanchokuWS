@@ -325,6 +325,9 @@ namespace KanchokuWS
             DpiChanged += dpiChangedHandler;
         }
 
+        /// <summary>上部ミニバッファの文字列を返す</summary>
+        public string TopText => topTextBox.Text;
+
         const int CS_DROPSHADOW = 0x00020000;
 
         /// <summary> フォームに影をつける </summary>
