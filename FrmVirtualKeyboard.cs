@@ -1034,7 +1034,7 @@ namespace KanchokuWS
             return LongVkeyNum._range().Select(n => {
                 int pos = LongVkeyCharSize * n;
                 int end = (pos + LongVkeyCharSize)._highLimit(candChars.Length);
-                int len = candChars._findIndex(pos, end, x => x == 0) - pos;
+                int len = candChars._findIndex(pos, end, '\0') - pos;
                 if (len < 0) len = end - pos;
                 return new string(candChars, pos, len);
             }).ToArray();
@@ -1327,7 +1327,7 @@ namespace KanchokuWS
             //logger.Info($"chars.Length={chars.Length}, rows={dgvHorizontal._rowsCount()}");
             if (nth >= 0 && nth < dgvHorizontal._rowsCount()) {
                 int pos = nth * LongVkeyCharSize;
-                int len = chars._findIndex(pos, pos + LongVkeyCharSize, x => x == 0) - pos;
+                int len = chars._findIndex(pos, pos + LongVkeyCharSize, '\0') - pos;
                 if (len < 0) len = LongVkeyCharSize;
                 StringBuilder sb = new StringBuilder();
                 sb.Append((nth + 1) % 10).Append(' ').Append(chars, pos, len);
@@ -1538,7 +1538,7 @@ namespace KanchokuWS
             int len = 0;
             string drawString = "";
             if (chars._notEmpty()) {
-                len = chars._findIndex(startPos, startPos + LongVkeyCharSize, x => x == 0) - startPos;
+                len = chars._findIndex(startPos, startPos + LongVkeyCharSize, '\0') - startPos;
                 if (len < 0) len = LongVkeyCharSize._highLimit(chars.Length);
                 drawString = new string(chars, startPos, len);
             }
@@ -1556,7 +1556,7 @@ namespace KanchokuWS
             //int len = 0;
             //string drawString = "";
             //if (chars._notEmpty()) {
-            //    len = chars._findIndex(startPos, startPos + LongVkeyCharSize, x => x == 0) - startPos;
+            //    len = chars._findIndex(startPos, startPos + LongVkeyCharSize, '\0') - startPos;
             //    if (len < 0) len = LongVkeyCharSize._highLimit(chars.Length);
             //    drawString = new string(chars, startPos, len);
             //}

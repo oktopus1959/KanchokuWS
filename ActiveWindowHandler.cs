@@ -543,8 +543,7 @@ namespace KanchokuWS
             if (Settings.LoggingDecKeyInfo) logger.Info(() => $"ActiveWinHandle={(int)ActiveWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}, bForceString={bForceString}");
 
             if (ActiveWinHandle != IntPtr.Zero && ((str._notEmpty() && str[0] != 0) || numBS > 0)) {
-                int len = str._isEmpty() ? 0 : str._findIndex(x => x == 0);     // 終端までの長さを取得
-                if (len < 0) len = str._safeLength();
+                int len = str._isEmpty() ? 0 : str._strlen();     // 終端までの長さを取得
                 if (bForceString || Settings.MinLeghthViaClipboard <= 0 || len < Settings.MinLeghthViaClipboard) {
                     // 自前で送出
                     SendString(str, len, numBS);

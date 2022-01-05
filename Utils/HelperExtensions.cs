@@ -506,10 +506,40 @@ namespace Utils
             for (int i = 0; i < array.Length; ++i) array[i] = default(T);
         }
 
+        public static int _findIndex(this char[] array, char ch)
+        {
+            if (array != null) {
+                return array._findIndex(0, array.Length, ch);
+            }
+            return -1;
+        }
+
+        public static int _findIndex(this char[] array, int startPos, char ch)
+        {
+            return array._findIndex(startPos, -1, ch);
+        }
+
+        public static int _findIndex(this char[] array, int startPos, int endPos, char ch)
+        {
+            if (array != null) {
+                if (endPos < 0 || endPos > array.Length) endPos = array.Length;
+                for (int idx = startPos; idx < endPos; ++idx) {
+                    if (ch == array[idx]) return idx;
+                    if (array[idx] == 0) return -1;
+                }
+            }
+            return -1;
+        }
+
+        public static int _strlen(this char[] array)
+        {
+            int len = array._findIndex('\0');
+            return len >= 0 ? len : array._safeLength();
+        }
+
         public static string _toString(this char[] array)
         {
-            int idx = array._findIndex(c => c == 0);
-            return new string(array, 0, idx >= 0 ? idx : array.Length);
+            return new string(array, 0, array._strlen());
         }
     }
 

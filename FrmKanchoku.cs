@@ -366,8 +366,7 @@ namespace KanchokuWS
 
         private void getCenterString()
         {
-            int len = decoderOutput.centerString._findIndex(c => c == '\0');
-            if (len < 0) len = decoderOutput.centerString.Length;
+            int len = decoderOutput.centerString._strlen();
             string tail = "";
             if (len > 11) {
                 len = 10;
@@ -403,6 +402,7 @@ namespace KanchokuWS
         public bool ExecCmdDecoder(string cmd, string data, bool bInit = false)
         {
             logger.Info(() => $"ENTER: cmd={cmd}, data={data}, bInit={bInit}");
+            bool resultFlag = true;
             if (decoderPtr != IntPtr.Zero) {
                 var prm = new DecoderCommandParams() {
                     //hWnd = this.Handle,
@@ -429,23 +429,24 @@ namespace KanchokuWS
                 // アンマネージドのメモリを解放
                 Marshal.FreeCoTaskMem(cmdParamsPtr);
 
-                if (result == 1) {
-                    var errMsg = new string(prm.inOutData, 0, prm.inOutData._findIndex(c => c == '\0')._geZeroOr(prm.inOutData.Length));
-                    logger.Warn(errMsg);
-                    SystemHelper.ShowWarningMessageBox(errMsg);
-                } else if (result > 1) {
-                    var errMsg = new string(prm.inOutData, 0, prm.inOutData._findIndex(c => c == '\0')._geZeroOr(prm.inOutData.Length));
-                    logger.Error(errMsg);
-                    SystemHelper.ShowErrorMessageBox(errMsg);
-                    return false;
+                if (result >= 1) {
+                    var errMsg = prm.inOutData._toString();
+                    if (result == 1) {
+                        logger.Warn(errMsg);
+                        SystemHelper.ShowWarningMessageBox(errMsg);
+                    } else {
+                        logger.Error(errMsg);
+                        SystemHelper.ShowErrorMessageBox(errMsg);
+                        resultFlag = false;
+                    }
                 } else if (result < 0) {
                     var errMsg = "Some error occured when Decoder called";
                     logger.Warn(errMsg);
                     SystemHelper.ShowWarningMessageBox(errMsg);
                 }
             }
-            logger.Info("LEAVE");
-            return true;
+            logger.Info(() => $"LEAVE: resultFlag={resultFlag}");
+            return resultFlag;
         }
 
         /// <summary>デコーダの関数を呼び出す。正常に終了したら、戻値である faceStringsを返す </summary>
@@ -1139,11 +1140,10 @@ namespace KanchokuWS
 
                     // BSと文字送出(もしあれば)
                     var outString = decoderOutput.outString;
-                    int outLen = outString._findIndex(x => x == 0);
-                    if (outLen < 0) outLen = outString._safeLength();
+                    int outLen = outString._strlen();
                     if (outLen >= 0) {
                         // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
-                        bool bFuncVkeyContained = isFuncVkeyContained(outString);
+                        bool bFuncVkeyContained = isFuncVkeyContained(outString, outLen);
                         int numBS = decoderOutput.numBackSpaces;
                         int leadLen = calcSameLeadingLen(outString, outLen, numBS);
                         var outStr = leadLen > 0 ? outString.Skip(leadLen).ToArray() : outString;
@@ -1216,12 +1216,13 @@ namespace KanchokuWS
             }
         }
 
-        private bool isFuncVkeyContained(char[] str)
+        private bool isFuncVkeyContained(char[] str, int len = -1)
         {
-            int pos = str._findIndex(x => x == '!');
+            if (len < 0) len = str._strlen();
+            int pos = str._findIndex(0, len, '!');
             while (pos >= 0 && pos + 1 < str.Length) {
                 if (str[pos + 1] == '{') return true;
-                pos = str._findIndex(pos + 1, x => x == '!');
+                pos = str._findIndex(pos + 1, len, '!');
             }
             return false;
         }
