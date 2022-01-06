@@ -1251,11 +1251,11 @@ namespace KanchokuWS
         private bool sendVkeyFromDeckey(int deckey, uint mod)
         {
             if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod})");
-            if (isCtrlKeyConversionEffectiveWindow()
-                || deckey < DecoderKeys.FUNC_DECKEY_START
-                || deckey >= DecoderKeys.FUNC_DECKEY_END && deckey < DecoderKeys.CTRL_FUNC_DECKEY_START
-                || deckey >= DecoderKeys.CTRL_FUNC_DECKEY_END && deckey < DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START
-                || deckey >= DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_END) {
+            if (((mod & KeyModifiers.MOD_CONTROL) == 0) || isCtrlKeyConversionEffectiveWindow()                 // Ctrlキーが押されていないか、Ctrl修飾を受け付けるWindowClassか
+                || deckey < DecoderKeys.STROKE_DECKEY_END                                                       // 通常のストロークキーは通す
+                || deckey >= DecoderKeys.CTRL_DECKEY_START && deckey < DecoderKeys.CTRL_DECKEY_END              // Ctrl-A～Ctrl-Z は通す
+                || deckey >= DecoderKeys.CTRL_SHIFT_DECKEY_START && deckey < DecoderKeys.CTRL_SHIFT_DECKEY_END  // Ctrl-Shift-A～Ctrl-Shift-Z は通す
+                ) {
 
                 if (Settings.LoggingDecKeyInfo) logger.Info($"TARGET WINDOW: deckey={deckey:x}H({deckey})");
                 var combo = VirtualKeys.GetVKeyComboFromDecKey(deckey);
