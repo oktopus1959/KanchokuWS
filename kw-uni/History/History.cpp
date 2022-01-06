@@ -520,7 +520,9 @@ namespace {
             if (!result.Word.empty()) {
                 getLastHistKeyAndRewindOutput();    // 前回の履歴検索キー取得と出力スタックの巻き戻し予約(numBackSpacesに値をセット)
                 setOutString(result);
-                if (result.KeyLen() >= 2) STATE_COMMON->SetHistoryBlockFlag();  // 1文字の場合は履歴検索の対象となる
+                //if (result.KeyLen() >= 2) STATE_COMMON->SetHistoryBlockFlag();  // 1文字の場合は履歴検索の対象となる
+                // 出力された履歴に対しては、履歴の再検索の対象としない
+                STATE_COMMON->SetHistoryBlockFlag();
             }
             handleKeyPostProc();
             LOG_DEBUG(_T("LEAVE"));
