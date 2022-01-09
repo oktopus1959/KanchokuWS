@@ -358,6 +358,7 @@ namespace KanchokuWS
             this.checkBox_SandSEnabledWhenOffMode = new System.Windows.Forms.CheckBox();
             this.checkBox_SandSEnabled = new System.Windows.Forms.CheckBox();
             this.groupBox38 = new System.Windows.Forms.GroupBox();
+            this.checkBox_yamanobeEnabled = new System.Windows.Forms.CheckBox();
             this.label54 = new System.Windows.Forms.Label();
             this.textBox_bushuAssocSelectCount = new System.Windows.Forms.TextBox();
             this.checkBox_autoBushuComp = new System.Windows.Forms.CheckBox();
@@ -405,6 +406,7 @@ namespace KanchokuWS
             this.textBox_bushuComp = new System.Windows.Forms.TextBox();
             this.button_enterBushu = new System.Windows.Forms.Button();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.button_readBushuAssoc = new System.Windows.Forms.Button();
             this.label_saveAssoc = new System.Windows.Forms.Label();
             this.button_saveBushuAssocFile = new System.Windows.Forms.Button();
             this.label_bushuAssoc = new System.Windows.Forms.Label();
@@ -427,7 +429,6 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button_readBushuAssoc = new System.Windows.Forms.Button();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onSecondaryTable = new KanchokuWS.ColorTextBox();
@@ -443,7 +444,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.checkBox_yamanobeEnabled = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1523,7 +1523,7 @@ namespace KanchokuWS
             this.radioButton_vkbRelativePos.TabIndex = 0;
             this.radioButton_vkbRelativePos.TabStop = true;
             this.radioButton_vkbRelativePos.Text = "カレットからの相対表示位置";
-            this.toolTip1.SetToolTip(this.radioButton_vkbRelativePos, "仮想鍵盤をカレットからの相対位置に表示します");
+            this.toolTip1.SetToolTip(this.radioButton_vkbRelativePos, "仮想鍵盤をカレット（テキストカーソル）からの相対位置に表示します");
             this.radioButton_vkbRelativePos.UseVisualStyleBackColor = true;
             this.radioButton_vkbRelativePos.CheckedChanged += new System.EventHandler(this.radioButton_vkbRelativePos_CheckedChanged);
             // 
@@ -2652,7 +2652,8 @@ namespace KanchokuWS
             this.textBox_bushuAssocDirectKeySeq.Name = "textBox_bushuAssocDirectKeySeq";
             this.textBox_bushuAssocDirectKeySeq.Size = new System.Drawing.Size(56, 19);
             this.textBox_bushuAssocDirectKeySeq.TabIndex = 6;
-            this.toolTip1.SetToolTip(this.textBox_bushuAssocDirectKeySeq, resources.GetString("textBox_bushuAssocDirectKeySeq.ToolTip"));
+            this.toolTip1.SetToolTip(this.textBox_bushuAssocDirectKeySeq, "直前の文字に対して、その連想文字候補の先頭のもので置換して出力します。\r\n\r\n連続的に呼び出したときに、第5候補まで出力するような設定も可能です。\r\n\r\nなお、手" +
+        "動または自動部首合成の直後に当機能を呼び出すと、\r\n次の部首合成候補出力となります。\r\n");
             // 
             // label63
             // 
@@ -2661,7 +2662,7 @@ namespace KanchokuWS
             this.label63.Name = "label63";
             this.label63.Size = new System.Drawing.Size(79, 15);
             this.label63.TabIndex = 8;
-            this.label63.Text = "連想直接出力";
+            this.label63.Text = "連想直接置換";
             // 
             // textBox_bushuAssocKeySeq
             // 
@@ -4362,7 +4363,18 @@ namespace KanchokuWS
             this.groupBox38.Size = new System.Drawing.Size(264, 88);
             this.groupBox38.TabIndex = 5;
             this.groupBox38.TabStop = false;
-            this.groupBox38.Text = "部首合成・連想直接出力";
+            this.groupBox38.Text = "部首合成・連想直接置換";
+            // 
+            // checkBox_yamanobeEnabled
+            // 
+            this.checkBox_yamanobeEnabled.AutoSize = true;
+            this.checkBox_yamanobeEnabled.Location = new System.Drawing.Point(11, 20);
+            this.checkBox_yamanobeEnabled.Name = "checkBox_yamanobeEnabled";
+            this.checkBox_yamanobeEnabled.Size = new System.Drawing.Size(206, 19);
+            this.checkBox_yamanobeEnabled.TabIndex = 0;
+            this.checkBox_yamanobeEnabled.Text = "YAMANOBEアルゴリズムを有効にする";
+            this.toolTip1.SetToolTip(this.checkBox_yamanobeEnabled, "部首合成における YAMANOBE アルゴリズムを利用する場合は、\r\nこれにチェックを入れてください。");
+            this.checkBox_yamanobeEnabled.UseVisualStyleBackColor = true;
             // 
             // label54
             // 
@@ -4372,7 +4384,7 @@ namespace KanchokuWS
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(137, 15);
             this.label54.TabIndex = 40;
-            this.label54.Text = "連想直接出力の試行回数";
+            this.label54.Text = "連想直接置換の試行回数";
             // 
             // textBox_bushuAssocSelectCount
             // 
@@ -4382,8 +4394,8 @@ namespace KanchokuWS
             this.textBox_bushuAssocSelectCount.Name = "textBox_bushuAssocSelectCount";
             this.textBox_bushuAssocSelectCount.Size = new System.Drawing.Size(36, 19);
             this.textBox_bushuAssocSelectCount.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_bushuAssocSelectCount, "連想直接出力の試行回数を設定します。(最大5回)\r\n\r\n連想直接出力機能を連続して呼び出すと、連想文字一覧の\r\n先頭から順に出力文字を取得して置換していきます。\r" +
-        "\n\r\n試行回数を超えて連想直接出力を呼び出した場合は、連想\r\n文字一覧からの選択画面に遷移します。");
+            this.toolTip1.SetToolTip(this.textBox_bushuAssocSelectCount, "連想直接置換の試行回数を設定します。(最大5回)\r\n\r\n連想直接置換機能を連続して呼び出すと、連想文字一覧の\r\n先頭から順に出力文字を取得して置換していきます。\r" +
+        "\n\r\n試行回数を超えて連想直接置換を呼び出した場合は、連想\r\n文字一覧からの選択画面に遷移します。");
             // 
             // checkBox_autoBushuComp
             // 
@@ -4935,7 +4947,19 @@ namespace KanchokuWS
             this.groupBox9.Size = new System.Drawing.Size(276, 74);
             this.groupBox9.TabIndex = 2;
             this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "部首連想登録";
+            this.groupBox9.Text = "連想文字登録";
+            // 
+            // button_readBushuAssoc
+            // 
+            this.button_readBushuAssoc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_readBushuAssoc.Location = new System.Drawing.Point(113, 47);
+            this.button_readBushuAssoc.Name = "button_readBushuAssoc";
+            this.button_readBushuAssoc.Size = new System.Drawing.Size(60, 21);
+            this.button_readBushuAssoc.TabIndex = 1;
+            this.button_readBushuAssoc.Text = "読み出し";
+            this.toolTip1.SetToolTip(this.button_readBushuAssoc, resources.GetString("button_readBushuAssoc.ToolTip"));
+            this.button_readBushuAssoc.UseVisualStyleBackColor = true;
+            this.button_readBushuAssoc.Click += new System.EventHandler(this.button_readBushuAssoc_Click);
             // 
             // label_saveAssoc
             // 
@@ -5185,19 +5209,6 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // button_readBushuAssoc
-            // 
-            this.button_readBushuAssoc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button_readBushuAssoc.Location = new System.Drawing.Point(113, 47);
-            this.button_readBushuAssoc.Name = "button_readBushuAssoc";
-            this.button_readBushuAssoc.Size = new System.Drawing.Size(60, 21);
-            this.button_readBushuAssoc.TabIndex = 1;
-            this.button_readBushuAssoc.Text = "読み出し";
-            this.toolTip1.SetToolTip(this.button_readBushuAssoc, "デコーダが保持している連想辞書の内容をファイルに保存します。\r\n\r\n保存の際、現在のファイルを .1 という拡張子を付加して\r\nback フォルダに移動します。\r" +
-        "\n");
-            this.button_readBushuAssoc.UseVisualStyleBackColor = true;
-            this.button_readBushuAssoc.Click += new System.EventHandler(this.button_readBushuAssoc_Click);
-            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -5374,17 +5385,6 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // checkBox_yamanobeEnabled
-            // 
-            this.checkBox_yamanobeEnabled.AutoSize = true;
-            this.checkBox_yamanobeEnabled.Location = new System.Drawing.Point(11, 20);
-            this.checkBox_yamanobeEnabled.Name = "checkBox_yamanobeEnabled";
-            this.checkBox_yamanobeEnabled.Size = new System.Drawing.Size(206, 19);
-            this.checkBox_yamanobeEnabled.TabIndex = 0;
-            this.checkBox_yamanobeEnabled.Text = "YAMANOBEアルゴリズムを有効にする";
-            this.toolTip1.SetToolTip(this.checkBox_yamanobeEnabled, resources.GetString("checkBox_yamanobeEnabled.ToolTip"));
-            this.checkBox_yamanobeEnabled.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
