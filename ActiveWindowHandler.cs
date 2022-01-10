@@ -344,7 +344,7 @@ namespace KanchokuWS
             return idx;
         }
 
-        private int setFuncKeyInputs(char[] str, ref int pos, int strLen, INPUT[] inputs, int idx)
+        private int setFuncKeyInputs(string str, ref int pos, int strLen, INPUT[] inputs, int idx)
         {
             bool bLCtrl = false;
             bool bLShift = false;
@@ -391,8 +391,81 @@ namespace KanchokuWS
             return idx;
         }
 
-        private int setStringInputs(char[] str, int strLen, INPUT[] inputs, int idx)
+        private static System.Text.RegularExpressions.Regex reThreeTerms = new System.Text.RegularExpressions.Regex(@"\(([^)]+)\)\?\(([^)]+)\):\(([^)]+)\)");
+
+        //private static string[] threeTermDelims = { ")?(", "):(" };
+
+        /// <summary>(Q)?(A):(B) 形式だったら、Q に該当するウィンドウクラスか否かを判定し、当ならAを、否ならBを返す</summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        private string extractSubString(string str)
         {
+            //logger.InfoH(() => $"CALLED: str={str}, actWinName={ActiveWinClassName._toLower()}");
+            var resultStr = str;
+            if (str._getFirst() == '(' && str.Last() == ')') {
+                var items = str._reScan(reThreeTerms);
+                //logger.InfoH(() => $"items={items._join(" | ")}, actWinName={ActiveWinClassName._toLower()}");
+                //List<string> items = new List<string>();
+                //int start = 1;
+                //int strLen = str.Length - 1;
+                //string extractor(string toStr)
+                //{
+                //    logger.InfoH(() => $"start={start}, subStr={str._safeSubstring(start)}, toStr={toStr}");
+                //    StringBuilder sb = new StringBuilder();
+                //    int toStrLen = toStr._safeLength();
+                //    if (toStrLen > 0) {
+                //        for (int i = start; i < strLen - toStrLen; ++i) {
+                //            if (str[i] == toStr[0]) {
+                //                bool flag = true;
+                //                for (int j = 1; j < toStrLen; ++j) {
+                //                    if (str[i + j] != toStr[j]) {
+                //                        flag = false;
+                //                        break;
+                //                    }
+                //                }
+                //                if (flag) return sb.ToString();
+                //            }
+                //            sb.Append(str[i]);
+                //        }
+                //    }
+                //    return null;
+                //}
+                //for (int i = 0; i < threeTermDelims.Length; ++i) {
+                //    var delim = threeTermDelims[i];
+                //    var substr = extractor(delim);
+                //    if (substr._notEmpty()) {
+                //        items.Add(substr);
+                //        start += substr.Length + delim.Length;
+                //    }
+                //}
+                //if (items.Count == 2 && start < strLen) items.Add(str.Substring(start, strLen - start));
+                //logger.InfoH(() => $"items={items._join(" | ")}, actWinName={ActiveWinClassName._toLower()}");
+                if (items._safeCount() == 4) {
+                    string activeWinClassName = ActiveWinClassName._toLower();
+                    var names = items[1]._toLower()._split('|');
+                    bool checkFunc()
+                    {
+                        if (activeWinClassName._notEmpty() && names._notEmpty()) {
+                            foreach (var name in names) {
+                                if (name._notEmpty()) {
+                                    //logger.InfoH(() => $"name={name}");
+                                    if (activeWinClassName.StartsWith(name)) return true;
+                                    if (name.Last() == '$' && name.Length == activeWinClassName.Length + 1 && name.StartsWith(activeWinClassName)) return true;
+                                }
+                            }
+                        }
+                        return false;
+                    }
+                    resultStr = checkFunc() ? items[2] : items[3];
+                }
+            }
+            //logger.InfoH(() => $"RESULT: {resultStr}");
+            return resultStr;
+        }
+
+        private int setStringInputs(string str, INPUT[] inputs, int idx)
+        {
+            int strLen = str._safeCount();
             if (strLen > inputs._safeLength()) strLen = inputs._safeLength();
             for (int i = 0; i < strLen; ++i) {
                 for (int j = 0; j < 2; ++j) {
@@ -473,8 +546,10 @@ namespace KanchokuWS
             if (loggingFlag) logger.Info($"bs: idx={idx}");
 
             // 文字列
-            idx = setStringInputs(str, strLen, inputs, idx);
-            if (loggingFlag) logger.Info($"str: idx={idx}");
+            if (strLen > 0) {
+                idx = setStringInputs(extractSubString(str._toString()), inputs, idx);
+                if (loggingFlag) logger.Info($"str: idx={idx}");
+            }
 
             // Ctrl戻し
             idx = revertCtrlKeyInputs(inputs, idx, true, leftCtrl, rightCtrl);
