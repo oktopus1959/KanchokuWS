@@ -1123,6 +1123,12 @@ namespace KanchokuWS
                 frmVkb.SetTopText(decoderOutput.topString);
                 targetChar = 0;
             } else {
+                if (decoderOutput.GetStrokeCount() > 0) {
+                    // 第2打鍵以降の待ちで、何かVkey出力がある場合は、打鍵クリア
+                    if (decoderOutput.IsDeckeyToVkey()) {
+                        HandleDeckeyDecoder(decoderPtr, DecoderKeys.ESC_DECKEY, 0, false, ref decoderOutput);
+                    }
+                }
                 if (decoderOutput.GetStrokeCount() < 1) {
                     // 第1打鍵待ちになった時のみ
                     // 一時的な仮想鍵盤表示カウントをリセットする
