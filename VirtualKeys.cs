@@ -329,11 +329,11 @@ namespace KanchokuWS
             VKeyComboFromDecKey[deckey] = combo;
         }
 
-        public static void AddDecKeyAndCombo(int deckey, uint mod, uint vkey)
+        public static void AddDecKeyAndCombo(int deckey, uint mod, uint vkey, bool bFromComboOnly = false)
         {
             logger.Debug(() => $"deckey={deckey:x}H({deckey}), mod={mod:x}H, vkey={vkey:x}H({vkey})");
             var combo = new VKeyCombo(mod, (uint)vkey);
-            VKeyComboFromDecKey[deckey] = combo;
+            if (!bFromComboOnly) VKeyComboFromDecKey[deckey] = combo;
             DecKeyFromVKeyCombo[combo.SerialValue] = deckey;
         }
 
@@ -711,7 +711,7 @@ namespace KanchokuWS
                                     logger.DebugH(() => $"AddModConvertedDecKeyFromCombo: deckey={deckey}, mod={mod}, vkey={vkey}");
                                     if (mod == 0) {
                                         // 拡張修飾キー単打の場合は、キーの登録だけで、拡張シフトB面の割り当てはやらない
-                                        AddDecKeyAndCombo(deckey, 0, vkey);
+                                        AddDecKeyAndCombo(deckey, 0, vkey, true);  // deckey から vkey(拡張修飾キー)への逆マップは不要
                                         VirtualKeys.AddExModVkeyAssignedForDecoderFuncByVkey(vkey);
                                     } else {
                                         AddModConvertedDecKeyFromCombo(deckey, mod, vkey);
