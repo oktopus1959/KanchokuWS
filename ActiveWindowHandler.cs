@@ -346,18 +346,36 @@ namespace KanchokuWS
 
         private int setFuncKeyInputs(string str, ref int pos, int strLen, INPUT[] inputs, int idx)
         {
+            //logger.InfoH(() => $"CALLED: str={str}, idx={idx}");
             bool bLCtrl = false;
+            bool bRCtrl = false;
             bool bLShift = false;
+            bool bRShift = false;
+            bool bRight = false;
             var sb = new StringBuilder();
             while (pos < strLen) {
                 var ch = str[pos];
                 if (ch == '}') break;
-                if (ch == '^') {
+                if (ch == '<') {
+                    bRight = false;
+                } else if (ch == '>') {
+                    bRight = true;
+                } else if (ch == '^') {
                     // Ctrl
-                    bLCtrl = true;
+                    if (bRight) {
+                        bRCtrl = true;
+                    } else {
+                        bLCtrl = true;
+                    }
+                    bRight = false;
                 } else if (ch == '+') {
                     // Shift
-                    bLShift = true;
+                    if (bRight) {
+                        bRShift = true;
+                    } else {
+                        bLShift = true;
+                    }
+                    bRight = false;
                 } else {
                     sb.Append(ch);
                 }
@@ -366,15 +384,25 @@ namespace KanchokuWS
             if (sb.Length > 0) {
                 string name = sb.ToString();
                 uint vkey = VirtualKeys.GetFuncVkeyByName(name);
+                //logger.InfoH(() => $"vkey={vkey:x} by FuncKey");
                 if (vkey == 0) vkey = VirtualKeys.GetAlphabetVkeyByName(name);
+                //logger.InfoH(() => $"vkey={vkey:x} by Alphabet");
                 if (vkey > 0) {
                     if (bLCtrl) {
                         // 左Ctrl下げ
                         setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
                     }
+                    if (bRCtrl) {
+                        // 右Ctrl下げ
+                        setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                    }
                     if (bLShift) {
                         // 左Shift下げ
                         setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                    }
+                    if (bRShift) {
+                        // 右Shift下げ
+                        setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
                     }
                     // キー送出
                     idx = setVkeyInputs((ushort)vkey, inputs, idx);
@@ -382,12 +410,21 @@ namespace KanchokuWS
                         // 左Shift戻し
                         setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
                     }
+                    if (bRShift) {
+                        // 右Shift戻し
+                        setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+                    }
                     if (bLCtrl) {
                         // 左Ctrl戻し
                         setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
                     }
+                    if (bRCtrl) {
+                        // 右Ctrl戻し
+                        setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+                    }
                 }
             }
+            //logger.InfoH(() => $"LEAVE: idx={idx}");
             return idx;
         }
 

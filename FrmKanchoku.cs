@@ -540,7 +540,7 @@ namespace KanchokuWS
         /// <summary>無条件にデコーダを呼び出す</summary>
         private bool InvokeDecoderUnconditionally(int deckey, uint mod)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey}H({deckey}), mod={mod}H({mod})");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}H({deckey}), mod={mod}H({mod})");
             if (IsDecoderActive)
                 handleKeyDecoder(deckey, mod);
             else
@@ -1234,8 +1234,10 @@ namespace KanchokuWS
         private void sendEscToDecoder()
         {
             HandleDeckeyDecoder(decoderPtr, DecoderKeys.ESC_DECKEY, 0, false, ref decoderOutput);
-            // 仮想キーボードにヘルプや文字候補を表示
-            frmVkb.DrawVirtualKeyboardChars();
+            if (IsDecoderActive) {
+                // 仮想キーボードにヘルプや文字候補を表示
+                frmVkb.DrawVirtualKeyboardChars();
+            }
         }
 
         private bool isFuncVkeyContained(char[] str, int len = -1)

@@ -100,7 +100,7 @@ namespace KanchokuWS
         public const int TOTAL_DECKEY_NUM = UNMODIFIED_DECKEY_NUM + CTRL_DECKEY_NUM + CTRL_SHIFT_DECKEY_NUM;
 
         // 無条件でデコーダを呼び出すストロークキーに変換するためのオフセット
-        public const int UNCONDITIONAL_DECKEY_OFFSET = CTRL_SHIFT_FUNC_DECKEY_END;
+        public const int UNCONDITIONAL_DECKEY_OFFSET = ((CTRL_SHIFT_FUNC_DECKEY_END + 99) / 100) * 100;
 
         // 無条件でデコーダを呼び出すストロークキーの終わり
         public const int UNCONDITIONAL_DECKEY_END = UNCONDITIONAL_DECKEY_OFFSET + STROKE_DECKEY_NUM;
