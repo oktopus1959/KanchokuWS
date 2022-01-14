@@ -237,6 +237,8 @@ namespace KanchokuWS
 
         public const int COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY = MODE_TOGGLE_FOLLOW_CARET_DECKEY + 1; // 文字列をコピーして、それをデコーダの辞書に登録する
 
+        public const int SEND_ESC_TO_DECODER_DECKEY = COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY + 1;    // デコーダに ESC を送りつける
+
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 
     }

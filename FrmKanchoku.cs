@@ -631,6 +631,11 @@ namespace KanchokuWS
                         logger.Info(() => $"COPY_SELECTION_AND_SEND_TO_DICTIONARY:{deckey}");
                         copySelectionAndSendToDictionary();
                         return true;
+                    case DecoderKeys.SEND_ESC_TO_DECODER_DECKEY:
+                        logger.Info(() => $"SEND_ESC_TO_DECODER:{deckey}");
+                        sendEscToDecoder();
+                        return true;
+
                     default:
                         bPrevDtUpdate = true;
                         if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
@@ -786,6 +791,7 @@ namespace KanchokuWS
                 Helper.WaitMilliSeconds(20);
                 frmMode.SetKanjiMode();
                 if (Settings.VirtualKeyboardShowStrokeCount == 1) {
+                    sendEscToDecoder(); // デコーダを第1打鍵待ちに戻しておく
                     frmVkb.SetTopText(actWinHandler.ActiveWinClassName);
                     ShowFrmVkb();       // Show NonActive
                                         //} else if (Settings.ModeMarkerShowIntervalSec > 0) {
@@ -1220,6 +1226,16 @@ namespace KanchokuWS
                 // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
                 HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput);
             }
+        }
+
+        /// <summary>
+        /// デコーダにESCを送りつける
+        /// </summary>
+        private void sendEscToDecoder()
+        {
+            HandleDeckeyDecoder(decoderPtr, DecoderKeys.ESC_DECKEY, 0, false, ref decoderOutput);
+            // 仮想キーボードにヘルプや文字候補を表示
+            frmVkb.DrawVirtualKeyboardChars();
         }
 
         private bool isFuncVkeyContained(char[] str, int len = -1)
