@@ -758,7 +758,7 @@ namespace KanchokuWS
                 } else if (str._reMatch("^[^ ]+ /")) {
                     ExecCmdDecoder("addMazegakiEntry", str);
                 } else {
-                    ExecCmdDecoder("addHistEntry", str);
+                    ExecCmdDecoder("addHistEntry", str._safeSubstring(0, Settings.HistMaxLength));
                 }
             }
         }
