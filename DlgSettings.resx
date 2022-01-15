@@ -120,29 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="checkBox_autoBushuComp.ToolTip" xml:space="preserve">
-    <value>ある2文字の組み合わせで一度部首合成を実行すると、
-次からはその2文字を入力した時点で自動的に部首合成を
-実行します。
-
-たとえば、一度「日」＋「生」で部首合成を実行し、「星」を出力したと
-すると、次に「日生」と（連続して）入力した時点で自動的に「星」に
-置換されます。
-
-自動合成の直後であれば、 Escキーを押すことで合成をキャンセルして
-元の2文字に戻すことができます。
-キャンセル後、もう一度、Escキーを押すと、元の2文字の組み合わせに
-対する自動部首合成を無効にするような辞書登録が行われます。
-
-辞書登録の詳細については「辞書登録」-「自動部首合成登録」の
-ところのツールチップを参照ください。
-
-なお、自動部首合成直後は、手動の部首合成を無効にしています。
-その場合は、もう一度手動部首合成を実行すれば、有効になります。</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -682,12 +659,17 @@ ONの場合でも有効です。
 
 無効にするには 0 を設定してください。</value>
   </data>
-  <data name="checkBox_ignoreSpaceUpOnSandS.ToolTip" xml:space="preserve">
-    <value>SandS有効時に、Space単打で空白を入力しないようにします。
+  <data name="checkBox_OneshotSandSEnabled.ToolTip" xml:space="preserve">
+    <value>SandS有効時に、Space単打で次打鍵のみをシフトさせる、ワンショットシフト
+機能を有効にします。
 
-これをONにすると、ほぼ通常のSHIFTキーと同等の使い方ができるように
-なります。また、併せて Ctrl+Space は Space によるシフト状態移行として
-処理されるようになります。
+これをONにすると、Space単打の後は「ワンショットシフト状態」になり、次の
+1打鍵のみをシフトさせることができます。
+Ctrl+Space は Space によるシフト状態移行として処理されるようになります。
+
+SandS の拡張シフト面にテーブルファイルの裏面定義を行っているような場合は、
+これをONにしておくと、最初にSpace単打することで裏面定義を呼び出せる
+ようになります。
 
 空白を入力するには、
 ・指定ms以内にもう一度Spaceを単打する
@@ -720,6 +702,26 @@ SandS 方式を有効にすると、スペースキーを押しながら何か�
 SandS を有効にすると SandS と同じシフト面を使う
 Shift (または拡張修飾キー)+Space は有効なキーではなく、たんなる
 シフトキーとして扱われます。</value>
+  </data>
+  <data name="checkBox_autoBushuComp.ToolTip" xml:space="preserve">
+    <value>ある2文字の組み合わせで一度部首合成を実行すると、
+次からはその2文字を入力した時点で自動的に部首合成を
+実行します。
+
+たとえば、一度「日」＋「生」で部首合成を実行し、「星」を出力したと
+すると、次に「日生」と（連続して）入力した時点で自動的に「星」に
+置換されます。
+
+自動合成の直後であれば、 Escキーを押すことで合成をキャンセルして
+元の2文字に戻すことができます。
+キャンセル後、もう一度、Escキーを押すと、元の2文字の組み合わせに
+対する自動部首合成を無効にするような辞書登録が行われます。
+
+辞書登録の詳細については「辞書登録」-「自動部首合成登録」の
+ところのツールチップを参照ください。
+
+なお、自動部首合成直後は、手動の部首合成を無効にしています。
+その場合は、もう一度手動部首合成を実行すれば、有効になります。</value>
   </data>
   <data name="checkBox_convertShiftedHiraganaToKatakana.ToolTip" xml:space="preserve">
     <value>Shiftキー(または拡張修飾キー)を押しながら平仮名を入力すると、

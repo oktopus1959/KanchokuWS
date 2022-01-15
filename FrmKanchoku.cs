@@ -486,6 +486,11 @@ namespace KanchokuWS
             return IsDecoderActive;
         }
 
+        private bool isDecoderWaitingFirstStroke()
+        {
+            return decoderOutput.IsWaitingFirstStroke();
+        }
+
         public bool IsVkbShown => Settings.VirtualKeyboardShowStrokeCountEffective > 0 && Settings.VirtualKeyboardShowStrokeCountEffective <= decoderOutput.GetStrokeCount() + 1;
 
         /// <summary>
@@ -524,6 +529,8 @@ namespace KanchokuWS
             keDispatcher.ActivateDecoder = ActivateDecoder;
             keDispatcher.DeactivateDecoder = DeactivateDecoder;
             keDispatcher.IsDecoderActivated = isDecoderActivated;
+            keDispatcher.IsDecoderWaitingFirstStroke = isDecoderWaitingFirstStroke;
+            keDispatcher.SetSandSShiftedOneshot = setSandSShiftedOneshot;
             keDispatcher.FuncDispatcher = FuncDispatcher;
             keDispatcher.SendInputVkeyWithMod = SendInputVkeyWithMod;
             keDispatcher.InvokeDecoderUnconditionally = InvokeDecoderUnconditionally;
@@ -648,6 +655,18 @@ namespace KanchokuWS
                 prevDeckey = deckey;
                 if (bPrevDtUpdate) prevDecDt = DateTime.Now;
             }
+        }
+
+        /// <summary>SandS状態が一時的なシフト状態か</summary>
+        public bool IsSandSShiftedOneshot { get; private set; } = false;
+
+        /// <summary>SandS状態を一時的なシフト状態にする</summary>
+        private void setSandSShiftedOneshot()
+        {
+            // 中央鍵盤色を、第2テーブル選択状態の色にする
+            IsSandSShiftedOneshot = true;
+            frmVkb.DrawVirtualKeyboardChars();
+            IsSandSShiftedOneshot = false;
         }
 
         private bool rotateStrokeHelp()

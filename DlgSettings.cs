@@ -1309,7 +1309,7 @@ namespace KanchokuWS
             checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
             checkBox_SandSEnabled.Checked = Settings.SandSEnabled;
             checkBox_SandSEnabledWhenOffMode.Checked = Settings.SandSEnabledWhenOffMode;
-            checkBox_ignoreSpaceUpOnSandS.Checked = Settings.IgnoreSpaceUpOnSandS;
+            checkBox_OneshotSandSEnabled.Checked = Settings.OneshotSandSEnabled;
             textBox_SandSEnableSpaceOrRepeatMillisec.Text = $"{Settings.SandSEnableSpaceOrRepeatMillisec}";
             checkBox_SandSEnablePostShift.Checked = Settings.SandSEnablePostShift;
             checkBox_extraModifiersEnabled.Checked = Settings.ExtraModifiersEnabled;
@@ -1338,7 +1338,7 @@ namespace KanchokuWS
             checkerMiscSettings.Add(checkBox_removeOneStrokeByBackspace);
             checkerMiscSettings.Add(checkBox_SandSEnabled);
             checkerMiscSettings.Add(checkBox_SandSEnabledWhenOffMode);
-            checkerMiscSettings.Add(checkBox_ignoreSpaceUpOnSandS);
+            checkerMiscSettings.Add(checkBox_OneshotSandSEnabled);
             checkerMiscSettings.Add(textBox_SandSEnableSpaceOrRepeatMillisec);
             checkerMiscSettings.Add(checkBox_SandSEnablePostShift);
             checkerMiscSettings.Add(checkBox_extraModifiersEnabled);
@@ -1370,7 +1370,7 @@ namespace KanchokuWS
             Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);
             Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
             Settings.SetUserIni("sandsEnabledWhenOffMode", checkBox_SandSEnabledWhenOffMode.Checked);
-            Settings.SetUserIni("ignoreSpaceUpOnSandS", checkBox_ignoreSpaceUpOnSandS.Checked);
+            Settings.SetUserIni("oneshotSandSEnabled", checkBox_OneshotSandSEnabled.Checked);
             Settings.SetUserIni("sandsEnableSpaceOrRepeatMillisec", textBox_SandSEnableSpaceOrRepeatMillisec.Text);
             Settings.SetUserIni("sandsEnablePostShift", checkBox_SandSEnablePostShift.Checked);
             Settings.SetUserIni("extraModifiersEnabled", checkBox_extraModifiersEnabled.Checked);

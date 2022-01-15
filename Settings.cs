@@ -426,7 +426,7 @@ namespace KanchokuWS
         public static bool SandSEnabledWhenOffMode { get; set; } = false;
 
         /// <summary>SandS 時の Space KeyUP を無視するか (Space単打による空白入力をやらない)</summary>
-        public static bool IgnoreSpaceUpOnSandS { get; set; } = false;
+        public static bool OneshotSandSEnabled { get; set; } = false;
 
         /// <summary>SandS 時の空白入力またはリピート入力までの時間</summary>
         public static int SandSEnableSpaceOrRepeatMillisec { get; set; } = 500;
@@ -811,8 +811,8 @@ namespace KanchokuWS
             ConvertShiftedHiraganaToKatakana = GetString("convertShiftedHiraganaToKatakana", "shiftKana", "")._parseBool(false);  // 平仮名をカタカナに変換する
             SandSEnabled = GetString("sandsEnabled")._parseBool(false);                         // SandS を有効にするか
             SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
-            IgnoreSpaceUpOnSandS= GetString("ignoreSpaceUpOnSandS")._parseBool(false);          // SandS 時の Space KeyUP を無視するか (Space単打による空白入力をやらない)
-            SandSEnableSpaceOrRepeatMillisec = GetString("sandsEnableSpaceOrRepeatMillisec")._parseInt(500);    // SandS 時の空白入力またはリピート入力までの時間
+            OneshotSandSEnabled= GetString("oneshotSandSEnabled", "ignoreSpaceUpOnSandS", "")._parseBool(false);    // SandSのワンショットシフトを有効にするか
+            SandSEnableSpaceOrRepeatMillisec = GetString("sandsEnableSpaceOrRepeatMillisec")._parseInt(500);        // SandS 時の空白入力またはリピート入力までの時間
             SandSEnablePostShift = GetString("sandsEnablePostShift")._parseBool(false);         // SandS 時の後置シフト出力(疑似同時打鍵サポート)
             ModConversionFile = GetString("modConversionFile");
             bool isModConversionFileEmpty = ModConversionFile._isEmpty();

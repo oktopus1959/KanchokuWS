@@ -354,7 +354,7 @@ namespace KanchokuWS
             this.checkBox_SandSEnablePostShift = new System.Windows.Forms.CheckBox();
             this.textBox_SandSEnableSpaceOrRepeatMillisec = new System.Windows.Forms.TextBox();
             this.label103 = new System.Windows.Forms.Label();
-            this.checkBox_ignoreSpaceUpOnSandS = new System.Windows.Forms.CheckBox();
+            this.checkBox_OneshotSandSEnabled = new System.Windows.Forms.CheckBox();
             this.checkBox_SandSEnabledWhenOffMode = new System.Windows.Forms.CheckBox();
             this.checkBox_SandSEnabled = new System.Windows.Forms.CheckBox();
             this.groupBox38 = new System.Windows.Forms.GroupBox();
@@ -4274,7 +4274,7 @@ namespace KanchokuWS
             this.groupBox39.Controls.Add(this.checkBox_SandSEnablePostShift);
             this.groupBox39.Controls.Add(this.textBox_SandSEnableSpaceOrRepeatMillisec);
             this.groupBox39.Controls.Add(this.label103);
-            this.groupBox39.Controls.Add(this.checkBox_ignoreSpaceUpOnSandS);
+            this.groupBox39.Controls.Add(this.checkBox_OneshotSandSEnabled);
             this.groupBox39.Controls.Add(this.checkBox_SandSEnabledWhenOffMode);
             this.groupBox39.Controls.Add(this.checkBox_SandSEnabled);
             this.groupBox39.Location = new System.Drawing.Point(309, 110);
@@ -4319,16 +4319,16 @@ namespace KanchokuWS
             this.label103.TabIndex = 5;
             this.label103.Text = "ms以内の再打鍵で単打またはリピートを有効";
             // 
-            // checkBox_ignoreSpaceUpOnSandS
+            // checkBox_OneshotSandSEnabled
             // 
-            this.checkBox_ignoreSpaceUpOnSandS.AutoSize = true;
-            this.checkBox_ignoreSpaceUpOnSandS.Location = new System.Drawing.Point(11, 62);
-            this.checkBox_ignoreSpaceUpOnSandS.Name = "checkBox_ignoreSpaceUpOnSandS";
-            this.checkBox_ignoreSpaceUpOnSandS.Size = new System.Drawing.Size(253, 19);
-            this.checkBox_ignoreSpaceUpOnSandS.TabIndex = 2;
-            this.checkBox_ignoreSpaceUpOnSandS.Text = "SandS有効時にSpace単打で空白を入力しない";
-            this.toolTip1.SetToolTip(this.checkBox_ignoreSpaceUpOnSandS, resources.GetString("checkBox_ignoreSpaceUpOnSandS.ToolTip"));
-            this.checkBox_ignoreSpaceUpOnSandS.UseVisualStyleBackColor = true;
+            this.checkBox_OneshotSandSEnabled.AutoSize = true;
+            this.checkBox_OneshotSandSEnabled.Location = new System.Drawing.Point(11, 62);
+            this.checkBox_OneshotSandSEnabled.Name = "checkBox_OneshotSandSEnabled";
+            this.checkBox_OneshotSandSEnabled.Size = new System.Drawing.Size(220, 19);
+            this.checkBox_OneshotSandSEnabled.TabIndex = 2;
+            this.checkBox_OneshotSandSEnabled.Text = "Space単打でワンショットシフト状態にする";
+            this.toolTip1.SetToolTip(this.checkBox_OneshotSandSEnabled, resources.GetString("checkBox_OneshotSandSEnabled.ToolTip"));
+            this.checkBox_OneshotSandSEnabled.UseVisualStyleBackColor = true;
             // 
             // checkBox_SandSEnabledWhenOffMode
             // 
@@ -5893,7 +5893,7 @@ namespace KanchokuWS
         private System.Windows.Forms.TextBox textBox_romanBushuCompPrefix;
         private System.Windows.Forms.GroupBox groupBox41;
         private System.Windows.Forms.CheckBox checkBox_ignoreOtherHooker;
-        private System.Windows.Forms.CheckBox checkBox_ignoreSpaceUpOnSandS;
+        private System.Windows.Forms.CheckBox checkBox_OneshotSandSEnabled;
         private System.Windows.Forms.GroupBox groupBox42;
         private System.Windows.Forms.Button button_saveEelllJsTableFile;
         private System.Windows.Forms.Label label_miscEelllJsOut;

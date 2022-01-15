@@ -1471,7 +1471,7 @@ namespace KanchokuWS
                     var color = Color.FromName(name);
                     if (!color.IsEmpty) return color;
                 }
-                return decoderOutput.IsCurrentStrokeTablePrimary() ? SystemColors.Window : Color.FromName(Settings.BgColorForSecondaryTable);
+                return decoderOutput.IsCurrentStrokeTablePrimary() && !frmMain.IsSandSShiftedOneshot ? SystemColors.Window : Color.FromName(Settings.BgColorForSecondaryTable);
             }
 
             drawCenterChars(g, makeSpecifiedColor());
