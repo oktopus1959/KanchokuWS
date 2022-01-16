@@ -638,9 +638,9 @@ namespace KanchokuWS
                         logger.Info(() => $"COPY_SELECTION_AND_SEND_TO_DICTIONARY:{deckey}");
                         copySelectionAndSendToDictionary();
                         return true;
-                    case DecoderKeys.SEND_ESC_TO_DECODER_DECKEY:
-                        logger.Info(() => $"SEND_ESC_TO_DECODER:{deckey}");
-                        sendEscToDecoder();
+                    case DecoderKeys.CLEAR_STROKE_DECKEY:
+                        logger.Info(() => $"CLEAR_STROKE_DECKEY:{deckey}");
+                        sendClearStrokeToDecoder();
                         return true;
 
                     default:
@@ -810,7 +810,7 @@ namespace KanchokuWS
                 Helper.WaitMilliSeconds(20);
                 frmMode.SetKanjiMode();
                 if (Settings.VirtualKeyboardShowStrokeCount == 1) {
-                    sendEscToDecoder(); // デコーダを第1打鍵待ちに戻しておく
+                    sendClearStrokeToDecoder(); // デコーダを第1打鍵待ちに戻しておく
                     frmVkb.SetTopText(actWinHandler.ActiveWinClassName);
                     ShowFrmVkb();       // Show NonActive
                                         //} else if (Settings.ModeMarkerShowIntervalSec > 0) {
@@ -1151,7 +1151,7 @@ namespace KanchokuWS
                 if (decoderOutput.GetStrokeCount() > 0) {
                     // 第2打鍵以降の待ちで、何かVkey出力がある場合は、打鍵クリア
                     if (decoderOutput.IsDeckeyToVkey()) {
-                        HandleDeckeyDecoder(decoderPtr, DecoderKeys.ESC_DECKEY, 0, false, ref decoderOutput);
+                        HandleDeckeyDecoder(decoderPtr, DecoderKeys.CLEAR_STROKE_DECKEY, 0, false, ref decoderOutput);
                     }
                 }
                 if (decoderOutput.GetStrokeCount() < 1) {
@@ -1248,11 +1248,11 @@ namespace KanchokuWS
         }
 
         /// <summary>
-        /// デコーダにESCを送りつける
+        /// デコーダにCLEAR_STROKEを送りつける
         /// </summary>
-        private void sendEscToDecoder()
+        private void sendClearStrokeToDecoder()
         {
-            HandleDeckeyDecoder(decoderPtr, DecoderKeys.ESC_DECKEY, 0, false, ref decoderOutput);
+            HandleDeckeyDecoder(decoderPtr, DecoderKeys.CLEAR_STROKE_DECKEY, 0, false, ref decoderOutput);
             if (IsDecoderActive) {
                 // 仮想キーボードにヘルプや文字候補を表示
                 frmVkb.DrawVirtualKeyboardChars();

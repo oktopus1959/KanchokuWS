@@ -496,6 +496,9 @@ void State::handlePrevCandTrigger() { LOG_INFOH(_T("CALLED")); handleSpecialKeys
 // handleZenkakuConversion デフォルトハンドラ
 void State::handleZenkakuConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(TOGGLE_ZENKAKU_CONVERSION); }
 
+// handleClearStroke デフォルトハンドラ
+void State::handleClearStroke() { LOG_INFOH(_T("CALLED")); }
+
 //-----------------------------------------------------------------------
 // DecoderOff デフォルトハンドラ
 void State::handleDecoderOff() { LOG_INFOH(_T("CALLED")); }

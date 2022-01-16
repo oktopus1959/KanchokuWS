@@ -128,6 +128,11 @@ namespace {
             setToRemoveAllStroke();
         }
 
+        void handleClearStroke() {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            setToRemoveAllStroke();
+        }
+
         void handleEsc() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             setToRemoveAllStroke();

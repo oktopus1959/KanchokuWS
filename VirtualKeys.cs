@@ -599,7 +599,7 @@ namespace KanchokuWS
             {"leftshiftmazestartpos", DecoderKeys.LEFT_SHIFT_MAZE_START_POS_DECKEY},
             {"rightshiftmazestartpos", DecoderKeys.RIGHT_SHIFT_MAZE_START_POS_DECKEY},
             {"copyselectionandsendtodictionary", DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY},
-            {"sendesctodecoder", DecoderKeys.SEND_ESC_TO_DECODER_DECKEY},
+            {"clearstroke", DecoderKeys.CLEAR_STROKE_DECKEY},
             //{"^a", DecoderKeys.CTRL_},
         };
 

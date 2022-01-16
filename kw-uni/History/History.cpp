@@ -894,6 +894,7 @@ namespace {
 
         // 前回の履歴検索との比較、新しい履歴検索の開始 (bManual=trueなら自動モードでなくても履歴検索を実行する)
         void historySearch(bool bManual) {
+            LOG_INFOH(_T("ENTER: manual=%s"), BOOL_TO_WPTR(bManual));
             // 前回の履歴選択の出力と現在の出力文字列(改行以降)の末尾を比較し、同じであれば前回の履歴選択の出力を取得する
             // たとえば前回「中」で履歴検索し「中納言家持」が履歴出力されており、現在の出力スタックが「・・・中納言家持」なら「中納言持家」が返る
             auto prevOut = getLastHistOutIfSameAsCurrent();
@@ -985,6 +986,8 @@ namespace {
                 bCandSelectable = true;
             }
             maybeEditedBySubState = false;
+
+            LOG_INFOH(_T("LEAVE"));
         }
 
     public:
@@ -1008,8 +1011,9 @@ namespace {
                 HIST_CAND->PushFrontSelectedWord();
                 bCandSelectable = false;
 
+                _LOG_DEBUGH(_T("PATH 6: bCandSelectable=%s, bNoHistTemporary=%s"), BOOL_TO_WPTR(bCandSelectable), BOOL_TO_WPTR(bNoHistTemporary));
                 if (OUTPUT_STACK->isLastOutputStackCharBlocker()) {
-                    _LOG_DEBUGH(_T("PATH 6"));
+                    _LOG_DEBUGH(_T("PATH 7"));
                     HISTORY_DIC->ClearNgramSet();
                 }
 
@@ -1019,8 +1023,10 @@ namespace {
                     MString prevKey = HISTORY_STAY_NODE->GetPrevKey();
                     MString outStr = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(prevKey.size());
                     bNoHistTemporary = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(prevKey.size()) == prevKey;
-                    _LOG_DEBUGH(_T("PATH 7: bNoHistTemporary=%s: prevKey=%s, outStr=%s"), BOOL_TO_WPTR(bNoHistTemporary), MAKE_WPTR(prevKey), MAKE_WPTR(outStr));
+                    _LOG_DEBUGH(_T("PATH 8: bNoHistTemporary=%s: prevKey=%s, outStr=%s"), BOOL_TO_WPTR(bNoHistTemporary), MAKE_WPTR(prevKey), MAKE_WPTR(outStr));
                 }
+
+                _LOG_DEBUGH(_T("PATH 9: bNoHistTemporary=%s"), BOOL_TO_WPTR(bNoHistTemporary));
                 if (!bNoHistTemporary) {
                     historySearch(bManualTemporary);
                 }

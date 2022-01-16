@@ -240,6 +240,9 @@ protected:
     // DecoderOff ハンドラ
     virtual void handleDecoderOff();
 
+    // ClearStroke ハンドラ
+    virtual void handleClearStroke();
+
     //// Ctrl-A ～ Ctrl-Zハンドラ
     virtual void handleCtrlKeys(int deckey);
     //virtual void handleCtrlA();

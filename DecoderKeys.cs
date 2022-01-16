@@ -203,11 +203,13 @@ namespace KanchokuWS
         public const int DATE_STRING_ROTATION_DECKEY = STROKE_HELP_UNROTATION_DECKEY + 1;   // 今日の日付文字列を正順に出力
         public const int DATE_STRING_UNROTATION_DECKEY = DATE_STRING_ROTATION_DECKEY + 1;   // 今日の日付文字列を逆順に出力
 
-        public const int FULL_ESCAPE_DECKEY = DATE_STRING_UNROTATION_DECKEY + 1;    // モードを抜けたり、履歴ブロックをしたりする
-        public const int UNBLOCK_DECKEY = FULL_ESCAPE_DECKEY + 1;                   // 改行コード除去と履歴ブロックの解除
+        public const int FULL_ESCAPE_DECKEY = DATE_STRING_UNROTATION_DECKEY + 1;        // モードを抜けたり、履歴ブロックをしたりする
+        public const int UNBLOCK_DECKEY = FULL_ESCAPE_DECKEY + 1;                       // 改行コード除去と履歴ブロックの解除
 
-        public const int HISTORY_NEXT_SEARCH_DECKEY = UNBLOCK_DECKEY + 1;                // 履歴検索実行&次候補選択キー
-        public const int HISTORY_PREV_SEARCH_DECKEY = HISTORY_NEXT_SEARCH_DECKEY + 1;    // 履歴検索実行&前候補選択キー
+        public const int CLEAR_STROKE_DECKEY = UNBLOCK_DECKEY + 1;                      // 途中まで打ったストロークのクリア
+
+        public const int HISTORY_NEXT_SEARCH_DECKEY = CLEAR_STROKE_DECKEY + 1;          // 履歴検索実行&次候補選択キー
+        public const int HISTORY_PREV_SEARCH_DECKEY = HISTORY_NEXT_SEARCH_DECKEY + 1;   // 履歴検索実行&前候補選択キー
 
         //public const int NEXT_CAND_TRIGGER_DECKEY = HISTORY_SEARCH_DECKEY + 1;      // 履歴検索開始&次の候補選択
         //public const int PREV_CAND_TRIGGER_DECKEY = NEXT_CAND_TRIGGER_DECKEY + 1;   // 履歴検索開始&前の候補選択
@@ -236,8 +238,6 @@ namespace KanchokuWS
         public const int MODE_TOGGLE_FOLLOW_CARET_DECKEY = POST_PLANE_B_SHIFT_DECKEY + 1;   // 仮想鍵盤をカレットに再追従させて、漢直モードのトグル
 
         public const int COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY = MODE_TOGGLE_FOLLOW_CARET_DECKEY + 1; // 文字列をコピーして、それをデコーダの辞書に登録する
-
-        public const int SEND_ESC_TO_DECODER_DECKEY = COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY + 1;    // デコーダに ESC を送りつける
 
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 
