@@ -648,16 +648,16 @@ Enterキーで選択されます。</value>
  Try-Code での1打鍵目空白による漢字入力など)</value>
   </data>
   <data name="textBox_SandSEnableSpaceOrRepeatMillisec.ToolTip" xml:space="preserve">
-    <value>SandS有効時に Space キーを連続打鍵した時、空白の入力または
-リピート入力を有効にするまでの時間(ミリ秒)を設定します。
+    <value>SandS有効時に Space キーを連続打鍵した時、空白のリピート入力を有効に
+するまでの時間(ミリ秒)を設定します。
 
-1回目のSpaceキー打鍵のキーアップ時から、設定した時間内にSpaceを
-再打鍵すると、空白の入力またはリピート入力を有効にします。
+1回目のSpaceキー単打鍵のキーアップ時から、設定した時間内にSpaceを
+押下状態にすると、空白のリピート入力が有効になります。
 
-ここの設定は、上記の「Space単打で空白を入力しない」が
-ONの場合でも有効です。
+ここの設定は、上記の「Space単打でワンショットシフト状態にする」がOFFの
+場合に有効となります。
 
-無効にするには 0 を設定してください。</value>
+リピート状態を無効にするには 0 を設定してください。</value>
   </data>
   <data name="checkBox_OneshotSandSEnabled.ToolTip" xml:space="preserve">
     <value>SandS有効時に、Space単打で次打鍵のみをシフトさせる、ワンショットシフト
@@ -671,11 +671,8 @@ SandS の拡張シフト面にテーブルファイルの裏面定義を行っ�
 これをONにしておくと、最初にSpace単打することで裏面定義を呼び出せる
 ようになります。
 
-空白を入力するには、
-・指定ms以内にもう一度Spaceを単打する
-・SandSに割り当てたシフト面のどこかの打鍵に空白を定義する
-・拡張修飾キーによる変換定義で適当なキーを Space に変換する
-などの方法があります。</value>
+ワンショットシフト状態の場合に、Spaceキーを単打すると空白が1つ出力され、
+Spaceキーを押下状態にするとリピート出力となります。</value>
   </data>
   <data name="checkBox_SandSEnabledWhenOffMode.ToolTip" xml:space="preserve">
     <value>デコーダがOFFのときに SandS 方式を有効にします。

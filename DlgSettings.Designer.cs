@@ -4315,9 +4315,9 @@ namespace KanchokuWS
             this.label103.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label103.Location = new System.Drawing.Point(46, 84);
             this.label103.Name = "label103";
-            this.label103.Size = new System.Drawing.Size(220, 15);
+            this.label103.Size = new System.Drawing.Size(187, 15);
             this.label103.TabIndex = 5;
-            this.label103.Text = "ms以内の再打鍵で単打またはリピートを有効";
+            this.label103.Text = "ms以内の再打鍵でリピート状態にする";
             // 
             // checkBox_OneshotSandSEnabled
             // 
