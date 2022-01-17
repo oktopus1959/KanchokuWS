@@ -401,7 +401,7 @@ namespace KanchokuWS
         /// <summary> デコーダにコマンドを送信する(エラーなら false を返す)</summary> 
         public bool ExecCmdDecoder(string cmd, string data, bool bInit = false)
         {
-            logger.Info(() => $"ENTER: cmd={cmd}, data={data}, bInit={bInit}");
+            logger.InfoH(() => $"ENTER: cmd={cmd}, data={data}, bInit={bInit}");
             bool resultFlag = true;
             if (decoderPtr != IntPtr.Zero) {
                 var prm = new DecoderCommandParams() {
@@ -555,6 +555,9 @@ namespace KanchokuWS
             return true;
         }
 
+        private int prevFuncDeckey = 0;
+        private int prevFuncTotalCount = 0;
+
         /// <summary>
         /// UI側のハンドラー
         /// </summary>
@@ -564,6 +567,10 @@ namespace KanchokuWS
         {
             if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod})");
             bool bPrevDtUpdate = false;
+            int prevDeckey = prevFuncDeckey;
+            prevFuncDeckey = deckey;
+            int prevCount = prevFuncTotalCount;
+            prevFuncTotalCount = deckeyTotalCount;
             try {
                 if (IsDecoderActive) {
                     renewSaveDictsPlannedDt();
@@ -577,24 +584,31 @@ namespace KanchokuWS
                         return !isActiveWinExcel() && rotateDateString(1);
                     case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
                         return !isActiveWinExcel() && rotateDateString(-1);
-                    case DecoderKeys.BUSHU_COMP_HELP:
+                    case DecoderKeys.STROKE_HELP_DECKEY:
+                        if (prevDeckey != deckey || prevCount + 1 < deckeyTotalCount) {
+                            ShowStrokeHelp(null);
+                        } else {
+                            ShowBushuCompHelp();
+                        }
+                        return true;
+                    case DecoderKeys.BUSHU_COMP_HELP_DECKEY:
                         ShowBushuCompHelp();
                         return true;
-                    case DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE:
+                    case DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE_DECKEY:
                         if (IsDecoderActive) {
                             rotateStrokeHelp(0);
                             bRomanStrokeGuideMode = !bRomanStrokeGuideMode && !bRomanMode;
                             drawRomanOrHiraganaMode(bRomanStrokeGuideMode, false);
                         }
                         return true;
-                    case DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE:
+                    case DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY:
                         if (IsDecoderActive) {
                             rotateStrokeHelp(0);
                             bUpperRomanStrokeGuideMode = !bUpperRomanStrokeGuideMode && !bRomanMode;
                             if (!bRomanMode) drawRomanOrHiraganaMode(bUpperRomanStrokeGuideMode, false);
                         }
                         return true;
-                    case DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE:
+                    case DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY:
                         if (IsDecoderActive) {
                             rotateStrokeHelp(0);
                             bHiraganaStrokeGuideMode = !bHiraganaStrokeGuideMode;
@@ -862,16 +876,22 @@ namespace KanchokuWS
             actWinHandler?.MoveWindow();
         }
 
+        /// <summary>ストロークヘルプ</summary>
         public void ShowStrokeHelp(string w)
         {
+            logger.InfoH($"CALLED: w={w}");
+            // 指定文字(空なら最後に入力された文字)のストロークヘルプを取得
             ExecCmdDecoder("showStrokeHelp", w);
             // 仮想キーボードにヘルプや文字候補を表示
             getCenterString();
             frmVkb.DrawVirtualKeyboardChars();
         }
 
+        /// <summary>部首合成ヘルプ</summary>
         public void ShowBushuCompHelp()
         {
+            logger.InfoH("CALLED");
+            // 中央鍵盤文字(空なら最後に入力された文字)のストロークヘルプを取得
             ExecCmdDecoder("showBushuCompHelp", CommonState.CenterString);
             // 仮想キーボードにヘルプや文字候補を表示
             getCenterString();

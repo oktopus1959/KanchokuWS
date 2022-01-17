@@ -82,7 +82,7 @@ void State::DoDeckeyPreProc(int deckey) {
             }
             _LOG_DEBUGH(_T("PATH-E"));
 
-            if (pNode && dynamic_cast<ZenkakuNode*>(pNode) == 0 && deckey == TOGGLE_ZENKAKU_CONVERSION) {
+            if (pNode && dynamic_cast<ZenkakuNode*>(pNode) == 0 && deckey == TOGGLE_ZENKAKU_CONVERSION_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: ZenkakuState"));
                 pNext = ZENKAKU_NODE->CreateState();
                 pNext->SetPrevState(this);
@@ -369,7 +369,7 @@ void State::dispatchDeckey(int deckey) {
         handleNextCandTrigger();
     } else if (deckey == HISTORY_PREV_SEARCH_DECKEY) {
         handlePrevCandTrigger();
-    } else if (deckey == TOGGLE_ZENKAKU_CONVERSION) {
+    } else if (deckey == TOGGLE_ZENKAKU_CONVERSION_DECKEY) {
         handleZenkakuConversion();
     } else {
         if (handleFunctionKeys(deckey)) return;
@@ -494,7 +494,7 @@ void State::handleNextCandTrigger() { LOG_INFOH(_T("CALLED")); handleSpecialKeys
 void State::handlePrevCandTrigger() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(HISTORY_PREV_SEARCH_DECKEY); }
 
 // handleZenkakuConversion デフォルトハンドラ
-void State::handleZenkakuConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(TOGGLE_ZENKAKU_CONVERSION); }
+void State::handleZenkakuConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(TOGGLE_ZENKAKU_CONVERSION_DECKEY); }
 
 // handleClearStroke デフォルトハンドラ
 void State::handleClearStroke() { LOG_INFOH(_T("CALLED")); }

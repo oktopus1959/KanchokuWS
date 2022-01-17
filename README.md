@@ -1818,6 +1818,7 @@ Esc, Tab, BackSpace, Enter, Insert, Delete, Home, End, PageUp, PageDown, UpArrow
 |Activate|漢直モードに入る|
 |Deactivate|漢直モードから出る|
 |ExchangeCodeTable|主・副テーブルファイルを切り替える|
+|ClearStroke|打鍵中のストロークを取り消して、第1打鍵待ちに戻る|
 |FullEscape|入力途中状態をクリアし、ミニバッファ末尾にブロッカーを置く|
 |Unblock|ミニバッファ末尾のブロッカーを解除する|
 |HistNext|履歴を先頭から選択|
@@ -1826,6 +1827,7 @@ Esc, Tab, BackSpace, Enter, Insert, Delete, Home, End, PageUp, PageDown, UpArrow
 |HelpUnRotate|ストロークヘルプの逆順回転|
 |DateRotate|日時変換の入力(フォーマットの正順切替)|
 |DateUnrotate|日時変換の入力(フォーマットの逆順切替)|
+|StrokeHelp|最後に入力した文字のストロークヘルプ (ストローク表に定義がないか、2回続けて呼び出すと部首合成ヘルプになる)|
 |BushuCompHelp|部首合成ヘルプ表示|
 |RomanStrokeGuide|ローマ字による読み打鍵ガイドモードのON/OFF|
 |UpperRomanStrokeGuide|英大文字ローマ字による読み打鍵ガイドモード|

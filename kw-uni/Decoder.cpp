@@ -319,10 +319,10 @@ public:
             } else if (cmd == _T("saveMazegakiDic") && BUSHU_ASSOC_DIC) {
                 // 交ぜ書き辞書の保存
                 if (MAZEGAKI_DIC) MAZEGAKI_DIC->WriteMazegakiDic();
-            } else if (cmd == _T("showStrokeHelp") && items.size() >= 2 && !items[1].empty() && STROKE_HELP) {
+            } else if (cmd == _T("showStrokeHelp") && STROKE_HELP) {
                 // ストロークヘルプの表示
                 OutParams = outParams;
-                makeStrokeHelp(items[1]);
+                makeStrokeHelp(items.size() > 1 ? items[1] : _T(""));
             } else if (cmd == _T("showBushuCompHelp") && BUSHU_DIC) {
                 // 部首合成ヘルプの表示
                 OutParams = outParams;

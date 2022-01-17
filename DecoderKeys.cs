@@ -214,15 +214,16 @@ namespace KanchokuWS
         //public const int NEXT_CAND_TRIGGER_DECKEY = HISTORY_SEARCH_DECKEY + 1;      // 履歴検索開始&次の候補選択
         //public const int PREV_CAND_TRIGGER_DECKEY = NEXT_CAND_TRIGGER_DECKEY + 1;   // 履歴検索開始&前の候補選択
 
-        public const int BUSHU_COMP_HELP = HISTORY_PREV_SEARCH_DECKEY + 1;          // 部首合成ヘルプ
+        public const int STROKE_HELP_DECKEY = HISTORY_PREV_SEARCH_DECKEY + 1;              // ストロークヘルプ
+        public const int BUSHU_COMP_HELP_DECKEY = STROKE_HELP_DECKEY + 1;                  // 部首合成ヘルプ
 
-        public const int TOGGLE_ZENKAKU_CONVERSION = BUSHU_COMP_HELP + 1;           // 全角変換のトグル
+        public const int TOGGLE_ZENKAKU_CONVERSION_DECKEY = BUSHU_COMP_HELP_DECKEY + 1;    // 全角変換のトグル
 
-        public const int TOGGLE_UPPER_ROMAN_STROKE_GUIDE = TOGGLE_ZENKAKU_CONVERSION + 1;   // 大文字ローマ字読みによる打鍵ガイドのトグル
-        public const int TOGGLE_ROMAN_STROKE_GUIDE = TOGGLE_UPPER_ROMAN_STROKE_GUIDE + 1;   // ローマ字読みによる打鍵ガイドのトグル
-        public const int TOGGLE_HIRAGANA_STROKE_GUIDE = TOGGLE_ROMAN_STROKE_GUIDE + 1;      // ひらがな読みによる打鍵ガイドのトグル
+        public const int TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY = TOGGLE_ZENKAKU_CONVERSION_DECKEY + 1;   // 大文字ローマ字読みによる打鍵ガイドのトグル
+        public const int TOGGLE_ROMAN_STROKE_GUIDE_DECKEY = TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY + 1;   // ローマ字読みによる打鍵ガイドのトグル
+        public const int TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY = TOGGLE_ROMAN_STROKE_GUIDE_DECKEY + 1;      // ひらがな読みによる打鍵ガイドのトグル
 
-        public const int EXCHANGE_CODE_TABLE_DECKEY = TOGGLE_HIRAGANA_STROKE_GUIDE + 1;     // 漢直コード系(通常コード系と代替コード系)の入れ替え
+        public const int EXCHANGE_CODE_TABLE_DECKEY = TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY + 1;     // 漢直コード系(通常コード系と代替コード系)の入れ替え
 
         public const int LEFT_SHIFT_BLOCKER_DECKEY = EXCHANGE_CODE_TABLE_DECKEY + 1;        // ブロッカーを左シフトする
         public const int RIGHT_SHIFT_BLOCKER_DECKEY = LEFT_SHIFT_BLOCKER_DECKEY + 1;        // ブロッカーを右シフトする
