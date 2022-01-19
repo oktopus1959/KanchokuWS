@@ -648,6 +648,12 @@ namespace {
             handleKeyPostProc();
         }
 
+        // ストロークのクリア -- 処理のキャンセル
+        void handleClearStroke() {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            handleKeyPostProc();
+        }
+
     protected:
         void handleKeyPostProc() {
             _LOG_DEBUGH(_T("CALLED: handleKeyPostProc"));
