@@ -747,8 +747,8 @@ namespace KanchokuWS
             if (modEx == 0 && keyInfoManager.isSandSShiftedOneshot()) modEx = KeyModifiers.MOD_SPACE;
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
 
-            int kanchokuCode = -1;
-            if (modEx != 0 && !ctrl) {
+            int kanchokuCode = VirtualKeys.GetKanchokuToggleDecKey(mod, (uint)vkey); // 漢直モードのトグルをやるキーか
+            if (kanchokuCode < 0 && modEx != 0 && !ctrl) {
                 // 拡張シフトが有効なのは、Ctrlキーが押されていない場合とする
                 kanchokuCode = VirtualKeys.GetModConvertedDecKeyFromCombo(modEx, (uint)vkey);
                 if (kanchokuCode < 0) {

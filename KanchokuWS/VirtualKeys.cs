@@ -199,6 +199,13 @@ namespace KanchokuWS
             return decoderFuncAssignedExModKeys.Contains(vkey);
         }
 
+        /// <summary> 漢直モードのトグルをやるキーか </summary>
+        public static int GetKanchokuToggleDecKey(uint mod, uint vkey)
+        {
+            int kanchokuCodeWithMod = GetModConvertedDecKeyFromCombo(mod, vkey);
+            return (kanchokuCodeWithMod >= DecoderKeys.TOGGLE_DECKEY && kanchokuCodeWithMod <= DecoderKeys.DEACTIVE2_DECKEY) ? kanchokuCodeWithMod : -1;
+        }
+
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
         private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftModFlag = new Dictionary<uint, ShiftPlane>();
 
