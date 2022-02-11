@@ -31,8 +31,10 @@ struct Settings {
     size_t histHiraganaKeyLength = 2;       // ひらがな履歴検索キーの長さ
     size_t histKatakanaKeyLength = 2;       // カタカナ履歴検索キーの長さ
     size_t histKanjiKeyLength = 1;          // 漢字履歴検索キーの長さ
+    size_t histAbbrevKeyLength = 1;         // 短縮履歴検索キーの長さ
 
     size_t abbrevKeyMaxLength = 16;         // 短縮履歴キーの最大長
+    size_t abbrevGobiMaxLength = 3;         // 短縮履歴キーに付加できる語尾の最大長
 
     bool autoHistSearchEnabled = false;     // 自動履歴検索を行う
     //bool histSearchByCtrlSpace = false;     // Ctrl-Space で履歴検索を行う
@@ -54,7 +56,7 @@ struct Settings {
     bool mazeRemoveHeadSpace = true;        // 交ぜ書き変換で、変換開始位置の空白を削除
     bool mazeRightShiftYomiPos = true;      // 交ぜ書き変換で、読みの開始位置を右移動する
     bool mazeNoIfxConnectKanji = false;     // 交ぜ書き変換で、無活用語の語尾に漢字を許可する
-    bool mazeNoIfxConnectAny = true;       // 交ぜ書き変換で、無活用語の語尾は何でもOKとする
+    bool mazeNoIfxConnectAny = true;        // 交ぜ書き変換で、無活用語の語尾は何でもOKとする
     size_t mazeYomiMaxLen = 10;             // 交ぜ書き変換時の最長入力読み長
     size_t mazeGobiMaxLen = 3;              // 語尾あり交ぜ書きの最長語尾長
     size_t mazeNoIfxGobiMaxLen = 4;         // 交ぜ書きでの無活用語の語尾の最大長

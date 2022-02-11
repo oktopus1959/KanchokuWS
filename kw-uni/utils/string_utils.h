@@ -27,6 +27,8 @@ namespace {
 
     MString MSTR_THREE_DOTS = to_mstr(_T("…")[0]);
 
+    MString MSTR_VERT_BAR = to_mstr('|');
+
     mchar_t strip_delims[] = {' ', '\r', '\n' };
 
     inline bool is_paired_mchar(mchar_t m) {

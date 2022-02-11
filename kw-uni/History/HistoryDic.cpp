@@ -14,7 +14,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 0
+#if 1
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
@@ -607,7 +607,7 @@ namespace {
     public:
         // 新規登録
         void AddNewEntry(const MString& word) {
-            LOG_DEBUG(_T("CALLED: word=%s"), MAKE_WPTR(word));
+            _LOG_DEBUGH(_T("CALLED: word=%s"), MAKE_WPTR(word));
             if (word.empty()) return;
             if (!STROKE_HELP->Find(utils::safe_back(word))) {
                 // 末尾文字がストローク可能文字でなければ、履歴に登録しておく
@@ -621,6 +621,7 @@ namespace {
                 }
             }
             if (word.size() >= SETTINGS->histKatakanaWordMinLength ||
+                word.find('|') != MString::npos ||
                 (utils::is_kanji(word[0]) &&
                     (word.size() >= SETTINGS->histKanjiWordMinLength ||
                     (word.size() >= SETTINGS->histKanjiWordMinLengthEx && !EASY_CHARS->AllContainedIn(word))))) {

@@ -46,7 +46,7 @@ public:
     virtual bool AddMazeDicEntry(const wstring& line, bool bUser, bool bPrim) = 0;
 
     // 指定の見出し語に対する変換候補のセットを取得する
-    virtual const std::vector<MazeResult>& GetCandidates(const MString& key) = 0;
+    virtual const std::vector<MazeResult>& GetCandidates(const MString& key, bool bPrim = false) = 0;
 
     // GetCandidates() が返した候補のうち target を持つものを選択してユーザー辞書にコピー
     virtual void SelectCandidate(const MString& target) = 0;

@@ -179,6 +179,7 @@ public:
 #define LOG_INFO(...)       if (Logger::IsInfoEnabled())  logger.Info(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define LOG_INFOH(...)      if (Logger::IsInfoHEnabled()) logger.InfoH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
 #define LOG_INFOH_COND(flag, ...) if (flag && Logger::IsInfoHEnabled()) logger.InfoH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
+#define LOG_INFO_COND(flag, ...) if (flag && Logger::IsInfoEnabled()) logger.InfoH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
 #define LOG_WARN(...)       logger.Warn(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
 #define LOG_ERROR(...)      logger.Error(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
 

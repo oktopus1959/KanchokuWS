@@ -19,7 +19,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegaki)
 
-#if 0
+#if 1
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
@@ -122,11 +122,12 @@ namespace {
 
         // n番目の候補を選択 ⇒ 必要ならユーザー辞書に追加
         void SelectNth(size_t n) {
-            if (n > 0 && n < mazeCandidates.size()) {
+            LOG_INFOH(_T("CALLED: n=%d, mazeCandidates.size()=%d"), n, mazeCandidates.size());
+            if (n < mazeCandidates.size()) {
                 size_t len = GetYomiLen(mazeCandidates[n].resultStr);
-                if (GetYomiLen(mazeCandidates[n - 1].resultStr) == len) {
-                    // 直前の候補と読み長が同じ、つまり、同じ読みの中で先頭ではなかった
-                    // 再検索して、ユーザー辞書に追加する
+                if (n == 0 || (n > 0 && GetYomiLen(mazeCandidates[n - 1].resultStr) == len)) {
+                    // 先頭候補か、直前の候補と読み長が同じ、つまり、同じ読みの中で先頭ではなかった
+                    // 再検索して、短縮履歴への登録と優先辞書に追加する
                     MAZEGAKI_DIC->GetCandidates(utils::last_substr(firstCandYomi, len));
                     MAZEGAKI_DIC->SelectCandidate(mazeCandidates[n].resultStr);
                 }
@@ -284,6 +285,8 @@ namespace {
                         outputStringAndPostProc(EMPTY_MSTR, cand, candYlen, nullptr, 0);
                     }
                 }
+                // 先頭候補を選択しておく
+                candsByLen.SelectNth(0);
                 // チェイン不要
                 //MAZEGAKI_INFO->SetJustAfterPrevXfer();
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));
