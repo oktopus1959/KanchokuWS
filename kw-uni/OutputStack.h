@@ -378,7 +378,7 @@ public:
 
     // 出力履歴の末尾から4文字以上(ただしブロッカー以降)の漢字列またはカタカナ列をとり出す
     // 3文字以下だったら、ひらがなも含めて4文字まで取り出す
-    // 最後は10文字までのASCII文字列を取り出す(abbrev用)
+    // 最後は10文字までのASCII文字列を取り出す(histMap用)
     template<typename T>
     inline T GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey() const {
         T key = GetLastKanjiOrKatakanaKey<T>();

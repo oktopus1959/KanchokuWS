@@ -127,7 +127,7 @@ namespace {
                 size_t len = GetYomiLen(mazeCandidates[n].resultStr);
                 if (n == 0 || (n > 0 && GetYomiLen(mazeCandidates[n - 1].resultStr) == len)) {
                     // 先頭候補か、直前の候補と読み長が同じ、つまり、同じ読みの中で先頭ではなかった
-                    // 再検索して、短縮履歴への登録と優先辞書に追加する
+                    // 再検索して、変換履歴への登録と優先辞書に追加する
                     MAZEGAKI_DIC->GetCandidates(utils::last_substr(firstCandYomi, len));
                     MAZEGAKI_DIC->SelectCandidate(mazeCandidates[n].resultStr);
                 }

@@ -938,7 +938,7 @@ namespace {
             return mazeResult;
         }
 
-        // GetCandidates() が返した候補のうち output を持つものを選択して短縮履歴登録と優先辞書にコピー
+        // GetCandidates() が返した候補のうち output を持つものを選択して変換履歴登録と優先辞書にコピー
         void SelectCandidate(const MString& output) {
             _LOG_DEBUGH(_T("CALLED: output=%s, mazeCandidates.size()=%d"), MAKE_WPTR(output), mazeCandidates.size());
             if (!mazeCandidates.empty()) {
@@ -947,7 +947,7 @@ namespace {
                 for (size_t n = 0; n < mazeCandidates.size(); ++n) {
                     _LOG_DEBUGH(_T("%d: yomi=%s, output=%s"), n, MAKE_WPTR(mazeCandidates[n].yomi), MAKE_WPTR(mazeCandidates[n].output));
                     if (mazeCandidates[n].output == output) {
-                        // まず、短縮形として履歴登録
+                        // まず、変換履歴登録
                         const MString& myYomi = mazeCandidates[n].yomi;
                         const MString& yomiStem = mazeCandidates[n].yomiStem;
                         MString origYomi = mazeCandidates[n].EntryPtr->GetTrimmedYomi();

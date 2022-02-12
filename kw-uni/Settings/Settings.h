@@ -31,10 +31,10 @@ struct Settings {
     size_t histHiraganaKeyLength = 2;       // ひらがな履歴検索キーの長さ
     size_t histKatakanaKeyLength = 2;       // カタカナ履歴検索キーの長さ
     size_t histKanjiKeyLength = 1;          // 漢字履歴検索キーの長さ
-    size_t histAbbrevKeyLength = 1;         // 短縮履歴検索キーの長さ
+    size_t histMapKeyLength = 1;            // 変換履歴検索キーの長さ
 
-    size_t abbrevKeyMaxLength = 16;         // 短縮履歴キーの最大長
-    size_t abbrevGobiMaxLength = 3;         // 短縮履歴キーに付加できる語尾の最大長
+    size_t histMapKeyMaxLength = 16;        // 変換履歴キーの最大長
+    size_t histMapGobiMaxLength = 3;        // 変換履歴キーに付加できる語尾の最大長
 
     bool autoHistSearchEnabled = false;     // 自動履歴検索を行う
     //bool histSearchByCtrlSpace = false;     // Ctrl-Space で履歴検索を行う

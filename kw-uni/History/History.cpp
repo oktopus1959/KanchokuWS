@@ -241,8 +241,8 @@ namespace {
             MString outStr = result.Word;
             MString outKey = result.Key;
             size_t pos = outStr.find('|');
-            if (pos < SETTINGS->abbrevKeyMaxLength) {
-                // Abbrev候補
+            if (pos < SETTINGS->histMapKeyMaxLength) {
+                // histMap候補
                 outStr = utils::safe_substr(outStr, pos + 1);
             } else if (outStr.empty()) {
                 outKey = HISTORY_STAY_NODE->GetPrevKey();
