@@ -49,7 +49,7 @@ public:
     virtual const std::vector<MazeResult>& GetCandidates(const MString& key, bool bPrim = false) = 0;
 
     // GetCandidates() が返した候補のうち target を持つものを選択してユーザー辞書にコピー
-    virtual void SelectCandidate(const MString& target) = 0;
+    virtual void SelectCandidate(const MString& target, bool bRegMazeHist) = 0;
 
     // 指定の読みと変換形を持つユーザー辞書エントリを削除
     virtual void DeleteEntry(const wstring& yomi, const MString& xfer) = 0;

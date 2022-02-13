@@ -3,33 +3,35 @@
 #include "string_type.h"
 
 namespace {
-    wchar_t TOTEN = 0x3001;     // 、
+    const wchar_t VERT_BAR = '|';     // |
 
-    wchar_t KUTEN = 0x3002;     // 。
+    const wchar_t TOTEN = 0x3001;     // 、
 
-    wchar_t NAKAGURO = 0x30fb;  // '・'
+    const wchar_t KUTEN = 0x3002;     // 。
 
-    wchar_t HAN_NAKAGURO = 0xff65;  // '・'
+    const wchar_t NAKAGURO = 0x30fb;  // '・'
 
-    wchar_t CHOON = 0x30fc;     // 'ー'
+    const wchar_t HAN_NAKAGURO = 0xff65;  // '・'
 
-    wchar_t HAN_CHOON = 0xff70; // 'ー'
+    const wchar_t CHOON = 0x30fc;     // 'ー'
 
-    wchar_t QUESTION_MARK = 0xff1f;   // '？'
+    const wchar_t HAN_CHOON = 0xff70; // 'ー'
+
+    const wchar_t QUESTION_MARK = 0xff1f;   // '？'
 
     inline MString to_mstr(mchar_t x) {
         return x != 0 ? MString(1, x) : MString();
     }
 
-    MString EMPTY_MSTR;
+    const MString EMPTY_MSTR;
 
-    MString MSTR_SPACE = to_mstr(' ');
+    const MString MSTR_SPACE = to_mstr(' ');
 
-    MString MSTR_THREE_DOTS = to_mstr(_T("…")[0]);
+    const MString MSTR_THREE_DOTS = to_mstr(_T("…")[0]);
 
-    MString MSTR_VERT_BAR = to_mstr('|');
+    const MString MSTR_VERT_BAR = to_mstr('|');
 
-    mchar_t strip_delims[] = {' ', '\r', '\n' };
+    const mchar_t strip_delims[] = {' ', '\r', '\n' };
 
     inline bool is_paired_mchar(mchar_t m) {
         return (m & 0xffff0000) != 0;
@@ -941,21 +943,24 @@ namespace utils
         return result;
     }
 
-    inline bool match_key_containing_question(const MString& str, size_t pos, const MString& qKey) {
+    inline bool match_key_containing_question(const MString& str, size_t pos, const MString& qKey, size_t vertBarGobiMaxLen = 2) {
         for (size_t i = 0; i < qKey.size(); ++i) {
             if (i >= str.size()) return false;
+            if (str[i] == VERT_BAR) {
+                return qKey.size() <= i + vertBarGobiMaxLen;
+            }
             if (qKey[i] == '?') continue;
             if (qKey[i] != str[pos + i]) return false;
         }
         return true;
     }
 
-    inline bool startsWithWildKey(const MString& str, const MString qKey) {
-        return str.size() >= qKey.size() && match_key_containing_question(str, 0, qKey);
+    inline bool startsWithWildKey(const MString& str, const MString qKey, size_t vertBarGobiMaxLen) {
+        return (vertBarGobiMaxLen > 0 || str.size() >= qKey.size()) && match_key_containing_question(str, 0, qKey, vertBarGobiMaxLen);
     }
 
     inline bool endsWithWildKey(const MString& str, const MString qKey) {
-        return str.size() >= qKey.size() && match_key_containing_question(str, str.size() - qKey.size(), qKey);
+        return str.size() >= qKey.size() && match_key_containing_question(str, str.size() - qKey.size(), qKey, 0);
     }
 
 } // namespace utils

@@ -50,6 +50,9 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_INT_VALUE(histHiraganaKeyLength);
     SET_INT_VALUE(histKatakanaKeyLength);
     SET_INT_VALUE(histKanjiKeyLength);
+    //SET_INT_VALUE(histMapKeyLength);
+    SET_INT_VALUE(histMapKeyMaxLength);
+    SET_INT_VALUE(histMapGobiMaxLength);
 
     SET_BOOL_VALUE(autoHistSearchEnabled);
     //SET_BOOL_VALUE(histSearchByCtrlSpace);
@@ -63,12 +66,14 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_BOOL_VALUE(useArrowKeyToSelectCandidate);
     SET_BOOL_VALUE(selectHistCandByTab);
 
+    SET_BOOL_VALUE(mazeHistRegisterAnyway);
     SET_BOOL_VALUE(mazegakiSelectFirstCand);
     SET_BOOL_VALUE(mazeBlockerTail);
     SET_BOOL_VALUE(mazeRemoveHeadSpace);
     SET_BOOL_VALUE(mazeRightShiftYomiPos);
     SET_BOOL_VALUE(mazeNoIfxConnectKanji);
     SET_BOOL_VALUE(mazeNoIfxConnectAny);
+    SET_INT_VALUE(mazeHistRegisterMinLen);
     SET_INT_VALUE(mazeYomiMaxLen);
     SET_INT_VALUE(mazeGobiMaxLen);
     SET_INT_VALUE(mazeNoIfxGobiMaxLen);

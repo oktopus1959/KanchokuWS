@@ -291,6 +291,11 @@ namespace KanchokuWS
             this.radioButton_excludeFollowings = new System.Windows.Forms.RadioButton();
             this.radioButton_includeFollowings = new System.Windows.Forms.RadioButton();
             this.tabPage_history = new System.Windows.Forms.TabPage();
+            this.groupBox44 = new System.Windows.Forms.GroupBox();
+            this.label113 = new System.Windows.Forms.Label();
+            this.textBox_mazeHistRegisterMinLen = new System.Windows.Forms.TextBox();
+            this.label112 = new System.Windows.Forms.Label();
+            this.textBox_histMapGobiMaxLength = new System.Windows.Forms.TextBox();
             this.groupBox34 = new System.Windows.Forms.GroupBox();
             this.label91 = new System.Windows.Forms.Label();
             this.groupBox23 = new System.Windows.Forms.GroupBox();
@@ -477,6 +482,7 @@ namespace KanchokuWS
             this.groupBox_globalCtrlKeys.SuspendLayout();
             this.groupBox11.SuspendLayout();
             this.tabPage_history.SuspendLayout();
+            this.groupBox44.SuspendLayout();
             this.groupBox34.SuspendLayout();
             this.groupBox23.SuspendLayout();
             this.groupBox17.SuspendLayout();
@@ -1534,7 +1540,9 @@ namespace KanchokuWS
             this.textBox_vkbOffsetY.Name = "textBox_vkbOffsetY";
             this.textBox_vkbOffsetY.Size = new System.Drawing.Size(30, 19);
             this.textBox_vkbOffsetY.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.textBox_vkbOffsetY, resources.GetString("textBox_vkbOffsetY.ToolTip"));
+            this.toolTip1.SetToolTip(this.textBox_vkbOffsetY, "仮想鍵盤の表示位置(Y軸)\n\n文字送出の対象となるアクティブウィンドウのカレット位置からの\n相対位置として設定します。\n\n0以上の値を設定した場合は、カレットの下" +
+        "端位置が基準点に、\nまた、負の値を設定した場合は、カレットの上端位置が基準点に\nなります。\n\n相対位置は、ウィンドウごとに個別に設定することもできます。\n設定方" +
+        "法については README の「相対位置の個別設定」を\n参照ください。");
             // 
             // textBox_vkbOffsetX
             // 
@@ -1543,7 +1551,9 @@ namespace KanchokuWS
             this.textBox_vkbOffsetX.Name = "textBox_vkbOffsetX";
             this.textBox_vkbOffsetX.Size = new System.Drawing.Size(30, 19);
             this.textBox_vkbOffsetX.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_vkbOffsetX, resources.GetString("textBox_vkbOffsetX.ToolTip"));
+            this.toolTip1.SetToolTip(this.textBox_vkbOffsetX, "仮想鍵盤の表示位置(X軸)\n\n文字送出の対象となるアクティブウィンドウのカレット位置からの\n相対位置として設定します。\n\n0以上の値を設定した場合は、カレットの右" +
+        "端位置が基準点に、\nまた、負の値を設定した場合は、カレットの左端位置が基準点に\nなります。\n\n相対位置は、ウィンドウごとに個別に設定することもできます。\n設定方" +
+        "法については README の「相対位置の個別設定」を\n参照ください。");
             // 
             // label40
             // 
@@ -1773,7 +1783,9 @@ namespace KanchokuWS
             this.textBox_deckeyInfiniteLoopDetectCount.Name = "textBox_deckeyInfiniteLoopDetectCount";
             this.textBox_deckeyInfiniteLoopDetectCount.Size = new System.Drawing.Size(45, 19);
             this.textBox_deckeyInfiniteLoopDetectCount.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_deckeyInfiniteLoopDetectCount, resources.GetString("textBox_deckeyInfiniteLoopDetectCount.ToolTip"));
+            this.toolTip1.SetToolTip(this.textBox_deckeyInfiniteLoopDetectCount, "キーボードフックの無限ループ検出回数\n\nキーボードフックで処理されたキー入力は、当アプリ独自の extraInfo を設定してから\nSendInput を呼び出す" +
+        "ようにして、無限ループに陥ることのないようにしています。\n\n万一、無限ループに陥った場合にそれを検出するための呼び出し回数を設定します。\n同じキーの呼び出しがこ" +
+        "こで設定した回数だけ連続したら、強制的に漢直WinSを\n終了させます。");
             // 
             // label33
             // 
@@ -3556,6 +3568,7 @@ namespace KanchokuWS
             // 
             // tabPage_history
             // 
+            this.tabPage_history.Controls.Add(this.groupBox44);
             this.tabPage_history.Controls.Add(this.groupBox34);
             this.tabPage_history.Controls.Add(this.groupBox23);
             this.tabPage_history.Controls.Add(this.groupBox17);
@@ -3572,12 +3585,61 @@ namespace KanchokuWS
             this.tabPage_history.Text = "履歴・交ぜ書き";
             this.tabPage_history.UseVisualStyleBackColor = true;
             // 
+            // groupBox44
+            // 
+            this.groupBox44.Controls.Add(this.label113);
+            this.groupBox44.Controls.Add(this.textBox_mazeHistRegisterMinLen);
+            this.groupBox44.Controls.Add(this.label112);
+            this.groupBox44.Controls.Add(this.textBox_histMapGobiMaxLength);
+            this.groupBox44.Location = new System.Drawing.Point(312, 206);
+            this.groupBox44.Name = "groupBox44";
+            this.groupBox44.Size = new System.Drawing.Size(261, 63);
+            this.groupBox44.TabIndex = 4;
+            this.groupBox44.TabStop = false;
+            this.groupBox44.Text = "交ぜ書き変換履歴";
+            // 
+            // label113
+            // 
+            this.label113.AutoSize = true;
+            this.label113.Location = new System.Drawing.Point(18, 19);
+            this.label113.Name = "label113";
+            this.label113.Size = new System.Drawing.Size(125, 15);
+            this.label113.TabIndex = 34;
+            this.label113.Text = "履歴登録の最小語幹長";
+            // 
+            // textBox_mazeHistRegisterMinLen
+            // 
+            this.textBox_mazeHistRegisterMinLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_mazeHistRegisterMinLen.Location = new System.Drawing.Point(146, 17);
+            this.textBox_mazeHistRegisterMinLen.Name = "textBox_mazeHistRegisterMinLen";
+            this.textBox_mazeHistRegisterMinLen.Size = new System.Drawing.Size(42, 19);
+            this.textBox_mazeHistRegisterMinLen.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_mazeHistRegisterMinLen, resources.GetString("textBox_mazeHistRegisterMinLen.ToolTip"));
+            // 
+            // label112
+            // 
+            this.label112.AutoSize = true;
+            this.label112.Location = new System.Drawing.Point(18, 41);
+            this.label112.Name = "label112";
+            this.label112.Size = new System.Drawing.Size(113, 15);
+            this.label112.TabIndex = 32;
+            this.label112.Text = "履歴変換時の語尾長";
+            // 
+            // textBox_histMapGobiMaxLength
+            // 
+            this.textBox_histMapGobiMaxLength.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_histMapGobiMaxLength.Location = new System.Drawing.Point(146, 39);
+            this.textBox_histMapGobiMaxLength.Name = "textBox_histMapGobiMaxLength";
+            this.textBox_histMapGobiMaxLength.Size = new System.Drawing.Size(42, 19);
+            this.textBox_histMapGobiMaxLength.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_histMapGobiMaxLength, resources.GetString("textBox_histMapGobiMaxLength.ToolTip"));
+            // 
             // groupBox34
             // 
             this.groupBox34.Controls.Add(this.label91);
-            this.groupBox34.Location = new System.Drawing.Point(312, 209);
+            this.groupBox34.Location = new System.Drawing.Point(312, 275);
             this.groupBox34.Name = "groupBox34";
-            this.groupBox34.Size = new System.Drawing.Size(261, 97);
+            this.groupBox34.Size = new System.Drawing.Size(261, 49);
             this.groupBox34.TabIndex = 26;
             this.groupBox34.TabStop = false;
             this.groupBox34.Text = "交ぜ書きブロッカーとは";
@@ -3588,10 +3650,9 @@ namespace KanchokuWS
             this.label91.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label91.Location = new System.Drawing.Point(5, 17);
             this.label91.Name = "label91";
-            this.label91.Size = new System.Drawing.Size(254, 75);
+            this.label91.Size = new System.Drawing.Size(252, 30);
             this.label91.TabIndex = 2;
-            this.label91.Text = "ミニバッファ(直前の出力内容)から交ぜ書き変換ため\r\nの読みを取得する際に、出力の末尾から見ていって、\r\n「ここで取得をストップする」というフラグのことです。\r\n" +
-    "詳細は、ここにマウスポインタを置いてツールチップを参\r\n照してください。";
+            this.label91.Text = "詳細は、ここにマウスポインタを置いてツールチップを参\r\n照してください。";
             this.toolTip1.SetToolTip(this.label91, resources.GetString("label91.ToolTip"));
             // 
             // groupBox23
@@ -3609,7 +3670,7 @@ namespace KanchokuWS
             this.groupBox23.Controls.Add(this.checkBox_mazegakiSelectFirstCand);
             this.groupBox23.Location = new System.Drawing.Point(312, 10);
             this.groupBox23.Name = "groupBox23";
-            this.groupBox23.Size = new System.Drawing.Size(261, 193);
+            this.groupBox23.Size = new System.Drawing.Size(261, 191);
             this.groupBox23.TabIndex = 3;
             this.groupBox23.TabStop = false;
             this.groupBox23.Text = "交ぜ書き変換";
@@ -3648,7 +3709,7 @@ namespace KanchokuWS
             // textBox_mazeGobiLikeTailLen
             // 
             this.textBox_mazeGobiLikeTailLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeGobiLikeTailLen.Location = new System.Drawing.Point(138, 166);
+            this.textBox_mazeGobiLikeTailLen.Location = new System.Drawing.Point(146, 166);
             this.textBox_mazeGobiLikeTailLen.Name = "textBox_mazeGobiLikeTailLen";
             this.textBox_mazeGobiLikeTailLen.Size = new System.Drawing.Size(42, 19);
             this.textBox_mazeGobiLikeTailLen.TabIndex = 8;
@@ -3666,7 +3727,7 @@ namespace KanchokuWS
             // textBox_mazeGobiMaxLen
             // 
             this.textBox_mazeGobiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(138, 144);
+            this.textBox_mazeGobiMaxLen.Location = new System.Drawing.Point(146, 144);
             this.textBox_mazeGobiMaxLen.Name = "textBox_mazeGobiMaxLen";
             this.textBox_mazeGobiMaxLen.Size = new System.Drawing.Size(42, 19);
             this.textBox_mazeGobiMaxLen.TabIndex = 7;
@@ -3686,7 +3747,7 @@ namespace KanchokuWS
             // textBox_mazeYomiMaxLen
             // 
             this.textBox_mazeYomiMaxLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(138, 122);
+            this.textBox_mazeYomiMaxLen.Location = new System.Drawing.Point(146, 122);
             this.textBox_mazeYomiMaxLen.Name = "textBox_mazeYomiMaxLen";
             this.textBox_mazeYomiMaxLen.Size = new System.Drawing.Size(42, 19);
             this.textBox_mazeYomiMaxLen.TabIndex = 6;
@@ -3700,7 +3761,9 @@ namespace KanchokuWS
             this.checkBox_mazeRemoveHeadSpace.Size = new System.Drawing.Size(219, 19);
             this.checkBox_mazeRemoveHeadSpace.TabIndex = 3;
             this.checkBox_mazeRemoveHeadSpace.Text = "変換後に読みの先頭の空白文字を削除";
-            this.toolTip1.SetToolTip(this.checkBox_mazeRemoveHeadSpace, resources.GetString("checkBox_mazeRemoveHeadSpace.ToolTip"));
+            this.toolTip1.SetToolTip(this.checkBox_mazeRemoveHeadSpace, "ONにすると、交ぜ書き変換後、読みの先頭の空白文字が削除されます。\n（ひらがな⇒カタカナ変換時にも適用されます）\n\n例：「明日彼女にあう」の「あう」を「逢う」に変" +
+        "換したい場合、\n「彼女にあう」を変換すると「彼女似合う」になってしまいます。\nこれを避けるには、当項目をONにして、「彼女に あう」のように\n「に」と「あう」の" +
+        "間に空白を入れてから変換すると、「彼女に逢う」\nのように変換されます。");
             this.checkBox_mazeRemoveHeadSpace.UseVisualStyleBackColor = true;
             // 
             // checkBox_mazeBlockerTail
@@ -3723,7 +3786,8 @@ namespace KanchokuWS
             this.checkBox_mazegakiSelectFirstCand.TabIndex = 0;
             this.checkBox_mazegakiSelectFirstCand.Text = "先頭候補を無条件に出力する";
             this.toolTip1.SetToolTip(this.checkBox_mazegakiSelectFirstCand, "交ぜ書き変換の結果が複数あっても、先頭候補を無条件に出力します。\r\n\r\n他の候補を出力したい場合は、いったん Esc で変換前の文字列に戻してから\r\n再度、交ぜ書" +
-        "き変換を実行すると、縦列鍵盤表示になります。");
+        "き変換を実行すると、縦列鍵盤表示になります。\r\n\r\nなお、この設定をONにしておくと、交ぜ書き変換履歴の登録がうまく行かない\r\n場合があります。その場合は、この" +
+        "設定をOFFにしてください。");
             this.checkBox_mazegakiSelectFirstCand.UseVisualStyleBackColor = true;
             // 
             // groupBox17
@@ -3842,7 +3906,9 @@ namespace KanchokuWS
             this.checkBox_selectFirstCandByEnter.Size = new System.Drawing.Size(180, 19);
             this.checkBox_selectFirstCandByEnter.TabIndex = 0;
             this.checkBox_selectFirstCandByEnter.Text = "Enterキーで先頭候補を選択する";
-            this.toolTip1.SetToolTip(this.checkBox_selectFirstCandByEnter, resources.GetString("checkBox_selectFirstCandByEnter.ToolTip"));
+            this.toolTip1.SetToolTip(this.checkBox_selectFirstCandByEnter, "自動履歴検索で横列表示された候補の先頭候補を\nEnterキーで選択するかを設定します。\n\n当設定をOFFに設定してあるのに、つい選択するつもりで\nEnterを押し" +
+        "てしまった場合は、出力先ウィンドウでEnter前の\n位置にカレットを移動させてからブロッカーを解除して手動で\n履歴検索を実行してください。\n\nなお、履歴候補が縦" +
+        "列表示されている状態では、先頭候補が\nEnterキーで選択されます。");
             this.checkBox_selectFirstCandByEnter.UseVisualStyleBackColor = true;
             // 
             // groupBox14
@@ -3922,7 +3988,7 @@ namespace KanchokuWS
             this.label_okResultHist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_okResultHist.AutoSize = true;
             this.label_okResultHist.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultHist.Location = new System.Drawing.Point(499, 325);
+            this.label_okResultHist.Location = new System.Drawing.Point(499, 327);
             this.label_okResultHist.Name = "label_okResultHist";
             this.label_okResultHist.Size = new System.Drawing.Size(65, 15);
             this.label_okResultHist.TabIndex = 19;
@@ -4094,7 +4160,7 @@ namespace KanchokuWS
             // checkBox_mazeRightShiftYomiPos
             // 
             this.checkBox_mazeRightShiftYomiPos.AutoSize = true;
-            this.checkBox_mazeRightShiftYomiPos.Location = new System.Drawing.Point(311, 312);
+            this.checkBox_mazeRightShiftYomiPos.Location = new System.Drawing.Point(320, 345);
             this.checkBox_mazeRightShiftYomiPos.Name = "checkBox_mazeRightShiftYomiPos";
             this.checkBox_mazeRightShiftYomiPos.Size = new System.Drawing.Size(201, 19);
             this.checkBox_mazeRightShiftYomiPos.TabIndex = 2;
@@ -5466,6 +5532,8 @@ namespace KanchokuWS
             this.groupBox11.PerformLayout();
             this.tabPage_history.ResumeLayout(false);
             this.tabPage_history.PerformLayout();
+            this.groupBox44.ResumeLayout(false);
+            this.groupBox44.PerformLayout();
             this.groupBox34.ResumeLayout(false);
             this.groupBox34.PerformLayout();
             this.groupBox23.ResumeLayout(false);
@@ -5928,5 +5996,10 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label111;
         private System.Windows.Forms.Button button_readBushuAssoc;
         private System.Windows.Forms.CheckBox checkBox_yamanobeEnabled;
+        private System.Windows.Forms.Label label112;
+        private System.Windows.Forms.TextBox textBox_histMapGobiMaxLength;
+        private System.Windows.Forms.GroupBox groupBox44;
+        private System.Windows.Forms.Label label113;
+        private System.Windows.Forms.TextBox textBox_mazeHistRegisterMinLen;
     }
 }

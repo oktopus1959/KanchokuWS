@@ -357,6 +357,9 @@ namespace KanchokuWS
         public static int HistHiraganaKeyLength { get; private set; } = 0;
         public static int HistKatakanaKeyLength { get; private set; } = 0;
         public static int HistKanjiKeyLength { get; private set; } = 0;
+        public static int HistMapKeyMaxLength { get; private set; } = 16;        // 変換履歴キーの最大長
+        public static int HistMapGobiMaxLength { get; private set; } = 3;        // 変換履歴キーに付加できる語尾の最大長
+
         /// <summary>自動履歴検索</summary>
         public static bool AutoHistSearchEnabled { get; private set; } = false;
         //public static bool HistSearchByCtrlSpace { get; private set; } = false;
@@ -405,6 +408,12 @@ namespace KanchokuWS
 
         /// <summary>無活用語の語尾に任意文字を許可する</summary>
         public static bool MazeNoIfxConnectAny { get; set; } = false;
+
+        /// <summary>交ぜ書き変換での選択を強制的に履歴登録する(除外登録されていたら復活する)</summary>
+        public static bool MazeHistRegisterAnyway { get; set; } = false;
+
+        /// <summary>交ぜ書き変換を履歴登録する際の最小長</summary>
+        public static int MazeHistRegisterMinLen { get; set; } = 2;
 
         //------------------------------------------------------------------------------
         // 各種変換
@@ -876,6 +885,8 @@ namespace KanchokuWS
             HistHiraganaKeyLength = addDecoderSetting("histHiraganaKeyLength", 2, 1);           // ひらがな始まり履歴の検索を行う際のキー長
             HistKatakanaKeyLength = addDecoderSetting("histKatakanaKeyLength", 2, 1);           // カタカナ履歴の検索を行う際のキー長
             HistKanjiKeyLength = addDecoderSetting("histKanjiKeyLength", 1, 1);                 // 漢字履歴の検索を行う際のキー長
+            HistMapKeyMaxLength = addDecoderSetting("histMapKeyMaxLength", 8, 4);               // 変換履歴キーの最大長
+            HistMapGobiMaxLength = addDecoderSetting("histMapGobiMaxLength", 3, 0);             // 変換履歴キーに付加できる語尾の最大長
             AutoHistSearchEnabled = addDecoderSetting("autoHistSearchEnabled", true);           // 自動履歴検索を行う
             //HistSearchByCtrlSpace = addDecoderSetting("histSearchByCtrlSpace", true);           // Ctrl-Space で履歴検索を行う
             //VirtualKeys.AddCtrlDeckeyAndCombo(" ", DecoderKeys.CTRL_SPACE_DECKEY, 0);           // 登録
@@ -897,6 +908,8 @@ namespace KanchokuWS
             MazeRightShiftYomiPos = addDecoderSetting("mazeRightShiftYomiPos", false);          // 交ぜ書き変換で、読みの開始位置を右移動する
             MazeNoIfxConnectKanji = addDecoderSetting("mazeNoIfxConnectKanji", true);           // 無活用語の語尾に漢字を許可する
             MazeNoIfxConnectAny = addDecoderSetting("mazeNoIfxConnectAny", false);              // 無活用語の語尾に任意文字を許可する
+            MazeHistRegisterAnyway = addDecoderSetting("mazeHistRegisterAnyway", false);        // 交ぜ書き変換での選択を強制的に履歴登録する(除外登録されていたら復活する)
+            MazeHistRegisterMinLen = addDecoderSetting("mazeHistRegisterMinLen", 2, 0);         // 交ぜ書き変換を履歴登録する際の最小長
             MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
             MazeGobiLikeTailLen = addDecoderSetting("mazeGobiLikeTailLen", 2, 0);               // 交ぜ書き変換で、語尾に含めてしまう末尾の長さ

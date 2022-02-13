@@ -14,7 +14,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 1
+#if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
@@ -96,15 +96,7 @@ namespace {
             }
         }
 
-    public:
-        void Insert(mchar_t mch, const MString& s) {
-            if (!hashToStrMap.FindWord(s)) {
-                insert(mch, utils::get_hash(s));
-            }
-        }
-
-        std::set<MString> GetSet(mchar_t mch) {
-            std::set<MString> result;
+        void getSet(std::set<MString>& result, mchar_t mch) {
             auto iter = dic.find(mch);
             if (iter != dic.end()) {
                 for (auto hsh : iter->second) {
@@ -112,6 +104,18 @@ namespace {
                     if (!set_.empty()) result.insert(set_.begin(), set_.end());
                 }
             }
+        }
+
+    public:
+        void Insert(mchar_t mch, const MString& s) {
+            if (!hashToStrMap.FindWord(s)) {
+                insert(mch, utils::get_hash(s));
+            }
+        }
+
+        std::set<MString> GetSetByMchar(mchar_t mch) {
+            std::set<MString> result;
+            getSet(result, mch);
             return result;
         }
     };
@@ -136,10 +140,31 @@ namespace {
 
         // key の末尾n文字にマッチする文字列集合を取得する('?' も考慮, ただし少なくとも1文字は'?'以外を含む)
         std::set<MString> GetSet(const MString& key, size_t n) {
+            _LOG_DEBUGH(_T("ENTER: key=%s, n=%d"), MAKE_WPTR(key), n);
             std::set<MString> result;
+            std::set<MString> histMaps; // '|' を含む候補
             size_t start = n >= key.size() ? 0 : key.size() - n;
             size_t nkey = key.size() - start;
             for (size_t i = 0; i < histCharDics.size() && i < nkey; ++i) {
+                if (i > 0 && nkey <= i + SETTINGS->histMapGobiMaxLength) {
+                    // '|' を含む候補を集める(ただし最大語尾長以下の場合)
+                    for (auto w : result) {
+                        if (w.size() > i && w[i] == VERT_BAR) {
+                            // w[i] == '|' だった。i == 1 (つまり、読みが1文字)の場合は、語尾はひらがなのみ許容する
+                            if (i == 1) {
+                                bool flag = true;
+                                for (size_t j = i; j < nkey; ++j) {
+                                    if (!utils::is_hiragana(key[start + j])) {
+                                        flag = false;
+                                        break;
+                                    }
+                                }
+                                if (!flag) continue;    // ひらがな以外の語尾があったので、採用しない
+                            }
+                            histMaps.insert(w);
+                        }
+                    }
+                }
                 auto mch = key[start + i];
                 if (mch == '?') {
                     // '?' なら全部にマッチするとみなし、長さだけをチェック
@@ -157,13 +182,15 @@ namespace {
                     continue; 
                 }
                 if (result.empty()) {
-                    result = histCharDics[i].GetSet(mch);
+                    result = histCharDics[i].GetSetByMchar(mch);
                 } else {
-                    utils::apply_intersection(result, histCharDics[i].GetSet(mch));
+                    utils::apply_intersection(result, histCharDics[i].GetSetByMchar(mch));
                 }
                 if (result.empty()) break;
             }
-            _LOG_DEBUGH(_T("result.size=%d"), result.size());
+            _LOG_DEBUGH(_T("result.size=%d, histMaps.size()=%d"), result.size(), histMaps.size());
+            utils::apply_union(result, histMaps);
+            _LOG_DEBUGH(_T("LEAVE: result.size=%d"), result.size());
             return result;
         }
 
@@ -178,9 +205,9 @@ namespace {
                     auto mch = key0[start + i];
                     if (mch == '?') continue; // '?' なら全部にマッチするとみなす
                     if (temp_set.empty())
-                        temp_set = histCharDics[i].GetSet(mch);
+                        temp_set = histCharDics[i].GetSetByMchar(mch);
                     else
-                        utils::apply_intersection(temp_set, histCharDics[i].GetSet(mch));
+                        utils::apply_intersection(temp_set, histCharDics[i].GetSetByMchar(mch));
                     if (temp_set.empty()) break;
                 }
                 if (!temp_set.empty()) {
@@ -239,7 +266,7 @@ namespace {
         }
 
         void PushEntry(const MString& word, size_t minlen = 2) {
-            LOG_INFO(_T("CALLED: word=%s, minlen=%d"), MAKE_WPTR(word), minlen);
+            _LOG_DEBUGH(_T("CALLED: word=%s, minlen=%d"), MAKE_WPTR(word), minlen);
             clearRevertPos();
             if (word.size() >= minlen) {
                 if (!usedList.empty()) {
@@ -305,13 +332,14 @@ namespace {
         // ・wlen == 0 なら単語長 >= 2
         // ・wlen >= 9 なら単語長 >= 9
         // ・ただし、キーが1文字(keylen==1)なら、候補列から1文字単語は除く
-        void ExtractUsedWords(size_t keylen, HistResultList& outvec, std::set<MString>& set_, size_t wlen = 0) {
-            LOG_DEBUG(_T("CALLED: keylen=%d, wlen=%d"), keylen, wlen);
+        void ExtractUsedWords(const MString& key, HistResultList& outvec, std::set<MString>& set_, size_t wlen = 0) {
+            LOG_DEBUG(_T("CALLED: key=%s, wlen=%d"), MAKE_WPTR(key), wlen);
+            size_t keylen = key.size();
             for (const auto& w : usedList) {
                 if ((w.size() == wlen || (wlen == 0 && w.size() >= 2) || (wlen >= 9 && w.size() > 9)) && utils::contains(set_, w)) {
                     if (keylen != 1 || w.size() >= 2) {
                         // キーが1文字なら、候補列から1文字単語は除く
-                        outvec.PushHistory(w);
+                        outvec.PushHistory(key, w);
                         set_.erase(w);
                     }
                 }
@@ -323,7 +351,7 @@ namespace {
         // ・maxlen == 0 なら単語長 >= 2
         // ・1 <= maxlen <= 3 なら難打鍵文字を含むものだけ
         // ・maxlen >= 9 なら単語長 >= 9
-        void ExtractUsedWords(HistResultList& outvec, size_t n, size_t minlen = 0, size_t maxlen = 0) {
+        void ExtractUsedWords(const MString& key, HistResultList& outvec, size_t n, size_t minlen = 0, size_t maxlen = 0) {
             LOG_DEBUG(_T("CALLED: size=%d, minlen=%d, maxlen=%d"), n, minlen, maxlen);
             auto checkCond = [minlen, maxlen](const MString& w) {
                 if (w.size() >= minlen && w.size() <= maxlen && (maxlen > 3 || !EASY_CHARS->AllContainedIn(w))) return true;
@@ -334,7 +362,7 @@ namespace {
             size_t i = 0;
             for (const auto& w : usedList) {
                 if (checkCond(w)) {
-                    outvec.PushHistory(w);
+                    outvec.PushHistory(key, w);
                     if (++i >= n) break;
                 }
             }
@@ -621,7 +649,7 @@ namespace {
                 }
             }
             if (word.size() >= SETTINGS->histKatakanaWordMinLength ||
-                word.find('|') != MString::npos ||
+                word.find(VERT_BAR) != MString::npos ||
                 (utils::is_kanji(word[0]) &&
                     (word.size() >= SETTINGS->histKanjiWordMinLength ||
                     (word.size() >= SETTINGS->histKanjiWordMinLengthEx && !EASY_CHARS->AllContainedIn(word))))) {
@@ -665,14 +693,16 @@ namespace {
     private:
         // resultList に最近使ったものから取得した候補を格納し、pasts には set_ に含まれるものでそれ以外の候補を格納する
         // wlen > 0 なら、その長さの候補だけを返す
-        void extract_and_copy(const MString& key, bool bWild, std::set<MString>& set_, HistResultList& pastList, size_t wlen = 0) {
+        void extract_and_copy(const MString& key, std::set<MString>& set_, HistResultList& pastList, size_t wlen, bool bWild = false) {
+            if (!bWild) bWild = key.find('?') != MString::npos;
+            _LOG_DEBUGH(_T("extract_and_copy(key=%s, bWild=%s, set_.size()=%d, pastList.size()=%d, wlen=%d"), MAKE_WPTR(key), BOOL_TO_WPTR(bWild), set_.size(), pastList.Size(), wlen);
             resultList.SetKeyInfo(key, bWild);
             size_t keylen = key.size();
-            usedList.ExtractUsedWords(keylen, resultList, set_, wlen);
+            usedList.ExtractUsedWords(key, resultList, set_, wlen);
             for (const auto& s : set_) {
                 // keylen == 1 なら1文字単語は対象外
                 if ((wlen > 0 && s.size() == wlen) || (wlen == 0 && (keylen != 1 || s.size() >= 2))) {
-                    pastList.PushHistory(s);
+                    pastList.PushHistory(key, s);
                 }
             }
         }
@@ -688,32 +718,43 @@ namespace {
                 std::set<MString> set_;
                 const MString& key1 = items[itemsSize - 2];
                 const MString& key2 = items[itemsSize - 1];
+                _LOG_DEBUGH(_T("hist4CharsDic.FindMatchingWords(%s, %s)"), MAKE_WPTR(key1), MAKE_WPTR(key2));
                 matchLen = hist4CharsDic.FindMatchingWords(key1, key2, set_) + key2.size() + 1;
-                _LOG_DEBUGH(_T("extract_and_copy(keyLen=%d, set=hist4CharsDic.FindMatchingWords(%s, %s), pastList=(empty), wlen=0, bWild=true"), matchLen, MAKE_WPTR(key1), MAKE_WPTR(key2));
-                extract_and_copy(utils::last_substr(key, matchLen), true, set_, pastList, 0);
+                _LOG_DEBUGH(_T("matchLen=%d, set_.size()=%d"), matchLen, set_.size());
+                extract_and_copy(utils::last_substr(key, matchLen), set_, pastList, 0, true);
                 _LOG_DEBUGH(_T("resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
             }
             return matchLen;
         }
 
-        // key の pos 位置から4文字(i.e., key[pos, pos+4])にマッチする候補の取得
+        // key の pos 位置以降がマッチする候補の取得
+        // まず key の pos 位置から4文字(i.e., key[pos, pos+4])にマッチする候補を取得し、それに対して startsWithWildKey() でさらにマッチをかける
         // resultList に最近使ったものから取得した候補を格納し、pastList にはそれ以外の候補を格納する
         // wlen > 0 なら、その長さの候補だけを返す
         void extract_and_copy_for_longer_than_4(const MString& key, size_t wlen, size_t pos, HistResultList& pastList) {
             auto subStr = key.substr(pos);
             auto subKey = subStr.substr(0, 4);
-            std::set<MString> set_ = utils::filter(hist4CharsDic.GetSet(subKey, 4), [subStr](const auto& s) {return utils::startsWithWildKey(s, subStr);});
-            _LOG_DEBUGH(_T("extract_and_copy(keyLen=%d, set=filter(hist4CharsDic.GetSet(%s, 4)), pastList=(empty), wlen=%d"), subStr.size(), MAKE_WPTR(subKey), wlen);
-            extract_and_copy(subStr, subStr.find('?') != MString::npos, set_, pastList, wlen);
-            _LOG_DEBUGH(_T("filter(hist4CharsDic, %d-4): resultList.size()=%d, pastList.size()=%d"), pos, resultList.Size(), pastList.Size());
+            size_t gobiLen = SETTINGS->histMapGobiMaxLength;
+            _LOG_DEBUGH(_T("subStr=%s, subKey=%s"), MAKE_WPTR(subStr), MAKE_WPTR(subKey));
+            std::set<MString> set_ = utils::filter(hist4CharsDic.GetSet(subKey, 4), [subStr, gobiLen](const auto& s) {return utils::startsWithWildKey(s, subStr, gobiLen);});
+            _LOG_DEBUGH(_T("filter(hist4CharsDic.GetSet(subKey=%s, 4), startsWithWildKey(s, qKey=%s)): set_.size()=%d"), MAKE_WPTR(subKey), MAKE_WPTR(subStr), set_.size());
+            if (!set_.empty()) {
+                //bool bWild = subStr.find('?') != MString::npos;
+                extract_and_copy(subStr, set_, pastList, wlen);
+            }
+            _LOG_DEBUGH(_T("RESULT: resultList.size()=%d, pastList.size()=%d"), pos, resultList.Size(), pastList.Size());
         }
 
         // keyの末尾n文字にマッチする候補を取得して out に返す
         // wlen は候補文字列の長さに関する制約
         void extract_and_copy_for_tail_n(const MString& key, size_t n, HistResultList& out, size_t wlen = 0) {
+            _LOG_DEBUGH(_T("CALLED: key=%s, n=%d, wlen=%d)"), MAKE_WPTR(key), n, wlen);
             std::set<MString> set_ = hist4CharsDic.GetSet(key, n);
-            MString tailKey = utils::last_substr(key, n);
-            extract_and_copy(tailKey, tailKey.find('?') != MString::npos, set_, out, wlen);
+            if (!set_.empty()) {
+                //MString tailKey = utils::last_substr(key, n);
+                //bool bWild = tailKey.find('?') != MString::npos;
+                extract_and_copy(utils::last_substr(key, n), set_, out, wlen);
+            }
         }
 
     public:
@@ -731,43 +772,62 @@ namespace {
             size_t maxlen = len >= 0 ? len : max(minlen, (size_t)abs(len));
             if (key.empty()) {
                 // ここでは len < 0 の場合も考慮
-                usedList.ExtractUsedWords(resultList, 100, minlen, maxlen);
+                usedList.ExtractUsedWords(key, resultList, 100, minlen, maxlen);
                 resultKey = key;
             } else {
                 // ここでは maxlen は無視する
                 // 直近以外の過去に使った履歴のリスト
                 HistResultList pastList;
 
+                // マッチしたキーの長さ(0ならキー全体がマッチ、>0 ならマッチした末尾の長さ)
+                size_t resultKeyLen = 0;
+
                 // key が '*' を含んでいる場合にワイルドカードのマッチングを行う
-                size_t resultKeyLen = extract_and_copy_for_wildecard_included(key, pastList);
+                resultKeyLen = extract_and_copy_for_wildecard_included(key, pastList);
+
+#define IS_LIST_EMPTY() (resultList.Empty() && pastList.Empty())
+
+                bool bListEmpty = IS_LIST_EMPTY();
+                bool bAll = SETTINGS->histGatherAllCandidates && bListEmpty;
 
                 // Phase-A
                 size_t keySize = key.size();
 
-                // keyが5文字以上の場合に、先頭の4文字についても試す(末尾4文字は、この後の Phase-B で試される
-                if (resultList.Empty() && pastList.Empty() && keySize >= 5) {
-                    resultKeyLen = 0;
+                // keyが5文字以上の場合には、先頭からマッチングさせる(4文字以下の場合は、この後の Phase-B で試される)
+                if ((bAll || bListEmpty) && keySize >= 5) {
+                    // "■■■■■" (5)
+                    if (bListEmpty) resultKeyLen = 0; // 最終的にマッチすれば、先頭からのマッチになるので 0 でよい
                     extract_and_copy_for_longer_than_4(key, minlen, 0, pastList);
                 }
+                bListEmpty = IS_LIST_EMPTY();
 
-                // keyが6文字の場合に、中間の4文字についても試す(末尾4文字は、この後の Phase-B で試される
-                if (resultList.Empty() && pastList.Empty() && keySize == 6) {
-                    resultKeyLen = 5;
+                // 上記がマッチせず、keyが6文字以上の場合には、key.substr(1) について試す
+                if ((bAll || bListEmpty) && keySize >= 6) {
+                    // "□■■■■■" (6)
+                    if (bListEmpty) resultKeyLen = 5;
                     extract_and_copy_for_longer_than_4(key, minlen, 1, pastList);
                 }
+                bListEmpty = IS_LIST_EMPTY();
 
-                // keyが7文字以上の場合に、末尾側の中間の4文字についても試す(最末尾4文字は、この後の Phase-B で試される
-                if (resultList.Empty() && pastList.Empty() && keySize >= 7) {
-                    resultKeyLen = 6;
-                    extract_and_copy_for_longer_than_4(key, minlen, keySize - 6, pastList);
-                    if (resultList.Empty() && pastList.Empty()) {
-                        resultKeyLen = 5;
-                        extract_and_copy_for_longer_than_4(key, minlen, keySize - 5, pastList);
+                // 上記がマッチせず、keyが7文字以上の場合には、末尾から6文字および5文字について試す
+                if ((bAll || bListEmpty) && keySize >= 7) {
+                    if (keySize >= 8) {
+                        // "□□■■■■■■" (8)
+                        if (bListEmpty) resultKeyLen = 6;
+                        extract_and_copy_for_longer_than_4(key, minlen, keySize - resultKeyLen, pastList);
+                    }
+                    bListEmpty = IS_LIST_EMPTY();
+                    if (keySize == 7 || (bAll || bListEmpty)) {
+                        // "□□■■■■■" (7)
+                        // "□□□■■■■■" (8)
+                        if (bListEmpty) resultKeyLen = 5;
+                        extract_and_copy_for_longer_than_4(key, minlen, keySize - resultKeyLen, pastList);
                     }
                 }
+                bListEmpty = IS_LIST_EMPTY();
 
-                // Phase-B
-                if (resultList.Empty() && pastList.Empty()) {
+                // Phase-B (4文字以下のマッチング)
+                if (bAll || bListEmpty) {
                     size_t minKana = SETTINGS->histHiraganaKeyLength;
                     size_t minKata = SETTINGS->histKatakanaKeyLength;
                     size_t minKanj = SETTINGS->histKanjiKeyLength;
@@ -783,29 +843,29 @@ namespace {
                     };
 
                     if (checkFunc(4)) {
-                        resultKeyLen = 4;
-                        _LOG_DEBUGH(_T("extract_and_copy_for_tail_n(key=%s, n=4, minlen=%d)"), MAKE_WPTR(key), minlen);
+                        if (bListEmpty) resultKeyLen = 4;
                         extract_and_copy_for_tail_n(key, 4, pastList, minlen);
                         _LOG_DEBUGH(_T("histDic4: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
                     }
-                    if (resultList.Empty() && pastList.Empty()) {
+                    bListEmpty = IS_LIST_EMPTY();
+
+                    if (bAll || bListEmpty) {
                         if (checkFunc(3)) {
-                            resultKeyLen = 3;
-                            _LOG_DEBUGH(_T("extract_and_copy_for_tail_n(key=%s, n=3, minlen=%d)"), MAKE_WPTR(key), minlen);
+                            if (bListEmpty) resultKeyLen = 3;
                             extract_and_copy_for_tail_n(key, 3, pastList, minlen);
                             _LOG_DEBUGH(_T("histDic3: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
                         }
-                        if (resultList.Empty() && pastList.Empty()) {
+                        bListEmpty = IS_LIST_EMPTY();
+                        if (bAll || bListEmpty) {
                             if (checkFunc(2)) {
-                                resultKeyLen = 2;
-                                _LOG_DEBUGH(_T("extract_and_copy_for_tail_n(key=%s, n=2, minlen=%d)"), MAKE_WPTR(key), minlen);
+                                if (bListEmpty) resultKeyLen = 2;
                                 extract_and_copy_for_tail_n(key, 2, pastList, minlen);
                                 _LOG_DEBUGH(_T("histDic2: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
                             }
-                            if (resultList.Empty() && pastList.Empty()) {
+                            bListEmpty = IS_LIST_EMPTY();
+                            if (bAll || bListEmpty) {
                                 if (checkFunc(1)) {
-                                    resultKeyLen = 1;
-                                    _LOG_DEBUGH(_T("extract_and_copy_for_tail_n(key=%s, n=1, minlen=%d)"), MAKE_WPTR(key), minlen);
+                                    if (bListEmpty) resultKeyLen = 1;
                                     extract_and_copy_for_tail_n(key, 1, pastList, minlen);
                                     _LOG_DEBUGH(_T("histDic1: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
                                 }
@@ -832,15 +892,15 @@ namespace {
             usedList.PushEntry(word, 0);    // 1文字の単語についても優先順の移動をするため、ここの minlen は1以下にしておく
         }
 
-        // 指定の単語と先頭単語の入れ替え。指定単語が存在しなければ先頭に追加
-        void SwapWord(const MString& word) {
-            usedList.SwapEntry(word);
-        }
+        //// 指定の単語と先頭単語の入れ替え。指定単語が存在しなければ先頭に追加
+        //void SwapWord(const MString& word) {
+        //    usedList.SwapEntry(word);
+        //}
 
-        // 先頭単語を元の位置に戻す
-        void RevertWord() {
-            usedList.RevertEntry();
-        }
+        //// 先頭単語を元の位置に戻す
+        //void RevertWord() {
+        //    usedList.RevertEntry();
+        //}
 
         // 辞書内容の保存
         void WriteFile(utils::OfstreamWriter& writer) {

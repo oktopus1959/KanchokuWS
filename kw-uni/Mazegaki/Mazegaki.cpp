@@ -19,7 +19,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegaki)
 
-#if 1
+#if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
@@ -121,16 +121,16 @@ namespace {
         }
 
         // n番目の候補を選択 ⇒ 必要ならユーザー辞書に追加
-        void SelectNth(size_t n) {
-            LOG_INFOH(_T("CALLED: n=%d, mazeCandidates.size()=%d"), n, mazeCandidates.size());
+        void SelectNth(size_t n, bool bJustOneOrManualSelected) {
+            LOG_INFOH(_T("CALLED: n=%d, bJustOneOrManualSelected=%s, mazeCandidates.size()=%d"), n, BOOL_TO_WPTR(bJustOneOrManualSelected), mazeCandidates.size());
             if (n < mazeCandidates.size()) {
+                auto resultStr = mazeCandidates[n].resultStr;
                 size_t len = GetYomiLen(mazeCandidates[n].resultStr);
-                if (n == 0 || (n > 0 && GetYomiLen(mazeCandidates[n - 1].resultStr) == len)) {
-                    // 先頭候補か、直前の候補と読み長が同じ、つまり、同じ読みの中で先頭ではなかった
-                    // 再検索して、変換履歴への登録と優先辞書に追加する
-                    MAZEGAKI_DIC->GetCandidates(utils::last_substr(firstCandYomi, len));
-                    MAZEGAKI_DIC->SelectCandidate(mazeCandidates[n].resultStr);
-                }
+                LOG_INFOH(_T("resultStr=%s, firstCandYomi=%s, yomiLen=%d"), MAKE_WPTR(resultStr), MAKE_WPTR(firstCandYomi), len);
+                // 再検索して、変換履歴への登録と優先辞書に追加する
+                LOG_INFOH(_T("GetCandidates(%s)"), MAKE_WPTR(utils::last_substr(firstCandYomi, len)));
+                MAZEGAKI_DIC->GetCandidates(utils::last_substr(firstCandYomi, len));
+                MAZEGAKI_DIC->SelectCandidate(resultStr, bJustOneOrManualSelected);
             }
         }
     };
@@ -286,7 +286,8 @@ namespace {
                     }
                 }
                 // 先頭候補を選択しておく
-                candsByLen.SelectNth(0);
+                _LOG_DEBUGH(_T("CALL: candsByLen.SelectNth(): pCands->size()=%d"), pCands->size());
+                candsByLen.SelectNth(0, pCands->size() == 1);
                 // チェイン不要
                 //MAZEGAKI_INFO->SetJustAfterPrevXfer();
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));
@@ -333,7 +334,7 @@ namespace {
                         _LOG_DEBUGH(_T("CANDS_SIZE=%d, SELECT_FIRST=%s"), cands.size(), BOOL_TO_WPTR(SETTINGS->mazegakiSelectFirstCand));
                         outputStringAndPostProc(EMPTY_MSTR, cand, candYlen, nullptr, 0);
                     }
-                    candsByLen.SelectNth(n);
+                    candsByLen.SelectNth(n, true);
                     return;
                 }
             }
@@ -481,9 +482,6 @@ namespace {
             _LOG_DEBUGH(_T("SET_MAZE_BLOCKER: pos=%d"), SETTINGS->mazeBlockerTail ? 0 : mazeResult.resultStr.size() - mazeResult.xferLen);
             STATE_COMMON->SetMazegakiBlockerPosition(SETTINGS->mazeBlockerTail ? 0 : mazeResult.resultStr.size() - mazeResult.xferLen);
             handleKeyPostProc();
-            //選択した候補を履歴に登録
-            // いったん無効にしておく
-            //if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::strip(outStr, _T("、。")));
         }
 
         void handleKeyPostProc() {

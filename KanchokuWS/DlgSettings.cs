@@ -1180,6 +1180,8 @@ namespace KanchokuWS
             textBox_mazeYomiMaxLen.Text = $"{Settings.MazeYomiMaxLen}";
             textBox_mazeGobiMaxLen.Text = $"{Settings.MazeGobiMaxLen}";
             textBox_mazeGobiLikeTailLen.Text = $"{Settings.MazeGobiLikeTailLen}";
+            textBox_histMapGobiMaxLength.Text = $"{Settings.HistMapGobiMaxLength}";
+            textBox_mazeHistRegisterMinLen.Text = $"{Settings.MazeHistRegisterMinLen}";
         }
 
         private void setHistoryStatusChecker()
@@ -1217,6 +1219,8 @@ namespace KanchokuWS
             checkerHistory.Add(textBox_mazeYomiMaxLen);
             checkerHistory.Add(textBox_mazeGobiMaxLen);
             checkerHistory.Add(textBox_mazeGobiLikeTailLen);
+            checkerHistory.Add(textBox_histMapGobiMaxLength);
+            checkerHistory.Add(textBox_mazeHistRegisterMinLen);
 
             checkerAll.Add(checkerHistory);
         }
@@ -1257,6 +1261,8 @@ namespace KanchokuWS
             Settings.SetUserIni("mazeGobiMaxLen", textBox_mazeGobiMaxLen.Text.Trim());
             Settings.SetUserIni("mazeYomiMaxLen", textBox_mazeYomiMaxLen.Text.Trim());
             Settings.SetUserIni("mazeGobiLikeTailLen", textBox_mazeGobiLikeTailLen.Text.Trim());
+            Settings.SetUserIni("histMapGobiMaxLength", textBox_histMapGobiMaxLength.Text.Trim());
+            Settings.SetUserIni("mazeHistRegisterMinLen", textBox_mazeHistRegisterMinLen.Text.Trim());
 
             Settings.ReadIniFile();
             // 各種定義ファイルの再読み込み

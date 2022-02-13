@@ -7,6 +7,7 @@
 // -------------------------------------------------------------------
 // 履歴検索の出力クラス
 struct HistResult {
+    MString OrigKey;
     MString Key;
     MString Word;
     bool WildKey = false;
@@ -14,38 +15,47 @@ struct HistResult {
 };
 
 class HistResultList {
-    std::vector<MString> histories;
-    MString histKey;
+    struct HistPair {
+        size_t KeyLen;
+        MString Word;
+    };
+    std::vector<HistResult> histories;
+    MString origKey;
     bool isWildKey = false;
 
     MString emptyStr;
 
+    HistResult emptyResult;
+
 public:
     void Clear() {
         histories.clear();
-        histKey.clear();
+        origKey.clear();
         isWildKey = false;
     }
 
     void SetKeyInfo(const MString& key, bool bWild = false) {
-        histKey = key;
-        isWildKey = bWild;
+        if (origKey.empty()) {
+            origKey = key;
+            isWildKey = bWild;
+        }
     }
 
-    const std::vector<MString>& GetHistories() const {
+    const std::vector<HistResult>& GetHistories() const {
         return histories;
     }
 
-    void PushHistory(const MString& hist) {
-        histories.push_back(hist);
+    void PushHistory(const MString& key, const MString& word) {
+        histories.push_back(HistResult{ origKey, key, word,isWildKey });
     }
 
     const MString& GetNthWord(size_t n) const {
-        return n < histories.size() ? histories[n] : emptyStr;
+        return GetNthHist(n).Word;
+
     }
 
-    const HistResult GetNthHist(size_t n) const {
-        return HistResult{ histKey, GetNthWord(n), isWildKey };
+    const HistResult& GetNthHist(size_t n) const {
+        return n < histories.size() ? histories[n] : emptyResult;
     }
 
     size_t Size() const { return histories.size(); }
@@ -61,9 +71,9 @@ public:
         size_t shortestIdx = 0;
         size_t shortestLen = size_t(-1);
         for (size_t i = 0; i < Size(); ++i) {
-            if (histories[i].size() < shortestLen) {
+            if (histories[i].Word.size() < shortestLen) {
                 shortestIdx = i;
-                shortestLen = histories[i].size();
+                shortestLen = histories[i].Word.size();
             }
         }
         if (shortestIdx > 1) {
@@ -119,11 +129,11 @@ public:
     // 単語の使用
     virtual void UseWord(const MString& word) = 0;
 
-    // 指定の単語と先頭単語の入れ替え。指定単語が存在しなければ先頭に追加
-    virtual void SwapWord(const MString& word) = 0;
+    //// 指定の単語と先頭単語の入れ替え。指定単語が存在しなければ先頭に追加
+    //virtual void SwapWord(const MString& word) = 0;
 
-    // 先頭単語を元の位置に戻す
-    virtual void RevertWord() = 0;
+    //// 先頭単語を元の位置に戻す
+    //virtual void RevertWord() = 0;
 
     // 辞書ファイルの内容の書き出し
     virtual void WriteFile(utils::OfstreamWriter& writer) = 0;

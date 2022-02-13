@@ -16,6 +16,8 @@ public:
     static const unsigned short FLAG_BLOCK_MAZE = 4;
     static const unsigned short FLAG_BLOCK_KATA = 8;
 
+    static const size_t HIST_KEY_MAX_LEN = 8;   // 履歴用のキーの最大長
+
 private:
     struct Moji {
         uint32_t flag = 0;
@@ -354,8 +356,8 @@ public:
 
     // ブロッカー以降で、出力履歴の末尾から len 文字までのカタカナor漢字文字列を取得する
     template<typename T>
-    inline T GetLastKanjiOrKatakanaKey() const {
-        return utils::find_tail_kanji_or_katakana_str(backStringUpto(20, OutputStack::FLAG_BLOCK_HIST));
+    inline T GetLastKanjiOrKatakanaKey(size_t len) const {
+        return utils::find_tail_kanji_or_katakana_str(backStringUpto(len, OutputStack::FLAG_BLOCK_HIST));
     }
 
     // ブロッカー以降で、出力履歴の末尾から len 文字までの平仮名文字列を取得する (bHeadSpace=trueなら先頭の空白も含む)
@@ -378,14 +380,14 @@ public:
 
     // 出力履歴の末尾から4文字以上(ただしブロッカー以降)の漢字列またはカタカナ列をとり出す
     // 3文字以下だったら、ひらがなも含めて4文字まで取り出す
-    // 最後は10文字までのASCII文字列を取り出す(histMap用)
+    // 末尾に漢字、カタカナ、ひらがながなかったら、ASCII文字列を取り出す
     template<typename T>
     inline T GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey() const {
-        T key = GetLastKanjiOrKatakanaKey<T>();
+        T key = GetLastKanjiOrKatakanaKey<T>(HIST_KEY_MAX_LEN);
         if (key.size() >= 4) return key;
         key = GetLastJapaneseKey<T>(4);
         if (!key.empty()) return key;
-        return GetLastAsciiKey<T>(10);
+        return GetLastAsciiKey<T>(HIST_KEY_MAX_LEN);
     }
 
     // 末尾のアルファベット文字列をクリアする

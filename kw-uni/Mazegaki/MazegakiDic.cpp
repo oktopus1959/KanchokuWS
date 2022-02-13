@@ -15,7 +15,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegakiDic)
 
-#if 1
+#if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
@@ -351,12 +351,21 @@ namespace {
             bDirty = true;
         }
 
-        void AddPrimaryEntry(const MString& yomi, const MString& xfer) {
-            entries[yomi] = xfer;
-            bDirty = true;
+        bool AddPrimaryEntryIfNeeded(const MString& yomi, const MString& xfer) {
+            _LOG_DEBUGH(_T("ENTER: yomi=%s, xfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(xfer));
+            bool flag = false;
+            auto iter = entries.find(yomi);
+            if (iter == entries.end()) {
+                entries[yomi] = xfer;
+                bDirty = true;
+                flag = true;
+            }
+            _LOG_DEBUGH(_T("LEAVE: result=%s"), BOOL_TO_WPTR(flag));
+            return flag;
         }
 
         void DeletePrimaryEntry(const MString& yomi) {
+            _LOG_DEBUGH(_T("CALLED: yomi=%s"), MAKE_WPTR(yomi));
             entries.erase(yomi);
         }
 
@@ -939,8 +948,8 @@ namespace {
         }
 
         // GetCandidates() が返した候補のうち output を持つものを選択して変換履歴登録と優先辞書にコピー
-        void SelectCandidate(const MString& output) {
-            _LOG_DEBUGH(_T("CALLED: output=%s, mazeCandidates.size()=%d"), MAKE_WPTR(output), mazeCandidates.size());
+        void SelectCandidate(const MString& output, bool bRegMazeHist) {
+            _LOG_DEBUGH(_T("ENTER: output=%s, mazeCandidates.size()=%d, bRegMazeHist=%s"), MAKE_WPTR(output), mazeCandidates.size(), BOOL_TO_WPTR(bRegMazeHist));
             if (!mazeCandidates.empty()) {
                 const MString& firstYomi = mazeCandidates[0].yomi;
                 _LOG_DEBUGH(_T("firstYomi=%s"), MAKE_WPTR(firstYomi));
@@ -952,15 +961,29 @@ namespace {
                         const MString& yomiStem = mazeCandidates[n].yomiStem;
                         MString origYomi = mazeCandidates[n].EntryPtr->GetTrimmedYomi();
                         const MString& xfer = mazeCandidates[n].EntryPtr->xfer;
-                        LOG_INFOH(_T("firstYomi=%s, myYomi=%s, yomiStem=%s, origYomi=%s, xfer=%s"), MAKE_WPTR(firstYomi), MAKE_WPTR(myYomi), MAKE_WPTR(yomiStem), MAKE_WPTR(origYomi), MAKE_WPTR(xfer));
-                        HISTORY_DIC->AddNewEntry(yomiStem + MSTR_VERT_BAR + mazeCandidates[n].EntryPtr->xfer);
+                        LOG_INFOH(_T("firstYomi=%s, myYomi=%s, yomiStem=%s, origYomi=%s, xfer=%s, mazeHistRegisterMinLen=%d"), \
+                            MAKE_WPTR(firstYomi), MAKE_WPTR(myYomi), MAKE_WPTR(yomiStem), MAKE_WPTR(origYomi), MAKE_WPTR(xfer), SETTINGS->mazeHistRegisterMinLen);
+                        if (bRegMazeHist && SETTINGS->mazeHistRegisterMinLen > 0 && yomiStem.size() >= SETTINGS->mazeHistRegisterMinLen && yomiStem != xfer) {
+                            // 無条件先頭候補出力モードではなく、語幹長が設定長以上の場合のみ変換履歴登録する
+                            auto mazeHistRegister = [](const MString& s) {
+                                if (SETTINGS->mazeHistRegisterAnyway) {
+                                    HISTORY_DIC->AddNewEntryAnyway(s);
+                                } else {
+                                    HISTORY_DIC->AddNewEntry(s);
+                                }
+                            };
+                            LOG_INFOH(_T("mazeHistRegister(%s)"), MAKE_WPTR(yomiStem + MSTR_VERT_BAR + xfer));
+                            mazeHistRegister(yomiStem + MSTR_VERT_BAR + xfer);
+                        }
                         // それを優先辞書に登録する
-                        PrimaryEntries.AddPrimaryEntry(origYomi, mazeCandidates[n].EntryPtr->xfer);
-                        if (myYomi != origYomi) PrimaryEntries.DeletePrimaryEntry(myYomi);
+                        if (PrimaryEntries.AddPrimaryEntryIfNeeded(origYomi, xfer)) {
+                            if (myYomi != origYomi) PrimaryEntries.DeletePrimaryEntry(myYomi);
+                        }
                         break;
                     }
                 }
             }
+            _LOG_DEBUGH(_T("LEAVE"));
         }
 
         // 指定の読みと変換形を持つユーザー辞書エントリを削除

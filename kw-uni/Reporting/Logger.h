@@ -162,6 +162,7 @@ public:
 #define LOG_DEBUGH(...)     {}
 #define _LOG_DEBUGH(...)    {}
 #define _LOG_DEBUGH_COND(flag, ...)    {}
+#define _LOG_DEBUG_COND(flag, ...)    {}
 #define _DEBUG_SENT(x)      
 #define _DEBUG_FLAG(x)      false
 #else
@@ -170,8 +171,8 @@ public:
 #define LOG_DEBUGH(...)     if (Logger::IsDebugHEnabled()) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define _LOG_DEBUGH(...)    if (Logger::IsDebugHEnabled() && _LOG_DEBUGH_FLAG) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__); \
                             else if (Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
-#define _LOG_DEBUGH_COND(flag, ...)  if (flag && Logger::IsDebugHEnabled() && _LOG_DEBUGH_FLAG) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__); \
-                                     else if (flag && Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
+#define _LOG_DEBUG_COND(flag, ...)  if (flag && Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
+#define _LOG_DEBUGH_COND(flag, ...)  if (flag && Logger::IsDebugHEnabled() && _LOG_DEBUGH_FLAG) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define _DEBUG_SENT(x)      x
 #define _DEBUG_FLAG(x)      (x)
 #endif

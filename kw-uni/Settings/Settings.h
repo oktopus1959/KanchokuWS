@@ -31,7 +31,7 @@ struct Settings {
     size_t histHiraganaKeyLength = 2;       // ひらがな履歴検索キーの長さ
     size_t histKatakanaKeyLength = 2;       // カタカナ履歴検索キーの長さ
     size_t histKanjiKeyLength = 1;          // 漢字履歴検索キーの長さ
-    size_t histMapKeyLength = 1;            // 変換履歴検索キーの長さ
+    //size_t histMapKeyLength = 1;            // 変換履歴検索キーの長さ
 
     size_t histMapKeyMaxLength = 16;        // 変換履歴キーの最大長
     size_t histMapGobiMaxLength = 3;        // 変換履歴キーに付加できる語尾の最大長
@@ -49,6 +49,10 @@ struct Settings {
     bool useArrowKeyToSelectCandidate = true;   // 矢印キーで履歴候補選択を行う
     bool selectHistCandByTab = true;            // Tabキーで履歴候補選択を行う
     //bool handleShiftSpaceAsNormalSpace = true;    // Shift-Space を通常の Space として扱う (ただし histSearchByShiftSpace が優先)
+
+    bool histGatherAllCandidates = true;    // キーの開始位置をずらして全履歴候補を取得するか
+    bool mazeHistRegisterAnyway = false;    // 交ぜ書き変換での選択を強制的に履歴登録する(除外登録されていたら復活する)
+    size_t mazeHistRegisterMinLen = 2;      // 交ぜ書き変換での選択を履歴登録する際の最小長
 
     //bool mazegakiByShiftSpace = true;       // Shift-Space で交ぜ書き変換
     bool mazegakiSelectFirstCand = false;   // 交ぜ書き変換で先頭の候補を自動選択
