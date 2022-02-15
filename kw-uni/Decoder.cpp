@@ -32,6 +32,14 @@
 
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
+#if 0
+#define IS_LOG_DEBUGH_ENABLED true
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#endif
+
 // -------------------------------------------------------------------
 namespace {
     inline void set_facestr(mchar_t m, wchar_t* faces) {
@@ -409,12 +417,12 @@ public:
         STATE_COMMON->IncrementTotalDecKeyCount();
         STATE_COMMON->CountSameDecKey(keyId);
         if (decodeKeyboardChar) STATE_COMMON->SetDecodeKeyboardCharMode();  // キーボードフェイス文字を返すモード
-        LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+        _LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
 
         // DecKey処理を呼ぶ
         startState->HandleDeckey(keyId);
 
-        LOG_DEBUGH(_T("OUTPUT: outString=\"%s\", origString=\"%s\", flags=%x, numBS=%d"), \
+        _LOG_DEBUGH(_T("OUTPUT: outString=\"%s\", origString=\"%s\", flags=%x, numBS=%d"), \
             MAKE_WPTR(STATE_COMMON->OutString()), MAKE_WPTR(STATE_COMMON->OrigString()), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetBackspaceNum());
 
         // アクティブウィンドウへの送出文字列
@@ -434,29 +442,29 @@ public:
         OUTPUT_STACK->push(utils::convert_star_and_question_to_hankaku(OutParams->outString));
         if (Logger::IsDebugEnabled()) {
             //wstring stack = std::regex_replace(to_wstr(OUTPUT_STACK->backStringFull(10)), std::wregex(_T("\n")), _T("|"));
-            LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+            _LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
         }
         // 出力履歴に BackSpaceStopper を反映
         if (STATE_COMMON->IsAppendBackspaceStopper()) { OUTPUT_STACK->pushNewLine(); }
         // 出力履歴に HistoryBlock を反映
         if (STATE_COMMON->IsSetHistoryBlockFlag()) {
             OUTPUT_STACK->setHistBlocker();
-            LOG_DEBUGH(_T("OUTPUT_STACK->setHistBlocker(): %s"), MAKE_WPTR(OUTPUT_STACK->backStringWithFlagUpto(20)));
+            _LOG_DEBUGH(_T("OUTPUT_STACK->setHistBlocker(): %s"), MAKE_WPTR(OUTPUT_STACK->backStringWithFlagUpto(20)));
         }
         // 出力履歴に MazeBlock を反映
         if (STATE_COMMON->IsSetMazegakiBlockFlag()) {
             OUTPUT_STACK->setMazeBlocker(STATE_COMMON->GetMazegakiBlockerPosition());
-            LOG_DEBUGH(_T("OUTPUT_STACK->setMazeBlocker(): %s"), MAKE_WPTR(OUTPUT_STACK->backStringWithFlagUpto(20)));
+            _LOG_DEBUGH(_T("OUTPUT_STACK->setMazeBlocker(): %s"), MAKE_WPTR(OUTPUT_STACK->backStringWithFlagUpto(20)));
         }
 
         int strokeTableChainLen = startState->StrokeTableChainLength();
-        LOG_DEBUGH(_T("strokeTableChainLen=%d"), strokeTableChainLen);
+        _LOG_DEBUGH(_T("strokeTableChainLen=%d"), strokeTableChainLen);
         STATE_COMMON->SetStrokeCount(max(strokeTableChainLen - 1, 0));
         if (strokeTableChainLen >= 2) {
             STATE_COMMON->SetWaiting2ndStroke();
             if (STATE_COMMON->GetLayout() == VkbLayout::None) STATE_COMMON->SetNormalVkbLayout();
         }
-        LOG_DEBUGH(_T("STATE_COMMON->StrokeCount=%d"), STATE_COMMON->GetStrokeCount());
+        _LOG_DEBUGH(_T("STATE_COMMON->StrokeCount=%d"), STATE_COMMON->GetStrokeCount());
 
         // 最終的な出力履歴が整ったところで呼び出される処理
         if (!STATE_COMMON->IsOutStringProcDone() && !STATE_COMMON->IsWaiting2ndStroke()) startState->DoOutStringProcChain();
@@ -482,13 +490,13 @@ public:
     // 末尾のローマ字列を削除
     void clearTailRomanStr() {
         OUTPUT_STACK->ClearTailAlaphabetStr();
-        LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+        _LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
     }
 
     // 末尾のひらがな列を削除
     void clearTailHiraganaStr() {
         OUTPUT_STACK->ClearTailHiraganaStr();
-        LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+        _LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
     }
 
     // 末尾にひらがなブロッカーを設定
@@ -617,19 +625,19 @@ public:
     }
 
     mchar_t copyToTopString() {
-        LOG_DEBUGH(_T("\nENTER: outStackStr=%s"), MAKE_WPTR(OUTPUT_STACK->OutputStackBackStrUpto(32)));
+        _LOG_DEBUGH(_T("\nENTER: outStackStr=%s"), MAKE_WPTR(OUTPUT_STACK->OutputStackBackStrUpto(32)));
         size_t origLen = 0;
         // 打鍵途中なら打鍵中のキー文字列も表示する
         if (STATE_COMMON->IsWaiting2ndStroke()) origLen = STATE_COMMON->OrigString().size();
         size_t topLen = utils::array_length(OutParams->topString);
         size_t prevMazeLen = MAZEGAKI_INFO ? MAZEGAKI_INFO->GetPrevOutputLen() : 0;
-        LOG_DEBUGH(_T("origLen=%d, prevMazeLen=%d"), origLen, prevMazeLen);
+        _LOG_DEBUGH(_T("topLen=%d, origLen=%d, prevMazeLen=%d"), topLen, origLen, prevMazeLen);
         auto s = OUTPUT_STACK->OutputStackBackStrWithFlagUpto(topLen - origLen - 1, prevMazeLen);        // ブロッカーを反映した文字列を取得
-        LOG_DEBUGH(_T("OutputStackBackStrWithFlagUpto(%d)=%s"), (topLen - origLen - 1), MAKE_WPTR(s));
+        _LOG_DEBUGH(_T("OutputStackBackStrWithFlagUpto(%d)=%s"), (topLen - origLen - 1), MAKE_WPTR(s));
         size_t pos = copy_mstr(s, OutParams->topString, topLen);
         if (origLen > 0) copy_mstr(STATE_COMMON->OrigString(), OutParams->topString + pos, origLen);
         mchar_t lastChar = origLen == 0 ? OUTPUT_STACK->OutputStackLastChar() : 0;
-        LOG_DEBUGH(_T("LEAVE: OutParams->topString=%s, lastChar=%s"), OutParams->topString, MAKE_WPTR(lastChar));
+        _LOG_DEBUGH(_T("LEAVE: OutParams->topString=%s, lastChar=%s"), OutParams->topString, MAKE_WPTR(lastChar));
         return lastChar;
     }
 

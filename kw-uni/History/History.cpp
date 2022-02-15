@@ -1038,27 +1038,27 @@ namespace {
     public:
         // 最終的な出力履歴が整ったところで呼び出される処理
         void DoOutStringProc() {
-            _LOG_DEBUGH(_T("\nENTER: %s: %s"), NAME_PTR, MAKE_WPTR(OUTPUT_STACK->OutputStackBackStrUpto(10)));
-            _LOG_DEBUGH(_T("PATH 2: bCandSelectable=%s"), BOOL_TO_WPTR(bCandSelectable));
+            LOG_INFO(_T("\nENTER: %s: %s"), NAME_PTR, MAKE_WPTR(OUTPUT_STACK->OutputStackBackStrUpto(10)));
+            LOG_INFO(_T("PATH 2: bCandSelectable=%s"), BOOL_TO_WPTR(bCandSelectable));
 
             if (bCandSelectable && wasCandSelectCalled()) {
-                _LOG_DEBUGH(_T("PATH 3: by SelectionKey"));
+                LOG_INFO(_T("PATH 3: by SelectionKey"));
                 // 履歴選択キーによる処理だった場合
                 if (bCandSelectable) {
-                    _LOG_DEBUGH(_T("PATH 4"));
+                    LOG_INFO(_T("PATH 4"));
                     // この処理は、GUI側で候補の背景色を変更するのと矢印キーをホットキーにするために必要
-                    _LOG_DEBUGH(_T("Set selectedPos=%d"), HIST_CAND->GetSelectPos());
+                    LOG_INFO(_T("Set selectedPos=%d"), HIST_CAND->GetSelectPos());
                     STATE_COMMON->SetWaitingCandSelect(HIST_CAND->GetSelectPos());
                 }
             } else {
-                _LOG_DEBUGH(_T("PATH 5: by Other Input"));
+                LOG_INFO(_T("PATH 5: by Other Input"));
                 // その他の文字出力だった場合
                 HIST_CAND->DelayedPushFrontSelectedWord();
                 bCandSelectable = false;
 
-                _LOG_DEBUGH(_T("PATH 6: bCandSelectable=%s, bNoHistTemporary=%s"), BOOL_TO_WPTR(bCandSelectable), BOOL_TO_WPTR(bNoHistTemporary));
+                LOG_INFO(_T("PATH 6: bCandSelectable=%s, bNoHistTemporary=%s"), BOOL_TO_WPTR(bCandSelectable), BOOL_TO_WPTR(bNoHistTemporary));
                 if (OUTPUT_STACK->isLastOutputStackCharBlocker()) {
-                    _LOG_DEBUGH(_T("PATH 7"));
+                    LOG_INFO(_T("PATH 7"));
                     HISTORY_DIC->ClearNgramSet();
                 }
 
@@ -1068,22 +1068,22 @@ namespace {
                     MString prevKey = HISTORY_STAY_NODE->GetPrevKey();
                     MString outStr = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(prevKey.size());
                     bNoHistTemporary = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(prevKey.size()) == prevKey;
-                    _LOG_DEBUGH(_T("PATH 8: bNoHistTemporary=%s: prevKey=%s, outStr=%s"), BOOL_TO_WPTR(bNoHistTemporary), MAKE_WPTR(prevKey), MAKE_WPTR(outStr));
+                    LOG_INFO(_T("PATH 8: bNoHistTemporary=%s: prevKey=%s, outStr=%s"), BOOL_TO_WPTR(bNoHistTemporary), MAKE_WPTR(prevKey), MAKE_WPTR(outStr));
                 }
 
-                _LOG_DEBUGH(_T("PATH 9: bNoHistTemporary=%s"), BOOL_TO_WPTR(bNoHistTemporary));
+                LOG_INFO(_T("PATH 9: bNoHistTemporary=%s"), BOOL_TO_WPTR(bNoHistTemporary));
                 if (!bNoHistTemporary) {
                     historySearch(bManualTemporary);
                 }
                 bManualTemporary = false;
             }
 
-            _LOG_DEBUGH(_T("LEAVE: %s\n"), NAME_PTR);
+            LOG_INFO(_T("LEAVE: %s\n"), NAME_PTR);
         }
 
         // (Ctrl or Shift)+Space の処理 -- 履歴検索の開始、次の候補を返す
         void handleNextOrPrevCandTrigger(bool bNext) {
-            _LOG_DEBUGH(_T("\nCALLED: %s: selectPos=%d, bNext=%s"), NAME_PTR, HIST_CAND->GetSelectPos(), BOOL_TO_WPTR(bNext));
+            LOG_INFO(_T("\nCALLED: %s: selectPos=%d, bNext=%s"), NAME_PTR, HIST_CAND->GetSelectPos(), BOOL_TO_WPTR(bNext));
             // これにより、前回のEnterによる改行点挿入やFullEscapeによるブロッカーフラグが削除される⇒(2021/12/18)workしなくなっていたので、いったん削除
             //OUTPUT_STACK->clearFlagAndPopNewLine();
             // 今回、履歴選択用ホットキーだったことを保存
@@ -1094,13 +1094,13 @@ namespace {
                 historySearch(true);
             }
             if (bCandSelectable) {
-                _LOG_DEBUGH(_T("CandSelectable: bNext=%s"), BOOL_TO_WPTR(bNext));
+                LOG_INFO(_T("CandSelectable: bNext=%s"), BOOL_TO_WPTR(bNext));
                 if (bNext)
                     getNextCandidate();
                 else
                     getPrevCandidate();
             } else {
-                _LOG_DEBUGH(_T("NOP"));
+                LOG_INFO(_T("NOP"));
             }
         }
 

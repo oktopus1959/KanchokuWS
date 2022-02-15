@@ -545,7 +545,7 @@ namespace {
 
         // 登録済みNグラム集合をクリアする
         void ClearNgramSet() {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUG(_T("CALLED"));
             seenNgrams.clear();
         }
 

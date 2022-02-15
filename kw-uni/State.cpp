@@ -44,7 +44,7 @@ void State::Reactivate() {
 // DECKEY 処理の流れ
 // 新ノードが未処理の場合は、ここで NULL 以外が返されるので、親状態で処理する
 void State::HandleDeckey(int deckey) {
-    _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), totalCount=%d, NextNode=%s"), NAME_PTR, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME_PTR(NextNodeMaybe()));
+    LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), totalCount=%d, NextNode=%s"), NAME_PTR, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME_PTR(NextNodeMaybe()));
     // 事前チェック
     DoPreCheck();
     // 前処理
@@ -53,7 +53,7 @@ void State::HandleDeckey(int deckey) {
     DoIntermediateCheck();
     // 後処理
     DoDeckeyPostProc();
-    _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
+    LOG_INFO(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
     //return pNextNodeMaybe;
 }
 
@@ -170,17 +170,17 @@ MString State::TranslateString(const MString& outStr) {
 
 // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
 void State::DoOutStringProcChain() {
-    LOG_DEBUG(_T("ENTER: %s"), NAME_PTR);
+    LOG_INFO(_T("ENTER: %s"), NAME_PTR);
     if (pNext) pNext->DoOutStringProcChain();
     if (!STATE_COMMON->IsOutStringProcDone()) DoOutStringProc();
-    LOG_DEBUG(_T("LEAVE: %s"), NAME_PTR);
+    LOG_INFO(_T("LEAVE: %s"), NAME_PTR);
 }
 
 // 最終的な出力履歴が整ったところで呼び出される処理
 void State::DoOutStringProc() {
-    LOG_DEBUG(_T("ENTER: %s"), NAME_PTR);
+    LOG_INFO(_T("ENTER: %s"), NAME_PTR);
     // 何もしない
-    LOG_DEBUG(_T("LEAVE: %s"), NAME_PTR);
+    LOG_INFO(_T("LEAVE: %s"), NAME_PTR);
 }
 
 // ノードから生成した状態を後接させ、その状態を常駐させる

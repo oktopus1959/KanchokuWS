@@ -32,7 +32,8 @@ void OutputStack::_resize() {
 // bWithFlag = true なら、FLAG のセットしてある文字の後に "|" を付加する
 // extraBarPos > 0 なら、末尾から extraBarPos位置に "|" を付加する
 MString OutputStack::tail_string(size_t tailLen, size_t tailMaxlen, bool bWithFlag, size_t extraBarPos) const {
-    mchar_t buf[OUTPUT_STACK_MAXSIZE + 2];
+    LOG_DEBUGH(_T("ENTER: tailLen=%d, tailMaxLen=%d, bWithFlag=%d, extraBarPos=%d"), tailLen, tailMaxlen, bWithFlag, extraBarPos);
+    mchar_t buf[OUTPUT_STACK_MAXSIZE + 8];
     size_t stackSize = size();
     if (tailLen > OUTPUT_STACK_MAXSIZE) tailLen = OUTPUT_STACK_MAXSIZE;
     if (tailLen > tailMaxlen) tailLen = tailMaxlen;
@@ -46,6 +47,8 @@ MString OutputStack::tail_string(size_t tailLen, size_t tailMaxlen, bool bWithFl
         if (bWithFlag && ((stack[pos].flag & ~FLAG_BLOCK_KATA) != 0)) buf[i++] = '|';
         ++pos;
     }
+    LOG_INFOH(_T("i=%d"), i);
     buf[i] = 0;
+    LOG_DEBUGH(_T("LEAVE: result=%s"), MAKE_WPTR(buf));
     return buf;
 }
