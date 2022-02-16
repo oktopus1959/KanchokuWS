@@ -772,8 +772,22 @@ namespace KanchokuWS
                 } else if (str._reMatch("^[^ ]+ /")) {
                     ExecCmdDecoder("addMazegakiEntry", str);
                 } else {
-                    ExecCmdDecoder("addHistEntry", str._safeSubstring(0, Settings.HistMaxLength));
+                    //ExecCmdDecoder("addHistEntry", str._safeSubstring(0, Settings.HistMaxLength));
+                    AddHistEntry(str);
                 }
+            }
+        }
+
+        /// <summary>文字列を履歴登録する(ただし、20文字以下で空白を含まない。変換形登録なら、変換部は32文字以下)</summary>
+        /// <param name="str"></param>
+        public void AddHistEntry(string str)
+        {
+            var items = str._split2('|');
+            int len1 = items._getFirst()._safeLength();
+            int len2 = items._getSecond()._safeLength();
+            logger.InfoH(() => $"len1={len1}, len2={len2}, items[0]={items._getFirst()._safeSubstring(0, 20)}, items[1]={items._getSecond()._safeSubstring(0, 20)}");
+            if (len1 > 0 && len1 <= 20 && len2 <= 32 && items._getFirst()._safeIndexOf(' ') < 0) {
+                ExecCmdDecoder("addHistEntry", str);
             }
         }
 

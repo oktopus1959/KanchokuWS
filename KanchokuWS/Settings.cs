@@ -350,7 +350,7 @@ namespace KanchokuWS
 
         //------------------------------------------------------------------------------
         // 履歴
-        public static int HistMaxLength { get; private set; } = 50;
+        public static int HistMaxLength { get; private set; } = 20;
         public static int HistKatakanaWordMinLength { get; private set; } = 0;
         public static int HistKanjiWordMinLength { get; private set; } = 0;
         public static int HistKanjiWordMinLengthEx { get; private set; } = 0;

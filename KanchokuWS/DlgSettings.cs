@@ -1561,7 +1561,8 @@ namespace KanchokuWS
         {
             var line = textBox_history.Text.Trim().Replace(" ", "");
             if (line._notEmpty()) {
-                frmMain?.ExecCmdDecoder("addHistEntry", line);
+                //frmMain?.ExecCmdDecoder("addHistEntry", line);
+                frmMain?.AddHistEntry(line);
                 label_saveHist.Hide();
                 label_history.Show();
                 dicRegLabelCount = dicRegLabelCountMax;
