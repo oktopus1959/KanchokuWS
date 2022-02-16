@@ -259,6 +259,7 @@ namespace {
             MString outStr = result.Word;
             MString outKey = result.Key;
             if (outStr.empty()) {
+                // 元に戻す
                 outKey = HISTORY_STAY_NODE->GetPrevKey();
                 outStr = HISTORY_STAY_NODE->GetPrevOutString();
                 if (outStr.empty()) outStr = outKey;
@@ -556,8 +557,8 @@ namespace {
                 getLastHistKeyAndRewindOutput();    // 前回の履歴検索キー取得と出力スタックの巻き戻し予約(numBackSpacesに値をセット)
                 setOutString(result);
                 //if (result.KeyLen() >= 2) STATE_COMMON->SetHistoryBlockFlag();  // 1文字の場合は履歴検索の対象となる
-                // 出力された履歴に対しては、履歴の再検索の対象としない
-                STATE_COMMON->SetHistoryBlockFlag();
+                // 出力された履歴に対しては、履歴の再検索の対象としない(変換形履歴の場合を除く)
+                if (result.Word.find(VERT_BAR) == MString::npos) STATE_COMMON->SetHistoryBlockFlag();
             }
             handleKeyPostProc();
             _LOG_DEBUGH(_T("LEAVE"));
@@ -1289,8 +1290,8 @@ namespace {
             getLastHistKeyAndRewindOutput();    // 前回の履歴検索キー取得と出力スタックの巻き戻し予約(numBackSpacesに値をセット)
 
             setOutString(result);
-            if (!result.Word.empty()) {
-                // emptyの場合は元に戻ったので、ブロッカーを設定してはならない (@TODO: ちょっと意味不明)
+            if (!result.Word.empty() && result.Word.find(VERT_BAR) == MString::npos) {
+                // 何か履歴候補(変換形履歴以外)が選択されたら、ブロッカーを設定する (emptyの場合は元に戻ったので、ブロッカーを設定しない)
                 STATE_COMMON->SetHistoryBlockFlag();
             }
             setCandidatesVKB(VkbLayout::Horizontal, HIST_CAND->GetCandWords(), HIST_CAND->GetCurrentKey());
