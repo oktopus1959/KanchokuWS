@@ -1207,14 +1207,24 @@ namespace {
         
         // RET/Enter の処理
         void handleEnter() {
-            _LOG_DEBUGH(_T("CALLED: %s: selectPos=%d"), NAME_PTR, HIST_CAND->GetSelectPos());
+            _LOG_DEBUGH(_T("CALLED: %s: bCandSelectable=%s, selectPos=%d"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable), HIST_CAND->GetSelectPos());
             if (SETTINGS->selectFirstCandByEnter && bCandSelectable && HIST_CAND->GetSelectPos() < 0) {
                 // 選択可能状態かつ候補未選択なら第1候補を返す。
+                _LOG_DEBUGH(_T("CALL: getNextCandidate()"));
                 getNextCandidate();
+            } else if (bCandSelectable && HIST_CAND->GetSelectPos() >= 0) {
+                _LOG_DEBUGH(_T("CALL: HISTORY_STAY_NODE->ClearPrevHistState(); bManualTemporary = true"));
+                // どれかの候補が選択されている状態なら、それを確定し、履歴キーをクリアしておく
+                HISTORY_STAY_NODE->ClearPrevHistState();
+                // 一時的にマニュアル操作フラグを立てることで、DoOutStringProc() から historySearch() を呼ぶときに履歴再検索が実行されるようにする
+                bManualTemporary = true;
             } else {
+                // それ以外は通常のEnter処理
+                _LOG_DEBUGH(_T("CALL: AddNewHistEntryOnEnter()"));
                 AddNewHistEntryOnEnter();
                 HistoryStayState::handleEnter();
             }
+            _LOG_DEBUGH(_T("LEAVE"));
         }
 
         //// Ctrl-J の処理 -- 選択可能状態かつ候補未選択なら第1候補を返す。候補選択済みなら確定扱い
