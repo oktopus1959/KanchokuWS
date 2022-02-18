@@ -28,7 +28,7 @@ class HistResultList {
     HistResult emptyResult;
 
 public:
-    void Clear() {
+    void ClearKeyInfo() {
         histories.clear();
         origKey.clear();
         isWildKey = false;

@@ -339,6 +339,7 @@ namespace {
                 if ((w.size() == wlen || (wlen == 0 && w.size() >= 2) || (wlen >= 9 && w.size() > 9)) && w != key && utils::contains(set_, w)) {
                     if (keylen != 1 || w.size() >= 2) {
                         // キーが1文字なら、候補列から1文字単語は除く
+                        _LOG_DEBUGH(_T("outvec.PushHistory(key=%s, w=%s)"), MAKE_WPTR(key), MAKE_WPTR(w));
                         outvec.PushHistory(key, w);
                         set_.erase(w);
                     }
@@ -362,6 +363,7 @@ namespace {
             size_t i = 0;
             for (const auto& w : usedList) {
                 if (w != key && checkCond(w)) {
+                    _LOG_DEBUGH(_T("outvec.PushHistory(key=%s, w=%s)"), MAKE_WPTR(key), MAKE_WPTR(w));
                     outvec.PushHistory(key, w);
                     if (++i >= n) break;
                 }
@@ -702,6 +704,7 @@ namespace {
             for (const auto& s : set_) {
                 // keylen == 1 なら1文字単語は対象外
                 if ((wlen > 0 && s.size() == wlen) || (wlen == 0 && (keylen != 1 || s.size() >= 2)) && s != key) {
+                    _LOG_DEBUGH(_T("pastList.PushHistory(key=%s, s=%s)"), MAKE_WPTR(key), MAKE_WPTR(s));
                     pastList.PushHistory(key, s);
                 }
             }
@@ -767,7 +770,7 @@ namespace {
         {
             _LOG_DEBUGH(_T("ENTER: key=%s, checkMinKeyLen=%s, len=%d"), MAKE_WPTR(key), BOOL_TO_WPTR(checkMinKeyLen), len);
             // 結果を返すためのリストをクリアしておく
-            resultList.Clear();
+            resultList.ClearKeyInfo();
             size_t minlen = len >= 0 ? len : 2;
             size_t maxlen = len >= 0 ? len : max(minlen, (size_t)abs(len));
             if (key.empty()) {
@@ -790,13 +793,19 @@ namespace {
                 bool bListEmpty = IS_LIST_EMPTY();
                 bool bAll = SETTINGS->histGatherAllCandidates && bListEmpty;
 
+#define CHECK_LIST_EMPTY(n) \
+            if (bListEmpty) {\
+                resultKeyLen = n;\
+                resultList.ClearKeyInfo();\
+            }
+
                 // Phase-A
                 size_t keySize = key.size();
 
                 // keyが5文字以上の場合には、先頭からマッチングさせる(4文字以下の場合は、この後の Phase-B で試される)
                 if ((bAll || bListEmpty) && keySize >= 5) {
                     // "■■■■■" (5)
-                    if (bListEmpty) resultKeyLen = 0; // 最終的にマッチすれば、先頭からのマッチになるので 0 でよい
+                    CHECK_LIST_EMPTY(0);    // 最終的にマッチすれば、先頭からのマッチになるので 0 でよい
                     extract_and_copy_for_longer_than_4(key, minlen, 0, pastList);
                 }
                 bListEmpty = IS_LIST_EMPTY();
@@ -804,7 +813,7 @@ namespace {
                 // 上記がマッチせず、keyが6文字以上の場合には、key.substr(1) について試す
                 if ((bAll || bListEmpty) && keySize >= 6) {
                     // "□■■■■■" (6)
-                    if (bListEmpty) resultKeyLen = 5;
+                    CHECK_LIST_EMPTY(5);
                     extract_and_copy_for_longer_than_4(key, minlen, 1, pastList);
                 }
                 bListEmpty = IS_LIST_EMPTY();
@@ -813,14 +822,14 @@ namespace {
                 if ((bAll || bListEmpty) && keySize >= 7) {
                     if (keySize >= 8) {
                         // "□□■■■■■■" (8)
-                        if (bListEmpty) resultKeyLen = 6;
+                        CHECK_LIST_EMPTY(6);
                         extract_and_copy_for_longer_than_4(key, minlen, keySize - resultKeyLen, pastList);
                     }
                     bListEmpty = IS_LIST_EMPTY();
                     if (keySize == 7 || (bAll || bListEmpty)) {
                         // "□□■■■■■" (7)
                         // "□□□■■■■■" (8)
-                        if (bListEmpty) resultKeyLen = 5;
+                        CHECK_LIST_EMPTY(5);
                         extract_and_copy_for_longer_than_4(key, minlen, keySize - resultKeyLen, pastList);
                     }
                 }
@@ -843,7 +852,7 @@ namespace {
                     };
 
                     if (checkFunc(4)) {
-                        if (bListEmpty) resultKeyLen = 4;
+                        CHECK_LIST_EMPTY(4);
                         extract_and_copy_for_tail_n(key, 4, pastList, minlen);
                         _LOG_DEBUGH(_T("histDic4: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
                     }
@@ -851,21 +860,21 @@ namespace {
 
                     if (bAll || bListEmpty) {
                         if (checkFunc(3)) {
-                            if (bListEmpty) resultKeyLen = 3;
+                            CHECK_LIST_EMPTY(3);
                             extract_and_copy_for_tail_n(key, 3, pastList, minlen);
                             _LOG_DEBUGH(_T("histDic3: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
                         }
                         bListEmpty = IS_LIST_EMPTY();
                         if (bAll || bListEmpty) {
                             if (checkFunc(2)) {
-                                if (bListEmpty) resultKeyLen = 2;
+                                CHECK_LIST_EMPTY(2);
                                 extract_and_copy_for_tail_n(key, 2, pastList, minlen);
                                 _LOG_DEBUGH(_T("histDic2: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
                             }
                             bListEmpty = IS_LIST_EMPTY();
                             if (bAll || bListEmpty) {
                                 if (checkFunc(1)) {
-                                    if (bListEmpty) resultKeyLen = 1;
+                                    CHECK_LIST_EMPTY(1);
                                     extract_and_copy_for_tail_n(key, 1, pastList, minlen);
                                     _LOG_DEBUGH(_T("histDic1: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
                                 }

@@ -311,12 +311,14 @@ namespace {
                 _LOG_DEBUGH(_T("NOT YET HIST USED"));
             } else if (prevOut.empty()) {
                 // ②検索が実行されたが、出力文字列にはキーだけが表示されている状態
+                _LOG_DEBUGH(_T("CURRENT: SetOutString(str=%s, numBS=%d)"), MAKE_WPTR(prevKey), prevKey.size());
                 key = prevKey;
                 STATE_COMMON->SetOutString(prevKey, prevKey.size());
                 HISTORY_STAY_NODE->SetPrevHistState(prevKey, prevKey);
                 _LOG_DEBUGH(_T("CURRENT: key=%s"), MAKE_WPTR(key));
             } else {
                 // ③横列のどれかの候補が選択されて出力文字列に反映されている状態
+                _LOG_DEBUGH(_T("REVERT: SetOutString(str=%s, numBS=%d)"), MAKE_WPTR(prevKey), prevOut.size());
                 key = prevKey;
                 STATE_COMMON->SetOutString(prevKey, prevOut.size());
                 HISTORY_STAY_NODE->SetPrevHistState(prevKey, prevKey);
