@@ -336,7 +336,7 @@ namespace {
             LOG_DEBUG(_T("CALLED: key=%s, wlen=%d"), MAKE_WPTR(key), wlen);
             size_t keylen = key.size();
             for (const auto& w : usedList) {
-                if ((w.size() == wlen || (wlen == 0 && w.size() >= 2) || (wlen >= 9 && w.size() > 9)) && utils::contains(set_, w)) {
+                if ((w.size() == wlen || (wlen == 0 && w.size() >= 2) || (wlen >= 9 && w.size() > 9)) && w != key && utils::contains(set_, w)) {
                     if (keylen != 1 || w.size() >= 2) {
                         // キーが1文字なら、候補列から1文字単語は除く
                         outvec.PushHistory(key, w);
@@ -361,7 +361,7 @@ namespace {
             };
             size_t i = 0;
             for (const auto& w : usedList) {
-                if (checkCond(w)) {
+                if (w != key && checkCond(w)) {
                     outvec.PushHistory(key, w);
                     if (++i >= n) break;
                 }
@@ -701,7 +701,7 @@ namespace {
             usedList.ExtractUsedWords(key, resultList, set_, wlen);
             for (const auto& s : set_) {
                 // keylen == 1 なら1文字単語は対象外
-                if ((wlen > 0 && s.size() == wlen) || (wlen == 0 && (keylen != 1 || s.size() >= 2))) {
+                if ((wlen > 0 && s.size() == wlen) || (wlen == 0 && (keylen != 1 || s.size() >= 2)) && s != key) {
                     pastList.PushHistory(key, s);
                 }
             }
