@@ -25,6 +25,7 @@
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
+#define LOG_INFO LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
@@ -1076,8 +1077,12 @@ namespace {
                 if (!bNoHistTemporary) {
                     historySearch(bManualTemporary);
                 }
-                bManualTemporary = false;
+                //bNoHistTemporary = false;
+                //bManualTemporary = false;
             }
+
+            bNoHistTemporary = false;
+            bManualTemporary = false;
 
             LOG_INFO(_T("LEAVE: %s\n"), NAME_PTR);
         }
