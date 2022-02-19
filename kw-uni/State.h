@@ -243,6 +243,9 @@ protected:
     // ClearStroke ハンドラ
     virtual void handleClearStroke();
 
+    // ToggleBlocker ハンドラ
+    virtual void handleToggleBlocker();
+
     //// Ctrl-A ～ Ctrl-Zハンドラ
     virtual void handleCtrlKeys(int deckey);
     //virtual void handleCtrlA();

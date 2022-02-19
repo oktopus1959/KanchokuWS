@@ -565,7 +565,7 @@ namespace KanchokuWS
         /// <returns></returns>
         private bool FuncDispatcher(int deckey, uint mod)
         {
-            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod})");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod})");
             bool bPrevDtUpdate = false;
             int prevDeckey = prevFuncDeckey;
             prevFuncDeckey = deckey;
@@ -623,14 +623,14 @@ namespace KanchokuWS
                         }
                         return true;
                     case DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY:
-                        logger.Info("EXCHANGE_CODE_TABLE");
+                        logger.InfoH("EXCHANGE_CODE_TABLE");
                         if (IsDecoderActive && DecoderOutput.IsWaitingFirstStroke()) {
                             ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
                             frmVkb.DrawVirtualKeyboardChars();
                         }
                         return true;
                     case DecoderKeys.PSEUDO_SPACE_DECKEY:
-                        logger.Info(() => $"PSEUDO_SPACE_DECKEY: strokeCount={decoderOutput.GetStrokeCount()}");
+                        logger.InfoH(() => $"PSEUDO_SPACE_DECKEY: strokeCount={decoderOutput.GetStrokeCount()}");
                         deckey = DecoderKeys.STROKE_SPACE_DECKEY;
                         if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
                             // 第2打鍵待ちなら、スペースを出力
@@ -640,7 +640,7 @@ namespace KanchokuWS
                     case DecoderKeys.POST_NORMAL_SHIFT_DECKEY:
                     case DecoderKeys.POST_PLANE_A_SHIFT_DECKEY:
                     case DecoderKeys.POST_PLANE_B_SHIFT_DECKEY:
-                        logger.Info(() => $"POST_PLANE_X_SHIFT_DECKEY:{deckey}, strokeCount={decoderOutput.GetStrokeCount()}");
+                        logger.InfoH(() => $"POST_PLANE_X_SHIFT_DECKEY:{deckey}, strokeCount={decoderOutput.GetStrokeCount()}");
                         if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
                             // 第2打鍵待ちなら、いったんBSを出力してからシフトされたコードを出力
                             InvokeDecoder(DecoderKeys.BS_DECKEY, 0);
@@ -649,12 +649,16 @@ namespace KanchokuWS
                         }
                         return true;
                     case DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY:
-                        logger.Info(() => $"COPY_SELECTION_AND_SEND_TO_DICTIONARY:{deckey}");
+                        logger.InfoH(() => $"COPY_SELECTION_AND_SEND_TO_DICTIONARY:{deckey}");
                         copySelectionAndSendToDictionary();
                         return true;
                     case DecoderKeys.CLEAR_STROKE_DECKEY:
-                        logger.Info(() => $"CLEAR_STROKE_DECKEY:{deckey}");
+                        logger.InfoH(() => $"CLEAR_STROKE_DECKEY:{deckey}");
                         sendClearStrokeToDecoder();
+                        return true;
+                    case DecoderKeys.TOGGLE_BLOCKER_DECKEY:
+                        logger.InfoH(() => $"TOGGLE_BLOCKER_DECKEY:{deckey}");
+                        sendDeckeyToDecoder(deckey);
                         return true;
 
                     default:
@@ -1286,7 +1290,17 @@ namespace KanchokuWS
         /// </summary>
         private void sendClearStrokeToDecoder()
         {
-            HandleDeckeyDecoder(decoderPtr, DecoderKeys.CLEAR_STROKE_DECKEY, 0, false, ref decoderOutput);
+            logger.InfoH(() => $"CLLED");
+            sendDeckeyToDecoder(DecoderKeys.CLEAR_STROKE_DECKEY);
+        }
+
+        /// <summary>
+        /// デコーダにキーを送りつける
+        /// </summary>
+        private void sendDeckeyToDecoder(int deckey)
+        {
+            logger.InfoH(() => $"CLLED: deckey={deckey:x}H({deckey})");
+            HandleDeckeyDecoder(decoderPtr, deckey, 0, false, ref decoderOutput);
             if (IsDecoderActive) {
                 // 仮想キーボードにヘルプや文字候補を表示
                 frmVkb.DrawVirtualKeyboardChars();

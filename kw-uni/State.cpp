@@ -371,6 +371,10 @@ void State::dispatchDeckey(int deckey) {
         handlePrevCandTrigger();
     } else if (deckey == TOGGLE_ZENKAKU_CONVERSION_DECKEY) {
         handleZenkakuConversion();
+    } else if (deckey == CLEAR_STROKE_DECKEY) {
+        handleClearStroke();
+    } else if (deckey == TOGGLE_BLOCKER_DECKEY) {
+        handleToggleBlocker();
     } else {
         if (handleFunctionKeys(deckey)) return;
 
@@ -498,6 +502,13 @@ void State::handleZenkakuConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKe
 
 // handleClearStroke デフォルトハンドラ
 void State::handleClearStroke() { LOG_INFOH(_T("CALLED")); }
+
+// handleToggleBlocker デフォルトハンドラ
+void State::handleToggleBlocker() {
+    LOG_INFOH(_T("CALLED"));
+    // ブロッカーをセット/リセットする
+    OUTPUT_STACK->toggleLastBlocker();
+}
 
 //-----------------------------------------------------------------------
 // DecoderOff デフォルトハンドラ

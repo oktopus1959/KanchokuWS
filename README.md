@@ -938,7 +938,7 @@ Ctrl-G などでミニバッファをクリアしてから「@」で履歴検索
 登録方法には下記の3通りがあります。
 
 - 仮想鍵盤の上部ミニバッファに文字列をコピペする
-- 選択状態の文字列に対して後述の CopySelectionAndSendToDictionary コマンドを呼び出す
+- 選択状態の文字列に対して後述の拡張修飾キーで CopySelectionAndSendToDictionary コマンドを呼び出す
 - 設定ダイアログの「辞書登録」>「履歴登録」で登録する
 
 たとえば「お世話になっております」を履歴として登録するには、
@@ -1220,7 +1220,7 @@ https://twitter.com/kanchokker/status/1411910765976506373 <br/>
 登録方法には下記の3通りがあります。
 
 - 仮想鍵盤の上部ミニバッファに文字列をコピペする
-- 後述の CopySelectionAndSendToDictionary コマンドを呼び出す
+- 後述の拡張修飾キーで CopySelectionAndSendToDictionary コマンドを呼び出す
 - 設定ダイアログの「辞書登録」>「交ぜ書き登録」で登録する
 
 形式は、
@@ -1282,7 +1282,7 @@ https://twitter.com/kanchokker/status/1411910765976506373 <br/>
 登録方法には下記の3通りがあります。
 
 - 仮想鍵盤の上部ミニバッファに文字列をコピペする
-- 後述の CopySelectionAndSendToDictionary コマンドを呼び出す
+- 後述の拡張修飾キーで CopySelectionAndSendToDictionary コマンドを呼び出す
 - 設定ダイアログの「辞書登録」>「連想文字登録」で登録する
 
 形式は、
@@ -1496,7 +1496,7 @@ KanchokuWS では、辞書読み込み時に部品としての使用頻度を計
 登録方法には下記の3通りがあります。
 
 1. 仮想鍵盤の上部ミニバッファに文字列をコピペする
-1. 後述の CopySelectionAndSendToDictionary コマンドを呼び出す
+1. 後述の拡張修飾キーで CopySelectionAndSendToDictionary コマンドを呼び出す
 1. 設定ダイアログの「辞書登録」>「自動部首合成登録」で登録する
 
 形式は、A, B を部品文字、C を合成文字として、1と2の場合は
@@ -1899,6 +1899,7 @@ Esc, Tab, BackSpace, Enter, Insert, Delete, Home, End, PageUp, PageDown, UpArrow
 |ClearStroke|打鍵中のストロークを取り消して、第1打鍵待ちに戻る|
 |FullEscape|入力途中状態をクリアし、ミニバッファ末尾にブロッカーを置く|
 |Unblock|ミニバッファ末尾のブロッカーを解除する|
+|BlockerToggle|ミニバッファ末尾のブロッカーを設定・解除する|
 |HistNext|履歴を先頭から選択|
 |HistPrev|履歴を末尾から選択|
 |HelpRotate|ストロークヘルプの正順回転|

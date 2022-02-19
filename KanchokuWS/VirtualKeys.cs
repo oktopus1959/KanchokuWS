@@ -588,6 +588,8 @@ namespace KanchokuWS
             {"deactivate", DecoderKeys.DEACTIVE_DECKEY},
             {"fullescape", DecoderKeys.FULL_ESCAPE_DECKEY},
             {"unblock", DecoderKeys.UNBLOCK_DECKEY},
+            {"toggleblocker", DecoderKeys.TOGGLE_BLOCKER_DECKEY},
+            {"blockertoggle", DecoderKeys.TOGGLE_BLOCKER_DECKEY},
             {"helprotate", DecoderKeys.STROKE_HELP_ROTATION_DECKEY},
             {"helpunrotate", DecoderKeys.STROKE_HELP_UNROTATION_DECKEY},
             {"daterotate", DecoderKeys.DATE_STRING_ROTATION_DECKEY},
