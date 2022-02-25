@@ -22,6 +22,9 @@ public:
 
     // デストラクタ
     ~StrokeTableNode() {
+        for (auto p : children) {
+            delete p;
+        }
     }
 
     // 当ノードを処理する State インスタンスを作成する
@@ -37,7 +40,8 @@ public:
 
     // n番目の子ノードを返す
     inline Node* getNth(size_t n) const {
-        return n < children.size() ? children[n].get() : 0;
+        //return n < children.size() ? children[n].get() : 0;
+        return n < children.size() ? children[n] : 0;
     }
 
     //// 新しい子ノードを追加する
@@ -47,7 +51,13 @@ public:
 
     // n番目の子ノードをセットする
     inline void setNthChild(size_t n, Node* node) {
-        if (n < children.size()) children[n].reset(node);
+        //if (n < children.size()) children[n].reset(node);
+        if (n < children.size()) {
+            if (children[n]) {
+                delete children[n];
+            }
+            children[n] = node;
+        }
     }
 
 public:
@@ -72,7 +82,8 @@ public:
     }
 
 private:
-    std::vector<std::unique_ptr<Node>> children;
+    //std::vector<std::unique_ptr<Node>> children;
+    std::vector<Node*> children;
 
     size_t _depth;
 
@@ -88,7 +99,8 @@ public:
         VkbTableMaker::ReorderByStrokePosition(this, strokeGuide.data(), targetChars);
         for (size_t i = 0; i * 2 < strokeGuide.size() && i < children.size(); ++i) {
             auto ch = strokeGuide[i * 2];
-            Node* child = children[i].get();
+            //Node* child = children[i].get();
+            Node* child = getNth(i);
             if (ch != 0 && child && child->isStrokeTableNode()) {
                 StrokeTableNode* tblNode = dynamic_cast<StrokeTableNode*>(child);
                 if (tblNode) tblNode->nodeMarker[0] = ch;

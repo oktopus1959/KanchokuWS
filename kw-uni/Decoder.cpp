@@ -32,12 +32,13 @@
 
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
-#if 0
+#if 1
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define _LOG_DEBUGH_FLAG (true)
 #endif
 
 // -------------------------------------------------------------------
@@ -270,7 +271,7 @@ public:
     // cmdParams->inOutData に "コマンド\t引数" の形でコマンドラインが格納されている
     // 結果は outParams で返す
     void ExecCmd(DecoderCommandParams* cmdParams, DecoderOutParams* outParams) {
-        LOG_INFOH(_T("ENTER: data=%s"), cmdParams->inOutData);
+        LOG_INFOH(_T("ENTER: paramLen=%d, data=%s"), _tcslen(cmdParams->inOutData), cmdParams->inOutData);
 
         auto items = utils::split(cmdParams->inOutData, '\t');
         if (!items.empty()) {

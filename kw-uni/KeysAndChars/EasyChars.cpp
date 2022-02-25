@@ -37,24 +37,27 @@ std::unique_ptr<EasyChars> EasyChars::Singleton;
 
 // 簡易打鍵文字(最上段を使わないレベル1(900文字)、2ストローク文字、全ストローク文字、およびユーザー定義の簡易打鍵文字)を集める
 void EasyChars::GatherEasyChars() {
-    LOG_INFO(_T("ENTER"));
+    LOG_INFOH(_T("ENTER"));
 
-    //if (Singleton) {
-    //    LOG_INFO(_T("LEAVE: Already created"));
-    //    return;
-    //}
-
-    Singleton.reset(new EasyChars());
+    if (Singleton) {
+        LOG_INFOH(_T("Already created. Do cleaning."));
+        Singleton->CleanUp();
+    } else {
+        Singleton.reset(new EasyChars());
+        LOG_INFOH(_T("New Singleton = %p"), Singleton.get());
+    }
 
     auto easyCharsFile = SETTINGS->easyCharsFile;
     if (!easyCharsFile.empty()) {
-        LOG_INFO(_T("open easy chars file: %s"), easyCharsFile.c_str());
+        LOG_INFOH(_T("open easy chars file: %s"), easyCharsFile.c_str());
         utils::IfstreamReader reader(easyCharsFile);
         if (reader.success()) {
             for (const auto& line : reader.getAllLines()) {
                 LOG_INFO(_T("line=%s"), line.c_str());
                 auto ln = utils::strip(line);
                 if (ln.empty() || ln[0] == '#') continue;
+
+                LOG_INFOH(_T("line=%s"), line.c_str());
 
                 // 最上段を使わないレベル1の2ストローク
                 if (utils::toLower(ln) == _T("includefirstlevel")) {
@@ -81,10 +84,10 @@ void EasyChars::GatherEasyChars() {
             }
         } else {
             // エラーメッセージを表示
-            LOG_ERROR(_T("Can't read maze file: %s"), easyCharsFile.c_str());
+            LOG_ERROR(_T("Can't read easyChars file: %s"), easyCharsFile.c_str());
             ERROR_HANDLER->Warn(utils::format(_T("簡易打鍵文字ファイル(%s)が開けません"), easyCharsFile.c_str()));
         }
     }
-    LOG_INFO(_T("LEAVE"));
+    LOG_INFOH(_T("LEAVE"));
 }
 

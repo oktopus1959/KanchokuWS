@@ -20,6 +20,11 @@ public:
     // 最上段を使わないレベル1(900文字)とユーザー定義の簡易打鍵文字を集める
     static void GatherEasyChars();
 
+    // CleanUp
+    inline void CleanUp() {
+        easyChars.clear();
+    }
+
     // 容易打鍵文字を追加
     inline void AddEasyChar(mchar_t ch) {
         easyChars.insert(ch);

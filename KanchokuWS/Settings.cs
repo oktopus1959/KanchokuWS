@@ -11,7 +11,7 @@ namespace KanchokuWS
     {
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.1.20";
+        public static string Version => "1.1.20a";
 
         /// <summary> ドキュメントへのURL </summary>
         public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
@@ -958,15 +958,15 @@ namespace KanchokuWS
             BlockerSetterOneShotKeySeq = addDecoderKeySeqSetting("blockerSetterOneShotKeySeq");
 
             // for Debug
-            addDecoderSetting("debughState", false);
-            addDecoderSetting("debughMazegaki", false);
-            addDecoderSetting("debughMazegakiDic", false);
-            addDecoderSetting("debughHistory", false);
-            addDecoderSetting("debughStrokeTable", false);
-            addDecoderSetting("debughBushu", false);
-            addDecoderSetting("debughString", false);
-            addDecoderSetting("debughZenkaku", false);
-            addDecoderSetting("debughKatakana", false);
+            //addDecoderSetting("debughState", false);
+            //addDecoderSetting("debughMazegaki", false);
+            //addDecoderSetting("debughMazegakiDic", false);
+            //addDecoderSetting("debughHistory", false);
+            //addDecoderSetting("debughStrokeTable", false);
+            //addDecoderSetting("debughBushu", false);
+            //addDecoderSetting("debughString", false);
+            //addDecoderSetting("debughZenkaku", false);
+            //addDecoderSetting("debughKatakana", false);
             BushuDicLogEnabled = addDecoderSetting("bushuDicLogEnabled", false);
 
             return true;

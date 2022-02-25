@@ -435,6 +435,8 @@ namespace KanchokuWS
 
         private void button_basicEnter_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
+
             frmMain?.DeactivateDecoder();
 
             label_initialMsg.Hide();
@@ -481,6 +483,8 @@ namespace KanchokuWS
 
             //SystemHelper.ShowInfoMessageBox("設定しました");
             label_okResultBasic.Show();
+
+            logger.InfoH("LEAVE");
         }
 
         /// <summary> INIファイルのリロード </summary>
@@ -488,10 +492,14 @@ namespace KanchokuWS
         /// <param name="e"></param>
         private void button_Reload_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
+
             label_initialMsg.Hide();
 
             reloadIniFileAndDefFiles();
             label_reloadBasic.Show();
+
+            logger.InfoH("LEAVE");
         }
 
         private void reloadIniFileAndDefFiles()
@@ -518,11 +526,13 @@ namespace KanchokuWS
 
         private void button_basicClose_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             if (button_basicClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabBasic();
                 checkerBasic.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+                logger.InfoH("LEAVE");
             }
         }
 
@@ -605,6 +615,7 @@ namespace KanchokuWS
 
         private void button_fontColrEnter_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             frmMain?.DeactivateDecoder();
 
             // フォント
@@ -653,6 +664,7 @@ namespace KanchokuWS
 
             label_okResultFontColor.Show();
 
+            logger.InfoH("LEAVE");
         }
 
         private void tabFontColorStatusChanged(bool flag)
@@ -663,11 +675,13 @@ namespace KanchokuWS
 
         private void button_fontColorClose_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             if (button_fontColorClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabFontColor();
                 checkerFontColor.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+                logger.InfoH("LEAVE");
             }
         }
 
@@ -791,6 +805,7 @@ namespace KanchokuWS
 
         private void button_advancedEnter_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             frmMain?.DeactivateDecoder();
 
             // モード標識表示時間
@@ -849,15 +864,19 @@ namespace KanchokuWS
             //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             label_okResultAdvanced.Show();
+
+            logger.InfoH("LEAVE");
         }
 
         private void button_advancedClose_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             if (button_advancedClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabAdvanced();
                 checkerAdvanced.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+                logger.InfoH("LEAVE");
             }
         }
 
@@ -913,12 +932,15 @@ namespace KanchokuWS
 
         private void button_keyAssignReload_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             reloadIniFileAndDefFiles();
             label_keyAssignReload.Show();
+            logger.InfoH("LEAVE");
         }
 
         private void button_keyAssignEnter_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             frmMain?.DeactivateDecoder();
 
             Settings.SetUserIni("zenkakuModeKeySeq", textBox_zenkakuModeKeySeq.Text);
@@ -953,15 +975,19 @@ namespace KanchokuWS
             //frmMain?.MakeInitialVkbTable();
 
             label_okResultKeyAssign.Show();
+
+            logger.InfoH("LEAVE");
         }
 
         private void button_keyAssignClose_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             if (button_keyAssignClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabKeyAssign();
                 checkerKeyAssign.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+                logger.InfoH("LEAVE");
             }
         }
 
@@ -1095,6 +1121,7 @@ namespace KanchokuWS
 
         private void button_ctrlEnter_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             frmMain?.DeactivateDecoder();
 
             Settings.SetUserIni("globalCtrlKeysEnabled", checkBox_globalCtrlKeysEnabled.Checked);
@@ -1133,15 +1160,19 @@ namespace KanchokuWS
             checkerCtrlKeys.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
             label_okResultCtrlKeys.Show();
+
+            logger.InfoH("LEAVE");
         }
 
         private void button_ctrlClose_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             if (button_ctrlClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabCtrlKeys();
                 checkerCtrlKeys.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+                logger.InfoH("LEAVE");
             }
         }
 
@@ -1233,6 +1264,7 @@ namespace KanchokuWS
 
         private void button_histEnter_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             frmMain?.DeactivateDecoder();
 
             Settings.SetUserIni("histKatakanaWordMinLength", textBox_histKatakanaWordMinLength.Text.Trim());
@@ -1277,15 +1309,19 @@ namespace KanchokuWS
             //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             label_okResultHist.Show();
+
+            logger.InfoH("LEAVE");
         }
 
         private void button_histClose_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             if (button_histClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabHistory();
                 checkerHistory.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+                logger.InfoH("LEAVE");
             }
         }
 
@@ -1366,6 +1402,7 @@ namespace KanchokuWS
 
         private void button_miscEnter_Click(object sender, EventArgs e)
         {
+            logger.InfoH("ENTER");
             Settings.SetUserIni("yamanobeEnabled", checkBox_yamanobeEnabled.Checked);
             Settings.SetUserIni("autoBushuComp", checkBox_autoBushuComp.Checked);
             Settings.SetUserIni("bushuAssocSelectCount", textBox_bushuAssocSelectCount.Text);
@@ -1399,6 +1436,8 @@ namespace KanchokuWS
             //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             label_okResultMisc.Show();
+
+            logger.InfoH("LEAVE");
         }
 
         private void checkBox_convertShiftedHiraganaToKatakana_CheckedChanged(object sender, EventArgs e)
@@ -1415,6 +1454,7 @@ namespace KanchokuWS
 
         private void button_openModConversionFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             //try {
             //    if (Settings.ModConversionFile._notEmpty()) {
             //        System.Diagnostics.Process.Start(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.ModConversionFile));
@@ -1425,6 +1465,7 @@ namespace KanchokuWS
 
         private void button_openKanjiYomiFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             //try {
             //    if (Settings.KanjiYomiFile._notEmpty()) {
             //        System.Diagnostics.Process.Start(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KanjiYomiFile));
@@ -1435,18 +1476,21 @@ namespace KanchokuWS
 
         private void button_reloadMisc_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             reloadIniFileAndDefFiles();
             label_reloadMisc.Show();
         }
 
         private void button_saveRomanTableFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             frmMain?.ExecCmdDecoder("SaveRomanStrokeTable", $"{textBox_romanBushuCompPrefix.Text}\t{textBox_romanSecPlanePrefix.Text}");
             label_miscRomanOut.Show();
         }
 
         private void button_saveEelllJsTableFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             frmMain?.ExecCmdDecoder("SaveEelllJsTable", null);
             label_miscEelllJsOut.Show();
         }
@@ -1454,6 +1498,7 @@ namespace KanchokuWS
         /// <summary> 閉じる </summary>
         private void button_miscClose_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             if (button_miscClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
@@ -1559,6 +1604,7 @@ namespace KanchokuWS
         /// <summary> 履歴辞書登録 </summary>
         private void button_enterHistory_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             var line = textBox_history.Text.Trim().Replace(" ", "");
             if (line._notEmpty()) {
                 //frmMain?.ExecCmdDecoder("addHistEntry", line);
@@ -1571,6 +1617,7 @@ namespace KanchokuWS
 
         private void button_saveHistoryFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             frmMain?.ExecCmdDecoder("saveHistoryDic", null);
             label_history.Hide();
             label_saveHist.Show();
@@ -1586,6 +1633,7 @@ namespace KanchokuWS
         /// <summary> 交ぜ書き辞書登録 </summary>
         private void button_enterMazegaki_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             var line = textBox_mazegaki.Text.Trim()._reReplace(@" +", " ");
             if (line._reMatch(@"^[^ ]+ ")) {
                 frmMain?.ExecCmdDecoder("addMazegakiEntry", line);
@@ -1599,6 +1647,7 @@ namespace KanchokuWS
 
         private void button_saveMazegakiFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             frmMain?.ExecCmdDecoder("saveMazegakiDic", null);
             label_mazegaki.Hide();
             label_saveMaze.Show();
@@ -1615,6 +1664,7 @@ namespace KanchokuWS
         /// <summary> 部首連想辞書登録 </summary>
         private void button_enterBushuAssoc_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             var line = textBox_bushuAssoc.Text.Trim().Replace(" ", "");
             if (line._reMatch(@"^[^=]=.")) {
                 frmMain?.ExecCmdDecoder("mergeBushuAssocEntry", line);
@@ -1629,6 +1679,7 @@ namespace KanchokuWS
 
         private void button_saveBushuAssocFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             frmMain?.ExecCmdDecoder("saveBushuAssocDic", null);
             button_readBushuAssoc.Hide();
             label_bushuAssoc.Hide();
@@ -1641,6 +1692,7 @@ namespace KanchokuWS
         /// <param name="e"></param>
         private void button_readBushuAssoc_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             if (textBox_bushuAssoc.Text._notEmpty()) {
                 var s = textBox_bushuAssoc.Text.Substring(0, 1);
                 char[] result = frmMain?.CallDecoderFunc("readBushuAssoc", s);
@@ -1666,6 +1718,7 @@ namespace KanchokuWS
         /// <summary> 部首合成辞書登録 </summary>
         private void button_enterBushu_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             var line = textBox_bushuComp.Text.Trim().Replace(" ", "");
             int n = 0;
             foreach (var ch in line) {
@@ -1684,6 +1737,7 @@ namespace KanchokuWS
 
         private void button_saveBushuCompFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             frmMain?.ExecCmdDecoder("saveBushuDic", null);
             label_bushuComp.Hide();
             label_saveBushu.Show();
@@ -1699,6 +1753,7 @@ namespace KanchokuWS
         /// <summary> 自動部首合成辞書登録 </summary>
         private void button_enterAutoBushu_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             var line = textBox_autoBushuComp.Text.Trim().Replace(" ", "");
             int n = 0;
             foreach (var ch in line) {
@@ -1717,6 +1772,7 @@ namespace KanchokuWS
 
         private void button_saveAutoBushuCompFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             frmMain?.ExecCmdDecoder("saveAutoBushuDic", null);
             label_autoBushuComp.Hide();
             label_saveAutoBushu.Show();
@@ -1731,6 +1787,7 @@ namespace KanchokuWS
 
         private void button_registerClose_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             this.Close();
         }
 
@@ -1763,6 +1820,7 @@ namespace KanchokuWS
         //-----------------------------------------------------------------------------------
         private void button_aboutClose_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             this.Close();
         }
 
@@ -1825,6 +1883,7 @@ namespace KanchokuWS
 
         private void button_saveAll_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             frmMain?.SaveAllFiles();
             label_execResultFile.Show();
         }
@@ -1901,12 +1960,14 @@ namespace KanchokuWS
 
         private void button_restart_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             RestartRequired = true;
             Close();
         }
 
         private void button_restartWithNoSave_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             RestartRequired = true;
             NoSave = true;
             Close();
@@ -1936,6 +1997,7 @@ namespace KanchokuWS
 
         private void button_document_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             openDocumentUrl();
         }
 
@@ -2010,6 +2072,7 @@ namespace KanchokuWS
 
         private void button_showPaddingsDesc_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             if (frmVkb != null) {
                 var dlg = new DlgPaddingsDesc(frmVkb.GetPaddingsDesc());
                 dlg.ShowDialog();
@@ -2175,52 +2238,62 @@ namespace KanchokuWS
 
         private void button_openKeyboardFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             openFileByTxtAssociatedProgram(Settings.KeyboardFile);
         }
 
         private void button_openTableFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             openFileByTxtAssociatedProgram(Settings.TableFile);
         }
 
         private void button_openTableFile2_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             openFileByTxtAssociatedProgram(Settings.TableFile2);
         }
 
         private void button_openKeyCharMapFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             openFileByTxtAssociatedProgram(Settings.CharsDefFile);
         }
 
         private void button_openEasyCharsFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             openFileByTxtAssociatedProgram(Settings.EasyCharsFile);
         }
 
         private void button_openStrokeHelpFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             openFileByTxtAssociatedProgram(Settings.StrokeHelpFile);
         }
 
         private void button_openBushuCompFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             openFileByTxtAssociatedProgram(Settings.BushuFile);
             openFileByTxtAssociatedProgram(Settings.AutoBushuFile);
         }
 
         private void button_bushuAssocFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             openFileByTxtAssociatedProgram(Settings.BushuAssocFile);
         }
 
         private void button_openMazeFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             openFileByTxtAssociatedProgram(Settings.MazegakiFile._safeReplace("*", "user"));
         }
 
         private void button_openHistoryFile_Click(object sender, EventArgs e)
         {
+            logger.InfoH("CALLED");
             openFileByTxtAssociatedProgram(Settings.HistoryFile._safeReplace("*", "entry"));
         }
 

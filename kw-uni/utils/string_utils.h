@@ -245,9 +245,11 @@ namespace {
 
 namespace utils
 {
+#define UTILS_BUFSIZ 2048
+
     // hWnd で指定されたウインドウのクラス名を取得する
     inline tstring getClassNameFromHwnd(HWND hWnd) {
-        TCHAR s[2048];
+        TCHAR s[UTILS_BUFSIZ];
         GetClassName(hWnd, s, _countof(s));
         return s;
     }
@@ -263,10 +265,10 @@ namespace utils
 
     inline tstring vformat(const TCHAR* fmt, va_list list) {
 #ifdef _UNICODE
-        wchar_t buf[2048];
+        wchar_t buf[UTILS_BUFSIZ];
         wvsprintf(buf, fmt, list);
 #else
-        char buf[2048];
+        char buf[UTILS_BUFSIZ];
         vsprintf_s(buf, fmt, list);
 #endif
         return buf;
@@ -289,7 +291,7 @@ namespace utils
         va_list ap;
         va_start(ap, fmt);
 
-        char buf[2048];
+        char buf[UTILS_BUFSIZ];
         vsprintf_s(buf, fmt, ap);
 
         va_end(ap);
@@ -345,7 +347,7 @@ namespace utils
     inline std::string ws_to_mbs(const wstring& ws)
     {
         size_t size;
-        char buffer[2048];
+        char buffer[UTILS_BUFSIZ];
         setlocale(LC_CTYPE, "ja-JP");
         errno_t error = wcstombs_s(&size, buffer, sizeof(buffer), ws.c_str(), _TRUNCATE);
         //debug_rptf2("error=%d size=%d\n", error, size);
@@ -963,6 +965,7 @@ namespace utils
         return str.size() >= qKey.size() && match_key_containing_question(str, str.size() - qKey.size(), qKey, 0);
     }
 
+#undef UTILS_BUFSIZ
 } // namespace utils
 
 #define MAKE_WPTR(ms) to_wstr(ms).c_str()

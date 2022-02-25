@@ -228,13 +228,17 @@ namespace KanchokuWS
         // 終了
         public void Terminate()
         {
+            logger.InfoH("CALLED");
             if (frmSplash != null) {
                 closeSplash();
-                logger.Debug("Splash Closed");
+                logger.Info("Splash Closed");
             }
+
             DeactivateDecoder();
-            logger.Debug("Decoder OFF");
+
+            logger.InfoH($"ConfirmOnClose={Settings.ConfirmOnClose}");
             if (!Settings.ConfirmOnClose || SystemHelper.OKCancelDialog("漢直窓Sを終了します。\r\nよろしいですか。")) {
+                logger.InfoH("CLOSING...");
                 Close();
             }
         }
@@ -243,16 +247,20 @@ namespace KanchokuWS
         // 再起動
         public void Restart(bool bNoSave)
         {
+            logger.InfoH($"CALLED: bNoSave={bNoSave}");
             if (frmSplash != null) {
                 closeSplash();
-                logger.Debug("Splash Closed");
+                logger.Info("Splash Closed");
             }
+
             DeactivateDecoder();
-            logger.Debug("Decoder OFF");
+
+            logger.InfoH($"bNoSave={bNoSave}, ConfirmOnRestart={Settings.ConfirmOnRestart}");
             var msg = bNoSave ?
                 "漢直窓Sを再起動します。\r\nデコーダが保持している辞書内容はファイルに保存されません。\r\nよろしいですか。" :
                 "漢直窓Sを再起動します。\r\nデコーダが保持している辞書内容をファイルに書き出すので、\r\nユーザーが直接辞書ファイルに加えた変更は失われます。\r\nよろしいですか。";
             if (!Settings.ConfirmOnRestart || SystemHelper.OKCancelDialog(msg)) {
+                logger.InfoH("RESTARTING...");
                 bRestart = true;
                 bNoSaveDicts = bNoSave;
                 Close();
@@ -401,7 +409,7 @@ namespace KanchokuWS
         /// <summary> デコーダにコマンドを送信する(エラーなら false を返す)</summary> 
         public bool ExecCmdDecoder(string cmd, string data, bool bInit = false)
         {
-            logger.InfoH(() => $"ENTER: cmd={cmd}, data={data}, bInit={bInit}");
+            logger.InfoH(() => $"ENTER: cmd={cmd}, bInit={bInit}, dataLen={data._safeLength()}, data={data}");
             bool resultFlag = true;
             if (decoderPtr != IntPtr.Zero) {
                 var prm = new DecoderCommandParams() {
@@ -1422,13 +1430,13 @@ namespace KanchokuWS
         private void Exit_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // 終了
-            logger.Debug("ENTER");
+            logger.Info("CALLED");
             Terminate();
-            logger.Debug("LEAVE");
         }
 
         private void Settings_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            logger.Info("CALLED");
             openSettingsDialog();
         }
 
@@ -1442,6 +1450,7 @@ namespace KanchokuWS
                 bool bRestart = dlg.RestartRequired;
                 bool bNoSave = dlg.NoSave;
                 dlg.Dispose();
+                logger.InfoH(() => $"bRestart={bRestart}, bNoSave={bNoSave}");
                 if (bRestart) Restart(bNoSave);
             }
         }
@@ -1555,16 +1564,19 @@ namespace KanchokuWS
 
         private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            logger.Info("CALLED");
             ReloadBushuDic();
         }
 
         private void ReadMazeWikipediaDic_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            logger.Info("CALLED");
             ReadMazegakiWikipediaDic();
         }
 
         private void ReloadSettings_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            logger.Info("CALLED");
             ReloadSettingsAndDefFiles();
         }
     }
