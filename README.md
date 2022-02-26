@@ -343,6 +343,7 @@ KanchokuWS はサロゲートペアもサポートしています。
 |-|-|-|
 |t.tbl|T-Code|2ストローク、カタカナあり、ひらがな・カタカナが無規則|
 |tut.tbl|TUT-Code|多ストローク、カタカナなし|
+|tutr.tbl|TUT-Code改|TUTの拡張版。拗音等の短縮や鏡像反転を追加|
 |tt.tbl|TT-Code|T-Code + 多ストローク (fj/jf で拡張面に移動)|
 |g.tbl|G-Code|多ストローク、カタカナあり|
 |phoenix.tbl|phoenix|多ストローク、ひらがなが左右逆順も同文字、カタカナなし|
@@ -353,6 +354,8 @@ T-Code 以外は、ひらがな（カタカナ）が覚えやすい配置にな�
 （というか、T-Code が変態なだけとも言いますが） 。
 TUT や phoenix のようにカタカナがテーブルファイルに存在しないものは、
 カタカナ入力モードやひらがな→カタカナ変換機能を使って入力することになります。
+
+※ tutr.tbl については Hary氏の「[TUT-Code使うならこれだけは絶対やっとけ！](https://ameblo.jp/harycurl/entry-12108859013.html)」を参照してください。
 
 打鍵列と文字の対応を記述するテーブルファイルの記法については、
 元祖漢直Winの[ドキュメント](https://kanchoku.github.io/kw/doc/kanchoku_frame.html)の

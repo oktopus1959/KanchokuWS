@@ -237,6 +237,9 @@ protected:
     // ZenkakuConversion ハンドラ
     virtual void handleZenkakuConversion();
 
+    // KatakanaConversion ハンドラ
+    virtual void handleKatakanaConversion();
+
     // DecoderOff ハンドラ
     virtual void handleDecoderOff();
 

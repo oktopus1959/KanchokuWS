@@ -17,7 +17,11 @@ public:
     // 当機能を表す文字を設定
     MString getString() const { return to_mstr(_T("カ")); }
 
+    static void CreateSingleton();
+
+    static std::unique_ptr<KatakanaNode> Singleton;
 };
+#define KATAKANA_NODE (KatakanaNode::Singleton)
 
 // -------------------------------------------------------------------
 // KatakanaNodeBuilder - ノードビルダ

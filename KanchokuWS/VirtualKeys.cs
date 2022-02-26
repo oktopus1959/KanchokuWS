@@ -600,6 +600,8 @@ namespace KanchokuWS
             {"bushucomphelp", DecoderKeys.BUSHU_COMP_HELP_DECKEY},
             {"zenkakuconvert", DecoderKeys.TOGGLE_ZENKAKU_CONVERSION_DECKEY},
             {"zenkakuconversion", DecoderKeys.TOGGLE_ZENKAKU_CONVERSION_DECKEY},
+            {"katakanaconvert", DecoderKeys.TOGGLE_KATAKANA_CONVERSION_DECKEY},
+            {"katakanaconversion", DecoderKeys.TOGGLE_KATAKANA_CONVERSION_DECKEY},
             {"romanstrokeguide", DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE_DECKEY},
             {"upperromanstrokeguide", DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY},
             {"hiraganastrokeguide", DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY},

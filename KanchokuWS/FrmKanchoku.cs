@@ -212,6 +212,8 @@ namespace KanchokuWS
                 logger.InfoH("RESTART");
                 MultiAppChecker.Release();
                 Logger.Close();
+                //Helper.WaitMilliSeconds(1000);
+                logger.InfoH("Start another process...");
                 Helper.StartProcess(SystemHelper.GetExePath(), null);
             }
 

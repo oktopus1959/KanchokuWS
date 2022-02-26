@@ -19,10 +19,10 @@ void StayState::handleEsc() {
     State::handleEsc();
 }
 
-// ZenkakuConversionの処理
-void handleZenkakuConversion() {
-
-}
+//// ZenkakuConversionの処理
+//void handleZenkakuConversion() {
+//
+//}
 
 DEFINE_CLASS_LOGGER(StayState);
 

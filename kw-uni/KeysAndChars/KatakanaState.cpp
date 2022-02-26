@@ -83,6 +83,24 @@ namespace {
             return result;
         }
 
+        // FullEscape の処理 -- 処理のキャンセル
+        void handleFullEscape() {
+            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            cancelMe();
+        }
+
+        // Esc の処理 -- 処理のキャンセル
+        void handleEsc() {
+            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            cancelMe();
+        }
+
+        // KatakanaConversionの処理 - 処理のキャンセル
+        void handleKatakanaConversion() {
+            LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            cancelMe();
+        }
+
         // モード標識文字を返す
         mchar_t GetModeMarker() {
             return utils::safe_front(MY_NODE->getString());
@@ -120,6 +138,15 @@ KatakanaNode::~KatakanaNode() {
 State* KatakanaNode::CreateState() {
     LOG_INFO(_T("CALLED"));
     return new KatakanaState(this);
+}
+
+std::unique_ptr<KatakanaNode> KatakanaNode::Singleton;
+
+void KatakanaNode::CreateSingleton() {
+    LOG_INFO(_T("CALLED"));
+    if (KatakanaNode::Singleton == 0) {
+        KatakanaNode::Singleton.reset(new KatakanaNode());
+    }
 }
 
 // -------------------------------------------------------------------

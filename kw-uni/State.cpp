@@ -11,6 +11,7 @@
 #include "Settings.h"
 #include "StrokeTable.h"
 #include "Mazegaki/Mazegaki.h"
+#include "KeysAndChars/Katakana.h"
 #include "KeysAndChars/Zenkaku.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
@@ -85,6 +86,11 @@ void State::DoDeckeyPreProc(int deckey) {
             if (pNode && dynamic_cast<ZenkakuNode*>(pNode) == 0 && deckey == TOGGLE_ZENKAKU_CONVERSION_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: ZenkakuState"));
                 pNext = ZENKAKU_NODE->CreateState();
+                pNext->SetPrevState(this);
+                deckey = -1;    // この後は dekcey の処理をやらない
+            } else if (pNode && dynamic_cast<KatakanaNode*>(pNode) == 0 && deckey == TOGGLE_KATAKANA_CONVERSION_DECKEY) {
+                _LOG_DEBUGH(_T("CREATE: KatakanaState"));
+                pNext = KATAKANA_NODE->CreateState();
                 pNext->SetPrevState(this);
                 deckey = -1;    // この後は dekcey の処理をやらない
             } else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokeKeyOrShiftedKeyOrModeFuncKey(deckey)) {
@@ -371,6 +377,8 @@ void State::dispatchDeckey(int deckey) {
         handlePrevCandTrigger();
     } else if (deckey == TOGGLE_ZENKAKU_CONVERSION_DECKEY) {
         handleZenkakuConversion();
+    } else if (deckey == TOGGLE_KATAKANA_CONVERSION_DECKEY) {
+        handleKatakanaConversion();
     } else if (deckey == CLEAR_STROKE_DECKEY) {
         handleClearStroke();
     } else if (deckey == TOGGLE_BLOCKER_DECKEY) {
@@ -499,6 +507,9 @@ void State::handlePrevCandTrigger() { LOG_INFOH(_T("CALLED")); handleSpecialKeys
 
 // handleZenkakuConversion デフォルトハンドラ
 void State::handleZenkakuConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(TOGGLE_ZENKAKU_CONVERSION_DECKEY); }
+
+// handleKatakanaConversion デフォルトハンドラ
+void State::handleKatakanaConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(TOGGLE_KATAKANA_CONVERSION_DECKEY); }
 
 // handleClearStroke デフォルトハンドラ
 void State::handleClearStroke() { LOG_INFOH(_T("CALLED")); }

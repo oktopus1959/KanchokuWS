@@ -207,7 +207,6 @@ DEFINE_CLASS_LOGGER(ZenkakuNodeBuilder);
 
 Node* ZenkakuNodeBuilder::CreateNode() {
     LOG_INFO(_T("CALLED"));
-    ZenkakuNode::CreateSingleton();
     return new ZenkakuNode();
 }
 

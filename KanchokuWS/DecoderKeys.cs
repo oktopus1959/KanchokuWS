@@ -218,9 +218,10 @@ namespace KanchokuWS
         public const int STROKE_HELP_DECKEY = HISTORY_PREV_SEARCH_DECKEY + 1;              // ストロークヘルプ
         public const int BUSHU_COMP_HELP_DECKEY = STROKE_HELP_DECKEY + 1;                  // 部首合成ヘルプ
 
-        public const int TOGGLE_ZENKAKU_CONVERSION_DECKEY = BUSHU_COMP_HELP_DECKEY + 1;    // 全角変換のトグル
+        public const int TOGGLE_ZENKAKU_CONVERSION_DECKEY = BUSHU_COMP_HELP_DECKEY + 1;             // 全角変換のトグル
+        public const int TOGGLE_KATAKANA_CONVERSION_DECKEY = TOGGLE_ZENKAKU_CONVERSION_DECKEY + 1;  // カタカナ変換のトグル
 
-        public const int TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY = TOGGLE_ZENKAKU_CONVERSION_DECKEY + 1;   // 大文字ローマ字読みによる打鍵ガイドのトグル
+        public const int TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY = TOGGLE_KATAKANA_CONVERSION_DECKEY + 1;   // 大文字ローマ字読みによる打鍵ガイドのトグル
         public const int TOGGLE_ROMAN_STROKE_GUIDE_DECKEY = TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY + 1;   // ローマ字読みによる打鍵ガイドのトグル
         public const int TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY = TOGGLE_ROMAN_STROKE_GUIDE_DECKEY + 1;      // ひらがな読みによる打鍵ガイドのトグル
 

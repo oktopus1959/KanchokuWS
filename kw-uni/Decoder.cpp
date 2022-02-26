@@ -14,6 +14,7 @@
 #include "KeysAndChars/DeckeyToChars.h"
 #include "KeysAndChars/VkbTableMaker.h"
 #include "KeysAndChars/Zenkaku.h"
+#include "KeysAndChars/Katakana.h"
 #include "ErrorHandler.h"
 #include "Settings.h"
 #include "State.h"
@@ -117,6 +118,9 @@ public:
         
         // 全角変換ノードのSingleton生成
         ZenkakuNode::CreateSingleton();
+
+        // カタカナ変換ノードのSingleton生成
+        KatakanaNode::CreateSingleton();
 
         // ストロークヘルプを求めておく
         StrokeHelp::GatherStrokeHelp();
