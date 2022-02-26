@@ -19,6 +19,15 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughKatakana)
 
+#if 0
+#define IS_LOG_DEBUGH_ENABLED true
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define LOG_INFO LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#endif
+
 namespace {
 
 #define MAX_YOMI_LEN 10
@@ -42,7 +51,7 @@ namespace {
 
         // 機能状態に対して生成時処理を実行する
         bool DoProcOnCreated() {
-            LOG_DEBUG(_T("ENTER"));
+            _LOG_DEBUGH(_T("ENTER"));
 
             if (!STATE_COMMON->AddOrEraseRunningState(Name, this)) {
                 LOG_INFO(_T("Already same function had been running. Mark it unnecessary."));
@@ -53,9 +62,16 @@ namespace {
             setKatakanaModeMarker();
 
             // 前状態にチェインする
-            LOG_DEBUG(_T("LEAVE: CHAIN ME"));
+            _LOG_DEBUGH(_T("LEAVE: CHAIN ME"));
 
             return true;
+        }
+
+        // 履歴検索を初期化する状態か
+        bool IsHistoryReset() {
+            bool result = (pNext && pNext->IsHistoryReset());
+            _LOG_DEBUGH(_T("CALLED: %s: result=%s"), NAME_PTR, BOOL_TO_WPTR(result));
+            return result;
         }
 
     private:
@@ -71,7 +87,7 @@ namespace {
     public:
         // 文字列を変換
         MString TranslateString(const MString& outStr) {
-            LOG_DEBUGH(_T("ENTER: %s: outStr=%s"), NAME_PTR, MAKE_WPTR(outStr));
+            _LOG_DEBUGH(_T("ENTER: %s: outStr=%s"), NAME_PTR, MAKE_WPTR(outStr));
             MString result;
             if (pNext) {
                 result = translate(pNext->TranslateString(outStr));
@@ -79,25 +95,26 @@ namespace {
                 result = translate(outStr);
                 setKatakanaModeMarker();
             }
-            LOG_DEBUGH(_T("LEAVE: %s, translated=%s"), NAME_PTR, MAKE_WPTR(result));
+            _LOG_DEBUGH(_T("LEAVE: %s, translated=%s"), NAME_PTR, MAKE_WPTR(result));
             return result;
         }
 
-        // FullEscape の処理 -- 処理のキャンセル
+        // FullEscape の処理 -- HISTORYを呼ぶ
         void handleFullEscape() {
-            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
-            cancelMe();
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            //cancelMe();
+            HISTORY_STAY_STATE->handleFullEscapeStayState();
         }
 
         // Esc の処理 -- 処理のキャンセル
         void handleEsc() {
-            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             cancelMe();
         }
 
         // KatakanaConversionの処理 - 処理のキャンセル
         void handleKatakanaConversion() {
-            LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             cancelMe();
         }
 

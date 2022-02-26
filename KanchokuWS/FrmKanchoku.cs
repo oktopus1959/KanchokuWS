@@ -1125,7 +1125,7 @@ namespace KanchokuWS
         /// </summary>
         private bool handleKeyDecoder(int deckey, uint mod)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}");
+            logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}");
 
             getTargetChar(deckey);
 
@@ -1246,7 +1246,7 @@ namespace KanchokuWS
                 }
             }
 
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE");
+            logger.InfoH(() => $"LEAVE: sendKeyFlag={sendKeyFlag}");
 
             return sendKeyFlag;
         }

@@ -134,12 +134,14 @@ public:
     }
 
     inline void SetPrevHistState(const MString& outStr, const MString& key, bool bPrevHistKeyUsed = true) {
+        HIST_LOG_DEBUGH(_T("CALLED: outStr=%s, key=%s, bPrevHistKeyUsed=%s"), MAKE_WPTR(outStr), MAKE_WPTR(key), BOOL_TO_WPTR(bPrevHistKeyUsed));
         prevOutString = outStr;
         prevKey = key;
         isPrevHistKeyUsed = bPrevHistKeyUsed;
     }
 
     inline void SetPrevHistKeyState(const MString& key, bool bPrevHistKeyUsed = true) {
+        HIST_LOG_DEBUGH(_T("CALLED: key=%s, bPrevHistKeyUsed=%s"), MAKE_WPTR(key), BOOL_TO_WPTR(bPrevHistKeyUsed));
         prevOutString.clear();
         prevKey = key;
         isPrevHistKeyUsed = bPrevHistKeyUsed;

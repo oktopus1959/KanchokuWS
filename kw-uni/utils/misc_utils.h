@@ -249,9 +249,5 @@ namespace utils {
         return time(nullptr);
     }
 
-    inline tstring boolToString(bool flag) {
-        return flag ? _T("True") : _T("False");
-    }
-
 } // namespace utils
 

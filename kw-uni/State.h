@@ -135,6 +135,9 @@ public:
     // この状態以降を不要としてマークする
     virtual void MarkUnnecessaryFromThis();
 
+    // 履歴検索を初期化する状態か
+    virtual bool IsHistoryReset();
+
     // 入力・変換モード標識を連結して返す
     MString JoinModeMarker();
 

@@ -494,6 +494,13 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: %s, IsOutStringProcDone=%s"), NAME_PTR, BOOL_TO_WPTR(STATE_COMMON->IsOutStringProcDone()));
         }
 
+        // 履歴検索を初期化する状態か
+        bool IsHistoryReset() {
+            bool result = (pNext && pNext->IsHistoryReset());
+            _LOG_DEBUGH(_T("CALLED: %s: result=%s"), NAME_PTR, BOOL_TO_WPTR(result));
+            return result;
+        }
+
          // Strokeキー を処理する
         void handleStrokeKeys(int deckey) {
             _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
@@ -823,6 +830,12 @@ namespace {
             HISTORY_STAY_NODE->ClearPrevHistState();     // まだ履歴検索が行われていないということを表す
         }
 
+        // 履歴検索を初期化する状態か
+        bool IsHistoryReset() {
+            bool result = (pNext && pNext->IsHistoryReset());
+            _LOG_DEBUGH(_T("CALLED: %s: result=%s"), NAME_PTR, BOOL_TO_WPTR(result));
+            return result;
+        }
 
     public:
         // Enter時の新しい履歴の追加
@@ -876,13 +889,18 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
 
+        void handleFullEscapeStayState() {
+            handleFullEscape();
+        }
+
     protected:
         // 事前チェック
         void DoPreCheck() {
             _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
             maybeEditedBySubState = false;
             // 常駐モード
-            if (pNext && pNext->GetName().find(_T("History")) == wstring::npos) {
+            //if (pNext && pNext->GetName().find(_T("History")) == wstring::npos)
+            if (IsHistoryReset()) {
                 // 履歴機能ではない次状態(StrokeStateなど)があれば、それが何かをしているはずなので、戻ってきたら新たに候補の再取得を行うために、ここで maybeEditedBySubState を true にセットしておく
                 //prevKey.clear();
                 _LOG_DEBUGH(_T("Set Reinitialized=true"));

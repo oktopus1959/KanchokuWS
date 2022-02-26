@@ -18,6 +18,8 @@ public:
     // Ctrl-H ハンドラ
     //void handleCtrlH() { setCharDeleteInfo(1); }
 
+    virtual void handleFullEscapeStayState() = 0;
+
 public:
     // 唯一のインスタンスを指すポインタ (寿命管理は CreateState() を呼び出したところがやる)
     static HistoryStayState* Singleton;

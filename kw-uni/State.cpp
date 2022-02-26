@@ -225,6 +225,12 @@ bool State::IsStay() const {
     return false;
 }
 
+// 履歴検索を初期化する状態か
+bool State::IsHistoryReset() {
+    _LOG_DEBUGH(_T("CALLED: %s: True (default)"), NAME_PTR);
+    return true;
+}
+
 #define UNNECESSARY_PTR (utils::boolToString(bUnnecessary).c_str())
 
 // 不要になった状態か

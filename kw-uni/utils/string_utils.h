@@ -965,7 +965,12 @@ namespace utils
         return str.size() >= qKey.size() && match_key_containing_question(str, str.size() - qKey.size(), qKey, 0);
     }
 
+    inline tstring boolToString(bool flag) {
+        return flag ? _T("True") : _T("False");
+    }
+
 #undef UTILS_BUFSIZ
 } // namespace utils
 
 #define MAKE_WPTR(ms) to_wstr(ms).c_str()
+#define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
