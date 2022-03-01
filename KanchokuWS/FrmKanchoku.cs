@@ -1226,6 +1226,7 @@ namespace KanchokuWS
                         int numBS = decoderOutput.numBackSpaces;
                         int leadLen = calcSameLeadingLen(outString, outLen, numBS);
                         var outStr = leadLen > 0 ? outString.Skip(leadLen).ToArray() : outString;
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"outString={outString._toString()}, numBS={numBS}, leadLen={leadLen}, outStr={outStr._toString()}");
                         actWinHandler.SendStringViaClipboardIfNeeded(outStr, numBS - leadLen, bFuncVkeyContained);
                         if (bFuncVkeyContained) {
                             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
@@ -1259,6 +1260,11 @@ namespace KanchokuWS
 
             var topString = frmVkb.TopText;
             int topLen = topString._safeLength();
+            if (topLen > 0 && topString.Last() == '|') {
+                // 末尾がブロッカーフラグだったので、それを削除しておく
+                --topLen;
+                topString = topString.Substring(0, topLen);
+            }
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: topString={topString}, topLen={topLen}, outString={outString._toString()}, outLen={outLen}, numBS={numBS}");
 
             if (topLen <= 0) return 0;
