@@ -5,25 +5,20 @@
 #include "Logger.h"
 
 // -------------------------------------------------------------------
-// 履歴検索の出力クラス
+// 検索された履歴候補のクラス
 struct HistResult {
-    MString OrigKey;
-    MString Key;
-    MString Word;
-    bool WildKey = false;
+    MString OrigKey;        // 履歴検索の基となったキー (ex.「プログ」)
+    MString Key;            // 当履歴候補のキー (ex.「ログ」)
+    MString Word;           // 当履歴候補 (ex.「ログファイル」)
+    bool WildKey = false;   // ワイルドカードを含むキーか
     size_t KeyLen() const { return Key.size(); }
 };
 
+// 検索された履歴候補リストのクラス
 class HistResultList {
-    struct HistPair {
-        size_t KeyLen;
-        MString Word;
-    };
     std::vector<HistResult> histories;
     MString origKey;
     bool isWildKey = false;
-
-    MString emptyStr;
 
     HistResult emptyResult;
 
@@ -34,11 +29,16 @@ public:
         isWildKey = false;
     }
 
-    void SetKeyInfo(const MString& key, bool bWild = false) {
+    // ClearKeyInfo() の直後のみ、基キーのセットをする
+    void SetKeyInfoIfFirst(const MString& key, bool bWild = false) {
         if (origKey.empty()) {
             origKey = key;
             isWildKey = bWild;
         }
+    }
+
+    const MString& GetOrigKey() const {
+        return origKey;
     }
 
     const std::vector<HistResult>& GetHistories() const {
@@ -46,7 +46,9 @@ public:
     }
 
     void PushHistory(const MString& key, const MString& word) {
-        histories.push_back(HistResult{ origKey, key, word,isWildKey });
+        if (histories.empty() || histories.back().Word != word) {
+            histories.push_back(HistResult{ origKey, key, word, isWildKey });
+        }
     }
 
     const MString& GetNthWord(size_t n) const {
