@@ -5,7 +5,7 @@
 #include "FunctionNode.h"
 #include "HistoryStayState.h"
 
-#if 1
+#if 0
 #define HIST_LOG_DEBUGH LOG_INFOH
 #else
 #define HIST_LOG_DEBUGH(...) {}
@@ -95,9 +95,6 @@ public:
 class HistoryStayNode : public FunctionNode {
     DECLARE_CLASS_LOGGER;
 private:
-    //// 履歴選択により文字列出力されたときのキー(デコーダONになったら -1 で初期化)
-    //bool isPrevHistKeyUsed = false;
-
     // 履歴選択により出力された文字列
     MString prevOutString;
 
@@ -124,34 +121,20 @@ public:
         return prevKey;
     }
 
-    //inline int PrevKeyLen() const {
-    //    HIST_LOG_DEBUGH(_T("CALLED: PrevKeyLen=%d"), isPrevHistKeyUsed ? prevKey.size() : -1);
-    //    return isPrevHistKeyUsed ? prevKey.size() : -1;
-    //}
-
-    //inline bool IsPrevHistKeyUsed() const {
-    //    return isPrevHistKeyUsed;
-    //}
-
     inline void SetPrevHistState(const MString& outStr, const MString& key /*, bool bPrevHistKeyUsed = true*/) {
-        //HIST_LOG_DEBUGH(_T("CALLED: outStr=%s, key=%s, bPrevHistKeyUsed=%s"), MAKE_WPTR(outStr), MAKE_WPTR(key), BOOL_TO_WPTR(bPrevHistKeyUsed));
         HIST_LOG_DEBUGH(_T("CALLED: outStr=%s, key=%s"), MAKE_WPTR(outStr), MAKE_WPTR(key));
         prevOutString = outStr;
         prevKey = key;
-        //isPrevHistKeyUsed = bPrevHistKeyUsed;
     }
 
     inline void SetPrevHistKeyState(const MString& key /*, bool bPrevHistKeyUsed = true*/) {
-        //HIST_LOG_DEBUGH(_T("CALLED: key=%s, bPrevHistKeyUsed=%s"), MAKE_WPTR(key), BOOL_TO_WPTR(bPrevHistKeyUsed));
         HIST_LOG_DEBUGH(_T("CALLED: key=%s"), MAKE_WPTR(key));
         prevOutString.clear();
         prevKey = key;
-        //isPrevHistKeyUsed = bPrevHistKeyUsed;
     }
 
     inline void ClearPrevHistState() {
         HIST_LOG_DEBUGH(_T("CALLED: ClearPrevHistState"));
-        //isPrevHistKeyUsed = false;
         prevOutString.clear();
         prevKey.clear();
     }

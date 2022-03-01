@@ -14,7 +14,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 1
+#if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
@@ -702,9 +702,9 @@ namespace {
     private:
         // resultList に最近使ったものから取得した候補を格納し、pasts には set_ に含まれるものでそれ以外の候補を格納する
         // wlen > 0 なら、その長さの候補だけを返す
-        void extract_and_copy(const MString& key, std::set<MString>& set_, HistResultList& pastList, size_t wlen, bool bWild = false) {
+        void extract_and_copy(const MString& key, std::set<MString>& set_, size_t wlen, bool bWild = false) {
             if (!bWild) bWild = key.find('?') != MString::npos;
-            _LOG_DEBUGH(_T("extract_and_copy(key=%s, bWild=%s, set_.size()=%d, pastList.size()=%d, wlen=%d"), MAKE_WPTR(key), BOOL_TO_WPTR(bWild), set_.size(), pastList.Size(), wlen);
+            _LOG_DEBUGH(_T("extract_and_copy(key=%s, bWild=%s, set_.size()=%d, wlen=%d"), MAKE_WPTR(key), BOOL_TO_WPTR(bWild), set_.size(), wlen);
             resultList.SetKeyInfoIfFirst(key, bWild);
             size_t keylen = key.size();
             usedList.ExtractUsedWords(key, resultList, set_, wlen);
@@ -712,15 +712,15 @@ namespace {
             for (const auto& s : set_) {
                 // keylen == 1 なら1文字単語は対象外
                 if ((wlen > 0 && s.size() == wlen) || (wlen == 0 && (keylen != 1 || s.size() >= 2)) && s != key) {
-                    _DEBUG_SENT(if (n++ < 10) _LOG_DEBUGH(_T("pastList.PushHistory(key=%s, s=%s)"), MAKE_WPTR(key), MAKE_WPTR(s)));
-                    pastList.PushHistory(key, s);
+                    _DEBUG_SENT(if (n++ < 10) _LOG_DEBUGH(_T("resultList.PushHistory(key=%s, s=%s)"), MAKE_WPTR(key), MAKE_WPTR(s)));
+                    resultList.PushHistory(key, s);
                 }
             }
         }
 
         // '*' をはさんで、前半部の key1 と後半部の key2 にマッチする文字列集合を取得
-        // resultList に最近使ったものから取得した候補を格納し、pastList にはそれ以外の候補を格納する
-        size_t extract_and_copy_for_wildecard_included(const MString& key, HistResultList& pastList) {
+        // resultList に最近使ったものから取得した候補を格納し、その後にそれ以外の候補を格納する
+        size_t extract_and_copy_for_wildecard_included(const MString& key) {
             size_t matchLen = 0;
             auto items = utils::split(key, '*');
             size_t itemsSize = items.size();
@@ -732,17 +732,17 @@ namespace {
                 _LOG_DEBUGH(_T("hist4CharsDic.FindMatchingWords(%s, %s)"), MAKE_WPTR(key1), MAKE_WPTR(key2));
                 matchLen = hist4CharsDic.FindMatchingWords(key1, key2, set_) + key2.size() + 1;
                 _LOG_DEBUGH(_T("matchLen=%d, set_.size()=%d"), matchLen, set_.size());
-                extract_and_copy(utils::last_substr(key, matchLen), set_, pastList, 0, true);
-                _LOG_DEBUGH(_T("resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
+                extract_and_copy(utils::last_substr(key, matchLen), set_, 0, true);
+                _LOG_DEBUGH(_T("resultList.size()=%d"), resultList.Size());
             }
             return matchLen;
         }
 
         // key の pos 位置以降がマッチする候補の取得
         // まず key の pos 位置から4文字(i.e., key[pos, pos+4])にマッチする候補を取得し、それに対して startsWithWildKey() でさらにマッチをかける
-        // resultList に最近使ったものから取得した候補を格納し、pastList にはそれ以外の候補を格納する
+        // resultList に最近使ったものから取得した候補を格納し、その後にそれ以外の候補を格納する
         // wlen > 0 なら、その長さの候補だけを返す
-        void extract_and_copy_for_longer_than_4(const MString& key, size_t wlen, size_t pos, HistResultList& pastList) {
+        void extract_and_copy_for_longer_than_4(const MString& key, size_t wlen, size_t pos) {
             auto subStr = key.substr(pos);
             auto subKey = subStr.substr(0, 4);
             size_t gobiLen = SETTINGS->histMapGobiMaxLength;
@@ -751,20 +751,20 @@ namespace {
             _LOG_DEBUGH(_T("filter(hist4CharsDic.GetSet(subKey=%s, 4), startsWithWildKey(s, qKey=%s)): set_.size()=%d"), MAKE_WPTR(subKey), MAKE_WPTR(subStr), set_.size());
             if (!set_.empty()) {
                 //bool bWild = subStr.find('?') != MString::npos;
-                extract_and_copy(subStr, set_, pastList, wlen);
+                extract_and_copy(subStr, set_, wlen);
             }
-            _LOG_DEBUGH(_T("RESULT: resultList.size()=%d, pastList.size()=%d"), pos, resultList.Size(), pastList.Size());
+            _LOG_DEBUGH(_T("RESULT: resultList.size()=%d"), pos, resultList.Size());
         }
 
         // keyの末尾n文字にマッチする候補を取得して out に返す
         // wlen は候補文字列の長さに関する制約
-        void extract_and_copy_for_tail_n(const MString& key, size_t n, HistResultList& out, size_t wlen = 0) {
+        void extract_and_copy_for_tail_n(const MString& key, size_t n, size_t wlen = 0) {
             _LOG_DEBUGH(_T("CALLED: key=%s, n=%d, wlen=%d)"), MAKE_WPTR(key), n, wlen);
             std::set<MString> set_ = hist4CharsDic.GetSet(key, n);
             if (!set_.empty()) {
                 //MString tailKey = utils::last_substr(key, n);
                 //bool bWild = tailKey.find('?') != MString::npos;
-                extract_and_copy(utils::last_substr(key, n), set_, out, wlen);
+                extract_and_copy(utils::last_substr(key, n), set_, wlen);
             }
         }
 
@@ -788,17 +788,13 @@ namespace {
                 resultKey = key;
             } else {
                 // ここでは maxlen は無視する
-                // 直近以外の過去に使った履歴のリスト
-                HistResultList pastList;
-
                 // マッチしたキーの長さ(0ならキー全体がマッチ、>0 ならマッチした末尾の長さ)
                 size_t resultKeyLen = 0;
 
                 // key が '*' を含んでいる場合にワイルドカードのマッチングを行う
-                resultKeyLen = extract_and_copy_for_wildecard_included(key, pastList);
-                resultList.Append(pastList); pastList.ClearKeyInfo();
+                resultKeyLen = extract_and_copy_for_wildecard_included(key);
 
-#define IS_LIST_EMPTY() (resultList.Empty() && pastList.Empty())
+#define IS_LIST_EMPTY() (resultList.Empty())
 
                 bool bListEmpty = IS_LIST_EMPTY();
                 bool bAll = SETTINGS->histGatherAllCandidates && bListEmpty;
@@ -816,8 +812,7 @@ namespace {
                 if ((bAll || bListEmpty) && keySize >= 5) {
                     // "■■■■■" (5)
                     CHECK_LIST_EMPTY(0);    // 最終的にマッチすれば、先頭からのマッチになるので 0 でよい
-                    extract_and_copy_for_longer_than_4(key, minlen, 0, pastList);
-                    resultList.Append(pastList); pastList.ClearKeyInfo();
+                    extract_and_copy_for_longer_than_4(key, minlen, 0);
                 }
                 bListEmpty = IS_LIST_EMPTY();
 
@@ -825,8 +820,7 @@ namespace {
                 if ((bAll || bListEmpty) && keySize >= 6) {
                     // "□■■■■■" (6)
                     CHECK_LIST_EMPTY(5);
-                    extract_and_copy_for_longer_than_4(key, minlen, 1, pastList);
-                    resultList.Append(pastList); pastList.ClearKeyInfo();
+                    extract_and_copy_for_longer_than_4(key, minlen, 1);
                 }
                 bListEmpty = IS_LIST_EMPTY();
 
@@ -835,16 +829,14 @@ namespace {
                     if (keySize >= 8) {
                         // "□□■■■■■■" (8)
                         CHECK_LIST_EMPTY(6);
-                        extract_and_copy_for_longer_than_4(key, minlen, keySize - resultKeyLen, pastList);
-                        resultList.Append(pastList); pastList.ClearKeyInfo();
+                        extract_and_copy_for_longer_than_4(key, minlen, keySize - resultKeyLen);
                     }
                     bListEmpty = IS_LIST_EMPTY();
                     if (keySize == 7 || (bAll || bListEmpty)) {
                         // "□□■■■■■" (7)
                         // "□□□■■■■■" (8)
                         CHECK_LIST_EMPTY(5);
-                        extract_and_copy_for_longer_than_4(key, minlen, keySize - resultKeyLen, pastList);
-                        resultList.Append(pastList); pastList.ClearKeyInfo();
+                        extract_and_copy_for_longer_than_4(key, minlen, keySize - resultKeyLen);
                     }
                 }
                 bListEmpty = IS_LIST_EMPTY();
@@ -867,40 +859,36 @@ namespace {
 
                     if (checkFunc(4)) {
                         CHECK_LIST_EMPTY(4);
-                        extract_and_copy_for_tail_n(key, 4, pastList, minlen);
-                        resultList.Append(pastList); pastList.ClearKeyInfo();
-                        _LOG_DEBUGH(_T("histDic4: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
+                        extract_and_copy_for_tail_n(key, 4, minlen);
+                        _LOG_DEBUGH(_T("histDic4: resultList.size()=%d"), resultList.Size());
                     }
                     bListEmpty = IS_LIST_EMPTY();
 
                     if (bAll || bListEmpty) {
                         if (checkFunc(3)) {
                             CHECK_LIST_EMPTY(3);
-                            extract_and_copy_for_tail_n(key, 3, pastList, minlen);
-                            resultList.Append(pastList); pastList.ClearKeyInfo();
-                            _LOG_DEBUGH(_T("histDic3: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
+                            extract_and_copy_for_tail_n(key, 3, minlen);
+                            _LOG_DEBUGH(_T("histDic3: resultList.size()=%d"), resultList.Size());
                         }
                         bListEmpty = IS_LIST_EMPTY();
                         if (bAll || bListEmpty) {
                             if (checkFunc(2)) {
                                 CHECK_LIST_EMPTY(2);
-                                extract_and_copy_for_tail_n(key, 2, pastList, minlen);
-                                resultList.Append(pastList); pastList.ClearKeyInfo();
-                                _LOG_DEBUGH(_T("histDic2: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
+                                extract_and_copy_for_tail_n(key, 2, minlen);
+                                _LOG_DEBUGH(_T("histDic2: resultList.size()=%d"), resultList.Size());
                             }
                             bListEmpty = IS_LIST_EMPTY();
                             if (bAll || bListEmpty) {
                                 if (checkFunc(1)) {
                                     CHECK_LIST_EMPTY(1);
-                                    extract_and_copy_for_tail_n(key, 1, pastList, minlen);
-                                    resultList.Append(pastList); pastList.ClearKeyInfo();
-                                    _LOG_DEBUGH(_T("histDic1: resultList.size()=%d, pastList.size()=%d"), resultList.Size(), pastList.Size());
+                                    extract_and_copy_for_tail_n(key, 1, minlen);
+                                    _LOG_DEBUGH(_T("histDic1: resultList.size()=%d"), resultList.Size());
                                 }
                             }
                         }
                     }
                 }
-                resultList.Append(pastList);  // 最近使ったもの以外を追加する
+
                 if (resultList.Empty()) {
                     resultKey.clear();
                 } else {

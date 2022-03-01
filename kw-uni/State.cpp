@@ -613,7 +613,7 @@ void State::handleEnter() {
 void State::handleEsc() { LOG_DEBUG(_T("Esc")); handleSpecialKeys(ESC_DECKEY); }
     
 // BS ハンドラ
-void State::handleBS() { LOG_DEBUG(_T("BackSpace")); setCharDeleteInfo(1); }
+void State::handleBS() { _LOG_DEBUGH(_T("BackSpace")); setCharDeleteInfo(1); }
 
 // TAB ハンドラ
 void State::handleTab() { handleSpecialKeys(TAB_DECKEY); }

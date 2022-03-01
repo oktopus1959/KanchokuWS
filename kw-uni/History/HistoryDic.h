@@ -22,6 +22,17 @@ class HistResultList {
 
     HistResult emptyResult;
 
+private:
+    // 履歴リストのサイズが10個以下なら、先頭から10個分の要素と比較する
+    bool findSameEntry(const MString& word) {
+        if (histories.size() < 10) {
+            for (size_t i = 0; i < histories.size(); ++i) {
+                if (histories[i].Word == word) return true;
+            }
+        }
+        return false;
+    }
+
 public:
     void ClearKeyInfo() {
         histories.clear();
@@ -46,7 +57,7 @@ public:
     }
 
     void PushHistory(const MString& key, const MString& word) {
-        if (histories.empty() || histories.back().Word != word) {
+        if (!findSameEntry(word)) {
             histories.push_back(HistResult{ origKey, key, word, isWildKey });
         }
     }

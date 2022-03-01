@@ -21,7 +21,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 1
+#if 0
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -348,24 +348,15 @@ namespace {
             return prevKey;
         }
 
-        // 前回の履歴選択の出力と現在の出力文字列(改行以降)の末尾を比較し、同じであれば前回の履歴選択の出力を取得する
-        // 異なっていれば空文字列を返す
-        MString getLastHistOutIfSameAsCurrent() {
-            MString outStr;
-
+        // 前回の履歴選択の出力と現在の出力文字列(改行以降)の末尾が同一であるか
+        bool isLastHistOutSameAsCurrentOut() {
             // 前回の履歴選択の出力
-            const auto& prevOut = HISTORY_STAY_NODE->GetPrevOutString();
+            MString prevOut = HISTORY_STAY_NODE->GetPrevOutString();
             // 出力スタックから、上記と同じ長さの末尾文字列を取得
             auto lastJstr = OUTPUT_STACK->GetLastJapaneseStr<MString>(prevOut.size());
-            _LOG_DEBUGH(_T("prevOut=%s, lastJapaneseStr=%s"), MAKE_WPTR(prevOut), MAKE_WPTR(lastJstr));
-            if (lastJstr == prevOut) {
-                //前回の履歴選択の出力が、現在の出力と同じなので、それを返す
-                outStr.assign(prevOut);
-                _LOG_DEBUGH(_T("REVERT"));
-            }
-
-            _LOG_DEBUGH(_T("last Japanese outStr=%s"), MAKE_WPTR(outStr));
-            return outStr;
+            bool result = lastJstr == prevOut;
+            _LOG_DEBUGH(_T("RESULT: %s: prevOut=%s, lastJapaneseStr=%s"), BOOL_TO_WPTR(result), MAKE_WPTR(prevOut), MAKE_WPTR(lastJstr));
+            return result;
         }
 
         // 履歴入力候補を鍵盤にセットする
@@ -470,17 +461,6 @@ namespace {
                 // 末尾文字がストローク可能文字でなければ登録する
                 HISTORY_DIC->AddNewEntry(ws);
             }
-
-            //// 前回の履歴検索キー取得と出力スタックの巻き戻し予約(numBackSpacesに値をセット)
-            //auto key = getLastHistKeyAndRewindOutput();
-
-            //if (key.empty() && HISTORY_STAY_NODE->PrevKeyLen() != 0) {
-            //    // 前回履歴検索とは一致しなかった
-            //    // ひらがな交じりやASCIIもキーとして取得する
-            //    key = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>();
-            //    //key = STATE_COMMON->GetLastKanjiOrKatakanaKey();
-            //    _LOG_DEBUGH(_T("new Japanese key=%s"), MAKE_WPTR(key));
-            //}
 
             MString key;
             if (HIST_CAND->IsHistInSearch()) {
@@ -1005,26 +985,36 @@ namespace {
 
         // 前回の履歴検索との比較、新しい履歴検索の開始 (bManual=trueなら自動モードでなくても履歴検索を実行する)
         void historySearch(bool bManual) {
-            LOG_INFOH(_T("ENTER: manual=%s"), BOOL_TO_WPTR(bManual));
-            // 前回の履歴選択の出力と現在の出力文字列(改行以降)の末尾を比較し、同じであれば前回の履歴選択の出力を取得する
-            // たとえば前回「中」で履歴検索し「中納言家持」が履歴出力されており、現在の出力スタックが「・・・中納言家持」なら「中納言持家」が返る
-            auto prevOut = getLastHistOutIfSameAsCurrent();
-            LOG_INFOH(_T("PATH 7: prevOut=%s, auto=%s, manual=%s, maybeEditedBySubState=%s"), \
-                MAKE_WPTR(prevOut), BOOL_TO_WPTR(SETTINGS->autoHistSearchEnabled), BOOL_TO_WPTR(bManual), BOOL_TO_WPTR(maybeEditedBySubState));
-            // 前回履歴出力が取得できた、つまり出力文字列の末尾が前回の履歴選択と同じ出力だったら、出力文字列をキーとした履歴検索はやらない
-            // これは、たとえば「中」で履歴検索し、「中納言家持」を選択した際に、キーとして返される「中納言家持」の末尾の「持」を拾って「持統天皇」を履歴検索してしまうことを防ぐため。
-            // ただし、交ぜ書き変換など何か後続状態により出力がなされた場合(maybeEditedBySubState)は、履歴検索を行う。
-            if (SETTINGS->autoHistSearchEnabled || bManual) {
-                // 履歴検索可能状態であって
-                _LOG_DEBUGH(_T("PATH 11: Auto or Manual"));
-                if (prevOut.empty() || maybeEditedBySubState) {
-                    _LOG_DEBUGH(_T("PATH 12A: prevOut is Empty or maybeEditedBySubState"));
+            LOG_INFOH(_T("ENTER: auto=%s, manual=%s, maybeEditedBySubState=%s, histInSearch=%s"), \
+                BOOL_TO_WPTR(SETTINGS->autoHistSearchEnabled), BOOL_TO_WPTR(bManual), BOOL_TO_WPTR(maybeEditedBySubState), BOOL_TO_WPTR(HIST_CAND->IsHistInSearch()));
+            if (!SETTINGS->autoHistSearchEnabled && !bManual) {
+                // 履歴検索状態ではないので、前回キーをクリアしておく。
+                // こうしておかないと、自動履歴検索OFFのとき、たとえば、
+                // 「エッ」⇒Ctrl+Space⇒「エッセンス」⇒Esc⇒「エッ」⇒「セ」追加⇒出力「エッセ」、キー=「エッ」のまま⇒再検索⇒「エッセセンス」となる
+                _LOG_DEBUGH(_T("Not Hist Search mode: Clear PrevKey"));
+                HISTORY_STAY_NODE->ClearPrevHistState();
+                HIST_CAND->ClearKeyInfo();
+            } else {
+                // 履歴検索可能状態である
+                _LOG_DEBUGH(_T("Auto or Manual"));
+                // 前回の履歴選択の出力と現在の出力文字列(改行以降)の末尾を比較する。
+                // たとえば前回「中」で履歴検索し「中納言家持」が履歴出力されており、現在の出力スタックが「・・・中納言家持」なら true が返る
+                bool bSameOut = isLastHistOutSameAsCurrentOut();
+                LOG_INFOH(_T("bSameOut=%s, maybeEditedBySubState=%s, histInSearch=%s"), \
+                    BOOL_TO_WPTR(bSameOut), BOOL_TO_WPTR(maybeEditedBySubState), BOOL_TO_WPTR(HIST_CAND->IsHistInSearch()));
+                if (bSameOut && !maybeEditedBySubState && HIST_CAND->IsHistInSearch()) {
+                    // 前回履歴出力が取得できた、つまり出力文字列の末尾が前回の履歴選択と同じ出力だったら、出力文字列をキーとした履歴検索はやらない
+                    // これは、たとえば「中」で履歴検索し、「中納言家持」を選択した際に、キーとして返される「中納言家持」の末尾の「持」を拾って「持統天皇」を履歴検索してしまうことを防ぐため。
+                    _LOG_DEBUGH(_T("Do nothing: prevOut is same as current out"));
+                } else {
+                    // ただし、交ぜ書き変換など何か後続状態により出力がなされた場合(maybeEditedBySubState)は、履歴検索を行う。
+                    _LOG_DEBUGH(_T("DO HistSearch: prevOut is diff with current out or maybeEditedBySubState or not yet HistInSearch"));
                     // 現在の出力文字列は履歴選択したものではなかった
                     // キー取得用 lambda
                     auto keyGetter = []() {
                         // まず、ワイルドカードパターンを試す
                         auto key9 = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(9);
-                        _LOG_DEBUGH(_T("key9=%s"), MAKE_WPTR(key9));
+                        _LOG_DEBUGH(_T("HistSearch: key9=%s"), MAKE_WPTR(key9));
                         if (key9.empty() || key9.back() == ' ') {
                             return EMPTY_MSTR;
                         }
@@ -1040,55 +1030,48 @@ namespace {
                         // ワイルドカードパターンでなかった
                         // 出力文字から、ひらがな交じりやASCIIもキーとして取得する
                         auto jaKey = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>();
-                        _LOG_DEBUGH(_T("jaKey=%s"), MAKE_WPTR(jaKey));
+                        _LOG_DEBUGH(_T("HistSearch: jaKey=%s"), MAKE_WPTR(jaKey));
                         if (jaKey.size() >= 9) return jaKey;    // 同種の文字列で9文以上取れたので、これをキーとする
                         // 最終的には末尾8文字をキーとする('*' は含まない。'?' は含んでいる可能性あり)
                         return utils::tail_substr(key9, 8);
                     };
                     // キーの取得
                     MString key = keyGetter();
-                    _LOG_DEBUGH(_T("LastJapaneseKey=%s"), MAKE_WPTR(key));
+                    _LOG_DEBUGH(_T("HistSearch: LastJapaneseKey=%s"), MAKE_WPTR(key));
                     if (!key.empty()) {
                         // キーが取得できた
                         //bool isAscii = is_ascii_char((wchar_t)utils::safe_back(key));
-                        _LOG_DEBUGH(_T("PATH 8: key=%s, prevKey=%s, maybeEditedBySubState=%s"), MAKE_WPTR(key), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevKey()), utils::boolToString(maybeEditedBySubState).c_str());
+                        _LOG_DEBUGH(_T("HistSearch: PATH 8: key=%s, prevKey=%s, maybeEditedBySubState=%s"), MAKE_WPTR(key), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevKey()), utils::boolToString(maybeEditedBySubState).c_str());
                         auto histCandsChecker = [this](const std::vector<MString>& words, const MString& ky) {
-                            _LOG_DEBUGH(_T("CANDS CHECKER: words.size()=%d, key=%s"), words.size(), MAKE_WPTR(ky));
+                            _LOG_DEBUGH(_T("HistSearch: CANDS CHECKER: words.size()=%d, key=%s"), words.size(), MAKE_WPTR(ky));
                             if (words.empty() || (words.size() == 1 && (words[0].empty() || words[0] == ky))) {
-                                _LOG_DEBUGH(_T("CANDS CHECKER-A: cands size <= 1"));
+                                _LOG_DEBUGH(_T("HistSearch: CANDS CHECKER-A: cands size <= 1"));
                                 // 候補が1つだけで、keyに一致するときは履歴選択状態にはしない
                             } else {
-                                _LOG_DEBUGH(_T("CANDS CHECKER-B"));
+                                _LOG_DEBUGH(_T("HistSearch: CANDS CHECKER-B"));
                                 setCandidatesVKB(VkbLayout::Horizontal, words, ky);
                             }
                         };
                         if (key != HISTORY_STAY_NODE->GetPrevKey() || maybeEditedBySubState || bManual) {
-                            _LOG_DEBUGH(_T("PATH 9: different key"));
+                            _LOG_DEBUGH(_T("HistSearch: PATH 9: different key"));
                             //bool bCheckMinKeyLen = !bManual && utils::is_hiragana(key[0]);       // 自動検索かつ、キー先頭がひらがなならキー長チェックをやる
                             bool bCheckMinKeyLen = !bManual;                                     // 自動検索ならキー長チェックをやる
                             histCandsChecker(HIST_CAND->GetCandWords(key, bCheckMinKeyLen, 0), key);
                             // キーが短くなる可能性があるので再取得
                             key = HIST_CAND->GetCurrentKey();
-                            _LOG_DEBUGH(_T("PATH 9: currentKey=%s"), MAKE_WPTR(key));
+                            _LOG_DEBUGH(_T("HistSearch: PATH 9: currentKey=%s"), MAKE_WPTR(key));
                         } else {
                             // 前回の履歴検索と同じキーだった
-                            _LOG_DEBUGH(_T("PATH 10: Same as prev hist key"));
+                            _LOG_DEBUGH(_T("HistSearch: PATH 10: Same as prev hist key"));
                             histCandsChecker(HIST_CAND->GetCandWords(), key);
                         }
                     }
+                    _LOG_DEBUGH(_T("HistSearch: SetPrevHistKeyState(key=%s)"), MAKE_WPTR(key));
                     HISTORY_STAY_NODE->SetPrevHistKeyState(key);
-                    _LOG_DEBUGH(_T("PATH 12B: prevKey=%s"), MAKE_WPTR(key));
-                } else {
-                    _LOG_DEBUGH(_T("PATH 12C: prevOut is same as current out: prevOut=%s, prevKey=%s"), MAKE_WPTR(prevOut), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevKey()));
+                    _LOG_DEBUGH(_T("DONE HistSearch"));
                 }
-            } else {
-                // 履歴検索状態ではないので、前回キーをクリアしておく。
-                // こうしておかないと、自動履歴検索OFFのとき、たとえば、
-                // 「エッ」⇒Ctrl+Space⇒「エッセンス」⇒Esc⇒「エッ」⇒「セ」追加⇒出力「エッセ」、キー=「エッ」のまま⇒再検索⇒「エッセセンス」となる
-                _LOG_DEBUGH(_T("PATH 13: Clear PrevKey"));
-                HISTORY_STAY_NODE->ClearPrevHistState();
-                HIST_CAND->ClearKeyInfo();
             }
+
             // この処理は、GUI側で候補の背景色を変更するために必要
             if (isHotCandidateReady(HISTORY_STAY_NODE->GetPrevKey(), HIST_CAND->GetCandWords())) {
                 _LOG_DEBUGH(_T("PATH 14"));
@@ -1265,6 +1248,14 @@ namespace {
             } else {
                 HistoryStayState::handleShiftTab();
             }
+        }
+
+        // Ctrl-H/BS の処理 -- 履歴検索の初期化
+        void handleBS() {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            HISTORY_STAY_NODE->ClearPrevHistState();
+            HIST_CAND->ClearKeyInfo();
+            HistoryStayState::handleBS();
         }
 
         // DecoderOff の処理
