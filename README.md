@@ -1915,6 +1915,7 @@ Esc, Tab, BackSpace, Enter, Insert, Delete, Home, End, PageUp, PageDown, UpArrow
 |UpperRomanStrokeGuide|英大文字ローマ字による読み打鍵ガイドモード|
 |HiraganaStrokeGuide|ひながな入力による読み打鍵ガイドモード|
 |ZenkakuConversion|全角変換入力モードのON/OFF|
+|KatakanaConversion|カタカナ入力モードのON/OFF|
 |Space|Space に変換|
 |ShiftSpace|Shift+Space に変換|
 |LeftShiftBlocker|交ぜ書きブロッカーの左移動|
