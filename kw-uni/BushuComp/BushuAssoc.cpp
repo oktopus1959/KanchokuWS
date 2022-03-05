@@ -466,16 +466,22 @@ State* BushuAssocExNode::CreateState() {
     return new BushuAssocExState(this);
 }
 
-BushuAssocExNode* BushuAssocExNode::Singleton;
+// Singletonノードの生成
+void BushuAssocExNode::CreateSingleton() {
+    if (!Singleton) {
+        Singleton.reset(new BushuAssocExNode());
+    }
+}
+
+std::unique_ptr<BushuAssocExNode> BushuAssocExNode::Singleton;
 
 // -------------------------------------------------------------------
-// BushuAssocNodeBuilder - 拡張部首連想入力機能ノードビルダー
+// BushuAssocExNodeBuilder - 拡張部首連想入力機能ノードビルダー
 DEFINE_CLASS_LOGGER(BushuAssocExNodeBuilder);
 
 Node* BushuAssocExNodeBuilder::CreateNode() {
     LOG_INFO(_T("CALLED"));
-    EX_NODE = new BushuAssocExNode();
-    return EX_NODE;
+    return new BushuAssocExNode();
 }
 
 // -------------------------------------------------------------------

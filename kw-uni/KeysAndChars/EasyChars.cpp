@@ -40,7 +40,7 @@ void EasyChars::GatherEasyChars() {
     LOG_INFOH(_T("ENTER"));
 
     if (Singleton) {
-        LOG_INFOH(_T("Already created. Do cleaning."));
+        LOG_INFOH(_T("Already created. Do cleaning: Singleton=%p"), Singleton.get());
         Singleton->CleanUp();
     } else {
         Singleton.reset(new EasyChars());
@@ -89,5 +89,18 @@ void EasyChars::GatherEasyChars() {
         }
     }
     LOG_INFOH(_T("LEAVE"));
+}
+
+void EasyChars::DumpEasyCharsMemory(int n) {
+    if (Singleton) {
+        const std::set<mchar_t>& set_ = Singleton->GetCharsSet();
+        unsigned long* p = (unsigned long*)(&set_);
+        LOG_INFOH(_T("%d: %p=%08x,%08x,%08x,%08x,%08x,%08x,%08x,%08x"), n, p, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]);
+        MString chars;
+        for (auto x : set_) {
+            chars.push_back(x);
+        }
+        LOG_INFOH(_T("CHARS: %s"), MAKE_WPTR(chars));
+    }
 }
 

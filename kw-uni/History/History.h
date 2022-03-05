@@ -141,7 +141,7 @@ public:
 
 public:
     // 履歴機能常駐ノードの生成
-    static HistoryStayNode* CreateNode();
+    static void CreateSingleton();
 
     // 履歴機能常駐ノードのSingleton
     static std::unique_ptr<HistoryStayNode> Singleton;

@@ -152,7 +152,14 @@ void BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
 
 // 後置部首合成機能ノードのSingleton
 // unique_ptr による管理は下記 BushuCompNodeBuilder の呼び出し側で行う
-BushuCompNode* BushuCompNode::Singleton;
+std::unique_ptr<BushuCompNode> BushuCompNode::Singleton;
+
+// Singletonノードの生成
+void BushuCompNode::CreateSingleton() {
+    if (!Singleton) {
+        Singleton.reset(new BushuCompNode());
+    }
+}
 
 // -------------------------------------------------------------------
 // BushuCompNode - 後置部首合成機能ノードビルダー
@@ -169,9 +176,9 @@ Node* BushuCompNodeBuilder::CreateNode() {
     //if (bushuFile.empty()) {
     //    ERROR_HANDLER->Warn(_T("「bushu=(ファイル名)」の設定がまちがっているようです"));
     //}
+    // この中では、Singleton によって一回だけ生成されるようになっている
     BushuDic::CreateBushuDic(bushuFile, auotBushuFile);
 
-    BUSHU_COMP_NODE = new BushuCompNode();
-    return BUSHU_COMP_NODE;
+    return new BushuCompNode();
 }
 

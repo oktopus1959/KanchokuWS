@@ -130,19 +130,20 @@ void State::DoDeckeyPostProc() {
     if (NextNodeMaybe() && !IsUnnecessary()) {
         // 新しい後続ノードが生成されており、自身が不要状態でないならば、ここで後続ノードの処理を行う
         // (自身が不要状態ならば、この後、前接状態に戻り、そこで後続ノードが処理される)
-        LOG_DEBUG(_T("nextNode: %s"), NODE_NAME_PTR(NextNodeMaybe()));
+        _LOG_DEBUGH(_T("nextNode: %s"), NODE_NAME_PTR(NextNodeMaybe()));
         // 後続状態を作成
         State* ps = NextNodeMaybe()->CreateState();
         // 状態が生成されたときに処理を実行
         // ストロークノード以外は、ここで何らかの出力処理をするはず
         if (ps->DoProcOnCreated()) {
             // 必要があれば後続ノードから生成した新状態をチェインする
-            LOG_DEBUG(_T("%s: appendSuccessorState: %s"), NAME_PTR, ps->NAME_PTR);
+            _LOG_DEBUGH(_T("%s: appendSuccessorState: %s"), NAME_PTR, ps->NAME_PTR);
             pNext = ps;
             ps->pPrev = this;
         } else {
             delete ps;
         }
+        _LOG_DEBUGH(_T("ClearNextNodeMaybe()"));
         //pNextNodeMaybe = nullptr;   // 新ノードを処理したので、親には渡さない。参照をクリアしておく
         ClearNextNodeMaybe();       // 新ノードを処理したので、親には渡さない。参照をクリアしておく
     }
@@ -165,7 +166,7 @@ void State::DoPostCheckChain() {
 // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
 bool State::DoProcOnCreated() {
     // Do nothing
-    LOG_DEBUG(_T("CALLED: %s: DEFAULT"), NAME_PTR);
+    _LOG_DEBUGH(_T("CALLED: %s: DEFAULT"), NAME_PTR);
     return false;
 }
 
@@ -176,10 +177,10 @@ MString State::TranslateString(const MString& outStr) {
 
 // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
 void State::DoOutStringProcChain() {
-    LOG_INFO(_T("ENTER: %s"), NAME_PTR);
+    LOG_INFOH(_T("ENTER: %s"), NAME_PTR);
     if (pNext) pNext->DoOutStringProcChain();
     if (!STATE_COMMON->IsOutStringProcDone()) DoOutStringProc();
-    LOG_INFO(_T("LEAVE: %s"), NAME_PTR);
+    LOG_INFOH(_T("LEAVE: %s"), NAME_PTR);
 }
 
 // 最終的な出力履歴が整ったところで呼び出される処理
@@ -263,7 +264,7 @@ void State::DeleteUnnecessarySuccessorState() {
     _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
     if (pNext) {
         if (pNext->IsUnnecessary()) {
-            _LOG_DEBUGH(_T("DELTE NEXT: %s"), pNext->Name.c_str());
+            _LOG_DEBUGH(_T("DELETE NEXT: %s"), pNext->Name.c_str());
             delete pNext;
             pNext = nullptr;
         }

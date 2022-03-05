@@ -24,7 +24,9 @@
 #include "StrokeTable.h"
 #include "StrokeHelp.h"
 
+#include "BushuComp/BushuComp.h"
 #include "BushuComp/BushuDic.h"
+#include "BushuComp/BushuAssoc.h"
 #include "BushuComp/BushuAssocDic.h"
 #include "History/History.h"
 #include "History/HistoryDic.h"
@@ -33,13 +35,13 @@
 
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
+#define _LOG_DEBUGH_FLAG true
 #if 0
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
-#define _LOG_DEBUGH_FLAG (true)
 #endif
 
 // -------------------------------------------------------------------
@@ -113,9 +115,16 @@ public:
         startState.reset(startNode->CreateState());
 
         // 履歴入力機能を生成して常駐させる
-        startState->ChainAndStay(HistoryStayNode::CreateNode());
+        HistoryStayNode::CreateSingleton();
+        startState->ChainAndStay(HISTORY_STAY_NODE.get());
         // 必要があれば、ここにその他の常駐機能を追加する
-        
+       
+        // 部首合成ノードのSingleton生成
+        BushuCompNode::CreateSingleton();
+
+        // 直接連想変換ノードのSingleton生成
+        BushuAssocExNode::CreateSingleton();
+
         // 全角変換ノードのSingleton生成
         ZenkakuNode::CreateSingleton();
 

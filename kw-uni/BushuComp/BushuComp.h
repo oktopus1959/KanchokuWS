@@ -34,7 +34,9 @@ public:
 
 public:
     // 後置部首合成機能ノードのSingleton
-    static BushuCompNode* Singleton;
+    static std::unique_ptr<BushuCompNode> Singleton;
+
+    static void CreateSingleton();
 };
 #define BUSHU_COMP_NODE (BushuCompNode::Singleton)
 

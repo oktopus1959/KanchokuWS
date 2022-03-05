@@ -17,8 +17,14 @@ public:
     static std::unique_ptr<EasyChars> Singleton;
 
 public:
+    static void DumpEasyCharsMemory(int n);
+
     // 最上段を使わないレベル1(900文字)とユーザー定義の簡易打鍵文字を集める
     static void GatherEasyChars();
+
+    inline const std::set<mchar_t>& GetCharsSet() const {
+        return easyChars;
+    }
 
     // CleanUp
     inline void CleanUp() {

@@ -49,6 +49,7 @@ namespace Utils
                         dirPath = dirPath._getDirPath();
                     }
                     s_KanchokuRootDir = dirPath._joinPath("test");
+                    if (!Helper.DirectoryExists(s_KanchokuRootDir)) s_KanchokuRootDir = dirPath;
                 } else {
                     s_KanchokuRootDir = path._getDirPath();
                 }

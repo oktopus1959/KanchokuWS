@@ -1490,7 +1490,7 @@ State* HistoryStayNode::CreateState() {
 }
 
 // 履歴機能常駐ノードの生成
-HistoryStayNode* HistoryStayNode::CreateNode() {
+void HistoryStayNode::CreateSingleton() {
     // 履歴入力辞書ファイル名
     auto histFile = SETTINGS->historyFile;
     LOG_INFO(_T("histFile=%s"), histFile.c_str());
@@ -1500,7 +1500,6 @@ HistoryStayNode* HistoryStayNode::CreateNode() {
 
     HIST_CAND.reset(new HistCandidates());
     HISTORY_STAY_NODE.reset(new HistoryStayNode());
-    return HISTORY_STAY_NODE.get();
 }
 
 // Singleton

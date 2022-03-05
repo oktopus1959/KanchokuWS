@@ -9,6 +9,13 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughString)
 
+#if 0
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#endif
+
 namespace {
     void convertZenkakuPeriod(MString& ms) {
         for (size_t i = 0; i < ms.size(); ++i) {

@@ -52,8 +52,9 @@ class BushuAssocExNode : public BushuAssocNode {
     size_t Count = 0;           // 1回目または2回目の呼び出しであることをチェックするためのカウント
 
 public:
-    // Singleton (生存管理は呼び出し側の StrokeNode のほうでやる)
-    static BushuAssocExNode* Singleton;
+    static std::unique_ptr<BushuAssocExNode> Singleton;
+
+    static void CreateSingleton();
 };
 #define BUSHU_ASSOC_EX_NODE (BushuAssocExNode::Singleton)
 
