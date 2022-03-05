@@ -45,7 +45,7 @@ namespace VkbTableMaker {
     std::set<int> hiraganaFirstIndexes;
 
     void makeStrokeKeysTable(wchar_t* table, std::set<int>* pSet, StrokeTableNode* pNode, const std::map<wchar_t, size_t>& idxMap, size_t firstIdx, size_t secondIdx, size_t depth) {
-        for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
+        for (size_t i = 0; i < NORMAL_DECKEY_NUM; ++i) {
             if (depth == 0)
                 firstIdx = i;
             else if (depth == 1)
