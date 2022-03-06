@@ -13,6 +13,7 @@
 #include "deckey_id_defs.h"
 #include "KeysAndChars/DeckeyToChars.h"
 #include "KeysAndChars/VkbTableMaker.h"
+#include "KeysAndChars/MyPrevChar.h"
 #include "KeysAndChars/Zenkaku.h"
 #include "KeysAndChars/Katakana.h"
 #include "ErrorHandler.h"
@@ -119,6 +120,9 @@ public:
         startState->ChainAndStay(HISTORY_STAY_NODE.get());
         // 必要があれば、ここにその他の常駐機能を追加する
        
+        // PrevCharNode - 直前キー文字を返すノードのSingleton生成
+        PrevCharNode::CreateSingleton();
+
         // 部首合成ノードのSingleton生成
         BushuCompNode::CreateSingleton();
 
@@ -817,7 +821,7 @@ int FinalizeDecoder(void* pDecoder) {
     auto method_call = [pDecoder]() {
         Decoder* p = (Decoder*)pDecoder;
         p->Destroy();
-        delete p;
+        delete p;       // デコーダの終了時にデコーダインスタンスを破棄する
         LOG_INFO(_T("======== kw-uni TERMINATED ========\n"));
     };
     return invokeDecoderMethod(method_call, nullptr);

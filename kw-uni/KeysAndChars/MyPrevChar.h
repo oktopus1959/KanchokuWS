@@ -35,11 +35,11 @@ public:
     MString getString() const { return to_mstr(_T("・")); }
 
 public:
-    static PrevCharNode* Singleton();
-
-private:
     static std::unique_ptr<PrevCharNode> _singleton;
+
+    static void CreateSingleton();
 };
+#define PREV_CHAR_NODE (PrevCharNode::_singleton.get())
 
 // -------------------------------------------------------------------
 // MyCharNodeBuilder - ノードビルダ

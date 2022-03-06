@@ -23,7 +23,7 @@ public:
     // デストラクタ
     ~StrokeTableNode() {
         for (auto p : children) {
-            delete p;
+            delete p;       // 子ノードの削除 (デストラクタ)
         }
     }
 
@@ -54,7 +54,7 @@ public:
         //if (n < children.size()) children[n].reset(node);
         if (n < children.size()) {
             if (children[n]) {
-                delete children[n];
+                delete children[n];     // 新しい n番目の子ノードをセットするために、既存のものを削除しておく
             }
             children[n] = node;
         }

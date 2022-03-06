@@ -30,8 +30,7 @@ DEFINE_CLASS_LOGGER(State);
 // デストラクタのデフォルト
 State::~State() {
     LOG_DEBUG(_T("ENTER: Destructor: %s"), NAME_PTR);
-    // 後続状態を削除する
-    delete pNext;
+    delete pNext;       // デストラクタ -- 後続状態を削除する
     pNext = nullptr;
     LOG_DEBUG(_T("LEAVE: Destructor: %s"), NAME_PTR);
 }
@@ -141,7 +140,7 @@ void State::DoDeckeyPostProc() {
             pNext = ps;
             ps->pPrev = this;
         } else {
-            delete ps;
+            delete ps;  // 後続状態の生成時処理の結果、後続状態は不要になったので削除する
         }
         _LOG_DEBUGH(_T("ClearNextNodeMaybe()"));
         //pNextNodeMaybe = nullptr;   // 新ノードを処理したので、親には渡さない。参照をクリアしておく
@@ -214,7 +213,7 @@ void State::DeleteRemainingState() {
         pNext->DeleteRemainingState();
         if (!pNext->IsStay()) {
             LOG_DEBUG(_T("delete next=%s"), pNext->NAME_PTR);
-            delete pNext;
+            delete pNext;       // 居残っている一時状態の削除(デコーダのOFF->ON時に呼ばれる)
             pNext = 0;
         }
     }
@@ -265,7 +264,7 @@ void State::DeleteUnnecessarySuccessorState() {
     if (pNext) {
         if (pNext->IsUnnecessary()) {
             _LOG_DEBUGH(_T("DELETE NEXT: %s"), pNext->Name.c_str());
-            delete pNext;
+            delete pNext;       // 不要とマークされた後続状態を削除する
             pNext = nullptr;
         }
     }

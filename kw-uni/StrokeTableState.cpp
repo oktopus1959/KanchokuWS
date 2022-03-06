@@ -144,7 +144,7 @@ namespace {
         void handleEnter() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             // 前打鍵を出力する
-            SetNextNodeMaybe(PrevCharNode::Singleton());
+            SetNextNodeMaybe(PREV_CHAR_NODE);
             setToRemoveAllStroke();
         }
 

@@ -120,11 +120,10 @@ State* PrevCharNode::CreateState() {
     return new PrevCharState(this);
 }
 
-PrevCharNode* PrevCharNode::Singleton() {
+void PrevCharNode::CreateSingleton() {
     if (!_singleton) {
         _singleton.reset(new PrevCharNode());
     }
-    return _singleton.get();
 }
 
 std::unique_ptr<PrevCharNode> PrevCharNode::_singleton;
