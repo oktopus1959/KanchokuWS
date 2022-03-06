@@ -354,7 +354,7 @@ namespace {
             MString prevOut = HISTORY_STAY_NODE->GetPrevOutString();
             // 出力スタックから、上記と同じ長さの末尾文字列を取得
             auto lastJstr = OUTPUT_STACK->GetLastJapaneseStr<MString>(prevOut.size());
-            bool result = lastJstr == prevOut;
+            bool result = !prevOut.empty() && lastJstr == prevOut;
             _LOG_DEBUGH(_T("RESULT: %s: prevOut=%s, lastJapaneseStr=%s"), BOOL_TO_WPTR(result), MAKE_WPTR(prevOut), MAKE_WPTR(lastJstr));
             return result;
         }
@@ -849,6 +849,7 @@ namespace {
             // 初期化という意味で、下記のように変更しておく(2021/5/31)
             maybeEditedBySubState = false;
             bCandSelectable = false;
+            _LOG_DEBUGH(_T("bCandSelectable=False"));
             HISTORY_STAY_NODE->ClearPrevHistState();     // まだ履歴検索が行われていないということを表す
             HIST_CAND->ClearKeyInfo();      // まだ履歴検索が行われていないということを表す
         }
@@ -999,7 +1000,7 @@ namespace {
                 _LOG_DEBUGH(_T("Auto or Manual"));
                 // 前回の履歴選択の出力と現在の出力文字列(改行以降)の末尾を比較する。
                 // たとえば前回「中」で履歴検索し「中納言家持」が履歴出力されており、現在の出力スタックが「・・・中納言家持」なら true が返る
-                bool bSameOut = isLastHistOutSameAsCurrentOut();
+                bool bSameOut = !bManual && isLastHistOutSameAsCurrentOut();
                 LOG_INFOH(_T("bSameOut=%s, maybeEditedBySubState=%s, histInSearch=%s"), \
                     BOOL_TO_WPTR(bSameOut), BOOL_TO_WPTR(maybeEditedBySubState), BOOL_TO_WPTR(HIST_CAND->IsHistInSearch()));
                 if (bSameOut && !maybeEditedBySubState && HIST_CAND->IsHistInSearch()) {
@@ -1079,6 +1080,7 @@ namespace {
                 _LOG_DEBUGH(_T("Set Unselected"));
                 STATE_COMMON->SetWaitingCandSelect(-1);
                 bCandSelectable = true;
+                _LOG_DEBUGH(_T("bCandSelectable=True"));
             }
             maybeEditedBySubState = false;
 
@@ -1137,7 +1139,7 @@ namespace {
 
         // (Ctrl or Shift)+Space の処理 -- 履歴検索の開始、次の候補を返す
         void handleNextOrPrevCandTrigger(bool bNext) {
-            LOG_INFO(_T("\nCALLED: %s: selectPos=%d, bNext=%s"), NAME_PTR, HIST_CAND->GetSelectPos(), BOOL_TO_WPTR(bNext));
+            LOG_INFO(_T("\nCALLED: %s: bCandSelectable=%s, selectPos=%d, bNext=%s"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable), HIST_CAND->GetSelectPos(), BOOL_TO_WPTR(bNext));
             // これにより、前回のEnterによる改行点挿入やFullEscapeによるブロッカーフラグが削除される⇒(2021/12/18)workしなくなっていたので、いったん削除
             //OUTPUT_STACK->clearFlagAndPopNewLine();
             // 今回、履歴選択用ホットキーだったことを保存
@@ -1190,7 +1192,7 @@ namespace {
 
         // ↓の処理 -- 次候補を返す
         void handleDownArrow() {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: %s: bCandSelectable=%s"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable));
             if (SETTINGS->useArrowKeyToSelectCandidate && bCandSelectable) {
                 setCandSelectIsCalled();
                 getNextCandidate();
@@ -1202,7 +1204,7 @@ namespace {
 
         // ↑の処理 -- 前候補を返す
         void handleUpArrow() {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: %s: bCandSelectable=%s"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable));
             if (SETTINGS->useArrowKeyToSelectCandidate && bCandSelectable) {
                 setCandSelectIsCalled();
                 getPrevCandidate();
@@ -1230,7 +1232,7 @@ namespace {
 
         // Tab の処理 -- 次の候補を返す
         void handleTab() {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: %s: bCandSelectable=%s"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable));
             if (SETTINGS->selectHistCandByTab && bCandSelectable) {
                 setCandSelectIsCalled();
                 getNextCandidate();
@@ -1241,7 +1243,7 @@ namespace {
 
         // ShiftTab の処理 -- 前の候補を返す
         void handleShiftTab() {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: %s: bCandSelectable=%s"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable));
             if (SETTINGS->selectHistCandByTab && bCandSelectable) {
                 setCandSelectIsCalled();
                 getPrevCandidate();
