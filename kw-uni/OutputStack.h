@@ -106,6 +106,13 @@ public:
         }
     }
 
+    inline void setLastBlocker() {
+        if (!stack.empty()) {
+            stack.back().flag |= FLAG_BLOCK_HIST;
+            stack.back().flag |= FLAG_BLOCK_MAZE;
+        }
+    }
+
     inline void setHistBlockerAt(size_t lastNth) {
         if (stack.size() > lastNth) {
             stack[stack.size() - lastNth - 1].flag |= FLAG_BLOCK_HIST;

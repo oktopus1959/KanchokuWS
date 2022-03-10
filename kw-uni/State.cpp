@@ -616,10 +616,10 @@ void State::handleEsc() { LOG_DEBUG(_T("Esc")); handleSpecialKeys(ESC_DECKEY); }
 void State::handleBS() { _LOG_DEBUGH(_T("BackSpace")); setCharDeleteInfo(1); }
 
 // TAB ハンドラ
-void State::handleTab() { handleSpecialKeys(TAB_DECKEY); }
+void State::handleTab() { _LOG_DEBUGH(_T("Tab")); OUTPUT_STACK->setLastBlocker(); handleSpecialKeys(TAB_DECKEY); }
 
 // Shift+TAB ハンドラ
-void State::handleShiftTab() { handleSpecialKeys(SHIFT_TAB_DECKEY); }
+void State::handleShiftTab() { _LOG_DEBUGH(_T("Shift+Tab")); OUTPUT_STACK->setLastBlocker(); handleSpecialKeys(SHIFT_TAB_DECKEY); }
 
 // Delete ハンドラ
 void State::handleDelete() { handleSpecialKeys(DEL_DECKEY); }
