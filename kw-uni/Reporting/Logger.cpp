@@ -131,6 +131,7 @@ tstring Logger::LogFilename;
 FileWriter* Logger::m_fw = 0;
 
 void Logger::Close() {
+	LogFilename.clear();
     if (m_fw != 0) {
         try {
 			delete m_fw;
