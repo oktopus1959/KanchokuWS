@@ -20,6 +20,9 @@ namespace KanchokuWS
 
         private void DlgModConversion_Load(object sender, EventArgs e)
         {
+            radioButton_modKeys.Checked = true;
+            dataGridView1.Visible = false;
+            setDataGridView1();
             setDataGridView2();
         }
 
@@ -158,6 +161,36 @@ namespace KanchokuWS
             new string[]{ "CopyAndRegisterSelection", "選択されている部分をデコーダの辞書に送って登録" },
         };
 
+        private void setDataGridView1()
+        {
+            double dpiRate = ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
+            int rowHeight = (int)(20 * dpiRate);
+
+            var dgv = dataGridView1;
+            dgv._defaultSetup(rowHeight, rowHeight);
+            dgv._setSelectionColorLemon();                 // 選択時の色をレモン色にする
+            dgv._setDefaultFont(DgvHelpers.FontYUG9);
+            int keyCodeWidth = (int)(30 * dpiRate);
+            int keyNameWidth = (int)(80 * dpiRate);
+            int funcNameWidth = (int)(180 * dpiRate);
+            int funcDescWidth = (int)(dgv.Width - 20 * dpiRate - keyCodeWidth - keyNameWidth - funcNameWidth);
+            dgv.Columns.Add(dgv._makeTextBoxColumn("keyCode", "No", keyCodeWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR, true));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "キー", keyNameWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("funcName", "機能名", funcNameWidth, true));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("funcDesc", "機能説明", funcDescWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
+
+            int num = 21;
+            dgv.Rows.Add(num);
+
+            for (int i = 0; i < num; ++i) {
+                dgv.Rows[i].Cells[0].Value = i + 1;
+                dgv.Rows[i].Cells[1].Value = specialDecKeys[i][0];
+                dgv.Rows[i].Cells[2].Value = specialDecKeys[i+21][0];
+                dgv.Rows[i].Cells[3].Value = specialDecKeys[i+21][1];
+            }
+
+        }
+
         private void setDataGridView2()
         {
             double dpiRate = ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
@@ -198,6 +231,15 @@ namespace KanchokuWS
         {
             DialogResult = DialogResult.Cancel;
             Close();
+        }
+
+        private void radioButton_modKeys_CheckedChanged(object sender, EventArgs e)
+        {
+            dataGridView1.Visible = !radioButton_modKeys.Checked;
+            dataGridView2.Visible = radioButton_modKeys.Checked;
+            comboBox_modKeys.Enabled = radioButton_modKeys.Checked;
+            comboBox_shiftPlaneOn.Enabled = radioButton_modKeys.Checked;
+            comboBox_shiftPlaneOff.Enabled = radioButton_modKeys.Checked;
         }
     }
 }
