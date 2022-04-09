@@ -610,6 +610,7 @@ namespace KanchokuWS
             {"rightshiftblocker", DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY},
             {"leftshiftmazestartpos", DecoderKeys.LEFT_SHIFT_MAZE_START_POS_DECKEY},
             {"rightshiftmazestartpos", DecoderKeys.RIGHT_SHIFT_MAZE_START_POS_DECKEY},
+            {"copyandregisterselection", DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY},
             {"copyselectionandsendtodictionary", DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY},
             {"clearstroke", DecoderKeys.CLEAR_STROKE_DECKEY},
             //{"^a", DecoderKeys.CTRL_},

@@ -941,15 +941,15 @@ Ctrl-G などでミニバッファをクリアしてから「@」で履歴検索
 登録方法には下記の3通りがあります。
 
 - 仮想鍵盤の上部ミニバッファに文字列をコピペする
-- 選択状態の文字列に対して後述の拡張修飾キーで CopySelectionAndSendToDictionary コマンドを呼び出す
+- 選択状態の文字列に対して後述の拡張修飾キーで CopyAndRegisterSelection コマンドを呼び出す
 - 設定ダイアログの「辞書登録」>「履歴登録」で登録する
 
 たとえば「お世話になっております」を履歴として登録するには、
 この文字列をコピーして仮想鍵盤のミニバッファにペーストするか、
-この文字列を選択状態にしておいて CopySelectionAndSendToDictionary を呼び出すか、
+この文字列を選択状態にしておいて CopyAndRegisterSelection を呼び出すか、
 あるいは「履歴登録」のところで直接入力して「登録」ボタンを押します。
 
-ちなみに作者は、 CopySelectionAndSendToDictionary を 「無変換」+`O` に割り当てています。
+ちなみに作者は、 CopyAndRegisterSelection を 「無変換」+`O` に割り当てています。
 
 ![Nfer O](image/nfer_o.png)
 
@@ -1223,7 +1223,7 @@ https://twitter.com/kanchokker/status/1411910765976506373 <br/>
 登録方法には下記の3通りがあります。
 
 - 仮想鍵盤の上部ミニバッファに文字列をコピペする
-- 後述の拡張修飾キーで CopySelectionAndSendToDictionary コマンドを呼び出す
+- 後述の拡張修飾キーで CopyAndRegisterSelection コマンドを呼び出す
 - 設定ダイアログの「辞書登録」>「交ぜ書き登録」で登録する
 
 形式は、
@@ -1233,7 +1233,7 @@ https://twitter.com/kanchokker/status/1411910765976506373 <br/>
 です。
 たとえば「とうきょうとっきょきょかきょく /東京特許許可局/」を登録するには、
 この文字列をコピーして仮想鍵盤のミニバッファにペーストするか、
-この文字列を選択状態にしておいて CopySelectionAndSendToDictionary を呼び出すか、
+この文字列を選択状態にしておいて CopyAndRegisterSelection を呼び出すか、
 あるいは「交ぜ書き登録」のところで直接入力して「登録」ボタンを押します。
 
 同一読みに対して複数の変換形がある場合は、それを「/」で区切って一行で記述することができます。
@@ -1285,7 +1285,7 @@ https://twitter.com/kanchokker/status/1411910765976506373 <br/>
 登録方法には下記の3通りがあります。
 
 - 仮想鍵盤の上部ミニバッファに文字列をコピペする
-- 後述の拡張修飾キーで CopySelectionAndSendToDictionary コマンドを呼び出す
+- 後述の拡張修飾キーで CopyAndRegisterSelection コマンドを呼び出す
 - 設定ダイアログの「辞書登録」>「連想文字登録」で登録する
 
 形式は、
@@ -1295,7 +1295,7 @@ https://twitter.com/kanchokker/status/1411910765976506373 <br/>
 です。
 たとえば「恋=愛」を登録するには、
 この文字列をコピーして仮想鍵盤のミニバッファにペーストするか、
-この文字列を選択状態にしておいて CopySelectionAndSendToDictionary を呼び出すか、
+この文字列を選択状態にしておいて CopyAndRegisterSelection を呼び出すか、
 あるいは「連想文字登録」のところで直接入力して「登録」ボタンを押します。
 
 「連想文字列」の途中に「|」を挿入しておくと、先頭から「|」までの候補は優先順固定となります。
@@ -1499,7 +1499,7 @@ KanchokuWS では、辞書読み込み時に部品としての使用頻度を計
 登録方法には下記の3通りがあります。
 
 1. 仮想鍵盤の上部ミニバッファに文字列をコピペする
-1. 後述の拡張修飾キーで CopySelectionAndSendToDictionary コマンドを呼び出す
+1. 後述の拡張修飾キーで CopyAndRegisterSelection コマンドを呼び出す
 1. 設定ダイアログの「辞書登録」>「自動部首合成登録」で登録する
 
 形式は、A, B を部品文字、C を合成文字として、1と2の場合は
@@ -1514,7 +1514,7 @@ CAB
 です。
 たとえば「県心=懸」を登録するには、
 この文字列をコピーして仮想鍵盤のミニバッファにペーストするか、
-この文字列を選択状態にしておいて CopySelectionAndSendToDictionary を呼び出すか、
+この文字列を選択状態にしておいて CopyAndRegisterSelection を呼び出すか、
 あるいは設定ダイアログの「辞書登録」-「自動部首合成登録」のところで直接入力して「登録」ボタンを押します。
 
 特に、いったん無効化登録がされた組み合わせを再び有効化するには、この辞書登録で再登録する必要があります。
@@ -1922,7 +1922,7 @@ Esc, Tab, BackSpace, Enter, Insert, Delete, Home, End, PageUp, PageDown, UpArrow
 |RightShiftBlocker|交ぜ書きブロッカーの右移動|
 |LeftShiftMazeStartPos|交ぜ書き開始位置の左移動 （ただし直前の右移動の実行前の状態にのみ戻る）|
 |RightShiftMazeStartPos|交ぜ書き開始位置の右移動|
-|CopySelectionAndSendToDictionary|アクティブウィンドウに Ctrl-C を送りつけて、選択されている部分をクリップボードにコピーし、それをデコーダの辞書に送って登録する。<br/>形式はミニバッファへのコピペによる辞書登録と同じで、履歴、交ぜ書き、連想の3通りの登録が可能|
+|CopyAndRegisterSelection|アクティブウィンドウに Ctrl-C を送りつけて、選択されている部分をクリップボードにコピーし、それをデコーダの辞書に送って登録する。<br/>形式はミニバッファへのコピペによる辞書登録と同じで、履歴、交ぜ書き、連想の3通りの登録が可能|
 
 ※ コマンド名は大文字・小文字を区別しません。
 

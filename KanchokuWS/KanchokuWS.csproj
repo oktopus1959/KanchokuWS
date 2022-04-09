@@ -99,6 +99,12 @@
     <Compile Include="DlgColorSelector.Designer.cs">
       <DependentUpon>DlgColorSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="DlgModConversion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DlgModConversion.Designer.cs">
+      <DependentUpon>DlgModConversion.cs</DependentUpon>
+    </Compile>
     <Compile Include="DlgPaddingsDesc.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -167,6 +173,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DlgColorSelector.resx">
       <DependentUpon>DlgColorSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DlgModConversion.resx">
+      <DependentUpon>DlgModConversion.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DlgPaddingsDesc.resx">
       <DependentUpon>DlgPaddingsDesc.cs</DependentUpon>

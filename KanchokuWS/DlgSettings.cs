@@ -2297,6 +2297,12 @@ namespace KanchokuWS
             openFileByTxtAssociatedProgram(Settings.HistoryFile._safeReplace("*", "entry"));
         }
 
+        private void button_setModConversion_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new DlgModConversion()) {
+                dlg.ShowDialog();
+            }
+        }
     }
 }
 

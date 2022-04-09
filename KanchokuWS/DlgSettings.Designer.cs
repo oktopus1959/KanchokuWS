@@ -434,6 +434,7 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.button_setModConversion = new System.Windows.Forms.Button();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onSecondaryTable = new KanchokuWS.ColorTextBox();
@@ -4175,6 +4176,7 @@ namespace KanchokuWS
             this.tabPage_misc.Controls.Add(this.groupBox40);
             this.tabPage_misc.Controls.Add(this.label_reloadMisc);
             this.tabPage_misc.Controls.Add(this.button_reloadMisc);
+            this.tabPage_misc.Controls.Add(this.button_openModConversionFile);
             this.tabPage_misc.Controls.Add(this.groupBox39);
             this.tabPage_misc.Controls.Add(this.groupBox38);
             this.tabPage_misc.Controls.Add(this.groupBox37);
@@ -4534,32 +4536,32 @@ namespace KanchokuWS
             // 
             // groupBox36
             // 
+            this.groupBox36.Controls.Add(this.button_setModConversion);
             this.groupBox36.Controls.Add(this.textBox_modConversionFile);
             this.groupBox36.Controls.Add(this.checkBox_extraModifiersEnabled);
             this.groupBox36.Controls.Add(this.label93);
-            this.groupBox36.Controls.Add(this.button_openModConversionFile);
             this.groupBox36.Location = new System.Drawing.Point(7, 12);
             this.groupBox36.Name = "groupBox36";
             this.groupBox36.Size = new System.Drawing.Size(290, 47);
             this.groupBox36.TabIndex = 0;
             this.groupBox36.TabStop = false;
-            this.groupBox36.Text = "拡張修飾キー";
+            this.groupBox36.Text = "拡張修飾キー　　　　";
             // 
             // textBox_modConversionFile
             // 
             this.textBox_modConversionFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_modConversionFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_modConversionFile.Location = new System.Drawing.Point(124, 19);
+            this.textBox_modConversionFile.Location = new System.Drawing.Point(75, 19);
             this.textBox_modConversionFile.Name = "textBox_modConversionFile";
-            this.textBox_modConversionFile.Size = new System.Drawing.Size(124, 19);
+            this.textBox_modConversionFile.Size = new System.Drawing.Size(168, 19);
             this.textBox_modConversionFile.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_modConversionFile, resources.GetString("textBox_modConversionFile.ToolTip"));
             // 
             // checkBox_extraModifiersEnabled
             // 
             this.checkBox_extraModifiersEnabled.AutoSize = true;
-            this.checkBox_extraModifiersEnabled.Location = new System.Drawing.Point(6, 20);
+            this.checkBox_extraModifiersEnabled.Location = new System.Drawing.Point(79, 0);
             this.checkBox_extraModifiersEnabled.Name = "checkBox_extraModifiersEnabled";
             this.checkBox_extraModifiersEnabled.Size = new System.Drawing.Size(50, 19);
             this.checkBox_extraModifiersEnabled.TabIndex = 0;
@@ -4570,7 +4572,7 @@ namespace KanchokuWS
             // label93
             // 
             this.label93.AutoSize = true;
-            this.label93.Location = new System.Drawing.Point(60, 21);
+            this.label93.Location = new System.Drawing.Point(7, 21);
             this.label93.Name = "label93";
             this.label93.Size = new System.Drawing.Size(65, 15);
             this.label93.TabIndex = 10;
@@ -4579,7 +4581,7 @@ namespace KanchokuWS
             // button_openModConversionFile
             // 
             this.button_openModConversionFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openModConversionFile.Location = new System.Drawing.Point(252, 17);
+            this.button_openModConversionFile.Location = new System.Drawing.Point(259, 52);
             this.button_openModConversionFile.Name = "button_openModConversionFile";
             this.button_openModConversionFile.Size = new System.Drawing.Size(34, 23);
             this.button_openModConversionFile.TabIndex = 8;
@@ -4587,6 +4589,7 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.button_openModConversionFile, "拡張修飾キー定義ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\n定義ファイルを修正した場合は、「再読込」をクリ" +
         "ックすると、その内容が\r\n読み込まれて、内部状態が更新されます。");
             this.button_openModConversionFile.UseVisualStyleBackColor = true;
+            this.button_openModConversionFile.Visible = false;
             this.button_openModConversionFile.Click += new System.EventHandler(this.button_openModConversionFile_Click);
             // 
             // groupBox35
@@ -5274,6 +5277,19 @@ namespace KanchokuWS
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // button_setModConversion
+            // 
+            this.button_setModConversion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_setModConversion.Location = new System.Drawing.Point(246, 17);
+            this.button_setModConversion.Name = "button_setModConversion";
+            this.button_setModConversion.Size = new System.Drawing.Size(40, 23);
+            this.button_setModConversion.TabIndex = 11;
+            this.button_setModConversion.Text = "設定";
+            this.toolTip1.SetToolTip(this.button_setModConversion, "拡張修飾キー定義ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\n定義ファイルを修正した場合は、「再読込」をクリ" +
+        "ックすると、その内容が\r\n読み込まれて、内部状態が更新されます。");
+            this.button_setModConversion.UseVisualStyleBackColor = true;
+            this.button_setModConversion.Click += new System.EventHandler(this.button_setModConversion_Click);
             // 
             // textBox_onSelectedBackColor
             // 
@@ -6001,5 +6017,6 @@ namespace KanchokuWS
         private System.Windows.Forms.GroupBox groupBox44;
         private System.Windows.Forms.Label label113;
         private System.Windows.Forms.TextBox textBox_mazeHistRegisterMinLen;
+        private System.Windows.Forms.Button button_setModConversion;
     }
 }

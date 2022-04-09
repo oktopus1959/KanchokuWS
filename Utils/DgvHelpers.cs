@@ -258,7 +258,7 @@ namespace Utils
         /// <returns></returns>
         static public DataGridViewTextBoxColumn _makeTextBoxColumn(this DataGridView dgv,
             string name, string text, int width,
-            bool sortable = false, bool writable = false,
+            bool sortable = false, bool writable = true,
             int selectionColor = DEFAULT_SELECTION_COLOR, bool alignCentered = false, bool alignRight = false)
         {
             DataGridViewTextBoxColumn col = new DataGridViewTextBoxColumn();
