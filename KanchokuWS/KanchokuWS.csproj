@@ -161,6 +161,7 @@
     </Compile>
     <Compile Include="ScreenInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="SpecialKeysAndFunctions.cs" />
     <Compile Include="VirtualKeys.cs" />
     <EmbeddedResource Include="BackColorComboBox.resx">
       <DependentUpon>BackColorComboBox.cs</DependentUpon>

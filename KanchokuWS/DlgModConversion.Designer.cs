@@ -85,11 +85,15 @@ namespace KanchokuWS
             "英数",
             "無変換",
             "変換",
-            "右シフト"});
+            "右シフト",
+            "左コントロール",
+            "右コントロール",
+            "シフト"});
             this.comboBox_modKeys.Location = new System.Drawing.Point(88, 5);
             this.comboBox_modKeys.Name = "comboBox_modKeys";
             this.comboBox_modKeys.Size = new System.Drawing.Size(80, 20);
             this.comboBox_modKeys.TabIndex = 11;
+            this.comboBox_modKeys.SelectedIndexChanged += new System.EventHandler(this.comboBox_modKeys_SelectedIndexChanged);
             // 
             // dataGridView2
             // 

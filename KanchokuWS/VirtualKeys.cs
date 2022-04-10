@@ -207,15 +207,15 @@ namespace KanchokuWS
         }
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
-        private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftModFlag = new Dictionary<uint, ShiftPlane>();
+        public static Dictionary<uint, ShiftPlane> ShiftPlaneForShiftModFlag = new Dictionary<uint, ShiftPlane>();
 
         /// <summary> DecoderがOffの時のシフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
-        private static Dictionary<uint, ShiftPlane> shiftPlaneForShiftModFlagWhenDecoderOff = new Dictionary<uint, ShiftPlane>();
+        public static Dictionary<uint, ShiftPlane> ShiftPlaneForShiftModFlagWhenDecoderOff = new Dictionary<uint, ShiftPlane>();
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てられたシフト面を得る</summary>
         public static ShiftPlane GetShiftPlaneFromShiftModFlag(uint modFlag, bool bDecoderOn)
         {
-            return bDecoderOn ? shiftPlaneForShiftModFlag._safeGet(modFlag, ShiftPlane.NONE) : shiftPlaneForShiftModFlagWhenDecoderOff._safeGet(modFlag, ShiftPlane.NONE);
+            return bDecoderOn ? ShiftPlaneForShiftModFlag._safeGet(modFlag, ShiftPlane.NONE) : ShiftPlaneForShiftModFlagWhenDecoderOff._safeGet(modFlag, ShiftPlane.NONE);
         }
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) にシフト面が割り当てられているか</summary>
@@ -534,6 +534,11 @@ namespace KanchokuWS
             {"zenkaku", KeyModifiers.MOD_SINGLE },
         };
 
+        public static uint GetModifierKeyByName(string name)
+        {
+            return modifierKeysFromName._safeGet(name);
+        }
+
         /// <summary>(拡張)シフト面に割り当てられる拡張修飾キーか (kana, lctrl, rctrl 以外)</summary>
         /// <param name="mod"></param>
         /// <returns></returns>
@@ -616,6 +621,64 @@ namespace KanchokuWS
             //{"^a", DecoderKeys.CTRL_},
         };
 
+        private static Dictionary<int, string> keyNamesFromDecKey = new Dictionary<int, string>() {
+            {DecoderKeys.ESC_DECKEY, "Esc"},
+            {DecoderKeys.HANZEN_DECKEY , "Zenkaku"},
+            {DecoderKeys.TAB_DECKEY, "Tab"},
+            {DecoderKeys.CAPS_DECKEY , "CapsLock"},
+            {DecoderKeys.ALNUM_DECKEY , "AlphaNum"},
+            {DecoderKeys.NFER_DECKEY , "Nfer"},
+            {DecoderKeys.XFER_DECKEY , "Xfer"},
+            {DecoderKeys.KANA_DECKEY , "Kana"},
+            {DecoderKeys.BS_DECKEY , "BackSpace"},
+            {DecoderKeys.ENTER_DECKEY, "Enter"},
+            {DecoderKeys.INS_DECKEY, "Insert"},
+            {DecoderKeys.DEL_DECKEY, "Delete"},
+            {DecoderKeys.HOME_DECKEY, "Home"},
+            {DecoderKeys.END_DECKEY, "End"},
+            {DecoderKeys.PAGE_UP_DECKEY, "PageUp"},
+            {DecoderKeys.PAGE_DOWN_DECKEY, "PageDown"},
+            {DecoderKeys.LEFT_ARROW_DECKEY, "Left"},
+            {DecoderKeys.RIGHT_ARROW_DECKEY, "Right"},
+            {DecoderKeys.UP_ARROW_DECKEY, "Up"},
+            {DecoderKeys.DOWN_ARROW_DECKEY, "Down"},
+            {DecoderKeys.RIGHT_SHIFT_DECKEY, "Rshift"},
+            {DecoderKeys.STROKE_SPACE_DECKEY, "Space"},
+            {DecoderKeys.SHIFT_SPACE_DECKEY, "ShiftSpace"},
+            {DecoderKeys.TOGGLE_DECKEY, "ModeToggle"},
+            {DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY, "ModeToggleFollowCaret"},
+            {DecoderKeys.ACTIVE_DECKEY, "Activate"},
+            {DecoderKeys.DEACTIVE_DECKEY, "Deactivate"},
+            {DecoderKeys.FULL_ESCAPE_DECKEY, "FullEscape"},
+            {DecoderKeys.UNBLOCK_DECKEY, "Unblock"},
+            {DecoderKeys.TOGGLE_BLOCKER_DECKEY, "BlockerToggle"},
+            {DecoderKeys.STROKE_HELP_ROTATION_DECKEY, "HelpRotate"},
+            {DecoderKeys.STROKE_HELP_UNROTATION_DECKEY, "HelpUnrotate"},
+            {DecoderKeys.DATE_STRING_ROTATION_DECKEY, "DateRotate"},
+            {DecoderKeys.DATE_STRING_UNROTATION_DECKEY, "DateUnrotate"},
+            {DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY, "HistNext"},
+            {DecoderKeys.HISTORY_PREV_SEARCH_DECKEY, "HistPrev"},
+            {DecoderKeys.STROKE_HELP_DECKEY, "StrokeHelp"},
+            {DecoderKeys.BUSHU_COMP_HELP_DECKEY, "BushuCompHelp"},
+            {DecoderKeys.TOGGLE_ZENKAKU_CONVERSION_DECKEY, "ZenkakuConversion"},
+            {DecoderKeys.TOGGLE_KATAKANA_CONVERSION_DECKEY, "KatakanaConversion"},
+            {DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE_DECKEY, "RomanStrokeGuide"},
+            {DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY, "UpperRomanStrokeGuide"},
+            {DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY, "HiraganaStrokeGuide"},
+            {DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY, "ExchangeCodeTable"},
+            {DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY, "LeftShiftBlocker"},
+            {DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY, "RightShiftBlocker"},
+            {DecoderKeys.LEFT_SHIFT_MAZE_START_POS_DECKEY, "LeftShiftMazeStartpos"},
+            {DecoderKeys.RIGHT_SHIFT_MAZE_START_POS_DECKEY, "RightShiftMazeStartpos"},
+            {DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY, "CopyAndRegisterSelection"},
+            {DecoderKeys.CLEAR_STROKE_DECKEY, "ClearStroke"},
+        };
+
+        public static string GetKeyNameByDeckey(int deckey)
+        {
+            return keyNamesFromDecKey._safeGet(deckey);
+        }
+
         /// <summary>
         /// シフト面も含んだ漢直キーコード文字列を解析する("20", "A31", "B11" など)<br/>
         /// 漢直キーコードでなければ -1 を返す
@@ -629,6 +692,12 @@ namespace KanchokuWS
             if (deckey < 0 || deckey >= DecoderKeys.STROKE_DECKEY_END) return -1;
             return deckey + offset;
         }
+
+        public static string DefaultExtModifierName = "";
+
+        public static Dictionary<int, string> SingleHitDefs = new Dictionary<int, string>();
+
+        public static Dictionary<int, Dictionary<int, string>> ExtModifierKeyDefs = new Dictionary<int, Dictionary<int, string>>();
 
         /// <summary>
         /// 追加の modifier 変換表を読み込む
@@ -645,19 +714,21 @@ namespace KanchokuWS
                     SystemHelper.ShowErrorMessageBox($"修飾キー変換定義ファイル({filePath}の読み込みに失敗しました。");
                     return false;
                 }
-                shiftPlaneForShiftModFlag.Clear();
-                shiftPlaneForShiftModFlagWhenDecoderOff.Clear();
+                ShiftPlaneForShiftModFlag.Clear();
+                ShiftPlaneForShiftModFlagWhenDecoderOff.Clear();
+                Dictionary<string, int> modCount = new Dictionary<string, int>();
                 int nl = 0;
                 foreach (var rawLine in lines._split('\n')) {
                     ++nl;
                     logger.DebugH(() => $"line({nl}): {rawLine}");
-                    var line = rawLine._reReplace("#.*", "").Trim().Replace(" ", "")._toLower();
+                    var origLine = rawLine._reReplace("#.*", "").Trim().Replace(" ", "");
+                    var line = origLine._toLower();
                     if (line._notEmpty() && line[0] != '#') {
                         if (line.IndexOf('=') > 0) {
                             // NAME=plane[|plane]...
                             var items = line._split('=');
                             if (items._length() == 2) {
-                                uint mod = modifierKeysFromName._safeGet(items[0]);
+                                uint mod = GetModifierKeyByName(items[0]);
                                 var planes = items[1]._split('|');
                                 ShiftPlane shiftPlane = ShiftPlane.NONE;
                                 switch (planes._getNth(0)) {
@@ -677,62 +748,81 @@ namespace KanchokuWS
                                 logger.DebugH(() => $"mod={mod:x}H({mod}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
                                 if (mod != 0 && shiftPlane > 0) {
                                     logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{mod}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{mod}] = {shiftPlaneWhenOff}");
-                                    shiftPlaneForShiftModFlag[mod] = shiftPlane;
-                                    shiftPlaneForShiftModFlagWhenDecoderOff[mod] = shiftPlaneWhenOff;
+                                    ShiftPlaneForShiftModFlag[mod] = shiftPlane;
+                                    ShiftPlaneForShiftModFlagWhenDecoderOff[mod] = shiftPlaneWhenOff;
                                     continue;
                                 }
                             }
                         } else {
                             // NAME:xx:function
+                            var origItems = origLine._split(':');
                             var items = line._split(':');
                             if (items._length() == 3) {
+                                string modName = items[0];
+                                string modifiee = items[1];
+                                string target = origItems[2];
                                 uint mod = 0;
+                                int modDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modName);
+                                int modifieeDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modifiee)._gtZeroOr(modifiee._parseInt(-1, -1));
+                                logger.DebugH(() => $"modName={modName}, modifiee={modifiee}, target={target}, modDeckey={modDeckey}, modifieeDeckey={modifieeDeckey})");
+
                                 // 被修飾キーの仮想キーコード: 特殊キー名(esc, tab, ins, ...)または漢直コード(00～49)から、それに該当する仮想キーコードを得る
-                                uint vkey = getVKeyFromDecKey(specialDecKeysFromName._safeGet(items[1])._gtZeroOr(items[1]._parseInt(-1, -1)));
+                                uint vkey = getVKeyFromDecKey(modifieeDeckey);
+                                logger.DebugH(() => $"vkey={vkey}");
                                 if (vkey == 0) {
                                     // 被修飾キーが指定されていない場合は、拡張修飾キーまたは特殊キーの単打とみなす
-                                    vkey = GetFuncVkeyByName(items[0]);  
+                                    vkey = GetFuncVkeyByName(modName);  
                                 } else {
                                     // 被修飾キーが指定されている場合は、拡張修飾キーの修飾フラグを取得
-                                    mod = modifierKeysFromName._safeGet(items[0]);
+                                    mod = GetModifierKeyByName(modName);
                                 }
-                                bool ctrl = items[2]._startsWith("^");
-                                var name = items[2].Replace("^", "");
-                                int deckey = parseShiftPlaneDeckey(items[2]);
-                                logger.DebugH(() => $"deckey={deckey:x}H({deckey})");
-                                if (deckey >= 0) {
+
+                                bool ctrl = target._startsWith("^");
+                                var name = target.Replace("^", "")._toLower();
+                                int targetDeckey = parseShiftPlaneDeckey(target);
+
+                                logger.DebugH(() => $"name={name}, targetDeckey={targetDeckey:x}H({targetDeckey})");
+
+                                if (targetDeckey >= 0) {
                                     // targetが漢直コードによる直接定義(nfer:11:B11など)の場合⇒無条件のデコーダ呼び出し(デコーダがOFFの場合も呼び出される)
-                                    deckey += DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET;
+                                    targetDeckey += DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET;
                                 } else {
-                                    deckey = specialDecKeysFromName._safeGet(name);
+                                    targetDeckey = specialDecKeysFromName._safeGet(name);
                                 }
-                                logger.DebugH(() => $"mod={mod:x}H, vkey={vkey:x}H, deckey={deckey:x}H({deckey}), ctrl={ctrl}, name={name}");
+
+                                logger.DebugH(() => $"mod={mod:x}H, vkey={vkey:x}H, targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, name={name}");
+
                                 if (ctrl) {
                                     uint decVkey = 0;
                                     if (name._safeLength() == 1 && name._ge("a") && name._le("z")) {
                                         // Ctrl-A～Ctrl-Z
                                         decVkey = faceToVkey._safeGet(name._toUpper());
-                                        deckey = DecoderKeys.DECKEY_CTRL_A + name[0] - 'a';
-                                    } else if (deckey >= DecoderKeys.FUNC_DECKEY_START && deckey < DecoderKeys.FUNC_DECKEY_END) {
+                                        targetDeckey = DecoderKeys.DECKEY_CTRL_A + name[0] - 'a';
+                                    } else if (targetDeckey >= DecoderKeys.FUNC_DECKEY_START && targetDeckey < DecoderKeys.FUNC_DECKEY_END) {
                                         // Ctrl+機能キー(特殊キー)(Ctrl+Tabとか)
-                                        decVkey = getVKeyFromDecKey(deckey);
-                                        deckey += DecoderKeys.CTRL_FUNC_DECKEY_START - DecoderKeys.FUNC_DECKEY_START;
+                                        decVkey = getVKeyFromDecKey(targetDeckey);
+                                        targetDeckey += DecoderKeys.CTRL_FUNC_DECKEY_START - DecoderKeys.FUNC_DECKEY_START;
                                     }
-                                    logger.DebugH(() => $"deckey={deckey:x}H({deckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
-                                    if (deckey > 0) AddModifiedDeckey(deckey, KeyModifiers.MOD_CONTROL, decVkey);
+                                    logger.DebugH(() => $"targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
+                                    if (targetDeckey > 0) AddModifiedDeckey(targetDeckey, KeyModifiers.MOD_CONTROL, decVkey);
                                 }
-                                if (vkey > 0 && deckey > 0) {
-                                    logger.DebugH(() => $"AddModConvertedDecKeyFromCombo: deckey={deckey}, mod={mod}, vkey={vkey}");
+
+                                if (vkey > 0 && targetDeckey > 0) {
                                     if (mod == 0) {
+                                        logger.DebugH(() => $"Single Hit");
                                         // 拡張修飾キー単打の場合は、キーの登録だけで、拡張シフトB面の割り当てはやらない
-                                        AddDecKeyAndCombo(deckey, 0, vkey, true);  // deckey から vkey(拡張修飾キー)への逆マップは不要
+                                        AddDecKeyAndCombo(targetDeckey, 0, vkey, true);  // targetDeckey から vkey(拡張修飾キー)への逆マップは不要
                                         VirtualKeys.AddExModVkeyAssignedForDecoderFuncByVkey(vkey);
+                                        SingleHitDefs[modDeckey] = target;
                                     } else {
-                                        AddModConvertedDecKeyFromCombo(deckey, mod, vkey);
-                                        if (isPlaneMappedModifier(mod) && !shiftPlaneForShiftModFlag.ContainsKey(mod)) {
+                                        logger.DebugH(() => $"Extra Modifier");
+                                        modCount[modName] = modCount._safeGet(modName) + 1;
+                                        ExtModifierKeyDefs._safeGetOrNewInsert(modDeckey)[modifieeDeckey] = target;
+                                        AddModConvertedDecKeyFromCombo(targetDeckey, mod, vkey);
+                                        if (isPlaneMappedModifier(mod) && !ShiftPlaneForShiftModFlag.ContainsKey(mod)) {
                                             // mod に対する ShiftPlane が設定されていない場合は、拡張シフトB面を割り当てる
-                                            shiftPlaneForShiftModFlag[mod] = ShiftPlane.PlaneB;
-                                            shiftPlaneForShiftModFlagWhenDecoderOff[mod] = ShiftPlane.PlaneB;
+                                            ShiftPlaneForShiftModFlag[mod] = ShiftPlane.PlaneB;
+                                            ShiftPlaneForShiftModFlagWhenDecoderOff[mod] = ShiftPlane.PlaneB;
                                         }
                                     }
                                     continue;
@@ -740,6 +830,13 @@ namespace KanchokuWS
                             }
                         }
                         logger.Warn($"Invalid line({nl}): {rawLine}");
+                    }
+                }
+                int maxCnt = 0;
+                foreach (var pair in modCount) {
+                    if (pair.Value > maxCnt) {
+                        maxCnt = pair.Value;
+                        DefaultExtModifierName = pair.Key;
                     }
                 }
             }
