@@ -13,19 +13,40 @@ namespace KanchokuWS
 {
     public partial class DlgModConversion : Form
     {
-        private static string[] modifierKeys = new string[] {
-            "space",
-            "caps",
-            "alnum",
-            "nfer",
-            "xfer",
-            "rshift",
-            "lctrl",
-            "rctrl",
-            "shift",
+        public class ModifierDef
+        {
+            public string Name { get; private set; }
+            public uint ModKey { get; private set; }
+            public string Description { get; private set; }
+
+            public ModifierDef(string name, uint modkey, string desc)
+            {
+                Name = name;
+                ModKey = modkey;
+                Description = desc;
+            }
+        };
+
+        private static ModifierDef[] modifierKeys = new ModifierDef[] {
+            new ModifierDef("space", KeyModifiers.MOD_SPACE, "SandS"),
+            new ModifierDef("caps", KeyModifiers.MOD_CAPS, "CapsLock"),
+            new ModifierDef("alnum", KeyModifiers.MOD_ALNUM, "英数"),
+            new ModifierDef("nfer", KeyModifiers.MOD_NFER, "無変換"),
+            new ModifierDef("xfer", KeyModifiers.MOD_XFER, "変換"),
+            new ModifierDef("rshift", KeyModifiers.MOD_RSHIFT, "右シフト"),
+            new ModifierDef("lctrl", KeyModifiers.MOD_LCTRL, "左コントロール"),
+            new ModifierDef("rctrl", KeyModifiers.MOD_RCTRL, "右コントロール"),
+            new ModifierDef("shift", KeyModifiers.MOD_SHIFT, "シフト"),
         };
 
         const int PLANE_ASIGNABLE_MOD_KEYS_NUM = 6;
+
+        private static string[] shiftPlaneNames = new string[] {
+            "なし",
+            "通常シフト",
+            "拡張シフトA",
+            "拡張シフトB"
+        };
 
         private static string[] normalKeyNames = new string[] {
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
@@ -82,15 +103,59 @@ namespace KanchokuWS
             InitializeComponent();
         }
 
+        private int defaultModkeyIndex = 0;
+
         private void DlgModConversion_Load(object sender, EventArgs e)
         {
-            radioButton_modKeys.Checked = true;
+            comboBox_modKeys.Visible = true;
+            comboBox_shiftPlaneOn.Visible = false;
+            comboBox_shiftPlaneOff.Visible = false;
+            comboBox_modKeys._setItems(modifierKeys.Select(x => x.Description));
+            comboBox_shiftPlaneOn._setItems(shiftPlaneNames);
+            comboBox_shiftPlaneOff._setItems(shiftPlaneNames);
+
             dataGridView1.Visible = false;
+            dataGridView2.Visible = true;
+            dataGridView3.Visible = false;
+            setDataGridViewForShiftPlane();
             setDataGridViewForSingleHit();
             setDataGridViewForExtModifier();
-            int modIdx = modifierKeys._findIndex((x) => x._equalsTo(VirtualKeys.DefaultExtModifierName));
-            if (modIdx >= 0) comboBox_modKeys.SelectedIndex = modIdx;
+
+            defaultModkeyIndex = modifierKeys._findIndex(x => x.ModKey == VirtualKeys.DefaultExtModifierKey);
+            comboBox_modKeys.SelectedIndex = defaultModkeyIndex;
+            radioButton_modKeys.Checked = true;
         }
+
+        private void setDataGridViewForShiftPlane()
+        {
+            double dpiRate = ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
+            int rowHeight = (int)(20 * dpiRate);
+
+            var dgv = dataGridView3;
+            dgv._defaultSetup(rowHeight, rowHeight);
+            dgv._setSelectionColorLemon();                 // 選択時の色をレモン色にする
+            dgv._setDefaultFont(DgvHelpers.FontYUG9);
+            int keyCodeWidth = (int)(30 * dpiRate);
+            int keyNameWidth = (int)(80 * dpiRate);
+            int planeNameOnWidth = (int)(200 * dpiRate);
+            int planeNameOffWidth = (int)(dgv.Width - keyCodeWidth - keyNameWidth - planeNameOnWidth - 4 * dpiRate);
+            dgv.Columns.Add(dgv._makeTextBoxColumn("keyCode", "No", keyCodeWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR, true));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "キー", keyNameWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("planeNameOn", "漢直ON時シフト面", planeNameOnWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("planeNameOff", "漢直OFF時シフト面", planeNameOffWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
+
+            int num = PLANE_ASIGNABLE_MOD_KEYS_NUM;
+            dgv.Rows.Add(num);
+
+            for (int i = 0; i < num; ++i) {
+                dgv.Rows[i].Cells[0].Value = i;
+                dgv.Rows[i].Cells[1].Value = modifierKeys[i].Description;
+                uint modKey = modifierKeys[i].ModKey;
+                dgv.Rows[i].Cells[2].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKey._safeGet(modKey)) ?? "";
+                dgv.Rows[i].Cells[3].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modKey)) ?? "";
+            }
+        }
+
 
         private void setDataGridViewForSingleHit()
         {
@@ -157,11 +222,11 @@ namespace KanchokuWS
             }
         }
 
-        private void setExtModifierDgv(int modDeckey)
+        private void setExtModifierDgv(uint modKey)
         {
             var dgv = dataGridView2;
             int num = dgv.Rows.Count;
-            var dict = VirtualKeys.ExtModifierKeyDefs._safeGet(modDeckey);
+            var dict = VirtualKeys.ExtModifierKeyDefs._safeGet(modKey);
             for (int i = 0; i < num; ++i) {
                 string defStr = "";
                 string desc = "";
@@ -186,17 +251,21 @@ namespace KanchokuWS
 
         private void selectModKey(int idx)
         {
-            string modKeyName = modifierKeys._getNth(idx);
-            uint modVKey = VirtualKeys.GetModifierKeyByName(modKeyName);
+            var modKeyDef = modifierKeys._getNth(idx);
+            uint modKey = modKeyDef?.ModKey ?? 0;
             bool bAssignable = idx >= 0 && idx < PLANE_ASIGNABLE_MOD_KEYS_NUM;
             if (bAssignable) {
-                comboBox_shiftPlaneOn.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModFlag._safeGet(modVKey);
-                comboBox_shiftPlaneOff.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModFlagWhenDecoderOff._safeGet(modVKey);
-            } 
-            comboBox_shiftPlaneOn.Enabled = bAssignable;
-            comboBox_shiftPlaneOff.Enabled = bAssignable;
+                comboBox_shiftPlaneOn.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModKey._safeGet(modKey);
+                comboBox_shiftPlaneOff.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modKey);
+            }
 
-            setExtModifierDgv(SpecialKeysAndFunctions.GetDeckeyByName(modKeyName));
+            bool shiftPlaneVisible = !radioButton_singleHit.Checked && bAssignable;
+            label_shiftPlaneOn.Visible = shiftPlaneVisible;
+            comboBox_shiftPlaneOn.Visible = shiftPlaneVisible;
+            label_shiftPlaneOff.Visible = shiftPlaneVisible;
+            comboBox_shiftPlaneOff.Visible = shiftPlaneVisible;
+
+            setExtModifierDgv(modKey);
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
@@ -211,13 +280,47 @@ namespace KanchokuWS
             Close();
         }
 
+        private void radioButtonCheckedChanged()
+        {
+            dataGridView1.Visible = radioButton_singleHit.Checked;
+            dataGridView2.Visible = radioButton_modKeys.Checked;
+            dataGridView3.Visible = radioButton_shiftPlane.Checked;
+
+            if (!radioButton_singleHit.Checked) {
+                int idx = comboBox_modKeys.SelectedIndex;
+                int nItems = radioButton_modKeys.Checked ? modifierKeys.Length : PLANE_ASIGNABLE_MOD_KEYS_NUM;
+                comboBox_modKeys._setItems(modifierKeys.Take(nItems).Select(x => x.Description));
+                comboBox_modKeys.SelectedIndex = idx < nItems ? idx : defaultModkeyIndex;
+            }
+
+            bool bModkeysVisible = !radioButton_singleHit.Checked;
+            bool bAssignable = comboBox_modKeys.SelectedIndex >= 0 && comboBox_modKeys.SelectedIndex < PLANE_ASIGNABLE_MOD_KEYS_NUM;
+            bool bShiftPlaneVisible = bModkeysVisible && bAssignable;
+            bool bShiftPlaneEnabled = radioButton_shiftPlane.Checked;
+
+            label_modKeys.Visible = bModkeysVisible;
+            comboBox_modKeys.Visible = bModkeysVisible;
+            label_shiftPlaneOn.Visible = bShiftPlaneVisible;
+            comboBox_shiftPlaneOn.Visible = bShiftPlaneVisible;
+            comboBox_shiftPlaneOn.Enabled = bShiftPlaneEnabled;
+            label_shiftPlaneOff.Visible = bShiftPlaneVisible;
+            comboBox_shiftPlaneOff.Visible = bShiftPlaneVisible;
+            comboBox_shiftPlaneOff.Enabled = bShiftPlaneEnabled;
+        }
+
         private void radioButton_modKeys_CheckedChanged(object sender, EventArgs e)
         {
-            dataGridView1.Visible = !radioButton_modKeys.Checked;
-            dataGridView2.Visible = radioButton_modKeys.Checked;
-            comboBox_modKeys.Enabled = radioButton_modKeys.Checked;
-            comboBox_shiftPlaneOn.Enabled = radioButton_modKeys.Checked;
-            comboBox_shiftPlaneOff.Enabled = radioButton_modKeys.Checked;
+            radioButtonCheckedChanged();
+        }
+
+        private void radioButton_singleHit_CheckedChanged(object sender, EventArgs e)
+        {
+            radioButtonCheckedChanged();
+        }
+
+        private void radioButton_shiftPlane_CheckedChanged(object sender, EventArgs e)
+        {
+            radioButtonCheckedChanged();
         }
 
         private void comboBox_modKeys_SelectedIndexChanged(object sender, EventArgs e)

@@ -30,18 +30,21 @@ namespace KanchokuWS
         {
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
+            this.label_modKeys = new System.Windows.Forms.Label();
             this.comboBox_modKeys = new System.Windows.Forms.ComboBox();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.comboBox_shiftPlaneOn = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.label_shiftPlaneOn = new System.Windows.Forms.Label();
             this.comboBox_shiftPlaneOff = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.label_shiftPlaneOff = new System.Windows.Forms.Label();
             this.radioButton_modKeys = new System.Windows.Forms.RadioButton();
             this.radioButton_singleHit = new System.Windows.Forms.RadioButton();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dataGridView3 = new System.Windows.Forms.DataGridView();
+            this.radioButton_shiftPlane = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonOK
@@ -66,14 +69,14 @@ namespace KanchokuWS
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
-            // label7
+            // label_modKeys
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(13, 9);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(73, 12);
-            this.label7.TabIndex = 2;
-            this.label7.Text = "拡張修飾キー";
+            this.label_modKeys.AutoSize = true;
+            this.label_modKeys.Location = new System.Drawing.Point(13, 9);
+            this.label_modKeys.Name = "label_modKeys";
+            this.label_modKeys.Size = new System.Drawing.Size(73, 12);
+            this.label_modKeys.TabIndex = 2;
+            this.label_modKeys.Text = "拡張修飾キー";
             // 
             // comboBox_modKeys
             // 
@@ -91,7 +94,7 @@ namespace KanchokuWS
             "シフト"});
             this.comboBox_modKeys.Location = new System.Drawing.Point(88, 5);
             this.comboBox_modKeys.Name = "comboBox_modKeys";
-            this.comboBox_modKeys.Size = new System.Drawing.Size(80, 20);
+            this.comboBox_modKeys.Size = new System.Drawing.Size(102, 20);
             this.comboBox_modKeys.TabIndex = 11;
             this.comboBox_modKeys.SelectedIndexChanged += new System.EventHandler(this.comboBox_modKeys_SelectedIndexChanged);
             // 
@@ -122,15 +125,15 @@ namespace KanchokuWS
             this.comboBox_shiftPlaneOn.Size = new System.Drawing.Size(88, 20);
             this.comboBox_shiftPlaneOn.TabIndex = 13;
             // 
-            // label1
+            // label_shiftPlaneOn
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(214, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 12);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "漢直ON時シフト面";
+            this.label_shiftPlaneOn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label_shiftPlaneOn.AutoSize = true;
+            this.label_shiftPlaneOn.Location = new System.Drawing.Point(214, 9);
+            this.label_shiftPlaneOn.Name = "label_shiftPlaneOn";
+            this.label_shiftPlaneOn.Size = new System.Drawing.Size(95, 12);
+            this.label_shiftPlaneOn.TabIndex = 12;
+            this.label_shiftPlaneOn.Text = "漢直ON時シフト面";
             // 
             // comboBox_shiftPlaneOff
             // 
@@ -147,21 +150,21 @@ namespace KanchokuWS
             this.comboBox_shiftPlaneOff.Size = new System.Drawing.Size(88, 20);
             this.comboBox_shiftPlaneOff.TabIndex = 15;
             // 
-            // label2
+            // label_shiftPlaneOff
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(421, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(101, 12);
-            this.label2.TabIndex = 14;
-            this.label2.Text = "漢直OFF時シフト面";
+            this.label_shiftPlaneOff.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label_shiftPlaneOff.AutoSize = true;
+            this.label_shiftPlaneOff.Location = new System.Drawing.Point(421, 9);
+            this.label_shiftPlaneOff.Name = "label_shiftPlaneOff";
+            this.label_shiftPlaneOff.Size = new System.Drawing.Size(101, 12);
+            this.label_shiftPlaneOff.TabIndex = 14;
+            this.label_shiftPlaneOff.Text = "漢直OFF時シフト面";
             // 
             // radioButton_modKeys
             // 
             this.radioButton_modKeys.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.radioButton_modKeys.AutoSize = true;
-            this.radioButton_modKeys.Location = new System.Drawing.Point(13, 419);
+            this.radioButton_modKeys.Location = new System.Drawing.Point(111, 419);
             this.radioButton_modKeys.Name = "radioButton_modKeys";
             this.radioButton_modKeys.Size = new System.Drawing.Size(91, 16);
             this.radioButton_modKeys.TabIndex = 16;
@@ -174,13 +177,14 @@ namespace KanchokuWS
             // 
             this.radioButton_singleHit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.radioButton_singleHit.AutoSize = true;
-            this.radioButton_singleHit.Location = new System.Drawing.Point(121, 419);
+            this.radioButton_singleHit.Location = new System.Drawing.Point(216, 419);
             this.radioButton_singleHit.Name = "radioButton_singleHit";
             this.radioButton_singleHit.Size = new System.Drawing.Size(71, 16);
             this.radioButton_singleHit.TabIndex = 17;
             this.radioButton_singleHit.TabStop = true;
             this.radioButton_singleHit.Text = "単打設定";
             this.radioButton_singleHit.UseVisualStyleBackColor = true;
+            this.radioButton_singleHit.CheckedChanged += new System.EventHandler(this.radioButton_singleHit_CheckedChanged);
             // 
             // dataGridView1
             // 
@@ -194,23 +198,50 @@ namespace KanchokuWS
             this.dataGridView1.Size = new System.Drawing.Size(599, 378);
             this.dataGridView1.TabIndex = 18;
             // 
+            // dataGridView3
+            // 
+            this.dataGridView3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView3.Location = new System.Drawing.Point(13, 31);
+            this.dataGridView3.Name = "dataGridView3";
+            this.dataGridView3.RowTemplate.Height = 21;
+            this.dataGridView3.Size = new System.Drawing.Size(599, 378);
+            this.dataGridView3.TabIndex = 19;
+            // 
+            // radioButton_shiftPlane
+            // 
+            this.radioButton_shiftPlane.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.radioButton_shiftPlane.AutoSize = true;
+            this.radioButton_shiftPlane.Location = new System.Drawing.Point(15, 419);
+            this.radioButton_shiftPlane.Name = "radioButton_shiftPlane";
+            this.radioButton_shiftPlane.Size = new System.Drawing.Size(85, 16);
+            this.radioButton_shiftPlane.TabIndex = 20;
+            this.radioButton_shiftPlane.TabStop = true;
+            this.radioButton_shiftPlane.Text = "シフト面設定";
+            this.radioButton_shiftPlane.UseVisualStyleBackColor = true;
+            this.radioButton_shiftPlane.CheckedChanged += new System.EventHandler(this.radioButton_shiftPlane_CheckedChanged);
+            // 
             // DlgModConversion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 441);
+            this.Controls.Add(this.radioButton_shiftPlane);
+            this.Controls.Add(this.dataGridView3);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.radioButton_singleHit);
             this.Controls.Add(this.radioButton_modKeys);
             this.Controls.Add(this.dataGridView2);
             this.Controls.Add(this.comboBox_shiftPlaneOff);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label_shiftPlaneOff);
             this.Controls.Add(this.comboBox_shiftPlaneOn);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.label_shiftPlaneOn);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.comboBox_modKeys);
             this.Controls.Add(this.buttonCancel);
-            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label_modKeys);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(640, 400);
@@ -220,6 +251,7 @@ namespace KanchokuWS
             this.Load += new System.EventHandler(this.DlgModConversion_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -228,15 +260,17 @@ namespace KanchokuWS
         #endregion
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label_modKeys;
         private System.Windows.Forms.ComboBox comboBox_modKeys;
         private System.Windows.Forms.DataGridView dataGridView2;
         private System.Windows.Forms.ComboBox comboBox_shiftPlaneOn;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label_shiftPlaneOn;
         private System.Windows.Forms.ComboBox comboBox_shiftPlaneOff;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label_shiftPlaneOff;
         private System.Windows.Forms.RadioButton radioButton_modKeys;
         private System.Windows.Forms.RadioButton radioButton_singleHit;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dataGridView3;
+        private System.Windows.Forms.RadioButton radioButton_shiftPlane;
     }
 }

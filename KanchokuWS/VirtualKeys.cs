@@ -207,15 +207,15 @@ namespace KanchokuWS
         }
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
-        public static Dictionary<uint, ShiftPlane> ShiftPlaneForShiftModFlag = new Dictionary<uint, ShiftPlane>();
+        public static Dictionary<uint, ShiftPlane> ShiftPlaneForShiftModKey = new Dictionary<uint, ShiftPlane>();
 
         /// <summary> DecoderがOffの時のシフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
-        public static Dictionary<uint, ShiftPlane> ShiftPlaneForShiftModFlagWhenDecoderOff = new Dictionary<uint, ShiftPlane>();
+        public static Dictionary<uint, ShiftPlane> ShiftPlaneForShiftModKeyWhenDecoderOff = new Dictionary<uint, ShiftPlane>();
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てられたシフト面を得る</summary>
         public static ShiftPlane GetShiftPlaneFromShiftModFlag(uint modFlag, bool bDecoderOn)
         {
-            return bDecoderOn ? ShiftPlaneForShiftModFlag._safeGet(modFlag, ShiftPlane.NONE) : ShiftPlaneForShiftModFlagWhenDecoderOff._safeGet(modFlag, ShiftPlane.NONE);
+            return bDecoderOn ? ShiftPlaneForShiftModKey._safeGet(modFlag, ShiftPlane.NONE) : ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modFlag, ShiftPlane.NONE);
         }
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) にシフト面が割り当てられているか</summary>
@@ -693,11 +693,11 @@ namespace KanchokuWS
             return deckey + offset;
         }
 
-        public static string DefaultExtModifierName = "";
+        public static uint DefaultExtModifierKey = 0;
 
         public static Dictionary<int, string> SingleHitDefs = new Dictionary<int, string>();
 
-        public static Dictionary<int, Dictionary<int, string>> ExtModifierKeyDefs = new Dictionary<int, Dictionary<int, string>>();
+        public static Dictionary<uint, Dictionary<int, string>> ExtModifierKeyDefs = new Dictionary<uint, Dictionary<int, string>>();
 
         /// <summary>
         /// 追加の modifier 変換表を読み込む
@@ -714,9 +714,9 @@ namespace KanchokuWS
                     SystemHelper.ShowErrorMessageBox($"修飾キー変換定義ファイル({filePath}の読み込みに失敗しました。");
                     return false;
                 }
-                ShiftPlaneForShiftModFlag.Clear();
-                ShiftPlaneForShiftModFlagWhenDecoderOff.Clear();
-                Dictionary<string, int> modCount = new Dictionary<string, int>();
+                ShiftPlaneForShiftModKey.Clear();
+                ShiftPlaneForShiftModKeyWhenDecoderOff.Clear();
+                Dictionary<uint, int> modCount = new Dictionary<uint, int>();
                 int nl = 0;
                 foreach (var rawLine in lines._split('\n')) {
                     ++nl;
@@ -728,7 +728,7 @@ namespace KanchokuWS
                             // NAME=plane[|plane]...
                             var items = line._split('=');
                             if (items._length() == 2) {
-                                uint mod = GetModifierKeyByName(items[0]);
+                                uint modKey = GetModifierKeyByName(items[0]);
                                 var planes = items[1]._split('|');
                                 ShiftPlane shiftPlane = ShiftPlane.NONE;
                                 switch (planes._getNth(0)) {
@@ -745,11 +745,11 @@ namespace KanchokuWS
                                         default: shiftPlaneWhenOff = ShiftPlane.NONE; break;
                                     }
                                 }
-                                logger.DebugH(() => $"mod={mod:x}H({mod}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
-                                if (mod != 0 && shiftPlane > 0) {
-                                    logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{mod}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{mod}] = {shiftPlaneWhenOff}");
-                                    ShiftPlaneForShiftModFlag[mod] = shiftPlane;
-                                    ShiftPlaneForShiftModFlagWhenDecoderOff[mod] = shiftPlaneWhenOff;
+                                logger.DebugH(() => $"mod={modKey:x}H({modKey}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
+                                if (modKey != 0 && shiftPlane > 0) {
+                                    logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{modKey}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{modKey}] = {shiftPlaneWhenOff}");
+                                    ShiftPlaneForShiftModKey[modKey] = shiftPlane;
+                                    ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = shiftPlaneWhenOff;
                                     continue;
                                 }
                             }
@@ -761,7 +761,7 @@ namespace KanchokuWS
                                 string modName = items[0];
                                 string modifiee = items[1];
                                 string target = origItems[2];
-                                uint mod = 0;
+                                uint modKey = 0;
                                 int modDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modName);
                                 int modifieeDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modifiee)._gtZeroOr(modifiee._parseInt(-1, -1));
                                 logger.DebugH(() => $"modName={modName}, modifiee={modifiee}, target={target}, modDeckey={modDeckey}, modifieeDeckey={modifieeDeckey})");
@@ -774,7 +774,7 @@ namespace KanchokuWS
                                     vkey = GetFuncVkeyByName(modName);  
                                 } else {
                                     // 被修飾キーが指定されている場合は、拡張修飾キーの修飾フラグを取得
-                                    mod = GetModifierKeyByName(modName);
+                                    modKey = GetModifierKeyByName(modName);
                                 }
 
                                 bool ctrl = target._startsWith("^");
@@ -790,7 +790,7 @@ namespace KanchokuWS
                                     targetDeckey = specialDecKeysFromName._safeGet(name);
                                 }
 
-                                logger.DebugH(() => $"mod={mod:x}H, vkey={vkey:x}H, targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, name={name}");
+                                logger.DebugH(() => $"modKey={modKey:x}H, vkey={vkey:x}H, targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, name={name}");
 
                                 if (ctrl) {
                                     uint decVkey = 0;
@@ -808,7 +808,7 @@ namespace KanchokuWS
                                 }
 
                                 if (vkey > 0 && targetDeckey > 0) {
-                                    if (mod == 0) {
+                                    if (modKey == 0) {
                                         logger.DebugH(() => $"Single Hit");
                                         // 拡張修飾キー単打の場合は、キーの登録だけで、拡張シフトB面の割り当てはやらない
                                         AddDecKeyAndCombo(targetDeckey, 0, vkey, true);  // targetDeckey から vkey(拡張修飾キー)への逆マップは不要
@@ -816,13 +816,13 @@ namespace KanchokuWS
                                         SingleHitDefs[modDeckey] = target;
                                     } else {
                                         logger.DebugH(() => $"Extra Modifier");
-                                        modCount[modName] = modCount._safeGet(modName) + 1;
-                                        ExtModifierKeyDefs._safeGetOrNewInsert(modDeckey)[modifieeDeckey] = target;
-                                        AddModConvertedDecKeyFromCombo(targetDeckey, mod, vkey);
-                                        if (isPlaneMappedModifier(mod) && !ShiftPlaneForShiftModFlag.ContainsKey(mod)) {
+                                        modCount[modKey] = modCount._safeGet(modKey) + 1;
+                                        ExtModifierKeyDefs._safeGetOrNewInsert(modKey)[modifieeDeckey] = target;
+                                        AddModConvertedDecKeyFromCombo(targetDeckey, modKey, vkey);
+                                        if (isPlaneMappedModifier(modKey) && !ShiftPlaneForShiftModKey.ContainsKey(modKey)) {
                                             // mod に対する ShiftPlane が設定されていない場合は、拡張シフトB面を割り当てる
-                                            ShiftPlaneForShiftModFlag[mod] = ShiftPlane.PlaneB;
-                                            ShiftPlaneForShiftModFlagWhenDecoderOff[mod] = ShiftPlane.PlaneB;
+                                            ShiftPlaneForShiftModKey[modKey] = ShiftPlane.PlaneB;
+                                            ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = ShiftPlane.PlaneB;
                                         }
                                     }
                                     continue;
@@ -836,7 +836,7 @@ namespace KanchokuWS
                 foreach (var pair in modCount) {
                     if (pair.Value > maxCnt) {
                         maxCnt = pair.Value;
-                        DefaultExtModifierName = pair.Key;
+                        DefaultExtModifierKey = pair.Key;
                     }
                 }
             }
