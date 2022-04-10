@@ -133,14 +133,13 @@ namespace KanchokuWS
 
             var dgv = dataGridView3;
             dgv._defaultSetup(rowHeight, rowHeight);
-            dgv._setSelectionColorLemon();                 // 選択時の色をレモン色にする
             dgv._setDefaultFont(DgvHelpers.FontYUG9);
             int keyCodeWidth = (int)(30 * dpiRate);
             int keyNameWidth = (int)(80 * dpiRate);
             int planeNameOnWidth = (int)(200 * dpiRate);
             int planeNameOffWidth = (int)(dgv.Width - keyCodeWidth - keyNameWidth - planeNameOnWidth - 4 * dpiRate);
             dgv.Columns.Add(dgv._makeTextBoxColumn("keyCode", "No", keyCodeWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR, true));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "キー", keyNameWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "拡張修飾キー", keyNameWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
             dgv.Columns.Add(dgv._makeTextBoxColumn("planeNameOn", "漢直ON時シフト面", planeNameOnWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
             dgv.Columns.Add(dgv._makeTextBoxColumn("planeNameOff", "漢直OFF時シフト面", planeNameOffWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
 
@@ -164,15 +163,14 @@ namespace KanchokuWS
 
             var dgv = dataGridView1;
             dgv._defaultSetup(rowHeight, rowHeight);
-            dgv._setSelectionColorLemon();                 // 選択時の色をレモン色にする
             dgv._setDefaultFont(DgvHelpers.FontYUG9);
             int keyCodeWidth = (int)(30 * dpiRate);
             int keyNameWidth = (int)(80 * dpiRate);
             int funcNameWidth = (int)(180 * dpiRate);
             int funcDescWidth = (int)(dgv.Width - 20 * dpiRate - keyCodeWidth - keyNameWidth - funcNameWidth);
             dgv.Columns.Add(dgv._makeTextBoxColumn("keyCode", "No", keyCodeWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR, true));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "キー", keyNameWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("funcName", "キー/機能名", funcNameWidth, true));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "単打キー", keyNameWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("funcName", "割り当てキー/機能名", funcNameWidth, true));
             dgv.Columns.Add(dgv._makeTextBoxColumn("funcDesc", "機能説明", funcDescWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
 
             int num = singleHitModifiers.Length;
@@ -198,15 +196,14 @@ namespace KanchokuWS
 
             var dgv = dataGridView2;
             dgv._defaultSetup(rowHeight, rowHeight);
-            dgv._setSelectionColorLemon();                 // 選択時の色をレモン色にする
             dgv._setDefaultFont(DgvHelpers.FontYUG9);
             int keyCodeWidth = (int)(30 * dpiRate);
             int keyNameWidth = (int)(80 * dpiRate);
             int funcNameWidth = (int)(180 * dpiRate);
             int funcDescWidth = (int)(dgv.Width - 20 * dpiRate - keyCodeWidth - keyNameWidth - funcNameWidth);
             dgv.Columns.Add(dgv._makeTextBoxColumn("keyCode", "No", keyCodeWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR, true));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "キー", keyNameWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("funcName", "キー/機能名", funcNameWidth, true));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "被修飾キー", keyNameWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("funcName", "割り当てキー/機能名", funcNameWidth, true));
             dgv.Columns.Add(dgv._makeTextBoxColumn("funcDesc", "機能説明", funcDescWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
 
             int num = normalKeyNames.Length + extModifiees.Length;

@@ -53,7 +53,7 @@ namespace KanchokuWS
             this.buttonOK.Location = new System.Drawing.Point(537, 415);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
-            this.buttonOK.TabIndex = 6;
+            this.buttonOK.TabIndex = 10;
             this.buttonOK.Text = "設定(&O)";
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
@@ -64,7 +64,7 @@ namespace KanchokuWS
             this.buttonCancel.Location = new System.Drawing.Point(414, 415);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(76, 23);
-            this.buttonCancel.TabIndex = 5;
+            this.buttonCancel.TabIndex = 9;
             this.buttonCancel.Text = "キャンセル(&C)";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
@@ -95,7 +95,7 @@ namespace KanchokuWS
             this.comboBox_modKeys.Location = new System.Drawing.Point(88, 5);
             this.comboBox_modKeys.Name = "comboBox_modKeys";
             this.comboBox_modKeys.Size = new System.Drawing.Size(102, 20);
-            this.comboBox_modKeys.TabIndex = 11;
+            this.comboBox_modKeys.TabIndex = 0;
             this.comboBox_modKeys.SelectedIndexChanged += new System.EventHandler(this.comboBox_modKeys_SelectedIndexChanged);
             // 
             // dataGridView2
@@ -108,7 +108,8 @@ namespace KanchokuWS
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.RowTemplate.Height = 21;
             this.dataGridView2.Size = new System.Drawing.Size(599, 378);
-            this.dataGridView2.TabIndex = 1;
+            this.dataGridView2.TabIndex = 4;
+            this.dataGridView2.TabStop = false;
             // 
             // comboBox_shiftPlaneOn
             // 
@@ -123,7 +124,7 @@ namespace KanchokuWS
             this.comboBox_shiftPlaneOn.Location = new System.Drawing.Point(311, 5);
             this.comboBox_shiftPlaneOn.Name = "comboBox_shiftPlaneOn";
             this.comboBox_shiftPlaneOn.Size = new System.Drawing.Size(88, 20);
-            this.comboBox_shiftPlaneOn.TabIndex = 13;
+            this.comboBox_shiftPlaneOn.TabIndex = 1;
             // 
             // label_shiftPlaneOn
             // 
@@ -148,7 +149,7 @@ namespace KanchokuWS
             this.comboBox_shiftPlaneOff.Location = new System.Drawing.Point(524, 5);
             this.comboBox_shiftPlaneOff.Name = "comboBox_shiftPlaneOff";
             this.comboBox_shiftPlaneOff.Size = new System.Drawing.Size(88, 20);
-            this.comboBox_shiftPlaneOff.TabIndex = 15;
+            this.comboBox_shiftPlaneOff.TabIndex = 2;
             // 
             // label_shiftPlaneOff
             // 
@@ -167,7 +168,7 @@ namespace KanchokuWS
             this.radioButton_modKeys.Location = new System.Drawing.Point(111, 419);
             this.radioButton_modKeys.Name = "radioButton_modKeys";
             this.radioButton_modKeys.Size = new System.Drawing.Size(91, 16);
-            this.radioButton_modKeys.TabIndex = 16;
+            this.radioButton_modKeys.TabIndex = 7;
             this.radioButton_modKeys.TabStop = true;
             this.radioButton_modKeys.Text = "修飾キー設定";
             this.radioButton_modKeys.UseVisualStyleBackColor = true;
@@ -180,7 +181,7 @@ namespace KanchokuWS
             this.radioButton_singleHit.Location = new System.Drawing.Point(216, 419);
             this.radioButton_singleHit.Name = "radioButton_singleHit";
             this.radioButton_singleHit.Size = new System.Drawing.Size(71, 16);
-            this.radioButton_singleHit.TabIndex = 17;
+            this.radioButton_singleHit.TabIndex = 8;
             this.radioButton_singleHit.TabStop = true;
             this.radioButton_singleHit.Text = "単打設定";
             this.radioButton_singleHit.UseVisualStyleBackColor = true;
@@ -196,7 +197,8 @@ namespace KanchokuWS
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 21;
             this.dataGridView1.Size = new System.Drawing.Size(599, 378);
-            this.dataGridView1.TabIndex = 18;
+            this.dataGridView1.TabIndex = 3;
+            this.dataGridView1.TabStop = false;
             // 
             // dataGridView3
             // 
@@ -208,7 +210,8 @@ namespace KanchokuWS
             this.dataGridView3.Name = "dataGridView3";
             this.dataGridView3.RowTemplate.Height = 21;
             this.dataGridView3.Size = new System.Drawing.Size(599, 378);
-            this.dataGridView3.TabIndex = 19;
+            this.dataGridView3.TabIndex = 5;
+            this.dataGridView3.TabStop = false;
             // 
             // radioButton_shiftPlane
             // 
@@ -217,7 +220,7 @@ namespace KanchokuWS
             this.radioButton_shiftPlane.Location = new System.Drawing.Point(15, 419);
             this.radioButton_shiftPlane.Name = "radioButton_shiftPlane";
             this.radioButton_shiftPlane.Size = new System.Drawing.Size(85, 16);
-            this.radioButton_shiftPlane.TabIndex = 20;
+            this.radioButton_shiftPlane.TabIndex = 6;
             this.radioButton_shiftPlane.TabStop = true;
             this.radioButton_shiftPlane.Text = "シフト面設定";
             this.radioButton_shiftPlane.UseVisualStyleBackColor = true;

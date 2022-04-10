@@ -4632,7 +4632,7 @@ namespace KanchokuWS
             this.textBox_kanjiYomiFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.textBox_kanjiYomiFile.Location = new System.Drawing.Point(96, 17);
             this.textBox_kanjiYomiFile.Name = "textBox_kanjiYomiFile";
-            this.textBox_kanjiYomiFile.Size = new System.Drawing.Size(152, 19);
+            this.textBox_kanjiYomiFile.Size = new System.Drawing.Size(147, 19);
             this.textBox_kanjiYomiFile.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_kanjiYomiFile, "漢字の読みを定義したファイル名を設定します。\r\n\r\nこのファイルは、ローマ字またはひらがな入力による読みに対して、\r\nその読みを持つ漢字の打鍵ヘルプを表示するため" +
         "に使用されます。\r\n\r\n音読みはカタカナで、訓読みはひらがなで記述します。\r\n音読みは読みが完全一致したものだけが選択されます。\r\n訓読みは、完全一致または2文" +
@@ -4652,9 +4652,9 @@ namespace KanchokuWS
             // button_openKanjiYomiFile
             // 
             this.button_openKanjiYomiFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openKanjiYomiFile.Location = new System.Drawing.Point(252, 15);
+            this.button_openKanjiYomiFile.Location = new System.Drawing.Point(246, 15);
             this.button_openKanjiYomiFile.Name = "button_openKanjiYomiFile";
-            this.button_openKanjiYomiFile.Size = new System.Drawing.Size(34, 23);
+            this.button_openKanjiYomiFile.Size = new System.Drawing.Size(40, 23);
             this.button_openKanjiYomiFile.TabIndex = 1;
             this.button_openKanjiYomiFile.Text = "開く";
             this.toolTip1.SetToolTip(this.button_openKanjiYomiFile, "漢字読みファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\n漢字読みファイルを修正した場合は、「再読込」をクリック" +
