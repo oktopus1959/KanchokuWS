@@ -464,5 +464,50 @@ namespace KanchokuWS
 
             logger.DebugH(() => $"LEAVE");
         }
+
+        private static int dlgKeywordSelectorHeight = 0;
+
+        private void selectKeyOrFuncName(int ridx)
+        {
+            using (var dlg = new DlgKeywordSelector(dlgKeywordSelectorHeight)) {
+                if (dlg.ShowDialog() == DialogResult.OK) {
+                    var keyword = dlg.SelectedWord;
+                    if (keyword._notEmpty()) {
+                        dataGridView2.EndEdit();
+                        dataGridView2.Rows[ridx].Cells[2].Value = keyword;
+                    }
+                }
+                dlgKeywordSelectorHeight = dlg.Height;
+            }
+        }
+
+        private void dataGridView2_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right) return;
+            int ridx = e.RowIndex;
+            if (ridx < 0 || ridx >= dataGridView2.Rows.Count) return;
+
+            selectKeyOrFuncName(ridx);
+        }
+
+        private void dataGridView2_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            int ridx = e.RowIndex;
+            if (ridx < 0 || ridx >= dataGridView2.Rows.Count) return;
+
+            selectKeyOrFuncName(ridx);
+        }
+
+        private void dataGridView2_KeyDown(object sender, KeyEventArgs e)
+        {
+            var dgv = dataGridView2;
+            if (!dgv.IsCurrentCellInEditMode) {
+                if (dgv.CurrentCell != null && dgv.CurrentCell.ColumnIndex == 2) {
+                    if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete) {
+                        dgv.CurrentCell.Value = "";
+                    }
+                }
+            }
+        }
     }
 }

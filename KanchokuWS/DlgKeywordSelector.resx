@@ -117,28 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="label1.ToolTip" xml:space="preserve">
-    <value>拡張修飾キーの被修飾キーの組合せ、またはキーの単打に対して、特殊キーや漢直機能を
-割り当てたり、複合コマンド文字列を設定したりすることができます。
-設定の詳細については、ドキュメントの「機能キーを修飾キーとして使う(拡張修飾キー)」を
-参照してください。
-
-・行の右クリックまたはダブルクリックで、「キー／機能名」選択ダイアログが開きます。
-　そのダイアログで適当なキー名／機能名を選択すると、それが「割り当てキー／機能名」
-　列のセルに入力されます。
-
-・「割り当てキー／機能名」列のセルを選択してから BS または Delete キーを押すと
-　そのセルの内容が削除されます。
-
-・「割り当てキー／機能名」列のセルが選択されている状態で、F2 を押すか左クリック
-　すると、セル編集モードになります。「キー／機能名」選択ダイアログで候補にない
-　文字列は、編集モードで入力してください。
-
-・当ダイアログを閉じても修正結果はメモリ上に残ります。
-　修正を元に戻したい場合は、ダイアログを閉じた後、元の画面で「再読込」を
-　実行してから、もう一度当ダイアログを開いてください。</value>
-  </data>
 </root>

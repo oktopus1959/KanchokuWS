@@ -99,6 +99,12 @@
     <Compile Include="DlgColorSelector.Designer.cs">
       <DependentUpon>DlgColorSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="DlgKeywordSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DlgKeywordSelector.Designer.cs">
+      <DependentUpon>DlgKeywordSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="DlgModConversion.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -174,6 +180,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DlgColorSelector.resx">
       <DependentUpon>DlgColorSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DlgKeywordSelector.resx">
+      <DependentUpon>DlgKeywordSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DlgModConversion.resx">
       <DependentUpon>DlgModConversion.cs</DependentUpon>
