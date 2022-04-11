@@ -5286,8 +5286,8 @@ namespace KanchokuWS
             this.button_setModConversion.Size = new System.Drawing.Size(40, 23);
             this.button_setModConversion.TabIndex = 11;
             this.button_setModConversion.Text = "設定";
-            this.toolTip1.SetToolTip(this.button_setModConversion, "拡張修飾キー定義ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\n定義ファイルを修正した場合は、「再読込」をクリ" +
-        "ックすると、その内容が\r\n読み込まれて、内部状態が更新されます。");
+            this.toolTip1.SetToolTip(this.button_setModConversion, "拡張修飾キー設定ダイアログを開きます。\r\n\r\n設定ダイアログで「書き出し」をクリックすると、定義ファイルに\r\n設定が書き出されます。\r\n\r\n定義ファイルを更新した" +
+        "場合は、「再読込」をクリックすると、\r\nその内容が読み込まれて、内部状態が更新されます。");
             this.button_setModConversion.UseVisualStyleBackColor = true;
             this.button_setModConversion.Click += new System.EventHandler(this.button_setModConversion_Click);
             // 

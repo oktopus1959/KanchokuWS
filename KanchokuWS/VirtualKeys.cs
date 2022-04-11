@@ -177,6 +177,26 @@ namespace KanchokuWS
             PlaneB = 3
         }
 
+        public static ShiftPlane GetShiftPlane(int idx)
+        {
+            switch (idx) {
+                case 1: return ShiftPlane.NormalPlane;
+                case 2: return ShiftPlane.PlaneA;
+                case 3: return ShiftPlane.PlaneB;
+                default: return ShiftPlane.NONE;
+            }
+        }
+
+        public static string GetShiftPlaneName(ShiftPlane plane)
+        {
+            switch (plane) {
+                case ShiftPlane.NormalPlane: return "Shift";
+                case ShiftPlane.PlaneA: return "ShiftA";
+                case ShiftPlane.PlaneB: return "ShiftB";
+                default: return "none";
+            }
+        }
+
         /// <summary> デコーダ機能に割り当てられた拡張修飾キー(space, Caps, alnum, nfer, xfer, Rshift)のVkeyを集めた集合 </summary>
         private static HashSet<uint> decoderFuncAssignedExModKeys = new HashSet<uint>();
 
@@ -539,6 +559,14 @@ namespace KanchokuWS
             return modifierKeysFromName._safeGet(name);
         }
 
+        public static string GetModifierNameByKey(uint modKey)
+        {
+            foreach (var pair in modifierKeysFromName) {
+                if (pair.Value == modKey) return pair.Key;
+            }
+            return null;
+        }
+
         /// <summary>(拡張)シフト面に割り当てられる拡張修飾キーか (kana, lctrl, rctrl 以外)</summary>
         /// <param name="mod"></param>
         /// <returns></returns>
@@ -842,6 +870,65 @@ namespace KanchokuWS
             }
             logger.Info("LEAVE");
             return true;
+        }
+
+        public static string MakeModConversionContents()
+        {
+            var sb = new StringBuilder();
+
+            // シフト面設定
+            var dict = new Dictionary<string, string>();
+            foreach (var pair in ShiftPlaneForShiftModKey) {
+                var keyName = GetModifierNameByKey(pair.Key);
+                if (keyName._notEmpty()) {
+                    dict[keyName] = GetShiftPlaneName(pair.Value);
+                }
+            }
+            foreach (var pair in ShiftPlaneForShiftModKeyWhenDecoderOff) {
+                var keyName = GetModifierNameByKey(pair.Key);
+                if (keyName._notEmpty()) {
+                    var str = dict._safeGet(keyName);
+                    if (str._notEmpty()) {
+                        dict[keyName] = $"{str}|{GetShiftPlaneName(pair.Value)}";
+                    }
+                }
+            }
+            sb.Append("## Shift plane settings ##\n");
+            foreach (var pair in dict) {
+                sb.Append($"{pair.Key}={pair.Value}\n");
+            }
+
+            // 単打設定
+            sb.Append("\n## Single hit settings ##\n");
+            foreach (var pair in SingleHitDefs) {
+                var keyName = SpecialKeysAndFunctions.GetKeyNameByDeckey(pair.Key);
+                if (keyName._notEmpty()) {
+                    sb.Append($"{keyName}::{pair.Value}\n");
+                }
+            }
+
+            // 拡張修飾キー設定
+            sb.Append("\n## Extra modifier settings ##\n");
+            foreach (var pair in ExtModifierKeyDefs) {
+                var keyName = GetModifierNameByKey(pair.Key);
+                logger.DebugH(() => $"modKey={pair.Key}, keyName={keyName}, dict.Size={pair.Value.Count}");
+                if (keyName._notEmpty()) {
+                    foreach (var p in pair.Value) {
+                        var deckey = p.Key;
+                        var target = p.Value;
+                        if (target._notEmpty()) {
+                            if (deckey >= 0 && deckey < DecoderKeys.NORMAL_DECKEY_END) {
+                                sb.Append($"{keyName}:{deckey}:{target}\n");
+                            } else {
+                                var modifieeName = SpecialKeysAndFunctions.GetKeyNameByDeckey(deckey);
+                                if (modifieeName._notEmpty()) sb.Append($"{keyName}:{modifieeName}:{target}\n");
+                            }
+                        }
+                    }
+                }
+            }
+
+            return sb.ToString();
         }
     }
 }

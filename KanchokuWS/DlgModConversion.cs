@@ -13,6 +13,8 @@ namespace KanchokuWS
 {
     public partial class DlgModConversion : Form
     {
+        private static Logger logger = Logger.GetLogger();
+
         public class ModifierDef
         {
             public string Name { get; private set; }
@@ -53,7 +55,7 @@ namespace KanchokuWS
             "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
             "A", "S", "D", "F", "G", "H", "J", "K", "L",  ";",
             "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/",
-            "Sp", "-", "^", "￥", "@", "[", ":", "]", "\\", ""
+            "Sp", "-", "^", "￥", "@", "[", ":", "]", "＼", ""
         };
 
         private static int[] singleHitModifiers = new int[] {
@@ -98,12 +100,25 @@ namespace KanchokuWS
             DecoderKeys.DOWN_ARROW_DECKEY,
         };
 
-        public DlgModConversion()
+        public DlgModConversion(int height)
         {
             InitializeComponent();
+
+            if (height > 0) Height = height;
+
+            CancelButton = buttonCancel;
+        }
+
+        public int GetHeight()
+        {
+            return Height;
         }
 
         private int defaultModkeyIndex = 0;
+
+        private bool dgv1Locked = true;
+        private bool dgv2Locked = true;
+        //private bool dgv3Locked = true;
 
         private void DlgModConversion_Load(object sender, EventArgs e)
         {
@@ -138,13 +153,21 @@ namespace KanchokuWS
             int keyNameWidth = (int)(80 * dpiRate);
             int planeNameOnWidth = (int)(200 * dpiRate);
             int planeNameOffWidth = (int)(dgv.Width - keyCodeWidth - keyNameWidth - planeNameOnWidth - 4 * dpiRate);
-            dgv.Columns.Add(dgv._makeTextBoxColumn("keyCode", "No", keyCodeWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR, true));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "拡張修飾キー", keyNameWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("planeNameOn", "漢直ON時シフト面", planeNameOnWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("planeNameOff", "漢直OFF時シフト面", planeNameOffWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("keyCode", "No", keyCodeWidth, false, false, DgvHelpers.READONLY_SELECTION_COLOR, true));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "拡張修飾キー", keyNameWidth, false, false, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("planeNameOn", "漢直ON時シフト面", planeNameOnWidth, false, false, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn("planeNameOff", "漢直OFF時シフト面", planeNameOffWidth, false, false, DgvHelpers.READONLY_SELECTION_COLOR));
 
-            int num = PLANE_ASIGNABLE_MOD_KEYS_NUM;
-            dgv.Rows.Add(num);
+            dgv.Rows.Add(PLANE_ASIGNABLE_MOD_KEYS_NUM);
+
+            renewShiftPlaneDgv();
+        }
+
+        private void renewShiftPlaneDgv()
+        {
+            //dgv3Locked = true;
+            var dgv = dataGridView3;
+            int num = dgv.Rows.Count;
 
             for (int i = 0; i < num; ++i) {
                 dgv.Rows[i].Cells[0].Value = i;
@@ -153,8 +176,8 @@ namespace KanchokuWS
                 dgv.Rows[i].Cells[2].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKey._safeGet(modKey)) ?? "";
                 dgv.Rows[i].Cells[3].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modKey)) ?? "";
             }
+            //dgv3Locked = false;
         }
-
 
         private void setDataGridViewForSingleHit()
         {
@@ -173,20 +196,33 @@ namespace KanchokuWS
             dgv.Columns.Add(dgv._makeTextBoxColumn("funcName", "割り当てキー/機能名", funcNameWidth, true));
             dgv.Columns.Add(dgv._makeTextBoxColumn("funcDesc", "機能説明", funcDescWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
 
-            int num = singleHitModifiers.Length;
-            dgv.Rows.Add(num);
+            dgv.Rows.Add(singleHitModifiers.Length);
+
+            renewSingleHitDgv();
+        }
+
+        private void renewSingleHitDgv()
+        {
+            dgv1Locked = true;
+            var dgv = dataGridView1;
+            int num = dgv.Rows.Count;
 
             for (int i = 0; i < num; ++i) {
                 dgv.Rows[i].Cells[0].Value = i;
                 int deckey = singleHitModifiers[i];
                 dgv.Rows[i].Cells[1].Value = SpecialKeysAndFunctions.GetKeyOrFuncByDeckey(deckey)?.Name ?? "";
+                string assigned = "";
+                string desc = "";
                 var target = VirtualKeys.SingleHitDefs._safeGet(deckey);
                 if (target._notEmpty()) {
                     var kof = SpecialKeysAndFunctions.GetKeyOrFuncByName(target);
-                    dgv.Rows[i].Cells[2].Value = kof != null ? kof.Name : target;
-                    dgv.Rows[i].Cells[3].Value = kof != null ? kof.Description : "";
+                    assigned = kof != null ? kof.Name : target;
+                    desc = kof != null ? kof.Description : "";
                 }
+                dgv.Rows[i].Cells[2].Value = assigned;
+                dgv.Rows[i].Cells[3].Value = desc;
             }
+            dgv1Locked = false;
         }
 
         private void setDataGridViewForExtModifier()
@@ -206,9 +242,20 @@ namespace KanchokuWS
             dgv.Columns.Add(dgv._makeTextBoxColumn("funcName", "割り当てキー/機能名", funcNameWidth, true));
             dgv.Columns.Add(dgv._makeTextBoxColumn("funcDesc", "機能説明", funcDescWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
 
-            int num = normalKeyNames.Length + extModifiees.Length;
-            dgv.Rows.Add(num);
+            dgv.Rows.Add(normalKeyNames.Length + extModifiees.Length);
+        }
 
+        private void renewExtModifierDgv()
+        {
+            int idx = comboBox_modKeys.SelectedIndex;
+            var modKeyDef = modifierKeys._getNth(idx);
+            if (modKeyDef == null) return;
+
+            dgv2Locked = true;
+            uint modKey = modKeyDef.ModKey;
+            var dgv = dataGridView2;
+            int num = dgv.Rows.Count;
+            var dict = VirtualKeys.ExtModifierKeyDefs._safeGet(modKey);
             for (int i = 0; i < num; ++i) {
                 dgv.Rows[i].Cells[0].Value = i;
                 if (i < normalKeyNames.Length) {
@@ -216,16 +263,7 @@ namespace KanchokuWS
                 } else {
                     dgv.Rows[i].Cells[1].Value = SpecialKeysAndFunctions.GetKeyOrFuncByDeckey(extModifiees[i - normalKeyNames.Length])?.Name ?? "";
                 }
-            }
-        }
-
-        private void setExtModifierDgv(uint modKey)
-        {
-            var dgv = dataGridView2;
-            int num = dgv.Rows.Count;
-            var dict = VirtualKeys.ExtModifierKeyDefs._safeGet(modKey);
-            for (int i = 0; i < num; ++i) {
-                string defStr = "";
+                string assigned = "";
                 string desc = "";
                 KeyOrFunction kof = null;
                 if (dict != null) {
@@ -234,20 +272,22 @@ namespace KanchokuWS
                     if (target._notEmpty()) {
                         kof = SpecialKeysAndFunctions.GetKeyOrFuncByName(target);
                         if (kof != null) {
-                            defStr = kof.Name;
+                            assigned = kof.Name;
                             desc = kof.Description;
                         } else {
-                            defStr = target;
+                            assigned = target;
                         }
                     }
                 }
-                dgv.Rows[i].Cells[2].Value = defStr;
+                dgv.Rows[i].Cells[2].Value = assigned;
                 dgv.Rows[i].Cells[3].Value = desc;
             }
+            dgv2Locked = false;
         }
 
-        private void selectModKey(int idx)
+        private void selectModKey()
         {
+            int idx = comboBox_modKeys.SelectedIndex;
             var modKeyDef = modifierKeys._getNth(idx);
             uint modKey = modKeyDef?.ModKey ?? 0;
             bool bAssignable = idx >= 0 && idx < PLANE_ASIGNABLE_MOD_KEYS_NUM;
@@ -262,7 +302,7 @@ namespace KanchokuWS
             label_shiftPlaneOff.Visible = shiftPlaneVisible;
             comboBox_shiftPlaneOff.Visible = shiftPlaneVisible;
 
-            setExtModifierDgv(modKey);
+            renewExtModifierDgv();
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
@@ -322,7 +362,107 @@ namespace KanchokuWS
 
         private void comboBox_modKeys_SelectedIndexChanged(object sender, EventArgs e)
         {
-            selectModKey(comboBox_modKeys.SelectedIndex);
+            selectModKey();
+        }
+
+        private void selectShiftPlane(bool bOn, int idx)
+        {
+            int modkeyIdx = comboBox_modKeys.SelectedIndex;
+            if (modkeyIdx < 0 || modkeyIdx >= PLANE_ASIGNABLE_MOD_KEYS_NUM) return;
+
+            var modKeyDef = modifierKeys._getNth(modkeyIdx);
+            if (modKeyDef == null) return;
+
+            uint modKey = modKeyDef.ModKey;
+            var plane = VirtualKeys.GetShiftPlane(idx);
+            if (bOn) {
+                VirtualKeys.ShiftPlaneForShiftModKey[modKey] = plane;
+            } else {
+                VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = plane;
+            }
+
+            renewShiftPlaneDgv();
+        }
+
+        private void comboBox_shiftPlaneOn_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectShiftPlane(true, comboBox_shiftPlaneOn.SelectedIndex);
+        }
+
+        private void comboBox_shiftPlaneOff_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectShiftPlane(false, comboBox_shiftPlaneOff.SelectedIndex);
+        }
+
+        private void dataGridView2_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dgv2Locked) return;
+
+            logger.DebugH(() => $"ENTER: row={e.RowIndex}, col={e.ColumnIndex}");
+
+            const int TARGET_COL = 2;
+
+            if (e.ColumnIndex != TARGET_COL) return;
+
+            var dgv = dataGridView2;
+            int row = e.RowIndex;
+            if (row < 0 || row >= dgv.Rows.Count) return;
+
+            int idx = comboBox_modKeys.SelectedIndex;
+            var modKeyDef = modifierKeys._getNth(idx);
+            if (modKeyDef == null) return;
+
+            try {
+                uint modKey = modKeyDef.ModKey;
+                var dict = VirtualKeys.ExtModifierKeyDefs._safeGetOrNewInsert(modKey);
+
+                int deckey = row < normalKeyNames.Length ? row : extModifiees[row - normalKeyNames.Length];
+                var target = dgv.Rows[row].Cells[TARGET_COL].Value?.ToString() ?? "";
+                if (target._notEmpty()) {
+                    dict[deckey] = target;
+                } else {
+                    if (dict.ContainsKey(deckey)) dict.Remove(deckey);
+                }
+                renewExtModifierDgv();
+
+            } catch (Exception ex) {
+                logger.Error(ex._getErrorMsg());
+            }
+
+            logger.DebugH(() => $"LEAVE");
+        }
+
+        private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dgv1Locked) return;
+
+            logger.DebugH(() => $"ENTER: row={e.RowIndex}, col={e.ColumnIndex}");
+
+            const int TARGET_COL = 2;
+
+            if (e.ColumnIndex != TARGET_COL) return;
+
+            var dgv = dataGridView1;
+            int row = e.RowIndex;
+            if (row < 0 || row >= dgv.Rows.Count) return;
+
+            int deckey = singleHitModifiers._getNth(row, -1);
+            if (deckey < 0) return;
+
+            try {
+                var target = dgv.Rows[row].Cells[TARGET_COL].Value?.ToString() ?? "";
+                if (target._notEmpty()) {
+                    VirtualKeys.SingleHitDefs[deckey] = target;
+                } else {
+                    if (VirtualKeys.SingleHitDefs.ContainsKey(deckey)) VirtualKeys.SingleHitDefs.Remove(deckey);
+                }
+                renewSingleHitDgv();
+
+            } catch (Exception ex) {
+                logger.Error(ex._getErrorMsg());
+            }
+
+            logger.DebugH(() => $"LEAVE");
         }
     }
 }

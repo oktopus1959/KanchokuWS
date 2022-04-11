@@ -1460,7 +1460,7 @@ namespace KanchokuWS
             //        System.Diagnostics.Process.Start(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.ModConversionFile));
             //    }
             //} catch { }
-            openFileByTxtAssociatedProgram(Settings.ModConversionFile);
+            openFileByTxtAssociatedProgram(textBox_modConversionFile.Text);
         }
 
         private void button_openKanjiYomiFile_Click(object sender, EventArgs e)
@@ -2297,11 +2297,33 @@ namespace KanchokuWS
             openFileByTxtAssociatedProgram(Settings.HistoryFile._safeReplace("*", "entry"));
         }
 
+        private int dlgModConversionHeight = 0;
+
         private void button_setModConversion_Click(object sender, EventArgs e)
         {
-            using (var dlg = new DlgModConversion()) {
-                dlg.ShowDialog();
+            using (var dlg = new DlgModConversion(dlgModConversionHeight)) {
+                if (dlg.ShowDialog() == DialogResult.OK) {
+                    // 設定内容を mod-conversion.txt に書き出す
+                    writeModConversionSettings();
+                }
+                dlgModConversionHeight = dlg.GetHeight();
             }
+        }
+
+        private void writeModConversionSettings()
+        {
+            var path = KanchokuIni.Singleton.KanchokuDir._joinPath(textBox_modConversionFile.Text);
+            logger.InfoH($"ENTER: path={path}");
+            try {
+                using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite)) {
+                    using (var sw = new System.IO.StreamWriter(fs, Encoding.UTF8)) {
+                        sw.Write(VirtualKeys.MakeModConversionContents());
+                    }
+                }
+            } catch (Exception e) {
+                logger.Error(e._getErrorMsg());
+            }
+            logger.InfoH($"LEAVE");
         }
     }
 }

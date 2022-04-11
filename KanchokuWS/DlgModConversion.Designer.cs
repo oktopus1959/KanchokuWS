@@ -28,6 +28,7 @@ namespace KanchokuWS
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.label_modKeys = new System.Windows.Forms.Label();
@@ -42,6 +43,7 @@ namespace KanchokuWS
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
             this.radioButton_shiftPlane = new System.Windows.Forms.RadioButton();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -54,7 +56,8 @@ namespace KanchokuWS
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 10;
-            this.buttonOK.Text = "設定(&O)";
+            this.buttonOK.Text = "書き出し(&W)";
+            this.toolTip1.SetToolTip(this.buttonOK, "設定内容をファイルに書き出して、ダイアログを閉じます。");
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
@@ -65,7 +68,8 @@ namespace KanchokuWS
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(76, 23);
             this.buttonCancel.TabIndex = 9;
-            this.buttonCancel.Text = "キャンセル(&C)";
+            this.buttonCancel.Text = "閉じる(&C)";
+            this.toolTip1.SetToolTip(this.buttonCancel, "ダイアログを閉じます。\r\n\r\nファイルへの書き出しは行いません。");
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
@@ -110,6 +114,7 @@ namespace KanchokuWS
             this.dataGridView2.Size = new System.Drawing.Size(599, 378);
             this.dataGridView2.TabIndex = 4;
             this.dataGridView2.TabStop = false;
+            this.dataGridView2.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellValueChanged);
             // 
             // comboBox_shiftPlaneOn
             // 
@@ -125,6 +130,7 @@ namespace KanchokuWS
             this.comboBox_shiftPlaneOn.Name = "comboBox_shiftPlaneOn";
             this.comboBox_shiftPlaneOn.Size = new System.Drawing.Size(88, 20);
             this.comboBox_shiftPlaneOn.TabIndex = 1;
+            this.comboBox_shiftPlaneOn.SelectedIndexChanged += new System.EventHandler(this.comboBox_shiftPlaneOn_SelectedIndexChanged);
             // 
             // label_shiftPlaneOn
             // 
@@ -150,6 +156,7 @@ namespace KanchokuWS
             this.comboBox_shiftPlaneOff.Name = "comboBox_shiftPlaneOff";
             this.comboBox_shiftPlaneOff.Size = new System.Drawing.Size(88, 20);
             this.comboBox_shiftPlaneOff.TabIndex = 2;
+            this.comboBox_shiftPlaneOff.SelectedIndexChanged += new System.EventHandler(this.comboBox_shiftPlaneOff_SelectedIndexChanged);
             // 
             // label_shiftPlaneOff
             // 
@@ -171,6 +178,7 @@ namespace KanchokuWS
             this.radioButton_modKeys.TabIndex = 7;
             this.radioButton_modKeys.TabStop = true;
             this.radioButton_modKeys.Text = "修飾キー設定";
+            this.toolTip1.SetToolTip(this.radioButton_modKeys, "拡張修飾キーによるキー割り当て設定画面に切り替えます。");
             this.radioButton_modKeys.UseVisualStyleBackColor = true;
             this.radioButton_modKeys.CheckedChanged += new System.EventHandler(this.radioButton_modKeys_CheckedChanged);
             // 
@@ -184,6 +192,7 @@ namespace KanchokuWS
             this.radioButton_singleHit.TabIndex = 8;
             this.radioButton_singleHit.TabStop = true;
             this.radioButton_singleHit.Text = "単打設定";
+            this.toolTip1.SetToolTip(this.radioButton_singleHit, "単打キー割り当て設定画面に切り替えます。");
             this.radioButton_singleHit.UseVisualStyleBackColor = true;
             this.radioButton_singleHit.CheckedChanged += new System.EventHandler(this.radioButton_singleHit_CheckedChanged);
             // 
@@ -199,6 +208,7 @@ namespace KanchokuWS
             this.dataGridView1.Size = new System.Drawing.Size(599, 378);
             this.dataGridView1.TabIndex = 3;
             this.dataGridView1.TabStop = false;
+            this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValueChanged);
             // 
             // dataGridView3
             // 
@@ -223,8 +233,15 @@ namespace KanchokuWS
             this.radioButton_shiftPlane.TabIndex = 6;
             this.radioButton_shiftPlane.TabStop = true;
             this.radioButton_shiftPlane.Text = "シフト面設定";
+            this.toolTip1.SetToolTip(this.radioButton_shiftPlane, "シフト面設定画面に切り替えます。");
             this.radioButton_shiftPlane.UseVisualStyleBackColor = true;
             this.radioButton_shiftPlane.CheckedChanged += new System.EventHandler(this.radioButton_shiftPlane_CheckedChanged);
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.AutoPopDelay = 32000;
+            this.toolTip1.InitialDelay = 100;
+            this.toolTip1.ReshowDelay = 100;
             // 
             // DlgModConversion
             // 
@@ -275,5 +292,6 @@ namespace KanchokuWS
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.DataGridView dataGridView3;
         private System.Windows.Forms.RadioButton radioButton_shiftPlane;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
