@@ -171,7 +171,7 @@ namespace KanchokuWS
             //dgvAbout._disableToolTips();
             int itemWidth = (int)(150 * dpiRate);
             dgvAbout.Columns.Add(dgvAbout._makeTextBoxColumn_ReadOnly("itemName", "", itemWidth)._setUnresizable());
-            int descWidth = (int)(400 * dpiRate);
+            int descWidth = (int)(410 * dpiRate);
             dgvAbout.Columns.Add(dgvAbout._makeTextBoxColumn_ReadOnly("description", "", descWidth)._setUnresizable()._setWrapMode());
 
             int nRow = 10;

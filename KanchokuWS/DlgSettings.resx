@@ -647,31 +647,18 @@ SandS の拡張シフト面にテーブルファイルの裏面定義を行っ�
 ワンショットシフト状態の場合に、Spaceキーを単打すると空白が1つ出力され、
 Spaceキーを押下状態にするとリピート出力となります。</value>
   </data>
-  <data name="checkBox_SandSEnabledWhenOffMode.ToolTip" xml:space="preserve">
-    <value>デコーダがOFFのときに SandS 方式を有効にします。
+  <data name="groupBox39.ToolTip" xml:space="preserve">
+    <value>SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを押すと、
+スペースキーがシフトキーあるいは拡張修飾キーとして働くようになります。
 
-SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを
-押すと、スペースキーがシフトキーとして働くようになります。
+SandS をどの拡張シフト面に割り当てるかは、「拡張修飾キー」の設定で、
+「シフト面設定」画面を表示させ、「SandS」を選択して設定してください。
 
-スペースを入力したい場合は、オートリピートが始まる前にスペースキーを
-離してください。
+SandS有効時にスペースを入力したい場合は、オートリピートが始まる前に
+スペースキーを離してください。
 
-SandS を有効にすると SandS と同じシフト面を使う
-Shift (または拡張修飾キー)+Space は有効なキーではなく、たんなる
-シフトキーとして扱われます。</value>
-  </data>
-  <data name="checkBox_SandSEnabled.ToolTip" xml:space="preserve">
-    <value>デコーダがONのときに SandS 方式を有効にします。
-
-SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを
-押すと、スペースキーがシフトキーとして働くようになります。
-
-スペースを入力したい場合は、オートリピートが始まる前にスペースキーを
-離してください。
-
-SandS を有効にすると SandS と同じシフト面を使う
-Shift (または拡張修飾キー)+Space は有効なキーではなく、たんなる
-シフトキーとして扱われます。</value>
+SandS が有効であっても、 Shift+Space はそのまま Shift+Space として
+扱われます。</value>
   </data>
   <data name="checkBox_autoBushuComp.ToolTip" xml:space="preserve">
     <value>ある2文字の組み合わせで一度部首合成を実行すると、
