@@ -45,8 +45,8 @@ namespace KanchokuWS
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
             this.radioButton_shiftPlane = new System.Windows.Forms.RadioButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.groupBox_help = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.groupBox_help = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -56,7 +56,7 @@ namespace KanchokuWS
             // buttonOK
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.Location = new System.Drawing.Point(537, 415);
+            this.buttonOK.Location = new System.Drawing.Point(538, 415);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 10;
@@ -68,7 +68,7 @@ namespace KanchokuWS
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(414, 415);
+            this.buttonCancel.Location = new System.Drawing.Point(415, 415);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(76, 23);
             this.buttonCancel.TabIndex = 9;
@@ -115,7 +115,7 @@ namespace KanchokuWS
             this.dataGridView2.Location = new System.Drawing.Point(13, 31);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.RowTemplate.Height = 21;
-            this.dataGridView2.Size = new System.Drawing.Size(599, 378);
+            this.dataGridView2.Size = new System.Drawing.Size(600, 378);
             this.dataGridView2.TabIndex = 4;
             this.dataGridView2.TabStop = false;
             this.dataGridView2.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView2_CellMouseClick);
@@ -159,7 +159,7 @@ namespace KanchokuWS
             "通常シフト",
             "拡張シフトA",
             "拡張シフトB"});
-            this.comboBox_shiftPlaneOff.Location = new System.Drawing.Point(524, 5);
+            this.comboBox_shiftPlaneOff.Location = new System.Drawing.Point(525, 5);
             this.comboBox_shiftPlaneOff.Name = "comboBox_shiftPlaneOff";
             this.comboBox_shiftPlaneOff.Size = new System.Drawing.Size(88, 20);
             this.comboBox_shiftPlaneOff.TabIndex = 2;
@@ -169,7 +169,7 @@ namespace KanchokuWS
             // 
             this.label_shiftPlaneOff.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label_shiftPlaneOff.AutoSize = true;
-            this.label_shiftPlaneOff.Location = new System.Drawing.Point(421, 9);
+            this.label_shiftPlaneOff.Location = new System.Drawing.Point(422, 9);
             this.label_shiftPlaneOff.Name = "label_shiftPlaneOff";
             this.label_shiftPlaneOff.Size = new System.Drawing.Size(101, 12);
             this.label_shiftPlaneOff.TabIndex = 14;
@@ -212,10 +212,13 @@ namespace KanchokuWS
             this.dataGridView1.Location = new System.Drawing.Point(13, 31);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 21;
-            this.dataGridView1.Size = new System.Drawing.Size(599, 378);
+            this.dataGridView1.Size = new System.Drawing.Size(600, 378);
             this.dataGridView1.TabIndex = 3;
             this.dataGridView1.TabStop = false;
+            this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
+            this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
             this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValueChanged);
+            this.dataGridView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView1_KeyDown);
             // 
             // dataGridView3
             // 
@@ -226,7 +229,7 @@ namespace KanchokuWS
             this.dataGridView3.Location = new System.Drawing.Point(13, 31);
             this.dataGridView3.Name = "dataGridView3";
             this.dataGridView3.RowTemplate.Height = 21;
-            this.dataGridView3.Size = new System.Drawing.Size(599, 378);
+            this.dataGridView3.Size = new System.Drawing.Size(600, 378);
             this.dataGridView3.TabIndex = 5;
             this.dataGridView3.TabStop = false;
             // 
@@ -250,15 +253,6 @@ namespace KanchokuWS
             this.toolTip1.InitialDelay = 100;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // groupBox_help
-            // 
-            this.groupBox_help.Controls.Add(this.label1);
-            this.groupBox_help.Location = new System.Drawing.Point(314, 408);
-            this.groupBox_help.Name = "groupBox_help";
-            this.groupBox_help.Size = new System.Drawing.Size(52, 30);
-            this.groupBox_help.TabIndex = 15;
-            this.groupBox_help.TabStop = false;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -269,13 +263,22 @@ namespace KanchokuWS
             this.label1.Text = "  説明  ";
             this.toolTip1.SetToolTip(this.label1, resources.GetString("label1.ToolTip"));
             // 
+            // groupBox_help
+            // 
+            this.groupBox_help.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox_help.Controls.Add(this.label1);
+            this.groupBox_help.Location = new System.Drawing.Point(314, 408);
+            this.groupBox_help.Name = "groupBox_help";
+            this.groupBox_help.Size = new System.Drawing.Size(52, 30);
+            this.groupBox_help.TabIndex = 15;
+            this.groupBox_help.TabStop = false;
+            // 
             // DlgModConversion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 441);
             this.Controls.Add(this.radioButton_shiftPlane);
-            this.Controls.Add(this.dataGridView3);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.radioButton_singleHit);
             this.Controls.Add(this.radioButton_modKeys);
@@ -288,6 +291,7 @@ namespace KanchokuWS
             this.Controls.Add(this.comboBox_modKeys);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.label_modKeys);
+            this.Controls.Add(this.dataGridView3);
             this.Controls.Add(this.groupBox_help);
             this.MaximizeBox = false;
             this.MinimizeBox = false;

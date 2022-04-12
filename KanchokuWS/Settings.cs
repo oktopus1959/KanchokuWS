@@ -450,6 +450,15 @@ namespace KanchokuWS
         /// <summary> 修飾キー定義ファイル</summary>
         public static string ModConversionFile { get; private set; }
 
+        /// <summary> 拡張修飾キー設定ダイアログの高さ</summary>
+        public static int DlgModConversionHeight { get; set; } = 0;
+
+        /// <summary> キー／機能名設定ダイアログの高さ</summary>
+        public static int DlgKeywordSelectorHeight { get; set; } = 0;
+
+        /// <summary> 割り当てキー／機能名カラムの幅</summary>
+        public static int AssignedKeyOrFuncColWidth { get; set; } = 0;
+
         /// <summary>YAMANOBEアルゴリズムを有効にするか</summary>
         public static bool YamanobeEnabled { get; set; } = false;
 
@@ -827,6 +836,9 @@ namespace KanchokuWS
             ModConversionFile = GetString("modConversionFile");
             bool isModConversionFileEmpty = ModConversionFile._isEmpty();
             if (isModConversionFileEmpty) { ModConversionFile = "mod-conversion.txt"; }
+            DlgModConversionHeight = GetString("dlgModConversionHeight")._parseInt(0);
+            DlgKeywordSelectorHeight = GetString("dlgKeywordSelectorHeight")._parseInt(0);
+            AssignedKeyOrFuncColWidth = GetString("assignedKeyOrFuncColWidth")._parseInt(0);
             ExtraModifiersEnabled = GetString("extraModifiersEnabled")._parseBool(!isModConversionFileEmpty);   // 拡張修飾キーを有効にするか
             UpperRomanStrokeGuide = GetString("upperRomanStrokeGuide")._parseBool(false);       // ローマ字読みによるストロークガイドを有効にするか
             ShowLastStrokeByDiffBackColor = GetString("showLastStrokeByDiffBackColor")._parseBool(false); // 前打鍵位置の背景色を変えて表示するか

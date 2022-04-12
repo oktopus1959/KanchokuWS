@@ -100,18 +100,17 @@ namespace KanchokuWS
             DecoderKeys.DOWN_ARROW_DECKEY,
         };
 
-        public DlgModConversion(int height)
+        public int AssignedKeyOrFuncColWidth {
+            get { return dataGridView2.Columns != null && dataGridView2.Columns.Count > 2 ? dataGridView2.Columns[2].Width : 0; }
+        }
+
+        public DlgModConversion()
         {
             InitializeComponent();
 
-            if (height > 0) Height = height;
+            if (Settings.DlgModConversionHeight > 0) Height = Settings.DlgModConversionHeight;
 
             CancelButton = buttonCancel;
-        }
-
-        public int GetHeight()
-        {
-            return Height;
         }
 
         private int defaultModkeyIndex = 0;
@@ -235,8 +234,8 @@ namespace KanchokuWS
             dgv._setDefaultFont(DgvHelpers.FontYUG9);
             int keyCodeWidth = (int)(30 * dpiRate);
             int keyNameWidth = (int)(80 * dpiRate);
-            int funcNameWidth = (int)(180 * dpiRate);
-            int funcDescWidth = (int)(dgv.Width - 20 * dpiRate - keyCodeWidth - keyNameWidth - funcNameWidth);
+            int funcNameWidth = (int)(Settings.AssignedKeyOrFuncColWidth._gtZeroOr(180) * dpiRate);
+            int funcDescWidth = (int)(290 * dpiRate);
             dgv.Columns.Add(dgv._makeTextBoxColumn("keyCode", "No", keyCodeWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR, true));
             dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "被修飾キー", keyNameWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
             dgv.Columns.Add(dgv._makeTextBoxColumn("funcName", "割り当てキー/機能名", funcNameWidth, true));
@@ -465,42 +464,42 @@ namespace KanchokuWS
             logger.DebugH(() => $"LEAVE");
         }
 
-        private static int dlgKeywordSelectorHeight = 0;
-
-        private void selectKeyOrFuncName(int ridx)
+        private void selectKeyOrFuncName(DataGridView dgv, int ridx)
         {
-            using (var dlg = new DlgKeywordSelector(dlgKeywordSelectorHeight)) {
+            using (var dlg = new DlgKeywordSelector()) {
                 if (dlg.ShowDialog() == DialogResult.OK) {
                     var keyword = dlg.SelectedWord;
                     if (keyword._notEmpty()) {
-                        dataGridView2.EndEdit();
-                        dataGridView2.Rows[ridx].Cells[2].Value = keyword;
+                        dgv.EndEdit();
+                        dgv.Rows[ridx].Cells[2].Value = keyword;
                     }
                 }
-                dlgKeywordSelectorHeight = dlg.Height;
+                if (Settings.DlgKeywordSelectorHeight != dlg.Height) {
+                    Settings.SetUserIni("dlgKeywordSelectorHeight", dlg.Height);
+                    Settings.DlgKeywordSelectorHeight = dlg.Height;
+                }
             }
         }
 
-        private void dataGridView2_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void dgvCellMouseClick(DataGridView dgv, DataGridViewCellMouseEventArgs e)
         {
             if (e.Button != MouseButtons.Right) return;
             int ridx = e.RowIndex;
-            if (ridx < 0 || ridx >= dataGridView2.Rows.Count) return;
+            if (ridx < 0 || ridx >= dgv.Rows.Count) return;
 
-            selectKeyOrFuncName(ridx);
+            selectKeyOrFuncName(dgv, ridx);
         }
 
-        private void dataGridView2_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void dgvCellMouseDoubleClick(DataGridView dgv, DataGridViewCellMouseEventArgs e)
         {
             int ridx = e.RowIndex;
-            if (ridx < 0 || ridx >= dataGridView2.Rows.Count) return;
+            if (ridx < 0 || ridx >= dgv.Rows.Count) return;
 
-            selectKeyOrFuncName(ridx);
+            selectKeyOrFuncName(dgv, ridx);
         }
 
-        private void dataGridView2_KeyDown(object sender, KeyEventArgs e)
+        private void dgvKeyDown(DataGridView dgv, KeyEventArgs e)
         {
-            var dgv = dataGridView2;
             if (!dgv.IsCurrentCellInEditMode) {
                 if (dgv.CurrentCell != null && dgv.CurrentCell.ColumnIndex == 2) {
                     if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete) {
@@ -508,6 +507,36 @@ namespace KanchokuWS
                     }
                 }
             }
+        }
+
+        private void dataGridView2_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            dgvCellMouseClick(dataGridView2, e);
+        }
+
+        private void dataGridView2_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            dgvCellMouseDoubleClick(dataGridView2, e);
+        }
+
+        private void dataGridView2_KeyDown(object sender, KeyEventArgs e)
+        {
+            dgvKeyDown(dataGridView2, e);
+        }
+
+        private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            dgvCellMouseClick(dataGridView1, e);
+        }
+
+        private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            dgvCellMouseDoubleClick(dataGridView1, e);
+        }
+
+        private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            dgvKeyDown(dataGridView1, e);
         }
     }
 }

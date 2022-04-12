@@ -73,6 +73,7 @@ namespace KanchokuWS
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(9, 419);
             this.label1.Name = "label1";
@@ -91,6 +92,7 @@ namespace KanchokuWS
             this.Controls.Add(this.dataGridView1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(640, 400);
             this.Name = "DlgKeywordSelector";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "キー名／機能名の選択";

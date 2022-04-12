@@ -16,10 +16,10 @@ namespace KanchokuWS
     {
         public string SelectedWord { get; private set; }
 
-        public DlgKeywordSelector(int height)
+        public DlgKeywordSelector()
         {
             InitializeComponent();
-            if (height > 0) Height = height;
+            if (Settings.DlgKeywordSelectorHeight > 0) Height = Settings.DlgKeywordSelectorHeight;
             buttonOK.Enabled = false;
             CancelButton = buttonCancel;
         }

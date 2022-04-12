@@ -2297,16 +2297,25 @@ namespace KanchokuWS
             openFileByTxtAssociatedProgram(Settings.HistoryFile._safeReplace("*", "entry"));
         }
 
-        private int dlgModConversionHeight = 0;
-
         private void button_setModConversion_Click(object sender, EventArgs e)
         {
-            using (var dlg = new DlgModConversion(dlgModConversionHeight)) {
+            using (var dlg = new DlgModConversion()) {
                 if (dlg.ShowDialog() == DialogResult.OK) {
                     // 設定内容を mod-conversion.txt に書き出す
                     writeModConversionSettings();
                 }
-                dlgModConversionHeight = dlg.GetHeight();
+                int height = dlg.Height;
+                logger.InfoH(() => $"DlgModConversionHeight={height}");
+                if (Settings.DlgModConversionHeight != height) {
+                    Settings.SetUserIni("dlgModConversionHeight", height);
+                    Settings.DlgModConversionHeight = height;
+                }
+                int width = dlg.AssignedKeyOrFuncColWidth;
+                logger.InfoH(() => $"AssignedKeyOrFuncColWidth={width}");
+                if (Settings.AssignedKeyOrFuncColWidth != width) {
+                    Settings.SetUserIni("assignedKeyOrFuncColWidth", width);
+                    Settings.AssignedKeyOrFuncColWidth = width;
+                }
             }
         }
 
