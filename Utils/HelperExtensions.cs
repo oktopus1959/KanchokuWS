@@ -1071,6 +1071,30 @@ namespace Utils
         }
 
         /// <summary>
+        /// 例外を起こさないn分割 Split。入力が null または空文字列なら空文字列を1つ含む配列を返す。
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="delim"></param>
+        /// <returns></returns>
+        public static string[] _splitn(this string str, char delim, int n)
+        {
+            if (str._isEmpty()) return new string[] { "" };
+
+            if (n < 2) return new string[] { str };
+
+            var list = new List<string>();
+            string s = str;
+            for (int i = 1; i < n; ++i) {
+                var items = s._split2(delim);
+                list.Add(items._getFirst());
+                s = items._getSecond();
+                if (s._isEmpty()) break;
+            }
+            if (s._notEmpty()) list.Add(s);
+            return list.ToArray();
+        }
+
+        /// <summary>
         /// 入力が null または空文字列なら、空の配列を返す _split
         /// </summary>
         /// <param name="str"></param>

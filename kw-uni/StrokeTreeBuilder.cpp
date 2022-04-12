@@ -20,6 +20,16 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
 
+#if 0
+#define IS_LOG_DEBUGH_ENABLED true
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define LOG_INFO LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define LOG_TRACE LOG_INFO
+#endif
+
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
 namespace {
@@ -59,7 +69,7 @@ namespace {
     }
 
     // 機能ノードの生成
-    Node* createFunctionNode(tstring marker, int prevNum, int ) {
+    Node* createFunctionNode(wstring marker, int prevNum, int ) {
         LOG_DEBUG(_T("marker=%s, prevNum=%d, myNum=%d"), marker.c_str(), prevNum, 0);
         if (prevNum < 0) prevNum = 0;
         switch (utils::safe_front(marker)) {
@@ -83,14 +93,14 @@ namespace {
     private:
         DECLARE_CLASS_LOGGER;
 
-        std::vector<tstring>& tableLines;
+        std::vector<wstring>& tableLines;
 
         TOKEN currentToken = TOKEN::END;   // 最後に読んだトークン
-        tstring currentStr;                 // 文字列トークン
+        wstring currentStr;                 // 文字列トークン
         int arrowIndex = -1;                // ARROWインデックス
         size_t lineNumber = 0;              // 今読んでる行数
 
-        tstring currentLine;                // 現在解析中の行
+        wstring currentLine;                // 現在解析中の行
         size_t nextPos = 0;                 // 次の文字位置
         char_t currentChar = 0;             // 次の文字
 
@@ -118,20 +128,23 @@ namespace {
         std::vector<int> strokes;
 
         // 漢字置換マップ
-        std::map<tstring, tstring> kanjiConvMap;
+        std::map<wstring, wstring> kanjiConvMap;
 
-        const tstring& conv_kanji(const tstring& k) {
+        const wstring& conv_kanji(const wstring& k) {
             auto iter = kanjiConvMap.find(k);
             return iter == kanjiConvMap.end() ? k : iter->second;
         }
 
     public:
-        StrokeTreeBuilder(std::vector<tstring>& lines, bool bMakeStrokeSerieses)
+        // コンストラクタ
+        // lines: ソースとなるテーブル定義
+        // bPrimaryTable: 主テーブルなら true を渡す。副テーブルや後からの定義差し込みなら false を渡す
+        StrokeTreeBuilder(std::vector<wstring>& lines, bool bPrimaryTable)
             : tableLines(lines) {
             if (!tableLines.empty()) {
                 currentLine = tableLines[0];
             }
-            if (bMakeStrokeSerieses) {
+            if (bPrimaryTable) {
                 strokeSerieses = VkbTableMaker::StrokeSerieses();
                 if (strokeSerieses) strokeSerieses->clear();
                 strokeSerieses2 = VkbTableMaker::StrokeSerieses2();
@@ -153,6 +166,20 @@ namespace {
             // RootStrokeTable は機能キーやCtrl修飾も含めたテーブルとする
             StrokeTableNode* tblNode = new StrokeTableNode(0, TOTAL_DECKEY_NUM);
             setupShiftedKeyFunction(tblNode);
+            ParseTableSource(tblNode);
+            return tblNode;
+        }
+
+        // デフォルトのシフト面の機能(自身の文字を返す)ノードの設定
+        void setupShiftedKeyFunction(StrokeTableNode* tblNode) {
+            for (size_t i = 0; i < SHIFT_DECKEY_NUM; ++i) {
+                tblNode->setNthChild(i + SHIFT_DECKEY_START, new MyCharNode());
+            }
+        }
+
+        // テーブル定義を解析してストローク木を構築する
+        // 後から部分的にストローク定義を差し込む際にも使用される
+        void ParseTableSource(StrokeTableNode* tblNode) {
             readNextToken(0);
             while (currentToken != TOKEN::END) {
                 switch (currentToken) {
@@ -177,14 +204,6 @@ namespace {
                     break;
                 }
                 readNextToken(0);
-            }
-            return tblNode;
-        }
-
-        // デフォルトのシフト面の機能(自身の文字を返す)ノードの設定
-        void setupShiftedKeyFunction(StrokeTableNode* tblNode) {
-            for (size_t i = 0; i < SHIFT_DECKEY_NUM; ++i) {
-                tblNode->setNthChild(i + SHIFT_DECKEY_START, new MyCharNode());
             }
         }
 
@@ -246,6 +265,7 @@ namespace {
                 createNodePositionedByArrowSub(dynamic_cast<StrokeTableNode*>(node), nextDepth, prevNth, idx);
             } else {
                 tblNode->setNthChild(idx, createNodePositionedByArrowSub(0, nextDepth, prevNth, idx));
+                _LOG_DEBUGH(_T("tblNode->setNthChild(%d)"), idx);
             }
         }
 
@@ -319,6 +339,7 @@ namespace {
         }
 
         Node* createNode(TOKEN token, int depth, int prevNth, int nth, bool bArrowBundle = false) {
+            LOG_TRACE(_T("CALLED: token=%d, depth=%d, prevNth=%d, nth=%d, bArrowBundle=%d"), token, depth, prevNth, nth, bArrowBundle);
             switch (token) {
             case TOKEN::LBRACE: {
                 strokes.push_back(nth);
@@ -331,10 +352,12 @@ namespace {
             case TOKEN::SLASH:             // '/' が来ても次のトークン
                 return 0;
             case TOKEN::STRING:            // "str" : 文字列ノード
-                LOG_TRACE(_T("%d:%d=%s"), lineNumber + 1, nth, currentStr.c_str());
+                LOG_TRACE(_T("STRING: %d:%d=%s, shiftPlane=%d"), lineNumber + 1, nth, currentStr.c_str(), shiftPlane);
                 if (currentStr.empty()) return 0;
                 if (kanjiConvMap.empty()) {
+                    LOG_TRACE(_T("kanjiConvMap.empty()"));
                     if (strokeSerieses && shiftPlane == 0) {
+                        LOG_TRACE(_T("strokeSerieses && shiftPlane == 0"));
                         // 文字から、その文字の打鍵列へのマップに追加 (通常面)
                         auto ms = to_mstr(currentStr);
                         if (!ms.empty()) {
@@ -345,7 +368,7 @@ namespace {
                                 ms.push_back('\t');
                             }
                             if (bArrowBundle) {
-                                LOG_DEBUGH(_T("line=%d, ArrowBundle, strokes.size=%d, strokes[0]=%d, prevNth=%d, nth=%d, str=%s"),
+                                LOG_TRACE(_T("line=%d, ArrowBundle, strokes.size=%d, strokes[0]=%d, prevNth=%d, nth=%d, str=%s"),
                                     lineNumber + 1, strokes.size(), strokes.size() > 0 ? strokes[0] : -1, prevNth, nth, currentStr.c_str());
                                 strokes.push_back(prevNth);
                             }
@@ -355,9 +378,10 @@ namespace {
                             if (bArrowBundle) strokes.pop_back();
                         }
                     }
+                    LOG_TRACE(_T("LEAVE: new StringNode(%s)"), currentStr.c_str());
                     return new StringNode(currentStr);
                 } else {
-                    tstring convStr = conv_kanji(currentStr);
+                    wstring convStr = conv_kanji(currentStr);
                     if (strokeSerieses2) {
                         // 文字から、その文字の打鍵列へのマップに追加 (裏面)
                         auto ms = to_mstr(convStr);
@@ -745,7 +769,7 @@ namespace {
         // 読みこみに失敗した場合
         void parseError() {
             wchar_t buf[2] = { currentChar, 0 };
-            tstring msg = utils::format(_T("テーブルファイルの %d 行 %d文字目('%s')がまちがっているようです：\r\n> %s ..."), lineNumber, nextPos, buf, currentLine.substr(0, 50).c_str());
+            wstring msg = utils::format(_T("テーブルファイルの %d 行 %d文字目('%s')がまちがっているようです：\r\n> %s ..."), lineNumber, nextPos, buf, currentLine.substr(0, 50).c_str());
             LOG_ERROR(msg);
             wstring lines;
             for (size_t i = 10; i > 0; --i) {
@@ -767,8 +791,11 @@ namespace {
 DEFINE_CLASS_LOGGER(StrokeTableNode);
 
 // 機能の再割り当て
-void StrokeTableNode::AssignFucntion(const tstring& keys, const tstring& name) {
+void StrokeTableNode::AssignFucntion(const wstring& keys, const wstring& name) {
     _LOG_DEBUGH(_T("CALLED: keys=%s, name=%s"), keys.c_str(), name.c_str());
+
+    StrokeTableNode* pNode = ROOT_STROKE_NODE;
+    if (pNode == 0) return;
 
     if (keys.empty()) return;
 
@@ -792,8 +819,7 @@ void StrokeTableNode::AssignFucntion(const tstring& keys, const tstring& name) {
         }
         keyCodes.push_back((size_t)utils::strToInt(k, -1) + shiftOffset);
     }
-    StrokeTableNode* pNode = RootStrokeNode1.get();
-    if (pNode == 0) return;
+
     size_t idx = 0;
     size_t key = 0;
     while (idx < keyCodes.size()) {
@@ -817,18 +843,23 @@ void StrokeTableNode::AssignFucntion(const tstring& keys, const tstring& name) {
     }
 }
 
+// ストロークノードの更新
+void StrokeTableNode::UpdateStrokeNodes(const wstring& strokeSource) {
+    auto list = utils::split(strokeSource, '\n');
+    StrokeTreeBuilder(list, false).ParseTableSource(ROOT_STROKE_NODE);
+    //ROOT_STROKE_NODE = 
+}
+
 // ストローク木を作成してそのルートを返す
-StrokeTableNode* StrokeTableNode::CreateStrokeTree(std::vector<tstring>& lines) {
-    auto ptr = std::make_unique<StrokeTreeBuilder>(lines, true);
-    RootStrokeNode1.reset(ptr->CreateStrokeTree());
-    ROOT_STROKE_NODE = RootStrokeNode1.get();
+StrokeTableNode* StrokeTableNode::CreateStrokeTree(std::vector<wstring>& lines) {
+    ROOT_STROKE_NODE = StrokeTreeBuilder(lines, true).CreateStrokeTree();
+    RootStrokeNode1.reset(ROOT_STROKE_NODE);
     return ROOT_STROKE_NODE;
 }
 
 // ストローク木2を作成してそのルートを返す
-StrokeTableNode* StrokeTableNode::CreateStrokeTree2(std::vector<tstring>& lines) {
-    auto ptr = std::make_unique<StrokeTreeBuilder>(lines, false);
-    RootStrokeNode2.reset(ptr->CreateStrokeTree());
+StrokeTableNode* StrokeTableNode::CreateStrokeTree2(std::vector<wstring>& lines) {
+    RootStrokeNode2.reset(StrokeTreeBuilder(lines, false).CreateStrokeTree());
     return RootStrokeNode2.get();
 }
 

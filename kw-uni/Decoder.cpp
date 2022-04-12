@@ -411,13 +411,19 @@ public:
                 // Backspace Blocker のセット
                 setBackspaceBlocker();
             } else if (cmd == _T("SaveRomanStrokeTable")) {
+                // ローマ字テーブルを作成してファイルに書き出す
                 VkbTableMaker::SaveRomanStrokeTable(items.size() >= 2 ? items[1].c_str() : 0, items.size() >= 3 ? items[2].c_str() : 0);
             } else if (cmd == _T("SaveEelllJsTable")) {
                 VkbTableMaker::SaveEelllJsTable();
             } else if (cmd == _T("exchangeCodeTable")) {
+                // eelll/JS用テーブルを作成してファイルに書き出す
                 outParams->strokeTableNum = StrokeTableNode::ExchangeStrokeTable();
             } else if (cmd == _T("readBushuAssoc")) {
+                // 連想辞書から定義文字列を読み出してくる
                 readBushuAssoc(items[1], outParams->faceStrings);
+            } else if (cmd == _T("updateStrokeNodes")) {
+                // 後から部分的にストローク定義を解析してストローク木に差し込む
+                updateStrokeNodes(items[1]);
             } else if (cmd == _T("closeLogger")) {
                 Logger::Close();
             }
@@ -735,6 +741,11 @@ public:
                 }
             }
         }
+    }
+
+    // 後から部分的にストローク定義を解析してストローク木に差し込む
+    void updateStrokeNodes(const wstring& ws) {
+        StrokeTableNode::UpdateStrokeNodes(ws);
     }
 
 }; // class DecoderImpl

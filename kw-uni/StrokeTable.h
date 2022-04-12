@@ -109,13 +109,16 @@ public:
     }
 
     // ストローク木を構築する
-    static StrokeTableNode* CreateStrokeTree(std::vector<tstring>&);
+    static StrokeTableNode* CreateStrokeTree(std::vector<wstring>&);
 
     // ストローク木2を構築する
-    static StrokeTableNode* CreateStrokeTree2(std::vector<tstring>&);
+    static StrokeTableNode* CreateStrokeTree2(std::vector<wstring>&);
 
     // 機能の再割り当て
-    static void AssignFucntion(const tstring& keys, const tstring& name);
+    static void AssignFucntion(const wstring& keys, const wstring& name);
+
+    // ストロークノードの更新
+    static void UpdateStrokeNodes(const wstring& strokeSource);
 
     // ストローク木の入れ替え
     static int ExchangeStrokeTable();

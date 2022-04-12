@@ -48,6 +48,11 @@ namespace KanchokuWS
 
         private KeyboardEventDispatcher keDispatcher { get; set; }
 
+        /// <summary>
+        /// 複合コマンド文字列
+        /// </summary>
+        private string complexCommandStr = null;
+
         //------------------------------------------------------------------
         /// <summary>
         /// コンストラクタ
@@ -72,7 +77,7 @@ namespace KanchokuWS
             DpiChanged += dpiChangedHandler;
         }
 
-    private void dpiChangedHandler(object sender, DpiChangedEventArgs e)
+        private void dpiChangedHandler(object sender, DpiChangedEventArgs e)
         {
             logger.InfoH(() => $"CALLED: new dpi={e.DeviceDpiNew}");
         }
@@ -153,12 +158,21 @@ namespace KanchokuWS
 
             // 追加の修飾キー定義ファイルの読み込み
             if (Settings.ExtraModifiersEnabled && Settings.ModConversionFile._notEmpty()) {
-                VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
+                complexCommandStr = VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
             }
 
             // 漢字読みファイルの読み込み
             if (Settings.KanjiYomiFile._notEmpty()) {
                 KanjiYomiTable.ReadKanjiYomiFile(Settings.KanjiYomiFile);
+            }
+        }
+
+        private void updateStrokeNodesByComplexCommands()
+        {
+            if (complexCommandStr._notEmpty()) {
+                // 複合コマンド定義があるので、デコーダに送る
+                ExecCmdDecoder("updateStrokeNodes", complexCommandStr);
+                complexCommandStr = null;
             }
         }
 
@@ -169,6 +183,8 @@ namespace KanchokuWS
             ReadDefFiles();
 
             ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+
+            updateStrokeNodesByComplexCommands();
 
             // 初期打鍵表(下端機能キー以外は空白)の作成
             MakeInitialVkbTable();
@@ -991,6 +1007,8 @@ namespace KanchokuWS
 
                 // キー入力時のデコーダから出力情報を保持する構造体インスタンスを確保
                 decoderOutput = new DecoderOutParams();
+
+                updateStrokeNodesByComplexCommands();
 
                 logger.Info("LEAVE");
                 return true;
