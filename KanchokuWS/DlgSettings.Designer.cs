@@ -355,7 +355,6 @@ namespace KanchokuWS
             this.label_miscRomanOut = new System.Windows.Forms.Label();
             this.label_reloadMisc = new System.Windows.Forms.Label();
             this.button_reloadMisc = new System.Windows.Forms.Button();
-            this.button_openModConversionFile = new System.Windows.Forms.Button();
             this.groupBox39 = new System.Windows.Forms.GroupBox();
             this.checkBox_SandSEnablePostShift = new System.Windows.Forms.CheckBox();
             this.textBox_SandSEnableSpaceOrRepeatMillisec = new System.Windows.Forms.TextBox();
@@ -378,6 +377,7 @@ namespace KanchokuWS
             this.textBox_modConversionFile = new System.Windows.Forms.TextBox();
             this.checkBox_extraModifiersEnabled = new System.Windows.Forms.CheckBox();
             this.label93 = new System.Windows.Forms.Label();
+            this.button_openModConversionFile = new System.Windows.Forms.Button();
             this.groupBox35 = new System.Windows.Forms.GroupBox();
             this.label101 = new System.Windows.Forms.Label();
             this.label97 = new System.Windows.Forms.Label();
@@ -4246,7 +4246,7 @@ namespace KanchokuWS
             this.groupBox40.Size = new System.Drawing.Size(290, 67);
             this.groupBox40.TabIndex = 3;
             this.groupBox40.TabStop = false;
-            this.groupBox40.Text = "ローマ字テーブルファイル出力";
+            this.groupBox40.Text = "Google日本語入力 ローマ字テーブルファイル出力";
             // 
             // label15
             // 
@@ -4341,19 +4341,6 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.button_reloadMisc, "各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
             this.button_reloadMisc.UseVisualStyleBackColor = true;
             this.button_reloadMisc.Click += new System.EventHandler(this.button_reloadMisc_Click);
-            // 
-            // button_openModConversionFile
-            // 
-            this.button_openModConversionFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openModConversionFile.Location = new System.Drawing.Point(211, 17);
-            this.button_openModConversionFile.Name = "button_openModConversionFile";
-            this.button_openModConversionFile.Size = new System.Drawing.Size(34, 23);
-            this.button_openModConversionFile.TabIndex = 8;
-            this.button_openModConversionFile.Text = "開く";
-            this.toolTip1.SetToolTip(this.button_openModConversionFile, "拡張修飾キー定義ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\n定義ファイルを修正した場合は、「再読込」をクリ" +
-        "ックすると、その内容が\r\n読み込まれて、内部状態が更新されます。");
-            this.button_openModConversionFile.UseVisualStyleBackColor = true;
-            this.button_openModConversionFile.Click += new System.EventHandler(this.button_openModConversionFile_Click);
             // 
             // groupBox39
             // 
@@ -4608,6 +4595,19 @@ namespace KanchokuWS
             this.label93.Size = new System.Drawing.Size(65, 15);
             this.label93.TabIndex = 10;
             this.label93.Text = "定義ファイル";
+            // 
+            // button_openModConversionFile
+            // 
+            this.button_openModConversionFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_openModConversionFile.Location = new System.Drawing.Point(211, 17);
+            this.button_openModConversionFile.Name = "button_openModConversionFile";
+            this.button_openModConversionFile.Size = new System.Drawing.Size(34, 23);
+            this.button_openModConversionFile.TabIndex = 8;
+            this.button_openModConversionFile.Text = "開く";
+            this.toolTip1.SetToolTip(this.button_openModConversionFile, "拡張修飾キー定義ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\n定義ファイルを修正した場合は、「再読込」をクリ" +
+        "ックすると、その内容が\r\n読み込まれて、内部状態が更新されます。");
+            this.button_openModConversionFile.UseVisualStyleBackColor = true;
+            this.button_openModConversionFile.Click += new System.EventHandler(this.button_openModConversionFile_Click);
             // 
             // groupBox35
             // 
