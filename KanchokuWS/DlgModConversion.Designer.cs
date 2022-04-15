@@ -61,19 +61,20 @@ namespace KanchokuWS
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 10;
             this.buttonOK.Text = "書き出し(&W)";
-            this.toolTip1.SetToolTip(this.buttonOK, "設定内容をファイルに書き出して、ダイアログを閉じます。");
+            this.toolTip1.SetToolTip(this.buttonOK, "設定内容をファイルに書き出して、ダイアログを閉じます。\r\n\r\n変更した設定内容を漢直WSに反映させるには、元の設定画面で\r\n「再読込」を実行してください。");
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(415, 415);
+            this.buttonCancel.Location = new System.Drawing.Point(427, 415);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(76, 23);
             this.buttonCancel.TabIndex = 9;
             this.buttonCancel.Text = "閉じる(&C)";
-            this.toolTip1.SetToolTip(this.buttonCancel, "ダイアログを閉じます。\r\n\r\nファイルへの書き出しは行いません。");
+            this.toolTip1.SetToolTip(this.buttonCancel, "ダイアログを閉じます。\r\n\r\nファイルへの書き出しは行いませんが、ダイアログを閉じても修正結果は\r\nメモリ上に残るので、再度開いたときは前回の修正結果が表示されま" +
+        "す。\r\n\r\n修正を元に戻したい場合は、ダイアログを閉じた後、元の画面で「再読込」を\r\n実行してください。\r\n");
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
@@ -267,7 +268,7 @@ namespace KanchokuWS
             // 
             this.groupBox_help.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox_help.Controls.Add(this.label1);
-            this.groupBox_help.Location = new System.Drawing.Point(314, 408);
+            this.groupBox_help.Location = new System.Drawing.Point(322, 408);
             this.groupBox_help.Name = "groupBox_help";
             this.groupBox_help.Size = new System.Drawing.Size(52, 30);
             this.groupBox_help.TabIndex = 15;

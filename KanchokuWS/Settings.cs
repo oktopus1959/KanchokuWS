@@ -450,6 +450,9 @@ namespace KanchokuWS
         /// <summary> 修飾キー定義ファイル</summary>
         public static string ModConversionFile { get; private set; }
 
+        /// <summary> 拡張修飾キー設定ダイアログの幅</summary>
+        public static int DlgModConversionWidth { get; set; } = 0;
+
         /// <summary> 拡張修飾キー設定ダイアログの高さ</summary>
         public static int DlgModConversionHeight { get; set; } = 0;
 
@@ -836,6 +839,7 @@ namespace KanchokuWS
             ModConversionFile = GetString("modConversionFile");
             bool isModConversionFileEmpty = ModConversionFile._isEmpty();
             if (isModConversionFileEmpty) { ModConversionFile = "mod-conversion.txt"; }
+            DlgModConversionWidth = GetString("dlgModConversionWidth")._parseInt(0);
             DlgModConversionHeight = GetString("dlgModConversionHeight")._parseInt(0);
             DlgKeywordSelectorHeight = GetString("dlgKeywordSelectorHeight")._parseInt(0);
             AssignedKeyOrFuncColWidth = GetString("assignedKeyOrFuncColWidth")._parseInt(0);

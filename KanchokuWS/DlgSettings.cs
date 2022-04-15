@@ -2304,17 +2304,23 @@ namespace KanchokuWS
                     // 設定内容を mod-conversion.txt に書き出す
                     writeModConversionSettings();
                 }
+                int width = dlg.Width;
+                logger.InfoH(() => $"DlgModConversionWidth={width}");
+                if (Settings.DlgModConversionWidth != width) {
+                    Settings.SetUserIni("dlgModConversionWidth", width);
+                    Settings.DlgModConversionWidth = width;
+                }
                 int height = dlg.Height;
                 logger.InfoH(() => $"DlgModConversionHeight={height}");
                 if (Settings.DlgModConversionHeight != height) {
                     Settings.SetUserIni("dlgModConversionHeight", height);
                     Settings.DlgModConversionHeight = height;
                 }
-                int width = dlg.AssignedKeyOrFuncColWidth;
-                logger.InfoH(() => $"AssignedKeyOrFuncColWidth={width}");
-                if (Settings.AssignedKeyOrFuncColWidth != width) {
-                    Settings.SetUserIni("assignedKeyOrFuncColWidth", width);
-                    Settings.AssignedKeyOrFuncColWidth = width;
+                int colWidth = dlg.AssignedKeyOrFuncColWidth;
+                logger.InfoH(() => $"AssignedKeyOrFuncColWidth={colWidth}");
+                if (Settings.AssignedKeyOrFuncColWidth != colWidth) {
+                    Settings.SetUserIni("assignedKeyOrFuncColWidth", colWidth);
+                    Settings.AssignedKeyOrFuncColWidth = colWidth;
                 }
             }
         }

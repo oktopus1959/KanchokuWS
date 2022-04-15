@@ -104,13 +104,16 @@ namespace KanchokuWS
             get { return dataGridView2.Columns != null && dataGridView2.Columns.Count > 2 ? dataGridView2.Columns[2].Width : 0; }
         }
 
+        /// <summary>コンストラクタ</summary>
         public DlgModConversion()
         {
             InitializeComponent();
 
             if (Settings.DlgModConversionHeight > 0) Height = Settings.DlgModConversionHeight;
+            if (Settings.DlgModConversionWidth > 0) Width = Settings.DlgModConversionWidth;
 
             CancelButton = buttonCancel;
+            DialogResult = DialogResult.None;
         }
 
         private int defaultModkeyIndex = 0;
