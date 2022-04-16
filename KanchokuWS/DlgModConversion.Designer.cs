@@ -47,10 +47,13 @@ namespace KanchokuWS
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox_help = new System.Windows.Forms.GroupBox();
+            this.panel_shiftPlaneHint = new System.Windows.Forms.Panel();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
             this.groupBox_help.SuspendLayout();
+            this.panel_shiftPlaneHint.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonOK
@@ -103,8 +106,10 @@ namespace KanchokuWS
             "シフト"});
             this.comboBox_modKeys.Location = new System.Drawing.Point(88, 5);
             this.comboBox_modKeys.Name = "comboBox_modKeys";
-            this.comboBox_modKeys.Size = new System.Drawing.Size(102, 20);
+            this.comboBox_modKeys.Size = new System.Drawing.Size(114, 20);
             this.comboBox_modKeys.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.comboBox_modKeys, "表示または変更対象となる拡張修飾キーを選択します。\r\n\r\nキー名の末尾に (＊) が付いているものは、\r\n何らかの被修飾キーが定義されていることを\r\n示しています" +
+        "。");
             this.comboBox_modKeys.SelectedIndexChanged += new System.EventHandler(this.comboBox_modKeys_SelectedIndexChanged);
             // 
             // dataGridView2
@@ -134,17 +139,18 @@ namespace KanchokuWS
             "通常シフト",
             "拡張シフトA",
             "拡張シフトB"});
-            this.comboBox_shiftPlaneOn.Location = new System.Drawing.Point(311, 5);
+            this.comboBox_shiftPlaneOn.Location = new System.Drawing.Point(319, 5);
             this.comboBox_shiftPlaneOn.Name = "comboBox_shiftPlaneOn";
             this.comboBox_shiftPlaneOn.Size = new System.Drawing.Size(88, 20);
             this.comboBox_shiftPlaneOn.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.comboBox_shiftPlaneOn, "選択されている拡張修飾キーに対して、\r\n漢直ON時に割り当てるシフト面を選択します。");
             this.comboBox_shiftPlaneOn.SelectedIndexChanged += new System.EventHandler(this.comboBox_shiftPlaneOn_SelectedIndexChanged);
             // 
             // label_shiftPlaneOn
             // 
             this.label_shiftPlaneOn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label_shiftPlaneOn.AutoSize = true;
-            this.label_shiftPlaneOn.Location = new System.Drawing.Point(214, 9);
+            this.label_shiftPlaneOn.Location = new System.Drawing.Point(222, 9);
             this.label_shiftPlaneOn.Name = "label_shiftPlaneOn";
             this.label_shiftPlaneOn.Size = new System.Drawing.Size(95, 12);
             this.label_shiftPlaneOn.TabIndex = 12;
@@ -164,6 +170,7 @@ namespace KanchokuWS
             this.comboBox_shiftPlaneOff.Name = "comboBox_shiftPlaneOff";
             this.comboBox_shiftPlaneOff.Size = new System.Drawing.Size(88, 20);
             this.comboBox_shiftPlaneOff.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.comboBox_shiftPlaneOff, "選択されている拡張修飾キーに対して、\r\n漢直OFF時に割り当てるシフト面を選択します。\r\n");
             this.comboBox_shiftPlaneOff.SelectedIndexChanged += new System.EventHandler(this.comboBox_shiftPlaneOff_SelectedIndexChanged);
             // 
             // label_shiftPlaneOff
@@ -186,7 +193,7 @@ namespace KanchokuWS
             this.radioButton_modKeys.TabIndex = 7;
             this.radioButton_modKeys.TabStop = true;
             this.radioButton_modKeys.Text = "修飾キー設定";
-            this.toolTip1.SetToolTip(this.radioButton_modKeys, "拡張修飾キーによるキー割り当て設定画面に切り替えます。");
+            this.toolTip1.SetToolTip(this.radioButton_modKeys, "拡張修飾キーによるキー設定画面に切り替えます。\r\n\r\n選択した拡張修飾キーごとに、被修飾キーに対して割り当てる\r\n特殊キーや機能を設定します。");
             this.radioButton_modKeys.UseVisualStyleBackColor = true;
             this.radioButton_modKeys.CheckedChanged += new System.EventHandler(this.radioButton_modKeys_CheckedChanged);
             // 
@@ -200,7 +207,7 @@ namespace KanchokuWS
             this.radioButton_singleHit.TabIndex = 8;
             this.radioButton_singleHit.TabStop = true;
             this.radioButton_singleHit.Text = "単打設定";
-            this.toolTip1.SetToolTip(this.radioButton_singleHit, "単打キー割り当て設定画面に切り替えます。");
+            this.toolTip1.SetToolTip(this.radioButton_singleHit, "単打キー設定画面に切り替えます。\r\n\r\n拡張修飾キーや特殊キーの単打(押してすぐ離すこと)に対して\r\nキーや機能を設定することができます。");
             this.radioButton_singleHit.UseVisualStyleBackColor = true;
             this.radioButton_singleHit.CheckedChanged += new System.EventHandler(this.radioButton_singleHit_CheckedChanged);
             // 
@@ -244,7 +251,7 @@ namespace KanchokuWS
             this.radioButton_shiftPlane.TabIndex = 6;
             this.radioButton_shiftPlane.TabStop = true;
             this.radioButton_shiftPlane.Text = "シフト面設定";
-            this.toolTip1.SetToolTip(this.radioButton_shiftPlane, "シフト面設定画面に切り替えます。");
+            this.toolTip1.SetToolTip(this.radioButton_shiftPlane, "シフト面設定画面に切り替えます。\r\n\r\n選択した拡張修飾キーに対して、漢直ON時とOFF時の\r\nシフト面を設定できます。");
             this.radioButton_shiftPlane.UseVisualStyleBackColor = true;
             this.radioButton_shiftPlane.CheckedChanged += new System.EventHandler(this.radioButton_shiftPlane_CheckedChanged);
             // 
@@ -274,11 +281,29 @@ namespace KanchokuWS
             this.groupBox_help.TabIndex = 15;
             this.groupBox_help.TabStop = false;
             // 
+            // panel_shiftPlaneHint
+            // 
+            this.panel_shiftPlaneHint.Controls.Add(this.label3);
+            this.panel_shiftPlaneHint.Location = new System.Drawing.Point(41, 240);
+            this.panel_shiftPlaneHint.Name = "panel_shiftPlaneHint";
+            this.panel_shiftPlaneHint.Size = new System.Drawing.Size(222, 58);
+            this.panel_shiftPlaneHint.TabIndex = 17;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(7, 12);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(207, 36);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "キー名の末尾に (＊) が付いているものは、\r\n何らかの被修飾キーが定義されていることを\r\n示しています。";
+            // 
             // DlgModConversion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 441);
+            this.Controls.Add(this.panel_shiftPlaneHint);
             this.Controls.Add(this.radioButton_shiftPlane);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.radioButton_singleHit);
@@ -306,6 +331,8 @@ namespace KanchokuWS
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
             this.groupBox_help.ResumeLayout(false);
             this.groupBox_help.PerformLayout();
+            this.panel_shiftPlaneHint.ResumeLayout(false);
+            this.panel_shiftPlaneHint.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -329,5 +356,7 @@ namespace KanchokuWS
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.GroupBox groupBox_help;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel panel_shiftPlaneHint;
+        private System.Windows.Forms.Label label3;
     }
 }

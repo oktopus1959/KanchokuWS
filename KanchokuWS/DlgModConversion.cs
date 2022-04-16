@@ -15,33 +15,9 @@ namespace KanchokuWS
     {
         private static Logger logger = Logger.GetLogger();
 
-        public class ModifierDef
-        {
-            public string Name { get; private set; }
-            public uint ModKey { get; private set; }
-            public string Description { get; private set; }
+        private static KeyOrFunction[] modifierKeys;
 
-            public ModifierDef(string name, uint modkey, string desc)
-            {
-                Name = name;
-                ModKey = modkey;
-                Description = desc;
-            }
-        };
-
-        private static ModifierDef[] modifierKeys = new ModifierDef[] {
-            new ModifierDef("space", KeyModifiers.MOD_SPACE, "SandS"),
-            new ModifierDef("caps", KeyModifiers.MOD_CAPS, "CapsLock"),
-            new ModifierDef("alnum", KeyModifiers.MOD_ALNUM, "英数"),
-            new ModifierDef("nfer", KeyModifiers.MOD_NFER, "無変換"),
-            new ModifierDef("xfer", KeyModifiers.MOD_XFER, "変換"),
-            new ModifierDef("rshift", KeyModifiers.MOD_RSHIFT, "右シフト"),
-            new ModifierDef("lctrl", KeyModifiers.MOD_LCTRL, "左コントロール"),
-            new ModifierDef("rctrl", KeyModifiers.MOD_RCTRL, "右コントロール"),
-            new ModifierDef("shift", KeyModifiers.MOD_SHIFT, "シフト"),
-        };
-
-        const int PLANE_ASIGNABLE_MOD_KEYS_NUM = 6;
+        private int PLANE_ASIGNABLE_MOD_KEYS_NUM;
 
         private static string[] shiftPlaneNames = new string[] {
             "なし",
@@ -50,55 +26,64 @@ namespace KanchokuWS
             "拡張シフトB"
         };
 
-        private static string[] normalKeyNames = new string[] {
+        private static string[] qwertyKeyNames = new string[] {
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
             "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
             "A", "S", "D", "F", "G", "H", "J", "K", "L",  ";",
             "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/",
-            "Sp", "-", "^", "￥", "@", "[", ":", "]", "＼", ""
+            "Space", "-", "^", "￥", "@", "[", ":", "]", "＼", "N/A"
         };
 
-        private static int[] singleHitModifiers = new int[] {
-            DecoderKeys.STROKE_SPACE_DECKEY,
-            DecoderKeys.ESC_DECKEY,
-            DecoderKeys.HANZEN_DECKEY,
-            DecoderKeys.TAB_DECKEY,
-            DecoderKeys.CAPS_DECKEY,
-            DecoderKeys.ALNUM_DECKEY,
-            DecoderKeys.NFER_DECKEY,
-            DecoderKeys.XFER_DECKEY,
-            DecoderKeys.KANA_DECKEY,
-            DecoderKeys.BS_DECKEY,
-            DecoderKeys.ENTER_DECKEY,
-            DecoderKeys.INS_DECKEY,
-            DecoderKeys.DEL_DECKEY,
-            DecoderKeys.HOME_DECKEY,
-            DecoderKeys.END_DECKEY,
-            DecoderKeys.PAGE_UP_DECKEY,
-            DecoderKeys.PAGE_DOWN_DECKEY,
-            DecoderKeys.LEFT_ARROW_DECKEY,
-            DecoderKeys.RIGHT_ARROW_DECKEY,
-            DecoderKeys.UP_ARROW_DECKEY,
-            DecoderKeys.DOWN_ARROW_DECKEY,
-            DecoderKeys.RIGHT_SHIFT_DECKEY,
-        };
+        private static List<string> normalKeyNames = null;
 
-        private static int[] extModifiees = new int[] {
-            DecoderKeys.ESC_DECKEY,
-            DecoderKeys.TAB_DECKEY,
-            DecoderKeys.BS_DECKEY,
-            DecoderKeys.ENTER_DECKEY,
-            DecoderKeys.INS_DECKEY,
-            DecoderKeys.DEL_DECKEY,
-            DecoderKeys.HOME_DECKEY,
-            DecoderKeys.END_DECKEY,
-            DecoderKeys.PAGE_UP_DECKEY,
-            DecoderKeys.PAGE_DOWN_DECKEY,
-            DecoderKeys.LEFT_ARROW_DECKEY,
-            DecoderKeys.RIGHT_ARROW_DECKEY,
-            DecoderKeys.UP_ARROW_DECKEY,
-            DecoderKeys.DOWN_ARROW_DECKEY,
-        };
+        private void readCharsDefFile()
+        {
+            if (normalKeyNames == null) {
+                if (Settings.CharsDefFile._notEmpty()) {
+                    var lines = Helper.GetFileContent(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.CharsDefFile))._safeReplace("\r", "")._split('\n');
+                    if (lines._notEmpty()) {
+                        normalKeyNames = new List<string>();
+                        int i = 0;
+                        while (i < lines.Length) {
+                            var line = lines[i++];
+                            if (line._startsWith("## NORMAL")) {
+                                bool bSpace = false;
+                                while (i < lines.Length) {
+                                    line = lines[i++];
+                                    if (line._startsWith("## END")) break;
+                                    foreach (var ch in line) {
+                                        if (ch == ' ') {
+                                            if (bSpace) {
+                                                normalKeyNames.Add("N/A");
+                                            } else {
+                                                normalKeyNames.Add("Space");
+                                                bSpace = true;
+                                            }
+                                        } else if (ch == '\\') {
+                                            normalKeyNames.Add("＼");
+                                        } else {
+                                            normalKeyNames.Add(ch.ToString()._toUpper());
+                                        }
+                                    }
+                                }
+                            } else if (line._startsWith("## YEN=")) {
+                                int yenPos = line._safeSubstring(7)._parseInt(-1);
+                                if (yenPos >= 0 && yenPos < normalKeyNames.Count) {
+                                    normalKeyNames[yenPos] = "￥";
+                                }
+                            }
+                        }
+                    }
+                }
+                if (normalKeyNames._isEmpty()) {
+                    normalKeyNames = qwertyKeyNames.ToList();
+                }
+            }
+        }
+
+        private static KeyOrFunction[] singleHitKeys;
+
+        private static KeyOrFunction[] extModifiees;
 
         public int AssignedKeyOrFuncColWidth {
             get { return dataGridView2.Columns != null && dataGridView2.Columns.Count > 2 ? dataGridView2.Columns[2].Width : 0; }
@@ -107,13 +92,24 @@ namespace KanchokuWS
         /// <summary>コンストラクタ</summary>
         public DlgModConversion()
         {
+            readCharsDefFile();
+            modifierKeys = SpecialKeysAndFunctions.GetModifierKeys();
+            PLANE_ASIGNABLE_MOD_KEYS_NUM = modifierKeys.Where(x => x.IsShiftable).Count();
+            extModifiees = SpecialKeysAndFunctions.GetModifieeKeys();
+            singleHitKeys = SpecialKeysAndFunctions.GetSingleHitKeys();
+
             InitializeComponent();
 
             if (Settings.DlgModConversionHeight > 0) Height = Settings.DlgModConversionHeight;
             if (Settings.DlgModConversionWidth > 0) Width = Settings.DlgModConversionWidth;
 
-            CancelButton = buttonCancel;
+            //CancelButton = buttonCancel;
             DialogResult = DialogResult.None;
+        }
+
+        public static void Initialize()
+        {
+            normalKeyNames = null;
         }
 
         private int defaultModkeyIndex = 0;
@@ -124,10 +120,11 @@ namespace KanchokuWS
 
         private void DlgModConversion_Load(object sender, EventArgs e)
         {
+            panel_shiftPlaneHint.Visible = false;
             comboBox_modKeys.Visible = true;
             comboBox_shiftPlaneOn.Visible = false;
             comboBox_shiftPlaneOff.Visible = false;
-            comboBox_modKeys._setItems(modifierKeys.Select(x => x.Description));
+            comboBox_modKeys._setItems(modifierKeys.Select(x => getModifiedDescription(x)));
             comboBox_shiftPlaneOn._setItems(shiftPlaneNames);
             comboBox_shiftPlaneOff._setItems(shiftPlaneNames);
 
@@ -143,6 +140,26 @@ namespace KanchokuWS
             radioButton_modKeys.Checked = true;
         }
 
+        private string getModifiedDescription(KeyOrFunction modDef)
+        {
+            if (modDef == null) return "";
+
+            string marker = "";
+            var dict = VirtualKeys.ExtModifierKeyDefs._safeGet(modDef.ModKey);
+            if (dict != null) {
+                int normalKeysNum = normalKeyNames._safeCount();
+                int num = normalKeysNum  + extModifiees.Length;
+                for (int i = 0; i < num; ++i) {
+                    int deckey = i < normalKeysNum ? i : extModifiees[i - normalKeysNum].DecKey;
+                    if (dict._safeGet(deckey)._notEmpty()) {
+                        marker = " (＊)";
+                        break;
+                    }
+                }
+            }
+            return modDef.ModName + marker;
+        }
+
         private void setDataGridViewForShiftPlane()
         {
             double dpiRate = ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
@@ -151,16 +168,17 @@ namespace KanchokuWS
             var dgv = dataGridView3;
             dgv._defaultSetup(rowHeight, rowHeight);
             dgv._setDefaultFont(DgvHelpers.FontYUG9);
+            dgv._setSelectionColorReadOnly();
             int keyCodeWidth = (int)(30 * dpiRate);
-            int keyNameWidth = (int)(80 * dpiRate);
+            int keyNameWidth = (int)(100 * dpiRate);
             int planeNameOnWidth = (int)(200 * dpiRate);
             int planeNameOffWidth = (int)(dgv.Width - keyCodeWidth - keyNameWidth - planeNameOnWidth - 4 * dpiRate);
-            dgv.Columns.Add(dgv._makeTextBoxColumn("keyCode", "No", keyCodeWidth, false, false, DgvHelpers.READONLY_SELECTION_COLOR, true));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "拡張修飾キー", keyNameWidth, false, false, DgvHelpers.READONLY_SELECTION_COLOR));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("planeNameOn", "漢直ON時シフト面", planeNameOnWidth, false, false, DgvHelpers.READONLY_SELECTION_COLOR));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("planeNameOff", "漢直OFF時シフト面", planeNameOffWidth, false, false, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Centered("keyCode", "No", keyCodeWidth));
+            dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly("keyName", "拡張修飾キー", keyNameWidth));
+            dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly("planeNameOn", "漢直ON時シフト面", planeNameOnWidth));
+            dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly("planeNameOff", "漢直OFF時シフト面", planeNameOffWidth));
 
-            dgv.Rows.Add(PLANE_ASIGNABLE_MOD_KEYS_NUM);
+            dgv.Rows.Add(modifierKeys.Length);
 
             renewShiftPlaneDgv();
         }
@@ -169,14 +187,19 @@ namespace KanchokuWS
         {
             //dgv3Locked = true;
             var dgv = dataGridView3;
-            int num = dgv.Rows.Count;
+            int num = dgv.Rows.Count._highLimit(modifierKeys.Length);
 
             for (int i = 0; i < num; ++i) {
                 dgv.Rows[i].Cells[0].Value = i;
-                dgv.Rows[i].Cells[1].Value = modifierKeys[i].Description;
-                uint modKey = modifierKeys[i].ModKey;
-                dgv.Rows[i].Cells[2].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKey._safeGet(modKey)) ?? "";
-                dgv.Rows[i].Cells[3].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modKey)) ?? "";
+                dgv.Rows[i].Cells[1].Value = getModifiedDescription(modifierKeys[i]);
+                if (i < PLANE_ASIGNABLE_MOD_KEYS_NUM) {
+                    uint modKey = modifierKeys[i].ModKey;
+                    dgv.Rows[i].Cells[2].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKey._safeGet(modKey)) ?? "";
+                    dgv.Rows[i].Cells[3].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modKey)) ?? "";
+                } else {
+                    dgv.Rows[i].Cells[2].Value = "なし（割り当て不可）";
+                    dgv.Rows[i].Cells[3].Value = "なし（割り当て不可）";
+                }
             }
             //dgv3Locked = false;
         }
@@ -188,17 +211,18 @@ namespace KanchokuWS
 
             var dgv = dataGridView1;
             dgv._defaultSetup(rowHeight, rowHeight);
+            dgv._setSelectionColorReadOnly();
             dgv._setDefaultFont(DgvHelpers.FontYUG9);
             int keyCodeWidth = (int)(30 * dpiRate);
             int keyNameWidth = (int)(80 * dpiRate);
             int funcNameWidth = (int)(180 * dpiRate);
             int funcDescWidth = (int)(dgv.Width - 20 * dpiRate - keyCodeWidth - keyNameWidth - funcNameWidth);
-            dgv.Columns.Add(dgv._makeTextBoxColumn("keyCode", "No", keyCodeWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR, true));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "単打キー", keyNameWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("funcName", "割り当てキー/機能名", funcNameWidth, true));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("funcDesc", "機能説明", funcDescWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable_Centered("keyCode", "No", keyCodeWidth, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable("keyName", "単打キー", keyNameWidth, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn_Sortable("funcName", "割り当てキー/機能名", funcNameWidth, DgvHelpers.HIGHLIGHT_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable("funcDesc", "機能説明", funcDescWidth, DgvHelpers.READONLY_SELECTION_COLOR));
 
-            dgv.Rows.Add(singleHitModifiers.Length);
+            dgv.Rows.Add(singleHitKeys.Length);
 
             renewSingleHitDgv();
         }
@@ -211,13 +235,14 @@ namespace KanchokuWS
 
             for (int i = 0; i < num; ++i) {
                 dgv.Rows[i].Cells[0].Value = i;
-                int deckey = singleHitModifiers[i];
-                dgv.Rows[i].Cells[1].Value = SpecialKeysAndFunctions.GetKeyOrFuncByDeckey(deckey)?.Name ?? "";
+                var kof = singleHitKeys[i];
+                int deckey = kof.DecKey;
+                dgv.Rows[i].Cells[1].Value = kof.ModName._orElse(kof.Name);
                 string assigned = "";
                 string desc = "";
-                var target = VirtualKeys.SingleHitDefs._safeGet(deckey);
+                var target = VirtualKeys.SingleHitDefs._safeGet(kof.DecKey);
                 if (target._notEmpty()) {
-                    var kof = SpecialKeysAndFunctions.GetKeyOrFuncByName(target);
+                    kof = SpecialKeysAndFunctions.GetKeyOrFuncByName(target);
                     assigned = kof != null ? kof.Name : target;
                     desc = kof != null ? kof.Description : "";
                 }
@@ -234,17 +259,18 @@ namespace KanchokuWS
 
             var dgv = dataGridView2;
             dgv._defaultSetup(rowHeight, rowHeight);
+            dgv._setSelectionColorReadOnly();
             dgv._setDefaultFont(DgvHelpers.FontYUG9);
             int keyCodeWidth = (int)(30 * dpiRate);
             int keyNameWidth = (int)(80 * dpiRate);
             int funcNameWidth = (int)(Settings.AssignedKeyOrFuncColWidth._gtZeroOr(180) * dpiRate);
             int funcDescWidth = (int)(290 * dpiRate);
-            dgv.Columns.Add(dgv._makeTextBoxColumn("keyCode", "No", keyCodeWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR, true));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("keyName", "被修飾キー", keyNameWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("funcName", "割り当てキー/機能名", funcNameWidth, true));
-            dgv.Columns.Add(dgv._makeTextBoxColumn("funcDesc", "機能説明", funcDescWidth, true, false, DgvHelpers.READONLY_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable_Centered("keyCode", "No", keyCodeWidth));
+            dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable("keyName", "被修飾キー", keyNameWidth));
+            dgv.Columns.Add(dgv._makeTextBoxColumn_Sortable("funcName", "割り当てキー/機能名", funcNameWidth, DgvHelpers.HIGHLIGHT_SELECTION_COLOR));
+            dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable("funcDesc", "機能説明", funcDescWidth));
 
-            dgv.Rows.Add(normalKeyNames.Length + extModifiees.Length);
+            dgv.Rows.Add(normalKeyNames._safeCount() + extModifiees.Length);
         }
 
         private void renewExtModifierDgv()
@@ -257,19 +283,20 @@ namespace KanchokuWS
             uint modKey = modKeyDef.ModKey;
             var dgv = dataGridView2;
             int num = dgv.Rows.Count;
+            int normalKeysNum = normalKeyNames._safeCount();
             var dict = VirtualKeys.ExtModifierKeyDefs._safeGet(modKey);
             for (int i = 0; i < num; ++i) {
                 dgv.Rows[i].Cells[0].Value = i;
-                if (i < normalKeyNames.Length) {
+                if (i < normalKeysNum) {
                     dgv.Rows[i].Cells[1].Value = normalKeyNames[i];
                 } else {
-                    dgv.Rows[i].Cells[1].Value = SpecialKeysAndFunctions.GetKeyOrFuncByDeckey(extModifiees[i - normalKeyNames.Length])?.Name ?? "";
+                    dgv.Rows[i].Cells[1].Value = extModifiees[i - normalKeysNum].Name;
                 }
                 string assigned = "";
                 string desc = "";
                 KeyOrFunction kof = null;
                 if (dict != null) {
-                    int deckey = i < normalKeyNames.Length ? i : extModifiees[i - normalKeyNames.Length];
+                    int deckey = i < normalKeysNum ? i : extModifiees[i - normalKeysNum].DecKey;
                     var target = dict._safeGet(deckey);
                     if (target._notEmpty()) {
                         kof = SpecialKeysAndFunctions.GetKeyOrFuncByName(target);
@@ -324,11 +351,12 @@ namespace KanchokuWS
             dataGridView1.Visible = radioButton_singleHit.Checked;
             dataGridView2.Visible = radioButton_modKeys.Checked;
             dataGridView3.Visible = radioButton_shiftPlane.Checked;
+            panel_shiftPlaneHint.Visible = radioButton_shiftPlane.Checked;
 
             if (!radioButton_singleHit.Checked) {
                 int idx = comboBox_modKeys.SelectedIndex;
                 int nItems = radioButton_modKeys.Checked ? modifierKeys.Length : PLANE_ASIGNABLE_MOD_KEYS_NUM;
-                comboBox_modKeys._setItems(modifierKeys.Take(nItems).Select(x => x.Description));
+                comboBox_modKeys._setItems(modifierKeys.Take(nItems).Select(x => getModifiedDescription(x)));
                 comboBox_modKeys.SelectedIndex = idx < nItems ? idx : defaultModkeyIndex;
             }
 
@@ -418,7 +446,8 @@ namespace KanchokuWS
                 uint modKey = modKeyDef.ModKey;
                 var dict = VirtualKeys.ExtModifierKeyDefs._safeGetOrNewInsert(modKey);
 
-                int deckey = row < normalKeyNames.Length ? row : extModifiees[row - normalKeyNames.Length];
+                int normalKeysNum = normalKeyNames._safeCount();
+                int deckey = row < normalKeysNum ? row : extModifiees[row - normalKeysNum].DecKey;
                 var target = dgv.Rows[row].Cells[TARGET_COL].Value?.ToString() ?? "";
                 if (target._notEmpty()) {
                     dict[deckey] = target;
@@ -448,7 +477,7 @@ namespace KanchokuWS
             int row = e.RowIndex;
             if (row < 0 || row >= dgv.Rows.Count) return;
 
-            int deckey = singleHitModifiers._getNth(row, -1);
+            int deckey = singleHitKeys._getNth(row)?.DecKey ?? -1;
             if (deckey < 0) return;
 
             try {

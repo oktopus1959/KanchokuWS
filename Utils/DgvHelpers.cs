@@ -108,6 +108,7 @@ namespace Utils
             dgv.EnableHeadersVisualStyles = false;                                                          // ヘッダー背景色を変更可能にする
             dgv.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.False;                        // ヘッダー複数行表示不可
             dgv.ColumnHeadersDefaultCellStyle.BackColor = hdrColor;                                         // ヘッダー背景色
+            dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = hdrColor;                                // ヘッダー選択時背景色
             dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;        // ヘッダー中央揃え
             if (hdrHeight > 0)
                 dgv.ColumnHeadersHeight = hdrHeight;
@@ -226,9 +227,18 @@ namespace Utils
 
 
         /// <summary>
+        /// テキストボックスカラムの作成 (ReadOnly, ソート無し、デフォルトアライメント、デフォルトフォント)
+        /// </summary>
+        static public DataGridViewTextBoxColumn _makeTextBoxColumn_ReadOnly(this DataGridView dgv,
+            string name, string text, int width, int selectionColor = DEFAULT_SELECTION_COLOR)
+        {
+            return _makeTextBoxColumn(dgv, name, text, width, false, false, selectionColor, false);
+        }
+
+        /// <summary>
         /// テキストボックスカラムの作成 (ReadOnly, ソート無し、センタリング、デフォルトフォント)
         /// </summary>
-        static public DataGridViewTextBoxColumn _makeTextBoxColumn_Centered(this DataGridView dgv,
+        static public DataGridViewTextBoxColumn _makeTextBoxColumn_ReadOnly_Centered(this DataGridView dgv,
             string name, string text, int width, int selectionColor = DEFAULT_SELECTION_COLOR)
         {
             return _makeTextBoxColumn(dgv, name, text, width, false, false, selectionColor, true);
@@ -236,12 +246,30 @@ namespace Utils
 
 
         /// <summary>
-        /// テキストボックスカラムの作成 (ReadOnly, ソート無し、デフォルトフォント)
+        /// テキストボックスカラムの作成 (ReadOnly, ソートあり、デフォルトアラインメント、デフォルトフォント)
         /// </summary>
-        static public DataGridViewTextBoxColumn _makeTextBoxColumn_ReadOnly(this DataGridView dgv,
+        static public DataGridViewTextBoxColumn _makeTextBoxColumn_ReadOnly_Sortable(this DataGridView dgv,
+            string name, string text, int width, int selectionColor = DEFAULT_SELECTION_COLOR)
+        {
+            return _makeTextBoxColumn(dgv, name, text, width, true, false, selectionColor, false);
+        }
+
+        /// <summary>
+        /// テキストボックスカラムの作成 (ReadOnly, ソートあり、センタリング、デフォルトフォント)
+        /// </summary>
+        static public DataGridViewTextBoxColumn _makeTextBoxColumn_ReadOnly_Sortable_Centered(this DataGridView dgv,
+            string name, string text, int width, int selectionColor = DEFAULT_SELECTION_COLOR)
+        {
+            return _makeTextBoxColumn(dgv, name, text, width, true, false, selectionColor, true);
+        }
+
+        /// <summary>
+        /// テキストボックスカラムの作成 (変更可、ソートあり、デフォルトフォント)
+        /// </summary>
+        static public DataGridViewTextBoxColumn _makeTextBoxColumn_Sortable(this DataGridView dgv,
             string name, string text, int width, int selectionColor = DEFAULT_SELECTION_COLOR, bool alignCentered = false)
         {
-            return _makeTextBoxColumn(dgv, name, text, width, false, false, selectionColor, alignCentered);
+            return _makeTextBoxColumn(dgv, name, text, width, true, true, selectionColor, alignCentered);
         }
 
 

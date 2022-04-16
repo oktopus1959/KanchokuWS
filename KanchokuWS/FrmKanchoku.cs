@@ -1578,6 +1578,7 @@ namespace KanchokuWS
             keDispatcher.Reinitialize();
             // 初期化
             VirtualKeys.Initialize();
+            DlgModConversion.Initialize();
             // キーボードファイルの読み込み
             if (!readKeyboardFile()) return;
             // 設定ファイルの読み込み

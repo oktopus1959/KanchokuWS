@@ -725,7 +725,7 @@ SandS、CapsLock、英数、無変換、変換、および右シフトキーを
 拡張修飾キーを押しながら何かキーを押したときのキー割り当てや
 機能割り当てが有効になります。
 
-詳細については mod-conversion.txt ファイルを参照してください。</value>
+詳細については mod-conversion.sample.txt ファイルを参照してください。</value>
   </data>
   <data name="label101.ToolTip" xml:space="preserve">
     <value>「拡張修飾キー定義ファイル」に定義した UpperRomanStrokeGuide を

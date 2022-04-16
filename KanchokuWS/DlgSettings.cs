@@ -1440,6 +1440,11 @@ namespace KanchokuWS
             logger.InfoH("LEAVE");
         }
 
+        private void checkBox_extraModifiersEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            button_setModConversion.Enabled = checkBox_extraModifiersEnabled.Checked;
+        }
+
         private void checkBox_convertShiftedHiraganaToKatakana_CheckedChanged(object sender, EventArgs e)
         {
             changeShiftPlaneSectionRadioButtonsState();
