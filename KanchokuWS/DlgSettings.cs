@@ -80,6 +80,7 @@ namespace KanchokuWS
             CancelButton = button_basicClose;
 
             button_showPaddingsDesc.Enabled = frmVkb != null;
+            button_setModConversion.Enabled = checkBox_extraModifiersEnabled.Checked;
 
             tabControl1.SelectedIndex = SelectedTabIndex;
             changeGlobalCtrlKeysCheckBoxState();
