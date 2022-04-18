@@ -33,6 +33,7 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.設定画面ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ReloadSettings_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadBushuDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadMazeWikipediaDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -43,7 +44,6 @@
             this.終了ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.ReloadSettings_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,7 +51,7 @@
             // 
             this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-            this.notifyIcon1.Text = "漢直窓WS";
+            this.notifyIcon1.Text = "漢直窓S";
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.Click += new System.EventHandler(this.notifyIcon1_Click);
             // 
@@ -65,12 +65,12 @@
             this.toolStripMenuItem1,
             this.終了ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 126);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(123, 104);
             // 
             // 設定画面ToolStripMenuItem
             // 
             this.設定画面ToolStripMenuItem.Name = "設定画面ToolStripMenuItem";
-            this.設定画面ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.設定画面ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.設定画面ToolStripMenuItem.Text = "設定画面";
             this.設定画面ToolStripMenuItem.Click += new System.EventHandler(this.Settings_ToolStripMenuItem_Click);
             // 
@@ -81,8 +81,15 @@
             this.ReadBushuDic_ToolStripMenuItem,
             this.ReadMazeWikipediaDic_ToolStripMenuItem});
             this.ReadDic_ToolStripMenuItem.Name = "ReadDic_ToolStripMenuItem";
-            this.ReadDic_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ReadDic_ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.ReadDic_ToolStripMenuItem.Text = "再読込";
+            // 
+            // ReloadSettings_ToolStripMenuItem
+            // 
+            this.ReloadSettings_ToolStripMenuItem.Name = "ReloadSettings_ToolStripMenuItem";
+            this.ReloadSettings_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.ReloadSettings_ToolStripMenuItem.Text = "設定と定義の再読込";
+            this.ReloadSettings_ToolStripMenuItem.Click += new System.EventHandler(this.ReloadSettings_ToolStripMenuItem_Click);
             // 
             // ReadBushuDic_ToolStripMenuItem
             // 
@@ -101,7 +108,7 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(119, 6);
             // 
             // Restart_ToolStripMenuItem
             // 
@@ -109,7 +116,7 @@
             this.RestartWithSave_ToolStripMenuItem,
             this.RestartWithDiscard_ToolStripMenuItem});
             this.Restart_ToolStripMenuItem.Name = "Restart_ToolStripMenuItem";
-            this.Restart_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.Restart_ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.Restart_ToolStripMenuItem.Text = "再起動";
             // 
             // RestartWithSave_ToolStripMenuItem
@@ -129,12 +136,12 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(119, 6);
             // 
             // 終了ToolStripMenuItem
             // 
             this.終了ToolStripMenuItem.Name = "終了ToolStripMenuItem";
-            this.終了ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.終了ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.終了ToolStripMenuItem.Text = "終了";
             this.終了ToolStripMenuItem.Click += new System.EventHandler(this.Exit_ToolStripMenuItem_Click);
             // 
@@ -153,13 +160,6 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // ReloadSettings_ToolStripMenuItem
-            // 
-            this.ReloadSettings_ToolStripMenuItem.Name = "ReloadSettings_ToolStripMenuItem";
-            this.ReloadSettings_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-            this.ReloadSettings_ToolStripMenuItem.Text = "設定と定義の再読込";
-            this.ReloadSettings_ToolStripMenuItem.Click += new System.EventHandler(this.ReloadSettings_ToolStripMenuItem_Click);
-            // 
             // FrmKanchoku
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -173,7 +173,7 @@
             this.Name = "FrmKanchoku";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "漢直窓 WS";
+            this.Text = "KanchokuWS";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmKanchoku_FormClosing);
             this.Load += new System.EventHandler(this.FrmKanchoku_Load);
             this.contextMenuStrip1.ResumeLayout(false);
