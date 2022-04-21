@@ -316,22 +316,26 @@ namespace KanchokuWS
 
         private void selectModKey()
         {
-            int idx = comboBox_modKeys.SelectedIndex;
-            var modKeyDef = modifierKeys._getNth(idx);
-            uint modKey = modKeyDef?.ModKey ?? 0;
-            bool bAssignable = idx >= 0 && idx < PLANE_ASIGNABLE_MOD_KEYS_NUM;
-            if (bAssignable) {
-                comboBox_shiftPlaneOn.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModKey._safeGet(modKey);
-                comboBox_shiftPlaneOff.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modKey);
+            try {
+                int idx = comboBox_modKeys.SelectedIndex;
+                var modKeyDef = modifierKeys._getNth(idx);
+                uint modKey = modKeyDef?.ModKey ?? 0;
+                bool bAssignable = idx >= 0 && idx < PLANE_ASIGNABLE_MOD_KEYS_NUM;
+                if (bAssignable) {
+                    comboBox_shiftPlaneOn.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModKey._safeGet(modKey);
+                    comboBox_shiftPlaneOff.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modKey);
+                }
+
+                bool shiftPlaneVisible = !radioButton_singleHit.Checked && bAssignable;
+                label_shiftPlaneOn.Visible = shiftPlaneVisible;
+                comboBox_shiftPlaneOn.Visible = shiftPlaneVisible;
+                label_shiftPlaneOff.Visible = shiftPlaneVisible;
+                comboBox_shiftPlaneOff.Visible = shiftPlaneVisible;
+
+                renewExtModifierDgv();
+            } catch (Exception ex) {
+                logger.Error(ex._getErrorMsg());
             }
-
-            bool shiftPlaneVisible = !radioButton_singleHit.Checked && bAssignable;
-            label_shiftPlaneOn.Visible = shiftPlaneVisible;
-            comboBox_shiftPlaneOn.Visible = shiftPlaneVisible;
-            label_shiftPlaneOff.Visible = shiftPlaneVisible;
-            comboBox_shiftPlaneOff.Visible = shiftPlaneVisible;
-
-            renewExtModifierDgv();
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
@@ -348,31 +352,35 @@ namespace KanchokuWS
 
         private void radioButtonCheckedChanged()
         {
-            dataGridView1.Visible = radioButton_singleHit.Checked;
-            dataGridView2.Visible = radioButton_modKeys.Checked;
-            dataGridView3.Visible = radioButton_shiftPlane.Checked;
-            panel_shiftPlaneHint.Visible = radioButton_shiftPlane.Checked;
+            try {
+                dataGridView1.Visible = radioButton_singleHit.Checked;
+                dataGridView2.Visible = radioButton_modKeys.Checked;
+                dataGridView3.Visible = radioButton_shiftPlane.Checked;
+                panel_shiftPlaneHint.Visible = radioButton_shiftPlane.Checked;
 
-            if (!radioButton_singleHit.Checked) {
-                int idx = comboBox_modKeys.SelectedIndex;
-                int nItems = radioButton_modKeys.Checked ? modifierKeys.Length : PLANE_ASIGNABLE_MOD_KEYS_NUM;
-                comboBox_modKeys._setItems(modifierKeys.Take(nItems).Select(x => getModifiedDescription(x)));
-                comboBox_modKeys.SelectedIndex = idx < nItems ? idx : defaultModkeyIndex;
+                if (!radioButton_singleHit.Checked) {
+                    int idx = comboBox_modKeys.SelectedIndex;
+                    int nItems = radioButton_modKeys.Checked ? modifierKeys.Length : PLANE_ASIGNABLE_MOD_KEYS_NUM;
+                    comboBox_modKeys._setItems(modifierKeys.Take(nItems).Select(x => getModifiedDescription(x)));
+                    comboBox_modKeys.SelectedIndex = idx < nItems ? idx : (defaultModkeyIndex < PLANE_ASIGNABLE_MOD_KEYS_NUM ? defaultModkeyIndex : 0);
+                }
+
+                bool bModkeysVisible = !radioButton_singleHit.Checked;
+                bool bAssignable = comboBox_modKeys.SelectedIndex >= 0 && comboBox_modKeys.SelectedIndex < PLANE_ASIGNABLE_MOD_KEYS_NUM;
+                bool bShiftPlaneVisible = bModkeysVisible && bAssignable;
+                bool bShiftPlaneEnabled = radioButton_shiftPlane.Checked;
+
+                label_modKeys.Visible = bModkeysVisible;
+                comboBox_modKeys.Visible = bModkeysVisible;
+                label_shiftPlaneOn.Visible = bShiftPlaneVisible;
+                comboBox_shiftPlaneOn.Visible = bShiftPlaneVisible;
+                comboBox_shiftPlaneOn.Enabled = bShiftPlaneEnabled;
+                label_shiftPlaneOff.Visible = bShiftPlaneVisible;
+                comboBox_shiftPlaneOff.Visible = bShiftPlaneVisible;
+                comboBox_shiftPlaneOff.Enabled = bShiftPlaneEnabled;
+            } catch (Exception ex) {
+                logger.Error(ex._getErrorMsg());
             }
-
-            bool bModkeysVisible = !radioButton_singleHit.Checked;
-            bool bAssignable = comboBox_modKeys.SelectedIndex >= 0 && comboBox_modKeys.SelectedIndex < PLANE_ASIGNABLE_MOD_KEYS_NUM;
-            bool bShiftPlaneVisible = bModkeysVisible && bAssignable;
-            bool bShiftPlaneEnabled = radioButton_shiftPlane.Checked;
-
-            label_modKeys.Visible = bModkeysVisible;
-            comboBox_modKeys.Visible = bModkeysVisible;
-            label_shiftPlaneOn.Visible = bShiftPlaneVisible;
-            comboBox_shiftPlaneOn.Visible = bShiftPlaneVisible;
-            comboBox_shiftPlaneOn.Enabled = bShiftPlaneEnabled;
-            label_shiftPlaneOff.Visible = bShiftPlaneVisible;
-            comboBox_shiftPlaneOff.Visible = bShiftPlaneVisible;
-            comboBox_shiftPlaneOff.Enabled = bShiftPlaneEnabled;
         }
 
         private void radioButton_modKeys_CheckedChanged(object sender, EventArgs e)
@@ -397,21 +405,25 @@ namespace KanchokuWS
 
         private void selectShiftPlane(bool bOn, int idx)
         {
-            int modkeyIdx = comboBox_modKeys.SelectedIndex;
-            if (modkeyIdx < 0 || modkeyIdx >= PLANE_ASIGNABLE_MOD_KEYS_NUM) return;
+            try {
+                int modkeyIdx = comboBox_modKeys.SelectedIndex;
+                if (modkeyIdx < 0 || modkeyIdx >= PLANE_ASIGNABLE_MOD_KEYS_NUM) return;
 
-            var modKeyDef = modifierKeys._getNth(modkeyIdx);
-            if (modKeyDef == null) return;
+                var modKeyDef = modifierKeys._getNth(modkeyIdx);
+                if (modKeyDef == null) return;
 
-            uint modKey = modKeyDef.ModKey;
-            var plane = VirtualKeys.GetShiftPlane(idx);
-            if (bOn) {
-                VirtualKeys.ShiftPlaneForShiftModKey[modKey] = plane;
-            } else {
-                VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = plane;
+                uint modKey = modKeyDef.ModKey;
+                var plane = VirtualKeys.GetShiftPlane(idx);
+                if (bOn) {
+                    VirtualKeys.ShiftPlaneForShiftModKey[modKey] = plane;
+                } else {
+                    VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = plane;
+                }
+
+                renewShiftPlaneDgv();
+            } catch (Exception ex) {
+                logger.Error(ex._getErrorMsg());
             }
-
-            renewShiftPlaneDgv();
         }
 
         private void comboBox_shiftPlaneOn_SelectedIndexChanged(object sender, EventArgs e)
@@ -499,16 +511,20 @@ namespace KanchokuWS
         private void selectKeyOrFuncName(DataGridView dgv, int ridx)
         {
             using (var dlg = new DlgKeywordSelector()) {
-                if (dlg.ShowDialog() == DialogResult.OK) {
-                    var keyword = dlg.SelectedWord;
-                    if (keyword._notEmpty()) {
-                        dgv.EndEdit();
-                        dgv.Rows[ridx].Cells[2].Value = keyword;
+                try {
+                    if (dlg.ShowDialog() == DialogResult.OK) {
+                        var keyword = dlg.SelectedWord;
+                        if (keyword._notEmpty()) {
+                            dgv.EndEdit();
+                            dgv.Rows[ridx].Cells[2].Value = keyword;
+                        }
                     }
-                }
-                if (Settings.DlgKeywordSelectorHeight != dlg.Height) {
-                    Settings.SetUserIni("dlgKeywordSelectorHeight", dlg.Height);
-                    Settings.DlgKeywordSelectorHeight = dlg.Height;
+                    if (Settings.DlgKeywordSelectorHeight != dlg.Height) {
+                        Settings.SetUserIni("dlgKeywordSelectorHeight", dlg.Height);
+                        Settings.DlgKeywordSelectorHeight = dlg.Height;
+                    }
+                } catch (Exception ex) {
+                    logger.Error(ex._getErrorMsg());
                 }
             }
         }

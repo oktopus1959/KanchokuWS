@@ -51,6 +51,9 @@ namespace KanchokuWS
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
                     Application.Run(new FrmKanchoku(keDispatcher));
+                } catch (Exception e) {
+                    Logger.GetLogger().Error(e._getErrorMsg());
+                    MessageBox.Show("エラーが発生しました。詳細はログファイルを参照してください。");
                 } finally {
                     MultiAppChecker.Release();
                 }
