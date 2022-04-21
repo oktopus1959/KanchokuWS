@@ -469,7 +469,7 @@ namespace {
                         readWordOrString();
                         defines[_T("defguide")] = currentStr;
                         _LOG_DEBUGH(_T("StrokePosition: %s"), currentStr.c_str());
-                    } else if (lcStr == _T("noshift")) {
+                    } else if (lcStr == _T("noshift") || lcStr == _T("normal")) {
                         shiftPlane = 0;
                     } else if (lcStr == _T("shift")) {
                         shiftPlane = 1;

@@ -744,6 +744,10 @@ namespace KanchokuWS
         public static string ReadExtraModConversionFile(string filename)
         {
             logger.Info("ENTER");
+            ShiftPlaneForShiftModKey.Clear();
+            ShiftPlaneForShiftModKeyWhenDecoderOff.Clear();
+            SingleHitDefs.Clear();
+            ExtModifierKeyDefs.Clear();
             var sbCompCmds = new StringBuilder();   // 複合コマンド定義文字列
             if (filename._notEmpty()) {
                 var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
@@ -754,8 +758,6 @@ namespace KanchokuWS
                     SystemHelper.ShowErrorMessageBox($"修飾キー変換定義ファイル({filePath}の読み込みに失敗しました。");
                     return null;
                 }
-                ShiftPlaneForShiftModKey.Clear();
-                ShiftPlaneForShiftModKeyWhenDecoderOff.Clear();
                 Dictionary<uint, int> modCount = new Dictionary<uint, int>();
                 int nl = 0;
                 foreach (var rawLine in lines._split('\n')) {
