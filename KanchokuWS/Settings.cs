@@ -444,6 +444,12 @@ namespace KanchokuWS
         /// <summary>SandS 時の後置シフト出力(疑似同時打鍵サポート)</summary>
         public static bool SandSEnablePostShift { get; set; } = false;
 
+        /// <summary>SandS は通常シフトよりも優位か</summary>
+        public static bool SandSSuperiorToShift { get; set; } = false;
+
+        /// <summary>Shift+SpaceをSandS として扱う</summary>
+        public static bool HandleShiftSpaceAsSandS { get; set; } = true;
+
         /// <summary> 拡張修飾キーを有効にするか</summary>
         public static bool ExtraModifiersEnabled { get; set; } = false;
 

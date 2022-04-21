@@ -395,7 +395,10 @@ namespace KanchokuWS
             /// <summary> SHIFT状態にある拡張修飾キーの修飾フラグを得る</summary>
             public uint getShiftedExModKey()
             {
-                if (spaceKeyInfo.Shifted) return KeyModifiers.MOD_SPACE;
+                if (spaceKeyInfo.Shifted) {
+                    if (Settings.SandSSuperiorToShift) return KeyModifiers.MOD_SPACE;
+                    if (!rshiftKeyInfo.Shifted) return KeyModifiers.MOD_SPACE;
+                }
                 if (capsKeyInfo.Shifted) return KeyModifiers.MOD_CAPS;
                 if (alnumKeyInfo.Shifted) return KeyModifiers.MOD_ALNUM;
                 if (nferKeyInfo.Shifted) return KeyModifiers.MOD_NFER;
@@ -407,7 +410,10 @@ namespace KanchokuWS
             /// <summary> 拡張修飾キーの押下またシフト状態を得る</summary>
             public uint getPressedOrShiftedExModFlag()
             {
-                if (spaceKeyInfo.Pressed || spaceKeyInfo.Shifted) return KeyModifiers.MOD_SPACE;
+                if (spaceKeyInfo.Pressed || spaceKeyInfo.Shifted) {
+                    if (Settings.SandSSuperiorToShift) return KeyModifiers.MOD_SPACE;
+                    if (!rshiftKeyInfo.Pressed && !rshiftKeyInfo.Shifted) return KeyModifiers.MOD_SPACE;
+                }
                 if (capsKeyInfo.Pressed || capsKeyInfo.Shifted) return KeyModifiers.MOD_CAPS;
                 if (alnumKeyInfo.Pressed || alnumKeyInfo.Shifted) return KeyModifiers.MOD_ALNUM;
                 if (nferKeyInfo.Pressed || nferKeyInfo.Shifted) return KeyModifiers.MOD_NFER;
@@ -430,9 +436,11 @@ namespace KanchokuWS
             public VirtualKeys.ShiftPlane getShiftPlane(bool bDecoderOn, bool bSandSEnabled)
             {
                 if (spaceKeyInfo.ShiftedOrOneshot) {
-                    var plane = VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, bDecoderOn);
-                    if (plane == VirtualKeys.ShiftPlane.NONE && bSandSEnabled) plane = VirtualKeys.ShiftPlane.NormalPlane;
-                    return plane;
+                    if (Settings.SandSSuperiorToShift || !rshiftKeyInfo.Shifted) {
+                        var plane = VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, bDecoderOn);
+                        if (plane == VirtualKeys.ShiftPlane.NONE && bSandSEnabled) plane = VirtualKeys.ShiftPlane.NormalPlane;
+                        return plane;
+                    }
                 }
                 if (capsKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_CAPS, bDecoderOn);
                 if (alnumKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_ALNUM, bDecoderOn);
@@ -637,8 +645,8 @@ namespace KanchokuWS
                                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS: keyState={keyInfo.KeyState}");
                                 if (!keyInfo.Repeated) {
                                     // RELEASEDのはず
-                                    if (!bCtrl && !bShift && modPressedOrShifted == 0) {
-                                        // 1回目の押下で Ctrl も Shift も他のmodiferも押されてない場合は、PRESSED に移行
+                                    if ((!bCtrl && !bShift && modPressedOrShifted == 0) || (Settings.HandleShiftSpaceAsSandS && (bShift || modPressedOrShifted == KeyModifiers.MOD_RSHIFT))) {
+                                        // 1回目の押下で Ctrl も Shift も他のmodiferも押されてない場合、またはShiftが押されていてもSandSがShiftより劣位の場合は、PRESSED に移行
                                         keyInfo.SetPressed();
                                         return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                                     }
@@ -748,8 +756,8 @@ namespace KanchokuWS
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
 
             int kanchokuCode = VirtualKeys.GetKanchokuToggleDecKey(mod, (uint)vkey); // 漢直モードのトグルをやるキーか
-            if (kanchokuCode < 0 && modEx != 0 && !ctrl) {
-                // 拡張シフトが有効なのは、Ctrlキーが押されていない場合とする
+            if (kanchokuCode < 0 && modEx != 0 && !ctrl && !shift) {
+                // 拡張シフトが有効なのは、Ctrlキーが押されておらず、Shiftも押されていないか、Shift+SpaceをSandSとして扱わない場合とする
                 kanchokuCode = VirtualKeys.GetModConvertedDecKeyFromCombo(modEx, (uint)vkey);
                 if (kanchokuCode < 0) {
                     // 拡張シフト面のコードを得る
