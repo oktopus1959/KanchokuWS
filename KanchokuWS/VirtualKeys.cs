@@ -763,8 +763,8 @@ namespace KanchokuWS
                 foreach (var rawLine in lines._split('\n')) {
                     ++nl;
                     logger.DebugH(() => $"line({nl}): {rawLine}");
-                    var origLine = rawLine._reReplace("#.*", "").Trim().Replace(" ", "");
-                    var line = origLine._toLower();
+                    var origLine = rawLine._reReplace("#.*", "").Trim();
+                    var line = origLine.Replace(" ", "")._toLower();
                     if (line._notEmpty() && line[0] != '#') {
                         if (line._reMatch(@"^\w+=")) {
                             // NAME=plane[|plane]...
@@ -802,7 +802,7 @@ namespace KanchokuWS
                             if (items._length() == 3) {
                                 string modName = items[0];
                                 string modifiee = items[1];
-                                string target = origItems[2];
+                                string target = origItems[2]._strip();
                                 uint modKey = 0;
                                 int modDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modName);
                                 int modifieeDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modifiee)._gtZeroOr(modifiee._parseInt(-1, -1));
@@ -858,7 +858,7 @@ namespace KanchokuWS
                                         if (modKey > 0) {
                                             // 特殊キーでもなかったので、複合コマンドとして扱う
                                             var strokeCode = GetShiftPlanePrefix(ShiftPlaneForShiftModKey._safeGet(modKey)) + modifiee;
-                                            sbCompCmds.Append($"-{strokeCode}>\"{target}\"\n");
+                                            sbCompCmds.Append($"-{strokeCode}>{(target.StartsWith("\"") ? "" : "\"")}{target}{(target.EndsWith("\"") ? "" : "\"")}\n");
                                             targetDeckey = convertUnconditional(parseShiftPlaneDeckey(strokeCode));   // 拡張シフト面も含めた漢直コードとして解析する
                                         } else {
                                             targetDeckey = -1;  // invalid line
