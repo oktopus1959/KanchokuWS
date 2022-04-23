@@ -116,8 +116,7 @@ namespace {
             return result;
         }
 
-#define NUM_SHIFT_PLANE  4
-        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB の4面
+        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 4:ShiftX(Simultaneous) の5面
         int shiftPlane = 0;
 
         // 打鍵マップ
@@ -126,6 +125,9 @@ namespace {
 
         // 打鍵列
         std::vector<int> strokes;
+
+        // 定義列マップ
+        std::map<wstring, std::shared_ptr<std::vector<wstring>>> linesMap;
 
         // 漢字置換マップ
         std::map<wstring, wstring> kanjiConvMap;
@@ -432,7 +434,7 @@ namespace {
             while (true) {
                 switch (getNextChar()) {
                 case '#': {
-                    // '#include', '#define', '#strokePosition', '#*shift*', '#yomiConvert', または '#' 以降、行末までコメント
+                    // '#include', '#define', '#strokePosition', '#*shift*', '#simultaneous', '#yomiConvert', '#set', '#use', '#end' または '#' 以降、行末までコメント
                     wstring filename;
                     readWord();
                     auto lcStr = utils::toLower(currentStr);
@@ -447,6 +449,35 @@ namespace {
                             readWordOrString();
                             defines[key] = currentStr;
                             _LOG_DEBUGH(_T("DEFINE: lineNum=%d, %s=%s"), lineNumber + 1, key.c_str(), currentStr.c_str());
+                        }
+                    } else if (lcStr == _T("set")) {
+                        std::shared_ptr<std::vector<wstring>> lines;
+                        readWord();
+                        if (currentStr.empty()) {
+                            parseError();
+                        } else {
+                            lines.reset(new std::vector<wstring>());
+                            linesMap[currentStr] = lines;
+                            _LOG_DEBUGH(_T("SET: lineNum=%d, %s"), lineNumber + 1, currentStr.c_str());
+                        }
+                        while (getNextLine()) {
+                            if (utils::startsWith(currentLine, _T("#end"))) break;
+                            if (lines) {
+                                lines->push_back(currentLine);
+                            }
+                        }
+                    } else if (lcStr == _T("use")) {
+                        readWord();
+                        if (currentStr.empty()) {
+                            parseError();
+                        } else {
+                            auto iter = linesMap.find(currentStr);
+                            if (iter == linesMap.end()) {
+                                parseError();
+                            } else {
+                                auto lines = iter->second;
+                                tableLines.insert(tableLines.begin() + lineNumber + 1, lines->begin(), lines->end());
+                            }
                         }
                     } else if (utils::startsWith(lcStr, _T("yomiconv"))) {
                         readWord();
@@ -477,6 +508,12 @@ namespace {
                         shiftPlane = 2;
                     } else if (lcStr == _T("shiftb")) {
                         shiftPlane = 3;
+                    } else if (lcStr == _T("shiftm") || lcStr == _T("simultaneous")) {
+                        shiftPlane = 4;
+                        skipToEndOfLine();
+                    } else if (lcStr == _T("end")) {
+                        shiftPlane = 0;
+                        skipToEndOfLine();
                     } else {
                         _LOG_DEBUGH(_T("#%s"), currentStr.c_str());
                     }
@@ -653,7 +690,7 @@ namespace {
                 if (arrowIndex >= FUNC_DECKEY_END) parseError();
             } else {
                 shiftPlane = arrowIndex;
-                if (arrowIndex >= NUM_SHIFT_PLANE) parseError();
+                if (shiftPlane >= ALL_SHIFT_PLANE_NUM) parseError();
                 return false;
             }
             if (c != '>') parseError();
@@ -695,6 +732,15 @@ namespace {
                 currentChar = '\n';
             }
             return currentChar;
+        }
+
+        bool getNextLine() {
+            ++lineNumber;
+            if (lineNumber >= tableLines.size()) {
+                return false;
+            }
+            currentLine = tableLines[lineNumber];
+            return true;
         }
 
         char_t peekNextChar() {
