@@ -54,10 +54,11 @@ namespace Utils
         private static System.IO.StreamWriter m_sw = null;
         private static object m_sync = new object();
 
-        public static Logger GetLogger()
+        public static Logger GetLogger(bool bInfoHPromotion = false)
         {
             return new Logger() {
                 ClassName = new StackFrame(1).GetMethod().DeclaringType.FullName._split('.').Last(),
+                IsInfoHPromoted = bInfoHPromotion,
             };
         }
 
@@ -105,7 +106,9 @@ namespace Utils
             }
         }
 
-        public string ClassName { get; set; }
+        public string ClassName { get; private set; }
+
+        public bool IsInfoHPromoted { get; private set; }
 
         public void Trace(string msg,
             [CallerMemberName] string method = "",
@@ -147,7 +150,7 @@ namespace Utils
             [CallerMemberName] string method = "",
             [CallerLineNumber] int lineNumber = -1)
         {
-            if (LogLevel >= LogLevelDebugH) {
+            if (LogLevel >= LogLevelDebugH || (IsInfoHPromoted && LogLevel >= LogLevelInfoH)) {
                 writeLog("DEBUH", $"{ClassName}.{method}", lineNumber, msg);
             }
         }
@@ -156,7 +159,7 @@ namespace Utils
             [CallerMemberName] string method = "",
             [CallerLineNumber] int lineNumber = -1)
         {
-            if (LogLevel >= LogLevelDebugH && func != null) {
+            if ((LogLevel >= LogLevelDebugH || (IsInfoHPromoted && LogLevel >= LogLevelInfoH)) && func != null) {
                 writeLog("DEBUH", $"{ClassName}.{method}", lineNumber, func());
             }
         }
