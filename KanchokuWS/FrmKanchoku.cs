@@ -165,6 +165,9 @@ namespace KanchokuWS
             if (Settings.KanjiYomiFile._notEmpty()) {
                 KanjiYomiTable.ReadKanjiYomiFile(Settings.KanjiYomiFile);
             }
+
+            // 同時打鍵設定の読み込み
+            SimultaneousKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile);
         }
 
         private void updateStrokeNodesByComplexCommands()

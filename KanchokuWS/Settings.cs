@@ -490,6 +490,13 @@ namespace KanchokuWS
         public static string RomanSecPlanePrefix { get; set; }
 
         //------------------------------------------------------------------------------
+        /// <summary>同時打鍵とみなす重複率<br/>第１打鍵と第２打鍵の重複時間が第２打鍵の時間に対してここで設定したパーセンテージを超えたら、同時打鍵とみなす</summary>
+        public static int SimultaneousKeyOverwrapTimeRate { get; set; } = 75;
+
+        /// <summary>同時打鍵とみなす重複時間<br/>第１打鍵と第２打鍵の重複時間がここで設定した時間(millisec)を超えたら、同時打鍵とみなす</summary>
+        public static int SimultaneousKeyOverwrapTimeMs { get; set; } = 100;
+
+        //------------------------------------------------------------------------------
         /// <summary>ウィンドウClassNameごとの設定</summary>
         public class WindowsClassSettings
         {
@@ -857,6 +864,11 @@ namespace KanchokuWS
             // 辞書保存時間
             SaveDictsIntervalTime = GetString("saveDictsIntervalTime")._parseInt(-60, -60);     // 辞書保存インターバルタイム(分)
             SaveDictsCalmTime = GetString("saveDictsCalmTime")._parseInt(1, 1);                 // 辞書保存に適した平穏な時間(分)
+
+            //-------------------------------------------------------------------------------------
+            // 同時打鍵
+            SimultaneousKeyOverwrapTimeRate = GetString("simultaneousKeyOverwrapTimeRate")._parseInt(75, 75);   // 重複時間率
+            SimultaneousKeyOverwrapTimeMs = GetString("simultaneousKeyOverwrapTimeMs")._parseInt(100, 100);   // 重複時間率
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

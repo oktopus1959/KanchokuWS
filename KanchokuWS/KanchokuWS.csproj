@@ -167,13 +167,16 @@
     </Compile>
     <Compile Include="ScreenInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="SimultaneousKeyStroke\Determiner.cs" />
+    <Compile Include="SimultaneousKeyStroke\DeterminerLib\DeterminerSub.cs" />
+    <Compile Include="SimultaneousKeyStroke\DeterminerLib\TableFileParser.cs" />
     <Compile Include="SimultaneousKeyStroke\KeyCodeInfo.cs" />
     <Compile Include="SimultaneousKeyStroke\DecoderKeySequence.cs" />
-    <Compile Include="SimultaneousKeyStroke\Determiner.cs" />
     <Compile Include="SimultaneousKeyStroke\DeterminerLib\Stroke.cs" />
     <Compile Include="SimultaneousKeyStroke\DeterminerLib\StrokeQueue.cs" />
     <Compile Include="SimultaneousKeyStroke\KeyCodeTypes.cs" />
     <Compile Include="SimultaneousKeyStroke\KeyCombination.cs" />
+    <Compile Include="SimultaneousKeyStroke\Factories.cs" />
     <Compile Include="SimultaneousKeyStroke\KeyCombinationFactory.cs" />
     <Compile Include="SpecialKeysAndFunctions.cs" />
     <Compile Include="VirtualKeys.cs" />

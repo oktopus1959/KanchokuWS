@@ -434,7 +434,7 @@ namespace {
             while (true) {
                 switch (getNextChar()) {
                 case '#': {
-                    // '#include', '#define', '#strokePosition', '#*shift*', '#simultaneous', '#yomiConvert', '#set', '#use', '#end' または '#' 以降、行末までコメント
+                    // '#include', '#define', '#strokePosition', '#*shift*', '#simultaneous', '#yomiConvert', '#store', '#load', '#end' または '#' 以降、行末までコメント
                     wstring filename;
                     readWord();
                     auto lcStr = utils::toLower(currentStr);
@@ -450,7 +450,7 @@ namespace {
                             defines[key] = currentStr;
                             _LOG_DEBUGH(_T("DEFINE: lineNum=%d, %s=%s"), lineNumber + 1, key.c_str(), currentStr.c_str());
                         }
-                    } else if (lcStr == _T("set")) {
+                    } else if (lcStr == _T("store")) {
                         std::shared_ptr<std::vector<wstring>> lines;
                         readWord();
                         if (currentStr.empty()) {
@@ -466,7 +466,7 @@ namespace {
                                 lines->push_back(currentLine);
                             }
                         }
-                    } else if (lcStr == _T("use")) {
+                    } else if (lcStr == _T("load")) {
                         readWord();
                         if (currentStr.empty()) {
                             parseError();

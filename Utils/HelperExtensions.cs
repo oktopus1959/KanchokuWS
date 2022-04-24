@@ -637,6 +637,11 @@ namespace Utils
             return string.IsNullOrEmpty(str);
         }
 
+        public static bool _isEmpty(this StringBuilder sb)
+        {
+            return sb == null || sb.Length == 0;
+        }
+
         /// <summary>
         /// 文字列が null でなく、かつ empty でもなければ true を返す。
         /// </summary>
@@ -1813,6 +1818,20 @@ namespace Utils
         public static void _clear<T>(this List<T> list)
         {
             for (int i = 0; i < list.Count(); ++i) list[i] = default(T);
+        }
+
+        public static void _resize<T>(this List<T> list, int len)
+        {
+            if (list._notEmpty() && len >= 0 && len < list.Count) {
+                list.RemoveRange(len, list.Count - len);
+            }
+        }
+
+        public static void _popBack<T>(this List<T> list)
+        {
+            if (list._notEmpty()) {
+                list.RemoveAt(list.Count - 1);
+            }
         }
     }
 
