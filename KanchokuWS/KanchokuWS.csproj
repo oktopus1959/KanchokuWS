@@ -167,8 +167,10 @@
     </Compile>
     <Compile Include="ScreenInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="SimultaneousKeyStroke\DecoderKeyCodeList.cs" />
     <Compile Include="SimultaneousKeyStroke\Determiner.cs" />
-    <Compile Include="SimultaneousKeyStroke\DeterminerLib\DeterminerSub.cs" />
+    <Compile Include="SimultaneousKeyStroke\DeterminerLib\DeterminerImpl.cs" />
+    <Compile Include="SimultaneousKeyStroke\DeterminerLib\ShiftKeyPriority.cs" />
     <Compile Include="SimultaneousKeyStroke\DeterminerLib\TableFileParser.cs" />
     <Compile Include="SimultaneousKeyStroke\KeyCodeInfo.cs" />
     <Compile Include="SimultaneousKeyStroke\DecoderKeySequence.cs" />

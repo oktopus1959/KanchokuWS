@@ -21,7 +21,7 @@ namespace KanchokuWS.SimultaneousKeyStroke
         /// 履歴機能や交ぜ書き機能などを利用できるようにするため、
         /// 当パッケージが直接 TargetString を出力するのではなく、いったんデコーダを経由して文字列を出力させる。<br/>
         /// </summary>
-        public List<DecoderKeyCode> DecoderKeyList { get; private set; }
+        public DecoderKeyCodeList DecoderKeyList { get; private set; }
 
         /// <summary>
         /// コンストラクタ
@@ -34,19 +34,10 @@ namespace KanchokuWS.SimultaneousKeyStroke
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public KeyCombination(List<DecoderKeyCode> keyList)
-        {
-            IsTerminal = true;
-            DecoderKeyList = keyList;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
         public KeyCombination(List<int> keyList)
         {
             IsTerminal = true;
-            DecoderKeyList = keyList.Select(k => new DecoderKeyCode(k)).ToList();
+            DecoderKeyList = new DecoderKeyCodeList(keyList);
         }
 
         public void NotTerminal()

@@ -2,19 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using KanchokuWS.SimultaneousKeyStroke.DeterminerLib;
 using Utils;
 
 namespace KanchokuWS.SimultaneousKeyStroke
 {
     static class KeyCombinationHelper
     {
-        public static string MakePrimaryKey(List<int> keyList)
+        public static bool _isTerminal(this KeyCombination keyCombo)
+        {
+            return keyCombo?.IsTerminal ?? false;
+        }
+
+        public static string MakePrimaryKey(IEnumerable<int> keyList, int lastKey = -1)
         {
             var sb = new StringBuilder();
             foreach (var k in keyList) {
                 sb.Append(makeChar(k));
             }
+            if (lastKey >= 0) sb.Append(makeChar(lastKey));
             return sb.ToString();
+        }
+
+        public static string MakePrimaryKey(IEnumerable<Stroke> keyList, int lastKey = -1)
+        {
+            return MakePrimaryKey(keyList.Select(x => x.KeyCode), lastKey);
         }
 
         /// <summary>

@@ -11,9 +11,9 @@ namespace KanchokuWS.SimultaneousKeyStroke
     /// </summary>
     class KeyCodeInfo
     {
-        public VirtualKeyCode VKey { get; private set; }
+        public uint VKey { get; private set; }
 
-        public DecoderKeyCode DecKey { get; private set; }
+        public int DecKey { get; private set; }
 
         public string KeyFace { get; private set; }
     }

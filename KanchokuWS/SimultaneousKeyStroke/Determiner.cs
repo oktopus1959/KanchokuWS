@@ -11,9 +11,11 @@ namespace KanchokuWS.SimultaneousKeyStroke
     /// <summary>
     /// キー入力の時系列に対して、同時打鍵などの判定を行って、出力文字列を決定する
     /// </summary>
-    partial class Determiner
+    class Determiner
     {
         private static Logger logger = Logger.GetLogger();
+
+        private DeterminerImpl impl = new DeterminerImpl();
 
         /// <summary>
         /// テーブルファイルを読み込んで同時打鍵定義を初期化する
@@ -21,7 +23,7 @@ namespace KanchokuWS.SimultaneousKeyStroke
         public void Initialize(string tableFile)
         {
             logger.InfoH(() => $"CALLED: tableFile={tableFile}");
-            initialize(tableFile);
+            impl.Initialize(tableFile);
         }
 
         /// <summary>
@@ -29,9 +31,9 @@ namespace KanchokuWS.SimultaneousKeyStroke
         /// </summary>
         /// <param name="keyInfo">押下されたキーの情報</param>
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダキー列を返す。<br/>確定しなければ null を返す</returns>
-        public List<DecoderKeyCode> KeyDown(KeyCodeInfo keyInfo)
+        public List<int> KeyDown(KeyCodeInfo keyInfo)
         {
-            return keyDown(keyInfo);
+            return impl.KeyDown(keyInfo)?.KeyList;
         }
 
         /// <summary>
@@ -39,9 +41,9 @@ namespace KanchokuWS.SimultaneousKeyStroke
         /// </summary>
         /// <param name="keyInfo">解放されたキーの情報</param>
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダキー列を返す。<br/>確定しなければ null を返す</returns>
-        public List<DecoderKeyCode> KeyUp(KeyCodeInfo keyInfo)
+        public List<int> KeyUp(KeyCodeInfo keyInfo)
         {
-            return keyUp(keyInfo);
+            return impl.KeyUp(keyInfo)?.KeyList;
         }
 
         /// <summary>

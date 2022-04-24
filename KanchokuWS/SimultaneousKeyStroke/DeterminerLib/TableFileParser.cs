@@ -17,6 +17,9 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
         // 同時打鍵組合せの部分キーの順列集合(これらは、最後に非終端となるキー順列として使う)
         private HashSet<string> comboSubKeys = new HashSet<string>();
 
+        // ShiftKeyとして扱いうるか
+        public ShiftKeyPriority SimultaneousShiftKeys { get; private set; } = new ShiftKeyPriority();
+
         private List<string> tableLines;
 
         // トークンの種類
@@ -97,8 +100,11 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
             if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
                 foreach (var pair in keyComboDict) {
                     var key = pair.Key.Select(x => ((int)(x - 0x20)).ToString())._join(":");
-                    var deckeys = pair.Value.DecoderKeyList?.Select(x => x.Value.ToString())._join(":") ?? "NONE";
+                    var deckeys = pair.Value.DecoderKeyList?.KeyString() ?? "NONE";
                     logger.DebugH($"{key}={deckeys} {pair.Value.IsTerminal}");
+                }
+                foreach (var pair in SimultaneousShiftKeys.Pairs) {
+                    logger.DebugH($"ShiftKey: {pair.Key}={pair.Value}");
                 }
             }
             logger.InfoH($"LEAVE: keyComboDict.Count={keyComboDict.Count}");
@@ -306,6 +312,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
                     } else if (lcStr == "shiftm" || lcStr == "simultaneous") {
                         shiftPlane = 4;
                         isInConcernedBlock = true;
+                        getSimultaneousKeys();
                     } else if (lcStr == "end") {
                         shiftPlane = 0;
                         isInConcernedBlock = false;
@@ -424,6 +431,24 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
                 } else {
                     logger.DebugH(() => $"InsertRange: {currentStr}, {lines.Count} lines");
                     tableLines.InsertRange(lineNumber + 1, lines);
+                }
+            }
+        }
+
+        void getSimultaneousKeys()
+        {
+            readWord();
+            var items = currentStr._split('=');
+            if (items._safeLength() == 2 && items[1]._notEmpty()) {
+                int pri = 1;
+                foreach (var keys in items[1]._split('|')) {
+                    if (keys._notEmpty()) {
+                        foreach (var k in keys._split(',')) {
+                            var code = k._parseInt();
+                            if (code > 0) SimultaneousShiftKeys.AddShiftKey(code, pri);
+                        }
+                    }
+                    ++pri;
                 }
             }
         }
