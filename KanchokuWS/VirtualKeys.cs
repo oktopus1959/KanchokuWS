@@ -802,7 +802,7 @@ namespace KanchokuWS
                             if (items._length() == 3) {
                                 string modName = items[0];
                                 string modifiee = items[1];
-                                string target = origItems[2]._strip();
+                                string target = origItems[2]._strip()._stripDq();
                                 uint modKey = 0;
                                 int modDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modName);
                                 int modifieeDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modifiee)._gtZeroOr(modifiee._parseInt(-1, -1));
@@ -858,7 +858,7 @@ namespace KanchokuWS
                                         if (modKey > 0) {
                                             // 特殊キーでもなかったので、複合コマンドとして扱う
                                             var strokeCode = GetShiftPlanePrefix(ShiftPlaneForShiftModKey._safeGet(modKey)) + modifiee;
-                                            sbCompCmds.Append($"-{strokeCode}>{(target.StartsWith("\"") ? "" : "\"")}{target}{(target.EndsWith("\"") ? "" : "\"")}\n");
+                                            sbCompCmds.Append($"-{strokeCode}>\"{target}\"\n");
                                             targetDeckey = convertUnconditional(parseShiftPlaneDeckey(strokeCode));   // 拡張シフト面も含めた漢直コードとして解析する
                                         } else {
                                             targetDeckey = -1;  // invalid line
