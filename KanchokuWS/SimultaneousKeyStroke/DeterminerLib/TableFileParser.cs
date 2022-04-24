@@ -9,10 +9,13 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
 {
     class TableFileParser
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         // 同時打鍵組合せ
         private Dictionary<string, KeyCombination> keyComboDict = new Dictionary<string, KeyCombination>();
+
+        // 同時打鍵組合せの部分キーの順列集合(これらは、最後に非終端となるキー順列として使う)
+        private HashSet<string> comboSubKeys = new HashSet<string>();
 
         private List<string> tableLines;
 
@@ -53,7 +56,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
         // テーブル定義を解析してストローク木を構築する
         // 後から部分的にストローク定義を差し込む際にも使用される
         public Dictionary<string, KeyCombination> ParseTable(string filename) {
-            logger.DebugH($"ENTER: filename={filename}");
+            logger.InfoH($"ENTER: filename={filename}");
             tableLines = readAllLines(filename);
 
             if (tableLines._notEmpty()) {
@@ -85,7 +88,20 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
                 }
             }
 
-            logger.DebugH($"LEAVE: keyComboDict.Count={keyComboDict.Count}");
+            logger.InfoH($"comboSubKeys.Count={comboSubKeys.Count}");
+            foreach (var key in comboSubKeys) {
+                // 部分キーに対して、非終端マークをセット
+                logger.DebugH(() => $"{key.Select(x => ((int)(x - 0x20)).ToString())._join(":")}");
+                keyComboDict._safeGetOrNewInsert(key).NotTerminal();
+            }
+            if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
+                foreach (var pair in keyComboDict) {
+                    var key = pair.Key.Select(x => ((int)(x - 0x20)).ToString())._join(":");
+                    var deckeys = pair.Value.DecoderKeyList?.Select(x => x.Value.ToString())._join(":") ?? "NONE";
+                    logger.DebugH($"{key}={deckeys} {pair.Value.IsTerminal}");
+                }
+            }
+            logger.InfoH($"LEAVE: keyComboDict.Count={keyComboDict.Count}");
             return keyComboDict;
         }
 
@@ -218,9 +234,17 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
         // 同時打鍵組合せを作成する
         void makeSimultaneousKeyCombo(int nth)
         {
-            var s = new List<int>(strokes);
-            s.Add(nth);
-            logger.DebugH(() => $"{s.Select(x => x.ToString())._join(":")}={currentStr}");
+            var ss = new List<int>(strokes);
+            ss.Add(nth);
+            logger.DebugH(() => $"{ss.Select(x => x.ToString())._join(":")}={currentStr}");
+            var keyCombo = new KeyCombination(ss);
+            // 同時打鍵キー集合は、Normalキーで作成しておく
+            var ts = ss.Select(x => x >= DecoderKeys.SHIFT_M_DECKEY_START ? x - DecoderKeys.SHIFT_M_DECKEY_START : x).ToList();
+            keyComboDict[KeyCombinationHelper.MakePrimaryKey(ts)] = keyCombo;
+            foreach (var key in KeyCombinationHelper.MakePermutatedKeys(ts)) {
+                if (!keyComboDict.ContainsKey(key)) { keyComboDict[key] = keyCombo; }
+            }
+            comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(ts));
         }
 
         // 現在のトークンをチェックする
@@ -521,7 +545,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
             if (!bShiftPlane) {
                 if (shiftOffset < 0) {
                     // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
-                    shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftOffset = shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM : 0;
+                    shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM : 0;
                 }
                 arrowIndex += shiftOffset;
                 if (arrowIndex >= DecoderKeys.FUNC_DECKEY_END) parseError();

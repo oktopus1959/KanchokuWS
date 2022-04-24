@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace KanchokuWS.SimultaneousKeyStroke
 {
@@ -27,10 +26,27 @@ namespace KanchokuWS.SimultaneousKeyStroke
         /// <summary>
         /// コンストラクタ
         /// </summary>
+        public KeyCombination()
+        {
+            IsTerminal = true;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public KeyCombination(List<DecoderKeyCode> keyList)
         {
             IsTerminal = true;
             DecoderKeyList = keyList;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public KeyCombination(List<int> keyList)
+        {
+            IsTerminal = true;
+            DecoderKeyList = keyList.Select(k => new DecoderKeyCode(k)).ToList();
         }
 
         public void NotTerminal()

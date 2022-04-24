@@ -9,10 +9,20 @@ namespace KanchokuWS.SimultaneousKeyStroke
     public struct VirtualKeyCode
     {
         public readonly uint Value;
+
+        public VirtualKeyCode(uint v)
+        {
+            Value = v;
+        }
     }
 
     public struct DecoderKeyCode
     {
         public readonly int Value;
+
+        public DecoderKeyCode(int v)
+        {
+            Value = v;
+        }
     }
 }

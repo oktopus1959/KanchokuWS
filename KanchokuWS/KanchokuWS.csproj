@@ -177,7 +177,7 @@
     <Compile Include="SimultaneousKeyStroke\KeyCodeTypes.cs" />
     <Compile Include="SimultaneousKeyStroke\KeyCombination.cs" />
     <Compile Include="SimultaneousKeyStroke\Factories.cs" />
-    <Compile Include="SimultaneousKeyStroke\KeyCombinationFactory.cs" />
+    <Compile Include="SimultaneousKeyStroke\KeyCombinationHelper.cs" />
     <Compile Include="SpecialKeysAndFunctions.cs" />
     <Compile Include="VirtualKeys.cs" />
     <EmbeddedResource Include="BackColorComboBox.resx">
