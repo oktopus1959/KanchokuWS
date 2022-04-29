@@ -114,8 +114,9 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         /// </summary>
         /// <param name="keyCode"></param>
         /// <param name="priority"></param>
-        public void AddShiftKey(int keyCode, int priority)
+        public void AddShiftKey(int keyCode, int priority = 1)
         {
+            logger.DebugH(() => $"CALLED: keyCode={keyCode}, priority={priority}");
             if (keyCode > 0) OverlappingShiftKeys.AddShiftKey(keyCode, priority);
         }
 

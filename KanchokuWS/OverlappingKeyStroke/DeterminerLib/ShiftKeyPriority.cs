@@ -20,7 +20,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         /// <param name="priority"></param>
         public void AddShiftKey(int keyCode, int priority)
         {
-            if (priority > 0) priorityDict[keyCode] = priority;
+            if (priority > 0) priorityDict[Stroke.NormalizeKey(keyCode)] = priority;
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         /// <returns></returns>
         public int GetShiftPriority(int keyCode)
         {
-            return priorityDict._safeGet(keyCode);
+            return priorityDict._safeGet(Stroke.NormalizeKey(keyCode));
         }
 
         public void Clear()

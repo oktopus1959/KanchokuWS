@@ -68,6 +68,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             if (tableLines._notEmpty()) {
                 currentLine = tableLines[0];
                 readNextToken(0);
+                TOKEN tokenNextToArrow;
                 while (currentToken != TOKEN.END) {
                     switch (currentToken) {
                         case TOKEN.LBRACE:
@@ -75,7 +76,9 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                             break;
 
                         case TOKEN.ARROW:
-                            parseArrowNode(0, 0, arrowIndex);
+                            int arrowDeckey = arrowIndex;
+                            tokenNextToArrow = parseArrowNode(0, 0, arrowIndex);
+                            if (isInConcernedBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey);
                             break;
 
                         case TOKEN.ARROW_BUNDLE:
@@ -103,14 +106,17 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 
         void parseSubTree(int depth, int prevNth)
         {
-            int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
+            //int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             int n = 0;
             bool isPrevDelim = true;
+            TOKEN tokenNextToArrow;
             readNextToken(depth);
             while (currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
                     case TOKEN.ARROW:
-                        parseArrowNode(depth + 1, prevNth, arrowIndex);
+                        int arrowDeckey = arrowIndex;
+                        tokenNextToArrow = parseArrowNode(depth + 1, prevNth, arrowIndex);
+                        if (isInConcernedBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey);
                         isPrevDelim = false;
                         break;
 
@@ -143,15 +149,17 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             strokes._resize(depth);
         }
 
-        void parseArrowNode(int depth, int prevNth, int idx) {
+        TOKEN parseArrowNode(int depth, int prevNth, int idx) {
             logger.DebugH(() => $"CALLED: currentLine={lineNumber}, depth={depth}, idx={idx}, prevN={prevNth}");
             readNextToken(depth);
+            var tokenNextToArrow = currentToken;
             if (currentToken == TOKEN.ARROW) {
                 strokes.Add(idx);
                 parseArrowNode(depth + 1, idx, arrowIndex);
                 strokes._popBack();
             }
             parseNode(currentToken, depth + 1, prevNth, idx);
+            return tokenNextToArrow;
         }
 
         // 矢印束記法(-*>-nn>)を第1打鍵位置に従って配置する
@@ -298,7 +306,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                     } else if (lcStr == "shifto" || lcStr == "overlapping") {
                         shiftPlane = 4;
                         isInConcernedBlock = true;
-                        getOverlappingKeys();
+                        //getOverlappingKeys();
                     } else if (lcStr == "end") {
                         shiftPlane = 0;
                         isInConcernedBlock = false;
