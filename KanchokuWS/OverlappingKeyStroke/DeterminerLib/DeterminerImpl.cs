@@ -113,6 +113,7 @@ namespace KanchokuWS.OverlappingKeyStroke
             int upKeyIdx = findSameKey(normalKey);
             logger.DebugH(() => $"Stroke {upKeyIdx} up");
             if (upKeyIdx >= 0) {
+                // 同時打鍵判定関数
                 bool isOverlapped(int pos, int len)
                 {
                     int pos2 = pos + len - 1;
@@ -122,41 +123,26 @@ namespace KanchokuWS.OverlappingKeyStroke
                     logger.DebugH(() => $"ms1={ms1:f2}, ms2={ms2:f2}, ovlRate={rate:f1}, threshold={Settings.OverlappingKeyTimeRate}");
                     return (ms1 <= Settings.OverlappingMaxAllowedLeadTimeMs && (rate >= Settings.OverlappingKeyTimeRate || ms2 >= Settings.OverlappingKeyTimeMs));
                 }
-                int overlapLen = 0;
-                if (upKeyIdx == 0 && !strokeList[0].IsShifted) {
-                    // 第１打鍵と同じキーが解放され、かつ第１打鍵がまだシフトされていない場合⇒同時打鍵になる最長範囲を求める
-                    for (int len = strokeList.Count; len >= 2; --len) {
-                        if (isOverlapped(0, len)) {
-                            overlapLen = len;
-                            break;
-                        }
-                    }
-                } else {
-                    // 第１打鍵がシフト済み、または第2打鍵以降が解放⇒ここまでの全打鍵を同時打鍵候補とみなす
-                    overlapLen = strokeList.Count;
-                }
-                // シフト済み、または同時打鍵候補あり
+
+                // まず末尾を固定して、長いほうからチェックして最長の同時打鍵列を求める
                 int startPos = 0;
-                if (overlapLen > 0) {
-                    // まず末尾を固定して、長いほうからチェックして最長の同時打鍵列を求める
-                    int checkLen = overlapLen;
-                    while (checkLen > 1) {
-                        var keyList = KeyCombinationPool.CurrentPool.GetEntry(strokeList, startPos, checkLen)?.DecoderKeyList;
-                        if (keyList != null && (upKeyIdx > startPos || strokeList[startPos].IsShifted || isOverlapped(startPos, checkLen))) {
-                            // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)
-                            logger.DebugH(() => $"PATH-1: Overlap candidates found: startPos={startPos}, overlapLen={checkLen}");
-                            result = new List<int>(keyList.KeyList);
-                            overlapLen = checkLen;
-                            break;
-                        }
-                        ++startPos;
-                        --checkLen;
+                int overlapLen = strokeList.Count;
+                while (overlapLen > 1) {
+                    startPos = strokeList.Count - overlapLen;
+                    var keyList = KeyCombinationPool.CurrentPool.GetEntry(strokeList, startPos, overlapLen)?.DecoderKeyList;
+                    //logger.DebugH(() => $"keyList {(keyList != null ? "!" : "=")}= null, upKeyIdx={upKeyIdx}, startPos={startPos}, strokeList[{startPos}].IsShiftedOrShiftableSpaceKey={strokeList[startPos].IsShiftedOrShiftableSpaceKey}");
+                    if (keyList != null && (upKeyIdx > startPos || strokeList[startPos].IsShiftedOrShiftableSpaceKey || isOverlapped(startPos, overlapLen))) {
+                        // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)
+                        logger.DebugH(() => $"PATH-1: Overlap candidates found: startPos={startPos}, overlapLen={overlapLen}");
+                        result = new List<int>(keyList.KeyList);
+                        break;
                     }
+                    --overlapLen;
                 }
-                if (result == null && overlapLen > 0) {
+                if (result == null) {
+                    // 見つからなかったら、次に先頭を固定して、長いほうからチェックして最長の同時打鍵列を求める
                     startPos = 0;
-                    // 次に先頭を固定して、長いほうからチェックして最長の同時打鍵列を求める
-                    --overlapLen;   // 全体についてはチェック済みなので、1つ短くしておく
+                    overlapLen = strokeList.Count - 1;   // 全体についてはチェック済みなので、1つ短くしておく
                     while (overlapLen > 1) {
                         var keyList = KeyCombinationPool.CurrentPool.GetEntry(strokeList, 0, overlapLen)?.DecoderKeyList;
                         if (keyList != null) {

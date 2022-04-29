@@ -22,6 +22,10 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         /// </summary>
         public int DecoderKeyCode { get; private set; }
 
+        public bool IsShiftableSpaceKey => NormalKeyCode == DecoderKeys.STROKE_SPACE_DECKEY && IsShiftable;
+
+        public bool IsShiftedOrShiftableSpaceKey => IsShifted || IsShiftableSpaceKey;
+
         /// <summary>
         /// 同じキーか
         /// </summary>
