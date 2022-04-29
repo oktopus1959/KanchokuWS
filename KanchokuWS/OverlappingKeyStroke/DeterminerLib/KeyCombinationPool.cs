@@ -66,25 +66,18 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(keyList));
         }
 
-        public KeyCombination GetEntry(IEnumerable<int> keyList)
+        private KeyCombination getEntry(IEnumerable<int> keyList)
         {
             logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(keyList)}");
             return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList));
         }
 
-        public KeyCombination GetEntry(List<Stroke> strokeList)
-        {
-            return GetEntry(strokeList?.Select(x => x.NormalKeyCode));
-        }
-
-        public KeyCombination GetEntry(List<Stroke> strokeList, int len)
-        {
-            return GetEntry(strokeList?.Take(len).Select(x => x.NormalKeyCode));
-        }
-
         public KeyCombination GetEntry(List<Stroke> strokeList, int start, int len)
         {
-            return GetEntry(strokeList?.Skip(start).Take(len).Select(x => x.NormalKeyCode));
+            // ストロークリストが空であるか、あるいは全てのストロークがシフトされていたら、null
+            if (strokeList._isEmpty() || strokeList.Skip(start).Take(len).All(x => x.IsShifted)) return null;
+
+            return getEntry(strokeList.Skip(start).Take(len).Select(x => x.NormalKeyCode));
         }
 
         public KeyCombination GetEntry(int decKey)

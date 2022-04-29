@@ -22,6 +22,18 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         /// </summary>
         public int DecoderKeyCode { get; private set; }
 
+        /// <summary>
+        /// 同じキーか
+        /// </summary>
+        /// <param name="decKey"></param>
+        /// <returns></returns>
+        public bool IsSameKey(int decKey)
+        {
+            return DecoderKeyCode == decKey || NormalKeyCode == normalizeKey(decKey);
+        }
+
+        private int normalizeKey(int decKey) { return decKey % DecoderKeys.NORMAL_DECKEY_NUM; }
+
         ///// <summary>
         ///// 同時打鍵シフトキーとしての優先順位
         ///// </summary>
@@ -76,9 +88,10 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         public Stroke(int decKey, DateTime dt)
         {
             DecoderKeyCode = decKey;
-            NormalKeyCode = decKey % DecoderKeys.NORMAL_DECKEY_NUM;
+            NormalKeyCode = normalizeKey(decKey);
             IsShiftable = KeyCombinationPool.CurrentPool.GetShiftPriority(NormalKeyCode) > 0;
             KeyDt = dt;
         }
+
     }
 }
