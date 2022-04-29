@@ -14,19 +14,44 @@ namespace KanchokuWS.SimultaneousKeyStroke
             return keyCombo?.IsTerminal ?? false;
         }
 
+        /// <summary>
+        /// 保持している打鍵列と追加の打鍵から、検索キーを生成する
+        /// </summary>
+        /// <param name="keyList"></param>
+        /// <param name="lastKey"></param>
+        /// <returns></returns>
         public static string MakePrimaryKey(IEnumerable<int> keyList, int lastKey = -1)
         {
             var sb = new StringBuilder();
-            foreach (var k in keyList) {
-                sb.Append(makeChar(k));
+            if (keyList._notEmpty()) {
+                foreach (var k in keyList) {
+                    sb.Append(makeChar(k));
+                }
             }
             if (lastKey >= 0) sb.Append(makeChar(lastKey));
             return sb.ToString();
         }
 
+        /// <summary>
+        /// 保持している打鍵列と追加の打鍵から、検索キーを生成する
+        /// </summary>
+        /// <param name="keyList"></param>
+        /// <param name="lastKey"></param>
+        /// <returns></returns>
         public static string MakePrimaryKey(IEnumerable<Stroke> keyList, int lastKey = -1)
         {
-            return MakePrimaryKey(keyList.Select(x => x.KeyCode), lastKey);
+            return MakePrimaryKey(keyList.Select(x => x.NormalKeyCode), lastKey);
+        }
+
+        /// <summary>
+        /// 保持している打鍵列と追加の打鍵から、検索キーを生成する
+        /// </summary>
+        /// <param name="keyList"></param>
+        /// <param name="decKey"></param>
+        /// <returns></returns>
+        public static string MakePrimaryKey(int decKey)
+        {
+            return makeChar(decKey).ToString();
         }
 
         /// <summary>
@@ -95,6 +120,16 @@ namespace KanchokuWS.SimultaneousKeyStroke
             return result;
         }
 
+        public static List<int> DecodeKey(string key)
+        {
+            return key._notEmpty() ? key.Select(x => decodeChar(x)).ToList() : new List<int>();
+        }
+
+        public static string EncodeKeyList(IEnumerable<int> keyList)
+        {
+            return keyList?.Select(x => x.ToString())._join(":") ?? "";
+        }
+
         private static string makeString(int c)
         {
             return makeChar(c).ToString();
@@ -113,6 +148,11 @@ namespace KanchokuWS.SimultaneousKeyStroke
         private static char makeChar(int ch)
         {
             return (char)(ch + 0x20);
+        }
+
+        private static int decodeChar(char ch)
+        {
+            return (char)(ch - 0x20);
         }
     }
 }

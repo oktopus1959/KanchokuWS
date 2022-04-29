@@ -23,6 +23,17 @@ namespace Utils
         }
 
         /// <summary>
+        /// 引数をListにして返す。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        public static List<T> MakeList<T>(params T[] array)
+        {
+            return new List<T>(array);
+        }
+
+        /// <summary>
         /// size個の要素(default(T))を持つリストを作成して返す。
         /// </summary>
         /// <typeparam name="T"></typeparam>

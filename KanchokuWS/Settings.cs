@@ -491,10 +491,13 @@ namespace KanchokuWS
 
         //------------------------------------------------------------------------------
         /// <summary>同時打鍵とみなす重複率<br/>第１打鍵と第２打鍵の重複時間が第２打鍵の時間に対してここで設定したパーセンテージを超えたら、同時打鍵とみなす</summary>
-        public static int SimultaneousKeyOverwrapTimeRate { get; set; } = 75;
+        public static int SimultaneousKeyOverlapTimeRate { get; set; } = 75;
 
         /// <summary>同時打鍵とみなす重複時間<br/>第１打鍵と第２打鍵の重複時間がここで設定した時間(millisec)を超えたら、同時打鍵とみなす</summary>
-        public static int SimultaneousKeyOverwrapTimeMs { get; set; } = 100;
+        public static int SimultaneousKeyOverlapTimeMs { get; set; } = 100;
+
+        /// <summary>同時打鍵判定を行う際の、第１打鍵に許容する最大のリード時間(ミリ秒)<br/>第２打鍵までにこの時間より長くかかったら、第1打鍵は同時とみなさない</summary>
+        public static int SimultaneousMaxAllowedLeadTimeMs { get; set; } = 50;
 
         //------------------------------------------------------------------------------
         /// <summary>ウィンドウClassNameごとの設定</summary>
@@ -867,8 +870,9 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             // 同時打鍵
-            SimultaneousKeyOverwrapTimeRate = GetString("simultaneousKeyOverwrapTimeRate")._parseInt(75, 75);   // 重複時間率
-            SimultaneousKeyOverwrapTimeMs = GetString("simultaneousKeyOverwrapTimeMs")._parseInt(100, 100);   // 重複時間率
+            SimultaneousKeyOverlapTimeRate = GetString("simultaneousKeyOverlapTimeRate")._parseInt(75, 75);        // 重複時間率
+            SimultaneousKeyOverlapTimeMs = GetString("simultaneousKeyOverlapTimeMs")._parseInt(100, 100);          // 重複時間率
+            SimultaneousMaxAllowedLeadTimeMs = GetString("simultaneousMaxAllowedLeadTimeMs")._parseInt(50, 50);     // 許容リードタイム
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

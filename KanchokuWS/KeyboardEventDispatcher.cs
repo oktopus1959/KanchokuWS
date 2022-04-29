@@ -748,6 +748,7 @@ namespace KanchokuWS
         {
             //bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
             //bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            bool bDecoderOn = isDecoderActivated();
             bool ctrl = leftCtrl || rightCtrl;
             bool shift = shiftKeyPressed((uint)vkey);
             uint mod = KeyModifiers.MakeModifier(ctrl, shift);
@@ -761,7 +762,7 @@ namespace KanchokuWS
                 kanchokuCode = VirtualKeys.GetModConvertedDecKeyFromCombo(modEx, (uint)vkey);
                 if (kanchokuCode < 0) {
                     // 拡張シフト面のコードを得る
-                    var shiftPlane = keyInfoManager.getShiftPlane(isDecoderActivated(), isSandSEnabled());
+                    var shiftPlane = keyInfoManager.getShiftPlane(bDecoderOn, isSandSEnabled());
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-A: shiftPlane={shiftPlane}");
                     if (shiftPlane != VirtualKeys.ShiftPlane.NONE) kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey) + (int)shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM;
                 }
@@ -812,22 +813,32 @@ namespace KanchokuWS
 
             // どうやら KeyboardHook で CallNextHookEx を呼ばないと次のキー入力の処理に移らないみたいだが、
             // 将来必要になるかもしれないので、下記処理を残しておく
+            //if (bHandlerBusy) {
+            //    logger.Warn(() => "bHandlerBusy=True");
+            //    if (vkeyQueue.Count < vkeyQueueMaxSize) {
+            //        vkeyQueue.Enqueue(kanchokuCode);
+            //        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
+            //    }
+            //    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-C: result=True");
+            //    return true;
+            //}
+            //while (true) {
+            //    bool result = invokeHandler(kanchokuCode, mod);
+            //    if (vkeyQueue.Count == 0) {
+            //        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-D: result={result}");
+            //        return result;
+            //    }
+            //    kanchokuCode = vkeyQueue.Dequeue();
+            //}
             if (bHandlerBusy) {
-                logger.Warn(() => "bHandlerBusy=True");
-                if (vkeyQueue.Count < vkeyQueueMaxSize) {
-                    vkeyQueue.Enqueue(kanchokuCode);
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
-                }
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-C: result=True");
                 return true;
             }
-            while (true) {
-                bool result = invokeHandler(kanchokuCode, mod);
-                if (vkeyQueue.Count == 0) {
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-D: result={result}");
-                    return result;
-                }
-                kanchokuCode = vkeyQueue.Dequeue();
+            if (bDecoderOn && mod == 0 &&
+                (kanchokuCode >= 0 && kanchokuCode < DecoderKeys.NORMAL_DECKEY_END || kanchokuCode >= DecoderKeys.SHIFT_A_DECKEY_START && kanchokuCode < DecoderKeys.SHIFT_A_DECKEY_END) &&
+                SimultaneousKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode)) {
+                return true;
+            } else {
+                return invokeHandler(kanchokuCode, mod);
             }
         }
 
@@ -890,11 +901,13 @@ namespace KanchokuWS
                                 return true;
                             }
                             // Spaceキーを送出
-                            return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                            keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                            keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, 0);
                         } else if (bPrevPressedOneshot) {
                             // ShiftedOneshot の後 Spaceキーが1回押されただけの状態
                             // Spaceキーを送出
-                            return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                            keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                            keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, 0);
                         }
                     }
                     // 上記以外は何もせず、システムに処理をまかせる
@@ -912,6 +925,7 @@ namespace KanchokuWS
                         if (bPrevPressed) {
                             // PRESSED状態だったら、ハンドラを呼び出す
                             keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                            keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, 0);
                         }
                     }
                     // システムに RSHIFT UP 処理をまかせる
@@ -921,20 +935,33 @@ namespace KanchokuWS
                     if (bPrevPressed && keyInfo.IsShiftPlaneAssigned(bDecoderOn) && keyInfo.IsSingleShiftHitEffecive()) {
                         // 拡張シフト面が割り当てられ、かつ単打系がある拡張修飾キーで、それが押下状態の場合
                         keyboardDownHandler(vkey, leftCtrl, rightCtrl);
+                        keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, 0);
                     }
                     return false;
                 }
             }
 
-            // キーアップ時はなにもしない
-            //try {
-            //    bHandlerBusy = true;
-            //    result = OnKeyUp?.Invoke(vkey, extraInfo) ?? false;
-            //} finally {
-            //    bHandlerBusy = false;
-            //}
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={false}");
+            keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, modFlag);
             return false;
+        }
+
+        /// <summary>キーボードUP時のハンドラ</summary>
+        /// <param name="vkey"></param>
+        /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
+        private void keyboardUpHandler(bool bDecoderOn, int vkey, bool leftCtrl, bool rightCtrl, uint modFlag)
+        {
+            if (bDecoderOn && !leftCtrl && !rightCtrl && modFlag == 0) {
+                int deckey = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
+                if (deckey >= 0 && (deckey < DecoderKeys.NORMAL_DECKEY_END || deckey >= DecoderKeys.SHIFT_A_DECKEY_START && deckey < DecoderKeys.SHIFT_A_DECKEY_END)) {
+                    var keyList = SimultaneousKeyStroke.Determiner.Singleton.KeyUp(deckey);
+                    if (keyList._notEmpty()) {
+                        foreach (var k in keyList) {
+                            invokeHandler(k, 0);
+                        }
+                    }
+                }
+            }
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={false}");
         }
 
         private bool invokeHandler(int kanchokuCode, uint mod)

@@ -13,7 +13,7 @@ namespace KanchokuWS.SimultaneousKeyStroke
     /// </summary>
     class Determiner
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         private DeterminerImpl impl = new DeterminerImpl();
 
@@ -27,23 +27,34 @@ namespace KanchokuWS.SimultaneousKeyStroke
         }
 
         /// <summary>
-        /// キーの押下
+        /// 同時打鍵リストをクリアする
         /// </summary>
-        /// <param name="keyInfo">押下されたキーの情報</param>
-        /// <returns>出力文字列が確定すれば、それを出力するためのデコーダキー列を返す。<br/>確定しなければ null を返す</returns>
-        public List<int> KeyDown(KeyCodeInfo keyInfo)
+        public void Clear()
         {
-            return impl.KeyDown(keyInfo)?.KeyList;
+            impl.Clear();
+        }
+
+        /// <summary>
+        /// キーの押下<br/>押下されたキーをキューに積むだけ。同時打鍵などの判定はキーの解放時に行う。
+        /// </summary>
+        /// <param name="decKey">押下されたキーのデコーダコード</param>
+        /// <returns>同時打鍵が有効なら true を返す<br/>無効なら false を返す</returns>
+        public bool KeyDown(int decKey)
+        {
+            logger.DebugH(() => $"\nCALLED: decKey={decKey}");
+            if (!impl.IsEnabled) return false;
+            return impl.KeyDown(decKey);
         }
 
         /// <summary>
         /// キーの解放
         /// </summary>
-        /// <param name="keyInfo">解放されたキーの情報</param>
-        /// <returns>出力文字列が確定すれば、それを出力するためのデコーダキー列を返す。<br/>確定しなければ null を返す</returns>
-        public List<int> KeyUp(KeyCodeInfo keyInfo)
+        /// <param name="decKey">解放されたキーのデコーダコード</param>
+        /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
+        public List<int> KeyUp(int decKey)
         {
-            return impl.KeyUp(keyInfo)?.KeyList;
+            logger.DebugH(() => $"\nCALLED: decKey={decKey}");
+            return impl.IsEnabled ? impl.KeyUp(decKey) : null;
         }
 
         /// <summary>

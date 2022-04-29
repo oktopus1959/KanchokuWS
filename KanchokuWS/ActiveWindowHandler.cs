@@ -848,14 +848,14 @@ namespace KanchokuWS
                     int xFixed = (ActiveWinSettings?.VkbFixedPos)._getNth(0, -1)._geZeroOr(Settings.VirtualKeyboardFixedPosX);
                     int yFixed = (ActiveWinSettings?.VkbFixedPos)._getNth(1, -1)._geZeroOr(Settings.VirtualKeyboardFixedPosY);
                     //double dpiRatio = 1.0; //FrmVkb.GetDeviceDpiRatio();
-                    if (bLog || bFirstMove) logger.InfoH($"CaretPos.X={ActiveWinCaretPos.X}, CaretPos.Y={ActiveWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}, xFixed={xFixed}, yFixed={yFixed}");
+                    if (bLog || bFirstMove) logger.Info($"CaretPos.X={ActiveWinCaretPos.X}, CaretPos.Y={ActiveWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}, xFixed={xFixed}, yFixed={yFixed}");
                     if (ActiveWinCaretPos.X >= 0) {
                         int cX = ActiveWinCaretPos.X;
                         int cY = ActiveWinCaretPos.Y;
                         int cW = ActiveWinCaretPos.Width;
                         int cH = ActiveWinCaretPos.Height;
                         if (bLog) {
-                            logger.InfoH($"MOVE: X={cX}, Y={cY}, W={cW}, H={cH}, OX={xOffset}, OY={yOffset}");
+                            logger.Info($"MOVE: X={cX}, Y={cY}, W={cW}, H={cH}, OX={xOffset}, OY={yOffset}");
                             if (Settings.LoggingActiveWindowInfo) {
                                 var dpis = ScreenInfo.ScreenDpi.Select(x => $"{x}")._join(", ");
                                 FrmVkb.SetTopText($"DR={dpis}, CX={cX},CY={cY},CW={cW},CH={cH},OX={xOffset},OY={yOffset}");

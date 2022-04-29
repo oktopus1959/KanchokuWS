@@ -855,6 +855,7 @@ namespace KanchokuWS
                 prevDeckey = -1;
                 if (frmSplash != null) closeSplash();
                 if (decoderPtr != IntPtr.Zero) ResetDecoder(decoderPtr);
+                SimultaneousKeyStroke.Determiner.Singleton.Clear();     // 同時打鍵キューのクリア
                 decoderOutput.layout = 0;   // None にリセットしておく。これをやらないと仮想鍵盤モードを切り替えたときに以前の履歴選択状態が残ったりする
                 CommonState.CenterString = "";
                 Settings.VirtualKeyboardShowStrokeCountTemp = 0;
@@ -919,7 +920,7 @@ namespace KanchokuWS
         /// <summary>仮想鍵盤の表示位置を移動する</summary>
         public void MoveFormVirtualKeyboard()
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             actWinHandler?.MoveWindow();
         }
 
@@ -1247,7 +1248,7 @@ namespace KanchokuWS
                         int numBS = decoderOutput.numBackSpaces;
                         int leadLen = calcSameLeadingLen(outString, outLen, numBS);
                         var outStr = leadLen > 0 ? outString.Skip(leadLen).ToArray() : outString;
-                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"outString={outString._toString()}, numBS={numBS}, leadLen={leadLen}, outStr={outStr._toString()}");
+                        /*if (Settings.LoggingDecKeyInfo)*/ logger.InfoH(() => $"outString={outString._toString()}, numBS={numBS}, leadLen={leadLen}, outStr={outStr._toString()}");
                         actWinHandler.SendStringViaClipboardIfNeeded(outStr, numBS - leadLen, bFuncVkeyContained);
                         if (bFuncVkeyContained) {
                             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく

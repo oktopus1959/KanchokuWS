@@ -380,6 +380,9 @@ public:
             } else if (cmd == _T("makeShiftBStrokePosition")) {
                 // シフトキー文字配列をストロークの位置に従って並べる
                 VkbTableMaker::MakeShiftBKeyCharsStrokePositionTable(outParams->faceStrings);
+            } else if (cmd == _T("makeShiftMStrokePosition")) {
+                // シフトキー文字配列をストロークの位置に従って並べる
+                VkbTableMaker::MakeShiftMKeyCharsStrokePositionTable(outParams->faceStrings);
             } else if (cmd == _T("makeStrokeKeysTable") && items.size() >= 2 && !items[1].empty()) {
                 // 指定の文字配列をストロークキー配列に変換
                 VkbTableMaker::MakeStrokeKeysTable(outParams->faceStrings, items[1].c_str());

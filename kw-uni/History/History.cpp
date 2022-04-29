@@ -986,7 +986,7 @@ namespace {
 
         // 前回の履歴検索との比較、新しい履歴検索の開始 (bManual=trueなら自動モードでなくても履歴検索を実行する)
         void historySearch(bool bManual) {
-            LOG_INFOH(_T("ENTER: auto=%s, manual=%s, maybeEditedBySubState=%s, histInSearch=%s"), \
+            LOG_INFO(_T("ENTER: auto=%s, manual=%s, maybeEditedBySubState=%s, histInSearch=%s"), \
                 BOOL_TO_WPTR(SETTINGS->autoHistSearchEnabled), BOOL_TO_WPTR(bManual), BOOL_TO_WPTR(maybeEditedBySubState), BOOL_TO_WPTR(HIST_CAND->IsHistInSearch()));
             if (!SETTINGS->autoHistSearchEnabled && !bManual) {
                 // 履歴検索状態ではないので、前回キーをクリアしておく。
@@ -1001,7 +1001,7 @@ namespace {
                 // 前回の履歴選択の出力と現在の出力文字列(改行以降)の末尾を比較する。
                 // たとえば前回「中」で履歴検索し「中納言家持」が履歴出力されており、現在の出力スタックが「・・・中納言家持」なら true が返る
                 bool bSameOut = !bManual && isLastHistOutSameAsCurrentOut();
-                LOG_INFOH(_T("bSameOut=%s, maybeEditedBySubState=%s, histInSearch=%s"), \
+                LOG_INFO(_T("bSameOut=%s, maybeEditedBySubState=%s, histInSearch=%s"), \
                     BOOL_TO_WPTR(bSameOut), BOOL_TO_WPTR(maybeEditedBySubState), BOOL_TO_WPTR(HIST_CAND->IsHistInSearch()));
                 if (bSameOut && !maybeEditedBySubState && HIST_CAND->IsHistInSearch()) {
                     // 前回履歴出力が取得できた、つまり出力文字列の末尾が前回の履歴選択と同じ出力だったら、出力文字列をキーとした履歴検索はやらない
@@ -1084,7 +1084,7 @@ namespace {
             }
             maybeEditedBySubState = false;
 
-            LOG_INFOH(_T("LEAVE"));
+            LOG_INFO(_T("LEAVE"));
         }
 
     public:

@@ -170,12 +170,12 @@
     <Compile Include="SimultaneousKeyStroke\DecoderKeyCodeList.cs" />
     <Compile Include="SimultaneousKeyStroke\Determiner.cs" />
     <Compile Include="SimultaneousKeyStroke\DeterminerLib\DeterminerImpl.cs" />
+    <Compile Include="SimultaneousKeyStroke\DeterminerLib\KeyCombinationPool.cs" />
     <Compile Include="SimultaneousKeyStroke\DeterminerLib\ShiftKeyPriority.cs" />
     <Compile Include="SimultaneousKeyStroke\DeterminerLib\TableFileParser.cs" />
     <Compile Include="SimultaneousKeyStroke\KeyCodeInfo.cs" />
     <Compile Include="SimultaneousKeyStroke\DecoderKeySequence.cs" />
     <Compile Include="SimultaneousKeyStroke\DeterminerLib\Stroke.cs" />
-    <Compile Include="SimultaneousKeyStroke\DeterminerLib\StrokeQueue.cs" />
     <Compile Include="SimultaneousKeyStroke\KeyCodeTypes.cs" />
     <Compile Include="SimultaneousKeyStroke\KeyCombination.cs" />
     <Compile Include="SimultaneousKeyStroke\Factories.cs" />

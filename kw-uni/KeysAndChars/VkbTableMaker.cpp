@@ -287,6 +287,12 @@ namespace VkbTableMaker {
         makeKeyCharsStrokePositionTable1(faces, SHIFT_B_DECKEY_START, SHIFT_DECKEY_NUM);
     }
 
+    // 同時打鍵シフト面キー文字を集めたストローク表を作成する
+    void MakeShiftMKeyCharsStrokePositionTable(wchar_t* faces) {
+        LOG_INFO(_T("CALLED"));
+        makeKeyCharsStrokePositionTable1(faces, SHIFT_M_DECKEY_START, SHIFT_DECKEY_NUM);
+    }
+
     //----------------------------------------------------------------------------
     // 初期打鍵表(下端機能キー以外は空白)の作成
     void MakeInitialVkbTable(wchar_t* faces) {

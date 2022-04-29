@@ -9,16 +9,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
 {
     class TableFileParser
     {
-        private static Logger logger = Logger.GetLogger();
-
-        // 同時打鍵組合せ
-        private Dictionary<string, KeyCombination> keyComboDict = new Dictionary<string, KeyCombination>();
-
-        // 同時打鍵組合せの部分キーの順列集合(これらは、最後に非終端となるキー順列として使う)
-        private HashSet<string> comboSubKeys = new HashSet<string>();
-
-        // ShiftKeyとして扱いうるか
-        public ShiftKeyPriority SimultaneousShiftKeys { get; private set; } = new ShiftKeyPriority();
+        private static Logger logger = Logger.GetLogger(true);
 
         private List<string> tableLines;
 
@@ -44,7 +35,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
         int nextPos = 0;                    // 次の文字位置
         char currentChar = '\0';            // 次の文字
 
-        // 同時打鍵定義ブロックの中か
+        // 関心のあるブロックの中か
         bool isInConcernedBlock = false;
 
         // 打鍵列
@@ -58,7 +49,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
 
         // テーブル定義を解析してストローク木を構築する
         // 後から部分的にストローク定義を差し込む際にも使用される
-        public Dictionary<string, KeyCombination> ParseTable(string filename) {
+        public void ParseTable(string filename) {
             logger.InfoH($"ENTER: filename={filename}");
             tableLines = readAllLines(filename);
 
@@ -91,24 +82,11 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
                 }
             }
 
-            logger.InfoH($"comboSubKeys.Count={comboSubKeys.Count}");
-            foreach (var key in comboSubKeys) {
-                // 部分キーに対して、非終端マークをセット
-                logger.DebugH(() => $"{key.Select(x => ((int)(x - 0x20)).ToString())._join(":")}");
-                keyComboDict._safeGetOrNewInsert(key).NotTerminal();
-            }
+            KeyCombinationPool.Singleton.SetNonTerminalMarkForSubkeys();
             if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
-                foreach (var pair in keyComboDict) {
-                    var key = pair.Key.Select(x => ((int)(x - 0x20)).ToString())._join(":");
-                    var deckeys = pair.Value.DecoderKeyList?.KeyString() ?? "NONE";
-                    logger.DebugH($"{key}={deckeys} {pair.Value.IsTerminal}");
-                }
-                foreach (var pair in SimultaneousShiftKeys.Pairs) {
-                    logger.DebugH($"ShiftKey: {pair.Key}={pair.Value}");
-                }
+                KeyCombinationPool.Singleton.DebugPrint();
             }
-            logger.InfoH($"LEAVE: keyComboDict.Count={keyComboDict.Count}");
-            return keyComboDict;
+            logger.InfoH($"LEAVE: KeyCombinationPool.Count={KeyCombinationPool.Singleton.Count}");
         }
 
         void parseSubTree(int depth, int prevNth)
@@ -125,7 +103,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
                         break;
 
                     case TOKEN.ARROW_BUNDLE:
-                        parseArrowBundleNode(0, arrowIndex);
+                        parseArrowBundleNode(depth, arrowIndex);
                         break;
 
                     case TOKEN.LBRACE:
@@ -161,7 +139,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
                 parseArrowNode(depth + 1, idx, arrowIndex);
                 strokes._popBack();
             }
-            parseNode(currentToken, depth, prevNth, idx);
+            parseNode(currentToken, depth + 1, prevNth, idx);
         }
 
         // 矢印束記法(-*>-nn>)を第1打鍵位置に従って配置する
@@ -212,7 +190,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
 
         void parseNode(TOKEN token, int depth, int prevNth, int nth, bool bArrowBundle = false)
         {
-            logger.Trace(() => $"CALLED: token={token}, depth={depth}, prevNth={prevNth}, nth={nth}, bArrowBundle={bArrowBundle}");
+            logger.DebugH(() => $"CALLED: token={token}, depth={depth}, prevNth={prevNth}, nth={nth}, bArrowBundle={bArrowBundle}");
             switch (token) {
                 case TOKEN.LBRACE:
                     strokes.Add(nth);
@@ -246,11 +224,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
             var keyCombo = new KeyCombination(ss);
             // 同時打鍵キー集合は、Normalキーで作成しておく
             var ts = ss.Select(x => x >= DecoderKeys.SHIFT_M_DECKEY_START ? x - DecoderKeys.SHIFT_M_DECKEY_START : x).ToList();
-            keyComboDict[KeyCombinationHelper.MakePrimaryKey(ts)] = keyCombo;
-            foreach (var key in KeyCombinationHelper.MakePermutatedKeys(ts)) {
-                if (!keyComboDict.ContainsKey(key)) { keyComboDict[key] = keyCombo; }
-            }
-            comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(ts));
+            KeyCombinationPool.Singleton.AddEntry(ts, keyCombo);
         }
 
         // 現在のトークンをチェックする
@@ -316,6 +290,8 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
                     } else if (lcStr == "end") {
                         shiftPlane = 0;
                         isInConcernedBlock = false;
+                    } else if (lcStr == "sands") {
+                        handleSandSState();
                     } else {
                         logger.DebugH(() => $"#{currentStr}");
                     }
@@ -401,8 +377,9 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
         // 名前を付けて、行ブロックを保存する
         void storeLineBlock()
         {
-            List<string> lines = null;
             readWord();
+            logger.DebugH(() => $"CALLED: {currentStr}");
+            List<string> lines = null;
             if (currentStr._isEmpty()) {
                 parseError();
             } else {
@@ -422,16 +399,36 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
         void loadLineBlock()
         {
             readWord();
+            logger.DebugH(() => $"CALLED: {currentStr}");
             if (currentStr._isEmpty()) {
                 parseError();
             } else if (isInConcernedBlock) {
                 var lines = linesMap._safeGet(currentStr);
-                if (linesMap._isEmpty()) {
+                if (lines._isEmpty()) {
                     parseError();
                 } else {
                     logger.DebugH(() => $"InsertRange: {currentStr}, {lines.Count} lines");
                     tableLines.InsertRange(lineNumber + 1, lines);
                 }
+            }
+        }
+
+        void handleSandSState()
+        {
+            readWord();
+            var word = currentStr._toLower();
+            if (currentStr._startsWith("enable")) {
+                Settings.SandSEnabled = true;
+            } else if (currentStr._startsWith("disable")) {
+                Settings.SandSEnabled = false;
+            } else if (currentStr._startsWith("enabeoneshot")) {
+                Settings.OneshotSandSEnabled = true;
+            } else if (currentStr._startsWith("disabeoneshot")) {
+                Settings.OneshotSandSEnabled = false;
+            } else if (currentStr._startsWith("enabepostshift")) {
+                Settings.SandSEnablePostShift = true;
+            } else if (currentStr._startsWith("disabepostshift")) {
+                Settings.SandSEnablePostShift = false;
             }
         }
 
@@ -444,8 +441,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
                 foreach (var keys in items[1]._split('|')) {
                     if (keys._notEmpty()) {
                         foreach (var k in keys._split(',')) {
-                            var code = k._parseInt();
-                            if (code > 0) SimultaneousShiftKeys.AddShiftKey(code, pri);
+                            KeyCombinationPool.Singleton.AddShiftKey(k._parseInt(), pri);
                         }
                     }
                     ++pri;
@@ -580,6 +576,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
                 return false;
             }
             if (c != '>') parseError();
+            logger.DebugH(() => $"depth={depth}, arrowIndex={arrowIndex}, shiftPlane={shiftPlane}, shiftOffset={shiftOffset}");
             return true;
         }
 

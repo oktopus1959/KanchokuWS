@@ -47,7 +47,7 @@ MString OutputStack::tail_string(size_t tailLen, size_t tailMaxlen, bool bWithFl
         if (bWithFlag && ((stack[pos].flag & ~FLAG_BLOCK_KATA) != 0)) buf[i++] = '|';
         ++pos;
     }
-    LOG_INFOH(_T("i=%d"), i);
+    LOG_DEBUGH(_T("i=%d"), i);
     buf[i] = 0;
     LOG_DEBUGH(_T("LEAVE: result=%s"), MAKE_WPTR(buf));
     return buf;

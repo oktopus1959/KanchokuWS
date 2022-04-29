@@ -34,5 +34,10 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
         {
             return priorityDict._safeGet(keyCode);
         }
+
+        public void Clear()
+        {
+            priorityDict.Clear();
+        }
     }
 }

@@ -19,6 +19,7 @@
 #if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
+#define LOG_INFO LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
@@ -176,10 +177,10 @@ MString State::TranslateString(const MString& outStr) {
 
 // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
 void State::DoOutStringProcChain() {
-    LOG_INFOH(_T("ENTER: %s"), NAME_PTR);
+    LOG_INFO(_T("ENTER: %s"), NAME_PTR);
     if (pNext) pNext->DoOutStringProcChain();
     if (!STATE_COMMON->IsOutStringProcDone()) DoOutStringProc();
-    LOG_INFOH(_T("LEAVE: %s"), NAME_PTR);
+    LOG_INFO(_T("LEAVE: %s"), NAME_PTR);
 }
 
 // 最終的な出力履歴が整ったところで呼び出される処理
@@ -299,7 +300,7 @@ bool State::isStrokeKey(int deckey) {
 
 // DECKEY はShift修飾キーか
 bool State::isShiftedKey(int deckey) {
-    return deckey >= SHIFT_DECKEY_START && deckey < SHIFT_B_DECKEY_END;
+    return deckey >= SHIFT_DECKEY_START && deckey < STROKE_DECKEY_END;
 }
 
 // DECKEY はモード機能キーか

@@ -16,5 +16,10 @@ namespace KanchokuWS.SimultaneousKeyStroke
         public int DecKey { get; private set; }
 
         public string KeyFace { get; private set; }
+
+        public KeyCodeInfo(int deckey)
+        {
+            DecKey = deckey;
+        }
     }
 }

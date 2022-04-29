@@ -229,6 +229,7 @@ namespace {
                     break;
 
                 case TOKEN::LBRACE:
+                    if (shiftPlane == 4) { _LOG_DEBUGH(_T("LBRACE: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), lineNumber + 1, depth, shiftPlane, prevNth, n + shiftPlaneOffset); }
                 case TOKEN::STRING:             // "str" : 文字列ノード
                 case TOKEN::FUNCTION:           // @c : 機能ノード
                     tblNode->setNthChild(n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
@@ -355,6 +356,7 @@ namespace {
                 return 0;
             case TOKEN::STRING:            // "str" : 文字列ノード
                 LOG_TRACE(_T("STRING: %d:%d=%s, shiftPlane=%d"), lineNumber + 1, nth, currentStr.c_str(), shiftPlane);
+                if (shiftPlane == 4) { _LOG_DEBUGH(_T("STRING: %s: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), currentStr.c_str(), lineNumber + 1, depth, shiftPlane, prevNth, nth); }
                 if (currentStr.empty()) return 0;
                 if (kanjiConvMap.empty()) {
                     LOG_TRACE(_T("kanjiConvMap.empty()"));
