@@ -909,8 +909,10 @@ namespace KanchokuWS
                             keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                             keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, 0);
                         }
+                    } else {
+                        // Spaceキーの解放を通知
+                        keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, 0);
                     }
-                    // 上記以外は何もせず、システムに処理をまかせる
                     return false;
                 } else if ((uint)vkey == VirtualKeys.RSHIFT) {
                     // RSHIFT

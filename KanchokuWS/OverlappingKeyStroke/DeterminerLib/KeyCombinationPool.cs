@@ -16,6 +16,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         // 副テーブル用のCombinaitonPool
         public static KeyCombinationPool Singleton2 = new KeyCombinationPool();
 
+        // 現在使用中のKeyCombinaitonPool
         public static KeyCombinationPool CurrentPool { get; private set; } = Singleton1;
 
         public static void Initialize()

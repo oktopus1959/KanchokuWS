@@ -42,7 +42,7 @@ namespace KanchokuWS.OverlappingKeyStroke
             KeyCombinationPool.ExchangeCurrentPool();
         }
 
-        public bool IsEnabled => KeyCombinationPool.CurrentPool.Count > 0;
+        public bool IsEnabled => KeyCombinationPool.CurrentPool.Enabled;
 
         /// <summary>
         /// 同時打鍵リストをクリアする
