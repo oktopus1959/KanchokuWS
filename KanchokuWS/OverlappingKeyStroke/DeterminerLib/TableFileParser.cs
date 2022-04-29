@@ -446,7 +446,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 
         void getOverlappingKeys()
         {
-            // オペランドは、shiftKeyPriority=|23,26,33,36|25,19,17 のような形式で、連続
+            // オペランドは、shiftKeys=23,26,33,36,25,19,17 のような形式('|'で区切ると優先順位の指定ができるが、現状では優先順をサポートしていない)
             readWord();
             var items = currentStr._split('=');
             if (items._safeLength() == 2 && items[1]._notEmpty()) {

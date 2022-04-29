@@ -22,15 +22,15 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         /// </summary>
         public int DecoderKeyCode { get; private set; }
 
-        /// <summary>
-        /// 同時打鍵シフトキーとしての優先順位
-        /// </summary>
-        public int ShiftPriority { get; private set; }
+        ///// <summary>
+        ///// 同時打鍵シフトキーとしての優先順位
+        ///// </summary>
+        //public int ShiftPriority { get; private set; }
 
         /// <summary>
         /// 同時打鍵シフトキーとして使われ得るか
         /// </summary>
-        public bool IsShiftable { get { return ShiftPriority > 0; } }
+        public bool IsShiftable { get; private set; }
 
         /// <summary>
         /// 同時打鍵のシフトキーになったか
@@ -77,7 +77,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         {
             DecoderKeyCode = decKey;
             NormalKeyCode = decKey % DecoderKeys.NORMAL_DECKEY_NUM;
-            ShiftPriority = KeyCombinationPool.CurrentPool.GetShiftPriority(NormalKeyCode);
+            IsShiftable = KeyCombinationPool.CurrentPool.GetShiftPriority(NormalKeyCode) > 0;
             KeyDt = dt;
         }
     }

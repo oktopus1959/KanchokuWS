@@ -82,6 +82,11 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             return GetEntry(strokeList?.Take(len).Select(x => x.NormalKeyCode));
         }
 
+        public KeyCombination GetEntry(List<Stroke> strokeList, int start, int len)
+        {
+            return GetEntry(strokeList?.Skip(start).Take(len).Select(x => x.NormalKeyCode));
+        }
+
         public KeyCombination GetEntry(int decKey)
         {
             return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(decKey));
