@@ -77,7 +77,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         {
             DecoderKeyCode = decKey;
             NormalKeyCode = decKey % DecoderKeys.NORMAL_DECKEY_NUM;
-            ShiftPriority = KeyCombinationPool.Singleton.GetShiftPriority(NormalKeyCode);
+            ShiftPriority = KeyCombinationPool.CurrentPool.GetShiftPriority(NormalKeyCode);
             KeyDt = dt;
         }
     }

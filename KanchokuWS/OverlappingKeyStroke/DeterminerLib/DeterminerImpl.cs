@@ -18,17 +18,31 @@ namespace KanchokuWS.OverlappingKeyStroke
         /// <summary>
         /// 初期化と同時打鍵組合せ辞書の読み込み
         /// </summary>
-        /// <param name="tableFile"></param>
-        public void Initialize(string tableFile)
+        /// <param name="tableFile">主テーブルファイル名</param>
+        /// <param name="tableFile2">副テーブルファイル名</param>
+        public void Initialize(string tableFile, string tableFile2)
         {
-            KeyCombinationPool.Singleton.Clear();
+            KeyCombinationPool.Initialize();
             Clear();
 
-            var parser = new TableFileParser();
+            var parser = new TableFileParser(KeyCombinationPool.Singleton1);
             parser.ParseTable(tableFile);
+
+            if (tableFile2._notEmpty()) {
+                var parser2 = new TableFileParser(KeyCombinationPool.Singleton2);
+                parser2.ParseTable(tableFile2);
+            }
         }
 
-        public bool IsEnabled => KeyCombinationPool.Singleton.Count > 0;
+        /// <summary>
+        /// 選択されたテーブルファイルに合わせて、KeyComboPoolを入れ替える
+        /// </summary>
+        public void ExchangeKeyCombinationPool()
+        {
+            KeyCombinationPool.ExchangeCurrentPool();
+        }
+
+        public bool IsEnabled => KeyCombinationPool.CurrentPool.Count > 0;
 
         /// <summary>
         /// 同時打鍵リストをクリアする
@@ -49,7 +63,7 @@ namespace KanchokuWS.OverlappingKeyStroke
             logger.DebugH(() => $"ENTER: Add new stroke: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}");
             bool flag = false;
             var stroke = new Stroke(decKey, dtNow);
-            if (strokeList._notEmpty() || !(KeyCombinationPool.Singleton.GetEntry(stroke)?.IsTerminal ?? true)) {
+            if (strokeList._notEmpty() || !(KeyCombinationPool.CurrentPool.GetEntry(stroke)?.IsTerminal ?? true)) {
                 flag = true;
                 strokeList.Add(stroke);
             }
@@ -108,7 +122,7 @@ namespace KanchokuWS.OverlappingKeyStroke
                 }
                 // シフト済み、または同時打鍵候補あり⇒長いほうからチェックして最長の同時打鍵列を求める
                 while (overlapLen > 1) {
-                    var keyList = KeyCombinationPool.Singleton.GetEntry(strokeList, overlapLen)?.DecoderKeyList;
+                    var keyList = KeyCombinationPool.CurrentPool.GetEntry(strokeList, overlapLen)?.DecoderKeyList;
                     if (keyList != null) {
                         // 同時打鍵が見つかった
                         logger.DebugH($"PATH-1: Overlap candidates found");

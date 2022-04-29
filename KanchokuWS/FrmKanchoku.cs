@@ -167,7 +167,7 @@ namespace KanchokuWS
             }
 
             // 同時打鍵設定の読み込み
-            OverlappingKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile);
+            OverlappingKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, Settings.TableFile2);
         }
 
         private void updateStrokeNodesByComplexCommands()
@@ -185,6 +185,7 @@ namespace KanchokuWS
             // 各種定義ファイルの読み込み
             ReadDefFiles();
 
+            // デコーダの再設定(ここでストローク木も構築される)
             ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
 
             updateStrokeNodesByComplexCommands();
@@ -655,6 +656,7 @@ namespace KanchokuWS
                         logger.InfoH("EXCHANGE_CODE_TABLE");
                         if (IsDecoderActive && DecoderOutput.IsWaitingFirstStroke()) {
                             ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
+                            OverlappingKeyStroke.Determiner.Singleton.ExchangeKeyCombinationPool();  // KeyCombinationPoolの入れ替え
                             frmVkb.DrawVirtualKeyboardChars();
                         }
                         return true;
@@ -1497,6 +1499,7 @@ namespace KanchokuWS
         // 辞書保存チャレンジ開始時刻
         private static DateTime saveDictsChallengeDt = DateTime.MaxValue;
 
+        // 辞書保存チャレンジ開始時刻の再初期化
         private void reinitializeSaveDictsChallengeDt()
         {
             if (Settings.SaveDictsIntervalTime > 0) {
@@ -1580,16 +1583,21 @@ namespace KanchokuWS
         {
             // キーボードハンドラの再初期化
             keDispatcher.Reinitialize();
+
             // 初期化
             VirtualKeys.Initialize();
             DlgModConversion.Initialize();
+
             // キーボードファイルの読み込み
             if (!readKeyboardFile()) return;
+
             // 設定ファイルの読み込み
             Settings.ReadIniFile();
+
             // 各種定義ファイルの読み込み
             ReloadDefFiles();
-            //ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+
+            // 辞書保存チャレンジ開始時刻の再初期化
             reinitializeSaveDictsChallengeDt();
         }
 

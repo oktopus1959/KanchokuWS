@@ -47,6 +47,18 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 4:ShiftO(Overlapping) の5面
         int shiftPlane = 0;
 
+        // 対象となる KeyComboPool
+        KeyCombinationPool keyComboPool;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="pool">対象となる KeyComboPool</param>
+        public TableFileParser(KeyCombinationPool pool)
+        {
+            keyComboPool = pool;
+        }
+
         // テーブル定義を解析してストローク木を構築する
         // 後から部分的にストローク定義を差し込む際にも使用される
         public void ParseTable(string filename) {
@@ -82,11 +94,11 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                 }
             }
 
-            KeyCombinationPool.Singleton.SetNonTerminalMarkForSubkeys();
+            keyComboPool.SetNonTerminalMarkForSubkeys();
             if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
-                KeyCombinationPool.Singleton.DebugPrint();
+                keyComboPool.DebugPrint();
             }
-            logger.InfoH($"LEAVE: KeyCombinationPool.Count={KeyCombinationPool.Singleton.Count}");
+            logger.InfoH($"LEAVE: KeyCombinationPool.Count={keyComboPool.Count}");
         }
 
         void parseSubTree(int depth, int prevNth)
@@ -224,7 +236,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             var keyCombo = new KeyCombination(ss);
             // 同時打鍵キー集合は、Normalキーで作成しておく
             var ts = ss.Select(x => x >= DecoderKeys.SHIFT_M_DECKEY_START ? x - DecoderKeys.SHIFT_M_DECKEY_START : x).ToList();
-            KeyCombinationPool.Singleton.AddEntry(ts, keyCombo);
+            keyComboPool.AddEntry(ts, keyCombo);
         }
 
         // 現在のトークンをチェックする
@@ -434,6 +446,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 
         void getOverlappingKeys()
         {
+            // オペランドは、shiftKeyPriority=|23,26,33,36|25,19,17 のような形式で、連続
             readWord();
             var items = currentStr._split('=');
             if (items._safeLength() == 2 && items[1]._notEmpty()) {
@@ -441,7 +454,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                 foreach (var keys in items[1]._split('|')) {
                     if (keys._notEmpty()) {
                         foreach (var k in keys._split(',')) {
-                            KeyCombinationPool.Singleton.AddShiftKey(k._parseInt(), pri);
+                            keyComboPool.AddShiftKey(k._parseInt(), pri);
                         }
                     }
                     ++pri;

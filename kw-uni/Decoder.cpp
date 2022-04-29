@@ -219,9 +219,11 @@ public:
             // エラー
             ERROR_HANDLER->Error(_T("「tableFile=(ファイル名)」の設定がまちがっているようです"));
         } else {
+            // 主テーブルファイルの構築
             createStrokeTree(SETTINGS->tableFile, [](std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree(lines);});
 
             if (!SETTINGS->tableFile2.empty()) {
+                // 副テーブルファイルの構築
                 createStrokeTree(SETTINGS->tableFile2, [](std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree2(lines);});
             }
         }

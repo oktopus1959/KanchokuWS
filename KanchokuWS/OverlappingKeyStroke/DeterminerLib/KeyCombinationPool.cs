@@ -10,12 +10,33 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
     {
         private static Logger logger = Logger.GetLogger(true);
 
-        public static KeyCombinationPool Singleton = new KeyCombinationPool();
+        // 主テーブル用のCombinaitonPool
+        public static KeyCombinationPool Singleton1 = new KeyCombinationPool();
+
+        // 副テーブル用のCombinaitonPool
+        public static KeyCombinationPool Singleton2 = new KeyCombinationPool();
+
+        public static KeyCombinationPool CurrentPool { get; private set; } = Singleton1;
+
+        public static void Initialize()
+        {
+            Singleton1.Clear();
+            Singleton2.Clear();
+        }
+
+        public static void ExchangeCurrentPool()
+        {
+            CurrentPool = CurrentPool == Singleton1 ? Singleton2 : Singleton1;
+            logger.DebugH(() => $"CurrentPool={(CurrentPool == Singleton1 ? 1 : 2)}");
+        }
 
         // 同時打鍵組合せ
         private Dictionary<string, KeyCombination> keyComboDict = new Dictionary<string, KeyCombination>();
 
         public int Count { get { return keyComboDict.Count; } }
+
+        // 利用可能か
+        public bool Enabled => Count > 0;
 
         // 同時打鍵組合せの部分キーの順列集合(これらは、最後に非終端となるキー順列として使う)
         private HashSet<string> comboSubKeys = new HashSet<string>();

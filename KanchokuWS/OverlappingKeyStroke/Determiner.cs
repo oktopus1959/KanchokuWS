@@ -20,10 +20,18 @@ namespace KanchokuWS.OverlappingKeyStroke
         /// <summary>
         /// テーブルファイルを読み込んで同時打鍵定義を初期化する
         /// </summary>
-        public void Initialize(string tableFile)
+        public void Initialize(string tableFile, string tableFile2)
         {
-            logger.InfoH(() => $"CALLED: tableFile={tableFile}");
-            impl.Initialize(tableFile);
+            logger.InfoH(() => $"CALLED: tableFile={tableFile}, tableFile2={tableFile2}");
+            impl.Initialize(tableFile, tableFile2);
+        }
+
+        /// <summary>
+        /// 選択されたテーブルファイルに合わせて、KeyComboPoolを入れ替える
+        /// </summary>
+        public void ExchangeKeyCombinationPool()
+        {
+            impl.ExchangeKeyCombinationPool();
         }
 
         /// <summary>
@@ -41,7 +49,7 @@ namespace KanchokuWS.OverlappingKeyStroke
         /// <returns>同時打鍵が有効なら true を返す<br/>無効なら false を返す</returns>
         public bool KeyDown(int decKey)
         {
-            logger.DebugH(() => $"\nCALLED: decKey={decKey}");
+            logger.DebugH(() => $"\nCALLED: decKey={decKey}, Determiner.Enabled={impl.IsEnabled}");
             if (!impl.IsEnabled) return false;
             return impl.KeyDown(decKey);
         }
