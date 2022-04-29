@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KanchokuWS.SimultaneousKeyStroke
+namespace KanchokuWS.OverlappingKeyStroke
 {
     /// <summary>
     /// VirtualKey, DecoderKey, KeyFace などの情報をまとめた構造体

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using KanchokuWS.SimultaneousKeyStroke.DeterminerLib;
+using KanchokuWS.OverlappingKeyStroke.DeterminerLib;
 using Utils;
 
-namespace KanchokuWS.SimultaneousKeyStroke
+namespace KanchokuWS.OverlappingKeyStroke
 {
     class DeterminerImpl
     {
@@ -96,8 +96,8 @@ namespace KanchokuWS.SimultaneousKeyStroke
                         double ms1 = strokeList[0].TimeSpanMs(strokeList[i]);
                         double ms2 = strokeList[i].TimeSpanMs(dtNow);
                         double rate = (ms2 / (ms1 + ms2)) * 100.0;
-                        logger.DebugH(() => $"ms1={ms1:f2}, ms2={ms2:f2}, ovlRate={rate:f1}, threshold={Settings.SimultaneousKeyOverlapTimeRate}");
-                        if (ms1 <= Settings.SimultaneousMaxAllowedLeadTimeMs && (rate >= Settings.SimultaneousKeyOverlapTimeRate || ms2 >= Settings.SimultaneousKeyOverlapTimeMs)) {
+                        logger.DebugH(() => $"ms1={ms1:f2}, ms2={ms2:f2}, ovlRate={rate:f1}, threshold={Settings.OverlappingKeyTimeRate}");
+                        if (ms1 <= Settings.OverlappingMaxAllowedLeadTimeMs && (rate >= Settings.OverlappingKeyTimeRate || ms2 >= Settings.OverlappingKeyTimeMs)) {
                             overlapLen = i + 1;
                             break;
                         }

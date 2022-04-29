@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using KanchokuWS.SimultaneousKeyStroke.DeterminerLib;
+using KanchokuWS.OverlappingKeyStroke.DeterminerLib;
 
-namespace KanchokuWS.SimultaneousKeyStroke
+namespace KanchokuWS.OverlappingKeyStroke
 {
     static class Factories
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
+namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 {
     /// <summary>
     /// 打鍵キューに保持されるストロークを表現するクラス<br/>

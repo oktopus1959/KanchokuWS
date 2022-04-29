@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Utils;
 
-namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
+namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 {
     class KeyCombinationPool
     {
@@ -21,13 +21,13 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
         private HashSet<string> comboSubKeys = new HashSet<string>();
 
         // ShiftKeyとして扱いうるキー
-        public ShiftKeyPriority SimultaneousShiftKeys { get; private set; } = new ShiftKeyPriority();
+        public ShiftKeyPriority OverlappingShiftKeys { get; private set; } = new ShiftKeyPriority();
 
         public void Clear()
         {
             keyComboDict.Clear();
             comboSubKeys.Clear();
-            SimultaneousShiftKeys.Clear();
+            OverlappingShiftKeys.Clear();
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
         /// <param name="priority"></param>
         public void AddShiftKey(int keyCode, int priority)
         {
-            if (keyCode > 0) SimultaneousShiftKeys.AddShiftKey(keyCode, priority);
+            if (keyCode > 0) OverlappingShiftKeys.AddShiftKey(keyCode, priority);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
         /// <returns></returns>
         public int GetShiftPriority(int keyCode)
         {
-            return SimultaneousShiftKeys.GetShiftPriority(keyCode);
+            return OverlappingShiftKeys.GetShiftPriority(keyCode);
         }
 
         public void DebugPrint()
@@ -118,7 +118,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
                 var deckeys = pair.Value.DecoderKeyList?.KeyString() ?? "NONE";
                 logger.DebugH($"{key}={deckeys} {pair.Value.IsTerminal}");
             }
-            foreach (var pair in SimultaneousShiftKeys.Pairs) {
+            foreach (var pair in OverlappingShiftKeys.Pairs) {
                 logger.DebugH($"ShiftKey: {pair.Key}={pair.Value}");
             }
         }

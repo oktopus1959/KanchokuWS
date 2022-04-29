@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utils;
 
-namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
+namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 {
     class TableFileParser
     {
@@ -44,7 +44,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
         // 定義列マップ
         Dictionary<string, List<string>> linesMap = new Dictionary<string, List<string>>();
 
-        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 4:ShiftX(Simultaneous) の5面
+        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 4:ShiftO(Overlapping) の5面
         int shiftPlane = 0;
 
         // テーブル定義を解析してストローク木を構築する
@@ -200,7 +200,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
 
                 case TOKEN.STRING:            // "str" : 文字列ノード
                     if (isInConcernedBlock) {
-                        makeSimultaneousKeyCombo(nth);
+                        makeOverlappingKeyCombo(nth);
                     }
                     return;
 
@@ -216,7 +216,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
         }
 
         // 同時打鍵組合せを作成する
-        void makeSimultaneousKeyCombo(int nth)
+        void makeOverlappingKeyCombo(int nth)
         {
             var ss = new List<int>(strokes);
             ss.Add(nth);
@@ -258,7 +258,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
                 }
 
                 if (currentChar == '#') {
-                    // Directive: '#include', '#define', '#strokePosition', '#*shift*', '#simultaneous', '#yomiConvert', '#store', '#load', '#end' または '#' 以降、行末までコメント
+                    // Directive: '#include', '#define', '#strokePosition', '#*shift*', '#overlapping', '#yomiConvert', '#store', '#load', '#end' または '#' 以降、行末までコメント
                     readWord();
                     var lcStr = currentStr._toLower();
                     if (lcStr == "include") {
@@ -283,10 +283,10 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
                         shiftPlane = 2;
                     } else if (lcStr == "shiftb") {
                         shiftPlane = 3;
-                    } else if (lcStr == "shiftm" || lcStr == "simultaneous") {
+                    } else if (lcStr == "shifto" || lcStr == "overlapping") {
                         shiftPlane = 4;
                         isInConcernedBlock = true;
-                        getSimultaneousKeys();
+                        getOverlappingKeys();
                     } else if (lcStr == "end") {
                         shiftPlane = 0;
                         isInConcernedBlock = false;
@@ -432,7 +432,7 @@ namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
             }
         }
 
-        void getSimultaneousKeys()
+        void getOverlappingKeys()
         {
             readWord();
             var items = currentStr._split('=');

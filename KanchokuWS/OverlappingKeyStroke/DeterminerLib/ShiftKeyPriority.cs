@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utils;
 
-namespace KanchokuWS.SimultaneousKeyStroke.DeterminerLib
+namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 {
     class ShiftKeyPriority
     {

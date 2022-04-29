@@ -835,7 +835,7 @@ namespace KanchokuWS
             }
             if (bDecoderOn && mod == 0 &&
                 (kanchokuCode >= 0 && kanchokuCode < DecoderKeys.NORMAL_DECKEY_END || kanchokuCode >= DecoderKeys.SHIFT_A_DECKEY_START && kanchokuCode < DecoderKeys.SHIFT_A_DECKEY_END) &&
-                SimultaneousKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode)) {
+                OverlappingKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode)) {
                 return true;
             } else {
                 return invokeHandler(kanchokuCode, mod);
@@ -953,7 +953,7 @@ namespace KanchokuWS
             if (bDecoderOn && !leftCtrl && !rightCtrl && modFlag == 0) {
                 int deckey = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
                 if (deckey >= 0 && (deckey < DecoderKeys.NORMAL_DECKEY_END || deckey >= DecoderKeys.SHIFT_A_DECKEY_START && deckey < DecoderKeys.SHIFT_A_DECKEY_END)) {
-                    var keyList = SimultaneousKeyStroke.Determiner.Singleton.KeyUp(deckey);
+                    var keyList = OverlappingKeyStroke.Determiner.Singleton.KeyUp(deckey);
                     if (keyList._notEmpty()) {
                         foreach (var k in keyList) {
                             invokeHandler(k, 0);

@@ -116,7 +116,7 @@ namespace {
             return result;
         }
 
-        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 4:ShiftX(Simultaneous) の5面
+        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 4:ShiftO(Overlapping) の5面
         int shiftPlane = 0;
 
         // 打鍵マップ
@@ -436,7 +436,7 @@ namespace {
             while (true) {
                 switch (getNextChar()) {
                 case '#': {
-                    // '#include', '#define', '#strokePosition', '#*shift*', '#simultaneous', '#yomiConvert', '#store', '#load', '#end' または '#' 以降、行末までコメント
+                    // '#include', '#define', '#strokePosition', '#*shift*', '#overlapping', '#yomiConvert', '#store', '#load', '#end' または '#' 以降、行末までコメント
                     wstring filename;
                     readWord();
                     auto lcStr = utils::toLower(currentStr);
@@ -510,7 +510,7 @@ namespace {
                         shiftPlane = 2;
                     } else if (lcStr == _T("shiftb")) {
                         shiftPlane = 3;
-                    } else if (lcStr == _T("shiftm") || lcStr == _T("simultaneous")) {
+                    } else if (lcStr == _T("shifto") || lcStr == _T("overlapping")) {
                         shiftPlane = 4;
                         skipToEndOfLine();
                     } else if (lcStr == _T("end")) {

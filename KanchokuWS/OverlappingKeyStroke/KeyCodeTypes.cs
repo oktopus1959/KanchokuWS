@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KanchokuWS.SimultaneousKeyStroke
+namespace KanchokuWS.OverlappingKeyStroke
 {
     public struct VirtualKeyCode
     {
