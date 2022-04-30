@@ -23,6 +23,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         {
             Singleton1.Clear();
             Singleton2.Clear();
+            CurrentPool = Singleton1;
         }
 
         public static void ExchangeCurrentPool()

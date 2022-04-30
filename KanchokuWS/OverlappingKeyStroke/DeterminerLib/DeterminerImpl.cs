@@ -22,6 +22,7 @@ namespace KanchokuWS.OverlappingKeyStroke
         /// <param name="tableFile2">副テーブルファイル名</param>
         public void Initialize(string tableFile, string tableFile2)
         {
+            Settings.ClearSpecificDecoderSettings();
             KeyCombinationPool.Initialize();
             Clear();
 

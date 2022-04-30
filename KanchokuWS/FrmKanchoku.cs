@@ -654,7 +654,7 @@ namespace KanchokuWS
                         return true;
                     case DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY:
                         logger.InfoH("EXCHANGE_CODE_TABLE");
-                        if (IsDecoderActive && DecoderOutput.IsWaitingFirstStroke()) {
+                        if (IsDecoderActive && Settings.TableFile2._notEmpty() && DecoderOutput.IsWaitingFirstStroke()) {
                             ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
                             OverlappingKeyStroke.Determiner.Singleton.ExchangeKeyCombinationPool();  // KeyCombinationPoolの入れ替え
                             frmVkb.DrawVirtualKeyboardChars();
