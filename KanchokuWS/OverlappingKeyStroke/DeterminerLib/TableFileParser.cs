@@ -312,6 +312,8 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                         isInConcernedBlock = false;
                     } else if (lcStr == "sands") {
                         handleSandSState();
+                    } else if (lcStr == "set") {
+                        handleSettings();
                     } else {
                         logger.DebugH(() => $"#{currentStr}");
                     }
@@ -450,6 +452,31 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             } else if (currentStr._startsWith("disabepostshift")) {
                 Settings.SandSEnablePostShift = false;
             }
+        }
+
+        /// <summary>
+        /// Settings のプロパティに値を設定する
+        /// </summary>
+        void handleSettings()
+        {
+            readWord();
+            var items = currentStr._split('=');
+            if (items._safeLength() == 2 && items[0]._notEmpty() && items[1]._notEmpty()) {
+                var propName = items[0];
+                var strVal = items[1];
+                const int errorVal = -999999;
+                int iVal = strVal._parseInt(errorVal, errorVal);
+                if (iVal != errorVal) {
+                    if (Settings.SetValueByName(propName, iVal)) return;
+                } else if (strVal._toLower()._equalsTo("true")) {
+                    if (Settings.SetValueByName(propName, true)) return;
+                } else if (strVal._toLower()._equalsTo("false")) {
+                    if (Settings.SetValueByName(propName, false)) return;
+                } else {
+                    if (Settings.SetValueByName(propName, strVal)) return;
+                }
+            }
+            parseError();
         }
 
         void getOverlappingKeys()

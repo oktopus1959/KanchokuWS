@@ -3,12 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
+
 using Utils;
 
 namespace KanchokuWS
 {
     public static class Settings
     {
+        private static Logger logger = Logger.GetLogger(true);
+
+        //-------------------------------------------------------------------------------------
+        /// <summary>
+        /// 名前で指定されたプロパティに値を設定する
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="propName"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool SetValueByName<T>(string propName, T value)
+        {
+            logger.DebugH(() => $"CALLED: propName={propName}, value={value}");
+            try {
+                Type myClass = typeof(Settings);
+                var prop = myClass.GetProperty(propName, BindingFlags.Static | BindingFlags.Public);
+                prop.SetValue(myClass, value, BindingFlags.Static, null, null, null);
+                var decoderPropName = propName._safeSubstring(0, 1)._toLower() + propName._safeSubstring(1);
+                specificDecoderSettings[decoderPropName] = value.ToString();
+                return true;
+            } catch (Exception e) {
+                logger.Error(e._getErrorMsg());
+                return false;
+            }
+        }
+
+        public static void ClearSpecificDecoderSettings()
+        {
+            specificDecoderSettings.Clear();
+        }
+
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
         public static string Version => "1.1.23";
@@ -529,9 +562,11 @@ namespace KanchokuWS
 
         //------------------------------------------------------------------------------
         /// <summary>デコーダ用の設定辞書</summary>
-        public static Dictionary<string, string> DecoderSettings { get; private set; } = new Dictionary<string, string>();
+        private static Dictionary<string, string> DecoderSettings { get; set; } = new Dictionary<string, string>();
 
-        public static string SerializedDecoderSettings => DecoderSettings.Select(pair => $"{pair.Key}={pair.Value}")._join("\n");
+        private static Dictionary<string, string> specificDecoderSettings { get; set; } = new Dictionary<string, string>();
+
+        public static string SerializedDecoderSettings => DecoderSettings.Select(pair => $"{pair.Key}={specificDecoderSettings._safeGet(pair.Key)._orElse(pair.Value)}")._join("\n");
 
         //------------------------------------------------------------------------------
         public static string GetString(string attr, string defval = "")

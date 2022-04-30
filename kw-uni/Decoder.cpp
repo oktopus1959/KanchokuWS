@@ -178,7 +178,7 @@ public:
 
         LOG_INFO(_T("LEAVE"));
     }
-   
+
     // settings のロード
     void loadSettings(const wstring & settings) {
         LOG_INFO(_T("ENTER: settings=%s"), settings.c_str());
