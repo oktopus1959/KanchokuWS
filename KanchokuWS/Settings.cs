@@ -14,6 +14,11 @@ namespace KanchokuWS
         private static Logger logger = Logger.GetLogger(true);
 
         //-------------------------------------------------------------------------------------
+        /// <summary> バージョン </summary>
+        public static string Version => "1.2.0.1";
+        public static string Version2 => "(nicola)";
+
+        //-------------------------------------------------------------------------------------
         /// <summary>
         /// 名前で指定されたプロパティに値を設定する
         /// </summary>
@@ -41,10 +46,6 @@ namespace KanchokuWS
         {
             specificDecoderSettings.Clear();
         }
-
-        //-------------------------------------------------------------------------------------
-        /// <summary> バージョン </summary>
-        public static string Version => "1.1.23";
 
         /// <summary> ドキュメントへのURL </summary>
         public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";

@@ -32,6 +32,7 @@ namespace KanchokuWS
             FormBorderStyle = FormBorderStyle.None;
 
             label_version.Text += Settings.Version;
+            label_version2.Text = Settings.Version2;
 
             double dpiRate = ScreenInfo.GetScreenDpiRate(this.Left, this.Top);
             this.Width = (int)(this.Width * dpiRate);
