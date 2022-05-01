@@ -34,6 +34,11 @@ namespace utils {
         }
     }
 
+    // path のデリミタの正規化
+    inline tstring canonicalizePathDelimiter(const tstring& path) {
+        return utils::replace_all(path, '/', '\\');
+    }
+
     // カレントディレクトリの取得
     inline tstring getCurrentDirName() {
         TCHAR dirName[MAX_PATH + 1];

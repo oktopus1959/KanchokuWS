@@ -461,6 +461,12 @@ namespace utils
         return (pos == tstring::npos) ? s : s.substr(0, pos) + r + s.substr(pos + wcslen(t));
     }
 
+    inline tstring replace_all(const tstring& s, wchar_t t, wchar_t r) {
+        tstring result = s;
+        std::replace(result.begin(), result.end(), t, r);
+        return result;
+    }
+
     // 文字列の末尾の n 文字からなら部分文字列を返す
     inline tstring last_substr(const tstring& s, size_t n) {
         size_t len = s.size();

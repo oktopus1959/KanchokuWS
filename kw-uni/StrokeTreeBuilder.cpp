@@ -104,6 +104,11 @@ namespace {
         size_t nextPos = 0;                 // 次の文字位置
         char_t currentChar = 0;             // 次の文字
 
+        // include ファイルのスタック
+        std::vector<wstring> includeDirStack;
+        std::vector<wstring> includeFileStack;
+        std::vector<size_t> includeLineOffsettack;
+
         std::map<wstring, wstring> defines; // 定義
 
         wstring getAndRemoveDefines(const wstring& key) {
@@ -143,6 +148,9 @@ namespace {
         // bPrimaryTable: 主テーブルなら true を渡す。副テーブルや後からの定義差し込みなら false を渡す
         StrokeTreeBuilder(std::vector<wstring>& lines, bool bPrimaryTable)
             : tableLines(lines) {
+            includeDirStack.push_back(SETTINGS->rootDir);
+            includeFileStack.push_back(_T(""));
+            includeLineOffsettack.push_back(0);
             if (!tableLines.empty()) {
                 currentLine = tableLines[0];
             }
@@ -514,7 +522,21 @@ namespace {
                         shiftPlane = 4;
                         skipToEndOfLine();
                     } else if (lcStr == _T("end")) {
-                        shiftPlane = 0;
+                        readWord();
+                        auto word = utils::toLower(currentStr);
+                        _LOG_DEBUGH(_T("end %s"), word.c_str());
+                        if (word == _T("shifto") || word == _T("overlapping")) {
+                            shiftPlane = 0;
+                        } else if (word == _T("__include__")) {
+                            _LOG_DEBUGH(_T("includeDirStack.pop_back()"));
+                            includeDirStack.pop_back();
+                            includeFileStack.pop_back();
+                            includeLineOffsettack.pop_back();
+                            if (!includeLineOffsettack.empty()) {
+                                includeLineOffsettack.back() = lineNumber;
+                                _LOG_DEBUGH(_T("includeFileStack.back()=%s, includeLineOffsettack.back()=%d"), includeFileStack.back().c_str(), includeLineOffsettack.back());
+                            }
+                        }
                         skipToEndOfLine();
                     } else {
                         _LOG_DEBUGH(_T("#%s"), currentStr.c_str());
@@ -613,7 +635,7 @@ namespace {
             }
         }
 
-        // 次の空白文字までを読み込んで、currentStr に格納。
+        // 行末までの間で、次の空白文字までを読み込んで、currentStr に格納。
         void readWord() {
             currentStr.clear();
             char_t c = skipSpace();
@@ -622,7 +644,7 @@ namespace {
             readWordSub(c);
         }
 
-        // 次の空白文字までを読み込んで、currentStr に格納。
+        // 行末までの間で、次の空白文字までを読み込んで、currentStr に格納。
         void readWordSub(wchar_t c) {
             currentStr.append(1, c);
             while (true) {
@@ -632,7 +654,7 @@ namespace {
             }
         }
 
-        // 文字列または単語を読み込む
+        // 行末までの間で、文字列または単語を読み込む
         void readWordOrString() {
             currentStr.clear();
             char_t c = skipSpace();
@@ -754,13 +776,18 @@ namespace {
         }
 
         void readFile(const wstring& filename) {
-            _LOG_DEBUGH(_T("INCLUDE: %s"), filename.c_str());
-            auto reader = utils::IfstreamReader(utils::joinPath(SETTINGS->rootDir, filename));
+            auto includeFilePath = utils::joinPath(includeDirStack.back(), utils::canonicalizePathDelimiter(filename));
+            _LOG_DEBUGH(_T("INCLUDE FILE PATH: %s"), includeFilePath.c_str());
+            auto reader = utils::IfstreamReader(includeFilePath);
             if (reader.success()) {
                 auto lines = reader.getAllLines();
+                lines.push_back(_T("#end __include__"));
                 tableLines.insert(tableLines.begin() + lineNumber + 1, lines.begin(), lines.end());
+                includeDirStack.push_back(utils::getParentDirPath(includeFilePath));
+                includeFileStack.push_back(filename);
+                includeLineOffsettack.push_back(lineNumber);
             } else {
-                LOG_ERROR(_T("Can't open: %s"), filename.c_str());
+                LOG_ERROR(_T("Can't open: %s"), includeFilePath.c_str());
             }
         }
 
@@ -816,8 +843,10 @@ namespace {
 
         // 読みこみに失敗した場合
         void parseError() {
+            _LOG_DEBUGH(_T("lineNumber=%d, lineOffset=%d"), lineNumber, includeLineOffsettack.back());
             wchar_t buf[2] = { currentChar, 0 };
-            wstring msg = utils::format(_T("テーブルファイルの %d 行 %d文字目('%s')がまちがっているようです：\r\n> %s ..."), lineNumber, nextPos, buf, currentLine.substr(0, 50).c_str());
+            wstring msg = utils::format(_T("テーブルファイル %s の %d 行 %d文字目('%s')がまちがっているようです：\r\n> %s ..."), \
+                includeFileStack.back().c_str(), lineNumber + 1 - includeLineOffsettack.back(), nextPos, buf, currentLine.substr(0, 50).c_str());
             LOG_ERROR(msg);
             wstring lines;
             for (size_t i = 10; i > 0; --i) {

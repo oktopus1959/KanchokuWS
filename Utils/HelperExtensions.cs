@@ -1753,6 +1753,15 @@ namespace Utils
         }
 
         /// <summary>
+        /// リストの末尾要素を除去。リストを返す。
+        /// </summary>
+        public static List<T> _safePopBack<T>(this List<T> list)
+        {
+            if (list != null && list.Count > 0) list.RemoveAt(list.Count - 1);
+            return list;
+        }
+
+        /// <summary>
         /// リストの各要素を join する。
         /// </summary>
         public static string _join(this List<string> list, string delim)

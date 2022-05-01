@@ -50,6 +50,9 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         // 対象となる KeyComboPool
         KeyCombinationPool keyComboPool;
 
+        // include ファイル名のスタック
+        List<string> includeDirStack;
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -57,6 +60,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         public TableFileParser(KeyCombinationPool pool)
         {
             keyComboPool = pool;
+            includeDirStack = Helper.MakeList(KanchokuIni.Singleton.KanchokuDir);
         }
 
         // テーブル定義を解析してストローク木を構築する
@@ -308,8 +312,18 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                         isInConcernedBlock = true;
                         //getOverlappingKeys();
                     } else if (lcStr == "end") {
-                        shiftPlane = 0;
-                        isInConcernedBlock = false;
+                        readWord();
+                        switch (currentStr._toLower()) {
+                            case "shifto":
+                            case "overlapping":
+                                shiftPlane = 0;
+                                isInConcernedBlock = false;
+                                break;
+                            case "__include__":
+                                logger.DebugH("includeDirStack._safePopBack()");
+                                includeDirStack._safePopBack();
+                                break;
+                        }
                     } else if (lcStr == "sands") {
                         handleSandSState();
                     } else if (lcStr == "set") {
@@ -689,10 +703,13 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 
         List<string> readAllLines(string filename)
         {
-            logger.DebugH(() => $"ENTER: filename={filename}");
             var lines = new List<string>();
             if (filename._notEmpty()) {
-                lines = Helper.GetFileContent(KanchokuIni.Singleton.KanchokuDir._joinPath(filename))._safeReplace("\r", "")._split('\n')?.ToList() ?? new List<string>();
+                var includeFilePath = includeDirStack.Last()._joinPath(filename._canonicalPath());
+                logger.DebugH(() => $"ENTER: includeFilePath={includeFilePath}");
+                lines = Helper.GetFileContent(includeFilePath)._safeReplace("\r", "")._split('\n')?.ToList() ?? new List<string>();
+                lines.Add("#end __include__");
+                includeDirStack.Add(includeFilePath._getDirPath());
             }
             logger.DebugH(() => $"LEAVE: num of lines={lines.Count}");
             return lines;
