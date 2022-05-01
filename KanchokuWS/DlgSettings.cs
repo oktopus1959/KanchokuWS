@@ -16,7 +16,7 @@ namespace KanchokuWS
 {
     public partial class DlgSettings : Form
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         public static DlgSettings ShownDlg { get; private set; } = null;
 
@@ -368,13 +368,33 @@ namespace KanchokuWS
             textBox_keyboardFile.Text = Settings.KeyboardFile;
             textBox_deckeyCharsFile.Text = Settings.GetString("charsDefFile");
             textBox_easyCharsFile.Text = Settings.EasyCharsFile;
-            textBox_tableFile.Text = Settings.TableFile;
-            textBox_tableFile2.Text = Settings.TableFile2;
             textBox_strokeHelpFile.Text = Settings.StrokeHelpFile;
             textBox_bushuCompFile.Text = Settings.BushuFile;
             textBox_bushuAssocFile.Text = Settings.BushuAssocFile;
             textBox_mazegakiFile.Text = Settings.MazegakiFile;
             textBox_historyFile.Text = Settings.HistoryFile;
+
+            // テーブルファイル
+            string getTableName(string filepath)
+            {
+                logger.DebugH(() => $"filepath={filepath}");
+                var filename = Helper.GetFileName(filepath);
+                var content = Helper.GetFileHead(filepath, 2048);
+                if (content._notEmpty()) {
+                    //logger.DebugH(() => $"content={content}");
+                    var list = content._reScan(@"#define\s+table-name\s+""([^""]+)");
+                    logger.DebugH(() => $"match: {list._getFirst()}, {list._getSecond()}, list.Count={list._safeCount()}");
+                    if (list._safeCount() >= 2) return $"{list[1]} ({filename})";
+                }
+                return filename;
+            }
+            var fileList = Helper.GetFiles(KanchokuIni.Singleton.KanchokuDir, "*.tbl").Select(x => getTableName(x)).ToArray();
+            comboBox_tableFile.Items.Clear();
+            comboBox_tableFile.Items.AddRange(fileList);
+            comboBox_tableFile2.Items.Clear();
+            comboBox_tableFile2.Items.AddRange(fileList);
+            if (Settings.TableFile._notEmpty()) comboBox_tableFile.Text = getTableName(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.TableFile));
+            if (Settings.TableFile2._notEmpty()) comboBox_tableFile2.Text = getTableName(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.TableFile2));
         }
 
         private void selectModeToggleKeyItem(ComboBox cbx, string hex)
@@ -417,8 +437,8 @@ namespace KanchokuWS
             checkerBasic.Add(textBox_keyboardFile);
             checkerBasic.Add(textBox_deckeyCharsFile);
             checkerBasic.Add(textBox_easyCharsFile);
-            checkerBasic.Add(textBox_tableFile);
-            checkerBasic.Add(textBox_tableFile2);
+            checkerBasic.Add(comboBox_tableFile);
+            checkerBasic.Add(comboBox_tableFile2);
             checkerBasic.Add(textBox_strokeHelpFile);
             checkerBasic.Add(textBox_bushuCompFile);
             checkerBasic.Add(textBox_bushuAssocFile);
@@ -432,6 +452,13 @@ namespace KanchokuWS
         {
             button_basicClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
             changeCancelButton(flag, button_basicClose);
+        }
+
+        string getTableFileName(string tableFileSpec)
+        {
+            var items = tableFileSpec._strip()._reScan(@" \((.+)\)$");
+            logger.DebugH(() => $"{items._getFirst()}, {items._getNth(1)}, {items._getNth(2)}, {items._getNth(3)}");
+            return items._getNth(1)._orElse(tableFileSpec._strip());
         }
 
         private void button_basicEnter_Click(object sender, EventArgs e)
@@ -461,8 +488,8 @@ namespace KanchokuWS
             Settings.SetUserIni("keyboard", textBox_keyboardFile.Text.Trim());
             Settings.SetUserIni("charsDefFile", textBox_deckeyCharsFile.Text.Trim());
             Settings.SetUserIni("easyCharsFile", textBox_easyCharsFile.Text.Trim());
-            Settings.SetUserIni("tableFile", textBox_tableFile.Text.Trim());
-            Settings.SetUserIni("tableFile2", textBox_tableFile2.Text.Trim());
+            Settings.SetUserIni("tableFile", getTableFileName(comboBox_tableFile.Text));
+            Settings.SetUserIni("tableFile2", getTableFileName(comboBox_tableFile2.Text));
             Settings.SetUserIni("strokeHelpFile", textBox_strokeHelpFile.Text.Trim());
             Settings.SetUserIni("bushuFile", textBox_bushuCompFile.Text.Trim());
             Settings.SetUserIni("bushuAssocFile", textBox_bushuAssocFile.Text.Trim());
@@ -2251,13 +2278,13 @@ namespace KanchokuWS
         private void button_openTableFile_Click(object sender, EventArgs e)
         {
             logger.InfoH("CALLED");
-            openFileByTxtAssociatedProgram(Settings.TableFile);
+            openFileByTxtAssociatedProgram(getTableFileName(comboBox_tableFile.Text));
         }
 
         private void button_openTableFile2_Click(object sender, EventArgs e)
         {
             logger.InfoH("CALLED");
-            openFileByTxtAssociatedProgram(Settings.TableFile2);
+            openFileByTxtAssociatedProgram(getTableFileName(comboBox_tableFile2.Text));
         }
 
         private void button_openKeyCharMapFile_Click(object sender, EventArgs e)

@@ -37,8 +37,9 @@ namespace KanchokuWS
             this.button_document = new System.Windows.Forms.Button();
             this.button_restart = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.comboBox_tableFile2 = new System.Windows.Forms.ComboBox();
+            this.comboBox_tableFile = new System.Windows.Forms.ComboBox();
             this.button_openTableFile2 = new System.Windows.Forms.Button();
-            this.textBox_tableFile2 = new System.Windows.Forms.TextBox();
             this.label104 = new System.Windows.Forms.Label();
             this.button_openHistoryFile = new System.Windows.Forms.Button();
             this.button_openMazeFile = new System.Windows.Forms.Button();
@@ -53,7 +54,6 @@ namespace KanchokuWS
             this.label47 = new System.Windows.Forms.Label();
             this.textBox_easyCharsFile = new System.Windows.Forms.TextBox();
             this.label44 = new System.Windows.Forms.Label();
-            this.textBox_tableFile = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.textBox_deckeyCharsFile = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -608,8 +608,9 @@ namespace KanchokuWS
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.comboBox_tableFile2);
+            this.groupBox2.Controls.Add(this.comboBox_tableFile);
             this.groupBox2.Controls.Add(this.button_openTableFile2);
-            this.groupBox2.Controls.Add(this.textBox_tableFile2);
             this.groupBox2.Controls.Add(this.label104);
             this.groupBox2.Controls.Add(this.button_openHistoryFile);
             this.groupBox2.Controls.Add(this.button_openMazeFile);
@@ -624,7 +625,6 @@ namespace KanchokuWS
             this.groupBox2.Controls.Add(this.label47);
             this.groupBox2.Controls.Add(this.textBox_easyCharsFile);
             this.groupBox2.Controls.Add(this.label44);
-            this.groupBox2.Controls.Add(this.textBox_tableFile);
             this.groupBox2.Controls.Add(this.label18);
             this.groupBox2.Controls.Add(this.textBox_deckeyCharsFile);
             this.groupBox2.Controls.Add(this.label10);
@@ -646,10 +646,35 @@ namespace KanchokuWS
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "ファイル";
             // 
+            // comboBox_tableFile2
+            // 
+            this.comboBox_tableFile2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox_tableFile2.FormattingEnabled = true;
+            this.comboBox_tableFile2.Location = new System.Drawing.Point(129, 63);
+            this.comboBox_tableFile2.Name = "comboBox_tableFile2";
+            this.comboBox_tableFile2.Size = new System.Drawing.Size(144, 23);
+            this.comboBox_tableFile2.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.comboBox_tableFile2, "打鍵から文字への副変換テーブルファイルの設定\r\n\r\nファイルの内容は主テーブルファイルと同様です。\r\n切り替えコマンドにより、主・副テーブルファイルを切り替えるこ" +
+        "とができます。\r\n");
+            // 
+            // comboBox_tableFile
+            // 
+            this.comboBox_tableFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox_tableFile.FormattingEnabled = true;
+            this.comboBox_tableFile.Location = new System.Drawing.Point(129, 38);
+            this.comboBox_tableFile.Name = "comboBox_tableFile";
+            this.comboBox_tableFile.Size = new System.Drawing.Size(144, 23);
+            this.comboBox_tableFile.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.comboBox_tableFile, "打鍵から文字への主変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることに" +
+        "より、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\nファイル名を変更したり、テーブルの内容を修正した場合は、「再読込」を\r\n実行すると、その内容が反映されま" +
+        "す。\r\n");
+            // 
             // button_openTableFile2
             // 
             this.button_openTableFile2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openTableFile2.Location = new System.Drawing.Point(278, 61);
+            this.button_openTableFile2.Location = new System.Drawing.Point(278, 62);
             this.button_openTableFile2.Name = "button_openTableFile2";
             this.button_openTableFile2.Size = new System.Drawing.Size(34, 23);
             this.button_openTableFile2.TabIndex = 5;
@@ -659,22 +684,10 @@ namespace KanchokuWS
             this.button_openTableFile2.UseVisualStyleBackColor = true;
             this.button_openTableFile2.Click += new System.EventHandler(this.button_openTableFile2_Click);
             // 
-            // textBox_tableFile2
-            // 
-            this.textBox_tableFile2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_tableFile2.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_tableFile2.Location = new System.Drawing.Point(129, 63);
-            this.textBox_tableFile2.Name = "textBox_tableFile2";
-            this.textBox_tableFile2.Size = new System.Drawing.Size(144, 19);
-            this.textBox_tableFile2.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.textBox_tableFile2, "打鍵から文字への副変換テーブルファイルの設定\r\n\r\nファイルの内容は主テーブルファイルと同様です。\r\n切り替えコマンドにより、主・副テーブルファイルを切り替えるこ" +
-        "とができます。");
-            // 
             // label104
             // 
             this.label104.AutoSize = true;
-            this.label104.Location = new System.Drawing.Point(15, 65);
+            this.label104.Location = new System.Drawing.Point(15, 66);
             this.label104.Name = "label104";
             this.label104.Size = new System.Drawing.Size(89, 15);
             this.label104.TabIndex = 35;
@@ -683,7 +696,7 @@ namespace KanchokuWS
             // button_openHistoryFile
             // 
             this.button_openHistoryFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openHistoryFile.Location = new System.Drawing.Point(278, 229);
+            this.button_openHistoryFile.Location = new System.Drawing.Point(278, 231);
             this.button_openHistoryFile.Name = "button_openHistoryFile";
             this.button_openHistoryFile.Size = new System.Drawing.Size(34, 23);
             this.button_openHistoryFile.TabIndex = 19;
@@ -695,7 +708,7 @@ namespace KanchokuWS
             // button_openMazeFile
             // 
             this.button_openMazeFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openMazeFile.Location = new System.Drawing.Point(278, 205);
+            this.button_openMazeFile.Location = new System.Drawing.Point(278, 207);
             this.button_openMazeFile.Name = "button_openMazeFile";
             this.button_openMazeFile.Size = new System.Drawing.Size(34, 23);
             this.button_openMazeFile.TabIndex = 17;
@@ -707,7 +720,7 @@ namespace KanchokuWS
             // button_bushuAssocFile
             // 
             this.button_bushuAssocFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_bushuAssocFile.Location = new System.Drawing.Point(278, 181);
+            this.button_bushuAssocFile.Location = new System.Drawing.Point(278, 183);
             this.button_bushuAssocFile.Name = "button_bushuAssocFile";
             this.button_bushuAssocFile.Size = new System.Drawing.Size(34, 23);
             this.button_bushuAssocFile.TabIndex = 15;
@@ -719,7 +732,7 @@ namespace KanchokuWS
             // button_openBushuCompFile
             // 
             this.button_openBushuCompFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openBushuCompFile.Location = new System.Drawing.Point(278, 157);
+            this.button_openBushuCompFile.Location = new System.Drawing.Point(278, 159);
             this.button_openBushuCompFile.Name = "button_openBushuCompFile";
             this.button_openBushuCompFile.Size = new System.Drawing.Size(34, 23);
             this.button_openBushuCompFile.TabIndex = 13;
@@ -731,7 +744,7 @@ namespace KanchokuWS
             // button_openStrokeHelpFile
             // 
             this.button_openStrokeHelpFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openStrokeHelpFile.Location = new System.Drawing.Point(278, 133);
+            this.button_openStrokeHelpFile.Location = new System.Drawing.Point(278, 135);
             this.button_openStrokeHelpFile.Name = "button_openStrokeHelpFile";
             this.button_openStrokeHelpFile.Size = new System.Drawing.Size(34, 23);
             this.button_openStrokeHelpFile.TabIndex = 11;
@@ -744,7 +757,7 @@ namespace KanchokuWS
             // button_openEasyCharsFile
             // 
             this.button_openEasyCharsFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openEasyCharsFile.Location = new System.Drawing.Point(278, 109);
+            this.button_openEasyCharsFile.Location = new System.Drawing.Point(278, 111);
             this.button_openEasyCharsFile.Name = "button_openEasyCharsFile";
             this.button_openEasyCharsFile.Size = new System.Drawing.Size(34, 23);
             this.button_openEasyCharsFile.TabIndex = 9;
@@ -757,7 +770,7 @@ namespace KanchokuWS
             // button_openKeyCharMapFile
             // 
             this.button_openKeyCharMapFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openKeyCharMapFile.Location = new System.Drawing.Point(278, 85);
+            this.button_openKeyCharMapFile.Location = new System.Drawing.Point(278, 87);
             this.button_openKeyCharMapFile.Name = "button_openKeyCharMapFile";
             this.button_openKeyCharMapFile.Size = new System.Drawing.Size(34, 23);
             this.button_openKeyCharMapFile.TabIndex = 7;
@@ -769,7 +782,7 @@ namespace KanchokuWS
             // button_openTableFile
             // 
             this.button_openTableFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openTableFile.Location = new System.Drawing.Point(278, 37);
+            this.button_openTableFile.Location = new System.Drawing.Point(278, 38);
             this.button_openTableFile.Name = "button_openTableFile";
             this.button_openTableFile.Size = new System.Drawing.Size(34, 23);
             this.button_openTableFile.TabIndex = 3;
@@ -796,7 +809,7 @@ namespace KanchokuWS
             this.textBox_strokeHelpFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_strokeHelpFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_strokeHelpFile.Location = new System.Drawing.Point(129, 135);
+            this.textBox_strokeHelpFile.Location = new System.Drawing.Point(129, 137);
             this.textBox_strokeHelpFile.Name = "textBox_strokeHelpFile";
             this.textBox_strokeHelpFile.Size = new System.Drawing.Size(144, 19);
             this.textBox_strokeHelpFile.TabIndex = 10;
@@ -806,7 +819,7 @@ namespace KanchokuWS
             // label47
             // 
             this.label47.AutoSize = true;
-            this.label47.Location = new System.Drawing.Point(15, 137);
+            this.label47.Location = new System.Drawing.Point(15, 139);
             this.label47.Name = "label47";
             this.label47.Size = new System.Drawing.Size(94, 15);
             this.label47.TabIndex = 32;
@@ -817,7 +830,7 @@ namespace KanchokuWS
             this.textBox_easyCharsFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_easyCharsFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_easyCharsFile.Location = new System.Drawing.Point(129, 111);
+            this.textBox_easyCharsFile.Location = new System.Drawing.Point(129, 113);
             this.textBox_easyCharsFile.Name = "textBox_easyCharsFile";
             this.textBox_easyCharsFile.Size = new System.Drawing.Size(144, 19);
             this.textBox_easyCharsFile.TabIndex = 8;
@@ -827,29 +840,17 @@ namespace KanchokuWS
             // label44
             // 
             this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(15, 113);
+            this.label44.Location = new System.Drawing.Point(15, 115);
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(113, 15);
             this.label44.TabIndex = 18;
             this.label44.Text = "容易打鍵文字ファイル";
             // 
-            // textBox_tableFile
-            // 
-            this.textBox_tableFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_tableFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_tableFile.Location = new System.Drawing.Point(129, 39);
-            this.textBox_tableFile.Name = "textBox_tableFile";
-            this.textBox_tableFile.Size = new System.Drawing.Size(144, 19);
-            this.textBox_tableFile.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_tableFile, "打鍵から文字への主変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることに" +
-        "より、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\nファイル名を変更したり、テーブルの内容を修正した場合は、「再読込」を\r\n実行すると、その内容が反映されま" +
-        "す。");
-            // 
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(15, 41);
+            this.label18.ForeColor = System.Drawing.Color.DarkRed;
+            this.label18.Location = new System.Drawing.Point(15, 42);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(89, 15);
             this.label18.TabIndex = 16;
@@ -860,7 +861,7 @@ namespace KanchokuWS
             this.textBox_deckeyCharsFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_deckeyCharsFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_deckeyCharsFile.Location = new System.Drawing.Point(129, 87);
+            this.textBox_deckeyCharsFile.Location = new System.Drawing.Point(129, 89);
             this.textBox_deckeyCharsFile.Name = "textBox_deckeyCharsFile";
             this.textBox_deckeyCharsFile.Size = new System.Drawing.Size(144, 19);
             this.textBox_deckeyCharsFile.TabIndex = 6;
@@ -871,7 +872,7 @@ namespace KanchokuWS
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(15, 89);
+            this.label10.Location = new System.Drawing.Point(15, 91);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(114, 15);
             this.label10.TabIndex = 14;
@@ -882,7 +883,7 @@ namespace KanchokuWS
             this.textBox_historyFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_historyFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_historyFile.Location = new System.Drawing.Point(129, 231);
+            this.textBox_historyFile.Location = new System.Drawing.Point(129, 233);
             this.textBox_historyFile.Name = "textBox_historyFile";
             this.textBox_historyFile.Size = new System.Drawing.Size(144, 19);
             this.textBox_historyFile.TabIndex = 18;
@@ -891,7 +892,7 @@ namespace KanchokuWS
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(15, 233);
+            this.label7.Location = new System.Drawing.Point(15, 235);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(89, 15);
             this.label7.TabIndex = 8;
@@ -902,7 +903,7 @@ namespace KanchokuWS
             this.textBox_mazegakiFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_mazegakiFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazegakiFile.Location = new System.Drawing.Point(129, 207);
+            this.textBox_mazegakiFile.Location = new System.Drawing.Point(129, 209);
             this.textBox_mazegakiFile.Name = "textBox_mazegakiFile";
             this.textBox_mazegakiFile.Size = new System.Drawing.Size(144, 19);
             this.textBox_mazegakiFile.TabIndex = 16;
@@ -911,7 +912,7 @@ namespace KanchokuWS
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(15, 209);
+            this.label6.Location = new System.Drawing.Point(15, 211);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(108, 15);
             this.label6.TabIndex = 6;
@@ -922,7 +923,7 @@ namespace KanchokuWS
             this.textBox_bushuAssocFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_bushuAssocFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_bushuAssocFile.Location = new System.Drawing.Point(129, 183);
+            this.textBox_bushuAssocFile.Location = new System.Drawing.Point(129, 185);
             this.textBox_bushuAssocFile.Name = "textBox_bushuAssocFile";
             this.textBox_bushuAssocFile.Size = new System.Drawing.Size(144, 19);
             this.textBox_bushuAssocFile.TabIndex = 14;
@@ -933,7 +934,7 @@ namespace KanchokuWS
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(15, 185);
+            this.label5.Location = new System.Drawing.Point(15, 187);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(113, 15);
             this.label5.TabIndex = 4;
@@ -944,7 +945,7 @@ namespace KanchokuWS
             this.textBox_bushuCompFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_bushuCompFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_bushuCompFile.Location = new System.Drawing.Point(129, 159);
+            this.textBox_bushuCompFile.Location = new System.Drawing.Point(129, 161);
             this.textBox_bushuCompFile.Name = "textBox_bushuCompFile";
             this.textBox_bushuCompFile.Size = new System.Drawing.Size(144, 19);
             this.textBox_bushuCompFile.TabIndex = 12;
@@ -953,7 +954,7 @@ namespace KanchokuWS
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(15, 161);
+            this.label4.Location = new System.Drawing.Point(15, 163);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(113, 15);
             this.label4.TabIndex = 2;
@@ -5716,7 +5717,6 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label47;
         private System.Windows.Forms.TextBox textBox_easyCharsFile;
         private System.Windows.Forms.Label label44;
-        private System.Windows.Forms.TextBox textBox_tableFile;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox textBox_deckeyCharsFile;
         private System.Windows.Forms.Label label10;
@@ -5989,7 +5989,6 @@ namespace KanchokuWS
         private System.Windows.Forms.TextBox textBox_SandSEnableSpaceOrRepeatMillisec;
         private System.Windows.Forms.Label label103;
         private System.Windows.Forms.Button button_openTableFile2;
-        private System.Windows.Forms.TextBox textBox_tableFile2;
         private System.Windows.Forms.Label label104;
         private ColorTextBox textBox_onSecondaryTable;
         private System.Windows.Forms.Label label105;
@@ -6023,5 +6022,7 @@ namespace KanchokuWS
         private System.Windows.Forms.Label label113;
         private System.Windows.Forms.TextBox textBox_mazeHistRegisterMinLen;
         private System.Windows.Forms.Button button_setModConversion;
+        private System.Windows.Forms.ComboBox comboBox_tableFile;
+        private System.Windows.Forms.ComboBox comboBox_tableFile2;
     }
 }

@@ -638,6 +638,27 @@ namespace Utils
         }
 
         /// <summary>
+        /// テキストファイルの先頭のNバイトを読む。エラーの場合は null を返す
+        /// </summary>
+        /// <param name="filePath">Dataフォルダ配下の相対パスまたは絶対パス</param>
+        /// <returns></returns>
+        public static string GetFileHead(string filePath, int size, Action<Exception> errHandler = null)
+        {
+            try {
+                using (var fs = new System.IO.FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+                    using (var sr = new System.IO.StreamReader(fs)) {
+                        var buffer = new char[size];
+                        sr.ReadBlock(buffer, 0, size);
+                        return buffer._toString();
+                    }
+                }
+            } catch (Exception e) {
+                errHandler?.Invoke(e);
+                return null;
+            }
+        }
+
+        /// <summary>
         /// テキストファイルの最後のNバイトを読む。エラーの場合は null を返す
         /// </summary>
         /// <param name="filePath">Dataフォルダ配下の相対パスまたは絶対パス</param>
