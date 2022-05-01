@@ -20,7 +20,7 @@ namespace KanchokuWS.OverlappingKeyStroke
         /// 当同時打鍵組合せに割り当てられた出力文字列を得るためにデコーダに送信する DecoderKey のリスト。<br/>
         /// 履歴機能や交ぜ書き機能などを利用できるようにするため、
         /// 当パッケージが直接 TargetString を出力するのではなく、いったんデコーダを経由して文字列を出力させる。<br/>
-        /// 空リストの場合は、同時打鍵の組合せが存在しないことを表す。
+        /// 空リストの場合は、最終的な文字にマップされる同時打鍵の組合せが存在しないことを表す。
         /// </summary>
         public DecoderKeyCodeList DecoderKeyList { get; private set; } = new DecoderKeyCodeList();
 
@@ -32,7 +32,7 @@ namespace KanchokuWS.OverlappingKeyStroke
         }
 
         /// <summary>
-        /// コンストラクタ
+        /// コンストラクタ(keyListがnullの場合は、同時打鍵集合の部分集合であることを示す)
         /// </summary>
         public KeyCombination(List<int> keyList)
         {

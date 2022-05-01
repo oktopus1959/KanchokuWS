@@ -13,6 +13,8 @@ namespace KanchokuWS.OverlappingKeyStroke
 
         public int Count { get { return KeyList.Count; } }
 
+        public bool IsEmpty => Count == 0;
+
         public int At(int n)
         {
             return n < KeyList.Count ? KeyList[n] : -1;

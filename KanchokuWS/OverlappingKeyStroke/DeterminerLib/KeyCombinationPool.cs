@@ -99,11 +99,10 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             logger.DebugH($"comboSubKeys.Count={comboSubKeys.Count}");
             foreach (var key in comboSubKeys) {
                 // 部分キーに対して、非終端マークをセット
-                var list = KeyCombinationHelper.DecodeKey(key);
-                logger.DebugH(() => $"key={key}, list={KeyCombinationHelper.EncodeKeyList(list)}");
+                logger.DebugH(() => $"key={key}, list={KeyCombinationHelper.EncodeKeyList(KeyCombinationHelper.DecodeKey(key))}");
                 var keyCombo = keyComboDict._safeGet(key);
                 if (keyCombo == null) {
-                    keyComboDict[key] = keyCombo =new KeyCombination(list);
+                    keyComboDict[key] = keyCombo = new KeyCombination(null);
                 }
                 keyCombo.NotTerminal();
             }
