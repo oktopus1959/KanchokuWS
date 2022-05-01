@@ -1712,6 +1712,14 @@ namespace Utils
         }
 
         /// <summary>
+        /// リストの末尾の要素を取得する。リストが空なら null を返す。
+        /// </summary>
+        public static T _getLast<T>(this List<T> list)
+        {
+            return list._isEmpty() ? default(T) : list.Last();
+        }
+
+        /// <summary>
         /// リストの2番目の要素を取得する。リスト長が2未満なら null を返す。
         /// </summary>
         public static T _getSecond<T>(this List<T> list)

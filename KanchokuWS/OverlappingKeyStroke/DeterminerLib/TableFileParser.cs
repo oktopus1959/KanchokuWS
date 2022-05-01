@@ -52,6 +52,8 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 
         // include ファイル名のスタック
         List<string> includeDirStack;
+        List<string> includeFileStack;
+        List<int> includeLineOffsetStack;
 
         /// <summary>
         /// コンストラクタ
@@ -61,6 +63,8 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         {
             keyComboPool = pool;
             includeDirStack = Helper.MakeList(KanchokuIni.Singleton.KanchokuDir);
+            includeFileStack = Helper.MakeList("");
+            includeLineOffsetStack = Helper.MakeList(0);
         }
 
         // テーブル定義を解析してストローク木を構築する
@@ -322,6 +326,13 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                             case "__include__":
                                 logger.DebugH("includeDirStack._safePopBack()");
                                 includeDirStack._safePopBack();
+                                includeFileStack._safePopBack();
+                                int lastOffset = includeLineOffsetStack._getLast();
+                                includeLineOffsetStack._safePopBack();
+                                if (includeLineOffsetStack._notEmpty()) {
+                                    includeLineOffsetStack[includeLineOffsetStack.Count - 1] = lineNumber - lastOffset;
+                                    logger.DebugH(() => $"includeFileStack.Last()={includeFileStack.Last()}, includeLineOffsetStack.Last()={includeLineOffsetStack.Last()}");
+                                }
                                 break;
                         }
                     } else if (lcStr == "sands") {
@@ -435,16 +446,19 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         void loadLineBlock()
         {
             readWord();
-            logger.DebugH(() => $"CALLED: {currentStr}");
+            logger.DebugH(() => $"CALLED: |{currentStr}|");
             if (currentStr._isEmpty()) {
                 parseError();
             } else if (isInConcernedBlock) {
                 var lines = linesMap._safeGet(currentStr);
                 if (lines._isEmpty()) {
+                    logger.Error($"No stored lines for \"{currentStr}\"");
                     parseError();
                 } else {
                     logger.DebugH(() => $"InsertRange: {currentStr}, {lines.Count} lines");
                     tableLines.InsertRange(lineNumber + 1, lines);
+                    includeLineOffsetStack[includeLineOffsetStack.Count - 1] += lines.Count;
+                    logger.DebugH(() => $"includeFileStack.Last()={includeFileStack.Last()}, includeLineOffsetStack.Last()={includeLineOffsetStack.Last()}");
                 }
             }
         }
@@ -707,16 +721,21 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             if (filename._notEmpty()) {
                 var includeFilePath = includeDirStack.Last()._joinPath(filename._canonicalPath());
                 logger.DebugH(() => $"ENTER: includeFilePath={includeFilePath}");
-                lines = Helper.GetFileContent(includeFilePath)._safeReplace("\r", "")._split('\n')?.ToList() ?? new List<string>();
-                lines.Add("#end __include__");
-                includeDirStack.Add(includeFilePath._getDirPath());
+                var contents = Helper.GetFileContent(includeFilePath, (e) => logger.Error(e._getErrorMsg()));
+                if (contents._notEmpty()) {
+                    lines.AddRange(contents._safeReplace("\r", "")._split('\n'));
+                    lines.Add("#end __include__");
+                    includeDirStack.Add(includeFilePath._getDirPath());
+                    includeFileStack.Add(filename);
+                    includeLineOffsetStack.Add(lineNumber);
+                }
             }
             logger.DebugH(() => $"LEAVE: num of lines={lines.Count}");
             return lines;
         }
 
         void parseError() {
-            string msg = $"テーブルファイルの {lineNumber}行 {nextPos}文字目('{currentChar}')がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...";
+            string msg = $"テーブルファイル {includeFileStack.Last()} の {lineNumber + 1 - includeLineOffsetStack.Last()}行 {nextPos}文字目('{currentChar}')がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...";
             logger.Error(msg);
             var sb = new StringBuilder();
             for (int i = 10; i > 0; --i) {

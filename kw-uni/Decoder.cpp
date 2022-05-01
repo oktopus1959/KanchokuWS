@@ -220,17 +220,17 @@ public:
             ERROR_HANDLER->Error(_T("「tableFile=(ファイル名)」の設定がまちがっているようです"));
         } else {
             // 主テーブルファイルの構築
-            createStrokeTree(SETTINGS->tableFile, [](std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree(lines);});
+            createStrokeTree(SETTINGS->tableFile, [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree(file, lines);});
 
             if (!SETTINGS->tableFile2.empty()) {
                 // 副テーブルファイルの構築
-                createStrokeTree(SETTINGS->tableFile2, [](std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree2(lines);});
+                createStrokeTree(SETTINGS->tableFile2, [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
             }
         }
     }
 
     // テーブルファイルを読み込んでストローク木を作成する
-    void createStrokeTree(const tstring& tableFile, void(*treeCreator)(std::vector<wstring>&)) {
+    void createStrokeTree(const tstring& tableFile, void(*treeCreator)(const wstring&, std::vector<wstring>&)) {
         LOG_INFO(_T("ENTER: tableFile=%s"), tableFile.c_str());
 
         utils::IfstreamReader reader(tableFile);
@@ -238,7 +238,7 @@ public:
             //auto lines = utils::IfstreamReader(tableFile).getAllLines();
             auto lines = reader.getAllLines();
             // ストロークノード木の構築
-            treeCreator(lines);
+            treeCreator(tableFile, lines);
             LOG_INFO(_T("close table file: %s"), tableFile.c_str());
         } else {
             // エラー

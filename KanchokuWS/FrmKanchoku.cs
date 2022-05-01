@@ -311,13 +311,15 @@ namespace KanchokuWS
 
         private void closeSplash()
         {
-            logger.Info("CALLED");
+            logger.InfoH("CALLED");
             if (frmSplash != null) {
+                frmSplash.TopMost = false;
+                frmSplash.Hide();
                 if (syncSplash.BusyCheck()) return;
                 using (syncSplash) {
                     if (frmSplash != null) {
                         frmSplash.IsKanchokuTerminated = true;
-                        logger.Info("CLOSED");
+                        logger.InfoH("CLOSED");
                     }
                     frmSplash = null;
                 }
@@ -460,6 +462,7 @@ namespace KanchokuWS
                 Marshal.FreeCoTaskMem(cmdParamsPtr);
 
                 if (result >= 1) {
+                    if (frmSplash != null) closeSplash();
                     var errMsg = prm.inOutData._toString();
                     if (result == 1) {
                         logger.Warn(errMsg);

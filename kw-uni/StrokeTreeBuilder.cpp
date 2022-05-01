@@ -107,7 +107,7 @@ namespace {
         // include ファイルのスタック
         std::vector<wstring> includeDirStack;
         std::vector<wstring> includeFileStack;
-        std::vector<size_t> includeLineOffsettack;
+        std::vector<size_t> includeLineOffsetStack;
 
         std::map<wstring, wstring> defines; // 定義
 
@@ -146,11 +146,11 @@ namespace {
         // コンストラクタ
         // lines: ソースとなるテーブル定義
         // bPrimaryTable: 主テーブルなら true を渡す。副テーブルや後からの定義差し込みなら false を渡す
-        StrokeTreeBuilder(std::vector<wstring>& lines, bool bPrimaryTable)
+        StrokeTreeBuilder(const wstring& tableFile, std::vector<wstring>& lines, bool bPrimaryTable)
             : tableLines(lines) {
             includeDirStack.push_back(SETTINGS->rootDir);
-            includeFileStack.push_back(_T(""));
-            includeLineOffsettack.push_back(0);
+            includeFileStack.push_back(tableFile);
+            includeLineOffsetStack.push_back(0);
             if (!tableLines.empty()) {
                 currentLine = tableLines[0];
             }
@@ -487,6 +487,8 @@ namespace {
                             } else {
                                 auto lines = iter->second;
                                 tableLines.insert(tableLines.begin() + lineNumber + 1, lines->begin(), lines->end());
+                                includeLineOffsetStack.back() += lines->size();
+                                _LOG_DEBUGH(_T("includeFileStack.back()=%s, includeLineOffsetStack.back()=%d"), includeFileStack.back().c_str(), includeLineOffsetStack.back());
                             }
                         }
                     } else if (utils::startsWith(lcStr, _T("yomiconv"))) {
@@ -531,10 +533,11 @@ namespace {
                             _LOG_DEBUGH(_T("includeDirStack.pop_back()"));
                             includeDirStack.pop_back();
                             includeFileStack.pop_back();
-                            includeLineOffsettack.pop_back();
-                            if (!includeLineOffsettack.empty()) {
-                                includeLineOffsettack.back() = lineNumber;
-                                _LOG_DEBUGH(_T("includeFileStack.back()=%s, includeLineOffsettack.back()=%d"), includeFileStack.back().c_str(), includeLineOffsettack.back());
+                            size_t lastOffset = includeLineOffsetStack.back();
+                            includeLineOffsetStack.pop_back();
+                            if (!includeLineOffsetStack.empty()) {
+                                includeLineOffsetStack.back() = lineNumber - lastOffset;
+                                _LOG_DEBUGH(_T("includeFileStack.back()=%s, includeLineOffsetStack.back()=%d"), includeFileStack.back().c_str(), includeLineOffsetStack.back());
                             }
                         }
                         skipToEndOfLine();
@@ -785,9 +788,11 @@ namespace {
                 tableLines.insert(tableLines.begin() + lineNumber + 1, lines.begin(), lines.end());
                 includeDirStack.push_back(utils::getParentDirPath(includeFilePath));
                 includeFileStack.push_back(filename);
-                includeLineOffsettack.push_back(lineNumber);
+                includeLineOffsetStack.push_back(lineNumber);
+                _LOG_DEBUGH(_T("lines.size=%d, includeFileStack.back()=%s, includeLineOffsetStack.back()=%d"), lines.size(), includeFileStack.back().c_str(), includeLineOffsetStack.back());
             } else {
                 LOG_ERROR(_T("Can't open: %s"), includeFilePath.c_str());
+                fileOpenError(filename);
             }
         }
 
@@ -838,15 +843,27 @@ namespace {
                 _LOG_DEBUGH(_T("kanjiConvMap.size(): %d"), kanjiConvMap.size());
             } else {
                 LOG_ERROR(_T("Can't open: %s"), filename.c_str());
+                fileOpenError(filename);
             }
         }
 
-        // 読みこみに失敗した場合
+        // 解析に失敗した場合
         void parseError() {
-            _LOG_DEBUGH(_T("lineNumber=%d, lineOffset=%d"), lineNumber, includeLineOffsettack.back());
+            _LOG_DEBUGH(_T("lineNumber=%d, lineOffset=%d"), lineNumber, includeLineOffsetStack.back());
             wchar_t buf[2] = { currentChar, 0 };
-            wstring msg = utils::format(_T("テーブルファイル %s の %d 行 %d文字目('%s')がまちがっているようです：\r\n> %s ..."), \
-                includeFileStack.back().c_str(), lineNumber + 1 - includeLineOffsettack.back(), nextPos, buf, currentLine.substr(0, 50).c_str());
+            handleError(utils::format(_T("テーブルファイル %s の %d行 %d文字目('%s')がまちがっているようです：\r\n> %s ..."), \
+                includeFileStack.back().c_str(), lineNumber + 1 - includeLineOffsetStack.back(), nextPos, buf, currentLine.substr(0, 50).c_str()));
+        }
+
+        // ファイルの読み込みに失敗した場合
+        void fileOpenError(const wstring& filename) {
+            _LOG_DEBUGH(_T("lineNumber=%d, lineOffset=%d"), lineNumber, includeLineOffsetStack.back());
+            handleError(utils::format(_T("ファイル %s を読み込めません。\r\nテーブルファイル %s の %d行目がまちがっているようです：\r\n> %s ..."), \
+                filename.c_str(), includeFileStack.back().c_str(), lineNumber + 1 - includeLineOffsetStack.back(), currentLine.substr(0, 50).c_str()));
+        }
+
+        // エラー処理
+        void handleError(const wstring& msg) {
             LOG_ERROR(msg);
             wstring lines;
             for (size_t i = 10; i > 0; --i) {
@@ -923,20 +940,20 @@ void StrokeTableNode::AssignFucntion(const wstring& keys, const wstring& name) {
 // ストロークノードの更新
 void StrokeTableNode::UpdateStrokeNodes(const wstring& strokeSource) {
     auto list = utils::split(strokeSource, '\n');
-    StrokeTreeBuilder(list, false).ParseTableSource(ROOT_STROKE_NODE);
+    StrokeTreeBuilder(_T("(none)"), list, false).ParseTableSource(ROOT_STROKE_NODE);
     //ROOT_STROKE_NODE = 
 }
 
 // ストローク木を作成してそのルートを返す
-StrokeTableNode* StrokeTableNode::CreateStrokeTree(std::vector<wstring>& lines) {
-    ROOT_STROKE_NODE = StrokeTreeBuilder(lines, true).CreateStrokeTree();
+StrokeTableNode* StrokeTableNode::CreateStrokeTree(const wstring& tableFile, std::vector<wstring>& lines) {
+    ROOT_STROKE_NODE = StrokeTreeBuilder(tableFile, lines, true).CreateStrokeTree();
     RootStrokeNode1.reset(ROOT_STROKE_NODE);
     return ROOT_STROKE_NODE;
 }
 
 // ストローク木2を作成してそのルートを返す
-StrokeTableNode* StrokeTableNode::CreateStrokeTree2(std::vector<wstring>& lines) {
-    RootStrokeNode2.reset(StrokeTreeBuilder(lines, false).CreateStrokeTree());
+StrokeTableNode* StrokeTableNode::CreateStrokeTree2(const wstring& tableFile, std::vector<wstring>& lines) {
+    RootStrokeNode2.reset(StrokeTreeBuilder(tableFile, lines, false).CreateStrokeTree());
     return RootStrokeNode2.get();
 }
 
