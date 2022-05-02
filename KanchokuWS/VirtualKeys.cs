@@ -83,7 +83,7 @@ namespace KanchokuWS
 
     public static class VirtualKeys
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         //public const uint BACK = 0x08;
         public const uint CONTROL = 0x11;
@@ -767,34 +767,7 @@ namespace KanchokuWS
                     var line = origLine.Replace(" ", "")._toLower();
                     if (line._notEmpty() && line[0] != '#') {
                         if (line._reMatch(@"^\w+=")) {
-                            // NAME=plane[|plane]...
-                            var items = line._split('=');
-                            if (items._length() == 2) {
-                                uint modKey = GetModifierKeyByName(items[0]);
-                                var planes = items[1]._split('|');
-                                ShiftPlane shiftPlane = ShiftPlane.NONE;
-                                switch (planes._getNth(0)) {
-                                    case "shift": shiftPlane = ShiftPlane.NormalPlane; break;
-                                    case "shifta": shiftPlane = ShiftPlane.PlaneA; break;
-                                    case "shiftb": shiftPlane = ShiftPlane.PlaneB; break;
-                                }
-                                var shiftPlaneWhenOff = shiftPlane;
-                                if (planes.Length > 1) {
-                                    switch (planes._getNth(1)) {
-                                        case "shift": shiftPlaneWhenOff = ShiftPlane.NormalPlane; break;
-                                        case "shifta": shiftPlaneWhenOff = ShiftPlane.PlaneA; break;
-                                        case "shiftb": shiftPlaneWhenOff = ShiftPlane.PlaneB; break;
-                                        default: shiftPlaneWhenOff = ShiftPlane.NONE; break;
-                                    }
-                                }
-                                logger.DebugH(() => $"mod={modKey:x}H({modKey}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
-                                if (modKey != 0 && shiftPlane > 0) {
-                                    logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{modKey}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{modKey}] = {shiftPlaneWhenOff}");
-                                    ShiftPlaneForShiftModKey[modKey] = shiftPlane;
-                                    ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = shiftPlaneWhenOff;
-                                    continue;
-                                }
-                            }
+                            if (AssignShiftPlane(line)) continue;
                         } else {
                             // NAME:xx:function
                             var origItems = origLine._splitn(':', 3);
@@ -899,6 +872,48 @@ namespace KanchokuWS
             }
             logger.Info("LEAVE");
             return sbCompCmds.ToString();
+        }
+
+        public static void UpdateModConversion(IEnumerable<string> lines)
+        {
+            foreach (var line in lines) {
+                if (line._reMatch(@"^\w+=")) {
+                    AssignShiftPlane(line);
+                }
+            }
+        }
+
+        public static bool AssignShiftPlane(string line)
+        {
+            // NAME=plane[|plane]...
+            var items = line._toLower()._split('=');
+            if (items._length() == 2) {
+                uint modKey = GetModifierKeyByName(items[0]);
+                var planes = items[1]._split('|');
+                ShiftPlane shiftPlane = ShiftPlane.NONE;
+                switch (planes._getNth(0)) {
+                    case "shift": shiftPlane = ShiftPlane.NormalPlane; break;
+                    case "shifta": shiftPlane = ShiftPlane.PlaneA; break;
+                    case "shiftb": shiftPlane = ShiftPlane.PlaneB; break;
+                }
+                var shiftPlaneWhenOff = shiftPlane;
+                if (planes.Length > 1) {
+                    switch (planes._getNth(1)) {
+                        case "shift": shiftPlaneWhenOff = ShiftPlane.NormalPlane; break;
+                        case "shifta": shiftPlaneWhenOff = ShiftPlane.PlaneA; break;
+                        case "shiftb": shiftPlaneWhenOff = ShiftPlane.PlaneB; break;
+                        default: shiftPlaneWhenOff = ShiftPlane.NONE; break;
+                    }
+                }
+                logger.DebugH(() => $"mod={modKey:x}H({modKey}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
+                if (modKey != 0 && shiftPlane > 0) {
+                    logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{modKey}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{modKey}] = {shiftPlaneWhenOff}");
+                    ShiftPlaneForShiftModKey[modKey] = shiftPlane;
+                    ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = shiftPlaneWhenOff;
+                    return true;    // OK
+                }
+            }
+            return false;   // NG
         }
 
         public static string MakeModConversionContents()

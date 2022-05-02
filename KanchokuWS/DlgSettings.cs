@@ -382,7 +382,7 @@ namespace KanchokuWS
                 var content = Helper.GetFileHead(filepath, 2048);
                 if (content._notEmpty()) {
                     //logger.DebugH(() => $"content={content}");
-                    var list = content._reScan(@"#define\s+table-name\s+""([^""]+)");
+                    var list = content._reScan(@"#define\s+display-name\s+""([^""]+)");
                     logger.DebugH(() => $"match: {list._getFirst()}, {list._getSecond()}, list.Count={list._safeCount()}");
                     if (list._safeCount() >= 2) return $"{list[1]} ({filename})";
                 }

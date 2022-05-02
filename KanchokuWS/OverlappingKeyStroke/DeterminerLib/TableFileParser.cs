@@ -337,6 +337,8 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                         }
                     } else if (lcStr == "sands") {
                         handleSandSState();
+                    } else if (lcStr == "assignplane") {
+                        assignShiftPlane();
                     } else if (lcStr == "set") {
                         handleSettings();
                     } else {
@@ -479,6 +481,17 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                 Settings.SandSEnablePostShift = true;
             } else if (currentStr._startsWith("disabepostshift")) {
                 Settings.SandSEnablePostShift = false;
+            }
+        }
+
+        void assignShiftPlane()
+        {
+            readWord();
+            if (currentStr._notEmpty()) {
+                bool resultOK = VirtualKeys.AssignShiftPlane(currentStr);
+                if (!resultOK) {
+                    parseError();
+                }
             }
         }
 
