@@ -272,7 +272,10 @@ namespace {
                 utils::contains(VkbTableMaker::GetHiraganaFirstDeckeys(), UNSHIFT_DECKEY(deckey))) {
                 // 後でShift入力された平仮名をカタカナに変換する
                 bUnshifted = true;
+                _LOG_DEBUGH(_T("SET SHIFTED HIRAGANA: %s"), NAME_PTR);
+                STATE_COMMON->SetShiftedHiraganaToKatakana();   // Shift入力された平仮名だった
                 shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+                _LOG_DEBUGH(_T("Unshifted: shiftedOrigChar=%c"), shiftedOrigChar);
                 handleStrokeKeys(UNSHIFT_DECKEY(deckey));
             } else {
                 // その他の(拡張)シフト
