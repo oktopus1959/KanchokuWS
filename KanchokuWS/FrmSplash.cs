@@ -79,6 +79,13 @@ namespace KanchokuWS
 
         public bool IsKanchokuTerminated { get; set; } = false;
 
+        public void Fallback()
+        {
+            TopMost = false;
+            Hide();
+            IsKanchokuReady = true;
+        }
+
         private void checkKanchokuReady()
         {
             if (IsKanchokuReady) {

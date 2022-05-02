@@ -93,10 +93,12 @@ namespace KanchokuWS
             logger.WriteLog("INFO", $"\n\n==== KANCHOKU WS START (LogLevel={Logger.LogLevel}) ====");
 
             // キーボードファイルの読み込み
-            if (!readKeyboardFile()) return;
+            bool resultOK = readKeyboardFile();
 
             // 設定ファイルの読み込み
             Settings.ReadIniFile();
+
+            if (!resultOK) return;
 
             // 各種定義ファイルの読み込み
             ReadDefFiles();
@@ -140,9 +142,8 @@ namespace KanchokuWS
             if (!VirtualKeys.ReadKeyboardFile()) {
                 // キーボードファイルを読み込めなかったので終了する
                 logger.Error($"CLOSE: Can't read keyboard file");
-                //DecKeyHandler.Destroy();
-                //PostMessage(this.Handle, WM_Defs.WM_CLOSE, 0, 0);
-                this.Close();
+                //this.Close();
+                frmSplash?.Fallback();
                 return false;
             }
             return true;
@@ -195,7 +196,7 @@ namespace KanchokuWS
 
             // 打鍵テーブルの作成
             if (Settings.StrokeHelpFile._notEmpty()) {
-                frmVkb.MakeStrokeTables(Settings.StrokeHelpFile);
+                frmVkb?.MakeStrokeTables(Settings.StrokeHelpFile);
             }
         }
 
@@ -462,7 +463,10 @@ namespace KanchokuWS
                 Marshal.FreeCoTaskMem(cmdParamsPtr);
 
                 if (result >= 1) {
-                    if (frmSplash != null) closeSplash();
+                    if (frmSplash != null) {
+                        //frmSplash._invoke(() => frmSplash.Fallback());
+                        this._invoke(() => this.closeSplash());
+                    }
                     var errMsg = prm.inOutData._toString();
                     if (result == 1) {
                         logger.Warn(errMsg);
@@ -910,14 +914,16 @@ namespace KanchokuWS
         {
             logger.InfoH(() => $"\nENTER");
             IsDecoderActive = false;
-            handleKeyDecoder(DecoderKeys.DEACTIVE_DECKEY, 0);   // DecoderOff の処理をやる
-            actWinHandler.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
-            frmVkb.Hide();
-            frmMode.Hide();
-            notifyIcon1.Icon = Properties.Resources.kanmini0;
-            frmMode.SetKanjiMode();
-            if (Settings.VirtualKeyboardShowStrokeCount != 1) {
-                frmMode.SetAlphaMode();
+            if (decoderPtr != IntPtr.Zero) {
+                handleKeyDecoder(DecoderKeys.DEACTIVE_DECKEY, 0);   // DecoderOff の処理をやる
+                actWinHandler.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
+                frmVkb.Hide();
+                frmMode.Hide();
+                notifyIcon1.Icon = Properties.Resources.kanmini0;
+                frmMode.SetKanjiMode();
+                if (Settings.VirtualKeyboardShowStrokeCount != 1) {
+                    frmMode.SetAlphaMode();
+                }
             }
             logger.InfoH("LEAVE");
         }
@@ -1010,7 +1016,7 @@ namespace KanchokuWS
                 if (!ExecCmdDecoder(null, Settings.SerializedDecoderSettings, true)) {
                     logger.Error($"CLOSE: Decoder initialize error");
                     //PostMessage(this.Handle, WM_Defs.WM_CLOSE, 0, 0);
-                    this._invoke(() => this.Close());
+                    //this._invoke(() => this.Close());
                     return false;
                 }
 
@@ -1592,10 +1598,12 @@ namespace KanchokuWS
             DlgModConversion.Initialize();
 
             // キーボードファイルの読み込み
-            if (!readKeyboardFile()) return;
+            bool resultOK = readKeyboardFile();
 
             // 設定ファイルの読み込み
             Settings.ReadIniFile();
+
+            if (!resultOK) return;
 
             // 各種定義ファイルの読み込み
             ReloadDefFiles();
