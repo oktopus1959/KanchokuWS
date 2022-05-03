@@ -18,8 +18,10 @@ void ErrorHandler::Clear() {
 // エラー情報を格納
 void ErrorHandler::setErrorInfo(int level, const wstring& msg) {
     errorLevel = level;
-    if (!errorMsg.empty()) errorMsg.append(_T("\r\n"));
-    errorMsg.append(msg);
+    if (errorMsg.size() + msg.size() < 1024) {
+        if (!errorMsg.empty()) errorMsg.append(_T("\r\n\r\n"));
+        errorMsg.append(msg);
+    }
 }
 
 // エラー情報を格納し、例外を送出

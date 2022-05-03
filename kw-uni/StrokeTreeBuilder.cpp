@@ -88,7 +88,77 @@ namespace {
         }
     }
 
-// ストローク木の作成クラス
+    // include/load ブロック情報のスタック
+    class BlockInfoStack {
+    private:
+        DECLARE_CLASS_LOGGER;
+
+        struct BlockInfo {
+            wstring DirPath;        // インクルードする場合の起動ディレクトリ
+            wstring BlockName;      // ファイル名やブロック名
+            size_t OrigLineNumber;  // ブロックの開始行番号(0起点)
+            size_t CurrentOffset;   // 当ブロック内での行番号を算出するための、真の起点から現在行におけるオフセット行数
+
+            BlockInfo() { }
+
+            BlockInfo(const wstring& dirPath, const wstring& name, size_t lineNum, size_t off)
+                : DirPath(dirPath), BlockName(name), OrigLineNumber(lineNum), CurrentOffset(off) { }
+
+            BlockInfo(const BlockInfo& info)
+                : BlockInfo(info.DirPath, info.BlockName, info.OrigLineNumber, info.CurrentOffset) { }
+        };
+
+        std::vector<BlockInfo> blockInfoStack;
+
+        wstring safeDirPath(const wstring& dirPath) {
+            wstring path = dirPath;
+            if (path.empty() && !blockInfoStack.empty()) {
+                path = blockInfoStack.back().DirPath;
+            }
+            return path;
+        }
+
+        wstring emptyStr = _T("");
+
+    public:
+        const wstring& CurrentDirPath() {
+            _LOG_DEBUGH(_T("PATH: %s"), blockInfoStack.empty() ? _T("(empty)") : blockInfoStack.back().DirPath.c_str());
+            return blockInfoStack.empty() ? emptyStr : blockInfoStack.back().DirPath;
+        }
+
+        const wstring& CurrentBlockName() {
+            _LOG_DEBUGH(_T("NAME: %s"), blockInfoStack.empty() ? _T("empty") : blockInfoStack.back().BlockName.c_str());
+            return blockInfoStack.empty() ? emptyStr : blockInfoStack.back().BlockName;
+        }
+
+        size_t CurrentOffset() {
+            _LOG_DEBUGH(_T("OFFSET: %d"), blockInfoStack.empty() ? 0 : blockInfoStack.back().CurrentOffset);
+            return blockInfoStack.empty() ? 0 : blockInfoStack.back().CurrentOffset;
+        }
+
+        size_t CalcCurrentLineNumber(size_t lineNum) {
+            return lineNum - CurrentOffset();
+        }
+
+        void Push(const wstring& dirPath, const wstring& name, size_t lineNum) {
+            blockInfoStack.push_back(BlockInfo(dirPath, name, lineNum, lineNum));
+        }
+
+        void Pop(size_t nextLineNum) {
+            _LOG_DEBUGH(_T("PUSH ENTER: nextLineNum=%d, dirPath=%s, blockName=%s, origLine=%d, offset=%d"), 
+                nextLineNum, blockInfoStack.back().DirPath.c_str(), blockInfoStack.back().BlockName.c_str(), blockInfoStack.back().OrigLineNumber, blockInfoStack.back().CurrentOffset);
+            size_t insertedTotalLineNum = nextLineNum - blockInfoStack.back().OrigLineNumber;
+            blockInfoStack.pop_back();
+            if (!blockInfoStack.empty()) {
+                blockInfoStack.back().CurrentOffset += insertedTotalLineNum;
+                _LOG_DEBUGH(_T("PUSH LEAVE: dirPath=%s, blockName=%s, origLine=%d, offset=%d"),
+                    blockInfoStack.back().DirPath.c_str(), blockInfoStack.back().BlockName.c_str(), blockInfoStack.back().OrigLineNumber, blockInfoStack.back().CurrentOffset);
+            }
+        }
+    };
+    DEFINE_CLASS_LOGGER(BlockInfoStack);
+
+    // ストローク木の作成クラス
     class StrokeTreeBuilder {
     private:
         DECLARE_CLASS_LOGGER;
@@ -104,10 +174,8 @@ namespace {
         size_t nextPos = 0;                 // 次の文字位置
         char_t currentChar = 0;             // 次の文字
 
-        // include ファイルのスタック
-        std::vector<wstring> includeDirStack;
-        std::vector<wstring> includeFileStack;
-        std::vector<size_t> includeLineOffsetStack;
+        // ブロック情報のスタック
+        BlockInfoStack blockInfoStack;
 
         std::map<wstring, wstring> defines; // 定義
 
@@ -120,6 +188,9 @@ namespace {
             }
             return result;
         }
+
+        // 同時打鍵定義ブロック
+        bool inOverlappingKeyBlock = false;
 
         // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 4:ShiftO(Overlapping) の5面
         int shiftPlane = 0;
@@ -148,9 +219,7 @@ namespace {
         // bPrimaryTable: 主テーブルなら true を渡す。副テーブルや後からの定義差し込みなら false を渡す
         StrokeTreeBuilder(const wstring& tableFile, std::vector<wstring>& lines, bool bPrimaryTable)
             : tableLines(lines) {
-            includeDirStack.push_back(SETTINGS->rootDir);
-            includeFileStack.push_back(tableFile);
-            includeLineOffsetStack.push_back(0);
+            blockInfoStack.Push(SETTINGS->rootDir, tableFile, 0);
             if (!tableLines.empty()) {
                 currentLine = tableLines[0];
             }
@@ -183,7 +252,8 @@ namespace {
         // デフォルトのシフト面の機能(自身の文字を返す)ノードの設定
         void setupShiftedKeyFunction(StrokeTableNode* tblNode) {
             for (size_t i = 0; i < SHIFT_DECKEY_NUM; ++i) {
-                tblNode->setNthChild(i + SHIFT_DECKEY_START, new MyCharNode());
+                //tblNode->setNthChild(i + SHIFT_DECKEY_START, new MyCharNode());
+                setNthChildNode(tblNode, i + SHIFT_DECKEY_START, new MyCharNode());
             }
         }
 
@@ -240,7 +310,8 @@ namespace {
                     if (shiftPlane == 4) { _LOG_DEBUGH(_T("LBRACE: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), lineNumber + 1, depth, shiftPlane, prevNth, n + shiftPlaneOffset); }
                 case TOKEN::STRING:             // "str" : 文字列ノード
                 case TOKEN::FUNCTION:           // @c : 機能ノード
-                    tblNode->setNthChild(n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
+                    //tblNode->setNthChild(n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
+                    setNthChildNode(tblNode, n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
                     ++n;
                     isPrevDelim = false;
                     break;
@@ -275,7 +346,8 @@ namespace {
             if (node && node->isStrokeTableNode()) {
                 createNodePositionedByArrowSub(dynamic_cast<StrokeTableNode*>(node), nextDepth, prevNth, idx);
             } else {
-                tblNode->setNthChild(idx, createNodePositionedByArrowSub(0, nextDepth, prevNth, idx));
+                //tblNode->setNthChild(idx, createNodePositionedByArrowSub(0, nextDepth, prevNth, idx));
+                setNthChildNode(tblNode, idx, createNodePositionedByArrowSub(0, nextDepth, prevNth, idx));
                 _LOG_DEBUGH(_T("tblNode->setNthChild(%d)"), idx);
             }
         }
@@ -317,7 +389,11 @@ namespace {
                 case TOKEN::LBRACE:
                 case TOKEN::STRING:             // "str" : 文字列ノード
                 case TOKEN::FUNCTION:           // @c : 機能ノード
-                    getNodePositionedByArrowBundle(tblNode, n + shiftPlaneOffset)->setNthChild(nextArrowIdx, createNode(currentToken, depth + 2, n, nextArrowIdx, true));
+                    //getNodePositionedByArrowBundle(tblNode, n + shiftPlaneOffset)->setNthChild(nextArrowIdx, createNode(currentToken, depth + 2, n, nextArrowIdx, true));
+                    setNthChildNode(
+                        getNodePositionedByArrowBundle(tblNode, n + shiftPlaneOffset),
+                        nextArrowIdx,
+                        createNode(currentToken, depth + 2, n, nextArrowIdx, true));
                     ++n;
                     isPrevDelim = false;
                     break;
@@ -345,7 +421,8 @@ namespace {
             if (node && node->isStrokeTableNode()) return dynamic_cast<StrokeTableNode*>(node);
 
             StrokeTableNode* stNode = new StrokeTableNode(tblNode->depth() + 1);
-            tblNode->setNthChild(idx, stNode);
+            //tblNode->setNthChild(idx, stNode);
+            setNthChildNode(tblNode, idx, stNode);
             return stNode;
         }
 
@@ -420,6 +497,29 @@ namespace {
             }
         }
 
+        // 親ノードに対して、n番目の子ノードをセットする
+        void setNthChildNode(StrokeTableNode* parentNode, size_t n, Node* childNode) {
+            if (parentNode && childNode) {
+                if (!inOverlappingKeyBlock) {
+                    // 同時打鍵ブロック以外ならば上書きOK
+                    parentNode->setNthChild(n, childNode);
+                } else {
+                    // 同時打鍵ブロックの場合
+                    Node* p = parentNode->getNth(n);
+                    if (p == 0 || p->isFunctionNode()) {
+                        // 未割り当て、または機能ノードならば上書きOK
+                        parentNode->setNthChild(n, childNode);
+                    } else if (childNode->isFunctionNode()) {
+                        // 重複していて、子ノードが機能ノードなら無視
+                    } else {
+                        // 重複していて、親ノードも子ノードも機能ノード以外なら警告
+                        LOG_WARN(_T("DUPLICATED: %s"), currentLine.c_str());
+                        nodeDuplicateWarning();
+                    }
+                }
+            }
+        }
+
         // 現在のトークンをチェックする
         bool isCurrentToken(TOKEN target) {
             return (currentToken == target);
@@ -471,7 +571,10 @@ namespace {
                             _LOG_DEBUGH(_T("SET: lineNum=%d, %s"), lineNumber + 1, currentStr.c_str());
                         }
                         while (getNextLine()) {
-                            if (utils::startsWith(currentLine, _T("#end"))) break;
+                            if (utils::startsWith(currentLine, _T("#end"))) {
+                                lines->push_back(_T("#end __include__"));
+                                break;
+                            }
                             if (lines) {
                                 lines->push_back(currentLine);
                             }
@@ -485,10 +588,11 @@ namespace {
                             if (iter == linesMap.end()) {
                                 parseError();
                             } else {
+                                _LOG_DEBUGH(_T("LOAD: %s"), currentStr.c_str());
                                 auto lines = iter->second;
-                                tableLines.insert(tableLines.begin() + lineNumber + 1, lines->begin(), lines->end());
-                                includeLineOffsetStack.back() += lines->size();
-                                _LOG_DEBUGH(_T("includeFileStack.back()=%s, includeLineOffsetStack.back()=%d"), includeFileStack.back().c_str(), includeLineOffsetStack.back());
+                                size_t nextLineNum = lineNumber + 1;
+                                tableLines.insert(tableLines.begin() + nextLineNum, lines->begin(), lines->end());
+                                blockInfoStack.Push(_T(""), currentStr, nextLineNum);
                             }
                         }
                     } else if (utils::startsWith(lcStr, _T("yomiconv"))) {
@@ -521,6 +625,7 @@ namespace {
                     } else if (lcStr == _T("shiftb")) {
                         shiftPlane = 3;
                     } else if (lcStr == _T("shifto") || lcStr == _T("overlapping")) {
+                        inOverlappingKeyBlock = true;
                         shiftPlane = 4;
                         skipToEndOfLine();
                     } else if (lcStr == _T("end")) {
@@ -528,17 +633,11 @@ namespace {
                         auto word = utils::toLower(currentStr);
                         _LOG_DEBUGH(_T("end %s"), word.c_str());
                         if (word == _T("shifto") || word == _T("overlapping")) {
+                            inOverlappingKeyBlock = false;
                             shiftPlane = 0;
                         } else if (word == _T("__include__")) {
-                            _LOG_DEBUGH(_T("includeDirStack.pop_back()"));
-                            includeDirStack.pop_back();
-                            includeFileStack.pop_back();
-                            size_t lastOffset = includeLineOffsetStack.back();
-                            includeLineOffsetStack.pop_back();
-                            if (!includeLineOffsetStack.empty()) {
-                                includeLineOffsetStack.back() = lineNumber - lastOffset;
-                                _LOG_DEBUGH(_T("includeFileStack.back()=%s, includeLineOffsetStack.back()=%d"), includeFileStack.back().c_str(), includeLineOffsetStack.back());
-                            }
+                            _LOG_DEBUGH(_T("END INCLUDE/LOAD: lineNumber=%d"), lineNumber);
+                            blockInfoStack.Pop(lineNumber + 1);
                         }
                         skipToEndOfLine();
                     } else {
@@ -779,17 +878,15 @@ namespace {
         }
 
         void readFile(const wstring& filename) {
-            auto includeFilePath = utils::joinPath(includeDirStack.back(), utils::canonicalizePathDelimiter(filename));
-            _LOG_DEBUGH(_T("INCLUDE FILE PATH: %s"), includeFilePath.c_str());
+            auto includeFilePath = utils::joinPath(blockInfoStack.CurrentDirPath(), utils::canonicalizePathDelimiter(filename));
+            _LOG_DEBUGH(_T("INCLUDE: FILE PATH: %s"), includeFilePath.c_str());
             auto reader = utils::IfstreamReader(includeFilePath);
             if (reader.success()) {
                 auto lines = reader.getAllLines();
                 lines.push_back(_T("#end __include__"));
-                tableLines.insert(tableLines.begin() + lineNumber + 1, lines.begin(), lines.end());
-                includeDirStack.push_back(utils::getParentDirPath(includeFilePath));
-                includeFileStack.push_back(filename);
-                includeLineOffsetStack.push_back(lineNumber);
-                _LOG_DEBUGH(_T("lines.size=%d, includeFileStack.back()=%s, includeLineOffsetStack.back()=%d"), lines.size(), includeFileStack.back().c_str(), includeLineOffsetStack.back());
+                size_t nextLineNum = lineNumber + 1;
+                tableLines.insert(tableLines.begin() + nextLineNum, lines.begin(), lines.end());
+                blockInfoStack.Push(utils::getParentDirPath(includeFilePath), filename, nextLineNum);
             } else {
                 LOG_ERROR(_T("Can't open: %s"), includeFilePath.c_str());
                 fileOpenError(filename);
@@ -847,35 +944,67 @@ namespace {
             }
         }
 
+        inline wstring blockOrFile() {
+            return blockInfoStack.CurrentDirPath().empty() ? _T("ブロック") : _T("テーブルファイル");
+        }
+
+        inline size_t calcErrorLineNumber() {
+            return blockInfoStack.CalcCurrentLineNumber(lineNumber + 1);
+        }
+
+        inline size_t calcErrorColumn() {
+            if (nextPos == 0 && lineNumber > 0) return tableLines[lineNumber - 1].size();
+            return nextPos;
+        }
+
         // 解析に失敗した場合
         void parseError() {
-            _LOG_DEBUGH(_T("lineNumber=%d, lineOffset=%d"), lineNumber, includeLineOffsetStack.back());
+            _LOG_DEBUGH(_T("lineNumber=%d, nextPos=%d"), lineNumber, nextPos);
             wchar_t buf[2] = { currentChar, 0 };
-            handleError(utils::format(_T("テーブルファイル %s の %d行 %d文字目('%s')がまちがっているようです：\r\n> %s ..."), \
-                includeFileStack.back().c_str(), lineNumber + 1 - includeLineOffsetStack.back(), nextPos, buf, currentLine.substr(0, 50).c_str()));
+            handleError(utils::format(_T("%s %s の %d行 %d文字目('%s')がまちがっているようです：\r\n> %s ..."), \
+                blockOrFile().c_str(), blockInfoStack.CurrentBlockName().c_str(), calcErrorLineNumber(), calcErrorColumn(), buf, currentLine.substr(0, 50).c_str()));
         }
 
         // ファイルの読み込みに失敗した場合
         void fileOpenError(const wstring& filename) {
-            _LOG_DEBUGH(_T("lineNumber=%d, lineOffset=%d"), lineNumber, includeLineOffsetStack.back());
+            _LOG_DEBUGH(_T("lineNumber=%d, nextPos=%d"), lineNumber, nextPos);
             handleError(utils::format(_T("ファイル %s を読み込めません。\r\nテーブルファイル %s の %d行目がまちがっているようです：\r\n> %s ..."), \
-                filename.c_str(), includeFileStack.back().c_str(), lineNumber + 1 - includeLineOffsetStack.back(), currentLine.substr(0, 50).c_str()));
+                filename.c_str(), blockInfoStack.CurrentBlockName().c_str(), calcErrorLineNumber(), currentLine.substr(0, 50).c_str()));
+        }
+
+        // ノードの重複が発生した場合
+        void nodeDuplicateWarning() {
+            _LOG_DEBUGH(_T("lineNumber=%d, nextPos=%d"), lineNumber, nextPos);
+            handleWarning(utils::format(_T("%s %s の %d行目でノードの重複が発生しました：\r\n> %s ..."), \
+                blockOrFile().c_str(), blockInfoStack.CurrentBlockName().c_str(), calcErrorLineNumber(), currentLine.substr(0, 50).c_str()));
         }
 
         // エラー処理
         void handleError(const wstring& msg) {
             LOG_ERROR(msg);
-            wstring lines;
-            for (size_t i = 10; i > 0; --i) {
-                if (lineNumber >= i + 2) lines = lines + tableLines[lineNumber - (i + 1)] + _T("\n");
-            }
-            lines = lines + _T(">> ") + currentLine + _T("\n");
-            for (size_t i = 0; i < 10; ++i) {
-                if (lineNumber + i < tableLines.size())lines = lines + tableLines[lineNumber + i] + _T("\n");
-            }
-            LOG_ERROR(_T("lines=\n%s"), lines.c_str());
+            LOG_ERROR(_T("lines=\n%s"), makeErrorLines().c_str());
             // エラーメッセージを投げる
             ERROR_HANDLER->Error(msg);
+        }
+
+        // 警告ー処理
+        void handleWarning(const wstring& msg) {
+            LOG_WARN(msg);
+            LOG_WARN(_T("lines=\n%s"), makeErrorLines().c_str());
+            // エラーメッセージを投げる
+            ERROR_HANDLER->Warn(msg);
+        }
+
+        wstring makeErrorLines() {
+            wstring lines;
+            for (size_t i = 9; i > 0; --i) {
+                if (lineNumber >= i) lines = lines + tableLines[lineNumber - i] + _T("\n");
+            }
+            lines = lines + _T(">> ") + currentLine + _T("\n");
+            for (size_t i = 1; i < 10; ++i) {
+                if (lineNumber + i < tableLines.size())lines = lines + tableLines[lineNumber + i] + _T("\n");
+            }
+            return lines;
         }
     };
     DEFINE_CLASS_LOGGER(StrokeTreeBuilder);

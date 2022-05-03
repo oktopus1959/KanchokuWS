@@ -7,6 +7,76 @@ using Utils;
 
 namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 {
+    // include/load ブロック情報のスタック
+    class BlockInfoStack
+    {
+        private static Logger logger = Logger.GetLogger(true);
+
+        struct BlockInfo
+        {
+            public string DirPath;        // インクルードする場合の起動ディレクトリ
+            public string BlockName;      // ファイル名やブロック名
+            public int OrigLineNumber;  // ブロックの開始行番号(0起点)
+            public int CurrentOffset;   // 当ブロック内での行番号を算出するための、真の起点から現在行におけるオフセット行数
+
+            public BlockInfo(string dirPath, string name, int lineNum, int off)
+            {
+                DirPath = dirPath;
+                BlockName = name;
+                OrigLineNumber = lineNum;
+                CurrentOffset = off;
+            }
+        }
+
+        List<BlockInfo> blockInfoStack = new List<BlockInfo>();
+
+        public string CurrentDirPath {
+            get {
+                var path = blockInfoStack._isEmpty() ? "(empty)" : blockInfoStack.Last().DirPath;
+                logger.DebugH(() => $"PATH: {path}");
+                return path;
+            }
+        }
+
+        public string CurrentBlockName {
+            get {
+                var name = blockInfoStack._isEmpty() ? "" : blockInfoStack.Last().BlockName;
+                logger.DebugH(() => $"NAME: {name}");
+                return name;
+            }
+        }
+
+        public int CurrentOffset {
+            get {
+                int offset = blockInfoStack._isEmpty() ? 0 : blockInfoStack.Last().CurrentOffset;
+                logger.DebugH(() => $"OFFSET: {offset}");
+                return offset;
+            }
+        }
+
+        public int CalcCurrentLineNumber(int lineNum)
+        {
+            return lineNum - CurrentOffset;
+        }
+
+        public void Push(string dirPath, string name, int lineNum)
+        {
+            blockInfoStack.Add(new BlockInfo(dirPath, name, lineNum, lineNum));
+        }
+
+        public void Pop(int nextLineNum)
+        {
+            var lastInfo = blockInfoStack.Last();
+            logger.DebugH(() => $"PUSH ENTER: nextLineNum={nextLineNum}, dirPath={lastInfo.DirPath}, blockName={lastInfo.BlockName}, origLine={lastInfo.OrigLineNumber}, offset={lastInfo.CurrentOffset}");
+            int insertedTotalLineNum = nextLineNum - lastInfo.OrigLineNumber;
+            blockInfoStack._safePopBack();
+            if (!blockInfoStack._isEmpty()) {
+                lastInfo.CurrentOffset += insertedTotalLineNum;
+                logger.DebugH(() => $"PUSH LEAVE: dirPath={lastInfo.DirPath}, blockName={lastInfo.BlockName}, origLine={lastInfo.OrigLineNumber}, offset={lastInfo.CurrentOffset}");
+            }
+        }
+    }
+
     class TableFileParser
     {
         private static Logger logger = Logger.GetLogger(true);
@@ -50,10 +120,8 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         // 対象となる KeyComboPool
         KeyCombinationPool keyComboPool;
 
-        // include ファイル名のスタック
-        List<string> includeDirStack;
-        List<string> includeFileStack;
-        List<int> includeLineOffsetStack;
+        // ブロック情報のスタック
+        BlockInfoStack blockInfoStack = new BlockInfoStack();
 
         /// <summary>
         /// コンストラクタ
@@ -62,9 +130,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         public TableFileParser(KeyCombinationPool pool)
         {
             keyComboPool = pool;
-            includeDirStack = Helper.MakeList(KanchokuIni.Singleton.KanchokuDir);
-            includeFileStack = Helper.MakeList("");
-            includeLineOffsetStack = Helper.MakeList(0);
+            blockInfoStack.Push(KanchokuIni.Singleton.KanchokuDir, "", 0);
         }
 
         // テーブル定義を解析してストローク木を構築する
@@ -324,15 +390,8 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                                 isInConcernedBlock = false;
                                 break;
                             case "__include__":
-                                logger.DebugH("includeDirStack._safePopBack()");
-                                includeDirStack._safePopBack();
-                                includeFileStack._safePopBack();
-                                int lastOffset = includeLineOffsetStack._getLast();
-                                includeLineOffsetStack._safePopBack();
-                                if (includeLineOffsetStack._notEmpty()) {
-                                    includeLineOffsetStack[includeLineOffsetStack.Count - 1] = lineNumber - lastOffset;
-                                    logger.DebugH(() => $"includeFileStack.Last()={includeFileStack.Last()}, includeLineOffsetStack.Last()={includeLineOffsetStack.Last()}");
-                                }
+                                logger.DebugH(() => $"END INCLUDE/LOAD: lineNumber={lineNumber}");
+                                blockInfoStack.Pop(lineNumber + 1);
                                 break;
                         }
                     } else if (lcStr == "sands") {
@@ -437,7 +496,10 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                 logger.DebugH(() => $"SET: lineNum={lineNumber + 1}, {currentStr}");
             }
             while (getNextLine()) {
-                if (currentLine._startsWith("#end")) break;
+                if (currentLine._startsWith("#end")) {
+                    lines.Add("#end __include__");
+                    break;
+                }
                 if (lines != null) {
                     lines.Add(currentLine);
                 }
@@ -458,9 +520,9 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                     parseError();
                 } else {
                     logger.DebugH(() => $"InsertRange: {currentStr}, {lines.Count} lines");
-                    tableLines.InsertRange(lineNumber + 1, lines);
-                    includeLineOffsetStack[includeLineOffsetStack.Count - 1] += lines.Count;
-                    logger.DebugH(() => $"includeFileStack.Last()={includeFileStack.Last()}, includeLineOffsetStack.Last()={includeLineOffsetStack.Last()}");
+                    int nextLineNum = lineNumber + 1;
+                    tableLines.InsertRange(nextLineNum, lines);
+                    blockInfoStack.Push("", currentStr, nextLineNum);
                 }
             }
         }
@@ -520,23 +582,23 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             parseError();
         }
 
-        void getOverlappingKeys()
-        {
-            // オペランドは、shiftKeys=23,26,33,36,25,19,17 のような形式('|'で区切ると優先順位の指定ができるが、現状では優先順をサポートしていない)
-            readWord();
-            var items = currentStr._split('=');
-            if (items._safeLength() == 2 && items[1]._notEmpty()) {
-                int pri = 1;
-                foreach (var keys in items[1]._split('|')) {
-                    if (keys._notEmpty()) {
-                        foreach (var k in keys._split(',')) {
-                            keyComboPool.AddShiftKey(k._parseInt(), pri);
-                        }
-                    }
-                    ++pri;
-                }
-            }
-        }
+        //void getOverlappingKeys()
+        //{
+        //    // オペランドは、shiftKeys=23,26,33,36,25,19,17 のような形式('|'で区切ると優先順位の指定ができるが、現状では優先順をサポートしていない)
+        //    readWord();
+        //    var items = currentStr._split('=');
+        //    if (items._safeLength() == 2 && items[1]._notEmpty()) {
+        //        int pri = 1;
+        //        foreach (var keys in items[1]._split('|')) {
+        //            if (keys._notEmpty()) {
+        //                foreach (var k in keys._split(',')) {
+        //                    keyComboPool.AddShiftKey(k._parseInt(), pri);
+        //                }
+        //            }
+        //            ++pri;
+        //        }
+        //    }
+        //}
 
         // '"' が来るまで読みこんで、currentStr に格納。
         void readString() {
@@ -732,33 +794,51 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         {
             var lines = new List<string>();
             if (filename._notEmpty()) {
-                var includeFilePath = includeDirStack.Last()._joinPath(filename._canonicalPath());
+                var includeFilePath = blockInfoStack.CurrentDirPath._joinPath(filename._canonicalPath());
                 logger.DebugH(() => $"ENTER: includeFilePath={includeFilePath}");
                 var contents = Helper.GetFileContent(includeFilePath, (e) => logger.Error(e._getErrorMsg()));
                 if (contents._notEmpty()) {
                     lines.AddRange(contents._safeReplace("\r", "")._split('\n'));
                     lines.Add("#end __include__");
-                    includeDirStack.Add(includeFilePath._getDirPath());
-                    includeFileStack.Add(filename);
-                    includeLineOffsetStack.Add(lineNumber);
+                    int nextLineNum = lineNumber + 1;
+                    blockInfoStack.Push(includeFilePath._getDirPath(), filename, nextLineNum);
                 }
             }
             logger.DebugH(() => $"LEAVE: num of lines={lines.Count}");
             return lines;
         }
 
+        string blockOrFile() {
+            return blockInfoStack.CurrentDirPath._isEmpty() ? "ブロック" : "テーブルファイル";
+        }
+
+        int calcErrorLineNumber() {
+            return blockInfoStack.CalcCurrentLineNumber(lineNumber + 1);
+        }
+
+        int calcErrorColumn() {
+            if (nextPos == 0 && lineNumber > 0) return tableLines[lineNumber - 1].Count();
+            return nextPos;
+        }
+
         void parseError() {
-            string msg = $"テーブルファイル {includeFileStack.Last()} の {lineNumber + 1 - includeLineOffsetStack.Last()}行 {nextPos}文字目('{currentChar}')がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...";
+            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
+            string msg = $"{blockOrFile()} {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行 {calcErrorColumn()}文字目('{currentChar}')がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...";
             logger.Error(msg);
+            logger.Error(makeErrorLines());
+        }
+
+        string makeErrorLines() {
             var sb = new StringBuilder();
-            for (int i = 10; i > 0; --i) {
-                if (lineNumber >= i + 2) sb.Append(tableLines[lineNumber - (i + 1)]).Append('\n');
+            sb.Append("lines=\n");
+            for (int i = 9; i > 0; --i) {
+                if (lineNumber >= i) sb.Append(tableLines[lineNumber - (i + 1)]).Append('\n');
             }
             sb.Append($">> {currentLine}\n");
-            for (int i = 0; i < 10; ++i) {
+            for (int i = 1; i < 10; ++i) {
                 if (lineNumber + i < tableLines._safeCount())sb.Append(tableLines[lineNumber + i]).Append('\n');
             }
-            logger.Error($"lines=\n{sb.ToString()}");
+            return sb.ToString();
         }
     }
 }
