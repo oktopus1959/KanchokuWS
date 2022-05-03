@@ -85,6 +85,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 
         // トークンの種類
         enum TOKEN {
+            IGNORE,
             END,
             LBRACE,         // {
             RBRACE,         // }
@@ -96,7 +97,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             ARROW_BUNDLE,   // -*>-n>
         };
 
-        TOKEN currentToken = TOKEN.END;     // 最後に読んだトークン
+        TOKEN currentToken = TOKEN.IGNORE;  // 最後に読んだトークン
         string currentStr;                  // 文字列トークン
         int arrowIndex = -1;                // ARROWインデックス
         int lineNumber = 0;                 // 今読んでる行数
@@ -163,6 +164,9 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                         case TOKEN.SLASH:             // '/' が来ても次のトークン待ち
                             break;
 
+                        case TOKEN.IGNORE:
+                            break;
+
                         default:
                             parseError();
                             break;
@@ -180,6 +184,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 
         void parseSubTree(int depth, int prevNth)
         {
+            logger.DebugH(() => $"ENTER: currentLine={lineNumber}, depth={depth}, prevNth={prevNth}");
             //int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             int n = 0;
             bool isPrevDelim = true;
@@ -212,6 +217,9 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                         isPrevDelim = true;
                         break;
 
+                    case TOKEN.IGNORE:
+                        break;
+
                     default:                        // 途中でファイルが終わったりした場合 : エラー
                         parseError();
                         break;
@@ -221,10 +229,11 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             }
 
             strokes._resize(depth);
+            logger.DebugH(() => $"LEAVE: currentLine={lineNumber}, depth={depth}");
         }
 
         TOKEN parseArrowNode(int depth, int prevNth, int idx) {
-            logger.DebugH(() => $"CALLED: currentLine={lineNumber}, depth={depth}, idx={idx}, prevN={prevNth}");
+            logger.DebugH(() => $"ENTER: currentLine={lineNumber}, depth={depth}, idx={idx}, prevNth={prevNth}");
             readNextToken(depth);
             var tokenNextToArrow = currentToken;
             if (currentToken == TOKEN.ARROW) {
@@ -233,13 +242,15 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                 strokes._popBack();
             }
             parseNode(currentToken, depth + 1, prevNth, idx);
+            currentToken = TOKEN.IGNORE;    // いったん末端ノードの処理をしたら、矢印記法を抜けるまで無視
+            logger.DebugH(() => $"LEAVE: currentLine={lineNumber}, depth={depth}");
             return tokenNextToArrow;
         }
 
         // 矢印束記法(-*>-nn>)を第1打鍵位置に従って配置する
         void parseArrowBundleNode(int depth, int nextArrowIdx)
         {
-            logger.DebugH(() => $"depth={depth}, nextArrowIdx={nextArrowIdx}");
+            logger.DebugH(() => $"ENTER: depth={depth}, nextArrowIdx={nextArrowIdx}");
 
             int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             int n = 0;
@@ -271,6 +282,9 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                         isPrevDelim = true;
                         break;
 
+                    case TOKEN.IGNORE:
+                        break;
+
                     default:                        // 途中でファイルが終わったりした場合 : エラー
                         parseError();
                         break;
@@ -280,29 +294,38 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             }
 
             strokes._resize(depth);
+
+            logger.DebugH(() => $"LEAVE: depth={depth}");
         }
 
         void parseNode(TOKEN token, int depth, int prevNth, int nth, bool bArrowBundle = false)
         {
-            logger.DebugH(() => $"CALLED: token={token}, depth={depth}, prevNth={prevNth}, nth={nth}, bArrowBundle={bArrowBundle}");
+            logger.DebugH(() => $"ENTER: token={token}, depth={depth}, prevNth={prevNth}, nth={nth}, bArrowBundle={bArrowBundle}");
             switch (token) {
                 case TOKEN.LBRACE:
                     strokes.Add(nth);
                     parseSubTree(depth, nth);
                     strokes._popBack();
+                    logger.DebugH(() => $"LEAVE: depth={depth}");
                     return;
 
                 case TOKEN.STRING:            // "str" : 文字列ノード
                     if (isInConcernedBlock) {
                         makeOverlappingKeyCombo(nth);
                     }
+                    logger.DebugH(() => $"LEAVE: depth={depth}");
                     return;
 
                 case TOKEN.RBRACE:
                 case TOKEN.COMMA:             // ',' が来たら次のトークン
                 case TOKEN.SLASH:             // '/' が来ても次のトークン
                 case TOKEN.FUNCTION:          // @c : 機能ノード
+                    logger.DebugH(() => $"LEAVE: depth={depth}");
                     return;
+
+                case TOKEN.IGNORE:
+                    return;
+
                 default:                // 途中でファイルが終わったりした場合 : エラー
                     parseError();
                     return;

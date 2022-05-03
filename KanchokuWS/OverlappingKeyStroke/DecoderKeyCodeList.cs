@@ -71,4 +71,17 @@ namespace KanchokuWS.OverlappingKeyStroke
         }
 
     }
+
+    public static class DecoderKeyCodeListExtension
+    {
+        public static bool _isEmpty(this DecoderKeyCodeList list)
+        {
+            return list == null || list.IsEmpty;
+        }
+
+        public static bool _notEmpty(this DecoderKeyCodeList list)
+        {
+            return !list._isEmpty();
+        }
+    }
 }
