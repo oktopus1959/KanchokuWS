@@ -46,6 +46,7 @@ namespace KanchokuWS
         private GuiStatusChecker checkerCtrlKeys;
         private GuiStatusChecker checkerHistory;
         private GuiStatusChecker checkerMiscSettings;
+        private GuiStatusChecker checkerAbout;
 
         private const int timerInterval = 200;
 
@@ -97,6 +98,7 @@ namespace KanchokuWS
             checkerCtrlKeys = new GuiStatusChecker("CtrlKeys");
             checkerHistory = new GuiStatusChecker("History");
             checkerMiscSettings = new GuiStatusChecker("MiscSettings");
+            checkerAbout = new GuiStatusChecker("About");
 
             readSettings_tabBasic();
             setBasicStatusChecker();
@@ -118,6 +120,9 @@ namespace KanchokuWS
 
             readSettings_tabMiscSettings();
             setMiscSettingsStatusChecker();
+
+            readSettings_tabAbout();
+            setAboutStatusChecker();
 
             checkerAll.Reinitialize();
 
@@ -543,6 +548,7 @@ namespace KanchokuWS
             readSettings_tabCtrlKeys();
             readSettings_tabHistory();
             readSettings_tabMiscSettings();
+            readSettings_tabAbout();
 
             checkerAll.Reinitialize();
 
@@ -750,15 +756,12 @@ namespace KanchokuWS
             textBox_saveDictsIntervalTime.Text = $"{Math.Abs(Settings.SaveDictsIntervalTime)}";
             textBox_saveDictsCalmTime.Text = $"{Settings.SaveDictsCalmTime}";
 
-            // 開発者用
-            comboBox_logLevel.SelectedIndex = Settings.GetLogLevel();
-            checkBox_loggingDecKeyInfo.Checked = Settings.GetString("loggingDecKeyInfo")._parseBool();
-            checkBox_bushuDicLogEnabled.Checked = Settings.BushuDicLogEnabled;
-            checkBox_loggingActiveWindowInfo.Checked = Settings.LoggingActiveWindowInfo;
-            checkBox_loggingVirtualKeyboardInfo.Checked = Settings.LoggingVirtualKeyboardInfo;
-            checkBox_multiAppEnabled.Checked = Settings.MultiAppEnabled;
-
             //checkBox_autoOffWhenBurstKeyIn.Checked = Settings.GetString("autoOffWhenBurstKeyIn")._parseBool();
+
+            // 同時打鍵
+            textBox_overlappingMaxAllowedLeadTimeMs.Text = $"{Settings.OverlappingMaxAllowedLeadTimeMs}";
+            textBox_overlappingKeyTimeRate.Text = $"{Settings.OverlappingKeyTimeRate}";
+            textBox_overlappingKeyTimeMs.Text = $"{Settings.OverlappingKeyTimeMs}";
         }
 
         private void setAdvancedStatusChecker()
@@ -798,15 +801,12 @@ namespace KanchokuWS
             checkerAdvanced.Add(textBox_saveDictsIntervalTime);
             checkerAdvanced.Add(textBox_saveDictsCalmTime);
 
-            // 開発者用
-            checkerAdvanced.Add(comboBox_logLevel);
-            checkerAdvanced.Add(checkBox_loggingDecKeyInfo);
-            checkerAdvanced.Add(checkBox_bushuDicLogEnabled);
-            checkerAdvanced.Add(checkBox_loggingActiveWindowInfo);
-            checkerAdvanced.Add(checkBox_loggingVirtualKeyboardInfo);
-            checkerAdvanced.Add(checkBox_multiAppEnabled);
-
             //checkerAdvanced.Add(checkBox_autoOffWhenBurstKeyIn);
+
+            // 同時打鍵
+            checkerAdvanced.Add(textBox_overlappingMaxAllowedLeadTimeMs);
+            checkerAdvanced.Add(textBox_overlappingKeyTimeRate);
+            checkerAdvanced.Add(textBox_overlappingKeyTimeMs);
 
             checkerAll.Add(checkerAdvanced);
         }
@@ -864,17 +864,12 @@ namespace KanchokuWS
             Settings.SetUserIni("saveDictsIntervalTime", (checkBox_dictsAutoSaveEnabled.Checked ? "" : "-") + textBox_saveDictsIntervalTime.Text.Trim());
             Settings.SetUserIni("saveDictsCalmTime", textBox_saveDictsCalmTime.Text.Trim());
 
-            // 開発者用
-            Settings.SetUserIni("logLevel", comboBox_logLevel.SelectedIndex);
-            Logger.LogLevel = comboBox_logLevel.SelectedIndex;
-            Settings.SetUserIni("loggingDecKeyInfo", checkBox_loggingDecKeyInfo.Checked);
-            Settings.SetUserIni("bushuDicLogEnabled", checkBox_bushuDicLogEnabled.Checked);
-            //Settings.SetUserIni("loggingActiveWindowInfo", checkBox_loggingActiveWindowInfo.Checked);
-            Settings.LoggingActiveWindowInfo = checkBox_loggingActiveWindowInfo.Checked;
-            Settings.SetUserIni("loggingVirtualKeyboardInfo", checkBox_loggingVirtualKeyboardInfo.Checked);
-            Settings.SetUserIni("multiAppEnabled", checkBox_multiAppEnabled.Checked);
-
             //Settings.SetUserIni("autoOffWhenBurstKeyIn", checkBox_autoOffWhenBurstKeyIn.Checked);
+
+            // 同時打鍵
+            Settings.SetUserIni("overlappingMaxAllowedLeadTimeMs", textBox_overlappingMaxAllowedLeadTimeMs.Text.Trim());
+            Settings.SetUserIni("overlappingKeyTimeRate", textBox_overlappingKeyTimeRate.Text.Trim());
+            Settings.SetUserIni("overlappingKeyTimeMs", textBox_overlappingKeyTimeMs.Text.Trim());
 
             //Settings.ReadIniFile();
             // 各種定義ファイルの再読み込み
@@ -1541,6 +1536,92 @@ namespace KanchokuWS
         }
 
         //-----------------------------------------------------------------------------------
+        /// <summary> 開発者用設定</summary>
+        void readSettings_tabAbout()
+        {
+            // 開発者用
+            comboBox_logLevel.SelectedIndex = Settings.GetLogLevel();
+            checkBox_loggingDecKeyInfo.Checked = Settings.GetString("loggingDecKeyInfo")._parseBool();
+            checkBox_bushuDicLogEnabled.Checked = Settings.BushuDicLogEnabled;
+            checkBox_loggingActiveWindowInfo.Checked = Settings.LoggingActiveWindowInfo;
+            checkBox_loggingVirtualKeyboardInfo.Checked = Settings.LoggingVirtualKeyboardInfo;
+            checkBox_multiAppEnabled.Checked = Settings.MultiAppEnabled;
+        }
+
+        private void setAboutStatusChecker()
+        {
+            button_aboutEnter.Enabled = false;
+            checkerAbout.CtlToBeEnabled = button_aboutEnter;
+            checkerAbout.ControlEnabler = tabAboutStatusChanged;
+
+            // 開発者用
+            checkerAbout.Add(comboBox_logLevel);
+            checkerAbout.Add(checkBox_loggingDecKeyInfo);
+            checkerAbout.Add(checkBox_bushuDicLogEnabled);
+            checkerAbout.Add(checkBox_loggingActiveWindowInfo);
+            checkerAbout.Add(checkBox_loggingVirtualKeyboardInfo);
+            checkerAbout.Add(checkBox_multiAppEnabled);
+
+            //checkerAbout.Add(checkBox_autoOffWhenBurstKeyIn);
+
+            checkerAll.Add(checkerAbout);
+        }
+
+        private void button_aboutEnter_Click(object sender, EventArgs e)
+        {
+            logger.InfoH("ENTER");
+            frmMain?.DeactivateDecoder();
+
+            // 開発者用
+            Settings.SetUserIni("logLevel", comboBox_logLevel.SelectedIndex);
+            Logger.LogLevel = comboBox_logLevel.SelectedIndex;
+            Settings.SetUserIni("loggingDecKeyInfo", checkBox_loggingDecKeyInfo.Checked);
+            Settings.SetUserIni("bushuDicLogEnabled", checkBox_bushuDicLogEnabled.Checked);
+            //Settings.SetUserIni("loggingActiveWindowInfo", checkBox_loggingActiveWindowInfo.Checked);
+            Settings.LoggingActiveWindowInfo = checkBox_loggingActiveWindowInfo.Checked;
+            Settings.SetUserIni("loggingVirtualKeyboardInfo", checkBox_loggingVirtualKeyboardInfo.Checked);
+            Settings.SetUserIni("multiAppEnabled", checkBox_multiAppEnabled.Checked);
+
+            //Settings.ReadIniFile();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
+
+            readSettings_tabAbout();
+            checkerAbout.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+
+            //frmVkb?.SetNormalCellBackColors();
+            frmMode?.ShowImmediately();
+
+            // 各種定義ファイルの再読み込み
+            //frmMain?.ReloadDefFiles();
+
+            //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+
+            label_okResultAbout.Show();
+
+            logger.InfoH("LEAVE");
+
+        }
+
+        private void tabAboutStatusChanged(bool flag)
+        {
+            button_aboutClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+            changeCancelButton(flag, button_aboutClose);
+        }
+
+        private void button_aboutClose_Click(object sender, EventArgs e)
+        {
+            logger.InfoH("ENTER");
+            if (button_aboutClose.Text.StartsWith("閉")) {
+                this.Close();
+            } else {
+                readSettings_tabAbout();
+                checkerAbout.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+                logger.InfoH("LEAVE");
+            }
+        }
+
+        //-----------------------------------------------------------------------------------
         // 一定時間後にOKリザルトラベルを非表示にする
         int okResultCount = 0;
 
@@ -1564,6 +1645,7 @@ namespace KanchokuWS
                     label_miscEelllJsOut.Hide();
                     label_reloadMisc.Hide();
                     label_execResultFile.Hide();
+                    label_okResultAbout.Hide();
                 }
             }
         }
@@ -1629,6 +1711,11 @@ namespace KanchokuWS
         }
 
         private void label_okResultMisc_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_okResultAbout_VisibleChanged(object sender, EventArgs e)
         {
             okResultCount = okResultCountMax;
         }
@@ -1851,12 +1938,6 @@ namespace KanchokuWS
         }
 
         //-----------------------------------------------------------------------------------
-        private void button_aboutClose_Click(object sender, EventArgs e)
-        {
-            logger.InfoH("CALLED");
-            this.Close();
-        }
-
         private void radioButton_modeMarker_CheckedChanged(object sender, EventArgs e)
         {
             //checkBox_hideTopText.Enabled = radioButton_modeMarker.Checked;
@@ -1900,7 +1981,7 @@ namespace KanchokuWS
                     CancelButton = button_registerClose;
                     break;
                 case "tabPage_about":
-                    AcceptButton = button_aboutClose;
+                    AcceptButton = button_aboutEnter;
                     CancelButton = button_aboutClose;
                     break;
             }
