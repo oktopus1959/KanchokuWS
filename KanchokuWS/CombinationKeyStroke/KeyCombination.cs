@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace KanchokuWS.OverlappingKeyStroke
+namespace KanchokuWS.CombinationKeyStroke
 {
     /// <summary>
     /// キーの同時打鍵定義を表すクラス

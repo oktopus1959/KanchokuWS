@@ -438,11 +438,11 @@ namespace KanchokuWS
             this.label29 = new System.Windows.Forms.Label();
             this.button_aboutEnter = new System.Windows.Forms.Button();
             this.label_okResultAbout = new System.Windows.Forms.Label();
-            this.textBox_overlappingMaxAllowedLeadTimeMs = new System.Windows.Forms.TextBox();
+            this.textBox_combinationMaxAllowedLeadTimeMs = new System.Windows.Forms.TextBox();
             this.label114 = new System.Windows.Forms.Label();
-            this.textBox_overlappingKeyTimeRate = new System.Windows.Forms.TextBox();
+            this.textBox_combinationKeyTimeRate = new System.Windows.Forms.TextBox();
             this.label115 = new System.Windows.Forms.Label();
-            this.textBox_overlappingKeyTimeMs = new System.Windows.Forms.TextBox();
+            this.textBox_combinationKeyTimeMs = new System.Windows.Forms.TextBox();
             this.label116 = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
@@ -5218,11 +5218,11 @@ namespace KanchokuWS
             // 
             // groupBox45
             // 
-            this.groupBox45.Controls.Add(this.textBox_overlappingKeyTimeMs);
+            this.groupBox45.Controls.Add(this.textBox_combinationKeyTimeMs);
             this.groupBox45.Controls.Add(this.label116);
-            this.groupBox45.Controls.Add(this.textBox_overlappingKeyTimeRate);
+            this.groupBox45.Controls.Add(this.textBox_combinationKeyTimeRate);
             this.groupBox45.Controls.Add(this.label115);
-            this.groupBox45.Controls.Add(this.textBox_overlappingMaxAllowedLeadTimeMs);
+            this.groupBox45.Controls.Add(this.textBox_combinationMaxAllowedLeadTimeMs);
             this.groupBox45.Controls.Add(this.label114);
             this.groupBox45.Location = new System.Drawing.Point(323, 114);
             this.groupBox45.Name = "groupBox45";
@@ -5354,14 +5354,14 @@ namespace KanchokuWS
             this.label_okResultAbout.Visible = false;
             this.label_okResultAbout.VisibleChanged += new System.EventHandler(this.label_okResultAbout_VisibleChanged);
             // 
-            // textBox_overlappingMaxAllowedLeadTimeMs
+            // textBox_combinationMaxAllowedLeadTimeMs
             // 
-            this.textBox_overlappingMaxAllowedLeadTimeMs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_overlappingMaxAllowedLeadTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_overlappingMaxAllowedLeadTimeMs.Location = new System.Drawing.Point(248, 19);
-            this.textBox_overlappingMaxAllowedLeadTimeMs.Name = "textBox_overlappingMaxAllowedLeadTimeMs";
-            this.textBox_overlappingMaxAllowedLeadTimeMs.Size = new System.Drawing.Size(45, 19);
-            this.textBox_overlappingMaxAllowedLeadTimeMs.TabIndex = 0;
+            this.textBox_combinationMaxAllowedLeadTimeMs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_combinationMaxAllowedLeadTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_combinationMaxAllowedLeadTimeMs.Location = new System.Drawing.Point(248, 19);
+            this.textBox_combinationMaxAllowedLeadTimeMs.Name = "textBox_combinationMaxAllowedLeadTimeMs";
+            this.textBox_combinationMaxAllowedLeadTimeMs.Size = new System.Drawing.Size(45, 19);
+            this.textBox_combinationMaxAllowedLeadTimeMs.TabIndex = 0;
             // 
             // label114
             // 
@@ -5372,15 +5372,15 @@ namespace KanchokuWS
             this.label114.TabIndex = 6;
             this.label114.Text = "第1打鍵に許容する最大のリード時間(ミリ秒)";
             // 
-            // textBox_overlappingKeyTimeRate
+            // textBox_combinationKeyTimeRate
             // 
-            this.textBox_overlappingKeyTimeRate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_overlappingKeyTimeRate.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_overlappingKeyTimeRate.Location = new System.Drawing.Point(248, 42);
-            this.textBox_overlappingKeyTimeRate.Name = "textBox_overlappingKeyTimeRate";
-            this.textBox_overlappingKeyTimeRate.Size = new System.Drawing.Size(45, 19);
-            this.textBox_overlappingKeyTimeRate.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_overlappingKeyTimeRate, "第1打鍵と第2打鍵の重複時間が、第1打鍵の時間に対して\r\nここで設定したパーセンテージを超えたら、同時打鍵とみなします。\r\n\r\n例： ");
+            this.textBox_combinationKeyTimeRate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_combinationKeyTimeRate.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_combinationKeyTimeRate.Location = new System.Drawing.Point(248, 42);
+            this.textBox_combinationKeyTimeRate.Name = "textBox_combinationKeyTimeRate";
+            this.textBox_combinationKeyTimeRate.Size = new System.Drawing.Size(45, 19);
+            this.textBox_combinationKeyTimeRate.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBox_combinationKeyTimeRate, "第1打鍵と第2打鍵の重複時間が、第1打鍵の時間に対して\r\nここで設定したパーセンテージを超えたら、同時打鍵とみなします。\r\n\r\n例： ");
             // 
             // label115
             // 
@@ -5391,15 +5391,15 @@ namespace KanchokuWS
             this.label115.TabIndex = 8;
             this.label115.Text = "第1打鍵と第2打鍵の重複率 (%)";
             // 
-            // textBox_overlappingKeyTimeMs
+            // textBox_combinationKeyTimeMs
             // 
-            this.textBox_overlappingKeyTimeMs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_overlappingKeyTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_overlappingKeyTimeMs.Location = new System.Drawing.Point(248, 65);
-            this.textBox_overlappingKeyTimeMs.Name = "textBox_overlappingKeyTimeMs";
-            this.textBox_overlappingKeyTimeMs.Size = new System.Drawing.Size(45, 19);
-            this.textBox_overlappingKeyTimeMs.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_overlappingKeyTimeMs, "第1打鍵と第2打鍵の重複時間がここで設定した時間を超えたら、\r\n同時打鍵とみなします。");
+            this.textBox_combinationKeyTimeMs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_combinationKeyTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_combinationKeyTimeMs.Location = new System.Drawing.Point(248, 65);
+            this.textBox_combinationKeyTimeMs.Name = "textBox_combinationKeyTimeMs";
+            this.textBox_combinationKeyTimeMs.Size = new System.Drawing.Size(45, 19);
+            this.textBox_combinationKeyTimeMs.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_combinationKeyTimeMs, "第1打鍵と第2打鍵の重複時間がここで設定した時間を超えたら、\r\n同時打鍵とみなします。");
             // 
             // label116
             // 
@@ -6143,11 +6143,11 @@ namespace KanchokuWS
         private System.Windows.Forms.ComboBox comboBox_logLevel;
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.Label label_okResultAbout;
-        private System.Windows.Forms.TextBox textBox_overlappingMaxAllowedLeadTimeMs;
+        private System.Windows.Forms.TextBox textBox_combinationMaxAllowedLeadTimeMs;
         private System.Windows.Forms.Label label114;
-        private System.Windows.Forms.TextBox textBox_overlappingKeyTimeRate;
+        private System.Windows.Forms.TextBox textBox_combinationKeyTimeRate;
         private System.Windows.Forms.Label label115;
-        private System.Windows.Forms.TextBox textBox_overlappingKeyTimeMs;
+        private System.Windows.Forms.TextBox textBox_combinationKeyTimeMs;
         private System.Windows.Forms.Label label116;
     }
 }

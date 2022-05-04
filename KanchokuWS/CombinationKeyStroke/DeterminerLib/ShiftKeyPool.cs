@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utils;
 
-namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
+namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 {
     class ShiftKeyPool
     {

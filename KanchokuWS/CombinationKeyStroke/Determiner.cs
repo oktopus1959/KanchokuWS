@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using KanchokuWS.OverlappingKeyStroke.DeterminerLib;
+using KanchokuWS.CombinationKeyStroke.DeterminerLib;
 using Utils;
 
-namespace KanchokuWS.OverlappingKeyStroke
+namespace KanchokuWS.CombinationKeyStroke
 {
     /// <summary>
     /// キー入力の時系列に対して、同時打鍵などの判定を行って、出力文字列を決定する

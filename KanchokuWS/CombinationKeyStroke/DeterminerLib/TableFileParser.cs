@@ -5,8 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Utils;
 
-namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
+
+namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 {
+    using ShiftKeyKind = ShiftKeyPool.Kind;
+
     // include/load ブロック情報のスタック
     class BlockInfoStack
     {
@@ -106,8 +109,11 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         int nextPos = 0;                    // 次の文字位置
         char currentChar = '\0';            // 次の文字
 
-        // 関心のあるブロックの中か
-        bool isInConcernedBlock = false;
+        // 同時打鍵定義ブロックの中か
+        bool isInCombinationBlock => shiftKeyKind != ShiftKeyKind.None;
+
+        // 同時打鍵によるシフト種別
+        ShiftKeyKind shiftKeyKind = ShiftKeyKind.None;
 
         // 打鍵列
         List<int> strokes = new List<int>();
@@ -115,7 +121,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         // 定義列マップ
         Dictionary<string, List<string>> linesMap = new Dictionary<string, List<string>>();
 
-        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 4:ShiftO(Overlapping) の5面
+        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 4:Combination(Overlapping) の5面
         int shiftPlane = 0;
 
         // 対象となる KeyComboPool
@@ -153,7 +159,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                         case TOKEN.ARROW:
                             int arrowDeckey = arrowIndex;
                             tokenNextToArrow = parseArrowNode(0, 0, arrowIndex);
-                            if (isInConcernedBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, ShiftKeyPool.Kind.MutualShift);
+                            if (isInCombinationBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
                             break;
 
                         case TOKEN.ARROW_BUNDLE:
@@ -195,7 +201,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                     case TOKEN.ARROW:
                         int arrowDeckey = arrowIndex;
                         tokenNextToArrow = parseArrowNode(depth + 1, prevNth, arrowIndex);
-                        if (isInConcernedBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, ShiftKeyPool.Kind.MutualShift);
+                        if (isInCombinationBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
                         isPrevDelim = false;
                         break;
 
@@ -310,8 +316,8 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                     return;
 
                 case TOKEN.STRING:            // "str" : 文字列ノード
-                    if (isInConcernedBlock) {
-                        makeOverlappingKeyCombo(nth);
+                    if (isInCombinationBlock) {
+                        makeCombinationKeyCombo(nth);
                     }
                     logger.DebugH(() => $"LEAVE: depth={depth}");
                     return;
@@ -333,7 +339,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         }
 
         // 同時打鍵組合せを作成する
-        void makeOverlappingKeyCombo(int keyCode)
+        void makeCombinationKeyCombo(int keyCode)
         {
             var ss = new List<int>(strokes);
             ss.Add(keyCode);
@@ -372,7 +378,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                 }
 
                 if (currentChar == '#') {
-                    // Directive: '#include', '#define', '#strokePosition', '#*shift*', '#overlapping', '#yomiConvert', '#store', '#load', '#end' または '#' 以降、行末までコメント
+                    // Directive: '#include', '#define', '#strokePosition', '#*shift*', '#combination', '#overlapping', '#yomiConvert', '#store', '#load', '#end' または '#' 以降、行末までコメント
                     readWord();
                     var lcStr = currentStr._toLower();
                     if (lcStr == "include") {
@@ -397,17 +403,28 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                         shiftPlane = 2;
                     } else if (lcStr == "shiftb") {
                         shiftPlane = 3;
-                    } else if (lcStr == "shifto" || lcStr == "overlapping") {
+                    } else if (lcStr == "combination" || lcStr == "overlapping") {
                         shiftPlane = 4;
-                        isInConcernedBlock = true;
-                        //getOverlappingKeys();
+                        readWord();
+                        switch (currentStr._toLower()) {
+                            case "preshift":
+                                shiftKeyKind = ShiftKeyKind.PreShift;
+                                break;
+                            case "oneshot":
+                                shiftKeyKind = ShiftKeyKind.OneshotShift;
+                                break;
+                            case "mutual":
+                            default:
+                                shiftKeyKind = ShiftKeyKind.MutualShift;
+                                break;
+                        }
                     } else if (lcStr == "end") {
                         readWord();
                         switch (currentStr._toLower()) {
-                            case "shifto":
+                            case "combination":
                             case "overlapping":
                                 shiftPlane = 0;
-                                isInConcernedBlock = false;
+                                shiftKeyKind = ShiftKeyKind.None;
                                 break;
                             case "__include__":
                                 logger.DebugH(() => $"END INCLUDE/LOAD: lineNumber={lineNumber}");
@@ -428,7 +445,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                     continue;
                 }
 
-                if (!isInConcernedBlock) {
+                if (!isInCombinationBlock) {
                     skipToEndOfLine();
                     continue;
                 }
@@ -533,7 +550,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             logger.DebugH(() => $"CALLED: |{currentStr}|");
             if (currentStr._isEmpty()) {
                 parseError();
-            } else if (isInConcernedBlock) {
+            } else if (isInCombinationBlock) {
                 var lines = linesMap._safeGet(currentStr);
                 if (lines._isEmpty()) {
                     logger.Error($"No stored lines for \"{currentStr}\"");
@@ -642,9 +659,10 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             }
         }
 
-        // 次の空白文字までを読み込んで、currentStr に格納。
+        // 行末までの範囲で次の空白文字までを読み込んで、currentStr に格納。
         void readWord() {
             currentStr = "";
+            if (nextPos >= currentLine._safeLength()) return;
             char c = skipSpace();
             if (c <= ' ') return;
 

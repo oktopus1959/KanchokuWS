@@ -168,7 +168,7 @@ namespace KanchokuWS
             }
 
             // 同時打鍵設定の読み込み
-            OverlappingKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, Settings.TableFile2);
+            CombinationKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, Settings.TableFile2);
         }
 
         private void updateStrokeNodesByComplexCommands()
@@ -663,7 +663,7 @@ namespace KanchokuWS
                         logger.InfoH("EXCHANGE_CODE_TABLE");
                         if (IsDecoderActive && Settings.TableFile2._notEmpty() && DecoderOutput.IsWaitingFirstStroke()) {
                             ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
-                            OverlappingKeyStroke.Determiner.Singleton.ExchangeKeyCombinationPool();  // KeyCombinationPoolの入れ替え
+                            CombinationKeyStroke.Determiner.Singleton.ExchangeKeyCombinationPool();  // KeyCombinationPoolの入れ替え
                             frmVkb.DrawVirtualKeyboardChars();
                         }
                         return true;
@@ -864,7 +864,7 @@ namespace KanchokuWS
                 prevDeckey = -1;
                 if (frmSplash != null) closeSplash();
                 if (decoderPtr != IntPtr.Zero) ResetDecoder(decoderPtr);
-                OverlappingKeyStroke.Determiner.Singleton.Clear();     // 同時打鍵キューのクリア
+                CombinationKeyStroke.Determiner.Singleton.Clear();     // 同時打鍵キューのクリア
                 decoderOutput.layout = 0;   // None にリセットしておく。これをやらないと仮想鍵盤モードを切り替えたときに以前の履歴選択状態が残ったりする
                 CommonState.CenterString = "";
                 Settings.VirtualKeyboardShowStrokeCountTemp = 0;

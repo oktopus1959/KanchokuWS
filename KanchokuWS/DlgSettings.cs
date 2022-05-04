@@ -759,9 +759,9 @@ namespace KanchokuWS
             //checkBox_autoOffWhenBurstKeyIn.Checked = Settings.GetString("autoOffWhenBurstKeyIn")._parseBool();
 
             // 同時打鍵
-            textBox_overlappingMaxAllowedLeadTimeMs.Text = $"{Settings.OverlappingMaxAllowedLeadTimeMs}";
-            textBox_overlappingKeyTimeRate.Text = $"{Settings.OverlappingKeyTimeRate}";
-            textBox_overlappingKeyTimeMs.Text = $"{Settings.OverlappingKeyTimeMs}";
+            textBox_combinationMaxAllowedLeadTimeMs.Text = $"{Settings.CombinationMaxAllowedLeadTimeMs}";
+            textBox_combinationKeyTimeRate.Text = $"{Settings.CombinationKeyTimeRate}";
+            textBox_combinationKeyTimeMs.Text = $"{Settings.CombinationKeyTimeMs}";
         }
 
         private void setAdvancedStatusChecker()
@@ -804,9 +804,9 @@ namespace KanchokuWS
             //checkerAdvanced.Add(checkBox_autoOffWhenBurstKeyIn);
 
             // 同時打鍵
-            checkerAdvanced.Add(textBox_overlappingMaxAllowedLeadTimeMs);
-            checkerAdvanced.Add(textBox_overlappingKeyTimeRate);
-            checkerAdvanced.Add(textBox_overlappingKeyTimeMs);
+            checkerAdvanced.Add(textBox_combinationMaxAllowedLeadTimeMs);
+            checkerAdvanced.Add(textBox_combinationKeyTimeRate);
+            checkerAdvanced.Add(textBox_combinationKeyTimeMs);
 
             checkerAll.Add(checkerAdvanced);
         }
@@ -867,9 +867,9 @@ namespace KanchokuWS
             //Settings.SetUserIni("autoOffWhenBurstKeyIn", checkBox_autoOffWhenBurstKeyIn.Checked);
 
             // 同時打鍵
-            Settings.SetUserIni("overlappingMaxAllowedLeadTimeMs", textBox_overlappingMaxAllowedLeadTimeMs.Text.Trim());
-            Settings.SetUserIni("overlappingKeyTimeRate", textBox_overlappingKeyTimeRate.Text.Trim());
-            Settings.SetUserIni("overlappingKeyTimeMs", textBox_overlappingKeyTimeMs.Text.Trim());
+            Settings.SetUserIni("combinationMaxAllowedLeadTimeMs", textBox_combinationMaxAllowedLeadTimeMs.Text.Trim());
+            Settings.SetUserIni("combinationKeyTimeRate", textBox_combinationKeyTimeRate.Text.Trim());
+            Settings.SetUserIni("combinationKeyTimeMs", textBox_combinationKeyTimeMs.Text.Trim());
 
             //Settings.ReadIniFile();
             // 各種定義ファイルの再読み込み

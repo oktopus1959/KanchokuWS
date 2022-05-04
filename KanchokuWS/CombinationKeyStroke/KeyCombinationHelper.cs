@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using KanchokuWS.OverlappingKeyStroke.DeterminerLib;
+using KanchokuWS.CombinationKeyStroke.DeterminerLib;
 using Utils;
 
-namespace KanchokuWS.OverlappingKeyStroke
+namespace KanchokuWS.CombinationKeyStroke
 {
     static class KeyCombinationHelper
     {
@@ -123,6 +123,11 @@ namespace KanchokuWS.OverlappingKeyStroke
         public static List<int> DecodeKey(string key)
         {
             return key._notEmpty() ? key.Select(x => decodeChar(x)).ToList() : new List<int>();
+        }
+
+        public static string DecodeKeyString(string key)
+        {
+            return key._notEmpty() ? key.Select(x => decodeChar(x).ToString())._join(":") : "";
         }
 
         public static string EncodeKeyList(IEnumerable<int> keyList)

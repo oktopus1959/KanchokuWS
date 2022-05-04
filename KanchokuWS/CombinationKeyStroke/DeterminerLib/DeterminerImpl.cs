@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using KanchokuWS.OverlappingKeyStroke.DeterminerLib;
+using KanchokuWS.CombinationKeyStroke.DeterminerLib;
 using Utils;
 
-namespace KanchokuWS.OverlappingKeyStroke
+namespace KanchokuWS.CombinationKeyStroke
 {
     class DeterminerImpl
     {
@@ -121,9 +121,9 @@ namespace KanchokuWS.OverlappingKeyStroke
                     double ms1 = strokeList[pos].TimeSpanMs(strokeList[pos2]);
                     double ms2 = strokeList[pos2].TimeSpanMs(dtNow);
                     double rate = (ms2 / (ms1 + ms2)) * 100.0;
-                    logger.DebugH(() => $"ms1={ms1:f2}, ms2={ms2:f2}, ovlRate={rate:f1}, threshold={Settings.OverlappingKeyTimeRate}");
-                    return (Settings.OverlappingMaxAllowedLeadTimeMs <= 0 || ms1 <= Settings.OverlappingMaxAllowedLeadTimeMs)
-                        && (rate >= Settings.OverlappingKeyTimeRate || ms2 >= Settings.OverlappingKeyTimeMs);
+                    logger.DebugH(() => $"ms1={ms1:f2}, ms2={ms2:f2}, ovlRate={rate:f1}, threshold={Settings.CombinationKeyTimeRate}");
+                    return (Settings.CombinationMaxAllowedLeadTimeMs <= 0 || ms1 <= Settings.CombinationMaxAllowedLeadTimeMs)
+                        && (rate >= Settings.CombinationKeyTimeRate || ms2 >= Settings.CombinationKeyTimeMs);
                 }
 
                 // まず末尾を固定して、長いほうからチェックして最長の同時打鍵列を求める

@@ -120,6 +120,9 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -620,6 +623,19 @@ OFFにすると、変換文字列全体の末尾にブロッカーを置きま�
 で置換します。(TUT-Code の2打鍵目スペースによる記号入力や、
  Try-Code での1打鍵目空白による漢字入力など)</value>
   </data>
+  <data name="groupBox39.ToolTip" xml:space="preserve">
+    <value>SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを押すと、
+スペースキーがシフトキーあるいは拡張修飾キーとして働くようになります。
+
+SandS をどの拡張シフト面に割り当てるかは、「拡張修飾キー」の設定で、
+「シフト面設定」画面を表示させ、「SandS」を選択して設定してください。
+
+SandS有効時にスペースを入力したい場合は、オートリピートが始まる前に
+スペースキーを離してください。
+
+SandS が有効であっても、 Shift+Space はそのまま Shift+Space として
+扱われます。</value>
+  </data>
   <data name="textBox_SandSEnableSpaceOrRepeatMillisec.ToolTip" xml:space="preserve">
     <value>SandS有効時に Space キーを連続打鍵した時、空白のリピート入力を有効に
 するまでの時間(ミリ秒)を設定します。
@@ -646,19 +662,6 @@ SandS の拡張シフト面にテーブルファイルの裏面定義を行っ�
 
 ワンショットシフト状態の場合に、Spaceキーを単打すると空白が1つ出力され、
 Spaceキーを押下状態にするとリピート出力となります。</value>
-  </data>
-  <data name="groupBox39.ToolTip" xml:space="preserve">
-    <value>SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを押すと、
-スペースキーがシフトキーあるいは拡張修飾キーとして働くようになります。
-
-SandS をどの拡張シフト面に割り当てるかは、「拡張修飾キー」の設定で、
-「シフト面設定」画面を表示させ、「SandS」を選択して設定してください。
-
-SandS有効時にスペースを入力したい場合は、オートリピートが始まる前に
-スペースキーを離してください。
-
-SandS が有効であっても、 Shift+Space はそのまま Shift+Space として
-扱われます。</value>
   </data>
   <data name="checkBox_autoBushuComp.ToolTip" xml:space="preserve">
     <value>ある2文字の組み合わせで一度部首合成を実行すると、

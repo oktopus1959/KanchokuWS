@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using KanchokuWS.OverlappingKeyStroke.DeterminerLib;
+using KanchokuWS.CombinationKeyStroke.DeterminerLib;
 using Utils;
 
-namespace KanchokuWS.OverlappingKeyStroke
+namespace KanchokuWS.CombinationKeyStroke
 {
     public class DecoderKeyCodeList
     {

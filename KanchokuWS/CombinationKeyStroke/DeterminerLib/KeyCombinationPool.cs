@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Utils;
 
-namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
+namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 {
     class KeyCombinationPool
     {
@@ -44,13 +44,13 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         private HashSet<string> comboSubKeys = new HashSet<string>();
 
         // ShiftKeyとして扱いうるキー
-        public ShiftKeyPool OverlappingShiftKeys { get; private set; } = new ShiftKeyPool();
+        public ShiftKeyPool ComboShiftKeys { get; private set; } = new ShiftKeyPool();
 
         public void Clear()
         {
             keyComboDict.Clear();
             comboSubKeys.Clear();
-            OverlappingShiftKeys.Clear();
+            ComboShiftKeys.Clear();
         }
 
         /// <summary>
@@ -61,12 +61,13 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         public void AddEntry(List<int> comboShiftedKeyList)
         {
             var keyCombo = new KeyCombination(comboShiftedKeyList);
-            var primKey = KeyCombinationHelper.MakePrimaryKey(comboShiftedKeyList.Select(x => Stroke.ModuloizeKey(x)));
+            var moduloKeyList = comboShiftedKeyList.Select(x => Stroke.ModuloizeKey(x)).ToList();
+            var primKey = KeyCombinationHelper.MakePrimaryKey(moduloKeyList);
             keyComboDict[primKey] = keyCombo;
-            foreach (var key in KeyCombinationHelper.MakePermutatedKeys(comboShiftedKeyList)) {
+            foreach (var key in KeyCombinationHelper.MakePermutatedKeys(moduloKeyList)) {
                 if (!keyComboDict.ContainsKey(key)) { keyComboDict[key] = keyCombo; }
             }
-            comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(comboShiftedKeyList));
+            comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(moduloKeyList));
         }
 
         private KeyCombination getEntry(IEnumerable<int> keyList)
@@ -120,7 +121,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         public void AddShiftKey(int keyCode, ShiftKeyPool.Kind kind)
         {
             logger.DebugH(() => $"CALLED: keyCode={keyCode}, shiftKey={kind}");
-            if (keyCode > 0) OverlappingShiftKeys.AddShiftKey(keyCode, kind);
+            if (keyCode > 0) ComboShiftKeys.AddShiftKey(keyCode, kind);
         }
 
         /// <summary>
@@ -132,17 +133,17 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         /// <returns></returns>
         public ShiftKeyPool.Kind GetShiftKeyKind(int keyCode)
         {
-            return OverlappingShiftKeys.GetShiftKeyKind(keyCode);
+            return ComboShiftKeys.GetShiftKeyKind(keyCode);
         }
 
         public void DebugPrint()
         {
             foreach (var pair in keyComboDict) {
-                var key = pair.Key.Select(x => ((int)(x - 0x20)).ToString())._join(":");
-                var deckeys = pair.Value.ComboShiftedDecoderKeyList?.KeyString() ?? "NONE";
+                var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
+                var deckeys = (pair.Value.ComboShiftedDecoderKeyList?.KeyString())._orElse("NONE");
                 logger.DebugH($"{key}={deckeys} {pair.Value.IsTerminal}");
             }
-            foreach (var pair in OverlappingShiftKeys.Pairs) {
+            foreach (var pair in ComboShiftKeys.Pairs) {
                 logger.DebugH($"ShiftKey: {pair.Key}={pair.Value}");
             }
         }
