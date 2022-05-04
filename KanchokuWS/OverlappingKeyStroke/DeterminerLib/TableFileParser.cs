@@ -333,15 +333,12 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         }
 
         // 同時打鍵組合せを作成する
-        void makeOverlappingKeyCombo(int nth)
+        void makeOverlappingKeyCombo(int keyCode)
         {
             var ss = new List<int>(strokes);
-            ss.Add(nth);
+            ss.Add(keyCode);
             logger.DebugH(() => $"{ss.Select(x => x.ToString())._join(":")}={currentStr}");
-            var keyCombo = new KeyCombination(ss);
-            // 同時打鍵キー集合は、Normalキーで作成しておく
-            var ts = ss.Select(x => x >= DecoderKeys.SHIFT_M_DECKEY_START ? x - DecoderKeys.SHIFT_M_DECKEY_START : x).ToList();
-            keyComboPool.AddEntry(ts, keyCombo);
+            keyComboPool.AddEntry(ss);
         }
 
         // 現在のトークンをチェックする

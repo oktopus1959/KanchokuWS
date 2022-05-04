@@ -78,7 +78,7 @@ namespace KanchokuWS.OverlappingKeyStroke
                 flag = true;
                 strokeList.Add(stroke);
             }
-            logger.DebugH(() => $"LEAVE: {flag}: strokeList={strokeList.Select(x => x.NormalKeyCode.ToString())._join(":")}");
+            logger.DebugH(() => $"LEAVE: {flag}: strokeList={strokeList.Select(x => x.ModuloKeyCode.ToString())._join(":")}");
             return flag;
         }
 
@@ -101,12 +101,11 @@ namespace KanchokuWS.OverlappingKeyStroke
 
             if (strokeList.Count == 1) {
                 // ストロークキューに１打鍵だけ積んであった場合
-                if (strokeList[0].NormalKeyCode == normalKey) {
-                    //if (!strokeList[0].IsShifted) result = Helper.MakeList(strokeList[0].DecoderKeyCode);
-                    if (!strokeList[0].IsShifted) result = Helper.MakeList(strokeList[0].NormalKeyCode);
+                if (strokeList[0].ModuloKeyCode == normalKey) {
+                    if (!strokeList[0].IsShifted) result = Helper.MakeList(strokeList[0].DecoderKeyCode);
                     strokeList.Clear();
                 }
-                logger.DebugH(() => $"LEAVE-1: result={decKey}, strokeList={strokeList.Select(x => x.NormalKeyCode.ToString())._join(":")}");
+                logger.DebugH(() => $"LEAVE-1: result={decKey}, strokeList={strokeList.Select(x => x.ModuloKeyCode.ToString())._join(":")}");
                 return result;
             }
 
@@ -132,7 +131,7 @@ namespace KanchokuWS.OverlappingKeyStroke
                 int overlapLen = strokeList.Count;
                 while (overlapLen > 1) {
                     startPos = strokeList.Count - overlapLen;
-                    var keyList = KeyCombinationPool.CurrentPool.GetEntry(strokeList, startPos, overlapLen)?.DecoderKeyList;
+                    var keyList = KeyCombinationPool.CurrentPool.GetEntry(strokeList, startPos, overlapLen)?.ComboShiftedDecoderKeyList;
                     logger.DebugH(() => $"keyList={(keyList._isEmpty() ? "(empty)" : keyList.KeyString())}, upKeyIdx={upKeyIdx}, startPos={startPos}, strokeList[{startPos}].IsShiftedOrShiftableSpaceKey={strokeList[startPos].IsShiftedOrShiftableSpaceKey}");
                     if (keyList._notEmpty() && (upKeyIdx > startPos || strokeList[startPos].IsShiftedOrShiftableSpaceKey || isOverlapped(startPos, overlapLen))) {
                         // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)
@@ -147,7 +146,7 @@ namespace KanchokuWS.OverlappingKeyStroke
                     startPos = 0;
                     overlapLen = strokeList.Count - 1;   // 全体についてはチェック済みなので、1つ短くしておく
                     while (overlapLen > 1) {
-                        var keyList = KeyCombinationPool.CurrentPool.GetEntry(strokeList, 0, overlapLen)?.DecoderKeyList;
+                        var keyList = KeyCombinationPool.CurrentPool.GetEntry(strokeList, 0, overlapLen)?.ComboShiftedDecoderKeyList;
                         if (keyList._notEmpty()) {
                             // 同時打鍵が見つかった
                             logger.DebugH(() => $"PATH-2: Overlap candidates found: startPos=0, overlapLen={overlapLen}");
@@ -166,8 +165,7 @@ namespace KanchokuWS.OverlappingKeyStroke
                 // 同時打鍵の後に解放キーがあるなら、そこまでを出力に加える
                 for (int i = startPos + overlapLen; i <= upKeyIdx; ++i) {
                     if (!strokeList[i].IsShifted) {
-                        //result.Add(strokeList[i].DecoderKeyCode);
-                        result.Add(strokeList[i].NormalKeyCode);
+                        result.Add(strokeList[i].DecoderKeyCode);
                     }
                 }
                 // UPされたキーとシフトされないキーを除去
@@ -180,19 +178,19 @@ namespace KanchokuWS.OverlappingKeyStroke
                     }
                 }
 
-                logger.DebugH(() => $"LEAVE-1: result={result?.Select(x => x.ToString())._join(":") ?? "null"}, strokeList={strokeList.Select(x => x.NormalKeyCode.ToString())._join(":")}");
+                logger.DebugH(() => $"LEAVE-1: result={result?.Select(x => x.ToString())._join(":") ?? "null"}, strokeList={strokeList.Select(x => x.ModuloKeyCode.ToString())._join(":")}");
                 return result;
             }
 
             // Downされたキーが見つからなかった
-            logger.DebugH(() => $"LEAVE: result=(null), strokeList={strokeList.Select(x => x.NormalKeyCode.ToString())._join(":")}");
+            logger.DebugH(() => $"LEAVE: result=(null), strokeList={strokeList.Select(x => x.ModuloKeyCode.ToString())._join(":")}");
             return null;
         }
 
         private int findSameKey(int normKey)
         {
             for (int idx = strokeList.Count - 1; idx >= 0; --idx) {
-                if (strokeList[idx].NormalKeyCode == normKey) return idx;
+                if (strokeList[idx].ModuloKeyCode == normKey) return idx;
             }
             return -1;
         }

@@ -40,7 +40,7 @@ namespace KanchokuWS.OverlappingKeyStroke
         /// <returns></returns>
         public static string MakePrimaryKey(IEnumerable<Stroke> keyList, int lastKey = -1)
         {
-            return MakePrimaryKey(keyList.Select(x => x.NormalKeyCode), lastKey);
+            return MakePrimaryKey(keyList.Select(x => x.ModuloKeyCode), lastKey);
         }
 
         /// <summary>

@@ -13,16 +13,16 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
     public class Stroke
     {
         /// <summary>
-        /// 打鍵されたキーの正規化キーコード
+        /// 打鍵されたキーのModulo化キーコード(検索キーを生成するのに使用)
         /// </summary>
-        public int NormalKeyCode { get; private set; }
+        public int ModuloKeyCode { get; private set; }
 
         /// <summary>
         /// 打鍵されたキーのデコーダキーコード
         /// </summary>
         public int DecoderKeyCode { get; private set; }
 
-        public bool IsShiftableSpaceKey => NormalKeyCode == DecoderKeys.STROKE_SPACE_DECKEY && IsShiftable;
+        public bool IsShiftableSpaceKey => ModuloKeyCode == DecoderKeys.STROKE_SPACE_DECKEY && IsShiftable;
 
         public bool IsShiftedOrShiftableSpaceKey => IsShifted || IsShiftableSpaceKey;
 
@@ -33,10 +33,10 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         /// <returns></returns>
         public bool IsSameKey(int decKey)
         {
-            return DecoderKeyCode == decKey || NormalKeyCode == NormalizeKey(decKey);
+            return DecoderKeyCode == decKey || ModuloKeyCode == ModuloizeKey(decKey);
         }
 
-        public static int NormalizeKey(int decKey) { return decKey % DecoderKeys.NORMAL_DECKEY_NUM; }
+        public static int ModuloizeKey(int decKey) { return decKey % DecoderKeys.NORMAL_DECKEY_NUM; }
 
         ///// <summary>
         ///// 同時打鍵シフトキーとしての優先順位
@@ -92,8 +92,8 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         public Stroke(int decKey, DateTime dt)
         {
             DecoderKeyCode = decKey;
-            NormalKeyCode = NormalizeKey(decKey);
-            IsShiftable = KeyCombinationPool.CurrentPool.GetShiftPriority(NormalKeyCode) > 0;
+            ModuloKeyCode = ModuloizeKey(decKey);
+            IsShiftable = KeyCombinationPool.CurrentPool.GetShiftPriority(ModuloKeyCode) > 0;
             KeyDt = dt;
         }
 

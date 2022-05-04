@@ -17,12 +17,13 @@ namespace KanchokuWS.OverlappingKeyStroke
         public bool IsTerminal { get; private set; } = true;
 
         /// <summary>
-        /// 当同時打鍵組合せに割り当てられた出力文字列を得るためにデコーダに送信する DecoderKey のリスト。<br/>
+        /// 当同時打鍵組合せに割り当てられた出力文字列を得るためにデコーダに送信する DecoderKey のリスト。
+        /// 同時打鍵用にコードがシフトされている。<br/>
         /// 履歴機能や交ぜ書き機能などを利用できるようにするため、
         /// 当パッケージが直接 TargetString を出力するのではなく、いったんデコーダを経由して文字列を出力させる。<br/>
         /// 空リストの場合は、最終的な文字にマップされる同時打鍵の組合せが存在しないことを表す。
         /// </summary>
-        public DecoderKeyCodeList DecoderKeyList { get; private set; } = new DecoderKeyCodeList();
+        public DecoderKeyCodeList ComboShiftedDecoderKeyList { get; private set; } = new DecoderKeyCodeList();
 
         /// <summary>
         /// コンストラクタ
@@ -36,7 +37,7 @@ namespace KanchokuWS.OverlappingKeyStroke
         /// </summary>
         public KeyCombination(List<int> keyList)
         {
-            DecoderKeyList.Add(keyList);
+            ComboShiftedDecoderKeyList.Add(keyList);
         }
 
         public void NotTerminal()

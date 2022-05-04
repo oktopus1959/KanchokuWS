@@ -56,15 +56,17 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         /// <summary>
         /// エントリの追加
         /// </summary>
-        /// <param name="keyList"></param>
+        /// <param name="comboShiftedKeyList"></param>
         /// <param name="keyCombo"></param>
-        public void AddEntry(List<int> keyList, KeyCombination keyCombo)
+        public void AddEntry(List<int> comboShiftedKeyList)
         {
-            keyComboDict[KeyCombinationHelper.MakePrimaryKey(keyList)] = keyCombo;
-            foreach (var key in KeyCombinationHelper.MakePermutatedKeys(keyList)) {
+            var keyCombo = new KeyCombination(comboShiftedKeyList);
+            var primKey = KeyCombinationHelper.MakePrimaryKey(comboShiftedKeyList.Select(x => Stroke.ModuloizeKey(x)));
+            keyComboDict[primKey] = keyCombo;
+            foreach (var key in KeyCombinationHelper.MakePermutatedKeys(comboShiftedKeyList)) {
                 if (!keyComboDict.ContainsKey(key)) { keyComboDict[key] = keyCombo; }
             }
-            comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(keyList));
+            comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(comboShiftedKeyList));
         }
 
         private KeyCombination getEntry(IEnumerable<int> keyList)
@@ -78,7 +80,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             // ストロークリストが空であるか、あるいは全てのストロークがシフトされていたら、null
             if (strokeList._isEmpty() || strokeList.Skip(start).Take(len).All(x => x.IsShifted)) return null;
 
-            return getEntry(strokeList.Skip(start).Take(len).Select(x => x.NormalKeyCode));
+            return getEntry(strokeList.Skip(start).Take(len).Select(x => x.ModuloKeyCode));
         }
 
         public KeyCombination GetEntry(int decKey)
@@ -88,7 +90,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 
         public KeyCombination GetEntry(Stroke stroke)
         {
-            return GetEntry(stroke.NormalKeyCode);
+            return GetEntry(stroke.ModuloKeyCode);
         }
 
         /// <summary>
@@ -102,6 +104,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                 logger.DebugH(() => $"key={key}, list={KeyCombinationHelper.EncodeKeyList(KeyCombinationHelper.DecodeKey(key))}");
                 var keyCombo = keyComboDict._safeGet(key);
                 if (keyCombo == null) {
+                    // 存在していなかった部分キーを追加
                     keyComboDict[key] = keyCombo = new KeyCombination(null);
                 }
                 keyCombo.NotTerminal();
@@ -136,7 +139,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         {
             foreach (var pair in keyComboDict) {
                 var key = pair.Key.Select(x => ((int)(x - 0x20)).ToString())._join(":");
-                var deckeys = pair.Value.DecoderKeyList?.KeyString() ?? "NONE";
+                var deckeys = pair.Value.ComboShiftedDecoderKeyList?.KeyString() ?? "NONE";
                 logger.DebugH($"{key}={deckeys} {pair.Value.IsTerminal}");
             }
             foreach (var pair in OverlappingShiftKeys.Pairs) {
