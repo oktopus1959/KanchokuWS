@@ -171,7 +171,7 @@
     <Compile Include="OverlappingKeyStroke\Determiner.cs" />
     <Compile Include="OverlappingKeyStroke\DeterminerLib\DeterminerImpl.cs" />
     <Compile Include="OverlappingKeyStroke\DeterminerLib\KeyCombinationPool.cs" />
-    <Compile Include="OverlappingKeyStroke\DeterminerLib\ShiftKeyPriority.cs" />
+    <Compile Include="OverlappingKeyStroke\DeterminerLib\ShiftKeyPool.cs" />
     <Compile Include="OverlappingKeyStroke\DeterminerLib\TableFileParser.cs" />
     <Compile Include="OverlappingKeyStroke\KeyCodeInfo.cs" />
     <Compile Include="OverlappingKeyStroke\DecoderKeySequence.cs" />

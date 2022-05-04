@@ -44,7 +44,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         private HashSet<string> comboSubKeys = new HashSet<string>();
 
         // ShiftKeyとして扱いうるキー
-        public ShiftKeyPriority OverlappingShiftKeys { get; private set; } = new ShiftKeyPriority();
+        public ShiftKeyPool OverlappingShiftKeys { get; private set; } = new ShiftKeyPool();
 
         public void Clear()
         {
@@ -113,14 +113,14 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         }
 
         /// <summary>
-        /// ShiftKeyとして扱いうるキーの設定(priority は 1以上であること。1が最優先)
+        /// ShiftKeyとして扱いうるキーの設定
         /// </summary>
         /// <param name="keyCode"></param>
-        /// <param name="priority"></param>
-        public void AddShiftKey(int keyCode, int priority = 1)
+        /// <param name="kind"></param>
+        public void AddShiftKey(int keyCode, ShiftKeyPool.Kind kind)
         {
-            logger.DebugH(() => $"CALLED: keyCode={keyCode}, priority={priority}");
-            if (keyCode > 0) OverlappingShiftKeys.AddShiftKey(keyCode, priority);
+            logger.DebugH(() => $"CALLED: keyCode={keyCode}, shiftKey={kind}");
+            if (keyCode > 0) OverlappingShiftKeys.AddShiftKey(keyCode, kind);
         }
 
         /// <summary>
@@ -130,9 +130,9 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         /// </summary>
         /// <param name="keyCode"></param>
         /// <returns></returns>
-        public int GetShiftPriority(int keyCode)
+        public ShiftKeyPool.Kind GetShiftKeyKind(int keyCode)
         {
-            return OverlappingShiftKeys.GetShiftPriority(keyCode);
+            return OverlappingShiftKeys.GetShiftKeyKind(keyCode);
         }
 
         public void DebugPrint()

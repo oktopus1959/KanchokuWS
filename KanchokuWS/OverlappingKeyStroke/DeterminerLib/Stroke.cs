@@ -38,11 +38,6 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
 
         public static int ModuloizeKey(int decKey) { return decKey % DecoderKeys.NORMAL_DECKEY_NUM; }
 
-        ///// <summary>
-        ///// 同時打鍵シフトキーとしての優先順位
-        ///// </summary>
-        //public int ShiftPriority { get; private set; }
-
         /// <summary>
         /// 同時打鍵シフトキーとして使われ得るか
         /// </summary>
@@ -93,7 +88,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
         {
             DecoderKeyCode = decKey;
             ModuloKeyCode = ModuloizeKey(decKey);
-            IsShiftable = KeyCombinationPool.CurrentPool.GetShiftPriority(ModuloKeyCode) > 0;
+            IsShiftable = KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode) > 0;
             KeyDt = dt;
         }
 

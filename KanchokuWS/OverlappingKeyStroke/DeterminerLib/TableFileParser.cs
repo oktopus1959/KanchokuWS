@@ -153,7 +153,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                         case TOKEN.ARROW:
                             int arrowDeckey = arrowIndex;
                             tokenNextToArrow = parseArrowNode(0, 0, arrowIndex);
-                            if (isInConcernedBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey);
+                            if (isInConcernedBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, ShiftKeyPool.Kind.MutualShift);
                             break;
 
                         case TOKEN.ARROW_BUNDLE:
@@ -195,7 +195,7 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
                     case TOKEN.ARROW:
                         int arrowDeckey = arrowIndex;
                         tokenNextToArrow = parseArrowNode(depth + 1, prevNth, arrowIndex);
-                        if (isInConcernedBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey);
+                        if (isInConcernedBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, ShiftKeyPool.Kind.MutualShift);
                         isPrevDelim = false;
                         break;
 
@@ -601,24 +601,6 @@ namespace KanchokuWS.OverlappingKeyStroke.DeterminerLib
             }
             parseError();
         }
-
-        //void getOverlappingKeys()
-        //{
-        //    // オペランドは、shiftKeys=23,26,33,36,25,19,17 のような形式('|'で区切ると優先順位の指定ができるが、現状では優先順をサポートしていない)
-        //    readWord();
-        //    var items = currentStr._split('=');
-        //    if (items._safeLength() == 2 && items[1]._notEmpty()) {
-        //        int pri = 1;
-        //        foreach (var keys in items[1]._split('|')) {
-        //            if (keys._notEmpty()) {
-        //                foreach (var k in keys._split(',')) {
-        //                    keyComboPool.AddShiftKey(k._parseInt(), pri);
-        //                }
-        //            }
-        //            ++pri;
-        //        }
-        //    }
-        //}
 
         // '"' が来るまで読みこんで、currentStr に格納。
         void readString() {
