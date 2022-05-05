@@ -55,11 +55,24 @@ namespace KanchokuWS.CombinationKeyStroke
         }
 
         /// <summary>
-        /// PrimaryKey以外の順列置換されたキーのリストを返す<br/>ただし、bAll=true なら、PrimaryKeyも含めた全キーを返す
+        /// PrimaryKey以外の順列置換されたキーのリストを返す<br/>ただし、preShift=true なら、リストの先頭は固定する
         /// </summary>
         /// <param name="keyList"></param>
+        /// <param name="bPreShift"></param>
         /// <returns></returns>
-        public static List<string> MakePermutatedKeys(List<int> keyList, bool bAll = false)
+        public static List<string> MakePermutatedKeys(List<int> keyList, bool bPreShift)
+        {
+            return makePermutatedKeys(keyList, bPreShift, false);
+        }
+
+        /// <summary>
+        /// PrimaryKey以外の順列置換されたキーのリストを返す<br/>ただし、preShift=true なら、リストの先頭は固定する。またbAll=true なら、PrimaryKeyも含めた全キーを返す
+        /// </summary>
+        /// <param name="keyList"></param>
+        /// <param name="bPreShift"></param>
+        /// <param name="bAll"></param>
+        /// <returns></returns>
+        private static List<string> makePermutatedKeys(List<int> keyList, bool bPreShift, bool bAll)
         {
             var result = new List<string>();
             if (keyList._notEmpty()) {
@@ -67,21 +80,26 @@ namespace KanchokuWS.CombinationKeyStroke
                     if (bAll) result.Add(makeString(keyList[0]));
                 } else if (keyList.Count == 2) {
                     if (bAll) result.Add(makeString(keyList[0], keyList[1]));
-                    result.Add(makeString(keyList[1], keyList[0]));
+                    if (!bPreShift) result.Add(makeString(keyList[1], keyList[0]));
                 } else if (keyList.Count == 3) {
                     if (bAll) result.Add(makeString(keyList[0], keyList[1], keyList[2]));
                     result.Add(makeString(keyList[0], keyList[2], keyList[1]));
-                    result.Add(makeString(keyList[1], keyList[0], keyList[2]));
-                    result.Add(makeString(keyList[1], keyList[2], keyList[0]));
-                    result.Add(makeString(keyList[2], keyList[0], keyList[1]));
-                    result.Add(makeString(keyList[2], keyList[1], keyList[0]));
+                    if (!bPreShift) {
+                        result.Add(makeString(keyList[1], keyList[0], keyList[2]));
+                        result.Add(makeString(keyList[1], keyList[2], keyList[0]));
+                        result.Add(makeString(keyList[2], keyList[0], keyList[1]));
+                        result.Add(makeString(keyList[2], keyList[1], keyList[0]));
+                    }
                 } else {
                     for (int i = keyList.Count - 1; i >= 0; --i) {
-                        char kc = (char)keyList[i];
-                        var subList = keyList.Take(i).ToList();
-                        if (i < keyList.Count - 1) subList.AddRange(keyList.Skip(i + 1));
-                        foreach (var k in MakePermutatedKeys(subList, true)) {
-                            result.Add(k.Append(kc).ToString());
+                        if (!bPreShift || i == 0) {
+                            // 先頭固定なら i==0 のときだけ
+                            char kc = (char)keyList[i];
+                            var subList = keyList.Take(i).ToList();
+                            if (i < keyList.Count - 1) subList.AddRange(keyList.Skip(i + 1));
+                            foreach (var k in makePermutatedKeys(subList, false, true)) {
+                                result.Add(k.Append(kc).ToString());
+                            }
                         }
                     }
                     if (!bAll) result.RemoveAt(0);

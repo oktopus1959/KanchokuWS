@@ -16,6 +16,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             OneshotShift
         }
 
+        public static bool IsShiftable(Kind kind) { return kind == Kind.PreShift || kind == Kind.MutualShift; }
+
         private Dictionary<int, Kind> shiftKindDict = new Dictionary<int, Kind>();
 
         public IEnumerable<KeyValuePair<int, Kind>> Pairs { get { return shiftKindDict.AsEnumerable(); } }

@@ -624,7 +624,7 @@ namespace {
                         shiftPlane = 2;
                     } else if (lcStr == _T("shiftb")) {
                         shiftPlane = 3;
-                    } else if (lcStr == _T("shifto") || lcStr == _T("overlapping")) {
+                    } else if (lcStr == _T("combination") || lcStr == _T("overlapping")) {
                         inOverlappingKeyBlock = true;
                         shiftPlane = 4;
                         skipToEndOfLine();
@@ -632,7 +632,7 @@ namespace {
                         readWord();
                         auto word = utils::toLower(currentStr);
                         _LOG_DEBUGH(_T("end %s"), word.c_str());
-                        if (word == _T("shifto") || word == _T("overlapping")) {
+                        if (word == _T("combination") || word == _T("overlapping")) {
                             inOverlappingKeyBlock = false;
                             shiftPlane = 0;
                         } else if (word == _T("__include__")) {

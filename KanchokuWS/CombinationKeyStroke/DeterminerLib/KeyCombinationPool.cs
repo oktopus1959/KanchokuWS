@@ -6,6 +6,8 @@ using Utils;
 
 namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 {
+    using ShiftKeyKind = ShiftKeyPool.Kind;
+
     class KeyCombinationPool
     {
         private static Logger logger = Logger.GetLogger(true);
@@ -57,14 +59,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// エントリの追加
         /// </summary>
         /// <param name="comboShiftedKeyList"></param>
-        /// <param name="keyCombo"></param>
-        public void AddEntry(List<int> comboShiftedKeyList)
+        /// <param name="shiftKind">PreShiftの場合は、先頭キーを固定した順列を生成する</param>
+        public void AddEntry(List<int> comboShiftedKeyList, ShiftKeyKind shiftKind)
         {
             var keyCombo = new KeyCombination(comboShiftedKeyList);
             var moduloKeyList = comboShiftedKeyList.Select(x => Stroke.ModuloizeKey(x)).ToList();
             var primKey = KeyCombinationHelper.MakePrimaryKey(moduloKeyList);
             keyComboDict[primKey] = keyCombo;
-            foreach (var key in KeyCombinationHelper.MakePermutatedKeys(moduloKeyList)) {
+            foreach (var key in KeyCombinationHelper.MakePermutatedKeys(moduloKeyList, shiftKind == ShiftKeyKind.PreShift)) {
                 if (!keyComboDict.ContainsKey(key)) { keyComboDict[key] = keyCombo; }
             }
             comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(moduloKeyList));
@@ -118,7 +120,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         /// <param name="keyCode"></param>
         /// <param name="kind"></param>
-        public void AddShiftKey(int keyCode, ShiftKeyPool.Kind kind)
+        public void AddShiftKey(int keyCode, ShiftKeyKind kind)
         {
             logger.DebugH(() => $"CALLED: keyCode={keyCode}, shiftKey={kind}");
             if (keyCode > 0) ComboShiftKeys.AddShiftKey(keyCode, kind);
@@ -131,7 +133,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         /// <param name="keyCode"></param>
         /// <returns></returns>
-        public ShiftKeyPool.Kind GetShiftKeyKind(int keyCode)
+        public ShiftKeyKind GetShiftKeyKind(int keyCode)
         {
             return ComboShiftKeys.GetShiftKeyKind(keyCode);
         }

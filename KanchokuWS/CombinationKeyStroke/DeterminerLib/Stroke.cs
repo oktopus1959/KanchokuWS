@@ -88,7 +88,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             DecoderKeyCode = decKey;
             ModuloKeyCode = ModuloizeKey(decKey);
-            IsShiftable = KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode) > 0;
+            IsShiftable = ShiftKeyPool.IsShiftable(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
             KeyDt = dt;
         }
 

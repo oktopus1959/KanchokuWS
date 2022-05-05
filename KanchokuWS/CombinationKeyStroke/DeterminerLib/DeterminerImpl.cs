@@ -132,7 +132,8 @@ namespace KanchokuWS.CombinationKeyStroke
                 while (overlapLen > 1) {
                     startPos = strokeList.Count - overlapLen;
                     var keyList = KeyCombinationPool.CurrentPool.GetEntry(strokeList, startPos, overlapLen)?.ComboShiftedDecoderKeyList;
-                    logger.DebugH(() => $"keyList={(keyList._isEmpty() ? "(empty)" : keyList.KeyString())}, upKeyIdx={upKeyIdx}, startPos={startPos}, strokeList[{startPos}].IsShiftedOrShiftableSpaceKey={strokeList[startPos].IsShiftedOrShiftableSpaceKey}");
+                    logger.DebugH(() => $"keyList={(keyList._isEmpty() ? "(empty)" : keyList.KeyString())}, upKeyIdx={upKeyIdx}, startPos={startPos}, " +
+                                        $"strokeList[{startPos}].IsShiftedOrShiftableSpaceKey={strokeList[startPos].IsShiftedOrShiftableSpaceKey}");
                     if (keyList._notEmpty() && (upKeyIdx > startPos || strokeList[startPos].IsShiftedOrShiftableSpaceKey || isOverlapped(startPos, overlapLen))) {
                         // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)
                         logger.DebugH(() => $"PATH-1: Overlap candidates found: startPos={startPos}, overlapLen={overlapLen}");

@@ -317,6 +317,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                 case TOKEN.STRING:            // "str" : 文字列ノード
                     if (isInCombinationBlock) {
+                        // 文字列に至る同時打鍵列の組合せを作成して登録しておく
                         makeCombinationKeyCombo(nth);
                     }
                     logger.DebugH(() => $"LEAVE: depth={depth}");
@@ -338,13 +339,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
-        // 同時打鍵組合せを作成する
+        // 同時打鍵列の組合せを作成して登録しておく
         void makeCombinationKeyCombo(int keyCode)
         {
             var ss = new List<int>(strokes);
             ss.Add(keyCode);
             logger.DebugH(() => $"{ss.Select(x => x.ToString())._join(":")}={currentStr}");
-            keyComboPool.AddEntry(ss);
+            keyComboPool.AddEntry(ss, shiftKeyKind);
         }
 
         // 現在のトークンをチェックする
