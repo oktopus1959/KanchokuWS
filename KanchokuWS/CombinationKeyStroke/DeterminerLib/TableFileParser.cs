@@ -344,7 +344,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             var ss = new List<int>(strokes);
             ss.Add(keyCode);
-            logger.DebugH(() => $"{ss.Select(x => x.ToString())._join(":")}={currentStr}");
+            logger.DebugH(() => $"{ss._keyString()}={currentStr}");
             keyComboPool.AddEntry(ss, shiftKeyKind);
         }
 

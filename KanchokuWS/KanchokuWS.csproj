@@ -89,6 +89,7 @@
     <Compile Include="ColorTextBox.Designer.cs">
       <DependentUpon>ColorTextBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="CombinationKeyStroke\DeterminerLib\StrokeList.cs" />
     <Compile Include="CommonState.cs" />
     <Compile Include="DecoderKeys.cs" />
     <Compile Include="DecoderKeyToChar.cs" />

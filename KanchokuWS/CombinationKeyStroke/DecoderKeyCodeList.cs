@@ -22,7 +22,7 @@ namespace KanchokuWS.CombinationKeyStroke
 
         public string KeyString()
         {
-            return KeyList.Select(x => x.ToString())._join(":");
+            return KeyList._keyString();
         }
 
         public DecoderKeyCodeList()
@@ -82,6 +82,11 @@ namespace KanchokuWS.CombinationKeyStroke
         public static bool _notEmpty(this DecoderKeyCodeList list)
         {
             return !list._isEmpty();
+        }
+
+        public static string _keyString(this List<int> list)
+        {
+            return list._notEmpty() ? list.Select(x => x.ToString())._join(":") : "";
         }
     }
 }

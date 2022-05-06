@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utils;
 
 namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 {
@@ -38,8 +39,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public static int ModuloizeKey(int decKey) { return decKey % DecoderKeys.NORMAL_DECKEY_NUM; }
 
+        public bool IsRepeatable { get; private set; } = false;
+
         /// <summary>
-        /// 同時打鍵シフトキーとして使われ得るか
+        /// 同時打鍵の連続シフト可能キーとして使われ得るか
         /// </summary>
         public bool IsShiftable { get; private set; }
 
@@ -49,6 +52,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public bool IsShifted { get; private set; }
 
         public void SetShifted() { IsShifted = true; }
+
+        /// <summary>
+        /// 出力済みか
+        /// </summary>
+        public bool IsAlreadyOutput { get; private set; } = false;
+
+        public void SetAlreadyOutput() { IsAlreadyOutput = true; }
 
         /// <summary>
         /// キー打鍵時の時刻
@@ -92,5 +102,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             KeyDt = dt;
         }
 
+        //public static string ToDebugString(IEnumerable<Stroke> list)
+        //{
+        //    return list._isEmpty() ? "" : list.Select(x => x.ModuloKeyCode.ToString())._join(":");
+        //}
     }
 }

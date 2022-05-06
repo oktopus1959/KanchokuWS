@@ -72,18 +72,33 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(moduloKeyList));
         }
 
-        private KeyCombination getEntry(IEnumerable<int> keyList)
+        private KeyCombination getEntry(IEnumerable<int> keyList, int lastKey)
         {
-            logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(keyList)}");
-            return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList));
+            logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(keyList)}, lastKey={lastKey}");
+            return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList, lastKey));
         }
 
-        public KeyCombination GetEntry(List<Stroke> strokeList, int start, int len)
+        public KeyCombination GetEntry(IEnumerable<Stroke> strokeList, Stroke lastStroke)
         {
             // ストロークリストが空であるか、あるいは全てのストロークがシフトされていたら、null
-            if (strokeList._isEmpty() || strokeList.Skip(start).Take(len).All(x => x.IsShifted)) return null;
+            if (strokeList._isEmpty() || (strokeList.All(x => x.IsShifted) && (lastStroke?.IsShifted ?? true))) return null;
 
-            return getEntry(strokeList.Skip(start).Take(len).Select(x => x.ModuloKeyCode));
+            return getEntry(strokeList.Select(x => x.ModuloKeyCode), lastStroke?.ModuloKeyCode ?? -1);
+        }
+
+        public KeyCombination GetEntry(StrokeList strokeList, int start, int len)
+        {
+            return GetEntry(strokeList.GetList().Skip(start).Take(len), null);
+        }
+
+        public KeyCombination GetEntry(IEnumerable<Stroke> strokeList, int start, int len)
+        {
+            return GetEntry(strokeList.Skip(start).Take(len), null);
+        }
+
+        public KeyCombination GetEntry(StrokeList strokeList, Stroke lastStroke)
+        {
+            return GetEntry(strokeList.GetList(), lastStroke);
         }
 
         public KeyCombination GetEntry(int decKey)
