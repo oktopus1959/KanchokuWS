@@ -170,7 +170,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="CombinationKeyStroke\DecoderKeyCodeList.cs" />
     <Compile Include="CombinationKeyStroke\Determiner.cs" />
-    <Compile Include="CombinationKeyStroke\DeterminerLib\DeterminerImpl.cs" />
     <Compile Include="CombinationKeyStroke\DeterminerLib\KeyCombinationPool.cs" />
     <Compile Include="CombinationKeyStroke\DeterminerLib\ShiftKeyPool.cs" />
     <Compile Include="CombinationKeyStroke\DeterminerLib\TableFileParser.cs" />

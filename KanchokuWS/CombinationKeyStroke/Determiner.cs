@@ -64,7 +64,7 @@ namespace KanchokuWS.CombinationKeyStroke
         public bool KeyDown(int decKey)
         {
             var dtNow = DateTime.Now;
-            logger.DebugH(() => $"ENTER: Add new stroke: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}");
+            logger.DebugH(() => $"ENTER: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}");
             bool flag = false;
             var stroke = new Stroke(decKey, dtNow);
             var sameStk = strokeList.DetectKeyRepeat(stroke);
@@ -80,11 +80,13 @@ namespace KanchokuWS.CombinationKeyStroke
             } else if (strokeList.Count > 0) {
                 flag = true;
                 strokeList.Add(stroke);
+                logger.DebugH("Add new stroke: PATH-1");
             } else {
                 var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
                 if (combo != null && !combo.IsTerminal) {
                     flag = true;
                     strokeList.Add(stroke);
+                    logger.DebugH("Add new stroke: PATH-2");
                 }
             }
             logger.DebugH(() => $"LEAVE: {flag}: {strokeList.ToDebugString()}");
@@ -98,6 +100,7 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
         public List<int> KeyUp(int decKey)
         {
+            logger.DebugH(() => $"ENTER: decKey={decKey}");
             return strokeList.GetKeyCombination(decKey, DateTime.Now);
         }
         ///// <summary>
