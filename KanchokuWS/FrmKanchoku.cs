@@ -1009,7 +1009,7 @@ namespace KanchokuWS
         private async Task<bool> initializeDecoder()
         {
             return await Task.Run(() => {
-                logger.Info("ENTER");
+                logger.InfoH("ENTER");
                 decoderPtr = CreateDecoder(Logger.LogLevel);         // UI側のLogLevelに合わせる
 
                 //ExecCmdDecoder(null, KanchokuIni.Singleton.IniFilePath, true);
@@ -1025,7 +1025,7 @@ namespace KanchokuWS
 
                 updateStrokeNodesByComplexCommands();
 
-                logger.Info("LEAVE");
+                logger.InfoH("LEAVE");
                 return true;
             });
         }
@@ -1033,7 +1033,7 @@ namespace KanchokuWS
         // デコーダの終了
         private void finalizeDecoder()
         {
-            logger.Info("ENTER");
+            logger.InfoH("ENTER");
             if (decoderPtr != IntPtr.Zero) {
                 if (!bNoSaveDicts) {
                     logger.Info("CALL SaveDictsDecoder");
@@ -1044,7 +1044,7 @@ namespace KanchokuWS
                 decoderPtr = IntPtr.Zero;
             }
 
-            logger.Info("LEAVE");
+            logger.InfoH("LEAVE");
         }
 
         /// <summary>初期打鍵表(下端機能キー以外は空白)の作成</summary>

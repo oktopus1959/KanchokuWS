@@ -44,6 +44,7 @@ namespace KanchokuWS
 
         public static void ClearSpecificDecoderSettings()
         {
+            logger.DebugH(() => $"CALLED");
             specificDecoderSettings.Clear();
         }
 
@@ -567,7 +568,8 @@ namespace KanchokuWS
 
         private static Dictionary<string, string> specificDecoderSettings { get; set; } = new Dictionary<string, string>();
 
-        public static string SerializedDecoderSettings => DecoderSettings.Select(pair => $"{pair.Key}={specificDecoderSettings._safeGet(pair.Key)._orElse(pair.Value)}")._join("\n");
+        public static string SerializedDecoderSettings =>
+            DecoderSettings.Select(pair => $"{pair.Key}={(specificDecoderSettings.ContainsKey(pair.Key) ? specificDecoderSettings[pair.Key] : pair.Value)}")._join("\n");
 
         //------------------------------------------------------------------------------
         public static string GetString(string attr, string defval = "")
@@ -720,6 +722,8 @@ namespace KanchokuWS
         /// <returns></returns>
         public static bool ReadIniFile()
         {
+            logger.DebugH(() => $"ENTER");
+
             //-------------------------------------------------------------------------------------
             // 基本設定
             DeckeyInfiniteLoopDetectCount = GetString("deckeyInfiniteLoopDetectCount")._parseInt(1000)._lowLimit(100);
@@ -1042,6 +1046,8 @@ namespace KanchokuWS
             //addDecoderSetting("debughZenkaku", false);
             //addDecoderSetting("debughKatakana", false);
             BushuDicLogEnabled = addDecoderSetting("bushuDicLogEnabled", false);
+
+            logger.DebugH(() => $"LEAVE");
 
             return true;
         }

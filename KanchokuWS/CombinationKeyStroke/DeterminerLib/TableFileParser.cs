@@ -240,7 +240,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         TOKEN parseArrowNode(int depth, int prevNth, int idx) {
             logger.DebugH(() => $"ENTER: currentLine={lineNumber}, depth={depth}, idx={idx}, prevNth={prevNth}");
-            readNextToken(depth);
+            readNextToken(depth + 1);
             var tokenNextToArrow = currentToken;
             if (currentToken == TOKEN.ARROW) {
                 strokes.Add(idx);
@@ -600,11 +600,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         void handleSettings()
         {
+            logger.DebugH(() => $"CALLED: currentLine={currentLine}");
             readWord();
             var items = currentStr._split('=');
-            if (items._safeLength() == 2 && items[0]._notEmpty() && items[1]._notEmpty()) {
+            logger.DebugH(() => $"currentStr={currentStr}, items.Length={items._safeLength()}, items[0]={items._getFirst()}, items[1]={items._getSecond()}");
+            if (items._safeLength() == 2 && items[0]._notEmpty()) {
                 var propName = items[0];
-                var strVal = items[1];
+                var strVal = items[1]._strip();
                 const int errorVal = -999999;
                 int iVal = strVal._parseInt(errorVal, errorVal);
                 if (iVal != errorVal) {
