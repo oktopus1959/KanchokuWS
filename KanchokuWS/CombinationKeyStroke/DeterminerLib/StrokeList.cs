@@ -137,9 +137,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         int minLen = subList.Count > 0 ? 1 : 2;
                         logger.DebugH(() => $"minLen={minLen}, overlapLen={overlapLen}");
                         while (overlapLen >= minLen) {
-                            var iter = strokeList.Skip(startPos).Take(overlapLen);
+                            IEnumerable<Stroke> getIter() => strokeList.Skip(startPos).Take(overlapLen);
                             var list = new List<Stroke>(subList);
-                            list.AddRange(iter);
+                            list.AddRange(getIter());
                             logger.DebugH(() => $"PATH-1: list={list._toString()}");
                             var keyList = KeyCombinationPool.CurrentPool.GetEntry(list, null)?.ComboShiftedDecoderKeyList;
                             logger.DebugH(() => $"PATH-1: keyList={(keyList._isEmpty() ? "(empty)" : keyList.KeyString())}");
@@ -156,7 +156,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 } else if (subComboLists.Count <= 1 && subComboLists._getFirst()._isEmpty()) {
                                     // 持ち越された同時打鍵キーリストが空なので、今回の同時打鍵に使用したキーを使い回す
                                     logger.DebugH(() => $"PATH-1: Reuse temporary combination");
-                                    foreach (var s in iter) s.SetShifted();
+                                    foreach (var s in getIter()) s.SetShifted();
                                     subComboLists.Clear();
                                     gatherSubList(list, subComboLists);
                                 }
@@ -194,7 +194,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             int checkPos = startPos + overlapLen - 1;
 
-            logger.DebugH(() => $"upKeyIdx={upKeyIdx} >= startPos={startPos} + overlapLen={overlapLen} - 1 ? {upKeyIdx >= checkPos} ");
+            logger.DebugH(() => $"upKeyIdx={upKeyIdx},startPos={startPos}, overlapLen={overlapLen}: {upKeyIdx >= checkPos}");
             if (upKeyIdx >= checkPos) return true;      // チェック対象の末尾キーが最初にUPされた
 
             //logger.DebugH(() => $"strokeList[{startPos}].IsShiftableSpaceKey={strokeList[startPos].IsShiftableSpaceKey}");
