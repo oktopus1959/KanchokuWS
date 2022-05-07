@@ -5,16 +5,23 @@ using System.Text;
 
 namespace KanchokuWS.CombinationKeyStroke
 {
+    using ShiftKeyKind = DeterminerLib.ShiftKeyPool.Kind;
+
     /// <summary>
     /// キーの同時打鍵定義を表すクラス
     /// </summary>
-    public class KeyCombination
+    class KeyCombination
     {
         /// <summary>
         /// 終端の組合せか。<br/>すなわち、当組合せを含むようなより大きな同時打鍵組合せが無いか。<br/>
         /// たとえば、当組合せが [a, c] だったとして、[a, b, c] という同時打鍵組合せが存在すれば false となる
         /// </summary>
         public bool IsTerminal { get; private set; } = true;
+
+        /// <summary>
+        /// Oneshotの同時打鍵か<br/>すなわち、当組合せの同時打鍵が発生したら、それ打鍵列は次に持ち越さずに破棄されるか
+        /// </summary>
+        public bool IsOneshot => ComboShiftedDecoderKeyList.ShiftKind == ShiftKeyKind.OneshotShift;
 
         /// <summary>
         /// 当同時打鍵組合せに割り当てられた出力文字列を得るためにデコーダに送信する DecoderKey のリスト。
@@ -35,9 +42,9 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <summary>
         /// コンストラクタ(keyListがnullの場合は、同時打鍵集合の部分集合であることを示す)
         /// </summary>
-        public KeyCombination(List<int> keyList)
+        public KeyCombination(List<int> keyList, ShiftKeyKind shiftKind)
         {
-            ComboShiftedDecoderKeyList.Add(keyList);
+            ComboShiftedDecoderKeyList.Add(keyList, shiftKind);
         }
 
         public void NotTerminal()

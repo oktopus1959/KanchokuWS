@@ -7,7 +7,7 @@ using Utils;
 
 namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 {
-    class ShiftKeyPool
+    public class ShiftKeyPool
     {
         public enum Kind {
             None,
@@ -17,6 +17,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         public static bool IsShiftable(Kind kind) { return kind == Kind.PreShift || kind == Kind.MutualShift; }
+
+        public static bool IsOneshotShift(Kind kind) { return kind == Kind.OneshotShift; }
 
         private Dictionary<int, Kind> shiftKindDict = new Dictionary<int, Kind>();
 

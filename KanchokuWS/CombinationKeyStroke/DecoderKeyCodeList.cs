@@ -7,13 +7,19 @@ using Utils;
 
 namespace KanchokuWS.CombinationKeyStroke
 {
+    using ShiftKeyKind = DeterminerLib.ShiftKeyPool.Kind;
+
     public class DecoderKeyCodeList
     {
+        public ShiftKeyKind ShiftKind { get; private set; }
+
         public List<int> KeyList { get; private set; } = new List<int>();
 
         public int Count { get { return KeyList.Count; } }
 
         public bool IsEmpty => Count == 0;
+
+        public bool IsOneshotShift => ShiftKind == ShiftKeyKind.OneshotShift;
 
         public int At(int n)
         {
@@ -25,49 +31,21 @@ namespace KanchokuWS.CombinationKeyStroke
             return KeyList._keyString();
         }
 
+        /// <summary>コンストラクタ</summary>
         public DecoderKeyCodeList()
         {
         }
 
-        public DecoderKeyCodeList(List<int> list)
+        public void Add(List<int> list, ShiftKeyKind shiftKind)
         {
-            Add(list);
-        }
-
-        public DecoderKeyCodeList(List<Stroke> list)
-        {
-            Add(list);
-        }
-
-        public DecoderKeyCodeList(int key)
-        {
-            Add(key);
-        }
-
-        public DecoderKeyCodeList(int key1, int key2)
-        {
-            Add(key1, key2);
-        }
-
-        public void Add(List<int> list)
-        {
+            ShiftKind = shiftKind;
             if (list != null) KeyList.AddRange(list);
         }
 
-        public void Add(List<Stroke> list)
+        public void Add(List<Stroke> list, ShiftKeyKind shiftKind)
         {
+            ShiftKind = shiftKind;
             if (list != null) KeyList.AddRange(list.Select(x => x.DecoderKeyCode));
-        }
-
-        public void Add(int key)
-        {
-            KeyList.Add(key);
-        }
-
-        public void Add(int key1, int key2)
-        {
-            KeyList.Add(key1);
-            KeyList.Add(key2);
         }
 
     }

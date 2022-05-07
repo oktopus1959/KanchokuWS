@@ -62,7 +62,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <param name="shiftKind">PreShiftの場合は、先頭キーを固定した順列を生成する</param>
         public void AddEntry(List<int> comboShiftedKeyList, ShiftKeyKind shiftKind)
         {
-            var keyCombo = new KeyCombination(comboShiftedKeyList);
+            var keyCombo = new KeyCombination(comboShiftedKeyList, shiftKind);
             var moduloKeyList = comboShiftedKeyList.Select(x => Stroke.ModuloizeKey(x)).ToList();
             var primKey = KeyCombinationHelper.MakePrimaryKey(moduloKeyList);
             keyComboDict[primKey] = keyCombo;
@@ -123,7 +123,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 var keyCombo = keyComboDict._safeGet(key);
                 if (keyCombo == null) {
                     // 存在していなかった部分キーを追加
-                    keyComboDict[key] = keyCombo = new KeyCombination(null);
+                    keyComboDict[key] = keyCombo = new KeyCombination(null, ShiftKeyKind.None);
                 }
                 keyCombo.NotTerminal();
             }
