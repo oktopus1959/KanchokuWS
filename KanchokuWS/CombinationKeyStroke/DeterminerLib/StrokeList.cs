@@ -95,14 +95,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return -1;
         }
 
-        public Stroke DetectKeyRepeat(Stroke s)
+        public bool DetectKeyRepeat(Stroke s)
         {
-            return s != null ? DetectKeyRepeat(s.DecoderKeyCode) : null;
+            return s != null ? DetectKeyRepeat(s.DecoderKeyCode) : false;
         }
 
-        public Stroke DetectKeyRepeat(int decKey)
+        public bool DetectKeyRepeat(int decKey)
         {
-            return (Last?.IsSameKey(decKey) ?? false) ? Last : null;
+            return Last?.IsSameKey(decKey) ?? false;
         }
 
         public void Add(Stroke s)

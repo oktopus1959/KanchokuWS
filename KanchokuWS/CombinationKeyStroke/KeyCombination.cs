@@ -18,6 +18,11 @@ namespace KanchokuWS.CombinationKeyStroke
         /// </summary>
         public bool IsTerminal { get; private set; } = true;
 
+        public void NotTerminal()
+        {
+            IsTerminal = false;
+        }
+
         /// <summary>
         /// Oneshotの同時打鍵か<br/>すなわち、当組合せの同時打鍵が発生したら、それ打鍵列は次に持ち越さずに破棄されるか
         /// </summary>
@@ -47,9 +52,5 @@ namespace KanchokuWS.CombinationKeyStroke
             ComboShiftedDecoderKeyList.Add(keyList, shiftKind);
         }
 
-        public void NotTerminal()
-        {
-            IsTerminal = false;
-        }
     }
 }

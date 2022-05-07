@@ -32,9 +32,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>同時打鍵検索用にモジュロ化したキーコードを返す</summary>
         public static int ModuloizeKey(int decKey) { return decKey % DecoderKeys.NORMAL_DECKEY_NUM; }
 
-        /// <summary>オートリピート可なキーか</summary>
-        public bool IsRepeatable { get; private set; } = false;
-
         /// <summary>Oneshotな同時打鍵キーか</summary>
         public bool IsOneshotShift { get; private set; }
 

@@ -48,6 +48,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // ShiftKeyとして扱いうるキー
         public ShiftKeyPool ComboShiftKeys { get; private set; } = new ShiftKeyPool();
 
+        // Repeatableなキー
+        public RepeatableKeyPool RepeatableKeys { get; private set; } = new RepeatableKeyPool();
+
         public void Clear()
         {
             keyComboDict.Clear();
@@ -103,7 +106,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public KeyCombination GetEntry(int decKey)
         {
-            return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(decKey));
+            return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(Stroke.ModuloizeKey(decKey)));
         }
 
         public KeyCombination GetEntry(Stroke stroke)
@@ -131,6 +134,22 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 ++i;
             }
             logger.DebugH($"LEAVE");
+        }
+
+        /// <summary>
+        /// Repeatableとして扱いうるキーの設定
+        /// </summary>
+        /// <param name="keyCode"></param>
+        /// <param name="kind"></param>
+        public void AddRepeatableKey(int keyCode)
+        {
+            logger.DebugH(() => $"CALLED: keyCode={keyCode}");
+            if (keyCode > 0) RepeatableKeys.AddRepeatableKey(keyCode);
+        }
+
+        public bool IsRepeatableKey(int keyCode)
+        {
+            return RepeatableKeys.IsRepeatable(keyCode);
         }
 
         /// <summary>

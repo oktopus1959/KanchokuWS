@@ -67,11 +67,10 @@ namespace KanchokuWS.CombinationKeyStroke
             logger.DebugH(() => $"ENTER: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}");
             bool flag = false;
             var stroke = new Stroke(decKey, dtNow);
-            var sameStk = strokeList.DetectKeyRepeat(stroke);
-            if (sameStk != null) {
+            if (strokeList.DetectKeyRepeat(stroke)) {
                 // キーリピートが発生した場合
-                if (sameStk.IsRepeatable) {
-                    logger.DebugH("Normal Key repeated");
+                if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
+                    logger.DebugH("Key repeated");
                     flag = false;
                 } else {
                     logger.DebugH("Key repeat ignored");

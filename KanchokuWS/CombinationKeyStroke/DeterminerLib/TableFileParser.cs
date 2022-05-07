@@ -192,11 +192,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             logger.DebugH(() => $"ENTER: currentLine={lineNumber}, depth={depth}, prevNth={prevNth}");
             //int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
+            bool bError = false;
             int n = 0;
             bool isPrevDelim = true;
             TOKEN tokenNextToArrow;
             readNextToken(depth);
-            while (currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
+            while (!bError && currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
                     case TOKEN.ARROW:
                         int arrowDeckey = arrowIndex;
@@ -210,9 +211,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         break;
 
                     case TOKEN.LBRACE:
+                        parseNode(currentToken, depth + 1, prevNth, n);
+                        ++n;
+                        isPrevDelim = false;
+                        break;
+
                     case TOKEN.STRING:             // "str" : 文字列ノード
                     case TOKEN.FUNCTION:           // @c : 機能ノード
-                        parseNode(currentToken, depth + 1, prevNth, n);
+                        parseNode(currentToken, depth, prevNth, n);
                         ++n;
                         isPrevDelim = false;
                         break;
@@ -228,6 +234,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                     default:                        // 途中でファイルが終わったりした場合 : エラー
                         parseError();
+                        bError = true;
                         break;
                 }
 
@@ -235,7 +242,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
 
             strokes._resize(depth);
-            logger.DebugH(() => $"LEAVE: currentLine={lineNumber}, depth={depth}");
+            logger.DebugH(() => $"LEAVE: currentLine={lineNumber}, depth={depth}, bError={bError}");
         }
 
         TOKEN parseArrowNode(int depth, int prevNth, int idx) {
@@ -319,6 +326,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     if (isInCombinationBlock) {
                         // 文字列に至る同時打鍵列の組合せを作成して登録しておく
                         makeCombinationKeyCombo(nth);
+                    }
+                    if (depth == 0 && currentStr._startsWith("!{")) {
+                        logger.DebugH(() => $"REPEATABLE");
+                        keyComboPool.AddRepeatableKey(nth);
                     }
                     logger.DebugH(() => $"LEAVE: depth={depth}");
                     return;
@@ -446,11 +457,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     continue;
                 }
 
-                if (!isInCombinationBlock) {
-                    skipToEndOfLine();
-                    continue;
-                }
-
                 switch (currentChar) {
                     case ';':
                         // ';' 以降、行末までコメント
@@ -551,7 +557,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"CALLED: |{currentStr}|");
             if (currentStr._isEmpty()) {
                 parseError();
-            } else if (isInCombinationBlock) {
+            } else {
                 var lines = linesMap._safeGet(currentStr);
                 if (lines._isEmpty()) {
                     logger.Error($"No stored lines for \"{currentStr}\"");
@@ -855,11 +861,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             var sb = new StringBuilder();
             sb.Append("lines=\n");
             for (int i = 9; i > 0; --i) {
-                if (lineNumber >= i) sb.Append(tableLines[lineNumber - (i + 1)]).Append('\n');
+                if (lineNumber >= i && tableLines._safeCount() > lineNumber - i) sb.Append(tableLines[lineNumber - i]).Append('\n');
             }
             sb.Append($">> {currentLine}\n");
             for (int i = 1; i < 10; ++i) {
-                if (lineNumber + i < tableLines._safeCount())sb.Append(tableLines[lineNumber + i]).Append('\n');
+                if (lineNumber + i < tableLines._safeCount()) sb.Append(tableLines[lineNumber + i]).Append('\n');
             }
             return sb.ToString();
         }
