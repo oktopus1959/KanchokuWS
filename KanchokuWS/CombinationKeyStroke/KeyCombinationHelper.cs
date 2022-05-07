@@ -9,6 +9,8 @@ namespace KanchokuWS.CombinationKeyStroke
 {
     static class KeyCombinationHelper
     {
+        private static Logger logger = Logger.GetLogger();
+
         public static bool _isTerminal(this KeyCombination keyCombo)
         {
             return keyCombo?.IsTerminal ?? false;
@@ -91,14 +93,17 @@ namespace KanchokuWS.CombinationKeyStroke
                         result.Add(makeString(keyList[2], keyList[1], keyList[0]));
                     }
                 } else {
-                    for (int i = keyList.Count - 1; i >= 0; --i) {
+                    for (int i = 0; i < keyList.Count; ++i) {
                         if (!bPreShift || i == 0) {
                             // 先頭固定なら i==0 のときだけ
-                            char kc = (char)keyList[i];
+                            string ks = makeString(keyList[i]);
                             var subList = keyList.Take(i).ToList();
                             if (i < keyList.Count - 1) subList.AddRange(keyList.Skip(i + 1));
+                            bool bAllSub = bAll || i != 0;
                             foreach (var k in makePermutatedKeys(subList, false, true)) {
-                                result.Add(k.Append(kc).ToString());
+                                //logger.DebugH(() => $"ADD: {ks + k}");
+                                if (bAllSub) result.Add(ks + k);
+                                bAllSub = true;
                             }
                         }
                     }
@@ -116,11 +121,19 @@ namespace KanchokuWS.CombinationKeyStroke
         public static List<string> MakeSubKeys(List<int> keyList)
         {
             var result = new List<string>();
-            if (keyList != null && keyList.Count > 1) {
-                if (keyList.Count == 2) {
-                    result.Add(makeString(keyList[0]));
-                    result.Add(makeString(keyList[1]));
-                } else if (keyList.Count == 3) {
+            if (keyList._safeCount() > 1) {
+                makeSubKeys(keyList, result);
+                foreach (var k in keyList) {
+                    result.Add(makeString(k));
+                }
+            }
+            return result;
+        }
+
+        private static void makeSubKeys(List<int> keyList, List<string> result)
+        {
+            if (keyList != null && keyList.Count > 2) {
+                if (keyList.Count == 3) {
                     result.Add(makeString(keyList[0], keyList[1]));
                     result.Add(makeString(keyList[1], keyList[0]));
                     result.Add(makeString(keyList[0], keyList[2]));
@@ -131,11 +144,11 @@ namespace KanchokuWS.CombinationKeyStroke
                     for (int i = keyList.Count - 1; i >= 0; --i) {
                         var subList = keyList.Take(i).ToList();
                         if (i < keyList.Count - 1) subList.AddRange(keyList.Skip(i + 1));
-                        result.AddRange(MakeSubKeys(subList));
+                        result.AddRange(makePermutatedKeys(subList, false, true));
+                        makeSubKeys(subList, result);
                     }
                 }
             }
-            return result;
         }
 
         public static List<int> DecodeKey(string key)
@@ -166,6 +179,13 @@ namespace KanchokuWS.CombinationKeyStroke
         private static string makeString(int c1, int c2, int c3)
         {
             return new string(new char[] { makeChar(c1), makeChar(c2), makeChar(c3)});
+        }
+
+        private static string makeString(IEnumerable<int> list)
+        {
+            var sb = new StringBuilder();
+            foreach (var c in list) sb.Append(makeChar(c));
+            return sb.ToString();
         }
 
         private static char makeChar(int ch)

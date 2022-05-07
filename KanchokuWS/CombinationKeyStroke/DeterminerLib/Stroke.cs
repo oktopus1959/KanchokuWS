@@ -21,7 +21,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool IsShiftableSpaceKey => ModuloKeyCode == DecoderKeys.STROKE_SPACE_DECKEY && IsShiftable;
 
-        public bool IsShiftedOrShiftableSpaceKey => IsShifted || IsShiftableSpaceKey;
+        //public bool IsShiftedOrShiftableSpaceKey => IsShifted || IsShiftableSpaceKey;
 
         /// <summary>同じキーか</summary>
         public bool IsSameKey(int decKey)

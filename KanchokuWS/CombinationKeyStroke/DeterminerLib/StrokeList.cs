@@ -197,10 +197,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"upKeyIdx={upKeyIdx},startPos={startPos}, overlapLen={overlapLen}: {upKeyIdx >= checkPos}");
             if (upKeyIdx >= checkPos) return true;      // チェック対象の末尾キーが最初にUPされた
 
-            //logger.DebugH(() => $"strokeList[{startPos}].IsShiftableSpaceKey={strokeList[startPos].IsShiftableSpaceKey}");
-            //if (strokeList[startPos].IsShiftableSpaceKey) return true;     // 先頭キーがシフト可能なスペースキーだった
             logger.DebugH(() => $"strokeList[{startPos}].IsShifted={strokeList[startPos].IsShifted}");
             if (strokeList[startPos].IsShifted) return true;     // 先頭キーがシフト済みキーだった
+            logger.DebugH(() => $"strokeList[{startPos}].IsShiftableSpaceKey={strokeList[startPos].IsShiftableSpaceKey}");
+            if (strokeList[startPos].IsShiftableSpaceKey) return true;     // 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
 
             // タイミングチェック
             double ms1 = strokeList[startPos].TimeSpanMs(strokeList[checkPos]);

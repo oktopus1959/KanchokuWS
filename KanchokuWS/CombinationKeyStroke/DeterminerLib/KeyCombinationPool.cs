@@ -116,16 +116,19 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>        
         public void SetNonTerminalMarkForSubkeys()
         {
-            logger.DebugH($"comboSubKeys.Count={comboSubKeys.Count}");
+            logger.DebugH($"ENTER: comboSubKeys.Count={comboSubKeys.Count}");
+            int i = 0;
             foreach (var key in comboSubKeys) {
                 // 部分キーに対して、非終端マークをセット
-                logger.DebugH(() => $"key={key}, list={KeyCombinationHelper.EncodeKeyList(KeyCombinationHelper.DecodeKey(key))}");
+                if (i < 100) logger.DebugH(() => $"search keyString={key} => list={KeyCombinationHelper.EncodeKeyList(KeyCombinationHelper.DecodeKey(key))}");
                 var keyCombo = keyComboDict._safeGet(key);
                 if (keyCombo == null) {
                     // 存在していなかった部分キーを追加
+                    if (i < 100) logger.DebugH($"Add non terminal subkey: {key}");
                     keyComboDict[key] = keyCombo = new KeyCombination(null, ShiftKeyKind.None);
                 }
                 keyCombo.NotTerminal();
+                ++i;
             }
             logger.DebugH($"LEAVE");
         }
@@ -155,10 +158,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void DebugPrint()
         {
+            int i = 0;
             foreach (var pair in keyComboDict) {
                 var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
                 var deckeys = (pair.Value.ComboShiftedDecoderKeyList?.KeyString())._orElse("NONE");
-                logger.DebugH($"{key}={deckeys} {pair.Value.IsTerminal}");
+                if (i < 100) logger.DebugH($"{key}={deckeys} {pair.Value.IsTerminal}");
+                ++i;
             }
             foreach (var pair in ComboShiftKeys.Pairs) {
                 logger.DebugH($"ShiftKey: {pair.Key}={pair.Value}");
