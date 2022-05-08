@@ -33,6 +33,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return result;
         }
 
+        /// <summary>
+        /// 与えられたリストの部分リストからなる集合(リスト)を返す
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="result"></param>
         private void gatherSubList(List<Stroke> list, List<List<Stroke>> result)
         {
             if (list.Count > 0) {
@@ -127,6 +132,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 int overlapLen = 0;
                 var preShifts = new StrokeList();
 
+                // 持ち越したキーリストの部分リストからなる集合(リスト)
                 var subComboLists = new List<List<Stroke>>();
                 gatherSubList(comboList, subComboLists);
 
@@ -137,9 +143,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         int minLen = subList.Count > 0 ? 1 : 2;
                         logger.DebugH(() => $"minLen={minLen}, overlapLen={overlapLen}");
                         while (overlapLen >= minLen) {
-                            IEnumerable<Stroke> getIter() => strokeList.Skip(startPos).Take(overlapLen);
-                            var list = new List<Stroke>(subList);
-                            list.AddRange(getIter());
+                            var list = makeComboChallengeList(subList, startPos, overlapLen);
                             logger.DebugH(() => $"PATH-1: list={list._toString()}");
                             var keyList = KeyCombinationPool.CurrentPool.GetEntry(list, null)?.ComboShiftedDecoderKeyList;
                             logger.DebugH(() => $"PATH-1: keyList={(keyList._isEmpty() ? "(empty)" : keyList.KeyString())}");
@@ -156,7 +160,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 } else if (subComboLists.Count <= 1 && subComboLists._getFirst()._isEmpty()) {
                                     // 持ち越された同時打鍵キーリストが空なので、今回の同時打鍵に使用したキーを使い回す
                                     logger.DebugH(() => $"PATH-1: Reuse temporary combination");
-                                    foreach (var s in getIter()) s.SetShifted();
+                                    foreach (var s in getRange(startPos, overlapLen)) s.SetShifted();
                                     subComboLists.Clear();
                                     gatherSubList(list, subComboLists);
                                 }
@@ -186,8 +190,32 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return result;
         }
 
+        /// <summary>同時打鍵のチャレンジ列を作成する</summary>
+        /// <returns></returns>
+        private List<Stroke> makeComboChallengeList(List<Stroke> preShifts, int startPos, int overlapLen)
+        {
+            var list = new List<Stroke>(preShifts);
+            list.AddRange(getRange(startPos, overlapLen));
+            if (list.Count >= 3) {
+                // 3個以上のキーを含むならば、スペースのような weakShift を削除する
+                for (int i = 0; i < list.Count; ++i) {
+                    if (list[i].ModuloKeyCode == DecoderKeys.STROKE_SPACE_DECKEY) {
+                        logger.DebugH(() => $"DELETE weakShift at {i}");
+                        list.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+            return list;
+        }
+
+        private IEnumerable<Stroke> getRange(int startPos, int overlapLen)
+        {
+            return strokeList.Skip(startPos).Take(overlapLen);
+        }
+
         // タイミングによる同時打鍵判定関数
-        bool isCombinationTiming(int upKeyIdx, int startPos, int overlapLen, DateTime dtNow)
+        private bool isCombinationTiming(int upKeyIdx, int startPos, int overlapLen, DateTime dtNow)
         {
             logger.DebugH(() => $"comboList.Count={comboList.Count}");
             if (comboList.Count > 0) return true;
