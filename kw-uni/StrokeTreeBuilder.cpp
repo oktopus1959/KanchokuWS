@@ -20,7 +20,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
 
-#if 0
+#if 1
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -658,7 +658,15 @@ namespace {
                 case '{': return TOKEN::LBRACE;
                 case '}': return TOKEN::RBRACE;
                 case ',': return TOKEN::COMMA;
-                case '/': return TOKEN::SLASH;
+                case '|': return TOKEN::COMMA;
+
+                case '/':
+                    if (peekNextChar() == '/') {
+                        // 2重スラッシュはコメント扱い
+                        skipToEndOfLine();
+                        break;
+                    }
+                    return TOKEN::SLASH;
 
                 case '\n':
                 case ' ':                   // SPC : スキップ
@@ -694,6 +702,9 @@ namespace {
                     return TOKEN::END;
 
                 default:
+                    readBareString(currentChar);
+                    if (!currentStr.empty()) return TOKEN::STRING;
+
                     // エラー
                     parseError();
                     return TOKEN::END;
@@ -724,6 +735,26 @@ namespace {
             }
         }
 
+        bool isOutputChar(wchar_t c) {
+            return ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c >= 0x1000);
+        }
+
+        // 何らかのデリミタが来るまで読みこんで、currentStr に格納。
+        void readBareString(wchar_t c = '\0') {
+            currentStr.clear();
+            if (c != '\0') {
+                if (!isOutputChar(c)) return;   // エラー
+                currentStr.append(1, c);
+            }
+            while (true) {
+                c = peekNextChar();
+                if (!isOutputChar(c)) break;
+                getNextChar();
+                currentStr.append(1, c);
+            }
+            _LOG_DEBUGH(_T("LEAVE: %s"), currentStr.c_str());
+        }
+
         // 空白またはカンマが来るまで読みこんで、currentStr に格納。
         void readMarker() {
             while (true) {
@@ -737,11 +768,16 @@ namespace {
             }
         }
 
-        // 行末までの間で、次の空白文字までを読み込んで、currentStr に格納。
+        // 行末までの範囲で次の空白文字またはコメント文字までを読み込んで、currentStr に格納。
         void readWord() {
             currentStr.clear();
             char_t c = skipSpace();
             if (c <= ' ') return;
+
+            if (c == ';' || (c == '/' && peekNextChar() == '/')) {
+                skipToEndOfLine();
+                return;
+            }
 
             readWordSub(c);
         }
@@ -761,10 +797,13 @@ namespace {
             currentStr.clear();
             char_t c = skipSpace();
             if (c > ' ') {
-                if (c == '"')
+                if (c == '"') {
                     readString();
-                else
+                } else if (c == ';' || (c == '/' && peekNextChar() == '/')) {
+                    skipToEndOfLine();
+                } else {
                     readWordSub(c);
+                }
             }
         }
 
@@ -860,6 +899,10 @@ namespace {
             return currentChar;
         }
 
+        char_t peekNextChar() {
+            return (nextPos < currentLine.size()) ? currentLine[nextPos] : '\0';
+        }
+
         bool getNextLine() {
             ++lineNumber;
             if (lineNumber >= tableLines.size()) {
@@ -869,12 +912,9 @@ namespace {
             return true;
         }
 
-        char_t peekNextChar() {
-            return (nextPos < currentLine.size()) ? currentLine[nextPos] : '\0';
-        }
-
         void skipToEndOfLine() {
             nextPos = currentLine.size();
+            currentChar = '\n';
         }
 
         void readFile(const wstring& filename) {

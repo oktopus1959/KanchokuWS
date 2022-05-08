@@ -466,7 +466,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     case '{': return TOKEN.LBRACE;
                     case '}': return TOKEN.RBRACE;
                     case ',': return TOKEN.COMMA;
-                    case '/': return TOKEN.SLASH;
+                    case '|': return TOKEN.COMMA;
+
+                    case '/':
+                        if (peekNextChar() == '/') {
+                            // 2重スラッシュはコメント扱い
+                            skipToEndOfLine();
+                            break;
+                        }
+                        return TOKEN.SLASH;
 
                     case '\n':
                     case ' ':                   // SPC : スキップ
@@ -502,6 +510,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         return TOKEN.END;
 
                     default:
+                        readBareString(currentChar);
+                        if (currentStr._notEmpty()) return TOKEN.STRING;
+
                         // エラー
                         parseError();
                         return TOKEN.END;
@@ -653,6 +664,24 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             currentStr = sb.ToString();
         }
 
+        // 何らかのデリミタが来るまで読みこんで、currentStr に格納。
+        void readBareString(char c = '\0') {
+            var sb = new StringBuilder();
+            bool isOutputChar() { return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c >= 0x1000; }
+            if (c != '\0') {
+                if (!isOutputChar()) return;
+                sb.Append(c);
+            }
+            while (true) {
+                c = peekNextChar();
+                if (!isOutputChar()) break;
+                getNextChar();
+                sb.Append(c);
+            }
+            currentStr = sb.ToString();
+            logger.DebugH(() => $"LEAVE: {currentStr}");
+        }
+
         // 空白またはカンマが来るまで読みこんで、currentStr に格納。
         void readMarker() {
             var sb = new StringBuilder();
@@ -668,13 +697,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
-        // 行末までの範囲で次の空白文字までを読み込んで、currentStr に格納。
+        // 行末までの範囲で次の空白文字またはコメント文字までを読み込んで、currentStr に格納。
         void readWord() {
             currentStr = "";
             if (nextPos >= currentLine._safeLength()) return;
             char c = skipSpace();
             if (c <= ' ') return;
-
+            if (c == ';' || (c == '/' && peekNextChar() == '/')) {
+                skipToEndOfLine();
+                return;
+            }
             readWordSub(c);
         }
 
@@ -693,14 +725,18 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         // 文字列または単語を読み込む
-        void readWordOrString() {
+        void readWordOrString()
+        {
             currentStr = "";
             char c = skipSpace();
             if (c > ' ') {
-                if (c == '"')
+                if (c == '"') {
                     readString();
-                else
+                } else if (c == ';' || (c == '/' && peekNextChar() == '/')) {
+                    skipToEndOfLine();
+                } else {
                     readWordSub(c);
+                }
             }
         }
 
@@ -802,6 +838,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return currentChar;
         }
 
+        char peekNextChar() {
+            return (nextPos < currentLine._safeLength()) ? currentLine[nextPos] : '\0';
+        }
+
         bool getNextLine() {
             ++lineNumber;
             if (lineNumber >= tableLines._safeCount()) {
@@ -811,12 +851,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return true;
         }
 
-        char peekNextChar() {
-            return (nextPos < currentLine._safeLength()) ? currentLine[nextPos] : '\0';
-        }
-
         void skipToEndOfLine() {
             nextPos = currentLine._safeLength() + 1;
+            currentChar = '\n';
         }
 
         List<string> readAllLines(string filename)
