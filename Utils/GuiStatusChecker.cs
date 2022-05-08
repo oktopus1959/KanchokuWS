@@ -109,7 +109,10 @@ namespace Utils
             bool flag = CurrentSerializedData._ne(InitialSerializedData);
             IsDifferent = flag;
             ControlEnabler?.Invoke(flag);
-            if (CtlToBeEnabled != null) CtlToBeEnabled.Enabled = flag;
+            if (CtlToBeEnabled != null) {
+                CtlToBeEnabled.Enabled = flag;
+                CtlToBeEnabled.ForeColor = flag ? System.Drawing.Color.DarkRed : System.Drawing.Color.Black;
+            }
             if (CtlToBeVisible != null) CtlToBeVisible.Visible = flag;
 
             // check for children
