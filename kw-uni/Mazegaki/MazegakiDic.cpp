@@ -1149,8 +1149,8 @@ void MazegakiDic::WriteMazegakiDic(const tstring& path, bool bUser, bool bPrim) 
 // 交ぜ書き辞書ファイルに書き込む
 void MazegakiDic::WriteMazegakiDic() {
     if (!SETTINGS->mazegakiFile.empty()) {
-        wstring primDic = _T("kwmaze.prim.dic");       // デフォルトの優先辞書名
-        wstring userDic = _T("kwmaze.user.dic");       // デフォルトのユーザー辞書名
+        wstring primDic;
+        wstring userDic;
         for (const auto& nm : utils::split(SETTINGS->mazegakiFile, '|')) {
             auto lname = utils::toLower(nm);
             if (lname.find(_T(".prim.")) != wstring::npos) {
@@ -1167,13 +1167,16 @@ void MazegakiDic::WriteMazegakiDic() {
                 // パターンファイル(xxx.*.yyy) があれば xxx.user.yyy に変える
                 size_t pos = lname.find(_T(".*."));
                 if (pos != wstring::npos) {
-                    primDic = nm.substr(0, pos + 1) + _T("prim") + nm.substr(pos + 2);
-                    userDic = nm.substr(0, pos + 1) + _T("user") + nm.substr(pos + 2);
+                    if (primDic.empty()) primDic = nm.substr(0, pos + 1) + _T("prim") + nm.substr(pos + 2);
+                    if (userDic.empty()) userDic = nm.substr(0, pos + 1) + _T("user") + nm.substr(pos + 2);
                     LOG_INFO(_T("replaced primary maze filename: %s"), primDic.c_str());
                     LOG_INFO(_T("replaced user maze filename: %s"), userDic.c_str());
                 }
             }
         }
+
+        if (primDic.empty()) primDic = _T("kwmaze.prim.dic");       // デフォルトの優先辞書名
+        if (userDic.empty()) userDic = _T("kwmaze.user.dic");       // デフォルトのユーザー辞書名
 
         auto path = utils::joinPath(SETTINGS->rootDir, userDic);
         LOG_INFO(_T("save user maze file: %s"), path.c_str());
