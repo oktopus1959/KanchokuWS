@@ -45,11 +45,11 @@ namespace KanchokuWS
         // SHIFT_B修飾DECKEYの終わり(の次)
         public const int SHIFT_B_DECKEY_END = SHIFT_B_DECKEY_START + SHIFT_DECKEY_NUM;
 
-        // 同時打鍵用SHIFT_M修飾DECKEYの始まり
-        public const int SHIFT_M_DECKEY_START = SHIFT_B_DECKEY_END;
+        // 同時打鍵用修飾DECKEYの始まり
+        public const int COMBO_DECKEY_START = SHIFT_B_DECKEY_END;
 
-        // 同時打鍵用SHIFT_M修飾DECKEYの終わり(の次)
-        public const int SHIFT_M_DECKEY_END = SHIFT_M_DECKEY_START + SHIFT_DECKEY_NUM;
+        // 同時打鍵用修飾DECKEYの終わり(の次)
+        public const int COMBO_DECKEY_END = COMBO_DECKEY_START + SHIFT_DECKEY_NUM;
 
         // シフト面の数(通常面を含む)
         public const int ALL_SHIFT_PLANE_NUM = 5;
