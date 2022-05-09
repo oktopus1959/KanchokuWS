@@ -537,6 +537,10 @@ namespace {
             currentToken = getToken(depth);
         }
 
+        bool bIgnoreWarningAll = false;
+        bool bIgnoreWarningBraceLevel = false;
+        int braceLevel = 0;
+
         // トークンを読む
         TOKEN getToken(int depth) {
             currentStr.clear();
@@ -544,7 +548,7 @@ namespace {
             while (true) {
                 switch (getNextChar()) {
                 case '#': {
-                    // '#include', '#define', '#strokePosition', '#*shift*', '#overlapping', '#yomiConvert', '#store', '#load', '#end' または '#' 以降、行末までコメント
+                    // '#include', '#define', '#strokePosition', '#*shift*', '#overlapping', '#yomiConvert', '#store', '#load', '#end', '#ignoreWarning' または '#' 以降、行末までコメント
                     wstring filename;
                     readWord();
                     auto lcStr = utils::toLower(currentStr);
@@ -640,6 +644,15 @@ namespace {
                             blockInfoStack.Pop(lineNumber + 1);
                         }
                         skipToEndOfLine();
+                    } else if (lcStr == _T("ignorewarning")) {
+                        readWord();
+                        auto word = utils::toLower(currentStr);
+                        if (word.empty()) {
+                            bIgnoreWarningAll = true;
+                            bIgnoreWarningBraceLevel = true;
+                        } else if (word == _T("bracelevel")) {
+                            bIgnoreWarningBraceLevel = true;
+                        }
                     } else {
                         _LOG_DEBUGH(_T("#%s"), currentStr.c_str());
                     }
@@ -655,8 +668,16 @@ namespace {
                     skipToEndOfLine();
                     break;
 
-                case '{': return TOKEN::LBRACE;
-                case '}': return TOKEN::RBRACE;
+                case '{':
+                    if (!bIgnoreWarningBraceLevel && nextPos == 1 && braceLevel > 0) unexpectedLeftBraceAtColumn0Warning();
+                    ++braceLevel;
+                    return TOKEN::LBRACE;
+
+                case '}':
+                    if (!bIgnoreWarningBraceLevel && nextPos == 1 && braceLevel > 1) unexpectedRightBraceAtColumn0Warning();
+                    --braceLevel;
+                    return TOKEN::RBRACE;
+
                 case ',': return TOKEN::COMMA;
                 case '|': return TOKEN::COMMA;
 
@@ -1016,6 +1037,20 @@ namespace {
         void nodeDuplicateWarning() {
             _LOG_DEBUGH(_T("lineNumber=%d, nextPos=%d"), lineNumber, nextPos);
             handleWarning(utils::format(_T("%s %s の %d行目でノードの重複が発生しました：\r\n> %s ..."), \
+                blockOrFile().c_str(), blockInfoStack.CurrentBlockName().c_str(), calcErrorLineNumber(), currentLine.substr(0, 50).c_str()));
+        }
+
+        // カラム0で予期しないLBRACEが発生
+        void unexpectedLeftBraceAtColumn0Warning() {
+            _LOG_DEBUGH(_T("lineNumber=%d, nextPos=%d"), lineNumber, nextPos);
+            handleWarning(utils::format(_T("%s %s の %d行目の行頭にネストされた '{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> %s ..."), \
+                blockOrFile().c_str(), blockInfoStack.CurrentBlockName().c_str(), calcErrorLineNumber(), currentLine.substr(0, 50).c_str()));
+        }
+
+        // カラム0で予期しないRBRACEが発生
+        void unexpectedRightBraceAtColumn0Warning() {
+            _LOG_DEBUGH(_T("lineNumber=%d, nextPos=%d"), lineNumber, nextPos);
+            handleWarning(utils::format(_T("%s %s の %d行目の行頭にまだネスト中の '}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> %s ..."), \
                 blockOrFile().c_str(), blockInfoStack.CurrentBlockName().c_str(), calcErrorLineNumber(), currentLine.substr(0, 50).c_str()));
         }
 
