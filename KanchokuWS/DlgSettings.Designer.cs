@@ -444,6 +444,7 @@ namespace KanchokuWS
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.label117 = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.ColorTextBox();
             this.textBox_onSecondaryTable = new KanchokuWS.ColorTextBox();
@@ -459,7 +460,6 @@ namespace KanchokuWS
             this.textBox_alphaModeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.ColorTextBox();
-            this.label117 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -668,6 +668,7 @@ namespace KanchokuWS
             this.comboBox_tableFile2.TabIndex = 4;
             this.toolTip1.SetToolTip(this.comboBox_tableFile2, "打鍵から文字への副変換テーブルファイルの設定\r\n\r\nファイルの内容は主テーブルファイルと同様です。\r\n切り替えコマンドにより、主・副テーブルファイルを切り替えるこ" +
         "とができます。\r\n");
+            this.comboBox_tableFile2.DropDown += new System.EventHandler(this.comboBox_tableFile2_DropDown);
             // 
             // comboBox_tableFile
             // 
@@ -681,6 +682,7 @@ namespace KanchokuWS
             this.toolTip1.SetToolTip(this.comboBox_tableFile, "打鍵から文字への主変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることに" +
         "より、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\nファイル名を変更したり、テーブルの内容を修正した場合は、「再読込」を\r\n実行すると、その内容が反映されま" +
         "す。\r\n");
+            this.comboBox_tableFile.DropDown += new System.EventHandler(this.comboBox_tableFile_DropDown);
             // 
             // button_openTableFile2
             // 
@@ -5416,6 +5418,17 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // label117
+            // 
+            this.label117.AutoSize = true;
+            this.label117.Location = new System.Drawing.Point(19, 97);
+            this.label117.Name = "label117";
+            this.label117.Size = new System.Drawing.Size(286, 90);
+            this.label117.TabIndex = 11;
+            this.label117.Text = "複数キーが押されたときに、それを「同時打鍵」として判定\r\nする条件を設定します。同時打鍵判定は、重複して押下\r\nされているキーのどれかが解放されたタイミングで行わ" +
+    "れます。\r\n条件判定の論理式は [1] and ([2] or [3]) です。\r\nなお、第1打鍵押下中に第2打鍵の押下・解放があった\r\n場合は、無条件に同時打" +
+    "鍵とみなします。";
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -5592,17 +5605,6 @@ namespace KanchokuWS
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // label117
-            // 
-            this.label117.AutoSize = true;
-            this.label117.Location = new System.Drawing.Point(19, 97);
-            this.label117.Name = "label117";
-            this.label117.Size = new System.Drawing.Size(286, 90);
-            this.label117.TabIndex = 11;
-            this.label117.Text = "複数キーが押されたときに、それを「同時打鍵」として判定\r\nする条件を設定します。同時打鍵判定は、重複して押下\r\nされているキーのどれかが解放されたタイミングで行わ" +
-    "れます。\r\n条件判定の論理式は [1] and ([2] or [3]) です。\r\nなお、第1打鍵押下中に第2打鍵の押下・解放があった\r\n場合は、無条件に同時打" +
-    "鍵とみなします。";
             // 
             // DlgSettings
             // 

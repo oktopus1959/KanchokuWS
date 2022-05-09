@@ -379,25 +379,6 @@ namespace KanchokuWS
             textBox_mazegakiFile.Text = Settings.MazegakiFile;
             textBox_historyFile.Text = Settings.HistoryFile;
 
-            // テーブルファイル
-            string getTableName(string filepath)
-            {
-                logger.DebugH(() => $"filepath={filepath}");
-                var filename = Helper.GetFileName(filepath);
-                var content = Helper.GetFileHead(filepath, 2048);
-                if (content._notEmpty()) {
-                    //logger.DebugH(() => $"content={content}");
-                    var list = content._reScan(@"#define\s+display-name\s+""([^""]+)");
-                    logger.DebugH(() => $"match: {list._getFirst()}, {list._getSecond()}, list.Count={list._safeCount()}");
-                    if (list._safeCount() >= 2) return $"{list[1]} ({filename})";
-                }
-                return filename;
-            }
-            var fileList = Helper.GetFiles(KanchokuIni.Singleton.KanchokuDir, "*.tbl").Select(x => getTableName(x)).ToArray();
-            comboBox_tableFile.Items.Clear();
-            comboBox_tableFile.Items.AddRange(fileList);
-            comboBox_tableFile2.Items.Clear();
-            comboBox_tableFile2.Items.AddRange(fileList);
             if (Settings.TableFile._notEmpty()) comboBox_tableFile.Text = getTableName(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.TableFile));
             if (Settings.TableFile2._notEmpty()) comboBox_tableFile2.Text = getTableName(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.TableFile2));
         }
@@ -568,6 +549,35 @@ namespace KanchokuWS
                 checkerBasic.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
                 logger.InfoH("LEAVE");
             }
+        }
+
+        // テーブルファイル名を取得
+        string getTableName(string filepath)
+        {
+            logger.DebugH(() => $"filepath={filepath}");
+            var filename = Helper.GetFileName(filepath);
+            var content = Helper.GetFileHead(filepath, 2048);
+            if (content._notEmpty()) {
+                //logger.DebugH(() => $"content={content}");
+                var list = content._reScan(@"#define\s+display-name\s+""([^""]+)");
+                logger.DebugH(() => $"match: {list._getFirst()}, {list._getSecond()}, list.Count={list._safeCount()}");
+                if (list._safeCount() >= 2) return $"{list[1]} ({filename})";
+            }
+            return filename;
+        }
+
+        private void comboBox_tableFile_DropDown(object sender, EventArgs e)
+        {
+            var fileList = Helper.GetFiles(KanchokuIni.Singleton.KanchokuDir, "*.tbl").Select(x => getTableName(x)).ToArray();
+            comboBox_tableFile.Items.Clear();
+            comboBox_tableFile.Items.AddRange(fileList);
+        }
+
+        private void comboBox_tableFile2_DropDown(object sender, EventArgs e)
+        {
+            var fileList = Helper.GetFiles(KanchokuIni.Singleton.KanchokuDir, "*.tbl").Select(x => getTableName(x)).ToArray();
+            comboBox_tableFile2.Items.Clear();
+            comboBox_tableFile2.Items.AddRange(fileList);
         }
 
         //-----------------------------------------------------------------------------------
@@ -2454,6 +2464,7 @@ namespace KanchokuWS
             }
             logger.InfoH($"LEAVE");
         }
+
     }
 }
 
