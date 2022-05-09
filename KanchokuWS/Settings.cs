@@ -712,7 +712,10 @@ namespace KanchokuWS
         /// <summary> パターンによるファイル名の取得 (複数ある場合は、| で連結する) </summary>
         private static string getFiles(string filePattern)
         {
-            return Helper.GetFiles(KanchokuIni.Singleton.KanchokuDir, filePattern)._join("|");
+            var rootDir = KanchokuIni.Singleton.KanchokuDir;
+            char lastChar = rootDir?.LastOrDefault() ?? '\0';
+            if (lastChar != '\\' && lastChar != '/') rootDir = rootDir + "\\";
+            return Helper.GetFiles(rootDir, filePattern).Select(x => x.Replace(rootDir, ""))._join("|");
         }
 
         //------------------------------------------------------------------------------
