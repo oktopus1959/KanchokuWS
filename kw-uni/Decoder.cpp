@@ -108,7 +108,7 @@ public:
         // Deckey から文字への変換インスタンスの構築
         createDeckeyToCharsInstance();
 
-        // ここで機能呼び出しキーの再割り当て
+        // settings の再ロードとストローク木の再構築
         reloadSettings(params->inOutData, false);
 
         // 始状態

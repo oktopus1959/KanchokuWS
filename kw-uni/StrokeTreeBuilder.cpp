@@ -1049,61 +1049,66 @@ namespace {
     };
     DEFINE_CLASS_LOGGER(StrokeTreeBuilder);
 
+    // 機能の再割り当て
+    void assignFucntion(StrokeTableNode* pNode, const wstring& keys, const wstring& name) {
+        _LOG_DEBUGH(_T("CALLED: keys=%s, name=%s"), keys.c_str(), name.c_str());
+
+        if (pNode == 0 || keys.empty()) return;
+
+        std::vector<size_t> keyCodes;
+        std::wregex reDigits(_T("^[SsAaBbXx]?[0-9]+$"));
+        for (auto k : utils::split(keys, ',')) {
+            if (k.empty() || !std::regex_match(k, reDigits)) return;    // 10進数でなければエラー
+            int shiftOffset = 0;
+            if (k[0] == 'S' || k[0] == 's') {
+                shiftOffset = SHIFT_DECKEY_START;
+                k = k.substr(1);
+            } else if (k[0] == 'A' || k[0] == 'a') {
+                shiftOffset = SHIFT_A_DECKEY_START;
+                k = k.substr(1);
+            } else if (k[0] == 'B' || k[0] == 'b') {
+                shiftOffset = SHIFT_B_DECKEY_START;
+                k = k.substr(1);
+            } else if (k[0] == 'X' || k[0] == 'x') {
+                shiftOffset = FUNC_DECKEY_START;
+                k = k.substr(1);
+            }
+            keyCodes.push_back((size_t)utils::strToInt(k, -1) + shiftOffset);
+        }
+
+        size_t idx = 0;
+        size_t key = 0;
+        while (idx < keyCodes.size()) {
+            key = keyCodes[idx++];
+            if (key >= pNode->numChildren()) break;        // 子ノード数の範囲外ならばエラー
+            Node* p = pNode->getNth(key);
+            if (p == 0 || p->isFunctionNode()) {
+                // 未割り当て、または機能ノードならばOK
+                if (idx == keyCodes.size()) {
+                    // 打鍵列の最後まで行った
+                    _LOG_DEBUGH(_T("RESET: depth=%d, key=%d, name=%s"), idx, key, name.c_str());
+                    pNode->setNthChild(key, FunctionNodeManager::CreateFunctionNodeByName(name));
+                }
+                break;
+            }
+            if (p->isStrokeTableNode()) {
+                pNode = dynamic_cast<StrokeTableNode*>(pNode->getNth(key));
+                if (pNode != 0) continue;                   // 子ノードに
+            }
+            break;     // エラー
+        }
+    }
+
 } // namespace
 
 DEFINE_CLASS_LOGGER(StrokeTableNode);
 
 // 機能の再割り当て
 void StrokeTableNode::AssignFucntion(const wstring& keys, const wstring& name) {
-    _LOG_DEBUGH(_T("CALLED: keys=%s, name=%s"), keys.c_str(), name.c_str());
-
-    StrokeTableNode* pNode = ROOT_STROKE_NODE;
-    if (pNode == 0) return;
-
     if (keys.empty()) return;
 
-    std::vector<size_t> keyCodes;
-    std::wregex reDigits(_T("^[SsAaBbXx]?[0-9]+$"));
-    for (auto k : utils::split(keys, ',')) {
-        if (k.empty() || !std::regex_match(k, reDigits)) return;    // 10進数でなければエラー
-        int shiftOffset = 0;
-        if (k[0] == 'S' || k[0] == 's') {
-            shiftOffset = SHIFT_DECKEY_START;
-            k = k.substr(1);
-        } else if (k[0] == 'A' || k[0] == 'a') {
-            shiftOffset = SHIFT_A_DECKEY_START;
-            k = k.substr(1);
-        } else if (k[0] == 'B' || k[0] == 'b') {
-            shiftOffset = SHIFT_B_DECKEY_START;
-            k = k.substr(1);
-        } else if (k[0] == 'X' || k[0] == 'x') {
-            shiftOffset = FUNC_DECKEY_START;
-            k = k.substr(1);
-        }
-        keyCodes.push_back((size_t)utils::strToInt(k, -1) + shiftOffset);
-    }
-
-    size_t idx = 0;
-    size_t key = 0;
-    while (idx < keyCodes.size()) {
-        key = keyCodes[idx++];
-        if (key >= pNode->numChildren()) break;        // 子ノード数の範囲外ならばエラー
-        Node* p = pNode->getNth(key);
-        if (p == 0 || p->isFunctionNode()) {
-            // 未割り当て、または機能ノードならばOK
-            if (idx == keyCodes.size()) {
-                // 打鍵列の最後まで行った
-                _LOG_DEBUGH(_T("RESET: depth=%d, key=%d, name=%s"), idx, key, name.c_str());
-                pNode->setNthChild(key, FunctionNodeManager::CreateFunctionNodeByName(name));
-            }
-            break;
-        }
-        if (p->isStrokeTableNode()) {
-            pNode = dynamic_cast<StrokeTableNode*>(pNode->getNth(key));
-            if (pNode != 0) continue;                   // 子ノードに
-        }
-        break;     // エラー
-    }
+    if (RootStrokeNode1) assignFucntion(RootStrokeNode1.get(), keys, name);
+    if (RootStrokeNode2) assignFucntion(RootStrokeNode2.get(), keys, name);
 }
 
 // ストロークノードの更新
