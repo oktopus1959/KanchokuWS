@@ -60,38 +60,43 @@ namespace KanchokuWS.CombinationKeyStroke
         /// キーの押下<br/>押下されたキーをキューに積むだけ。同時打鍵などの判定はキーの解放時に行う。
         /// </summary>
         /// <param name="decKey">押下されたキーのデコーダコード</param>
-        /// <returns>同時打鍵の可能性があるなら true を返す<br/>無効なら false を返す</returns>
-        public bool KeyDown(int decKey)
+        /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
+        public List<int> KeyDown(int decKey)
         {
             var dtNow = DateTime.Now;
             logger.DebugH(() => $"ENTER: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}");
-            bool flag = false;
+            List<int> result = null;
             var stroke = new Stroke(decKey, dtNow);
             logger.DebugH(() => stroke.DebugString());
             if (strokeList.DetectKeyRepeat(stroke)) {
                 // キーリピートが発生した場合
                 if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
                     logger.DebugH("Key repeated");
-                    flag = false;
+                    result = Helper.MakeList(decKey);
                 } else {
                     logger.DebugH("Key repeat ignored");
-                    flag = true;
                 }
             } else if (strokeList.Count > 0) {
-                flag = true;
                 strokeList.Add(stroke);
                 logger.DebugH("Add new stroke: PATH-1");
+                if (!stroke.IsShiftable && !KeyCombinationPool.CurrentPool.ContainsMutualShiftKey) {
+                    result = strokeList.GetKeyCombination(decKey, DateTime.Now);
+                }
             } else {
                 var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
                 logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}");
                 if (combo != null && !combo.IsTerminal) {
-                    flag = true;
                     strokeList.Add(stroke);
                     logger.DebugH("Add new stroke: PATH-2");
+                    if (!stroke.IsShiftable && !KeyCombinationPool.CurrentPool.ContainsMutualShiftKey) {
+                        result = strokeList.GetKeyCombination(decKey, DateTime.Now);
+                    }
+                } else {
+                    result = Helper.MakeList(decKey);
                 }
             }
-            logger.DebugH(() => $"LEAVE: {flag}: {strokeList.ToDebugString()}");
-            return flag;
+            logger.DebugH(() => $"LEAVE: result.Count={result._safeCount()}: {strokeList.ToDebugString()}");
+            return result;
         }
 
         /// <summary>

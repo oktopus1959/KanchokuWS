@@ -20,9 +20,20 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public static bool IsOneshotShift(Kind kind) { return kind == Kind.OneshotShift; }
 
+        public static bool IsMutualShift(Kind kind) { return kind == Kind.MutualShift; }
+
         private Dictionary<int, Kind> shiftKindDict = new Dictionary<int, Kind>();
 
         public IEnumerable<KeyValuePair<int, Kind>> Pairs { get { return shiftKindDict.AsEnumerable(); } }
+
+        private bool? _containsMutualShiftKey = null;
+
+        public bool ContainsMutualShiftKey() {
+            if (!_containsMutualShiftKey.HasValue) {
+                _containsMutualShiftKey = Pairs.Any(p => IsMutualShift(p.Value));
+            }
+            return _containsMutualShiftKey.Value;
+        }
 
         /// <summary>
         /// ShiftKeyとして扱いうるキーの設定

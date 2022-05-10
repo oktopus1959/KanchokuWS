@@ -834,8 +834,13 @@ namespace KanchokuWS
                 return true;
             }
             if (bDecoderOn && mod == 0 &&
-                (kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END) &&
-                CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode)) {
+                kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END) {
+                var keyList = CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode);
+                if (keyList._notEmpty()) {
+                    foreach (var k in keyList) {
+                        invokeHandler(k, 0);
+                    }
+                }
                 return true;
             } else {
                 return invokeHandler(kanchokuCode, mod);

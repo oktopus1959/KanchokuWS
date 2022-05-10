@@ -48,6 +48,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // ShiftKeyとして扱いうるキー
         public ShiftKeyPool ComboShiftKeys { get; private set; } = new ShiftKeyPool();
 
+        // 相互シフトキーを保持しているか
+        public bool ContainsMutualShiftKey => ComboShiftKeys.ContainsMutualShiftKey();
+
         // Repeatableなキー
         public RepeatableKeyPool RepeatableKeys { get; private set; } = new RepeatableKeyPool();
 
