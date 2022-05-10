@@ -141,7 +141,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     foreach (var subList in subComboLists) {
                         overlapLen = strokeList.Count - startPos;
                         int minLen = subList.Count > 0 ? 1 : 2;
-                        logger.DebugH(() => $"minLen={minLen}, overlapLen={overlapLen}");
+                        logger.DebugH(() => $"subList.Count={subList.Count}, minLen={minLen}, overlapLen={overlapLen}");
                         while (overlapLen >= minLen) {
                             var list = makeComboChallengeList(subList, startPos, overlapLen);
                             logger.DebugH(() => $"PATH-1: list={list._toString()}");
@@ -151,19 +151,22 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する
                                 logger.DebugH(() => $"PATH-1: FOUND: Overlap candidates found: startPos={startPos}, overlapLen={overlapLen}");
                                 result.AddRange(keyList.KeyList);
-                                startPos += overlapLen;
-                                bFound = true;
                                 // 同時打鍵に使用したキーを使い回すかあるいは破棄するか
                                 if (keyList.IsOneshotShift) {
                                     // Oneshotなら使い回さず、今回かぎりとする
                                     logger.DebugH(() => $"PATH-1: OneshotShift");
-                                } else if (subComboLists.Count <= 1 && subComboLists._getFirst()._isEmpty()) {
-                                    // 持ち越された同時打鍵キーリストが空なので、今回の同時打鍵に使用したキーを使い回す
-                                    logger.DebugH(() => $"PATH-1: Reuse temporary combination");
+                                } else {
+                                    logger.DebugH(() => $"PATH-1: Move to next combination: startPos={startPos}, overlapLen={overlapLen}");
                                     foreach (var s in getRange(startPos, overlapLen)) s.SetShifted();
-                                    subComboLists.Clear();
-                                    gatherSubList(list, subComboLists);
+                                    if (subComboLists.Count <= 1 && subComboLists._getFirst()._isEmpty()) {
+                                        // 持ち越された同時打鍵キーリストが空なので、今回の同時打鍵に使用したキーを使い回す
+                                        logger.DebugH(() => $"PATH-1: Reuse temporary combination");
+                                        subComboLists.Clear();
+                                        gatherSubList(list, subComboLists);
+                                    }
                                 }
+                                startPos += overlapLen;
+                                bFound = true;
                                 break;
                             }
                             --overlapLen;
@@ -181,7 +184,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                 // UPされたキー以外を comboList に移動する
                 if (upKeyIdx >= 0) strokeList.RemoveAt(upKeyIdx);
-                comboList.AddRange(strokeList.Where(x => !x.IsShifted));
+                comboList.AddRange(strokeList.Where(x => x.IsShifted));
                 strokeList.Clear();
             }
             if (upComboIdx >= 0) comboList.RemoveAt(upComboIdx);

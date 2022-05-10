@@ -309,5 +309,10 @@ namespace KanchokuWS
         {
             frmMain.ReloadSettingsAndDefFiles();
         }
+
+        private void ExchangeTable_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMain.ExchangeCodeTable();
+        }
     }
 }

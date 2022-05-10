@@ -20,6 +20,7 @@
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define LOG_INFO LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
@@ -93,7 +94,7 @@ void State::DoDeckeyPreProc(int deckey) {
                 pNext = KATAKANA_NODE->CreateState();
                 pNext->SetPrevState(this);
                 deckey = -1;    // この後は dekcey の処理をやらない
-            } else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokeKeyOrShiftedKeyOrModeFuncKey(deckey)) {
+            } else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokableKey(deckey)) {
                 // ルートストロークノードの生成
                 _LOG_DEBUGH(_T("CREATE: RootStrokeState"));
                 pNext = ROOT_STROKE_NODE->CreateState();
@@ -294,17 +295,17 @@ mchar_t State::GetModeMarker() {
 }
 
 // DECKEY はストロークキーか
-bool State::isStrokeKey(int deckey) {
+bool State::isNormalStrokeKey(int deckey) {
     return deckey >= 0 && deckey < NORMAL_DECKEY_NUM;
 }
 
 // DECKEY はShift修飾キーか
 bool State::isShiftedKey(int deckey) {
-    return deckey >= SHIFT_DECKEY_START && deckey < STROKE_DECKEY_END;
+    return deckey >= SHIFT_DECKEY_START && deckey < TOTAL_SHIFT_DECKEY_END;
 }
 
-// DECKEY はモード機能キーか
-bool State::isModeFuncKey(int deckey) {
+// DECKEY はストロークキーとして扱われる機能キーか
+bool State::isStrokableFuncKey(int deckey) {
     switch (deckey) {
     case HANZEN_DECKEY:
     case CAPS_DECKEY:
@@ -321,14 +322,18 @@ bool State::isModeFuncKey(int deckey) {
     //return deckey >= FUNC_DECKEY_START && deckey < FUNC_DECKEY_END;
 }
 
+// DECKEY は同時打鍵Shift修飾キーか
+bool State::isComboShiftedKey(int deckey) {
+    return deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END;
+}
 // DECKEY はCtrl飾修キーか
 bool State::isCtrledKey(int deckey) {
     return deckey >= CTRL_DECKEY_START && deckey < TOTAL_DECKEY_NUM;
 }
 
-// DECKEY はストロークキーまたはShift修飾かまたは機能キーか
-bool State::isStrokeKeyOrShiftedKeyOrModeFuncKey(int deckey) {
-    return isStrokeKey(deckey) || isShiftedKey(deckey) || isModeFuncKey(deckey);
+// DECKEY はストロークキーとして扱われるキーか
+bool State::isStrokableKey(int deckey) {
+    return isNormalStrokeKey(deckey) || isShiftedKey(deckey) || isStrokableFuncKey(deckey) || isComboShiftedKey(deckey);
         //|| (isShiftedKey(deckey)
         //    && (deckey != SHIFT_SPACE_DECKEY
         //        || (!SETTINGS->histSearchByShiftSpace && SETTINGS->handleShiftSpaceAsNormalSpace)));
@@ -364,11 +369,12 @@ void State::copyStrokeHelpToVkbFaces() {
 
 // 入力された DECKEY をディスパッチする
 void State::dispatchDeckey(int deckey) {
-    _LOG_DEBUGH(_T("CALLED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+    _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
     //pStateResult->Iniitalize();
-    if (isStrokeKey(deckey)) {
+    if (isNormalStrokeKey(deckey)) {
         if (deckey == STROKE_SPACE_DECKEY) {
             handleSpaceKey();
+            _LOG_DEBUGH(_T("LEAVE: %s: SpaceKey handled"), NAME_PTR);
             return;
         }
         handleStrokeKeys(deckey);
@@ -391,7 +397,10 @@ void State::dispatchDeckey(int deckey) {
     } else if (deckey == TOGGLE_BLOCKER_DECKEY) {
         handleToggleBlocker();
     } else {
-        if (handleFunctionKeys(deckey)) return;
+        if (handleFunctionKeys(deckey)) {
+            _LOG_DEBUGH(_T("LEAVE: %s: FunctionKey handled"), NAME_PTR);
+            return;
+        }
 
         _LOG_DEBUGH(_T("DISPATH FUNCTION KEY: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
         switch (deckey) {
@@ -416,6 +425,7 @@ void State::dispatchDeckey(int deckey) {
         //    break;
         case ENTER_DECKEY:
             handleEnter();
+            _LOG_DEBUGH(_T("%s: Enter Key handled"), NAME_PTR);
             break;
         case ESC_DECKEY:
             handleEsc();
@@ -487,6 +497,7 @@ void State::dispatchDeckey(int deckey) {
             break;
         }
     }
+    _LOG_DEBUGH(_T("LEAVE: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
 }
 
 //-----------------------------------------------------------------------

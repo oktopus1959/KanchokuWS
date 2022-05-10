@@ -67,6 +67,7 @@ namespace KanchokuWS.CombinationKeyStroke
             logger.DebugH(() => $"ENTER: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}");
             bool flag = false;
             var stroke = new Stroke(decKey, dtNow);
+            logger.DebugH(() => stroke.DebugString());
             if (strokeList.DetectKeyRepeat(stroke)) {
                 // キーリピートが発生した場合
                 if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
@@ -82,6 +83,7 @@ namespace KanchokuWS.CombinationKeyStroke
                 logger.DebugH("Add new stroke: PATH-1");
             } else {
                 var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
+                logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}");
                 if (combo != null && !combo.IsTerminal) {
                     flag = true;
                     strokeList.Add(stroke);
@@ -102,45 +104,6 @@ namespace KanchokuWS.CombinationKeyStroke
             logger.DebugH(() => $"ENTER: decKey={decKey}");
             return strokeList.GetKeyCombination(decKey, DateTime.Now);
         }
-        ///// <summary>
-        ///// テーブルファイルを読み込んで同時打鍵定義を初期化する
-        ///// </summary>
-        //public void Initialize(string tableFile, string tableFile2)
-        //{
-        //    logger.InfoH(() => $"CALLED: tableFile={tableFile}, tableFile2={tableFile2}");
-        //    impl.Initialize(tableFile, tableFile2);
-        //}
-
-        ///// <summary>
-        ///// 選択されたテーブルファイルに合わせて、KeyComboPoolを入れ替える
-        ///// </summary>
-        //public void ExchangeKeyCombinationPool()
-        //{
-        //    impl.ExchangeKeyCombinationPool();
-        //}
-
-        ///// <summary>
-        ///// キーの押下<br/>押下されたキーをキューに積むだけ。同時打鍵などの判定はキーの解放時に行う。
-        ///// </summary>
-        ///// <param name="decKey">押下されたキーのデコーダコード</param>
-        ///// <returns>同時打鍵が有効なら true を返す<br/>無効なら false を返す</returns>
-        //public bool KeyDown(int decKey)
-        //{
-        //    logger.DebugH(() => $"\nCALLED: decKey={decKey}, Determiner.Enabled={impl.IsEnabled}");
-        //    if (!impl.IsEnabled) return false;
-        //    return impl.KeyDown(decKey);
-        //}
-
-        ///// <summary>
-        ///// キーの解放
-        ///// </summary>
-        ///// <param name="decKey">解放されたキーのデコーダコード</param>
-        ///// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
-        //public List<int> KeyUp(int decKey)
-        //{
-        //    logger.DebugH(() => $"\nCALLED: decKey={decKey}");
-        //    return impl.IsEnabled ? impl.KeyUp(decKey) : null;
-        //}
 
         /// <summary>
         /// Singleton オブジェクトを返す

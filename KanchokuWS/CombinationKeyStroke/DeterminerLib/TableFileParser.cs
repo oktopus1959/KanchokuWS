@@ -191,7 +191,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         void parseSubTree(int depth, int prevNth)
         {
             logger.DebugH(() => $"ENTER: currentLine={lineNumber}, depth={depth}, prevNth={prevNth}");
-            //int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
+            //int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.NORMAL_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             bool bError = false;
             int n = 0;
             bool isPrevDelim = true;
@@ -265,7 +265,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             logger.DebugH(() => $"ENTER: depth={depth}, nextArrowIdx={nextArrowIdx}");
 
-            int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
+            int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.NORMAL_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             int n = 0;
             bool isPrevDelim = true;
             readNextToken(depth);
@@ -415,8 +415,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         shiftPlane = 2;
                     } else if (lcStr == "shiftb") {
                         shiftPlane = 3;
-                    } else if (lcStr == "combination" || lcStr == "overlapping") {
+                    } else if (lcStr == "shiftc") {
                         shiftPlane = 4;
+                    } else if (lcStr == "shiftd") {
+                        shiftPlane = 5;
+                    } else if (lcStr == "shifte") {
+                        shiftPlane = 6;
+                    } else if (lcStr == "shiftf") {
+                        shiftPlane = 7;
+                    } else if (lcStr == "combination" || lcStr == "overlapping") {
                         readWord();
                         switch (currentStr._toLower()) {
                             case "preshift":
@@ -435,7 +442,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         switch (currentStr._toLower()) {
                             case "combination":
                             case "overlapping":
-                                shiftPlane = 0;
                                 shiftKeyKind = ShiftKeyKind.None;
                                 break;
                             case "__include__":
@@ -759,11 +765,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             } else if (c == 'S' || c == 's') {
                 shiftOffset = DecoderKeys.SHIFT_DECKEY_START;
                 c = getNextChar();
-            } else if (c == 'A' || c == 'a') {
-                shiftOffset = DecoderKeys.SHIFT_A_DECKEY_START;
+            } else if (c >= 'A' && c <= 'F') {
+                shiftOffset = DecoderKeys.SHIFT_DECKEY_START + (c - 'A' + 1) * DecoderKeys.NORMAL_DECKEY_NUM;
                 c = getNextChar();
-            } else if (c == 'B' || c == 'b') {
-                shiftOffset = DecoderKeys.SHIFT_B_DECKEY_START;
+            } else if (c >= 'a' && c <= 'f') {
+                shiftOffset = DecoderKeys.SHIFT_DECKEY_START + (c - 'a' + 1) * DecoderKeys.NORMAL_DECKEY_NUM;
                 c = getNextChar();
             } else if (c == 'X' || c == 'x') {
                 shiftOffset = DecoderKeys.FUNC_DECKEY_START;
@@ -779,16 +785,20 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 arrowIndex = arrowIndex * 10 + c - '0';
                 c = getNextChar();
             }
+            arrowIndex %= DecoderKeys.NORMAL_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
             if (!bShiftPlane) {
-                if (shiftOffset < 0) {
+                if (isInCombinationBlock) {
+                    // 同時打鍵ブロック用の Offset(機能キーの場合は、さらに NORMAL_DECKEY_NUM 分だけずらす)
+                    shiftOffset = DecoderKeys.COMBO_DECKEY_START + (shiftOffset == DecoderKeys.FUNC_DECKEY_START ? DecoderKeys.NORMAL_DECKEY_NUM : 0);
+                } else if (shiftOffset < 0) {
                     // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
-                    shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM : 0;
+                    shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftPlane * DecoderKeys.NORMAL_DECKEY_NUM : 0;
                 }
                 arrowIndex += shiftOffset;
-                if (arrowIndex >= DecoderKeys.FUNC_DECKEY_END) parseError();
+                if (arrowIndex >= DecoderKeys.COMBO_DECKEY_END) parseError();
             } else {
                 shiftPlane = arrowIndex;
-                if (shiftPlane >= DecoderKeys.ALL_SHIFT_PLANE_NUM) parseError();
+                if (shiftPlane >= DecoderKeys.ALL_PLANE_NUM) parseError();
                 return false;
             }
             if (c != '>') parseError();

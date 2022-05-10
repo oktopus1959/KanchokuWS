@@ -35,6 +35,7 @@ namespace KanchokuWS
             this.ReloadSettings_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadBushuDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadMazeWikipediaDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FollowCaret_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.Restart_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RestartWithSave_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,7 +47,7 @@ namespace KanchokuWS
             this.topTextBox = new Utils.TextBoxRO();
             this.dgvHorizontal = new System.Windows.Forms.DataGridView();
             this.pictureBox_measureFontSize = new System.Windows.Forms.PictureBox();
-            this.FollowCaret_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExcangeTable_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Main)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvHorizontal)).BeginInit();
@@ -79,6 +80,7 @@ namespace KanchokuWS
             this.ReadDic_ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ReloadSettings_ToolStripMenuItem,
             this.ReadBushuDic_ToolStripMenuItem,
+            this.ExcangeTable_ToolStripMenuItem,
             this.ReadMazeWikipediaDic_ToolStripMenuItem});
             this.ReadDic_ToolStripMenuItem.Name = "ReadDic_ToolStripMenuItem";
             this.ReadDic_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
@@ -104,6 +106,13 @@ namespace KanchokuWS
             this.ReadMazeWikipediaDic_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
             this.ReadMazeWikipediaDic_ToolStripMenuItem.Text = "Wikipedia交ぜ書き辞書読込";
             this.ReadMazeWikipediaDic_ToolStripMenuItem.Click += new System.EventHandler(this.ReadMazeWikipediaDic_ToolStripMenuItem_Click);
+            // 
+            // FollowCaret_ToolStripMenuItem
+            // 
+            this.FollowCaret_ToolStripMenuItem.Name = "FollowCaret_ToolStripMenuItem";
+            this.FollowCaret_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.FollowCaret_ToolStripMenuItem.Text = "再追従";
+            this.FollowCaret_ToolStripMenuItem.Click += new System.EventHandler(this.FollowCaret_ToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -197,12 +206,12 @@ namespace KanchokuWS
             this.pictureBox_measureFontSize.TabStop = false;
             this.pictureBox_measureFontSize.Visible = false;
             // 
-            // FollowCaret_ToolStripMenuItem
+            // ExcangeTable_ToolStripMenuItem
             // 
-            this.FollowCaret_ToolStripMenuItem.Name = "FollowCaret_ToolStripMenuItem";
-            this.FollowCaret_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.FollowCaret_ToolStripMenuItem.Text = "再追従";
-            this.FollowCaret_ToolStripMenuItem.Click += new System.EventHandler(this.FollowCaret_ToolStripMenuItem_Click);
+            this.ExcangeTable_ToolStripMenuItem.Name = "ExcangeTable_ToolStripMenuItem";
+            this.ExcangeTable_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.ExcangeTable_ToolStripMenuItem.Text = "主・副テーブル切り替え";
+            this.ExcangeTable_ToolStripMenuItem.Click += new System.EventHandler(this.ExcangeTable_ToolStripMenuItem_Click);
             // 
             // FrmVirtualKeyboard
             // 
@@ -253,5 +262,6 @@ namespace KanchokuWS
         private System.Windows.Forms.ToolStripMenuItem ReadMazeWikipediaDic_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ReloadSettings_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem FollowCaret_ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ExcangeTable_ToolStripMenuItem;
     }
 }

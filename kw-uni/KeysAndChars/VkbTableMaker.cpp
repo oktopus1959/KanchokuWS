@@ -278,19 +278,19 @@ namespace VkbTableMaker {
     // シフトA面キー文字を集めたストローク表を作成する
     void MakeShiftAKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        makeKeyCharsStrokePositionTable1(faces, SHIFT_A_DECKEY_START, SHIFT_DECKEY_NUM);
+        makeKeyCharsStrokePositionTable1(faces, SHIFT_DECKEY_START + NORMAL_DECKEY_NUM, NORMAL_DECKEY_NUM);
     }
 
     // シフトB面キー文字を集めたストローク表を作成する
     void MakeShiftBKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        makeKeyCharsStrokePositionTable1(faces, SHIFT_B_DECKEY_START, SHIFT_DECKEY_NUM);
+        makeKeyCharsStrokePositionTable1(faces, SHIFT_DECKEY_START + NORMAL_DECKEY_NUM * 2, NORMAL_DECKEY_NUM);
     }
 
-    // 同時打鍵シフト面キー文字を集めたストローク表を作成する
+    // 同時打鍵面通常キー文字を集めたストローク表を作成する
     void MakeCombinationKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        makeKeyCharsStrokePositionTable1(faces, COMBO_DECKEY_START, SHIFT_DECKEY_NUM);
+        makeKeyCharsStrokePositionTable1(faces, COMBO_DECKEY_START, NORMAL_DECKEY_NUM);
     }
 
     //----------------------------------------------------------------------------

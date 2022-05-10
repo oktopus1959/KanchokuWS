@@ -23,14 +23,22 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         //public bool IsShiftedOrShiftableSpaceKey => IsShifted || IsShiftableSpaceKey;
 
+        public string DebugString() => $"DecKeyCode={DecoderKeyCode}, ModKeyCode={ModuloKeyCode}";
+
         /// <summary>同じキーか</summary>
         public bool IsSameKey(int decKey)
         {
             return DecoderKeyCode == decKey || ModuloKeyCode == ModuloizeKey(decKey);
         }
 
-        /// <summary>同時打鍵検索用にモジュロ化したキーコードを返す</summary>
-        public static int ModuloizeKey(int decKey) { return decKey % DecoderKeys.NORMAL_DECKEY_NUM; }
+        /// <summary>
+        /// 同時打鍵検索用にモジュロ化したキーコードを返す<br/>
+        /// これはシフトキーや拡張シフトキーで入力されたコードを、シフトを無視して検索するために必要となる
+        /// </summary>
+        public static int ModuloizeKey(int decKey) {
+            return (decKey % DecoderKeys.NORMAL_DECKEY_NUM)
+                + ((decKey >= DecoderKeys.FUNC_DECKEY_START && decKey < DecoderKeys.FUNC_DECKEY_END || decKey >= DecoderKeys.COMBO_EX_DECKEY_START) ? DecoderKeys.NORMAL_DECKEY_NUM : 0);
+        }
 
         /// <summary>Oneshotな同時打鍵キーか</summary>
         public bool IsOneshotShift { get; private set; }

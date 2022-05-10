@@ -16,6 +16,7 @@ EOS
 sed -n '/public static class DecoderKeys/,$ p' $SRCFILE | \
     tail -n +2 | \
     grep -v '^ *[{}]' | \
+    grep -v 'private' | \
     sed 's/^ *//' | \
     sed 's/public const int/#define/' | \
     sed 's/= /(/' | \

@@ -15,7 +15,7 @@ namespace KanchokuWS
 {
     public partial class FrmKanchoku : Form
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         //------------------------------------------------------------------
         // GUI側の処理
@@ -152,6 +152,8 @@ namespace KanchokuWS
         /// <summary> 各種定義ファイルの読み込み </summary>
         public void ReadDefFiles()
         {
+            logConstant();
+
             // 文字定義ファイルの読み込み
             //if (Settings.CharsDefFile._notEmpty()) {
             //    DecoderKeyToChar.ReadCharsDefFile(Settings.CharsDefFile);
@@ -169,6 +171,25 @@ namespace KanchokuWS
 
             // 同時打鍵設定の読み込み
             CombinationKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, Settings.TableFile2);
+        }
+
+        private void logConstant()
+        {
+            //logger.DebugH(() => $"SHIFT_F_DECKEY_END={DecoderKeys.SHIFT_F_DECKEY_END}");
+            logger.DebugH(() => $"TOTAL_SHIFT_DECKEY_NUM={DecoderKeys.TOTAL_SHIFT_DECKEY_NUM}");
+            logger.DebugH(() => $"FUNC_DECKEY_START={DecoderKeys.FUNC_DECKEY_START}");
+            //logger.DebugH(() => $"FUNC_DECKEY_NUM={DecoderKeys.FUNC_DECKEY_NUM}");
+            //logger.DebugH(() => $"FUNC_DECKEY_END={DecoderKeys.FUNC_DECKEY_END}");
+            logger.DebugH(() => $"STROKE_DECKEY_END={DecoderKeys.STROKE_DECKEY_END}");
+            logger.DebugH(() => $"COMBO_DECKEY_START={DecoderKeys.COMBO_DECKEY_START}");
+            logger.DebugH(() => $"COMBO_EX_DECKEY_START={DecoderKeys.COMBO_EX_DECKEY_START}");
+            logger.DebugH(() => $"CTRL_DECKEY_START={DecoderKeys.CTRL_DECKEY_START}");
+            //logger.DebugH(() => $"UNMODIFIED_DECKEY_NUM={DecoderKeys.UNMODIFIED_DECKEY_NUM}");
+            logger.DebugH(() => $"TOTAL_DECKEY_NUM={DecoderKeys.TOTAL_DECKEY_NUM}");
+            logger.DebugH(() => $"UNCONDITIONAL_DECKEY_OFFSET={DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET}");
+            logger.DebugH(() => $"UNCONDITIONAL_DECKEY_END={DecoderKeys.UNCONDITIONAL_DECKEY_END}");
+            logger.DebugH(() => $"CTRL_RIGHT_ARROW_DECKEY={DecoderKeys.CTRL_RIGHT_ARROW_DECKEY}");
+            logger.DebugH(() => $"SPECIAL_DECKEY_ID_BASE={DecoderKeys.SPECIAL_DECKEY_ID_BASE}");
         }
 
         private void updateStrokeNodesByComplexCommands()
@@ -661,11 +682,7 @@ namespace KanchokuWS
                         return true;
                     case DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY:
                         logger.InfoH("EXCHANGE_CODE_TABLE");
-                        if (IsDecoderActive && Settings.TableFile2._notEmpty() && DecoderOutput.IsWaitingFirstStroke()) {
-                            ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
-                            CombinationKeyStroke.Determiner.Singleton.ExchangeKeyCombinationPool();  // KeyCombinationPoolの入れ替え
-                            frmVkb.DrawVirtualKeyboardChars();
-                        }
+                        ExchangeCodeTable();
                         return true;
                     case DecoderKeys.PSEUDO_SPACE_DECKEY:
                         logger.InfoH(() => $"PSEUDO_SPACE_DECKEY: strokeCount={decoderOutput.GetStrokeCount()}");
@@ -682,7 +699,7 @@ namespace KanchokuWS
                         if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
                             // 第2打鍵待ちなら、いったんBSを出力してからシフトされたコードを出力
                             InvokeDecoder(DecoderKeys.BS_DECKEY, 0);
-                            deckey = (prevDeckey % DecoderKeys.NORMAL_DECKEY_NUM) + (deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY + 1) * DecoderKeys.SHIFT_DECKEY_NUM;
+                            deckey = (prevDeckey % DecoderKeys.NORMAL_DECKEY_NUM) + (deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY + 1) * DecoderKeys.NORMAL_DECKEY_NUM;
                             InvokeDecoder(deckey, 0);
                         }
                         return true;
@@ -710,6 +727,17 @@ namespace KanchokuWS
             } finally {
                 prevDeckey = deckey;
                 if (bPrevDtUpdate) prevDecDt = DateTime.Now;
+            }
+        }
+
+        /// <summary>漢直コードテーブルの入れ替え</summary>
+        public void ExchangeCodeTable()
+        {
+            logger.InfoH("CALLED");
+            if (IsDecoderActive && Settings.TableFile2._notEmpty() && DecoderOutput.IsWaitingFirstStroke()) {
+                ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
+                CombinationKeyStroke.Determiner.Singleton.ExchangeKeyCombinationPool();  // KeyCombinationPoolの入れ替え
+                frmVkb.DrawVirtualKeyboardChars();
             }
         }
 
@@ -1374,7 +1402,7 @@ namespace KanchokuWS
 
         private int unshiftDeckey(int deckey)
         {
-            return deckey < DecoderKeys.SHIFT_B_DECKEY_END ? deckey % DecoderKeys.SHIFT_DECKEY_NUM : deckey;
+            return deckey < DecoderKeys.TOTAL_SHIFT_DECKEY_END ? deckey % DecoderKeys.NORMAL_DECKEY_NUM : deckey;
         }
 
         private void drawRomanOrHiraganaMode(bool bRoman, bool bHiragana)
@@ -1628,6 +1656,12 @@ namespace KanchokuWS
         {
             logger.Info("CALLED");
             ReloadSettingsAndDefFiles();
+        }
+
+        private void ExchangeTable_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            logger.Info("CALLED");
+            ExchangeCodeTable();
         }
     }
 

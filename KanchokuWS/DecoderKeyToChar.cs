@@ -12,7 +12,7 @@ namespace KanchokuWS
     {
         private static Logger logger = Logger.GetLogger();
 
-        private static char[] decKeyShiftChars = new char[DecoderKeys.SHIFT_DECKEY_NUM];
+        private static char[] decKeyShiftChars = new char[DecoderKeys.NORMAL_DECKEY_NUM];
 
         public static bool ReadCharsDefFile(string filename)
         {

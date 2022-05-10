@@ -725,7 +725,7 @@ namespace KanchokuWS
         {
             if (str._isEmpty()) return -1;
             var s = str._toUpper();
-            int offset = s[0] == 'S' ? DecoderKeys.SHIFT_DECKEY_START : s[0] == 'A' ? DecoderKeys.SHIFT_A_DECKEY_START : s[0] == 'B' ? DecoderKeys.SHIFT_B_DECKEY_START : 0;
+            int offset = s[0] == 'S' ? DecoderKeys.SHIFT_DECKEY_START : s[0] >= 'A' && s[0] <= 'F' ? DecoderKeys.SHIFT_DECKEY_START + (s[0] - 'A' + 1) * DecoderKeys.NORMAL_DECKEY_NUM : 0;
             int deckey = offset > 0 ? s._safeSubstring(1)._parseInt(-1, -1) : s._parseInt(-1, -1);
             if (deckey < 0 || deckey >= DecoderKeys.STROKE_DECKEY_END) return -1;
             return deckey + offset;

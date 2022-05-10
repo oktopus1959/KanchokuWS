@@ -9,8 +9,8 @@
 #include "StateCommonInfo.h"
 #include "Node.h"
 
-#define UNSHIFT_DECKEY(x) (x % SHIFT_DECKEY_NUM)
-#define DECKEY_TO_SHIFT_PLANE(x) (x / SHIFT_DECKEY_NUM)
+#define UNSHIFT_DECKEY(x) (x % NORMAL_DECKEY_NUM)
+#define DECKEY_TO_SHIFT_PLANE(x) (x / NORMAL_DECKEY_NUM)
 
 #define STATE_NAME_PTR(p) (p == 0 ? _T("None") : p->GetName().c_str())
 
@@ -193,7 +193,7 @@ protected:
 
 public:
     // DECKEY はストロークキーか
-    static bool isStrokeKey(int deckey);
+    static bool isNormalStrokeKey(int deckey);
 
     // DECKEY はShift修飾キーか
     static bool isShiftedKey(int deckey);
@@ -201,11 +201,14 @@ public:
     // DECKEY はCtrl修飾キーか
     static bool isCtrledKey(int deckey);
 
-    // DECKEY は機能キーか
-    static bool isModeFuncKey(int deckey);
+    // DECKEY はストロークキーとして扱われる機能キーか
+    static bool isStrokableFuncKey(int deckey);
 
-    // DECKEY はストロークキーまたはShift修飾かまたは機能キーか
-    static bool isStrokeKeyOrShiftedKeyOrModeFuncKey(int deckey);
+    // DECKEY は同時打鍵シフトキーか
+    static bool isComboShiftedKey(int deckey);
+
+    // DECKEY はストロークキーとして扱われるキーか
+    static bool isStrokableKey(int deckey);
 
 public:
     // 入力された DECKEY をディスパッチする

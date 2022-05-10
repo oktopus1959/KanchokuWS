@@ -192,8 +192,10 @@ namespace {
         // 同時打鍵定義ブロック
         bool inOverlappingKeyBlock = false;
 
-        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 4:ShiftO(Overlapping) の5面
+        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 9:Combination
         int shiftPlane = 0;
+
+        const int COMBO_SHIFT_PLANE = 9;
 
         // 打鍵マップ
         std::map<MString, std::vector<int>>* strokeSerieses = 0;
@@ -251,7 +253,7 @@ namespace {
 
         // デフォルトのシフト面の機能(自身の文字を返す)ノードの設定
         void setupShiftedKeyFunction(StrokeTableNode* tblNode) {
-            for (size_t i = 0; i < SHIFT_DECKEY_NUM; ++i) {
+            for (size_t i = 0; i < NORMAL_DECKEY_NUM; ++i) {
                 //tblNode->setNthChild(i + SHIFT_DECKEY_START, new MyCharNode());
                 setNthChildNode(tblNode, i + SHIFT_DECKEY_START, new MyCharNode());
             }
@@ -291,7 +293,7 @@ namespace {
             wstring myGuideChars = getAndRemoveDefines(_T("defguide"));
 
             if (tblNode == 0) tblNode = new StrokeTableNode(depth);
-            int shiftPlaneOffset = depth == 0 ? shiftPlane * SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
+            int shiftPlaneOffset = depth == 0 ? shiftPlane * NORMAL_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             int n = 0;
             bool isPrevDelim = true;
             readNextToken(depth);
@@ -307,7 +309,7 @@ namespace {
                     break;
 
                 case TOKEN::LBRACE:
-                    if (shiftPlane == 4) { _LOG_DEBUGH(_T("LBRACE: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), lineNumber + 1, depth, shiftPlane, prevNth, n + shiftPlaneOffset); }
+                    if (shiftPlane == COMBO_SHIFT_PLANE) { _LOG_DEBUGH(_T("LBRACE: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), lineNumber + 1, depth, shiftPlane, prevNth, n + shiftPlaneOffset); }
                 case TOKEN::STRING:             // "str" : 文字列ノード
                 case TOKEN::FUNCTION:           // @c : 機能ノード
                     //tblNode->setNthChild(n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
@@ -341,9 +343,10 @@ namespace {
 
         void createNodePositionedByArrow(StrokeTableNode* tblNode, int prevNth, int idx) {
             int nextDepth = tblNode->depth() + 1;
-            _LOG_DEBUGH(_T("CALLED: currentLine=%d, nextDepth=%d, idx=%d, prevN=%d"), lineNumber, nextDepth, idx, prevNth);
+            _LOG_DEBUGH(_T("CALLED: currentLine=%s, nextDepth=%d, idx=%d, prevN=%d"), currentLine.c_str(), nextDepth, idx, prevNth);
             Node* node = tblNode->getNth(idx);
             if (node && node->isStrokeTableNode()) {
+                _LOG_DEBUGH(_T("tblNode[%d] has been created"), idx);
                 createNodePositionedByArrowSub(dynamic_cast<StrokeTableNode*>(node), nextDepth, prevNth, idx);
             } else {
                 //tblNode->setNthChild(idx, createNodePositionedByArrowSub(0, nextDepth, prevNth, idx));
@@ -370,7 +373,7 @@ namespace {
 
             if (!tblNode) return;
 
-            int shiftPlaneOffset = depth == 0 ? shiftPlane * SHIFT_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
+            int shiftPlaneOffset = depth == 0 ? shiftPlane * NORMAL_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             int n = 0;
             bool isPrevDelim = true;
             readNextToken(depth);
@@ -441,7 +444,7 @@ namespace {
                 return 0;
             case TOKEN::STRING:            // "str" : 文字列ノード
                 LOG_TRACE(_T("STRING: %d:%d=%s, shiftPlane=%d"), lineNumber + 1, nth, currentStr.c_str(), shiftPlane);
-                if (shiftPlane == 4) { _LOG_DEBUGH(_T("STRING: %s: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), currentStr.c_str(), lineNumber + 1, depth, shiftPlane, prevNth, nth); }
+                if (shiftPlane == COMBO_SHIFT_PLANE) { _LOG_DEBUGH(_T("STRING: %s: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), currentStr.c_str(), lineNumber + 1, depth, shiftPlane, prevNth, nth); }
                 if (currentStr.empty()) return 0;
                 if (kanjiConvMap.empty()) {
                     LOG_TRACE(_T("kanjiConvMap.empty()"));
@@ -628,17 +631,27 @@ namespace {
                         shiftPlane = 2;
                     } else if (lcStr == _T("shiftb")) {
                         shiftPlane = 3;
-                    } else if (lcStr == _T("combination") || lcStr == _T("overlapping")) {
-                        inOverlappingKeyBlock = true;
+                    } else if (lcStr == _T("shiftc")) {
                         shiftPlane = 4;
+                    } else if (lcStr == _T("shiftd")) {
+                        shiftPlane = 5;
+                    } else if (lcStr == _T("shifte")) {
+                        shiftPlane = 6;
+                    } else if (lcStr == _T("shiftf")) {
+                        shiftPlane = 7;
+                    } else if (lcStr == _T("combination") || lcStr == _T("overlapping")) {
+                        _LOG_DEBUGH(_T("START Combination: %s"), currentLine.c_str());
+                        shiftPlane = COMBO_SHIFT_PLANE;
+                        inOverlappingKeyBlock = true;
                         skipToEndOfLine();
                     } else if (lcStr == _T("end")) {
                         readWord();
                         auto word = utils::toLower(currentStr);
                         _LOG_DEBUGH(_T("end %s"), word.c_str());
                         if (word == _T("combination") || word == _T("overlapping")) {
-                            inOverlappingKeyBlock = false;
+                            _LOG_DEBUGH(_T("END Combination: %s"), currentLine.c_str());
                             shiftPlane = 0;
+                            inOverlappingKeyBlock = false;
                         } else if (word == _T("__include__")) {
                             _LOG_DEBUGH(_T("END INCLUDE/LOAD: lineNumber=%d"), lineNumber);
                             blockInfoStack.Pop(lineNumber + 1);
@@ -847,11 +860,11 @@ namespace {
             } else if (c == 'S' || c == 's') {
                 shiftOffset = SHIFT_DECKEY_START;
                 c = getNextChar();
-            } else if (c == 'A' || c == 'a') {
-                shiftOffset = SHIFT_A_DECKEY_START;
+            } else if (c >= 'A' && c <= 'F') {
+                shiftOffset = SHIFT_DECKEY_START + (c - 'A' + 1) * NORMAL_DECKEY_NUM;
                 c = getNextChar();
-            } else if (c == 'B' || c == 'b') {
-                shiftOffset = SHIFT_B_DECKEY_START;
+            } else if (c >= 'a' && c <= 'f') {
+                shiftOffset = SHIFT_DECKEY_START + (c - 'a' + 1) * NORMAL_DECKEY_NUM;
                 c = getNextChar();
             } else if (c == 'X' || c == 'x') {
                 shiftOffset = FUNC_DECKEY_START;
@@ -867,16 +880,20 @@ namespace {
                 arrowIndex = arrowIndex * 10 + c - '0';
                 c = getNextChar();
             }
+            arrowIndex %= NORMAL_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
             if (!bShiftPlane) {
-                if (shiftOffset < 0) {
+                if (inOverlappingKeyBlock) {
+                    // 同時打鍵ブロック用の Offset(機能キーの場合は、さらに NORMAL_DECKEY_NUM 分だけずらす)
+                    shiftOffset = COMBO_DECKEY_START + (shiftOffset == FUNC_DECKEY_START ? NORMAL_DECKEY_NUM : 0);
+                } else if (shiftOffset < 0) {
                     // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
-                    shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftOffset = shiftPlane * SHIFT_DECKEY_NUM : 0;
+                    shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftOffset = shiftPlane * NORMAL_DECKEY_NUM : 0;
                 }
                 arrowIndex += shiftOffset;
-                if (arrowIndex >= FUNC_DECKEY_END) parseError();
+                if (arrowIndex >= COMBO_DECKEY_END) parseError();
             } else {
                 shiftPlane = arrowIndex;
-                if (shiftPlane >= ALL_SHIFT_PLANE_NUM) parseError();
+                if (shiftPlane >= ALL_PLANE_NUM) parseError();
                 return false;
             }
             if (c != '>') parseError();
@@ -1098,11 +1115,11 @@ namespace {
             if (k[0] == 'S' || k[0] == 's') {
                 shiftOffset = SHIFT_DECKEY_START;
                 k = k.substr(1);
-            } else if (k[0] == 'A' || k[0] == 'a') {
-                shiftOffset = SHIFT_A_DECKEY_START;
+            } else if (k[0] >= 'A' && k[0] <= 'F') {
+                shiftOffset = SHIFT_DECKEY_START + (k[0] - 'A' + 1) * NORMAL_DECKEY_NUM;
                 k = k.substr(1);
-            } else if (k[0] == 'B' || k[0] == 'b') {
-                shiftOffset = SHIFT_B_DECKEY_START;
+            } else if (k[0] >= 'a' && k[0] <= 'f') {
+                shiftOffset = SHIFT_DECKEY_START + (k[0] - 'a' + 1) * NORMAL_DECKEY_NUM;
                 k = k.substr(1);
             } else if (k[0] == 'X' || k[0] == 'x') {
                 shiftOffset = FUNC_DECKEY_START;

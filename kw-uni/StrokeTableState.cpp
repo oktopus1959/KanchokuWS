@@ -257,10 +257,10 @@ namespace {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             STATE_COMMON->SyncFirstStrokeKeyCount();    // 第1ストロークキーカウントの同期
             StrokeTableState::handleStrokeKeys(deckey);
-            if (!NextNodeMaybe() && State::isModeFuncKey(deckey)) {
-                // 次ノードがなく、拡張修飾キーの類なら、入力された拡張修飾類キーをそのまま返す
-                setThroughDeckeyFlag();
-            }
+            //if (!NextNodeMaybe() && State::isStrokableFuncKey(deckey)) {
+            //    // 次ノードがなく、拡張修飾キーの類なら、入力された拡張修飾類キーをそのまま返す
+            //    setThroughDeckeyFlag();
+            //}
         }
 
         // Shift飾修されたキー

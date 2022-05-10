@@ -10,7 +10,7 @@ class DeckeyToChars {
     DECLARE_CLASS_LOGGER;
 
     wchar_t normalChars[NORMAL_DECKEY_NUM] = { 0 };
-    wchar_t shiftedChars[SHIFT_DECKEY_NUM] = { 0 };
+    wchar_t shiftedChars[NORMAL_DECKEY_NUM] = { 0 };
 
     int yenPos = -1;
 
@@ -26,7 +26,7 @@ public:
             int id = deckeyId;
             if (id >= 0 && id < NORMAL_DECKEY_NUM) return normalChars[id];
             id = deckeyId - SHIFT_DECKEY_START;
-            if (id >= 0 && id < SHIFT_DECKEY_NUM) return shiftedChars[id];
+            if (id >= 0 && id < NORMAL_DECKEY_NUM) return shiftedChars[id];
         }
         return defChar;
     }

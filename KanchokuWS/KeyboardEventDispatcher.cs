@@ -12,7 +12,7 @@ namespace KanchokuWS
 {
     public class KeyboardEventDispatcher : IDisposable
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         /// <summary>Ctrlキー変換の有効なウィンドウクラスか</summary>
         public delegate bool DelegateCtrlConversionEffectiveChecker();
@@ -764,7 +764,7 @@ namespace KanchokuWS
                     // 拡張シフト面のコードを得る
                     var shiftPlane = keyInfoManager.getShiftPlane(bDecoderOn, isSandSEnabled());
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-A: shiftPlane={shiftPlane}");
-                    if (shiftPlane != VirtualKeys.ShiftPlane.NONE) kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey) + (int)shiftPlane * DecoderKeys.SHIFT_DECKEY_NUM;
+                    if (shiftPlane != VirtualKeys.ShiftPlane.NONE) kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey) + (int)shiftPlane * DecoderKeys.NORMAL_DECKEY_NUM;
                 }
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-B: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), modEx={modEx:x}, ctrl={ctrl}, shift={shift}");
             }
@@ -834,7 +834,7 @@ namespace KanchokuWS
                 return true;
             }
             if (bDecoderOn && mod == 0 &&
-                (kanchokuCode >= 0 && kanchokuCode < DecoderKeys.NORMAL_DECKEY_END || kanchokuCode >= DecoderKeys.SHIFT_A_DECKEY_START && kanchokuCode < DecoderKeys.SHIFT_A_DECKEY_END) &&
+                (kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END) &&
                 CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode)) {
                 return true;
             } else {
@@ -937,8 +937,8 @@ namespace KanchokuWS
                     if (bPrevPressed && keyInfo.IsShiftPlaneAssigned(bDecoderOn) && keyInfo.IsSingleShiftHitEffecive()) {
                         // 拡張シフト面が割り当てられ、かつ単打系がある拡張修飾キーで、それが押下状態の場合
                         keyboardDownHandler(vkey, leftCtrl, rightCtrl);
-                        keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, 0);
                     }
+                    keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, 0);
                     return false;
                 }
             }
@@ -954,7 +954,7 @@ namespace KanchokuWS
         {
             if (bDecoderOn && !leftCtrl && !rightCtrl && modFlag == 0) {
                 int deckey = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
-                if (deckey >= 0 && (deckey < DecoderKeys.NORMAL_DECKEY_END || deckey >= DecoderKeys.SHIFT_A_DECKEY_START && deckey < DecoderKeys.SHIFT_A_DECKEY_END)) {
+                if (deckey >= 0 && deckey < DecoderKeys.STROKE_DECKEY_END) {
                     var keyList = CombinationKeyStroke.Determiner.Singleton.KeyUp(deckey);
                     if (keyList._notEmpty()) {
                         foreach (var k in keyList) {

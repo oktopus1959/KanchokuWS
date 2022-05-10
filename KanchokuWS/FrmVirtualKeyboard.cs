@@ -1706,5 +1706,10 @@ namespace KanchokuWS
         {
             Settings.VirtualKeyboardPosFixedTemporarily = false;
         }
+
+        private void ExcangeTable_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMain.ExchangeCodeTable();
+        }
     }
 }

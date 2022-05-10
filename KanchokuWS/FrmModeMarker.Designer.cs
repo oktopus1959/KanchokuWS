@@ -33,6 +33,7 @@ namespace KanchokuWS
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.Settings_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Read_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ReloadSettings_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadBushuDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadMazeWikipediaDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -42,7 +43,7 @@ namespace KanchokuWS
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.Exit_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.ReloadSettings_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExchangeTable_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -82,10 +83,18 @@ namespace KanchokuWS
             this.Read_ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ReloadSettings_ToolStripMenuItem,
             this.ReadBushuDic_ToolStripMenuItem,
+            this.ExchangeTable_ToolStripMenuItem,
             this.ReadMazeWikipediaDic_ToolStripMenuItem});
             this.Read_ToolStripMenuItem.Name = "Read_ToolStripMenuItem";
             this.Read_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.Read_ToolStripMenuItem.Text = "再読込";
+            // 
+            // ReloadSettings_ToolStripMenuItem
+            // 
+            this.ReloadSettings_ToolStripMenuItem.Name = "ReloadSettings_ToolStripMenuItem";
+            this.ReloadSettings_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.ReloadSettings_ToolStripMenuItem.Text = "設定と定義の再読込";
+            this.ReloadSettings_ToolStripMenuItem.Click += new System.EventHandler(this.ReloadSettings_ToolStripMenuItem_Click);
             // 
             // ReadBushuDic_ToolStripMenuItem
             // 
@@ -145,12 +154,12 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // ReloadSettings_ToolStripMenuItem
+            // ExchangeTable_ToolStripMenuItem
             // 
-            this.ReloadSettings_ToolStripMenuItem.Name = "ReloadSettings_ToolStripMenuItem";
-            this.ReloadSettings_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-            this.ReloadSettings_ToolStripMenuItem.Text = "設定と定義の再読込";
-            this.ReloadSettings_ToolStripMenuItem.Click += new System.EventHandler(this.ReloadSettings_ToolStripMenuItem_Click);
+            this.ExchangeTable_ToolStripMenuItem.Name = "ExchangeTable_ToolStripMenuItem";
+            this.ExchangeTable_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.ExchangeTable_ToolStripMenuItem.Text = "主・副テーブル切り替え";
+            this.ExchangeTable_ToolStripMenuItem.Click += new System.EventHandler(this.ExchangeTable_ToolStripMenuItem_Click);
             // 
             // FrmModeMarker
             // 
@@ -187,5 +196,6 @@ namespace KanchokuWS
         private System.Windows.Forms.ToolStripMenuItem ReadBushuDic_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ReadMazeWikipediaDic_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ReloadSettings_ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ExchangeTable_ToolStripMenuItem;
     }
 }

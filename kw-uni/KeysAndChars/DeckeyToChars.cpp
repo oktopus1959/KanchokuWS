@@ -12,7 +12,7 @@ namespace {
          ' ', '-', '^', '\\', '@', '[', ':', ']', '\\', 0
     };
 
-    wchar_t QwertyShiftedChars[SHIFT_DECKEY_NUM] = {
+    wchar_t QwertyShiftedChars[NORMAL_DECKEY_NUM] = {
          '!', '"', '#', '$', '%', '&', '\'', '(', ')', 0,
          'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
          'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', '+',
@@ -32,7 +32,7 @@ int DeckeyToChars::CreateSingleton(const tstring& filePath) {
     Singleton.reset(new DeckeyToChars());
 
     memcpy_s(Singleton->normalChars, NORMAL_DECKEY_NUM * sizeof(wchar_t), QwertyChars, NORMAL_DECKEY_NUM * sizeof(wchar_t));
-    memcpy_s(Singleton->shiftedChars, SHIFT_DECKEY_NUM * sizeof(wchar_t), QwertyShiftedChars, SHIFT_DECKEY_NUM * sizeof(wchar_t));
+    memcpy_s(Singleton->shiftedChars, NORMAL_DECKEY_NUM * sizeof(wchar_t), QwertyShiftedChars, NORMAL_DECKEY_NUM * sizeof(wchar_t));
     Singleton->yenPos = QwertyYenPos;
 
     if (!filePath.empty()) {

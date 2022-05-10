@@ -27,56 +27,83 @@ namespace KanchokuWS
         // SHIFT修飾DECKEYの始まり
         public const int SHIFT_DECKEY_START = NORMAL_DECKEY_END;
 
-        // SHIFT修飾DECKEYの数
-        public const int SHIFT_DECKEY_NUM = 50;
-
         // SHIFT修飾DECKEYの終わり(の次)
-        public const int SHIFT_DECKEY_END = SHIFT_DECKEY_START + SHIFT_DECKEY_NUM;
+        public const int SHIFT_DECKEY_END = SHIFT_DECKEY_START + NORMAL_DECKEY_NUM;
 
-        // SHIFT_A修飾DECKEYの始まり
-        public const int SHIFT_A_DECKEY_START = SHIFT_DECKEY_END;
+        //// SHIFT_A修飾DECKEYの始まり
+        //public const int SHIFT_A_DECKEY_START = SHIFT_DECKEY_END;
 
-        // SHIFT_A修飾DECKEYの終わり(の次)
-        public const int SHIFT_A_DECKEY_END = SHIFT_A_DECKEY_START + SHIFT_DECKEY_NUM;
+        //// SHIFT_A修飾DECKEYの終わり(の次)
+        //public const int SHIFT_A_DECKEY_END = SHIFT_A_DECKEY_START + NORMAL_DECKEY_NUM;
 
-        // SHIFT_B修飾DECKEYの始まり
-        public const int SHIFT_B_DECKEY_START = SHIFT_A_DECKEY_END;
+        //// SHIFT_B修飾DECKEYの始まり
+        //public const int SHIFT_B_DECKEY_START = SHIFT_A_DECKEY_END;
 
-        // SHIFT_B修飾DECKEYの終わり(の次)
-        public const int SHIFT_B_DECKEY_END = SHIFT_B_DECKEY_START + SHIFT_DECKEY_NUM;
+        //// SHIFT_B修飾DECKEYの終わり(の次)
+        //public const int SHIFT_B_DECKEY_END = SHIFT_B_DECKEY_START + NORMAL_DECKEY_NUM;
 
-        // 同時打鍵用修飾DECKEYの始まり
-        public const int COMBO_DECKEY_START = SHIFT_B_DECKEY_END;
+        //// SHIFT_C修飾DECKEYの始まり
+        //public const int SHIFT_C_DECKEY_START = SHIFT_B_DECKEY_END;
 
-        // 同時打鍵用修飾DECKEYの終わり(の次)
-        public const int COMBO_DECKEY_END = COMBO_DECKEY_START + SHIFT_DECKEY_NUM;
+        //// SHIFT_D修飾DECKEYの終わり(の次)
+        //public const int SHIFT_C_DECKEY_END = SHIFT_C_DECKEY_START + NORMAL_DECKEY_NUM;
 
-        // シフト面の数(通常面を含む)
-        public const int ALL_SHIFT_PLANE_NUM = 5;
+        //// SHIFT_B修飾DECKEYの始まり
+        //public const int SHIFT_D_DECKEY_START = SHIFT_C_DECKEY_END;
+
+        //// SHIFT_B修飾DECKEYの終わり(の次)
+        //public const int SHIFT_D_DECKEY_END = SHIFT_D_DECKEY_START + NORMAL_DECKEY_NUM;
+
+        //// SHIFT_B修飾DECKEYの始まり
+        //public const int SHIFT_E_DECKEY_START = SHIFT_D_DECKEY_END;
+
+        //// SHIFT_B修飾DECKEYの終わり(の次)
+        //public const int SHIFT_E_DECKEY_END = SHIFT_E_DECKEY_START + NORMAL_DECKEY_NUM;
+
+        //// SHIFT_B修飾DECKEYの始まり
+        //public const int SHIFT_F_DECKEY_START = SHIFT_E_DECKEY_END;
+
+        //// SHIFT_B修飾DECKEYの終わり(の次)
+        //public const int SHIFT_F_DECKEY_END = SHIFT_F_DECKEY_START + NORMAL_DECKEY_NUM;
+
+        // 面の総数(通常面を含む)
+        public const int ALL_PLANE_NUM = 9;
 
         // SHIFTキーの総数
-        public const int TOTAL_SHIFT_DECKEY_NUM = SHIFT_DECKEY_NUM * (ALL_SHIFT_PLANE_NUM - 1);
+        public const int TOTAL_SHIFT_DECKEY_NUM = NORMAL_DECKEY_NUM * (ALL_PLANE_NUM - 1);
 
-        // ストロークキーの数
-        public const int STROKE_DECKEY_NUM = NORMAL_DECKEY_NUM + TOTAL_SHIFT_DECKEY_NUM;
-
-        // ストロークキーの終わり(の次)
-        public const int STROKE_DECKEY_END = STROKE_DECKEY_NUM;
+        // SHIFTキーの終わり(の次)
+        public const int TOTAL_SHIFT_DECKEY_END = NORMAL_DECKEY_NUM + TOTAL_SHIFT_DECKEY_NUM;
 
         /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)の始まり</summary>
-        public const int FUNC_DECKEY_START = STROKE_DECKEY_END;
+        public const int FUNC_DECKEY_START = TOTAL_SHIFT_DECKEY_END;
 
         // 機能キーとして使われるDECKEYの数
-        public const int FUNC_DECKEY_NUM = 30;
+        public const int FUNC_DECKEY_NUM = 50;
 
         // 機能キーとして使われるDECKEYの終わり(の次)
         public const int FUNC_DECKEY_END = FUNC_DECKEY_START + FUNC_DECKEY_NUM;
 
-        // 修飾なしキーの数
-        public const int UNMODIFIED_DECKEY_NUM = NORMAL_DECKEY_NUM + TOTAL_SHIFT_DECKEY_NUM + FUNC_DECKEY_NUM;
+        // ストロークキーの終わり(の次)
+        public const int STROKE_DECKEY_END = FUNC_DECKEY_END;
+
+        //// ストロークキーの数
+        //public const int STROKE_DECKEY_NUM = STROKE_DECKEY_END;
+
+        // 同時打鍵用修飾DECKEYの始まり
+        public const int COMBO_DECKEY_START = STROKE_DECKEY_END;
+
+        // 機能キーに対する同時打鍵用修飾DECKEYの始まり
+        public const int COMBO_EX_DECKEY_START = COMBO_DECKEY_START + NORMAL_DECKEY_NUM;
+
+        // 同時打鍵用修飾DECKEYの終わり(の次)
+        public const int COMBO_DECKEY_END = COMBO_EX_DECKEY_START + FUNC_DECKEY_NUM;
+
+        //// 修飾なしキーの数
+        //public const int UNMODIFIED_DECKEY_NUM = NORMAL_DECKEY_NUM + TOTAL_SHIFT_DECKEY_NUM + FUNC_DECKEY_NUM;
 
         // Ctrl修飾DECKEYの始まり
-        public const int CTRL_DECKEY_START = FUNC_DECKEY_END;
+        public const int CTRL_DECKEY_START = COMBO_DECKEY_END;
 
         // Ctrl修飾DECKEYの終わり(の次)
         public const int CTRL_DECKEY_END = CTRL_DECKEY_START + NORMAL_DECKEY_NUM;
@@ -106,13 +133,13 @@ namespace KanchokuWS
         public const int CTRL_SHIFT_DECKEY_NUM = NORMAL_DECKEY_NUM + FUNC_DECKEY_NUM;
 
         // DECKEYの総数
-        public const int TOTAL_DECKEY_NUM = UNMODIFIED_DECKEY_NUM + CTRL_DECKEY_NUM + CTRL_SHIFT_DECKEY_NUM;
+        public const int TOTAL_DECKEY_NUM = COMBO_DECKEY_END + CTRL_DECKEY_NUM + CTRL_SHIFT_DECKEY_NUM;
 
         // 無条件でデコーダを呼び出すストロークキーに変換するためのオフセット
         public const int UNCONDITIONAL_DECKEY_OFFSET = ((CTRL_SHIFT_FUNC_DECKEY_END + 99) / 100) * 100;
 
         // 無条件でデコーダを呼び出すストロークキーの終わり
-        public const int UNCONDITIONAL_DECKEY_END = UNCONDITIONAL_DECKEY_OFFSET + STROKE_DECKEY_NUM;
+        public const int UNCONDITIONAL_DECKEY_END = UNCONDITIONAL_DECKEY_OFFSET + STROKE_DECKEY_END;
 
         // 以下、特別なキーの設定
 
@@ -198,7 +225,7 @@ namespace KanchokuWS
         /// 特殊なDECKEY<br/>
         /// CTRL_SHIFT_FUNC_DECKEY_END よりも大きな値にする必要がある
         /// </summary>
-        public const int SPECIAL_DECKEY_ID_BASE = 0x400;
+        public const int SPECIAL_DECKEY_ID_BASE = 0x800;
 
         public const int TOGGLE_DECKEY = SPECIAL_DECKEY_ID_BASE + 1;     // ON/OFF の切り替えキー
         public const int ACTIVE_DECKEY = TOGGLE_DECKEY + 1;             // ON への切り替えキー

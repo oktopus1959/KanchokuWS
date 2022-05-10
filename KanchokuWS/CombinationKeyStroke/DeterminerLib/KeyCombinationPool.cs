@@ -61,10 +61,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>
         /// エントリの追加
         /// </summary>
-        /// <param name="comboShiftedKeyList"></param>
+        /// <param name="comboShiftedKeyList">先頭キーがComboShiftされたキーのリスト</param>
         /// <param name="shiftKind">PreShiftの場合は、先頭キーを固定した順列を生成する</param>
         public void AddEntry(List<int> comboShiftedKeyList, ShiftKeyKind shiftKind)
         {
+            logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(comboShiftedKeyList)}, ShiftKeyKind={shiftKind}");
             var keyCombo = new KeyCombination(comboShiftedKeyList, shiftKind);
             var moduloKeyList = comboShiftedKeyList.Select(x => Stroke.ModuloizeKey(x)).ToList();
             var primKey = KeyCombinationHelper.MakePrimaryKey(moduloKeyList);
@@ -111,7 +112,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public KeyCombination GetEntry(Stroke stroke)
         {
-            return GetEntry(stroke.ModuloKeyCode);
+            return GetEntry(stroke.DecoderKeyCode);
         }
 
         /// <summary>
@@ -127,7 +128,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 var keyCombo = keyComboDict._safeGet(key);
                 if (keyCombo == null) {
                     // 存在していなかった部分キーを追加
-                    if (i < 100) logger.DebugH($"Add non terminal subkey: {key}");
+                    if (i < 500) logger.DebugH($"Add non terminal subkey: {key}");
                     keyComboDict[key] = keyCombo = new KeyCombination(null, ShiftKeyKind.None);
                 }
                 keyCombo.NotTerminal();
@@ -181,7 +182,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             foreach (var pair in keyComboDict) {
                 var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
                 var deckeys = (pair.Value.ComboShiftedDecoderKeyList?.KeyString())._orElse("NONE");
-                if (i < 100) logger.DebugH($"{key}={deckeys} {pair.Value.IsTerminal}");
+                if (i < 500) logger.DebugH($"{key}={deckeys} {pair.Value.IsTerminal}");
                 ++i;
             }
             foreach (var pair in ComboShiftKeys.Pairs) {
