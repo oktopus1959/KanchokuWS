@@ -187,6 +187,10 @@ namespace KanchokuWS
                 case 1: return ShiftPlane.NormalPlane;
                 case 2: return ShiftPlane.PlaneA;
                 case 3: return ShiftPlane.PlaneB;
+                case 4: return ShiftPlane.PlaneC;
+                case 5: return ShiftPlane.PlaneD;
+                case 6: return ShiftPlane.PlaneE;
+                case 7: return ShiftPlane.PlaneF;
                 default: return ShiftPlane.NONE;
             }
         }
@@ -197,6 +201,10 @@ namespace KanchokuWS
                 case ShiftPlane.NormalPlane: return "Shift";
                 case ShiftPlane.PlaneA: return "ShiftA";
                 case ShiftPlane.PlaneB: return "ShiftB";
+                case ShiftPlane.PlaneC: return "ShiftC";
+                case ShiftPlane.PlaneD: return "ShiftD";
+                case ShiftPlane.PlaneE: return "ShiftE";
+                case ShiftPlane.PlaneF: return "ShiftF";
                 default: return "none";
             }
         }
@@ -207,6 +215,10 @@ namespace KanchokuWS
                 case ShiftPlane.NormalPlane: return "S";
                 case ShiftPlane.PlaneA: return "A";
                 case ShiftPlane.PlaneB: return "B";
+                case ShiftPlane.PlaneC: return "C";
+                case ShiftPlane.PlaneD: return "D";
+                case ShiftPlane.PlaneE: return "E";
+                case ShiftPlane.PlaneF: return "F";
                 default: return "";
             }
         }
@@ -721,6 +733,14 @@ namespace KanchokuWS
             return keyNamesFromDecKey._safeGet(deckey);
         }
 
+        public static int CalcShiftOffset(char shiftChar)
+        {
+            return shiftChar == 'S' || shiftChar == 's' ? DecoderKeys.SHIFT_DECKEY_START
+                : shiftChar >= 'A' && shiftChar <= 'F' ? DecoderKeys.SHIFT_A_DECKEY_START + (shiftChar - 'A') * DecoderKeys.PLANE_DECKEY_NUM
+                : shiftChar >= 'a' && shiftChar <= 'f' ? DecoderKeys.SHIFT_A_DECKEY_START + (shiftChar - 'a') * DecoderKeys.PLANE_DECKEY_NUM
+                : 0;
+        }
+
         /// <summary>
         /// シフト面も含んだ漢直キーコード文字列を解析する("20", "A31", "B11" など)<br/>
         /// 漢直キーコードでなければ -1 を返す
@@ -729,7 +749,7 @@ namespace KanchokuWS
         {
             if (str._isEmpty()) return -1;
             var s = str._toUpper();
-            int offset = s[0] == 'S' ? DecoderKeys.SHIFT_DECKEY_START : s[0] >= 'A' && s[0] <= 'F' ? DecoderKeys.SHIFT_DECKEY_START + (s[0] - 'A' + 1) * DecoderKeys.NORMAL_DECKEY_NUM : 0;
+            int offset = CalcShiftOffset(s[0]);
             int deckey = offset > 0 ? s._safeSubstring(1)._parseInt(-1, -1) : s._parseInt(-1, -1);
             if (deckey < 0 || deckey >= DecoderKeys.STROKE_DECKEY_END) return -1;
             return deckey + offset;
@@ -899,6 +919,10 @@ namespace KanchokuWS
                     case "shift": shiftPlane = ShiftPlane.NormalPlane; break;
                     case "shifta": shiftPlane = ShiftPlane.PlaneA; break;
                     case "shiftb": shiftPlane = ShiftPlane.PlaneB; break;
+                    case "shiftc": shiftPlane = ShiftPlane.PlaneC; break;
+                    case "shiftd": shiftPlane = ShiftPlane.PlaneD; break;
+                    case "shifte": shiftPlane = ShiftPlane.PlaneE; break;
+                    case "shiftf": shiftPlane = ShiftPlane.PlaneF; break;
                 }
                 var shiftPlaneWhenOff = shiftPlane;
                 if (planes.Length > 1) {
@@ -906,6 +930,10 @@ namespace KanchokuWS
                         case "shift": shiftPlaneWhenOff = ShiftPlane.NormalPlane; break;
                         case "shifta": shiftPlaneWhenOff = ShiftPlane.PlaneA; break;
                         case "shiftb": shiftPlaneWhenOff = ShiftPlane.PlaneB; break;
+                        case "shiftc": shiftPlaneWhenOff = ShiftPlane.PlaneC; break;
+                        case "shiftd": shiftPlaneWhenOff = ShiftPlane.PlaneD; break;
+                        case "shifte": shiftPlaneWhenOff = ShiftPlane.PlaneE; break;
+                        case "shiftf": shiftPlaneWhenOff = ShiftPlane.PlaneF; break;
                         default: shiftPlaneWhenOff = ShiftPlane.NONE; break;
                     }
                 }

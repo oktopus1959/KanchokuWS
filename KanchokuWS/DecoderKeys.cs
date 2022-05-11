@@ -39,6 +39,9 @@ namespace KanchokuWS
         // SHIFT修飾DECKEYの終わり(の次)
         public const int SHIFT_DECKEY_END = SHIFT_DECKEY_START + PLANE_DECKEY_NUM;
 
+        // SHIFT_A修飾DECKEYの始まり
+        public const int SHIFT_A_DECKEY_START = SHIFT_DECKEY_END;
+
         // 面の総数(通常面、SHIFT面、SHIFT_A～SHIFT_F面)
         public const int ALL_PLANE_NUM = 8;
 
@@ -50,6 +53,9 @@ namespace KanchokuWS
 
         // ストロークキーの終わり(の次)
         public const int STROKE_DECKEY_END = TOTAL_SHIFT_DECKEY_END;
+
+        // 同時打鍵用PLANE idx
+        public const int COMBO_SHIFT_PLANE = ALL_PLANE_NUM;
 
         // 同時打鍵用修飾DECKEYの始まり
         public const int COMBO_DECKEY_START = STROKE_DECKEY_END;

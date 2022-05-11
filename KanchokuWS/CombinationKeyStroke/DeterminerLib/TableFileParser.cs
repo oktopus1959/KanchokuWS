@@ -121,7 +121,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // 定義列マップ
         Dictionary<string, List<string>> linesMap = new Dictionary<string, List<string>>();
 
-        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 4:Combination(Overlapping) の5面
+        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, ...
         int shiftPlane = 0;
 
         // 対象となる KeyComboPool
@@ -129,6 +129,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         // ブロック情報のスタック
         BlockInfoStack blockInfoStack = new BlockInfoStack();
+
+        int makeComboDecKeyIfInComboBlock(int decKey)
+        {
+            if (isInCombinationBlock) {
+                decKey = (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.COMBO_DECKEY_START;
+                keyComboPool.AddShiftKey(decKey, shiftKeyKind);
+            }
+            return decKey;
+        }
 
         /// <summary>
         /// コンストラクタ
@@ -149,7 +158,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             if (tableLines._notEmpty()) {
                 currentLine = tableLines[0];
                 readNextToken(0);
-                TOKEN tokenNextToArrow;
+                //TOKEN tokenNextToArrow;
                 while (currentToken != TOKEN.END) {
                     switch (currentToken) {
                         case TOKEN.LBRACE:
@@ -157,9 +166,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             break;
 
                         case TOKEN.ARROW:
-                            int arrowDeckey = arrowIndex;
-                            tokenNextToArrow = parseArrowNode(0, 0, arrowIndex);
-                            if (isInCombinationBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
+                            parseArrowNode(0, 0, makeComboDecKeyIfInComboBlock(arrowIndex));
+                            //int arrowDeckey = makeComboDecKeyIfInComboBlock(arrowIndex, 0);
+                            //tokenNextToArrow = parseArrowNode(0, 0, arrowIndex);
+                            //if (isInCombinationBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
+                            //if (isInCombinationBlock) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
                             break;
 
                         case TOKEN.ARROW_BUNDLE:
@@ -195,14 +206,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             bool bError = false;
             int n = 0;
             bool isPrevDelim = true;
-            TOKEN tokenNextToArrow;
+            //TOKEN tokenNextToArrow;
             readNextToken(depth);
             while (!bError && currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
                     case TOKEN.ARROW:
-                        int arrowDeckey = arrowIndex;
-                        tokenNextToArrow = parseArrowNode(depth + 1, prevNth, arrowIndex);
-                        if (isInCombinationBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
+                        parseArrowNode(depth + 1, prevNth, arrowIndex);
+                        //int arrowDeckey = arrowIndex;
+                        //tokenNextToArrow = parseArrowNode(depth + 1, prevNth, arrowIndex);
+                        ////if (isInCombinationBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
+                        //if (isInCombinationBlock && depth == 0) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
                         isPrevDelim = false;
                         break;
 
@@ -424,6 +437,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     } else if (lcStr == "shiftf") {
                         shiftPlane = 7;
                     } else if (lcStr == "combination" || lcStr == "overlapping") {
+                        shiftPlane = 0;
                         readWord();
                         switch (currentStr._toLower()) {
                             case "preshift":
@@ -763,14 +777,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             if (c == 'N' || c == 'n') {
                 shiftOffset = 0;
                 c = getNextChar();
-            } else if (c == 'S' || c == 's') {
-                shiftOffset = DecoderKeys.SHIFT_DECKEY_START;
-                c = getNextChar();
-            } else if (c >= 'A' && c <= 'F') {
-                shiftOffset = DecoderKeys.SHIFT_DECKEY_START + (c - 'A' + 1) * DecoderKeys.PLANE_DECKEY_NUM;
-                c = getNextChar();
-            } else if (c >= 'a' && c <= 'f') {
-                shiftOffset = DecoderKeys.SHIFT_DECKEY_START + (c - 'a' + 1) * DecoderKeys.PLANE_DECKEY_NUM;
+            } else if (c == 'S' || c == 's' || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {
+                shiftOffset = VirtualKeys.CalcShiftOffset(c);
                 c = getNextChar();
             } else if (c == 'X' || c == 'x') {
                 shiftOffset = 0;
@@ -790,10 +798,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             arrowIndex += funckeyOffset;
             arrowIndex %= DecoderKeys.PLANE_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
             if (!bShiftPlane) {
-                if (isInCombinationBlock) {
-                    // 同時打鍵ブロック用の Offset
-                    shiftOffset = DecoderKeys.COMBO_DECKEY_START;
-                } else if (shiftOffset < 0) {
+                //if (isInCombinationBlock) {
+                //    // 同時打鍵ブロック用の Offset
+                //    shiftOffset = DecoderKeys.COMBO_DECKEY_START;
+                //} else
+                if (shiftOffset < 0) {
                     // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
                     shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;
                 }

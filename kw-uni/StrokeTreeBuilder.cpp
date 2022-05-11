@@ -190,12 +190,10 @@ namespace {
         }
 
         // 同時打鍵定義ブロック
-        bool inOverlappingKeyBlock = false;
+        bool isInCombinationBlock = false;
 
-        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, 9:Combination
+        // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, ...
         int shiftPlane = 0;
-
-        const int COMBO_SHIFT_PLANE = 9;
 
         // 打鍵マップ
         std::map<MString, std::vector<int>>* strokeSerieses = 0;
@@ -259,6 +257,11 @@ namespace {
             }
         }
 
+        int makeComboDecKeyIfInComboBlock(int decKey)
+        {
+            return isInCombinationBlock ? (decKey % PLANE_DECKEY_NUM) + COMBO_DECKEY_START : decKey;
+        }
+
         // テーブル定義を解析してストローク木を構築する
         // 後から部分的にストローク定義を差し込む際にも使用される
         void ParseTableSource(StrokeTableNode* tblNode) {
@@ -270,7 +273,7 @@ namespace {
                     break;
 
                 case TOKEN::ARROW:
-                    createNodePositionedByArrow(tblNode, 0, arrowIndex);
+                    createNodePositionedByArrow(tblNode, 0, makeComboDecKeyIfInComboBlock(arrowIndex));
                     break;
 
                 case TOKEN::ARROW_BUNDLE:
@@ -503,7 +506,7 @@ namespace {
         // 親ノードに対して、n番目の子ノードをセットする
         void setNthChildNode(StrokeTableNode* parentNode, size_t n, Node* childNode) {
             if (parentNode && childNode) {
-                if (!inOverlappingKeyBlock) {
+                if (!isInCombinationBlock) {
                     // 同時打鍵ブロック以外ならば上書きOK
                     parentNode->setNthChild(n, childNode);
                 } else {
@@ -641,8 +644,8 @@ namespace {
                         shiftPlane = 7;
                     } else if (lcStr == _T("combination") || lcStr == _T("overlapping")) {
                         _LOG_DEBUGH(_T("START Combination: %s"), currentLine.c_str());
-                        shiftPlane = COMBO_SHIFT_PLANE;
-                        inOverlappingKeyBlock = true;
+                        shiftPlane = 0;
+                        isInCombinationBlock = true;
                         skipToEndOfLine();
                     } else if (lcStr == _T("end")) {
                         readWord();
@@ -651,7 +654,7 @@ namespace {
                         if (word == _T("combination") || word == _T("overlapping")) {
                             _LOG_DEBUGH(_T("END Combination: %s"), currentLine.c_str());
                             shiftPlane = 0;
-                            inOverlappingKeyBlock = false;
+                            isInCombinationBlock = false;
                         } else if (word == _T("__include__")) {
                             _LOG_DEBUGH(_T("END INCLUDE/LOAD: lineNumber=%d"), lineNumber);
                             blockInfoStack.Pop(lineNumber + 1);
@@ -862,10 +865,10 @@ namespace {
                 shiftOffset = SHIFT_DECKEY_START;
                 c = getNextChar();
             } else if (c >= 'A' && c <= 'F') {
-                shiftOffset = SHIFT_DECKEY_START + (c - 'A' + 1) * PLANE_DECKEY_NUM;
+                shiftOffset = SHIFT_A_DECKEY_START + (c - 'A') * PLANE_DECKEY_NUM;
                 c = getNextChar();
             } else if (c >= 'a' && c <= 'f') {
-                shiftOffset = SHIFT_DECKEY_START + (c - 'a' + 1) * PLANE_DECKEY_NUM;
+                shiftOffset = SHIFT_A_DECKEY_START + (c - 'a') * PLANE_DECKEY_NUM;
                 c = getNextChar();
             } else if (c == 'X' || c == 'x') {
                 shiftOffset = 0;
@@ -885,10 +888,11 @@ namespace {
             arrowIndex += funckeyOffset;
             arrowIndex %= PLANE_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
             if (!bShiftPlane) {
-                if (inOverlappingKeyBlock) {
-                    // 同時打鍵ブロック用の Offset
-                    shiftOffset = COMBO_DECKEY_START;
-                } else if (shiftOffset < 0) {
+                //if (isInCombinationBlock) {
+                //    // 同時打鍵ブロック用の Offset
+                //    shiftOffset = COMBO_DECKEY_START;
+                //} else
+                if (shiftOffset < 0) {
                     // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
                     shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftOffset = shiftPlane * PLANE_DECKEY_NUM : 0;
                 }
@@ -1120,10 +1124,10 @@ namespace {
                 shiftOffset = SHIFT_DECKEY_START;
                 k = k.substr(1);
             } else if (k[0] >= 'A' && k[0] <= 'F') {
-                shiftOffset = SHIFT_DECKEY_START + (k[0] - 'A' + 1) * PLANE_DECKEY_NUM;
+                shiftOffset = SHIFT_DECKEY_START + (k[0] - 'A' + 2) * PLANE_DECKEY_NUM;
                 k = k.substr(1);
             } else if (k[0] >= 'a' && k[0] <= 'f') {
-                shiftOffset = SHIFT_DECKEY_START + (k[0] - 'a' + 1) * PLANE_DECKEY_NUM;
+                shiftOffset = SHIFT_DECKEY_START + (k[0] - 'a' + 2) * PLANE_DECKEY_NUM;
                 k = k.substr(1);
             } else if (k[0] == 'X' || k[0] == 'x') {
                 shiftOffset = 0;
@@ -1171,7 +1175,8 @@ void StrokeTableNode::AssignFucntion(const wstring& keys, const wstring& name) {
 // ストロークノードの更新
 void StrokeTableNode::UpdateStrokeNodes(const wstring& strokeSource) {
     auto list = utils::split(strokeSource, '\n');
-    StrokeTreeBuilder(_T("(none)"), list, false).ParseTableSource(ROOT_STROKE_NODE);
+    if (RootStrokeNode1) StrokeTreeBuilder(_T("(none)"), list, false).ParseTableSource(RootStrokeNode1.get());
+    if (RootStrokeNode2) StrokeTreeBuilder(_T("(none)"), list, false).ParseTableSource(RootStrokeNode2.get());
     //ROOT_STROKE_NODE = 
 }
 
