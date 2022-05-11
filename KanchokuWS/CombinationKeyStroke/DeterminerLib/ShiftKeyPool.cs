@@ -16,23 +16,25 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             OneshotShift
         }
 
-        public static bool IsShiftable(Kind kind) { return kind == Kind.PreShift || kind == Kind.MutualShift; }
+        public static bool IsComboShift(Kind kind) { return kind != Kind.None; }
+
+        public static bool IsContinuousShift(Kind kind) { return kind == Kind.PreShift || kind == Kind.MutualShift; }
 
         public static bool IsOneshotShift(Kind kind) { return kind == Kind.OneshotShift; }
 
-        public static bool IsMutualShift(Kind kind) { return kind == Kind.MutualShift; }
+        public static bool IsMutualOrOneshotShift(Kind kind) { return kind == Kind.MutualShift || kind == Kind.OneshotShift; }
 
         private Dictionary<int, Kind> shiftKindDict = new Dictionary<int, Kind>();
 
         public IEnumerable<KeyValuePair<int, Kind>> Pairs { get { return shiftKindDict.AsEnumerable(); } }
 
-        private bool? _containsMutualShiftKey = null;
+        private int _containsMutualOrOneshotShiftKey = 0;
 
-        public bool ContainsMutualShiftKey() {
-            if (!_containsMutualShiftKey.HasValue) {
-                _containsMutualShiftKey = Pairs.Any(p => IsMutualShift(p.Value));
+        public bool ContainsMutualOrOneshotShiftKey() {
+            if (_containsMutualOrOneshotShiftKey == 0) {
+                _containsMutualOrOneshotShiftKey = shiftKindDict._notEmpty() && Pairs.Any(p => IsMutualOrOneshotShift(p.Value)) ? 1 : -1;
             }
-            return _containsMutualShiftKey.Value;
+            return _containsMutualOrOneshotShiftKey == 1;
         }
 
         /// <summary>

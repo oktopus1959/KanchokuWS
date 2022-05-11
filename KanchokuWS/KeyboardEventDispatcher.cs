@@ -764,7 +764,7 @@ namespace KanchokuWS
                     // 拡張シフト面のコードを得る
                     var shiftPlane = keyInfoManager.getShiftPlane(bDecoderOn, isSandSEnabled());
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-A: shiftPlane={shiftPlane}");
-                    if (shiftPlane != VirtualKeys.ShiftPlane.NONE) kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey) + (int)shiftPlane * DecoderKeys.NORMAL_DECKEY_NUM;
+                    if (shiftPlane != VirtualKeys.ShiftPlane.NONE) kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey) + (int)shiftPlane * DecoderKeys.PLANE_DECKEY_NUM;
                 }
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-B: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), modEx={modEx:x}, ctrl={ctrl}, shift={shift}");
             }

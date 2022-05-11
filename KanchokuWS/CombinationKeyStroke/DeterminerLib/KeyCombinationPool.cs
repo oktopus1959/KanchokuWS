@@ -49,7 +49,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public ShiftKeyPool ComboShiftKeys { get; private set; } = new ShiftKeyPool();
 
         // 相互シフトキーを保持しているか
-        public bool ContainsMutualShiftKey => ComboShiftKeys.ContainsMutualShiftKey();
+        public bool ContainsMutualOneshotShiftKey => ComboShiftKeys.ContainsMutualOrOneshotShiftKey();
 
         // Repeatableなキー
         public RepeatableKeyPool RepeatableKeys { get; private set; } = new RepeatableKeyPool();

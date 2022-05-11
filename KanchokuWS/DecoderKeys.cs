@@ -18,77 +18,38 @@ namespace KanchokuWS
         // 通常ストロークに使われるDECKEYの始まり
         public const int NORMAL_DECKEY_START = 0;
 
-        // 通常ストロークに使われるDECKEYの数
+        // 通常文字ストロークに使われるDECKEYの数
         public const int NORMAL_DECKEY_NUM = 50;
 
-        // 通常ストロークに使われるDECKEYの終わり(の次)
-        public const int NORMAL_DECKEY_END = NORMAL_DECKEY_START + NORMAL_DECKEY_NUM;
-
-        // SHIFT修飾DECKEYの始まり
-        public const int SHIFT_DECKEY_START = NORMAL_DECKEY_END;
-
-        // SHIFT修飾DECKEYの終わり(の次)
-        public const int SHIFT_DECKEY_END = SHIFT_DECKEY_START + NORMAL_DECKEY_NUM;
-
-        //// SHIFT_A修飾DECKEYの始まり
-        //public const int SHIFT_A_DECKEY_START = SHIFT_DECKEY_END;
-
-        //// SHIFT_A修飾DECKEYの終わり(の次)
-        //public const int SHIFT_A_DECKEY_END = SHIFT_A_DECKEY_START + NORMAL_DECKEY_NUM;
-
-        //// SHIFT_B修飾DECKEYの始まり
-        //public const int SHIFT_B_DECKEY_START = SHIFT_A_DECKEY_END;
-
-        //// SHIFT_B修飾DECKEYの終わり(の次)
-        //public const int SHIFT_B_DECKEY_END = SHIFT_B_DECKEY_START + NORMAL_DECKEY_NUM;
-
-        //// SHIFT_C修飾DECKEYの始まり
-        //public const int SHIFT_C_DECKEY_START = SHIFT_B_DECKEY_END;
-
-        //// SHIFT_D修飾DECKEYの終わり(の次)
-        //public const int SHIFT_C_DECKEY_END = SHIFT_C_DECKEY_START + NORMAL_DECKEY_NUM;
-
-        //// SHIFT_B修飾DECKEYの始まり
-        //public const int SHIFT_D_DECKEY_START = SHIFT_C_DECKEY_END;
-
-        //// SHIFT_B修飾DECKEYの終わり(の次)
-        //public const int SHIFT_D_DECKEY_END = SHIFT_D_DECKEY_START + NORMAL_DECKEY_NUM;
-
-        //// SHIFT_B修飾DECKEYの始まり
-        //public const int SHIFT_E_DECKEY_START = SHIFT_D_DECKEY_END;
-
-        //// SHIFT_B修飾DECKEYの終わり(の次)
-        //public const int SHIFT_E_DECKEY_END = SHIFT_E_DECKEY_START + NORMAL_DECKEY_NUM;
-
-        //// SHIFT_B修飾DECKEYの始まり
-        //public const int SHIFT_F_DECKEY_START = SHIFT_E_DECKEY_END;
-
-        //// SHIFT_B修飾DECKEYの終わり(の次)
-        //public const int SHIFT_F_DECKEY_END = SHIFT_F_DECKEY_START + NORMAL_DECKEY_NUM;
-
-        // 面の総数(通常面を含む)
-        public const int ALL_PLANE_NUM = 9;
-
-        // SHIFTキーの総数
-        public const int TOTAL_SHIFT_DECKEY_NUM = NORMAL_DECKEY_NUM * (ALL_PLANE_NUM - 1);
-
-        // SHIFTキーの終わり(の次)
-        public const int TOTAL_SHIFT_DECKEY_END = NORMAL_DECKEY_NUM + TOTAL_SHIFT_DECKEY_NUM;
+        // 1面あたりのDECKEYの数 (通常文字キー＋機能キー)
+        public const int PLANE_DECKEY_NUM = 100;
 
         /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)の始まり</summary>
-        public const int FUNC_DECKEY_START = TOTAL_SHIFT_DECKEY_END;
-
-        // 機能キーとして使われるDECKEYの数
-        public const int FUNC_DECKEY_NUM = 50;
+        public const int FUNC_DECKEY_START = NORMAL_DECKEY_START + NORMAL_DECKEY_NUM;
 
         // 機能キーとして使われるDECKEYの終わり(の次)
-        public const int FUNC_DECKEY_END = FUNC_DECKEY_START + FUNC_DECKEY_NUM;
+        public const int FUNC_DECKEY_END = NORMAL_DECKEY_START + PLANE_DECKEY_NUM;
+
+        // 機能キーとして使われるDECKEYの数
+        public const int FUNC_DECKEY_NUM = FUNC_DECKEY_END - NORMAL_DECKEY_NUM;
+
+        // SHIFT修飾DECKEYの始まり
+        public const int SHIFT_DECKEY_START = PLANE_DECKEY_NUM;
+
+        // SHIFT修飾DECKEYの終わり(の次)
+        public const int SHIFT_DECKEY_END = SHIFT_DECKEY_START + PLANE_DECKEY_NUM;
+
+        // 面の総数(通常面、SHIFT面、SHIFT_A～SHIFT_F面)
+        public const int ALL_PLANE_NUM = 8;
+
+        // SHIFTされたキーの総数
+        public const int TOTAL_SHIFT_DECKEY_NUM = PLANE_DECKEY_NUM * (ALL_PLANE_NUM - 1);
+
+        // SHIFTされたキーの終わり(の次)
+        public const int TOTAL_SHIFT_DECKEY_END = PLANE_DECKEY_NUM + TOTAL_SHIFT_DECKEY_NUM;
 
         // ストロークキーの終わり(の次)
-        public const int STROKE_DECKEY_END = FUNC_DECKEY_END;
-
-        //// ストロークキーの数
-        //public const int STROKE_DECKEY_NUM = STROKE_DECKEY_END;
+        public const int STROKE_DECKEY_END = TOTAL_SHIFT_DECKEY_END;
 
         // 同時打鍵用修飾DECKEYの始まり
         public const int COMBO_DECKEY_START = STROKE_DECKEY_END;
@@ -98,9 +59,6 @@ namespace KanchokuWS
 
         // 同時打鍵用修飾DECKEYの終わり(の次)
         public const int COMBO_DECKEY_END = COMBO_EX_DECKEY_START + FUNC_DECKEY_NUM;
-
-        //// 修飾なしキーの数
-        //public const int UNMODIFIED_DECKEY_NUM = NORMAL_DECKEY_NUM + TOTAL_SHIFT_DECKEY_NUM + FUNC_DECKEY_NUM;
 
         // Ctrl修飾DECKEYの始まり
         public const int CTRL_DECKEY_START = COMBO_DECKEY_END;
@@ -269,14 +227,18 @@ namespace KanchokuWS
         public const int LEFT_SHIFT_MAZE_START_POS_DECKEY = RIGHT_SHIFT_BLOCKER_DECKEY + 1;         // 交ぜ書き開始位置を左シフトする
         public const int RIGHT_SHIFT_MAZE_START_POS_DECKEY = LEFT_SHIFT_MAZE_START_POS_DECKEY + 1;  // 交ぜ書き開始位置を右シフトする
 
-        public const int PSEUDO_SPACE_DECKEY = RIGHT_SHIFT_MAZE_START_POS_DECKEY + 1;       // 疑似スペースキー
+        public const int MODE_TOGGLE_FOLLOW_CARET_DECKEY = RIGHT_SHIFT_MAZE_START_POS_DECKEY + 1;   // 仮想鍵盤をカレットに再追従させて、漢直モードのトグル
+
+        public const int COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY = MODE_TOGGLE_FOLLOW_CARET_DECKEY + 1; // 文字列をコピーして、それをデコーダの辞書に登録する
+
+        public const int PSEUDO_SPACE_DECKEY = COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY + 1;       // 疑似スペースキー
         public const int POST_NORMAL_SHIFT_DECKEY = PSEUDO_SPACE_DECKEY + 1;                // 後置通常シフトキー
         public const int POST_PLANE_A_SHIFT_DECKEY = POST_NORMAL_SHIFT_DECKEY + 1;          // 後置拡張シフトAキー
         public const int POST_PLANE_B_SHIFT_DECKEY = POST_PLANE_A_SHIFT_DECKEY + 1;         // 後置拡張シフトBキー
-
-        public const int MODE_TOGGLE_FOLLOW_CARET_DECKEY = POST_PLANE_B_SHIFT_DECKEY + 1;   // 仮想鍵盤をカレットに再追従させて、漢直モードのトグル
-
-        public const int COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY = MODE_TOGGLE_FOLLOW_CARET_DECKEY + 1; // 文字列をコピーして、それをデコーダの辞書に登録する
+        public const int POST_PLANE_C_SHIFT_DECKEY = POST_PLANE_B_SHIFT_DECKEY + 1;         // 後置拡張シフトCキー
+        public const int POST_PLANE_D_SHIFT_DECKEY = POST_PLANE_C_SHIFT_DECKEY + 1;         // 後置拡張シフトDキー
+        public const int POST_PLANE_E_SHIFT_DECKEY = POST_PLANE_D_SHIFT_DECKEY + 1;         // 後置拡張シフトEキー
+        public const int POST_PLANE_F_SHIFT_DECKEY = POST_PLANE_E_SHIFT_DECKEY + 1;         // 後置拡張シフトFキー
 
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 

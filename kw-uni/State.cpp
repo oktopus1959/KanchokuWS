@@ -294,7 +294,7 @@ mchar_t State::GetModeMarker() {
     return 0;
 }
 
-// DECKEY はストロークキーか
+// DECKEY は通常文字ストロークキーか
 bool State::isNormalStrokeKey(int deckey) {
     return deckey >= 0 && deckey < NORMAL_DECKEY_NUM;
 }
@@ -306,6 +306,7 @@ bool State::isShiftedKey(int deckey) {
 
 // DECKEY はストロークキーとして扱われる機能キーか
 bool State::isStrokableFuncKey(int deckey) {
+    //return deckey >= FUNC_DECKEY_START && deckey < FUNC_DECKEY_END;
     switch (deckey) {
     case HANZEN_DECKEY:
     case CAPS_DECKEY:
@@ -319,7 +320,6 @@ bool State::isStrokableFuncKey(int deckey) {
     default:
         return false;
     }
-    //return deckey >= FUNC_DECKEY_START && deckey < FUNC_DECKEY_END;
 }
 
 // DECKEY は同時打鍵Shift修飾キーか

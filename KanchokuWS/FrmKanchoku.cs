@@ -175,16 +175,12 @@ namespace KanchokuWS
 
         private void logConstant()
         {
-            //logger.DebugH(() => $"SHIFT_F_DECKEY_END={DecoderKeys.SHIFT_F_DECKEY_END}");
             logger.DebugH(() => $"TOTAL_SHIFT_DECKEY_NUM={DecoderKeys.TOTAL_SHIFT_DECKEY_NUM}");
             logger.DebugH(() => $"FUNC_DECKEY_START={DecoderKeys.FUNC_DECKEY_START}");
-            //logger.DebugH(() => $"FUNC_DECKEY_NUM={DecoderKeys.FUNC_DECKEY_NUM}");
-            //logger.DebugH(() => $"FUNC_DECKEY_END={DecoderKeys.FUNC_DECKEY_END}");
             logger.DebugH(() => $"STROKE_DECKEY_END={DecoderKeys.STROKE_DECKEY_END}");
             logger.DebugH(() => $"COMBO_DECKEY_START={DecoderKeys.COMBO_DECKEY_START}");
             logger.DebugH(() => $"COMBO_EX_DECKEY_START={DecoderKeys.COMBO_EX_DECKEY_START}");
             logger.DebugH(() => $"CTRL_DECKEY_START={DecoderKeys.CTRL_DECKEY_START}");
-            //logger.DebugH(() => $"UNMODIFIED_DECKEY_NUM={DecoderKeys.UNMODIFIED_DECKEY_NUM}");
             logger.DebugH(() => $"TOTAL_DECKEY_NUM={DecoderKeys.TOTAL_DECKEY_NUM}");
             logger.DebugH(() => $"UNCONDITIONAL_DECKEY_OFFSET={DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET}");
             logger.DebugH(() => $"UNCONDITIONAL_DECKEY_END={DecoderKeys.UNCONDITIONAL_DECKEY_END}");
@@ -695,11 +691,15 @@ namespace KanchokuWS
                     case DecoderKeys.POST_NORMAL_SHIFT_DECKEY:
                     case DecoderKeys.POST_PLANE_A_SHIFT_DECKEY:
                     case DecoderKeys.POST_PLANE_B_SHIFT_DECKEY:
+                    case DecoderKeys.POST_PLANE_C_SHIFT_DECKEY:
+                    case DecoderKeys.POST_PLANE_D_SHIFT_DECKEY:
+                    case DecoderKeys.POST_PLANE_E_SHIFT_DECKEY:
+                    case DecoderKeys.POST_PLANE_F_SHIFT_DECKEY:
                         logger.InfoH(() => $"POST_PLANE_X_SHIFT_DECKEY:{deckey}, strokeCount={decoderOutput.GetStrokeCount()}");
                         if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
                             // 第2打鍵待ちなら、いったんBSを出力してからシフトされたコードを出力
                             InvokeDecoder(DecoderKeys.BS_DECKEY, 0);
-                            deckey = (prevDeckey % DecoderKeys.NORMAL_DECKEY_NUM) + (deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY + 1) * DecoderKeys.NORMAL_DECKEY_NUM;
+                            deckey = (prevDeckey % DecoderKeys.PLANE_DECKEY_NUM) + (deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY + 1) * DecoderKeys.PLANE_DECKEY_NUM;
                             InvokeDecoder(deckey, 0);
                         }
                         return true;
@@ -1397,12 +1397,12 @@ namespace KanchokuWS
 
         private bool isNormalDeckey(int deckey)
         {
-            return deckey >= DecoderKeys.NORMAL_DECKEY_START && deckey < DecoderKeys.NORMAL_DECKEY_END;
+            return deckey >= DecoderKeys.NORMAL_DECKEY_START && deckey < DecoderKeys.PLANE_DECKEY_NUM;
         }
 
         private int unshiftDeckey(int deckey)
         {
-            return deckey < DecoderKeys.TOTAL_SHIFT_DECKEY_END ? deckey % DecoderKeys.NORMAL_DECKEY_NUM : deckey;
+            return deckey < DecoderKeys.TOTAL_SHIFT_DECKEY_END ? deckey % DecoderKeys.PLANE_DECKEY_NUM : deckey;
         }
 
         private void drawRomanOrHiraganaMode(bool bRoman, bool bHiragana)

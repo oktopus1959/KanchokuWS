@@ -19,7 +19,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>打鍵されたキーのデコーダキーコード</summary>
         public int DecoderKeyCode { get; private set; }
 
-        public bool IsShiftableSpaceKey => ModuloKeyCode == DecoderKeys.STROKE_SPACE_DECKEY && IsShiftable;
+        public bool IsShiftableSpaceKey => ModuloKeyCode == DecoderKeys.STROKE_SPACE_DECKEY && IsContinuousShift;
 
         //public bool IsShiftedOrShiftableSpaceKey => IsShifted || IsShiftableSpaceKey;
 
@@ -36,15 +36,17 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// これはシフトキーや拡張シフトキーで入力されたコードを、シフトを無視して検索するために必要となる
         /// </summary>
         public static int ModuloizeKey(int decKey) {
-            return (decKey % DecoderKeys.NORMAL_DECKEY_NUM)
-                + ((decKey >= DecoderKeys.FUNC_DECKEY_START && decKey < DecoderKeys.FUNC_DECKEY_END || decKey >= DecoderKeys.COMBO_EX_DECKEY_START) ? DecoderKeys.NORMAL_DECKEY_NUM : 0);
+            return decKey % DecoderKeys.PLANE_DECKEY_NUM;
         }
 
         /// <summary>Oneshotな同時打鍵キーか</summary>
         public bool IsOneshotShift { get; private set; }
 
         /// <summary>同時打鍵の連続シフト可能キーとして使われ得るか</summary>
-        public bool IsShiftable { get; private set; }
+        public bool IsContinuousShift { get; private set; }
+
+        /// <summary>同時打鍵のシフトキーか</summary>
+        public bool IsComboShift { get; private set; }
 
         /// <summary>同時打鍵のシフトキーになったか</summary>
         public bool IsShifted { get; private set; }
@@ -78,8 +80,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             DecoderKeyCode = decKey;
             ModuloKeyCode = ModuloizeKey(decKey);
-            IsShiftable = ShiftKeyPool.IsShiftable(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
+            IsContinuousShift = ShiftKeyPool.IsContinuousShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
             IsOneshotShift = ShiftKeyPool.IsOneshotShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
+            IsComboShift = ShiftKeyPool.IsComboShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
             KeyDt = dt;
         }
 

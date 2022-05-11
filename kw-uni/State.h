@@ -9,8 +9,8 @@
 #include "StateCommonInfo.h"
 #include "Node.h"
 
-#define UNSHIFT_DECKEY(x) (x % NORMAL_DECKEY_NUM)
-#define DECKEY_TO_SHIFT_PLANE(x) (x / NORMAL_DECKEY_NUM)
+#define UNSHIFT_DECKEY(x) (x % PLANE_DECKEY_NUM)
+#define DECKEY_TO_SHIFT_PLANE(x) (x / PLANE_DECKEY_NUM)
 
 #define STATE_NAME_PTR(p) (p == 0 ? _T("None") : p->GetName().c_str())
 

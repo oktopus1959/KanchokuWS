@@ -253,7 +253,7 @@ namespace {
 
         // デフォルトのシフト面の機能(自身の文字を返す)ノードの設定
         void setupShiftedKeyFunction(StrokeTableNode* tblNode) {
-            for (size_t i = 0; i < NORMAL_DECKEY_NUM; ++i) {
+            for (size_t i = 0; i < PLANE_DECKEY_NUM; ++i) {
                 //tblNode->setNthChild(i + SHIFT_DECKEY_START, new MyCharNode());
                 setNthChildNode(tblNode, i + SHIFT_DECKEY_START, new MyCharNode());
             }
@@ -293,7 +293,7 @@ namespace {
             wstring myGuideChars = getAndRemoveDefines(_T("defguide"));
 
             if (tblNode == 0) tblNode = new StrokeTableNode(depth);
-            int shiftPlaneOffset = depth == 0 ? shiftPlane * NORMAL_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
+            int shiftPlaneOffset = depth == 0 ? shiftPlane * PLANE_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             int n = 0;
             bool isPrevDelim = true;
             readNextToken(depth);
@@ -373,7 +373,7 @@ namespace {
 
             if (!tblNode) return;
 
-            int shiftPlaneOffset = depth == 0 ? shiftPlane * NORMAL_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
+            int shiftPlaneOffset = depth == 0 ? shiftPlane * PLANE_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             int n = 0;
             bool isPrevDelim = true;
             readNextToken(depth);
@@ -852,6 +852,7 @@ namespace {
         // ARROW: /-[SsXxPp]?[0-9]+>/
         bool parseArrow(int depth, char_t c) {
             int shiftOffset = -1;
+            int funckeyOffset = 0;
             bool bShiftPlane = false;
             //char_t c = getNextChar();
             if (c == 'N' || c == 'n') {
@@ -861,13 +862,14 @@ namespace {
                 shiftOffset = SHIFT_DECKEY_START;
                 c = getNextChar();
             } else if (c >= 'A' && c <= 'F') {
-                shiftOffset = SHIFT_DECKEY_START + (c - 'A' + 1) * NORMAL_DECKEY_NUM;
+                shiftOffset = SHIFT_DECKEY_START + (c - 'A' + 1) * PLANE_DECKEY_NUM;
                 c = getNextChar();
             } else if (c >= 'a' && c <= 'f') {
-                shiftOffset = SHIFT_DECKEY_START + (c - 'a' + 1) * NORMAL_DECKEY_NUM;
+                shiftOffset = SHIFT_DECKEY_START + (c - 'a' + 1) * PLANE_DECKEY_NUM;
                 c = getNextChar();
             } else if (c == 'X' || c == 'x') {
-                shiftOffset = FUNC_DECKEY_START;
+                shiftOffset = 0;
+                funckeyOffset = FUNC_DECKEY_START;
                 c = getNextChar();
             } else if (c == 'P' || c == 'P') {
                 bShiftPlane = true;
@@ -880,14 +882,15 @@ namespace {
                 arrowIndex = arrowIndex * 10 + c - '0';
                 c = getNextChar();
             }
-            arrowIndex %= NORMAL_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
+            arrowIndex += funckeyOffset;
+            arrowIndex %= PLANE_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
             if (!bShiftPlane) {
                 if (inOverlappingKeyBlock) {
-                    // 同時打鍵ブロック用の Offset(機能キーの場合は、さらに NORMAL_DECKEY_NUM 分だけずらす)
-                    shiftOffset = COMBO_DECKEY_START + (shiftOffset == FUNC_DECKEY_START ? NORMAL_DECKEY_NUM : 0);
+                    // 同時打鍵ブロック用の Offset
+                    shiftOffset = COMBO_DECKEY_START;
                 } else if (shiftOffset < 0) {
                     // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
-                    shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftOffset = shiftPlane * NORMAL_DECKEY_NUM : 0;
+                    shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftOffset = shiftPlane * PLANE_DECKEY_NUM : 0;
                 }
                 arrowIndex += shiftOffset;
                 if (arrowIndex >= COMBO_DECKEY_END) parseError();
@@ -914,7 +917,7 @@ namespace {
                 arrowIndex = arrowIndex * 10 + c - '0';
                 c = getNextChar();
             }
-            if (arrowIndex >= NORMAL_DECKEY_NUM) parseError();
+            if (arrowIndex >= PLANE_DECKEY_NUM) parseError();
             if (c != '>') parseError();
             return true;
         }
@@ -1112,20 +1115,22 @@ namespace {
         for (auto k : utils::split(keys, ',')) {
             if (k.empty() || !std::regex_match(k, reDigits)) return;    // 10進数でなければエラー
             int shiftOffset = 0;
+            int funckeyOffset = 0;
             if (k[0] == 'S' || k[0] == 's') {
                 shiftOffset = SHIFT_DECKEY_START;
                 k = k.substr(1);
             } else if (k[0] >= 'A' && k[0] <= 'F') {
-                shiftOffset = SHIFT_DECKEY_START + (k[0] - 'A' + 1) * NORMAL_DECKEY_NUM;
+                shiftOffset = SHIFT_DECKEY_START + (k[0] - 'A' + 1) * PLANE_DECKEY_NUM;
                 k = k.substr(1);
             } else if (k[0] >= 'a' && k[0] <= 'f') {
-                shiftOffset = SHIFT_DECKEY_START + (k[0] - 'a' + 1) * NORMAL_DECKEY_NUM;
+                shiftOffset = SHIFT_DECKEY_START + (k[0] - 'a' + 1) * PLANE_DECKEY_NUM;
                 k = k.substr(1);
             } else if (k[0] == 'X' || k[0] == 'x') {
-                shiftOffset = FUNC_DECKEY_START;
+                shiftOffset = 0;
+                funckeyOffset = FUNC_DECKEY_START;
                 k = k.substr(1);
             }
-            keyCodes.push_back((size_t)utils::strToInt(k, -1) + shiftOffset);
+            keyCodes.push_back((size_t)utils::strToInt(k, -1) + funckeyOffset + shiftOffset);
         }
 
         size_t idx = 0;

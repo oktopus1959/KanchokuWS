@@ -191,7 +191,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         void parseSubTree(int depth, int prevNth)
         {
             logger.DebugH(() => $"ENTER: currentLine={lineNumber}, depth={depth}, prevNth={prevNth}");
-            //int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.NORMAL_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
+            //int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             bool bError = false;
             int n = 0;
             bool isPrevDelim = true;
@@ -265,7 +265,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             logger.DebugH(() => $"ENTER: depth={depth}, nextArrowIdx={nextArrowIdx}");
 
-            int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.NORMAL_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
+            int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             int n = 0;
             bool isPrevDelim = true;
             readNextToken(depth);
@@ -757,6 +757,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // ARROW: /-[SsXxPp]?[0-9]+>/
         bool parseArrow(int depth, char c) {
             int shiftOffset = -1;
+            int funckeyOffset = 0;
             bool bShiftPlane = false;
             //char c = getNextChar();
             if (c == 'N' || c == 'n') {
@@ -766,13 +767,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 shiftOffset = DecoderKeys.SHIFT_DECKEY_START;
                 c = getNextChar();
             } else if (c >= 'A' && c <= 'F') {
-                shiftOffset = DecoderKeys.SHIFT_DECKEY_START + (c - 'A' + 1) * DecoderKeys.NORMAL_DECKEY_NUM;
+                shiftOffset = DecoderKeys.SHIFT_DECKEY_START + (c - 'A' + 1) * DecoderKeys.PLANE_DECKEY_NUM;
                 c = getNextChar();
             } else if (c >= 'a' && c <= 'f') {
-                shiftOffset = DecoderKeys.SHIFT_DECKEY_START + (c - 'a' + 1) * DecoderKeys.NORMAL_DECKEY_NUM;
+                shiftOffset = DecoderKeys.SHIFT_DECKEY_START + (c - 'a' + 1) * DecoderKeys.PLANE_DECKEY_NUM;
                 c = getNextChar();
             } else if (c == 'X' || c == 'x') {
-                shiftOffset = DecoderKeys.FUNC_DECKEY_START;
+                shiftOffset = 0;
+                funckeyOffset = DecoderKeys.FUNC_DECKEY_START;
                 c = getNextChar();
             } else if (c == 'P' || c == 'P') {
                 bShiftPlane = true;
@@ -785,14 +787,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 arrowIndex = arrowIndex * 10 + c - '0';
                 c = getNextChar();
             }
-            arrowIndex %= DecoderKeys.NORMAL_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
+            arrowIndex += funckeyOffset;
+            arrowIndex %= DecoderKeys.PLANE_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
             if (!bShiftPlane) {
                 if (isInCombinationBlock) {
-                    // 同時打鍵ブロック用の Offset(機能キーの場合は、さらに NORMAL_DECKEY_NUM 分だけずらす)
-                    shiftOffset = DecoderKeys.COMBO_DECKEY_START + (shiftOffset == DecoderKeys.FUNC_DECKEY_START ? DecoderKeys.NORMAL_DECKEY_NUM : 0);
+                    // 同時打鍵ブロック用の Offset
+                    shiftOffset = DecoderKeys.COMBO_DECKEY_START;
                 } else if (shiftOffset < 0) {
                     // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
-                    shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftPlane * DecoderKeys.NORMAL_DECKEY_NUM : 0;
+                    shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;
                 }
                 arrowIndex += shiftOffset;
                 if (arrowIndex >= DecoderKeys.COMBO_DECKEY_END) parseError();
@@ -820,7 +823,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 arrowIndex = arrowIndex * 10 + c - '0';
                 c = getNextChar();
             }
-            if (arrowIndex >= DecoderKeys.NORMAL_DECKEY_NUM) parseError();
+            if (arrowIndex >= DecoderKeys.PLANE_DECKEY_NUM) parseError();
             if (c != '>') parseError();
             return true;
         }

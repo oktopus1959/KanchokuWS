@@ -172,9 +172,13 @@ namespace KanchokuWS
         public enum ShiftPlane
         {
             NONE = 0,
-            NormalPlane = 1,
-            PlaneA = 2,
-            PlaneB = 3
+            NormalPlane,
+            PlaneA,
+            PlaneB,
+            PlaneC,
+            PlaneD,
+            PlaneE,
+            PlaneF,
         }
 
         public static ShiftPlane GetShiftPlane(int idx)
@@ -390,7 +394,7 @@ namespace KanchokuWS
 
         private static void setupDecKeyAndComboTable()
         {
-            // ストロークキー
+            // 通常文字ストロークキー
             for (int id = 0; id < DecoderKeys.NORMAL_DECKEY_NUM; ++id) {
                 uint vkey = getVKeyFromDecKey(id);
                 // Normal
@@ -961,7 +965,7 @@ namespace KanchokuWS
                         var deckey = p.Key;
                         var target = p.Value;
                         if (target._notEmpty()) {
-                            if (deckey >= 0 && deckey < DecoderKeys.NORMAL_DECKEY_END) {
+                            if (deckey >= 0 && deckey < DecoderKeys.NORMAL_DECKEY_NUM) {
                                 sb.Append($"{keyName}:{deckey}:{target}\n");
                             } else {
                                 var modifieeName = SpecialKeysAndFunctions.GetKeyNameByDeckey(deckey);

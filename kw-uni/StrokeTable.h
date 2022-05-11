@@ -14,7 +14,7 @@ public:
     // コンストラクタ
     StrokeTableNode(int depth) : _depth(depth) {
         //children.resize(STROKE_DECKEY_NUM);     // normalキーとshift修飾キーの両方のキーの分を確保しておく
-        children.resize(NORMAL_DECKEY_NUM);     // normalキーだけの分を確保しておけば十分である
+        children.resize(PLANE_DECKEY_NUM);     // 通常面のキーの分を確保しておけば十分である
     }
 
     StrokeTableNode(int depth, size_t numChildren) : _depth(depth) {

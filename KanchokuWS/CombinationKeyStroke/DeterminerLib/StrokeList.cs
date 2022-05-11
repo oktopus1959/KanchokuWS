@@ -64,7 +64,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool IsEmpty()
         {
-            return strokeList.Count == 0;
+            return comboList.Count == 0 && strokeList.Count == 0;
         }
 
         public Stroke First => strokeList._isEmpty() ? null : strokeList[0];

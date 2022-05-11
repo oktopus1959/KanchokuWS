@@ -76,19 +76,16 @@ namespace KanchokuWS.CombinationKeyStroke
                 } else {
                     logger.DebugH("Key repeat ignored");
                 }
-            } else if (strokeList.Count > 0) {
-                strokeList.Add(stroke);
-                logger.DebugH("Add new stroke: PATH-1");
-                if (!stroke.IsShiftable && !KeyCombinationPool.CurrentPool.ContainsMutualShiftKey) {
-                    result = strokeList.GetKeyCombination(decKey, DateTime.Now);
-                }
             } else {
                 var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
-                logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}");
-                if (combo != null && !combo.IsTerminal) {
+                bool isStrokeListEmpty = strokeList.IsEmpty();
+                logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={isStrokeListEmpty}");
+                if (combo != null || !isStrokeListEmpty) {
                     strokeList.Add(stroke);
-                    logger.DebugH("Add new stroke: PATH-2");
-                    if (!stroke.IsShiftable && !KeyCombinationPool.CurrentPool.ContainsMutualShiftKey) {
+                    bool bContainsMutual = KeyCombinationPool.CurrentPool.ContainsMutualOneshotShiftKey;
+                    bool isComboShift = stroke.IsComboShift;
+                    logger.DebugH(() => $"Add new stroke: ContainsMutual={bContainsMutual}, IsComboShift={isComboShift}");  // ここで直接 KeyCombinationPool.CurrentPool.ContainsMutualOneshotShiftKey を参照すると、内部のキャッシュが先に計算されるようで、結果がおかしくなるっぽい
+                    if (!bContainsMutual && (!isComboShift || !isStrokeListEmpty)) {
                         result = strokeList.GetKeyCombination(decKey, DateTime.Now);
                     }
                 } else {
