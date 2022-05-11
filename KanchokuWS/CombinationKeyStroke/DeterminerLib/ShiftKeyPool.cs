@@ -28,13 +28,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public IEnumerable<KeyValuePair<int, Kind>> Pairs { get { return shiftKindDict.AsEnumerable(); } }
 
-        private int _containsMutualOrOneshotShiftKey = 0;
-
         public bool ContainsMutualOrOneshotShiftKey() {
-            if (_containsMutualOrOneshotShiftKey == 0) {
-                _containsMutualOrOneshotShiftKey = shiftKindDict._notEmpty() && Pairs.Any(p => IsMutualOrOneshotShift(p.Value)) ? 1 : -1;
-            }
-            return _containsMutualOrOneshotShiftKey == 1;
+            // ここをキャッシュ変数を使って、最初だけ判定するようにすると、おかしな結果になることがあったので、毎回判定するようにした
+            return shiftKindDict._notEmpty() && Pairs.Any(p => IsMutualOrOneshotShift(p.Value));
         }
 
         /// <summary>
