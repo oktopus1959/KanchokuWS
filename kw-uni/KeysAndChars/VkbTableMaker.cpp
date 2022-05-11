@@ -247,50 +247,50 @@ namespace VkbTableMaker {
         }
     }
 
-    // キー文字を集めたストローク表を作成する
-    void makeKeyCharsStrokePositionTable1(wchar_t* faces, size_t start, size_t num) {
-        makeKeyCharsStrokePositionTable(StrokeTableNode::RootStrokeNode1.get(), faces, start, num);
+    // 主テーブル用のキー文字を集めたストローク表を作成する
+    void makeKeyCharsStrokePositionTable1(wchar_t* faces, size_t shiftPlane) {
+        makeKeyCharsStrokePositionTable(StrokeTableNode::RootStrokeNode1.get(), faces, shiftPlane * PLANE_DECKEY_NUM, NORMAL_DECKEY_NUM);
     }
 
-    // キー文字を集めたストローク表を作成する
-    void makeKeyCharsStrokePositionTable2(wchar_t* faces, size_t start, size_t num) {
-        makeKeyCharsStrokePositionTable(StrokeTableNode::RootStrokeNode2.get(), faces, start, num);
+    // 副テーブル用のキー文字を集めたストローク表を作成する
+    void makeKeyCharsStrokePositionTable2(wchar_t* faces, size_t shiftPlane) {
+        makeKeyCharsStrokePositionTable(StrokeTableNode::RootStrokeNode2.get(), faces, shiftPlane * PLANE_DECKEY_NUM, NORMAL_DECKEY_NUM);
     }
 
     // アンシフトキー文字を集めたストローク表を作成する
     void MakeKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        makeKeyCharsStrokePositionTable1(faces, 0, NORMAL_DECKEY_NUM);
+        makeKeyCharsStrokePositionTable1(faces, 0);
     }
 
     // 第2テーブルからアンシフトキー文字を集めたストローク表を作成する
     void MakeKeyCharsStrokePositionTable2(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        makeKeyCharsStrokePositionTable2(faces, 0, NORMAL_DECKEY_NUM);
+        makeKeyCharsStrokePositionTable2(faces, 0);
     }
 
     // シフトキー文字を集めたストローク表を作成する
     void MakeShiftKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        makeKeyCharsStrokePositionTable1(faces, SHIFT_DECKEY_START, STROKE_SPACE_DECKEY);
+        makeKeyCharsStrokePositionTable1(faces, 1);
     }
 
     // シフトA面キー文字を集めたストローク表を作成する
     void MakeShiftAKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        makeKeyCharsStrokePositionTable1(faces, SHIFT_DECKEY_START + NORMAL_DECKEY_NUM, NORMAL_DECKEY_NUM);
+        makeKeyCharsStrokePositionTable1(faces, 2);
     }
 
     // シフトB面キー文字を集めたストローク表を作成する
     void MakeShiftBKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        makeKeyCharsStrokePositionTable1(faces, SHIFT_DECKEY_START + NORMAL_DECKEY_NUM * 2, NORMAL_DECKEY_NUM);
+        makeKeyCharsStrokePositionTable1(faces, 3);
     }
 
     // 同時打鍵面通常キー文字を集めたストローク表を作成する
     void MakeCombinationKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        makeKeyCharsStrokePositionTable1(faces, COMBO_DECKEY_START, NORMAL_DECKEY_NUM);
+        makeKeyCharsStrokePositionTable1(faces, COMBO_SHIFT_PLANE);
     }
 
     //----------------------------------------------------------------------------
