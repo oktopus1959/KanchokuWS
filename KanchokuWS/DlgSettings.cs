@@ -442,7 +442,7 @@ namespace KanchokuWS
 
         string getTableFileName(string tableFileSpec)
         {
-            var items = tableFileSpec._strip()._reScan(@" \((.+)\)$");
+            var items = tableFileSpec._strip()._reScan(@" \(([^()]+)\)$");
             logger.DebugH(() => $"{items._getFirst()}, {items._getNth(1)}, {items._getNth(2)}, {items._getNth(3)}");
             return items._getNth(1)._orElse(tableFileSpec._strip());
         }

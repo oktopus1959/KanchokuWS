@@ -656,6 +656,8 @@ namespace {
                         } else if (word == _T("__include__")) {
                             _LOG_DEBUGH(_T("END INCLUDE/LOAD: lineNumber=%d"), lineNumber);
                             blockInfoStack.Pop(lineNumber + 1);
+                        } else if (word == _T("shift")) {
+                            shiftPlane = 0;
                         }
                         skipToEndOfLine();
                     } else if (lcStr == _T("ignorewarning")) {
