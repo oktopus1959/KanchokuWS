@@ -28,10 +28,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public IEnumerable<KeyValuePair<int, Kind>> Pairs { get { return shiftKindDict.AsEnumerable(); } }
 
-        public bool ContainsMutualOrOneshotShiftKey() {
-            // ここをキャッシュ変数を使って、最初だけ判定するようにすると、おかしな結果になることがあったので、毎回判定するようにした
-            return shiftKindDict._notEmpty() && Pairs.Any(p => IsMutualOrOneshotShift(p.Value));
-        }
+        //public bool ContainsMutualOrOneshotShiftKey() {
+        //    // ここをキャッシュ変数を使って、最初だけ判定するようにすると、おかしな結果になることがあったので、毎回判定するようにした
+        //    return shiftKindDict._notEmpty() && Pairs.Any(p => IsMutualOrOneshotShift(p.Value));
+        //}
+
+        public bool ContainsMutualOrOneshotShiftKey { get; private set; } = false;
 
         /// <summary>
         /// ShiftKeyとして扱いうるキーの設定
@@ -40,7 +42,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <param name="kind"></param>
         public void AddShiftKey(int keyCode, Kind kind)
         {
-            if (kind != Kind.None) shiftKindDict[Stroke.ModuloizeKey(keyCode)] = kind;
+            //if (kind != Kind.None) shiftKindDict[Stroke.ModuloizeKey(keyCode)] = kind;
+            if (kind != Kind.None && !shiftKindDict.ContainsKey(keyCode)) {
+                shiftKindDict[keyCode] = kind;
+                if (IsMutualOrOneshotShift(kind)) ContainsMutualOrOneshotShiftKey = true;
+            }
         }
 
         /// <summary>
@@ -51,7 +57,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <returns></returns>
         public Kind GetShiftKeyKind(int keyCode)
         {
-            return shiftKindDict._safeGet(Stroke.ModuloizeKey(keyCode));
+            //return shiftKindDict._safeGet(Stroke.ModuloizeKey(keyCode));
+            return shiftKindDict._safeGet(keyCode);
         }
 
         public void Clear()

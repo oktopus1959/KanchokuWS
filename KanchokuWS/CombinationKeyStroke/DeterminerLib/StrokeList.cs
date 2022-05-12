@@ -81,21 +81,21 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             if (pos >= 0 && pos < strokeList.Count) strokeList.RemoveAt(pos);
         }
 
-        public Stroke FindSameStroke(int moduloKey)
+        public Stroke FindSameStroke(int decKey)
         {
-            int idx = FindSameIndex(moduloKey);
+            int idx = FindSameIndex(decKey);
             return idx >= 0 ? strokeList[idx] : null;
         }
 
-        public int FindSameIndex(int moduloKey)
+        public int FindSameIndex(int decKey)
         {
-            return findSameIndex(strokeList, moduloKey);
+            return findSameIndex(strokeList, decKey);
         }
 
-        private int findSameIndex(List<Stroke> list, int moduloKey)
+        private int findSameIndex(List<Stroke> list, int decKey)
         {
             for (int idx = list.Count - 1; idx >= 0; --idx) {
-                if (list[idx].ModuloKeyCode == moduloKey) return idx;
+                if (list[idx].IsSameKey(decKey)) return idx;
             }
             return -1;
         }
@@ -117,8 +117,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public List<int> GetKeyCombination(int decKey, DateTime dtNow)
         {
-            int moduloKey = Stroke.ModuloizeKey(decKey);     // 検索のためにキーを正規化しておく
-            logger.DebugH(() => $"ENTER: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}, modulo={moduloKey}");
+            int moduloKey = ShiftKeyPool.IsComboShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(decKey)) ? Stroke.ModuloizeKey(decKey) : decKey;     // 検索のためにキーを正規化しておく
+            logger.DebugH(() => $"ENTER: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}, moduloKey={moduloKey}");
 
             List<int> result = null;
 
@@ -145,7 +145,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         while (overlapLen >= minLen) {
                             var list = makeComboChallengeList(subList, startPos, overlapLen);
                             logger.DebugH(() => $"PATH-1: list={list._toString()}");
-                            var keyList = KeyCombinationPool.CurrentPool.GetEntry(list, null)?.ComboShiftedDecoderKeyList;
+                            var keyList = KeyCombinationPool.CurrentPool.GetEntry(list)?.ComboShiftedDecoderKeyList;
                             logger.DebugH(() => $"PATH-1: keyList={(keyList._isEmpty() ? "(empty)" : keyList.KeyString())}");
                             if (keyList._notEmpty() && isCombinationTiming(upKeyIdx, startPos, overlapLen, dtNow)) {
                                 // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する
@@ -157,7 +157,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                     logger.DebugH(() => $"PATH-1: OneshotShift");
                                 } else {
                                     logger.DebugH(() => $"PATH-1: Move to next combination: startPos={startPos}, overlapLen={overlapLen}");
-                                    foreach (var s in getRange(startPos, overlapLen)) s.SetShifted();
+                                    foreach (var s in getRange(startPos, overlapLen)) s.SetCombined();
                                     if (subComboLists.Count <= 1 && subComboLists._getFirst()._isEmpty()) {
                                         // 持ち越された同時打鍵キーリストが空なので、今回の同時打鍵に使用したキーを使い回す
                                         logger.DebugH(() => $"PATH-1: Reuse temporary combination");
@@ -184,7 +184,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                 // UPされたキー以外を comboList に移動する
                 if (upKeyIdx >= 0) strokeList.RemoveAt(upKeyIdx);
-                comboList.AddRange(strokeList.Where(x => x.IsShifted));
+                comboList.AddRange(strokeList.Where(x => x.IsCombined));
                 strokeList.Clear();
             }
             if (upComboIdx >= 0) comboList.RemoveAt(upComboIdx);
@@ -228,8 +228,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"upKeyIdx={upKeyIdx},startPos={startPos}, overlapLen={overlapLen}: {upKeyIdx >= checkPos}");
             if (upKeyIdx >= checkPos) return true;      // チェック対象の末尾キーが最初にUPされた
 
-            logger.DebugH(() => $"strokeList[{startPos}].IsShifted={strokeList[startPos].IsShifted}");
-            if (strokeList[startPos].IsShifted) return true;     // 先頭キーがシフト済みキーだった
+            logger.DebugH(() => $"strokeList[{startPos}].IsShifted={strokeList[startPos].IsCombined}");
+            if (strokeList[startPos].IsCombined) return true;     // 先頭キーがシフト済みキーだった
             logger.DebugH(() => $"strokeList[{startPos}].IsShiftableSpaceKey={strokeList[startPos].IsShiftableSpaceKey}");
             if (strokeList[startPos].IsShiftableSpaceKey) return true;     // 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
 

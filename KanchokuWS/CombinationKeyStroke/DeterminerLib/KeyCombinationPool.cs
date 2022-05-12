@@ -49,7 +49,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public ShiftKeyPool ComboShiftKeys { get; private set; } = new ShiftKeyPool();
 
         // 相互シフトキーを保持しているか
-        public bool ContainsMutualOneshotShiftKey => ComboShiftKeys.ContainsMutualOrOneshotShiftKey();
+        public bool ContainsMutualOneshotShiftKey => ComboShiftKeys.ContainsMutualOrOneshotShiftKey;
 
         // Repeatableなキー
         public RepeatableKeyPool RepeatableKeys { get; private set; } = new RepeatableKeyPool();
@@ -64,19 +64,23 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>
         /// エントリの追加
         /// </summary>
+        /// <param name="keyList">キーのリスト</param>
         /// <param name="comboShiftedKeyList">先頭キーがComboShiftされたキーのリスト</param>
         /// <param name="shiftKind">PreShiftの場合は、先頭キーを固定した順列を生成する</param>
-        public void AddEntry(List<int> comboShiftedKeyList, ShiftKeyKind shiftKind)
+        public void AddEntry(List<int> keyList, List<int> comboShiftedKeyList, ShiftKeyKind shiftKind)
         {
-            logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(comboShiftedKeyList)}, ShiftKeyKind={shiftKind}");
-            var keyCombo = new KeyCombination(comboShiftedKeyList, shiftKind);
-            var moduloKeyList = comboShiftedKeyList.Select(x => Stroke.ModuloizeKey(x)).ToList();
-            var primKey = KeyCombinationHelper.MakePrimaryKey(moduloKeyList);
-            keyComboDict[primKey] = keyCombo;
-            foreach (var key in KeyCombinationHelper.MakePermutatedKeys(moduloKeyList, shiftKind == ShiftKeyKind.PreShift)) {
-                if (!keyComboDict.ContainsKey(key)) { keyComboDict[key] = keyCombo; }
+            logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(keyList)}, comboShiftedKeyList={KeyCombinationHelper.EncodeKeyList(comboShiftedKeyList)}, ShiftKeyKind={shiftKind}");
+            if (keyList._notEmpty() && comboShiftedKeyList._notEmpty()) {
+                var keyCombo = new KeyCombination(comboShiftedKeyList, shiftKind);
+                var moduloKeyList = Helper.MakeList(keyList[0]);
+                moduloKeyList.AddRange(keyList.Skip(1).Select(x => Stroke.ModuloizeKey(x)));
+                var primKey = KeyCombinationHelper.MakePrimaryKey(moduloKeyList);
+                keyComboDict[primKey] = keyCombo;
+                foreach (var key in KeyCombinationHelper.MakePermutatedKeys(moduloKeyList, shiftKind == ShiftKeyKind.PreShift)) {
+                    if (!keyComboDict.ContainsKey(key)) { keyComboDict[key] = keyCombo; }
+                }
+                comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(moduloKeyList));
             }
-            comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(moduloKeyList));
         }
 
         private KeyCombination getEntry(IEnumerable<int> keyList, int lastKey)
@@ -85,32 +89,41 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList, lastKey));
         }
 
-        public KeyCombination GetEntry(IEnumerable<Stroke> strokeList, Stroke lastStroke)
+        public KeyCombination GetEntry(IEnumerable<Stroke> strokeList)
         {
             // ストロークリストが空であるか、あるいは全てのストロークがシフトされていたら、null
-            if (strokeList._isEmpty() || (strokeList.All(x => x.IsShifted) && (lastStroke?.IsShifted ?? true))) return null;
+            if (strokeList._isEmpty() || strokeList.All(x => x.IsCombined)) return null;
 
-            return getEntry(strokeList.Select(x => x.ModuloKeyCode), lastStroke?.ModuloKeyCode ?? -1);
+            // リストのうち先頭のComboShiftedだけをもとの DecoderKey で検索
+            bool bComboShifted = false;
+            List<int> list = new List<int>();
+            foreach (var s in strokeList) {
+                int c = bComboShifted ? s.ModuloKeyCode : s.ComboKeyCode;
+                if (s.IsComboShift) bComboShifted = true;
+                list.Add(c);
+            }
+            return getEntry(list, -1);
         }
 
-        public KeyCombination GetEntry(StrokeList strokeList, int start, int len)
-        {
-            return GetEntry(strokeList.GetList().Skip(start).Take(len), null);
-        }
+        //public KeyCombination GetEntry(StrokeList strokeList, int start, int len)
+        //{
+        //    return GetEntry(strokeList.GetList().Skip(start).Take(len), null);
+        //}
 
-        public KeyCombination GetEntry(IEnumerable<Stroke> strokeList, int start, int len)
-        {
-            return GetEntry(strokeList.Skip(start).Take(len), null);
-        }
+        //public KeyCombination GetEntry(IEnumerable<Stroke> strokeList, int start, int len)
+        //{
+        //    return GetEntry(strokeList.Skip(start).Take(len), null);
+        //}
 
-        public KeyCombination GetEntry(StrokeList strokeList, Stroke lastStroke)
-        {
-            return GetEntry(strokeList.GetList(), lastStroke);
-        }
+        //public KeyCombination GetEntry(StrokeList strokeList, Stroke lastStroke)
+        //{
+        //    return GetEntry(strokeList.GetList(), lastStroke);
+        //}
 
         public KeyCombination GetEntry(int decKey)
         {
-            return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(Stroke.ModuloizeKey(decKey)));
+            //return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(Stroke.ModuloizeKey(decKey)));
+            return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(decKey));
         }
 
         public KeyCombination GetEntry(Stroke stroke)
@@ -161,7 +174,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         /// <param name="keyCode"></param>
         /// <param name="kind"></param>
-        public void AddShiftKey(int keyCode, ShiftKeyKind kind)
+        public void AddComboShiftKey(int keyCode, ShiftKeyKind kind)
         {
             logger.DebugH(() => $"CALLED: keyCode={keyCode}, shiftKey={kind}");
             if (keyCode > 0) ComboShiftKeys.AddShiftKey(keyCode, kind);

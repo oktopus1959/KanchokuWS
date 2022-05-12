@@ -19,11 +19,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>打鍵されたキーのデコーダキーコード</summary>
         public int DecoderKeyCode { get; private set; }
 
+        /// <summary>同時打鍵用のキーコード</summary>
+        public int ComboKeyCode => IsComboShift ? DecoderKeyCode : ModuloKeyCode;
+
         public bool IsShiftableSpaceKey => ModuloKeyCode == DecoderKeys.STROKE_SPACE_DECKEY && IsContinuousShift;
 
         //public bool IsShiftedOrShiftableSpaceKey => IsShifted || IsShiftableSpaceKey;
-
-        public string DebugString() => $"DecKeyCode={DecoderKeyCode}, ModKeyCode={ModuloKeyCode}";
 
         /// <summary>同じキーか</summary>
         public bool IsSameKey(int decKey)
@@ -49,9 +50,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public bool IsComboShift { get; private set; }
 
         /// <summary>同時打鍵のシフトキーになったか</summary>
-        public bool IsShifted { get; private set; }
+        public bool IsCombined { get; private set; }
 
-        public void SetShifted() { IsShifted = true; }
+        public void SetCombined() { IsCombined = true; }
 
         /// <summary>キー打鍵時の時刻</summary>
         public DateTime KeyDt { get; private set; }
@@ -80,11 +81,17 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             DecoderKeyCode = decKey;
             ModuloKeyCode = ModuloizeKey(decKey);
-            IsContinuousShift = ShiftKeyPool.IsContinuousShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
-            IsOneshotShift = ShiftKeyPool.IsOneshotShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
-            IsComboShift = ShiftKeyPool.IsComboShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
+            //IsContinuousShift = ShiftKeyPool.IsContinuousShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
+            //IsOneshotShift = ShiftKeyPool.IsOneshotShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
+            //IsComboShift = ShiftKeyPool.IsComboShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
+            IsContinuousShift = ShiftKeyPool.IsContinuousShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(DecoderKeyCode));
+            IsOneshotShift = ShiftKeyPool.IsOneshotShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(DecoderKeyCode));
+            IsComboShift = ShiftKeyPool.IsComboShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(DecoderKeyCode));
+            //ModuloKeyCode = IsComboShift ? DecoderKeyCode : ModuloizeKey(decKey);
             KeyDt = dt;
         }
+
+        public string DebugString() => $"DecKeyCode={DecoderKeyCode}, ModKeyCode={ModuloKeyCode}, IsComobShift={IsComboShift}";
 
     }
 }

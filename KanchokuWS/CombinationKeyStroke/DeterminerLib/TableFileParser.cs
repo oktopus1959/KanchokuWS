@@ -130,11 +130,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // ブロック情報のスタック
         BlockInfoStack blockInfoStack = new BlockInfoStack();
 
+        int makeComboDecKey(int decKey)
+        {
+            return isInCombinationBlock ? (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.COMBO_DECKEY_START : decKey;
+        }
+
         int makeComboDecKeyIfInComboBlock(int decKey)
         {
             if (isInCombinationBlock) {
                 decKey = (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.COMBO_DECKEY_START;
-                keyComboPool.AddShiftKey(decKey, shiftKeyKind);
+                keyComboPool.AddComboShiftKey(decKey, shiftKeyKind);
             }
             return decKey;
         }
@@ -166,7 +171,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             break;
 
                         case TOKEN.ARROW:
-                            parseArrowNode(0, 0, makeComboDecKeyIfInComboBlock(arrowIndex));
+                            parseArrowNode(0, 0, arrowIndex);
+                            //parseArrowNode(0, 0, makeComboDecKeyIfInComboBlock(arrowIndex));
                             //int arrowDeckey = makeComboDecKeyIfInComboBlock(arrowIndex, 0);
                             //tokenNextToArrow = parseArrowNode(0, 0, arrowIndex);
                             //if (isInCombinationBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
@@ -368,8 +374,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             var ss = new List<int>(strokes);
             ss.Add(keyCode);
+            keyComboPool.AddComboShiftKey(ss[0], shiftKeyKind);
+            var cs = Helper.MakeList(makeComboDecKey(ss[0]));
+            cs.AddRange(ss.Skip(1));
             logger.DebugH(() => $"{ss._keyString()}={currentStr}");
-            keyComboPool.AddEntry(ss, shiftKeyKind);
+            keyComboPool.AddEntry(ss, cs, shiftKeyKind);
         }
 
         // 現在のトークンをチェックする
@@ -415,9 +424,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     } else if (lcStr == "load") {
                         loadLineBlock();
                     } else if (lcStr._startsWith("yomiconv")) {
-                        while (getNextLine()) {
-                            if (currentLine._startsWith("#yomiconv") && currentLine._safeIndexOf("end") >= 0) break;
-                        }
+                        // do nothing
                     } else if (lcStr == "strokePosition") {
                         // do nothing
                     } else if (lcStr == "noshift" || lcStr == "normal") {
@@ -437,7 +444,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     } else if (lcStr == "shiftf") {
                         shiftPlane = 7;
                     } else if (lcStr == "combination" || lcStr == "overlapping") {
-                        shiftPlane = 0;
                         readWord();
                         switch (currentStr._toLower()) {
                             case "preshift":
@@ -457,6 +463,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             case "combination":
                             case "overlapping":
                                 shiftKeyKind = ShiftKeyKind.None;
+                                break;
+                            case "shift":
+                                shiftPlane = 0;
                                 break;
                             case "__include__":
                                 logger.DebugH(() => $"END INCLUDE/LOAD: lineNumber={lineNumber}");

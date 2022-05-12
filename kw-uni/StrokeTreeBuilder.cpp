@@ -644,7 +644,6 @@ namespace {
                         shiftPlane = 7;
                     } else if (lcStr == _T("combination") || lcStr == _T("overlapping")) {
                         _LOG_DEBUGH(_T("START Combination: %s"), currentLine.c_str());
-                        shiftPlane = 0;
                         isInCombinationBlock = true;
                         skipToEndOfLine();
                     } else if (lcStr == _T("end")) {
@@ -653,7 +652,6 @@ namespace {
                         _LOG_DEBUGH(_T("end %s"), word.c_str());
                         if (word == _T("combination") || word == _T("overlapping")) {
                             _LOG_DEBUGH(_T("END Combination: %s"), currentLine.c_str());
-                            shiftPlane = 0;
                             isInCombinationBlock = false;
                         } else if (word == _T("__include__")) {
                             _LOG_DEBUGH(_T("END INCLUDE/LOAD: lineNumber=%d"), lineNumber);
