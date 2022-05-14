@@ -8,7 +8,7 @@ using Utils;
 
 namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 {
-    using ShiftKeyKind = ShiftKeyPool.Kind;
+    using ShiftKeyKind = ComboShiftKeyPool.ComboKind;
 
     // include/load ブロック情報のスタック
     class BlockInfoStack
@@ -130,11 +130,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // ブロック情報のスタック
         BlockInfoStack blockInfoStack = new BlockInfoStack();
 
-        int makeComboDecKey(int decKey)
-        {
-            return isInCombinationBlock ? (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.COMBO_DECKEY_START : decKey;
-        }
-
         int makeComboDecKeyIfInComboBlock(int decKey)
         {
             if (isInCombinationBlock) {
@@ -143,6 +138,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
             return decKey;
         }
+
+        // 出力用のバッファ
+        List<string> outputLines = new List<string>();
 
         /// <summary>
         /// コンストラクタ
@@ -154,9 +152,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             blockInfoStack.Push(KanchokuIni.Singleton.KanchokuDir, "", 0);
         }
 
-        // テーブル定義を解析してストローク木を構築する
-        // 後から部分的にストローク定義を差し込む際にも使用される
-        public void ParseTable(string filename) {
+        /// <summary>
+        /// テーブル定義を解析してストローク木を構築する。
+        /// 解析結果を矢印記法に変換して出力ファイル(outFile)に書き込む
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="outFilename"></param>
+        public void ParseTable(string filename, string outFilename)
+        {
             logger.InfoH($"ENTER: filename={filename}");
             tableLines = readAllLines(filename);
 
@@ -183,9 +186,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             parseArrowBundleNode(0, arrowIndex);
                             break;
 
-                        case TOKEN.COMMA:             // ',' が来たら次のトークン待ち
-                        case TOKEN.SLASH:             // '/' が来ても次のトークン待ち
-                            break;
+                        //case TOKEN.COMMA:             // ',' が来たら次のトークン待ち
+                        //case TOKEN.SLASH:             // '/' が来ても次のトークン待ち
+                        //    break;
 
                         case TOKEN.IGNORE:
                             break;
@@ -202,6 +205,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
                 keyComboPool.DebugPrint();
             }
+
+            writeAllLines(outFilename, outputLines);
+
             logger.InfoH($"LEAVE: KeyCombinationPool.Count={keyComboPool.Count}");
         }
 
@@ -210,12 +216,18 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"ENTER: currentLine={lineNumber}, depth={depth}, prevNth={prevNth}");
             //int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             bool bError = false;
-            int n = 0;
+            int idx = 0;
             bool isPrevDelim = true;
             //TOKEN tokenNextToArrow;
             readNextToken(depth);
             while (!bError && currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
+                    case TOKEN.LBRACE:
+                        parseNode(currentToken, depth + 1, idx);
+                        ++idx;
+                        isPrevDelim = false;
+                        break;
+
                     case TOKEN.ARROW:
                         parseArrowNode(depth + 1, prevNth, arrowIndex);
                         //int arrowDeckey = arrowIndex;
@@ -229,22 +241,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         parseArrowBundleNode(depth, arrowIndex);
                         break;
 
-                    case TOKEN.LBRACE:
-                        parseNode(currentToken, depth + 1, prevNth, n);
-                        ++n;
-                        isPrevDelim = false;
-                        break;
-
                     case TOKEN.STRING:             // "str" : 文字列ノード
                     case TOKEN.FUNCTION:           // @c : 機能ノード
-                        parseNode(currentToken, depth, prevNth, n);
-                        ++n;
+                        parseNode(currentToken, depth, idx);
+                        ++idx;
                         isPrevDelim = false;
                         break;
 
                     case TOKEN.COMMA:              // 次のトークン待ち
                     case TOKEN.SLASH:              // 次のトークン待ち
-                        if (isPrevDelim) ++n;
+                        if (isPrevDelim) ++idx;
                         isPrevDelim = true;
                         break;
 
@@ -273,7 +279,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 parseArrowNode(depth + 1, idx, arrowIndex);
                 strokes._popBack();
             }
-            parseNode(currentToken, depth + 1, prevNth, idx);
+            parseNode(currentToken, depth + 1, idx);
             currentToken = TOKEN.IGNORE;    // いったん末端ノードの処理をしたら、矢印記法を抜けるまで無視
             logger.DebugH(() => $"LEAVE: currentLine={lineNumber}, depth={depth}");
             return tokenNextToArrow;
@@ -303,7 +309,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     case TOKEN.LBRACE:
                     case TOKEN.STRING:             // "str" : 文字列ノード
                     case TOKEN.FUNCTION:           // @c : 機能ノード
-                        parseNode(currentToken, depth + 2, n, nextArrowIdx);
+                        parseNode(currentToken, depth + 2, nextArrowIdx, n);
                         ++n;
                         isPrevDelim = false;
                         break;
@@ -330,9 +336,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"LEAVE: depth={depth}");
         }
 
-        void parseNode(TOKEN token, int depth, int prevNth, int nth, bool bArrowBundle = false)
+        void parseNode(TOKEN token, int depth, int nth, int prevNth = -1)
         {
-            logger.DebugH(() => $"ENTER: token={token}, depth={depth}, prevNth={prevNth}, nth={nth}, bArrowBundle={bArrowBundle}");
+            logger.DebugH(() => $"ENTER: token={token}, depth={depth}, prevNth={prevNth}, nth={nth}");
             switch (token) {
                 case TOKEN.LBRACE:
                     strokes.Add(nth);
@@ -342,10 +348,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     return;
 
                 case TOKEN.STRING:            // "str" : 文字列ノード
-                    if (isInCombinationBlock) {
-                        // 文字列に至る同時打鍵列の組合せを作成して登録しておく
-                        makeCombinationKeyCombo(nth);
-                    }
+                    // 終端ノードの追加と同時打鍵列の組合せの登録
+                    addTerminalNode(prevNth, nth, $"\"{currentStr}\"");
                     if (depth == 0 && currentStr._startsWith("!{")) {
                         logger.DebugH(() => $"REPEATABLE");
                         keyComboPool.AddRepeatableKey(nth);
@@ -353,10 +357,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     logger.DebugH(() => $"LEAVE: depth={depth}");
                     return;
 
+                case TOKEN.FUNCTION:          // @c : 機能ノード
+                    // 終端ノードの追加と同時打鍵列の組合せの登録
+                    addTerminalNode(prevNth, nth, "@" + currentStr);
+                    logger.DebugH(() => $"LEAVE: depth={depth}");
+                    return;
+
                 case TOKEN.RBRACE:
                 case TOKEN.COMMA:             // ',' が来たら次のトークン
                 case TOKEN.SLASH:             // '/' が来ても次のトークン
-                case TOKEN.FUNCTION:          // @c : 機能ノード
                     logger.DebugH(() => $"LEAVE: depth={depth}");
                     return;
 
@@ -369,16 +378,39 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
+        // 終端ノードの追加と同時打鍵列の組合せの登録
+        void addTerminalNode(int prevNth, int lastNth, string outStr)
+        {
+            var list = new List<int>(strokes);
+            if (prevNth >= 0) list.Add(prevNth);
+            list.Add(lastNth);
+            if (list[0] < DecoderKeys.PLANE_DECKEY_NUM && shiftPlane > 0) {
+                list[0] += shiftPlane * DecoderKeys.PLANE_DECKEY_NUM;
+            }
+            for (int i = 1; i < list.Count; ++i) {
+                list[i] %= DecoderKeys.PLANE_DECKEY_NUM;
+            }
+            outputLines.Add($"-{list.Select(x => x.ToString())._join(">-")}>{outStr}");
+            if (isInCombinationBlock) {
+                makeCombinationKeyCombo(lastNth);
+            }
+        }
+
         // 同時打鍵列の組合せを作成して登録しておく
-        void makeCombinationKeyCombo(int keyCode)
+        void makeCombinationKeyCombo(int lastNth)
         {
             var ss = new List<int>(strokes);
-            ss.Add(keyCode);
+            ss.Add(lastNth);
             keyComboPool.AddComboShiftKey(ss[0], shiftKeyKind);
             var cs = Helper.MakeList(makeComboDecKey(ss[0]));
             cs.AddRange(ss.Skip(1));
             logger.DebugH(() => $"{ss._keyString()}={currentStr}");
             keyComboPool.AddEntry(ss, cs, shiftKeyKind);
+        }
+
+        int makeComboDecKey(int decKey)
+        {
+            return isInCombinationBlock ? (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.COMBO_DECKEY_START : decKey;
         }
 
         // 現在のトークンをチェックする
@@ -903,6 +935,23 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
             logger.DebugH(() => $"LEAVE: num of lines={lines.Count}");
             return lines;
+        }
+
+        private void writeAllLines(string filename, List<string> lines)
+        {
+            var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
+            Helper.CreateDirectory(Helper.GetDirectoryName(path));
+            logger.InfoH($"ENTER: path={path}");
+            try {
+                using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite)) {
+                    using (var sw = new System.IO.StreamWriter(fs)) {   // BOM無しで書き込む
+                        sw.Write(lines._join("\n"));
+                    }
+                }
+            } catch (Exception e) {
+                logger.Error(e._getErrorMsg());
+            }
+            logger.InfoH($"LEAVE");
         }
 
         string blockOrFile() {

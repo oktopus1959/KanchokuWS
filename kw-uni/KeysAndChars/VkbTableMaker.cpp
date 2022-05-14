@@ -74,15 +74,17 @@ namespace VkbTableMaker {
     // 指定の文字配列をストロークキー配列に変換
     void MakeStrokeKeysTable(wchar_t* table, const wchar_t* targetChars) {
         LOG_INFO(_T("CALLED"));
-        std::map<wchar_t, size_t> indexMap;
+        if (ROOT_STROKE_NODE) {
+            std::map<wchar_t, size_t> indexMap;
 
-        for (size_t i = 0; targetChars[i] && i < VKB_TABLE_SIZE ; ++i) {
-            indexMap[targetChars[i]] = i;
+            for (size_t i = 0; targetChars[i] && i < VKB_TABLE_SIZE; ++i) {
+                indexMap[targetChars[i]] = i;
+            }
+            for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
+                table[i] = 0;
+            }
+            makeStrokeKeysTable(table, nullptr, ROOT_STROKE_NODE, indexMap, STROKE_SPACE_DECKEY, STROKE_SPACE_DECKEY, 0);
         }
-        for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
-            table[i] = 0;
-        }
-        makeStrokeKeysTable(table, nullptr, ROOT_STROKE_NODE, indexMap, STROKE_SPACE_DECKEY, STROKE_SPACE_DECKEY, 0);
     }
 
     void setIndexMap(std::map<wchar_t, size_t>& map, const wstring& kanaArray1, const wstring& kanaArray2) {
@@ -95,14 +97,16 @@ namespace VkbTableMaker {
     }
 
     void makeKanaTable(wchar_t* table, const wstring& kanaArray1, const wstring& kanaArray2) {
-        std::map<wchar_t, size_t> indexMap;
-        setIndexMap(indexMap, kanaArray1, kanaArray2);
+        if (ROOT_STROKE_NODE) {
+            std::map<wchar_t, size_t> indexMap;
+            setIndexMap(indexMap, kanaArray1, kanaArray2);
 
-        for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
-            table[i] = 0;
+            for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
+                table[i] = 0;
+            }
+
+            makeStrokeKeysTable(table, nullptr, ROOT_STROKE_NODE, indexMap, 0, 0, 0);
         }
-
-        makeStrokeKeysTable(table, nullptr, ROOT_STROKE_NODE, indexMap, 0, 0, 0);
     }
 
     // ひらがな50音図配列を作成する (あかさたなはまやらわ、ぁがざだばぱゃ)
@@ -119,10 +123,12 @@ namespace VkbTableMaker {
 
     // ひらがなに到る第1打鍵集合を取得する
     const std::set<int>& GetHiraganaFirstDeckeys() {
-        if (hiraganaFirstIndexes.empty()) {
-            std::map<wchar_t, size_t> indexMap;
-            setIndexMap(indexMap, hiraganaArray1, hiraganaArray2);
-            makeStrokeKeysTable(nullptr, &hiraganaFirstIndexes, ROOT_STROKE_NODE, indexMap, 0, 0, 0);
+        if (ROOT_STROKE_NODE) {
+            if (hiraganaFirstIndexes.empty()) {
+                std::map<wchar_t, size_t> indexMap;
+                setIndexMap(indexMap, hiraganaArray1, hiraganaArray2);
+                makeStrokeKeysTable(nullptr, &hiraganaFirstIndexes, ROOT_STROKE_NODE, indexMap, 0, 0, 0);
+            }
         }
         return hiraganaFirstIndexes;
     }
@@ -169,13 +175,15 @@ namespace VkbTableMaker {
     // table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
     void ReorderByFirstStrokePosition(wchar_t* table, const wchar_t* targetChars, int tableId) {
         LOG_INFO(_T("CALLED: targetChars=%s"), targetChars);
-        wstring orderedChars = targetChars;
-        std::set<wchar_t> charSet(orderedChars.begin(), orderedChars.end());
-        for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
-            table[i] = 0;
+        if (ROOT_STROKE_NODE) {
+            wstring orderedChars = targetChars;
+            std::set<wchar_t> charSet(orderedChars.begin(), orderedChars.end());
+            for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
+                table[i] = 0;
+            }
+            StrokeTableNode* node = tableId == 1 ? StrokeTableNode::RootStrokeNode1.get() : tableId == 2 ? StrokeTableNode::RootStrokeNode2.get() : ROOT_STROKE_NODE;
+            if (node) reorderByFirstStrokePosition(table, node, orderedChars, charSet, STROKE_SPACE_DECKEY, 0);
         }
-        StrokeTableNode* node = tableId == 1 ? StrokeTableNode::RootStrokeNode1.get() : tableId == 2 ? StrokeTableNode::RootStrokeNode2.get() : ROOT_STROKE_NODE;
-        reorderByFirstStrokePosition(table, node, orderedChars, charSet, STROKE_SPACE_DECKEY, 0);
     }
 
     // 指定の文字配列をストロークの位置に従って並べかえる
@@ -193,36 +201,38 @@ namespace VkbTableMaker {
     // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
     void MakeExtraCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        size_t order1[6] = { 12, 22, 13, 23, 11, 21 };
-        for (size_t i = 0; i < 10; ++i) {
-            mchar_t ch = 0;
-            auto blk = ROOT_STROKE_NODE->getNth(i);
-            if (blk && blk->isStrokeTableNode()) {
-                size_t offset = (i % 10) < 5 ? 0 : 5;
-                for (size_t j = 0; j < 6 && ch == 0; ++j) {
-                    Node* sb = ((StrokeTableNode*)blk)->getNth(order1[j] + offset);
-                    if (sb && sb->isStringNode()) {
-                        ch = utils::safe_front(sb->getString());
+        if (ROOT_STROKE_NODE) {
+            size_t order1[6] = { 12, 22, 13, 23, 11, 21 };
+            for (size_t i = 0; i < 10; ++i) {
+                mchar_t ch = 0;
+                auto blk = ROOT_STROKE_NODE->getNth(i);
+                if (blk && blk->isStrokeTableNode()) {
+                    size_t offset = (i % 10) < 5 ? 0 : 5;
+                    for (size_t j = 0; j < 6 && ch == 0; ++j) {
+                        Node* sb = ((StrokeTableNode*)blk)->getNth(order1[j] + offset);
+                        if (sb && sb->isStringNode()) {
+                            ch = utils::safe_front(sb->getString());
+                        }
                     }
                 }
+                set_facestr(ch, faces + i * 2);
             }
-            set_facestr(ch, faces + i * 2);
-        }
 
-        size_t order2[5] = { 2, 1, 3, 4, 0 };
-        for (size_t i = 10; i < STROKE_SPACE_DECKEY; ++i) {
-            wchar_t ch = 0;
-            auto blk = ROOT_STROKE_NODE->getNth(i);
-            if (blk && blk->isStrokeTableNode()) {
-                size_t offset = (i % 10) < 5 ? 0 : 5;
-                for (size_t j = 0; j < 5 && ch == 0; ++j) {
-                    Node* sb = ((StrokeTableNode*)blk)->getNth(order2[j] + offset);
-                    if (sb && sb->isStringNode()) {
-                        ch = (wchar_t)utils::safe_front(sb->getString());
+            size_t order2[5] = { 2, 1, 3, 4, 0 };
+            for (size_t i = 10; i < STROKE_SPACE_DECKEY; ++i) {
+                wchar_t ch = 0;
+                auto blk = ROOT_STROKE_NODE->getNth(i);
+                if (blk && blk->isStrokeTableNode()) {
+                    size_t offset = (i % 10) < 5 ? 0 : 5;
+                    for (size_t j = 0; j < 5 && ch == 0; ++j) {
+                        Node* sb = ((StrokeTableNode*)blk)->getNth(order2[j] + offset);
+                        if (sb && sb->isStringNode()) {
+                            ch = (wchar_t)utils::safe_front(sb->getString());
+                        }
                     }
                 }
+                set_facestr(ch, faces + i * 2);
             }
-            set_facestr(ch, faces + i * 2);
         }
     }
 
@@ -297,16 +307,18 @@ namespace VkbTableMaker {
     // 初期打鍵表(下端機能キー以外は空白)の作成
     void MakeInitialVkbTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
-            set_facestr(0, faces + i * 2);
-        }
-        for (size_t i = STROKE_SPACE_DECKEY; i < NORMAL_DECKEY_NUM; ++i) {
-            wchar_t ch = _T("・")[0];
-            auto blk = ROOT_STROKE_NODE->getNth(i);
-            if (blk /*&& blk->isFunctionNode()*/) {
-                ch = (wchar_t)utils::safe_front(blk->getString());
+        if (ROOT_STROKE_NODE) {
+            for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
+                set_facestr(0, faces + i * 2);
             }
-            set_facestr(ch, faces + i * 2);
+            for (size_t i = STROKE_SPACE_DECKEY; i < NORMAL_DECKEY_NUM; ++i) {
+                wchar_t ch = _T("・")[0];
+                auto blk = ROOT_STROKE_NODE->getNth(i);
+                if (blk /*&& blk->isFunctionNode()*/) {
+                    ch = (wchar_t)utils::safe_front(blk->getString());
+                }
+                set_facestr(ch, faces + i * 2);
+            }
         }
     }
 

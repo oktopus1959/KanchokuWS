@@ -97,8 +97,10 @@ void State::DoDeckeyPreProc(int deckey) {
             } else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokableKey(deckey)) {
                 // ルートストロークノードの生成
                 _LOG_DEBUGH(_T("CREATE: RootStrokeState"));
-                pNext = ROOT_STROKE_NODE->CreateState();
-                pNext->SetPrevState(this);
+                if (ROOT_STROKE_NODE) {
+                    pNext = ROOT_STROKE_NODE->CreateState();
+                    pNext->SetPrevState(this);
+                }
             }
         }
     }

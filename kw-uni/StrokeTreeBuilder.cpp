@@ -886,7 +886,7 @@ namespace {
                 c = getNextChar();
             }
             arrowIndex += funckeyOffset;
-            arrowIndex %= PLANE_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
+            if (shiftPlane > 0) arrowIndex %= PLANE_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
             if (!bShiftPlane) {
                 //if (isInCombinationBlock) {
                 //    // 同時打鍵ブロック用の Offset
@@ -1177,11 +1177,11 @@ void StrokeTableNode::UpdateStrokeNodes(const wstring& strokeSource) {
     auto list = utils::split(strokeSource, '\n');
     if (RootStrokeNode1) StrokeTreeBuilder(_T("(none)"), list, false).ParseTableSource(RootStrokeNode1.get());
     if (RootStrokeNode2) StrokeTreeBuilder(_T("(none)"), list, false).ParseTableSource(RootStrokeNode2.get());
-    //ROOT_STROKE_NODE = 
 }
 
 // ストローク木を作成してそのルートを返す
 StrokeTableNode* StrokeTableNode::CreateStrokeTree(const wstring& tableFile, std::vector<wstring>& lines) {
+    ROOT_STROKE_NODE = 0;
     ROOT_STROKE_NODE = StrokeTreeBuilder(tableFile, lines, true).CreateStrokeTree();
     RootStrokeNode1.reset(ROOT_STROKE_NODE);
     return ROOT_STROKE_NODE;

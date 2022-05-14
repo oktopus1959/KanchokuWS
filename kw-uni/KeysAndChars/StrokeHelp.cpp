@@ -28,7 +28,7 @@ void StrokeHelp::GatherStrokeHelp() {
 
     Singleton.reset(new StrokeHelp());
 
-    Singleton->gatherStrokeHelp(ROOT_STROKE_NODE, 0, 0);
+    if (ROOT_STROKE_NODE) Singleton->gatherStrokeHelp(ROOT_STROKE_NODE, 0, 0);
 }
 
 size_t StrokeHelp::gatherStrokeHelp(StrokeTableNode* pNode, size_t pos, size_t depth) {

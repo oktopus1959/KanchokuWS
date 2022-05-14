@@ -34,6 +34,19 @@ namespace Utils
         }
 
         /// <summary>
+        /// list に対して、残りの引数をAddRangeして返す。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        public static List<T> MakeList<T>(List<T> list, params T[] array)
+        {
+            List<T> result = new List<T>(list);
+            result.AddRange(array);
+            return result;
+        }
+
+        /// <summary>
         /// size個の要素(default(T))を持つリストを作成して返す。
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -449,7 +462,7 @@ namespace Utils
         /// </summary>
         public static string JoinPath(string path1, string path2)
         {
-            return Path.Combine(path1, path2);
+            return path2._notEmpty() ? Path.Combine(path1, path2) : path1;
         }
 
         /// <summary>
@@ -457,7 +470,7 @@ namespace Utils
         /// </summary>
         public static string JoinPath(string path1, string path2, string path3)
         {
-            return Path.Combine(path1, path2, path3);
+            return path3._notEmpty() ? Path.Combine(path1, path2, path3) : JoinPath(path1, path2);
         }
 
         /// <summary>

@@ -26,7 +26,7 @@ namespace {
     // Nストローク文字を追加
     void addNStrokeChars(size_t start, size_t deckeyNum, size_t depth) {
         LOG_INFO(_T("start=%d, deckeyNum=%d, depth=%d"), start, deckeyNum, depth);
-        addNStrokeChars(ROOT_STROKE_NODE, start, deckeyNum, depth);
+        if (ROOT_STROKE_NODE) addNStrokeChars(ROOT_STROKE_NODE, start, deckeyNum, depth);
     }
 }
 

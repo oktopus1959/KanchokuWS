@@ -222,11 +222,11 @@ public:
             ERROR_HANDLER->Error(_T("「tableFile=(ファイル名)」の設定がまちがっているようです"));
         } else {
             // 主テーブルファイルの構築
-            createStrokeTree(SETTINGS->tableFile, [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree(file, lines);});
+            createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile1.tbl")), [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree(file, lines);});
 
             if (!SETTINGS->tableFile2.empty()) {
                 // 副テーブルファイルの構築
-                createStrokeTree(SETTINGS->tableFile2, [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
+                createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile2.tbl")), [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
             }
         }
     }
@@ -810,16 +810,15 @@ namespace {
                 if (params) wcscpy_s(params->inOutData, ERROR_HANDLER->GetErrorMsg().c_str());
                 return pErr->GetErrorLevel();
             }
-            return -1;
         }
         catch (tstring msg) {
             LOG_ERROR(msg);
-            return -1;
         }
         catch (...) {
             LOG_ERROR(_T("Some exception caught"));
-            return -1;
         }
+        ROOT_STROKE_NODE = 0;
+        return -1;
     }
 }
 
