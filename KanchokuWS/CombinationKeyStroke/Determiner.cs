@@ -30,11 +30,11 @@ namespace KanchokuWS.CombinationKeyStroke
             Clear();
 
             var parser = new TableFileParser(KeyCombinationPool.Singleton1);
-            parser.ParseTable(tableFile);
+            parser.ParseTable(tableFile, "tmp/tableFile1.tbl");
 
             if (tableFile2._notEmpty()) {
                 var parser2 = new TableFileParser(KeyCombinationPool.Singleton2);
-                parser2.ParseTable(tableFile2);
+                parser2.ParseTable(tableFile2, "tmp/tableFile2.tbl");
             }
         }
 
@@ -57,7 +57,7 @@ namespace KanchokuWS.CombinationKeyStroke
         }
 
         /// <summary>
-        /// キーの押下<br/>押下されたキーをキューに積むだけ。同時打鍵などの判定はキーの解放時に行う。
+        /// キーの押下<br/>押下されたキーをキューに積み、可能であれば同時打鍵判定も行う
         /// </summary>
         /// <param name="decKey">押下されたキーのデコーダコード</param>
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
@@ -65,39 +65,50 @@ namespace KanchokuWS.CombinationKeyStroke
         {
             var dtNow = DateTime.Now;
             logger.DebugH(() => $"ENTER: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}");
+
             List<int> result = null;
+
             var stroke = new Stroke(decKey, dtNow);
             logger.DebugH(() => stroke.DebugString());
+
+            // キーリピートのチェック
             if (strokeList.DetectKeyRepeat(stroke)) {
                 // キーリピートが発生した場合
                 if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
+                    // キーリピートが可能なキーだった(BacSpaceとか)ので、それを返す
                     logger.DebugH("Key repeated");
                     result = Helper.MakeList(decKey);
                 } else {
+                    // キーリピートが不可なキーは無視
                     logger.DebugH("Key repeat ignored");
                 }
             } else {
+                // キーリピートではない通常の押下の場合は、同時打鍵判定を行う
                 var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
                 bool isStrokeListEmpty = strokeList.IsEmpty();
                 logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={isStrokeListEmpty}");
                 if (combo != null || !isStrokeListEmpty) {
+                    // 押下されたのは同時打鍵に使われる可能性のあるキーだったので、キューに追加して同時打鍵判定を行う
                     strokeList.Add(stroke);
                     bool bContainsMutual = KeyCombinationPool.CurrentPool.ContainsMutualOneshotShiftKey;
                     bool isComboShift = stroke.IsComboShift;
                     logger.DebugH(() => $"Add new stroke: ContainsMutual={bContainsMutual}, IsComboShift={isComboShift}");  // ここで直接 KeyCombinationPool.CurrentPool.ContainsMutualOneshotShiftKey を参照すると、内部のキャッシュが先に計算されるようで、結果がおかしくなるっぽい
                     if (!bContainsMutual && (!isComboShift || !isStrokeListEmpty)) {
+                        // 相互シフトではなく、連続シフトであっても2打鍵目以降であれば、同時打鍵判定を行う
                         result = strokeList.GetKeyCombination(decKey, DateTime.Now);
                     }
                 } else {
+                    // 同時打鍵には使われないキーなので、そのまま返す
                     result = Helper.MakeList(decKey);
                 }
             }
+
             logger.DebugH(() => $"LEAVE: result.Count={result._safeCount()}: {strokeList.ToDebugString()}");
             return result;
         }
 
         /// <summary>
-        /// キーの解放
+        /// キーの解放。同時打鍵判定も行う。
         /// </summary>
         /// <param name="decKey">解放されたキーのデコーダコード</param>
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>

@@ -13,31 +13,31 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
     /// </summary>
     public class Stroke
     {
-        /// <summary>打鍵されたキーのModulo化キーコード(検索キーを生成するのに使用)</summary>
-        public int ModuloKeyCode { get; private set; }
-
-        /// <summary>打鍵されたキーのデコーダキーコード</summary>
-        public int DecoderKeyCode { get; private set; }
-
-        /// <summary>同時打鍵用のキーコード</summary>
-        public int ComboKeyCode => IsComboShift ? DecoderKeyCode : ModuloKeyCode;
-
-        public bool IsShiftableSpaceKey => ModuloKeyCode == DecoderKeys.STROKE_SPACE_DECKEY && IsContinuousShift;
-
-        //public bool IsShiftedOrShiftableSpaceKey => IsShifted || IsShiftableSpaceKey;
-
-        /// <summary>同じキーか</summary>
-        public bool IsSameKey(int decKey)
-        {
-            return DecoderKeyCode == decKey || ModuloKeyCode == ModuloizeKey(decKey);
-        }
-
         /// <summary>
         /// 同時打鍵検索用にモジュロ化したキーコードを返す<br/>
         /// これはシフトキーや拡張シフトキーで入力されたコードを、シフトを無視して検索するために必要となる
         /// </summary>
         public static int ModuloizeKey(int decKey) {
             return decKey % DecoderKeys.PLANE_DECKEY_NUM;
+        }
+
+        /// <summary>打鍵されたキーのModulo化キーコード(検索キーを生成するのに使用)</summary>
+        public int ModuloDecKey => ModuloizeKey(OrigDecoderKey);
+
+        /// <summary>打鍵されたキーのデコーダキーコード</summary>
+        public int OrigDecoderKey { get; private set; }
+
+        /// <summary>同時打鍵用のキーコード</summary>
+        public int ComboKeyCode => IsComboShift ? OrigDecoderKey : ModuloDecKey;
+
+        public bool IsShiftableSpaceKey => ModuloDecKey == DecoderKeys.STROKE_SPACE_DECKEY && IsContinuousShift;
+
+        //public bool IsShiftedOrShiftableSpaceKey => IsShifted || IsShiftableSpaceKey;
+
+        /// <summary>同じキーか</summary>
+        public bool IsSameKey(int decKey)
+        {
+            return OrigDecoderKey == decKey || ModuloDecKey == ModuloizeKey(decKey);
         }
 
         /// <summary>Oneshotな同時打鍵キーか</summary>
@@ -79,19 +79,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         public Stroke(int decKey, DateTime dt)
         {
-            DecoderKeyCode = decKey;
-            ModuloKeyCode = ModuloizeKey(decKey);
-            //IsContinuousShift = ShiftKeyPool.IsContinuousShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
-            //IsOneshotShift = ShiftKeyPool.IsOneshotShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
-            //IsComboShift = ShiftKeyPool.IsComboShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(ModuloKeyCode));
-            IsContinuousShift = ShiftKeyPool.IsContinuousShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(DecoderKeyCode));
-            IsOneshotShift = ShiftKeyPool.IsOneshotShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(DecoderKeyCode));
-            IsComboShift = ShiftKeyPool.IsComboShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(DecoderKeyCode));
-            //ModuloKeyCode = IsComboShift ? DecoderKeyCode : ModuloizeKey(decKey);
+            OrigDecoderKey = decKey;
+            IsContinuousShift = KeyCombinationPool.IsComboContinuous(OrigDecoderKey);
+            IsOneshotShift = KeyCombinationPool.IsComboOneshot(OrigDecoderKey);
+            IsComboShift = KeyCombinationPool.IsComboShift(OrigDecoderKey);
             KeyDt = dt;
         }
 
-        public string DebugString() => $"DecKeyCode={DecoderKeyCode}, ModKeyCode={ModuloKeyCode}, IsComobShift={IsComboShift}";
+        public string DebugString() => $"DecKeyCode={OrigDecoderKey}, ModKeyCode={ModuloDecKey}, IsComobShift={IsComboShift}";
 
     }
 }

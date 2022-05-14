@@ -21,17 +21,17 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         private List<Stroke> strokeList = new List<Stroke>();
 
-        public List<Stroke> GetList()
-        {
-            return strokeList;
-        }
+        //public List<Stroke> GetList()
+        //{
+        //    return strokeList;
+        //}
 
-        public List<List<Stroke>> GetSubLists()
-        {
-            var result = new List<List<Stroke>>();
-            gatherSubList(strokeList, result);
-            return result;
-        }
+        //public List<List<Stroke>> GetSubLists()
+        //{
+        //    var result = new List<List<Stroke>>();
+        //    gatherSubList(strokeList, result);
+        //    return result;
+        //}
 
         /// <summary>
         /// 与えられたリストの部分リストからなる集合(リスト)を返す
@@ -64,22 +64,22 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool IsEmpty()
         {
-            return comboList.Count == 0 && strokeList.Count == 0;
+            return Count == 0;
         }
 
         public Stroke First => strokeList._isEmpty() ? null : strokeList[0];
 
         public Stroke Last => strokeList._isEmpty() ? null : strokeList.Last();
 
-        public Stroke At(int pos)
-        {
-            return (pos >= 0 && pos < strokeList.Count) ? strokeList[pos] : null;
-        }
+        //public Stroke At(int pos)
+        //{
+        //    return (pos >= 0 && pos < strokeList.Count) ? strokeList[pos] : null;
+        //}
 
-        public void RemoveAt(int pos)
-        {
-            if (pos >= 0 && pos < strokeList.Count) strokeList.RemoveAt(pos);
-        }
+        //public void RemoveAt(int pos)
+        //{
+        //    if (pos >= 0 && pos < strokeList.Count) strokeList.RemoveAt(pos);
+        //}
 
         public Stroke FindSameStroke(int decKey)
         {
@@ -102,7 +102,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool DetectKeyRepeat(Stroke s)
         {
-            return s != null ? DetectKeyRepeat(s.DecoderKeyCode) : false;
+            return s != null ? DetectKeyRepeat(s.OrigDecoderKey) : false;
         }
 
         public bool DetectKeyRepeat(int decKey)
@@ -117,7 +117,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public List<int> GetKeyCombination(int decKey, DateTime dtNow)
         {
-            int moduloKey = ShiftKeyPool.IsComboShift(KeyCombinationPool.CurrentPool.GetShiftKeyKind(decKey)) ? Stroke.ModuloizeKey(decKey) : decKey;     // 検索のためにキーを正規化しておく
+            int moduloKey = KeyCombinationPool.IsComboShift(decKey) ? Stroke.ModuloizeKey(decKey) : decKey;     // 検索のためにキーを正規化しておく
             logger.DebugH(() => $"ENTER: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}, moduloKey={moduloKey}");
 
             List<int> result = null;
@@ -144,23 +144,24 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         logger.DebugH(() => $"subList.Count={subList.Count}, minLen={minLen}, overlapLen={overlapLen}");
                         while (overlapLen >= minLen) {
                             var list = makeComboChallengeList(subList, startPos, overlapLen);
-                            logger.DebugH(() => $"PATH-1: list={list._toString()}");
-                            var keyList = KeyCombinationPool.CurrentPool.GetEntry(list)?.ComboShiftedDecoderKeyList;
-                            logger.DebugH(() => $"PATH-1: keyList={(keyList._isEmpty() ? "(empty)" : keyList.KeyString())}");
-                            if (keyList._notEmpty() && isCombinationTiming(upKeyIdx, startPos, overlapLen, dtNow)) {
+                            logger.DebugH(() => $"SEARCH: searchKey={list._toString()}");
+                            //var keyList = KeyCombinationPool.CurrentPool.GetEntry(list)?.ComboShiftedDecoderKeyList;
+                            var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(list);
+                            logger.DebugH(() => $"RESULT: combo={(keyCombo == null ? "(none)" : "FOUND")}, decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
+                            if (keyCombo?.DecKeyList != null && isCombinationTiming(upKeyIdx, startPos, overlapLen, dtNow)) {
                                 // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する
-                                logger.DebugH(() => $"PATH-1: FOUND: Overlap candidates found: startPos={startPos}, overlapLen={overlapLen}");
-                                result.AddRange(keyList.KeyList);
+                                logger.DebugH(() => $"COMBO CHECK PASSED: Overlap candidates found: startPos={startPos}, overlapLen={overlapLen}");
+                                result.AddRange(keyCombo.DecKeyList);
                                 // 同時打鍵に使用したキーを使い回すかあるいは破棄するか
-                                if (keyList.IsOneshotShift) {
+                                if (keyCombo.IsOneshotShift) {
                                     // Oneshotなら使い回さず、今回かぎりとする
-                                    logger.DebugH(() => $"PATH-1: OneshotShift");
+                                    logger.DebugH(() => $"OneshotShift");
                                 } else {
-                                    logger.DebugH(() => $"PATH-1: Move to next combination: startPos={startPos}, overlapLen={overlapLen}");
+                                    logger.DebugH(() => $"Move to next combination: startPos={startPos}, overlapLen={overlapLen}");
                                     foreach (var s in getRange(startPos, overlapLen)) s.SetCombined();
                                     if (subComboLists.Count <= 1 && subComboLists._getFirst()._isEmpty()) {
                                         // 持ち越された同時打鍵キーリストが空なので、今回の同時打鍵に使用したキーを使い回す
-                                        logger.DebugH(() => $"PATH-1: Reuse temporary combination");
+                                        logger.DebugH(() => $"Reuse temporary combination");
                                         subComboLists.Clear();
                                         gatherSubList(list, subComboLists);
                                     }
@@ -175,8 +176,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     }
                     if (!bFound) {
                         // 見つからなかったら、それを出力し、1つずらして、ループする
-                        logger.DebugH(() => $"ADD: startPos={startPos}, keyCode={strokeList[startPos].DecoderKeyCode}");
-                        result.Add(strokeList[startPos].DecoderKeyCode);
+                        logger.DebugH(() => $"ADD: startPos={startPos}, keyCode={strokeList[startPos].OrigDecoderKey}");
+                        result.Add(strokeList[startPos].OrigDecoderKey);
                         ++startPos;
                     }
                     logger.DebugH(() => $"startPos={startPos}, overlapLen={overlapLen}");
@@ -202,7 +203,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             if (list.Count >= 3) {
                 // 3個以上のキーを含むならば、スペースのような weakShift を削除する
                 for (int i = 0; i < list.Count; ++i) {
-                    if (list[i].ModuloKeyCode == DecoderKeys.STROKE_SPACE_DECKEY) {
+                    if (list[i].ModuloDecKey == DecoderKeys.STROKE_SPACE_DECKEY) {
                         logger.DebugH(() => $"DELETE weakShift at {i}");
                         list.RemoveAt(i);
                         break;
@@ -262,7 +263,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public static string _toString(this List<Stroke> list)
         {
-            return list?.Select(x => x.ModuloKeyCode.ToString())._join(":") ?? "";
+            return list?.Select(x => x.OrigDecoderKey.ToString())._join(":") ?? "";
         }
     }
 }

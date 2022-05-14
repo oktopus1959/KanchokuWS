@@ -35,14 +35,25 @@ namespace KanchokuWS.CombinationKeyStroke
         }
 
         /// <summary>
-        /// 保持している打鍵列と追加の打鍵から、検索キーを生成する
+        /// 保持している打鍵列のModuloDecKeyと追加の打鍵から、検索キーを生成する
         /// </summary>
         /// <param name="keyList"></param>
         /// <param name="lastKey"></param>
         /// <returns></returns>
-        public static string MakePrimaryKey(IEnumerable<Stroke> keyList, int lastKey = -1)
+        public static string MakePrimaryKeyFromModuloDecKey(IEnumerable<Stroke> keyList, int lastKey = -1)
         {
-            return MakePrimaryKey(keyList.Select(x => x.ModuloKeyCode), lastKey);
+            return MakePrimaryKey(keyList.Select(x => x.ModuloDecKey), lastKey);
+        }
+
+        /// <summary>
+        /// 保持している打鍵列のOrigDecKeyと追加の打鍵から、検索キーを生成する
+        /// </summary>
+        /// <param name="keyList"></param>
+        /// <param name="lastKey"></param>
+        /// <returns></returns>
+        public static string MakePrimaryKeyFromOrigDecKey(IEnumerable<Stroke> keyList, int lastKey = -1)
+        {
+            return MakePrimaryKey(keyList.Select(x => x.OrigDecoderKey), lastKey);
         }
 
         /// <summary>

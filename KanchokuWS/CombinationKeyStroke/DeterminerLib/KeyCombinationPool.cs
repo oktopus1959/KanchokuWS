@@ -6,7 +6,7 @@ using Utils;
 
 namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 {
-    using ShiftKeyKind = ShiftKeyPool.Kind;
+    using ComboKind = ComboShiftKeyPool.ComboKind;
 
     class KeyCombinationPool
     {
@@ -46,7 +46,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         private HashSet<string> comboSubKeys = new HashSet<string>();
 
         // ShiftKeyとして扱いうるキー
-        public ShiftKeyPool ComboShiftKeys { get; private set; } = new ShiftKeyPool();
+        public ComboShiftKeyPool ComboShiftKeys { get; private set; } = new ComboShiftKeyPool();
 
         // 相互シフトキーを保持しているか
         public bool ContainsMutualOneshotShiftKey => ComboShiftKeys.ContainsMutualOrOneshotShiftKey;
@@ -64,29 +64,33 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>
         /// エントリの追加
         /// </summary>
-        /// <param name="keyList">キーのリスト</param>
-        /// <param name="comboShiftedKeyList">先頭キーがComboShiftされたキーのリスト</param>
+        /// <param name="deckeyList">デコーダ向けのキーリスト</param>
+        /// <param name="comboKeyList">同時打鍵検索用キーのリスト</param>
         /// <param name="shiftKind">PreShiftの場合は、先頭キーを固定した順列を生成する</param>
-        public void AddEntry(List<int> keyList, List<int> comboShiftedKeyList, ShiftKeyKind shiftKind)
+        public void AddEntry(List<int> deckeyList, List<int> comboKeyList, ComboKind shiftKind)
         {
-            logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(keyList)}, comboShiftedKeyList={KeyCombinationHelper.EncodeKeyList(comboShiftedKeyList)}, ShiftKeyKind={shiftKind}");
-            if (keyList._notEmpty() && comboShiftedKeyList._notEmpty()) {
-                var keyCombo = new KeyCombination(comboShiftedKeyList, shiftKind);
-                var moduloKeyList = Helper.MakeList(keyList[0]);
-                moduloKeyList.AddRange(keyList.Skip(1).Select(x => Stroke.ModuloizeKey(x)));
-                var primKey = KeyCombinationHelper.MakePrimaryKey(moduloKeyList);
+            logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(deckeyList)}, comboShiftedKeyList={KeyCombinationHelper.EncodeKeyList(comboKeyList)}, ShiftKeyKind={shiftKind}");
+            if (deckeyList._notEmpty() && comboKeyList._notEmpty()) {
+                var keyCombo = new KeyCombination(deckeyList, comboKeyList, shiftKind);
+                var primKey = KeyCombinationHelper.MakePrimaryKey(comboKeyList);
                 keyComboDict[primKey] = keyCombo;
-                foreach (var key in KeyCombinationHelper.MakePermutatedKeys(moduloKeyList, shiftKind == ShiftKeyKind.PreShift)) {
+                foreach (var key in KeyCombinationHelper.MakePermutatedKeys(comboKeyList, shiftKind == ComboKind.PreShift)) {
                     if (!keyComboDict.ContainsKey(key)) { keyComboDict[key] = keyCombo; }
                 }
-                comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(moduloKeyList));
+                comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(comboKeyList));
             }
         }
 
         private KeyCombination getEntry(IEnumerable<int> keyList, int lastKey)
         {
             logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(keyList)}, lastKey={lastKey}");
-            return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList, lastKey));
+            // まずは打鍵されたキーをそのまま使って検索
+            var combo = keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList, lastKey));
+            if (combo == null && (keyList.Any(x => x >= DecoderKeys.PLANE_DECKEY_NUM) || lastKey >= DecoderKeys.PLANE_DECKEY_NUM)) {
+                // 見つからない、かつ拡張シフトコードが含まれていれば、すべてModuloizeしたキーでも試す
+                combo = keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList.Select(x => Stroke.ModuloizeKey(x)), Stroke.ModuloizeKey(lastKey)));
+            }
+            return combo;
         }
 
         public KeyCombination GetEntry(IEnumerable<Stroke> strokeList)
@@ -94,31 +98,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             // ストロークリストが空であるか、あるいは全てのストロークがシフトされていたら、null
             if (strokeList._isEmpty() || strokeList.All(x => x.IsCombined)) return null;
 
-            // リストのうち先頭のComboShiftedだけをもとの DecoderKey で検索
-            bool bComboShifted = false;
-            List<int> list = new List<int>();
-            foreach (var s in strokeList) {
-                int c = bComboShifted ? s.ModuloKeyCode : s.ComboKeyCode;
-                if (s.IsComboShift) bComboShifted = true;
-                list.Add(c);
+            // まずは打鍵されたキーをそのまま使って検索
+            var combo = keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKeyFromOrigDecKey(strokeList));
+            if (combo == null && strokeList.Any(x => x.OrigDecoderKey >= DecoderKeys.PLANE_DECKEY_NUM)) {
+                // 見つからない、かつ拡張シフトコードが含まれていれば、すべてModuloizeしたキーでも試す
+                combo = keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKeyFromModuloDecKey(strokeList));
             }
-            return getEntry(list, -1);
+            return combo;
         }
-
-        //public KeyCombination GetEntry(StrokeList strokeList, int start, int len)
-        //{
-        //    return GetEntry(strokeList.GetList().Skip(start).Take(len), null);
-        //}
-
-        //public KeyCombination GetEntry(IEnumerable<Stroke> strokeList, int start, int len)
-        //{
-        //    return GetEntry(strokeList.Skip(start).Take(len), null);
-        //}
-
-        //public KeyCombination GetEntry(StrokeList strokeList, Stroke lastStroke)
-        //{
-        //    return GetEntry(strokeList.GetList(), lastStroke);
-        //}
 
         public KeyCombination GetEntry(int decKey)
         {
@@ -128,7 +115,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public KeyCombination GetEntry(Stroke stroke)
         {
-            return GetEntry(stroke.DecoderKeyCode);
+            return GetEntry(stroke.OrigDecoderKey);
         }
 
         /// <summary>
@@ -145,9 +132,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 if (keyCombo == null) {
                     // 存在していなかった部分キーを追加
                     if (i < 500) logger.DebugH($"Add non terminal subkey: {key}");
-                    keyComboDict[key] = keyCombo = new KeyCombination(null, ShiftKeyKind.None);
+                    keyComboDict[key] = keyCombo = new KeyCombination(null, null, ComboKind.None);
                 }
-                keyCombo.NotTerminal();
+                keyCombo.SetNonTerminal();
                 ++i;
             }
             logger.DebugH($"LEAVE");
@@ -174,22 +161,40 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         /// <param name="keyCode"></param>
         /// <param name="kind"></param>
-        public void AddComboShiftKey(int keyCode, ShiftKeyKind kind)
+        public void AddComboShiftKey(int keyCode, ComboKind kind)
         {
             logger.DebugH(() => $"CALLED: keyCode={keyCode}, shiftKey={kind}");
             if (keyCode > 0) ComboShiftKeys.AddShiftKey(keyCode, kind);
         }
 
         /// <summary>
-        /// keyCode が ShiftKeyとしても扱われるか否かを返す。<br/>
+        /// keyCode の ComboKind を返す。<br/>
         /// 0 なら ShiftKey としては扱わない<br/>
         /// 1以上なら、ShiftKeyとしての優先度となる(1が最優先)
         /// </summary>
         /// <param name="keyCode"></param>
         /// <returns></returns>
-        public ShiftKeyKind GetShiftKeyKind(int keyCode)
+        public ComboKind GetShiftKeyKind(int keyCode)
         {
-            return ComboShiftKeys.GetShiftKeyKind(keyCode);
+            return ComboShiftKeys.GetComboKind(keyCode);
+        }
+
+        /// <summary>keyCode が ComboShiftKeyとしても扱われるか否かを返す</summary>
+        public static bool IsComboShift(int keyCode)
+        {
+            return ComboShiftKeyPool.IsComboShift(CurrentPool.GetShiftKeyKind(keyCode));
+        }
+
+        /// <summary>keyCode が連続シフトとしても扱われるか否かを返す</summary>
+        public static bool IsComboContinuous(int keyCode)
+        {
+            return ComboShiftKeyPool.IsContinuousShift(CurrentPool.GetShiftKeyKind(keyCode));
+        }
+
+        /// <summary>keyCode がワンショットシフトとしても扱われるか否かを返す</summary>
+        public static bool IsComboOneshot(int keyCode)
+        {
+            return ComboShiftKeyPool.IsOneshotShift(CurrentPool.GetShiftKeyKind(keyCode));
         }
 
         public void DebugPrint()
@@ -197,7 +202,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             int i = 0;
             foreach (var pair in keyComboDict) {
                 var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
-                var deckeys = (pair.Value.ComboShiftedDecoderKeyList?.KeyString())._orElse("NONE");
+                var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
                 if (i < 500) logger.DebugH($"{key}={deckeys} {pair.Value.IsTerminal}");
                 ++i;
             }

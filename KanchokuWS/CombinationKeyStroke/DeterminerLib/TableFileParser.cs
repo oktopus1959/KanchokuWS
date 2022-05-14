@@ -130,15 +130,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // ブロック情報のスタック
         BlockInfoStack blockInfoStack = new BlockInfoStack();
 
-        int makeComboDecKeyIfInComboBlock(int decKey)
-        {
-            if (isInCombinationBlock) {
-                decKey = (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.COMBO_DECKEY_START;
-                keyComboPool.AddComboShiftKey(decKey, shiftKeyKind);
-            }
-            return decKey;
-        }
-
         // 出力用のバッファ
         List<string> outputLines = new List<string>();
 
@@ -175,20 +166,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                         case TOKEN.ARROW:
                             parseArrowNode(0, 0, arrowIndex);
-                            //parseArrowNode(0, 0, makeComboDecKeyIfInComboBlock(arrowIndex));
-                            //int arrowDeckey = makeComboDecKeyIfInComboBlock(arrowIndex, 0);
-                            //tokenNextToArrow = parseArrowNode(0, 0, arrowIndex);
-                            //if (isInCombinationBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
-                            //if (isInCombinationBlock) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
                             break;
 
                         case TOKEN.ARROW_BUNDLE:
                             parseArrowBundleNode(0, arrowIndex);
                             break;
-
-                        //case TOKEN.COMMA:             // ',' が来たら次のトークン待ち
-                        //case TOKEN.SLASH:             // '/' が来ても次のトークン待ち
-                        //    break;
 
                         case TOKEN.IGNORE:
                             break;
@@ -214,11 +196,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         void parseSubTree(int depth, int prevNth)
         {
             logger.DebugH(() => $"ENTER: currentLine={lineNumber}, depth={depth}, prevNth={prevNth}");
-            //int shiftPlaneOffset = depth == 0 ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
             bool bError = false;
             int idx = 0;
             bool isPrevDelim = true;
-            //TOKEN tokenNextToArrow;
             readNextToken(depth);
             while (!bError && currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
@@ -230,10 +210,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                     case TOKEN.ARROW:
                         parseArrowNode(depth + 1, prevNth, arrowIndex);
-                        //int arrowDeckey = arrowIndex;
-                        //tokenNextToArrow = parseArrowNode(depth + 1, prevNth, arrowIndex);
-                        ////if (isInCombinationBlock && tokenNextToArrow != TOKEN.STRING) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
-                        //if (isInCombinationBlock && depth == 0) keyComboPool.AddShiftKey(arrowDeckey, shiftKeyKind);
                         isPrevDelim = false;
                         break;
 
@@ -378,39 +354,60 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
-        // 終端ノードの追加と同時打鍵列の組合せの登録
+        /// <summary>
+        /// 終端ノードの追加と同時打鍵列の組合せの登録<br/>
+        /// 同時打鍵の場合は、ブロックのルートキーをCOMBO_DECKEY_STARTまでシフトする
+        /// </summary>
+        /// <param name="prevNth"></param>
+        /// <param name="lastNth"></param>
+        /// <param name="outStr"></param>
         void addTerminalNode(int prevNth, int lastNth, string outStr)
         {
             var list = new List<int>(strokes);
             if (prevNth >= 0) list.Add(prevNth);
             list.Add(lastNth);
-            if (list[0] < DecoderKeys.PLANE_DECKEY_NUM && shiftPlane > 0) {
-                list[0] += shiftPlane * DecoderKeys.PLANE_DECKEY_NUM;
+            int shiftOffset = calcShiftOffset(list[0]);
+
+            // 先頭キーはシフト化
+            if (isInCombinationBlock) {
+                list[0] = makeComboDecKey(list[0]);
+            } else if (list[0] < DecoderKeys.PLANE_DECKEY_NUM) {
+                list[0] += shiftOffset;
             }
+            // 残りは Modulo
             for (int i = 1; i < list.Count; ++i) {
                 list[i] %= DecoderKeys.PLANE_DECKEY_NUM;
             }
+
             outputLines.Add($"-{list.Select(x => x.ToString())._join(">-")}>{outStr}");
+
             if (isInCombinationBlock) {
-                makeCombinationKeyCombo(lastNth);
+                makeCombinationKeyCombo(list, shiftOffset);
             }
         }
 
-        // 同時打鍵列の組合せを作成して登録しておく
-        void makeCombinationKeyCombo(int lastNth)
+        int calcShiftOffset(int deckey)
         {
-            var ss = new List<int>(strokes);
-            ss.Add(lastNth);
-            keyComboPool.AddComboShiftKey(ss[0], shiftKeyKind);
-            var cs = Helper.MakeList(makeComboDecKey(ss[0]));
-            cs.AddRange(ss.Skip(1));
-            logger.DebugH(() => $"{ss._keyString()}={currentStr}");
-            keyComboPool.AddEntry(ss, cs, shiftKeyKind);
+            return (deckey >= DecoderKeys.PLANE_DECKEY_NUM ? deckey / DecoderKeys.PLANE_DECKEY_NUM : shiftPlane) * DecoderKeys.PLANE_DECKEY_NUM;
+        }
+
+        // 同時打鍵列の組合せを作成して登録しておく
+        void makeCombinationKeyCombo(List<int> deckeyList, int shiftOffset)
+        {
+            var comboKeyList = deckeyList.Select(x => makeShiftedDecKey(x, shiftOffset)).ToList();      // 先頭キーのオフセットに合わせる
+            logger.DebugH(() => $"{deckeyList._keyString()}={currentStr}");
+            keyComboPool.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
+            keyComboPool.AddEntry(deckeyList, comboKeyList, shiftKeyKind);
         }
 
         int makeComboDecKey(int decKey)
         {
-            return isInCombinationBlock ? (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.COMBO_DECKEY_START : decKey;
+            return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.COMBO_DECKEY_START;
+        }
+
+        int makeShiftedDecKey(int decKey, int shiftOffset)
+        {
+            return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + shiftOffset;
         }
 
         // 現在のトークンをチェックする
