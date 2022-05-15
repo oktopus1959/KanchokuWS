@@ -90,11 +90,12 @@ namespace KanchokuWS.CombinationKeyStroke
                 if (combo != null || !isStrokeListEmpty) {
                     // 押下されたのは同時打鍵に使われる可能性のあるキーだったので、キューに追加して同時打鍵判定を行う
                     strokeList.Add(stroke);
-                    bool bContainsMutual = KeyCombinationPool.CurrentPool.ContainsMutualOneshotShiftKey;
                     bool isComboShift = stroke.IsComboShift;
-                    logger.DebugH(() => $"Add new stroke: ContainsMutual={bContainsMutual}, IsComboShift={isComboShift}");  // ここで直接 KeyCombinationPool.CurrentPool.ContainsMutualOneshotShiftKey を参照すると、内部のキャッシュが先に計算されるようで、結果がおかしくなるっぽい
-                    if (!bContainsMutual && (!isComboShift || !isStrokeListEmpty)) {
-                        // 相互シフトではなく、連続シフトであっても2打鍵目以降であれば、同時打鍵判定を行う
+                    //bool bContainsMutual = KeyCombinationPool.CurrentPool.ContainsMutualOrOneshotShiftKey;
+                    bool bContinuous = KeyCombinationPool.CurrentPool.ContainsContinuousShiftKey;
+                    logger.DebugH(() => $"Add new stroke: IsComboShift={isComboShift}, ContainsShift={bContinuous}");  // ここで直接 KeyCombinationPool.CurrentPool.ContainsMutualOneshotShiftKey を参照すると、内部のキャッシュが先に計算されるようで、結果がおかしくなるっぽい
+                    if (strokeList.IsComboEmpty() && (!isComboShift || (bContinuous && !isStrokeListEmpty))) {
+                        // まだ同時打鍵キーが処理されていない状態で、当打鍵が同時打鍵シフトでないかまたは連続シフト同時打鍵キーであって2打鍵目以降ならば、同時打鍵判定を行う
                         result = strokeList.GetKeyCombination(decKey, DateTime.Now);
                     }
                 } else {

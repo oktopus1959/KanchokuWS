@@ -30,6 +30,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool ContainsMutualOrOneshotShiftKey { get; private set; } = false;
 
+        public bool ContainsContinuousShiftKey { get; private set; } = false;
+
         /// <summary>
         /// ShiftKeyとして扱いうるキーの設定
         /// </summary>
@@ -40,6 +42,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             if (kind != ComboKind.None && !comboKindDict.ContainsKey(keyCode)) {
                 comboKindDict[keyCode] = kind;
                 if (IsMutualOrOneshotShift(kind)) ContainsMutualOrOneshotShiftKey = true;
+                if (IsContinuousShift(kind)) ContainsContinuousShiftKey = true;
             }
         }
 
