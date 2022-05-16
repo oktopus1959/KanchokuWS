@@ -88,10 +88,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 var keyCombo = new KeyCombination(deckeyList, comboKeyList, shiftKind);
                 var primKey = KeyCombinationHelper.MakePrimaryKey(comboKeyList);
                 keyComboDict[primKey] = keyCombo;
-                foreach (var key in KeyCombinationHelper.MakePermutatedKeys(comboKeyList, shiftKind == ComboKind.PreShift)) {
+                bool bPreShift = shiftKind == ComboKind.PreShift;
+                foreach (var key in KeyCombinationHelper.MakePermutatedKeys(comboKeyList, bPreShift)) {
                     if (!keyComboDict.ContainsKey(key)) { keyComboDict[key] = keyCombo; }
                 }
-                comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(comboKeyList));
+                comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(comboKeyList, bPreShift));
             }
         }
 

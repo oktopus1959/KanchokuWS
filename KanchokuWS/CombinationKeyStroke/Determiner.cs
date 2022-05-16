@@ -90,21 +90,14 @@ namespace KanchokuWS.CombinationKeyStroke
                 if (combo != null || !isStrokeListEmpty) {
                     // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だったので、キューに追加して同時打鍵判定を行う
                     strokeList.Add(stroke);
-                    bool isComboEmpty = strokeList.IsComboEmpty();
-                    bool isComboShift = stroke.IsComboShift;
-                    bool bContainsMutual = KeyCombinationPool.CurrentPool.ContainsMutualOrOneshotShiftKey;
-                    logger.DebugH(() => $"Add new stroke: IsComboEmpty={isComboEmpty}, IsComboShift={isComboShift}, ContainsMutual={bContainsMutual}");
-                    if (isComboEmpty && !isComboShift && !bContainsMutual /*&& !isStrokeListEmpty*/) {
-                        // まだ同時打鍵キーが処理されていない状態で、当打鍵が同時打鍵シフトでなく、相互シフト同時打鍵キーが存在なければ、同時打鍵判定を行う
-                        result = strokeList.GetKeyCombination(decKey, DateTime.Now);
-                    }
+                    result = strokeList.GetKeyCombinationWhenKeyDown(decKey, DateTime.Now);
                 } else {
                     // 同時打鍵には使われないキーなので、そのまま返す
                     result = Helper.MakeList(decKey);
                 }
             }
 
-            logger.DebugH(() => $"LEAVE: result.Count={result._safeCount()}: {strokeList.ToDebugString()}");
+            logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
             return result;
         }
 
@@ -116,7 +109,9 @@ namespace KanchokuWS.CombinationKeyStroke
         public List<int> KeyUp(int decKey)
         {
             logger.DebugH(() => $"ENTER: decKey={decKey}");
-            return strokeList.GetKeyCombination(decKey, DateTime.Now);
+            var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, DateTime.Now);
+            logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
+            return result;
         }
 
         /// <summary>
