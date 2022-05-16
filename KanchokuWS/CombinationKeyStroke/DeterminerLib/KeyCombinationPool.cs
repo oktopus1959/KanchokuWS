@@ -12,10 +12,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
     {
         private static Logger logger = Logger.GetLogger(true);
 
-        // 主テーブル用のCombinaitonPool
+        /// <summary>
+        /// 主テーブル用のCombinaitonPool
+        /// </summary>        
         public static KeyCombinationPool Singleton1 = new KeyCombinationPool();
 
-        // 副テーブル用のCombinaitonPool
+        /// <summary>
+        /// 副テーブル用のCombinaitonPool
+        /// </summary>        
         public static KeyCombinationPool Singleton2 = new KeyCombinationPool();
 
         // 現在使用中のKeyCombinaitonPool
@@ -34,7 +38,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"CurrentPool={(CurrentPool == Singleton1 ? 1 : 2)}");
         }
 
-        // 同時打鍵組合せ
+        /// <summary>
+        /// 同時打鍵組合せ
+        /// </summary>        
         private Dictionary<string, KeyCombination> keyComboDict = new Dictionary<string, KeyCombination>();
 
         public int Count { get { return keyComboDict.Count; } }
@@ -45,7 +51,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // 同時打鍵組合せの部分キーの順列集合(これらは、最後に非終端となるキー順列として使う)
         private HashSet<string> comboSubKeys = new HashSet<string>();
 
-        // ShiftKeyとして扱いうるキー
+        /// <summary>
+        /// ShiftKeyとして扱いうるキー
+        /// </summary>
         public ComboShiftKeyPool ComboShiftKeys { get; private set; } = new ComboShiftKeyPool();
 
         // 相互シフトキーを保持しているか
@@ -54,7 +62,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // 連続シフトキーを保持しているか
         public bool ContainsContinuousShiftKey => ComboShiftKeys.ContainsContinuousShiftKey;
 
-        // Repeatableなキー
+        /// <summary>
+        /// Repeatableなキー
+        /// </summary>        
         public RepeatableKeyPool RepeatableKeys { get; private set; } = new RepeatableKeyPool();
 
         public void Clear()

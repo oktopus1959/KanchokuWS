@@ -917,8 +917,8 @@ namespace KanchokuWS
             //-------------------------------------------------------------------------------------
             // 同時打鍵
             CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0, 0);        // 重複時間率
-            CombinationKeyTimeMs = GetString("combinationKeyTimeMs")._parseInt(0, 0);          // 重複時間率
-            CombinationMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(0, 0);     // 許容リードタイム
+            CombinationKeyTimeMs = GetString("combinationKeyTimeMs")._parseInt(70, 70);          // 重複時間
+            CombinationMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100, 100);     // 許容リードタイム
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

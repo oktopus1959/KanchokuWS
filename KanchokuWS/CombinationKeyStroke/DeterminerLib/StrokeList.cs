@@ -242,10 +242,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"CHECK3: strokeList[{startPos}].IsShiftableSpaceKey={strokeList[startPos].IsShiftableSpaceKey}");
             if (strokeList[startPos].IsShiftableSpaceKey) return true;     // 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
 
-            // タイミングチェック(1文字目なら True; 2文字目以降の場合は、対象キーダウンからシフトキーアップまでの時間によって判定)
+            // タイミングチェック(1文字目ならリードタイムをチェック; 2文字目以降の場合は、対象キーダウンからシフトキーアップまでの時間によって判定)
+            double ms1 = strokeList[startPos].TimeSpanMs(strokeList[checkPos]);
             double ms2 = strokeList[checkPos].TimeSpanMs(dtNow);
-            logger.DebugH(() => $"ms2={ms2:f2}ms, threshold={Settings.CombinationKeyTimeMs}ms");
-            return !bSecondComboCheck || ms2 >= Settings.CombinationKeyTimeMs;
+            logger.DebugH(() => $"ms1={ms1:f2}ms, threshold={Settings.CombinationMaxAllowedLeadTimeMs}ms, ms2={ms2:f2}ms, threshold={Settings.CombinationKeyTimeMs}ms");
+            return (!bSecondComboCheck && ms1 <= Settings.CombinationMaxAllowedLeadTimeMs) || (bSecondComboCheck && ms2 >= Settings.CombinationKeyTimeMs);
         }
 
         public string ToDebugString()

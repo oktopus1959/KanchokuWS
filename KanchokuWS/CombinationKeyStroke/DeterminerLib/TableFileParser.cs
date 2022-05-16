@@ -92,6 +92,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
     // include/load ブロック情報のスタック
     class BlockInfoStack
     {
+        //private static Logger logger = Logger.GetLogger(true);
         private static Logger logger = Logger.GetLogger();
 
         struct BlockInfo
@@ -161,6 +162,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
     class TableFileParser
     {
+        //private static Logger logger = Logger.GetLogger(true);
         private static Logger logger = Logger.GetLogger();
 
         private List<string> tableLines;
