@@ -88,14 +88,16 @@ namespace KanchokuWS.CombinationKeyStroke
                 bool isStrokeListEmpty = strokeList.IsEmpty();
                 logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={isStrokeListEmpty}");
                 if (combo != null || !isStrokeListEmpty) {
-                    // 押下されたのは同時打鍵に使われる可能性のあるキーだったので、キューに追加して同時打鍵判定を行う
+                    // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だったので、キューに追加して同時打鍵判定を行う
                     strokeList.Add(stroke);
+                    bool isComboEmpty = strokeList.IsComboEmpty();
                     bool isComboShift = stroke.IsComboShift;
-                    //bool bContainsMutual = KeyCombinationPool.CurrentPool.ContainsMutualOrOneshotShiftKey;
-                    bool bContinuous = KeyCombinationPool.CurrentPool.ContainsContinuousShiftKey;
-                    logger.DebugH(() => $"Add new stroke: IsComboShift={isComboShift}, ContainsShift={bContinuous}");  // ここで直接 KeyCombinationPool.CurrentPool.ContainsMutualOneshotShiftKey を参照すると、内部のキャッシュが先に計算されるようで、結果がおかしくなるっぽい
-                    if (strokeList.IsComboEmpty() && (!isComboShift || (bContinuous && !isStrokeListEmpty))) {
-                        // まだ同時打鍵キーが処理されていない状態で、当打鍵が同時打鍵シフトでないかまたは連続シフト同時打鍵キーであって2打鍵目以降ならば、同時打鍵判定を行う
+                    bool bContainsMutual = KeyCombinationPool.CurrentPool.ContainsMutualOrOneshotShiftKey;
+                    logger.DebugH(() => $"Add new stroke: IsComboEmpty={isComboEmpty}, IsComboShift={isComboShift}, ContainsMutual={bContainsMutual}");
+                    //bool bContinuous = KeyCombinationPool.CurrentPool.ContainsContinuousShiftKey;
+                    //logger.DebugH(() => $"Add new stroke: IsComboShift={isComboShift}, Continuous={bContinuous}");
+                    if (isComboEmpty && !isComboShift && !bContainsMutual /*&& !isStrokeListEmpty*/) {
+                        // まだ同時打鍵キーが処理されていない状態で、当打鍵が同時打鍵シフトでなく、相互シフト同時打鍵キーが存在なければ、同時打鍵判定を行う
                         result = strokeList.GetKeyCombination(decKey, DateTime.Now);
                     }
                 } else {
