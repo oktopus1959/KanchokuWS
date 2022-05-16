@@ -30,7 +30,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>同時打鍵用のキーコード</summary>
         public int ComboKeyCode => IsComboShift ? OrigDecoderKey : ModuloDecKey;
 
-        public bool IsShiftableSpaceKey => ModuloDecKey == DecoderKeys.STROKE_SPACE_DECKEY && IsContinuousShift;
+        public bool IsShiftableSpaceKey => ModuloDecKey == DecoderKeys.STROKE_SPACE_DECKEY && IsSuccessiveShift;
 
         //public bool IsShiftedOrShiftableSpaceKey => IsShifted || IsShiftableSpaceKey;
 
@@ -44,7 +44,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public bool IsOneshotShift { get; private set; }
 
         /// <summary>同時打鍵の連続シフト可能キーとして使われ得るか</summary>
-        public bool IsContinuousShift { get; private set; }
+        public bool IsSuccessiveShift { get; private set; }
 
         /// <summary>同時打鍵のシフトキーか</summary>
         public bool IsComboShift { get; private set; }
@@ -80,7 +80,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public Stroke(int decKey, DateTime dt)
         {
             OrigDecoderKey = decKey;
-            IsContinuousShift = KeyCombinationPool.IsComboContinuous(OrigDecoderKey);
+            IsSuccessiveShift = KeyCombinationPool.IsComboSuccessive(OrigDecoderKey);
             IsOneshotShift = KeyCombinationPool.IsComboOneshot(OrigDecoderKey);
             IsComboShift = KeyCombinationPool.IsComboShift(OrigDecoderKey);
             KeyDt = dt;

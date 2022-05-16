@@ -20,7 +20,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public static bool IsComboShift(ComboKind kind) { return kind != ComboKind.None; }
 
-        public static bool IsContinuousShift(ComboKind kind) { return kind == ComboKind.PreShift || kind == ComboKind.MutualShift; }
+        public static bool IsSuccessiveShift(ComboKind kind) { return kind == ComboKind.PreShift || kind == ComboKind.MutualShift; }
 
         public static bool IsOneshotShift(ComboKind kind) { return kind == ComboKind.OneshotShift; }
 
@@ -32,7 +32,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool ContainsMutualOrOneshotShiftKey { get; private set; } = false;
 
-        public bool ContainsContinuousShiftKey { get; private set; } = false;
+        public bool ContainsSuccessiveShiftKey { get; private set; } = false;
 
         /// <summary>
         /// ShiftKeyとして扱いうるキーの設定
@@ -45,7 +45,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 logger.DebugH(() => $"ADD: keyCode={keyCode}, Kind={kind}");
                 comboKindDict[keyCode] = kind;
                 if (IsMutualOrOneshotShift(kind)) ContainsMutualOrOneshotShiftKey = true;
-                if (IsContinuousShift(kind)) ContainsContinuousShiftKey = true;
+                if (IsSuccessiveShift(kind)) ContainsSuccessiveShiftKey = true;
             }
         }
 
@@ -65,7 +65,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH("CALLED");
             comboKindDict.Clear();
             ContainsMutualOrOneshotShiftKey = false;
-            ContainsContinuousShiftKey = false;
+            ContainsSuccessiveShiftKey = false;
         }
     }
 }

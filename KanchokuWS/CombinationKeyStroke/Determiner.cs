@@ -94,8 +94,6 @@ namespace KanchokuWS.CombinationKeyStroke
                     bool isComboShift = stroke.IsComboShift;
                     bool bContainsMutual = KeyCombinationPool.CurrentPool.ContainsMutualOrOneshotShiftKey;
                     logger.DebugH(() => $"Add new stroke: IsComboEmpty={isComboEmpty}, IsComboShift={isComboShift}, ContainsMutual={bContainsMutual}");
-                    //bool bContinuous = KeyCombinationPool.CurrentPool.ContainsContinuousShiftKey;
-                    //logger.DebugH(() => $"Add new stroke: IsComboShift={isComboShift}, Continuous={bContinuous}");
                     if (isComboEmpty && !isComboShift && !bContainsMutual /*&& !isStrokeListEmpty*/) {
                         // まだ同時打鍵キーが処理されていない状態で、当打鍵が同時打鍵シフトでなく、相互シフト同時打鍵キーが存在なければ、同時打鍵判定を行う
                         result = strokeList.GetKeyCombination(decKey, DateTime.Now);

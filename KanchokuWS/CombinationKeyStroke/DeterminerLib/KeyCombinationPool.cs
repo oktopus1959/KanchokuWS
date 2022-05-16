@@ -61,7 +61,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public bool ContainsMutualOrOneshotShiftKey => ComboShiftKeys.ContainsMutualOrOneshotShiftKey;
 
         // 連続シフトキーを保持しているか
-        public bool ContainsContinuousShiftKey => ComboShiftKeys.ContainsContinuousShiftKey;
+        public bool ContainsSuccessiveShiftKey => ComboShiftKeys.ContainsSuccessiveShiftKey;
 
         /// <summary>
         /// Repeatableなキー
@@ -200,9 +200,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         /// <summary>keyCode が連続シフトとしても扱われるか否かを返す</summary>
-        public static bool IsComboContinuous(int keyCode)
+        public static bool IsComboSuccessive(int keyCode)
         {
-            return ComboShiftKeyPool.IsContinuousShift(CurrentPool.GetShiftKeyKind(keyCode));
+            return ComboShiftKeyPool.IsSuccessiveShift(CurrentPool.GetShiftKeyKind(keyCode));
         }
 
         /// <summary>keyCode がワンショットシフトとしても扱われるか否かを返す</summary>
