@@ -9,6 +9,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 {
     public class ComboShiftKeyPool
     {
+        private static Logger logger = Logger.GetLogger(true);
+
         public enum ComboKind {
             None,
             PreShift,
@@ -40,6 +42,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public void AddShiftKey(int keyCode, ComboKind kind)
         {
             if (kind != ComboKind.None && !comboKindDict.ContainsKey(keyCode)) {
+                logger.DebugH(() => $"ADD: keyCode={keyCode}, Kind={kind}");
                 comboKindDict[keyCode] = kind;
                 if (IsMutualOrOneshotShift(kind)) ContainsMutualOrOneshotShiftKey = true;
                 if (IsContinuousShift(kind)) ContainsContinuousShiftKey = true;
@@ -59,7 +62,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void Clear()
         {
+            logger.DebugH("CALLED");
             comboKindDict.Clear();
+            ContainsMutualOrOneshotShiftKey = false;
+            ContainsContinuousShiftKey = false;
         }
     }
 }

@@ -27,6 +27,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public static void Initialize()
         {
+            logger.DebugH("CALLED");
             Singleton1.Clear();
             Singleton2.Clear();
             CurrentPool = Singleton1;
