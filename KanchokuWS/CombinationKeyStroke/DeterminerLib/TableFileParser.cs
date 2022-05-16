@@ -496,7 +496,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                 case TOKEN.STRING:            // "str" : 文字列ノード
                     // 終端ノードの追加と同時打鍵列の組合せの登録
-                    addTerminalNode(new StringNode($"\"{currentStr}\""), prevNth, nth);
+                    addTerminalNode(new StringNode($"\"{currentStr._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")}\""), prevNth, nth);
                     if (depth == 0 && nth >= 0 && currentStr._startsWith("!{")) {
                         logger.DebugH(() => $"REPEATABLE");
                         keyComboPool.AddRepeatableKey(nth);
