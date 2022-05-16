@@ -683,8 +683,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 shiftKeyKind = ShiftKeyKind.OneshotShift;
                                 break;
                             case "mutual":
-                            default:
+                            case "":
                                 shiftKeyKind = ShiftKeyKind.MutualShift;
+                                break;
+                            default:
+                                argumentError(currentStr);
                                 break;
                         }
                     } else if (lcStr == "end") {
@@ -1205,6 +1208,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 default:
                     return $"'{currentChar}'";
             }
+        }
+
+        // 引数エラー
+        void argumentError(string arg) {
+            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
+            handleError($"引数 {arg} が不正です。\r\nテーブルファイル {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...");
         }
 
         // ファイルの読み込みに失敗した場合
