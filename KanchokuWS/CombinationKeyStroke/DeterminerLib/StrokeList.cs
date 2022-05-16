@@ -77,16 +77,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public Stroke Last => unprocList._isEmpty() ? null : unprocList.Last();
 
-        //public Stroke At(int pos)
-        //{
-        //    return (pos >= 0 && pos < strokeList.Count) ? strokeList[pos] : null;
-        //}
-
-        //public void RemoveAt(int pos)
-        //{
-        //    if (pos >= 0 && pos < strokeList.Count) strokeList.RemoveAt(pos);
-        //}
-
         public Stroke FindSameStroke(int decKey)
         {
             int idx = FindSameIndex(decKey);
@@ -125,7 +115,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public List<int> GetKeyCombinationWhenKeyDown(int decKey, DateTime dtNow)
         {
             // 連続シフトでなければ何も返さない
-            if (KeyCombinationPool.CurrentPool.ContainsMutualOrOneshotShiftKey) return null;
+            if (KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey) return null;
 
             // 連続シフトの場合は、同時打鍵キーの数は最大2とする
             List<int> getAndCheckCombo(List<Stroke> list)
@@ -176,7 +166,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     result = new List<int>();
                     int startPos = 0;
                     int overlapLen = 0;
-                    var preShifts = new StrokeList();
 
                     // 持ち越したキーリストの部分リストからなる集合(リスト)
                     var subComboLists = new List<List<Stroke>>();
@@ -245,9 +234,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         /// <summary>同時打鍵のチャレンジ列を作成する</summary>
         /// <returns></returns>
-        private List<Stroke> makeComboChallengeList(List<Stroke> preShifts, int startPos, int overlapLen)
+        private List<Stroke> makeComboChallengeList(List<Stroke> strokes, int startPos, int overlapLen)
         {
-            var list = new List<Stroke>(preShifts);
+            var list = new List<Stroke>(strokes);
             list.AddRange(getRange(startPos, overlapLen));
             if (list.Count >= 3) {
                 // 3個以上のキーを含むならば、スペースのような weakShift を削除する

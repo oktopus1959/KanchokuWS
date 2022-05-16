@@ -13,24 +13,27 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public enum ComboKind {
             None,
-            PreShift,
-            MutualShift,
-            OneshotShift
+            /// <summary>前置連続シフト(テーブルの深さは、シフトキー含め2とする)</summary>
+            PrefixSuccessiveShift,
+            /// <summary>相互連続シフト</summary>
+            UnorderedSuccessiveShift,
+            /// <summary>相互ワンショットシフト</summary>
+            UnorderedOneshotShift
         }
 
         public static bool IsComboShift(ComboKind kind) { return kind != ComboKind.None; }
 
-        public static bool IsSuccessiveShift(ComboKind kind) { return kind == ComboKind.PreShift || kind == ComboKind.MutualShift; }
+        public static bool IsSuccessiveShift(ComboKind kind) { return kind == ComboKind.PrefixSuccessiveShift || kind == ComboKind.UnorderedSuccessiveShift; }
 
-        public static bool IsOneshotShift(ComboKind kind) { return kind == ComboKind.OneshotShift; }
+        public static bool IsOneshotShift(ComboKind kind) { return kind == ComboKind.UnorderedOneshotShift; }
 
-        public static bool IsMutualOrOneshotShift(ComboKind kind) { return kind == ComboKind.MutualShift || kind == ComboKind.OneshotShift; }
+        public static bool IsUnorderedShift(ComboKind kind) { return kind == ComboKind.UnorderedSuccessiveShift || kind == ComboKind.UnorderedOneshotShift; }
 
         private Dictionary<int, ComboKind> comboKindDict = new Dictionary<int, ComboKind>();
 
         public IEnumerable<KeyValuePair<int, ComboKind>> Pairs { get { return comboKindDict.AsEnumerable(); } }
 
-        public bool ContainsMutualOrOneshotShiftKey { get; private set; } = false;
+        public bool ContainsUnorderedShiftKey { get; private set; } = false;
 
         public bool ContainsSuccessiveShiftKey { get; private set; } = false;
 
@@ -44,7 +47,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             if (kind != ComboKind.None && !comboKindDict.ContainsKey(keyCode)) {
                 logger.DebugH(() => $"ADD: keyCode={keyCode}, Kind={kind}");
                 comboKindDict[keyCode] = kind;
-                if (IsMutualOrOneshotShift(kind)) ContainsMutualOrOneshotShiftKey = true;
+                if (IsUnorderedShift(kind)) ContainsUnorderedShiftKey = true;
                 if (IsSuccessiveShift(kind)) ContainsSuccessiveShiftKey = true;
             }
         }
@@ -64,7 +67,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             logger.DebugH("CALLED");
             comboKindDict.Clear();
-            ContainsMutualOrOneshotShiftKey = false;
+            ContainsUnorderedShiftKey = false;
             ContainsSuccessiveShiftKey = false;
         }
     }

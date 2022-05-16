@@ -30,7 +30,7 @@ namespace KanchokuWS.CombinationKeyStroke
         /// Oneshotの同時打鍵か<br/>すなわち、当組合せの同時打鍵が発生したら、それ打鍵列は次に持ち越さずに破棄されるか
         /// </summary>
         //public bool IsOneshot => ComboShiftedDecoderKeyList.ShiftKind == ShiftKeyKind.OneshotShift;
-        public bool IsOneshotShift => ShiftKind == ShiftKeyKind.OneshotShift;
+        public bool IsOneshotShift => ShiftKind == ShiftKeyKind.UnorderedOneshotShift;
 
         /// <summary>当同時打鍵組合せに割り当てられた出力文字列を得るためにデコーダに送信する DecoderKey のリスト</summary>
         public List<int> DecKeyList { get; private set; }

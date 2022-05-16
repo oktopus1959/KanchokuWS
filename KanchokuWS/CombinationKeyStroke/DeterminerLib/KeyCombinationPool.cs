@@ -58,7 +58,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public ComboShiftKeyPool ComboShiftKeys { get; private set; } = new ComboShiftKeyPool();
 
         // 相互シフトキーを保持しているか
-        public bool ContainsMutualOrOneshotShiftKey => ComboShiftKeys.ContainsMutualOrOneshotShiftKey;
+        public bool ContainsUnorderedShiftKey => ComboShiftKeys.ContainsUnorderedShiftKey;
 
         // 連続シフトキーを保持しているか
         public bool ContainsSuccessiveShiftKey => ComboShiftKeys.ContainsSuccessiveShiftKey;
@@ -80,7 +80,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         /// <param name="deckeyList">デコーダ向けのキーリスト</param>
         /// <param name="comboKeyList">同時打鍵検索用キーのリスト</param>
-        /// <param name="shiftKind">PreShiftの場合は、先頭キーを固定した順列を生成する</param>
+        /// <param name="shiftKind">Prefixの場合は、先頭キーを固定した順列を生成する</param>
         public void AddEntry(List<int> deckeyList, List<int> comboKeyList, ComboKind shiftKind)
         {
             logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(deckeyList)}, comboShiftedKeyList={KeyCombinationHelper.EncodeKeyList(comboKeyList)}, ShiftKeyKind={shiftKind}");
@@ -88,11 +88,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 var keyCombo = new KeyCombination(deckeyList, comboKeyList, shiftKind);
                 var primKey = KeyCombinationHelper.MakePrimaryKey(comboKeyList);
                 keyComboDict[primKey] = keyCombo;
-                bool bPreShift = shiftKind == ComboKind.PreShift;
-                foreach (var key in KeyCombinationHelper.MakePermutatedKeys(comboKeyList, bPreShift)) {
+                bool bPrefix = shiftKind == ComboKind.PrefixSuccessiveShift;
+                foreach (var key in KeyCombinationHelper.MakePermutatedKeys(comboKeyList, bPrefix)) {
                     if (!keyComboDict.ContainsKey(key)) { keyComboDict[key] = keyCombo; }
                 }
-                comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(comboKeyList, bPreShift));
+                comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(comboKeyList, bPrefix));
             }
         }
 

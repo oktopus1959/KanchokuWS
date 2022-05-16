@@ -68,24 +68,24 @@ namespace KanchokuWS.CombinationKeyStroke
         }
 
         /// <summary>
-        /// PrimaryKey以外の順列置換されたキーのリストを返す<br/>ただし、preShift=true なら、リストの先頭は固定する
+        /// PrimaryKey以外の順列置換されたキーのリストを返す<br/>ただし、bPrefix=true なら、リストの先頭は固定する
         /// </summary>
         /// <param name="keyList"></param>
-        /// <param name="bPreShift"></param>
+        /// <param name="bPrefix"></param>
         /// <returns></returns>
-        public static List<string> MakePermutatedKeys(List<int> keyList, bool bPreShift)
+        public static List<string> MakePermutatedKeys(List<int> keyList, bool bPrefix)
         {
-            return makePermutatedKeys(keyList, bPreShift, false);
+            return makePermutatedKeys(keyList, bPrefix, false);
         }
 
         /// <summary>
-        /// PrimaryKey以外の順列置換されたキーのリストを返す<br/>ただし、preShift=true なら、リストの先頭は固定する。またbAll=true なら、PrimaryKeyも含めた全キーを返す
+        /// PrimaryKey以外の順列置換されたキーのリストを返す<br/>ただし、bPrefix=true なら、リストの先頭は固定する。またbAll=true なら、PrimaryKeyも含めた全キーを返す
         /// </summary>
         /// <param name="keyList"></param>
-        /// <param name="bPreShift"></param>
+        /// <param name="bPrefix"></param>
         /// <param name="bAll"></param>
         /// <returns></returns>
-        private static List<string> makePermutatedKeys(List<int> keyList, bool bPreShift, bool bAll)
+        private static List<string> makePermutatedKeys(List<int> keyList, bool bPrefix, bool bAll)
         {
             var result = new List<string>();
             if (keyList._notEmpty()) {
@@ -93,11 +93,11 @@ namespace KanchokuWS.CombinationKeyStroke
                     if (bAll) result.Add(makeString(keyList[0]));
                 } else if (keyList.Count == 2) {
                     if (bAll) result.Add(makeString(keyList[0], keyList[1]));
-                    if (!bPreShift) result.Add(makeString(keyList[1], keyList[0]));
+                    if (!bPrefix) result.Add(makeString(keyList[1], keyList[0]));
                 } else if (keyList.Count == 3) {
                     if (bAll) result.Add(makeString(keyList[0], keyList[1], keyList[2]));
                     result.Add(makeString(keyList[0], keyList[2], keyList[1]));
-                    if (!bPreShift) {
+                    if (!bPrefix) {
                         result.Add(makeString(keyList[1], keyList[0], keyList[2]));
                         result.Add(makeString(keyList[1], keyList[2], keyList[0]));
                         result.Add(makeString(keyList[2], keyList[0], keyList[1]));
@@ -105,7 +105,7 @@ namespace KanchokuWS.CombinationKeyStroke
                     }
                 } else {
                     for (int i = 0; i < keyList.Count; ++i) {
-                        if (!bPreShift || i == 0) {
+                        if (!bPrefix || i == 0) {
                             // 先頭固定なら i==0 のときだけ
                             string ks = makeString(keyList[i]);
                             var subList = keyList.Take(i).ToList();
@@ -129,10 +129,10 @@ namespace KanchokuWS.CombinationKeyStroke
         /// </summary>
         /// <param name="keyList"></param>
         /// <returns></returns>
-        public static List<string> MakeSubKeys(List<int> keyList, bool bPreShift)
+        public static List<string> MakeSubKeys(List<int> keyList, bool bPrefix)
         {
             var result = new List<string>();
-            if (bPreShift) {
+            if (bPrefix) {
                 if (keyList._safeCount() > 2) {
                     makeSubKeys(keyList, result, true);
                     foreach (var k in keyList.Skip(1)) {
@@ -151,7 +151,7 @@ namespace KanchokuWS.CombinationKeyStroke
             return result;
         }
 
-        private static void makeSubKeys(List<int> keyList, List<string> result, bool bPreShift)
+        private static void makeSubKeys(List<int> keyList, List<string> result, bool bPrefix)
         {
             if (keyList != null && keyList.Count > 2) {
                 if (keyList.Count == 3) {
@@ -161,7 +161,7 @@ namespace KanchokuWS.CombinationKeyStroke
                     result.Add(makeString(keyList[1], keyList[2]));
                     result.Add(makeString(keyList[2], keyList[0]));
                     result.Add(makeString(keyList[2], keyList[1]));
-                } else if (bPreShift && keyList.Count == 4) {
+                } else if (bPrefix && keyList.Count == 4) {
                     result.Add(makeString(keyList[0], keyList[1], keyList[2]));
                     result.Add(makeString(keyList[0], keyList[1], keyList[3]));
                     result.Add(makeString(keyList[0], keyList[2], keyList[1]));
@@ -169,12 +169,12 @@ namespace KanchokuWS.CombinationKeyStroke
                     result.Add(makeString(keyList[0], keyList[3], keyList[1]));
                     result.Add(makeString(keyList[0], keyList[3], keyList[2]));
                 } else {
-                    int start = bPreShift ? 1 : 0;
+                    int start = bPrefix ? 1 : 0;
                     for (int i = keyList.Count - 1; i >= start; --i) {
                         var subList = keyList.Take(i).ToList();
                         if (i < keyList.Count - 1) subList.AddRange(keyList.Skip(i + 1));
                         result.AddRange(makePermutatedKeys(subList, false, true));
-                        makeSubKeys(subList, result, bPreShift);
+                        makeSubKeys(subList, result, bPrefix);
                     }
                 }
             }

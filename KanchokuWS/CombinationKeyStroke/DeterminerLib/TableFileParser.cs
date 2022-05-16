@@ -676,15 +676,17 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     } else if (lcStr == "combination" || lcStr == "overlapping") {
                         readWord();
                         switch (currentStr._toLower()) {
+                            case "prefix":
                             case "preshift":
-                                shiftKeyKind = ShiftKeyKind.PreShift;
+                                shiftKeyKind = ShiftKeyKind.PrefixSuccessiveShift;
                                 break;
                             case "oneshot":
-                                shiftKeyKind = ShiftKeyKind.OneshotShift;
+                                shiftKeyKind = ShiftKeyKind.UnorderedOneshotShift;
                                 break;
+                            case "successive":
+                            case "unordered":
                             case "mutual":
-                            case "":
-                                shiftKeyKind = ShiftKeyKind.MutualShift;
+                                shiftKeyKind = ShiftKeyKind.UnorderedSuccessiveShift;
                                 break;
                             default:
                                 argumentError(currentStr);
