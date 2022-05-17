@@ -291,7 +291,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     pn.setNthChild(stkList.Last(), node);
                 }
             }
-            if (bOverwritten && isInCombinationBlock) {
+            if (bOverwritten && isInCombinationBlock && !bIgnoreWarningOverwrite) {
                 logger.Warn($"DUPLICATED: {currentLine}");
                 nodeDuplicateWarning();
             }
@@ -605,8 +605,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         // 重複していて、子ノードが機能ノードなら無視
                     } else {
                         // 重複していて、親ノードも子ノードも機能ノード以外なら警告
-                        logger.Warn($"DUPLICATED: {currentLine}");
-                        nodeDuplicateWarning();
+                        if (!bIgnoreWarningOverwrite) {
+                            logger.Warn($"DUPLICATED: {currentLine}");
+                            nodeDuplicateWarning();
+                        }
                     }
                 }
             }
@@ -631,6 +633,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         bool bIgnoreWarningAll = false;
         bool bIgnoreWarningBraceLevel = false;
+        bool bIgnoreWarningOverwrite = false;
         int braceLevel = 0;
 
         // トークンを読む
@@ -721,11 +724,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     } else if (lcStr == "ignorewarning") {
                         readWord();
                         var word = currentStr._toLower();
-                        if (word._isEmpty()) {
+                        if (word._isEmpty() || word == "all") {
                             bIgnoreWarningAll = true;
                             bIgnoreWarningBraceLevel = true;
+                            bIgnoreWarningOverwrite = true;
                         } else if (word == "bracelevel") {
                             bIgnoreWarningBraceLevel = true;
+                        } else if (word == "overwrite") {
+                            bIgnoreWarningOverwrite = true;
                         }
                     } else {
                         logger.DebugH(() => $"#{currentStr}");
@@ -1248,7 +1254,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // ノードの重複が発生した場合
         void nodeDuplicateWarning() {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleWarning($"{blockOrFile()} {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目でノードの重複が発生しました：\r\n> {currentLine._safeSubstring(0, 50)} ...");
+            handleWarning($"{blockOrFile()} {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目でノードの重複が発生しました。意図したものであれば無視してください (#ignoreWarning overwrite を記述すると無視されます)：\r\n> {currentLine._safeSubstring(0, 50)} ...");
         }
 
         // カラム0で予期しないLBRACEが発生
