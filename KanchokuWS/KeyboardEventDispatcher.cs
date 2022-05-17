@@ -47,6 +47,9 @@ namespace KanchokuWS
         /// <summary>無条件にデコーダを呼び出す</summary>
         public delegate bool DelegateInvokeDecoderUnconditionally(int deckey, uint mod);
 
+        /// <summary>ストロークヘルプのシフト面の設定</summary>
+        public delegate void DelegateSetStrokeHelpShiftPlane(int shiftPlane);
+
         ///// <summary>打鍵ヘルプのローテーション<br/>ローテーションを行わない場合は false を返す</summary>
         //public delegate bool DelegateRotateStrokeHelp();
 
@@ -102,6 +105,9 @@ namespace KanchokuWS
 
         /// <summary>無条件にデコーダを呼び出す</summary>
         public DelegateInvokeDecoderUnconditionally InvokeDecoderUnconditionally { get; set; }
+
+        /// <summary>打鍵ヘルプのシフト面を設定</summary>
+        public DelegateSetStrokeHelpShiftPlane SetStrokeHelpShiftPlane { get; set; }
 
         ///// <summary>打鍵ヘルプのローテーション<br/>ローテーションを行わない場合は false を返す</summary>
         //public DelegateRotateStrokeHelp RotateStrokeHelp { get; set; }
@@ -433,12 +439,12 @@ namespace KanchokuWS
                 if (rshiftKeyInfo.Pressed) rshiftKeyInfo.SetShifted();
             }
 
-            public VirtualKeys.ShiftPlane getShiftPlane(bool bDecoderOn, bool bSandSEnabled)
+            public int getShiftPlane(bool bDecoderOn, bool bSandSEnabled)
             {
                 if (spaceKeyInfo.ShiftedOrOneshot) {
                     if (Settings.SandSSuperiorToShift || !rshiftKeyInfo.Shifted) {
                         var plane = VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, bDecoderOn);
-                        if (plane == VirtualKeys.ShiftPlane.NONE && bSandSEnabled) plane = VirtualKeys.ShiftPlane.NormalPlane;
+                        if (plane == VirtualKeys.ShiftPlane_NONE && bSandSEnabled) plane = VirtualKeys.ShiftPlane_SHIFT;
                         return plane;
                     }
                 }
@@ -447,7 +453,7 @@ namespace KanchokuWS
                 if (nferKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_NFER, bDecoderOn);
                 if (xferKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_XFER, bDecoderOn);
                 if (rshiftKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_RSHIFT, bDecoderOn);
-                return VirtualKeys.ShiftPlane.NONE;
+                return VirtualKeys.ShiftPlane_NONE;
             }
 
             public ExModiferKeyInfo.ExModKeyState getSandSKeyState()
@@ -508,8 +514,8 @@ namespace KanchokuWS
             }
             if (isLshiftKeyPressed()) {
                 // 左シフトキーが押されている場合は、SandSが通常シフト面か否かをチェック
-                if (Settings.LoggingDecKeyInfo) logger.DebugH($"plane_Lshift={VirtualKeys.ShiftPlane.NormalPlane}, plane_sands={plane_sands}");
-                return plane_sands == VirtualKeys.ShiftPlane.NormalPlane;
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"plane_Lshift={VirtualKeys.ShiftPlane_SHIFT}, plane_sands={plane_sands}");
+                return plane_sands == VirtualKeys.ShiftPlane_SHIFT;
             }
             return false;
         }
@@ -535,11 +541,11 @@ namespace KanchokuWS
         private int getShiftPlaneDeckeyForSandS(bool bDecoderOn)
         {
             switch (VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, bDecoderOn)) {
-                case VirtualKeys.ShiftPlane.NormalPlane:
+                case VirtualKeys.ShiftPlane_SHIFT:
                     return DecoderKeys.POST_NORMAL_SHIFT_DECKEY;
-                case VirtualKeys.ShiftPlane.PlaneA:
+                case VirtualKeys.ShiftPlane_A:
                     return DecoderKeys.POST_PLANE_A_SHIFT_DECKEY;
-                case VirtualKeys.ShiftPlane.PlaneB:
+                case VirtualKeys.ShiftPlane_B:
                     return DecoderKeys.POST_PLANE_B_SHIFT_DECKEY;
                 default:
                     return 0;
@@ -595,18 +601,26 @@ namespace KanchokuWS
                     if ((uint)vkey == VirtualKeys.SPACE) {
                         // Space
                         if (isSandSEnabled()) {
+                            void setShifted()
+                            {
+                                if (!keyInfo.Shifted) {
+                                    SetStrokeHelpShiftPlane?.Invoke(VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, true));   // SanS用のストロークヘルプ指定
+                                }
+                                keyInfo.SetShifted();
+                            }
+
                             // SandSと同じシフト面を使う左Shiftまたは拡張修飾キーがシフト状態か(何か(拡張)シフトキーが Pressed だったら、Spaceキーが押されたことで Shifted に移行しているはず)
                             bool bShiftOnSamePlane = isSameShiftKeyAsSandSShifted(bDecoderOn);
                             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS Enabled: ShiftOnSamePlane={bShiftOnSamePlane}, SandSEnablePostShift={Settings.SandSEnablePostShift}");
                             if (bShiftOnSamePlane) {
                                 // SandSと同じシフト面を使う拡張修飾キーがシフト状態なら、シフト状態に遷移する
-                                keyInfo.SetShifted();
+                                setShifted();
                                 return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                             }
                             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS: IgnoreSpaceUpOnSandS={Settings.OneshotSandSEnabled}, ctrl={bCtrl}");
                             if (Settings.OneshotSandSEnabled && bCtrl) {
                                 // SandS時に1回目のSpace単打を無視する設定の場合は、Ctrl+Space が打鍵されたらそれをシフト状態に遷移させる
-                                keyInfo.SetShifted();
+                                setShifted();
                                 return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                             }
                             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS: keyInfo.Shifted={keyInfo.Shifted}");
@@ -633,7 +647,7 @@ namespace KanchokuWS
                                     if (Settings.SandSEnableSpaceOrRepeatMillisec <= 0 ||
                                         DateTime.Now > prevSpaceUpDt.AddMilliseconds(Settings.SandSEnableSpaceOrRepeatMillisec + KEY_REPEAT_INTERVAL)) {
                                         // キーリピートに移行しない閾値時間が設定されている or 前回のSpaceキー離放時から閾値時間を超過していた
-                                        keyInfo.SetShifted();
+                                        setShifted();
                                         // 後置シフトキーを送出する
                                         if (Settings.SandSEnablePostShift && bDecoderOn) invokeHandlerForPostSandSKey();
                                         return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
@@ -764,7 +778,7 @@ namespace KanchokuWS
                     // 拡張シフト面のコードを得る
                     var shiftPlane = keyInfoManager.getShiftPlane(bDecoderOn, isSandSEnabled());
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-A: shiftPlane={shiftPlane}");
-                    if (shiftPlane != VirtualKeys.ShiftPlane.NONE) kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey) + (int)shiftPlane * DecoderKeys.PLANE_DECKEY_NUM;
+                    if (shiftPlane != VirtualKeys.ShiftPlane_NONE) kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey) + (int)shiftPlane * DecoderKeys.PLANE_DECKEY_NUM;
                 }
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-B: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), modEx={modEx:x}, ctrl={ctrl}, shift={shift}");
             }
@@ -888,6 +902,7 @@ namespace KanchokuWS
                 if ((uint)vkey == VirtualKeys.SPACE) {
                     // Space離放
                     if (isSandSEnabled()) {
+                        SetStrokeHelpShiftPlane?.Invoke(0);
                         var dtLimit = prevSpaceUpDt.AddMilliseconds(Settings.SandSEnableSpaceOrRepeatMillisec._geZeroOr(0));
                         var dtNow = DateTime.Now;
                         if (bPrevPressed || bPrevPressedOneshot) prevSpaceUpDt = dtNow;

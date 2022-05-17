@@ -58,6 +58,16 @@ namespace Utils
         }
 
         /// <summary>
+        /// 0 ～ num-1 の間の Range を返す
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        public static IEnumerable<int> MakeRange(int num)
+        {
+            return Enumerable.Range(0, num);
+        }
+
+        /// <summary>
         /// n個の空文字列からなる配列を作成して返す
         /// </summary>
         /// <param name="n"></param>

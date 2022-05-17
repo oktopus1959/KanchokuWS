@@ -11,6 +11,16 @@
 //#define OUT_TABLE_SIZE 200
 //#define VKB_TABLE_SIZE 50
 
+#if 1
+#define IS_LOG_DEBUGH_ENABLED true
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#endif
+
 namespace VkbTableMaker {
     DEFINE_NAMESPACE_LOGGER(VkbTableMaker);
 
@@ -267,34 +277,28 @@ namespace VkbTableMaker {
         makeKeyCharsStrokePositionTable(StrokeTableNode::RootStrokeNode2.get(), faces, shiftPlane * PLANE_DECKEY_NUM, NORMAL_DECKEY_NUM);
     }
 
-    // アンシフトキー文字を集めたストローク表を作成する
+    // 指定されたシフト面の単打ストローク表を作成する
+    void MakeShiftPlaneKeyCharsStrokePositionTable(wchar_t* faces, size_t shiftPlane) {
+        LOG_INFO(_T("CALLED: shiftPlane=%d"), shiftPlane);
+        makeKeyCharsStrokePositionTable1(faces, shiftPlane);
+    }
+
+    // 副テーブルの指定されたシフト面の単打ストローク表を作成する
+    void MakeShiftPlaneKeyCharsStrokePositionTable2(wchar_t* faces, size_t shiftPlane) {
+        LOG_INFO(_T("CALLED: shiftPlane=%d"), shiftPlane);
+        makeKeyCharsStrokePositionTable2(faces, shiftPlane);
+    }
+
+    // 通常面の単打ストローク表を作成する
     void MakeKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
         makeKeyCharsStrokePositionTable1(faces, 0);
     }
 
-    // 第2テーブルからアンシフトキー文字を集めたストローク表を作成する
+    // 第2テーブルの通常面の単打ストローク表を作成する
     void MakeKeyCharsStrokePositionTable2(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
         makeKeyCharsStrokePositionTable2(faces, 0);
-    }
-
-    // シフトキー文字を集めたストローク表を作成する
-    void MakeShiftKeyCharsStrokePositionTable(wchar_t* faces) {
-        LOG_INFO(_T("CALLED"));
-        makeKeyCharsStrokePositionTable1(faces, 1);
-    }
-
-    // シフトA面キー文字を集めたストローク表を作成する
-    void MakeShiftAKeyCharsStrokePositionTable(wchar_t* faces) {
-        LOG_INFO(_T("CALLED"));
-        makeKeyCharsStrokePositionTable1(faces, 2);
-    }
-
-    // シフトB面キー文字を集めたストローク表を作成する
-    void MakeShiftBKeyCharsStrokePositionTable(wchar_t* faces) {
-        LOG_INFO(_T("CALLED"));
-        makeKeyCharsStrokePositionTable1(faces, 3);
     }
 
     // 同時打鍵面通常キー文字を集めたストローク表を作成する

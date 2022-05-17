@@ -412,12 +412,13 @@ namespace KanchokuWS
                 var modKeyDef = modifierKeys._getNth(modkeyIdx);
                 if (modKeyDef == null) return;
 
-                uint modKey = modKeyDef.ModKey;
-                var plane = VirtualKeys.GetShiftPlane(idx);
-                if (bOn) {
-                    VirtualKeys.ShiftPlaneForShiftModKey[modKey] = plane;
-                } else {
-                    VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = plane;
+                if (idx < VirtualKeys.ShiftPlane_NUM) {
+                    uint modKey = modKeyDef.ModKey;
+                    if (bOn) {
+                        VirtualKeys.ShiftPlaneForShiftModKey[modKey] = idx;
+                    } else {
+                        VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = idx;
+                    }
                 }
 
                 renewShiftPlaneDgv();

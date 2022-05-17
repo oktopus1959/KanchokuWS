@@ -169,56 +169,40 @@ namespace KanchokuWS
             return (name._safeLength() == 1 && name[0] >= 'A' && name[0] <= 'Z') ? (uint)Keys.A + (uint)(name[0] - 'A') : 0;
         }
 
-        public enum ShiftPlane
-        {
-            NONE = 0,
-            NormalPlane,
-            PlaneA,
-            PlaneB,
-            PlaneC,
-            PlaneD,
-            PlaneE,
-            PlaneF,
-        }
+        public const int ShiftPlane_NONE = 0;
+        public const int ShiftPlane_SHIFT = 1;
+        public const int ShiftPlane_A = 2;
+        public const int ShiftPlane_B = 3;
+        public const int ShiftPlane_C = 4;
+        public const int ShiftPlane_D = 5;
+        public const int ShiftPlane_E = 6;
+        public const int ShiftPlane_F = 7;
+        public const int ShiftPlane_NUM = 8;
 
-        public static ShiftPlane GetShiftPlane(int idx)
-        {
-            switch (idx) {
-                case 1: return ShiftPlane.NormalPlane;
-                case 2: return ShiftPlane.PlaneA;
-                case 3: return ShiftPlane.PlaneB;
-                case 4: return ShiftPlane.PlaneC;
-                case 5: return ShiftPlane.PlaneD;
-                case 6: return ShiftPlane.PlaneE;
-                case 7: return ShiftPlane.PlaneF;
-                default: return ShiftPlane.NONE;
-            }
-        }
-
-        public static string GetShiftPlaneName(ShiftPlane plane)
+        public static string GetShiftPlaneName(int plane)
         {
             switch (plane) {
-                case ShiftPlane.NormalPlane: return "Shift";
-                case ShiftPlane.PlaneA: return "ShiftA";
-                case ShiftPlane.PlaneB: return "ShiftB";
-                case ShiftPlane.PlaneC: return "ShiftC";
-                case ShiftPlane.PlaneD: return "ShiftD";
-                case ShiftPlane.PlaneE: return "ShiftE";
-                case ShiftPlane.PlaneF: return "ShiftF";
+                case 1: return "Shift";
+                case 2: return "ShiftA";
+                case 3: return "ShiftB";
+                case 4: return "ShiftC";
+                case 5: return "ShiftD";
+                case 6: return "ShiftE";
+                case 7: return "ShiftF";
                 default: return "none";
             }
         }
 
-        public static string GetShiftPlanePrefix(ShiftPlane plane)
+        public static string GetShiftPlanePrefix(int plane)
         {
             switch (plane) {
-                case ShiftPlane.NormalPlane: return "S";
-                case ShiftPlane.PlaneA: return "A";
-                case ShiftPlane.PlaneB: return "B";
-                case ShiftPlane.PlaneC: return "C";
-                case ShiftPlane.PlaneD: return "D";
-                case ShiftPlane.PlaneE: return "E";
-                case ShiftPlane.PlaneF: return "F";
+                case 1: return "S";
+                case 2: return "A";
+                case 3: return "B";
+                case 4: return "C";
+                case 5: return "D";
+                case 6: return "E";
+                case 7: return "F";
                 default: return "";
             }
         }
@@ -253,21 +237,21 @@ namespace KanchokuWS
         }
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
-        public static Dictionary<uint, ShiftPlane> ShiftPlaneForShiftModKey = new Dictionary<uint, ShiftPlane>();
+        public static Dictionary<uint, int> ShiftPlaneForShiftModKey = new Dictionary<uint, int>();
 
         /// <summary> DecoderがOffの時のシフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
-        public static Dictionary<uint, ShiftPlane> ShiftPlaneForShiftModKeyWhenDecoderOff = new Dictionary<uint, ShiftPlane>();
+        public static Dictionary<uint, int> ShiftPlaneForShiftModKeyWhenDecoderOff = new Dictionary<uint, int>();
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てられたシフト面を得る</summary>
-        public static ShiftPlane GetShiftPlaneFromShiftModFlag(uint modFlag, bool bDecoderOn)
+        public static int GetShiftPlaneFromShiftModFlag(uint modFlag, bool bDecoderOn)
         {
-            return bDecoderOn ? ShiftPlaneForShiftModKey._safeGet(modFlag, ShiftPlane.NONE) : ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modFlag, ShiftPlane.NONE);
+            return bDecoderOn ? ShiftPlaneForShiftModKey._safeGet(modFlag, 0) : ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modFlag, 0);
         }
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) にシフト面が割り当てられているか</summary>
         public static bool IsShiftPlaneAssignedForShiftModFlag(uint modFlag, bool bDecoderOn)
         {
-            return GetShiftPlaneFromShiftModFlag(modFlag, bDecoderOn) != ShiftPlane.NONE;
+            return GetShiftPlaneFromShiftModFlag(modFlag, bDecoderOn) != ShiftPlane_NONE;
         }
 
         private static uint getVKeyFromDecKey(int deckey)
@@ -816,8 +800,8 @@ namespace KanchokuWS
                                     modKey = GetModifierKeyByName(modName);
                                     if (isPlaneMappedModifier(modKey) && !ShiftPlaneForShiftModKey.ContainsKey(modKey)) {
                                         // mod に対する ShiftPlane が設定されていない場合は、拡張シフトB面を割り当てる
-                                        ShiftPlaneForShiftModKey[modKey] = ShiftPlane.PlaneB;
-                                        ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = ShiftPlane.PlaneB;
+                                        ShiftPlaneForShiftModKey[modKey] = ShiftPlane_B;
+                                        ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = ShiftPlane_B;
                                     }
                                 }
 
@@ -914,27 +898,27 @@ namespace KanchokuWS
             if (items._length() == 2) {
                 uint modKey = GetModifierKeyByName(items[0]);
                 var planes = items[1]._split('|');
-                ShiftPlane shiftPlane = ShiftPlane.NONE;
+                int shiftPlane = ShiftPlane_NONE;
                 switch (planes._getNth(0)) {
-                    case "shift": shiftPlane = ShiftPlane.NormalPlane; break;
-                    case "shifta": shiftPlane = ShiftPlane.PlaneA; break;
-                    case "shiftb": shiftPlane = ShiftPlane.PlaneB; break;
-                    case "shiftc": shiftPlane = ShiftPlane.PlaneC; break;
-                    case "shiftd": shiftPlane = ShiftPlane.PlaneD; break;
-                    case "shifte": shiftPlane = ShiftPlane.PlaneE; break;
-                    case "shiftf": shiftPlane = ShiftPlane.PlaneF; break;
+                    case "shift": shiftPlane = ShiftPlane_SHIFT; break;
+                    case "shifta": shiftPlane = ShiftPlane_A; break;
+                    case "shiftb": shiftPlane = ShiftPlane_B; break;
+                    case "shiftc": shiftPlane = ShiftPlane_C; break;
+                    case "shiftd": shiftPlane = ShiftPlane_D; break;
+                    case "shifte": shiftPlane = ShiftPlane_E; break;
+                    case "shiftf": shiftPlane = ShiftPlane_F; break;
                 }
                 var shiftPlaneWhenOff = shiftPlane;
                 if (planes.Length > 1) {
                     switch (planes._getNth(1)) {
-                        case "shift": shiftPlaneWhenOff = ShiftPlane.NormalPlane; break;
-                        case "shifta": shiftPlaneWhenOff = ShiftPlane.PlaneA; break;
-                        case "shiftb": shiftPlaneWhenOff = ShiftPlane.PlaneB; break;
-                        case "shiftc": shiftPlaneWhenOff = ShiftPlane.PlaneC; break;
-                        case "shiftd": shiftPlaneWhenOff = ShiftPlane.PlaneD; break;
-                        case "shifte": shiftPlaneWhenOff = ShiftPlane.PlaneE; break;
-                        case "shiftf": shiftPlaneWhenOff = ShiftPlane.PlaneF; break;
-                        default: shiftPlaneWhenOff = ShiftPlane.NONE; break;
+                        case "shift": shiftPlaneWhenOff = ShiftPlane_SHIFT; break;
+                        case "shifta": shiftPlaneWhenOff = ShiftPlane_A; break;
+                        case "shiftb": shiftPlaneWhenOff = ShiftPlane_B; break;
+                        case "shiftc": shiftPlaneWhenOff = ShiftPlane_C; break;
+                        case "shiftd": shiftPlaneWhenOff = ShiftPlane_D; break;
+                        case "shifte": shiftPlaneWhenOff = ShiftPlane_E; break;
+                        case "shiftf": shiftPlaneWhenOff = ShiftPlane_F; break;
+                        default: shiftPlaneWhenOff = ShiftPlane_NONE; break;
                     }
                 }
                 logger.DebugH(() => $"mod={modKey:x}H({modKey}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");

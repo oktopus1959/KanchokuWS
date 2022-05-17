@@ -588,6 +588,7 @@ namespace KanchokuWS
             keDispatcher.FuncDispatcher = FuncDispatcher;
             keDispatcher.SendInputVkeyWithMod = SendInputVkeyWithMod;
             keDispatcher.InvokeDecoderUnconditionally = InvokeDecoderUnconditionally;
+            keDispatcher.SetStrokeHelpShiftPlane = SetStrokeHelpShiftPlane;
             //keDispatcher.RotateReverseStrokeHelp = rotateReverseStrokeHelp;
             //keDispatcher.RotateDateString = rotateDateString;
             //keDispatcher.RotateReverseDateString = rotateReverseDateString;
@@ -607,6 +608,17 @@ namespace KanchokuWS
             else
                 handleKeyDecoderDirectly(deckey, mod);
             return true;
+        }
+
+        /// <summary>ストロークヘルプを表示するシフト面を設定する</summary>
+        /// <param name="shiftPlane"></param>
+        private void SetStrokeHelpShiftPlane(int shiftPlane)
+        {
+            logger.InfoH(() => $"CALLED: shiftPlane={shiftPlane}");
+            if (shiftPlane >= 0 && shiftPlane < VirtualKeys.ShiftPlane_NUM) {
+                frmVkb.StrokeHelpShiftPlane = shiftPlane;
+                frmVkb.DrawInitailVkb();
+            }
         }
 
         private int prevFuncDeckey = 0;
@@ -898,6 +910,7 @@ namespace KanchokuWS
                 Settings.VirtualKeyboardShowStrokeCountTemp = 0;
                 bHiraganaStrokeGuideMode = false;
                 bRomanStrokeGuideMode = false;
+                frmVkb.StrokeHelpShiftPlane = 0;
                 frmVkb.DrawInitailVkb();
                 //Text = "漢直窓S - ON";
                 notifyIcon1.Icon = Properties.Resources.kanmini1;

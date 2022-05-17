@@ -377,13 +377,21 @@ public:
                 VkbTableMaker::MakeKeyCharsStrokePositionTable2(outParams->faceStrings);
             } else if (cmd == _T("makeShiftStrokePosition")) {
                 // シフトキー文字配列をストロークの位置に従って並べる
-                VkbTableMaker::MakeShiftKeyCharsStrokePositionTable(outParams->faceStrings);
+                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable(outParams->faceStrings, 1);
             } else if (cmd == _T("makeShiftAStrokePosition")) {
-                // シフトキー文字配列をストロークの位置に従って並べる
-                VkbTableMaker::MakeShiftAKeyCharsStrokePositionTable(outParams->faceStrings);
+                // シフトA面のキー文字配列をストロークの位置に従って並べる
+                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable(outParams->faceStrings, 2);
             } else if (cmd == _T("makeShiftBStrokePosition")) {
-                // シフトキー文字配列をストロークの位置に従って並べる
-                VkbTableMaker::MakeShiftBKeyCharsStrokePositionTable(outParams->faceStrings);
+                // シフトB面のキー文字配列をストロークの位置に従って並べる
+                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable(outParams->faceStrings, 3);
+            } else if (cmd == _T("makeShiftPlaneStrokePosition")) {
+                // 指定のシフト面のキー文字配列をストロークの位置に従って並べる
+                size_t shiftPlane = items.size() >= 2 ? utils::strToInt(items[1]) : 0;
+                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable(outParams->faceStrings, shiftPlane);
+            } else if (cmd == _T("makeShiftPlaneStrokePosition2")) {
+                // 副テーブルの指定のシフト面のキー文字配列をストロークの位置に従って並べる
+                size_t shiftPlane = items.size() >= 2 ? utils::strToInt(items[1]) : 0;
+                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable2(outParams->faceStrings, shiftPlane);
             } else if (cmd == _T("makeComboStrokePosition")) {
                 // シフトキー文字配列をストロークの位置に従って並べる
                 VkbTableMaker::MakeCombinationKeyCharsStrokePositionTable(outParams->faceStrings);
