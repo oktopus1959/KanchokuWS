@@ -413,6 +413,12 @@ public:
             } else if (cmd == _T("makeKatakanaTable")) {
                 // カタカナ50音図の作成
                 makeKatakanaTable(outParams);
+            } else if (cmd == _T("makeNextStrokeTable")) {
+                // 指定キーに対する次打鍵テーブルの作成
+                if (items.size() > 1 && !items[1].empty()) {
+                    OutParams = outParams;
+                    makeNextStrokeTable(utils::strToInt(items[1], -1));
+                }
             } else if (cmd == _T("getCharsOrderedByDeckey")) {
                 // Deckey順に並んだ通常文字列とシフト文字列を返す
                 getCharsOrderedByDeckey(outParams);
@@ -707,6 +713,26 @@ public:
                             OutParams->nextExpectedKeyType = (int)ExpectedKeyType::BushuCompHelp;
                         }
                     }
+                }
+            }
+        }
+        LOG_INFO(_T("LEAVE: layout=%d"), OutParams->layout);
+    }
+
+    // 指定キーに対する次打鍵テーブルの作成
+    void makeNextStrokeTable(int decKey) {
+        LOG_INFO(_T("ENTER: decKey=%d"), decKey);
+        OutParams->layout = (int)VkbLayout::Normal;
+        clearKeyFaces();
+        if (ROOT_STROKE_NODE && decKey >= 0) {
+            StrokeTableNode* pn = dynamic_cast<StrokeTableNode*>(ROOT_STROKE_NODE->getNth(decKey));
+            if (pn) {
+                mchar_t* faces = STATE_COMMON->GetFaces();
+                size_t numFaces = STATE_COMMON->FacesSize();
+                pn->CopyChildrenFace(faces, numFaces);
+                for (size_t i = 0; i < numFaces; ++i) {
+                    //OutParams->faceStrings[i] = STATE_COMMON->faces[i];
+                    set_facestr(faces[i], OutParams->faceStrings + i * 2);
                 }
             }
         }

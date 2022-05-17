@@ -11,7 +11,7 @@
 //#define OUT_TABLE_SIZE 200
 //#define VKB_TABLE_SIZE 50
 
-#if 1
+#if 0
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)

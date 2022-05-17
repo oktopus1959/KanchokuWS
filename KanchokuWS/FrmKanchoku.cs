@@ -589,6 +589,7 @@ namespace KanchokuWS
             keDispatcher.SendInputVkeyWithMod = SendInputVkeyWithMod;
             keDispatcher.InvokeDecoderUnconditionally = InvokeDecoderUnconditionally;
             keDispatcher.SetStrokeHelpShiftPlane = SetStrokeHelpShiftPlane;
+            keDispatcher.SetNextStrokeHelpDecKey = SetNextStrokeHelpDecKey;
             //keDispatcher.RotateReverseStrokeHelp = rotateReverseStrokeHelp;
             //keDispatcher.RotateDateString = rotateDateString;
             //keDispatcher.RotateReverseDateString = rotateReverseDateString;
@@ -617,6 +618,19 @@ namespace KanchokuWS
             logger.InfoH(() => $"CALLED: shiftPlane={shiftPlane}");
             if (shiftPlane >= 0 && shiftPlane < VirtualKeys.ShiftPlane_NUM) {
                 frmVkb.StrokeHelpShiftPlane = shiftPlane;
+                frmVkb.DrawInitailVkb();
+            }
+        }
+
+        /// <summary>
+        /// 指定キーに対する次打鍵テーブルの作成
+        /// </summary>
+        /// <param name="decKey"></param>
+        private void SetNextStrokeHelpDecKey(int decKey)
+        {
+            logger.InfoH(() => $"CALLED: decKey={decKey}");
+            if (decKey < DecoderKeys.COMBO_DECKEY_END) {
+                frmVkb.DecKeyForNextTableStrokeHelp = decKey;
                 frmVkb.DrawInitailVkb();
             }
         }
@@ -911,6 +925,7 @@ namespace KanchokuWS
                 bHiraganaStrokeGuideMode = false;
                 bRomanStrokeGuideMode = false;
                 frmVkb.StrokeHelpShiftPlane = 0;
+                frmVkb.DecKeyForNextTableStrokeHelp = -1;
                 frmVkb.DrawInitailVkb();
                 //Text = "漢直窓S - ON";
                 notifyIcon1.Icon = Properties.Resources.kanmini1;

@@ -210,17 +210,11 @@ namespace {
             _LOG_DEBUGH(_T("ENTER"));
             // 打鍵ヘルプをセットする
             STATE_COMMON->SetNormalVkbLayout();
-            mchar_t* faces = STATE_COMMON->GetFaces();
-            size_t facesSize = STATE_COMMON->FacesSize();
-            size_t numChildren = NUM_CHILDREN;
-            for (size_t n = 0; n < facesSize; ++n) {
-                mchar_t ch = 0;
-                if (n < numChildren) {
-                    const Node* child = NEXT_NODE(n);
-                    const auto& s = child ? child->getString() : MString();
-                    ch = s.empty() ? 0 : is_ascii_pair(s) ? make_mchar((wchar_t)s[0], (wchar_t)s[1]) : s[0];  // "12" のような半角文字のペアも扱う
-                }
-                faces[n] = ch;
+            auto tblNode = myNode();
+            if (tblNode) {
+                tblNode->CopyChildrenFace(STATE_COMMON->GetFaces(), STATE_COMMON->FacesSize());
+            } else {
+                STATE_COMMON->ClearFaces();
             }
             //STATE_COMMON->SetWaiting2ndStroke();
             _LOG_DEBUGH(_T("LEAVE"));
@@ -341,6 +335,16 @@ State* StrokeTableNode::CreateState() {
     return depth() == 0 ? new RootStrokeTableState(this) : new StrokeTableState(this);
 }
 
+// 子ノード列の文字をコピーする
+void StrokeTableNode::CopyChildrenFace(mchar_t* faces, size_t facesSize) {
+    _LOG_DEBUGH(_T("ENTER"));
+    for (size_t n = 0; n < facesSize; ++n) {
+        const Node* child = getNth(n);
+        const auto& s = child ? child->getString() : MString();
+        faces[n] = s.empty() ? 0 : is_ascii_pair(s) ? make_mchar((wchar_t)s[0], (wchar_t)s[1]) : s[0];  // "12" のような半角文字のペアも扱う
+    }
+    _LOG_DEBUGH(_T("LEAVE"));
+}
 // -------------------------------------------------------------------
 // ストローク木の入れ替え
 int StrokeTableNode::ExchangeStrokeTable() {

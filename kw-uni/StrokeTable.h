@@ -31,6 +31,9 @@ public:
     // 当ノードを処理する State インスタンスを作成する
     State* CreateState();
 
+    // 子ノードの文字をコピーする
+    void CopyChildrenFace(mchar_t* faces, size_t facesSize);
+
     // 表示用文字列を返す
     MString getString() const { return to_mstr(nodeMarker); }
 

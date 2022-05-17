@@ -15,7 +15,7 @@ namespace KanchokuWS
 {
     public partial class FrmVirtualKeyboard : Form
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         private FrmKanchoku frmMain;
 
@@ -640,6 +640,8 @@ namespace KanchokuWS
 
         public int StrokeHelpShiftPlane { get; set; } = 0;
 
+        public int DecKeyForNextTableStrokeHelp { get; set; } = -1;
+
         public void MakeStrokeTables(string defFile)
         {
             var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(defFile);
@@ -809,13 +811,18 @@ namespace KanchokuWS
                 if ((isPrimary && StrokeTables._isEmpty()) || (!isPrimary && StrokeTables2 == null)) {
                     tblDef = null;
                 } else {
+                    string[] nextTable = DecKeyForNextTableStrokeHelp >= 0 ? makeCharOrKeys($"makeNextStrokeTable\t{DecKeyForNextTableStrokeHelp}", null) : null;
                     string[] shiftPlaneTbl = StrokeHelpShiftPlane > 0 ? shiftPlaneStrokeTables._getNth(StrokeHelpShiftPlane) : null;
-                    logger.DebugH(() => $"shiftPlaneStrokeTables[{StrokeHelpShiftPlane}]={shiftPlaneTbl._join(":")}");
-                    tblDef = isPrimary ?
-                        (shiftPlaneTbl != null
-                            ? new StrokeTableDef() { CharOrKeys = shiftPlaneTbl, ShiftPlane = true }
-                            : StrokeTables[selectedTable._lowLimit(0) % StrokeTables.Count])
-                        : StrokeTables2;
+                    logger.DebugH(() => $"nextTable={nextTable._join(":")}\n, shiftPlaneStrokeTables[{StrokeHelpShiftPlane}]={shiftPlaneTbl._join(":")}");
+                    if (nextTable != null) {
+                        tblDef = new StrokeTableDef() { CharOrKeys = nextTable };
+                    }
+                    else if (isPrimary) {
+                        tblDef = shiftPlaneTbl != null ? new StrokeTableDef() { CharOrKeys = shiftPlaneTbl, ShiftPlane = true }
+                               : StrokeTables[selectedTable._lowLimit(0) % StrokeTables.Count];
+                    } else {
+                        tblDef = StrokeTables2;
+                    }
                 }
                 if (tblDef == null) {
                     drawNormalVkb(initialVkbChars, true);
@@ -849,7 +856,7 @@ namespace KanchokuWS
 
         private void drawNormalVkb(string[] strokeTable, bool bNormalPlane, int lastDeckey = -1)
         {
-            if (Settings.LoggingVirtualKeyboardInfo || logger.IsInfoHPromoted) logger.DebugH($"\nlastDeckey={lastDeckey}");
+            if (Settings.LoggingVirtualKeyboardInfo || logger.IsInfoHPromoted) logger.DebugH($"\nstrokeTable={strokeTable._join(":")}\nlastDeckey={lastDeckey}");
 
             resetVkbControls("", VkbNormalWidth, VkbPictureBoxHeight_Normal, VkbCenterBoxHeight_Normal);
             using (PictureBoxDrawer drawer = new PictureBoxDrawer(pictureBox_Main)) {

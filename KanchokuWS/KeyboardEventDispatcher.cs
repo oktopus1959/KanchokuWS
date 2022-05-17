@@ -12,7 +12,7 @@ namespace KanchokuWS
 {
     public class KeyboardEventDispatcher : IDisposable
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         /// <summary>Ctrlキー変換の有効なウィンドウクラスか</summary>
         public delegate bool DelegateCtrlConversionEffectiveChecker();
@@ -49,6 +49,9 @@ namespace KanchokuWS
 
         /// <summary>ストロークヘルプのシフト面の設定</summary>
         public delegate void DelegateSetStrokeHelpShiftPlane(int shiftPlane);
+
+        /// <summary>指定キーに対する次打鍵テーブルの作成</summary>
+        public delegate void DelegateSetNextStrokeHelpDecKey(int decKey);
 
         ///// <summary>打鍵ヘルプのローテーション<br/>ローテーションを行わない場合は false を返す</summary>
         //public delegate bool DelegateRotateStrokeHelp();
@@ -108,6 +111,9 @@ namespace KanchokuWS
 
         /// <summary>打鍵ヘルプのシフト面を設定</summary>
         public DelegateSetStrokeHelpShiftPlane SetStrokeHelpShiftPlane { get; set; }
+
+        /// <summary>指定キーに対する次打鍵テーブルの作成</summary>
+        public DelegateSetNextStrokeHelpDecKey SetNextStrokeHelpDecKey { get; set; }
 
         ///// <summary>打鍵ヘルプのローテーション<br/>ローテーションを行わない場合は false を返す</summary>
         //public DelegateRotateStrokeHelp RotateStrokeHelp { get; set; }
@@ -569,6 +575,44 @@ namespace KanchokuWS
 
         private const int KEY_REPEAT_INTERVAL = 500;
 
+        /// <summary> 同時打鍵キーのリピート中か(仮想鍵盤に表示する打鍵ガイドを切り替えるのに使う) </summary>
+        private bool bComboKeyRepeat = false;
+        private int prevComboVkey = -1;
+
+        /// <summary>
+        /// 同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
+        /// </summary>
+        /// <param name="vkey">同時打鍵キーの仮想キーコード</param>
+        /// <param name="decKey">同時打鍵キーのデコーダ用コード</param>
+        void handleComboKeyRepeat(int vkey, int decKey)
+        {
+            if (prevComboVkey == vkey) {
+                // KeyRepeat
+                if (!bComboKeyRepeat) {
+                    logger.DebugH(() => $"SetNextStrokeHelpDecKey({decKey})");
+                    SetNextStrokeHelpDecKey?.Invoke(decKey);
+                    bComboKeyRepeat = true;
+                }
+            } else {
+                prevComboVkey = vkey;
+            }
+        }
+
+        /// <summary>
+        /// 同時打鍵キーのオートリピートが終了したら打鍵ガイドを元に戻す
+        /// </summary>
+        /// <param name="vkey"></param>
+        void handleComboKeyRepeatStop(int vkey)
+        {
+            if (prevComboVkey == vkey) {
+                if (bComboKeyRepeat) {
+                    bComboKeyRepeat = false;
+                    SetNextStrokeHelpDecKey?.Invoke(-1);
+                }
+                prevComboVkey = -1;
+            }
+        }
+
         /// <summary>キーボード押下時のハンドラ</summary>
         /// <param name="vkey"></param>
         /// <param name="extraInfo"></param>
@@ -849,7 +893,8 @@ namespace KanchokuWS
             }
             if (bDecoderOn && mod == 0 &&
                 kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END) {
-                var keyList = CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode);
+                // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
+                var keyList = CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode, (decKey) => handleComboKeyRepeat(vkey, decKey));
                 if (keyList._notEmpty()) {
                     foreach (var k in keyList) {
                         invokeHandler(k, 0);
@@ -884,6 +929,9 @@ namespace KanchokuWS
             var keyState = keyInfoManager.getSandSKeyState();
             // spaceKey の shiftedOneshot 状態を解除しておく
             keyInfoManager.resetSandSShiftedOneshot();
+
+            // 同時打鍵キーのオートリピートが終了したら打鍵ガイドを元に戻す
+            handleComboKeyRepeatStop(vkey);
 
             if (!isEffectiveVkey(vkey, scanCode, extraInfo, leftCtrl || rightCtrl)) {
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result=False, not EffectiveVkey");

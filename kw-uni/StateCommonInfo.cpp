@@ -3,6 +3,16 @@
 
 DEFINE_CLASS_LOGGER(StateCommonInfo);
 
+#if 0
+#define IS_LOG_DEBUGH_ENABLED true
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#endif
+
 std::unique_ptr<StateCommonInfo> StateCommonInfo::Singleton;
 
 void StateCommonInfo::CreateSingleton() {

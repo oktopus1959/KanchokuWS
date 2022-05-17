@@ -24,6 +24,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>打鍵されたキーのModulo化キーコード(検索キーを生成するのに使用)</summary>
         public int ModuloDecKey => ModuloizeKey(OrigDecoderKey);
 
+        public int ComboShiftDecKey => ModuloDecKey + DecoderKeys.COMBO_DECKEY_START;
+
         /// <summary>打鍵されたキーのデコーダキーコード</summary>
         public int OrigDecoderKey { get; private set; }
 

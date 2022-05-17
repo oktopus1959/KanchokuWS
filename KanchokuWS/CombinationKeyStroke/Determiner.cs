@@ -61,7 +61,7 @@ namespace KanchokuWS.CombinationKeyStroke
         /// </summary>
         /// <param name="decKey">押下されたキーのデコーダコード</param>
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
-        public List<int> KeyDown(int decKey)
+        public List<int> KeyDown(int decKey, Action<int> handleComboKeyRepeat)
         {
             var dtNow = DateTime.Now;
             logger.DebugH(() => $"ENTER: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}");
@@ -81,6 +81,8 @@ namespace KanchokuWS.CombinationKeyStroke
                 } else {
                     // キーリピートが不可なキーは無視
                     logger.DebugH("Key repeat ignored");
+                    // 同時打鍵シフトキーの場合は、ハンドラを呼び出す
+                    if (stroke.IsComboShift) handleComboKeyRepeat(stroke.ComboShiftDecKey);
                 }
             } else {
                 // キーリピートではない通常の押下の場合は、同時打鍵判定を行う

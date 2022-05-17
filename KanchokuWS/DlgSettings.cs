@@ -16,7 +16,7 @@ namespace KanchokuWS
 {
     public partial class DlgSettings : Form
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         public static DlgSettings ShownDlg { get; private set; } = null;
 
