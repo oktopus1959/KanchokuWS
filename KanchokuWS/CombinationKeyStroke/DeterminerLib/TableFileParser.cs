@@ -111,11 +111,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
-        List<BlockInfo> blockInfoStack = new List<BlockInfo>();
+        List<BlockInfo> blockInfoList = new List<BlockInfo>();
 
         public string CurrentDirPath {
             get {
-                var path = blockInfoStack._isEmpty() ? "(empty)" : blockInfoStack.Last().DirPath;
+                var path = blockInfoList._isEmpty() ? "(empty)" : blockInfoList.Last().DirPath;
                 logger.DebugH(() => $"PATH: {path}");
                 return path;
             }
@@ -123,7 +123,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public string CurrentBlockName {
             get {
-                var name = blockInfoStack._isEmpty() ? "" : blockInfoStack.Last().BlockName;
+                var name = blockInfoList._isEmpty() ? "" : blockInfoList.Last().BlockName;
                 logger.DebugH(() => $"NAME: {name}");
                 return name;
             }
@@ -131,7 +131,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public int CurrentOffset {
             get {
-                int offset = blockInfoStack._isEmpty() ? 0 : blockInfoStack.Last().CurrentOffset;
+                int offset = blockInfoList._isEmpty() ? 0 : blockInfoList.Last().CurrentOffset;
                 logger.DebugH(() => $"OFFSET: {offset}");
                 return offset;
             }
@@ -144,19 +144,24 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void Push(string dirPath, string name, int lineNum)
         {
-            blockInfoStack.Add(new BlockInfo(dirPath, name, lineNum, lineNum));
+            blockInfoList.Add(new BlockInfo(dirPath, name, lineNum, lineNum));
         }
 
         public void Pop(int nextLineNum)
         {
-            var lastInfo = blockInfoStack.Last();
+            var lastInfo = blockInfoList.Last();
             logger.DebugH(() => $"PUSH ENTER: nextLineNum={nextLineNum}, dirPath={lastInfo.DirPath}, blockName={lastInfo.BlockName}, origLine={lastInfo.OrigLineNumber}, offset={lastInfo.CurrentOffset}");
             int insertedTotalLineNum = nextLineNum - lastInfo.OrigLineNumber;
-            blockInfoStack._safePopBack();
-            if (!blockInfoStack._isEmpty()) {
+            blockInfoList._safePopBack();
+            if (!blockInfoList._isEmpty()) {
                 lastInfo.CurrentOffset += insertedTotalLineNum;
                 logger.DebugH(() => $"PUSH LEAVE: dirPath={lastInfo.DirPath}, blockName={lastInfo.BlockName}, origLine={lastInfo.OrigLineNumber}, offset={lastInfo.CurrentOffset}");
             }
+        }
+
+        public bool Find(string name)
+        {
+            return blockInfoList.Any(x => x.BlockName == name);
         }
     }
 
@@ -825,14 +830,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         void storeLineBlock()
         {
             readWord();
-            logger.DebugH(() => $"CALLED: {currentStr}");
+            var blockName = currentStr;
+            logger.DebugH(() => $"CALLED: {blockName}");
             List<string> lines = null;
-            if (currentStr._isEmpty()) {
+            if (blockName._isEmpty()) {
                 parseError();
             } else {
                 lines = new List<string>();
-                linesMap[currentStr] = lines;
-                logger.DebugH(() => $"SET: lineNum={lineNumber + 1}, {currentStr}");
+                linesMap[blockName] = lines;
+                logger.DebugH(() => $"SET: lineNum={lineNumber + 1}, {blockName}");
             }
             while (getNextLine()) {
                 if (currentLine._startsWith("#end")) {
@@ -849,19 +855,22 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         void loadLineBlock()
         {
             readWord();
-            logger.DebugH(() => $"CALLED: |{currentStr}|");
-            if (currentStr._isEmpty()) {
+            var blockName = currentStr;
+            logger.DebugH(() => $"CALLED: |{blockName}|");
+            if (blockName._isEmpty()) {
                 parseError();
+            } else if (blockInfoStack.Find(blockName)) {
+                loadLoopError(blockName);
             } else {
-                var lines = linesMap._safeGet(currentStr);
+                var lines = linesMap._safeGet(blockName);
                 if (lines._isEmpty()) {
-                    logger.Error($"No stored lines for \"{currentStr}\"");
-                    parseError();
+                    logger.Error($"No stored lines for \"{blockName}\"");
+                    noSuchBlockError(blockName);
                 } else {
-                    logger.DebugH(() => $"InsertRange: {currentStr}, {lines.Count} lines");
+                    logger.DebugH(() => $"InsertRange: {blockName}, {lines.Count} lines");
                     int nextLineNum = lineNumber + 1;
                     tableLines.InsertRange(nextLineNum, lines);
-                    blockInfoStack.Push("", currentStr, nextLineNum);
+                    blockInfoStack.Push("", blockName, nextLineNum);
                 }
             }
         }
@@ -1216,6 +1225,18 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         void argumentError(string arg) {
             logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
             handleError($"引数 {arg} が不正です。\r\nテーブルファイル {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...");
+        }
+
+        // loadループエラー
+        void loadLoopError(string name) {
+            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
+            handleError($"ブロック {name} のロードがループしています。\r\n{blockOrFile()} {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...");
+        }
+
+        // storeブロックが存在しない
+        void noSuchBlockError(string name) {
+            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
+            handleError($"指定されたブロック {name} が存在しません。\r\n{blockOrFile()} {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...");
         }
 
         // ファイルの読み込みに失敗した場合
