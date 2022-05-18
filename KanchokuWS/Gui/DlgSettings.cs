@@ -770,7 +770,7 @@ namespace KanchokuWS.Gui
 
             // 同時打鍵
             textBox_combinationMaxAllowedLeadTimeMs.Text = $"{Settings.CombinationMaxAllowedLeadTimeMs}";
-            textBox_combinationKeyTimeRate.Text = $"{Settings.CombinationKeyTimeRate}";
+            //textBox_combinationKeyTimeRate.Text = $"{Settings.CombinationKeyTimeRate}";
             textBox_combinationKeyTimeMs.Text = $"{Settings.CombinationKeyTimeMs}";
         }
 
@@ -815,7 +815,7 @@ namespace KanchokuWS.Gui
 
             // 同時打鍵
             checkerAdvanced.Add(textBox_combinationMaxAllowedLeadTimeMs);
-            checkerAdvanced.Add(textBox_combinationKeyTimeRate);
+            //checkerAdvanced.Add(textBox_combinationKeyTimeRate);
             checkerAdvanced.Add(textBox_combinationKeyTimeMs);
 
             checkerAll.Add(checkerAdvanced);
@@ -878,7 +878,7 @@ namespace KanchokuWS.Gui
 
             // 同時打鍵
             Settings.SetUserIni("combinationMaxAllowedLeadTimeMs", textBox_combinationMaxAllowedLeadTimeMs.Text.Trim());
-            Settings.SetUserIni("combinationKeyTimeRate", textBox_combinationKeyTimeRate.Text.Trim());
+            //Settings.SetUserIni("combinationKeyTimeRate", textBox_combinationKeyTimeRate.Text.Trim());
             Settings.SetUserIni("combinationKeyTimeMs", textBox_combinationKeyTimeMs.Text.Trim());
 
             //Settings.ReadIniFile();

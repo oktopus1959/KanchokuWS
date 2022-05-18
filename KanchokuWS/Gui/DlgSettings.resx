@@ -202,18 +202,19 @@ exclude ファイルは、履歴検索および履歴登録の対象外となる
 
 キーを使用しない場合は、ComboBoxの内容を削除して空白にしてください。</value>
   </data>
-  <data name="textBox_combinationKeyTimeRate.ToolTip" xml:space="preserve">
-    <value>条件[1]が満たされている場合に、第1打鍵と第2打鍵の重複時間が、
-第1打鍵の時間に対してここで設定したパーセンテージ以上となれば、
-同時打鍵とみなします。
+  <data name="textBox_combinationKeyTimeMs.ToolTip" xml:space="preserve">
+    <value>連続シフトによる同時打鍵で、2文字目以降のキーの押下時間を設定します。
+押下時間がここで設定した時間以上であれば、同時打鍵と判定します。
 
-例1： A押→B押→A上→B上の場合
-「『B押→A上』の時間 ÷ 『A押→A上』の時間」が設定値以上に
-なれば、同時打鍵と判定します。
+例： A押→B押→C押→A上の場合
+連続シフトの場合、「A押→B押」は無条件で同時打鍵と判定するので、
+これにより1文字目が出力されます。
+次に「C押→A上」の時間が設定値未満であれば、2文字目は同時打鍵とは
+判定されません。
 
-例2： A押→B押→B上→A上の場合
-Aの押下中にBの押→上が発生したので、無条件に同時打鍵と
-判定します。</value>
+ただし、AよりもCのほうが先に解放された場合は無条件に同時打鍵と判定
+します。
+</value>
   </data>
   <data name="textBox_saveDictsCalmTime.ToolTip" xml:space="preserve">
     <value>辞書の自動保存時刻になってからの待機時間を設定します(分単位)

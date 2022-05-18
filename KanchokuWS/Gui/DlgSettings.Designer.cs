@@ -92,10 +92,9 @@ namespace KanchokuWS.Gui
             this.label2 = new System.Windows.Forms.Label();
             this.tabPage_advanced = new System.Windows.Forms.TabPage();
             this.groupBox45 = new System.Windows.Forms.GroupBox();
+            this.label117 = new System.Windows.Forms.Label();
             this.textBox_combinationKeyTimeMs = new System.Windows.Forms.TextBox();
             this.label116 = new System.Windows.Forms.Label();
-            this.textBox_combinationKeyTimeRate = new System.Windows.Forms.TextBox();
-            this.label115 = new System.Windows.Forms.Label();
             this.textBox_combinationMaxAllowedLeadTimeMs = new System.Windows.Forms.TextBox();
             this.label114 = new System.Windows.Forms.Label();
             this.groupBox28 = new System.Windows.Forms.GroupBox();
@@ -444,7 +443,6 @@ namespace KanchokuWS.Gui
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.label117 = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_onSecondaryTable = new KanchokuWS.Gui.ColorTextBox();
@@ -666,8 +664,8 @@ namespace KanchokuWS.Gui
             this.comboBox_tableFile2.Name = "comboBox_tableFile2";
             this.comboBox_tableFile2.Size = new System.Drawing.Size(182, 23);
             this.comboBox_tableFile2.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.comboBox_tableFile2, "打鍵から文字への副変換テーブルファイルの設定\r\n\r\nファイルの内容は主テーブルファイルと同様です。\r\n切り替えコマンドにより、主・副テーブルファイルを切り替えるこ" +
-        "とができます。\r\n");
+            this.toolTip1.SetToolTip(this.comboBox_tableFile2, "打鍵から文字への副変換テーブルファイルの設定\r\n\r\nファイルの内容は主テーブルファイルと同様です。\r\n切り替えコマンドまたは右クリックメニューの\r\n「再読込 > " +
+        "主・副テーブル切り替え」により、\r\n主・副テーブルファイルを切り替えることができます。\r\n");
             this.comboBox_tableFile2.DropDown += new System.EventHandler(this.comboBox_tableFile2_DropDown);
             // 
             // comboBox_tableFile
@@ -680,8 +678,8 @@ namespace KanchokuWS.Gui
             this.comboBox_tableFile.Size = new System.Drawing.Size(182, 23);
             this.comboBox_tableFile.TabIndex = 2;
             this.toolTip1.SetToolTip(this.comboBox_tableFile, "打鍵から文字への主変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることに" +
-        "より、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\nファイル名を変更したり、テーブルの内容を修正した場合は、「再読込」を\r\n実行すると、その内容が反映されま" +
-        "す。\r\n");
+        "より、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\n別のファイルを選択した場合は、「適用」を実行するとその内容が反映\r\nされます。\r\nテーブルの内容を修正し" +
+        "た場合は、「再読込」を実行するとその内容が\r\n反映されます。\r\n");
             this.comboBox_tableFile.DropDown += new System.EventHandler(this.comboBox_tableFile_DropDown);
             // 
             // button_openTableFile2
@@ -1357,79 +1355,66 @@ namespace KanchokuWS.Gui
             // 
             // groupBox45
             // 
-            this.groupBox45.Controls.Add(this.label117);
             this.groupBox45.Controls.Add(this.textBox_combinationKeyTimeMs);
-            this.groupBox45.Controls.Add(this.label116);
-            this.groupBox45.Controls.Add(this.textBox_combinationKeyTimeRate);
-            this.groupBox45.Controls.Add(this.label115);
             this.groupBox45.Controls.Add(this.textBox_combinationMaxAllowedLeadTimeMs);
+            this.groupBox45.Controls.Add(this.label116);
             this.groupBox45.Controls.Add(this.label114);
+            this.groupBox45.Controls.Add(this.label117);
             this.groupBox45.Location = new System.Drawing.Point(323, 114);
             this.groupBox45.Name = "groupBox45";
-            this.groupBox45.Size = new System.Drawing.Size(306, 195);
+            this.groupBox45.Size = new System.Drawing.Size(306, 175);
             this.groupBox45.TabIndex = 6;
             this.groupBox45.TabStop = false;
             this.groupBox45.Text = "同時打鍵の判定条件";
+            // 
+            // label117
+            // 
+            this.label117.AutoSize = true;
+            this.label117.Location = new System.Drawing.Point(15, 75);
+            this.label117.Name = "label117";
+            this.label117.Size = new System.Drawing.Size(286, 90);
+            this.label117.TabIndex = 11;
+            this.label117.Text = "複数キーが押されたときに、それを「同時打鍵」として判定\r\nする条件を設定します。同時打鍵判定は、重複して押下\r\nされているキーのどれかが解放されたタイミングで行わ" +
+    "れます。\r\nなお、同時打鍵シフトキーの押下中に第2打鍵以降のキー\r\nの押下・解放があった場合は、無条件に同時打鍵とみな\r\nします。";
             // 
             // textBox_combinationKeyTimeMs
             // 
             this.textBox_combinationKeyTimeMs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_combinationKeyTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_combinationKeyTimeMs.Location = new System.Drawing.Point(248, 65);
+            this.textBox_combinationKeyTimeMs.Location = new System.Drawing.Point(255, 44);
             this.textBox_combinationKeyTimeMs.Name = "textBox_combinationKeyTimeMs";
             this.textBox_combinationKeyTimeMs.Size = new System.Drawing.Size(45, 19);
             this.textBox_combinationKeyTimeMs.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.textBox_combinationKeyTimeMs, "条件[1]が満たされている場合に、第1打鍵と第2打鍵の重複時間が\r\nここで設定した時間以上になったら、同時打鍵とみなします。\r\n\r\n例1： A押→B押→A上→B上" +
-        "の場合\r\n「『B押→A上』の時間」が設定値以上になれば、同時打鍵と\r\n判定します。\r\n\r\n例2： A押→B押→B上→A上の場合\r\nAの押下中にBの押→上が発生し" +
-        "たので、無条件に同時打鍵と\r\n判定します。\r\n");
+            this.toolTip1.SetToolTip(this.textBox_combinationKeyTimeMs, resources.GetString("textBox_combinationKeyTimeMs.ToolTip"));
             // 
             // label116
             // 
             this.label116.AutoSize = true;
-            this.label116.Location = new System.Drawing.Point(13, 67);
+            this.label116.Location = new System.Drawing.Point(9, 46);
             this.label116.Name = "label116";
-            this.label116.Size = new System.Drawing.Size(213, 15);
+            this.label116.Size = new System.Drawing.Size(219, 15);
             this.label116.TabIndex = 10;
-            this.label116.Text = "[3] 第1打鍵と第2打鍵の重複時間 (ミリ秒)";
-            // 
-            // textBox_combinationKeyTimeRate
-            // 
-            this.textBox_combinationKeyTimeRate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_combinationKeyTimeRate.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_combinationKeyTimeRate.Location = new System.Drawing.Point(248, 42);
-            this.textBox_combinationKeyTimeRate.Name = "textBox_combinationKeyTimeRate";
-            this.textBox_combinationKeyTimeRate.Size = new System.Drawing.Size(45, 19);
-            this.textBox_combinationKeyTimeRate.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_combinationKeyTimeRate, resources.GetString("textBox_combinationKeyTimeRate.ToolTip"));
-            // 
-            // label115
-            // 
-            this.label115.AutoSize = true;
-            this.label115.Location = new System.Drawing.Point(13, 44);
-            this.label115.Name = "label115";
-            this.label115.Size = new System.Drawing.Size(184, 15);
-            this.label115.TabIndex = 8;
-            this.label115.Text = "[2] 第1打鍵と第2打鍵の重複率 (%)";
+            this.label116.Text = "連続シフト2文字目の最小押下時間 (ミリ秒)";
             // 
             // textBox_combinationMaxAllowedLeadTimeMs
             // 
             this.textBox_combinationMaxAllowedLeadTimeMs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_combinationMaxAllowedLeadTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_combinationMaxAllowedLeadTimeMs.Location = new System.Drawing.Point(248, 19);
+            this.textBox_combinationMaxAllowedLeadTimeMs.Location = new System.Drawing.Point(255, 19);
             this.textBox_combinationMaxAllowedLeadTimeMs.Name = "textBox_combinationMaxAllowedLeadTimeMs";
             this.textBox_combinationMaxAllowedLeadTimeMs.Size = new System.Drawing.Size(45, 19);
             this.textBox_combinationMaxAllowedLeadTimeMs.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_combinationMaxAllowedLeadTimeMs, "第1打鍵押下から第2打鍵押下までの許容時間\r\n\r\nここで設定した時間以上に間があいた場合は同時打鍵とみなしません。\r\n当条件が満たされた場合は、条件[2], [3" +
-        "] のいずれかが満たされれば、\r\n同時打鍵と判定されます。\r\nなお 0 を設定した場合は、当条件は満たされたものとして扱われます。");
+            this.toolTip1.SetToolTip(this.textBox_combinationMaxAllowedLeadTimeMs, "第1打鍵押下から第2打鍵押下までの許容時間を設定します。\r\nここで設定した時間以上に間があいた場合は同時打鍵と判定されません。\r\n\r\nただし、第1打鍵を押しつづけ" +
+        "て、第2打鍵のほうが先に解放された場合は\r\n無条件に同時打鍵と判定します。");
             // 
             // label114
             // 
             this.label114.AutoSize = true;
-            this.label114.Location = new System.Drawing.Point(13, 21);
+            this.label114.Location = new System.Drawing.Point(9, 21);
             this.label114.Name = "label114";
-            this.label114.Size = new System.Drawing.Size(235, 15);
+            this.label114.Size = new System.Drawing.Size(246, 15);
             this.label114.TabIndex = 6;
-            this.label114.Text = "[1] 第1打鍵に許容する最大のリード時間(ミリ秒)";
+            this.label114.Text = "第1打鍵押下から第2打鍵押下までの時間(ミリ秒)";
             // 
             // groupBox28
             // 
@@ -5418,17 +5403,6 @@ namespace KanchokuWS.Gui
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // label117
-            // 
-            this.label117.AutoSize = true;
-            this.label117.Location = new System.Drawing.Point(19, 97);
-            this.label117.Name = "label117";
-            this.label117.Size = new System.Drawing.Size(286, 90);
-            this.label117.TabIndex = 11;
-            this.label117.Text = "複数キーが押されたときに、それを「同時打鍵」として判定\r\nする条件を設定します。同時打鍵判定は、重複して押下\r\nされているキーのどれかが解放されたタイミングで行わ" +
-    "れます。\r\n条件判定の論理式は [1] and ([2] or [3]) です。\r\nなお、第1打鍵押下中に第2打鍵の押下・解放があった\r\n場合は、無条件に同時打" +
-    "鍵とみなします。";
-            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -6164,8 +6138,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label_okResultAbout;
         private System.Windows.Forms.TextBox textBox_combinationMaxAllowedLeadTimeMs;
         private System.Windows.Forms.Label label114;
-        private System.Windows.Forms.TextBox textBox_combinationKeyTimeRate;
-        private System.Windows.Forms.Label label115;
         private System.Windows.Forms.TextBox textBox_combinationKeyTimeMs;
         private System.Windows.Forms.Label label116;
         private System.Windows.Forms.Label label117;
