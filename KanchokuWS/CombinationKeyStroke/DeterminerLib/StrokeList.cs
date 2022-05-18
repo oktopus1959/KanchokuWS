@@ -157,17 +157,18 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     unprocList.Clear();
                 }
             }
-            else if (comboList.Count == 1 && unprocList.Count == 2 && unprocList.Last().IsSameKey(decKey)) {
+            else if (comboList.Count == 1 && unprocList.Count == 1 && unprocList[0].IsSameKey(decKey) && Settings.CombinationKeyTimeMs <= 0) {
                 // 連続シフトでの2文字目以降のケース
                 logger.DebugH("Try second or later successive combo");
                 result = getAndCheckCombo(Helper.MakeList(comboList[0], unprocList[0]));
-                if (result != null) {
-                    unprocList.RemoveAt(0);
-                }
+                unprocList.RemoveAt(0); // コンボがなくてもキーを削除しておく(たとえば月光でDを長押ししてKを押したような場合は、何も出力せず、Kも除去する)
+            } else {
+                logger.DebugH("Combo check will be done at key release");
             }
             return result;
         }
 
+        // 解放の場合
         public List<int> GetKeyCombinationWhenKeyUp(int decKey, DateTime dtNow)
         {
             logger.DebugH(() => $"ENTER: decKey={decKey}, dt={dtNow.ToString("HH:mm:ss.fff")}");

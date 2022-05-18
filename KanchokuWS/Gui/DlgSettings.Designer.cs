@@ -1404,8 +1404,8 @@ namespace KanchokuWS.Gui
             this.textBox_combinationMaxAllowedLeadTimeMs.Name = "textBox_combinationMaxAllowedLeadTimeMs";
             this.textBox_combinationMaxAllowedLeadTimeMs.Size = new System.Drawing.Size(45, 19);
             this.textBox_combinationMaxAllowedLeadTimeMs.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_combinationMaxAllowedLeadTimeMs, "第1打鍵押下から第2打鍵押下までの許容時間を設定します。\r\nここで設定した時間以上に間があいた場合は同時打鍵と判定されません。\r\n\r\nただし、第1打鍵を押しつづけ" +
-        "て、第2打鍵のほうが先に解放された場合は\r\n無条件に同時打鍵と判定します。");
+            this.toolTip1.SetToolTip(this.textBox_combinationMaxAllowedLeadTimeMs, "第1打鍵押下から第2打鍵押下までの許容時間を設定します。\r\nここで設定した時間以上に間があいた場合は同時打鍵と判定しません。\r\n\r\nなお、第1打鍵を押しつづけて、" +
+        "第2打鍵のほうが先に解放された場合は\r\n無条件に同時打鍵と判定します。");
             // 
             // label114
             // 
