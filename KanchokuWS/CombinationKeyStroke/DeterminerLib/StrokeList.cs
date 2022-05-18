@@ -73,9 +73,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return unprocList.Count == 0;
         }
 
-        public Stroke First => unprocList._isEmpty() ? null : unprocList[0];
+        public Stroke First => unprocList._getFirst();
 
-        public Stroke Last => unprocList._isEmpty() ? null : unprocList.Last();
+        public Stroke Last => unprocList._getLast();
 
         public Stroke FindSameStroke(int decKey)
         {
@@ -103,7 +103,23 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool DetectKeyRepeat(int decKey)
         {
-            return Last?.IsSameKey(decKey) ?? false;
+            var s = unprocList._getLast();
+            if (s != null) {
+                if (s.IsSameKey(decKey)) {
+                    s.SetCombined();
+                    if (unprocList._safeCount() == 1) {
+                        comboList.Add(s);
+                        unprocList.Clear();
+                    }
+                    return true;
+                }
+            } else {
+                s = comboList._getLast();
+                if (s != null && s.IsSameKey(decKey)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void Add(Stroke s)

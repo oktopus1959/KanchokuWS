@@ -81,7 +81,7 @@ namespace KanchokuWS.CombinationKeyStroke
                 } else {
                     // キーリピートが不可なキーは無視
                     logger.DebugH("Key repeat ignored");
-                    // 同時打鍵シフトキーの場合は、ハンドラを呼び出す
+                    // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出す
                     if (stroke.IsComboShift) handleComboKeyRepeat(stroke.ComboShiftDecKey);
                 }
             } else {
