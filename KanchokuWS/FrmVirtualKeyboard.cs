@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
+using KanchokuWS.Gui;
 using Utils;
 
 namespace KanchokuWS

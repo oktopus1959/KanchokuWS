@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 using Utils;
 
-namespace KanchokuWS
+namespace KanchokuWS.Gui
 {
     public partial class DlgSettings : Form
     {

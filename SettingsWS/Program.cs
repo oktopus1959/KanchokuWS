@@ -24,7 +24,7 @@ namespace SettingsWS
                 Application.SetCompatibleTextRenderingDefault(false);
                 //ScreenInfo.GetScreenInfo();   // ここでやっても正しい値が取得できなかったので、ダイアログのコンストラクタでやるようにした
                 Settings.ReadIniFile();
-                Application.Run(new KanchokuWS.DlgSettings(null, null, null));
+                Application.Run(new KanchokuWS.Gui.DlgSettings(null, null, null));
             } finally {
                 MultiAppChecker.Release();
             }

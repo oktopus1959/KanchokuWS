@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SRCDIR=KanchokuWS
+SRCDIR=KanchokuWS/Domain
 TGTDIR=kw-uni
 
 SRCFILE=$SRCDIR/DecoderKeys.cs

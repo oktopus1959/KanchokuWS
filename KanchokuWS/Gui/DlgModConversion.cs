@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Utils;
 
-namespace KanchokuWS
+namespace KanchokuWS.Gui
 {
     public partial class DlgModConversion : Form
     {

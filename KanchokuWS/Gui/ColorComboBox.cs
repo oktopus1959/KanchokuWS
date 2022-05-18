@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using Utils;
 
-namespace KanchokuWS
+namespace KanchokuWS.Gui
 {
     public partial class ColorComboBox : ComboBox
     {

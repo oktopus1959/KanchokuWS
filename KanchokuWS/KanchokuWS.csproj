@@ -156,6 +156,7 @@
       <DependentUpon>FrmModeMarker.cs</DependentUpon>
     </Compile>
     <Compile Include="Handler\GUIThreadInfo.cs" />
+    <Compile Include="Handler\SendInputHandler.cs" />
     <Compile Include="KanchokuIni.cs" />
     <Compile Include="Domain\KanjiYomiTable.cs" />
     <Compile Include="Handler\KeyboardEventDispatcher.cs" />

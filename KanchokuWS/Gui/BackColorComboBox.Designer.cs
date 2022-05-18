@@ -1,5 +1,5 @@
 ﻿
-namespace KanchokuWS
+namespace KanchokuWS.Gui
 {
     partial class BackColorComboBox
     {

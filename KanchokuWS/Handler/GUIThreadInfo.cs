@@ -9,7 +9,7 @@ using Accessibility;
 
 using Utils;
 
-namespace KanchokuWS
+namespace KanchokuWS.Handler
 {
     /// <summary>
     /// Win32 の GetGUIThreadInfo を使うラッパークラス<br/>

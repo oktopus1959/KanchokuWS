@@ -8,9 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
+
 using Utils;
 
-namespace KanchokuWS
+namespace KanchokuWS.Gui
 {
     public partial class DlgColorSelector : Form
     {

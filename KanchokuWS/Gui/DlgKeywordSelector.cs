@@ -8,9 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using KanchokuWS.Handler;
 using Utils;
 
-namespace KanchokuWS
+namespace KanchokuWS.Gui
 {
     public partial class DlgKeywordSelector : Form
     {

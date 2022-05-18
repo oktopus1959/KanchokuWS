@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 using Utils;
 
-namespace KanchokuWS
+namespace KanchokuWS.Handler
 {
     public class KeyboardEventDispatcher : IDisposable
     {
@@ -178,7 +178,7 @@ namespace KanchokuWS
         {
             // 0xa0 = LSHIFT, 0xa1 = RSHIFT, 0xa5 = RMENU, 0xf3 = Zenkaku, 0xf4 = Kanji
             return
-                (Settings.IgnoreOtherHooker ? extraInfo == 0 : extraInfo != ActiveWindowHandler.MyMagicNumber) &&
+                (Settings.IgnoreOtherHooker ? extraInfo == 0 : extraInfo != SendInputHandler.MyMagicNumber) &&
                 scanCode != 0 && scanCode != YamabukiRscanCode &&
                 ((vkey >= 0 && vkey < 0xa0) ||
                  // RSHIFT の場合は、Ctrlキーが押されておらず、それが漢直トグルキーになっているか、または漢直モードでシフト単打が有効か、または拡張シフト面が定義されているとき

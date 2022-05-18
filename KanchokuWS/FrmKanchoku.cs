@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using KanchokuWS.Handler;
+using KanchokuWS.Gui;
 using Utils;
 
 namespace KanchokuWS
@@ -41,6 +43,9 @@ namespace KanchokuWS
 
         /// <summary> アクティブなウィンドウに関する処理 </summary>
         private ActiveWindowHandler actWinHandler;
+
+        /// <summary> アクティブなウィンドウに関する処理 </summary>
+        private SendInputHandler sendInputHandler;
 
         //private string CharCountFile;
 
@@ -240,7 +245,8 @@ namespace KanchokuWS
 
             // この後は各種終了処理
             //DecKeyHandler.Destroy();
-            actWinHandler?.Dispose();
+            ActiveWindowHandler.DisposeSingleton();
+            SendInputHandler.DisposeSingleton();
             finalizeDecoder();
             frmMode?.Close();
             frmVkb?.Close();
@@ -841,7 +847,7 @@ namespace KanchokuWS
         {
             try {
                 // Ctrl-C を送る
-                actWinHandler.SendVKeyCombo(VirtualKeys.CtrlC_VKeyCombo.modifier, VirtualKeys.CtrlC_VKeyCombo.vkey, 1);
+                sendInputHandler.SendVKeyCombo(VirtualKeys.CtrlC_VKeyCombo.modifier, VirtualKeys.CtrlC_VKeyCombo.vkey, 1);
                 Helper.WaitMilliSeconds(100);
                 if (Clipboard.ContainsText()) {
                     //文字列データがあるときはこれを取得する
@@ -903,9 +909,9 @@ namespace KanchokuWS
                 ActivateDecoder();
             } else {
                 bool leftCtrl, rightCtrl;
-                actWinHandler.GetCtrlKeyState(out leftCtrl, out rightCtrl);
+                sendInputHandler.GetCtrlKeyState(out leftCtrl, out rightCtrl);
                 DeactivateDecoder();
-                if (bRevertCtrl) actWinHandler.RevertUpCtrlKey(leftCtrl, rightCtrl);
+                if (bRevertCtrl) sendInputHandler.RevertUpCtrlKey(leftCtrl, rightCtrl);
             }
             logger.InfoH("LEAVE");
         }
@@ -972,7 +978,7 @@ namespace KanchokuWS
             IsDecoderActive = false;
             if (decoderPtr != IntPtr.Zero) {
                 handleKeyDecoder(DecoderKeys.DEACTIVE_DECKEY, 0);   // DecoderOff の処理をやる
-                actWinHandler.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
+                sendInputHandler.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
                 frmVkb.Hide();
                 frmMode.Hide();
                 notifyIcon1.Icon = Properties.Resources.kanmini0;
@@ -1039,7 +1045,10 @@ namespace KanchokuWS
             logger.Info("ENTER");
 
             // アクティブなウィンドウのハンドラ作成
-            actWinHandler = new ActiveWindowHandler(this, frmVkb, frmMode);
+            actWinHandler = ActiveWindowHandler.CreateSingleton(this, frmVkb, frmMode);
+
+            // SendInputハンドラの作成
+            sendInputHandler = SendInputHandler.CreateSingleton();
 
             //Settings.ReadIniFile();
             //frmVkb.SetNormalCellBackColors();
@@ -1316,7 +1325,7 @@ namespace KanchokuWS
                         int leadLen = calcSameLeadingLen(outString, outLen, numBS);
                         var outStr = leadLen > 0 ? outString.Skip(leadLen).ToArray() : outString;
                         /*if (Settings.LoggingDecKeyInfo)*/ logger.InfoH(() => $"outString={outString._toString()}, numBS={numBS}, leadLen={leadLen}, outStr={outStr._toString()}");
-                        actWinHandler.SendStringViaClipboardIfNeeded(outStr, numBS - leadLen, bFuncVkeyContained);
+                        sendInputHandler.SendStringViaClipboardIfNeeded(outStr, numBS - leadLen, bFuncVkeyContained);
                         if (bFuncVkeyContained) {
                             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
                             HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput);
@@ -1383,7 +1392,7 @@ namespace KanchokuWS
             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
             bool bFuncVkeyContained = isFuncVkeyContained(decoderOutput.outString);
             // BSと文字送出(もしあれば)
-            actWinHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
+            sendInputHandler.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
             if (bFuncVkeyContained) {
                 // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
                 HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput);
@@ -1447,7 +1456,7 @@ namespace KanchokuWS
         private bool sendVkeyFromDeckey(int deckey, uint mod)
         {
             bool leftCtrl, rightCtrl;
-            actWinHandler.GetCtrlKeyState(out leftCtrl, out rightCtrl);
+            sendInputHandler.GetCtrlKeyState(out leftCtrl, out rightCtrl);
             if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
             if ((!leftCtrl && !rightCtrl) || isCtrlKeyConversionEffectiveWindow()                 // Ctrlキーが押されていないか、Ctrl修飾を受け付けるWindowClassか
                 //|| deckey < DecoderKeys.STROKE_DECKEY_END                                                       // 通常のストロークキーは通す
@@ -1466,11 +1475,11 @@ namespace KanchokuWS
                             + $"mod={mod:x}H({mod})");
                     }
                     //if (deckey < DecoderKeys.FUNCTIONAL_DECKEY_ID_BASE) {
-                    //    actWinHandler.SendVirtualKey(combo.Value.vkey, 1);
+                    //    sendInputHandler.SendVirtualKey(combo.Value.vkey, 1);
                     //} else {
-                    //    actWinHandler.SendVKeyCombo(combo.Value, 1);
+                    //    sendInputHandler.SendVKeyCombo(combo.Value, 1);
                     //}
-                    actWinHandler.SendVKeyCombo((combo.Value.modifier != 0 ? combo.Value.modifier : mod), combo.Value.vkey, 1);
+                    sendInputHandler.SendVKeyCombo((combo.Value.modifier != 0 ? combo.Value.modifier : mod), combo.Value.vkey, 1);
                     return true;
                 }
             }
@@ -1481,7 +1490,7 @@ namespace KanchokuWS
         private bool SendInputVkeyWithMod(uint mod, uint vkey)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: mod={mod}H({mod}), vkey={vkey}H({vkey})");
-            actWinHandler.SendVKeyCombo(mod, vkey, 1);
+            sendInputHandler.SendVKeyCombo(mod, vkey, 1);
             return true;
         }
 
@@ -1510,7 +1519,7 @@ namespace KanchokuWS
                 }
                 dtStr = dtNow.AddYears(-diffYear).ToString(fmt);
             }
-            actWinHandler.SendStringViaClipboardIfNeeded(dtStr.ToCharArray(), prevDateStrLength);
+            sendInputHandler.SendStringViaClipboardIfNeeded(dtStr.ToCharArray(), prevDateStrLength);
             prevDateStrLength = dtStr.Length;
         }
 

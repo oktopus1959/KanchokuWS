@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Utils;
 
-namespace KanchokuWS
+namespace KanchokuWS.Handler
 {
     /// <summary>
     /// グローバルキーフッククラス

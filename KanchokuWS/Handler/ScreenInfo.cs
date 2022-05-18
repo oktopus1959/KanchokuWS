@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Utils;
 
-namespace KanchokuWS
+namespace KanchokuWS.Gui
 {
     public static class ScreenInfo
     {
