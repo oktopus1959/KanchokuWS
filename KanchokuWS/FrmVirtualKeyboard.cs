@@ -664,11 +664,12 @@ namespace KanchokuWS
             var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(defFile);
             if (Settings.LoggingVirtualKeyboardInfo || logger.IsInfoHPromoted) logger.DebugH(() => $"ENTER: filePath={filePath}");
 
-            shiftPlaneStrokeTables1 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition1\t{x}", null)).ToList();
-            shiftPlaneStrokeTables2 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition2\t{x}", null)).ToList();
+            shiftPlaneStrokeTables1 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition1", x.ToString())).ToList();
+            shiftPlaneStrokeTables2 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition2", x.ToString())).ToList();
 
             if (Helper.FileExists(filePath)) {
                 StrokeTables1.Clear();
+                StrokeTables2.Clear();
                 try {
                     foreach (var line in System.IO.File.ReadAllLines(filePath)) {
                         var items = line.Trim()._reReplace("  +", " ")._split(' ');
