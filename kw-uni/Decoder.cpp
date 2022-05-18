@@ -252,8 +252,9 @@ public:
     }
 
     // 初期打鍵表(下端機能キー以外は空白)の作成
-    void MakeInitialVkbTable(DecoderOutParams* outParam) {
-        VkbTableMaker::MakeInitialVkbTable(outParam->faceStrings);
+    void MakeInitialVkbTable(DecoderOutParams* outParams) {
+        OutParams = outParams;
+        VkbTableMaker::MakeInitialVkbTable(outParams->faceStrings);
     }
 
     // デコーダ状態のリセット (Decoder が ON になったときに呼ばれる)
@@ -293,6 +294,8 @@ public:
     // 結果は outParams で返す
     void ExecCmd(DecoderCommandParams* cmdParams, DecoderOutParams* outParams) {
         LOG_INFOH(_T("ENTER: paramLen=%d, data=%s"), _tcslen(cmdParams->inOutData), cmdParams->inOutData);
+
+        OutParams = outParams;
 
         auto items = utils::split(cmdParams->inOutData, '\t');
         if (!items.empty()) {
@@ -351,11 +354,11 @@ public:
                 if (MAZEGAKI_DIC) MAZEGAKI_DIC->WriteMazegakiDic();
             } else if (cmd == _T("showStrokeHelp") && STROKE_HELP) {
                 // ストロークヘルプの表示
-                OutParams = outParams;
+                //OutParams = outParams;
                 makeStrokeHelp(items.size() > 1 ? items[1] : _T(""));
             } else if (cmd == _T("showBushuCompHelp") && BUSHU_DIC) {
                 // 部首合成ヘルプの表示
-                OutParams = outParams;
+                //OutParams = outParams;
                 makeBushuCompHelp(items.size() > 1 ? items[1] : _T(""));
             } else if (cmd == _T("clearTailRomanStr")) {
                 // 末尾のローマ字列を削除
@@ -416,7 +419,7 @@ public:
             } else if (cmd == _T("makeNextStrokeTable")) {
                 // 指定キーに対する次打鍵テーブルの作成
                 if (items.size() > 1 && !items[1].empty()) {
-                    OutParams = outParams;
+                    //OutParams = outParams;
                     makeNextStrokeTable(utils::strToInt(items[1], -1));
                 }
             } else if (cmd == _T("getCharsOrderedByDeckey")) {
@@ -452,9 +455,9 @@ public:
     }
 
     // DECKEY処理
-    void HandleDeckey(int keyId, mchar_t targetChar, bool decodeKeyboardChar, DecoderOutParams* params) {
+    void HandleDeckey(int keyId, mchar_t targetChar, bool decodeKeyboardChar, DecoderOutParams* outParams) {
         LOG_INFOH(_T("\nENTER: keyId=%xH(%d=%s), targetChar=%s, decodeKeyboardChar=%s"), keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId), to_wstr(targetChar).c_str(), BOOL_TO_WPTR(decodeKeyboardChar));
-        OutParams = params;
+        OutParams = outParams;
         initializeOutParams();
 
         if (startState == 0) return;

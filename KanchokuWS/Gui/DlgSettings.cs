@@ -62,7 +62,7 @@ namespace KanchokuWS.Gui
             frmVkb = vkb;
             frmMode = mode;
 
-            ScreenInfo.GetScreenInfo();
+            ScreenInfo.CreateSingleton();
 
             InitializeComponent();
         }
@@ -165,7 +165,7 @@ namespace KanchokuWS.Gui
 
         private void initializeAboutDgv()
         {
-            double dpiRate = ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
+            double dpiRate = ScreenInfo.Singleton.PrimaryScreenDpiRate._lowLimit(1.0);
             //if (dpiRate > 1.0) dpiRate *= 1.05;
             int rowHeight = (int)(20 * dpiRate);
             dgvAbout._defaultSetup(0, rowHeight, false, true);  // headerHeight=0 -> ヘッダーを表示しない, 複数セル選択OK

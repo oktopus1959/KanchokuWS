@@ -33,7 +33,7 @@ namespace KanchokuWS.Gui
 
         private void setDataGridViewForExtModifier()
         {
-            double dpiRate = ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
+            double dpiRate = ScreenInfo.Singleton.PrimaryScreenDpiRate._lowLimit(1.0);
             int rowHeight = (int)(20 * dpiRate);
 
             var dgv = dataGridView1;

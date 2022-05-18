@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 using KanchokuWS.Gui;
+using KanchokuWS.Handler;
 using Utils;
 
 namespace KanchokuWS
@@ -46,6 +47,19 @@ namespace KanchokuWS
 
         private const int MinVerticalChars = 2;
         private const int MinCenterChars = 2;
+
+        ///// <summary> 仮想鍵盤ウィンドウの ClassName の末尾のハッシュ部分 </summary>
+        private string dlgVkbClassNameHash;
+
+        public bool IsMyWinClassName(string winClassName)
+        {
+            if (dlgVkbClassNameHash._isEmpty()) {
+                dlgVkbClassNameHash = ActiveWindowHandler.GetWindowClassName(this.Handle)._safeSubstring(-16);
+                logger.Info(() => $"Vkb ClassName Hash={dlgVkbClassNameHash}");
+            }
+
+            return winClassName._endsWith(winClassName);
+        }
 
         /// <summary> ストローク文字横書きフォント </summary>
         private Font strokeCharFont;
@@ -320,7 +334,7 @@ namespace KanchokuWS
             //pictureBox_Main.MouseWheel += new System.Windows.Forms.MouseEventHandler(pictureBox_Main_MouseWheel);
 
             // 各種パラメータの初期化
-            resetDrawParameters(ScreenInfo.PrimaryScreenDpi);
+            resetDrawParameters(ScreenInfo.Singleton.PrimaryScreenDpi);
 
             // モニタのDPIが変化したたときに呼ばれるハンドラを登録
             DpiChanged += dpiChangedHandler;
@@ -507,7 +521,7 @@ namespace KanchokuWS
         {
             logger.Info(() => $"\nCALLED: new dpi={e.DeviceDpiNew}");
 
-            CurrentScreen = ScreenInfo.GetScreenIndexByDpi(e.DeviceDpiNew);
+            CurrentScreen = ScreenInfo.Singleton.GetScreenIndexByDpi(e.DeviceDpiNew);
 
             if (frmMain.IsDecoderActive) {
                 this.Hide();
@@ -524,7 +538,7 @@ namespace KanchokuWS
         private void resetDrawParameters(int dpi)
         {
             if (Settings.LoggingVirtualKeyboardInfo || logger.IsInfoHPromoted) logger.DebugH($"CALLED: dpi={dpi}");
-            //float rate = (float)ScreenInfo.PrimaryScreenDpiRate._lowLimit(1.0);
+            //float rate = (float)ScreenInfo.Singleton.PrimaryScreenDpiRate._lowLimit(1.0);
             float rate = dpi / 96.0f;
 
             Func<float, float> mulRate = (float x) => (int)(x * rate);

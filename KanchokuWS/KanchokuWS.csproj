@@ -159,7 +159,7 @@
     <Compile Include="Handler\SendInputHandler.cs" />
     <Compile Include="KanchokuIni.cs" />
     <Compile Include="Domain\KanjiYomiTable.cs" />
-    <Compile Include="Handler\KeyboardEventDispatcher.cs" />
+    <Compile Include="Handler\KeyboardEventHandler.cs" />
     <Compile Include="Handler\KeyboardHook.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -168,7 +168,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Handler\ScreenInfo.cs" />
+    <Compile Include="Gui\ScreenInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="CombinationKeyStroke\Determiner.cs" />
     <Compile Include="CombinationKeyStroke\DeterminerLib\KeyCombinationPool.cs" />

@@ -10,19 +10,30 @@ using Utils;
 
 namespace KanchokuWS.Gui
 {
-    public static class ScreenInfo
+    public class ScreenInfo
     {
         private static Logger logger = Logger.GetLogger();
 
-        public static List<Rectangle> ScreenRects { get; private set; } = new List<Rectangle>();
+        public List<Rectangle> ScreenRects { get; private set; } = new List<Rectangle>();
 
-        public static List<int> ScreenDpi { get; private set; } = new List<int>();
+        public List<int> ScreenDpi { get; private set; } = new List<int>();
 
-        public static double PrimaryScreenDpiRate => ScreenDpi._getFirst() / 96.0;
+        public double PrimaryScreenDpiRate => ScreenDpi._getFirst() / 96.0;
 
-        public static int PrimaryScreenDpi => ScreenDpi._getFirst();
+        public int PrimaryScreenDpi => ScreenDpi._getFirst();
 
-        public static void GetScreenInfo()
+        public static ScreenInfo Singleton { get; private set; }
+
+        public static ScreenInfo CreateSingleton()
+        {
+            if (Singleton == null) {
+                Singleton = new ScreenInfo();
+                Singleton.GetScreenInfo();
+            }
+            return Singleton;
+        }
+            
+        private void GetScreenInfo()
         {
             ScreenRects = Screen.AllScreens.Select(s => new Rectangle(s.Bounds.X, s.Bounds.Y, s.Bounds.Width, s.Bounds.Height)).ToList();
             ScreenDpi = Screen.AllScreens.Select(s => {
@@ -47,17 +58,17 @@ namespace KanchokuWS.Gui
         /// <param name="y"></param>
         /// <param name="rect"></param>
         /// <returns></returns>
-        public static Rectangle GetScreenContaining(int x, int y)
+        public Rectangle GetScreenContaining(int x, int y)
         {
             return ScreenRects[findContaingScreenIdx(x, y)];
         }
 
-        public static double GetScreenDpiRate(int x, int y)
+        public double GetScreenDpiRate(int x, int y)
         {
             return ScreenDpi[findContaingScreenIdx(x, y)] / 96.0;
         }
 
-        private static int findContaingScreenIdx(int x, int y)
+        private int findContaingScreenIdx(int x, int y)
         {
             for (int idx = 0; idx < ScreenRects.Count; ++idx) {
                 var r = ScreenRects[idx];
@@ -69,7 +80,7 @@ namespace KanchokuWS.Gui
             return 0;
         }
 
-        public static int GetScreenIndexByDpi(int dpi)
+        public int GetScreenIndexByDpi(int dpi)
         {
             return ScreenDpi.IndexOf(dpi)._lowLimit(0);
         }

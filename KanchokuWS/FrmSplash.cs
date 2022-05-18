@@ -35,7 +35,7 @@ namespace KanchokuWS
             label_version.Text += Settings.Version;
             label_version2.Text = Settings.Version2;
 
-            double dpiRate = ScreenInfo.GetScreenDpiRate(this.Left, this.Top);
+            double dpiRate = ScreenInfo.Singleton.GetScreenDpiRate(this.Left, this.Top);
             this.Width = (int)(this.Width * dpiRate);
             this.Height = (int)(this.Height * dpiRate);
             label_version.Top = (int)(label_version.Top * dpiRate);

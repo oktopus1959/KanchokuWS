@@ -47,7 +47,7 @@ namespace KanchokuWS
                 }
             }
 
-            using (var keDispatcher = new KeyboardEventDispatcher()) {
+            using (var keDispatcher = new KeyboardEventHandler()) {
                 try {
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);

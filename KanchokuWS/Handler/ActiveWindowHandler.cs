@@ -16,10 +16,6 @@ namespace KanchokuWS.Handler
     {
         private static Logger logger = Logger.GetLogger();
 
-        public FrmKanchoku FrmMain { get; set; }
-        public FrmVirtualKeyboard FrmVkb { get; set; }
-        public FrmModeMarker FrmMode { get; set; }
-
         /// <summary> アクティブ(フォーカスを持つ)ウィンドウの ClassName </summary>
         public string ActiveWinClassName { get; private set; } = "";
 
@@ -27,20 +23,16 @@ namespace KanchokuWS.Handler
         public IntPtr ActiveWinHandle { get; private set; } = IntPtr.Zero;
 
         /// <summary> アクティブ(フォーカスを持つ)ウィンドウのカレット位置 </summary>
-        private Rectangle ActiveWinCaretPos;
+        private Rectangle activeWinCaretPos;
 
-        /// <summary> アクティブ(フォーカスを持つ)ウィンドウの固有の設定 </summary>
-        private Settings.WindowsClassSettings ActiveWinSettings;
-
-        /// <summary> 仮想鍵盤ウィンドウの ClassName の末尾のハッシュ部分 </summary>
-        private string DlgVkbClassNameHash;
+        public Rectangle ActiveWinCaretPos => activeWinCaretPos;
 
         /// <summary> シングルトンオブジェクト </summary>
         public static ActiveWindowHandler Singleton { get; private set; }
 
-        public static ActiveWindowHandler CreateSingleton(FrmKanchoku frmMain, FrmVirtualKeyboard frmVkb, FrmModeMarker frmMode)
+        public static ActiveWindowHandler CreateSingleton()
         {
-            Singleton = new ActiveWindowHandler(frmMain, frmVkb, frmMode);
+            Singleton = new ActiveWindowHandler();
             return Singleton;
         }
 
@@ -51,13 +43,11 @@ namespace KanchokuWS.Handler
             logger.Info("Disposed");
         }
 
-        private ActiveWindowHandler(FrmKanchoku frmMain, FrmVirtualKeyboard frmVkb, FrmModeMarker frmMode)
+        /// <summary>
+        /// private コンストラクタ
+        /// </summary>
+        private ActiveWindowHandler()
         {
-            FrmMain = frmMain;
-            FrmVkb = frmVkb;
-            FrmMode = frmMode;
-            DlgVkbClassNameHash = getWindowClassName(FrmVkb.Handle)._safeSubstring(-16);
-            logger.Info(() => $"Vkb ClassName Hash={DlgVkbClassNameHash}");
         }
 
 
@@ -106,8 +96,8 @@ namespace KanchokuWS.Handler
         [DllImport("user32.dll")]
         private static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
 
-        [DllImport("user32.dll")]
-        private static extern bool MoveWindow(IntPtr handle, int x, int y, int width, int height, bool redraw);
+        //[DllImport("user32.dll")]
+        //private static extern bool MoveWindow(IntPtr handle, int x, int y, int width, int height, bool redraw);
 
         GUIThreadInfo guiThreadInfo = new GUIThreadInfo();
 
@@ -137,9 +127,9 @@ namespace KanchokuWS.Handler
                 if (bLog) logger.Info(() => $"fgHan={(int)fgHan:x}H, focusHan={(int)focusHan:x}H");
 
                 // カレットのスクリーン座標を取得
-                guiThreadInfo.GetScreenCaretPos(ref ActiveWinCaretPos);
+                guiThreadInfo.GetScreenCaretPos(ref activeWinCaretPos);
                 //getScreenCaretPosByOriginalWay(fgHan, ref ActiveWinCaretPos, bLog);   // やっぱりこのやり方だとうまく取れない場合あり
-                if (bLog) logger.Info(() => $"WndClass={ActiveWinClassName}: focus caret pos=({ActiveWinCaretPos.X}, {ActiveWinCaretPos.Y})");
+                if (bLog) logger.Info(() => $"WndClass={ActiveWinClassName}: focus caret pos=({activeWinCaretPos.X}, {activeWinCaretPos.Y})");
 
                 if (focusHan != IntPtr.Zero || ActiveWinClassName._equalsTo("ConsoleWindowClass")) break;  // CMD Prompt の場合は Focus が取れないっぽい?
                 if (bLog || Logger.IsInfoEnabled) logger.Warn($"RETRY: count={count + 1}");
@@ -180,7 +170,7 @@ namespace KanchokuWS.Handler
             rect.Height = 20;
         }
 
-        private string getWindowClassName(IntPtr hwnd)
+        public static string GetWindowClassName(IntPtr hwnd)
         {
             const int nChars = 1024;
             StringBuilder Buff = new StringBuilder(nChars);
@@ -188,22 +178,17 @@ namespace KanchokuWS.Handler
             return Buff.ToString();
         }
 
-        private Rectangle prevCaretPos;
-
-        /// <summary> ウィンドウを移動さ出ない微少変動量 </summary>
-        private const int NoMoveOffset = 10;
-
         private DateTime prevLogDt1;
 
-        private void loggingCaretInfo()
+        public void LoggingCaretInfo(Settings.WindowsClassSettings settings)
         {
             if (prevLogDt1.AddSeconds(3) < DateTime.Now) {
                 prevLogDt1 = DateTime.Now;
-                var caretMargin = ActiveWinSettings?.ValidCaretMargin;
+                var caretMargin = settings?.ValidCaretMargin;
                 if (caretMargin != null) {
                     GUIThreadInfo.RECT rect;
                     guiThreadInfo.GetForegroundWindowRect(out rect);
-                    logger.Info($"caretPos=(X:{ActiveWinCaretPos.X}, Y:{ActiveWinCaretPos.Y}), " +
+                    logger.Info($"caretPos=(X:{activeWinCaretPos.X}, Y:{activeWinCaretPos.Y}), " +
                         $"validCaretMargin=({caretMargin.Select(m => m.ToString())._join(",")}), " +
                         $"WinRect=(L:{rect.iLeft}, T:{rect.iTop}, R:{rect.iRight}, B:{rect.iBottom}), " +
                         $"validWinRect=(L:{rect.iLeft + caretMargin._getNth(2)}, " +
@@ -211,11 +196,11 @@ namespace KanchokuWS.Handler
                         $"R:{rect.iRight - caretMargin._getNth(3)}, " +
                         $"B:{rect.iBottom - caretMargin._getNth(1)})");
                 }
-                var caretOffset = ActiveWinSettings?.CaretOffset;
+                var caretOffset = settings?.CaretOffset;
                 if (caretOffset != null) {
                     logger.Info($"caretOffset=({caretOffset.Select(m => m.ToString())._join(",")})");
                 }
-                var vkbFixedPos = ActiveWinSettings?.VkbFixedPos;
+                var vkbFixedPos = settings?.VkbFixedPos;
                 if (vkbFixedPos != null) {
                     logger.Info($"vkbFixedPos=({vkbFixedPos.Select(m => m.ToString())._join(",")})");
                 }
@@ -224,104 +209,17 @@ namespace KanchokuWS.Handler
 
         /// <summary> 指定されたマージンの内側にカレットがあるか</summary>
         /// <returns></returns>
-        private bool isInValidCaretMargin(Settings.WindowsClassSettings settings)
+        public bool IsInValidCaretMargin(Settings.WindowsClassSettings settings)
         {
             var caretMargin = settings?.ValidCaretMargin;
             if (caretMargin == null) return true;
 
             GUIThreadInfo.RECT rect;
             guiThreadInfo.GetForegroundWindowRect(out rect);
-            return rect.iTop + caretMargin._getNth(0) <= ActiveWinCaretPos.Y
-                && ActiveWinCaretPos.Y <= rect.iBottom - caretMargin._getNth(1)
-                && rect.iLeft + caretMargin._getNth(2) <= ActiveWinCaretPos.X
-                && ActiveWinCaretPos.X <= rect.iRight - caretMargin._getNth(3);
-        }
-
-        /// <summary>
-        /// 仮想鍵盤をカレットの近くに移動する<br/>
-        /// </summary>
-        public void MoveWindow()
-        {
-            moveWindow(false, true, true);
-        }
-
-        private bool bFirstMove = true;
-
-        /// <summary>
-        /// 仮想鍵盤をカレットの近くに移動する (仮想鍵盤自身がアクティブの場合は移動しない)<br/>
-        /// これが呼ばれるのはデコーダがONのときだけ
-        /// </summary>
-        private void moveWindow(bool bDiffWin, bool bMoveMandatory, bool bLog)
-        {
-            ActiveWinSettings = Settings.GetWinClassSettings(ActiveWinClassName);
-            if (bLog || bFirstMove) {
-                logger.Info($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}, firstMove={bFirstMove}");
-                loggingCaretInfo();
-            }
-
-            if (Settings.VirtualKeyboardPosFixedTemporarily) return;    // 一時的に固定されている
-
-            if (bFirstMove || (!FrmMain.IsVirtualKeyboardFreezed && !ActiveWinClassName.EndsWith(DlgVkbClassNameHash) && ActiveWinClassName._ne("SysShadow"))) {
-                if (bFirstMove || bMoveMandatory ||
-                    ((Math.Abs(ActiveWinCaretPos.X) >= NoMoveOffset || Math.Abs(ActiveWinCaretPos.Y) >= NoMoveOffset) &&
-                     (Math.Abs(ActiveWinCaretPos.X - prevCaretPos.X) >= NoMoveOffset || Math.Abs(ActiveWinCaretPos.Y - prevCaretPos.Y) >= NoMoveOffset) &&
-                     isInValidCaretMargin(ActiveWinSettings))
-                   ) {
-                    int xOffset = (ActiveWinSettings?.CaretOffset)._getNth(0, Settings.VirtualKeyboardOffsetX);
-                    int yOffset = (ActiveWinSettings?.CaretOffset)._getNth(1, Settings.VirtualKeyboardOffsetY);
-                    int xFixed = (ActiveWinSettings?.VkbFixedPos)._getNth(0, -1)._geZeroOr(Settings.VirtualKeyboardFixedPosX);
-                    int yFixed = (ActiveWinSettings?.VkbFixedPos)._getNth(1, -1)._geZeroOr(Settings.VirtualKeyboardFixedPosY);
-                    //double dpiRatio = 1.0; //FrmVkb.GetDeviceDpiRatio();
-                    if (bLog || bFirstMove) logger.Info($"CaretPos.X={ActiveWinCaretPos.X}, CaretPos.Y={ActiveWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}, xFixed={xFixed}, yFixed={yFixed}");
-                    if (ActiveWinCaretPos.X >= 0) {
-                        int cX = ActiveWinCaretPos.X;
-                        int cY = ActiveWinCaretPos.Y;
-                        int cW = ActiveWinCaretPos.Width;
-                        int cH = ActiveWinCaretPos.Height;
-                        if (bLog) {
-                            logger.Info($"MOVE: X={cX}, Y={cY}, W={cW}, H={cH}, OX={xOffset}, OY={yOffset}");
-                            if (Settings.LoggingActiveWindowInfo) {
-                                var dpis = ScreenInfo.ScreenDpi.Select(x => $"{x}")._join(", ");
-                                FrmVkb.SetTopText($"DR={dpis}, CX={cX},CY={cY},CW={cW},CH={cH},OX={xOffset},OY={yOffset}");
-                            }
-                        }
-                        Action<Form> moveAction = (Form frm) => {
-                            int fX = 0;
-                            int fY = 0;
-                            int fW = frm.Size.Width;
-                            int fH = frm.Size.Height;
-                            if (xFixed >= 0 && yFixed >= 0) {
-                                fX = xFixed;
-                                fY = yFixed;
-                            } else {
-                                fX = cX + (xOffset >= 0 ? cW : -fW) + xOffset ;
-                                if (fX < 0) fX = cX + cW + Math.Abs(xOffset);
-                                fY = cY + (yOffset >= 0 ? cH : -fH) + yOffset;
-                                if (fY < 0) fY = cY + cH + Math.Abs(yOffset);
-                                int fRight = fX + fW;
-                                int fBottom = fY + fH;
-                                Rectangle rect = ScreenInfo.GetScreenContaining(cX, cY);
-                                if (fRight >= rect.X + rect.Width) fX = cX - fW - Math.Abs(xOffset);
-                                if (fBottom >= rect.Y + rect.Height) fY = cY - fH - Math.Abs(yOffset);
-                            }
-                            MoveWindow(frm.Handle, fX, fY, fW, fH, true);
-                        };
-                        // 仮想鍵盤の移動
-                        moveAction(FrmVkb);
-
-                        // 入力モード標識の移動
-                        moveAction(FrmMode);
-                        if (bDiffWin && !FrmMain.IsVkbShown) {
-                            // 異なるウィンドウに移動したら入力モード標識を表示する
-                            FrmMode.ShowImmediately();
-                        }
-                        prevCaretPos = ActiveWinCaretPos;
-                    }
-                }
-                bFirstMove = false;
-            } else {
-                logger.Debug(() => $"ActiveWinClassName={ActiveWinClassName}, VkbClassName={DlgVkbClassNameHash}");
-            }
+            return rect.iTop + caretMargin._getNth(0) <= activeWinCaretPos.Y
+                && activeWinCaretPos.Y <= rect.iBottom - caretMargin._getNth(1)
+                && rect.iLeft + caretMargin._getNth(2) <= activeWinCaretPos.X
+                && activeWinCaretPos.X <= rect.iRight - caretMargin._getNth(3);
         }
 
         // 同じスレッドで再入するのを防ぐ
@@ -338,12 +236,12 @@ namespace KanchokuWS.Handler
             MoveMandatory = 2,
         }
 
-        public void GetActiveWindowInfo()
+        public void GetActiveWindowInfo(Action<bool, bool, bool> actionMoveWindow, FrmVirtualKeyboard frmVkb)
         {
-            GetActiveWindowInfo(MoveWinType.MoveIfAny, Settings.LoggingActiveWindowInfo /*&& Logger.IsDebugEnabled*/);
+            getActiveWindowInfo(actionMoveWindow, frmVkb, MoveWinType.MoveIfAny, Settings.LoggingActiveWindowInfo /*&& Logger.IsDebugEnabled*/);
         }
 
-        public void GetActiveWindowInfo(MoveWinType moveWin, bool bLog = false)
+        private void getActiveWindowInfo(Action<bool, bool, bool> actionMoveWindow, FrmVirtualKeyboard frmVkb, MoveWinType moveWin, bool bLog = false)
         {
             GUIThreadInfo.SetLogFlag(bLog);
 
@@ -369,7 +267,7 @@ namespace KanchokuWS.Handler
                         }
                         busyCount = 0;
                     }
-                    if (Logger.IsInfoEnabled && !ActiveWinClassName._endsWith(DlgVkbClassNameHash)) {
+                    if (Logger.IsInfoEnabled && !frmVkb.IsMyWinClassName(ActiveWinClassName)) {
                         logger.InfoH("LEAVE: In Progress");
                     }
                     return;
@@ -384,9 +282,9 @@ namespace KanchokuWS.Handler
                     GetActiveWindowHandle(bLog);
                     bOK = true;
                     bDiffWin = ActiveWinClassName._ne(prevClassName);
-                    if (bDiffWin && !ActiveWinClassName._endsWith(DlgVkbClassNameHash)) {
+                    if (bDiffWin && !frmVkb.IsMyWinClassName(ActiveWinClassName)) {
                         // 直前のものとクラス名が異なっていれば、それを仮想鍵盤上部に表示する (ただし、仮想鍵盤自身を除く)
-                        FrmVkb.SetTopText(ActiveWinClassName);
+                        frmVkb.SetTopText(ActiveWinClassName);
                     }
                 } catch (Exception e) {
                     logger.Error($"{e.Message}\n{e.StackTrace}");
@@ -396,7 +294,7 @@ namespace KanchokuWS.Handler
                 // 強制移動でない場合は、頻繁に移動しないように、最後のキー出力が終わってNms経過したらウィンドウを移動する
                 bool bMandatory = moveWin == MoveWinType.MoveMandatory;
                 if (bMandatory || DateTime.Now >= (SendInputHandler.Singleton?.LastOutputDt.AddMilliseconds(Settings.VirtualKeyboardMoveGuardMillisec) ?? DateTime.MaxValue))
-                    moveWindow(bDiffWin, bMandatory, bLog);
+                    actionMoveWindow(bDiffWin, bMandatory, bLog);
             }
             if (bLog) logger.Info(() => $"LEAVE: ActiveWinClassName={ActiveWinClassName}");
         }

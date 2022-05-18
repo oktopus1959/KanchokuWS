@@ -10,7 +10,7 @@ using Utils;
 
 namespace KanchokuWS.Handler
 {
-    public class KeyboardEventDispatcher : IDisposable
+    public class KeyboardEventHandler : IDisposable
     {
         private static Logger logger = Logger.GetLogger();
 
@@ -133,7 +133,7 @@ namespace KanchokuWS.Handler
         private bool bHooked = false;
 
         /// <summary>コンストラクタ</summary>
-        public KeyboardEventDispatcher()
+        public KeyboardEventHandler()
         {
             //clearKeyCodeTable();
         }
