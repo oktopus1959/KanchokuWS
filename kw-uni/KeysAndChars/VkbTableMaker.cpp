@@ -277,13 +277,13 @@ namespace VkbTableMaker {
         makeKeyCharsStrokePositionTable(StrokeTableNode::RootStrokeNode2.get(), faces, shiftPlane * PLANE_DECKEY_NUM, NORMAL_DECKEY_NUM);
     }
 
-    // 指定されたシフト面の単打ストローク表を作成する
-    void MakeShiftPlaneKeyCharsStrokePositionTable(wchar_t* faces, size_t shiftPlane) {
+    // 主テーブルに対して指定されたシフト面の単打ストローク表を作成する
+    void MakeShiftPlaneKeyCharsStrokePositionTable1(wchar_t* faces, size_t shiftPlane) {
         LOG_INFO(_T("CALLED: shiftPlane=%d"), shiftPlane);
         makeKeyCharsStrokePositionTable1(faces, shiftPlane);
     }
 
-    // 副テーブルの指定されたシフト面の単打ストローク表を作成する
+    // 副テーブルに対して指定されたシフト面の単打ストローク表を作成する
     void MakeShiftPlaneKeyCharsStrokePositionTable2(wchar_t* faces, size_t shiftPlane) {
         LOG_INFO(_T("CALLED: shiftPlane=%d"), shiftPlane);
         makeKeyCharsStrokePositionTable2(faces, shiftPlane);

@@ -32,10 +32,10 @@ namespace VkbTableMaker {
     // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
     void MakeExtraCharsStrokePositionTable(wchar_t* faces);
 
-    // 指定されたシフト面の単打ストローク表を作成する
-    void MakeShiftPlaneKeyCharsStrokePositionTable(wchar_t* faces, size_t shiftPlane);
+    // 主テーブルに対して指定されたシフト面の単打ストローク表を作成する
+    void MakeShiftPlaneKeyCharsStrokePositionTable1(wchar_t* faces, size_t shiftPlane);
 
-    // 副テーブルの指定されたシフト面の単打ストローク表を作成する
+    // 副テーブルに対して指定されたシフト面の単打ストローク表を作成する
     void MakeShiftPlaneKeyCharsStrokePositionTable2(wchar_t* faces, size_t shiftPlane);
 
     // 通常面のキー文字を集めたストローク表を作成する

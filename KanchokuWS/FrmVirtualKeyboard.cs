@@ -585,10 +585,14 @@ namespace KanchokuWS
             public string[] CharOrKeys;
         }
 
-        private int selectedTable = 0;
-        private List<StrokeTableDef> StrokeTables = new List<StrokeTableDef>();
+        private int selectedTable1 = 0;
+        private int selectedTable2 = 0;
+        private List<StrokeTableDef> StrokeTables1 = new List<StrokeTableDef>();
+        private List<StrokeTableDef> StrokeTables2 = new List<StrokeTableDef>();
 
-        private StrokeTableDef StrokeTables2 = null;
+        private List<string[]> shiftPlaneStrokeTables1;
+        private List<string[]> shiftPlaneStrokeTables2;
+
 
         private string[] initialVkbChars = new string[DecoderKeys.NORMAL_DECKEY_NUM] {
             "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
@@ -597,8 +601,6 @@ namespace KanchokuWS
             "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
             "・", "・", "・", "・", "・", "・", "・", "・", "・", "・",
         };
-
-        private List<string[]> shiftPlaneStrokeTables;
 
         private string[] kanaOutChars = {
             "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわ ん を",
@@ -647,10 +649,11 @@ namespace KanchokuWS
             var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(defFile);
             if (Settings.LoggingVirtualKeyboardInfo || logger.IsInfoHPromoted) logger.DebugH(() => $"ENTER: filePath={filePath}");
 
-            shiftPlaneStrokeTables = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition\t{x}", null)).ToList();
+            shiftPlaneStrokeTables1 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition1\t{x}", null)).ToList();
+            shiftPlaneStrokeTables2 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition2\t{x}", null)).ToList();
 
             if (Helper.FileExists(filePath)) {
-                StrokeTables.Clear();
+                StrokeTables1.Clear();
                 try {
                     foreach (var line in System.IO.File.ReadAllLines(filePath)) {
                         var items = line.Trim()._reReplace("  +", " ")._split(' ');
@@ -660,42 +663,42 @@ namespace KanchokuWS
                             if (Settings.LoggingVirtualKeyboardInfo || logger.IsInfoHPromoted) logger.DebugH(() => $"cmd={cmd}, param={chars}");
                             if (cmd == "initialtable") {
                                 // 初期表示を追加(初期表示は事前に作成されている)
-                                StrokeTables.Add(new StrokeTableDef {
+                                StrokeTables1.Add(new StrokeTableDef {
                                     KanaAlign = false,
                                     Faces = null,
                                     CharOrKeys = initialVkbChars,
                                 });
                             } else if (cmd == "extracharsposition") {
-                                makeVkbStrokeTable("makeExtraCharsStrokePositionTable", null);
+                                makeVkbStrokeTable1("makeExtraCharsStrokePositionTable", null);
                             } else if (cmd == "keycharsposition") {
                                 // 主テーブルの単打用
-                                makeVkbStrokeTable($"makeStrokePosition", null, false, false, false);
+                                makeVkbStrokeTable1($"makeStrokePosition", null, false, false, false);
                             } else if (cmd == "keycharsposition2") {
                                 // 副テーブルの単打用
                                 makeVkbStrokeTable2($"makeStrokePosition2", null);
                             } else if (cmd == "shiftkeycharsposition") {
-                                makeVkbStrokeTable("makeShiftStrokePosition", null, false, false, true);
+                                makeVkbStrokeTable1("makeShiftStrokePosition1", null, false, false, true);
                             } else if (cmd == "shiftakeycharsposition") {
-                                makeVkbStrokeTable("makeShiftAStrokePosition", null, false, false, true);
+                                makeVkbStrokeTable1("makeShiftAStrokePosition1", null, false, false, true);
                             } else if (cmd == "shiftbkeycharsposition") {
-                                makeVkbStrokeTable("makeShiftBStrokePosition", null, false, false, true);
+                                makeVkbStrokeTable1("makeShiftBStrokePosition1", null, false, false, true);
                             } else if (cmd == "hiraganakey1") {
-                                makeVkbStrokeTable("makeStrokeKeysTable", kanaOutChars[0], true, true);
+                                makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[0], true, true);
                             } else if (cmd == "hiraganakey2") {
-                                makeVkbStrokeTable("makeStrokeKeysTable", kanaOutChars[1], true, true);
+                                makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[1], true, true);
                             } else if (cmd == "katakanakey1") {
-                                makeVkbStrokeTable("makeStrokeKeysTable", kanaOutChars[2], true, true);
+                                makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[2], true, true);
                             } else if (cmd == "katakanakey2") {
-                                makeVkbStrokeTable("makeStrokeKeysTable", kanaOutChars[3], true, true);
+                                makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[3], true, true);
                             } else if (chars._notEmpty()) {
                                 if (cmd == "strokeposition") {
-                                    makeVkbStrokeTable("reorderByFirstStrokePosition1", chars);
+                                    makeVkbStrokeTable1("reorderByFirstStrokePosition1", chars);
                                 } else if (cmd == "strokeposition2") {
                                     makeVkbStrokeTable2("reorderByFirstStrokePosition2", chars);
                                 } else if (cmd == "strokepositionfixed") {
                                     makeVkbStrokeTableFixed(chars);
                                 } else if (cmd == "strokekey") {
-                                    makeVkbStrokeTable("makeStrokeKeysTable", chars, true, false);
+                                    makeVkbStrokeTable1("makeStrokeKeysTable", chars, true, false);
                                 }
                             }
                         }
@@ -707,11 +710,21 @@ namespace KanchokuWS
             if (Settings.LoggingVirtualKeyboardInfo || logger.IsInfoHPromoted) logger.DebugH("LEAVE");
         }
 
-        private void makeVkbStrokeTable(string cmd, string faces, bool drawFaces = false, bool kana = false, bool shiftPlane = false)
+        private void makeVkbStrokeTable1(string cmd, string faces, bool drawFaces = false, bool kana = false, bool shiftPlane = false)
+        {
+            addStrokeTableDef(StrokeTables1, cmd, faces, drawFaces, kana, shiftPlane);
+        }
+
+        private void makeVkbStrokeTable2(string cmd, string faces, bool drawFaces = false, bool kana = false, bool shiftPlane = false)
+        {
+            addStrokeTableDef(StrokeTables2, cmd, faces, drawFaces, kana, shiftPlane);
+        }
+
+        private void addStrokeTableDef(List<StrokeTableDef> tblDefList, string cmd, string faces, bool drawFaces = false, bool kana = false, bool shiftPlane = false)
         {
             var charOrKeys = makeCharOrKeys(cmd, faces);
             if (charOrKeys != null) {
-                StrokeTables.Add(new StrokeTableDef {
+                tblDefList.Add(new StrokeTableDef {
                     KanaAlign = kana,
                     ShiftPlane = shiftPlane,
                     Faces = drawFaces ? faces : null,
@@ -720,22 +733,9 @@ namespace KanchokuWS
             }
         }
 
-        private void makeVkbStrokeTable2(string cmd, string faces)
+        private string[] makeCharOrKeys(string cmd, string data)
         {
-            var charOrKeys = makeCharOrKeys(cmd, faces);
-            if (charOrKeys != null) {
-                StrokeTables2 = new StrokeTableDef {
-                    KanaAlign = false,
-                    ShiftPlane = false,
-                    Faces = null,
-                    CharOrKeys = charOrKeys,
-                };
-            }
-        }
-
-        private string[] makeCharOrKeys(string cmd, string faces)
-        {
-            var result = frmMain.CallDecoderFunc(cmd, faces);
+            var result = frmMain.CallDecoderFunc(cmd, data);
             if (result == null) return null;
 
             var charOrKeys = new string[DecoderKeys.NORMAL_DECKEY_NUM];
@@ -751,7 +751,7 @@ namespace KanchokuWS
             for (int i = 0; i < charOrKeys.Length; ++i) {
                 charOrKeys[i] = faces._safeSubstring(i, 1);
             }
-            StrokeTables.Add(new StrokeTableDef {
+            StrokeTables1.Add(new StrokeTableDef {
                 KanaAlign = false,
                 Faces = null,
                 CharOrKeys = charOrKeys,
@@ -808,20 +808,24 @@ namespace KanchokuWS
                 StrokeTableDef tblDef = null;
                 // 主コードテーブルか
                 bool isPrimary = frmMain.DecoderOutput.IsCurrentStrokeTablePrimary();
-                if ((isPrimary && StrokeTables._isEmpty()) || (!isPrimary && StrokeTables2 == null)) {
+                if ((isPrimary && StrokeTables1._isEmpty()) || (!isPrimary && StrokeTables2._isEmpty())) {
                     tblDef = null;
                 } else {
-                    string[] nextTable = DecKeyForNextTableStrokeHelp >= 0 ? makeCharOrKeys($"makeNextStrokeTable\t{DecKeyForNextTableStrokeHelp}", null) : null;
-                    string[] shiftPlaneTbl = StrokeHelpShiftPlane > 0 ? shiftPlaneStrokeTables._getNth(StrokeHelpShiftPlane) : null;
-                    logger.DebugH(() => $"nextTable={nextTable._join(":")}\n, shiftPlaneStrokeTables[{StrokeHelpShiftPlane}]={shiftPlaneTbl._join(":")}");
+                    string[] nextTable = DecKeyForNextTableStrokeHelp >= 0 ? makeCharOrKeys("makeNextStrokeTable", DecKeyForNextTableStrokeHelp.ToString()) : null;
+                    logger.DebugH(() => $"nextTable={nextTable._join(":")}");
                     if (nextTable != null) {
                         tblDef = new StrokeTableDef() { CharOrKeys = nextTable };
                     }
                     else if (isPrimary) {
+                        string[] shiftPlaneTbl = StrokeHelpShiftPlane > 0 ? shiftPlaneStrokeTables1._getNth(StrokeHelpShiftPlane) : null;
+                        logger.DebugH(() => $"shiftPlaneStrokeTables[{StrokeHelpShiftPlane}]={shiftPlaneTbl._join(":")}");
                         tblDef = shiftPlaneTbl != null ? new StrokeTableDef() { CharOrKeys = shiftPlaneTbl, ShiftPlane = true }
-                               : StrokeTables[selectedTable._lowLimit(0) % StrokeTables.Count];
+                               : StrokeTables1[selectedTable1._lowLimit(0) % StrokeTables1.Count];
                     } else {
-                        tblDef = StrokeTables2;
+                        string[] shiftPlaneTbl = StrokeHelpShiftPlane > 0 ? shiftPlaneStrokeTables2._getNth(StrokeHelpShiftPlane) : null;
+                        logger.DebugH(() => $"shiftPlaneStrokeTables[{StrokeHelpShiftPlane}]={shiftPlaneTbl._join(":")}");
+                        tblDef = shiftPlaneTbl != null ? new StrokeTableDef() { CharOrKeys = shiftPlaneTbl, ShiftPlane = true }
+                               : StrokeTables2[selectedTable2._lowLimit(0) % StrokeTables2.Count];
                     }
                 }
                 if (tblDef == null) {
@@ -904,9 +908,13 @@ namespace KanchokuWS
         /// <summary> 第1打鍵待ち受け時に表示するストロークテーブルの切り替え </summary>
         public void RotateStrokeTable(int delta = 1)
         {
-            if (frmMain.DecoderOutput.IsCurrentStrokeTablePrimary() && StrokeTables._notEmpty()) {
-                if (delta < 0) delta = StrokeTables.Count - ((-delta) % StrokeTables.Count);
-                selectedTable = (selectedTable + delta) % StrokeTables.Count;
+            if (frmMain.DecoderOutput.IsCurrentStrokeTablePrimary() && StrokeTables1._notEmpty()) {
+                if (delta < 0) delta = StrokeTables1.Count - ((-delta) % StrokeTables1.Count);
+                selectedTable1 = (selectedTable1 + delta) % StrokeTables1.Count;
+                DrawVirtualKeyboardChars();
+            } else if (frmMain.DecoderOutput.IsCurrentStrokeTablePrimary() && StrokeTables2._notEmpty()) {
+                if (delta < 0) delta = StrokeTables2.Count - ((-delta) % StrokeTables2.Count);
+                selectedTable2 = (selectedTable2 + delta) % StrokeTables2.Count;
                 DrawVirtualKeyboardChars();
             }
         }

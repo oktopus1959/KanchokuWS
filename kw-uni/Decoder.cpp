@@ -375,19 +375,19 @@ public:
             } else if (cmd == _T("makeStrokePosition2")) {
                 // 第2テーブルから、アンシフトキー文字配列をストロークの位置に従って並べる
                 VkbTableMaker::MakeKeyCharsStrokePositionTable2(outParams->faceStrings);
-            } else if (cmd == _T("makeShiftStrokePosition")) {
+            } else if (cmd == _T("makeShiftStrokePosition1")) {
                 // シフトキー文字配列をストロークの位置に従って並べる
-                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable(outParams->faceStrings, 1);
-            } else if (cmd == _T("makeShiftAStrokePosition")) {
+                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable1(outParams->faceStrings, 1);
+            } else if (cmd == _T("makeShiftAStrokePosition1")) {
                 // シフトA面のキー文字配列をストロークの位置に従って並べる
-                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable(outParams->faceStrings, 2);
-            } else if (cmd == _T("makeShiftBStrokePosition")) {
+                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable1(outParams->faceStrings, 2);
+            } else if (cmd == _T("makeShiftBStrokePosition1")) {
                 // シフトB面のキー文字配列をストロークの位置に従って並べる
-                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable(outParams->faceStrings, 3);
-            } else if (cmd == _T("makeShiftPlaneStrokePosition")) {
+                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable1(outParams->faceStrings, 3);
+            } else if (cmd == _T("makeShiftPlaneStrokePosition1")) {
                 // 指定のシフト面のキー文字配列をストロークの位置に従って並べる
                 size_t shiftPlane = items.size() >= 2 ? utils::strToInt(items[1]) : 0;
-                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable(outParams->faceStrings, shiftPlane);
+                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable1(outParams->faceStrings, shiftPlane);
             } else if (cmd == _T("makeShiftPlaneStrokePosition2")) {
                 // 副テーブルの指定のシフト面のキー文字配列をストロークの位置に従って並べる
                 size_t shiftPlane = items.size() >= 2 ? utils::strToInt(items[1]) : 0;
