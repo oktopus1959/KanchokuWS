@@ -70,53 +70,53 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActiveWindowHandler.cs" />
-    <Compile Include="BackColorComboBox.cs">
+    <Compile Include="Handler\ActiveWindowHandler.cs" />
+    <Compile Include="Gui\BackColorComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="BackColorComboBox.Designer.cs">
+    <Compile Include="Gui\BackColorComboBox.Designer.cs">
       <DependentUpon>BackColorComboBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="ColorComboBox.cs">
+    <Compile Include="Gui\ColorComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ColorComboBox.Designer.cs">
+    <Compile Include="Gui\ColorComboBox.Designer.cs">
       <DependentUpon>ColorComboBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="ColorTextBox.cs">
+    <Compile Include="Gui\ColorTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ColorTextBox.Designer.cs">
+    <Compile Include="Gui\ColorTextBox.Designer.cs">
       <DependentUpon>ColorTextBox.cs</DependentUpon>
     </Compile>
     <Compile Include="CombinationKeyStroke\DeterminerLib\RepeatableKeyPool.cs" />
     <Compile Include="CombinationKeyStroke\DeterminerLib\StrokeList.cs" />
     <Compile Include="CommonState.cs" />
-    <Compile Include="DecoderKeys.cs" />
-    <Compile Include="DecoderKeyToChar.cs" />
+    <Compile Include="Domain\DecoderKeys.cs" />
+    <Compile Include="Domain\DecoderKeyToChar.cs" />
     <Compile Include="DecoderOutParams.cs" />
-    <Compile Include="DlgColorSelector.cs">
+    <Compile Include="Gui\DlgColorSelector.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DlgColorSelector.Designer.cs">
+    <Compile Include="Gui\DlgColorSelector.Designer.cs">
       <DependentUpon>DlgColorSelector.cs</DependentUpon>
     </Compile>
-    <Compile Include="DlgKeywordSelector.cs">
+    <Compile Include="Gui\DlgKeywordSelector.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DlgKeywordSelector.Designer.cs">
+    <Compile Include="Gui\DlgKeywordSelector.Designer.cs">
       <DependentUpon>DlgKeywordSelector.cs</DependentUpon>
     </Compile>
-    <Compile Include="DlgModConversion.cs">
+    <Compile Include="Gui\DlgModConversion.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DlgModConversion.Designer.cs">
+    <Compile Include="Gui\DlgModConversion.Designer.cs">
       <DependentUpon>DlgModConversion.cs</DependentUpon>
     </Compile>
-    <Compile Include="DlgPaddingsDesc.cs">
+    <Compile Include="Gui\DlgPaddingsDesc.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DlgPaddingsDesc.Designer.cs">
+    <Compile Include="Gui\DlgPaddingsDesc.Designer.cs">
       <DependentUpon>DlgPaddingsDesc.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmKanchoku.cs">
@@ -125,10 +125,10 @@
     <Compile Include="FrmKanchoku.Designer.cs">
       <DependentUpon>FrmKanchoku.cs</DependentUpon>
     </Compile>
-    <Compile Include="DlgSettings.cs">
+    <Compile Include="Gui\DlgSettings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DlgSettings.Designer.cs">
+    <Compile Include="Gui\DlgSettings.Designer.cs">
       <DependentUpon>DlgSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmVirtualKeyboard.cs">
@@ -137,10 +137,10 @@
     <Compile Include="FrmVirtualKeyboard.Designer.cs">
       <DependentUpon>FrmVirtualKeyboard.cs</DependentUpon>
     </Compile>
-    <Compile Include="ForeColorComboBox.cs">
+    <Compile Include="Gui\ForeColorComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ForeColorComboBox.Designer.cs">
+    <Compile Include="Gui\ForeColorComboBox.Designer.cs">
       <DependentUpon>ForeColorComboBox.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmSplash.cs">
@@ -155,11 +155,11 @@
     <Compile Include="FrmModeMarker.Designer.cs">
       <DependentUpon>FrmModeMarker.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUIThreadInfo.cs" />
+    <Compile Include="Handler\GUIThreadInfo.cs" />
     <Compile Include="KanchokuIni.cs" />
-    <Compile Include="KanjiYomiTable.cs" />
-    <Compile Include="KeyboardEventDispatcher.cs" />
-    <Compile Include="KeyboardHook.cs" />
+    <Compile Include="Domain\KanjiYomiTable.cs" />
+    <Compile Include="Handler\KeyboardEventDispatcher.cs" />
+    <Compile Include="Handler\KeyboardHook.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -167,7 +167,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ScreenInfo.cs" />
+    <Compile Include="Handler\ScreenInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="CombinationKeyStroke\Determiner.cs" />
     <Compile Include="CombinationKeyStroke\DeterminerLib\KeyCombinationPool.cs" />
@@ -180,39 +180,39 @@
     <Compile Include="CombinationKeyStroke\KeyCombination.cs" />
     <Compile Include="CombinationKeyStroke\Factories.cs" />
     <Compile Include="CombinationKeyStroke\KeyCombinationHelper.cs" />
-    <Compile Include="SpecialKeysAndFunctions.cs" />
-    <Compile Include="VirtualKeys.cs" />
-    <EmbeddedResource Include="BackColorComboBox.resx">
+    <Compile Include="Domain\SpecialKeysAndFunctions.cs" />
+    <Compile Include="Domain\VirtualKeys.cs" />
+    <EmbeddedResource Include="Gui\BackColorComboBox.resx">
       <DependentUpon>BackColorComboBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ColorComboBox.resx">
+    <EmbeddedResource Include="Gui\ColorComboBox.resx">
       <DependentUpon>ColorComboBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ColorTextBox.resx">
+    <EmbeddedResource Include="Gui\ColorTextBox.resx">
       <DependentUpon>ColorTextBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DlgColorSelector.resx">
+    <EmbeddedResource Include="Gui\DlgColorSelector.resx">
       <DependentUpon>DlgColorSelector.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DlgKeywordSelector.resx">
+    <EmbeddedResource Include="Gui\DlgKeywordSelector.resx">
       <DependentUpon>DlgKeywordSelector.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DlgModConversion.resx">
+    <EmbeddedResource Include="Gui\DlgModConversion.resx">
       <DependentUpon>DlgModConversion.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DlgPaddingsDesc.resx">
+    <EmbeddedResource Include="Gui\DlgPaddingsDesc.resx">
       <DependentUpon>DlgPaddingsDesc.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmKanchoku.resx">
       <DependentUpon>FrmKanchoku.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DlgSettings.resx">
+    <EmbeddedResource Include="Gui\DlgSettings.resx">
       <DependentUpon>DlgSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmVirtualKeyboard.resx">
       <DependentUpon>FrmVirtualKeyboard.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ForeColorComboBox.resx">
+    <EmbeddedResource Include="Gui\ForeColorComboBox.resx">
       <DependentUpon>ForeColorComboBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmSplash.resx">
