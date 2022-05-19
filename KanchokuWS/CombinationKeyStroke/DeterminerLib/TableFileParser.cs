@@ -68,11 +68,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // n番目の子ノードをセットする
         public void setNthChild(int n, Node node)
         {
-            if (n < children.Count) {
+            if (n >= 0 && n < children.Count) {
                 children[n] = node;
             }
         }
-
     }
 
     class StringNode : Node
@@ -415,6 +414,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"LEAVE: currentLine={lineNumber}, depth={depth}, bError={bError}");
         }
 
+        // 矢印記法(-\d+(,\d+)*>)を解析して第1打鍵位置に従って配置する
         void parseArrowNode(int idx) {
             strokeList.Add(idx);
             logger.DebugH(() => $"ENTER: currentLine={lineNumber}, depth={depth}, idx={idx}");
@@ -422,6 +422,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             var tokenNextToArrow = currentToken;
             if (currentToken == TOKEN.ARROW) {
                 parseArrowNode(arrowIndex);
+            } else if (currentToken == TOKEN.COMMA) {
+                if (parseArrow(getNextChar())) parseArrowNode(arrowIndex);
             } else if (currentToken == TOKEN.LBRACE) {
                 parseSubTree();
             } else {
@@ -1053,6 +1055,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             int funckeyOffset = 0;
             bool bShiftPlane = false;
             //char c = getNextChar();
+            if (c == ' ' || c == '\t') c = skipSpace();
             if (c == 'N' || c == 'n') {
                 shiftOffset = 0;
                 c = getNextChar();
@@ -1067,7 +1070,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 bShiftPlane = true;
                 c = getNextChar();
             }
-            if (!is_numeral(c)) parseError();
+            if (c == ' ' || c == '\t') c = skipSpace();
+            if (!is_numeral(c)) {
+                parseError();
+                return false;
+            }
             arrowIndex = c - '0';
             c = getNextChar();
             while (is_numeral(c)) {
@@ -1086,13 +1093,18 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;
                 }
                 arrowIndex += shiftOffset;
-                if (arrowIndex >= DecoderKeys.COMBO_DECKEY_END) parseError();
+                if (arrowIndex < 0 || arrowIndex >= DecoderKeys.COMBO_DECKEY_END) {
+                    parseError();
+                    return false;
+                }
             } else {
                 shiftPlane = arrowIndex;
                 if (shiftPlane >= DecoderKeys.ALL_PLANE_NUM) parseError();
                 return false;
             }
-            if (c != '>') parseError();
+            if (c == ' ' || c == '\t') c = skipSpace();
+            if (c == ',') decrementPos();
+            else if (c != '>') parseError();
             logger.DebugH(() => $"depth={depth}, arrowIndex={arrowIndex}, shiftPlane={shiftPlane}, shiftOffset={shiftOffset}");
             return true;
         }
@@ -1141,6 +1153,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         char peekNextChar() {
             return (nextPos < currentLine._safeLength()) ? currentLine[nextPos] : '\0';
+        }
+
+        void decrementPos()
+        {
+            --nextPos;
         }
 
         bool getNextLine() {
