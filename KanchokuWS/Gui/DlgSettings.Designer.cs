@@ -443,6 +443,8 @@ namespace KanchokuWS.Gui
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.groupBox46 = new System.Windows.Forms.GroupBox();
+            this.checkBox_imeCooperationEnabled = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_onSecondaryTable = new KanchokuWS.Gui.ColorTextBox();
@@ -515,6 +517,7 @@ namespace KanchokuWS.Gui
             this.tabPage_about.SuspendLayout();
             this.groupBox15.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).BeginInit();
+            this.groupBox46.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -541,6 +544,7 @@ namespace KanchokuWS.Gui
             // 
             // tabPage_basic
             // 
+            this.tabPage_basic.Controls.Add(this.groupBox46);
             this.tabPage_basic.Controls.Add(this.label_initialMsg);
             this.tabPage_basic.Controls.Add(this.label_reloadBasic);
             this.tabPage_basic.Controls.Add(this.button_document);
@@ -594,7 +598,7 @@ namespace KanchokuWS.Gui
             this.button_document.Location = new System.Drawing.Point(138, 343);
             this.button_document.Name = "button_document";
             this.button_document.Size = new System.Drawing.Size(82, 23);
-            this.button_document.TabIndex = 4;
+            this.button_document.TabIndex = 5;
             this.button_document.TabStop = false;
             this.button_document.Text = "ドキュメント(&D)";
             this.toolTip1.SetToolTip(this.button_document, "ドキュメントのURLをブラウザで開きます");
@@ -651,7 +655,7 @@ namespace KanchokuWS.Gui
             this.groupBox2.Location = new System.Drawing.Point(271, 10);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(356, 258);
-            this.groupBox2.TabIndex = 3;
+            this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "ファイル";
             // 
@@ -999,17 +1003,17 @@ namespace KanchokuWS.Gui
             this.groupBox4.Controls.Add(this.radioButton_modeMarker);
             this.groupBox4.Controls.Add(this.radioButton_normalVkb);
             this.groupBox4.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox4.Location = new System.Drawing.Point(7, 139);
+            this.groupBox4.Location = new System.Drawing.Point(7, 181);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(254, 97);
-            this.groupBox4.TabIndex = 1;
+            this.groupBox4.Size = new System.Drawing.Size(254, 83);
+            this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "仮想鍵盤表示";
             // 
             // radioButton_noVkb
             // 
             this.radioButton_noVkb.AutoSize = true;
-            this.radioButton_noVkb.Location = new System.Drawing.Point(17, 67);
+            this.radioButton_noVkb.Location = new System.Drawing.Point(17, 59);
             this.radioButton_noVkb.Name = "radioButton_noVkb";
             this.radioButton_noVkb.Size = new System.Drawing.Size(61, 19);
             this.radioButton_noVkb.TabIndex = 6;
@@ -1043,7 +1047,7 @@ namespace KanchokuWS.Gui
             // radioButton_modeMarker
             // 
             this.radioButton_modeMarker.AutoSize = true;
-            this.radioButton_modeMarker.Location = new System.Drawing.Point(17, 42);
+            this.radioButton_modeMarker.Location = new System.Drawing.Point(17, 38);
             this.radioButton_modeMarker.Name = "radioButton_modeMarker";
             this.radioButton_modeMarker.Size = new System.Drawing.Size(74, 19);
             this.radioButton_modeMarker.TabIndex = 1;
@@ -1074,7 +1078,7 @@ namespace KanchokuWS.Gui
             this.button_Reload.Location = new System.Drawing.Point(281, 343);
             this.button_Reload.Name = "button_Reload";
             this.button_Reload.Size = new System.Drawing.Size(80, 23);
-            this.button_Reload.TabIndex = 5;
+            this.button_Reload.TabIndex = 6;
             this.button_Reload.Text = "再読込(&R)";
             this.toolTip1.SetToolTip(this.button_Reload, "辞書を除く各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
             this.button_Reload.UseVisualStyleBackColor = true;
@@ -1099,17 +1103,17 @@ namespace KanchokuWS.Gui
             this.groupBox13.Controls.Add(this.textBox_splashWindowShowDuration);
             this.groupBox13.Controls.Add(this.label24);
             this.groupBox13.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox13.Location = new System.Drawing.Point(7, 242);
+            this.groupBox13.Location = new System.Drawing.Point(7, 274);
             this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(254, 71);
-            this.groupBox13.TabIndex = 2;
+            this.groupBox13.Size = new System.Drawing.Size(254, 61);
+            this.groupBox13.TabIndex = 3;
             this.groupBox13.TabStop = false;
             this.groupBox13.Text = "開始・終了";
             // 
             // checkBox_confirmOnClose
             // 
             this.checkBox_confirmOnClose.AutoSize = true;
-            this.checkBox_confirmOnClose.Location = new System.Drawing.Point(21, 43);
+            this.checkBox_confirmOnClose.Location = new System.Drawing.Point(21, 37);
             this.checkBox_confirmOnClose.Name = "checkBox_confirmOnClose";
             this.checkBox_confirmOnClose.Size = new System.Drawing.Size(114, 19);
             this.checkBox_confirmOnClose.TabIndex = 3;
@@ -1121,7 +1125,7 @@ namespace KanchokuWS.Gui
             // textBox_splashWindowShowDuration
             // 
             this.textBox_splashWindowShowDuration.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_splashWindowShowDuration.Location = new System.Drawing.Point(168, 19);
+            this.textBox_splashWindowShowDuration.Location = new System.Drawing.Point(168, 17);
             this.textBox_splashWindowShowDuration.Name = "textBox_splashWindowShowDuration";
             this.textBox_splashWindowShowDuration.Size = new System.Drawing.Size(45, 19);
             this.textBox_splashWindowShowDuration.TabIndex = 0;
@@ -1131,7 +1135,7 @@ namespace KanchokuWS.Gui
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(19, 21);
+            this.label24.Location = new System.Drawing.Point(19, 19);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(133, 15);
             this.label24.TabIndex = 2;
@@ -1144,7 +1148,7 @@ namespace KanchokuWS.Gui
             this.button_basicClose.Location = new System.Drawing.Point(440, 343);
             this.button_basicClose.Name = "button_basicClose";
             this.button_basicClose.Size = new System.Drawing.Size(80, 23);
-            this.button_basicClose.TabIndex = 6;
+            this.button_basicClose.TabIndex = 7;
             this.button_basicClose.Text = "閉じる(&C)";
             this.button_basicClose.UseVisualStyleBackColor = true;
             this.button_basicClose.Click += new System.EventHandler(this.button_basicClose_Click);
@@ -1156,7 +1160,7 @@ namespace KanchokuWS.Gui
             this.button_basicEnter.Location = new System.Drawing.Point(548, 343);
             this.button_basicEnter.Name = "button_basicEnter";
             this.button_basicEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_basicEnter.TabIndex = 7;
+            this.button_basicEnter.TabIndex = 8;
             this.button_basicEnter.Text = "適用(&E)";
             this.toolTip1.SetToolTip(this.button_basicEnter, "設定内容を適用して kanchoku.user.ini に書き込みます");
             this.button_basicEnter.UseVisualStyleBackColor = true;
@@ -1175,7 +1179,7 @@ namespace KanchokuWS.Gui
             this.groupBox1.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox1.Location = new System.Drawing.Point(7, 10);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(254, 123);
+            this.groupBox1.Size = new System.Drawing.Size(254, 116);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "漢直モードトグル/OFFキー";
@@ -1202,7 +1206,7 @@ namespace KanchokuWS.Gui
             "1d (無変換)",
             "f2 (かな/カナ)",
             "20 (Space)"});
-            this.comboBox_modifiedOffKey.Location = new System.Drawing.Point(134, 95);
+            this.comboBox_modifiedOffKey.Location = new System.Drawing.Point(134, 89);
             this.comboBox_modifiedOffKey.Name = "comboBox_modifiedOffKey";
             this.comboBox_modifiedOffKey.Size = new System.Drawing.Size(114, 20);
             this.comboBox_modifiedOffKey.TabIndex = 3;
@@ -1233,7 +1237,7 @@ namespace KanchokuWS.Gui
             "f2 (かな/カナ)",
             "a1 (右シフト)",
             "20 (Space)"});
-            this.comboBox_unmodifiedOffKey.Location = new System.Drawing.Point(134, 69);
+            this.comboBox_unmodifiedOffKey.Location = new System.Drawing.Point(134, 65);
             this.comboBox_unmodifiedOffKey.Name = "comboBox_unmodifiedOffKey";
             this.comboBox_unmodifiedOffKey.Size = new System.Drawing.Size(114, 20);
             this.comboBox_unmodifiedOffKey.TabIndex = 2;
@@ -1263,7 +1267,7 @@ namespace KanchokuWS.Gui
             "1d (無変換)",
             "f2 (かな/カナ)",
             "20 (Space)"});
-            this.comboBox_modifiedToggleKey.Location = new System.Drawing.Point(134, 43);
+            this.comboBox_modifiedToggleKey.Location = new System.Drawing.Point(134, 41);
             this.comboBox_modifiedToggleKey.Name = "comboBox_modifiedToggleKey";
             this.comboBox_modifiedToggleKey.Size = new System.Drawing.Size(114, 20);
             this.comboBox_modifiedToggleKey.TabIndex = 1;
@@ -1301,7 +1305,7 @@ namespace KanchokuWS.Gui
             // label55
             // 
             this.label55.AutoSize = true;
-            this.label55.Location = new System.Drawing.Point(15, 71);
+            this.label55.Location = new System.Drawing.Point(15, 67);
             this.label55.Name = "label55";
             this.label55.Size = new System.Drawing.Size(113, 15);
             this.label55.TabIndex = 10;
@@ -1310,7 +1314,7 @@ namespace KanchokuWS.Gui
             // label56
             // 
             this.label56.AutoSize = true;
-            this.label56.Location = new System.Drawing.Point(15, 97);
+            this.label56.Location = new System.Drawing.Point(15, 91);
             this.label56.Name = "label56";
             this.label56.Size = new System.Drawing.Size(115, 15);
             this.label56.TabIndex = 9;
@@ -1328,7 +1332,7 @@ namespace KanchokuWS.Gui
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(15, 45);
+            this.label2.Location = new System.Drawing.Point(15, 43);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(121, 15);
             this.label2.TabIndex = 1;
@@ -5403,6 +5407,27 @@ namespace KanchokuWS.Gui
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // groupBox46
+            // 
+            this.groupBox46.Controls.Add(this.checkBox_imeCooperationEnabled);
+            this.groupBox46.Location = new System.Drawing.Point(7, 132);
+            this.groupBox46.Name = "groupBox46";
+            this.groupBox46.Size = new System.Drawing.Size(254, 43);
+            this.groupBox46.TabIndex = 1;
+            this.groupBox46.TabStop = false;
+            this.groupBox46.Text = "IME連携";
+            // 
+            // checkBox_imeCooperationEnabled
+            // 
+            this.checkBox_imeCooperationEnabled.AutoSize = true;
+            this.checkBox_imeCooperationEnabled.Location = new System.Drawing.Point(14, 17);
+            this.checkBox_imeCooperationEnabled.Name = "checkBox_imeCooperationEnabled";
+            this.checkBox_imeCooperationEnabled.Size = new System.Drawing.Size(226, 19);
+            this.checkBox_imeCooperationEnabled.TabIndex = 4;
+            this.checkBox_imeCooperationEnabled.Text = "IMEの状態に合わせて漢直をON/OFFする";
+            this.toolTip1.SetToolTip(this.checkBox_imeCooperationEnabled, "この項目をチェックすると、IMEの状態に合わせて漢直モードの\r\nON/OFFを切り替えるようになります。\r\n\r\n");
+            this.checkBox_imeCooperationEnabled.UseVisualStyleBackColor = true;
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -5707,6 +5732,8 @@ namespace KanchokuWS.Gui
             this.groupBox15.ResumeLayout(false);
             this.groupBox15.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).EndInit();
+            this.groupBox46.ResumeLayout(false);
+            this.groupBox46.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -6141,5 +6168,7 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.TextBox textBox_combinationKeyTimeMs;
         private System.Windows.Forms.Label label116;
         private System.Windows.Forms.Label label117;
+        private System.Windows.Forms.GroupBox groupBox46;
+        private System.Windows.Forms.CheckBox checkBox_imeCooperationEnabled;
     }
 }

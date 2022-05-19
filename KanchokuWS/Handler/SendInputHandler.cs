@@ -129,15 +129,29 @@ namespace KanchokuWS.Handler
         private const int VK_RSHIFT = 0xa1;                 // RSHIFTキー
         private const int VK_PACKET = 0xe7;                 // Unicode 
 
+        private const int WM_CLOSE = 0x0010;
+        private const int WM_COPYDATA = 0x4A;
+        private const int WM_KEYDOWN = 0x0100;
+        private const int WM_KEYUP = 0x0101;
+        private const int WM_CHAR = 0x0102;
+        private const int WM_UNICHAR = 0x0109;
+        private const int WM_IME_CHAR = 0x0286;
+        private const int WM_HOTKEY = 0x0312;
 
-        //[DllImport("User32.dll", CharSet = CharSet.Auto)]
-        //private static extern Int32 PostMessageW(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
+        [DllImport("User32.dll", CharSet = CharSet.Auto)]
+        private static extern Int32 PostMessageW(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
+
 
         [DllImport("user32.dll")]
         private static extern ushort GetAsyncKeyState(uint vkey);
 
         //[DllImport("user32.dll")]
         //private static extern uint keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
+
+        private void sendInput(uint len, INPUT[] inputs)
+        {
+            SendInput(len, inputs, Marshal.SizeOf(typeof(INPUT)));
+        }
 
         private const uint MAPVK_VK_TO_VSC = 0;
 
@@ -329,6 +343,18 @@ namespace KanchokuWS.Handler
             return idx;
         }
 
+        private int setUnicodeInputs(char uc, INPUT[] inputs, int idx)
+        {
+            initializeKeyboardInput(ref inputs[idx]);
+            inputs[idx].ki.wScan = (ushort)uc;
+            inputs[idx].ki.dwFlags = KEYEVENTF_UNICODE;
+            ++idx;
+            inputs[idx].ki.wScan = (ushort)uc;
+            inputs[idx].ki.dwFlags = KEYEVENTF_KEYUP;
+            ++idx;
+            return idx;
+        }
+
         private int setFuncKeyInputs(string str, ref int pos, int strLen, INPUT[] inputs, int idx)
         {
             //logger.InfoH(() => $"CALLED: str={str}, idx={idx}");
@@ -453,16 +479,26 @@ namespace KanchokuWS.Handler
             int strLen = str._safeCount();
             if (strLen > inputs._safeLength()) strLen = inputs._safeLength();
             for (int i = 0; i < strLen; ++i) {
-                for (int j = 0; j < 2; ++j) {
-                    if (j == 0 && str[i] == '!' && (i + 1) < strLen && str[i + 1] == '{') {     // "!{"
-                        i += 2;
-                        idx = setFuncKeyInputs(str, ref i, strLen, inputs, idx);
+                if (str[i] == '!' && (i + 1) < strLen && str[i + 1] == '{') {     // "!{"
+                    i += 2;
+                    idx = setFuncKeyInputs(str, ref i, strLen, inputs, idx);
+                } else {
+                    initializeKeyboardInput(ref inputs[idx]);
+                    //inputs[idx].ki.wVk = VK_PACKET;       // SendInput でUniCodeを出力するときは、ここを 0 にしておく
+                    string roman = null;
+                    if (IMEHandler.ImeEnabled) {
+                        roman = str[i]._hiraganaToRoman();
+                        if (roman._isEmpty() && str[i] >= ' ' && str[i] < (char)0x7f) roman = str[i].ToString();
+                    }
+                    if (roman._notEmpty()) {
+                        foreach (var r in roman) {
+                            uint vk = VirtualKeys.GetVKeyFromFaceString(r.ToString()) & 0xff;
+                            if (vk > 0) {
+                                idx = setVkeyInputs((ushort)vk, inputs, idx);
+                            }
+                        }
                     } else {
-                        initializeKeyboardInput(ref inputs[idx]);
-                        //inputs[idx].ki.wVk = VK_PACKET;       // SendInput でUniCodeを出力するときは、ここを 0 にしておく
-                        inputs[idx].ki.wScan = str[i];
-                        inputs[idx].ki.dwFlags = j == 0 ? KEYEVENTF_UNICODE : KEYEVENTF_KEYUP;
-                        ++idx;
+                        idx = setUnicodeInputs(str[i], inputs, idx);
                     }
                 }
             }
@@ -473,7 +509,8 @@ namespace KanchokuWS.Handler
         {
             if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: len={len}, vkey={vkey}");
 
-            if (len > 0) SendInput(len, inputs, Marshal.SizeOf(typeof(INPUT)));
+            //if (len > 0) SendInput(len, inputs, Marshal.SizeOf(typeof(INPUT)));
+            if (len > 0) sendInput(len, inputs);
 
             // Enterキーだったら、すぐに仮想鍵盤を移動するように MinValue とする
             LastOutputDt = vkey == (uint)Keys.Enter ? DateTime.MinValue : DateTime.Now;
@@ -496,6 +533,7 @@ namespace KanchokuWS.Handler
             idx = upShiftKeyInputs(inputs, idx, out left, out right);
             // 送出
             if (idx > 0) SendInput((uint)idx, inputs, Marshal.SizeOf(typeof(INPUT)));
+            //if (idx > 0) sendInput((uint)idx, inputs);
         }
 
         /// <summary>
@@ -511,7 +549,7 @@ namespace KanchokuWS.Handler
             if (numBS < 0) numBS = 0;
             if (strLen < 0) strLen = 0;
             int numCtrlKeys = 2;            // leftCtrl と rightCtrl
-            int inputsLen = strLen + numBS + numCtrlKeys * 2;
+            int inputsLen = strLen * 3 + numBS + numCtrlKeys * 2;   // IMEがONの時、ひらがなはローマ字に変換するので、3倍にしておく
 
             var inputs = new INPUT[inputsLen * 2];
 

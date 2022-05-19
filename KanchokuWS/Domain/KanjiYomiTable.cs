@@ -16,6 +16,8 @@ namespace KanchokuWS
 
         private static Dictionary<string, string> romanKanaTbl = new Dictionary<string, string>();
 
+        private static Dictionary<char, string> kanaRomanTbl = new Dictionary<char, string>();
+
         static KanjiYomiTable()
         {
             yomiKanjiTbl["あ"] = new HashSet<char>() { 'あ', 'ぁ', 'ア', 'ァ' };
@@ -217,6 +219,94 @@ namespace KanchokuWS
             romanKanaTbl["RYA"] = "りゃ";
             romanKanaTbl["RYU"] = "りゅ";
             romanKanaTbl["RYO"] = "りょ";
+
+            kanaRomanTbl['ぁ'] = "LA";
+            kanaRomanTbl['ぃ'] = "LI";
+            kanaRomanTbl['ぅ'] = "LU";
+            kanaRomanTbl['ぇ'] = "LE";
+            kanaRomanTbl['ぉ'] = "LO";
+            kanaRomanTbl['あ'] = "A";
+            kanaRomanTbl['い'] = "I";
+            kanaRomanTbl['う'] = "U";
+            kanaRomanTbl['え'] = "E";
+            kanaRomanTbl['お'] = "O";
+            kanaRomanTbl['ゕ'] = "LKA";
+            kanaRomanTbl['か'] = "KA";
+            kanaRomanTbl['が'] = "GA";
+            kanaRomanTbl['き'] = "KI";
+            kanaRomanTbl['ぎ'] = "GI";
+            kanaRomanTbl['く'] = "KU";
+            kanaRomanTbl['ぐ'] = "GU";
+            kanaRomanTbl['ゖ'] = "LKE";
+            kanaRomanTbl['け'] = "KE";
+            kanaRomanTbl['げ'] = "GE";
+            kanaRomanTbl['こ'] = "KO";
+            kanaRomanTbl['ご'] = "GO";
+            kanaRomanTbl['さ'] = "SA";
+            kanaRomanTbl['ざ'] = "ZA";
+            kanaRomanTbl['し'] = "SI";
+            kanaRomanTbl['じ'] = "ZI";
+            kanaRomanTbl['す'] = "SU";
+            kanaRomanTbl['ず'] = "ZU";
+            kanaRomanTbl['せ'] = "SE";
+            kanaRomanTbl['ぜ'] = "ZE";
+            kanaRomanTbl['そ'] = "SO";
+            kanaRomanTbl['ぞ'] = "ZO";
+            kanaRomanTbl['た'] = "TA";
+            kanaRomanTbl['だ'] = "DA";
+            kanaRomanTbl['ち'] = "TI";
+            kanaRomanTbl['ぢ'] = "DI";
+            kanaRomanTbl['っ'] = "LTU";
+            kanaRomanTbl['つ'] = "TU";
+            kanaRomanTbl['づ'] = "DU";
+            kanaRomanTbl['て'] = "TE";
+            kanaRomanTbl['で'] = "DE";
+            kanaRomanTbl['と'] = "TO";
+            kanaRomanTbl['ど'] = "DO";
+            kanaRomanTbl['な'] = "NA";
+            kanaRomanTbl['に'] = "NI";
+            kanaRomanTbl['ぬ'] = "NU";
+            kanaRomanTbl['ね'] = "NU";
+            kanaRomanTbl['の'] = "NO";
+            kanaRomanTbl['は'] = "HA";
+            kanaRomanTbl['ば'] = "BA";
+            kanaRomanTbl['ぱ'] = "PA";
+            kanaRomanTbl['ひ'] = "HI";
+            kanaRomanTbl['び'] = "BI";
+            kanaRomanTbl['ぴ'] = "PI";
+            kanaRomanTbl['ふ'] = "HU";
+            kanaRomanTbl['ぶ'] = "BU";
+            kanaRomanTbl['ぷ'] = "PU";
+            kanaRomanTbl['へ'] = "HE";
+            kanaRomanTbl['べ'] = "BE";
+            kanaRomanTbl['ぺ'] = "PE";
+            kanaRomanTbl['ほ'] = "HO";
+            kanaRomanTbl['ぼ'] = "BO";
+            kanaRomanTbl['ぽ'] = "PO";
+            kanaRomanTbl['ま'] = "MA";
+            kanaRomanTbl['み'] = "MI";
+            kanaRomanTbl['む'] = "MU";
+            kanaRomanTbl['め'] = "ME";
+            kanaRomanTbl['も'] = "MO";
+            kanaRomanTbl['ゃ'] = "LYA";
+            kanaRomanTbl['や'] = "YA";
+            kanaRomanTbl['ゅ'] = "LYU";
+            kanaRomanTbl['ゆ'] = "YU";
+            kanaRomanTbl['ょ'] = "LYO";
+            kanaRomanTbl['よ'] = "YO";
+            kanaRomanTbl['ら'] = "RA";
+            kanaRomanTbl['り'] = "RI";
+            kanaRomanTbl['る'] = "RU";
+            kanaRomanTbl['れ'] = "RE";
+            kanaRomanTbl['ろ'] = "RO";
+            kanaRomanTbl['ゎ'] = "LWA";
+            kanaRomanTbl['わ'] = "WA";
+            kanaRomanTbl['ゐ'] = "WYI";
+            kanaRomanTbl['ゔ'] = "VU";
+            kanaRomanTbl['ヴ'] = "VU";
+            kanaRomanTbl['ゑ'] = "WYE";
+            kanaRomanTbl['を'] = "WO";
+            kanaRomanTbl['ん'] = "NN";
         }
 
         public static void ReadKanjiYomiFile(string filename)
@@ -301,6 +391,26 @@ namespace KanchokuWS
                 }
             }
             return sb.ToString();
+        }
+
+        public static string _hiraganaToRoman(this string str)
+        {
+            var sb = new StringBuilder();
+            if (str._notEmpty()) {
+                foreach (var c in str) {
+                    if (c >= 'ぁ' && c <= 'ゖ' && kanaRomanTbl.ContainsKey(c))
+                        sb.Append(kanaRomanTbl[c]);
+                    else
+                        sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
+
+        public static string _hiraganaToRoman(this char ch)
+        {
+            if (ch >= 'ぁ' && ch <= 'ゖ') return kanaRomanTbl._safeGet(ch);
+            return null;
         }
     }
 }

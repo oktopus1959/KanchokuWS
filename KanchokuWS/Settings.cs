@@ -538,6 +538,10 @@ namespace KanchokuWS
         public static bool IsCheckedSecondCombination { get; set; } = true;
 
         //------------------------------------------------------------------------------
+        /// <summary> IMEの状態に連携してON/OFFする </summary>
+        public static bool ImeCooperationEnabled { get; set; } = false;
+
+        //------------------------------------------------------------------------------
         /// <summary>ウィンドウClassNameごとの設定</summary>
         public class WindowsClassSettings
         {
@@ -919,6 +923,10 @@ namespace KanchokuWS
             CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0, 0);        // 重複時間率
             CombinationKeyTimeMs = GetString("combinationKeyTimeMs")._parseInt(70, 70);          // 重複時間
             CombinationMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100, 100);     // 許容リードタイム
+
+            //-------------------------------------------------------------------------------------
+            // IME連携
+            ImeCooperationEnabled = GetString("imeCooperationEnabled")._parseBool(false);
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

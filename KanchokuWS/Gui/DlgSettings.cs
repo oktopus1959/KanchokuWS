@@ -357,6 +357,9 @@ namespace KanchokuWS.Gui
             selectModeToggleKeyItem(comboBox_unmodifiedOffKey, Settings.GetString("unmodifiedOffHotKey").Replace("X", ""));
             selectModeToggleKeyItem(comboBox_modifiedOffKey, Settings.GetString("offHotKey").Replace("X", ""));
 
+            // IME連携
+            checkBox_imeCooperationEnabled.Checked = Settings.ImeCooperationEnabled;
+
             // 仮想鍵盤表示
             radioButton_noVkb.Checked = !Settings.ShowVkbOrMaker;
             radioButton_normalVkb.Checked = Settings.ShowVkbOrMaker && Settings.VirtualKeyboardShowStrokeCount > 0;
@@ -407,6 +410,9 @@ namespace KanchokuWS.Gui
             checkerBasic.Add(comboBox_modifiedToggleKey);
             checkerBasic.Add(comboBox_unmodifiedOffKey);
             checkerBasic.Add(comboBox_modifiedOffKey);
+
+            // IME連携
+            checkerBasic.Add(checkBox_imeCooperationEnabled);
 
             // 仮想鍵盤表示
             checkerBasic.Add(radioButton_normalVkb);
@@ -464,6 +470,9 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("hotKey", comboBox_modifiedToggleKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));
             Settings.SetUserIni("unmodifiedOffHotKey", comboBox_unmodifiedOffKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));
             Settings.SetUserIni("offHotKey", comboBox_modifiedOffKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));
+
+            // IME連携
+            Settings.SetUserIni("imeCooperationEnabled", checkBox_imeCooperationEnabled.Checked);
 
             // 仮想鍵盤表示
             Settings.SetUserIni("vkbShowStrokeCount", $"{textBox_vkbShowStrokeCount.Text._parseInt(1)._lowLimit(0) * (radioButton_normalVkb.Checked ? 1 : -1)}");

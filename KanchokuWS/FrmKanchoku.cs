@@ -1706,6 +1706,14 @@ namespace KanchokuWS
                 activeWinInfoCount = Settings.GetActiveWindowInfoIntervalMillisec / timerInterval;
             }
 
+            if (IMEHandler.GetImeStateChanged() && Settings.ImeCooperationEnabled) {
+                if (IMEHandler.ImeEnabled) {
+                    ActivateDecoder();
+                } else {
+                    DeactivateDecoder();
+                }
+            }
+
             if (DateTime.Now >= saveDictsPlannedDt || (IsDecoderActive && DateTime.Now >= saveDictsChallengeDt)) {
                 reinitializeSaveDictsChallengeDt();
                 if (decoderPtr != IntPtr.Zero) {

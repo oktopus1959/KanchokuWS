@@ -39,6 +39,9 @@ namespace KanchokuWS.Handler
         [DllImport("user32.dll")]
         private static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
 
+        [DllImport("imm32.dll")]
+        static extern IntPtr ImmGetDefaultIMEWnd(IntPtr hWnd);
+
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT
         {
@@ -119,6 +122,13 @@ namespace KanchokuWS.Handler
 
             if (bLog) logger.Debug(() => $"RESULT: {result}: foreground hWnd={(int)hwndForeground:x}, WndClassName={className}");
             return result;
+        }
+
+        public IntPtr GetDefaultIMEWnd()
+        {
+            bool result = GetGUIThreadInfo(0, ref guiThreadInfo);
+            //if (bLog) logger.Debug(() => $"RESULT: {result}: foreground hWnd={(int)hwndForeground:x}, WndClassName={className}");
+            return result ? ImmGetDefaultIMEWnd(guiThreadInfo.hwndFocus) : IntPtr.Zero;
         }
 
         public void GetCaretPos(ref Rectangle rect)

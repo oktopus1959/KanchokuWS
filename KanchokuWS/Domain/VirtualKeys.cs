@@ -281,6 +281,16 @@ namespace KanchokuWS
         private static Dictionary<string, uint> faceToVkey = new Dictionary<string, uint>() {
             {" ", (uint)Keys.Space },
             {"SPACE", (uint)Keys.Space },
+            {"0", (uint)Keys.D0 },
+            {"1", (uint)Keys.D1 },
+            {"2", (uint)Keys.D2 },
+            {"3", (uint)Keys.D3 },
+            {"4", (uint)Keys.D4 },
+            {"5", (uint)Keys.D5 },
+            {"6", (uint)Keys.D6 },
+            {"7", (uint)Keys.D7 },
+            {"8", (uint)Keys.D8 },
+            {"9", (uint)Keys.D9 },
             {"A", (uint)Keys.A },
             {"B", (uint)Keys.B },
             {"C", (uint)Keys.C },
@@ -308,18 +318,41 @@ namespace KanchokuWS
             {"Y", (uint)Keys.Y },
             {"Z", (uint)Keys.Z },
             { "COLON", (uint)Keys.Oem1 },       // ba
+            { ":", (uint)Keys.Oem1 },       // ba
+            { "*", (uint)Keys.Oem1 + 0x100 },       // ba
             { "PLUS", (uint)Keys.Oemplus },     // bb
+            { ";", (uint)Keys.Oemplus },     // bb
+            { "+", (uint)Keys.Oemplus + 0x100 },     // bb
             { "COMMA", (uint)Keys.Oemcomma },   // bc
+            { ",", (uint)Keys.Oemcomma },   // bc
+            { "<", (uint)Keys.Oemcomma + 0x100 },   // bc
             { "MINUS", (uint)Keys.OemMinus },   // bd
+            { "-", (uint)Keys.OemMinus },   // bd
+            { "=", (uint)Keys.OemMinus + 0x100 },   // bd
             { "PERIOD", (uint)Keys.OemPeriod }, // be
+            { ".", (uint)Keys.OemPeriod }, // be
+            { ">", (uint)Keys.OemPeriod + 0x100 }, // be
             { "SLASH", (uint)Keys.Oem2 },       // bf
+            { "/", (uint)Keys.Oem2 },       // bf
+            { "?", (uint)Keys.Oem2 + 0x100 },       // bf
             { "BQUOTE", (uint)Keys.Oem3 },      // c0/106
+            { "@", (uint)Keys.Oem3 },      // c0/106
+            { "`", (uint)Keys.Oem3 + 0x100 },      // c0/106
             { "OEM4", (uint)Keys.Oem4 },        // db
+            { "[", (uint)Keys.Oem4 },        // db
+            { "{", (uint)Keys.Oem4 + 0x100 },        // db
             { "OEM5", (uint)Keys.Oem5 },        // dc
+            { "\\", (uint)Keys.Oem5 },        // dc
+            { "|", (uint)Keys.Oem5 + 0x100 },        // dc
             { "OEM6", (uint)Keys.Oem6 },        // dd
+            { "]", (uint)Keys.Oem6 },        // dd
+            { "}", (uint)Keys.Oem6 + 0x100 },        // dd
             { "OEM7", (uint)Keys.Oem7 },        // de
+            { "^", (uint)Keys.Oem7 },        // de
+            { "~", (uint)Keys.Oem7 + 0x100 },        // de
             { "OEM8", (uint)Keys.Oem8 },        // df
             { "OEM102", (uint)Keys.Oem102 },    // e2/106
+            { "_", (uint)Keys.Oem7 + 0x100 },        // de
         };
 
         public static VKeyCombo EmptyCombo = new VKeyCombo(0, 0);
@@ -328,10 +361,15 @@ namespace KanchokuWS
 
         public static VKeyCombo CtrlV_VKeyCombo = new VKeyCombo(KeyModifiers.MOD_CONTROL, faceToVkey["V"]);
 
+        public static uint GetVKeyFromFaceString(string face)
+        {
+            return faceToVkey._safeGet(face);
+        }
+
         public static VKeyCombo? GetVKeyComboFromFaceString(string face, bool ctrl, bool shift)
         {
             uint vkey = faceToVkey._safeGet(face);
-            if (vkey > 0) {
+            if (vkey > 0 && vkey < 0x100) {
                 return new VKeyCombo(KeyModifiers.MakeModifier(ctrl, shift), vkey);
             }
             return null;
