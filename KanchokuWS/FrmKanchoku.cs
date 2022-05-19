@@ -1318,7 +1318,7 @@ namespace KanchokuWS
             // デコーダの呼び出し
             HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, ref decoderOutput);
 
-            logger.Info(() =>
+            logger.InfoH(() =>
                 $"HandleDeckeyDecoder: RESULT: layout={decoderOutput.layout}, numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, " +
                 $"output={decoderOutput.outString._toString()}, IsDeckeyToVkey={decoderOutput.IsDeckeyToVkey()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
 
@@ -1383,18 +1383,21 @@ namespace KanchokuWS
                 targetChar = 0;
             } else {
                 if (decoderOutput.GetStrokeCount() > 0) {
+                    logger.DebugH("PATH-1");
                     // 第2打鍵以降の待ちで、何かVkey出力がある場合は、打鍵クリア
                     if (decoderOutput.IsDeckeyToVkey()) {
                         HandleDeckeyDecoder(decoderPtr, DecoderKeys.CLEAR_STROKE_DECKEY, 0, false, ref decoderOutput);
                     }
                 }
                 if (decoderOutput.GetStrokeCount() < 1) {
+                    logger.DebugH("PATH-2");
                     // 第1打鍵待ちになった時のみ
                     // 一時的な仮想鍵盤表示カウントをリセットする
                     Settings.VirtualKeyboardShowStrokeCountTemp = 0;
 
                     // 他のVKey送出(もしあれば)
                     if (decoderOutput.IsDeckeyToVkey()) {
+                        logger.DebugH("PATH-3");
                         sendKeyFlag = sendVkeyFromDeckey(deckey, mod);
                         //nPreKeys += 1;
                     }
@@ -1407,6 +1410,7 @@ namespace KanchokuWS
                     var outString = decoderOutput.outString;
                     int outLen = outString._strlen();
                     if (outLen >= 0) {
+                        logger.DebugH("PATH-4");
                         // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
                         bool bFuncVkeyContained = isFuncVkeyContained(outString, outLen);
                         int numBS = decoderOutput.numBackSpaces;
@@ -1415,11 +1419,13 @@ namespace KanchokuWS
                         /*if (Settings.LoggingDecKeyInfo)*/ logger.InfoH(() => $"outString={outString._toString()}, numBS={numBS}, leadLen={leadLen}, outStr={outStr._toString()}");
                         SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(outStr, numBS - leadLen, bFuncVkeyContained);
                         if (bFuncVkeyContained) {
+                            logger.DebugH("PATH-5");
                             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
                             HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput);
                         }
                     }
                 }
+                logger.DebugH("PATH-6");
 
                 // 仮想キーボードにヘルプや文字候補を表示
                 frmVkb.DrawVirtualKeyboardChars(Settings.ShowLastStrokeByDiffBackColor && !bPrevMultiStrokeChar ? unshiftDeckey(deckey) : -1);
@@ -1427,6 +1433,7 @@ namespace KanchokuWS
                 bPrevMultiStrokeChar = decoderOutput.outString[0] == 0 && isNormalDeckey(deckey);
 
                 if (bRomanMode || bUpperRomanStrokeGuideMode) {
+                    logger.DebugH("PATH-7");
                     bRomanMode = false;
                     bUpperRomanStrokeGuideMode = false;
                     ExecCmdDecoder("clearTailRomanStr", null);
@@ -1545,7 +1552,7 @@ namespace KanchokuWS
         {
             bool leftCtrl, rightCtrl;
             SendInputHandler.Singleton.GetCtrlKeyState(out leftCtrl, out rightCtrl);
-            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
             if ((!leftCtrl && !rightCtrl) || isCtrlKeyConversionEffectiveWindow()                 // Ctrlキーが押されていないか、Ctrl修飾を受け付けるWindowClassか
                 //|| deckey < DecoderKeys.STROKE_DECKEY_END                                                       // 通常のストロークキーは通す
                 || deckey < DecoderKeys.NORMAL_DECKEY_NUM                                                       // 通常のストロークキーは通す
@@ -1553,11 +1560,11 @@ namespace KanchokuWS
                 || deckey >= DecoderKeys.CTRL_SHIFT_DECKEY_START && deckey < DecoderKeys.CTRL_SHIFT_DECKEY_END  // Ctrl-Shift-A～Ctrl-Shift-Z は通す
                 ) {
 
-                if (Settings.LoggingDecKeyInfo) logger.Info($"TARGET WINDOW: deckey={deckey:x}H({deckey})");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET WINDOW: deckey={deckey:x}H({deckey})");
                 var combo = VirtualKeys.GetVKeyComboFromDecKey(deckey);
                 if (combo != null) {
                     if (Settings.LoggingDecKeyInfo) {
-                        logger.Info($"SEND: combo.modifier={combo.Value.modifier:x}H({combo.Value.modifier}), "
+                        logger.InfoH($"SEND: combo.modifier={combo.Value.modifier:x}H({combo.Value.modifier}), "
                             + $"combo.vkey={combo.Value.vkey:x}H({combo.Value.vkey}), "
                             + $"ctrl={(combo.Value.modifier & KeyModifiers.MOD_CONTROL) != 0}, "
                             + $"mod={mod:x}H({mod})");

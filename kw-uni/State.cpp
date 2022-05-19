@@ -511,7 +511,7 @@ void State::handleSpaceKey() { LOG_INFO(_T("CALLED")); handleStrokeKeys(STROKE_S
 
 //-----------------------------------------------------------------------
 // 特殊キーデフォルトハンドラ
-void State::handleSpecialKeys(int /*deckey*/) { setThroughDeckeyFlag(); }
+void State::handleSpecialKeys(int /*deckey*/) { LOG_INFOH(_T("CALLED")); setThroughDeckeyFlag(); }
 
 // FullEscape デフォルトハンドラ
 void State::handleFullEscape() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(FULL_ESCAPE_DECKEY); }
@@ -557,7 +557,7 @@ _DEBUG_SENT(hk)
 
 //-----------------------------------------------------------------------
 // Ctrlキー デフォルトハンドラ
-void State::handleCtrlKeys(int /*deckey*/) { setThroughDeckeyFlag(); }
+void State::handleCtrlKeys(int /*deckey*/) { LOG_INFOH(_T("CALLED")); setThroughDeckeyFlag(); }
 
 //-----------------------------------------------------------------------
 // Shiftキー デフォルトハンドラ

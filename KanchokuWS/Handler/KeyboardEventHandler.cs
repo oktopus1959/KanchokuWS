@@ -12,7 +12,7 @@ namespace KanchokuWS.Handler
 {
     public class KeyboardEventHandler : IDisposable
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(false);
 
         /// <summary>Ctrlキー変換の有効なウィンドウクラスか</summary>
         public delegate bool DelegateCtrlConversionEffectiveChecker();
@@ -895,12 +895,13 @@ namespace KanchokuWS.Handler
                 kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END) {
                 // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
                 var keyList = CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode, (decKey) => handleComboKeyRepeat(vkey, decKey));
+                bool result = true;
                 if (keyList._notEmpty()) {
                     foreach (var k in keyList) {
-                        invokeHandler(k, 0);
+                        result = invokeHandler(k, 0);
                     }
                 }
-                return true;
+                return result;
             } else {
                 return invokeHandler(kanchokuCode, mod);
             }
