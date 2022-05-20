@@ -24,6 +24,16 @@ namespace KanchokuWS.Handler
         [DllImport("User32.dll")]
         static extern int SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+        [DllImport("Imm32.dll", SetLastError = true)]
+        public static extern IntPtr ImmGetContext(IntPtr hWnd);
+
+        [DllImport("imm32.dll", CharSet = CharSet.Unicode)]
+
+        static extern int ImmGetCompositionString(IntPtr hIMC, uint dwIndex, char[] lpBuf, uint dwBufLen);
+
+        [DllImport("imm32.dll")]
+        public static extern int ImmNotifyIME(IntPtr hIMC, int dwAction, int dwIndex, int dwValue);
+
         const int WM_IME_CONTROL = 0x283;
         const int IMC_GETCONVERSIONMODE = 1;
         const int IMC_SETCONVERSIONMODE = 2;
@@ -35,6 +45,14 @@ namespace KanchokuWS.Handler
         const int IME_CMODE_KATAKANA = 2;
         const int IME_CMODE_FULLSHAPE = 8;
         const int IME_CMODE_ROMAN = 16;
+
+        const int WM_IME_NOTIFY = 0x0282;
+        const int IMN_CLOSECANDIDATE = 4;
+
+        const int NI_COMPOSITIONSTR = 0x0015;
+        const int CPS_COMPLETE = 1;
+
+        const int GCS_COMPATTR = 0x0010;
 
         // cf. dj_src_2014-06-07/src/IME/IME.ahk
         // IME 入力モード(どの IMEでも共通っぽい)
@@ -59,8 +77,13 @@ namespace KanchokuWS.Handler
         // 入力モード
         public static int ImeConversionMode { get; private set; }
 
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+
         // IMEのWndHandle
-        public static IntPtr ImeWnd { get; private set; } = IntPtr.Zero;
+        //public static IntPtr ImeWnd { get; private set; } = IntPtr.Zero;
+
+        public static IntPtr MainWnd { get; set; }
 
         /// <summary>
         /// IMEの状態が変化したかどうかを取得する<br/>
@@ -68,14 +91,14 @@ namespace KanchokuWS.Handler
         /// <returns></returns>
         public static bool GetImeStateChanged()
         {
-            logger.DebugH(() => $"CALLED: ImeInputModeChanged={ImeInputModeChanged}");
+            logger.Debug(() => $"CALLED: ImeInputModeChanged={ImeInputModeChanged}");
             if (!ImeInputModeChanged) {
                 //IME状態の取得
-                ImeWnd = new Handler.GUIThreadInfo().GetDefaultIMEWnd();
+                IntPtr imeWnd = new Handler.GUIThreadInfo().GetDefaultIMEWnd();
 
-                if (ImeWnd != IntPtr.Zero) {
-                    int imeConvMode = SendMessage(ImeWnd, WM_IME_CONTROL, (IntPtr)IMC_GETCONVERSIONMODE, IntPtr.Zero);
-                    bool imeEnabled = SendMessage(ImeWnd, WM_IME_CONTROL, (IntPtr)IMC_GETOPENSTATUS, IntPtr.Zero) != 0;
+                if (imeWnd != IntPtr.Zero) {
+                    int imeConvMode = SendMessage(imeWnd, WM_IME_CONTROL, (IntPtr)IMC_GETCONVERSIONMODE, IntPtr.Zero);
+                    bool imeEnabled = SendMessage(imeWnd, WM_IME_CONTROL, (IntPtr)IMC_GETOPENSTATUS, IntPtr.Zero) != 0;
 
                     if (ImeEnabled != imeEnabled) {
                         // 状態が変化した
@@ -90,6 +113,34 @@ namespace KanchokuWS.Handler
             return false;
         }
 
+        public static void NotifyComplete()
+        {
+            logger.DebugH(() => $"CALLED: ImeEnabled={ImeEnabled}");
+            if (ImeEnabled) {
+                // 他のプロセスに対してImmGetContext()を呼ぶと Zeroが返るようだ。なので下記処理は無効
+                var hImc = ImmGetContext(ActiveWindowHandler.Singleton.ActiveWinHandle);
+                logger.DebugH(() => $"hImc={hImc:x}");
+                if (hImc != IntPtr.Zero) {
+                    int result = ImmNotifyIME(hImc, NI_COMPOSITIONSTR, CPS_COMPLETE, 0);
+                    logger.DebugH(() => $"result={result:x}");
+                }
+            }
+        }
+
+        public static bool HasUnconfirmed()
+        {
+            logger.DebugH(() => $"CALLED: ImeEnabled={ImeEnabled}");
+            if (ImeEnabled) {
+                var hImc = ImmGetContext(ActiveWindowHandler.Singleton.ActiveWinHandle);
+                if (hImc != IntPtr.Zero) {
+                    int len = ImmGetCompositionString(hImc, GCS_COMPATTR, null, 0);
+                    logger.DebugH(() => $"len={len}");
+                    return len > 0;
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// 元の入力モードに戻る
         /// </summary>
@@ -97,7 +148,8 @@ namespace KanchokuWS.Handler
         {
             logger.DebugH(() => $"CALLED: ImeEnabled={ImeEnabled}");
             if (ImeEnabled) {
-                SendMessage(ImeWnd, WM_IME_CONTROL, (IntPtr)IMC_SETCONVERSIONMODE, (IntPtr)ImeConversionMode); // 元の入力モードに設定
+                IntPtr imeWnd = new Handler.GUIThreadInfo().GetDefaultIMEWnd();
+                SendMessage(imeWnd, WM_IME_CONTROL, (IntPtr)IMC_SETCONVERSIONMODE, (IntPtr)ImeConversionMode); // 元の入力モードに設定
             }
             ImeInputModeChanged = false;
         }
@@ -110,7 +162,8 @@ namespace KanchokuWS.Handler
             logger.DebugH(() => $"CALLED: ImeEnabled={ImeEnabled}");
             if (ImeEnabled) {
                 ImeInputModeChanged = true;
-                SendMessage(ImeWnd, WM_IME_CONTROL, (IntPtr)IMC_SETCONVERSIONMODE, (IntPtr)(IME_CMODE_KANA | IME_CMODE_FULLSHAPE | IME_CMODE_NATIVE)); // ひらがなモードに設定
+                IntPtr imeWnd = new Handler.GUIThreadInfo().GetDefaultIMEWnd();
+                SendMessage(imeWnd, WM_IME_CONTROL, (IntPtr)IMC_SETCONVERSIONMODE, (IntPtr)(IME_CMODE_KANA | IME_CMODE_FULLSHAPE | IME_CMODE_NATIVE)); // ひらがなモードに設定
             }
         }
     }

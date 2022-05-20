@@ -88,6 +88,8 @@ namespace KanchokuWS
         {
             logger.WriteLog("INFO", $"\n\n==== KANCHOKU WS START (LogLevel={Logger.LogLevel}) ====");
 
+            IMEHandler.MainWnd = this.Handle;
+
             // 仮想鍵盤フォームの作成
             frmVkb = new FrmVirtualKeyboard(this);
             frmVkb.Opacity = 0;

@@ -12,7 +12,7 @@ namespace KanchokuWS.Handler
 
     class SendInputHandler
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         public const int MyMagicNumber = 1959;
 
@@ -29,7 +29,7 @@ namespace KanchokuWS.Handler
 
         public static void DisposeSingleton()
         {
-            logger.Info("Disposed");
+            logger.InfoH("Disposed");
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace KanchokuWS.Handler
         {
             leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
             rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
-            if (Settings.LoggingDecKeyInfo) logger.Info($"bUp={bUp}, leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
 
             if (bUp) {
                 // DOWNしているほうだけ上げる
@@ -229,7 +229,7 @@ namespace KanchokuWS.Handler
         /// <param name="prevRightCtrl"></param>
         private int revertCtrlKeyInputs(INPUT[] inputs, int idx, bool bUp, bool prevLeftCtrl, bool prevRightCtrl)
         {
-            if (Settings.LoggingDecKeyInfo) logger.Info($"bUp={bUp}, prevLeftCtrl={prevLeftCtrl}, prevRightCtrl={prevRightCtrl}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, prevLeftCtrl={prevLeftCtrl}, prevRightCtrl={prevRightCtrl}");
 
             if (bUp) {
                 // 事前操作がUPだった
@@ -244,13 +244,13 @@ namespace KanchokuWS.Handler
 
         public void RevertUpCtrlKey(bool prevLeftCtrl, bool prevRightCtrl)
         {
-            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED");
 
             var inputs = new INPUT[2];
             
             // Ctrl戻し
             int idx = revertCtrlKeyInputs(inputs, 0, true, prevLeftCtrl, prevRightCtrl);
-            if (Settings.LoggingDecKeyInfo) logger.Info($"revert: idx={idx}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"revert: idx={idx}");
 
             // 送出
             sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
@@ -279,7 +279,7 @@ namespace KanchokuWS.Handler
         {
             leftShift = (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0;
             rightShift = (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
-            if (Settings.LoggingDecKeyInfo) logger.Info($"bUp={bUp}, leftShift={leftShift}, rightShift={rightShift}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, leftShift={leftShift}, rightShift={rightShift}");
 
             if (bUp) {
                 // 下がっているほうだけ上げる
@@ -313,7 +313,7 @@ namespace KanchokuWS.Handler
         /// <param name="prevRightShift"></param>
         private int revertShiftKeyInputs(INPUT[] inputs, int idx, bool bUp, bool prevLeftShift, bool prevRightShift)
         {
-            if (Settings.LoggingDecKeyInfo) logger.Info($"bUp={bUp}, prevLeftShift={prevLeftShift}, prevRightShift={prevRightShift}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, prevLeftShift={prevLeftShift}, prevRightShift={prevRightShift}");
 
             if (bUp) {
                 // 事前操作がUPだった
@@ -507,7 +507,7 @@ namespace KanchokuWS.Handler
 
         private void sendInputsWithHandlingDeckey(uint len, INPUT[] inputs, uint vkey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: len={len}, vkey={vkey}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: len={len}, vkey={vkey}");
 
             //if (len > 0) SendInput(len, inputs, Marshal.SizeOf(typeof(INPUT)));
             if (len > 0) sendInput(len, inputs);
@@ -521,7 +521,7 @@ namespace KanchokuWS.Handler
         /// </summary>
         public void UpCtrlAndShftKeys()
         {
-            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED");
 
             var inputs = new INPUT[4];
             int idx = 0;
@@ -538,8 +538,11 @@ namespace KanchokuWS.Handler
 
         private void sendStringInputs(string str)
         {
+            bool loggingFlag = Settings.LoggingDecKeyInfo;
+            if (loggingFlag) logger.InfoH($"ENTER: str={str}");
+
             int strLen = str._safeCount();
-            int inputsLen = strLen * 3;     // IMEがONの時、ひらがなはローマ字等に変換するので、3倍にしておく
+            int inputsLen = strLen * 3 + 3;     // IMEがONの時、ひらがなはローマ字等に変換するので、3倍にしておく。あと、確定のための３個
 
             var inputs = new INPUT[inputsLen * 2];
 
@@ -555,13 +558,19 @@ namespace KanchokuWS.Handler
                     //inputs[idx].ki.wVk = VK_PACKET;       // SendInput でUniCodeを出力するときは、ここを 0 にしておく
                     string faceStr = null;
                     bool bKana = false;
+                    if (loggingFlag) logger.InfoH($"ImeEnabled={IMEHandler.ImeEnabled}, ImeSendInputInRoman={Settings.ImeSendInputInRoman}");
                     if (IMEHandler.ImeEnabled && Settings.ImeSendInputInRoman) {
                         faceStr = str[i]._hiraganaToRoman();
+                        if (loggingFlag && faceStr._isEmpty()) logger.InfoH($"_hiraganaToRoman empty");
                         if (faceStr._isEmpty()) {
                             faceStr = str[i]._hiraganaToKeyface();
                             bKana = faceStr._notEmpty();
+                            if (loggingFlag && faceStr._isEmpty()) logger.InfoH($"_hiraganaToKeyface empty");
                         }
-                        if (faceStr._isEmpty() && str[i] >= ' ' && str[i] < (char)0x7f) faceStr = str[i].ToString();
+                        if (faceStr._isEmpty() && str[i] >= ' ' && str[i] < (char)0x7f) {
+                            if (loggingFlag) logger.InfoH($"use ascii");
+                            faceStr = str[i].ToString();
+                        }
                     }
                     if (faceStr._notEmpty()) {
                         foreach (var fc in faceStr) {
@@ -585,12 +594,28 @@ namespace KanchokuWS.Handler
                             }
                         }
                     } else {
+                        if (loggingFlag) logger.InfoH($"send asis string");
+                        // そもそも、未確定を確定させてしまうのはいかがなものか。やるなら、Chromeとか、特定のやつだけにしたい
+                        if (IMEHandler.ImeEnabled && Settings.ImeSendInputInRoman) {
+                            // 以下は効かない(ImmGetContext()が他プロセスに対しては無効なため)
+                            //IMEHandler.NotifyComplete();
+                            //if (IMEHandler.HasUnconfirmed()) {
+                            //    if (loggingFlag) logger.InfoH($"Has unconfirmed");
+                            //    idx = setVkeyInputs((ushort)Keys.Enter, inputs, idx);
+                            //}
+
+                            // 以下はやりすぎ
+                            //idx = setVkeyInputs((ushort)Keys.Oem102, inputs, idx);
+                            //idx = setVkeyInputs((ushort)Keys.Enter, inputs, idx);
+                            //idx = setVkeyInputs((ushort)Keys.Back, inputs, idx);
+                        }
                         idx = setUnicodeInputs(str[i], inputs, idx);
                     }
                 }
             }
             // 送出
             sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
+            if (loggingFlag) logger.InfoH($"LEAVE: str={str}");
         }
 
         /// <summary>
@@ -601,7 +626,7 @@ namespace KanchokuWS.Handler
         public void SendString(char[] str, int strLen, int numBS)
         {
             bool loggingFlag = Settings.LoggingDecKeyInfo;
-            if (loggingFlag) logger.Info($"CALLED: str={(str._isEmpty() ? "" : new string(str, 0, strLen._lowLimit(0)))}, numBS={numBS}");
+            if (loggingFlag) logger.InfoH($"CALLED: str={(str._isEmpty() ? "" : new string(str, 0, strLen._lowLimit(0)))}, numBS={numBS}");
 
             if (numBS < 0) numBS = 0;
             if (strLen < 0) strLen = 0;
@@ -616,14 +641,14 @@ namespace KanchokuWS.Handler
 
             // Ctrl上げ
             idx = upCtrlKeyInputs(inputs, idx, out leftCtrl, out rightCtrl);
-            if (loggingFlag) logger.Info($"upCtrl: idx={idx}");
+            if (loggingFlag) logger.InfoH($"upCtrl: idx={idx}");
             //sendInputUpCtrlKey(out leftCtrl, out rightCtrl);      // StikyNote など、Waitを入れても状況が変わらない
 
             // Backspace
             for (int i = 0; i < numBS; ++i) {
                 idx = setVkeyInputs(VK_BACK, inputs, idx);
             }
-            if (loggingFlag) logger.Info($"bs: idx={idx}");
+            if (loggingFlag) logger.InfoH($"bs: idx={idx}");
 
             // 送出
             sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
@@ -636,7 +661,7 @@ namespace KanchokuWS.Handler
             // Ctrl戻し
             idx = 0;
             idx = revertCtrlKeyInputs(inputs, idx, true, leftCtrl, rightCtrl);
-            if (loggingFlag) logger.Info($"revert: idx={idx}");
+            if (loggingFlag) logger.InfoH($"revert: idx={idx}");
             // 送出
             sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
         }
@@ -650,9 +675,9 @@ namespace KanchokuWS.Handler
         public void SendVKeyCombo(uint modifier, uint vkey, int n)
         {
             bool loggingFlag = Settings.LoggingDecKeyInfo;
-            if (loggingFlag) logger.Info($"CALLED: modifier={modifier:x}H, vkey={vkey:x}H, numKeys={n}");
+            if (loggingFlag) logger.InfoH($"CALLED: modifier={modifier:x}H, vkey={vkey:x}H, numKeys={n}");
             if (syncPostVkey.BusyCheck()) {
-                if (loggingFlag) logger.Info($"IGNORED: numKeys={n}");
+                if (loggingFlag) logger.InfoH($"IGNORED: numKeys={n}");
                 return;
             }
             using (syncPostVkey) {
@@ -698,7 +723,7 @@ namespace KanchokuWS.Handler
         public void SendStringViaClipboardIfNeeded(char[] str, int numBS, bool bForceString = false)
         {
             var activeWinHandle = ActiveWindowHandler.Singleton?.ActiveWinHandle ?? IntPtr.Zero;
-            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"ActiveWinHandle={(int)activeWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}, bForceString={bForceString}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ActiveWinHandle={(int)activeWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}, bForceString={bForceString}");
 
             if (activeWinHandle != IntPtr.Zero && ((str._notEmpty() && str[0] != 0) || numBS > 0)) {
                 int len = str._isEmpty() ? 0 : str._strlen();     // 終端までの長さを取得
@@ -713,7 +738,7 @@ namespace KanchokuWS.Handler
                     // Ctrl-V を送る (SendVirtualKeys の中でも upDownCtrlKey/revertCtrlKey をやっている)
                     if (numBS > 0 && Settings.PreWmCharGuardMillisec > 0) {
                         int waitMs = (int)(Math.Pow(numBS, Settings.ReductionExponet._lowLimit(0.5)) * Settings.PreWmCharGuardMillisec);
-                        if (Settings.LoggingDecKeyInfo) logger.Info(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
                         Helper.WaitMilliSeconds(waitMs);
                     }
                     SendVKeyCombo(VirtualKeys.CtrlV_VKeyCombo.modifier, VirtualKeys.CtrlV_VKeyCombo.vkey, 1);
