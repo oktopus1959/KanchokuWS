@@ -359,6 +359,7 @@ namespace KanchokuWS.Gui
 
             // IME連携
             checkBox_imeCooperationEnabled.Checked = Settings.ImeCooperationEnabled;
+            checkBox_imeSendInputInRoman.Checked = Settings.ImeSendInputInRoman;
 
             // 仮想鍵盤表示
             radioButton_noVkb.Checked = !Settings.ShowVkbOrMaker;
@@ -413,6 +414,7 @@ namespace KanchokuWS.Gui
 
             // IME連携
             checkerBasic.Add(checkBox_imeCooperationEnabled);
+            checkerBasic.Add(checkBox_imeSendInputInRoman);
 
             // 仮想鍵盤表示
             checkerBasic.Add(radioButton_normalVkb);
@@ -473,6 +475,7 @@ namespace KanchokuWS.Gui
 
             // IME連携
             Settings.SetUserIni("imeCooperationEnabled", checkBox_imeCooperationEnabled.Checked);
+            Settings.SetUserIni("imeSendInputInRoman", checkBox_imeSendInputInRoman.Checked);
 
             // 仮想鍵盤表示
             Settings.SetUserIni("vkbShowStrokeCount", $"{textBox_vkbShowStrokeCount.Text._parseInt(1)._lowLimit(0) * (radioButton_normalVkb.Checked ? 1 : -1)}");

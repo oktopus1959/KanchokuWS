@@ -352,7 +352,84 @@ namespace KanchokuWS
             { "~", (uint)Keys.Oem7 + 0x100 },        // de
             { "OEM8", (uint)Keys.Oem8 },        // df
             { "OEM102", (uint)Keys.Oem102 },    // e2/106
-            { "_", (uint)Keys.Oem7 + 0x100 },        // de
+            { "＼", (uint)Keys.Oem102 },    // e2/106
+            { "_", (uint)Keys.Oem102 + 0x100 },        // de
+        };
+
+        private static Dictionary<char, uint> charToVkey = new Dictionary<char, uint>() {
+            {' ', (uint)Keys.Space },
+            {'1', (uint)Keys.D1 },
+            {'2', (uint)Keys.D2 },
+            {'3', (uint)Keys.D3 },
+            {'4', (uint)Keys.D4 },
+            {'5', (uint)Keys.D5 },
+            {'6', (uint)Keys.D6 },
+            {'7', (uint)Keys.D7 },
+            {'8', (uint)Keys.D8 },
+            {'9', (uint)Keys.D9 },
+            {'0', (uint)Keys.D0 },
+            {'を', (uint)Keys.D0 + 0x100 },
+            {'!', (uint)Keys.D1 + 0x100 },
+            {'\"', (uint)Keys.D2 + 0x100 },
+            {'#', (uint)Keys.D3 + 0x100 },
+            {'$', (uint)Keys.D4 + 0x100 },
+            {'%', (uint)Keys.D5 + 0x100 },
+            {'&', (uint)Keys.D6 + 0x100 },
+            {'\'', (uint)Keys.D7 + 0x100 },
+            {'(', (uint)Keys.D8 + 0x100 },
+            {')', (uint)Keys.D9 + 0x100 },
+            {'A', (uint)Keys.A },
+            {'B', (uint)Keys.B },
+            {'C', (uint)Keys.C },
+            {'D', (uint)Keys.D },
+            {'E', (uint)Keys.E },
+            {'ぃ', (uint)Keys.E + 0x100 },
+            {'F', (uint)Keys.F },
+            {'G', (uint)Keys.G },
+            {'H', (uint)Keys.H },
+            {'I', (uint)Keys.I },
+            {'J', (uint)Keys.J },
+            {'K', (uint)Keys.K },
+            {'L', (uint)Keys.L },
+            {'M', (uint)Keys.M },
+            {'N', (uint)Keys.N },
+            {'O', (uint)Keys.O },
+            {'P', (uint)Keys.P },
+            {'Q', (uint)Keys.Q },
+            {'R', (uint)Keys.R },
+            {'S', (uint)Keys.S },
+            {'T', (uint)Keys.T },
+            {'U', (uint)Keys.U },
+            {'V', (uint)Keys.V },
+            {'W', (uint)Keys.W },
+            {'X', (uint)Keys.X },
+            {'Y', (uint)Keys.Y },
+            {'Z', (uint)Keys.Z },
+            {'っ', (uint)Keys.Z + 0x100 },
+            { ';', (uint)Keys.Oemplus },     // bb
+            { '+', (uint)Keys.Oemplus + 0x100 },     // bb
+            { ',', (uint)Keys.Oemcomma },   // bc
+            { '<', (uint)Keys.Oemcomma + 0x100 },   // bc
+            { '.', (uint)Keys.OemPeriod }, // be
+            { '>', (uint)Keys.OemPeriod + 0x100 }, // be
+            { '-', (uint)Keys.OemMinus },   // bd
+            { '=', (uint)Keys.OemMinus + 0x100 },   // bd
+            { ':', (uint)Keys.Oem1 },       // ba
+            { '*', (uint)Keys.Oem1 + 0x100 },       // ba
+            { '/', (uint)Keys.Oem2 },       // bf
+            { '?', (uint)Keys.Oem2 + 0x100 },       // bf
+            { '@', (uint)Keys.Oem3 },      // c0/106
+            { '`', (uint)Keys.Oem3 + 0x100 },      // c0/106
+            { '[', (uint)Keys.Oem4 },        // db
+            { '{', (uint)Keys.Oem4 + 0x100 },        // db
+            { '\\', (uint)Keys.Oem5 },        // dc
+            { '|', (uint)Keys.Oem5 + 0x100 },        // dc
+            { ']', (uint)Keys.Oem6 },        // dd
+            { '}', (uint)Keys.Oem6 + 0x100 },        // dd
+            { '^', (uint)Keys.Oem7 },        // de
+            { '~', (uint)Keys.Oem7 + 0x100 },        // de
+            { '＼', (uint)Keys.Oem102 + 0x100 },        // de
+            { '_', (uint)Keys.Oem102 + 0x100 },        // de
         };
 
         public static VKeyCombo EmptyCombo = new VKeyCombo(0, 0);
@@ -364,6 +441,11 @@ namespace KanchokuWS
         public static uint GetVKeyFromFaceString(string face)
         {
             return faceToVkey._safeGet(face);
+        }
+
+        public static uint GetVKeyFromFaceChar(char face)
+        {
+            return charToVkey._safeGet(face);
         }
 
         public static VKeyCombo? GetVKeyComboFromFaceString(string face, bool ctrl, bool shift)

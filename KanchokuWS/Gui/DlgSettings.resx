@@ -120,6 +120,21 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="checkBox_imeSendInputInRoman.ToolTip" xml:space="preserve">
+    <value>この項目をチェックすると、入力されたひらがなをローマ字に変換して
+IMEに送信するようになります。
+
+ローマ字に変換できない文字のうち、ひらがにモードで入力できるもの、
+たとえば「、」や「゛」などは、IMEの入力モードを一時的に「ひらがな入力」
+に変更してから送信します。（IMEへの送信が完了したら元の入力
+モードに戻ります）
+ひらがなモードでも入力できない文字のうち、アスキー文字はそのまま
+送信されます。その他の漢字などは送信されずに無視されます。
+
+チェックがない場合は、文字の Unicode をそのまま送信します。
+漢字などもそのまま送信されますが、相手先のアプリによってはIMEに
+送られないことがあります。（例： Chrome や VS Code など）</value>
+  </data>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 

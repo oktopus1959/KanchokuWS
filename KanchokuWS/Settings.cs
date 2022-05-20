@@ -541,6 +541,12 @@ namespace KanchokuWS
         /// <summary> IMEの状態に連携してON/OFFする </summary>
         public static bool ImeCooperationEnabled { get; set; } = false;
 
+        /// <summary> IMEに対してローマ字で送信する </summary>
+        public static bool ImeSendInputInRoman { get; set; } = false;
+
+        /// <summary> IMEに対してカナで送信する </summary>
+        public static bool ImeSendInputInKana { get; set; } = false;
+
         //------------------------------------------------------------------------------
         /// <summary>ウィンドウClassNameごとの設定</summary>
         public class WindowsClassSettings
@@ -927,6 +933,8 @@ namespace KanchokuWS
             //-------------------------------------------------------------------------------------
             // IME連携
             ImeCooperationEnabled = GetString("imeCooperationEnabled")._parseBool(false);
+            ImeSendInputInRoman = GetString("imeSendInputInRoman")._parseBool(false);
+            ImeSendInputInKana = GetString("imeSendInputInKana")._parseBool(false);
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

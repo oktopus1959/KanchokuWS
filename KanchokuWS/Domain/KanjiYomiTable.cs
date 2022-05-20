@@ -16,8 +16,193 @@ namespace KanchokuWS
 
         private static Dictionary<string, string> romanKanaTbl = new Dictionary<string, string>();
 
-        private static Dictionary<char, string> kanaRomanTbl = new Dictionary<char, string>();
+        private static Dictionary<char, string> kanaRomanTbl = new Dictionary<char, string>() {
+            { 'ぁ', "LA" },
+            { 'ぃ', "LI" },
+            { 'ぅ', "LU" },
+            { 'ぇ', "LE" },
+            { 'ぉ', "LO" },
+            { 'あ', "A" },
+            { 'い', "I" },
+            { 'う', "U" },
+            { 'え', "E" },
+            { 'お', "O" },
+            { 'ゕ', "LKA" },
+            { 'か', "KA" },
+            { 'が', "GA" },
+            { 'き', "KI" },
+            { 'ぎ', "GI" },
+            { 'く', "KU" },
+            { 'ぐ', "GU" },
+            { 'ゖ', "LKE" },
+            { 'け', "KE" },
+            { 'げ', "GE" },
+            { 'こ', "KO" },
+            { 'ご', "GO" },
+            { 'さ', "SA" },
+            { 'ざ', "ZA" },
+            { 'し', "SI" },
+            { 'じ', "ZI" },
+            { 'す', "SU" },
+            { 'ず', "ZU" },
+            { 'せ', "SE" },
+            { 'ぜ', "ZE" },
+            { 'そ', "SO" },
+            { 'ぞ', "ZO" },
+            { 'た', "TA" },
+            { 'だ', "DA" },
+            { 'ち', "TI" },
+            { 'ぢ', "DI" },
+            { 'っ', "LTU" },
+            { 'つ', "TU" },
+            { 'づ', "DU" },
+            { 'て', "TE" },
+            { 'で', "DE" },
+            { 'と', "TO" },
+            { 'ど', "DO" },
+            { 'な', "NA" },
+            { 'に', "NI" },
+            { 'ぬ', "NU" },
+            { 'ね', "NU" },
+            { 'の', "NO" },
+            { 'は', "HA" },
+            { 'ば', "BA" },
+            { 'ぱ', "PA" },
+            { 'ひ', "HI" },
+            { 'び', "BI" },
+            { 'ぴ', "PI" },
+            { 'ふ', "HU" },
+            { 'ぶ', "BU" },
+            { 'ぷ', "PU" },
+            { 'へ', "HE" },
+            { 'べ', "BE" },
+            { 'ぺ', "PE" },
+            { 'ほ', "HO" },
+            { 'ぼ', "BO" },
+            { 'ぽ', "PO" },
+            { 'ま', "MA" },
+            { 'み', "MI" },
+            { 'む', "MU" },
+            { 'め', "ME" },
+            { 'も', "MO" },
+            { 'ゃ', "LYA" },
+            { 'や', "YA" },
+            { 'ゅ', "LYU" },
+            { 'ゆ', "YU" },
+            { 'ょ', "LYO" },
+            { 'よ', "YO" },
+            { 'ら', "RA" },
+            { 'り', "RI" },
+            { 'る', "RU" },
+            { 'れ', "RE" },
+            { 'ろ', "RO" },
+            { 'ゎ', "LWA" },
+            { 'わ', "WA" },
+            { 'ゐ', "WYI" },
+            { 'ゔ', "VU" },
+            { 'ヴ', "VU" },
+            { 'ゑ', "WYE" },
+            { 'を', "WO" },
+            { 'ん', "NN" },
+            { 'ー', "-" },
+            { '、', "," },
+            { '。', "." },
+            { '「', "[" },
+            { '」', "]" },
+        };
 
+        private static Dictionary<char, string> hiraganaKeyfaceDic = new Dictionary<char, string>() {
+            {'ぁ', "#"},
+            {'ぃ', "ぃ"},
+            {'ぅ', "$"},
+            {'ぇ', "%"},
+            {'ぉ', "&"},
+            {'あ', "3"},
+            {'い', "E"},
+            {'う', "4"},
+            {'え', "5"},
+            {'お', "6"},
+            {'か', "T"},
+            {'が', "T@"},
+            {'き', "G"},
+            {'ぎ', "G@"},
+            {'く', "H"},
+            {'ぐ', "H@"},
+            {'け', ":"},
+            {'げ', ":@"},
+            {'こ', "B"},
+            {'ご', "B@"},
+            {'さ', "X"},
+            {'ざ', "X@"},
+            {'し', "D"},
+            {'じ', "D@"},
+            {'す', "R"},
+            {'ず', "R@"},
+            {'せ', "P"},
+            {'ぜ', "P@"},
+            {'そ', "C"},
+            {'ぞ', "C@"},
+            {'た', "Q"},
+            {'だ', "Q@"},
+            {'ち', "A"},
+            {'ぢ', "A@"},
+            {'っ', "っ"},
+            {'つ', "Z"},
+            {'づ', "Z@"},
+            {'て', "W"},
+            {'で', "W@"},
+            {'と', "S"},
+            {'ど', "S@"},
+            {'な', "U"},
+            {'に', "I@"},
+            {'ぬ', "1"},
+            {'ね', ","},
+            {'の', "K"},
+            {'は', "F"},
+            {'ば', "F@"},
+            {'ぱ', "F["},
+            {'ひ', "V"},
+            {'び', "V@"},
+            {'ぴ', "V["},
+            {'ふ', "2"},
+            {'ぶ', "2@"},
+            {'ぷ', "2["},
+            {'へ', "^"},
+            {'べ', "^@"},
+            {'ぺ', "^["},
+            {'ほ', "-"},
+            {'ぼ', "-@"},
+            {'ぽ', "-["},
+            {'ま', "J"},
+            {'み', "N"},
+            {'む', "]"},
+            {'め', "/"},
+            {'も', "M"},
+            {'ゃ', "'"},
+            {'や', "7"},
+            {'ゅ', "("},
+            {'ゆ', "8"},
+            {'ょ', ")"},
+            {'よ', "9"},
+            {'ら', "O"},
+            {'り', "L"},
+            {'る', "."},
+            {'れ', ";"},
+            {'ろ', "＼"},
+            {'わ', "0"},
+            {'ゔ', "4@"},
+            {'ヴ', "4@"},
+            {'を', "を"},
+            {'ん', "Y"},
+            {'、', "<"},
+            {'。', ">"},
+            {'・', "?"},
+            {'「', "{"},
+            {'」', "}"},
+            {'゛', "@"},
+            {'゜', "["},
+            {'ー', "\\"},
+        };
         static KanjiYomiTable()
         {
             yomiKanjiTbl["あ"] = new HashSet<char>() { 'あ', 'ぁ', 'ア', 'ァ' };
@@ -220,93 +405,6 @@ namespace KanchokuWS
             romanKanaTbl["RYU"] = "りゅ";
             romanKanaTbl["RYO"] = "りょ";
 
-            kanaRomanTbl['ぁ'] = "LA";
-            kanaRomanTbl['ぃ'] = "LI";
-            kanaRomanTbl['ぅ'] = "LU";
-            kanaRomanTbl['ぇ'] = "LE";
-            kanaRomanTbl['ぉ'] = "LO";
-            kanaRomanTbl['あ'] = "A";
-            kanaRomanTbl['い'] = "I";
-            kanaRomanTbl['う'] = "U";
-            kanaRomanTbl['え'] = "E";
-            kanaRomanTbl['お'] = "O";
-            kanaRomanTbl['ゕ'] = "LKA";
-            kanaRomanTbl['か'] = "KA";
-            kanaRomanTbl['が'] = "GA";
-            kanaRomanTbl['き'] = "KI";
-            kanaRomanTbl['ぎ'] = "GI";
-            kanaRomanTbl['く'] = "KU";
-            kanaRomanTbl['ぐ'] = "GU";
-            kanaRomanTbl['ゖ'] = "LKE";
-            kanaRomanTbl['け'] = "KE";
-            kanaRomanTbl['げ'] = "GE";
-            kanaRomanTbl['こ'] = "KO";
-            kanaRomanTbl['ご'] = "GO";
-            kanaRomanTbl['さ'] = "SA";
-            kanaRomanTbl['ざ'] = "ZA";
-            kanaRomanTbl['し'] = "SI";
-            kanaRomanTbl['じ'] = "ZI";
-            kanaRomanTbl['す'] = "SU";
-            kanaRomanTbl['ず'] = "ZU";
-            kanaRomanTbl['せ'] = "SE";
-            kanaRomanTbl['ぜ'] = "ZE";
-            kanaRomanTbl['そ'] = "SO";
-            kanaRomanTbl['ぞ'] = "ZO";
-            kanaRomanTbl['た'] = "TA";
-            kanaRomanTbl['だ'] = "DA";
-            kanaRomanTbl['ち'] = "TI";
-            kanaRomanTbl['ぢ'] = "DI";
-            kanaRomanTbl['っ'] = "LTU";
-            kanaRomanTbl['つ'] = "TU";
-            kanaRomanTbl['づ'] = "DU";
-            kanaRomanTbl['て'] = "TE";
-            kanaRomanTbl['で'] = "DE";
-            kanaRomanTbl['と'] = "TO";
-            kanaRomanTbl['ど'] = "DO";
-            kanaRomanTbl['な'] = "NA";
-            kanaRomanTbl['に'] = "NI";
-            kanaRomanTbl['ぬ'] = "NU";
-            kanaRomanTbl['ね'] = "NU";
-            kanaRomanTbl['の'] = "NO";
-            kanaRomanTbl['は'] = "HA";
-            kanaRomanTbl['ば'] = "BA";
-            kanaRomanTbl['ぱ'] = "PA";
-            kanaRomanTbl['ひ'] = "HI";
-            kanaRomanTbl['び'] = "BI";
-            kanaRomanTbl['ぴ'] = "PI";
-            kanaRomanTbl['ふ'] = "HU";
-            kanaRomanTbl['ぶ'] = "BU";
-            kanaRomanTbl['ぷ'] = "PU";
-            kanaRomanTbl['へ'] = "HE";
-            kanaRomanTbl['べ'] = "BE";
-            kanaRomanTbl['ぺ'] = "PE";
-            kanaRomanTbl['ほ'] = "HO";
-            kanaRomanTbl['ぼ'] = "BO";
-            kanaRomanTbl['ぽ'] = "PO";
-            kanaRomanTbl['ま'] = "MA";
-            kanaRomanTbl['み'] = "MI";
-            kanaRomanTbl['む'] = "MU";
-            kanaRomanTbl['め'] = "ME";
-            kanaRomanTbl['も'] = "MO";
-            kanaRomanTbl['ゃ'] = "LYA";
-            kanaRomanTbl['や'] = "YA";
-            kanaRomanTbl['ゅ'] = "LYU";
-            kanaRomanTbl['ゆ'] = "YU";
-            kanaRomanTbl['ょ'] = "LYO";
-            kanaRomanTbl['よ'] = "YO";
-            kanaRomanTbl['ら'] = "RA";
-            kanaRomanTbl['り'] = "RI";
-            kanaRomanTbl['る'] = "RU";
-            kanaRomanTbl['れ'] = "RE";
-            kanaRomanTbl['ろ'] = "RO";
-            kanaRomanTbl['ゎ'] = "LWA";
-            kanaRomanTbl['わ'] = "WA";
-            kanaRomanTbl['ゐ'] = "WYI";
-            kanaRomanTbl['ゔ'] = "VU";
-            kanaRomanTbl['ヴ'] = "VU";
-            kanaRomanTbl['ゑ'] = "WYE";
-            kanaRomanTbl['を'] = "WO";
-            kanaRomanTbl['ん'] = "NN";
         }
 
         public static void ReadKanjiYomiFile(string filename)
@@ -410,6 +508,12 @@ namespace KanchokuWS
         public static string _hiraganaToRoman(this char ch)
         {
             if (ch >= 'ぁ' && ch <= 'ゖ') return kanaRomanTbl._safeGet(ch);
+            return null;
+        }
+
+        public static string _hiraganaToKeyface(this char ch)
+        {
+            if (ch >= 'ぁ' && ch <= 'ゖ') return hiraganaKeyfaceDic._safeGet(ch);
             return null;
         }
     }

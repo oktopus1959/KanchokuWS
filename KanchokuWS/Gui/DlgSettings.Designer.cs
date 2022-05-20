@@ -445,6 +445,7 @@ namespace KanchokuWS.Gui
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox46 = new System.Windows.Forms.GroupBox();
             this.checkBox_imeCooperationEnabled = new System.Windows.Forms.CheckBox();
+            this.checkBox_imeSendInputInRoman = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_onSecondaryTable = new KanchokuWS.Gui.ColorTextBox();
@@ -1003,9 +1004,9 @@ namespace KanchokuWS.Gui
             this.groupBox4.Controls.Add(this.radioButton_modeMarker);
             this.groupBox4.Controls.Add(this.radioButton_normalVkb);
             this.groupBox4.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox4.Location = new System.Drawing.Point(7, 181);
+            this.groupBox4.Location = new System.Drawing.Point(7, 202);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(254, 83);
+            this.groupBox4.Size = new System.Drawing.Size(254, 66);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "仮想鍵盤表示";
@@ -1013,7 +1014,7 @@ namespace KanchokuWS.Gui
             // radioButton_noVkb
             // 
             this.radioButton_noVkb.AutoSize = true;
-            this.radioButton_noVkb.Location = new System.Drawing.Point(17, 59);
+            this.radioButton_noVkb.Location = new System.Drawing.Point(106, 42);
             this.radioButton_noVkb.Name = "radioButton_noVkb";
             this.radioButton_noVkb.Size = new System.Drawing.Size(61, 19);
             this.radioButton_noVkb.TabIndex = 6;
@@ -1047,7 +1048,7 @@ namespace KanchokuWS.Gui
             // radioButton_modeMarker
             // 
             this.radioButton_modeMarker.AutoSize = true;
-            this.radioButton_modeMarker.Location = new System.Drawing.Point(17, 38);
+            this.radioButton_modeMarker.Location = new System.Drawing.Point(17, 42);
             this.radioButton_modeMarker.Name = "radioButton_modeMarker";
             this.radioButton_modeMarker.Size = new System.Drawing.Size(74, 19);
             this.radioButton_modeMarker.TabIndex = 1;
@@ -1135,7 +1136,7 @@ namespace KanchokuWS.Gui
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(19, 19);
+            this.label24.Location = new System.Drawing.Point(17, 19);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(133, 15);
             this.label24.TabIndex = 2;
@@ -5409,10 +5410,11 @@ namespace KanchokuWS.Gui
             // 
             // groupBox46
             // 
+            this.groupBox46.Controls.Add(this.checkBox_imeSendInputInRoman);
             this.groupBox46.Controls.Add(this.checkBox_imeCooperationEnabled);
             this.groupBox46.Location = new System.Drawing.Point(7, 132);
             this.groupBox46.Name = "groupBox46";
-            this.groupBox46.Size = new System.Drawing.Size(254, 43);
+            this.groupBox46.Size = new System.Drawing.Size(254, 64);
             this.groupBox46.TabIndex = 1;
             this.groupBox46.TabStop = false;
             this.groupBox46.Text = "IME連携";
@@ -5423,10 +5425,21 @@ namespace KanchokuWS.Gui
             this.checkBox_imeCooperationEnabled.Location = new System.Drawing.Point(14, 17);
             this.checkBox_imeCooperationEnabled.Name = "checkBox_imeCooperationEnabled";
             this.checkBox_imeCooperationEnabled.Size = new System.Drawing.Size(226, 19);
-            this.checkBox_imeCooperationEnabled.TabIndex = 4;
+            this.checkBox_imeCooperationEnabled.TabIndex = 0;
             this.checkBox_imeCooperationEnabled.Text = "IMEの状態に合わせて漢直をON/OFFする";
             this.toolTip1.SetToolTip(this.checkBox_imeCooperationEnabled, "この項目をチェックすると、IMEの状態に合わせて漢直モードの\r\nON/OFFを切り替えるようになります。\r\n\r\n");
             this.checkBox_imeCooperationEnabled.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_imeSendInputInRoman
+            // 
+            this.checkBox_imeSendInputInRoman.AutoSize = true;
+            this.checkBox_imeSendInputInRoman.Location = new System.Drawing.Point(14, 37);
+            this.checkBox_imeSendInputInRoman.Name = "checkBox_imeSendInputInRoman";
+            this.checkBox_imeSendInputInRoman.Size = new System.Drawing.Size(177, 19);
+            this.checkBox_imeSendInputInRoman.TabIndex = 1;
+            this.checkBox_imeSendInputInRoman.Text = "ローマ字変換してIMEに送信する";
+            this.toolTip1.SetToolTip(this.checkBox_imeSendInputInRoman, resources.GetString("checkBox_imeSendInputInRoman.ToolTip"));
+            this.checkBox_imeSendInputInRoman.UseVisualStyleBackColor = true;
             // 
             // textBox_onSelectedBackColor
             // 
@@ -6170,5 +6183,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label117;
         private System.Windows.Forms.GroupBox groupBox46;
         private System.Windows.Forms.CheckBox checkBox_imeCooperationEnabled;
+        private System.Windows.Forms.CheckBox checkBox_imeSendInputInRoman;
     }
 }

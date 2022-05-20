@@ -536,6 +536,63 @@ namespace KanchokuWS.Handler
             //if (idx > 0) sendInput((uint)idx, inputs);
         }
 
+        private void sendStringInputs(string str)
+        {
+            int strLen = str._safeCount();
+            int inputsLen = strLen * 3;     // IMEがONの時、ひらがなはローマ字等に変換するので、3倍にしておく
+
+            var inputs = new INPUT[inputsLen * 2];
+
+            int idx = 0;
+
+            if (strLen > inputs._safeLength()) strLen = inputs._safeLength();
+            for (int i = 0; i < strLen; ++i) {
+                if (str[i] == '!' && (i + 1) < strLen && str[i + 1] == '{') {     // "!{"
+                    i += 2;
+                    idx = setFuncKeyInputs(str, ref i, strLen, inputs, idx);
+                } else {
+                    initializeKeyboardInput(ref inputs[idx]);
+                    //inputs[idx].ki.wVk = VK_PACKET;       // SendInput でUniCodeを出力するときは、ここを 0 にしておく
+                    string faceStr = null;
+                    bool bKana = false;
+                    if (IMEHandler.ImeEnabled && Settings.ImeSendInputInRoman) {
+                        faceStr = str[i]._hiraganaToRoman();
+                        if (faceStr._isEmpty()) {
+                            faceStr = str[i]._hiraganaToKeyface();
+                            bKana = faceStr._notEmpty();
+                        }
+                        if (faceStr._isEmpty() && str[i] >= ' ' && str[i] < (char)0x7f) faceStr = str[i].ToString();
+                    }
+                    if (faceStr._notEmpty()) {
+                        foreach (var fc in faceStr) {
+                            uint vk = VirtualKeys.GetVKeyFromFaceChar(fc);
+                            if (vk > 0) {
+                                using (var changer = new IMEInputModeChanger(bKana)) {
+                                    bool leftShift = false, rightShift = false;
+                                    if (vk >= 0x100) {
+                                        // Shift下げ
+                                        idx = upDownShiftKeyInputs(inputs, idx, false, out leftShift, out rightShift);
+                                    }
+
+                                    // Vkey
+                                    idx = setVkeyInputs((ushort)(vk & 0xff), inputs, idx);
+
+                                    // Shift戻し
+                                    if (vk >= 0x100) {
+                                        idx = revertShiftKeyInputs(inputs, idx, false, leftShift, rightShift);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        idx = setUnicodeInputs(str[i], inputs, idx);
+                    }
+                }
+            }
+            // 送出
+            sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
+        }
+
         /// <summary>
         /// キーボード入力をエミュレートして文字列を送出する
         /// </summary>
@@ -549,7 +606,7 @@ namespace KanchokuWS.Handler
             if (numBS < 0) numBS = 0;
             if (strLen < 0) strLen = 0;
             int numCtrlKeys = 2;            // leftCtrl と rightCtrl
-            int inputsLen = strLen * 3 + numBS + numCtrlKeys * 2;   // IMEがONの時、ひらがなはローマ字に変換するので、3倍にしておく
+            int inputsLen = numBS + numCtrlKeys * 2;   // IMEがONの時、ひらがなはローマ字に変換するので、3倍にしておく
 
             var inputs = new INPUT[inputsLen * 2];
 
@@ -568,16 +625,18 @@ namespace KanchokuWS.Handler
             }
             if (loggingFlag) logger.Info($"bs: idx={idx}");
 
+            // 送出
+            sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
+
             // 文字列
             if (strLen > 0) {
-                idx = setStringInputs(extractSubString(str._toString()), inputs, idx);
-                if (loggingFlag) logger.Info($"str: idx={idx}");
+                sendStringInputs(extractSubString(str._toString()));
             }
 
             // Ctrl戻し
+            idx = 0;
             idx = revertCtrlKeyInputs(inputs, idx, true, leftCtrl, rightCtrl);
             if (loggingFlag) logger.Info($"revert: idx={idx}");
-
             // 送出
             sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
         }
