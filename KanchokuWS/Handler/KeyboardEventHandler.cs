@@ -12,7 +12,7 @@ namespace KanchokuWS.Handler
 {
     public class KeyboardEventHandler : IDisposable
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         /// <summary>Ctrlキー変換の有効なウィンドウクラスか</summary>
         public delegate bool DelegateCtrlConversionEffectiveChecker();
@@ -283,16 +283,13 @@ namespace KanchokuWS.Handler
                 KeyState = ExModKeyState.REPEATED;
             }
 
-            private bool? isSingleShiftHitEffecive = null;
-
             /// <summary> シフト単打が有効か</summary>
-            public bool IsSingleShiftHitEffecive()
+            public bool IsSingleShiftHitEffecive(bool bCtrl)
             {
-                if (isSingleShiftHitEffecive == null) {
-                    isSingleShiftHitEffecive = Settings.ActiveKey == Vkey || VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc(Vkey);
-                }
-                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:IsSingleShiftHitEffecive={isSingleShiftHitEffecive}");
-                return isSingleShiftHitEffecive.Value;
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:Vkey={Vkey}, bCtrl={bCtrl}, ActiveKey={Settings.ActiveKey}, ActiveKeyWithCtrl={Settings.ActiveKeyWithCtrl}, IsExModKeyIndexAssignedForDecoderFunc={VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc(Vkey)}");
+                bool bEffective = (Settings.ActiveKey == Vkey && (!bCtrl || Settings.ActiveKeyWithCtrl != Vkey)) || VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc(Vkey);
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:IsSingleShiftHitEffecive={bEffective}");
+                return bEffective;
             }
 
             private bool? bShiftPlaneAssignedOn = null;
@@ -326,7 +323,6 @@ namespace KanchokuWS.Handler
             public void Reinitialize()
             {
                 logger.InfoH($"ENTER: {Name}");
-                isSingleShiftHitEffecive = null;
                 bShiftPlaneAssignedOn = null;
                 bShiftPlaneAssignedOff = null;
             }
@@ -730,7 +726,7 @@ namespace KanchokuWS.Handler
                             }
                             return true; // keyboardDownHandler() をスキップ、システム側の本来のSHIFT処理もスキップ
                         }
-                        if (keyInfo.IsSingleShiftHitEffecive()) {
+                        if (keyInfo.IsSingleShiftHitEffecive(bCtrl)) {
                             // 拡張シフト面が割り当てはないが、単打系ありの場合
                             if (keyInfo.Pressed) {
                                 // 当拡張修飾キーが押下されているなら、シフト状態に遷移する
@@ -757,7 +753,7 @@ namespace KanchokuWS.Handler
                                 //    // SHIFT状態なら何もしない
                             }
                             return true; // keyboardDownHandler() をスキップ、システム側の本来のSHIFT処理もスキップ
-                        } else if (keyInfo.IsSingleShiftHitEffecive()) {
+                        } else if (keyInfo.IsSingleShiftHitEffecive(bCtrl)) {
                             // 拡張シフト面が割り当てはないが、単打系ありの場合
                             if (keyInfo.Released) {
                                 if (bCtrl || bShift || modPressedOrShifted != 0) {
@@ -931,6 +927,7 @@ namespace KanchokuWS.Handler
 
             bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
             bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            bool bCtrl = leftCtrl || rightCtrl;
 
             var keyState = keyInfoManager.getSandSKeyState();
             // spaceKey の shiftedOneshot 状態を解除しておく
@@ -996,7 +993,7 @@ namespace KanchokuWS.Handler
                     //        keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                     //    }
                     //}
-                    if (keyInfo.IsSingleShiftHitEffecive()) {
+                    if (keyInfo.IsSingleShiftHitEffecive(bCtrl)) {
                         // 拡張シフト面が割り当ての有無にかかわらず、単打系ありの場合
                         if (bPrevPressed) {
                             // PRESSED状態だったら、ハンドラを呼び出す
@@ -1008,7 +1005,7 @@ namespace KanchokuWS.Handler
                     return false;
                 } else {
                     // Space/RSHIFT 以外
-                    if (bPrevPressed && keyInfo.IsShiftPlaneAssigned(bDecoderOn) && keyInfo.IsSingleShiftHitEffecive()) {
+                    if (bPrevPressed && keyInfo.IsShiftPlaneAssigned(bDecoderOn) && keyInfo.IsSingleShiftHitEffecive(bCtrl)) {
                         // 拡張シフト面が割り当てられ、かつ単打系がある拡張修飾キーで、それが押下状態の場合
                         keyboardDownHandler(vkey, leftCtrl, rightCtrl);
                     }
