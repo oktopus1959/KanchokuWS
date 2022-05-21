@@ -177,6 +177,7 @@
     <ClInclude Include="History\History.h" />
     <ClInclude Include="History\HistoryDic.h" />
     <ClInclude Include="History\HistoryStayState.h" />
+    <ClInclude Include="KeysAndChars\DakutenOneShot.h" />
     <ClInclude Include="KeysAndChars\DeckeyToChars.h" />
     <ClInclude Include="KeysAndChars\deckey_id_defs.h" />
     <ClInclude Include="KeysAndChars\EasyChars.h" />
@@ -227,6 +228,7 @@
     <ClCompile Include="FunctionNodeManager.cpp" />
     <ClCompile Include="History\History.cpp" />
     <ClCompile Include="History\HistoryDic.cpp" />
+    <ClCompile Include="KeysAndChars\DakutenOneShotState.cpp" />
     <ClCompile Include="KeysAndChars\DeckeyToChars.cpp" />
     <ClCompile Include="KeysAndChars\deckey_id_defs.cpp" />
     <ClCompile Include="KeysAndChars\EasyChars.cpp" />

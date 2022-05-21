@@ -666,18 +666,16 @@ namespace KanchokuWS.Handler
             upShiftKeyInputs();
         }
 
-        private static void sendInputsRomanOrKana(string faceStr, bool bKana)
+        private static void sendInputsRomanOrKana(string faceStr)
         {
-            logger.DebugH(() => $"CALLED: faceStr={faceStr}, Kana={bKana}");
+            logger.DebugH(() => $"CALLED: faceStr={faceStr}");
 
-            using (var changer = new IMEInputModeChanger(bKana)) {
-                foreach (var fc in faceStr) {
-                    uint vk = VirtualKeys.GetVKeyFromFaceChar(fc);
-                    if (vk > 0) {
-                        using (var guard = new ShiftKeyDownGuard(vk >= 0x100)) {
-                            // Vkey
-                            sendInputsVkey((ushort)(vk & 0xff));
-                        }
+            foreach (var fc in faceStr) {
+                uint vk = VirtualKeys.GetVKeyFromFaceChar(fc);
+                if (vk > 0) {
+                    using (var guard = new ShiftKeyDownGuard(vk >= 0x100)) {
+                        // Vkey
+                        sendInputsVkey((ushort)(vk & 0xff));
                     }
                 }
             }
@@ -694,23 +692,24 @@ namespace KanchokuWS.Handler
                     i = sendFuncKeyInputs(str, i, strLen);
                 } else {
                     string faceStr = null;
-                    bool bKana = false;
-                    logger.DebugH(() => $"ImeEnabled={IMEHandler.ImeEnabled}, ImeSendInputInRoman={Settings.ImeSendInputInRoman}");
-                    if (IMEHandler.ImeEnabled && Settings.ImeSendInputInRoman) {
-                        faceStr = str[i]._hiraganaToRoman();
-                        if (faceStr._isEmpty()) logger.DebugH($"_hiraganaToRoman empty");
-                        if (faceStr._isEmpty()) {
+                    logger.DebugH(() => $"ImeEnabled={IMEHandler.ImeEnabled}, ImeSendInputInRoman={Settings.ImeSendInputInRoman}, ImeSendInputInKana={Settings.ImeSendInputInKana}");
+                    if (IMEHandler.ImeEnabled) {
+                        if (Settings.ImeSendInputInRoman) {
+                            faceStr = str[i]._hiraganaToRoman();
+                            if (faceStr._isEmpty()) {
+                                logger.DebugH($"_hiraganaToRoman empty");
+                                if (str[i] >= ' ' && str[i] < (char)0x7f) {
+                                    logger.DebugH($"use ascii");
+                                    faceStr = str[i].ToString();
+                                }
+                            }
+                        } else if (Settings.ImeSendInputInKana) {
                             faceStr = str[i]._hiraganaToKeyface();
-                            bKana = faceStr._notEmpty();
                             if (faceStr._isEmpty()) logger.DebugH($"_hiraganaToKeyface empty");
-                        }
-                        if (faceStr._isEmpty() && str[i] >= ' ' && str[i] < (char)0x7f) {
-                            logger.DebugH($"use ascii");
-                            faceStr = str[i].ToString();
                         }
                     }
                     if (faceStr._notEmpty()) {
-                        sendInputsRomanOrKana(faceStr, bKana);
+                        sendInputsRomanOrKana(faceStr);
                     } else {
                         logger.DebugH($"send asis string");
                         // そもそも、未確定を確定させてしまうのはいかがなものか。やるなら、Chromeとか、特定のやつだけにしたい

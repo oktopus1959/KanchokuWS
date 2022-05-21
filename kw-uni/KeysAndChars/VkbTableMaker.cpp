@@ -256,7 +256,7 @@ namespace VkbTableMaker {
                 if (blk) {
                     if (blk->isStrokeTableNode()) {
                         ch = _T("□")[0];
-                    } else if (blk->isStringNode()) {
+                    } else if (blk->isStringNode() || blk->isFunctionNode()) {
                         ch = utils::safe_front(blk->getString());
                     } else {
                         ch = _T("・")[0];

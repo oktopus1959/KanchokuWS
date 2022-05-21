@@ -91,7 +91,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
     // include/load ブロック情報のスタック
     class BlockInfoStack
     {
-        //private static Logger logger = Logger.GetLogger(true);
         private static Logger logger = Logger.GetLogger();
 
         struct BlockInfo
@@ -166,7 +165,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
     class TableFileParser
     {
-        //private static Logger logger = Logger.GetLogger(true);
         private static Logger logger = Logger.GetLogger();
 
         private List<string> tableLines;
@@ -494,7 +492,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         void parseNode(TOKEN token, int nth, int prevNth = -1)
         {
-            logger.DebugH(() => $"ENTER: token={token}, depth={depth}, prevNth={prevNth}, nth={nth}");
+            logger.DebugH(() => $"ENTER: token={token}, currentStr={currentStr}, depth={depth}, prevNth={prevNth}, nth={nth}");
             switch (token) {
                 //case TOKEN.LBRACE:
                 //    parseSubTree(getOrNewLastTreeNode(), nth);
@@ -983,12 +981,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"LEAVE: {currentStr}");
         }
 
-        // 空白またはカンマが来るまで読みこんで、currentStr に格納。
+        // 区切り文字が来るまで読みこんで、currentStr に格納。
         void readMarker() {
             var sb = new StringBuilder();
             while (true) {
                 char c = peekNextChar();
-                if (c <= ' ' || c == ',') {
+                if (c <= ' ' || c == ',' || c == '|' || c == ';' || c == '/') {
                     if (sb._isEmpty()) parseError();
                     currentStr = sb.ToString();
                     return;

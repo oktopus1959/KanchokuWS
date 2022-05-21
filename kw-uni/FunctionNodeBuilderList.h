@@ -13,6 +13,7 @@
 #include "KeysAndChars/Katakana.h"
 #include "KeysAndChars/KatakanaOneShot.h"
 #include "KeysAndChars/HankakuKatakanaOneShot.h"
+#include "KeysAndChars/DakutenOneShot.h"
 #include "OneShot/OneShot.h"
 //#include "Template/Template.h"
 
@@ -35,6 +36,10 @@ void FunctionNodeManager::AddFunctionNodeBuilders() {
     addFunctionNodeBuilder(_T("k"), _T("katakanaOneShot"), new KatakanaOneShotNodeBuilder());
     addFunctionNodeBuilder(_T("h"), _T("hankakuKatakanaOneShot"), new HankakuKatakanaOneShotNodeBuilder());
     addFunctionNodeBuilder(_T("bs"), _T("blockerSetterOneShot"), new BlockerSetterNodeBuilder());
+    addFunctionNodeBuilder(_T("D"), _T("dakutenOneShot"), new DakutenOneShotNodeBuilder());
+    addFunctionNodeBuilder(_T("゛"), _T("dakutenOneShot"), new DakutenOneShotNodeBuilder());
+    addFunctionNodeBuilder(_T("d"), _T("handakutenOneShot"), new HanDakutenOneShotNodeBuilder());
+    addFunctionNodeBuilder(_T("゜"), _T("handakutenOneShot"), new HanDakutenOneShotNodeBuilder());
     //addFunctionNodeBuilder(_T("Z"), new TemplateNodeBuilder());
 }
 

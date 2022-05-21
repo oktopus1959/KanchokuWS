@@ -77,6 +77,8 @@ namespace KanchokuWS.Handler
         // 入力モード
         public static int ImeConversionMode { get; private set; }
 
+        public static bool IsRomanMode => ImeConversionMode >= 16;
+
         [DllImport("user32.dll")]
         static extern bool SetForegroundWindow(IntPtr hWnd);
 

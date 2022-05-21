@@ -171,6 +171,9 @@
     <ClInclude Include="OneShot\OneShot.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="KeysAndChars\DakutenOneShot.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -285,6 +288,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="OneShot\OneShotState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="KeysAndChars\DakutenOneShotState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

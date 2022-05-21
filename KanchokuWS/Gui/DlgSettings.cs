@@ -360,6 +360,7 @@ namespace KanchokuWS.Gui
             // IME連携
             checkBox_imeCooperationEnabled.Checked = Settings.ImeCooperationEnabled;
             checkBox_imeSendInputInRoman.Checked = Settings.ImeSendInputInRoman;
+            checkBox_imeSendInputInKana.Checked = Settings.ImeSendInputInKana;
 
             // 仮想鍵盤表示
             radioButton_noVkb.Checked = !Settings.ShowVkbOrMaker;
@@ -415,6 +416,7 @@ namespace KanchokuWS.Gui
             // IME連携
             checkerBasic.Add(checkBox_imeCooperationEnabled);
             checkerBasic.Add(checkBox_imeSendInputInRoman);
+            checkerBasic.Add(checkBox_imeSendInputInKana);
 
             // 仮想鍵盤表示
             checkerBasic.Add(radioButton_normalVkb);
@@ -476,6 +478,7 @@ namespace KanchokuWS.Gui
             // IME連携
             Settings.SetUserIni("imeCooperationEnabled", checkBox_imeCooperationEnabled.Checked);
             Settings.SetUserIni("imeSendInputInRoman", checkBox_imeSendInputInRoman.Checked);
+            Settings.SetUserIni("imeSendInputInKana", checkBox_imeSendInputInKana.Checked);
 
             // 仮想鍵盤表示
             Settings.SetUserIni("vkbShowStrokeCount", $"{textBox_vkbShowStrokeCount.Text._parseInt(1)._lowLimit(0) * (radioButton_normalVkb.Checked ? 1 : -1)}");
@@ -590,6 +593,16 @@ namespace KanchokuWS.Gui
             var fileList = Helper.GetFiles(KanchokuIni.Singleton.KanchokuDir, "*.tbl").Select(x => getTableName(x)).ToArray();
             comboBox_tableFile2.Items.Clear();
             comboBox_tableFile2.Items.AddRange(fileList);
+        }
+
+        private void checkBox_imeSendInputInRoman_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox_imeSendInputInRoman.Checked) checkBox_imeSendInputInKana.Checked = false;
+        }
+
+        private void checkBox_imeSendInputInKana_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox_imeSendInputInKana.Checked) checkBox_imeSendInputInRoman.Checked = false;
         }
 
         //-----------------------------------------------------------------------------------
