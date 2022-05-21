@@ -907,10 +907,9 @@ namespace KanchokuWS
             if (!IsDecoderActive) {
                 ActivateDecoder();
             } else {
-                bool leftCtrl, rightCtrl;
-                SendInputHandler.Singleton.GetCtrlKeyState(out leftCtrl, out rightCtrl);
+                var keyState = SendInputHandler.GetCtrlKeyState(true);
                 DeactivateDecoder();
-                if (bRevertCtrl) SendInputHandler.Singleton.RevertUpCtrlKey(leftCtrl, rightCtrl);
+                if (bRevertCtrl) SendInputHandler.Singleton.RevertCtrlKey(keyState);
             }
             logger.InfoH("LEAVE");
         }
@@ -1552,10 +1551,9 @@ namespace KanchokuWS
 
         private bool sendVkeyFromDeckey(int deckey, uint mod)
         {
-            bool leftCtrl, rightCtrl;
-            SendInputHandler.Singleton.GetCtrlKeyState(out leftCtrl, out rightCtrl);
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
-            if ((!leftCtrl && !rightCtrl) || isCtrlKeyConversionEffectiveWindow()                 // Ctrlキーが押されていないか、Ctrl修飾を受け付けるWindowClassか
+            var keyState = SendInputHandler.GetCtrlKeyState();
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={keyState.LeftKeyDown}, rightCtrl={keyState.RightKeyDown}");
+            if ((!keyState.LeftKeyDown && !keyState.RightKeyDown) || isCtrlKeyConversionEffectiveWindow()                 // Ctrlキーが押されていないか、Ctrl修飾を受け付けるWindowClassか
                 //|| deckey < DecoderKeys.STROKE_DECKEY_END                                                       // 通常のストロークキーは通す
                 || deckey < DecoderKeys.NORMAL_DECKEY_NUM                                                       // 通常のストロークキーは通す
                 || deckey >= DecoderKeys.CTRL_DECKEY_START && deckey < DecoderKeys.CTRL_DECKEY_END              // Ctrl-A～Ctrl-Z は通す

@@ -496,7 +496,7 @@ namespace KanchokuWS
             var sb = new StringBuilder();
             if (str._notEmpty()) {
                 foreach (var c in str) {
-                    if (c >= 'ぁ' && c <= 'ゖ' && kanaRomanTbl.ContainsKey(c))
+                    if (kanaRomanTbl.ContainsKey(c))
                         sb.Append(kanaRomanTbl[c]);
                     else
                         sb.Append(c);
@@ -507,14 +507,12 @@ namespace KanchokuWS
 
         public static string _hiraganaToRoman(this char ch)
         {
-            if (ch >= 'ぁ' && ch <= 'ゖ') return kanaRomanTbl._safeGet(ch);
-            return null;
+            return kanaRomanTbl._safeGet(ch);
         }
 
         public static string _hiraganaToKeyface(this char ch)
         {
-            if (ch >= 'ぁ' && ch <= 'ゖ') return hiraganaKeyfaceDic._safeGet(ch);
-            return null;
+            return hiraganaKeyfaceDic._safeGet(ch);
         }
     }
 }

@@ -157,6 +157,7 @@
     </Compile>
     <Compile Include="Handler\GUIThreadInfo.cs" />
     <Compile Include="Handler\IMEHandler.cs" />
+    <Compile Include="Handler\ModifierKeyState.cs" />
     <Compile Include="Handler\SendInputHandler.cs" />
     <Compile Include="KanchokuIni.cs" />
     <Compile Include="Domain\KanjiYomiTable.cs" />

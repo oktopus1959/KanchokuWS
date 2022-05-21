@@ -148,16 +148,22 @@ namespace KanchokuWS.Handler
         //[DllImport("user32.dll")]
         //private static extern uint keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 
-        private void sendInput(uint len, INPUT[] inputs)
+        private static void sendInput(InputInfo info)
         {
-            SendInput(len, inputs, Marshal.SizeOf(typeof(INPUT)));
+            if (info.Index > 0) SendInput((uint)info.Index, info.Inputs, Marshal.SizeOf(typeof(INPUT)));
         }
 
         private const uint MAPVK_VK_TO_VSC = 0;
 
         public DateTime LastOutputDt { get; private set; }
 
-        private void initializeKeyboardInput(ref INPUT input)
+        private void updateLastOutputDt(bool bMoveVkbAtOnce = false)
+        {
+            // Enterキーだったら、すぐに仮想鍵盤を移動するように MinValue とする
+            LastOutputDt = bMoveVkbAtOnce ? DateTime.MinValue : DateTime.Now;
+        }
+
+        private static void initializeKeyboardInput(ref INPUT input)
         {
             input.type = INPUT_KEYBOARD;
             input.ki.wVk = 0;
@@ -167,23 +173,52 @@ namespace KanchokuWS.Handler
             input.ki.dwExtraInfo = MyMagicNumber;
         }
 
-        private void setLeftCtrlInput(ref INPUT input, int keyEventFlag)
+        private static void setLeftCtrlInput(ref INPUT input, int keyEventFlag)
         {
             initializeKeyboardInput(ref input);
             input.ki.wVk = VK_CONTROL;
             input.ki.dwFlags = keyEventFlag;
         }
 
-        private void setRightCtrlInput(ref INPUT input, int keyEventFlag)
+        private static void setRightCtrlInput(ref INPUT input, int keyEventFlag)
         {
             setLeftCtrlInput(ref input, keyEventFlag);
             input.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;  // 右Ctrlは、0xa3 ではなく、EXTENTED を設定する必要あり
         }
 
-        public void GetCtrlKeyState(out bool leftCtrl, out bool rightCtrl)
+        public static ModifierKeyState GetCtrlKeyState(bool bUp = false)
         {
-            leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-            rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            return new ModifierKeyState() {
+                OperationUp = bUp,
+                LeftKeyDown = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0,
+                RightKeyDown = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0
+            };
+        }
+
+        public static ModifierKeyState GetCtrlKeyState(ModifierKeyState state)
+        {
+            state.LeftKeyDown = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
+            state.RightKeyDown = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            return state;
+        }
+
+        class InputInfo
+        {
+            public INPUT[] Inputs;
+            public int Index;
+            public ModifierKeyState KeyState;
+
+            public InputInfo(INPUT[] inputs, int idx = 0, ModifierKeyState state = null)
+            {
+                Inputs = inputs;
+                Index = idx;
+                KeyState = state != null ? state : new ModifierKeyState();
+            }
+
+            public InputInfo(int inputsLen, ModifierKeyState state = null)
+                : this(new INPUT[inputsLen * 2], 0, state)
+            {
+            }
         }
 
         /// <summary>
@@ -191,24 +226,53 @@ namespace KanchokuWS.Handler
         /// </summary>
         /// <param name="leftCtrl"></param>
         /// <param name="rightCtrl"></param>
-        private int upDownCtrlKeyInputs(INPUT[] inputs, int idx, bool bUp, out bool leftCtrl, out bool rightCtrl)
+        private static void upDownCtrlKeyInputs(InputInfo info)
         {
-            leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-            rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, leftCtrl={leftCtrl}, rightCtrl={rightCtrl}");
+            var keyState = info.KeyState;
+            keyState.LeftKeyDown = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
+            keyState.RightKeyDown = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            logger.DebugH(() => $"bUp={keyState.OperationUp}, LeftKeyDown={keyState.LeftKeyDown}, RightKeyDown={keyState.RightKeyDown}");
 
-            if (bUp) {
+            if (keyState.OperationUp) {
                 // DOWNしているほうだけ上げる
-                if (leftCtrl) setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-                if (rightCtrl) setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+                if (keyState.LeftKeyDown) setLeftCtrlInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYUP);
+                if (keyState.RightKeyDown) setRightCtrlInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYUP);
             } else {
-                if (!leftCtrl && !rightCtrl) {
+                if (!keyState.LeftKeyDown && !keyState.RightKeyDown) {
                     // leftだけ下げる
-                    setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-                    //setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                    setLeftCtrlInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYDOWN);
+                    //setRightCtrlInput(ref info.Inputs[idx++], KEYEVENTF_KEYDOWN);
                 }
             }
-            return idx;
+        }
+
+        /// <summary>
+        /// Ctrlキーの事前上げ下げ
+        /// </summary>
+        /// <param name="leftCtrl"></param>
+        /// <param name="rightCtrl"></param>
+        private static ModifierKeyState upDownCtrlKeyInputs(bool bUp)
+        {
+            var keyState = new ModifierKeyState(
+                bUp,
+                (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0,
+                (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0);
+            logger.DebugH(() => $"bUp={keyState.OperationUp}, LeftKeyDown={keyState.LeftKeyDown}, RightKeyDown={keyState.RightKeyDown}");
+
+            var info = new InputInfo(4, keyState);
+            if (keyState.OperationUp) {
+                // DOWNしているほうだけ上げる
+                if (keyState.LeftKeyDown) setLeftCtrlInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYUP);
+                if (keyState.RightKeyDown) setRightCtrlInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYUP);
+            } else {
+                if (!keyState.LeftKeyDown && !keyState.RightKeyDown) {
+                    // leftだけ下げる
+                    setLeftCtrlInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYDOWN);
+                    //setRightCtrlInput(ref info.Inputs[idx++], KEYEVENTF_KEYDOWN);
+                }
+            }
+            sendInput(info);
+            return keyState;
         }
 
         /// <summary>
@@ -216,9 +280,20 @@ namespace KanchokuWS.Handler
         /// </summary>
         /// <param name="leftCtrl"></param>
         /// <param name="rightCtrl"></param>
-        private int upCtrlKeyInputs(INPUT[] inputs, int idx, out bool leftCtrl, out bool rightCtrl)
+        private static void upCtrlKeyInputs(InputInfo info)
         {
-            return upDownCtrlKeyInputs(inputs, idx, true, out leftCtrl, out rightCtrl);
+            info.KeyState.OperationUp = true;
+            upDownCtrlKeyInputs(info);
+        }
+
+        /// <summary>
+        /// Ctrlキーの事前上げ
+        /// </summary>
+        /// <param name="leftCtrl"></param>
+        /// <param name="rightCtrl"></param>
+        private static ModifierKeyState upCtrlKeyInputs()
+        {
+            return upDownCtrlKeyInputs(true);
         }
 
         /// <summary>
@@ -227,72 +302,79 @@ namespace KanchokuWS.Handler
         /// <param name="bUp">事前操作<</param>
         /// <param name="prevLeftCtrl"></param>
         /// <param name="prevRightCtrl"></param>
-        private int revertCtrlKeyInputs(INPUT[] inputs, int idx, bool bUp, bool prevLeftCtrl, bool prevRightCtrl)
+        private static void revertCtrlKeyInputs(InputInfo info)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, prevLeftCtrl={prevLeftCtrl}, prevRightCtrl={prevRightCtrl}");
+            var keyState = info.KeyState;
+            logger.DebugH(() => $"bUp={keyState.OperationUp}, prevLeftCtrl={keyState.LeftKeyDown}, prevRightCtrl={keyState.RightKeyDown}");
 
-            if (bUp) {
+            if (keyState.OperationUp) {
                 // 事前操作がUPだった
-                if (prevLeftCtrl) setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-                if (prevRightCtrl) setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                if (keyState.LeftKeyDown) setLeftCtrlInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYDOWN);
+                if (keyState.RightKeyDown) setRightCtrlInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYDOWN);
             } else {
                 // 事前操作がDOWNだった⇒左Ctrlだけを上げる
-                if (!prevLeftCtrl && !prevRightCtrl) setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+                if (!keyState.LeftKeyDown && !keyState.RightKeyDown) setLeftCtrlInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYUP);
             }
-            return idx;
         }
 
-        public void RevertUpCtrlKey(bool prevLeftCtrl, bool prevRightCtrl)
+        public void RevertCtrlKey(ModifierKeyState state)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED");
+            logger.DebugH($"CALLED");
 
             var inputs = new INPUT[2];
+            var info = new InputInfo(2, state);
             
             // Ctrl戻し
-            int idx = revertCtrlKeyInputs(inputs, 0, true, prevLeftCtrl, prevRightCtrl);
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"revert: idx={idx}");
+            revertCtrlKeyInputs(info);
+            logger.DebugH(() => $"revert: idx={info.Index}");
 
             // 送出
-            sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
+            sendInput(info);
+            updateLastOutputDt();
         }
 
-        private void setLeftShiftInput(ref INPUT input, int keyEventFlag)
+        private static void setLeftShiftInput(ref INPUT input, int keyEventFlag)
         {
             initializeKeyboardInput(ref input);
             input.ki.wVk = VK_LSHIFT;           // 右シフトは EXTENTED ではなく、0xa1 を設定する必要あり
             input.ki.dwFlags = keyEventFlag;
         }
 
-        private void setRightShiftInput(ref INPUT input, int keyEventFlag)
+        private static void setRightShiftInput(ref INPUT input, int keyEventFlag)
         {
             initializeKeyboardInput(ref input);
             input.ki.wVk = VK_RSHIFT;
             input.ki.dwFlags = keyEventFlag;
         }
 
+
         /// <summary>
         /// Shiftキーの事前上げ下げ
         /// </summary>
         /// <param name="leftShift"></param>
         /// <param name="rightShift"></param>
-        private int upDownShiftKeyInputs(INPUT[] inputs, int idx, bool bUp, out bool leftShift, out bool rightShift)
+        private static ModifierKeyState upDownShiftKeyInputs(bool bUp)
         {
-            leftShift = (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0;
-            rightShift = (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, leftShift={leftShift}, rightShift={rightShift}");
+            var keyState = new ModifierKeyState(
+                bUp,
+                (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0,
+                (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0);
+            logger.DebugH(() => $"bUp={keyState.OperationUp}, leftShift={keyState.LeftKeyDown}, rightShift={keyState.RightKeyDown}");
 
-            if (bUp) {
+            var info = new InputInfo(4, keyState);
+            if (keyState.OperationUp) {
                 // 下がっているほうだけ上げる
-                if (leftShift) setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-                if (rightShift) setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+                if (keyState.LeftKeyDown) setLeftShiftInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYUP);
+                if (keyState.RightKeyDown) setRightShiftInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYUP);
             } else {
-                if (!leftShift && !rightShift) {
+                if (!keyState.LeftKeyDown && !keyState.RightKeyDown) {
                     // 左だけ下げる
-                    setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-                    //setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                    setLeftShiftInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYDOWN);
+                    //setRightShiftInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYDOWN);
                 }
             }
-            return idx;
+            sendInput(info);
+            return keyState;
         }
 
         /// <summary>
@@ -300,9 +382,32 @@ namespace KanchokuWS.Handler
         /// </summary>
         /// <param name="leftShift"></param>
         /// <param name="rightShift"></param>
-        private int upShiftKeyInputs(INPUT[] inputs, int idx, out bool leftShift, out bool rightShift)
+        private static void upShiftKeyInputs()
         {
-            return upDownShiftKeyInputs(inputs, idx, true, out leftShift, out rightShift);
+            upDownShiftKeyInputs(true);
+        }
+
+        /// <summary>
+        /// Shiftキーの状態を戻す
+        /// </summary>
+        private static InputInfo revertShiftKey(ModifierKeyState keyState, bool bSend = true)
+        {
+            logger.DebugH(() => $"bUp={keyState?.OperationUp}, prevLeftShift={keyState?.LeftKeyDown}, prevRightShift={keyState?.RightKeyDown}");
+
+            InputInfo info = null;
+            if (keyState != null) {
+                info = new InputInfo(2, keyState);
+                if (keyState.OperationUp) {
+                    // 事前操作がUPだった
+                    if (keyState.LeftKeyDown) setLeftShiftInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYDOWN);
+                    if (keyState.RightKeyDown) setRightShiftInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYDOWN);
+                } else {
+                    // 事前操作がDOWNだった⇒左Shiftだけを上げる
+                    if (!keyState.LeftKeyDown && !keyState.RightKeyDown) setLeftShiftInput(ref info.Inputs[info.Index++], KEYEVENTF_KEYUP);
+                }
+                sendInput(info);
+            }
+            return info;
         }
 
         /// <summary>
@@ -311,22 +416,53 @@ namespace KanchokuWS.Handler
         /// <param name="bUp">事前操作<</param>
         /// <param name="prevLeftShift"></param>
         /// <param name="prevRightShift"></param>
-        private int revertShiftKeyInputs(INPUT[] inputs, int idx, bool bUp, bool prevLeftShift, bool prevRightShift)
+        public void RevertShiftKey(ModifierKeyState state)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"bUp={bUp}, prevLeftShift={prevLeftShift}, prevRightShift={prevRightShift}");
+            logger.DebugH($"CALLED");
 
-            if (bUp) {
-                // 事前操作がUPだった
-                if (prevLeftShift) setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-                if (prevRightShift) setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-            } else {
-                // 事前操作がDOWNだった⇒左Shiftだけを上げる
-                if (!prevLeftShift && !prevRightShift) setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-            }
-            return idx;
+            // Shift戻し
+            var info = revertShiftKey(state, false);
+
+            // 送出
+            sendInput(info);
+            updateLastOutputDt();
         }
 
-        private int setVkeyInputs(ushort vkey, INPUT[] inputs, int idx)
+
+        class ShiftKeyUpDownGuard : IDisposable
+        {
+            ModifierKeyState keyState = null;
+
+            public ShiftKeyUpDownGuard(bool bUp, bool bEffective)
+            {
+                if (bEffective) {
+                    keyState = upDownShiftKeyInputs(bUp);
+                }
+            }
+
+            public void Dispose()
+            {
+                if (keyState != null) revertShiftKey(keyState);
+            }
+        }
+
+        class ShiftKeyUpGuard : ShiftKeyUpDownGuard
+        {
+            public ShiftKeyUpGuard(bool bEffective = true)
+                : base(true, bEffective)
+            {
+            }
+        }
+
+        class ShiftKeyDownGuard : ShiftKeyUpDownGuard
+        {
+            public ShiftKeyDownGuard(bool bEffective = true)
+                : base(false, bEffective)
+            {
+            }
+        }
+
+        private static int setVkeyInputs(ushort vkey, INPUT[] inputs, int idx)
         {
             initializeKeyboardInput(ref inputs[idx]);
             ushort wScan = (ushort)MapVirtualKey(vkey, 0);
@@ -343,7 +479,12 @@ namespace KanchokuWS.Handler
             return idx;
         }
 
-        private int setUnicodeInputs(char uc, INPUT[] inputs, int idx)
+        private static void setVkeyInputs(ushort vkey, InputInfo info)
+        {
+            info.Index = setVkeyInputs(vkey, info.Inputs, info.Index);
+        }
+
+        private static int setUnicodeInputs(char uc, INPUT[] inputs, int idx)
         {
             initializeKeyboardInput(ref inputs[idx]);
             inputs[idx].ki.wScan = (ushort)uc;
@@ -355,9 +496,20 @@ namespace KanchokuWS.Handler
             return idx;
         }
 
-        private int setFuncKeyInputs(string str, ref int pos, int strLen, INPUT[] inputs, int idx)
+        private static void sendInputsUnicode(char uc)
         {
-            //logger.InfoH(() => $"CALLED: str={str}, idx={idx}");
+            var info = new InputInfo(2);
+            info.Index = setUnicodeInputs(uc, info.Inputs, info.Index);
+            sendInput(info);
+        }
+
+        private int sendFuncKeyInputs(string str, int pos, int strLen)
+        {
+            //logger.DebugH(() => $"CALLED: str={str}, idx={idx}");
+            var info = new InputInfo(5);
+            INPUT[] inputs = info.Inputs;
+            int idx = info.Index;
+
             bool bLCtrl = false;
             bool bRCtrl = false;
             bool bLShift = false;
@@ -395,9 +547,9 @@ namespace KanchokuWS.Handler
             if (sb.Length > 0) {
                 string name = sb.ToString();
                 uint vkey = VirtualKeys.GetFuncVkeyByName(name);
-                //logger.InfoH(() => $"vkey={vkey:x} by FuncKey");
+                //logger.DebugH(() => $"vkey={vkey:x} by FuncKey");
                 if (vkey == 0) vkey = VirtualKeys.GetAlphabetVkeyByName(name);
-                //logger.InfoH(() => $"vkey={vkey:x} by Alphabet");
+                //logger.DebugH(() => $"vkey={vkey:x} by Alphabet");
                 if (vkey > 0) {
                     if (bLCtrl) {
                         // 左Ctrl下げ
@@ -435,8 +587,11 @@ namespace KanchokuWS.Handler
                     }
                 }
             }
-            //logger.InfoH(() => $"LEAVE: idx={idx}");
-            return idx;
+            //logger.DebugH(() => $"LEAVE: idx={idx}");
+            info.Index = idx;
+            sendInput(info);
+
+            return pos;
         }
 
         private static System.Text.RegularExpressions.Regex reThreeTerms = new System.Text.RegularExpressions.Regex(@"\(([^)]+)\)\?\(([^)]+)\):\(([^)]+)\)");
@@ -446,11 +601,11 @@ namespace KanchokuWS.Handler
         /// <returns></returns>
         private string extractSubString(string str)
         {
-            //logger.InfoH(() => $"CALLED: str={str}, actWinName={ActiveWinClassName._toLower()}");
+            //logger.DebugH(() => $"CALLED: str={str}, actWinName={ActiveWinClassName._toLower()}");
             var resultStr = str;
             if (str._getFirst() == '(' && str.Last() == ')') {
                 var items = str._reScan(reThreeTerms);
-                //logger.InfoH(() => $"items={items._join(" | ")}, actWinName={ActiveWinClassName._toLower()}");
+                //logger.DebugH(() => $"items={items._join(" | ")}, actWinName={ActiveWinClassName._toLower()}");
                 if (items._safeCount() == 4) {
                     string activeWinClassName = ActiveWindowHandler.Singleton?.ActiveWinClassName._toLower();
                     var names = items[1]._toLower()._split('|');
@@ -459,7 +614,7 @@ namespace KanchokuWS.Handler
                         if (activeWinClassName._notEmpty() && names._notEmpty()) {
                             foreach (var name in names) {
                                 if (name._notEmpty()) {
-                                    //logger.InfoH(() => $"name={name}");
+                                    //logger.DebugH(() => $"name={name}");
                                     if (activeWinClassName.StartsWith(name)) return true;
                                     if (name.Last() == '$' && name.Length == activeWinClassName.Length + 1 && name.StartsWith(activeWinClassName)) return true;
                                 }
@@ -470,50 +625,32 @@ namespace KanchokuWS.Handler
                     resultStr = checkFunc() ? items[2] : items[3];
                 }
             }
-            //logger.InfoH(() => $"RESULT: {resultStr}");
+            //logger.DebugH(() => $"RESULT: {resultStr}");
             return resultStr;
         }
 
-        private int setStringInputs(string str, INPUT[] inputs, int idx)
+        private void sendInputsVkey(uint vkey, int num, bool bMoveVkbAtOnce = false)
         {
-            int strLen = str._safeCount();
-            if (strLen > inputs._safeLength()) strLen = inputs._safeLength();
-            for (int i = 0; i < strLen; ++i) {
-                if (str[i] == '!' && (i + 1) < strLen && str[i + 1] == '{') {     // "!{"
-                    i += 2;
-                    idx = setFuncKeyInputs(str, ref i, strLen, inputs, idx);
-                } else {
-                    initializeKeyboardInput(ref inputs[idx]);
-                    //inputs[idx].ki.wVk = VK_PACKET;       // SendInput でUniCodeを出力するときは、ここを 0 にしておく
-                    string roman = null;
-                    if (IMEHandler.ImeEnabled) {
-                        roman = str[i]._hiraganaToRoman();
-                        if (roman._isEmpty() && str[i] >= ' ' && str[i] < (char)0x7f) roman = str[i].ToString();
-                    }
-                    if (roman._notEmpty()) {
-                        foreach (var r in roman) {
-                            uint vk = VirtualKeys.GetVKeyFromFaceString(r.ToString()) & 0xff;
-                            if (vk > 0) {
-                                idx = setVkeyInputs((ushort)vk, inputs, idx);
-                            }
-                        }
-                    } else {
-                        idx = setUnicodeInputs(str[i], inputs, idx);
-                    }
+            logger.DebugH(() => $"CALLED: vkey={vkey}, len={num}, MoveVkbAtOnce={bMoveVkbAtOnce}");
+
+            if (num > 0) {
+                var info = new InputInfo(num);
+                for (int i = 0; i < num; ++i) {
+                    setVkeyInputs((ushort)vkey, info);
                 }
+                // 送出
+                sendInput(info);
             }
-            return idx;
-        }
-
-        private void sendInputsWithHandlingDeckey(uint len, INPUT[] inputs, uint vkey)
-        {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: len={len}, vkey={vkey}");
-
-            //if (len > 0) SendInput(len, inputs, Marshal.SizeOf(typeof(INPUT)));
-            if (len > 0) sendInput(len, inputs);
 
             // Enterキーだったら、すぐに仮想鍵盤を移動するように MinValue とする
-            LastOutputDt = vkey == (uint)Keys.Enter ? DateTime.MinValue : DateTime.Now;
+            updateLastOutputDt(bMoveVkbAtOnce);
+        }
+
+        private static void sendInputsVkey(ushort vkey)
+        {
+            var info = new InputInfo(2);
+            setVkeyInputs(vkey, info);
+            sendInput(info);
         }
 
         /// <summary>
@@ -521,86 +658,67 @@ namespace KanchokuWS.Handler
         /// </summary>
         public void UpCtrlAndShftKeys()
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED");
-
-            var inputs = new INPUT[4];
-            int idx = 0;
-            bool left = false, right = false;
+            logger.DebugH($"CALLED");
 
             // Ctrl上げ
-            idx = upCtrlKeyInputs(inputs, idx, out left, out right);
+            upCtrlKeyInputs();
             // Shift上げ
-            idx = upShiftKeyInputs(inputs, idx, out left, out right);
-            // 送出
-            if (idx > 0) SendInput((uint)idx, inputs, Marshal.SizeOf(typeof(INPUT)));
-            //if (idx > 0) sendInput((uint)idx, inputs);
+            upShiftKeyInputs();
+        }
+
+        private static void sendInputsRomanOrKana(string faceStr, bool bKana)
+        {
+            logger.DebugH(() => $"CALLED: faceStr={faceStr}, Kana={bKana}");
+
+            using (var changer = new IMEInputModeChanger(bKana)) {
+                foreach (var fc in faceStr) {
+                    uint vk = VirtualKeys.GetVKeyFromFaceChar(fc);
+                    if (vk > 0) {
+                        using (var guard = new ShiftKeyDownGuard(vk >= 0x100)) {
+                            // Vkey
+                            sendInputsVkey((ushort)(vk & 0xff));
+                        }
+                    }
+                }
+            }
         }
 
         private void sendStringInputs(string str)
         {
-            bool loggingFlag = Settings.LoggingDecKeyInfo;
-            if (loggingFlag) logger.InfoH($"ENTER: str={str}");
+            logger.DebugH(() => $"ENTER: str={str}");
 
             int strLen = str._safeCount();
-            int inputsLen = strLen * 3 + 3;     // IMEがONの時、ひらがなはローマ字等に変換するので、3倍にしておく。あと、確定のための３個
-
-            var inputs = new INPUT[inputsLen * 2];
-
-            int idx = 0;
-
-            if (strLen > inputs._safeLength()) strLen = inputs._safeLength();
             for (int i = 0; i < strLen; ++i) {
                 if (str[i] == '!' && (i + 1) < strLen && str[i + 1] == '{') {     // "!{"
                     i += 2;
-                    idx = setFuncKeyInputs(str, ref i, strLen, inputs, idx);
+                    i = sendFuncKeyInputs(str, i, strLen);
                 } else {
-                    initializeKeyboardInput(ref inputs[idx]);
-                    //inputs[idx].ki.wVk = VK_PACKET;       // SendInput でUniCodeを出力するときは、ここを 0 にしておく
                     string faceStr = null;
                     bool bKana = false;
-                    if (loggingFlag) logger.InfoH($"ImeEnabled={IMEHandler.ImeEnabled}, ImeSendInputInRoman={Settings.ImeSendInputInRoman}");
+                    logger.DebugH(() => $"ImeEnabled={IMEHandler.ImeEnabled}, ImeSendInputInRoman={Settings.ImeSendInputInRoman}");
                     if (IMEHandler.ImeEnabled && Settings.ImeSendInputInRoman) {
                         faceStr = str[i]._hiraganaToRoman();
-                        if (loggingFlag && faceStr._isEmpty()) logger.InfoH($"_hiraganaToRoman empty");
+                        if (faceStr._isEmpty()) logger.DebugH($"_hiraganaToRoman empty");
                         if (faceStr._isEmpty()) {
                             faceStr = str[i]._hiraganaToKeyface();
                             bKana = faceStr._notEmpty();
-                            if (loggingFlag && faceStr._isEmpty()) logger.InfoH($"_hiraganaToKeyface empty");
+                            if (faceStr._isEmpty()) logger.DebugH($"_hiraganaToKeyface empty");
                         }
                         if (faceStr._isEmpty() && str[i] >= ' ' && str[i] < (char)0x7f) {
-                            if (loggingFlag) logger.InfoH($"use ascii");
+                            logger.DebugH($"use ascii");
                             faceStr = str[i].ToString();
                         }
                     }
                     if (faceStr._notEmpty()) {
-                        foreach (var fc in faceStr) {
-                            uint vk = VirtualKeys.GetVKeyFromFaceChar(fc);
-                            if (vk > 0) {
-                                using (var changer = new IMEInputModeChanger(bKana)) {
-                                    bool leftShift = false, rightShift = false;
-                                    if (vk >= 0x100) {
-                                        // Shift下げ
-                                        idx = upDownShiftKeyInputs(inputs, idx, false, out leftShift, out rightShift);
-                                    }
-
-                                    // Vkey
-                                    idx = setVkeyInputs((ushort)(vk & 0xff), inputs, idx);
-
-                                    // Shift戻し
-                                    if (vk >= 0x100) {
-                                        idx = revertShiftKeyInputs(inputs, idx, false, leftShift, rightShift);
-                                    }
-                                }
-                            }
-                        }
+                        sendInputsRomanOrKana(faceStr, bKana);
                     } else {
-                        if (loggingFlag) logger.InfoH($"send asis string");
+                        logger.DebugH($"send asis string");
                         // そもそも、未確定を確定させてしまうのはいかがなものか。やるなら、Chromeとか、特定のやつだけにしたい
-                        if (IMEHandler.ImeEnabled && Settings.ImeSendInputInRoman) {
+                        //if (IMEHandler.ImeEnabled && Settings.ImeSendInputInRoman) {
                             // 以下は効かない(ImmGetContext()が他プロセスに対しては無効なため)
                             //IMEHandler.NotifyComplete();
                             //if (IMEHandler.HasUnconfirmed()) {
-                            //    if (loggingFlag) logger.InfoH($"Has unconfirmed");
+                            //    if (loggingFlag) logger.DebugH($"Has unconfirmed");
                             //    idx = setVkeyInputs((ushort)Keys.Enter, inputs, idx);
                             //}
 
@@ -608,14 +726,13 @@ namespace KanchokuWS.Handler
                             //idx = setVkeyInputs((ushort)Keys.Oem102, inputs, idx);
                             //idx = setVkeyInputs((ushort)Keys.Enter, inputs, idx);
                             //idx = setVkeyInputs((ushort)Keys.Back, inputs, idx);
-                        }
-                        idx = setUnicodeInputs(str[i], inputs, idx);
+                        //}
+                        sendInputsUnicode(str[i]);
                     }
                 }
             }
-            // 送出
-            sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
-            if (loggingFlag) logger.InfoH($"LEAVE: str={str}");
+            updateLastOutputDt();
+            logger.DebugH(() => $"LEAVE: str={str}");
         }
 
         /// <summary>
@@ -625,33 +742,14 @@ namespace KanchokuWS.Handler
         /// <param name="numBS"></param>
         public void SendString(char[] str, int strLen, int numBS)
         {
-            bool loggingFlag = Settings.LoggingDecKeyInfo;
-            if (loggingFlag) logger.InfoH($"CALLED: str={(str._isEmpty() ? "" : new string(str, 0, strLen._lowLimit(0)))}, numBS={numBS}");
-
-            if (numBS < 0) numBS = 0;
-            if (strLen < 0) strLen = 0;
-            int numCtrlKeys = 2;            // leftCtrl と rightCtrl
-            int inputsLen = numBS + numCtrlKeys * 2;   // IMEがONの時、ひらがなはローマ字に変換するので、3倍にしておく
-
-            var inputs = new INPUT[inputsLen * 2];
-
-            int idx = 0;
-
-            bool leftCtrl = false, rightCtrl = false;
+            logger.DebugH(() => $"CALLED: str={(str._isEmpty() ? "" : new string(str, 0, strLen._lowLimit(0)))}, numBS={numBS}");
 
             // Ctrl上げ
-            idx = upCtrlKeyInputs(inputs, idx, out leftCtrl, out rightCtrl);
-            if (loggingFlag) logger.InfoH($"upCtrl: idx={idx}");
-            //sendInputUpCtrlKey(out leftCtrl, out rightCtrl);      // StikyNote など、Waitを入れても状況が変わらない
+            var ctrlState = upCtrlKeyInputs();
+            logger.DebugH($"upCtrl");
 
             // Backspace
-            for (int i = 0; i < numBS; ++i) {
-                idx = setVkeyInputs(VK_BACK, inputs, idx);
-            }
-            if (loggingFlag) logger.InfoH($"bs: idx={idx}");
-
-            // 送出
-            sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
+            sendInputsVkey(VK_BACK, numBS);
 
             // 文字列
             if (strLen > 0) {
@@ -659,11 +757,8 @@ namespace KanchokuWS.Handler
             }
 
             // Ctrl戻し
-            idx = 0;
-            idx = revertCtrlKeyInputs(inputs, idx, true, leftCtrl, rightCtrl);
-            if (loggingFlag) logger.InfoH($"revert: idx={idx}");
-            // 送出
-            sendInputsWithHandlingDeckey((uint)idx, inputs, VK_BACK);
+            RevertCtrlKey(ctrlState);
+            logger.DebugH($"revertCtrl");
         }
 
         BoolObject syncPostVkey = new BoolObject();
@@ -674,43 +769,27 @@ namespace KanchokuWS.Handler
         /// <param name="n">キーダウンの数</param>
         public void SendVKeyCombo(uint modifier, uint vkey, int n)
         {
-            bool loggingFlag = Settings.LoggingDecKeyInfo;
-            if (loggingFlag) logger.InfoH($"CALLED: modifier={modifier:x}H, vkey={vkey:x}H, numKeys={n}");
+            logger.DebugH(() => $"CALLED: modifier={modifier:x}H, vkey={vkey:x}H, numKeys={n}");
             if (syncPostVkey.BusyCheck()) {
-                if (loggingFlag) logger.InfoH($"IGNORED: numKeys={n}");
+                logger.DebugH(() => $"IGNORED: numKeys={n}");
                 return;
             }
             using (syncPostVkey) {
                 lock (syncPostVkey) {
-                    int numCtrlKeys = 2;            // leftCtrl と rightCtrl
-                    var inputs = new INPUT[(n + numCtrlKeys * 2) * 2];
-
-                    int idx = 0;
-
                     // Ctrl上げ(または下げ)
-                    bool leftCtrl = false, rightCtrl = false;
-                    bool bUp = (modifier & KeyModifiers.MOD_CONTROL) == 0;
-                    idx = upDownCtrlKeyInputs(inputs, idx, bUp, out leftCtrl, out rightCtrl);
-                    //sendInputUpDownCtrlKey(bUp, out leftCtrl, out rightCtrl);         // StikyNote など、Waitを入れても状況が変わらない
+                    var ctrlState = upDownCtrlKeyInputs((modifier & KeyModifiers.MOD_CONTROL) == 0);
 
                     // Shift上げ(または下げ)
-                    bool leftShift = false, rightShift = false;
-                    bool bShiftUp = (modifier & KeyModifiers.MOD_SHIFT) == 0;
-                    idx = upDownShiftKeyInputs(inputs, idx, bShiftUp, out leftShift, out rightShift);
+                    var shiftState = upDownShiftKeyInputs((modifier & KeyModifiers.MOD_SHIFT) == 0);
 
-                    // Vkey
-                    for (int i = 0; i < n; ++i) {
-                        idx = setVkeyInputs((ushort)vkey, inputs, idx);
-                    }
+                    // Vkey送出
+                    sendInputsVkey(vkey, n);
 
                     // Shift戻し
-                    idx = revertShiftKeyInputs(inputs, idx, bShiftUp, leftShift, rightShift);
+                    RevertShiftKey(shiftState);
 
                     // Ctrl戻し
-                    idx = revertCtrlKeyInputs(inputs, idx, bUp, leftCtrl, rightCtrl);
-
-                    // 送出
-                    sendInputsWithHandlingDeckey((uint)idx, inputs, vkey);
+                    RevertCtrlKey(ctrlState);
                 }
             }
         }
@@ -723,7 +802,7 @@ namespace KanchokuWS.Handler
         public void SendStringViaClipboardIfNeeded(char[] str, int numBS, bool bForceString = false)
         {
             var activeWinHandle = ActiveWindowHandler.Singleton?.ActiveWinHandle ?? IntPtr.Zero;
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ActiveWinHandle={(int)activeWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}, bForceString={bForceString}");
+            logger.DebugH(() => $"ActiveWinHandle={(int)activeWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}, bForceString={bForceString}");
 
             if (activeWinHandle != IntPtr.Zero && ((str._notEmpty() && str[0] != 0) || numBS > 0)) {
                 int len = str._isEmpty() ? 0 : str._strlen();     // 終端までの長さを取得
@@ -738,7 +817,7 @@ namespace KanchokuWS.Handler
                     // Ctrl-V を送る (SendVirtualKeys の中でも upDownCtrlKey/revertCtrlKey をやっている)
                     if (numBS > 0 && Settings.PreWmCharGuardMillisec > 0) {
                         int waitMs = (int)(Math.Pow(numBS, Settings.ReductionExponet._lowLimit(0.5)) * Settings.PreWmCharGuardMillisec);
-                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
+                        logger.DebugH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
                         Helper.WaitMilliSeconds(waitMs);
                     }
                     SendVKeyCombo(VirtualKeys.CtrlV_VKeyCombo.modifier, VirtualKeys.CtrlV_VKeyCombo.vkey, 1);

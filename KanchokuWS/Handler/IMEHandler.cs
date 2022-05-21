@@ -104,7 +104,7 @@ namespace KanchokuWS.Handler
                         // 状態が変化した
                         ActiveWindowHandler.Singleton.GetActiveWindowInfo(null, frmVkb);
                         if (frmVkb == null || !frmVkb.IsMyWinClassName()) {
-                            logger.DebugH(() => $"IME State Changed: imeEnabled={imeEnabled}, convMode={imeConvMode}");
+                            logger.DebugH(() => $"IME State Changed: imeWnd={imeWnd}, imeEnabled={imeEnabled}, convMode={imeConvMode}");
                             ImeEnabled = imeEnabled;
                             ImeConversionMode = imeConvMode;
                             return true;
@@ -152,6 +152,7 @@ namespace KanchokuWS.Handler
             logger.DebugH(() => $"CALLED: ImeEnabled={ImeEnabled}");
             if (ImeEnabled) {
                 IntPtr imeWnd = new Handler.GUIThreadInfo().GetDefaultIMEWnd();
+                logger.DebugH(() => $"imeWnd={imeWnd}");
                 SendMessage(imeWnd, WM_IME_CONTROL, (IntPtr)IMC_SETCONVERSIONMODE, (IntPtr)ImeConversionMode); // 元の入力モードに設定
             }
             ImeInputModeChanged = false;
@@ -166,6 +167,7 @@ namespace KanchokuWS.Handler
             if (ImeEnabled) {
                 ImeInputModeChanged = true;
                 IntPtr imeWnd = new Handler.GUIThreadInfo().GetDefaultIMEWnd();
+                logger.DebugH(() => $"imeWnd={imeWnd}");
                 SendMessage(imeWnd, WM_IME_CONTROL, (IntPtr)IMC_SETCONVERSIONMODE, (IntPtr)(IME_CMODE_KANA | IME_CMODE_FULLSHAPE | IME_CMODE_NATIVE)); // ひらがなモードに設定
             }
         }
