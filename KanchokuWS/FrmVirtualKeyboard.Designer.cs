@@ -34,6 +34,7 @@ namespace KanchokuWS
             this.ReadDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReloadSettings_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadBushuDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExcangeTable_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadMazeWikipediaDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FollowCaret_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -47,7 +48,6 @@ namespace KanchokuWS
             this.topTextBox = new Utils.TextBoxRO();
             this.dgvHorizontal = new System.Windows.Forms.DataGridView();
             this.pictureBox_measureFontSize = new System.Windows.Forms.PictureBox();
-            this.ExcangeTable_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Main)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvHorizontal)).BeginInit();
@@ -66,7 +66,7 @@ namespace KanchokuWS
             this.toolStripSeparator1,
             this.終了ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 148);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(111, 126);
             // 
             // 設定ToolStripMenuItem
             // 
@@ -99,6 +99,13 @@ namespace KanchokuWS
             this.ReadBushuDic_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
             this.ReadBushuDic_ToolStripMenuItem.Text = "部首合成辞書再読込";
             this.ReadBushuDic_ToolStripMenuItem.Click += new System.EventHandler(this.ReadBushuDic_ToolStripMenuItem_Click);
+            // 
+            // ExcangeTable_ToolStripMenuItem
+            // 
+            this.ExcangeTable_ToolStripMenuItem.Name = "ExcangeTable_ToolStripMenuItem";
+            this.ExcangeTable_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.ExcangeTable_ToolStripMenuItem.Text = "主・副テーブル切り替え";
+            this.ExcangeTable_ToolStripMenuItem.Click += new System.EventHandler(this.ExcangeTable_ToolStripMenuItem_Click);
             // 
             // ReadMazeWikipediaDic_ToolStripMenuItem
             // 
@@ -205,13 +212,6 @@ namespace KanchokuWS
             this.pictureBox_measureFontSize.TabIndex = 33;
             this.pictureBox_measureFontSize.TabStop = false;
             this.pictureBox_measureFontSize.Visible = false;
-            // 
-            // ExcangeTable_ToolStripMenuItem
-            // 
-            this.ExcangeTable_ToolStripMenuItem.Name = "ExcangeTable_ToolStripMenuItem";
-            this.ExcangeTable_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-            this.ExcangeTable_ToolStripMenuItem.Text = "主・副テーブル切り替え";
-            this.ExcangeTable_ToolStripMenuItem.Click += new System.EventHandler(this.ExcangeTable_ToolStripMenuItem_Click);
             // 
             // FrmVirtualKeyboard
             // 

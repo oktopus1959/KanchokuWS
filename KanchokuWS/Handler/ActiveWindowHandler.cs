@@ -267,7 +267,7 @@ namespace KanchokuWS.Handler
                         }
                         busyCount = 0;
                     }
-                    if (Logger.IsInfoEnabled && !frmVkb.IsMyWinClassName(ActiveWinClassName)) {
+                    if (Logger.IsInfoEnabled && frmVkb != null && !frmVkb.IsMyWinClassName(ActiveWinClassName)) {
                         logger.InfoH("LEAVE: In Progress");
                     }
                     return;
@@ -282,7 +282,7 @@ namespace KanchokuWS.Handler
                     GetActiveWindowHandle(bLog);
                     bOK = true;
                     bDiffWin = ActiveWinClassName._ne(prevClassName);
-                    if (bDiffWin && !frmVkb.IsMyWinClassName(ActiveWinClassName)) {
+                    if (bDiffWin && frmVkb != null && !frmVkb.IsMyWinClassName(ActiveWinClassName)) {
                         // 直前のものとクラス名が異なっていれば、それを仮想鍵盤上部に表示する (ただし、仮想鍵盤自身を除く)
                         frmVkb.SetTopText(ActiveWinClassName);
                     }
@@ -294,7 +294,7 @@ namespace KanchokuWS.Handler
                 // 強制移動でない場合は、頻繁に移動しないように、最後のキー出力が終わってNms経過したらウィンドウを移動する
                 bool bMandatory = moveWin == MoveWinType.MoveMandatory;
                 if (bMandatory || DateTime.Now >= (SendInputHandler.Singleton?.LastOutputDt.AddMilliseconds(Settings.VirtualKeyboardMoveGuardMillisec) ?? DateTime.MaxValue))
-                    actionMoveWindow(bDiffWin, bMandatory, bLog);
+                    actionMoveWindow?.Invoke(bDiffWin, bMandatory, bLog);
             }
             if (bLog) logger.Info(() => $"LEAVE: ActiveWinClassName={ActiveWinClassName}");
         }
