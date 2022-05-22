@@ -895,6 +895,7 @@ namespace KanchokuWS
                     var line = origLine.Replace(" ", "")._toLower();
                     if (line._notEmpty() && line[0] != '#') {
                         if (line._reMatch(@"^\w+=")) {
+                            //シフト面の割り当て
                             if (AssignShiftPlane(line)) continue;
                         } else {
                             // NAME:xx:function
@@ -1050,6 +1051,15 @@ namespace KanchokuWS
                 }
             }
             return false;   // NG
+        }
+
+        /// <summary>設定ダイアログで割り当てたSandSシフト面を優先する</summary>
+        public static void AssignSanSPlane()
+        {
+            logger.DebugH(() => $"CALLED: SandSAssignedPlane={Settings.SandSAssignedPlane}");
+            if (Settings.SandSAssignedPlane > 0 && Settings.SandSAssignedPlane < ShiftPlane_NUM) {
+                ShiftPlaneForShiftModKey[KeyModifiers.MOD_SPACE] = Settings.SandSAssignedPlane;
+            }
         }
 
         public static string MakeModConversionContents()

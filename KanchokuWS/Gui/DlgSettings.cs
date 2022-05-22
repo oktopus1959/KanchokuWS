@@ -908,6 +908,14 @@ namespace KanchokuWS.Gui
         /// <summary> IME・同時打鍵</summary>
         void readSettings_tabImeCombo()
         {
+            // SandS
+            checkBox_SandSEnabled.Checked = Settings.SandSEnabled;
+            checkBox_SandSEnabledWhenOffMode.Checked = Settings.SandSEnabledWhenOffMode;
+            comboBox_SandSAssignedPlane.SelectedIndex = Settings.SandSAssignedPlane._lowLimit(0)._highLimit(7);
+            checkBox_OneshotSandSEnabled.Checked = Settings.OneshotSandSEnabled;
+            textBox_SandSEnableSpaceOrRepeatMillisec.Text = $"{Settings.SandSEnableSpaceOrRepeatMillisec}";
+            checkBox_SandSEnablePostShift.Checked = Settings.SandSEnablePostShift;
+
             // 同時打鍵
             textBox_combinationMaxAllowedLeadTimeMs.Text = $"{Settings.CombinationMaxAllowedLeadTimeMs}";
             //textBox_combinationKeyTimeRate.Text = $"{Settings.CombinationKeyTimeRate}";
@@ -927,6 +935,14 @@ namespace KanchokuWS.Gui
             button_imeComboEnter.Enabled = false;
             checkerImeCombo.CtlToBeEnabled = button_imeComboEnter;
             checkerImeCombo.ControlEnabler = tabImeComboStatusChanged;
+
+            // SandS
+            checkerImeCombo.Add(checkBox_SandSEnabled);
+            checkerImeCombo.Add(checkBox_SandSEnabledWhenOffMode);
+            checkerImeCombo.Add(comboBox_SandSAssignedPlane);
+            checkerImeCombo.Add(checkBox_OneshotSandSEnabled);
+            checkerImeCombo.Add(textBox_SandSEnableSpaceOrRepeatMillisec);
+            checkerImeCombo.Add(checkBox_SandSEnablePostShift);
 
             // 同時打鍵
             checkerImeCombo.Add(textBox_combinationMaxAllowedLeadTimeMs);
@@ -953,6 +969,14 @@ namespace KanchokuWS.Gui
         {
             logger.InfoH("ENTER");
             frmMain?.DeactivateDecoder();
+
+            // SandS
+            Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
+            Settings.SetUserIni("sandsEnabledWhenOffMode", checkBox_SandSEnabledWhenOffMode.Checked);
+            Settings.SetUserIni("sandsAssignedPlane", comboBox_SandSAssignedPlane.SelectedIndex);
+            Settings.SetUserIni("oneshotSandSEnabled", checkBox_OneshotSandSEnabled.Checked);
+            Settings.SetUserIni("sandsEnableSpaceOrRepeatMillisec", textBox_SandSEnableSpaceOrRepeatMillisec.Text);
+            Settings.SetUserIni("sandsEnablePostShift", checkBox_SandSEnablePostShift.Checked);
 
             // 同時打鍵
             Settings.SetUserIni("combinationMaxAllowedLeadTimeMs", textBox_combinationMaxAllowedLeadTimeMs.Text.Trim());
@@ -1478,11 +1502,6 @@ namespace KanchokuWS.Gui
             checkBox_convertJaPeriod.Checked = Settings.ConvertJaPeriod;
             checkBox_convertJaComma.Checked = Settings.ConvertJaComma;
             checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
-            checkBox_SandSEnabled.Checked = Settings.SandSEnabled;
-            checkBox_SandSEnabledWhenOffMode.Checked = Settings.SandSEnabledWhenOffMode;
-            checkBox_OneshotSandSEnabled.Checked = Settings.OneshotSandSEnabled;
-            textBox_SandSEnableSpaceOrRepeatMillisec.Text = $"{Settings.SandSEnableSpaceOrRepeatMillisec}";
-            checkBox_SandSEnablePostShift.Checked = Settings.SandSEnablePostShift;
             checkBox_extraModifiersEnabled.Checked = Settings.ExtraModifiersEnabled;
             textBox_modConversionFile.Text = Settings.ModConversionFile;
             checkBox_upperRomanStrokeGuide.Checked = Settings.UpperRomanStrokeGuide;
@@ -1507,11 +1526,6 @@ namespace KanchokuWS.Gui
             checkerMiscSettings.Add(checkBox_convertJaPeriod);
             checkerMiscSettings.Add(checkBox_convertJaComma);
             checkerMiscSettings.Add(checkBox_removeOneStrokeByBackspace);
-            checkerMiscSettings.Add(checkBox_SandSEnabled);
-            checkerMiscSettings.Add(checkBox_SandSEnabledWhenOffMode);
-            checkerMiscSettings.Add(checkBox_OneshotSandSEnabled);
-            checkerMiscSettings.Add(textBox_SandSEnableSpaceOrRepeatMillisec);
-            checkerMiscSettings.Add(checkBox_SandSEnablePostShift);
             checkerMiscSettings.Add(checkBox_extraModifiersEnabled);
             checkerMiscSettings.Add(textBox_modConversionFile);
             checkerMiscSettings.Add(checkBox_upperRomanStrokeGuide);
@@ -1540,11 +1554,6 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
             Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
             Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);
-            Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
-            Settings.SetUserIni("sandsEnabledWhenOffMode", checkBox_SandSEnabledWhenOffMode.Checked);
-            Settings.SetUserIni("oneshotSandSEnabled", checkBox_OneshotSandSEnabled.Checked);
-            Settings.SetUserIni("sandsEnableSpaceOrRepeatMillisec", textBox_SandSEnableSpaceOrRepeatMillisec.Text);
-            Settings.SetUserIni("sandsEnablePostShift", checkBox_SandSEnablePostShift.Checked);
             Settings.SetUserIni("extraModifiersEnabled", checkBox_extraModifiersEnabled.Checked);
             Settings.SetUserIni("modConversionFile", textBox_modConversionFile.Text);
             Settings.SetUserIni("upperRomanStrokeGuide", checkBox_upperRomanStrokeGuide.Checked);

@@ -168,6 +168,9 @@ namespace KanchokuWS
                 complexCommandStr = VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
             }
 
+            // 設定ダイアログで割り当てたSandSシフト面による上書き
+            VirtualKeys.AssignSanSPlane();
+
             // 漢字読みファイルの読み込み
             if (Settings.KanjiYomiFile._notEmpty()) {
                 KanjiYomiTable.ReadKanjiYomiFile(Settings.KanjiYomiFile);

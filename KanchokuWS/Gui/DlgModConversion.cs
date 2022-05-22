@@ -23,7 +23,11 @@ namespace KanchokuWS.Gui
             "なし",
             "通常シフト",
             "拡張シフトA",
-            "拡張シフトB"
+            "拡張シフトB",
+            "拡張シフトC",
+            "拡張シフトD",
+            "拡張シフトE",
+            "拡張シフトF",
         };
 
         private static string[] qwertyKeyNames = new string[] {
