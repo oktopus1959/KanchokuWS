@@ -40,8 +40,9 @@ namespace KanchokuWS.Gui
 
         private GuiStatusChecker checkerAll;
         private GuiStatusChecker checkerBasic;
-        private GuiStatusChecker checkerFontColor;
         private GuiStatusChecker checkerAdvanced;
+        private GuiStatusChecker checkerImeCombo;
+        private GuiStatusChecker checkerFontColor;
         private GuiStatusChecker checkerKeyAssign;
         private GuiStatusChecker checkerCtrlKeys;
         private GuiStatusChecker checkerHistory;
@@ -92,8 +93,9 @@ namespace KanchokuWS.Gui
             // 各タブの状態チェッカーをまとめる
             checkerAll = new GuiStatusChecker("All");
             checkerBasic = new GuiStatusChecker("Basic");
-            checkerFontColor = new GuiStatusChecker("FontAndColor");
             checkerAdvanced = new GuiStatusChecker("Advanced");
+            checkerImeCombo = new GuiStatusChecker("ImeCombo");
+            checkerFontColor = new GuiStatusChecker("FontAndColor");
             checkerKeyAssign = new GuiStatusChecker("KeyAssign");
             checkerCtrlKeys = new GuiStatusChecker("CtrlKeys");
             checkerHistory = new GuiStatusChecker("History");
@@ -103,11 +105,14 @@ namespace KanchokuWS.Gui
             readSettings_tabBasic();
             setBasicStatusChecker();
 
-            readSettings_tabFontColor();
-            setFontColortatusChecker();
-
             readSettings_tabAdvanced();
             setAdvancedStatusChecker();
+
+            readSettings_tabImeCombo();
+            setImeComboStatusChecker();
+
+            readSettings_tabFontColor();
+            setFontColortatusChecker();
 
             readSettings_tabKeyAssign();
             setKeyAssignStatusChecker();
@@ -357,11 +362,6 @@ namespace KanchokuWS.Gui
             selectModeToggleKeyItem(comboBox_unmodifiedOffKey, Settings.GetString("unmodifiedOffHotKey").Replace("X", ""));
             selectModeToggleKeyItem(comboBox_modifiedOffKey, Settings.GetString("offHotKey").Replace("X", ""));
 
-            // IME連携
-            checkBox_imeCooperationEnabled.Checked = Settings.ImeCooperationEnabled;
-            checkBox_imeSendInputInRoman.Checked = Settings.ImeSendInputInRoman;
-            checkBox_imeSendInputInKana.Checked = Settings.ImeSendInputInKana;
-
             // 仮想鍵盤表示
             radioButton_noVkb.Checked = !Settings.ShowVkbOrMaker;
             radioButton_normalVkb.Checked = Settings.ShowVkbOrMaker && Settings.VirtualKeyboardShowStrokeCount > 0;
@@ -412,11 +412,6 @@ namespace KanchokuWS.Gui
             checkerBasic.Add(comboBox_modifiedToggleKey);
             checkerBasic.Add(comboBox_unmodifiedOffKey);
             checkerBasic.Add(comboBox_modifiedOffKey);
-
-            // IME連携
-            checkerBasic.Add(checkBox_imeCooperationEnabled);
-            checkerBasic.Add(checkBox_imeSendInputInRoman);
-            checkerBasic.Add(checkBox_imeSendInputInKana);
 
             // 仮想鍵盤表示
             checkerBasic.Add(radioButton_normalVkb);
@@ -474,11 +469,6 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("hotKey", comboBox_modifiedToggleKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));
             Settings.SetUserIni("unmodifiedOffHotKey", comboBox_unmodifiedOffKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));
             Settings.SetUserIni("offHotKey", comboBox_modifiedOffKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));
-
-            // IME連携
-            Settings.SetUserIni("imeCooperationEnabled", checkBox_imeCooperationEnabled.Checked);
-            Settings.SetUserIni("imeSendInputInRoman", checkBox_imeSendInputInRoman.Checked);
-            Settings.SetUserIni("imeSendInputInKana", checkBox_imeSendInputInKana.Checked);
 
             // 仮想鍵盤表示
             Settings.SetUserIni("vkbShowStrokeCount", $"{textBox_vkbShowStrokeCount.Text._parseInt(1)._lowLimit(0) * (radioButton_normalVkb.Checked ? 1 : -1)}");
@@ -539,6 +529,7 @@ namespace KanchokuWS.Gui
 
             readSettings_tabBasic();
             readSettings_tabAdvanced();
+            readSettings_tabImeCombo();
             readSettings_tabFontColor();
             readSettings_tabKeyAssign();
             readSettings_tabCtrlKeys();
@@ -593,16 +584,6 @@ namespace KanchokuWS.Gui
             var fileList = Helper.GetFiles(KanchokuIni.Singleton.KanchokuDir, "*.tbl").Select(x => getTableName(x)).ToArray();
             comboBox_tableFile2.Items.Clear();
             comboBox_tableFile2.Items.AddRange(fileList);
-        }
-
-        private void checkBox_imeSendInputInRoman_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBox_imeSendInputInRoman.Checked) checkBox_imeSendInputInKana.Checked = false;
-        }
-
-        private void checkBox_imeSendInputInKana_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBox_imeSendInputInKana.Checked) checkBox_imeSendInputInRoman.Checked = false;
         }
 
         //-----------------------------------------------------------------------------------
@@ -792,11 +773,6 @@ namespace KanchokuWS.Gui
             textBox_saveDictsCalmTime.Text = $"{Settings.SaveDictsCalmTime}";
 
             //checkBox_autoOffWhenBurstKeyIn.Checked = Settings.GetString("autoOffWhenBurstKeyIn")._parseBool();
-
-            // 同時打鍵
-            textBox_combinationMaxAllowedLeadTimeMs.Text = $"{Settings.CombinationMaxAllowedLeadTimeMs}";
-            //textBox_combinationKeyTimeRate.Text = $"{Settings.CombinationKeyTimeRate}";
-            textBox_combinationKeyTimeMs.Text = $"{Settings.CombinationKeyTimeMs}";
         }
 
         private void setAdvancedStatusChecker()
@@ -837,11 +813,6 @@ namespace KanchokuWS.Gui
             checkerAdvanced.Add(textBox_saveDictsCalmTime);
 
             //checkerAdvanced.Add(checkBox_autoOffWhenBurstKeyIn);
-
-            // 同時打鍵
-            checkerAdvanced.Add(textBox_combinationMaxAllowedLeadTimeMs);
-            //checkerAdvanced.Add(textBox_combinationKeyTimeRate);
-            checkerAdvanced.Add(textBox_combinationKeyTimeMs);
 
             checkerAll.Add(checkerAdvanced);
         }
@@ -901,11 +872,6 @@ namespace KanchokuWS.Gui
 
             //Settings.SetUserIni("autoOffWhenBurstKeyIn", checkBox_autoOffWhenBurstKeyIn.Checked);
 
-            // 同時打鍵
-            Settings.SetUserIni("combinationMaxAllowedLeadTimeMs", textBox_combinationMaxAllowedLeadTimeMs.Text.Trim());
-            //Settings.SetUserIni("combinationKeyTimeRate", textBox_combinationKeyTimeRate.Text.Trim());
-            Settings.SetUserIni("combinationKeyTimeMs", textBox_combinationKeyTimeMs.Text.Trim());
-
             //Settings.ReadIniFile();
             // 各種定義ファイルの再読み込み
             frmMain?.ReloadSettingsAndDefFiles();
@@ -936,6 +902,111 @@ namespace KanchokuWS.Gui
                 checkerAdvanced.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
                 logger.InfoH("LEAVE");
             }
+        }
+
+        //-----------------------------------------------------------------------------------
+        /// <summary> IME・同時打鍵</summary>
+        void readSettings_tabImeCombo()
+        {
+            // 同時打鍵
+            textBox_combinationMaxAllowedLeadTimeMs.Text = $"{Settings.CombinationMaxAllowedLeadTimeMs}";
+            //textBox_combinationKeyTimeRate.Text = $"{Settings.CombinationKeyTimeRate}";
+            textBox_combinationKeyTimeMs.Text = $"{Settings.CombinationKeyTimeMs}";
+
+            // IME連携
+            checkBox_imeCooperationEnabled.Checked = Settings.ImeCooperationEnabled;
+            radioButton_imeSendInputInRoman.Checked = Settings.ImeSendInputInRoman;
+            radioButton_imeSendInputInKana.Checked = Settings.ImeSendInputInKana;
+            radioButton_imeSendInputInUnicode.Checked = !(Settings.ImeSendInputInRoman || Settings.ImeSendInputInKana);
+            textBox_imeUnicodeClassNames.Text = Settings.ImeUnicodeClassNames._reReplace(@"\|", "\r\n");
+
+        }
+
+        private void setImeComboStatusChecker()
+        {
+            button_imeComboEnter.Enabled = false;
+            checkerImeCombo.CtlToBeEnabled = button_imeComboEnter;
+            checkerImeCombo.ControlEnabler = tabImeComboStatusChanged;
+
+            // 同時打鍵
+            checkerImeCombo.Add(textBox_combinationMaxAllowedLeadTimeMs);
+            //checkerImeCombo.Add(textBox_combinationKeyTimeRate);
+            checkerImeCombo.Add(textBox_combinationKeyTimeMs);
+
+            // IME連携
+            checkerImeCombo.Add(checkBox_imeCooperationEnabled);
+            checkerImeCombo.Add(radioButton_imeSendInputInRoman);
+            checkerImeCombo.Add(radioButton_imeSendInputInKana);
+            checkerImeCombo.Add(radioButton_imeSendInputInUnicode);
+            checkerImeCombo.Add(textBox_imeUnicodeClassNames);
+
+            checkerAll.Add(checkerImeCombo);
+        }
+
+        private void tabImeComboStatusChanged(bool flag)
+        {
+            button_imeComboClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+            changeCancelButton(flag, button_imeComboClose);
+        }
+
+        private void button_imeComboEnter_Click(object sender, EventArgs e)
+        {
+            logger.InfoH("ENTER");
+            frmMain?.DeactivateDecoder();
+
+            // 同時打鍵
+            Settings.SetUserIni("combinationMaxAllowedLeadTimeMs", textBox_combinationMaxAllowedLeadTimeMs.Text.Trim());
+            //Settings.SetUserIni("combinationKeyTimeRate", textBox_combinationKeyTimeRate.Text.Trim());
+            Settings.SetUserIni("combinationKeyTimeMs", textBox_combinationKeyTimeMs.Text.Trim());
+
+            // IME連携
+            Settings.SetUserIni("imeCooperationEnabled", checkBox_imeCooperationEnabled.Checked);
+            Settings.SetUserIni("imeSendInputInRoman", radioButton_imeSendInputInRoman.Checked);
+            Settings.SetUserIni("imeSendInputInKana", radioButton_imeSendInputInKana.Checked);
+            Settings.SetUserIni("imeUnicodeClassNames", textBox_imeUnicodeClassNames.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
+
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
+
+            readSettings_tabImeCombo();
+
+            checkerImeCombo.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+
+            label_okResultImeCombo.Show();
+
+            logger.InfoH("LEAVE");
+        }
+
+        private void button_imeComboClose_Click(object sender, EventArgs e)
+        {
+            logger.InfoH("ENTER");
+            if (button_imeComboClose.Text.StartsWith("閉")) {
+                this.Close();
+            } else {
+                readSettings_tabImeCombo();
+                checkerImeCombo.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+                logger.InfoH("LEAVE");
+            }
+        }
+
+        private void checkBox_imeSendInputInRoman_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox_imeSendInputInRoman.Checked) checkBox_imeSendInputInKana.Checked = false;
+        }
+
+        private void checkBox_imeSendInputInKana_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox_imeSendInputInKana.Checked) checkBox_imeSendInputInRoman.Checked = false;
+        }
+
+        private void textBox_imeUnicodeClassNames_Enter(object sender, EventArgs e)
+        {
+            AcceptButton = null;
+        }
+
+        private void textBox_imeUnicodeClassNames_Leave(object sender, EventArgs e)
+        {
+            AcceptButton = button_imeComboEnter;
         }
 
         //-----------------------------------------------------------------------------------
@@ -1100,7 +1171,7 @@ namespace KanchokuWS.Gui
             radioButton_excludeFollowings.Checked = !Settings.UseClassNameListAsInclusion;
             radioButton_includeFollowings.Checked = Settings.UseClassNameListAsInclusion;
 
-            textBox_targetClassNames.Text = Settings.GetString("ctrlKeyTargetlassNames").Trim()._reReplace(@"\|", "\r\n");
+            textBox_targetClassNames.Text = Settings.CtrlKeyTargetClassNames._reReplace(@"\|", "\r\n");
 
             checkBox_ctrlJasEnter.Checked = Settings.UseCtrlJasEnter;
             //checkBox_ctrlMasEnter.Checked = Settings.UseCtrlMasEnter;
@@ -1202,7 +1273,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("useLeftControlToConversion", checkBox_useLeftCtrl.Checked);
             Settings.SetUserIni("useRightControlToConversion", checkBox_useRightCtrl.Checked);
             Settings.SetUserIni("useClassNameListAsInclusion", radioButton_includeFollowings.Checked);
-            Settings.SetUserIni("ctrlKeyTargetlassNames", textBox_targetClassNames.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
+            Settings.SetUserIni("ctrlKeyTargetClassNames", textBox_targetClassNames.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
 
             Settings.SetUserIni("useCtrlJasEnter", checkBox_ctrlJasEnter.Checked);
             //Settings.SetUserIni("useCtrlMasEnter", checkBox_ctrlMasEnter.Checked);
@@ -1669,8 +1740,9 @@ namespace KanchokuWS.Gui
                 if (okResultCount == 0) {
                     label_okResultBasic.Hide();
                     label_reloadBasic.Hide();
-                    label_okResultFontColor.Hide();
                     label_okResultAdvanced.Hide();
+                    label_okResultImeCombo.Hide();
+                    label_okResultFontColor.Hide();
                     label_okResultHist.Hide();
                     label_okResultKeyAssign.Hide();
                     label_okResultCtrlKeys.Hide();
@@ -1701,6 +1773,11 @@ namespace KanchokuWS.Gui
         }
 
         private void label_okResultAdvanced_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_okResultImeCombo_VisibleChanged(object sender, EventArgs e)
         {
             okResultCount = okResultCountMax;
         }
@@ -1987,13 +2064,17 @@ namespace KanchokuWS.Gui
                     AcceptButton = button_basicEnter;
                     CancelButton = button_basicClose;
                     break;
-                case "tabPage_fontColor":
-                    AcceptButton = button_fontColorEnter;
-                    CancelButton = button_fontColorClose;
-                    break;
                 case "tabPage_advanced":
                     AcceptButton = button_advancedEnter;
                     CancelButton = button_advancedClose;
+                    break;
+                case "tabPage_imeCombo":
+                    AcceptButton = button_imeComboEnter;
+                    CancelButton = button_imeComboClose;
+                    break;
+                case "tabPage_fontColor":
+                    AcceptButton = button_fontColorEnter;
+                    CancelButton = button_fontColorClose;
                     break;
                 case "tabPage_keyAssign":
                     AcceptButton = button_keyAssignEnter;
@@ -2489,7 +2570,6 @@ namespace KanchokuWS.Gui
             }
             logger.InfoH($"LEAVE");
         }
-
     }
 }
 

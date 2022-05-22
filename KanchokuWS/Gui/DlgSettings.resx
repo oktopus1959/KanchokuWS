@@ -120,33 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="checkBox_imeSendInputInKana.ToolTip" xml:space="preserve">
-    <value>この項目をチェックすると、入力されたひらがなをひらがな入力モードに
-合わせた形式に変換してIMEに送信するようになります。
-
-ひらがな入力モードで変換できない文字はそのまま送信されます。
-この時、アプリによっては未確定文字が消えてしまうことがあるので
-ご注意を。
-
-ローマ字変換／かな変換のどちらにもチェックがない場合は、文字の
-Unicode をそのまま送信します。漢字などもそのまま送信されますが、
-相手先のアプリによってはIMEに送られないことがあります。
-（例： Chrome や VS Code など）</value>
-  </data>
-  <data name="checkBox_imeSendInputInRoman.ToolTip" xml:space="preserve">
-    <value>この項目をチェックすると、入力されたひらがなをローマ字入力モードに
-合わせた形式に変換してIMEに送信するようになります。
-
-ローマ字入力モードで変換できない文字はそのまま送信されます。
-この時、アプリによっては未確定文字が消えてしまうことがあるので
-ご注意を。
-
-ローマ字変換／かな変換のどちらにもチェックがない場合は、文字の
-Unicode をそのまま送信します。漢字などもそのまま送信されますが、
-相手先のアプリによってはIMEに送られないことがあります。
-（例： Chrome や VS Code など）
-</value>
-  </data>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -229,20 +202,6 @@ exclude ファイルは、履歴検索および履歴登録の対象外となる
 
 キーを使用しない場合は、ComboBoxの内容を削除して空白にしてください。</value>
   </data>
-  <data name="textBox_combinationKeyTimeMs.ToolTip" xml:space="preserve">
-    <value>連続シフトによる同時打鍵で、2文字目以降のキーの同時押下時間を設定します。
-同時押下時間がここで設定した時間以上であれば、同時打鍵と判定します。
-
-0 を設定すると2文字目以降についてもキーの押下時の即時判定となります。
-
-例： A押→B押→C押→A上の場合 (設定値が 0 でない場合)
-連続シフトの場合、最初の「A押→B押」は無条件で同時打鍵と判定するので、
-これにより1文字目が出力されます。
-次に「C押→A上」のC・A同時押下時間が設定値未満であれば、2文字目は
-同時打鍵とは判定されません。
-
-なお、AよりもCのほうが先に解放された場合は無条件に同時打鍵と判定します。</value>
-  </data>
   <data name="textBox_saveDictsCalmTime.ToolTip" xml:space="preserve">
     <value>辞書の自動保存時刻になってからの待機時間を設定します(分単位)
 
@@ -286,6 +245,47 @@ extraInfo の値が当ツールの設定したものだけを無視するよう�
 そのような場合は、当項目にチェックを入れることで、競合を解消することが
 できます。ただし、元々競合していなかったツールからの出力を、当ツールが
 無視することになる可能性もあるので、試行しながら設定してください。</value>
+  </data>
+  <data name="checkBox_imeSendInputInKana.ToolTip" xml:space="preserve">
+    <value>この項目をチェックすると、入力されたひらがなをひらがな入力モードに
+合わせた形式に変換してIMEに送信するようになります。
+
+ひらがな入力モードで変換できない文字はそのまま送信されます。
+この時、アプリによっては未確定文字が消えてしまうことがあるので
+ご注意を。
+
+ローマ字変換／かな変換のどちらにもチェックがない場合は、文字の
+Unicode をそのまま送信します。漢字などもそのまま送信されますが、
+相手先のアプリによってはIMEに送られないことがあります。
+（例： Chrome や VS Code など）</value>
+  </data>
+  <data name="checkBox_imeSendInputInRoman.ToolTip" xml:space="preserve">
+    <value>この項目をチェックすると、入力されたひらがなをローマ字入力モードに
+合わせた形式に変換してIMEに送信するようになります。
+
+ローマ字入力モードで変換できない文字はそのまま送信されます。
+この時、アプリによっては未確定文字が消えてしまうことがあるので
+ご注意を。
+
+ローマ字変換／かな変換のどちらにもチェックがない場合は、文字の
+Unicode をそのまま送信します。漢字などもそのまま送信されますが、
+相手先のアプリによってはIMEに送られないことがあります。
+（例： Chrome や VS Code など）
+</value>
+  </data>
+  <data name="textBox_combinationKeyTimeMs.ToolTip" xml:space="preserve">
+    <value>連続シフトによる同時打鍵で、2文字目以降のキーの同時押下時間を設定します。
+同時押下時間がここで設定した時間以上であれば、同時打鍵と判定します。
+
+0 を設定すると2文字目以降についてもキーの押下時の即時判定となります。
+
+例： A押→B押→C押→A上の場合 (設定値が 0 でない場合)
+連続シフトの場合、最初の「A押→B押」は無条件で同時打鍵と判定するので、
+これにより1文字目が出力されます。
+次に「C押→A上」のC・A同時押下時間が設定値未満であれば、2文字目は
+同時打鍵とは判定されません。
+
+なお、AよりもCのほうが先に解放された場合は無条件に同時打鍵と判定します。</value>
   </data>
   <data name="textBox_verticalFont.ToolTip" xml:space="preserve">
     <value>縦列鍵盤に表示する文字のフォント

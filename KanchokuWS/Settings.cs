@@ -369,7 +369,8 @@ namespace KanchokuWS
         public static bool UseClassNameListAsInclusion { get; private set; } = false;
 
         /// <summary>Ctrl修飾キー変換の対象(または対象外)となるウィンドウのClassName</summary>
-        public static HashSet<string> CtrlKeyTargetClassNames { get; private set; } = new HashSet<string>();
+        public static string CtrlKeyTargetClassNames { get; private set; }
+        public static HashSet<string> CtrlKeyTargetClassNamesHash { get; private set; } = new HashSet<string>();
 
         /// <summary>Ctrl-J を Enter と同じように扱う </summary>
         public static bool UseCtrlJasEnter { get; private set; } = false;
@@ -546,6 +547,10 @@ namespace KanchokuWS
 
         /// <summary> IMEに対してカナで送信する </summary>
         public static bool ImeSendInputInKana { get; set; } = false;
+
+        /// <summary>IMEにUnicodeで文字送出する対象となるウィンドウのClassName</summary>
+        public static string ImeUnicodeClassNames { get; private set; }
+        public static HashSet<string> ImeUnicodeClassNamesHash { get; private set; } = new HashSet<string>();
 
         //------------------------------------------------------------------------------
         /// <summary>ウィンドウClassNameごとの設定</summary>
@@ -892,7 +897,8 @@ namespace KanchokuWS
             UseLeftControlToConversion = GetString("useLeftControlToConversion")._parseBool(true);
             UseRightControlToConversion = GetString("useRightControlToConversion")._parseBool(false);
             UseClassNameListAsInclusion = GetString("useClassNameListAsInclusion")._parseBool(false);
-            CtrlKeyTargetClassNames = new HashSet<string>(GetString("ctrlKeyTargetlassNames").Trim()._toLower()._split('|'));
+            CtrlKeyTargetClassNames = GetString("ctrlKeyTargetClassNames", "ctrlKeyTargetlassNames", "").Trim();
+            CtrlKeyTargetClassNamesHash = new HashSet<string>(CtrlKeyTargetClassNames._toLower()._split('|'));
 
             UseCtrlJasEnter = GetString("useCtrlJasEnter")._parseBool(false);
             //UseCtrlMasEnter = GetString("useCtrlMasEnter")._parseBool(false);
@@ -935,6 +941,8 @@ namespace KanchokuWS
             ImeCooperationEnabled = GetString("imeCooperationEnabled")._parseBool(false);
             ImeSendInputInRoman = GetString("imeSendInputInRoman")._parseBool(false);
             ImeSendInputInKana = GetString("imeSendInputInKana")._parseBool(false);
+            ImeUnicodeClassNames = GetString("imeUnicodeClassNames")._orElse("Edit|_WwG|SakuraView*").Trim();
+            ImeUnicodeClassNamesHash = new HashSet<string>(ImeUnicodeClassNames.Trim()._toLower()._split('|'));
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定
@@ -967,7 +975,7 @@ namespace KanchokuWS
             AutoBushuFile = addDecoderSetting("autoBushuFile", "bushuAuto", "kwbushu.aut");
             CharsDefFile = addDecoderSetting("charsDefFile", $"chars.{KeyboardFile._split('.')._getNth(0)._orElse("106")}.txt");
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
-            TableFile = addDecoderSetting("tableFile", "t.tbl");
+            TableFile = addDecoderSetting("tableFile", "tutr.tbl");
             TableFile2 = addDecoderSetting("tableFile2", "");
             KanjiYomiFile = addDecoderSetting("kanjiYomiFile", "kanji-yomi.txt");
             //addDecoderSetting("strokeHelpFile");

@@ -812,8 +812,8 @@ namespace KanchokuWS
         {
             string activeWinClassName = ActiveWindowHandler.Singleton.ActiveWinClassName._toLower();
             bool contained = activeWinClassName._notEmpty()
-                && Settings.CtrlKeyTargetClassNames._notEmpty()
-                && Settings.CtrlKeyTargetClassNames.Any(name => name._notEmpty() && activeWinClassName.StartsWith(name));
+                && Settings.CtrlKeyTargetClassNamesHash._notEmpty()
+                && Settings.CtrlKeyTargetClassNamesHash.Any(name => name._notEmpty() && activeWinClassName.StartsWith(name));
             bool ctrlTarget = !(Settings.UseClassNameListAsInclusion ^ contained);
             if (Settings.LoggingDecKeyInfo && Logger.IsInfoEnabled) {
                 logger.InfoH($"ctrlTarget={ctrlTarget} (=!({Settings.UseClassNameListAsInclusion} (Inclusion) XOR {contained} (ContainedInList)");

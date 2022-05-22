@@ -681,6 +681,16 @@ namespace KanchokuWS.Handler
             }
         }
 
+        private bool isUnicodeSendWindow()
+        {
+            string activeWinClassName = ActiveWindowHandler.Singleton.ActiveWinClassName._toLower();
+            bool contained = activeWinClassName._notEmpty()
+                && Settings.ImeUnicodeClassNamesHash._notEmpty()
+                && Settings.ImeUnicodeClassNamesHash.Any(name => name._notEmpty() && (activeWinClassName == name || name.Last() == '*' && activeWinClassName.StartsWith(name._safeSubstring(0, -1))));
+            logger.DebugH(() => $"contained={contained}, activeWinClassName={activeWinClassName}");
+            return contained;
+        }
+
         private void sendStringInputs(string str)
         {
             logger.DebugH(() => $"ENTER: str={str}");
@@ -693,7 +703,7 @@ namespace KanchokuWS.Handler
                 } else {
                     string faceStr = null;
                     logger.DebugH(() => $"ImeEnabled={IMEHandler.ImeEnabled}, ImeSendInputInRoman={Settings.ImeSendInputInRoman}, ImeSendInputInKana={Settings.ImeSendInputInKana}");
-                    if (IMEHandler.ImeEnabled) {
+                    if (IMEHandler.ImeEnabled && !isUnicodeSendWindow()) {
                         if (Settings.ImeSendInputInRoman) {
                             faceStr = str[i]._hiraganaToRoman();
                             if (faceStr._isEmpty()) {
