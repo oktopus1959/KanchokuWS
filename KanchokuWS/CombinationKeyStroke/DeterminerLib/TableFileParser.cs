@@ -885,17 +885,29 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             readWord();
             var word = currentStr._toLower();
-            if (currentStr._startsWith("enable")) {
+            if (word._isEmpty()) {
                 Settings.SandSEnabled = true;
-            } else if (currentStr._startsWith("disable")) {
+                int plane = VirtualKeys.GetSandSPlane();
+                if (plane > 0) shiftPlane = plane;
+            } else if (word._startsWith("enable")) {
+                Settings.SandSEnabled = true;
+            } else if (word._startsWith("disable")) {
                 Settings.SandSEnabled = false;
-            } else if (currentStr._startsWith("enabeoneshot")) {
+            } else if (word == "s") {
+                Settings.SandSEnabled = true;
+                shiftPlane = 1;
+                VirtualKeys.AssignSanSPlane(shiftPlane);
+            } else if (word.Length == 1 && word[0] >= 'a' && word[0] <= 'f') {
+                Settings.SandSEnabled = true;
+                shiftPlane = word[0] - 'a' + 2;
+                VirtualKeys.AssignSanSPlane(shiftPlane);
+            } else if (word._startsWith("enabeoneshot")) {
                 Settings.OneshotSandSEnabled = true;
-            } else if (currentStr._startsWith("disabeoneshot")) {
+            } else if (word._startsWith("disabeoneshot")) {
                 Settings.OneshotSandSEnabled = false;
-            } else if (currentStr._startsWith("enabepostshift")) {
+            } else if (word._startsWith("enabepostshift")) {
                 Settings.SandSEnablePostShift = true;
-            } else if (currentStr._startsWith("disabepostshift")) {
+            } else if (word._startsWith("disabepostshift")) {
                 Settings.SandSEnablePostShift = false;
             }
         }

@@ -1053,13 +1053,19 @@ namespace KanchokuWS
             return false;   // NG
         }
 
-        /// <summary>設定ダイアログで割り当てたSandSシフト面を優先する</summary>
-        public static void AssignSanSPlane()
+        /// <summary>テーブルファイルor設定ダイアログで割り当てたSandSシフト面を優先する</summary>
+        public static void AssignSanSPlane(int shiftPlane = 0)
         {
             logger.DebugH(() => $"CALLED: SandSAssignedPlane={Settings.SandSAssignedPlane}");
-            if (Settings.SandSAssignedPlane > 0 && Settings.SandSAssignedPlane < ShiftPlane_NUM) {
-                ShiftPlaneForShiftModKey[KeyModifiers.MOD_SPACE] = Settings.SandSAssignedPlane;
+            if (shiftPlane <= 0) shiftPlane = Settings.SandSAssignedPlane;
+            if (shiftPlane > 0 && shiftPlane < ShiftPlane_NUM) {
+                ShiftPlaneForShiftModKey[KeyModifiers.MOD_SPACE] = shiftPlane;
             }
+        }
+
+        public static int GetSandSPlane()
+        {
+            return ShiftPlaneForShiftModKey._safeGet(KeyModifiers.MOD_SPACE);
         }
 
         public static string MakeModConversionContents()

@@ -686,6 +686,8 @@ namespace KanchokuWS
                                 });
                             } else if (cmd == "extracharsposition") {
                                 makeVkbStrokeTable1("makeExtraCharsStrokePositionTable", null);
+                            } else if (cmd == "sands") {
+                                makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", VirtualKeys.GetSandSPlane().ToString(), false, false, true);
                             } else if (cmd == "keycharsposition") {
                                 // 主テーブルの単打用
                                 makeVkbStrokeTable1($"makeStrokePosition", null, false, false, false);
