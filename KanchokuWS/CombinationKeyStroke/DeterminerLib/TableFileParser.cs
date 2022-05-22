@@ -165,7 +165,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
     class TableFileParser
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         private List<string> tableLines;
 
@@ -176,6 +176,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             LBRACE,         // {
             RBRACE,         // }
             COMMA,          // ,
+            VBAR,           // |
+            NEW_LINE,
             STRING,         // "str"
             FUNCTION,       // @?
             SLASH,          // /
@@ -317,7 +319,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             if (tableLines._notEmpty()) {
                 currentLine = tableLines[0];
-                readNextToken();
+                readNextToken(true);
                 while (currentToken != TOKEN.END) {
                     switch (currentToken) {
                         case TOKEN.LBRACE:
@@ -339,7 +341,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             parseError();
                             break;
                     }
-                    readNextToken();
+                    readNextToken(true);
                 }
             } else {
                 Error($"テーブルファイル({filename})が開けません");
@@ -357,12 +359,34 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.InfoH($"LEAVE: KeyCombinationPool.Count={keyComboPool.Count}");
         }
 
+        int calcRow(int idx, int currentRow)
+        {
+            if (idx <= 40) return idx / 10;
+            return currentRow;
+        }
+
+        int calcOverrunIndex(int idx)
+        {
+            if (idx == 10) return 41;
+            if (idx == 20) return 44;
+            if (idx == 30) return 46;
+            if (idx == 40) return 48;
+            return idx;
+        }
+
+        int calcNewLinedIndex(int row)
+        {
+            return row * 10;
+        }
+
         void parseSubTree()
         {
             logger.DebugH(() => $"ENTER: currentLine={lineNumber}, strokeList={strokeList._keyString()}");
             bool bError = false;
             int idx = 0;
-            bool isPrevDelim = true;
+            int row = 0;
+            //bool isPrevDelim = true;
+            TOKEN prevToken = 0;
             readNextToken();
             while (!bError && currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
@@ -371,13 +395,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         //getOrNewLastTreeNode();
                         parseSubTree();
                         strokeList._popBack();
-                        ++idx;
-                        isPrevDelim = false;
+                        //++idx;
+                        //isPrevDelim = false;
                         break;
 
                     case TOKEN.ARROW:
                         parseArrowNode(arrowIndex);
-                        isPrevDelim = false;
+                        //isPrevDelim = false;
                         break;
 
                     case TOKEN.ARROW_BUNDLE:
@@ -387,14 +411,26 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     case TOKEN.STRING:             // "str" : 文字列ノード
                     case TOKEN.FUNCTION:           // @c : 機能ノード
                         parseNode(currentToken, idx);
-                        ++idx;
-                        isPrevDelim = false;
+                        //++idx;
+                        //isPrevDelim = false;
+                        break;
+
+                    case TOKEN.VBAR:               // 次のトークン待ち
+                        row = calcRow(idx, row);
+                        idx = calcOverrunIndex(idx + 1);
+                        break;
+
+                    case TOKEN.NEW_LINE:           // 次の行
+                        if (prevToken == TOKEN.VBAR) {
+                            idx = calcNewLinedIndex(++row);
+                        }
                         break;
 
                     case TOKEN.COMMA:              // 次のトークン待ち
                     case TOKEN.SLASH:              // 次のトークン待ち
-                        if (isPrevDelim) ++idx;
-                        isPrevDelim = true;
+                        //if (isPrevDelim) ++idx;
+                        //isPrevDelim = true;
+                        ++idx;
                         break;
 
                     case TOKEN.IGNORE:
@@ -405,6 +441,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         bError = true;
                         break;
                 }
+                prevToken = currentToken;
 
                 readNextToken();
             }
@@ -416,11 +453,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         void parseArrowNode(int idx) {
             strokeList.Add(idx);
             logger.DebugH(() => $"ENTER: currentLine={lineNumber}, depth={depth}, idx={idx}");
-            readNextToken();
+            readNextToken(true);
             var tokenNextToArrow = currentToken;
             if (currentToken == TOKEN.ARROW) {
                 parseArrowNode(arrowIndex);
-            } else if (currentToken == TOKEN.COMMA) {
+            } else if (currentToken == TOKEN.COMMA || currentToken == TOKEN.VBAR) {
                 if (parseArrow(getNextChar())) parseArrowNode(arrowIndex);
             } else if (currentToken == TOKEN.LBRACE) {
                 parseSubTree();
@@ -439,12 +476,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"ENTER: depth={depth}, nextArrowIdx={nextArrowIdx}");
 
             int n = 0;
-            bool isPrevDelim = true;
-            readNextToken();
+            int row = 0;
+            //bool isPrevDelim = true;
+            readNextToken(true);
             if (currentToken != TOKEN.LBRACE) { // 直後は '{' でブロックの始まりである必要がある
                 parseError();
                 return;
             }
+            TOKEN prevToken = 0;
             readNextToken();
             while (currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
@@ -466,14 +505,26 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     case TOKEN.STRING:             // "str" : 文字列ノード
                     case TOKEN.FUNCTION:           // @c : 機能ノード
                         parseNode(currentToken, nextArrowIdx, n);
-                        ++n;
-                        isPrevDelim = false;
+                        //++n;
+                        //isPrevDelim = false;
+                        break;
+
+                    case TOKEN.VBAR:              // 次のトークン待ち
+                        row = calcRow(n, row);
+                        n = calcOverrunIndex(n + 1);
+                        break;
+
+                    case TOKEN.NEW_LINE:
+                        if (prevToken == TOKEN.VBAR) {
+                            n = calcNewLinedIndex(++row);
+                        }
                         break;
 
                     case TOKEN.COMMA:              // 次のトークン待ち
                     case TOKEN.SLASH:              // 次のトークン待ち
-                        if (isPrevDelim) ++n;
-                        isPrevDelim = true;
+                        //if (isPrevDelim) ++n;
+                        //isPrevDelim = true;
+                        ++n;
                         break;
 
                     case TOKEN.IGNORE:
@@ -483,6 +534,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         parseError();
                         break;
                 }
+                prevToken = currentToken;
 
                 readNextToken();
             }
@@ -517,10 +569,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                 case TOKEN.RBRACE:
                 case TOKEN.COMMA:             // ',' が来たら次のトークン
+                case TOKEN.VBAR:              // '|' が来たら次のトークン
                 case TOKEN.SLASH:             // '/' が来ても次のトークン
                     logger.DebugH(() => $"LEAVE: depth={depth}");
                     break;
 
+                case TOKEN.NEW_LINE:
                 case TOKEN.IGNORE:
                     break;
 
@@ -627,8 +681,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         // トークンひとつ読んで currentToken にセット
-        void readNextToken() {
-            currentToken = getToken();
+        void readNextToken(bool bSkipNL = false) {
+            currentToken = getToken(bSkipNL);
         }
 
         bool bIgnoreWarningAll = false;
@@ -637,7 +691,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         int braceLevel = 0;
 
         // トークンを読む
-        TOKEN getToken()
+        TOKEN getToken(bool bSkipNL)
         {
             currentStr = "";
             arrowIndex = -1;
@@ -758,7 +812,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         return TOKEN.RBRACE;
 
                     case ',': return TOKEN.COMMA;
-                    case '|': return TOKEN.COMMA;
+                    case '|': return TOKEN.VBAR;
 
                     case '/':
                         if (peekNextChar() == '/') {
@@ -769,6 +823,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         return TOKEN.SLASH;
 
                     case '\n':
+                        if (bSkipNL) break;
+                        return TOKEN.NEW_LINE;
+
                     case ' ':                   // SPC : スキップ
                     case '\t':                  // TAB : スキップ
                     case '\r':                  // ^M  : スキップ
