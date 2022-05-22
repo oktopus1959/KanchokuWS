@@ -858,6 +858,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         // ファイルの終わり
                         return TOKEN.END;
 
+                    case '゛':
+                    case '゜':
+                        // 機能
+                        decrementPos();
+                        readMarker();
+                        return TOKEN.FUNCTION;
+
                     default:
                         readBareString(currentChar);
                         if (currentStr._notEmpty()) return TOKEN.STRING;
