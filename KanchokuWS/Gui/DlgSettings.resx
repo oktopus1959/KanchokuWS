@@ -117,36 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="checkBox_imeSendInputInKana.ToolTip" xml:space="preserve">
-    <value>この項目をチェックすると、入力されたひらがなをひらがな入力モードに
-合わせた形式に変換してIMEに送信するようになります。
-
-ひらがな入力モードで変換できない文字はそのまま送信されます。
-この時、アプリによっては未確定文字が消えてしまうことがあるので
-ご注意を。
-
-ローマ字変換／かな変換のどちらにもチェックがない場合は、文字の
-Unicode をそのまま送信します。漢字などもそのまま送信されますが、
-相手先のアプリによってはIMEに送られないことがあります。
-（例： Chrome や VS Code など）</value>
-  </data>
-  <data name="checkBox_imeSendInputInRoman.ToolTip" xml:space="preserve">
-    <value>この項目をチェックすると、入力されたひらがなをローマ字入力モードに
-合わせた形式に変換してIMEに送信するようになります。
-
-ローマ字入力モードで変換できない文字はそのまま送信されます。
-この時、アプリによっては未確定文字が消えてしまうことがあるので
-ご注意を。
-
-ローマ字変換／かな変換のどちらにもチェックがない場合は、文字の
-Unicode をそのまま送信します。漢字などもそのまま送信されますが、
-相手先のアプリによってはIMEに送られないことがあります。
-（例： Chrome や VS Code など）
-</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
@@ -275,6 +245,89 @@ extraInfo の値が当ツールの設定したものだけを無視するよう�
 そのような場合は、当項目にチェックを入れることで、競合を解消することが
 できます。ただし、元々競合していなかったツールからの出力を、当ツールが
 無視することになる可能性もあるので、試行しながら設定してください。</value>
+  </data>
+  <data name="comboBox_SandSAssignedPlane.ToolTip" xml:space="preserve">
+    <value>SandS を割り当てるシフト面を選択します。
+
+SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを押すと、
+スペースキーがシフトキーあるいは拡張修飾キーとして働くようになります。
+
+「未割り当て」を選択すると、「その他設定 &gt; 拡張修飾キー」のところで
+割り当てたシフト面が使われます。
+
+SandS有効時にスペースを入力したい場合は、オートリピートが始まる前に
+スペースキーを離してください。
+
+SandS が有効であっても、 Shift+Space はそのまま Shift+Space として
+扱われます。</value>
+  </data>
+  <data name="textBox_SandSEnableSpaceOrRepeatMillisec.ToolTip" xml:space="preserve">
+    <value>SandS有効時に Space キーを連続打鍵した時、空白のリピート入力を有効に
+するまでの時間(ミリ秒)を設定します。
+
+1回目のSpaceキー単打鍵のキーアップ時から、設定した時間内にSpaceを
+押下状態にすると、空白のリピート入力が有効になります。
+
+ここの設定は、上記の「Space単打でワンショットシフト状態にする」がOFFの
+場合に有効となります。
+
+リピート状態を無効にするには 0 を設定してください。</value>
+  </data>
+  <data name="checkBox_OneshotSandSEnabled.ToolTip" xml:space="preserve">
+    <value>SandS有効時に、Space単打で次打鍵のみをシフトさせる、ワンショットシフト
+機能を有効にします。
+
+これをONにすると、Space単打の後は「ワンショットシフト状態」になり、次の
+1打鍵のみをシフトさせることができます。
+Ctrl+Space は Space によるシフト状態移行として処理されるようになります。
+
+SandS の拡張シフト面にテーブルファイルの裏面定義を行っているような場合は、
+これをONにしておくと、最初にSpace単打することで裏面定義を呼び出せる
+ようになります。
+
+ワンショットシフト状態の場合に、Spaceキーを単打すると空白が1つ出力され、
+Spaceキーを押下状態にするとリピート出力となります。</value>
+  </data>
+  <data name="checkBox_imeSendInputInKana.ToolTip" xml:space="preserve">
+    <value>この項目をチェックすると、入力されたひらがなをひらがな入力モードに
+合わせた形式に変換してIMEに送信するようになります。
+
+ひらがな入力モードで変換できない文字はそのまま送信されます。
+この時、アプリによっては未確定文字が消えてしまうことがあるので
+ご注意を。
+
+ローマ字変換／かな変換のどちらにもチェックがない場合は、文字の
+Unicode をそのまま送信します。漢字などもそのまま送信されますが、
+相手先のアプリによってはIMEに送られないことがあります。
+（例： Chrome や VS Code など）</value>
+  </data>
+  <data name="checkBox_imeSendInputInRoman.ToolTip" xml:space="preserve">
+    <value>この項目をチェックすると、入力されたひらがなをローマ字入力モードに
+合わせた形式に変換してIMEに送信するようになります。
+
+ローマ字入力モードで変換できない文字はそのまま送信されます。
+この時、アプリによっては未確定文字が消えてしまうことがあるので
+ご注意を。
+
+ローマ字変換／かな変換のどちらにもチェックがない場合は、文字の
+Unicode をそのまま送信します。漢字などもそのまま送信されますが、
+相手先のアプリによってはIMEに送られないことがあります。
+（例： Chrome や VS Code など）
+</value>
+  </data>
+  <data name="textBox_combinationKeyTimeMs.ToolTip" xml:space="preserve">
+    <value>連続シフトによる同時打鍵で、2文字目以降のキーの同時押下時間を設定します。
+同時押下時間がここで設定した時間以上であれば、同時打鍵と判定します。
+
+0 を設定すると2文字目以降についてもキーの押下時の即時判定となります。
+
+例： A押→B押→C押→A上の場合 (設定値が 0 でない場合)
+連続シフトの場合、最初の「A押→B押」は無条件で同時打鍵と判定するので、
+これにより1文字目が出力されます。
+次に「C押→A上」のC・A同時押下時間が設定値未満であれば、2文字目は
+同時打鍵とは判定されません。
+
+なお、AよりもCのほうが先に解放された場合は無条件に同時打鍵と判定します。</value>
   </data>
   <data name="textBox_verticalFont.ToolTip" xml:space="preserve">
     <value>縦列鍵盤に表示する文字のフォント
@@ -868,62 +921,6 @@ A=BC...
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>114, 17</value>
   </metadata>
-  <data name="textBox_combinationKeyTimeMs.ToolTip" xml:space="preserve">
-    <value>連続シフトによる同時打鍵で、2文字目以降のキーの同時押下時間を設定します。
-同時押下時間がここで設定した時間以上であれば、同時打鍵と判定します。
-
-0 を設定すると2文字目以降についてもキーの押下時の即時判定となります。
-
-例： A押→B押→C押→A上の場合 (設定値が 0 でない場合)
-連続シフトの場合、最初の「A押→B押」は無条件で同時打鍵と判定するので、
-これにより1文字目が出力されます。
-次に「C押→A上」のC・A同時押下時間が設定値未満であれば、2文字目は
-同時打鍵とは判定されません。
-
-なお、AよりもCのほうが先に解放された場合は無条件に同時打鍵と判定します。</value>
-  </data>
-  <data name="textBox_SandSEnableSpaceOrRepeatMillisec.ToolTip" xml:space="preserve">
-    <value>SandS有効時に Space キーを連続打鍵した時、空白のリピート入力を有効に
-するまでの時間(ミリ秒)を設定します。
-
-1回目のSpaceキー単打鍵のキーアップ時から、設定した時間内にSpaceを
-押下状態にすると、空白のリピート入力が有効になります。
-
-ここの設定は、上記の「Space単打でワンショットシフト状態にする」がOFFの
-場合に有効となります。
-
-リピート状態を無効にするには 0 を設定してください。</value>
-  </data>
-  <data name="checkBox_OneshotSandSEnabled.ToolTip" xml:space="preserve">
-    <value>SandS有効時に、Space単打で次打鍵のみをシフトさせる、ワンショットシフト
-機能を有効にします。
-
-これをONにすると、Space単打の後は「ワンショットシフト状態」になり、次の
-1打鍵のみをシフトさせることができます。
-Ctrl+Space は Space によるシフト状態移行として処理されるようになります。
-
-SandS の拡張シフト面にテーブルファイルの裏面定義を行っているような場合は、
-これをONにしておくと、最初にSpace単打することで裏面定義を呼び出せる
-ようになります。
-
-ワンショットシフト状態の場合に、Spaceキーを単打すると空白が1つ出力され、
-Spaceキーを押下状態にするとリピート出力となります。</value>
-  </data>
-  <data name="comboBox_SandSAssignedPlane.ToolTip" xml:space="preserve">
-    <value>SandS を割り当てるシフト面を選択します。
-
-SandS 方式を有効にすると、スペースキーを押しながら何か別のキーを押すと、
-スペースキーがシフトキーあるいは拡張修飾キーとして働くようになります。
-
-「未割り当て」を選択すると、「その他設定 &gt; 拡張修飾キー」のところで
-割り当てたシフト面が使われます。
-
-SandS有効時にスペースを入力したい場合は、オートリピートが始まる前に
-スペースキーを離してください。
-
-SandS が有効であっても、 Shift+Space はそのまま Shift+Space として
-扱われます。</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

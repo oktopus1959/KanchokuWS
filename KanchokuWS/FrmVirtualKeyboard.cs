@@ -17,7 +17,7 @@ namespace KanchokuWS
 {
     public partial class FrmVirtualKeyboard : Form
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         private FrmKanchoku frmMain;
 
@@ -688,18 +688,24 @@ namespace KanchokuWS
                                 makeVkbStrokeTable1("makeExtraCharsStrokePositionTable", null);
                             } else if (cmd == "sands") {
                                 makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", VirtualKeys.GetSandSPlane().ToString(), false, false, true);
+                                makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", VirtualKeys.GetSandSPlane().ToString(), false, false, true);
                             } else if (cmd == "keycharsposition") {
                                 // 主テーブルの単打用
-                                makeVkbStrokeTable1($"makeStrokePosition", null, false, false, false);
-                            } else if (cmd == "keycharsposition2") {
+                                makeVkbStrokeTable1($"makeStrokePosition", null);
                                 // 副テーブルの単打用
                                 makeVkbStrokeTable2($"makeStrokePosition2", null);
                             } else if (cmd == "shiftkeycharsposition") {
-                                makeVkbStrokeTable1("makeShiftStrokePosition1", null, false, false, true);
+                                //makeVkbStrokeTable1("makeShiftStrokePosition1", null, false, false, true);
+                                makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", "1", false, false, true);
+                                makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", "1", false, false, true);
                             } else if (cmd == "shiftakeycharsposition") {
-                                makeVkbStrokeTable1("makeShiftAStrokePosition1", null, false, false, true);
+                                //makeVkbStrokeTable1("makeShiftAStrokePosition1", null, false, false, true);
+                                makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", "2", false, false, true);
+                                makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", "2", false, false, true);
                             } else if (cmd == "shiftbkeycharsposition") {
-                                makeVkbStrokeTable1("makeShiftBStrokePosition1", null, false, false, true);
+                                //makeVkbStrokeTable1("makeShiftBStrokePosition1", null, false, false, true);
+                                makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", "3", false, false, true);
+                                makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", "3", false, false, true);
                             } else if (cmd == "hiraganakey1") {
                                 makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[0], true, true);
                             } else if (cmd == "hiraganakey2") {
@@ -926,11 +932,12 @@ namespace KanchokuWS
         /// <summary> 第1打鍵待ち受け時に表示するストロークテーブルの切り替え </summary>
         public void RotateStrokeTable(int delta = 1)
         {
+            logger.DebugH(() => $"CALLED: delta={delta}, IsCurrentStrokeTablePrimary()={frmMain.DecoderOutput.IsCurrentStrokeTablePrimary()}, StrokeTables1.Count={StrokeTables1?.Count},StrokeTables2.Count={StrokeTables2?.Count} ");
             if (frmMain.DecoderOutput.IsCurrentStrokeTablePrimary() && StrokeTables1._notEmpty()) {
                 if (delta < 0) delta = StrokeTables1.Count - ((-delta) % StrokeTables1.Count);
                 selectedTable1 = (selectedTable1 + delta) % StrokeTables1.Count;
                 DrawVirtualKeyboardChars();
-            } else if (frmMain.DecoderOutput.IsCurrentStrokeTablePrimary() && StrokeTables2._notEmpty()) {
+            } else if (!frmMain.DecoderOutput.IsCurrentStrokeTablePrimary() && StrokeTables2._notEmpty()) {
                 if (delta < 0) delta = StrokeTables2.Count - ((-delta) % StrokeTables2.Count);
                 selectedTable2 = (selectedTable2 + delta) % StrokeTables2.Count;
                 DrawVirtualKeyboardChars();

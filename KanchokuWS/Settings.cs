@@ -239,7 +239,7 @@ namespace KanchokuWS
         /// <summary>部首合成ヘルプの中央鍵盤背景色 </summary>
         public static string BgColorForBushuCompHelp { get; private set; }
 
-        /// <summary>2番目のストロークテーブルの中央鍵盤背景色 </summary>
+        /// <summary>副ストロークテーブルの中央鍵盤背景色 </summary>
         public static string BgColorForSecondaryTable { get; private set; }
 
         //-------------------------------------------------------------------------------------

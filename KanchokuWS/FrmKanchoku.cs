@@ -772,6 +772,7 @@ namespace KanchokuWS
                 ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
                 CombinationKeyStroke.Determiner.Singleton.ExchangeKeyCombinationPool();  // KeyCombinationPoolの入れ替え
                 frmVkb.DrawVirtualKeyboardChars();
+                frmMode.SetKanjiMode();
             }
         }
 

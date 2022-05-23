@@ -18,6 +18,7 @@ namespace KanchokuWS
         private static Logger logger = Logger.GetLogger();
 
         private static string kanchokuModeFace = "漢";
+        private static string secondaryModeFace = "副";
         private static string zenkakuModeFace = "全";
         private static string alphaModeFace = "Ａ";
 
@@ -26,6 +27,9 @@ namespace KanchokuWS
         private FrmVirtualKeyboard frmVkb;
 
         private bool bTerminated = false;
+
+        private string KanchokuModeFace => frmMain.DecoderOutput.IsCurrentStrokeTablePrimary() ? kanchokuModeFace : secondaryModeFace;
+        private string KanchokuModeForeColor => frmMain.DecoderOutput.IsCurrentStrokeTablePrimary() ? Settings.KanjiModeMarkerForeColor : Settings.AlphaModeForeColor;
 
         public FrmModeMarker(FrmKanchoku fMain, FrmVirtualKeyboard fVkb)
         {
@@ -136,7 +140,7 @@ namespace KanchokuWS
         public void SetKanjiMode()
         {
             logger.Info("CALLED");
-            newFaceLabel = kanchokuModeFace;
+            newFaceLabel = KanchokuModeFace;
             faceLabel = alphaModeFace;
             iAlphaMode = 0;
             foreColorChanged = waiting2ndStroke;
@@ -148,7 +152,7 @@ namespace KanchokuWS
         {
             logger.Debug($"CALLED: flag={flag}");
             if (Settings.EffectiveKanjiModeMarkerShowIntervalSec == 0) {
-                newFaceLabel = kanchokuModeFace;
+                newFaceLabel = KanchokuModeFace;
                 faceLabel = alphaModeFace;
                 iAlphaMode = 0;
                 foreColorChanged = waiting2ndStroke != flag;
@@ -209,7 +213,7 @@ namespace KanchokuWS
                 } else if (alphaModeHideDt < DateTime.Now) {
                     iAlphaMode = 0;
                     this.Hide();
-                    this.label1.Text = kanchokuModeFace;
+                    this.label1.Text = KanchokuModeFace;
                 }
             } else {
                 if (!frmMain.IsDecoderActive || frmVkb.Visible || this.Visible) {
@@ -223,9 +227,8 @@ namespace KanchokuWS
                     decrementCount();
                 }
 
-                if (foreColorChanged) {
-                    changeForeColor();
-                }
+                changeForeColor();
+
                 if (isFaceLabelChanged() || isCountZero()) {
                     if (isFaceLabelChanged()) setNewFaceLabel();
                     if (frmMain.IsDecoderActive && !frmVkb.Visible && !this.Visible) {
@@ -244,7 +247,7 @@ namespace KanchokuWS
 
         private void changeForeColor()
         {
-            var colorName = iAlphaMode == 2 ? Settings.AlphaModeForeColor : waiting2ndStroke ? Settings.KanjiModeMarker2ndForeColor : Settings.KanjiModeMarkerForeColor;
+            var colorName = iAlphaMode == 2 ? Settings.AlphaModeForeColor : waiting2ndStroke ? Settings.KanjiModeMarker2ndForeColor : KanchokuModeForeColor;
             if (colorName._notEmpty() && colorName._ne(label1.ForeColor.Name)) {
                 label1.ForeColor = Color.FromName(colorName);
             }

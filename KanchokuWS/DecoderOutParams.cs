@@ -162,7 +162,7 @@ namespace KanchokuWS
         /// <returns></returns>
         public static int GetStrokeCount(this DecoderOutParams output) { return output.strokeCount; }
 
-        /// <summary> 1番目のストロークテーブルか</summary>
+        /// <summary> 主ストロークテーブルか</summary>
         public static bool IsCurrentStrokeTablePrimary(this DecoderOutParams output) { return output.strokeTableNum != 2; }
     }
 
