@@ -754,13 +754,14 @@ namespace KanchokuWS.Handler
                             }
                             return true; // keyboardDownHandler() をスキップ、システム側の本来のSHIFT処理もスキップ
                         } else if (keyInfo.IsSingleShiftHitEffecive(bCtrl)) {
+                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SingleShiftHitEffecive({bCtrl})");
                             // 拡張シフト面が割り当てはないが、単打系ありの場合
                             if (keyInfo.Released) {
-                                if (bCtrl || bShift || modPressedOrShifted != 0) {
-                                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"RELEASED -> PRESSED");
-                                    keyInfo.SetPressed();
-                                    return true; // keyboardDownHandler() をスキップ、システム側の本来のSHIFT処理もスキップ
-                                }
+                                //if (bCtrl || bShift || modPressedOrShifted != 0) {
+                                //    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"RELEASED -> PRESSED");
+                                //    keyInfo.SetPressed();
+                                //    return true; // keyboardDownHandler() をスキップ、システム側の本来のSHIFT処理もスキップ
+                                //}
                                 // 最初の押下で他のCtrlやShiftや拡張修飾が押されていない場合は、keyboardDownHandler() を呼び出す
                             } else if (keyInfo.Pressed) {
                                 keyInfo.SetShifted();
@@ -768,13 +769,13 @@ namespace KanchokuWS.Handler
                             }
                         } else {
                             // 拡張シフト面が割り当てられておらず単打系でもない拡張修飾キー
-                            // すでに押下状態にある拡張修飾キーをSHIFT状態に遷移させる
+                            // すでに押下状態にあれば拡張修飾キーをSHIFT状態に遷移させる
                             keyInfoManager.makeExModKeyShifted(bDecoderOn);
                             // 拡張修飾キーがテーブルファイルに記述されている可能性もあるので keyboardDownHandler() を呼び出す
                         }
                     }
                 } else {
-                    // 通常キーの場合は、すでに押下状態にある拡張修飾キーをSHIFT状態に遷移させる
+                    // 通常キーの場合は、すでに押下状態にあれば拡張修飾キーをSHIFT状態に遷移させる
                     keyInfoManager.makeExModKeyShifted(bDecoderOn);
                     if (keyInfoManager.isSandSShifted() && bDecoderOn && Settings.SandSEnablePostShift) {
                         // SandS が SHIFTED に遷移していれば後置シフトキーも送出する
