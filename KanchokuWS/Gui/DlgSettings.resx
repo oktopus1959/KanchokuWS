@@ -639,6 +639,16 @@ OFFにすると、変換文字列全体の末尾にブロッカーを置きま�
 いったん「優－人⇒憂」という部首合成を実行すると、自動的に「優=憂」
 という連想が登録されます。</value>
   </data>
+  <data name="checkBox_historySearchKey.ToolTip" xml:space="preserve">
+    <value>Ctrl修飾キーで履歴検索を実行し、同時に先頭候補を選択できるようにします。
+
+連続して押すことで、次の候補を選択することもできます。
+これは自動履歴検索がOFFの場合でも有効です。
+
+履歴検索・選択は、 「その他設定 &gt; 拡張修飾キー」の「設定」をクリックして開く
+「拡張修飾キー設定」ダイアログで、適当なキーに HistNext, HistPrev の呼び出しを
+設定することでも可能です。</value>
+  </data>
   <data name="checkBox_autoHistEnabled.ToolTip" xml:space="preserve">
     <value>入力時に自動的に履歴検索を実行する設定
 
