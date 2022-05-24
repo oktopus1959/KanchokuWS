@@ -1499,6 +1499,7 @@ namespace KanchokuWS.Gui
                 default: radioButton_normalShift.Checked = true; break;
             }
             changeShiftPlaneSectionRadioButtonsState();
+            checkBox_convertHiraganaToKatakanaNormalPlane.Checked = Settings.HiraganaToKatakanaNormalPlane;
             checkBox_convertJaPeriod.Checked = Settings.ConvertJaPeriod;
             checkBox_convertJaComma.Checked = Settings.ConvertJaComma;
             checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
@@ -1523,6 +1524,7 @@ namespace KanchokuWS.Gui
             checkerMiscSettings.Add(radioButton_normalShift);
             checkerMiscSettings.Add(radioButton_shiftA);
             checkerMiscSettings.Add(radioButton_shiftB);
+            checkerMiscSettings.Add(checkBox_convertHiraganaToKatakanaNormalPlane);
             checkerMiscSettings.Add(checkBox_convertJaPeriod);
             checkerMiscSettings.Add(checkBox_convertJaComma);
             checkerMiscSettings.Add(checkBox_removeOneStrokeByBackspace);
@@ -1550,7 +1552,8 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("autoBushuComp", checkBox_autoBushuComp.Checked);
             Settings.SetUserIni("bushuAssocSelectCount", textBox_bushuAssocSelectCount.Text);
             Settings.SetUserIni("convertShiftedHiraganaToKatakana", checkBox_convertShiftedHiraganaToKatakana.Checked);
-            Settings.SetUserIni("hiraganaToKatakanaShiftPlane", radioButton_shiftA.Checked ? 2 : radioButton_shiftB.Checked ? 3 : 1);
+            Settings.SetUserIni("hiraToKataShiftPlane", radioButton_shiftA.Checked ? 2 : radioButton_shiftB.Checked ? 3 : 1);
+            Settings.SetUserIni("hiraToKataNormalPlane", checkBox_convertHiraganaToKatakanaNormalPlane.Checked);
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
             Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
             Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);

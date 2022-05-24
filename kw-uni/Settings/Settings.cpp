@@ -81,7 +81,8 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
 
     SET_INT_VALUE(bushuAssocSelectCount);
 
-    SET_INT_VALUE(hiraganaToKatakanaShiftPlane);
+    SET_INT_VALUE(hiraToKataShiftPlane);
+    SET_BOOL_VALUE(hiraToKataNormalPlane);
     SET_BOOL_VALUE(convertJaPeriod);
     SET_BOOL_VALUE(convertJaComma);
 

@@ -32,7 +32,7 @@ namespace {
     }
 
     MString xlat(const MString& ms) {
-        MString result = STATE_COMMON->IsShiftedHiraganaToKatakana() ? utils::convert_hiragana_to_katakana(ms) : ms;
+        MString result = STATE_COMMON->IsHiraganaToKatakana() ? utils::convert_hiragana_to_katakana(ms) : ms;
         if (SETTINGS->convertJaPeriod) convertZenkakuPeriod(result);
         if (SETTINGS->convertJaComma) convertZenkakuComma(result);
         return result;

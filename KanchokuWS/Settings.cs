@@ -459,6 +459,9 @@ namespace KanchokuWS
         /// <summary>平仮名⇒カタカナ変換を実行するシフト面</summary>
         public static int HiraganaToKatakanaShiftPlane { get; set; } = 0;
 
+        /// <summary>通常面の平仮名⇒カタカナ変換を実行</summary>
+        public static bool HiraganaToKatakanaNormalPlane { get; set; } = false;
+
         /// <summary>「。」⇔「．」</summary>
         public static bool ConvertJaPeriod { get; set; } = false;
         /// <summary>「、」⇔「，」</summary>
@@ -1030,8 +1033,9 @@ namespace KanchokuWS
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
             MazeGobiLikeTailLen = addDecoderSetting("mazeGobiLikeTailLen", 2, 0);               // 交ぜ書き変換で、語尾に含めてしまう末尾の長さ
 
-            HiraganaToKatakanaShiftPlane = GetString("hiraganaToKatakanaShiftPlane")._parseInt(1);  // 平仮名をカタカナに変換する際に使用するシフト面(0:None, 1:通常、2:A、3:B)
-            DecoderSettings["hiraganaToKatakanaShiftPlane"] = (!ConvertShiftedHiraganaToKatakana ? 0 : HiraganaToKatakanaShiftPlane).ToString();
+            HiraganaToKatakanaShiftPlane = GetString("hiraToKataShiftPlane")._parseInt(1);      // 平仮名をカタカナに変換する際に使用するシフト面(0:None, 1:通常、2:A、3:B)
+            DecoderSettings["hiraToKataShiftPlane"] = (!ConvertShiftedHiraganaToKatakana ? 0 : HiraganaToKatakanaShiftPlane).ToString();
+            HiraganaToKatakanaNormalPlane = addDecoderSetting("hiraToKataNormalPlane", false);                      // 「。」と「．」の相互変換
             ConvertJaPeriod = addDecoderSetting("convertJaPeriod", false);                      // 「。」と「．」の相互変換
             ConvertJaComma = addDecoderSetting("convertJaComma", false);                        // 「、」と「，」の相互変換
 

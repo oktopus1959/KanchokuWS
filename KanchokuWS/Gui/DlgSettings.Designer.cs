@@ -474,6 +474,7 @@ namespace KanchokuWS.Gui
             this.textBox_alphaModeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.Gui.ColorTextBox();
+            this.checkBox_convertHiraganaToKatakanaNormalPlane = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -4691,13 +4692,14 @@ namespace KanchokuWS.Gui
             // 
             // groupBox37
             // 
+            this.groupBox37.Controls.Add(this.checkBox_convertHiraganaToKatakanaNormalPlane);
             this.groupBox37.Controls.Add(this.radioButton_shiftB);
             this.groupBox37.Controls.Add(this.checkBox_convertShiftedHiraganaToKatakana);
             this.groupBox37.Controls.Add(this.radioButton_shiftA);
             this.groupBox37.Controls.Add(this.radioButton_normalShift);
             this.groupBox37.Location = new System.Drawing.Point(7, 172);
             this.groupBox37.Name = "groupBox37";
-            this.groupBox37.Size = new System.Drawing.Size(300, 70);
+            this.groupBox37.Size = new System.Drawing.Size(300, 95);
             this.groupBox37.TabIndex = 2;
             this.groupBox37.TabStop = false;
             this.groupBox37.Text = "平仮名⇒片仮名変換";
@@ -4932,7 +4934,7 @@ namespace KanchokuWS.Gui
             this.groupBox27.Controls.Add(this.checkBox_removeOneStrokeByBackspace);
             this.groupBox27.Controls.Add(this.checkBox_convertJaComma);
             this.groupBox27.Controls.Add(this.checkBox_convertJaPeriod);
-            this.groupBox27.Location = new System.Drawing.Point(7, 248);
+            this.groupBox27.Location = new System.Drawing.Point(7, 273);
             this.groupBox27.Name = "groupBox27";
             this.groupBox27.Size = new System.Drawing.Size(299, 67);
             this.groupBox27.TabIndex = 3;
@@ -5808,6 +5810,18 @@ namespace KanchokuWS.Gui
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // checkBox_convertHiraganaToKatakanaNormalPlane
+            // 
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.AutoSize = true;
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.Location = new System.Drawing.Point(5, 70);
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.Name = "checkBox_convertHiraganaToKatakanaNormalPlane";
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.Size = new System.Drawing.Size(208, 19);
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.TabIndex = 4;
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.Text = "通常面のひらがなをカタカナに変換する";
+            this.toolTip1.SetToolTip(this.checkBox_convertHiraganaToKatakanaNormalPlane, "通常面(漢直面)で入力した平仮名を、対応するカタカナに変換します。\r\n\r\nSandS などによるひらがな入力を並用しているような場合は、ここをONに\r\nしておくと" +
+        "便利かもしれません。\r\n\r\n※ この設定は、同時打鍵に対しては効果がありません。");
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.UseVisualStyleBackColor = true;
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -6391,5 +6405,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.CheckBox checkBox_OneshotSandSEnabled;
         private System.Windows.Forms.CheckBox checkBox_SandSEnabledWhenOffMode;
         private System.Windows.Forms.CheckBox checkBox_SandSEnabled;
+        private System.Windows.Forms.CheckBox checkBox_convertHiraganaToKatakanaNormalPlane;
     }
 }

@@ -68,7 +68,8 @@ struct Settings {
 
     size_t bushuAssocSelectCount = 1;       // 部首連想直接出力の回数
 
-    int hiraganaToKatakanaShiftPlane = 0;   // Shift入力された平仮名をカタカナに変換する面
+    int hiraToKataShiftPlane = 0;   // Shift入力された平仮名をカタカナに変換する面
+    bool hiraToKataNormalPlane = false;   // 通常面の平仮名をカタカナに変換する
     bool convertJaPeriod = false;           // 「。」と「．」を相互変換する
     bool convertJaComma = false;            // 「、」と「，」を相互変換する
 

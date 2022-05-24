@@ -202,7 +202,7 @@ public:
         layout = VkbLayout::None;
         centerString.clear();
         outStringProcDone = false;
-        convertShiftedHiraganaToKatakana = false;
+        convertHiraganaToKatakana = false;
         decodeKeyboardChar = false;
     }
 
@@ -382,14 +382,14 @@ public:
 
 private:
     // Shift入力された平仮名をカタカナに変換する
-    bool convertShiftedHiraganaToKatakana = false;
+    bool convertHiraganaToKatakana = false;
 
 public:
-    inline bool IsShiftedHiraganaToKatakana() const { return convertShiftedHiraganaToKatakana; }
+    inline bool IsHiraganaToKatakana() const { return convertHiraganaToKatakana; }
 
-    inline void ClearShiftedHiraganaToKatakana() { convertShiftedHiraganaToKatakana = false; }
+    inline void ClearHiraganaToKatakana() { convertHiraganaToKatakana = false; }
 
-    inline void SetShiftedHiraganaToKatakana() { convertShiftedHiraganaToKatakana = true; }
+    inline void SetHiraganaToKatakana() { convertHiraganaToKatakana = true; }
 
 public:
     //仮想鍵盤にストロークヘルプの情報を設定する

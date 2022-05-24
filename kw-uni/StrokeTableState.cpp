@@ -45,12 +45,19 @@ namespace {
 
 #define REMOVE_ALL_PTR (utils::boolToString(myNode()->isToRemoveAllStroke()).c_str())
 
-        wchar_t shiftedOrigChar = 0;
+        int origDeckey = -1;
+        //wchar_t shiftedOrigChar = 0;
 
         // ルートキーは UNSHIFT されているか
-        virtual bool IsRootKeyUnshifted() {
+        //virtual bool IsRootKeyUnshifted() {
+        //    auto p = dynamic_cast<StrokeTableState*>(pPrev);
+        //    return p != nullptr ? p->IsRootKeyUnshifted() : false;
+        //}
+
+        // ルートキーは平仮名化されているか
+        virtual bool IsRootKeyHiraganaized() {
             auto p = dynamic_cast<StrokeTableState*>(pPrev);
-            return p != nullptr ? p->IsRootKeyUnshifted() : false;
+            return p != nullptr ? p->IsRootKeyHiraganaized() : false;
         }
 
     public:
@@ -67,7 +74,7 @@ namespace {
 
         // StrokeTableNode を処理する
         void handleStrokeKeys(int deckey) {
-            wchar_t myChar = shiftedOrigChar != 0 ? shiftedOrigChar : DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+            wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(origDeckey >= 0 ? origDeckey : deckey);
             LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), face=%c, nodeDepth=%d"), NAME_PTR, deckey, deckey, myChar, DEPTH);
             STATE_COMMON->AppendOrigString(myChar); // RootStrokeTableState が作成されたときに OrigString はクリアされている
 
@@ -84,24 +91,30 @@ namespace {
                 LOG_INFO(_T("%s: RemoveAllStroke: Next node=%p, DecodeKeyboardCharMode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()), BOOL_TO_WPTR(STATE_COMMON->IsDecodeKeyboardCharMode()));
                 setToRemoveAllStroke();
             }
+            if (deckey < NORMAL_DECKEY_NUM && IsRootKeyHiraganaized()) {
+                _LOG_DEBUGH(_T("%s, rootKeyHiraganaized=%s"), NAME_PTR, BOOL_TO_WPTR(IsRootKeyHiraganaized()));
+                STATE_COMMON->SetHiraganaToKatakana();   // 通常面の平仮名を片仮名に変換するモード
+            }
             LOG_INFO(_T("LEAVE"));
         }
 
         // Shift飾修されたキー
         void handleShiftKeys(int deckey) {
-            _LOG_DEBUGH(_T("ENTER: %s, deckey=%x(%d), rootKeyUnshifted=%s"), NAME_PTR, deckey, deckey, BOOL_TO_WPTR(IsRootKeyUnshifted()));
-            if (IsRootKeyUnshifted()) {
-                // シフト入力された平仮名を片仮名に変換するモードとかの場合
-                shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
-                handleStrokeKeys(UNSHIFT_DECKEY(deckey));
-            } else {
-                //State::handleShiftKeys(deckey);
-                //// 自身を捨てて前打鍵を出力
-                //SetNextNodeMaybe(PrevCharNode::Singleton());
-                //setToRemoveAllStroke();
-                // 2打鍵目以降は、Unshiftして処理する
-                handleStrokeKeys(UNSHIFT_DECKEY(deckey));
-            }
+            _LOG_DEBUGH(_T("ENTER: %s, deckey=%x(%d), rootKeyHiraganaized=%s"), NAME_PTR, deckey, deckey, BOOL_TO_WPTR(IsRootKeyHiraganaized()));
+            if (origDeckey < 0) origDeckey = deckey;
+            handleStrokeKeys(UNSHIFT_DECKEY(deckey));
+            //if (IsRootKeyUnshifted()) {
+            //    // シフト入力された平仮名を片仮名に変換するモードとかの場合
+            //    //shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+            //    handleStrokeKeys(UNSHIFT_DECKEY(deckey));
+            //} else {
+            //    //State::handleShiftKeys(deckey);
+            //    //// 自身を捨てて前打鍵を出力
+            //    //SetNextNodeMaybe(PrevCharNode::Singleton());
+            //    //setToRemoveAllStroke();
+            //    // 2打鍵目以降は、Unshiftして処理する
+            //    handleStrokeKeys(UNSHIFT_DECKEY(deckey));
+            //}
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
 
@@ -229,13 +242,20 @@ namespace {
     private:
         DECLARE_CLASS_LOGGER;
 
-        bool bUnshifted = false;
+        //bool bUnshifted = false;
+        bool bHiraganaized = false;
 
     protected:
         // ルートキーは UNSHIFT されているか
-        virtual bool IsRootKeyUnshifted() {
-            _LOG_DEBUGH(_T("CALLED: %s, unshifted=%s"), NAME_PTR, BOOL_TO_WPTR(bUnshifted));
-            return bUnshifted;
+        //virtual bool IsRootKeyUnshifted() {
+        //    _LOG_DEBUGH(_T("CALLED: %s, unshifted=%s"), NAME_PTR, BOOL_TO_WPTR(bUnshifted));
+        //    return bUnshifted;
+        //}
+
+        // ルートキーは平仮名化されているか
+        virtual bool IsRootKeyHiraganaized() {
+            _LOG_DEBUGH(_T("CALLED: %s, hiraganaized=%s"), NAME_PTR, BOOL_TO_WPTR(bHiraganaized));
+            return bHiraganaized;
         }
 
     public:
@@ -250,6 +270,10 @@ namespace {
         void handleStrokeKeys(int deckey) {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             STATE_COMMON->SyncFirstStrokeKeyCount();    // 第1ストロークキーカウントの同期
+            if (!bHiraganaized && deckey < NORMAL_DECKEY_NUM && SETTINGS->hiraToKataNormalPlane) {
+                bHiraganaized = true;
+                STATE_COMMON->SetHiraganaToKatakana();   // 通常面の平仮名を片仮名に変換するモード
+            }
             StrokeTableState::handleStrokeKeys(deckey);
             //if (!NextNodeMaybe() && State::isStrokableFuncKey(deckey)) {
             //    // 次ノードがなく、拡張修飾キーの類なら、入力された拡張修飾類キーをそのまま返す
@@ -259,22 +283,21 @@ namespace {
 
         // Shift飾修されたキー
         void handleShiftKeys(int deckey) {
-            _LOG_DEBUGH(_T("ENTER: %s, deckey=%xH(%d), hiraConvPlane=%d"), NAME_PTR, deckey, deckey, SETTINGS->hiraganaToKatakanaShiftPlane);
+            _LOG_DEBUGH(_T("ENTER: %s, deckey=%xH(%d), hiraConvPlane=%d"), NAME_PTR, deckey, deckey, SETTINGS->hiraToKataShiftPlane);
             STATE_COMMON->SyncFirstStrokeKeyCount();    // 第1ストロークキーカウントの同期
-            if (SETTINGS->hiraganaToKatakanaShiftPlane > 0 &&
-                DECKEY_TO_SHIFT_PLANE(deckey) == SETTINGS->hiraganaToKatakanaShiftPlane &&
+            if (origDeckey < 0) origDeckey = deckey;
+            if (SETTINGS->hiraToKataShiftPlane > 0 &&
+                DECKEY_TO_SHIFT_PLANE(deckey) == SETTINGS->hiraToKataShiftPlane &&
                 utils::contains(VkbTableMaker::GetHiraganaFirstDeckeys(), UNSHIFT_DECKEY(deckey))) {
                 // 後でShift入力された平仮名をカタカナに変換する
-                bUnshifted = true;
+                bHiraganaized = true;
                 _LOG_DEBUGH(_T("SET SHIFTED HIRAGANA: %s"), NAME_PTR);
-                STATE_COMMON->SetShiftedHiraganaToKatakana();   // Shift入力された平仮名だった
-                shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
-                _LOG_DEBUGH(_T("Unshifted: shiftedOrigChar=%c"), shiftedOrigChar);
+                STATE_COMMON->SetHiraganaToKatakana();   // Shift入力された平仮名だった
+                //shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+                //_LOG_DEBUGH(_T("Unshifted: shiftedOrigChar=%c"), shiftedOrigChar);
                 handleStrokeKeys(UNSHIFT_DECKEY(deckey));
             } else {
                 // その他の(拡張)シフト
-                //bUnnecessary = true;            // これをやらないと、RootStrokeTable が残ってしまう
-                //State::handleShiftKeys(deckey);
                 StrokeTableState::handleStrokeKeys(deckey);
             }
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
@@ -310,9 +333,9 @@ namespace {
         void CheckNextState() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             StrokeTableState::CheckNextState();
-            if (bUnshifted) {
+            if (bHiraganaized) {
                 _LOG_DEBUGH(_T("SET SHIFTED HIRAGANA: %s"), NAME_PTR);
-                STATE_COMMON->SetShiftedHiraganaToKatakana();   // Shift入力された平仮名だった
+                STATE_COMMON->SetHiraganaToKatakana();   // Shift入力された平仮名だった
             }
             if (pNext && pNext->IsUnnecessary()) {
                 // 次状態が不要になったらルートストロークテーブルも不要

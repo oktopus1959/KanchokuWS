@@ -120,6 +120,26 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="checkBox_convertShiftedHiraganaToKatakana.ToolTip" xml:space="preserve">
+    <value>Shiftキー(または拡張修飾キー)を押しながら平仮名を入力すると、対応するカタカナに変換します。
+
+※ この設定は、同時打鍵に対しては効果がありません。
+
+使用するシフト面を「通常シフト面」「シフトA面」「シフトB面」から選択します。
+（ひらがなからカタカナへのマッピングは自動的に行われるため、
+　使用するシフト面へのカタカナ文字設定は不要です。）
+
+シフト面と対応する拡張修飾キーの組み合わせは、拡張修飾キー定義ファイルで設定します。
+
+例：「シフトB面」を選択し、SandS によるシフトを使用する場合
+・「デコーダON時に SandS を有効にする」にチェックを入れる
+・「拡張修飾キーを有効にする」にチェックを入れる
+・拡張修飾キー定義ファイルに次の設定を記述する：
+      space=shiftB | none</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -732,23 +752,6 @@ OFFにすると、変換文字列全体の末尾にブロッカーを置きま�
 
 なお、自動部首合成直後は、手動の部首合成を無効にしています。
 その場合は、もう一度手動部首合成を実行すれば、有効になります。</value>
-  </data>
-  <data name="checkBox_convertShiftedHiraganaToKatakana.ToolTip" xml:space="preserve">
-    <value>Shiftキー(または拡張修飾キー)を押しながら平仮名を入力すると、対応するカタカナに変換します。
-
-※ この設定は、同時打鍵に対しては効果がありません。
-
-使用するシフト面を「通常シフト面」「シフトA面」「シフトB面」から選択します。
-（ひらがなからカタカナへのマッピングは自動的に行われるため、
-　使用するシフト面へのカタカナ文字設定は不要です。）
-
-シフト面と対応する拡張修飾キーの組み合わせは、拡張修飾キー定義ファイルで設定します。
-
-例：「シフトB面」を選択し、SandS によるシフトを使用する場合
-・「デコーダON時に SandS を有効にする」にチェックを入れる
-・「拡張修飾キーを有効にする」にチェックを入れる
-・拡張修飾キー定義ファイルに次の設定を記述する：
-      space=shiftB | none</value>
   </data>
   <data name="textBox_modConversionFile.ToolTip" xml:space="preserve">
     <value>修飾キー変換定義ファイルの設定
