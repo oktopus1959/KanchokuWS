@@ -847,18 +847,18 @@ namespace {
                     size_t minKata = SETTINGS->histKatakanaKeyLength;
                     size_t minKanj = SETTINGS->histKanjiKeyLength;
                     size_t minUalpha = 2;
-                    size_t minLalpha = 4;
                     _LOG_DEBUGH(_T("minKana=%d, minKata=%d, minKanj=%d"), minKana, minKata, minKanj);
 
-                    auto checkFunc = [key, bCheckMinKeyLen, minKana, minKata, minKanj, minUalpha, minLalpha](size_t len) {
+                    auto checkFunc = [key, bCheckMinKeyLen, minKana, minKata, minKanj, minUalpha](size_t len) {
                         _LOG_DEBUGH(_T("checkFunc(key=%s, bCheckMinKeyLen=%s, len=%d)"), MAKE_WPTR(key), BOOL_TO_WPTR(bCheckMinKeyLen), len);
+                        size_t minMax = 4;
                         return key.size() >= len &&
-                            (!bCheckMinKeyLen ||
-                             ((minKana <= len || !utils::is_hirakana(utils::safe_back(key, len))) &&
-                              (minKata <= len || !utils::is_katakana(utils::safe_back(key, len))) &&
-                              (minKanj <= len || !utils::is_kanji(utils::safe_back(key, len))) && 
-                              (minUalpha <= len || !is_upper_alphabet(utils::safe_back(key, len))) &&
-                              (minLalpha <= len || !is_lower_alphabet(utils::safe_back(key, len)))   ));
+                            (!bCheckMinKeyLen || len >= minMax ||
+                             (len >= minKana && utils::is_hirakana(utils::safe_back(key, len))) ||
+                             (len >= minKata && utils::is_katakana(utils::safe_back(key, len))) ||
+                             (len >= minKanj && utils::is_kanji(utils::safe_back(key, len))) ||
+                             (len >= minUalpha && is_upper_alphabet(utils::safe_back(key, len)))
+                            );
                     };
 
                     if (checkFunc(4)) {
