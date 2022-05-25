@@ -745,6 +745,7 @@ namespace KanchokuWS
             {"rshift", DecoderKeys.RIGHT_SHIFT_DECKEY},
             {"space", DecoderKeys.STROKE_SPACE_DECKEY},
             {"shiftspace", DecoderKeys.SHIFT_SPACE_DECKEY},
+            {"directspace", DecoderKeys.DIRECT_SPACE_DECKEY},
             {"modetoggle", DecoderKeys.TOGGLE_DECKEY},
             {"modetogglefollowcaret", DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY},
             {"activate", DecoderKeys.ACTIVE_DECKEY},

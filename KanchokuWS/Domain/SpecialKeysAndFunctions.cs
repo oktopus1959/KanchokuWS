@@ -124,7 +124,8 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY, 0, "CopyAndRegisterSelection", "", "選択されている部分をデコーダの辞書に送って登録",
                 "copyselectionandsendtodictionary", null, 
                 "アクティブウィンドウに Ctrl-C を送りつけて、選択されている部分をクリップボードにコピーし、\nそれをデコーダの辞書に送って登録する。\n" +
-                "形式はミニバッファへのコピペによる辞書登録と同じで、履歴、交ぜ書き、連想の3通りの登録が可能")
+                "形式はミニバッファへのコピペによる辞書登録と同じで、履歴、交ぜ書き、連想の3通りの登録が可能"),
+            new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.DIRECT_SPACE_DECKEY, 0, "DirectSpace", "", "デコーダを通さずに直接Spaceをアプリに送る"),
         };
 
         public static KeyOrFunction[] GetSpecialKeyOrFunctionList()

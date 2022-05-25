@@ -750,6 +750,10 @@ namespace KanchokuWS
                         sendDeckeyToDecoder(deckey);
                         return true;
 
+                    case DecoderKeys.DIRECT_SPACE_DECKEY:
+                        logger.InfoH(() => $"DIRECT_SPACE_DECKEY:{deckey}, mode={mod:x}H");
+                        return sendVkeyFromDeckey(DecoderKeys.STROKE_SPACE_DECKEY, mod);
+
                     default:
                         bPrevDtUpdate = true;
                         if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
