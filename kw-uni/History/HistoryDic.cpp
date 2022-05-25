@@ -145,6 +145,7 @@ namespace {
             std::set<MString> histMaps; // '|' を含む候補
             size_t start = n >= key.size() ? 0 : key.size() - n;
             size_t nkey = key.size() - start;
+            std::vector<size_t> quesPoses;  // '?' の位置
             for (size_t i = 0; i < histCharDics.size() && i < nkey; ++i) {
                 if (i > 0 && nkey <= i + SETTINGS->histMapGobiMaxLength) {
                     // '|' を含む候補を集める(ただし最大語尾長以下の場合)
@@ -167,6 +168,8 @@ namespace {
                 }
                 auto mch = key[start + i];
                 if (mch == '?') {
+                    _LOG_DEBUGH(_T("'?' found in key=%s: start=%d, i=%d"), MAKE_WPTR(key), start, i);
+                    quesPoses.push_back(i);
                     // '?' なら全部にマッチするとみなし、長さだけをチェック
                     if (i > 0 && !result.empty()) {
                         std::set<MString> newResult;
@@ -190,6 +193,32 @@ namespace {
             }
             _LOG_DEBUGH(_T("result.size=%d, histMaps.size()=%d"), result.size(), histMaps.size());
             utils::apply_union(result, histMaps);
+            if (!quesPoses.empty()) {
+                // '?' があった
+                _LOG_DEBUGH(_T("'?' pos=%d, %d, %d"), quesPoses.size() > 0 ? quesPoses[0] : -1, quesPoses.size() > 1 ? quesPoses[1] : -1, quesPoses.size() > 2 ? quesPoses[2] : -1);
+                std::set<MString> newResult;
+                for (auto w : result) {
+                    _LOG_DEBUGH(_T("CHECK: w=%s"), MAKE_WPTR(w));
+                    size_t vbarPos = w.find_first_of(VERT_BAR);
+                    bool bFound = true;
+                    for (auto i : quesPoses) {
+                        if (i >= vbarPos || i >= w.size() || utils::is_hiragana(w[i])) {
+                            bFound = false;
+                            break;
+                        }
+                    }
+                    if (bFound) {
+                        _LOG_DEBUGH(_T("'?' match: w=%s"), MAKE_WPTR(w));
+                        newResult.insert(w);
+                    }
+                }
+                if (newResult.empty()) {
+                    result.clear();
+                } else {
+                    result = newResult;
+                }
+                _LOG_DEBUGH(_T("'?' found: result.size=%d"), result.size());
+            }
             _LOG_DEBUGH(_T("LEAVE: result.size=%d"), result.size());
             return result;
         }
