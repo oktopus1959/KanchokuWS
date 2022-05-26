@@ -871,7 +871,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                         // エラー
                         parseError();
-                        return TOKEN.END;
+                        return TOKEN.IGNORE;
                 }
             }
         }
@@ -1042,7 +1042,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // 何らかのデリミタが来るまで読みこんで、currentStr に格納。
         void readBareString(char c = '\0') {
             var sb = new StringBuilder();
-            bool isOutputChar() { return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c >= 0x1000; }
+            bool isOutputChar() { return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c >= 0x80; }
             if (c != '\0') {
                 if (!isOutputChar()) return;
                 sb.Append(c);
