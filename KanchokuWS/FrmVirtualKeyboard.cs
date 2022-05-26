@@ -1760,11 +1760,6 @@ namespace KanchokuWS
             frmMain.ReadMazegakiWikipediaDic();
         }
 
-        private void ReloadSettings_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmMain.ReloadSettingsAndDefFiles();
-        }
-
         private void FollowCaret_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Settings.VirtualKeyboardPosFixedTemporarily = false;
@@ -1773,6 +1768,11 @@ namespace KanchokuWS
         private void ExcangeTable_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             frmMain.ExchangeCodeTable();
+        }
+
+        private void ReloadSettigs_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMain.ReloadSettingsAndDefFiles();
         }
     }
 }

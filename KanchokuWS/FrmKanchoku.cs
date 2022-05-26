@@ -1801,16 +1801,16 @@ namespace KanchokuWS
             ReadMazegakiWikipediaDic();
         }
 
-        private void ReloadSettings_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            logger.Info("CALLED");
-            ReloadSettingsAndDefFiles();
-        }
-
         private void ExchangeTable_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             logger.Info("CALLED");
             ExchangeCodeTable();
+        }
+
+        private void ReloadSettings_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            logger.Info("CALLED");
+            ReloadSettingsAndDefFiles();
         }
     }
 
