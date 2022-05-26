@@ -116,7 +116,6 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY, 0, "HiraganaStrokeGuide", "", "ひらがな入力による読み打鍵ガイドモード"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_ZENKAKU_CONVERSION_DECKEY, 0, "ZenkakuConversion", "", "全角変換入力モードのON/OFF"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_KATAKANA_CONVERSION_DECKEY, 0, "KatakanaConversion", "", "カタカナ入力モードのON/OFF"),
-            new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.SHIFT_SPACE_DECKEY, 0, "ShiftSpace", "", "Shift+Space に変換"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY, 0, "LeftShiftBlocker", "", "交ぜ書きブロッカーの左移動 (交ぜ書き候補が縦列表示されている時に有効)"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY, 0, "RightShiftBlocker", "", "交ぜ書きブロッカーの右移動 (交ぜ書き候補が縦列表示されている時に有効)"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.LEFT_SHIFT_MAZE_START_POS_DECKEY, 0, "LeftShiftMazeStartPos", "", "交ぜ書き開始位置の左移動 (交ぜ書き変換の確定直後、あるいは「先頭候補を無条件に出力する」を有効にしている時に有効)"),
@@ -125,6 +124,7 @@ namespace KanchokuWS
                 "copyselectionandsendtodictionary", null, 
                 "アクティブウィンドウに Ctrl-C を送りつけて、選択されている部分をクリップボードにコピーし、\nそれをデコーダの辞書に送って登録する。\n" +
                 "形式はミニバッファへのコピペによる辞書登録と同じで、履歴、交ぜ書き、連想の3通りの登録が可能"),
+            new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.SHIFT_SPACE_DECKEY, 0, "ShiftSpace", "", "Shift+Space に変換"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.DIRECT_SPACE_DECKEY, 0, "DirectSpace", "", "デコーダを通さずに直接Spaceをアプリに送る"),
         };
 
