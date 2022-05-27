@@ -15,6 +15,8 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegakiDic)
 
+#define DONT_READ_MAZEDIC_ON_DEBUG 1
+
 #if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -1076,6 +1078,7 @@ int MazegakiDic::CreateMazegakiDic(const tstring& mazeFile) {
     auto pImpl = new MazegakiDicImpl();
     Singleton.reset(pImpl);
 
+#if defined(NDEBUG) || DONT_READ_MAZEDIC_ON_DEBUG == 0
     // '|' で区切られた複数ファイルを対象とする
     for (const auto& name : utils::split(mazeFile, '|')) {
         if (name.empty()) continue;
@@ -1100,6 +1103,8 @@ int MazegakiDic::CreateMazegakiDic(const tstring& mazeFile) {
             result = -1;
         }
     }
+#endif
+
     LOG_INFO(_T("LEAVE: result=%d"), result);
     return result;
 }
