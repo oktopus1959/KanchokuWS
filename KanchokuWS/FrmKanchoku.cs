@@ -1395,6 +1395,7 @@ namespace KanchokuWS
                     logger.DebugH("PATH-1");
                     // 第2打鍵以降の待ちで、何かVkey出力がある場合は、打鍵クリア
                     if (decoderOutput.IsDeckeyToVkey()) {
+                        logger.DebugH(() => $"send CLEAR_STROKE_DECKEY");
                         HandleDeckeyDecoder(decoderPtr, DecoderKeys.CLEAR_STROKE_DECKEY, 0, false, ref decoderOutput);
                     }
                 }
