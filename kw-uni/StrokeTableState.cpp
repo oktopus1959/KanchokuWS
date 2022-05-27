@@ -18,6 +18,7 @@
 #if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
+#define LOG_INFO LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
@@ -78,6 +79,11 @@ namespace {
             LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), face=%c, nodeDepth=%d"), NAME_PTR, deckey, deckey, myChar, DEPTH);
             STATE_COMMON->AppendOrigString(myChar); // RootStrokeTableState が作成されたときに OrigString はクリアされている
 
+            if (!myNode()->isRootStrokeTableNode()) {
+                // RootStrokeNodeでなければ通常面に落としこむ
+                deckey = UNSHIFT_DECKEY(deckey);
+                LOG_INFO(_T("UNSHIFT_DECKEY: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+            }
             if (STATE_COMMON->IsDecodeKeyboardCharMode()) {
                 // キーボードフェイス文字を返すモード
                 LOG_INFO(_T("SetOutString"));

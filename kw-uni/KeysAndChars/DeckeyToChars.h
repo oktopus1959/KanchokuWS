@@ -21,7 +21,7 @@ public:
 
     void ReadDefFile(const std::vector<wstring>&);
 
-    wchar_t GetCharFromDeckey(int deckeyId, wchar_t defChar = 0) {
+    wchar_t GetCharFromDeckey(int deckeyId, wchar_t defChar = '?') {
         if (deckeyId >= 0) {
             int id = deckeyId;
             if (id >= 0 && id < NORMAL_DECKEY_NUM) return normalChars[id];

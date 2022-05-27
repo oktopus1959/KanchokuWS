@@ -488,11 +488,14 @@ void State::dispatchDeckey(int deckey) {
         //    break;
         default:
             if (isShiftedKey(deckey)) {
+                _LOG_DEBUGH(_T("SHIFTED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
                 handleShiftKeys(deckey);
                 break;
             } else if (isCtrledKey(deckey)) {
+                _LOG_DEBUGH(_T("CTRLKEY: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
                 handleCtrlKeys(deckey);
             } else {
+                _LOG_DEBUGH(_T("DEFAULT: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
                 // 半全, 英数/Caps, 無変換, 変換, ひらがな
                 handleStrokeKeys(deckey);
             }
@@ -504,14 +507,14 @@ void State::dispatchDeckey(int deckey) {
 
 //-----------------------------------------------------------------------
 // ストロークキーデフォルトハンドラ
-void State::handleStrokeKeys(int hk) { LOG_INFO(_T("CALLED: deckey=%xH(%d)"), hk, hk); }
+void State::handleStrokeKeys(int _DEBUG_SENT(hk)) { _LOG_DEBUGH(_T("DO NOTHING: deckey=%xH(%d)"), hk, hk); }
 
 // スペースキーハンドラ
-void State::handleSpaceKey() { LOG_INFO(_T("CALLED")); handleStrokeKeys(STROKE_SPACE_DECKEY); }
+void State::handleSpaceKey() { _LOG_DEBUGH(_T("CALLED")); handleStrokeKeys(STROKE_SPACE_DECKEY); }
 
 //-----------------------------------------------------------------------
 // 特殊キーデフォルトハンドラ
-void State::handleSpecialKeys(int /*deckey*/) { LOG_INFOH(_T("CALLED")); setThroughDeckeyFlag(); }
+void State::handleSpecialKeys(int /*deckey*/) { LOG_INFOH(_T("THROUGH")); setThroughDeckeyFlag(); }
 
 // FullEscape デフォルトハンドラ
 void State::handleFullEscape() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(FULL_ESCAPE_DECKEY); }
@@ -532,7 +535,7 @@ void State::handleZenkakuConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKe
 void State::handleKatakanaConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(TOGGLE_KATAKANA_CONVERSION_DECKEY); }
 
 // handleClearStroke デフォルトハンドラ
-void State::handleClearStroke() { LOG_INFOH(_T("CALLED")); }
+void State::handleClearStroke() { LOG_INFOH(_T("DO NOTHING")); }
 
 // handleToggleBlocker デフォルトハンドラ
 void State::handleToggleBlocker() {
@@ -551,7 +554,7 @@ void State::handleDecoderOff() { LOG_INFOH(_T("CALLED")); }
 bool State::handleFunctionKeys(int
 _DEBUG_SENT(hk)
 ) {
-    _LOG_DEBUGH(_T("CALLED: deckey=%xH(%d)"), hk, hk);
+    _LOG_DEBUGH(_T("DO NOTHING: deckey=%xH(%d)"), hk, hk);
     return false;
 }
 
@@ -561,7 +564,7 @@ void State::handleCtrlKeys(int /*deckey*/) { LOG_INFOH(_T("CALLED")); setThrough
 
 //-----------------------------------------------------------------------
 // Shiftキー デフォルトハンドラ
-void State::handleShiftKeys(int /*deckey*/) { STATE_COMMON->OutputDeckeyChar(); }
+void State::handleShiftKeys(int /*deckey*/) { LOG_INFOH(_T("DEFAULT")); STATE_COMMON->OutputDeckeyChar(); }
 
 // < ハンドラ
 void State::handleLeftTriangle() { handleShiftKeys(LEFT_TRIANGLE_DECKEY); }
