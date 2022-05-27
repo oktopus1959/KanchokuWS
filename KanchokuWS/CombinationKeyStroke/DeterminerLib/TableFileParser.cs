@@ -387,6 +387,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             int row = 0;
             //bool isPrevDelim = true;
             TOKEN prevToken = 0;
+            TOKEN prevPrevToken = 0;
             readNextToken();
             while (!bError && currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
@@ -421,7 +422,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         break;
 
                     case TOKEN.NEW_LINE:           // 次の行
-                        if (prevToken == TOKEN.VBAR) {
+                        if (prevToken == TOKEN.VBAR || prevPrevToken == TOKEN.VBAR) {
                             idx = calcNewLinedIndex(++row);
                         }
                         break;
@@ -441,6 +442,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         bError = true;
                         break;
                 }
+                prevPrevToken = prevToken;
                 prevToken = currentToken;
 
                 readNextToken();
@@ -484,6 +486,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 return;
             }
             TOKEN prevToken = 0;
+            TOKEN prevPrevToken = 0;
             readNextToken();
             while (currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
@@ -515,7 +518,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         break;
 
                     case TOKEN.NEW_LINE:
-                        if (prevToken == TOKEN.VBAR) {
+                        if (prevToken == TOKEN.VBAR || prevPrevToken == TOKEN.VBAR) {
                             n = calcNewLinedIndex(++row);
                         }
                         break;
@@ -534,6 +537,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         parseError();
                         break;
                 }
+                prevPrevToken = prevToken;
                 prevToken = currentToken;
 
                 readNextToken();
