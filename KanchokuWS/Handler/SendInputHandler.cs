@@ -505,7 +505,7 @@ namespace KanchokuWS.Handler
 
         private int sendFuncKeyInputs(string str, int pos, int strLen)
         {
-            //logger.DebugH(() => $"CALLED: str={str}, idx={idx}");
+            logger.DebugH(() => $"CALLED: str={str}, pos={pos}, strLen={strLen}");
             var info = new InputInfo(5);
             INPUT[] inputs = info.Inputs;
             int idx = info.Index;
@@ -648,6 +648,7 @@ namespace KanchokuWS.Handler
 
         private static void sendInputsVkey(ushort vkey)
         {
+            logger.DebugH(() => $"CALLED: vkey={vkey}");
             var info = new InputInfo(2);
             setVkeyInputs(vkey, info);
             sendInput(info);
@@ -703,7 +704,7 @@ namespace KanchokuWS.Handler
                 } else {
                     string faceStr = null;
                     logger.DebugH(() => $"ImeEnabled={IMEHandler.ImeEnabled}, ImeSendInputInRoman={Settings.ImeSendInputInRoman}, ImeSendInputInKana={Settings.ImeSendInputInKana}");
-                    if (IMEHandler.ImeEnabled && !isUnicodeSendWindow()) {
+                    if (IMEHandler.ImeEnabled && (str[i] == ' ' || !isUnicodeSendWindow())) {
                         if (Settings.ImeSendInputInRoman) {
                             faceStr = str[i]._hiraganaToRoman();
                             if (faceStr._isEmpty()) {
