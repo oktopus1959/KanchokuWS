@@ -296,6 +296,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
+        /// <summary>もしSpaceキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる</summary>
+        void addSpaceMyCharFunctionIfNeeded()
+        {
+            if (rootTableNode.getNth(DecoderKeys.STROKE_SPACE_DECKEY) == null) {
+                outputLines.Add("-40>@^");
+            }
+        }
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -352,6 +360,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 keyComboPool.DebugPrint();
             }
 
+            addSpaceMyCharFunctionIfNeeded();
             writeAllLines(outFilename, outputLines);
 
             showErrorMessage();
