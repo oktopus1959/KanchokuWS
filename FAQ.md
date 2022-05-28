@@ -1,5 +1,5 @@
 # FAQ
-# KanchokuWS -- 漢直Win Spoiler
+## KanchokuWS -- 漢直Win Spoiler
 KanchokuWS は Windows 用の漢字直接入力ツールです。
 
 本書は KanchokuWS に関する FAQ(よくある質問と回答)をまとめたものです。
