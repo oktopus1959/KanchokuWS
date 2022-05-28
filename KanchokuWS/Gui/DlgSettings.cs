@@ -350,6 +350,13 @@ namespace KanchokuWS.Gui
         }
 
         //-----------------------------------------------------------------------------------
+        private string getTableFileDir()
+        {
+            var rootDir = KanchokuIni.Singleton.KanchokuDir;
+            var tableFileDir = rootDir._joinPath(Settings.TableFileDir);
+            return Helper.DirectoryExists(tableFileDir) ? tableFileDir : rootDir;
+        }
+
         /// <summary> 基本設定</summary>
         void readSettings_tabBasic()
         {
@@ -561,7 +568,10 @@ namespace KanchokuWS.Gui
         string getTableName(string filepath)
         {
             logger.DebugH(() => $"filepath={filepath}");
-            var filename = Helper.GetFileName(filepath);
+            var filename = filepath._getFileName();
+            var parentDir = filepath._getDirPath()._getFileName();
+            if (parentDir._equalsTo(Settings.TableFileDir)) filename = parentDir._joinPath(filename);
+
             var content = Helper.GetFileHead(filepath, 2048);
             if (content._notEmpty()) {
                 //logger.DebugH(() => $"content={content}");
@@ -574,14 +584,14 @@ namespace KanchokuWS.Gui
 
         private void comboBox_tableFile_DropDown(object sender, EventArgs e)
         {
-            var fileList = Helper.GetFiles(KanchokuIni.Singleton.KanchokuDir, "*.tbl").Select(x => getTableName(x)).ToArray();
+            var fileList = Helper.GetFiles(getTableFileDir(), "*.tbl").Select(x => getTableName(x)).ToArray();
             comboBox_tableFile.Items.Clear();
             comboBox_tableFile.Items.AddRange(fileList);
         }
 
         private void comboBox_tableFile2_DropDown(object sender, EventArgs e)
         {
-            var fileList = Helper.GetFiles(KanchokuIni.Singleton.KanchokuDir, "*.tbl").Select(x => getTableName(x)).ToArray();
+            var fileList = Helper.GetFiles(getTableFileDir(), "*.tbl").Select(x => getTableName(x)).ToArray();
             comboBox_tableFile2.Items.Clear();
             comboBox_tableFile2.Items.AddRange(fileList);
         }
@@ -1603,7 +1613,7 @@ namespace KanchokuWS.Gui
             logger.InfoH("CALLED");
             //try {
             //    if (Settings.ModConversionFile._notEmpty()) {
-            //        System.Diagnostics.Process.Start(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.ModConversionFile));
+            //        System.Diagnostics.Process.Start(TableFileDir._joinPath(Settings.ModConversionFile));
             //    }
             //} catch { }
             openFileByTxtAssociatedProgram(textBox_modConversionFile.Text);
@@ -1614,7 +1624,7 @@ namespace KanchokuWS.Gui
             logger.InfoH("CALLED");
             //try {
             //    if (Settings.KanjiYomiFile._notEmpty()) {
-            //        System.Diagnostics.Process.Start(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KanjiYomiFile));
+            //        System.Diagnostics.Process.Start(TableFileDir._joinPath(Settings.KanjiYomiFile));
             //    }
             //} catch { }
             openFileByTxtAssociatedProgram(Settings.KanjiYomiFile);

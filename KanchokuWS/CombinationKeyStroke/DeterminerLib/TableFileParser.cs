@@ -1285,7 +1285,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         private void writeAllLines(string filename, List<string> lines)
         {
             var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
-            Helper.CreateDirectory(Helper.GetDirectoryName(path));
+            Helper.CreateDirectory(path._getDirPath());
             logger.InfoH($"ENTER: path={path}");
             try {
                 using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite)) {

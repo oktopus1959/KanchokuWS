@@ -1479,7 +1479,7 @@ namespace Utils
         /// <returns></returns>
         public static string _getDirPath(this string path)
         {
-            return Helper.GetDirectoryName(path);
+            return Helper.GetDirectoryPath(path);
         }
 
         /// <summary>

@@ -133,6 +133,8 @@ namespace KanchokuWS
         public static string AutoBushuFile { get; private set; }
         public static string CharsDefFile { get; private set; }
         public static string EasyCharsFile { get; private set; }
+
+        public const string TableFileDir = "tables";
         public static string TableFile { get; private set; }
         public static string TableFile2 { get; private set; }
         public static string HistoryFile { get; private set; }
@@ -986,7 +988,7 @@ namespace KanchokuWS
             AutoBushuFile = addDecoderSetting("autoBushuFile", "bushuAuto", "kwbushu.aut");
             CharsDefFile = addDecoderSetting("charsDefFile", $"chars.{KeyboardFile._split('.')._getNth(0)._orElse("106")}.txt");
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
-            TableFile = addDecoderSetting("tableFile", "tutr.tbl");
+            TableFile = addDecoderSetting("tableFile", $"{TableFileDir}\\tutr.tbl");
             TableFile2 = addDecoderSetting("tableFile2", "");
             KanjiYomiFile = addDecoderSetting("kanjiYomiFile", "kanji-yomi.txt");
             //addDecoderSetting("strokeHelpFile");

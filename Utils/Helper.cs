@@ -452,7 +452,7 @@ namespace Utils
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string GetDirectoryName(string path)
+        public static string GetDirectoryPath(string path)
         {
             return path._notEmpty() ? Path.GetDirectoryName(path) : "";
         }
