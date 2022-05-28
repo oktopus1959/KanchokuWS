@@ -567,10 +567,10 @@ namespace KanchokuWS.Gui
         // テーブルファイル名を取得
         string getTableName(string filepath)
         {
-            logger.DebugH(() => $"filepath={filepath}");
             var filename = filepath._getFileName();
             var parentDir = filepath._getDirPath()._getFileName();
             if (parentDir._equalsTo(Settings.TableFileDir)) filename = parentDir._joinPath(filename);
+            logger.DebugH(() => $"filepath={filepath}, filename={filename}, parentDir={parentDir}");
 
             var content = Helper.GetFileHead(filepath, 2048);
             if (content._notEmpty()) {

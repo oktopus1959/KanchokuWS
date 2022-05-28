@@ -165,7 +165,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
     class TableFileParser
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         private List<string> tableLines;
 
@@ -769,15 +769,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         }
                     } else if (lcStr == "end") {
                         readWord();
-                        switch (currentStr._toLower()) {
-                            case "combination":
-                            case "overlapping":
+                        switch (currentStr._toLower()._substring(0, 5)) {
+                            case "combi":
+                            case "overl":
                                 shiftKeyKind = ShiftKeyKind.None;
                                 break;
                             case "shift":
+                            case "sands":
                                 shiftPlane = 0;
                                 break;
-                            case "__include__":
+                            case "__inc":
                                 logger.DebugH(() => $"END INCLUDE/LOAD: lineNumber={lineNumber}");
                                 blockInfoStack.Pop(lineNumber + 1);
                                 break;
