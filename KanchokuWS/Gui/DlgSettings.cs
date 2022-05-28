@@ -180,9 +180,11 @@ namespace KanchokuWS.Gui
             dgvAbout._setDefaultFont(DgvHelpers.FontYUG9);
             //dgvAbout._setDefaultFont(DgvHelpers.FontMSG8);
             //dgvAbout._disableToolTips();
-            int itemWidth = (int)(150 * dpiRate);
+            const int DGV_COL1_WIDTH = 150;
+            const int DGV_COL2_WIDTH = 450;
+            int itemWidth = (int)(DGV_COL1_WIDTH * dpiRate);
             dgvAbout.Columns.Add(dgvAbout._makeTextBoxColumn_ReadOnly("itemName", "", itemWidth)._setUnresizable());
-            int descWidth = (int)(410 * dpiRate);
+            int descWidth = (int)(DGV_COL2_WIDTH * dpiRate);
             dgvAbout.Columns.Add(dgvAbout._makeTextBoxColumn_ReadOnly("description", "", descWidth)._setUnresizable()._setWrapMode());
 
             int nRow = 10;
@@ -202,7 +204,7 @@ namespace KanchokuWS.Gui
             dgvAbout.Rows[iRow].Cells[0].Value = "動作対象環境";
             dgvAbout.Rows[iRow++].Cells[1].Value = "Windows 10 (.NET Framework 4.8)";
             dgvAbout.Rows[iRow].Cells[0].Value = "ドキュメント";
-            dgvAbout.Rows[iRow++].Cells[1] = new DataGridViewLinkCell() { Value = Settings.DocumentUrl };
+            dgvAbout.Rows[iRow++].Cells[1] = new DataGridViewLinkCell() { Value = Settings.ManualUrl };
             dgvAbout.Rows[iRow].Cells[0].Value = "ビルド日時";
             dgvAbout.Rows[iRow++].Cells[1].Value = Assembly.GetExecutingAssembly()._getLinkerTime().ToString("yyyy/M/d HH:mm:ss");
             dgvAbout.Rows[iRow].Cells[0].Value = "初版公開日";
@@ -223,7 +225,7 @@ namespace KanchokuWS.Gui
                 var cell = dgvAbout.Rows[e.RowIndex].Cells[1];
                 if (cell is DataGridViewLinkCell) {
                     var link = cell.Value.ToString();
-                    if (link._reMatchIcase(@"^https?://")) openDocumentUrl();
+                    if (link._reMatchIcase(@"^https?://")) openDocumentUrl(Settings.ManualUrl);
                 }
             }
         }
@@ -332,9 +334,9 @@ namespace KanchokuWS.Gui
 
         //----------------------------------------------------------------------------------------
 
-        private void openDocumentUrl()
+        private void openDocumentUrl(string url)
         {
-            System.Diagnostics.Process.Start(Settings.DocumentUrl);
+            System.Diagnostics.Process.Start(url);
         }
 
         /// <summary> tabPage に含まれるコントロールをチェッカーに登録する</summary>
@@ -2250,7 +2252,7 @@ namespace KanchokuWS.Gui
         private void button_document_Click(object sender, EventArgs e)
         {
             logger.InfoH("CALLED");
-            openDocumentUrl();
+            openDocumentUrl(Settings.FaqUrl);
         }
 
         private void radioButton_normalVkb_CheckedChanged(object sender, EventArgs e)

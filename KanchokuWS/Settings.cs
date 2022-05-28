@@ -49,7 +49,9 @@ namespace KanchokuWS
         }
 
         /// <summary> ドキュメントへのURL </summary>
-        public static string DocumentUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
+        public static string ReadmeUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
+        public static string ManualUrl => "https://github.com/oktopus1959/KanchokuWS/blob/main/MANUAL.md#manual";
+        public static string FaqUrl => "https://github.com/oktopus1959/KanchokuWS/blob/main/FAQ.md#faq";
 
         //-------------------------------------------------------------------------------------
         /// <summary>Ctrl修飾なしで Decoder をアクティブにするホットキーの仮想キーコード</summary> 

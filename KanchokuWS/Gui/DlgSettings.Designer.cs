@@ -459,6 +459,7 @@ namespace KanchokuWS.Gui
             this.button_aboutClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.checkBox_convertHiraganaToKatakanaNormalPlane = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_onSecondaryTable = new KanchokuWS.Gui.ColorTextBox();
@@ -474,7 +475,6 @@ namespace KanchokuWS.Gui
             this.textBox_alphaModeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.Gui.ColorTextBox();
-            this.checkBox_convertHiraganaToKatakanaNormalPlane = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -617,8 +617,8 @@ namespace KanchokuWS.Gui
             this.button_document.Size = new System.Drawing.Size(82, 23);
             this.button_document.TabIndex = 5;
             this.button_document.TabStop = false;
-            this.button_document.Text = "ドキュメント(&D)";
-            this.toolTip1.SetToolTip(this.button_document, "ドキュメントのURLをブラウザで開きます");
+            this.button_document.Text = "FAQ(&F)";
+            this.toolTip1.SetToolTip(this.button_document, "「よくある質問と回答」ページのURLをブラウザで開きます");
             this.button_document.UseVisualStyleBackColor = true;
             this.button_document.Click += new System.EventHandler(this.button_document_Click);
             // 
@@ -5633,6 +5633,18 @@ namespace KanchokuWS.Gui
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // checkBox_convertHiraganaToKatakanaNormalPlane
+            // 
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.AutoSize = true;
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.Location = new System.Drawing.Point(5, 70);
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.Name = "checkBox_convertHiraganaToKatakanaNormalPlane";
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.Size = new System.Drawing.Size(208, 19);
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.TabIndex = 4;
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.Text = "通常面のひらがなをカタカナに変換する";
+            this.toolTip1.SetToolTip(this.checkBox_convertHiraganaToKatakanaNormalPlane, "通常面(漢直面)で入力した平仮名を、対応するカタカナに変換します。\r\n\r\nSandS などによるひらがな入力を並用しているような場合は、ここをONに\r\nしておくと" +
+        "便利かもしれません。\r\n\r\n※ この設定は、同時打鍵に対しては効果がありません。");
+            this.checkBox_convertHiraganaToKatakanaNormalPlane.UseVisualStyleBackColor = true;
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -5809,18 +5821,6 @@ namespace KanchokuWS.Gui
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // checkBox_convertHiraganaToKatakanaNormalPlane
-            // 
-            this.checkBox_convertHiraganaToKatakanaNormalPlane.AutoSize = true;
-            this.checkBox_convertHiraganaToKatakanaNormalPlane.Location = new System.Drawing.Point(5, 70);
-            this.checkBox_convertHiraganaToKatakanaNormalPlane.Name = "checkBox_convertHiraganaToKatakanaNormalPlane";
-            this.checkBox_convertHiraganaToKatakanaNormalPlane.Size = new System.Drawing.Size(208, 19);
-            this.checkBox_convertHiraganaToKatakanaNormalPlane.TabIndex = 4;
-            this.checkBox_convertHiraganaToKatakanaNormalPlane.Text = "通常面のひらがなをカタカナに変換する";
-            this.toolTip1.SetToolTip(this.checkBox_convertHiraganaToKatakanaNormalPlane, "通常面(漢直面)で入力した平仮名を、対応するカタカナに変換します。\r\n\r\nSandS などによるひらがな入力を並用しているような場合は、ここをONに\r\nしておくと" +
-        "便利かもしれません。\r\n\r\n※ この設定は、同時打鍵に対しては効果がありません。");
-            this.checkBox_convertHiraganaToKatakanaNormalPlane.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
