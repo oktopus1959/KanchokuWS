@@ -1,4 +1,5 @@
-# KanchokuWS -- 漢直Win Spoiler -- 利用者ガイド
+# MANUAL
+## KanchokuWS -- 漢直Win Spoiler -- 利用者ガイド
 KanchokuWS は、[漢直Win（漢直窓）](https://github.com/kanchoku/kw)の使い勝手を受け継ぎ、
 かつ、利用者を徹底的に甘やかすことを目標として新たに開発された、
 Windows 用の漢字直接入力ツールです。
