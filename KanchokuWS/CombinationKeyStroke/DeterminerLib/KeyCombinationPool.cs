@@ -130,7 +130,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public KeyCombination GetEntry(Stroke stroke)
         {
-            return GetEntry(stroke.OrigDecoderKey);
+            var combo = GetEntry(stroke.OrigDecoderKey);
+            if (combo == null && stroke.OrigDecoderKey >= DecoderKeys.PLANE_DECKEY_NUM) {
+                // 見つからない、かつ拡張シフトコードならば、Moduloizeしたキーでも試す
+                combo = GetEntry(stroke.ModuloDecKey);
+            }
+            return combo;
         }
 
         /// <summary>

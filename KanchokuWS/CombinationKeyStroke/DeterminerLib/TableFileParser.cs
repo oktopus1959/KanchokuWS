@@ -165,7 +165,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
     class TableFileParser
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         private List<string> tableLines;
 

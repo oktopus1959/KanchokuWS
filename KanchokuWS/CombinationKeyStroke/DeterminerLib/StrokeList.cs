@@ -131,7 +131,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public List<int> GetKeyCombinationWhenKeyDown(int decKey, DateTime dtNow)
         {
             // 連続シフトでなければ何も返さない
-            if (KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey) return null;
+            if (KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey) {
+                logger.DebugH("No unordered shift key");
+                return null;
+            }
 
             // 連続シフトの場合は、同時打鍵キーの数は最大2とする
             List<int> getAndCheckCombo(List<Stroke> list)

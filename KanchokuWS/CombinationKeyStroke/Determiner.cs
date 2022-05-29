@@ -64,7 +64,7 @@ namespace KanchokuWS.CombinationKeyStroke
         public List<int> KeyDown(int decKey, Action<int> handleComboKeyRepeat)
         {
             var dtNow = DateTime.Now;
-            logger.DebugH(() => $"ENTER: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}");
+            logger.DebugH(() => $"\nENTER: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}");
 
             List<int> result = null;
 
@@ -95,6 +95,7 @@ namespace KanchokuWS.CombinationKeyStroke
                     result = strokeList.GetKeyCombinationWhenKeyDown(decKey, DateTime.Now);
                 } else {
                     // 同時打鍵には使われないキーなので、そのまま返す
+                    logger.DebugH("Return ASIS");
                     result = Helper.MakeList(decKey);
                 }
             }
@@ -110,7 +111,7 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
         public List<int> KeyUp(int decKey)
         {
-            logger.DebugH(() => $"ENTER: decKey={decKey}");
+            logger.DebugH(() => $"\nENTER: decKey={decKey}");
             var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, DateTime.Now);
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
             return result;
