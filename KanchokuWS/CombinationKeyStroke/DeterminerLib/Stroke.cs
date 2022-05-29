@@ -56,6 +56,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void SetCombined() { IsCombined = true; }
 
+        /// <summary>同時打鍵のキーとしてつかわれたか</summary>
+        public bool IsUsedForOneshot { get; private set; }
+
+        public void SetUsedForOneshot() { IsUsedForOneshot = true; }
+
         /// <summary>キー打鍵時の時刻</summary>
         public DateTime KeyDt { get; private set; }
 

@@ -68,36 +68,40 @@ namespace KanchokuWS.CombinationKeyStroke
 
             List<int> result = null;
 
-            var stroke = new Stroke(decKey, dtNow);
-            logger.DebugH(() => stroke.DebugString());
+            try {
+                var stroke = new Stroke(decKey, dtNow);
+                logger.DebugH(() => stroke.DebugString());
 
-            // キーリピートのチェック
-            if (strokeList.DetectKeyRepeat(stroke)) {
-                // キーリピートが発生した場合
-                if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
-                    // キーリピートが可能なキーだった(BacSpaceとか)ので、それを返す
-                    logger.DebugH("Key repeated");
-                    result = Helper.MakeList(decKey);
+                // キーリピートのチェック
+                if (strokeList.DetectKeyRepeat(stroke)) {
+                    // キーリピートが発生した場合
+                    if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
+                        // キーリピートが可能なキーだった(BacSpaceとか)ので、それを返す
+                        logger.DebugH("Key repeated");
+                        result = Helper.MakeList(decKey);
+                    } else {
+                        // キーリピートが不可なキーは無視
+                        logger.DebugH("Key repeat ignored");
+                        // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出す
+                        if (stroke.IsComboShift) handleComboKeyRepeat(stroke.ComboShiftDecKey);
+                    }
                 } else {
-                    // キーリピートが不可なキーは無視
-                    logger.DebugH("Key repeat ignored");
-                    // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出す
-                    if (stroke.IsComboShift) handleComboKeyRepeat(stroke.ComboShiftDecKey);
+                    // キーリピートではない通常の押下の場合は、同時打鍵判定を行う
+                    var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
+                    bool isStrokeListEmpty = strokeList.IsEmpty();
+                    logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={isStrokeListEmpty}");
+                    if (combo != null || !isStrokeListEmpty) {
+                        // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だったので、キューに追加して同時打鍵判定を行う
+                        strokeList.Add(stroke);
+                        result = strokeList.GetKeyCombinationWhenKeyDown(decKey, DateTime.Now);
+                    } else {
+                        // 同時打鍵には使われないキーなので、そのまま返す
+                        logger.DebugH("Return ASIS");
+                        result = Helper.MakeList(decKey);
+                    }
                 }
-            } else {
-                // キーリピートではない通常の押下の場合は、同時打鍵判定を行う
-                var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
-                bool isStrokeListEmpty = strokeList.IsEmpty();
-                logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={isStrokeListEmpty}");
-                if (combo != null || !isStrokeListEmpty) {
-                    // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だったので、キューに追加して同時打鍵判定を行う
-                    strokeList.Add(stroke);
-                    result = strokeList.GetKeyCombinationWhenKeyDown(decKey, DateTime.Now);
-                } else {
-                    // 同時打鍵には使われないキーなので、そのまま返す
-                    logger.DebugH("Return ASIS");
-                    result = Helper.MakeList(decKey);
-                }
+            } catch (Exception ex) {
+                logger.Error(ex._getErrorMsg());
             }
 
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
@@ -112,8 +116,20 @@ namespace KanchokuWS.CombinationKeyStroke
         public List<int> KeyUp(int decKey)
         {
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
-            var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, DateTime.Now);
+            List<int> result = null;
+            try {
+                result = strokeList.GetKeyCombinationWhenKeyUp(decKey, DateTime.Now);
+            } catch (Exception ex) {
+                logger.Error(ex._getErrorMsg());
+            }
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
+            if (strokeList.Count > 5) {
+                logger.Warn($"strokeList.Count={strokeList.Count}");
+                if (strokeList.Count > 10) {
+                    logger.Warn($"Clear strokeList");
+                    strokeList.Clear();
+                }
+            }
             return result;
         }
 
