@@ -5,6 +5,13 @@ def make_toc_line(s)
 end
 
 while line = gets
+  if line =~ /^## 目次/
+    #puts line
+    break
+  end
+end
+
+while line = gets
   line = line.strip
   if line =~ /^## +(.*[^\s])\s*$/ && line != "## 目次"
     puts "- #{make_toc_line($1)}"
