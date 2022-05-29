@@ -102,6 +102,7 @@ namespace KanchokuWS.CombinationKeyStroke
                 }
             } catch (Exception ex) {
                 logger.Error(ex._getErrorMsg());
+                strokeList.Clear();
             }
 
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
@@ -121,6 +122,7 @@ namespace KanchokuWS.CombinationKeyStroke
                 result = strokeList.GetKeyCombinationWhenKeyUp(decKey, DateTime.Now);
             } catch (Exception ex) {
                 logger.Error(ex._getErrorMsg());
+                strokeList.Clear();
             }
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
             if (strokeList.Count > 5) {

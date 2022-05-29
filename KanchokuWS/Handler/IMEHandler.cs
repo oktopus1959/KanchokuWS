@@ -12,7 +12,7 @@ namespace KanchokuWS.Handler
     // cf. [C#でIMEの変換モードを監視・変更する](https://qiita.com/kob58im/items/a1644b36366f4d094a2c)
     class IMEHandler
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         public enum IMEChangeState
         {
