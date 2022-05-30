@@ -1484,6 +1484,18 @@ namespace KanchokuWS
             return i;
         }
 
+        public string CallDecoderWithKey(int deckey, uint mod)
+        {
+            logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}");
+
+            // デコーダの呼び出し
+            HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, ref decoderOutput);
+
+            var result = decoderOutput.outString._toString();
+            logger.InfoH(() => $"LEAVE: result={result}");
+            return result;
+        }
+
         /// <summary>
         /// デコーダの直接呼び出し
         /// </summary>

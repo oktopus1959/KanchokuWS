@@ -124,8 +124,14 @@ public:
     // ストロークノードの更新
     static void UpdateStrokeNodes(const wstring& strokeSource);
 
-    // ストローク木の入れ替え
+    // 主・副ストローク木の入れ替え
     static int ExchangeStrokeTable();
+
+    // 主ストローク木を使う
+    static int UseStrokeTable1();
+
+    // 副ストローク木を使う
+    static int UseStrokeTable2();
 
     // 現在のストローク木の番号
     static int GetCurrentStrokeTableNum();

@@ -92,12 +92,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             var s = unprocList._getLast();
             if (s != null) {
                 if (s.IsSameKey(decKey)) {
-                    s.SetCombined();
-                    if (unprocList._safeCount() == 1) {
-                        // 未処理キーが1つで、それがリピートされたら comboList に移動しておく
-                        comboList.Add(s);
-                        unprocList.Clear();
-                    }
                     return true;
                 }
             } else {
@@ -317,8 +311,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             // タイミングチェック(1文字目ならリードタイムをチェック; 2文字目以降の場合は、対象キーダウンからシフトキーアップまでの時間によって判定)
             double ms1 = unprocList[startPos].TimeSpanMs(unprocList[checkPos]);
             double ms2 = unprocList[checkPos].TimeSpanMs(dtNow);
-            logger.DebugH(() => $"ms1={ms1:f2}ms, threshold={Settings.CombinationMaxAllowedLeadTimeMs}ms, ms2={ms2:f2}ms, threshold={Settings.CombinationKeyTimeMs}ms");
-            return (!bSecondComboCheck && ms1 <= Settings.CombinationMaxAllowedLeadTimeMs) || (bSecondComboCheck && ms2 >= Settings.CombinationKeyTimeMs);
+            bool result = (!bSecondComboCheck && ms1 <= Settings.CombinationMaxAllowedLeadTimeMs) || (bSecondComboCheck && ms2 >= Settings.CombinationKeyTimeMs);
+            logger.DebugH(() => $"RESULT={result}: !bSecondComboCheck={!bSecondComboCheck} && (ms1={ms1:f2}ms <= threshold={Settings.CombinationMaxAllowedLeadTimeMs}ms || ms2={ms2:f2}ms >= threshold={Settings.CombinationKeyTimeMs}ms)");
+            return result;
         }
 
         public string ToDebugString()

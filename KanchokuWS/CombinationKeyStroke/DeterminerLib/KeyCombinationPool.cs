@@ -39,6 +39,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"CurrentPool={(CurrentPool == Singleton1 ? 1 : 2)}");
         }
 
+        public static void UsePrimaryPool()
+        {
+            CurrentPool = Singleton1;
+        }
+
+        public static void UseSecondaryPool()
+        {
+            CurrentPool = Singleton2;
+        }
+
         /// <summary>
         /// 同時打鍵組合せ
         /// </summary>        

@@ -46,6 +46,16 @@ namespace KanchokuWS.CombinationKeyStroke
             KeyCombinationPool.ExchangeCurrentPool();
         }
 
+        public void UsePrimaryPool()
+        {
+            KeyCombinationPool.UsePrimaryPool();
+        }
+
+        public void UseSecondaryPool()
+        {
+            KeyCombinationPool.UseSecondaryPool();
+        }
+
         public bool IsEnabled => KeyCombinationPool.CurrentPool.Enabled;
 
         /// <summary>
@@ -83,7 +93,7 @@ namespace KanchokuWS.CombinationKeyStroke
                         // キーリピートが不可なキーは無視
                         logger.DebugH("Key repeat ignored");
                         // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出す
-                        if (stroke.IsComboShift) handleComboKeyRepeat(stroke.ComboShiftDecKey);
+                        if (stroke.IsComboShift && handleComboKeyRepeat != null) handleComboKeyRepeat(stroke.ComboShiftDecKey);
                     }
                 } else {
                     // キーリピートではない通常の押下の場合は、同時打鍵判定を行う

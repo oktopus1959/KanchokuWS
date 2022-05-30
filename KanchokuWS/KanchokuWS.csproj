@@ -70,6 +70,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gui\DlgSettings_Develop.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Handler\ActiveWindowHandler.cs" />
     <Compile Include="Gui\BackColorComboBox.cs">
       <SubType>Component</SubType>

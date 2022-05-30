@@ -375,13 +375,25 @@ void StrokeTableNode::CopyChildrenFace(mchar_t* faces, size_t facesSize) {
     _LOG_DEBUGH(_T("LEAVE"));
 }
 // -------------------------------------------------------------------
-// ストローク木の入れ替え
+// 主・副ストローク木の入れ替え
 int StrokeTableNode::ExchangeStrokeTable() {
     if (RootStrokeNode == RootStrokeNode1.get()) {
         if (RootStrokeNode2.get() != nullptr) RootStrokeNode = RootStrokeNode2.get();
     } else {
         RootStrokeNode = RootStrokeNode1.get();
     }
+    return GetCurrentStrokeTableNum();
+}
+
+// 主ストローク木の使用
+int StrokeTableNode::UseStrokeTable1() {
+    RootStrokeNode = RootStrokeNode1.get();
+    return GetCurrentStrokeTableNum();
+}
+
+// 副ストローク木の使用
+int StrokeTableNode::UseStrokeTable2() {
+    if (RootStrokeNode2.get() != nullptr) RootStrokeNode = RootStrokeNode2.get();
     return GetCurrentStrokeTableNum();
 }
 

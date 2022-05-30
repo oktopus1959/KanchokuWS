@@ -428,6 +428,9 @@ public:
             } else if (cmd == _T("reloadSettings")) {
                 // 設定の再読み込み
                 if (items.size() > 1 && !items[1].empty()) reloadSettings(items[1]);
+            } else if (cmd == _T("createStrokeTrees")) {
+                // ストローク木の再構築
+                createStrokeTrees();
             } else if (cmd == _T("saveDictFiles")) {
                 // ファイル保存
                 SaveDicts();
@@ -438,10 +441,17 @@ public:
                 // ローマ字テーブルを作成してファイルに書き出す
                 VkbTableMaker::SaveRomanStrokeTable(items.size() >= 2 ? items[1].c_str() : 0, items.size() >= 3 ? items[2].c_str() : 0);
             } else if (cmd == _T("SaveEelllJsTable")) {
+                // eelll/JS用テーブルを作成してファイルに書き出す
                 VkbTableMaker::SaveEelllJsTable();
             } else if (cmd == _T("exchangeCodeTable")) {
-                // eelll/JS用テーブルを作成してファイルに書き出す
+                // 主・副テーブルを切り替える
                 outParams->strokeTableNum = StrokeTableNode::ExchangeStrokeTable();
+            } else if (cmd == _T("useCodeTable1")) {
+                // 主テーブルに切り替える
+                outParams->strokeTableNum = StrokeTableNode::UseStrokeTable1();
+            } else if (cmd == _T("useCodeTable2")) {
+                // 副テーブルに切り替える
+                outParams->strokeTableNum = StrokeTableNode::UseStrokeTable2();
             } else if (cmd == _T("readBushuAssoc")) {
                 // 連想辞書から定義文字列を読み出してくる
                 readBushuAssoc(items[1], outParams->faceStrings);
