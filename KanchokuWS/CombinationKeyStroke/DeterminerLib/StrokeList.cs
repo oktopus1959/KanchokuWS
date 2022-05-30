@@ -12,14 +12,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         private static Logger logger = Logger.GetLogger(true);
 
         /// <summary>
-        /// 前回のKeyUp時から持ち越された、同時打鍵用のストロークリスト
-        /// </summary>
-        private List<Stroke> comboList = new List<Stroke>();
-
-        /// <summary>
         /// キー押下によって追加された未処理のストロークリスト
         /// </summary>
         private List<Stroke> unprocList = new List<Stroke>();
+
+        /// <summary>
+        /// 同時打鍵検索によって処理されたが、次の同時打鍵検索にも使用されうるストロークリスト
+        /// </summary>
+        private List<Stroke> comboList = new List<Stroke>();
 
         /// <summary>
         /// 与えられたリストの部分リストからなる集合(リスト)を返す
@@ -55,23 +55,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return Count == 0;
         }
 
-        /// <summary>
-        /// 処理済み同時打鍵の個数
-        /// </summary>
-        /// <returns></returns>
-        public bool IsComboListEmpty()
-        {
-            return comboList.Count == 0;
-        }
+        public bool IsComboListEmpty => comboList.Count == 0;
 
-        /// <summary>
-        /// 未処理打鍵の個数
-        /// </summary>
-        /// <returns></returns>
-        public bool IsUnprocListEmpty()
-        {
-            return unprocList.Count == 0;
-        }
+        public bool IsUnprocListEmpty => unprocList.Count == 0;
 
         public Stroke First => unprocList._getFirst();
 
@@ -108,6 +94,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 if (s.IsSameKey(decKey)) {
                     s.SetCombined();
                     if (unprocList._safeCount() == 1) {
+                        // 未処理キーが1つで、それがリピートされたら comboList に移動しておく
                         comboList.Add(s);
                         unprocList.Clear();
                     }
@@ -178,94 +165,110 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             List<int> result = null;
 
-            int upComboIdx = findSameIndex(comboList, decKey);
-            if (unprocList._notEmpty()) {
-                int upKeyIdx = findSameIndex(unprocList, decKey);
-                logger.DebugH(() => $"upComboIdx={upComboIdx}, upKeyIdx={upKeyIdx}");
-                if (upComboIdx >= 0 || upKeyIdx >= 0) {
-                    result = new List<int>();
-                    int startPos = 0;
-                    int overlapLen = 0;
-                    bool isUpStrokeShiftKey = upComboIdx >= 0 || (unprocList._getNth(upKeyIdx)?.IsComboShift ?? false);
+            try {
+                int upComboIdx = findSameIndex(comboList, decKey);
+                if (unprocList._notEmpty()) {
+                    int upKeyIdx = findSameIndex(unprocList, decKey);
+                    logger.DebugH(() => $"upComboIdx={upComboIdx}, upKeyIdx={upKeyIdx}");
+                    if (upComboIdx >= 0 || upKeyIdx >= 0) {
+                        result = new List<int>();
+                        int startPos = 0;
+                        int overlapLen = 0;
+                        bool isUpStrokeShiftKey = upComboIdx >= 0 || (unprocList._getNth(upKeyIdx)?.IsComboShift ?? false);
 
-                    // 持ち越したキーリストの部分リストからなる集合(リスト)
-                    var subComboLists = new List<List<Stroke>>();
-                    gatherSubList(comboList, subComboLists);
+                        // 持ち越したキーリストの部分リストからなる集合(リスト)
+                        var subComboLists = new List<List<Stroke>>();
+                        gatherSubList(comboList, subComboLists);
 
-                    bool bSecondComboCheck = comboList._notEmpty();
-                    while (startPos < unprocList.Count && (isUpStrokeShiftKey || startPos <= upKeyIdx)) {   // 同時打鍵シフトキー以外が解放された場合は、そのキーまでしかチェックしない
-                        bool bFound = false;
-                        foreach (var subList in subComboLists) {
-                            overlapLen = unprocList.Count - startPos;
-                            int minLen = subList._isEmpty() ? 2 : 1;
-                            logger.DebugH(() => $"subList.Count={subList.Count}, minLen={minLen}, overlapLen={overlapLen}");
-                            while (overlapLen >= minLen) {
-                                var list = makeComboChallengeList(subList, startPos, overlapLen);
-                                logger.DebugH(() => $"SEARCH: searchKey={list._toString()}");
-                                //var keyList = KeyCombinationPool.CurrentPool.GetEntry(list)?.ComboShiftedDecoderKeyList;
-                                var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(list);
-                                logger.DebugH(() => $"RESULT: combo={(keyCombo == null ? "(none)" : "FOUND")}, decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
-                                if (keyCombo?.DecKeyList != null && isCombinationTiming(true, upKeyIdx, startPos, overlapLen, dtNow, bSecondComboCheck)) {
-                                    // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する
-                                    bSecondComboCheck = true;
-                                    logger.DebugH(() => $"COMBO CHECK PASSED: Overlap candidates found: startPos={startPos}, overlapLen={overlapLen}, list={list._toString()}");
-                                    result.AddRange(keyCombo.DecKeyList);
-                                    // 同時打鍵に使用したキーを使い回すかあるいは破棄するか
-                                    if (keyCombo.IsOneshotShift) {
-                                        // Oneshotなら使い回さず、今回かぎりとする
-                                        logger.DebugH(() => $"OneshotShift");
-                                        foreach (var s in list) s.SetUsedForOneshot();
-                                    } else {
-                                        logger.DebugH(() => $"Move to next combination: startPos={startPos}, overlapLen={overlapLen}");
-                                        foreach (var s in getRange(startPos, overlapLen)) s.SetCombined();
-                                        if (subComboLists.Count <= 1 && subComboLists._getFirst()._isEmpty()) {
-                                            // 持ち越された同時打鍵キーリストが空なので、今回の同時打鍵に使用したキーを使い回す
-                                            logger.DebugH(() => $"Reuse temporary combination");
-                                            subComboLists.Clear();
-                                            gatherSubList(list, subComboLists);
+                        bool bSecondComboCheck = comboList._notEmpty();
+                        logger.DebugH(() => $"START while: {ToDebugString()}, startPos={startPos}, isUpStrokeShiftKey={isUpStrokeShiftKey}, upKeyIdx={upKeyIdx}");
+                        while (startPos < unprocList.Count && (isUpStrokeShiftKey || startPos <= upKeyIdx)) {   // 同時打鍵シフトキー以外が解放された場合は、そのキーまでしかチェックしない
+                            bool bFound = false;
+                            foreach (var subList in subComboLists) {
+                                overlapLen = unprocList.Count - startPos;
+                                int minLen = subList._isEmpty() ? 2 : 1;
+                                logger.DebugH(() => $"subList={subList._toString()}, overlapLen={overlapLen}, minLen={minLen}");
+                                while (overlapLen >= minLen) {
+                                    var list = makeComboChallengeList(subList, startPos, overlapLen);
+                                    logger.DebugH(() => $"COMBO SEARCH: searchKey={list._toString()}");
+                                    //var keyList = KeyCombinationPool.CurrentPool.GetEntry(list)?.ComboShiftedDecoderKeyList;
+                                    var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(list);
+                                    logger.DebugH(() => $"COMBO RESULT: combo={(keyCombo == null ? "(none)" : "FOUND")}, decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
+                                    if (keyCombo?.DecKeyList != null && isCombinationTiming(true, upKeyIdx, startPos, overlapLen, dtNow, bSecondComboCheck)) {
+                                        // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する
+                                        bSecondComboCheck = true;
+                                        logger.DebugH(() => $"COMBO CHECK PASSED: Overlap candidates found: startPos={startPos}, overlapLen={overlapLen}, list={list._toString()}");
+                                        result.AddRange(keyCombo.DecKeyList);
+                                        // 同時打鍵に使用したキーを使い回すかあるいは破棄するか
+                                        if (keyCombo.IsOneshotShift) {
+                                            // Oneshotなら使い回さず、今回かぎりとする
+                                            logger.DebugH(() => $"OneshotShift");
+                                            foreach (var s in list) s.SetUsedForOneshot();
+                                        } else {
+                                            logger.DebugH(() => $"Move to next combination: startPos={startPos}, overlapLen={overlapLen}");
+                                            foreach (var s in getRange(startPos, overlapLen)) s.SetCombined();
+                                            if (subComboLists.Count <= 1 && subComboLists._getFirst()._isEmpty()) {
+                                                // 持ち越された同時打鍵キーリストが空なので、今回の同時打鍵に使用したキーを使い回す
+                                                logger.DebugH(() => $"Reuse temporary combination");
+                                                subComboLists.Clear();
+                                                gatherSubList(list, subComboLists);
+                                            }
                                         }
+                                        startPos += overlapLen;
+                                        bFound = true;
+                                        break;
                                     }
-                                    startPos += overlapLen;
-                                    bFound = true;
-                                    break;
+                                    --overlapLen;
                                 }
-                                --overlapLen;
+                                if (bFound) break;  // 見つかった
                             }
-                            if (bFound) break;  // 見つかった
-                        }
-                        if (!bFound) {
-                            // 見つからなかったら、それを出力し、1つずらして、ループする
-                            logger.DebugH(() => $"ADD: startPos={startPos}, keyCode={unprocList[startPos].OrigDecoderKey}");
-                            var s = unprocList._getNth(startPos);
-                            if (s != null) {
-                                result.Add(s.OrigDecoderKey);
-                                s.SetUsedForOneshot();
+                            if (!bFound) {
+                                // 見つからなかったら、それを出力し、1つずらして、ループする
+                                logger.DebugH(() => $"ADD: startPos={startPos}, keyCode={unprocList[startPos].OrigDecoderKey}");
+                                var s = unprocList._getNth(startPos);
+                                if (s != null) {
+                                    result.Add(s.OrigDecoderKey);
+                                    s.SetUsedForOneshot();
+                                }
+                                ++startPos;
                             }
-                            ++startPos;
+                            logger.DebugH(() => $"TRY NEXT: startPos={startPos}, overlapLen={overlapLen}, {ToDebugString()}");
                         }
-                        logger.DebugH(() => $"TRY NEXT: startPos={startPos}, overlapLen={overlapLen}, {ToDebugString()}");
-                    }
 
-                    logger.DebugH(() => $"CLEANUP1: {ToDebugString()}");
-                    // UPされたキー以外を comboList に移動する
-                    if (upKeyIdx >= 0) unprocList.RemoveAt(upKeyIdx);
-                    logger.DebugH(() => $"CLEANUP2: upKeyIdx={upKeyIdx} Removed: {ToDebugString()}");
-                    comboList.AddRange(unprocList.Where(x => x.IsCombined));
-                    //unprocList.Clear();
-                    logger.DebugH(() => $"CLEANUP3: Combined Added: {ToDebugString()}");
-                    // comboList のうちで同時打鍵のOneshotに使われたものを削除する
-                    for (int i = comboList.Count - 1; i >= 0; --i) {
-                        if (i != upComboIdx && comboList[i].IsUsedForOneshot) comboList.RemoveAt(i);    // upComboIdx は後で削除される
+                        logger.DebugH(() => $"END while: {ToDebugString()}, startPos={startPos}, upKeyIdx={upKeyIdx}");
+
+                        // UPされたキー以外を comboList に移動する
+                        if (upKeyIdx >= 0) unprocList.RemoveAt(upKeyIdx);
+                        logger.DebugH(() => $"CLEANUP1: upKeyIdx={upKeyIdx} Removed: {ToDebugString()}");
+                        comboList.AddRange(unprocList.Where(x => x.IsCombined));
+                        //unprocList.Clear();
+                        logger.DebugH(() => $"CLEANUP2: Combined Added: {ToDebugString()}");
+                        // comboList のうちで同時打鍵のOneshotに使われたものを削除する
+                        for (int i = comboList.Count - 1; i >= 0; --i) {
+                            if (i != upComboIdx && comboList[i].IsUsedForOneshot) comboList.RemoveAt(i);    // upComboIdx は後で削除される
+                        }
+                        logger.DebugH(() => $"CLEANUP3: Oneshot in comboList Removed: {ToDebugString()}");
+                        // comboList に移動した、または同時打鍵のOneshotに使われたものを削除する
+                        for (int i = unprocList.Count - 1; i >= 0; --i) {
+                            if (unprocList[i].IsCombined || unprocList[i].IsUsedForOneshot) unprocList.RemoveAt(i);
+                        }
+                        logger.DebugH(() => $"CLEANUP4: Combined or Oneshot in unprocList Removed: {ToDebugString()}");
                     }
-                    logger.DebugH(() => $"CLEANUP4: Oneshot in comboList Removed: {ToDebugString()}");
-                    // comboList に移動した、または同時打鍵のOneshotに使われたものを削除する
-                    for (int i = unprocList.Count - 1; i >= 0; --i) {
-                        if (unprocList[i].IsCombined || unprocList[i].IsUsedForOneshot) unprocList.RemoveAt(i);
-                    }
-                    logger.DebugH(() => $"CLEANUP5: Combined or Oneshot in unprocList Removed: {ToDebugString()}");
                 }
+                if (upComboIdx >= 0) comboList.RemoveAt(upComboIdx);
+
+                if (Count > 5) {
+                    logger.Warn($"strokeList.Count={Count}");
+                    if (Count > 10) {
+                        logger.Warn($"Clear strokeList");
+                        Clear();
+                    }
+                }
+
+            } catch (Exception ex) {
+                logger.Error(ex._getErrorMsg());
+                Clear();
             }
-            if (upComboIdx >= 0) comboList.RemoveAt(upComboIdx);
 
             logger.DebugH(() => $"LEAVE: result={result?._keyString() ?? "null"}, {ToDebugString()}");
             return result;

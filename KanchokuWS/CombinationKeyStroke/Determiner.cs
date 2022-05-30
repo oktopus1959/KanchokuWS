@@ -117,21 +117,10 @@ namespace KanchokuWS.CombinationKeyStroke
         public List<int> KeyUp(int decKey)
         {
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
-            List<int> result = null;
-            try {
-                result = strokeList.GetKeyCombinationWhenKeyUp(decKey, DateTime.Now);
-            } catch (Exception ex) {
-                logger.Error(ex._getErrorMsg());
-                strokeList.Clear();
-            }
+
+            var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, DateTime.Now);
+
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
-            if (strokeList.Count > 5) {
-                logger.Warn($"strokeList.Count={strokeList.Count}");
-                if (strokeList.Count > 10) {
-                    logger.Warn($"Clear strokeList");
-                    strokeList.Clear();
-                }
-            }
             return result;
         }
 

@@ -17,7 +17,7 @@ namespace KanchokuWS
 {
     public partial class FrmVirtualKeyboard : Form
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         private FrmKanchoku frmMain;
 
