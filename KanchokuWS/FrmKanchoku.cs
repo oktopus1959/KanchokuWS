@@ -96,6 +96,9 @@ namespace KanchokuWS
                 UserKanchokuIni.Singleton.SetInt("logLevel", Logger.LogLevelWarn);
             }
 
+            // 各種サンプルから本番ファイルをコピー(もし無ければ)
+            copySampleFiles();
+
             // 仮想鍵盤フォームの作成
             frmVkb = new FrmVirtualKeyboard(this);
             frmVkb.Opacity = 0;
@@ -144,6 +147,24 @@ namespace KanchokuWS
 
             // キーボードイベントのディスパッチ開始
             initializeKeyboardEventDispatcher();
+        }
+
+        // 各種サンプルから本番ファイルをコピー(もし無ければ)
+        private void copySampleFiles()
+        {
+            void copySampleFile(string filename)
+            {
+                var rootDir = KanchokuIni.Singleton.KanchokuDir;
+                var sampleFilePath = rootDir._joinPath(filename._safeReplace(".txt", ".sample.txt"));
+                var prodFilePath = rootDir._joinPath(filename);
+                if (Helper.FileExists(sampleFilePath) && !Helper.FileExists(prodFilePath)) {
+                    Helper.CopyFile(sampleFilePath, prodFilePath);
+                }
+            }
+
+            copySampleFile("easy_chars.txt");
+            copySampleFile("stroke-help.txt");
+            copySampleFile("mod-conversion.txt");
         }
 
         /// <summary> キーボードファイルの読み込み (成功したら true, 失敗したら false を返す) </summary>

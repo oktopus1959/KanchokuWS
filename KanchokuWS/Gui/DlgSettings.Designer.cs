@@ -631,7 +631,7 @@ namespace KanchokuWS.Gui
             this.button_restart.TabIndex = 9;
             this.button_restart.TabStop = false;
             this.button_restart.Text = "再起動(&K)";
-            this.toolTip1.SetToolTip(this.button_restart, "漢直窓Sを再起動します。");
+            this.toolTip1.SetToolTip(this.button_restart, "漢直WSを再起動します。\r\n\r\n部首合成辞書、交ぜ書き辞書、履歴辞書などを\r\n再読み込みする場合は再起動が必要です。");
             this.button_restart.UseVisualStyleBackColor = true;
             this.button_restart.Click += new System.EventHandler(this.button_restart_Click);
             // 
