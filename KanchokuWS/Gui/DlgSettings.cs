@@ -1094,6 +1094,12 @@ namespace KanchokuWS.Gui
             }
         }
 
+        private void button_keyAssignTable_Click(object sender, EventArgs e)
+        {
+            logger.InfoH("CALLED");
+            openDocumentUrl(Settings.FaqUrl);
+        }
+
         //-----------------------------------------------------------------------------------
         /// <summary> Ctrlキー変換</summary>
         void readSettings_tabCtrlKeys()
@@ -2441,7 +2447,6 @@ namespace KanchokuWS.Gui
             }
             logger.InfoH($"LEAVE");
         }
-
     }
 }
 

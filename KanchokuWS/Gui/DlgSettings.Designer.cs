@@ -210,13 +210,9 @@ namespace KanchokuWS.Gui
             this.label69 = new System.Windows.Forms.Label();
             this.label_keyAssignReload = new System.Windows.Forms.Label();
             this.button_keyAssignReload = new System.Windows.Forms.Button();
-            this.textBox2 = new System.Windows.Forms.TextBox();
             this.label_okResultKeyAssign = new System.Windows.Forms.Label();
-            this.label100 = new System.Windows.Forms.Label();
             this.groupBox32 = new System.Windows.Forms.GroupBox();
             this.label71 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label99 = new System.Windows.Forms.Label();
             this.button_keyAssignClose = new System.Windows.Forms.Button();
             this.button_keyAssignEnter = new System.Windows.Forms.Button();
             this.groupBox30 = new System.Windows.Forms.GroupBox();
@@ -477,6 +473,7 @@ namespace KanchokuWS.Gui
             this.textBox_alphaModeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.Gui.ColorTextBox();
+            this.button_keyAssignTable = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -2639,16 +2636,13 @@ namespace KanchokuWS.Gui
             // 
             // tabPage_keyAssign
             // 
+            this.tabPage_keyAssign.Controls.Add(this.button_keyAssignTable);
             this.tabPage_keyAssign.Controls.Add(this.groupBox43);
             this.tabPage_keyAssign.Controls.Add(this.groupBox31);
             this.tabPage_keyAssign.Controls.Add(this.label_keyAssignReload);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignReload);
-            this.tabPage_keyAssign.Controls.Add(this.textBox2);
             this.tabPage_keyAssign.Controls.Add(this.label_okResultKeyAssign);
-            this.tabPage_keyAssign.Controls.Add(this.label100);
             this.tabPage_keyAssign.Controls.Add(this.groupBox32);
-            this.tabPage_keyAssign.Controls.Add(this.textBox1);
-            this.tabPage_keyAssign.Controls.Add(this.label99);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignClose);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignEnter);
             this.tabPage_keyAssign.Controls.Add(this.groupBox30);
@@ -2710,7 +2704,7 @@ namespace KanchokuWS.Gui
             this.label_keyAssignReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label_keyAssignReload.AutoSize = true;
             this.label_keyAssignReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_keyAssignReload.Location = new System.Drawing.Point(262, 325);
+            this.label_keyAssignReload.Location = new System.Drawing.Point(282, 325);
             this.label_keyAssignReload.Name = "label_keyAssignReload";
             this.label_keyAssignReload.Size = new System.Drawing.Size(77, 15);
             this.label_keyAssignReload.TabIndex = 36;
@@ -2722,7 +2716,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_keyAssignReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_keyAssignReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_keyAssignReload.Location = new System.Drawing.Point(261, 343);
+            this.button_keyAssignReload.Location = new System.Drawing.Point(281, 343);
             this.button_keyAssignReload.Name = "button_keyAssignReload";
             this.button_keyAssignReload.Size = new System.Drawing.Size(80, 23);
             this.button_keyAssignReload.TabIndex = 2;
@@ -2730,17 +2724,6 @@ namespace KanchokuWS.Gui
             this.toolTip1.SetToolTip(this.button_keyAssignReload, "各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
             this.button_keyAssignReload.UseVisualStyleBackColor = true;
             this.button_keyAssignReload.Click += new System.EventHandler(this.button_keyAssignReload_Click);
-            // 
-            // textBox2
-            // 
-            this.textBox2.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox2.Location = new System.Drawing.Point(88, 352);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(56, 19);
-            this.textBox2.TabIndex = 11;
-            this.toolTip1.SetToolTip(this.textBox2, "ひらがな入力による打鍵ガイド機能を呼び出します。\r\n\r\n当機能を呼び出すと、いったんひらがな入力モードになります。\r\nもう一度呼び出すとひらがな入力モードを抜けて" +
-        "、打鍵ガイドモードに移動します。");
-            this.textBox2.Visible = false;
             // 
             // label_okResultKeyAssign
             // 
@@ -2754,16 +2737,6 @@ namespace KanchokuWS.Gui
             this.label_okResultKeyAssign.Text = "適用しました";
             this.label_okResultKeyAssign.Visible = false;
             this.label_okResultKeyAssign.VisibleChanged += new System.EventHandler(this.label_okResultKeyAssign_VisibleChanged);
-            // 
-            // label100
-            // 
-            this.label100.AutoSize = true;
-            this.label100.Location = new System.Drawing.Point(15, 352);
-            this.label100.Name = "label100";
-            this.label100.Size = new System.Drawing.Size(148, 15);
-            this.label100.TabIndex = 12;
-            this.label100.Text = "ひらがな入力 漢字打鍵ガイド";
-            this.label100.Visible = false;
             // 
             // groupBox32
             // 
@@ -2785,27 +2758,6 @@ namespace KanchokuWS.Gui
             this.label71.TabIndex = 1;
             this.label71.Text = "※テーブルファイルによって既に文字が割り当てられている打鍵列には再割り当てできません。\r\n※割り当て可能なのは、未割り当てか、他の機能呼び出しが割り当てられている" +
     "打鍵列です。";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox1.Location = new System.Drawing.Point(89, 334);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(56, 19);
-            this.textBox1.TabIndex = 9;
-            this.toolTip1.SetToolTip(this.textBox1, "大文字ローマ字入力による打鍵ガイド機能を呼び出します。\r\n\r\n当機能を呼び出すと、シフト打鍵などで英大文字を入力している間は\r\nローマ字入力モードを継続し、何か通" +
-        "常打鍵を行うと打鍵ガイドモードに\r\n移動します。");
-            this.textBox1.Visible = false;
-            // 
-            // label99
-            // 
-            this.label99.AutoSize = true;
-            this.label99.Location = new System.Drawing.Point(16, 334);
-            this.label99.Name = "label99";
-            this.label99.Size = new System.Drawing.Size(147, 15);
-            this.label99.TabIndex = 10;
-            this.label99.Text = "ローマ字入力 漢字打鍵ガイド";
-            this.label99.Visible = false;
             // 
             // button_keyAssignClose
             // 
@@ -5848,6 +5800,20 @@ namespace KanchokuWS.Gui
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
+            // button_keyAssignTable
+            // 
+            this.button_keyAssignTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_keyAssignTable.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_keyAssignTable.Location = new System.Drawing.Point(138, 343);
+            this.button_keyAssignTable.Name = "button_keyAssignTable";
+            this.button_keyAssignTable.Size = new System.Drawing.Size(82, 23);
+            this.button_keyAssignTable.TabIndex = 38;
+            this.button_keyAssignTable.TabStop = false;
+            this.button_keyAssignTable.Text = "漢直コード表(&F)";
+            this.toolTip1.SetToolTip(this.button_keyAssignTable, "「よくある質問と回答」ページのURLをブラウザで開きます");
+            this.button_keyAssignTable.UseVisualStyleBackColor = true;
+            this.button_keyAssignTable.Click += new System.EventHandler(this.button_keyAssignTable_Click);
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -6327,10 +6293,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.RadioButton radioButton_shiftB;
         private System.Windows.Forms.RadioButton radioButton_shiftA;
         private System.Windows.Forms.RadioButton radioButton_normalShift;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Label label100;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label99;
         private System.Windows.Forms.Label label101;
         private System.Windows.Forms.Label label_reloadMisc;
         private System.Windows.Forms.Button button_reloadMisc;
@@ -6434,5 +6396,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.CheckBox checkBox_convertHiraganaToKatakanaNormalPlane;
         private System.Windows.Forms.Button button_developTest;
         private System.Windows.Forms.CheckBox checkBox_testAll;
+        private System.Windows.Forms.Button button_keyAssignTable;
     }
 }
