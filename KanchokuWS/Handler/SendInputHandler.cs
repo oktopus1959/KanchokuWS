@@ -435,6 +435,7 @@ namespace KanchokuWS.Handler
 
             public ShiftKeyUpDownGuard(bool bUp, bool bEffective)
             {
+                logger.DebugH(() => $"ShiftKeyUpDownGuard {(bUp ? "UP" : "DOWN")}: bEffective={bEffective}");
                 if (bEffective) {
                     keyState = upDownShiftKeyInputs(bUp);
                 }
@@ -442,6 +443,7 @@ namespace KanchokuWS.Handler
 
             public void Dispose()
             {
+                logger.DebugH($"ShiftKeyUpDownGuard REVERT");
                 if (keyState != null) revertShiftKey(keyState);
             }
         }
@@ -498,6 +500,7 @@ namespace KanchokuWS.Handler
 
         private static void sendInputsUnicode(char uc)
         {
+            logger.DebugH(() => $"CALLED: uc={uc}");
             var info = new InputInfo(2);
             info.Index = setUnicodeInputs(uc, info.Inputs, info.Index);
             sendInput(info);
@@ -667,7 +670,7 @@ namespace KanchokuWS.Handler
             upShiftKeyInputs();
         }
 
-        private static void sendInputsRomanOrKana(string faceStr)
+        private static void sendInputsRomanOrKanaUnicode(string faceStr)
         {
             logger.DebugH(() => $"CALLED: faceStr={faceStr}");
 
@@ -678,6 +681,8 @@ namespace KanchokuWS.Handler
                         // Vkey
                         sendInputsVkey((ushort)(vk & 0xff));
                     }
+                } else {
+                    sendInputsUnicode(fc);
                 }
             }
         }
@@ -707,36 +712,18 @@ namespace KanchokuWS.Handler
                     if (IMEHandler.ImeEnabled && (str[i] == ' ' || !isUnicodeSendWindow())) {
                         if (Settings.ImeSendInputInRoman) {
                             faceStr = str[i]._hiraganaToRoman();
-                            if (faceStr._isEmpty()) {
-                                logger.DebugH($"_hiraganaToRoman empty");
-                                if (str[i] >= ' ' && str[i] < (char)0x7f) {
-                                    logger.DebugH($"use ascii");
-                                    faceStr = str[i].ToString();
-                                }
-                            }
+                            if (faceStr._isEmpty()) logger.DebugH($"_hiraganaToRoman empty");
                         } else if (Settings.ImeSendInputInKana) {
                             faceStr = str[i]._hiraganaToKeyface();
                             if (faceStr._isEmpty()) logger.DebugH($"_hiraganaToKeyface empty");
                         }
-                    }
-                    if (faceStr._notEmpty()) {
-                        sendInputsRomanOrKana(faceStr);
+                        if (faceStr._isEmpty()) {
+                            logger.DebugH($"send asis string");
+                            faceStr = str[i].ToString();
+                        }
+                        sendInputsRomanOrKanaUnicode(faceStr);
                     } else {
-                        logger.DebugH($"send asis string");
-                        // そもそも、未確定を確定させてしまうのはいかがなものか。やるなら、Chromeとか、特定のやつだけにしたい
-                        //if (IMEHandler.ImeEnabled && Settings.ImeSendInputInRoman) {
-                            // 以下は効かない(ImmGetContext()が他プロセスに対しては無効なため)
-                            //IMEHandler.NotifyComplete();
-                            //if (IMEHandler.HasUnconfirmed()) {
-                            //    if (loggingFlag) logger.DebugH($"Has unconfirmed");
-                            //    idx = setVkeyInputs((ushort)Keys.Enter, inputs, idx);
-                            //}
-
-                            // 以下はやりすぎ
-                            //idx = setVkeyInputs((ushort)Keys.Oem102, inputs, idx);
-                            //idx = setVkeyInputs((ushort)Keys.Enter, inputs, idx);
-                            //idx = setVkeyInputs((ushort)Keys.Back, inputs, idx);
-                        //}
+                        logger.DebugH($"send Unicode string");
                         sendInputsUnicode(str[i]);
                     }
                 }
