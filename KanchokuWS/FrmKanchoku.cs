@@ -90,6 +90,12 @@ namespace KanchokuWS
 
             IMEHandler.MainWnd = this.Handle;
 
+            // kanchoku.user.ini が存在しなければ、初期状態で作成しておく
+            if (!UserKanchokuIni.Singleton.IsIniFileExist) {
+                logger.WriteLog("INFO", "kanchoku.user.ini not found. Create.");
+                UserKanchokuIni.Singleton.SetInt("logLevel", Logger.LogLevelWarn);
+            }
+
             // 仮想鍵盤フォームの作成
             frmVkb = new FrmVirtualKeyboard(this);
             frmVkb.Opacity = 0;
