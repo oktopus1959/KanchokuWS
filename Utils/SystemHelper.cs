@@ -105,24 +105,6 @@ namespace Utils
         }
 
         /// <summary>
-        /// kanchoku.ini のアクセサを作成して返す。
-        /// </summary>
-        /// <returns></returns>
-        public static IniFileAccessor GetKanchokuIni()
-        {
-            return new IniFileAccessor(MakeAbsPathUnderKanchokuRootDir(@"kanchoku.ini"));
-        }
-
-        /// <summary>
-        /// kanchoku.user.ini のアクセサを作成して返す。
-        /// </summary>
-        /// <returns></returns>
-        public static IniFileAccessor GetUserKanchokuIni()
-        {
-            return new IniFileAccessor(MakeAbsPathUnderKanchokuRootDir(@"kanchoku.user.ini"));
-        }
-
-        /// <summary>
         /// 情報メッセージダイアログボックスの表示
         /// </summary>
         /// <param name="msg"></param>
