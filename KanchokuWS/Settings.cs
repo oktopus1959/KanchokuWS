@@ -606,7 +606,7 @@ namespace KanchokuWS
             return UserKanchokuIni.Singleton.GetString(attr)._orElse(() => KanchokuIni.Singleton.GetString(attr, defval));
         }
 
-        // kanchoku.use.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
+        // kanchoku.user.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
         public static string GetStringEx(string attr, string defvalInit, string defval = "")
         {
             return UserKanchokuIni.Singleton.GetStringEx(attr, defvalInit)._orElse(() => KanchokuIni.Singleton.GetString(attr, defval));
@@ -617,7 +617,7 @@ namespace KanchokuWS
             return UserKanchokuIni.Singleton.GetString(attr)._orElse(() => UserKanchokuIni.Singleton.GetString(attrOld))._orElse(() => KanchokuIni.Singleton.GetString(attrOld, defval));
         }
 
-        // kanchoku.use.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
+        // kanchoku.user.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
         public static string GetStringEx(string attr, string attrOld, string defvalInit, string defval)
         {
             return UserKanchokuIni.Singleton.GetStringEx(attr, defvalInit)._orElse(() => UserKanchokuIni.Singleton.GetStringEx(attrOld, defvalInit))._orElse(() => KanchokuIni.Singleton.GetString(attrOld, defval));
@@ -674,7 +674,7 @@ namespace KanchokuWS
             return origKeySeq;
         }
 
-        // kanchoku.use.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
+        // kanchoku.user.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
         private static string addDecoderSettingEx(string attr, string defvalInit, string defval = "")
         {
             return DecoderSettings[attr] = GetStringEx(attr, defvalInit, defval);
@@ -685,7 +685,7 @@ namespace KanchokuWS
             return DecoderSettings[attr] = GetString(attr, attrOld, defval);
         }
 
-        // kanchoku.use.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
+        // kanchoku.user.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
         private static string addDecoderSettingEx(string attr, string attrOld, string defvalInit, string defval)
         {
             return DecoderSettings[attr] = GetStringEx(attr, attrOld, defvalInit, defval);
@@ -956,7 +956,8 @@ namespace KanchokuWS
             ImeCooperationEnabled = GetString("imeCooperationEnabled")._parseBool(false);
             ImeSendInputInRoman = GetString("imeSendInputInRoman")._parseBool(false);
             ImeSendInputInKana = GetString("imeSendInputInKana")._parseBool(false);
-            ImeUnicodeClassNames = GetString("imeUnicodeClassNames")._orElse("Edit|_WwG|SakuraView*").Trim();
+            //ImeUnicodeClassNames = GetString("imeUnicodeClassNames")._orElse("Edit|_WwG|SakuraView*").Trim();
+            ImeUnicodeClassNames = GetString("imeUnicodeClassNames").Trim();
             ImeUnicodeClassNamesHash = new HashSet<string>(ImeUnicodeClassNames.Trim()._toLower()._split('|'));
 
             //-------------------------------------------------------------------------------------
