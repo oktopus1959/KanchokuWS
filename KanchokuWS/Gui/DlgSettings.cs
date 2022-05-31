@@ -796,7 +796,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("vkbOffsetX", textBox_vkbOffsetX.Text.Trim());
             Settings.SetUserIni("vkbOffsetY", textBox_vkbOffsetY.Text.Trim());
             int factor = radioButton_vkbFixedPos.Checked ? 1 : -1;
-            Settings.SetUserIni("vkbFixedPos", $"{textBox_vkbFixedPosX.Text.Trim()._parseInt(-1, -1) * factor},{textBox_vkbFixedPosY.Text.Trim()._parseInt(-1, -1) * factor}");
+            Settings.SetUserIni("vkbFixedPos", $"{textBox_vkbFixedPosX.Text.Trim()._parseInt(-1) * factor},{textBox_vkbFixedPosY.Text.Trim()._parseInt(-1) * factor}");
             //Settings.SetUserIni("displayScale", textBox_displayScale.Text.Trim());
             Settings.SetUserIni("kanjiModeMarkerShowIntervalSec", textBox_kanjiModeInterval.Text.Trim());
             Settings.SetUserIni("alphaModeMarkerShowMillisec", textBox_alphaModeShowTime.Text.Trim());
@@ -867,9 +867,9 @@ namespace KanchokuWS.Gui
             checkBox_SandSEnablePostShift.Checked = Settings.SandSEnablePostShift;
 
             // 同時打鍵
-            textBox_combinationMaxAllowedLeadTimeMs.Text = $"{Settings.CombinationMaxAllowedLeadTimeMs}";
+            textBox_combinationMaxAllowedLeadTimeMs.Text = $"{Settings.CombinationKeyMaxAllowedLeadTimeMs}";
             //textBox_combinationKeyTimeRate.Text = $"{Settings.CombinationKeyTimeRate}";
-            textBox_combinationKeyTimeMs.Text = $"{Settings.CombinationKeyTimeMs}";
+            textBox_combinationKeyTimeMs.Text = $"{Settings.CombinationKeyMinOverlappingTimeMs}";
 
             // IME連携
             checkBox_imeCooperationEnabled.Checked = Settings.ImeCooperationEnabled;

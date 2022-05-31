@@ -1204,11 +1204,21 @@ namespace Utils
         }
 
         /// <summary>
+        /// 整数に解釈されるべき文字列を整数値に変換する。エラーまたは空文字列なら errorVal を返す。
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static int _parseInt(this string str, int errorVal = 0)
+        {
+            return str._parseInt(errorVal, errorVal);
+        }
+
+        /// <summary>
         /// 整数に解釈されるべき文字列を整数値に変換する。エラーなら errorVal を返し、空文字列なら emptyVal を返す。
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public static int _parseInt(this string str, int emptyVal = 0, int errorVal = 0)
+        public static int _parseInt(this string str, int emptyVal, int errorVal)
         {
             try {
                 return str._isEmpty() ? emptyVal : int.Parse(str);

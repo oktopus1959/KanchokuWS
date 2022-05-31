@@ -1016,7 +1016,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 var propName = items[0];
                 var strVal = items[1]._strip();
                 const int errorVal = -999999;
-                int iVal = strVal._parseInt(errorVal, errorVal);
+                int iVal = strVal._parseInt(errorVal);
                 if (iVal != errorVal) {
                     if (Settings.SetValueByName(propName, iVal)) return;
                 } else if (strVal._toLower()._equalsTo("true")) {

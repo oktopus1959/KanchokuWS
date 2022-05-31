@@ -881,7 +881,7 @@ namespace KanchokuWS
             if (str._isEmpty()) return -1;
             var s = str._toUpper();
             int offset = CalcShiftOffset(s[0]);
-            int deckey = offset > 0 ? s._safeSubstring(1)._parseInt(-1, -1) : s._parseInt(-1, -1);
+            int deckey = offset > 0 ? s._safeSubstring(1)._parseInt(-1) : s._parseInt(-1);
             if (deckey < 0 || deckey >= DecoderKeys.STROKE_DECKEY_END) return -1;
             return deckey + offset;
         }
@@ -934,7 +934,7 @@ namespace KanchokuWS
                                 string target = origItems[2]._strip()._stripDq();
                                 uint modKey = 0;
                                 int modDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modName);
-                                int modifieeDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modifiee)._gtZeroOr(modifiee._parseInt(-1, -1));
+                                int modifieeDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modifiee)._gtZeroOr(modifiee._parseInt(-1));
                                 logger.DebugH(() => $"modName={modName}, modifiee={modifiee}, target={target}, modDeckey={modDeckey}, modifieeDeckey={modifieeDeckey})");
 
                                 // 被修飾キーの仮想キーコード: 特殊キー名(esc, tab, ins, ...)または漢直コード(00～49)から、それに該当する仮想キーコードを得る

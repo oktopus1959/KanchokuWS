@@ -541,11 +541,11 @@ namespace KanchokuWS
         /// <summary>同時打鍵とみなす重複率<br/>第１打鍵と第２打鍵の重複時間が第２打鍵の時間に対してここで設定したパーセンテージを超えたら、同時打鍵とみなす</summary>
         public static int CombinationKeyTimeRate { get; set; } = 0;
 
-        /// <summary>同時打鍵とみなす重複時間<br/>第１打鍵と第２打鍵の重複時間がここで設定した時間(millisec)を超えたら、同時打鍵とみなす</summary>
-        public static int CombinationKeyTimeMs { get; set; } = 70;
+        /// <summary>同時打鍵とみなす重複時間<br/>第２打鍵DOWNから第１打鍵UPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす</summary>
+        public static int CombinationKeyMinOverlappingTimeMs { get; set; } = 70;
 
         /// <summary>同時打鍵判定を行う際の、第１打鍵に許容する最大のリード時間(ミリ秒)<br/>第２打鍵までにこの時間より長くかかったら、第1打鍵は同時とみなさない</summary>
-        public static int CombinationMaxAllowedLeadTimeMs { get; set; } = 0;
+        public static int CombinationKeyMaxAllowedLeadTimeMs { get; set; } = 0;
 
         /// <summary>第２打鍵以降についてのみ同時打鍵チェックを行う</summary>
         public static bool IsCheckedSecondCombination { get; set; } = true;
@@ -669,7 +669,7 @@ namespace KanchokuWS
             }
             setDecoderSetting(attr, keyseq);
             if (keyseq._safeLength() > 1 && (keyseq[0] == 'X' || keyseq[0] == 'x')) {
-                int ix = keyseq._safeSubstring(1)._parseInt(-1, -1);
+                int ix = keyseq._safeSubstring(1)._parseInt(-1);
                 if (ix >= 0) VirtualKeys.AddExModVkeyAssignedForDecoderFuncByIndex(ix);
             }
             return origKeySeq;
@@ -828,10 +828,10 @@ namespace KanchokuWS
             ShowVkbOrMaker = GetString("showVkbOrMaker")._parseBool(true);
 
             //-------------------------------------------------------------------------------------
-            VirtualKeyboardOffsetX = GetString("vkbOffsetX")._parseInt(2, 2);
-            VirtualKeyboardOffsetY = GetString("vkbOffsetY")._parseInt(2, 2);
+            VirtualKeyboardOffsetX = GetString("vkbOffsetX")._parseInt(2);
+            VirtualKeyboardOffsetY = GetString("vkbOffsetY")._parseInt(2);
 
-            var fixedPos = GetString("vkbFixedPos").Trim()._split(',').Select(x => x._parseInt(-1, -1)).ToArray();
+            var fixedPos = GetString("vkbFixedPos").Trim()._split(',').Select(x => x._parseInt(-1)).ToArray();
             VirtualKeyboardFixedPosX = fixedPos._getNth(0, -1);
             VirtualKeyboardFixedPosY = fixedPos._getNth(1, -1);
 
@@ -934,8 +934,8 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             // 辞書保存時間
-            SaveDictsIntervalTime = GetString("saveDictsIntervalTime")._parseInt(-60, -60);     // 辞書保存インターバルタイム(分)
-            SaveDictsCalmTime = GetString("saveDictsCalmTime")._parseInt(1, 1);                 // 辞書保存に適した平穏な時間(分)
+            SaveDictsIntervalTime = GetString("saveDictsIntervalTime")._parseInt(-60);     // 辞書保存インターバルタイム(分)
+            SaveDictsCalmTime = GetString("saveDictsCalmTime")._parseInt(1);                 // 辞書保存に適した平穏な時間(分)
 
             //-------------------------------------------------------------------------------------
             // SandS
@@ -948,9 +948,9 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             // 同時打鍵
-            CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0, 0);        // 重複時間率
-            CombinationKeyTimeMs = GetString("combinationKeyTimeMs")._parseInt(70, 70);          // 重複時間
-            CombinationMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100, 100);     // 許容リードタイム
+            CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0);        // 重複時間率
+            CombinationKeyMinOverlappingTimeMs = GetString("combinationKeyTimeMs")._parseInt(70);          // 重複時間
+            CombinationKeyMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100);     // 許容リードタイム
 
             //-------------------------------------------------------------------------------------
             // IME連携

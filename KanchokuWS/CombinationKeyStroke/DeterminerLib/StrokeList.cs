@@ -141,7 +141,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     unprocList.Clear();
                 }
             }
-            else if (comboList.Count == 1 && unprocList.Count == 1 && unprocList[0].IsSameKey(decKey) && Settings.CombinationKeyTimeMs <= 0) {
+            else if (comboList.Count == 1 && unprocList.Count == 1 && unprocList[0].IsSameKey(decKey) && Settings.CombinationKeyMinOverlappingTimeMs <= 0) {
                 // 連続シフトでの2文字目以降のケース
                 logger.DebugH("Try second or later successive combo");
                 result = getAndCheckCombo(Helper.MakeList(comboList[0], unprocList[0]));
@@ -306,8 +306,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             // タイミングチェック(1文字目ならリードタイムをチェック; 2文字目以降の場合は、対象キーダウンからシフトキーアップまでの時間によって判定)
             double ms1 = unprocList[startPos].TimeSpanMs(unprocList[tailPos]);
             double ms2 = unprocList[tailPos].TimeSpanMs(dtNow);
-            bool result = (!bSecondComboCheck && ms1 <= Settings.CombinationMaxAllowedLeadTimeMs) || (bSecondComboCheck && ms2 >= Settings.CombinationKeyTimeMs);
-            logger.DebugH(() => $"RESULT={result}: (!bSecondComboCheck={!bSecondComboCheck} && ms1={ms1:f2}ms <= threshold={Settings.CombinationMaxAllowedLeadTimeMs}ms) || (bSecondComboCheck={bSecondComboCheck} && ms2={ms2:f2}ms >= threshold={Settings.CombinationKeyTimeMs}ms)");
+            bool result = (!bSecondComboCheck && ms1 <= Settings.CombinationKeyMaxAllowedLeadTimeMs) || (bSecondComboCheck && ms2 >= Settings.CombinationKeyMinOverlappingTimeMs);
+            logger.DebugH(() => $"RESULT={result}: (!bSecondComboCheck={!bSecondComboCheck} && ms1={ms1:f2}ms <= threshold={Settings.CombinationKeyMaxAllowedLeadTimeMs}ms) || (bSecondComboCheck={bSecondComboCheck} && ms2={ms2:f2}ms >= threshold={Settings.CombinationKeyMinOverlappingTimeMs}ms)");
             return result;
         }
 
