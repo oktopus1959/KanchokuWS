@@ -7,7 +7,7 @@ convert(J<100>Wjw) = あき
 convert(JJJ<100>Wjw) = あき
 convert(JWRjwr) = ぎし
 convert(JWRrjw) = ぎじ
-convert(JWR<50>jwr) = ぎし
+convert(JWR<40>jwr) = ぎし
 convert(JWR<80>jwr) = ぎじ
 
 loadTable(tables/shin-geta.tbl)

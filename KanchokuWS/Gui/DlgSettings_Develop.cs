@@ -140,12 +140,12 @@ namespace KanchokuWS.Gui
                 var command = items[1];
                 var arg = items[2];
                 var expected = items._getNth(4);
-                logger.DebugH(() => $"command={command}, arg={arg}, expected={(expected._notEmpty() ? expected : "null")}");
+                logger.WriteInfo($"command={command}, arg={arg}, expected={(expected._notEmpty() ? expected : "null")}");
                 switch (command) {
                     case "loadTable":
                         //Settings.TableFile2 = arg;
                         CombinationKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, arg);
-                        frmMain.ExecCmdDecoder("createStrokeTrees", null); // ストローク木の再構築
+                        frmMain.ExecCmdDecoder("createStrokeTrees", "both"); // ストローク木の再構築
                         frmMain.ExecCmdDecoder("useCodeTable2", null);
                         CombinationKeyStroke.Determiner.Singleton.UseSecondaryPool();
                         break;
@@ -243,13 +243,13 @@ namespace KanchokuWS.Gui
             var lines = new List<string>();
             if (filepath._notEmpty()) {
                 var absPath = KanchokuIni.Singleton.KanchokuDir._joinPath(filepath);
-                logger.DebugH(() => $"ENTER: absFilePath={absPath}");
+                logger.WriteInfo($"ENTER: absFilePath={absPath}");
                 var contents = Helper.GetFileContent(absPath, (e) => logger.Error(e._getErrorMsg()));
                 if (contents._notEmpty()) {
                     lines.AddRange(contents._safeReplace("\r", "")._split('\n'));
                 }
             }
-            logger.DebugH(() => $"LEAVE: num of lines={lines.Count}");
+            logger.WriteInfo($"LEAVE: num of lines={lines.Count}");
             return lines;
         }
 

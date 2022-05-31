@@ -215,7 +215,7 @@ public:
     }
 
     // テーブルファイルを読み込んでストローク木を作成する
-    void createStrokeTrees() {
+    void createStrokeTrees(bool bForceSecondary = false) {
         // テーブルファイル名
         if (SETTINGS->tableFile.empty()) {
             // エラー
@@ -224,7 +224,7 @@ public:
             // 主テーブルファイルの構築
             createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile1.tbl")), [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree(file, lines);});
 
-            if (!SETTINGS->tableFile2.empty()) {
+            if (bForceSecondary || !SETTINGS->tableFile2.empty()) {
                 // 副テーブルファイルの構築
                 createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile2.tbl")), [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
             }
@@ -430,7 +430,7 @@ public:
                 if (items.size() > 1 && !items[1].empty()) reloadSettings(items[1]);
             } else if (cmd == _T("createStrokeTrees")) {
                 // ストローク木の再構築
-                createStrokeTrees();
+                createStrokeTrees(items.size() >= 2 && !items[1].empty());
             } else if (cmd == _T("saveDictFiles")) {
                 // ファイル保存
                 SaveDicts();

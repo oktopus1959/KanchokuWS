@@ -86,13 +86,13 @@ namespace KanchokuWS
         /// <param name="e"></param>
         private async void FrmKanchoku_Load(object sender, EventArgs e)
         {
-            logger.WriteLog("INFO", $"\n\n==== KANCHOKU WS START (LogLevel={Logger.LogLevel}) ====");
+            logger.WriteInfo($"\n\n==== KANCHOKU WS START (LogLevel={Logger.LogLevel}) ====");
 
             IMEHandler.MainWnd = this.Handle;
 
             // kanchoku.user.ini が存在しなければ、初期状態で作成しておく
             if (!UserKanchokuIni.Singleton.IsIniFileExist) {
-                logger.WriteLog("INFO", "kanchoku.user.ini not found. Create.");
+                logger.WriteInfo("kanchoku.user.ini not found. Create.");
                 UserKanchokuIni.Singleton.SetInt("logLevel", Logger.LogLevelWarn);
             }
 
@@ -155,9 +155,11 @@ namespace KanchokuWS
             void copySampleFile(string filename)
             {
                 var rootDir = KanchokuIni.Singleton.KanchokuDir;
-                var sampleFilePath = rootDir._joinPath(filename._safeReplace(".txt", ".sample.txt"));
+                var sampleFilename = filename._safeReplace(".txt", ".sample.txt");
+                var sampleFilePath = rootDir._joinPath(sampleFilename);
                 var prodFilePath = rootDir._joinPath(filename);
                 if (Helper.FileExists(sampleFilePath) && !Helper.FileExists(prodFilePath)) {
+                    logger.WriteInfo($"COPY {sampleFilename} to {filename}.");
                     Helper.CopyFile(sampleFilePath, prodFilePath);
                 }
             }
@@ -293,7 +295,7 @@ namespace KanchokuWS
             // 各種Timer処理が終了するのを待つ
             Helper.WaitMilliSeconds(200);
             Logger.EnableInfoH();
-            logger.WriteLog("INFO", "==== KANCHOKU WS TERMINATED ====\n");
+            logger.WriteInfo("==== KANCHOKU WS TERMINATED ====\n");
         }
 
         private bool bRestart = false;
@@ -1355,7 +1357,7 @@ namespace KanchokuWS
             HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, ref decoderOutput);
 
             logger.InfoH(() =>
-                $"HandleDeckeyDecoder: RESULT: layout={decoderOutput.layout}, numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, " +
+                $"HandleDeckeyDecoder: RESULT: tableNum={decoderOutput.strokeTableNum}, layout={decoderOutput.layout}, numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, " +
                 $"output={decoderOutput.outString._toString()}, IsDeckeyToVkey={decoderOutput.IsDeckeyToVkey()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
 
             // 第1打鍵待ち状態になったら、一時的な仮想鍵盤表示カウントをリセットする
@@ -1519,7 +1521,7 @@ namespace KanchokuWS
             HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, ref decoderOutput);
 
             var result = decoderOutput.outString._toString();
-            logger.InfoH(() => $"LEAVE: result={result}");
+            logger.InfoH(() => $"LEAVE: result={result}, usedTable={decoderOutput.strokeTableNum}");
             return result;
         }
 

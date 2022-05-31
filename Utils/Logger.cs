@@ -227,6 +227,15 @@ namespace Utils
             }
         }
 
+        public void WriteInfo(string msg,
+            [CallerMemberName] string method = "",
+            [CallerLineNumber] int lineNumber = -1)
+        {
+            if (LogLevel > 0) {
+                writeLog("INFO", $"{ClassName}.{method}", lineNumber, msg);
+            }
+        }
+
         public void WriteLog(string Level, string msg,
             [CallerMemberName] string method = "",
             [CallerLineNumber] int lineNumber = -1)
