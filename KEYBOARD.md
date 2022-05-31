@@ -1,22 +1,23 @@
-## �g�p����L�[�Ƃ��̊����R�[�h
-�e�[�u���t�@�C���ɋL�q����̂́A���}�̃L�[�{�[�h���C�A�E�g��
-�����̔w�i�F���Ɨ΂ɂȂ��Ă���L�[(0�`48)�ł��B
-�w�i�F�̕t���������́A�e�L�[�Ɋ���U��ꂽ�u**�����R�[�h**�v�������Ă��܂��B
+<a href="#keyboard"></a>
+## 使用するキーとその漢直コード
+テーブルファイルに記述するのは、下図のキーボードレイアウトで
+数字の背景色が青と緑になっているキー(0～48)です。
+背景色の付いた数字は、各キーに割り振られた「**漢直コード**」を示しています。
 
 ![Keyboard Layout](image/keyboard-layout.png)
 
-�u���ϊ��v�Ȃǂ̓���L�[(�@�\�L�[)�̊����R�[�h�� 50�`99 �ƂȂ�܂����A`X0�`X49` �Ə������Ƃ��ł��܂��B
-���̏ꍇ�u�ϊ��v�L�[�� `X6` �ƂȂ�܂��B
+「無変換」などの特殊キー(機能キー)の漢直コードは 50～99 となりますが、`X0～X49` と書くこともできます。
+この場合「変換」キーは `X6` となります。
 
-�܂��A���L�̒P�ŉ\�ȓ���L�[�͖��O�ł��L�q�ł��܂��B
+また、下記の単打可能な特殊キーは名前でも記述できます。
 
-|�L�[��|X�L�@|���O|
+|キー名|X記法|名前|
 |-|-|-|
-|���p/�S�p| X1|zenkaku|
+|半角/全角| X1|zenkaku|
 |CapsLock|X3|caps|
-|�p��|X4|alnum|
-|���ϊ�|X5|nfer|
-|�ϊ�|X6|xfer|
-|�Ђ炪��|X7|kana|
-|�E�V�t�g|X20|rshift|
+|英数|X4|alnum|
+|無変換|X5|nfer|
+|変換|X6|xfer|
+|ひらがな|X7|kana|
+|右シフト|X20|rshift|
 |Insert|X60|ins|
