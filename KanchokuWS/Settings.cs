@@ -958,8 +958,8 @@ namespace KanchokuWS
             ImeSendInputInRoman = GetString("imeSendInputInRoman")._parseBool(false);
             ImeSendInputInKana = GetString("imeSendInputInKana")._parseBool(false);
             //ImeUnicodeClassNames = GetString("imeUnicodeClassNames")._orElse("Edit|_WwG|SakuraView*").Trim();
-            ImeUnicodeClassNames = GetString("imeUnicodeClassNames").Trim();
-            ImeUnicodeClassNamesHash = new HashSet<string>(ImeUnicodeClassNames.Trim()._toLower()._split('|'));
+            //ImeUnicodeClassNames = GetString("imeUnicodeClassNames").Trim();
+            //ImeUnicodeClassNamesHash = new HashSet<string>(ImeUnicodeClassNames.Trim()._toLower()._split('|'));
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

@@ -876,7 +876,7 @@ namespace KanchokuWS.Gui
             radioButton_imeSendInputInRoman.Checked = Settings.ImeSendInputInRoman;
             radioButton_imeSendInputInKana.Checked = Settings.ImeSendInputInKana;
             radioButton_imeSendInputInUnicode.Checked = !(Settings.ImeSendInputInRoman || Settings.ImeSendInputInKana);
-            textBox_imeUnicodeClassNames.Text = Settings.ImeUnicodeClassNames._reReplace(@"\|", "\r\n");
+            //textBox_imeUnicodeClassNames.Text = Settings.ImeUnicodeClassNames._reReplace(@"\|", "\r\n");
 
         }
 
@@ -904,7 +904,7 @@ namespace KanchokuWS.Gui
             checkerImeCombo.Add(radioButton_imeSendInputInRoman);
             checkerImeCombo.Add(radioButton_imeSendInputInKana);
             checkerImeCombo.Add(radioButton_imeSendInputInUnicode);
-            checkerImeCombo.Add(textBox_imeUnicodeClassNames);
+            //checkerImeCombo.Add(textBox_imeUnicodeClassNames);
 
             checkerAll.Add(checkerImeCombo);
         }
@@ -937,7 +937,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("imeCooperationEnabled", checkBox_imeCooperationEnabled.Checked);
             Settings.SetUserIni("imeSendInputInRoman", radioButton_imeSendInputInRoman.Checked);
             Settings.SetUserIni("imeSendInputInKana", radioButton_imeSendInputInKana.Checked);
-            Settings.SetUserIni("imeUnicodeClassNames", textBox_imeUnicodeClassNames.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
+            //Settings.SetUserIni("imeUnicodeClassNames", textBox_imeUnicodeClassNames.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
 
             // 各種定義ファイルの再読み込み
             frmMain?.ReloadSettingsAndDefFiles();

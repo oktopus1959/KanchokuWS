@@ -1825,7 +1825,9 @@ namespace KanchokuWS.Gui
             // 
             // tabPage_imeCombo
             // 
+            this.tabPage_imeCombo.Controls.Add(this.label118);
             this.tabPage_imeCombo.Controls.Add(this.groupBox39);
+            this.tabPage_imeCombo.Controls.Add(this.textBox_imeUnicodeClassNames);
             this.tabPage_imeCombo.Controls.Add(this.checkBox_imeSendInputInKana);
             this.tabPage_imeCombo.Controls.Add(this.groupBox47);
             this.tabPage_imeCombo.Controls.Add(this.checkBox_imeSendInputInRoman);
@@ -1967,14 +1969,12 @@ namespace KanchokuWS.Gui
             // 
             // groupBox47
             // 
-            this.groupBox47.Controls.Add(this.label118);
-            this.groupBox47.Controls.Add(this.textBox_imeUnicodeClassNames);
             this.groupBox47.Controls.Add(this.radioButton_imeSendInputInUnicode);
             this.groupBox47.Controls.Add(this.radioButton_imeSendInputInKana);
             this.groupBox47.Controls.Add(this.radioButton_imeSendInputInRoman);
             this.groupBox47.Location = new System.Drawing.Point(337, 60);
             this.groupBox47.Name = "groupBox47";
-            this.groupBox47.Size = new System.Drawing.Size(322, 209);
+            this.groupBox47.Size = new System.Drawing.Size(322, 98);
             this.groupBox47.TabIndex = 3;
             this.groupBox47.TabStop = false;
             this.groupBox47.Text = "IMEがONの時の文字送出方法";
@@ -1982,26 +1982,28 @@ namespace KanchokuWS.Gui
             // label118
             // 
             this.label118.AutoSize = true;
-            this.label118.Location = new System.Drawing.Point(33, 95);
+            this.label118.Location = new System.Drawing.Point(370, 210);
             this.label118.Name = "label118";
             this.label118.Size = new System.Drawing.Size(257, 15);
             this.label118.TabIndex = 18;
             this.label118.Text = "常にUnicode文字送出とするウィンドウのClassName";
+            this.label118.Visible = false;
             // 
             // textBox_imeUnicodeClassNames
             // 
             this.textBox_imeUnicodeClassNames.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_imeUnicodeClassNames.Location = new System.Drawing.Point(36, 113);
+            this.textBox_imeUnicodeClassNames.Location = new System.Drawing.Point(373, 233);
             this.textBox_imeUnicodeClassNames.Multiline = true;
             this.textBox_imeUnicodeClassNames.Name = "textBox_imeUnicodeClassNames";
             this.textBox_imeUnicodeClassNames.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox_imeUnicodeClassNames.Size = new System.Drawing.Size(280, 90);
+            this.textBox_imeUnicodeClassNames.Size = new System.Drawing.Size(280, 48);
             this.textBox_imeUnicodeClassNames.TabIndex = 3;
             this.toolTip1.SetToolTip(this.textBox_imeUnicodeClassNames, "IMEがONであっても、常にUnicodeで文字送出をするウィンドウの\r\nClassNameを列挙します。1行1エントリで記述します。\r\n末尾に * を付加すると" +
         "、名前の先頭一致で判断されます。\r\n\r\nウィンドウのClassNameは、漢直モードに入り、仮想鍵盤を表示して、\r\n対象となるウィンドウをアクティブにすると、仮" +
         "想鍵盤の上部に表示されます。");
+            this.textBox_imeUnicodeClassNames.Visible = false;
             this.textBox_imeUnicodeClassNames.Enter += new System.EventHandler(this.textBox_imeUnicodeClassNames_Enter);
             this.textBox_imeUnicodeClassNames.Leave += new System.EventHandler(this.textBox_imeUnicodeClassNames_Leave);
             // 
