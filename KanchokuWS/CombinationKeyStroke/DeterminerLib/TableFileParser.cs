@@ -296,11 +296,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
-        /// <summary>もしSpaceキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる</summary>
-        void addSpaceMyCharFunctionIfNeeded()
+        /// <summary>もしルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる</summary>
+        void addMyCharFunctionInRootStrokeTable()
         {
-            if (rootTableNode.getNth(DecoderKeys.STROKE_SPACE_DECKEY) == null) {
-                outputLines.Add("-40>@^");
+            for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
+                if (rootTableNode.getNth(idx) == null) {
+                    outputLines.Add($"-{idx}>@^");
+                }
             }
         }
 
@@ -360,7 +362,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 keyComboPool.DebugPrint();
             }
 
-            addSpaceMyCharFunctionIfNeeded();
+            addMyCharFunctionInRootStrokeTable();
             writeAllLines(outFilename, outputLines);
 
             showErrorMessage();
