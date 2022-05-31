@@ -1097,7 +1097,7 @@ namespace KanchokuWS.Gui
         private void button_keyAssignTable_Click(object sender, EventArgs e)
         {
             logger.InfoH("CALLED");
-            openDocumentUrl(Settings.FaqUrl);
+            openDocumentUrl(Settings.KeyboardUrl);
         }
 
         //-----------------------------------------------------------------------------------

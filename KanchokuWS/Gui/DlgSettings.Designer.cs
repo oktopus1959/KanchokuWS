@@ -204,6 +204,7 @@ namespace KanchokuWS.Gui
             this.button_fontColorClose = new System.Windows.Forms.Button();
             this.button_fontColorEnter = new System.Windows.Forms.Button();
             this.tabPage_keyAssign = new System.Windows.Forms.TabPage();
+            this.button_keyAssignTable = new System.Windows.Forms.Button();
             this.groupBox43 = new System.Windows.Forms.GroupBox();
             this.label110 = new System.Windows.Forms.Label();
             this.groupBox31 = new System.Windows.Forms.GroupBox();
@@ -473,7 +474,6 @@ namespace KanchokuWS.Gui
             this.textBox_alphaModeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.Gui.ColorTextBox();
-            this.button_keyAssignTable = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -2654,12 +2654,26 @@ namespace KanchokuWS.Gui
             this.tabPage_keyAssign.Text = "機能キー割当";
             this.tabPage_keyAssign.UseVisualStyleBackColor = true;
             // 
+            // button_keyAssignTable
+            // 
+            this.button_keyAssignTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_keyAssignTable.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_keyAssignTable.Location = new System.Drawing.Point(65, 343);
+            this.button_keyAssignTable.Name = "button_keyAssignTable";
+            this.button_keyAssignTable.Size = new System.Drawing.Size(82, 23);
+            this.button_keyAssignTable.TabIndex = 38;
+            this.button_keyAssignTable.TabStop = false;
+            this.button_keyAssignTable.Text = "漢直コード表(&F)";
+            this.toolTip1.SetToolTip(this.button_keyAssignTable, "漢直キーコード表のページをブラウザで開きます");
+            this.button_keyAssignTable.UseVisualStyleBackColor = true;
+            this.button_keyAssignTable.Click += new System.EventHandler(this.button_keyAssignTable_Click);
+            // 
             // groupBox43
             // 
             this.groupBox43.Controls.Add(this.label110);
-            this.groupBox43.Location = new System.Drawing.Point(341, 145);
+            this.groupBox43.Location = new System.Drawing.Point(353, 145);
             this.groupBox43.Name = "groupBox43";
-            this.groupBox43.Size = new System.Drawing.Size(253, 119);
+            this.groupBox43.Size = new System.Drawing.Size(253, 131);
             this.groupBox43.TabIndex = 37;
             this.groupBox43.TabStop = false;
             this.groupBox43.Text = "設定例";
@@ -2682,7 +2696,7 @@ namespace KanchokuWS.Gui
             this.groupBox31.Controls.Add(this.label69);
             this.groupBox31.Location = new System.Drawing.Point(9, 145);
             this.groupBox31.Name = "groupBox31";
-            this.groupBox31.Size = new System.Drawing.Size(325, 119);
+            this.groupBox31.Size = new System.Drawing.Size(334, 131);
             this.groupBox31.TabIndex = 14;
             this.groupBox31.TabStop = false;
             this.groupBox31.Text = "説明";
@@ -2693,10 +2707,11 @@ namespace KanchokuWS.Gui
             this.label69.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label69.Location = new System.Drawing.Point(1, 19);
             this.label69.Name = "label69";
-            this.label69.Size = new System.Drawing.Size(323, 90);
+            this.label69.Size = new System.Drawing.Size(324, 105);
             this.label69.TabIndex = 1;
             this.label69.Text = "機能を呼び出すための打鍵列を設定します。\r\n\r\n打鍵列は、漢直キーコード(00～49)をカンマ区切りで並べたもの。\r\nコードに S/s/A/a/B/b を前接させ" +
-    "るとシフト(拡張シフト)コードになる。\r\nまた X/x を前接させると拡張修飾キーや特殊キーになる。\r\nキーコードについては、ここのツールチップを参照。";
+    "るとシフト(拡張シフト)コードになる。\r\nまた X/x を前接させると拡張修飾キーや特殊キーになる。\r\nキーコードについては、「漢直コード表」ボタンをクリックし" +
+    "て説明ページを\r\n表示。およびここのツールチップを参照。";
             this.toolTip1.SetToolTip(this.label69, resources.GetString("label69.ToolTip"));
             // 
             // label_keyAssignReload
@@ -2704,7 +2719,7 @@ namespace KanchokuWS.Gui
             this.label_keyAssignReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label_keyAssignReload.AutoSize = true;
             this.label_keyAssignReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_keyAssignReload.Location = new System.Drawing.Point(282, 325);
+            this.label_keyAssignReload.Location = new System.Drawing.Point(202, 347);
             this.label_keyAssignReload.Name = "label_keyAssignReload";
             this.label_keyAssignReload.Size = new System.Drawing.Size(77, 15);
             this.label_keyAssignReload.TabIndex = 36;
@@ -2741,7 +2756,7 @@ namespace KanchokuWS.Gui
             // groupBox32
             // 
             this.groupBox32.Controls.Add(this.label71);
-            this.groupBox32.Location = new System.Drawing.Point(9, 270);
+            this.groupBox32.Location = new System.Drawing.Point(9, 282);
             this.groupBox32.Name = "groupBox32";
             this.groupBox32.Size = new System.Drawing.Size(456, 51);
             this.groupBox32.TabIndex = 15;
@@ -5799,20 +5814,6 @@ namespace KanchokuWS.Gui
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // button_keyAssignTable
-            // 
-            this.button_keyAssignTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button_keyAssignTable.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_keyAssignTable.Location = new System.Drawing.Point(138, 343);
-            this.button_keyAssignTable.Name = "button_keyAssignTable";
-            this.button_keyAssignTable.Size = new System.Drawing.Size(82, 23);
-            this.button_keyAssignTable.TabIndex = 38;
-            this.button_keyAssignTable.TabStop = false;
-            this.button_keyAssignTable.Text = "漢直コード表(&F)";
-            this.toolTip1.SetToolTip(this.button_keyAssignTable, "「よくある質問と回答」ページのURLをブラウザで開きます");
-            this.button_keyAssignTable.UseVisualStyleBackColor = true;
-            this.button_keyAssignTable.Click += new System.EventHandler(this.button_keyAssignTable_Click);
             // 
             // DlgSettings
             // 
