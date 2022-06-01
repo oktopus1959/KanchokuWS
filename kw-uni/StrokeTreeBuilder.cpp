@@ -17,6 +17,7 @@
 #include "deckey_id_defs.h"
 #include "MyPrevChar.h"
 #include "VkbTableMaker.h"
+#include "Oneshot/PostRewriteOneShot.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
 
@@ -47,6 +48,7 @@ namespace {
         SLASH,          // /
         ARROW,          // -n>
         ARROW_BUNDLE,   // -*>-n>
+        REWRITE,        // @{ : 後置書き換え
     };
 
     // ビルトイン機能
@@ -315,6 +317,7 @@ namespace {
                     if (shiftPlane == COMBO_SHIFT_PLANE) { _LOG_DEBUGH(_T("LBRACE: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), lineNumber + 1, depth, shiftPlane, prevNth, n + shiftPlaneOffset); }
                 case TOKEN::STRING:             // "str" : 文字列ノード
                 case TOKEN::FUNCTION:           // @c : 機能ノード
+                case TOKEN::REWRITE:            // @{ : 書き換えノード
                     //tblNode->setNthChild(n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
                     setNthChildNode(tblNode, n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
                     ++n;
@@ -395,6 +398,7 @@ namespace {
                 case TOKEN::LBRACE:
                 case TOKEN::STRING:             // "str" : 文字列ノード
                 case TOKEN::FUNCTION:           // @c : 機能ノード
+                case TOKEN::REWRITE:            // @{ : 書き換えノード
                     //getNodePositionedByArrowBundle(tblNode, n + shiftPlaneOffset)->setNthChild(nextArrowIdx, createNode(currentToken, depth + 2, n, nextArrowIdx, true));
                     setNthChildNode(
                         getNodePositionedByArrowBundle(tblNode, n + shiftPlaneOffset),
@@ -497,10 +501,37 @@ namespace {
                 }
             case TOKEN::FUNCTION:          // @c : 機能ノード
                 return createFunctionNode(currentStr, prevNth, nth);
+
+            case TOKEN::REWRITE:            // @{ : 書き換えノード
+                return createRewriteNdoe();
+
             default:                // 途中でファイルが終わったりした場合 : エラー
                 parseError();
                 return 0;
             }
+        }
+
+        Node* createRewriteNdoe() {
+            readWord();
+            PostRewriteOneShotNode* rewNode = new PostRewriteOneShotNode(currentStr);
+
+            skipToEndOfLine();
+            readNextToken(0);
+            while (currentToken != TOKEN::RBRACE) { // '}' でブロックの終わり
+                auto items = utils::split(utils::strip(currentLine), '|');
+                if (items.size() == 2) {
+                    _LOG_DEBUGH(_T("REWRITE: %s -> %s"), items[0].c_str(), items[1].c_str());
+                    rewNode->addRewritePair(to_mstr(items[0]), to_mstr(items[1]));
+                } else {
+                    parseError();
+                    break;
+                }
+
+                skipToEndOfLine();
+                readNextToken(0);
+            }
+
+            return rewNode;
         }
 
         // 親ノードに対して、n番目の子ノードをセットする
@@ -714,6 +745,10 @@ namespace {
 
                 case '@':
                     // 機能
+                    if (peekNextChar() == '{') {
+                        getNextChar();
+                        return TOKEN::REWRITE;
+                    }
                     readMarker();
                     return TOKEN::FUNCTION;
 

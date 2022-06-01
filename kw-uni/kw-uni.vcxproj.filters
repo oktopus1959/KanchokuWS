@@ -153,13 +153,7 @@
     <ClInclude Include="KeysAndChars\Katakana.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="KeysAndChars\KatakanaOneShot.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="KeysAndChars\MyPrevChar.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="KeysAndChars\HankakuKatakanaOneShot.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="KeysAndChars\deckey_id_defs.h">
@@ -171,7 +165,16 @@
     <ClInclude Include="OneShot\OneShot.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="KeysAndChars\DakutenOneShot.h">
+    <ClInclude Include="OneShot\DakutenOneShot.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="OneShot\HankakuKatakanaOneShot.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="OneShot\KatakanaOneShot.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="OneShot\PostRewriteOneShot.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -272,13 +275,7 @@
     <ClCompile Include="KeysAndChars\KatakanaState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="KeysAndChars\KatakanaOneShotState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="KeysAndChars\MyPrevCharState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="KeysAndChars\HankakuKatakanaOneShotState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="KeysAndChars\deckey_id_defs.cpp">
@@ -290,7 +287,16 @@
     <ClCompile Include="OneShot\OneShotState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="KeysAndChars\DakutenOneShotState.cpp">
+    <ClCompile Include="OneShot\DakutenOneShotState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="OneShot\HankakuKatakanaOneShotState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="OneShot\KatakanaOneShotState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="OneShot\PostRewriteOneShotState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

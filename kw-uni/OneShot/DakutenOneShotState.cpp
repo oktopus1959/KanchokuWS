@@ -14,8 +14,7 @@
 
 #include "DakutenOneShot.h"
 
-#define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegaki)
-
+#define _LOG_DEBUGH_FLAG (false)
 #if 0
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
@@ -59,7 +58,7 @@ namespace {
     };
 
     // -------------------------------------------------------------------
-    // 状態テンプレートクラス
+    // 状態クラス
     class DakutenOneShotState : public State {
         DECLARE_CLASS_LOGGER;
 

@@ -11,9 +11,9 @@
 #include "EscapeNode.h"
 #include "KeysAndChars/Zenkaku.h"
 #include "KeysAndChars/Katakana.h"
-#include "KeysAndChars/KatakanaOneShot.h"
-#include "KeysAndChars/HankakuKatakanaOneShot.h"
-#include "KeysAndChars/DakutenOneShot.h"
+#include "OneShot/KatakanaOneShot.h"
+#include "OneShot/HankakuKatakanaOneShot.h"
+#include "OneShot/DakutenOneShot.h"
 #include "OneShot/OneShot.h"
 //#include "Template/Template.h"
 
