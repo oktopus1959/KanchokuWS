@@ -983,6 +983,10 @@ namespace utils
         return flag ? _T("True") : _T("False");
     }
 
+    inline tstring intToString(int val) {
+        return std::to_wstring(val);
+    }
+
 #undef UTILS_BUFSIZ
 } // namespace utils
 

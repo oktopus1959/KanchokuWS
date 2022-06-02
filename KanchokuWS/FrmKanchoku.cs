@@ -1513,7 +1513,7 @@ namespace KanchokuWS
             return i;
         }
 
-        public string CallDecoderWithKey(int deckey, uint mod)
+        public string CallDecoderWithKey(int deckey, uint mod, out int numBS)
         {
             logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}");
 
@@ -1521,7 +1521,8 @@ namespace KanchokuWS
             HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, ref decoderOutput);
 
             var result = decoderOutput.outString._toString();
-            logger.InfoH(() => $"LEAVE: result={result}, usedTable={decoderOutput.strokeTableNum}");
+            numBS = decoderOutput.numBackSpaces;
+            logger.InfoH(() => $"LEAVE: result={result}, numBS={decoderOutput.numBackSpaces}, usedTable={decoderOutput.strokeTableNum}");
             return result;
         }
 

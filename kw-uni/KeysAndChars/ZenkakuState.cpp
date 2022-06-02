@@ -112,7 +112,7 @@ namespace {
             STATE_COMMON->SetZenkakuModeMarkerShowFlag();
             if (wch > 0) {
                 //STATE_COMMON->SetOutString(wch, 0);
-                HISTORY_STAY_STATE->SetTranslatedOutString(MString(1, wch));
+                HISTORY_STAY_STATE->SetTranslatedOutString(MString(1, wch), 0);
             }
         }
 

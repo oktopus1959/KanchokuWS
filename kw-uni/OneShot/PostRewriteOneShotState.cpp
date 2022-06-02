@@ -11,11 +11,12 @@
 #include "Node.h"
 #include "State.h"
 #include "OutputStack.h"
+#include "History/History.h"
 
 #include "PostRewriteOneShot.h"
 
 #define _LOG_DEBUGH_FLAG (false)
-#if 0
+#if 1
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -46,20 +47,24 @@ namespace {
 
         // 機能状態に対して生成時処理を実行する
         bool DoProcOnCreated() {
-            _LOG_DEBUGH(_T("ENTER"));
+            _LOG_DEBUGH(_T("ENTER: %s"), MY_NODE->getDebugString().c_str());
 
             bool bRewrited = false;
-            for (size_t len = 3; len > 0; --len) {
-                const MString& rewStr = MY_NODE->getRewriteStr(OUTPUT_STACK->OutputStackBackStr(len));
-                if (!rewStr.empty()) {
-                    _LOG_DEBUGH(_T("REWRITE: outStr=%s, numBS=%d"), MAKE_WPTR(rewStr), len);
-                    STATE_COMMON->SetOutString(rewStr, len);
+            const MString targetStr = OUTPUT_STACK->backStringWhileRewritable(5);
+            _LOG_DEBUGH(_T("targetStr=%s"), MAKE_WPTR(targetStr));
+            for (size_t pos = 0; pos < targetStr.size(); ++pos) {
+                _LOG_DEBUGH(_T("subStr=%s, pos=%d"), MAKE_WPTR(targetStr.substr(pos)), pos);
+                const RewriteInfo* rewInfo = MY_NODE->getRewriteInfo(targetStr.substr(pos));
+                if (rewInfo) {
+                    int numBS = targetStr.size() - pos;
+                    _LOG_DEBUGH(_T("REWRITE: outStr=%s, rewritableLen=%d, numBS=%d"), MAKE_WPTR(rewInfo->rewriteStr), rewInfo->rewritableLen, numBS);
+                    HISTORY_STAY_STATE->SetTranslatedOutString(rewInfo->rewriteStr, rewInfo->rewritableLen, numBS);
                     bRewrited = true;
                     break;
                 }
             }
             if (!bRewrited) {
-                STATE_COMMON->SetOutString(MY_NODE->getString(), 0);
+                HISTORY_STAY_STATE->SetTranslatedOutString(MY_NODE->getString(), MY_NODE->getRewritableLen());
             }
 
             // チェイン不要
@@ -78,10 +83,18 @@ namespace {
 DEFINE_CLASS_LOGGER(PostRewriteOneShotNode);
 
 // コンストラクタ
-PostRewriteOneShotNode::PostRewriteOneShotNode(const wstring& s)
-    : myStr(to_mstr(s))
+PostRewriteOneShotNode::PostRewriteOneShotNode(const wstring& s, bool bBare)
 {
-    LOG_INFO(_T("CALLED: constructor: myStr=%s"), s.c_str());
+    LOG_INFO(_T("CALLED: constructor: s=%s, bBare=%s"), s.c_str(), BOOL_TO_WPTR(bBare));
+    wstring rewStr = s;
+    myRewriteLen = 0;
+    if (bBare) {
+        rewStr = utils::replace(rewStr, _T("/"), _T(""));
+        size_t pos = s.find('/', 0);
+        myRewriteLen = pos < rewStr.size() ? rewStr.size() - pos : rewStr.empty() ? 0 : 1;
+    }
+    myStr = to_mstr(rewStr);
+    LOG_INFO(_T("LEAVE: myStr=%s, myRewriteLen=%d"), MAKE_WPTR(myStr), myRewriteLen);
 }
 
 // デストラクタ
@@ -94,3 +107,25 @@ State* PostRewriteOneShotNode::CreateState() {
     return new PostRewriteOneShotState(this);
 }
 
+void PostRewriteOneShotNode::addRewritePair(const wstring& key, const wstring& value, bool bBare) {
+    wstring rewStr = value;
+    size_t rewLen = 0;
+    if (bBare) {
+        rewStr = utils::replace(rewStr, _T("/"), _T(""));
+        size_t pos = value.find('/', 0);
+        rewLen = pos < rewStr.size() ? rewStr.size() - pos : rewStr.empty() ? 0 : 1;
+    }
+    rewriteMap[to_mstr(key)] = RewriteInfo(to_mstr(rewStr), rewLen);
+}
+
+const wstring PostRewriteOneShotNode::getDebugString() const {
+    wstring result = _T("myStr: ");
+    result.append(to_wstr(myStr)).append(_T(", rewriteMap="));
+    bool bFirst = true;
+    for (auto pair : rewriteMap) {
+        if (!bFirst) result.append(_T(", "));
+        result.append(to_wstr(pair.first)).append(_T(":")).append(to_wstr(pair.second.rewriteStr)).append(_T(":")).append(std::to_wstring(pair.second.rewritableLen));
+        bFirst = false;
+    }
+    return result;
+}

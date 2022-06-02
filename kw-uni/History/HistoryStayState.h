@@ -13,7 +13,7 @@ public:
     virtual void AddNewHistEntryOnSomeChar() = 0;
 
     // 文字列を変換して出力、その後、履歴の追加
-    virtual void SetTranslatedOutString(const MString& outStr) = 0;
+    virtual void SetTranslatedOutString(const MString& outStr, size_t rewritableLen, int numBS = -1) = 0;
 
     // Ctrl-H ハンドラ
     //void handleCtrlH() { setCharDeleteInfo(1); }

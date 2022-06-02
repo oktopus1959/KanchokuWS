@@ -128,6 +128,9 @@ class StateCommonInfo {
     // 出力文字列 (UI側に送られる)
     MString outString;
 
+    // 書き換え可能な末尾文字列の長さ
+    size_t rewritableLen;
+
     // 処理後に表示する仮想鍵盤のレイアウト
     VkbLayout layout;
 
@@ -199,6 +202,7 @@ public:
         strokeCount = 0;
         nextSelectPos = 0;
         outString.clear();
+        rewritableLen = 0;
         layout = VkbLayout::None;
         centerString.clear();
         outStringProcDone = false;
@@ -290,10 +294,20 @@ public:
         outString = ch;
         if (numBS >= 0) numBackSpaces = numBS;
     }
+
     inline void SetOutString(const MString& s, int numBS = -1) {
         outString = s;
         if (numBS >= 0) numBackSpaces = numBS;
     }
+
+    inline void SetOutStringWithRewritableLen(const MString& s, size_t rewLen, int numBS = -1) {
+        outString = s;
+        rewritableLen = rewLen;
+        if (numBS >= 0) numBackSpaces = numBS;
+    }
+
+    inline size_t RewritableLen() const { return rewritableLen; }
+
     inline const MString& OutString() const { return outString; }
     inline mchar_t GetFirstOutChar() const { return outString.empty() ? 0 : outString[0]; }
     inline mchar_t GetLastOutChar() const { return outString.empty() ? 0 : outString.back(); }

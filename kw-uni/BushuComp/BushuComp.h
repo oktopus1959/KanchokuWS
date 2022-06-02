@@ -30,7 +30,7 @@ public:
     MString ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev = 0);
 
     // 自動部首合成の実行
-    void ReduceByAutoBushu(const MString& ms);
+    bool ReduceByAutoBushu(const MString& ms);
 
 public:
     // 後置部首合成機能ノードのSingleton

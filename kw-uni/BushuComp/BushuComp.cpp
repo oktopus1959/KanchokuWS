@@ -118,7 +118,7 @@ MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
 }
 
 // 自動部首合成の実行
-void BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
+bool BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
     if (BUSHU_DIC && !mstr.empty()) {
         size_t prevTotalCnt = PrevTotalCount;
         PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
@@ -143,11 +143,11 @@ void BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
                 IsPrevAuto = true;
                 //合成した文字を履歴に登録
                 if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(ms);
-                return;
+                return true;
             }
         }
     }
-    STATE_COMMON->SetOutString(mstr);
+    return false;
 }
 
 // 後置部首合成機能ノードのSingleton

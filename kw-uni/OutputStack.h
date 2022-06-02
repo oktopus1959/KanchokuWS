@@ -15,6 +15,7 @@ public:
     static const unsigned short FLAG_BLOCK_HIST = 2;
     static const unsigned short FLAG_BLOCK_MAZE = 4;
     static const unsigned short FLAG_BLOCK_KATA = 8;
+    static const unsigned short FLAG_REWRITABLE = 16;
 
     static const size_t HIST_KEY_MAX_LEN = 8;   // 履歴用のキーの最大長
 
@@ -143,6 +144,16 @@ public:
         setKataBlocker();
     }
 
+    // 書き換え可能フラグ(末尾 lastNum 文字にセット)
+    inline void setRewritable(size_t lastNum) {
+        if (!stack.empty()) {
+            for (size_t i = 0; i < lastNum; ++i) {
+                if (i >= stack.size()) break;
+                stack[stack.size() - i - 1].flag |= FLAG_REWRITABLE;
+            }
+        }
+    }
+
     // 末尾に交ぜ書きブロッカーをセットする
     inline void setMazeBlocker() {
         setFlag(FLAG_BLOCK_MAZE);
@@ -236,6 +247,17 @@ public:
         return size() - pos;
     }
 
+    // 改行を含まない末尾部分で、flag が続く長さ
+    inline size_t tail_size_while(unsigned short flag) const {
+        if (size() == 0) return 0;
+        size_t pos = size();
+        while (pos > 0) {
+            if (stack[pos - 1].chr == '\n' || (stack[pos - 1].flag & flag) == 0) break;
+            --pos;
+        }
+        return size() - pos;
+    }
+
     // 改行を含まない末尾部分で、句読点の直後までの長さ(ただし末尾句読点は含める)
     inline size_t tail_size_upto_flag_or_punct(unsigned short flag) const {
         if (size() == 0) return 0;
@@ -290,6 +312,16 @@ public:
     // 改行を含まない末尾部分(最大長maxlen)で、指定の flag の直後までの部分文字列を返す
     inline MString backStringUpto(size_t maxlen, unsigned short flag) const {
         return tail_string(maxlen, tail_size_upto(flag));
+    }
+
+    // 改行を含まない末尾部分(最大長maxlen)で、指定の flag が続いている部分文字列を返す
+    inline MString backStringWhile(size_t maxlen, unsigned short flag) const {
+        return tail_string(maxlen, tail_size_while(flag));
+    }
+
+    // 改行を含まない末尾部分(最大長maxlen)で、REWRITABLE が続いている部分文字列を返す
+    inline MString backStringWhileRewritable(size_t maxlen) const {
+        return tail_string(maxlen, tail_size_while(FLAG_REWRITABLE));
     }
 
     // 改行を含まない末尾部分(最大長maxlen)で、何かflagがあれば | を付加した部分文字列を返す

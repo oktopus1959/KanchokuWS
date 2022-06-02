@@ -37,7 +37,7 @@
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
 #define _LOG_DEBUGH_FLAG true
-#if 0
+#if 1
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -523,6 +523,9 @@ public:
             OUTPUT_STACK->setMazeBlocker(STATE_COMMON->GetMazegakiBlockerPosition());
             _LOG_DEBUGH(_T("OUTPUT_STACK->setMazeBlocker(): %s"), MAKE_WPTR(OUTPUT_STACK->backStringWithFlagUpto(20)));
         }
+        // 出力履歴に Rewritable を反映
+        _LOG_DEBUGH(_T("OUTPUT_STACK->setRewritable(%d)"), STATE_COMMON->RewritableLen());
+        OUTPUT_STACK->setRewritable(STATE_COMMON->RewritableLen());
 
         int strokeTableChainLen = startState->StrokeTableChainLength();
         _LOG_DEBUGH(_T("strokeTableChainLen=%d"), strokeTableChainLen);

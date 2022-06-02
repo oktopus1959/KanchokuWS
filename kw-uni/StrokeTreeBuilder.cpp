@@ -44,6 +44,7 @@ namespace {
         RBRACE,         // }
         COMMA,          // ,
         STRING,         // "str"
+        BARE_STRING,    // str
         FUNCTION,       // @?
         SLASH,          // /
         ARROW,          // -n>
@@ -316,6 +317,7 @@ namespace {
                 case TOKEN::LBRACE:
                     if (shiftPlane == COMBO_SHIFT_PLANE) { _LOG_DEBUGH(_T("LBRACE: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), lineNumber + 1, depth, shiftPlane, prevNth, n + shiftPlaneOffset); }
                 case TOKEN::STRING:             // "str" : 文字列ノード
+                case TOKEN::BARE_STRING:        // str : 文字列ノード
                 case TOKEN::FUNCTION:           // @c : 機能ノード
                 case TOKEN::REWRITE:            // @{ : 書き換えノード
                     //tblNode->setNthChild(n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
@@ -397,6 +399,7 @@ namespace {
 
                 case TOKEN::LBRACE:
                 case TOKEN::STRING:             // "str" : 文字列ノード
+                case TOKEN::BARE_STRING:        // str : 文字列ノード
                 case TOKEN::FUNCTION:           // @c : 機能ノード
                 case TOKEN::REWRITE:            // @{ : 書き換えノード
                     //getNodePositionedByArrowBundle(tblNode, n + shiftPlaneOffset)->setNthChild(nextArrowIdx, createNode(currentToken, depth + 2, n, nextArrowIdx, true));
@@ -438,6 +441,7 @@ namespace {
 
         Node* createNode(TOKEN token, int depth, int prevNth, int nth, bool bArrowBundle = false) {
             LOG_TRACE(_T("CALLED: token=%d, depth=%d, prevNth=%d, nth=%d, bArrowBundle=%d"), token, depth, prevNth, nth, bArrowBundle);
+            bool bBareStr = token == TOKEN::BARE_STRING;
             switch (token) {
             case TOKEN::LBRACE: {
                 strokes.push_back(nth);
@@ -450,6 +454,7 @@ namespace {
             case TOKEN::SLASH:             // '/' が来ても次のトークン
                 return 0;
             case TOKEN::STRING:            // "str" : 文字列ノード
+            case TOKEN::BARE_STRING:       // str : 文字列ノード
                 LOG_TRACE(_T("STRING: %d:%d=%s, shiftPlane=%d"), lineNumber + 1, nth, currentStr.c_str(), shiftPlane);
                 if (shiftPlane == COMBO_SHIFT_PLANE) { _LOG_DEBUGH(_T("STRING: %s: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), currentStr.c_str(), lineNumber + 1, depth, shiftPlane, prevNth, nth); }
                 if (currentStr.empty()) return 0;
@@ -478,7 +483,7 @@ namespace {
                         }
                     }
                     LOG_TRACE(_T("LEAVE: new StringNode(%s)"), currentStr.c_str());
-                    return new StringNode(currentStr);
+                    return new StringNode(currentStr, bBareStr);
                 } else {
                     wstring convStr = conv_kanji(currentStr);
                     if (strokeSerieses2) {
@@ -513,15 +518,17 @@ namespace {
 
         Node* createRewriteNdoe() {
             readWord();
-            PostRewriteOneShotNode* rewNode = new PostRewriteOneShotNode(currentStr);
+            bool bBare = !currentStr.empty() && currentStr[0] != '"';
+            PostRewriteOneShotNode* rewNode = new PostRewriteOneShotNode(utils::strip(currentStr, _T("\"")), bBare);
 
             skipToEndOfLine();
             readNextToken(0);
             while (currentToken != TOKEN::RBRACE) { // '}' でブロックの終わり
-                auto items = utils::split(utils::strip(currentLine), '|');
+                auto items = utils::split(utils::strip(currentLine), '\t');
                 if (items.size() == 2) {
                     _LOG_DEBUGH(_T("REWRITE: %s -> %s"), items[0].c_str(), items[1].c_str());
-                    rewNode->addRewritePair(to_mstr(items[0]), to_mstr(items[1]));
+                    bBare = items[1].size() > 0 && items[1][0] != '"';
+                    rewNode->addRewritePair(utils::strip(items[0], _T("\"")), utils::strip(items[1], _T("\"")), bBare);
                 } else {
                     parseError();
                     break;
@@ -537,13 +544,19 @@ namespace {
         // 親ノードに対して、n番目の子ノードをセットする
         void setNthChildNode(StrokeTableNode* parentNode, size_t n, Node* childNode) {
             if (parentNode && childNode) {
+                Node* pn = parentNode->getNth(n);
                 if (!isInCombinationBlock) {
                     // 同時打鍵ブロック以外ならば上書きOK
+                    PostRewriteOneShotNode* pp = pn ? dynamic_cast<PostRewriteOneShotNode*>(pn) : 0;
+                    PostRewriteOneShotNode* cp = dynamic_cast<PostRewriteOneShotNode*>(childNode);
+                    if (pp && cp) {
+                        // 後置書き換えが重複した場合
+                        cp->addRewriteMap(pp->getRewriteMap());
+                    }
                     parentNode->setNthChild(n, childNode);
                 } else {
                     // 同時打鍵ブロックの場合
-                    Node* p = parentNode->getNth(n);
-                    if (p == 0 || p->isFunctionNode()) {
+                    if (pn == 0 || pn->isFunctionNode()) {
                         // 未割り当て、または機能ノードならば上書きOK
                         parentNode->setNthChild(n, childNode);
                     } else if (childNode->isFunctionNode()) {
@@ -734,6 +747,8 @@ namespace {
                         skipToEndOfLine();
                         break;
                     }
+                    readBareString(currentChar);
+                    if (currentStr.size() > 1) return TOKEN::BARE_STRING;
                     return TOKEN::SLASH;
 
                 case '\n':
@@ -775,7 +790,7 @@ namespace {
 
                 default:
                     readBareString(currentChar);
-                    if (!currentStr.empty()) return TOKEN::STRING;
+                    if (!currentStr.empty()) return TOKEN::BARE_STRING;
 
                     // エラー
                     parseError();
@@ -807,8 +822,9 @@ namespace {
             }
         }
 
+        // スラッシュも含む
         bool isOutputChar(wchar_t c) {
-            return ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c >= 0x1000);
+            return (c == '/' || (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c >= 0x80);
         }
 
         // 何らかのデリミタが来るまで読みこんで、currentStr に格納。

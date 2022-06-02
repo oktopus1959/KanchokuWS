@@ -6,10 +6,14 @@
 // StringNode - 文字列を格納するノード
 class StringNode : public Node {
  public:
-     StringNode(const wstring& s) {
+     StringNode(const wstring& s, bool bRewritable = false) : rewritableLen(0) {
          if (s.empty()) {   // 文字列がない場合
              str.clear();
-         } else {           // 文字列がある場合 - 文字列を保存する
+         } else if (bRewritable) {           // 文字列がある場合 - 文字列を保存する
+             str = to_mstr(utils::replace(s, _T("/"), _T("")));
+             size_t pos = s.find('/', 0);
+             rewritableLen = pos <= str.size() ? str.size() - pos : str.empty() ? 0 : 1;
+         } else {
              str = to_mstr(s);
          }
      }
@@ -29,10 +33,14 @@ class StringNode : public Node {
     // 出力用文字列を返す
      MString getString() const { return str; }
 
+    size_t getRewritableLen() const { return rewritableLen; }
+
     NodeType getNodeType() const { return NodeType::String; }
 
 private:
     // 打鍵による出力文字列
     MString str;
+
+    size_t rewritableLen;
 };
 

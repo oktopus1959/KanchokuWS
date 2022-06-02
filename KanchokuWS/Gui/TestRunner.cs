@@ -121,7 +121,10 @@ namespace KanchokuWS.Gui
             {
                 if (list._notEmpty()) {
                     foreach (var dk in list) {
-                        sb.Append(frmMain.CallDecoderWithKey(dk, 0));
+                        int numBS = 0;
+                        var result = frmMain.CallDecoderWithKey(dk, 0, out numBS);
+                        sb.Length = (sb.Length - numBS)._lowLimit(0);
+                        sb.Append(result);
                     }
                 }
             }

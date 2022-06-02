@@ -47,6 +47,9 @@ public:
     // 表示用または出力用文字列を返す
     virtual MString getString() const = 0;
 
+    // Google日本語入力における「次の入力」に相当する文字列の長さを返す
+    virtual size_t getRewritableLen() const { return 0; }
+
     // ノード型を返す
     virtual NodeType getNodeType() const = 0;
 

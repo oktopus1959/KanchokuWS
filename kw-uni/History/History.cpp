@@ -21,7 +21,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 0
+#if 1
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -900,14 +900,17 @@ namespace {
         }
 
         // 文字列を変換して出力、その後、履歴の追加
-        void SetTranslatedOutString(const MString& outStr) {
-            _LOG_DEBUGH(_T("ENTER: %s: outStr=%s"), NAME_PTR, MAKE_WPTR(outStr));
+        void SetTranslatedOutString(const MString& outStr, size_t rewritableLen, int numBS = -1) {
+            _LOG_DEBUGH(_T("ENTER: %s: outStr=%s, rewritableLen=%d, numBS=%d"), NAME_PTR, MAKE_WPTR(outStr), rewritableLen, numBS);
             if (pNext) {
-                STATE_COMMON->SetOutString(pNext->TranslateString(outStr));
-            } else if (SETTINGS->autoBushuComp) {
-                BUSHU_COMP_NODE->ReduceByAutoBushu(outStr);
+                MString xlatStr = pNext->TranslateString(outStr);
+                _LOG_DEBUGH(_T("%s: SetOutStringWithRewritableLen(%s, %d, %d)"), NAME_PTR, MAKE_WPTR(xlatStr), xlatStr == outStr ? rewritableLen : 0, numBS);
+                STATE_COMMON->SetOutStringWithRewritableLen(xlatStr, xlatStr == outStr ? rewritableLen : 0, numBS);
             } else {
-                STATE_COMMON->SetOutString(outStr);
+                if (!SETTINGS->autoBushuComp || !BUSHU_COMP_NODE->ReduceByAutoBushu(outStr)) {
+                    _LOG_DEBUGH(_T("%s: SetOutStringWithRewritableLen(%s, %d, %d)"), NAME_PTR, MAKE_WPTR(outStr), rewritableLen, numBS);
+                    STATE_COMMON->SetOutStringWithRewritableLen(outStr, rewritableLen, numBS);
+                }
             }
             AddNewHistEntryOnSomeChar();
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
