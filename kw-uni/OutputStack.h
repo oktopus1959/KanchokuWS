@@ -247,12 +247,12 @@ public:
         return size() - pos;
     }
 
-    // 改行を含まない末尾部分で、flag が続く長さ
-    inline size_t tail_size_while(unsigned short flag) const {
+    // 改行を含まない末尾部分で、flag のみが続く長さ
+    inline size_t tail_size_while_only(unsigned short flag) const {
         if (size() == 0) return 0;
         size_t pos = size();
         while (pos > 0) {
-            if (stack[pos - 1].chr == '\n' || (stack[pos - 1].flag & flag) == 0) break;
+            if (stack[pos - 1].chr == '\n' || stack[pos - 1].flag != flag) break;
             --pos;
         }
         return size() - pos;
@@ -314,14 +314,14 @@ public:
         return tail_string(maxlen, tail_size_upto(flag));
     }
 
-    // 改行を含まない末尾部分(最大長maxlen)で、指定の flag が続いている部分文字列を返す
-    inline MString backStringWhile(size_t maxlen, unsigned short flag) const {
-        return tail_string(maxlen, tail_size_while(flag));
+    // 改行を含まない末尾部分(最大長maxlen)で、指定の flag のみが続いている部分文字列を返す
+    inline MString backStringWhileOnly(size_t maxlen, unsigned short flag) const {
+        return tail_string(maxlen, tail_size_while_only(flag));
     }
 
-    // 改行を含まない末尾部分(最大長maxlen)で、REWRITABLE が続いている部分文字列を返す
-    inline MString backStringWhileRewritable(size_t maxlen) const {
-        return tail_string(maxlen, tail_size_while(FLAG_REWRITABLE));
+    // 改行を含まない末尾部分(最大長maxlen)で、REWRITABLE のみが続いている部分文字列を返す
+    inline MString backStringWhileOnlyRewritable(size_t maxlen) const {
+        return tail_string(maxlen, tail_size_while_only(FLAG_REWRITABLE));
     }
 
     // 改行を含まない末尾部分(最大長maxlen)で、何かflagがあれば | を付加した部分文字列を返す

@@ -50,7 +50,7 @@ namespace {
             _LOG_DEBUGH(_T("ENTER: %s"), MY_NODE->getDebugString().c_str());
 
             bool bRewrited = false;
-            const MString targetStr = OUTPUT_STACK->backStringWhileRewritable(5);
+            const MString targetStr = OUTPUT_STACK->backStringWhileOnlyRewritable(5);
             _LOG_DEBUGH(_T("targetStr=%s"), MAKE_WPTR(targetStr));
             for (size_t pos = 0; pos < targetStr.size(); ++pos) {
                 _LOG_DEBUGH(_T("subStr=%s, pos=%d"), MAKE_WPTR(targetStr.substr(pos)), pos);
