@@ -30,7 +30,7 @@ namespace KanchokuWS.Gui
                 return;
             }
 
-            var regex = new Regex(@"^\s*(\w+)\(([^)]+)\)(\s*=\s*([^\s]+))?");
+            var regex = new Regex(@"^\s*(\w+)\(([^)]*)\)(\s*=\s*([^\s]+))?");
             var sb = new StringBuilder();
 
             int lineNum = 0;
@@ -77,6 +77,10 @@ namespace KanchokuWS.Gui
                         }
                         break;
 
+                    case "clear":
+                        callDecoderWithKey(DecoderKeys.FULL_ESCAPE_DECKEY);
+                        break;
+
                     case "comboMinTime":
                         Settings.CombinationKeyMinOverlappingTimeMs = arg._parseInt(70);
                         break;
@@ -103,6 +107,16 @@ namespace KanchokuWS.Gui
             }
         }
 
+        void callDecoderWithKey(int dk, StringBuilder sb = null)
+        {
+            int numBS = 0;
+            var result = frmMain.CallDecoderWithKey(dk, 0, out numBS);
+            if (sb != null) {
+                sb.Length = (sb.Length - numBS)._lowLimit(0);
+                sb.Append(result);
+            }
+        }
+
         static Dictionary<char, int> keyToDeckey = new Dictionary<char, int>() {
             {'1', 0 }, {'2', 1 }, {'3', 2 }, {'4', 3 }, {'5', 4 }, {'6', 5 }, {'7', 6 }, {'8', 7 }, {'9', 8 }, {'0', 9 }, 
             {'Q', 10 }, {'W', 11 }, {'E', 12 }, {'R', 13 }, {'T', 14 }, {'Y', 15 }, {'U', 16 }, {'I', 17 }, {'O', 18 }, {'P', 19 }, 
@@ -121,10 +135,7 @@ namespace KanchokuWS.Gui
             {
                 if (list._notEmpty()) {
                     foreach (var dk in list) {
-                        int numBS = 0;
-                        var result = frmMain.CallDecoderWithKey(dk, 0, out numBS);
-                        sb.Length = (sb.Length - numBS)._lowLimit(0);
-                        sb.Append(result);
+                        callDecoderWithKey(dk, sb);
                     }
                 }
             }
