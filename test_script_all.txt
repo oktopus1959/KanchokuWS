@@ -1,3 +1,4 @@
+# 薙刀式
 loadTable(tables/naginata15.tbl)
 convert(JWjw) = ぎ
 convert(JJJWjw) = ぎ
@@ -7,20 +8,56 @@ convert(J<100>Wjw) = あき
 convert(JJJ<100>Wjw) = あき
 convert(JWRjwr) = ぎし
 convert(JWRrjw) = ぎじ
+comboMinTime(100)
 convert(JWR<40>jwr) = ぎし
+comboMinTime(50)
 convert(JWR<80>jwr) = ぎじ
 
+# 新下駄
 loadTable(tables/shin-geta.tbl)
 convert(KWEkwe) = ごは
 convert(KKKWEkwe) = ごは
 convert(KWEewk) = ごは
 convert(KKKWEewk) = ごは
 
+# 月
 loadTable(tables/tuki-2-263.pfx.tbl)
 convert(DUIdui) = えい
 convert(DDD<1000>UIdui) = えい
 convert(DDDUIdui) = えい
 
-
+# phoenix RT
 loadTable(tables/phoenix_rt.tbl)
 convert({21}[21]{29}[29]) = ね
+
+# ブリ中トロ
+loadTable(tables/chutoro.211023.tbl)
+
+convert(Qq) = ゅ
+convert(Tt) = ゃ
+convert(Zz) = ょ
+convert(Aa) = た
+convert({46}[46]) = ー
+convert(Kk) = 。
+clear()
+convert(KSks) = が
+convert(Dd) = 、
+clear()
+convert(DPpd) = ふぁ
+convert(ETet) = どぅ
+convert(CTct) = うぉ
+convert({37}[37]) = お
+convert({37}T[37]t) = りゃ
+convert(YTyt) = ぷろぐらむ
+convert(MDAmda) = でしょう
+convert({38}DAad[38]) = ましょう
+
+# のにいると
+loadTable(tables/noniiruto.tbl)
+
+comboMaxTime(100)
+comboMinTime(70)
+convert(KDFkdf) = にゅ
+convert(KDFdfk) = にゅ
+convert(KkDFdf) = にゅ
+convert(K<87>D<30>F<43>kfd) = にゅ
