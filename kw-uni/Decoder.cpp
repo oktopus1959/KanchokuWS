@@ -37,7 +37,7 @@
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
 #define _LOG_DEBUGH_FLAG true
-#if 1
+#if 0
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -479,12 +479,12 @@ public:
         if (decodeKeyboardChar) STATE_COMMON->SetDecodeKeyboardCharMode();  // キーボードフェイス文字を返すモード
         _LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
 
-        // 同時打鍵コードなら、RootStrokeStateを削除しておく
-        if (keyId >= COMBO_DECKEY_START && keyId < COMBO_DECKEY_END) {
-            _LOG_DEBUGH(_T("\nENTER: Clear stroke"));
-            startState->HandleDeckey(CLEAR_STROKE_DECKEY);
-            _LOG_DEBUGH(_T("LEAVE: Clear stroke\n"));
-        }
+        // 同時打鍵コードなら、RootStrokeStateを削除しておく⇒と思ったが、実際にはそのようなケースがあったのでコメントアウト(「のにいると」で  KkDF のケース)
+        //if (keyId >= COMBO_DECKEY_START && keyId < COMBO_DECKEY_END) {
+        //    _LOG_DEBUGH(_T("\nENTER: Clear stroke"));
+        //    startState->HandleDeckey(CLEAR_STROKE_DECKEY);
+        //    _LOG_DEBUGH(_T("LEAVE: Clear stroke\n"));
+        //}
 
         // DecKey処理を呼ぶ
         startState->HandleDeckey(keyId);
