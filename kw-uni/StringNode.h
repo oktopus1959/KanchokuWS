@@ -1,4 +1,4 @@
-//#include "pch.h"
+#pragma once
 
 #include "Node.h"
 
@@ -6,7 +6,7 @@
 // StringNode - 文字列を格納するノード
 class StringNode : public Node {
  public:
-     StringNode(const wstring& s, bool bRewritable = false) : rewritableLen(0) {
+     StringNode(const wstring& s, bool converted, bool bRewritable) : bConverted(converted), rewritableLen(0) {
          if (s.empty()) {   // 文字列がない場合
              str.clear();
          } else if (bRewritable) {           // 文字列がある場合 - 文字列を保存する
@@ -37,10 +37,15 @@ class StringNode : public Node {
 
     NodeType getNodeType() const { return NodeType::String; }
 
+    bool isConverted() const { return bConverted; }
+
 private:
     // 打鍵による出力文字列
     MString str;
 
     size_t rewritableLen;
+
+    // 裏面定義文字か
+    bool bConverted;
 };
 

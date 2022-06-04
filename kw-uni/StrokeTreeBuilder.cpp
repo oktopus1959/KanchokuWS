@@ -16,7 +16,6 @@
 #include "DeckeyToChars.h"
 #include "deckey_id_defs.h"
 #include "MyPrevChar.h"
-#include "VkbTableMaker.h"
 #include "Oneshot/PostRewriteOneShot.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
@@ -166,6 +165,8 @@ namespace {
     private:
         DECLARE_CLASS_LOGGER;
 
+        bool bPrimaryTable = false;
+
         std::vector<wstring>& tableLines;
 
         TOKEN currentToken = TOKEN::END;   // 最後に読んだトークン
@@ -176,6 +177,8 @@ namespace {
         wstring currentLine;                // 現在解析中の行
         size_t nextPos = 0;                 // 次の文字位置
         char_t currentChar = 0;             // 次の文字
+
+        //bool bPostRewriteNodeFound = false; // 後置書き換え機能ノードがあったか
 
         // ブロック情報のスタック
         BlockInfoStack blockInfoStack;
@@ -198,10 +201,6 @@ namespace {
         // シフト面 -- 0:シフト無し、1:通常シフト、2:ShiftA, 3:ShiftB, ...
         int shiftPlane = 0;
 
-        // 打鍵マップ
-        std::map<MString, std::vector<int>>* strokeSerieses = 0;
-        std::map<MString, std::vector<int>>* strokeSerieses2 = 0;
-
         // 打鍵列
         std::vector<int> strokes;
 
@@ -219,18 +218,12 @@ namespace {
     public:
         // コンストラクタ
         // lines: ソースとなるテーブル定義
-        // bPrimaryTable: 主テーブルなら true を渡す。副テーブルや後からの定義差し込みなら false を渡す
-        StrokeTreeBuilder(const wstring& tableFile, std::vector<wstring>& lines, bool bPrimaryTable)
-            : tableLines(lines) {
+        // bPrimary: 主テーブルなら true を渡す。副テーブルや後からの定義差し込みなら false を渡す
+        StrokeTreeBuilder(const wstring& tableFile, std::vector<wstring>& lines, bool bPrimary)
+            : tableLines(lines), bPrimaryTable(bPrimary) {
             blockInfoStack.Push(SETTINGS->rootDir, tableFile, 0);
             if (!tableLines.empty()) {
                 currentLine = tableLines[0];
-            }
-            if (bPrimaryTable) {
-                strokeSerieses = VkbTableMaker::StrokeSerieses();
-                if (strokeSerieses) strokeSerieses->clear();
-                strokeSerieses2 = VkbTableMaker::StrokeSerieses2();
-                if (strokeSerieses2) strokeSerieses2->clear();
             }
         }
 
@@ -246,10 +239,11 @@ namespace {
             // として扱うということ。
             // なので、先に treeNode(テーブルノード)を作成しておく
             // RootStrokeTable は機能キーやCtrl修飾も含めたテーブルとする
-            StrokeTableNode* tblNode = new StrokeTableNode(0, TOTAL_DECKEY_NUM);
-            setupShiftedKeyFunction(tblNode);
-            ParseTableSource(tblNode);
-            return tblNode;
+            StrokeTableNode* rootNode = new StrokeTableNode(0, TOTAL_DECKEY_NUM);
+            setupShiftedKeyFunction(rootNode);
+            ParseTableSource(rootNode);
+            //rootNode->setPostRewrite(bPostRewriteNodeFound);
+            return rootNode;
         }
 
         // デフォルトのシフト面の機能(自身の文字を返す)ノードの設定
@@ -406,7 +400,7 @@ namespace {
                     setNthChildNode(
                         getNodePositionedByArrowBundle(tblNode, n + shiftPlaneOffset),
                         nextArrowIdx,
-                        createNode(currentToken, depth + 2, n, nextArrowIdx, true));
+                        createNode(currentToken, depth + 2, n, nextArrowIdx/*, true*/));
                     ++n;
                     isPrevDelim = false;
                     break;
@@ -439,7 +433,7 @@ namespace {
             return stNode;
         }
 
-        Node* createNode(TOKEN token, int depth, int prevNth, int nth, bool bArrowBundle = false) {
+        Node* createNode(TOKEN token, int depth, int prevNth, int nth/*, bool bArrowBundle = false*/) {
             LOG_TRACE(_T("CALLED: token=%d, depth=%d, prevNth=%d, nth=%d, bArrowBundle=%d"), token, depth, prevNth, nth, bArrowBundle);
             bool bBareStr = token == TOKEN::BARE_STRING;
             switch (token) {
@@ -460,54 +454,18 @@ namespace {
                 if (currentStr.empty()) return 0;
                 if (kanjiConvMap.empty()) {
                     LOG_TRACE(_T("kanjiConvMap.empty()"));
-                    if (strokeSerieses && shiftPlane == 0) {
-                        LOG_TRACE(_T("strokeSerieses && shiftPlane == 0"));
-                        // 文字から、その文字の打鍵列へのマップに追加 (通常面)
-                        auto ms = to_mstr(currentStr);
-                        if (!ms.empty()) {
-                            for (int k = 0; k < 10; ++k) {
-                                auto iter = strokeSerieses->find(ms);
-                                if (iter == strokeSerieses->end()) break;
-                                // すでに同じものがあったら、末尾に TAB を追加しておく(後でローマ字テーブルを出力するときに複数の打鍵列も出力できるようにするため)
-                                ms.push_back('\t');
-                            }
-                            if (bArrowBundle) {
-                                LOG_TRACE(_T("line=%d, ArrowBundle, strokes.size=%d, strokes[0]=%d, prevNth=%d, nth=%d, str=%s"),
-                                    lineNumber + 1, strokes.size(), strokes.size() > 0 ? strokes[0] : -1, prevNth, nth, currentStr.c_str());
-                                strokes.push_back(prevNth);
-                            }
-                            strokes.push_back(nth);
-                            (*strokeSerieses)[ms] = strokes;
-                            strokes.pop_back();
-                            if (bArrowBundle) strokes.pop_back();
-                        }
-                    }
+                    StringNode* strNode = new StringNode(currentStr, false, bBareStr);
                     LOG_TRACE(_T("LEAVE: new StringNode(%s)"), currentStr.c_str());
-                    return new StringNode(currentStr, bBareStr);
+                    return strNode;
                 } else {
                     wstring convStr = conv_kanji(currentStr);
-                    if (strokeSerieses2) {
-                        // 文字から、その文字の打鍵列へのマップに追加 (裏面)
-                        auto ms = to_mstr(convStr);
-                        if (!ms.empty()) {
-                            for (int k = 0; k < 10; ++k) {
-                                auto iter = strokeSerieses2->find(ms);
-                                if (iter != strokeSerieses2->end()) {
-                                    // すでに同じものがあったら、末尾に TAB を追加しておく(後でローマ字テーブルを出力するときに複数の打鍵列も出力できるようにするため)
-                                    ms.push_back('\t');
-                                }
-                            }
-                            strokes.push_back(nth);
-                            (*strokeSerieses2)[ms] = strokes;
-                            strokes.pop_back();
-                        }
-                    }
-                    return new StringNode(convStr);
+                    StringNode* strNode = new StringNode(convStr, true, false);
+                    return strNode;
                 }
             case TOKEN::FUNCTION:          // @c : 機能ノード
                 return createFunctionNode(currentStr, prevNth, nth);
 
-            case TOKEN::REWRITE:            // @{ : 書き換えノード
+            case TOKEN::REWRITE:            // @{ : 書き換えノード '}
                 return createRewriteNdoe();
 
             default:                // 途中でファイルが終わったりした場合 : エラー
@@ -538,6 +496,7 @@ namespace {
                 readNextToken(0);
             }
 
+            //bPostRewriteNodeFound = true;
             return rewNode;
         }
 
@@ -550,7 +509,7 @@ namespace {
                     PostRewriteOneShotNode* pp = pn ? dynamic_cast<PostRewriteOneShotNode*>(pn) : 0;
                     PostRewriteOneShotNode* cp = dynamic_cast<PostRewriteOneShotNode*>(childNode);
                     if (pp && cp) {
-                        // 後置書き換えが重複した場合
+                        // 後置書き換えが重複した場合は、書き換え規則のマージ
                         cp->addRewriteMap(pp->getRewriteMap());
                     }
                     parentNode->setNthChild(n, childNode);

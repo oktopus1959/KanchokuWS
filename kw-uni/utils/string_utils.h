@@ -475,6 +475,16 @@ namespace utils
         return result;
     }
 
+    inline void remove(MString& s, mchar_t t) {
+        size_t pos = s.find(t);
+        if (pos < s.size()) s.erase(pos);
+    }
+
+    inline void remove(tstring& s, wchar_t t) {
+        size_t pos = s.find(t);
+        if (pos < s.size()) s.erase(pos);
+    }
+
     // 文字列の末尾の n 文字からなら部分文字列を返す
     inline tstring last_substr(const tstring& s, size_t n) {
         size_t len = s.size();
@@ -788,40 +798,33 @@ namespace utils
     /**
     * split
     */
-    inline std::vector<wstring> split(const wstring& s, TCHAR delim) {
-        std::vector<wstring> elems;
-        wstring item;
-        for (auto ch : s) {
-            if (ch == delim) {
-                if (!item.empty())
-                    elems.push_back(item);
-                item.clear();
-            } else {
-                item += ch;
-            }
-        }
-        if (!item.empty())
-            elems.push_back(item);
+#define SPLIT(T) \
+        std::vector<T> elems; \
+        T item; \
+        for (auto ch : s) { \
+            if (ch == delim) { \
+                if (!item.empty() || !elems.empty()) { \
+                    elems.push_back(item); \
+                } \
+                item.clear(); \
+            } else { \
+                item += ch; \
+            } \
+        } \
+        if (!item.empty()) \
+            elems.push_back(item); \
         return elems;
+
+    // delim で分割する。先頭が delim の場合、そのdelimは削除してから分割する
+    inline std::vector<wstring> split(const wstring& s, TCHAR delim) {
+        SPLIT(wstring)
     }
 
     // delim で分割する。先頭が delim の場合、そのdelimは削除してから分割する
     inline std::vector<MString> split(const MString& s, mchar_t delim) {
-        std::vector<MString> elems;
-        MString item;
-        for (auto ch : s) {
-            if (ch == delim) {
-                if (!item.empty())
-                    elems.push_back(item);
-                item.clear();
-            } else {
-                item += ch;
-            }
-        }
-        if (!item.empty())
-            elems.push_back(item);
-        return elems;
+        SPLIT(MString)
     }
+#undef SPLIT
 
     /**
     * join
@@ -835,6 +838,19 @@ namespace utils
             if (n++ >= maxElem) break;
             if (!result.empty()) result.append(delim);
             result.append(e);
+        }
+        return result;
+    }
+
+    inline wstring join(const std::vector<int>& list, const wstring& delim, size_t maxElem = 0)
+    {
+        wstring result;
+        if (maxElem == 0) maxElem = list.size();
+        size_t n = 0;
+        for (auto& e : list) {
+            if (n++ >= maxElem) break;
+            if (!result.empty()) result.append(delim);
+            result.append(std::to_wstring(e));
         }
         return result;
     }

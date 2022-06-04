@@ -4,6 +4,8 @@
 #include "misc_utils.h"
 #include "Constants.h"
 
+#include "OneShot/PostRewriteOneShot.h"
+
 #include "State.h"
 #include "StrokeTable.h"
 #include "VkbTableMaker.h"
@@ -94,7 +96,7 @@ namespace {
             }
             if (!NextNodeMaybe() || !NextNodeMaybe()->isStrokeTableNode()) {
                 // 次ノードがストロークノードでないか、ストロークテーブルノード以外(文字ノードや機能ノードなど)ならば、全ストロークを削除対象とする
-                LOG_INFO(_T("%s: RemoveAllStroke: Next node=%p, DecodeKeyboardCharMode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()), BOOL_TO_WPTR(STATE_COMMON->IsDecodeKeyboardCharMode()));
+                LOG_INFO(_T("%s: RemoveAllStroke: NEXT_NODE=%p, DecodeKeyboardCharMode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()), BOOL_TO_WPTR(STATE_COMMON->IsDecodeKeyboardCharMode()));
                 setToRemoveAllStroke();
             }
             if (deckey < NORMAL_DECKEY_NUM && IsRootKeyHiraganaized()) {
@@ -374,6 +376,60 @@ void StrokeTableNode::CopyChildrenFace(mchar_t* faces, size_t facesSize) {
     }
     _LOG_DEBUGH(_T("LEAVE"));
 }
+
+
+// 指定文字に至るストローク列を返す
+bool StrokeTableNode::getStrokeListSub(const MString& target, std::vector<int>& list, bool bFull) {
+    for (size_t i = 0; i < children.size(); ++i) {
+        if (!bFull && i >= NORMAL_DECKEY_NUM) break;
+        Node* p = children[i];
+        if (p) {
+            StrokeTableNode* pn = dynamic_cast<StrokeTableNode*>(p);
+            if (pn) {
+                list.push_back((int)i);
+                if (pn->getStrokeListSub(target, list, bFull)) return true;
+                list.pop_back();
+            } else {
+                StringNode* cn = dynamic_cast<StringNode*>(p);
+                if (cn && target == cn->getString()) {
+                    list.push_back((int)i);
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+// ストロークガイドの構築
+void StrokeTableNode::MakeStrokeGuide(const wstring& targetChars) {
+    std::vector<wchar_t> strokeGuide(VkbTableMaker::OUT_TABLE_SIZE);
+    VkbTableMaker::ReorderByStrokePosition(this, strokeGuide.data(), targetChars);
+    for (size_t i = 0; i * 2 < strokeGuide.size() && i < children.size(); ++i) {
+        auto ch = strokeGuide[i * 2];
+        //Node* child = children[i].get();
+        Node* child = getNth(i);
+        if (ch != 0 && child && child->isStrokeTableNode()) {
+            StrokeTableNode* tblNode = dynamic_cast<StrokeTableNode*>(child);
+            if (tblNode) tblNode->nodeMarker[0] = ch;
+        }
+    }
+}
+
+bool StrokeTableNode::hasPostRewriteNode() {
+    for (Node* p : children) {
+        if (p) {
+            StrokeTableNode* pn = dynamic_cast<StrokeTableNode*>(p);
+            if (pn) {
+                pn->hasPostRewriteNode();
+            } else {
+                if (dynamic_cast<PostRewriteOneShotNode*>(p) || dynamic_cast<DakutenOneShotNode*>(p)) return true;
+            }
+        }
+    }
+    return false;
+}
+
 // -------------------------------------------------------------------
 // 主・副ストローク木の入れ替え
 int StrokeTableNode::ExchangeStrokeTable() {
@@ -405,4 +461,40 @@ int StrokeTableNode::GetCurrentStrokeTableNum() {
 std::unique_ptr<StrokeTableNode> StrokeTableNode::RootStrokeNode1;
 std::unique_ptr<StrokeTableNode> StrokeTableNode::RootStrokeNode2;
 StrokeTableNode* StrokeTableNode::RootStrokeNode;
+
+// -------------------------------------------------------------------
+// ストローク木のトラバーサ
+StrokeTreeTraverser::StrokeTreeTraverser(class StrokeTableNode* p, bool full) : bFull(full) {
+    tblList.push_back(p);
+    path.push_back(-1);
+}
+
+Node* StrokeTreeTraverser::getNext() {
+    while (!tblList.empty()) {
+        StrokeTableNode* pn = tblList.back();
+        int nodePos = path.back() + 1;
+        while (nodePos < (int)pn->numChildren()) {
+            if (!bFull && nodePos >= NORMAL_DECKEY_NUM) break;
+
+            Node* p = pn->getNth(nodePos);
+            if (p) {
+                path.back() = nodePos;
+                if (!p->isStrokeTableNode()) return p;
+
+                StrokeTableNode* pp = dynamic_cast<StrokeTableNode*>(p);
+                if (pp) {
+                    pn = pp;
+                    tblList.push_back(pn);
+                    nodePos = 0;
+                    path.push_back(nodePos);
+                    continue;
+                }
+            }
+            ++nodePos;
+        }
+        tblList.pop_back();
+        path.pop_back();
+    }
+    return 0;
+}
 

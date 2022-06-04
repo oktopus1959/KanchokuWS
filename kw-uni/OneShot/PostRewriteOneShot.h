@@ -1,9 +1,11 @@
+#pragma once
+
 #include "Logger.h"
 
 #include "FunctionNode.h"
 
 // -------------------------------------------------------------------
-struct RewriteInfo {
+class RewriteInfo {
 public:
     MString rewriteStr;
     size_t rewritableLen;
@@ -19,6 +21,17 @@ public:
         : rewriteStr(ms), rewritableLen(rewLen)
     {
     }
+
+    size_t getOutStrLen() const {
+        return rewritableLen >= rewriteStr.size() ? 0 : rewriteStr.size() - rewritableLen;
+    }
+    MString getOutStr() const {
+        return utils::safe_substr(rewriteStr, 0, getOutStrLen());
+    }
+
+    MString getNextStr() const {
+        return utils::safe_substr(rewriteStr, getOutStrLen());
+    }
 };
 
 // PostRewriteOneShotNode - ノードのテンプレート
@@ -27,11 +40,12 @@ class PostRewriteOneShotNode : public FunctionNode {
 
     std::map<MString, RewriteInfo> rewriteMap;
 
-    MString myStr;
+    RewriteInfo myRewriteInfo;
+    //MString myStr;
 
-    size_t myRewriteLen;
+    //size_t myRewriteLen;
 
-    MString emptyStr;
+    //MString emptyStr;
 
 public:
     PostRewriteOneShotNode(const wstring& s, bool bBare);
@@ -41,9 +55,11 @@ public:
     // 当ノードを処理する State インスタンスを作成する
     State* CreateState();
 
-    MString getString() const { return myStr; }
+    MString getString() const { return myRewriteInfo.rewriteStr; }
 
-    size_t getRewritableLen() const { return myRewriteLen; }
+    size_t getRewritableLen() const { return myRewriteInfo.rewritableLen; }
+
+    const RewriteInfo& getRewriteInfo() const { return myRewriteInfo; }
 
     void addRewritePair(const wstring& key, const wstring& value, bool bBare);
 
@@ -61,4 +77,44 @@ public:
     const wstring getDebugString() const;
 };
 
+// -------------------------------------------------------------------
+// DakutenOneShotNode - ノードのテンプレート
+class DakutenOneShotNode : public PostRewriteOneShotNode {
+    DECLARE_CLASS_LOGGER;
+
+    MString markStr;
+
+    wstring postfix;
+
+public:
+    DakutenOneShotNode(wstring markStr);
+
+    ~DakutenOneShotNode();
+
+    // 当ノードを処理する State インスタンスを作成する
+    State* CreateState();
+
+    // 当機能を表す文字を設定
+    MString getString() const { return markStr; }
+
+    wstring getPostfix() const { return postfix; }
+};
+
+// -------------------------------------------------------------------
+// DakutenOneShotNodeBuilder - ノードビルダ
+#include "FunctionNodeBuilder.h"
+
+class DakutenOneShotNodeBuilder : public FunctionNodeBuilder {
+    DECLARE_CLASS_LOGGER;
+public:
+    // これの呼び出しを FunctionNodeBuilderList.h に記述する
+    Node* CreateNode();
+};
+
+class HanDakutenOneShotNodeBuilder : public FunctionNodeBuilder {
+    DECLARE_CLASS_LOGGER;
+public:
+    // これの呼び出しを FunctionNodeBuilderList.h に記述する
+    Node* CreateNode();
+};
 

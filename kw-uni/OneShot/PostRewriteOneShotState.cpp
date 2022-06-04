@@ -16,7 +16,7 @@
 #include "PostRewriteOneShot.h"
 
 #define _LOG_DEBUGH_FLAG (false)
-#if 1
+#if 0
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -27,6 +27,39 @@
 #endif
 
 namespace {
+
+    // -------------------------------------------------------------------
+    // 濁音
+    std::map<wstring, wstring> dakuonDic = {
+        { _T("か"), _T("が")},
+        { _T("き"), _T("ぎ")},
+        { _T("く"), _T("ぐ")},
+        { _T("け"), _T("げ")},
+        { _T("こ"), _T("ご")},
+        { _T("さ"), _T("ざ")},
+        { _T("し"), _T("じ")},
+        { _T("す"), _T("ず")},
+        { _T("せ"), _T("ぜ")},
+        { _T("そ"), _T("ぞ")},
+        { _T("た"), _T("だ")},
+        { _T("ち"), _T("ぢ")},
+        { _T("つ"), _T("づ")},
+        { _T("て"), _T("で")},
+        { _T("と"), _T("ど")},
+        { _T("は"), _T("ば")},
+        { _T("ひ"), _T("び")},
+        { _T("ふ"), _T("ぶ")},
+        { _T("へ"), _T("べ")},
+        { _T("ほ"), _T("ぼ")},
+    };
+
+    std::map<wstring, wstring> handakuonDic = {
+        { _T("は"), _T("ぱ")},
+        { _T("ひ"), _T("ぴ")},
+        { _T("ふ"), _T("ぷ")},
+        { _T("へ"), _T("ぺ")},
+        { _T("ほ"), _T("ぽ")},
+    };
 
     // -------------------------------------------------------------------
     // 状態クラス
@@ -87,14 +120,15 @@ PostRewriteOneShotNode::PostRewriteOneShotNode(const wstring& s, bool bBare)
 {
     LOG_INFO(_T("CALLED: constructor: s=%s, bBare=%s"), s.c_str(), BOOL_TO_WPTR(bBare));
     wstring rewStr = s;
-    myRewriteLen = 0;
+    size_t rewLen = 0;
     if (bBare) {
         rewStr = utils::replace(rewStr, _T("/"), _T(""));
         size_t pos = s.find('/', 0);
-        myRewriteLen = pos < rewStr.size() ? rewStr.size() - pos : rewStr.empty() ? 0 : 1;
+        rewLen = pos < rewStr.size() ? rewStr.size() - pos : rewStr.empty() ? 0 : 1;
     }
-    myStr = to_mstr(rewStr);
-    LOG_INFO(_T("LEAVE: myStr=%s, myRewriteLen=%d"), MAKE_WPTR(myStr), myRewriteLen);
+    myRewriteInfo.rewriteStr = to_mstr(rewStr);
+    myRewriteInfo.rewritableLen = rewLen;
+    LOG_INFO(_T("LEAVE: myStr=%s, myRewriteLen=%d"), rewStr.c_str(), rewLen);
 }
 
 // デストラクタ
@@ -120,7 +154,7 @@ void PostRewriteOneShotNode::addRewritePair(const wstring& key, const wstring& v
 
 const wstring PostRewriteOneShotNode::getDebugString() const {
     wstring result = _T("myStr: ");
-    result.append(to_wstr(myStr)).append(_T(", rewriteMap="));
+    result.append(to_wstr(getString())).append(_T(", rewriteMap="));
     bool bFirst = true;
     for (auto pair : rewriteMap) {
         if (!bFirst) result.append(_T(", "));
@@ -129,3 +163,44 @@ const wstring PostRewriteOneShotNode::getDebugString() const {
     }
     return result;
 }
+
+// -------------------------------------------------------------------
+// DakutenOneShotNode - ノードのテンプレート
+DEFINE_CLASS_LOGGER(DakutenOneShotNode);
+
+// コンストラクタ
+DakutenOneShotNode::DakutenOneShotNode(wstring mkstr)
+    : PostRewriteOneShotNode(mkstr, false), markStr(to_mstr(mkstr)), postfix(mkstr)
+{
+    LOG_INFO(_T("CALLED: constructor"));
+    const auto& dic = mkstr == _T("゛") ? dakuonDic : handakuonDic;
+    for (auto pair : dic) {
+        addRewritePair(pair.first, pair.second, true);
+    }
+}
+
+// デストラクタ
+DakutenOneShotNode::~DakutenOneShotNode() {
+    LOG_INFO(_T("CALLED: destructor"));
+}
+
+// 当ノードを処理する State インスタンスを作成する
+State* DakutenOneShotNode::CreateState() {
+    return new PostRewriteOneShotState(this);
+}
+
+// -------------------------------------------------------------------
+// DakutenOneShotNodeBuilder - ノードビルダー
+
+DEFINE_CLASS_LOGGER(DakutenOneShotNodeBuilder);
+
+Node* DakutenOneShotNodeBuilder::CreateNode() {
+    return new DakutenOneShotNode(_T("゛"));
+}
+
+DEFINE_CLASS_LOGGER(HanDakutenOneShotNodeBuilder);
+
+Node* HanDakutenOneShotNodeBuilder::CreateNode() {
+    return new DakutenOneShotNode(_T("゜"));
+}
+

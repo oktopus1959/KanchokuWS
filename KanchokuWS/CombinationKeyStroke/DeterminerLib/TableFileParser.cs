@@ -681,9 +681,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 return (rootTableNode.getNth(n)?.getString())._stripDq()._toSafe();
             }
 
-            string getRewriteString()
+            string getRewriteString(bool bBare)
             {
-                return currentToken == TOKEN.STRING ? "\"" + currentStr + "\"" : currentStr;
+                return !bBare ? "\"" + currentStr + "\"" : currentStr;
             }
 
             int lastIdx = strokeList.Last();
@@ -696,11 +696,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             string leaderStr = strokeList.Count > 1 ? strokeList.Take(strokeList.Count - 1).Select(x => getNthRootNodeString(x))._join("") : "";
 
-            void setNodeAndOutputByIndex(int nth)
+            void setNodeAndOutputByIndex(int nth, bool bBare)
             {
                 string s = getNthRootNodeString(nth);
                 if (s._notEmpty()) {
-                    string rewStr = getRewriteString();
+                    string rewStr = getRewriteString(bBare);
                     if (node == null) {
                         Node nd = new FunctionNode(s);
                         outputLines.Add($"-{nth}>@{{{s}");
@@ -738,7 +738,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                     if (currentStr._isEmpty() || itemIdx >= items.Length) {
                                         parseError();
                                     } else {
-                                        items[itemIdx++] = getRewriteString();
+                                        items[itemIdx++] = getRewriteString(currentToken == TOKEN.BARE_STRING);
                                     }
                                     break;
 
@@ -757,13 +757,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                     case TOKEN.ARROW:
                         int arrowIdx = arrowIndex;
-                        readWordOrString();
-                        setNodeAndOutputByIndex(arrowIdx);
+                        bool bare = readWordOrString();
+                        setNodeAndOutputByIndex(arrowIdx, bare);
                         break;
 
                     case TOKEN.STRING:             // "str" : 文字列ノード
                     case TOKEN.BARE_STRING:        // str : 文字列ノード
-                        setNodeAndOutputByIndex(idx);
+                        setNodeAndOutputByIndex(idx, currentToken == TOKEN.BARE_STRING);
                         break;
 
                     case TOKEN.VBAR:               // 次のトークン待ち
@@ -1294,20 +1294,24 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         // 行末までの範囲で文字列または単語を読み込む
-        void readWordOrString()
+        bool readWordOrString()
         {
             currentStr = "";
-            if (nextPos >= currentLine._safeLength()) return;
-            char c = skipSpace();
-            if (c > ' ') {
-                if (c == '"') {
-                    readString();
-                } else if (c == ';' || (c == '/' && peekNextChar() == '/')) {
-                    skipToEndOfLine();
-                } else {
-                    readWordSub(c);
+            bool bBare = true;
+            if (nextPos < currentLine._safeLength()) {
+                char c = skipSpace();
+                if (c > ' ') {
+                    if (c == '"') {
+                        readString();
+                        bBare = false;
+                    } else if (c == ';' || (c == '/' && peekNextChar() == '/')) {
+                        skipToEndOfLine();
+                    } else {
+                        readWordSub(c);
+                    }
                 }
             }
+            return bBare;
         }
 
         // 空白文字を読み飛ばす

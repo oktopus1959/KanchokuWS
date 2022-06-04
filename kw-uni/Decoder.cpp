@@ -585,11 +585,13 @@ public:
         copyToCenterString();
         mchar_t lastChar = copyToTopString();
 
-        if (targetChar != 0 && OutParams->strokeCount > 0) {
-            auto iter = VkbTableMaker::StrokeSerieses()->find(to_mstr(targetChar));
-            if (iter != VkbTableMaker::StrokeSerieses()->end()) {
-                if (iter->second.size() > (size_t)OutParams->strokeCount) {
-                    OutParams->nextStrokeDeckey = iter->second[OutParams->strokeCount];
+        if (ROOT_STROKE_NODE && targetChar != 0 && OutParams->strokeCount > 0) {
+            auto list = ROOT_STROKE_NODE->getStrokeList(to_mstr(targetChar), true);
+            LOG_DEBUG(_T("strokeList=%s, targetChar=%c"), utils::join(list, _T(":")).c_str(), targetChar);
+            if (!list.empty()) {
+                if (list.size() > (size_t)OutParams->strokeCount) {
+                    OutParams->nextStrokeDeckey = list[OutParams->strokeCount];
+                    LOG_DEBUG(_T("OutParams->nextStrokeDeckey=%d"), OutParams->nextStrokeDeckey);
                 }
             }
         }

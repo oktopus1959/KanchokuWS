@@ -2,13 +2,41 @@
 
 #include "deckey_id_defs.h"
 #include "Reporting/Logger.h"
+#include "StringNode.h"
+#include "FunctionNode.h"
 #include "Node.h"
-#include "VkbTableMaker.h"
+
+// -------------------------------------------------------------------
+// ストローク木のトラバーサ
+class StrokeTreeTraverser {
+    std::vector<class StrokeTableNode*> tblList;
+    std::vector<int> path;
+
+    bool bFull = false;
+
+public:
+    StrokeTreeTraverser(class StrokeTableNode*, bool);
+
+    Node* getNext();
+
+    const std::vector<int>& getPath() { return path; }
+};
 
 // -------------------------------------------------------------------
 // StrokeTableNode - ストロークテーブルの連鎖となるノード
 class StrokeTableNode : public Node {
     DECLARE_CLASS_LOGGER;
+
+private:
+    //std::vector<std::unique_ptr<Node>> children;
+    std::vector<Node*> children;
+
+    size_t _depth;
+
+    wstring nodeMarker = _T("□");
+
+    // 全ストロークノードが不要になったら true (ステートの作成時にクリアする)
+    bool bRemoveAllStroke = false;
 
 public:
     // コンストラクタ
@@ -39,23 +67,19 @@ public:
 
     NodeType getNodeType() const { return _depth == 0 ? NodeType::RootStroke : NodeType::Stroke; }
 
+    // 後置書き換え機能ありか
+    bool hasPostRewriteNode();
+
 public:
     /* StrokeTableNode 独自メソッド */
 
     // n番目の子ノードを返す
     inline Node* getNth(size_t n) const {
-        //return n < children.size() ? children[n].get() : 0;
         return n < children.size() ? children[n] : 0;
     }
 
-    //// 新しい子ノードを追加する
-    //inline void addNode(Node* node) {
-    //    children.push_back(std::unique_ptr<Node>(node));
-    //}
-
     // n番目の子ノードをセットする
     inline void setNthChild(size_t n, Node* node) {
-        //if (n < children.size()) children[n].reset(node);
         if (n < children.size()) {
             if (children[n]) {
                 delete children[n];     // 新しい n番目の子ノードをセットするために、既存のものを削除しておく
@@ -86,31 +110,19 @@ public:
     }
 
 private:
-    //std::vector<std::unique_ptr<Node>> children;
-    std::vector<Node*> children;
-
-    size_t _depth;
-
-    wstring nodeMarker = _T("□");
-
-    // 全ストロークノードが不要になったら true (ステートの作成時にクリアする)
-    bool bRemoveAllStroke = false;
+    // 指定文字に至るストローク列を返す
+    bool getStrokeListSub(const MString& target, std::vector<int>& list, bool bFull);
 
 public:
-    // ストロークガイドの構築
-    void MakeStrokeGuide(const wstring& targetChars) {
-        std::vector<wchar_t> strokeGuide(VkbTableMaker::OUT_TABLE_SIZE);
-        VkbTableMaker::ReorderByStrokePosition(this, strokeGuide.data(), targetChars);
-        for (size_t i = 0; i * 2 < strokeGuide.size() && i < children.size(); ++i) {
-            auto ch = strokeGuide[i * 2];
-            //Node* child = children[i].get();
-            Node* child = getNth(i);
-            if (ch != 0 && child && child->isStrokeTableNode()) {
-                StrokeTableNode* tblNode = dynamic_cast<StrokeTableNode*>(child);
-                if (tblNode) tblNode->nodeMarker[0] = ch;
-            }
-        }
+    // 指定文字に至るストローク列を返す
+    std::vector<int> getStrokeList(const MString& target, bool bFull) {
+        std::vector<int> list;
+        if (!getStrokeListSub(target, list, bFull)) list.clear();
+        return list;
     }
+
+    // ストロークガイドの構築
+    void MakeStrokeGuide(const wstring& targetChars);
 
     // ストローク木を構築する
     static StrokeTableNode* CreateStrokeTree(const wstring&, std::vector<wstring>&);

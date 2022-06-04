@@ -13,7 +13,7 @@
 #include "KeysAndChars/Katakana.h"
 #include "OneShot/KatakanaOneShot.h"
 #include "OneShot/HankakuKatakanaOneShot.h"
-#include "OneShot/DakutenOneShot.h"
+#include "OneShot/PostRewriteOneShot.h"
 #include "OneShot/OneShot.h"
 //#include "Template/Template.h"
 

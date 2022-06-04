@@ -8,6 +8,7 @@
 #include "Settings/Settings.h"
 
 #include "VkbTableMaker.h"
+#include "OneShot/PostRewriteOneShot.h"
 //#define OUT_TABLE_SIZE 200
 //#define VKB_TABLE_SIZE 50
 
@@ -33,14 +34,6 @@ namespace VkbTableMaker {
         }
         *faces = p.second;
     }
-
-    //----------------------------------------------------------------------------
-    // 文字に到る打鍵列
-    std::map<MString, std::vector<int>> strokeSerieses;
-    std::map<MString, std::vector<int>> strokeSerieses2;
-
-    std::map<MString, std::vector<int>>* StrokeSerieses() { return &strokeSerieses; }
-    std::map<MString, std::vector<int>>* StrokeSerieses2() { return &strokeSerieses2; }
 
     //----------------------------------------------------------------------------
     wstring hiraganaArray1 = _T("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわ ん を");
@@ -338,65 +331,106 @@ namespace VkbTableMaker {
     wstring convDeckeysToWstring(std::vector<int> deckeys) {
         wstring result;
         for (auto deckey : deckeys) {
-            wchar_t ch = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+            int dk = deckey % PLANE_DECKEY_NUM;
+            if (dk >= NORMAL_DECKEY_NUM) {
+                result.clear();
+                break;
+            }
+            wchar_t ch = DECKEY_TO_CHARS->GetCharFromDeckey(dk);
             if (ch == 0) break;
             result.push_back(ch);
         }
         return result;
     }
 
+    wstring makeRewriteDefLine(const wstring& prev, const wstring& path, const RewriteInfo& info) {
+        wstring line = prev;
+        line.append(path);
+        line.push_back('\t');
+        line.append(to_wstr(info.getOutStr()));
+        MString nextStr = info.getNextStr();
+        if (!nextStr.empty()) {
+            line.push_back('\t');
+            line.append(to_wstr(nextStr));
+        }
+        return line;
+    }
+
     // ローマ字テーブルを作成してファイルに書き出す
+    // prefix: 部首合成用, prefix2: 裏面定義用
     void SaveRomanStrokeTable(const wchar_t* prefix, const wchar_t* prefix2) {
-        auto path = utils::joinPath(SETTINGS->rootDir, _T("roman-stroke-table.txt"));
-        utils::OfstreamWriter writer(path);
+        if (!StrokeTableNode::RootStrokeNode1) return;
+
+        _LOG_DEBUGH(_T("CALLED: prefix=%s, prefix2=%s"), prefix, prefix2);
+
+        utils::OfstreamWriter writer(utils::joinPath(SETTINGS->rootDir, _T("roman-stroke-table.txt")));
         if (writer.success()) {
             // テーブルファイルから
-            for (const auto& pair : strokeSerieses) {
-                //if (pair.first.length() > 1) {
-                //    LOG_DEBUGH(_T("str=%s, strokeLen=%d"), MAKE_WPTR(pair.first), pair.second.size());
-                //}
-                if (!pair.first.empty() && !pair.second.empty()) {
-                    // 重複した出力文字(列)の場合は末尾にTABが付加されているのでそれを除去してから書き出し
-                    // また、最初に出現する空白はromanSecPlanePrefixで置換
-                    wstring str = utils::replace(convDeckeysToWstring(pair.second), _T(" "), SETTINGS->romanSecPlanePrefix.c_str());
-                    if (str.find(' ') == wstring::npos) {
-                        // 空白文字を含まないものだけを対象とする
-                        writer.writeLine(utils::utf8_encode(
-                            utils::format(_T("%s\t%s"), str.c_str(), MAKE_WPTR(utils::strip(pair.first, _T("\t"))))));
+            bool bPostRewrite = StrokeTableNode::RootStrokeNode1->hasPostRewriteNode();
+
+            auto pfx2 = prefix2 && wcslen(prefix2) > 0 ? prefix2 : !SETTINGS->romanSecPlanePrefix.empty() ? SETTINGS->romanSecPlanePrefix.c_str() : _T(":");
+            MString cmdMarker = to_mstr(_T("!{"));
+
+            // 文字から、その文字の打鍵列へのマップに追加 (通常面)
+            StrokeTreeTraverser traverser(StrokeTableNode::RootStrokeNode1.get(), true);
+            while (true) {
+                Node* np = traverser.getNext();
+                if (!np) break;
+
+                wstring origPath = convDeckeysToWstring(traverser.getPath());
+                if (origPath.empty()) continue;
+
+                StringNode* sp = dynamic_cast<StringNode*>(np);
+                if (sp) {
+                    auto ms = sp->getString();
+                    if (ms.empty() || ms.find(cmdMarker) != MString::npos) continue;
+
+                    if (bPostRewrite) {
+                        size_t rewritableLen = sp->getRewritableLen();
+                        if (rewritableLen > 0) ms.insert(rewritableLen > ms.size() ? 0 : ms.size() - rewritableLen, 1, '\t');   // 「次の入力」の位置に TAB を挿入しておく
                     }
-                }
-            }
-            // テーブルファイルの裏面から
-            for (const auto& pair : strokeSerieses2) {
-                //if (pair.first.length() > 1) {
-                //    LOG_DEBUGH(_T("str=%s, strokeLen=%d"), MAKE_WPTR(pair.first), pair.second.size());
-                //}
-                if (!pair.first.empty() && !pair.second.empty()) {
-                    // 重複した出力文字(列)の場合は末尾にTABが付加されているのでそれを除去してから書き出し
-                    // また、最初に出現する空白はromanSecPlanePrefixで置換
-                    wstring str = utils::replace(convDeckeysToWstring(pair.second), _T(" "), SETTINGS->romanSecPlanePrefix.c_str());
-                    if (str.find(' ') == wstring::npos) {
-                        // 空白文字を含まないものだけを対象とする
-                        writer.writeLine(utils::utf8_encode(
-                            utils::format(_T("%s%s\t%s"),
-                                prefix2 && wcslen(prefix2) > 0 ? prefix2 : SETTINGS->romanSecPlanePrefix.c_str(),
-                                str.c_str(),
-                                MAKE_WPTR(utils::strip(pair.first, _T("\t"))))));
+
+                    // 最初に出現する空白はromanSecPlanePrefixで置換
+                    wstring strPath = utils::replace(origPath, _T(" "), pfx2);
+                    if (strPath.find(' ') == wstring::npos) {
+                        // 2つ以上の空白文字を含まないものだけを対象とする
+                        if (!sp->isConverted() || origPath.front() == ' ') {
+                            writer.writeLine(utils::utf8_encode(
+                                utils::format(_T("%s\t%s"), strPath.c_str(), MAKE_WPTR(ms))));
+                        } else {
+                            writer.writeLine(utils::utf8_encode(
+                                utils::format(_T("%s%s\t%s"),
+                                    pfx2,
+                                    strPath.c_str(),
+                                    MAKE_WPTR(ms))));
+                        }
+                    }
+                } else if (origPath.find(' ') == wstring::npos) {
+                    // 後置書き換え(空白を含まないものだけ)
+                    PostRewriteOneShotNode* prnp = dynamic_cast<PostRewriteOneShotNode*>(np);
+                    if (prnp) {
+                        writer.writeLine(utils::utf8_encode(makeRewriteDefLine(_T(""), origPath, prnp->getRewriteInfo())));
+                        for (auto pair : prnp->getRewriteMap()) {
+                            writer.writeLine(utils::utf8_encode(makeRewriteDefLine(to_wstr(pair.first), origPath, pair.second)));
+                        }
                     }
                 }
             }
             // 部首合成から
-            for (const auto& line : readBushuFile()) {
-                if (line.size() == 3) {
-                    auto iter1 = strokeSerieses.find(to_mstr(line.substr(1, 1)));
-                    auto iter2 = strokeSerieses.find(to_mstr(line.substr(2, 1)));
-                    if (iter1 != strokeSerieses.end() && iter2 != strokeSerieses.end()) {
-                        writer.writeLine(utils::utf8_encode(
-                            utils::format(_T("%s%s%s\t%s"),
-                                prefix && wcslen(prefix) > 0 ? prefix : SETTINGS->romanBushuCompPrefix.c_str(),
-                                convDeckeysToWstring(iter1->second).c_str(),
-                                convDeckeysToWstring(iter2->second).c_str(),
-                                line.substr(0, 1).c_str())));
+            if (prefix && wcslen(prefix) > 0) {
+                _LOG_DEBUGH(_T("BUSHU_COMP: prefix=%s"), prefix);
+                for (const auto& line : readBushuFile()) {
+                    if (line.size() == 3) {
+                        auto list1 = utils::replace(convDeckeysToWstring(StrokeTableNode::RootStrokeNode1->getStrokeList(to_mstr(line.substr(1, 1)), false)), _T(" "), pfx2);
+                        auto list2 = utils::replace(convDeckeysToWstring(StrokeTableNode::RootStrokeNode1->getStrokeList(to_mstr(line.substr(2, 1)), false)), _T(" "), pfx2);
+                        if (!list1.empty() && !list2.empty()) {
+                            writer.writeLine(utils::utf8_encode(
+                                utils::format(_T("%s%s%s\t%s"),
+                                    prefix,
+                                    list1.c_str(),
+                                    list2.c_str(),
+                                    line.substr(0, 1).c_str())));
+                        }
                     }
                 }
             }
@@ -405,16 +439,27 @@ namespace VkbTableMaker {
 
     // eelll/JS用テーブルを作成してファイルに書き出す
     void SaveEelllJsTable() {
-        auto path = utils::joinPath(SETTINGS->rootDir, _T("eelll-js-table.txt"));
-        utils::OfstreamWriter writer(path);
+        if (!StrokeTableNode::RootStrokeNode1) return;
+
+        utils::OfstreamWriter writer(utils::joinPath(SETTINGS->rootDir, _T("eelll-js-table.txt")));
         if (writer.success()) {
-            // テーブルファイルから
-            for (const auto& pair : strokeSerieses) {
-                if (!pair.first.empty() && !pair.second.empty()) {
-                    // 重複した出力文字(列)の場合は末尾にTABが付加されているのでそれを除去してから書き出し
-                    writer.writeLine(utils::utf8_encode(
-                        utils::format(_T("%s=%s"), MAKE_WPTR(utils::strip(pair.first, _T("\t"))), convDeckeysToWstring(pair.second).c_str())));
-                }
+            // 文字から、その文字の打鍵列へのマップに追加 (通常面)
+            StrokeTreeTraverser traverser(StrokeTableNode::RootStrokeNode1.get(), false);
+            while (true) {
+                Node* np = traverser.getNext();
+                if (!np) break;
+
+                StringNode* sp = dynamic_cast<StringNode*>(np);
+                if (!sp || sp->isConverted()) continue;
+
+                auto ms = sp->getString();
+                if (ms.empty()) continue;
+
+                auto path = traverser.getPath();
+                if (path.empty() || path[0] >= NORMAL_DECKEY_NUM) continue;
+
+                writer.writeLine(utils::utf8_encode(
+                    utils::format(_T("%s=%s"), MAKE_WPTR(ms), convDeckeysToWstring(path).c_str())));
             }
         }
     }

@@ -165,9 +165,6 @@
     <ClInclude Include="OneShot\OneShot.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="OneShot\DakutenOneShot.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="OneShot\HankakuKatakanaOneShot.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -285,9 +282,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="OneShot\OneShotState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="OneShot\DakutenOneShotState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="OneShot\HankakuKatakanaOneShotState.cpp">
