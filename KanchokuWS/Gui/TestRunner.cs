@@ -24,10 +24,16 @@ namespace KanchokuWS.Gui
         {
             if (frmMain == null) return;
 
-            var lines = readAllLines($@"src\test_script{(bAll ? "_all" : "")}.txt");
+            var testFilename = $@"test_script{(bAll ? "_all" : "")}.txt";
+            var testFilePath = Helper.JoinPath("src", testFilename);
+            var lines = readAllLines(testFilePath);
             if (lines._isEmpty()) {
-                SystemHelper.ShowWarningMessageBox(@"ファイルが見つかりません: bin\test_script.txt");
-                return;
+                testFilePath = Helper.JoinPath("bin", testFilename);
+                lines = readAllLines(testFilePath);
+                if (lines._isEmpty()) {
+                    SystemHelper.ShowWarningMessageBox($"ファイルが見つかりません: {testFilePath}");
+                    return;
+                }
             }
 
             var regex = new Regex(@"^\s*(\w+)\(([^)]*)\)(\s*=\s*([^\s]+))?");
