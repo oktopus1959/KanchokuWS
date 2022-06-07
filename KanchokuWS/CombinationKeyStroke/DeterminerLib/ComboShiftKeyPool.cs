@@ -27,11 +27,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public static bool IsOneshotShift(ComboKind kind) { return kind == ComboKind.UnorderedOneshotShift; }
 
+        public static bool IsPrefixShift(ComboKind kind) { return kind == ComboKind.PrefixSuccessiveShift; }
+
         public static bool IsUnorderedShift(ComboKind kind) { return kind == ComboKind.UnorderedSuccessiveShift || kind == ComboKind.UnorderedOneshotShift; }
 
         private Dictionary<int, ComboKind> comboKindDict = new Dictionary<int, ComboKind>();
 
         public IEnumerable<KeyValuePair<int, ComboKind>> Pairs { get { return comboKindDict.AsEnumerable(); } }
+
+        public bool ContainsComboShiftKey => comboKindDict.Count > 0;
 
         public bool ContainsUnorderedShiftKey { get; private set; } = false;
 

@@ -315,6 +315,31 @@ Unicode をそのまま送信します。漢字などもそのまま送信され
 （例： Chrome や VS Code など）
 </value>
   </data>
+  <data name="checkBox_useCombinationKeyTimer2.ToolTip" xml:space="preserve">
+    <value>同時打鍵判定のタイミングにタイマーを併用します。
+
+当項目にチェックを入れると、連続シフト中の2文字目以降の
+押下の時点でタイマーを起動して、上記で設定した時間が
+経過したタイミングでも同時判定が行われるようになります。
+
+例：
+「薙刀式」で  J→W→R と連続押下した時、R の押下後に
+タイマーが起動し、上記条件の時間が経過した
+⇒ J, W, R キーの解放を待たずに、J+R⇒「じ」が確定します。
+</value>
+  </data>
+  <data name="checkBox_useCombinationKeyTimer1.ToolTip" xml:space="preserve">
+    <value>同時打鍵判定のタイミングにタイマーを併用します。
+
+当項目にチェックを入れると、第1打鍵がシフトキーではなく文字キー
+だったときに、タイマーを起動して上記で設定した時間が経過した
+タイミングでも同時判定が行われるようになります。
+
+例：
+NICOLA配列で文字キーを押下後、シフトキーが押下される前に
+上記条件で設定した時間が経過した。
+⇒キーの解放を待たずに文字の単打が確定します。</value>
+  </data>
   <data name="textBox_combinationKeyTimeMs.ToolTip" xml:space="preserve">
     <value>連続シフトによる同時打鍵で、2文字目以降のキーの同時押下時間を設定します。
 同時押下時間がここで設定した時間以上であれば、同時打鍵と判定します。

@@ -1,17 +1,25 @@
-# 薙刀式
+### 薙刀式 ###
 loadTable(tables/naginata15.tbl)
 convert(JWjw) = ぎ
 convert(JJJWjw) = ぎ
 convert(J<50>Wjw) = ぎ
 convert(JJJ<50>Wjw) = ぎ
-convert(J<100>Wjw) = あき
-convert(JJJ<100>Wjw) = あき
+comboMaxTime(80)
+convert(J<120>Wjw) = あき
+convert(JJJ<120>Wjw) = あき
 convert(JWRjwr) = ぎし
 convert(JWRrjw) = ぎじ
 comboMinTime(100)
 convert(JWR<40>jwr) = ぎし
+convert(J<32>W<93>jRwr) = ぎし
 comboMinTime(50)
 convert(JWR<80>jwr) = ぎじ
+
+convert(FIOPiopf) = ずべ
+
+enableTimer2()
+convert(J<48>E<45>R<152>erj) = でじ
+convert(J<32>W<93>jRwr) = ぎし
 
 # 新下駄
 loadTable(tables/shin-geta.tbl)
@@ -60,4 +68,36 @@ comboMinTime(70)
 convert(KDFkdf) = にゅ
 convert(KDFdfk) = にゅ
 convert(KkDFdf) = にゅ
+convert(KDFkfd) = にゅ
 convert(K<87>D<30>F<43>kfd) = にゅ
+
+### NICOLA ###
+loadTable(tables/nicola.tbl)
+comboMaxTime(100)
+convert(J<50>{55}j[55]) = ど
+convert(J<200>{55}j[55]) = と
+convert(J<200>{55}[55]j) = と
+convert({55}<200>Jj[55]) = ど
+convert({55}<200>J[55]j) = と
+
+enableTimer1()
+convert(J<50>{55}j[55]) = ど
+convert(J<200>{55}[55]j) = と
+
+### 月光(連続シフト) ###
+loadTable(tables/gekko-20211106.pfx.tbl)
+comboMinTime(80)
+convert(DIid) = よ
+convert(DDDDKkIid) = よ
+convert(DDDDKIkid) = よ
+convert(DIO<40>dio) = よの
+
+comboMinTime(0) # 2打鍵以降も即時判定
+convert(DDDDKkIid) = よ
+convert(DDDDKIkid) = よ
+convert(DIO<40>dio) = よえ
+
+comboMinTime(80)
+convert(DIO<120>dio) = よえ
+convert(DIOoid) = よえ
+

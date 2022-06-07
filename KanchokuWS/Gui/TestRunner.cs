@@ -36,16 +36,24 @@ namespace KanchokuWS.Gui
                 }
             }
 
+            Settings.UseCombinationKeyTimer1 = false;
+            Settings.UseCombinationKeyTimer2 = false;
+
             var regex = new Regex(@"^\s*(\w+)\(([^)]*)\)(\s*=\s*([^\s]+))?");
             var sb = new StringBuilder();
 
             int lineNum = 0;
             int numErrors = 0;
+            bool bBreak = false;
             foreach (var line in lines) {
                 if (numErrors >= 10) break;
 
                 ++lineNum;
-                void appendError(string msg) { sb.Append(msg).Append($":\n>> ").Append(lineNum).Append(": ").Append(line).Append("\n\n"); }
+                void appendError(string msg)
+                {
+                    logger.Warn(msg);
+                    sb.Append(msg).Append($":\n>> ").Append(lineNum).Append(": ").Append(line).Append("\n\n");
+                }
 
                 var trimmedLine = line.Trim();
                 if (trimmedLine._isEmpty() || trimmedLine._startsWith("#") || trimmedLine._startsWith(";")) continue;
@@ -60,7 +68,7 @@ namespace KanchokuWS.Gui
                 var command = items[1];
                 var arg = items[2];
                 var expected = items._getNth(4);
-                logger.WriteInfo($"command={command}, arg={arg}, expected={(expected._notEmpty() ? expected : "null")}");
+                logger.WriteInfo($"\n==== TEST: command={command}, arg={arg}, expected={(expected._notEmpty() ? expected : "null")} ====");
                 switch (command) {
                     case "loadTable":
                         //Settings.TableFile2 = arg;
@@ -75,7 +83,7 @@ namespace KanchokuWS.Gui
                             appendError($"Illegal arguments");
                             ++numErrors;
                         } else {
-                            var result = convertKeySequence(arg);
+                            var result = convertKeySequence(arg, bAll);
                             if (result != expected) {
                                 appendError($"Expected={expected}, but Result={result}");
                                 ++numErrors;
@@ -95,11 +103,35 @@ namespace KanchokuWS.Gui
                         Settings.CombinationKeyMaxAllowedLeadTimeMs = arg._parseInt(70);
                         break;
 
+                    case "enableTimer1":
+                        Settings.UseCombinationKeyTimer1 = true;
+                        break;
+
+                    case "disableTimer1":
+                        Settings.UseCombinationKeyTimer1 = false;
+                        break;
+
+                    case "enableTimer2":
+                        Settings.UseCombinationKeyTimer2 = true;
+                        break;
+
+                    case "disableTimer2":
+                        Settings.UseCombinationKeyTimer2 = false;
+                        break;
+
+                    case "break":
+                    case "exit":
+                    case "quit":
+                        bBreak = true;
+                        logger.WriteInfo("\nBREAK");
+                        break;
+
                     default:
                         appendError($"Illegal command={command}");
                         ++numErrors;
                         break;
                 }
+                if (bBreak) break;
             }
 
             logger.WriteInfo("DONE");
@@ -131,10 +163,14 @@ namespace KanchokuWS.Gui
             {' ', 40 }, {'-', 41 }, {'^', 42 }, {'\\', 43 }, {'@', 44 }, {'[', 45 }, {':', 46 }, {']', 47 }, 
         };
 
-        string convertKeySequence(string keys)
+        string convertKeySequence(string keys, bool bAll)
         {
             int prevLogLevel = Logger.LogLevel;
-            if (prevLogLevel < Logger.LogLevelInfoH) Logger.LogLevel = Logger.LogLevelInfoH;
+            if (bAll) {
+                Logger.LogLevel = Logger.LogLevelWarn;
+            } else if (prevLogLevel < Logger.LogLevelInfoH) {
+                Logger.LogLevel = Logger.LogLevelInfoH;
+            }
 
             var sb = new StringBuilder();
             void callDecoder(List<int> list)
@@ -161,22 +197,30 @@ namespace KanchokuWS.Gui
                 return 0;
             }
 
-            for (int pos = 0; pos < keysLen; ++pos) {
-                char k = keys[pos];
-                if (k >= 'A' && k <= 'Z') {
-                    callDecoder(CombinationKeyStroke.Determiner.Singleton.KeyDown(keyToDeckey._safeGet(k), null));
-                } else if (k >= 'a' && k <= 'z') {
-                    callDecoder(CombinationKeyStroke.Determiner.Singleton.KeyUp(keyToDeckey._safeGet(toUpper(k))));
-                } else if (k == '<') {
-                    int ms = getInt(ref pos, '>');
-                    if (ms > 0) Helper.WaitMilliSeconds(ms);
-                } else if (k == '{') {
-                    int dk = getInt(ref pos, '}');
-                    callDecoder(CombinationKeyStroke.Determiner.Singleton.KeyDown(dk, null));
-                } else if (k == '[') {
-                    int dk = getInt(ref pos, ']');
-                    callDecoder(CombinationKeyStroke.Determiner.Singleton.KeyUp(dk));
+            var oldFunc = CombinationKeyStroke.Determiner.Singleton.KeyProcHandler;
+            CombinationKeyStroke.Determiner.Singleton.KeyProcHandler = callDecoder;
+            try {
+                for (int pos = 0; pos < keysLen; ++pos) {
+                    char k = keys[pos];
+                    if (k >= 'A' && k <= 'Z') {
+                        CombinationKeyStroke.Determiner.Singleton.KeyDown(keyToDeckey._safeGet(k), null);
+                    } else if (k >= 'a' && k <= 'z') {
+                        CombinationKeyStroke.Determiner.Singleton.KeyUp(keyToDeckey._safeGet(toUpper(k)));
+                    } else if (k == '<') {
+                        int ms = getInt(ref pos, '>');
+                        if (ms > 0) Helper.WaitMilliSeconds(ms);
+                    } else if (k == '{') {
+                        int dk = getInt(ref pos, '}');
+                        CombinationKeyStroke.Determiner.Singleton.KeyDown(dk, null);
+                    } else if (k == '[') {
+                        int dk = getInt(ref pos, ']');
+                        CombinationKeyStroke.Determiner.Singleton.KeyUp(dk);
+                    }
                 }
+            } catch (Exception ex) {
+                logger.Error(ex._getErrorMsg());
+            } finally {
+                CombinationKeyStroke.Determiner.Singleton.KeyProcHandler = oldFunc;
             }
 
             Logger.LogLevel = prevLogLevel;

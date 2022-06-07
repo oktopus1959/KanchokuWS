@@ -107,6 +107,11 @@ namespace KanchokuWS.Gui
             }
         }
 
+        private void button_developSaveDebugTableFile_Click(object sender, EventArgs e)
+        {
+            frmMain?.ExecCmdDecoder("SaveDebugTable", null);
+        }
+
         //-----------------------------------------------------------------------------------
         /// <summary>情報設定</summary>
         private void initializeAboutDgv()

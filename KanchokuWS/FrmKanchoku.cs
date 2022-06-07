@@ -96,6 +96,9 @@ namespace KanchokuWS
                 UserKanchokuIni.Singleton.SetInt("logLevel", Logger.LogLevelWarn);
             }
 
+            // DeterminerのタイマーのSynchronizingObjectを自身に設定しておく
+            CombinationKeyStroke.Determiner.Singleton.InitializeTimer(this);
+
             // 各種サンプルから本番ファイルをコピー(もし無ければ)
             copySampleFiles();
 
@@ -613,6 +616,8 @@ namespace KanchokuWS
         private void initializeKeyboardEventDispatcher()
         {
             logger.InfoH("ENTER");
+
+            keDispatcher.SetInvokeHandlerToDeterminer();
 
             keDispatcher.OnKeyDown = OnKeyboardDownHandler;
             keDispatcher.OnKeyUp = OnKeyboardUpHandler;
@@ -1522,7 +1527,7 @@ namespace KanchokuWS
 
             var result = decoderOutput.outString._toString();
             numBS = decoderOutput.numBackSpaces;
-            logger.InfoH(() => $"LEAVE: result={result}, numBS={decoderOutput.numBackSpaces}, usedTable={decoderOutput.strokeTableNum}");
+            logger.InfoH(() => $"LEAVE: result={result}, numBS={decoderOutput.numBackSpaces}, usedTable={decoderOutput.strokeTableNum}, strokeCount={decoderOutput.GetStrokeCount()}");
             return result;
         }
 
@@ -1764,6 +1769,8 @@ namespace KanchokuWS
                     DeactivateDecoder();
                 }
             }
+
+            CombinationKeyStroke.Determiner.Singleton.HandleQueue();
 
             if (DateTime.Now >= saveDictsPlannedDt || (IsDecoderActive && DateTime.Now >= saveDictsChallengeDt)) {
                 reinitializeSaveDictsChallengeDt();

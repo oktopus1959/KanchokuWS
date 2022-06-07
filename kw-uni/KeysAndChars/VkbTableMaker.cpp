@@ -464,5 +464,55 @@ namespace VkbTableMaker {
         }
     }
 
+    // デバッグ用テーブルを作成してファイルに書き出す
+    void SaveDebugTable() {
+        if (!StrokeTableNode::RootStrokeNode1) return;
+
+        utils::OfstreamWriter writer(utils::joinPath(SETTINGS->rootDir, _T("debug-table.txt")));
+        if (writer.success()) {
+            // テーブルファイルから
+            bool bPostRewrite = StrokeTableNode::RootStrokeNode1->hasPostRewriteNode();
+
+            MString cmdMarker = to_mstr(_T("!{"));
+
+            // 文字から、その文字の打鍵列へのマップに追加 (通常面)
+            StrokeTreeTraverser traverser(StrokeTableNode::RootStrokeNode1.get(), true);
+            while (true) {
+                Node* np = traverser.getNext();
+                if (!np) break;
+
+                wstring origPath;
+                for (int x : traverser.getPath()) {
+                    if (!origPath.empty()) origPath.push_back(':');
+                    origPath.append(std::to_wstring(x));
+                }
+                if (origPath.empty()) continue;
+
+                StringNode* sp = dynamic_cast<StringNode*>(np);
+                if (sp) {
+                    auto ms = sp->getString();
+                    if (ms.empty() || ms.find(cmdMarker) != MString::npos) continue;
+
+                    if (bPostRewrite) {
+                        size_t rewritableLen = sp->getRewritableLen();
+                        if (rewritableLen > 0) ms.insert(rewritableLen > ms.size() ? 0 : ms.size() - rewritableLen, 1, '\t');   // 「次の入力」の位置に TAB を挿入しておく
+                    }
+
+                    writer.writeLine(utils::utf8_encode(
+                        utils::format(_T("%s\t%s"), origPath.c_str(), MAKE_WPTR(ms))));
+                } else {
+                    // 後置書き換え
+                    PostRewriteOneShotNode* prnp = dynamic_cast<PostRewriteOneShotNode*>(np);
+                    if (prnp) {
+                        writer.writeLine(utils::utf8_encode(makeRewriteDefLine(_T(""), origPath, prnp->getRewriteInfo())));
+                        for (auto pair : prnp->getRewriteMap()) {
+                            writer.writeLine(utils::utf8_encode(makeRewriteDefLine(to_wstr(pair.first), origPath, pair.second)));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
 

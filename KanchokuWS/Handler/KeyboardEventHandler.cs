@@ -563,9 +563,6 @@ namespace KanchokuWS.Handler
         /// <summary> extraInfo=0 の時のキー押下時のリザルトフラグ </summary>
         //private bool normalInfoKeyDownResult = false;
 
-        /// <summary> キーボードハンドラの処理中か </summary>
-        private bool bHandlerBusy = false;
-
         /// <summary> 前回のSpace打鍵UP時刻 </summary>
         private DateTime prevSpaceUpDt = DateTime.MinValue;
 
@@ -873,40 +870,54 @@ namespace KanchokuWS.Handler
 
             // どうやら KeyboardHook で CallNextHookEx を呼ばないと次のキー入力の処理に移らないみたいだが、
             // 将来必要になるかもしれないので、下記処理を残しておく
+            // ⇒タイマー処理を入れたらbusyが発生するようになったので復活
             //if (bHandlerBusy) {
             //    logger.Warn(() => "bHandlerBusy=True");
             //    if (vkeyQueue.Count < vkeyQueueMaxSize) {
             //        vkeyQueue.Enqueue(kanchokuCode);
             //        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
             //    }
-            //    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-C: result=True");
+            //    logger.DebugH(() => $"LEAVE-C: result=True");
             //    return true;
             //}
-            //while (true) {
-            //    bool result = invokeHandler(kanchokuCode, mod);
-            //    if (vkeyQueue.Count == 0) {
-            //        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-D: result={result}");
-            //        return result;
-            //    }
-            //    kanchokuCode = vkeyQueue.Dequeue();
-            //}
-            if (bHandlerBusy) {
+            if (vkeyQueue.Count < vkeyQueueMaxSize) {
+                vkeyQueue.Enqueue(kanchokuCode);
+            } else {
+                logger.Warn("vkeyQueue OVERFLOW!!!");
                 return true;
             }
-            if (bDecoderOn && mod == 0 &&
-                kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END) {
-                // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
-                var keyList = CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode, (decKey) => handleComboKeyRepeat(vkey, decKey));
-                bool result = true;
-                if (keyList._notEmpty()) {
-                    foreach (var k in keyList) {
-                        result = invokeHandler(k, 0);
-                    }
-                }
-                return result;
-            } else {
-                return invokeHandler(kanchokuCode, mod);
+            if (vkeyQueue.Count > 1) {
+                logger.Warn(() => "bHandlerBusy");
+                return true;
             }
+            bool result = true;
+            //if (bDecoderOn && mod == 0 &&
+            //    kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END) {
+            //    // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
+            //    var keyList = CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode, (decKey) => handleComboKeyRepeat(vkey, decKey));
+            //    if (keyList._notEmpty()) {
+            //        foreach (var k in keyList) {
+            //            result = invokeHandler(k, 0);
+            //        }
+            //    }
+            //} else {
+            //    result = invokeHandler(kanchokuCode, mod);
+            //}
+            while (vkeyQueue.Count > 0) {
+                logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
+                kanchokuCode = vkeyQueue.Peek();
+                if (bDecoderOn && mod == 0 &&
+                    kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END) {
+                    // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
+                    CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode, (decKey) => handleComboKeyRepeat(vkey, decKey));
+                    result = true;
+                } else {
+                    result = invokeHandler(kanchokuCode, mod);
+                }
+                kanchokuCode = vkeyQueue.Dequeue();
+                //if (vkeyQueue.Count > 0) logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
+            }
+            return result;
         }
 
         private const int vkeyQueueMaxSize = 4;
@@ -1027,21 +1038,42 @@ namespace KanchokuWS.Handler
             if (bDecoderOn && !leftCtrl && !rightCtrl && modFlag == 0) {
                 int deckey = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
                 if (deckey >= 0 && deckey < DecoderKeys.STROKE_DECKEY_END) {
-                    var keyList = CombinationKeyStroke.Determiner.Singleton.KeyUp(deckey);
-                    if (keyList._notEmpty()) {
-                        foreach (var k in keyList) {
-                            invokeHandler(k, 0);
-                        }
-                    }
+                    CombinationKeyStroke.Determiner.Singleton.KeyUp(deckey);
                 }
             }
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={false}");
         }
 
+        public void SetInvokeHandlerToDeterminer()
+        {
+            CombinationKeyStroke.Determiner.Singleton.KeyProcHandler = (keyList) => invokeHandlerForKeyList(keyList);
+        }
+
+        private bool invokeHandlerForKeyList(List<int> keyList)
+        {
+            logger.Debug(() => $"CALLED: keyList.Count={keyList._safeCount()}");
+            if (keyList._isEmpty()) return true;
+
+            logger.DebugH(() => $"ENTER: keyList={keyList.Select(x => x.ToString())._join(":")}");
+            bool result = true;
+            if (keyList._notEmpty()) {
+                foreach (var k in keyList) {
+                    result = invokeHandler(k, 0);
+                }
+            }
+            logger.DebugH(() => $"LEAVE: result={result}");
+            return result;
+        }
+
+        /// <summary> キーボードハンドラの処理中か </summary>
+        private bool bInvokeHandlerBusy = false;
+
         private bool invokeHandler(int kanchokuCode, uint mod)
         {
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), mod={mod:x}H({mod}), UNCONDITIONAL_DECKEY_OFFSET={DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET}, UNCONDITIONAL_DECKEY_END={DecoderKeys.UNCONDITIONAL_DECKEY_END}");
-            bHandlerBusy = true;
+            if (bInvokeHandlerBusy) return false;
+
+            bInvokeHandlerBusy = true;
             try {
                 switch (kanchokuCode) {
                     case DecoderKeys.TOGGLE_DECKEY:
@@ -1077,7 +1109,7 @@ namespace KanchokuWS.Handler
                         return false;
                 }
             } finally {
-                bHandlerBusy = false;
+                bInvokeHandlerBusy = false;
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE");
             }
         }

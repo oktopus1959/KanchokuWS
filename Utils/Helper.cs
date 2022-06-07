@@ -34,7 +34,7 @@ namespace Utils
         }
 
         /// <summary>
-        /// list に対して、残りの引数をAddRangeして返す。
+        /// list と、残りの引数を連結したものを返す。
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="array"></param>

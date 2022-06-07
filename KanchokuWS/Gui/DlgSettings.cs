@@ -870,6 +870,8 @@ namespace KanchokuWS.Gui
             textBox_combinationMaxAllowedLeadTimeMs.Text = $"{Settings.CombinationKeyMaxAllowedLeadTimeMs}";
             //textBox_combinationKeyTimeRate.Text = $"{Settings.CombinationKeyTimeRate}";
             textBox_combinationKeyTimeMs.Text = $"{Settings.CombinationKeyMinOverlappingTimeMs}";
+            checkBox_useCombinationKeyTimer1.Checked = Settings.UseCombinationKeyTimer1;
+            checkBox_useCombinationKeyTimer2.Checked = Settings.UseCombinationKeyTimer2;
 
             // IME連携
             checkBox_imeCooperationEnabled.Checked = Settings.ImeCooperationEnabled;
@@ -898,6 +900,8 @@ namespace KanchokuWS.Gui
             checkerImeCombo.Add(textBox_combinationMaxAllowedLeadTimeMs);
             //checkerImeCombo.Add(textBox_combinationKeyTimeRate);
             checkerImeCombo.Add(textBox_combinationKeyTimeMs);
+            checkerImeCombo.Add(checkBox_useCombinationKeyTimer1);
+            checkerImeCombo.Add(checkBox_useCombinationKeyTimer2);
 
             // IME連携
             checkerImeCombo.Add(checkBox_imeCooperationEnabled);
@@ -932,6 +936,8 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("combinationMaxAllowedLeadTimeMs", textBox_combinationMaxAllowedLeadTimeMs.Text.Trim());
             //Settings.SetUserIni("combinationKeyTimeRate", textBox_combinationKeyTimeRate.Text.Trim());
             Settings.SetUserIni("combinationKeyTimeMs", textBox_combinationKeyTimeMs.Text.Trim());
+            Settings.SetUserIni("useCombinationKeyTimer1", checkBox_useCombinationKeyTimer1.Checked);
+            Settings.SetUserIni("useCombinationKeyTimer2", checkBox_useCombinationKeyTimer2.Checked);
 
             // IME連携
             Settings.SetUserIni("imeCooperationEnabled", checkBox_imeCooperationEnabled.Checked);

@@ -15,7 +15,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.0β";
+        public static string Version => "1.2.0β4";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -550,6 +550,10 @@ namespace KanchokuWS
         /// <summary>第２打鍵以降についてのみ同時打鍵チェックを行う</summary>
         public static bool IsCheckedSecondCombination { get; set; } = true;
 
+        /// <summary>同時打鍵チェック用のタイマーを使用する</summary>
+        public static bool UseCombinationKeyTimer1 { get; set; } = false;
+        public static bool UseCombinationKeyTimer2 { get; set; } = false;
+
         //------------------------------------------------------------------------------
         /// <summary> IMEの状態に連携してON/OFFする </summary>
         public static bool ImeCooperationEnabled { get; set; } = false;
@@ -948,9 +952,11 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             // 同時打鍵
-            CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0);        // 重複時間率
-            CombinationKeyMinOverlappingTimeMs = GetString("combinationKeyTimeMs")._parseInt(70);          // 重複時間
-            CombinationKeyMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100);     // 許容リードタイム
+            CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0);                          // 重複時間率
+            CombinationKeyMinOverlappingTimeMs = GetString("combinationKeyTimeMs")._parseInt(70);               // 重複時間
+            CombinationKeyMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100);   // 許容リードタイム
+            UseCombinationKeyTimer1 = GetString("useCombinationKeyTimer1")._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
+            UseCombinationKeyTimer2 = GetString("useCombinationKeyTimer2")._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
 
             //-------------------------------------------------------------------------------------
             // IME連携

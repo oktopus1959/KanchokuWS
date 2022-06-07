@@ -936,6 +936,38 @@ namespace Utils
         }
 
         /// <summary>
+        /// list[start..end]を返す<br/>end <= 0 なら末尾からの位置
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        static public IEnumerable<T> _getRange<T>(this IEnumerable<T> list, int start, int end = 0)
+        {
+            if (list == null) return new List<T>();
+            if (start < 0) start = 0;
+            if (end < 0) end = list.Count() + end;
+            return list._getRangeByLen(start, end - start);
+        }
+
+        /// <summary>
+        /// list[start..(start+len)]を返す<br/> len <= 0 なら長さ0を返す
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        static public IEnumerable<T> _getRangeByLen<T>(this IEnumerable<T> list, int start, int len)
+        {
+            if (list == null) return new List<T>();
+            if (start < 0) start = 0;
+            if (len < 0) len = 0;
+            return list.Skip(start).Take(len);
+        }
+
+        /// <summary>
         /// set に item が格納されていれば false を返す。格納されていなければ true を返して set する
         /// </summary>
         /// <typeparam name="T"></typeparam>

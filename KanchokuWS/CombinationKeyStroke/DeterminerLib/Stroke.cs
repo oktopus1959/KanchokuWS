@@ -42,6 +42,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return OrigDecoderKey == decKey || ModuloDecKey == ModuloizeKey(decKey);
         }
 
+        /// <summary>単打可能なキーか</summary>
+        public bool IsSingleHittable { get; private set; }
+
+        /// <summary>前置シフトな同時打鍵キーか</summary>
+        public bool IsPrefixShift { get; private set; }
+
         /// <summary>Oneshotな同時打鍵キーか</summary>
         public bool IsOneshotShift { get; private set; }
 
@@ -57,9 +63,24 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public void SetCombined() { IsCombined = true; }
 
         /// <summary>同時打鍵のキーとしてつかわれたか</summary>
-        public bool IsUsedForOneshot { get; private set; }
+        //public bool IsUsedForOneshot { get; private set; }
 
-        public void SetUsedForOneshot() { IsUsedForOneshot = true; }
+        //public void SetUsedForOneshot() { IsUsedForOneshot = true; }
+
+        /// <summary>UPされたキーか</summary>
+        public bool IsUpKey { get; private set; }
+
+        public void SetUpKey() { IsUpKey = true; }
+
+        /// <summary>削除されるべきキーか</summary>
+        public bool ToBeRemoved => _toBeRemoved;
+        //public bool ToBeRemoved => _toBeRemoved || IsUsedForOneshot;
+
+        private bool _toBeRemoved = false;
+
+        public void SetToBeRemoved() { _toBeRemoved = true; }
+
+        public void ResetToBeRemoved() { _toBeRemoved = false; }
 
         /// <summary>キー打鍵時の時刻</summary>
         public DateTime KeyDt { get; private set; }
@@ -87,8 +108,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public Stroke(int decKey, DateTime dt)
         {
             OrigDecoderKey = decKey;
+            IsSingleHittable = KeyCombinationPool.CurrentPool.GetEntry(decKey) != null;
             IsSuccessiveShift = KeyCombinationPool.IsComboSuccessive(OrigDecoderKey);
             IsOneshotShift = KeyCombinationPool.IsComboOneshot(OrigDecoderKey);
+            IsPrefixShift = KeyCombinationPool.IsComboPrefix(OrigDecoderKey);
             IsComboShift = KeyCombinationPool.IsComboShift(OrigDecoderKey);
             KeyDt = dt;
         }

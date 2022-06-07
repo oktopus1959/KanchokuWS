@@ -54,5 +54,8 @@ namespace VkbTableMaker {
 
     // eelll/JS用テーブルを作成してファイルに書き出す
     void SaveEelllJsTable();
+
+    // デバッグ用テーブルを作成してファイルに書き出す
+    void SaveDebugTable();
 }
 

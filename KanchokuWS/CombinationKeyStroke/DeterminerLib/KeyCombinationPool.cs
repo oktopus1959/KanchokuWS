@@ -67,6 +67,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         public ComboShiftKeyPool ComboShiftKeys { get; private set; } = new ComboShiftKeyPool();
 
+        // 同時打鍵シフトキーを保持しているか
+        public bool ContainsComboShiftKey => ComboShiftKeys.ContainsComboShiftKey;
+
         // 相互シフトキーを保持しているか
         public bool ContainsUnorderedShiftKey => ComboShiftKeys.ContainsUnorderedShiftKey;
 
@@ -106,17 +109,17 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
-        private KeyCombination getEntry(IEnumerable<int> keyList, int lastKey)
-        {
-            logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(keyList)}, lastKey={lastKey}");
-            // まずは打鍵されたキーをそのまま使って検索
-            var combo = keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList, lastKey));
-            if (combo == null && (keyList.Any(x => x >= DecoderKeys.PLANE_DECKEY_NUM) || lastKey >= DecoderKeys.PLANE_DECKEY_NUM)) {
-                // 見つからない、かつ拡張シフトコードが含まれていれば、すべてModuloizeしたキーでも試す
-                combo = keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList.Select(x => Stroke.ModuloizeKey(x)), Stroke.ModuloizeKey(lastKey)));
-            }
-            return combo;
-        }
+        //private KeyCombination getEntry(IEnumerable<int> keyList, int lastKey)
+        //{
+        //    logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(keyList)}, lastKey={lastKey}");
+        //    // まずは打鍵されたキーをそのまま使って検索
+        //    var combo = keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList, lastKey));
+        //    if (combo == null && (keyList.Any(x => x >= DecoderKeys.PLANE_DECKEY_NUM) || lastKey >= DecoderKeys.PLANE_DECKEY_NUM)) {
+        //        // 見つからない、かつ拡張シフトコードが含まれていれば、すべてModuloizeしたキーでも試す
+        //        combo = keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList.Select(x => Stroke.ModuloizeKey(x)), Stroke.ModuloizeKey(lastKey)));
+        //    }
+        //    return combo;
+        //}
 
         public KeyCombination GetEntry(IEnumerable<Stroke> strokeList)
         {
@@ -132,20 +135,30 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return combo;
         }
 
+        public KeyCombination GetEntry(Stroke stroke)
+        {
+            return GetEntry(stroke.OrigDecoderKey, stroke.ModuloDecKey);
+        }
+
         public KeyCombination GetEntry(int decKey)
+        {
+            return GetEntry(decKey, Stroke.ModuloizeKey(decKey));
+        }
+
+        public KeyCombination GetEntry(int origDecKey, int moduloDecKey)
+        {
+            var combo = getEntry(origDecKey);
+            if (combo == null && origDecKey >= DecoderKeys.PLANE_DECKEY_NUM) {
+                // 見つからない、かつ拡張シフトコードならば、Moduloizeしたキーでも試す
+                combo = getEntry(moduloDecKey);
+            }
+            return combo;
+        }
+
+        public KeyCombination getEntry(int decKey)
         {
             //return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(Stroke.ModuloizeKey(decKey)));
             return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(decKey));
-        }
-
-        public KeyCombination GetEntry(Stroke stroke)
-        {
-            var combo = GetEntry(stroke.OrigDecoderKey);
-            if (combo == null && stroke.OrigDecoderKey >= DecoderKeys.PLANE_DECKEY_NUM) {
-                // 見つからない、かつ拡張シフトコードならば、Moduloizeしたキーでも試す
-                combo = GetEntry(stroke.ModuloDecKey);
-            }
-            return combo;
         }
 
         /// <summary>
@@ -225,6 +238,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public static bool IsComboOneshot(int keyCode)
         {
             return ComboShiftKeyPool.IsOneshotShift(CurrentPool.GetShiftKeyKind(keyCode));
+        }
+
+        /// <summary>keyCode が前置シフトとしても扱われるか否かを返す</summary>
+        public static bool IsComboPrefix(int keyCode)
+        {
+            return ComboShiftKeyPool.IsPrefixShift(CurrentPool.GetShiftKeyKind(keyCode));
         }
 
         public void DebugPrint()
