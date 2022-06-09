@@ -76,6 +76,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // 連続シフトキーを保持しているか
         public bool ContainsSuccessiveShiftKey => ComboShiftKeys.ContainsSuccessiveShiftKey;
 
+        public bool ContainsSequentialShiftKey { get; set; }
+
+        public bool IsPrefixedSequentialShift => !ContainsUnorderedShiftKey && ContainsSuccessiveShiftKey;
+
         /// <summary>
         /// Repeatableなキー
         /// </summary>        
@@ -258,6 +262,21 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             foreach (var pair in ComboShiftKeys.Pairs) {
                 logger.DebugH($"ShiftKey: {pair.Key}={pair.Value}");
             }
+        }
+
+        public void DebugPringFile(string filename)
+        {
+            var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
+            List<string> lines = new List<string>();
+            foreach (var pair in keyComboDict) {
+                var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
+                var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
+                lines.Add($"{key}={deckeys} {pair.Value.IsTerminal}");
+            }
+            foreach (var pair in ComboShiftKeys.Pairs) {
+                lines.Add($"ShiftKey: {pair.Key}={pair.Value}");
+            }
+            Helper.WriteLinesToFile(path, lines, (e) => logger.Error(e._getErrorMsg()));
         }
     }
 }

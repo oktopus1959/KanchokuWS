@@ -632,6 +632,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
+        HashSet<int> singleKeys = new HashSet<int>();
+
         /// <summary>
         /// 終端ノードの追加と同時打鍵列の組合せの登録<br/>
         /// 同時打鍵の場合は、ブロックのルートキーをCOMBO_DECKEY_STARTまでシフトする
@@ -663,8 +665,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             string outStr = node.isStringNode() ? $"{dq}{node.getString()}{dq}" : node.getMarker();
             outputLines.Add($"-{list.Select(x => x.ToString())._join(">-")}>{outStr}");
 
-            if (isInCombinationBlock) {
+            if (isInCombinationBlock || list.Count == 1) {
                 makeCombinationKeyCombo(list, shiftOffset);
+            } else {
+                keyComboPool.ContainsSequentialShiftKey = true;
+                foreach (var dk in list) {
+                    if (!singleKeys.Contains(dk)) {
+                        makeCombinationKeyCombo(Helper.MakeList(dk), shiftOffset);
+                        singleKeys.Add(dk);
+                    }
+                }
             }
 
             setNodeAtLast(list, node);
@@ -1473,15 +1483,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
             Helper.CreateDirectory(path._getDirPath());
             logger.InfoH($"ENTER: path={path}");
-            try {
-                using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite)) {
-                    using (var sw = new System.IO.StreamWriter(fs)) {   // BOM無しで書き込む
-                        sw.Write(lines._join("\n"));
-                    }
-                }
-            } catch (Exception e) {
-                logger.Error(e._getErrorMsg());
-            }
+            Helper.WriteLinesToFile(path, lines, (e) => logger.Error(e._getErrorMsg()));
             logger.InfoH($"LEAVE");
         }
 

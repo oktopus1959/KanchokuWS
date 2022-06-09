@@ -42,7 +42,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return OrigDecoderKey == decKey || ModuloDecKey == ModuloizeKey(decKey);
         }
 
-        /// <summary>単打可能なキーか</summary>
+        /// <summary>単打可能なキーか<br/>ただし出力文字列が定義されていない打鍵もある</summary>
         public bool IsSingleHittable { get; private set; }
 
         /// <summary>前置シフトな同時打鍵キーか</summary>
@@ -108,11 +108,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public Stroke(int decKey, DateTime dt)
         {
             OrigDecoderKey = decKey;
-            IsSingleHittable = KeyCombinationPool.CurrentPool.GetEntry(decKey) != null;
             IsSuccessiveShift = KeyCombinationPool.IsComboSuccessive(OrigDecoderKey);
             IsOneshotShift = KeyCombinationPool.IsComboOneshot(OrigDecoderKey);
             IsPrefixShift = KeyCombinationPool.IsComboPrefix(OrigDecoderKey);
             IsComboShift = KeyCombinationPool.IsComboShift(OrigDecoderKey);
+            IsSingleHittable = KeyCombinationPool.CurrentPool.GetEntry(decKey)?.DecKeyList != null;
             KeyDt = dt;
         }
 

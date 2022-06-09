@@ -434,7 +434,7 @@ namespace {
         }
 
         Node* createNode(TOKEN token, int depth, int prevNth, int nth/*, bool bArrowBundle = false*/) {
-            LOG_TRACE(_T("CALLED: token=%d, depth=%d, prevNth=%d, nth=%d, bArrowBundle=%d"), token, depth, prevNth, nth, bArrowBundle);
+            LOG_TRACE(_T("CALLED: token=%d, depth=%d, prevNth=%d, nth=%d"), token, depth, prevNth, nth);
             bool bBareStr = token == TOKEN::BARE_STRING;
             switch (token) {
             case TOKEN::LBRACE: {

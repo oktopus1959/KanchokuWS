@@ -1,21 +1,38 @@
 ### 薙刀式 ###
 loadTable(tables/naginata15.tbl)
+comboMaxTime(100)
+convert(Jj) = あ
+convert(Ff) = か
+convert(Ii) = る
+convert(Kk) = い
 convert(JWjw) = ぎ
+convert(WJwj) = ぎ
 convert(JJJWjw) = ぎ
 convert(J<50>Wjw) = ぎ
 convert(JJJ<50>Wjw) = ぎ
-comboMaxTime(80)
+
 convert(J<120>Wjw) = あき
 convert(JJJ<120>Wjw) = あき
 convert(JWRjwr) = ぎし
 convert(JWRrjw) = ぎじ
+
 comboMinTime(100)
+convert(JKjk) = あい
+convert(JKkj) = あい
+convert(KJkj) = いあ
+convert(KJjk) = いあ
+convert(FIfi) = かる
+convert(JIji) = ある
+convert(F{38}Wf[38]w) = ぶき
 convert(JWR<40>jwr) = ぎし
+convert(JWE<40>jwe) = ぎて
 convert(J<32>W<93>jRwr) = ぎし
+convert(J<32>W<93>jEwe) = ぎて
+
 comboMinTime(50)
 convert(JWR<80>jwr) = ぎじ
-
-convert(FIOPiopf) = ずべ
+convert(FIOPiopf) = かるずべ
+convert(FKOPkopf) = かいずべ
 
 enableTimer2()
 convert(J<48>E<45>R<152>erj) = でじ
@@ -23,6 +40,10 @@ convert(J<32>W<93>jRwr) = ぎし
 
 # 新下駄
 loadTable(tables/shin-geta.tbl)
+convert(KWkw) = ご
+convert(KWwk) = ご
+convert(WKwk) = ご
+convert(WKkw) = ご
 convert(KWEkwe) = ごは
 convert(KKKWEkwe) = ごは
 convert(KWEewk) = ごは
@@ -62,14 +83,23 @@ convert({38}DAad[38]) = ましょう
 
 # のにいると
 loadTable(tables/noniiruto.tbl)
-
 comboMaxTime(100)
 comboMinTime(70)
+convert(Ff) = の
+convert(DdFf) = け
+convert(D<200>Idi) = び
 convert(KDFkdf) = にゅ
 convert(KDFdfk) = にゅ
 convert(KkDFdf) = にゅ
 convert(KDFkfd) = にゅ
 convert(K<87>D<30>F<43>kfd) = にゅ
+convert(K<150>DFkfd) = にゅ
+convert(KD<150>Fkfd) = にゅ
+convert(K<150>D<150>Fkfd) = にゅ
+convert(K<24>D<103>k<23>F<150>df) = にゅ
+enableTimer2()
+convert(K<24>D<103>k<23>F<150>df) = にゅ
+convert(D<52>I<105>O<48>i<80>od) = びだ
 
 ### NICOLA ###
 loadTable(tables/nicola.tbl)
@@ -88,7 +118,7 @@ convert(J<200>{55}[55]j) = と
 loadTable(tables/gekko-20211106.pfx.tbl)
 comboMinTime(80)
 convert(DIid) = よ
-convert(DDDDKkIid) = よ
+convert(DDDDKkIid) = い
 convert(DDDDKIkid) = よ
 convert(DIO<40>dio) = よの
 

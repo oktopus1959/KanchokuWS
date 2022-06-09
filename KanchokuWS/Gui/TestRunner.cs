@@ -39,7 +39,7 @@ namespace KanchokuWS.Gui
             Settings.UseCombinationKeyTimer1 = false;
             Settings.UseCombinationKeyTimer2 = false;
 
-            var regex = new Regex(@"^\s*(\w+)\(([^)]*)\)(\s*=\s*([^\s]+))?");
+            var regex = new Regex(@"^\s*(\w+)(?:\(([^)]*)\)(?:\s*=\s*([^\s]+))?)?");
             var sb = new StringBuilder();
 
             int lineNum = 0;
@@ -59,16 +59,16 @@ namespace KanchokuWS.Gui
                 if (trimmedLine._isEmpty() || trimmedLine._startsWith("#") || trimmedLine._startsWith(";")) continue;
 
                 var items = trimmedLine._reScan(regex);
-                if (items._safeCount() < 3) {
+                if (items._safeCount() < 2) {
                     appendError($"Illegal format");
                     ++numErrors;
                     continue;
                 }
 
                 var command = items[1];
-                var arg = items[2];
-                var expected = items._getNth(4);
-                logger.WriteInfo($"\n==== TEST: command={command}, arg={arg}, expected={(expected._notEmpty() ? expected : "null")} ====");
+                var arg = items._getNth(2);
+                var expected = items._getNth(3);
+                logger.WriteInfo($"\n==== TEST({lineNum}): command={command}, arg={arg}, expected={(expected._notEmpty() ? expected : "null")} ====");
                 switch (command) {
                     case "loadTable":
                         //Settings.TableFile2 = arg;
@@ -76,8 +76,13 @@ namespace KanchokuWS.Gui
                         frmMain.ExecCmdDecoder("createStrokeTrees", "both"); // ストローク木の再構築
                         frmMain.ExecCmdDecoder("useCodeTable2", null);
                         CombinationKeyStroke.Determiner.Singleton.UseSecondaryPool();
+                        Settings.UseCombinationKeyTimer1 = false;
+                        Settings.UseCombinationKeyTimer2 = false;
+                        Settings.CombinationKeyMaxAllowedLeadTimeMs = arg._parseInt(100);
+                        Settings.CombinationKeyMinOverlappingTimeMs = arg._parseInt(70);
                         break;
 
+                    case "test":
                     case "convert":
                         if (expected._isEmpty()) {
                             appendError($"Illegal arguments");

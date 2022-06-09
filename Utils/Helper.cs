@@ -718,6 +718,19 @@ namespace Utils
                 return absPath;
         }
 
+        public static void WriteLinesToFile(string filePath, IEnumerable<string> lines, Action<Exception> errHandler = null)
+        {
+            try {
+                using (var fs = new System.IO.FileStream(filePath, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite)) {
+                    using (var sw = new System.IO.StreamWriter(fs)) {   // BOM無しで書き込む
+                        sw.Write(lines._join("\n"));
+                    }
+                }
+            } catch (Exception e) {
+                errHandler?.Invoke(e);
+            }
+        }
+
         /// <summary>
         /// dirPath 配下で filePattern にマッチするファイルを削除する<para/>
         /// エラーが発生したら、エラーメッセージを返す
