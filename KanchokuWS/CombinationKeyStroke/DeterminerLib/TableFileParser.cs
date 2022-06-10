@@ -196,6 +196,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             ARROW_BUNDLE,   // -*>-n>
             REWRITE_PRE,    // %n>
             REWRITE_POST,   // &n>
+            PLACE_HOLDER,   // $n
         };
 
         TOKEN currentToken = TOKEN.IGNORE;  // 最後に読んだトークン
@@ -232,6 +233,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         // 出力用のバッファ
         List<string> outputLines = new List<string>();
+
+        // プレースホルダー
+        Dictionary<string, int> placeHolders = new Dictionary<string, int>();
 
         StrokeTableNode rootTableNode = new StrokeTableNode(true);
 
@@ -448,6 +452,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         //isPrevDelim = false;
                         break;
 
+                    case TOKEN.PLACE_HOLDER:
+                        placeHolders[currentStr] = idx;
+                        break;
+
                     case TOKEN.VBAR:               // 次のトークン待ち
                         row = calcRow(idx, row);
                         idx = calcOverrunIndex(idx + 1);
@@ -480,6 +488,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 readNextToken();
             }
 
+            if (depth == 0) placeHolders.Clear();
             logger.DebugH(() => $"LEAVE: currentLine={lineNumber}, depth={depth}, bError={bError}");
         }
 
@@ -555,6 +564,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         //isPrevDelim = false;
                         break;
 
+                    case TOKEN.PLACE_HOLDER:
+                        placeHolders[currentStr] = n;
+                        break;
+
                     case TOKEN.VBAR:              // 次のトークン待ち
                         row = calcRow(n, row);
                         n = calcOverrunIndex(n + 1);
@@ -586,6 +599,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 readNextToken();
             }
 
+            if (depth == 0) placeHolders.Clear();
             logger.DebugH(() => $"LEAVE: depth={depth}");
         }
 
@@ -776,6 +790,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         setNodeAndOutputByIndex(idx, currentToken == TOKEN.BARE_STRING);
                         break;
 
+                    case TOKEN.PLACE_HOLDER:        // プレースホルダー
+                        placeHolders[currentStr] = idx;
+                        break;
+
                     case TOKEN.VBAR:               // 次のトークン待ち
                         row = calcRow(idx, row);
                         idx = calcOverrunIndex(idx + 1);
@@ -810,6 +828,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 setNodeAt(lastIdx, node);
             }
 
+            if (depth == 0) placeHolders.Clear();
             logger.DebugH(() => $"LEAVE: str={node?.getMarker()}");
         }
 
@@ -1049,6 +1068,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         }
                     }
                     break;
+
+                    case '$':
+                        readBareString();
+                        if (currentStr._notEmpty()) return TOKEN.PLACE_HOLDER;
+                        break;
 
                     case '%':
                         if (parseArrow(getNextChar())) return TOKEN.REWRITE_PRE;
@@ -1354,16 +1378,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 c = getNextChar();
             }
             if (c == ' ' || c == '\t') c = skipSpace();
-            if (!is_numeral(c)) {
-                parseError();
-                return false;
+
+            if (c == '$') {
+                readBareString();
+                arrowIndex = placeHolders._safeGet(currentStr, -1);
+            } else {
+                arrowIndex = parseNumerical(c);
             }
-            arrowIndex = c - '0';
-            c = getNextChar();
-            while (is_numeral(c)) {
-                arrowIndex = arrowIndex * 10 + c - '0';
-                c = getNextChar();
-            }
+            if (arrowIndex < 0) return false;
+
             arrowIndex += funckeyOffset;
             arrowIndex %= DecoderKeys.PLANE_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
             if (!bShiftPlane) {
@@ -1385,6 +1408,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 if (shiftPlane >= DecoderKeys.ALL_PLANE_NUM) parseError();
                 return false;
             }
+            c = getNextChar();
             if (c == ' ' || c == '\t') c = skipSpace();
             if (c == ',') decrementPos();
             else if (c != '>') parseError();
@@ -1399,16 +1423,32 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             c = getNextChar();
             if (c != '-') parseError();
             c = getNextChar();
-            if (!is_numeral(c)) parseError();
-            arrowIndex = c - '0';
-            c = getNextChar();
-            while (is_numeral(c)) {
-                arrowIndex = arrowIndex * 10 + c - '0';
-                c = getNextChar();
+            if (c == '$') {
+                readBareString();
+                arrowIndex = placeHolders._safeGet(currentStr, -1);
+            } else {
+                arrowIndex = parseNumerical(c);
             }
-            if (arrowIndex >= DecoderKeys.PLANE_DECKEY_NUM) parseError();
+            if (arrowIndex < 0 || arrowIndex >= DecoderKeys.PLANE_DECKEY_NUM) parseError();
+            c = getNextChar();
             if (c != '>') parseError();
             return true;
+        }
+
+        int parseNumerical(char c)
+        {
+            if (!is_numeral(c)) {
+                parseError();
+                return -1;
+            }
+            int result = c - '0';
+            while (true) {
+                c = peekNextChar();
+                if (!is_numeral(c)) break;
+                getNextChar();
+                result = result * 10 + c - '0';
+            }
+            return result;
         }
 
         bool is_numeral(char c)
@@ -1435,7 +1475,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         char peekNextChar() {
-            return (nextPos < currentLine._safeLength()) ? currentLine[nextPos] : '\0';
+            return currentChar = (nextPos < currentLine._safeLength()) ? currentLine[nextPos] : '\n';
         }
 
         void decrementPos()
