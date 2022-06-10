@@ -646,7 +646,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
-        HashSet<int> singleKeys = new HashSet<int>();
+        HashSet<int> sequentialShiftKeys = new HashSet<int>();
 
         /// <summary>
         /// 終端ノードの追加と同時打鍵列の組合せの登録<br/>
@@ -683,10 +683,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 makeCombinationKeyCombo(list, shiftOffset);
             } else {
                 keyComboPool.ContainsSequentialShiftKey = true;
-                foreach (var dk in list) {
-                    if (!singleKeys.Contains(dk)) {
-                        makeCombinationKeyCombo(Helper.MakeList(dk), shiftOffset);
-                        singleKeys.Add(dk);
+                for (int i = 0; i < list.Count - 1; ++i) {
+                    int dk = list[i];
+                    if (!sequentialShiftKeys.Contains(dk)) {
+                        addSequentialShiftKey(dk, shiftOffset);
+                        sequentialShiftKeys.Add(dk);
                     }
                 }
             }
@@ -844,6 +845,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"{deckeyList._keyString()}={currentStr}");
             keyComboPool.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
             keyComboPool.AddEntry(deckeyList, comboKeyList, shiftKeyKind);
+        }
+
+        void addSequentialShiftKey(int decKey, int shiftOffset)
+        {
+            keyComboPool.AddComboShiftKey(makeShiftedDecKey(decKey, shiftOffset), ShiftKeyKind.SequentialShift);
         }
 
         int makeComboDecKey(int decKey)

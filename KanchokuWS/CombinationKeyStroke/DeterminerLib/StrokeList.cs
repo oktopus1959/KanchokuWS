@@ -137,7 +137,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // 押下の場合
         public List<int> GetKeyCombinationWhenKeyDown(int decKey)
         {
-            // 同時打鍵シフトでなければ何も返さない
+            // 同時打鍵可でなければ何も返さない⇒同時打鍵判定をしない
             if (!KeyCombinationPool.CurrentPool.ContainsComboShiftKey) {
                 logger.DebugH("No combo shift key");
                 return null;
@@ -263,17 +263,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     logger.DebugH(() => $"upComboIdx={upComboIdx}, upKeyIdx={upKeyIdx}");
 
                     if (upComboIdx >= 0 || upKeyIdx >= 0) {
-                        //Stroke upStroke = upComboIdx >= 0 ? comboList[upComboIdx] : unprocList[upKeyIdx];
-
-                        // 処理対象リスト
-                        //List<Stroke> hotList = unprocList;
-                        //if (upComboIdx < 0 && upKeyIdx >= 0 && upKeyIdx < unprocList.Count && !unprocList[upKeyIdx].IsComboShift) {
-                        //    // 未処理リストの方は、同時打鍵シフトキー以外が解放された場合は、そのキーまでしかチェックしない
-                        //    hotList = unprocList.Take(upKeyIdx + 1).ToList();
-                        //}
-                        //unprocList = unprocList.Skip(hotList.Count).ToList();
-                        //unprocList = new List<Stroke>();
-
                         result = new List<int>();
 
                         bool bSecondComboCheck = comboList._notEmpty();
@@ -286,6 +275,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             logger.DebugH(() => $"bTemporaryComboDisabled={bTemporaryComboDisabled}");
                             List<List<Stroke>> subComboLists = gatherSubList(bTemporaryComboDisabled ? null : comboList);
                             //List<List<Stroke>> subComboLists = gatherSubList(comboList);
+
                             int overlapLen = findCombo(result, subComboLists, unprocList, dtNow, bSecondComboCheck);
                             if (overlapLen > 0) {
                                 // 見つかった
@@ -301,8 +291,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 int copyShiftLen = 1;
                                 if (comboList._isEmpty() && unprocList.Count == 1) {
                                     logger.DebugH($"NO SHIFT and SELF UP KEY and NO OTHER KEY");
-                                    if (s.IsSingleHittable) {
-                                        logger.DebugH($"Single Hittable");
+                                    if (s.IsSingleHittable || s.IsSequentialShift) {
+                                        logger.DebugH($"Single Hittable or SequentialShift");
                                         outputLen = 1;
                                     } else {
                                         logger.DebugH($"ABANDONED-1");
@@ -396,9 +386,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     if (keyCombo?.DecKeyList != null) {
                         bComboFound = true; // 同時打鍵の組合せが見つかった
                         Stroke tailKey = hotList[overlapLen - 1];
-                        logger.DebugH(() => $"CHECK1: {tailKey.IsUpKey && tailKey.IsComboShift}: hotList[tailPos={overlapLen - 1}].IsUpKey && !IsComboShift");
+                        logger.DebugH(() => $"CHECK0: {!hotList[0].IsSingleHittable}: hotList[0] NOT SINGLE");
+                        logger.DebugH(() => $"CHECK1: {tailKey.IsUpKey && hotList[0].IsComboShift && tailKey.IsSingleHittable}: hotList[0].IsComboShift={hotList[0].IsComboShift} and hotList[tailPos={overlapLen - 1}].IsUpKey && IsSingle");
                         logger.DebugH(() => $"CHECK2: {hotList[0].IsShiftableSpaceKey}: hotList[0].IsShiftableSpaceKey");
-                        if (tailKey.IsUpKey && !tailKey.IsComboShift || // CHECK1: 対象リストの末尾キーが先にUPされた
+                        if (tailKey.IsUpKey && tailKey.IsSingleHittable && hotList[0].IsComboShift || // CHECK1: 対象リストの末尾キーが先にUPされた
                             hotList[0].IsShiftableSpaceKey ||           // CHECK2: 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
                             isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) {
                             // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する

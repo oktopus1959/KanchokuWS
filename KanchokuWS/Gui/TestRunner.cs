@@ -75,6 +75,7 @@ namespace KanchokuWS.Gui
                         CombinationKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, arg);
                         frmMain.ExecCmdDecoder("createStrokeTrees", "both"); // ストローク木の再構築
                         frmMain.ExecCmdDecoder("useCodeTable2", null);
+                        callDecoderWithKey(DecoderKeys.FULL_ESCAPE_DECKEY);
                         CombinationKeyStroke.Determiner.Singleton.UseSecondaryPool();
                         Settings.UseCombinationKeyTimer1 = false;
                         Settings.UseCombinationKeyTimer2 = false;

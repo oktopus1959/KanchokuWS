@@ -250,6 +250,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return ComboShiftKeyPool.IsPrefixShift(CurrentPool.GetShiftKeyKind(keyCode));
         }
 
+        /// <summary>keyCode が順次シフトか否かを返す</summary>
+        public static bool IsSequential(int keyCode)
+        {
+            return ComboShiftKeyPool.IsSequentialShift(CurrentPool.GetShiftKeyKind(keyCode));
+        }
+
         public void DebugPrint()
         {
             int i = 0;

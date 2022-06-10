@@ -1,3 +1,7 @@
+# T
+loadTable(tables/t.tbl)
+convert(KRkr) = 日
+
 ### 薙刀式 ###
 loadTable(tables/naginata15.tbl)
 comboMaxTime(100)
@@ -11,6 +15,15 @@ convert(JJJWjw) = ぎ
 convert(J<50>Wjw) = ぎ
 convert(JJJ<50>Wjw) = ぎ
 
+convert(QJqj) = ぁ
+convert(QJjq) = ぁ
+convert(JQqj) = ぁ
+convert(QJKLjklq) = ぁぃぅ
+
+comboMaxTime(10)
+convert(Q<50>Jjq) = ぁ
+
+comboMaxTime(100)
 convert(J<120>Wjw) = あき
 convert(JJJ<120>Wjw) = あき
 convert(JWRjwr) = ぎし
@@ -87,6 +100,8 @@ comboMaxTime(100)
 comboMinTime(70)
 convert(Ff) = の
 convert(DdFf) = け
+convert(OKAoka) = ため
+convert(VKJvkj) = かっ
 convert(D<200>Idi) = び
 convert(KDFkdf) = にゅ
 convert(KDFdfk) = にゅ
@@ -97,6 +112,7 @@ convert(K<150>DFkfd) = にゅ
 convert(KD<150>Fkfd) = にゅ
 convert(K<150>D<150>Fkfd) = にゅ
 convert(K<24>D<103>k<23>F<150>df) = にゅ
+
 enableTimer2()
 convert(K<24>D<103>k<23>F<150>df) = にゅ
 convert(D<52>I<105>O<48>i<80>od) = びだ

@@ -13,6 +13,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public enum ComboKind {
             None,
+            /// <summary>順次シフト</summary>
+            SequentialShift,
             /// <summary>前置連続シフト(テーブルの深さは、シフトキー含め2とする)</summary>
             PrefixSuccessiveShift,
             /// <summary>相互連続シフト</summary>
@@ -21,7 +23,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             UnorderedOneshotShift
         }
 
-        public static bool IsComboShift(ComboKind kind) { return kind != ComboKind.None; }
+        public static bool IsComboShift(ComboKind kind) { return kind != ComboKind.None && kind != ComboKind.SequentialShift; }
 
         public static bool IsSuccessiveShift(ComboKind kind) { return kind == ComboKind.PrefixSuccessiveShift || kind == ComboKind.UnorderedSuccessiveShift; }
 
@@ -30,6 +32,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public static bool IsPrefixShift(ComboKind kind) { return kind == ComboKind.PrefixSuccessiveShift; }
 
         public static bool IsUnorderedShift(ComboKind kind) { return kind == ComboKind.UnorderedSuccessiveShift || kind == ComboKind.UnorderedOneshotShift; }
+
+        public static bool IsSequentialShift(ComboKind kind) { return kind == ComboKind.SequentialShift; }
 
         private Dictionary<int, ComboKind> comboKindDict = new Dictionary<int, ComboKind>();
 
