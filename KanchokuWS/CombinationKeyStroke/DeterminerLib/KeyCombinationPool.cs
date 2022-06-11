@@ -90,6 +90,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             keyComboDict.Clear();
             comboSubKeys.Clear();
             ComboShiftKeys.Clear();
+            RepeatableKeys.Clear();
         }
 
         /// <summary>
@@ -122,18 +123,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(comboKeyList, bPrefix));
             }
         }
-
-        //private KeyCombination getEntry(IEnumerable<int> keyList, int lastKey)
-        //{
-        //    logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(keyList)}, lastKey={lastKey}");
-        //    // まずは打鍵されたキーをそのまま使って検索
-        //    var combo = keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList, lastKey));
-        //    if (combo == null && (keyList.Any(x => x >= DecoderKeys.PLANE_DECKEY_NUM) || lastKey >= DecoderKeys.PLANE_DECKEY_NUM)) {
-        //        // 見つからない、かつ拡張シフトコードが含まれていれば、すべてModuloizeしたキーでも試す
-        //        combo = keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(keyList.Select(x => Stroke.ModuloizeKey(x)), Stroke.ModuloizeKey(lastKey)));
-        //    }
-        //    return combo;
-        //}
 
         public KeyCombination GetEntry(IEnumerable<Stroke> strokeList)
         {

@@ -173,50 +173,50 @@ namespace KanchokuWS.CombinationKeyStroke
             List<int> result = null;
 
             try {
-                var stroke = new Stroke(decKey, dtNow);
-                logger.DebugH(() => stroke.DebugString());
+                if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
+                    // キーリピートが可能なキーだった(BacSpaceとか)ので、それを返す
+                    logger.DebugH("repeatable key");
+                    result = Helper.MakeList(decKey);
+                } else {
+                    var stroke = new Stroke(decKey, dtNow);
+                    logger.DebugH(() => stroke.DebugString());
 
-                // キーリピートのチェック
-                if (strokeList.DetectKeyRepeat(stroke)) {
-                    // キーリピートが発生した場合
-                    if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
-                        // キーリピートが可能なキーだった(BacSpaceとか)ので、それを返す
-                        logger.DebugH("Key repeated");
-                        result = Helper.MakeList(decKey);
-                    } else {
+                    // キーリピートのチェック
+                    if (strokeList.DetectKeyRepeat(stroke)) {
+                        // キーリピートが発生した場合
                         // キーリピートが不可なキーは無視
                         logger.DebugH("Key repeat ignored");
                         // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出す
                         if (stroke.IsComboShift && handleComboKeyRepeat != null) handleComboKeyRepeat(stroke.ComboShiftDecKey);
-                    }
-                } else {
-                    // キーリピートではない通常の押下の場合は、同時打鍵判定を行う
-                    var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
-                    bool isStrokeListEmpty = strokeList.IsEmpty();
-                    logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={isStrokeListEmpty}");
-                    if (combo != null || !isStrokeListEmpty) {
-                        // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だったので、キューに追加して同時打鍵判定を行う
-                        strokeList.Add(stroke);
-                        result = strokeList.GetKeyCombinationWhenKeyDown(decKey);
-                        if (result._isEmpty()) {
-                            if (isStrokeListEmpty) {
-                                if (!stroke.IsComboShift) {
-                                    logger.DebugH($"UseCombinationKeyTimer1={Settings.UseCombinationKeyTimer1}");
-                                    // 非同時打鍵キーの第1打鍵であり、未確定だったらタイマーを起動する
-                                    if (Settings.UseCombinationKeyTimer1) startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey));
-                                }
-                            } else {
-                                if (strokeList.IsSuccessiveShift2ndKey()) {
-                                    logger.DebugH($"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}");
-                                    // 同時打鍵シフト後の第2打鍵であり、同時打鍵が未判定だったらタイマーを起動する
-                                    if (Settings.UseCombinationKeyTimer2) startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey));
+                    } else {
+                        // キーリピートではない通常の押下の場合は、同時打鍵判定を行う
+                        var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
+                        bool isStrokeListEmpty = strokeList.IsEmpty();
+                        logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={isStrokeListEmpty}");
+                        if (combo != null || !isStrokeListEmpty) {
+                            // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だったので、キューに追加して同時打鍵判定を行う
+                            strokeList.Add(stroke);
+                            result = strokeList.GetKeyCombinationWhenKeyDown(decKey);
+                            if (result._isEmpty()) {
+                                if (isStrokeListEmpty) {
+                                    if (!stroke.IsComboShift) {
+                                        logger.DebugH($"UseCombinationKeyTimer1={Settings.UseCombinationKeyTimer1}");
+                                        // 非同時打鍵キーの第1打鍵であり、未確定だったらタイマーを起動する
+                                        if (Settings.UseCombinationKeyTimer1) startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey));
+                                    }
+                                } else {
+                                    if (strokeList.IsSuccessiveShift2ndKey()) {
+                                        logger.DebugH($"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}");
+                                        // 同時打鍵シフト後の第2打鍵であり、同時打鍵が未判定だったらタイマーを起動する
+                                        if (Settings.UseCombinationKeyTimer2) startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey));
+                                    }
                                 }
                             }
+                        } else {
+                            // 同時打鍵には使われないキーなので、そのまま返す
+                            logger.DebugH("Return ASIS");
+                            result = Helper.MakeList(decKey);
                         }
-                    } else {
-                        // 同時打鍵には使われないキーなので、そのまま返す
-                        logger.DebugH("Return ASIS");
-                        result = Helper.MakeList(decKey);
                     }
                 }
             } catch (Exception ex) {

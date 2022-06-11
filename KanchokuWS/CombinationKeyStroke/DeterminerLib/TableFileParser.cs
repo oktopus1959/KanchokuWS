@@ -239,47 +239,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         StrokeTableNode rootTableNode = new StrokeTableNode(true);
 
-        //StrokeTableNode getLastTreeNode(bool bPrev)
-        //{
-        //    int dep = depth;
-        //    if (bPrev) --dep;
-        //    if (dep<= 0) return null;
-        //    var node = rootTableNode;
-        //    for (int i = 0; i < dep; ++i) {
-        //        var nd = node.getNth(strokeList[i]);
-        //        if (!nd.isStrokeTree()) return null;
-        //        node = (StrokeTableNode)nd;
-        //    }
-        //    return node;
-        //}
-
-        //StrokeTableNode getOrNewLastTreeNode()
-        //{
-        //    var node = rootTableNode;
-        //    for (int i = 0; i < strokeList.Count; ++i) {
-        //        var nd = node.getNth(strokeList[i]);
-        //        if (nd != null && nd.isStrokeTree()) {
-        //            node = (StrokeTableNode)nd;
-        //        } else {
-        //            var _pn = new StrokeTableNode();
-        //            node.setNthChild(i, _pn);
-        //            node = _pn;
-        //        }
-        //    }
-        //    return node;
-        //}
-
-        //Node getNode(int idx, int prevIdx = -1)
-        //{
-        //    if (prevIdx < 0)
-        //        return getLastTreeNode(false)?.getNth(idx);
-        //    else {
-        //        var nd = getLastTreeNode(true)?.getNth(prevIdx);
-        //        if (nd != null && nd.isStrokeTree()) return nd.getNth(idx);
-        //        return null;
-        //    }
-        //}
-
         void setNodeAtLast(List<int> stkList, Node node)
         {
             logger.DebugH(() => $"CALLED: stkList={stkList._keyString()}, {node.DebugString()}");
@@ -620,9 +579,18 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 case TOKEN.BARE_STRING:       // str : 文字列ノード
                     // 終端ノードの追加と同時打鍵列の組合せの登録
                     addTerminalNode(token, new StringNode($"{currentStr._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")}"), prevNth, nth);
-                    if (depth == 0 && nth >= 0 && currentStr._startsWith("!{")) {
-                        logger.DebugH(() => $"REPEATABLE");
-                        keyComboPool.AddRepeatableKey(nth);
+                    if (depth <= 1 && currentStr._startsWith("!{")) {
+                        // 矢印記法の場合も考慮する
+                        int dk = nth;
+                        int dp = depth;
+                        if (dp == 1 && dk < 0) {
+                            dk = strokeList[0];
+                            dp = 0;
+                        }
+                        if (dp == 0 && dk >= 0) {
+                            logger.DebugH(() => $"REPEATABLE");
+                            keyComboPool.AddRepeatableKey(dk);
+                        }
                     }
                     logger.DebugH(() => $"LEAVE: depth={depth}");
                     break;

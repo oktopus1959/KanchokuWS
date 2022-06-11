@@ -197,27 +197,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             public int k1stShift;          // 0:D/C, 1:同時, 2:順次, -1:NO
             public int k2ndSingle;
             public int k2ndShift;          // 0:D/C, 1:同時, 2:順次, -1:NO
-            //public int kNo3rdKey;
-            //public int kShiftKeyUp;
             public int outputLen;
             public int discardLen;
             public bool bMoveShift;
-
-            //public KeyComboRule(bool bComboFound, int kComboEmpty, int k1stSingle, int k1stShift, int k2ndSingle, int k2ndShift, int kNo3rdKey, int kShiftKeyUp,
-            //    int outLen, int discLen = -1, bool bMoveShift = true)
-            //{
-            //    this.bComboFound = bComboFound;
-            //    this.kComboListEmpty = kComboEmpty;
-            //    this.k1stSingle = k1stSingle;
-            //    this.k1stShift = k1stShift;
-            //    this.k2ndSingle = k2ndSingle;
-            //    this.k2ndShift = k2ndShift;
-            //    this.kNo3rdKey = kNo3rdKey;
-            //    this.kShiftKeyUp = kShiftKeyUp;
-            //    this.outputLen = outLen;
-            //    this.discardLen = discLen >= 0 ? discLen : outLen > 0 ? outLen : 1;
-            //    this.bMoveShift = bMoveShift;
-            //}
 
             public KeyComboRule(bool bComboFound, int kComboEmpty, int k1stSingle, int k1stShift, int k2ndSingle, int k2ndShift,
                 int outLen, int discLen = -1, bool bMoveShift = true)
@@ -228,8 +210,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 this.k1stShift = k1stShift;
                 this.k2ndSingle = k2ndSingle;
                 this.k2ndShift = k2ndShift;
-                //this.kNo3rdKey = kNo3rdKey;
-                //this.kShiftKeyUp = kShiftKeyUp;
                 this.outputLen = outLen;
                 this.discardLen = discLen >= 0 ? discLen : outLen > 0 ? outLen : 1;
                 this.bMoveShift = bMoveShift;
@@ -243,7 +223,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     && (k1stShift == 0 || (k1stShift == 1) == s.IsComboShift || (k1stShift == 2) == s.IsSequentialShift)
                     && (k2ndSingle == 0 || (k2ndSingle == 1) == (t != null && t.IsSingleHittable))
                     && (k2ndShift == 0 || (k2ndShift == 1) == (t != null && t.IsComboShift) || (k2ndShift == 2) == (t != null && t.IsSequentialShift))
-                    //(kShiftKeyUp == 0 || (kShiftKeyUp == 1) == (comboList._notEmpty() && comboList.Any(x => x.IsUpKey))));
                     ;
             }
         }
