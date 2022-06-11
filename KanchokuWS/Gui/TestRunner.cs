@@ -70,6 +70,10 @@ namespace KanchokuWS.Gui
                 var expected = items._getNth(3);
                 logger.WriteInfo($"\n==== TEST({lineNum}): command={command}, arg={arg}, expected={(expected._notEmpty() ? expected : "null")} ====");
                 switch (command) {
+                    case "logLevel":
+                        Logger.LogLevel = arg._parseInt(Logger.LogLevelWarn);
+                        break;
+
                     case "loadTable":
                         //Settings.TableFile2 = arg;
                         CombinationKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, arg);
@@ -81,19 +85,18 @@ namespace KanchokuWS.Gui
                         Settings.UseCombinationKeyTimer2 = false;
                         Settings.CombinationKeyMaxAllowedLeadTimeMs = arg._parseInt(100);
                         Settings.CombinationKeyMinOverlappingTimeMs = arg._parseInt(70);
+                        if (Logger.LogLevel >= Logger.LogLevelInfoH) {
+                            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.Singleton2?.DebugPrint(true);
+                        }
                         break;
 
                     case "test":
                     case "convert":
-                        if (expected._isEmpty()) {
-                            appendError($"Illegal arguments");
+                        if (expected == null || expected._equalsTo("\"\"") || expected._equalsTo("''")) expected = "";
+                        var result = convertKeySequence(arg, bAll);
+                        if (result != expected) {
+                            appendError($"Expected={expected}, but Result={result}");
                             ++numErrors;
-                        } else {
-                            var result = convertKeySequence(arg, bAll);
-                            if (result != expected) {
-                                appendError($"Expected={expected}, but Result={result}");
-                                ++numErrors;
-                            }
                         }
                         break;
 

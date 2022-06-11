@@ -76,9 +76,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // 連続シフトキーを保持しているか
         public bool ContainsSuccessiveShiftKey => ComboShiftKeys.ContainsSuccessiveShiftKey;
 
-        public bool ContainsSequentialShiftKey { get; set; }
+        public bool ContainsSequentialShiftKey { private get; set; }
 
-        public bool IsPrefixedSequentialShift => !ContainsUnorderedShiftKey && ContainsSuccessiveShiftKey;
+        public bool IsPrefixedOrSequentialShift => !ContainsUnorderedShiftKey && (ContainsSuccessiveShiftKey || ContainsSequentialShiftKey);
 
         /// <summary>
         /// Repeatableなキー
@@ -98,17 +98,27 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <param name="deckeyList">デコーダ向けのキーリスト</param>
         /// <param name="comboKeyList">同時打鍵検索用キーのリスト</param>
         /// <param name="shiftKind">Prefixの場合は、先頭キーを固定した順列を生成する</param>
-        public void AddEntry(List<int> deckeyList, List<int> comboKeyList, ComboKind shiftKind)
+        public void AddEntry(List<int> deckeyList, List<int> comboKeyList, ComboKind shiftKind, bool hasStr)
         {
-            logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(deckeyList)}, comboShiftedKeyList={KeyCombinationHelper.EncodeKeyList(comboKeyList)}, ShiftKeyKind={shiftKind}");
+            logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(deckeyList)}, comboShiftedKeyList={KeyCombinationHelper.EncodeKeyList(comboKeyList)}, ShiftKeyKind={shiftKind}, HasString={hasStr}");
             if (deckeyList._notEmpty() && comboKeyList._notEmpty()) {
-                var keyCombo = new KeyCombination(deckeyList, comboKeyList, shiftKind);
+                var keyCombo = new KeyCombination(deckeyList, comboKeyList, shiftKind, hasStr);
+                void setKeyCombo(string k)
+                {
+                    if (hasStr || !keyComboDict.ContainsKey(k)) {
+                        // 文字を持つなら、他の順列と置き換える
+                        keyComboDict[k] = keyCombo;
+                    }
+                }
+
                 var primKey = KeyCombinationHelper.MakePrimaryKey(comboKeyList);
-                keyComboDict[primKey] = keyCombo;
+                setKeyCombo(primKey);
+
                 bool bPrefix = shiftKind == ComboKind.PrefixSuccessiveShift;
                 foreach (var key in KeyCombinationHelper.MakePermutatedKeys(comboKeyList, bPrefix)) {
-                    if (!keyComboDict.ContainsKey(key)) { keyComboDict[key] = keyCombo; }
+                    setKeyCombo(key);
                 }
+
                 comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(comboKeyList, bPrefix));
             }
         }
@@ -179,7 +189,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 if (keyCombo == null) {
                     // 存在していなかった部分キーを追加
                     if (i < 500) logger.DebugH($"Add non terminal subkey: {key}");
-                    keyComboDict[key] = keyCombo = new KeyCombination(null, null, ComboKind.None);
+                    keyComboDict[key] = keyCombo = new KeyCombination(null, null, ComboKind.None, false);
                 }
                 keyCombo.SetNonTerminal();
                 ++i;
@@ -256,32 +266,34 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return ComboShiftKeyPool.IsSequentialShift(CurrentPool.GetShiftKeyKind(keyCode));
         }
 
-        public void DebugPrint()
+        public void DebugPrint(bool bAll = false)
         {
             int i = 0;
             foreach (var pair in keyComboDict) {
                 var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
                 var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
-                if (i < 500) logger.DebugH($"{key}={deckeys} {pair.Value.IsTerminal}");
+                if (bAll || i < 500) logger.DebugH($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal}");
                 ++i;
             }
             foreach (var pair in ComboShiftKeys.Pairs) {
                 logger.DebugH($"ShiftKey: {pair.Key}={pair.Value}");
             }
+            logger.DebugH($"RepeatableKeys={RepeatableKeys.DebugString()}");
         }
 
-        public void DebugPringFile(string filename)
+        public void DebugPrintFile(string filename)
         {
             var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
             List<string> lines = new List<string>();
             foreach (var pair in keyComboDict) {
                 var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
                 var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
-                lines.Add($"{key}={deckeys} {pair.Value.IsTerminal}");
+                lines.Add($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal}");
             }
             foreach (var pair in ComboShiftKeys.Pairs) {
                 lines.Add($"ShiftKey: {pair.Key}={pair.Value}");
             }
+            lines.Add($"RepeatableKeys={RepeatableKeys.DebugString()}");
             Helper.WriteLinesToFile(path, lines, (e) => logger.Error(e._getErrorMsg()));
         }
     }

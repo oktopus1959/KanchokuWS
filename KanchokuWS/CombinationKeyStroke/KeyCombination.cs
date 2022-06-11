@@ -27,6 +27,11 @@ namespace KanchokuWS.CombinationKeyStroke
         }
 
         /// <summary>
+        /// 文字出力のある組合せか
+        /// </summary>
+        public bool HasString { get; set; } = false;
+
+        /// <summary>
         /// Oneshotの同時打鍵か<br/>すなわち、当組合せの同時打鍵が発生したら、それ打鍵列は次に持ち越さずに破棄されるか
         /// </summary>
         //public bool IsOneshot => ComboShiftedDecoderKeyList.ShiftKind == ShiftKeyKind.OneshotShift;
@@ -40,12 +45,13 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <summary>
         /// コンストラクタ(keyListがnullの場合は、同時打鍵集合の部分集合であることを示す)
         /// </summary>
-        public KeyCombination(List<int> decKeyList, List<int> comboKeyList, ShiftKeyKind shiftKind)
+        public KeyCombination(List<int> decKeyList, List<int> comboKeyList, ShiftKeyKind shiftKind, bool hasStr)
         {
             //ComboShiftedDecoderKeyList.Add(decKeyList, shiftKind);
             DecKeyList = decKeyList;
             ComboKeyList = comboKeyList;
             ShiftKind = shiftKind;
+            HasString = hasStr;
         }
 
         public string DecKeysDebugString()

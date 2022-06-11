@@ -9,15 +9,19 @@ convert(Jj) = あ
 convert(Ff) = か
 convert(Ii) = る
 convert(Kk) = い
+convert(FJfj) = が
+convert(FJjf) = が
 convert(JWjw) = ぎ
 convert(WJwj) = ぎ
 convert(JJJWjw) = ぎ
 convert(J<50>Wjw) = ぎ
 convert(JJJ<50>Wjw) = ぎ
 
+convert(Qq) = ""
 convert(QJqj) = ぁ
 convert(QJjq) = ぁ
 convert(JQqj) = ぁ
+convert(QJjKkLl) = ぁぃぅ
 convert(QJKLjklq) = ぁぃぅ
 
 comboMaxTime(10)
@@ -134,7 +138,7 @@ convert(J<200>{55}[55]j) = と
 loadTable(tables/gekko-20211106.pfx.tbl)
 comboMinTime(80)
 convert(DIid) = よ
-convert(DDDDKkIid) = い
+convert(DDDDKkIid) = よ
 convert(DDDDKIkid) = よ
 convert(DIO<40>dio) = よの
 

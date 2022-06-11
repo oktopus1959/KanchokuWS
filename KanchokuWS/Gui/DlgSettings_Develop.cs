@@ -110,7 +110,8 @@ namespace KanchokuWS.Gui
         private void button_developSaveDebugTableFile_Click(object sender, EventArgs e)
         {
             frmMain?.ExecCmdDecoder("SaveDebugTable", null);
-            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.Singleton1.DebugPringFile("key-combination.txt");
+            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.Singleton1?.DebugPrintFile("key-combination1.txt");
+            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.Singleton2?.DebugPrintFile("key-combination2.txt");
         }
 
         //-----------------------------------------------------------------------------------

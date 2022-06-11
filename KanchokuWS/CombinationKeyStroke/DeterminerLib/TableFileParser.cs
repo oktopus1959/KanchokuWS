@@ -457,6 +457,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         break;
 
                     case TOKEN.VBAR:               // 次のトークン待ち
+                        if ((prevToken == 0 || prevToken == TOKEN.VBAR) && isInCombinationBlock && depth > 0) {
+                            // 空セルで、同時判定ブロック内で、深さ2以上なら、同時打鍵可能としておく
+                            addCombinationKey(-1, idx, false);
+                        }
                         row = calcRow(idx, row);
                         idx = calcOverrunIndex(idx + 1);
                         break;
@@ -629,9 +633,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     logger.DebugH(() => $"LEAVE: depth={depth}");
                     break;
 
+                case TOKEN.VBAR:              // '|' が来たら次のトークン
+                    break;
+
                 case TOKEN.RBRACE:
                 case TOKEN.COMMA:             // ',' が来たら次のトークン
-                case TOKEN.VBAR:              // '|' が来たら次のトークン
                 case TOKEN.SLASH:             // '/' が来ても次のトークン
                     logger.DebugH(() => $"LEAVE: depth={depth}");
                     break;
@@ -654,45 +660,55 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         /// <param name="prevNth"></param>
         /// <param name="lastNth"></param>
-        /// <param name="outStr"></param>
         void addTerminalNode(TOKEN token, Node node, int prevNth, int lastNth)
         {
+            var list = addCombinationKey(prevNth, lastNth, true);
+
+            if (list._notEmpty()) {
+                string dq = token == TOKEN.STRING ? "\"" : "";
+                string outStr = node.isStringNode() ? $"{dq}{node.getString()}{dq}" : node.getMarker();
+                outputLines.Add($"-{list.Select(x => x.ToString())._join(">-")}>{outStr}");
+
+                setNodeAtLast(list, node);
+            }
+        }
+
+        List<int> addCombinationKey(int prevNth, int lastNth, bool hasStr)
+        {
             var list = new List<int>(strokeList);
+
             if (prevNth >= 0) list.Add(prevNth);
             if (lastNth >= 0) list.Add(lastNth);
-            if (list._isEmpty()) return;
 
-            int shiftOffset = calcShiftOffset(list[0]);
+            if (list._notEmpty()) {
+                int shiftOffset = calcShiftOffset(list[0]);
 
-            // 先頭キーはシフト化
-            if (isInCombinationBlock) {
-                list[0] = makeComboDecKey(list[0]);
-            } else if (list[0] < DecoderKeys.PLANE_DECKEY_NUM) {
-                list[0] += shiftOffset;
-            }
-            // 残りは Modulo
-            for (int i = 1; i < list.Count; ++i) {
-                list[i] %= DecoderKeys.PLANE_DECKEY_NUM;
-            }
+                // 先頭キーはシフト化
+                if (isInCombinationBlock) {
+                    list[0] = makeComboDecKey(list[0]);
+                } else if (list[0] < DecoderKeys.PLANE_DECKEY_NUM) {
+                    list[0] += shiftOffset;
+                }
+                // 残りは Modulo
+                for (int i = 1; i < list.Count; ++i) {
+                    list[i] %= DecoderKeys.PLANE_DECKEY_NUM;
+                }
 
-            string dq = token == TOKEN.STRING ? "\"" : "";
-            string outStr = node.isStringNode() ? $"{dq}{node.getString()}{dq}" : node.getMarker();
-            outputLines.Add($"-{list.Select(x => x.ToString())._join(">-")}>{outStr}");
-
-            if (isInCombinationBlock || list.Count == 1) {
-                makeCombinationKeyCombo(list, shiftOffset);
-            } else {
-                keyComboPool.ContainsSequentialShiftKey = true;
-                for (int i = 0; i < list.Count - 1; ++i) {
-                    int dk = list[i];
-                    if (!sequentialShiftKeys.Contains(dk)) {
-                        addSequentialShiftKey(dk, shiftOffset);
-                        sequentialShiftKeys.Add(dk);
+                if (isInCombinationBlock || list.Count == 1) {
+                    makeCombinationKeyCombo(list, shiftOffset, hasStr);
+                } else {
+                    keyComboPool.ContainsSequentialShiftKey = true;
+                    for (int i = 0; i < list.Count - 1; ++i) {
+                        int dk = list[i];
+                        if (!sequentialShiftKeys.Contains(dk)) {
+                            addSequentialShiftKey(dk, shiftOffset);
+                            sequentialShiftKeys.Add(dk);
+                        }
                     }
                 }
             }
 
-            setNodeAtLast(list, node);
+            return list;
         }
 
         void addRewriteNode(TOKEN token)
@@ -839,12 +855,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         // 同時打鍵列の組合せを作成して登録しておく
-        void makeCombinationKeyCombo(List<int> deckeyList, int shiftOffset)
+        void makeCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr)
         {
             var comboKeyList = deckeyList.Select(x => makeShiftedDecKey(x, shiftOffset)).ToList();      // 先頭キーのオフセットに合わせる
             logger.DebugH(() => $"{deckeyList._keyString()}={currentStr}");
             keyComboPool.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
-            keyComboPool.AddEntry(deckeyList, comboKeyList, shiftKeyKind);
+            keyComboPool.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr);
         }
 
         void addSequentialShiftKey(int decKey, int shiftOffset)
