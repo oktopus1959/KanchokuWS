@@ -466,18 +466,18 @@ namespace VkbTableMaker {
     }
 
     // デバッグ用テーブルを作成してファイルに書き出す
-    void SaveDebugTable() {
-        if (!StrokeTableNode::RootStrokeNode1) return;
+    void saveDebugTable(StrokeTableNode* tbl, const wstring& outfile) {
+        if (!tbl) return;
 
-        utils::OfstreamWriter writer(utils::joinPath(SETTINGS->rootDir, _T("debug-table.txt")));
+        utils::OfstreamWriter writer(utils::joinPath(SETTINGS->rootDir, outfile));
         if (writer.success()) {
             // テーブルファイルから
-            bool bPostRewrite = StrokeTableNode::RootStrokeNode1->hasPostRewriteNode();
+            bool bPostRewrite = tbl->hasPostRewriteNode();
 
             MString cmdMarker = to_mstr(_T("!{"));
 
             // 文字から、その文字の打鍵列へのマップに追加 (通常面)
-            StrokeTreeTraverser traverser(StrokeTableNode::RootStrokeNode1.get(), true);
+            StrokeTreeTraverser traverser(tbl, true);
             while (true) {
                 Node* np = traverser.getNext();
                 if (!np) break;
@@ -513,6 +513,12 @@ namespace VkbTableMaker {
                 }
             }
         }
+    }
+
+    // デバッグ用テーブルを作成してファイルに書き出す
+    void SaveDebugTable() {
+        saveDebugTable(StrokeTableNode::RootStrokeNode1.get(), _T("tmp/debug-table1.txt"));
+        saveDebugTable(StrokeTableNode::RootStrokeNode2.get(), _T("tmp/debug-table2.txt"));
     }
 
 }
