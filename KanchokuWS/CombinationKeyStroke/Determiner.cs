@@ -16,6 +16,9 @@ namespace KanchokuWS.CombinationKeyStroke
     {
         private static Logger logger = Logger.GetLogger(true);
 
+        // FrmKanchoku
+        FrmKanchoku frmMain;
+
         // タイマー
         System.Timers.Timer timer1;
         System.Timers.Timer timer2;
@@ -47,9 +50,10 @@ namespace KanchokuWS.CombinationKeyStroke
 
         public Action<List<int>> KeyProcHandler { get; set; }
 
-        public void InitializeTimer(Form frm)
+        public void InitializeTimer(FrmKanchoku frm)
         {
             logger.DebugH(() => $"CALLED");
+            frmMain = frm;
             timer1 = new System.Timers.Timer();
             timer2 = new System.Timers.Timer();
             timer1.SynchronizingObject = frm;
@@ -76,6 +80,29 @@ namespace KanchokuWS.CombinationKeyStroke
 
         // 同時打鍵保持リスト
         private StrokeList strokeList = new StrokeList();
+
+        // 前置書き換えキーの打鍵時刻
+        private DateTime preRewriteDt = DateTime.MinValue;
+
+        private void checkPreRewriteTime()
+        {
+            if (preRewriteDt._isValid() && Settings.PreRewriteAllowedDelayTimeMs > 0) {
+                if ((DateTime.Now - preRewriteDt).TotalMilliseconds > Settings.PreRewriteAllowedDelayTimeMs) {
+                    logger.DebugH($"CALL cancelPreRewrite");
+                    frmMain?.ExecCmdDecoder("cancelPreRewrite", null);
+                }
+            }
+        }
+
+        private void setPreRewriteTime(int dk)
+        {
+            if (KeyCombinationPool.CurrentPool.IsPreRewriteKey(dk)) {
+                logger.DebugH($"set PreRewrite DateTime");
+                preRewriteDt = DateTime.Now;
+            } else {
+                preRewriteDt = DateTime.MinValue;
+            }
+        }
 
         public void Dispose()
         {
@@ -167,8 +194,9 @@ namespace KanchokuWS.CombinationKeyStroke
 
         public List<int> keyDown(int decKey, Action<int> handleComboKeyRepeat)
         {
-            var dtNow = DateTime.Now;
-            logger.DebugH(() => $"\nENTER: dt={dtNow.ToString("HH:mm:ss.fff")}, decKey={decKey}");
+            logger.DebugH(() => $"\nENTER: decKey={decKey}");
+
+            checkPreRewriteTime();
 
             List<int> result = null;
 
@@ -178,7 +206,7 @@ namespace KanchokuWS.CombinationKeyStroke
                     logger.DebugH("repeatable key");
                     result = Helper.MakeList(decKey);
                 } else {
-                    var stroke = new Stroke(decKey, dtNow);
+                    var stroke = new Stroke(decKey, DateTime.Now);
                     logger.DebugH(() => stroke.DebugString());
 
                     // キーリピートのチェック
@@ -193,7 +221,7 @@ namespace KanchokuWS.CombinationKeyStroke
                         var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
                         bool isStrokeListEmpty = strokeList.IsEmpty();
                         logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={isStrokeListEmpty}");
-                        if (combo != null || !isStrokeListEmpty) {
+                        if ((combo != null && !combo.IsTerminal) || !isStrokeListEmpty) {
                             // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だったので、キューに追加して同時打鍵判定を行う
                             strokeList.Add(stroke);
                             result = strokeList.GetKeyCombinationWhenKeyDown(decKey);
@@ -225,6 +253,9 @@ namespace KanchokuWS.CombinationKeyStroke
             }
 
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
+
+            if (result._notEmpty()) setPreRewriteTime(result.Last());
+
             return result;
         }
 
@@ -243,9 +274,14 @@ namespace KanchokuWS.CombinationKeyStroke
         {
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
 
+            checkPreRewriteTime();
+
             var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, DateTime.Now);
 
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
+
+            if (result._notEmpty()) setPreRewriteTime(result.Last());
+
             return result;
         }
 

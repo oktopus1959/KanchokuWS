@@ -154,6 +154,13 @@ public:
         }
     }
 
+    // 書き換え可能フラグをキャンセル
+    inline void cancelRewritable() {
+        if (!stack.empty()) {
+            stack.back().flag &= ~FLAG_REWRITABLE;
+        }
+    }
+
     // 末尾に交ぜ書きブロッカーをセットする
     inline void setMazeBlocker() {
         setFlag(FLAG_BLOCK_MAZE);

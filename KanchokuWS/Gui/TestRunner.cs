@@ -112,6 +112,10 @@ namespace KanchokuWS.Gui
                         Settings.CombinationKeyMaxAllowedLeadTimeMs = arg._parseInt(70);
                         break;
 
+                    case "rewriteMaxTime":
+                        Settings.PreRewriteAllowedDelayTimeMs = arg._parseInt(200);
+                        break;
+
                     case "enableTimer1":
                         Settings.UseCombinationKeyTimer1 = true;
                         break;

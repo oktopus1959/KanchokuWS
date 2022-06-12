@@ -247,6 +247,7 @@ namespace KanchokuWS
         public const int POST_PLANE_F_SHIFT_DECKEY = POST_PLANE_E_SHIFT_DECKEY + 1;         // 後置拡張シフトFキー
 
         public const int DIRECT_SPACE_DECKEY = POST_PLANE_F_SHIFT_DECKEY + 1;               // デコーダを介さずに直接出力されるスペースキー
+        public const int CANCEL_POST_REWRITE_DECKEY = DIRECT_SPACE_DECKEY + 1;              // 後置書き換えをキャンセルする
 
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 

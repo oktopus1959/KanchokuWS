@@ -83,14 +83,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>
         /// Repeatableなキー
         /// </summary>        
-        public RepeatableKeyPool RepeatableKeys { get; private set; } = new RepeatableKeyPool();
+        public MiscKeyPool MiscKeys { get; private set; } = new MiscKeyPool();
 
         public void Clear()
         {
             keyComboDict.Clear();
             comboSubKeys.Clear();
             ComboShiftKeys.Clear();
-            RepeatableKeys.Clear();
+            MiscKeys.Clear();
         }
 
         /// <summary>
@@ -194,12 +194,28 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public void AddRepeatableKey(int keyCode)
         {
             logger.DebugH(() => $"CALLED: keyCode={keyCode}");
-            if (keyCode > 0) RepeatableKeys.AddRepeatableKey(keyCode);
+            if (keyCode > 0) MiscKeys.AddRepeatableKey(keyCode);
         }
 
         public bool IsRepeatableKey(int keyCode)
         {
-            return RepeatableKeys.IsRepeatable(keyCode);
+            return MiscKeys.IsRepeatable(keyCode);
+        }
+
+        /// <summary>
+        /// PreRewriteとして扱いうるキーの設定
+        /// </summary>
+        /// <param name="keyCode"></param>
+        /// <param name="kind"></param>
+        public void AddPreRewriteKey(int keyCode)
+        {
+            logger.DebugH(() => $"CALLED: keyCode={keyCode}");
+            if (keyCode > 0) MiscKeys.AddPreRewriteKey(keyCode);
+        }
+
+        public bool IsPreRewriteKey(int keyCode)
+        {
+            return MiscKeys.IsPreRewrite(keyCode);
         }
 
         /// <summary>
@@ -267,7 +283,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             foreach (var pair in ComboShiftKeys.Pairs) {
                 logger.DebugH($"ShiftKey: {pair.Key}={pair.Value}");
             }
-            logger.DebugH($"RepeatableKeys={RepeatableKeys.DebugString()}");
+            logger.DebugH($"{MiscKeys.DebugString()}");
         }
 
         public void DebugPrintFile(string filename)
@@ -282,7 +298,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             foreach (var pair in ComboShiftKeys.Pairs) {
                 lines.Add($"ShiftKey: {pair.Key}={pair.Value}");
             }
-            lines.Add($"RepeatableKeys={RepeatableKeys.DebugString()}");
+            lines.Add($"{MiscKeys.DebugString()}");
             Helper.WriteLinesToFile(path, lines, (e) => logger.Error(e._getErrorMsg()));
         }
     }

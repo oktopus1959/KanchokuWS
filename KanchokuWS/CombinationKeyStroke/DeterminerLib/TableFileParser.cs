@@ -470,6 +470,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     // 書き換えノードの追加
                     logger.DebugH(() => $"ADD REWRITE NODE");
                     addRewriteNode(token);
+                    if (token == TOKEN.REWRITE_PRE) {
+                        keyComboPool.AddPreRewriteKey(idx);
+                    }
                 } else {
                     parseError();
                 }

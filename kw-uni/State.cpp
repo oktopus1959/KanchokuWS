@@ -398,6 +398,8 @@ void State::dispatchDeckey(int deckey) {
         handleClearStroke();
     } else if (deckey == TOGGLE_BLOCKER_DECKEY) {
         handleToggleBlocker();
+    } else if (deckey == CANCEL_POST_REWRITE_DECKEY) {
+        OUTPUT_STACK->cancelRewritable();
     } else {
         if (handleFunctionKeys(deckey)) {
             _LOG_DEBUGH(_T("LEAVE: %s: FunctionKey handled"), NAME_PTR);
