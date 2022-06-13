@@ -109,6 +109,7 @@ convert(VKJvkj) = かっ
 convert(D<200>Idi) = び
 convert(KDFkdf) = にゅ
 convert(KDFdfk) = にゅ
+convert(KkDFdf) = 、け
 convert(KkDFdf) = にゅ
 convert(KDFkfd) = にゅ
 convert(K<87>D<30>F<43>kfd) = にゅ
@@ -123,12 +124,12 @@ convert(D<52>I<105>O<48>i<80>od) = びだ
 
 rewriteMaxTime(100)
 convert({22}[22]<50>{12}[12]) = ぽ
-convert({22}[22]<200>{12}[12]) = 、て
+convert({22}[22]<200>{12}[12]) = 。て
 
 loadTable(tables/okt.tbl)
 rewriteMaxTime(100)
 convert({422}[422]<50>{412}[412]) = ぽ
-convert({422}[422]<200>{412}[412]) = 、て
+convert({422}[422]<200>{412}[412]) = 。て
 
 ### NICOLA ###
 loadTable(tables/nicola.tbl)

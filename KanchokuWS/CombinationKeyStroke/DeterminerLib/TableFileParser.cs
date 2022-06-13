@@ -469,7 +469,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 if (currentToken == TOKEN.LBRACE) {
                     // 書き換えノードの追加
                     logger.DebugH(() => $"ADD REWRITE NODE");
-                    addRewriteNode(token);
+                    addRewriteNode(token, calcShiftOffset(idx));
                     if (token == TOKEN.REWRITE_PRE) {
                         keyComboPool.AddPreRewriteKey(idx);
                     }
@@ -682,7 +682,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return list;
         }
 
-        void addRewriteNode(TOKEN token)
+        void addRewriteNode(TOKEN token, int shiftOffset)
         {
             logger.DebugH(() => $"ENTER: token={token}");
 
@@ -710,12 +710,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             void setNodeAndOutputByIndex(int nth, bool bBare)
             {
-                string s = getNthRootNodeString(nth);
+                int rootIdx = nth + shiftOffset;
+                string s = getNthRootNodeString(rootIdx);
                 if (s._notEmpty()) {
                     string rewStr = getRewriteString(bBare);
                     if (node == null) {
                         Node nd = new FunctionNode(s);
-                        outputLines.Add($"-{nth}>@{{{s}");
+                        outputLines.Add($"-{rootIdx}>@{{{s}");
                         setNodeAt(nth, nd);
                         outputLines.Add($"{leaderStr}{myStr}\t{rewStr}");
                         outputLines.Add("}");
