@@ -670,20 +670,25 @@ namespace KanchokuWS.Handler
             upShiftKeyInputs();
         }
 
+        private static void sendInputsRomanOrKanaUnicode(char fc, bool bExceptKana)
+        {
+            uint vk = bExceptKana ? 0 : VirtualKeys.GetVKeyFromFaceChar(fc);
+            if (vk > 0) {
+                using (var guard = new ShiftKeyDownGuard(vk >= 0x100)) {
+                    // Vkey
+                    sendInputsVkey((ushort)(vk & 0xff));
+                }
+            } else {
+                sendInputsUnicode(fc);
+            }
+        }
+
         private static void sendInputsRomanOrKanaUnicode(string faceStr)
         {
             logger.DebugH(() => $"CALLED: faceStr={faceStr}");
 
             foreach (var fc in faceStr) {
-                uint vk = VirtualKeys.GetVKeyFromFaceChar(fc);
-                if (vk > 0) {
-                    using (var guard = new ShiftKeyDownGuard(vk >= 0x100)) {
-                        // Vkey
-                        sendInputsVkey((ushort)(vk & 0xff));
-                    }
-                } else {
-                    sendInputsUnicode(fc);
-                }
+                sendInputsRomanOrKanaUnicode(fc, false);
             }
         }
 
@@ -702,6 +707,7 @@ namespace KanchokuWS.Handler
             logger.DebugH(() => $"ENTER: str={str}");
 
             int strLen = str._safeCount();
+            char prevUniChar = '\0';
             for (int i = 0; i < strLen; ++i) {
                 if (str[i] == '!' && (i + 1) < strLen && str[i + 1] == '{') {     // "!{"
                     i += 2;
@@ -717,15 +723,19 @@ namespace KanchokuWS.Handler
                             faceStr = str[i]._hiraganaToKeyface();
                             if (faceStr._isEmpty()) logger.DebugH($"_hiraganaToKeyface empty");
                         }
-                        if (faceStr._isEmpty()) {
-                            logger.DebugH($"send asis string");
-                            faceStr = str[i].ToString();
+                        if (faceStr._notEmpty()) {
+                            sendInputsRomanOrKanaUnicode(faceStr);
+                            continue;
                         }
-                        sendInputsRomanOrKanaUnicode(faceStr);
-                    } else {
-                        logger.DebugH($"send Unicode string");
-                        sendInputsUnicode(str[i]);
+
+                        logger.DebugH($"send asis string");
                     }
+                    logger.DebugH($"send Unicode string");
+                    char uniChar = str[i];
+                    if (uniChar >= 0x80 && uniChar == prevUniChar) Helper.WaitMilliSeconds(10);
+                    //sendInputsUnicode(str[i]);
+                    sendInputsRomanOrKanaUnicode(str[i], true);
+                    prevUniChar = uniChar;
                 }
             }
             updateLastOutputDt();
