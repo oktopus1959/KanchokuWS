@@ -120,36 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="checkBox_imeSendInputInKana.ToolTip" xml:space="preserve">
-    <value>この項目をチェックすると、入力されたひらがなをひらがな入力モードに
-合わせた形式に変換してIMEに送信するようになります。
-
-ひらがな入力モードで変換できない文字はそのまま送信されます。
-この時、アプリによっては未確定文字が消えてしまうことがあるので
-ご注意を。
-
-ローマ字変換／かな変換のどちらにもチェックがない場合は、文字の
-Unicode をそのまま送信します。漢字などもそのまま送信されますが、
-相手先のアプリによってはIMEに送られないことがあります。
-（例： Chrome や VS Code など）</value>
-  </data>
-  <data name="checkBox_imeSendInputInRoman.ToolTip" xml:space="preserve">
-    <value>この項目をチェックすると、入力されたひらがなをローマ字入力モードに
-合わせた形式に変換してIMEに送信するようになります。
-
-ローマ字入力モードで変換できない文字はそのまま送信されます。
-この時、アプリによっては未確定文字が消えてしまうことがあるので
-ご注意を。
-
-ローマ字変換／かな変換のどちらにもチェックがない場合は、文字の
-Unicode をそのまま送信します。漢字などもそのまま送信されますが、
-相手先のアプリによってはIMEに送られないことがあります。
-（例： Chrome や VS Code など）
-</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -317,6 +287,33 @@ SandS の拡張シフト面にテーブルファイルの裏面定義を行っ�
 
 ワンショットシフト状態の場合に、Spaceキーを単打すると空白が1つ出力され、
 Spaceキーを押下状態にするとリピート出力となります。</value>
+  </data>
+  <data name="checkBox_imeSendInputInKana.ToolTip" xml:space="preserve">
+    <value>この項目をチェックすると、入力されたひらがなをひらがな入力モードに
+合わせた形式に変換してIMEに送信するようになります。
+
+ひらがな入力モードで変換できない文字はそのまま送信されます。
+この時、アプリによっては未確定文字が消えてしまうことがあるので
+ご注意を。
+
+ローマ字変換／かな変換のどちらにもチェックがない場合は、文字の
+Unicode をそのまま送信します。漢字などもそのまま送信されますが、
+相手先のアプリによってはIMEに送られないことがあります。
+（例： Chrome や VS Code など）</value>
+  </data>
+  <data name="checkBox_imeSendInputInRoman.ToolTip" xml:space="preserve">
+    <value>この項目をチェックすると、入力されたひらがなをローマ字入力モードに
+合わせた形式に変換してIMEに送信するようになります。
+
+ローマ字入力モードで変換できない文字はそのまま送信されます。
+この時、アプリによっては未確定文字が消えてしまうことがあるので
+ご注意を。
+
+ローマ字変換／かな変換のどちらにもチェックがない場合は、文字の
+Unicode をそのまま送信します。漢字などもそのまま送信されますが、
+相手先のアプリによってはIMEに送られないことがあります。
+（例： Chrome や VS Code など）
+</value>
   </data>
   <data name="checkBox_useCombinationKeyTimer2.ToolTip" xml:space="preserve">
     <value>同時打鍵判定のタイミングにタイマーを併用します。

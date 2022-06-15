@@ -480,6 +480,7 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.button_imeFAQ = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1832,6 +1833,7 @@ namespace KanchokuWS.Gui
             // 
             // tabPage_imeCombo
             // 
+            this.tabPage_imeCombo.Controls.Add(this.button_imeFAQ);
             this.tabPage_imeCombo.Controls.Add(this.groupBox48);
             this.tabPage_imeCombo.Controls.Add(this.label118);
             this.tabPage_imeCombo.Controls.Add(this.groupBox39);
@@ -5895,6 +5897,20 @@ namespace KanchokuWS.Gui
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // button_imeFAQ
+            // 
+            this.button_imeFAQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_imeFAQ.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_imeFAQ.Location = new System.Drawing.Point(341, 343);
+            this.button_imeFAQ.Name = "button_imeFAQ";
+            this.button_imeFAQ.Size = new System.Drawing.Size(82, 23);
+            this.button_imeFAQ.TabIndex = 20;
+            this.button_imeFAQ.TabStop = false;
+            this.button_imeFAQ.Text = "FAQ(&F)";
+            this.toolTip1.SetToolTip(this.button_imeFAQ, "「よくある質問と回答」ページのURLをブラウザで開きます");
+            this.button_imeFAQ.UseVisualStyleBackColor = true;
+            this.button_imeFAQ.Click += new System.EventHandler(this.button_imeFAQ_Click);
+            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -6486,5 +6502,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.GroupBox groupBox48;
         private System.Windows.Forms.TextBox textBox_preRewriteAllowedDelayTimeMs;
         private System.Windows.Forms.Label label99;
+        private System.Windows.Forms.Button button_imeFAQ;
     }
 }

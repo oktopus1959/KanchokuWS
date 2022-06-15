@@ -2117,6 +2117,12 @@ namespace KanchokuWS.Gui
             openDocumentUrl(Settings.FaqUrl);
         }
 
+        private void button_imeFAQ_Click(object sender, EventArgs e)
+        {
+            logger.InfoH("CALLED");
+            openDocumentUrl(Settings.FaqUrl);
+        }
+
         private void radioButton_normalVkb_CheckedChanged(object sender, EventArgs e)
         {
             textBox_vkbShowStrokeCount.Enabled = radioButton_normalVkb.Checked;
