@@ -999,9 +999,9 @@ namespace KanchokuWS
                                     }
 
                                     if (targetDeckey == 0) {
-                                        if (modKey > 0) {
+                                        if (modKey > 0 && modifieeDeckey >= 0) {
                                             // 特殊キーでもなかったので、複合コマンドまたは機能として扱う
-                                            var strokeCode = GetShiftPlanePrefix(ShiftPlaneForShiftModKey._safeGet(modKey)) + modifiee;
+                                            var strokeCode = GetShiftPlanePrefix(ShiftPlaneForShiftModKey._safeGet(modKey)) + modifieeDeckey.ToString();
                                             var decoderStr = target._getFirst() == '@' ? target : $"\"{target}\"";
                                             sbCompCmds.Append($"-{strokeCode}>{decoderStr}\n");
                                             targetDeckey = convertUnconditional(parseShiftPlaneDeckey(strokeCode));   // 拡張シフト面も含めた漢直コードとして解析する
