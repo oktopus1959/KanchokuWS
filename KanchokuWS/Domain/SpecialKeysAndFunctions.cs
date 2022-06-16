@@ -27,8 +27,12 @@ namespace KanchokuWS
         public const uint ATTR_MODIFIER = 2;
         public const uint ATTR_MODIFIEE = 4;
         public const uint ATTR_SINGLE = 8;
-        public const uint ATTR_SHIFTABLE = 16;
-        public const uint ATTR_SANDS = 32;
+        public const uint ATTR_EXTENTED = 16;
+        public const uint ATTR_SPACE = 32;
+
+        public const uint ATTR_EXTMOD = ATTR_MODIFIER | ATTR_EXTENTED;
+        public const uint ATTR_EXTSINGLE = ATTR_EXTMOD | ATTR_SINGLE;
+        public const uint ATTR_SANDS = ATTR_EXTMOD | ATTR_SPACE;
 
         public KeyOrFunction(uint flag, int deckey, uint modKey, string name, string modName, string desc, string name1 = null, string name2 = null, string detail = null)
         {
@@ -45,15 +49,20 @@ namespace KanchokuWS
         }
 
         public bool IsFunction => (AttrFlag & ATTR_FUNCTION) != 0;
-        public bool IsModifier => (AttrFlag & (ATTR_MODIFIER | ATTR_SHIFTABLE | ATTR_SANDS)) != 0;
+        public bool IsModifier => (AttrFlag & ATTR_MODIFIER) != 0;
         public bool IsModifiee => (AttrFlag & ATTR_MODIFIEE) != 0;
-        public bool IsSingle => (AttrFlag & (ATTR_MODIFIEE | ATTR_SINGLE | ATTR_SHIFTABLE)) != 0;
-        public bool IsShiftable => (AttrFlag & (ATTR_SHIFTABLE | ATTR_SANDS)) != 0;
-        public bool IsAssignable => (AttrFlag & (ATTR_MODIFIEE | ATTR_SANDS | ATTR_FUNCTION)) != 0;
+        public bool IsSingle => (AttrFlag & (ATTR_MODIFIEE | ATTR_SINGLE)) != 0;
+        public bool IsExtModifier => (AttrFlag & ATTR_EXTMOD) == ATTR_EXTMOD;
+        public bool IsAssignable => (AttrFlag & (ATTR_MODIFIEE | ATTR_SPACE | ATTR_FUNCTION)) != 0;
 
         public bool MatchDeckey(int deckey)
         {
             return deckey == DecKey;
+        }
+
+        public bool MatchModKey(uint modkey)
+        {
+            return modkey == ModKey;
         }
 
         public bool MatchName(string name)
@@ -73,10 +82,10 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.ESC_DECKEY, 0, "Esc", "", "Escape キー", "escape"),
             new KeyOrFunction(KeyOrFunction.ATTR_SINGLE, DecoderKeys.HANZEN_DECKEY, 0, "zenkaku", "半角/全角", "半角/全角 キー", "hanzen"),
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.TAB_DECKEY, 0, "Tab", "", "Tab キー"),
-            new KeyOrFunction(KeyOrFunction.ATTR_SHIFTABLE, DecoderKeys.CAPS_DECKEY, KeyModifiers.MOD_CAPS, "caps", "Caps Lock", "Caps Lock キー", "capslock"),
-            new KeyOrFunction(KeyOrFunction.ATTR_SHIFTABLE, DecoderKeys.ALNUM_DECKEY, KeyModifiers.MOD_ALNUM, "alnum", "英数", "英数 キー", "alphanum", "eisu"),
-            new KeyOrFunction(KeyOrFunction.ATTR_SHIFTABLE, DecoderKeys.NFER_DECKEY, KeyModifiers.MOD_NFER, "nfer", "無変換", "無変換 キー"),
-            new KeyOrFunction(KeyOrFunction.ATTR_SHIFTABLE, DecoderKeys.XFER_DECKEY, KeyModifiers.MOD_XFER, "xfer", "変換", "変換 キー"),
+            new KeyOrFunction(KeyOrFunction.ATTR_EXTMOD, DecoderKeys.CAPS_DECKEY, KeyModifiers.MOD_CAPS, "caps", "Caps Lock", "Caps Lock キー", "capslock"),
+            new KeyOrFunction(KeyOrFunction.ATTR_EXTSINGLE, DecoderKeys.ALNUM_DECKEY, KeyModifiers.MOD_ALNUM, "alnum", "英数", "英数 キー", "alphanum", "eisu"),
+            new KeyOrFunction(KeyOrFunction.ATTR_EXTSINGLE, DecoderKeys.NFER_DECKEY, KeyModifiers.MOD_NFER, "nfer", "無変換", "無変換 キー"),
+            new KeyOrFunction(KeyOrFunction.ATTR_EXTSINGLE, DecoderKeys.XFER_DECKEY, KeyModifiers.MOD_XFER, "xfer", "変換", "変換 キー"),
             new KeyOrFunction(KeyOrFunction.ATTR_SINGLE, DecoderKeys.KANA_DECKEY, 0, "kana", "ひらがな", "ひらがな キー", "hiragana"),
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.BS_DECKEY, 0, "BackSpace", "", "Back Space キー", "back", "bs"),
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.ENTER_DECKEY, 0, "Enter", "", "Enter キー"),
@@ -90,9 +99,9 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.RIGHT_ARROW_DECKEY, 0, "Right", "", "→ キー", "rightarrow"),
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.UP_ARROW_DECKEY, 0, "Up", "", "↑ キー", "uparrow"),
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.DOWN_ARROW_DECKEY, 0, "Down", "", "↓ キー", "downarrow"),
-            new KeyOrFunction(KeyOrFunction.ATTR_SHIFTABLE, DecoderKeys.RIGHT_SHIFT_DECKEY, KeyModifiers.MOD_RSHIFT, "Rshift", "右シフト", "右シフト キー"),
-            new KeyOrFunction(KeyOrFunction.ATTR_MODIFIER, -1, KeyModifiers.MOD_LCTRL, "lctrl", "左コントロール", "左コントロール キー"),
-            new KeyOrFunction(KeyOrFunction.ATTR_MODIFIER, -1, KeyModifiers.MOD_RCTRL, "rctrl", "右コントロール", "右コントロール キー"),
+            new KeyOrFunction(KeyOrFunction.ATTR_EXTSINGLE, DecoderKeys.RIGHT_SHIFT_DECKEY, KeyModifiers.MOD_RSHIFT, "Rshift", "右シフト", "右シフト キー"),
+            new KeyOrFunction(KeyOrFunction.ATTR_EXTMOD, -1, KeyModifiers.MOD_LCTRL, "lctrl", "左コントロール", "左コントロール キー"),
+            new KeyOrFunction(KeyOrFunction.ATTR_EXTMOD, -1, KeyModifiers.MOD_RCTRL, "rctrl", "右コントロール", "右コントロール キー"),
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIER, -1, KeyModifiers.MOD_SHIFT, "shift", "シフト", "シフト キー"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_DECKEY, 0, "ModeToggle", "", "漢直モードのトグル"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY, 0, "ModeToggleFollowCaret", "", "漢直モードのトグル（カレットへの再追従）"),
@@ -166,6 +175,11 @@ namespace KanchokuWS
         public static KeyOrFunction GetKeyOrFuncByDeckey(int deckey)
         {
             return specialKeysAndFunctions._getNth(specialKeysAndFunctions._findIndex(x => x.MatchDeckey(deckey)));
+        }
+
+        public static bool IsPlaneAssignableModKey(uint modkey)
+        {
+            return specialKeysAndFunctions._getNth(specialKeysAndFunctions._findIndex(x => x.MatchModKey(modkey)))?.IsExtModifier ?? false;
         }
 
         public static string GetKeyNameByDeckey(int deckey)

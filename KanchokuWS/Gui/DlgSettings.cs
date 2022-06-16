@@ -2447,6 +2447,7 @@ namespace KanchokuWS.Gui
             }
         }
 
+        // 拡張修飾キー設定をファイルに書き出す
         private void writeModConversionSettings()
         {
             var path = KanchokuIni.Singleton.KanchokuDir._joinPath(textBox_modConversionFile.Text);

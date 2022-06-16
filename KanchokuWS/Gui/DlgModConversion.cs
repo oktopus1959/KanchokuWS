@@ -98,7 +98,7 @@ namespace KanchokuWS.Gui
         {
             readCharsDefFile();
             modifierKeys = SpecialKeysAndFunctions.GetModifierKeys();
-            PLANE_ASIGNABLE_MOD_KEYS_NUM = modifierKeys.Where(x => x.IsShiftable).Count();
+            PLANE_ASIGNABLE_MOD_KEYS_NUM = modifierKeys.Where(x => x.IsExtModifier).Count();
             extModifiees = SpecialKeysAndFunctions.GetModifieeKeys();
             singleHitKeys = SpecialKeysAndFunctions.GetSingleHitKeys();
 
@@ -200,6 +200,9 @@ namespace KanchokuWS.Gui
                     uint modKey = modifierKeys[i].ModKey;
                     dgv.Rows[i].Cells[2].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKey._safeGet(modKey)) ?? "";
                     dgv.Rows[i].Cells[3].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modKey)) ?? "";
+                } else if (modifierKeys._getNth(i)?.ModKey == KeyModifiers.MOD_SHIFT) {
+                    dgv.Rows[i].Cells[2].Value = "通常シフト";
+                    dgv.Rows[i].Cells[3].Value = "通常シフト";
                 } else {
                     dgv.Rows[i].Cells[2].Value = "なし（割り当て不可）";
                     dgv.Rows[i].Cells[3].Value = "なし（割り当て不可）";

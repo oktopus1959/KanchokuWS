@@ -723,12 +723,13 @@ namespace KanchokuWS
             return null;
         }
 
-        /// <summary>(拡張)シフト面に割り当てられる拡張修飾キーか (kana, lctrl, rctrl 以外)</summary>
+        /// <summary>(拡張)シフト面に割り当てられる拡張修飾キーか</summary>
         /// <param name="mod"></param>
         /// <returns></returns>
         private static bool isPlaneMappedModifier(uint mod)
         {
-            return (mod & (KeyModifiers.MOD_SINGLE | KeyModifiers.MOD_LCTRL | KeyModifiers.MOD_RCTRL)) == 0;
+            //return (mod & (KeyModifiers.MOD_SINGLE | KeyModifiers.MOD_LCTRL | KeyModifiers.MOD_RCTRL)) == 0;
+            return SpecialKeysAndFunctions.IsPlaneAssignableModKey(mod);
         }
 
         private static Dictionary<string, int> specialDecKeysFromName = new Dictionary<string, int>() {
@@ -947,9 +948,23 @@ namespace KanchokuWS
                                     // 被修飾キーが指定されている場合は、拡張修飾キーの修飾フラグを取得
                                     modKey = GetModifierKeyByName(modName);
                                     if (isPlaneMappedModifier(modKey) && !ShiftPlaneForShiftModKey.ContainsKey(modKey)) {
-                                        // mod に対する ShiftPlane が設定されていない場合は、拡張シフトB面を割り当てる
-                                        ShiftPlaneForShiftModKey[modKey] = ShiftPlane_B;
-                                        ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = ShiftPlane_B;
+                                        // mod に対する ShiftPlane が設定されていない場合は、適当なシフト面を割り当てる
+                                        if (modKey == KeyModifiers.MOD_SHIFT) {
+                                            // SHIFTなら標準シフト面
+                                            ShiftPlaneForShiftModKey[modKey] = ShiftPlane_SHIFT;
+                                            ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = ShiftPlane_SHIFT;
+                                        } else {
+                                            // mod に対する ShiftPlane が設定されていない場合は、拡張シフトB面以降の空いている面を割り当てる(空いてなければF面)
+                                            int pn = ShiftPlane_B;
+                                            while (pn < ShiftPlane_F) {
+                                                if (!ShiftPlaneForShiftModKey.Values.Any(x => x == pn) && !ShiftPlaneForShiftModKeyWhenDecoderOff.Values.Any(x => x == pn)) {
+                                                    break;
+                                                }
+                                                ++pn;
+                                            }
+                                            ShiftPlaneForShiftModKey[modKey] = pn;
+                                            ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = pn;
+                                        }
                                     }
                                 }
 
@@ -1096,6 +1111,7 @@ namespace KanchokuWS
             return ShiftPlaneForShiftModKey._safeGet(KeyModifiers.MOD_SPACE);
         }
 
+        // ファイルに書き出す拡張修飾キー設定を作成
         public static string MakeModConversionContents()
         {
             var sb = new StringBuilder();
