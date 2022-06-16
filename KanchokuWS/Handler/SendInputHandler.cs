@@ -670,9 +670,9 @@ namespace KanchokuWS.Handler
             upShiftKeyInputs();
         }
 
-        private static void sendInputsRomanOrKanaUnicode(char fc, bool bExceptKana)
+        private static void sendInputsRomanOrKanaUnicodeEx(char fc, bool bOnlyASCII)
         {
-            uint vk = bExceptKana ? 0 : VirtualKeys.GetVKeyFromFaceChar(fc);
+            uint vk = !bOnlyASCII || fc < 0x80 ? VirtualKeys.GetVKeyFromFaceChar(fc) : 0;
             if (vk > 0) {
                 using (var guard = new ShiftKeyDownGuard(vk >= 0x100)) {
                     // Vkey
@@ -688,7 +688,7 @@ namespace KanchokuWS.Handler
             logger.DebugH(() => $"CALLED: faceStr={faceStr}");
 
             foreach (var fc in faceStr) {
-                sendInputsRomanOrKanaUnicode(fc, false);
+                sendInputsRomanOrKanaUnicodeEx(fc, false);
             }
         }
 
@@ -734,7 +734,7 @@ namespace KanchokuWS.Handler
                     char uniChar = str[i];
                     if (uniChar >= 0x80 && uniChar == prevUniChar) Helper.WaitMilliSeconds(10);
                     //sendInputsUnicode(str[i]);
-                    sendInputsRomanOrKanaUnicode(str[i], true);
+                    sendInputsRomanOrKanaUnicodeEx(str[i], true);
                     prevUniChar = uniChar;
                 }
             }
