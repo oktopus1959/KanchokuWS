@@ -48,7 +48,10 @@ namespace KanchokuWS
         private const int MinVerticalChars = 2;
         private const int MinCenterChars = 2;
 
-        ///// <summary> 仮想鍵盤ウィンドウの ClassName の末尾のハッシュ部分 </summary>
+        /// <summary>現在表示されているのは通常鍵盤か</summary>
+        public bool IsCurrentNormalVkb { get; private set; } = true;
+
+        /// <summary> 仮想鍵盤ウィンドウの ClassName の末尾のハッシュ部分 </summary>
         private string dlgVkbClassNameHash;
 
         public bool IsMyWinClassName(string winClassName = null)
@@ -381,7 +384,7 @@ namespace KanchokuWS
             createObjectsForDrawingVerticalChars();
 
             // 仮想鍵盤の初期化
-            DrawInitailVkb();
+            DrawInitialVkb();
         }
 
         /// <summary>通常・中央・縦列鍵盤の余白情報を文字列として取得</summary>
@@ -824,9 +827,10 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------
         /// <summary> 第1打鍵待ち状態の仮想キーボード表示 </summary>
-        public void DrawInitailVkb(int lastDeckey = -1)
+        public void DrawInitialVkb(int lastDeckey = -1)
         {
             if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH(() => $"CALLED: EffectiveCount={Settings.VirtualKeyboardShowStrokeCountEffective}");
+            IsCurrentNormalVkb = true;
             if (Settings.VirtualKeyboardShowStrokeCountEffective == 1) {
                 // 第1打鍵待ちである
                 StrokeTableDef tblDef = null;
@@ -973,6 +977,8 @@ namespace KanchokuWS
                 return new string(decoderOutput.topString, s, i - s);
 
             }
+
+            IsCurrentNormalVkb = false;
             var topText = makeTopString();
 
             if (decoderOutput.layout >= (int)VkbLayout.Horizontal && decoderOutput.layout < (int)VkbLayout.Normal) {
@@ -1039,7 +1045,7 @@ namespace KanchokuWS
             }
 
             // 初期状態に戻す
-            DrawInitailVkb(lastDeckey);
+            DrawInitialVkb(lastDeckey);
             SetTopText(topText, true);
         }
 

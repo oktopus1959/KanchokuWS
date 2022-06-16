@@ -660,7 +660,7 @@ namespace KanchokuWS
             logger.InfoH(() => $"CALLED: shiftPlane={shiftPlane}");
             if (shiftPlane >= 0 && shiftPlane < VirtualKeys.ShiftPlane_NUM) {
                 frmVkb.StrokeHelpShiftPlane = shiftPlane;
-                frmVkb.DrawInitailVkb();
+                if (frmVkb.IsCurrentNormalVkb) frmVkb.DrawInitialVkb();
             }
         }
 
@@ -673,7 +673,7 @@ namespace KanchokuWS
             logger.InfoH(() => $"CALLED: decKey={decKey}");
             if (decKey < DecoderKeys.COMBO_DECKEY_END) {
                 frmVkb.DecKeyForNextTableStrokeHelp = decKey;
-                frmVkb.DrawInitailVkb();
+                frmVkb.DrawInitialVkb();
             }
         }
 
@@ -972,7 +972,7 @@ namespace KanchokuWS
                 bRomanStrokeGuideMode = false;
                 frmVkb.StrokeHelpShiftPlane = 0;
                 frmVkb.DecKeyForNextTableStrokeHelp = -1;
-                frmVkb.DrawInitailVkb();
+                frmVkb.DrawInitialVkb();
                 //Text = "漢直窓S - ON";
                 notifyIcon1.Icon = Properties.Resources.kanmini1;
                 // 仮想鍵盤を移動させる
