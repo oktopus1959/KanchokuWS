@@ -1314,7 +1314,7 @@ namespace KanchokuWS
                 frmMode.Vanish();
                 // 通常のストロークキーまたは機能キー(BSとか矢印キーとかCttrl-Hとか)
                 bool flag = handleKeyDecoder(deckey, mod);
-                logger.InfoH($"LEAVE");
+                logger.InfoH(() => $"LEAVE: {flag}");
                 return flag;
             }
             return false;
@@ -1608,7 +1608,7 @@ namespace KanchokuWS
         private bool sendVkeyFromDeckey(int deckey, uint mod)
         {
             var keyState = SendInputHandler.GetCtrlKeyState();
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={keyState.LeftKeyDown}, rightCtrl={keyState.RightKeyDown}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={keyState.LeftKeyDown}, rightCtrl={keyState.RightKeyDown}");
             if ((!keyState.LeftKeyDown && !keyState.RightKeyDown) || isCtrlKeyConversionEffectiveWindow()                 // Ctrlキーが押されていないか、Ctrl修飾を受け付けるWindowClassか
                 //|| deckey < DecoderKeys.STROKE_DECKEY_END                                                       // 通常のストロークキーは通す
                 || deckey < DecoderKeys.NORMAL_DECKEY_NUM                                                       // 通常のストロークキーは通す
@@ -1631,9 +1631,11 @@ namespace KanchokuWS
                     //    SendInputHandler.Singleton.SendVKeyCombo(combo.Value, 1);
                     //}
                     SendInputHandler.Singleton.SendVKeyCombo((combo.Value.modifier != 0 ? combo.Value.modifier : mod), combo.Value.vkey, 1);
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: TRUE");
                     return true;
                 }
             }
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: FALSE");
             return false;
         }
 

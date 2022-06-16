@@ -907,7 +907,9 @@ namespace KanchokuWS.Handler
                 logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
                 kanchokuCode = vkeyQueue.Peek();
                 if (bDecoderOn && mod == 0 &&
-                    kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END) {
+                    kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END &&
+                    ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM) ||
+                    KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool.GetEntry(kanchokuCode) != null){    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする
                     // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
                     CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode, (decKey) => handleComboKeyRepeat(vkey, decKey));
                     result = true;
@@ -917,6 +919,7 @@ namespace KanchokuWS.Handler
                 kanchokuCode = vkeyQueue.Dequeue();
                 //if (vkeyQueue.Count > 0) logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
             }
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={result}");
             return result;
         }
 
