@@ -240,6 +240,8 @@ namespace KanchokuWS.Gui
             this.dataGridView3.Size = new System.Drawing.Size(600, 378);
             this.dataGridView3.TabIndex = 5;
             this.dataGridView3.TabStop = false;
+            this.dataGridView3.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView3_CellMouseClick);
+            this.dataGridView3.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView3_CellMouseDoubleClick);
             // 
             // radioButton_shiftPlane
             // 

@@ -164,6 +164,7 @@ namespace KanchokuWS.Gui
             return modDef.ModName + marker;
         }
 
+        // 拡張シフト面割り当て用DGV(dataGridView3)の設定
         private void setDataGridViewForShiftPlane()
         {
             double dpiRate = ScreenInfo.Singleton.PrimaryScreenDpiRate._lowLimit(1.0);
@@ -211,6 +212,7 @@ namespace KanchokuWS.Gui
             //dgv3Locked = false;
         }
 
+        // 単打用DGV(dataGridView1)の設定
         private void setDataGridViewForSingleHit()
         {
             double dpiRate = ScreenInfo.Singleton.PrimaryScreenDpiRate._lowLimit(1.0);
@@ -222,7 +224,8 @@ namespace KanchokuWS.Gui
             dgv._setDefaultFont(DgvHelpers.FontYUG9);
             int keyCodeWidth = (int)(30 * dpiRate);
             int keyNameWidth = (int)(80 * dpiRate);
-            int funcNameWidth = (int)(180 * dpiRate);
+            //int funcNameWidth = (int)(180 * dpiRate);
+            int funcNameWidth = (int)(Settings.AssignedKeyOrFuncColWidth._gtZeroOr(180) * dpiRate);
             int funcDescWidth = (int)(dgv.Width - 20 * dpiRate - keyCodeWidth - keyNameWidth - funcNameWidth);
             dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable_Centered("keyCode", "No", keyCodeWidth, DgvHelpers.READONLY_SELECTION_COLOR));
             dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable("keyName", "単打キー", keyNameWidth, DgvHelpers.READONLY_SELECTION_COLOR));
@@ -259,6 +262,7 @@ namespace KanchokuWS.Gui
             dgv1Locked = false;
         }
 
+        // 拡張修飾キー設定用DGV(dataGridView2)の設定
         private void setDataGridViewForExtModifier()
         {
             double dpiRate = ScreenInfo.Singleton.PrimaryScreenDpiRate._lowLimit(1.0);
@@ -597,6 +601,29 @@ namespace KanchokuWS.Gui
         private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
         {
             dgvKeyDown(dataGridView1, e);
+        }
+
+        private void selectModKey(int idx)
+        {
+            if (idx >= 0 && idx < comboBox_modKeys.Items.Count) {
+                comboBox_modKeys.SelectedIndex = idx;
+            }
+        }
+
+        private void openComboBox(ComboBox comboBox)
+        {
+            comboBox.DroppedDown = true;
+        }
+
+        private void dataGridView3_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            selectModKey(e.RowIndex);
+        }
+
+        private void dataGridView3_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            selectModKey(e.RowIndex);
+            openComboBox(e.ColumnIndex < 3 ? comboBox_shiftPlaneOn : comboBox_shiftPlaneOff);
         }
     }
 }
