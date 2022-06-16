@@ -367,12 +367,12 @@ namespace KanchokuWS.Handler
             /// <summary> 拡張修飾キーからキー状態を得る</summary>
             public ExModiferKeyInfo getModiferKeyInfoByVkey(uint vkey)
             {
-                if (vkey == spaceKeyInfo.Vkey) return spaceKeyInfo;
                 if (vkey == capsKeyInfo.Vkey) return capsKeyInfo;
                 if (vkey == alnumKeyInfo.Vkey) return alnumKeyInfo;
                 if (vkey == nferKeyInfo.Vkey) return nferKeyInfo;
                 if (vkey == xferKeyInfo.Vkey) return xferKeyInfo;
                 if (vkey == rshiftKeyInfo.Vkey) return rshiftKeyInfo;
+                if (vkey == spaceKeyInfo.Vkey) return spaceKeyInfo;
                 return null;
             }
 
@@ -391,42 +391,42 @@ namespace KanchokuWS.Handler
             /// <summary> 拡張修飾キーの修飾フラグからキー状態を得る</summary>
             public ExModiferKeyInfo getModiferKeyInfoByModFlag(uint modFlag)
             {
-                if (modFlag == KeyModifiers.MOD_SPACE) return spaceKeyInfo;
                 if (modFlag == KeyModifiers.MOD_CAPS) return capsKeyInfo;
                 if (modFlag == KeyModifiers.MOD_ALNUM) return alnumKeyInfo;
                 if (modFlag == KeyModifiers.MOD_NFER) return nferKeyInfo;
                 if (modFlag == KeyModifiers.MOD_XFER) return xferKeyInfo;
                 if (modFlag == KeyModifiers.MOD_RSHIFT) return rshiftKeyInfo;
+                if (modFlag == KeyModifiers.MOD_SPACE) return spaceKeyInfo;
                 return otherKeyState;
             }
 
             /// <summary> SHIFT状態にある拡張修飾キーの修飾フラグを得る</summary>
             public uint getShiftedExModKey()
             {
-                if (spaceKeyInfo.Shifted) {
-                    if (Settings.SandSSuperiorToShift) return KeyModifiers.MOD_SPACE;
-                    if (!rshiftKeyInfo.Shifted) return KeyModifiers.MOD_SPACE;
-                }
                 if (capsKeyInfo.Shifted) return KeyModifiers.MOD_CAPS;
                 if (alnumKeyInfo.Shifted) return KeyModifiers.MOD_ALNUM;
                 if (nferKeyInfo.Shifted) return KeyModifiers.MOD_NFER;
                 if (xferKeyInfo.Shifted) return KeyModifiers.MOD_XFER;
                 if (rshiftKeyInfo.Shifted) return KeyModifiers.MOD_RSHIFT;
+                if (spaceKeyInfo.Shifted) {
+                    if (Settings.SandSSuperiorToShift) return KeyModifiers.MOD_SPACE;
+                    if (!rshiftKeyInfo.Shifted) return KeyModifiers.MOD_SPACE;
+                }
                 return 0;
             }
 
             /// <summary> 拡張修飾キーの押下またシフト状態を得る</summary>
             public uint getPressedOrShiftedExModFlag()
             {
-                if (spaceKeyInfo.Pressed || spaceKeyInfo.Shifted) {
-                    if (Settings.SandSSuperiorToShift) return KeyModifiers.MOD_SPACE;
-                    if (!rshiftKeyInfo.Pressed && !rshiftKeyInfo.Shifted) return KeyModifiers.MOD_SPACE;
-                }
                 if (capsKeyInfo.Pressed || capsKeyInfo.Shifted) return KeyModifiers.MOD_CAPS;
                 if (alnumKeyInfo.Pressed || alnumKeyInfo.Shifted) return KeyModifiers.MOD_ALNUM;
                 if (nferKeyInfo.Pressed || nferKeyInfo.Shifted) return KeyModifiers.MOD_NFER;
                 if (xferKeyInfo.Pressed || xferKeyInfo.Shifted) return KeyModifiers.MOD_XFER;
                 if (rshiftKeyInfo.Pressed || rshiftKeyInfo.Shifted) return KeyModifiers.MOD_RSHIFT;
+                if (spaceKeyInfo.Pressed || spaceKeyInfo.Shifted) {
+                    if (Settings.SandSSuperiorToShift) return KeyModifiers.MOD_SPACE;
+                    if (!rshiftKeyInfo.Pressed && !rshiftKeyInfo.Shifted) return KeyModifiers.MOD_SPACE;
+                }
                 return 0;
             }
 
@@ -443,6 +443,11 @@ namespace KanchokuWS.Handler
 
             public int getShiftPlane(bool bDecoderOn, bool bSandSEnabled)
             {
+                if (capsKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_CAPS, bDecoderOn);
+                if (alnumKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_ALNUM, bDecoderOn);
+                if (nferKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_NFER, bDecoderOn);
+                if (xferKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_XFER, bDecoderOn);
+                if (rshiftKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_RSHIFT, bDecoderOn);
                 if (spaceKeyInfo.ShiftedOrOneshot) {
                     if (Settings.SandSSuperiorToShift || !rshiftKeyInfo.Shifted) {
                         var plane = VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, bDecoderOn);
@@ -450,11 +455,6 @@ namespace KanchokuWS.Handler
                         return plane;
                     }
                 }
-                if (capsKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_CAPS, bDecoderOn);
-                if (alnumKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_ALNUM, bDecoderOn);
-                if (nferKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_NFER, bDecoderOn);
-                if (xferKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_XFER, bDecoderOn);
-                if (rshiftKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_RSHIFT, bDecoderOn);
                 return VirtualKeys.ShiftPlane_NONE;
             }
 
@@ -549,6 +549,14 @@ namespace KanchokuWS.Handler
                     return DecoderKeys.POST_PLANE_A_SHIFT_DECKEY;
                 case VirtualKeys.ShiftPlane_B:
                     return DecoderKeys.POST_PLANE_B_SHIFT_DECKEY;
+                case VirtualKeys.ShiftPlane_C:
+                    return DecoderKeys.POST_PLANE_C_SHIFT_DECKEY;
+                case VirtualKeys.ShiftPlane_D:
+                    return DecoderKeys.POST_PLANE_D_SHIFT_DECKEY;
+                case VirtualKeys.ShiftPlane_E:
+                    return DecoderKeys.POST_PLANE_E_SHIFT_DECKEY;
+                case VirtualKeys.ShiftPlane_F:
+                    return DecoderKeys.POST_PLANE_F_SHIFT_DECKEY;
                 default:
                     return 0;
             }
