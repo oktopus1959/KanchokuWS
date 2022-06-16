@@ -151,16 +151,24 @@ namespace {
                     // '|' を含む候補を集める(ただし最大語尾長以下の場合)
                     for (auto w : result) {
                         if (w.size() > i && w[i] == VERT_BAR) {
-                            // w[i] == '|' だった。i == 1 (つまり、読みが1文字)の場合は、語尾はひらがなのみ許容する
-                            if (i == 1) {
-                                bool flag = true;
-                                for (size_t j = i; j < nkey; ++j) {
-                                    if (!utils::is_hiragana(key[start + j])) {
-                                        flag = false;
-                                        break;
-                                    }
+                            // w[i] == '|' だった。
+                            // 語尾はひらがなだけか
+                            bool allHiragana = true;
+                            for (size_t j = i; j < nkey; ++j) {
+                                if (!utils::is_hiragana(key[start + j])) {
+                                    allHiragana = false;
+                                    break;
                                 }
-                                if (!flag) continue;    // ひらがな以外の語尾があったので、採用しない
+                            }
+                            if (!allHiragana) {
+                                // 語尾にひらがな以外も含まれている
+                                if (i == 1) {
+                                    // i == 1 (つまり、読みが1文字)の場合は、語尾はひらがな以外があれば採用しない
+                                    continue;
+                                } else if (!utils::is_kanji(key[start + i])) {
+                                    // i >= 2 (読みが2文字以上)のでひらがな以外を含む場合は、漢字で始まるもの以外は採用しない
+                                    continue;
+                                }
                             }
                             histMaps.insert(w);
                         }
