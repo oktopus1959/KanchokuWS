@@ -83,7 +83,7 @@ namespace KanchokuWS
 
     public static class VirtualKeys
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         //public const uint BACK = 0x08;
         public const uint CONTROL = 0x11;
@@ -1059,41 +1059,45 @@ namespace KanchokuWS
         {
             // NAME=plane[|plane]...
             var items = line._toLower()._split('=');
-            if (items._length() == 2) {
-                uint modKey = GetModifierKeyByName(items[0]);
-                var planes = items[1]._split('|');
-                int shiftPlane = ShiftPlane_NONE;
-                switch (planes._getNth(0)) {
-                    case "shift": shiftPlane = ShiftPlane_SHIFT; break;
-                    case "shifta": shiftPlane = ShiftPlane_A; break;
-                    case "shiftb": shiftPlane = ShiftPlane_B; break;
-                    case "shiftc": shiftPlane = ShiftPlane_C; break;
-                    case "shiftd": shiftPlane = ShiftPlane_D; break;
-                    case "shifte": shiftPlane = ShiftPlane_E; break;
-                    case "shiftf": shiftPlane = ShiftPlane_F; break;
-                }
-                var shiftPlaneWhenOff = shiftPlane;
-                if (planes.Length > 1) {
-                    switch (planes._getNth(1)) {
-                        case "shift": shiftPlaneWhenOff = ShiftPlane_SHIFT; break;
-                        case "shifta": shiftPlaneWhenOff = ShiftPlane_A; break;
-                        case "shiftb": shiftPlaneWhenOff = ShiftPlane_B; break;
-                        case "shiftc": shiftPlaneWhenOff = ShiftPlane_C; break;
-                        case "shiftd": shiftPlaneWhenOff = ShiftPlane_D; break;
-                        case "shifte": shiftPlaneWhenOff = ShiftPlane_E; break;
-                        case "shiftf": shiftPlaneWhenOff = ShiftPlane_F; break;
-                        default: shiftPlaneWhenOff = ShiftPlane_NONE; break;
-                    }
-                }
-                logger.DebugH(() => $"mod={modKey:x}H({modKey}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
-                if (modKey != 0 && shiftPlane > 0) {
-                    logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{modKey}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{modKey}] = {shiftPlaneWhenOff}");
-                    ShiftPlaneForShiftModKey[modKey] = shiftPlane;
-                    ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = shiftPlaneWhenOff;
-                    return true;    // OK
+            if (items._length() != 2) return false;
+
+            uint modKey = GetModifierKeyByName(items[0]);
+            var planes = items[1]._split('|');
+            int shiftPlane = ShiftPlane_NONE;
+            switch (planes._getNth(0)) {
+                case "shift": shiftPlane = ShiftPlane_SHIFT; break;
+                case "shifta": shiftPlane = ShiftPlane_A; break;
+                case "shiftb": shiftPlane = ShiftPlane_B; break;
+                case "shiftc": shiftPlane = ShiftPlane_C; break;
+                case "shiftd": shiftPlane = ShiftPlane_D; break;
+                case "shifte": shiftPlane = ShiftPlane_E; break;
+                case "shiftf": shiftPlane = ShiftPlane_F; break;
+                case "none": shiftPlane = ShiftPlane_NONE; break;
+                default: return false;
+            }
+
+            var shiftPlaneWhenOff = shiftPlane;
+            if (planes.Length > 1) {
+                switch (planes._getNth(1)) {
+                    case "shift": shiftPlaneWhenOff = ShiftPlane_SHIFT; break;
+                    case "shifta": shiftPlaneWhenOff = ShiftPlane_A; break;
+                    case "shiftb": shiftPlaneWhenOff = ShiftPlane_B; break;
+                    case "shiftc": shiftPlaneWhenOff = ShiftPlane_C; break;
+                    case "shiftd": shiftPlaneWhenOff = ShiftPlane_D; break;
+                    case "shifte": shiftPlaneWhenOff = ShiftPlane_E; break;
+                    case "shiftf": shiftPlaneWhenOff = ShiftPlane_F; break;
+                    case "none": shiftPlaneWhenOff = ShiftPlane_NONE; break;
+                    default: return false;
                 }
             }
-            return false;   // NG
+
+            logger.DebugH(() => $"mod={modKey:x}H({modKey}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
+            if (modKey != 0 && shiftPlane > 0) {
+                logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{modKey}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{modKey}] = {shiftPlaneWhenOff}");
+                ShiftPlaneForShiftModKey[modKey] = shiftPlane;
+                ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = shiftPlaneWhenOff;
+            }
+            return true;    // OK
         }
 
         /// <summary>テーブルファイルor設定ダイアログで割り当てたSandSシフト面を優先する</summary>
@@ -1135,7 +1139,9 @@ namespace KanchokuWS
             }
             sb.Append("## Shift plane settings ##\n");
             foreach (var pair in dict) {
-                sb.Append($"{pair.Key}={pair.Value}\n");
+                if (pair.Value != "none|none") {
+                    sb.Append($"{pair.Key}={pair.Value}\n");
+                }
             }
 
             // 単打設定
