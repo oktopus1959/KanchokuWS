@@ -912,12 +912,12 @@ namespace KanchokuWS.Handler
             //    result = invokeHandler(kanchokuCode, mod);
             //}
             while (vkeyQueue.Count > 0) {
-                logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
+                logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}, bDecoderOn={bDecoderOn}, mod={mod:x}H, kanchokuCode={kanchokuCode}");
                 kanchokuCode = vkeyQueue.Peek();
                 if (bDecoderOn && mod == 0 &&
                     kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END &&
-                    ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM) ||
-                    KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool.GetEntry(kanchokuCode) != null){    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする
+                    ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM ||
+                    KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool.GetEntry(kanchokuCode) != null)) {    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする
                     // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
                     CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode, (decKey) => handleComboKeyRepeat(vkey, decKey));
                     result = true;
