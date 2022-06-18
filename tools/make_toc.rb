@@ -17,8 +17,8 @@ while line = gets
     puts "- #{make_toc_line($1)}"
   elsif line =~ /^### +(.*[^\s])\s*$/
     puts "    - #{make_toc_line($1)}"
-  elsif line =~ /^#### +(.*[^\s])\s*$/
-    puts "        - #{make_toc_line($1)}"
+#  elsif line =~ /^#### +(.*[^\s])\s*$/
+#    puts "        - #{make_toc_line($1)}"
   end
 end
 
