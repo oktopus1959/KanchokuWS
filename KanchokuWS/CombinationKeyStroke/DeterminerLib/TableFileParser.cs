@@ -208,6 +208,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         int nextPos = 0;                    // 次の文字位置
         char currentChar = '\0';            // 次の文字
 
+        bool bPrimary;                      // 主テーブルか
+
         // 同時打鍵定義ブロックの中か
         bool isInCombinationBlock => shiftKeyKind != ShiftKeyKind.None;
 
@@ -291,8 +293,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// コンストラクタ
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public TableFileParser(KeyCombinationPool pool)
+        public TableFileParser(KeyCombinationPool pool, bool primary)
         {
+            bPrimary = primary;
             keyComboPool = pool;
             blockInfoStack.Push(KanchokuIni.Singleton.KanchokuDir, "", 0);
         }
@@ -917,14 +920,19 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         includeFile();
                     } else if (lcStr == "define") {
                         outputLines.Add(currentLine);
+                        readWord();
+                        if (currentStr._toLower()._equalsTo("defguide")) {
+                            handleStrokePosition();
+                        }
                     } else if (lcStr == "store") {
                         storeLineBlock();
                     } else if (lcStr == "load") {
                         loadLineBlock();
                     } else if (lcStr._startsWith("yomiconv")) {
                         outputLines.Add(currentLine);
-                    } else if (lcStr == "strokePosition") {
-                        outputLines.Add(currentLine);
+                    } else if (lcStr == "strokeposition") {
+                        //outputLines.Add(currentLine);
+                        handleStrokePosition();
                     } else if (lcStr == "noshift" || lcStr == "normal") {
                         shiftPlane = 0;
                     } else if (lcStr == "shift") {
@@ -1115,6 +1123,19 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 }
             } else {
                 parseError("ファイル名が指定されていません。");
+            }
+        }
+
+        // define 行を処理
+        void handleStrokePosition()
+        {
+            readWordOrString();
+            if (currentStr._notEmpty()) {
+                if (bPrimary) {
+                    Settings.DefGuide1 = currentStr;
+                } else {
+                    Settings.DefGuide2 = currentStr;
+                }
             }
         }
 

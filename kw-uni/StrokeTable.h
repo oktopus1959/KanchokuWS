@@ -122,7 +122,7 @@ public:
     }
 
     // ストロークガイドの構築
-    void MakeStrokeGuide(const wstring& targetChars);
+    void MakeStrokeGuide(const wstring& targetChars, int tableId);
 
     // ストローク木を構築する
     static StrokeTableNode* CreateStrokeTree(const wstring&, std::vector<wstring>&);

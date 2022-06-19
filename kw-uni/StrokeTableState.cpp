@@ -402,9 +402,9 @@ bool StrokeTableNode::getStrokeListSub(const MString& target, std::vector<int>& 
 }
 
 // ストロークガイドの構築
-void StrokeTableNode::MakeStrokeGuide(const wstring& targetChars) {
+void StrokeTableNode::MakeStrokeGuide(const wstring& targetChars, int tableId) {
     std::vector<wchar_t> strokeGuide(VkbTableMaker::OUT_TABLE_SIZE);
-    VkbTableMaker::ReorderByStrokePosition(this, strokeGuide.data(), targetChars);
+    VkbTableMaker::ReorderByStrokePosition(this, strokeGuide.data(), targetChars, tableId);
     for (size_t i = 0; i * 2 < strokeGuide.size() && i < children.size(); ++i) {
         auto ch = strokeGuide[i * 2];
         //Node* child = children[i].get();

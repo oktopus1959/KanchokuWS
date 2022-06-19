@@ -670,9 +670,17 @@ namespace KanchokuWS
             shiftPlaneStrokeTables1 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition1", x.ToString())).ToList();
             shiftPlaneStrokeTables2 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition2", x.ToString())).ToList();
 
+            StrokeTables1.Clear();
+            StrokeTables2.Clear();
+
+            if (Settings.DefGuide1._notEmpty()) {
+                makeVkbStrokeTable1("reorderByFirstStrokePosition1", Settings.DefGuide1);
+            }
+            if (Settings.DefGuide2._notEmpty()) {
+                makeVkbStrokeTable2("reorderByFirstStrokePosition2", Settings.DefGuide2);
+            }
+
             if (Helper.FileExists(filePath)) {
-                StrokeTables1.Clear();
-                StrokeTables2.Clear();
                 try {
                     foreach (var line in System.IO.File.ReadAllLines(filePath)) {
                         var items = line.Trim()._reReplace("  +", " ")._split(' ');

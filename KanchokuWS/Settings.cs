@@ -15,7 +15,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.0β4";
+        public static string Version => "1.2.0β5";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -332,6 +332,12 @@ namespace KanchokuWS
         //public static string DateStringRotationKey { get; set; }
 
         public static HashSet<int> DecoderSpecialDeckeys { get; set; } = new HashSet<int>();
+
+        /// <summary>配字案内1</summary>
+        public static string DefGuide1 { get; set; }
+
+        /// <summary>配字案内2</summary>
+        public static string DefGuide2 { get; set; }
 
         //-------------------------------------------------------------------------------------
         // Ctrlキー
@@ -763,6 +769,11 @@ namespace KanchokuWS
         public static bool ReadIniFile()
         {
             logger.DebugH(() => $"ENTER");
+
+            //-------------------------------------------------------------------------------------
+            // 設定のクリア
+            DefGuide1 = "";
+            DefGuide2 = "";
 
             //-------------------------------------------------------------------------------------
             // 基本設定

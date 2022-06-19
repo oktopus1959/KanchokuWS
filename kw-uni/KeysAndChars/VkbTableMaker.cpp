@@ -192,13 +192,13 @@ namespace VkbTableMaker {
 
     // 指定の文字配列をストロークの位置に従って並べかえる
     // node: ストロークテーブルノード, table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
-    void ReorderByStrokePosition(StrokeTableNode* node, wchar_t* table, const wstring& targetChars) {
+    void ReorderByStrokePosition(StrokeTableNode* node, wchar_t* table, const wstring& targetChars, int tableId) {
         LOG_INFO(_T("CALLED: targetChars=%s"), targetChars.c_str());
         std::set<wchar_t> charSet(targetChars.begin(), targetChars.end());
         for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
             table[i] = 0;
         }
-        reorderByFirstStrokePosition(table, node, targetChars, charSet, STROKE_SPACE_DECKEY, 0);
+        reorderByFirstStrokePosition(table, node, targetChars, charSet, STROKE_SPACE_DECKEY, tableId);
     }
 
     //----------------------------------------------------------------------------

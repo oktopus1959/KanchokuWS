@@ -290,7 +290,7 @@ namespace {
         }
 
         StrokeTableNode* makeSubTree(StrokeTableNode* tblNode, int depth, int prevNth) {
-            wstring myGuideChars = getAndRemoveDefines(_T("defguide"));
+            //wstring myGuideChars = getAndRemoveDefines(_T("defguide"));   // フロントエンドでサポート
 
             if (tblNode == 0) tblNode = new StrokeTableNode(depth);
             int shiftPlaneOffset = depth == 0 ? shiftPlane * PLANE_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
@@ -313,7 +313,7 @@ namespace {
                 case TOKEN::STRING:             // "str" : 文字列ノード
                 case TOKEN::BARE_STRING:        // str : 文字列ノード
                 case TOKEN::FUNCTION:           // @c : 機能ノード
-                case TOKEN::REWRITE:            // @{ : 書き換えノード
+                case TOKEN::REWRITE:            // @{ : 書き換えノード }
                     //tblNode->setNthChild(n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
                     setNthChildNode(tblNode, n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
                     ++n;
@@ -334,10 +334,10 @@ namespace {
                 readNextToken(depth);
             }
 
-            if (!myGuideChars.empty()) {
-                _LOG_DEBUGH(_T("DEFGUID: %s"), myGuideChars.c_str());
-                tblNode->MakeStrokeGuide(myGuideChars);
-            }
+            //if (!myGuideChars.empty()) {
+            //    _LOG_DEBUGH(_T("DEFGUID: %s"), myGuideChars.c_str());
+            //    tblNode->MakeStrokeGuide(myGuideChars, bPrimaryTable);
+            //}
 
             strokes.resize(depth);
             return tblNode;
@@ -625,10 +625,10 @@ namespace {
                                 }
                             }
                         }
-                    } else if (lcStr == _T("strokePosition")) {
-                        readWordOrString();
-                        defines[_T("defguide")] = currentStr;
-                        _LOG_DEBUGH(_T("StrokePosition: %s"), currentStr.c_str());
+                    //} else if (lcStr == _T("strokePosition")) {   // フロントエンドでサポート
+                    //    readWordOrString();
+                    //    defines[_T("defguide")] = currentStr;
+                    //    _LOG_DEBUGH(_T("StrokePosition: %s"), currentStr.c_str());
                     } else if (lcStr == _T("noshift") || lcStr == _T("normal")) {
                         shiftPlane = 0;
                     } else if (lcStr == _T("shift")) {
