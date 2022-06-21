@@ -1,6 +1,7 @@
 #pragma once
 
 #include "string_type.h"
+#include "Logger.h"
 
 class State;
 class StateCommonInfo;
@@ -12,7 +13,8 @@ enum class NodeType {
     RootStroke, // ルートストロークテーブルノード
     Stroke,     // ストロークテーブルノード
     String,     // 文字列ノード
-    Function   // 機能ノード
+    Function,   // 機能ノード
+    None,
 };
 
 namespace {
@@ -38,6 +40,8 @@ namespace {
 // -------------------------------------------------------------------
 // ノードの基底クラス (抽象クラス)
 class Node {
+    DECLARE_CLASS_LOGGER;
+
 public:
     virtual ~Node();
 

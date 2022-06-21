@@ -261,6 +261,19 @@ SandS有効時にスペースを入力したい場合は、オートリピート
 SandS が有効であっても、 Shift+Space はそのまま Shift+Space として
 扱われます。</value>
   </data>
+  <data name="checkBox_SandSEnablePostShift.ToolTip" xml:space="preserve">
+    <value>SandS有効時に、多ストローク入力に対して疑似同時打鍵を有効にします。
+
+具体的には第2打鍵が SandS によるシフト状態だった場合に、
+第1打鍵も強制的にシフト状態に移行させることで実現しています。
+
+したがって、第1打鍵のキーがシフトなしで押下された後でも、
+第2打鍵を SandS でシフト状態にして打鍵すれば、第1打鍵が
+シフト状態で押下されたものとして処理が行われます。
+
+なお、後置書き換えキーも利用する場合は、当項目はチェックを
+外してください。</value>
+  </data>
   <data name="textBox_SandSEnableSpaceOrRepeatMillisec.ToolTip" xml:space="preserve">
     <value>SandS有効時に Space キーを連続打鍵した時、空白のリピート入力を有効に
 するまでの時間(ミリ秒)を設定します。
@@ -327,18 +340,6 @@ Unicode をそのまま送信します。漢字などもそのまま送信され
 タイマーが起動し、上記条件の時間が経過した
 ⇒ J, W, R キーの解放を待たずに、J+R⇒「じ」が確定します。
 </value>
-  </data>
-  <data name="checkBox_useCombinationKeyTimer1.ToolTip" xml:space="preserve">
-    <value>同時打鍵判定のタイミングにタイマーを併用します。
-
-当項目にチェックを入れると、第1打鍵がシフトキーではなく文字キー
-だったときに、タイマーを起動して上記で設定した時間が経過した
-タイミングでも同時判定が行われるようになります。
-
-例：
-NICOLA配列で文字キーを押下後、シフトキーが押下される前に
-上記条件で設定した時間が経過した。
-⇒キーの解放を待たずに文字の単打が確定します。</value>
   </data>
   <data name="textBox_combinationKeyTimeMs.ToolTip" xml:space="preserve">
     <value>連続シフトによる同時打鍵で、2文字目以降のキーの同時押下時間を設定します。
@@ -663,16 +664,6 @@ OFFにすると、変換文字列全体の末尾にブロッカーを置きま�
 場合は、「優=憂」という部首連想定義をしておくとよいかと思います。
 いったん「優－人⇒憂」という部首合成を実行すると、自動的に「優=憂」
 という連想が登録されます。</value>
-  </data>
-  <data name="checkBox_historySearchKey.ToolTip" xml:space="preserve">
-    <value>Ctrl修飾キーで履歴検索を実行し、同時に先頭候補を選択できるようにします。
-
-連続して押すことで、次の候補を選択することもできます。
-これは自動履歴検索がOFFの場合でも有効です。
-
-履歴検索・選択は、 「その他設定 &gt; 拡張修飾キー」の「設定」をクリックして開く
-「拡張修飾キー設定」ダイアログで、適当なキーに HistNext, HistPrev の呼び出しを
-設定することでも可能です。</value>
   </data>
   <data name="checkBox_autoHistEnabled.ToolTip" xml:space="preserve">
     <value>入力時に自動的に履歴検索を実行する設定

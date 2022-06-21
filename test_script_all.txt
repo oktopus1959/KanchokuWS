@@ -99,18 +99,17 @@ convert(MDAmda) = でしょう
 convert({38}DAad[38]) = ましょう
 
 # のにいると
-loadTable(tables/noniiruto.tbl)
+loadTable(tables/subtables/noniiruto.6.tbl)
 comboMaxTime(100)
 comboMinTime(70)
 convert(Ff) = の
-convert(DdFf) = け
-convert(OKAoka) = ため
-convert(VKJvkj) = かっ
+convert(DdFf) = よ
+convert(OKAoka) = うば
+convert(VKJvkj) = かき
 convert(D<200>Idi) = び
 convert(KDFkdf) = にゅ
 convert(KDFdfk) = にゅ
-convert(KkDFdf) = 、け
-convert(KkDFdf) = にゅ
+convert(KkDFdf) = 、よ
 convert(KDFkfd) = にゅ
 convert(K<87>D<30>F<43>kfd) = にゅ
 convert(K<150>DFkfd) = にゅ
@@ -120,16 +119,16 @@ convert(K<24>D<103>k<23>F<150>df) = にゅ
 
 enableTimer2()
 convert(K<24>D<103>k<23>F<150>df) = にゅ
-convert(D<52>I<105>O<48>i<80>od) = びだ
+convert(D<52>I<105>O<48>i<80>od) = びぜ
 
 rewriteMaxTime(100)
 convert({22}[22]<50>{12}[12]) = ぽ
-convert({22}[22]<200>{12}[12]) = 。て
+convert({22}[22]<200>{12}[12]) = 。し
 
 loadTable(tables/okt.tbl)
 rewriteMaxTime(100)
 convert({422}[422]<50>{412}[412]) = ぽ
-convert({422}[422]<200>{412}[412]) = 。て
+convert({422}[422]<200>{412}[412]) = 。し
 
 ### NICOLA ###
 loadTable(tables/nicola.tbl)

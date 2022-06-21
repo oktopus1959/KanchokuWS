@@ -130,12 +130,16 @@ void State::DoDeckeyPostProc() {
     DoPostCheckChain();
     //// 不要な後続状態を削除
     //DeleteUnnecessarySuccessorState();
-    if (NextNodeMaybe() && !IsUnnecessary()) {
+    while (NextNodeMaybe() && !IsUnnecessary()) {
+        _LOG_DEBUGH(_T("PATH-0: NextNodeMaybe=%p"), NextNodeMaybe());
         // 新しい後続ノードが生成されており、自身が不要状態でないならば、ここで後続ノードの処理を行う
         // (自身が不要状態ならば、この後、前接状態に戻り、そこで後続ノードが処理される)
         _LOG_DEBUGH(_T("nextNode: %s"), NODE_NAME_PTR(NextNodeMaybe()));
         // 後続状態を作成
         State* ps = NextNodeMaybe()->CreateState();
+        _LOG_DEBUGH(_T("PATH-A"));
+        ClearNextNodeMaybe();       // 新状態を生成したので、親には渡さない。参照をクリアしておく
+        _LOG_DEBUGH(_T("PATH-B"));
         // 状態が生成されたときに処理を実行
         // ストロークノード以外は、ここで何らかの出力処理をするはず
         if (ps->DoProcOnCreated()) {
@@ -143,12 +147,14 @@ void State::DoDeckeyPostProc() {
             _LOG_DEBUGH(_T("%s: appendSuccessorState: %s"), NAME_PTR, ps->NAME_PTR);
             pNext = ps;
             ps->pPrev = this;
+            _LOG_DEBUGH(_T("PATH-C"));
         } else {
+            SetNextNodeMaybe(ps->NextNodeMaybe());   // 新しい後続ノードがあるかもしれないのでここでセットしておく
+            _LOG_DEBUGH(_T("NextNodeMaybe=%p"), NextNodeMaybe());
             delete ps;  // 後続状態の生成時処理の結果、後続状態は不要になったので削除する
+            _LOG_DEBUGH(_T("PATH-D"));
         }
-        _LOG_DEBUGH(_T("ClearNextNodeMaybe()"));
-        //pNextNodeMaybe = nullptr;   // 新ノードを処理したので、親には渡さない。参照をクリアしておく
-        ClearNextNodeMaybe();       // 新ノードを処理したので、親には渡さない。参照をクリアしておく
+        _LOG_DEBUGH(_T("PATH-E"));
     }
     _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
 }

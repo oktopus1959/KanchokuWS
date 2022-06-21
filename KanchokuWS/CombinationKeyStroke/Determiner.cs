@@ -84,13 +84,17 @@ namespace KanchokuWS.CombinationKeyStroke
         // 前置書き換えキーの打鍵時刻
         private DateTime preRewriteDt = DateTime.MinValue;
 
-        private void checkPreRewriteTime()
+        // 前キー
+        private int prevDecKey = -1;
+
+        private void checkPreRewriteTime(int dk)
         {
-            if (preRewriteDt._isValid() && Settings.PreRewriteAllowedDelayTimeMs > 0) {
-                if ((DateTime.Now - preRewriteDt).TotalMilliseconds > Settings.PreRewriteAllowedDelayTimeMs) {
-                    logger.DebugH($"CALL cancelPreRewrite");
-                    frmMain?.ExecCmdDecoder("cancelPreRewrite", null);
-                }
+            if (Stroke.ModuloizeKey(prevDecKey) != Stroke.ModuloizeKey(dk) && 
+                preRewriteDt._isValid() &&
+                Settings.PreRewriteAllowedDelayTimeMs > 0 &&
+                (DateTime.Now - preRewriteDt).TotalMilliseconds > Settings.PreRewriteAllowedDelayTimeMs) {
+                logger.DebugH($"CALL cancelPreRewrite");
+                frmMain?.ExecCmdDecoder("cancelPreRewrite", null);
             }
         }
 
@@ -196,7 +200,8 @@ namespace KanchokuWS.CombinationKeyStroke
         {
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
 
-            checkPreRewriteTime();
+            checkPreRewriteTime(decKey);
+            prevDecKey = decKey;
 
             List<int> result = null;
 
@@ -254,7 +259,9 @@ namespace KanchokuWS.CombinationKeyStroke
 
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
 
-            if (result._notEmpty()) setPreRewriteTime(result.Last());
+            if (result._notEmpty()) {
+                setPreRewriteTime(result.Last());
+            }
 
             return result;
         }
@@ -274,13 +281,15 @@ namespace KanchokuWS.CombinationKeyStroke
         {
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
 
-            checkPreRewriteTime();
+            checkPreRewriteTime(decKey);
 
             var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, DateTime.Now);
 
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
 
-            if (result._notEmpty()) setPreRewriteTime(result.Last());
+            if (result._notEmpty()) {
+                setPreRewriteTime(result.Last());
+            }
 
             return result;
         }

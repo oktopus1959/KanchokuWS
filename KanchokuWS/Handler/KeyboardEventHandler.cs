@@ -694,7 +694,10 @@ namespace KanchokuWS.Handler
                                         // キーリピートに移行しない閾値時間が設定されている or 前回のSpaceキー離放時から閾値時間を超過していた
                                         setShifted();
                                         // 後置シフトキーを送出する
-                                        if (Settings.SandSEnablePostShift && bDecoderOn) invokeHandlerForPostSandSKey();
+                                        if (Settings.SandSEnablePostShift && bDecoderOn) {
+                                            logger.DebugH(() => $"CALL-1: invokeHandlerForPostSandSKey");
+                                            invokeHandlerForPostSandSKey();
+                                        }
                                         return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                                     }
                                     // リピート状態に移行
@@ -784,6 +787,7 @@ namespace KanchokuWS.Handler
                     keyInfoManager.makeExModKeyShifted(bDecoderOn);
                     if (keyInfoManager.isSandSShifted() && bDecoderOn && Settings.SandSEnablePostShift) {
                         // SandS が SHIFTED に遷移していれば後置シフトキーも送出する
+                        logger.DebugH(() => $"CALL-2: invokeHandlerForPostSandSKey");
                         invokeHandlerForPostSandSKey();
                     }
                 }

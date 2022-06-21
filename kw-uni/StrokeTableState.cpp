@@ -360,6 +360,14 @@ namespace {
 // -------------------------------------------------------------------
 // StrokeTableNode - ストロークテーブルの連鎖となるノード
 
+// デストラクタ
+StrokeTableNode::~StrokeTableNode() {
+    _LOG_DEBUGH(_T("CALLED: destructor: ptr=%p"), this);
+    for (auto p : children) {
+        delete p;       // 子ノードの削除 (デストラクタ)
+    }
+}
+
 // 当ノードを処理する State インスタンスを作成する (depth == 0 ならルートStateを返す)
 State* StrokeTableNode::CreateState() {
     bRemoveAllStroke = false;

@@ -3,22 +3,25 @@
 #include "Logger.h"
 
 #include "FunctionNode.h"
+#include "StrokeTable.h"
 
 // -------------------------------------------------------------------
+// 書き換え情報
 class RewriteInfo {
 public:
     MString rewriteStr;
     size_t rewritableLen;
+    StrokeTableNode* subTable = 0;
 
     RewriteInfo() : rewriteStr(), rewritableLen(0) { }
 
     RewriteInfo(const RewriteInfo& info)
-        : rewriteStr(info.rewriteStr), rewritableLen(info.rewritableLen)
+        : rewriteStr(info.rewriteStr), rewritableLen(info.rewritableLen), subTable(info.subTable)
     {
     }
 
-    RewriteInfo(const MString& ms, size_t rewLen)
-        : rewriteStr(ms), rewritableLen(rewLen)
+    RewriteInfo(const MString& ms, size_t rewLen, StrokeTableNode* pn)
+        : rewriteStr(ms), rewritableLen(rewLen), subTable(pn)
     {
     }
 
@@ -32,20 +35,22 @@ public:
     MString getNextStr() const {
         return utils::safe_substr(rewriteStr, getOutStrLen());
     }
+
+    wstring getDebugStr() const {
+        return to_wstr(getOutStr()) + _T("/") + to_wstr(getNextStr());
+    }
 };
 
-// PostRewriteOneShotNode - ノードのテンプレート
+// PostRewriteOneShotNode
 class PostRewriteOneShotNode : public FunctionNode {
     DECLARE_CLASS_LOGGER;
 
+    // 書き換え情報マップ -- 前置書き換え対象文字列がキーとなる
     std::map<MString, RewriteInfo> rewriteMap;
 
     RewriteInfo myRewriteInfo;
-    //MString myStr;
 
-    //size_t myRewriteLen;
-
-    //MString emptyStr;
+    std::vector<StrokeTableNode*> subTables;
 
 public:
     PostRewriteOneShotNode(const wstring& s, bool bBare);
@@ -61,10 +66,13 @@ public:
 
     const RewriteInfo& getRewriteInfo() const { return myRewriteInfo; }
 
-    void addRewritePair(const wstring& key, const wstring& value, bool bBare);
+    void addRewritePair(const wstring& key, const wstring& value, bool bBare, StrokeTableNode* pNode);
 
-    void addRewriteMap(const std::map<MString, RewriteInfo>& rewMap) {
-        rewriteMap.insert(rewMap.begin(), rewMap.end());
+    void merge(PostRewriteOneShotNode& rewNode) {
+        rewriteMap.insert(rewNode.rewriteMap.begin(), rewNode.rewriteMap.end());
+        rewNode.rewriteMap.clear();
+        utils::append(subTables, rewNode.subTables);
+        rewNode.subTables.clear();
     }
 
     const RewriteInfo* getRewriteInfo(const MString& key) const {
@@ -73,6 +81,8 @@ public:
     }
 
     const std::map<MString, RewriteInfo>& getRewriteMap() const { return rewriteMap; }
+
+    size_t getSubTableNum() const { return subTables.size(); }
 
     const wstring getDebugString() const;
 };

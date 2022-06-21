@@ -18,16 +18,16 @@
 #include "MyPrevChar.h"
 #include "Oneshot/PostRewriteOneShot.h"
 
-#define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
 
 #if 0
+#define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define LOG_INFO LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
-#define LOG_TRACE LOG_INFO
+//#define LOG_TRACE LOG_INFO
 #endif
 
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
@@ -50,6 +50,23 @@ namespace {
         ARROW_BUNDLE,   // -*>-n>
         REWRITE,        // @{ : 後置書き換え
     };
+
+    inline wstring getTokenString(TOKEN token) {
+        switch (token) {
+        case TOKEN::END: return _T("END");
+        case TOKEN::LBRACE: return _T("LBRACE");
+        case TOKEN::RBRACE: return _T("RBRACE");
+        case TOKEN::COMMA: return _T("COMMA");
+        case TOKEN::STRING: return _T("STRING");
+        case TOKEN::BARE_STRING: return _T("BARE_STRING");
+        case TOKEN::FUNCTION: return _T("FUNCTION");
+        case TOKEN::SLASH: return _T("SLASH");
+        case TOKEN::ARROW: return _T("ARROW");
+        case TOKEN::ARROW_BUNDLE: return _T("ARROW_BUNDLE");
+        case TOKEN::REWRITE: return _T("REWRITE");
+        default: return _T("UNKNOWN");
+        };
+    }
 
     // ビルトイン機能
     struct BuiltInMarker {
@@ -224,6 +241,7 @@ namespace {
             blockInfoStack.Push(SETTINGS->rootDir, tableFile, 0);
             if (!tableLines.empty()) {
                 currentLine = tableLines[0];
+                _LOG_DEBUGH(_T("currentLine(1)=%s"), currentLine.c_str());
             }
         }
 
@@ -248,6 +266,7 @@ namespace {
 
         // デフォルトのシフト面の機能(自身の文字を返す)ノードの設定
         void setupShiftedKeyFunction(StrokeTableNode* tblNode) {
+            _LOG_DEBUGH(_T("CALLED"));
             for (size_t i = 0; i < PLANE_DECKEY_NUM; ++i) {
                 //tblNode->setNthChild(i + SHIFT_DECKEY_START, new MyCharNode());
                 setNthChildNode(tblNode, i + SHIFT_DECKEY_START, new MyCharNode());
@@ -262,6 +281,7 @@ namespace {
         // テーブル定義を解析してストローク木を構築する
         // 後から部分的にストローク定義を差し込む際にも使用される
         void ParseTableSource(StrokeTableNode* tblNode) {
+            _LOG_DEBUGH(_T("ENTER"));
             readNextToken(0);
             while (currentToken != TOKEN::END) {
                 switch (currentToken) {
@@ -287,10 +307,12 @@ namespace {
                 }
                 readNextToken(0);
             }
+            _LOG_DEBUGH(_T("LEAVE"));
         }
 
         StrokeTableNode* makeSubTree(StrokeTableNode* tblNode, int depth, int prevNth) {
             //wstring myGuideChars = getAndRemoveDefines(_T("defguide"));   // フロントエンドでサポート
+            _LOG_DEBUGH(_T("ENTER: tblNode=%p, depth=%d, parevNth=%d"), tblNode, depth, prevNth);
 
             if (tblNode == 0) tblNode = new StrokeTableNode(depth);
             int shiftPlaneOffset = depth == 0 ? shiftPlane * PLANE_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
@@ -298,6 +320,7 @@ namespace {
             bool isPrevDelim = true;
             readNextToken(depth);
             while (currentToken != TOKEN::RBRACE) { // '}' でブロックの終わり
+                _LOG_DEBUGH(_T("token=%s"), getTokenString(currentToken).c_str());
                 switch (currentToken) {
                 case TOKEN::ARROW:
                     createNodePositionedByArrow(tblNode, prevNth, arrowIndex);
@@ -340,12 +363,13 @@ namespace {
             //}
 
             strokes.resize(depth);
+            _LOG_DEBUGH(_T("LEAVE"));
             return tblNode;
         }
 
         void createNodePositionedByArrow(StrokeTableNode* tblNode, int prevNth, int idx) {
             int nextDepth = tblNode->depth() + 1;
-            _LOG_DEBUGH(_T("CALLED: currentLine=%s, nextDepth=%d, idx=%d, prevN=%d"), currentLine.c_str(), nextDepth, idx, prevNth);
+            _LOG_DEBUGH(_T("ENTER: currentLine=%s, nextDepth=%d, idx=%d, prevN=%d"), currentLine.c_str(), nextDepth, idx, prevNth);
             Node* node = tblNode->getNth(idx);
             if (node && node->isStrokeTableNode()) {
                 _LOG_DEBUGH(_T("tblNode[%d] has been created"), idx);
@@ -355,6 +379,7 @@ namespace {
                 setNthChildNode(tblNode, idx, createNodePositionedByArrowSub(0, nextDepth, prevNth, idx));
                 _LOG_DEBUGH(_T("tblNode->setNthChild(%d)"), idx);
             }
+            _LOG_DEBUGH(_T("LEAVE"));
         }
 
         Node* createNodePositionedByArrowSub(StrokeTableNode* tblNode, int depth, int prevNth, int nth) {
@@ -366,7 +391,12 @@ namespace {
                 strokes.pop_back();
                 return tblNode;
             }
-            return createNode(currentToken, depth, prevNth, nth);
+            Node* p = createNode(currentToken, depth, prevNth, nth);
+            if (tblNode) {
+                setNthChildNode(tblNode, nth, p);
+                _LOG_DEBUGH(_T("tblNode->setNthChild(%d)"), nth);
+            }
+            return p;
         }
 
         // 矢印束記法(-*>-nn>)を第1打鍵位置に従って配置する
@@ -434,47 +464,57 @@ namespace {
         }
 
         Node* createNode(TOKEN token, int depth, int prevNth, int nth/*, bool bArrowBundle = false*/) {
-            LOG_TRACE(_T("CALLED: token=%d, depth=%d, prevNth=%d, nth=%d"), token, depth, prevNth, nth);
+            _LOG_DEBUGH(_T("ENTER: token=%s, depth=%d, prevNth=%d, nth=%d"), getTokenString(token).c_str(), depth, prevNth, nth);
+            Node* pResult = 0;
             bool bBareStr = token == TOKEN::BARE_STRING;
             switch (token) {
-            case TOKEN::LBRACE: {
+            case TOKEN::LBRACE:
                 strokes.push_back(nth);
-                auto np = makeSubTree(0, depth, nth);
+                pResult = makeSubTree(0, depth, nth);
                 strokes.pop_back();
-                return np;
-            }
+                break;
+
             case TOKEN::RBRACE:
             case TOKEN::COMMA:             // ',' が来たら次のトークン
             case TOKEN::SLASH:             // '/' が来ても次のトークン
-                return 0;
+                break;
+
             case TOKEN::STRING:            // "str" : 文字列ノード
             case TOKEN::BARE_STRING:       // str : 文字列ノード
                 LOG_TRACE(_T("STRING: %d:%d=%s, shiftPlane=%d"), lineNumber + 1, nth, currentStr.c_str(), shiftPlane);
                 if (shiftPlane == COMBO_SHIFT_PLANE) { _LOG_DEBUGH(_T("STRING: %s: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), currentStr.c_str(), lineNumber + 1, depth, shiftPlane, prevNth, nth); }
-                if (currentStr.empty()) return 0;
+                if (currentStr.empty()) {
+                    _LOG_DEBUGH(_T("empty str"));
+                    break;
+                }
                 if (kanjiConvMap.empty()) {
                     LOG_TRACE(_T("kanjiConvMap.empty()"));
-                    StringNode* strNode = new StringNode(currentStr, false, bBareStr);
-                    LOG_TRACE(_T("LEAVE: new StringNode(%s)"), currentStr.c_str());
-                    return strNode;
+                    pResult = new StringNode(currentStr, false, bBareStr);
                 } else {
                     wstring convStr = conv_kanji(currentStr);
-                    StringNode* strNode = new StringNode(convStr, true, false);
-                    return strNode;
+                    pResult = new StringNode(convStr, true, false);
                 }
+                _LOG_DEBUGH(_T("new StringNode(%s)"), currentStr.c_str());
+                break;
+
             case TOKEN::FUNCTION:          // @c : 機能ノード
-                return createFunctionNode(currentStr, prevNth, nth);
+                pResult = createFunctionNode(currentStr, prevNth, nth);
+                break;
 
             case TOKEN::REWRITE:            // @{ : 書き換えノード '}
-                return createRewriteNdoe();
+                pResult = createRewriteNode();
+                break;
 
             default:                // 途中でファイルが終わったりした場合 : エラー
                 parseError();
-                return 0;
+                break;
             }
+            _LOG_DEBUGH(_T("LEAVE: %s: ptr=%p"), getTokenString(token).c_str(), pResult);
+            return pResult;
         }
 
-        Node* createRewriteNdoe() {
+        Node* createRewriteNode() {
+            _LOG_DEBUGH(_T("ENTER"));
             readWord();
             bool bBare = !currentStr.empty() && currentStr[0] != '"';
             PostRewriteOneShotNode* rewNode = new PostRewriteOneShotNode(utils::strip(currentStr, _T("\"")), bBare);
@@ -485,43 +525,60 @@ namespace {
                 auto items = utils::split(utils::strip(currentLine), '\t');
                 if (items.size() == 2) {
                     _LOG_DEBUGH(_T("REWRITE: %s -> %s"), items[0].c_str(), items[1].c_str());
-                    bBare = items[1].size() > 0 && items[1][0] != '"';
-                    rewNode->addRewritePair(utils::strip(items[0], _T("\"")), utils::strip(items[1], _T("\"")), bBare);
+                    auto key = utils::strip(items[0], _T("\""));
+                    if (items[1] == _T("{")) {
+                        _LOG_DEBUGH(_T("REWRITE: Add SubTable"), items[0].c_str(), items[1].c_str());
+                        skipToEndOfLine();
+                        auto p = makeSubTree(0, 1, 0);
+                        rewNode->addRewritePair(key, _T(""), false, p);
+                    } else {
+                        bBare = items[1].size() > 0 && items[1][0] != '"';
+                        rewNode->addRewritePair(key, utils::strip(items[1], _T("\"")), bBare, 0);
+                        skipToEndOfLine();
+                    }
                 } else {
                     parseError();
                     break;
                 }
 
-                skipToEndOfLine();
                 readNextToken(0);
             }
 
             //bPostRewriteNodeFound = true;
+            _LOG_DEBUGH(_T("LEAVE: rewNode=%p"), rewNode);
             return rewNode;
         }
 
         // 親ノードに対して、n番目の子ノードをセットする
         void setNthChildNode(StrokeTableNode* parentNode, size_t n, Node* childNode) {
             if (parentNode && childNode) {
-                Node* pn = parentNode->getNth(n);
+                Node* pn = parentNode->getNth(n);   // 既存ノード
+                if (pn) {
+                    _LOG_DEBUGH(_T("OVERWRITE: pn=%s(%p), str=%s, cn=%s(%p), str=%s"),
+                        NODE_NAME_PTR(pn), pn, pn->getString().c_str(), NODE_NAME_PTR(childNode), childNode, childNode->getString().c_str());
+                }
                 if (!isInCombinationBlock) {
                     // 同時打鍵ブロック以外ならば上書きOK
                     PostRewriteOneShotNode* pp = pn ? dynamic_cast<PostRewriteOneShotNode*>(pn) : 0;
                     PostRewriteOneShotNode* cp = dynamic_cast<PostRewriteOneShotNode*>(childNode);
                     if (pp && cp) {
                         // 後置書き換えが重複した場合は、書き換え規則のマージ
-                        cp->addRewriteMap(pp->getRewriteMap());
+                        pp->merge(*cp);
+                        LOG_INFOH(_T("PostRewriteOneShotNode merged: pp(%p)=%s, tblNum=%d, cn(%p)=%s"), pp, pp->getDebugString().c_str(), pp->getSubTableNum(), cp, cp->getDebugString().c_str());
+                        delete childNode;
+                    } else {
+                        // 後からのほうで上書きする(前のやつは delete される)
+                        parentNode->setNthChild(n, childNode);
                     }
-                    parentNode->setNthChild(n, childNode);
                 } else {
                     // 同時打鍵ブロックの場合
                     if (pn == 0 || pn->isFunctionNode()) {
                         // 未割り当て、または機能ノードならば上書きOK
                         parentNode->setNthChild(n, childNode);
                     } else if (childNode->isFunctionNode()) {
-                        // 重複していて、子ノードが機能ノードなら無視
+                        // 重複していて、新子ノードが機能ノードなら無視
                     } else {
-                        // 重複していて、親ノードも子ノードも機能ノード以外なら警告
+                        // 重複していて、既存ノードも新子ノードも機能ノード以外なら警告
                         LOG_WARN(_T("DUPLICATED: %s"), currentLine.c_str());
                         nodeDuplicateWarning();
                     }
@@ -544,6 +601,7 @@ namespace {
         // トークンひとつ読んで currentToken にセット
         void readNextToken(int depth) {
             currentToken = getToken(depth);
+            _LOG_DEBUGH(_T("currentToken=%s"), getTokenString(currentToken).c_str());
         }
 
         bool bIgnoreWarningAll = false;
@@ -799,7 +857,7 @@ namespace {
                 getNextChar();
                 currentStr.append(1, c);
             }
-            _LOG_DEBUGH(_T("LEAVE: %s"), currentStr.c_str());
+            _LOG_DEBUGH(_T("RESULT: %s"), currentStr.c_str());
         }
 
         // 空白またはカンマが来るまで読みこんで、currentStr に格納。
@@ -943,6 +1001,7 @@ namespace {
                     return currentChar = 0;
                 }
                 currentLine = tableLines[lineNumber];
+                _LOG_DEBUGH(_T("currentLine(%d)=%s"), lineNumber + 1, currentLine.c_str());
                 nextPos = 0;
             }
             if (nextPos < currentLine.size()) {
@@ -964,6 +1023,7 @@ namespace {
                 return false;
             }
             currentLine = tableLines[lineNumber];
+            _LOG_DEBUGH(_T("currentLine(%d)=%s"), lineNumber + 1, currentLine.c_str());
             return true;
         }
 

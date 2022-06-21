@@ -133,6 +133,7 @@ namespace KanchokuWS.Gui
             this.textBox_vkbMoveGuardMillisec = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.tabPage_imeCombo = new System.Windows.Forms.TabPage();
+            this.button_imeFAQ = new System.Windows.Forms.Button();
             this.groupBox48 = new System.Windows.Forms.GroupBox();
             this.textBox_preRewriteAllowedDelayTimeMs = new System.Windows.Forms.TextBox();
             this.label99 = new System.Windows.Forms.Label();
@@ -480,7 +481,6 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button_imeFAQ = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1853,6 +1853,20 @@ namespace KanchokuWS.Gui
             this.tabPage_imeCombo.Text = "同時打鍵・IME";
             this.tabPage_imeCombo.UseVisualStyleBackColor = true;
             // 
+            // button_imeFAQ
+            // 
+            this.button_imeFAQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_imeFAQ.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_imeFAQ.Location = new System.Drawing.Point(341, 343);
+            this.button_imeFAQ.Name = "button_imeFAQ";
+            this.button_imeFAQ.Size = new System.Drawing.Size(82, 23);
+            this.button_imeFAQ.TabIndex = 20;
+            this.button_imeFAQ.TabStop = false;
+            this.button_imeFAQ.Text = "FAQ(&F)";
+            this.toolTip1.SetToolTip(this.button_imeFAQ, "「よくある質問と回答」ページのURLをブラウザで開きます");
+            this.button_imeFAQ.UseVisualStyleBackColor = true;
+            this.button_imeFAQ.Click += new System.EventHandler(this.button_imeFAQ_Click);
+            // 
             // groupBox48
             // 
             this.groupBox48.Controls.Add(this.textBox_preRewriteAllowedDelayTimeMs);
@@ -1949,9 +1963,7 @@ namespace KanchokuWS.Gui
             this.checkBox_SandSEnablePostShift.Size = new System.Drawing.Size(134, 19);
             this.checkBox_SandSEnablePostShift.TabIndex = 5;
             this.checkBox_SandSEnablePostShift.Text = "疑似同時打鍵サポート";
-            this.toolTip1.SetToolTip(this.checkBox_SandSEnablePostShift, "SandS有効時に、多ストローク入力に対して疑似同時打鍵を有効にします。\r\n\r\n具体的には第2打鍵が SandS によるシフト状態だった場合に、\r\n第1打鍵も強制" +
-        "的にシフト状態に移行させることで実現しています。\r\n\r\nしたがって、第1打鍵のキーがシフトなしで押下された後でも、\r\n第2打鍵を SandS でシフト状態にして" +
-        "打鍵すれば、第1打鍵が\r\nシフト状態で押下されたものとして処理が行われます。");
+            this.toolTip1.SetToolTip(this.checkBox_SandSEnablePostShift, resources.GetString("checkBox_SandSEnablePostShift.ToolTip"));
             this.checkBox_SandSEnablePostShift.UseVisualStyleBackColor = true;
             // 
             // textBox_SandSEnableSpaceOrRepeatMillisec
@@ -2117,7 +2129,9 @@ namespace KanchokuWS.Gui
             this.checkBox_useCombinationKeyTimer1.Size = new System.Drawing.Size(249, 19);
             this.checkBox_useCombinationKeyTimer1.TabIndex = 1;
             this.checkBox_useCombinationKeyTimer1.Text = "第1打鍵が文字キーの場合にタイマーを併用する";
-            this.toolTip1.SetToolTip(this.checkBox_useCombinationKeyTimer1, resources.GetString("checkBox_useCombinationKeyTimer1.ToolTip"));
+            this.toolTip1.SetToolTip(this.checkBox_useCombinationKeyTimer1, "同時打鍵判定のタイミングにタイマーを併用します。\n\n当項目にチェックを入れると、第1打鍵がシフトキーではなく文字キー\nだったときに、タイマーを起動して上記で設定し" +
+        "た時間が経過した\nタイミングでも同時判定が行われるようになります。\n\n例：\nNICOLA配列で文字キーを押下後、シフトキーが押下される前に\n上記条件で設定した時" +
+        "間が経過した。\n⇒キーの解放を待たずに文字の単打が確定します。");
             this.checkBox_useCombinationKeyTimer1.UseVisualStyleBackColor = true;
             // 
             // textBox_combinationKeyTimeMs
@@ -4601,7 +4615,9 @@ namespace KanchokuWS.Gui
             this.checkBox_historySearchKey.Size = new System.Drawing.Size(185, 19);
             this.checkBox_historySearchKey.TabIndex = 5;
             this.checkBox_historySearchKey.Text = "履歴検索・候補選択する     Ctrl-";
-            this.toolTip1.SetToolTip(this.checkBox_historySearchKey, resources.GetString("checkBox_historySearchKey.ToolTip"));
+            this.toolTip1.SetToolTip(this.checkBox_historySearchKey, "Ctrl修飾キーで履歴検索を実行し、同時に先頭候補を選択できるようにします。\n\n連続して押すことで、次の候補を選択することもできます。\nこれは自動履歴検索がOFF" +
+        "の場合でも有効です。\n\n履歴検索・選択は、 「その他設定 > 拡張修飾キー」の「設定」をクリックして開く\n「拡張修飾キー設定」ダイアログで、適当なキーに His" +
+        "tNext, HistPrev の呼び出しを\n設定することでも可能です。");
             this.checkBox_historySearchKey.UseVisualStyleBackColor = true;
             this.checkBox_historySearchKey.CheckedChanged += new System.EventHandler(this.checkBox_historySearchKey_CheckedChanged);
             // 
@@ -5896,20 +5912,6 @@ namespace KanchokuWS.Gui
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // button_imeFAQ
-            // 
-            this.button_imeFAQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button_imeFAQ.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_imeFAQ.Location = new System.Drawing.Point(341, 343);
-            this.button_imeFAQ.Name = "button_imeFAQ";
-            this.button_imeFAQ.Size = new System.Drawing.Size(82, 23);
-            this.button_imeFAQ.TabIndex = 20;
-            this.button_imeFAQ.TabStop = false;
-            this.button_imeFAQ.Text = "FAQ(&F)";
-            this.toolTip1.SetToolTip(this.button_imeFAQ, "「よくある質問と回答」ページのURLをブラウザで開きます");
-            this.button_imeFAQ.UseVisualStyleBackColor = true;
-            this.button_imeFAQ.Click += new System.EventHandler(this.button_imeFAQ_Click);
             // 
             // DlgSettings
             // 

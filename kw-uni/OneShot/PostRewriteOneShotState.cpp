@@ -15,8 +15,8 @@
 
 #include "PostRewriteOneShot.h"
 
-#define _LOG_DEBUGH_FLAG (false)
 #if 0
+#define _LOG_DEBUGH_FLAG (false)
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -69,11 +69,13 @@ namespace {
     public:
         // コンストラクタ
         PostRewriteOneShotState(PostRewriteOneShotNode* pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFO(_T("CALLED: constructor: this=%p, NodePtr=%p"), this, pN);
             Initialize(logger.ClassNameT(), pN);
         }
 
-        ~PostRewriteOneShotState() { };
+        ~PostRewriteOneShotState() {
+            LOG_INFO(_T("CALLED: destructor: ptr=%p"), this);
+        };
 
 #define NAME_PTR (Name.c_str())
 #define MY_NODE ((PostRewriteOneShotNode*)pNode)
@@ -90,8 +92,11 @@ namespace {
                 const RewriteInfo* rewInfo = MY_NODE->getRewriteInfo(targetStr.substr(pos));
                 if (rewInfo) {
                     int numBS = targetStr.size() - pos;
-                    _LOG_DEBUGH(_T("REWRITE: outStr=%s, rewritableLen=%d, numBS=%d"), MAKE_WPTR(rewInfo->rewriteStr), rewInfo->rewritableLen, numBS);
+                    _LOG_DEBUGH(_T("REWRITE: outStr=%s, rewritableLen=%d, subTable=%p, numBS=%d"), MAKE_WPTR(rewInfo->rewriteStr), rewInfo->rewritableLen, rewInfo->subTable, numBS);
                     HISTORY_STAY_STATE->SetTranslatedOutString(rewInfo->rewriteStr, rewInfo->rewritableLen, numBS);
+                    if (rewInfo->subTable) {
+                        SetNextNodeMaybe(rewInfo->subTable);
+                    }
                     bRewrited = true;
                     break;
                 }
@@ -112,13 +117,13 @@ namespace {
 } // namespace
 
 // -------------------------------------------------------------------
-// PostRewriteOneShotNode - ノードのテンプレート
+// PostRewriteOneShotNode - 書き換えノード
 DEFINE_CLASS_LOGGER(PostRewriteOneShotNode);
 
 // コンストラクタ
 PostRewriteOneShotNode::PostRewriteOneShotNode(const wstring& s, bool bBare)
 {
-    LOG_INFO(_T("CALLED: constructor: s=%s, bBare=%s"), s.c_str(), BOOL_TO_WPTR(bBare));
+    LOG_INFO(_T("ENTER: constructor: ptr=%p, s=%s, bBare=%s"), this, s.c_str(), BOOL_TO_WPTR(bBare));
     wstring rewStr = s;
     size_t rewLen = 0;
     if (bBare) {
@@ -133,7 +138,10 @@ PostRewriteOneShotNode::PostRewriteOneShotNode(const wstring& s, bool bBare)
 
 // デストラクタ
 PostRewriteOneShotNode::~PostRewriteOneShotNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_INFO(_T("CALLED: destructor: ptr=%p"), this);
+    for (auto p : subTables) {
+        delete p;
+    }
 }
 
 // 当ノードを処理する State インスタンスを作成する
@@ -141,7 +149,8 @@ State* PostRewriteOneShotNode::CreateState() {
     return new PostRewriteOneShotState(this);
 }
 
-void PostRewriteOneShotNode::addRewritePair(const wstring& key, const wstring& value, bool bBare) {
+void PostRewriteOneShotNode::addRewritePair(const wstring& key, const wstring& value, bool bBare, StrokeTableNode* pNode) {
+    LOG_INFO(_T("CALLED: key=%s, value=%s, bBare=%s, pNode=%p"), key.c_str(), value.c_str(), BOOL_TO_WPTR(bBare), pNode);
     wstring rewStr = value;
     size_t rewLen = 0;
     if (bBare) {
@@ -149,23 +158,27 @@ void PostRewriteOneShotNode::addRewritePair(const wstring& key, const wstring& v
         size_t pos = value.find('/', 0);
         rewLen = pos < rewStr.size() ? rewStr.size() - pos : rewStr.empty() ? 0 : 1;
     }
-    rewriteMap[to_mstr(key)] = RewriteInfo(to_mstr(rewStr), rewLen);
+    if (pNode) {
+        subTables.push_back(pNode);
+    }
+
+    rewriteMap[to_mstr(key)] = RewriteInfo(to_mstr(rewStr), rewLen, pNode);
 }
 
 const wstring PostRewriteOneShotNode::getDebugString() const {
-    wstring result = _T("myStr: ");
-    result.append(to_wstr(getString())).append(_T(", rewriteMap="));
+    wstring result = _T("myStr: \"");
+    result.append(myRewriteInfo.getDebugStr()).append(_T("\", rewriteMap="));
     bool bFirst = true;
     for (auto pair : rewriteMap) {
         if (!bFirst) result.append(_T(", "));
-        result.append(to_wstr(pair.first)).append(_T(":")).append(to_wstr(pair.second.rewriteStr)).append(_T(":")).append(std::to_wstring(pair.second.rewritableLen));
+        result.append(_T("\"")).append(to_wstr(pair.first)).append(_T(":")).append(pair.second.getDebugStr()).append(_T("\""));
         bFirst = false;
     }
     return result;
 }
 
 // -------------------------------------------------------------------
-// DakutenOneShotNode - ノードのテンプレート
+// DakutenOneShotNode - 濁点書き換えノード
 DEFINE_CLASS_LOGGER(DakutenOneShotNode);
 
 // コンストラクタ
@@ -175,7 +188,7 @@ DakutenOneShotNode::DakutenOneShotNode(wstring mkstr)
     LOG_INFO(_T("CALLED: constructor"));
     const auto& dic = mkstr == _T("゛") ? dakuonDic : handakuonDic;
     for (auto pair : dic) {
-        addRewritePair(pair.first, pair.second, true);
+        addRewritePair(pair.first, pair.second, true, 0);
     }
 }
 

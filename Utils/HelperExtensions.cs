@@ -539,7 +539,7 @@ namespace Utils
 
         public static string _toString(this char[] array)
         {
-            return new string(array, 0, array._strlen());
+            return array != null ? new string(array, 0, array._strlen()) : "";
         }
     }
 

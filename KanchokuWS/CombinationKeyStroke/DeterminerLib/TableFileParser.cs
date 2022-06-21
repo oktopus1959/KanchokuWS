@@ -210,6 +210,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         bool bPrimary;                      // 主テーブルか
 
+        bool bRewriteEnabled = false;       // 書き換えノードがあった
+
         // 同時打鍵定義ブロックの中か
         bool isInCombinationBlock => shiftKeyKind != ShiftKeyKind.None;
 
@@ -238,6 +240,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         // プレースホルダー
         Dictionary<string, int> placeHolders = new Dictionary<string, int>();
+
+        // 書き換えテーブルが対象
+        bool bRewriteTable = false;
 
         StrokeTableNode rootTableNode = new StrokeTableNode(true);
 
@@ -272,11 +277,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 logger.Warn($"DUPLICATED: {currentLine}");
                 nodeDuplicateWarning();
             }
-        }
-
-        void setNodeAt(int idx, Node node)
-        {
-            setNodeAtLast(Helper.MakeList(idx), node);
         }
 
         /// <summary>もしルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる</summary>
@@ -346,6 +346,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             keyComboPool.SetNonTerminalMarkForSubkeys();
             if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
                 keyComboPool.DebugPrint();
+            }
+
+            if (bRewriteEnabled) {
+                // 書き換えノードがあったら、SandSの疑似同時打鍵サポートをOFFにしておく
+                Settings.SandSEnablePostShift = false;
             }
 
             addMyCharFunctionInRootStrokeTable();
@@ -643,7 +648,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 string outStr = node.isStringNode() ? $"{dq}{node.getString()}{dq}" : node.getMarker();
                 outputLines.Add($"-{list.Select(x => x.ToString())._join(">-")}>{outStr}");
 
-                setNodeAtLast(list, node);
+                // 対象が書き換えテーブルでなければノードをセットする
+                if (!bRewriteTable) setNodeAtLast(list, node);
             }
         }
 
@@ -701,6 +707,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 return !bBare ? "\"" + currentStr + "\"" : currentStr;
             }
 
+            //void setNodeAt(int _idx, Node _node)
+            //{
+            //    setNodeAtLast(Helper.MakeList(_idx), _node);
+            //}
+
             int lastIdx = strokeList.Last();
 
             readWordOrString(); // 後置文字列の指定があるか→なければ単打テーブルから文字を拾ってくる
@@ -720,13 +731,47 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     if (node == null) {
                         Node nd = new FunctionNode(s);
                         outputLines.Add($"-{rootIdx}>@{{{s}");
-                        setNodeAt(nth, nd);
+                        //setNodeAt(nth, nd);
                         outputLines.Add($"{leaderStr}{myStr}\t{rewStr}");
                         outputLines.Add("}");
                     } else {
                         outputLines.Add($"{s}{leaderStr}\t{rewStr}");
                     }
                 }
+            }
+
+            void setTableNodeAndOutputByIndex(int nth)
+            {
+                int rootIdx = nth + shiftOffset;
+                string s = getNthRootNodeString(rootIdx);
+                var shiftKeyKindSave = shiftKeyKind;
+                shiftKeyKind = ShiftKeyKind.None;
+                int shiftPlaneSave = shiftPlane;
+                shiftPlane = 0;
+                List<int> strokeListSave = new List<int>(strokeList);
+                strokeList.Clear();
+                bRewriteTable = true;
+
+                if (s._notEmpty()) {
+                    if (node == null) {
+                        Node nd = new FunctionNode(s);
+                        outputLines.Add($"-{rootIdx}>@{{{s}");
+                        //setNodeAt(nth, nd);
+                        outputLines.Add($"{leaderStr}{myStr}\t{{");
+                    } else {
+                        outputLines.Add($"{s}{leaderStr}\t{{");
+                    }
+                    parseSubTree();
+                    outputLines.Add("}");
+                    if (node == null) {
+                        outputLines.Add("}");
+                    }
+                }
+
+                bRewriteTable = false;
+                strokeList.AddRange(strokeListSave);
+                shiftPlane = shiftPlaneSave;
+                shiftKeyKind = shiftKeyKindSave;
             }
 
             int idx = 0;
@@ -773,8 +818,20 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                     case TOKEN.ARROW:
                         int arrowIdx = arrowIndex;
-                        bool bare = readWordOrString();
-                        setNodeAndOutputByIndex(arrowIdx, bare);
+                        readNextToken();
+                        switch (currentToken) {
+                            case TOKEN.LBRACE:
+                                // -22>{ } 形式
+                                setTableNodeAndOutputByIndex(arrowIdx);
+                                break;
+                            case TOKEN.STRING:
+                            case TOKEN.BARE_STRING:
+                                setNodeAndOutputByIndex(arrowIdx, currentToken == TOKEN.BARE_STRING);
+                                break;
+                            default:
+                                parseError();
+                                break;
+                        }
                         break;
 
                     case TOKEN.STRING:             // "str" : 文字列ノード
@@ -817,7 +874,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             if (node != null) {
                 outputLines.Add("}");
-                setNodeAt(lastIdx, node);
+                //setNodeAt(lastIdx, node);
             }
 
             if (depth == 0) placeHolders.Clear();
@@ -1077,11 +1134,17 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         break;
 
                     case '%':
-                        if (parseArrow(getNextChar())) return TOKEN.REWRITE_PRE;
+                        if (parseArrow(getNextChar())) {
+                            bRewriteEnabled = true;
+                            return TOKEN.REWRITE_PRE;
+                        }
                         break;
 
                     case '&':
-                        if (parseArrow(getNextChar())) return TOKEN.REWRITE_POST;
+                        if (parseArrow(getNextChar())) {
+                            bRewriteEnabled = true;
+                            return TOKEN.REWRITE_POST;
+                        }
                         break;
 
                     case '\0':

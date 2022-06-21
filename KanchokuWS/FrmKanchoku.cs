@@ -763,7 +763,7 @@ namespace KanchokuWS
                     case DecoderKeys.POST_PLANE_D_SHIFT_DECKEY:
                     case DecoderKeys.POST_PLANE_E_SHIFT_DECKEY:
                     case DecoderKeys.POST_PLANE_F_SHIFT_DECKEY:
-                        logger.InfoH(() => $"POST_PLANE_X_SHIFT_DECKEY:{deckey}, strokeCount={decoderOutput.GetStrokeCount()}");
+                        logger.InfoH(() => $"POST_PLANE_X_SHIFT_DECKEY=POST_NORMAL_SHIFT_DECKEY+{deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY}, strokeCount={decoderOutput.GetStrokeCount()}");
                         if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
                             // 第2打鍵待ちなら、いったんBSを出力してからシフトされたコードを出力
                             InvokeDecoder(DecoderKeys.BS_DECKEY, 0);
@@ -1431,6 +1431,9 @@ namespace KanchokuWS
                     if (decoderOutput.IsDeckeyToVkey()) {
                         logger.DebugH(() => $"send CLEAR_STROKE_DECKEY");
                         HandleDeckeyDecoder(decoderPtr, DecoderKeys.CLEAR_STROKE_DECKEY, 0, false, ref decoderOutput);
+                    }
+                    if (decoderOutput.numBackSpaces > 0) {
+                        SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(null, decoderOutput.numBackSpaces, true);
                     }
                 }
                 if (decoderOutput.GetStrokeCount() < 1) {
