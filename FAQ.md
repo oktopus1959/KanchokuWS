@@ -258,7 +258,7 @@ IMEに対して文字をUnicodeのまま送っているか、または送出方�
 ![Sands Directive](image/sands-directive.png)
 
 テーブル記述の前後を `#SandS` と `#end SandS` で
-囲みます。`#` は行頭に位置する必要があります。
+囲みます。
 
 ### 連続シフトありの前置シフト
 同時打鍵で連続シフトありだけれども、シフトキーが前置の場合のみ有効なケース。
@@ -266,7 +266,7 @@ IMEに対して文字をUnicodeのまま送っているか、または送出方�
 ![Combo Prefix](image/combo-prefix.png)
 
 テーブル記述の前後を `#combination prefix` と `#end combination` で
-囲みます。`#` は行頭に位置する必要があります。
+囲みます。
 
 ### 連続シフトありの相互シフト同時打鍵
 同時打鍵で連続シフトあり、かつシフトキーの順序が前後しても構わないケース。
@@ -275,7 +275,7 @@ IMEに対して文字をUnicodeのまま送っているか、または送出方�
 ![Combo Succ Nagi](image/combo-succ-nagi.png)
 
 テーブル記述の前後を `#combination successive` と `#end combination` で
-囲みます。`#` は行頭に位置する必要があります。
+囲みます。
 
 ### ワンショット(連続シフトなし)の相互シフト同時打鍵
 同時打鍵かつシフトキーの順序が前後しても構わないが、連続シフトは不可のケース。
@@ -284,7 +284,7 @@ IMEに対して文字をUnicodeのまま送っているか、または送出方�
 ![Combo Oneshot](image/combo-oneshot.png)
 
 テーブル記述の前後を `#combination oneshot` と `#end combination` で
-囲みます。`#` は行頭に位置する必要があります。
+囲みます。
 
 ### 「無変換」キーや「変換」キーを同時打鍵シフトキーとして使いたい
 親指シフトの親指キーとして「無変換」「変換」キーを使いたい場合は、
