@@ -173,11 +173,446 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
     }
 
-    class TableFileParser
+    class TableLines
     {
         private static Logger logger = Logger.GetLogger();
 
-        private List<string> tableLines;
+        private List<string> tableLines = new List<string>();
+
+        // ブロック情報のスタック
+        BlockInfoStack blockInfoStack = new BlockInfoStack();
+
+        // 定義列マップ
+        Dictionary<string, List<string>> linesMap = new Dictionary<string, List<string>>();
+
+        int lineNumber = 0;
+
+        int nextPos = 0;
+
+        public bool Empty => tableLines.Count == 0;
+
+        public bool NotEmpty => tableLines.Count != 0;
+
+        public string CurrentLine => tableLines[lineNumber];
+
+        public int LineNumber => lineNumber + 1;
+
+        public bool IsCurrentPosHeadOfLine => nextPos == 1;
+
+        public char CurrentChar { get; private set; }
+
+        public string currentStr;                  // 文字列トークン
+
+        public TableLines()
+        {
+            blockInfoStack.Push(KanchokuIni.Singleton.KanchokuDir, "", 0);
+        }
+
+        private List<string> readAllLines(string filename, bool bInclude)
+        {
+            List<string> lines = new List<string>();
+            if (filename._notEmpty()) {
+                var includeFilePath = blockInfoStack.CurrentDirPath._joinPath(filename._canonicalPath());
+                logger.DebugH(() => $"ENTER: includeFilePath={includeFilePath}");
+                var contents = Helper.GetFileContent(includeFilePath, (e) => logger.Error(e._getErrorMsg()));
+                if (contents._notEmpty()) {
+                    lines.AddRange(contents._safeReplace("\r", "")._split('\n'));
+                    int nextLineNum = lineNumber;
+                    if (bInclude) {
+                        lines.Add("#end __include__");
+                        ++nextLineNum;
+                    }
+                    blockInfoStack.Push(includeFilePath._getDirPath(), filename, nextLineNum);
+                }
+            }
+            logger.DebugH(() => $"LEAVE: num of lines={lines.Count}");
+            return lines;
+        }
+
+        public void ReadAllLines(string filename)
+        {
+            tableLines.InsertRange(0, readAllLines(filename, false));
+        }
+
+        // ファイルをインクルードする
+        public void IncludeFile() {
+            logger.DebugH("CALLED");
+            var filename = ReadWordOrString();
+            logger.DebugH(() => $"INCLUDE: lineNum={LineNumber}, {filename}");
+            if (filename._notEmpty()) {
+                var lines = readAllLines(filename, true);
+                if (lines._isEmpty()) {
+                    logger.Error($"Can't open: {filename}");
+                    FileOpenError(filename);
+                } else {
+                    tableLines.InsertRange(lineNumber + 1, lines);
+                    logger.DebugH(() => $"INCLUDE: {lines.Count} lines included");
+                }
+            } else {
+                ParseError("ファイル名が指定されていません。");
+            }
+        }
+
+        public void EndInclude()
+        {
+            blockInfoStack.Pop(LineNumber);
+        }
+
+        // 名前を付けて、行ブロックを保存する
+        public void StoreLineBlock()
+        {
+            ReadWord();
+            var blockName = currentStr;
+            logger.DebugH(() => $"CALLED: {blockName}");
+            List<string> lines = null;
+            if (blockName._isEmpty()) {
+                ParseError();
+            } else {
+                lines = new List<string>();
+                linesMap[blockName] = lines;
+                logger.DebugH(() => $"SET: lineNum={LineNumber}, {blockName}");
+            }
+            while (GetNextLine()) {
+                if (CurrentLine._startsWith("#end")) {
+                    lines.Add("#end __include__");
+                    break;
+                }
+                if (lines != null) {
+                    lines.Add(CurrentLine);
+                }
+            }
+        }
+
+        // 保存しておいた行ブロックをロードする
+        public void LoadLineBlock()
+        {
+            var blockName = ReadWord();
+            logger.DebugH(() => $"CALLED: |{blockName}|");
+            if (blockName._isEmpty()) {
+                ParseError();
+            } else if (blockInfoStack.Find(blockName)) {
+                LoadLoopError(blockName);
+            } else {
+                var lines = linesMap._safeGet(blockName);
+                if (lines._isEmpty()) {
+                    logger.Error($"No stored lines for \"{blockName}\"");
+                    NoSuchBlockError(blockName);
+                } else {
+                    logger.DebugH(() => $"InsertRange: {blockName}, {lines.Count} lines");
+                    tableLines.InsertRange(LineNumber, lines);
+                    blockInfoStack.Push("", blockName, LineNumber);
+                }
+            }
+        }
+
+        // '"' が来るまで読みこんで、currentStr に格納。
+        public void ReadString() {
+            // 「"」自身は「"\""」と表記することで指定できる。
+            // 「\」自身は「"\\"」と表記する。
+            // 「\」は、単に次の一文字をエスケープするだけで、
+            // 「"\n"」「"\t"」「"\ooo"」は未対応。
+            var sb = new StringBuilder();
+            while (true) {
+                char c = GetNextChar();
+                if (c == '\r' || c == '\n' || c == 0) {
+                    ParseError();
+                }
+                if (c == '"') {
+                    // 文字列の終わり
+                    break;
+                }
+                if (c == '\\') {
+                    // 最初の「\」は、単に読みとばす
+                    c = GetNextChar();
+                }
+                sb.Append(c);
+            }
+            currentStr = sb.ToString();
+        }
+
+        // 何らかのデリミタが来るまで読みこんで、currentStr に格納。スラッシュは文字列に含む
+        public void ReadBareString(char c = '\0') {
+            var sb = new StringBuilder();
+            bool isOutputChar() { return c == '/' || (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c >= 0x80; }
+            if (c != '\0') {
+                if (!isOutputChar()) return;
+                sb.Append(c);
+            }
+            while (true) {
+                c = PeekNextChar();
+                if (!isOutputChar()) break;
+                GetNextChar();
+                sb.Append(c);
+            }
+            currentStr = sb.ToString();
+            logger.DebugH(() => $"LEAVE: {currentStr}");
+        }
+
+        // 区切り文字が来るまで読みこんで、currentStr に格納。
+        public void ReadMarker() {
+            var sb = new StringBuilder();
+            while (true) {
+                char c = PeekNextChar();
+                if (c <= ' ' || c == ',' || c == '|' || c == ';' || c == '/') {
+                    if (sb._isEmpty()) ParseError();
+                    currentStr = sb.ToString();
+                    return;
+                }
+                GetNextChar();
+                sb.Append(c);
+            }
+        }
+
+        public string ReadWord() {
+            currentStr = "";
+            if (nextPos >= CurrentLine._safeLength()) return currentStr;
+            char c = SkipSpace();
+            if (c <= ' ') return currentStr;
+            if (c == ';' || (c == '/' && PeekNextChar() == '/')) {
+                SkipToEndOfLine();
+                return currentStr;
+            }
+            currentStr = readWordSub(c);
+            return currentStr;
+        }
+
+        string readWordSub(char c) {
+            var sb = new StringBuilder();
+            sb.Append(c);
+            while (true) {
+                c = GetNextChar();
+                if (c <= ' ') {
+                    return sb.ToString();
+                }
+                sb.Append(c);
+            }
+        }
+
+        // 行末までの範囲で文字列または単語を読み込む
+        public string ReadWordOrString()
+        {
+            currentStr = "";
+            if (nextPos < CurrentLine._safeLength()) {
+                char c = SkipSpace();
+                if (c > ' ') {
+                    if (c == '"') {
+                        ReadString();
+                    } else if (c == ';' || (c == '/' && PeekNextChar() == '/')) {
+                        SkipToEndOfLine();
+                    } else {
+                        readWordSub(c);
+                    }
+                }
+            }
+            return currentStr;
+        }
+
+        public char PeekNextChar() {
+            return CurrentChar = (nextPos < CurrentLine.Length) ? CurrentLine[nextPos] : '\n';
+        }
+
+        public char GetNextChar() {
+            if (nextPos > CurrentLine.Length) {
+                ++lineNumber;
+                if (lineNumber >= tableLines.Count) {
+                    return CurrentChar = '\0';
+                }
+                nextPos = 0;
+            }
+            if (nextPos < CurrentLine.Length) {
+                CurrentChar = CurrentLine[nextPos++];
+            } else {
+                ++nextPos;
+                CurrentChar = '\n';
+            }
+            return CurrentChar;
+        }
+
+        public bool GetNextLine() {
+            ++lineNumber;
+            if (lineNumber >= tableLines.Count) {
+                return false;
+            }
+            return true;
+        }
+
+        public void SkipToEndOfLine() {
+            nextPos = CurrentLine.Length + 1;
+            CurrentChar = '\n';
+        }
+
+        // 空白文字を読み飛ばす
+        public char SkipSpace() {
+            while (true) {
+                char c = GetNextChar();
+                if (c == '\r' || c == '\n' || c == 0 || c > ' ')  return c;
+            }
+        }
+
+        public void RewindChar()
+        {
+            --nextPos;
+        }
+
+        public string MakeErrorLines() {
+            var sb = new StringBuilder();
+            sb.Append("lines=\n");
+            for (int i = 9; i > 0; --i) {
+                if (lineNumber >= i && tableLines.Count > lineNumber - i) sb.Append(tableLines[lineNumber - i]).Append('\n');
+            }
+            sb.Append($">> {CurrentLine}\n");
+            for (int i = 1; i < 10; ++i) {
+                if (lineNumber + i < tableLines.Count) sb.Append(tableLines[lineNumber + i]).Append('\n');
+            }
+            return sb.ToString();
+        }
+
+        string blockOrFile() {
+            return blockInfoStack.CurrentDirPath._isEmpty() ? "ブロック" : "テーブルファイル";
+        }
+
+        int calcErrorLineNumber() {
+            return blockInfoStack.CalcCurrentLineNumber(LineNumber);
+        }
+
+        int calcErrorColumn() {
+            if (nextPos == 0 && lineNumber > 0) return tableLines[lineNumber - 1].Count();
+            return nextPos;
+        }
+
+        // 解析エラー
+        public void ParseError(string msg = null) {
+            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
+            handleError(String.Format("{0}{1} {2} の {3}行 {4}文字目({5})がまちがっているようです：\r\n> {6} ...",
+                msg._notEmpty() ? msg + "\r\n" : "",
+                blockOrFile(),
+                blockInfoStack.CurrentBlockName,
+                calcErrorLineNumber(),
+                calcErrorColumn(),
+                errorChar(),
+                CurrentLine._safeSubstring(0, 50)));
+        }
+
+        string errorChar()
+        {
+            switch (CurrentChar) {
+                case '\n':
+                case '\r':
+                    return "NL";
+                case '\0':
+                    return "NULL";
+                default:
+                    return $"'{CurrentChar}'";
+            }
+        }
+
+        // 引数エラー
+        public void ArgumentError(string arg) {
+            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
+            handleError(String.Format("引数 {0} が不正です。\r\nテーブルファイル {1} の {2}行目がまちがっているようです：\r\n> {3} ...",
+                arg, blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+        }
+
+        // loadループエラー
+        public void LoadLoopError(string name) {
+            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
+            handleError(String.Format("ブロック {0} のロードがループしています。\r\n{1} {2} の {3}行目がまちがっているようです：\r\n> {4} ...",
+                name, blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+        }
+
+        // storeブロックが存在しない
+        public void NoSuchBlockError(string name) {
+            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
+            handleError(String.Format("指定されたブロック {0} が存在しません。\r\n{1} {2} の {3}行目がまちがっているようです：\r\n> {4} ...",
+                name, blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+        }
+
+        // ファイルの読み込みに失敗した場合
+        public void FileOpenError(string filename) {
+            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
+            handleError(String.Format("ファイル {0} を読み込めません。\r\nテーブルファイル {1} の {2}行目がまちがっているようです：\r\n> {3} ...",
+                filename, blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+        }
+
+        // ノードの重複が発生した場合
+        public void NodeDuplicateWarning() {
+            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
+            handleWarning(String.Format("{0} {1} の {2}行目でノードの重複が発生しました。意図したものであれば無視してください (#ignoreWarning overwrite を記述すると無視されます)：\r\n> {3} ...",
+                blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+        }
+
+        // カラム0で予期しないLBRACEが発生
+        public void UnexpectedLeftBraceAtColumn0Warning() {
+            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
+            handleWarning(
+                String.Format("{0} {1} の {2}行目の行頭にネストされた '{{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {3} ...",
+                blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+        }
+
+        // カラム0で予期しないRBRACEが発生
+        public void UnexpectedRightBraceAtColumn0Warning() {
+            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
+            handleWarning(
+                String.Format("{0} {1} の {2}行目の行頭にまだネスト中の '}}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {3} ...",
+                blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+        }
+
+        // エラー処理
+        void handleError(string msg) {
+            logger.Error(msg);
+            logger.Error("lines=\n" + MakeErrorLines());
+            // エラーメッセージを投げる
+            Error(msg);
+        }
+
+        // 警告ー処理
+        void handleWarning(string msg) {
+            logger.Warn(msg);
+            logger.Warn("lines=\n" + MakeErrorLines());
+            // エラーメッセージを投げる
+            Warn(msg);
+        }
+
+        public void showErrorMessage()
+        {
+            if (!errorMsg._isEmpty()) {
+                SystemHelper.ShowWarningMessageBox(errorMsg.ToString());
+            }
+        }
+
+        private StringBuilder errorMsg = new StringBuilder();
+
+        private int errorLevel = 0;
+
+        // エラー情報を格納
+        void setErrorInfo(int level, string msg) {
+            errorLevel = level;
+            if (errorMsg.Length + msg.Length < 800) {
+                if (level == Logger.LogLevelError || errorMsg.Length + msg.Length < 500) {
+                    if (!errorMsg._isEmpty()) errorMsg.Append("\r\n\r\n");
+                    errorMsg.Append(msg);
+                }
+            }
+        }
+
+        // エラー情報を格納し、例外を送出
+        public void Error(string msg) {
+            setErrorInfo(Logger.LogLevelError, msg);
+        }
+
+        // 警告情報を格納するが、継続する
+        public void Warn(string msg) {
+            setErrorInfo(Logger.LogLevelWarn, msg);
+        }
+
+    }
+
+    /// <summary>
+    /// テーブル解析器
+    /// </summary>
+    class TableParser
+    {
+        private static Logger logger = Logger.GetLogger();
 
         // トークンの種類
         enum TOKEN {
@@ -199,14 +634,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             PLACE_HOLDER,   // $n
         };
 
+        TableLines tableLines;
+
         TOKEN currentToken = TOKEN.IGNORE;  // 最後に読んだトークン
         string currentStr;                  // 文字列トークン
         int arrowIndex = -1;                // ARROWインデックス
-        int lineNumber = 0;                 // 今読んでる行数
-
-        string currentLine;                 // 現在解析中の行
-        int nextPos = 0;                    // 次の文字位置
-        char currentChar = '\0';            // 次の文字
 
         bool bPrimary;                      // 主テーブルか
 
@@ -232,11 +664,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // 対象となる KeyComboPool
         KeyCombinationPool keyComboPool;
 
-        // ブロック情報のスタック
-        BlockInfoStack blockInfoStack = new BlockInfoStack();
-
         // 出力用のバッファ
         List<string> outputLines = new List<string>();
+
+        public List<string> OutputLines => outputLines;
 
         // プレースホルダー
         Dictionary<string, int> placeHolders = new Dictionary<string, int>();
@@ -245,6 +676,79 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         bool bRewriteTable = false;
 
         StrokeTableNode rootTableNode = new StrokeTableNode(true);
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="pool">対象となる KeyComboPool</param>
+        public TableParser(TableLines tableLines, KeyCombinationPool pool, bool primary)
+        {
+            this.tableLines = tableLines;
+            bPrimary = primary;
+            keyComboPool = pool;
+        }
+
+        /// <summary>
+        /// テーブル定義を解析してストローク木を構築する。
+        /// 解析結果を矢印記法に変換して出力ファイル(outFile)に書き込む
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="outFilename"></param>
+        public void ParseTable()
+        {
+            logger.InfoH($"ENTER");
+
+            readNextToken(true);
+            while (currentToken != TOKEN.END) {
+                switch (currentToken) {
+                    case TOKEN.LBRACE:
+                        parseSubTree();
+                        break;
+
+                    case TOKEN.ARROW:
+                    case TOKEN.REWRITE_PRE:
+                    case TOKEN.REWRITE_POST:
+                        parseArrowNode(currentToken, arrowIndex);
+                        break;
+
+                    case TOKEN.ARROW_BUNDLE:
+                        parseArrowBundleNode(arrowIndex);
+                        break;
+
+                    case TOKEN.IGNORE:
+                        break;
+
+                    default:
+                        tableLines.ParseError();
+                        break;
+                }
+                readNextToken(true);
+            }
+
+            keyComboPool.SetNonTerminalMarkForSubkeys();
+            if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
+                keyComboPool.DebugPrint();
+            }
+
+            if (bRewriteEnabled) {
+                // 書き換えノードがあったら、SandSの疑似同時打鍵サポートをOFFにしておく
+                Settings.SandSEnablePostShift = false;
+            }
+
+            addMyCharFunctionInRootStrokeTable();
+
+            logger.InfoH($"LEAVE: KeyCombinationPool.Count={keyComboPool.Count}");
+        }
+
+        /// <summary>もしルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる</summary>
+        void addMyCharFunctionInRootStrokeTable()
+        {
+            for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
+                if (rootTableNode.getNth(idx) == null) {
+                    outputLines.Add($"-{idx}>@^");
+                }
+            }
+        }
 
         void setNodeAtLast(List<int> stkList, Node node)
         {
@@ -274,91 +778,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 }
             }
             if (bOverwritten && isInCombinationBlock && !bIgnoreWarningOverwrite) {
-                logger.Warn($"DUPLICATED: {currentLine}");
-                nodeDuplicateWarning();
+                logger.Warn($"DUPLICATED: {tableLines.CurrentLine}");
+                tableLines.NodeDuplicateWarning();
             }
-        }
-
-        /// <summary>もしルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる</summary>
-        void addMyCharFunctionInRootStrokeTable()
-        {
-            for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
-                if (rootTableNode.getNth(idx) == null) {
-                    outputLines.Add($"-{idx}>@^");
-                }
-            }
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="pool">対象となる KeyComboPool</param>
-        public TableFileParser(KeyCombinationPool pool, bool primary)
-        {
-            bPrimary = primary;
-            keyComboPool = pool;
-            blockInfoStack.Push(KanchokuIni.Singleton.KanchokuDir, "", 0);
-        }
-
-        /// <summary>
-        /// テーブル定義を解析してストローク木を構築する。
-        /// 解析結果を矢印記法に変換して出力ファイル(outFile)に書き込む
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="outFilename"></param>
-        public void ParseTable(string filename, string outFilename)
-        {
-            logger.InfoH($"ENTER: filename={filename}");
-            tableLines = readAllLines(filename, false);
-
-            if (tableLines._notEmpty()) {
-                currentLine = tableLines[0];
-                readNextToken(true);
-                while (currentToken != TOKEN.END) {
-                    switch (currentToken) {
-                        case TOKEN.LBRACE:
-                            parseSubTree();
-                            break;
-
-                        case TOKEN.ARROW:
-                        case TOKEN.REWRITE_PRE:
-                        case TOKEN.REWRITE_POST:
-                            parseArrowNode(currentToken, arrowIndex);
-                            break;
-
-                        case TOKEN.ARROW_BUNDLE:
-                            parseArrowBundleNode(arrowIndex);
-                            break;
-
-                        case TOKEN.IGNORE:
-                            break;
-
-                        default:
-                            parseError();
-                            break;
-                    }
-                    readNextToken(true);
-                }
-            } else {
-                Error($"テーブルファイル({filename})が開けません");
-            }
-
-            keyComboPool.SetNonTerminalMarkForSubkeys();
-            if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
-                keyComboPool.DebugPrint();
-            }
-
-            if (bRewriteEnabled) {
-                // 書き換えノードがあったら、SandSの疑似同時打鍵サポートをOFFにしておく
-                Settings.SandSEnablePostShift = false;
-            }
-
-            addMyCharFunctionInRootStrokeTable();
-            writeAllLines(outFilename, outputLines);
-
-            showErrorMessage();
-
-            logger.InfoH($"LEAVE: KeyCombinationPool.Count={keyComboPool.Count}");
         }
 
         int calcRow(int idx, int currentRow)
@@ -383,7 +805,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         void parseSubTree()
         {
-            logger.DebugH(() => $"ENTER: currentLine={lineNumber}, strokeList={strokeList._keyString()}");
+            logger.DebugH(() => $"ENTER: currentLine={tableLines.LineNumber}, strokeList={strokeList._keyString()}");
             bool bError = false;
             int idx = 0;
             int row = 0;
@@ -420,7 +842,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         break;
 
                     case TOKEN.PLACE_HOLDER:
-                        placeHolders[currentStr] = idx;
+                        placeHolders[tableLines.currentStr] = idx;
                         break;
 
                     case TOKEN.VBAR:               // 次のトークン待ち
@@ -449,7 +871,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         break;
 
                     default:                        // 途中でファイルが終わったりした場合 : エラー
-                        parseError();
+                        tableLines.ParseError();
                         bError = true;
                         break;
                 }
@@ -460,29 +882,65 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
 
             if (depth == 0) placeHolders.Clear();
-            logger.DebugH(() => $"LEAVE: currentLine={lineNumber}, depth={depth}, bError={bError}");
+            logger.DebugH(() => $"LEAVE: currentLine={tableLines.LineNumber}, depth={depth}, bError={bError}");
         }
 
+        // 前置書き換対象文字列指定ノード
+        // %あいう> {
+        //  -nn>・・・
+        // }
+        // %あいう>-nn>{ } もあり
+        //void parsePreRewriteNode()
+        //{
+        //    logger.DebugH(() => $"ENTER: currentLine={tableLines.LineNumber}, depth={depth}, idx={idx}");
+        //    readNextToken(true);
+        //    //var tokenNextToArrow = currentToken;
+        //    if (currentToken == TOKEN.ARROW) {
+        //        parseArrowNode(token, arrowIndex);
+        //    } else if (token == TOKEN.REWRITE_PRE || token == TOKEN.REWRITE_POST) {
+        //        if (currentToken == TOKEN.LBRACE) {
+        //            // 書き換えノードの追加
+        //            logger.DebugH(() => $"ADD REWRITE NODE");
+        //            addRewriteNode(token, calcShiftOffset(idx), targetStr);
+        //            if (token == TOKEN.REWRITE_PRE && idx >= 0) {
+        //                keyComboPool.AddPreRewriteKey(idx);
+        //            }
+        //        } else {
+        //            tableLines.ParseError();
+        //        }
+        //    } else {
+        //        if (currentToken == TOKEN.LBRACE) {
+        //            parseSubTree();
+        //        } else {
+        //            parseNode(currentToken, -1);
+        //        }
+        //    }
+        //    currentToken = TOKEN.IGNORE;    // いったん末端ノードの処理をしたら、矢印記法を抜けるまで無視
+        //    logger.DebugH(() => $"LEAVE: currentLine={tableLines.LineNumber}, depth={depth}");
+        //    strokeList._popBack();
+        //    return;
+        //}
+
         // 矢印記法(-\d+(,\d+)*>)を解析して第1打鍵位置に従って配置する
-        void parseArrowNode(TOKEN token, int idx) {
+        void parseArrowNode(TOKEN token, int idx, string targetStr = "") {
             strokeList.Add(idx);
-            logger.DebugH(() => $"ENTER: currentLine={lineNumber}, depth={depth}, idx={idx}");
+            logger.DebugH(() => $"ENTER: currentLine={tableLines.LineNumber}, depth={depth}, idx={idx}");
             readNextToken(true);
-            var tokenNextToArrow = currentToken;
+            //var tokenNextToArrow = currentToken;
             if (currentToken == TOKEN.ARROW) {
                 parseArrowNode(token, arrowIndex);
             } else if (currentToken == TOKEN.COMMA || currentToken == TOKEN.VBAR) {
-                if (parseArrow(getNextChar())) parseArrowNode(token, arrowIndex);
+                if (parseArrow(tableLines.GetNextChar())) parseArrowNode(token, arrowIndex);
             } else if (token == TOKEN.REWRITE_PRE || token == TOKEN.REWRITE_POST) {
                 if (currentToken == TOKEN.LBRACE) {
                     // 書き換えノードの追加
                     logger.DebugH(() => $"ADD REWRITE NODE");
-                    addRewriteNode(token, calcShiftOffset(idx));
-                    if (token == TOKEN.REWRITE_PRE) {
+                    addRewriteNode(token, calcShiftOffset(idx), targetStr);
+                    if (token == TOKEN.REWRITE_PRE && idx >= 0) {
                         keyComboPool.AddPreRewriteKey(idx);
                     }
                 } else {
-                    parseError();
+                    tableLines.ParseError();
                 }
             } else {
                 if (currentToken == TOKEN.LBRACE) {
@@ -492,7 +950,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 }
             }
             currentToken = TOKEN.IGNORE;    // いったん末端ノードの処理をしたら、矢印記法を抜けるまで無視
-            logger.DebugH(() => $"LEAVE: currentLine={lineNumber}, depth={depth}");
+            logger.DebugH(() => $"LEAVE: currentLine={tableLines.LineNumber}, depth={depth}");
             strokeList._popBack();
             return;
         }
@@ -507,7 +965,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             //bool isPrevDelim = true;
             readNextToken(true);
             if (currentToken != TOKEN.LBRACE) { // 直後は '{' でブロックの始まりである必要がある
-                parseError();
+                tableLines.ParseError();
                 return;
             }
             TOKEN prevToken = 0;
@@ -539,7 +997,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         break;
 
                     case TOKEN.PLACE_HOLDER:
-                        placeHolders[currentStr] = n;
+                        placeHolders[tableLines.currentStr] = n;
                         break;
 
                     case TOKEN.VBAR:              // 次のトークン待ち
@@ -564,7 +1022,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         break;
 
                     default:                        // 途中でファイルが終わったりした場合 : エラー
-                        parseError();
+                        tableLines.ParseError();
                         break;
                 }
                 prevPrevToken = prevToken;
@@ -579,7 +1037,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         void parseNode(TOKEN token, int nth, int prevNth = -1)
         {
-            logger.DebugH(() => $"ENTER: token={token}, currentStr={currentStr}, depth={depth}, prevNth={prevNth}, nth={nth}");
+            logger.DebugH(() => $"ENTER: token={token}, currentStr={tableLines.currentStr}, depth={depth}, prevNth={prevNth}, nth={nth}");
             switch (token) {
                 //case TOKEN.LBRACE:
                 //    parseSubTree(getOrNewLastTreeNode(), nth);
@@ -589,8 +1047,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 case TOKEN.STRING:            // "str" : 文字列ノード
                 case TOKEN.BARE_STRING:       // str : 文字列ノード
                     // 終端ノードの追加と同時打鍵列の組合せの登録
-                    addTerminalNode(token, new StringNode($"{currentStr._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")}"), prevNth, nth);
-                    if (depth <= 1 && currentStr._startsWith("!{")) {
+                    addTerminalNode(token, new StringNode($"{tableLines.currentStr._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")}"), prevNth, nth);
+                    if (depth <= 1 && tableLines.currentStr._startsWith("!{")) {
                         // 矢印記法の場合も考慮する
                         int dk = nth;
                         int dp = depth;
@@ -608,7 +1066,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                 case TOKEN.FUNCTION:          // @c : 機能ノード
                     // 終端ノードの追加と同時打鍵列の組合せの登録
-                    addTerminalNode(token, new FunctionNode(currentStr), prevNth, nth);
+                    addTerminalNode(token, new FunctionNode(tableLines.currentStr), prevNth, nth);
                     logger.DebugH(() => $"LEAVE: depth={depth}");
                     break;
 
@@ -626,7 +1084,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     break;
 
                 default:                // 途中でファイルが終わったりした場合 : エラー
-                    parseError();
+                    tableLines.ParseError();
                     break;
             }
         }
@@ -691,7 +1149,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return list;
         }
 
-        void addRewriteNode(TOKEN token, int shiftOffset)
+        void addRewriteNode(TOKEN token, int shiftOffset, string targetStr)
         {
             logger.DebugH(() => $"ENTER: token={token}");
 
@@ -704,7 +1162,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             string getRewriteString(bool bBare)
             {
-                return !bBare ? "\"" + currentStr + "\"" : currentStr;
+                return !bBare ? "\"" + tableLines.currentStr + "\"" : tableLines.currentStr;
             }
 
             //void setNodeAt(int _idx, Node _node)
@@ -714,11 +1172,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             int lastIdx = strokeList.Last();
 
-            readWordOrString(); // 後置文字列の指定があるか→なければ単打テーブルから文字を拾ってくる
-            var myStr = currentStr._orElse(() => getNthRootNodeString(lastIdx));
+            tableLines.ReadWordOrString(); // 後置文字列の指定があるか→なければ単打テーブルから文字を拾ってくる
+            var myStr = tableLines.currentStr._orElse(() => lastIdx >= 0 ? getNthRootNodeString(lastIdx) : "");
             var node = token == TOKEN.REWRITE_POST ? new FunctionNode(myStr) : null;
 
-            if (node != null) outputLines.Add($"-{lastIdx}>@{{{myStr}");
+            if (node != null && lastIdx >= 0) outputLines.Add($"-{lastIdx}>@{{{myStr}");
 
             string leaderStr = strokeList.Count > 1 ? strokeList.Take(strokeList.Count - 1).Select(x => getNthRootNodeString(x))._join("") : "";
 
@@ -782,7 +1240,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             var items = new string[2];
             int itemIdx = 0;
             bool bError = false;
-            skipToEndOfLine();
+            tableLines.SkipToEndOfLine();
             readNextToken();
             while (!bError && currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
@@ -796,21 +1254,21 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                                 case TOKEN.STRING:
                                 case TOKEN.BARE_STRING:
-                                    if (currentStr._isEmpty() || itemIdx >= items.Length) {
-                                        parseError();
+                                    if (tableLines.currentStr._isEmpty() || itemIdx >= items.Length) {
+                                        tableLines.ParseError();
                                     } else {
                                         items[itemIdx++] = getRewriteString(currentToken == TOKEN.BARE_STRING);
                                     }
                                     break;
 
                                 default:
-                                    parseError();
+                                    tableLines.ParseError();
                                     break;
                             }
                             readNextToken();
                         }
                         if (itemIdx != 2) {
-                            parseError();
+                            tableLines.ParseError();
                         } else {
                             if (node != null) outputLines.Add(items._join("\t"));
                         }
@@ -829,7 +1287,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 setNodeAndOutputByIndex(arrowIdx, currentToken == TOKEN.BARE_STRING);
                                 break;
                             default:
-                                parseError();
+                                tableLines.ParseError();
                                 break;
                         }
                         break;
@@ -840,7 +1298,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         break;
 
                     case TOKEN.PLACE_HOLDER:        // プレースホルダー
-                        placeHolders[currentStr] = idx;
+                        placeHolders[tableLines.currentStr] = idx;
                         break;
 
                     case TOKEN.VBAR:               // 次のトークン待ち
@@ -862,7 +1320,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         break;
 
                     default:                        // 途中でファイルが終わったりした場合 : エラー
-                        parseError();
+                        tableLines.ParseError();
                         bError = true;
                         break;
                 }
@@ -890,7 +1348,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         void makeCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr)
         {
             var comboKeyList = deckeyList.Select(x => makeShiftedDecKey(x, shiftOffset)).ToList();      // 先頭キーのオフセットに合わせる
-            logger.DebugH(() => $"{deckeyList._keyString()}={currentStr}");
+            logger.DebugH(() => $"{deckeyList._keyString()}={tableLines.currentStr}");
             keyComboPool.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
             keyComboPool.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr);
         }
@@ -910,29 +1368,29 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + shiftOffset;
         }
 
-        void setNthChildNode(StrokeTableNode parentNode, int n, Node childNode) {
-            if (parentNode != null && childNode != null) {
-                if (!isInCombinationBlock) {
-                    // 同時打鍵ブロック以外ならば上書きOK
-                    parentNode.setNthChild(n, childNode);
-                } else {
-                    // 同時打鍵ブロックの場合
-                    Node p = parentNode.getNth(n);
-                    if (p == null || p.isFunctionNode()) {
-                        // 未割り当て、または機能ノードならば上書きOK
-                        parentNode.setNthChild(n, childNode);
-                    } else if (childNode.isFunctionNode()) {
-                        // 重複していて、子ノードが機能ノードなら無視
-                    } else {
-                        // 重複していて、親ノードも子ノードも機能ノード以外なら警告
-                        if (!bIgnoreWarningOverwrite) {
-                            logger.Warn($"DUPLICATED: {currentLine}");
-                            nodeDuplicateWarning();
-                        }
-                    }
-                }
-            }
-        }
+        //void setNthChildNode(StrokeTableNode parentNode, int n, Node childNode) {
+        //    if (parentNode != null && childNode != null) {
+        //        if (!isInCombinationBlock) {
+        //            // 同時打鍵ブロック以外ならば上書きOK
+        //            parentNode.setNthChild(n, childNode);
+        //        } else {
+        //            // 同時打鍵ブロックの場合
+        //            Node p = parentNode.getNth(n);
+        //            if (p == null || p.isFunctionNode()) {
+        //                // 未割り当て、または機能ノードならば上書きOK
+        //                parentNode.setNthChild(n, childNode);
+        //            } else if (childNode.isFunctionNode()) {
+        //                // 重複していて、子ノードが機能ノードなら無視
+        //            } else {
+        //                // 重複していて、親ノードも子ノードも機能ノード以外なら警告
+        //                if (!bIgnoreWarningOverwrite) {
+        //                    logger.Warn($"DUPLICATED: {tableLines.CurrentLine}");
+        //                    tableLines.NodeDuplicateWarning();
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         // 現在のトークンをチェックする
         bool isCurrentToken(TOKEN target) {
@@ -942,7 +1400,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // 現在のトークンをチェックする
         void checkCurrentToken(TOKEN target) {
             if (currentToken != target) {
-                parseError();           // 違ったらエラー
+                tableLines.ParseError();           // 違ったらエラー
             }
         }
 
@@ -962,33 +1420,33 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             currentStr = "";
             arrowIndex = -1;
             while (true) {
-                getNextChar();
+                char ch = tableLines.GetNextChar();
 
-                if (currentChar == '\0') {
+                if (ch == '\0') {
                     // ファイルの終わり
                     return TOKEN.END;
                 }
 
-                if (currentChar == '#') {
+                if (ch == '#') {
                     // Directive: '#include', '#define', '#strokePosition', '#*shift*', '#combination', '#overlapping', '#yomiConvert', '#store', '#load', '#end' または '#' 以降、行末までコメント
-                    readWord();
+                    tableLines.ReadWord();
                     var lcStr = currentStr._toLower();
                     if (lcStr == "include") {
-                        includeFile();
+                        tableLines.IncludeFile();
                     } else if (lcStr == "define") {
-                        outputLines.Add(currentLine);
-                        readWord();
+                        outputLines.Add(tableLines.CurrentLine);
+                        tableLines.ReadWord();
                         if (currentStr._toLower()._equalsTo("defguide")) {
                             handleStrokePosition();
                         }
                     } else if (lcStr == "store") {
-                        storeLineBlock();
+                        tableLines.StoreLineBlock();
                     } else if (lcStr == "load") {
-                        loadLineBlock();
+                        tableLines.LoadLineBlock();
                     } else if (lcStr._startsWith("yomiconv")) {
-                        outputLines.Add(currentLine);
+                        outputLines.Add(tableLines.CurrentLine);
                     } else if (lcStr == "strokeposition") {
-                        //outputLines.Add(currentLine);
+                        //outputLines.Add(tableLines.CurrentLine);
                         handleStrokePosition();
                     } else if (lcStr == "noshift" || lcStr == "normal") {
                         shiftPlane = 0;
@@ -1007,7 +1465,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     } else if (lcStr == "shiftf") {
                         shiftPlane = 7;
                     } else if (lcStr == "combination" || lcStr == "overlapping") {
-                        readWord();
+                        tableLines.ReadWord();
                         switch (currentStr._toLower()) {
                             case "prefix":
                             case "preshift":
@@ -1022,11 +1480,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 shiftKeyKind = ShiftKeyKind.UnorderedSuccessiveShift;
                                 break;
                             default:
-                                argumentError(currentStr);
+                                tableLines.ArgumentError(currentStr);
                                 break;
                         }
                     } else if (lcStr == "end") {
-                        readWord();
+                        tableLines.ReadWord();
                         switch (currentStr._toLower()._substring(0, 5)) {
                             case "combi":
                             case "overl":
@@ -1037,8 +1495,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 shiftPlane = 0;
                                 break;
                             case "__inc":
-                                logger.DebugH(() => $"END INCLUDE/LOAD: lineNumber={lineNumber}");
-                                blockInfoStack.Pop(lineNumber + 1);
+                                logger.DebugH(() => $"END INCLUDE/LOAD: lineNumber={tableLines.LineNumber}");
+                                tableLines.EndInclude();
                                 break;
                         }
                     } else if (lcStr == "sands") {
@@ -1048,7 +1506,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     } else if (lcStr == "set") {
                         handleSettings();
                     } else if (lcStr == "ignorewarning") {
-                        readWord();
+                        tableLines.ReadWord();
                         var word = currentStr._toLower();
                         if (word._isEmpty() || word == "all") {
                             bIgnoreWarningAll = true;
@@ -1063,23 +1521,23 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         logger.DebugH(() => $"#{currentStr}");
                     }
                     currentStr = "";
-                    skipToEndOfLine();
+                    tableLines.SkipToEndOfLine();
                     continue;
                 }
 
-                switch (currentChar) {
+                switch (tableLines.CurrentChar) {
                     case ';':
                         // ';' 以降、行末までコメント
-                        skipToEndOfLine();
+                        tableLines.SkipToEndOfLine();
                         break;
 
                     case '{':
-                        if (!bIgnoreWarningBraceLevel && !bIgnoreWarningAll && nextPos == 1 && braceLevel > 0) unexpectedLeftBraceAtColumn0Warning();
+                        if (!bIgnoreWarningBraceLevel && !bIgnoreWarningAll && tableLines.IsCurrentPosHeadOfLine && braceLevel > 0) tableLines.UnexpectedLeftBraceAtColumn0Warning();
                         ++braceLevel;
                         return TOKEN.LBRACE;
 
                     case '}':
-                        if (!bIgnoreWarningBraceLevel && !bIgnoreWarningAll && nextPos == 1 && braceLevel > 1) unexpectedRightBraceAtColumn0Warning();
+                        if (!bIgnoreWarningBraceLevel && !bIgnoreWarningAll && tableLines.IsCurrentPosHeadOfLine && braceLevel > 1) tableLines.UnexpectedRightBraceAtColumn0Warning();
                         --braceLevel;
                         return TOKEN.RBRACE;
 
@@ -1087,12 +1545,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     case '|': return TOKEN.VBAR;
 
                     case '/':
-                        if (peekNextChar() == '/') {
+                        if (tableLines.PeekNextChar() == '/') {
                             // 2重スラッシュはコメント扱い
-                            skipToEndOfLine();
+                            tableLines.SkipToEndOfLine();
                             break;
                         }
-                        readBareString(currentChar);
+                        tableLines.ReadBareString(tableLines.CurrentChar);
                         if (currentStr._safeLength() > 1) return TOKEN.BARE_STRING;  // 2文字以だったら文字列扱い
                         return TOKEN.SLASH; // スラッシュ単体なので SLASH扱い
 
@@ -1108,16 +1566,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                     case '@':
                         // 機能
-                        readMarker();
+                        tableLines.ReadMarker();
                         return TOKEN.FUNCTION;
 
                     case '"':
                         // 文字列
-                        readString();
+                        tableLines.ReadString();
                         return TOKEN.STRING;
 
                     case '-': {
-                        char c = getNextChar();
+                        char c = tableLines.GetNextChar();
                         if (c == '*') {
                             // 矢印束記法
                             if (parseArrowBundle()) return TOKEN.ARROW_BUNDLE;
@@ -1129,19 +1587,23 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     break;
 
                     case '$':
-                        readBareString();
+                        tableLines.ReadBareString();
                         if (currentStr._notEmpty()) return TOKEN.PLACE_HOLDER;
                         break;
 
                     case '%':
-                        if (parseArrow(getNextChar())) {
+                        if (depth != 0) {
+                            tableLines.ParseError("'%'で始まる前置書き換え記法はテーブルがネストされた位置では使えません。");
+                        } else if (parseArrow(tableLines.GetNextChar())) {
                             bRewriteEnabled = true;
                             return TOKEN.REWRITE_PRE;
                         }
                         break;
 
                     case '&':
-                        if (parseArrow(getNextChar())) {
+                        if (depth != 0) {
+                            tableLines.ParseError("'%'で始まる前置書き換え記法はテーブルがネストされた位置では使えません。");
+                        } else if (parseArrow(tableLines.GetNextChar())) {
                             bRewriteEnabled = true;
                             return TOKEN.REWRITE_POST;
                         }
@@ -1154,45 +1616,25 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     case '゛':
                     case '゜':
                         // 機能
-                        decrementPos();
-                        readMarker();
+                        tableLines.RewindChar();
+                        tableLines.ReadMarker();
                         return TOKEN.FUNCTION;
 
                     default:
-                        readBareString(currentChar);
+                        tableLines.ReadBareString(tableLines.CurrentChar);
                         if (currentStr._notEmpty()) return TOKEN.BARE_STRING;
 
                         // エラー
-                        parseError();
+                        tableLines.ParseError();
                         return TOKEN.IGNORE;
                 }
-            }
-        }
-
-        // ファイルをインクルードする
-        void includeFile() {
-            logger.DebugH("CALLED");
-            readWordOrString();
-            var filename = currentStr;
-            logger.DebugH(() => $"INCLUDE: lineNum={lineNumber + 1}, {filename}");
-            if (filename._notEmpty()) {
-                var lines = readAllLines(filename, true);
-                if (lines._isEmpty()) {
-                    logger.Error($"Can't open: {filename}");
-                    fileOpenError(filename);
-                } else {
-                    tableLines.InsertRange(lineNumber + 1, lines);
-                    logger.DebugH(() => $"INCLUDE: {lines.Count} lines included");
-                }
-            } else {
-                parseError("ファイル名が指定されていません。");
             }
         }
 
         // define 行を処理
         void handleStrokePosition()
         {
-            readWordOrString();
+            tableLines.ReadWordOrString();
             if (currentStr._notEmpty()) {
                 if (bPrimary) {
                     Settings.DefGuide1 = currentStr;
@@ -1202,58 +1644,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
-        // 名前を付けて、行ブロックを保存する
-        void storeLineBlock()
-        {
-            readWord();
-            var blockName = currentStr;
-            logger.DebugH(() => $"CALLED: {blockName}");
-            List<string> lines = null;
-            if (blockName._isEmpty()) {
-                parseError();
-            } else {
-                lines = new List<string>();
-                linesMap[blockName] = lines;
-                logger.DebugH(() => $"SET: lineNum={lineNumber + 1}, {blockName}");
-            }
-            while (getNextLine()) {
-                if (currentLine._startsWith("#end")) {
-                    lines.Add("#end __include__");
-                    break;
-                }
-                if (lines != null) {
-                    lines.Add(currentLine);
-                }
-            }
-        }
-
-        // 保存しておいた行ブロックをロードする
-        void loadLineBlock()
-        {
-            readWord();
-            var blockName = currentStr;
-            logger.DebugH(() => $"CALLED: |{blockName}|");
-            if (blockName._isEmpty()) {
-                parseError();
-            } else if (blockInfoStack.Find(blockName)) {
-                loadLoopError(blockName);
-            } else {
-                var lines = linesMap._safeGet(blockName);
-                if (lines._isEmpty()) {
-                    logger.Error($"No stored lines for \"{blockName}\"");
-                    noSuchBlockError(blockName);
-                } else {
-                    logger.DebugH(() => $"InsertRange: {blockName}, {lines.Count} lines");
-                    int nextLineNum = lineNumber + 1;
-                    tableLines.InsertRange(nextLineNum, lines);
-                    blockInfoStack.Push("", blockName, nextLineNum);
-                }
-            }
-        }
-
         void handleSandSState()
         {
-            readWord();
+            tableLines.ReadWord();
             var word = currentStr._toLower();
             if (word._isEmpty()) {
                 Settings.SandSEnabled = true;
@@ -1284,11 +1677,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         void assignShiftPlane()
         {
-            readWord();
+            tableLines.ReadWord();
             if (currentStr._notEmpty()) {
                 bool resultOK = VirtualKeys.AssignShiftPlane(currentStr);
                 if (!resultOK) {
-                    parseError();
+                    tableLines.ParseError();
                 }
             }
         }
@@ -1298,8 +1691,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         void handleSettings()
         {
-            logger.DebugH(() => $"CALLED: currentLine={currentLine}");
-            readWord();
+            logger.DebugH(() => $"CALLED: currentLine={tableLines.CurrentLine}");
+            tableLines.ReadWord();
             var items = currentStr._split('=');
             logger.DebugH(() => $"currentStr={currentStr}, items.Length={items._safeLength()}, items[0]={items._getFirst()}, items[1]={items._getSecond()}");
             if (items._safeLength() == 2 && items[0]._notEmpty()) {
@@ -1317,121 +1710,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     if (Settings.SetValueByName(propName, strVal)) return;
                 }
             }
-            parseError();
-        }
-
-        // '"' が来るまで読みこんで、currentStr に格納。
-        void readString() {
-            // 「"」自身は「"\""」と表記することで指定できる。
-            // 「\」自身は「"\\"」と表記する。
-            // 「\」は、単に次の一文字をエスケープするだけで、
-            // 「"\n"」「"\t"」「"\ooo"」は未対応。
-            var sb = new StringBuilder();
-            while (true) {
-                char c = getNextChar();
-                if (c == '\r' || c == '\n' || c == 0) {
-                    parseError();
-                }
-                if (c == '"') {
-                    // 文字列の終わり
-                    break;
-                }
-                if (c == '\\') {
-                    // 最初の「\」は、単に読みとばす
-                    c = getNextChar();
-                }
-                sb.Append(c);
-            }
-            currentStr = sb.ToString();
-        }
-
-        // 何らかのデリミタが来るまで読みこんで、currentStr に格納。スラッシュは文字列に含む
-        void readBareString(char c = '\0') {
-            var sb = new StringBuilder();
-            bool isOutputChar() { return c == '/' || (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c >= 0x80; }
-            if (c != '\0') {
-                if (!isOutputChar()) return;
-                sb.Append(c);
-            }
-            while (true) {
-                c = peekNextChar();
-                if (!isOutputChar()) break;
-                getNextChar();
-                sb.Append(c);
-            }
-            currentStr = sb.ToString();
-            logger.DebugH(() => $"LEAVE: {currentStr}");
-        }
-
-        // 区切り文字が来るまで読みこんで、currentStr に格納。
-        void readMarker() {
-            var sb = new StringBuilder();
-            while (true) {
-                char c = peekNextChar();
-                if (c <= ' ' || c == ',' || c == '|' || c == ';' || c == '/') {
-                    if (sb._isEmpty()) parseError();
-                    currentStr = sb.ToString();
-                    return;
-                }
-                getNextChar();
-                sb.Append(c);
-            }
-        }
-
-        // 行末までの範囲で次の空白文字またはコメント文字までを読み込んで、currentStr に格納。
-        void readWord() {
-            currentStr = "";
-            if (nextPos >= currentLine._safeLength()) return;
-            char c = skipSpace();
-            if (c <= ' ') return;
-            if (c == ';' || (c == '/' && peekNextChar() == '/')) {
-                skipToEndOfLine();
-                return;
-            }
-            readWordSub(c);
-        }
-
-        // 次の空白文字までを読み込んで、currentStr に格納。
-        void readWordSub(char c) {
-            var sb = new StringBuilder();
-            sb.Append(c);
-            while (true) {
-                c = getNextChar();
-                if (c <= ' ') {
-                    currentStr = sb.ToString();
-                    return;
-                }
-                sb.Append(c);
-            }
-        }
-
-        // 行末までの範囲で文字列または単語を読み込む
-        bool readWordOrString()
-        {
-            currentStr = "";
-            bool bBare = true;
-            if (nextPos < currentLine._safeLength()) {
-                char c = skipSpace();
-                if (c > ' ') {
-                    if (c == '"') {
-                        readString();
-                        bBare = false;
-                    } else if (c == ';' || (c == '/' && peekNextChar() == '/')) {
-                        skipToEndOfLine();
-                    } else {
-                        readWordSub(c);
-                    }
-                }
-            }
-            return bBare;
-        }
-
-        // 空白文字を読み飛ばす
-        char skipSpace() {
-            while (true) {
-                char c = getNextChar();
-                if (c == '\r' || c == '\n' || c == 0 || c > ' ')  return c;
-            }
+            tableLines.ParseError();
         }
 
         // ARROW: /-[SsXxPp]?[0-9]+>/
@@ -1439,26 +1718,26 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             int shiftOffset = -1;
             int funckeyOffset = 0;
             bool bShiftPlane = false;
-            //char c = getNextChar();
-            if (c == ' ' || c == '\t') c = skipSpace();
+            //char c = tableLines.GetNextChar();
+            if (c == ' ' || c == '\t') c = tableLines.SkipSpace();
             if (c == 'N' || c == 'n') {
                 shiftOffset = 0;
-                c = getNextChar();
+                c = tableLines.GetNextChar();
             } else if (c == 'S' || c == 's' || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {
                 shiftOffset = VirtualKeys.CalcShiftOffset(c);
-                c = getNextChar();
+                c = tableLines.GetNextChar();
             } else if (c == 'X' || c == 'x') {
                 shiftOffset = 0;
                 funckeyOffset = DecoderKeys.FUNC_DECKEY_START;
-                c = getNextChar();
+                c = tableLines.GetNextChar();
             } else if (c == 'P' || c == 'P') {
                 bShiftPlane = true;
-                c = getNextChar();
+                c = tableLines.GetNextChar();
             }
-            if (c == ' ' || c == '\t') c = skipSpace();
+            if (c == ' ' || c == '\t') c = tableLines.SkipSpace();
 
             if (c == '$') {
-                readBareString();
+                tableLines.ReadBareString();
                 arrowIndex = placeHolders._safeGet(currentStr, -1);
             } else {
                 arrowIndex = parseNumerical(c);
@@ -1478,52 +1757,52 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 }
                 arrowIndex += shiftOffset;
                 if (arrowIndex < 0 || arrowIndex >= DecoderKeys.COMBO_DECKEY_END) {
-                    parseError();
+                    tableLines.ParseError();
                     return false;
                 }
             } else {
                 shiftPlane = arrowIndex;
-                if (shiftPlane >= DecoderKeys.ALL_PLANE_NUM) parseError();
+                if (shiftPlane >= DecoderKeys.ALL_PLANE_NUM) tableLines.ParseError();
                 return false;
             }
-            c = getNextChar();
-            if (c == ' ' || c == '\t') c = skipSpace();
-            if (c == ',') decrementPos();
-            else if (c != '>') parseError();
+            c = tableLines.GetNextChar();
+            if (c == ' ' || c == '\t') c = tableLines.SkipSpace();
+            if (c == ',') tableLines.RewindChar();
+            else if (c != '>') tableLines.ParseError();
             logger.DebugH(() => $"depth={depth}, arrowIndex={arrowIndex}, shiftPlane={shiftPlane}, shiftOffset={shiftOffset}");
             return true;
         }
 
         // ARROW_BUNLE: -*>-nn>
         bool parseArrowBundle() {
-            char c = getNextChar();
-            if (c != '>') parseError();
-            c = getNextChar();
-            if (c != '-') parseError();
-            c = getNextChar();
+            char c = tableLines.GetNextChar();
+            if (c != '>') tableLines.ParseError();
+            c = tableLines.GetNextChar();
+            if (c != '-') tableLines.ParseError();
+            c = tableLines.GetNextChar();
             if (c == '$') {
-                readBareString();
-                arrowIndex = placeHolders._safeGet(currentStr, -1);
+                tableLines.ReadBareString();
+                arrowIndex = placeHolders._safeGet(tableLines.currentStr, -1);
             } else {
                 arrowIndex = parseNumerical(c);
             }
-            if (arrowIndex < 0 || arrowIndex >= DecoderKeys.PLANE_DECKEY_NUM) parseError();
-            c = getNextChar();
-            if (c != '>') parseError();
+            if (arrowIndex < 0 || arrowIndex >= DecoderKeys.PLANE_DECKEY_NUM) tableLines.ParseError();
+            c = tableLines.GetNextChar();
+            if (c != '>') tableLines.ParseError();
             return true;
         }
 
         int parseNumerical(char c)
         {
             if (!is_numeral(c)) {
-                parseError();
+                tableLines.ParseError();
                 return -1;
             }
             int result = c - '0';
             while (true) {
-                c = peekNextChar();
+                c = tableLines.PeekNextChar();
                 if (!is_numeral(c)) break;
-                getNextChar();
+                tableLines.GetNextChar();
                 result = result * 10 + c - '0';
             }
             return result;
@@ -1534,66 +1813,44 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return c >= '0' && c <= '9';
         }
 
-        char getNextChar() {
-            if (nextPos > currentLine._safeLength()) {
-                ++lineNumber;
-                if (lineNumber >= tableLines._safeCount()) {
-                    return currentChar = '\0';
-                }
-                currentLine = tableLines[lineNumber];
-                nextPos = 0;
-            }
-            if (nextPos < currentLine._safeLength()) {
-                currentChar = currentLine[nextPos++];
+    }
+
+    class TableFileParser
+    {
+        private static Logger logger = Logger.GetLogger();
+
+        TableLines tableLines = new TableLines();
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public TableFileParser()
+        {
+        }
+
+        /// <summary>
+        /// テーブル定義を解析してストローク木を構築する。
+        /// 解析結果を矢印記法に変換して出力ファイル(outFile)に書き込む
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="outFilename"></param>
+        /// <param name="pool">対象となる KeyComboPool</param>
+        public void ParseTableFile(string filename, string outFilename, KeyCombinationPool pool, bool primary)
+        {
+            logger.InfoH($"ENTER: filename={filename}");
+            tableLines.ReadAllLines(filename);
+
+            if (tableLines.NotEmpty) {
+                TableParser parser = new TableParser(tableLines, pool, primary);
+                parser.ParseTable();
+                writeAllLines(outFilename, parser.OutputLines);
             } else {
-                ++nextPos;
-                currentChar = '\n';
+                tableLines.Error($"テーブルファイル({filename})が開けません");
             }
-            return currentChar;
-        }
 
-        char peekNextChar() {
-            return currentChar = (nextPos < currentLine._safeLength()) ? currentLine[nextPos] : '\n';
-        }
+            tableLines.showErrorMessage();
 
-        void decrementPos()
-        {
-            --nextPos;
-        }
-
-        bool getNextLine() {
-            ++lineNumber;
-            if (lineNumber >= tableLines._safeCount()) {
-                return false;
-            }
-            currentLine = tableLines[lineNumber];
-            return true;
-        }
-
-        void skipToEndOfLine() {
-            nextPos = currentLine._safeLength() + 1;
-            currentChar = '\n';
-        }
-
-        List<string> readAllLines(string filename, bool bInclude)
-        {
-            var lines = new List<string>();
-            if (filename._notEmpty()) {
-                var includeFilePath = blockInfoStack.CurrentDirPath._joinPath(filename._canonicalPath());
-                logger.DebugH(() => $"ENTER: includeFilePath={includeFilePath}");
-                var contents = Helper.GetFileContent(includeFilePath, (e) => logger.Error(e._getErrorMsg()));
-                if (contents._notEmpty()) {
-                    lines.AddRange(contents._safeReplace("\r", "")._split('\n'));
-                    int nextLineNum = lineNumber;
-                    if (bInclude) {
-                        lines.Add("#end __include__");
-                        ++nextLineNum;
-                    }
-                    blockInfoStack.Push(includeFilePath._getDirPath(), filename, nextLineNum);
-                }
-            }
-            logger.DebugH(() => $"LEAVE: num of lines={lines.Count}");
-            return lines;
+            logger.InfoH($"LEAVE");
         }
 
         private void writeAllLines(string filename, List<string> lines)
@@ -1605,139 +1862,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.InfoH($"LEAVE");
         }
 
-        string blockOrFile() {
-            return blockInfoStack.CurrentDirPath._isEmpty() ? "ブロック" : "テーブルファイル";
-        }
-
-        int calcErrorLineNumber() {
-            return blockInfoStack.CalcCurrentLineNumber(lineNumber + 1);
-        }
-
-        int calcErrorColumn() {
-            if (nextPos == 0 && lineNumber > 0) return tableLines[lineNumber - 1].Count();
-            return nextPos;
-        }
-
-        // 解析エラー
-        void parseError(string msg = null) {
-            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError($"{(msg._notEmpty() ? msg + "\r\n" : "")}{blockOrFile()} {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行 {calcErrorColumn()}文字目({errorChar()})がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...");
-        }
-
-        string errorChar()
-        {
-            switch (currentChar) {
-                case '\n':
-                case '\r':
-                    return "NL";
-                case '\0':
-                    return "NULL";
-                default:
-                    return $"'{currentChar}'";
-            }
-        }
-
-        // 引数エラー
-        void argumentError(string arg) {
-            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError($"引数 {arg} が不正です。\r\nテーブルファイル {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...");
-        }
-
-        // loadループエラー
-        void loadLoopError(string name) {
-            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError($"ブロック {name} のロードがループしています。\r\n{blockOrFile()} {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...");
-        }
-
-        // storeブロックが存在しない
-        void noSuchBlockError(string name) {
-            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError($"指定されたブロック {name} が存在しません。\r\n{blockOrFile()} {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...");
-        }
-
-        // ファイルの読み込みに失敗した場合
-        void fileOpenError(string filename) {
-            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError($"ファイル {filename} を読み込めません。\r\nテーブルファイル {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目がまちがっているようです：\r\n> {currentLine._safeSubstring(0, 50)} ...");
-        }
-
-        // ノードの重複が発生した場合
-        void nodeDuplicateWarning() {
-            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleWarning($"{blockOrFile()} {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目でノードの重複が発生しました。意図したものであれば無視してください (#ignoreWarning overwrite を記述すると無視されます)：\r\n> {currentLine._safeSubstring(0, 50)} ...");
-        }
-
-        // カラム0で予期しないLBRACEが発生
-        void unexpectedLeftBraceAtColumn0Warning() {
-            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleWarning($"{blockOrFile()} {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目の行頭にネストされた '{{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {currentLine._safeSubstring(0, 50)} ...");
-        }
-
-        // カラム0で予期しないRBRACEが発生
-        void unexpectedRightBraceAtColumn0Warning() {
-            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleWarning($"{blockOrFile()} {blockInfoStack.CurrentBlockName} の {calcErrorLineNumber()}行目の行頭にまだネスト中の '}}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {currentLine._safeSubstring(0, 50)} ...");
-        }
-
-        // エラー処理
-        void handleError(string msg) {
-            logger.Error(msg);
-            logger.Error("lines=\n" + makeErrorLines());
-            // エラーメッセージを投げる
-            Error(msg);
-        }
-
-        // 警告ー処理
-        void handleWarning(string msg) {
-            logger.Warn(msg);
-            logger.Warn("lines=\n" + makeErrorLines());
-            // エラーメッセージを投げる
-            Warn(msg);
-        }
-
-        string makeErrorLines() {
-            var sb = new StringBuilder();
-            sb.Append("lines=\n");
-            for (int i = 9; i > 0; --i) {
-                if (lineNumber >= i && tableLines._safeCount() > lineNumber - i) sb.Append(tableLines[lineNumber - i]).Append('\n');
-            }
-            sb.Append($">> {currentLine}\n");
-            for (int i = 1; i < 10; ++i) {
-                if (lineNumber + i < tableLines._safeCount()) sb.Append(tableLines[lineNumber + i]).Append('\n');
-            }
-            return sb.ToString();
-        }
-
-        private void showErrorMessage()
-        {
-            if (!errorMsg._isEmpty()) {
-                SystemHelper.ShowWarningMessageBox(errorMsg.ToString());
-            }
-        }
-
-        private StringBuilder errorMsg = new StringBuilder();
-
-        private int errorLevel = 0;
-
-        // エラー情報を格納
-        void setErrorInfo(int level, string msg) {
-            errorLevel = level;
-            if (errorMsg.Length + msg.Length < 800) {
-                if (level == Logger.LogLevelError || errorMsg.Length + msg.Length < 500) {
-                    if (!errorMsg._isEmpty()) errorMsg.Append("\r\n\r\n");
-                    errorMsg.Append(msg);
-                }
-            }
-        }
-
-        // エラー情報を格納し、例外を送出
-        void Error(string msg) {
-            setErrorInfo(Logger.LogLevelError, msg);
-        }
-
-        // 警告情報を格納するが、継続する
-        void Warn(string msg) {
-            setErrorInfo(Logger.LogLevelWarn, msg);
-        }
     }
+
 }

@@ -127,12 +127,10 @@ namespace KanchokuWS.CombinationKeyStroke
             KeyCombinationPool.Initialize();
             Clear();
 
-            var parser = new TableFileParser(KeyCombinationPool.Singleton1, true);
-            parser.ParseTable(tableFile, "tmp/tableFile1.tbl");
+            new TableFileParser().ParseTableFile(tableFile, "tmp/tableFile1.tbl", KeyCombinationPool.Singleton1, true);
 
             if (tableFile2._notEmpty()) {
-                var parser2 = new TableFileParser(KeyCombinationPool.Singleton2, false);
-                parser2.ParseTable(tableFile2, "tmp/tableFile2.tbl");
+                new TableFileParser().ParseTableFile(tableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.Singleton2, false);
             }
         }
 
