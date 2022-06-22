@@ -179,7 +179,7 @@
     <Compile Include="CombinationKeyStroke\Determiner.cs" />
     <Compile Include="CombinationKeyStroke\DeterminerLib\KeyCombinationPool.cs" />
     <Compile Include="CombinationKeyStroke\DeterminerLib\ComboShiftKeyPool.cs" />
-    <Compile Include="CombinationKeyStroke\DeterminerLib\TableFileParser.cs" />
+    <Compile Include="TableFileParser.cs" />
     <Compile Include="CombinationKeyStroke\KeyCodeInfo.cs" />
     <Compile Include="CombinationKeyStroke\DecoderKeySequence.cs" />
     <Compile Include="CombinationKeyStroke\DeterminerLib\Stroke.cs" />
