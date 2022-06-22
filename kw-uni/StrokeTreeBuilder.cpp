@@ -20,7 +20,6 @@
 
 
 #if 0
-#define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)

@@ -152,7 +152,7 @@ public:
 #define DEFINE_LOCAL_LOGGER(name)   Logger logger = Logger::GetLogger("LOCAL." ## #name, _T("LOCAL." ## #name))
 #define DEFINE_NAMESPACE_LOGGER(name)   Logger logger = Logger::GetLogger("NAMESPACE." ## #name, _T("NAMESPACE." ## #name))
 
-#define IS_LOG_DEBUGH_ENABLED   (Logger::IsDebugHEnabled() && _LOG_DEBUGH_FLAG) 
+#define IS_LOG_DEBUGH_ENABLED   (Logger::IsDebugHEnabled()) 
 
 #define _SAFE_CHAR(ch) (ch > 0 ? ch : ' ')
 
@@ -169,10 +169,10 @@ public:
 #define LOG_TRACE(...)      if (Logger::IsTraceEnabled()) logger.Trace(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define LOG_DEBUG(...)      if (Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define LOG_DEBUGH(...)     if (Logger::IsDebugHEnabled()) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
-#define _LOG_DEBUGH(...)    if (Logger::IsDebugHEnabled() && _LOG_DEBUGH_FLAG) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__); \
+#define _LOG_DEBUGH(...)    if (Logger::IsDebugHEnabled()) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__); \
                             else if (Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define _LOG_DEBUG_COND(flag, ...)  if (flag && Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
-#define _LOG_DEBUGH_COND(flag, ...)  if (flag && Logger::IsDebugHEnabled() && _LOG_DEBUGH_FLAG) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
+#define _LOG_DEBUGH_COND(flag, ...)  if (flag && Logger::IsDebugHEnabled()) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define _DEBUG_SENT(x)      x
 #define _DEBUG_FLAG(x)      (x)
 #endif
