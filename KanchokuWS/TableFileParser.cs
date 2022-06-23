@@ -671,6 +671,13 @@ namespace KanchokuWS
         // 書き換えテーブルが対象
         public bool bRewriteTable = false;
 
+        public bool bIgnoreWarningAll = false;
+        public bool bIgnoreWarningBraceLevel = false;
+        public bool bIgnoreWarningOverwrite = false;
+        public int braceLevel = 0;
+
+        public HashSet<int> sequentialShiftKeys = new HashSet<int>();
+
         public StrokeTableNode rootTableNode = new StrokeTableNode(true);
 
         /// <summary>
@@ -704,70 +711,13 @@ namespace KanchokuWS
             context = ctx;
         }
 
-        /// <summary>もしルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる</summary>
-        public void addMyCharFunctionInRootStrokeTable()
-        {
-            for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
-                if (rootTableNode.getNth(idx) == null) {
-                    OutputLines.Add($"-{idx}>@^");
-                }
-            }
-        }
-
-        void setNodeAtLast(List<int> stkList, Node node)
-        {
-            logger.DebugH(() => $"CALLED: stkList={stkList._keyString()}, {node.DebugString()}");
-            bool bOverwritten = false;
-            if (stkList._isEmpty()) {
-                logger.Warn($"strokeList is empty");
-            } else {
-                var pn = rootTableNode;
-                for (int i = 0; i < stkList.Count - 1; ++i) {
-                    int idx = stkList[i];
-                    var nd = pn.getNth(idx);
-                    if (nd != null && nd.isStrokeTree()) {
-                        pn = (StrokeTableNode)nd;
-                    } else {
-                        bOverwritten = bOverwritten || nd != null && !nd.isFunctionNode();
-                        var _pn = new StrokeTableNode();
-                        pn.setNthChild(idx, _pn);
-                        pn = _pn;
-                    }
-                }
-                if (pn == null) {
-                    logger.Warn($"No such node: strokeList={stkList._keyString()}");
-                } else {
-                    bOverwritten = bOverwritten || !(pn.getNth(stkList.Last())?.isFunctionNode() ?? true);
-                    pn.setNthChild(stkList.Last(), node);
-                }
-            }
-            if (bOverwritten && isInCombinationBlock && !bIgnoreWarningOverwrite) {
-                logger.Warn($"DUPLICATED: {CurrentLine}");
-                NodeDuplicateWarning();
-            }
-        }
-
-        int calcRow(int idx, int currentRow)
-        {
-            if (idx <= 40) return idx / 10;
-            return currentRow;
-        }
-
-        int calcOverrunIndex(int idx)
-        {
-            if (idx == 10) return 41;
-            if (idx == 20) return 44;
-            if (idx == 30) return 46;
-            if (idx == 40) return 48;
-            return idx;
-        }
-
-        int calcNewLinedIndex(int row)
-        {
-            return row * 10;
-        }
-
-        public void parseSubTree()
+        /// <summary>
+        /// テーブル定義を解析してストローク木を構築する。
+        /// 解析結果を矢印記法に変換して出力ファイル(outFile)に書き込む
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="outFilename"></param>
+        public virtual void ParseTable()
         {
             logger.DebugH(() => $"ENTER: currentLine={LineNumber}, strokeList={strokeList._keyString()}");
             bool bError = false;
@@ -781,11 +731,8 @@ namespace KanchokuWS
                 switch (currentToken) {
                     case TOKEN.LBRACE:
                         strokeList.Add(idx);
-                        //getOrNewLastTreeNode();
-                        parseSubTree();
+                        new TableParser(context).ParseTable();
                         strokeList._popBack();
-                        //++idx;
-                        //isPrevDelim = false;
                         break;
 
                     case TOKEN.ARROW:
@@ -835,7 +782,7 @@ namespace KanchokuWS
                         break;
 
                     default:                        // 途中でファイルが終わったりした場合 : エラー
-                        ParseError($"parseSubTree: unexpected token: {currentToken}");
+                        ParseError($"ParseTable: unexpected token: {currentToken}");
                         bError = true;
                         break;
                 }
@@ -847,6 +794,69 @@ namespace KanchokuWS
 
             if (depth == 0) placeHolders.Clear();
             logger.DebugH(() => $"LEAVE: currentLine={LineNumber}, depth={depth}, bError={bError}");
+        }
+
+        /// <summary>もしルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる</summary>
+        public void addMyCharFunctionInRootStrokeTable()
+        {
+            for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
+                if (rootTableNode.getNth(idx) == null) {
+                    OutputLines.Add($"-{idx}>@^");
+                }
+            }
+        }
+
+        void setNodeAtLast(List<int> stkList, Node node)
+        {
+            logger.DebugH(() => $"CALLED: stkList={stkList._keyString()}, {node.DebugString()}");
+            bool bOverwritten = false;
+            if (stkList._isEmpty()) {
+                logger.Warn($"strokeList is empty");
+            } else {
+                var pn = rootTableNode;
+                for (int i = 0; i < stkList.Count - 1; ++i) {
+                    int idx = stkList[i];
+                    var nd = pn.getNth(idx);
+                    if (nd != null && nd.isStrokeTree()) {
+                        pn = (StrokeTableNode)nd;
+                    } else {
+                        bOverwritten = bOverwritten || nd != null && !nd.isFunctionNode();
+                        var _pn = new StrokeTableNode();
+                        pn.setNthChild(idx, _pn);
+                        pn = _pn;
+                    }
+                }
+                if (pn == null) {
+                    logger.Warn($"No such node: strokeList={stkList._keyString()}");
+                } else {
+                    bOverwritten = bOverwritten || !(pn.getNth(stkList.Last())?.isFunctionNode() ?? true);
+                    pn.setNthChild(stkList.Last(), node);
+                }
+            }
+            if (bOverwritten && isInCombinationBlock && !bIgnoreWarningOverwrite) {
+                logger.Warn($"DUPLICATED: {CurrentLine}");
+                NodeDuplicateWarning();
+            }
+        }
+
+        protected int calcRow(int idx, int currentRow)
+        {
+            if (idx <= 40) return idx / 10;
+            return currentRow;
+        }
+
+        protected int calcOverrunIndex(int idx)
+        {
+            if (idx == 10) return 41;
+            if (idx == 20) return 44;
+            if (idx == 30) return 46;
+            if (idx == 40) return 48;
+            return idx;
+        }
+
+        protected int calcNewLinedIndex(int row)
+        {
+            return row * 10;
         }
 
         // 前置書き換対象文字列指定ノード
@@ -909,7 +919,7 @@ namespace KanchokuWS
                 }
             } else {
                 if (currentToken == TOKEN.LBRACE) {
-                    parseSubTree();
+                    new TableParser(context).ParseTable();
                 } else {
                     parseNode(currentToken, -1);
                 }
@@ -1000,7 +1010,7 @@ namespace KanchokuWS
             logger.DebugH(() => $"LEAVE: depth={depth}");
         }
 
-        void parseNode(TOKEN token, int nth, int prevNth = -1)
+        protected void parseNode(TOKEN token, int nth, int prevNth = -1)
         {
             logger.DebugH(() => $"ENTER: token={token}, currentStr={CurrentStr}, depth={depth}, prevNth={prevNth}, nth={nth}");
             switch (token) {
@@ -1054,8 +1064,6 @@ namespace KanchokuWS
             }
         }
 
-        HashSet<int> sequentialShiftKeys = new HashSet<int>();
-
         /// <summary>
         /// 終端ノードの追加と同時打鍵列の組合せの登録<br/>
         /// 同時打鍵の場合は、ブロックのルートキーをCOMBO_DECKEY_STARTまでシフトする
@@ -1076,7 +1084,7 @@ namespace KanchokuWS
             }
         }
 
-        List<int> addCombinationKey(int prevNth, int lastNth, bool hasStr)
+        protected List<int> addCombinationKey(int prevNth, int lastNth, bool hasStr)
         {
             var list = new List<int>(strokeList);
 
@@ -1184,7 +1192,7 @@ namespace KanchokuWS
                     } else {
                         OutputLines.Add($"{s}{leaderStr}\t{{");
                     }
-                    parseSubTree();
+                    new TableParser(context).ParseTable();
                     OutputLines.Add("}");
                     if (node == null) {
                         OutputLines.Add("}");
@@ -1376,11 +1384,6 @@ namespace KanchokuWS
         {
             currentToken = getToken(bSkipNL);
         }
-
-        bool bIgnoreWarningAll = false;
-        bool bIgnoreWarningBraceLevel = false;
-        bool bIgnoreWarningOverwrite = false;
-        int braceLevel = 0;
 
         // トークンを読む
         TOKEN getToken(bool bSkipNL)
@@ -1818,6 +1821,13 @@ namespace KanchokuWS
         }
         protected StrokeTableNode rootTableNode => context.rootTableNode;
 
+        protected bool bIgnoreWarningAll { get { return context.bIgnoreWarningAll; } set { context.bIgnoreWarningAll = value; } }
+        protected bool bIgnoreWarningBraceLevel { get { return context.bIgnoreWarningBraceLevel; } set { context.bIgnoreWarningBraceLevel = value; } }
+        protected bool bIgnoreWarningOverwrite { get { return context.bIgnoreWarningOverwrite; } set { context.bIgnoreWarningOverwrite = value; } }
+        protected int braceLevel { get { return context.braceLevel; } set { context.braceLevel = value; } }
+
+        protected HashSet<int> sequentialShiftKeys => context.sequentialShiftKeys;
+
         protected bool Empty => tableLines.Empty;
         protected bool NotEmpty => tableLines.NotEmpty;
         protected string CurrentLine => tableLines.CurrentLine;
@@ -1860,7 +1870,7 @@ namespace KanchokuWS
     /// <summary>
     /// ルートテーブルの解析
     /// </summary>
-        class RootTableParser : TableParser
+    class RootTableParser : TableParser
     {
         private static Logger logger = Logger.GetLogger();
 
@@ -1879,7 +1889,7 @@ namespace KanchokuWS
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="outFilename"></param>
-        public void ParseTable()
+        public override void ParseTable()
         {
             logger.InfoH($"ENTER");
 
@@ -1887,7 +1897,7 @@ namespace KanchokuWS
             while (context.currentToken != TOKEN.END) {
                 switch (context.currentToken) {
                     case TOKEN.LBRACE:
-                        parseSubTree();
+                        new TableParser(context).ParseTable();
                         break;
 
                     case TOKEN.ARROW:
