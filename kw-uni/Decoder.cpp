@@ -259,17 +259,21 @@ public:
 
     // デコーダ状態のリセット (Decoder が ON になったときに呼ばれる)
     void Reset() {
-        LOG_INFOH(_T("\nENTER: states=%s (len=%d), flags=%u, numBS=%d, outLength=%d, stack=%s"),
-            startState->JoinedName().c_str(), startState->ChainLength(), STATE_COMMON->GetResultFlags(), 
-            STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5).c_str());
-        if (startState) startState->DeleteRemainingState();
+        if (startState) {
+            LOG_INFOH(_T("\nENTER: states=%s (len=%d), flags=%u, numBS=%d, outLength=%d, stack=%s"),
+                startState->JoinedName().c_str(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
+                STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5).c_str());
+            startState->DeleteRemainingState();
+        }
         STATE_COMMON->ClearAllStateInfo();
         OUTPUT_STACK->pushNewLine();    // 履歴ブロッカーとして改行を追加
         if (startState) startState->Reactivate();
         if (MAZEGAKI_INFO) MAZEGAKI_INFO->Initialize(false);
-        LOG_INFOH(_T("LEAVE: states=%s (len=%d), flags=%u, numBS=%d, outLength=%d, stack=%s\n"),
-            startState->JoinedName().c_str(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
-            STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5).c_str());
+        if (startState) {
+            LOG_INFOH(_T("LEAVE: states=%s (len=%d), flags=%u, numBS=%d, outLength=%d, stack=%s\n"),
+                startState->JoinedName().c_str(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
+                STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5).c_str());
+        }
     }
 
     // デコーダが扱う辞書を保存する

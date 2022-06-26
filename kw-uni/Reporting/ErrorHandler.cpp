@@ -17,7 +17,7 @@ void ErrorHandler::Clear() {
 
 // エラー情報を格納
 void ErrorHandler::setErrorInfo(int level, const wstring& msg) {
-    errorLevel = level;
+    if (errorLevel < level) errorLevel = level;
     if (errorMsg.size() + msg.size() < 800) {
         if (level >= 2 || errorMsg.size() + msg.size() < 500) {
             if (!errorMsg.empty()) errorMsg.append(_T("\r\n\r\n"));
@@ -26,13 +26,13 @@ void ErrorHandler::setErrorInfo(int level, const wstring& msg) {
     }
 }
 
-// エラー情報を格納し、例外を送出
+// エラー情報を格納
 void ErrorHandler::Error(const wstring& msg) {
     setErrorInfo(2, msg);
-    throw ERROR_HANDLER.get();
+    //throw ERROR_HANDLER.get();
 }
 
-// 警告情報を格納するが、継続する
+// 警告情報を格納
 void ErrorHandler::Warn(const wstring& msg) {
     setErrorInfo(1, msg);
 }

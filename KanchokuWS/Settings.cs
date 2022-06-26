@@ -37,7 +37,7 @@ namespace KanchokuWS
                 specificDecoderSettings[decoderPropName] = value.ToString();
                 return true;
             } catch (Exception e) {
-                logger.Error(e._getErrorMsg());
+                logger.Warn(e._getErrorMsgShort());
                 return false;
             }
         }

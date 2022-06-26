@@ -1605,6 +1605,11 @@ namespace Utils
             return false;
         }
 
+        public static string _quoteString(this string str, bool bBare = true)
+        {
+            if (str._isEmpty()) return "";
+            return bBare ? str : "\"" + str + "\"";
+        }
     }
 
     /// <summary>

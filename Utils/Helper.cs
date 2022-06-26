@@ -161,27 +161,6 @@ namespace Utils
         }
 
         /// <summary>
-        /// 削除マーク ('~') の付加されたIDか
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public static bool isDeletedId(string id)
-        {
-            return !id._isEmpty() && id[0] == '~';
-        }
-
-        /// <summary>
-        /// コマンドIDと確認番号からコマンド登録IDを作成して返す
-        /// </summary>
-        /// <param name="cmdId"></param>
-        /// <param name="wchId"></param>
-        /// <returns></returns>
-        public static string MakeCmdRegId(string cmdId, string wchId)
-        {
-            return string.Format("{0,-8}{1,2}", cmdId._toSafe(), wchId._isEmpty() ? "  " : ("00" + wchId._toSafe())._safeSubstring(-2));
-        }
-
-        /// <summary>
         /// 正規表現パターンを通常文字列としてマッチさせるために、メタ文字をエスケープする
         /// </summary>
         /// <param name="pattern"></param>
@@ -367,24 +346,15 @@ namespace Utils
         }
 
         /// <summary>
-        /// コマンド監視IDからコマンド発行ID部分を切り出す (先頭8文字、または空白の前まで)
+        /// ダブルクォーテーションを考慮して、２つの文字列を連結する
         /// </summary>
-        /// <param name="cmdRegId"></param>
+        /// <param name="s1"></param>
+        /// <param name="s2"></param>
         /// <returns></returns>
-        public static string ExtractCmdId(string cmdRegId)
+        public static string ConcatDqString(string s1, string s2)
         {
-            return cmdRegId._reSplit(" +")._getFirst()._toSafe()._strip()._safeSubstring(0,8);
-        }
-
-        /// <summary>
-        /// コマンド監視IDから確認番号部分を切り出す (9文字目以降、または空白の後から2文字分)
-        /// </summary>
-        /// <param name="cmdRegId"></param>
-        /// <returns></returns>
-        public static string ExtractWchId(string cmdRegId)
-        {
-            var wchId = cmdRegId._reSplit(" +")._getSecond()._toSafe()._strip()._safeSubstring(0, 2);
-            return wchId._notEmpty() ? wchId : cmdRegId._strip()._safeSubstring(8, 2);
+            bool dq = s1._getFirst() == '"' || s2._getFirst() == '"';
+            return (s1._toSafe()._stripDq() + s2._toSafe()._stripDq())._quoteString(!dq);
         }
 
         //-----------------------------------------------------------------------------
