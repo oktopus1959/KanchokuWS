@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using KanchokuWS.TableParser;
 using KanchokuWS.CombinationKeyStroke.DeterminerLib;
 using Utils;
 

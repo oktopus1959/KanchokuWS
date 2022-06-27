@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
+
+using KanchokuWS.CombinationKeyStroke.DeterminerLib;
+using KanchokuWS.TableParser;
 using Utils;
 
 namespace KanchokuWS.Gui
@@ -110,8 +113,11 @@ namespace KanchokuWS.Gui
         private void button_developSaveDebugTableFile_Click(object sender, EventArgs e)
         {
             frmMain?.ExecCmdDecoder("SaveDebugTable", null);
-            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.Singleton1?.DebugPrintFile("tmp/key-combination1.txt");
-            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.Singleton2?.DebugPrintFile("tmp/key-combination2.txt");
+            KeyCombinationPool.Singleton1?.DebugPrintFile("tmp/key-combination1.txt");
+            KeyCombinationPool.Singleton2?.DebugPrintFile("tmp/key-combination2.txt");
+
+            if (Settings.TableFile._notEmpty()) new TableFileParser().ParseTableFile(Settings.TableFile, "tmp/tableFile1.tbl", KeyCombinationPool.Singleton1, true, true);
+            if (Settings.TableFile2._notEmpty()) new TableFileParser().ParseTableFile(Settings.TableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.Singleton2, false, true);
         }
 
         //-----------------------------------------------------------------------------------

@@ -1,0 +1,766 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Utils;
+using KanchokuWS.CombinationKeyStroke;
+using KanchokuWS.CombinationKeyStroke.DeterminerLib;
+
+namespace KanchokuWS.TableParser
+{
+    using ShiftKeyKind = ComboShiftKeyPool.ComboKind;
+
+    /// <summary>
+    /// テーブル解析器
+    /// </summary>
+    class TableParser : TableParserLexer
+    {
+        private static Logger logger = Logger.GetLogger(true);
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="pool">対象となる KeyComboPool</param>
+        public TableParser(ParserContext ctx, List<int> stkList, StrokeTableNode rootNode = null, int shiftPlane = -1)
+            : base(ctx, stkList, rootNode, shiftPlane)
+        {
+        }
+
+        /// <summary>もしルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる</summary>
+        protected void addMyCharFunctionInRootStrokeTable()
+        {
+            for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
+                if (rootTableNode.getNth(idx) == null) {
+                    OutputLines.Add($"-{idx}>@^");
+                }
+            }
+        }
+
+        /// <summary>
+        /// n番目の子ノードをセットする(残ったほうのノードを返す)
+        /// </summary>
+        /// <param name="tbl"></param>
+        /// <param name="n"></param>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        protected Node setNthChildNode(StrokeTableNode tbl, int n, Node node)
+        {
+            if (tbl.setNthChild(n, node) && isInCombinationBlock && !bIgnoreWarningOverwrite) {
+                logger.Warn($"DUPLICATED: {CurrentLine}");
+                NodeDuplicateWarning();
+            }
+            return tbl.getNth(n);
+        }
+
+        /// <summary>
+        /// stkList の末尾 strokeに対応するノードを追加する<br/>
+        /// 途中、StrokeTableNodeが存在しない場所があれば、そこにStrokeTableNodeを生成して挿入(または置換)する
+        /// </summary>
+        /// <param name="stkList"></param>
+        /// <param name="node"></param>
+        void setNodeAtLast(List<int> stkList, Node node)
+        {
+            logger.DebugH(() => $"CALLED: stkList={stkList._keyString()}, isCombo={isInCombinationBlock}, {node.DebugString()}");
+            bool bOverwritten = false;
+            if (stkList._isEmpty()) {
+                logger.Warn($"strokeList is empty");
+            } else {
+                int getStroke(int idx)
+                {
+                    int stk = stkList[idx];
+                    if (idx == 0 && isInCombinationBlock) stk = makeComboDecKey(stk);   // 同時打鍵の先頭キーは Combo化(ノードの重複を避ける)
+                    return stk;
+                }
+                var pn = rootTableNode;
+                for (int i = 0; i < stkList.Count - 1; ++i) {
+                    int idx = getStroke(i);
+                    var nd = pn.getNth(idx);
+                    if (nd != null && nd.isStrokeTree()) {
+                        pn = (StrokeTableNode)nd;
+                    } else {
+                        // StrokeTableNodeを生成して挿入(または置換)する
+                        bOverwritten = bOverwritten || nd != null && !nd.isFunctionNode();
+                        var _pn = new StrokeTableNode();
+                        pn.setNthChild(idx, _pn);
+                        pn = _pn;
+                    }
+                }
+                if (pn == null) {
+                    logger.Warn($"No such node: strokeList={stkList._keyString()}");
+                } else {
+                    int idx = getStroke(stkList.Count - 1);
+                    bOverwritten = bOverwritten || !(pn.getNth(idx)?.isFunctionNode() ?? true);
+                    pn.setNthChild(idx, node);
+                }
+            }
+            if (bOverwritten && isInCombinationBlock && !bIgnoreWarningOverwrite) {
+                logger.Warn($"DUPLICATED: strokeList={stkList._keyString()}, isCombo={isInCombinationBlock}, line={CurrentLine}");
+                NodeDuplicateWarning();
+            }
+        }
+
+        class StrokeListUndoer : IDisposable
+        {
+            List<int> stkList = null;
+
+            public StrokeListUndoer(List<int> list, int stroke)
+            {
+                if (stroke >= 0) {
+                    stkList = list;
+                    stkList.Add(stroke);
+                }
+            }
+
+            public void Dispose()
+            {
+                stkList._popBack();
+            }
+        }
+
+        StrokeListUndoer pushStroke(int stroke)
+        {
+            if (stroke >= 0) {
+                // 先頭キーはシフト化
+                if (strokeList._isEmpty()) {
+                    stroke = shiftDecKey(stroke);
+                } else {
+                    // それ以外は Modulo
+                    stroke %= DecoderKeys.PLANE_DECKEY_NUM;
+                }
+            }
+            return new StrokeListUndoer(strokeList, stroke);
+        }
+
+        protected void addNodeTree(int stroke = -1)
+        {
+            logger.DebugH(() => $"ENTER: lineNum={LineNumber}, strokeList={strokeList._keyString()}, stroke={stroke}");
+            using (pushStroke(stroke)) {
+                // StrokeTableNodeを追加しておく(そうでないと矢印記法によって先に空のStrokeTableNodeが作られてしまう可能性があるため)
+                setNodeAtLast(strokeList, new StrokeTableNode());
+                new TableParser(context, strokeList).MakeNodeTree();
+                logger.DebugH(() => $"LEAVE");
+            }
+        }
+
+        static class VBarSeparationHelper
+        {
+            public static int calcRow(int idx, int currentRow)
+            {
+                if (idx <= 40) return idx / 10;
+                return currentRow;
+            }
+
+            public static int calcOverrunIndex(int idx)
+            {
+                if (idx == 10) return 41;
+                if (idx == 20) return 44;
+                if (idx == 30) return 46;
+                if (idx == 40) return 48;
+                return idx;
+            }
+
+            public static int calcNewLinedIndex(int row)
+            {
+                return row * 10;
+            }
+        }
+
+        /// <summary>
+        /// テーブル構造を解析してストロークノード木を構築する。
+        /// </summary>
+        public void MakeNodeTree()
+        {
+            logger.DebugH(() => $"ENTER: lineNum={LineNumber}, strokeList={strokeList._keyString()}");
+
+            bool bError = false;
+            int idx = 0;
+            int row = 0;
+            //bool isPrevDelim = true;
+            TOKEN prevToken = 0;
+            TOKEN prevPrevToken = 0;
+            readNextToken();
+            while (!bError && currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
+                int pos = idx;
+                switch (currentToken) {
+                    case TOKEN.LBRACE:
+                        addNodeTree(idx);
+                        break;
+
+                    case TOKEN.ARROW:
+                        pos = arrowIndex;
+                        addArrowNode(currentToken, arrowIndex);
+                        //isPrevDelim = false;
+                        break;
+
+                    case TOKEN.ARROW_BUNDLE:
+                        parseArrowBundleNode(arrowIndex);
+                        break;
+
+                    case TOKEN.STRING:             // "str" : 文字列ノード
+                    case TOKEN.BARE_STRING:        // str : 文字列ノード
+                    case TOKEN.FUNCTION:           // @c : 機能ノード
+                        addLeafNode(currentToken, idx);
+                        break;
+
+                    case TOKEN.PLACE_HOLDER:
+                        placeHolders[CurrentStr] = idx;
+                        break;
+
+                    case TOKEN.VBAR:               // 次のトークン待ち
+                        if ((prevToken == 0 || prevToken == TOKEN.VBAR) && isInCombinationBlock && depth > 0) {
+                            // 空セルで、同時判定ブロック内で、深さ2以上なら、同時打鍵可能としておく(TODO: 具体例）
+                            using (pushStroke(idx)) {
+                                addCombinationKey(false);
+                            }
+                        }
+                        row = VBarSeparationHelper.calcRow(idx, row);
+                        idx = VBarSeparationHelper.calcOverrunIndex(idx + 1);
+                        break;
+
+                    case TOKEN.NEW_LINE:           // 次の行
+                        if (prevToken == TOKEN.VBAR || prevPrevToken == TOKEN.VBAR) {
+                            idx = VBarSeparationHelper.calcNewLinedIndex(++row);
+                        }
+                        break;
+
+                    case TOKEN.COMMA:              // 次のトークン待ち
+                    case TOKEN.SLASH:              // 次のトークン待ち
+                        //if (isPrevDelim) ++idx;
+                        //isPrevDelim = true;
+                        ++idx;
+                        break;
+
+                    case TOKEN.IGNORE:
+                        break;
+
+                    default:                        // 途中でファイルが終わったりした場合 : エラー
+                        ParseError($"MakeNodeTree: unexpected token: {currentToken}");
+                        bError = true;
+                        break;
+                }
+
+                prevPrevToken = prevToken;
+                prevToken = currentToken;
+
+                readNextToken();
+            }
+
+            if (depth == 0) placeHolders.Clear();
+            logger.DebugH(() => $"LEAVE: lineNum={LineNumber}, depth={depth}, bError={bError}");
+
+        }
+
+        protected virtual void addNodeTreeByArrow()
+        {
+            addNodeTree();            
+        }
+
+        // 矢印記法(-\d+(,\d+)*>)を解析して第1打鍵位置に従って配置する
+        protected void addArrowNode(TOKEN token, int idx, string targetStr = "")
+        {
+            using (pushStroke(idx)) {
+                logger.DebugH(() => $"ENTER: lineNum={LineNumber}, depth={depth}, idx={idx}");
+                //int arrowIdx = arrowIndex;
+                readNextToken(true);
+                switch (currentToken) {
+                    case TOKEN.ARROW:
+                        if (token == TOKEN.REWRITE_PRE) {
+                            ParseError($"前置書き換えの場合は、矢印記法を重ねることはできません。");
+                        }
+                        addArrowNode(token, arrowIndex, targetStr);
+                        break;
+
+                    case TOKEN.COMMA:
+                    case TOKEN.VBAR:
+                        if (token == TOKEN.REWRITE_PRE) {
+                            ParseError($"前置書き換えの場合は、矢印記法を重ねることはできません。");
+                        }
+                        if (parseArrow(GetNextChar())) addArrowNode(token, arrowIndex, targetStr);
+                        break;
+
+                    case TOKEN.LBRACE:
+                        // -22>{ } 形式
+                        switch (token) {
+                            case TOKEN.ARROW:
+                                addNodeTreeByArrow();
+                                break;
+                            case TOKEN.REWRITE_PRE:
+                                addPreRewriteNode(targetStr);
+                                break;
+                            case TOKEN.REWRITE_POST:
+                                addPostRewriteNode();
+                                break;
+                        }
+                        break;
+
+                    case TOKEN.STRING:
+                    case TOKEN.BARE_STRING:
+                        if (token != TOKEN.ARROW) {
+                            ParseError($"前置または後置書き換えの場合は、ブロック記述が必要です。");
+                        }
+                        addLeafNode(currentToken, -1);  // idx は既にpush済み
+                        break;
+
+                    default:
+                        ParseError("PreRewriteParser-addArrowNode");
+                        break;
+                }
+
+                currentToken = TOKEN.IGNORE;    // いったん末端ノードの処理をしたら、矢印記法を抜けるまで無視
+                logger.DebugH(() => $"LEAVE: lineNum={LineNumber}, depth={depth}");
+            }
+        }
+
+        // 矢印束記法(-*>-nn>)を第1打鍵位置に従って配置する
+        protected Node parseArrowBundleNode(int nextArrowIdx)
+        {
+            logger.DebugH(() => $"ENTER: depth={depth}, nextArrowIdx={nextArrowIdx}");
+
+            Node myNode = null;
+
+            int n = 0;
+            int row = 0;
+            //bool isPrevDelim = true;
+            readNextToken(true);
+            if (currentToken != TOKEN.LBRACE) { // 直後は '{' でブロックの始まりである必要がある
+                ParseError($"parseArrowBundleNode: TOKEN.LBRACE is excpected, but {currentToken}");
+                return myNode;
+            }
+            TOKEN prevToken = 0;
+            TOKEN prevPrevToken = 0;
+            readNextToken();
+            while (currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
+                switch (currentToken) {
+                    //case TOKEN.ARROW:
+                    //    parseArrowNode(0, nextArrowIdx);
+                    //    isPrevDelim = false;
+                    //    break;
+
+                    //case TOKEN.LBRACE:
+                    //    strokeList.Add(n);
+                    //    strokeList.Add(nextArrowIdx);
+                    //    parseNode(currentToken, n);
+                    //    strokeList._popBack();
+                    //    strokeList._popBack();
+                    //    ++n;
+                    //    isPrevDelim = false;
+                    //    break;
+
+                    case TOKEN.STRING:             // "str" : 文字列ノード
+                    case TOKEN.BARE_STRING:        // str : 文字列ノード
+                    case TOKEN.FUNCTION:           // @c : 機能ノード
+                        addLeafNode(currentToken, nextArrowIdx, n);
+                        break;
+
+                    case TOKEN.PLACE_HOLDER:
+                        placeHolders[CurrentStr] = n;
+                        break;
+
+                    case TOKEN.VBAR:              // 次のトークン待ち
+                        row = VBarSeparationHelper.calcRow(n, row);
+                        n = VBarSeparationHelper.calcOverrunIndex(n + 1);
+                        break;
+
+                    case TOKEN.NEW_LINE:
+                        if (prevToken == TOKEN.VBAR || prevPrevToken == TOKEN.VBAR) {
+                            n = VBarSeparationHelper.calcNewLinedIndex(++row);
+                        }
+                        break;
+
+                    case TOKEN.COMMA:              // 次のトークン待ち
+                    case TOKEN.SLASH:              // 次のトークン待ち
+                        //if (isPrevDelim) ++n;
+                        //isPrevDelim = true;
+                        ++n;
+                        break;
+
+                    case TOKEN.IGNORE:
+                        break;
+
+                    default:                        // 途中でファイルが終わったりした場合 : エラー
+                        ParseError($"parseArrowBundleNode: unexpected token: {currentToken}");
+                        break;
+                }
+                prevPrevToken = prevToken;
+                prevToken = currentToken;
+
+                readNextToken();
+            }
+
+            if (depth == 0) placeHolders.Clear();
+            logger.DebugH(() => $"LEAVE: depth={depth}");
+
+            return myNode;
+        }
+
+        void addLeafNode(TOKEN token, int idx, int prevIdx = -1)
+        {
+            using (pushStroke(prevIdx)) {
+                using (pushStroke(idx)) {
+                    switch (token) {
+                        case TOKEN.STRING:             // "str" : 文字列ノード
+                            addStringNode(false);
+                            break;
+                        case TOKEN.BARE_STRING:        // str : 文字列ノード
+                            addStringNode(true);
+                            break;
+                        case TOKEN.FUNCTION:           // @c : 機能ノード
+                            addFunctionNode();
+                            break;
+                    }
+                }
+            }
+        }
+
+        protected virtual void addStringNode(bool bBare)
+        {
+            logger.DebugH(() => $"ENTER: depth={depth}, bBare={bBare}, str={CurrentStr}");
+            // 終端ノードの追加と同時打鍵列の組合せの登録
+            addTerminalNode(bBare, new StringNode($"{CurrentStr._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")}", bBare));
+            if (depth == 1 && CurrentStr._startsWith("!{")) {
+                // Repeatable Key
+                logger.DebugH(() => $"REPEATABLE");
+                keyComboPool.AddRepeatableKey(strokeList[0]);
+            }
+            logger.DebugH(() => $"LEAVE: depth={depth}");
+        }
+
+        void addFunctionNode()
+        {
+            logger.DebugH(() => $"ENTER: depth={depth}, str={CurrentStr}");
+            // 終端ノードの追加と同時打鍵列の組合せの登録
+            addTerminalNode(false, new FunctionNode(CurrentStr));
+            logger.DebugH(() => $"LEAVE: depth={depth}");
+        }
+
+        /// <summary>
+        /// 終端ノードの追加と同時打鍵列の組合せの登録<br/>
+        /// 同時打鍵の場合は、ブロックのルートキーをCOMBO_DECKEY_STARTまでシフトする
+        /// </summary>
+        /// <param name="prevNth"></param>
+        /// <param name="lastNth"></param>
+        void addTerminalNode(bool bBare, Node node)
+        {
+            addCombinationKey(true);
+
+            // 対象が書き換えテーブルでなければノードをセットする
+            if (!bRewriteTable) setNodeAtLast(strokeList, node);
+        }
+
+        void addCombinationKey(bool hasStr)
+        {
+            var list = new List<int>(strokeList);
+
+            if (list._notEmpty()) {
+                int shiftOffset = calcShiftOffset(list[0]);
+
+                // 先頭キーはシフト化
+                if (isInCombinationBlock) {
+                    list[0] = makeComboDecKey(list[0]);
+                } else if (list[0] < DecoderKeys.PLANE_DECKEY_NUM) {
+                    list[0] += shiftOffset;
+                }
+
+                if (isInCombinationBlock || list.Count == 1) {
+                    makeCombinationKeyCombo(list, shiftOffset, hasStr);
+                } else {
+                    keyComboPool.ContainsSequentialShiftKey = true;
+                    for (int i = 0; i < list.Count - 1; ++i) {
+                        int dk = list[i];
+                        if (!sequentialShiftKeys.Contains(dk)) {
+                            addSequentialShiftKey(dk, shiftOffset);
+                            sequentialShiftKeys.Add(dk);
+                        }
+                    }
+                }
+            }
+        }
+
+        void addPreRewriteNode(string targetStr)
+        {
+            logger.DebugH(() => $"ENTER");
+
+            if (strokeList.Count != 1) {
+                ParseError($"深さが1以上の前置書き換えはサポートされていません。");
+            }
+
+            // 前置文字列の指定があるか→なければ単打テーブルから文字を拾ってくる
+            int preIdx = strokeList._getFirst();
+            targetStr = targetStr._orElse(() => preIdx >= 0 ? getNthRootNodeString(preIdx) : "");
+            keyComboPool.AddPreRewriteKey(preIdx);
+
+            // 前置書き換えノードの処理を行う
+            new PreRewriteParser(context, targetStr).MakeNodeTree();
+
+            logger.DebugH(() => $"LEAVE");
+        }
+
+        void addPostRewriteNode()
+        {
+            logger.DebugH("ENTER");
+
+            // 後置文字列の指定があるか→なければ単打テーブルから文字を拾ってくる
+            int lastIdx = strokeList._getLast();
+            var myStr = ReadWordOrString()._orElse(() => lastIdx >= 0 ? getNthRootNodeString(lastIdx) : "");
+            var node = setNthChildNode(rootTableNode, lastIdx, new RewriteNode(myStr));
+            if (node is RewriteNode) {
+                // RewriteNode がノード木に反映された場合に限り、後置書き換えノードの処理を行う
+                new PostRewriteParser((RewriteNode)node, context, leaderStr).MakeNodeTree();
+            } else {
+                logger.Warn("RewriteNode NOT merged");
+            }
+            logger.DebugH("LEAVE");
+        }
+
+        int calcShiftOffset(int deckey)
+        {
+            return (deckey >= DecoderKeys.PLANE_DECKEY_NUM ? deckey / DecoderKeys.PLANE_DECKEY_NUM : shiftPlane) * DecoderKeys.PLANE_DECKEY_NUM;
+        }
+
+        // 同時打鍵列の組合せを作成して登録しておく
+        void makeCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr)
+        {
+            logger.DebugH(() => $"{deckeyList._keyString()}={CurrentStr}, shiftOffset={shiftOffset}, hasStr={hasStr}");
+            var comboKeyList = deckeyList.Select(x => makeShiftedDecKey(x, shiftOffset)).ToList();      // 先頭キーのオフセットに合わせる
+            keyComboPool.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
+            keyComboPool.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr);
+        }
+
+        void addSequentialShiftKey(int decKey, int shiftOffset)
+        {
+            keyComboPool.AddComboShiftKey(makeShiftedDecKey(decKey, shiftOffset), ShiftKeyKind.SequentialShift);
+        }
+
+        int makeComboDecKey(int decKey)
+        {
+            return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.COMBO_DECKEY_START;
+        }
+
+        int makeShiftedDecKey(int decKey, int shiftOffset)
+        {
+            return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + shiftOffset;
+        }
+
+    }
+
+    /// <summary>
+    /// 前置書き換えブロックの解析
+    /// </summary>
+    class PreRewriteParser : TableParser
+    {
+        private static Logger logger = Logger.GetLogger();
+
+        string targetStr;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public PreRewriteParser(ParserContext ctx, string targetStr)
+            : base(ctx, null)
+        {
+            this.targetStr = targetStr;
+        }
+
+        // ここが呼ばれたとき、strokeListの末尾には nodeIndex が入っている
+        protected override void addNodeTreeByArrow()
+        {
+            logger.DebugH(() => $"ENTER: lineNum={LineNumber}, strokeList={strokeList._keyString()}");
+            var tblNode = new StrokeTableNode(true);
+            if (addTreeOrStringNode("", tblNode)) {
+                new TableParser(context, null, tblNode, 0).MakeNodeTree();
+            }
+            logger.DebugH(() => $"LEAVE");
+        }
+
+        // ここが呼ばれたとき、strokeListの末尾には nodeIndex が入っている
+        protected override void addStringNode(bool bBare)
+        {
+            logger.DebugH(() => $"ENTER: bBare={bBare}, str={CurrentStr}, idx={strokeList._getLast()}");
+            addTreeOrStringNode(CurrentStr._quoteString(bBare), null);
+            logger.DebugH("LEAVE");
+        }
+
+        bool addTreeOrStringNode(string outStr, StrokeTableNode tblNode)
+        {
+            int lastIdx = shiftDecKey(strokeList._getLast());
+            string myStr = getNthRootNodeString(lastIdx);
+            var node = setNthChildNode(rootTableNode, lastIdx, new RewriteNode(myStr));
+            if (node is RewriteNode) {
+                // RewriteNode がノード木に反映された場合に限り、以下を実行
+                var tgtStr = Helper.ConcatDqString(targetStr, leaderStr);
+                ((RewriteNode)node).AddRewritePair(tgtStr, outStr, tblNode);
+                return true;
+            } else {
+                logger.Warn("RewriteNode NOT merged");
+                return false;
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// 後置書き換えブロックの解析
+    /// </summary>
+    class PostRewriteParser : TableParser
+    {
+        private static Logger logger = Logger.GetLogger();
+
+        RewriteNode node = null;
+
+        new string leaderStr;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="pool">対象となる KeyComboPool</param>
+        public PostRewriteParser(RewriteNode node, ParserContext ctx, string leaderStr)
+            : base(ctx, null)
+        {
+            this.node = node;
+            this.leaderStr = leaderStr;
+        }
+
+        // ここが呼ばれたとき、strokeListの末尾には nodeIndex が入っている
+        protected override void addNodeTreeByArrow()
+        {
+            addNodeTree();
+        }
+
+        // ここが呼ばれたとき、strokeListの末尾には nodeIndex が入っている
+        protected override void addStringNode(bool bBare)
+        {
+            logger.DebugH(() => $"ENTER: bBare={bBare}, str={CurrentStr}, idx={strokeList._getLast()}");
+            var tgtStr = Helper.ConcatDqString(pathStr, leaderStr);
+            var outStr = CurrentStr._quoteString(bBare);
+            node.AddRewritePair(tgtStr, outStr, null);
+            logger.DebugH("LEAVE");
+        }
+    }
+
+    /// <summary>
+    /// ルートテーブルの解析
+    /// </summary>
+    class RootTableParser : TableParser
+    {
+        private static Logger logger = Logger.GetLogger();
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="pool">対象となる KeyComboPool</param>
+        public RootTableParser(ParserContext ctx)
+            : base(ctx, null)
+        {
+        }
+
+        /// <summary>
+        /// トップレベルのテーブル定義を解析してストローク木を構築する。
+        /// 解析結果を矢印記法に変換して出力ファイル(outFile)に書き込む
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="outFilename"></param>
+        public void ParseRootTable()
+        {
+            logger.InfoH($"ENTER");
+
+            readNextToken(true);
+            while (context.currentToken != TOKEN.END) {
+                switch (context.currentToken) {
+                    case TOKEN.LBRACE:
+                        MakeNodeTree();
+                        break;
+
+                    case TOKEN.ARROW:
+                    case TOKEN.REWRITE_PRE:
+                    case TOKEN.REWRITE_POST:
+                        addArrowNode(currentToken, arrowIndex);
+                        break;
+
+                    case TOKEN.ARROW_BUNDLE:
+                        parseArrowBundleNode(context.arrowIndex);
+                        break;
+
+                    case TOKEN.IGNORE:
+                        break;
+
+                    default:
+                        context.tableLines.ParseError();
+                        break;
+                }
+                readNextToken(true);
+            }
+
+            context.keyComboPool.SetNonTerminalMarkForSubkeys();
+            if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
+                context.keyComboPool.DebugPrint();
+            }
+
+            if (context.bRewriteEnabled) {
+                // 書き換えノードがあったら、SandSの疑似同時打鍵サポートをOFFにしておく
+                Settings.SandSEnablePostShift = false;
+            }
+
+            outputNewLines();
+            addMyCharFunctionInRootStrokeTable();
+
+            logger.InfoH($"LEAVE: KeyCombinationPool.Count={context.keyComboPool.Count}");
+        }
+
+    }
+
+    /// <summary>
+    /// テーブルファイル解析器
+    /// </summary>
+    class TableFileParser
+    {
+        private static Logger logger = Logger.GetLogger();
+
+        TableLines tableLines = new TableLines();
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public TableFileParser()
+        {
+        }
+
+        /// <summary>
+        /// テーブル定義を解析してストローク木を構築する。
+        /// 解析結果を矢印記法に変換して出力ファイル(outFile)に書き込む
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="outFilename"></param>
+        /// <param name="pool">対象となる KeyComboPool</param>
+        public void ParseTableFile(string filename, string outFilename, KeyCombinationPool pool, bool primary, bool bWriteExpandedTableLines = false)
+        {
+            logger.InfoH($"ENTER: filename={filename}");
+            tableLines.ReadAllLines(filename);
+
+            if (tableLines.NotEmpty) {
+                var context = new ParserContext(tableLines, pool, primary);
+                var parser = new RootTableParser(context);
+                parser.ParseRootTable();
+                writeAllLines(outFilename, context.OutputLines);
+                if (bWriteExpandedTableLines) writeAllLines($"tmp/parsedTableFile{(primary ? 1 : 2)}.txt", context.tableLines.GetLines());
+            } else {
+                tableLines.Error($"テーブルファイル({filename})が開けません");
+            }
+
+            tableLines.showErrorMessage();
+
+            logger.InfoH($"LEAVE");
+        }
+
+        private void writeAllLines(string filename, List<string> lines)
+        {
+            var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
+            Helper.CreateDirectory(path._getDirPath());
+            logger.InfoH($"ENTER: path={path}");
+            Helper.WriteLinesToFile(path, lines, (e) => logger.Error(e._getErrorMsg()));
+            logger.InfoH($"LEAVE");
+        }
+
+    }
+
+}

@@ -179,7 +179,9 @@
     <Compile Include="CombinationKeyStroke\Determiner.cs" />
     <Compile Include="CombinationKeyStroke\DeterminerLib\KeyCombinationPool.cs" />
     <Compile Include="CombinationKeyStroke\DeterminerLib\ComboShiftKeyPool.cs" />
-    <Compile Include="TableFileParser.cs" />
+    <Compile Include="TableParser\Context.cs" />
+    <Compile Include="TableParser\Node.cs" />
+    <Compile Include="TableParser\TableFileParser.cs" />
     <Compile Include="CombinationKeyStroke\KeyCodeInfo.cs" />
     <Compile Include="CombinationKeyStroke\DecoderKeySequence.cs" />
     <Compile Include="CombinationKeyStroke\DeterminerLib\Stroke.cs" />
@@ -189,6 +191,8 @@
     <Compile Include="CombinationKeyStroke\KeyCombinationHelper.cs" />
     <Compile Include="Domain\SpecialKeysAndFunctions.cs" />
     <Compile Include="Domain\VirtualKeys.cs" />
+    <Compile Include="TableParser\TableParserLexer.cs" />
+    <Compile Include="TableParser\TOKEN.cs" />
     <EmbeddedResource Include="Gui\BackColorComboBox.resx">
       <DependentUpon>BackColorComboBox.cs</DependentUpon>
     </EmbeddedResource>
