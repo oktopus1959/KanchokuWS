@@ -14,7 +14,7 @@ namespace KanchokuWS.TableParser
     /// <summary>
     /// テーブル解析器
     /// </summary>
-    class TableParser : TableParserLexer
+    class TableParser : TableParserTokenizer
     {
         private static Logger logger = Logger.GetLogger(true);
 
@@ -253,13 +253,13 @@ namespace KanchokuWS.TableParser
 
         protected virtual void addNodeTreeByArrow()
         {
-            addNodeTree();            
+            addNodeTree();
         }
 
         // 矢印記法(-\d+(,\d+)*>)を解析して第1打鍵位置に従って配置する
-        protected void addArrowNode(TOKEN token, int idx, string targetStr = "")
+        protected void addArrowNode(TOKEN token, int idx)
         {
-            using (pushStroke(idx)) {
+            using (pushStroke(idx)) {   // ここで idx は保存される
                 logger.DebugH(() => $"ENTER: lineNum={LineNumber}, depth={depth}, idx={idx}");
                 //int arrowIdx = arrowIndex;
                 readNextToken(true);
@@ -268,7 +268,7 @@ namespace KanchokuWS.TableParser
                         if (token == TOKEN.REWRITE_PRE) {
                             ParseError($"前置書き換えの場合は、矢印記法を重ねることはできません。");
                         }
-                        addArrowNode(token, arrowIndex, targetStr);
+                        addArrowNode(token, arrowIndex);
                         break;
 
                     case TOKEN.COMMA:
@@ -276,7 +276,7 @@ namespace KanchokuWS.TableParser
                         if (token == TOKEN.REWRITE_PRE) {
                             ParseError($"前置書き換えの場合は、矢印記法を重ねることはできません。");
                         }
-                        if (parseArrow(GetNextChar())) addArrowNode(token, arrowIndex, targetStr);
+                        if (parseArrow()) addArrowNode(token, arrowIndex);
                         break;
 
                     case TOKEN.LBRACE:
@@ -286,7 +286,7 @@ namespace KanchokuWS.TableParser
                                 addNodeTreeByArrow();
                                 break;
                             case TOKEN.REWRITE_PRE:
-                                addPreRewriteNode(targetStr);
+                                addPreRewriteNode(RewriteTargetStr);
                                 break;
                             case TOKEN.REWRITE_POST:
                                 addPostRewriteNode();
@@ -332,21 +332,6 @@ namespace KanchokuWS.TableParser
             readNextToken();
             while (currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
                 switch (currentToken) {
-                    //case TOKEN.ARROW:
-                    //    parseArrowNode(0, nextArrowIdx);
-                    //    isPrevDelim = false;
-                    //    break;
-
-                    //case TOKEN.LBRACE:
-                    //    strokeList.Add(n);
-                    //    strokeList.Add(nextArrowIdx);
-                    //    parseNode(currentToken, n);
-                    //    strokeList._popBack();
-                    //    strokeList._popBack();
-                    //    ++n;
-                    //    isPrevDelim = false;
-                    //    break;
-
                     case TOKEN.STRING:             // "str" : 文字列ノード
                     case TOKEN.BARE_STRING:        // str : 文字列ノード
                     case TOKEN.FUNCTION:           // @c : 機能ノード
@@ -370,8 +355,6 @@ namespace KanchokuWS.TableParser
 
                     case TOKEN.COMMA:              // 次のトークン待ち
                     case TOKEN.SLASH:              // 次のトークン待ち
-                        //if (isPrevDelim) ++n;
-                        //isPrevDelim = true;
                         ++n;
                         break;
 
@@ -481,14 +464,16 @@ namespace KanchokuWS.TableParser
         {
             logger.DebugH(() => $"ENTER");
 
-            if (strokeList.Count != 1) {
+            if (strokeList.Count > (targetStr._notEmpty() ? 0 : 1)) {
                 ParseError($"深さが1以上の前置書き換えはサポートされていません。");
             }
 
             // 前置文字列の指定があるか→なければ単打テーブルから文字を拾ってくる
-            int preIdx = strokeList._getFirst();
-            targetStr = targetStr._orElse(() => preIdx >= 0 ? getNthRootNodeString(preIdx) : "");
-            keyComboPool.AddPreRewriteKey(preIdx);
+            if (targetStr._isEmpty()) {
+                int preIdx = strokeList._getFirst();
+                targetStr = preIdx >= 0 ? getNthRootNodeString(preIdx) : "";
+                keyComboPool.AddPreRewriteKey(preIdx);
+            }
 
             // 前置書き換えノードの処理を行う
             new PreRewriteParser(context, targetStr).MakeNodeTree();

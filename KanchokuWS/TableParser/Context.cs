@@ -120,6 +120,8 @@ namespace KanchokuWS.TableParser
 
         public void ClearCurrentStr() { CurrentStr = ""; }
 
+        public string RewriteTargetStr { get; set; }                    // 前置書き換え対象文字列
+
         public TableLines()
         {
             blockInfoStack.Push(KanchokuIni.Singleton.KanchokuDir, "", 0);
@@ -245,6 +247,7 @@ namespace KanchokuWS.TableParser
                 sb.Append(c);
             }
             CurrentStr = sb.ToString();
+            logger.DebugH(() => $"LEAVE: {CurrentStr}");
         }
 
         // 何らかのデリミタが来るまで読みこんで、currentStr に格納。スラッシュは文字列に含む
@@ -260,6 +263,33 @@ namespace KanchokuWS.TableParser
                 if (!isOutputChar()) break;
                 GetNextChar();
                 sb.Append(c);
+            }
+            CurrentStr = sb.ToString();
+            logger.DebugH(() => $"LEAVE: {CurrentStr}");
+        }
+
+        /// <summary>
+        /// 指定の文字が来るまで読みこんで、CurrentStr に格納。ポインタはデリミタの位置を指している
+        /// </summary>
+        /// <param name="array"></param>
+        public void ReadStringUpto(params char[] array) {
+            var sb = new StringBuilder();
+            char ch = '\0';
+            while (true) {
+                ch = PeekNextChar();
+                if (ch == '\r' || ch == '\n' || ch == 0) {
+                    ParseError("ReadRewriteTargetString: unexpected EOL or EOF");
+                    break;
+                }
+                if (array._findIndex(ch) >= 0) {
+                    // 文字列の終わり
+                    break;
+                }
+                if (ch == '\\') {
+                    // 最初の「\」は、単に読みとばす
+                    GetNextChar();
+                }
+                sb.Append(GetNextChar());
             }
             CurrentStr = sb.ToString();
             logger.DebugH(() => $"LEAVE: {CurrentStr}");

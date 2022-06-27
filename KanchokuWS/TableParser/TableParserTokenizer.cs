@@ -12,102 +12,9 @@ namespace KanchokuWS.TableParser
     using ShiftKeyKind = ComboShiftKeyPool.ComboKind;
 
     /// <summary>
-    /// テーブル解析器のコンテキストデータ
-    /// </summary>
-    class TableParserContext
-    {
-        private static Logger logger = Logger.GetLogger(true);
-
-        protected ParserContext context;
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="pool">対象となる KeyComboPool</param>
-        public TableParserContext(ParserContext ctx)
-        {
-            context = ctx;
-        }
-
-        protected TableLines tableLines => context.tableLines;
-
-        protected TOKEN currentToken {
-            get { return context.currentToken;}
-            set { context.currentToken = value; }
-        }
-        protected int arrowIndex {
-            get { return context.arrowIndex; }
-            set { context.arrowIndex = value;}
-        }
-        protected bool bPrimary => context.bPrimary;
-        protected bool bRewriteEnabled {
-            get { return context.bRewriteEnabled; }
-            set { context.bRewriteEnabled = value; }
-        }
-        protected bool isInCombinationBlock => context.isInCombinationBlock;
-        protected ShiftKeyKind shiftKeyKind {
-            get { return context.shiftKeyKind; }
-            set { context.shiftKeyKind = value; }
-        }
-        protected Dictionary<string, List<string>> linesMap => context.linesMap;
-        protected KeyCombinationPool keyComboPool => context.keyComboPool;
-        protected List<string> OutputLines => context.OutputLines;
-        protected Dictionary<string, int> placeHolders => context.placeHolders;
-        protected bool bRewriteTable {
-            get { return context.bRewriteTable; }
-            set { context.bRewriteTable = value; }
-        }
-
-        protected bool bIgnoreWarningAll { get { return context.bIgnoreWarningAll; } set { context.bIgnoreWarningAll = value; } }
-        protected bool bIgnoreWarningBraceLevel { get { return context.bIgnoreWarningBraceLevel; } set { context.bIgnoreWarningBraceLevel = value; } }
-        protected bool bIgnoreWarningOverwrite { get { return context.bIgnoreWarningOverwrite; } set { context.bIgnoreWarningOverwrite = value; } }
-        protected int braceLevel { get { return context.braceLevel; } set { context.braceLevel = value; } }
-
-        protected HashSet<int> sequentialShiftKeys => context.sequentialShiftKeys;
-
-        protected bool Empty => tableLines.Empty;
-        protected bool NotEmpty => tableLines.NotEmpty;
-        protected string CurrentLine => tableLines.CurrentLine;
-        protected int LineNumber => tableLines.LineNumber;
-        protected bool IsCurrentPosHeadOfLine => tableLines.IsCurrentPosHeadOfLine;
-        protected char CurrentChar => tableLines.CurrentChar;
-        protected string CurrentStr => tableLines.CurrentStr;
-        protected void ClearCurrentStr() { tableLines.ClearCurrentStr(); }
-        protected void ReadAllLines(string filename) { tableLines.ReadAllLines(filename); }
-        protected void IncludeFile() { tableLines.IncludeFile(); }
-        protected void EndInclude() { tableLines.EndInclude(); }
-        protected void StoreLineBlock() { tableLines.StoreLineBlock(); }
-        protected void LoadLineBlock() { tableLines.LoadLineBlock(); }
-        protected void ReadString() { tableLines.ReadString(); }
-        protected void ReadBareString(char c = '\0') { tableLines.ReadBareString(c); }
-        protected void ReadMarker() { tableLines.ReadMarker(); }
-        protected string ReadWord() { return tableLines.ReadWord(); }
-        protected string ReadWordOrString() { return tableLines.ReadWordOrString(); }
-        protected char PeekNextChar() { return tableLines.PeekNextChar(); }
-        protected char GetNextChar() { return tableLines.GetNextChar(); }
-        protected bool GetNextLine() { return tableLines.GetNextLine(); }
-        protected void SkipToEndOfLine() { tableLines.SkipToEndOfLine(); }
-        protected char SkipSpace() { return tableLines.SkipSpace(); }
-        protected void RewindChar() { tableLines.RewindChar(); }
-        protected string MakeErrorLines() { return tableLines.MakeErrorLines(); }
-        protected void ParseError(string msg = null) { tableLines.ParseError(msg); }
-        protected void ArgumentError(string arg) { tableLines.ArgumentError(arg); }
-        protected void LoadLoopError(string name) { tableLines.LoadLoopError(name); }
-        protected void NoSuchBlockError(string name) { tableLines.NoSuchBlockError(name); }
-        protected void FileOpenError(string filename) { tableLines.FileOpenError(filename); }
-        protected void NodeDuplicateWarning() { tableLines.NodeDuplicateWarning(); }
-        protected void UnexpectedLeftBraceAtColumn0Warning() { tableLines.UnexpectedLeftBraceAtColumn0Warning(); }
-        protected void UnexpectedRightBraceAtColumn0Warning() { tableLines.UnexpectedRightBraceAtColumn0Warning(); }
-        protected void showErrorMessage() { tableLines.showErrorMessage(); }
-        protected void Error(string msg) { tableLines.Error(msg); }
-        protected void Warn(string msg) { tableLines.Warn(msg); }
-
-    }
-
-    /// <summary>
     /// テーブル字句解析器
     /// </summary>
-    class TableParserLexer : TableParserContext
+    class TableParserTokenizer : TableParserContext
     {
         private static Logger logger = Logger.GetLogger(true);
 
@@ -145,7 +52,7 @@ namespace KanchokuWS.TableParser
         /// コンストラクタ
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public TableParserLexer(ParserContext ctx, List<int> stkList, StrokeTableNode rootNode = null, int shiftPlane = -1)
+        public TableParserTokenizer(ParserContext ctx, List<int> stkList, StrokeTableNode rootNode = null, int shiftPlane = -1)
             : base(ctx)
         {
             _rootTableNode = rootNode;
@@ -346,26 +253,27 @@ namespace KanchokuWS.TableParser
                         return TOKEN.STRING;
 
                     case '-': {
-                        char c = GetNextChar();
+                        char c = PeekNextChar();
                         if (c == '*') {
                             // 矢印束記法
+                            GetNextChar();
                             if (parseArrowBundle()) return TOKEN.ARROW_BUNDLE;
                         } else {
                             // 矢印記法
-                            if (parseArrow(c)) return TOKEN.ARROW;
+                            if (parseArrow()) return TOKEN.ARROW;
                         }
                     }
                     break;
 
                     case '$':
                         ReadBareString();
-                        if (CurrentStr._notEmpty()) return TOKEN.PLACE_HOLDER;
+                        if (CurrentStr._notEmpty()) return TOKEN.PLACE_HOLDER;      // '$' を除く文字列
                         break;
 
                     case '%':
                         if (depth != 0) {
                             ParseError("'%'で始まる前置書き換え記法はテーブルがネストされた位置では使えません。");
-                        } else if (parseArrow(GetNextChar())) {
+                        } else if (parseArrow()) {
                             bRewriteEnabled = true;
                             return TOKEN.REWRITE_PRE;
                         }
@@ -374,7 +282,7 @@ namespace KanchokuWS.TableParser
                     case '&':
                         if (depth != 0) {
                             ParseError("'%'で始まる前置書き換え記法はテーブルがネストされた位置では使えません。");
-                        } else if (parseArrow(GetNextChar())) {
+                        } else if (parseArrow()) {
                             bRewriteEnabled = true;
                             return TOKEN.REWRITE_POST;
                         }
@@ -480,44 +388,72 @@ namespace KanchokuWS.TableParser
         }
 
         // ARROW: /-[SsXxPp]?[0-9]+>/
-        protected bool parseArrow(char c)
+        protected bool parseArrow()
         {
             int shiftOffset = -1;
             int funckeyOffset = 0;
             bool bShiftPlane = false;
-            //char c = GetNextChar();
-            if (c == ' ' || c == '\t') c = SkipSpace();
-            if (c == 'N' || c == 'n') {
-                shiftOffset = 0;
-                c = GetNextChar();
-            } else if (c == 'S' || c == 's' || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {
-                shiftOffset = VirtualKeys.CalcShiftOffset(c);
-                c = GetNextChar();
-            } else if (c == 'X' || c == 'x') {
-                shiftOffset = 0;
-                funckeyOffset = DecoderKeys.FUNC_DECKEY_START;
-                c = GetNextChar();
-            } else if (c == 'P' || c == 'P') {
-                bShiftPlane = true;
-                c = GetNextChar();
+
+            RewriteTargetStr = "";
+
+            if (PeekNextChar() == '"') {
+                ReadString();
+            } else {
+                ReadStringUpto('>', ',', '|');
             }
-            if (c == ' ' || c == '\t') c = SkipSpace();
+            if (PeekNextChar() == '>') {
+                // エラーがあったら即時 return できるように、前もって進めておく
+                GetNextChar();
+            }
+
+            string s = CurrentStr._strip();
+            if (s._isEmpty()) {
+                ParseError($"parseArrow");
+                return false;
+            }
+
+            char c = s[0];
 
             if (c == '$') {
-                ReadBareString();
-                arrowIndex = placeHolders._safeGet(CurrentStr, -1);
+                // TOKEN.PLACE_HOLDER
+                arrowIndex = placeHolders._safeGet(s._safeSubstring(1), -1);
+                if (arrowIndex < 0) {
+                    ParseError($"定義されていないプレースホルダー: {s}");
+                    return false;
+                }
             } else {
-                arrowIndex = parseNumerical(c);
+                arrowIndex = s._parseInt(-1);
+                if (arrowIndex < 0) {
+                    arrowIndex = s._safeSubstring(1)._parseInt(-1);
+                    if (arrowIndex < 0) {
+                        // 前置書き換え対象文字列
+                        RewriteTargetStr = s;
+                        return true;
+                    }
+                    if (c == 'N' || c == 'n') {
+                        shiftOffset = 0;
+                    } else if (c == 'S' || c == 's' || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {
+                        shiftOffset = VirtualKeys.CalcShiftOffset(c);
+                    } else if (c == 'X' || c == 'x') {
+                        shiftOffset = 0;
+                        funckeyOffset = DecoderKeys.FUNC_DECKEY_START;
+                    } else if (c == 'P' || c == 'P') {
+                        bShiftPlane = true;
+                    } else {
+                        ParseError($"不正なプレーン指定: {s}");
+                        return false;
+                    }
+                }
             }
-            if (arrowIndex < 0) return false;
 
             arrowIndex += funckeyOffset;
             arrowIndex %= DecoderKeys.PLANE_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
-            if (!bShiftPlane) {
-                //if (isInCombinationBlock) {
-                //    // 同時打鍵ブロック用の Offset
-                //    shiftOffset = DecoderKeys.COMBO_DECKEY_START;
-                //} else
+            if (bShiftPlane) {
+                // プレーン指定の場合
+                shiftPlane = arrowIndex;
+                if (shiftPlane >= DecoderKeys.ALL_PLANE_NUM) ParseError($"parseArrow: shiftPlane out of range: {shiftPlane}");
+                return false;
+            } else {
                 if (shiftOffset < 0) {
                     // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
                     shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;
@@ -527,15 +463,7 @@ namespace KanchokuWS.TableParser
                     ParseError($"parseArrow: arrowIndex out of range: {arrowIndex}");
                     return false;
                 }
-            } else {
-                shiftPlane = arrowIndex;
-                if (shiftPlane >= DecoderKeys.ALL_PLANE_NUM) ParseError($"parseArrow: shiftPlane out of range: {shiftPlane}");
-                return false;
             }
-            c = GetNextChar();
-            if (c == ' ' || c == '\t') c = SkipSpace();
-            if (c == ',') RewindChar();
-            else if (c != '>') ParseError($"parseArrow: '>' is expected, but {c}");
             logger.DebugH(() => $"depth={depth}, arrowIndex={arrowIndex}, shiftPlane={shiftPlane}, shiftOffset={shiftOffset}");
             return true;
         }
@@ -547,38 +475,27 @@ namespace KanchokuWS.TableParser
             if (c != '>') ParseError($"parseArrowBundle: '>' is expected, but {c}");
             c = GetNextChar();
             if (c != '-') ParseError($"parseArrowBundle: '-' is expected, but {c}");
-            c = GetNextChar();
-            if (c == '$') {
-                ReadBareString();
-                arrowIndex = placeHolders._safeGet(CurrentStr, -1);
+
+            ReadStringUpto('>');
+            string s = CurrentStr._strip();
+            if (s._isEmpty()) {
+                ParseError($"parseArrowBundle: arrowIndex is EMPTY");
             } else {
-                arrowIndex = parseNumerical(c);
+                c = s[0];
+                if (c == '$') {
+                    // TOKEN.PLACE_HOLDER
+                    arrowIndex = placeHolders._safeGet(s._safeSubstring(1), -1);
+                } else {
+                    arrowIndex = s._parseInt(-1);
+                }
+                if (arrowIndex < 0 || arrowIndex >= DecoderKeys.PLANE_DECKEY_NUM) ParseError($"parseArrowBundle: arrowIndex is out of range: {arrowIndex}");
             }
-            if (arrowIndex < 0 || arrowIndex >= DecoderKeys.PLANE_DECKEY_NUM) ParseError($"parseArrowBundle: arrowIndex is out of range: {arrowIndex}");
-            c = GetNextChar();
-            if (c != '>') ParseError($"parseArrowBundle-2: '>' is expected, but {c}");
-            return true;
-        }
-
-        int parseNumerical(char c)
-        {
-            if (!is_numeral(c)) {
-                ParseError($"parseNumerical: {c}");
-                return -1;
-            }
-            int result = c - '0';
-            while (true) {
-                c = PeekNextChar();
-                if (!is_numeral(c)) break;
+            if (PeekNextChar() == '>') {
                 GetNextChar();
-                result = result * 10 + c - '0';
+            } else {
+                ParseError($"parseArrowBundle-2: '>' is expected, but {c}");
             }
-            return result;
-        }
-
-        bool is_numeral(char c)
-        {
-            return c >= '0' && c <= '9';
+            return true;
         }
 
     }
