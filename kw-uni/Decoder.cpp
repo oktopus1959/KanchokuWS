@@ -447,9 +447,9 @@ public:
             } else if (cmd == _T("SaveEelllJsTable")) {
                 // eelll/JS用テーブルを作成してファイルに書き出す
                 VkbTableMaker::SaveEelllJsTable();
-            } else if (cmd == _T("SaveDebugTable")) {
+            } else if (cmd == _T("SaveDumpTable")) {
                 // デバッグ用テーブルを作成してファイルに書き出す
-                VkbTableMaker::SaveDebugTable();
+                VkbTableMaker::SaveDumpTable();
             } else if (cmd == _T("exchangeCodeTable")) {
                 // 主・副テーブルを切り替える
                 outParams->strokeTableNum = StrokeTableNode::ExchangeStrokeTable();

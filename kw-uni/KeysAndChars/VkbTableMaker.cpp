@@ -516,9 +516,9 @@ namespace VkbTableMaker {
     }
 
     // デバッグ用テーブルを作成してファイルに書き出す
-    void SaveDebugTable() {
-        saveDebugTable(StrokeTableNode::RootStrokeNode1.get(), _T("tmp/debug-table1.txt"));
-        saveDebugTable(StrokeTableNode::RootStrokeNode2.get(), _T("tmp/debug-table2.txt"));
+    void SaveDumpTable() {
+        saveDebugTable(StrokeTableNode::RootStrokeNode1.get(), _T("tmp/dump-table1.txt"));
+        saveDebugTable(StrokeTableNode::RootStrokeNode2.get(), _T("tmp/dump-table2.txt"));
     }
 
 }

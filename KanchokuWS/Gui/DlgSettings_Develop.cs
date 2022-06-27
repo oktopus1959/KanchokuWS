@@ -112,7 +112,8 @@ namespace KanchokuWS.Gui
 
         private void button_developSaveDebugTableFile_Click(object sender, EventArgs e)
         {
-            frmMain?.ExecCmdDecoder("SaveDebugTable", null);
+            frmMain?.ExecCmdDecoder("SaveDumpTable", null);    // tmp/dump-table[12].txt (Decoder が実際に保持しているテーブルの内容をダンプしたもの)
+
             KeyCombinationPool.Singleton1?.DebugPrintFile("tmp/key-combination1.txt");
             KeyCombinationPool.Singleton2?.DebugPrintFile("tmp/key-combination2.txt");
 
