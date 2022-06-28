@@ -290,11 +290,11 @@ public:
         while (pos > minpos) {
             size_t npos = pos - 1;
             __LOG_DEBUGH(_T("npos=%d, chr=%c, flag=%x"), npos, (wchar_t)stack[npos].chr, stack[npos].flag);
-            if ((stack[npos].flag & flagUpto) != 0) {
+            if ((stack[npos].flag & flagUpto) != 0 && (stack[npos].flag & ~flagUpto) == flag) {
                 maxpos = npos;
                 __LOG_DEBUGH(_T("new maxpos=%d"), maxpos);
             }
-            if (stack[npos].chr == '\n' || (stack[npos].flag & ~FLAG_REWRITABLE_BEGIN) != flag) {
+            if (stack[npos].chr == '\n' || (stack[npos].flag & ~flagUpto) != flag) {
                 __LOG_DEBUGH(_T("break"));
                 break;
             }
