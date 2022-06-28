@@ -273,7 +273,7 @@ namespace KanchokuWS.TableParser
                     case '%':
                         if (depth != 0) {
                             ParseError("'%'で始まる前置書き換え記法はテーブルがネストされた位置では使えません。");
-                        } else if (parseArrow()) {
+                        } else if (parseArrow(true)) {
                             bRewriteEnabled = true;
                             return TOKEN.REWRITE_PRE;
                         }
@@ -388,16 +388,16 @@ namespace KanchokuWS.TableParser
         }
 
         // ARROW: /-[SsXxPp]?[0-9]+>/
-        protected bool parseArrow()
+        protected bool parseArrow(bool bRewritePre = false)
         {
             int shiftOffset = -1;
             int funckeyOffset = 0;
             bool bShiftPlane = false;
 
-            RewriteTargetStr = "";
-
             if (PeekNextChar() == '"') {
                 ReadString();
+            } else if (PeekNextChar() == '$') {
+                ReadPlaceHolderName();
             } else {
                 ReadStringUpto('>', ',', '|');
             }
@@ -408,7 +408,7 @@ namespace KanchokuWS.TableParser
 
             string s = CurrentStr._strip();
             if (s._isEmpty()) {
-                ParseError($"parseArrow");
+                ParseError($"parseArrow: EMPTY");
                 return false;
             }
 
@@ -416,9 +416,9 @@ namespace KanchokuWS.TableParser
 
             if (c == '$') {
                 // TOKEN.PLACE_HOLDER
-                arrowIndex = placeHolders._safeGet(s._safeSubstring(1), -1);
+                arrowIndex = placeHolders.Get(s._safeSubstring(1));
                 if (arrowIndex < 0) {
-                    ParseError($"定義されていないプレースホルダー: {s}");
+                    ParseError($"parseArrow: 定義されていないプレースホルダー: {s}");
                     return false;
                 }
             } else {
@@ -427,8 +427,13 @@ namespace KanchokuWS.TableParser
                     arrowIndex = s._safeSubstring(1)._parseInt(-1);
                     if (arrowIndex < 0) {
                         // 前置書き換え対象文字列
-                        RewriteTargetStr = s;
-                        return true;
+                        if (bRewritePre) {
+                            RewriteTargetStr = s;
+                            return true;
+                        } else {
+                            ParseError($"parseArrow: 前置書き換え以外の文字列: {s}");
+                            return false;
+                        }
                     }
                     if (c == 'N' || c == 'n') {
                         shiftOffset = 0;
@@ -440,7 +445,7 @@ namespace KanchokuWS.TableParser
                     } else if (c == 'P' || c == 'P') {
                         bShiftPlane = true;
                     } else {
-                        ParseError($"不正なプレーン指定: {s}");
+                        ParseError($"parseArrow: 不正なプレーン指定: {s}");
                         return false;
                     }
                 }
@@ -484,7 +489,7 @@ namespace KanchokuWS.TableParser
                 c = s[0];
                 if (c == '$') {
                     // TOKEN.PLACE_HOLDER
-                    arrowIndex = placeHolders._safeGet(s._safeSubstring(1), -1);
+                    arrowIndex = placeHolders.Get(s._safeSubstring(1));
                 } else {
                     arrowIndex = s._parseInt(-1);
                 }

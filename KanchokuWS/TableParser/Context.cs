@@ -11,6 +11,75 @@ namespace KanchokuWS.TableParser
 {
     using ShiftKeyKind = ComboShiftKeyPool.ComboKind;
 
+    // プレースホルダー
+    class PlaceHolders
+    {
+        Dictionary<string, int> placeHolders = new Dictionary<string, int>();
+
+        public PlaceHolders()
+        {
+            Initialize();
+        }
+
+        public void Put(string key, int value)
+        {
+            placeHolders[key] = value;
+        }
+
+        public int Get(string key)
+        {
+            return placeHolders._safeGet(key, -1);
+        }
+
+        public void Initialize()
+        {
+            placeHolders["1"] = 0;
+            placeHolders["2"] = 1;
+            placeHolders["3"] = 2;
+            placeHolders["4"] = 3;
+            placeHolders["5"] = 4;
+            placeHolders["6"] = 5;
+            placeHolders["7"] = 6;
+            placeHolders["8"] = 7;
+            placeHolders["9"] = 8;
+            placeHolders["0"] = 9;
+            placeHolders["q"] = 10;
+            placeHolders["w"] = 11;
+            placeHolders["e"] = 12;
+            placeHolders["r"] = 13;
+            placeHolders["t"] = 14;
+            placeHolders["y"] = 15;
+            placeHolders["u"] = 16;
+            placeHolders["i"] = 17;
+            placeHolders["o"] = 18;
+            placeHolders["p"] = 19;
+            placeHolders["a"] = 20;
+            placeHolders["s"] = 21;
+            placeHolders["d"] = 22;
+            placeHolders["f"] = 23;
+            placeHolders["g"] = 24;
+            placeHolders["h"] = 25;
+            placeHolders["j"] = 26;
+            placeHolders["k"] = 27;
+            placeHolders["l"] = 28;
+            placeHolders[";"] = 29;
+            placeHolders["sc"] = 29;
+            placeHolders["z"] = 30;
+            placeHolders["x"] = 31;
+            placeHolders["c"] = 32;
+            placeHolders["v"] = 33;
+            placeHolders["b"] = 34;
+            placeHolders["n"] = 35;
+            placeHolders["m"] = 36;
+            placeHolders[","] = 37;
+            placeHolders["cm"] = 37;
+            placeHolders["."] = 38;
+            placeHolders["pd"] = 38;
+            placeHolders["/"] = 39;
+            placeHolders["sl"] = 39;
+        }
+    }
+
     // include/load ブロック情報のスタック
     class BlockInfoStack
     {
@@ -274,9 +343,8 @@ namespace KanchokuWS.TableParser
         /// <param name="array"></param>
         public void ReadStringUpto(params char[] array) {
             var sb = new StringBuilder();
-            char ch = '\0';
             while (true) {
-                ch = PeekNextChar();
+                char ch = PeekNextChar();
                 if (ch == '\r' || ch == '\n' || ch == 0) {
                     ParseError("ReadRewriteTargetString: unexpected EOL or EOF");
                     break;
@@ -292,6 +360,22 @@ namespace KanchokuWS.TableParser
                 sb.Append(GetNextChar());
             }
             CurrentStr = sb.ToString();
+            logger.DebugH(() => $"LEAVE: {CurrentStr}");
+        }
+
+        /// <summary>
+        /// プレースホルダー名を読みこんで、CurrentStr に格納。ポインタはデリミタの位置を指している
+        /// </summary>
+        /// <param name="array"></param>
+        public void ReadPlaceHolderName() {
+            CurrentStr = "";
+            if (PeekNextChar(0) == '$') {
+                if (";,./".IndexOf(PeekNextChar(1)) >= 0) {   // $; $, $. $/ はプレースホルダー名として有効
+                    ReadStringUpto('|', '>');
+                } else {
+                    ReadStringUpto(',', '|', '>');
+                }
+            }
             logger.DebugH(() => $"LEAVE: {CurrentStr}");
         }
 
@@ -354,8 +438,8 @@ namespace KanchokuWS.TableParser
             return CurrentStr;
         }
 
-        public char PeekNextChar() {
-            return CurrentChar = (nextPos < CurrentLine.Length) ? CurrentLine[nextPos] : '\n';
+        public char PeekNextChar(int offset = 0) {
+            return ((nextPos + offset) < CurrentLine.Length) ? CurrentLine[nextPos + offset] : '\n';
         }
 
         public char GetNextChar() {
@@ -585,7 +669,7 @@ namespace KanchokuWS.TableParser
         public List<string> OutputLines = new List<string>();
 
         // プレースホルダー
-        public Dictionary<string, int> placeHolders = new Dictionary<string, int>();
+        public PlaceHolders placeHolders = new PlaceHolders();
 
         // 書き換えテーブルが対象
         public bool bRewriteTable = false;

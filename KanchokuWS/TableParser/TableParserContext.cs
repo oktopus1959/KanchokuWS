@@ -52,7 +52,7 @@ namespace KanchokuWS.TableParser
         protected Dictionary<string, List<string>> linesMap => context.linesMap;
         protected KeyCombinationPool keyComboPool => context.keyComboPool;
         protected List<string> OutputLines => context.OutputLines;
-        protected Dictionary<string, int> placeHolders => context.placeHolders;
+        protected PlaceHolders placeHolders => context.placeHolders;
         protected bool bRewriteTable {
             get { return context.bRewriteTable; }
             set { context.bRewriteTable = value; }
@@ -82,10 +82,11 @@ namespace KanchokuWS.TableParser
         protected void ReadString() { tableLines.ReadString(); }
         protected void ReadBareString(char c = '\0') { tableLines.ReadBareString(c); }
         protected void ReadStringUpto(params char[] array) { tableLines.ReadStringUpto(array); }
+        protected void ReadPlaceHolderName() { tableLines.ReadPlaceHolderName(); }
         protected void ReadMarker() { tableLines.ReadMarker(); }
         protected string ReadWord() { return tableLines.ReadWord(); }
         protected string ReadWordOrString() { return tableLines.ReadWordOrString(); }
-        protected char PeekNextChar() { return tableLines.PeekNextChar(); }
+        protected char PeekNextChar(int offset = 0) { return tableLines.PeekNextChar(offset); }
         protected char GetNextChar() { return tableLines.GetNextChar(); }
         protected bool GetNextLine() { return tableLines.GetNextLine(); }
         protected void SkipToEndOfLine() { tableLines.SkipToEndOfLine(); }

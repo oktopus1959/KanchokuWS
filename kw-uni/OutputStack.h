@@ -16,6 +16,7 @@ public:
     static const unsigned short FLAG_BLOCK_MAZE = 4;
     static const unsigned short FLAG_BLOCK_KATA = 8;
     static const unsigned short FLAG_REWRITABLE = 16;
+    static const unsigned short FLAG_REWRITABLE_BEGIN = 32;
 
     static const size_t HIST_KEY_MAX_LEN = 8;   // 履歴用のキーの最大長
 
@@ -64,10 +65,19 @@ public:
 
     inline void pop(size_t n) {
         if (n > 0) {
+            uint32_t lastFlag = 0;
             if (n > stack.size()) n = stack.size();
             n = utils::minimum(tail_size(), n);
             if (n > 0) {
+                lastFlag = stack[stack.size() - n].flag;
                 stack.resize(stack.size() - n);
+            }
+            if ((lastFlag & FLAG_REWRITABLE) != 0 && (lastFlag & FLAG_REWRITABLE_BEGIN) == 0) {
+                // 書き換え可能フラグが途中まで削除されたら、書き換え可能フラグ先頭までフラグを削除する
+                for (size_t pos = stack.size(); pos > 0; --pos) {
+                    stack[pos - 1].flag &= ~FLAG_REWRITABLE;
+                    if ((stack[pos - 1].flag & FLAG_REWRITABLE_BEGIN) != 0) break;
+                }
             }
         }
     }
@@ -146,11 +156,13 @@ public:
 
     // 書き換え可能フラグ(末尾 lastNum 文字にセット)
     inline void setRewritable(size_t lastNum) {
-        if (!stack.empty()) {
+        if (!stack.empty() && lastNum > 0) {
             for (size_t i = 0; i < lastNum; ++i) {
                 if (i >= stack.size()) break;
                 stack[stack.size() - i - 1].flag |= FLAG_REWRITABLE;
             }
+            size_t beg = lastNum < stack.size() ? stack.size() - lastNum : 0;
+            stack[beg].flag |= FLAG_REWRITABLE_BEGIN;   // 書き換え可能先頭フラグをセットしておく
         }
     }
 
@@ -265,6 +277,34 @@ public:
         return size() - pos;
     }
 
+//#define __LOG_DEBUGH LOG_INFOH
+#define __LOG_DEBUGH LOG_DEBUGH
+
+    // 改行を含まない末尾部分で、flag のみが続き、flagUpto が来るまでの最大長
+    inline size_t tail_size_while_only_and_upto(size_t maxlen, unsigned short flag, unsigned short flagUpto) const {
+        if (size() == 0) return 0;
+        size_t pos = size();
+        size_t minpos = maxlen >= size() ? 0 : size() - maxlen;
+        size_t maxpos = pos;
+        __LOG_DEBUGH(_T("ENTER: size=%d, maxlen=%d, pos=%d, minpos=%d, maxpos=%d"), size(), maxlen, pos, minpos, maxpos);
+        while (pos > minpos) {
+            size_t npos = pos - 1;
+            __LOG_DEBUGH(_T("npos=%d, chr=%c, flag=%x"), npos, (wchar_t)stack[npos].chr, stack[npos].flag);
+            if ((stack[npos].flag & flagUpto) != 0) {
+                maxpos = npos;
+                __LOG_DEBUGH(_T("new maxpos=%d"), maxpos);
+            }
+            if (stack[npos].chr == '\n' || (stack[npos].flag & ~FLAG_REWRITABLE_BEGIN) != flag) {
+                __LOG_DEBUGH(_T("break"));
+                break;
+            }
+            pos = npos;
+        }
+        __LOG_DEBUGH(_T("LEAVE: result len=%d"), size() - maxpos);
+        return size() - maxpos;
+    }
+#undef __LOG_DEBUGH
+
     // 改行を含まない末尾部分で、句読点の直後までの長さ(ただし末尾句読点は含める)
     inline size_t tail_size_upto_flag_or_punct(unsigned short flag) const {
         if (size() == 0) return 0;
@@ -328,7 +368,7 @@ public:
 
     // 改行を含まない末尾部分(最大長maxlen)で、REWRITABLE のみが続いている部分文字列を返す
     inline MString backStringWhileOnlyRewritable(size_t maxlen) const {
-        return tail_string(maxlen, tail_size_while_only(FLAG_REWRITABLE));
+        return tail_string(maxlen, tail_size_while_only_and_upto(maxlen, FLAG_REWRITABLE, FLAG_REWRITABLE_BEGIN));
     }
 
     // 改行を含まない末尾部分(最大長maxlen)で、何かflagがあれば | を付加した部分文字列を返す

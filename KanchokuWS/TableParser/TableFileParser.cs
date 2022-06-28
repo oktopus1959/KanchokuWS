@@ -204,7 +204,7 @@ namespace KanchokuWS.TableParser
                         break;
 
                     case TOKEN.PLACE_HOLDER:
-                        placeHolders[CurrentStr] = idx;
+                        placeHolders.Put(CurrentStr, idx);
                         break;
 
                     case TOKEN.VBAR:               // 次のトークン待ち
@@ -246,7 +246,7 @@ namespace KanchokuWS.TableParser
                 readNextToken();
             }
 
-            if (depth == 0) placeHolders.Clear();
+            if (depth == 0) placeHolders.Initialize();
             logger.DebugH(() => $"LEAVE: lineNum={LineNumber}, depth={depth}, bError={bError}");
 
         }
@@ -266,17 +266,23 @@ namespace KanchokuWS.TableParser
                 switch (currentToken) {
                     case TOKEN.ARROW:
                         if (token == TOKEN.REWRITE_PRE) {
-                            ParseError($"前置書き換えの場合は、矢印記法を重ねることはできません。");
+                            //ParseError($"前置書き換えの場合は、矢印記法を重ねることはできません。");
+                            addPreRewriteNode(TOKEN.ARROW, arrowIndex, RewriteTargetStr);
+                        } else {
+                            addArrowNode(token, arrowIndex);
                         }
-                        addArrowNode(token, arrowIndex);
                         break;
 
                     case TOKEN.COMMA:
                     case TOKEN.VBAR:
-                        if (token == TOKEN.REWRITE_PRE) {
-                            ParseError($"前置書き換えの場合は、矢印記法を重ねることはできません。");
+                        if (parseArrow()) {
+                            if (token == TOKEN.REWRITE_PRE) {
+                                //ParseError($"前置書き換えの場合は、矢印記法を重ねることはできません。");
+                                addPreRewriteNode(TOKEN.ARROW, arrowIndex, RewriteTargetStr);
+                            } else {
+                                addArrowNode(token, arrowIndex);
+                            }
                         }
-                        if (parseArrow()) addArrowNode(token, arrowIndex);
                         break;
 
                     case TOKEN.LBRACE:
@@ -286,7 +292,7 @@ namespace KanchokuWS.TableParser
                                 addNodeTreeByArrow();
                                 break;
                             case TOKEN.REWRITE_PRE:
-                                addPreRewriteNode(RewriteTargetStr);
+                                addPreRewriteNode(TOKEN.LBRACE, -1, RewriteTargetStr);
                                 break;
                             case TOKEN.REWRITE_POST:
                                 addPostRewriteNode();
@@ -339,7 +345,7 @@ namespace KanchokuWS.TableParser
                         break;
 
                     case TOKEN.PLACE_HOLDER:
-                        placeHolders[CurrentStr] = n;
+                        placeHolders.Put(CurrentStr, n);
                         break;
 
                     case TOKEN.VBAR:              // 次のトークン待ち
@@ -371,7 +377,7 @@ namespace KanchokuWS.TableParser
                 readNextToken();
             }
 
-            if (depth == 0) placeHolders.Clear();
+            if (depth == 0) placeHolders.Initialize();
             logger.DebugH(() => $"LEAVE: depth={depth}");
 
             return myNode;
@@ -460,7 +466,7 @@ namespace KanchokuWS.TableParser
             }
         }
 
-        void addPreRewriteNode(string targetStr)
+        void addPreRewriteNode(TOKEN token, int arwIdx, string targetStr)
         {
             logger.DebugH(() => $"ENTER");
 
@@ -470,13 +476,20 @@ namespace KanchokuWS.TableParser
 
             // 前置文字列の指定があるか→なければ単打テーブルから文字を拾ってくる
             if (targetStr._isEmpty()) {
-                int preIdx = strokeList._getFirst();
-                targetStr = preIdx >= 0 ? getNthRootNodeString(preIdx) : "";
-                keyComboPool.AddPreRewriteKey(preIdx);
+                if (strokeList.Count > 0) {
+                    int preIdx = strokeList[0];
+                    targetStr = preIdx >= 0 ? getNthRootNodeString(preIdx) : "";
+                    keyComboPool.AddPreRewriteKey(preIdx);
+                }
             }
 
             // 前置書き換えノードの処理を行う
-            new PreRewriteParser(context, targetStr).MakeNodeTree();
+            var parser = new PreRewriteParser(context, targetStr);
+            if (token == TOKEN.LBRACE) {
+                parser.MakeNodeTree();
+            } else if (token == TOKEN.ARROW) {
+                parser.addArrowNode(TOKEN.ARROW, arwIdx);
+            }
 
             logger.DebugH(() => $"LEAVE");
         }

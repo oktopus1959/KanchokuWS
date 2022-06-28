@@ -85,13 +85,16 @@ namespace {
             _LOG_DEBUGH(_T("ENTER: %s"), MY_NODE->getDebugString().c_str());
 
             bool bRewrited = false;
-            const MString targetStr = OUTPUT_STACK->backStringWhileOnlyRewritable(5);
-            _LOG_DEBUGH(_T("targetStr=%s"), MAKE_WPTR(targetStr));
-            for (size_t pos = 0; pos < targetStr.size(); ++pos) {
-                _LOG_DEBUGH(_T("subStr=%s, pos=%d"), MAKE_WPTR(targetStr.substr(pos)), pos);
-                const RewriteInfo* rewInfo = MY_NODE->getRewriteInfo(targetStr.substr(pos));
+            size_t maxlen = 8;
+            while (maxlen > 0) {
+                _LOG_DEBUGH(_T("maxlen=%d"), maxlen);
+                const MString targetStr = OUTPUT_STACK->backStringWhileOnlyRewritable(maxlen);
+                _LOG_DEBUGH(_T("targetStr=%s"), MAKE_WPTR(targetStr));
+                if (targetStr.empty()) break;
+
+                const RewriteInfo* rewInfo = MY_NODE->getRewriteInfo(targetStr);
                 if (rewInfo) {
-                    int numBS = targetStr.size() - pos;
+                    int numBS = targetStr.size();
                     _LOG_DEBUGH(_T("REWRITE: outStr=%s, rewritableLen=%d, subTable=%p, numBS=%d"), MAKE_WPTR(rewInfo->rewriteStr), rewInfo->rewritableLen, rewInfo->subTable, numBS);
                     HISTORY_STAY_STATE->SetTranslatedOutString(rewInfo->rewriteStr, rewInfo->rewritableLen, numBS);
                     if (rewInfo->subTable) {
@@ -100,6 +103,8 @@ namespace {
                     bRewrited = true;
                     break;
                 }
+
+                maxlen = targetStr.size() - 1;
             }
             if (!bRewrited) {
                 HISTORY_STAY_STATE->SetTranslatedOutString(MY_NODE->getString(), MY_NODE->getRewritableLen());
@@ -156,7 +161,7 @@ void PostRewriteOneShotNode::addRewritePair(const wstring& key, const wstring& v
     if (bBare) {
         rewStr = utils::replace(rewStr, _T("/"), _T(""));
         size_t pos = value.find('/', 0);
-        rewLen = pos < rewStr.size() ? rewStr.size() - pos : rewStr.empty() ? 0 : 1;
+        rewLen = pos <= rewStr.size() ? rewStr.size() - pos : rewStr.empty() ? 0 : 1;
     }
     if (pNode) {
         subTables.push_back(pNode);
