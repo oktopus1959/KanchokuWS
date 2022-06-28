@@ -842,6 +842,15 @@ namespace KanchokuWS.Gui
             logger.InfoH("LEAVE");
         }
 
+        // 仮想鍵盤の現在位置を取得
+        private void button_getCurrentPos_Click(object sender, EventArgs e)
+        {
+            if (frmVkb != null) {
+                textBox_vkbFixedPosX.Text = frmVkb.Left.ToString();
+                textBox_vkbFixedPosY.Text = frmVkb.Top.ToString();
+            }
+        }
+
         private void button_advancedClose_Click(object sender, EventArgs e)
         {
             logger.InfoH("ENTER");
@@ -2463,6 +2472,7 @@ namespace KanchokuWS.Gui
             }
             logger.InfoH($"LEAVE");
         }
+
     }
 }
 
