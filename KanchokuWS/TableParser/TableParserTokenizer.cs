@@ -16,7 +16,7 @@ namespace KanchokuWS.TableParser
     /// </summary>
     class TableParserTokenizer : TableParserContext
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         StrokeTableNode _rootTableNode;
 

@@ -16,7 +16,7 @@ namespace KanchokuWS.TableParser
     /// </summary>
     class TableParserContext
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         protected ParserContext context;
 

@@ -210,6 +210,7 @@ namespace KanchokuWS.TableParser
                     case TOKEN.VBAR:               // 次のトークン待ち
                         if ((prevToken == 0 || prevToken == TOKEN.VBAR) && isInCombinationBlock && depth > 0) {
                             // 空セルで、同時判定ブロック内で、深さ2以上なら、同時打鍵可能としておく(TODO: 具体例）
+                            logger.DebugH(() => $"CALL addCombinationKey(false): prevToken={prevToken}, depth={depth}");
                             using (pushStroke(idx)) {
                                 addCombinationKey(false);
                             }

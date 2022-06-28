@@ -14,8 +14,8 @@ convert(FJjf) = が
 convert(JWjw) = ぎ
 convert(WJwj) = ぎ
 convert(JJJWjw) = ぎ
-convert(J<50>Wjw) = ぎ
-convert(JJJ<50>Wjw) = ぎ
+convert(J<30>Wjw) = ぎ
+convert(JJJ<30>Wjw) = ぎ
 
 convert(Qq) = ""
 convert(QJqj) = ぁ
