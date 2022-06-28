@@ -161,7 +161,7 @@ void PostRewriteOneShotNode::addRewritePair(const wstring& key, const wstring& v
     if (bBare) {
         rewStr = utils::replace(rewStr, _T("/"), _T(""));
         size_t pos = value.find('/', 0);
-        rewLen = pos <= rewStr.size() ? rewStr.size() - pos : rewStr.empty() ? 0 : 1;
+        rewLen = pos <= rewStr.size() ? rewStr.size() - pos : rewStr.size() == 1 ? 1 : 0;
     }
     if (pNode) {
         subTables.push_back(pNode);
