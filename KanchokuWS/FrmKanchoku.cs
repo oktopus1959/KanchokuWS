@@ -748,6 +748,10 @@ namespace KanchokuWS
                         logger.InfoH("EXCHANGE_CODE_TABLE");
                         ExchangeCodeTable();
                         return true;
+                    case DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY:
+                        logger.InfoH("KANA_TRAINING_TOGGLE");
+                        KanaTrainingModeToggle();
+                        return true;
                     case DecoderKeys.PSEUDO_SPACE_DECKEY:
                         logger.InfoH(() => $"PSEUDO_SPACE_DECKEY: strokeCount={decoderOutput.GetStrokeCount()}");
                         deckey = DecoderKeys.STROKE_SPACE_DECKEY;
@@ -1844,6 +1848,21 @@ namespace KanchokuWS
             reinitializeSaveDictsChallengeDt();
         }
 
+        public void KanaTrainingModeToggle()
+        {
+            Settings.KanaTrainingMode = !Settings.KanaTrainingMode;
+            if (Settings.KanaTrainingMode) {
+                ExecCmdDecoder("setKanaTrainingMode", "true");
+                ExecCmdDecoder("setAutoHistSearchEnabled", "false");
+            } else {
+                ExecCmdDecoder("setKanaTrainingMode", "false");
+                if (Settings.AutoHistSearchEnabled) ExecCmdDecoder("setAutoHistSearchEnabled", "true");
+            }
+            if (IsDecoderActive) {
+                frmVkb.DrawInitialVkb();
+            }
+        }
+
         private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             logger.Info("CALLED");
@@ -1866,6 +1885,12 @@ namespace KanchokuWS
         {
             logger.Info("CALLED");
             ReloadSettingsAndDefFiles();
+        }
+
+        private void KanaTrainingMode_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            logger.Info("CALLED");
+            KanaTrainingModeToggle();
         }
     }
 

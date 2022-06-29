@@ -114,9 +114,16 @@ namespace KanchokuWS.TableParser
                         outputNewLines();
                         OutputLines.Add(CurrentLine);
                         ReadWord();
+                        if (CurrentStr._notEmpty()) definedNames.Add(CurrentStr);
                         if (CurrentStr._toLower()._equalsTo("defguide")) {
                             handleStrokePosition();
                         }
+                    } else if (lcStr == "ifdef") {
+                        ReadWord();
+                        bool flag = CurrentStr._notEmpty() && definedNames.Contains(CurrentStr);
+                        RewriteIfdefBlock(flag);
+                    } else if (lcStr == "else") {
+                    } else if (lcStr == "endif") {
                     } else if (lcStr == "store") {
                         StoreLineBlock();
                     } else if (lcStr == "load") {

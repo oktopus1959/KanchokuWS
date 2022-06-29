@@ -163,6 +163,7 @@ namespace KanchokuWS
         public const int RIGHT_ARROW_DECKEY = LEFT_ARROW_DECKEY + 1;
         public const int RIGHT_SHIFT_DECKEY = RIGHT_ARROW_DECKEY + 1;
         public const int SHIFT_TAB_DECKEY = RIGHT_SHIFT_DECKEY + 1;
+        public const int PAUSE_DECKEY = SHIFT_TAB_DECKEY + 1;
 
         public const int CTRL_ESC_DECKEY = CTRL_FUNC_DECKEY_START;
         public const int CTRL_HANZEN_DECKEY = CTRL_ESC_DECKEY + 1;
@@ -184,6 +185,7 @@ namespace KanchokuWS
         public const int CTRL_DOWN_ARROW_DECKEY = CTRL_UP_ARROW_DECKEY + 1;
         public const int CTRL_LEFT_ARROW_DECKEY = CTRL_DOWN_ARROW_DECKEY + 1;
         public const int CTRL_RIGHT_ARROW_DECKEY = CTRL_LEFT_ARROW_DECKEY + 1;
+        public const int CTRL_PAUSE_DECKEY = CTRL_RIGHT_ARROW_DECKEY + 1;
 
         /// <summary> 
         /// 特殊なDECKEY<br/>
@@ -248,6 +250,7 @@ namespace KanchokuWS
 
         public const int DIRECT_SPACE_DECKEY = POST_PLANE_F_SHIFT_DECKEY + 1;               // デコーダを介さずに直接出力されるスペースキー
         public const int CANCEL_POST_REWRITE_DECKEY = DIRECT_SPACE_DECKEY + 1;              // 後置書き換えをキャンセルする
+        public const int KANA_TRAINING_TOGGLE_DECKEY = CANCEL_POST_REWRITE_DECKEY + 1;      // かな入力練習モードのトグル
 
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 

@@ -115,7 +115,8 @@ namespace KanchokuWS
         /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)</summary>
         private static uint[] vkeyArrayFuncKeys = {
             /*Esc*/ 0x1b, /*半/全*/ 0xf3, /*Tab*/ 0x09, /*Caps*/ 0x14, /*英数*/ 0xf0, /*無変換*/ 0x1d, /*変換*/ 0x1c, /*かな*/ 0xf2, /*BS*/ 0x08, /*Enter*/ 0x0d,
-            /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21, /*PgDn*/ 0x22, /*↑*/ 0x26, /*↓*/ 0x28, /*←*/ 0x25, /*→*/ 0x27, /*Rshift*/ RSHIFT
+            /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21, /*PgDn*/ 0x22, /*↑*/ 0x26, /*↓*/ 0x28, /*←*/ 0x25, /*→*/ 0x27, /*Rshift*/ RSHIFT,
+            /*Pause*/ 0x13,
         };
 
         private const uint capsVkeyWithShift = 0x14;    // 日本語キーボードだと Shift + 0x14 で CapsLock になる
@@ -148,6 +149,7 @@ namespace KanchokuWS
                 case "left": case "leftarrow": n = 18; break;
                 case "right": case "rightarrow": n = 19; break;
                 case "rshift": n = 20; break;
+                case "pause": n = 21; break;
                 default: n = -1; break;
             }
             return n;
@@ -770,6 +772,7 @@ namespace KanchokuWS
             {"down", DecoderKeys.DOWN_ARROW_DECKEY},
             {"downarrow", DecoderKeys.DOWN_ARROW_DECKEY},
             {"rshift", DecoderKeys.RIGHT_SHIFT_DECKEY},
+            {"pause", DecoderKeys.PAUSE_DECKEY},
             {"space", DecoderKeys.STROKE_SPACE_DECKEY},
             {"shiftspace", DecoderKeys.SHIFT_SPACE_DECKEY},
             {"directspace", DecoderKeys.DIRECT_SPACE_DECKEY},
@@ -797,6 +800,7 @@ namespace KanchokuWS
             {"upperromanstrokeguide", DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY},
             {"hiraganastrokeguide", DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY},
             {"exchangecodetable", DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY},
+            {"kanatrainingtoggle", DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY},
             {"leftshiftblocker", DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY},
             {"rightshiftblocker", DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY},
             {"leftshiftmazestartpos", DecoderKeys.LEFT_SHIFT_MAZE_START_POS_DECKEY},
@@ -828,6 +832,7 @@ namespace KanchokuWS
             {DecoderKeys.RIGHT_ARROW_DECKEY, "Right"},
             {DecoderKeys.UP_ARROW_DECKEY, "Up"},
             {DecoderKeys.DOWN_ARROW_DECKEY, "Down"},
+            {DecoderKeys.PAUSE_DECKEY, "Pause"},
             {DecoderKeys.RIGHT_SHIFT_DECKEY, "Rshift"},
             {DecoderKeys.STROKE_SPACE_DECKEY, "Space"},
             {DecoderKeys.SHIFT_SPACE_DECKEY, "ShiftSpace"},
@@ -852,6 +857,7 @@ namespace KanchokuWS
             {DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY, "UpperRomanStrokeGuide"},
             {DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY, "HiraganaStrokeGuide"},
             {DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY, "ExchangeCodeTable"},
+            {DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY, "KanaTrainingToggle"},
             {DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY, "LeftShiftBlocker"},
             {DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY, "RightShiftBlocker"},
             {DecoderKeys.LEFT_SHIFT_MAZE_START_POS_DECKEY, "LeftShiftMazeStartpos"},

@@ -319,6 +319,45 @@ namespace KanchokuWS.TableParser
             }
         }
 
+        // ifdef else endif ブロックで真となる方をロードする
+        public void RewriteIfdefBlock(bool which)
+        {
+            logger.DebugH(() => $"CALLED: block={which}");
+            int lineNum = lineNumber;
+            tableLines[lineNum] = ";; " + tableLines[lineNum];
+            ++lineNum;
+            if (which) {
+                while (lineNum < tableLines.Count) {
+                    if (tableLines[lineNum]._startsWith("#else")) {
+                        break;
+                    }
+                    ++lineNum;
+                }
+                while (lineNum < tableLines.Count) {
+                    tableLines[lineNum] = ";; " + tableLines[lineNum];
+                    if (tableLines[lineNum]._startsWith(";; #endif")) {
+                        break;
+                    }
+                    ++lineNum;
+                }
+            } else {
+                while (lineNum < tableLines.Count) {
+                    tableLines[lineNum] = ";; " + tableLines[lineNum];
+                    if (tableLines[lineNum]._startsWith(";; #else")) {
+                        break;
+                    }
+                    ++lineNum;
+                }
+                while (lineNum < tableLines.Count) {
+                    if (tableLines[lineNum]._startsWith("#endif")) {
+                        tableLines[lineNum] = ";; #endif";
+                        break;
+                    }
+                    ++lineNum;
+                }
+            }
+        }
+
         // '"' が来るまで読みこんで、currentStr に格納。
         public void ReadString() {
             // 「"」自身は「"\""」と表記することで指定できる。
@@ -675,6 +714,8 @@ namespace KanchokuWS.TableParser
         public bool bPrimary;                                  // 主テーブルか
 
         public bool bRewriteEnabled = false;         // 書き換えノードがあった
+
+        public HashSet<string> definedNames = new HashSet<string>();
 
         // 同時打鍵定義ブロックの中か
         public bool isInCombinationBlock => shiftKeyKind != ShiftKeyKind.None;

@@ -44,6 +44,7 @@ namespace KanchokuWS.TableParser
             get { return context.bRewriteEnabled; }
             set { context.bRewriteEnabled = value; }
         }
+        protected HashSet<string> definedNames => context.definedNames;
         protected bool isInCombinationBlock => context.isInCombinationBlock;
         protected ShiftKeyKind shiftKeyKind {
             get { return context.shiftKeyKind; }
@@ -79,6 +80,7 @@ namespace KanchokuWS.TableParser
         protected void EndInclude() { tableLines.EndInclude(); }
         protected void StoreLineBlock() { tableLines.StoreLineBlock(); }
         protected void LoadLineBlock() { tableLines.LoadLineBlock(); }
+        protected void RewriteIfdefBlock(bool flag) { tableLines.RewriteIfdefBlock(flag); }
         protected void ReadString() { tableLines.ReadString(); }
         protected void ReadBareString(char c = '\0') { tableLines.ReadBareString(c); }
         protected void ReadStringUpto(params char[] array) { tableLines.ReadStringUpto(array); }

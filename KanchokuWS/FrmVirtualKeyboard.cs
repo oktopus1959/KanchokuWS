@@ -1539,6 +1539,9 @@ namespace KanchokuWS
                 } else if (decoderOutput.IsOtherStatus()) {
                     name = "Yellow";    // とりあえず Yellow 固定
                 }
+                if (name._isEmpty() && Settings.KanaTrainingMode) {
+                    name = "LightPink";     // かな入力練習モードのとき
+                }
                 if (name._notEmpty()) {
                     var color = Color.FromName(name);
                     if (!color.IsEmpty) return color;
@@ -1787,6 +1790,11 @@ namespace KanchokuWS
         private void ReloadSettigs_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             frmMain.ReloadSettingsAndDefFiles();
+        }
+
+        private void KanaTrainingMode_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMain.KanaTrainingModeToggle();
         }
     }
 }

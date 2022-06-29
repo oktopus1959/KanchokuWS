@@ -577,6 +577,9 @@ namespace KanchokuWS
         public static string ImeUnicodeClassNames { get; private set; }
         public static HashSet<string> ImeUnicodeClassNamesHash { get; private set; } = new HashSet<string>();
 
+        /// <summary>かな入力練習モードか</summary>
+        public static bool KanaTrainingMode { get; set; } = false;
+
         //------------------------------------------------------------------------------
         /// <summary>ウィンドウClassNameごとの設定</summary>
         public class WindowsClassSettings

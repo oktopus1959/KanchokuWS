@@ -729,6 +729,14 @@ namespace KanchokuWS.Handler
                         }
 
                         logger.DebugH($"send asis string");
+                    } else if (Settings.KanaTrainingMode) {
+                        faceStr = str[i]._hiraganaToKeyface();
+                        if (faceStr._notEmpty()) {
+                            sendInputsRomanOrKanaUnicode(faceStr);
+                            continue;
+                        } else {
+                            logger.DebugH($"_hiraganaToKeyface empty");
+                        }
                     }
                     logger.DebugH($"send Unicode string");
                     char uniChar = str[i];

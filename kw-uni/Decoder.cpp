@@ -468,6 +468,12 @@ public:
             } else if (cmd == _T("cancelPreRewrite")) {
                 // 前置書き換えをキャンセルする
                 OUTPUT_STACK->cancelRewritable();
+            } else if (cmd == _T("setAutoHistSearchEnabled")) {
+                // 自動履歴検索のON/OFF
+                SETTINGS->autoHistSearchEnabled = (items.size() >= 2 && items[1] == _T("true"));
+            } else if (cmd == _T("setKanaTrainingMode")) {
+                // かな入力練習モードのON/OFF
+                SETTINGS->kanaTrainingMode = (items.size() >= 2 && items[1] == _T("true"));
             } else if (cmd == _T("closeLogger")) {
                 Logger::Close();
             }

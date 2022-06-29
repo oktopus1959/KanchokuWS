@@ -81,6 +81,8 @@ struct Settings {
     tstring romanBushuCompPrefix;           // ローマ字テーブル出力時の部首合成用プレフィックス
     tstring romanSecPlanePrefix;            // 裏面定義文字に対するローマ字出力時のプレフィックス
 
+    bool kanaTrainingMode = false;          // かな入力練習モードか
+
     // for Debug
     bool debughState = false;               // State モジュールで DebugH を有効にする
     bool debughMazegaki = false;            // mazegaki モジュールで DebugH を有効にする

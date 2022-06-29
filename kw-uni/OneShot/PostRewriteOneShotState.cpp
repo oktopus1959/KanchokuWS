@@ -85,7 +85,7 @@ namespace {
             _LOG_DEBUGH(_T("ENTER: %s"), MY_NODE->getDebugString().c_str());
 
             bool bRewrited = false;
-            size_t maxlen = 8;
+            size_t maxlen = SETTINGS->kanaTrainingMode ? 0 : 8;     // かな入力練習モードなら書き換えをやらない
             while (maxlen > 0) {
                 _LOG_DEBUGH(_T("maxlen=%d"), maxlen);
                 const MString targetStr = OUTPUT_STACK->backStringWhileOnlyRewritable(maxlen);
