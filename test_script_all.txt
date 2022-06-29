@@ -16,6 +16,8 @@ convert(WJwj) = ぎ
 convert(JJJWjw) = ぎ
 convert(J<30>Wjw) = ぎ
 convert(JJJ<30>Wjw) = ぎ
+convert(XHMxhm) = ぴゃ
+convert(XMHxhm) = ぴゃ
 
 convert(Qq) = ""
 convert(QJqj) = ぁ
@@ -102,6 +104,7 @@ loadTable(tables/chutoro.220329.tbl)
 rewriteMaxTime(100)
 convert(Dd<30>Dd) = ！
 convert(Dd<200>Dd) = 、、
+clear()
 convert(DLdlAa) = ました
 
 
