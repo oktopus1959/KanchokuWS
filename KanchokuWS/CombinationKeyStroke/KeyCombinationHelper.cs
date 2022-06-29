@@ -68,7 +68,7 @@ namespace KanchokuWS.CombinationKeyStroke
         }
 
         /// <summary>
-        /// PrimaryKey以外の順列置換されたキーのリストを返す<br/>ただし、bPrefix=true なら、リストの先頭は固定する
+        /// PrimaryKey以外の順列置換されたキーのリストを返す
         /// </summary>
         /// <param name="keyList"></param>
         /// <returns></returns>
@@ -78,7 +78,7 @@ namespace KanchokuWS.CombinationKeyStroke
         }
 
         /// <summary>
-        /// PrimaryKey以外の順列置換されたキーのリストを返す<br/>ただし、bFixOrdered=true なら、リストの順序は固定する。またbAll=true なら、PrimaryKeyも含めた全キーを返す
+        /// PrimaryKey以外の順列置換されたキーのリストを返す<br/>bAll=true なら、PrimaryKeyも含めた全キーを返す
         /// </summary>
         /// <param name="keyList"></param>
         /// <param name="bAll"></param>
@@ -101,7 +101,6 @@ namespace KanchokuWS.CombinationKeyStroke
                     result.Add(makeString(keyList[2], keyList[1], keyList[0]));
                 } else {
                     for (int i = 0; i < keyList.Count; ++i) {
-                        // 順序固定なら i==0 のときだけ
                         string ks = makeString(keyList[i]);
                         var subList = keyList.Take(i).ToList();
                         if (i < keyList.Count - 1) subList.AddRange(keyList.Skip(i + 1));
@@ -119,14 +118,15 @@ namespace KanchokuWS.CombinationKeyStroke
         }
 
         /// <summary>
-        /// 全体よりも長さの短いリストの順列置換されたキーのリストを返す
+        /// 全体よりも長さの短いリストの順列置換されたキーのリストを返す<br/>
+        /// bFixedOrder=trueなら、順序固定で末尾から1つずつ短くしたものを返す
         /// </summary>
         /// <param name="keyList"></param>
         /// <returns></returns>
-        public static List<string> MakeSubKeys(List<int> keyList, bool bFixOrdered)
+        public static List<string> MakeSubKeys(List<int> keyList, bool bFixedOrder)
         {
             var result = new List<string>();
-            if (bFixOrdered) {
+            if (bFixedOrder) {
                 // 順序固定で末尾から1つずつ短くしたものを採用
                 for (int len = keyList._safeCount() - 1; len >= 1; --len) {
                     result.Add(makeString(keyList.Take(len)));
@@ -142,7 +142,7 @@ namespace KanchokuWS.CombinationKeyStroke
             return result;
         }
 
-        // FixOrdered = false の時だけ呼ぶこと
+        // FixedOrder = false の時だけ呼ぶこと
         private static void makeSubKeys(List<int> keyList, List<string> result)
         {
             if (keyList != null && keyList.Count > 2) {

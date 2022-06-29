@@ -115,15 +115,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 var primKey = KeyCombinationHelper.MakePrimaryKey(comboKeyList);
                 setKeyCombo(primKey);
 
-                bool bFixOrdered = shiftKind == ComboKind.PrefixSuccessiveShift;
-                if (!bFixOrdered) {
+                bool bFixedOrder = shiftKind == ComboKind.PrefixSuccessiveShift;
+                if (!bFixedOrder) {
                     // 前置連続シフトの場合は、順序を固定してしまうので、ここの処理はそれ以外の場合にのみ必要
                     foreach (var key in KeyCombinationHelper.MakePermutatedKeys(comboKeyList)) {
                         setKeyCombo(key);
                     }
                 }
 
-                comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(comboKeyList, bFixOrdered));
+                comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(comboKeyList, bFixedOrder));
             }
         }
 
