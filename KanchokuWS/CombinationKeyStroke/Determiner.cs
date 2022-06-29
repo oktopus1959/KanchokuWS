@@ -86,14 +86,15 @@ namespace KanchokuWS.CombinationKeyStroke
         private DateTime preRewriteDt = DateTime.MinValue;
 
         // 前キー
-        private int prevDecKey = -1;
+        //private int prevDecKey = -1;
 
         private void checkPreRewriteTime(int dk)
         {
-            if (Stroke.ModuloizeKey(prevDecKey) != Stroke.ModuloizeKey(dk) && 
+            if (/*Stroke.ModuloizeKey(prevDecKey) != Stroke.ModuloizeKey(dk) && */ //たぶんこの処理は不要(同じキーの連打は時間チェックをしない)。後で削除
                 preRewriteDt._isValid() &&
                 Settings.PreRewriteAllowedDelayTimeMs > 0 &&
-                (DateTime.Now - preRewriteDt).TotalMilliseconds > Settings.PreRewriteAllowedDelayTimeMs) {
+                (DateTime.Now - preRewriteDt).TotalMilliseconds > Settings.PreRewriteAllowedDelayTimeMs)
+            {
                 logger.DebugH($"CALL cancelPreRewrite");
                 frmMain?.ExecCmdDecoder("cancelPreRewrite", null);
             }
@@ -200,7 +201,7 @@ namespace KanchokuWS.CombinationKeyStroke
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
 
             checkPreRewriteTime(decKey);
-            prevDecKey = decKey;
+            //prevDecKey = decKey;
 
             List<int> result = null;
 
