@@ -98,6 +98,13 @@ convert(YTyt) = ぷろぐらむ
 convert(MDAmda) = でしょう
 convert({38}DAad[38]) = ましょう
 
+loadTable(tables/chutoro.220329.tbl)
+rewriteMaxTime(100)
+convert(Dd<30>Dd) = ！
+convert(Dd<200>Dd) = 、、
+convert(DLdlAa) = ました
+
+
 # のにいると
 loadTable(tables/subtables/noniiruto.6.tbl)
 comboMaxTime(100)
