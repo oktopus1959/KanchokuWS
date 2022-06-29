@@ -319,5 +319,10 @@ namespace KanchokuWS
         {
             frmMain.ReloadSettingsAndDefFiles();
         }
+
+        private void KanaTrainingMode_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMain.KanaTrainingModeToggle();
+        }
     }
 }

@@ -44,6 +44,7 @@ namespace KanchokuWS
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.Exit_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.KanaTrainingMode_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,12 +71,12 @@ namespace KanchokuWS
             this.toolStripMenuItem2,
             this.Exit_ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(123, 126);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 148);
             // 
             // Settings_ToolStripMenuItem
             // 
             this.Settings_ToolStripMenuItem.Name = "Settings_ToolStripMenuItem";
-            this.Settings_ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.Settings_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.Settings_ToolStripMenuItem.Text = "設定画面";
             this.Settings_ToolStripMenuItem.ToolTipText = "設定ダイアログを開きます";
             this.Settings_ToolStripMenuItem.Click += new System.EventHandler(this.Settings_ToolStripMenuItem_Click);
@@ -92,6 +93,7 @@ namespace KanchokuWS
             // 
             this.Read_ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ExchangeTable_ToolStripMenuItem,
+            this.KanaTrainingMode_ToolStripMenuItem,
             this.ReadBushuDic_ToolStripMenuItem,
             this.ReadMazeWikipediaDic_ToolStripMenuItem});
             this.Read_ToolStripMenuItem.Name = "Read_ToolStripMenuItem";
@@ -163,6 +165,13 @@ namespace KanchokuWS
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // KanaTrainingMode_ToolStripMenuItem
+            // 
+            this.KanaTrainingMode_ToolStripMenuItem.Name = "KanaTrainingMode_ToolStripMenuItem";
+            this.KanaTrainingMode_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.KanaTrainingMode_ToolStripMenuItem.Text = "かな入力練習モード切り替え";
+            this.KanaTrainingMode_ToolStripMenuItem.Click += new System.EventHandler(this.KanaTrainingMode_ToolStripMenuItem_Click);
+            // 
             // FrmModeMarker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -199,5 +208,6 @@ namespace KanchokuWS
         private System.Windows.Forms.ToolStripMenuItem ReadMazeWikipediaDic_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ExchangeTable_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem Reload_ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem KanaTrainingMode_ToolStripMenuItem;
     }
 }

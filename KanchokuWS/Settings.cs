@@ -247,6 +247,9 @@ namespace KanchokuWS
         /// <summary>副ストロークテーブルの中央鍵盤背景色 </summary>
         public static string BgColorForSecondaryTable { get; private set; }
 
+        /// <summary>かな練習モードの中央鍵盤背景色 </summary>
+        public static string BgColorForKanaTrainingMode { get; private set; }
+
         //-------------------------------------------------------------------------------------
         /// <summary>漢直モード標識の文字色</summary>
         public static string KanjiModeMarkerForeColor { get; private set; }
@@ -871,6 +874,7 @@ namespace KanchokuWS
             BgColorOnSelected = GetString("bgColorOnSelected", "LightPink");
             BgColorForBushuCompHelp = GetString("bgColorForBushuCompHelp", "LightCyan");
             BgColorForSecondaryTable = GetString("bgColorForSecondaryTable", "LightGreen");
+            BgColorForKanaTrainingMode = GetString("bgColorForKanaTrainingMode", "LightPink");
 
             //-------------------------------------------------------------------------------------
             KanjiModeMarkerForeColor = GetString("kanjiModeMarkerForeColor", "Blue");

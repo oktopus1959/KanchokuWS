@@ -566,6 +566,7 @@ namespace KanchokuWS.Gui
             textBox_onHistAssoc.Text= Settings.BgColorForHistOrAssoc;
             textBox_onBushuCompHelp.Text= Settings.BgColorForBushuCompHelp;
             textBox_onSecondaryTable.Text= Settings.BgColorForSecondaryTable;
+            textBox_onKanaTrainingMode.Text= Settings.BgColorForKanaTrainingMode;
 
             // 縦列・横列鍵盤背景色
             textBox_firstCandidateBackColor.Text = Settings.BgColorForFirstCandidate;
@@ -605,6 +606,7 @@ namespace KanchokuWS.Gui
             checkerFontColor.Add(textBox_onHistAssoc);
             checkerFontColor.Add(textBox_onBushuCompHelp);
             checkerFontColor.Add(textBox_onSecondaryTable);
+            checkerFontColor.Add(textBox_onKanaTrainingMode);
 
             // 縦列・横列鍵盤背景色
             checkerFontColor.Add(textBox_firstCandidateBackColor);
@@ -644,6 +646,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("bgColorForHistOrAssoc", textBox_onHistAssoc.Text.Trim());
             Settings.SetUserIni("bgColorForBushuCompHelp", textBox_onBushuCompHelp.Text.Trim());
             Settings.SetUserIni("bgColorForSecondaryTable", textBox_onSecondaryTable.Text.Trim());
+            Settings.SetUserIni("bgColorForKanaTrainingMode", textBox_onKanaTrainingMode.Text.Trim());
 
             // 縦列・横列鍵盤背景色
             Settings.SetUserIni("bgColorForFirstCandidate", textBox_firstCandidateBackColor.Text.Trim());

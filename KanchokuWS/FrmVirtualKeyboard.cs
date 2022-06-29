@@ -1540,7 +1540,7 @@ namespace KanchokuWS
                     name = "Yellow";    // とりあえず Yellow 固定
                 }
                 if (name._isEmpty() && Settings.KanaTrainingMode) {
-                    name = "LightPink";     // かな入力練習モードのとき
+                    name = Settings.BgColorForKanaTrainingMode;     // かな入力練習モードのとき
                 }
                 if (name._notEmpty()) {
                     var color = Color.FromName(name);
