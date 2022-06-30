@@ -21,30 +21,30 @@ namespace KanchokuWS.CombinationKeyStroke
         FrmKanchoku frmMain;
 
         // タイマー
-        System.Timers.Timer timer1;
-        System.Timers.Timer timer2;
+        System.Timers.Timer timerA;
+        System.Timers.Timer timerB;
 
-        int decKeyForTimer1 = -1;
-        int decKeyForTimer2 = -1;
+        int decKeyForTimerA = -1;
+        int decKeyForTimerB = -1;
 
-        private void timer1_elapsed(Object sender, System.Timers.ElapsedEventArgs e)
+        private void timerA_elapsed(Object sender, System.Timers.ElapsedEventArgs e)
         {
-            logger.DebugH(() => $"TIMER1 ELAPSED: decKeyForTimer1={decKeyForTimer1}");
-            timer1?.Stop();
-            if (decKeyForTimer1 >= 0) {
-                int dk = decKeyForTimer1;
-                decKeyForTimer1 = -1;
+            logger.DebugH(() => $"TIMER1 ELAPSED: decKeyForTimer1={decKeyForTimerA}");
+            timerA?.Stop();
+            if (decKeyForTimerA >= 0) {
+                int dk = decKeyForTimerA;
+                decKeyForTimerA = -1;
                 KeyUp(dk);
             }
         }
 
-        private void timer2_elapsed(Object sender, System.Timers.ElapsedEventArgs e)
+        private void timerB_elapsed(Object sender, System.Timers.ElapsedEventArgs e)
         {
-            logger.DebugH(() => $"TIMER2 ELAPSED: decKeyForTimer2={decKeyForTimer2}");
-            timer2?.Stop();
-            if (decKeyForTimer2 >= 0) {
-                int dk = decKeyForTimer2;
-                decKeyForTimer2 = -1;
+            logger.DebugH(() => $"TIMER2 ELAPSED: decKeyForTimer2={decKeyForTimerB}");
+            timerB?.Stop();
+            if (decKeyForTimerB >= 0) {
+                int dk = decKeyForTimerB;
+                decKeyForTimerB = -1;
                 KeyUp(dk);
             }
         }
@@ -55,26 +55,28 @@ namespace KanchokuWS.CombinationKeyStroke
         {
             logger.DebugH(() => $"CALLED");
             frmMain = frm;
-            timer1 = new System.Timers.Timer();
-            timer2 = new System.Timers.Timer();
-            timer1.SynchronizingObject = frm;
-            timer2.SynchronizingObject = frm;
-            timer1.Elapsed += timer1_elapsed;
-            timer2.Elapsed += timer2_elapsed;
+            timerA = new System.Timers.Timer();
+            timerB = new System.Timers.Timer();
+            timerA.SynchronizingObject = frm;
+            timerB.SynchronizingObject = frm;
+            timerA.Elapsed += timerA_elapsed;
+            timerB.Elapsed += timerB_elapsed;
         }
 
         void startTimer(int ms, int decKey)
         {
             logger.DebugH(() => $"CALLED: ms={ms}, decKey={decKey}");
-            if (timer1 != null && !timer1.Enabled) {
-                decKeyForTimer1 = decKey;
-                timer1.Interval = ms;
-                timer1.Start();
+            if (ms <= 0) return;
+
+            if (timerA != null && !timerA.Enabled) {
+                decKeyForTimerA = decKey;
+                timerA.Interval = ms;
+                timerA.Start();
                 logger.DebugH(() => $"TIMER1 STARTED");
-            } else if (timer2 != null && !timer2.Enabled) {
-                decKeyForTimer2 = decKey;
-                timer2.Interval = ms;
-                timer2.Start();
+            } else if (timerB != null && !timerB.Enabled) {
+                decKeyForTimerB = decKey;
+                timerB.Interval = ms;
+                timerB.Start();
                 logger.DebugH(() => $"TIMER2 STARTED");
             }
         }
@@ -112,10 +114,10 @@ namespace KanchokuWS.CombinationKeyStroke
 
         public void Dispose()
         {
-            timer1?.Dispose();
-            timer1 = null;
-            timer2?.Dispose();
-            timer2 = null;
+            timerA?.Dispose();
+            timerA = null;
+            timerB?.Dispose();
+            timerB = null;
         }
 
         /// <summary>
@@ -232,12 +234,14 @@ namespace KanchokuWS.CombinationKeyStroke
                             result = strokeList.GetKeyCombinationWhenKeyDown(decKey);
                             if (result._isEmpty()) {
                                 if (isStrokeListEmpty) {
+                                    // 第1打鍵の場合
                                     if (!stroke.IsComboShift) {
                                         logger.DebugH($"UseCombinationKeyTimer1={Settings.UseCombinationKeyTimer1}");
                                         // 非同時打鍵キーの第1打鍵であり、未確定だったらタイマーを起動する
                                         if (Settings.UseCombinationKeyTimer1) startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey));
                                     }
                                 } else {
+                                    // 第2打鍵以降の場合
                                     if (strokeList.IsSuccessiveShift2ndKey()) {
                                         logger.DebugH($"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}");
                                         // 同時打鍵シフト後の第2打鍵であり、同時打鍵が未判定だったらタイマーを起動する
@@ -257,7 +261,7 @@ namespace KanchokuWS.CombinationKeyStroke
                 strokeList.Clear();
             }
 
-            logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
+            logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}");
 
             if (result._notEmpty()) {
                 setPreRewriteTime(result.Last());
@@ -285,7 +289,7 @@ namespace KanchokuWS.CombinationKeyStroke
 
             var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, DateTime.Now);
 
-            logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}: {strokeList.ToDebugString()}");
+            logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}");
 
             if (result._notEmpty()) {
                 setPreRewriteTime(result.Last());

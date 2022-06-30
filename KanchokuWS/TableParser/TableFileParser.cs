@@ -208,14 +208,16 @@ namespace KanchokuWS.TableParser
                         break;
 
                     case TOKEN.VBAR:               // 次のトークン待ち
-                        // TODO: ここの処理が必要な理由→たしかにこの処理を削除すると、月光連続シフトでのテストに失敗する
-                        //if ((prevToken == 0 || prevToken == TOKEN.VBAR) && isInCombinationBlock && depth > 0) {
-                        //    // 空セルで、同時判定ブロック内で、深さ2以上なら、同時打鍵可能としておく(TODO: 具体例）
-                        //    logger.DebugH(() => $"CALL addCombinationKey(false): prevToken={prevToken}, depth={depth}");
-                        //    using (pushStroke(idx)) {
-                        //        addCombinationKey(false);
-                        //    }
-                        //}
+                        if ((prevToken == 0 || prevToken == TOKEN.VBAR) && isInCombinationBlock && depth > 0) {
+                            // 空セルで、同時打鍵ブロック内で、深さ2以上なら、同時打鍵可能(テーブルの出力定義はなし)としておく
+                            // →たとえば、月光の連続シフトで「DKI」と打鍵したとき、「DK」でいったん同時打鍵成立と判定(出力は無し)して「K」を除去し、
+                            // 次の「I」で「DI」⇒「よ」を出したいため。
+                            // ただし、余計な同時打鍵候補が生成されることを防ぐため、固定順序の場合は、順序を置換した部分打鍵列を生成させないようにしておく必要あり。
+                            logger.DebugH(() => $"CALL addCombinationKey(false): prevToken={prevToken}, depth={depth}");
+                            using (pushStroke(idx)) {
+                                addCombinationKey(false);
+                            }
+                        }
                         row = VBarSeparationHelper.calcRow(idx, row);
                         idx = VBarSeparationHelper.calcOverrunIndex(idx + 1);
                         break;
