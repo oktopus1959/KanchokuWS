@@ -208,24 +208,31 @@ namespace KanchokuWS.CombinationKeyStroke
             List<int> result = null;
 
             try {
-                if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
-                    // キーリピートが可能なキーだった(BacSpaceとか)ので、それを返す
-                    logger.DebugH("repeatable key");
+                var stroke = new Stroke(decKey, DateTime.Now);
+                var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
+                if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
+                    // 終端、かつキーリピートが可能なキーだった(BacSpaceとか)ので、それを返す
+                    logger.DebugH("terminal and repeatable key");
                     result = Helper.MakeList(decKey);
                 } else {
-                    var stroke = new Stroke(decKey, DateTime.Now);
                     logger.DebugH(() => stroke.DebugString());
 
                     // キーリピートのチェック
                     if (strokeList.DetectKeyRepeat(stroke)) {
                         // キーリピートが発生した場合
-                        // キーリピートが不可なキーは無視
-                        logger.DebugH("Key repeat ignored");
-                        // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出す
-                        if (stroke.IsComboShift && handleComboKeyRepeat != null) handleComboKeyRepeat(stroke.ComboShiftDecKey);
+                        if (stroke.IsComboShift && handleComboKeyRepeat != null) {
+                            // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出す
+                            handleComboKeyRepeat(stroke.ComboShiftDecKey);
+                        } else if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
+                            // キーリピートが可能なキー
+                            logger.DebugH("non terminal and repeatable key");
+                            result = Helper.MakeList(decKey);
+                        } else {
+                            // キーリピートが不可なキーは無視
+                            logger.DebugH("Key repeat ignored");
+                        }
                     } else {
                         // キーリピートではない通常の押下の場合は、同時打鍵判定を行う
-                        var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
                         bool isStrokeListEmpty = strokeList.IsEmpty();
                         logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={isStrokeListEmpty}");
                         if ((combo != null && !combo.IsTerminal) || !isStrokeListEmpty) {
