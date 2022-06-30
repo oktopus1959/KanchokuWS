@@ -109,6 +109,9 @@ namespace KanchokuWS
         /// <summary>部首合成ログを有効にする</summary>
         public static bool BushuDicLogEnabled { get; private set; }
 
+        /// <summary>指定個数以上の打鍵が残っていたら警告をログ出力する</summary>        
+        public static int WarnThresholdKeyQueueCount { get; private set; } = 6;
+
         public static bool IsAnyDevFlagEnabled => LogLevel > 2 || LoggingDecKeyInfo || LoggingActiveWindowInfo || LoggingVirtualKeyboardInfo || BushuDicLogEnabled;
 
         //-------------------------------------------------------------------------------------
@@ -795,6 +798,7 @@ namespace KanchokuWS
             //LoggingActiveWindowInfo = GetString("loggingActiveWindowInfo")._parseBool();
             LoggingVirtualKeyboardInfo = GetString("loggingVirtualKeyboardInfo")._parseBool();
             MultiAppEnabled = IsMultiAppEnabled();
+            WarnThresholdKeyQueueCount = GetString("warnThresholdKeyQueueCount")._parseInt(6);
 
             //-------------------------------------------------------------------------------------
             // ファイル設定

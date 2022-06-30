@@ -359,10 +359,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 bTemporaryComboDisabled = comboList._notEmpty() && (bPrevSequential || KeyCombinationPool.CurrentPool.IsPrefixedOrSequentialShift && bSomeShiftKeyUp);
                 logger.DebugH(() => $"CLEANUP: UpKey or Oneshot in comboList Removed: bTemporaryComboDisabled={bTemporaryComboDisabled}, {ToDebugString()}");
 
-                // 6個以上の打鍵が残っていたら警告をログ出力する
-                if (Count > 5) {
+                // 指定個数以上の打鍵が残っていたら警告をログ出力する
+                if (Count >= Settings.WarnThresholdKeyQueueCount) {
                     logger.Warn($"strokeList.Count={Count}");
-                    if (Count > 10) {
+                    if (Count >= Settings.WarnThresholdKeyQueueCount + 5) {
+                        // さらにそれを5個以上、上回っていたら、安全のためキューをクリアしておく
                         logger.Warn($"Clear strokeList");
                         Clear();
                     }
