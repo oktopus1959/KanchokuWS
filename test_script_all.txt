@@ -1,6 +1,10 @@
-# T
+### T ###
 loadTable(tables/t.tbl)
 convert(KRkr) = 日
+
+### ふじこ ###
+loadTable(tables/fujiko.tbl)
+convert(ASDFJKL{29}asdfjkl[29]) = くぁwせdrftgyふじこlp!{Enter}
 
 ### 薙刀式 ###
 loadTable(tables/naginata15.tbl)
