@@ -547,8 +547,8 @@ namespace KanchokuWS
         public static bool HandleShiftSpaceAsSandS { get; set; } = true;
 
         //------------------------------------------------------------------------------
-        /// <summary>同時打鍵とみなす重複率<br/>第１打鍵と第２打鍵の重複時間が第２打鍵の時間に対してここで設定したパーセンテージを超えたら、同時打鍵とみなす</summary>
-        public static int CombinationKeyTimeRate { get; set; } = 0;
+        ///// <summary>同時打鍵とみなす重複率<br/>第１打鍵と第２打鍵の重複時間が第２打鍵の時間に対してここで設定したパーセンテージを超えたら、同時打鍵とみなす</summary>
+        //public static int CombinationKeyTimeRate { get; set; } = 0;
 
         /// <summary>同時打鍵とみなす重複時間<br/>第２打鍵DOWNから第１打鍵UPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす</summary>
         public static int CombinationKeyMinOverlappingTimeMs { get; set; } = 70;
@@ -556,8 +556,8 @@ namespace KanchokuWS
         /// <summary>同時打鍵判定を行う際の、第１打鍵に許容する最大のリード時間(ミリ秒)<br/>第２打鍵までにこの時間より長くかかったら、第1打鍵は同時とみなさない</summary>
         public static int CombinationKeyMaxAllowedLeadTimeMs { get; set; } = 0;
 
-        /// <summary>第２打鍵以降についてのみ同時打鍵チェックを行う</summary>
-        public static bool IsCheckedSecondCombination { get; set; } = true;
+        ///// <summary>第２打鍵以降についてのみ同時打鍵チェックを行う</summary>
+        //public static bool IsCheckedSecondCombination { get; set; } = true;
 
         /// <summary>前置書き換え時の遅延許容時間</summary>
         public static int PreRewriteAllowedDelayTimeMs { get; set; } = 0;
@@ -973,12 +973,12 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             // 同時打鍵
-            CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0);                          // 重複時間率
+            //CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0);                          // 重複時間率
             CombinationKeyMinOverlappingTimeMs = GetString("combinationKeyTimeMs")._parseInt(70);               // 重複時間
             CombinationKeyMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100);   // 許容リードタイム
             PreRewriteAllowedDelayTimeMs = GetString("preRewriteAllowedDelayTimeMs")._parseInt(200);            // 前置書き換え許容遅延タイム
-            UseCombinationKeyTimer1 = GetString("useCombinationKeyTimer1")._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
-            UseCombinationKeyTimer2 = GetString("useCombinationKeyTimer2")._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
+            UseCombinationKeyTimer1 = GetString("useCombinationKeyTimer1")._parseBool(true);                   // 同時打鍵判定用タイマーを使用する
+            UseCombinationKeyTimer2 = GetString("useCombinationKeyTimer2")._parseBool(true);                   // 同時打鍵判定用タイマーを使用する
 
             //-------------------------------------------------------------------------------------
             // IME連携
