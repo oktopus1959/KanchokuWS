@@ -3,6 +3,7 @@
 #include "path_utils.h"
 #include "StrokeTable.h"
 #include "StringNode.h"
+#include "FunctionNode.h"
 #include "MyPrevChar.h"
 #include "DecKeyToChars.h"
 #include "Settings/Settings.h"
@@ -474,8 +475,6 @@ namespace VkbTableMaker {
             // テーブルファイルから
             bool bPostRewrite = tbl->hasPostRewriteNode();
 
-            MString cmdMarker = to_mstr(_T("!{"));
-
             // 文字から、その文字の打鍵列へのマップに追加 (通常面)
             StrokeTreeTraverser traverser(tbl, true);
             while (true) {
@@ -492,15 +491,14 @@ namespace VkbTableMaker {
                 StringNode* sp = dynamic_cast<StringNode*>(np);
                 if (sp) {
                     auto ms = sp->getString();
-                    if (ms.empty() || ms.find(cmdMarker) != MString::npos) continue;
 
                     if (bPostRewrite) {
                         size_t rewritableLen = sp->getRewritableLen();
-                        if (rewritableLen > 0) ms.insert(rewritableLen > ms.size() ? 0 : ms.size() - rewritableLen, 1, '\t');   // 「次の入力」の位置に TAB を挿入しておく
+                        if (rewritableLen > 0) ms.insert(rewritableLen > ms.size() ? 0 : ms.size() - rewritableLen, 1, '/');   // 「次の入力」の位置に '/' を挿入しておく
                     }
 
                     writer.writeLine(utils::utf8_encode(
-                        utils::format(_T("%s\t%s"), origPath.c_str(), MAKE_WPTR(ms))));
+                        utils::format(_T("%s\t\"%s\""), origPath.c_str(), MAKE_WPTR(ms))));
                 } else {
                     // 後置書き換え
                     PostRewriteOneShotNode* prnp = dynamic_cast<PostRewriteOneShotNode*>(np);
@@ -508,6 +506,13 @@ namespace VkbTableMaker {
                         writer.writeLine(utils::utf8_encode(makeRewriteDefLine(_T(""), origPath, prnp->getRewriteInfo())));
                         for (auto pair : prnp->getRewriteMap()) {
                             writer.writeLine(utils::utf8_encode(makeRewriteDefLine(to_wstr(pair.first), origPath, pair.second)));
+                        }
+                    } else {
+                        // 機能ノード
+                        FunctionNode* fp = dynamic_cast<FunctionNode*>(np);
+                        if (fp) {
+                            writer.writeLine(utils::utf8_encode(
+                                utils::format(_T("%s\t@%s"), origPath.c_str(), MAKE_WPTR(fp->getString()))));
                         }
                     }
                 }

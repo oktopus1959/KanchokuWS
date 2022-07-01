@@ -414,7 +414,7 @@ namespace KanchokuWS.TableParser
             if (depth == 1 && CurrentStr._startsWith("!{")) {
                 // Repeatable Key
                 logger.DebugH(() => $"REPEATABLE");
-                keyComboPool.AddRepeatableKey(strokeList[0]);
+                keyComboPool?.AddRepeatableKey(strokeList[0]);
             }
             logger.DebugH(() => $"LEAVE: depth={depth}");
         }
@@ -458,7 +458,7 @@ namespace KanchokuWS.TableParser
                 if (isInCombinationBlock || list.Count == 1) {
                     makeCombinationKeyCombo(list, shiftOffset, hasStr);
                 } else {
-                    keyComboPool.ContainsSequentialShiftKey = true;
+                    if (keyComboPool != null) keyComboPool.ContainsSequentialShiftKey = true;
                     for (int i = 0; i < list.Count - 1; ++i) {
                         int dk = list[i];
                         if (!sequentialShiftKeys.Contains(dk)) {
@@ -483,7 +483,7 @@ namespace KanchokuWS.TableParser
                 if (strokeList.Count > 0) {
                     int preIdx = strokeList[0];
                     targetStr = preIdx >= 0 ? getNthRootNodeString(preIdx) : "";
-                    keyComboPool.AddPreRewriteKey(preIdx);
+                    keyComboPool?.AddPreRewriteKey(preIdx);
                 }
             }
 
@@ -525,13 +525,13 @@ namespace KanchokuWS.TableParser
         {
             logger.DebugH(() => $"{deckeyList._keyString()}={CurrentStr}, shiftOffset={shiftOffset}, hasStr={hasStr}");
             var comboKeyList = deckeyList.Select(x => makeShiftedDecKey(x, shiftOffset)).ToList();      // 先頭キーのオフセットに合わせる
-            keyComboPool.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
-            keyComboPool.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr);
+            keyComboPool?.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
+            keyComboPool?.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr);
         }
 
         void addSequentialShiftKey(int decKey, int shiftOffset)
         {
-            keyComboPool.AddComboShiftKey(makeShiftedDecKey(decKey, shiftOffset), ShiftKeyKind.SequentialShift);
+            keyComboPool?.AddComboShiftKey(makeShiftedDecKey(decKey, shiftOffset), ShiftKeyKind.SequentialShift);
         }
 
         int makeComboDecKey(int decKey)
@@ -658,10 +658,7 @@ namespace KanchokuWS.TableParser
 
         /// <summary>
         /// トップレベルのテーブル定義を解析してストローク木を構築する。
-        /// 解析結果を矢印記法に変換して出力ファイル(outFile)に書き込む
         /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="outFilename"></param>
         public void ParseRootTable()
         {
             logger.InfoH($"ENTER");
@@ -693,9 +690,9 @@ namespace KanchokuWS.TableParser
                 readNextToken(true);
             }
 
-            context.keyComboPool.SetNonTerminalMarkForSubkeys();
+            context.keyComboPool?.SetNonTerminalMarkForSubkeys();
             if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
-                context.keyComboPool.DebugPrint();
+                context.keyComboPool?.DebugPrint();
             }
 
             if (context.bRewriteEnabled) {
@@ -706,9 +703,17 @@ namespace KanchokuWS.TableParser
             outputNewLines();
             addMyCharFunctionInRootStrokeTable();
 
-            logger.InfoH($"LEAVE: KeyCombinationPool.Count={context.keyComboPool.Count}");
+            logger.InfoH($"LEAVE: KeyCombinationPool.Count={context.keyComboPool?.Count}");
         }
 
+        public void ParseDirectives()
+        {
+            readNextToken();
+            while (currentToken != TOKEN.END) {
+                SkipToEndOfLine();
+                readNextToken();
+            }
+        }
     }
 
     /// <summary>
@@ -754,13 +759,39 @@ namespace KanchokuWS.TableParser
             logger.InfoH($"LEAVE");
         }
 
+        /// <summary>
+        /// テーブル定義を読んでディレクティブだけを解析する
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="outFilename"></param>
+        /// <param name="pool">対象となる KeyComboPool</param>
+        public void ReadDirectives(string filename, bool primary)
+        {
+            logger.InfoH($"ENTER: filename={filename}");
+            tableLines.ReadAllLines(filename);
+
+            if (tableLines.NotEmpty) {
+                var context = new ParserContext(tableLines, null, primary);
+                var parser = new RootTableParser(context);
+                parser.ParseDirectives();
+            } else {
+                tableLines.Error($"テーブルファイル({filename})が開けません");
+            }
+
+            tableLines.showErrorMessage();
+
+            logger.InfoH($"LEAVE");
+        }
+
         private void writeAllLines(string filename, List<string> lines)
         {
-            var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
-            Helper.CreateDirectory(path._getDirPath());
-            logger.InfoH($"ENTER: path={path}");
-            Helper.WriteLinesToFile(path, lines, (e) => logger.Error(e._getErrorMsg()));
-            logger.InfoH($"LEAVE");
+            if (filename._notEmpty()) {
+                var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
+                Helper.CreateDirectory(path._getDirPath());
+                logger.InfoH($"ENTER: path={path}");
+                Helper.WriteLinesToFile(path, lines, (e) => logger.Error(e._getErrorMsg()));
+                logger.InfoH($"LEAVE");
+            }
         }
 
     }

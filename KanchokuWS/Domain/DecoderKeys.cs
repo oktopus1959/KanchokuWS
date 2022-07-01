@@ -10,8 +10,6 @@ namespace KanchokuWS
 {
     /// <summary>
     /// デコーダキー定義<br/>
-    /// キー番号 0 〜 48 および 50〜98 (with Shift) が漢直入力に用いるキー。<br/>
-    /// 0x100以降が機能キーとなっている。<br/>
     /// </summary>
     public static class DecoderKeys
     {
@@ -161,9 +159,9 @@ namespace KanchokuWS
         public const int DOWN_ARROW_DECKEY = UP_ARROW_DECKEY + 1;
         public const int LEFT_ARROW_DECKEY = DOWN_ARROW_DECKEY + 1;
         public const int RIGHT_ARROW_DECKEY = LEFT_ARROW_DECKEY + 1;
-        public const int RIGHT_SHIFT_DECKEY = RIGHT_ARROW_DECKEY + 1;
+        public const int PAUSE_DECKEY = RIGHT_ARROW_DECKEY + 1;
+        public const int RIGHT_SHIFT_DECKEY = PAUSE_DECKEY + 1;
         public const int SHIFT_TAB_DECKEY = RIGHT_SHIFT_DECKEY + 1;
-        public const int PAUSE_DECKEY = SHIFT_TAB_DECKEY + 1;
 
         public const int CTRL_ESC_DECKEY = CTRL_FUNC_DECKEY_START;
         public const int CTRL_HANZEN_DECKEY = CTRL_ESC_DECKEY + 1;

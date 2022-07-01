@@ -191,6 +191,9 @@ namespace KanchokuWS.TableParser
                         assignShiftPlane();
                     } else if (lcStr == "set") {
                         handleSettings();
+                    } else if (lcStr == "disableextkey") {
+                        ReadWord();
+                        if (CurrentStr._notEmpty()) VirtualKeys.AddDisabledExtKey(CurrentStr);
                     } else if (lcStr == "ignorewarning") {
                         ReadWord();
                         var word = CurrentStr._toLower();
@@ -342,6 +345,7 @@ namespace KanchokuWS.TableParser
                 Settings.SandSEnabled = true;
             } else if (word._startsWith("disable")) {
                 Settings.SandSEnabled = false;
+                VirtualKeys.AddDisabledExtKey("space");
             } else if (word == "s") {
                 Settings.SandSEnabled = true;
                 shiftPlane = 1;

@@ -103,6 +103,13 @@ namespace KanchokuWS.TableParser
             placeHolders["pd"] = 38;
             placeHolders["/"] = 39;
             placeHolders["sl"] = 39;
+            placeHolders["space"] = 40;
+            placeHolders["nfer"] = VirtualKeys.GetFuncDeckeyByName("nfer");
+            placeHolders["Nfer"] = VirtualKeys.GetFuncDeckeyByName("nfer");
+            placeHolders["NFER"] = VirtualKeys.GetFuncDeckeyByName("nfer");
+            placeHolders["xfer"] = VirtualKeys.GetFuncDeckeyByName("xfer");
+            placeHolders["Xfer"] = VirtualKeys.GetFuncDeckeyByName("xfer");
+            placeHolders["XFER"] = VirtualKeys.GetFuncDeckeyByName("xfer");
         }
     }
 
@@ -329,14 +336,17 @@ namespace KanchokuWS.TableParser
             if (which) {
                 while (lineNum < tableLines.Count) {
                     if (tableLines[lineNum]._startsWith("#else")) {
-                        break;
-                    }
-                    ++lineNum;
-                }
-                while (lineNum < tableLines.Count) {
-                    tableLines[lineNum] = ";; " + tableLines[lineNum];
-                    if (tableLines[lineNum]._startsWith(";; #endif")) {
-                        break;
+                        while (lineNum < tableLines.Count) {
+                            tableLines[lineNum] = ";; " + tableLines[lineNum];
+                            if (tableLines[lineNum]._startsWith(";; #endif")) {
+                                break;
+                            }
+                            ++lineNum;
+                        }
+                        return;
+                    } else if (tableLines[lineNum]._startsWith("#endif")) {
+                        tableLines[lineNum] = ";; " + tableLines[lineNum];
+                        return;
                     }
                     ++lineNum;
                 }
@@ -344,14 +354,16 @@ namespace KanchokuWS.TableParser
                 while (lineNum < tableLines.Count) {
                     tableLines[lineNum] = ";; " + tableLines[lineNum];
                     if (tableLines[lineNum]._startsWith(";; #else")) {
-                        break;
-                    }
-                    ++lineNum;
-                }
-                while (lineNum < tableLines.Count) {
-                    if (tableLines[lineNum]._startsWith("#endif")) {
-                        tableLines[lineNum] = ";; #endif";
-                        break;
+                        while (lineNum < tableLines.Count) {
+                            if (tableLines[lineNum]._startsWith("#endif")) {
+                                tableLines[lineNum] = ";; #endif";
+                                return;
+                            }
+                            ++lineNum;
+                        }
+                        return;
+                    } else if (tableLines[lineNum]._startsWith(";; #endif")) {
+                        return;
                     }
                     ++lineNum;
                 }
@@ -711,7 +723,7 @@ namespace KanchokuWS.TableParser
 
         public int arrowIndex = -1;                  // ARROWインデックス
 
-        public bool bPrimary;                                  // 主テーブルか
+        public bool bPrimary;                        // 主テーブルか
 
         public bool bRewriteEnabled = false;         // 書き換えノードがあった
 

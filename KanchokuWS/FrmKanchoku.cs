@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using KanchokuWS.Handler;
 using KanchokuWS.Gui;
+using KanchokuWS.TableParser;
 using Utils;
 
 namespace KanchokuWS
@@ -189,6 +190,14 @@ namespace KanchokuWS
         public void ReadDefFiles()
         {
             logConstant();
+
+            // テーブルファイルの先読み（各種制約の設定）
+            if (Settings.TableFile._notEmpty()) {
+                new TableFileParser().ReadDirectives(Settings.TableFile, true);
+            }
+            if (Settings.TableFile2._notEmpty()) {
+                new TableFileParser().ReadDirectives(Settings.TableFile2, false);
+            }
 
             // 文字定義ファイルの読み込み
             //if (Settings.CharsDefFile._notEmpty()) {
