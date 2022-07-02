@@ -144,9 +144,9 @@ namespace KanchokuWS
             return specialKeysAndFunctions;
         }
 
-        public static KeyOrFunction[] GetModifierKeys()
+        public static KeyOrFunction[] GetModifierKeys(Func<string, bool> namePred)
         {
-            return specialKeysAndFunctions.Where(x => x.IsModifier).ToArray();
+            return specialKeysAndFunctions.Where(x => x.IsModifier && namePred(x.Name)).ToArray();
         }
 
         public static KeyOrFunction[] GetModifieeKeys()

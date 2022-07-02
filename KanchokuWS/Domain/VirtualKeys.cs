@@ -81,6 +81,44 @@ namespace KanchokuWS
         }
     }
 
+    /// <summary>
+    /// シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面
+    /// </summary>
+    public class ShiftPlaneMapper
+    {
+        Dictionary<uint, int> shiftPlaneMap = new Dictionary<uint, int>();
+
+        public void Clear()
+        {
+            shiftPlaneMap.Clear();
+        }
+
+        public void Add(uint key, int plane)
+        {
+            shiftPlaneMap[key] = plane;
+        }
+
+        public bool ContainsKey(uint key)
+        {
+            return shiftPlaneMap.ContainsKey(key);
+        }
+
+        public int GetPlane(uint key)
+        {
+            return shiftPlaneMap._safeGet(key, 0);
+        }
+
+        public bool FindPlane(int plane)
+        {
+            return shiftPlaneMap.Values.Any(x => x == plane);
+        }
+
+        public List<KeyValuePair<uint, int>> GetPairs()
+        {
+            return shiftPlaneMap.ToList();
+        }
+    }
+
     public static class VirtualKeys
     {
         private static Logger logger = Logger.GetLogger(true);
@@ -241,36 +279,38 @@ namespace KanchokuWS
         /// <summary>無効化された拡張修飾キー</summary>
         private static HashSet<string> disabledExtKeys;
 
+        private static HashSet<string> disabledExtKeyLines = new HashSet<string>();
+
         public static void AddDisabledExtKey(string name)
         {
             disabledExtKeys.Add(name._toLower());
         }
 
-        private static bool isDisabledExtKey(string name)
+        public static bool IsDisabledExtKey(string name)
         {
             return disabledExtKeys.Contains(name._toLower());
         }
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
-        public static Dictionary<uint, int> ShiftPlaneForShiftModKey = new Dictionary<uint, int>();
+        public static ShiftPlaneMapper ShiftPlaneForShiftModKey { get; private set; } = new ShiftPlaneMapper();
 
         /// <summary> DecoderがOffの時のシフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
-        public static Dictionary<uint, int> ShiftPlaneForShiftModKeyWhenDecoderOff = new Dictionary<uint, int>();
+        public static ShiftPlaneMapper ShiftPlaneForShiftModKeyWhenDecoderOff { get; private set; } = new ShiftPlaneMapper();
 
         private static void initializeShiftPlaneForShiftModKey()
         {
             ShiftPlaneForShiftModKey.Clear();
             ShiftPlaneForShiftModKeyWhenDecoderOff.Clear();
 
-            // SHIFTなら標準シフト面をﾃﾞﾌｫﾙﾄとしておく
-            ShiftPlaneForShiftModKey[KeyModifiers.MOD_SHIFT] = ShiftPlane_SHIFT;
-            ShiftPlaneForShiftModKeyWhenDecoderOff[KeyModifiers.MOD_SHIFT] = ShiftPlane_SHIFT;
+            // SHIFTなら標準シフト面をデフォルトとしておく
+            ShiftPlaneForShiftModKey.Add(KeyModifiers.MOD_SHIFT, ShiftPlane_SHIFT);
+            ShiftPlaneForShiftModKeyWhenDecoderOff.Add(KeyModifiers.MOD_SHIFT, ShiftPlane_SHIFT);
         }
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てられたシフト面を得る</summary>
         public static int GetShiftPlaneFromShiftModFlag(uint modFlag, bool bDecoderOn)
         {
-            return bDecoderOn ? ShiftPlaneForShiftModKey._safeGet(modFlag, 0) : ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modFlag, 0);
+            return bDecoderOn ? ShiftPlaneForShiftModKey.GetPlane(modFlag) : ShiftPlaneForShiftModKeyWhenDecoderOff.GetPlane(modFlag);
         }
 
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) にシフト面が割り当てられているか</summary>
@@ -626,6 +666,7 @@ namespace KanchokuWS
             DecKeyFromVKeyCombo = new Dictionary<uint, int>();
             ModConvertedDecKeyFromVKeyCombo = new Dictionary<uint, int>();
             disabledExtKeys = new HashSet<string>();
+            disabledExtKeyLines.Clear();
         }
 
         public static void AddCtrlDeckeyFromCombo(string keyFace, int ctrlDeckey, int ctrlShiftDeckey)
@@ -933,6 +974,7 @@ namespace KanchokuWS
             initializeShiftPlaneForShiftModKey();
             SingleHitDefs.Clear();
             ExtModifierKeyDefs.Clear();
+            disabledExtKeyLines.Clear();
             var sbCompCmds = new StringBuilder();   // 複合コマンド定義文字列
             if (filename._notEmpty()) {
                 var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
@@ -953,7 +995,7 @@ namespace KanchokuWS
                     if (line._notEmpty() && line[0] != '#') {
                         if (line._reMatch(@"^\w+=")) {
                             //シフト面の割り当て
-                            if (AssignShiftPlane(line)) continue;
+                            if (AssignShiftPlane(line, rawLine)) continue;
                         } else {
                             // NAME:xx:function
                             var origItems = origLine._splitn(':', 3);
@@ -962,16 +1004,18 @@ namespace KanchokuWS
                                 string modName = items[0];
                                 string modifiee = items[1];
                                 string target = origItems[2]._strip()._stripDq();
+
+                                if (IsDisabledExtKey(modName)) {
+                                    // 無効にされた拡張修飾キーだった
+                                    logger.DebugH(() => $"modName={modName} is disabled");
+                                    disabledExtKeyLines.Add(rawLine);
+                                    continue;
+                                }
+
                                 uint modKey = 0;
                                 int modDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modName);
                                 int modifieeDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modifiee)._gtZeroOr(modifiee._parseInt(-1));
                                 logger.DebugH(() => $"modName={modName}, modifiee={modifiee}, target={target}, modDeckey={modDeckey}, modifieeDeckey={modifieeDeckey})");
-
-                                if (isDisabledExtKey(modName)) {
-                                    // 無効にされた拡張修飾キーだった
-                                    logger.DebugH(() => $"modName={modName} is disabled");
-                                    continue;
-                                }
 
                                 // 被修飾キーの仮想キーコード: 特殊キー名(esc, tab, ins, ...)または漢直コード(00～49)から、それに該当する仮想キーコードを得る
                                 uint vkey = getVKeyFromDecKey(modifieeDeckey);
@@ -987,13 +1031,13 @@ namespace KanchokuWS
                                         // mod に対する ShiftPlane が設定されていない場合は、拡張シフトB面以降の空いている面を割り当てる(空いてなければF面)
                                         int pn = ShiftPlane_B;
                                         while (pn < ShiftPlane_F) {
-                                            if (!ShiftPlaneForShiftModKey.Values.Any(x => x == pn) && !ShiftPlaneForShiftModKeyWhenDecoderOff.Values.Any(x => x == pn)) {
+                                            if (!ShiftPlaneForShiftModKey.FindPlane(pn) && !ShiftPlaneForShiftModKeyWhenDecoderOff.FindPlane(pn)) {
                                                 break;
                                             }
                                             ++pn;
                                         }
-                                        ShiftPlaneForShiftModKey[modKey] = pn;
-                                        ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = pn;
+                                        ShiftPlaneForShiftModKey.Add(modKey, pn);
+                                        ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, pn);
                                     }
                                 }
 
@@ -1030,7 +1074,7 @@ namespace KanchokuWS
                                     if (targetDeckey == 0) {
                                         if (modKey > 0 && modifieeDeckey >= 0) {
                                             // 特殊キーでもなかったので、文字列、複合コマンドまたは機能として扱う
-                                            var strokeCode = GetShiftPlanePrefix(ShiftPlaneForShiftModKey._safeGet(modKey)) + modifieeDeckey.ToString();
+                                            var strokeCode = GetShiftPlanePrefix(ShiftPlaneForShiftModKey.GetPlane(modKey)) + modifieeDeckey.ToString();
                                             var decoderStr = target._getFirst() == '@' ? target : $"\"{target}\"";
                                             sbCompCmds.Append($"-{strokeCode}>{decoderStr}\n");
                                             targetDeckey = convertUnconditional(parseShiftPlaneDeckey(strokeCode));   // 拡張シフト面も含めた漢直コードとして解析する
@@ -1075,22 +1119,25 @@ namespace KanchokuWS
             return sbCompCmds.ToString();
         }
 
-        public static void UpdateModConversion(IEnumerable<string> lines)
-        {
-            foreach (var line in lines) {
-                if (line._reMatch(@"^\w+=")) {
-                    AssignShiftPlane(line);
-                }
-            }
-        }
+        //public static void UpdateModConversion(IEnumerable<string> lines)
+        //{
+        //    foreach (var line in lines) {
+        //        if (line._reMatch(@"^\w+=")) {
+        //            AssignShiftPlane(line);
+        //        }
+        //    }
+        //}
 
-        public static bool AssignShiftPlane(string line)
+        public static bool AssignShiftPlane(string line, string rawLine = null)
         {
             // NAME=plane[|plane]...
             var items = line._toLower()._split('=');
             if (items._length() != 2) return false;
 
-            if (isDisabledExtKey(items[0])) return true;
+            if (IsDisabledExtKey(items[0])) {
+                disabledExtKeyLines.Add(rawLine._orElse(line));
+                return true;
+            }
 
             uint modKey = GetModifierKeyByName(items[0]);
             var planes = items[1]._split('|');
@@ -1125,8 +1172,8 @@ namespace KanchokuWS
             logger.DebugH(() => $"mod={modKey:x}H({modKey}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
             if (modKey != 0 && shiftPlane > 0) {
                 logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{modKey}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{modKey}] = {shiftPlaneWhenOff}");
-                ShiftPlaneForShiftModKey[modKey] = shiftPlane;
-                ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = shiftPlaneWhenOff;
+                ShiftPlaneForShiftModKey.Add(modKey, shiftPlane);
+                ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, shiftPlaneWhenOff);
             }
             return true;    // OK
         }
@@ -1134,16 +1181,18 @@ namespace KanchokuWS
         /// <summary>テーブルファイルor設定ダイアログで割り当てたSandSシフト面を優先する</summary>
         public static void AssignSanSPlane(int shiftPlane = 0)
         {
-            logger.DebugH(() => $"CALLED: SandSAssignedPlane={Settings.SandSAssignedPlane}");
-            if (shiftPlane <= 0) shiftPlane = Settings.SandSAssignedPlane;
-            if (shiftPlane > 0 && shiftPlane < ShiftPlane_NUM) {
-                ShiftPlaneForShiftModKey[KeyModifiers.MOD_SPACE] = shiftPlane;
+            logger.DebugH(() => $"CALLED: SandSEnabled={Settings.SandSEnabled}, SandSAssignedPlane={Settings.SandSAssignedPlane}");
+            if (Settings.SandSEnabled) {
+                if (shiftPlane <= 0) shiftPlane = Settings.SandSAssignedPlane;
+                if (shiftPlane > 0 && shiftPlane < ShiftPlane_NUM) {
+                    ShiftPlaneForShiftModKey.Add(KeyModifiers.MOD_SPACE, shiftPlane);
+                }
             }
         }
 
         public static int GetSandSPlane()
         {
-            return ShiftPlaneForShiftModKey._safeGet(KeyModifiers.MOD_SPACE);
+            return ShiftPlaneForShiftModKey.GetPlane(KeyModifiers.MOD_SPACE);
         }
 
         // ファイルに書き出す拡張修飾キー設定を作成
@@ -1153,13 +1202,13 @@ namespace KanchokuWS
 
             // シフト面設定
             var dict = new Dictionary<string, string>();
-            foreach (var pair in ShiftPlaneForShiftModKey) {
+            foreach (var pair in ShiftPlaneForShiftModKey.GetPairs()) {
                 var keyName = GetModifierNameByKey(pair.Key);
                 if (keyName._notEmpty()) {
                     dict[keyName] = GetShiftPlaneName(pair.Value);
                 }
             }
-            foreach (var pair in ShiftPlaneForShiftModKeyWhenDecoderOff) {
+            foreach (var pair in ShiftPlaneForShiftModKeyWhenDecoderOff.GetPairs()) {
                 var keyName = GetModifierNameByKey(pair.Key);
                 if (keyName._notEmpty()) {
                     var str = dict._safeGet(keyName);
@@ -1203,6 +1252,12 @@ namespace KanchokuWS
                         }
                     }
                 }
+            }
+
+            // 無効化された設定
+            sb.Append("\n## Disabled modifier settings ##\n");
+            foreach(var line in disabledExtKeyLines) {
+                sb.Append(line + "\n");
             }
 
             return sb.ToString();

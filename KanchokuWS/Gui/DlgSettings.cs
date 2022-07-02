@@ -2439,6 +2439,8 @@ namespace KanchokuWS.Gui
                 if (dlg.ShowDialog() == DialogResult.OK) {
                     // 設定内容を mod-conversion.txt に書き出す
                     writeModConversionSettings();
+                    // SandSのシフト面のコンボボックスを置き換える
+                    comboBox_SandSAssignedPlane.SelectedIndex = Settings.SandSAssignedPlane._lowLimit(0)._highLimit(7);
                 }
                 int width = dlg.Width;
                 logger.InfoH(() => $"DlgModConversionWidth={width}");

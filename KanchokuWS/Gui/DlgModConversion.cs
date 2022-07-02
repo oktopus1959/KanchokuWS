@@ -103,7 +103,7 @@ namespace KanchokuWS.Gui
         public DlgModConversion()
         {
             readCharsDefFile();
-            modifierKeys = SpecialKeysAndFunctions.GetModifierKeys();
+            modifierKeys = SpecialKeysAndFunctions.GetModifierKeys(name => !VirtualKeys.IsDisabledExtKey(name._toLower()));
             PLANE_ASIGNABLE_MOD_KEYS_NUM = modifierKeys.Where(x => x.IsExtModifier).Count();
             extModifiees = SpecialKeysAndFunctions.GetModifieeKeys();
             singleHitKeys = SpecialKeysAndFunctions.GetSingleHitKeys();
@@ -209,8 +209,8 @@ namespace KanchokuWS.Gui
                 dgv.Rows[i].Cells[1].Value = getModifiedDescription(modifierKeys[i]);
                 if (i < PLANE_ASIGNABLE_MOD_KEYS_NUM) {
                     uint modKey = modifierKeys[i].ModKey;
-                    dgv.Rows[i].Cells[2].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKey._safeGet(modKey)) ?? "";
-                    dgv.Rows[i].Cells[3].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modKey)) ?? "";
+                    dgv.Rows[i].Cells[2].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKey.GetPlane(modKey)) ?? "";
+                    dgv.Rows[i].Cells[3].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff.GetPlane(modKey)) ?? "";
                 } else if (modifierKeys._getNth(i)?.ModKey == KeyModifiers.MOD_SHIFT) {
                     dgv.Rows[i].Cells[2].Value = "通常シフト";
                     dgv.Rows[i].Cells[3].Value = "通常シフト";
@@ -344,8 +344,8 @@ namespace KanchokuWS.Gui
                 uint modKey = modKeyDef?.ModKey ?? 0;
                 bool bAssignable = idx >= 0 && idx < PLANE_ASIGNABLE_MOD_KEYS_NUM;
                 if (bAssignable) {
-                    comboBox_shiftPlaneOn.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModKey._safeGet(modKey);
-                    comboBox_shiftPlaneOff.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff._safeGet(modKey);
+                    comboBox_shiftPlaneOn.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModKey.GetPlane(modKey);
+                    comboBox_shiftPlaneOff.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff.GetPlane(modKey);
                 }
 
                 bool shiftPlaneVisible = !radioButton_singleHit.Checked && bAssignable;
@@ -449,9 +449,10 @@ namespace KanchokuWS.Gui
                 if (idx < VirtualKeys.ShiftPlane_NUM) {
                     uint modKey = modKeyDef.ModKey;
                     if (bOn) {
-                        VirtualKeys.ShiftPlaneForShiftModKey[modKey] = idx;
+                        VirtualKeys.ShiftPlaneForShiftModKey.Add(modKey, idx);
+                        if (modKey == KeyModifiers.MOD_SPACE) Settings.SandSAssignedPlane = idx;
                     } else {
-                        VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff[modKey] = idx;
+                        VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, idx);
                     }
                 }
 
