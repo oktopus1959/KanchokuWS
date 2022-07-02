@@ -104,6 +104,7 @@ namespace KanchokuWS.TableParser
             placeHolders["/"] = 39;
             placeHolders["sl"] = 39;
             placeHolders["space"] = 40;
+            placeHolders["Space"] = 40;
             placeHolders["nfer"] = VirtualKeys.GetFuncDeckeyByName("nfer");
             placeHolders["Nfer"] = VirtualKeys.GetFuncDeckeyByName("nfer");
             placeHolders["NFER"] = VirtualKeys.GetFuncDeckeyByName("nfer");

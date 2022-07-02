@@ -143,8 +143,8 @@ convert({22}[22]<200>{12}[12]) = 。し
 
 loadTable(tables/okt.tbl)
 rewriteMaxTime(100)
-convert({422}[422]<50>{412}[412]) = ぽ
-convert({422}[422]<200>{412}[412]) = 。し
+convert({222}[222]<50>{212}[212]) = ぽ
+convert({222}[222]<200>{212}[212]) = 。し
 
 ### NICOLA ###
 loadTable(tables/nicola.tbl)
