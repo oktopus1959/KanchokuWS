@@ -246,7 +246,7 @@ namespace KanchokuWS.Gui
             if (filepath._notEmpty()) {
                 var absPath = KanchokuIni.Singleton.KanchokuDir._joinPath(filepath);
                 logger.WriteInfo($"ENTER: absFilePath={absPath}");
-                var contents = Helper.GetFileContent(absPath, (e) => logger.Error(e._getErrorMsg()));
+                var contents = Helper.GetFileContent(absPath, (e) => logger.Error(e._getErrorMsgShort()));
                 if (contents._notEmpty()) {
                     lines.AddRange(contents._safeReplace("\r", "")._split('\n'));
                 }

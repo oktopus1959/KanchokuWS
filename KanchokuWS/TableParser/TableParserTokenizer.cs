@@ -340,7 +340,12 @@ namespace KanchokuWS.TableParser
             if (word._isEmpty()) {
                 Settings.SandSEnabled = true;
                 int plane = VirtualKeys.GetSandSPlane();
-                if (plane > 0) shiftPlane = plane;
+                if (plane > 0) {
+                    shiftPlane = plane;
+                } else {
+                    shiftPlane = 2;
+                    VirtualKeys.AssignSanSPlane(shiftPlane);
+                }
             } else if (word._startsWith("enable")) {
                 Settings.SandSEnabled = true;
             } else if (word._startsWith("disable")) {
