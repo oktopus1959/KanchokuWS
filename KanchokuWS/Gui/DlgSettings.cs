@@ -2132,7 +2132,7 @@ namespace KanchokuWS.Gui
         private void button_imeFAQ_Click(object sender, EventArgs e)
         {
             logger.InfoH("CALLED");
-            openDocumentUrl(Settings.FaqUrl);
+            openDocumentUrl(Settings.FaqBasicUrl);
         }
 
         private void radioButton_normalVkb_CheckedChanged(object sender, EventArgs e)
