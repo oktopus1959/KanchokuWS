@@ -1,4 +1,4 @@
-<a href="#top" />
+###### TOP
 
 # KanchokuWS -- 漢直Win Spoiler -- FAQ
 KanchokuWS は Windows 用の漢字直接入力ツールです。

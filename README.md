@@ -1,3 +1,5 @@
+###### TOP
+
 # KanchokuWS -- 漢直Win Spoiler -- インストールガイド
 KanchokuWS は、[漢直Win（漢直窓）](https://github.com/kanchoku/kw)の使い勝手を受け継ぎ、
 かつ、利用者を徹底的に甘やかすことを目標として新たに開発された、
