@@ -667,9 +667,11 @@ namespace KanchokuWS
         private void SetStrokeHelpShiftPlane(int shiftPlane)
         {
             logger.InfoH(() => $"CALLED: shiftPlane={shiftPlane}");
-            if (shiftPlane >= 0 && shiftPlane < VirtualKeys.ShiftPlane_NUM) {
-                frmVkb.StrokeHelpShiftPlane = shiftPlane;
-                if (frmVkb.IsCurrentNormalVkb) frmVkb.DrawInitialVkb();
+            if (IsDecoderActive) {
+                if (shiftPlane >= 0 && shiftPlane < VirtualKeys.ShiftPlane_NUM) {
+                    frmVkb.StrokeHelpShiftPlane = shiftPlane;
+                    if (frmVkb.IsCurrentNormalVkb) frmVkb.DrawInitialVkb();
+                }
             }
         }
 
