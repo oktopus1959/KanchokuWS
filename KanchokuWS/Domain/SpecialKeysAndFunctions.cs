@@ -122,7 +122,7 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.DATE_STRING_UNROTATION_DECKEY, 0, "DateUnrotate", "", "日時変換の入力(フォーマットの逆順切替)"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.STROKE_HELP_DECKEY, 0, "StrokeHelp", "", "最後に入力した文字のストロークヘルプ"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.BUSHU_COMP_HELP_DECKEY, 0, "BushuCompHelp", "", "部首合成ヘルプ表示"),
-            new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE_DECKEY, 0, "RomanStrokeGuide", "", "ローマ字による読み打鍵ガイドモードのON/OFF"),
+            new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE_DECKEY, 0, "RomanStrokeGuide", "", "打鍵ガイドへのローマ字による読み入力モードのON/OFF(読み入力OFF後にガイド開始)"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY, 0, "UpperRomanStrokeGuide", "", "英大文字ローマ字による読み打鍵ガイドモード"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY, 0, "HiraganaStrokeGuide", "", "ひらがな入力による読み打鍵ガイドモード"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_ZENKAKU_CONVERSION_DECKEY, 0, "ZenkakuConversion", "", "全角変換入力モードのON/OFF"),

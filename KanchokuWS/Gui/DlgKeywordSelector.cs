@@ -20,6 +20,7 @@ namespace KanchokuWS.Gui
         public DlgKeywordSelector()
         {
             InitializeComponent();
+            if (Settings.DlgKeywordSelectorWidth > 0) Width = Settings.DlgKeywordSelectorWidth;
             if (Settings.DlgKeywordSelectorHeight > 0) Height = Settings.DlgKeywordSelectorHeight;
             buttonOK.Enabled = false;
             CancelButton = buttonCancel;

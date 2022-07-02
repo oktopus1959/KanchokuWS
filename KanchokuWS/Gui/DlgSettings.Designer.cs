@@ -454,6 +454,8 @@ namespace KanchokuWS.Gui
             this.label_okResultDevelop = new System.Windows.Forms.Label();
             this.button_developEnter = new System.Windows.Forms.Button();
             this.groupBox15 = new System.Windows.Forms.GroupBox();
+            this.textBox_warnThresholdKeyQueueCount = new System.Windows.Forms.TextBox();
+            this.label119 = new System.Windows.Forms.Label();
             this.button_developSaveDebugTableFile = new System.Windows.Forms.Button();
             this.button_developTest = new System.Windows.Forms.Button();
             this.checkBox_testAll = new System.Windows.Forms.CheckBox();
@@ -468,8 +470,6 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.textBox_warnThresholdKeyQueueCount = new System.Windows.Forms.TextBox();
-            this.label119 = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_onKanaTrainingMode = new KanchokuWS.Gui.ColorTextBox();
@@ -4864,9 +4864,9 @@ namespace KanchokuWS.Gui
             this.button_setModConversion.Name = "button_setModConversion";
             this.button_setModConversion.Size = new System.Drawing.Size(40, 23);
             this.button_setModConversion.TabIndex = 11;
-            this.button_setModConversion.Text = "設定";
-            this.toolTip1.SetToolTip(this.button_setModConversion, "拡張修飾キー定義ファイルを読み込み、その内容を反映した\r\n設定ダイアログを開きます。\r\n\r\n設定ダイアログで「書き出し」をクリックすると、定義ファイルに\r\n設定が" +
-        "書き出されます。\r\n\r\n定義ファイルを更新した場合は、「再読込」をクリックすると、\r\nその内容が読み込まれて、内部状態が更新されます。");
+            this.button_setModConversion.Text = "編集";
+            this.toolTip1.SetToolTip(this.button_setModConversion, "拡張修飾キー定義ファイルを読み込み、その内容を反映した\r\n設定ダイアログを開きます。\r\n\r\n設定ダイアログで「書き出し」をクリックすると、定義ファイルに\r\n修正結" +
+        "果が書き出されます。\r\n\r\n定義ファイルを更新した場合は、「再読込」をクリックすると、\r\nその内容が読み込まれて、内部状態に反映されます。");
             this.button_setModConversion.UseVisualStyleBackColor = true;
             this.button_setModConversion.Click += new System.EventHandler(this.button_setModConversion_Click);
             // 
@@ -5619,6 +5619,23 @@ namespace KanchokuWS.Gui
             this.groupBox15.TabStop = false;
             this.groupBox15.Text = "開発者用設定";
             // 
+            // textBox_warnThresholdKeyQueueCount
+            // 
+            this.textBox_warnThresholdKeyQueueCount.Location = new System.Drawing.Point(216, 15);
+            this.textBox_warnThresholdKeyQueueCount.Name = "textBox_warnThresholdKeyQueueCount";
+            this.textBox_warnThresholdKeyQueueCount.Size = new System.Drawing.Size(24, 23);
+            this.textBox_warnThresholdKeyQueueCount.TabIndex = 9;
+            this.textBox_warnThresholdKeyQueueCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label119
+            // 
+            this.label119.AutoSize = true;
+            this.label119.Location = new System.Drawing.Point(238, 20);
+            this.label119.Name = "label119";
+            this.label119.Size = new System.Drawing.Size(259, 15);
+            this.label119.TabIndex = 10;
+            this.label119.Text = "個以上の打鍵がキューにたまったら警告をログ出力する";
+            // 
             // button_developSaveDebugTableFile
             // 
             this.button_developSaveDebugTableFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -5766,23 +5783,6 @@ namespace KanchokuWS.Gui
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // textBox_warnThresholdKeyQueueCount
-            // 
-            this.textBox_warnThresholdKeyQueueCount.Location = new System.Drawing.Point(216, 15);
-            this.textBox_warnThresholdKeyQueueCount.Name = "textBox_warnThresholdKeyQueueCount";
-            this.textBox_warnThresholdKeyQueueCount.Size = new System.Drawing.Size(24, 23);
-            this.textBox_warnThresholdKeyQueueCount.TabIndex = 9;
-            this.textBox_warnThresholdKeyQueueCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label119
-            // 
-            this.label119.AutoSize = true;
-            this.label119.Location = new System.Drawing.Point(238, 20);
-            this.label119.Name = "label119";
-            this.label119.Size = new System.Drawing.Size(259, 15);
-            this.label119.TabIndex = 10;
-            this.label119.Text = "個以上の打鍵がキューにたまったら警告をログ出力する";
             // 
             // textBox_onSelectedBackColor
             // 

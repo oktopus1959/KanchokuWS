@@ -2433,6 +2433,8 @@ namespace KanchokuWS.Gui
 
         private void button_setModConversion_Click(object sender, EventArgs e)
         {
+            int nameColWidth = Settings.AssignedKeyOrFuncNameColWidth;
+            int descColWidth = Settings.AssignedKeyOrFuncDescColWidth;
             using (var dlg = new DlgModConversion()) {
                 if (dlg.ShowDialog() == DialogResult.OK) {
                     // 設定内容を mod-conversion.txt に書き出す
@@ -2450,11 +2452,13 @@ namespace KanchokuWS.Gui
                     Settings.SetUserIni("dlgModConversionHeight", height);
                     Settings.DlgModConversionHeight = height;
                 }
-                int colWidth = dlg.AssignedKeyOrFuncColWidth;
-                logger.InfoH(() => $"AssignedKeyOrFuncColWidth={colWidth}");
-                if (Settings.AssignedKeyOrFuncColWidth != colWidth) {
-                    Settings.SetUserIni("assignedKeyOrFuncColWidth", colWidth);
-                    Settings.AssignedKeyOrFuncColWidth = colWidth;
+                logger.InfoH(() => $"AssignedKeyOrFuncColNameWidth={nameColWidth}");
+                if (Settings.AssignedKeyOrFuncNameColWidth != nameColWidth) {
+                    Settings.SetUserIni("assignedKeyOrFuncNameColWidth", Settings.AssignedKeyOrFuncNameColWidth);
+                }
+                logger.InfoH(() => $"AssignedKeyOrFuncColDescWidth={descColWidth}");
+                if (Settings.AssignedKeyOrFuncDescColWidth != descColWidth) {
+                    Settings.SetUserIni("assignedKeyOrFuncDescColWidth", Settings.AssignedKeyOrFuncDescColWidth);
                 }
             }
         }

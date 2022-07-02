@@ -89,9 +89,15 @@ namespace KanchokuWS.Gui
 
         private static KeyOrFunction[] extModifiees;
 
-        public int AssignedKeyOrFuncColWidth {
-            get { return dataGridView2.Columns != null && dataGridView2.Columns.Count > 2 ? dataGridView2.Columns[2].Width : 0; }
-        }
+        //public int AssignedKeyOrFuncNameColWidth {
+        //    get { return dataGridView2.Columns != null && dataGridView2.Columns.Count > 2 ? dataGridView2.Columns[2].Width : 0; }
+        //}
+        //public int AssignedKeyOrFuncNameColWidth { get; private set; }
+
+        //public int AssignedKeyOrFuncDescColWidth {
+        //    get { return dataGridView2.Columns != null && dataGridView2.Columns.Count > 3 ? dataGridView2.Columns[3].Width : 0; }
+        //}
+        //public int AssignedKeyOrFuncDescColWidth { get; private set; }
 
         /// <summary>コンストラクタ</summary>
         public DlgModConversion()
@@ -135,6 +141,10 @@ namespace KanchokuWS.Gui
             dataGridView1.Visible = false;
             dataGridView2.Visible = true;
             dataGridView3.Visible = false;
+
+            //AssignedKeyOrFuncNameColWidth = Settings.AssignedKeyOrFuncNameColWidth._gtZeroOr(180);
+            //AssignedKeyOrFuncDescColWidth = Settings.AssignedKeyOrFuncDescColWidth._gtZeroOr(290);
+
             setDataGridViewForShiftPlane();
             setDataGridViewForSingleHit();
             setDataGridViewForExtModifier();
@@ -225,8 +235,9 @@ namespace KanchokuWS.Gui
             int keyCodeWidth = (int)(30 * dpiRate);
             int keyNameWidth = (int)(80 * dpiRate);
             //int funcNameWidth = (int)(180 * dpiRate);
-            int funcNameWidth = (int)(Settings.AssignedKeyOrFuncColWidth._gtZeroOr(180) * dpiRate);
-            int funcDescWidth = (int)(dgv.Width - 20 * dpiRate - keyCodeWidth - keyNameWidth - funcNameWidth);
+            int funcNameWidth = (int)(Settings.AssignedKeyOrFuncNameColWidth * dpiRate);
+            //int funcDescWidth = (int)(dgv.Width - 20 * dpiRate - keyCodeWidth - keyNameWidth - funcNameWidth);
+            int funcDescWidth = (int)(Settings.AssignedKeyOrFuncDescColWidth * dpiRate);
             dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable_Centered("keyCode", "No", keyCodeWidth, DgvHelpers.READONLY_SELECTION_COLOR));
             dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable("keyName", "単打キー", keyNameWidth, DgvHelpers.READONLY_SELECTION_COLOR));
             dgv.Columns.Add(dgv._makeTextBoxColumn_Sortable("funcName", "割り当てキー/機能名", funcNameWidth, DgvHelpers.HIGHLIGHT_SELECTION_COLOR));
@@ -274,8 +285,8 @@ namespace KanchokuWS.Gui
             dgv._setDefaultFont(DgvHelpers.FontYUG9);
             int keyCodeWidth = (int)(30 * dpiRate);
             int keyNameWidth = (int)(80 * dpiRate);
-            int funcNameWidth = (int)(Settings.AssignedKeyOrFuncColWidth._gtZeroOr(180) * dpiRate);
-            int funcDescWidth = (int)(290 * dpiRate);
+            int funcNameWidth = (int)(Settings.AssignedKeyOrFuncNameColWidth * dpiRate);
+            int funcDescWidth = (int)(Settings.AssignedKeyOrFuncDescColWidth * dpiRate);
             dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable_Centered("keyCode", "No", keyCodeWidth));
             dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable("keyName", "被修飾キー", keyNameWidth));
             dgv.Columns.Add(dgv._makeTextBoxColumn_Sortable("funcName", "割り当てキー/機能名", funcNameWidth, DgvHelpers.HIGHLIGHT_SELECTION_COLOR));
@@ -369,6 +380,18 @@ namespace KanchokuWS.Gui
                 dataGridView3.Visible = radioButton_shiftPlane.Checked;
                 panel_shiftPlaneHint.Visible = radioButton_shiftPlane.Checked;
 
+                if (radioButton_singleHit.Checked) {
+                    if (dataGridView1.Columns.Count > 3) {
+                        dataGridView1.Columns[2].Width = Settings.AssignedKeyOrFuncNameColWidth;
+                        dataGridView1.Columns[3].Width = Settings.AssignedKeyOrFuncDescColWidth;
+                    }
+                }
+                if (radioButton_modKeys.Checked) {
+                    if (dataGridView2.Columns.Count > 3) {
+                        dataGridView2.Columns[2].Width = Settings.AssignedKeyOrFuncNameColWidth;
+                        dataGridView2.Columns[3].Width = Settings.AssignedKeyOrFuncDescColWidth;
+                    }
+                }
                 if (!radioButton_singleHit.Checked) {
                     int idx = comboBox_modKeys.SelectedIndex;
                     int nItems = radioButton_modKeys.Checked ? modifierKeys.Length : PLANE_ASIGNABLE_MOD_KEYS_NUM;
@@ -539,6 +562,10 @@ namespace KanchokuWS.Gui
                         Settings.SetUserIni("dlgKeywordSelectorHeight", dlg.Height);
                         Settings.DlgKeywordSelectorHeight = dlg.Height;
                     }
+                    if (Settings.DlgKeywordSelectorWidth != dlg.Width) {
+                        Settings.SetUserIni("dlgKeywordSelectorWidth", dlg.Width);
+                        Settings.DlgKeywordSelectorWidth = dlg.Width;
+                    }
                 } catch (Exception ex) {
                     logger.Error(ex._getErrorMsg());
                 }
@@ -603,11 +630,13 @@ namespace KanchokuWS.Gui
             dgvKeyDown(dataGridView1, e);
         }
 
-        private void selectModKey(int idx)
+        private bool selectModKey(int idx)
         {
             if (idx >= 0 && idx < comboBox_modKeys.Items.Count) {
                 comboBox_modKeys.SelectedIndex = idx;
+                return true;
             }
+            return false;
         }
 
         private void openComboBox(ComboBox comboBox)
@@ -622,8 +651,25 @@ namespace KanchokuWS.Gui
 
         private void dataGridView3_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            selectModKey(e.RowIndex);
-            openComboBox(e.ColumnIndex < 3 ? comboBox_shiftPlaneOn : comboBox_shiftPlaneOff);
+            if (selectModKey(e.RowIndex)) {
+                openComboBox(e.ColumnIndex < 3 ? comboBox_shiftPlaneOn : comboBox_shiftPlaneOff);
+            }
+        }
+
+        private void dataGridView1_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+        {
+            if (dataGridView1.Columns.Count > 3) {
+                Settings.AssignedKeyOrFuncNameColWidth = dataGridView1.Columns[2].Width;
+                Settings.AssignedKeyOrFuncDescColWidth = dataGridView1.Columns[3].Width;
+            }
+        }
+
+        private void dataGridView2_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+        {
+            if (dataGridView2.Columns.Count > 3) {
+                Settings.AssignedKeyOrFuncNameColWidth = dataGridView2.Columns[2].Width;
+                Settings.AssignedKeyOrFuncDescColWidth = dataGridView2.Columns[3].Width;
+            }
         }
     }
 }

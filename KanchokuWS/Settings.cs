@@ -499,11 +499,17 @@ namespace KanchokuWS
         /// <summary> 拡張修飾キー設定ダイアログの高さ</summary>
         public static int DlgModConversionHeight { get; set; } = 0;
 
+        /// <summary> 割り当てキー／機能名カラムの幅</summary>
+        public static int AssignedKeyOrFuncNameColWidth { get; set; } = 0;
+
+        /// <summary> 割り当てキー／機能説明カラムの幅</summary>
+        public static int AssignedKeyOrFuncDescColWidth { get; set; } = 0;
+
+        /// <summary> キー／機能名設定ダイアログの副</summary>
+        public static int DlgKeywordSelectorWidth { get; set; } = 0;
+
         /// <summary> キー／機能名設定ダイアログの高さ</summary>
         public static int DlgKeywordSelectorHeight { get; set; } = 0;
-
-        /// <summary> 割り当てキー／機能名カラムの幅</summary>
-        public static int AssignedKeyOrFuncColWidth { get; set; } = 0;
 
         /// <summary>YAMANOBEアルゴリズムを有効にするか</summary>
         public static bool YamanobeEnabled { get; set; } = false;
@@ -955,8 +961,10 @@ namespace KanchokuWS
             if (isModConversionFileEmpty) { ModConversionFile = "mod-conversion.txt"; }
             DlgModConversionWidth = GetString("dlgModConversionWidth")._parseInt(0);
             DlgModConversionHeight = GetString("dlgModConversionHeight")._parseInt(0);
+            DlgKeywordSelectorWidth = GetString("dlgKeywordSelectorWidth")._parseInt(0);
             DlgKeywordSelectorHeight = GetString("dlgKeywordSelectorHeight")._parseInt(0);
-            AssignedKeyOrFuncColWidth = GetString("assignedKeyOrFuncColWidth")._parseInt(0);
+            AssignedKeyOrFuncNameColWidth = GetString("assignedKeyOrFuncNameColWidth")._parseInt(180);
+            AssignedKeyOrFuncDescColWidth = GetString("assignedKeyOrFuncDescColWidth")._parseInt(290);
             ExtraModifiersEnabled = GetString("extraModifiersEnabled")._parseBool(!isModConversionFileEmpty);   // 拡張修飾キーを有効にするか
             UpperRomanStrokeGuide = GetString("upperRomanStrokeGuide")._parseBool(false);       // ローマ字読みによるストロークガイドを有効にするか
             ShowLastStrokeByDiffBackColor = GetString("showLastStrokeByDiffBackColor")._parseBool(false); // 前打鍵位置の背景色を変えて表示するか
