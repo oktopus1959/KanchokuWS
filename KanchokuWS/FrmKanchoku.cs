@@ -1153,22 +1153,26 @@ namespace KanchokuWS
         public void ShowStrokeHelp(string w)
         {
             logger.InfoH($"CALLED: w={w}");
-            // 指定文字(空なら最後に入力された文字)のストロークヘルプを取得
-            ExecCmdDecoder("showStrokeHelp", w);
-            // 仮想キーボードにヘルプや文字候補を表示
-            getCenterString();
-            frmVkb.DrawVirtualKeyboardChars();
+            if (IsDecoderActive) {
+                // 指定文字(空なら最後に入力された文字)のストロークヘルプを取得
+                ExecCmdDecoder("showStrokeHelp", w);
+                // 仮想キーボードにヘルプや文字候補を表示
+                getCenterString();
+                frmVkb.DrawVirtualKeyboardChars();
+            }
         }
 
         /// <summary>部首合成ヘルプ</summary>
         public void ShowBushuCompHelp()
         {
             logger.InfoH("CALLED");
-            // 中央鍵盤文字(空なら最後に入力された文字)のストロークヘルプを取得
-            ExecCmdDecoder("showBushuCompHelp", CommonState.CenterString);
-            // 仮想キーボードにヘルプや文字候補を表示
-            getCenterString();
-            frmVkb.DrawVirtualKeyboardChars();
+            if (IsDecoderActive) {
+                // 中央鍵盤文字(空なら最後に入力された文字)のストロークヘルプを取得
+                ExecCmdDecoder("showBushuCompHelp", CommonState.CenterString);
+                // 仮想キーボードにヘルプや文字候補を表示
+                getCenterString();
+                frmVkb.DrawVirtualKeyboardChars();
+            }
         }
 
         /// <summary> 仮想鍵盤のストローク表を切り替える </summary>
@@ -1176,8 +1180,10 @@ namespace KanchokuWS
         public void RotateStrokeTable(int delta)
         {
             logger.InfoH(() => $"CALLED: delta={delta}");
-            if (delta == 0) delta = 1;
-            frmVkb.RotateStrokeTable(delta);
+            if (IsDecoderActive) {
+                if (delta == 0) delta = 1;
+                frmVkb.RotateStrokeTable(delta);
+            }
         }
 
         /// <summary> 辞書ファイルなどの保存 </summary>
@@ -1421,10 +1427,13 @@ namespace KanchokuWS
                     + $"HiraganaStrokeGuide={bHiraganaStrokeGuideMode}, "
                     + $"Settings.UpperRomanStrokeGuide={Settings.UpperRomanStrokeGuide}, numBS={decoderOutput.numBackSpaces}, "
                     + $"output={decoderOutput.outString._toString()}, deckey={deckey}, prevMultiChar={bPrevMultiStrokeChar}");
+
             if (bRomanStrokeGuideMode ||
                 (bRomanMode && decoderOutput.numBackSpaces > 0) ||
-                ((Settings.UpperRomanStrokeGuide || bUpperRomanStrokeGuideMode) && decoderOutput.numBackSpaces == 0 && isUpperAlphabet(decoderOutput.outString[0]) && decoderOutput.outString[1] == 0)) {
-                // ローマ字読みモード
+                ((Settings.UpperRomanStrokeGuide || bUpperRomanStrokeGuideMode) &&
+                 decoderOutput.numBackSpaces == 0 &&
+                 isUpperAlphabet(decoderOutput.outString[0]) && decoderOutput.outString[1] == 0)) {
+                // ローマ字読み入力モード
                 var romanStr = getTailRomanStr();
                 logger.Info(() => $"romanStr={romanStr}");
                 CommonState.CenterString = "ローマ字";
@@ -1434,6 +1443,7 @@ namespace KanchokuWS
                 targetChar = 0;
                 bRomanMode = true;
             } else if (bHiraganaStrokeGuideMode) {
+                // ひらがな読み入力モード
                 CommonState.CenterString = "ひらがな";
                 candidateChars = KanjiYomiTable.GetCandidates(getTailHiraganaStr());
                 candidateCharStrs = frmVkb.DrawStrokeHelp(candidateChars);
