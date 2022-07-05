@@ -35,6 +35,7 @@ namespace KanchokuWS
             this.FollowCaret_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExcangeTable_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.KanaTrainingMode_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadBushuDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadMazeWikipediaDic_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -48,7 +49,6 @@ namespace KanchokuWS
             this.topTextBox = new Utils.TextBoxRO();
             this.dgvHorizontal = new System.Windows.Forms.DataGridView();
             this.pictureBox_measureFontSize = new System.Windows.Forms.PictureBox();
-            this.KanaTrainingMode_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Main)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvHorizontal)).BeginInit();
@@ -111,6 +111,13 @@ namespace KanchokuWS
             this.ExcangeTable_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
             this.ExcangeTable_ToolStripMenuItem.Text = "主・副テーブル切り替え";
             this.ExcangeTable_ToolStripMenuItem.Click += new System.EventHandler(this.ExcangeTable_ToolStripMenuItem_Click);
+            // 
+            // KanaTrainingMode_ToolStripMenuItem
+            // 
+            this.KanaTrainingMode_ToolStripMenuItem.Name = "KanaTrainingMode_ToolStripMenuItem";
+            this.KanaTrainingMode_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.KanaTrainingMode_ToolStripMenuItem.Text = "かな入力練習モード切り替え";
+            this.KanaTrainingMode_ToolStripMenuItem.Click += new System.EventHandler(this.KanaTrainingMode_ToolStripMenuItem_Click);
             // 
             // ReadBushuDic_ToolStripMenuItem
             // 
@@ -217,13 +224,6 @@ namespace KanchokuWS
             this.pictureBox_measureFontSize.TabIndex = 33;
             this.pictureBox_measureFontSize.TabStop = false;
             this.pictureBox_measureFontSize.Visible = false;
-            // 
-            // KanaTrainingMode_ToolStripMenuItem
-            // 
-            this.KanaTrainingMode_ToolStripMenuItem.Name = "KanaTrainingMode_ToolStripMenuItem";
-            this.KanaTrainingMode_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-            this.KanaTrainingMode_ToolStripMenuItem.Text = "かな入力練習モード切り替え";
-            this.KanaTrainingMode_ToolStripMenuItem.Click += new System.EventHandler(this.KanaTrainingMode_ToolStripMenuItem_Click);
             // 
             // FrmVirtualKeyboard
             // 

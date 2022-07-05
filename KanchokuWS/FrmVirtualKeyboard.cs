@@ -1796,5 +1796,6 @@ namespace KanchokuWS
         {
             frmMain.KanaTrainingModeToggle();
         }
+
     }
 }

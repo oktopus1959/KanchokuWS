@@ -73,6 +73,12 @@
     <Compile Include="Gui\DlgSettings_Develop.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Gui\DlgStrokeLog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\DlgStrokeLog.Designer.cs">
+      <DependentUpon>DlgStrokeLog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\TestRunner.cs" />
     <Compile Include="Handler\ActiveWindowHandler.cs" />
     <Compile Include="Gui\BackColorComboBox.cs">
@@ -223,6 +229,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmVirtualKeyboard.resx">
       <DependentUpon>FrmVirtualKeyboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\DlgStrokeLog.resx">
+      <DependentUpon>DlgStrokeLog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\ForeColorComboBox.resx">
       <DependentUpon>ForeColorComboBox.cs</DependentUpon>

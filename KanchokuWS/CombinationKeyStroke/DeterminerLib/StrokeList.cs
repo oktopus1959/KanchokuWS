@@ -492,9 +492,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"list={list._toString()}, tailStk={tailStk.DebugString()}");
             if (list._isEmpty()) return false;
 
-            // タイミングチェック(1文字目ならリードタイムをチェック; 2文字目以降の場合は、対象キーダウンからシフトキーアップまでの時間によって判定)
             bool result = false;
             if (!bSecondComboCheck) {
+                // 1文字目ならリードタイムをチェック
                 if (!KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey) {
                     // 相互シフトを含まないならば、1文字目の時間制約は気にしない
                     result = true;
@@ -502,17 +502,19 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 } else {
                     double ms1 = list[0].TimeSpanMs(tailStk);
                     result = ms1 <= Settings.CombinationKeyMaxAllowedLeadTimeMs;
-                    logger.DebugH(() => $"RESULT1={result}: !bSecondComboCheck && ms1={ms1:f2}ms <= threshold={Settings.CombinationKeyMaxAllowedLeadTimeMs}ms");
+                    logger.DebugH(() => $"RESULT1={result}: !bSecondComboCheck (True) && ms1={ms1:f2}ms <= threshold={Settings.CombinationKeyMaxAllowedLeadTimeMs}ms ({result})");
                 }
+            }
+
+            result = list.Any(x => x.OrigDecoderKey != tailStk.OrigDecoderKey && !x.IsUpKey && x.IsComboShift);   // まだUPされていないシフトキーがあるか
+            if (result) {
+                // シフトキーがまだ解放されずに残っていたら同時打鍵と判定する
+                logger.DebugH(() => $"RESULT2={result}: bSecondComboCheck && ALIVE SHIFT Key found");
             } else {
-                result = list.Any(x => x.OrigDecoderKey != tailStk.OrigDecoderKey && !x.IsUpKey && x.IsComboShift);   // まだUPされていないシフトキーがあるか
-                if (result) {
-                    logger.DebugH(() => $"RESULT2={result}: bSecondComboCheck && ALIVE SHIFT Key found");
-                } else {
-                    double ms2 = tailStk.TimeSpanMs(dtNow);
-                    result = ms2 >= Settings.CombinationKeyMinOverlappingTimeMs;
-                    logger.DebugH(() => $"RESULT2={result}: bSecondComboCheck && ms2={ms2:f2}ms >= threshold={Settings.CombinationKeyMinOverlappingTimeMs}ms");
-                }
+                // シフトキーが解放されているので、最後のキー押下時刻との差分を求め、タイミング判定する
+                double ms2 = tailStk.TimeSpanMs(dtNow);
+                result = ms2 >= Settings.CombinationKeyMinOverlappingTimeMs;
+                logger.DebugH(() => $"RESULT2={result}: bSecondComboCheck (True) && ms2={ms2:f2}ms >= threshold={Settings.CombinationKeyMinOverlappingTimeMs}ms ({result})");
             }
             return result;
         }

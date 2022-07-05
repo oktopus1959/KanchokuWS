@@ -16,7 +16,7 @@ namespace KanchokuWS.TableParser
     /// </summary>
     class TableParser : TableParserTokenizer
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         /// <summary>
         /// コンストラクタ

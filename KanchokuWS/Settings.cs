@@ -15,7 +15,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.0β5";
+        public static string Version => "1.2.0β6";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -534,6 +534,8 @@ namespace KanchokuWS
         public static string RomanSecPlanePrefix { get; set; }
 
         //------------------------------------------------------------------------------
+        // SandS
+        //------------------------------------------------------------------------------
         /// <summary>SandS を有効にするか</summary>
         public static bool SandSEnabled { get; set; } = false;
         public static bool SandSEnabledWhenOffMode { get; set; } = false;
@@ -557,17 +559,13 @@ namespace KanchokuWS
         public static bool HandleShiftSpaceAsSandS { get; set; } = true;
 
         //------------------------------------------------------------------------------
-        ///// <summary>同時打鍵とみなす重複率<br/>第１打鍵と第２打鍵の重複時間が第２打鍵の時間に対してここで設定したパーセンテージを超えたら、同時打鍵とみなす</summary>
-        //public static int CombinationKeyTimeRate { get; set; } = 0;
-
+        // 同時打鍵判定
+        //------------------------------------------------------------------------------
         /// <summary>同時打鍵とみなす重複時間<br/>第２打鍵DOWNから第１打鍵UPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす</summary>
         public static int CombinationKeyMinOverlappingTimeMs { get; set; } = 70;
 
         /// <summary>同時打鍵判定を行う際の、第１打鍵に許容する最大のリード時間(ミリ秒)<br/>第２打鍵までにこの時間より長くかかったら、第1打鍵は同時とみなさない</summary>
         public static int CombinationKeyMaxAllowedLeadTimeMs { get; set; } = 0;
-
-        ///// <summary>第２打鍵以降についてのみ同時打鍵チェックを行う</summary>
-        //public static bool IsCheckedSecondCombination { get; set; } = true;
 
         /// <summary>前置書き換え時の遅延許容時間</summary>
         public static int PreRewriteAllowedDelayTimeMs { get; set; } = 0;
@@ -576,6 +574,14 @@ namespace KanchokuWS
         public static bool UseCombinationKeyTimer1 { get; set; } = false;
         public static bool UseCombinationKeyTimer2 { get; set; } = false;
 
+        ///// <summary>同時打鍵とみなす重複率<br/>第１打鍵と第２打鍵の重複時間が第２打鍵の時間に対してここで設定したパーセンテージを超えたら、同時打鍵とみなす</summary>
+        //public static int CombinationKeyTimeRate { get; set; } = 0;
+
+        ///// <summary>第２打鍵以降についてのみ同時打鍵チェックを行う</summary>
+        //public static bool IsCheckedSecondCombination { get; set; } = true;
+
+        //------------------------------------------------------------------------------
+        // IME連携
         //------------------------------------------------------------------------------
         /// <summary> IMEの状態に連携してON/OFFする </summary>
         public static bool ImeCooperationEnabled { get; set; } = false;
@@ -593,6 +599,8 @@ namespace KanchokuWS
         /// <summary>かな入力練習モードか</summary>
         public static bool KanaTrainingMode { get; set; } = false;
 
+        //------------------------------------------------------------------------------
+        // ウィンドウClassName
         //------------------------------------------------------------------------------
         /// <summary>ウィンドウClassNameごとの設定</summary>
         public class WindowsClassSettings

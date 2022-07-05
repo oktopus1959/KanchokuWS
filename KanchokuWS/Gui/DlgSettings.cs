@@ -147,6 +147,7 @@ namespace KanchokuWS.Gui
                 e.Cancel = true;
             } else {
                 logger.InfoH("ENTER");
+                frmMain?.CloseDlgStrokeLog();
                 timer1.Stop();
                 logger.Info("Timer Stopped");
                 ShownDlg = null;
@@ -982,26 +983,6 @@ namespace KanchokuWS.Gui
                 checkerImeCombo.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
                 logger.InfoH("LEAVE");
             }
-        }
-
-        private void checkBox_imeSendInputInRoman_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBox_imeSendInputInRoman.Checked) checkBox_imeSendInputInKana.Checked = false;
-        }
-
-        private void checkBox_imeSendInputInKana_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBox_imeSendInputInKana.Checked) checkBox_imeSendInputInRoman.Checked = false;
-        }
-
-        private void textBox_imeUnicodeClassNames_Enter(object sender, EventArgs e)
-        {
-            AcceptButton = null;
-        }
-
-        private void textBox_imeUnicodeClassNames_Leave(object sender, EventArgs e)
-        {
-            AcceptButton = button_imeComboEnter;
         }
 
         //-----------------------------------------------------------------------------------
@@ -2482,6 +2463,11 @@ namespace KanchokuWS.Gui
             logger.InfoH($"LEAVE");
         }
 
+        // 打鍵ログ表示
+        private void button_showDlgStrokeLog_Click(object sender, EventArgs e)
+        {
+            frmMain?.ShowDlgStrokeLog(this, Right - 10, Top);
+        }
     }
 }
 

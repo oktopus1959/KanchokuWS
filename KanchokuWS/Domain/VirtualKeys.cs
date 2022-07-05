@@ -523,6 +523,58 @@ namespace KanchokuWS
             { '_', (uint)Keys.Oem102 + 0x100 },        // e1
         };
 
+        private static Dictionary<uint, char> vkeyToChar = new Dictionary<uint, char>() {
+            { (uint)Keys.Space,' ' },
+            { (uint)Keys.D1,'1' },
+            { (uint)Keys.D2,'2' },
+            { (uint)Keys.D3,'3' },
+            { (uint)Keys.D4,'4' },
+            { (uint)Keys.D5,'5' },
+            { (uint)Keys.D6,'6' },
+            { (uint)Keys.D7,'7' },
+            { (uint)Keys.D8,'8' },
+            { (uint)Keys.D9,'9' },
+            { (uint)Keys.D0,'0' },
+            { (uint)Keys.A,'a' },
+            { (uint)Keys.B,'b' },
+            { (uint)Keys.C,'c' },
+            { (uint)Keys.D,'d' },
+            { (uint)Keys.E,'e' },
+            { (uint)Keys.F,'f' },
+            { (uint)Keys.G,'g' },
+            { (uint)Keys.H,'h' },
+            { (uint)Keys.I,'i' },
+            { (uint)Keys.J,'j' },
+            { (uint)Keys.K,'k' },
+            { (uint)Keys.L,'l' },
+            { (uint)Keys.M,'m' },
+            { (uint)Keys.N,'n' },
+            { (uint)Keys.O,'o' },
+            { (uint)Keys.P,'p' },
+            { (uint)Keys.Q,'q' },
+            { (uint)Keys.R,'r' },
+            { (uint)Keys.S,'s' },
+            { (uint)Keys.T,'t' },
+            { (uint)Keys.U,'u' },
+            { (uint)Keys.V,'v' },
+            { (uint)Keys.W,'w' },
+            { (uint)Keys.X,'x' },
+            { (uint)Keys.Y,'y' },
+            { (uint)Keys.Z,'z' },
+            { (uint)Keys.Oemplus, ';' },     // bb
+            { (uint)Keys.Oemcomma, ',' },   // bc
+            { (uint)Keys.OemPeriod, '.' }, // be
+            { (uint)Keys.OemMinus, '-' },   // bd
+            { (uint)Keys.Oem1, ':' },       // ba
+            { (uint)Keys.Oem2, '/' },       // bf
+            { (uint)Keys.Oem3, '@' },      // c0/106
+            { (uint)Keys.Oem4, '[' },        // db
+            { (uint)Keys.Oem5, '\\' },        // dc
+            { (uint)Keys.Oem6, ']' },        // dd
+            { (uint)Keys.Oem7, '^' },        // de
+            { (uint)Keys.Oem102, '＼' },        // e1
+        };
+
         public static VKeyCombo EmptyCombo = new VKeyCombo(0, 0);
 
         public static VKeyCombo CtrlC_VKeyCombo = new VKeyCombo(KeyModifiers.MOD_CONTROL, faceToVkey["C"]);
@@ -546,6 +598,16 @@ namespace KanchokuWS
                 return new VKeyCombo(KeyModifiers.MakeModifier(ctrl, shift), vkey);
             }
             return null;
+        }
+
+        public static char GetFaceCharFromVKey(uint vkey)
+        {
+            return vkeyToChar._safeGet(vkey);
+        }
+
+        public static char GetFaceCharFromDecKey(int decKey)
+        {
+            return GetFaceCharFromVKey(GetVKeyComboFromDecKey(decKey)?.vkey ?? 0);
         }
 
         /// <summary>

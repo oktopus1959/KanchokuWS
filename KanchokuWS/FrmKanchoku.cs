@@ -39,6 +39,79 @@ namespace KanchokuWS
             ShowWindow(frmMode.Handle, SW_SHOWNA);   // NonActive
         }
 
+        private DlgStrokeLog dlgStrokeLog = null;
+
+        private DateTime strokeLogLastDt;
+
+        private StringBuilder sbStrokeLog = new StringBuilder();
+
+        public void ShowDlgStrokeLog(Form frmFocus, int left, int top)
+        {
+            logger.DebugH("ENTER");
+            // 打鍵ログ表示ダイアログの作成
+            if (dlgStrokeLog != null) {
+                dlgStrokeLog._showTopMost();
+            } else {
+                dlgStrokeLog = new DlgStrokeLog(NotifyToCloseDlgStrokeLog, frmFocus);
+                dlgStrokeLog.Show();
+                MoveWindow(dlgStrokeLog.Handle, left, top, dlgStrokeLog.Width, dlgStrokeLog.Height, true);
+                sbStrokeLog.Clear();
+            }
+            logger.DebugH("LEAVE");
+        }
+
+        public void CloseDlgStrokeLog()
+        {
+            logger.DebugH("CALLED");
+            dlgStrokeLog?.Close();
+        }
+
+        public void NotifyToCloseDlgStrokeLog()
+        {
+            logger.DebugH("CALLED");
+            dlgStrokeLog = null;
+        }
+
+        public void WriteStrokeLog(int decKey, bool bDown, bool bTimer = false)
+        {
+            if (IsDecoderActive && dlgStrokeLog != null) {
+                char faceCh = VirtualKeys.GetFaceCharFromDecKey(decKey)._gtZeroOr('?');
+                string msg = $"{(bTimer ? "*Up " : bDown ? "Down" : "Up  ")} | '{faceCh}'";
+                logger.DebugH(() => $"WriteStrokeLog: {msg}");
+                appenStrokeLog(msg);
+            }
+        }
+
+        public void WriteStrokeLog(string str)
+        {
+            if (IsDecoderActive && dlgStrokeLog != null) {
+                string msg = $"Out  | '{str}'";
+                logger.DebugH(() => $"WriteStrokeLog: {msg}");
+                appenStrokeLog(msg);
+            }
+        }
+
+        private void appenStrokeLog(string msg)
+        {
+            DateTime dtNow = DateTime.Now;
+            int diffMs = strokeLogLastDt._isValid() ? (int)(dtNow - strokeLogLastDt).TotalMilliseconds : 100000;
+            if (diffMs >= 1000) {
+                sbStrokeLog.Append($"--- time --- | diff ms\r\n");
+                if (diffMs >= 60000) diffMs = 0;
+            }
+            sbStrokeLog.Append($"{dtNow.ToString("HH:mm:ss.fff")} | {diffMs, 6:#,0} | {msg}\r\n");
+            strokeLogLastDt = dtNow;
+        }
+
+        public void FlushStrokeLog()
+        {
+            if (IsDecoderActive && dlgStrokeLog != null) {
+                dlgStrokeLog?.WriteLog(sbStrokeLog.ToString());
+            }
+            sbStrokeLog.Clear();
+        }
+
+        //------------------------------------------------------------------
         //private string CharCountFile;
 
         private const int timerInterval = 100;
@@ -1489,6 +1562,7 @@ namespace KanchokuWS
                         int leadLen = calcSameLeadingLen(outString, outLen, numBS);
                         var outStr = leadLen > 0 ? outString.Skip(leadLen).ToArray() : outString;
                         /*if (Settings.LoggingDecKeyInfo)*/ logger.InfoH(() => $"outString={outString._toString()}, numBS={numBS}, leadLen={leadLen}, outStr={outStr._toString()}");
+                        WriteStrokeLog(outStr._toString());
                         SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(outStr, numBS - leadLen, bFuncVkeyContained);
                         if (bFuncVkeyContained) {
                             logger.DebugH("PATH-5");
@@ -1555,6 +1629,7 @@ namespace KanchokuWS
 
             var result = decoderOutput.outString._toString();
             numBS = decoderOutput.numBackSpaces;
+            WriteStrokeLog(result);
             logger.InfoH(() => $"LEAVE: result={result}, numBS={decoderOutput.numBackSpaces}, usedTable={decoderOutput.strokeTableNum}, strokeCount={decoderOutput.GetStrokeCount()}");
             return result;
         }
@@ -1913,6 +1988,7 @@ namespace KanchokuWS
             logger.Info("CALLED");
             KanaTrainingModeToggle();
         }
+
     }
 
 }

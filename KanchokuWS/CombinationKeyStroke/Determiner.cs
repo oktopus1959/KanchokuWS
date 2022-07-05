@@ -34,7 +34,7 @@ namespace KanchokuWS.CombinationKeyStroke
             if (decKeyForTimerA >= 0) {
                 int dk = decKeyForTimerA;
                 decKeyForTimerA = -1;
-                KeyUp(dk);
+                KeyUp(dk, true);
             }
         }
 
@@ -45,7 +45,7 @@ namespace KanchokuWS.CombinationKeyStroke
             if (decKeyForTimerB >= 0) {
                 int dk = decKeyForTimerB;
                 decKeyForTimerB = -1;
-                KeyUp(dk);
+                KeyUp(dk, true);
             }
         }
 
@@ -194,6 +194,8 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
         public void KeyDown(int decKey, Action<int> handleComboKeyRepeat)
         {
+            frmMain?.WriteStrokeLog(decKey, true);
+
             procQueue.Enqueue(() => keyDown(decKey, handleComboKeyRepeat));
             HandleQueue();
         }
@@ -282,8 +284,10 @@ namespace KanchokuWS.CombinationKeyStroke
         /// </summary>
         /// <param name="decKey">解放されたキーのデコーダコード</param>
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
-        public void KeyUp(int decKey)
+        public void KeyUp(int decKey, bool bTimer = false)
         {
+            frmMain?.WriteStrokeLog(decKey, false, bTimer);
+
             procQueue.Enqueue(() => keyUp(decKey));
             HandleQueue();
         }
@@ -297,6 +301,8 @@ namespace KanchokuWS.CombinationKeyStroke
             var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, DateTime.Now);
 
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}");
+
+            if (strokeList.IsEmpty()) frmMain?.FlushStrokeLog();
 
             if (result._notEmpty()) {
                 setPreRewriteTime(result.Last());
