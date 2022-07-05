@@ -199,14 +199,29 @@ namespace KanchokuWS.Gui
 
             int keysLen = keys._safeLength();
 
-            int getInt(ref int pos, char ch)
+            int getDecKeyOrInt(ref int pos, char ch, bool bOnlyInt = false)
             {
                 int start = ++pos;
                 while (pos < keysLen) {
                     if (keys[pos] == ch) break;
                     ++pos;
                 }
-                if (pos > start) return keys._safeSubstring(start, pos - start)._parseInt(0);
+                if (pos > start) {
+                    var s = keys._safeSubstring(start, pos - start);
+                    if (!bOnlyInt) {
+                        int dk = -1;
+                        switch (s) {
+                            case ";": dk = 29; break;
+                            case ",": dk = 37; break;
+                            case ".": dk = 38; break;
+                            case "/": dk = 39; break;
+                            case "nfer": dk = 55; break;
+                            case "xfer": dk = 56; break;
+                        }
+                        if (dk >= 0) return dk;
+                    }
+                    return s._parseInt(0);
+                }
                 return 0;
             }
 
@@ -215,18 +230,18 @@ namespace KanchokuWS.Gui
             try {
                 for (int pos = 0; pos < keysLen; ++pos) {
                     char k = keys[pos];
-                    if (k >= 'A' && k <= 'Z') {
+                    if (k >= '0' && k <= '9' || k >= 'A' && k <= 'Z') {
                         CombinationKeyStroke.Determiner.Singleton.KeyDown(keyToDeckey._safeGet(k), null);
                     } else if (k >= 'a' && k <= 'z') {
                         CombinationKeyStroke.Determiner.Singleton.KeyUp(keyToDeckey._safeGet(toUpper(k)));
                     } else if (k == '<') {
-                        int ms = getInt(ref pos, '>');
+                        int ms = getDecKeyOrInt(ref pos, '>', true);
                         if (ms > 0) Helper.WaitMilliSeconds(ms);
                     } else if (k == '{') {
-                        int dk = getInt(ref pos, '}');
+                        int dk = getDecKeyOrInt(ref pos, '}');
                         CombinationKeyStroke.Determiner.Singleton.KeyDown(dk, null);
                     } else if (k == '[') {
-                        int dk = getInt(ref pos, ']');
+                        int dk = getDecKeyOrInt(ref pos, ']');
                         CombinationKeyStroke.Determiner.Singleton.KeyUp(dk);
                     }
                 }

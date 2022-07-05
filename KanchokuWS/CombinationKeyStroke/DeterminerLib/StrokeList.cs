@@ -400,10 +400,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     if (keyCombo != null && keyCombo.DecKeyList != null && keyCombo.HasString) {
                         bComboFound = true; // 同時打鍵の組合せが見つかった
                         Stroke tailKey = hotList[overlapLen - 1];
-                        logger.DebugH(() => $"CHECK0: {!hotList[0].IsSingleHittable}: hotList[0] NOT SINGLE");
-                        logger.DebugH(() => $"CHECK1: {tailKey.IsUpKey && hotList[0].IsComboShift && tailKey.IsSingleHittable}: hotList[0].IsComboShift={hotList[0].IsComboShift} and hotList[tailPos={overlapLen - 1}].IsUpKey && IsSingle");
+                        //logger.DebugH(() => $"CHECK0: {!hotList[0].IsSingleHittable}: hotList[0] NOT SINGLE");
+                        //logger.DebugH(() => $"CHECK1: {tailKey.IsUpKey && hotList[0].IsComboShift && tailKey.IsSingleHittable}: hotList[0].IsComboShift={hotList[0].IsComboShift} and hotList[tailPos={overlapLen - 1}].IsUpKey && IsSingle");
+                        logger.DebugH(() => $"CHECK1: {tailKey.IsUpKey && tailKey.IsSingleHittable}: hotList[tailPos={overlapLen - 1}].IsUpKey && IsSingleHittable");
                         logger.DebugH(() => $"CHECK2: {hotList[0].IsShiftableSpaceKey}: hotList[0].IsShiftableSpaceKey");
-                        if (tailKey.IsUpKey && tailKey.IsSingleHittable && hotList[0].IsComboShift || // CHECK1: 対象リストの末尾キーが先にUPされた
+                        //if (tailKey.IsUpKey && tailKey.IsSingleHittable && hotList[0].IsComboShift || // CHECK1: 対象リストの末尾キーが先にUPされた
+                        if (tailKey.IsUpKey && tailKey.IsSingleHittable || // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
                             hotList[0].IsShiftableSpaceKey ||           // CHECK2: 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
                             isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) {
                             // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する
@@ -489,32 +491,34 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         // タイミングによる同時打鍵判定関数
         private bool isCombinationTiming(List<Stroke> list, Stroke tailStk, DateTime dtNow, bool bSecondComboCheck)
         {
-            logger.DebugH(() => $"list={list._toString()}, tailStk={tailStk.DebugString()}");
+            logger.DebugH(() => $"list={list._toString()}, tailStk={tailStk.DebugString()}, bSecondComboCheck={bSecondComboCheck}");
             if (list._isEmpty()) return false;
 
-            bool result = false;
+            bool result = true;
             if (!bSecondComboCheck) {
                 // 1文字目ならリードタイムをチェック
                 if (!KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey) {
                     // 相互シフトを含まないならば、1文字目の時間制約は気にしない
                     result = true;
-                    logger.DebugH(() => $"RESULT1={result}: !bSecondComboCheck && !ContainsUnorderedShiftKey={!KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey}");
+                    logger.DebugH(() => $"RESULT1={result}: !bSecondComboCheck (True) && !ContainsUnorderedShiftKey={!KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey}");
                 } else {
                     double ms1 = list[0].TimeSpanMs(tailStk);
                     result = ms1 <= Settings.CombinationKeyMaxAllowedLeadTimeMs;
                     logger.DebugH(() => $"RESULT1={result}: !bSecondComboCheck (True) && ms1={ms1:f2}ms <= threshold={Settings.CombinationKeyMaxAllowedLeadTimeMs}ms ({result})");
                 }
             }
-
-            result = list.Any(x => x.OrigDecoderKey != tailStk.OrigDecoderKey && !x.IsUpKey && x.IsComboShift);   // まだUPされていないシフトキーがあるか
             if (result) {
-                // シフトキーがまだ解放されずに残っていたら同時打鍵と判定する
-                logger.DebugH(() => $"RESULT2={result}: bSecondComboCheck && ALIVE SHIFT Key found");
-            } else {
-                // シフトキーが解放されているので、最後のキー押下時刻との差分を求め、タイミング判定する
-                double ms2 = tailStk.TimeSpanMs(dtNow);
-                result = ms2 >= Settings.CombinationKeyMinOverlappingTimeMs;
-                logger.DebugH(() => $"RESULT2={result}: bSecondComboCheck (True) && ms2={ms2:f2}ms >= threshold={Settings.CombinationKeyMinOverlappingTimeMs}ms ({result})");
+                // 1文字目のリードタイムチェックをパスした、あるいは2文字目だった
+                result = list.Any(x => x.OrigDecoderKey != tailStk.OrigDecoderKey && !x.IsUpKey && x.IsComboShift);   // まだUPされていないシフトキーがあるか
+                if (result) {
+                    // シフトキーがまだ解放されずに残っていたら同時打鍵と判定する
+                    logger.DebugH(() => $"RESULT2={result}: bSecondComboCheck && ALIVE SHIFT Key found");
+                } else {
+                    // シフトキーが解放されているので、最後のキー押下時刻との差分を求め、タイミング判定する
+                    double ms2 = tailStk.TimeSpanMs(dtNow);
+                    result = ms2 >= Settings.CombinationKeyMinOverlappingTimeMs;
+                    logger.DebugH(() => $"RESULT2={result}: ms2={ms2:f2}ms >= threshold={Settings.CombinationKeyMinOverlappingTimeMs}ms ({result})");
+                }
             }
             return result;
         }

@@ -76,6 +76,7 @@ namespace KanchokuWS
         {
             if (IsDecoderActive && dlgStrokeLog != null) {
                 char faceCh = VirtualKeys.GetFaceCharFromDecKey(decKey)._gtZeroOr('?');
+                if (bDown && faceCh >= 'a' && faceCh <= 'z') faceCh = (char)(faceCh - 0x20);
                 string msg = $"{(bTimer ? "*Up " : bDown ? "Down" : "Up  ")} | '{faceCh}'";
                 logger.DebugH(() => $"WriteStrokeLog: {msg}");
                 appenStrokeLog(msg);

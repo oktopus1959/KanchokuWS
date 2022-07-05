@@ -4,11 +4,13 @@ convert(KRkr) = 日
 
 ### ふじこ ###
 loadTable(tables/fujiko.tbl)
-convert(ASDFJKL{29}asdfjkl[29]) = くぁwせdrftgyふじこlp!{Enter}
+comboMinTime(10)
+convert(ASDFJKL{;}<30>asdfjkl[;]) = くぁwせdrftgyふじこlp!{Enter}
 
 ### 薙刀式 ###
 loadTable(tables/naginata15.tbl)
 comboMaxTime(100)
+comboMinTime(0)
 convert(Jj) = あ
 convert(Ff) = か
 convert(Ii) = る
@@ -22,6 +24,11 @@ convert(U<50>Fuf) = ざ
 convert(JJJWjw) = ぎ
 convert(J<30>Wjw) = ぎ
 convert(JJJ<30>Wjw) = ぎ
+convert(W<20>J<20>H<20>wjh) = ぎゃ
+convert(J<50>W<50>H<100>hjw) = ぎゃ
+
+comboMinTime(20)
+convert(W<50>J<50>H<100>hwj) = ぎゃ
 convert(XHMxhm) = ぴゃ
 convert(XMHxhm) = ぴゃ
 
@@ -35,29 +42,35 @@ convert(QJKLjklq) = ぁぃぅ
 comboMaxTime(10)
 convert(Q<50>Jjq) = ぁ
 
-comboMaxTime(100)
+comboMaxTime(80)
+comboMinTime(80)
 convert(J<120>Wjw) = あき
 convert(JJJ<120>Wjw) = あき
-convert(JWRjwr) = ぎし
+convert(J<10>W<50>R<20>jwr) = ぎし
 convert(JWRrjw) = ぎじ
 
-comboMinTime(100)
+comboMaxTime(120)
+comboMinTime(20)
 convert(JKjk) = あい
 convert(JKkj) = あい
 convert(KJkj) = いあ
 convert(KJjk) = いあ
 convert(FIfi) = かる
 convert(JIji) = ある
-convert(F{38}Wf[38]w) = ぶき
-convert(JWR<40>jwr) = ぎし
-convert(JWE<40>jwe) = ぎて
-convert(J<32>W<93>jRwr) = ぎし
-convert(J<32>W<93>jEwe) = ぎて
+convert(F{.}W<60>f[.]w) = ぶき
+convert(JW<40>Rjwr) = ぎし
+convert(JW<40>Ejwe) = ぎて
+convert(J<30>W<53>jRwr) = ぎし
+convert(J<30>W<53>jEwe) = ぎて
 
 comboMinTime(50)
 convert(JWR<80>jwr) = ぎじ
 convert(FIOPiopf) = かるずべ
 convert(FKOPkopf) = かいずべ
+
+enableTimer2()
+convert(J<48>E<45>R<152>erj) = でじ
+convert(J<32>W<93>jRwr) = ぎし
 
 enableTimer2()
 convert(J<48>E<45>R<152>erj) = でじ
@@ -82,7 +95,7 @@ convert(DDDUIdui) = えい
 
 # phoenix RT
 loadTable(tables/phoenix_rt.tbl)
-convert({21}[21]{29}[29]) = ね
+convert(Ss{;}[;]) = ね
 
 # ブリ中トロ
 loadTable(tables/chutoro.211023.tbl)
@@ -149,15 +162,15 @@ convert({222}[222]<200>{212}[212]) = 。し
 ### NICOLA ###
 loadTable(tables/nicola.tbl)
 comboMaxTime(100)
-convert(J<50>{55}j[55]) = ど
-convert(J<200>{55}j[55]) = と
-convert(J<200>{55}[55]j) = と
-convert({55}<200>Jj[55]) = ど
-convert({55}<200>J[55]j) = と
+convert(J<50>{nfer}j[nfer]) = ど
+convert(J<200>{nfer}j[nfer]) = と
+convert(J<200>{nfer}[nfer]j) = と
+convert({nfer}<200>Jj[nfer]) = ど
+convert({nfer}<200>J[nfer]j) = と
 
 enableTimer1()
-convert(J<50>{55}j[55]) = ど
-convert(J<200>{55}[55]j) = と
+convert(J<50>{nfer}j[nfer]) = ど
+convert(J<200>{nfer}[nfer]j) = と
 
 ### 月光(連続シフト) ###
 loadTable(tables/gekko-20211106.pfx.tbl)

@@ -157,6 +157,17 @@ namespace Utils
         }
 
         /// <summary>
+        /// 0 より大きければ自身を返し、0 以下なら defval を返す
+        /// </summary>
+        /// <param name="val"></param>
+        /// <param name="defval"></param>
+        /// <returns></returns>
+        public static char _gtZeroOr(this char val, char defval)
+        {
+            return val > '\0' ? val : defval;
+        }
+
+        /// <summary>
         ///  val が NaN でなければ true を返す
         /// </summary>
         /// <param name="val"></param>
