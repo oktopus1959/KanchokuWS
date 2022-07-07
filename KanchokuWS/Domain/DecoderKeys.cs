@@ -160,7 +160,8 @@ namespace KanchokuWS
         public const int LEFT_ARROW_DECKEY = DOWN_ARROW_DECKEY + 1;
         public const int RIGHT_ARROW_DECKEY = LEFT_ARROW_DECKEY + 1;
         public const int PAUSE_DECKEY = RIGHT_ARROW_DECKEY + 1;
-        public const int RIGHT_SHIFT_DECKEY = PAUSE_DECKEY + 1;
+        public const int SCR_LOCK_DECKEY = PAUSE_DECKEY + 1;
+        public const int RIGHT_SHIFT_DECKEY = SCR_LOCK_DECKEY + 1;
         public const int SHIFT_TAB_DECKEY = RIGHT_SHIFT_DECKEY + 1;
 
         public const int CTRL_ESC_DECKEY = CTRL_FUNC_DECKEY_START;
@@ -184,6 +185,7 @@ namespace KanchokuWS
         public const int CTRL_LEFT_ARROW_DECKEY = CTRL_DOWN_ARROW_DECKEY + 1;
         public const int CTRL_RIGHT_ARROW_DECKEY = CTRL_LEFT_ARROW_DECKEY + 1;
         public const int CTRL_PAUSE_DECKEY = CTRL_RIGHT_ARROW_DECKEY + 1;
+        public const int CTRL_SCR_LOCK_DECKEY = CTRL_PAUSE_DECKEY + 1;
 
         /// <summary> 
         /// 特殊なDECKEY<br/>

@@ -99,6 +99,7 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.RIGHT_ARROW_DECKEY, 0, "Right", "", "→ キー", "rightarrow"),
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.UP_ARROW_DECKEY, 0, "Up", "", "↑ キー", "uparrow"),
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.DOWN_ARROW_DECKEY, 0, "Down", "", "↓ キー", "downarrow"),
+            new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.SCR_LOCK_DECKEY, 0, "ScrLock", "", "Scroll Lock キー", "scrlock"),
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.PAUSE_DECKEY, 0, "Pause", "", "Pause キー", "pause"),
             new KeyOrFunction(KeyOrFunction.ATTR_EXTSINGLE, DecoderKeys.RIGHT_SHIFT_DECKEY, KeyModifiers.MOD_RSHIFT, "Rshift", "右シフト", "右シフト キー"),
             new KeyOrFunction(KeyOrFunction.ATTR_EXTMOD, -1, KeyModifiers.MOD_LCTRL, "lctrl", "左コントロール", "左コントロール キー"),
