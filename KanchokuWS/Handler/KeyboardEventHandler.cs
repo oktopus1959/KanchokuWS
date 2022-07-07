@@ -12,7 +12,7 @@ namespace KanchokuWS.Handler
 {
     public class KeyboardEventHandler : IDisposable
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         /// <summary>Ctrlキー変換の有効なウィンドウクラスか</summary>
         public delegate bool DelegateCtrlConversionEffectiveChecker();

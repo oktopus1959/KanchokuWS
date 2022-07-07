@@ -11,7 +11,7 @@ namespace KanchokuWS.Gui
 {
     class TestRunner
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         FrmKanchoku frmMain = null;
 

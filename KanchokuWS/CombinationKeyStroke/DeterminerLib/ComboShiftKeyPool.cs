@@ -9,7 +9,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 {
     public class ComboShiftKeyPool
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         public enum ComboKind {
             None,

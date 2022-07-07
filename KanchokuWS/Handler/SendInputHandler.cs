@@ -12,7 +12,7 @@ namespace KanchokuWS.Handler
 
     class SendInputHandler
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         public const int MyMagicNumber = 1959;
 

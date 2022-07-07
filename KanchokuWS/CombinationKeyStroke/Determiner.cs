@@ -15,7 +15,7 @@ namespace KanchokuWS.CombinationKeyStroke
     /// </summary>
     class Determiner : IDisposable
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         // FrmKanchoku
         FrmKanchoku frmMain;

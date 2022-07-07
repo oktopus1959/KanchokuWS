@@ -10,7 +10,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
     class KeyCombinationPool
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         /// <summary>
         /// 主テーブル用のCombinaitonPool
