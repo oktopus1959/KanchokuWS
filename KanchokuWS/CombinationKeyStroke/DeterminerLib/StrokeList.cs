@@ -407,7 +407,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         //if (tailKey.IsUpKey && tailKey.IsSingleHittable && hotList[0].IsComboShift || // CHECK1: 対象リストの末尾キーが先にUPされた
                         if (tailKey.IsUpKey && tailKey.IsSingleHittable || // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
                             hotList[0].IsShiftableSpaceKey ||           // CHECK2: 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
-                            isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) {
+                            isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck))  // タイミングチェック
+                        {
                             // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する
                             logger.DebugH(() => $"COMBO CHECK PASSED: Overlap candidates found: overlapLen={overlapLen}, list={challengeList._toString()}");
                             result.AddRange(keyCombo.DecKeyList);
@@ -507,8 +508,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     logger.DebugH(() => $"RESULT1={result}: !bSecondComboCheck (True) && ms1={ms1:f2}ms <= threshold={Settings.CombinationKeyMaxAllowedLeadTimeMs}ms ({result})");
                 }
             }
-            if (result) {
-                // 1文字目のリードタイムチェックをパスした、あるいは2文字目だった
+            if (bSecondComboCheck || (result && !Settings.CombinationKeyMinTimeOnlyAfterSecond)) {
+                // 2文字目であるか、または、1文字目のリードタイムチェックをパスし、かつ、1文字目でも重複時間チェックが必要
                 result = list.Any(x => x.OrigDecoderKey != tailStk.OrigDecoderKey && !x.IsUpKey && x.IsComboShift);   // まだUPされていないシフトキーがあるか
                 if (result) {
                     // シフトキーがまだ解放されずに残っていたら同時打鍵と判定する

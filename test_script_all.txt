@@ -27,6 +27,15 @@ convert(JJJ<30>Wjw) = ぎ
 convert(W<20>J<20>H<20>wjh) = ぎゃ
 convert(J<50>W<50>H<100>hjw) = ぎゃ
 
+comboMinTime(100)
+convert(FJ<50>fj) = かあ
+disableFirstComboCheck
+convert(FJ<50>fj) = が
+convert(UF<50>uf) = ざ
+comboMinTime(20)
+convert(FJ<50>fj) = が
+
+enableFirstComboCheck
 comboMinTime(20)
 convert(W<50>J<50>H<100>hwj) = ぎゃ
 convert(XHMxhm) = ぴゃ

@@ -298,7 +298,9 @@ namespace KanchokuWS.Gui
             return Helper.DirectoryExists(tableFileDir) ? tableFileDir : rootDir;
         }
 
-        /// <summary> 基本設定</summary>
+        //-----------------------------------------------------------------------------------
+        // 基本設定
+        //-----------------------------------------------------------------------------------
         void readSettings_tabBasic()
         {
             // 漢直モードトグル/OFFキー
@@ -538,157 +540,7 @@ namespace KanchokuWS.Gui
         }
 
         //-----------------------------------------------------------------------------------
-        /// <summary>フォント・色設定</summary>
-        void readSettings_tabFontColor()
-        {
-            // 仮想鍵盤フォント
-            textBox_normalFont.Text = Settings.NormalVkbFontSpec;
-            textBox_centerFont.Text = Settings.CenterVkbFontSpec;
-            textBox_verticalFont.Text = Settings.VerticalVkbFontSpec;
-            textBox_horizontalFont.Text = Settings.HorizontalVkbFontSpec;
-            textBox_minibufFont.Text = Settings.MiniBufVkbFontSpec;
-            textBox_verticalFontHeightFactor.Text = $"{Settings.VerticalFontHeightFactor:f2}";
-
-            // 通常鍵盤背景色
-            textBox_topLevelBackColor.Text = Settings.BgColorTopLevelCells;
-            textBox_centerSideBackColor.Text = Settings.BgColorCenterSideCells;
-            textBox_highLowLevelBackColor.Text = Settings.BgColorHighLowLevelCells;
-            textBox_middleLevelBackColor.Text = Settings.BgColorMiddleLevelCells;
-            textBox_nextStrokeBackColor.Text = Settings.BgColorNextStrokeCell;
-
-            // モード標識文字色
-            textBox_modeForeColor.Text = Settings.KanjiModeMarkerForeColor;
-            textBox_2ndStrokeForeColor.Text = Settings.KanjiModeMarker2ndForeColor;
-            textBox_alphaModeForeColor.Text = Settings.AlphaModeForeColor;
-
-            // 中央鍵盤背景色
-            textBox_on2ndStrokeBackColor.Text= Settings.BgColorOnWaiting2ndStroke;
-            textBox_onMazegaki.Text= Settings.BgColorForMazegaki;
-            textBox_onHistAssoc.Text= Settings.BgColorForHistOrAssoc;
-            textBox_onBushuCompHelp.Text= Settings.BgColorForBushuCompHelp;
-            textBox_onSecondaryTable.Text= Settings.BgColorForSecondaryTable;
-            textBox_onKanaTrainingMode.Text= Settings.BgColorForKanaTrainingMode;
-
-            // 縦列・横列鍵盤背景色
-            textBox_firstCandidateBackColor.Text = Settings.BgColorForFirstCandidate;
-            textBox_onSelectedBackColor.Text = Settings.BgColorOnSelected;
-
-        }
-
-        private void setFontColortatusChecker()
-        {
-            button_fontColorEnter.Enabled = false;
-            checkerFontColor.CtlToBeEnabled = button_fontColorEnter;
-            checkerFontColor.ControlEnabler = tabFontColorStatusChanged;
-
-            // フォント
-            checkerFontColor.Add(textBox_normalFont);
-            checkerFontColor.Add(textBox_centerFont);
-            checkerFontColor.Add(textBox_verticalFont);
-            checkerFontColor.Add(textBox_horizontalFont);
-            checkerFontColor.Add(textBox_minibufFont);
-            checkerFontColor.Add(textBox_verticalFontHeightFactor);
-
-            // 通常鍵盤背景色
-            checkerFontColor.Add(textBox_topLevelBackColor);
-            checkerFontColor.Add(textBox_centerSideBackColor);
-            checkerFontColor.Add(textBox_highLowLevelBackColor);
-            checkerFontColor.Add(textBox_middleLevelBackColor);
-            checkerFontColor.Add(textBox_nextStrokeBackColor);
-
-            // モード標識文字色
-            checkerFontColor.Add(textBox_modeForeColor);
-            checkerFontColor.Add(textBox_2ndStrokeForeColor);
-            checkerFontColor.Add(textBox_alphaModeForeColor);
-
-            // 中央鍵盤背景色
-            checkerFontColor.Add(textBox_on2ndStrokeBackColor);
-            checkerFontColor.Add(textBox_onMazegaki);
-            checkerFontColor.Add(textBox_onHistAssoc);
-            checkerFontColor.Add(textBox_onBushuCompHelp);
-            checkerFontColor.Add(textBox_onSecondaryTable);
-            checkerFontColor.Add(textBox_onKanaTrainingMode);
-
-            // 縦列・横列鍵盤背景色
-            checkerFontColor.Add(textBox_firstCandidateBackColor);
-            checkerFontColor.Add(textBox_onSelectedBackColor);
-
-            checkerAll.Add(checkerFontColor);
-        }
-
-        private void button_fontColrEnter_Click(object sender, EventArgs e)
-        {
-            logger.InfoH("ENTER");
-            frmMain?.DeactivateDecoder();
-
-            // フォント
-            Settings.SetUserIni("normalFont", textBox_normalFont.Text.Trim());
-            Settings.SetUserIni("centerFont", textBox_centerFont.Text.Trim());
-            Settings.SetUserIni("verticalFont", textBox_verticalFont.Text.Trim());
-            Settings.SetUserIni("horizontalFont", textBox_horizontalFont.Text.Trim());
-            Settings.SetUserIni("minibufFont", textBox_minibufFont.Text.Trim());
-            Settings.SetUserIni("verticalFontHeightFactor", textBox_verticalFontHeightFactor.Text.Trim());
-
-            // 通常鍵盤背景色
-            Settings.SetUserIni("bgColorTopLevelCells", textBox_topLevelBackColor.Text.Trim());
-            Settings.SetUserIni("bgColorCenterSideCells", textBox_centerSideBackColor.Text.Trim());
-            Settings.SetUserIni("bgColorHighLowLevelCells", textBox_highLowLevelBackColor.Text.Trim());
-            Settings.SetUserIni("bgColorMiddleLevelCells", textBox_middleLevelBackColor.Text.Trim());
-            Settings.SetUserIni("bgColorNextStrokeCell", textBox_nextStrokeBackColor.Text.Trim());
-
-            // モード標識色
-            Settings.SetUserIni("kanjiModeMarkerForeColor", textBox_modeForeColor.Text.Trim());
-            Settings.SetUserIni("kanjiModeMarker2ndForeColor", textBox_2ndStrokeForeColor.Text.Trim());
-            Settings.SetUserIni("alphaModeForeColor", textBox_alphaModeForeColor.Text.Trim());
-
-            // 中央鍵盤背景色
-            Settings.SetUserIni("bgColorOnWaiting2ndStroke", textBox_on2ndStrokeBackColor.Text.Trim());
-            Settings.SetUserIni("bgColorForMazegaki", textBox_onMazegaki.Text.Trim());
-            Settings.SetUserIni("bgColorForHistOrAssoc", textBox_onHistAssoc.Text.Trim());
-            Settings.SetUserIni("bgColorForBushuCompHelp", textBox_onBushuCompHelp.Text.Trim());
-            Settings.SetUserIni("bgColorForSecondaryTable", textBox_onSecondaryTable.Text.Trim());
-            Settings.SetUserIni("bgColorForKanaTrainingMode", textBox_onKanaTrainingMode.Text.Trim());
-
-            // 縦列・横列鍵盤背景色
-            Settings.SetUserIni("bgColorForFirstCandidate", textBox_firstCandidateBackColor.Text.Trim());
-            Settings.SetUserIni("bgColorOnSelected", textBox_onSelectedBackColor.Text.Trim());
-
-            //Settings.ReadIniFile();
-            // 各種定義ファイルの再読み込み
-            frmMain?.ReloadSettingsAndDefFiles();
-
-            readSettings_tabFontColor();
-
-            checkerFontColor.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
-
-            // 各種定義ファイルの再読み込み
-            //frmMain?.ReloadDefFiles();
-
-            //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
-
-            label_okResultFontColor.Show();
-
-            logger.InfoH("LEAVE");
-        }
-
-        private void tabFontColorStatusChanged(bool flag)
-        {
-            button_fontColorClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
-            changeCancelButton(flag, button_fontColorClose);
-        }
-
-        private void button_fontColorClose_Click(object sender, EventArgs e)
-        {
-            logger.InfoH("ENTER");
-            if (button_fontColorClose.Text.StartsWith("閉")) {
-                this.Close();
-            } else {
-                readSettings_tabFontColor();
-                checkerFontColor.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
-                logger.InfoH("LEAVE");
-            }
-        }
-
+        // 詳細設定
         //-----------------------------------------------------------------------------------
         /// <summary> 詳細設定</summary>
         void readSettings_tabAdvanced()
@@ -868,7 +720,8 @@ namespace KanchokuWS.Gui
         }
 
         //-----------------------------------------------------------------------------------
-        /// <summary> IME・同時打鍵</summary>
+        // IME・同時打鍵
+        //-----------------------------------------------------------------------------------
         void readSettings_tabImeCombo()
         {
             // SandS
@@ -881,8 +734,8 @@ namespace KanchokuWS.Gui
 
             // 同時打鍵
             textBox_combinationMaxAllowedLeadTimeMs.Text = $"{Settings.CombinationKeyMaxAllowedLeadTimeMs}";
-            //textBox_combinationKeyTimeRate.Text = $"{Settings.CombinationKeyTimeRate}";
             textBox_combinationKeyTimeMs.Text = $"{Settings.CombinationKeyMinOverlappingTimeMs}";
+            checkBox_combinationKeyTimeOnlyAfterSecond.Checked = Settings.CombinationKeyMinTimeOnlyAfterSecond;
             checkBox_useCombinationKeyTimer1.Checked = Settings.UseCombinationKeyTimer1;
             checkBox_useCombinationKeyTimer2.Checked = Settings.UseCombinationKeyTimer2;
             textBox_preRewriteAllowedDelayTimeMs.Text = $"{Settings.PreRewriteAllowedDelayTimeMs}";
@@ -912,8 +765,8 @@ namespace KanchokuWS.Gui
 
             // 同時打鍵
             checkerImeCombo.Add(textBox_combinationMaxAllowedLeadTimeMs);
-            //checkerImeCombo.Add(textBox_combinationKeyTimeRate);
             checkerImeCombo.Add(textBox_combinationKeyTimeMs);
+            checkerImeCombo.Add(checkBox_combinationKeyTimeOnlyAfterSecond);
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer1);
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer2);
             checkerImeCombo.Add(textBox_preRewriteAllowedDelayTimeMs);
@@ -949,8 +802,8 @@ namespace KanchokuWS.Gui
 
             // 同時打鍵
             Settings.SetUserIni("combinationMaxAllowedLeadTimeMs", textBox_combinationMaxAllowedLeadTimeMs.Text.Trim());
-            //Settings.SetUserIni("combinationKeyTimeRate", textBox_combinationKeyTimeRate.Text.Trim());
             Settings.SetUserIni("combinationKeyTimeMs", textBox_combinationKeyTimeMs.Text.Trim());
+            Settings.SetUserIni("combinationKeyTimeOnlyAfterSecond", checkBox_combinationKeyTimeOnlyAfterSecond.Checked);
             Settings.SetUserIni("useCombinationKeyTimer1", checkBox_useCombinationKeyTimer1.Checked);
             Settings.SetUserIni("useCombinationKeyTimer2", checkBox_useCombinationKeyTimer2.Checked);
             Settings.SetUserIni("preRewriteAllowedDelayTimeMs", textBox_preRewriteAllowedDelayTimeMs.Text.Trim());
@@ -986,7 +839,161 @@ namespace KanchokuWS.Gui
         }
 
         //-----------------------------------------------------------------------------------
-        /// <summary>機能キー割り当て</summary>
+        // フォント・色設定
+        //-----------------------------------------------------------------------------------
+        void readSettings_tabFontColor()
+        {
+            // 仮想鍵盤フォント
+            textBox_normalFont.Text = Settings.NormalVkbFontSpec;
+            textBox_centerFont.Text = Settings.CenterVkbFontSpec;
+            textBox_verticalFont.Text = Settings.VerticalVkbFontSpec;
+            textBox_horizontalFont.Text = Settings.HorizontalVkbFontSpec;
+            textBox_minibufFont.Text = Settings.MiniBufVkbFontSpec;
+            textBox_verticalFontHeightFactor.Text = $"{Settings.VerticalFontHeightFactor:f2}";
+
+            // 通常鍵盤背景色
+            textBox_topLevelBackColor.Text = Settings.BgColorTopLevelCells;
+            textBox_centerSideBackColor.Text = Settings.BgColorCenterSideCells;
+            textBox_highLowLevelBackColor.Text = Settings.BgColorHighLowLevelCells;
+            textBox_middleLevelBackColor.Text = Settings.BgColorMiddleLevelCells;
+            textBox_nextStrokeBackColor.Text = Settings.BgColorNextStrokeCell;
+
+            // モード標識文字色
+            textBox_modeForeColor.Text = Settings.KanjiModeMarkerForeColor;
+            textBox_2ndStrokeForeColor.Text = Settings.KanjiModeMarker2ndForeColor;
+            textBox_alphaModeForeColor.Text = Settings.AlphaModeForeColor;
+
+            // 中央鍵盤背景色
+            textBox_on2ndStrokeBackColor.Text= Settings.BgColorOnWaiting2ndStroke;
+            textBox_onMazegaki.Text= Settings.BgColorForMazegaki;
+            textBox_onHistAssoc.Text= Settings.BgColorForHistOrAssoc;
+            textBox_onBushuCompHelp.Text= Settings.BgColorForBushuCompHelp;
+            textBox_onSecondaryTable.Text= Settings.BgColorForSecondaryTable;
+            textBox_onKanaTrainingMode.Text= Settings.BgColorForKanaTrainingMode;
+
+            // 縦列・横列鍵盤背景色
+            textBox_firstCandidateBackColor.Text = Settings.BgColorForFirstCandidate;
+            textBox_onSelectedBackColor.Text = Settings.BgColorOnSelected;
+
+        }
+
+        private void setFontColortatusChecker()
+        {
+            button_fontColorEnter.Enabled = false;
+            checkerFontColor.CtlToBeEnabled = button_fontColorEnter;
+            checkerFontColor.ControlEnabler = tabFontColorStatusChanged;
+
+            // フォント
+            checkerFontColor.Add(textBox_normalFont);
+            checkerFontColor.Add(textBox_centerFont);
+            checkerFontColor.Add(textBox_verticalFont);
+            checkerFontColor.Add(textBox_horizontalFont);
+            checkerFontColor.Add(textBox_minibufFont);
+            checkerFontColor.Add(textBox_verticalFontHeightFactor);
+
+            // 通常鍵盤背景色
+            checkerFontColor.Add(textBox_topLevelBackColor);
+            checkerFontColor.Add(textBox_centerSideBackColor);
+            checkerFontColor.Add(textBox_highLowLevelBackColor);
+            checkerFontColor.Add(textBox_middleLevelBackColor);
+            checkerFontColor.Add(textBox_nextStrokeBackColor);
+
+            // モード標識文字色
+            checkerFontColor.Add(textBox_modeForeColor);
+            checkerFontColor.Add(textBox_2ndStrokeForeColor);
+            checkerFontColor.Add(textBox_alphaModeForeColor);
+
+            // 中央鍵盤背景色
+            checkerFontColor.Add(textBox_on2ndStrokeBackColor);
+            checkerFontColor.Add(textBox_onMazegaki);
+            checkerFontColor.Add(textBox_onHistAssoc);
+            checkerFontColor.Add(textBox_onBushuCompHelp);
+            checkerFontColor.Add(textBox_onSecondaryTable);
+            checkerFontColor.Add(textBox_onKanaTrainingMode);
+
+            // 縦列・横列鍵盤背景色
+            checkerFontColor.Add(textBox_firstCandidateBackColor);
+            checkerFontColor.Add(textBox_onSelectedBackColor);
+
+            checkerAll.Add(checkerFontColor);
+        }
+
+        private void button_fontColrEnter_Click(object sender, EventArgs e)
+        {
+            logger.InfoH("ENTER");
+            frmMain?.DeactivateDecoder();
+
+            // フォント
+            Settings.SetUserIni("normalFont", textBox_normalFont.Text.Trim());
+            Settings.SetUserIni("centerFont", textBox_centerFont.Text.Trim());
+            Settings.SetUserIni("verticalFont", textBox_verticalFont.Text.Trim());
+            Settings.SetUserIni("horizontalFont", textBox_horizontalFont.Text.Trim());
+            Settings.SetUserIni("minibufFont", textBox_minibufFont.Text.Trim());
+            Settings.SetUserIni("verticalFontHeightFactor", textBox_verticalFontHeightFactor.Text.Trim());
+
+            // 通常鍵盤背景色
+            Settings.SetUserIni("bgColorTopLevelCells", textBox_topLevelBackColor.Text.Trim());
+            Settings.SetUserIni("bgColorCenterSideCells", textBox_centerSideBackColor.Text.Trim());
+            Settings.SetUserIni("bgColorHighLowLevelCells", textBox_highLowLevelBackColor.Text.Trim());
+            Settings.SetUserIni("bgColorMiddleLevelCells", textBox_middleLevelBackColor.Text.Trim());
+            Settings.SetUserIni("bgColorNextStrokeCell", textBox_nextStrokeBackColor.Text.Trim());
+
+            // モード標識色
+            Settings.SetUserIni("kanjiModeMarkerForeColor", textBox_modeForeColor.Text.Trim());
+            Settings.SetUserIni("kanjiModeMarker2ndForeColor", textBox_2ndStrokeForeColor.Text.Trim());
+            Settings.SetUserIni("alphaModeForeColor", textBox_alphaModeForeColor.Text.Trim());
+
+            // 中央鍵盤背景色
+            Settings.SetUserIni("bgColorOnWaiting2ndStroke", textBox_on2ndStrokeBackColor.Text.Trim());
+            Settings.SetUserIni("bgColorForMazegaki", textBox_onMazegaki.Text.Trim());
+            Settings.SetUserIni("bgColorForHistOrAssoc", textBox_onHistAssoc.Text.Trim());
+            Settings.SetUserIni("bgColorForBushuCompHelp", textBox_onBushuCompHelp.Text.Trim());
+            Settings.SetUserIni("bgColorForSecondaryTable", textBox_onSecondaryTable.Text.Trim());
+            Settings.SetUserIni("bgColorForKanaTrainingMode", textBox_onKanaTrainingMode.Text.Trim());
+
+            // 縦列・横列鍵盤背景色
+            Settings.SetUserIni("bgColorForFirstCandidate", textBox_firstCandidateBackColor.Text.Trim());
+            Settings.SetUserIni("bgColorOnSelected", textBox_onSelectedBackColor.Text.Trim());
+
+            //Settings.ReadIniFile();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
+
+            readSettings_tabFontColor();
+
+            checkerFontColor.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+
+            // 各種定義ファイルの再読み込み
+            //frmMain?.ReloadDefFiles();
+
+            //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+
+            label_okResultFontColor.Show();
+
+            logger.InfoH("LEAVE");
+        }
+
+        private void tabFontColorStatusChanged(bool flag)
+        {
+            button_fontColorClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+            changeCancelButton(flag, button_fontColorClose);
+        }
+
+        private void button_fontColorClose_Click(object sender, EventArgs e)
+        {
+            logger.InfoH("ENTER");
+            if (button_fontColorClose.Text.StartsWith("閉")) {
+                this.Close();
+            } else {
+                readSettings_tabFontColor();
+                checkerFontColor.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+                logger.InfoH("LEAVE");
+            }
+        }
+
+        //-----------------------------------------------------------------------------------
+        // 機能キー割り当て
+        //-----------------------------------------------------------------------------------
         void readSettings_tabKeyAssign()
         {
             textBox_zenkakuModeKeySeq.Text = Settings.ZenkakuModeKeySeq;
@@ -1103,7 +1110,8 @@ namespace KanchokuWS.Gui
         }
 
         //-----------------------------------------------------------------------------------
-        /// <summary> Ctrlキー変換</summary>
+        //  Ctrlキー変換
+        //-----------------------------------------------------------------------------------
         void readSettings_tabCtrlKeys()
         {
             // Ctrlキー変換
@@ -1288,7 +1296,8 @@ namespace KanchokuWS.Gui
         }
 
         //-----------------------------------------------------------------------------------
-        /// <summary> 履歴・交ぜ書き </summary>
+        //  履歴・交ぜ書き
+        //-----------------------------------------------------------------------------------
         void readSettings_tabHistory()
         {
             // 履歴関連
@@ -1443,7 +1452,8 @@ namespace KanchokuWS.Gui
         }
 
         //-----------------------------------------------------------------------------------
-        /// <summary> その他設定 </summary>
+        //  その他設定
+        //-----------------------------------------------------------------------------------
         void readSettings_tabMiscSettings()
         {
             // その他変換
@@ -1612,105 +1622,7 @@ namespace KanchokuWS.Gui
         }
 
         //-----------------------------------------------------------------------------------
-        // 一定時間後にOKリザルトラベルを非表示にする
-        int okResultCount = 0;
-
-        private const int okResultCountMax = 5000 / timerInterval;    // 5秒
-
-        private void hideOkResultLabel()
-        {
-            if (okResultCount > 0) {
-                --okResultCount;
-                if (okResultCount == 0) {
-                    label_okResultBasic.Hide();
-                    label_reloadBasic.Hide();
-                    label_okResultAdvanced.Hide();
-                    label_okResultImeCombo.Hide();
-                    label_okResultFontColor.Hide();
-                    label_okResultHist.Hide();
-                    label_okResultKeyAssign.Hide();
-                    label_okResultCtrlKeys.Hide();
-                    label_okResultMisc.Hide();
-                    label_keyAssignReload.Hide();
-                    label_miscRomanOut.Hide();
-                    label_miscEelllJsOut.Hide();
-                    label_reloadMisc.Hide();
-                    label_execResultFile.Hide();
-                    label_okResultDevelop.Hide();
-                }
-            }
-        }
-
-        private void label_okResultBasic_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
-        private void label_reloadBasic_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
-        private void label_okResultFontColor_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
-        private void label_okResultAdvanced_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
-        private void label_okResultImeCombo_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
-        private void label_okResultKeyAssign_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
-        private void label_okResultHistory_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
-        private void label_okResultCtrlKeys_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-        
-        private void label_execResultFile_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
-        private void label_keyAssignReload_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
-        private void label_reloadMisc_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
-        private void label_miscRomanOut_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
-        private void label_miscEelllJsOut_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
-        private void label_okResultMisc_VisibleChanged(object sender, EventArgs e)
-        {
-            okResultCount = okResultCountMax;
-        }
-
+        // 辞書登録
         //-----------------------------------------------------------------------------------
         /// <summary> 履歴辞書登録 </summary>
         private void button_enterHistory_Click(object sender, EventArgs e)
@@ -1902,6 +1814,110 @@ namespace KanchokuWS.Gui
             this.Close();
         }
 
+        //-----------------------------------------------------------------------------------
+        // 共通・ヘルパー他
+        //-----------------------------------------------------------------------------------
+        // 一定時間後にOKリザルトラベルを非表示にする
+        int okResultCount = 0;
+
+        private const int okResultCountMax = 5000 / timerInterval;    // 5秒
+
+        private void hideOkResultLabel()
+        {
+            if (okResultCount > 0) {
+                --okResultCount;
+                if (okResultCount == 0) {
+                    label_okResultBasic.Hide();
+                    label_reloadBasic.Hide();
+                    label_okResultAdvanced.Hide();
+                    label_okResultImeCombo.Hide();
+                    label_okResultFontColor.Hide();
+                    label_okResultHist.Hide();
+                    label_okResultKeyAssign.Hide();
+                    label_okResultCtrlKeys.Hide();
+                    label_okResultMisc.Hide();
+                    label_keyAssignReload.Hide();
+                    label_miscRomanOut.Hide();
+                    label_miscEelllJsOut.Hide();
+                    label_reloadMisc.Hide();
+                    label_execResultFile.Hide();
+                    label_okResultDevelop.Hide();
+                }
+            }
+        }
+
+        private void label_okResultBasic_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_reloadBasic_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_okResultFontColor_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_okResultAdvanced_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_okResultImeCombo_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_okResultKeyAssign_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_okResultHistory_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_okResultCtrlKeys_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+        
+        private void label_execResultFile_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_keyAssignReload_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_reloadMisc_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_miscRomanOut_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_miscEelllJsOut_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_okResultMisc_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        //-----------------------------------------------------------------------------------
+        // ヘルパー他
         //-----------------------------------------------------------------------------------
         // 一定時間後にリザルトラベルを非表示にする
         int dicRegLabelCount = 0;

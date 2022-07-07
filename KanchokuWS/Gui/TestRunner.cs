@@ -36,6 +36,7 @@ namespace KanchokuWS.Gui
                 }
             }
 
+            Settings.CombinationKeyMinTimeOnlyAfterSecond = false;
             Settings.UseCombinationKeyTimer1 = false;
             Settings.UseCombinationKeyTimer2 = false;
 
@@ -81,6 +82,7 @@ namespace KanchokuWS.Gui
                         frmMain.ExecCmdDecoder("useCodeTable2", null);
                         callDecoderWithKey(DecoderKeys.FULL_ESCAPE_DECKEY);
                         CombinationKeyStroke.Determiner.Singleton.UseSecondaryPool();
+                        Settings.CombinationKeyMinTimeOnlyAfterSecond = false;
                         Settings.UseCombinationKeyTimer1 = false;
                         Settings.UseCombinationKeyTimer2 = false;
                         Settings.CombinationKeyMaxAllowedLeadTimeMs = arg._parseInt(100);
@@ -114,6 +116,14 @@ namespace KanchokuWS.Gui
 
                     case "rewriteMaxTime":
                         Settings.PreRewriteAllowedDelayTimeMs = arg._parseInt(200);
+                        break;
+
+                    case "enableFirstComboCheck":
+                        Settings.CombinationKeyMinTimeOnlyAfterSecond = false;
+                        break;
+
+                    case "disableFirstComboCheck":
+                        Settings.CombinationKeyMinTimeOnlyAfterSecond = true;
                         break;
 
                     case "enableTimer1":

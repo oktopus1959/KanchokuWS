@@ -134,6 +134,8 @@ namespace KanchokuWS.Gui
             this.textBox_vkbMoveGuardMillisec = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.tabPage_imeCombo = new System.Windows.Forms.TabPage();
+            this.groupBox49 = new System.Windows.Forms.GroupBox();
+            this.label121 = new System.Windows.Forms.Label();
             this.button_showDlgStrokeLog = new System.Windows.Forms.Button();
             this.button_imeFAQ = new System.Windows.Forms.Button();
             this.groupBox48 = new System.Windows.Forms.GroupBox();
@@ -148,7 +150,6 @@ namespace KanchokuWS.Gui
             this.checkBox_OneshotSandSEnabled = new System.Windows.Forms.CheckBox();
             this.checkBox_SandSEnabledWhenOffMode = new System.Windows.Forms.CheckBox();
             this.checkBox_SandSEnabled = new System.Windows.Forms.CheckBox();
-            this.checkBox_applyMinTimeAndMaxTime = new System.Windows.Forms.CheckBox();
             this.groupBox47 = new System.Windows.Forms.GroupBox();
             this.radioButton_imeSendInputInUnicode = new System.Windows.Forms.RadioButton();
             this.radioButton_imeSendInputInKana = new System.Windows.Forms.RadioButton();
@@ -158,6 +159,7 @@ namespace KanchokuWS.Gui
             this.label120 = new System.Windows.Forms.Label();
             this.textBox_combinationMaxAllowedLeadTimeMs = new System.Windows.Forms.TextBox();
             this.checkBox_useCombinationKeyTimer2 = new System.Windows.Forms.CheckBox();
+            this.checkBox_combinationKeyTimeOnlyAfterSecond = new System.Windows.Forms.CheckBox();
             this.label118 = new System.Windows.Forms.Label();
             this.checkBox_useCombinationKeyTimer1 = new System.Windows.Forms.CheckBox();
             this.label116 = new System.Windows.Forms.Label();
@@ -470,7 +472,6 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.groupBox49 = new System.Windows.Forms.GroupBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_onKanaTrainingMode = new KanchokuWS.Gui.ColorTextBox();
@@ -487,7 +488,6 @@ namespace KanchokuWS.Gui
             this.textBox_alphaModeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.Gui.ColorTextBox();
-            this.label121 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -502,6 +502,7 @@ namespace KanchokuWS.Gui
             this.groupBox16.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.tabPage_imeCombo.SuspendLayout();
+            this.groupBox49.SuspendLayout();
             this.groupBox48.SuspendLayout();
             this.groupBox39.SuspendLayout();
             this.groupBox47.SuspendLayout();
@@ -549,7 +550,6 @@ namespace KanchokuWS.Gui
             this.tabPage_develop.SuspendLayout();
             this.groupBox15.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).BeginInit();
-            this.groupBox49.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -1857,7 +1857,6 @@ namespace KanchokuWS.Gui
             this.tabPage_imeCombo.Controls.Add(this.button_imeFAQ);
             this.tabPage_imeCombo.Controls.Add(this.groupBox48);
             this.tabPage_imeCombo.Controls.Add(this.groupBox39);
-            this.tabPage_imeCombo.Controls.Add(this.checkBox_applyMinTimeAndMaxTime);
             this.tabPage_imeCombo.Controls.Add(this.groupBox47);
             this.tabPage_imeCombo.Controls.Add(this.groupBox45);
             this.tabPage_imeCombo.Controls.Add(this.groupBox46);
@@ -1870,6 +1869,26 @@ namespace KanchokuWS.Gui
             this.tabPage_imeCombo.TabIndex = 10;
             this.tabPage_imeCombo.Text = "同時打鍵・IME";
             this.tabPage_imeCombo.UseVisualStyleBackColor = true;
+            // 
+            // groupBox49
+            // 
+            this.groupBox49.Controls.Add(this.label121);
+            this.groupBox49.Controls.Add(this.button_showDlgStrokeLog);
+            this.groupBox49.Location = new System.Drawing.Point(361, 221);
+            this.groupBox49.Name = "groupBox49";
+            this.groupBox49.Size = new System.Drawing.Size(302, 46);
+            this.groupBox49.TabIndex = 15;
+            this.groupBox49.TabStop = false;
+            this.groupBox49.Text = "打鍵ログ ダイアログ";
+            // 
+            // label121
+            // 
+            this.label121.AutoSize = true;
+            this.label121.Location = new System.Drawing.Point(9, 20);
+            this.label121.Name = "label121";
+            this.label121.Size = new System.Drawing.Size(207, 15);
+            this.label121.TabIndex = 15;
+            this.label121.Text = "打鍵されたキーや出力文字列のログを表示";
             // 
             // button_showDlgStrokeLog
             // 
@@ -2039,19 +2058,6 @@ namespace KanchokuWS.Gui
             this.toolTip1.SetToolTip(this.checkBox_SandSEnabled, "デコーダがONのときに SandS 方式を有効にします。");
             this.checkBox_SandSEnabled.UseVisualStyleBackColor = true;
             // 
-            // checkBox_applyMinTimeAndMaxTime
-            // 
-            this.checkBox_applyMinTimeAndMaxTime.AutoSize = true;
-            this.checkBox_applyMinTimeAndMaxTime.Location = new System.Drawing.Point(385, 303);
-            this.checkBox_applyMinTimeAndMaxTime.Name = "checkBox_applyMinTimeAndMaxTime";
-            this.checkBox_applyMinTimeAndMaxTime.Size = new System.Drawing.Size(274, 19);
-            this.checkBox_applyMinTimeAndMaxTime.TabIndex = 3;
-            this.checkBox_applyMinTimeAndMaxTime.Text = "1文字目の同時打鍵判定についてはAND条件とする";
-            this.toolTip1.SetToolTip(this.checkBox_applyMinTimeAndMaxTime, "当項目にチェックを入れると、同時打鍵の1文字目についても\r\nこの最小時間条件が適用されるようになり、第1条件との\r\nANDで判定が行われます。\r\n\r\nキーを素早く" +
-        "連打しているときに同時打鍵と判定されたくない、\r\nという場合は、こちらにチェックを入れるとよいでしょう。");
-            this.checkBox_applyMinTimeAndMaxTime.UseVisualStyleBackColor = true;
-            this.checkBox_applyMinTimeAndMaxTime.Visible = false;
-            // 
             // groupBox47
             // 
             this.groupBox47.Controls.Add(this.radioButton_imeSendInputInUnicode);
@@ -2109,6 +2115,7 @@ namespace KanchokuWS.Gui
             this.groupBox45.Controls.Add(this.label120);
             this.groupBox45.Controls.Add(this.textBox_combinationMaxAllowedLeadTimeMs);
             this.groupBox45.Controls.Add(this.checkBox_useCombinationKeyTimer2);
+            this.groupBox45.Controls.Add(this.checkBox_combinationKeyTimeOnlyAfterSecond);
             this.groupBox45.Controls.Add(this.label118);
             this.groupBox45.Controls.Add(this.checkBox_useCombinationKeyTimer1);
             this.groupBox45.Controls.Add(this.label116);
@@ -2116,15 +2123,15 @@ namespace KanchokuWS.Gui
             this.groupBox45.Controls.Add(this.label117);
             this.groupBox45.Location = new System.Drawing.Point(7, 164);
             this.groupBox45.Name = "groupBox45";
-            this.groupBox45.Size = new System.Drawing.Size(342, 193);
+            this.groupBox45.Size = new System.Drawing.Size(342, 205);
             this.groupBox45.TabIndex = 1;
             this.groupBox45.TabStop = false;
-            this.groupBox45.Text = "同時打鍵の判定条件 (AND 判定 )";
+            this.groupBox45.Text = "同時打鍵の判定条件 (AとBの AND 判定 )";
             // 
             // textBox_combinationKeyTimeMs
             // 
             this.textBox_combinationKeyTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_combinationKeyTimeMs.Location = new System.Drawing.Point(217, 63);
+            this.textBox_combinationKeyTimeMs.Location = new System.Drawing.Point(230, 61);
             this.textBox_combinationKeyTimeMs.Name = "textBox_combinationKeyTimeMs";
             this.textBox_combinationKeyTimeMs.Size = new System.Drawing.Size(45, 19);
             this.textBox_combinationKeyTimeMs.TabIndex = 2;
@@ -2134,7 +2141,7 @@ namespace KanchokuWS.Gui
             // label120
             // 
             this.label120.AutoSize = true;
-            this.label120.Location = new System.Drawing.Point(261, 65);
+            this.label120.Location = new System.Drawing.Point(274, 63);
             this.label120.Name = "label120";
             this.label120.Size = new System.Drawing.Size(58, 15);
             this.label120.TabIndex = 19;
@@ -2143,7 +2150,7 @@ namespace KanchokuWS.Gui
             // textBox_combinationMaxAllowedLeadTimeMs
             // 
             this.textBox_combinationMaxAllowedLeadTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_combinationMaxAllowedLeadTimeMs.Location = new System.Drawing.Point(216, 19);
+            this.textBox_combinationMaxAllowedLeadTimeMs.Location = new System.Drawing.Point(230, 17);
             this.textBox_combinationMaxAllowedLeadTimeMs.Name = "textBox_combinationMaxAllowedLeadTimeMs";
             this.textBox_combinationMaxAllowedLeadTimeMs.Size = new System.Drawing.Size(45, 19);
             this.textBox_combinationMaxAllowedLeadTimeMs.TabIndex = 0;
@@ -2155,7 +2162,7 @@ namespace KanchokuWS.Gui
             // checkBox_useCombinationKeyTimer2
             // 
             this.checkBox_useCombinationKeyTimer2.AutoSize = true;
-            this.checkBox_useCombinationKeyTimer2.Location = new System.Drawing.Point(33, 84);
+            this.checkBox_useCombinationKeyTimer2.Location = new System.Drawing.Point(33, 101);
             this.checkBox_useCombinationKeyTimer2.Name = "checkBox_useCombinationKeyTimer2";
             this.checkBox_useCombinationKeyTimer2.Size = new System.Drawing.Size(300, 19);
             this.checkBox_useCombinationKeyTimer2.TabIndex = 4;
@@ -2163,10 +2170,22 @@ namespace KanchokuWS.Gui
             this.toolTip1.SetToolTip(this.checkBox_useCombinationKeyTimer2, resources.GetString("checkBox_useCombinationKeyTimer2.ToolTip"));
             this.checkBox_useCombinationKeyTimer2.UseVisualStyleBackColor = true;
             // 
+            // checkBox_combinationKeyTimeOnlyAfterSecond
+            // 
+            this.checkBox_combinationKeyTimeOnlyAfterSecond.AutoSize = true;
+            this.checkBox_combinationKeyTimeOnlyAfterSecond.Location = new System.Drawing.Point(33, 82);
+            this.checkBox_combinationKeyTimeOnlyAfterSecond.Name = "checkBox_combinationKeyTimeOnlyAfterSecond";
+            this.checkBox_combinationKeyTimeOnlyAfterSecond.Size = new System.Drawing.Size(190, 19);
+            this.checkBox_combinationKeyTimeOnlyAfterSecond.TabIndex = 3;
+            this.checkBox_combinationKeyTimeOnlyAfterSecond.Text = "1文字目にはこの条件を適用しない";
+            this.toolTip1.SetToolTip(this.checkBox_combinationKeyTimeOnlyAfterSecond, "当項目にチェックを入れると、同時打鍵の1文字目にかぎりこの条件を\r\n適用しなくなります。\r\n\r\n薙刀式のように同時3打鍵以上がある場合に有効です。\r\n第1～第2打" +
+        "鍵の押下をすばやく行った場合には必ず同時打鍵と判定\r\nしたい場合は、こちらにチェックを入れるとよいでしょう。");
+            this.checkBox_combinationKeyTimeOnlyAfterSecond.UseVisualStyleBackColor = true;
+            // 
             // label118
             // 
             this.label118.AutoSize = true;
-            this.label118.Location = new System.Drawing.Point(261, 21);
+            this.label118.Location = new System.Drawing.Point(275, 19);
             this.label118.Name = "label118";
             this.label118.Size = new System.Drawing.Size(58, 15);
             this.label118.TabIndex = 18;
@@ -2175,7 +2194,7 @@ namespace KanchokuWS.Gui
             // checkBox_useCombinationKeyTimer1
             // 
             this.checkBox_useCombinationKeyTimer1.AutoSize = true;
-            this.checkBox_useCombinationKeyTimer1.Location = new System.Drawing.Point(33, 40);
+            this.checkBox_useCombinationKeyTimer1.Location = new System.Drawing.Point(33, 38);
             this.checkBox_useCombinationKeyTimer1.Name = "checkBox_useCombinationKeyTimer1";
             this.checkBox_useCombinationKeyTimer1.Size = new System.Drawing.Size(249, 19);
             this.checkBox_useCombinationKeyTimer1.TabIndex = 1;
@@ -2188,25 +2207,25 @@ namespace KanchokuWS.Gui
             // label116
             // 
             this.label116.AutoSize = true;
-            this.label116.Location = new System.Drawing.Point(9, 65);
+            this.label116.Location = new System.Drawing.Point(9, 63);
             this.label116.Name = "label116";
-            this.label116.Size = new System.Drawing.Size(210, 15);
+            this.label116.Size = new System.Drawing.Size(223, 15);
             this.label116.TabIndex = 1;
-            this.label116.Text = "第Nキー押下から第1キー解放までの時間が";
+            this.label116.Text = "B: 第Nキー押下から第1キー解放までの時間が";
             // 
             // label114
             // 
             this.label114.AutoSize = true;
-            this.label114.Location = new System.Drawing.Point(9, 21);
+            this.label114.Location = new System.Drawing.Point(9, 19);
             this.label114.Name = "label114";
-            this.label114.Size = new System.Drawing.Size(207, 15);
+            this.label114.Size = new System.Drawing.Size(221, 15);
             this.label114.TabIndex = 0;
-            this.label114.Text = "第1キー押下から第2キー押下までの時間が";
+            this.label114.Text = "A: 第1キー押下から第2キー押下までの時間が";
             // 
             // label117
             // 
             this.label117.AutoSize = true;
-            this.label117.Location = new System.Drawing.Point(5, 109);
+            this.label117.Location = new System.Drawing.Point(6, 127);
             this.label117.Name = "label117";
             this.label117.Size = new System.Drawing.Size(334, 75);
             this.label117.TabIndex = 11;
@@ -5777,17 +5796,6 @@ namespace KanchokuWS.Gui
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // groupBox49
-            // 
-            this.groupBox49.Controls.Add(this.label121);
-            this.groupBox49.Controls.Add(this.button_showDlgStrokeLog);
-            this.groupBox49.Location = new System.Drawing.Point(361, 221);
-            this.groupBox49.Name = "groupBox49";
-            this.groupBox49.Size = new System.Drawing.Size(302, 46);
-            this.groupBox49.TabIndex = 15;
-            this.groupBox49.TabStop = false;
-            this.groupBox49.Text = "打鍵ログ ダイアログ";
-            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -5977,15 +5985,6 @@ namespace KanchokuWS.Gui
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
-            // label121
-            // 
-            this.label121.AutoSize = true;
-            this.label121.Location = new System.Drawing.Point(9, 20);
-            this.label121.Name = "label121";
-            this.label121.Size = new System.Drawing.Size(207, 15);
-            this.label121.TabIndex = 15;
-            this.label121.Text = "打鍵されたキーや出力文字列のログを表示";
-            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -6028,6 +6027,8 @@ namespace KanchokuWS.Gui
             this.groupBox6.PerformLayout();
             this.tabPage_imeCombo.ResumeLayout(false);
             this.tabPage_imeCombo.PerformLayout();
+            this.groupBox49.ResumeLayout(false);
+            this.groupBox49.PerformLayout();
             this.groupBox48.ResumeLayout(false);
             this.groupBox48.PerformLayout();
             this.groupBox39.ResumeLayout(false);
@@ -6121,8 +6122,6 @@ namespace KanchokuWS.Gui
             this.groupBox15.ResumeLayout(false);
             this.groupBox15.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).EndInit();
-            this.groupBox49.ResumeLayout(false);
-            this.groupBox49.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -6582,7 +6581,7 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label100;
         private System.Windows.Forms.TextBox textBox_warnThresholdKeyQueueCount;
         private System.Windows.Forms.Label label119;
-        private System.Windows.Forms.CheckBox checkBox_applyMinTimeAndMaxTime;
+        private System.Windows.Forms.CheckBox checkBox_combinationKeyTimeOnlyAfterSecond;
         private System.Windows.Forms.Label label120;
         private System.Windows.Forms.Button button_showDlgStrokeLog;
         private System.Windows.Forms.GroupBox groupBox49;
