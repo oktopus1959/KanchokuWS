@@ -2247,10 +2247,10 @@ namespace KanchokuWS.Gui
             this.checkBox_imeCooperationEnabled.AutoSize = true;
             this.checkBox_imeCooperationEnabled.Location = new System.Drawing.Point(14, 17);
             this.checkBox_imeCooperationEnabled.Name = "checkBox_imeCooperationEnabled";
-            this.checkBox_imeCooperationEnabled.Size = new System.Drawing.Size(226, 19);
+            this.checkBox_imeCooperationEnabled.Size = new System.Drawing.Size(236, 19);
             this.checkBox_imeCooperationEnabled.TabIndex = 0;
-            this.checkBox_imeCooperationEnabled.Text = "IMEの状態に合わせて漢直をON/OFFする";
-            this.toolTip1.SetToolTip(this.checkBox_imeCooperationEnabled, "この項目をチェックすると、IMEの状態に合わせて漢直モードの\r\nON/OFFを切り替えるようになります。\r\n\r\n");
+            this.checkBox_imeCooperationEnabled.Text = "IMEの状態に合わせてデコーダをON/OFFする";
+            this.toolTip1.SetToolTip(this.checkBox_imeCooperationEnabled, "この項目をチェックすると、IMEの状態に合わせてデコーダの\r\nON/OFFを切り替えるようになります。\r\n\r\nかな配列を利用している場合に有用な設定です。\r\n");
             this.checkBox_imeCooperationEnabled.UseVisualStyleBackColor = true;
             // 
             // label_okResultImeCombo
