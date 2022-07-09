@@ -24,7 +24,7 @@ convert(U<50>Fuf) = ざ
 convert(JJJWjw) = ぎ
 convert(J<30>Wjw) = ぎ
 convert(JJJ<30>Wjw) = ぎ
-convert(W<20>J<20>H<20>wjh) = ぎゃ
+convert(W<20>J<20>H<40>wjh) = ぎゃ
 convert(J<50>W<50>H<100>hjw) = ぎゃ
 
 comboMinTime(100)
@@ -163,10 +163,17 @@ rewriteMaxTime(100)
 convert({22}[22]<50>{12}[12]) = ぽ
 convert({22}[22]<200>{12}[12]) = 。し
 
+loadTable(tables/noniiruto.combo.tbl)
+rewriteMaxTime(100)
+convert(Dd<50>Ee) = ぽ
+convert({.}<100>DS<100>[.]ds) = させ
+convert({.}<20>C<20>V<111>v[.]c) = さん
+
 loadTable(tables/okt.tbl)
 rewriteMaxTime(100)
-convert({222}[222]<50>{212}[212]) = ぽ
-convert({222}[222]<200>{212}[212]) = 。し
+setShiftOffset(200)
+convert(Dd<50>Ee) = ぽ
+#convert(DdEe) = 。し
 
 ### NICOLA ###
 loadTable(tables/nicola.tbl)
@@ -183,7 +190,7 @@ convert(J<200>{nfer}[nfer]j) = と
 
 ### 月光(連続シフト) ###
 loadTable(tables/gekko-20211106.pfx.tbl)
-comboMinTime(80)
+comboMinTime(100)
 convert(DIid) = よ
 convert(DDDDKkIid) = よ
 convert(DDDDKIkid) = よ

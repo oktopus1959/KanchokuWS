@@ -230,9 +230,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         List<KeyComboRule> keyComboRules = new List<KeyComboRule>() {
             new KeyComboRule(true, 0, 1, 0, 0, 0, 1),       // COMBO有, ComboList/DC, 第1:単/DC, 第2:DC/DC ⇒ 1出, 1棄, MS
             //new KeyComboRule(true, 0, -1, 1, 0, 0, 0, 0, 0, 1, false),  // COMBO有, ComboList有, 第1:非/シ, 第2:DC/DC ⇒ 0出, 1棄, NS
-            new KeyComboRule(false, 1, 1, 0, 1, 0, 2),      // COMBO:無, ComboList:無, 第1:単/DC, 第2:単/DC ⇒ 2出, 2棄, MS (薙刀「あい」「かい」「ある」「かる」)
-            new KeyComboRule(false, 1, 1, 0, 0, 0, 1),      // COMBO:無, ComboList:無, 第1:単/DC, 第2:DC/DC ⇒ 1出, 1棄, MS (のに「OKA⇒ため」)
-            new KeyComboRule(false, -1, 1, 0, 0, 0, 1),     // COMBO:無, ComboList:有, 第1:単/DC, 第2:DC/DC ⇒ 1出, 1棄, MS (薙刀「ぶき」)
+            //new KeyComboRule(false, 1, 1, 0, 1, 0, 2),      // COMBO:無, ComboList:無, 第1:単/DC, 第2:単/DC ⇒ 2出, 2棄, MS (薙刀「あい」「かい」「ある」「かる」)
+            //new KeyComboRule(false, 1, 1, 0, 0, 0, 1),      // COMBO:無, ComboList:空, 第1:単/DC, 第2:DC/DC ⇒ 1出, 1棄, MS (のに「OKA⇒ため」)
+            //new KeyComboRule(false, -1, 1, 0, 0, 0, 1),     // COMBO:無, ComboList:有, 第1:単/DC, 第2:DC/DC ⇒ 1出, 1棄, MS (薙刀「ぶき」)
+            new KeyComboRule(false, 0, 1, 0, 0, 0, 1),      // COMBO:無, ComboList:DC, 第1:単/DC, 第2:DC/DC ⇒ 1出, 1棄, MS (薙刀「ぶき」)
             new KeyComboRule(false, 0, 0, 2, 0, 0, 1),      // COMBO:無, ComboList:DC, 第1:DC/順, 第2:DC/DC ⇒ 1出, 1棄, MS (のに「KDkFdf⇒にょ」)
             //new KeyComboRule(false, -1, 0, 0, 0, 0, 0),   // COMBO:無, ComboList:有, 第1:DC/DC, 第2:DC/DC ⇒ 0出, 1棄, MS (薙刀「ある」「かる」)
             //new KeyComboRule(false, 1, 0, 0, 0, 0, 1),   // COMBO無, ComboList無, 第1:DC/シ, 第2:DC/DC, 第3:有 ⇒ 0出, 1棄, MS (薙刀「(かるすへ)⇒ずべ」
