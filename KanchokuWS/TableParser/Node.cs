@@ -64,7 +64,7 @@ namespace KanchokuWS.TableParser
 
         public StrokeTableNode(bool bRoot = false) : base(NodeType.StrokeTree, "")
         {
-            children = Helper.MakeList(new Node[(bRoot ? DecoderKeys.TOTAL_DECKEY_NUM : DecoderKeys.PLANE_DECKEY_NUM)]);
+            children = Helper.MakeList(new Node[(bRoot ? DecoderKeys.TOTAL_DECKEY_NUM : DecoderKeys.PLANE_DECKEY_NUM * 2)]);    // 同時打鍵の終端と非終端の重複回避用に2倍(非終端はシフト面を使う)
         }
 
         public override List<Node> getChildren()

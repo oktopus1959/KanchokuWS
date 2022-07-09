@@ -87,6 +87,7 @@ namespace KanchokuWS.Gui
                         Settings.UseCombinationKeyTimer2 = false;
                         Settings.CombinationKeyMaxAllowedLeadTimeMs = arg._parseInt(100);
                         Settings.CombinationKeyMinOverlappingTimeMs = arg._parseInt(70);
+                        shiftOffset = 0;
                         if (Logger.LogLevel >= Logger.LogLevelInfoH) {
                             KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.Singleton2?.DebugPrint(true);
                         }
@@ -104,6 +105,10 @@ namespace KanchokuWS.Gui
 
                     case "clear":
                         callDecoderWithKey(DecoderKeys.FULL_ESCAPE_DECKEY);
+                        break;
+
+                    case "setShiftOffset":
+                        shiftOffset = arg._parseInt(0);
                         break;
 
                     case "comboMinTime":
@@ -186,13 +191,15 @@ namespace KanchokuWS.Gui
             {' ', 40 }, {'-', 41 }, {'^', 42 }, {'\\', 43 }, {'@', 44 }, {'[', 45 }, {':', 46 }, {']', 47 }, 
         };
 
+        int shiftOffset = 0;
+
         string convertKeySequence(string keys, bool bAll)
         {
             int prevLogLevel = Logger.LogLevel;
             if (bAll) {
                 Logger.LogLevel = Logger.LogLevelWarn;
-            } else if (prevLogLevel < Logger.LogLevelInfoH) {
-                Logger.LogLevel = Logger.LogLevelInfoH;
+            } else if (prevLogLevel < Logger.LogLevelDebugH) {
+                Logger.LogLevel = Logger.LogLevelDebugH;
             }
 
             var sb = new StringBuilder();
@@ -235,24 +242,34 @@ namespace KanchokuWS.Gui
                 return 0;
             }
 
+            void keyDown(int decKey)
+            {
+                CombinationKeyStroke.Determiner.Singleton.KeyDown(decKey + shiftOffset, null);
+            }
+
+            void keyUp(int decKey)
+            {
+                CombinationKeyStroke.Determiner.Singleton.KeyUp(decKey + shiftOffset);
+            }
+
             var oldFunc = CombinationKeyStroke.Determiner.Singleton.KeyProcHandler;
             CombinationKeyStroke.Determiner.Singleton.KeyProcHandler = callDecoder;
             try {
                 for (int pos = 0; pos < keysLen; ++pos) {
                     char k = keys[pos];
                     if (k >= '0' && k <= '9' || k >= 'A' && k <= 'Z') {
-                        CombinationKeyStroke.Determiner.Singleton.KeyDown(keyToDeckey._safeGet(k), null);
+                        keyDown(keyToDeckey._safeGet(k));
                     } else if (k >= 'a' && k <= 'z') {
-                        CombinationKeyStroke.Determiner.Singleton.KeyUp(keyToDeckey._safeGet(toUpper(k)));
+                        keyUp(keyToDeckey._safeGet(toUpper(k)));
                     } else if (k == '<') {
                         int ms = getDecKeyOrInt(ref pos, '>', true);
                         if (ms > 0) Helper.WaitMilliSeconds(ms);
                     } else if (k == '{') {
                         int dk = getDecKeyOrInt(ref pos, '}');
-                        CombinationKeyStroke.Determiner.Singleton.KeyDown(dk, null);
+                        keyDown(dk);
                     } else if (k == '[') {
                         int dk = getDecKeyOrInt(ref pos, ']');
-                        CombinationKeyStroke.Determiner.Singleton.KeyUp(dk);
+                        keyUp(dk);
                     }
                 }
             } catch (Exception ex) {

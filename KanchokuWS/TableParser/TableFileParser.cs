@@ -68,8 +68,17 @@ namespace KanchokuWS.TableParser
             } else {
                 int getStroke(int idx)
                 {
+                    // assert(idx < stkList.Count)
                     int stk = stkList[idx];
-                    if (idx == 0 && isInCombinationBlock) stk = makeComboDecKey(stk);   // 同時打鍵の先頭キーは Combo化(ノードの重複を避ける)
+                    if (isInCombinationBlock) {
+                        if (idx == 0) {
+                            // 同時打鍵の先頭キーは Combo化(ノードの重複を避ける)
+                            stk = makeComboDecKey(stk);
+                        } else if (idx > 0 && (node.isStrokeTree() || idx + 1 < stkList.Count)) {
+                            // 同時打鍵の非終端キーは、Shift化(終端ノードとの重複を避ける)
+                            stk = makeNonTerminalDuplicatableComboKey(stk);
+                        }
+                    }
                     return stk;
                 }
                 var pn = rootTableNode;
@@ -451,6 +460,10 @@ namespace KanchokuWS.TableParser
                 // 先頭キーはシフト化
                 if (isInCombinationBlock) {
                     list[0] = makeComboDecKey(list[0]);
+                    for (int i = 1; i < list.Count - 1; ++i) {
+                        // 同時打鍵での中間キーは終端キーとの重複を避けるためシフト化しておく
+                        list[i] = makeNonTerminalDuplicatableComboKey(list[i]);
+                    }
                 } else if (list[0] < DecoderKeys.PLANE_DECKEY_NUM) {
                     list[0] += shiftOffset;
                 }
@@ -544,6 +557,10 @@ namespace KanchokuWS.TableParser
             return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + shiftOffset;
         }
 
+        int makeNonTerminalDuplicatableComboKey(int decKey)
+        {
+            return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.PLANE_DECKEY_NUM;
+        }
     }
 
     /// <summary>

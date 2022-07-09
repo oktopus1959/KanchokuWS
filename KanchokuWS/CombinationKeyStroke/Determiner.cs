@@ -238,7 +238,7 @@ namespace KanchokuWS.CombinationKeyStroke
                         bool isStrokeListEmpty = strokeList.IsEmpty();
                         logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={isStrokeListEmpty}");
                         if ((combo != null && !combo.IsTerminal) || !isStrokeListEmpty) {
-                            // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だったので、キューに追加して同時打鍵判定を行う
+                            // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だったので、打鍵リストに追加して同時打鍵判定を行う
                             strokeList.Add(stroke);
                             result = strokeList.GetKeyCombinationWhenKeyDown(decKey);
                             if (result._isEmpty()) {

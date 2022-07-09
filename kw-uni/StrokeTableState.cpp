@@ -63,6 +63,12 @@ namespace {
             return p != nullptr ? p->IsRootKeyHiraganaized() : false;
         }
 
+        // ルートキーは同時打鍵キーか
+        virtual bool IsRootKeyCombination() {
+            auto p = dynamic_cast<StrokeTableState*>(pPrev);
+            return p != nullptr ? p->IsRootKeyCombination() : false;
+        }
+
     public:
         // コンストラクタ
         StrokeTableState(StrokeTableNode* pN) {
@@ -81,8 +87,9 @@ namespace {
             LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), face=%c, nodeDepth=%d"), NAME_PTR, deckey, deckey, myChar, DEPTH);
             STATE_COMMON->AppendOrigString(myChar); // RootStrokeTableState が作成されたときに OrigString はクリアされている
 
-            if (!myNode()->isRootStrokeTableNode()) {
-                // RootStrokeNodeでなければ通常面に落としこむ
+            if (!myNode()->isRootStrokeTableNode() && !IsRootKeyCombination()) {
+                // 自身がRootStrokeNodeでなく、かつRootStrokeKeyが同時打鍵キーでなければ通常面に落としこむ
+                // 同時打鍵の場合は、重複回避のため、第２キーはシフト化されてくる場合がある。その場合は、UNSHIFTしない
                 deckey = UNSHIFT_DECKEY(deckey);
                 LOG_INFO(_T("UNSHIFT_DECKEY: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
             }
@@ -110,7 +117,8 @@ namespace {
         void handleShiftKeys(int deckey) {
             _LOG_DEBUGH(_T("ENTER: %s, deckey=%x(%d), rootKeyHiraganaized=%s"), NAME_PTR, deckey, deckey, BOOL_TO_WPTR(IsRootKeyHiraganaized()));
             if (origDeckey < 0) origDeckey = deckey;
-            handleStrokeKeys(UNSHIFT_DECKEY(deckey));
+            //handleStrokeKeys(UNSHIFT_DECKEY(deckey));
+            handleStrokeKeys(deckey);
             //if (IsRootKeyUnshifted()) {
             //    // シフト入力された平仮名を片仮名に変換するモードとかの場合
             //    //shiftedOrigChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
@@ -252,6 +260,7 @@ namespace {
 
         //bool bUnshifted = false;
         bool bHiraganaized = false;
+        bool bCombination = false;
 
     protected:
         // ルートキーは UNSHIFT されているか
@@ -266,6 +275,12 @@ namespace {
             return bHiraganaized;
         }
 
+        // ルートキーは同時打鍵キーか
+        virtual bool IsRootKeyCombination() {
+            _LOG_DEBUGH(_T("CALLED: %s, combination=%s"), NAME_PTR, BOOL_TO_WPTR(bCombination));
+            return bCombination;
+        }
+
     public:
         // コンストラクタ
         RootStrokeTableState(StrokeTableNode* pN)
@@ -278,6 +293,9 @@ namespace {
         void handleStrokeKeys(int deckey) {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             STATE_COMMON->SyncFirstStrokeKeyCount();    // 第1ストロークキーカウントの同期
+            if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END) {
+                bCombination = true;
+            }
             if (!bHiraganaized && deckey < NORMAL_DECKEY_NUM && SETTINGS->hiraToKataNormalPlane) {
                 bHiraganaized = true;
                 STATE_COMMON->SetHiraganaToKatakana();   // 通常面の平仮名を片仮名に変換するモード
@@ -482,7 +500,7 @@ Node* StrokeTreeTraverser::getNext() {
         StrokeTableNode* pn = tblList.back();
         int nodePos = path.back() + 1;
         while (nodePos < (int)pn->numChildren()) {
-            if (!bFull && nodePos >= NORMAL_DECKEY_NUM) break;
+            if (!bFull && nodePos >= NORMAL_DECKEY_NUM * 2) break;
 
             Node* p = pn->getNth(nodePos);
             if (p) {
