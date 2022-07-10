@@ -199,9 +199,10 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
         public void KeyDown(int decKey, Action<int> handleComboKeyRepeat)
         {
-            frmMain?.WriteStrokeLog(decKey, true);
+            DateTime dtNow = DateTime.Now;
+            frmMain?.WriteStrokeLog(decKey, dtNow, true);
 
-            procQueue.Enqueue(() => keyDown(decKey, DateTime.Now, handleComboKeyRepeat));
+            procQueue.Enqueue(() => keyDown(decKey, dtNow, handleComboKeyRepeat));
             HandleQueue();
         }
 
@@ -294,20 +295,21 @@ namespace KanchokuWS.CombinationKeyStroke
         {
             DateTime dtNow = DateTime.Now;
             logger.DebugH(() => $"\ndecKey={decKey}, forChar={forChar}, {strokeList.ToDebugString()}");
-            if (forChar == 0 ||
+            bool bTimer = forChar > 0;
+            if (!bTimer ||
                 (forChar == 1 && strokeList.IsComboListEmpty && strokeList.UnprocListCount == 1) ||   // タイマーによる1文字目キーUPのとき
                 (forChar == 2 && strokeList.UnprocListCount == 1))                                    // タイマーによる２文字目キーUPのとき
             {
-                frmMain?.WriteStrokeLog(decKey, false, forChar > 0);
-                procQueue.Enqueue(() => keyUp(decKey, dtNow));
+                frmMain?.WriteStrokeLog(decKey, dtNow, false, bTimer);
+                procQueue.Enqueue(() => keyUp(decKey, dtNow, bTimer));
                 HandleQueue();
-            } else if (forChar > 0) {
+            } else if (bTimer) {
                 logger.DebugH(() => $"TIMER IGNORED");
-                frmMain?.WriteStrokeLog(-1, false, true);
+                frmMain?.WriteStrokeLog(-1, dtNow, false, true);
             }
         }
 
-        public List<int> keyUp(int decKey, DateTime dt)
+        public List<int> keyUp(int decKey, DateTime dt, bool bTimer)
         {
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
 
@@ -317,7 +319,7 @@ namespace KanchokuWS.CombinationKeyStroke
 
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}");
 
-            if (strokeList.IsEmpty()) frmMain?.FlushStrokeLog();
+            if (!bTimer && strokeList.IsEmpty()) frmMain?.FlushStrokeLog();
 
             if (result._notEmpty()) {
                 setPreRewriteTime(result.Last());

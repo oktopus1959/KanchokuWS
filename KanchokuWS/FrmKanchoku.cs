@@ -72,14 +72,14 @@ namespace KanchokuWS
             dlgStrokeLog = null;
         }
 
-        public void WriteStrokeLog(int decKey, bool bDown, bool bTimer = false)
+        public void WriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bTimer = false)
         {
             if (IsDecoderActive && dlgStrokeLog != null) {
                 char faceCh = VirtualKeys.GetFaceCharFromDecKey(decKey)._gtZeroOr('?');
                 if (bDown && faceCh >= 'a' && faceCh <= 'z') faceCh = (char)(faceCh - 0x20);
                 string msg = $"{(bTimer ? "*Up " : bDown ? "Down" : "Up  ")} | '{faceCh}'";
                 logger.DebugH(() => $"WriteStrokeLog: {msg}");
-                appenStrokeLog(msg);
+                appenStrokeLog(msg, dt);
             }
         }
 
@@ -88,20 +88,20 @@ namespace KanchokuWS
             if (IsDecoderActive && dlgStrokeLog != null) {
                 string msg = $"Out  | '{str}'";
                 logger.DebugH(() => $"WriteStrokeLog: {msg}");
-                appenStrokeLog(msg);
+                appenStrokeLog(msg, DateTime.Now);
+                //if (CombinationKeyStroke.Determiner.Singleton.IsStrokeListEmpty()) FlushStrokeLog();
             }
         }
 
-        private void appenStrokeLog(string msg)
+        private void appenStrokeLog(string msg, DateTime dt)
         {
-            DateTime dtNow = DateTime.Now;
-            int diffMs = strokeLogLastDt._isValid() ? (int)(dtNow - strokeLogLastDt).TotalMilliseconds : 100000;
+            int diffMs = strokeLogLastDt._isValid() ? (int)Math.Round((dt - strokeLogLastDt).TotalMilliseconds) : 100000;
             if (diffMs >= 1000) {
                 sbStrokeLog.Append($"--- time --- | diff ms\r\n");
                 if (diffMs >= 60000) diffMs = 0;
             }
-            sbStrokeLog.Append($"{dtNow.ToString("HH:mm:ss.fff")} | {diffMs, 6:#,0} | {msg}\r\n");
-            strokeLogLastDt = dtNow;
+            sbStrokeLog.Append($"{dt.ToString("HH:mm:ss.fff")} | {diffMs, 6:#,0} | {msg}\r\n");
+            strokeLogLastDt = dt;
         }
 
         public void FlushStrokeLog()
@@ -110,6 +110,12 @@ namespace KanchokuWS
                 dlgStrokeLog?.WriteLog(sbStrokeLog.ToString());
             }
             sbStrokeLog.Clear();
+        }
+
+        private void flushStrokeLogByTimer()
+        {
+            if (sbStrokeLog.Length > 0 && IsDecoderActive && dlgStrokeLog != null && DateTime.Now > strokeLogLastDt.AddMilliseconds(300))
+                FlushStrokeLog();
         }
 
         //------------------------------------------------------------------
@@ -1885,6 +1891,8 @@ namespace KanchokuWS
                     SaveDictsDecoder(decoderPtr);
                 }
             }
+
+            flushStrokeLogByTimer();
         }
 
         // 辞書内容を保存して再起動
