@@ -201,11 +201,11 @@ namespace KanchokuWS.CombinationKeyStroke
         {
             frmMain?.WriteStrokeLog(decKey, true);
 
-            procQueue.Enqueue(() => keyDown(decKey, handleComboKeyRepeat));
+            procQueue.Enqueue(() => keyDown(decKey, DateTime.Now, handleComboKeyRepeat));
             HandleQueue();
         }
 
-        public List<int> keyDown(int decKey, Action<int> handleComboKeyRepeat)
+        public List<int> keyDown(int decKey, DateTime dt, Action<int> handleComboKeyRepeat)
         {
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
 
@@ -215,7 +215,7 @@ namespace KanchokuWS.CombinationKeyStroke
             List<int> result = null;
 
             try {
-                var stroke = new Stroke(decKey, DateTime.Now);
+                var stroke = new Stroke(decKey, dt);
                 var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
                 if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
                     // 終端、かつキーリピートが可能なキーだった(BacSpaceとか)ので、それを返す
@@ -292,24 +292,28 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
         public void KeyUp(int decKey, int forChar = 0)
         {
-
+            DateTime dtNow = DateTime.Now;
+            logger.DebugH(() => $"\ndecKey={decKey}, forChar={forChar}, {strokeList.ToDebugString()}");
             if (forChar == 0 ||
-                (forChar == 1 && strokeList.IsComboListEmpty && strokeList.Count == 1) ||   // タイマーによる1文字目キーUPのとき
-                (forChar == 2 && strokeList.Count == 1))                                    // タイマーによる２文字目キーUPのとき
+                (forChar == 1 && strokeList.IsComboListEmpty && strokeList.UnprocListCount == 1) ||   // タイマーによる1文字目キーUPのとき
+                (forChar == 2 && strokeList.UnprocListCount == 1))                                    // タイマーによる２文字目キーUPのとき
             {
                 frmMain?.WriteStrokeLog(decKey, false, forChar > 0);
-                procQueue.Enqueue(() => keyUp(decKey));
+                procQueue.Enqueue(() => keyUp(decKey, dtNow));
                 HandleQueue();
+            } else if (forChar > 0) {
+                logger.DebugH(() => $"TIMER IGNORED");
+                frmMain?.WriteStrokeLog(-1, false, true);
             }
         }
 
-        public List<int> keyUp(int decKey)
+        public List<int> keyUp(int decKey, DateTime dt)
         {
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
 
             checkPreRewriteTime(decKey);
 
-            var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, DateTime.Now);
+            var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, dt);
 
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}");
 

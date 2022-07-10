@@ -53,6 +53,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
+        public int ComboListCount => comboList.Count;
+        public int UnprocListCount => unprocList.Count;
         public int Count => comboList.Count + unprocList.Count;
 
         public void Clear()
@@ -176,7 +178,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 if (comboList.Count >= 1 && unprocList.Count == 1 && unprocList[0].IsSameKey(decKey)) {
                     // 2文字目以降のケース
                     logger.DebugH("Try second or later successive combo");
-                    result = getAndCheckCombo(Helper.MakeList(comboList, unprocList[0]));
+                    if (bTemporaryComboDisabled) {
+                        // 連続シフト版「月光」などで、先行してShiftキーが送出され、一時的に同時打鍵がOFFになっている場合
+                        result = getAndCheckCombo(Helper.MakeList(unprocList[0]));
+                        bTemporaryComboDisabled = false;
+                    } else {
+                        result = getAndCheckCombo(Helper.MakeList(comboList, unprocList[0]));
+                    }
                     unprocList.RemoveAt(0); // コンボがなくてもキーを削除しておく(たとえば月光でDを長押ししてKを押したような場合は、何も出力せず、Kも除去する)
                 }
             } else {
@@ -404,12 +412,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         if (keyCombo != null && keyCombo.DecKeyList != null && keyCombo.HasString) {
                             bComboFound = true; // 同時打鍵の組合せが見つかった
                             Stroke tailKey = hotList[overlapLen - 1];
+                            bool isTailKeyUp = hotList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
                             //logger.DebugH(() => $"CHECK0: {!hotList[0].IsSingleHittable}: hotList[0] NOT SINGLE");
                             //logger.DebugH(() => $"CHECK1: {tailKey.IsUpKey && hotList[0].IsComboShift && tailKey.IsSingleHittable}: hotList[0].IsComboShift={hotList[0].IsComboShift} and hotList[tailPos={overlapLen - 1}].IsUpKey && IsSingle");
-                            logger.DebugH(() => $"CHECK1: {tailKey.IsUpKey && tailKey.IsSingleHittable}: hotList[tailPos={overlapLen - 1}].IsUpKey && IsSingleHittable");
+                            logger.DebugH(() => $"CHECK1: {isTailKeyUp && tailKey.IsSingleHittable}: tailPos={overlapLen - 1}: isTailKeyUp && tailKey.IsSingleHittable");
                             logger.DebugH(() => $"CHECK2: {hotList[0].IsShiftableSpaceKey}: hotList[0].IsShiftableSpaceKey");
                             //if (tailKey.IsUpKey && tailKey.IsSingleHittable && hotList[0].IsComboShift || // CHECK1: 対象リストの末尾キーが先にUPされた
-                            if (tailKey.IsUpKey && tailKey.IsSingleHittable || // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
+                            if (isTailKeyUp && tailKey.IsSingleHittable ||  // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
                                 hotList[0].IsShiftableSpaceKey ||           // CHECK2: 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
                                 isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck))  // タイミングチェック
                             {

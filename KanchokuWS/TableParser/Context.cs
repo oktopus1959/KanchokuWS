@@ -731,7 +731,11 @@ namespace KanchokuWS.TableParser
         public HashSet<string> definedNames = new HashSet<string>();
 
         // 同時打鍵定義ブロックの中か
-        public bool isInCombinationBlock => shiftKeyKind != ShiftKeyKind.None;
+        //public bool isInCombinationBlock => shiftKeyKind != ShiftKeyKind.None;
+        public bool isInCombinationBlock => ComboShiftKeyPool.IsComboShift(shiftKeyKind);
+
+        // 連続シフト可な同時打鍵定義ブロックの中か
+        public bool isInSuccCombinationBlock => ComboShiftKeyPool.IsSuccessiveShift(shiftKeyKind);
 
         // 同時打鍵によるシフト種別
         public ShiftKeyKind shiftKeyKind = ShiftKeyKind.None;

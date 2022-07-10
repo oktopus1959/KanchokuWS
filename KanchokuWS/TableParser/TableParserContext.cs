@@ -46,6 +46,7 @@ namespace KanchokuWS.TableParser
         }
         protected HashSet<string> definedNames => context.definedNames;
         protected bool isInCombinationBlock => context.isInCombinationBlock;
+        protected bool isInSuccCombinationBlock => context.isInSuccCombinationBlock;
         protected ShiftKeyKind shiftKeyKind {
             get { return context.shiftKeyKind; }
             set { context.shiftKeyKind = value; }

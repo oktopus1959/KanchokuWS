@@ -83,9 +83,12 @@ enableTimer2()
 convert(J<48>E<45>R<152>erj) = でじ
 convert(J<32>W<93>jRwr) = ぎし
 
-enableTimer2()
-convert(J<48>E<45>R<152>erj) = でじ
-convert(J<32>W<93>jRwr) = ぎし
+comboMaxTime(50)
+comboMinTime(70)
+enableTimer1
+enableTimer2
+convert(J<305>W<46>E<129>w<14>e<48>j) = ぎで
+convert(J<226>W<62>E<143>e<32>w<61>j) = ぎで
 
 ### 新下駄 ###
 loadTable(tables/shin-geta.tbl)
@@ -168,14 +171,16 @@ convert({22}[22]<200>{12}[12]) = 。し
 ### のにいると (同時打鍵) ###
 loadTable(tables/noniiruto.combo.tbl)
 rewriteMaxTime(100)
-convert(Dd<50>Ee) = ぽ
-convert({.}<100>DS<100>[.]ds) = させ
-convert({.}<20>C<20>V<111>v[.]c) = さん
+#convert(Dd<50>Ee) = ぽ
+#convert({.}<100>DS<100>[.]ds) = させ
+#convert({.}<20>C<20>V<111>v[.]c) = さん
+convert(F<24>O<65>I<39>J<69>ofij) = えない
 
+### OKT (同時打鍵) ###
 loadTable(tables/okt.tbl)
 rewriteMaxTime(100)
 setShiftOffset(200)
-convert(Dd<50>Ee) = ぽ
+#convert(Dd<50>Ee) = ぽ
 #convert(DdEe) = 。し
 
 ### NICOLA ###
@@ -200,6 +205,7 @@ convert(DDDDKIkid) = よ
 convert(DIO<40>dio) = よの
 
 comboMinTime(0) # 2打鍵以降も即時判定
+convert(DKkIid) = よ
 convert(DDDDKkIid) = よ
 convert(DDDDKIkid) = よ
 convert(DIO<40>dio) = よえ
@@ -207,4 +213,8 @@ convert(DIO<40>dio) = よえ
 comboMinTime(80)
 convert(DIO<120>dio) = よえ
 convert(DIOoid) = よえ
+
+comboMinTime(50)
+enableTimer2()
+convert(D<39>I<61>O<64>i<29>od) = よえ
 
