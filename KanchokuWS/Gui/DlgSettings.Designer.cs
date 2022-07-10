@@ -2178,8 +2178,8 @@ namespace KanchokuWS.Gui
             this.checkBox_combinationKeyTimeOnlyAfterSecond.Size = new System.Drawing.Size(190, 19);
             this.checkBox_combinationKeyTimeOnlyAfterSecond.TabIndex = 3;
             this.checkBox_combinationKeyTimeOnlyAfterSecond.Text = "1文字目にはこの条件を適用しない";
-            this.toolTip1.SetToolTip(this.checkBox_combinationKeyTimeOnlyAfterSecond, "当項目にチェックを入れると、同時打鍵の1文字目にかぎりこの条件を\r\n適用しなくなります。\r\n\r\n薙刀式のように同時3打鍵以上がある場合に有効です。\r\n第1～第2打" +
-        "鍵の押下をすばやく行った場合には必ず同時打鍵と判定\r\nしたい場合は、こちらにチェックを入れるとよいでしょう。");
+            this.toolTip1.SetToolTip(this.checkBox_combinationKeyTimeOnlyAfterSecond, "当項目にチェックを入れると、同時打鍵の1文字目にかぎりこの条件を\r\n適用しなくなります。\r\n\r\n第1～第2打鍵の押下をすばやく行った場合には必ず同時打鍵と判定\r\n" +
+        "したい場合は、こちらにチェックを入れるとよいでしょう。");
             this.checkBox_combinationKeyTimeOnlyAfterSecond.UseVisualStyleBackColor = true;
             // 
             // label118

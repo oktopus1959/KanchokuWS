@@ -26,6 +26,8 @@ convert(J<30>Wjw) = ぎ
 convert(JJJ<30>Wjw) = ぎ
 convert(W<20>J<20>H<40>wjh) = ぎゃ
 convert(J<50>W<50>H<100>hjw) = ぎゃ
+convert(W<20>J<20>H<40>hIiwj) = ぎゃぎょ
+convert(J<50>W<50>H<100>hIijw) = ぎゃぎょ
 
 comboMinTime(100)
 convert(FJ<50>fj) = かあ
@@ -85,7 +87,7 @@ enableTimer2()
 convert(J<48>E<45>R<152>erj) = でじ
 convert(J<32>W<93>jRwr) = ぎし
 
-# 新下駄
+### 新下駄 ###
 loadTable(tables/shin-geta.tbl)
 convert(KWkw) = ご
 convert(KWwk) = ご
@@ -96,17 +98,17 @@ convert(KKKWEkwe) = ごは
 convert(KWEewk) = ごは
 convert(KKKWEewk) = ごは
 
-# 月
+### 月 ###
 loadTable(tables/tuki-2-263.pfx.tbl)
 convert(DUIdui) = えい
 convert(DDD<1000>UIdui) = えい
 convert(DDDUIdui) = えい
 
-# phoenix RT
+### phoenix RT ###
 loadTable(tables/phoenix_rt.tbl)
 convert(Ss{;}[;]) = ね
 
-# ブリ中トロ
+### ブリ中トロ ###
 loadTable(tables/chutoro.211023.tbl)
 
 convert(Qq) = ゅ
@@ -136,7 +138,7 @@ clear()
 convert(DLdlAa) = ました
 
 
-# のにいると
+### のにいると ###
 loadTable(tables/subtables/noniiruto.6.tbl)
 comboMaxTime(100)
 comboMinTime(70)
@@ -163,6 +165,7 @@ rewriteMaxTime(100)
 convert({22}[22]<50>{12}[12]) = ぽ
 convert({22}[22]<200>{12}[12]) = 。し
 
+### のにいると (同時打鍵) ###
 loadTable(tables/noniiruto.combo.tbl)
 rewriteMaxTime(100)
 convert(Dd<50>Ee) = ぽ
