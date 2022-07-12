@@ -169,23 +169,19 @@ rewriteMaxTime(100)
 convert({22}[22]<50>{12}[12]) = ぽ
 convert({22}[22]<200>{12}[12]) = 。し
 
-### のにいると (同時打鍵) ###
-loadTable(tables/noniiruto.combo.tbl)
+### 同時打鍵 ###
+loadTable(tables/subtables/combo-test.tbl)
 comboMaxTime(100)
 comboMinTime(70)
-#rewriteMaxTime(100)
-#convert(Dd<50>Ee) = ぽ
-#convert({.}<100>DS<100>[.]ds) = させ
-#convert({.}<20>C<20>V<111>v[.]c) = さん
-#convert(F<24>O<65>I<39>J<69>ofij) = えない
-#convert(D<24>J<100>dj) = を
-convert(F<70>O<20>fo) = のう
-#convert(K<20>A<100>ka) = ば
+convert(E<18>W<53>O<33>I<9>ew<100>oi) = みえ
+convert(G<89>K<7>J<31>g<65>jk) = でき
+convert(J<89>K<40>jk) = いあ
+convert(J<50>K<80>jk) = き
 
-### OKT (同時打鍵) ###
-loadTable(tables/okt.tbl)
-rewriteMaxTime(100)
-setShiftOffset(200)
+#### OKT (同時打鍵) ###
+#loadTable(tables/okt.tbl)
+#rewriteMaxTime(100)
+#setShiftOffset(200)
 #convert(Dd<50>Ee) = ぽ
 #convert(DdEe) = 。し
 
@@ -193,6 +189,8 @@ setShiftOffset(200)
 loadTable(tables/nicola.tbl)
 comboMaxTime(200)
 convert(J<50>{nfer}j[nfer]) = ど
+#convert(J<80>{nfer}Kj[nfer]k) = とぎ
+
 comboMaxTime(100)
 convert(J<200>{nfer}j[nfer]) = と
 convert(J<200>{nfer}[nfer]j) = と
