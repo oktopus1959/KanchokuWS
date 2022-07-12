@@ -10,6 +10,14 @@ using Utils;
 
 namespace KanchokuWS.CombinationKeyStroke
 {
+    enum TimerKind
+    {
+        None,
+        FirstStroke,
+        JustTwoComboKey,
+        SecondOrLaterChar
+    }
+
     /// <summary>
     /// キー入力の時系列に対して、同時打鍵などの判定を行って、出力文字列を決定する
     /// </summary>
@@ -27,8 +35,8 @@ namespace KanchokuWS.CombinationKeyStroke
         int decKeyForTimerA = -1;
         int decKeyForTimerB = -1;
 
-        int nCharForTimerA = 0;
-        int nCharForTimerB = 0;
+        TimerKind kindForTimerA = TimerKind.None;
+        TimerKind kindForTimerB = TimerKind.None;
 
         private void timerA_elapsed(Object sender, System.Timers.ElapsedEventArgs e)
         {
@@ -37,7 +45,7 @@ namespace KanchokuWS.CombinationKeyStroke
             if (decKeyForTimerA >= 0) {
                 int dk = decKeyForTimerA;
                 decKeyForTimerA = -1;
-                KeyUp(dk, nCharForTimerA);
+                KeyUp(dk, kindForTimerA);
             }
         }
 
@@ -48,7 +56,7 @@ namespace KanchokuWS.CombinationKeyStroke
             if (decKeyForTimerB >= 0) {
                 int dk = decKeyForTimerB;
                 decKeyForTimerB = -1;
-                KeyUp(dk, nCharForTimerB);
+                KeyUp(dk, kindForTimerB);
             }
         }
 
@@ -66,20 +74,20 @@ namespace KanchokuWS.CombinationKeyStroke
             timerB.Elapsed += timerB_elapsed;
         }
 
-        void startTimer(int ms, int decKey, int nChar)
+        void startTimer(int ms, int decKey, TimerKind kind)
         {
             logger.DebugH(() => $"CALLED: ms={ms}, decKey={decKey}");
             if (ms <= 0) return;
 
             if (timerA != null && !timerA.Enabled) {
                 decKeyForTimerA = decKey;
-                nCharForTimerA = nChar;
+                kindForTimerA = kind;
                 timerA.Interval = ms;
                 timerA.Start();
                 logger.DebugH(() => $"TIMER1 STARTED");
             } else if (timerB != null && !timerB.Enabled) {
                 decKeyForTimerB = decKey;
-                nCharForTimerB = nChar;
+                kindForTimerB = kind;
                 timerB.Interval = ms;
                 timerB.Start();
                 logger.DebugH(() => $"TIMER2 STARTED");
@@ -241,26 +249,30 @@ namespace KanchokuWS.CombinationKeyStroke
                         }
                     } else {
                         // キーリピートではない通常の押下の場合は、同時打鍵判定を行う
-                        bool isStrokeListEmpty = strokeList.IsEmpty();
-                        logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={isStrokeListEmpty}");
-                        if ((combo != null && !combo.IsTerminal) || !isStrokeListEmpty) {
+                        //bool isStrokeListEmpty = strokeList.IsEmpty();
+                        logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={strokeList.IsEmpty()}");
+                        if ((combo != null && !combo.IsTerminal) || !strokeList.IsEmpty()) {
                             // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だったので、打鍵リストに追加して同時打鍵判定を行う
                             strokeList.Add(stroke);
-                            result = strokeList.GetKeyCombinationWhenKeyDown(decKey);
-                            if (result._isEmpty()) {
-                                if (isStrokeListEmpty) {
-                                    // 第1打鍵の場合
-                                    if (!stroke.IsComboShift) {
-                                        logger.DebugH($"UseCombinationKeyTimer1={Settings.UseCombinationKeyTimer1}");
-                                        // 非同時打鍵キーの第1打鍵であり、未確定だったらタイマーを起動する
-                                        if (Settings.UseCombinationKeyTimer1) startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey), 1);
-                                    }
-                                } else {
-                                    // 第2打鍵以降の場合
-                                    if (strokeList.IsSuccessiveShift2ndKey()) {
-                                        logger.DebugH($"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}");
-                                        // 同時打鍵シフト後の第2打鍵であり、同時打鍵が未判定だったらタイマーを起動する
-                                        if (Settings.UseCombinationKeyTimer2) startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), 2);
+                            if (strokeList.Count == 1) {
+                                // 第1打鍵の場合
+                                if (!stroke.IsComboShift) {
+                                    logger.DebugH(() => $"UseCombinationKeyTimer1={Settings.UseCombinationKeyTimer1}");
+                                    // 非同時打鍵キーの第1打鍵ならタイマーを起動する
+                                    if (Settings.UseCombinationKeyTimer1) startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey), TimerKind.FirstStroke);
+                                }
+                            } else {
+                                // 第2打鍵以降の場合は、同時打鍵チェック
+                                bool bTimer = false;
+                                result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer);
+                                if (result._isEmpty()) {
+                                    if (bTimer || strokeList.IsSuccessiveShift2ndKey()) {
+                                        logger.DebugH(() => $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}, TimerKind={(bTimer ? TimerKind.JustTwoComboKey : TimerKind.SecondOrLaterChar)}");
+                                        // タイマーが有効であるか、または同時打鍵シフト後の第2打鍵であって同時打鍵が未判定だったらタイマーを起動する
+                                        if (Settings.UseCombinationKeyTimer2) {
+                                            startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey),
+                                                bTimer ? TimerKind.JustTwoComboKey : TimerKind.SecondOrLaterChar);
+                                        }
                                     }
                                 }
                             }
@@ -289,16 +301,16 @@ namespace KanchokuWS.CombinationKeyStroke
         /// キーの解放。同時打鍵判定も行う。
         /// </summary>
         /// <param name="decKey">解放されたキーのデコーダコード</param>
-        /// <param name="forChar">1 .. forFirstCharbyTimer, 2..forSecondCharByTimer</param>
+        /// <param name="timerKind">1 .. forFirstCharbyTimer, 2..forSecondCharByTimer</param>
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
-        public void KeyUp(int decKey, int forChar = 0)
+        public void KeyUp(int decKey, TimerKind timerKind = 0)
         {
             DateTime dtNow = DateTime.Now;
-            logger.DebugH(() => $"\ndecKey={decKey}, forChar={forChar}, {strokeList.ToDebugString()}");
-            bool bTimer = forChar > 0;
-            if (!bTimer ||
-                (forChar == 1 && strokeList.IsComboListEmpty && strokeList.UnprocListCount == 1) ||   // タイマーによる1文字目キーUPのとき
-                (forChar == 2 && strokeList.UnprocListCount == 1))                                    // タイマーによる２文字目キーUPのとき
+            logger.DebugH(() => $"\ndecKey={decKey}, forChar={timerKind}, {strokeList.ToDebugString()}");
+            bool bTimer = timerKind != TimerKind.None;
+            if (!bTimer || timerKind == TimerKind.JustTwoComboKey ||
+                (timerKind == TimerKind.FirstStroke && strokeList.IsComboListEmpty && strokeList.UnprocListCount == 1) ||   // タイマーによる1文字目キーUPのとき
+                (timerKind == TimerKind.SecondOrLaterChar && strokeList.UnprocListCount == 1))                              // タイマーによる２文字目キーUPのとき
             {
                 frmMain?.WriteStrokeLog(decKey, dtNow, false, bTimer);
                 procQueue.Enqueue(() => keyUp(decKey, dtNow, bTimer));

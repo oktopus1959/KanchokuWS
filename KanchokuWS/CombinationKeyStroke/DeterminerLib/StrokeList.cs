@@ -137,12 +137,20 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         // 押下の場合
-        public List<int> GetKeyCombinationWhenKeyDown(int decKey)
+        public List<int> GetKeyCombinationWhenKeyDown(out bool bTimer)
         {
+            bTimer = false;
+
             // 同時打鍵可でなければ何も返さない⇒同時打鍵判定をしない
             if (!KeyCombinationPool.CurrentPool.ContainsComboShiftKey) {
                 logger.DebugH("No combo shift key");
                 return null;
+            }
+
+            // 1つは非単打キーがある
+            bool anyNotSingleHittable()
+            {
+                return unprocList.Any(x => !x.IsSingleHittable);
             }
 
             // 連続シフトの場合は、同時打鍵キーの数は最大2とする
@@ -154,28 +162,36 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     logger.DebugH("COMBO CHECK PASSED");
                     return new List<int>(keyCombo.DecKeyList);
                 }
+                logger.DebugH("COMBO CHECK FAILED");
                 return null;
             }
 
             List<int> result = null;
-            if (comboList._isEmpty() && unprocList.Count == 2 && unprocList.Last().IsSameKey(decKey)) {
+            if (comboList._isEmpty() && unprocList.Count == 2) {
                 // 最初の同時打鍵のケース
                 logger.DebugH("Try first successive combo");
-                if (unprocList[0].IsPrefixShift || unprocList[1].TimeSpanMs(unprocList[0]) <= Settings.CombinationKeyMaxAllowedLeadTimeMs) {
-                    // 前置シフトか、第2打鍵までの時間が閾値以下の場合
-                    result = getAndCheckCombo(unprocList);
-                    if (result != null) {
+                result = getAndCheckCombo(unprocList);
+                if (result != null) {
+                    // 同時打鍵候補があった
+                    if (unprocList[0].IsPrefixShift ||
+                        (unprocList[1].TimeSpanMs(unprocList[0]) <= Settings.CombinationKeyMaxAllowedLeadTimeMs &&
+                        (Settings.CombinationKeyMinTimeOnlyAfterSecond || Settings.CombinationKeyMinOverlappingTimeMs <= 0 || anyNotSingleHittable()))) {
+                        // 前置シフトであるか、または第2打鍵までの時間が閾値以下で即時判定あるいは親指シフトのように非単打キーを含む場合
                         if (KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey) {
                             // 連続シフトの場合は、同時打鍵に使用したキーを使い回す
                             comboList.Add(unprocList[0].IsComboShift ? unprocList[0] : unprocList[1]);
                             comboList[0].SetCombined();
                         }
                         unprocList.Clear();
+                    } else {
+                        // どちらも単打を含むため、未確定の場合は、タイマーを有効にする
+                        result = null;
+                        bTimer = true;
                     }
                 }
             } else if (Settings.CombinationKeyMinOverlappingTimeMs <= 0) {
                 // 2文字目以降も即時判定の場合
-                if (comboList.Count >= 1 && unprocList.Count == 1 && unprocList[0].IsSameKey(decKey)) {
+                if (comboList.Count >= 1 && unprocList.Count == 1) {
                     // 2文字目以降のケース
                     logger.DebugH("Try second or later successive combo");
                     if (bTemporaryComboDisabled) {

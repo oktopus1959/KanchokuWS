@@ -2164,9 +2164,9 @@ namespace KanchokuWS.Gui
             this.checkBox_useCombinationKeyTimer2.AutoSize = true;
             this.checkBox_useCombinationKeyTimer2.Location = new System.Drawing.Point(33, 101);
             this.checkBox_useCombinationKeyTimer2.Name = "checkBox_useCombinationKeyTimer2";
-            this.checkBox_useCombinationKeyTimer2.Size = new System.Drawing.Size(300, 19);
+            this.checkBox_useCombinationKeyTimer2.Size = new System.Drawing.Size(240, 19);
             this.checkBox_useCombinationKeyTimer2.TabIndex = 4;
-            this.checkBox_useCombinationKeyTimer2.Text = "連続シフトの2文字目以降のキー押下でタイマーを併用する";
+            this.checkBox_useCombinationKeyTimer2.Text = "第2打鍵以降のキー押下でタイマーを併用する";
             this.toolTip1.SetToolTip(this.checkBox_useCombinationKeyTimer2, resources.GetString("checkBox_useCombinationKeyTimer2.ToolTip"));
             this.checkBox_useCombinationKeyTimer2.UseVisualStyleBackColor = true;
             // 

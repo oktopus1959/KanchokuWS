@@ -44,7 +44,7 @@ convert(XHMxhm) = ぴゃ
 convert(XMHxhm) = ぴゃ
 
 convert(Qq) = ""
-convert(QJqj) = ぁ
+convert(QJ<40>qj) = ぁ
 convert(QJjq) = ぁ
 convert(JQqj) = ぁ
 convert(QJjKkLl) = ぁぃぅ
@@ -92,12 +92,13 @@ convert(J<226>W<62>E<143>e<32>w<61>j) = ぎで
 
 ### 新下駄 ###
 loadTable(tables/shin-geta.tbl)
-convert(KWkw) = ご
+comboMinTime(20)
+convert(KW<40>kw) = ご
 convert(KWwk) = ご
-convert(WKwk) = ご
+convert(WK<40>wk) = ご
 convert(WKkw) = ご
-convert(KWEkwe) = ごは
-convert(KKKWEkwe) = ごは
+convert(KWE<40>kwe) = ごは
+convert(KKKWE<40>kwe) = ごは
 convert(KWEewk) = ごは
 convert(KKKWEewk) = ごは
 
@@ -170,11 +171,16 @@ convert({22}[22]<200>{12}[12]) = 。し
 
 ### のにいると (同時打鍵) ###
 loadTable(tables/noniiruto.combo.tbl)
-rewriteMaxTime(100)
+comboMaxTime(100)
+comboMinTime(70)
+#rewriteMaxTime(100)
 #convert(Dd<50>Ee) = ぽ
 #convert({.}<100>DS<100>[.]ds) = させ
 #convert({.}<20>C<20>V<111>v[.]c) = さん
-convert(F<24>O<65>I<39>J<69>ofij) = えない
+#convert(F<24>O<65>I<39>J<69>ofij) = えない
+#convert(D<24>J<100>dj) = を
+convert(F<70>O<20>fo) = のう
+#convert(K<20>A<100>ka) = ば
 
 ### OKT (同時打鍵) ###
 loadTable(tables/okt.tbl)
@@ -185,8 +191,9 @@ setShiftOffset(200)
 
 ### NICOLA ###
 loadTable(tables/nicola.tbl)
-comboMaxTime(100)
+comboMaxTime(200)
 convert(J<50>{nfer}j[nfer]) = ど
+comboMaxTime(100)
 convert(J<200>{nfer}j[nfer]) = と
 convert(J<200>{nfer}[nfer]j) = と
 convert({nfer}<200>Jj[nfer]) = ど
