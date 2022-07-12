@@ -109,8 +109,16 @@ namespace KanchokuWS.Gui
         private void button_developTest_Click(object sender, EventArgs e)
         {
             if (frmMain != null) {
-                new TestRunner(frmMain).RunTest(checkBox_testAll.Checked);
+                label_testCount.Text = "0/0件";
+                label_testCount.Visible = true;
+                new TestRunner(frmMain).RunTest(checkBox_testAll.Checked, displayTestCount);
+                label_testCount.Visible = false;
             }
+        }
+
+        private void displayTestCount(string msg)
+        {
+            label_testCount.Text = msg;
         }
 
         private void button_developSaveDebugTableFile_Click(object sender, EventArgs e)

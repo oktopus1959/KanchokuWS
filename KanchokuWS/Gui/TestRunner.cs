@@ -20,7 +20,7 @@ namespace KanchokuWS.Gui
             frmMain = frm;
         }
 
-        public void RunTest(bool bAll)
+        public void RunTest(bool bAll, Action<string> displayTestCount)
         {
             if (frmMain == null) return;
 
@@ -43,9 +43,23 @@ namespace KanchokuWS.Gui
             var regex = new Regex(@"^\s*(\w+)(?:\(([^)]*)\)(?:\s*=\s*([^\s]+))?)?");
             var sb = new StringBuilder();
 
+            int totalCases = 0;
+            foreach (var line in lines) {
+                if (line._startsWith("convert") || line._startsWith("test")) ++totalCases;
+            }
+
+            int numCases = 0;
             int lineNum = 0;
             int numErrors = 0;
             bool bBreak = false;
+
+            void dispTestCount()
+            {
+                displayTestCount?.Invoke($"全体: {totalCases} / 実行: {numCases} / エラー: {numErrors}");
+            }
+
+            dispTestCount();
+
             foreach (var line in lines) {
                 if (numErrors >= 10) break;
 
@@ -95,12 +109,14 @@ namespace KanchokuWS.Gui
 
                     case "test":
                     case "convert":
+                        ++numCases;
                         if (expected == null || expected._equalsTo("\"\"") || expected._equalsTo("''")) expected = "";
                         var result = convertKeySequence(arg, bAll);
                         if (result != expected) {
                             appendError($"Expected={expected}, but Result={result}");
                             ++numErrors;
                         }
+                        dispTestCount();
                         break;
 
                     case "clear":
@@ -161,6 +177,8 @@ namespace KanchokuWS.Gui
                 }
                 if (bBreak) break;
             }
+
+            dispTestCount();
 
             logger.WriteInfo("DONE");
 

@@ -472,6 +472,7 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.label_testCount = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_onKanaTrainingMode = new KanchokuWS.Gui.ColorTextBox();
@@ -5611,6 +5612,7 @@ namespace KanchokuWS.Gui
             // 
             // groupBox15
             // 
+            this.groupBox15.Controls.Add(this.label_testCount);
             this.groupBox15.Controls.Add(this.textBox_warnThresholdKeyQueueCount);
             this.groupBox15.Controls.Add(this.label119);
             this.groupBox15.Controls.Add(this.button_developSaveDebugTableFile);
@@ -5664,7 +5666,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_developTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_developTest.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_developTest.Location = new System.Drawing.Point(477, 77);
+            this.button_developTest.Location = new System.Drawing.Point(477, 81);
             this.button_developTest.Name = "button_developTest";
             this.button_developTest.Size = new System.Drawing.Size(75, 23);
             this.button_developTest.TabIndex = 6;
@@ -5676,7 +5678,7 @@ namespace KanchokuWS.Gui
             // 
             this.checkBox_testAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox_testAll.AutoSize = true;
-            this.checkBox_testAll.Location = new System.Drawing.Point(430, 80);
+            this.checkBox_testAll.Location = new System.Drawing.Point(430, 84);
             this.checkBox_testAll.Name = "checkBox_testAll";
             this.checkBox_testAll.Size = new System.Drawing.Size(50, 19);
             this.checkBox_testAll.TabIndex = 7;
@@ -5795,6 +5797,18 @@ namespace KanchokuWS.Gui
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // label_testCount
+            // 
+            this.label_testCount.AutoSize = true;
+            this.label_testCount.Location = new System.Drawing.Point(250, 85);
+            this.label_testCount.MinimumSize = new System.Drawing.Size(174, 15);
+            this.label_testCount.Name = "label_testCount";
+            this.label_testCount.Size = new System.Drawing.Size(174, 15);
+            this.label_testCount.TabIndex = 11;
+            this.label_testCount.Text = "全体: 999 / 実行: 999 / エラー: 999";
+            this.label_testCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label_testCount.Visible = false;
             // 
             // textBox_onSelectedBackColor
             // 
@@ -6586,5 +6600,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Button button_showDlgStrokeLog;
         private System.Windows.Forms.GroupBox groupBox49;
         private System.Windows.Forms.Label label121;
+        private System.Windows.Forms.Label label_testCount;
     }
 }
