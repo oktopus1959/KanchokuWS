@@ -122,6 +122,10 @@ namespace KanchokuWS.TableParser
                         ReadWord();
                         bool flag = CurrentStr._notEmpty() && definedNames.Contains(CurrentStr);
                         RewriteIfdefBlock(flag);
+                    } else if (lcStr == "ifndef") {
+                        ReadWord();
+                        bool flag = CurrentStr._notEmpty() && definedNames.Contains(CurrentStr);
+                        RewriteIfdefBlock(!flag);
                     } else if (lcStr == "else") {
                     } else if (lcStr == "endif") {
                     } else if (lcStr == "store") {

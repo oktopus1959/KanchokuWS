@@ -295,7 +295,7 @@ namespace KanchokuWS.TableParser
                 logger.DebugH(() => $"SET: lineNum={LineNumber}, {blockName}");
             }
             while (GetNextLine()) {
-                if (CurrentLine._startsWith("#end")) {
+                if (CurrentLine._reMatch(@"^#end\b")) {
                     lines.Add("#end __include__");
                     break;
                 }
