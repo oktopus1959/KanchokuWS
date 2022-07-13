@@ -1855,7 +1855,6 @@ namespace KanchokuWS.Gui
             // tabPage_imeCombo
             // 
             this.tabPage_imeCombo.Controls.Add(this.groupBox49);
-            this.tabPage_imeCombo.Controls.Add(this.button_imeFAQ);
             this.tabPage_imeCombo.Controls.Add(this.groupBox48);
             this.tabPage_imeCombo.Controls.Add(this.groupBox39);
             this.tabPage_imeCombo.Controls.Add(this.groupBox47);
@@ -1878,7 +1877,7 @@ namespace KanchokuWS.Gui
             this.groupBox49.Location = new System.Drawing.Point(361, 221);
             this.groupBox49.Name = "groupBox49";
             this.groupBox49.Size = new System.Drawing.Size(302, 46);
-            this.groupBox49.TabIndex = 15;
+            this.groupBox49.TabIndex = 5;
             this.groupBox49.TabStop = false;
             this.groupBox49.Text = "打鍵ログ ダイアログ";
             // 
@@ -1898,7 +1897,7 @@ namespace KanchokuWS.Gui
             this.button_showDlgStrokeLog.Location = new System.Drawing.Point(227, 15);
             this.button_showDlgStrokeLog.Name = "button_showDlgStrokeLog";
             this.button_showDlgStrokeLog.Size = new System.Drawing.Size(66, 23);
-            this.button_showDlgStrokeLog.TabIndex = 14;
+            this.button_showDlgStrokeLog.TabIndex = 0;
             this.button_showDlgStrokeLog.Text = "表示(&L)";
             this.toolTip1.SetToolTip(this.button_showDlgStrokeLog, "打鍵ログ ダイアログを表示します");
             this.button_showDlgStrokeLog.UseVisualStyleBackColor = true;
@@ -1908,7 +1907,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_imeFAQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_imeFAQ.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_imeFAQ.Location = new System.Drawing.Point(373, 343);
+            this.button_imeFAQ.Location = new System.Drawing.Point(264, 134);
             this.button_imeFAQ.Name = "button_imeFAQ";
             this.button_imeFAQ.Size = new System.Drawing.Size(69, 23);
             this.button_imeFAQ.TabIndex = 5;
@@ -2113,6 +2112,7 @@ namespace KanchokuWS.Gui
             // groupBox45
             // 
             this.groupBox45.Controls.Add(this.textBox_combinationKeyTimeMs);
+            this.groupBox45.Controls.Add(this.button_imeFAQ);
             this.groupBox45.Controls.Add(this.label120);
             this.groupBox45.Controls.Add(this.textBox_combinationMaxAllowedLeadTimeMs);
             this.groupBox45.Controls.Add(this.checkBox_useCombinationKeyTimer2);
@@ -2124,7 +2124,7 @@ namespace KanchokuWS.Gui
             this.groupBox45.Controls.Add(this.label117);
             this.groupBox45.Location = new System.Drawing.Point(7, 164);
             this.groupBox45.Name = "groupBox45";
-            this.groupBox45.Size = new System.Drawing.Size(342, 205);
+            this.groupBox45.Size = new System.Drawing.Size(342, 163);
             this.groupBox45.TabIndex = 1;
             this.groupBox45.TabStop = false;
             this.groupBox45.Text = "同時打鍵の判定条件 (AとBの AND 判定 )";
@@ -2228,10 +2228,9 @@ namespace KanchokuWS.Gui
             this.label117.AutoSize = true;
             this.label117.Location = new System.Drawing.Point(6, 127);
             this.label117.Name = "label117";
-            this.label117.Size = new System.Drawing.Size(334, 75);
+            this.label117.Size = new System.Drawing.Size(204, 30);
             this.label117.TabIndex = 11;
-            this.label117.Text = "・同時打鍵判定は、重複して押下されているキーのどれかが解放された\r\n  タイミング(またはタイマーのタイムアウト)で行われます。\r\n・同時打鍵シフトキーの押下中に" +
-    "第2打鍵以降のキーの押下・解放が\r\n  あった場合は、無条件に同時打鍵とみなします。\r\n・同時打鍵判定の詳細については「FAQ」を参照ください。";
+            this.label117.Text = "同時打鍵判定の詳細については「FAQ」を\r\n参照ください。";
             // 
             // groupBox46
             // 
