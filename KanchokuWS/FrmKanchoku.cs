@@ -95,12 +95,15 @@ namespace KanchokuWS
 
         private void appenStrokeLog(string msg, DateTime dt)
         {
+            string sDiff = "    --";
             int diffMs = strokeLogLastDt._isValid() ? (int)Math.Round((dt - strokeLogLastDt).TotalMilliseconds) : 100000;
             if (diffMs >= 1000) {
                 sbStrokeLog.Append($"--- time --- | diff ms\r\n");
-                if (diffMs >= 60000) diffMs = 0;
+                //if (diffMs >= 60000) diffMs = 0;
+            } else {
+                sDiff = $"{diffMs,6:#,0}";
             }
-            sbStrokeLog.Append($"{dt.ToString("HH:mm:ss.fff")} | {diffMs, 6:#,0} | {msg}\r\n");
+            sbStrokeLog.Append($"{dt.ToString("HH:mm:ss.fff")} | {sDiff} | {msg}\r\n");
             strokeLogLastDt = dt;
         }
 
