@@ -561,12 +561,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
             if (bSecondComboCheck || (result == 0 && !Settings.CombinationKeyMinTimeOnlyAfterSecond)) {
                 // 2文字目であるか、または、1文字目のリードタイムチェックをパスし、かつ、1文字目でも重複時間チェックが必要
-                result = list.Any(x => x.OrigDecoderKey != tailStk.OrigDecoderKey && !x.IsUpKey && x.IsComboShift) ? 0 : 2;   // まだUPされていないシフトキーがあるか
+                result = list.Any(x => x.OrigDecoderKey != tailStk.OrigDecoderKey && !x.IsUpKey && x.IsJustComboShift) ? 0 : 2;   // まだUPされていない非単打シフトキーがあるか
                 if (result == 0) {
-                    // シフトキーがまだ解放されずに残っていたら同時打鍵と判定する
+                    // 非単打シフトキーがまだ解放されずに残っていたら同時打鍵と判定する
                     logger.DebugH(() => $"RESULT2={result == 0}: bSecondComboCheck && ALIVE SHIFT Key found");
                 } else {
-                    // シフトキーが解放されているので、最後のキー押下時刻との差分を求め、タイミング判定する
+                    // シフトキーが解放されている(または単打可能キーのみ)ので、最後のキー押下時刻との差分を求め、タイミング判定する
                     double ms2 = tailStk.TimeSpanMs(dtNow);
                     result = ms2 >= Settings.CombinationKeyMinOverlappingTimeMs ? 0 : 2;
                     logger.DebugH(() => $"RESULT2={result == 0}: ms2={ms2:f2}ms >= threshold={Settings.CombinationKeyMinOverlappingTimeMs}ms (Timing={result})");

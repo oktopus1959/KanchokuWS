@@ -40,8 +40,8 @@ convert(FJ<50>fj) = が
 enableFirstComboCheck
 comboMinTime(20)
 convert(W<50>J<50>H<100>hwj) = ぎゃ
-convert(XHMxhm) = ぴゃ
-convert(XMHxhm) = ぴゃ
+convert(XHM<50>xhm) = ぴゃ
+convert(XMH<50>xhm) = ぴゃ
 
 convert(Qq) = ""
 convert(QJ<40>qj) = ぁ
@@ -89,6 +89,9 @@ enableTimer1
 enableTimer2
 convert(J<305>W<46>E<129>w<14>e<48>j) = ぎで
 convert(J<226>W<62>E<143>e<32>w<61>j) = ぎで
+
+comboMaxTime(70)
+convert(EM<55>K<30>m<16>e<26>k) = てない
 
 ### 新下駄 ###
 loadTable(tables/shin-geta.tbl)
@@ -146,6 +149,7 @@ convert(DLdlAa) = ました
 loadTable(tables/subtables/noniiruto.6.tbl)
 comboMaxTime(100)
 comboMinTime(70)
+rewriteMaxTime(300)
 convert(Ff) = の
 convert(DdFf) = よ
 convert(OKAoka) = うば
@@ -153,7 +157,7 @@ convert(VKJvkj) = かき
 convert(D<200>Idi) = び
 convert(KDFkdf) = にゅ
 convert(KDFdfk) = にゅ
-convert(KkDFdf) = 、よ
+convert(KkDFdf) = にゅ
 convert(KDFkfd) = にゅ
 convert(K<87>D<30>F<43>kfd) = にゅ
 convert(K<150>DFkfd) = にゅ
@@ -163,7 +167,7 @@ convert(K<24>D<103>k<23>F<150>df) = にゅ
 
 enableTimer2()
 convert(K<24>D<103>k<23>F<150>df) = にゅ
-convert(D<52>I<105>O<48>i<80>od) = びぜ
+#convert(D<52>I<105>O<48>i<80>od) = びぜ
 
 rewriteMaxTime(100)
 convert({22}[22]<50>{12}[12]) = ぽ
