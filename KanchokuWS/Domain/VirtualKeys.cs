@@ -575,7 +575,7 @@ namespace KanchokuWS
             { (uint)Keys.Oem7, '^' },        // de
             { (uint)Keys.Oem102, '＼' },        // e1
             { (uint)Keys.IMEConvert, '変' },        // 1c
-            { (uint)Keys.IMENonconvert, '無' },        // 1d1
+            { (uint)Keys.IMENonconvert, '無' },        // 1d
         };
 
         public static VKeyCombo EmptyCombo = new VKeyCombo(0, 0);

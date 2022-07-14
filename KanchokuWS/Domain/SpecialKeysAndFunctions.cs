@@ -29,6 +29,7 @@ namespace KanchokuWS
         public const uint ATTR_SINGLE = 8;
         public const uint ATTR_EXTENTED = 16;
         public const uint ATTR_SPACE = 32;
+        public const uint ATTR_ASSIGNABLE = 64;
 
         public const uint ATTR_EXTMOD = ATTR_MODIFIER | ATTR_EXTENTED;
         public const uint ATTR_EXTSINGLE = ATTR_EXTMOD | ATTR_SINGLE;
@@ -53,7 +54,7 @@ namespace KanchokuWS
         public bool IsModifiee => (AttrFlag & ATTR_MODIFIEE) != 0;
         public bool IsSingle => (AttrFlag & (ATTR_MODIFIEE | ATTR_SINGLE)) != 0;
         public bool IsExtModifier => (AttrFlag & ATTR_EXTMOD) == ATTR_EXTMOD;
-        public bool IsAssignable => (AttrFlag & (ATTR_MODIFIEE | ATTR_SPACE | ATTR_FUNCTION)) != 0;
+        public bool IsAssignable => (AttrFlag & (ATTR_MODIFIEE | ATTR_SPACE | ATTR_FUNCTION | ATTR_ASSIGNABLE)) != 0;
 
         public bool MatchDeckey(int deckey)
         {
@@ -84,8 +85,8 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.TAB_DECKEY, 0, "Tab", "", "Tab キー"),
             new KeyOrFunction(KeyOrFunction.ATTR_EXTMOD, DecoderKeys.CAPS_DECKEY, KeyModifiers.MOD_CAPS, "caps", "Caps Lock", "Caps Lock キー", "capslock"),
             new KeyOrFunction(KeyOrFunction.ATTR_EXTSINGLE, DecoderKeys.ALNUM_DECKEY, KeyModifiers.MOD_ALNUM, "alnum", "英数", "英数 キー", "alphanum", "eisu"),
-            new KeyOrFunction(KeyOrFunction.ATTR_EXTSINGLE, DecoderKeys.NFER_DECKEY, KeyModifiers.MOD_NFER, "nfer", "無変換", "無変換 キー"),
-            new KeyOrFunction(KeyOrFunction.ATTR_EXTSINGLE, DecoderKeys.XFER_DECKEY, KeyModifiers.MOD_XFER, "xfer", "変換", "変換 キー"),
+            new KeyOrFunction(KeyOrFunction.ATTR_EXTSINGLE | KeyOrFunction.ATTR_ASSIGNABLE, DecoderKeys.NFER_DECKEY, KeyModifiers.MOD_NFER, "Nfer", "無変換", "無変換 キー"),
+            new KeyOrFunction(KeyOrFunction.ATTR_EXTSINGLE | KeyOrFunction.ATTR_ASSIGNABLE, DecoderKeys.XFER_DECKEY, KeyModifiers.MOD_XFER, "Xfer", "変換", "変換 キー"),
             new KeyOrFunction(KeyOrFunction.ATTR_SINGLE, DecoderKeys.KANA_DECKEY, 0, "kana", "ひらがな", "ひらがな キー", "hiragana"),
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.BS_DECKEY, 0, "BackSpace", "", "Back Space キー", "back", "bs"),
             new KeyOrFunction(KeyOrFunction.ATTR_MODIFIEE, DecoderKeys.ENTER_DECKEY, 0, "Enter", "", "Enter キー"),
