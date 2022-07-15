@@ -72,14 +72,14 @@ namespace KanchokuWS
             dlgStrokeLog = null;
         }
 
-        public void WriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bTimer = false)
+        public void WriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bFirst, bool bTimer = false)
         {
             if (IsDecoderActive && dlgStrokeLog != null) {
-                char faceCh = VirtualKeys.GetFaceCharFromDecKey(decKey)._gtZeroOr('?');
+                char faceCh = bTimer && decKey < 0 ? '\0' : VirtualKeys.GetFaceCharFromDecKey(decKey)._gtZeroOr('?');
                 if (bDown && faceCh >= 'a' && faceCh <= 'z') faceCh = (char)(faceCh - 0x20);
-                string msg = $"{(bTimer ? "*Up " : bDown ? "Down" : "Up  ")} | '{faceCh}'";
+                string msg = $"{(bTimer ? "*Up " : bDown ? "Down" : "Up  ")} | " + (faceCh != '\0' ? $"'{faceCh}'" : "N/A");
                 logger.DebugH(() => $"WriteStrokeLog: {msg}");
-                appenStrokeLog(msg, dt);
+                appenStrokeLog(msg, dt, bFirst);
             }
         }
 
@@ -88,16 +88,16 @@ namespace KanchokuWS
             if (IsDecoderActive && dlgStrokeLog != null) {
                 string msg = $"Out  | '{str}'";
                 logger.DebugH(() => $"WriteStrokeLog: {msg}");
-                appenStrokeLog(msg, DateTime.Now);
+                appenStrokeLog(msg, DateTime.Now, false);
                 //if (CombinationKeyStroke.Determiner.Singleton.IsStrokeListEmpty()) FlushStrokeLog();
             }
         }
 
-        private void appenStrokeLog(string msg, DateTime dt)
+        private void appenStrokeLog(string msg, DateTime dt, bool bFirst)
         {
             string sDiff = "    --";
             int diffMs = strokeLogLastDt._isValid() ? (int)Math.Round((dt - strokeLogLastDt).TotalMilliseconds) : 100000;
-            if (diffMs >= 1000) {
+            if (bFirst || diffMs >= 1000) {
                 sbStrokeLog.Append($"--- time --- | diff ms\r\n");
                 //if (diffMs >= 60000) diffMs = 0;
             } else {

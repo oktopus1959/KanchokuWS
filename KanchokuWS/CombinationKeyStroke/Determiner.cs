@@ -208,7 +208,7 @@ namespace KanchokuWS.CombinationKeyStroke
         public void KeyDown(int decKey, Action<int> handleComboKeyRepeat)
         {
             DateTime dtNow = DateTime.Now;
-            frmMain?.WriteStrokeLog(decKey, dtNow, true);
+            frmMain?.WriteStrokeLog(decKey, dtNow, true, strokeList.IsEmpty());
 
             procQueue.Enqueue(() => keyDown(decKey, dtNow, handleComboKeyRepeat));
             HandleQueue();
@@ -312,12 +312,12 @@ namespace KanchokuWS.CombinationKeyStroke
                 (timerKind == TimerKind.FirstStroke && strokeList.IsComboListEmpty && strokeList.UnprocListCount == 1) ||   // タイマーによる1文字目キーUPのとき
                 (timerKind == TimerKind.SecondOrLaterChar && strokeList.UnprocListCount == 1))                              // タイマーによる２文字目キーUPのとき
             {
-                frmMain?.WriteStrokeLog(decKey, dtNow, false, bTimer);
+                frmMain?.WriteStrokeLog(decKey, dtNow, false, false, bTimer);
                 procQueue.Enqueue(() => keyUp(decKey, dtNow, bTimer));
                 HandleQueue();
             } else if (bTimer) {
                 logger.DebugH(() => $"TIMER IGNORED");
-                frmMain?.WriteStrokeLog(-1, dtNow, false, true);
+                frmMain?.WriteStrokeLog(-1, dtNow, false, false, true);
             }
         }
 
