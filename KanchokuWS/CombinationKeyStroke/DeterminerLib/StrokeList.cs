@@ -190,7 +190,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     }
                 }
             } else if (Settings.CombinationKeyMinOverlappingTimeMs <= 0) {
-                // 2文字目以降も即時判定の場合
+                // 2文字目以降または3キー以上の同時押し状態で、即時判定の場合
                 if (comboList.Count >= 1 && unprocList.Count == 1) {
                     // 2文字目以降のケース
                     logger.DebugH("Try second or later successive combo");
@@ -541,6 +541,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         // タイミングによる同時打鍵判定関数
+        // result: 0: 判定OK, 1:1文字目チェックNG, 2:2文字目チェックNG
         private int isCombinationTiming(List<Stroke> list, Stroke tailStk, DateTime dtNow, bool bSecondComboCheck)
         {
             logger.DebugH(() => $"list={list._toString()}, tailStk={tailStk.DebugString()}, bSecondComboCheck={bSecondComboCheck}");
@@ -566,7 +567,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     // 非単打シフトキーがまだ解放されずに残っていたら同時打鍵と判定する
                     logger.DebugH(() => $"RESULT2={result == 0}: bSecondComboCheck && ALIVE SHIFT Key found");
                 } else {
-                    // シフトキーが解放されている(または単打可能キーのみ)ので、最後のキー押下時刻との差分を求め、タイミング判定する
+                    // シフトキーが解放されている(または単打可能キーのみである)ので、最後のキー押下時刻との差分を求め、タイミング判定する
                     double ms2 = tailStk.TimeSpanMs(dtNow);
                     result = ms2 >= Settings.CombinationKeyMinOverlappingTimeMs ? 0 : 2;
                     logger.DebugH(() => $"RESULT2={result == 0}: ms2={ms2:f2}ms >= threshold={Settings.CombinationKeyMinOverlappingTimeMs}ms (Timing={result})");

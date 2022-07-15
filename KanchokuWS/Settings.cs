@@ -564,7 +564,7 @@ namespace KanchokuWS
         /// <summary>同時打鍵判定を行う際の、第１打鍵に許容する最大のリード時間(ミリ秒)<br/>第２打鍵までにこの時間より長くかかったら、第1打鍵は同時とみなさない</summary>
         public static int CombinationKeyMaxAllowedLeadTimeMs { get; set; } = 0;
 
-        /// <summary>同時打鍵とみなす重複時間<br/>第２打鍵DOWNから第１打鍵UPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす</summary>
+        /// <summary>同時打鍵とみなす重複時間<br/>Nキー同時押しの状態からどれかのキーUPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす</summary>
         public static int CombinationKeyMinOverlappingTimeMs { get; set; } = 70;
 
         /// <summary>２文字目以降についてのみ同時打鍵チェックを行う</summary>

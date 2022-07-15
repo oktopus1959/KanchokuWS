@@ -1874,9 +1874,9 @@ namespace KanchokuWS.Gui
             // 
             this.groupBox49.Controls.Add(this.label121);
             this.groupBox49.Controls.Add(this.button_showDlgStrokeLog);
-            this.groupBox49.Location = new System.Drawing.Point(361, 221);
+            this.groupBox49.Location = new System.Drawing.Point(366, 221);
             this.groupBox49.Name = "groupBox49";
-            this.groupBox49.Size = new System.Drawing.Size(302, 46);
+            this.groupBox49.Size = new System.Drawing.Size(297, 46);
             this.groupBox49.TabIndex = 5;
             this.groupBox49.TabStop = false;
             this.groupBox49.Text = "打鍵ログ ダイアログ";
@@ -1892,9 +1892,9 @@ namespace KanchokuWS.Gui
             // 
             // button_showDlgStrokeLog
             // 
-            this.button_showDlgStrokeLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_showDlgStrokeLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button_showDlgStrokeLog.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_showDlgStrokeLog.Location = new System.Drawing.Point(227, 15);
+            this.button_showDlgStrokeLog.Location = new System.Drawing.Point(223, 15);
             this.button_showDlgStrokeLog.Name = "button_showDlgStrokeLog";
             this.button_showDlgStrokeLog.Size = new System.Drawing.Size(66, 23);
             this.button_showDlgStrokeLog.TabIndex = 0;
@@ -1905,9 +1905,9 @@ namespace KanchokuWS.Gui
             // 
             // button_imeFAQ
             // 
-            this.button_imeFAQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_imeFAQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button_imeFAQ.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_imeFAQ.Location = new System.Drawing.Point(264, 134);
+            this.button_imeFAQ.Location = new System.Drawing.Point(276, 134);
             this.button_imeFAQ.Name = "button_imeFAQ";
             this.button_imeFAQ.Size = new System.Drawing.Size(69, 23);
             this.button_imeFAQ.TabIndex = 5;
@@ -1920,9 +1920,9 @@ namespace KanchokuWS.Gui
             // 
             this.groupBox48.Controls.Add(this.textBox_preRewriteAllowedDelayTimeMs);
             this.groupBox48.Controls.Add(this.label99);
-            this.groupBox48.Location = new System.Drawing.Point(361, 164);
+            this.groupBox48.Location = new System.Drawing.Point(366, 164);
             this.groupBox48.Name = "groupBox48";
-            this.groupBox48.Size = new System.Drawing.Size(302, 51);
+            this.groupBox48.Size = new System.Drawing.Size(297, 51);
             this.groupBox48.TabIndex = 4;
             this.groupBox48.TabStop = false;
             this.groupBox48.Text = "後置書き換え条件";
@@ -1931,7 +1931,7 @@ namespace KanchokuWS.Gui
             // 
             this.textBox_preRewriteAllowedDelayTimeMs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_preRewriteAllowedDelayTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_preRewriteAllowedDelayTimeMs.Location = new System.Drawing.Point(248, 19);
+            this.textBox_preRewriteAllowedDelayTimeMs.Location = new System.Drawing.Point(243, 19);
             this.textBox_preRewriteAllowedDelayTimeMs.Name = "textBox_preRewriteAllowedDelayTimeMs";
             this.textBox_preRewriteAllowedDelayTimeMs.Size = new System.Drawing.Size(45, 19);
             this.textBox_preRewriteAllowedDelayTimeMs.TabIndex = 1;
@@ -1960,7 +1960,7 @@ namespace KanchokuWS.Gui
             this.groupBox39.Controls.Add(this.checkBox_SandSEnabled);
             this.groupBox39.Location = new System.Drawing.Point(7, 9);
             this.groupBox39.Name = "groupBox39";
-            this.groupBox39.Size = new System.Drawing.Size(344, 149);
+            this.groupBox39.Size = new System.Drawing.Size(351, 149);
             this.groupBox39.TabIndex = 0;
             this.groupBox39.TabStop = false;
             this.groupBox39.Text = "SandS (Space and Shift)";
@@ -2063,9 +2063,9 @@ namespace KanchokuWS.Gui
             this.groupBox47.Controls.Add(this.radioButton_imeSendInputInUnicode);
             this.groupBox47.Controls.Add(this.radioButton_imeSendInputInKana);
             this.groupBox47.Controls.Add(this.radioButton_imeSendInputInRoman);
-            this.groupBox47.Location = new System.Drawing.Point(361, 60);
+            this.groupBox47.Location = new System.Drawing.Point(366, 60);
             this.groupBox47.Name = "groupBox47";
-            this.groupBox47.Size = new System.Drawing.Size(302, 98);
+            this.groupBox47.Size = new System.Drawing.Size(297, 98);
             this.groupBox47.TabIndex = 3;
             this.groupBox47.TabStop = false;
             this.groupBox47.Text = "IMEがONの時の文字送出方法";
@@ -2124,7 +2124,7 @@ namespace KanchokuWS.Gui
             this.groupBox45.Controls.Add(this.label117);
             this.groupBox45.Location = new System.Drawing.Point(7, 164);
             this.groupBox45.Name = "groupBox45";
-            this.groupBox45.Size = new System.Drawing.Size(342, 163);
+            this.groupBox45.Size = new System.Drawing.Size(351, 163);
             this.groupBox45.TabIndex = 1;
             this.groupBox45.TabStop = false;
             this.groupBox45.Text = "同時打鍵の判定条件 (AとBの AND 判定 )";
@@ -2132,7 +2132,7 @@ namespace KanchokuWS.Gui
             // textBox_combinationKeyTimeMs
             // 
             this.textBox_combinationKeyTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_combinationKeyTimeMs.Location = new System.Drawing.Point(230, 61);
+            this.textBox_combinationKeyTimeMs.Location = new System.Drawing.Point(219, 61);
             this.textBox_combinationKeyTimeMs.Name = "textBox_combinationKeyTimeMs";
             this.textBox_combinationKeyTimeMs.Size = new System.Drawing.Size(45, 19);
             this.textBox_combinationKeyTimeMs.TabIndex = 2;
@@ -2142,7 +2142,7 @@ namespace KanchokuWS.Gui
             // label120
             // 
             this.label120.AutoSize = true;
-            this.label120.Location = new System.Drawing.Point(274, 63);
+            this.label120.Location = new System.Drawing.Point(263, 63);
             this.label120.Name = "label120";
             this.label120.Size = new System.Drawing.Size(58, 15);
             this.label120.TabIndex = 19;
@@ -2210,9 +2210,9 @@ namespace KanchokuWS.Gui
             this.label116.AutoSize = true;
             this.label116.Location = new System.Drawing.Point(9, 63);
             this.label116.Name = "label116";
-            this.label116.Size = new System.Drawing.Size(223, 15);
+            this.label116.Size = new System.Drawing.Size(211, 15);
             this.label116.TabIndex = 1;
-            this.label116.Text = "B: 第Nキー押下から第1キー解放までの時間が";
+            this.label116.Text = "B: 同時押し状態からキー解放までの時間が";
             // 
             // label114
             // 
@@ -2235,9 +2235,9 @@ namespace KanchokuWS.Gui
             // groupBox46
             // 
             this.groupBox46.Controls.Add(this.checkBox_imeCooperationEnabled);
-            this.groupBox46.Location = new System.Drawing.Point(361, 9);
+            this.groupBox46.Location = new System.Drawing.Point(366, 9);
             this.groupBox46.Name = "groupBox46";
-            this.groupBox46.Size = new System.Drawing.Size(302, 45);
+            this.groupBox46.Size = new System.Drawing.Size(297, 45);
             this.groupBox46.TabIndex = 2;
             this.groupBox46.TabStop = false;
             this.groupBox46.Text = "IME連携";
