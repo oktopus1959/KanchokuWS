@@ -1,4 +1,4 @@
-###### TOP
+###### [FAQ HOME](FAQ.md#FAQ-HOME)
 
 # KanchokuWS -- 漢直Win Spoiler -- FAQ
 KanchokuWS は Windows 用の漢字直接入力ツールです。
@@ -9,9 +9,9 @@ KanchokuWS は Windows 用の漢字直接入力ツールです。
 
 ## 目次
 
-- [基本編](FAQ/FAQ-基本.md)
-- [配列作成編](FAQ/FAQ-配列作成.md)
-- [キーアサイン編](FAQ/FAQ-キーアサイン.md)
+- [基本編](FAQ/FAQ-基本.md#faq-home)
+- [配列作成編](FAQ/FAQ-配列作成.md#faq-home)
+- [キーアサイン編](FAQ/FAQ-キーアサイン.md#faq-home)
 - [利用条件と免責](#利用条件と免責)
 
 ## 利用条件と免責
