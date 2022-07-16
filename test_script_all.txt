@@ -179,7 +179,7 @@ comboMaxTime(100)
 comboMinTime(70)
 convert(E<18>W<53>O<33>I<9>ew<100>oi) = みえ
 convert(G<89>K<7>J<31>g<65>jk) = でき
-convert(J<89>K<40>jk) = いあ
+convert(J<59>K<40>jk) = いあ
 convert(J<50>K<80>jk) = き
 
 #### OKT (同時打鍵) ###

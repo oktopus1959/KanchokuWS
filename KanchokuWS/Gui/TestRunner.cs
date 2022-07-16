@@ -55,7 +55,7 @@ namespace KanchokuWS.Gui
 
             void dispTestCount()
             {
-                displayTestCount?.Invoke($"全体: {totalCases} / 実行: {numCases} / エラー: {numErrors}");
+                displayTestCount?.Invoke($"全件: {totalCases} / 実行: {numCases} / エラー: {numErrors}");
             }
 
             dispTestCount();
