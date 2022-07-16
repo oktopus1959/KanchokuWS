@@ -37,7 +37,7 @@
 #define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
 
 #define _LOG_DEBUGH_FLAG true
-#if 0
+#if 1
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
