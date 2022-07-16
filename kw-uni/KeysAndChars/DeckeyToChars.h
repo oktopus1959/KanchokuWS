@@ -36,7 +36,7 @@ public:
     wchar_t oneCharResult[2] = { 0, 0 };
 
     const wchar_t* GetDeckeyNameFromId(int deckeyId) {
-        wchar_t ch = GetCharFromDeckey(deckeyId);
+        wchar_t ch = GetCharFromDeckey(deckeyId, 0);
         if (ch != 0) {
             oneCharResult[0] = ch;
             return oneCharResult;
