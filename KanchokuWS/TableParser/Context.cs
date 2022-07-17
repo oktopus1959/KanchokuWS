@@ -119,12 +119,12 @@ namespace KanchokuWS.TableParser
     {
         private static Logger logger = Logger.GetLogger();
 
-        struct BlockInfo
+        class BlockInfo
         {
-            public string DirPath;        // インクルードする場合の起動ディレクトリ
-            public string BlockName;      // ファイル名やブロック名
-            public int OrigLineNumber;  // ブロックの開始行番号(0起点)
-            public int CurrentOffset;   // 当ブロック内での行番号を算出するための、真の起点から現在行におけるオフセット行数
+            public string DirPath;          // インクルードする場合の起動ディレクトリ
+            public string BlockName;        // ファイル名やブロック名
+            public int OrigLineNumber;      // ブロックの開始行番号(0起点)
+            public int CurrentOffset;       // 当ブロック内での行番号を算出するための、真の起点から現在行におけるオフセット行数
 
             public BlockInfo(string dirPath, string name, int lineNum, int off)
             {
@@ -174,12 +174,15 @@ namespace KanchokuWS.TableParser
         public void Pop(int nextLineNum)
         {
             var lastInfo = blockInfoList.Last();
-            logger.DebugH(() => $"PUSH ENTER: nextLineNum={nextLineNum}, dirPath={lastInfo.DirPath}, blockName={lastInfo.BlockName}, origLine={lastInfo.OrigLineNumber}, offset={lastInfo.CurrentOffset}");
+            logger.DebugH(() => string.Format("POP ENTER: nextLineNum={0}, dirPath={1}, blockName={2}, origLine={3}, offset={4}",
+                nextLineNum, lastInfo.DirPath, lastInfo.BlockName, lastInfo.OrigLineNumber, lastInfo.CurrentOffset));
             int insertedTotalLineNum = nextLineNum - lastInfo.OrigLineNumber;
             blockInfoList._safePopBack();
             if (!blockInfoList._isEmpty()) {
-                lastInfo.CurrentOffset += insertedTotalLineNum;
-                logger.DebugH(() => $"PUSH LEAVE: dirPath={lastInfo.DirPath}, blockName={lastInfo.BlockName}, origLine={lastInfo.OrigLineNumber}, offset={lastInfo.CurrentOffset}");
+                var newLastInfo = blockInfoList._getLast();
+                newLastInfo.CurrentOffset += insertedTotalLineNum;
+                logger.DebugH(() => string.Format("POP LEAVE: newDirPath={0}, newBlockName={1}, newOrigLine={2}, newOffset={3}",
+                    newLastInfo.DirPath, newLastInfo.BlockName, newLastInfo.OrigLineNumber, newLastInfo.CurrentOffset));
             }
         }
 
