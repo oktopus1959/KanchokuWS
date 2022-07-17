@@ -170,7 +170,7 @@ convert(K<24>D<103>k<23>F<150>df) = にゅ
 #convert(D<52>I<105>O<48>i<80>od) = びぜ
 
 rewriteMaxTime(100)
-convert({22}[22]<50>{12}[12]) = ぽ
+convert({22}[22]<20>{12}[12]) = ぽ
 convert({22}[22]<200>{12}[12]) = 。し
 
 ### 同時打鍵 ###
@@ -179,7 +179,7 @@ comboMaxTime(100)
 comboMinTime(70)
 convert(E<18>W<53>O<33>I<9>ew<100>oi) = みえ
 convert(G<89>K<7>J<31>g<65>jk) = でき
-convert(J<59>K<40>jk) = いあ
+convert(J<59>K<20>jk) = いあ
 convert(J<50>K<80>jk) = き
 
 #### OKT (同時打鍵) ###

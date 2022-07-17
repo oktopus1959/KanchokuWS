@@ -13,26 +13,26 @@ namespace KanchokuWS
     /// </summary>
     public static class DecoderKeys
     {
-        // 通常ストロークに使われるDECKEYの始まり
-        public const int NORMAL_DECKEY_START = 0;
-
         // 通常文字ストロークに使われるDECKEYの数
         public const int NORMAL_DECKEY_NUM = 50;
 
+        // 機能キーとして使われるDECKEYの数
+        public const int FUNC_DECKEY_NUM = 50;
+
         // 1面あたりのDECKEYの数 (通常文字キー＋機能キー)
-        public const int PLANE_DECKEY_NUM = 100;
+        public const int PLANE_DECKEY_NUM = NORMAL_DECKEY_NUM + FUNC_DECKEY_NUM;    // 100;
+
+        // 通常ストロークに使われるDECKEYの始まり
+        public const int NORMAL_DECKEY_START = 0;
 
         /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)の始まり</summary>
         public const int FUNC_DECKEY_START = NORMAL_DECKEY_START + NORMAL_DECKEY_NUM;
 
         // 機能キーとして使われるDECKEYの終わり(の次)
-        public const int FUNC_DECKEY_END = NORMAL_DECKEY_START + PLANE_DECKEY_NUM;
-
-        // 機能キーとして使われるDECKEYの数
-        public const int FUNC_DECKEY_NUM = FUNC_DECKEY_END - NORMAL_DECKEY_NUM;
+        public const int FUNC_DECKEY_END = FUNC_DECKEY_START + FUNC_DECKEY_NUM;
 
         // SHIFT修飾DECKEYの始まり
-        public const int SHIFT_DECKEY_START = PLANE_DECKEY_NUM;
+        public const int SHIFT_DECKEY_START = FUNC_DECKEY_END;
 
         // SHIFT修飾DECKEYの終わり(の次)
         public const int SHIFT_DECKEY_END = SHIFT_DECKEY_START + PLANE_DECKEY_NUM;

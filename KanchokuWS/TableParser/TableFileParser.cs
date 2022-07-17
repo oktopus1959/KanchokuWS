@@ -54,14 +54,14 @@ namespace KanchokuWS.TableParser
         }
 
         /// <summary>
-        /// stkList の末尾 strokeに対応するノードを追加する<br/>
+        /// stkList の末尾 strokeに対応するノードを追加する。node==null なら新しく TreeNode を作成する<br/>
         /// 途中、StrokeTableNodeが存在しない場所があれば、そこにStrokeTableNodeを生成して挿入(または置換)する
         /// </summary>
         /// <param name="stkList"></param>
         /// <param name="node"></param>
-        void setNodeAtLast(List<int> stkList, Node node)
+        void setNodeOrNewTreeNodeAtLast(List<int> stkList, Node node)
         {
-            logger.DebugH(() => $"CALLED: stkList={stkList._keyString()}, isCombo={isInCombinationBlock}, {node.DebugString()}");
+            logger.DebugH(() => $"CALLED: stkList={stkList._keyString()}, isCombo={isInCombinationBlock}, {node?.DebugString() ?? "node=null"}");
             bool bOverwritten = false;
             if (stkList._isEmpty()) {
                 logger.Warn($"strokeList is empty");
@@ -74,7 +74,7 @@ namespace KanchokuWS.TableParser
                         if (idx == 0) {
                             // 同時打鍵の先頭キーは Combo化(ノードの重複を避ける)
                             stk = makeComboDecKey(stk);
-                        } else if (idx > 0 && (node.isStrokeTree() || idx + 1 < stkList.Count)) {
+                        } else if (idx > 0 && (node == null || node.isStrokeTree() || idx + 1 < stkList.Count)) {
                             // 同時打鍵の非終端キーは、Shift化(終端ノードとの重複を避ける)
                             stk = makeNonTerminalDuplicatableComboKey(stk);
                         }
@@ -96,11 +96,20 @@ namespace KanchokuWS.TableParser
                     }
                 }
                 if (pn == null) {
-                    logger.Warn($"No such node: strokeList={stkList._keyString()}");
+                    logger.Warn($"No such parent node: strokeList={stkList._keyString()}");
                 } else {
                     int idx = getStroke(stkList.Count - 1);
-                    bOverwritten = bOverwritten || !(pn.getNth(idx)?.isFunctionNode() ?? true);
-                    pn.setNthChild(idx, node);
+                    if (node == null) {
+                        if (pn.getNth(idx) == null) {
+                            // 新しく StrokeTableNode を作成して追加
+                            pn.setNthChild(idx, new StrokeTableNode());
+                        } else if (!pn.getNth(idx).isStrokeTree()) {
+                            bOverwritten = true;
+                        }
+                    } else {
+                        bOverwritten = bOverwritten || !(pn.getNth(idx)?.isFunctionNode() ?? true);
+                        pn.setNthChild(idx, node);
+                    }
                 }
             }
             if (bOverwritten && isInCombinationBlock && !bIgnoreWarningOverwrite) {
@@ -146,7 +155,7 @@ namespace KanchokuWS.TableParser
             logger.DebugH(() => $"ENTER: lineNum={LineNumber}, strokeList={strokeList._keyString()}, stroke={stroke}");
             using (pushStroke(stroke)) {
                 // StrokeTableNodeを追加しておく(そうでないと矢印記法によって先に空のStrokeTableNodeが作られてしまう可能性があるため)
-                setNodeAtLast(strokeList, new StrokeTableNode());
+                setNodeOrNewTreeNodeAtLast(strokeList, null);
                 new TableParser(context, strokeList).MakeNodeTree();
                 logger.DebugH(() => $"LEAVE");
             }
@@ -448,7 +457,7 @@ namespace KanchokuWS.TableParser
             addCombinationKey(true);
 
             // 対象が書き換えテーブルでなければノードをセットする
-            if (!bRewriteTable) setNodeAtLast(strokeList, node);
+            if (!bRewriteTable) setNodeOrNewTreeNodeAtLast(strokeList, node);
         }
 
         void addCombinationKey(bool hasStr)
