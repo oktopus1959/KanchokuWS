@@ -105,6 +105,12 @@ namespace KanchokuWS.TableParser
             placeHolders["sl"] = 39;
             placeHolders["space"] = 40;
             placeHolders["Space"] = 40;
+            placeHolders["-"] = 41;
+            placeHolders["hp"] = 41;
+            placeHolders["@"] = 44;
+            placeHolders["at"] = 44;
+            placeHolders[":"] = 46;
+            placeHolders["cl"] = 46;
             placeHolders["nfer"] = VirtualKeys.GetFuncDeckeyByName("nfer");
             placeHolders["Nfer"] = VirtualKeys.GetFuncDeckeyByName("nfer");
             placeHolders["NFER"] = VirtualKeys.GetFuncDeckeyByName("nfer");
@@ -451,7 +457,7 @@ namespace KanchokuWS.TableParser
         public void ReadPlaceHolderName() {
             CurrentStr = "";
             if (PeekNextChar(0) == '$') {
-                if (";,./".IndexOf(PeekNextChar(1)) >= 0) {   // $; $, $. $/ はプレースホルダー名として有効
+                if (";,./-@:".IndexOf(PeekNextChar(1)) >= 0) {   // $; $, $. $/ $- $@ $: はプレースホルダー名として有効
                     ReadStringUpto('|', '>');
                 } else {
                     ReadStringUpto(',', '|', '>');
