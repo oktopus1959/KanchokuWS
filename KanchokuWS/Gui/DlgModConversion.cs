@@ -17,6 +17,8 @@ namespace KanchokuWS.Gui
 
         private static KeyOrFunction[] modifierKeys;
 
+        private static int SelectedModKeysIndex = -1;
+
         private int PLANE_ASIGNABLE_MOD_KEYS_NUM;
 
         private static string[] shiftPlaneNames = new string[] {
@@ -150,7 +152,7 @@ namespace KanchokuWS.Gui
             setDataGridViewForExtModifier();
 
             defaultModkeyIndex = modifierKeys._findIndex(x => x.ModKey == VirtualKeys.DefaultExtModifierKey);
-            comboBox_modKeys.SelectedIndex = defaultModkeyIndex;
+            comboBox_modKeys.SelectedIndex = (SelectedModKeysIndex >= 0 ? SelectedModKeysIndex : defaultModkeyIndex)._highLimit(comboBox_modKeys.Items.Count - 1);
             radioButton_modKeys.Checked = true;
         }
 
@@ -339,7 +341,7 @@ namespace KanchokuWS.Gui
         private void selectModKey()
         {
             try {
-                int idx = comboBox_modKeys.SelectedIndex;
+                int idx = SelectedModKeysIndex = comboBox_modKeys.SelectedIndex;
                 var modKeyDef = modifierKeys._getNth(idx);
                 uint modKey = modKeyDef?.ModKey ?? 0;
                 bool bAssignable = idx >= 0 && idx < PLANE_ASIGNABLE_MOD_KEYS_NUM;
