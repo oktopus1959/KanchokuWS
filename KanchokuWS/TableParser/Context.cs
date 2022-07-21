@@ -28,7 +28,7 @@ namespace KanchokuWS.TableParser
 
         public int Get(string key)
         {
-            return placeHolders._safeGet(key, -1);
+            return placeHolders._safeGet(key._toLower(), -1);
         }
 
         public void Initialize()
@@ -43,59 +43,33 @@ namespace KanchokuWS.TableParser
             placeHolders["8"] = 7;
             placeHolders["9"] = 8;
             placeHolders["0"] = 9;
-            placeHolders["Q"] = 10;
             placeHolders["q"] = 10;
-            placeHolders["W"] = 11;
             placeHolders["w"] = 11;
-            placeHolders["E"] = 12;
             placeHolders["e"] = 12;
-            placeHolders["R"] = 13;
             placeHolders["r"] = 13;
-            placeHolders["T"] = 14;
             placeHolders["t"] = 14;
-            placeHolders["Y"] = 15;
             placeHolders["y"] = 15;
-            placeHolders["U"] = 16;
             placeHolders["u"] = 16;
-            placeHolders["I"] = 17;
             placeHolders["i"] = 17;
-            placeHolders["O"] = 18;
             placeHolders["o"] = 18;
-            placeHolders["P"] = 19;
             placeHolders["p"] = 19;
-            placeHolders["A"] = 20;
             placeHolders["a"] = 20;
-            placeHolders["S"] = 21;
             placeHolders["s"] = 21;
-            placeHolders["D"] = 22;
             placeHolders["d"] = 22;
-            placeHolders["F"] = 23;
             placeHolders["f"] = 23;
-            placeHolders["G"] = 24;
             placeHolders["g"] = 24;
-            placeHolders["H"] = 25;
             placeHolders["h"] = 25;
-            placeHolders["J"] = 26;
             placeHolders["j"] = 26;
-            placeHolders["K"] = 27;
             placeHolders["k"] = 27;
-            placeHolders["L"] = 28;
             placeHolders["l"] = 28;
             placeHolders[";"] = 29;
             placeHolders["sc"] = 29;
-            placeHolders["Z"] = 30;
             placeHolders["z"] = 30;
-            placeHolders["X"] = 31;
             placeHolders["x"] = 31;
-            placeHolders["C"] = 32;
             placeHolders["c"] = 32;
-            placeHolders["V"] = 33;
             placeHolders["v"] = 33;
-            placeHolders["B"] = 34;
             placeHolders["b"] = 34;
-            placeHolders["N"] = 35;
             placeHolders["n"] = 35;
-            placeHolders["M"] = 36;
             placeHolders["m"] = 36;
             placeHolders[","] = 37;
             placeHolders["cm"] = 37;
@@ -104,19 +78,21 @@ namespace KanchokuWS.TableParser
             placeHolders["/"] = 39;
             placeHolders["sl"] = 39;
             placeHolders["space"] = 40;
-            placeHolders["Space"] = 40;
             placeHolders["-"] = 41;
             placeHolders["hp"] = 41;
             placeHolders["@"] = 44;
             placeHolders["at"] = 44;
             placeHolders[":"] = 46;
             placeHolders["cl"] = 46;
+            placeHolders["ej"] = VirtualKeys.GetFuncDeckeyByName("zenkaku");
+            placeHolders["hz"] = VirtualKeys.GetFuncDeckeyByName("zenkaku");
+            placeHolders["tab"] = VirtualKeys.GetFuncDeckeyByName("tab");
+            placeHolders["caps"] = VirtualKeys.GetFuncDeckeyByName("caps");
+            placeHolders["alnum"] = VirtualKeys.GetFuncDeckeyByName("alnum");
+            placeHolders["eisu"] = VirtualKeys.GetFuncDeckeyByName("alnum");
             placeHolders["nfer"] = VirtualKeys.GetFuncDeckeyByName("nfer");
-            placeHolders["Nfer"] = VirtualKeys.GetFuncDeckeyByName("nfer");
-            placeHolders["NFER"] = VirtualKeys.GetFuncDeckeyByName("nfer");
             placeHolders["xfer"] = VirtualKeys.GetFuncDeckeyByName("xfer");
-            placeHolders["Xfer"] = VirtualKeys.GetFuncDeckeyByName("xfer");
-            placeHolders["XFER"] = VirtualKeys.GetFuncDeckeyByName("xfer");
+            placeHolders["kana"] = VirtualKeys.GetFuncDeckeyByName("kana");
         }
     }
 
