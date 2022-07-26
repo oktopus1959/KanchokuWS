@@ -527,16 +527,18 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             var list = new List<Stroke>(strokes);
             list.AddRange(addList);
-            if (list.Count >= 3) {
-                // 3個以上のキーを含むならば、スペースのような weakShift を削除する
-                for (int i = 0; i < list.Count; ++i) {
-                    if (list[i].ModuloDecKey == DecoderKeys.STROKE_SPACE_DECKEY) {
-                        logger.DebugH(() => $"DELETE weakShift at {i}");
-                        list.RemoveAt(i);
-                        break;
-                    }
-                }
-            }
+            //ちょっと意図が不明なので、コメントアウトしておく
+            //たとえば、Spaceキーを同時打鍵のシフトキーとしている場合は、下記処理があると3打鍵以上の同時打鍵ができなくなる
+            //if (list.Count >= 3) {
+            //    // 3個以上のキーを含むならば、スペースのような weakShift を削除する
+            //    for (int i = 0; i < list.Count; ++i) {
+            //        if (list[i].ModuloDecKey == DecoderKeys.STROKE_SPACE_DECKEY) {
+            //            logger.DebugH(() => $"DELETE weakShift at {i}");
+            //            list.RemoveAt(i);
+            //            break;
+            //        }
+            //    }
+            //}
             return list;
         }
 
