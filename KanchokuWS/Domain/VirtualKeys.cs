@@ -1195,6 +1195,13 @@ namespace KanchokuWS
         //    }
         //}
 
+        /// <summary>
+        /// 拡張シフトキーに対するシフト面の割り当て<br/>
+        ///   EXT_MOD_NAME=plane[|plane]
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="rawLine"></param>
+        /// <returns></returns>
         public static bool AssignShiftPlane(string line, string rawLine = null)
         {
             // NAME=plane[|plane]...

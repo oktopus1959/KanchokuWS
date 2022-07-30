@@ -679,67 +679,69 @@ namespace KanchokuWS
             if (Settings.DefGuide2._notEmpty()) {
                 makeVkbStrokeTable2("reorderByFirstStrokePosition2", Settings.DefGuide2);
             }
+            if (Settings.StrokeHelpExtraCharsPosition1) {
+                makeVkbStrokeTable1("makeExtraCharsStrokePositionTable1", null);
+            }
+            if (Settings.StrokeHelpExtraCharsPosition2) {
+                makeVkbStrokeTable1("makeExtraCharsStrokePositionTable2", null);
+            }
 
             if (Helper.FileExists(filePath)) {
-                try {
-                    foreach (var line in System.IO.File.ReadAllLines(filePath)) {
-                        var items = line.Trim()._reReplace("  +", " ")._split(' ');
-                        if (items._notEmpty() && items[0]._notEmpty() && !items[0].StartsWith("#")) {
-                            var cmd = items[0]._toLower();
-                            var chars = items.Length > 1 ? items.Skip(1)._join(" ") : "";
-                            if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH(() => $"cmd={cmd}, param={chars}");
-                            if (cmd == "initialtable") {
-                                // 初期表示を追加(初期表示は事前に作成されている)
-                                StrokeTables1.Add(new StrokeTableDef {
-                                    KanaAlign = false,
-                                    Faces = null,
-                                    CharOrKeys = initialVkbChars,
-                                });
-                            } else if (cmd == "extracharsposition") {
-                                makeVkbStrokeTable1("makeExtraCharsStrokePositionTable", null);
-                            } else if (cmd == "sands") {
-                                makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", VirtualKeys.GetSandSPlane().ToString(), false, false, true);
-                                makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", VirtualKeys.GetSandSPlane().ToString(), false, false, true);
-                            } else if (cmd == "keycharsposition") {
-                                // 主テーブルの単打用
-                                makeVkbStrokeTable1($"makeStrokePosition", null);
-                                // 副テーブルの単打用
-                                makeVkbStrokeTable2($"makeStrokePosition2", null);
-                            } else if (cmd == "shiftkeycharsposition") {
-                                //makeVkbStrokeTable1("makeShiftStrokePosition1", null, false, false, true);
-                                makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", "1", false, false, true);
-                                makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", "1", false, false, true);
-                            } else if (cmd == "shiftakeycharsposition") {
-                                //makeVkbStrokeTable1("makeShiftAStrokePosition1", null, false, false, true);
-                                makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", "2", false, false, true);
-                                makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", "2", false, false, true);
-                            } else if (cmd == "shiftbkeycharsposition") {
-                                //makeVkbStrokeTable1("makeShiftBStrokePosition1", null, false, false, true);
-                                makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", "3", false, false, true);
-                                makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", "3", false, false, true);
-                            } else if (cmd == "hiraganakey1") {
-                                makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[0], true, true);
-                            } else if (cmd == "hiraganakey2") {
-                                makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[1], true, true);
-                            } else if (cmd == "katakanakey1") {
-                                makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[2], true, true);
-                            } else if (cmd == "katakanakey2") {
-                                makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[3], true, true);
-                            } else if (chars._notEmpty()) {
-                                if (cmd == "strokeposition") {
-                                    makeVkbStrokeTable1("reorderByFirstStrokePosition1", chars);
-                                } else if (cmd == "strokeposition2") {
-                                    makeVkbStrokeTable2("reorderByFirstStrokePosition2", chars);
-                                } else if (cmd == "strokepositionfixed") {
-                                    makeVkbStrokeTableFixed(chars);
-                                } else if (cmd == "strokekey") {
-                                    makeVkbStrokeTable1("makeStrokeKeysTable", chars, true, false);
-                                }
+                foreach (var line in Helper.ReadAllLines(filePath, e => logger.Error($"Cannot read file: {filePath}: {e.Message}"))) {
+                    var items = line.Trim()._reReplace("  +", " ")._split(' ');
+                    if (items._notEmpty() && items[0]._notEmpty() && !items[0].StartsWith("#")) {
+                        var cmd = items[0]._toLower();
+                        var chars = items.Length > 1 ? items.Skip(1)._join(" ") : "";
+                        if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH(() => $"cmd={cmd}, param={chars}");
+                        if (cmd == "initialtable") {
+                            // 初期表示を追加(初期表示は事前に作成されている)
+                            StrokeTables1.Add(new StrokeTableDef {
+                                KanaAlign = false,
+                                Faces = null,
+                                CharOrKeys = initialVkbChars,
+                            });
+                        } else if (cmd == "extracharsposition") {
+                            makeVkbStrokeTable1("makeExtraCharsStrokePositionTable", null);
+                        } else if (cmd == "sands") {
+                            makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", VirtualKeys.GetSandSPlane().ToString(), false, false, true);
+                            makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", VirtualKeys.GetSandSPlane().ToString(), false, false, true);
+                        } else if (cmd == "keycharsposition") {
+                            // 主テーブルの単打用
+                            makeVkbStrokeTable1($"makeStrokePosition", null);
+                            // 副テーブルの単打用
+                            makeVkbStrokeTable2($"makeStrokePosition2", null);
+                        } else if (cmd == "shiftkeycharsposition") {
+                            //makeVkbStrokeTable1("makeShiftStrokePosition1", null, false, false, true);
+                            makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", "1", false, false, true);
+                            makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", "1", false, false, true);
+                        } else if (cmd == "shiftakeycharsposition") {
+                            //makeVkbStrokeTable1("makeShiftAStrokePosition1", null, false, false, true);
+                            makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", "2", false, false, true);
+                            makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", "2", false, false, true);
+                        } else if (cmd == "shiftbkeycharsposition") {
+                            //makeVkbStrokeTable1("makeShiftBStrokePosition1", null, false, false, true);
+                            makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", "3", false, false, true);
+                            makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", "3", false, false, true);
+                        } else if (cmd == "hiraganakey1") {
+                            makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[0], true, true);
+                        } else if (cmd == "hiraganakey2") {
+                            makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[1], true, true);
+                        } else if (cmd == "katakanakey1") {
+                            makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[2], true, true);
+                        } else if (cmd == "katakanakey2") {
+                            makeVkbStrokeTable1("makeStrokeKeysTable", kanaOutChars[3], true, true);
+                        } else if (chars._notEmpty()) {
+                            if (cmd == "strokeposition") {
+                                makeVkbStrokeTable1("reorderByFirstStrokePosition1", chars);
+                            } else if (cmd == "strokeposition2") {
+                                makeVkbStrokeTable2("reorderByFirstStrokePosition2", chars);
+                            } else if (cmd == "strokepositionfixed") {
+                                makeVkbStrokeTableFixed(chars);
+                            } else if (cmd == "strokekey") {
+                                makeVkbStrokeTable1("makeStrokeKeysTable", chars, true, false);
                             }
                         }
                     }
-                } catch (Exception e) {
-                    logger.Error($"Cannot read file: {filePath}: {e.Message}");
                 }
             }
             if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH("LEAVE");

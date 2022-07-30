@@ -105,17 +105,20 @@ namespace KanchokuWS.TableParser
                 }
 
                 if (ch == '#') {
-                    // Directive: '#include', '#define', '#strokePosition', '#*shift*', '#combination', '#overlapping', '#yomiConvert', '#store', '#load', '#end' または '#' 以降、行末までコメント
+                    // '#' 以降は、ディレクティブまたは行末までコメント
                     ReadWord();
                     var lcStr = CurrentStr._toLower();
                     if (lcStr == "include") {
+                        // #include: ファイルのインクルード
                         IncludeFile();
                     } else if (lcStr == "define") {
+                        // #define: 定数の定義
                         outputNewLines();
                         OutputLines.Add(CurrentLine);
                         ReadWord();
                         if (CurrentStr._notEmpty()) definedNames.Add(CurrentStr);
                         if (CurrentStr._toLower()._equalsTo("defguide")) {
+                            // 'defguide': 配字案内
                             handleStrokePosition();
                         }
                     } else if (lcStr == "ifdef") {
@@ -129,32 +132,47 @@ namespace KanchokuWS.TableParser
                     } else if (lcStr == "else") {
                     } else if (lcStr == "endif") {
                     } else if (lcStr == "store") {
+                        // #store: #end store までの行を変数に格納
                         StoreLineBlock();
                     } else if (lcStr == "load") {
+                        // #load: store で格納した行を展開
                         LoadLineBlock();
                     } else if (lcStr._startsWith("yomiconv")) {
+                        // #yomiCombert: 読み変換(kw-uni側で処理)
                         outputNewLines();
                         OutputLines.Add(CurrentLine);
                     } else if (lcStr == "strokeposition") {
+                        // #strokePosiion: 配字案内
                         //OutputLines.Add(CurrentLine);
                         handleStrokePosition();
+                    } else if (lcStr == "extracharsposition") {
+                        handleExtraCharsPosition();
                     } else if (lcStr == "noshift" || lcStr == "normal") {
                         shiftPlane = 0;
                     } else if (lcStr == "shift") {
+                        // #shift: シフト面割り当て
                         shiftPlane = 1;
                     } else if (lcStr == "shifta") {
+                        // #shift: 拡張シフトA面割り当て
                         shiftPlane = 2;
+                        // #shift: 拡張シフトA面割り当て
                     } else if (lcStr == "shiftb") {
+                        // #shift: 拡張シフトB面割り当て
                         shiftPlane = 3;
                     } else if (lcStr == "shiftc") {
+                        // #shift: 拡張シフトC面割り当て
                         shiftPlane = 4;
                     } else if (lcStr == "shiftd") {
+                        // #shift: 拡張シフトD面割り当て
                         shiftPlane = 5;
                     } else if (lcStr == "shifte") {
+                        // #shift: 拡張シフトE面割り当て
                         shiftPlane = 6;
                     } else if (lcStr == "shiftf") {
+                        // #shift: 拡張シフトF面割り当て
                         shiftPlane = 7;
                     } else if (lcStr == "combination" || lcStr == "overlapping") {
+                        // #combination: 同時打鍵設定
                         ReadWord();
                         switch (CurrentStr._toLower()) {
                             case "prefix":
@@ -174,6 +192,7 @@ namespace KanchokuWS.TableParser
                                 break;
                         }
                     } else if (lcStr == "end") {
+                        // #end: 各種ディレクティブの終了
                         ReadWord();
                         switch (CurrentStr._toLower()._substring(0, 5)) {
                             case "combi":
@@ -190,15 +209,20 @@ namespace KanchokuWS.TableParser
                                 break;
                         }
                     } else if (lcStr == "sands") {
+                        // #SandS: SandS の有効化、無効化、面の割り当て
                         handleSandSState();
                     } else if (lcStr == "assignplane") {
+                        // #assignPlane: 拡張シフトキーに対するシフト面の割り当て
                         assignShiftPlane();
                     } else if (lcStr == "set") {
+                        // Settings 変数の値の変更
                         handleSettings();
                     } else if (lcStr == "disableextkey") {
+                        // 拡張修飾キーの無効化
                         ReadWord();
                         if (CurrentStr._notEmpty()) VirtualKeys.AddDisabledExtKey(CurrentStr);
                     } else if (lcStr == "ignorewarning") {
+                        // 各種警告の無効化
                         ReadWord();
                         var word = CurrentStr._toLower();
                         if (word._isEmpty() || word == "all") {
@@ -211,6 +235,7 @@ namespace KanchokuWS.TableParser
                             bIgnoreWarningOverwrite = true;
                         }
                     } else {
+                        // 上記以外は無視(コメント扱い) 
                         logger.DebugH(() => $"#{CurrentStr}");
                     }
                     SkipToEndOfLine();
@@ -324,7 +349,7 @@ namespace KanchokuWS.TableParser
             }
         }
 
-        // define 行を処理
+        // strokePosition 行を処理
         void handleStrokePosition()
         {
             ReadWordOrString();
@@ -334,6 +359,16 @@ namespace KanchokuWS.TableParser
                 } else {
                     Settings.DefGuide2 = CurrentStr;
                 }
+            }
+        }
+
+        // extraCharsPosition 行を処理
+        void handleExtraCharsPosition()
+        {
+            if (bPrimary) {
+                Settings.StrokeHelpExtraCharsPosition1 = true;
+            } else {
+                Settings.StrokeHelpExtraCharsPosition2 = true;
             }
         }
 
@@ -374,6 +409,7 @@ namespace KanchokuWS.TableParser
             }
         }
 
+        // 拡張シフトキーに対するシフト面の割り当て
         void assignShiftPlane()
         {
             ReadWord();

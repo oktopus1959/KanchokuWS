@@ -593,6 +593,19 @@ namespace Utils
         }
 
         /// <summary>
+        /// テキストファイルの全行を読み込んで1行1要素の配列にして返す。エラーが発生したら長さ0の配列を返す
+        /// </summary>
+        public static string[] ReadAllLines(string filePath, Action<Exception> errHandler = null)
+        {
+            try {
+                return System.IO.File.ReadAllLines(filePath);
+            } catch (Exception e) {
+                errHandler?.Invoke(e);
+                return new string[0];
+            }
+        }
+
+        /// <summary>
         /// データフォルダ配下(または絶対パス)のテキストファイルの全内容を指定のエンコードで取得する。エラーが発生したら null を返す
         /// </summary>
         /// <param name="filePath">Dataフォルダ配下の相対パスまたは絶対パス</param>

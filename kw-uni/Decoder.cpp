@@ -373,10 +373,13 @@ public:
             } else if (cmd == _T("setHiraganaBlocker")) {
                 // 末尾にひらがなブロッカーを設定
                 setHiraganaBlocker();
-            } else if (cmd == _T("makeExtraCharsStrokePositionTable")) {
-                // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
-                VkbTableMaker::MakeExtraCharsStrokePositionTable(outParams->faceStrings);
-            } else if (cmd == _T("makeStrokePosition")) {
+            } else if (cmd == _T("makeExtraCharsStrokePositionTable") || cmd == _T("makeExtraCharsStrokePositionTable1")) {
+                // 主テーブルの外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
+                VkbTableMaker::MakeExtraCharsStrokePositionTable1(outParams->faceStrings);
+            } else if (cmd == _T("makeExtraCharsStrokePositionTable2")) {
+                // 副テーブルの外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
+                VkbTableMaker::MakeExtraCharsStrokePositionTable2(outParams->faceStrings);
+            } else if (cmd == _T("makeStrokePosition") || cmd == _T("makeStrokePosition1")) {
                 // アンシフトキー文字配列をストロークの位置に従って並べる
                 VkbTableMaker::MakeKeyCharsStrokePositionTable(outParams->faceStrings);
             } else if (cmd == _T("makeStrokePosition2")) {

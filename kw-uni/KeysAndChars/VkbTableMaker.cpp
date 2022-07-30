@@ -204,13 +204,13 @@ namespace VkbTableMaker {
 
     //----------------------------------------------------------------------------
     // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
-    void MakeExtraCharsStrokePositionTable(wchar_t* faces) {
+    void MakeExtraCharsStrokePositionTable(StrokeTableNode* rootStrokeNode, wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
-        if (ROOT_STROKE_NODE) {
+        if (rootStrokeNode) {
             size_t order1[6] = { 12, 22, 13, 23, 11, 21 };
             for (size_t i = 0; i < 10; ++i) {
                 mchar_t ch = 0;
-                auto blk = ROOT_STROKE_NODE->getNth(i);
+                auto blk = rootStrokeNode->getNth(i);
                 if (blk && blk->isStrokeTableNode()) {
                     size_t offset = (i % 10) < 5 ? 0 : 5;
                     for (size_t j = 0; j < 6 && ch == 0; ++j) {
@@ -226,7 +226,7 @@ namespace VkbTableMaker {
             size_t order2[5] = { 2, 1, 3, 4, 0 };
             for (size_t i = 10; i < STROKE_SPACE_DECKEY; ++i) {
                 wchar_t ch = 0;
-                auto blk = ROOT_STROKE_NODE->getNth(i);
+                auto blk = rootStrokeNode->getNth(i);
                 if (blk && blk->isStrokeTableNode()) {
                     size_t offset = (i % 10) < 5 ? 0 : 5;
                     for (size_t j = 0; j < 5 && ch == 0; ++j) {
@@ -260,6 +260,16 @@ namespace VkbTableMaker {
             }
             set_facestr(ch, faces + i * 2);
         }
+    }
+
+    // 主テーブル用の外字を集めたストローク表を作成する
+    void MakeExtraCharsStrokePositionTable1(wchar_t* faces) {
+        MakeExtraCharsStrokePositionTable(StrokeTableNode::RootStrokeNode1.get(), faces);
+    }
+
+    // 副テーブル用の外字を集めたストローク表を作成する
+    void MakeExtraCharsStrokePositionTable2(wchar_t* faces) {
+        MakeExtraCharsStrokePositionTable(StrokeTableNode::RootStrokeNode2.get(), faces);
     }
 
     // 主テーブル用のキー文字を集めたストローク表を作成する

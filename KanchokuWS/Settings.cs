@@ -346,6 +346,12 @@ namespace KanchokuWS
         /// <summary>配字案内2</summary>
         public static string DefGuide2 { get; set; }
 
+        /// <summary>デフォルトのストロークヘルプ1</summary>
+        public static bool StrokeHelpExtraCharsPosition1 { get; set; }
+
+        /// <summary>デフォルトのストロークヘルプ2</summary>
+        public static bool StrokeHelpExtraCharsPosition2 { get; set; }
+
         //-------------------------------------------------------------------------------------
         // Ctrlキー
         /// <summary>グローバルなコントロールキーを有効にするか </summary>
@@ -798,6 +804,8 @@ namespace KanchokuWS
             // 設定のクリア
             DefGuide1 = "";
             DefGuide2 = "";
+            StrokeHelpExtraCharsPosition1 = false;
+            StrokeHelpExtraCharsPosition2 = false;
 
             //-------------------------------------------------------------------------------------
             // 基本設定
