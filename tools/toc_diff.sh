@@ -1,3 +1,5 @@
 #! /bin/bash
 
-diff -w <(tools/make_toc.sh) <(sed -n '1,/## 元祖漢直窓/ p' README.md)
+MD=README.md
+
+diff -w <(tools/make_toc.sh $MD) <(sed -n '/## 目次/,/## 動作環境と注意/ p' $MD)
