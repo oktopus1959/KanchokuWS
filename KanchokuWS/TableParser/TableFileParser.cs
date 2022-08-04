@@ -37,6 +37,28 @@ namespace KanchokuWS.TableParser
             }
         }
 
+        /// <summary>拡張修飾キーが同時打鍵キーとして使われた場合は、そのキーの単打設定として本来のキー出力を追加する</summary>
+        protected void addExtModfierAsSingleHitKey()
+        {
+            void addExtModAsSingleKey(string keyName)
+            {
+                int dk = VirtualKeys.GetFuncDeckeyByName(keyName);
+                if (dk >= 0) {
+                    if (rootTableNode.getNth(dk) == null && rootTableNode.getNth(dk + DecoderKeys.COMBO_DECKEY_START) != null) {
+                        // 単打設定が存在せず、同時打鍵の先頭キーになっている場合は、単打設定を追加する
+                        makeCombinationKeyCombo(Helper.MakeList(dk), 0, true);  // 単打指定
+                        OutputLines.Add($"-{dk}>\"!{{{keyName}}}\"");
+                    }
+                }
+            }
+
+            if (Settings.UseComboExtModKeyAsSingleHit) {
+                // とりあえず nfer と xfer だけ対応
+                addExtModAsSingleKey("nfer");
+                addExtModAsSingleKey("xfer");
+            }
+        }
+
         /// <summary>
         /// n番目の子ノードをセットする(残ったほうのノードを返す)
         /// </summary>
@@ -71,11 +93,12 @@ namespace KanchokuWS.TableParser
                     // assert(idx < stkList.Count)
                     int stk = stkList[idx];
                     if (isInCombinationBlock) {
+                        // 同時打鍵定義ブロック
                         if (idx == 0) {
-                            // 同時打鍵の先頭キーは Combo化(ノードの重複を避ける)
+                            // 同時打鍵の先頭キーは Combo化(単打ノードの重複を避ける)
                             stk = makeComboDecKey(stk);
                         } else if (idx > 0 && (node == null || node.isStrokeTree() || idx + 1 < stkList.Count)) {
-                            // 同時打鍵の非終端キーは、Shift化(終端ノードとの重複を避ける)
+                            // 同時打鍵の中間キー(非終端キー)は、Shift化(終端ノードとの重複を避ける)
                             stk = makeNonTerminalDuplicatableComboKey(stk);
                         }
                     }
@@ -690,6 +713,7 @@ namespace KanchokuWS.TableParser
         {
             logger.InfoH($"ENTER");
 
+            // トップレベルの解析
             readNextToken(true);
             while (context.currentToken != TOKEN.END) {
                 switch (context.currentToken) {
@@ -717,6 +741,10 @@ namespace KanchokuWS.TableParser
                 readNextToken(true);
             }
 
+            // 拡張修飾キーが同時打鍵キーとして使われた場合は、そのキーの単打設定として本来のキー出力を追加する
+            addExtModfierAsSingleHitKey();
+
+            // 部分キーに対して、非終端マークをセット
             context.keyComboPool?.SetNonTerminalMarkForSubkeys();
             if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
                 context.keyComboPool?.DebugPrint();
@@ -727,7 +755,10 @@ namespace KanchokuWS.TableParser
                 Settings.SandSEnablePostShift = false;
             }
 
+            // ここまでで未出力なノードを OutputLines に書き出す
             outputNewLines();
+
+            // ルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる
             addMyCharFunctionInRootStrokeTable();
 
             logger.InfoH($"LEAVE: KeyCombinationPool.Count={context.keyComboPool?.Count}");

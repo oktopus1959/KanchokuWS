@@ -15,7 +15,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.0β8";
+        public static string Version => "1.2.0β9";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -586,6 +586,9 @@ namespace KanchokuWS
         ///// <summary>同時打鍵とみなす重複率<br/>第１打鍵と第２打鍵の重複時間が第２打鍵の時間に対してここで設定したパーセンテージを超えたら、同時打鍵とみなす</summary>
         //public static int CombinationKeyTimeRate { get; set; } = 0;
 
+        /// <summary>同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする</summary>
+        public static bool UseComboExtModKeyAsSingleHit { get; set; } = true;
+
         //------------------------------------------------------------------------------
         // IME連携
         //------------------------------------------------------------------------------
@@ -1009,6 +1012,7 @@ namespace KanchokuWS
             PreRewriteAllowedDelayTimeMs = GetString("preRewriteAllowedDelayTimeMs")._parseInt(200);            // 前置書き換え許容遅延タイム
             UseCombinationKeyTimer1 = GetString("useCombinationKeyTimer1")._parseBool(true);                    // 同時打鍵判定用タイマーを使用する
             UseCombinationKeyTimer2 = GetString("useCombinationKeyTimer2")._parseBool(true);                    // 同時打鍵判定用タイマーを使用する
+            UseComboExtModKeyAsSingleHit = GetString("useComboExtModKeyAsSingleHit")._parseBool(true);          // 同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする
 
             //-------------------------------------------------------------------------------------
             // IME連携

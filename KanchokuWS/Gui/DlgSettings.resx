@@ -246,6 +246,16 @@ extraInfo の値が当ツールの設定したものだけを無視するよう�
 できます。ただし、元々競合していなかったツールからの出力を、当ツールが
 無視することになる可能性もあるので、試行しながら設定してください。</value>
   </data>
+  <data name="checkBox_useComboExtModKeyAsSingleHit.ToolTip" xml:space="preserve">
+    <value>この項目をチェックすると、テーブルファイルで「変換」キーや「無変換」キーを
+同時打鍵キーとして設定している場合でも、単打の場合は、本来のキーと
+して機能するようになります。
+
+例： NICOLA(親指シフト)で「無変換」「変換」を親指シフトキーに割り当て
+ている場合に、それらのキーを単打した場合は、本来の「無変換」「変換」
+キーとして機能する。(たとえば、IMEの OFF/ON など)
+</value>
+  </data>
   <data name="comboBox_SandSAssignedPlane.ToolTip" xml:space="preserve">
     <value>SandS を割り当てるシフト面を選択します。
 

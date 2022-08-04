@@ -738,6 +738,7 @@ namespace KanchokuWS.Gui
             checkBox_combinationKeyTimeOnlyAfterSecond.Checked = Settings.CombinationKeyMinTimeOnlyAfterSecond;
             checkBox_useCombinationKeyTimer1.Checked = Settings.UseCombinationKeyTimer1;
             checkBox_useCombinationKeyTimer2.Checked = Settings.UseCombinationKeyTimer2;
+            checkBox_useComboExtModKeyAsSingleHit.Checked = Settings.UseComboExtModKeyAsSingleHit;
             textBox_preRewriteAllowedDelayTimeMs.Text = $"{Settings.PreRewriteAllowedDelayTimeMs}";
 
             // IME連携
@@ -769,6 +770,7 @@ namespace KanchokuWS.Gui
             checkerImeCombo.Add(checkBox_combinationKeyTimeOnlyAfterSecond);
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer1);
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer2);
+            checkerImeCombo.Add(checkBox_useComboExtModKeyAsSingleHit);
             checkerImeCombo.Add(textBox_preRewriteAllowedDelayTimeMs);
 
             // IME連携
@@ -806,6 +808,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("combinationKeyTimeOnlyAfterSecond", checkBox_combinationKeyTimeOnlyAfterSecond.Checked);
             Settings.SetUserIni("useCombinationKeyTimer1", checkBox_useCombinationKeyTimer1.Checked);
             Settings.SetUserIni("useCombinationKeyTimer2", checkBox_useCombinationKeyTimer2.Checked);
+            Settings.SetUserIni("useComboExtModKeyAsSingleHit", checkBox_useComboExtModKeyAsSingleHit.Checked);
             Settings.SetUserIni("preRewriteAllowedDelayTimeMs", textBox_preRewriteAllowedDelayTimeMs.Text.Trim());
 
             // IME連携
