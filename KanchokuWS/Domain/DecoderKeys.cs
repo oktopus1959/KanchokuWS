@@ -161,7 +161,9 @@ namespace KanchokuWS
         public const int RIGHT_ARROW_DECKEY = LEFT_ARROW_DECKEY + 1;
         public const int PAUSE_DECKEY = RIGHT_ARROW_DECKEY + 1;
         public const int SCR_LOCK_DECKEY = PAUSE_DECKEY + 1;
-        public const int RIGHT_SHIFT_DECKEY = SCR_LOCK_DECKEY + 1;
+        public const int IME_ON_DECKEY = SCR_LOCK_DECKEY + 1;
+        public const int IME_OFF_DECKEY = IME_ON_DECKEY + 1;
+        public const int RIGHT_SHIFT_DECKEY = IME_OFF_DECKEY + 1;
         public const int SHIFT_TAB_DECKEY = RIGHT_SHIFT_DECKEY + 1;
 
         public const int CTRL_ESC_DECKEY = CTRL_FUNC_DECKEY_START;

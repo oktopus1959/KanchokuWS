@@ -121,7 +121,7 @@ namespace KanchokuWS
 
     public static class VirtualKeys
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         //public const uint BACK = 0x08;
         public const uint CONTROL = 0x11;
@@ -153,8 +153,8 @@ namespace KanchokuWS
         /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)</summary>
         private static uint[] vkeyArrayFuncKeys = {
             /*Esc*/ 0x1b, /*半/全*/ 0xf3, /*Tab*/ 0x09, /*Caps*/ 0x14, /*英数*/ 0xf0, /*無変換*/ 0x1d, /*変換*/ 0x1c, /*かな*/ 0xf2, /*BS*/ 0x08, /*Enter*/ 0x0d,
-            /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21, /*PgDn*/ 0x22, /*↑*/ 0x26, /*↓*/ 0x28, /*←*/ 0x25, /*→*/ 0x27, /*Rshift*/ RSHIFT,
-            /*ScrLock*/ 0x91, /*Pause*/ 0x13,
+            /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21, /*PgDn*/ 0x22, /*↑*/ 0x26, /*↓*/ 0x28, /*←*/ 0x25, /*→*/ 0x27,
+            /*Rshift*/ RSHIFT, /*ScrLock*/ 0x91, /*Pause*/ 0x13, /*IME ON*/ 0x16, /*IME OFF*/ 0x1a,
         };
 
         private const uint capsVkeyWithShift = 0x14;    // 日本語キーボードだと Shift + 0x14 で CapsLock になる
@@ -189,6 +189,8 @@ namespace KanchokuWS
                 case "rshift": n = 20; break;
                 case "scrlock": n = 21; break;
                 case "pause": n = 22; break;
+                case "imeon": n = 23; break;
+                case "imeoff": n = 24; break;
                 default: n = -1; break;
             }
             return n;
@@ -635,6 +637,20 @@ namespace KanchokuWS
         /// </summary>
         private static Dictionary<uint, int> ModConvertedDecKeyFromVKeyCombo;
 
+        /// <summary>
+        /// xfer, nfer など特殊キーに割り当てられている DecoderKey を登録
+        /// </summary>
+        /// <param name="deckey"></param>
+        public static void AddSpecialDeckey(string name, int deckey)
+        {
+            if (deckey > 0) {
+                uint vk = GetFuncVkeyByName(name);
+                if (vk > 0) {
+                    VKeyComboFromDecKey[deckey] = new VKeyCombo(0, vk);
+                }
+            }
+        }
+
         public static void AddModifiedDeckey(int deckey, uint mod, uint vkey)
         {
             logger.DebugH(() => $"deckey={deckey:x}H({deckey}), mod={mod:x}H, vkey={vkey:x}H({vkey})");
@@ -904,6 +920,8 @@ namespace KanchokuWS
             {"rshift", DecoderKeys.RIGHT_SHIFT_DECKEY},
             {"scrlock", DecoderKeys.SCR_LOCK_DECKEY},
             {"pause", DecoderKeys.PAUSE_DECKEY},
+            {"imeon", DecoderKeys.IME_ON_DECKEY},
+            {"imeoff", DecoderKeys.IME_OFF_DECKEY},
             {"space", DecoderKeys.STROKE_SPACE_DECKEY},
             {"shiftspace", DecoderKeys.SHIFT_SPACE_DECKEY},
             {"directspace", DecoderKeys.DIRECT_SPACE_DECKEY},
@@ -965,6 +983,8 @@ namespace KanchokuWS
             {DecoderKeys.DOWN_ARROW_DECKEY, "Down"},
             {DecoderKeys.SCR_LOCK_DECKEY, "ScrLock"},
             {DecoderKeys.PAUSE_DECKEY, "Pause"},
+            {DecoderKeys.IME_ON_DECKEY, "ImeOn"},
+            {DecoderKeys.IME_OFF_DECKEY, "ImeOff"},
             {DecoderKeys.RIGHT_SHIFT_DECKEY, "Rshift"},
             {DecoderKeys.STROKE_SPACE_DECKEY, "Space"},
             {DecoderKeys.SHIFT_SPACE_DECKEY, "ShiftSpace"},
@@ -1148,6 +1168,10 @@ namespace KanchokuWS
                                         } else {
                                             targetDeckey = -1;  // invalid line
                                         }
+                                    } else {
+                                        // 特殊キーだったので、漢直コードから変換テーブルに登録しておく
+                                        logger.DebugH(() => $"AddSpecialDeckey: name={name}, targetDeckey={targetDeckey:x}H({targetDeckey})");
+                                        AddSpecialDeckey(name, targetDeckey);
                                     }
                                 }
 

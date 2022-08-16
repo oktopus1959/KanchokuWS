@@ -194,18 +194,19 @@ convert(J<50>K<80>jk) = き
 ### NICOLA ###
 loadTable(tables/nicola.tbl)
 comboMaxTime(200)
-convert(J<50>{nfer}j[nfer]) = ど
-#convert(J<80>{nfer}Kj[nfer]k) = とぎ
+comboMinTime(70)
+convert(J<50>{nfer}<80>j[nfer]) = ど
+#convert(J<80>{nfer}Kj<80>[nfer]k) = とぎ
 
 comboMaxTime(100)
-convert(J<200>{nfer}j[nfer]) = と
-convert(J<200>{nfer}[nfer]j) = と
+convert(J<200>{nfer}<80>j[nfer]) = と!{nfer}
+convert(J<200>{nfer}[nfer]j) = ど
 convert({nfer}<200>Jj[nfer]) = ど
-convert({nfer}<200>J[nfer]j) = と
+convert({nfer}<200>J[nfer]j) = !{nfer}と
 
 enableTimer1()
-convert(J<50>{nfer}j[nfer]) = ど
-convert(J<200>{nfer}[nfer]j) = と
+convert(J<50>{nfer}<80>j[nfer]) = ど
+convert(J<200>{nfer}[nfer]j) = と!{nfer}
 
 ### 月光(連続シフト) ###
 loadTable(tables/gekko-20211106.pfx.tbl)
