@@ -204,6 +204,11 @@ namespace KanchokuWS
 
         public static uint GetFuncVkeyByName(string name)
         {
+            if (name._toLower().StartsWith("vk")) {
+                // "VKxx" のケース
+                int vk = name._safeSubstring(2)._parseHex();
+                if (vk > 0 && vk < 0xff) return (uint)vk;
+            }
             return vkeyArrayFuncKeys._getNth(GetFuncKeyIndexByName(name));
         }
 
