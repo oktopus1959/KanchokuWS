@@ -250,7 +250,9 @@ namespace KanchokuWS.TableParser
         public void AddRewritePair(string tgtStr, string outStr, StrokeTableNode pNode)
         {
             logger.DebugH(() => $"CALLED: key={tgtStr}, value={outStr}, pNode={(pNode != null ? pNode.getString() : "none")}");
-            upsertRewrteMap(tgtStr, new RewriteInfo(outStr, pNode));
+            if (tgtStr._notEmpty() && outStr._notEmpty()) {
+                upsertRewrteMap(tgtStr, new RewriteInfo(outStr, pNode));
+            }
         }
 
         public override void OutputLine(List<string> outLines, string leaderStr)
@@ -259,12 +261,14 @@ namespace KanchokuWS.TableParser
                 OutputFlag = true;
                 outLines.Add(leaderStr + "@{" + myInfo.OutputStr);
                 foreach (var pair in rewriteMap) {
-                    if (pair.Value.SubTable != null) {
-                        outLines.Add($"{pair.Key}\t{{");
-                        pair.Value.SubTable.OutputLine(outLines, "");
-                        outLines.Add("}");
-                    } else if (pair.Value.OutputStr._notEmpty()) {
-                        outLines.Add($"{pair.Key}\t{pair.Value.OutputStr}");
+                    if (pair.Key._notEmpty()) {
+                        if (pair.Value.SubTable != null) {
+                            outLines.Add($"{pair.Key}\t{{");
+                            pair.Value.SubTable.OutputLine(outLines, "");
+                            outLines.Add("}");
+                        } else if (pair.Value.OutputStr._notEmpty()) {
+                            outLines.Add($"{pair.Key}\t{pair.Value.OutputStr}");
+                        }
                     }
                 }
                 outLines.Add("}");
