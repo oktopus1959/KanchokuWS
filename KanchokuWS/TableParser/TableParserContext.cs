@@ -51,6 +51,10 @@ namespace KanchokuWS.TableParser
             get { return context.shiftKeyKind; }
             set { context.shiftKeyKind = value; }
         }
+        protected bool bComboEffectiveAlways {
+            get { return context.bComboEffectiveAlways; }
+            set { context.bComboEffectiveAlways = value; }
+        }
         protected Dictionary<string, List<string>> linesMap => context.linesMap;
         protected KeyCombinationPool keyComboPool => context.keyComboPool;
         protected List<string> OutputLines => context.OutputLines;

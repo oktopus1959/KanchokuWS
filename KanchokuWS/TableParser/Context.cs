@@ -730,6 +730,9 @@ namespace KanchokuWS.TableParser
         // 同時打鍵によるシフト種別
         public ShiftKeyKind shiftKeyKind = ShiftKeyKind.None;
 
+        // 同時打鍵がいつでも有効か(デコーダがOFFでも)
+        public bool bComboEffectiveAlways = false;
+
         // 定義列マップ
         public Dictionary<string, List<string>> linesMap = new Dictionary<string, List<string>>();
 

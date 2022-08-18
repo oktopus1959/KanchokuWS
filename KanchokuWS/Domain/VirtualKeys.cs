@@ -121,7 +121,7 @@ namespace KanchokuWS
 
     public static class VirtualKeys
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         //public const uint BACK = 0x08;
         public const uint CONTROL = 0x11;

@@ -193,10 +193,14 @@ namespace KanchokuWS.TableParser
                                 ArgumentError(CurrentStr);
                                 break;
                         }
+                    } else if (lcStr == "enablealways" || lcStr == "enabledalways") {
+                        // #enableAlways: デコーダOFFでも有効
+                        bComboEffectiveAlways = true;
                     } else if (lcStr == "end") {
                         // #end: 各種ディレクティブの終了
                         ReadWord();
-                        switch (CurrentStr._toLower()._substring(0, 5)) {
+                        var strLower = CurrentStr._toLower();
+                        switch (strLower._substring(0, 5)) {
                             case "combi":
                             case "overl":
                                 shiftKeyKind = ShiftKeyKind.None;
@@ -208,6 +212,12 @@ namespace KanchokuWS.TableParser
                             case "__inc":
                                 logger.DebugH(() => $"END INCLUDE/LOAD: lineNumber={LineNumber}");
                                 EndInclude();
+                                break;
+                            case "enabl":
+                                if (strLower._endsWith("always")) {
+                                    bComboEffectiveAlways = false;
+                                    if (keyComboPool != null) keyComboPool.HasComboEffectiveAlways = true;
+                                }
                                 break;
                         }
                     } else if (lcStr == "sands") {

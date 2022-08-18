@@ -18,6 +18,12 @@ namespace KanchokuWS.CombinationKeyStroke
         SecondOrLaterChar
     }
 
+    public class KeyHandlerResult
+    {
+        public List<int> list;
+        public bool bUncoditional;
+    }
+
     /// <summary>
     /// キー入力の時系列に対して、同時打鍵などの判定を行って、出力文字列を決定する
     /// </summary>
@@ -35,6 +41,9 @@ namespace KanchokuWS.CombinationKeyStroke
         int decKeyForTimerA = -1;
         int decKeyForTimerB = -1;
 
+        bool isDecoderOnA = false;
+        bool isDecoderOnB = false;
+
         TimerKind kindForTimerA = TimerKind.None;
         TimerKind kindForTimerB = TimerKind.None;
 
@@ -45,7 +54,7 @@ namespace KanchokuWS.CombinationKeyStroke
             if (decKeyForTimerA >= 0) {
                 int dk = decKeyForTimerA;
                 decKeyForTimerA = -1;
-                KeyUp(dk, kindForTimerA);
+                KeyUp(dk, isDecoderOnA, kindForTimerA);
             }
         }
 
@@ -56,11 +65,11 @@ namespace KanchokuWS.CombinationKeyStroke
             if (decKeyForTimerB >= 0) {
                 int dk = decKeyForTimerB;
                 decKeyForTimerB = -1;
-                KeyUp(dk, kindForTimerB);
+                KeyUp(dk, isDecoderOnB, kindForTimerB);
             }
         }
 
-        public Action<List<int>> KeyProcHandler { get; set; }
+        public Action<List<int>, bool> KeyProcHandler { get; set; }
 
         public void InitializeTimer(FrmKanchoku frm)
         {
@@ -74,19 +83,21 @@ namespace KanchokuWS.CombinationKeyStroke
             timerB.Elapsed += timerB_elapsed;
         }
 
-        void startTimer(int ms, int decKey, TimerKind kind)
+        void startTimer(int ms, int decKey, bool bDecoderOn, TimerKind kind)
         {
             logger.DebugH(() => $"CALLED: ms={ms}, decKey={decKey}");
             if (ms <= 0) return;
 
             if (timerA != null && !timerA.Enabled) {
                 decKeyForTimerA = decKey;
+                isDecoderOnA = bDecoderOn;
                 kindForTimerA = kind;
                 timerA.Interval = ms;
                 timerA.Start();
                 logger.DebugH(() => $"TIMER1 STARTED");
             } else if (timerB != null && !timerB.Enabled) {
                 decKeyForTimerB = decKey;
+                isDecoderOnB = bDecoderOn;
                 kindForTimerB = kind;
                 timerB.Interval = ms;
                 timerB.Start();
@@ -179,7 +190,7 @@ namespace KanchokuWS.CombinationKeyStroke
             strokeList.Clear();
         }
 
-        private Queue<Func<List<int>>> procQueue = new Queue<Func<List<int>>>();
+        private Queue<Func<KeyHandlerResult>> procQueue = new Queue<Func<KeyHandlerResult>>();
 
         private bool bHandling = false;
 
@@ -190,8 +201,8 @@ namespace KanchokuWS.CombinationKeyStroke
             bHandling = true;
             try {
                 while (procQueue.Count > 0) {
-                    var list = procQueue.Dequeue().Invoke();
-                    KeyProcHandler?.Invoke(list);
+                    var result = procQueue.Dequeue().Invoke();
+                    KeyProcHandler?.Invoke(result.list, result.bUncoditional);
                 }
             } catch (Exception ex) {
                 logger.Error(ex._getErrorMsg());
@@ -205,16 +216,16 @@ namespace KanchokuWS.CombinationKeyStroke
         /// </summary>
         /// <param name="decKey">押下されたキーのデコーダコード</param>
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
-        public void KeyDown(int decKey, Action<int> handleComboKeyRepeat)
+        public void KeyDown(int decKey, bool bDecoderOn, Action<int> handleComboKeyRepeat)
         {
             DateTime dtNow = DateTime.Now;
             frmMain?.WriteStrokeLog(decKey, dtNow, true, strokeList.IsEmpty());
 
-            procQueue.Enqueue(() => keyDown(decKey, dtNow, handleComboKeyRepeat));
+            procQueue.Enqueue(() => keyDown(decKey, dtNow, bDecoderOn, handleComboKeyRepeat));
             HandleQueue();
         }
 
-        public List<int> keyDown(int decKey, DateTime dt, Action<int> handleComboKeyRepeat)
+        public KeyHandlerResult keyDown(int decKey, DateTime dt, bool bDecoderOn, Action<int> handleComboKeyRepeat)
         {
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
 
@@ -222,6 +233,7 @@ namespace KanchokuWS.CombinationKeyStroke
             prevDownDecKey = decKey;
 
             List<int> result = null;
+            bool bUnconditional = false;
 
             try {
                 var stroke = new Stroke(decKey, dt);
@@ -236,8 +248,15 @@ namespace KanchokuWS.CombinationKeyStroke
                     // キーリピートのチェック
                     if (strokeList.DetectKeyRepeat(stroke)) {
                         // キーリピートが発生した場合
-                        if (stroke.IsComboShift && handleComboKeyRepeat != null) {
-                            // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出す
+                        // キーリピート時は、リピートの終わりに1回だけ KeyUp が発生するので、そこで strokeListのUplistがクリアされる
+                        logger.DebugH("key repeatable detected");
+                        if (!bDecoderOn) {
+                            // DecoderがOFFのときはキーリピート扱いとする
+                            logger.DebugH("Decoder OFF, so repeat key");
+                            result = Helper.MakeList(decKey);
+                        } else if (stroke.IsComboShift && handleComboKeyRepeat != null) {
+                            // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出すだけで、キーリピートは行わない(つまりシフト扱い)
+                            logger.DebugH("Call ComboKeyRepeat Handler");
                             handleComboKeyRepeat(stroke.ComboShiftDecKey);
                         } else if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
                             // キーリピートが可能なキー
@@ -259,18 +278,18 @@ namespace KanchokuWS.CombinationKeyStroke
                                 if (!stroke.IsComboShift) {
                                     logger.DebugH(() => $"UseCombinationKeyTimer1={Settings.UseCombinationKeyTimer1}");
                                     // 非同時打鍵キーの第1打鍵ならタイマーを起動する
-                                    if (Settings.UseCombinationKeyTimer1) startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey), TimerKind.FirstStroke);
+                                    if (Settings.UseCombinationKeyTimer1) startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn, TimerKind.FirstStroke);
                                 }
                             } else {
                                 // 第2打鍵以降の場合は、同時打鍵チェック
                                 bool bTimer = false;
-                                result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer);
+                                result = strokeList.GetKeyCombinationWhenKeyDown(bDecoderOn, out bTimer, out bUnconditional);
                                 if (result._isEmpty()) {
                                     if (bTimer || strokeList.IsSuccessiveShift2ndKey()) {
                                         logger.DebugH(() => $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}, TimerKind={(bTimer ? TimerKind.JustTwoComboKey : TimerKind.SecondOrLaterChar)}");
                                         // タイマーが有効であるか、または同時打鍵シフト後の第2打鍵であって同時打鍵が未判定だったらタイマーを起動する
                                         if (Settings.UseCombinationKeyTimer2) {
-                                            startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey),
+                                            startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn,
                                                 bTimer ? TimerKind.JustTwoComboKey : TimerKind.SecondOrLaterChar);
                                         }
                                     }
@@ -294,7 +313,7 @@ namespace KanchokuWS.CombinationKeyStroke
                 setPreRewriteTime(result.Last());
             }
 
-            return result;
+            return new KeyHandlerResult() { list = result, bUncoditional = bUnconditional };
         }
 
         /// <summary>
@@ -303,7 +322,7 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <param name="decKey">解放されたキーのデコーダコード</param>
         /// <param name="timerKind">1 .. forFirstCharbyTimer, 2..forSecondCharByTimer</param>
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
-        public void KeyUp(int decKey, TimerKind timerKind = 0)
+        public void KeyUp(int decKey, bool bDecoderOn, TimerKind timerKind = 0)
         {
             DateTime dtNow = DateTime.Now;
             logger.DebugH(() => $"\ndecKey={decKey}, forChar={timerKind}, {strokeList.ToDebugString()}");
@@ -313,7 +332,7 @@ namespace KanchokuWS.CombinationKeyStroke
                 (timerKind == TimerKind.SecondOrLaterChar && strokeList.UnprocListCount == 1))                              // タイマーによる２文字目キーUPのとき
             {
                 frmMain?.WriteStrokeLog(decKey, dtNow, false, false, bTimer);
-                procQueue.Enqueue(() => keyUp(decKey, dtNow, bTimer));
+                procQueue.Enqueue(() => keyUp(decKey, dtNow, bTimer, bDecoderOn));
                 HandleQueue();
             } else if (bTimer) {
                 logger.DebugH(() => $"TIMER IGNORED");
@@ -321,23 +340,24 @@ namespace KanchokuWS.CombinationKeyStroke
             }
         }
 
-        public List<int> keyUp(int decKey, DateTime dt, bool bTimer)
+        public KeyHandlerResult keyUp(int decKey, DateTime dt, bool bTimer, bool bDecoderOn)
         {
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
 
             checkPreRewriteTime(decKey);
 
-            var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, dt);
+            bool bUnconditional = false;
+            var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, dt, bDecoderOn, out bUnconditional);
 
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}");
 
             if (!bTimer && strokeList.IsEmpty()) frmMain?.FlushStrokeLog();
 
-            if (result._notEmpty()) {
+            if (result._notEmpty() && bDecoderOn) {
                 setPreRewriteTime(result.Last());
             }
 
-            return result;
+            return new KeyHandlerResult() { list = result, bUncoditional = bUnconditional };
         }
 
         /// <summary>

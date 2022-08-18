@@ -46,7 +46,7 @@ namespace KanchokuWS.TableParser
                 if (dk >= 0) {
                     if (rootTableNode.getNth(dk) == null && rootTableNode.getNth(dk + DecoderKeys.COMBO_DECKEY_START) != null) {
                         // 単打設定が存在せず、同時打鍵の先頭キーになっている場合は、単打設定を追加する
-                        makeCombinationKeyCombo(Helper.MakeList(dk), 0, true);  // 単打指定
+                        makeCombinationKeyCombo(Helper.MakeList(dk), 0, true, false);  // 単打指定
                         OutputLines.Add($"-{dk}>\"!{{{keyName}}}\"");
                     }
                 }
@@ -514,7 +514,7 @@ namespace KanchokuWS.TableParser
                 }
 
                 if (isInCombinationBlock || list.Count == 1) {
-                    makeCombinationKeyCombo(list, shiftOffset, hasStr);
+                    makeCombinationKeyCombo(list, shiftOffset, hasStr, bComboEffectiveAlways);
                 } else {
                     if (keyComboPool != null) keyComboPool.ContainsSequentialShiftKey = true;
                     for (int i = 0; i < list.Count - 1; ++i) {
@@ -590,12 +590,12 @@ namespace KanchokuWS.TableParser
         }
 
         // 同時打鍵列の組合せを作成して登録しておく
-        void makeCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr)
+        void makeCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr, bool effectiveAlways)
         {
             logger.DebugH(() => $"{deckeyList._keyString()}={CurrentStr}, shiftOffset={shiftOffset}, hasStr={hasStr}");
             var comboKeyList = deckeyList.Select(x => makeShiftedDecKey(x, shiftOffset)).ToList();      // 先頭キーのオフセットに合わせる
             keyComboPool?.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
-            keyComboPool?.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr);
+            keyComboPool?.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr, effectiveAlways);
         }
 
         void addSequentialShiftKey(int decKey, int shiftOffset)

@@ -80,6 +80,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool IsPrefixedOrSequentialShift => !ContainsUnorderedShiftKey && (ContainsSuccessiveShiftKey || ContainsSequentialShiftKey);
 
+        /// <summary>(デコーダOFFでも)常に有効な同時打鍵列があるか</summary>
+        public bool HasComboEffectiveAlways { get; set; }
+
         /// <summary>
         /// Repeatableなキー
         /// </summary>        
@@ -91,6 +94,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             comboSubKeys.Clear();
             ComboShiftKeys.Clear();
             MiscKeys.Clear();
+            HasComboEffectiveAlways = false;
         }
 
         /// <summary>
@@ -99,11 +103,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <param name="deckeyList">デコーダ向けのキーリスト</param>
         /// <param name="comboKeyList">同時打鍵検索用キーのリスト</param>
         /// <param name="shiftKind">Prefixの場合は、先頭キーを固定した順列を生成する</param>
-        public void AddEntry(List<int> deckeyList, List<int> comboKeyList, ComboKind shiftKind, bool hasStr)
+        public void AddEntry(List<int> deckeyList, List<int> comboKeyList, ComboKind shiftKind, bool hasStr, bool effectiveAlways)
         {
             logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(deckeyList)}, comboShiftedKeyList={KeyCombinationHelper.EncodeKeyList(comboKeyList)}, ShiftKeyKind={shiftKind}, HasString={hasStr}");
             if (deckeyList._notEmpty() && comboKeyList._notEmpty()) {
-                var keyCombo = new KeyCombination(deckeyList, comboKeyList, shiftKind, hasStr);
+                var keyCombo = new KeyCombination(deckeyList, comboKeyList, shiftKind, hasStr, effectiveAlways);
                 void setKeyCombo(string k)
                 {
                     if (hasStr || !keyComboDict.ContainsKey(k)) {
@@ -181,7 +185,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 if (keyCombo == null) {
                     // 存在していなかった部分キーを追加
                     if (i < 500) logger.DebugH($"Add non terminal subkey: {key}");
-                    keyComboDict[key] = keyCombo = new KeyCombination(null, null, ComboKind.None, false);
+                    keyComboDict[key] = keyCombo = new KeyCombination(null, null, ComboKind.None, false, false);
                 }
                 keyCombo.SetNonTerminal();
                 ++i;
@@ -293,10 +297,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
             List<string> lines = new List<string>();
+            lines.Add($"HasComboEffectiveAlways={HasComboEffectiveAlways}");
             foreach (var pair in keyComboDict) {
                 var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
                 var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
-                lines.Add($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal}");
+                lines.Add($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal} Always={pair.Value.IsEffectiveAlways}");
             }
             foreach (var pair in ComboShiftKeys.Pairs) {
                 lines.Add($"ShiftKey: {pair.Key}={pair.Value}");

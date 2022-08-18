@@ -221,7 +221,7 @@ namespace KanchokuWS.Gui
             }
 
             var sb = new StringBuilder();
-            void callDecoder(List<int> list)
+            void callDecoder(List<int> list, bool bUnconditional)
             {
                 if (list._notEmpty()) {
                     foreach (var dk in list) {
@@ -262,12 +262,12 @@ namespace KanchokuWS.Gui
 
             void keyDown(int decKey)
             {
-                CombinationKeyStroke.Determiner.Singleton.KeyDown(decKey + shiftOffset, null);
+                CombinationKeyStroke.Determiner.Singleton.KeyDown(decKey + shiftOffset, true, null);
             }
 
             void keyUp(int decKey)
             {
-                CombinationKeyStroke.Determiner.Singleton.KeyUp(decKey + shiftOffset);
+                CombinationKeyStroke.Determiner.Singleton.KeyUp(decKey + shiftOffset, true);
             }
 
             var oldFunc = CombinationKeyStroke.Determiner.Singleton.KeyProcHandler;

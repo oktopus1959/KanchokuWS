@@ -917,13 +917,14 @@ namespace KanchokuWS.Handler
             //}
             while (vkeyQueue.Count > 0) {
                 logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}, bDecoderOn={bDecoderOn}, mod={mod:x}H, kanchokuCode={kanchokuCode}");
+                var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
                 kanchokuCode = vkeyQueue.Peek();
-                if (bDecoderOn && mod == 0 &&
+                if ((bDecoderOn || currentPool.HasComboEffectiveAlways) && mod == 0 &&
                     kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END &&
                     ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM ||
-                    KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool.GetEntry(kanchokuCode) != null)) {    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする
+                    currentPool.GetEntry(kanchokuCode) != null)) {    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする
                     // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
-                    CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode, (decKey) => handleComboKeyRepeat(vkey, decKey));
+                    CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode, bDecoderOn, (decKey) => handleComboKeyRepeat(vkey, decKey));
                     result = true;
                 } else {
                     result = invokeHandler(kanchokuCode, mod);
@@ -1050,10 +1051,10 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private void keyboardUpHandler(bool bDecoderOn, int vkey, bool leftCtrl, bool rightCtrl, uint modFlag)
         {
-            if (bDecoderOn && !leftCtrl && !rightCtrl && modFlag == 0) {
+            if ((bDecoderOn || CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool.HasComboEffectiveAlways) && !leftCtrl && !rightCtrl && modFlag == 0) {
                 int deckey = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
                 if (deckey >= 0 && deckey < DecoderKeys.STROKE_DECKEY_END) {
-                    CombinationKeyStroke.Determiner.Singleton.KeyUp(deckey);
+                    CombinationKeyStroke.Determiner.Singleton.KeyUp(deckey, bDecoderOn);
                 }
             }
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={false}");
@@ -1061,10 +1062,10 @@ namespace KanchokuWS.Handler
 
         public void SetInvokeHandlerToDeterminer()
         {
-            CombinationKeyStroke.Determiner.Singleton.KeyProcHandler = (keyList) => invokeHandlerForKeyList(keyList);
+            CombinationKeyStroke.Determiner.Singleton.KeyProcHandler = (keyList, bUncond) => invokeHandlerForKeyList(keyList, bUncond);
         }
 
-        private bool invokeHandlerForKeyList(List<int> keyList)
+        private bool invokeHandlerForKeyList(List<int> keyList, bool bUnconditional)
         {
             logger.Debug(() => $"CALLED: keyList.Count={keyList._safeCount()}");
             if (keyList._isEmpty()) return true;
@@ -1073,7 +1074,7 @@ namespace KanchokuWS.Handler
             bool result = true;
             if (keyList._notEmpty()) {
                 foreach (var k in keyList) {
-                    result = invokeHandler(k, 0);
+                    result = invokeHandler(k, 0, bUnconditional);
                 }
             }
             logger.DebugH(() => $"LEAVE: result={result}");
@@ -1083,9 +1084,11 @@ namespace KanchokuWS.Handler
         /// <summary> キーボードハンドラの処理中か </summary>
         private bool bInvokeHandlerBusy = false;
 
-        private bool invokeHandler(int kanchokuCode, uint mod)
+        private bool invokeHandler(int kanchokuCode, uint mod, bool bUnconditional = false)
         {
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), mod={mod:x}H({mod}), UNCONDITIONAL_DECKEY_OFFSET={DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET}, UNCONDITIONAL_DECKEY_END={DecoderKeys.UNCONDITIONAL_DECKEY_END}");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() =>
+                $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), mod={mod:x}H({mod}), bUnconditional={bUnconditional}, " +
+                $"UNCONDITIONAL_DECKEY_OFFSET={DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET}, UNCONDITIONAL_DECKEY_END={DecoderKeys.UNCONDITIONAL_DECKEY_END}");
             if (bInvokeHandlerBusy) return false;
 
             bInvokeHandlerBusy = true;
@@ -1117,6 +1120,9 @@ namespace KanchokuWS.Handler
                     default:
                         if (kanchokuCode >= DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET && kanchokuCode < DecoderKeys.UNCONDITIONAL_DECKEY_END) {
                             return InvokeDecoderUnconditionally?.Invoke(kanchokuCode - DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET, mod) ?? false;
+                        }
+                        if (bUnconditional) {
+                            return InvokeDecoderUnconditionally?.Invoke(kanchokuCode, mod) ?? false;
                         }
                         if (kanchokuCode >= 0) {
                             return FuncDispatcher?.Invoke(kanchokuCode, mod) ?? false;

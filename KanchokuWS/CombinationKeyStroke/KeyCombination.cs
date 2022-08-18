@@ -37,21 +37,25 @@ namespace KanchokuWS.CombinationKeyStroke
         //public bool IsOneshot => ComboShiftedDecoderKeyList.ShiftKind == ShiftKeyKind.OneshotShift;
         public bool IsOneshotShift => ShiftKind == ShiftKeyKind.UnorderedOneshotShift;
 
+        /// <summary>デコーダがOFFの時にも有効な同時打鍵か</summary>
+        public bool IsEffectiveAlways { get; private set; } = false;
+
         /// <summary>当同時打鍵組合せに割り当てられた出力文字列を得るためにデコーダに送信する DecoderKey のリスト</summary>
         public List<int> DecKeyList { get; private set; }
 
-        public List<int> ComboKeyList { get; private set; }
+        private List<int> _comboKeyList { get; set; }
 
         /// <summary>
         /// コンストラクタ(keyListがnullの場合は、同時打鍵集合の部分集合であることを示す)
         /// </summary>
-        public KeyCombination(List<int> decKeyList, List<int> comboKeyList, ShiftKeyKind shiftKind, bool hasStr)
+        public KeyCombination(List<int> decKeyList, List<int> comboKeyList, ShiftKeyKind shiftKind, bool hasStr, bool effectiveAlways)
         {
             //ComboShiftedDecoderKeyList.Add(decKeyList, shiftKind);
             DecKeyList = decKeyList;
-            ComboKeyList = comboKeyList;
+            _comboKeyList = comboKeyList;
             ShiftKind = shiftKind;
             HasString = hasStr;
+            IsEffectiveAlways = effectiveAlways;
         }
 
         public string DecKeysDebugString()
@@ -61,7 +65,7 @@ namespace KanchokuWS.CombinationKeyStroke
 
         public string ComboKeysDebugString()
         {
-            return ComboKeyList._keyString()._orElse("(empty)");
+            return _comboKeyList._keyString()._orElse("(empty)");
         }
 
     }
