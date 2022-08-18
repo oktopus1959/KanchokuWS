@@ -19,6 +19,7 @@ namespace KanchokuWS.TableParser
         NEW_LINE,
         STRING,         // "str"
         BARE_STRING,    // str
+        STRING_PAIR,    // str:str
         FUNCTION,       // @?
         SLASH,          // /
         ARROW,          // -n>

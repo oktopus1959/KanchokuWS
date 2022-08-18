@@ -199,6 +199,8 @@ Ctrl修飾の場合は、*keyName* として `A`～`Z` を用いることもで�
 |無変換|Nfer|
 |変換|Xfer|
 |ひらがな|Kana, Hiragana|
+|IME オン|ImeOn|
+|IME オフ|ImeOff|
 |BackSpace| BS, Back, BackSpace|
 |Enter|Enter|
 |Pause|Pause|
@@ -216,3 +218,18 @@ Ctrl修飾の場合は、*keyName* として `A`～`Z` を用いることもで�
 どのキーを押したときにどのような仮想キーコードが発生するかは、同梱の `KeyboardHookMonitor`
 を使って調べられます。
 [こちら](https://github.com/oktopus1959/KeyboardHookMonitor#readme)に説明があります。
+
+### 任意の仮想キーコードの使用
+「IME オン」(0x16)、「IME オフ」(0x1a)、「F13」(0x7c) のように、
+一般的な物理キーボードには存在しないキーを出力したい場合は、
+`VKxx` または `vkxx` (`xx` のところは16進数)という名前を指定してください。
+
+例： HとJの同時押しで「IMEオン」を出力する
+
+```
+#combination oneShot
+-$H,$J>"!{vk16}"
+#end combination
+```
+
+（なお、「IME オン」「IME オフ」については、`ImeOn` `ImeOff` というキー名も用意してあります）

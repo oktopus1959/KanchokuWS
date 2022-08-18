@@ -48,6 +48,8 @@ namespace KanchokuWS.TableParser
 
         protected string pathStr => strokeList.Count > 0 ? strokeList.Select(x => getNthRootNodeString(x))._join("") : "";
 
+        protected string[] StringPair = new string[2];
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -289,7 +291,7 @@ namespace KanchokuWS.TableParser
                     case '"':
                         // 文字列
                         ReadString();
-                        return TOKEN.STRING;
+                        return parseStringPair() ? TOKEN.STRING_PAIR : TOKEN.STRING;
 
                     case '-': {
                         char c = PeekNextChar();
@@ -320,7 +322,7 @@ namespace KanchokuWS.TableParser
 
                     case '&':
                         if (depth != 0) {
-                            ParseError("'%'で始まる前置書き換え記法はテーブルがネストされた位置では使えません。");
+                            ParseError("'&'で始まる前置書き換え記法はテーブルがネストされた位置では使えません。");
                         } else if (parseArrow()) {
                             bRewriteEnabled = true;
                             return TOKEN.REWRITE_POST;
@@ -340,7 +342,7 @@ namespace KanchokuWS.TableParser
 
                     default:
                         ReadBareString(CurrentChar);
-                        if (CurrentStr._notEmpty()) return TOKEN.BARE_STRING;
+                        if (CurrentStr._notEmpty()) return parseStringPair() ? TOKEN.STRING_PAIR : TOKEN.BARE_STRING;
 
                         // エラー
                         ParseError($"getToken: unexpected char: '{CurrentChar}'");
@@ -555,6 +557,43 @@ namespace KanchokuWS.TableParser
                 GetNextChar();
             } else {
                 ParseError($"parseArrowBundle-2: '>' is expected, but {c}");
+            }
+            return true;
+        }
+
+        // 「STRING: STRING」形式
+        bool parseStringPair()
+        {
+            StringPair[0] = CurrentStr;
+
+            char c = '\0';
+            int countSpaces()
+            {
+                int n = 0;
+                while (true) {
+                    c = PeekNextChar(n);
+                    if (c != ' ' && c != '\t') break;
+                    ++n;
+                }
+                return n;
+            }
+
+            int spaceLen = countSpaces();
+            if (c != ':') return false;
+            AdvanceCharPos(spaceLen + 1);   // ':' の直後の位置に移動
+            spaceLen = countSpaces();
+            AdvanceCharPos(spaceLen);       // 空白の直後の位置に移動
+
+            if (PeekNextChar() == '"') {
+                ReadString();
+            } else {
+                ReadBareString();
+            }
+            StringPair[1] = CurrentStr;
+            SkipToEndOfLine();
+            if (StringPair[1]._isEmpty()) {
+                ParseError("Invalid String Pair");
+                return false;
             }
             return true;
         }

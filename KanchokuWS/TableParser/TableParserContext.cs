@@ -55,10 +55,6 @@ namespace KanchokuWS.TableParser
         protected KeyCombinationPool keyComboPool => context.keyComboPool;
         protected List<string> OutputLines => context.OutputLines;
         protected PlaceHolders placeHolders => context.placeHolders;
-        protected bool bRewriteTable {
-            get { return context.bRewriteTable; }
-            set { context.bRewriteTable = value; }
-        }
 
         protected bool bIgnoreWarningAll { get { return context.bIgnoreWarningAll; } set { context.bIgnoreWarningAll = value; } }
         protected bool bIgnoreWarningBraceLevel { get { return context.bIgnoreWarningBraceLevel; } set { context.bIgnoreWarningBraceLevel = value; } }
@@ -92,6 +88,7 @@ namespace KanchokuWS.TableParser
         protected char PeekNextChar(int offset = 0) { return tableLines.PeekNextChar(offset); }
         protected char GetNextChar() { return tableLines.GetNextChar(); }
         protected bool GetNextLine() { return tableLines.GetNextLine(); }
+        protected void AdvanceCharPos(int offset) { tableLines.AdvanceCharPos(offset); }
         protected void SkipToEndOfLine() { tableLines.SkipToEndOfLine(); }
         protected char SkipSpace() { return tableLines.SkipSpace(); }
         protected void RewindChar() { tableLines.RewindChar(); }

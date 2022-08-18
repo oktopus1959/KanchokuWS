@@ -522,6 +522,11 @@ namespace KanchokuWS.TableParser
             return CurrentChar;
         }
 
+        public void AdvanceCharPos(int offset)
+        {
+            nextPos += offset;
+        }
+
         public bool GetNextLine() {
             ++lineNumber;
             if (lineNumber >= tableLines.Count) {
@@ -739,9 +744,6 @@ namespace KanchokuWS.TableParser
 
         // プレースホルダー
         public PlaceHolders placeHolders = new PlaceHolders();
-
-        // 書き換えテーブルが対象
-        public bool bRewriteTable = false;
 
         public bool bIgnoreWarningAll = false;
         public bool bIgnoreWarningBraceLevel = false;

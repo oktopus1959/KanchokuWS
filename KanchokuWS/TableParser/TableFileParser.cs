@@ -244,6 +244,10 @@ namespace KanchokuWS.TableParser
                         addLeafNode(currentToken, idx);
                         break;
 
+                    case TOKEN.STRING_PAIR:
+                        addStringPairNode();
+                        break;
+
                     case TOKEN.PLACE_HOLDER:
                         placeHolders.Put(CurrentStr, idx);
                         break;
@@ -354,6 +358,10 @@ namespace KanchokuWS.TableParser
                         addLeafNode(currentToken, -1);  // idx は既にpush済み
                         break;
 
+                    //case TOKEN.STRING_PAIR:
+                    //    addStringPairNode();
+                    //    break;
+
                     default:
                         ParseError("PreRewriteParser-addArrowNode");
                         break;
@@ -461,6 +469,11 @@ namespace KanchokuWS.TableParser
             logger.DebugH(() => $"LEAVE: depth={depth}");
         }
 
+        protected virtual void addStringPairNode()
+        {
+            ParseError($"unexpected token: {currentToken}");
+        }
+
         void addFunctionNode()
         {
             logger.DebugH(() => $"ENTER: depth={depth}, str={CurrentStr}");
@@ -479,8 +492,7 @@ namespace KanchokuWS.TableParser
         {
             addCombinationKey(true);
 
-            // 対象が書き換えテーブルでなければノードをセットする
-            if (!bRewriteTable) setNodeOrNewTreeNodeAtLast(strokeList, node);
+            setNodeOrNewTreeNodeAtLast(strokeList, node);
         }
 
         void addCombinationKey(bool hasStr)
@@ -516,6 +528,7 @@ namespace KanchokuWS.TableParser
             }
         }
 
+        // 前置書き換えノード
         void addPreRewriteNode(TOKEN token, int arwIdx, string targetStr)
         {
             logger.DebugH(() => $"ENTER");
@@ -544,14 +557,24 @@ namespace KanchokuWS.TableParser
             logger.DebugH(() => $"LEAVE");
         }
 
+        // 後置書き換えノード
         void addPostRewriteNode()
         {
             logger.DebugH("ENTER");
 
-            // 後置文字列の指定があるか→なければ単打テーブルから文字を拾ってくる
-            int lastIdx = strokeList._getLast();
-            var myStr = ReadWordOrString()._orElse(() => lastIdx >= 0 ? getNthRootNodeString(lastIdx) : "");
-            var node = setNthChildNode(rootTableNode, lastIdx, new RewriteNode(myStr));
+            Node node = null;
+            if (isInCombinationBlock) {
+                // 同時打鍵の場合
+                addCombinationKey(true);
+                var myStr = ReadWordOrString();
+                node = new RewriteNode(myStr);
+                setNodeOrNewTreeNodeAtLast(strokeList, node);
+            } else {
+                // 後置文字列の指定があるか→なければ単打テーブルから文字を拾ってくる
+                int lastIdx = strokeList._getLast();
+                var myStr = ReadWordOrString()._orElse(() => lastIdx >= 0 ? getNthRootNodeString(lastIdx) : "");
+                node = setNthChildNode(rootTableNode, lastIdx, new RewriteNode(myStr));
+            }
             if (node is RewriteNode) {
                 // RewriteNode がノード木に反映された場合に限り、後置書き換えノードの処理を行う
                 new PostRewriteParser((RewriteNode)node, context, leaderStr).MakeNodeTree();
@@ -688,6 +711,21 @@ namespace KanchokuWS.TableParser
             node.AddRewritePair(tgtStr, outStr, null);
             logger.DebugH("LEAVE");
         }
+
+        // 書き換え文字列のペア
+        protected override void addStringPairNode()
+        {
+            var str1 = StringPair._getNth(0);
+            var str2 = StringPair._getNth(1);
+            logger.DebugH(() => $"ENTER: str1={str1}, str2={str2}");
+            if (str1._isEmpty() || str2._isEmpty()) {
+                ParseError("Invalid String Piar");
+            } else {
+                node.AddRewritePair(str1, str2, null);
+            }
+            logger.DebugH("LEAVE");
+        }
+
     }
 
     /// <summary>
