@@ -171,8 +171,8 @@ namespace KanchokuWS
                 case "tab": n = 2; break;
                 case "caps": case "capslock": n = 3; break;
                 case "alnum": case "alphanum": case "eisu": n = 4; break;
-                case "nfer": n = 5; break;
-                case "xfer": n = 6; break;
+                case "nfer": case "muhenkan": n = 5; break;
+                case "xfer": case "henkan": n = 6; break;
                 case "kana": case "hiragana": n = 7; break;
                 case "bs": case "back": case "backspace": n = 8; break;
                 case "enter": n = 9; break;
@@ -863,12 +863,18 @@ namespace KanchokuWS
             {"zenkaku", KeyModifiers.MOD_SINGLE },
         };
 
-        public static uint GetModifierKeyByName(string name)
+        private static Dictionary<string, uint> modifierKeysFromName2 = new Dictionary<string, uint>() {
+            {"eisu", KeyModifiers.MOD_ALNUM },
+            {"muhenkan", KeyModifiers.MOD_NFER },
+            {"henkan", KeyModifiers.MOD_XFER },
+        };
+
+        private static uint getModifierKeyByName(string name)
         {
-            return modifierKeysFromName._safeGet(name);
+            return modifierKeysFromName._safeGet(name)._gtZeroOr(() => modifierKeysFromName2._safeGet(name));
         }
 
-        public static string GetModifierNameByKey(uint modKey)
+        private static string getModifierNameByKey(uint modKey)
         {
             foreach (var pair in modifierKeysFromName) {
                 if (pair.Value == modKey) return pair.Key;
@@ -897,7 +903,9 @@ namespace KanchokuWS
             {"alphanum", DecoderKeys.ALNUM_DECKEY },
             {"eisu", DecoderKeys.ALNUM_DECKEY },
             {"nfer", DecoderKeys.NFER_DECKEY },
+            {"muhenkan", DecoderKeys.NFER_DECKEY },
             {"xfer", DecoderKeys.XFER_DECKEY },
+            {"henkan", DecoderKeys.XFER_DECKEY },
             {"kana", DecoderKeys.KANA_DECKEY },
             {"hiragana", DecoderKeys.KANA_DECKEY },
             {"bs", DecoderKeys.BS_DECKEY },
@@ -964,69 +972,6 @@ namespace KanchokuWS
             {"clearstroke", DecoderKeys.CLEAR_STROKE_DECKEY},
             //{"^a", DecoderKeys.CTRL_},
         };
-
-        private static Dictionary<int, string> keyNamesFromDecKey = new Dictionary<int, string>() {
-            {DecoderKeys.ESC_DECKEY, "Esc"},
-            {DecoderKeys.HANZEN_DECKEY , "Zenkaku"},
-            {DecoderKeys.TAB_DECKEY, "Tab"},
-            {DecoderKeys.CAPS_DECKEY , "CapsLock"},
-            {DecoderKeys.ALNUM_DECKEY , "AlphaNum"},
-            {DecoderKeys.NFER_DECKEY , "Nfer"},
-            {DecoderKeys.XFER_DECKEY , "Xfer"},
-            {DecoderKeys.KANA_DECKEY , "Kana"},
-            {DecoderKeys.BS_DECKEY , "BackSpace"},
-            {DecoderKeys.ENTER_DECKEY, "Enter"},
-            {DecoderKeys.INS_DECKEY, "Insert"},
-            {DecoderKeys.DEL_DECKEY, "Delete"},
-            {DecoderKeys.HOME_DECKEY, "Home"},
-            {DecoderKeys.END_DECKEY, "End"},
-            {DecoderKeys.PAGE_UP_DECKEY, "PageUp"},
-            {DecoderKeys.PAGE_DOWN_DECKEY, "PageDown"},
-            {DecoderKeys.LEFT_ARROW_DECKEY, "Left"},
-            {DecoderKeys.RIGHT_ARROW_DECKEY, "Right"},
-            {DecoderKeys.UP_ARROW_DECKEY, "Up"},
-            {DecoderKeys.DOWN_ARROW_DECKEY, "Down"},
-            {DecoderKeys.SCR_LOCK_DECKEY, "ScrLock"},
-            {DecoderKeys.PAUSE_DECKEY, "Pause"},
-            {DecoderKeys.IME_ON_DECKEY, "ImeOn"},
-            {DecoderKeys.IME_OFF_DECKEY, "ImeOff"},
-            {DecoderKeys.RIGHT_SHIFT_DECKEY, "Rshift"},
-            {DecoderKeys.STROKE_SPACE_DECKEY, "Space"},
-            {DecoderKeys.SHIFT_SPACE_DECKEY, "ShiftSpace"},
-            {DecoderKeys.TOGGLE_DECKEY, "ModeToggle"},
-            {DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY, "ModeToggleFollowCaret"},
-            {DecoderKeys.ACTIVE_DECKEY, "Activate"},
-            {DecoderKeys.DEACTIVE_DECKEY, "Deactivate"},
-            {DecoderKeys.FULL_ESCAPE_DECKEY, "FullEscape"},
-            {DecoderKeys.UNBLOCK_DECKEY, "Unblock"},
-            {DecoderKeys.TOGGLE_BLOCKER_DECKEY, "BlockerToggle"},
-            {DecoderKeys.STROKE_HELP_ROTATION_DECKEY, "HelpRotate"},
-            {DecoderKeys.STROKE_HELP_UNROTATION_DECKEY, "HelpUnrotate"},
-            {DecoderKeys.DATE_STRING_ROTATION_DECKEY, "DateRotate"},
-            {DecoderKeys.DATE_STRING_UNROTATION_DECKEY, "DateUnrotate"},
-            {DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY, "HistNext"},
-            {DecoderKeys.HISTORY_PREV_SEARCH_DECKEY, "HistPrev"},
-            {DecoderKeys.STROKE_HELP_DECKEY, "StrokeHelp"},
-            {DecoderKeys.BUSHU_COMP_HELP_DECKEY, "BushuCompHelp"},
-            {DecoderKeys.TOGGLE_ZENKAKU_CONVERSION_DECKEY, "ZenkakuConversion"},
-            {DecoderKeys.TOGGLE_KATAKANA_CONVERSION_DECKEY, "KatakanaConversion"},
-            {DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE_DECKEY, "RomanStrokeGuide"},
-            {DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY, "UpperRomanStrokeGuide"},
-            {DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY, "HiraganaStrokeGuide"},
-            {DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY, "ExchangeCodeTable"},
-            {DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY, "KanaTrainingToggle"},
-            {DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY, "LeftShiftBlocker"},
-            {DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY, "RightShiftBlocker"},
-            {DecoderKeys.LEFT_SHIFT_MAZE_START_POS_DECKEY, "LeftShiftMazeStartpos"},
-            {DecoderKeys.RIGHT_SHIFT_MAZE_START_POS_DECKEY, "RightShiftMazeStartpos"},
-            {DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY, "CopyAndRegisterSelection"},
-            {DecoderKeys.CLEAR_STROKE_DECKEY, "ClearStroke"},
-        };
-
-        public static string GetKeyNameByDeckey(int deckey)
-        {
-            return keyNamesFromDecKey._safeGet(deckey);
-        }
 
         public static int CalcShiftOffset(char shiftChar)
         {
@@ -1117,7 +1062,7 @@ namespace KanchokuWS
                                     vkey = GetFuncVkeyByName(modName);  
                                 } else {
                                     // 被修飾キーが指定されている場合は、拡張修飾キーの修飾フラグを取得
-                                    modKey = GetModifierKeyByName(modName);
+                                    modKey = getModifierKeyByName(modName);
                                     if (isPlaneMappedModifier(modKey) && !ShiftPlaneForShiftModKey.ContainsKey(modKey)) {
                                         // mod に対する ShiftPlane が設定されていない場合は、適当なシフト面を割り当てる(通常Shiftはすでに設定済みのはず)
                                         // mod に対する ShiftPlane が設定されていない場合は、拡張シフトB面以降の空いている面を割り当てる(空いてなければF面)
@@ -1242,7 +1187,7 @@ namespace KanchokuWS
                 return true;
             }
 
-            uint modKey = GetModifierKeyByName(items[0]);
+            uint modKey = getModifierKeyByName(items[0]);
             var planes = items[1]._split('|');
             int shiftPlane = ShiftPlane_NONE;
             switch (planes._getNth(0)) {
@@ -1306,13 +1251,13 @@ namespace KanchokuWS
             // シフト面設定
             var dict = new Dictionary<string, string>();
             foreach (var pair in ShiftPlaneForShiftModKey.GetPairs()) {
-                var keyName = GetModifierNameByKey(pair.Key);
+                var keyName = getModifierNameByKey(pair.Key);
                 if (keyName._notEmpty()) {
                     dict[keyName] = GetShiftPlaneName(pair.Value);
                 }
             }
             foreach (var pair in ShiftPlaneForShiftModKeyWhenDecoderOff.GetPairs()) {
-                var keyName = GetModifierNameByKey(pair.Key);
+                var keyName = getModifierNameByKey(pair.Key);
                 if (keyName._notEmpty()) {
                     var str = dict._safeGet(keyName);
                     if (str._notEmpty()) {
@@ -1339,7 +1284,7 @@ namespace KanchokuWS
             // 拡張修飾キー設定
             sb.Append("\n## Extra modifier settings ##\n");
             foreach (var pair in ExtModifierKeyDefs) {
-                var keyName = GetModifierNameByKey(pair.Key);
+                var keyName = getModifierNameByKey(pair.Key);
                 logger.DebugH(() => $"modKey={pair.Key}, keyName={keyName}, dict.Size={pair.Value.Count}");
                 if (keyName._notEmpty()) {
                     foreach (var p in pair.Value) {

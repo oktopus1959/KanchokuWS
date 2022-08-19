@@ -88,10 +88,13 @@ namespace KanchokuWS.TableParser
             placeHolders["hz"] = VirtualKeys.GetFuncDeckeyByName("zenkaku");
             placeHolders["tab"] = VirtualKeys.GetFuncDeckeyByName("tab");
             placeHolders["caps"] = VirtualKeys.GetFuncDeckeyByName("caps");
+            placeHolders["capslock"] = VirtualKeys.GetFuncDeckeyByName("caps");
             placeHolders["alnum"] = VirtualKeys.GetFuncDeckeyByName("alnum");
             placeHolders["eisu"] = VirtualKeys.GetFuncDeckeyByName("alnum");
             placeHolders["nfer"] = VirtualKeys.GetFuncDeckeyByName("nfer");
+            placeHolders["muhenkan"] = VirtualKeys.GetFuncDeckeyByName("nfer");
             placeHolders["xfer"] = VirtualKeys.GetFuncDeckeyByName("xfer");
+            placeHolders["henkan"] = VirtualKeys.GetFuncDeckeyByName("xfer");
             placeHolders["kana"] = VirtualKeys.GetFuncDeckeyByName("kana");
         }
     }
