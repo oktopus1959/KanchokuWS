@@ -385,10 +385,10 @@ namespace KanchokuWS.TableParser
             logger.DebugH(() => $"LEAVE: {CurrentStr}");
         }
 
-        // 何らかのデリミタが来るまで読みこんで、currentStr に格納。スラッシュは文字列に含む
+        // 何らかのデリミタが来るまで読みこんで、currentStr に格納。スラッシュは文字列に含む。バックスラッシュも含まれる。
         public void ReadBareString(char c = '\0') {
             var sb = new StringBuilder();
-            bool isOutputChar() { return c == '/' || (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c >= 0x80; }
+            bool isOutputChar() { return c == '/' || c == '\\' || (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c >= 0x80; }
             if (c != '\0') {
                 if (!isOutputChar()) return;
                 sb.Append(c);
@@ -396,6 +396,7 @@ namespace KanchokuWS.TableParser
             while (true) {
                 c = PeekNextChar();
                 if (!isOutputChar()) break;
+                if (c == '\\') GetNextChar();   // バックスラッシュの場合は、単純にそれを読み飛ばして次の1文字を採用する
                 GetNextChar();
                 sb.Append(c);
             }
