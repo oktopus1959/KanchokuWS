@@ -134,6 +134,8 @@ namespace KanchokuWS.Gui
             this.textBox_vkbMoveGuardMillisec = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.tabPage_imeCombo = new System.Windows.Forms.TabPage();
+            this.groupBox50 = new System.Windows.Forms.GroupBox();
+            this.checkBox_useComboExtModKeyAsSingleHit = new System.Windows.Forms.CheckBox();
             this.groupBox49 = new System.Windows.Forms.GroupBox();
             this.label121 = new System.Windows.Forms.Label();
             this.button_showDlgStrokeLog = new System.Windows.Forms.Button();
@@ -469,6 +471,7 @@ namespace KanchokuWS.Gui
             this.textBox_history = new System.Windows.Forms.TextBox();
             this.button_enterHistory = new System.Windows.Forms.Button();
             this.tabPage_develop = new System.Windows.Forms.TabPage();
+            this.button_developReload = new System.Windows.Forms.Button();
             this.label_okResultDevelop = new System.Windows.Forms.Label();
             this.button_developEnter = new System.Windows.Forms.Button();
             this.groupBox15 = new System.Windows.Forms.GroupBox();
@@ -489,8 +492,6 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.groupBox50 = new System.Windows.Forms.GroupBox();
-            this.checkBox_useComboExtModKeyAsSingleHit = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -505,6 +506,7 @@ namespace KanchokuWS.Gui
             this.groupBox16.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.tabPage_imeCombo.SuspendLayout();
+            this.groupBox50.SuspendLayout();
             this.groupBox49.SuspendLayout();
             this.groupBox48.SuspendLayout();
             this.groupBox39.SuspendLayout();
@@ -553,7 +555,6 @@ namespace KanchokuWS.Gui
             this.tabPage_develop.SuspendLayout();
             this.groupBox15.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).BeginInit();
-            this.groupBox50.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -1874,6 +1875,27 @@ namespace KanchokuWS.Gui
             this.tabPage_imeCombo.Text = "同時打鍵・IME";
             this.tabPage_imeCombo.UseVisualStyleBackColor = true;
             // 
+            // groupBox50
+            // 
+            this.groupBox50.Controls.Add(this.checkBox_useComboExtModKeyAsSingleHit);
+            this.groupBox50.Location = new System.Drawing.Point(366, 164);
+            this.groupBox50.Name = "groupBox50";
+            this.groupBox50.Size = new System.Drawing.Size(297, 48);
+            this.groupBox50.TabIndex = 4;
+            this.groupBox50.TabStop = false;
+            this.groupBox50.Text = "「変換」キーと「無変換」キー";
+            // 
+            // checkBox_useComboExtModKeyAsSingleHit
+            // 
+            this.checkBox_useComboExtModKeyAsSingleHit.AutoSize = true;
+            this.checkBox_useComboExtModKeyAsSingleHit.Location = new System.Drawing.Point(14, 18);
+            this.checkBox_useComboExtModKeyAsSingleHit.Name = "checkBox_useComboExtModKeyAsSingleHit";
+            this.checkBox_useComboExtModKeyAsSingleHit.Size = new System.Drawing.Size(214, 19);
+            this.checkBox_useComboExtModKeyAsSingleHit.TabIndex = 0;
+            this.checkBox_useComboExtModKeyAsSingleHit.Text = "単打の場合は本来のキーとして機能する";
+            this.toolTip1.SetToolTip(this.checkBox_useComboExtModKeyAsSingleHit, resources.GetString("checkBox_useComboExtModKeyAsSingleHit.ToolTip"));
+            this.checkBox_useComboExtModKeyAsSingleHit.UseVisualStyleBackColor = true;
+            // 
             // groupBox49
             // 
             this.groupBox49.Controls.Add(this.label121);
@@ -1916,7 +1938,7 @@ namespace KanchokuWS.Gui
             this.groupBox48.Size = new System.Drawing.Size(297, 48);
             this.groupBox48.TabIndex = 5;
             this.groupBox48.TabStop = false;
-            this.groupBox48.Text = "後置書き換え条件";
+            this.groupBox48.Text = "書き換えシステム";
             // 
             // textBox_preRewriteAllowedDelayTimeMs
             // 
@@ -1926,9 +1948,7 @@ namespace KanchokuWS.Gui
             this.textBox_preRewriteAllowedDelayTimeMs.Name = "textBox_preRewriteAllowedDelayTimeMs";
             this.textBox_preRewriteAllowedDelayTimeMs.Size = new System.Drawing.Size(45, 19);
             this.textBox_preRewriteAllowedDelayTimeMs.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_preRewriteAllowedDelayTimeMs, "後置書き換えを許容する遅延時間を設定します。\r\n\r\nここで設定した時間以上に間をあけて後置キーを打鍵した場合は、\r\n書き換えを行いません。\r\n\r\nなお、 0 を設" +
-        "定した場合は無限の遅延を許容する設定となります。\r\n\r\n例：「のにいると」で D→E と続けて打鍵する\r\n・D→E間の遅延が設定値以下の場合 ⇒ 「ぽ」を出力\r" +
-        "\n・D→E間の遅延が設定値より大きい場合 ⇒「、て」を出力");
+            this.toolTip1.SetToolTip(this.textBox_preRewriteAllowedDelayTimeMs, resources.GetString("textBox_preRewriteAllowedDelayTimeMs.ToolTip"));
             // 
             // label99
             // 
@@ -1937,7 +1957,7 @@ namespace KanchokuWS.Gui
             this.label99.Name = "label99";
             this.label99.Size = new System.Drawing.Size(208, 15);
             this.label99.TabIndex = 2;
-            this.label99.Text = "後置書き換えを許容する遅延時間(ミリ秒)";
+            this.label99.Text = "前置書き換えを許容する遅延時間(ミリ秒)";
             // 
             // groupBox39
             // 
@@ -5764,6 +5784,7 @@ namespace KanchokuWS.Gui
             // 
             // tabPage_develop
             // 
+            this.tabPage_develop.Controls.Add(this.button_developReload);
             this.tabPage_develop.Controls.Add(this.label_okResultDevelop);
             this.tabPage_develop.Controls.Add(this.button_developEnter);
             this.tabPage_develop.Controls.Add(this.groupBox15);
@@ -5775,6 +5796,19 @@ namespace KanchokuWS.Gui
             this.tabPage_develop.TabIndex = 2;
             this.tabPage_develop.Text = "情報";
             this.tabPage_develop.UseVisualStyleBackColor = true;
+            // 
+            // button_developReload
+            // 
+            this.button_developReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_developReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_developReload.Location = new System.Drawing.Point(588, 257);
+            this.button_developReload.Name = "button_developReload";
+            this.button_developReload.Size = new System.Drawing.Size(75, 23);
+            this.button_developReload.TabIndex = 14;
+            this.button_developReload.Text = "再読込(&R)";
+            this.toolTip1.SetToolTip(this.button_developReload, "辞書を除く各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
+            this.button_developReload.UseVisualStyleBackColor = true;
+            this.button_developReload.Click += new System.EventHandler(this.button_developReload_Click);
             // 
             // label_okResultDevelop
             // 
@@ -6002,27 +6036,6 @@ namespace KanchokuWS.Gui
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // groupBox50
-            // 
-            this.groupBox50.Controls.Add(this.checkBox_useComboExtModKeyAsSingleHit);
-            this.groupBox50.Location = new System.Drawing.Point(366, 164);
-            this.groupBox50.Name = "groupBox50";
-            this.groupBox50.Size = new System.Drawing.Size(297, 48);
-            this.groupBox50.TabIndex = 4;
-            this.groupBox50.TabStop = false;
-            this.groupBox50.Text = "「変換」キーと「無変換」キー";
-            // 
-            // checkBox_useComboExtModKeyAsSingleHit
-            // 
-            this.checkBox_useComboExtModKeyAsSingleHit.AutoSize = true;
-            this.checkBox_useComboExtModKeyAsSingleHit.Location = new System.Drawing.Point(14, 18);
-            this.checkBox_useComboExtModKeyAsSingleHit.Name = "checkBox_useComboExtModKeyAsSingleHit";
-            this.checkBox_useComboExtModKeyAsSingleHit.Size = new System.Drawing.Size(214, 19);
-            this.checkBox_useComboExtModKeyAsSingleHit.TabIndex = 0;
-            this.checkBox_useComboExtModKeyAsSingleHit.Text = "単打の場合は本来のキーとして機能する";
-            this.toolTip1.SetToolTip(this.checkBox_useComboExtModKeyAsSingleHit, resources.GetString("checkBox_useComboExtModKeyAsSingleHit.ToolTip"));
-            this.checkBox_useComboExtModKeyAsSingleHit.UseVisualStyleBackColor = true;
-            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -6065,6 +6078,8 @@ namespace KanchokuWS.Gui
             this.groupBox6.PerformLayout();
             this.tabPage_imeCombo.ResumeLayout(false);
             this.tabPage_imeCombo.PerformLayout();
+            this.groupBox50.ResumeLayout(false);
+            this.groupBox50.PerformLayout();
             this.groupBox49.ResumeLayout(false);
             this.groupBox49.PerformLayout();
             this.groupBox48.ResumeLayout(false);
@@ -6160,8 +6175,6 @@ namespace KanchokuWS.Gui
             this.groupBox15.ResumeLayout(false);
             this.groupBox15.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbout)).EndInit();
-            this.groupBox50.ResumeLayout(false);
-            this.groupBox50.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -6629,5 +6642,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label_testCount;
         private System.Windows.Forms.GroupBox groupBox50;
         private System.Windows.Forms.CheckBox checkBox_useComboExtModKeyAsSingleHit;
+        private System.Windows.Forms.Button button_developReload;
     }
 }

@@ -8,6 +8,7 @@ Debug/
 Release/
 ipch/
 obj/
+tmp/
 Work/
 junk/
 .vs/

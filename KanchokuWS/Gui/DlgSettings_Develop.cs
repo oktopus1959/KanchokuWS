@@ -83,6 +83,11 @@ namespace KanchokuWS.Gui
 
         }
 
+        private void button_developReload_Click(object sender, EventArgs e)
+        {
+            reloadIniFileAndDefFiles();
+        }
+
         private void tabDevelopStatusChanged(bool flag)
         {
             button_developClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";

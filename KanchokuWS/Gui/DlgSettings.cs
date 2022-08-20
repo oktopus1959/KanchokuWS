@@ -2487,6 +2487,7 @@ namespace KanchokuWS.Gui
         {
             frmMain?.ShowDlgStrokeLog(this, Right - 10, Top);
         }
+
     }
 }
 

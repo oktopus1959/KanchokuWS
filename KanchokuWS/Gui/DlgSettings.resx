@@ -256,6 +256,18 @@ extraInfo の値が当ツールの設定したものだけを無視するよう�
 キーとして機能する。(たとえば、IMEの OFF/ON など)
 </value>
   </data>
+  <data name="textBox_preRewriteAllowedDelayTimeMs.ToolTip" xml:space="preserve">
+    <value>前置書き換えを許容する遅延時間を設定します。
+
+前置書き換えキーの打鍵後に、ここで設定した時間以上に間をあけて
+後続キーを打鍵した場合は、書き換えを行いません。
+
+なお、 0 を設定した場合は無限の遅延を許容する設定となります。
+
+例：「ローマ字配列」で n→k と続けて打鍵する
+・n→k間の遅延が設定値以下の場合 ⇒ 「んk」を出力
+・n→k間の遅延が設定値より大きい場合 ⇒「nk」を出力</value>
+  </data>
   <data name="comboBox_SandSAssignedPlane.ToolTip" xml:space="preserve">
     <value>SandS を割り当てるシフト面を選択します。
 
