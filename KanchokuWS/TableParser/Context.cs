@@ -396,9 +396,8 @@ namespace KanchokuWS.TableParser
             while (true) {
                 c = PeekNextChar();
                 if (!isOutputChar()) break;
-                if (c == '\\') GetNextChar();   // バックスラッシュの場合は、単純にそれを読み飛ばして次の1文字を採用する
-                GetNextChar();
-                sb.Append(c);
+                if (c == '\\') AdvanceCharPos(1);       // バックスラッシュの場合は、単純にそれを読み飛ばして次の1文字を採用する
+                sb.Append(GetNextChar());
             }
             CurrentStr = sb.ToString();
             logger.DebugH(() => $"LEAVE: {CurrentStr}");
@@ -421,10 +420,7 @@ namespace KanchokuWS.TableParser
                     // 文字列の終わり
                     break;
                 }
-                if (ch == '\\') {
-                    // 最初の「\」は、単に読みとばす
-                    GetNextChar();
-                }
+                if (ch == '\\') AdvanceCharPos(1);      // 最初の「\」は、単に読みとばす
                 sb.Append(GetNextChar());
                 ++pos;
             }
@@ -455,8 +451,7 @@ namespace KanchokuWS.TableParser
                     CurrentStr = sb.ToString();
                     return;
                 }
-                GetNextChar();
-                sb.Append(c);
+                sb.Append(GetNextChar());
             }
         }
 
