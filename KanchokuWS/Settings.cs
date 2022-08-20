@@ -1009,7 +1009,7 @@ namespace KanchokuWS
             CombinationKeyMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100);   // 許容リードタイム
             CombinationKeyMinOverlappingTimeMs = GetString("combinationKeyTimeMs")._parseInt(70);               // 重複時間
             CombinationKeyMinTimeOnlyAfterSecond = GetString("combinationKeyTimeOnlyAfterSecond")._parseBool(false);         // ２文字目以降についてのみ同時打鍵チェックを行う
-            PreRewriteAllowedDelayTimeMs = GetString("preRewriteAllowedDelayTimeMs")._parseInt(200);            // 前置書き換え許容遅延タイム
+            PreRewriteAllowedDelayTimeMs = GetString("preRewriteAllowedDelayTimeMs")._parseInt(0);              // 前置書き換え許容遅延タイム
             UseCombinationKeyTimer1 = GetString("useCombinationKeyTimer1")._parseBool(true);                    // 同時打鍵判定用タイマーを使用する
             UseCombinationKeyTimer2 = GetString("useCombinationKeyTimer2")._parseBool(true);                    // 同時打鍵判定用タイマーを使用する
             UseComboExtModKeyAsSingleHit = GetString("useComboExtModKeyAsSingleHit")._parseBool(true);          // 同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする
