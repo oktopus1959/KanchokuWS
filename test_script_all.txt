@@ -57,7 +57,7 @@ comboMaxTime(80)
 comboMinTime(80)
 convert(J<120>Wjw) = あき
 convert(JJJ<120>Wjw) = あき
-convert(J<10>W<50>R<20>jwr) = ぎし
+convert(J<10>W<80>R<20>jwr) = ぎし
 convert(JWRrjw) = ぎじ
 
 comboMaxTime(120)
