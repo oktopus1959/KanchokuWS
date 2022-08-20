@@ -499,22 +499,27 @@ namespace KanchokuWS.TableParser
                             RewriteTargetStr = s;
                             return true;
                         } else {
-                            ParseError($"parseArrow: 前置書き換え以外の文字列: {s}");
+                            arrowIndex = placeHolders.Get(s);
+                            if (arrowIndex < 0) {
+                                ParseError($"parseArrow: 定義されていないプレースホルダー: {s}");
+                                return false;
+                            }
+                        }
+                    } else {
+                        // 「文字 + 数字列」のパターン
+                        if (c == 'N' || c == 'n') {
+                            shiftOffset = 0;
+                        } else if (c == 'S' || c == 's' || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {
+                            shiftOffset = VirtualKeys.CalcShiftOffset(c);
+                        } else if (c == 'X' || c == 'x') {
+                            shiftOffset = 0;
+                            funckeyOffset = DecoderKeys.FUNC_DECKEY_START;
+                        } else if (c == 'P' || c == 'P') {
+                            bShiftPlane = true;
+                        } else {
+                            ParseError($"parseArrow: 不正なプレーン指定: {s}");
                             return false;
                         }
-                    }
-                    if (c == 'N' || c == 'n') {
-                        shiftOffset = 0;
-                    } else if (c == 'S' || c == 's' || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {
-                        shiftOffset = VirtualKeys.CalcShiftOffset(c);
-                    } else if (c == 'X' || c == 'x') {
-                        shiftOffset = 0;
-                        funckeyOffset = DecoderKeys.FUNC_DECKEY_START;
-                    } else if (c == 'P' || c == 'P') {
-                        bShiftPlane = true;
-                    } else {
-                        ParseError($"parseArrow: 不正なプレーン指定: {s}");
-                        return false;
                     }
                 }
             }

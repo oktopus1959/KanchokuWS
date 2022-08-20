@@ -407,15 +407,16 @@ namespace KanchokuWS.TableParser
         /// 指定の文字が来るまで読みこんで、CurrentStr に格納。ポインタはデリミタの位置を指している
         /// </summary>
         /// <param name="array"></param>
-        public void ReadStringUpto(params char[] array) {
+        public void ReadStringUpto(int checkPos, params char[] array) {
             var sb = new StringBuilder();
+            int pos = 0;
             while (true) {
                 char ch = PeekNextChar();
                 if (ch == '\r' || ch == '\n' || ch == 0) {
                     ParseError("ReadRewriteTargetString: unexpected EOL or EOF");
                     break;
                 }
-                if (array._findIndex(ch) >= 0) {
+                if (pos >= checkPos && array._findIndex(ch) >= 0) {
                     // 文字列の終わり
                     break;
                 }
@@ -424,6 +425,7 @@ namespace KanchokuWS.TableParser
                     GetNextChar();
                 }
                 sb.Append(GetNextChar());
+                ++pos;
             }
             CurrentStr = sb.ToString();
             logger.DebugH(() => $"LEAVE: {CurrentStr}");
@@ -436,11 +438,8 @@ namespace KanchokuWS.TableParser
         public void ReadPlaceHolderName() {
             CurrentStr = "";
             if (PeekNextChar(0) == '$') {
-                if (";,./-@:".IndexOf(PeekNextChar(1)) >= 0) {   // $; $, $. $/ $- $@ $: はプレースホルダー名として有効
-                    ReadStringUpto('|', '>');
-                } else {
-                    ReadStringUpto(',', '|', '>');
-                }
+                // '$' と次の1文字は必ずプレースホルダーに含める
+                ReadStringUpto(2, ',', '|', '>');
             }
             logger.DebugH(() => $"LEAVE: {CurrentStr}");
         }
