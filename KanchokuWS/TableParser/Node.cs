@@ -250,7 +250,7 @@ namespace KanchokuWS.TableParser
         public void AddRewritePair(string tgtStr, string outStr, StrokeTableNode pNode)
         {
             logger.DebugH(() => $"CALLED: key={tgtStr}, value={outStr}, pNode={(pNode != null ? pNode.getString() : "none")}");
-            if (tgtStr._notEmpty() && outStr._notEmpty()) {
+            if (tgtStr._notEmpty() && (outStr._notEmpty() || pNode != null)) {
                 upsertRewrteMap(tgtStr, new RewriteInfo(outStr, pNode));
             }
         }
