@@ -739,7 +739,6 @@ namespace KanchokuWS.Gui
             checkBox_useCombinationKeyTimer1.Checked = Settings.UseCombinationKeyTimer1;
             checkBox_useCombinationKeyTimer2.Checked = Settings.UseCombinationKeyTimer2;
             checkBox_useComboExtModKeyAsSingleHit.Checked = Settings.UseComboExtModKeyAsSingleHit;
-            textBox_preRewriteAllowedDelayTimeMs.Text = $"{Settings.PreRewriteAllowedDelayTimeMs}";
 
             // IME連携
             checkBox_imeCooperationEnabled.Checked = Settings.ImeCooperationEnabled;
@@ -771,7 +770,6 @@ namespace KanchokuWS.Gui
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer1);
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer2);
             checkerImeCombo.Add(checkBox_useComboExtModKeyAsSingleHit);
-            checkerImeCombo.Add(textBox_preRewriteAllowedDelayTimeMs);
 
             // IME連携
             checkerImeCombo.Add(checkBox_imeCooperationEnabled);
@@ -809,7 +807,6 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("useCombinationKeyTimer1", checkBox_useCombinationKeyTimer1.Checked);
             Settings.SetUserIni("useCombinationKeyTimer2", checkBox_useCombinationKeyTimer2.Checked);
             Settings.SetUserIni("useComboExtModKeyAsSingleHit", checkBox_useComboExtModKeyAsSingleHit.Checked);
-            Settings.SetUserIni("preRewriteAllowedDelayTimeMs", textBox_preRewriteAllowedDelayTimeMs.Text.Trim());
 
             // IME連携
             Settings.SetUserIni("imeCooperationEnabled", checkBox_imeCooperationEnabled.Checked);
@@ -1480,6 +1477,8 @@ namespace KanchokuWS.Gui
             textBox_kanjiYomiFile.Text = Settings.KanjiYomiFile;
             textBox_romanBushuCompPrefix.Text = Settings.RomanBushuCompPrefix;
             textBox_romanSecPlanePrefix.Text = Settings.RomanSecPlanePrefix;
+            textBox_preRewriteTargetChars.Text = $"{Settings.PreRewriteTargetChars}";
+            textBox_preRewriteAllowedDelayTimeMs.Text = $"{Settings.PreRewriteAllowedDelayTimeMs}";
         }
 
         private void setMiscSettingsStatusChecker()
@@ -1505,6 +1504,8 @@ namespace KanchokuWS.Gui
             checkerMiscSettings.Add(textBox_kanjiYomiFile);
             checkerMiscSettings.Add(textBox_romanBushuCompPrefix);
             checkerMiscSettings.Add(textBox_romanSecPlanePrefix);
+            checkerMiscSettings.Add(textBox_preRewriteTargetChars);
+            checkerMiscSettings.Add(textBox_preRewriteAllowedDelayTimeMs);
 
             checkerAll.Add(checkerMiscSettings);
         }
@@ -1534,6 +1535,8 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
             Settings.SetUserIni("romanBushuCompPrefix", textBox_romanBushuCompPrefix.Text);
             Settings.SetUserIni("romanSecPlanePrefix", textBox_romanSecPlanePrefix.Text);
+            Settings.SetUserIni("preRewriteTargetChars", textBox_preRewriteTargetChars.Text.Trim());
+            Settings.SetUserIni("preRewriteAllowedDelayTimeMs", textBox_preRewriteAllowedDelayTimeMs.Text.Trim());
 
             Settings.ReadIniFile();
             // 各種定義ファイルの再読み込み

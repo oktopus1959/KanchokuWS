@@ -126,15 +126,26 @@ namespace KanchokuWS.CombinationKeyStroke
             }
         }
 
-        private void setPreRewriteTime(int dk)
+        public void SetPreRewriteTime(bool bPreRewriteTarget)
         {
-            if (KeyCombinationPool.CurrentPool.IsPreRewriteKey(dk)) {
-                logger.DebugH($"set PreRewrite DateTime");
+            if (bPreRewriteTarget) {
+                logger.DebugH("Set PreRewrite DateTime");
                 preRewriteDt = DateTime.Now;
             } else {
+                logger.DebugH("Reset PreRewrite DateTime");
                 preRewriteDt = DateTime.MinValue;
             }
         }
+
+        //private void setPreRewriteTime(int dk)
+        //{
+        //    if (KeyCombinationPool.CurrentPool.IsPreRewriteKey(dk)) {
+        //        logger.DebugH($"set PreRewrite DateTime");
+        //        preRewriteDt = DateTime.Now;
+        //    } else {
+        //        preRewriteDt = DateTime.MinValue;
+        //    }
+        //}
 
         public void Dispose()
         {
@@ -309,9 +320,9 @@ namespace KanchokuWS.CombinationKeyStroke
 
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}");
 
-            if (result._notEmpty()) {
-                setPreRewriteTime(result.Last());
-            }
+            //if (result._notEmpty()) {
+            //    setPreRewriteTime(result.Last());
+            //}
 
             return new KeyHandlerResult() { list = result, bUncoditional = bUnconditional };
         }
@@ -353,9 +364,9 @@ namespace KanchokuWS.CombinationKeyStroke
 
             if (!bTimer && strokeList.IsEmpty()) frmMain?.FlushStrokeLog();
 
-            if (result._notEmpty() && bDecoderOn) {
-                setPreRewriteTime(result.Last());
-            }
+            //if (result._notEmpty() && bDecoderOn) {
+            //    setPreRewriteTime(result.Last());
+            //}
 
             return new KeyHandlerResult() { list = result, bUncoditional = bUnconditional };
         }

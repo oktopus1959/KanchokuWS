@@ -1568,6 +1568,7 @@ namespace KanchokuWS
                         logger.DebugH("PATH-4");
                         // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
                         bool bFuncVkeyContained = isFuncVkeyContained(outString, outLen);
+                        bool bPreRewriteTarget = isTailPreRewriteChar(outString, outLen);
                         int numBS = decoderOutput.numBackSpaces;
                         int leadLen = calcSameLeadingLen(outString, outLen, numBS);
                         var outStr = leadLen > 0 ? outString.Skip(leadLen).ToArray() : outString;
@@ -1579,6 +1580,8 @@ namespace KanchokuWS
                             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
                             HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput);
                         }
+                        // 前置書き換え対象文字なら、許容時間をセットする
+                        CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(bPreRewriteTarget);
                     }
                 }
                 logger.DebugH("PATH-6");
@@ -1656,12 +1659,15 @@ namespace KanchokuWS
 
             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
             bool bFuncVkeyContained = isFuncVkeyContained(decoderOutput.outString);
+            bool bPreRewriteTarget = isTailPreRewriteChar(decoderOutput.outString);
             // BSと文字送出(もしあれば)
             SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
             if (bFuncVkeyContained) {
                 // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
                 HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput);
             }
+            // 前置書き換え対象文字なら、許容時間をセットする
+            CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(bPreRewriteTarget);
         }
 
         /// <summary>
@@ -1695,6 +1701,12 @@ namespace KanchokuWS
                 pos = str._findIndex(pos + 1, len, '!');
             }
             return false;
+        }
+
+        private bool isTailPreRewriteChar(char[] str, int len = -1)
+        {
+            if (len < 0) len = str._strlen();
+            return len > 0 && Settings.PreRewriteTargetChars.Contains(str[len - 1]);
         }
 
         private bool isNormalDeckey(int deckey)

@@ -56,6 +56,8 @@ namespace KanchokuWS
         public static string KeyboardUrl => "https://github.com/oktopus1959/KanchokuWS/blob/main/KEYBOARD.md#top";
 
         //-------------------------------------------------------------------------------------
+        // 基本設定
+        //-------------------------------------------------------------------------------------
         /// <summary>Ctrl修飾なしで Decoder をアクティブにするホットキーの仮想キーコード</summary> 
         public static uint ActiveKey { get; private set; } = 0x1c;
         /// <summary>Ctrl修飾ありで Decoder をアクティブにするホットキーの仮想キーコード</summary> 
@@ -117,6 +119,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         // フォントと色
+        //-------------------------------------------------------------------------------------
         public static string NormalVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
         public static string CenterVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
         public static string VerticalVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
@@ -124,6 +127,8 @@ namespace KanchokuWS
         public static string MiniBufVkbFontSpec { get; private set; } = "MS Gothic|9";
         public static float VerticalFontHeightFactor { get; private set; } = 1.0f;
 
+        //-------------------------------------------------------------------------------------
+        // 基本設定
         //-------------------------------------------------------------------------------------
         /// <summary>キーボードファイル</summary>
         public static string KeyboardFile { get; private set; }
@@ -299,6 +304,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         // キー割当
+        //-------------------------------------------------------------------------------------
         /// <summary>全角変換(モード)を呼び出す打鍵列</summary>
         public static string ZenkakuModeKeySeq { get; set; }
         /// <summary>全角変換(1文字)を呼び出す打鍵列</summary>
@@ -410,6 +416,7 @@ namespace KanchokuWS
 
         //------------------------------------------------------------------------------
         // 履歴
+        //------------------------------------------------------------------------------
         public static int HistMaxLength { get; private set; } = 20;
         public static int HistKatakanaWordMinLength { get; private set; } = 0;
         public static int HistKanjiWordMinLength { get; private set; } = 0;
@@ -451,6 +458,7 @@ namespace KanchokuWS
 
         //------------------------------------------------------------------------------
         // 交ぜ書き
+        //------------------------------------------------------------------------------
         //public static bool MazegakiByShiftSpace { get; set; } = true;
         public static bool MazegakiSelectFirstCand { get; set; } = true;
         public static int MazeYomiMaxLen { get; private set; } = 10;
@@ -477,6 +485,7 @@ namespace KanchokuWS
 
         //------------------------------------------------------------------------------
         // 各種変換
+        //------------------------------------------------------------------------------
         /// <summary>平仮名⇒カタカナ変換</summary>
         public static bool ConvertShiftedHiraganaToKatakana { get; set; } = false;
 
@@ -576,9 +585,6 @@ namespace KanchokuWS
         /// <summary>２文字目以降についてのみ同時打鍵チェックを行う</summary>
         public static bool CombinationKeyMinTimeOnlyAfterSecond { get; set; } = false;
 
-        /// <summary>前置書き換え時の遅延許容時間</summary>
-        public static int PreRewriteAllowedDelayTimeMs { get; set; } = 0;
-
         /// <summary>同時打鍵チェック用のタイマーを使用する</summary>
         public static bool UseCombinationKeyTimer1 { get; set; } = false;
         public static bool UseCombinationKeyTimer2 { get; set; } = false;
@@ -607,6 +613,15 @@ namespace KanchokuWS
 
         /// <summary>かな入力練習モードか</summary>
         public static bool KanaTrainingMode { get; set; } = false;
+
+        //------------------------------------------------------------------------------
+        // 書き換えシステム
+        //------------------------------------------------------------------------------
+        /// <summary>遅延許容時間の適用対象となる前置書き換え対象文字集合</summary>
+        public static string PreRewriteTargetChars { get; set; } = "";
+
+        /// <summary>前置書き換え時の遅延許容時間</summary>
+        public static int PreRewriteAllowedDelayTimeMs { get; set; } = 0;
 
         //------------------------------------------------------------------------------
         // ウィンドウClassName
@@ -1009,7 +1024,6 @@ namespace KanchokuWS
             CombinationKeyMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100);   // 許容リードタイム
             CombinationKeyMinOverlappingTimeMs = GetString("combinationKeyTimeMs")._parseInt(70);               // 重複時間
             CombinationKeyMinTimeOnlyAfterSecond = GetString("combinationKeyTimeOnlyAfterSecond")._parseBool(false);         // ２文字目以降についてのみ同時打鍵チェックを行う
-            PreRewriteAllowedDelayTimeMs = GetString("preRewriteAllowedDelayTimeMs")._parseInt(0);              // 前置書き換え許容遅延タイム
             UseCombinationKeyTimer1 = GetString("useCombinationKeyTimer1")._parseBool(true);                    // 同時打鍵判定用タイマーを使用する
             UseCombinationKeyTimer2 = GetString("useCombinationKeyTimer2")._parseBool(true);                    // 同時打鍵判定用タイマーを使用する
             UseComboExtModKeyAsSingleHit = GetString("useComboExtModKeyAsSingleHit")._parseBool(true);          // 同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする
@@ -1022,6 +1036,11 @@ namespace KanchokuWS
             //ImeUnicodeClassNames = GetString("imeUnicodeClassNames")._orElse("Edit|_WwG|SakuraView*").Trim();
             //ImeUnicodeClassNames = GetString("imeUnicodeClassNames").Trim();
             //ImeUnicodeClassNamesHash = new HashSet<string>(ImeUnicodeClassNames.Trim()._toLower()._split('|'));
+
+            //------------------------------------------------------------------------------
+            // 書き換えシステム
+            PreRewriteTargetChars  = GetString("preRewriteTargetChars")._orElse("。、");                        // 遅延許容時間の適用対象となる前置書き換え対象文字集合
+            PreRewriteAllowedDelayTimeMs = GetString("preRewriteAllowedDelayTimeMs")._parseInt(250);            // 前置書き換え許容遅延タイム
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

@@ -246,28 +246,6 @@ extraInfo の値が当ツールの設定したものだけを無視するよう�
 できます。ただし、元々競合していなかったツールからの出力を、当ツールが
 無視することになる可能性もあるので、試行しながら設定してください。</value>
   </data>
-  <data name="checkBox_useComboExtModKeyAsSingleHit.ToolTip" xml:space="preserve">
-    <value>この項目をチェックすると、テーブルファイルで「変換」キーや「無変換」キーを
-同時打鍵キーとして設定している場合でも、単打の場合は、本来のキーと
-して機能するようになります。
-
-例： NICOLA(親指シフト)で「無変換」「変換」を親指シフトキーに割り当て
-ている場合に、それらのキーを単打した場合は、本来の「無変換」「変換」
-キーとして機能する。(たとえば、IMEの OFF/ON など)
-</value>
-  </data>
-  <data name="textBox_preRewriteAllowedDelayTimeMs.ToolTip" xml:space="preserve">
-    <value>前置書き換えを許容する遅延時間を設定します。
-
-前置書き換えキーの打鍵後に、ここで設定した時間以上に間をあけて
-後続キーを打鍵した場合は、書き換えを行いません。
-
-なお、 0 を設定した場合は無限の遅延を許容する設定となります。
-
-例：「ローマ字配列」で n→k と続けて打鍵する
-・n→k間の遅延が設定値以下の場合 ⇒ 「んk」を出力
-・n→k間の遅延が設定値より大きい場合 ⇒「nk」を出力</value>
-  </data>
   <data name="comboBox_SandSAssignedPlane.ToolTip" xml:space="preserve">
     <value>SandS を割り当てるシフト面を選択します。
 
@@ -702,6 +680,31 @@ OFFにすると、変換文字列全体の末尾にブロッカーを置きま�
 
 また、ブロッカーを右端に移動させてから、さらに "&gt;" を打鍵した場合も
 変換開始位置の右移動になります。</value>
+  </data>
+  <data name="textBox_preRewriteTargetChars.ToolTip" xml:space="preserve">
+    <value>書き換え許容時間設定の対象となる文字集合を設定します。
+
+ここで設定した集合に含まれる文字が書き換え対象文字であった場合、
+次に項目で設定する許容時間以上に間をあけて後続キーを打鍵した
+場合は、書き換えを行いません。(自動確定)
+
+デフォルトでは、「。」と「、」を対象文字としています。
+「ブリ中トロ配列」のように、「。」や「、」が書き換え対象文字であっても、
+その打鍵後に許容時間以上に間をあければ、「。」または「、」が確定する、
+ということになります。</value>
+  </data>
+  <data name="textBox_preRewriteAllowedDelayTimeMs.ToolTip" xml:space="preserve">
+    <value>前項の文字集合に対して書き換えを許容する遅延時間を設定します。
+
+書き換え対象文字の入力後に、ここで設定した時間以上に間をあけて
+後続キーを打鍵した場合は、書き換えを行いません。(自動確定)
+
+なお、 0 を設定した場合は無限の遅延を許容する(自動確定しない)
+設定となります。
+
+例：対象文字に「n」を追加し、「ローマ字配列」で n→k と続けて打鍵する
+・n→k間の遅延が設定値以下の場合 ⇒ 「んk」を出力
+・n→k間の遅延が設定値より大きい場合 ⇒「nk」を出力</value>
   </data>
   <data name="button_saveEelllJsTableFile.ToolTip" xml:space="preserve">
     <value>eelll/JS用のテーブルを作成してファイル出力します。
