@@ -3249,7 +3249,7 @@ namespace KanchokuWS.Gui
             this.groupBox33.Size = new System.Drawing.Size(305, 62);
             this.groupBox33.TabIndex = 25;
             this.groupBox33.TabStop = false;
-            this.groupBox33.Text = "注意";
+            this.groupBox33.Text = "補足";
             // 
             // label77
             // 
@@ -3257,12 +3257,10 @@ namespace KanchokuWS.Gui
             this.label77.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label77.Location = new System.Drawing.Point(4, 13);
             this.label77.Name = "label77";
-            this.label77.Size = new System.Drawing.Size(295, 45);
+            this.label77.Size = new System.Drawing.Size(300, 45);
             this.label77.TabIndex = 2;
-            this.label77.Text = "変更前の設定をクリアするには漢直WSを再起動してください。\r\nまた、その他の特殊キーへの変換設定については、ここのツール\r\nチップを参照してください。";
-            this.toolTip1.SetToolTip(this.label77, "Insert, PageUp, PageDown キーへの変換は\nkanchoku.user.ini (または kanchoku.ini) に\n以下のような記述を" +
-        "追記します。\n(以下は一例です)\n\nctrlKeyToInsert=OEM6\nctrlKeyToPageUp=U\nctrlKeyToPageDown=PERIO" +
-        "D\n\n\"=\" の後の名前は、ドロップダウンで表示されるものを設定します。");
+            this.label77.Text = "「その他設定」 > 「拡張修飾キー」を有効にして、定義ファイルの\r\n「編集」をクリックすると、「拡張修飾キー設定」ダイアログが開き\r\nます。こちらを使うと、より柔" +
+    "軟なキー変換設定ができます。\r\n";
             // 
             // groupBox18
             // 

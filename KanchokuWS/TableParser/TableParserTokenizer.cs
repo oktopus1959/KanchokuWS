@@ -301,7 +301,7 @@ namespace KanchokuWS.TableParser
                     case '"':
                         // 文字列
                         ReadString();
-                        return parseStringPair() ? TOKEN.STRING_PAIR : TOKEN.STRING;
+                        return parseSecondString() ? TOKEN.STRING_PAIR : TOKEN.STRING;
 
                     case '-': {
                         char c = PeekNextChar();
@@ -351,8 +351,9 @@ namespace KanchokuWS.TableParser
                         return TOKEN.FUNCTION;
 
                     default:
+                        // BARE Stringか
                         ReadBareString(CurrentChar);
-                        if (CurrentStr._notEmpty()) return parseStringPair() ? TOKEN.STRING_PAIR : TOKEN.BARE_STRING;
+                        if (CurrentStr._notEmpty()) return parseSecondString() ? TOKEN.STRING_PAIR : TOKEN.BARE_STRING;
 
                         // エラー
                         ParseError($"getToken: unexpected char: '{CurrentChar}'");
@@ -576,8 +577,8 @@ namespace KanchokuWS.TableParser
             return true;
         }
 
-        // 「STRING: STRING」形式
-        bool parseStringPair()
+        // 「STRING:STRING」形式の2つめの文字列 (デリミタに '|' を使うことは不可。テーブルの簡易記法と間違うため)
+        bool parseSecondString()
         {
             StringPair[0] = CurrentStr;
 
