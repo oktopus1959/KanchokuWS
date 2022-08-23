@@ -495,15 +495,21 @@ namespace KanchokuWS.TableParser
                 if (arrowIndex < 0) {
                     arrowIndex = s._safeSubstring(1)._parseInt(-1);
                     if (arrowIndex < 0) {
-                        // 前置書き換え対象文字列
-                        if (bRewritePre) {
-                            RewritePreTargetStr = s;
-                            return true;
-                        } else {
+                        if (s.Length == 1) {
+                            // 1文字の場合は、プレースホルダを優先
                             arrowIndex = placeHolders.Get(s);
-                            if (arrowIndex < 0) {
-                                ParseError($"parseArrow: 定義されていないプレースホルダー: {s}");
-                                return false;
+                        }
+                        if (arrowIndex < 0) {
+                            if (bRewritePre) {
+                                // 前置書き換え対象文字列
+                                RewritePreTargetStr = s;
+                                return true;
+                            } else {
+                                arrowIndex = placeHolders.Get(s);
+                                if (arrowIndex < 0) {
+                                    ParseError($"parseArrow: 定義されていないプレースホルダー: {s}");
+                                    return false;
+                                }
                             }
                         }
                     } else {
