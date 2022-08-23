@@ -1640,6 +1640,10 @@ namespace KanchokuWS
             // デコーダの呼び出し
             HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, ref decoderOutput);
 
+            bool bPreRewriteTarget = isTailPreRewriteChar(decoderOutput.outString);
+            // 前置書き換え対象文字なら、許容時間をセットする
+            CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(bPreRewriteTarget);
+
             var result = decoderOutput.outString._toString();
             numBS = decoderOutput.numBackSpaces;
             WriteStrokeLog(result);
