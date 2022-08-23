@@ -211,7 +211,7 @@ namespace KanchokuWS.TableParser
 
         public void ClearCurrentStr() { CurrentStr = ""; }
 
-        public string RewriteTargetStr { get; set; }                    // 前置書き換え対象文字列
+        public string RewritePreTargetStr { get; set; }                    // 前置書き換え対象文字列
 
         public TableLines()
         {
@@ -704,6 +704,9 @@ namespace KanchokuWS.TableParser
 
     }
 
+    /// <summary>
+    /// グローバルなコンテキスト情報を格納するクラス
+    /// </summary>
     class ParserContext
     {
         public TableLines tableLines;
@@ -753,6 +756,7 @@ namespace KanchokuWS.TableParser
 
         public HashSet<int> sequentialShiftKeys = new HashSet<int>();
 
+        // ルートテーブルノード
         public StrokeTableNode rootTableNode = new StrokeTableNode(true);
 
         /// <summary>

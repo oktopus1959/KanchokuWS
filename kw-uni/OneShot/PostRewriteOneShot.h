@@ -45,11 +45,12 @@ public:
 class PostRewriteOneShotNode : public FunctionNode {
     DECLARE_CLASS_LOGGER;
 
-    // 書き換え情報マップ -- 前置書き換え対象文字列がキーとなる
+    // 書き換え情報マップ -- 前接する書き換え対象文字列がキーとなる
     std::map<MString, RewriteInfo> rewriteMap;
 
     RewriteInfo myRewriteInfo;
 
+    // 生存管理のためのvector
     std::vector<StrokeTableNode*> subTables;
 
 public:

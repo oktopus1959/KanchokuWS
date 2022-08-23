@@ -18,11 +18,11 @@ namespace KanchokuWS.TableParser
     {
         private static Logger logger = Logger.GetLogger();
 
-        StrokeTableNode _rootTableNode;
+        protected StrokeTableNode rootTableNode;
 
         int _shiftPlane = -1;
 
-        protected StrokeTableNode rootTableNode => _rootTableNode != null ? _rootTableNode : context.rootTableNode;
+        //protected StrokeTableNode rootTableNode => _rootTableNode != null ? _rootTableNode : context.rootTableNode;
 
         protected int shiftPlane {
             get { return _shiftPlane >= 0 ? _shiftPlane : context.shiftPlane; }
@@ -41,7 +41,7 @@ namespace KanchokuWS.TableParser
         protected string getNthRootNodeString(int n)
         {
             int idx = shiftDecKey(n);
-            return (rootTableNode.getNth(idx)?.getString())._stripDq()._toSafe();
+            return (rootTableNode?.getNth(idx)?.getString())._stripDq()._toSafe();
         }
 
         protected string leaderStr => strokeList.Count > 1 ? strokeList.Take(strokeList.Count - 1).Select(x => getNthRootNodeString(x))._join("") : "";
@@ -57,7 +57,7 @@ namespace KanchokuWS.TableParser
         public TableParserTokenizer(ParserContext ctx, List<int> stkList, StrokeTableNode rootNode = null, int shiftPlane = -1)
             : base(ctx)
         {
-            _rootTableNode = rootNode;
+            rootTableNode = rootNode;
             _shiftPlane = shiftPlane;
             if (stkList._notEmpty()) {
                 strokeList.AddRange(stkList);
@@ -70,7 +70,7 @@ namespace KanchokuWS.TableParser
         protected void outputNewLines()
         {
             var list = new List<int>();
-            rootTableNode.OutputLine(OutputLines, "");
+            rootTableNode?.OutputLine(OutputLines, "");
         }
 
         // 現在のトークンをチェックする
@@ -497,7 +497,7 @@ namespace KanchokuWS.TableParser
                     if (arrowIndex < 0) {
                         // 前置書き換え対象文字列
                         if (bRewritePre) {
-                            RewriteTargetStr = s;
+                            RewritePreTargetStr = s;
                             return true;
                         } else {
                             arrowIndex = placeHolders.Get(s);
