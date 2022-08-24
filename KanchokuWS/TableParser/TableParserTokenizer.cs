@@ -233,18 +233,19 @@ namespace KanchokuWS.TableParser
                         // 拡張修飾キーの無効化
                         ReadWord();
                         if (CurrentStr._notEmpty()) VirtualKeys.AddDisabledExtKey(CurrentStr);
-                    } else if (lcStr == "ignorewarning") {
-                        // 各種警告の無効化
+                    } else if (lcStr == "ignorewarning" || lcStr == "enablewarning") {
+                        // 各種警告の無効化/有効化
+                        bool flag = lcStr.StartsWith("ignore");
                         ReadWord();
                         var word = CurrentStr._toLower();
                         if (word._isEmpty() || word == "all") {
-                            bIgnoreWarningAll = true;
-                            bIgnoreWarningBraceLevel = true;
-                            bIgnoreWarningOverwrite = true;
+                            bIgnoreWarningAll = flag;
+                            bIgnoreWarningBraceLevel = flag;
+                            bIgnoreWarningOverwrite = flag;
                         } else if (word == "bracelevel") {
-                            bIgnoreWarningBraceLevel = true;
+                            bIgnoreWarningBraceLevel = flag;
                         } else if (word == "overwrite") {
-                            bIgnoreWarningOverwrite = true;
+                            bIgnoreWarningOverwrite = flag;
                         }
                     } else {
                         // 上記以外は無視(コメント扱い) 

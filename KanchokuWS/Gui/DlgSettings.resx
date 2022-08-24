@@ -202,6 +202,20 @@ exclude ファイルは、履歴検索および履歴登録の対象外となる
 
 キーを使用しない場合は、ComboBoxの内容を削除して空白にしてください。</value>
   </data>
+  <data name="checkBox_duplicateWarningEnabled.ToolTip" xml:space="preserve">
+    <value>テーブルファイル読み込み時に、同一打鍵列に対する定義の重複チェックを
+行う場合は、ここにチェックを入れてください。
+
+なお、同時打鍵については、ここの設定にかかわらず常に重複チェックが
+行われます。
+
+テーブルファイルの特定の範囲について重複チェックをやらないようにしたい
+場合は、その範囲を
+#ignoreWarning overwrite
+・・・
+#enableWarning overwrite
+で囲んでください。</value>
+  </data>
   <data name="textBox_saveDictsCalmTime.ToolTip" xml:space="preserve">
     <value>辞書の自動保存時刻になってからの待機時間を設定します(分単位)
 

@@ -56,40 +56,7 @@ namespace KanchokuWS
         public static string KeyboardUrl => "https://github.com/oktopus1959/KanchokuWS/blob/main/KEYBOARD.md#top";
 
         //-------------------------------------------------------------------------------------
-        // 基本設定
-        //-------------------------------------------------------------------------------------
-        /// <summary>Ctrl修飾なしで Decoder をアクティブにするホットキーの仮想キーコード</summary> 
-        public static uint ActiveKey { get; private set; } = 0x1c;
-        /// <summary>Ctrl修飾ありで Decoder をアクティブにするホットキーの仮想キーコード</summary> 
-        public static uint ActiveKeyWithCtrl { get; private set; } = 0x1c;
-
-        /// <summary>Ctrl修飾なしで Decoder を非アクティブにするホットキーの仮想キーコード</summary> 
-        public static uint DeactiveKey { get; private set; } = 0;
-        /// <summary>Ctrl修飾ありで Decoder を非アクティブにするホットキーの仮想キーコード</summary> 
-        public static uint DeactiveKeyWithCtrl { get; private set; } = 0;
-
-        public static uint DeactiveKeyEffective => DeactiveKey != 0 ? DeactiveKey : ActiveKey;
-        public static uint DeactiveKeyWithCtrlEffective => DeactiveKeyWithCtrl != 0 ? DeactiveKeyWithCtrl : ActiveKeyWithCtrl;
-
-        //-------------------------------------------------------------------------------------
-        /// <summary>DecKeyの無限ループを検出する回数</summary>
-        public static int DeckeyInfiniteLoopDetectCount { get; private set; } = 1000;
-
-        /// <summary>キーリピートが発生したことを認識するまでの時間(ミリ秒)</summary>
-        public static int KeyRepeatDetectMillisec { get; private set; } = 100;
-
-        ///// <summary>キーリピートなどで短時間に大量のキー入力があったら強制的にデコーダをOFFにする</summary>
-        //public static bool AutoOffWhenBurstKeyIn { get; private set; } = false;
-
-        /// <summary>スプラッシュウィンドウの表示時間</summary>
-        public static int SplashWindowShowDuration { get; private set; } = 60;
-
-        /// <summary>終了時に確認ダイアログを出す</summary>
-        public static bool ConfirmOnClose { get; private set; } = true;
-
-        /// <summary>再起動時に確認ダイアログを出す</summary>
-        public static bool ConfirmOnRestart { get; private set; } = true;
-
+        // ログ出力設定
         //-------------------------------------------------------------------------------------
         /// <summary>ログレベル</summary> 
         public static int LogLevel { get; private set; } = 0;
@@ -118,17 +85,32 @@ namespace KanchokuWS
         public static bool IsAnyDevFlagEnabled => LogLevel > 2 || LoggingDecKeyInfo || LoggingActiveWindowInfo || LoggingVirtualKeyboardInfo || BushuDicLogEnabled;
 
         //-------------------------------------------------------------------------------------
-        // フォントと色
+        // 基本設定
         //-------------------------------------------------------------------------------------
-        public static string NormalVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
-        public static string CenterVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
-        public static string VerticalVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
-        public static string HorizontalVkbFontSpec { get; private set; } = "MS Gothic|9";
-        public static string MiniBufVkbFontSpec { get; private set; } = "MS Gothic|9";
-        public static float VerticalFontHeightFactor { get; private set; } = 1.0f;
+        /// <summary>Ctrl修飾なしで Decoder をアクティブにするホットキーの仮想キーコード</summary> 
+        public static uint ActiveKey { get; private set; } = 0x1c;
+        /// <summary>Ctrl修飾ありで Decoder をアクティブにするホットキーの仮想キーコード</summary> 
+        public static uint ActiveKeyWithCtrl { get; private set; } = 0x1c;
+
+        /// <summary>Ctrl修飾なしで Decoder を非アクティブにするホットキーの仮想キーコード</summary> 
+        public static uint DeactiveKey { get; private set; } = 0;
+        /// <summary>Ctrl修飾ありで Decoder を非アクティブにするホットキーの仮想キーコード</summary> 
+        public static uint DeactiveKeyWithCtrl { get; private set; } = 0;
+
+        public static uint DeactiveKeyEffective => DeactiveKey != 0 ? DeactiveKey : ActiveKey;
+        public static uint DeactiveKeyWithCtrlEffective => DeactiveKeyWithCtrl != 0 ? DeactiveKeyWithCtrl : ActiveKeyWithCtrl;
+
+        /// <summary>スプラッシュウィンドウの表示時間</summary>
+        public static int SplashWindowShowDuration { get; private set; } = 60;
+
+        /// <summary>終了時に確認ダイアログを出す</summary>
+        public static bool ConfirmOnClose { get; private set; } = true;
+
+        /// <summary>再起動時に確認ダイアログを出す</summary>
+        public static bool ConfirmOnRestart { get; private set; } = true;
 
         //-------------------------------------------------------------------------------------
-        // 基本設定
+        // 各種ファイル
         //-------------------------------------------------------------------------------------
         /// <summary>キーボードファイル</summary>
         public static string KeyboardFile { get; private set; }
@@ -155,22 +137,8 @@ namespace KanchokuWS
         //public static string HistoryNgramFile {get; private set; }
         public static string MazegakiFile { get; private set; }
 
-        /// <summary>ファイル保存世代数</summary>
-        public static int BackFileRotationGeneration { get; private set; } = 3;
-
-        /// <summary>辞書保存インターバルタイム(分)</summary>
-        public static int SaveDictsIntervalTime { get; private set; } = 60;
-
-        /// <summary>辞書保存に適した平穏な時間(分)</summary>
-        public static int SaveDictsCalmTime { get; private set; } = 1;
-
-        /// <summary>自身以外のキーボードフックツールからの出力を無視する</summary>
-        public static bool IgnoreOtherHooker { get; private set; } = true;
-
         //-------------------------------------------------------------------------------------
-        /// <summary> 文字送出時にコピー&ペーストを行う文字数の閾値 </summary>
-        public static int MinLeghthViaClipboard { get; set; } = 5;
-
+        // 詳細設定
         //-------------------------------------------------------------------------------------
         /// <summary>仮想鍵盤の表示モード</summary>
         public enum VkbShowMode
@@ -223,6 +191,44 @@ namespace KanchokuWS
 
         ///// <summary>ディスプレイのDPI比(標準96dpiとの比)</summary>
         //public static double DisplayScale { get; private set; } = 1.0;
+
+        /// <summary>ファイル保存世代数</summary>
+        public static int BackFileRotationGeneration { get; private set; } = 3;
+
+        /// <summary>辞書保存インターバルタイム(分)</summary>
+        public static int SaveDictsIntervalTime { get; private set; } = 60;
+
+        /// <summary>辞書保存に適した平穏な時間(分)</summary>
+        public static int SaveDictsCalmTime { get; private set; } = 1;
+
+        /// <summary>自身以外のキーボードフックツールからの出力を無視する</summary>
+        public static bool IgnoreOtherHooker { get; private set; } = true;
+
+        /// <summary> 文字送出時にコピー&ペーストを行う文字数の閾値 </summary>
+        public static int MinLeghthViaClipboard { get; set; } = 5;
+
+        /// <summary> 同時打鍵ではないテーブルで、ノード重複の警告を表示するか </summary>
+        public static bool DuplicateWarningEnabled { get; set; } = false;
+
+        //-------------------------------------------------------------------------------------
+        /// <summary>DecKeyの無限ループを検出する回数</summary>
+        public static int DeckeyInfiniteLoopDetectCount { get; private set; } = 1000;
+
+        /// <summary>キーリピートが発生したことを認識するまでの時間(ミリ秒)</summary>
+        public static int KeyRepeatDetectMillisec { get; private set; } = 100;
+
+        ///// <summary>キーリピートなどで短時間に大量のキー入力があったら強制的にデコーダをOFFにする</summary>
+        //public static bool AutoOffWhenBurstKeyIn { get; private set; } = false;
+
+        //-------------------------------------------------------------------------------------
+        // フォントと色
+        //-------------------------------------------------------------------------------------
+        public static string NormalVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
+        public static string CenterVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
+        public static string VerticalVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
+        public static string HorizontalVkbFontSpec { get; private set; } = "MS Gothic|9";
+        public static string MiniBufVkbFontSpec { get; private set; } = "MS Gothic|9";
+        public static float VerticalFontHeightFactor { get; private set; } = 1.0f;
 
         /// <summary>仮想鍵盤の最上段セルの背景色</summary>
         public static string BgColorTopLevelCells { get; private set; } = "GhostWhite";
@@ -879,6 +885,9 @@ namespace KanchokuWS
 
             // 自身以外のキーボードフックツールからの出力を無視する
             IgnoreOtherHooker = GetString("ignoreOtherHooker")._parseBool(false);
+
+            // 同時打鍵ではないテーブルで、ノード重複の警告を表示するか
+            DuplicateWarningEnabled = GetString("duplicateWarningEnabled")._parseBool(false);
 
             //-------------------------------------------------------------------------------------
             // フォントと色の設定

@@ -68,7 +68,7 @@ namespace KanchokuWS.TableParser
         /// <returns></returns>
         protected Node setNthChildNode(StrokeTableNode tbl, int n, Node node)
         {
-            if (tbl.setNthChild(n, node) && isInCombinationBlock && !bIgnoreWarningOverwrite) {
+            if (tbl.setNthChild(n, node) && (Settings.DuplicateWarningEnabled || isInCombinationBlock) && !bIgnoreWarningOverwrite) {
                 logger.Warn($"DUPLICATED: {CurrentLine}");
                 NodeDuplicateWarning();
             }
@@ -130,12 +130,18 @@ namespace KanchokuWS.TableParser
                             bOverwritten = true;
                         }
                     } else {
-                        bOverwritten = bOverwritten || !(pn.getNth(idx)?.isFunctionNode() ?? true);
+                        if (!bOverwritten) {
+                            var _nd = pn.getNth(idx);
+                            if (_nd != null) {
+                                // 既存が FunctionNode でないか RewriteNode であり、新規がRewriteNodeでない
+                                bOverwritten = (!_nd.isFunctionNode() || _nd is RewriteNode) && !(node is RewriteNode);
+                            }
+                        }
                         pn.setNthChild(idx, node);
                     }
                 }
             }
-            if (bOverwritten && isInCombinationBlock && !bIgnoreWarningOverwrite) {
+            if (bOverwritten && (Settings.DuplicateWarningEnabled || isInCombinationBlock) && !bIgnoreWarningOverwrite) {
                 logger.Warn($"DUPLICATED: strokeList={stkList._keyString()}, isCombo={isInCombinationBlock}, line={CurrentLine}");
                 NodeDuplicateWarning();
             }

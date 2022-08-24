@@ -122,6 +122,10 @@ namespace KanchokuWS.TableParser
 
         List<BlockInfo> blockInfoList = new List<BlockInfo>();
 
+        public int Size() {
+            return blockInfoList.Count;
+        }
+
         public string CurrentDirPath {
             get {
                 var path = blockInfoList._isEmpty() ? "(empty)" : blockInfoList.Last().DirPath;
@@ -182,6 +186,8 @@ namespace KanchokuWS.TableParser
         private static Logger logger = Logger.GetLogger();
 
         private List<string> tableLines = new List<string>();
+
+        public bool IsPrimary { get; set; } = false;
 
         // ブロック情報のスタック
         BlockInfoStack blockInfoStack = new BlockInfoStack();
@@ -572,6 +578,10 @@ namespace KanchokuWS.TableParser
             return blockInfoStack.CalcCurrentLineNumber(LineNumber);
         }
 
+        string parsedFileAndLinenum() {
+            return blockInfoStack.Size() > 2 ? $"\r\n(tmp/parsedTableFile{(IsPrimary ? 1 : 2)}.txt:{LineNumber}行目、このファイルは設定ダイアログの「情報」>「テーブル出力」で出力されます)\r\n" : "";
+        }
+
         int calcErrorColumn() {
             if (nextPos == 0 && lineNumber > 0) return tableLines[lineNumber - 1].Count();
             return nextPos;
@@ -606,52 +616,52 @@ namespace KanchokuWS.TableParser
         // 引数エラー
         public void ArgumentError(string arg) {
             logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError(string.Format("引数 {0} が不正です。\r\nテーブルファイル {1} の {2}行目がまちがっているようです：\r\n> {3} ...",
-                arg, blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+            handleError(string.Format("引数 {0} が不正です。\r\nテーブルファイル {1} の {2}行目{3}がまちがっているようです：\r\n> {4} ...",
+                arg, blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // loadループエラー
         public void LoadLoopError(string name) {
             logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError(string.Format("ブロック {0} のロードがループしています。\r\n{1} {2} の {3}行目がまちがっているようです：\r\n> {4} ...",
-                name, blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+            handleError(string.Format("ブロック {0} のロードがループしています。\r\n{1} {2} の {3}行目{4}がまちがっているようです：\r\n> {5} ...",
+                name, blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // storeブロックが存在しない
         public void NoSuchBlockError(string name) {
             logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError(string.Format("指定されたブロック {0} が存在しません。\r\n{1} {2} の {3}行目がまちがっているようです：\r\n> {4} ...",
-                name, blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+            handleError(string.Format("指定されたブロック {0} が存在しません。\r\n{1} {2} の {3}行目{4}がまちがっているようです：\r\n> {5} ...",
+                name, blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // ファイルの読み込みに失敗した場合
         public void FileOpenError(string filename) {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError(string.Format("ファイル {0} を読み込めません。\r\nテーブルファイル {1} の {2}行目がまちがっているようです：\r\n> {3} ...",
-                filename, blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+            handleError(string.Format("ファイル {0} を読み込めません。\r\nテーブルファイル {1} の {2}行目{3}がまちがっているようです：\r\n> {4} ...",
+                filename, blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // ノードの重複が発生した場合
         public void NodeDuplicateWarning() {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleWarning(string.Format("{0} {1} の {2}行目でノードの重複が発生しました。意図したものであれば無視してください (#ignoreWarning overwrite を記述するとこの警告が出なくなります)：\r\n> {3} ...",
-                blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+            handleWarning(string.Format("{0} {1} の {2}行目{3}でノードの重複が発生しました。意図したものであれば無視してください (#ignoreWarning overwrite を記述するとこの警告が出なくなります)：\r\n> {4} ...",
+                blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // カラム0で予期しないLBRACEが発生
         public void UnexpectedLeftBraceAtColumn0Warning() {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
             handleWarning(
-                string.Format("{0} {1} の {2}行目の行頭にネストされた '{{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述するとこの警告が出なくなります)：\r\n> {3} ...",
-                blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+                string.Format("{0} {1} の {2}行目{3}の行頭にネストされた '{{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述するとこの警告が出なくなります)：\r\n> {4} ...",
+                blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // カラム0で予期しないRBRACEが発生
         public void UnexpectedRightBraceAtColumn0Warning() {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
             handleWarning(
-                string.Format("{0} {1} の {2}行目の行頭にまだネスト中の '}}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述するとこの警告が出なくなります)：\r\n> {3} ...",
-                blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), CurrentLine._safeSubstring(0, 50)));
+                string.Format("{0} {1} の {2}行目{3}の行頭にまだネスト中の '}}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述するとこの警告が出なくなります)：\r\n> {4} ...",
+                blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // エラー処理
@@ -766,6 +776,7 @@ namespace KanchokuWS.TableParser
         public ParserContext(TableLines tableLines, KeyCombinationPool pool, bool primary)
         {
             this.tableLines = tableLines;
+            this.tableLines.IsPrimary = primary;
             bPrimary = primary;
             keyComboPool = pool;
         }

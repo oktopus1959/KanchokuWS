@@ -563,6 +563,9 @@ namespace KanchokuWS.Gui
             textBox_activeWinInfoIntervalMillisec.Text = $"{Settings.GetActiveWindowInfoIntervalMillisec}";
             textBox_vkbMoveGuardMillisec.Text = $"{Settings.VirtualKeyboardMoveGuardMillisec}";
 
+            // ノード重複の警告
+            checkBox_duplicateWarningEnabled.Checked = Settings.DuplicateWarningEnabled;
+
             // 無限ループ対策
             textBox_deckeyInfiniteLoopDetectCount.Text = $"{Settings.DeckeyInfiniteLoopDetectCount}";
 
@@ -602,6 +605,9 @@ namespace KanchokuWS.Gui
             checkerAdvanced.Add(textBox_preWmCharGuardMillisec);
             checkerAdvanced.Add(textBox_activeWinInfoIntervalMillisec);
             checkerAdvanced.Add(textBox_vkbMoveGuardMillisec);
+
+            // ノード重複の警告
+            checkerAdvanced.Add(checkBox_duplicateWarningEnabled);
 
             // 無限ループ対策
             checkerAdvanced.Add(textBox_deckeyInfiniteLoopDetectCount);
@@ -661,6 +667,9 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("preWmCharGuardMillisec", textBox_preWmCharGuardMillisec.Text.Trim());
             Settings.SetUserIni("activeWindowInfoIntervalMillisec", textBox_activeWinInfoIntervalMillisec.Text.Trim());
             Settings.SetUserIni("virtualKeyboardMoveGuardMillisec", textBox_vkbMoveGuardMillisec.Text.Trim());
+
+            // ノード重複の警告
+            Settings.SetUserIni("duplicateWarningEnabled", checkBox_duplicateWarningEnabled.Checked);
 
             // 無限ループ対策
             Settings.SetUserIni("deckeyInfiniteLoopDetectCount", textBox_deckeyInfiniteLoopDetectCount.Text.Trim());

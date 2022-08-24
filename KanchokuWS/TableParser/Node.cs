@@ -97,10 +97,11 @@ namespace KanchokuWS.TableParser
                     } else if (node is StrokeTableNode || !(children[n] is StrokeTableNode)) {
                         // 新旧ノードが StrokeTableNode であるか、旧ノードが StrokeTableNode でなければ、上書き
                         children[n] = node;
+                        return !(node is RewriteNode);  // 新ノードが RewriteNode なら上書き警告しない
                     } else {
                         // それ以外は node を捨てる
+                        return true;
                     }
-                    return true;
                 }
                 children[n] = node;
             }
