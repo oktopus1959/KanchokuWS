@@ -214,7 +214,7 @@ namespace KanchokuWS.TableParser
         }
 
         /// <summary>
-        /// テーブル構造を解析してストロークノード木を構築する。
+        /// 下位レベルのテーブル(ブロック)構造を解析してストロークノード木を構築する。
         /// </summary>
         public void MakeNodeTree()
         {
@@ -312,7 +312,7 @@ namespace KanchokuWS.TableParser
             addNodeTree();
         }
 
-        // 矢印記法(-\d+(,\d+)*>)を解析して第1打鍵位置に従って配置する
+        // 矢印記法(-\d+(,\d+)*>)の直後を解析して第1打鍵位置に従って配置する
         protected void addArrowNode(TOKEN prevToken, int idx)
         {
             using (pushStroke(idx)) {   // ここで idx は保存される
@@ -321,6 +321,7 @@ namespace KanchokuWS.TableParser
                 readNextToken(true);
                 switch (currentToken) {
                     case TOKEN.ARROW:
+                        // 矢印記法の連続
                         if (prevToken == TOKEN.REWRITE_PRE) {
                             addPreRewriteNode(RewritePreTargetStr).addArrowNode(TOKEN.ARROW, arrowIndex);
                         } else {
@@ -331,6 +332,7 @@ namespace KanchokuWS.TableParser
                     case TOKEN.COMMA:
                     case TOKEN.VBAR:
                         if (parseArrow()) {
+                            // 矢印記法連続の簡略記法
                             if (prevToken == TOKEN.REWRITE_PRE) {
                                 addPreRewriteNode(RewritePreTargetStr).addArrowNode(TOKEN.ARROW, arrowIndex);
                             } else {
@@ -340,6 +342,7 @@ namespace KanchokuWS.TableParser
                         break;
 
                     case TOKEN.LBRACE:
+                        // ブロック開始
                         switch (prevToken) {
                             case TOKEN.ARROW:
                                 // -X>{ } 形式
@@ -356,8 +359,9 @@ namespace KanchokuWS.TableParser
                         }
                         break;
 
-                    case TOKEN.STRING:
-                    case TOKEN.BARE_STRING:
+                    case TOKEN.STRING:             // "str" : 文字列ノード
+                    case TOKEN.BARE_STRING:        // str : 文字列ノード
+                    case TOKEN.FUNCTION:           // @c : 機能ノード
                         if (prevToken == TOKEN.REWRITE_PRE) {
                             addPreRewriteNode(RewritePreTargetStr).addLeafNode(currentToken, -1);
                         } else if (prevToken != TOKEN.ARROW) {
