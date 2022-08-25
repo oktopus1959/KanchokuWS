@@ -107,14 +107,14 @@ namespace KanchokuWS.TableParser
         {
             if (n >= 0 && n < children.Count) {
                 if (children[n] != null) {
-                    if (node is RewriteNode && children[n] is RewriteNode) {
+                    if (node.isRewriteNode() && children[n].isRewriteNode()) {
                         // 新旧ノードが RewriteNode である
                         ((RewriteNode)children[n]).Merge((RewriteNode)node);
                         return false;
                     } else if (node is StrokeTableNode || !(children[n] is StrokeTableNode)) {
                         // 新旧ノードが StrokeTableNode であるか、旧ノードが StrokeTableNode でなければ、上書き
                         children[n] = node;
-                        return !(node is RewriteNode);  // 新ノードが RewriteNode なら上書き警告しない
+                        return !node.isRewriteNode();  // 新ノードが RewriteNode なら上書き警告しない
                     } else {
                         // それ以外は node を捨てる
                         return true;

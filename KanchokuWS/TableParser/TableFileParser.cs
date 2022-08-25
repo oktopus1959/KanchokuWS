@@ -134,7 +134,7 @@ namespace KanchokuWS.TableParser
                             var _nd = pn.getNth(idx);
                             if (_nd != null) {
                                 // 既存が空でないツリーノードか、既存が FunctionNode でなく新規がRewriteNodeでない、なら上書き(重複)
-                                bOverwritten = (_nd.isStrokeTree() && _nd.hasChildren()) || ((!_nd.isFunctionNode() || _nd is RewriteNode) && !(node is RewriteNode));
+                                bOverwritten = (_nd.isStrokeTree() && _nd.hasChildren()) || ((!_nd.isFunctionNode() || _nd.isRewriteNode()) && !node.isRewriteNode());
                             }
                         }
                         pn.setNthChild(idx, node);
@@ -583,7 +583,7 @@ namespace KanchokuWS.TableParser
                 var myStr = ReadWordOrString()._orElse(() => lastIdx >= 0 ? getNthRootNodeString(lastIdx) : "");
                 node = setNthChildNode(rootTableNode, lastIdx, new RewriteNode(myStr));
             }
-            if (node is RewriteNode) {
+            if (node.isRewriteNode()) {
                 // RewriteNode がノード木に反映された場合に限り、後置書き換えノードの処理を行う
                 new PostRewriteParser(rootTableNode, (RewriteNode)node, context, leaderStr).MakeNodeTree();
             } else {
@@ -670,7 +670,7 @@ namespace KanchokuWS.TableParser
             int lastIdx = shiftDecKey(strokeList._getLast());
             string myStr = getNthRootNodeString(lastIdx);
             var node = setNthChildNode(rootTableNode, lastIdx, new RewriteNode(myStr));
-            if (node is RewriteNode) {
+            if (node.isRewriteNode()) {
                 // RewriteNode がノード木に反映された場合に限り、以下を実行
                 var tgtStr = Helper.ConcatDqString(targetStr, leaderStr);
                 ((RewriteNode)node).AddRewritePair(tgtStr, outStr, tblNode);
