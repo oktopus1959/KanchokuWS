@@ -15,7 +15,8 @@ namespace KanchokuWS.TableParser
             None,
             String,
             Function,
-            StrokeTree
+            StrokeTree,
+            Rewrite
         }
 
         NodeType nodeType = NodeType.None;
@@ -36,7 +37,11 @@ namespace KanchokuWS.TableParser
 
         public virtual Node getNth(int n) { return null; }
 
-        public virtual List<Node> getChildren() { return null; }
+        //public virtual List<Node> getChildren() { return null; }
+
+        public virtual bool hasChildren() { return false; }
+
+        public virtual int getChildNum() { return 0; }
 
         public virtual string getString() { return str; }
 
@@ -47,6 +52,8 @@ namespace KanchokuWS.TableParser
         public bool isStringNode() { return nodeType == NodeType.String; }
 
         public bool isStrokeTree() { return nodeType == NodeType.StrokeTree; }
+
+        public bool isRewriteNode() { return nodeType == NodeType.Rewrite; }
 
         public virtual void OutputLine(List<string> outLines, string leaderStr)
         {
@@ -69,9 +76,19 @@ namespace KanchokuWS.TableParser
             children = Helper.MakeList(new Node[(bRoot ? DecoderKeys.TOTAL_DECKEY_NUM : DecoderKeys.PLANE_DECKEY_NUM * 2)]);
         }
 
-        public override List<Node> getChildren()
+        //public override List<Node> getChildren()
+        //{
+        //    return children;
+        //}
+
+        public override bool hasChildren()
         {
-            return children;
+            return children._notEmpty();
+        }
+
+        public override int getChildNum()
+        {
+            return children._safeCount();
         }
 
         // n番目の子ノードを返す
@@ -116,10 +133,10 @@ namespace KanchokuWS.TableParser
 
         void outputNewLines(List<string> outLines, Node p, List<int> list)
         {
-            var children = p.getChildren();
-            if (children._notEmpty()) {
-                for (int i = 0; i < children.Count; ++i) {
-                    var c = children[i];
+            if (p.hasChildren()) {
+                int num = p.getChildNum();
+                for (int i = 0; i < num; ++i) {
+                    var c = p.getNth(i);
                     if (c != null) {
                         list.Add(i);
                         outputNewLines(outLines, c, list);
@@ -198,7 +215,8 @@ namespace KanchokuWS.TableParser
                 if (subTable == null) {
                     subTable = info.subTable;
                 } else {
-                    for (int i = 0; i < info.subTable.getChildren()._safeCount(); ++i) {
+                    int num = info.subTable.getChildNum();
+                    for (int i = 0; i < num; ++i) {
                         var p = info.subTable.getNth(i);
                         if (p != null) subTable.setNthChild(i, p);
                     }
@@ -211,7 +229,7 @@ namespace KanchokuWS.TableParser
         public StrokeTableNode SubTable => subTable;
     }
 
-    class RewriteNode : FunctionNode
+    class RewriteNode : Node
     {
         private static Logger logger = Logger.GetLogger();
 
@@ -230,7 +248,7 @@ namespace KanchokuWS.TableParser
         }
 
         // コンストラクタ
-        public RewriteNode(string outStr) : base("__PRE__")
+        public RewriteNode(string outStr) : base(NodeType.Rewrite, "__PRE__")
         {
             myInfo = new RewriteInfo(outStr, null);
         }

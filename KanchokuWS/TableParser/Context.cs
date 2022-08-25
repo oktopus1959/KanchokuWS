@@ -579,7 +579,7 @@ namespace KanchokuWS.TableParser
         }
 
         string parsedFileAndLinenum() {
-            return blockInfoStack.Size() > 2 ? $"\r\n(tmp/parsedTableFile{(IsPrimary ? 1 : 2)}.txt:{LineNumber}行目、このファイルは設定ダイアログの「情報」>「テーブル出力」で出力されます)\r\n" : "";
+            return blockInfoStack.Size() > 2 ? $"\r\n(または tmp/parsedTableFile{(IsPrimary ? 1 : 2)}.txt の {LineNumber}行目、\r\n 同ファイルは設定ダイアログの「情報」>「テーブル出力」で出力される)\r\n" : "";
         }
 
         int calcErrorColumn() {
@@ -590,7 +590,7 @@ namespace KanchokuWS.TableParser
         // 解析エラー
         public void ParseError(string msg = null) {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError(string.Format("{0}{1} {2} の {3}行 {4}文字目({5})がまちがっているようです：\r\n> {6} ...",
+            handleError(string.Format("{0}{1} {2} の {3}行 {4}文字目({5})がまちがっているようです：\r\n\r\n> {6} ...",
                 msg._notEmpty() ? msg + "\r\n" : "",
                 blockOrFile(),
                 blockInfoStack.CurrentBlockName,
@@ -616,35 +616,35 @@ namespace KanchokuWS.TableParser
         // 引数エラー
         public void ArgumentError(string arg) {
             logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError(string.Format("引数 {0} が不正です。\r\nテーブルファイル {1} の {2}行目{3}がまちがっているようです：\r\n> {4} ...",
+            handleError(string.Format("引数 {0} が不正です。\r\nテーブルファイル {1} の {2}行目{3}がまちがっているようです：\r\n\r\n> {4} ...",
                 arg, blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // loadループエラー
         public void LoadLoopError(string name) {
             logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError(string.Format("ブロック {0} のロードがループしています。\r\n{1} {2} の {3}行目{4}がまちがっているようです：\r\n> {5} ...",
+            handleError(string.Format("ブロック {0} のロードがループしています。\r\n{1} {2} の {3}行目{4}がまちがっているようです：\r\n\r\n> {5} ...",
                 name, blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // storeブロックが存在しない
         public void NoSuchBlockError(string name) {
             logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError(string.Format("指定されたブロック {0} が存在しません。\r\n{1} {2} の {3}行目{4}がまちがっているようです：\r\n> {5} ...",
+            handleError(string.Format("指定されたブロック {0} が存在しません。\r\n{1} {2} の {3}行目{4}がまちがっているようです：\r\n\r\n> {5} ...",
                 name, blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // ファイルの読み込みに失敗した場合
         public void FileOpenError(string filename) {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError(string.Format("ファイル {0} を読み込めません。\r\nテーブルファイル {1} の {2}行目{3}がまちがっているようです：\r\n> {4} ...",
+            handleError(string.Format("ファイル {0} を読み込めません。\r\nテーブルファイル {1} の {2}行目{3}がまちがっているようです：\r\n\r\n> {4} ...",
                 filename, blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // ノードの重複が発生した場合
         public void NodeDuplicateWarning() {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleWarning(string.Format("{0} {1} の {2}行目{3}でノードの重複が発生しました。意図したものであれば無視してください (#ignoreWarning overwrite を記述するとこの警告が出なくなります)：\r\n> {4} ...",
+            handleWarning(string.Format("{0} {1} の {2}行目{3}でノードの重複が発生しました。意図したものであれば無視してください (#ignoreWarning overwrite を記述するとこの警告が出なくなります)：\r\n\r\n> {4} ...",
                 blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
@@ -652,7 +652,7 @@ namespace KanchokuWS.TableParser
         public void UnexpectedLeftBraceAtColumn0Warning() {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
             handleWarning(
-                string.Format("{0} {1} の {2}行目{3}の行頭にネストされた '{{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述するとこの警告が出なくなります)：\r\n> {4} ...",
+                string.Format("{0} {1} の {2}行目{3}の行頭にネストされた '{{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述するとこの警告が出なくなります)：\r\n\r\n> {4} ...",
                 blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
@@ -660,7 +660,7 @@ namespace KanchokuWS.TableParser
         public void UnexpectedRightBraceAtColumn0Warning() {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
             handleWarning(
-                string.Format("{0} {1} の {2}行目{3}の行頭にまだネスト中の '}}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述するとこの警告が出なくなります)：\r\n> {4} ...",
+                string.Format("{0} {1} の {2}行目{3}の行頭にまだネスト中の '}}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述するとこの警告が出なくなります)：\r\n\r\n> {4} ...",
                 blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 

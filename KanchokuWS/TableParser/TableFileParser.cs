@@ -112,7 +112,7 @@ namespace KanchokuWS.TableParser
                         pn = (StrokeTableNode)nd;
                     } else {
                         // StrokeTableNodeを生成して挿入(または置換)する
-                        bOverwritten = bOverwritten || nd != null && !nd.isFunctionNode();
+                        bOverwritten = bOverwritten || (nd != null && !nd.isFunctionNode());    // 置換先が機能ノード以外なら上書き(重複)とする
                         var _pn = new StrokeTableNode();
                         pn.setNthChild(idx, _pn);
                         pn = _pn;
@@ -133,8 +133,8 @@ namespace KanchokuWS.TableParser
                         if (!bOverwritten) {
                             var _nd = pn.getNth(idx);
                             if (_nd != null) {
-                                // 既存が FunctionNode でないか RewriteNode であり、新規がRewriteNodeでない
-                                bOverwritten = (!_nd.isFunctionNode() || _nd is RewriteNode) && !(node is RewriteNode);
+                                // 既存が空でないツリーノードか、既存が FunctionNode でなく新規がRewriteNodeでない、なら上書き(重複)
+                                bOverwritten = (_nd.isStrokeTree() && _nd.hasChildren()) || ((!_nd.isFunctionNode() || _nd is RewriteNode) && !(node is RewriteNode));
                             }
                         }
                         pn.setNthChild(idx, node);
