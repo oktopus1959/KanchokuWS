@@ -91,7 +91,7 @@ namespace KanchokuWS.Gui
 
                     case "loadTable":
                         //Settings.TableFile2 = arg;
-                        CombinationKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, arg);
+                        CombinationKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, arg, true);
                         frmMain.ExecCmdDecoder("createStrokeTrees", "both"); // ストローク木の再構築
                         frmMain.ExecCmdDecoder("useCodeTable2", null);
                         callDecoderWithKey(DecoderKeys.FULL_ESCAPE_DECKEY);

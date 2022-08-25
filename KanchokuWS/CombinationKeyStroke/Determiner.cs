@@ -160,16 +160,16 @@ namespace KanchokuWS.CombinationKeyStroke
         /// </summary>
         /// <param name="tableFile">主テーブルファイル名</param>
         /// <param name="tableFile2">副テーブルファイル名</param>
-        public void Initialize(string tableFile, string tableFile2)
+        public void Initialize(string tableFile, string tableFile2, bool bTest = false)
         {
             Settings.ClearSpecificDecoderSettings();
             KeyCombinationPool.Initialize();
             Clear();
 
-            new TableFileParser().ParseTableFile(tableFile, "tmp/tableFile1.tbl", KeyCombinationPool.Singleton1, true);
+            new TableFileParser().ParseTableFile(tableFile, "tmp/tableFile1.tbl", KeyCombinationPool.Singleton1, true, false, bTest);
 
             if (tableFile2._notEmpty()) {
-                new TableFileParser().ParseTableFile(tableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.Singleton2, false);
+                new TableFileParser().ParseTableFile(tableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.Singleton2, false, false, bTest);
             }
         }
 

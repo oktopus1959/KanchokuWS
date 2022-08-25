@@ -844,7 +844,7 @@ namespace KanchokuWS.TableParser
         /// <param name="filename"></param>
         /// <param name="outFilename"></param>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public void ParseTableFile(string filename, string outFilename, KeyCombinationPool pool, bool primary, bool bWriteExpandedTableLines = false)
+        public void ParseTableFile(string filename, string outFilename, KeyCombinationPool pool, bool primary, bool bWriteExpandedTableLines = false, bool bTest = false)
         {
             logger.InfoH($"ENTER: filename={filename}");
             tableLines.ReadAllLines(filename);
@@ -859,7 +859,7 @@ namespace KanchokuWS.TableParser
                 tableLines.Error($"テーブルファイル({filename})が開けません");
             }
 
-            tableLines.showErrorMessage();
+            if (!bWriteExpandedTableLines && !bTest) tableLines.showErrorMessage();
 
             logger.InfoH($"LEAVE");
         }
