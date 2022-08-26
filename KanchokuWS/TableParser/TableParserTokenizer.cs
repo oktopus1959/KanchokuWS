@@ -41,7 +41,7 @@ namespace KanchokuWS.TableParser
         protected string getNthRootNodeString(int n)
         {
             int idx = shiftDecKey(n);
-            return (rootTableNode?.getNth(idx)?.getString())._stripDq()._toSafe();
+            return (rootTableNode?.GetNthSubNode(idx)?.GetOutputString())._stripDq()._toSafe();
         }
 
         protected string leaderStr => strokeList.Count > 1 ? strokeList.Take(strokeList.Count - 1).Select(x => getNthRootNodeString(x))._join("") : "";
@@ -62,15 +62,6 @@ namespace KanchokuWS.TableParser
             if (stkList._notEmpty()) {
                 strokeList.AddRange(stkList);
             }
-        }
-
-        /// <summary>
-        /// 未出力なノードを OutputLines に書き出す
-        /// </summary>
-        protected void outputNewLines()
-        {
-            var list = new List<int>();
-            rootTableNode?.OutputLine(OutputLines, "");
         }
 
         // 現在のトークンをチェックする
@@ -115,9 +106,10 @@ namespace KanchokuWS.TableParser
                         IncludeFile();
                     } else if (lcStr == "define") {
                         // #define: 定数の定義
-                        outputNewLines();
-                        OutputLines.Add(CurrentLine);
+                        //outputNewLines();
+                        //OutputLines.Add(CurrentLine); // define はすべてフロント側で処理するようにした
                         ReadWord();
+                        if (CurrentStr._startsWith("display")) OutputLines.Add(";; " + CurrentLine); // display-name だけ出力する
                         if (CurrentStr._notEmpty()) definedNames.Add(CurrentStr);
                         if (CurrentStr._toLower()._equalsTo("defguide")) {
                             // 'defguide': 配字案内
@@ -140,9 +132,25 @@ namespace KanchokuWS.TableParser
                         // #load: store で格納した行を展開
                         LoadLineBlock();
                     } else if (lcStr._startsWith("yomiconv")) {
-                        // #yomiCombert: 読み変換(kw-uni側で処理)
-                        outputNewLines();
-                        OutputLines.Add(CurrentLine);
+                        // #yomiConvert: 読み変換(kw-uni側で処理)
+                        ReadWord();
+                        var keyword = CurrentStr._toLower();
+                        logger.DebugH(() => $"YomiConversion: keyword={keyword}");
+                        if (keyword == "clear" || keyword == "end") {
+                            kanjiConvMap?.Clear();
+                        } else {
+                            logger.DebugH(() => $"YomiConversion: {Settings.KanjiYomiFile}");
+                            if (Settings.KanjiYomiFile._notEmpty()) readKanjiConvFile(Settings.KanjiYomiFile, true);
+                            if (keyword == "with") {
+                                ReadWordOrString();
+                                if (CurrentStr._notEmpty()) {
+                                    logger.DebugH(() => $"YomiConversion: {CurrentStr}");
+                                    readKanjiConvFile(CurrentStr, false);
+                                }
+                            }
+                        }
+                        //outputNewLines();
+                        //OutputLines.Add(CurrentLine);
                     } else if (lcStr == "strokeposition") {
                         // #strokePosiion: 配字案内
                         //OutputLines.Add(CurrentLine);
@@ -619,6 +627,63 @@ namespace KanchokuWS.TableParser
                 return false;
             }
             return true;
+        }
+
+        // 漢字置換ファイルを読み込む
+        // 一行の形式は「漢字 [<TAB>|Space]+ 読みの並び('|'区切り)」
+        // 読みの並びの優先順は以下のとおり:
+        // ①2文字以上のカタカナ
+        // ②2文字以上のひらがな
+        // ③漢字
+        // bOnlyYomi == true なら、エントリの上書き禁止でカタカナをひらがなに変換
+        // bOnlyYomi == false なら、エントリの上書きOKで、カタカナはそのまま、漢字と読みの入れ替えもOK
+        void readKanjiConvFile(string filename, bool bOnlyYomi)
+        {
+            var reComment = @"#.*";
+            var reBlank = @"[\t ]+";
+            var reKatakanaMulti = @"[ァ-ン]{2,}";
+            var reHiraganaMulti = @"[ぁ-ん]{2,}";
+
+            logger.DebugH(() => $"filename: {filename}, bOnlyYomi={bOnlyYomi}");
+            var lines = Helper.ReadAllLines(KanchokuIni.MakeFullPath(filename), e => {
+                logger.Error($"Can't open: {filename}");
+                FileOpenError(filename);
+            });
+            logger.DebugH(() => $"lines.size(): {lines.Length}");
+            if (lines._notEmpty() && kanjiConvMap != null) {
+                foreach (var line in lines) {
+                    //var items = utils::split(utils::strip(std::regex_replace(std::regex_replace(line, reComment, _T("")), reBlank, _T(" "))), ' ');
+                    var items = line._reReplace(reComment, "")._reReplace(reBlank, " ")._stripAscii()._split(' ');
+                    if (items.Length >= 2) {
+                        var kanji = items[0];
+                        if (kanji._notEmpty() && items[1]._notEmpty()) {
+                            if (!bOnlyYomi || !kanjiConvMap.ContainsKey(kanji)) {
+                                if (!bOnlyYomi) {
+                                    // カタカナをそのまま入れる、漢字と読みの入れ替えもOK
+                                    var yomi = items[1];
+                                    if (yomi._notEmpty()) {
+                                        kanjiConvMap[kanji] = yomi;
+                                        kanjiConvMap[yomi] = kanji;
+                                    }
+                                } else {
+                                    //std::wsmatch results;
+                                    List<string> yomiItems = null;
+                                    string yomi = null;
+                                    if ((yomiItems = items[1]._reScan(reKatakanaMulti))._notEmpty()) {
+                                        // カタカナ読みがあれば、それを優先して、ひらがな変換して使う
+                                        yomi = Helper.ConvertKatakanaToHiragana(yomiItems[0]);
+                                    } else if ((yomiItems = items[1]._reScan(reHiraganaMulti))._notEmpty()) {
+                                        // カタカナ読みがなければ、ひらがな読みを使う
+                                        yomi = yomiItems[0];
+                                    }
+                                    if (yomi._notEmpty() && yomi != kanji) kanjiConvMap[kanji] = yomi;
+                                }
+                            }
+                        }
+                    }
+                }
+                logger.DebugH(() => $"kanjiConvMap.size(): {kanjiConvMap.Count()}");
+            }
         }
 
     }

@@ -22,11 +22,6 @@ namespace KanchokuWS
 
         public string KanchokuDir => IniFilePath._getDirPath();
 
-        public string MakeFullPath(string filename)
-        {
-            return KanchokuDir._joinAbsPath(filename);
-        }
-
         public string GetString(string key, string defval = "")
         {
             return m_ini?.GetString("kanchoku", key, defval) ?? defval;
@@ -93,6 +88,11 @@ namespace KanchokuWS
         private KanchokuIni()
             : base("kanchoku.ini")
         {
+        }
+
+        public static string MakeFullPath(string filename)
+        {
+            return Singleton.KanchokuDir._joinAbsPath(filename);
         }
 
     }

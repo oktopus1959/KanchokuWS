@@ -253,7 +253,8 @@ namespace KanchokuWS.TableParser
         // ファイルをインクルードする
         public void IncludeFile() {
             logger.DebugH("CALLED");
-            var filename = ReadWordOrString();
+            ReadWordOrString();
+            var filename = CurrentStr;
             logger.DebugH(() => $"INCLUDE: lineNum={LineNumber}, {filename}");
             if (filename._notEmpty()) {
                 var lines = readAllLines(filename, true);
@@ -487,9 +488,10 @@ namespace KanchokuWS.TableParser
         }
 
         // 行末までの範囲で文字列または単語を読み込む
-        public string ReadWordOrString()
+        public bool ReadWordOrString()
         {
             CurrentStr = "";
+            bool bBare = false;
             if (nextPos < CurrentLine._safeLength()) {
                 char c = SkipSpace();
                 if (c > ' ') {
@@ -499,10 +501,11 @@ namespace KanchokuWS.TableParser
                         SkipToEndOfLine();
                     } else {
                         readWordSub(c);
+                        bBare = true;
                     }
                 }
             }
-            return CurrentStr;
+            return bBare;
         }
 
         public char PeekNextChar(int offset = 0) {
@@ -672,12 +675,17 @@ namespace KanchokuWS.TableParser
             Error(msg);
         }
 
+        // 警告の出力数をカウントし、最大数に達したらそれ以上は出力しないようにする
+        int numWarnLog = 0;
+
         // 警告処理
         void handleWarning(string msg) {
-            logger.Warn(msg);
-            logger.Warn("lines=\n" + MakeErrorLines());
-            // エラーメッセージを投げる
-            Warn(msg);
+            if (numWarnLog++ < 10) {
+                logger.Warn(msg);
+                logger.Warn("lines=\n" + MakeErrorLines());
+                // エラーメッセージを投げる
+                Warn(msg);
+            }
         }
 
         public void showErrorMessage()
@@ -766,8 +774,18 @@ namespace KanchokuWS.TableParser
 
         public HashSet<int> sequentialShiftKeys = new HashSet<int>();
 
-        // ルートテーブルノード
+        // 真のルートテーブルノード
         public StrokeTableNode rootTableNode = new StrokeTableNode(true);
+
+        // 漢字置換マップ
+        public Dictionary<string, string> kanjiConvMap = new Dictionary<string, string>();
+
+        /// <summary>漢字置換ファイルによる漢字の書きえ</summary>
+        /// <param name="k"></param>
+        /// <returns></returns>
+        public string ConvertKanji(string k) {
+            return kanjiConvMap._safeGet(k)._orElse(k);
+        }
 
         /// <summary>
         /// コンストラクタ

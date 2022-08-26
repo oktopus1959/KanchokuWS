@@ -67,6 +67,9 @@ namespace KanchokuWS.TableParser
 
         protected HashSet<int> sequentialShiftKeys => context.sequentialShiftKeys;
 
+        protected Dictionary<string, string> kanjiConvMap => context.kanjiConvMap;
+        public string ConvertKanji(string k) { return context.ConvertKanji(k); }
+
         protected bool Empty => tableLines.Empty;
         protected bool NotEmpty => tableLines.NotEmpty;
         protected string CurrentLine => tableLines.CurrentLine;
@@ -88,7 +91,7 @@ namespace KanchokuWS.TableParser
         protected void ReadPlaceHolderName() { tableLines.ReadPlaceHolderName(); }
         protected void ReadMarker() { tableLines.ReadMarker(); }
         protected string ReadWord() { return tableLines.ReadWord(); }
-        protected string ReadWordOrString() { return tableLines.ReadWordOrString(); }
+        protected bool ReadWordOrString() { return tableLines.ReadWordOrString(); }
         protected char PeekNextChar(int offset = 0) { return tableLines.PeekNextChar(offset); }
         protected char GetNextChar() { return tableLines.GetNextChar(); }
         protected bool GetNextLine() { return tableLines.GetNextLine(); }

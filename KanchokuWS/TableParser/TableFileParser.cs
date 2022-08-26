@@ -31,7 +31,7 @@ namespace KanchokuWS.TableParser
         protected void addMyCharFunctionInRootStrokeTable()
         {
             for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
-                if (rootTableNode.getNth(idx) == null) {
+                if (rootTableNode.GetNthSubNode(idx) == null) {
                     OutputLines.Add($"-{idx}>@^");
                 }
             }
@@ -44,7 +44,7 @@ namespace KanchokuWS.TableParser
             {
                 int dk = VirtualKeys.GetFuncDeckeyByName(keyName);
                 if (dk >= 0) {
-                    if (rootTableNode.getNth(dk) == null && rootTableNode.getNth(dk + DecoderKeys.COMBO_DECKEY_START) != null) {
+                    if (rootTableNode.GetNthSubNode(dk) == null && rootTableNode.GetNthSubNode(dk + DecoderKeys.COMBO_DECKEY_START) != null) {
                         // 単打設定が存在せず、同時打鍵の先頭キーになっている場合は、単打設定を追加する
                         makeCombinationKeyCombo(Helper.MakeList(dk), 0, true, false);  // 単打指定
                         OutputLines.Add($"-{dk}>\"!{{{keyName}}}\"");
@@ -68,11 +68,12 @@ namespace KanchokuWS.TableParser
         /// <returns></returns>
         protected Node setNthChildNode(StrokeTableNode tbl, int n, Node node)
         {
-            if (tbl.setNthChild(n, node) && (Settings.DuplicateWarningEnabled || isInCombinationBlock) && !bIgnoreWarningOverwrite) {
+            bool bOverwrite = tbl.SetNthSubNode(n, node);
+            if (bOverwrite && (Settings.DuplicateWarningEnabled || isInCombinationBlock) && !bIgnoreWarningOverwrite) {
                 logger.Warn($"DUPLICATED: {CurrentLine}");
                 NodeDuplicateWarning();
             }
-            return tbl.getNth(n);
+            return tbl.GetNthSubNode(n);
         }
 
         /// <summary>
@@ -97,7 +98,7 @@ namespace KanchokuWS.TableParser
                         if (idx == 0) {
                             // 同時打鍵の先頭キーは Combo化(単打ノードの重複を避ける)
                             stk = makeComboDecKey(stk);
-                        } else if (idx > 0 && (node == null || node.isStrokeTree() || idx + 1 < stkList.Count)) {
+                        } else if (idx > 0 && (node == null || node.IsTreeNode() || idx + 1 < stkList.Count)) {
                             // 同時打鍵の中間キー(非終端キー)は、Shift化(終端ノードとの重複を避ける)
                             stk = makeNonTerminalDuplicatableComboKey(stk);
                         }
@@ -107,14 +108,14 @@ namespace KanchokuWS.TableParser
                 var pn = rootTableNode;
                 for (int i = 0; i < stkList.Count - 1; ++i) {
                     int idx = getStroke(i);
-                    var nd = pn.getNth(idx);
-                    if (nd != null && nd.isStrokeTree()) {
+                    var nd = pn.GetNthSubNode(idx);
+                    if (nd != null && nd.IsTreeNode()) {
                         pn = (StrokeTableNode)nd;
                     } else {
                         // StrokeTableNodeを生成して挿入(または置換)する
-                        bOverwritten = bOverwritten || (nd != null && !nd.isFunctionNode());    // 置換先が機能ノード以外なら上書き(重複)とする
+                        bOverwritten = bOverwritten || (nd != null && !nd.IsFunctionNode());    // 置換先が機能ノード以外なら上書き(重複)とする
                         var _pn = new StrokeTableNode();
-                        pn.setNthChild(idx, _pn);
+                        pn.SetNthSubNode(idx, _pn);
                         pn = _pn;
                     }
                 }
@@ -123,21 +124,21 @@ namespace KanchokuWS.TableParser
                 } else {
                     int idx = getStroke(stkList.Count - 1);
                     if (node == null) {
-                        if (pn.getNth(idx) == null) {
+                        if (pn.GetNthSubNode(idx) == null) {
                             // 新しく StrokeTableNode を作成して追加
-                            pn.setNthChild(idx, new StrokeTableNode());
-                        } else if (!pn.getNth(idx).isStrokeTree()) {
+                            pn.SetNthSubNode(idx, new StrokeTableNode());
+                        } else if (!pn.GetNthSubNode(idx).IsTreeNode()) {
                             bOverwritten = true;
                         }
                     } else {
                         if (!bOverwritten) {
-                            var _nd = pn.getNth(idx);
+                            var _nd = pn.GetNthSubNode(idx);
                             if (_nd != null) {
                                 // 既存が空でないツリーノードか、既存が FunctionNode でなく新規がRewriteNodeでない、なら上書き(重複)
-                                bOverwritten = (_nd.isStrokeTree() && _nd.hasChildren()) || ((!_nd.isFunctionNode() || _nd.isRewriteNode()) && !node.isRewriteNode());
+                                bOverwritten = (_nd.IsTreeNode() && _nd.HasSubNode()) || ((!_nd.IsFunctionNode() || _nd.IsRewriteNode()) && !node.IsRewriteNode());
                             }
                         }
-                        pn.setNthChild(idx, node);
+                        pn.SetNthSubNode(idx, node);
                     }
                 }
             }
@@ -472,7 +473,7 @@ namespace KanchokuWS.TableParser
         {
             logger.DebugH(() => $"ENTER: depth={depth}, bBare={bBare}, str={CurrentStr}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
-            addTerminalNode(bBare, new StringNode($"{CurrentStr._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")}", bBare));
+            addTerminalNode(bBare, new StringNode($"{ConvertKanji(CurrentStr)._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")}", bBare));
             if (depth == 1 && CurrentStr._startsWith("!{")) {
                 // Repeatable Key
                 logger.DebugH(() => $"REPEATABLE");
@@ -571,19 +572,20 @@ namespace KanchokuWS.TableParser
             logger.DebugH("ENTER");
 
             Node node = null;
+            bool bBare = ReadWordOrString();
+            var myStr = CurrentStr;
             if (isInCombinationBlock) {
                 // 同時打鍵の場合
                 addCombinationKey(true);
-                var myStr = ReadWordOrString();
-                node = new RewriteNode(myStr);
+                node = new RewriteNode(myStr, bBare);
                 setNodeOrNewTreeNodeAtLast(strokeList, node);
             } else {
                 // 後置文字列の指定があるか→なければ単打テーブルから文字を拾ってくる
                 int lastIdx = strokeList._getLast();
-                var myStr = ReadWordOrString()._orElse(() => lastIdx >= 0 ? getNthRootNodeString(lastIdx) : "");
-                node = setNthChildNode(rootTableNode, lastIdx, new RewriteNode(myStr));
+                myStr = myStr._orElse(() => lastIdx >= 0 ? getNthRootNodeString(lastIdx) : "");
+                node = setNthChildNode(rootTableNode, lastIdx, new RewriteNode(myStr, bBare));
             }
-            if (node.isRewriteNode()) {
+            if (node.IsRewriteNode()) {
                 // RewriteNode がノード木に反映された場合に限り、後置書き換えノードの処理を行う
                 new PostRewriteParser(rootTableNode, (RewriteNode)node, context, leaderStr).MakeNodeTree();
             } else {
@@ -669,11 +671,11 @@ namespace KanchokuWS.TableParser
         {
             int lastIdx = shiftDecKey(strokeList._getLast());
             string myStr = getNthRootNodeString(lastIdx);
-            var node = setNthChildNode(rootTableNode, lastIdx, new RewriteNode(myStr));
-            if (node.isRewriteNode()) {
+            var node = setNthChildNode(rootTableNode, lastIdx, new RewriteNode(myStr, false));
+            if (node.IsRewriteNode()) {
                 // RewriteNode がノード木に反映された場合に限り、以下を実行
                 var tgtStr = Helper.ConcatDqString(targetStr, leaderStr);
-                ((RewriteNode)node).AddRewritePair(tgtStr, outStr, tblNode);
+                node.AddRewritePair(tgtStr, new RewriteNode(outStr, tblNode, false));
                 return true;
             } else {
                 logger.Warn("RewriteNode NOT merged");
@@ -716,8 +718,8 @@ namespace KanchokuWS.TableParser
         {
             logger.DebugH(() => $"ENTER: bBare={bBare}, str={CurrentStr}, idx={strokeList._getLast()}");
             var tgtStr = Helper.ConcatDqString(pathStr, leaderStr);
-            var outStr = CurrentStr._quoteString(bBare);
-            node.AddRewritePair(tgtStr, outStr, null);
+            //var outStr = CurrentStr._quoteString(bBare);
+            node.AddRewritePair(tgtStr, new RewriteNode(CurrentStr, bBare));
             logger.DebugH("LEAVE");
         }
 
@@ -730,7 +732,7 @@ namespace KanchokuWS.TableParser
             if (str1._isEmpty() || str2._isEmpty()) {
                 ParseError("Invalid String Piar");
             } else {
-                node.AddRewritePair(str1, str2, null);
+                node.AddRewritePair(str1, new RewriteNode(str2, false));
             }
             logger.DebugH("LEAVE");
         }
@@ -803,7 +805,8 @@ namespace KanchokuWS.TableParser
             }
 
             // ここまでで未出力なノードを OutputLines に書き出す
-            outputNewLines();
+            //outputNewLines();
+            rootTableNode.OutputLine(OutputLines);
 
             // ルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる
             addMyCharFunctionInRootStrokeTable();
@@ -819,6 +822,7 @@ namespace KanchokuWS.TableParser
                 readNextToken();
             }
         }
+
     }
 
     /// <summary>

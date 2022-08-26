@@ -357,6 +357,23 @@ namespace Utils
             return (s1._toSafe()._stripDq() + s2._toSafe()._stripDq())._quoteString(!dq);
         }
 
+        public static string ConvertKatakanaToHiragana(string kataStr)
+        {
+            bool is_pure_katakana(char ch) {
+                return ch >= 'ァ' && ch <= 'ヶ';
+            }
+
+            char katakana_to_hiragana(char ch) {
+                return (char)(ch - 0x0060);
+            }
+
+            StringBuilder result = new StringBuilder();
+            foreach (char kc in kataStr) {
+                result.Append((is_pure_katakana(kc) ? katakana_to_hiragana(kc) : kc));
+            }
+            return result.ToString();
+        }
+
         //-----------------------------------------------------------------------------
         // ファイル・ディレクトリ関連
         //-----------------------------------------------------------------------------

@@ -199,17 +199,17 @@ namespace {
         // ブロック情報のスタック
         BlockInfoStack blockInfoStack;
 
-        std::map<wstring, wstring> defines; // 定義
+        //std::map<wstring, wstring> defines; // 定義
 
-        wstring getAndRemoveDefines(const wstring& key) {
-            wstring result;
-            auto iter = defines.find(key);
-            if (iter != defines.end()) {
-                result = iter->second;
-                defines.erase(key);
-            }
-            return result;
-        }
+        //wstring getAndRemoveDefines(const wstring& key) {
+        //    wstring result;
+        //    auto iter = defines.find(key);
+        //    if (iter != defines.end()) {
+        //        result = iter->second;
+        //        defines.erase(key);
+        //    }
+        //    return result;
+        //}
 
         // 同時打鍵定義ブロック
         bool isInCombinationBlock = false;
@@ -223,13 +223,13 @@ namespace {
         // 定義列マップ
         std::map<wstring, std::shared_ptr<std::vector<wstring>>> linesMap;
 
-        // 漢字置換マップ
-        std::map<wstring, wstring> kanjiConvMap;
+        //// 漢字置換マップ
+        //std::map<wstring, wstring> kanjiConvMap;
 
-        const wstring& conv_kanji(const wstring& k) {
-            auto iter = kanjiConvMap.find(k);
-            return iter == kanjiConvMap.end() ? k : iter->second;
-        }
+        //const wstring& conv_kanji(const wstring& k) {
+        //    auto iter = kanjiConvMap.find(k);
+        //    return iter == kanjiConvMap.end() ? k : iter->second;
+        //}
 
     public:
         // コンストラクタ
@@ -486,13 +486,14 @@ namespace {
                     _LOG_DEBUGH(_T("empty str"));
                     break;
                 }
-                if (kanjiConvMap.empty()) {
-                    LOG_TRACE(_T("kanjiConvMap.empty()"));
-                    pResult = new StringNode(currentStr, false, bBareStr);
-                } else {
-                    wstring convStr = conv_kanji(currentStr);
-                    pResult = new StringNode(convStr, true, false);
-                }
+                //if (kanjiConvMap.empty()) {
+                //    LOG_TRACE(_T("kanjiConvMap.empty()"));
+                //    pResult = new StringNode(currentStr, false, bBareStr);
+                //} else {
+                //    wstring convStr = conv_kanji(currentStr);
+                //    pResult = new StringNode(convStr, true, false);
+                //}
+                pResult = new StringNode(currentStr, /*false,*/ bBareStr);
                 _LOG_DEBUGH(_T("new StringNode(%s)"), currentStr.c_str());
                 break;
 
@@ -627,7 +628,7 @@ namespace {
                         if (!currentStr.empty()) {
                             wstring key = currentStr;
                             readWordOrString();
-                            defines[key] = currentStr;
+                            //defines[key] = currentStr;
                             _LOG_DEBUGH(_T("DEFINE: lineNum=%d, %s=%s"), lineNumber + 1, key.c_str(), currentStr.c_str());
                         }
                     } else if (lcStr == _T("store")) {
@@ -665,27 +666,32 @@ namespace {
                                 blockInfoStack.Push(_T(""), currentStr, nextLineNum);
                             }
                         }
-                    } else if (utils::startsWith(lcStr, _T("yomiconv"))) {
-                        readWord();
-                        auto keyword = currentStr;
-                        _LOG_DEBUGH(_T("YomiConversion: keyword=%s"), keyword.c_str());
-                        if (keyword == _T("clear") || keyword == _T("end")) {
-                            kanjiConvMap.clear();
-                        } else {
-                            _LOG_DEBUGH(_T("YomiConversion: %s"), SETTINGS->kanjiYomiFile.c_str());
-                            if (!SETTINGS->kanjiYomiFile.empty()) readKanjiConvFile(SETTINGS->kanjiYomiFile, true);
-                            if (keyword == _T("with")) {
-                                readWordOrString();
-                                if (!currentStr.empty()) {
-                                    _LOG_DEBUGH(_T("YomiConversion: %s"), currentStr.c_str());
-                                    readKanjiConvFile(currentStr, false);
-                                }
-                            }
-                        }
-                    //} else if (lcStr == _T("strokePosition")) {   // フロントエンドでサポート
+
+                    // フロントエンドでサポート
+                    //} else if (utils::startsWith(lcStr, _T("yomiconv"))) {
+                    //    readWord();
+                    //    auto keyword = currentStr;
+                    //    _LOG_DEBUGH(_T("YomiConversion: keyword=%s"), keyword.c_str());
+                    //    if (keyword == _T("clear") || keyword == _T("end")) {
+                    //        kanjiConvMap.clear();
+                    //    } else {
+                    //        _LOG_DEBUGH(_T("YomiConversion: %s"), SETTINGS->kanjiYomiFile.c_str());
+                    //        if (!SETTINGS->kanjiYomiFile.empty()) readKanjiConvFile(SETTINGS->kanjiYomiFile, true);
+                    //        if (keyword == _T("with")) {
+                    //            readWordOrString();
+                    //            if (!currentStr.empty()) {
+                    //                _LOG_DEBUGH(_T("YomiConversion: %s"), currentStr.c_str());
+                    //                readKanjiConvFile(currentStr, false);
+                    //            }
+                    //        }
+                    //    }
+
+                    // フロントエンドでサポート
+                    //} else if (lcStr == _T("strokePosition")) {   
                     //    readWordOrString();
                     //    defines[_T("defguide")] = currentStr;
                     //    _LOG_DEBUGH(_T("StrokePosition: %s"), currentStr.c_str());
+
                     } else if (lcStr == _T("noshift") || lcStr == _T("normal")) {
                         shiftPlane = 0;
                     } else if (lcStr == _T("shift")) {
@@ -1047,56 +1053,56 @@ namespace {
             }
         }
 
-        // 漢字置換ファイルを読み込む
-        // 一行の形式は「漢字 [<TAB>|Space]+ 読みの並び('|'区切り)」
-        // 読みの並びの優先順は以下のとおり:
-        // ①2文字以上のカタカナ
-        // ②2文字以上のひらがな
-        // ③漢字
-        // bOnlyYomi == true なら、エントリの上書き禁止でカタカナをひらがなに変換
-        // bOnlyYomi == false なら、エントリの上書きOKで、カタカナはそのまま
-        void readKanjiConvFile(const wstring& filename, bool bOnlyYomi) {
-            std::wregex reComment(_T("#.*"));
-            std::wregex reBlank(_T("[\\t ]+"));
-            std::wregex reKatakanaMulti(_T("[ァ-ン]{2,}"));
-            std::wregex reHiraganaMulti(_T("[ぁ-ん]{2,}"));
-            _LOG_DEBUGH(_T("filename: %s, bOnlyYomi=%s"), filename.c_str(), BOOL_TO_WPTR(bOnlyYomi));
-            auto reader = utils::IfstreamReader(utils::joinPath(SETTINGS->rootDir, filename));
-            if (reader.success()) {
-                auto lines = reader.getAllLines();
-                _LOG_DEBUGH(_T("lines.size(): %d"), lines.size());
-                for (auto line : lines) {
-                    auto items = utils::split(utils::strip(std::regex_replace(std::regex_replace(line, reComment, _T("")), reBlank, _T(" "))), ' ');
-                    if (items.size() >= 2) {
-                        auto kanji = items[0];
-                        if (!kanji.empty() && !items[1].empty()) {
-                            if (!bOnlyYomi || kanjiConvMap.find(kanji) == kanjiConvMap.end()) {
-                                if (!bOnlyYomi) {
-                                    auto yomi = items[1];
-                                    if (!yomi.empty()) {
-                                        kanjiConvMap[kanji] = yomi;
-                                        kanjiConvMap[yomi] = kanji;
-                                    }
-                                } else {
-                                    std::wsmatch results;
-                                    if (std::regex_search(items[1], results, reKatakanaMulti)) {
-                                        auto yomi = utils::convert_katakana_to_hiragana(results.str());
-                                        if (!yomi.empty()) kanjiConvMap[kanji] = yomi;
-                                    } else if (std::regex_search(items[1], results, reHiraganaMulti)) {
-                                        auto yomi = results.str();
-                                        if (!yomi.empty()) kanjiConvMap[kanji] = yomi;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                _LOG_DEBUGH(_T("kanjiConvMap.size(): %d"), kanjiConvMap.size());
-            } else {
-                LOG_ERROR(_T("Can't open: %s"), filename.c_str());
-                fileOpenError(filename);
-            }
-        }
+        //// 漢字置換ファイルを読み込む
+        //// 一行の形式は「漢字 [<TAB>|Space]+ 読みの並び('|'区切り)」
+        //// 読みの並びの優先順は以下のとおり:
+        //// ①2文字以上のカタカナ
+        //// ②2文字以上のひらがな
+        //// ③漢字
+        //// bOnlyYomi == true なら、エントリの上書き禁止でカタカナをひらがなに変換
+        //// bOnlyYomi == false なら、エントリの上書きOKで、カタカナはそのまま
+        //void readKanjiConvFile(const wstring& filename, bool bOnlyYomi) {
+        //    std::wregex reComment(_T("#.*"));
+        //    std::wregex reBlank(_T("[\\t ]+"));
+        //    std::wregex reKatakanaMulti(_T("[ァ-ン]{2,}"));
+        //    std::wregex reHiraganaMulti(_T("[ぁ-ん]{2,}"));
+        //    _LOG_DEBUGH(_T("filename: %s, bOnlyYomi=%s"), filename.c_str(), BOOL_TO_WPTR(bOnlyYomi));
+        //    auto reader = utils::IfstreamReader(utils::joinPath(SETTINGS->rootDir, filename));
+        //    if (reader.success()) {
+        //        auto lines = reader.getAllLines();
+        //        _LOG_DEBUGH(_T("lines.size(): %d"), lines.size());
+        //        for (auto line : lines) {
+        //            auto items = utils::split(utils::strip(std::regex_replace(std::regex_replace(line, reComment, _T("")), reBlank, _T(" "))), ' ');
+        //            if (items.size() >= 2) {
+        //                auto kanji = items[0];
+        //                if (!kanji.empty() && !items[1].empty()) {
+        //                    if (!bOnlyYomi || kanjiConvMap.find(kanji) == kanjiConvMap.end()) {
+        //                        if (!bOnlyYomi) {
+        //                            auto yomi = items[1];
+        //                            if (!yomi.empty()) {
+        //                                kanjiConvMap[kanji] = yomi;
+        //                                kanjiConvMap[yomi] = kanji;
+        //                            }
+        //                        } else {
+        //                            std::wsmatch results;
+        //                            if (std::regex_search(items[1], results, reKatakanaMulti)) {
+        //                                auto yomi = utils::convert_katakana_to_hiragana(results.str());
+        //                                if (!yomi.empty()) kanjiConvMap[kanji] = yomi;
+        //                            } else if (std::regex_search(items[1], results, reHiraganaMulti)) {
+        //                                auto yomi = results.str();
+        //                                if (!yomi.empty()) kanjiConvMap[kanji] = yomi;
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        _LOG_DEBUGH(_T("kanjiConvMap.size(): %d"), kanjiConvMap.size());
+        //    } else {
+        //        LOG_ERROR(_T("Can't open: %s"), filename.c_str());
+        //        fileOpenError(filename);
+        //    }
+        //}
 
         inline wstring blockOrFile() {
             return blockInfoStack.CurrentDirPath().empty() ? _T("ブロック") : _T("テーブルファイル");

@@ -1427,6 +1427,28 @@ namespace Utils
         }
 
         /// <summary>
+        /// str.Trim(charSet)
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string _strip(this string str, string charSet)
+        {
+            if (str._isEmpty()) return "";
+            if (charSet._isEmpty()) return str;
+            return str.Trim(charSet.ToCharArray());
+        }
+
+        /// <summary>
+        /// str.Trim("\t\r\n ")
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string _stripAscii(this string str)
+        {
+            return str._strip(@"\t\r\n ");
+        }
+
+        /// <summary>
         /// str.TrimStart()
         /// </summary>
         /// <param name="str"></param>
@@ -2060,7 +2082,7 @@ namespace Utils
         public static V _safeGet<K, V>(this Dictionary<K, V> dict, K key, V defval = default(V))
         {
             V val;
-            return key != null && dict.TryGetValue(key, out val) ? val : defval;
+            return dict != null && key != null && dict.TryGetValue(key, out val) ? val : defval;
         }
 
         public static V _safeGetOrNewInsert<K, V>(this Dictionary<K, V> dict, K key) where V:new()
@@ -2081,7 +2103,7 @@ namespace Utils
         public static string _safeGet(this Dictionary<string, string> dict, string key)
         {
             string val;
-            return key != null && dict.TryGetValue(key, out val) ? val : "";
+            return dict != null && key != null && dict.TryGetValue(key, out val) ? val : "";
         }
 
         /// <summary>
