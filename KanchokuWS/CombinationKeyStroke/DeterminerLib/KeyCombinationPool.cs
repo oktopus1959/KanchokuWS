@@ -209,21 +209,21 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return MiscKeys.IsRepeatable(keyCode);
         }
 
-        /// <summary>
-        /// PreRewriteとして扱いうるキーの設定
-        /// </summary>
-        /// <param name="keyCode"></param>
-        /// <param name="kind"></param>
-        public void AddPreRewriteKey(int keyCode)
-        {
-            logger.DebugH(() => $"CALLED: keyCode={keyCode}");
-            if (keyCode > 0) MiscKeys.AddPreRewriteKey(keyCode);
-        }
+        ///// <summary>
+        ///// PreRewriteとして扱いうるキーの設定
+        ///// </summary>
+        ///// <param name="keyCode"></param>
+        ///// <param name="kind"></param>
+        //public void AddPreRewriteKey(int keyCode)
+        //{
+        //    logger.DebugH(() => $"CALLED: keyCode={keyCode}");
+        //    if (keyCode > 0) MiscKeys.AddPreRewriteKey(keyCode);
+        //}
 
-        public bool IsPreRewriteKey(int keyCode)
-        {
-            return MiscKeys.IsPreRewrite(keyCode);
-        }
+        //public bool IsPreRewriteKey(int keyCode)
+        //{
+        //    return MiscKeys.IsPreRewrite(keyCode);
+        //}
 
         /// <summary>
         /// ShiftKeyとして扱いうるキーの設定

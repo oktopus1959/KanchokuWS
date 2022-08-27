@@ -18,35 +18,40 @@ namespace KanchokuWS.TableParser
     {
         private static Logger logger = Logger.GetLogger();
 
-        protected StrokeTableNode rootTableNode;
+        //protected StrokeTableNode rootTableNode;
 
-        int _shiftPlane = -1;
+        //private int _shiftPlane = -1;
 
         //protected StrokeTableNode rootTableNode => _rootTableNode != null ? _rootTableNode : context.rootTableNode;
 
-        protected int shiftPlane {
-            get { return _shiftPlane >= 0 ? _shiftPlane : context.shiftPlane; }
-            set { context.shiftPlane = _shiftPlane = value; }
+        // グローバルなルートノードか
+        protected virtual bool IsRootParser => false;
+
+        private int shiftPlane {
+            //get { return _shiftPlane >= 0 ? _shiftPlane : context.shiftPlane; }
+            //set { context.shiftPlane = _shiftPlane = value; }
+            get { return Context.shiftPlane; }
+            set { Context.shiftPlane = value; }
         }
 
-        protected List<int> strokeList = new List<int>();
+        //protected List<int> strokeList = new List<int>();
 
-        protected int depth => strokeList.Count;
+        //protected int depth => strokeList.Count;
 
-        protected int shiftDecKey(int deckey)
-        {
-            return deckey >= DecoderKeys.PLANE_DECKEY_NUM ? deckey : deckey + shiftPlane * DecoderKeys.PLANE_DECKEY_NUM;
-        }
+        //protected int shiftDecKey(int deckey)
+        //{
+        //    return deckey >= DecoderKeys.PLANE_DECKEY_NUM ? deckey : deckey + shiftPlane * DecoderKeys.PLANE_DECKEY_NUM;
+        //}
 
-        protected string getNthRootNodeString(int n)
-        {
-            int idx = shiftDecKey(n);
-            return (rootTableNode?.GetNthSubNode(idx)?.GetOutputString())._stripDq()._toSafe();
-        }
+        //protected string getNthRootNodeString(int n)
+        //{
+        //    int idx = shiftDecKey(n);
+        //    return (rootTableNode?.GetNthSubNode(idx)?.GetOutputString())._stripDq()._toSafe();
+        //}
 
-        protected string leaderStr => strokeList.Count > 1 ? strokeList.Take(strokeList.Count - 1).Select(x => getNthRootNodeString(x))._join("") : "";
+        //protected string leaderStr => strokeList.Count > 1 ? strokeList.Take(strokeList.Count - 1).Select(x => getNthRootNodeString(x))._join("") : "";
 
-        protected string pathStr => strokeList.Count > 0 ? strokeList.Select(x => getNthRootNodeString(x))._join("") : "";
+        //protected string pathStr => strokeList.Count > 0 ? strokeList.Select(x => getNthRootNodeString(x))._join("") : "";
 
         protected string[] StringPair = new string[2];
 
@@ -54,14 +59,14 @@ namespace KanchokuWS.TableParser
         /// コンストラクタ
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public TableParserTokenizer(ParserContext ctx, List<int> stkList, StrokeTableNode rootNode = null, int shiftPlane = -1)
-            : base(ctx)
+        public TableParserTokenizer(/*ParserContext ctx, List<int> stkList, StrokeTableNode rootNode = null, int shiftPlane = -1*/)
+            : base(/*ctx*/)
         {
-            rootTableNode = rootNode;
-            _shiftPlane = shiftPlane;
-            if (stkList._notEmpty()) {
-                strokeList.AddRange(stkList);
-            }
+            //rootTableNode = rootNode;
+            //_shiftPlane = shiftPlane;
+            //if (stkList._notEmpty()) {
+            //    strokeList.AddRange(stkList);
+            //}
         }
 
         // 現在のトークンをチェックする
@@ -87,7 +92,7 @@ namespace KanchokuWS.TableParser
         // トークンを読む
         TOKEN getToken(bool bSkipNL)
         {
-            arrowIndex = -1;
+            ArrowIndex = -1;
             while (true) {
                 ClearCurrentStr();
                 char ch = GetNextChar();
@@ -331,18 +336,14 @@ namespace KanchokuWS.TableParser
                         break;
 
                     case '%':
-                        if (depth != 0) {
-                            ParseError("'%'で始まる前置書き換え記法はテーブルがネストされた位置では使えません。");
-                        } else if (parseArrow(true)) {
+                        if (parseArrow(true)) {
                             bRewriteEnabled = true;
                             return TOKEN.REWRITE_PRE;
                         }
                         break;
 
                     case '&':
-                        if (depth != 0) {
-                            ParseError("'&'で始まる前置書き換え記法はテーブルがネストされた位置では使えません。");
-                        } else if (parseArrow()) {
+                        if (parseArrow()) {
                             bRewriteEnabled = true;
                             return TOKEN.REWRITE_POST;
                         }
@@ -472,6 +473,8 @@ namespace KanchokuWS.TableParser
             int funckeyOffset = 0;
             bool bShiftPlane = false;
 
+            RewritePreTargetStr = "";
+
             if (PeekNextChar() == '"') {
                 ReadString();
             } else if (PeekNextChar() == '$') {
@@ -494,28 +497,28 @@ namespace KanchokuWS.TableParser
 
             if (c == '$') {
                 // TOKEN.PLACE_HOLDER
-                arrowIndex = placeHolders.Get(s._safeSubstring(1));
-                if (arrowIndex < 0) {
+                ArrowIndex = placeHolders.Get(s._safeSubstring(1));
+                if (ArrowIndex < 0) {
                     ParseError($"parseArrow: 定義されていないプレースホルダー: {s}");
                     return false;
                 }
             } else {
-                arrowIndex = s._parseInt(-1);
-                if (arrowIndex < 0) {
-                    arrowIndex = s._safeSubstring(1)._parseInt(-1);
-                    if (arrowIndex < 0) {
+                ArrowIndex = s._parseInt(-1);
+                if (ArrowIndex < 0) {
+                    ArrowIndex = s._safeSubstring(1)._parseInt(-1);
+                    if (ArrowIndex < 0) {
                         if (s.Length == 1) {
                             // 1文字の場合は、プレースホルダを優先
-                            arrowIndex = placeHolders.Get(s);
+                            ArrowIndex = placeHolders.Get(s);
                         }
-                        if (arrowIndex < 0) {
+                        if (ArrowIndex < 0) {
                             if (bRewritePre) {
                                 // 前置書き換え対象文字列
                                 RewritePreTargetStr = s;
                                 return true;
                             } else {
-                                arrowIndex = placeHolders.Get(s);
-                                if (arrowIndex < 0) {
+                                ArrowIndex = placeHolders.Get(s);
+                                if (ArrowIndex < 0) {
                                     ParseError($"parseArrow: 定義されていないプレースホルダー: {s}");
                                     return false;
                                 }
@@ -540,25 +543,25 @@ namespace KanchokuWS.TableParser
                 }
             }
 
-            arrowIndex += funckeyOffset;
-            arrowIndex %= DecoderKeys.PLANE_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
+            ArrowIndex += funckeyOffset;
+            ArrowIndex %= DecoderKeys.PLANE_DECKEY_NUM;    // 後で Offset を足すので Modulo 化しておく
             if (bShiftPlane) {
                 // プレーン指定の場合
-                shiftPlane = arrowIndex;
+                shiftPlane = ArrowIndex;
                 if (shiftPlane >= DecoderKeys.ALL_PLANE_NUM) ParseError($"parseArrow: shiftPlane out of range: {shiftPlane}");
                 return false;
             } else {
                 if (shiftOffset < 0) {
                     // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
-                    shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;
+                    shiftOffset = (shiftPlane > 0 && IsRootParser) ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;
                 }
-                arrowIndex += shiftOffset;
-                if (arrowIndex < 0 || arrowIndex >= DecoderKeys.COMBO_DECKEY_END) {
-                    ParseError($"parseArrow: arrowIndex out of range: {arrowIndex}");
+                ArrowIndex += shiftOffset;
+                if (ArrowIndex < 0 || ArrowIndex >= DecoderKeys.COMBO_DECKEY_END) {
+                    ParseError($"parseArrow: arrowIndex out of range: {ArrowIndex}");
                     return false;
                 }
             }
-            logger.DebugH(() => $"depth={depth}, arrowIndex={arrowIndex}, shiftPlane={shiftPlane}, shiftOffset={shiftOffset}");
+            logger.DebugH(() => $"arrowIndex={ArrowIndex}, shiftPlane={shiftPlane}, shiftOffset={shiftOffset}");
             return true;
         }
 
@@ -578,11 +581,11 @@ namespace KanchokuWS.TableParser
                 c = s[0];
                 if (c == '$') {
                     // TOKEN.PLACE_HOLDER
-                    arrowIndex = placeHolders.Get(s._safeSubstring(1));
+                    ArrowIndex = placeHolders.Get(s._safeSubstring(1));
                 } else {
-                    arrowIndex = s._parseInt(-1);
+                    ArrowIndex = s._parseInt(-1);
                 }
-                if (arrowIndex < 0 || arrowIndex >= DecoderKeys.PLANE_DECKEY_NUM) ParseError($"parseArrowBundle: arrowIndex is out of range: {arrowIndex}");
+                if (ArrowIndex < 0 || ArrowIndex >= DecoderKeys.PLANE_DECKEY_NUM) ParseError($"parseArrowBundle: arrowIndex is out of range: {ArrowIndex}");
             }
             if (PeekNextChar() == '>') {
                 GetNextChar();

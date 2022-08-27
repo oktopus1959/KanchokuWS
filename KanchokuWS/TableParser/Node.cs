@@ -426,8 +426,8 @@ namespace KanchokuWS.TableParser
         }
 
         // コンストラクタ
-        public RewriteNode(string outStr, Node node, bool bBare)
-            : base(NodeType.Rewrite, outStr, node?.GetSubNodes() ?? makeNodeList(), bBare)
+        public RewriteNode(string outStr, List<Node> nodeList, bool bBare)
+            : base(NodeType.Rewrite, outStr, nodeList ?? makeNodeList(), bBare)
         {
         }
     }

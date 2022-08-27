@@ -791,7 +791,7 @@ namespace KanchokuWS.TableParser
         /// コンストラクタ
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public ParserContext(TableLines tableLines, KeyCombinationPool pool, bool primary)
+        private ParserContext(TableLines tableLines, KeyCombinationPool pool, bool primary)
         {
             this.tableLines = tableLines;
             this.tableLines.IsPrimary = primary;
@@ -799,5 +799,11 @@ namespace KanchokuWS.TableParser
             keyComboPool = pool;
         }
 
+        public static void CreateSingleton(TableLines tableLines, KeyCombinationPool pool, bool primary)
+        {
+            Singleton = new ParserContext(tableLines, pool, primary);
+        }
+
+        public static ParserContext Singleton { get; private set; }
     }
 }

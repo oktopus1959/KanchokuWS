@@ -25,29 +25,30 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         /// <summary>前置書き換えなキーの集合</summary>
-        private HashSet<int> preRewriteKeySet = new HashSet<int>();
+        //private HashSet<int> preRewriteKeySet = new HashSet<int>();
 
-        public bool IsPreRewrite(int key) { return preRewriteKeySet.Contains(key); }
+        //public bool IsPreRewrite(int key) { return preRewriteKeySet.Contains(key); }
 
-        /// <summary>
-        /// 前置書き換えキーの設定
-        /// </summary>
-        /// <param name="keyCode"></param>
-        public void AddPreRewriteKey(int keyCode)
-        {
-            preRewriteKeySet.Add(keyCode);
-        }
+        ///// <summary>
+        ///// 前置書き換えキーの設定
+        ///// </summary>
+        ///// <param name="keyCode"></param>
+        //public void AddPreRewriteKey(int keyCode)
+        //{
+        //    preRewriteKeySet.Add(keyCode);
+        //}
 
         public void Clear()
         {
             repeatableKeySet.Clear();
-            preRewriteKeySet.Clear();
+            //preRewriteKeySet.Clear();
         }
 
         public string DebugString()
         {
-            return "RepeatableKeys=" + (repeatableKeySet._isEmpty() ? "empty" : repeatableKeySet.Select(x => x.ToString())._join(",")) +
-                "\nPreRewriteKeys=" + (preRewriteKeySet._isEmpty() ? "empty" : preRewriteKeySet.Select(x => x.ToString())._join(","));
+            return "RepeatableKeys=" + (repeatableKeySet._isEmpty() ? "empty" : repeatableKeySet.Select(x => x.ToString())._join(","))
+                // + "\nPreRewriteKeys=" + (preRewriteKeySet._isEmpty() ? "empty" : preRewriteKeySet.Select(x => x.ToString())._join(","))
+                ;
         }
     }
 }

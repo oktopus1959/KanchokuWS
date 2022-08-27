@@ -18,57 +18,57 @@ namespace KanchokuWS.TableParser
     {
         private static Logger logger = Logger.GetLogger();
 
-        protected ParserContext context;
+        protected ParserContext Context => ParserContext.Singleton;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public TableParserContext(ParserContext ctx)
+        public TableParserContext(/* ParserContext ctx */)
         {
-            context = ctx;
+            //context = ctx;
         }
 
-        protected TableLines tableLines => context.tableLines;
+        protected TableLines tableLines => Context.tableLines;
 
         protected TOKEN currentToken {
-            get { return context.currentToken;}
-            set { context.currentToken = value; }
+            get { return Context.currentToken;}
+            set { Context.currentToken = value; }
         }
-        protected int arrowIndex {
-            get { return context.arrowIndex; }
-            set { context.arrowIndex = value;}
+        protected int ArrowIndex {
+            get { return Context.arrowIndex; }
+            set { Context.arrowIndex = value;}
         }
-        protected bool bPrimary => context.bPrimary;
+        protected bool bPrimary => Context.bPrimary;
         protected bool bRewriteEnabled {
-            get { return context.bRewriteEnabled; }
-            set { context.bRewriteEnabled = value; }
+            get { return Context.bRewriteEnabled; }
+            set { Context.bRewriteEnabled = value; }
         }
-        protected HashSet<string> definedNames => context.definedNames;
-        protected bool isInCombinationBlock => context.isInCombinationBlock;
-        protected bool isInSuccCombinationBlock => context.isInSuccCombinationBlock;
+        protected HashSet<string> definedNames => Context.definedNames;
+        protected bool isInCombinationBlock => Context.isInCombinationBlock;
+        protected bool isInSuccCombinationBlock => Context.isInSuccCombinationBlock;
         protected ShiftKeyKind shiftKeyKind {
-            get { return context.shiftKeyKind; }
-            set { context.shiftKeyKind = value; }
+            get { return Context.shiftKeyKind; }
+            set { Context.shiftKeyKind = value; }
         }
         protected bool bComboEffectiveAlways {
-            get { return context.bComboEffectiveAlways; }
-            set { context.bComboEffectiveAlways = value; }
+            get { return Context.bComboEffectiveAlways; }
+            set { Context.bComboEffectiveAlways = value; }
         }
-        protected Dictionary<string, List<string>> linesMap => context.linesMap;
-        protected KeyCombinationPool keyComboPool => context.keyComboPool;
-        protected List<string> OutputLines => context.OutputLines;
-        protected PlaceHolders placeHolders => context.placeHolders;
+        protected Dictionary<string, List<string>> linesMap => Context.linesMap;
+        protected KeyCombinationPool keyComboPool => Context.keyComboPool;
+        protected List<string> OutputLines => Context.OutputLines;
+        protected PlaceHolders placeHolders => Context.placeHolders;
 
-        protected bool bIgnoreWarningAll { get { return context.bIgnoreWarningAll; } set { context.bIgnoreWarningAll = value; } }
-        protected bool bIgnoreWarningBraceLevel { get { return context.bIgnoreWarningBraceLevel; } set { context.bIgnoreWarningBraceLevel = value; } }
-        protected bool bIgnoreWarningOverwrite { get { return context.bIgnoreWarningOverwrite; } set { context.bIgnoreWarningOverwrite = value; } }
-        protected int braceLevel { get { return context.braceLevel; } set { context.braceLevel = value; } }
+        protected bool bIgnoreWarningAll { get { return Context.bIgnoreWarningAll; } set { Context.bIgnoreWarningAll = value; } }
+        protected bool bIgnoreWarningBraceLevel { get { return Context.bIgnoreWarningBraceLevel; } set { Context.bIgnoreWarningBraceLevel = value; } }
+        protected bool bIgnoreWarningOverwrite { get { return Context.bIgnoreWarningOverwrite; } set { Context.bIgnoreWarningOverwrite = value; } }
+        protected int braceLevel { get { return Context.braceLevel; } set { Context.braceLevel = value; } }
 
-        protected HashSet<int> sequentialShiftKeys => context.sequentialShiftKeys;
+        protected HashSet<int> sequentialShiftKeys => Context.sequentialShiftKeys;
 
-        protected Dictionary<string, string> kanjiConvMap => context.kanjiConvMap;
-        public string ConvertKanji(string k) { return context.ConvertKanji(k); }
+        protected Dictionary<string, string> kanjiConvMap => Context.kanjiConvMap;
+        public string ConvertKanji(string k) { return Context.ConvertKanji(k); }
 
         protected bool Empty => tableLines.Empty;
         protected bool NotEmpty => tableLines.NotEmpty;
