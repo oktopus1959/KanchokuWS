@@ -60,7 +60,68 @@ namespace KanchokuWS.TableParser
         }
     }
 
-    static class OutputStringHelper
+    class NodeTable
+    {
+        List<Node> table;
+
+        bool isRoot;
+
+        public int Length => table?.Count ?? 0;
+
+        public Node GetNth(int n) { return table._getNth(n); }
+
+        public void SetNth(int n, Node node) { if (table != null) table[n] = node; }
+
+        public bool IsRoot => isRoot;
+
+        public NodeTable(bool bRoot = false)
+        {
+            // 同時打鍵の終端と非終端の重複回避用に2倍(非終端はシフト面を使う)
+            // たとえば「A B」と「A B C」という2つの同時打鍵列を使いたい場合など
+            table = Helper.MakeList(new Node[(bRoot ? DecoderKeys.TOTAL_DECKEY_NUM : DecoderKeys.PLANE_DECKEY_NUM * 2)]);
+            isRoot = bRoot;
+        }
+    }
+
+    class RewriteMap
+    {
+        Dictionary<string, Node> rewriteMap;
+
+        public bool IsEmpty => rewriteMap._isEmpty();
+
+        public int Count => rewriteMap._safeCount();
+
+        public RewriteMap()
+        {
+            rewriteMap = new Dictionary<string, Node>();
+        }
+
+        public bool ContainsKey(string key)
+        {
+            return rewriteMap?.ContainsKey(key) ?? false;
+        }
+
+        public Node GetNode(string key)
+        {
+            return rewriteMap._safeGet(key);
+        }
+
+        public void PutPair(string key, Node val)
+        {
+            if (rewriteMap != null) rewriteMap[key] = val;
+        }
+
+        public void ForEach(Action<string, Node> action)
+        {
+            if (rewriteMap._notEmpty()) {
+                foreach (var pair in rewriteMap) {
+                    action(pair.Key, pair.Value);
+                }
+            }
+        }
+    }
+
+    static class NodeHelper
     {
         public static bool _isEmpty(this OutputString outStr)
         {
@@ -86,6 +147,33 @@ namespace KanchokuWS.TableParser
         {
             return s?.GetSafeString() ?? "";
         }
+
+        public static int _safeCount(this NodeTable table)
+        {
+            return table?.Length ?? 0;
+        }
+
+        public static bool _isEmpty(this RewriteMap map)
+        {
+            return map == null || map.IsEmpty;
+        }
+
+        public static bool _notEmpty(this RewriteMap map)
+        {
+            return !map._isEmpty();
+        }
+
+        public static int _safeCount(this RewriteMap map)
+        {
+            return map?.Count ?? 0;
+        }
+
+        public static void _forEach(this RewriteMap map, Action<string, Node> action)
+        {
+            if (map._notEmpty()) {
+                map.ForEach(action);
+            }
+        }
     }
 
     /// <summary>書き換え情報も保持したノード</summary>    
@@ -93,25 +181,25 @@ namespace KanchokuWS.TableParser
     {
         private static Logger logger = Logger.GetLogger();
 
-        OutputString outputStr;                 // 出力文字列 (機能マーカーも含む)
-        List<Node> subTable;                    // 後続ストローク用のテーブル定義(outputStrとは排他になる)
-        Dictionary<string, Node> rewriteMap;    // 書き換え情報マップ -- 書き換え対象文字列がキーとなる
+        OutputString outputStr;     // 出力文字列 (機能マーカーも含む)
+        NodeTable subTable;         // 後続ストローク用のテーブル定義(outputStrとは排他になる)
+        RewriteMap rewriteMap;      // 書き換え情報マップ -- 書き換え対象文字列がキーとなる
 
         private Node()
         {
         }
 
-        static protected List<Node> makeNodeList(bool bRoot = false)
-        {
-            // 同時打鍵の終端と非終端の重複回避用に2倍(非終端はシフト面を使う)
-            // たとえば「A B」と「A B C」という2つの同時打鍵列を使いたい場合など
-            return Helper.MakeList(new Node[(bRoot ? DecoderKeys.TOTAL_DECKEY_NUM : DecoderKeys.PLANE_DECKEY_NUM * 2)]);
-        }
+        //static protected List<Node> makeNodeList(bool bRoot = false)
+        //{
+        //    // 同時打鍵の終端と非終端の重複回避用に2倍(非終端はシフト面を使う)
+        //    // たとえば「A B」と「A B C」という2つの同時打鍵列を使いたい場合など
+        //    return Helper.MakeList(new Node[(bRoot ? DecoderKeys.TOTAL_DECKEY_NUM : DecoderKeys.PLANE_DECKEY_NUM * 2)]);
+        //}
 
         // TreeNode を作成して返す
         public static Node MakeTreeNode(bool bRoot = false)
         {
-            return new Node() { subTable = makeNodeList(bRoot) };
+            return new Node() { subTable = new NodeTable(bRoot) };
         }
 
         // StringNode を作成して返す
@@ -135,32 +223,32 @@ namespace KanchokuWS.TableParser
         // RewriteNode を作成して返す
         public static Node MakeRewriteNode(string outStr, bool bBare)
         {
-            return new Node() { outputStr = new OutputString(outStr, bBare), rewriteMap = new Dictionary<string, Node>() };
+            return new Node() { outputStr = new OutputString(outStr, bBare), rewriteMap = new RewriteMap() };
         }
 
         // RewriteNode を作成して返す
         public static Node MakeRewriteNode(OutputString outStr)
         {
-            return new Node() { outputStr = outStr, rewriteMap = new Dictionary<string, Node>() };
+            return new Node() { outputStr = outStr, rewriteMap = new RewriteMap() };
         }
 
         // RewriteTreeNode を作成して返す
         public static Node MakeRewriteTreeNode(string outStr, bool bBare)
         {
-            return new Node() { outputStr = new OutputString(outStr, bBare), subTable = makeNodeList(), rewriteMap = new Dictionary<string, Node>() };
+            return new Node() { outputStr = new OutputString(outStr, bBare), subTable = new NodeTable(), rewriteMap = new RewriteMap() };
         }
 
         // RewriteTreeNode を作成して返す
         public static Node MakeRewriteTreeNode(OutputString outStr)
         {
-            return new Node() { outputStr = outStr, subTable = makeNodeList(), rewriteMap = new Dictionary<string, Node>() };
+            return new Node() { outputStr = outStr, subTable = new NodeTable(), rewriteMap = new RewriteMap() };
         }
 
         //public Node GetNthSubNode(int n) { return myInfo.GetNthSubNode(n); }
         /// <summary>n番目の子ノードを返す</summary>
         public Node GetNthSubNode(int n)
         {
-            return subTable._getNth(n);
+            return subTable?.GetNth(n);
         }
 
         //public bool HasSubNode() { return myInfo.HasSubNode(); }
@@ -175,11 +263,11 @@ namespace KanchokuWS.TableParser
         /// <summary>子ノードの数を返す</summary>
         public int GetSubNodeNum()
         {
-            return subTable._safeCount();
+            return subTable?.Length ?? 0;
         }
 
 
-        public List<Node> GetSubNodes() { return subTable; }
+        public NodeTable GetSubNodes() { return subTable; }
 
         public bool HasOutputString() { return outputStr._notEmpty(); }
 
@@ -194,7 +282,7 @@ namespace KanchokuWS.TableParser
 
         public bool IsStringNode() { return !IsFunctionNode() && !IsTreeNode() && !IsRewriteNode(); }
 
-        public bool IsRootTreeNode() { return subTable._safeCount() == DecoderKeys.TOTAL_DECKEY_NUM; }
+        public bool IsRootTreeNode() { return subTable?.IsRoot ?? false; }
 
         public bool IsTreeNode() { return subTable != null; }
 
@@ -202,12 +290,12 @@ namespace KanchokuWS.TableParser
 
         public void AddSubTable()
         {
-            if (subTable == null) subTable = makeNodeList();
+            if (subTable == null) subTable = new NodeTable();
         }
 
         public void AddRewriteMap()
         {
-            if (rewriteMap == null) rewriteMap = new Dictionary<string, Node>();
+            if (rewriteMap == null) rewriteMap = new RewriteMap();
         }
 
         /// <summary>ノードの内容をマージする</summary>
@@ -217,11 +305,9 @@ namespace KanchokuWS.TableParser
             bool bOverwritten = merge(node);
             if (node.IsRewriteNode()) {
                 AddRewriteMap();
-                if (node.rewriteMap._notEmpty()) {
-                    foreach (var pair in node.rewriteMap) {
-                        upsertRewrteMap(pair.Key, pair.Value);
-                    }
-                }
+                node.rewriteMap._forEach((key, val) => {
+                    upsertRewrteMap(key, val);
+                });
             }
             return bOverwritten;
         }
@@ -259,11 +345,11 @@ namespace KanchokuWS.TableParser
 
         private void upsertRewrteMap(string key, Node value)
         {
-            if (rewriteMap == null) rewriteMap = new Dictionary<string, Node>();
+            if (rewriteMap == null) rewriteMap = new RewriteMap();
             if (rewriteMap.ContainsKey(key)) {
-                rewriteMap[key].Merge(value);
+                rewriteMap.GetNode(key)?.Merge(value);
             } else {
-                rewriteMap[key] = value;
+                rewriteMap.PutPair(key, value);
             }
         }
 
@@ -284,22 +370,22 @@ namespace KanchokuWS.TableParser
         public bool SetNthSubNode(int n, Node node)
         {
             if (subTable != null) {
-                if (n >= 0 && n < subTable.Count) {
-                    if (subTable[n] != null) {
-                        if (node.IsRewriteNode() && subTable[n].IsRewriteNode()) {
+                if (n >= 0 && n < subTable.Length) {
+                    if (subTable.GetNth(n) != null) {
+                        if (node.IsRewriteNode() && subTable.GetNth(n).IsRewriteNode()) {
                             // 新旧ノードが RewriteNode である
-                            subTable[n].Merge(node);
+                            subTable.GetNth(n).Merge(node);
                             return false;
-                        } else if (node.IsTreeNode() || !subTable[n].IsTreeNode()) {
+                        } else if (node.IsTreeNode() || !subTable.GetNth(n).IsTreeNode()) {
                             // 新旧ノードが StrokeTableNode であるか、旧ノードが StrokeTableNode でなければ、上書き
-                            subTable[n] = node;
+                            subTable.SetNth(n, node);
                             return !node.IsRewriteNode();  // 新ノードが RewriteNode なら上書き警告しない
                         } else {
                             // それ以外は node を捨てる
                             return true;
                         }
                     }
-                    subTable[n] = node;
+                    subTable.SetNth(n, node);
                 }
             }
             return false;
@@ -315,14 +401,14 @@ namespace KanchokuWS.TableParser
         public (Node, bool) SetOrMergeNthSubNode(int n, Node node)
         {
             if (subTable != null) {
-                if (n >= 0 && n < subTable.Count) {
+                if (n >= 0 && n < subTable.Length) {
                     bool bOverwritten = false;
-                    if (subTable[n] != null) {
-                        bOverwritten = subTable[n].Merge(node);
+                    if (subTable.GetNth(n) != null) {
+                        bOverwritten = subTable.GetNth(n).Merge(node);
                     } else {
-                        subTable[n] = node;
+                        subTable.SetNth(n, node);
                     }
-                    return (subTable[n], bOverwritten);
+                    return (subTable.GetNth(n), bOverwritten);
                 }
             }
             return (null, false);
@@ -354,18 +440,18 @@ namespace KanchokuWS.TableParser
                 if (rewriteMap._notEmpty()) {
                     // 書き換えノード
                     outLines.Add(leaderStr + "@{" + GetQuotedString());
-                    foreach (var pair in rewriteMap) {
+                    rewriteMap.ForEach((key, node) => {
                         // 書き換えMapの先のノードは、文字列ノードかツリーノードとみなす
-                        if (pair.Key._notEmpty() && pair.Value != null) {
-                            if (pair.Value.HasSubNode()) {
-                                outLines.Add($"{pair.Key}\t{{");
-                                pair.Value.outputLine(outLines, null);  // 部分木の出力なので list = null にしている
+                        if (key._notEmpty() && node != null) {
+                            if (node.HasSubNode()) {
+                                outLines.Add($"{key}\t{{");
+                                node.outputLine(outLines, null);  // 部分木の出力なので list = null にしている
                                 outLines.Add("}");
-                            } else if (pair.Value.HasOutputString()) {
-                                outLines.Add($"{pair.Key}\t{pair.Value.GetQuotedString()}");
+                            } else if (node.HasOutputString()) {
+                                outLines.Add($"{key}\t{node.GetQuotedString()}");
                             }
                         }
-                    }
+                    });
                     outLines.Add("}");
                 } else {
                     // 文字列ノード
