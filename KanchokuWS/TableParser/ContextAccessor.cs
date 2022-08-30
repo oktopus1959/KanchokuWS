@@ -12,9 +12,9 @@ namespace KanchokuWS.TableParser
     using ShiftKeyKind = ComboShiftKeyPool.ComboKind;
 
     /// <summary>
-    /// テーブル解析器のコンテキストデータ
+    /// テーブル解析器のコンテキストデータへのアクセッサ
     /// </summary>
-    class TableParserContext
+    class ContextAccessor
     {
         private static Logger logger = Logger.GetLogger();
 
@@ -24,7 +24,7 @@ namespace KanchokuWS.TableParser
         /// コンストラクタ
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public TableParserContext(/* ParserContext ctx */)
+        public ContextAccessor(/* ParserContext ctx */)
         {
             //context = ctx;
         }
@@ -91,7 +91,7 @@ namespace KanchokuWS.TableParser
         protected void ReadPlaceHolderName() { tableLines.ReadPlaceHolderName(); }
         protected void ReadMarker() { tableLines.ReadMarker(); }
         protected string ReadWord() { return tableLines.ReadWord(); }
-        protected bool ReadWordOrString() { return tableLines.ReadWordOrString(); }
+        protected OutputString ReadWordOrString() { return tableLines.ReadWordOrString(); }
         protected char PeekNextChar(int offset = 0) { return tableLines.PeekNextChar(offset); }
         protected char GetNextChar() { return tableLines.GetNextChar(); }
         protected bool GetNextLine() { return tableLines.GetNextLine(); }

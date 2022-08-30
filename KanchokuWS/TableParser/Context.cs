@@ -488,7 +488,7 @@ namespace KanchokuWS.TableParser
         }
 
         // 行末までの範囲で文字列または単語を読み込む
-        public bool ReadWordOrString()
+        public OutputString ReadWordOrString()
         {
             CurrentStr = "";
             bool bBare = false;
@@ -505,7 +505,7 @@ namespace KanchokuWS.TableParser
                     }
                 }
             }
-            return bBare;
+            return new OutputString(CurrentStr, bBare);
         }
 
         public char PeekNextChar(int offset = 0) {
@@ -775,7 +775,7 @@ namespace KanchokuWS.TableParser
         public HashSet<int> sequentialShiftKeys = new HashSet<int>();
 
         // 真のルートテーブルノード
-        public StrokeTableNode rootTableNode = new StrokeTableNode(true);
+        public Node rootTableNode = Node.MakeTreeNode(true);
 
         // 漢字置換マップ
         public Dictionary<string, string> kanjiConvMap = new Dictionary<string, string>();

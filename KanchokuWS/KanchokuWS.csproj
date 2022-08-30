@@ -197,7 +197,7 @@
     <Compile Include="CombinationKeyStroke\KeyCombinationHelper.cs" />
     <Compile Include="Domain\SpecialKeysAndFunctions.cs" />
     <Compile Include="Domain\VirtualKeys.cs" />
-    <Compile Include="TableParser\TableParserContext.cs" />
+    <Compile Include="TableParser\ContextAccessor.cs" />
     <Compile Include="TableParser\TableParserTokenizer.cs" />
     <Compile Include="TableParser\TOKEN.cs" />
     <EmbeddedResource Include="Gui\BackColorComboBox.resx">

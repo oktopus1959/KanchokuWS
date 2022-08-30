@@ -14,7 +14,7 @@ namespace KanchokuWS.TableParser
     /// <summary>
     /// テーブル字句解析器
     /// </summary>
-    class TableParserTokenizer : TableParserContext
+    class TableParserTokenizer : ContextAccessor
     {
         private static Logger logger = Logger.GetLogger();
 
@@ -25,7 +25,7 @@ namespace KanchokuWS.TableParser
         //protected StrokeTableNode rootTableNode => _rootTableNode != null ? _rootTableNode : context.rootTableNode;
 
         // グローバルなルートノードか
-        protected virtual bool IsRootParser => false;
+        public virtual bool IsRootParser => false;
 
         private int shiftPlane {
             //get { return _shiftPlane >= 0 ? _shiftPlane : context.shiftPlane; }
@@ -34,39 +34,15 @@ namespace KanchokuWS.TableParser
             set { Context.shiftPlane = value; }
         }
 
-        //protected List<int> strokeList = new List<int>();
-
-        //protected int depth => strokeList.Count;
-
-        //protected int shiftDecKey(int deckey)
-        //{
-        //    return deckey >= DecoderKeys.PLANE_DECKEY_NUM ? deckey : deckey + shiftPlane * DecoderKeys.PLANE_DECKEY_NUM;
-        //}
-
-        //protected string getNthRootNodeString(int n)
-        //{
-        //    int idx = shiftDecKey(n);
-        //    return (rootTableNode?.GetNthSubNode(idx)?.GetOutputString())._stripDq()._toSafe();
-        //}
-
-        //protected string leaderStr => strokeList.Count > 1 ? strokeList.Take(strokeList.Count - 1).Select(x => getNthRootNodeString(x))._join("") : "";
-
-        //protected string pathStr => strokeList.Count > 0 ? strokeList.Select(x => getNthRootNodeString(x))._join("") : "";
-
         protected string[] StringPair = new string[2];
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public TableParserTokenizer(/*ParserContext ctx, List<int> stkList, StrokeTableNode rootNode = null, int shiftPlane = -1*/)
-            : base(/*ctx*/)
+        public TableParserTokenizer()
+            : base()
         {
-            //rootTableNode = rootNode;
-            //_shiftPlane = shiftPlane;
-            //if (stkList._notEmpty()) {
-            //    strokeList.AddRange(stkList);
-            //}
         }
 
         // 現在のトークンをチェックする
