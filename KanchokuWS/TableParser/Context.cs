@@ -179,6 +179,11 @@ namespace KanchokuWS.TableParser
         {
             return blockInfoList.Any(x => x.BlockName == name);
         }
+
+        public bool HasNestedLines()
+        {
+            return blockInfoList.Count > 1 && blockInfoList[1].CurrentOffset > 0;
+        }
     }
 
     class TableLines
@@ -582,7 +587,7 @@ namespace KanchokuWS.TableParser
         }
 
         string parsedFileAndLinenum() {
-            return blockInfoStack.Size() > 2 ? $"\r\n(または tmp/parsedTableFile{(IsPrimary ? 1 : 2)}.txt の {LineNumber}行目、\r\n 同ファイルは設定ダイアログの「情報」>「テーブル出力」で出力される)\r\n" : "";
+            return blockInfoStack.HasNestedLines() ? $"\r\n(または tmp/parsedTableFile{(IsPrimary ? 1 : 2)}.txt の {LineNumber}行目)\r\n" : "";
         }
 
         int calcErrorColumn() {

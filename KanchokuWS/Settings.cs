@@ -82,6 +82,9 @@ namespace KanchokuWS
         /// <summary>指定個数以上の打鍵が残っていたら警告をログ出力する</summary>        
         public static int WarnThresholdKeyQueueCount { get; private set; } = 6;
 
+        /// <summary>デバッグ用のテーブルファイルを出力する</summary>        
+        public static bool OutputDebugTableFiles { get; private set; }
+
         public static bool IsAnyDevFlagEnabled => LogLevel > 2 || LoggingDecKeyInfo || LoggingActiveWindowInfo || LoggingVirtualKeyboardInfo || BushuDicLogEnabled;
 
         //-------------------------------------------------------------------------------------
@@ -846,6 +849,7 @@ namespace KanchokuWS
             LoggingVirtualKeyboardInfo = GetString("loggingVirtualKeyboardInfo")._parseBool();
             MultiAppEnabled = IsMultiAppEnabled();
             WarnThresholdKeyQueueCount = GetString("warnThresholdKeyQueueCount")._parseInt(6);
+            OutputDebugTableFiles = GetString("outputDebugTableFiles")._parseBool();
 
             //-------------------------------------------------------------------------------------
             // ファイル設定

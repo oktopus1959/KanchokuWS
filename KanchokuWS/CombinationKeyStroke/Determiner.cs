@@ -166,10 +166,10 @@ namespace KanchokuWS.CombinationKeyStroke
             KeyCombinationPool.Initialize();
             Clear();
 
-            new TableFileParser().ParseTableFile(tableFile, "tmp/tableFile1.tbl", KeyCombinationPool.Singleton1, true, false, bTest);
+            new TableFileParser().ParseTableFile(tableFile, "tmp/tableFile1.tbl", KeyCombinationPool.Singleton1, true, bTest);
 
             if (tableFile2._notEmpty()) {
-                new TableFileParser().ParseTableFile(tableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.Singleton2, false, false, bTest);
+                new TableFileParser().ParseTableFile(tableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.Singleton2, false, bTest);
             }
         }
 

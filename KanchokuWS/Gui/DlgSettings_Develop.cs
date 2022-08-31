@@ -24,6 +24,7 @@ namespace KanchokuWS.Gui
             checkBox_bushuDicLogEnabled.Checked = Settings.BushuDicLogEnabled;
             checkBox_loggingActiveWindowInfo.Checked = Settings.LoggingActiveWindowInfo;
             checkBox_loggingVirtualKeyboardInfo.Checked = Settings.LoggingVirtualKeyboardInfo;
+            checkBox_outputDebugTableFiles.Checked = Settings.OutputDebugTableFiles;
             checkBox_multiAppEnabled.Checked = Settings.MultiAppEnabled;
             textBox_warnThresholdKeyQueueCount.Text = Settings.WarnThresholdKeyQueueCount.ToString();
         }
@@ -40,6 +41,7 @@ namespace KanchokuWS.Gui
             checkerDevelop.Add(checkBox_bushuDicLogEnabled);
             checkerDevelop.Add(checkBox_loggingActiveWindowInfo);
             checkerDevelop.Add(checkBox_loggingVirtualKeyboardInfo);
+            checkerDevelop.Add(checkBox_outputDebugTableFiles);
             checkerDevelop.Add(checkBox_multiAppEnabled);
             checkerDevelop.Add(textBox_warnThresholdKeyQueueCount);
 
@@ -59,6 +61,7 @@ namespace KanchokuWS.Gui
             //Settings.SetUserIni("loggingActiveWindowInfo", checkBox_loggingActiveWindowInfo.Checked);
             Settings.LoggingActiveWindowInfo = checkBox_loggingActiveWindowInfo.Checked;
             Settings.SetUserIni("loggingVirtualKeyboardInfo", checkBox_loggingVirtualKeyboardInfo.Checked);
+            Settings.SetUserIni("outputDebugTableFiles", checkBox_outputDebugTableFiles.Checked);
             Settings.SetUserIni("multiAppEnabled", checkBox_multiAppEnabled.Checked);
             Settings.SetUserIni("warnThresholdKeyQueueCount", textBox_warnThresholdKeyQueueCount.Text);
 
@@ -134,8 +137,8 @@ namespace KanchokuWS.Gui
             KeyCombinationPool.Singleton1?.DebugPrintFile("tmp/key-combination1.txt");
             KeyCombinationPool.Singleton2?.DebugPrintFile("tmp/key-combination2.txt");
 
-            if (Settings.TableFile._notEmpty()) new TableFileParser().ParseTableFile(Settings.TableFile, "tmp/tableFile1.tbl", KeyCombinationPool.Singleton1, true, true, false);
-            if (Settings.TableFile2._notEmpty()) new TableFileParser().ParseTableFile(Settings.TableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.Singleton2, false, true, false);
+            //if (Settings.TableFile._notEmpty()) new TableFileParser().ParseTableFile(Settings.TableFile, "tmp/tableFile1.tbl", KeyCombinationPool.Singleton1, true, true, false);
+            //if (Settings.TableFile2._notEmpty()) new TableFileParser().ParseTableFile(Settings.TableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.Singleton2, false, true, false);
         }
 
         //-----------------------------------------------------------------------------------

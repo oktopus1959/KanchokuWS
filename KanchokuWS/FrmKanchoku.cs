@@ -216,6 +216,9 @@ namespace KanchokuWS
             // 漢直初期化処理
             await initializeKanchoku();
 
+            // デバッグ用テーブルファイルの出力
+            if (Settings.OutputDebugTableFiles) dumpDebugTableFiles();
+
             //Text = "漢直窓S";
 
             // 仮想鍵盤フォームを隠す
@@ -1278,6 +1281,14 @@ namespace KanchokuWS
             ExecCmdDecoder("saveDictFiles", null);
         }
 
+        private void  dumpDebugTableFiles()
+        {
+            ExecCmdDecoder("SaveDumpTable", null);    // tmp/dump-table[12].txt (Decoder が実際に保持しているテーブルの内容をダンプしたもの)
+
+            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.Singleton1?.DebugPrintFile("tmp/key-combination1.txt");
+            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.Singleton2?.DebugPrintFile("tmp/key-combination2.txt");
+        }
+
         //------------------------------------------------------------------
         // 各種下請け処理
         //------------------------------------------------------------------
@@ -1967,6 +1978,9 @@ namespace KanchokuWS
 
             // 各種定義ファイルの読み込み
             ReloadDefFiles();
+
+            // デバッグ用テーブルファイルの出力
+            if (Settings.OutputDebugTableFiles) dumpDebugTableFiles();
 
             // 辞書保存チャレンジ開始時刻の再初期化
             reinitializeSaveDictsChallengeDt();

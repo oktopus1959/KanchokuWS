@@ -1181,7 +1181,7 @@ namespace KanchokuWS.TableParser
         /// <param name="filename"></param>
         /// <param name="outFilename"></param>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public void ParseTableFile(string filename, string outFilename, KeyCombinationPool pool, bool primary, bool bWriteExpandedTableLines = false, bool bTest = false)
+        public void ParseTableFile(string filename, string outFilename, KeyCombinationPool pool, bool primary, bool bTest = false)
         {
             logger.InfoH($"ENTER: filename={filename}");
             tableLines.ReadAllLines(filename);
@@ -1191,12 +1191,12 @@ namespace KanchokuWS.TableParser
                 var parser = new RootTableParser();
                 parser.ParseRootTable();
                 writeAllLines(outFilename, ParserContext.Singleton.OutputLines);
-                if (bWriteExpandedTableLines) writeAllLines($"tmp/parsedTableFile{(primary ? 1 : 2)}.txt", ParserContext.Singleton.tableLines.GetLines());
+                writeAllLines($"tmp/parsedTableFile{(primary ? 1 : 2)}.txt", ParserContext.Singleton.tableLines.GetLines());
             } else {
                 tableLines.Error($"テーブルファイル({filename})が開けません");
             }
 
-            if (!bWriteExpandedTableLines && !bTest) tableLines.showErrorMessage();
+            if (!bTest) tableLines.showErrorMessage();
 
             logger.InfoH($"LEAVE");
         }
