@@ -18,8 +18,8 @@ namespace KanchokuWS.TableParser
 
         public List<int> strokeList { get; private set; } = new List<int>();
 
-        // 追加の末尾打鍵
-        public int LastStroke { get; set; } = -1;
+        //// 追加の末尾打鍵
+        //public int LastStroke { get; set; } = -1;
 
         public int Count => strokeList.Count;
 
@@ -411,17 +411,17 @@ namespace KanchokuWS.TableParser
         /// <param name="lastNth"></param>
         void addTerminalNode(int idx, Node node)
         {
-            addCombinationKey(idx, true);
+            addCombinationKey(StrokeList.WithLastStrokeAdded(idx), true);
 
             //SetNodeOrNewTreeNodeAtLast(StrokeList.WithLastStrokeAdded(idx), node);
             SetOrMergeNthSubNode(idx, node);
         }
 
-        void addCombinationKey(int idx, bool hasStr)
+        protected void addCombinationKey(CStrokeList strkList, bool hasStr)
         {
             //var list = new List<int>(StrokeList.strokeList);
-            var strkList = StrokeList.WithLastStrokeAdded(idx);
-            var list = strkList.strokeList;
+            //var strkList = StrokeList.WithLastStrokeAdded(idx);
+            var list = new List<int>(strkList.strokeList);
 
             if (list._notEmpty()) {
                 int shiftOffset = calcShiftOffset(list[0]);
@@ -689,11 +689,11 @@ namespace KanchokuWS.TableParser
             return concatString(idx, targetStr);
         }
 
-        /// <summary>node を RootTable の idx 位置に merge する。merge に成功したら merge先のノードを返す</summary>
-        protected Node mergeNodeToRootTable(int idx, Node node)
+        /// <summary>node を treeNode の idx 位置に merge する。merge に成功したら merge先のノードを返す</summary>
+        protected Node mergeNode(Node treeNode, int idx, Node node)
         {
             int tgtIdx = ShiftDecKey(idx);  // 矢印記法でないルートブロックの場合は、まだShiftされていないので、ここで Shift する必要あり
-            (Node mergedNode, bool bOverwrite) = RootNode.SetOrMergeNthSubNode(tgtIdx, node);
+            (Node mergedNode, bool bOverwrite) = treeNode.SetOrMergeNthSubNode(tgtIdx, node);
             if (bOverwrite && (Settings.DuplicateWarningEnabled || isInCombinationBlock) && !bIgnoreWarningOverwrite) {
                 logger.Warn($"DUPLICATED: {CurrentLine}");
                 NodeDuplicateWarning();
@@ -868,7 +868,14 @@ namespace KanchokuWS.TableParser
             // 後置文字列の指定があるか→なければ単打テーブルから文字を拾ってくる
             var myStr = getMyString(idx);
             var strkList = StrokeList.WithLastStrokeAdded(idx);
-            Node node = mergeNodeToRootTable(idx, Node.MakeRewriteTreeNode(myStr));
+            idx = strkList.Last();
+            if (isInCombinationBlock) {
+                // 同時打鍵の場合
+                addCombinationKey(strkList, true);
+            }
+            // 同時打鍵の場合は、TreeNodeは RootNodeの子ノードになっているはず。
+            // 逆に同時打鍵でない場合は、 TreeNode == RootNode のはず
+            Node node = mergeNode(TreeNode, idx, Node.MakeRewriteTreeNode(myStr));
             if (node != null) {
                 return new PostRewriteParser(RootNode, node, strkList, -1, targetStr) { bNested = true };
             } else {
@@ -890,13 +897,22 @@ namespace KanchokuWS.TableParser
         // 後置書き換え用の後続矢印記法
         protected override ArrowParser AddArrowNode(int arrowIdx)
         {
-            if (bNested) {
-                prefixStr = myPrefixString(UnhandledArrowIndex);
-            } else {
-                targetStr = myTargetString(UnhandledArrowIndex);
-            }
+            ArrowParser parser = this;
+            int prevIndex = UnhandledArrowIndex;
             UnhandledArrowIndex = arrowIdx;
-            return this;
+            if (bNested) {
+                prefixStr = myPrefixString(prevIndex);
+            } else {
+                if (isInCombinationBlock) {
+                    // 同時打鍵の場合はTreeNodeを挿入しておく必要がある
+                    var strkList = StrokeList.WithLastStrokeAdded(prevIndex);
+                    Node node = SetOrMergeNthSubNode(prevIndex, Node.MakeTreeNode());
+                    parser = new PostRewriteParser(RootNode, node, strkList, arrowIdx, targetStr);
+                } else {
+                    targetStr = myTargetString(prevIndex);
+                }
+            }
+            return parser;
         }
 
         public override void AddStringNode(int idx, bool bBare)
@@ -917,11 +933,11 @@ namespace KanchokuWS.TableParser
         {
             var str1 = StringPair._getNth(0);
             var str2 = StringPair._getNth(1);
-            logger.DebugH(() => $"ENTER: str1={str1}, str2={str2}");
+            logger.DebugH(() => $"ENTER: str1={str1.DebugString()}, str2={str2.DebugString()}");
             if (str1._isEmpty() || str2._isEmpty()) {
                 ParseError("不正な書き換え文字列ペア");
             } else {
-                var tgtStr = str1 + targetStr._toSafe();
+                var tgtStr = str1.GetSafeString() + targetStr._toSafe();
                 TreeNode.UpsertRewritePair(tgtStr, Node.MakeStringNode(str2));
             }
             logger.DebugH("LEAVE");
