@@ -34,7 +34,7 @@ namespace KanchokuWS.TableParser
             set { Context.shiftPlane = value; }
         }
 
-        protected string[] StringPair = new string[2];
+        protected OutputString[] StringPair = new OutputString[2];
 
         /// <summary>
         /// コンストラクタ
@@ -291,7 +291,7 @@ namespace KanchokuWS.TableParser
                     case '"':
                         // 文字列
                         ReadString();
-                        return parseSecondString() ? TOKEN.STRING_PAIR : TOKEN.STRING;
+                        return parseSecondString(false) ? TOKEN.STRING_PAIR : TOKEN.STRING;
 
                     case '-': {
                         char c = PeekNextChar();
@@ -339,7 +339,7 @@ namespace KanchokuWS.TableParser
                     default:
                         // BARE Stringか
                         ReadBareString(CurrentChar);
-                        if (CurrentStr._notEmpty()) return parseSecondString() ? TOKEN.STRING_PAIR : TOKEN.BARE_STRING;
+                        if (CurrentStr._notEmpty()) return parseSecondString(true) ? TOKEN.STRING_PAIR : TOKEN.BARE_STRING;
 
                         // エラー
                         ParseError($"getToken: unexpected char: '{CurrentChar}'");
@@ -572,9 +572,9 @@ namespace KanchokuWS.TableParser
         }
 
         // 「STRING:STRING」形式の2つめの文字列 (デリミタに '|' を使うことは不可。テーブルの簡易記法と間違うため)
-        bool parseSecondString()
+        bool parseSecondString(bool bBare)
         {
-            StringPair[0] = CurrentStr;
+            StringPair[0] = new OutputString(CurrentStr, bBare);
 
             char c = '\0';
             int countSpaces()
@@ -596,10 +596,12 @@ namespace KanchokuWS.TableParser
 
             if (PeekNextChar() == '"') {
                 ReadString();
+                bBare = false;
             } else {
                 ReadBareString();
+                bBare = true;
             }
-            StringPair[1] = CurrentStr;
+            StringPair[1] = new OutputString(CurrentStr, bBare);
             SkipToEndOfLine();
             if (StringPair[1]._isEmpty()) {
                 ParseError("Invalid String Pair");

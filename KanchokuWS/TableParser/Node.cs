@@ -220,6 +220,12 @@ namespace KanchokuWS.TableParser
             return new Node() { outputStr = OutputString.OfFunction(str) };
         }
 
+        // 空のRewriteNode を作成して返す
+        public static Node MakeRewriteNode()
+        {
+            return MakeRewriteNode(new OutputString("", true));
+        }
+
         // RewriteNode を作成して返す
         public static Node MakeRewriteNode(string outStr, bool bBare)
         {

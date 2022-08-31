@@ -712,7 +712,7 @@ namespace KanchokuWS.TableParser
                 // TODO: node.IsTreeNode() だったらどうする?
                 rewriteNode.AddRewriteMap();
             } else {
-                rewriteNode = SetOrMergeNthSubNode(rewriteIdx, Node.MakeRewriteNode("", true));
+                rewriteNode = SetOrMergeNthSubNode(rewriteIdx, Node.MakeRewriteNode());
             }
             if (rewriteNode.IsRewriteNode()) {
                 // RewriteNode がノード木に反映された場合に限り、node を upsert する
@@ -808,7 +808,8 @@ namespace KanchokuWS.TableParser
                 ParseError("前置書き換え記法には、少なくとも1つの後続キーが必要です。");
             } else {
                 // 書き換え情報を upsert する
-                upsertNodeToRootTable(idx, Node.MakeRewriteNode(CurrentStr, bBare));
+                //upsertNodeToRootTable(idx, Node.MakeRewriteNode(CurrentStr, bBare));
+                upsertNodeToRootTable(idx, Node.MakeStringNode(CurrentStr, bBare));
             }
             logger.DebugH("LEAVE");
         }
@@ -906,7 +907,7 @@ namespace KanchokuWS.TableParser
                 ParseError("後置書き換え記法には、ブロックが必要です。");
             } else {
                 var tgtStr = prefixStr + GetNthRootNodeString(idx)._toSafe() + targetStr._toSafe();
-                TreeNode.UpsertRewritePair(tgtStr, Node.MakeRewriteNode(CurrentStr, bBare));
+                TreeNode.UpsertRewritePair(tgtStr, Node.MakeStringNode(CurrentStr, bBare));
             }
             logger.DebugH("LEAVE");
         }
@@ -921,7 +922,7 @@ namespace KanchokuWS.TableParser
                 ParseError("不正な書き換え文字列ペア");
             } else {
                 var tgtStr = str1 + targetStr._toSafe();
-                TreeNode.UpsertRewritePair(tgtStr, Node.MakeRewriteNode(str2, false));
+                TreeNode.UpsertRewritePair(tgtStr, Node.MakeStringNode(str2));
             }
             logger.DebugH("LEAVE");
         }
