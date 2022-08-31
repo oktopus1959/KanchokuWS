@@ -182,7 +182,7 @@ namespace KanchokuWS.TableParser
 
         public bool HasNestedLines()
         {
-            return blockInfoList.Count > 1 && blockInfoList[1].CurrentOffset > 0;
+            return blockInfoList.Count > 1 && CurrentOffset > 0;
         }
     }
 
@@ -598,11 +598,12 @@ namespace KanchokuWS.TableParser
         // 解析エラー
         public void ParseError(string msg = null) {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError(string.Format("{0}{1} {2} の {3}行 {4}文字目({5})がまちがっているようです：\r\n\r\n> {6} ...",
+            handleError(string.Format("{0}{1} {2} の {3}行{4}{5}文字目({6})がまちがっているようです：\r\n\r\n> {7} ...",
                 msg._notEmpty() ? msg + "\r\n" : "",
                 blockOrFile(),
                 blockInfoStack.CurrentBlockName,
                 calcErrorLineNumber(),
+                parsedFileAndLinenum(),
                 calcErrorColumn(),
                 errorChar(),
                 CurrentLine._safeSubstring(0, 50)));
@@ -652,7 +653,7 @@ namespace KanchokuWS.TableParser
         // ノードの重複が発生した場合
         public void NodeDuplicateWarning() {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleWarning(string.Format("{0} {1} の {2}行目{3}でノードの重複が発生しました。意図したものであれば無視してください (#ignoreWarning overwrite を記述するとこの警告が出なくなります)：\r\n\r\n> {4} ...",
+            handleWarning(string.Format("{0} {1} の {2}行目{3}でノードの重複が発生しました。意図したものであれば無視してください\r\n(#ignoreWarning overwrite を記述するとこの警告が出なくなります)：\r\n\r\n> {4} ...",
                 blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
@@ -660,7 +661,7 @@ namespace KanchokuWS.TableParser
         public void UnexpectedLeftBraceAtColumn0Warning() {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
             handleWarning(
-                string.Format("{0} {1} の {2}行目{3}の行頭にネストされた '{{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述するとこの警告が出なくなります)：\r\n\r\n> {4} ...",
+                string.Format("{0} {1} の {2}行目{3}の行頭にネストされた '{{' があります。意図したものであれば無視してください\r\n(#ignoreWarning braceLevel を記述するとこの警告が出なくなります)：\r\n\r\n> {4} ...",
                 blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
