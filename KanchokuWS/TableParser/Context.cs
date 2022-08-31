@@ -587,7 +587,7 @@ namespace KanchokuWS.TableParser
         }
 
         string parsedFileAndLinenum() {
-            return blockInfoStack.HasNestedLines() ? $"\r\n(または tmp/parsedTableFile{(IsPrimary ? 1 : 2)}.txt の {LineNumber}行目)\r\n" : "";
+            return blockInfoStack.HasNestedLines() ? $"\r\n(tmp/parsedTableFile{(IsPrimary ? 1 : 2)}.txt の {LineNumber}行目)\r\n" : "";
         }
 
         int calcErrorColumn() {

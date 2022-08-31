@@ -87,6 +87,7 @@ namespace KanchokuWS.TableParser
         // ルートノードから当ノードに至るまでの打鍵リスト
         CStrokeList _strokeList = null;
 
+        // addCombinationKey() で必要になる
         protected CStrokeList StrokeList => _strokeList;
 
         protected int Depth => StrokeList.Count;
@@ -173,33 +174,33 @@ namespace KanchokuWS.TableParser
             _shiftPlane = shiftPlane;
         }
 
-        /// <summary>
-        /// n番目の子ノードをセットする(残ったほうのノードを返す)
-        /// </summary>
-        /// <param name="tbl"></param>
-        /// <param name="idx"></param>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        protected Node SetNthSubNode(int idx, Node node)
-        {
-            if (isInCombinationBlock) {
-                // 同時打鍵定義ブロック
-                int depth = Depth;
-                if (depth == 0) {
-                    // 同時打鍵の先頭キーは Combo化(単打ノードの重複を避ける)
-                    idx = makeComboDecKey(idx);
-                } else if (node.IsTreeNode()) {
-                    // 同時打鍵の中間キー(非終端キー)は、Shift化して終端ノードとの重複を避ける
-                    idx = makeNonTerminalDuplicatableComboKey(idx);
-                }
-            }
-            bool bOverwrite = TreeNode.SetNthSubNode(idx, node);
-            if (bOverwrite && (Settings.DuplicateWarningEnabled || isInCombinationBlock) && !bIgnoreWarningOverwrite) {
-                logger.Warn($"DUPLICATED: {CurrentLine}");
-                NodeDuplicateWarning();
-            }
-            return TreeNode.GetNthSubNode(idx);
-        }
+        ///// <summary>
+        ///// n番目の子ノードをセットする(残ったほうのノードを返す)
+        ///// </summary>
+        ///// <param name="tbl"></param>
+        ///// <param name="idx"></param>
+        ///// <param name="node"></param>
+        ///// <returns></returns>
+        //protected Node SetNthSubNode(int idx, Node node)
+        //{
+        //    if (isInCombinationBlock) {
+        //        // 同時打鍵定義ブロック
+        //        int depth = Depth;
+        //        if (depth == 0) {
+        //            // 同時打鍵の先頭キーは Combo化(単打ノードの重複を避ける)
+        //            idx = makeComboDecKey(idx);
+        //        } else if (node.IsTreeNode()) {
+        //            // 同時打鍵の中間キー(非終端キー)は、Shift化して終端ノードとの重複を避ける
+        //            idx = makeNonTerminalDuplicatableComboKey(idx);
+        //        }
+        //    }
+        //    bool bOverwrite = TreeNode.SetNthSubNode(idx, node);
+        //    if (bOverwrite && (Settings.DuplicateWarningEnabled || isInCombinationBlock) && !bIgnoreWarningOverwrite) {
+        //        logger.Warn($"DUPLICATED: {CurrentLine}");
+        //        NodeDuplicateWarning();
+        //    }
+        //    return TreeNode.GetNthSubNode(idx);
+        //}
 
         /// <summary>
         /// n番目の子ノードをマージする(残ったほうのノードを返す)
@@ -516,15 +517,17 @@ namespace KanchokuWS.TableParser
         /// <param name="lastNth"></param>
         void addTerminalNode(int idx, Node node)
         {
-            addCombinationKey(true);
+            addCombinationKey(idx, true);
 
             //SetNodeOrNewTreeNodeAtLast(StrokeList.WithLastStrokeAdded(idx), node);
             SetOrMergeNthSubNode(idx, node);
         }
 
-        void addCombinationKey(bool hasStr)
+        void addCombinationKey(int idx, bool hasStr)
         {
-            var list = new List<int>(StrokeList.strokeList);
+            //var list = new List<int>(StrokeList.strokeList);
+            var strkList = StrokeList.WithLastStrokeAdded(idx);
+            var list = strkList.strokeList;
 
             if (list._notEmpty()) {
                 int shiftOffset = calcShiftOffset(list[0]);
