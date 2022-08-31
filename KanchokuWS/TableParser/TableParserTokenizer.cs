@@ -24,7 +24,7 @@ namespace KanchokuWS.TableParser
 
         //protected StrokeTableNode rootTableNode => _rootTableNode != null ? _rootTableNode : context.rootTableNode;
 
-        // グローバルなルートノードか
+        // グローバルなルートパーザか
         public virtual bool IsRootParser => false;
 
         private int shiftPlane {
