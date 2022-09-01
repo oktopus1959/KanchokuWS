@@ -36,12 +36,17 @@ namespace KanchokuWS.TableParser
 
         public bool IsFunction()
         {
-            return isBare && str._startsWith("@");
+            return isBare && str._getFirst() == '@';
         }
 
         public string GetSafeString()
         {
             return str._toSafe();
+        }
+
+        public string GetBaseQuotedString()
+        {
+            return (IsFunction() ? str._safeSubstring(1) : str)._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")._quoteString(isBare);
         }
 
         public string GetQuotedString()
@@ -211,7 +216,7 @@ namespace KanchokuWS.TableParser
         // StringNode を作成して返す
         public static Node MakeStringNode(string str, bool bare)
         {
-            return new Node() { outputStr = new OutputString(str, bare || str._startsWith("@")) };
+            return new Node() { outputStr = new OutputString(str, bare) };
         }
 
         // FunctionNode を作成して返す
@@ -281,6 +286,8 @@ namespace KanchokuWS.TableParser
         public OutputString GetOutputString() { return outputStr; }
 
         public bool IsBareString() { return outputStr.IsBare(); }
+
+        public string GetBaseQuotedString() { return outputStr.GetBaseQuotedString(); }
 
         public string GetQuotedString() { return outputStr.GetQuotedString(); }
 
@@ -445,7 +452,7 @@ namespace KanchokuWS.TableParser
                 string leaderStr = $"-{list.Select(x => x.ToString())._join(">-")}>";
                 if (rewriteMap._notEmpty()) {
                     // 書き換えノード
-                    outLines.Add(leaderStr + "@{" + GetQuotedString());
+                    outLines.Add(leaderStr + "@{" + GetBaseQuotedString());
                     rewriteMap.ForEach((key, node) => {
                         // 書き換えMapの先のノードは、文字列ノードかツリーノードとみなす
                         if (key._notEmpty() && node != null) {
