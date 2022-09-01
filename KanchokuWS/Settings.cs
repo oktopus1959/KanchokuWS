@@ -312,37 +312,65 @@ namespace KanchokuWS
         public static int GetActiveWindowInfoIntervalMillisec { get; private set; } = 200;
 
         //-------------------------------------------------------------------------------------
-        // キー割当
+        // 機能キー割当
         //-------------------------------------------------------------------------------------
         /// <summary>全角変換(モード)を呼び出す打鍵列</summary>
         public static string ZenkakuModeKeySeq { get; set; }
+        public static string ZenkakuModeKeySeq_Preset { get; set; }
+
         /// <summary>全角変換(1文字)を呼び出す打鍵列</summary>
         public static string ZenkakuOneCharKeySeq { get; set; }
+        public static string ZenkakuOneCharKeySeq_Preset { get; set; }
+
         /// <summary>次打鍵スルーを呼び出す打鍵列</summary>
         public static string NextThroughKeySeq { get; set; }
+        public static string NextThroughKeySeq_Preset { get; set; }
+
         /// <summary>履歴検索を呼び出す打鍵列</summary>
         public static string HistoryKeySeq { get; set; }
+        public static string HistoryKeySeq_Preset { get; set; }
+
         /// <summary>履歴検索(1文字)を呼び出す打鍵列</summary>
         public static string HistoryOneCharKeySeq { get; set; }
+        public static string HistoryOneCharKeySeq_Preset { get; set; }
+
         /// <summary>履歴検索(1～3文字)を呼び出す打鍵列</summary>
         public static string HistoryFewCharsKeySeq { get; set; }
+        public static string HistoryFewCharsKeySeq_Preset { get; set; }
+
         /// <summary>交ぜ書きを呼び出す打鍵列</summary>
         public static string MazegakiKeySeq { get; set; }
+        public static string MazegakiKeySeq_Preset { get; set; }
+
         /// <summary>部首合成を呼び出す打鍵列</summary>
         public static string BushuCompKeySeq { get; set; }
+        public static string BushuCompKeySeq_Preset { get; set; }
+
         /// <summary>連想文字検索を呼び出す打鍵列</summary>
         public static string BushuAssocKeySeq { get; set; }
+        public static string BushuAssocKeySeq_Preset { get; set; }
+
         /// <summary>連想直接変換を呼び出す打鍵列</summary>
         public static string BushuAssocDirectKeySeq { get; set; }
+        public static string BushuAssocDirectKeySeq_Preset { get; set; }
+
         /// <summary>カタカナ変換(モード)を呼び出す打鍵列</summary>
         public static string KatakanaModeKeySeq { get; set; }
+        public static string KatakanaModeKeySeq_Preset { get; set; }
+
         /// <summary>カタカナ変換(一括)を呼び出す打鍵列</summary>
         public static string KatakanaOneShotKeySeq { get; set; }
+        public static string KatakanaOneShotKeySeq_Preset { get; set; }
+
         /// <summary>半角カタカナ変換(一括)を呼び出す打鍵列</summary>
         public static string HankakuKatakanaOneShotKeySeq { get; set; }
+        public static string HankakuKatakanaOneShotKeySeq_Preset { get; set; }
 
         /// <summary>ブロッカー設定を呼び出す打鍵列</summary>
         public static string BlockerSetterOneShotKeySeq { get; set; }
+        public static string BlockerSetterOneShotKeySeq_Preset { get; set; }
+
+        public static HashSet<string> FunctionKeySeqSet = new HashSet<string>();
 
         /// <summary>全エスケープおよび出力文字列検索ブロッカー設定</summary>
         public static string FullEscapeKey { get; set; }
@@ -369,6 +397,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         // Ctrlキー
+        //-------------------------------------------------------------------------------------
         /// <summary>グローバルなコントロールキーを有効にするか </summary>
         public static bool GlobalCtrlKeysEnabled { get; set; } = false;
 
@@ -1162,20 +1191,50 @@ namespace KanchokuWS
             DecoderSpecialDeckeys.Add(DecoderKeys.STROKE_HELP_ROTATION_DECKEY);
             DecoderSpecialDeckeys.Add(DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
 
+            FunctionKeySeqSet.Clear();
             ZenkakuModeKeySeq = addDecoderKeySeqSetting("zenkakuModeKeySeq");
+            if (ZenkakuModeKeySeq._notEmpty()) FunctionKeySeqSet.Add(ZenkakuModeKeySeq);
             ZenkakuOneCharKeySeq = addDecoderKeySeqSetting("zenkakuOneCharKeySeq");
+            if (ZenkakuOneCharKeySeq._notEmpty()) FunctionKeySeqSet.Add(ZenkakuOneCharKeySeq);
             NextThroughKeySeq = addDecoderKeySeqSetting("nextThroughKeySeq");
+            if (NextThroughKeySeq._notEmpty()) FunctionKeySeqSet.Add(NextThroughKeySeq);
             HistoryKeySeq = addDecoderKeySeqSetting("historyKeySeq");
+            if (HistoryKeySeq._notEmpty()) FunctionKeySeqSet.Add(HistoryKeySeq);
             HistoryOneCharKeySeq = addDecoderKeySeqSetting("historyOneCharKeySeq");
+            if (HistoryOneCharKeySeq._notEmpty()) FunctionKeySeqSet.Add(HistoryOneCharKeySeq);
             HistoryFewCharsKeySeq = addDecoderKeySeqSetting("historyFewCharsKeySeq");
+            if (HistoryFewCharsKeySeq._notEmpty()) FunctionKeySeqSet.Add(HistoryFewCharsKeySeq);
             MazegakiKeySeq = addDecoderKeySeqSetting("mazegakiKeySeq");
+            if (MazegakiKeySeq._notEmpty()) FunctionKeySeqSet.Add(MazegakiKeySeq);
             BushuCompKeySeq = addDecoderKeySeqSetting("bushuCompKeySeq");
+            if (BushuCompKeySeq._notEmpty()) FunctionKeySeqSet.Add(BushuCompKeySeq);
             BushuAssocKeySeq = addDecoderKeySeqSetting("bushuAssocKeySeq");
+            if (BushuAssocKeySeq._notEmpty()) FunctionKeySeqSet.Add(BushuAssocKeySeq);
             BushuAssocDirectKeySeq = addDecoderKeySeqSetting("bushuAssocDirectKeySeq");
+            if (BushuAssocDirectKeySeq._notEmpty()) FunctionKeySeqSet.Add(BushuAssocDirectKeySeq);
             KatakanaModeKeySeq = addDecoderKeySeqSetting("katakanaModeKeySeq");
+            if (KatakanaModeKeySeq._notEmpty()) FunctionKeySeqSet.Add(KatakanaModeKeySeq);
             KatakanaOneShotKeySeq = addDecoderKeySeqSetting("katakanaOneShotKeySeq");
+            if (KatakanaOneShotKeySeq._notEmpty()) FunctionKeySeqSet.Add(KatakanaOneShotKeySeq);
             HankakuKatakanaOneShotKeySeq = addDecoderKeySeqSetting("hankakuKatakanaOneShotKeySeq");
+            if (HankakuKatakanaOneShotKeySeq._notEmpty()) FunctionKeySeqSet.Add(HankakuKatakanaOneShotKeySeq);
             BlockerSetterOneShotKeySeq = addDecoderKeySeqSetting("blockerSetterOneShotKeySeq");
+            if (BlockerSetterOneShotKeySeq._notEmpty()) FunctionKeySeqSet.Add(BlockerSetterOneShotKeySeq);
+
+            ZenkakuModeKeySeq_Preset = "";
+            ZenkakuOneCharKeySeq_Preset = "";
+            NextThroughKeySeq_Preset = "";
+            HistoryKeySeq_Preset = "";
+            HistoryOneCharKeySeq_Preset = "";
+            HistoryFewCharsKeySeq_Preset = "";
+            MazegakiKeySeq_Preset = "";
+            BushuCompKeySeq_Preset = "";
+            BushuAssocKeySeq_Preset = "";
+            BushuAssocDirectKeySeq_Preset = "";
+            KatakanaModeKeySeq_Preset = "";
+            KatakanaOneShotKeySeq_Preset = "";
+            HankakuKatakanaOneShotKeySeq_Preset = "";
+            BlockerSetterOneShotKeySeq_Preset = "";
 
             // for Debug
             //addDecoderSetting("debughState", false);

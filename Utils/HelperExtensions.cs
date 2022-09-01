@@ -771,6 +771,22 @@ namespace Utils
             return str == null ? "" : str.Replace(oldVal, newVal);
         }
 
+        /// <summary>
+        /// 文字列の先頭の要素を取得する。文字列が空なら '\0' を返す。
+        /// </summary>
+        public static char _getFirst(this string str)
+        {
+            return str._isEmpty() ? '\0' : str[0];
+        }
+
+        /// <summary>
+        /// 文字列の末尾要素を取得する。文字列が空なら '\0' を返す。
+        /// </summary>
+        public static char _getLast(this string str)
+        {
+            return str._isEmpty() ? '\0' : str[str.Length - 1];
+        }
+
         public static char? _getNth(this string str, int idx)
         {
             return str._notEmpty() && idx >= 0 && idx < str.Length ? str[idx] : (char?)null;
@@ -1664,6 +1680,21 @@ namespace Utils
         {
             if (str._isEmpty()) return "";
             return bBare ? str : "\"" + str + "\"";
+        }
+
+        /// <summary>
+        /// 指定の文字が含まれる個数をカウントする
+        /// </summary>
+        /// <returns></returns>
+        public static int _countChar(this string str, char ch)
+        {
+            int num = 0;
+            if (str._notEmpty()) {
+                foreach (var x in str) {
+                    if (x == ch) ++num;
+                }
+            }
+            return num;
         }
     }
 

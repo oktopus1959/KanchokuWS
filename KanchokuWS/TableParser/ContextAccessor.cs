@@ -70,6 +70,7 @@ namespace KanchokuWS.TableParser
         protected Dictionary<string, string> kanjiConvMap => Context.kanjiConvMap;
         public string ConvertKanji(string k) { return Context.ConvertKanji(k); }
 
+        protected bool IsPrimary => tableLines.IsPrimary;
         protected bool Empty => tableLines.Empty;
         protected bool NotEmpty => tableLines.NotEmpty;
         protected string CurrentLine => tableLines.CurrentLine;

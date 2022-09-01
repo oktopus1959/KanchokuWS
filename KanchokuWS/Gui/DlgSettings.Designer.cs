@@ -228,6 +228,16 @@ namespace KanchokuWS.Gui
             this.button_keyAssignClose = new System.Windows.Forms.Button();
             this.button_keyAssignEnter = new System.Windows.Forms.Button();
             this.groupBox30 = new System.Windows.Forms.GroupBox();
+            this.label133 = new System.Windows.Forms.Label();
+            this.label134 = new System.Windows.Forms.Label();
+            this.label135 = new System.Windows.Forms.Label();
+            this.label136 = new System.Windows.Forms.Label();
+            this.label137 = new System.Windows.Forms.Label();
+            this.label132 = new System.Windows.Forms.Label();
+            this.label128 = new System.Windows.Forms.Label();
+            this.label129 = new System.Windows.Forms.Label();
+            this.label130 = new System.Windows.Forms.Label();
+            this.label131 = new System.Windows.Forms.Label();
             this.textBox_historyFewCharsKeySeq = new System.Windows.Forms.TextBox();
             this.label106 = new System.Windows.Forms.Label();
             this.textBox_blockerSetterOneShotKeySeq = new System.Windows.Forms.TextBox();
@@ -249,6 +259,10 @@ namespace KanchokuWS.Gui
             this.textBox_historyKeySeq = new System.Windows.Forms.TextBox();
             this.label58 = new System.Windows.Forms.Label();
             this.groupBox29 = new System.Windows.Forms.GroupBox();
+            this.label127 = new System.Windows.Forms.Label();
+            this.label126 = new System.Windows.Forms.Label();
+            this.label125 = new System.Windows.Forms.Label();
+            this.label124 = new System.Windows.Forms.Label();
             this.textBox_nextThroughKeySeq = new System.Windows.Forms.TextBox();
             this.label70 = new System.Windows.Forms.Label();
             this.textBox_katakanaModeKeySeq = new System.Windows.Forms.TextBox();
@@ -464,6 +478,7 @@ namespace KanchokuWS.Gui
             this.label_okResultDevelop = new System.Windows.Forms.Label();
             this.button_developEnter = new System.Windows.Forms.Button();
             this.groupBox15 = new System.Windows.Forms.GroupBox();
+            this.checkBox_outputDebugTableFiles = new System.Windows.Forms.CheckBox();
             this.label_testCount = new System.Windows.Forms.Label();
             this.textBox_warnThresholdKeyQueueCount = new System.Windows.Forms.TextBox();
             this.label119 = new System.Windows.Forms.Label();
@@ -481,6 +496,8 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.label138 = new System.Windows.Forms.Label();
+            this.label139 = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_onKanaTrainingMode = new KanchokuWS.Gui.ColorTextBox();
@@ -497,7 +514,6 @@ namespace KanchokuWS.Gui
             this.textBox_alphaModeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.Gui.ColorTextBox();
-            this.checkBox_outputDebugTableFiles = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -2784,6 +2800,8 @@ namespace KanchokuWS.Gui
             // 
             // tabPage_keyAssign
             // 
+            this.tabPage_keyAssign.Controls.Add(this.label139);
+            this.tabPage_keyAssign.Controls.Add(this.label138);
             this.tabPage_keyAssign.Controls.Add(this.button_keyAssignTable);
             this.tabPage_keyAssign.Controls.Add(this.groupBox43);
             this.tabPage_keyAssign.Controls.Add(this.groupBox31);
@@ -2818,9 +2836,9 @@ namespace KanchokuWS.Gui
             // groupBox43
             // 
             this.groupBox43.Controls.Add(this.label110);
-            this.groupBox43.Location = new System.Drawing.Point(353, 145);
+            this.groupBox43.Location = new System.Drawing.Point(381, 162);
             this.groupBox43.Name = "groupBox43";
-            this.groupBox43.Size = new System.Drawing.Size(253, 131);
+            this.groupBox43.Size = new System.Drawing.Size(265, 116);
             this.groupBox43.TabIndex = 37;
             this.groupBox43.TabStop = false;
             this.groupBox43.Text = "設定例";
@@ -2833,17 +2851,17 @@ namespace KanchokuWS.Gui
             this.label110.Name = "label110";
             this.label110.Size = new System.Drawing.Size(217, 90);
             this.label110.TabIndex = 2;
-            this.label110.Text = "(カッコ内は 106 key による打鍵文字)\r\n交ぜ書き変換　　　「S40」  (Shift+Space)\r\n部首合成　　　　   「26,23」  ( jf)" +
-    "\r\n全角変換(モード)　    「X3」  (CapsLock)\r\nカタカナ変換(モード)　「kana」 (ひらがな)\r\nカタカナ変換(一括)    「B27」" +
-    " (シフトB面のK)";
+            this.label110.Text = "交ぜ書き変換　　　「S40」  (Shift+Space)\r\n部首合成　　　　   「26,23」  ( jf)\r\n全角変換(モード)　    「X3」  (Ca" +
+    "psLock)\r\nカタカナ変換(モード)　「kana」 (ひらがな)\r\nカタカナ変換(一括)    「B27」 (シフトB面のK)\r\n(カッコ内は 106 ke" +
+    "y による打鍵文字)";
             this.toolTip1.SetToolTip(this.label110, resources.GetString("label110.ToolTip"));
             // 
             // groupBox31
             // 
             this.groupBox31.Controls.Add(this.label69);
-            this.groupBox31.Location = new System.Drawing.Point(9, 145);
+            this.groupBox31.Location = new System.Drawing.Point(9, 162);
             this.groupBox31.Name = "groupBox31";
-            this.groupBox31.Size = new System.Drawing.Size(334, 131);
+            this.groupBox31.Size = new System.Drawing.Size(362, 116);
             this.groupBox31.TabIndex = 14;
             this.groupBox31.TabStop = false;
             this.groupBox31.Text = "説明";
@@ -2854,11 +2872,11 @@ namespace KanchokuWS.Gui
             this.label69.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label69.Location = new System.Drawing.Point(1, 19);
             this.label69.Name = "label69";
-            this.label69.Size = new System.Drawing.Size(324, 105);
+            this.label69.Size = new System.Drawing.Size(356, 90);
             this.label69.TabIndex = 1;
-            this.label69.Text = "機能を呼び出すための打鍵列を設定します。\r\n\r\n打鍵列は、漢直キーコード(00～49)をカンマ区切りで並べたもの。\r\nコードに S/s/A/a/B/b を前接させ" +
+            this.label69.Text = "機能を呼び出すための打鍵列を設定します。\r\n打鍵列は、漢直キーコード(00～49)をカンマ区切りで並べたもの。\r\nコードに S/s (A～F/a～f) を前接させ" +
     "るとシフト(拡張シフト)コードになる。\r\nまた X/x を前接させると拡張修飾キーや特殊キーになる。\r\nキーコードについては、「漢直コード表」ボタンをクリックし" +
-    "て説明ページを\r\n表示。およびここのツールチップを参照。";
+    "て説明ページを表示。\r\nまたはここのツールチップを参照。";
             this.toolTip1.SetToolTip(this.label69, resources.GetString("label69.ToolTip"));
             // 
             // label_keyAssignReload
@@ -2903,7 +2921,7 @@ namespace KanchokuWS.Gui
             // groupBox32
             // 
             this.groupBox32.Controls.Add(this.label71);
-            this.groupBox32.Location = new System.Drawing.Point(9, 282);
+            this.groupBox32.Location = new System.Drawing.Point(9, 284);
             this.groupBox32.Name = "groupBox32";
             this.groupBox32.Size = new System.Drawing.Size(456, 51);
             this.groupBox32.TabIndex = 15;
@@ -2948,6 +2966,16 @@ namespace KanchokuWS.Gui
             // 
             // groupBox30
             // 
+            this.groupBox30.Controls.Add(this.label133);
+            this.groupBox30.Controls.Add(this.label134);
+            this.groupBox30.Controls.Add(this.label135);
+            this.groupBox30.Controls.Add(this.label136);
+            this.groupBox30.Controls.Add(this.label137);
+            this.groupBox30.Controls.Add(this.label132);
+            this.groupBox30.Controls.Add(this.label128);
+            this.groupBox30.Controls.Add(this.label129);
+            this.groupBox30.Controls.Add(this.label130);
+            this.groupBox30.Controls.Add(this.label131);
             this.groupBox30.Controls.Add(this.textBox_historyFewCharsKeySeq);
             this.groupBox30.Controls.Add(this.label106);
             this.groupBox30.Controls.Add(this.textBox_blockerSetterOneShotKeySeq);
@@ -2968,12 +2996,102 @@ namespace KanchokuWS.Gui
             this.groupBox30.Controls.Add(this.label60);
             this.groupBox30.Controls.Add(this.textBox_historyKeySeq);
             this.groupBox30.Controls.Add(this.label58);
-            this.groupBox30.Location = new System.Drawing.Point(207, 5);
+            this.groupBox30.Location = new System.Drawing.Point(227, 5);
             this.groupBox30.Name = "groupBox30";
-            this.groupBox30.Size = new System.Drawing.Size(387, 134);
+            this.groupBox30.Size = new System.Drawing.Size(419, 134);
             this.groupBox30.TabIndex = 1;
             this.groupBox30.TabStop = false;
             this.groupBox30.Text = "後置呼び出し機能";
+            // 
+            // label133
+            // 
+            this.label133.AutoSize = true;
+            this.label133.Location = new System.Drawing.Point(384, 109);
+            this.label133.Name = "label133";
+            this.label133.Size = new System.Drawing.Size(35, 15);
+            this.label133.TabIndex = 28;
+            this.label133.Text = "<bs>";
+            // 
+            // label134
+            // 
+            this.label134.AutoSize = true;
+            this.label134.Location = new System.Drawing.Point(384, 87);
+            this.label134.Name = "label134";
+            this.label134.Size = new System.Drawing.Size(30, 15);
+            this.label134.TabIndex = 27;
+            this.label134.Text = "<h>";
+            // 
+            // label135
+            // 
+            this.label135.AutoSize = true;
+            this.label135.Location = new System.Drawing.Point(384, 65);
+            this.label135.Name = "label135";
+            this.label135.Size = new System.Drawing.Size(29, 15);
+            this.label135.TabIndex = 26;
+            this.label135.Text = "<k>";
+            // 
+            // label136
+            // 
+            this.label136.AutoSize = true;
+            this.label136.Location = new System.Drawing.Point(384, 43);
+            this.label136.Name = "label136";
+            this.label136.Size = new System.Drawing.Size(29, 15);
+            this.label136.TabIndex = 25;
+            this.label136.Text = "<a>";
+            // 
+            // label137
+            // 
+            this.label137.AutoSize = true;
+            this.label137.Location = new System.Drawing.Point(384, 21);
+            this.label137.Name = "label137";
+            this.label137.Size = new System.Drawing.Size(31, 15);
+            this.label137.TabIndex = 24;
+            this.label137.Text = "<A>";
+            // 
+            // label132
+            // 
+            this.label132.AutoSize = true;
+            this.label132.Location = new System.Drawing.Point(177, 109);
+            this.label132.Name = "label132";
+            this.label132.Size = new System.Drawing.Size(30, 15);
+            this.label132.TabIndex = 23;
+            this.label132.Text = "<B>";
+            // 
+            // label128
+            // 
+            this.label128.AutoSize = true;
+            this.label128.Location = new System.Drawing.Point(177, 87);
+            this.label128.Name = "label128";
+            this.label128.Size = new System.Drawing.Size(34, 15);
+            this.label128.TabIndex = 22;
+            this.label128.Text = "<M>";
+            // 
+            // label129
+            // 
+            this.label129.AutoSize = true;
+            this.label129.Location = new System.Drawing.Point(177, 65);
+            this.label129.Name = "label129";
+            this.label129.Size = new System.Drawing.Size(28, 15);
+            this.label129.TabIndex = 21;
+            this.label129.Text = "<?>";
+            // 
+            // label130
+            // 
+            this.label130.AutoSize = true;
+            this.label130.Location = new System.Drawing.Point(177, 43);
+            this.label130.Name = "label130";
+            this.label130.Size = new System.Drawing.Size(29, 15);
+            this.label130.TabIndex = 20;
+            this.label130.Text = "<1>";
+            // 
+            // label131
+            // 
+            this.label131.AutoSize = true;
+            this.label131.Location = new System.Drawing.Point(177, 21);
+            this.label131.Name = "label131";
+            this.label131.Size = new System.Drawing.Size(26, 15);
+            this.label131.TabIndex = 19;
+            this.label131.Text = "<!>";
             // 
             // textBox_historyFewCharsKeySeq
             // 
@@ -2996,7 +3114,7 @@ namespace KanchokuWS.Gui
             // textBox_blockerSetterOneShotKeySeq
             // 
             this.textBox_blockerSetterOneShotKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_blockerSetterOneShotKeySeq.Location = new System.Drawing.Point(308, 107);
+            this.textBox_blockerSetterOneShotKeySeq.Location = new System.Drawing.Point(316, 107);
             this.textBox_blockerSetterOneShotKeySeq.Name = "textBox_blockerSetterOneShotKeySeq";
             this.textBox_blockerSetterOneShotKeySeq.Size = new System.Drawing.Size(66, 19);
             this.textBox_blockerSetterOneShotKeySeq.TabIndex = 9;
@@ -3006,7 +3124,7 @@ namespace KanchokuWS.Gui
             // label81
             // 
             this.label81.AutoSize = true;
-            this.label81.Location = new System.Drawing.Point(201, 109);
+            this.label81.Location = new System.Drawing.Point(209, 109);
             this.label81.Name = "label81";
             this.label81.Size = new System.Drawing.Size(103, 15);
             this.label81.TabIndex = 16;
@@ -3015,7 +3133,7 @@ namespace KanchokuWS.Gui
             // textBox_hankakuKatakanaOneShotKeySeq
             // 
             this.textBox_hankakuKatakanaOneShotKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_hankakuKatakanaOneShotKeySeq.Location = new System.Drawing.Point(308, 85);
+            this.textBox_hankakuKatakanaOneShotKeySeq.Location = new System.Drawing.Point(316, 85);
             this.textBox_hankakuKatakanaOneShotKeySeq.Name = "textBox_hankakuKatakanaOneShotKeySeq";
             this.textBox_hankakuKatakanaOneShotKeySeq.Size = new System.Drawing.Size(66, 19);
             this.textBox_hankakuKatakanaOneShotKeySeq.TabIndex = 8;
@@ -3024,7 +3142,7 @@ namespace KanchokuWS.Gui
             // label75
             // 
             this.label75.AutoSize = true;
-            this.label75.Location = new System.Drawing.Point(204, 87);
+            this.label75.Location = new System.Drawing.Point(212, 87);
             this.label75.Name = "label75";
             this.label75.Size = new System.Drawing.Size(79, 15);
             this.label75.TabIndex = 14;
@@ -3042,7 +3160,7 @@ namespace KanchokuWS.Gui
             // textBox_katakanaOneShotKeySeq
             // 
             this.textBox_katakanaOneShotKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_katakanaOneShotKeySeq.Location = new System.Drawing.Point(308, 63);
+            this.textBox_katakanaOneShotKeySeq.Location = new System.Drawing.Point(316, 63);
             this.textBox_katakanaOneShotKeySeq.Name = "textBox_katakanaOneShotKeySeq";
             this.textBox_katakanaOneShotKeySeq.Size = new System.Drawing.Size(66, 19);
             this.textBox_katakanaOneShotKeySeq.TabIndex = 7;
@@ -3052,7 +3170,7 @@ namespace KanchokuWS.Gui
             // label65
             // 
             this.label65.AutoSize = true;
-            this.label65.Location = new System.Drawing.Point(204, 65);
+            this.label65.Location = new System.Drawing.Point(212, 65);
             this.label65.Name = "label65";
             this.label65.Size = new System.Drawing.Size(99, 15);
             this.label65.TabIndex = 10;
@@ -3070,7 +3188,7 @@ namespace KanchokuWS.Gui
             // textBox_bushuAssocDirectKeySeq
             // 
             this.textBox_bushuAssocDirectKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_bushuAssocDirectKeySeq.Location = new System.Drawing.Point(308, 41);
+            this.textBox_bushuAssocDirectKeySeq.Location = new System.Drawing.Point(316, 41);
             this.textBox_bushuAssocDirectKeySeq.Name = "textBox_bushuAssocDirectKeySeq";
             this.textBox_bushuAssocDirectKeySeq.Size = new System.Drawing.Size(66, 19);
             this.textBox_bushuAssocDirectKeySeq.TabIndex = 6;
@@ -3080,7 +3198,7 @@ namespace KanchokuWS.Gui
             // label63
             // 
             this.label63.AutoSize = true;
-            this.label63.Location = new System.Drawing.Point(204, 43);
+            this.label63.Location = new System.Drawing.Point(212, 43);
             this.label63.Name = "label63";
             this.label63.Size = new System.Drawing.Size(79, 15);
             this.label63.TabIndex = 8;
@@ -3089,7 +3207,7 @@ namespace KanchokuWS.Gui
             // textBox_bushuAssocKeySeq
             // 
             this.textBox_bushuAssocKeySeq.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_bushuAssocKeySeq.Location = new System.Drawing.Point(308, 19);
+            this.textBox_bushuAssocKeySeq.Location = new System.Drawing.Point(316, 19);
             this.textBox_bushuAssocKeySeq.Name = "textBox_bushuAssocKeySeq";
             this.textBox_bushuAssocKeySeq.Size = new System.Drawing.Size(66, 19);
             this.textBox_bushuAssocKeySeq.TabIndex = 5;
@@ -3098,7 +3216,7 @@ namespace KanchokuWS.Gui
             // label62
             // 
             this.label62.AutoSize = true;
-            this.label62.Location = new System.Drawing.Point(204, 21);
+            this.label62.Location = new System.Drawing.Point(212, 21);
             this.label62.Name = "label62";
             this.label62.Size = new System.Drawing.Size(79, 15);
             this.label62.TabIndex = 6;
@@ -3160,6 +3278,10 @@ namespace KanchokuWS.Gui
             // 
             // groupBox29
             // 
+            this.groupBox29.Controls.Add(this.label127);
+            this.groupBox29.Controls.Add(this.label126);
+            this.groupBox29.Controls.Add(this.label125);
+            this.groupBox29.Controls.Add(this.label124);
             this.groupBox29.Controls.Add(this.textBox_nextThroughKeySeq);
             this.groupBox29.Controls.Add(this.label70);
             this.groupBox29.Controls.Add(this.textBox_katakanaModeKeySeq);
@@ -3170,10 +3292,46 @@ namespace KanchokuWS.Gui
             this.groupBox29.Controls.Add(this.label64);
             this.groupBox29.Location = new System.Drawing.Point(9, 5);
             this.groupBox29.Name = "groupBox29";
-            this.groupBox29.Size = new System.Drawing.Size(192, 134);
+            this.groupBox29.Size = new System.Drawing.Size(208, 134);
             this.groupBox29.TabIndex = 0;
             this.groupBox29.TabStop = false;
             this.groupBox29.Text = "前置呼び出し機能";
+            // 
+            // label127
+            // 
+            this.label127.AutoSize = true;
+            this.label127.Location = new System.Drawing.Point(179, 93);
+            this.label127.Name = "label127";
+            this.label127.Size = new System.Drawing.Size(29, 15);
+            this.label127.TabIndex = 12;
+            this.label127.Text = "<\\>";
+            // 
+            // label126
+            // 
+            this.label126.AutoSize = true;
+            this.label126.Location = new System.Drawing.Point(179, 69);
+            this.label126.Name = "label126";
+            this.label126.Size = new System.Drawing.Size(30, 15);
+            this.label126.TabIndex = 11;
+            this.label126.Text = "<K>";
+            // 
+            // label125
+            // 
+            this.label125.AutoSize = true;
+            this.label125.Location = new System.Drawing.Point(179, 45);
+            this.label125.Name = "label125";
+            this.label125.Size = new System.Drawing.Size(28, 15);
+            this.label125.TabIndex = 10;
+            this.label125.Text = "<z>";
+            // 
+            // label124
+            // 
+            this.label124.AutoSize = true;
+            this.label124.Location = new System.Drawing.Point(179, 21);
+            this.label124.Name = "label124";
+            this.label124.Size = new System.Drawing.Size(30, 15);
+            this.label124.TabIndex = 9;
+            this.label124.Text = "<Z>";
             // 
             // textBox_nextThroughKeySeq
             // 
@@ -5732,6 +5890,16 @@ namespace KanchokuWS.Gui
             this.groupBox15.TabStop = false;
             this.groupBox15.Text = "開発者用設定";
             // 
+            // checkBox_outputDebugTableFiles
+            // 
+            this.checkBox_outputDebugTableFiles.AutoSize = true;
+            this.checkBox_outputDebugTableFiles.Location = new System.Drawing.Point(21, 78);
+            this.checkBox_outputDebugTableFiles.Name = "checkBox_outputDebugTableFiles";
+            this.checkBox_outputDebugTableFiles.Size = new System.Drawing.Size(196, 19);
+            this.checkBox_outputDebugTableFiles.TabIndex = 12;
+            this.checkBox_outputDebugTableFiles.Text = "デバッグ用テーブルファイルを出力する";
+            this.checkBox_outputDebugTableFiles.UseVisualStyleBackColor = true;
+            // 
             // label_testCount
             // 
             this.label_testCount.AutoSize = true;
@@ -5909,6 +6077,25 @@ namespace KanchokuWS.Gui
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // label138
+            // 
+            this.label138.AutoSize = true;
+            this.label138.Location = new System.Drawing.Point(339, 142);
+            this.label138.Name = "label138";
+            this.label138.Size = new System.Drawing.Size(303, 15);
+            this.label138.TabIndex = 38;
+            this.label138.Text = "※ ( ) で囲まれた打鍵列はテーブルファイルで定義されているもの";
+            // 
+            // label139
+            // 
+            this.label139.AutoSize = true;
+            this.label139.Location = new System.Drawing.Point(16, 142);
+            this.label139.Name = "label139";
+            this.label139.Size = new System.Drawing.Size(247, 15);
+            this.label139.TabIndex = 39;
+            this.label139.Text = "※ < > で囲まれた文字(列)は機能マーカーを示す...";
+            this.toolTip1.SetToolTip(this.label139, "機能マーカーは、テーブルファイルで @ に後接させて記述します。");
             // 
             // textBox_onSelectedBackColor
             // 
@@ -6098,16 +6285,6 @@ namespace KanchokuWS.Gui
             this.textBox_modeForeColor.TabIndex = 0;
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
-            // 
-            // checkBox_outputDebugTableFiles
-            // 
-            this.checkBox_outputDebugTableFiles.AutoSize = true;
-            this.checkBox_outputDebugTableFiles.Location = new System.Drawing.Point(21, 78);
-            this.checkBox_outputDebugTableFiles.Name = "checkBox_outputDebugTableFiles";
-            this.checkBox_outputDebugTableFiles.Size = new System.Drawing.Size(196, 19);
-            this.checkBox_outputDebugTableFiles.TabIndex = 12;
-            this.checkBox_outputDebugTableFiles.Text = "デバッグ用テーブルファイルを出力する";
-            this.checkBox_outputDebugTableFiles.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
@@ -6724,5 +6901,21 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.GroupBox groupBox51;
         private System.Windows.Forms.CheckBox checkBox_duplicateWarningEnabled;
         private System.Windows.Forms.CheckBox checkBox_outputDebugTableFiles;
+        private System.Windows.Forms.Label label133;
+        private System.Windows.Forms.Label label134;
+        private System.Windows.Forms.Label label135;
+        private System.Windows.Forms.Label label136;
+        private System.Windows.Forms.Label label137;
+        private System.Windows.Forms.Label label132;
+        private System.Windows.Forms.Label label128;
+        private System.Windows.Forms.Label label129;
+        private System.Windows.Forms.Label label130;
+        private System.Windows.Forms.Label label131;
+        private System.Windows.Forms.Label label127;
+        private System.Windows.Forms.Label label126;
+        private System.Windows.Forms.Label label125;
+        private System.Windows.Forms.Label label124;
+        private System.Windows.Forms.Label label138;
+        private System.Windows.Forms.Label label139;
     }
 }

@@ -445,6 +445,10 @@ namespace KanchokuWS.Gui
 
             checkerBasic.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
+            // 機能キー割当も呼んでおく
+            readSettings_tabKeyAssign();
+            checkerKeyAssign.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+
             // 各種定義ファイルの再読み込み
             //frmMain?.ReloadDefFiles();
 
@@ -1005,20 +1009,30 @@ namespace KanchokuWS.Gui
         //-----------------------------------------------------------------------------------
         void readSettings_tabKeyAssign()
         {
-            textBox_zenkakuModeKeySeq.Text = Settings.ZenkakuModeKeySeq;
-            textBox_zenkakuOneCharKeySeq.Text = Settings.ZenkakuOneCharKeySeq;
-            textBox_katakanaModeKeySeq.Text = Settings.KatakanaModeKeySeq;
-            textBox_nextThroughKeySeq.Text = Settings.NextThroughKeySeq;
-            textBox_historyKeySeq.Text = Settings.HistoryKeySeq;
-            textBox_historyOneCharKeySeq.Text = Settings.HistoryOneCharKeySeq;
-            textBox_historyFewCharsKeySeq.Text = Settings.HistoryFewCharsKeySeq;
-            textBox_mazegakiKeySeq.Text = Settings.MazegakiKeySeq;
-            textBox_bushuCompKeySeq.Text = Settings.BushuCompKeySeq;
-            textBox_bushuAssocKeySeq.Text = Settings.BushuAssocKeySeq;
-            textBox_bushuAssocDirectKeySeq.Text = Settings.BushuAssocDirectKeySeq;
-            textBox_katakanaOneShotKeySeq.Text = Settings.KatakanaOneShotKeySeq;
-            textBox_hankakuKatakanaOneShotKeySeq.Text = Settings.HankakuKatakanaOneShotKeySeq;
-            textBox_blockerSetterOneShotKeySeq.Text = Settings.BlockerSetterOneShotKeySeq;
+            textBox_zenkakuModeKeySeq.Text = Settings.ZenkakuModeKeySeq._orElse(() => makePresetString(Settings.ZenkakuModeKeySeq_Preset));
+            textBox_zenkakuOneCharKeySeq.Text = Settings.ZenkakuOneCharKeySeq._orElse(() => makePresetString(Settings.ZenkakuOneCharKeySeq_Preset));
+            textBox_katakanaModeKeySeq.Text = Settings.KatakanaModeKeySeq._orElse(() => makePresetString(Settings.KatakanaModeKeySeq_Preset));
+            textBox_nextThroughKeySeq.Text = Settings.NextThroughKeySeq._orElse(() => makePresetString(Settings.NextThroughKeySeq_Preset));
+            textBox_historyKeySeq.Text = Settings.HistoryKeySeq._orElse(() => makePresetString(Settings.HistoryKeySeq_Preset));
+            textBox_historyOneCharKeySeq.Text = Settings.HistoryOneCharKeySeq._orElse(() => makePresetString(Settings.HistoryOneCharKeySeq_Preset));
+            textBox_historyFewCharsKeySeq.Text = Settings.HistoryFewCharsKeySeq._orElse(() => makePresetString(Settings.HistoryFewCharsKeySeq_Preset));
+            textBox_mazegakiKeySeq.Text = Settings.MazegakiKeySeq._orElse(() => makePresetString(Settings.MazegakiKeySeq_Preset));
+            textBox_bushuCompKeySeq.Text = Settings.BushuCompKeySeq._orElse(() => makePresetString(Settings.BushuCompKeySeq_Preset));
+            textBox_bushuAssocKeySeq.Text = Settings.BushuAssocKeySeq._orElse(() => makePresetString(Settings.BushuAssocKeySeq_Preset));
+            textBox_bushuAssocDirectKeySeq.Text = Settings.BushuAssocDirectKeySeq._orElse(() => makePresetString(Settings.BushuAssocDirectKeySeq_Preset));
+            textBox_katakanaOneShotKeySeq.Text = Settings.KatakanaOneShotKeySeq._orElse(() => makePresetString(Settings.KatakanaOneShotKeySeq_Preset));
+            textBox_hankakuKatakanaOneShotKeySeq.Text = Settings.HankakuKatakanaOneShotKeySeq._orElse(() => makePresetString(Settings.HankakuKatakanaOneShotKeySeq_Preset));
+            textBox_blockerSetterOneShotKeySeq.Text = Settings.BlockerSetterOneShotKeySeq._orElse(() => makePresetString(Settings.BlockerSetterOneShotKeySeq_Preset));
+        }
+
+        string makePresetString(string preset)
+        {
+            return preset._notEmpty() ? "(" + preset + ")" : "";
+        }
+
+        private string revertPresetString(string str)
+        {
+            return str._getFirst() == '(' && str._getLast() == ')' ? "" : str;
         }
 
         private void setKeyAssignStatusChecker()
@@ -1064,20 +1078,20 @@ namespace KanchokuWS.Gui
             logger.InfoH("ENTER");
             frmMain?.DeactivateDecoder();
 
-            Settings.SetUserIni("zenkakuModeKeySeq", textBox_zenkakuModeKeySeq.Text);
-            Settings.SetUserIni("zenkakuOneCharKeySeq", textBox_zenkakuOneCharKeySeq.Text);
-            Settings.SetUserIni("katakanaModeKeySeq", textBox_katakanaModeKeySeq.Text);
-            Settings.SetUserIni("nextThroughKeySeq", textBox_nextThroughKeySeq.Text);
-            Settings.SetUserIni("historyKeySeq", textBox_historyKeySeq.Text);
-            Settings.SetUserIni("historyOneCharKeySeq", textBox_historyOneCharKeySeq.Text);
-            Settings.SetUserIni("historyFewCharsKeySeq", textBox_historyFewCharsKeySeq.Text);
-            Settings.SetUserIni("mazegakiKeySeq", textBox_mazegakiKeySeq.Text);
-            Settings.SetUserIni("bushuCompKeySeq", textBox_bushuCompKeySeq.Text);
-            Settings.SetUserIni("bushuAssocKeySeq", textBox_bushuAssocKeySeq.Text);
-            Settings.SetUserIni("bushuAssocDirectKeySeq", textBox_bushuAssocDirectKeySeq.Text);
-            Settings.SetUserIni("katakanaOneShotKeySeq", textBox_katakanaOneShotKeySeq.Text);
-            Settings.SetUserIni("hankakuKatakanaOneShotKeySeq", textBox_hankakuKatakanaOneShotKeySeq.Text);
-            Settings.SetUserIni("blockerSetterOneShotKeySeq", textBox_blockerSetterOneShotKeySeq.Text);
+            Settings.SetUserIni("zenkakuModeKeySeq", revertPresetString(textBox_zenkakuModeKeySeq.Text));
+            Settings.SetUserIni("zenkakuOneCharKeySeq", revertPresetString(textBox_zenkakuOneCharKeySeq.Text));
+            Settings.SetUserIni("katakanaModeKeySeq", revertPresetString(textBox_katakanaModeKeySeq.Text));
+            Settings.SetUserIni("nextThroughKeySeq", revertPresetString(textBox_nextThroughKeySeq.Text));
+            Settings.SetUserIni("historyKeySeq", revertPresetString(textBox_historyKeySeq.Text));
+            Settings.SetUserIni("historyOneCharKeySeq", revertPresetString(textBox_historyOneCharKeySeq.Text));
+            Settings.SetUserIni("historyFewCharsKeySeq", revertPresetString(textBox_historyFewCharsKeySeq.Text));
+            Settings.SetUserIni("mazegakiKeySeq", revertPresetString(textBox_mazegakiKeySeq.Text));
+            Settings.SetUserIni("bushuCompKeySeq", revertPresetString(textBox_bushuCompKeySeq.Text));
+            Settings.SetUserIni("bushuAssocKeySeq", revertPresetString(textBox_bushuAssocKeySeq.Text));
+            Settings.SetUserIni("bushuAssocDirectKeySeq", revertPresetString(textBox_bushuAssocDirectKeySeq.Text));
+            Settings.SetUserIni("katakanaOneShotKeySeq", revertPresetString(textBox_katakanaOneShotKeySeq.Text));
+            Settings.SetUserIni("hankakuKatakanaOneShotKeySeq", revertPresetString(textBox_hankakuKatakanaOneShotKeySeq.Text));
+            Settings.SetUserIni("blockerSetterOneShotKeySeq", revertPresetString(textBox_blockerSetterOneShotKeySeq.Text));
 
             Settings.ReadIniFile();
             // 各種定義ファイルの再読み込み

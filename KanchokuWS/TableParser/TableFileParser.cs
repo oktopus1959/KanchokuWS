@@ -394,8 +394,67 @@ namespace KanchokuWS.TableParser
         {
             logger.DebugH(() => $"ENTER: depth={Depth}, str={CurrentStr}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
-            addTerminalNode(idx, Node.MakeFunctionNode(CurrentStr));
+            var funcMarker = CurrentStr;
+            addTerminalNode(idx, Node.MakeFunctionNode(funcMarker));
+            if (IsPrimary) savePresetFunction(idx, funcMarker);
             logger.DebugH(() => $"LEAVE: depth={Depth}");
+        }
+
+        void savePresetFunction(int idx, string marker)
+        {
+            var strkList = StrokeList.WithLastStrokeAdded(idx).strokeList.Select(x => x.ToString())._join(",");
+
+            string chooseMinimalOne(string oldStr, string newStr)
+            {
+                return Settings.FunctionKeySeqSet.Contains(newStr) || (oldStr._notEmpty() && oldStr._countChar(',') <= newStr._countChar(',')) ? oldStr : newStr;
+            }
+
+            switch (marker) {
+                case "B":   // BushuComp
+                case "b":   // BushuComp
+                    Settings.BushuCompKeySeq_Preset = chooseMinimalOne(Settings.BushuCompKeySeq_Preset, strkList);
+                    break;
+                case "A":   // bushuAssoc
+                    Settings.BushuAssocKeySeq_Preset = chooseMinimalOne(Settings.BushuAssocKeySeq_Preset, strkList);
+                    break;
+                case "a":   // bushuAssocDirect
+                    Settings.BushuAssocDirectKeySeq_Preset = chooseMinimalOne(Settings.BushuAssocDirectKeySeq_Preset, strkList);
+                    break;
+                case "M":   // mazegaki
+                case "m":   // mazegaki
+                    Settings.MazegakiKeySeq_Preset = chooseMinimalOne(Settings.MazegakiKeySeq_Preset, strkList);
+                    break;
+                case "!":   // history
+                    Settings.HistoryKeySeq_Preset = chooseMinimalOne(Settings.HistoryKeySeq_Preset, strkList);
+                    break;
+                case "1":   // historyOneChar
+                    Settings.HistoryOneCharKeySeq_Preset = chooseMinimalOne(Settings.HistoryOneCharKeySeq_Preset, strkList);
+                    break;
+                case "?":   // historyFewChars
+                    Settings.HistoryFewCharsKeySeq_Preset = chooseMinimalOne(Settings.HistoryFewCharsKeySeq_Preset, strkList);
+                    break;
+                case "\\":  // nextThrough
+                    Settings.NextThroughKeySeq_Preset = chooseMinimalOne(Settings.NextThroughKeySeq_Preset, strkList);
+                    break;
+                case "Z":   // zenkakuMode
+                    Settings.ZenkakuModeKeySeq_Preset = chooseMinimalOne(Settings.ZenkakuModeKeySeq_Preset, strkList);
+                    break;
+                case "z":   //zenkakuOneChar
+                    Settings.ZenkakuOneCharKeySeq_Preset = chooseMinimalOne(Settings.ZenkakuOneCharKeySeq_Preset, strkList);
+                    break;
+                case "K":   // katakanaMode
+                    Settings.KatakanaModeKeySeq_Preset = chooseMinimalOne(Settings.KatakanaModeKeySeq_Preset, strkList);
+                    break;
+                case "k":   // katakanaOneShot
+                    Settings.KatakanaOneShotKeySeq_Preset = chooseMinimalOne(Settings.KatakanaOneShotKeySeq_Preset, strkList);
+                    break;
+                case "h":   // hankakuKatakanaOneShot
+                    Settings.HankakuKatakanaOneShotKeySeq_Preset = chooseMinimalOne(Settings.HankakuKatakanaOneShotKeySeq_Preset, strkList);
+                    break;
+                case "bs":  // blockerSetterOneShot
+                    Settings.BlockerSetterOneShotKeySeq_Preset = chooseMinimalOne(Settings.BlockerSetterOneShotKeySeq_Preset, strkList);
+                    break;
+            }
         }
 
         /// <summary>
