@@ -531,7 +531,7 @@ namespace KanchokuWS.Gui
         {
             IEnumerable<string> getEffectiveDirNames(string dirPath)
             {
-                return Helper.GetDirectories(dirPath, "*").Select(x => x._getFileName()).Where(x => x._notEmpty() && (x[0] != '_' && x[0] != '.'));
+                return Helper.GetDirectories(dirPath, "*").Select(x => x._getFileName()).Where(x => x._notEmpty() && (Settings.ShowHiddleFolder || x[0] != '_' && x[0] != '.'));
             }
 
             var result = new List<string>();

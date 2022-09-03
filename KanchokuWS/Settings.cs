@@ -85,6 +85,9 @@ namespace KanchokuWS
         /// <summary>デバッグ用のテーブルファイルを出力する</summary>        
         public static bool OutputDebugTableFiles { get; private set; }
 
+        /// <summary>隠しテーブルファイルフォルダを表示する</summary>        
+        public static bool ShowHiddleFolder { get; private set; }
+
         public static bool IsAnyDevFlagEnabled => LogLevel > 2 || LoggingDecKeyInfo || LoggingActiveWindowInfo || LoggingVirtualKeyboardInfo || BushuDicLogEnabled;
 
         //-------------------------------------------------------------------------------------
@@ -879,6 +882,7 @@ namespace KanchokuWS
             MultiAppEnabled = IsMultiAppEnabled();
             WarnThresholdKeyQueueCount = GetString("warnThresholdKeyQueueCount")._parseInt(6);
             OutputDebugTableFiles = GetString("outputDebugTableFiles")._parseBool();
+            ShowHiddleFolder = GetString("showHiddleFolder")._parseBool();
 
             //-------------------------------------------------------------------------------------
             // ファイル設定

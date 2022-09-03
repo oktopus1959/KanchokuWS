@@ -25,6 +25,7 @@ namespace KanchokuWS.Gui
             checkBox_loggingActiveWindowInfo.Checked = Settings.LoggingActiveWindowInfo;
             checkBox_loggingVirtualKeyboardInfo.Checked = Settings.LoggingVirtualKeyboardInfo;
             checkBox_outputDebugTableFiles.Checked = Settings.OutputDebugTableFiles;
+            checkBox_showHiddleFolder.Checked = Settings.ShowHiddleFolder;
             checkBox_multiAppEnabled.Checked = Settings.MultiAppEnabled;
             textBox_warnThresholdKeyQueueCount.Text = Settings.WarnThresholdKeyQueueCount.ToString();
         }
@@ -42,6 +43,7 @@ namespace KanchokuWS.Gui
             checkerDevelop.Add(checkBox_loggingActiveWindowInfo);
             checkerDevelop.Add(checkBox_loggingVirtualKeyboardInfo);
             checkerDevelop.Add(checkBox_outputDebugTableFiles);
+            checkerDevelop.Add(checkBox_showHiddleFolder);
             checkerDevelop.Add(checkBox_multiAppEnabled);
             checkerDevelop.Add(textBox_warnThresholdKeyQueueCount);
 
@@ -62,6 +64,7 @@ namespace KanchokuWS.Gui
             Settings.LoggingActiveWindowInfo = checkBox_loggingActiveWindowInfo.Checked;
             Settings.SetUserIni("loggingVirtualKeyboardInfo", checkBox_loggingVirtualKeyboardInfo.Checked);
             Settings.SetUserIni("outputDebugTableFiles", checkBox_outputDebugTableFiles.Checked);
+            Settings.SetUserIni("showHiddleFolder", checkBox_showHiddleFolder.Checked);
             Settings.SetUserIni("multiAppEnabled", checkBox_multiAppEnabled.Checked);
             Settings.SetUserIni("warnThresholdKeyQueueCount", textBox_warnThresholdKeyQueueCount.Text);
 

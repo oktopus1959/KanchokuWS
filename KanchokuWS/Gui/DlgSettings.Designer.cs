@@ -514,6 +514,7 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.checkBox_showHiddleFolder = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -6044,7 +6045,7 @@ namespace KanchokuWS.Gui
             this.button_developReload.Location = new System.Drawing.Point(588, 265);
             this.button_developReload.Name = "button_developReload";
             this.button_developReload.Size = new System.Drawing.Size(75, 23);
-            this.button_developReload.TabIndex = 14;
+            this.button_developReload.TabIndex = 2;
             this.button_developReload.Text = "再読込(&R)";
             this.toolTip1.SetToolTip(this.button_developReload, "辞書を除く各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
             this.button_developReload.UseVisualStyleBackColor = true;
@@ -6070,7 +6071,7 @@ namespace KanchokuWS.Gui
             this.button_developEnter.Location = new System.Drawing.Point(588, 314);
             this.button_developEnter.Name = "button_developEnter";
             this.button_developEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_developEnter.TabIndex = 2;
+            this.button_developEnter.TabIndex = 3;
             this.button_developEnter.Text = "適用(&E)";
             this.toolTip1.SetToolTip(this.button_developEnter, "設定内容を適用して kanchoku.user.ini に書き込みます");
             this.button_developEnter.UseVisualStyleBackColor = true;
@@ -6078,6 +6079,7 @@ namespace KanchokuWS.Gui
             // 
             // groupBox15
             // 
+            this.groupBox15.Controls.Add(this.checkBox_showHiddleFolder);
             this.groupBox15.Controls.Add(this.checkBox_outputDebugTableFiles);
             this.groupBox15.Controls.Add(this.label_testCount);
             this.groupBox15.Controls.Add(this.textBox_warnThresholdKeyQueueCount);
@@ -6106,7 +6108,7 @@ namespace KanchokuWS.Gui
             this.checkBox_outputDebugTableFiles.Location = new System.Drawing.Point(21, 78);
             this.checkBox_outputDebugTableFiles.Name = "checkBox_outputDebugTableFiles";
             this.checkBox_outputDebugTableFiles.Size = new System.Drawing.Size(196, 19);
-            this.checkBox_outputDebugTableFiles.TabIndex = 12;
+            this.checkBox_outputDebugTableFiles.TabIndex = 6;
             this.checkBox_outputDebugTableFiles.Text = "デバッグ用テーブルファイルを出力する";
             this.checkBox_outputDebugTableFiles.UseVisualStyleBackColor = true;
             // 
@@ -6127,7 +6129,7 @@ namespace KanchokuWS.Gui
             this.textBox_warnThresholdKeyQueueCount.Location = new System.Drawing.Point(216, 15);
             this.textBox_warnThresholdKeyQueueCount.Name = "textBox_warnThresholdKeyQueueCount";
             this.textBox_warnThresholdKeyQueueCount.Size = new System.Drawing.Size(24, 23);
-            this.textBox_warnThresholdKeyQueueCount.TabIndex = 9;
+            this.textBox_warnThresholdKeyQueueCount.TabIndex = 1;
             this.textBox_warnThresholdKeyQueueCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label119
@@ -6146,7 +6148,7 @@ namespace KanchokuWS.Gui
             this.button_developSaveDebugTableFile.Location = new System.Drawing.Point(448, 56);
             this.button_developSaveDebugTableFile.Name = "button_developSaveDebugTableFile";
             this.button_developSaveDebugTableFile.Size = new System.Drawing.Size(104, 23);
-            this.button_developSaveDebugTableFile.TabIndex = 8;
+            this.button_developSaveDebugTableFile.TabIndex = 10;
             this.button_developSaveDebugTableFile.Text = "テーブル出力(&F)";
             this.button_developSaveDebugTableFile.UseVisualStyleBackColor = true;
             this.button_developSaveDebugTableFile.Visible = false;
@@ -6159,7 +6161,7 @@ namespace KanchokuWS.Gui
             this.button_developTest.Location = new System.Drawing.Point(477, 91);
             this.button_developTest.Name = "button_developTest";
             this.button_developTest.Size = new System.Drawing.Size(75, 23);
-            this.button_developTest.TabIndex = 6;
+            this.button_developTest.TabIndex = 12;
             this.button_developTest.Text = "テスト(&T)";
             this.button_developTest.UseVisualStyleBackColor = true;
             this.button_developTest.Click += new System.EventHandler(this.button_developTest_Click);
@@ -6171,7 +6173,7 @@ namespace KanchokuWS.Gui
             this.checkBox_testAll.Location = new System.Drawing.Point(430, 98);
             this.checkBox_testAll.Name = "checkBox_testAll";
             this.checkBox_testAll.Size = new System.Drawing.Size(50, 19);
-            this.checkBox_testAll.TabIndex = 7;
+            this.checkBox_testAll.TabIndex = 11;
             this.checkBox_testAll.Text = "全件";
             this.checkBox_testAll.UseVisualStyleBackColor = true;
             // 
@@ -6181,17 +6183,17 @@ namespace KanchokuWS.Gui
             this.checkBox_bushuDicLogEnabled.Location = new System.Drawing.Point(220, 59);
             this.checkBox_bushuDicLogEnabled.Name = "checkBox_bushuDicLogEnabled";
             this.checkBox_bushuDicLogEnabled.Size = new System.Drawing.Size(168, 19);
-            this.checkBox_bushuDicLogEnabled.TabIndex = 4;
+            this.checkBox_bushuDicLogEnabled.TabIndex = 5;
             this.checkBox_bushuDicLogEnabled.Text = "部首合成結果をログ出力する";
             this.checkBox_bushuDicLogEnabled.UseVisualStyleBackColor = true;
             // 
             // checkBox_multiAppEnabled
             // 
             this.checkBox_multiAppEnabled.AutoSize = true;
-            this.checkBox_multiAppEnabled.Location = new System.Drawing.Point(220, 78);
+            this.checkBox_multiAppEnabled.Location = new System.Drawing.Point(21, 97);
             this.checkBox_multiAppEnabled.Name = "checkBox_multiAppEnabled";
             this.checkBox_multiAppEnabled.Size = new System.Drawing.Size(126, 19);
-            this.checkBox_multiAppEnabled.TabIndex = 5;
+            this.checkBox_multiAppEnabled.TabIndex = 9;
             this.checkBox_multiAppEnabled.Text = "二重起動を許可する";
             this.checkBox_multiAppEnabled.UseVisualStyleBackColor = true;
             // 
@@ -6201,7 +6203,7 @@ namespace KanchokuWS.Gui
             this.checkBox_loggingVirtualKeyboardInfo.Location = new System.Drawing.Point(21, 59);
             this.checkBox_loggingVirtualKeyboardInfo.Name = "checkBox_loggingVirtualKeyboardInfo";
             this.checkBox_loggingVirtualKeyboardInfo.Size = new System.Drawing.Size(187, 19);
-            this.checkBox_loggingVirtualKeyboardInfo.TabIndex = 3;
+            this.checkBox_loggingVirtualKeyboardInfo.TabIndex = 4;
             this.checkBox_loggingVirtualKeyboardInfo.Text = "仮想キーボード情報をログ出口する";
             this.checkBox_loggingVirtualKeyboardInfo.UseVisualStyleBackColor = true;
             // 
@@ -6211,7 +6213,7 @@ namespace KanchokuWS.Gui
             this.checkBox_loggingDecKeyInfo.Location = new System.Drawing.Point(21, 40);
             this.checkBox_loggingDecKeyInfo.Name = "checkBox_loggingDecKeyInfo";
             this.checkBox_loggingDecKeyInfo.Size = new System.Drawing.Size(189, 19);
-            this.checkBox_loggingDecKeyInfo.TabIndex = 1;
+            this.checkBox_loggingDecKeyInfo.TabIndex = 2;
             this.checkBox_loggingDecKeyInfo.Text = "入力されたキー情報をログ出力する";
             this.checkBox_loggingDecKeyInfo.UseVisualStyleBackColor = true;
             // 
@@ -6221,7 +6223,7 @@ namespace KanchokuWS.Gui
             this.checkBox_loggingActiveWindowInfo.Location = new System.Drawing.Point(220, 40);
             this.checkBox_loggingActiveWindowInfo.Name = "checkBox_loggingActiveWindowInfo";
             this.checkBox_loggingActiveWindowInfo.Size = new System.Drawing.Size(205, 19);
-            this.checkBox_loggingActiveWindowInfo.TabIndex = 2;
+            this.checkBox_loggingActiveWindowInfo.TabIndex = 3;
             this.checkBox_loggingActiveWindowInfo.Text = "アクティブウィンドウ情報をログ出力する";
             this.checkBox_loggingActiveWindowInfo.UseVisualStyleBackColor = true;
             // 
@@ -6273,7 +6275,7 @@ namespace KanchokuWS.Gui
             this.button_developClose.Location = new System.Drawing.Point(588, 343);
             this.button_developClose.Name = "button_developClose";
             this.button_developClose.Size = new System.Drawing.Size(75, 23);
-            this.button_developClose.TabIndex = 3;
+            this.button_developClose.TabIndex = 4;
             this.button_developClose.Text = "閉じる(&C)";
             this.button_developClose.UseVisualStyleBackColor = true;
             this.button_developClose.Click += new System.EventHandler(this.button_developClose_Click);
@@ -6287,6 +6289,16 @@ namespace KanchokuWS.Gui
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // checkBox_showHiddleFolder
+            // 
+            this.checkBox_showHiddleFolder.AutoSize = true;
+            this.checkBox_showHiddleFolder.Location = new System.Drawing.Point(220, 78);
+            this.checkBox_showHiddleFolder.Name = "checkBox_showHiddleFolder";
+            this.checkBox_showHiddleFolder.Size = new System.Drawing.Size(115, 19);
+            this.checkBox_showHiddleFolder.TabIndex = 8;
+            this.checkBox_showHiddleFolder.Text = "隠しフォルダの表示";
+            this.checkBox_showHiddleFolder.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
@@ -6919,5 +6931,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label124;
         private System.Windows.Forms.Label label138;
         private System.Windows.Forms.Label label139;
+        private System.Windows.Forms.CheckBox checkBox_showHiddleFolder;
     }
 }
