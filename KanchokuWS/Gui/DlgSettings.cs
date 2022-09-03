@@ -291,14 +291,6 @@ namespace KanchokuWS.Gui
         }
 
         //-----------------------------------------------------------------------------------
-        private string getTableFileDir()
-        {
-            var rootDir = KanchokuIni.Singleton.KanchokuDir;
-            var tableFileDir = rootDir._joinPath(Settings.TableFileDir);
-            return Helper.DirectoryExists(tableFileDir) ? tableFileDir : rootDir;
-        }
-
-        //-----------------------------------------------------------------------------------
         // 基本設定
         //-----------------------------------------------------------------------------------
         void readSettings_tabBasic()
@@ -515,8 +507,14 @@ namespace KanchokuWS.Gui
         string getTableName(string filepath)
         {
             var filename = filepath._getFileName();
-            var parentDir = filepath._getDirPath()._getFileName();
-            if (parentDir._equalsTo(Settings.TableFileDir)) filename = parentDir._joinPath(filename);
+            var parentDir = filepath._getDirPath();
+            var dirname = parentDir._getFileName();
+            while (parentDir._notEmpty() && dirname._notEmpty() && !dirname._equalsTo(Settings.TableFileDir)) {
+                filename = dirname._joinPath(filename);
+                parentDir = parentDir._getDirPath();
+                dirname = parentDir._getFileName();
+            }
+            if (dirname._equalsTo(Settings.TableFileDir)) filename = dirname._joinPath(filename);
             logger.DebugH(() => $"filepath={filepath}, filename={filename}, parentDir={parentDir}");
 
             var content = Helper.GetFileHead(filepath, 2048);
@@ -529,18 +527,78 @@ namespace KanchokuWS.Gui
             return filename;
         }
 
+        private string[] getDirectoryNames(string tableDir)
+        {
+            IEnumerable<string> getEffectiveDirNames(string dirPath)
+            {
+                return Helper.GetDirectories(dirPath, "*").Select(x => x._getFileName()).Where(x => x._notEmpty() && (x[0] != '_' && x[0] != '.'));
+            }
+
+            var result = new List<string>();
+            if (!tableDir._endsWith(@"\tables") && !tableDir._endsWith(@"/tables")) {
+                result.Add("..");
+                //result.AddRange(getEffectiveDirNames(tableDir._getDirPath()).Select(x => ".."._joinPath(x)));
+            }
+            result.AddRange(getEffectiveDirNames(tableDir).Select(x => "."._joinPath(x)));
+            return result.ToArray();
+        }
+
+        string tableDirectory1 = null;
+        string tableDirectory2 = null;
+
         private void comboBox_tableFile_DropDown(object sender, EventArgs e)
         {
-            var fileList = Helper.GetFiles(getTableFileDir(), "*.tbl").Select(x => getTableName(x)).ToArray();
-            comboBox_tableFile.Items.Clear();
-            comboBox_tableFile.Items.AddRange(fileList);
+            tableDirectory1 = comboBoxDropDown(comboBox_tableFile, tableDirectory1);
         }
 
         private void comboBox_tableFile2_DropDown(object sender, EventArgs e)
         {
-            var fileList = Helper.GetFiles(getTableFileDir(), "*.tbl").Select(x => getTableName(x)).ToArray();
-            comboBox_tableFile2.Items.Clear();
-            comboBox_tableFile2.Items.AddRange(fileList);
+            tableDirectory2 = comboBoxDropDown(comboBox_tableFile2, tableDirectory2);
+        }
+
+        private string comboBoxDropDown(ComboBox comboBox, string tableDir)
+        {
+            (var absTableDir, var relTabledir) = getTableFileDir(comboBox, tableDir);
+            var dirList = getDirectoryNames(absTableDir);
+            var fileList = Helper.GetFiles(absTableDir, "*.tbl").Select(x => getTableName(x)).ToArray();
+            comboBox.Items.Clear();
+            comboBox.Items.AddRange(dirList);
+            comboBox.Items.AddRange(fileList);
+            return relTabledir;
+        }
+
+        private void comboBox_tableFile_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            checkDirectory(comboBox_tableFile);
+        }
+
+        private void comboBox_tableFile2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            checkDirectory(comboBox_tableFile2);
+        }
+
+        private (string, string) getTableFileDir(ComboBox comboBox, string tableDir)
+        {
+            var rootDir = KanchokuIni.Singleton.KanchokuDir;
+            var tableFile = getTableFileName(comboBox.Text);
+            if (tableFile._startsWith(".")) {
+                tableDir = Helper.JoinPathAndCanonicalize(tableDir._orElse(Settings.TableFileDir), tableFile);
+                if (!tableDir._startsWith(Settings.TableFileDir)) tableDir = Settings.TableFileDir;
+            } else {
+                tableDir = tableFile._getDirPath()._orElse(Settings.TableFileDir);
+            }
+            var tableFileDir = rootDir._joinPath(tableDir);
+            if (Helper.DirectoryExists(tableFileDir)) return (tableFileDir, tableDir);
+            tableDir = Settings.TableFileDir;
+            tableFileDir = rootDir._joinPath(tableDir);
+            return (Helper.DirectoryExists(tableFileDir) ? tableFileDir : rootDir, tableDir);
+        }
+
+        private void checkDirectory(ComboBox comboBox)
+        {
+            if (getTableFileName(comboBox.Text)._startsWith(".")) {
+                comboBox.DroppedDown = true;
+            }
         }
 
         //-----------------------------------------------------------------------------------
@@ -2513,7 +2571,6 @@ namespace KanchokuWS.Gui
         {
             frmMain?.ShowDlgStrokeLog(this, Right - 10, Top);
         }
-
     }
 }
 

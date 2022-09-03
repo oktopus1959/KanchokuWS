@@ -463,6 +463,22 @@ namespace Utils
         }
 
         /// <summary>
+        /// 2つのパスを結合して正規化する
+        /// </summary>
+        public static string JoinPathAndCanonicalize(string path1, string path2)
+        {
+            if (path2._notEmpty()) {
+                if (path2.StartsWith("..")) {
+                    path1 = GetDirectoryPath(path1);
+                    path2 = path2._safeSubstring(3);
+                } else if (path2.StartsWith(".")) {
+                    path2 = path2._safeSubstring(2);
+                }
+            }
+            return path2._notEmpty() ? Path.Combine(path1, path2) : path1;
+        }
+
+        /// <summary>
         /// 3つのパスを結合する
         /// </summary>
         public static string JoinPath(string path1, string path2, string path3)

@@ -1115,7 +1115,7 @@ namespace KanchokuWS
             AutoBushuFile = addDecoderSetting("autoBushuFile", "bushuAuto", "kwbushu.aut");
             CharsDefFile = addDecoderSetting("charsDefFile", $"chars.{KeyboardFile._split('.')._getNth(0)._orElse("106")}.txt");
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
-            TableFile = addDecoderSetting("tableFile", $"{TableFileDir}\\tutr.tbl");
+            TableFile = addDecoderSetting("tableFile", $"{TableFileDir}\\漢直系\\tutr.tbl");
             TableFile2 = addDecoderSetting("tableFile2", "");
             KanjiYomiFile = addDecoderSetting("kanjiYomiFile", "kanji-yomi.txt");
             //addDecoderSetting("strokeHelpFile");

@@ -1194,7 +1194,7 @@ namespace KanchokuWS.TableParser
                 parser.ParseDirectives();
             } else {
                 tableLines.Error($"テーブルファイル({filename})が開けません");
-                tableLines.showErrorMessage();
+                //tableLines.showErrorMessage();
             }
 
             //tableLines.showErrorMessage();
