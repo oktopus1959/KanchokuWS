@@ -1,14 +1,14 @@
 ### T ###
-loadTable(tables/t.tbl)
+loadTable(tables/漢直系/t.tbl)
 convert(KRkr) = 日
 
 ### ふじこ ###
-loadTable(tables/fujiko.tbl)
+loadTable(tables/その他/fujiko.tbl)
 comboMinTime(10)
 convert(ASDFJKL{;}<30>asdfjkl[;]) = くぁwせdrftgyふじこlp!{Enter}
 
 ### 薙刀式 ###
-loadTable(tables/naginata15.tbl)
+loadTable(tables/かな系/naginata15.tbl)
 comboMaxTime(100)
 comboMinTime(0)
 convert(Jj) = あ
@@ -94,7 +94,7 @@ comboMaxTime(70)
 convert(EM<55>K<30>m<16>e<26>k) = てない
 
 ### 新下駄 ###
-loadTable(tables/shin-geta.tbl)
+loadTable(tables/かな系/shin-geta.tbl)
 comboMinTime(20)
 convert(KW<40>kw) = ご
 convert(KWwk) = ご
@@ -106,7 +106,7 @@ convert(KWEewk) = ごは
 convert(KKKWEewk) = ごは
 
 ### 月 ###
-loadTable(tables/tuki-2-263.pfx.tbl)
+loadTable(tables/かな系/変種/tuki-2-263.pfx.tbl)
 convert(DUIdui) = えい
 convert(DDD<1000>UIdui) = えい
 convert(DDDUIdui) = えい
@@ -114,11 +114,11 @@ convert(ALal) = ば
 convert(A{/}a[/]) = ぱ
 
 ### phoenix RT ###
-loadTable(tables/phoenix_rt.tbl)
+loadTable(tables/かな系/phoenix_rt.tbl)
 convert(Ss{;}[;]) = ね
 
 ### ブリ中トロ ###
-loadTable(tables/chutoro.211023.tbl)
+loadTable(tables/かな系/旧版/chutoro.211023.tbl)
 
 convert(Qq) = ゅ
 convert(Tt) = ゃ
@@ -139,7 +139,7 @@ convert(YTyt) = ぷろぐらむ
 convert(MDAmda) = でしょう
 convert({38}DAad[38]) = ましょう
 
-loadTable(tables/chutoro.220329.tbl)
+loadTable(tables/かな系/chutoro.220329.tbl)
 rewriteMaxTime(100)
 convert(Dd<30>Dd) = ！
 convert(Dd<200>Dd) = 、、
@@ -148,7 +148,7 @@ convert(DLdlAa) = ました
 
 
 ### のにいると ###
-loadTable(tables/subtables/noniiruto.6.tbl)
+loadTable(tables/_test/noniiruto.6.tbl)
 comboMaxTime(100)
 comboMinTime(70)
 rewriteMaxTime(300)
@@ -176,7 +176,7 @@ convert({22}[22]<20>{12}[12]) = ぽ
 convert({22}[22]<200>{12}[12]) = 。し
 
 ### 同時打鍵 ###
-loadTable(tables/subtables/combo-test.tbl)
+loadTable(tables/_test/combo-test.tbl)
 comboMaxTime(100)
 comboMinTime(70)
 convert(E<18>W<53>O<33>I<9>ew<100>oi) = みえ
@@ -185,14 +185,14 @@ convert(J<59>K<20>jk) = いあ
 convert(J<50>K<80>jk) = き
 
 #### OKT (同時打鍵) ###
-#loadTable(tables/okt.tbl)
+#loadTable(tables/漢直系/okt.tbl)
 #rewriteMaxTime(100)
 #setShiftOffset(200)
 #convert(Dd<50>Ee) = ぽ
 #convert(DdEe) = 。し
 
 ### NICOLA ###
-loadTable(tables/nicola.tbl)
+loadTable(tables/かな系/nicola.tbl)
 comboMaxTime(200)
 comboMinTime(70)
 convert(J<50>{nfer}<80>j[nfer]) = ど
@@ -209,7 +209,7 @@ convert(J<50>{nfer}<80>j[nfer]) = ど
 convert(J<200>{nfer}[nfer]j) = と!{nfer}
 
 ### 月光(連続シフト) ###
-loadTable(tables/gekko-20211106.pfx.tbl)
+loadTable(tables/かな系/変種/gekko-20211106.pfx.tbl)
 comboMinTime(100)
 convert(DIid) = よ
 convert(DDDDKkIid) = よ
