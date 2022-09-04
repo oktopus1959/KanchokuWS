@@ -83,9 +83,15 @@ namespace {
 
         // StrokeTableNode を処理する
         void handleStrokeKeys(int deckey) {
-            wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(origDeckey >= 0 ? origDeckey : deckey);
+            wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(origDeckey >= 0 ? origDeckey : deckey, 0);
             LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), face=%c, nodeDepth=%d"), NAME_PTR, deckey, deckey, myChar, DEPTH);
-            STATE_COMMON->AppendOrigString(myChar); // RootStrokeTableState が作成されたときに OrigString はクリアされている
+            if (myChar != 0) {
+                // 同時打鍵だと '\0' が返ってくるので、 OrigString にはアペンドしない。
+                // OrigString に '?' がアペンドされてしまうと、後で書き換えのときに同一部分判定で問題が生じる
+                STATE_COMMON->AppendOrigString(myChar); // RootStrokeTableState が作成されたときに OrigString はクリアされている
+            } else {
+                myChar = '?';
+            }
 
             if (!myNode()->isRootStrokeTableNode() && !IsRootKeyCombination()) {
                 // 自身がRootStrokeNodeでなく、かつRootStrokeKeyが同時打鍵キーでなければ通常面に落としこむ

@@ -971,7 +971,9 @@ namespace KanchokuWS
         {
             var decoderOutput = frmMain.DecoderOutput;
 
-            if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH(() => $"CALLED: layout={decoderOutput.layout}, center={CommonState.CenterString}, strokeCount={decoderOutput.strokeCount}, nextDeckey={decoderOutput.nextStrokeDeckey}, lastDeckey={lastDeckey}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.InfoH(() =>
+                $"CALLED: layout={decoderOutput.layout}, center={CommonState.CenterString}, strokeCount={decoderOutput.strokeCount}, " +
+                $"topString={decoderOutput.topString}, nextDeckey={decoderOutput.nextStrokeDeckey}, lastDeckey={lastDeckey}");
 
             if (decoderOutput.topString._isEmpty()) return;
 
