@@ -248,7 +248,8 @@ namespace KanchokuWS.TableParser
                     case ';':
                         // ';' 以降、行末までコメント
                         SkipToEndOfLine();
-                        break;
+                        if (bSkipNL) break;
+                        return TOKEN.NEW_LINE;
 
                     case '{':
                         if (!bIgnoreWarningBraceLevel && !bIgnoreWarningAll && IsCurrentPosHeadOfLine && braceLevel > 0) UnexpectedLeftBraceAtColumn0Warning();
