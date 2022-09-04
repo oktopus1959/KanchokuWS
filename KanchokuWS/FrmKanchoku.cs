@@ -409,7 +409,7 @@ namespace KanchokuWS
                 logger.Info("Splash Closed");
             }
 
-            DeactivateDecoder();
+            DeactivateDecoderWithModifiersOff();
 
             logger.InfoH($"ConfirmOnClose={Settings.ConfirmOnClose}");
             if (!Settings.ConfirmOnClose || SystemHelper.OKCancelDialog("漢直窓Sを終了します。\r\nよろしいですか。")) {
@@ -428,7 +428,7 @@ namespace KanchokuWS
                 logger.Info("Splash Closed");
             }
 
-            DeactivateDecoder();
+            DeactivateDecoderWithModifiersOff();
 
             logger.InfoH($"bNoSave={bNoSave}, ConfirmOnRestart={Settings.ConfirmOnRestart}");
             var msg = bNoSave ?
@@ -718,7 +718,7 @@ namespace KanchokuWS
             keDispatcher.OnKeyUp = OnKeyboardUpHandler;
             keDispatcher.ToggleDecoder = ToggleDecoder;
             keDispatcher.ActivateDecoder = ActivateDecoder;
-            keDispatcher.DeactivateDecoder = DeactivateDecoder;
+            keDispatcher.DeactivateDecoder = DeactivateDecoderWithModifiersOff;
             keDispatcher.IsDecoderActivated = isDecoderActivated;
             keDispatcher.IsDecoderWaitingFirstStroke = isDecoderWaitingFirstStroke;
             keDispatcher.SetSandSShiftedOneshot = setSandSShiftedOneshot;
@@ -1051,7 +1051,7 @@ namespace KanchokuWS
                 ActivateDecoder();
             } else {
                 var keyState = SendInputHandler.GetCtrlKeyState(true);
-                DeactivateDecoder();
+                DeactivateDecoder(!bRevertCtrl);
                 if (bRevertCtrl) SendInputHandler.Singleton.RevertCtrlKey(keyState);
             }
             logger.InfoH("LEAVE");
@@ -1111,13 +1111,13 @@ namespace KanchokuWS
         }
 
         // デコーダをOFFにする
-        public void DeactivateDecoder()
+        public void DeactivateDecoder(bool bModifiersOff = true)
         {
             logger.InfoH(() => $"\nENTER");
             IsDecoderActive = false;
             if (decoderPtr != IntPtr.Zero) {
                 handleKeyDecoder(DecoderKeys.DEACTIVE_DECKEY, 0);   // DecoderOff の処理をやる
-                SendInputHandler.Singleton.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
+                if (bModifiersOff) SendInputHandler.Singleton.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
                 frmVkb.Hide();
                 frmMode.Hide();
                 notifyIcon1.Icon = Properties.Resources.kanmini0;
@@ -1127,6 +1127,12 @@ namespace KanchokuWS
                 }
             }
             logger.InfoH("LEAVE");
+        }
+
+        // デコーダをOFFにする
+        public void DeactivateDecoderWithModifiersOff()
+        {
+            DeactivateDecoder(true);
         }
 
         /// <summary>仮想鍵盤の表示位置を移動する</summary>
@@ -1908,7 +1914,7 @@ namespace KanchokuWS
                 if (IMEHandler.ImeEnabled) {
                     ActivateDecoder();
                 } else {
-                    DeactivateDecoder();
+                    DeactivateDecoder(false);
                 }
             }
 

@@ -256,7 +256,7 @@ namespace KanchokuWS
         // 終了
         private void Exit_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //frmMain.DeactivateDecoder();
+            //frmMain.DeactivateDecoderWithModifiersOff();
             //if (!Settings.ConfirmOnClose || SystemHelper.OKCancelDialog("漢直窓を終了します。\r\nよろしいですか。")) {
             //    this.Close();
             //    frmMain.Close();
@@ -268,7 +268,7 @@ namespace KanchokuWS
 
         private void Settings_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmMain.DeactivateDecoder();
+            frmMain.DeactivateDecoderWithModifiersOff();
             if (!DlgSettings.BringTopMostShownDlg()) {
                 var dlg = new DlgSettings(frmMain, null, this);
                 dlg.ShowDialog();

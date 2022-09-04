@@ -398,7 +398,7 @@ namespace KanchokuWS.Gui
         {
             logger.InfoH("ENTER");
 
-            frmMain?.DeactivateDecoder();
+            frmMain?.DeactivateDecoderWithModifiersOff();
 
             label_initialMsg.Hide();
 
@@ -714,7 +714,7 @@ namespace KanchokuWS.Gui
         private void button_advancedEnter_Click(object sender, EventArgs e)
         {
             logger.InfoH("ENTER");
-            frmMain?.DeactivateDecoder();
+            frmMain?.DeactivateDecoderWithModifiersOff();
 
             // モード標識表示時間
             Settings.SetUserIni("vkbOffsetX", textBox_vkbOffsetX.Text.Trim());
@@ -861,7 +861,7 @@ namespace KanchokuWS.Gui
         private void button_imeComboEnter_Click(object sender, EventArgs e)
         {
             logger.InfoH("ENTER");
-            frmMain?.DeactivateDecoder();
+            frmMain?.DeactivateDecoderWithModifiersOff();
 
             // SandS
             Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
@@ -992,7 +992,7 @@ namespace KanchokuWS.Gui
         private void button_fontColrEnter_Click(object sender, EventArgs e)
         {
             logger.InfoH("ENTER");
-            frmMain?.DeactivateDecoder();
+            frmMain?.DeactivateDecoderWithModifiersOff();
 
             // フォント
             Settings.SetUserIni("normalFont", textBox_normalFont.Text.Trim());
@@ -1134,7 +1134,7 @@ namespace KanchokuWS.Gui
         private void button_keyAssignEnter_Click(object sender, EventArgs e)
         {
             logger.InfoH("ENTER");
-            frmMain?.DeactivateDecoder();
+            frmMain?.DeactivateDecoderWithModifiersOff();
 
             Settings.SetUserIni("zenkakuModeKeySeq", revertPresetString(textBox_zenkakuModeKeySeq.Text));
             Settings.SetUserIni("zenkakuOneCharKeySeq", revertPresetString(textBox_zenkakuOneCharKeySeq.Text));
@@ -1322,7 +1322,7 @@ namespace KanchokuWS.Gui
         private void button_ctrlEnter_Click(object sender, EventArgs e)
         {
             logger.InfoH("ENTER");
-            frmMain?.DeactivateDecoder();
+            frmMain?.DeactivateDecoderWithModifiersOff();
 
             Settings.SetUserIni("globalCtrlKeysEnabled", checkBox_globalCtrlKeysEnabled.Checked);
 
@@ -1466,7 +1466,7 @@ namespace KanchokuWS.Gui
         private void button_histEnter_Click(object sender, EventArgs e)
         {
             logger.InfoH("ENTER");
-            frmMain?.DeactivateDecoder();
+            frmMain?.DeactivateDecoderWithModifiersOff();
 
             Settings.SetUserIni("histKatakanaWordMinLength", textBox_histKatakanaWordMinLength.Text.Trim());
             Settings.SetUserIni("histKanjiWordMinLength", textBox_histKanjiWordMinLength.Text.Trim());

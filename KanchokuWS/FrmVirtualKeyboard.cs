@@ -528,7 +528,7 @@ namespace KanchokuWS
 
             if (frmMain.IsDecoderActive) {
                 this.Hide();
-                frmMain.DeactivateDecoder();
+                frmMain.DeactivateDecoderWithModifiersOff();
             }
 
             dgvHorizontal.Rows.Clear();
@@ -1667,8 +1667,8 @@ namespace KanchokuWS
                 logger.DebugH(() => $"Left MouseButton Clicked: prevLeftTop=({prevWinLeftTop.X}, {prevWinLeftTop.Y}), currentWinLeftTop=({this.Left}, {this.Top})");
                 if (Math.Abs(prevWinLeftTop.X - this.Left) < 10 && Math.Abs(prevWinLeftTop.Y - this.Top) < 10) {
                     Settings.VirtualKeyboardPosFixedTemporarily = false;
-                    frmMain.DeactivateDecoder();
-                    logger.DebugH("DeactivateDecoder");
+                    frmMain.DeactivateDecoderWithModifiersOff();
+                    logger.DebugH("DeactivateDecoderWithModifiersOff");
                 }
             }
         }
@@ -1706,7 +1706,7 @@ namespace KanchokuWS
         private void Exit_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             logger.DebugH("ENTER");
-            //frmMain.DeactivateDecoder();
+            //frmMain.DeactivateDecoderWithModifiersOff();
             //logger.Debug("Decoder OFF");
             //if (!Settings.ConfirmOnClose || SystemHelper.OKCancelDialog("漢直窓を終了します。\r\nよろしいですか。")) {
             //    this.Close();
@@ -1731,7 +1731,7 @@ namespace KanchokuWS
 
         private void Settings_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmMain.DeactivateDecoder();
+            frmMain.DeactivateDecoderWithModifiersOff();
             if (!DlgSettings.BringTopMostShownDlg()) {
                 var dlg = new DlgSettings(frmMain, this, null);
                 dlg.ShowDialog();

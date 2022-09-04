@@ -53,7 +53,7 @@ namespace KanchokuWS.Gui
         private void button_developEnter_Click(object sender, EventArgs e)
         {
             logger.InfoH("ENTER");
-            frmMain?.DeactivateDecoder();
+            frmMain?.DeactivateDecoderWithModifiersOff();
 
             // 開発者用
             Settings.SetUserIni("logLevel", comboBox_logLevel.SelectedIndex);
