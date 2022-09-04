@@ -83,15 +83,9 @@ namespace {
 
         // StrokeTableNode を処理する
         void handleStrokeKeys(int deckey) {
-            wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(origDeckey >= 0 ? origDeckey : deckey, 0);
+            wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(origDeckey >= 0 ? origDeckey : deckey);
             LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), face=%c, nodeDepth=%d"), NAME_PTR, deckey, deckey, myChar, DEPTH);
-            if (myChar != 0) {
-                // 同時打鍵だと '\0' が返ってくるので、 OrigString にはアペンドしない。
-                // OrigString に '?' がアペンドされてしまうと、後で書き換えのときに同一部分判定で問題が生じる
-                STATE_COMMON->AppendOrigString(myChar); // RootStrokeTableState が作成されたときに OrigString はクリアされている
-            } else {
-                myChar = '?';
-            }
+            STATE_COMMON->AppendOrigString(myChar); // RootStrokeTableState が作成されたときに OrigString はクリアされている。この処理は @^ などへの対応のために必要
 
             if (!myNode()->isRootStrokeTableNode() && !IsRootKeyCombination()) {
                 // 自身がRootStrokeNodeでなく、かつRootStrokeKeyが同時打鍵キーでなければ通常面に落としこむ
@@ -449,17 +443,28 @@ void StrokeTableNode::MakeStrokeGuide(const wstring& targetChars, int tableId) {
 }
 
 bool StrokeTableNode::hasPostRewriteNode() {
+    if (iHasPostRewriteNode == 0) {
+        iHasPostRewriteNode = findPostRewriteNode();
+        LOG_INFOH(_T("iHasPostRewriteNode: %d"), iHasPostRewriteNode);
+    }
+    return iHasPostRewriteNode > 0;
+}
+
+int StrokeTableNode::findPostRewriteNode() {
     for (Node* p : children) {
         if (p) {
             StrokeTableNode* pn = dynamic_cast<StrokeTableNode*>(p);
             if (pn) {
-                pn->hasPostRewriteNode();
+                if (pn->findPostRewriteNode() > 0) return 1;
             } else {
-                if (dynamic_cast<PostRewriteOneShotNode*>(p) || dynamic_cast<DakutenOneShotNode*>(p)) return true;
+                if (dynamic_cast<PostRewriteOneShotNode*>(p) || dynamic_cast<DakutenOneShotNode*>(p)) {
+                    LOG_INFOH(_T("LEAVE: 1"));
+                    return 1;
+                }
             }
         }
     }
-    return false;
+    return -1;
 }
 
 // -------------------------------------------------------------------

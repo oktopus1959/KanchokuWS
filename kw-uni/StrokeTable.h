@@ -39,6 +39,9 @@ private:
     // 全ストロークノードが不要になったら true (ステートの作成時にクリアする)
     bool bRemoveAllStroke = false;
 
+    // 後置書き換え機能ありか
+    int iHasPostRewriteNode = 0;
+
 public:
     // コンストラクタ
     StrokeTableNode(int depth) : _depth(depth) {
@@ -67,6 +70,9 @@ public:
 
     // 後置書き換え機能ありか
     bool hasPostRewriteNode();
+
+private:
+    int findPostRewriteNode();
 
 public:
     /* StrokeTableNode 独自メソッド */

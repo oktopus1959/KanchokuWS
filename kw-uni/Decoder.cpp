@@ -718,14 +718,15 @@ public:
     mchar_t copyToTopString() {
         _LOG_DEBUGH(_T("\nENTER: outStackStr=%s"), MAKE_WPTR(OUTPUT_STACK->OutputStackBackStrUpto(32)));
         size_t origLen = 0;
-        // 打鍵途中なら打鍵中のキー文字列も表示する
-        if (STATE_COMMON->IsWaiting2ndStroke()) origLen = STATE_COMMON->OrigString().size();
-        size_t topLen = utils::array_length(OutParams->topString);
+        // 打鍵途中なら打鍵中のキー文字列もミニバッファに表示する(ただし書き換えが存在しない場合のみ)
+        // 書き換えありの場合、OrigString に '?' がアペンドされてしまうと、後で書き換えのときに同一部分判定で問題が生じるため
+        if (STATE_COMMON->IsWaiting2ndStroke() && !(ROOT_STROKE_NODE && ROOT_STROKE_NODE->hasPostRewriteNode())) origLen = STATE_COMMON->OrigString().size();
+        size_t topBufSize = utils::array_length(OutParams->topString);
         size_t prevMazeLen = MAZEGAKI_INFO ? MAZEGAKI_INFO->GetPrevOutputLen() : 0;
-        _LOG_DEBUGH(_T("topLen=%d, origLen=%d, prevMazeLen=%d"), topLen, origLen, prevMazeLen);
-        auto s = OUTPUT_STACK->OutputStackBackStrWithFlagUpto(topLen - origLen - 1, prevMazeLen);        // ブロッカーを反映した文字列を取得
-        _LOG_DEBUGH(_T("OutputStackBackStrWithFlagUpto(%d)=%s"), (topLen - origLen - 1), MAKE_WPTR(s));
-        size_t pos = copy_mstr(s, OutParams->topString, topLen);
+        _LOG_DEBUGH(_T("topBufSize=%d, origLen=%d, prevMazeLen=%d"), topBufSize, origLen, prevMazeLen);
+        auto s = OUTPUT_STACK->OutputStackBackStrWithFlagUpto(topBufSize - origLen - 1, prevMazeLen);        // ブロッカーを反映した文字列を取得
+        _LOG_DEBUGH(_T("OutputStackBackStrWithFlagUpto(%d)=%s"), (topBufSize - origLen - 1), MAKE_WPTR(s));
+        size_t pos = copy_mstr(s, OutParams->topString, topBufSize);
         if (origLen > 0) copy_mstr(STATE_COMMON->OrigString(), OutParams->topString + pos, origLen);
         mchar_t lastChar = origLen == 0 ? OUTPUT_STACK->OutputStackLastChar() : 0;
         _LOG_DEBUGH(_T("LEAVE: OutParams->topString=%s, lastChar=%s"), OutParams->topString, MAKE_WPTR(lastChar));
