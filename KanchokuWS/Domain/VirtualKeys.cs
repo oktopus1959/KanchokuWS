@@ -214,7 +214,10 @@ namespace KanchokuWS
 
         public static uint GetAlphabetVkeyByName(string name)
         {
-            return (name._safeLength() == 1 && name[0] >= 'A' && name[0] <= 'Z') ? (uint)Keys.A + (uint)(name[0] - 'A') : 0;
+            if (name._safeLength() != 1) return 0;
+            char ch = name[0];
+            if (ch >= 'a' && ch <= 'z') ch = (char)(ch - ('a' - 'A'));
+            return (ch >= 'A' && ch <= 'Z') ? (uint)Keys.A + (uint)(ch - 'A') : 0;
         }
 
         public const int ShiftPlane_NONE = 0;
