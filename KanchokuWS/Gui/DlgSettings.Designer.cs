@@ -136,6 +136,8 @@ namespace KanchokuWS.Gui
             this.textBox_vkbMoveGuardMillisec = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.tabPage_imeCombo = new System.Windows.Forms.TabPage();
+            this.label_imeComboReload = new System.Windows.Forms.Label();
+            this.button_imeComboReload = new System.Windows.Forms.Button();
             this.groupBox50 = new System.Windows.Forms.GroupBox();
             this.checkBox_useComboExtModKeyAsSingleHit = new System.Windows.Forms.CheckBox();
             this.groupBox49 = new System.Windows.Forms.GroupBox();
@@ -420,8 +422,8 @@ namespace KanchokuWS.Gui
             this.textBox_romanBushuCompPrefix = new System.Windows.Forms.TextBox();
             this.button_saveRomanTableFile = new System.Windows.Forms.Button();
             this.label_miscRomanOut = new System.Windows.Forms.Label();
-            this.label_reloadMisc = new System.Windows.Forms.Label();
-            this.button_reloadMisc = new System.Windows.Forms.Button();
+            this.label_miscReload = new System.Windows.Forms.Label();
+            this.button_miscReload = new System.Windows.Forms.Button();
             this.groupBox38 = new System.Windows.Forms.GroupBox();
             this.checkBox_yamanobeEnabled = new System.Windows.Forms.CheckBox();
             this.label54 = new System.Windows.Forms.Label();
@@ -496,6 +498,7 @@ namespace KanchokuWS.Gui
             this.label_okResultDevelop = new System.Windows.Forms.Label();
             this.button_developEnter = new System.Windows.Forms.Button();
             this.groupBox15 = new System.Windows.Forms.GroupBox();
+            this.checkBox_showHiddleFolder = new System.Windows.Forms.CheckBox();
             this.checkBox_outputDebugTableFiles = new System.Windows.Forms.CheckBox();
             this.label_testCount = new System.Windows.Forms.Label();
             this.textBox_warnThresholdKeyQueueCount = new System.Windows.Forms.TextBox();
@@ -514,7 +517,6 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.checkBox_showHiddleFolder = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1906,6 +1908,8 @@ namespace KanchokuWS.Gui
             // 
             // tabPage_imeCombo
             // 
+            this.tabPage_imeCombo.Controls.Add(this.label_imeComboReload);
+            this.tabPage_imeCombo.Controls.Add(this.button_imeComboReload);
             this.tabPage_imeCombo.Controls.Add(this.groupBox50);
             this.tabPage_imeCombo.Controls.Add(this.groupBox49);
             this.tabPage_imeCombo.Controls.Add(this.groupBox39);
@@ -1921,6 +1925,32 @@ namespace KanchokuWS.Gui
             this.tabPage_imeCombo.TabIndex = 10;
             this.tabPage_imeCombo.Text = "同時打鍵・IME";
             this.tabPage_imeCombo.UseVisualStyleBackColor = true;
+            // 
+            // label_imeComboReload
+            // 
+            this.label_imeComboReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label_imeComboReload.AutoSize = true;
+            this.label_imeComboReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_imeComboReload.Location = new System.Drawing.Point(202, 347);
+            this.label_imeComboReload.Name = "label_imeComboReload";
+            this.label_imeComboReload.Size = new System.Drawing.Size(77, 15);
+            this.label_imeComboReload.TabIndex = 38;
+            this.label_imeComboReload.Text = "再読込しました";
+            this.label_imeComboReload.Visible = false;
+            this.label_imeComboReload.VisibleChanged += new System.EventHandler(this.label_imeComboReload_VisibleChanged);
+            // 
+            // button_imeComboReload
+            // 
+            this.button_imeComboReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_imeComboReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_imeComboReload.Location = new System.Drawing.Point(281, 343);
+            this.button_imeComboReload.Name = "button_imeComboReload";
+            this.button_imeComboReload.Size = new System.Drawing.Size(80, 23);
+            this.button_imeComboReload.TabIndex = 37;
+            this.button_imeComboReload.Text = "再読込(&R)";
+            this.toolTip1.SetToolTip(this.button_imeComboReload, "各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
+            this.button_imeComboReload.UseVisualStyleBackColor = true;
+            this.button_imeComboReload.Click += new System.EventHandler(this.button_imeComboReload_Click);
             // 
             // groupBox50
             // 
@@ -4957,8 +4987,8 @@ namespace KanchokuWS.Gui
             this.tabPage_misc.Controls.Add(this.groupBox48);
             this.tabPage_misc.Controls.Add(this.groupBox42);
             this.tabPage_misc.Controls.Add(this.groupBox40);
-            this.tabPage_misc.Controls.Add(this.label_reloadMisc);
-            this.tabPage_misc.Controls.Add(this.button_reloadMisc);
+            this.tabPage_misc.Controls.Add(this.label_miscReload);
+            this.tabPage_misc.Controls.Add(this.button_miscReload);
             this.tabPage_misc.Controls.Add(this.groupBox38);
             this.tabPage_misc.Controls.Add(this.groupBox37);
             this.tabPage_misc.Controls.Add(this.groupBox36);
@@ -5156,31 +5186,31 @@ namespace KanchokuWS.Gui
             this.label_miscRomanOut.Visible = false;
             this.label_miscRomanOut.VisibleChanged += new System.EventHandler(this.label_miscRomanOut_VisibleChanged);
             // 
-            // label_reloadMisc
+            // label_miscReload
             // 
-            this.label_reloadMisc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label_reloadMisc.AutoSize = true;
-            this.label_reloadMisc.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_reloadMisc.Location = new System.Drawing.Point(321, 325);
-            this.label_reloadMisc.Name = "label_reloadMisc";
-            this.label_reloadMisc.Size = new System.Drawing.Size(77, 15);
-            this.label_reloadMisc.TabIndex = 34;
-            this.label_reloadMisc.Text = "再読込しました";
-            this.label_reloadMisc.Visible = false;
-            this.label_reloadMisc.VisibleChanged += new System.EventHandler(this.label_reloadMisc_VisibleChanged);
+            this.label_miscReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label_miscReload.AutoSize = true;
+            this.label_miscReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label_miscReload.Location = new System.Drawing.Point(321, 325);
+            this.label_miscReload.Name = "label_miscReload";
+            this.label_miscReload.Size = new System.Drawing.Size(77, 15);
+            this.label_miscReload.TabIndex = 34;
+            this.label_miscReload.Text = "再読込しました";
+            this.label_miscReload.Visible = false;
+            this.label_miscReload.VisibleChanged += new System.EventHandler(this.label_miscReload_VisibleChanged);
             // 
-            // button_reloadMisc
+            // button_miscReload
             // 
-            this.button_reloadMisc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button_reloadMisc.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_reloadMisc.Location = new System.Drawing.Point(320, 343);
-            this.button_reloadMisc.Name = "button_reloadMisc";
-            this.button_reloadMisc.Size = new System.Drawing.Size(80, 23);
-            this.button_reloadMisc.TabIndex = 8;
-            this.button_reloadMisc.Text = "再読込(&R)";
-            this.toolTip1.SetToolTip(this.button_reloadMisc, "各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
-            this.button_reloadMisc.UseVisualStyleBackColor = true;
-            this.button_reloadMisc.Click += new System.EventHandler(this.button_reloadMisc_Click);
+            this.button_miscReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_miscReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_miscReload.Location = new System.Drawing.Point(320, 343);
+            this.button_miscReload.Name = "button_miscReload";
+            this.button_miscReload.Size = new System.Drawing.Size(80, 23);
+            this.button_miscReload.TabIndex = 8;
+            this.button_miscReload.Text = "再読込(&R)";
+            this.toolTip1.SetToolTip(this.button_miscReload, "各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
+            this.button_miscReload.UseVisualStyleBackColor = true;
+            this.button_miscReload.Click += new System.EventHandler(this.button_miscReload_Click);
             // 
             // groupBox38
             // 
@@ -6102,6 +6132,16 @@ namespace KanchokuWS.Gui
             this.groupBox15.TabStop = false;
             this.groupBox15.Text = "開発者用設定";
             // 
+            // checkBox_showHiddleFolder
+            // 
+            this.checkBox_showHiddleFolder.AutoSize = true;
+            this.checkBox_showHiddleFolder.Location = new System.Drawing.Point(220, 78);
+            this.checkBox_showHiddleFolder.Name = "checkBox_showHiddleFolder";
+            this.checkBox_showHiddleFolder.Size = new System.Drawing.Size(115, 19);
+            this.checkBox_showHiddleFolder.TabIndex = 8;
+            this.checkBox_showHiddleFolder.Text = "隠しフォルダの表示";
+            this.checkBox_showHiddleFolder.UseVisualStyleBackColor = true;
+            // 
             // checkBox_outputDebugTableFiles
             // 
             this.checkBox_outputDebugTableFiles.AutoSize = true;
@@ -6289,16 +6329,6 @@ namespace KanchokuWS.Gui
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // checkBox_showHiddleFolder
-            // 
-            this.checkBox_showHiddleFolder.AutoSize = true;
-            this.checkBox_showHiddleFolder.Location = new System.Drawing.Point(220, 78);
-            this.checkBox_showHiddleFolder.Name = "checkBox_showHiddleFolder";
-            this.checkBox_showHiddleFolder.Size = new System.Drawing.Size(115, 19);
-            this.checkBox_showHiddleFolder.TabIndex = 8;
-            this.checkBox_showHiddleFolder.Text = "隠しフォルダの表示";
-            this.checkBox_showHiddleFolder.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
@@ -6788,8 +6818,8 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.RadioButton radioButton_shiftA;
         private System.Windows.Forms.RadioButton radioButton_normalShift;
         private System.Windows.Forms.Label label101;
-        private System.Windows.Forms.Label label_reloadMisc;
-        private System.Windows.Forms.Button button_reloadMisc;
+        private System.Windows.Forms.Label label_miscReload;
+        private System.Windows.Forms.Button button_miscReload;
         private System.Windows.Forms.GroupBox groupBox38;
         private System.Windows.Forms.GroupBox groupBox37;
         private System.Windows.Forms.GroupBox groupBox36;
@@ -6932,5 +6962,7 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label138;
         private System.Windows.Forms.Label label139;
         private System.Windows.Forms.CheckBox checkBox_showHiddleFolder;
+        private System.Windows.Forms.Label label_imeComboReload;
+        private System.Windows.Forms.Button button_imeComboReload;
     }
 }

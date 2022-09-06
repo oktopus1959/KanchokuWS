@@ -909,6 +909,14 @@ namespace KanchokuWS.Gui
             }
         }
 
+        private void button_imeComboReload_Click(object sender, EventArgs e)
+        {
+            logger.InfoH("ENTER");
+            reloadIniFileAndDefFiles();
+            label_imeComboReload.Show();
+            logger.InfoH("LEAVE");
+        }
+
         //-----------------------------------------------------------------------------------
         // フォント・色設定
         //-----------------------------------------------------------------------------------
@@ -1675,11 +1683,11 @@ namespace KanchokuWS.Gui
             openFileByTxtAssociatedProgram(Settings.KanjiYomiFile);
         }
 
-        private void button_reloadMisc_Click(object sender, EventArgs e)
+        private void button_miscReload_Click(object sender, EventArgs e)
         {
             logger.InfoH("CALLED");
             reloadIniFileAndDefFiles();
-            label_reloadMisc.Show();
+            label_miscReload.Show();
         }
 
         private void button_saveRomanTableFile_Click(object sender, EventArgs e)
@@ -1923,10 +1931,11 @@ namespace KanchokuWS.Gui
                     label_okResultKeyAssign.Hide();
                     label_okResultCtrlKeys.Hide();
                     label_okResultMisc.Hide();
+                    label_imeComboReload.Hide();
                     label_keyAssignReload.Hide();
                     label_miscRomanOut.Hide();
                     label_miscEelllJsOut.Hide();
-                    label_reloadMisc.Hide();
+                    label_miscReload.Hide();
                     label_execResultFile.Hide();
                     label_okResultDevelop.Hide();
                 }
@@ -1978,12 +1987,17 @@ namespace KanchokuWS.Gui
             okResultCount = okResultCountMax;
         }
 
+        private void label_imeComboReload_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
         private void label_keyAssignReload_VisibleChanged(object sender, EventArgs e)
         {
             okResultCount = okResultCountMax;
         }
 
-        private void label_reloadMisc_VisibleChanged(object sender, EventArgs e)
+        private void label_miscReload_VisibleChanged(object sender, EventArgs e)
         {
             okResultCount = okResultCountMax;
         }
