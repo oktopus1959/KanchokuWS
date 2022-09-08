@@ -95,7 +95,7 @@ namespace KanchokuWS.Gui
                         frmMain.ExecCmdDecoder("createStrokeTrees", "both"); // ストローク木の再構築
                         frmMain.ExecCmdDecoder("useCodeTable2", null);
                         callDecoderWithKey(DecoderKeys.FULL_ESCAPE_DECKEY);
-                        CombinationKeyStroke.Determiner.Singleton.UseSecondaryPool();
+                        CombinationKeyStroke.Determiner.Singleton.UseSecondaryPool(true);
                         Settings.CombinationKeyMinTimeOnlyAfterSecond = false;
                         Settings.UseCombinationKeyTimer1 = false;
                         Settings.UseCombinationKeyTimer2 = false;
@@ -103,7 +103,7 @@ namespace KanchokuWS.Gui
                         Settings.CombinationKeyMinOverlappingTimeMs = arg._parseInt(70);
                         shiftOffset = 0;
                         if (Logger.LogLevel >= Logger.LogLevelInfoH) {
-                            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.Singleton2?.DebugPrint(true);
+                            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.SingletonK2?.DebugPrint(true);
                         }
                         break;
 

@@ -313,9 +313,9 @@ namespace KanchokuWS.TableParser
 
         /// <summary>ノードの内容をマージする</summary>
         /// <param name="node"></param>
-        public bool Merge(Node node)
+        private bool merge(Node node)
         {
-            bool bOverwritten = merge(node);
+            bool bOverwritten = _merge(node);
             if (node.IsRewriteNode()) {
                 AddRewriteMap();
                 node.rewriteMap._forEach((key, val) => {
@@ -328,7 +328,7 @@ namespace KanchokuWS.TableParser
         /// <summary>書き換え情報以外のノード内容をマージする。上書きが発生したら true を返す</summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        private bool merge(Node node)
+        private bool _merge(Node node)
         {
             bool bOverwrite = false;
             if (node.outputStr._notEmpty() && node.outputStr._ne(outputStr)) {
@@ -347,7 +347,7 @@ namespace KanchokuWS.TableParser
                         var p = node.GetNthSubNode(i);
                         if (p != null) {
                             bOverwrite = bOverwrite || GetNthSubNode(i) != null;  // マージ先に既存ノードがあれば上書き発生
-                            SetNthSubNode(i, p);
+                            setNthSubNode(i, p);
                         }
                     }
                 }
@@ -360,7 +360,7 @@ namespace KanchokuWS.TableParser
         {
             if (rewriteMap == null) rewriteMap = new RewriteMap();
             if (rewriteMap.ContainsKey(key)) {
-                rewriteMap.GetNode(key)?.Merge(value);
+                rewriteMap.GetNode(key)?.merge(value);
             } else {
                 rewriteMap.PutPair(key, value);
             }
@@ -380,14 +380,14 @@ namespace KanchokuWS.TableParser
         /// </summary>
         /// <param name=""></param>
         /// <param name=""></param>
-        public bool SetNthSubNode(int n, Node node)
+        private bool setNthSubNode(int n, Node node)
         {
             if (subTable != null) {
                 if (n >= 0 && n < subTable.Length) {
                     if (subTable.GetNth(n) != null) {
                         if (node.IsRewriteNode() && subTable.GetNth(n).IsRewriteNode()) {
                             // 新旧ノードが RewriteNode である
-                            subTable.GetNth(n).Merge(node);
+                            subTable.GetNth(n).merge(node);
                             return false;
                         } else if (node.IsTreeNode() || !subTable.GetNth(n).IsTreeNode()) {
                             // 新旧ノードが StrokeTableNode であるか、旧ノードが StrokeTableNode でなければ、上書き
@@ -417,7 +417,7 @@ namespace KanchokuWS.TableParser
                 if (n >= 0 && n < subTable.Length) {
                     bool bOverwritten = false;
                     if (subTable.GetNth(n) != null) {
-                        bOverwritten = subTable.GetNth(n).Merge(node);
+                        bOverwritten = subTable.GetNth(n).merge(node);
                     } else {
                         subTable.SetNth(n, node);
                     }

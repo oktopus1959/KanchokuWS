@@ -24,8 +24,11 @@ namespace KanchokuWS.TableParser
 
         //protected StrokeTableNode rootTableNode => _rootTableNode != null ? _rootTableNode : context.rootTableNode;
 
-        // グローバルなルートパーザか
+        /// <summary>グローバルなルートパーザか</summary>
         public virtual bool IsRootParser => false;
+
+        ///// <summary>漢直モードのためのパーザか</summary>
+        //protected bool IsKanchokuModeParser { get; set; } = false;
 
         private int shiftPlane {
             //get { return _shiftPlane >= 0 ? _shiftPlane : context.shiftPlane; }
@@ -59,13 +62,13 @@ namespace KanchokuWS.TableParser
             }
         }
 
-        // トークンひとつ読んで currentToken にセット
+        /// <summary>トークンひとつ読んで currentToken にセット</summary>
         protected void readNextToken(bool bSkipNL = false)
         {
             currentToken = getToken(bSkipNL);
         }
 
-        // トークンを読む
+        /// <summary>トークンを読む</summary>
         TOKEN getToken(bool bSkipNL)
         {
             ArrowIndex = -1;
@@ -182,9 +185,15 @@ namespace KanchokuWS.TableParser
                                 ArgumentError(CurrentStr);
                                 break;
                         }
-                    } else if (lcStr == "enablealways" || lcStr == "enabledalways") {
-                        // #enableAlways: デコーダOFFでも有効
-                        bComboEffectiveAlways = true;
+                    //} else if (lcStr == "enablecomboonboth" || lcStr == "enablealways" || lcStr == "enabledalways") {
+                    //    // #enableAlways: デコーダOFFでも有効
+                    //    //bComboEffectiveAlways = true;
+                    //    bComboEffectiveOnKanchokuMode = true;
+                    //    bComboEffectiveOnEisuMode = true;
+                    //} else if (lcStr == "enablecombooneisu") {
+                    //    // #enableComboOnEisu: 英数モード時のみ有効
+                    //    bComboEffectiveOnKanchokuMode = false;
+                    //    bComboEffectiveOnEisuMode = true;
                     } else if (lcStr == "end") {
                         // #end: 各種ディレクティブの終了
                         ReadWord();
@@ -202,12 +211,14 @@ namespace KanchokuWS.TableParser
                                 logger.DebugH(() => $"END INCLUDE/LOAD: lineNumber={LineNumber}");
                                 EndInclude();
                                 break;
-                            case "enabl":
-                                if (strLower._endsWith("always")) {
-                                    bComboEffectiveAlways = false;
-                                    if (keyComboPool != null) keyComboPool.HasComboEffectiveAlways = true;
-                                }
-                                break;
+                            //case "enabl":
+                            //    if (strLower._endsWith("onboth") || strLower._endsWith("oneisu") || strLower._endsWith("always")) {
+                            //        //bComboEffectiveAlways = false;
+                            //        bComboEffectiveOnKanchokuMode = true;
+                            //        bComboEffectiveOnEisuMode = false;
+                            //        //if (keyComboPoolK != null) keyComboPoolK.HasComboEffectiveAlways = true;
+                            //    }
+                            //    break;
                         }
                     } else if (lcStr == "sands") {
                         // #SandS: SandS の有効化、無効化、面の割り当て
@@ -533,7 +544,7 @@ namespace KanchokuWS.TableParser
                     shiftOffset = (shiftPlane > 0 && IsRootParser) ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;
                 }
                 ArrowIndex += shiftOffset;
-                if (ArrowIndex < 0 || ArrowIndex >= DecoderKeys.COMBO_DECKEY_END) {
+                if (ArrowIndex < 0 || ArrowIndex >= DecoderKeys.EISU_COMBO_DECKEY_END) {
                     ParseError($"parseArrow: arrowIndex out of range: {ArrowIndex}");
                     return false;
                 }

@@ -12,41 +12,75 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
     {
         private static Logger logger = Logger.GetLogger();
 
-        /// <summary>
-        /// 主テーブル用のCombinaitonPool
-        /// </summary>        
-        public static KeyCombinationPool Singleton1 = new KeyCombinationPool();
+        /// <summary>主テーブル用のCombinaitonPool</summary>        
+        public static KeyCombinationPool SingletonK1 = new KeyCombinationPool() { bEisuMode = false };
 
-        /// <summary>
-        /// 副テーブル用のCombinaitonPool
-        /// </summary>        
-        public static KeyCombinationPool Singleton2 = new KeyCombinationPool();
+        /// <summary>主テーブル・英数用のCombinaitonPool</summary>        
+        public static KeyCombinationPool SingletonA1 = new KeyCombinationPool() { bEisuMode = true };
+
+        /// <summary>副テーブル用のCombinaitonPool</summary>        
+        public static KeyCombinationPool SingletonK2 = new KeyCombinationPool() { bEisuMode = false };
+
+        /// <summary>副テーブル・英数用のCombinaitonPool</summary>        
+        public static KeyCombinationPool SingletonA2 = new KeyCombinationPool() { bEisuMode = true };
+
+        private static KeyCombinationPool currentPoolK = SingletonK1;
+
+        private static KeyCombinationPool currentPoolA = SingletonA1;
 
         // 現在使用中のKeyCombinaitonPool
-        public static KeyCombinationPool CurrentPool { get; private set; } = Singleton1;
+        public static KeyCombinationPool CurrentPool { get; private set; } = SingletonK1;
+
+        private static string detectCurrentPool()
+        {
+            return CurrentPool == SingletonK1 ? "K1" : CurrentPool == SingletonK2 ? "K2" : CurrentPool == SingletonA1 ? "A1" : "A2";
+        }
 
         public static void Initialize()
         {
             logger.DebugH("CALLED");
-            Singleton1.Clear();
-            Singleton2.Clear();
-            CurrentPool = Singleton1;
+            SingletonK1.Clear();
+            SingletonA1.Clear();
+            SingletonK2.Clear();
+            SingletonA2.Clear();
+            currentPoolK = SingletonK1;
+            currentPoolA = SingletonA1;
+            CurrentPool = currentPoolA;
         }
 
-        public static void ExchangeCurrentPool()
+        public static void ChangeCurrentPoolBySelectedTable(int tableNum, bool bDecoderOn)
         {
-            CurrentPool = CurrentPool == Singleton1 ? Singleton2 : Singleton1;
-            logger.DebugH(() => $"CurrentPool={(CurrentPool == Singleton1 ? 1 : 2)}");
+            if (tableNum == 1) {
+                currentPoolK = SingletonK1;
+                currentPoolA = SingletonA1;
+            } else {
+                currentPoolK = SingletonK2;
+                currentPoolA = SingletonA2;
+            }
+            ChangeCurrentPoolByDecoderMode(bDecoderOn);
+            logger.DebugH(() => $"CurrentPool={detectCurrentPool()}, Enabled={CurrentPool.Enabled}");
         }
 
-        public static void UsePrimaryPool()
+        public static void ChangeCurrentPoolByDecoderMode(bool bDecoderOn)
         {
-            CurrentPool = Singleton1;
+            if (bDecoderOn) {
+                CurrentPool = currentPoolK;
+            } else {
+                CurrentPool = currentPoolA;
+            }
+            logger.DebugH(() => $"CurrentPool={detectCurrentPool()}, Enabled={CurrentPool.Enabled}");
         }
 
-        public static void UseSecondaryPool()
+        public static void UsePrimaryPool(bool bDecoderOn)
         {
-            CurrentPool = Singleton2;
+            //CurrentPool = Singleton1;
+            ChangeCurrentPoolBySelectedTable(1, bDecoderOn);
+        }
+
+        public static void UseSecondaryPool(bool bDecoderOn)
+        {
+            //CurrentPool = Singleton2;
+            ChangeCurrentPoolBySelectedTable(2, bDecoderOn);
         }
 
         /// <summary>
@@ -55,6 +89,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         private Dictionary<string, KeyCombination> keyComboDict = new Dictionary<string, KeyCombination>();
 
         public int Count { get { return keyComboDict.Count; } }
+
+        private bool bEisuMode = false;
+
+        // 英数用か
+        public bool ForEisu => bEisuMode;
 
         // 利用可能か
         public bool Enabled => Count > 0;
@@ -80,8 +119,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool IsPrefixedOrSequentialShift => !ContainsUnorderedShiftKey && (ContainsSuccessiveShiftKey || ContainsSequentialShiftKey);
 
-        /// <summary>(デコーダOFFでも)常に有効な同時打鍵列があるか</summary>
-        public bool HasComboEffectiveAlways { get; set; }
+        ///// <summary>(デコーダOFFでも)常に有効な同時打鍵列があるか</summary>
+        //public bool HasComboEffectiveAlways { get; set; }
 
         /// <summary>
         /// Repeatableなキー
@@ -94,7 +133,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             comboSubKeys.Clear();
             ComboShiftKeys.Clear();
             MiscKeys.Clear();
-            HasComboEffectiveAlways = false;
+            //HasComboEffectiveAlways = false;
         }
 
         /// <summary>
@@ -103,11 +142,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <param name="deckeyList">デコーダ向けのキーリスト</param>
         /// <param name="comboKeyList">同時打鍵検索用キーのリスト</param>
         /// <param name="shiftKind">Prefixの場合は、先頭キーを固定した順列を生成する</param>
-        public void AddEntry(List<int> deckeyList, List<int> comboKeyList, ComboKind shiftKind, bool hasStr, bool effectiveAlways)
+        public void AddEntry(List<int> deckeyList, List<int> comboKeyList, ComboKind shiftKind, bool hasStr)
         {
-            logger.DebugH(() => $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(deckeyList)}, comboShiftedKeyList={KeyCombinationHelper.EncodeKeyList(comboKeyList)}, ShiftKeyKind={shiftKind}, HasString={hasStr}");
+            logger.DebugH(() =>
+                $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(deckeyList)}, comboShiftedKeyList={KeyCombinationHelper.EncodeKeyList(comboKeyList)}, " +
+                $"ShiftKeyKind={shiftKind}, HasString={hasStr}");
             if (deckeyList._notEmpty() && comboKeyList._notEmpty()) {
-                var keyCombo = new KeyCombination(deckeyList, comboKeyList, shiftKind, hasStr, effectiveAlways);
+                var keyCombo = new KeyCombination(deckeyList, comboKeyList, shiftKind, hasStr);
                 void setKeyCombo(string k)
                 {
                     if (hasStr || !keyComboDict.ContainsKey(k)) {
@@ -174,7 +215,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>
         /// 部分キーに対して、非終端マークをセット<br/>定義されていない部分キーの場合は新しく KeyCombination を生成しておく
         /// </summary>        
-        public void SetNonTerminalMarkForSubkeys()
+        public void SetNonTerminalMarkForSubkeys(bool bEisu)
         {
             logger.DebugH($"ENTER: comboSubKeys.Count={comboSubKeys.Count}");
             int i = 0;
@@ -185,7 +226,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 if (keyCombo == null) {
                     // 存在していなかった部分キーを追加
                     if (i < 500) logger.DebugH($"Add non terminal subkey: {key}");
-                    keyComboDict[key] = keyCombo = new KeyCombination(null, null, ComboKind.None, false, false);
+                    // 英数モードの場合は、1文字キーを単打可能に設定する
+                    List<int> dkList = bEisu && key._safeLength() == 1 ? KeyCombinationHelper.DecodeKey(key) : null;
+                    keyComboDict[key] = keyCombo = new KeyCombination(dkList, null, ComboKind.None, dkList._notEmpty());
                 }
                 keyCombo.SetNonTerminal();
                 ++i;
@@ -297,11 +340,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
             List<string> lines = new List<string>();
-            lines.Add($"HasComboEffectiveAlways={HasComboEffectiveAlways}");
+            //lines.Add($"HasComboEffectiveAlways={HasComboEffectiveAlways}");
             foreach (var pair in keyComboDict) {
                 var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
                 var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
-                lines.Add($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal} Always={pair.Value.IsEffectiveAlways}");
+                lines.Add($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal}");
             }
             foreach (var pair in ComboShiftKeys.Pairs) {
                 lines.Add($"ShiftKey: {pair.Key}={pair.Value}");

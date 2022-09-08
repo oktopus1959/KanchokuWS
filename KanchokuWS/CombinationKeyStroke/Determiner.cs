@@ -166,29 +166,29 @@ namespace KanchokuWS.CombinationKeyStroke
             KeyCombinationPool.Initialize();
             Clear();
 
-            new TableFileParser().ParseTableFile(tableFile, "tmp/tableFile1.tbl", KeyCombinationPool.Singleton1, true, bTest);
+            new TableFileParser().ParseTableFile(tableFile, "tmp/tableFile1.tbl", KeyCombinationPool.SingletonK1, KeyCombinationPool.SingletonA1, true, bTest);
 
             if (tableFile2._notEmpty()) {
-                new TableFileParser().ParseTableFile(tableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.Singleton2, false, bTest);
+                new TableFileParser().ParseTableFile(tableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.SingletonK2, KeyCombinationPool.SingletonA2, false, bTest);
             }
         }
 
         /// <summary>
-        /// 選択されたテーブルファイルに合わせて、KeyComboPoolを入れ替える
+        /// 選択されたテーブルファイルに合わせて、漢直用KeyComboPoolを入れ替える
         /// </summary>
-        public void ExchangeKeyCombinationPool()
+        public void SelectKanchokuKeyCombinationPool(int tableNum, bool bDecoderOn)
         {
-            KeyCombinationPool.ExchangeCurrentPool();
+            KeyCombinationPool.ChangeCurrentPoolBySelectedTable(tableNum, bDecoderOn);
         }
 
-        public void UsePrimaryPool()
+        public void UsePrimaryPool(bool bDecoderOn)
         {
-            KeyCombinationPool.UsePrimaryPool();
+            KeyCombinationPool.UsePrimaryPool(bDecoderOn);
         }
 
-        public void UseSecondaryPool()
+        public void UseSecondaryPool(bool bDecoderOn)
         {
-            KeyCombinationPool.UseSecondaryPool();
+            KeyCombinationPool.UseSecondaryPool(bDecoderOn);
         }
 
         public bool IsEnabled => KeyCombinationPool.CurrentPool.Enabled;
@@ -247,7 +247,7 @@ namespace KanchokuWS.CombinationKeyStroke
             bool bUnconditional = false;
 
             try {
-                var stroke = new Stroke(decKey, dt);
+                var stroke = new Stroke(decKey, bDecoderOn, dt);
                 var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
                 if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
                     // 終端、かつキーリピートが可能なキーだった(BacSpaceとか)ので、それを返す
@@ -294,7 +294,7 @@ namespace KanchokuWS.CombinationKeyStroke
                             } else {
                                 // 第2打鍵以降の場合は、同時打鍵チェック
                                 bool bTimer = false;
-                                result = strokeList.GetKeyCombinationWhenKeyDown(bDecoderOn, out bTimer, out bUnconditional);
+                                result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer, out bUnconditional);
                                 if (result._isEmpty()) {
                                     if (bTimer || strokeList.IsSuccessiveShift2ndKey()) {
                                         logger.DebugH(() => $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}, TimerKind={(bTimer ? TimerKind.JustTwoComboKey : TimerKind.SecondOrLaterChar)}");

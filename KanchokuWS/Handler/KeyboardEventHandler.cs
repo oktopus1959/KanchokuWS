@@ -482,12 +482,14 @@ namespace KanchokuWS.Handler
 
             public string modifiersStateStr()
             {
-                return $"spaceKeyState={spaceKeyInfo.KeyState}"
-                + $"\ncapsKeyState={capsKeyInfo.KeyState}"
-                + $"\nalnumKeyState={alnumKeyInfo.KeyState}"
-                + $"\nnferKeyState={nferKeyInfo.KeyState}"
-                + $"\nxferKeyState={xferKeyInfo.KeyState}"
-                + $"\nrshiftKeyState={rshiftKeyInfo.KeyState}\n";
+                return Logger.IsInfoEnabled
+                    ? $"spaceKeyState={spaceKeyInfo.KeyState}"
+                    + $"\ncapsKeyState={capsKeyInfo.KeyState}"
+                    + $"\nalnumKeyState={alnumKeyInfo.KeyState}"
+                    + $"\nnferKeyState={nferKeyInfo.KeyState}"
+                    + $"\nxferKeyState={xferKeyInfo.KeyState}"
+                    + $"\nrshiftKeyState={rshiftKeyInfo.KeyState}\n"
+                    : "";
             }
 
         }
@@ -917,14 +919,16 @@ namespace KanchokuWS.Handler
             //}
             while (vkeyQueue.Count > 0) {
                 logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}, bDecoderOn={bDecoderOn}, mod={mod:x}H, kanchokuCode={kanchokuCode}");
+                var determiner = CombinationKeyStroke.Determiner.Singleton;
                 var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
                 kanchokuCode = vkeyQueue.Peek();
-                if ((bDecoderOn || currentPool.HasComboEffectiveAlways) && mod == 0 &&
+                if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
+                    determiner.IsEnabled && mod == 0 &&
                     kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END &&
                     ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM ||
                     currentPool.GetEntry(kanchokuCode) != null)) {    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする
                     // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
-                    CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode, bDecoderOn, (decKey) => handleComboKeyRepeat(vkey, decKey));
+                    determiner.KeyDown(kanchokuCode, bDecoderOn, (decKey) => handleComboKeyRepeat(vkey, decKey));
                     result = true;
                 } else {
                     result = invokeHandler(kanchokuCode, mod);
@@ -1051,10 +1055,12 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private void keyboardUpHandler(bool bDecoderOn, int vkey, bool leftCtrl, bool rightCtrl, uint modFlag)
         {
-            if ((bDecoderOn || CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool.HasComboEffectiveAlways) && !leftCtrl && !rightCtrl && modFlag == 0) {
+            var determiner = CombinationKeyStroke.Determiner.Singleton;
+            if (/*(bDecoderOn || CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool.HasComboEffectiveAlways) &&*/
+                determiner.IsEnabled &&  !leftCtrl && !rightCtrl && modFlag == 0) {
                 int deckey = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
                 if (deckey >= 0 && deckey < DecoderKeys.STROKE_DECKEY_END) {
-                    CombinationKeyStroke.Determiner.Singleton.KeyUp(deckey, bDecoderOn);
+                    determiner.KeyUp(deckey, bDecoderOn);
                 }
             }
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={false}");
@@ -1119,12 +1125,15 @@ namespace KanchokuWS.Handler
                     //    return RotateReverseDateString?.Invoke() ?? false;
                     default:
                         if (kanchokuCode >= DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET && kanchokuCode < DecoderKeys.UNCONDITIONAL_DECKEY_END) {
+                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}");
                             return InvokeDecoderUnconditionally?.Invoke(kanchokuCode - DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET, mod) ?? false;
                         }
                         if (bUnconditional) {
+                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}, bUncond={bUnconditional}");
                             return InvokeDecoderUnconditionally?.Invoke(kanchokuCode, mod) ?? false;
                         }
                         if (kanchokuCode >= 0) {
+                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"FuncDispatcher: kanchokuCode={kanchokuCode}");
                             return FuncDispatcher?.Invoke(kanchokuCode, mod) ?? false;
                         }
                         return false;

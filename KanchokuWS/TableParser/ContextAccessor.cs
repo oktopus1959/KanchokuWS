@@ -51,12 +51,21 @@ namespace KanchokuWS.TableParser
             get { return Context.shiftKeyKind; }
             set { Context.shiftKeyKind = value; }
         }
-        protected bool bComboEffectiveAlways {
-            get { return Context.bComboEffectiveAlways; }
-            set { Context.bComboEffectiveAlways = value; }
-        }
+        //protected bool bComboEffectiveAlways {
+        //    get { return Context.bComboEffectiveAlways; }
+        //    set { Context.bComboEffectiveAlways = value; }
+        //}
+        //protected bool bComboEffectiveOnKanchokuMode {
+        //    get { return Context.bComboEffectiveOnKanchokuMode; }
+        //    set { Context.bComboEffectiveOnKanchokuMode = value; }
+        //}
+        //protected bool bComboEffectiveOnEisuMode {
+        //    get { return Context.bComboEffectiveOnEisuMode; }
+        //    set { Context.bComboEffectiveOnEisuMode = value; }
+        //}
         protected Dictionary<string, List<string>> linesMap => Context.linesMap;
         protected KeyCombinationPool keyComboPool => Context.keyComboPool;
+        protected int comboDeckeyStart => Context.comboDeckeyStart;
         protected List<string> OutputLines => Context.OutputLines;
         protected PlaceHolders placeHolders => Context.placeHolders;
 
@@ -80,7 +89,7 @@ namespace KanchokuWS.TableParser
         protected string CurrentStr => tableLines.CurrentStr;
         protected void ClearCurrentStr() { tableLines.ClearCurrentStr(); }
         protected string RewritePreTargetStr { get { return tableLines.RewritePreTargetStr; } set { tableLines.RewritePreTargetStr = value; } }
-        protected void ReadAllLines(string filename) { tableLines.ReadAllLines(filename); }
+        protected void ReadAllLines(string filename, bool bPrimary, bool bForKanchoku) { tableLines.ReadAllLines(filename, bPrimary, bForKanchoku); }
         protected void IncludeFile() { tableLines.IncludeFile(); }
         protected void EndInclude() { tableLines.EndInclude(); }
         protected void StoreLineBlock() { tableLines.StoreLineBlock(); }

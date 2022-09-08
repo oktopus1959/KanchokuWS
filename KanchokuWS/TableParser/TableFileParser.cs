@@ -108,7 +108,7 @@ namespace KanchokuWS.TableParser
 
         int makeComboDecKey(int decKey)
         {
-            return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.COMBO_DECKEY_START;
+            return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + comboDeckeyStart;
         }
 
         int makeShiftedDecKey(int decKey, int shiftOffset)
@@ -487,19 +487,21 @@ namespace KanchokuWS.TableParser
                         // 同時打鍵での中間キーは終端キーとの重複を避けるためシフト化しておく
                         list[i] = makeNonTerminalDuplicatableComboKey(list[i]);
                     }
-                } else if (list[0] < DecoderKeys.PLANE_DECKEY_NUM) {
-                    list[0] += shiftOffset;
-                }
-
-                if (isInCombinationBlock || list.Count == 1) {
-                    AddCombinationKeyCombo(list, shiftOffset, hasStr, bComboEffectiveAlways);
+                    AddCombinationKeyCombo(list, shiftOffset, hasStr);
                 } else {
-                    if (keyComboPool != null) keyComboPool.ContainsSequentialShiftKey = true;
-                    for (int i = 0; i < list.Count - 1; ++i) {
-                        int dk = list[i];
-                        if (!sequentialShiftKeys.Contains(dk)) {
-                            addSequentialShiftKey(dk, shiftOffset);
-                            sequentialShiftKeys.Add(dk);
+                    if (list[0] < DecoderKeys.PLANE_DECKEY_NUM) {
+                        list[0] += shiftOffset;
+                    }
+                    if (list.Count == 1) {
+                        AddCombinationKeyCombo(list, shiftOffset, hasStr);
+                    } else {
+                        if (keyComboPool != null) keyComboPool.ContainsSequentialShiftKey = true;
+                        for (int i = 0; i < list.Count - 1; ++i) {
+                            int dk = list[i];
+                            if (!sequentialShiftKeys.Contains(dk)) {
+                                addSequentialShiftKey(dk, shiftOffset);
+                                sequentialShiftKeys.Add(dk);
+                            }
                         }
                     }
                 }
@@ -507,12 +509,12 @@ namespace KanchokuWS.TableParser
         }
 
         // 同時打鍵列の組合せを作成して登録しておく
-        protected void AddCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr, bool effectiveAlways)
+        protected void AddCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr)
         {
             logger.DebugH(() => $"{deckeyList._keyString()}={CurrentStr}, shiftOffset={shiftOffset}, hasStr={hasStr}");
             var comboKeyList = deckeyList.Select(x => makeShiftedDecKey(x, shiftOffset)).ToList();      // 先頭キーのオフセットに合わせる
             keyComboPool?.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
-            keyComboPool?.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr, effectiveAlways);
+            keyComboPool?.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr);
         }
 
         void addSequentialShiftKey(int decKey, int shiftOffset)
@@ -1009,13 +1011,16 @@ namespace KanchokuWS.TableParser
         // グローバルなルートパーザか
         public override bool IsRootParser => true;
 
+        bool isKanchokuModeParser = true;
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public RootTableParser()
+        public RootTableParser(bool bForKanchoku)
             : base(RootTableNode, null)
         {
+            isKanchokuModeParser = bForKanchoku;
         }
 
         /// <summary>
@@ -1072,9 +1077,9 @@ namespace KanchokuWS.TableParser
             addExtModfierAsSingleHitKey();
 
             // 部分キーに対して、非終端マークをセット
-            Context.keyComboPool?.SetNonTerminalMarkForSubkeys();
+            keyComboPool?.SetNonTerminalMarkForSubkeys(!isKanchokuModeParser);
             if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
-                Context.keyComboPool?.DebugPrint();
+                keyComboPool?.DebugPrint();
             }
 
             if (Context.bRewriteEnabled) {
@@ -1085,10 +1090,12 @@ namespace KanchokuWS.TableParser
             // 全ノードの情報を OutputLines に書き出す
             RootTableNode.OutputLine(OutputLines);
 
-            // ルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる
-            addMyCharFunctionInRootStrokeTable();
+            if (isKanchokuModeParser) {
+                // 漢直モードの場合、ルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる
+                addMyCharFunctionInRootStrokeTable();
+            }
 
-            logger.InfoH($"LEAVE: KeyCombinationPool.Count={Context.keyComboPool?.Count}");
+            logger.InfoH($"LEAVE: KeyCombinationPool.Count={keyComboPool?.Count}");
         }
 
         public void ParseDirectives()
@@ -1107,9 +1114,10 @@ namespace KanchokuWS.TableParser
             {
                 int dk = VirtualKeys.GetFuncDeckeyByName(keyName);
                 if (dk >= 0) {
-                    if (RootTableNode.GetNthSubNode(dk) == null && RootTableNode.GetNthSubNode(dk + DecoderKeys.COMBO_DECKEY_START) != null) {
+                    if (RootTableNode.GetNthSubNode(dk) == null &&
+                        RootTableNode.GetNthSubNode(dk + comboDeckeyStart) != null) {
                         // 単打設定が存在せず、同時打鍵の先頭キーになっている場合は、単打設定を追加する
-                        AddCombinationKeyCombo(Helper.MakeList(dk), 0, true, false);  // 単打指定
+                        AddCombinationKeyCombo(Helper.MakeList(dk), 0, true);  // 単打指定
                         OutputLines.Add($"-{dk}>\"!{{{keyName}}}\"");
                     }
                 }
@@ -1141,8 +1149,6 @@ namespace KanchokuWS.TableParser
     {
         private static Logger logger = Logger.GetLogger();
 
-        TableLines tableLines = new TableLines();
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -1157,19 +1163,36 @@ namespace KanchokuWS.TableParser
         /// <param name="filename"></param>
         /// <param name="outFilename"></param>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public void ParseTableFile(string filename, string outFilename, KeyCombinationPool pool, bool primary, bool bTest = false)
+        public void ParseTableFile(string filename, string outFilename, KeyCombinationPool poolK, KeyCombinationPool poolA, bool primary, bool bTest = false)
         {
             logger.InfoH($"ENTER: filename={filename}");
-            tableLines.ReadAllLines(filename);
 
-            if (tableLines.NotEmpty) {
-                ParserContext.CreateSingleton(tableLines, pool, primary);
-                var parser = new RootTableParser();
+            List<string> outputLines = new List<string>();
+
+            void parseRootTable(TableLines tblLines, KeyCombinationPool pool, bool bKanchoku)
+            {
+                ParserContext.CreateSingleton(tblLines, pool, DecoderKeys.GetComboDeckeyStart(bKanchoku));
+                var parser = new RootTableParser(bKanchoku);
                 parser.ParseRootTable();
-                writeAllLines(outFilename, ParserContext.Singleton.OutputLines);
-                writeAllLines($"tmp/parsedTableFile{(primary ? 1 : 2)}.txt", ParserContext.Singleton.tableLines.GetLines());
+                //writeAllLines(outFilename, ParserContext.Singleton.OutputLines);
+                outputLines.AddRange(ParserContext.Singleton.OutputLines);
+                writeAllLines($"tmp/parsedTableFile{(bKanchoku ? 'K' : 'A')}{(primary ? 1 : 2)}.txt", ParserContext.Singleton.tableLines.GetLines());
+                ParserContext.FinalizeSingleton();
+            }
+
+            // 漢直モードの解析
+            TableLines tableLines = new TableLines();
+            tableLines.ReadAllLines(filename, primary, true);
+            if (tableLines.NotEmpty) {
+                parseRootTable(tableLines, poolK, true);
+                // 英数モードの解析
+                tableLines = new TableLines();
+                tableLines.ReadAllLines(filename, primary, false);
+                parseRootTable(tableLines, poolA, false);
+                // 解析結果の出力
+                writeAllLines(outFilename, outputLines);
             } else {
-                tableLines.Error($"テーブルファイル({filename})が開けません");
+                tableLines.Error($"テーブルファイル({filename})が開けないか、内容が空でした。");
             }
 
             if (!bTest) tableLines.showErrorMessage();
@@ -1186,14 +1209,17 @@ namespace KanchokuWS.TableParser
         public void ReadDirectives(string filename, bool primary)
         {
             logger.InfoH($"ENTER: filename={filename}");
-            tableLines.ReadAllLines(filename);
+
+            TableLines tableLines = new TableLines();
+            tableLines.ReadAllLines(filename, primary, true);
 
             if (tableLines.NotEmpty) {
-                ParserContext.CreateSingleton(tableLines, null, primary);
-                var parser = new RootTableParser();
+                ParserContext.CreateSingleton(tableLines, null, DecoderKeys.GetComboDeckeyStart(true));
+                var parser = new RootTableParser(true);
                 parser.ParseDirectives();
+                ParserContext.FinalizeSingleton();
             } else {
-                tableLines.Error($"テーブルファイル({filename})が開けません");
+                //tableLines.Error($"テーブルファイル({filename})が開けません");
                 //tableLines.showErrorMessage();
             }
 

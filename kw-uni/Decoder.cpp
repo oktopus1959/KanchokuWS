@@ -499,7 +499,7 @@ public:
         _LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
 
         // 同時打鍵コードなら、RootStrokeStateを削除しておく⇒と思ったが、実際にはそのようなケースがあったのでコメントアウト(「のにいると」で  KkDF のケース)
-        //if (keyId >= COMBO_DECKEY_START && keyId < COMBO_DECKEY_END) {
+        //if (keyId >= COMBO_DECKEY_START && keyId < EISU_COMBO_DECKEY_END) {
         //    _LOG_DEBUGH(_T("\nENTER: Clear stroke"));
         //    startState->HandleDeckey(CLEAR_STROKE_DECKEY);
         //    _LOG_DEBUGH(_T("LEAVE: Clear stroke\n"));

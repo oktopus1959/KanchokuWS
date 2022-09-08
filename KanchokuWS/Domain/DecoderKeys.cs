@@ -64,8 +64,17 @@ namespace KanchokuWS
         // 同時打鍵用修飾DECKEYの終わり(の次)
         public const int COMBO_DECKEY_END = COMBO_EX_DECKEY_START + FUNC_DECKEY_NUM;
 
+        // 英数モード同時打鍵用修飾DECKEYの始まり
+        public const int EISU_COMBO_DECKEY_START = COMBO_DECKEY_END;
+
+        // 機能キーに対する英数モード同時打鍵用修飾DECKEYの始まり
+        public const int EISU_COMBO_EX_DECKEY_START = EISU_COMBO_DECKEY_START + NORMAL_DECKEY_NUM;
+
+        // 英数モード同時打鍵用修飾DECKEYの終わり(の次)
+        public const int EISU_COMBO_DECKEY_END = EISU_COMBO_EX_DECKEY_START + FUNC_DECKEY_NUM;
+
         // Ctrl修飾DECKEYの始まり
-        public const int CTRL_DECKEY_START = COMBO_DECKEY_END;
+        public const int CTRL_DECKEY_START = EISU_COMBO_DECKEY_END;
 
         // Ctrl修飾DECKEYの終わり(の次)
         public const int CTRL_DECKEY_END = CTRL_DECKEY_START + NORMAL_DECKEY_NUM;
@@ -191,9 +200,9 @@ namespace KanchokuWS
 
         /// <summary> 
         /// 特殊なDECKEY<br/>
-        /// CTRL_SHIFT_FUNC_DECKEY_END よりも大きな値にする必要がある
+        /// UNCONDITIONAL_DECKEY_END よりも大きな値にする必要がある
         /// </summary>
-        public const int SPECIAL_DECKEY_ID_BASE = 0x800;
+        public const int SPECIAL_DECKEY_ID_BASE = 3000;
 
         public const int TOGGLE_DECKEY = SPECIAL_DECKEY_ID_BASE + 1;     // ON/OFF の切り替えキー
         public const int ACTIVE_DECKEY = TOGGLE_DECKEY + 1;             // ON への切り替えキー
@@ -256,5 +265,18 @@ namespace KanchokuWS
 
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 
+        // END_OF_AUTO_MAKE
+
+        /// <summary>同時打鍵用修飾DECKEYの始まりの取得</summary>
+        public static int GetComboDeckeyStart(bool bForKanchoku)
+        {
+            return bForKanchoku ? COMBO_DECKEY_START : EISU_COMBO_DECKEY_START;
+        }
+
+        /// <summary>英数モードでの同時打鍵キーか</summary>
+        public static bool IsEisuComboDeckey(int deckey)
+        {
+            return deckey >= EISU_COMBO_DECKEY_START && deckey <= EISU_COMBO_DECKEY_END;
+        }
     }
 }

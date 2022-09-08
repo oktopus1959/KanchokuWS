@@ -164,6 +164,11 @@ namespace KanchokuWS.CombinationKeyStroke
             }
         }
 
+        public static int DecodeKey(char key)
+        {
+            return decodeChar(key);
+        }
+
         public static List<int> DecodeKey(string key)
         {
             return key._notEmpty() ? key.Select(x => decodeChar(x)).ToList() : new List<int>();

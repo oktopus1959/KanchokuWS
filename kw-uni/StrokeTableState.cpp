@@ -293,7 +293,7 @@ namespace {
         void handleStrokeKeys(int deckey) {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             STATE_COMMON->SyncFirstStrokeKeyCount();    // 第1ストロークキーカウントの同期
-            if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END) {
+            if (deckey >= COMBO_DECKEY_START && deckey < EISU_COMBO_DECKEY_END) {
                 bCombination = true;
             }
             if (!bHiraganaized && deckey < NORMAL_DECKEY_NUM && SETTINGS->hiraToKataNormalPlane) {

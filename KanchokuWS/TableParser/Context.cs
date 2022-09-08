@@ -126,6 +126,11 @@ namespace KanchokuWS.TableParser
             return blockInfoList.Count;
         }
 
+        public void Clear()
+        {
+            blockInfoList.Clear();
+        }
+
         public string CurrentDirPath {
             get {
                 var path = blockInfoList._isEmpty() ? "(empty)" : blockInfoList.Last().DirPath;
@@ -192,7 +197,11 @@ namespace KanchokuWS.TableParser
 
         private List<string> tableLines = new List<string>();
 
-        public bool IsPrimary { get; set; } = false;
+        public bool IsPrimary { get; private set; } = false;
+
+        bool IsForKanchoku { get; set; } = false;
+
+        bool IsForEisu => !IsForKanchoku;
 
         // ブロック情報のスタック
         BlockInfoStack blockInfoStack = new BlockInfoStack();
@@ -224,8 +233,17 @@ namespace KanchokuWS.TableParser
 
         public string RewritePreTargetStr { get; set; }                    // 前置書き換え対象文字列
 
+        /// <summary>コンストラクタ</summary>
         public TableLines()
         {
+        }
+
+        public void Initialize(bool bPrimary, bool bForKanchoku)
+        {
+            IsPrimary = bPrimary;
+            IsForKanchoku = bForKanchoku;
+            tableLines.Clear();
+            blockInfoStack.Clear();
             blockInfoStack.Push(KanchokuIni.Singleton.KanchokuDir, "", 0);
         }
 
@@ -238,6 +256,7 @@ namespace KanchokuWS.TableParser
                 var contents = Helper.GetFileContent(includeFilePath, (e) => logger.Error(e._getErrorMsg()));
                 if (contents._notEmpty()) {
                     lines.AddRange(contents._safeReplace("\r", "")._split('\n'));
+                    rewriteKanchokuOrEisuModeBlock(lines);
                     int nextLineNum = lineNumber;
                     if (bInclude) {
                         lines.Add("#end __include__");
@@ -250,12 +269,71 @@ namespace KanchokuWS.TableParser
             return lines;
         }
 
-        public void ReadAllLines(string filename)
+        /// <summary>漢直モード/英数モードに対して、モード外となるブロックをコメントアウトする<br/>
+        ///  - bBlockForKanchokuMode : true: 漢直モード用(英数モードのみのブロックをコメントアウト)<br/>
+        ///  - bBlockForEisu : true: 英数モード用(漢直モードのみのブロックをコメントアウト)
+        /// </summary>
+        private void rewriteKanchokuOrEisuModeBlock(List<string> lines)
         {
-            tableLines.InsertRange(0, readAllLines(filename, false));
+            bool bInKanchokuMode = true;
+            bool bInEisuMode = false;
+            for (int idx = 0; idx < lines.Count; ++idx) {
+                var line = lines[idx];
+                var strippedLowerLine = line._strip()._toLower();
+                if (strippedLowerLine._notEmpty() && strippedLowerLine[0] == '#') {
+                    var items = strippedLowerLine._reReplace(@"[ \t]{2,}", " ")._split(' ');
+                    if (items._notEmpty()) {
+                        if (items[0] == "#enablecomboonboth" || items[0] == "#enablealways" || items[0] == "#enabledalways") {
+                            // #enableAlways: デコーダOFFでも有効
+                            bInKanchokuMode = true;
+                            bInEisuMode = true;
+                            lines[idx] = ";;;; " + line;
+                            continue;
+                        } else if (items[0] == "#enablecombooneisu") {
+                            // #enableComboOnEisu: 英数モード時のみ有効
+                            bInKanchokuMode = false;
+                            bInEisuMode = true;
+                            lines[idx] = ";;;; " + line;
+                            continue;
+                        } else if (items[0] == "#end") {
+                            if (items.Length >= 2 &&
+                                items[1] == "enablecomboonboth" || items[1] == "enablealways" || items[1] == "enabledalways" || items[1] == "enablecombooneisu") {
+                                bInKanchokuMode = true;
+                                bInEisuMode = false;
+                                lines[idx] = ";;;; " + line;
+                                continue;
+                            }
+                        }
+                    }
+                }
+                if ((IsForKanchoku && !bInKanchokuMode) || (IsForEisu && !bInEisuMode)) {
+                    if (strippedLowerLine._notEmpty() &&
+                        (strippedLowerLine[0] != '#' ||
+                        (!strippedLowerLine._safeContains("sands") && !strippedLowerLine._safeContains("combination")))) {
+                        // コメントアウト
+                        lines[idx] = ";;;; " + line;
+                    }
+                }
+            }
         }
 
-        // ファイルをインクルードする
+        /// <summary>
+        /// tableLinesをクリアしてから、ファイルの全行を読み込んで tableLnes に挿入する<br/>
+        /// bForKanchokuフラグによって、それぞれのモードに無関係のところをコメントアウトする
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="bForKanchoku"></param>
+        public void ReadAllLines(string filename, bool bPrimary, bool bForKanchoku)
+        {
+            Initialize(bPrimary, bForKanchoku);
+            tableLines.AddRange(readAllLines(filename, false));
+        }
+
+        /// <summary>
+        /// ファイルをインクルードする<br/>
+        /// bForKanchokuフラグによって、それぞれのモードに無関係のところをコメントアウトする
+        /// </summary>
+        /// <param name="bForKanchoku"></param>
         public void IncludeFile() {
             logger.DebugH("CALLED");
             ReadWordOrString();
@@ -327,43 +405,45 @@ namespace KanchokuWS.TableParser
             }
         }
 
-        // ifdef else endif ブロックで真となる方をロードする
+        /// <summary>if(n)def else endif ブロックで偽となる方をコメントアウトする<br/>
+        /// - which : true = else側をコメントアウト; false = if(n)def 側をコメントアウト
+        /// </summary>
         public void RewriteIfdefBlock(bool which)
         {
             logger.DebugH(() => $"CALLED: block={which}");
             int lineNum = lineNumber;
-            tableLines[lineNum] = ";; " + tableLines[lineNum];
+            tableLines[lineNum] = ";;; " + tableLines[lineNum];
             ++lineNum;
             if (which) {
                 while (lineNum < tableLines.Count) {
                     if (tableLines[lineNum]._startsWith("#else")) {
                         while (lineNum < tableLines.Count) {
-                            tableLines[lineNum] = ";; " + tableLines[lineNum];
-                            if (tableLines[lineNum]._startsWith(";; #endif")) {
+                            tableLines[lineNum] = ";;; " + tableLines[lineNum];
+                            if (tableLines[lineNum]._startsWith(";;; #endif")) {
                                 break;
                             }
                             ++lineNum;
                         }
                         return;
                     } else if (tableLines[lineNum]._startsWith("#endif")) {
-                        tableLines[lineNum] = ";; " + tableLines[lineNum];
+                        tableLines[lineNum] = ";;; " + tableLines[lineNum];
                         return;
                     }
                     ++lineNum;
                 }
             } else {
                 while (lineNum < tableLines.Count) {
-                    tableLines[lineNum] = ";; " + tableLines[lineNum];
-                    if (tableLines[lineNum]._startsWith(";; #else")) {
+                    tableLines[lineNum] = ";;; " + tableLines[lineNum];
+                    if (tableLines[lineNum]._startsWith(";;; #else")) {
                         while (lineNum < tableLines.Count) {
                             if (tableLines[lineNum]._startsWith("#endif")) {
-                                tableLines[lineNum] = ";; #endif";
+                                tableLines[lineNum] = ";;; #endif";
                                 return;
                             }
                             ++lineNum;
                         }
                         return;
-                    } else if (tableLines[lineNum]._startsWith(";; #endif")) {
+                    } else if (tableLines[lineNum]._startsWith(";;; #endif")) {
                         return;
                     }
                     ++lineNum;
@@ -587,7 +667,7 @@ namespace KanchokuWS.TableParser
         }
 
         string parsedFileAndLinenum() {
-            return blockInfoStack.HasNestedLines() ? $"\r\n(tmp/parsedTableFile{(IsPrimary ? 1 : 2)}.txt の {LineNumber}行目)\r\n" : "";
+            return blockInfoStack.HasNestedLines() ? $"\r\n(tmp/parsedTableFile{(IsForKanchoku ? 'K' : 'A')}{(IsPrimary ? 1 : 2)}.txt の {LineNumber}行目)\r\n" : "";
         }
 
         int calcErrorColumn() {
@@ -739,7 +819,7 @@ namespace KanchokuWS.TableParser
 
         public int arrowIndex = -1;                  // ARROWインデックス
 
-        public bool bPrimary;                        // 主テーブルか
+        public bool bPrimary => tableLines.IsPrimary;                        // 主テーブルか
 
         public bool bRewriteEnabled = false;         // 書き換えノードがあった
 
@@ -755,9 +835,6 @@ namespace KanchokuWS.TableParser
         // 同時打鍵によるシフト種別
         public ShiftKeyKind shiftKeyKind = ShiftKeyKind.None;
 
-        // 同時打鍵がいつでも有効か(デコーダがOFFでも)
-        public bool bComboEffectiveAlways = false;
-
         // 定義列マップ
         public Dictionary<string, List<string>> linesMap = new Dictionary<string, List<string>>();
 
@@ -766,6 +843,9 @@ namespace KanchokuWS.TableParser
 
         // 対象となる KeyComboPool
         public KeyCombinationPool keyComboPool;
+
+        // COMBO用のDecKeyの開始位置
+        public int comboDeckeyStart = 0;
 
         // 出力用のバッファ
         public List<string> OutputLines = new List<string>();
@@ -797,17 +877,22 @@ namespace KanchokuWS.TableParser
         /// コンストラクタ
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
-        private ParserContext(TableLines tableLines, KeyCombinationPool pool, bool primary)
+        /// <param name="comboDkStart"></param>
+        private ParserContext(TableLines tableLines, KeyCombinationPool pool, int comboDkStart)
         {
             this.tableLines = tableLines;
-            this.tableLines.IsPrimary = primary;
-            bPrimary = primary;
             keyComboPool = pool;
+            comboDeckeyStart = comboDkStart;
         }
 
-        public static void CreateSingleton(TableLines tableLines, KeyCombinationPool pool, bool primary)
+        public static void CreateSingleton(TableLines tableLines, KeyCombinationPool pool, int comboDkStart)
         {
-            Singleton = new ParserContext(tableLines, pool, primary);
+            Singleton = new ParserContext(tableLines, pool, comboDkStart);
+        }
+
+        public static void FinalizeSingleton()
+        {
+            Singleton = null;
         }
 
         public static ParserContext Singleton { get; private set; }

@@ -24,7 +24,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>打鍵されたキーのModulo化キーコード(検索キーを生成するのに使用)</summary>
         public int ModuloDecKey => ModuloizeKey(OrigDecoderKey);
 
-        public int ComboShiftDecKey => ModuloDecKey + DecoderKeys.COMBO_DECKEY_START;
+        public int ComboShiftDecKey => ModuloDecKey + DecoderKeys.GetComboDeckeyStart(IsKanchokuMode);
 
         /// <summary>打鍵されたキーのデコーダキーコード</summary>
         public int OrigDecoderKey { get; private set; }
@@ -41,6 +41,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             return OrigDecoderKey == decKey || ModuloDecKey == ModuloizeKey(decKey);
         }
+
+        /// <summary>漢直モード(デコーダOn)か</summary>
+        public bool IsKanchokuMode { get; private set; }
 
         /// <summary>単打可能なキーか<br/>ただし出力文字列が定義されていない打鍵もある</summary>
         public bool IsSingleHittable { get; private set; }
@@ -111,9 +114,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>
         /// コンストラクタ(引数あり)
         /// </summary>
-        public Stroke(int decKey, DateTime dt)
+        public Stroke(int decKey, bool bDecoderOn, DateTime dt)
         {
             OrigDecoderKey = decKey;
+            IsKanchokuMode = bDecoderOn;
             IsSuccessiveShift = KeyCombinationPool.IsComboSuccessive(OrigDecoderKey);
             IsOneshotShift = KeyCombinationPool.IsComboOneshot(OrigDecoderKey);
             IsPrefixShift = KeyCombinationPool.IsComboPrefix(OrigDecoderKey);

@@ -332,7 +332,7 @@ bool State::isStrokableFuncKey(int deckey) {
 
 // DECKEY は同時打鍵Shift修飾キーか
 bool State::isComboShiftedKey(int deckey) {
-    return deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END;
+    return deckey >= COMBO_DECKEY_START && deckey < EISU_COMBO_DECKEY_END;
 }
 // DECKEY はCtrl飾修キーか
 bool State::isCtrledKey(int deckey) {

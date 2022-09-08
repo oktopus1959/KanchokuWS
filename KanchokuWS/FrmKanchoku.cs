@@ -309,17 +309,20 @@ namespace KanchokuWS
 
         private void logConstant()
         {
-            logger.DebugH(() => $"TOTAL_SHIFT_DECKEY_NUM={DecoderKeys.TOTAL_SHIFT_DECKEY_NUM}");
-            logger.DebugH(() => $"FUNC_DECKEY_START={DecoderKeys.FUNC_DECKEY_START}");
-            logger.DebugH(() => $"STROKE_DECKEY_END={DecoderKeys.STROKE_DECKEY_END}");
-            logger.DebugH(() => $"COMBO_DECKEY_START={DecoderKeys.COMBO_DECKEY_START}");
-            logger.DebugH(() => $"COMBO_EX_DECKEY_START={DecoderKeys.COMBO_EX_DECKEY_START}");
-            logger.DebugH(() => $"CTRL_DECKEY_START={DecoderKeys.CTRL_DECKEY_START}");
-            logger.DebugH(() => $"TOTAL_DECKEY_NUM={DecoderKeys.TOTAL_DECKEY_NUM}");
-            logger.DebugH(() => $"UNCONDITIONAL_DECKEY_OFFSET={DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET}");
-            logger.DebugH(() => $"UNCONDITIONAL_DECKEY_END={DecoderKeys.UNCONDITIONAL_DECKEY_END}");
-            logger.DebugH(() => $"CTRL_RIGHT_ARROW_DECKEY={DecoderKeys.CTRL_RIGHT_ARROW_DECKEY}");
-            logger.DebugH(() => $"SPECIAL_DECKEY_ID_BASE={DecoderKeys.SPECIAL_DECKEY_ID_BASE}");
+            logger.InfoH(() => $"TOTAL_SHIFT_DECKEY_NUM={DecoderKeys.TOTAL_SHIFT_DECKEY_NUM}");
+            logger.InfoH(() => $"FUNC_DECKEY_START={DecoderKeys.FUNC_DECKEY_START}");
+            logger.InfoH(() => $"STROKE_DECKEY_END={DecoderKeys.STROKE_DECKEY_END}");
+            logger.InfoH(() => $"COMBO_DECKEY_START={DecoderKeys.COMBO_DECKEY_START}");
+            logger.InfoH(() => $"EISU_COMBO_DECKEY_START={DecoderKeys.EISU_COMBO_DECKEY_START}");
+            logger.InfoH(() => $"COMBO_EX_DECKEY_START={DecoderKeys.COMBO_EX_DECKEY_START}");
+            logger.InfoH(() => $"EISU_COMBO_EX_DECKEY_START={DecoderKeys.EISU_COMBO_EX_DECKEY_START}");
+            logger.InfoH(() => $"CTRL_DECKEY_START={DecoderKeys.CTRL_DECKEY_START}");
+            logger.InfoH(() => $"CTRL_FUNC_DECKEY_START={DecoderKeys.CTRL_FUNC_DECKEY_START}");
+            logger.InfoH(() => $"TOTAL_DECKEY_NUM={DecoderKeys.TOTAL_DECKEY_NUM}");
+            logger.InfoH(() => $"UNCONDITIONAL_DECKEY_OFFSET={DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET}");
+            logger.InfoH(() => $"UNCONDITIONAL_DECKEY_END={DecoderKeys.UNCONDITIONAL_DECKEY_END}");
+            logger.InfoH(() => $"CTRL_SCR_LOCK_DECKEY={DecoderKeys.CTRL_SCR_LOCK_DECKEY}");
+            logger.InfoH(() => $"SPECIAL_DECKEY_ID_BASE={DecoderKeys.SPECIAL_DECKEY_ID_BASE}");
         }
 
         private void updateStrokeNodesByComplexCommands()
@@ -768,7 +771,7 @@ namespace KanchokuWS
         private void SetNextStrokeHelpDecKey(int decKey)
         {
             logger.InfoH(() => $"CALLED: decKey={decKey}");
-            if (decKey < DecoderKeys.COMBO_DECKEY_END) {
+            if (decKey < DecoderKeys.EISU_COMBO_DECKEY_END) {
                 frmVkb.DecKeyForNextTableStrokeHelp = decKey;
                 frmVkb.DrawInitialVkb();
             }
@@ -909,7 +912,7 @@ namespace KanchokuWS
             logger.InfoH("CALLED");
             if (IsDecoderActive && Settings.TableFile2._notEmpty() && DecoderOutput.IsWaitingFirstStroke()) {
                 ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
-                CombinationKeyStroke.Determiner.Singleton.ExchangeKeyCombinationPool();  // KeyCombinationPoolの入れ替え
+                CombinationKeyStroke.Determiner.Singleton.SelectKanchokuKeyCombinationPool(decoderOutput.strokeTableNum, IsDecoderActive);  // KeyCombinationPoolの入れ替え
                 frmVkb.DrawVirtualKeyboardChars();
                 frmMode.SetKanjiMode();
             }
@@ -1061,6 +1064,7 @@ namespace KanchokuWS
         {
             logger.InfoH(() => $"\nENTER");
             IsDecoderActive = true;
+            CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolByDecoderMode(IsDecoderActive);
             try {
                 prevDeckey = -1;
                 if (frmSplash != null) closeSplash();
@@ -1115,6 +1119,7 @@ namespace KanchokuWS
         {
             logger.InfoH(() => $"\nENTER");
             IsDecoderActive = false;
+            CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolByDecoderMode(IsDecoderActive);
             if (decoderPtr != IntPtr.Zero) {
                 handleKeyDecoder(DecoderKeys.DEACTIVE_DECKEY, 0);   // DecoderOff の処理をやる
                 if (bModifiersOff) SendInputHandler.Singleton.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
@@ -1291,8 +1296,10 @@ namespace KanchokuWS
         {
             ExecCmdDecoder("SaveDumpTable", null);    // tmp/dump-table[12].txt (Decoder が実際に保持しているテーブルの内容をダンプしたもの)
 
-            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.Singleton1?.DebugPrintFile("tmp/key-combination1.txt");
-            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.Singleton2?.DebugPrintFile("tmp/key-combination2.txt");
+            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.SingletonK1?.DebugPrintFile("tmp/key-combinationK1.txt");
+            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.SingletonA1?.DebugPrintFile("tmp/key-combinationA1.txt");
+            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.SingletonK2?.DebugPrintFile("tmp/key-combinationK2.txt");
+            KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.SingletonA2?.DebugPrintFile("tmp/key-combinationA2.txt");
         }
 
         //------------------------------------------------------------------

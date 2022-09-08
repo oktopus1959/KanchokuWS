@@ -970,7 +970,7 @@ namespace {
                     shiftOffset = (shiftPlane > 0 && depth == 0) ? shiftOffset = shiftPlane * PLANE_DECKEY_NUM : 0;
                 }
                 arrowIndex += shiftOffset;
-                if (arrowIndex >= COMBO_DECKEY_END) parseError();
+                if (arrowIndex >= EISU_COMBO_DECKEY_END) parseError();
             } else {
                 shiftPlane = arrowIndex;
                 if (shiftPlane >= ALL_PLANE_NUM) parseError();

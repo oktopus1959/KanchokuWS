@@ -13,7 +13,7 @@ cat <<EOS > $TGTFILE
 
 EOS
 
-sed -n '/public static class DecoderKeys/,$ p' $SRCFILE | \
+sed -n '/public static class DecoderKeys/,/END_OF_AUTO_MAKE/ p' $SRCFILE | \
     tail -n +2 | \
     grep -v '^ *[{}]' | \
     grep -v 'private' | \

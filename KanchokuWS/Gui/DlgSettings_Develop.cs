@@ -137,8 +137,8 @@ namespace KanchokuWS.Gui
         {
             frmMain?.ExecCmdDecoder("SaveDumpTable", null);    // tmp/dump-table[12].txt (Decoder が実際に保持しているテーブルの内容をダンプしたもの)
 
-            KeyCombinationPool.Singleton1?.DebugPrintFile("tmp/key-combination1.txt");
-            KeyCombinationPool.Singleton2?.DebugPrintFile("tmp/key-combination2.txt");
+            KeyCombinationPool.SingletonK1?.DebugPrintFile("tmp/key-combination1.txt");
+            KeyCombinationPool.SingletonK2?.DebugPrintFile("tmp/key-combination2.txt");
 
             //if (Settings.TableFile._notEmpty()) new TableFileParser().ParseTableFile(Settings.TableFile, "tmp/tableFile1.tbl", KeyCombinationPool.Singleton1, true, true, false);
             //if (Settings.TableFile2._notEmpty()) new TableFileParser().ParseTableFile(Settings.TableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.Singleton2, false, true, false);
