@@ -901,7 +901,7 @@ namespace KanchokuWS.TableParser
         private OutputString getMyString(int idx)
         {
             var myStr = ReadWordOrString();
-            if (myStr._isEmpty() && idx >= 0) {
+            if (myStr._isEmpty() && idx >= 0 && !isInCombinationBlock) {    // 同時打鍵の場合は、単打テーブルからは拾わない
                 Node myNode = GetNthRootNode(idx);
                 if (myNode != null) {
                     myStr = myNode.GetOutputString();

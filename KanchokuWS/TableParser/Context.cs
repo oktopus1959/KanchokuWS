@@ -284,7 +284,7 @@ namespace KanchokuWS.TableParser
                     var items = strippedLowerLine._reReplace(@"[ \t]{2,}", " ")._split(' ');
                     if (items._notEmpty()) {
                         if (items[0] == "#enablecomboonboth" || items[0] == "#enablealways" || items[0] == "#enabledalways") {
-                            // #enableAlways: デコーダOFFでも有効
+                            // #enableComboOnBoth, enableAlways: デコーダOFFでも有効
                             bInKanchokuMode = true;
                             bInEisuMode = true;
                             lines[idx] = ";;;; " + line;
