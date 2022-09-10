@@ -386,7 +386,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             }
                             logger.DebugH(() => $"outputLen={outputLen}, copyShiftLen={copyShiftLen}, discardLen={discardLen}");
                             for (int i = 0; i < outputLen && i < unprocList.Count; ++i) {
-                                result.Add(unprocList[i].OrigDecoderKey);
+                                // Upされていない連続シフトキーは出力しない
+                                if (unprocList[i].IsUpKey || !unprocList[i].IsSuccessiveShift) {
+                                    result.Add(unprocList[i].OrigDecoderKey);
+                                }
                             }
                             if (copyShiftLen > 0) {
                                 // true: 連続シフトキーのみ、comboListに移す
