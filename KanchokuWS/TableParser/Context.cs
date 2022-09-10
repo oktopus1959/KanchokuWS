@@ -774,6 +774,11 @@ namespace KanchokuWS.TableParser
             }
         }
 
+        public string getErrorMessage()
+        {
+            return errorMsg.ToString();
+        }
+
         public void showErrorMessage()
         {
             if (!errorMsg._isEmpty()) {

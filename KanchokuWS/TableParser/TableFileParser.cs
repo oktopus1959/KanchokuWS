@@ -1180,22 +1180,28 @@ namespace KanchokuWS.TableParser
                 ParserContext.FinalizeSingleton();
             }
 
+            string errorMsg = "";
+
             // 漢直モードの解析
             TableLines tableLines = new TableLines();
             tableLines.ReadAllLines(filename, primary, true);
             if (tableLines.NotEmpty) {
                 parseRootTable(tableLines, poolK, true);
+                errorMsg = tableLines.getErrorMessage();
                 // 英数モードの解析
                 tableLines = new TableLines();
                 tableLines.ReadAllLines(filename, primary, false);
                 parseRootTable(tableLines, poolA, false);
+                if (errorMsg._isEmpty()) errorMsg = tableLines.getErrorMessage();
                 // 解析結果の出力
                 writeAllLines(outFilename, outputLines);
             } else {
                 tableLines.Error($"テーブルファイル({filename})が開けないか、内容が空でした。");
             }
 
-            if (!bTest) tableLines.showErrorMessage();
+            if (!bTest && errorMsg._notEmpty()) {
+                SystemHelper.ShowWarningMessageBox(errorMsg);
+            }
 
             logger.InfoH($"LEAVE");
         }
