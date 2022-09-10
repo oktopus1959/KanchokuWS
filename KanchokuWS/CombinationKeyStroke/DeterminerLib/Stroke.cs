@@ -123,7 +123,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             IsPrefixShift = KeyCombinationPool.IsComboPrefix(OrigDecoderKey);
             IsComboShift = KeyCombinationPool.IsComboShift(OrigDecoderKey);
             IsSequentialShift = KeyCombinationPool.IsSequential(OrigDecoderKey);
-            IsSingleHittable = KeyCombinationPool.CurrentPool.GetEntry(decKey)?.DecKeyList != null;
+            var entry = KeyCombinationPool.CurrentPool.GetEntry(decKey);
+            IsSingleHittable = entry == null || entry.DecKeyList != null;
             KeyDt = dt;
         }
 
