@@ -1092,7 +1092,7 @@ namespace KanchokuWS.Handler
 
         private bool invokeHandler(int kanchokuCode, uint mod, bool bUnconditional = false)
         {
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() =>
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() =>
                 $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), mod={mod:x}H({mod}), bUnconditional={bUnconditional}, " +
                 $"UNCONDITIONAL_DECKEY_OFFSET={DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET}, UNCONDITIONAL_DECKEY_END={DecoderKeys.UNCONDITIONAL_DECKEY_END}");
             if (bInvokeHandlerBusy) return false;
@@ -1125,22 +1125,22 @@ namespace KanchokuWS.Handler
                     //    return RotateReverseDateString?.Invoke() ?? false;
                     default:
                         if (kanchokuCode >= DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET && kanchokuCode < DecoderKeys.UNCONDITIONAL_DECKEY_END) {
-                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}");
+                            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}");
                             return InvokeDecoderUnconditionally?.Invoke(kanchokuCode - DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET, mod) ?? false;
                         }
                         if (bUnconditional) {
-                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}, bUncond={bUnconditional}");
+                            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}, bUncond={bUnconditional}");
                             return InvokeDecoderUnconditionally?.Invoke(kanchokuCode, mod) ?? false;
                         }
                         if (kanchokuCode >= 0) {
-                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"FuncDispatcher: kanchokuCode={kanchokuCode}");
+                            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"FuncDispatcher: kanchokuCode={kanchokuCode}");
                             return FuncDispatcher?.Invoke(kanchokuCode, mod) ?? false;
                         }
                         return false;
                 }
             } finally {
                 bInvokeHandlerBusy = false;
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE");
             }
         }
 

@@ -323,13 +323,22 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             int copyShiftLen = 1;
 
                             if (comboList._isEmpty() && unprocList.Count == 1) {
-                                logger.DebugH($"NO SHIFT and SELF UP KEY and NO OTHER KEY");
+                                logger.DebugH($"NO COMBO SHIFT and JUST 1 UNPROC KEY");
                                 var s = unprocList[0];
-                                if (s.IsSingleHittable || s.IsSequentialShift) {
-                                    logger.DebugH($"Single Hittable or SequentialShift");
-                                    outputLen = 1;
+                                if (s.IsUpKey || !s.IsComboShift) {
+                                    logger.DebugH($"JUST 1 UNPROC KEY is UP KEY");
+                                    if (s.IsSingleHittable || s.IsSequentialShift) {
+                                        logger.DebugH($"Single Hittable or SequentialShift");
+                                        outputLen = 1;
+                                    } else {
+                                        logger.DebugH($"ABANDONED-1");
+                                    }
                                 } else {
-                                    logger.DebugH($"ABANDONED-1");
+                                    // UPされていないシフトキーがある。多分、最初のループで処理されずに残ったものがRETRYで対象となった。
+                                    // 次のUPのときに処理するのでこのまま残す。以前はこれをここで出力していたので、余分な出力となっていた。
+                                    // 薙刀式での K→J→W で J の処理はそれ以降に任せるということ。
+                                    logger.DebugH($"JUST 1 UNPROC KEY is NOT UP KEY. Maybe RETRY and it's SHIFT KEY. BREAK.");
+                                    break;
                                 }
                             } else if (bPrevSequential) {
                                 logger.DebugH(() => $"PrevSequential={bPrevSequential}");
@@ -386,10 +395,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             }
                             logger.DebugH(() => $"outputLen={outputLen}, copyShiftLen={copyShiftLen}, discardLen={discardLen}");
                             for (int i = 0; i < outputLen && i < unprocList.Count; ++i) {
-                                // Upされていない連続シフトキーは出力しない
-                                if (unprocList[i].IsUpKey || !unprocList[i].IsSuccessiveShift) {
+                                // Upされていない連続シフトキーは出力しない ⇒ これをやると薙刀式で JE と打ったのが同時打鍵と判定されなかったときに E(て)が出力されなくなるので、やめる
+                                //if (unprocList[i].IsUpKey || !unprocList[i].IsSuccessiveShift) {
                                     result.Add(unprocList[i].OrigDecoderKey);
-                                }
+                                //}
                             }
                             if (copyShiftLen > 0) {
                                 // true: 連続シフトキーのみ、comboListに移す
