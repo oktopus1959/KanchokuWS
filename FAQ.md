@@ -12,6 +12,7 @@ KanchokuWS は Windows 用の漢字直接入力ツールです。
 
 - [基本編](FAQ/FAQ-基本.md#faq-home)
 - [配列作成編](FAQ/FAQ-配列作成.md#faq-home)
+- [書き換えシステム編](FAQ/FAQ-書き換え.md#faq-home)
 - [キーアサイン編](FAQ/FAQ-キーアサイン.md#faq-home)
 - [利用条件と免責](#利用条件と免責)
 
