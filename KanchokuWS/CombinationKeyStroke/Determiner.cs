@@ -29,7 +29,7 @@ namespace KanchokuWS.CombinationKeyStroke
     /// </summary>
     class Determiner : IDisposable
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         // FrmKanchoku
         FrmKanchoku frmMain;
@@ -280,7 +280,7 @@ namespace KanchokuWS.CombinationKeyStroke
                     } else {
                         // キーリピートではない通常の押下の場合は、同時打鍵判定を行う
                         //bool isStrokeListEmpty = strokeList.IsEmpty();
-                        logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, isStrokeListEmpty={strokeList.IsEmpty()}");
+                        logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, StrokeList.Count={strokeList.Count}");
                         if ((combo != null && !combo.IsTerminal) || !strokeList.IsEmpty()) {
                             // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だったので、打鍵リストに追加して同時打鍵判定を行う
                             strokeList.Add(stroke);

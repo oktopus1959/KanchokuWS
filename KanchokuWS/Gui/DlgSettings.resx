@@ -120,6 +120,43 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="textBox_combinationKeyTimeMs.ToolTip" xml:space="preserve">
+    <value>同時打鍵判定において、複数キーが同時に押下されている状態で、末尾
+キーの押下からいずれかのキーの解放までの最小時間を設定します。
+
+キー押下の重なっている状態の時間がここで設定した時間より短い場合は、
+同時打鍵と判定しません。
+たとえば A, B, C がこの順で押下されている状態の後にBが解放された場合、
+Cの押下からBの解放までの時間(キー押下の重なり時間)がここで設定した
+最小時間よりも小さければ、同時打鍵とは判定されません。
+
+連続シフトが可能な場合は、2文字目以降のキー押下からシフトキー解放
+までの時間についても、同様の判定が行われます。
+
+ただし、NICOLAのようなシフト専用キーと文字キーの組み合わせの場合は、
+1文字目についてはこの条件は適用されません。
+(条件A、つまり第1キー押下～第2キー押下の間隔だけで判定される）
+
+なお 0 を設定すると第2キーの押下時に即時、同時打鍵判定を実行します。
+(薙刀式のように2～3キーの同時打鍵が混在する場合は、効果がありません)</value>
+  </data>
+  <data name="checkBox_useCombinationKeyTimer2.ToolTip" xml:space="preserve">
+    <value>第2打鍵以降の同時打鍵判定のタイミングにタイマーを併用します。
+
+当項目にチェックを入れると、時間経過により同時打鍵判定が行えるような
+場合はタイマーを起動して、上記で設定した時間が経過したタイミングでも
+同時打鍵判定が行われるようになります。
+
+例：
+「薙刀式」で  J→C と連続押下した時、C の押下後にタイマーが-起動し、
+上記条件の時間が経過した
+　⇒ J, C キーの解放を待たずに、J+C⇒「ば」が確定します。
+J→W の場合は、その後拗音キーの入力がありえるので、タイマーは起動
+しません。</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -314,37 +351,6 @@ SandS の拡張シフト面にテーブルファイルの裏面定義を行っ�
 
 ワンショットシフト状態の場合に、Spaceキーを単打すると空白が1つ出力され、
 Spaceキーを押下状態にするとリピート出力となります。</value>
-  </data>
-  <data name="textBox_combinationKeyTimeMs.ToolTip" xml:space="preserve">
-    <value>同時打鍵判定において、複数キーが同時に押下されている状態で、
-末尾キーの押下からいずれかのキーの解放までの最小時間を設定します。
-
-たとえば A, B, C がこの順で押下されている状態の後にBが解放された場合、
-Cの押下からBの解放までの時間がここで設定した最小時間よりも小さければ、
-同時打鍵とは判定されません。
-
-連続シフトが可能な場合は、2文字目以降のキー押下からシフトキー解放までの
-時間についても、同様の判定が行われます。
-
-ただし、NICOLAのようなシフト専用キーと文字キーの組み合わせの場合は、
-1文字目についてはこの条件は適用されません。
-(条件A、つまり第1キー押下～第2キー押下の間隔だけで判定される）
-
-なお 0 を設定すると第Nキーの押下時に即時、同時打鍵と判定されます。</value>
-  </data>
-  <data name="checkBox_useCombinationKeyTimer2.ToolTip" xml:space="preserve">
-    <value>第2打鍵以降の同時打鍵判定のタイミングにタイマーを併用します。
-
-当項目にチェックを入れると、時間経過により同時打鍵判定が行えるような
-場合はタイマーを起動して、上記で設定した時間が経過したタイミングでも
-同時打鍵判定が行われるようになります。
-
-例：
-「薙刀式」で  J→C と連続押下した時、C の押下後にタイマーが-起動し、
-上記条件の時間が経過した
-　⇒ J, C キーの解放を待たずに、J+C⇒「ば」が確定します。
-J→W の場合は、その後拗音キーの入力がありえるので、タイマーは起動
-しません。</value>
   </data>
   <data name="textBox_verticalFont.ToolTip" xml:space="preserve">
     <value>縦列鍵盤に表示する文字のフォント

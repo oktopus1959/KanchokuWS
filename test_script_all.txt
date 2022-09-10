@@ -29,6 +29,10 @@ convert(J<50>W<50>H<100>hjw) = ぎゃ
 convert(W<20>J<20>H<40>hIiwj) = ぎゃぎょ
 convert(J<50>W<50>H<100>hIijw) = ぎゃぎょ
 
+comboMinTime(50)
+convert(K<55>J<56>k<10>W<99>j<34>w) = いぎ
+convert(W<111>J<1>w<89>E<56>j<74>e) = きで
+
 comboMinTime(100)
 convert(FJ<40>fj) = かあ
 disableFirstComboCheck
@@ -216,7 +220,7 @@ convert(DDDDKkIid) = よ
 convert(DDDDKIkid) = よ
 convert(DIO<40>dio) = よの
 
-comboMinTime(0) # 2打鍵以降も即時判定
+comboMinTime(0) # 2打鍵以降も即時判定(Kが無視されること)
 convert(DKkIid) = よ
 convert(DDDDKkIid) = よ
 convert(DDDDKIkid) = よ

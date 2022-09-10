@@ -9,7 +9,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 {
     class StrokeList
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         /// <summary>
         /// キー押下によって追加された未処理のストロークリスト
@@ -130,10 +130,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool IsSuccessiveShift2ndKey()
         {
-            logger.DebugH(() =>  $"ContainsSuccessiveShiftKey={KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey}, comboList.Count={comboList.Count}, unprocList.Count={unprocList.Count}");
-            return KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey &&
+            bool result = KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey &&
                 (comboList.Count >= 1 && unprocList.Count == 1 ||
                  comboList.Count == 0 && unprocList.Count >= 3);
+            logger.DebugH(() =>  $"Result={result}; ContainsSuccessiveShiftKey={KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey}, comboList.Count={comboList.Count}, unprocList.Count={unprocList.Count}");
+            return result;
         }
 
         // 押下の場合
@@ -155,7 +156,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
 
             // 連続シフトの場合は、同時打鍵キーの数は最大2とする
-            List<int> getAndCheckCombo(List<Stroke> list)
+            (List<int>, bool) getAndCheckCombo(List<Stroke> list)
             {
                 var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(list);
                 logger.DebugH(() =>
@@ -163,17 +164,18 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     $"Terminal={keyCombo?.IsTerminal ?? false}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
                 if (keyCombo != null && keyCombo.DecKeyList != null && keyCombo.IsTerminal) {
                     logger.DebugH("COMBO CHECK PASSED");
-                    return new List<int>(keyCombo.DecKeyList);
+                    return (new List<int>(keyCombo.DecKeyList), true);
                 }
                 logger.DebugH("COMBO CHECK FAILED");
-                return null;
+                return (null, keyCombo != null);
             }
 
             List<int> result = null;
+            bool bKeyComboFound = false;
             if (comboList._isEmpty() && unprocList.Count == 2) {
                 // 最初の同時打鍵のケース
                 logger.DebugH("Try first successive combo");
-                result = getAndCheckCombo(unprocList);
+                (result, bKeyComboFound) = getAndCheckCombo(unprocList);
                 if (result != null) {
                     // 同時打鍵候補があった
                     if (unprocList[0].IsPrefixShift ||
@@ -194,17 +196,27 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 }
             } else if (Settings.CombinationKeyMinOverlappingTimeMs <= 0) {
                 // 2文字目以降または3キー以上の同時押し状態で、即時判定の場合
+                logger.DebugH("Imediate Combo check");
                 if (comboList.Count >= 1 && unprocList.Count == 1) {
                     // 2文字目以降のケース
-                    logger.DebugH("Try second or later successive combo");
+                    logger.DebugH(() => $"Try second or later successive combo: bTemporaryComboDisabled={bTemporaryComboDisabled}");
                     if (bTemporaryComboDisabled) {
                         // 連続シフト版「月光」などで、先行してShiftキーが送出され、一時的に同時打鍵がOFFになっている場合
-                        result = getAndCheckCombo(Helper.MakeList(unprocList[0]));
+                        (result, bKeyComboFound) = getAndCheckCombo(Helper.MakeList(unprocList[0]));
                         bTemporaryComboDisabled = false;
                     } else {
-                        result = getAndCheckCombo(Helper.MakeList(comboList, unprocList[0]));
+                        (result, bKeyComboFound) = getAndCheckCombo(Helper.MakeList(comboList, unprocList[0]));
                     }
-                    unprocList.RemoveAt(0); // コンボがなくてもキーを削除しておく(たとえば月光でDを長押ししてKを押したような場合は、何も出力せず、Kも除去する)
+                    logger.DebugH(() => $"result={(result != null ? "FOUND" : "(empty)")}, bKeyComboFound={bKeyComboFound}");
+                    if (result != null || !bKeyComboFound) {
+                        // コンボがなくてもキーを削除しておく(たとえば月光でDを長押ししてKを押したような場合は、何も出力せず、Kも除去する)
+                        // ただし、薙刀式で k→j→w とほぼ同時に押したときに w が除去されるのはまずいので、コンボが見つかったら、削除はしない
+                        logger.DebugH("Remove first unproc key");
+                        unprocList.RemoveAt(0);
+                    }
+                } else {
+                    // 
+                    logger.DebugH("First successive combo and unproc key num >= 3. Combo check will be done at key release");
                 }
             } else {
                 logger.DebugH("Combo check will be done at key release");
