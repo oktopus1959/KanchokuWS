@@ -755,7 +755,7 @@ namespace KanchokuWS
         /// <param name="shiftPlane"></param>
         private void SetStrokeHelpShiftPlane(int shiftPlane)
         {
-            logger.InfoH(() => $"CALLED: shiftPlane={shiftPlane}");
+            logger.InfoH(() => $"CALLED: shiftPlane={shiftPlane}, IsDecoderActive={IsDecoderActive}");
             if (IsDecoderActive) {
                 if (shiftPlane >= 0 && shiftPlane < VirtualKeys.ShiftPlane_NUM) {
                     frmVkb.StrokeHelpShiftPlane = shiftPlane;
@@ -924,10 +924,13 @@ namespace KanchokuWS
         /// <summary>SandS状態を一時的なシフト状態にする</summary>
         private void setSandSShiftedOneshot()
         {
-            // 中央鍵盤色を、第2テーブル選択状態の色にする
-            IsSandSShiftedOneshot = true;
-            frmVkb.DrawVirtualKeyboardChars();
-            IsSandSShiftedOneshot = false;
+            logger.InfoH("CALLED");
+            if (IsDecoderActive) {
+                // 中央鍵盤色を、第2テーブル選択状態の色にする
+                IsSandSShiftedOneshot = true;
+                frmVkb.DrawVirtualKeyboardChars();
+                IsSandSShiftedOneshot = false;
+            }
         }
 
         private bool rotateStrokeHelp()
@@ -942,6 +945,7 @@ namespace KanchokuWS
 
         private bool rotateStrokeHelp(int direction)
         {
+            logger.InfoH(() => $"CALLED: IsDecoderActive={IsDecoderActive}");
             if (IsDecoderActive) {
                 // 入力標識の消去
                 frmMode.Vanish();
@@ -2002,6 +2006,7 @@ namespace KanchokuWS
 
         public void KanaTrainingModeToggle()
         {
+            logger.Info("CALLED");
             Settings.KanaTrainingMode = !Settings.KanaTrainingMode;
             if (Settings.KanaTrainingMode) {
                 ExecCmdDecoder("setKanaTrainingMode", "true");
