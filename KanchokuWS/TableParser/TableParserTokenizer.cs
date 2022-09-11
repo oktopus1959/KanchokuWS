@@ -420,6 +420,12 @@ namespace KanchokuWS.TableParser
             }
         }
 
+        void changeSandSState(bool bEnabled)
+        {
+            Settings.SandSEnabled = bEnabled;
+            Settings.SandSStateChangedTemporary = true;
+        }
+
         // 拡張シフトキーに対するシフト面の割り当て
         void assignShiftPlane()
         {

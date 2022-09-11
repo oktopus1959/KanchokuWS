@@ -594,6 +594,7 @@ namespace KanchokuWS
         //------------------------------------------------------------------------------
         /// <summary>SandS を有効にするか</summary>
         public static bool SandSEnabled { get; set; } = false;
+        public static bool SandSStateChangedTemporary { get; set; } = false;
         public static bool SandSEnabledWhenOffMode { get; set; } = false;
 
         /// <summary>SandS に割り当てるシフト面</summary>
@@ -1058,6 +1059,7 @@ namespace KanchokuWS
             //-------------------------------------------------------------------------------------
             // SandS
             SandSEnabled = GetString("sandsEnabled")._parseBool(false);                         // SandS を有効にするか
+            SandSStateChangedTemporary = false;
             SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
             SandSAssignedPlane = GetString("sandsAssignedPlane")._parseInt(2, 0)._highLimit(7); // SandS に割り当てるシフト面
             OneshotSandSEnabled= GetString("oneshotSandSEnabled", "ignoreSpaceUpOnSandS", "")._parseBool(false);    // SandSのワンショットシフトを有効にするか
