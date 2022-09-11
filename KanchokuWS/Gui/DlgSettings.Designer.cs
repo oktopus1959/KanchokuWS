@@ -137,6 +137,7 @@ namespace KanchokuWS.Gui
             this.label20 = new System.Windows.Forms.Label();
             this.tabPage_imeCombo = new System.Windows.Forms.TabPage();
             this.label_imeComboReload = new System.Windows.Forms.Label();
+            this.button_imeFAQ = new System.Windows.Forms.Button();
             this.button_imeComboReload = new System.Windows.Forms.Button();
             this.groupBox50 = new System.Windows.Forms.GroupBox();
             this.checkBox_useComboExtModKeyAsSingleHit = new System.Windows.Forms.CheckBox();
@@ -157,8 +158,10 @@ namespace KanchokuWS.Gui
             this.radioButton_imeSendInputInKana = new System.Windows.Forms.RadioButton();
             this.radioButton_imeSendInputInRoman = new System.Windows.Forms.RadioButton();
             this.groupBox45 = new System.Windows.Forms.GroupBox();
+            this.textBox_comboDisableIntervalTimeMs = new System.Windows.Forms.TextBox();
+            this.label140 = new System.Windows.Forms.Label();
+            this.label141 = new System.Windows.Forms.Label();
             this.textBox_combinationKeyTimeMs = new System.Windows.Forms.TextBox();
-            this.button_imeFAQ = new System.Windows.Forms.Button();
             this.label120 = new System.Windows.Forms.Label();
             this.textBox_combinationMaxAllowedLeadTimeMs = new System.Windows.Forms.TextBox();
             this.checkBox_useCombinationKeyTimer2 = new System.Windows.Forms.CheckBox();
@@ -167,12 +170,12 @@ namespace KanchokuWS.Gui
             this.checkBox_useCombinationKeyTimer1 = new System.Windows.Forms.CheckBox();
             this.label116 = new System.Windows.Forms.Label();
             this.label114 = new System.Windows.Forms.Label();
-            this.label117 = new System.Windows.Forms.Label();
             this.groupBox46 = new System.Windows.Forms.GroupBox();
             this.checkBox_imeCooperationEnabled = new System.Windows.Forms.CheckBox();
             this.label_okResultImeCombo = new System.Windows.Forms.Label();
             this.button_imeComboClose = new System.Windows.Forms.Button();
             this.button_imeComboEnter = new System.Windows.Forms.Button();
+            this.label117 = new System.Windows.Forms.Label();
             this.tabPage_fontColor = new System.Windows.Forms.TabPage();
             this.groupBox25 = new System.Windows.Forms.GroupBox();
             this.label13 = new System.Windows.Forms.Label();
@@ -1909,6 +1912,7 @@ namespace KanchokuWS.Gui
             // tabPage_imeCombo
             // 
             this.tabPage_imeCombo.Controls.Add(this.label_imeComboReload);
+            this.tabPage_imeCombo.Controls.Add(this.button_imeFAQ);
             this.tabPage_imeCombo.Controls.Add(this.button_imeComboReload);
             this.tabPage_imeCombo.Controls.Add(this.groupBox50);
             this.tabPage_imeCombo.Controls.Add(this.groupBox49);
@@ -1919,6 +1923,7 @@ namespace KanchokuWS.Gui
             this.tabPage_imeCombo.Controls.Add(this.label_okResultImeCombo);
             this.tabPage_imeCombo.Controls.Add(this.button_imeComboClose);
             this.tabPage_imeCombo.Controls.Add(this.button_imeComboEnter);
+            this.tabPage_imeCombo.Controls.Add(this.label117);
             this.tabPage_imeCombo.Location = new System.Drawing.Point(4, 24);
             this.tabPage_imeCombo.Name = "tabPage_imeCombo";
             this.tabPage_imeCombo.Size = new System.Drawing.Size(676, 373);
@@ -1939,6 +1944,19 @@ namespace KanchokuWS.Gui
             this.label_imeComboReload.Visible = false;
             this.label_imeComboReload.VisibleChanged += new System.EventHandler(this.label_imeComboReload_VisibleChanged);
             // 
+            // button_imeFAQ
+            // 
+            this.button_imeFAQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_imeFAQ.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_imeFAQ.Location = new System.Drawing.Point(10, 343);
+            this.button_imeFAQ.Name = "button_imeFAQ";
+            this.button_imeFAQ.Size = new System.Drawing.Size(69, 23);
+            this.button_imeFAQ.TabIndex = 5;
+            this.button_imeFAQ.Text = "FAQ(&F)";
+            this.toolTip1.SetToolTip(this.button_imeFAQ, "「よくある質問と回答」ページのURLをブラウザで開きます");
+            this.button_imeFAQ.UseVisualStyleBackColor = true;
+            this.button_imeFAQ.Click += new System.EventHandler(this.button_imeFAQ_Click);
+            // 
             // button_imeComboReload
             // 
             this.button_imeComboReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -1946,7 +1964,7 @@ namespace KanchokuWS.Gui
             this.button_imeComboReload.Location = new System.Drawing.Point(281, 343);
             this.button_imeComboReload.Name = "button_imeComboReload";
             this.button_imeComboReload.Size = new System.Drawing.Size(80, 23);
-            this.button_imeComboReload.TabIndex = 37;
+            this.button_imeComboReload.TabIndex = 6;
             this.button_imeComboReload.Text = "再読込(&R)";
             this.toolTip1.SetToolTip(this.button_imeComboReload, "各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
             this.button_imeComboReload.UseVisualStyleBackColor = true;
@@ -2171,8 +2189,10 @@ namespace KanchokuWS.Gui
             // 
             // groupBox45
             // 
+            this.groupBox45.Controls.Add(this.textBox_comboDisableIntervalTimeMs);
+            this.groupBox45.Controls.Add(this.label140);
+            this.groupBox45.Controls.Add(this.label141);
             this.groupBox45.Controls.Add(this.textBox_combinationKeyTimeMs);
-            this.groupBox45.Controls.Add(this.button_imeFAQ);
             this.groupBox45.Controls.Add(this.label120);
             this.groupBox45.Controls.Add(this.textBox_combinationMaxAllowedLeadTimeMs);
             this.groupBox45.Controls.Add(this.checkBox_useCombinationKeyTimer2);
@@ -2181,13 +2201,40 @@ namespace KanchokuWS.Gui
             this.groupBox45.Controls.Add(this.checkBox_useCombinationKeyTimer1);
             this.groupBox45.Controls.Add(this.label116);
             this.groupBox45.Controls.Add(this.label114);
-            this.groupBox45.Controls.Add(this.label117);
             this.groupBox45.Location = new System.Drawing.Point(7, 164);
             this.groupBox45.Name = "groupBox45";
-            this.groupBox45.Size = new System.Drawing.Size(351, 163);
+            this.groupBox45.Size = new System.Drawing.Size(351, 152);
             this.groupBox45.TabIndex = 1;
             this.groupBox45.TabStop = false;
             this.groupBox45.Text = "同時打鍵の判定条件 (AとBの AND 判定 )";
+            // 
+            // textBox_comboDisableIntervalTimeMs
+            // 
+            this.textBox_comboDisableIntervalTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_comboDisableIntervalTimeMs.Location = new System.Drawing.Point(242, 123);
+            this.textBox_comboDisableIntervalTimeMs.Name = "textBox_comboDisableIntervalTimeMs";
+            this.textBox_comboDisableIntervalTimeMs.Size = new System.Drawing.Size(45, 19);
+            this.textBox_comboDisableIntervalTimeMs.TabIndex = 5;
+            this.textBox_comboDisableIntervalTimeMs.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this.textBox_comboDisableIntervalTimeMs, resources.GetString("textBox_comboDisableIntervalTimeMs.ToolTip"));
+            // 
+            // label140
+            // 
+            this.label140.AutoSize = true;
+            this.label140.Location = new System.Drawing.Point(286, 125);
+            this.label140.Name = "label140";
+            this.label140.Size = new System.Drawing.Size(58, 15);
+            this.label140.TabIndex = 22;
+            this.label140.Text = "ミリ秒以上";
+            // 
+            // label141
+            // 
+            this.label141.AutoSize = true;
+            this.label141.Location = new System.Drawing.Point(9, 125);
+            this.label141.Name = "label141";
+            this.label141.Size = new System.Drawing.Size(234, 15);
+            this.label141.TabIndex = 20;
+            this.label141.Text = "C: シフトキー解放から文字キー押下までの時間が";
             // 
             // textBox_combinationKeyTimeMs
             // 
@@ -2198,19 +2245,6 @@ namespace KanchokuWS.Gui
             this.textBox_combinationKeyTimeMs.TabIndex = 2;
             this.textBox_combinationKeyTimeMs.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_combinationKeyTimeMs, resources.GetString("textBox_combinationKeyTimeMs.ToolTip"));
-            // 
-            // button_imeFAQ
-            // 
-            this.button_imeFAQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_imeFAQ.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_imeFAQ.Location = new System.Drawing.Point(276, 134);
-            this.button_imeFAQ.Name = "button_imeFAQ";
-            this.button_imeFAQ.Size = new System.Drawing.Size(69, 23);
-            this.button_imeFAQ.TabIndex = 5;
-            this.button_imeFAQ.Text = "FAQ(&F)";
-            this.toolTip1.SetToolTip(this.button_imeFAQ, "「よくある質問と回答」ページのURLをブラウザで開きます");
-            this.button_imeFAQ.UseVisualStyleBackColor = true;
-            this.button_imeFAQ.Click += new System.EventHandler(this.button_imeFAQ_Click);
             // 
             // label120
             // 
@@ -2296,15 +2330,6 @@ namespace KanchokuWS.Gui
             this.label114.TabIndex = 0;
             this.label114.Text = "A: 第1キー押下から第2キー押下までの時間が";
             // 
-            // label117
-            // 
-            this.label117.AutoSize = true;
-            this.label117.Location = new System.Drawing.Point(6, 127);
-            this.label117.Name = "label117";
-            this.label117.Size = new System.Drawing.Size(204, 30);
-            this.label117.TabIndex = 11;
-            this.label117.Text = "同時打鍵判定の詳細については「FAQ」を\r\n参照ください。";
-            // 
             // groupBox46
             // 
             this.groupBox46.Controls.Add(this.checkBox_imeCooperationEnabled);
@@ -2363,6 +2388,16 @@ namespace KanchokuWS.Gui
             this.toolTip1.SetToolTip(this.button_imeComboEnter, "設定内容を適用して kanchoku.user.ini に書き込みます");
             this.button_imeComboEnter.UseVisualStyleBackColor = true;
             this.button_imeComboEnter.Click += new System.EventHandler(this.button_imeComboEnter_Click);
+            // 
+            // label117
+            // 
+            this.label117.AutoSize = true;
+            this.label117.Location = new System.Drawing.Point(7, 337);
+            this.label117.Name = "label117";
+            this.label117.Size = new System.Drawing.Size(204, 30);
+            this.label117.TabIndex = 11;
+            this.label117.Text = "同時打鍵判定の詳細については「FAQ」を\r\n参照ください。";
+            this.label117.Visible = false;
             // 
             // tabPage_fontColor
             // 
@@ -6964,5 +6999,8 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.CheckBox checkBox_showHiddleFolder;
         private System.Windows.Forms.Label label_imeComboReload;
         private System.Windows.Forms.Button button_imeComboReload;
+        private System.Windows.Forms.TextBox textBox_comboDisableIntervalTimeMs;
+        private System.Windows.Forms.Label label140;
+        private System.Windows.Forms.Label label141;
     }
 }

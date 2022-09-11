@@ -806,6 +806,7 @@ namespace KanchokuWS.Gui
             // 同時打鍵
             textBox_combinationMaxAllowedLeadTimeMs.Text = $"{Settings.CombinationKeyMaxAllowedLeadTimeMs}";
             textBox_combinationKeyTimeMs.Text = $"{Settings.CombinationKeyMinOverlappingTimeMs}";
+            textBox_comboDisableIntervalTimeMs.Text = $"{Settings.ComboDisableIntervalTimeMs}";
             checkBox_combinationKeyTimeOnlyAfterSecond.Checked = Settings.CombinationKeyMinTimeOnlyAfterSecond;
             checkBox_useCombinationKeyTimer1.Checked = Settings.UseCombinationKeyTimer1;
             checkBox_useCombinationKeyTimer2.Checked = Settings.UseCombinationKeyTimer2;
@@ -837,6 +838,7 @@ namespace KanchokuWS.Gui
             // 同時打鍵
             checkerImeCombo.Add(textBox_combinationMaxAllowedLeadTimeMs);
             checkerImeCombo.Add(textBox_combinationKeyTimeMs);
+            checkerImeCombo.Add(textBox_comboDisableIntervalTimeMs);
             checkerImeCombo.Add(checkBox_combinationKeyTimeOnlyAfterSecond);
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer1);
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer2);
@@ -874,6 +876,7 @@ namespace KanchokuWS.Gui
             // 同時打鍵
             Settings.SetUserIni("combinationMaxAllowedLeadTimeMs", textBox_combinationMaxAllowedLeadTimeMs.Text.Trim());
             Settings.SetUserIni("combinationKeyTimeMs", textBox_combinationKeyTimeMs.Text.Trim());
+            Settings.SetUserIni("comboDisableIntervalTimeMs", textBox_comboDisableIntervalTimeMs.Text.Trim());
             Settings.SetUserIni("combinationKeyTimeOnlyAfterSecond", checkBox_combinationKeyTimeOnlyAfterSecond.Checked);
             Settings.SetUserIni("useCombinationKeyTimer1", checkBox_useCombinationKeyTimer1.Checked);
             Settings.SetUserIni("useCombinationKeyTimer2", checkBox_useCombinationKeyTimer2.Checked);

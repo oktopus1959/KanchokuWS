@@ -201,6 +201,9 @@ namespace KanchokuWS.CombinationKeyStroke
             strokeList.Clear();
         }
 
+        /// <summary>前回のComboシフトキーが解放された時刻</summary>
+        DateTime prevComboShiftKeyUpDt = DateTime.MinValue;
+
         private Queue<Func<KeyHandlerResult>> procQueue = new Queue<Func<KeyHandlerResult>>();
 
         private bool bHandling = false;
@@ -242,6 +245,9 @@ namespace KanchokuWS.CombinationKeyStroke
 
             checkPreRewriteTime(decKey);
             prevDownDecKey = decKey;
+            DateTime prevShiftUpDt = prevComboShiftKeyUpDt;
+            prevComboShiftKeyUpDt = DateTime.MinValue;      // 何か押されたらクリアしておく
+            if (KeyCombinationPool.IsComboShift(decKey)) prevShiftUpDt = DateTime.MinValue;
 
             List<int> result = null;
             bool bUnconditional = false;
@@ -282,26 +288,33 @@ namespace KanchokuWS.CombinationKeyStroke
                         //bool isStrokeListEmpty = strokeList.IsEmpty();
                         logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, StrokeList.Count={strokeList.Count}");
                         if ((combo != null && !combo.IsTerminal) || !strokeList.IsEmpty()) {
-                            // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だったので、打鍵リストに追加して同時打鍵判定を行う
-                            strokeList.Add(stroke);
-                            if (strokeList.Count == 1) {
-                                // 第1打鍵の場合
-                                if (!stroke.IsComboShift) {
-                                    logger.DebugH(() => $"UseCombinationKeyTimer1={Settings.UseCombinationKeyTimer1}");
-                                    // 非同時打鍵キーの第1打鍵ならタイマーを起動する
-                                    if (Settings.UseCombinationKeyTimer1) startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn, TimerKind.FirstStroke);
-                                }
+                            // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だった
+                            if (Settings.ComboDisableIntervalTimeMs > 0 && !stroke.IsComboShift && (dt - prevShiftUpDt).TotalMilliseconds <= Settings.ComboDisableIntervalTimeMs) {
+                                // 同時打鍵シフトキーがUPされた後、指定のインターバル時間内に文字キーが打鍵されたので、それを単打として扱う
+                                logger.DebugH(() => $"Handle as SingleHit: elapsed time = {(dt - prevShiftUpDt).TotalMilliseconds}ms < ComboDisableIntervalTimeMs={Settings.ComboDisableIntervalTimeMs}ms");
+                                result = Helper.MakeList(decKey);
                             } else {
-                                // 第2打鍵以降の場合は、同時打鍵チェック
-                                bool bTimer = false;
-                                result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer, out bUnconditional);
-                                if (result._isEmpty()) {
-                                    if (bTimer || strokeList.IsSuccessiveShift2ndKey()) {
-                                        logger.DebugH(() => $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}, TimerKind={(bTimer ? TimerKind.JustTwoComboKey : TimerKind.SecondOrLaterChar)}");
-                                        // タイマーが有効であるか、または同時打鍵シフト後の第2打鍵であって同時打鍵が未判定だったらタイマーを起動する
-                                        if (Settings.UseCombinationKeyTimer2) {
-                                            startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn,
-                                                bTimer ? TimerKind.JustTwoComboKey : TimerKind.SecondOrLaterChar);
+                                // 打鍵リストに追加して同時打鍵判定を行う
+                                strokeList.Add(stroke);
+                                if (strokeList.Count == 1) {
+                                    // 第1打鍵の場合
+                                    if (!stroke.IsComboShift) {
+                                        logger.DebugH(() => $"UseCombinationKeyTimer1={Settings.UseCombinationKeyTimer1}");
+                                        // 非同時打鍵キーの第1打鍵ならタイマーを起動する
+                                        if (Settings.UseCombinationKeyTimer1) startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn, TimerKind.FirstStroke);
+                                    }
+                                } else {
+                                    // 第2打鍵以降の場合は、同時打鍵チェック
+                                    bool bTimer = false;
+                                    result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer, out bUnconditional);
+                                    if (result._isEmpty()) {
+                                        if (bTimer || strokeList.IsSuccessiveShift2ndKey()) {
+                                            logger.DebugH(() => $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}, TimerKind={(bTimer ? TimerKind.JustTwoComboKey : TimerKind.SecondOrLaterChar)}");
+                                            // タイマーが有効であるか、または同時打鍵シフト後の第2打鍵であって同時打鍵が未判定だったらタイマーを起動する
+                                            if (Settings.UseCombinationKeyTimer2) {
+                                                startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn,
+                                                    bTimer ? TimerKind.JustTwoComboKey : TimerKind.SecondOrLaterChar);
+                                            }
                                         }
                                     }
                                 }
@@ -356,6 +369,8 @@ namespace KanchokuWS.CombinationKeyStroke
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
 
             checkPreRewriteTime(decKey);
+
+            if (KeyCombinationPool.IsComboShift(decKey)) prevComboShiftKeyUpDt = dt;
 
             bool bUnconditional = false;
             var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, dt, bDecoderOn, out bUnconditional);
