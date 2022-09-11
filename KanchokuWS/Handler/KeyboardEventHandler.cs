@@ -89,13 +89,16 @@ namespace KanchokuWS.Handler
         /// <summary>デコーダが ON か</summary>
         public DelegateIsDecoderActivated IsDecoderActivated { get; set; }
 
-        private bool isDecoderActivated()
-        {
+        private bool isDecoderActivated() {
             return IsDecoderActivated?.Invoke() ?? false;
         }
 
         /// <summary>デコーダが第1打鍵待ちか </summary>
         public DelegateIsDecoderWaitingFirstStroke IsDecoderWaitingFirstStroke { get; set; }
+
+        private bool isDecoderWaitingFirstStroke() {
+            return IsDecoderWaitingFirstStroke?.Invoke() == true;
+        }
 
         /// <summary>SandS状態を一時的なシフト状態にする</summary>
         public DelegateSetSandSShiftedOneshot SetSandSShiftedOneshot { get; set; }
@@ -923,7 +926,7 @@ namespace KanchokuWS.Handler
                 var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
                 kanchokuCode = vkeyQueue.Peek();
                 if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
-                    determiner.IsEnabled && mod == 0 &&
+                    determiner.IsEnabled && mod == 0 && isDecoderWaitingFirstStroke() &&
                     kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END &&
                     ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM ||
                     currentPool.GetEntry(kanchokuCode) != null)) {    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする
@@ -981,7 +984,8 @@ namespace KanchokuWS.Handler
                 bool bPrevPressed = keyInfo.Pressed;
                 bool bPrevPressedOneshot = keyInfo.PressedOneshot;
                 keyInfo.SetReleased();
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"{keyInfo.Name}Key up: prevPressed={bPrevPressed}, prevPressedOneshot={bPrevPressedOneshot}, decoderOn={bDecoderOn}, modFlag={modFlag:x}, newKeyState={keyInfo.KeyState}");
+                if (Settings.LoggingDecKeyInfo) logger.DebugH(() =>
+                    $"{keyInfo.Name}Key up: prevPressed={bPrevPressed}, prevPressedOneshot={bPrevPressedOneshot}, decoderOn={bDecoderOn}, modFlag={modFlag:x}, newKeyState={keyInfo.KeyState}");
                 if ((uint)vkey == VirtualKeys.SPACE) {
                     // Space離放
                     if (isSandSEnabled()) {
@@ -996,7 +1000,7 @@ namespace KanchokuWS.Handler
                             return true;
                         } else if (bPrevPressed) {
                             // Spaceキーが1回押されただけの状態
-                            if (Settings.OneshotSandSEnabled && (prevVkey != vkey || dtNow > dtLimit) && IsDecoderWaitingFirstStroke?.Invoke() == true) {
+                            if (Settings.OneshotSandSEnabled && (prevVkey != vkey || dtNow > dtLimit) && isDecoderWaitingFirstStroke() == true) {
                                 // SandS時のSpaceUpを一時シフト状態にする設定で、前回のキーがSPACEでないか前回のSpace打鍵から指定のms以上経過しており、今回が第1打鍵である
                                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS UP: SetShiftedOneshot");
                                 keyInfo.SetShiftedOneshot();
