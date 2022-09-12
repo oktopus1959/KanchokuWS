@@ -678,7 +678,7 @@ namespace KanchokuWS
             return IsDecoderActive;
         }
 
-        private bool isDecoderWaitingFirstStroke()
+        public bool IsDecoderWaitingFirstStroke()
         {
             return decoderOutput.IsWaitingFirstStroke();
         }
@@ -723,7 +723,7 @@ namespace KanchokuWS
             keDispatcher.ActivateDecoder = ActivateDecoder;
             keDispatcher.DeactivateDecoder = DeactivateDecoderWithModifiersOff;
             keDispatcher.IsDecoderActivated = isDecoderActivated;
-            keDispatcher.IsDecoderWaitingFirstStroke = isDecoderWaitingFirstStroke;
+            keDispatcher.IsDecoderWaitingFirstStroke = IsDecoderWaitingFirstStroke;
             keDispatcher.SetSandSShiftedOneshot = setSandSShiftedOneshot;
             keDispatcher.FuncDispatcher = FuncDispatcher;
             keDispatcher.SendInputVkeyWithMod = SendInputVkeyWithMod;

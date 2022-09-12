@@ -331,6 +331,7 @@ namespace KanchokuWS.CombinationKeyStroke
                 strokeList.Clear();
             }
 
+            checkResultAgainstDecoderState(result);
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}");
 
             //if (result._notEmpty()) {
@@ -375,6 +376,8 @@ namespace KanchokuWS.CombinationKeyStroke
             bool bUnconditional = false;
             var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, dt, bDecoderOn, out bUnconditional);
 
+            checkResultAgainstDecoderState(result);
+
             logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}");
 
             if (!bTimer && strokeList.IsEmpty()) frmMain?.FlushStrokeLog();
@@ -384,6 +387,20 @@ namespace KanchokuWS.CombinationKeyStroke
             //}
 
             return new KeyHandlerResult() { list = result, bUncoditional = bUnconditional };
+        }
+
+        private void checkResultAgainstDecoderState(List<int> result)
+        {
+            if (result._safeCount() > 1 && frmMain != null && !frmMain.IsDecoderWaitingFirstStroke()) {
+                // After 2 stroke or later
+                logger.DebugH("Decoder waiting 2nd or later stroke");
+                if (result._getFirst() > DecoderKeys.COMBO_DECKEY_START) {
+                    result.RemoveAt(0);
+                    for (int i = 0; i < result.Count; ++i) {
+                        result[i] %= DecoderKeys.PLANE_DECKEY_NUM;
+                    }
+                }
+            }
         }
 
         /// <summary>

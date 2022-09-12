@@ -926,7 +926,7 @@ namespace KanchokuWS.Handler
                 var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
                 kanchokuCode = vkeyQueue.Peek();
                 if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
-                    determiner.IsEnabled && mod == 0 && isDecoderWaitingFirstStroke() &&
+                    determiner.IsEnabled && mod == 0 &&
                     kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END &&
                     ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM ||
                     currentPool.GetEntry(kanchokuCode) != null)) {    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする

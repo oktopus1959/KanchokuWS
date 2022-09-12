@@ -467,16 +467,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         var challengeList = makeComboChallengeList(subList, hotList.Take(overlapLen));
                         logger.DebugH(() => $"COMBO SEARCH: searchKey={challengeList._toString()}");
 
-                        var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(challengeList);
-                        logger.DebugH(() => $"COMBO RESULT: keyCombo.decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, HasString={keyCombo?.HasString ?? false}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
+                            var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(challengeList);
+                            logger.DebugH(() => $"COMBO RESULT: keyCombo.decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, HasString={keyCombo?.HasString ?? false}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
 
                         if (keyCombo != null && keyCombo.DecKeyList != null && keyCombo.HasString) {
                             //bComboFound = true; // 同時打鍵の組合せが見つかった
                             timingResult = 0;  // 同時打鍵の組合せが見つかった
                             Stroke tailKey = hotList[overlapLen - 1];
                             bool isTailKeyUp = hotList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
-                            //logger.DebugH(() => $"CHECK0: {!hotList[0].IsSingleHittable}: hotList[0] NOT SINGLE");
-                            //logger.DebugH(() => $"CHECK1: {tailKey.IsUpKey && hotList[0].IsComboShift && tailKey.IsSingleHittable}: hotList[0].IsComboShift={hotList[0].IsComboShift} and hotList[tailPos={overlapLen - 1}].IsUpKey && IsSingle");
+                                                                                                    //logger.DebugH(() => $"CHECK0: {!hotList[0].IsSingleHittable}: hotList[0] NOT SINGLE");
+                                                                                                    //logger.DebugH(() => $"CHECK1: {tailKey.IsUpKey && hotList[0].IsComboShift && tailKey.IsSingleHittable}: hotList[0].IsComboShift={hotList[0].IsComboShift} and hotList[tailPos={overlapLen - 1}].IsUpKey && IsSingle");
                             logger.DebugH(() => $"CHECK1: {isTailKeyUp && tailKey.IsSingleHittable}: tailPos={overlapLen - 1}: isTailKeyUp && tailKey.IsSingleHittable");
                             logger.DebugH(() => $"CHECK2: {hotList[0].IsShiftableSpaceKey}: hotList[0].IsShiftableSpaceKey");
                             //if (tailKey.IsUpKey && tailKey.IsSingleHittable && hotList[0].IsComboShift || // CHECK1: 対象リストの末尾キーが先にUPされた
