@@ -2203,7 +2203,7 @@ namespace KanchokuWS.Gui
             this.groupBox45.Controls.Add(this.label114);
             this.groupBox45.Location = new System.Drawing.Point(7, 164);
             this.groupBox45.Name = "groupBox45";
-            this.groupBox45.Size = new System.Drawing.Size(351, 152);
+            this.groupBox45.Size = new System.Drawing.Size(351, 170);
             this.groupBox45.TabIndex = 1;
             this.groupBox45.TabStop = false;
             this.groupBox45.Text = "同時打鍵の判定条件 (AとBの AND 判定 )";
@@ -2211,7 +2211,7 @@ namespace KanchokuWS.Gui
             // textBox_comboDisableIntervalTimeMs
             // 
             this.textBox_comboDisableIntervalTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_comboDisableIntervalTimeMs.Location = new System.Drawing.Point(242, 123);
+            this.textBox_comboDisableIntervalTimeMs.Location = new System.Drawing.Point(51, 145);
             this.textBox_comboDisableIntervalTimeMs.Name = "textBox_comboDisableIntervalTimeMs";
             this.textBox_comboDisableIntervalTimeMs.Size = new System.Drawing.Size(45, 19);
             this.textBox_comboDisableIntervalTimeMs.TabIndex = 5;
@@ -2221,20 +2221,20 @@ namespace KanchokuWS.Gui
             // label140
             // 
             this.label140.AutoSize = true;
-            this.label140.Location = new System.Drawing.Point(286, 125);
+            this.label140.Location = new System.Drawing.Point(96, 147);
             this.label140.Name = "label140";
-            this.label140.Size = new System.Drawing.Size(58, 15);
+            this.label140.Size = new System.Drawing.Size(249, 15);
             this.label140.TabIndex = 22;
-            this.label140.Text = "ミリ秒以上";
+            this.label140.Text = "ミリ秒以内に文字キーが押下されたら単打として扱う";
             // 
             // label141
             // 
             this.label141.AutoSize = true;
-            this.label141.Location = new System.Drawing.Point(9, 125);
+            this.label141.Location = new System.Drawing.Point(9, 127);
             this.label141.Name = "label141";
-            this.label141.Size = new System.Drawing.Size(234, 15);
+            this.label141.Size = new System.Drawing.Size(135, 15);
             this.label141.TabIndex = 20;
-            this.label141.Text = "C: シフトキー解放から文字キー押下までの時間が";
+            this.label141.Text = "シフトキーの解放時点から、";
             // 
             // textBox_combinationKeyTimeMs
             // 
