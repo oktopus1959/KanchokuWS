@@ -18,6 +18,12 @@ namespace KanchokuWS.TableParser
 
         public List<int> strokeList { get; private set; } = new List<int>();
 
+        private List<bool> comboFlagList { get; set; } = new List<bool>();
+
+        public bool ComboFlagAt(int idx) => idx >= 0 && idx < comboFlagList.Count ? comboFlagList[idx] : false;
+
+        public bool ComboFlagAtLast() => comboFlagList.Count > 0 ? comboFlagList[comboFlagList.Count - 1] : false;
+
         //// 追加の末尾打鍵
         //public int LastStroke { get; set; } = -1;
 
@@ -33,7 +39,10 @@ namespace KanchokuWS.TableParser
         public CStrokeList(TableParser parser, CStrokeList strkList)
         {
             this.parser = parser;
-            if (strkList != null && strkList.strokeList._notEmpty()) strokeList.AddRange(strkList.strokeList);
+            if (strkList != null && strkList.strokeList._notEmpty()) {
+                strokeList.AddRange(strkList.strokeList);
+                comboFlagList.AddRange(strkList.comboFlagList);
+            }
         }
 
         public CStrokeList WithLastStrokeAdded(int lastStroke)
@@ -48,6 +57,7 @@ namespace KanchokuWS.TableParser
                     lastStroke %= DecoderKeys.PLANE_DECKEY_NUM;
                 }
                 result.strokeList.Add(lastStroke);
+                result.comboFlagList.Add(parser.IsInCombinationBlock);
             }
             return result;
         }
@@ -77,6 +87,9 @@ namespace KanchokuWS.TableParser
 
         // ルートノードへのアクセッサ
         protected static Node RootTableNode => ParserContext.Singleton.rootTableNode;
+
+        protected bool isComboBlocked = false;
+        public bool IsInCombinationBlock => !isComboBlocked && isInCombinationBlock;
 
         // 当Parserによる解析内容を格納するツリーノード
         Node _treeNode;
@@ -181,7 +194,7 @@ namespace KanchokuWS.TableParser
         /// <returns></returns>
         protected Node SetOrMergeNthSubNode(int idx, Node node)
         {
-            if (isInCombinationBlock) {
+            if (IsInCombinationBlock) {
                 // 同時打鍵定義ブロック
                 int depth = Depth;
                 if (depth == 0) {
@@ -193,7 +206,7 @@ namespace KanchokuWS.TableParser
                 }
             }
             (Node mergedNode, bool bOverwrite) = TreeNode.SetOrMergeNthSubNode(idx, node);
-            if (bOverwrite && (Settings.DuplicateWarningEnabled || isInCombinationBlock) && !bIgnoreWarningOverwrite) {
+            if (bOverwrite && (Settings.DuplicateWarningEnabled || IsInCombinationBlock) && !bIgnoreWarningOverwrite) {
                 logger.Warn($"DUPLICATED: {CurrentLine}");
                 NodeDuplicateWarning();
             }
@@ -324,13 +337,21 @@ namespace KanchokuWS.TableParser
 
         }
 
-        protected virtual TableParser AddTreeNode(int idx)
+        protected virtual TableParser AddTreeNode(int idx, bool bComboBlockerFound = false)
         {
             var strkList = StrokeList.WithLastStrokeAdded(idx);
+            if (IsInCombinationBlock && bComboBlockerFound) {
+                // ComboBlocker が見つかったので、ここでいったん同時打鍵列を登録しておく(末尾にダミーの -1 を追加して)
+                addCombinationKey(strkList.WithLastStrokeAdded(-1), false);
+            }
             //Node node = SetNodeOrNewTreeNodeAtLast(strkList, null);
             Node node = SetOrMergeNthSubNode(idx, Node.MakeTreeNode());
             if (node != null && node.IsTreeNode()) {
-                return new TableParser(node, strkList);
+                // ComboDisabled になるのは、ComboBlockerが見つかった、その次からとなる
+                bool bComboBlocked = bComboBlockerFound || isComboBlocked;
+                return new TableParser(node, strkList) {
+                    isComboBlocked = bComboBlocked
+                };
             } else {
                 return null;
             }
@@ -471,40 +492,93 @@ namespace KanchokuWS.TableParser
             SetOrMergeNthSubNode(idx, node);
         }
 
+        /// <summary>
+        /// 同時打鍵を含む打鍵列を KeyCombinationPool に登録する。<br/>
+        /// 1ストロークの場合は、単打として登録する<br/>
+        /// 先頭2打鍵が同時打鍵で、その後は順次打鍵になるケースもある。どの打鍵が同時打鍵かは、strokeList.comboFlagList で判断する。<br/>
+        /// なお、先頭2打が同時打鍵でその後順次打鍵に移行する場合は、一回だけ、末尾に -1 が格納されて呼び出される。
+        /// </summary>
+        /// <param name="strkList"></param>
+        /// <param name="hasStr"></param>
         protected void addCombinationKey(CStrokeList strkList, bool hasStr)
         {
-            //var list = new List<int>(StrokeList.strokeList);
-            //var strkList = StrokeList.WithLastStrokeAdded(idx);
-            var list = new List<int>(strkList.strokeList);
+            if (!strkList.IsEmpty) {
+                int strk = 0;
+                int shiftOffset = calcShiftOffset(strkList.At(0));
 
-            if (list._notEmpty()) {
-                int shiftOffset = calcShiftOffset(list[0]);
-
-                // 先頭キーはシフト化
-                if (isInCombinationBlock) {
-                    list[0] = makeComboDecKey(list[0]);
-                    for (int i = 1; i < list.Count - 1; ++i) {
-                        // 同時打鍵での中間キーは終端キーとの重複を避けるためシフト化しておく
-                        list[i] = makeNonTerminalDuplicatableComboKey(list[i]);
-                    }
-                    AddCombinationKeyCombo(list, shiftOffset, hasStr);
-                } else {
-                    if (list[0] < DecoderKeys.PLANE_DECKEY_NUM) {
-                        list[0] += shiftOffset;
-                    }
-                    if (list.Count == 1) {
-                        AddCombinationKeyCombo(list, shiftOffset, hasStr);
-                    } else {
-                        if (keyComboPool != null) keyComboPool.ContainsSequentialShiftKey = true;
-                        for (int i = 0; i < list.Count - 1; ++i) {
-                            int dk = list[i];
-                            if (!sequentialShiftKeys.Contains(dk)) {
-                                addSequentialShiftKey(dk, shiftOffset);
-                                sequentialShiftKeys.Add(dk);
-                            }
-                        }
+                void addSeqShiftKey()
+                {
+                    if (!sequentialShiftKeys.Contains(strk)) {
+                        addSequentialShiftKey(strk, shiftOffset);
+                        sequentialShiftKeys.Add(strk);
                     }
                 }
+
+                var comboList = new List<int>();
+
+                // 先頭キーはシフト化
+                strk = strkList.At(0);
+                if (strkList.ComboFlagAt(0)) {
+                    strk = makeComboDecKey(strk);
+                } else if (strk < DecoderKeys.PLANE_DECKEY_NUM) {
+                    strk += shiftOffset;
+                }
+
+                if (strkList.Count == 1 || strkList.ComboFlagAt(0)) {
+                    // 長さが1の場合は、単打として登録する
+                    comboList.Add(strk);
+                } else {
+                    // 長さが2以上で、同時打鍵でない
+                    addSeqShiftKey();
+                }
+
+                // 中間キー
+                for (int i = 1; i < strkList.Count - 1; ++i) {
+                    strk = strkList.At(i);
+                    if (strkList.ComboFlagAt(i)) {
+                        // 同時打鍵での中間キーは終端キーとの重複を避けるためシフト化しておく
+                        comboList.Add(makeNonTerminalDuplicatableComboKey(strk));
+                    } else {
+                        addSeqShiftKey();
+                    }
+                }
+
+                // 末尾キー(先頭2打が同時打鍵でその後順次打鍵に移行する場合は、末尾にダミーの -1 が格納されてくるので、それは除外)
+                if (strkList.Count > 1 && strkList.Last() >= 0 && strkList.ComboFlagAtLast()) {
+                    // Comboの末尾はそのまま
+                    comboList.Add(strkList.Last());
+                }
+
+                if (comboList._notEmpty()) {
+                    AddCombinationKeyCombo(comboList, shiftOffset, hasStr);
+                }
+
+                // var list = new List<int>(strkList.strokeList);
+                //// 先頭キーはシフト化
+                //if (IsInCombinationBlock) {
+                //    list[0] = makeComboDecKey(list[0]);
+                //    for (int i = 1; i < list.Count - 1; ++i) {
+                //        // 同時打鍵での中間キーは終端キーとの重複を避けるためシフト化しておく
+                //        list[i] = makeNonTerminalDuplicatableComboKey(list[i]);
+                //    }
+                //    AddCombinationKeyCombo(list, shiftOffset, hasStr);
+                //} else {
+                //    if (list[0] < DecoderKeys.PLANE_DECKEY_NUM) {
+                //        list[0] += shiftOffset;
+                //    }
+                //    if (list.Count == 1) {
+                //        AddCombinationKeyCombo(list, shiftOffset, hasStr);
+                //    } else {
+                //        if (keyComboPool != null) keyComboPool.ContainsSequentialShiftKey = true;
+                //        for (int i = 0; i < list.Count - 1; ++i) {
+                //            int dk = list[i];
+                //            if (!strkList.ComboFlagAt(i) && !sequentialShiftKeys.Contains(dk)) {
+                //                addSequentialShiftKey(dk, shiftOffset);
+                //                sequentialShiftKeys.Add(dk);
+                //            }
+                //        }
+                //    }
+                //}
             }
         }
 
@@ -519,7 +593,10 @@ namespace KanchokuWS.TableParser
 
         void addSequentialShiftKey(int decKey, int shiftOffset)
         {
-            keyComboPool?.AddComboShiftKey(makeShiftedDecKey(decKey, shiftOffset), ShiftKeyKind.SequentialShift);
+            if (keyComboPool != null) {
+                keyComboPool.ContainsSequentialShiftKey = true;
+                keyComboPool.AddComboShiftKey(makeShiftedDecKey(decKey, shiftOffset), ShiftKeyKind.SequentialShift);
+            }
         }
 
     }
@@ -549,6 +626,13 @@ namespace KanchokuWS.TableParser
         {
             logger.DebugH(() => $"ENTER: lineNum={LineNumber}, depth={Depth}, UnhandledArrowIndex={UnhandledArrowIndex}");
             //int arrowIdx = arrowIndex;
+            bool bComboBlockerFound = false;
+            if (PeekNextChar() == '|') {
+                // '>|' という形式だった
+                AdvanceCharPos(1);
+                bComboBlockerFound = true;
+            }
+
             readNextToken(true);
             switch (currentToken) {
                 case TOKEN.ARROW:
@@ -563,7 +647,6 @@ namespace KanchokuWS.TableParser
                     break;
 
                 case TOKEN.COMMA:
-                case TOKEN.VBAR:
                     if (parseArrow()) {
                         // 矢印記法連続の簡略記法
                         // ルートパーザの場合は、 ArrowIndex はすでに Shiftされている
@@ -574,7 +657,7 @@ namespace KanchokuWS.TableParser
                 case TOKEN.LBRACE:
                     // ブロック開始
                     // ルートパーザの場合は、 UnhandledArrowIndex はすでに Shiftされている
-                    AddTreeNode(UnhandledArrowIndex)?.ParseNodeBlock();
+                    AddTreeNode(UnhandledArrowIndex, bComboBlockerFound)?.ParseNodeBlock();
                     break;
 
                 //AddLeafNode(currentToken, UnhandledArrowIndex);
@@ -750,7 +833,7 @@ namespace KanchokuWS.TableParser
         {
             int tgtIdx = ShiftDecKey(idx);  // 矢印記法でないルートブロックの場合は、まだShiftされていないので、ここで Shift する必要あり
             (Node mergedNode, bool bOverwrite) = treeNode.SetOrMergeNthSubNode(tgtIdx, node);
-            if (bOverwrite && (Settings.DuplicateWarningEnabled || isInCombinationBlock) && !bIgnoreWarningOverwrite) {
+            if (bOverwrite && (Settings.DuplicateWarningEnabled || IsInCombinationBlock) && !bIgnoreWarningOverwrite) {
                 logger.Warn($"DUPLICATED: {CurrentLine}");
                 NodeDuplicateWarning();
             }
@@ -814,7 +897,7 @@ namespace KanchokuWS.TableParser
         }
 
         // ブロック処理(ネストされたパーザから呼ばれた場合は、通常のTableParserにする)
-        protected override TableParser AddTreeNode(int idx)
+        protected override TableParser AddTreeNode(int idx, bool _ = false)
         {
             if (!bNested) {
                 // 最初のブロック処理(パーザをネストさせる)
@@ -901,7 +984,7 @@ namespace KanchokuWS.TableParser
         private OutputString getMyString(int idx)
         {
             var myStr = ReadWordOrString();
-            if (myStr._isEmpty() && idx >= 0 && !isInCombinationBlock) {    // 同時打鍵の場合は、単打テーブルからは拾わない
+            if (myStr._isEmpty() && idx >= 0 && !IsInCombinationBlock) {    // 同時打鍵の場合は、単打テーブルからは拾わない
                 Node myNode = GetNthRootNode(idx);
                 if (myNode != null) {
                     myStr = myNode.GetOutputString();
@@ -915,7 +998,7 @@ namespace KanchokuWS.TableParser
         // &X,..,Y>{あ
         // というケース
         // ・後置書き換えではネストされたブロックは不可
-        protected override TableParser AddTreeNode(int idx)
+        protected override TableParser AddTreeNode(int idx, bool _ = false)
         {
             if (bNested) {
                 ParseError("後置書き換えではブロックのネストはできません");
@@ -925,7 +1008,7 @@ namespace KanchokuWS.TableParser
             var myStr = getMyString(idx);
             var strkList = StrokeList.WithLastStrokeAdded(idx);
             idx = strkList.Last();
-            if (isInCombinationBlock) {
+            if (IsInCombinationBlock) {
                 // 同時打鍵の場合
                 addCombinationKey(strkList, true);
             }
@@ -959,7 +1042,7 @@ namespace KanchokuWS.TableParser
             if (bNested) {
                 prefixStr = myPrefixString(prevIndex);
             } else {
-                if (isInCombinationBlock) {
+                if (IsInCombinationBlock) {
                     // 同時打鍵の場合はTreeNodeを挿入しておく必要がある
                     var strkList = StrokeList.WithLastStrokeAdded(prevIndex);
                     Node node = SetOrMergeNthSubNode(prevIndex, Node.MakeTreeNode());
