@@ -56,9 +56,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public void AddShiftKey(int keyCode, ComboKind kind)
         {
             if (kind != ComboKind.None) {
-                if (comboKindDict.ContainsKey(keyCode)) {
+                var oldKind = comboKindDict._safeGet(keyCode, ComboKind.None);
+                if (oldKind != ComboKind.None && kind <= ComboKind.PrefixSuccessiveShift) {
                     if (kind == ComboKind.SequentialShift || kind == ComboKind.PrefixSuccessiveShift) {
-                        var oldKind = comboKindDict[keyCode];
                         if (kind != oldKind && (oldKind == ComboKind.SequentialShift || oldKind == ComboKind.PrefixSuccessiveShift)) {
                             logger.DebugH(() => $"MERGE: keyCode={keyCode}, Kind=PrefixOrSequentialShift");
                             comboKindDict[keyCode] = ComboKind.PrefixOrSequentialShift;
