@@ -449,7 +449,7 @@ namespace KanchokuWS.TableParser
         private void outputLine(List<string> outLines, List<int> list)
         {
             if (rewriteMap._notEmpty() || outputStr._notEmpty()) {
-                string leaderStr = $"-{list.Select(x => x.ToString())._join(">-")}>";
+                string leaderStr = list._notEmpty() ? $"-{list.Select(x => x.ToString())._join(">-")}>" : "";
                 if (rewriteMap._notEmpty()) {
                     // 書き換えノード
                     outLines.Add(leaderStr + "@{" + GetBaseQuotedString());
