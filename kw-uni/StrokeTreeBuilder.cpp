@@ -515,7 +515,7 @@ namespace {
 
         Node* createRewriteNode() {
             _LOG_DEBUGH(_T("ENTER"));
-            readWord();
+            readWordOrString();
             bool bBare = !currentStr.empty() && currentStr[0] != '"';
             PostRewriteOneShotNode* rewNode = new PostRewriteOneShotNode(utils::strip(currentStr, _T("\"")), bBare);
 
