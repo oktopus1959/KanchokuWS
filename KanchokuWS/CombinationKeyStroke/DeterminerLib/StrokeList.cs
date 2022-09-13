@@ -57,6 +57,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public int UnprocListCount => unprocList.Count;
         public int Count => comboList.Count + unprocList.Count;
 
+        public void ClearComboList()
+        {
+            comboList.Clear();
+        }
+
         public void Clear()
         {
             comboList.Clear();
@@ -128,7 +133,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             unprocList.Add(s);
         }
 
-        public bool IsSuccessiveShift2ndKey()
+        public bool IsSuccessiveShift2ndOr3rdKey()
         {
             bool result = KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey &&
                 (comboList.Count >= 1 && unprocList.Count == 1 ||
@@ -410,6 +415,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 // 強制的に終了する
                                 break;
                             }
+                            if (unprocList._notEmpty() && Settings.AbandonUsedKeysWhenSpecialComboShiftDown && unprocList[0].IsSpaceOrFuncComboShift) {
+                                // Spaceまたは機能キーのシフトキーがきたら、使い終わったキーを破棄する
+                                logger.DebugH(() => $"Abandon Used Keys When Special Combo Shift Down");
+                                comboList.Clear();                           }
                             logger.DebugH(() => $"TRY NEXT: result={result._keyString()}, {ToDebugString()}");
                         } // while(unprocList)
 

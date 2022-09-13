@@ -637,9 +637,12 @@ namespace KanchokuWS
         /// <summary>同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする</summary>
         public static bool UseComboExtModKeyAsSingleHit { get; set; } = true;
 
-        /// <summary>同時打鍵シフトキーがUPされた後、前方へのシフトを無効にする時間(ミリ秒)。<br/>
-        /// 100ms に設定されている場合、 S up -(60ms)- A down -(20ms)- S down -(50ms)- B down の S down は、その後の B down にかかる</summary>
-        public static int ComboDisableIntervalTimeMs { get; set; } = 3000;
+        /// <summary>Spaceまたは機能キーによる同時打鍵シフトキーがUPされた後、後置シフトを無効にする時間(ミリ秒)。<br/>
+        /// つまり、この時間帯に打鍵された文字キーは単打扱いとなる</summary>
+        public static int ComboDisableIntervalTimeMs { get; set; } = 300;
+
+        /// <summary>Spaceまたは機能キーのシフトキーがきたら、使い終わったキーを破棄する</summary>
+        public static bool AbandonUsedKeysWhenSpecialComboShiftDown = true;
 
         /// <summary>3番目以降の同時打鍵キーは最初に解放される必要があるか<br/>
         /// true の場合は、3打鍵同時の場合に、3番目に押されたキーが最初に解放された場合に限り、同時打鍵と判定する。
@@ -1081,7 +1084,7 @@ namespace KanchokuWS
             //CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0);                          // 重複時間率
             CombinationKeyMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100);   // 許容リードタイム
             CombinationKeyMinOverlappingTimeMs = GetString("combinationKeyTimeMs")._parseInt(70);               // 重複時間
-            ComboDisableIntervalTimeMs = GetString("comboDisableIntervalTimeMs")._parseInt(1000);               // 同時打鍵シフトキーがUPされた後、前方へのシフトを無効にする時間
+            ComboDisableIntervalTimeMs = GetString("comboDisableIntervalTimeMs")._parseInt(0);                  // 同時打鍵シフトキーがUPされた後、前方へのシフトを無効にする時間
             CombinationKeyMinTimeOnlyAfterSecond = GetString("combinationKeyTimeOnlyAfterSecond")._parseBool(false);    // ２文字目以降についてのみ同時打鍵チェックを行う
             UseCombinationKeyTimer1 = GetString("useCombinationKeyTimer1")._parseBool(true);                    // 同時打鍵判定用タイマーを使用する
             UseCombinationKeyTimer2 = GetString("useCombinationKeyTimer2")._parseBool(true);                    // 同時打鍵判定用タイマーを使用する

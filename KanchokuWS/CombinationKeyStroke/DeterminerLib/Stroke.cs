@@ -66,6 +66,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>単打不可の同時打鍵のシフトキーか</summary>
         public bool IsJustComboShift => IsComboShift && !IsSingleHittable;
 
+        /// <summary>スペースキーまたは機能キーの同時打鍵シフトキーか</summary>
+        public bool IsSpaceOrFuncComboShift => DecoderKeys.IsSpaceOrFuncKey(OrigDecoderKey) && IsComboShift;
+
         /// <summary>同時打鍵のシフトキーになったか</summary>
         public bool IsCombined { get; private set; }
 

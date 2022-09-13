@@ -278,5 +278,12 @@ namespace KanchokuWS
         {
             return deckey >= EISU_COMBO_DECKEY_START && deckey <= EISU_COMBO_DECKEY_END;
         }
+
+        /// <summary>スペースキーまたは機能キーか</summary>
+        public static bool IsSpaceOrFuncKey(int deckey)
+        {
+            int dk = deckey % PLANE_DECKEY_NUM;
+            return dk == STROKE_SPACE_DECKEY || dk >= FUNC_DECKEY_START;
+        }
     }
 }
