@@ -184,7 +184,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 if (result != null) {
                     // 同時打鍵候補があった
                     if (unprocList[0].IsPrefixShift ||
-                        (unprocList[1].TimeSpanMs(unprocList[0]) <= Settings.CombinationKeyMaxAllowedLeadTimeMs &&
+                        (((unprocList[0].IsComboShift && unprocList[1].TimeSpanMs(unprocList[0]) <= Settings.CombinationKeyMaxAllowedLeadTimeMs) ||
+                          (!unprocList[0].IsComboShift && unprocList[1].TimeSpanMs(unprocList[0]) <= Settings.ComboKeyMaxAllowedPostfixTimeMs)) &&
                         (Settings.CombinationKeyMinTimeOnlyAfterSecond || Settings.CombinationKeyMinOverlappingTimeMs <= 0 || anyNotSingleHittable()))) {
                         // 前置シフトであるか、または第2打鍵までの時間が閾値以下で即時判定あるいは親指シフトのように非単打キーを含む場合
                         if (KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey) {
@@ -598,8 +599,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     logger.DebugH(() => $"RESULT1={result == 0}: !bSecondComboCheck (True) && !ContainsUnorderedShiftKey={!KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey}");
                 } else {
                     double ms1 = list[0].TimeSpanMs(tailStk);
-                    result = ms1 <= Settings.CombinationKeyMaxAllowedLeadTimeMs ? 0 : 1;
-                    logger.DebugH(() => $"RESULT1={result == 0}: !bSecondComboCheck (True) && ms1={ms1:f2}ms <= threshold={Settings.CombinationKeyMaxAllowedLeadTimeMs}ms (Timing={result})");
+                    result =
+                        (list[0].IsComboShift && ms1 <= Settings.CombinationKeyMaxAllowedLeadTimeMs) ||
+                        (!list[0].IsComboShift && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs)
+                        ? 0 : 1;
+                    logger.DebugH(() =>
+                        $"RESULT1={result == 0}: !bSecondComboCheck (True) && ms1={ms1:f2}ms <= " +
+                        $"threshold={Settings.CombinationKeyMaxAllowedLeadTimeMs}ms/{Settings.ComboKeyMaxAllowedPostfixTimeMs}ms (Timing={result})");
                 }
             }
             if (bSecondComboCheck || (result == 0 && !Settings.CombinationKeyMinTimeOnlyAfterSecond)) {

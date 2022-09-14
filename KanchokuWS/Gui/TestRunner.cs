@@ -100,7 +100,9 @@ namespace KanchokuWS.Gui
                         Settings.UseCombinationKeyTimer1 = false;
                         Settings.UseCombinationKeyTimer2 = false;
                         Settings.CombinationKeyMaxAllowedLeadTimeMs = arg._parseInt(100);
+                        Settings.ComboKeyMaxAllowedPostfixTimeMs = arg._parseInt(100);
                         Settings.CombinationKeyMinOverlappingTimeMs = arg._parseInt(70);
+                        Settings.ComboDisableIntervalTimeMs = arg._parseInt(0);
                         shiftOffset = 0;
                         if (Logger.LogLevel >= Logger.LogLevelInfoH) {
                             KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.SingletonK2?.DebugPrint(true);
@@ -133,6 +135,14 @@ namespace KanchokuWS.Gui
 
                     case "comboMaxTime":
                         Settings.CombinationKeyMaxAllowedLeadTimeMs = arg._parseInt(70);
+                        break;
+
+                    case "comboMaxPostTime":
+                        Settings.ComboKeyMaxAllowedPostfixTimeMs = arg._parseInt(70);
+                        break;
+
+                    case "comboDisableTime":
+                        Settings.ComboDisableIntervalTimeMs = arg._parseInt(300);
                         break;
 
                     case "rewriteMaxTime":

@@ -621,6 +621,9 @@ namespace KanchokuWS
         /// <summary>同時打鍵判定を行う際の、第１打鍵に許容する最大のリード時間(ミリ秒)<br/>第２打鍵までにこの時間より長くかかったら、第1打鍵は同時とみなさない</summary>
         public static int CombinationKeyMaxAllowedLeadTimeMs { get; set; } = 0;
 
+        /// <summary>同時打鍵判定を行う際、第2打鍵がシフトキーだった場合に許容する最大のリード時間(ミリ秒)<br/>これにより、シフトキーがその直後の文字キーにかかりやすくなることが期待できる</summary>
+        public static int ComboKeyMaxAllowedPostfixTimeMs { get; set; } = 0;
+
         /// <summary>同時打鍵とみなす重複時間<br/>Nキー同時押しの状態からどれかのキーUPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす</summary>
         public static int CombinationKeyMinOverlappingTimeMs { get; set; } = 70;
 
@@ -641,7 +644,7 @@ namespace KanchokuWS
         /// つまり、この時間帯に打鍵された文字キーは単打扱いとなる</summary>
         public static int ComboDisableIntervalTimeMs { get; set; } = 300;
 
-        /// <summary>Spaceまたは機能キーのシフトキーがきたら、使い終わったキーを破棄する</summary>
+        /// <summary>Spaceまたは機能キーのシフトキーがきたら、使い終わったキー(comboListにたまっているキー)を破棄する</summary>
         public static bool AbandonUsedKeysWhenSpecialComboShiftDown = true;
 
         /// <summary>3番目以降の同時打鍵キーは最初に解放される必要があるか<br/>
@@ -1083,6 +1086,7 @@ namespace KanchokuWS
             // 同時打鍵
             //CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0);                          // 重複時間率
             CombinationKeyMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100);   // 許容リードタイム
+            ComboKeyMaxAllowedPostfixTimeMs = GetString("comboMaxAllowedPostfixTimeMs")._parseInt(100)._highLimit(CombinationKeyMaxAllowedLeadTimeMs);  // 第2キーの許容リードタイム
             CombinationKeyMinOverlappingTimeMs = GetString("combinationKeyTimeMs")._parseInt(70);               // 重複時間
             ComboDisableIntervalTimeMs = GetString("comboDisableIntervalTimeMs")._parseInt(0);                  // 同時打鍵シフトキーがUPされた後、前方へのシフトを無効にする時間
             CombinationKeyMinTimeOnlyAfterSecond = GetString("combinationKeyTimeOnlyAfterSecond")._parseBool(false);    // ２文字目以降についてのみ同時打鍵チェックを行う

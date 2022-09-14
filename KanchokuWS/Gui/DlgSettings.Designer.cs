@@ -159,7 +159,6 @@ namespace KanchokuWS.Gui
             this.radioButton_imeSendInputInRoman = new System.Windows.Forms.RadioButton();
             this.groupBox45 = new System.Windows.Forms.GroupBox();
             this.textBox_comboDisableIntervalTimeMs = new System.Windows.Forms.TextBox();
-            this.label140 = new System.Windows.Forms.Label();
             this.label141 = new System.Windows.Forms.Label();
             this.textBox_combinationKeyTimeMs = new System.Windows.Forms.TextBox();
             this.label120 = new System.Windows.Forms.Label();
@@ -504,6 +503,8 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.textBox_comboMaxAllowedPostfixTimeMs = new System.Windows.Forms.TextBox();
+            this.label140 = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_onKanaTrainingMode = new KanchokuWS.Gui.ColorTextBox();
@@ -2189,8 +2190,9 @@ namespace KanchokuWS.Gui
             // 
             // groupBox45
             // 
-            this.groupBox45.Controls.Add(this.textBox_comboDisableIntervalTimeMs);
+            this.groupBox45.Controls.Add(this.textBox_comboMaxAllowedPostfixTimeMs);
             this.groupBox45.Controls.Add(this.label140);
+            this.groupBox45.Controls.Add(this.textBox_comboDisableIntervalTimeMs);
             this.groupBox45.Controls.Add(this.label141);
             this.groupBox45.Controls.Add(this.textBox_combinationKeyTimeMs);
             this.groupBox45.Controls.Add(this.label120);
@@ -2203,7 +2205,7 @@ namespace KanchokuWS.Gui
             this.groupBox45.Controls.Add(this.label114);
             this.groupBox45.Location = new System.Drawing.Point(7, 164);
             this.groupBox45.Name = "groupBox45";
-            this.groupBox45.Size = new System.Drawing.Size(351, 170);
+            this.groupBox45.Size = new System.Drawing.Size(351, 171);
             this.groupBox45.TabIndex = 1;
             this.groupBox45.TabStop = false;
             this.groupBox45.Text = "同時打鍵の判定条件 (AとBの AND 判定 )";
@@ -2211,45 +2213,36 @@ namespace KanchokuWS.Gui
             // textBox_comboDisableIntervalTimeMs
             // 
             this.textBox_comboDisableIntervalTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_comboDisableIntervalTimeMs.Location = new System.Drawing.Point(51, 145);
+            this.textBox_comboDisableIntervalTimeMs.Location = new System.Drawing.Point(285, 146);
             this.textBox_comboDisableIntervalTimeMs.Name = "textBox_comboDisableIntervalTimeMs";
             this.textBox_comboDisableIntervalTimeMs.Size = new System.Drawing.Size(45, 19);
-            this.textBox_comboDisableIntervalTimeMs.TabIndex = 5;
+            this.textBox_comboDisableIntervalTimeMs.TabIndex = 6;
             this.textBox_comboDisableIntervalTimeMs.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_comboDisableIntervalTimeMs, resources.GetString("textBox_comboDisableIntervalTimeMs.ToolTip"));
-            // 
-            // label140
-            // 
-            this.label140.AutoSize = true;
-            this.label140.Location = new System.Drawing.Point(96, 147);
-            this.label140.Name = "label140";
-            this.label140.Size = new System.Drawing.Size(249, 15);
-            this.label140.TabIndex = 22;
-            this.label140.Text = "ミリ秒以内に文字キーが押下されたら単打として扱う";
             // 
             // label141
             // 
             this.label141.AutoSize = true;
-            this.label141.Location = new System.Drawing.Point(9, 127);
+            this.label141.Location = new System.Drawing.Point(9, 148);
             this.label141.Name = "label141";
-            this.label141.Size = new System.Drawing.Size(135, 15);
+            this.label141.Size = new System.Drawing.Size(274, 15);
             this.label141.TabIndex = 20;
-            this.label141.Text = "シフトキーの解放時点から、";
+            this.label141.Text = "シフトキーの解放後、後置シフトを無効にする時間(ミリ秒)";
             // 
             // textBox_combinationKeyTimeMs
             // 
             this.textBox_combinationKeyTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_combinationKeyTimeMs.Location = new System.Drawing.Point(219, 61);
+            this.textBox_combinationKeyTimeMs.Location = new System.Drawing.Point(219, 82);
             this.textBox_combinationKeyTimeMs.Name = "textBox_combinationKeyTimeMs";
             this.textBox_combinationKeyTimeMs.Size = new System.Drawing.Size(45, 19);
-            this.textBox_combinationKeyTimeMs.TabIndex = 2;
+            this.textBox_combinationKeyTimeMs.TabIndex = 3;
             this.textBox_combinationKeyTimeMs.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_combinationKeyTimeMs, resources.GetString("textBox_combinationKeyTimeMs.ToolTip"));
             // 
             // label120
             // 
             this.label120.AutoSize = true;
-            this.label120.Location = new System.Drawing.Point(263, 63);
+            this.label120.Location = new System.Drawing.Point(263, 84);
             this.label120.Name = "label120";
             this.label120.Size = new System.Drawing.Size(58, 15);
             this.label120.TabIndex = 19;
@@ -2270,10 +2263,10 @@ namespace KanchokuWS.Gui
             // checkBox_useCombinationKeyTimer2
             // 
             this.checkBox_useCombinationKeyTimer2.AutoSize = true;
-            this.checkBox_useCombinationKeyTimer2.Location = new System.Drawing.Point(33, 101);
+            this.checkBox_useCombinationKeyTimer2.Location = new System.Drawing.Point(33, 122);
             this.checkBox_useCombinationKeyTimer2.Name = "checkBox_useCombinationKeyTimer2";
             this.checkBox_useCombinationKeyTimer2.Size = new System.Drawing.Size(240, 19);
-            this.checkBox_useCombinationKeyTimer2.TabIndex = 4;
+            this.checkBox_useCombinationKeyTimer2.TabIndex = 5;
             this.checkBox_useCombinationKeyTimer2.Text = "第2打鍵以降のキー押下でタイマーを併用する";
             this.toolTip1.SetToolTip(this.checkBox_useCombinationKeyTimer2, resources.GetString("checkBox_useCombinationKeyTimer2.ToolTip"));
             this.checkBox_useCombinationKeyTimer2.UseVisualStyleBackColor = true;
@@ -2281,10 +2274,10 @@ namespace KanchokuWS.Gui
             // checkBox_combinationKeyTimeOnlyAfterSecond
             // 
             this.checkBox_combinationKeyTimeOnlyAfterSecond.AutoSize = true;
-            this.checkBox_combinationKeyTimeOnlyAfterSecond.Location = new System.Drawing.Point(33, 82);
+            this.checkBox_combinationKeyTimeOnlyAfterSecond.Location = new System.Drawing.Point(33, 103);
             this.checkBox_combinationKeyTimeOnlyAfterSecond.Name = "checkBox_combinationKeyTimeOnlyAfterSecond";
             this.checkBox_combinationKeyTimeOnlyAfterSecond.Size = new System.Drawing.Size(190, 19);
-            this.checkBox_combinationKeyTimeOnlyAfterSecond.TabIndex = 3;
+            this.checkBox_combinationKeyTimeOnlyAfterSecond.TabIndex = 4;
             this.checkBox_combinationKeyTimeOnlyAfterSecond.Text = "1文字目にはこの条件を適用しない";
             this.toolTip1.SetToolTip(this.checkBox_combinationKeyTimeOnlyAfterSecond, "当項目にチェックを入れると、同時打鍵の1文字目にかぎりこの条件を\r\n適用しなくなります。\r\n\r\n第1～第2打鍵の押下をすばやく行った場合には必ず同時打鍵と判定\r\n" +
         "したい場合は、こちらにチェックを入れるとよいでしょう。");
@@ -2302,10 +2295,10 @@ namespace KanchokuWS.Gui
             // checkBox_useCombinationKeyTimer1
             // 
             this.checkBox_useCombinationKeyTimer1.AutoSize = true;
-            this.checkBox_useCombinationKeyTimer1.Location = new System.Drawing.Point(33, 38);
+            this.checkBox_useCombinationKeyTimer1.Location = new System.Drawing.Point(33, 59);
             this.checkBox_useCombinationKeyTimer1.Name = "checkBox_useCombinationKeyTimer1";
             this.checkBox_useCombinationKeyTimer1.Size = new System.Drawing.Size(249, 19);
-            this.checkBox_useCombinationKeyTimer1.TabIndex = 1;
+            this.checkBox_useCombinationKeyTimer1.TabIndex = 2;
             this.checkBox_useCombinationKeyTimer1.Text = "第1打鍵が文字キーの場合にタイマーを併用する";
             this.toolTip1.SetToolTip(this.checkBox_useCombinationKeyTimer1, "同時打鍵判定のタイミングにタイマーを併用します。\n\n当項目にチェックを入れると、第1打鍵がシフトキーではなく文字キー\nだったときに、タイマーを起動して上記で設定し" +
         "た時間が経過した\nタイミングでも同時判定が行われるようになります。\n\n例：\nNICOLA配列で文字キーを押下後、シフトキーが押下される前に\n上記条件で設定した時" +
@@ -2315,7 +2308,7 @@ namespace KanchokuWS.Gui
             // label116
             // 
             this.label116.AutoSize = true;
-            this.label116.Location = new System.Drawing.Point(9, 63);
+            this.label116.Location = new System.Drawing.Point(9, 84);
             this.label116.Name = "label116";
             this.label116.Size = new System.Drawing.Size(211, 15);
             this.label116.TabIndex = 1;
@@ -6176,6 +6169,26 @@ namespace KanchokuWS.Gui
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // textBox_comboMaxAllowedPostfixTimeMs
+            // 
+            this.textBox_comboMaxAllowedPostfixTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_comboMaxAllowedPostfixTimeMs.Location = new System.Drawing.Point(256, 38);
+            this.textBox_comboMaxAllowedPostfixTimeMs.Name = "textBox_comboMaxAllowedPostfixTimeMs";
+            this.textBox_comboMaxAllowedPostfixTimeMs.Size = new System.Drawing.Size(45, 19);
+            this.textBox_comboMaxAllowedPostfixTimeMs.TabIndex = 1;
+            this.textBox_comboMaxAllowedPostfixTimeMs.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this.textBox_comboMaxAllowedPostfixTimeMs, "第2キーがシフトキーだった場合に、より短い時間制限を設定します。\r\n\r\nこれにより、直前の文字キーではなく、直後に打鍵された文字キーの\r\nほうにシフトがかかりやす" +
+        "くなることが期待できます。");
+            // 
+            // label140
+            // 
+            this.label140.AutoSize = true;
+            this.label140.Location = new System.Drawing.Point(32, 40);
+            this.label140.Name = "label140";
+            this.label140.Size = new System.Drawing.Size(222, 15);
+            this.label140.TabIndex = 22;
+            this.label140.Text = "第2キーがシフトキーの場合の制限時間(ミリ秒)";
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -7000,7 +7013,8 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label_imeComboReload;
         private System.Windows.Forms.Button button_imeComboReload;
         private System.Windows.Forms.TextBox textBox_comboDisableIntervalTimeMs;
-        private System.Windows.Forms.Label label140;
         private System.Windows.Forms.Label label141;
+        private System.Windows.Forms.TextBox textBox_comboMaxAllowedPostfixTimeMs;
+        private System.Windows.Forms.Label label140;
     }
 }
