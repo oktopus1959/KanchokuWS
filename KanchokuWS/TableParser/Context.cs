@@ -498,10 +498,18 @@ namespace KanchokuWS.TableParser
         }
 
         /// <summary>
+        /// 指定の文字が来るまで読みこんで、CurrentStr に格納。bInclude==trueなら指定文字もCurrentStrに含める
+        /// </summary>
+        /// <param name="array"></param>
+        public void ReadStringUpto(bool bInclude, params char[] array) {
+            readStringUpto(0, bInclude, array);
+        }
+
+        /// <summary>
         /// 指定の文字が来るまで読みこんで、CurrentStr に格納。ポインタはデリミタの位置を指している
         /// </summary>
         /// <param name="array"></param>
-        public void ReadStringUpto(int checkPos, params char[] array) {
+        private void readStringUpto(int checkPos, bool bInclude, params char[] array) {
             var sb = new StringBuilder();
             int pos = 0;
             while (true) {
@@ -512,6 +520,7 @@ namespace KanchokuWS.TableParser
                 }
                 if (pos >= checkPos && array._findIndex(ch) >= 0) {
                     // 文字列の終わり
+                    if (bInclude) sb.Append(GetNextChar());
                     break;
                 }
                 if (ch == '\\') AdvanceCharPos(1);      // 最初の「\」は、単に読みとばす
@@ -530,7 +539,7 @@ namespace KanchokuWS.TableParser
             CurrentStr = "";
             if (PeekNextChar(0) == '$') {
                 // '$' と次の1文字は必ずプレースホルダーに含める
-                ReadStringUpto(2, ',', '|', '>');
+                readStringUpto(2, false, ',', '>');
             }
             logger.DebugH(() => $"LEAVE: {CurrentStr}");
         }

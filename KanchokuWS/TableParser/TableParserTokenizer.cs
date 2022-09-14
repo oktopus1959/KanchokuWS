@@ -305,6 +305,17 @@ namespace KanchokuWS.TableParser
                         ReadString();
                         return parseSecondString(false) ? TOKEN.STRING_PAIR : TOKEN.STRING;
 
+                    case '!':
+                        // 機能キー文字列
+                        if (PeekNextChar() == '{') {
+                            RewindChar();
+                            ReadStringUpto(true, '}');
+                            return TOKEN.STRING;
+                        }
+                        ParseError($"getToken: unexpected char: '{CurrentChar}'");
+                        SkipToEndOfLine();
+                        return TOKEN.IGNORE;
+
                     case '-': {
                         char c = PeekNextChar();
                         if (c == '*') {
@@ -474,7 +485,7 @@ namespace KanchokuWS.TableParser
             } else if (PeekNextChar() == '$') {
                 ReadPlaceHolderName();
             } else {
-                ReadStringUpto('>', ',', '|');
+                ReadStringUpto(false, '>', ',');
             }
             if (PeekNextChar() == '>') {
                 // エラーがあったら即時 return できるように、前もって進めておく
@@ -567,7 +578,7 @@ namespace KanchokuWS.TableParser
             c = GetNextChar();
             if (c != '-') ParseError($"parseArrowBundle: '-' is expected, but {c}");
 
-            ReadStringUpto('>');
+            ReadStringUpto(false, '>');
             string s = CurrentStr._strip();
             if (s._isEmpty()) {
                 ParseError($"parseArrowBundle: arrowIndex is EMPTY");
