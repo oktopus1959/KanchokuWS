@@ -1,14 +1,14 @@
 ### T ###
-loadTable(tables/漢直系/t.tbl)
+loadTable(tables/_test/t.tbl)
 convert(KRkr) = 日
 
 ### ふじこ ###
-loadTable(tables/その他/fujiko.tbl)
+loadTable(tables/_test/fujiko.tbl)
 comboMinTime(10)
 convert(ASDFJKL{;}<30>asdfjkl[;]) = くぁwせdrftgyふじこlp!{Enter}
 
 ### 薙刀式 ###
-loadTable(tables/かな系/naginata15.tbl)
+loadTable(tables/_test/naginata15.tbl)
 comboMaxTime(100)
 comboMinTime(0)
 convert(Jj) = あ
@@ -31,7 +31,7 @@ convert(J<50>W<50>H<100>hIijw) = ぎゃぎょ
 
 comboMinTime(50)
 convert(K<55>J<36>k<10>W<99>j<34>w) = いぎ
-convert(W<111>J<1>w<69>E<56>j<74>e) = きで
+convert(W<111>J<1>w<69>E<70>j<74>e) = きで
 convert(K<55>J<96>k<10>W<99>j<34>w) = いあき
 convert(W<111>J<10>w<99>E<56>j<74>e) = きあて
 
@@ -100,7 +100,7 @@ comboMaxTime(70)
 convert(EM<55>K<30>m<16>e<26>k) = てない
 
 ### 新下駄 ###
-loadTable(tables/かな系/shin-geta.tbl)
+loadTable(tables/_test/shin-geta.tbl)
 comboMinTime(20)
 convert(KW<40>kw) = ご
 convert(KWwk) = ご
@@ -112,7 +112,7 @@ convert(KWEewk) = ごは
 convert(KKKWEewk) = ごは
 
 ### 月 ###
-loadTable(tables/かな系/変種/tuki-2-263.pfx.tbl)
+loadTable(tables/_test/tuki-2-263.pfx.tbl)
 convert(DUIdui) = えい
 convert(DDD<1000>UIdui) = えい
 convert(DDDUIdui) = えい
@@ -120,11 +120,11 @@ convert(ALal) = ば
 convert(A{/}a[/]) = ぱ
 
 ### phoenix RT ###
-loadTable(tables/かな系/phoenix_rt.tbl)
+loadTable(tables/_test/phoenix_rt.tbl)
 convert(Ss{;}[;]) = ね
 
 ### ブリ中トロ ###
-loadTable(tables/かな系/旧版/chutoro.211023.tbl)
+loadTable(tables/_test/chutoro.211023.tbl)
 
 convert(Qq) = ゅ
 convert(Tt) = ゃ
@@ -145,7 +145,7 @@ convert(YTyt) = ぷろぐらむ
 convert(MDAmda) = でしょう
 convert({38}DAad[38]) = ましょう
 
-loadTable(tables/かな系/chutoro.220329.tbl)
+loadTable(tables/_test/chutoro.220329.tbl)
 rewriteMaxTime(100)
 convert(Dd<30>Dd) = ！
 convert(Dd<200>Dd) = 、、
@@ -181,6 +181,20 @@ rewriteMaxTime(100)
 convert({22}[22]<20>{12}[12]) = ぽ
 convert({22}[22]<200>{12}[12]) = 。し
 
+### のにいると 10 ###
+loadTable(tables/_test/noniiruto.10.tbl)
+comboMaxTime(100)
+comboMaxPostTime(100)
+comboMinTime(70)
+
+#enableTimer1
+#enableTimer2
+
+convert({40}<50>J<48>K<48>[40]<56>j<72>k) = める
+convert(J<50>{40}<50>K<48>j<56>[40]<72>k) = めや
+
+comboMaxPostTime(48)
+convert(J<50>{40}<50>K<48>j<56>[40]<72>k) = いや
 ### 同時打鍵 ###
 loadTable(tables/_test/combo-test.tbl)
 comboMaxTime(100)
@@ -191,14 +205,14 @@ convert(J<59>K<20>jk) = いあ
 convert(J<50>K<80>jk) = き
 
 #### OKT (同時打鍵) ###
-#loadTable(tables/漢直系/okt.tbl)
+#loadTable(tables/_test/okt.tbl)
 #rewriteMaxTime(100)
 #setShiftOffset(200)
 #convert(Dd<50>Ee) = ぽ
 #convert(DdEe) = 。し
 
 ### NICOLA ###
-loadTable(tables/かな系/nicola.tbl)
+loadTable(tables/_test/nicola.tbl)
 comboMaxTime(200)
 comboMinTime(70)
 convert(J<50>{nfer}<80>j[nfer]) = ど
@@ -215,7 +229,7 @@ convert(J<50>{nfer}<80>j[nfer]) = ど
 convert(J<200>{nfer}[nfer]j) = と!{nfer}
 
 ### 月光(連続シフト) ###
-loadTable(tables/かな系/変種/gekko-20211106.pfx.tbl)
+loadTable(tables/_test/gekko-20211106.pfx.tbl)
 comboMinTime(100)
 convert(DIid) = よ
 convert(DDDDKkIid) = よ

@@ -65,7 +65,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             ContainsSuccessiveShiftKey = true;
                         }
                     }
-                } else {
+                } else if (oldKind != ComboKind.UnorderedSuccessiveShift) { // UnorderedSuccessiveShift が最強
                     logger.DebugH(() => $"ADD: keyCode={keyCode}, Kind={kind}");
                     comboKindDict[keyCode] = kind;
                     if (IsUnorderedShift(kind)) ContainsUnorderedShiftKey = true;

@@ -405,13 +405,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 //if (unprocList[i].IsUpKey || !unprocList[i].IsSuccessiveShift) {
                                     result.Add(unprocList[i].OrigDecoderKey);
                                 //}
+                                logger.DebugH(() => $"ADD: result={result._keyString()}");
                             }
                             if (copyShiftLen > 0) {
                                 // true: 連続シフトキーのみ、comboListに移す
                                 copyToComboList(unprocList, copyShiftLen, true);
+                                logger.DebugH(() => $"copyToComboList={copyShiftLen}, successiveOnly: {ToDebugString()}");
                             }
                             if (discardLen > 0) {
                                 unprocList = unprocList.Skip(discardLen).ToList();
+                                logger.DebugH(() => $"discardLen={discardLen}: {ToDebugString()}");
                             } else {
                                 // 強制的に終了する
                                 break;
