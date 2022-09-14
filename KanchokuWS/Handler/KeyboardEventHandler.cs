@@ -53,6 +53,9 @@ namespace KanchokuWS.Handler
         /// <summary>指定キーに対する次打鍵テーブルの作成</summary>
         public delegate void DelegateSetNextStrokeHelpDecKey(int decKey);
 
+        /// <summaryストロークログの表示</summary>
+        public delegate void DelegateWriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bFirst, bool bTimer = false);
+
         ///// <summary>打鍵ヘルプのローテーション<br/>ローテーションを行わない場合は false を返す</summary>
         //public delegate bool DelegateRotateStrokeHelp();
 
@@ -117,6 +120,9 @@ namespace KanchokuWS.Handler
 
         /// <summary>指定キーに対する次打鍵テーブルの作成</summary>
         public DelegateSetNextStrokeHelpDecKey SetNextStrokeHelpDecKey { get; set; }
+
+        /// <summaryストロークログの表示</summary>
+        public DelegateWriteStrokeLog WriteStrokeLog { get; set; }
 
         ///// <summary>打鍵ヘルプのローテーション<br/>ローテーションを行わない場合は false を返す</summary>
         //public DelegateRotateStrokeHelp RotateStrokeHelp { get; set; }
@@ -934,6 +940,7 @@ namespace KanchokuWS.Handler
                     determiner.KeyDown(kanchokuCode, bDecoderOn, (decKey) => handleComboKeyRepeat(vkey, decKey));
                     result = true;
                 } else {
+                    //WriteStrokeLog?.Invoke(kanchokuCode, DateTime.Now, true, true);
                     result = invokeHandler(kanchokuCode, mod);
                 }
                 kanchokuCode = vkeyQueue.Dequeue();

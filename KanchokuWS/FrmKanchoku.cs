@@ -730,6 +730,7 @@ namespace KanchokuWS
             keDispatcher.InvokeDecoderUnconditionally = InvokeDecoderUnconditionally;
             keDispatcher.SetStrokeHelpShiftPlane = SetStrokeHelpShiftPlane;
             keDispatcher.SetNextStrokeHelpDecKey = SetNextStrokeHelpDecKey;
+            keDispatcher.WriteStrokeLog = WriteStrokeLog;
             //keDispatcher.RotateReverseStrokeHelp = rotateReverseStrokeHelp;
             //keDispatcher.RotateDateString = rotateDateString;
             //keDispatcher.RotateReverseDateString = rotateReverseDateString;
