@@ -469,6 +469,35 @@ Shift+Space=S40
 無変換=xfer, 変換=nfer, ひらがな=kana,
 右シフト=rshift, Insert=ins</value>
   </data>
+  <data name="textBox_modConversionFile.ToolTip" xml:space="preserve">
+    <value>修飾キー変換定義ファイルの設定
+
+SandS、CapsLock、英数、無変換、変換、および右シフトキーを
+修飾キーとして使用する際のキー変換定義ファイルを指定します。
+
+定義ファイルの例として、 mod-conversion.txt というファイルを
+用意してあります。記述方法は同ファイルを参照してください。
+
+定義ファイルを修正した場合は、漢直窓Sを再起動するか、または
+「基本設定」タブの「再読込」をクリックしてください。</value>
+  </data>
+  <data name="checkBox_extraModifiersEnabled.ToolTip" xml:space="preserve">
+    <value>拡張修飾キーを有効にします。
+
+拡張修飾キーには以下のものがあります。
+  - Space (SandS有効時)
+  - CapsLock
+  - 英数
+  - 無変換
+  - 変換
+  - 右シフト
+
+当機能をONにすると、拡張修飾キーに対してシフト面を割り当てたり、
+拡張修飾キーを押しながら何かキーを押したときのキー割り当てや
+機能割り当てが有効になります。
+
+詳細については mod-conversion.sample.txt ファイルを参照してください。</value>
+  </data>
   <data name="comboBox_dateStringKey.ToolTip" xml:space="preserve">
     <value>現在の日時を出力する Ctrlキーの設定
 
@@ -800,35 +829,6 @@ OFFにすると、変換文字列全体の末尾にブロッカーを置きま�
 ・「拡張修飾キーを有効にする」にチェックを入れる
 ・拡張修飾キー定義ファイルに次の設定を記述する：
       space=shiftB | none</value>
-  </data>
-  <data name="textBox_modConversionFile.ToolTip" xml:space="preserve">
-    <value>修飾キー変換定義ファイルの設定
-
-SandS、CapsLock、英数、無変換、変換、および右シフトキーを
-修飾キーとして使用する際のキー変換定義ファイルを指定します。
-
-定義ファイルの例として、 mod-conversion.txt というファイルを
-用意してあります。記述方法は同ファイルを参照してください。
-
-定義ファイルを修正した場合は、漢直窓Sを再起動するか、または
-「基本設定」タブの「再読込」をクリックしてください。</value>
-  </data>
-  <data name="checkBox_extraModifiersEnabled.ToolTip" xml:space="preserve">
-    <value>拡張修飾キーを有効にします。
-
-拡張修飾キーには以下のものがあります。
-  - Space (SandS有効時)
-  - CapsLock
-  - 英数
-  - 無変換
-  - 変換
-  - 右シフト
-
-当機能をONにすると、拡張修飾キーに対してシフト面を割り当てたり、
-拡張修飾キーを押しながら何かキーを押したときのキー割り当てや
-機能割り当てが有効になります。
-
-詳細については mod-conversion.sample.txt ファイルを参照してください。</value>
   </data>
   <data name="label101.ToolTip" xml:space="preserve">
     <value>「拡張修飾キー定義ファイル」に定義した UpperRomanStrokeGuide を

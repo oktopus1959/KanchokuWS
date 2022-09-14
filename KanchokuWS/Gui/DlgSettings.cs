@@ -1267,6 +1267,9 @@ namespace KanchokuWS.Gui
             checkBox_dateStringKey.Checked = Settings.CtrlKeyConvertedToDateString._notEmpty() && !Settings.CtrlKeyConvertedToDateString.StartsWith("#");
             comboBox_selectCtrlKeyItem(comboBox_dateStringKey, $"{Settings.CtrlKeyConvertedToDateString.Replace("#", "")}");
             textBox_dateStringFormat.Text = Settings.DateStringFormat._reReplace(@"\|", "\r\n");
+
+            checkBox_extraModifiersEnabled.Checked = Settings.ExtraModifiersEnabled;
+            textBox_modConversionFile.Text = Settings.ModConversionFile;
         }
 
         private void setCtrlKeysStatusChecker()
@@ -1319,6 +1322,9 @@ namespace KanchokuWS.Gui
             checkerCtrlKeys.Add(comboBox_fullEscapeKey);
             checkerCtrlKeys.Add(comboBox_strokeHelpRotationKey);
 
+            checkerCtrlKeys.Add(checkBox_extraModifiersEnabled);
+            checkerCtrlKeys.Add(textBox_modConversionFile);
+
             checkerAll.Add(checkerCtrlKeys);
         }
 
@@ -1366,6 +1372,9 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("fullEscapeKey", comboBox_fullEscapeKey._getSelectedItemSplittedFirst("G"));
             Settings.SetUserIni("strokeHelpRotationKey", comboBox_strokeHelpRotationKey._getSelectedItemSplittedFirst("T"));
 
+            Settings.SetUserIni("extraModifiersEnabled", checkBox_extraModifiersEnabled.Checked);
+            Settings.SetUserIni("modConversionFile", textBox_modConversionFile.Text);
+
             Settings.ReadIniFile();
             // 各種定義ファイルの再読み込み
             frmMain?.ReloadSettingsAndDefFiles();
@@ -1388,6 +1397,29 @@ namespace KanchokuWS.Gui
                 checkerCtrlKeys.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
                 logger.InfoH("LEAVE");
             }
+        }
+
+        private void checkBox_extraModifiersEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            button_setModConversion.Enabled = checkBox_extraModifiersEnabled.Checked;
+        }
+
+        private void button_openModConversionFile_Click(object sender, EventArgs e)
+        {
+            logger.InfoH("CALLED");
+            //try {
+            //    if (Settings.ModConversionFile._notEmpty()) {
+            //        System.Diagnostics.Process.Start(TableFileDir._joinPath(Settings.ModConversionFile));
+            //    }
+            //} catch { }
+            openFileByTxtAssociatedProgram(textBox_modConversionFile.Text);
+        }
+
+        private void button_ctrlReload_Click(object sender, EventArgs e)
+        {
+            logger.InfoH("CALLED");
+            reloadIniFileAndDefFiles();
+            label_ctrlReload.Show();
         }
 
         //-----------------------------------------------------------------------------------
@@ -1566,8 +1598,6 @@ namespace KanchokuWS.Gui
             checkBox_convertJaPeriod.Checked = Settings.ConvertJaPeriod;
             checkBox_convertJaComma.Checked = Settings.ConvertJaComma;
             checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
-            checkBox_extraModifiersEnabled.Checked = Settings.ExtraModifiersEnabled;
-            textBox_modConversionFile.Text = Settings.ModConversionFile;
             checkBox_upperRomanStrokeGuide.Checked = Settings.UpperRomanStrokeGuide;
             textBox_kanjiYomiFile.Text = Settings.KanjiYomiFile;
             textBox_romanBushuCompPrefix.Text = Settings.RomanBushuCompPrefix;
@@ -1593,8 +1623,6 @@ namespace KanchokuWS.Gui
             checkerMiscSettings.Add(checkBox_convertJaPeriod);
             checkerMiscSettings.Add(checkBox_convertJaComma);
             checkerMiscSettings.Add(checkBox_removeOneStrokeByBackspace);
-            checkerMiscSettings.Add(checkBox_extraModifiersEnabled);
-            checkerMiscSettings.Add(textBox_modConversionFile);
             checkerMiscSettings.Add(checkBox_upperRomanStrokeGuide);
             checkerMiscSettings.Add(textBox_kanjiYomiFile);
             checkerMiscSettings.Add(textBox_romanBushuCompPrefix);
@@ -1624,8 +1652,6 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
             Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
             Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);
-            Settings.SetUserIni("extraModifiersEnabled", checkBox_extraModifiersEnabled.Checked);
-            Settings.SetUserIni("modConversionFile", textBox_modConversionFile.Text);
             Settings.SetUserIni("upperRomanStrokeGuide", checkBox_upperRomanStrokeGuide.Checked);
             Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
             Settings.SetUserIni("romanBushuCompPrefix", textBox_romanBushuCompPrefix.Text);
@@ -1650,11 +1676,6 @@ namespace KanchokuWS.Gui
             logger.InfoH("LEAVE");
         }
 
-        private void checkBox_extraModifiersEnabled_CheckedChanged(object sender, EventArgs e)
-        {
-            button_setModConversion.Enabled = checkBox_extraModifiersEnabled.Checked;
-        }
-
         private void checkBox_convertShiftedHiraganaToKatakana_CheckedChanged(object sender, EventArgs e)
         {
             changeShiftPlaneSectionRadioButtonsState();
@@ -1665,17 +1686,6 @@ namespace KanchokuWS.Gui
             radioButton_normalShift.Enabled = checkBox_convertShiftedHiraganaToKatakana.Checked;
             radioButton_shiftA.Enabled = checkBox_convertShiftedHiraganaToKatakana.Checked;
             radioButton_shiftB.Enabled = checkBox_convertShiftedHiraganaToKatakana.Checked;
-        }
-
-        private void button_openModConversionFile_Click(object sender, EventArgs e)
-        {
-            logger.InfoH("CALLED");
-            //try {
-            //    if (Settings.ModConversionFile._notEmpty()) {
-            //        System.Diagnostics.Process.Start(TableFileDir._joinPath(Settings.ModConversionFile));
-            //    }
-            //} catch { }
-            openFileByTxtAssociatedProgram(textBox_modConversionFile.Text);
         }
 
         private void button_openKanjiYomiFile_Click(object sender, EventArgs e)
@@ -1939,6 +1949,7 @@ namespace KanchokuWS.Gui
                     label_okResultMisc.Hide();
                     label_imeComboReload.Hide();
                     label_keyAssignReload.Hide();
+                    label_ctrlReload.Hide();
                     label_miscRomanOut.Hide();
                     label_miscEelllJsOut.Hide();
                     label_miscReload.Hide();
@@ -1999,6 +2010,11 @@ namespace KanchokuWS.Gui
         }
 
         private void label_keyAssignReload_VisibleChanged(object sender, EventArgs e)
+        {
+            okResultCount = okResultCountMax;
+        }
+
+        private void label_ctrlReload_VisibleChanged(object sender, EventArgs e)
         {
             okResultCount = okResultCountMax;
         }
