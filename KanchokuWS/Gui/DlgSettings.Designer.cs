@@ -628,6 +628,8 @@ namespace KanchokuWS.Gui
             this.tabPage_basic.Size = new System.Drawing.Size(676, 373);
             this.tabPage_basic.TabIndex = 1;
             this.tabPage_basic.Text = "基本設定";
+            this.toolTip1.SetToolTip(this.tabPage_basic, "基本的な情報・振る舞いの設定");
+            this.tabPage_basic.ToolTipText = "基本的な情報・振る舞いの設定";
             this.tabPage_basic.UseVisualStyleBackColor = true;
             // 
             // label_initialMsg
@@ -1421,6 +1423,7 @@ namespace KanchokuWS.Gui
             this.tabPage_advanced.Size = new System.Drawing.Size(676, 373);
             this.tabPage_advanced.TabIndex = 3;
             this.tabPage_advanced.Text = "詳細設定";
+            this.tabPage_advanced.ToolTipText = "より詳細・高度な情報・振る舞いの設定";
             this.tabPage_advanced.UseVisualStyleBackColor = true;
             // 
             // groupBox51
@@ -1928,6 +1931,7 @@ namespace KanchokuWS.Gui
             this.tabPage_imeCombo.Size = new System.Drawing.Size(676, 373);
             this.tabPage_imeCombo.TabIndex = 10;
             this.tabPage_imeCombo.Text = "同時打鍵・IME";
+            this.tabPage_imeCombo.ToolTipText = "同時打鍵やIMEにかかわる設定";
             this.tabPage_imeCombo.UseVisualStyleBackColor = true;
             // 
             // label_imeComboReload
@@ -2425,6 +2429,7 @@ namespace KanchokuWS.Gui
             this.tabPage_fontColor.Size = new System.Drawing.Size(676, 373);
             this.tabPage_fontColor.TabIndex = 7;
             this.tabPage_fontColor.Text = "フォントと色";
+            this.tabPage_fontColor.ToolTipText = "仮想鍵盤のフォントと色に関する設定";
             this.tabPage_fontColor.UseVisualStyleBackColor = true;
             // 
             // groupBox25
@@ -2896,7 +2901,8 @@ namespace KanchokuWS.Gui
             this.tabPage_keyAssign.Name = "tabPage_keyAssign";
             this.tabPage_keyAssign.Size = new System.Drawing.Size(676, 373);
             this.tabPage_keyAssign.TabIndex = 8;
-            this.tabPage_keyAssign.Text = "機能キー割当";
+            this.tabPage_keyAssign.Text = "機能呼出";
+            this.tabPage_keyAssign.ToolTipText = "交ぜ書き、部首合成、カナ変換などの機能を呼び出す打鍵列の設定";
             this.tabPage_keyAssign.UseVisualStyleBackColor = true;
             // 
             // label139
@@ -3521,7 +3527,8 @@ namespace KanchokuWS.Gui
             this.tabPage_ctrlKeys.Name = "tabPage_ctrlKeys";
             this.tabPage_ctrlKeys.Size = new System.Drawing.Size(676, 373);
             this.tabPage_ctrlKeys.TabIndex = 5;
-            this.tabPage_ctrlKeys.Text = "修飾キー設定";
+            this.tabPage_ctrlKeys.Text = "修飾キー";
+            this.tabPage_ctrlKeys.ToolTipText = "Ctrlキーやその他の拡張修飾キーによる機能呼び出し設定";
             this.tabPage_ctrlKeys.UseVisualStyleBackColor = true;
             // 
             // label_ctrlReload
@@ -4320,6 +4327,7 @@ namespace KanchokuWS.Gui
             this.tabPage_history.Size = new System.Drawing.Size(676, 373);
             this.tabPage_history.TabIndex = 4;
             this.tabPage_history.Text = "履歴・交ぜ書き";
+            this.tabPage_history.ToolTipText = "履歴機能と交ぜ書き変換機能に関する設定";
             this.tabPage_history.UseVisualStyleBackColor = true;
             // 
             // groupBox44
@@ -4925,6 +4933,7 @@ namespace KanchokuWS.Gui
             this.tabPage_misc.Size = new System.Drawing.Size(676, 373);
             this.tabPage_misc.TabIndex = 9;
             this.tabPage_misc.Text = "その他設定";
+            this.tabPage_misc.ToolTipText = "打鍵ガイドや書き換えシステムなどに関する設定";
             this.tabPage_misc.UseVisualStyleBackColor = true;
             // 
             // groupBox48
@@ -5435,7 +5444,8 @@ namespace KanchokuWS.Gui
             this.tabPage_register.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage_register.Size = new System.Drawing.Size(676, 373);
             this.tabPage_register.TabIndex = 0;
-            this.tabPage_register.Text = "辞書";
+            this.tabPage_register.Text = "辞書登録";
+            this.tabPage_register.ToolTipText = "各種辞書への登録";
             this.tabPage_register.UseVisualStyleBackColor = true;
             // 
             // label_okResultRegister
@@ -5917,6 +5927,7 @@ namespace KanchokuWS.Gui
             this.tabPage_develop.Size = new System.Drawing.Size(676, 373);
             this.tabPage_develop.TabIndex = 2;
             this.tabPage_develop.Text = "情報";
+            this.tabPage_develop.ToolTipText = "当アプリの情報と開発者用設定";
             this.tabPage_develop.UseVisualStyleBackColor = true;
             // 
             // button_developReload
