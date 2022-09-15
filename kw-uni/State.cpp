@@ -16,7 +16,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
-#if 0
+#if 0 || defined(_DEBUG)
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define LOG_INFO LOG_INFOH
@@ -515,7 +515,10 @@ void State::dispatchDeckey(int deckey) {
 
 //-----------------------------------------------------------------------
 // ストロークキーデフォルトハンドラ
-void State::handleStrokeKeys(int _DEBUG_SENT(hk)) { _LOG_DEBUGH(_T("DO NOTHING: deckey=%xH(%d)"), hk, hk); }
+void State::handleStrokeKeys(int _DEBUG_SENT(hk)) {
+    _LOG_DEBUGH(_T("DO NOTHING: setThroughDeckeyFlag: deckey=%xH(%d)"), hk, hk);
+    setThroughDeckeyFlag();
+}
 
 // スペースキーハンドラ
 void State::handleSpaceKey() { _LOG_DEBUGH(_T("CALLED")); handleStrokeKeys(STROKE_SPACE_DECKEY); }

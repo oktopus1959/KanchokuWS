@@ -179,6 +179,8 @@ namespace KanchokuWS
                 logger.WriteInfo("kanchoku.user.ini not found. Create.");
                 UserKanchokuIni.Singleton.SetInt("logLevel", Logger.LogLevelWarn);
             }
+            // デバッグ用設定の読み込み
+            Settings.ReadIniFileForDebug();
 
             // DeterminerのタイマーのSynchronizingObjectを自身に設定しておく
             CombinationKeyStroke.Determiner.Singleton.InitializeTimer(this);
@@ -275,6 +277,8 @@ namespace KanchokuWS
         /// <summary> 各種定義ファイルの読み込み </summary>
         public void ReadDefFiles()
         {
+            logger.InfoH("ENTER");
+
             logConstant();
 
             // テーブルファイルの先読み（各種制約の設定）
@@ -305,6 +309,8 @@ namespace KanchokuWS
 
             // 同時打鍵設定の読み込み
             CombinationKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, Settings.TableFile2);
+
+            logger.InfoH("LEAVE");
         }
 
         private void logConstant()
@@ -337,6 +343,8 @@ namespace KanchokuWS
         /// <summary> 各種定義ファイルの読み込み </summary>
         public void ReloadDefFiles()
         {
+            logger.InfoH("ENTER");
+
             // 各種定義ファイルの読み込み
             ReadDefFiles();
 
@@ -352,6 +360,8 @@ namespace KanchokuWS
             if (Settings.StrokeHelpFile._notEmpty()) {
                 frmVkb?.MakeStrokeTables(Settings.StrokeHelpFile);
             }
+
+            logger.InfoH("LEAVE");
         }
 
         //------------------------------------------------------------------
@@ -1985,6 +1995,8 @@ namespace KanchokuWS
         // 設定ファイルと各種定義ファイルをリロードする
         public void ReloadSettingsAndDefFiles()
         {
+            logger.InfoH("ENTER");
+
             // キーボードハンドラの再初期化
             keDispatcher.Reinitialize();
 
@@ -2008,6 +2020,8 @@ namespace KanchokuWS
 
             // 辞書保存チャレンジ開始時刻の再初期化
             reinitializeSaveDictsChallengeDt();
+
+            logger.InfoH("LEAVE");
         }
 
         public void KanaTrainingModeToggle()

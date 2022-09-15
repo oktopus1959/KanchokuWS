@@ -155,6 +155,9 @@ namespace KanchokuWS
             /*Esc*/ 0x1b, /*半/全*/ 0xf3, /*Tab*/ 0x09, /*Caps*/ 0x14, /*英数*/ 0xf0, /*無変換*/ 0x1d, /*変換*/ 0x1c, /*かな*/ 0xf2, /*BS*/ 0x08, /*Enter*/ 0x0d,
             /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21, /*PgDn*/ 0x22, /*↑*/ 0x26, /*↓*/ 0x28, /*←*/ 0x25, /*→*/ 0x27,
             /*Rshift*/ RSHIFT, /*ScrLock*/ 0x91, /*Pause*/ 0x13, /*IME ON*/ 0x16, /*IME OFF*/ 0x1a,
+            /*F1*/ 0x70, /*F2*/ 0x71, /*F3*/ 0x72, /*F4*/ 0x73, /*F5*/ 0x74, /*F6*/ 0x75, /*F7*/ 0x76, /*F8*/ 0x77, /*F9*/ 0x78, /*F10*/ 0x79,
+            /*F11*/ 0x7a, /*F12*/ 0x7b, /*F13*/ 0x7c, /*F14*/ 0x7d, /*F15*/ 0x7e, /*F16*/ 0x7f, /*F17*/ 0x80, /*F18*/ 0x81, /*F19*/ 0x82, /*F20*/ 0x83,
+            /*F21*/ 0x84, /*F22*/ 0x85, /*F23*/ 0x86, /*F24*/ 0x87,
         };
 
         private const uint capsVkeyWithShift = 0x14;    // 日本語キーボードだと Shift + 0x14 で CapsLock になる
@@ -191,6 +194,30 @@ namespace KanchokuWS
                 case "pause": n = 22; break;
                 case "imeon": n = 23; break;
                 case "imeoff": n = 24; break;
+                case "f1": case "f01": n = 25; break;
+                case "f2": case "f02": n = 26; break;
+                case "f3": case "f03": n = 27; break;
+                case "f4": case "f04": n = 28; break;
+                case "f5": case "f05": n = 29; break;
+                case "f6": case "f06": n = 30; break;
+                case "f7": case "f07": n = 31; break;
+                case "f8": case "f08": n = 32; break;
+                case "f9": case "f09": n = 33; break;
+                case "f10": n = 34; break;
+                case "f11": n = 35; break;
+                case "f12": n = 36; break;
+                case "f13": n = 37; break;
+                case "f14": n = 38; break;
+                case "f15": n = 39; break;
+                case "f16": n = 40; break;
+                case "f17": n = 41; break;
+                case "f18": n = 42; break;
+                case "f19": n = 43; break;
+                case "f20": n = 44; break;
+                case "f21": n = 45; break;
+                case "f22": n = 46; break;
+                case "f23": n = 47; break;
+                case "f24": n = 48; break;
                 default: n = -1; break;
             }
             return n;
@@ -651,6 +678,7 @@ namespace KanchokuWS
         /// <param name="deckey"></param>
         public static void AddSpecialDeckey(string name, int deckey)
         {
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"name={name}, deckey={deckey:x}H({deckey})");
             if (deckey > 0) {
                 uint vk = GetFuncVkeyByName(name);
                 if (vk > 0) {
@@ -661,14 +689,14 @@ namespace KanchokuWS
 
         public static void AddModifiedDeckey(int deckey, uint mod, uint vkey)
         {
-            logger.DebugH(() => $"deckey={deckey:x}H({deckey}), mod={mod:x}H, vkey={vkey:x}H({vkey})");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"deckey={deckey:x}H({deckey}), mod={mod:x}H, vkey={vkey:x}H({vkey})");
             var combo = new VKeyCombo(mod, vkey);
             VKeyComboFromDecKey[deckey] = combo;
         }
 
         public static void AddDecKeyAndCombo(int deckey, uint mod, uint vkey, bool bFromComboOnly = false)
         {
-            logger.Debug(() => $"deckey={deckey:x}H({deckey}), mod={mod:x}H, vkey={vkey:x}H({vkey})");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"deckey={deckey:x}H({deckey}), mod={mod:x}H, vkey={vkey:x}H({vkey})");
             var combo = new VKeyCombo(mod, (uint)vkey);
             if (!bFromComboOnly) VKeyComboFromDecKey[deckey] = combo;
             DecKeyFromVKeyCombo[combo.SerialValue] = deckey;
@@ -690,35 +718,41 @@ namespace KanchokuWS
 
         private static void setupDecKeyAndComboTable()
         {
+            logger.InfoH($"ENTER");
             // 通常文字ストロークキー
             for (int id = 0; id < DecoderKeys.NORMAL_DECKEY_NUM; ++id) {
                 uint vkey = getVKeyFromDecKey(id);
-                // Normal
-                AddDecKeyAndCombo(id, 0, vkey);
-                // Shifted
-                AddDecKeyAndCombo(DecoderKeys.SHIFT_DECKEY_START + id, KeyModifiers.MOD_SHIFT, vkey);
-                // Ctrl
-                //AddDecKeyAndCombo(DecoderKeys.CTRL_DECKEY_START + id, KeyModifiers.MOD_CONTROL, vkey);
-                // Ctrl+Shift
-                //AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, vkey);
+                if (vkey > 0) {
+                    // Normal
+                    AddDecKeyAndCombo(id, 0, vkey);
+                    // Shifted
+                    AddDecKeyAndCombo(DecoderKeys.SHIFT_DECKEY_START + id, KeyModifiers.MOD_SHIFT, vkey);
+                    // Ctrl
+                    //AddDecKeyAndCombo(DecoderKeys.CTRL_DECKEY_START + id, KeyModifiers.MOD_CONTROL, vkey);
+                    // Ctrl+Shift
+                    //AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, vkey);
+                }
             }
 
             // 機能キー(RSHFTも登録される)
             for (int id = 0; id < DecoderKeys.FUNC_DECKEY_NUM; ++id) {
                 uint vkey = getVKeyFromDecKey(DecoderKeys.FUNC_DECKEY_START + id);
-                // Normal
-                AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, 0, vkey);
-                // Shift
-                if (vkey == capsVkeyWithShift) AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, KeyModifiers.MOD_SHIFT, vkey);
-                // Ctrl
-                //AddDecKeyAndCombo(DecoderKeys.CTRL_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL, vkey);
-                // Ctrl+Shifted
-                //AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, vkey);
+                if (vkey > 0) {
+                    // Normal
+                    AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, 0, vkey);
+                    // Shift
+                    if (vkey == capsVkeyWithShift) AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, KeyModifiers.MOD_SHIFT, vkey);
+                    // Ctrl
+                    //AddDecKeyAndCombo(DecoderKeys.CTRL_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL, vkey);
+                    // Ctrl+Shifted
+                    //AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, vkey);
+                }
             }
 
             // Shift+Tab
             AddDecKeyAndCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Tab);
             //AddModConvertedDecKeyFromCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Tab);
+            logger.InfoH($"LEAVE");
         }
 
         public static int GetDecKeyFromCombo(uint mod, uint vkey)
@@ -750,12 +784,14 @@ namespace KanchokuWS
 
         public static void Initialize()
         {
+            logger.InfoH("ENTER");
             decoderFuncAssignedExModKeys = new HashSet<uint>();
             VKeyComboFromDecKey = new VKeyCombo?[DecoderKeys.GLOBAL_DECKEY_ID_END];
             DecKeyFromVKeyCombo = new Dictionary<uint, int>();
             ModConvertedDecKeyFromVKeyCombo = new Dictionary<uint, int>();
             disabledExtKeys = new HashSet<string>();
             disabledExtKeyLines.Clear();
+            logger.InfoH("LEAVE");
         }
 
         public static void AddCtrlDeckeyFromCombo(string keyFace, int ctrlDeckey, int ctrlShiftDeckey)
@@ -779,11 +815,12 @@ namespace KanchokuWS
 
         public static void AddCtrlDeckeyAndCombo(string keyFace, int ctrlDeckey, int ctrlShiftDeckey)
         {
-                var combo = GetVKeyComboFromFaceString(keyFace, false, false);
-                if (combo != null) {
-                    if (ctrlDeckey > 0) AddDecKeyAndCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, combo.Value.vkey);
-                    if (ctrlShiftDeckey > 0) AddDecKeyAndCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, combo.Value.vkey);
-                }
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"keyFace={keyFace}, ctrlDeckey={ctrlDeckey:x}H({ctrlDeckey}), , ctrlShiftDeckey={ctrlShiftDeckey:x}H({ctrlShiftDeckey})");
+            var combo = GetVKeyComboFromFaceString(keyFace, false, false);
+            if (combo != null) {
+                if (ctrlDeckey > 0) AddDecKeyAndCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, combo.Value.vkey);
+                if (ctrlShiftDeckey > 0) AddDecKeyAndCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, combo.Value.vkey);
+            }
         }
 
         /// <summary>
@@ -794,7 +831,7 @@ namespace KanchokuWS
         /// <returns></returns>
         public static bool ReadKeyboardFile()
         {
-            logger.Info("ENTER");
+            logger.InfoH("ENTER");
 
             var array = VKeyArray106;
 
@@ -848,7 +885,7 @@ namespace KanchokuWS
 
             setupDecKeyAndComboTable();
 
-            logger.Info("LEAVE");
+            logger.InfoH("LEAVE");
             return true;
         }
 
@@ -938,6 +975,39 @@ namespace KanchokuWS
             {"pause", DecoderKeys.PAUSE_DECKEY},
             {"imeon", DecoderKeys.IME_ON_DECKEY},
             {"imeoff", DecoderKeys.IME_OFF_DECKEY},
+            {"f1", DecoderKeys.F1_DECKEY},
+            {"f01", DecoderKeys.F1_DECKEY},
+            {"f2", DecoderKeys.F2_DECKEY},
+            {"f02", DecoderKeys.F2_DECKEY},
+            {"f3", DecoderKeys.F3_DECKEY},
+            {"f03", DecoderKeys.F3_DECKEY},
+            {"f4", DecoderKeys.F4_DECKEY},
+            {"f04", DecoderKeys.F4_DECKEY},
+            {"f5", DecoderKeys.F5_DECKEY},
+            {"f05", DecoderKeys.F5_DECKEY},
+            {"f6", DecoderKeys.F6_DECKEY},
+            {"f06", DecoderKeys.F6_DECKEY},
+            {"f7", DecoderKeys.F7_DECKEY},
+            {"f07", DecoderKeys.F7_DECKEY},
+            {"f8", DecoderKeys.F8_DECKEY},
+            {"f08", DecoderKeys.F8_DECKEY},
+            {"f9", DecoderKeys.F9_DECKEY},
+            {"f09", DecoderKeys.F9_DECKEY},
+            {"f10", DecoderKeys.F10_DECKEY},
+            {"f11", DecoderKeys.F11_DECKEY},
+            {"f12", DecoderKeys.F12_DECKEY},
+            {"f13", DecoderKeys.F13_DECKEY},
+            {"f14", DecoderKeys.F14_DECKEY},
+            {"f15", DecoderKeys.F15_DECKEY},
+            {"f16", DecoderKeys.F16_DECKEY},
+            {"f17", DecoderKeys.F17_DECKEY},
+            {"f18", DecoderKeys.F18_DECKEY},
+            {"f19", DecoderKeys.F19_DECKEY},
+            {"f20", DecoderKeys.F20_DECKEY},
+            {"f21", DecoderKeys.F21_DECKEY},
+            {"f22", DecoderKeys.F22_DECKEY},
+            {"f23", DecoderKeys.F23_DECKEY},
+            {"f24", DecoderKeys.F24_DECKEY},
             {"space", DecoderKeys.STROKE_SPACE_DECKEY},
             {"shiftspace", DecoderKeys.SHIFT_SPACE_DECKEY},
             {"directspace", DecoderKeys.DIRECT_SPACE_DECKEY},
@@ -1010,7 +1080,7 @@ namespace KanchokuWS
         /// </summary>
         public static string ReadExtraModConversionFile(string filename)
         {
-            logger.Info("ENTER");
+            logger.InfoH("ENTER");
             initializeShiftPlaneForShiftModKey();
             SingleHitDefs.Clear();
             ExtModifierKeyDefs.Clear();
@@ -1018,7 +1088,7 @@ namespace KanchokuWS
             var sbCompCmds = new StringBuilder();   // 複合コマンド定義文字列
             if (filename._notEmpty()) {
                 var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
-                logger.Info($"modConversion file path={filePath}");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH($"modConversion file path={filePath}");
                 var lines = Helper.GetFileContent(filePath, Encoding.UTF8);
                 if (lines == null) {
                     logger.Error($"Can't read modConversion file: {filePath}");
@@ -1029,7 +1099,7 @@ namespace KanchokuWS
                 int nl = 0;
                 foreach (var rawLine in lines._split('\n')) {
                     ++nl;
-                    logger.DebugH(() => $"line({nl}): {rawLine}");
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"line({nl}): {rawLine}");
                     var origLine = rawLine._reReplace("#.*", "").Trim();
                     var line = origLine.Replace(" ", "")._toLower();
                     if (line._notEmpty() && line[0] != '#') {
@@ -1047,7 +1117,7 @@ namespace KanchokuWS
 
                                 if (IsDisabledExtKey(modName)) {
                                     // 無効にされた拡張修飾キーだった
-                                    logger.DebugH(() => $"modName={modName} is disabled");
+                                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modName={modName} is disabled");
                                     disabledExtKeyLines.Add(rawLine);
                                     continue;
                                 }
@@ -1055,11 +1125,11 @@ namespace KanchokuWS
                                 uint modKey = 0;
                                 int modDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modName);
                                 int modifieeDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modifiee)._gtZeroOr(modifiee._parseInt(-1));
-                                logger.DebugH(() => $"modName={modName}, modifiee={modifiee}, target={target}, modDeckey={modDeckey}, modifieeDeckey={modifieeDeckey})");
+                                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modName={modName}, modifiee={modifiee}, target={target}, modDeckey={modDeckey}, modifieeDeckey={modifieeDeckey})");
 
                                 // 被修飾キーの仮想キーコード: 特殊キー名(esc, tab, ins, ...)または漢直コード(00～49)から、それに該当する仮想キーコードを得る
                                 uint vkey = getVKeyFromDecKey(modifieeDeckey);
-                                logger.DebugH(() => $"vkey={vkey}");
+                                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"vkey={vkey}");
                                 if (vkey == 0) {
                                     // 被修飾キーが指定されていない場合は、拡張修飾キーまたは特殊キーの単打とみなす
                                     vkey = GetFuncVkeyByName(modName);  
@@ -1091,7 +1161,7 @@ namespace KanchokuWS
                                 var name = target.Replace("^", "")._toLower();
                                 int targetDeckey = convertUnconditional(parseShiftPlaneDeckey(target));   // まず、拡張シフト面も含めた漢直コードとして解析する
 
-                                logger.DebugH(() => $"ctrl={ctrl}, name={name}, targetDeckey={targetDeckey:x}H({targetDeckey})");
+                                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ctrl={ctrl}, name={name}, targetDeckey={targetDeckey:x}H({targetDeckey})");
 
                                 if (targetDeckey < 0) {
                                     // 変換先は拡張シフト面も含めた漢直コードではなかったので、特殊キーとして解析する
@@ -1107,7 +1177,7 @@ namespace KanchokuWS
                                             decVkey = getVKeyFromDecKey(targetDeckey);
                                             targetDeckey += DecoderKeys.CTRL_FUNC_DECKEY_START - DecoderKeys.FUNC_DECKEY_START;
                                         }
-                                        logger.DebugH(() => $"targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
+                                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
                                         if (targetDeckey > 0) AddModifiedDeckey(targetDeckey, KeyModifiers.MOD_CONTROL, decVkey);
                                     }
 
@@ -1123,22 +1193,22 @@ namespace KanchokuWS
                                         }
                                     } else {
                                         // 特殊キーだったので、漢直コードから変換テーブルに登録しておく
-                                        logger.DebugH(() => $"AddSpecialDeckey: name={name}, targetDeckey={targetDeckey:x}H({targetDeckey})");
+                                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"AddSpecialDeckey: name={name}, targetDeckey={targetDeckey:x}H({targetDeckey})");
                                         AddSpecialDeckey(name, targetDeckey);
                                     }
                                 }
 
-                                logger.DebugH(() => $"modKey={modKey:x}H, vkey={vkey:x}H, targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, name={name}");
+                                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modKey={modKey:x}H, vkey={vkey:x}H, targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, name={name}");
 
                                 if (vkey > 0 && targetDeckey > 0) {
                                     if (modKey == 0) {
-                                        logger.DebugH(() => $"Single Hit");
+                                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Single Hit");
                                         // キー単打の場合は、キーの登録だけで、拡張シフトB面の割り当てはやらない
                                         AddDecKeyAndCombo(targetDeckey, 0, vkey, true);  // targetDeckey から vkey(拡張修飾キー)への逆マップは不要
                                         VirtualKeys.AddExModVkeyAssignedForDecoderFuncByVkey(vkey);
                                         SingleHitDefs[modDeckey] = target;
                                     } else {
-                                        logger.DebugH(() => $"Extra Modifier");
+                                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Extra Modifier");
                                         // 拡張修飾キー設定
                                         modCount[modKey] = modCount._safeGet(modKey) + 1;
                                         ExtModifierKeyDefs._safeGetOrNewInsert(modKey)[modifieeDeckey] = target;
@@ -1159,7 +1229,7 @@ namespace KanchokuWS
                     }
                 }
             }
-            logger.Info("LEAVE");
+            logger.InfoH("LEAVE");
             return sbCompCmds.ToString();
         }
 

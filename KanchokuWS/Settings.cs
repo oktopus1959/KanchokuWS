@@ -869,12 +869,31 @@ namespace KanchokuWS
 
         //------------------------------------------------------------------------------
         /// <summary>
+        /// kanchoku.ini からデバッグ用設定を読み込む
+        /// </summary>
+        /// <returns></returns>
+        public static void ReadIniFileForDebug()
+        {
+            logger.InfoH(() => $"CALLED");
+
+            LogLevel = GetLogLevel();
+            LoggingDecKeyInfo = GetString("loggingDecKeyInfo")._parseBool();
+            //LoggingActiveWindowInfo = GetString("loggingActiveWindowInfo")._parseBool();
+            LoggingVirtualKeyboardInfo = GetString("loggingVirtualKeyboardInfo")._parseBool();
+            MultiAppEnabled = IsMultiAppEnabled();
+            WarnThresholdKeyQueueCount = GetString("warnThresholdKeyQueueCount")._parseInt(6);
+            OutputDebugTableFiles = GetString("outputDebugTableFiles")._parseBool();
+            ShowHiddleFolder = GetString("showHiddleFolder")._parseBool();
+        }
+
+        //------------------------------------------------------------------------------
+        /// <summary>
         /// kanchoku.ini から各種設定を読み込む
         /// </summary>
         /// <returns></returns>
         public static bool ReadIniFile()
         {
-            logger.DebugH(() => $"ENTER");
+            logger.InfoH(() => $"ENTER");
 
             //-------------------------------------------------------------------------------------
             // 設定のクリア
@@ -892,14 +911,16 @@ namespace KanchokuWS
             ConfirmOnClose = GetString("confirmOnClose")._parseBool(true);
 
             //-------------------------------------------------------------------------------------
-            LogLevel = GetLogLevel();
-            LoggingDecKeyInfo = GetString("loggingDecKeyInfo")._parseBool();
-            //LoggingActiveWindowInfo = GetString("loggingActiveWindowInfo")._parseBool();
-            LoggingVirtualKeyboardInfo = GetString("loggingVirtualKeyboardInfo")._parseBool();
-            MultiAppEnabled = IsMultiAppEnabled();
-            WarnThresholdKeyQueueCount = GetString("warnThresholdKeyQueueCount")._parseInt(6);
-            OutputDebugTableFiles = GetString("outputDebugTableFiles")._parseBool();
-            ShowHiddleFolder = GetString("showHiddleFolder")._parseBool();
+            // デバッグ用設定
+            ReadIniFileForDebug();
+            //LogLevel = GetLogLevel();
+            //LoggingDecKeyInfo = GetString("loggingDecKeyInfo")._parseBool();
+            ////LoggingActiveWindowInfo = GetString("loggingActiveWindowInfo")._parseBool();
+            //LoggingVirtualKeyboardInfo = GetString("loggingVirtualKeyboardInfo")._parseBool();
+            //MultiAppEnabled = IsMultiAppEnabled();
+            //WarnThresholdKeyQueueCount = GetString("warnThresholdKeyQueueCount")._parseInt(6);
+            //OutputDebugTableFiles = GetString("outputDebugTableFiles")._parseBool();
+            //ShowHiddleFolder = GetString("showHiddleFolder")._parseBool();
 
             //-------------------------------------------------------------------------------------
             // ファイル設定
@@ -1272,7 +1293,7 @@ namespace KanchokuWS
             //addDecoderSetting("debughKatakana", false);
             BushuDicLogEnabled = addDecoderSetting("bushuDicLogEnabled", false);
 
-            logger.DebugH(() => $"LEAVE");
+            logger.InfoH(() => $"LEAVE");
 
             return true;
         }

@@ -499,7 +499,7 @@ namespace KanchokuWS.TableParser
 
         public string DebugString()
         {
-            return $"OutputStr={outputStr.DebugString()}, SubNodeNum={GetSubNodeNum()}, RewriteMapNum={rewriteMap._safeCount()}";
+            return $"OutputStr={outputStr?.DebugString() ?? ""}, SubNodeNum={GetSubNodeNum()}, RewriteMapNum={rewriteMap._safeCount()}";
         }
 
     }
