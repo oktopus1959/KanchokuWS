@@ -1709,7 +1709,7 @@ namespace KanchokuWS
         /// </summary>
         private void sendClearStrokeToDecoder()
         {
-            logger.InfoH(() => $"CLLED");
+            logger.InfoH(() => $"CALLED");
             sendDeckeyToDecoder(DecoderKeys.CLEAR_STROKE_DECKEY);
         }
 
@@ -2008,15 +2008,15 @@ namespace KanchokuWS
         public void KanaTrainingModeToggle()
         {
             logger.Info("CALLED");
-            Settings.KanaTrainingMode = !Settings.KanaTrainingMode;
-            if (Settings.KanaTrainingMode) {
-                ExecCmdDecoder("setKanaTrainingMode", "true");
-                ExecCmdDecoder("setAutoHistSearchEnabled", "false");
-            } else {
-                ExecCmdDecoder("setKanaTrainingMode", "false");
-                if (Settings.AutoHistSearchEnabled) ExecCmdDecoder("setAutoHistSearchEnabled", "true");
-            }
             if (IsDecoderActive) {
+                Settings.KanaTrainingMode = !Settings.KanaTrainingMode;
+                if (Settings.KanaTrainingMode) {
+                    ExecCmdDecoder("setKanaTrainingMode", "true");
+                    ExecCmdDecoder("setAutoHistSearchEnabled", "false");
+                } else {
+                    ExecCmdDecoder("setKanaTrainingMode", "false");
+                    if (Settings.AutoHistSearchEnabled) ExecCmdDecoder("setAutoHistSearchEnabled", "true");
+                }
                 frmVkb.DrawInitialVkb();
             }
         }
