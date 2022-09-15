@@ -832,7 +832,7 @@ namespace KanchokuWS.Handler
 
             int kanchokuCode = VirtualKeys.GetKanchokuToggleDecKey(mod, (uint)vkey); // 漢直モードのトグルをやるキーか
 
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: kanchokuCode={kanchokuCode}, mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ENTER: kanchokuCode={kanchokuCode}, mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
 
             if (kanchokuCode < 0 && modEx != 0 && !ctrl && !shift) {
                 // 拡張シフトが有効なのは、Ctrlキーが押されておらず、Shiftも押されていないか、Shift+SpaceをSandSとして扱わない場合とする
@@ -946,7 +946,7 @@ namespace KanchokuWS.Handler
                 kanchokuCode = vkeyQueue.Dequeue();
                 //if (vkeyQueue.Count > 0) logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
             }
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={result}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE: result={result}");
             return result;
         }
 
@@ -1084,17 +1084,14 @@ namespace KanchokuWS.Handler
 
         private bool invokeHandlerForKeyList(List<int> keyList, bool bUnconditional)
         {
-            logger.Debug(() => $"CALLED: keyList.Count={keyList._safeCount()}");
-            if (keyList._isEmpty()) return true;
-
-            logger.DebugH(() => $"ENTER: keyList={keyList.Select(x => x.ToString())._join(":")}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ENTER: keyList={(keyList._isEmpty() ? "(empty)" : keyList.Select(x => x.ToString())._join(":"))}");
             bool result = true;
             if (keyList._notEmpty()) {
                 foreach (var k in keyList) {
-                    result = invokeHandler(k, 0, bUnconditional);
+                    result = invokeHandler(k, 0, bUnconditional) && result;
                 }
             }
-            logger.DebugH(() => $"LEAVE: result={result}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE: result={result}");
             return result;
         }
 
@@ -1106,52 +1103,60 @@ namespace KanchokuWS.Handler
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() =>
                 $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), mod={mod:x}H({mod}), bUnconditional={bUnconditional}, " +
                 $"UNCONDITIONAL_DECKEY_OFFSET={DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET}, UNCONDITIONAL_DECKEY_END={DecoderKeys.UNCONDITIONAL_DECKEY_END}");
-            if (bInvokeHandlerBusy) return false;
 
-            bInvokeHandlerBusy = true;
-            try {
-                switch (kanchokuCode) {
-                    case DecoderKeys.TOGGLE_DECKEY:
-                        ToggleDecoder?.Invoke();
-                        return true;
-                    case DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY:
-                        Settings.VirtualKeyboardPosFixedTemporarily = false;
-                        ToggleDecoder?.Invoke();
-                        return true;
-                    case DecoderKeys.ACTIVE_DECKEY:
-                    case DecoderKeys.ACTIVE2_DECKEY:
-                        ActivateDecoder?.Invoke();
-                        return true;
-                    case DecoderKeys.DEACTIVE_DECKEY:
-                    case DecoderKeys.DEACTIVE2_DECKEY:
-                        DeactivateDecoder?.Invoke();
-                        return true;
-                    //case DecoderKeys.STROKE_HELP_ROTATION_DECKEY:
-                    //    return RotateStrokeHelp?.Invoke() ?? false;
-                    //case DecoderKeys.STROKE_HELP_UNROTATION_DECKEY:
-                    //    return RotateReverseStrokeHelp?.Invoke() ?? false;
-                    //case DecoderKeys.DATE_STRING_ROTATION_DECKEY:
-                    //    return RotateDateString?.Invoke() ?? false;
-                    //case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
-                    //    return RotateReverseDateString?.Invoke() ?? false;
-                    default:
-                        if (kanchokuCode >= DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET && kanchokuCode < DecoderKeys.UNCONDITIONAL_DECKEY_END) {
-                            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}");
-                            return InvokeDecoderUnconditionally?.Invoke(kanchokuCode - DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET, mod) ?? false;
-                        }
-                        if (bUnconditional) {
-                            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}, bUncond={bUnconditional}");
-                            return InvokeDecoderUnconditionally?.Invoke(kanchokuCode, mod) ?? false;
-                        }
-                        if (kanchokuCode >= 0) {
-                            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"FuncDispatcher: kanchokuCode={kanchokuCode}");
-                            return FuncDispatcher?.Invoke(kanchokuCode, mod) ?? false;
-                        }
-                        return false;
-                }
-            } finally {
-                bInvokeHandlerBusy = false;
-                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE");
+            bool result = false;
+
+            if (!bInvokeHandlerBusy) {
+                bInvokeHandlerBusy = true;
+                result = _invokeHandler(kanchokuCode, mod, bUnconditional);
+            }
+            bInvokeHandlerBusy = false;
+
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE: result={result}");
+
+            return result;
+        }
+
+        private bool _invokeHandler(int kanchokuCode, uint mod, bool bUnconditional)
+        {
+            switch (kanchokuCode) {
+                case DecoderKeys.TOGGLE_DECKEY:
+                    ToggleDecoder?.Invoke();
+                    return true;
+                case DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY:
+                    Settings.VirtualKeyboardPosFixedTemporarily = false;
+                    ToggleDecoder?.Invoke();
+                    return true;
+                case DecoderKeys.ACTIVE_DECKEY:
+                case DecoderKeys.ACTIVE2_DECKEY:
+                    ActivateDecoder?.Invoke();
+                    return true;
+                case DecoderKeys.DEACTIVE_DECKEY:
+                case DecoderKeys.DEACTIVE2_DECKEY:
+                    DeactivateDecoder?.Invoke();
+                    return true;
+                //case DecoderKeys.STROKE_HELP_ROTATION_DECKEY:
+                //    return RotateStrokeHelp?.Invoke() ?? false;
+                //case DecoderKeys.STROKE_HELP_UNROTATION_DECKEY:
+                //    return RotateReverseStrokeHelp?.Invoke() ?? false;
+                //case DecoderKeys.DATE_STRING_ROTATION_DECKEY:
+                //    return RotateDateString?.Invoke() ?? false;
+                //case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
+                //    return RotateReverseDateString?.Invoke() ?? false;
+                default:
+                    if (kanchokuCode >= DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET && kanchokuCode < DecoderKeys.UNCONDITIONAL_DECKEY_END) {
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}");
+                        return InvokeDecoderUnconditionally?.Invoke(kanchokuCode - DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET, mod) ?? false;
+                    }
+                    if (bUnconditional) {
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}, bUncond={bUnconditional}");
+                        return InvokeDecoderUnconditionally?.Invoke(kanchokuCode, mod) ?? false;
+                    }
+                    if (kanchokuCode >= 0) {
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"FuncDispatcher: kanchokuCode={kanchokuCode}");
+                        return FuncDispatcher?.Invoke(kanchokuCode, mod) ?? false;
+                    }
+                    return false;
             }
         }
 

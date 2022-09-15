@@ -797,109 +797,112 @@ namespace KanchokuWS
             try {
                 if (IsDecoderActive) {
                     renewSaveDictsPlannedDt();
-                }
-                switch (deckey) {
-                    case DecoderKeys.STROKE_HELP_ROTATION_DECKEY:
-                        return rotateStrokeHelp(1);
-                    case DecoderKeys.STROKE_HELP_UNROTATION_DECKEY:
-                        return rotateStrokeHelp(-1);
-                    case DecoderKeys.DATE_STRING_ROTATION_DECKEY:
-                        return !isActiveWinExcel() && rotateDateString(1);
-                    case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
-                        return !isActiveWinExcel() && rotateDateString(-1);
-                    case DecoderKeys.STROKE_HELP_DECKEY:
-                        if (prevDeckey != deckey || prevCount + 1 < deckeyTotalCount) {
-                            ShowStrokeHelp(null);
-                        } else {
-                            ShowBushuCompHelp();
-                        }
-                        return true;
-                    case DecoderKeys.BUSHU_COMP_HELP_DECKEY:
-                        ShowBushuCompHelp();
-                        return true;
-                    case DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE_DECKEY:
-                        if (IsDecoderActive) {
-                            rotateStrokeHelp(0);
-                            bRomanStrokeGuideMode = !bRomanStrokeGuideMode && !bRomanMode;
-                            drawRomanOrHiraganaMode(bRomanStrokeGuideMode, false);
-                        }
-                        return true;
-                    case DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY:
-                        if (IsDecoderActive) {
-                            rotateStrokeHelp(0);
-                            bUpperRomanStrokeGuideMode = !bUpperRomanStrokeGuideMode && !bRomanMode;
-                            if (!bRomanMode) drawRomanOrHiraganaMode(bUpperRomanStrokeGuideMode, false);
-                        }
-                        return true;
-                    case DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY:
-                        if (IsDecoderActive) {
-                            rotateStrokeHelp(0);
-                            bHiraganaStrokeGuideMode = !bHiraganaStrokeGuideMode;
-                            if (bHiraganaStrokeGuideMode) {
-                                InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);   // やっぱり出力文字列をクリアしておく必要あり
-                                //ExecCmdDecoder("setHiraganaBlocker", null);       // こっちだと、以前のひらがなが出力文字列に残ったりして、それを拾ってしまう
+                    switch (deckey) {
+                        case DecoderKeys.STROKE_HELP_ROTATION_DECKEY:
+                            return rotateStrokeHelp(1);
+                        case DecoderKeys.STROKE_HELP_UNROTATION_DECKEY:
+                            return rotateStrokeHelp(-1);
+                        case DecoderKeys.DATE_STRING_ROTATION_DECKEY:
+                            return !isActiveWinExcel() && rotateDateString(1);
+                        case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
+                            return !isActiveWinExcel() && rotateDateString(-1);
+                        case DecoderKeys.STROKE_HELP_DECKEY:
+                            if (prevDeckey != deckey || prevCount + 1 < deckeyTotalCount) {
+                                ShowStrokeHelp(null);
                             } else {
-                                //HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput); // こっちだと、見えなくなるだけで、ひらがな列が残ってしまう
-                                ExecCmdDecoder("clearTailHiraganaStr", null);   // 物理的に読みのひらがな列を削除しておく必要あり
+                                ShowBushuCompHelp();
                             }
-                            drawRomanOrHiraganaMode(false, bHiraganaStrokeGuideMode);
-                        }
-                        return true;
-                    case DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY:
-                        logger.InfoH("EXCHANGE_CODE_TABLE");
-                        ExchangeCodeTable();
-                        return true;
-                    case DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY:
-                        logger.InfoH("KANA_TRAINING_TOGGLE");
-                        KanaTrainingModeToggle();
-                        return true;
-                    case DecoderKeys.PSEUDO_SPACE_DECKEY:
-                        logger.InfoH(() => $"PSEUDO_SPACE_DECKEY: strokeCount={decoderOutput.GetStrokeCount()}");
-                        deckey = DecoderKeys.STROKE_SPACE_DECKEY;
-                        if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
-                            // 第2打鍵待ちなら、スペースを出力
-                            InvokeDecoder(deckey, 0);
-                        }
-                        return true;
-                    case DecoderKeys.POST_NORMAL_SHIFT_DECKEY:
-                    case DecoderKeys.POST_PLANE_A_SHIFT_DECKEY:
-                    case DecoderKeys.POST_PLANE_B_SHIFT_DECKEY:
-                    case DecoderKeys.POST_PLANE_C_SHIFT_DECKEY:
-                    case DecoderKeys.POST_PLANE_D_SHIFT_DECKEY:
-                    case DecoderKeys.POST_PLANE_E_SHIFT_DECKEY:
-                    case DecoderKeys.POST_PLANE_F_SHIFT_DECKEY:
-                        logger.InfoH(() => $"POST_PLANE_X_SHIFT_DECKEY=POST_NORMAL_SHIFT_DECKEY+{deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY}, strokeCount={decoderOutput.GetStrokeCount()}");
-                        if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
-                            // 第2打鍵待ちなら、いったんBSを出力してからシフトされたコードを出力
-                            InvokeDecoder(DecoderKeys.BS_DECKEY, 0);
-                            deckey = (prevDeckey % DecoderKeys.PLANE_DECKEY_NUM) + (deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY + 1) * DecoderKeys.PLANE_DECKEY_NUM;
-                            InvokeDecoder(deckey, 0);
-                        }
-                        return true;
-                    case DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY:
-                        logger.InfoH(() => $"COPY_SELECTION_AND_SEND_TO_DICTIONARY:{deckey}");
-                        copySelectionAndSendToDictionary();
-                        return true;
-                    case DecoderKeys.CLEAR_STROKE_DECKEY:
-                        logger.InfoH(() => $"CLEAR_STROKE_DECKEY:{deckey}");
-                        sendClearStrokeToDecoder();
-                        return true;
-                    case DecoderKeys.TOGGLE_BLOCKER_DECKEY:
-                        logger.InfoH(() => $"TOGGLE_BLOCKER_DECKEY:{deckey}");
-                        sendDeckeyToDecoder(deckey);
-                        return true;
+                            return true;
+                        case DecoderKeys.BUSHU_COMP_HELP_DECKEY:
+                            ShowBushuCompHelp();
+                            return true;
+                        case DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE_DECKEY:
+                            if (IsDecoderActive) {
+                                rotateStrokeHelp(0);
+                                bRomanStrokeGuideMode = !bRomanStrokeGuideMode && !bRomanMode;
+                                drawRomanOrHiraganaMode(bRomanStrokeGuideMode, false);
+                            }
+                            return true;
+                        case DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY:
+                            if (IsDecoderActive) {
+                                rotateStrokeHelp(0);
+                                bUpperRomanStrokeGuideMode = !bUpperRomanStrokeGuideMode && !bRomanMode;
+                                if (!bRomanMode) drawRomanOrHiraganaMode(bUpperRomanStrokeGuideMode, false);
+                            }
+                            return true;
+                        case DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY:
+                            if (IsDecoderActive) {
+                                rotateStrokeHelp(0);
+                                bHiraganaStrokeGuideMode = !bHiraganaStrokeGuideMode;
+                                if (bHiraganaStrokeGuideMode) {
+                                    InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);   // やっぱり出力文字列をクリアしておく必要あり
+                                                                                        //ExecCmdDecoder("setHiraganaBlocker", null);       // こっちだと、以前のひらがなが出力文字列に残ったりして、それを拾ってしまう
+                                } else {
+                                    //HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, ref decoderOutput); // こっちだと、見えなくなるだけで、ひらがな列が残ってしまう
+                                    ExecCmdDecoder("clearTailHiraganaStr", null);   // 物理的に読みのひらがな列を削除しておく必要あり
+                                }
+                                drawRomanOrHiraganaMode(false, bHiraganaStrokeGuideMode);
+                            }
+                            return true;
+                        case DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY:
+                            logger.InfoH("EXCHANGE_CODE_TABLE");
+                            ExchangeCodeTable();
+                            return true;
+                        case DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY:
+                            logger.InfoH("KANA_TRAINING_TOGGLE");
+                            KanaTrainingModeToggle();
+                            return true;
+                        case DecoderKeys.PSEUDO_SPACE_DECKEY:
+                            logger.InfoH(() => $"PSEUDO_SPACE_DECKEY: strokeCount={decoderOutput.GetStrokeCount()}");
+                            deckey = DecoderKeys.STROKE_SPACE_DECKEY;
+                            if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
+                                // 第2打鍵待ちなら、スペースを出力
+                                InvokeDecoder(deckey, 0);
+                            }
+                            return true;
+                        case DecoderKeys.POST_NORMAL_SHIFT_DECKEY:
+                        case DecoderKeys.POST_PLANE_A_SHIFT_DECKEY:
+                        case DecoderKeys.POST_PLANE_B_SHIFT_DECKEY:
+                        case DecoderKeys.POST_PLANE_C_SHIFT_DECKEY:
+                        case DecoderKeys.POST_PLANE_D_SHIFT_DECKEY:
+                        case DecoderKeys.POST_PLANE_E_SHIFT_DECKEY:
+                        case DecoderKeys.POST_PLANE_F_SHIFT_DECKEY:
+                            logger.InfoH(() => $"POST_PLANE_X_SHIFT_DECKEY=POST_NORMAL_SHIFT_DECKEY+{deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY}, strokeCount={decoderOutput.GetStrokeCount()}");
+                            if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
+                                // 第2打鍵待ちなら、いったんBSを出力してからシフトされたコードを出力
+                                InvokeDecoder(DecoderKeys.BS_DECKEY, 0);
+                                deckey = (prevDeckey % DecoderKeys.PLANE_DECKEY_NUM) + (deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY + 1) * DecoderKeys.PLANE_DECKEY_NUM;
+                                InvokeDecoder(deckey, 0);
+                            }
+                            return true;
+                        case DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY:
+                            logger.InfoH(() => $"COPY_SELECTION_AND_SEND_TO_DICTIONARY:{deckey}");
+                            copySelectionAndSendToDictionary();
+                            return true;
+                        case DecoderKeys.CLEAR_STROKE_DECKEY:
+                            logger.InfoH(() => $"CLEAR_STROKE_DECKEY:{deckey}");
+                            sendClearStrokeToDecoder();
+                            return true;
+                        case DecoderKeys.TOGGLE_BLOCKER_DECKEY:
+                            logger.InfoH(() => $"TOGGLE_BLOCKER_DECKEY:{deckey}");
+                            sendDeckeyToDecoder(deckey);
+                            return true;
 
-                    case DecoderKeys.DIRECT_SPACE_DECKEY:
-                        logger.InfoH(() => $"DIRECT_SPACE_DECKEY:{deckey}, mode={mod:x}H");
-                        return sendVkeyFromDeckey(DecoderKeys.STROKE_SPACE_DECKEY, mod);
+                        case DecoderKeys.DIRECT_SPACE_DECKEY:
+                            logger.InfoH(() => $"DIRECT_SPACE_DECKEY:{deckey}, mode={mod:x}H");
+                            return sendVkeyFromDeckey(DecoderKeys.STROKE_SPACE_DECKEY, mod);
 
-                    default:
-                        bPrevDtUpdate = true;
-                        if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
-                            return InvokeDecoder(deckey, mod);
-                        } else {
-                            return sendVkeyFromDeckey(deckey, mod);
-                        }
+                        default:
+                            bPrevDtUpdate = true;
+                            if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
+                                return InvokeDecoder(deckey, mod);
+                            } else {
+                                return sendVkeyFromDeckey(deckey, mod);
+                            }
+                    }
+                } else {
+                    bPrevDtUpdate = true;
+                    return sendVkeyFromDeckey(deckey, mod);
                 }
             } finally {
                 prevDeckey = deckey;
@@ -1775,7 +1778,7 @@ namespace KanchokuWS
                 || deckey >= DecoderKeys.CTRL_SHIFT_DECKEY_START && deckey < DecoderKeys.CTRL_SHIFT_DECKEY_END  // Ctrl-Shift-A～Ctrl-Shift-Z は通す
                 ) {
 
-                if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET WINDOW: deckey={deckey:x}H({deckey})");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET WINDOW");
                 var combo = VirtualKeys.GetVKeyComboFromDecKey(deckey);
                 if (combo != null) {
                     if (Settings.LoggingDecKeyInfo) {
@@ -1792,6 +1795,8 @@ namespace KanchokuWS
                     SendInputHandler.Singleton.SendVKeyCombo((combo.Value.modifier != 0 ? combo.Value.modifier : mod), combo.Value.vkey, 1);
                     if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: TRUE");
                     return true;
+                } else {
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"NO VKEY COMBO for deckey={deckey:x}H({deckey})");
                 }
             }
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: FALSE");
