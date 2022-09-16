@@ -1035,6 +1035,8 @@ namespace KanchokuWS
             {"upperromanstrokeguide", DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY},
             {"hiraganastrokeguide", DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY},
             {"exchangecodetable", DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY},
+            {"selectcodetable1", DecoderKeys.SELECT_CODE_TABLE1_DECKEY},
+            {"selectcodetable2", DecoderKeys.SELECT_CODE_TABLE2_DECKEY},
             {"kanatrainingtoggle", DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY},
             {"leftshiftblocker", DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY},
             {"rightshiftblocker", DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY},

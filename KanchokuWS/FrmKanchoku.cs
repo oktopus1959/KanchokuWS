@@ -805,7 +805,11 @@ namespace KanchokuWS
             int prevCount = prevFuncTotalCount;
             prevFuncTotalCount = deckeyTotalCount;
             try {
-                if (IsDecoderActive) {
+                if (deckey == DecoderKeys.DATE_STRING_ROTATION_DECKEY) {
+                    return !isActiveWinExcel() && rotateDateString(1);
+                } else if (deckey == DecoderKeys.DATE_STRING_UNROTATION_DECKEY) {
+                    return !isActiveWinExcel() && rotateDateString(-1);
+                } else if (IsDecoderActive) {
                     renewSaveDictsPlannedDt();
                     switch (deckey) {
                         case DecoderKeys.STROKE_HELP_ROTATION_DECKEY:
@@ -857,6 +861,14 @@ namespace KanchokuWS
                         case DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY:
                             logger.InfoH("EXCHANGE_CODE_TABLE");
                             ExchangeCodeTable();
+                            return true;
+                        case DecoderKeys.SELECT_CODE_TABLE1_DECKEY:
+                            logger.InfoH("SELECT_CODE_TABLE1_DECKEY");
+                            SelectCodeTable(1);
+                            return true;
+                        case DecoderKeys.SELECT_CODE_TABLE2_DECKEY:
+                            logger.InfoH("SELECT_CODE_TABLE2_DECKEY");
+                            SelectCodeTable(2);
                             return true;
                         case DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY:
                             logger.InfoH("KANA_TRAINING_TOGGLE");
@@ -926,6 +938,22 @@ namespace KanchokuWS
             logger.InfoH("CALLED");
             if (IsDecoderActive && Settings.TableFile2._notEmpty() && DecoderOutput.IsWaitingFirstStroke()) {
                 ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
+                CombinationKeyStroke.Determiner.Singleton.SelectKanchokuKeyCombinationPool(decoderOutput.strokeTableNum, IsDecoderActive);  // KeyCombinationPoolの入れ替え
+                frmVkb.DrawVirtualKeyboardChars();
+                frmMode.SetKanjiMode();
+            }
+        }
+
+        /// <summary>漢直コードテーブルの入れ替え</summary>
+        public void SelectCodeTable(int n)
+        {
+            logger.InfoH($"CALLED: n={n}");
+            if (IsDecoderActive && Settings.TableFile2._notEmpty() && DecoderOutput.IsWaitingFirstStroke()) {
+                if (n == 1 && Settings.TableFile._notEmpty()) {
+                    ExecCmdDecoder("useCodeTable1", null);  // コードテーブル1に入れ替え
+                } else if (n == 2 && Settings.TableFile2._notEmpty()) {
+                    ExecCmdDecoder("useCodeTable2", null);  // コードテーブル2に入れ替え
+                }
                 CombinationKeyStroke.Determiner.Singleton.SelectKanchokuKeyCombinationPool(decoderOutput.strokeTableNum, IsDecoderActive);  // KeyCombinationPoolの入れ替え
                 frmVkb.DrawVirtualKeyboardChars();
                 frmMode.SetKanjiMode();
