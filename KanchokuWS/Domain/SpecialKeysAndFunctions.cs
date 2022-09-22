@@ -146,6 +146,7 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_BLOCKER_DECKEY, 0, "BlockerToggle", "", "ミニバッファ末尾のブロッカーを設定・解除する", "toggleblocker"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY, 0, "HistNext", "", "履歴を先頭から選択"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.HISTORY_PREV_SEARCH_DECKEY, 0, "HistPrev", "", "履歴を末尾から選択"),
+            new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.VKB_SHOW_HIDE_DECKEY, 0, "VkbShowHide", "", "仮想鍵盤の表示/非表示の切り替え"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.STROKE_HELP_ROTATION_DECKEY, 0, "HelpRotate", "", "ストロークヘルプの正順回転"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.STROKE_HELP_UNROTATION_DECKEY, 0, "HelpUnrotate", "", "ストロークヘルプの逆順回転"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.DATE_STRING_ROTATION_DECKEY, 0, "DateRotate", "", "日時変換の入力(フォーマットの正順切替)"),

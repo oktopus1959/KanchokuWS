@@ -615,6 +615,8 @@ namespace KanchokuWS.Gui
             radioButton_vkbRelativePos.Checked = Settings.VirtualKeyboardFixedPosX < 0 || Settings.VirtualKeyboardFixedPosY < 0;
             radioButton_vkbFixedPos.Checked = !radioButton_vkbRelativePos.Checked;
 
+            comboBox_selectCtrlKeyItem(comboBox_vkbShowHideTemporaryKey, $"{Settings.VkbShowHideTemporaryKey}");
+
             //textBox_displayScale.Text = $"{Settings.DisplayScale:f3}";
             // モード標識
             textBox_kanjiModeInterval.Text = $"{Settings.KanjiModeMarkerShowIntervalSec}";
@@ -659,6 +661,7 @@ namespace KanchokuWS.Gui
             checkerAdvanced.Add(textBox_vkbFixedPosY);
             checkerAdvanced.Add(radioButton_vkbRelativePos);
             checkerAdvanced.Add(radioButton_vkbFixedPos);
+            checkerAdvanced.Add(comboBox_vkbShowHideTemporaryKey);
             //checkerAdvanced.Add(textBox_displayScale);
             checkerAdvanced.Add(textBox_kanjiModeInterval);
             checkerAdvanced.Add(textBox_alphaModeShowTime);
@@ -722,6 +725,7 @@ namespace KanchokuWS.Gui
             int factor = radioButton_vkbFixedPos.Checked ? 1 : -1;
             Settings.SetUserIni("vkbFixedPos", $"{textBox_vkbFixedPosX.Text.Trim()._parseInt(-1) * factor},{textBox_vkbFixedPosY.Text.Trim()._parseInt(-1) * factor}");
             //Settings.SetUserIni("displayScale", textBox_displayScale.Text.Trim());
+            Settings.SetUserIni("vkbShowHideTemporaryKey", comboBox_vkbShowHideTemporaryKey._getSelectedItemSplittedFirst(""));
             Settings.SetUserIni("kanjiModeMarkerShowIntervalSec", textBox_kanjiModeInterval.Text.Trim());
             Settings.SetUserIni("alphaModeMarkerShowMillisec", textBox_alphaModeShowTime.Text.Trim());
 
@@ -1213,18 +1217,6 @@ namespace KanchokuWS.Gui
             checkBox_globalCtrlKeysEnabled.Checked = Settings.GlobalCtrlKeysEnabled;
 
             initializeCtrlKeyConversionComboBox();
-
-            //comboBox_ctrlKey_setItems(comboBox_backSpaceKey);
-            //comboBox_ctrlKey_setItems(comboBox_deleteKey);
-            //comboBox_ctrlKey_setItems(comboBox_leftArrowKey);
-            //comboBox_ctrlKey_setItems(comboBox_rightArrowKey);
-            //comboBox_ctrlKey_setItems(comboBox_upArrowKey);
-            //comboBox_ctrlKey_setItems(comboBox_downArrowKey);
-            //comboBox_ctrlKey_setItems(comboBox_homeKey);
-            //comboBox_ctrlKey_setItems(comboBox_endKey);
-            //comboBox_ctrlKey_setItems(comboBox_dateStringKey);
-            //comboBox_ctrlKey_setItems(comboBox_fullEscapeKey);
-            //comboBox_ctrlKey_setItems(comboBox_strokeHelpRotationKey);
 
             checkBox_backSpaceKey.Checked = Settings.CtrlKeyConvertedToBackSpace._notEmpty() && !Settings.CtrlKeyConvertedToBackSpace.StartsWith("#");
             checkBox_deleteKey.Checked = Settings.CtrlKeyConvertedToDelete._notEmpty() && !Settings.CtrlKeyConvertedToDelete.StartsWith("#");
@@ -2264,6 +2256,7 @@ namespace KanchokuWS.Gui
         /// Ctrlキー割り当てで、ドロップダウンに使われる項目
         /// </summary>
         private string[] ctrlKeyItems = new string[] {
+            "なし",
             "SPACE",
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
             "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
@@ -2606,6 +2599,11 @@ namespace KanchokuWS.Gui
         private void button_showDlgStrokeLog_Click(object sender, EventArgs e)
         {
             frmMain?.ShowDlgStrokeLog(this, Right - 10, Top);
+        }
+
+        private void comboBox_vkbShowHideTemporaryKey_DropDown(object sender, EventArgs e)
+        {
+            comboBox_ctrlKey_setItems(comboBox_vkbShowHideTemporaryKey);
         }
     }
 }

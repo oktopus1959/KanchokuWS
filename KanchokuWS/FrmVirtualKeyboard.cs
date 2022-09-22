@@ -314,11 +314,13 @@ namespace KanchokuWS
         // ウィンドウをアクティブにせずに表示する
         private const int SW_SHOWNA = 8;
 
-        private void showNonActive()
+        public void ShowNonActive()
         {
-            //topTextBox.Width = (int)(VkbNormalWidth);
-            ShowWindow(this.Handle, SW_SHOWNA);   // NonActive
-            logger.Info(() => $"LEAVE: this.Width={this.Width}, this.Height={this.Height}, tex.Height={topTextBox.Height}, pic.top={pictureBox_Main.Top}");
+            if (!frmMain.IsVkbHiddenTemporay) {
+                //topTextBox.Width = (int)(VkbNormalWidth);
+                ShowWindow(this.Handle, SW_SHOWNA);   // NonActive
+                logger.Info(() => $"LEAVE: this.Width={this.Width}, this.Height={this.Height}, tex.Height={topTextBox.Height}, pic.top={pictureBox_Main.Top}");
+            }
         }
 
         //------------------------------------------------------------------------------------
@@ -873,7 +875,7 @@ namespace KanchokuWS
                 } else {
                     drawVkb5x10Table(tblDef);
                 }
-                showNonActive();
+                ShowNonActive();
             } else {
                 this.Hide();
             }
@@ -1005,7 +1007,7 @@ namespace KanchokuWS
                 dgvHorizontal.CurrentCell = null;   // どのセルも選択されていない状態にする
                 dgvHorizontal.Height = (int)(VkbCellHeight * nRow + 1);
                 changeFormHeight(dgvHorizontal.Top + dgvHorizontal.Height + 1);
-                showNonActive();
+                ShowNonActive();
                 return;
             }
 
@@ -1029,7 +1031,7 @@ namespace KanchokuWS
                     }
                 }
                 changeFormHeight(pictureBox_Main.Top + pictureBox_Main.Height + 1);
-                showNonActive();
+                ShowNonActive();
                 return;
             }
             if (decoderOutput.layout >= (int)VkbLayout.Normal && decoderOutput.layout < (int)VkbLayout.KanaTable) {
@@ -1044,7 +1046,7 @@ namespace KanchokuWS
                         drawNormalVkbStrings(drawer.Gfx, i => makeMultiCharStr(decoderOutput.faceStrings, i * 2), false);
                     }
                     changeFormHeight(pictureBox_Main.Top + pictureBox_Main.Height + 1);
-                    showNonActive();
+                    ShowNonActive();
                 } else {
                     this.Hide();
                 }

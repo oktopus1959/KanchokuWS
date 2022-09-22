@@ -165,6 +165,9 @@ namespace KanchokuWS
             ? VirtualKeyboardShowStrokeCountTemp
             : VirtualKeyboardShowStrokeCount;
 
+        /// <summary>仮想鍵盤の一時的な表示/非表示キー</summary>
+        public static string VkbShowHideTemporaryKey { get; set; }
+
         ///// <summary>上部テキストボックスの表示モード</summary>
         //public enum TopTextboxMode
         //{
@@ -963,6 +966,10 @@ namespace KanchokuWS
 
             // 同時打鍵ではないテーブルで、ノード重複の警告を表示するか
             DuplicateWarningEnabled = GetString("duplicateWarningEnabled")._parseBool(false);
+
+            // 一時的な仮想鍵盤の表示/非表示
+            VkbShowHideTemporaryKey = GetString("vkbShowHideTemporaryKey", "").Trim();
+            if (VkbShowHideTemporaryKey._notEmpty()) VirtualKeys.AddCtrlDeckeyAndCombo(VkbShowHideTemporaryKey, DecoderKeys.VKB_SHOW_HIDE_DECKEY, DecoderKeys.VKB_SHOW_HIDE_DECKEY);
 
             //-------------------------------------------------------------------------------------
             // フォントと色の設定

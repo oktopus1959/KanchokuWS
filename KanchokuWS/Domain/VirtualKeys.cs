@@ -1019,6 +1019,7 @@ namespace KanchokuWS
             {"unblock", DecoderKeys.UNBLOCK_DECKEY},
             {"toggleblocker", DecoderKeys.TOGGLE_BLOCKER_DECKEY},
             {"blockertoggle", DecoderKeys.TOGGLE_BLOCKER_DECKEY},
+            {"vkbshowhide", DecoderKeys.VKB_SHOW_HIDE_DECKEY},
             {"helprotate", DecoderKeys.STROKE_HELP_ROTATION_DECKEY},
             {"helpunrotate", DecoderKeys.STROKE_HELP_UNROTATION_DECKEY},
             {"daterotate", DecoderKeys.DATE_STRING_ROTATION_DECKEY},

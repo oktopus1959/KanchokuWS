@@ -21,14 +21,23 @@ namespace KanchokuWS
         private static Logger logger = Logger.GetLogger();
 
         //------------------------------------------------------------------
+        [DllImport("user32.dll")]
+        private static extern void ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        // ウィンドウをアクティブにせずに表示する
+        private const int SW_SHOWNA = 8;
+
+        //------------------------------------------------------------------
         // GUI側の処理
         //------------------------------------------------------------------
         /// <summary> 仮想鍵盤フォーム </summary>
         private FrmVirtualKeyboard frmVkb;
 
+        public bool IsVkbHiddenTemporay = false;
+
         public void ShowFrmVkb()
         {
-            ShowWindow(frmVkb.Handle, SW_SHOWNA);   // NonActive
+            frmVkb.ShowNonActive();   // NonActive
         }
 
         /// <summary> 漢直モードマーカーフォーム </summary>
@@ -190,7 +199,7 @@ namespace KanchokuWS
 
             // 仮想鍵盤フォームの作成
             frmVkb = new FrmVirtualKeyboard(this);
-            frmVkb.Opacity = 0;
+            frmVkb.Opacity = 0;     // 最初は完全透明にして目に見えないようにする
             frmVkb.Show();
 
             // 漢直モード表示フォームの作成
@@ -500,12 +509,6 @@ namespace KanchokuWS
         [DllImport("user32.dll")]
         private static extern void PostQuitMessage(int nExitCode);
 
-        [DllImport("user32.dll")]
-        private static extern void ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        // ウィンドウをアクティブにせずに表示する
-        private const int SW_SHOWNA = 8;
-
         //------------------------------------------------------------------
         // Decoder 呼び出し
         //------------------------------------------------------------------
@@ -812,6 +815,15 @@ namespace KanchokuWS
                 } else if (IsDecoderActive) {
                     renewSaveDictsPlannedDt();
                     switch (deckey) {
+                        case DecoderKeys.VKB_SHOW_HIDE_DECKEY:
+                            if (IsVkbHiddenTemporay) {
+                                IsVkbHiddenTemporay = false;
+                                ShowFrmVkb();
+                            } else {
+                                IsVkbHiddenTemporay = true;
+                                frmVkb.Hide();
+                            }
+                            return true;
                         case DecoderKeys.STROKE_HELP_ROTATION_DECKEY:
                             return rotateStrokeHelp(1);
                         case DecoderKeys.STROKE_HELP_UNROTATION_DECKEY:
@@ -1121,6 +1133,7 @@ namespace KanchokuWS
                 Settings.VirtualKeyboardShowStrokeCountTemp = 0;
                 bHiraganaStrokeGuideMode = false;
                 bRomanStrokeGuideMode = false;
+                IsVkbHiddenTemporay = false;
                 frmVkb.StrokeHelpShiftPlane = 0;
                 frmVkb.DecKeyForNextTableStrokeHelp = -1;
                 frmVkb.DrawInitialVkb();

@@ -216,10 +216,10 @@ namespace KanchokuWS
                     this.label1.Text = KanchokuModeFace;
                 }
             } else {
-                if (!frmMain.IsDecoderActive || frmVkb.Visible || this.Visible) {
+                if (!isThisShowable() || this.Visible) {
                     // デコーダが非アクティブか、仮想鍵盤が表示されているか、自身が表示されていれば、常にカウントをリセットする
                     resetCount();
-                    if ((!frmMain.IsDecoderActive || frmVkb.Visible) && this.Visible) {
+                    if (!isThisShowable() && this.Visible) {
                         if (Settings.LoggingActiveWindowInfo) logger.InfoH("Hide ModeMarker");
                         this.Hide();
                     }
@@ -231,12 +231,17 @@ namespace KanchokuWS
 
                 if (isFaceLabelChanged() || isCountZero()) {
                     if (isFaceLabelChanged()) setNewFaceLabel();
-                    if (frmMain.IsDecoderActive && !frmVkb.Visible && !this.Visible) {
+                    if (isThisShowable() && !this.Visible) {
                         // 再表示する
                         showMyForm();
                     }
                 }
             }
+        }
+
+        bool isThisShowable()
+        {
+            return frmMain.IsDecoderActive && !frmMain.IsVkbHiddenTemporay && !frmVkb.Visible;
         }
 
         private void FrmModeMarker_VisibleChanged(object sender, EventArgs e)

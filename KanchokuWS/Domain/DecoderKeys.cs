@@ -235,7 +235,9 @@ namespace KanchokuWS
         public const int DEACTIVE_DECKEY = ACTIVE2_DECKEY + 1;          // OFF への切り替えキー
         public const int DEACTIVE2_DECKEY = DEACTIVE_DECKEY + 1;        // OFF への切り替えキー、その2
 
-        public const int STROKE_HELP_ROTATION_DECKEY = DEACTIVE2_DECKEY + 1;                // 打鍵ヘルプローテーションキー
+        public const int VKB_SHOW_HIDE_DECKEY = DEACTIVE2_DECKEY + 1;   // 仮想鍵盤の表示/非表示の切り替え
+
+        public const int STROKE_HELP_ROTATION_DECKEY = VKB_SHOW_HIDE_DECKEY + 1;            // 打鍵ヘルプローテーションキー
         public const int STROKE_HELP_UNROTATION_DECKEY = STROKE_HELP_ROTATION_DECKEY + 1;   // 打鍵ヘルプ逆ローテーションキー
 
         public const int DATE_STRING_ROTATION_DECKEY = STROKE_HELP_UNROTATION_DECKEY + 1;   // 今日の日付文字列を正順に出力
