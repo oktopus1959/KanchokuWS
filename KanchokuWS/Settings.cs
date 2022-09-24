@@ -15,7 +15,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.0β12";
+        public static string Version => "1.2.0RC1";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -1187,7 +1187,7 @@ namespace KanchokuWS
             HistKanjiKeyLength = addDecoderSetting("histKanjiKeyLength", 1, 1);                 // 漢字履歴の検索を行う際のキー長
             HistMapKeyMaxLength = addDecoderSetting("histMapKeyMaxLength", 8, 4);               // 変換履歴キーの最大長
             HistMapGobiMaxLength = addDecoderSetting("histMapGobiMaxLength", 2, 0);             // 変換履歴キーに付加できる語尾の最大長
-            AutoHistSearchEnabled = addDecoderSetting("autoHistSearchEnabled", true);           // 自動履歴検索を行う
+            AutoHistSearchEnabled = addDecoderSetting("autoHistSearchEnabled", false);          // 自動履歴検索を行う
             //HistSearchByCtrlSpace = addDecoderSetting("histSearchByCtrlSpace", true);           // Ctrl-Space で履歴検索を行う
             //VirtualKeys.AddCtrlDeckeyAndCombo(" ", DecoderKeys.CTRL_SPACE_DECKEY, 0);           // 登録
             //HistSearchByShiftSpace = addDecoderSetting("histSearchByShiftSpace", true);         // Shift-Space で履歴検索を行う

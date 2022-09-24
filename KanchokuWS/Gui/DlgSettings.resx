@@ -442,8 +442,8 @@ MS ゴシック、メイリオ、游ゴシックについては、ある程度�
 
 ・「kana」について
 拡張修飾キーや特殊キーは次のように名前で指定することもできます。
-半/全=zenkaku, CapsLock=caps, 英数=alnum,
-無変換=xfer, 変換=nfer, ひらがな=kana,
+半/全=zenkaku, CapsLock=caps, 英数=alnum(eisu),
+無変換=nfer(muhenkan), 変換=xfer(henkan), ひらがな=kana,
 右シフト=rshift, Insert=ins</value>
   </data>
   <data name="label69.ToolTip" xml:space="preserve">
@@ -459,14 +459,14 @@ Shift+Space=S40
 
 拡張シフトA面の'a'=A20
 拡張シフトB面のSpace=B40
-(A/a または B/b を前接させると拡張シフト面のコードとなります。)
+(A/a ～ F/f を前接させると拡張シフト面のコードとなります。)
 
 半/全=X1, Caps=X3, 英数=X4, 無変換=X5, 変換=X6, ひらがな=X7
 (コードに 'X' または 'x' を前接させると拡張修飾キーや特殊キーになります。)
 
 拡張修飾キーや特殊キーは次のように名前で指定することもできます。
-半/全=zenkaku, CapsLock=caps, 英数=alnum,
-無変換=xfer, 変換=nfer, ひらがな=kana,
+半/全=zenkaku, CapsLock=caps, 英数=alnum(eisu),
+無変換=nfer(muhenkan), 変換=xfer(henkan), ひらがな=kana,
 右シフト=rshift, Insert=ins</value>
   </data>
   <data name="textBox_modConversionFile.ToolTip" xml:space="preserve">
