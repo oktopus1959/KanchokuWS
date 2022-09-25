@@ -231,6 +231,9 @@ namespace KanchokuWS
 
         public static uint GetFuncVkeyByName(string name)
         {
+            if (name._toLower() == "space") {
+                return (uint)Keys.Space;
+            }
             if (name._toLower().StartsWith("vk")) {
                 // "VKxx" のケース
                 int vk = name._safeSubstring(2)._parseHex();
@@ -1118,8 +1121,8 @@ namespace KanchokuWS
                                 string modifiee = items[1];
                                 string target = origItems[2]._strip()._stripDq();
 
-                                if (IsDisabledExtKey(modName)) {
-                                    // 無効にされた拡張修飾キーだった
+                                if (IsDisabledExtKey(modName) && modifiee._isEmpty()) {
+                                    // 単打でなく、無効にされた拡張修飾キーだった
                                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modName={modName} is disabled");
                                     disabledExtKeyLines.Add(rawLine);
                                     continue;

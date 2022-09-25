@@ -861,6 +861,7 @@ namespace KanchokuWS.Handler
                 if (kanchokuCode < 0) {
                     kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || shift
                         ? VirtualKeys.GetModConvertedDecKeyFromCombo(mod, (uint)vkey)
+                        // : vkey == (int)Keys.Space ? DecoderKeys.STROKE_SPACE_DECKEY     // キーDown時のスペースは、いったんそのまま扱う(Up時に変換する)
                         : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
                 }
                 if (kanchokuCode >= 0) mod = 0;     // 何かのコードに変換されたら、 Ctrl や Shift の修飾は無かったことにしておく
@@ -1069,7 +1070,7 @@ namespace KanchokuWS.Handler
             var determiner = CombinationKeyStroke.Determiner.Singleton;
             if (/*(bDecoderOn || CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool.HasComboEffectiveAlways) &&*/
                 determiner.IsEnabled &&  !leftCtrl && !rightCtrl && modFlag == 0) {
-                int deckey = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
+                int deckey = /* vkey == (int)Keys.Space ? DecoderKeys.STROKE_SPACE_DECKEY :*/ VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey); /* ここではまだ、Spaceはいったん文字として扱う */
                 if (deckey >= 0 && deckey < DecoderKeys.STROKE_DECKEY_END) {
                     determiner.KeyUp(deckey, bDecoderOn);
                 }
@@ -1152,6 +1153,12 @@ namespace KanchokuWS.Handler
                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}, bUncond={bUnconditional}");
                         return InvokeDecoderUnconditionally?.Invoke(kanchokuCode, mod) ?? false;
                     }
+                    //if (kanchokuCode == DecoderKeys.STROKE_SPACE_DECKEY) {
+                    //    // ここでSpaceの変換を行う
+                    //    int deckey = VirtualKeys.GetDecKeyFromCombo(0, (uint)Keys.Space);
+                    //    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"SPACE: GetDecKeyFromCombo={deckey}");
+                    //    if (deckey >= 0) kanchokuCode = deckey;
+                    //}
                     if (kanchokuCode >= 0) {
                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"FuncDispatcher: kanchokuCode={kanchokuCode}");
                         return FuncDispatcher?.Invoke(kanchokuCode, mod) ?? false;
