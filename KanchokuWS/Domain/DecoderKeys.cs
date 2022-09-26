@@ -247,7 +247,8 @@ namespace KanchokuWS
         public const int UNBLOCK_DECKEY = FULL_ESCAPE_DECKEY + 1;                       // 改行コード除去と履歴ブロックの解除
         public const int TOGGLE_BLOCKER_DECKEY = UNBLOCK_DECKEY + 1;                    // 末尾のブロッカーの設定・解除のトグル
 
-        public const int CLEAR_STROKE_DECKEY = TOGGLE_BLOCKER_DECKEY + 1;               // 途中まで打ったストロークのクリア
+        public const int SOFT_ESCAPE_DECKEY = TOGGLE_BLOCKER_DECKEY + 1;                // ESCの出力をせずに ESC同等のキャンセル動作を行う
+        public const int CLEAR_STROKE_DECKEY = SOFT_ESCAPE_DECKEY + 1;                  // 途中まで打ったストロークのクリア
 
         public const int HISTORY_NEXT_SEARCH_DECKEY = CLEAR_STROKE_DECKEY + 1;          // 履歴検索実行&次候補選択キー
         public const int HISTORY_PREV_SEARCH_DECKEY = HISTORY_NEXT_SEARCH_DECKEY + 1;   // 履歴検索実行&前候補選択キー

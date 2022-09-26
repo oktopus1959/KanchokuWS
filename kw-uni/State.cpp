@@ -47,6 +47,7 @@ void State::Reactivate() {
 // 新ノードが未処理の場合は、ここで NULL 以外が返されるので、親状態で処理する
 void State::HandleDeckey(int deckey) {
     LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), totalCount=%d, NextNode=%s"), NAME_PTR, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME_PTR(NextNodeMaybe()));
+    currentDeckey = deckey;
     // 事前チェック
     DoPreCheck();
     // 前処理
@@ -400,6 +401,8 @@ void State::dispatchDeckey(int deckey) {
         handleZenkakuConversion();
     } else if (deckey == TOGGLE_KATAKANA_CONVERSION_DECKEY) {
         handleKatakanaConversion();
+    } else if (deckey == SOFT_ESCAPE_DECKEY) {
+        handleEsc();
     } else if (deckey == CLEAR_STROKE_DECKEY) {
         handleClearStroke();
     } else if (deckey == TOGGLE_BLOCKER_DECKEY) {
@@ -638,7 +641,7 @@ void State::handleEnter() {
 }
 
 // ESC ハンドラ
-void State::handleEsc() { LOG_DEBUG(_T("Esc")); handleSpecialKeys(ESC_DECKEY); }
+void State::handleEsc() { LOG_DEBUG(_T("Esc: currentDeckey=%d"), currentDeckey); if (currentDeckey == ESC_DECKEY) handleSpecialKeys(ESC_DECKEY); }
     
 // BS ハンドラ
 void State::handleBS() { _LOG_DEBUGH(_T("BackSpace")); setCharDeleteInfo(1); }

@@ -88,7 +88,7 @@ namespace {
 
     public:
         // 文字列を変換
-        MString TranslateString(const MString& outStr) {
+        MString TranslateString(const MString& outStr) override {
             _LOG_DEBUGH(_T("ENTER: %s: outStr=%s"), NAME_PTR, MAKE_WPTR(outStr));
             MString result;
             if (pNext) {
@@ -102,26 +102,26 @@ namespace {
         }
 
         // FullEscape の処理 -- HISTORYを呼ぶ
-        void handleFullEscape() {
+        void handleFullEscape() override {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             //cancelMe();
             HISTORY_STAY_STATE->handleFullEscapeStayState();
         }
 
         // Esc の処理 -- 処理のキャンセル
-        void handleEsc() {
+        void handleEsc() override {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             cancelMe();
         }
 
         // KatakanaConversionの処理 - 処理のキャンセル
-        void handleKatakanaConversion() {
+        void handleKatakanaConversion() override {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             cancelMe();
         }
 
         // モード標識文字を返す
-        mchar_t GetModeMarker() {
+        mchar_t GetModeMarker() override {
             return utils::safe_front(MY_NODE->getString());
         }
 

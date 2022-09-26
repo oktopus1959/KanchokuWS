@@ -23,6 +23,9 @@ class State {
     // これは状態生成の時に一時的に使用されるだけ
     Node* pNextNodeMaybe= 0;
 
+    // 現在処理中のキー
+    int currentDeckey = 0;
+
 protected:
     // 不要フラグ
     bool bUnnecessary = false;

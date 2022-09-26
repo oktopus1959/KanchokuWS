@@ -960,7 +960,9 @@ namespace KanchokuWS
         public void SelectCodeTable(int n)
         {
             logger.InfoH($"CALLED: n={n}");
-            if (IsDecoderActive && Settings.TableFile2._notEmpty() && DecoderOutput.IsWaitingFirstStroke()) {
+            if (IsDecoderActive && Settings.TableFile2._notEmpty() /*&& DecoderOutput.IsWaitingFirstStroke()*/) {
+                InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);
+                InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);
                 if (n == 1 && Settings.TableFile._notEmpty()) {
                     ExecCmdDecoder("useCodeTable1", null);  // コードテーブル1に入れ替え
                 } else if (n == 2 && Settings.TableFile2._notEmpty()) {
