@@ -56,6 +56,8 @@ enum class ResultFlags
     // カタカナモード標識の表示をやめる
     ClearKatakanaModeMarker = 0x400,
 
+    // 現在カタカナモード
+    CurrentModeIsKatakana = 0x800,
 };
 
 /// <summary>
@@ -245,6 +247,7 @@ public:
     inline void SetBothHistoryBlockFlag() { SetResultFlag((UINT32)ResultFlags::AppendBackspaceStopper | (UINT32)ResultFlags::SetHistoryBlockFlag); }
     //inline void SetToggleInitialStrokeHelp() { SetResultFlag(ResultFlags::ToggleInitialStrokeHelp); }
     inline void SetDontMoveVirtualKeyboard() { SetResultFlag(ResultFlags::DontMoveVirtualKeyboard); }
+    inline void SetCurrentModeIsKatakana() { SetResultFlag(ResultFlags::CurrentModeIsKatakana); }
 
     inline void SetWaiting2ndStroke() { nextExpectedKeyType = ExpectedKeyType::SecondStroke; }
     inline void SetMazeCandSelecting() { nextExpectedKeyType = ExpectedKeyType::MazeCandSelecting; }
@@ -381,6 +384,8 @@ public:
     // 既に実行されていれば、それを削除して true を返す
     // p == null なら削除のみ行う
     bool AddOrEraseRunningState(const wstring& stateName, State* p);
+
+    bool FindRunningState(const wstring& stateName);
 
     void ClearRunningStates();
 

@@ -114,6 +114,8 @@ namespace KanchokuWS
         //public const uint ToggleInitialStrokeHelp = 128;
         /// <summary> 仮想鍵盤を移動しない</summary>
         public const uint DontMoveVirtualKeyboard = 0x100;
+        /// <summary> 現在カタカナモード</summary>
+        public const uint CurrentModeIsKatakana = 0x800;
     }
 
     /// <summary> 拡張メソッド</summary>

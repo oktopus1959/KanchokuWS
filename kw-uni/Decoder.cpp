@@ -462,6 +462,9 @@ public:
             } else if (cmd == _T("useCodeTable2")) {
                 // 副テーブルに切り替える
                 outParams->strokeTableNum = StrokeTableNode::UseStrokeTable2();
+            } else if (cmd == _T("isKatakanaMode")) {
+                // カタカナモードか
+                if (STATE_COMMON->FindRunningState(_T("KatakanaState"))) outParams->resultFlags |=  (UINT32)ResultFlags::CurrentModeIsKatakana;
             } else if (cmd == _T("readBushuAssoc")) {
                 // 連想辞書から定義文字列を読み出してくる
                 readBushuAssoc(items[1], outParams->faceStrings);

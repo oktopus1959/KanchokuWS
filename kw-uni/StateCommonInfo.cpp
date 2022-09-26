@@ -69,9 +69,13 @@ bool StateCommonInfo::AddOrEraseRunningState(const wstring& stateName, State* pS
     }
 }
 
+bool StateCommonInfo::FindRunningState(const wstring& stateName) {
+    return runningStates.find(stateName) != runningStates.end();
+}
+
 void StateCommonInfo::ClearRunningStates() {
     runningStates.clear();
-};
+}
 
 #include "StrokeHelp.h"
 

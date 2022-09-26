@@ -948,11 +948,18 @@ namespace KanchokuWS
         public void ExchangeCodeTable()
         {
             logger.InfoH("CALLED");
-            if (IsDecoderActive && Settings.TableFile2._notEmpty() && DecoderOutput.IsWaitingFirstStroke()) {
-                ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
-                CombinationKeyStroke.Determiner.Singleton.SelectKanchokuKeyCombinationPool(decoderOutput.strokeTableNum, IsDecoderActive);  // KeyCombinationPoolの入れ替え
-                frmVkb.DrawVirtualKeyboardChars();
-                frmMode.SetKanjiMode();
+            if (IsDecoderActive && Settings.TableFile2._notEmpty() /*&& DecoderOutput.IsWaitingFirstStroke()*/) {
+                ExecCmdDecoder("isKatakanaMode", null);  // カタカナモードか
+                bool isKatakana = (decoderOutput.resultFlags & ResultFlags.CurrentModeIsKatakana) != 0;
+                InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);
+                InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);
+                if (!isKatakana) {
+                    // カタカナモードでなければ、テーブルの入れ替えを行う
+                    ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
+                    CombinationKeyStroke.Determiner.Singleton.SelectKanchokuKeyCombinationPool(decoderOutput.strokeTableNum, IsDecoderActive);  // KeyCombinationPoolの入れ替え
+                    frmVkb.DrawVirtualKeyboardChars();
+                    frmMode.SetKanjiMode();
+                }
             }
         }
 
