@@ -379,9 +379,10 @@ private:
 public:
     // 指定の名前の状態が実行されているか
     // 既に実行されていれば、それを削除して true を返す
+    // p == null なら削除のみ行う
     bool AddOrEraseRunningState(const wstring& stateName, State* p);
 
-    void ClearRunningStates() { runningStates.clear(); };
+    void ClearRunningStates();
 
 private:
     // 「最終的な出力履歴が整ったところで呼び出される処理」が実行済みか(実行不要の場合もこれをtrueにセットする)

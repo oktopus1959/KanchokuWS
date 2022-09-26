@@ -19,7 +19,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughKatakana)
 
-#if 0
+#if 0 || defined(_DEBUG)
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -44,7 +44,9 @@ namespace {
             Initialize(logger.ClassNameT(), pN);
         }
 
-        ~KatakanaState() { };
+        ~KatakanaState() {
+            LOG_INFO(_T("CALLED: DESTRUCTOR"));
+        };
 
 #define NAME_PTR (Name.c_str())
 #define MY_NODE ((KatakanaNode*)pNode)
@@ -129,6 +131,7 @@ namespace {
         }
 
         void cancelMe() {
+            STATE_COMMON->AddOrEraseRunningState(Name, 0);  // 削除
             bUnnecessary = true;
             STATE_COMMON->SetKatakanaModeMarkerClearFlag();
         }
