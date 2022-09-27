@@ -1093,7 +1093,7 @@ namespace {
     public:
         // 最終的な出力履歴が整ったところで呼び出される処理
         void DoOutStringProc() {
-            LOG_INFO(_T("\nENTER: %s: %s"), NAME_PTR, MAKE_WPTR(OUTPUT_STACK->OutputStackBackStrUpto(10)));
+            LOG_INFO(_T("\nENTER: %s: %s"), NAME_PTR, OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
             LOG_INFO(_T("PATH 2: bCandSelectable=%s"), BOOL_TO_WPTR(bCandSelectable));
 
             if (bCandSelectable && wasCandSelectCalled()) {

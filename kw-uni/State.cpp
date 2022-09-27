@@ -46,7 +46,8 @@ void State::Reactivate() {
 // DECKEY 処理の流れ
 // 新ノードが未処理の場合は、ここで NULL 以外が返されるので、親状態で処理する
 void State::HandleDeckey(int deckey) {
-    LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), totalCount=%d, NextNode=%s"), NAME_PTR, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME_PTR(NextNodeMaybe()));
+    LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), totalCount=%d, NextNode=%s, outStr=%s"),
+        NAME_PTR, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME_PTR(NextNodeMaybe()), MAKE_WPTR(STATE_COMMON->OutString()));
     currentDeckey = deckey;
     // 事前チェック
     DoPreCheck();
@@ -56,7 +57,7 @@ void State::HandleDeckey(int deckey) {
     DoIntermediateCheck();
     // 後処理
     DoDeckeyPostProc();
-    LOG_INFO(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
+    LOG_INFO(_T("LEAVE: %s, NextNode=%s, outStr=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()), MAKE_WPTR(STATE_COMMON->OutString()));
     //return pNextNodeMaybe;
 }
 
@@ -187,10 +188,10 @@ MString State::TranslateString(const MString& outStr) {
 
 // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
 void State::DoOutStringProcChain() {
-    LOG_INFO(_T("ENTER: %s"), NAME_PTR);
+    LOG_INFO(_T("ENTER: %s: outStr=%s"), NAME_PTR, MAKE_WPTR(STATE_COMMON->OutString()));
     if (pNext) pNext->DoOutStringProcChain();
     if (!STATE_COMMON->IsOutStringProcDone()) DoOutStringProc();
-    LOG_INFO(_T("LEAVE: %s"), NAME_PTR);
+    LOG_INFO(_T("LEAVE: %s: outStr=%s"), NAME_PTR, MAKE_WPTR(STATE_COMMON->OutString()));
 }
 
 // 最終的な出力履歴が整ったところで呼び出される処理
@@ -379,11 +380,15 @@ void State::copyStrokeHelpToVkbFaces() {
 // 入力された DECKEY をディスパッチする
 void State::dispatchDeckey(int deckey) {
     _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+    if (deckey < 0) {
+        _LOG_DEBUGH(_T("LEAVE: DO NOTHING: %s: deckey=%xH(%d), outStr=%s"), NAME_PTR, deckey, deckey, MAKE_WPTR(STATE_COMMON->OutString()));
+        return;
+    }
     //pStateResult->Iniitalize();
     if (isNormalStrokeKey(deckey)) {
         if (deckey == STROKE_SPACE_DECKEY) {
             handleSpaceKey();
-            _LOG_DEBUGH(_T("LEAVE: %s: SpaceKey handled"), NAME_PTR);
+            _LOG_DEBUGH(_T("LEAVE: %s: SpaceKey handled, outStr=%s"), NAME_PTR, MAKE_WPTR(STATE_COMMON->OutString()));
             return;
         }
         handleStrokeKeys(deckey);
@@ -411,7 +416,7 @@ void State::dispatchDeckey(int deckey) {
         OUTPUT_STACK->cancelRewritable();
     } else {
         if (handleFunctionKeys(deckey)) {
-            _LOG_DEBUGH(_T("LEAVE: %s: FunctionKey handled"), NAME_PTR);
+            _LOG_DEBUGH(_T("LEAVE: %s: FunctionKey handled, outStr=%s"), NAME_PTR, MAKE_WPTR(STATE_COMMON->OutString()));
             return;
         }
 
@@ -505,15 +510,17 @@ void State::dispatchDeckey(int deckey) {
             } else if (isCtrledKey(deckey)) {
                 _LOG_DEBUGH(_T("CTRLKEY: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
                 handleCtrlKeys(deckey);
-            } else {
+            } else if (deckey >= 0) {
                 _LOG_DEBUGH(_T("DEFAULT: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
                 // 半全, 英数/Caps, 無変換, 変換, ひらがな
                 handleStrokeKeys(deckey);
+            } else {
+                _LOG_DEBUGH(_T("DO NOTHING: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
             }
             break;
         }
     }
-    _LOG_DEBUGH(_T("LEAVE: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+    _LOG_DEBUGH(_T("LEAVE: %s: deckey=%xH(%d), outStr=%s"), NAME_PTR, deckey, deckey, MAKE_WPTR(STATE_COMMON->OutString()));
 }
 
 //-----------------------------------------------------------------------

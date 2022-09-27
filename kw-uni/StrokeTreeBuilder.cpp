@@ -368,17 +368,17 @@ namespace {
 
         void createNodePositionedByArrow(StrokeTableNode* tblNode, int prevNth, int idx) {
             int nextDepth = tblNode->depth() + 1;
-            _LOG_DEBUGH(_T("ENTER: currentLine=%s, nextDepth=%d, idx=%d, prevN=%d"), currentLine.c_str(), nextDepth, idx, prevNth);
+            LOG_DEBUG(_T("ENTER: currentLine=%s, nextDepth=%d, idx=%d, prevN=%d"), currentLine.c_str(), nextDepth, idx, prevNth);
             Node* node = tblNode->getNth(idx);
             if (node && node->isStrokeTableNode()) {
-                _LOG_DEBUGH(_T("tblNode[%d] has been created"), idx);
+                LOG_DEBUG(_T("tblNode[%d] has been created"), idx);
                 createNodePositionedByArrowSub(dynamic_cast<StrokeTableNode*>(node), nextDepth, prevNth, idx);
             } else {
                 //tblNode->setNthChild(idx, createNodePositionedByArrowSub(0, nextDepth, prevNth, idx));
                 setNthChildNode(tblNode, idx, createNodePositionedByArrowSub(0, nextDepth, prevNth, idx));
-                _LOG_DEBUGH(_T("tblNode->setNthChild(%d)"), idx);
+                LOG_DEBUG(_T("tblNode->setNthChild(%d)"), idx);
             }
-            _LOG_DEBUGH(_T("LEAVE"));
+            LOG_DEBUG(_T("LEAVE"));
         }
 
         Node* createNodePositionedByArrowSub(StrokeTableNode* tblNode, int depth, int prevNth, int nth) {
@@ -601,7 +601,7 @@ namespace {
         // トークンひとつ読んで currentToken にセット
         void readNextToken(int depth) {
             currentToken = getToken(depth);
-            _LOG_DEBUGH(_T("currentToken=%s"), getTokenString(currentToken).c_str());
+            LOG_DEBUG(_T("currentToken=%s"), getTokenString(currentToken).c_str());
         }
 
         bool bIgnoreWarningAll = false;
@@ -1006,7 +1006,7 @@ namespace {
                     return currentChar = 0;
                 }
                 currentLine = tableLines[lineNumber];
-                _LOG_DEBUGH(_T("currentLine(%d)=%s"), lineNumber + 1, currentLine.c_str());
+                LOG_DEBUG(_T("currentLine(%d)=%s"), lineNumber + 1, currentLine.c_str());
                 nextPos = 0;
             }
             if (nextPos < currentLine.size()) {

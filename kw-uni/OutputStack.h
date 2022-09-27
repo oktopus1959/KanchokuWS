@@ -501,6 +501,7 @@ public:
     }
 
 private:
+    // 出力文字スタック
     std::vector<Moji> stack;
 
     void _resize();

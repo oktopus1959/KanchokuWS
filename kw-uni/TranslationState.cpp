@@ -30,9 +30,9 @@ void TranslationState::handleSpecialKeys(int deckey) {
 
 // 最終的な出力履歴が整ったところで呼び出される処理
 void TranslationState::DoOutStringProc() {
-    LOG_INFO(_T("ENTER: %s"), NAME_PTR);
+    LOG_INFO(_T("ENTER: %s: outStr=%s"), NAME_PTR, MAKE_WPTR(STATE_COMMON->OutString()));
     if (pNext) pNext->DoOutStringProc();
-    LOG_INFO(_T("LEAVE: %s"), NAME_PTR);
+    LOG_INFO(_T("LEAVE: %s: outStr=%s"), NAME_PTR, MAKE_WPTR(STATE_COMMON->OutString()));
 }
 
 // ストローク状態が後続する変換系状態のベースクラス

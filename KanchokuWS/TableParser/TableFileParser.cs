@@ -395,7 +395,7 @@ namespace KanchokuWS.TableParser
 
         public virtual void AddStringNode(int idx, bool bBare)
         {
-            logger.DebugH(() => $"ENTER: depth={Depth}, bBare={bBare}, str={CurrentStr}");
+            logger.Debug(() => $"ENTER: depth={Depth}, bBare={bBare}, str={CurrentStr}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
             addTerminalNode(idx, Node.MakeStringNode($"{ConvertKanji(CurrentStr)}", bBare));
             if (IsRootParser && CurrentStr._startsWith("!{")) {
@@ -403,7 +403,7 @@ namespace KanchokuWS.TableParser
                 logger.DebugH(() => $"REPEATABLE");
                 keyComboPool?.AddRepeatableKey(idx);
             }
-            logger.DebugH(() => $"LEAVE: depth={Depth}");
+            logger.Debug(() => $"LEAVE: depth={Depth}");
         }
 
         protected virtual void AddStringPairNode()

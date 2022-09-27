@@ -499,7 +499,7 @@ public:
         STATE_COMMON->IncrementTotalDecKeyCount();
         STATE_COMMON->CountSameDecKey(keyId);
         if (decodeKeyboardChar) STATE_COMMON->SetDecodeKeyboardCharMode();  // キーボードフェイス文字を返すモード
-        _LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+        LOG_INFO(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
 
         // 同時打鍵コードなら、RootStrokeStateを削除しておく⇒と思ったが、実際にはそのようなケースがあったのでコメントアウト(「のにいると」で  KkDF のケース)
         //if (keyId >= COMBO_DECKEY_START && keyId < EISU_COMBO_DECKEY_END) {
@@ -511,7 +511,7 @@ public:
         // DecKey処理を呼ぶ
         startState->HandleDeckey(keyId);
 
-        _LOG_DEBUGH(_T("OUTPUT: outString=\"%s\", origString=\"%s\", flags=%x, numBS=%d"), \
+        LOG_INFO(_T("OUTPUT: outString=\"%s\", origString=\"%s\", flags=%x, numBS=%d"), \
             MAKE_WPTR(STATE_COMMON->OutString()), MAKE_WPTR(STATE_COMMON->OrigString()), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetBackspaceNum());
 
         // アクティブウィンドウへの送出文字列
@@ -526,13 +526,13 @@ public:
         OutParams->strokeTableNum = StrokeTableNode::GetCurrentStrokeTableNum();
 
         // 出力履歴に BackSpaces を反映
+        LOG_INFO(_T("pop numBS=%d, outStack=%s"), OutParams->numBackSpaces, OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
         OUTPUT_STACK->pop(OutParams->numBackSpaces);
         // 出力文字列を履歴に反映 (全角の＊と？は半角に変換しておく⇒ワイルドカードを含む交ぜ書き変換で使う)
+        LOG_INFO(_T("outStr=%s, outStack=%s"), OutParams->outString, OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
         OUTPUT_STACK->push(utils::convert_star_and_question_to_hankaku(OutParams->outString));
-        if (Logger::IsDebugEnabled()) {
-            //wstring stack = std::regex_replace(to_wstr(OUTPUT_STACK->backStringFull(10)), std::wregex(_T("\n")), _T("|"));
-            _LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
-        }
+        //wstring stack = std::regex_replace(to_wstr(OUTPUT_STACK->backStringFull(10)), std::wregex(_T("\n")), _T("|"));
+        LOG_INFO(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
         // 出力履歴に BackSpaceStopper を反映
         if (STATE_COMMON->IsAppendBackspaceStopper()) { OUTPUT_STACK->pushNewLine(); }
         // 出力履歴に HistoryBlock を反映
@@ -719,7 +719,7 @@ public:
     }
 
     mchar_t copyToTopString() {
-        _LOG_DEBUGH(_T("\nENTER: outStackStr=%s"), MAKE_WPTR(OUTPUT_STACK->OutputStackBackStrUpto(32)));
+        _LOG_DEBUGH(_T("\nENTER: outStackStr=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(32).c_str());
         size_t origLen = 0;
         // 打鍵途中なら打鍵中のキー文字列もミニバッファに表示する(ただし書き換えが存在しない場合のみ)
         // 書き換えありの場合、OrigString に '?' がアペンドされてしまうと、後で書き換えのときに同一部分判定で問題が生じるため

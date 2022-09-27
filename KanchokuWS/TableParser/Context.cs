@@ -476,7 +476,7 @@ namespace KanchokuWS.TableParser
                 sb.Append(c);
             }
             CurrentStr = sb.ToString();
-            logger.DebugH(() => $"LEAVE: {CurrentStr}");
+            logger.Debug(() => $"LEAVE: {CurrentStr}");
         }
 
         // 何らかのデリミタが来るまで読みこんで、currentStr に格納。スラッシュは文字列に含む。バックスラッシュも含まれる。
