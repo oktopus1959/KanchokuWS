@@ -538,8 +538,9 @@ namespace KanchokuWS
             var sb = new StringBuilder();
             if (str._notEmpty()) {
                 foreach (var c in str) {
-                    if (kanaRomanTbl.ContainsKey(c))
-                        sb.Append(kanaRomanTbl[c]);
+                    var rs = _hiraganaToRoman(c);
+                    if (rs._notEmpty())
+                        sb.Append(rs);
                     else
                         sb.Append(c);
                 }
@@ -549,7 +550,13 @@ namespace KanchokuWS
 
         public static string _hiraganaToRoman(this char ch)
         {
-            return kanaRomanTbl._safeGet(ch);
+            if (ch >= 'Ａ' && ch <= 'Ｚ') {
+                return ((char)(ch - 'Ａ' + 'A')).ToString();
+            } else if (ch >= 'ａ' && ch <= 'ｚ') {
+                return ((char)(ch - 'ａ' + 'a')).ToString();
+            } else {
+                return kanaRomanTbl._safeGet(ch);
+            }
         }
 
         public static string _hiraganaToKeyface(this char ch)
