@@ -90,11 +90,13 @@ void State::DoDeckeyPreProc(int deckey) {
                 _LOG_DEBUGH(_T("CREATE: ZenkakuState"));
                 pNext = ZENKAKU_NODE->CreateState();
                 pNext->SetPrevState(this);
+                pNext->DoProcOnCreated();
                 deckey = -1;    // この後は dekcey の処理をやらない
             } else if (pNode && dynamic_cast<KatakanaNode*>(pNode) == 0 && deckey == TOGGLE_KATAKANA_CONVERSION_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: KatakanaState"));
                 pNext = KATAKANA_NODE->CreateState();
                 pNext->SetPrevState(this);
+                pNext->DoProcOnCreated();
                 deckey = -1;    // この後は dekcey の処理をやらない
             } else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokableKey(deckey)) {
                 // ルートストロークノードの生成

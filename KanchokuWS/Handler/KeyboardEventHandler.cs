@@ -185,7 +185,7 @@ namespace KanchokuWS.Handler
         /// <summary> 漢直として有効なキーか</summary>
         private bool isEffectiveVkey(int vkey, int scanCode, int extraInfo, bool ctrl)
         {
-            // 0xa0 = LSHIFT, 0xa1 = RSHIFT, 0xa5 = RMENU, 0xf3 = Zenkaku, 0xf4 = Kanji
+            // 0xa0 = LSHIFT, 0xa1 = RSHIFT, 0xa2=LCTRL, 0xa3=RCTRL, 0xa4=LALT, 0xa5 = RALT, 0xf3 = Zenkaku, 0xf4 = Kanji
             return
                 (Settings.IgnoreOtherHooker ? extraInfo == 0 : extraInfo != SendInputHandler.MyMagicNumber) &&
                 scanCode != 0 && scanCode != YamabukiRscanCode &&
@@ -625,6 +625,8 @@ namespace KanchokuWS.Handler
             }
         }
 
+        bool bRCtrlShifted = false;
+
         /// <summary>キーボード押下時のハンドラ</summary>
         /// <param name="vkey"></param>
         /// <param name="extraInfo"></param>
@@ -642,6 +644,11 @@ namespace KanchokuWS.Handler
                 bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
                 bool bCtrl = leftCtrl || rightCtrl;
 
+                // とりあえず、やっつけコード
+                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"vkey={vkey:x}H({vkey}), rightCtrl={rightCtrl}");
+                if (extraInfo == 0 && rightCtrl) bRCtrlShifted = true;    // 右ＣＴＲＬがＯＮのときに何かキーが押されたら右ＣＴＲＬをシフト状態にする
+                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"bRCtrlShifted={bRCtrlShifted}");
+
                 if (!isEffectiveVkey(vkey, scanCode, extraInfo, bCtrl)) {
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"not EffectiveVkey");
                     return false;
@@ -651,6 +658,13 @@ namespace KanchokuWS.Handler
                 bool bDecoderOn = isDecoderActivated();
                 uint modFlag = ExModiferKeyInfoManager.getModFlagForExModVkey((uint)vkey);
                 uint modPressedOrShifted = keyInfoManager.getPressedOrShiftedExModFlag();
+
+                if (!bDecoderOn && !bCtrl && modPressedOrShifted == 0 && vkey >= (int)Keys.Left && vkey <= (int)Keys.Down) {
+                    // デコーダOFFで無修飾の矢印キーなら、システムに任せる
+                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"Normal Arrow Key");
+                    return false;
+                }
+
                 var keyInfo = keyInfoManager.getModiferKeyInfoByVkey((uint)vkey);
                 if (keyInfo != null) {
                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"{keyInfo.Name}Key Pressed: ctrl={bCtrl}, shift={bShift}, decoderOn={bDecoderOn}, modFlag={modFlag:x}, modPressedOrShifted={modPressedOrShifted:x}");
@@ -972,6 +986,20 @@ namespace KanchokuWS.Handler
             bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
             bool bCtrl = leftCtrl || rightCtrl;
 
+            bool bDecoderOn = isDecoderActivated();
+
+            if (extraInfo == 0 && vkey == VirtualKeys.RCONTROL) {
+                // とりあえず、やっつけコード
+                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"RCONTROL up");
+                if (!bRCtrlShifted && bDecoderOn && VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc((uint)vkey)) {
+                    int kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
+                    if (kanchokuCode >= 0) {
+                        invokeHandler(kanchokuCode, 0);
+                    }
+                }
+                bRCtrlShifted = false;
+            }
+
             var keyState = keyInfoManager.getSandSKeyState();
             // spaceKey の shiftedOneshot 状態を解除しておく
             keyInfoManager.resetSandSShiftedOneshot();
@@ -984,7 +1012,6 @@ namespace KanchokuWS.Handler
                 return false;
             }
 
-            bool bDecoderOn = isDecoderActivated();
             uint modFlag = ExModiferKeyInfoManager.getModFlagForExModVkey((uint)vkey);
             var keyInfo = keyInfoManager.getModiferKeyInfoByVkey((uint)vkey);
             //bool result = false;

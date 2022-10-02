@@ -876,11 +876,19 @@ namespace KanchokuWS
                             return true;
                         case DecoderKeys.SELECT_CODE_TABLE1_DECKEY:
                             logger.InfoH("SELECT_CODE_TABLE1_DECKEY");
-                            SelectCodeTable(1);
+                            SelectCodeTable(1, false);
                             return true;
                         case DecoderKeys.SELECT_CODE_TABLE2_DECKEY:
                             logger.InfoH("SELECT_CODE_TABLE2_DECKEY");
-                            SelectCodeTable(2);
+                            SelectCodeTable(2, false);
+                            return true;
+                        case DecoderKeys.TOGGLE_KATAKANA_CONVERSION1_DECKEY:
+                            logger.InfoH("TOGGLE_KATAKANA_CONVERSION1_DECKEY");
+                            SelectCodeTable(1, true);
+                            return true;
+                        case DecoderKeys.TOGGLE_KATAKANA_CONVERSION2_DECKEY:
+                            logger.InfoH("TOGGLE_KATAKANA_CONVERSION2_DECKEY");
+                            SelectCodeTable(2, true);
                             return true;
                         case DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY:
                             logger.InfoH("KANA_TRAINING_TOGGLE");
@@ -951,6 +959,7 @@ namespace KanchokuWS
             if (IsDecoderActive && Settings.TableFile2._notEmpty() /*&& DecoderOutput.IsWaitingFirstStroke()*/) {
                 ExecCmdDecoder("isKatakanaMode", null);  // カタカナモードか
                 bool isKatakana = (decoderOutput.resultFlags & ResultFlags.CurrentModeIsKatakana) != 0;
+                logger.InfoH(() => $"isKatakana={isKatakana}, resultFlags={decoderOutput.resultFlags:x}");
                 InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);
                 InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);
                 if (!isKatakana) {
@@ -963,13 +972,16 @@ namespace KanchokuWS
             }
         }
 
-        /// <summary>漢直コードテーブルの入れ替え</summary>
-        public void SelectCodeTable(int n)
+        /// <summary>漢直コードテーブルの選択</summary>
+        public void SelectCodeTable(int n, bool toggleKatakana)
         {
             logger.InfoH($"CALLED: n={n}");
             if (IsDecoderActive && Settings.TableFile2._notEmpty() /*&& DecoderOutput.IsWaitingFirstStroke()*/) {
-                InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);
+                ExecCmdDecoder("isKatakanaMode", null);  // カタカナモードか
+                bool isKatakana = (decoderOutput.resultFlags & ResultFlags.CurrentModeIsKatakana) != 0;
+                InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);   // ここでカタカナモードが解除される
                 InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);
+                if (toggleKatakana && !isKatakana) InvokeDecoder(DecoderKeys.TOGGLE_KATAKANA_CONVERSION_DECKEY, 0);
                 if (n == 1 && Settings.TableFile._notEmpty()) {
                     ExecCmdDecoder("useCodeTable1", null);  // コードテーブル1に入れ替え
                 } else if (n == 2 && Settings.TableFile2._notEmpty()) {
