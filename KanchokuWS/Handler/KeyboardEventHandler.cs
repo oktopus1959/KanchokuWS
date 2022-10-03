@@ -625,7 +625,9 @@ namespace KanchokuWS.Handler
             }
         }
 
+        bool bLCtrlShifted = false;
         bool bRCtrlShifted = false;
+        bool bLShiftShifted = false;
 
         /// <summary>キーボード押下時のハンドラ</summary>
         /// <param name="vkey"></param>
@@ -640,17 +642,20 @@ namespace KanchokuWS.Handler
             // キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる
             bool handleKeyDown()
             {
+                bool leftShift = (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0;
                 bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
                 bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
                 bool bCtrl = leftCtrl || rightCtrl;
 
                 // とりあえず、やっつけコード
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"vkey={vkey:x}H({vkey}), rightCtrl={rightCtrl}");
-                if (extraInfo == 0 && rightCtrl) bRCtrlShifted = true;    // 右ＣＴＲＬがＯＮのときに何かキーが押されたら右ＣＴＲＬをシフト状態にする
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"bRCtrlShifted={bRCtrlShifted}");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"vkey={vkey:x}H({vkey}), leftCtrl={leftCtrl}, rightCtrl={rightCtrl}, leftShift={leftShift}");
+                if (extraInfo == 0 && leftCtrl) bLCtrlShifted = true;    // 左ＣＴＲＬがＯＮのときに何かキーが押されたら左ＣＴＲＬをシフト状態にする
+                if (extraInfo == 0 && rightCtrl) bRCtrlShifted = true;   // 右ＣＴＲＬがＯＮのときに何かキーが押されたら右ＣＴＲＬをシフト状態にする
+                if (extraInfo == 0 && leftShift) bLShiftShifted = true;  // 左SHIFTがＯＮのときに何かキーが押されたら左SHIFTをシフト状態にする
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"bLCtrlShifted={bLCtrlShifted}, bRCtrlShifted={bRCtrlShifted}, bLShiftShifted={bLShiftShifted}");
 
                 if (!isEffectiveVkey(vkey, scanCode, extraInfo, bCtrl)) {
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"not EffectiveVkey");
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"not EffectiveVkey");
                     return false;
                 }
 
@@ -982,22 +987,46 @@ namespace KanchokuWS.Handler
             int prevVkey = prevUpVkey;
             prevUpVkey = vkey;
 
+            bool leftShift = (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0;
             bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
             bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
             bool bCtrl = leftCtrl || rightCtrl;
 
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"vkey={vkey:x}H({vkey}), leftCtrl={leftCtrl}, rightCtrl={rightCtrl}, leftShift={leftShift}");
+
             bool bDecoderOn = isDecoderActivated();
 
-            if (extraInfo == 0 && vkey == VirtualKeys.RCONTROL) {
+            if (extraInfo == 0) {
                 // とりあえず、やっつけコード
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"RCONTROL up");
-                if (!bRCtrlShifted && bDecoderOn && VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc((uint)vkey)) {
-                    int kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
-                    if (kanchokuCode >= 0) {
-                        invokeHandler(kanchokuCode, 0);
+                void checkAndInvoke(bool bShifted)
+                {
+                    if (!bShifted && bDecoderOn && VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc((uint)vkey)) {
+                        int kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
+                        if (kanchokuCode >= 0) {
+                            invokeHandler(kanchokuCode, 0);
+                        }
                     }
                 }
-                bRCtrlShifted = false;
+
+                if (vkey == VirtualKeys.LCONTROL) {
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LCONTROL up");
+                    checkAndInvoke(bLCtrlShifted);
+                    bLCtrlShifted = false;
+                } else if (vkey == VirtualKeys.RCONTROL) {
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"RCONTROL up");
+                    checkAndInvoke(bRCtrlShifted);
+                    //if (!bRCtrlShifted && bDecoderOn && VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc((uint)vkey)) {
+                    //    int kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
+                    //    if (kanchokuCode >= 0) {
+                    //        invokeHandler(kanchokuCode, 0);
+                    //    }
+                    //}
+                    bRCtrlShifted = false;
+                } else if (vkey == VirtualKeys.LSHIFT) {
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LSHIFT up");
+                    checkAndInvoke(bLShiftShifted);
+                    bLShiftShifted = false;
+                }
             }
 
             var keyState = keyInfoManager.getSandSKeyState();
@@ -1008,7 +1037,7 @@ namespace KanchokuWS.Handler
             handleComboKeyRepeatStop(vkey);
 
             if (!isEffectiveVkey(vkey, scanCode, extraInfo, leftCtrl || rightCtrl)) {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result=False, not EffectiveVkey");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE: result=False, not EffectiveVkey");
                 return false;
             }
 

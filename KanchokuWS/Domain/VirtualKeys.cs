@@ -154,10 +154,10 @@ namespace KanchokuWS
         private static uint[] vkeyArrayFuncKeys = {
             /*Esc*/ 0x1b, /*半/全*/ 0xf3, /*Tab*/ 0x09, /*Caps*/ 0x14, /*英数*/ 0xf0, /*無変換*/ 0x1d, /*変換*/ 0x1c, /*かな*/ 0xf2, /*BS*/ 0x08, /*Enter*/ 0x0d,
             /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21, /*PgDn*/ 0x22, /*↑*/ 0x26, /*↓*/ 0x28, /*←*/ 0x25, /*→*/ 0x27,
-            /*Rctrl*/ RCONTROL, /*Rshift*/ RSHIFT, /*ScrLock*/ 0x91, /*Pause*/ 0x13, /*IME ON*/ 0x16, /*IME OFF*/ 0x1a,
+            /*Lctrl*/ LCONTROL, /*Rctrl*/ RCONTROL, /*Lshift*/ LSHIFT, /*Rshift*/ RSHIFT, /*ScrLock*/ 0x91, /*Pause*/ 0x13, /*IME ON*/ 0x16, /*IME OFF*/ 0x1a,
             /*F1*/ 0x70, /*F2*/ 0x71, /*F3*/ 0x72, /*F4*/ 0x73, /*F5*/ 0x74, /*F6*/ 0x75, /*F7*/ 0x76, /*F8*/ 0x77, /*F9*/ 0x78, /*F10*/ 0x79,
             /*F11*/ 0x7a, /*F12*/ 0x7b, /*F13*/ 0x7c, /*F14*/ 0x7d, /*F15*/ 0x7e, /*F16*/ 0x7f, /*F17*/ 0x80, /*F18*/ 0x81, /*F19*/ 0x82, /*F20*/ 0x83,
-            /*F21*/ 0x84, /*F22*/ 0x85, /*F23*/ 0x86,
+            // /*F21*/ 0x84, /*F22*/ 0x85, /*F23*/ 0x86, /*F24*/ 0x87,
         };
 
         private const uint capsVkeyWithShift = 0x14;    // 日本語キーボードだと Shift + 0x14 で CapsLock になる
@@ -189,35 +189,37 @@ namespace KanchokuWS
                 case "down": case "downarrow": n = 17; break;
                 case "left": case "leftarrow": n = 18; break;
                 case "right": case "rightarrow": n = 19; break;
-                case "rctrl": n = 20; break;
-                case "rshift": n = 21; break;
-                case "scrlock": n = 22; break;
-                case "pause": n = 23; break;
-                case "imeon": n = 24; break;
-                case "imeoff": n = 25; break;
-                case "f1": case "f01": n = 26; break;
-                case "f2": case "f02": n = 27; break;
-                case "f3": case "f03": n = 28; break;
-                case "f4": case "f04": n = 29; break;
-                case "f5": case "f05": n = 30; break;
-                case "f6": case "f06": n = 31; break;
-                case "f7": case "f07": n = 32; break;
-                case "f8": case "f08": n = 33; break;
-                case "f9": case "f09": n = 34; break;
-                case "f10": n = 35; break;
-                case "f11": n = 36; break;
-                case "f12": n = 37; break;
-                case "f13": n = 38; break;
-                case "f14": n = 39; break;
-                case "f15": n = 40; break;
-                case "f16": n = 41; break;
-                case "f17": n = 42; break;
-                case "f18": n = 43; break;
-                case "f19": n = 44; break;
-                case "f20": n = 45; break;
-                case "f21": n = 46; break;
-                case "f22": n = 47; break;
-                case "f23": n = 48; break;
+                case "lctrl": n = 20; break;
+                case "rctrl": n = 21; break;
+                case "lshift": n = 22; break;
+                case "rshift": n = 23; break;
+                case "scrlock": n = 24; break;
+                case "pause": n = 25; break;
+                case "imeon": n = 26; break;
+                case "imeoff": n = 27; break;
+                case "f1": case "f01": n = 28; break;
+                case "f2": case "f02": n = 29; break;
+                case "f3": case "f03": n = 30; break;
+                case "f4": case "f04": n = 31; break;
+                case "f5": case "f05": n = 32; break;
+                case "f6": case "f06": n = 33; break;
+                case "f7": case "f07": n = 34; break;
+                case "f8": case "f08": n = 35; break;
+                case "f9": case "f09": n = 36; break;
+                case "f10": n = 37; break;
+                case "f11": n = 38; break;
+                case "f12": n = 39; break;
+                case "f13": n = 40; break;
+                case "f14": n = 41; break;
+                case "f15": n = 42; break;
+                case "f16": n = 43; break;
+                case "f17": n = 44; break;
+                case "f18": n = 45; break;
+                case "f19": n = 46; break;
+                case "f20": n = 47; break;
+                //case "f21": n = 46; break;
+                //case "f22": n = 47; break;
+                //case "f23": n = 48; break;
                 //case "f24": n = 49; break;
                 default: n = -1; break;
             }
@@ -1009,9 +1011,9 @@ namespace KanchokuWS
             {"f18", DecoderKeys.F18_DECKEY},
             {"f19", DecoderKeys.F19_DECKEY},
             {"f20", DecoderKeys.F20_DECKEY},
-            {"f21", DecoderKeys.F21_DECKEY},
-            {"f22", DecoderKeys.F22_DECKEY},
-            {"f23", DecoderKeys.F23_DECKEY},
+            //{"f21", DecoderKeys.F21_DECKEY},
+            //{"f22", DecoderKeys.F22_DECKEY},
+            //{"f23", DecoderKeys.F23_DECKEY},
             //{"f24", DecoderKeys.F24_DECKEY},
             {"space", DecoderKeys.STROKE_SPACE_DECKEY},
             {"shiftspace", DecoderKeys.SHIFT_SPACE_DECKEY},
