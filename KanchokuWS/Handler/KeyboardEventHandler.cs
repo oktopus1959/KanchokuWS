@@ -994,13 +994,11 @@ namespace KanchokuWS.Handler
 
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"vkey={vkey:x}H({vkey}), leftCtrl={leftCtrl}, rightCtrl={rightCtrl}, leftShift={leftShift}");
 
-            bool bDecoderOn = isDecoderActivated();
-
             if (extraInfo == 0) {
                 // とりあえず、やっつけコード
                 void checkAndInvoke(bool bShifted)
                 {
-                    if (!bShifted && bDecoderOn && VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc((uint)vkey)) {
+                    if (!bShifted && /*bDecoderOn &&*/ VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc((uint)vkey)) {
                         int kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
                         if (kanchokuCode >= 0) {
                             invokeHandler(kanchokuCode, 0);
@@ -1015,12 +1013,6 @@ namespace KanchokuWS.Handler
                 } else if (vkey == VirtualKeys.RCONTROL) {
                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"RCONTROL up");
                     checkAndInvoke(bRCtrlShifted);
-                    //if (!bRCtrlShifted && bDecoderOn && VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc((uint)vkey)) {
-                    //    int kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
-                    //    if (kanchokuCode >= 0) {
-                    //        invokeHandler(kanchokuCode, 0);
-                    //    }
-                    //}
                     bRCtrlShifted = false;
                 } else if (vkey == VirtualKeys.LSHIFT) {
                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LSHIFT up");
@@ -1040,6 +1032,8 @@ namespace KanchokuWS.Handler
                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE: result=False, not EffectiveVkey");
                 return false;
             }
+
+            bool bDecoderOn = isDecoderActivated();
 
             uint modFlag = ExModiferKeyInfoManager.getModFlagForExModVkey((uint)vkey);
             var keyInfo = keyInfoManager.getModiferKeyInfoByVkey((uint)vkey);
