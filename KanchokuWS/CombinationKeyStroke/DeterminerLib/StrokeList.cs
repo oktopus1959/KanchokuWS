@@ -478,8 +478,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             int timingResult = -1;
 
-            int findFunc(int overlapLen)
+            int findFunc()
             {
+                int overlapLen = hotList.Count;
                 while (overlapLen >= 1) {
                     logger.DebugH(() => $"WHILE: overlapLen={overlapLen}");
                     foreach (var subList in subComboLists) {
@@ -502,10 +503,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                                                                                     //logger.DebugH(() => $"CHECK1: {tailKey.IsUpKey && hotList[0].IsComboShift && tailKey.IsSingleHittable}: hotList[0].IsComboShift={hotList[0].IsComboShift} and hotList[tailPos={overlapLen - 1}].IsUpKey && IsSingle");
                             logger.DebugH(() => $"CHECK1: {isTailKeyUp && tailKey.IsSingleHittable}: tailPos={overlapLen - 1}: isTailKeyUp && tailKey.IsSingleHittable");
                             logger.DebugH(() => $"CHECK2: {hotList[0].IsShiftableSpaceKey}: hotList[0].IsShiftableSpaceKey");
+                            logger.DebugH(() => $"CHECK3: {keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStrings.Contains(challengeList._toString())}: challengeList={challengeList._toString()}");
                             //if (tailKey.IsUpKey && tailKey.IsSingleHittable && hotList[0].IsComboShift || // CHECK1: 対象リストの末尾キーが先にUPされた
                             if (isTailKeyUp && tailKey.IsSingleHittable ||  // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
                                 hotList[0].IsShiftableSpaceKey ||           // CHECK2: 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
-                                keyCombo.DecKeyList._safeCount() >= 3 ||    // CHECK3: 3打鍵以上の同時打鍵ならタイミングチェックをやらない
+                                (keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStrings.Contains(challengeList._toString())) ||    // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
                                 (timingResult = isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) == 0)  // タイミングチェック
                             {
                                 // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する
@@ -531,11 +533,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 return overlapLen;
             }
 
-            int resultLen = findFunc(hotList.Count);
+            int resultLen = findFunc();
 
             timingFailure = timingResult;
 
-            logger.DebugH(() => $"LEAVE: {(resultLen == 0 ? "NOT ": "")}FOUND: timingFailure={timingResult}, overlapLen={resultLen}: {ToDebugString()}");
+            logger.DebugH(() => $"LEAVE: {(resultLen == 0 ? "NOT ": "")}FOUND: result={result._keyString()}, timingFailure={timingResult}, overlapLen={resultLen}: {ToDebugString()}");
             return resultLen;
         }
 

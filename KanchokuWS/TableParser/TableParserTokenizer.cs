@@ -95,9 +95,14 @@ namespace KanchokuWS.TableParser
                         ReadWord();
                         if (CurrentStr._startsWith("display")) OutputLines.Add(";; " + CurrentLine); // display-name だけ出力する
                         if (CurrentStr._notEmpty()) definedNames.Add(CurrentStr);
-                        if (CurrentStr._toLower()._equalsTo("defguide")) {
+                        var lcDef = CurrentStr._toLower();
+                        if (lcDef._equalsTo("defguide")) {
                             // 'defguide': 配字案内
                             handleStrokePosition();
+                        } else if (lcDef._startsWith("sequen")) {
+                            ReadStringToEol();
+                            Settings.SequentialPriorityWords.UnionWith(CurrentStr._strip()._reSplit(" +"));
+                            SkipToEndOfLine();
                         }
                     } else if (lcStr == "ifdef") {
                         ReadWord();

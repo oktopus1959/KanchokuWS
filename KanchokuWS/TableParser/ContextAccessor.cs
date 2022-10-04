@@ -97,6 +97,7 @@ namespace KanchokuWS.TableParser
         protected void RewriteIfdefBlock(bool flag) { tableLines.RewriteIfdefBlock(flag); }
         protected void ReadString() { tableLines.ReadString(); }
         protected void ReadBareString(char c = '\0') { tableLines.ReadBareString(c); }
+        protected void ReadStringToEol() { tableLines.ReadStringToEol(); }
         protected void ReadStringUpto(bool bInclude, params char[] array) { tableLines.ReadStringUpto(bInclude, array); }
         protected void ReadPlaceHolderName() { tableLines.ReadPlaceHolderName(); }
         protected void ReadMarker() { tableLines.ReadMarker(); }

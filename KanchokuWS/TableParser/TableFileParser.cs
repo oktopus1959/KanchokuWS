@@ -149,6 +149,16 @@ namespace KanchokuWS.TableParser
             return TreeNode?.GetNthSubNode(n);
         }
 
+        public List<int> GetStrokeList(string word)
+        {
+            List<int> result = new List<int>();
+            foreach (var ch in word) {
+                int idx = RootTableNode.FindSubNode(ch.ToString());
+                if (idx >= 0) result.Add(idx);
+            }
+            return result;
+        }
+
         private string makePathStr(int dropTailLen = 0)
         {
             return StrokeList.MakePathString(dropTailLen);
@@ -1168,6 +1178,12 @@ namespace KanchokuWS.TableParser
             if (Context.bRewriteEnabled) {
                 // 書き換えノードがあったら、SandSの疑似同時打鍵サポートをOFFにしておく
                 Settings.SandSEnablePostShift = false;
+            }
+
+            // 優先する順次打鍵列
+            foreach (var seq in Settings.SequentialPriorityWords) {
+                var strkList = GetStrokeList(seq);
+                if (strkList._notEmpty()) Settings.SequentialPriorityWordKeyStrings.Add(strkList._keyString());
             }
 
             // 全ノードの情報を OutputLines に書き出す

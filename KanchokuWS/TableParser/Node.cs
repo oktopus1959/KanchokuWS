@@ -59,6 +59,11 @@ namespace KanchokuWS.TableParser
             return str._equalsTo(s?.str);
         }
 
+        public bool EqualsTo(string s)
+        {
+            return str._equalsTo(s);
+        }
+
         public string DebugString()
         {
             return $"OutputStr={str._orElse("empty")}, IsBare={isBare}";
@@ -277,6 +282,18 @@ namespace KanchokuWS.TableParser
             return subTable?.Length ?? 0;
         }
 
+        public int FindSubNode(string s)
+        {
+            if (subTable != null) {
+                for (int i = 0; i < subTable.Length; ++i) {
+                    var outStr = subTable.GetNth(i)?.GetOutputString();
+                    if (outStr != null && outStr.EqualsTo(s)) {
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
 
         public NodeTable GetSubNodes() { return subTable; }
 

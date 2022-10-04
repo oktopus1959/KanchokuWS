@@ -498,24 +498,32 @@ namespace KanchokuWS.TableParser
         }
 
         /// <summary>
+        /// 行末まで(またはコメント開始まで)を CurrentStr に格納
+        /// </summary>
+        /// <param name="array"></param>
+        public void ReadStringToEol() {
+            readStringUpto(0, false, false, ';');
+        }
+
+        /// <summary>
         /// 指定の文字が来るまで読みこんで、CurrentStr に格納。bInclude==trueなら指定文字もCurrentStrに含める
         /// </summary>
         /// <param name="array"></param>
         public void ReadStringUpto(bool bInclude, params char[] array) {
-            readStringUpto(0, bInclude, array);
+            readStringUpto(0, bInclude, true, array);
         }
 
         /// <summary>
         /// 指定の文字が来るまで読みこんで、CurrentStr に格納。ポインタはデリミタの位置を指している
         /// </summary>
         /// <param name="array"></param>
-        private void readStringUpto(int checkPos, bool bInclude, params char[] array) {
+        private void readStringUpto(int checkPos, bool bInclude, bool bErrorReport, params char[] array) {
             var sb = new StringBuilder();
             int pos = 0;
             while (true) {
                 char ch = PeekNextChar();
                 if (ch == '\r' || ch == '\n' || ch == 0) {
-                    ParseError("ReadRewriteTargetString: unexpected EOL or EOF");
+                    if (bErrorReport) ParseError("readStringUpto: unexpected EOL or EOF");
                     break;
                 }
                 if (pos >= checkPos && array._findIndex(ch) >= 0) {
@@ -539,7 +547,7 @@ namespace KanchokuWS.TableParser
             CurrentStr = "";
             if (PeekNextChar(0) == '$') {
                 // '$' と次の1文字は必ずプレースホルダーに含める
-                readStringUpto(2, false, ',', '>');
+                readStringUpto(2, false, true, ',', '>');
             }
             logger.DebugH(() => $"LEAVE: {CurrentStr}");
         }
