@@ -429,7 +429,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             if (unprocList._notEmpty() && Settings.AbandonUsedKeysWhenSpecialComboShiftDown && unprocList[0].IsSpaceOrFuncComboShift) {
                                 // Spaceまたは機能キーのシフトキーがきたら、使い終わったキーを破棄する
                                 logger.DebugH(() => $"Abandon Used Keys When Special Combo Shift Down");
-                                comboList.Clear();                           }
+                                comboList.Clear();
+                            }
                             logger.DebugH(() => $"TRY NEXT: result={result._keyString()}, {ToDebugString()}");
                         } // while(unprocList)
 
@@ -502,6 +503,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             //if (tailKey.IsUpKey && tailKey.IsSingleHittable && hotList[0].IsComboShift || // CHECK1: 対象リストの末尾キーが先にUPされた
                             if (isTailKeyUp && tailKey.IsSingleHittable ||  // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
                                 hotList[0].IsShiftableSpaceKey ||           // CHECK2: 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
+                                keyCombo.DecKeyList._safeCount() >= 3 ||    // CHECK3: 3打鍵以上の同時打鍵ならタイミングチェックをやらない
                                 (timingResult = isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) == 0)  // タイミングチェック
                             {
                                 // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する
