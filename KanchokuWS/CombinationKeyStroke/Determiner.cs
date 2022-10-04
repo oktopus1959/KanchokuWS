@@ -314,7 +314,7 @@ namespace KanchokuWS.CombinationKeyStroke
                                     bool bTimer = false;
                                     result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer, out bUnconditional);
                                     if (result._isEmpty()) {
-                                        if (bTimer || strokeList.IsSuccessiveShift2ndOr3rdKey()) {
+                                        if (bTimer || strokeList.IsSuccessiveShift3rdOrLaterKey() /*strokeList.IsSuccessiveShift2ndOr3rdKey()*/) {
                                             logger.DebugH(() =>
                                                 $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}, TimerKind={(bTimer ? TimerKind.JustTwoComboKey : TimerKind.SecondOrLaterChar)}");
                                             // タイマーが有効であるか、または同時打鍵シフト後の第2～3打鍵めの文字キーであって同時打鍵が未判定だったらタイマーを起動する

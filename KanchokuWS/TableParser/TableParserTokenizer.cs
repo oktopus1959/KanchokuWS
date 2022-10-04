@@ -171,6 +171,7 @@ namespace KanchokuWS.TableParser
                         switch (CurrentStr._toLower()) {
                             case "prefix":
                             case "preshift":
+                            case "ordered":
                                 shiftKeyKind = ShiftKeyKind.PrefixSuccessiveShift;
                                 break;
                             case "oneshot":

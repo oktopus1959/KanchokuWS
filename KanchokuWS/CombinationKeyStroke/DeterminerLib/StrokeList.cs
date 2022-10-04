@@ -142,6 +142,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return result;
         }
 
+        public bool IsSuccessiveShift3rdOrLaterKey()
+        {
+            bool result = KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey && Count >= 3;
+            logger.DebugH(() =>  $"Result={result}; ContainsSuccessiveShiftKey={KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey}, comboList.Count={comboList.Count}, unprocList.Count={unprocList.Count}");
+            return result;
+        }
+
         // 押下の場合
         public List<int> GetKeyCombinationWhenKeyDown(out bool bTimer, out bool bUnconditional)
         {
