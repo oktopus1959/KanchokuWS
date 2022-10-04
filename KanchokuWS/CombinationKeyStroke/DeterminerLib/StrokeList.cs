@@ -412,6 +412,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 //if (unprocList[i].IsUpKey || !unprocList[i].IsSuccessiveShift) {
                                     result.Add(unprocList[i].OrigDecoderKey);
                                 //}
+                                // 同時打鍵でなく出力されたキーは comboList には移さない
+                                unprocList[i].SetToBeRemoved();
                                 logger.DebugH(() => $"ADD: result={result._keyString()}");
                             }
                             if (copyShiftLen > 0) {
@@ -566,7 +568,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         private void copyToComboList(List<Stroke> list, int len, bool bSuccessiveShiftOnly)
         {
             foreach (var s in list.Take(len)) {
-                if (s.IsSuccessiveShift || (!bSuccessiveShiftOnly && !s.IsUpKey)) {
+                if (!s.ToBeRemoved && s.IsSuccessiveShift || (!bSuccessiveShiftOnly && !s.IsUpKey)) {
                     // !bSuccessiveShiftOnly なら非連続シフトキーでもKeyUpされていなければ comboListに移す
                     if (s.IsSuccessiveShift) s.SetCombined();
                     comboList.Add(s);

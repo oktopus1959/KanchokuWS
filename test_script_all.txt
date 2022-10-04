@@ -99,6 +99,15 @@ convert(J<226>W<62>E<143>e<32>w<61>j) = ぎで
 comboMaxTime(70)
 convert(EM<55>K<30>m<16>e<26>k) = てない
 
+comboMaxTime(100)
+comboMinTime(70)
+enableTimer1()
+enableTimer2()
+
+convert(J<111>C<112>j<31>c) = ば
+convert(J<66>W<52>P<137>j<38>p<236>w) = ぎゅ
+convert(J<113>F<0>j<54>O<89>f<24>o) = あず
+
 ### 新下駄 ###
 loadTable(tables/_test/shin-geta.tbl)
 comboMinTime(20)
@@ -195,6 +204,17 @@ convert(J<50>{40}<50>K<48>j<56>[40]<72>k) = めや
 
 comboMaxPostTime(48)
 convert(J<50>{40}<50>K<48>j<56>[40]<72>k) = いや
+
+loadTable(tables/_test/noniiruto.10a.tbl)
+comboMaxTime(100)
+comboMinTime(70)
+
+enableTimer1()
+enableTimer2()
+
+#convert({40}<162>J<94>F<33>j<95>f<1000>J<79>F<97>j<30>f<30>[40]) = ぃぃ
+convert(F<81>J<14>{40}<48>f<112>[40]<13>j) = の、
+
 ### 同時打鍵 ###
 loadTable(tables/_test/combo-test.tbl)
 comboMaxTime(100)
