@@ -1181,10 +1181,11 @@ namespace KanchokuWS.TableParser
             }
 
             // 優先する順次打鍵列
-            foreach (var seq in Settings.SequentialPriorityWords) {
+            foreach (var seq in Settings.SequentialPriorityWordSet) {
                 var strkList = GetStrokeList(seq);
-                if (strkList._notEmpty()) Settings.SequentialPriorityWordKeyStrings.Add(strkList._keyString());
+                Settings.SequentialPriorityWordKeyStringSet.Add(strkList._notEmpty() ? strkList._keyString() : seq);
             }
+            logger.InfoH($"SequentialPriorityWordKeyStringSet={Settings.SequentialPriorityWordKeyStringSet._join(",")}");
 
             // 全ノードの情報を OutputLines に書き出す
             RootTableNode.OutputLine(OutputLines);

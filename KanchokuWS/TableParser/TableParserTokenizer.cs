@@ -101,7 +101,7 @@ namespace KanchokuWS.TableParser
                             handleStrokePosition();
                         } else if (lcDef._startsWith("sequen")) {
                             ReadStringToEol();
-                            Settings.SequentialPriorityWords.UnionWith(CurrentStr._strip()._reSplit(" +"));
+                            Settings.SequentialPriorityWordSet.UnionWith(CurrentStr._strip()._reSplit(" +"));
                             SkipToEndOfLine();
                         }
                     } else if (lcStr == "ifdef") {

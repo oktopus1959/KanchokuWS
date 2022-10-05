@@ -816,6 +816,7 @@ namespace KanchokuWS.Gui
             checkBox_useCombinationKeyTimer1.Checked = Settings.UseCombinationKeyTimer1;
             checkBox_useCombinationKeyTimer2.Checked = Settings.UseCombinationKeyTimer2;
             checkBox_useComboExtModKeyAsSingleHit.Checked = Settings.UseComboExtModKeyAsSingleHit;
+            textBox_sequentialPriorityWords.Text = Settings.SequentialPriorityWords._reReplace(@"\|", "\r\n");
 
             // IME連携
             checkBox_imeCooperationEnabled.Checked = Settings.ImeCooperationEnabled;
@@ -849,6 +850,7 @@ namespace KanchokuWS.Gui
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer1);
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer2);
             checkerImeCombo.Add(checkBox_useComboExtModKeyAsSingleHit);
+            checkerImeCombo.Add(textBox_sequentialPriorityWords);
 
             // IME連携
             checkerImeCombo.Add(checkBox_imeCooperationEnabled);
@@ -888,6 +890,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("useCombinationKeyTimer1", checkBox_useCombinationKeyTimer1.Checked);
             Settings.SetUserIni("useCombinationKeyTimer2", checkBox_useCombinationKeyTimer2.Checked);
             Settings.SetUserIni("useComboExtModKeyAsSingleHit", checkBox_useComboExtModKeyAsSingleHit.Checked);
+            Settings.SetUserIni("sequentialPriorityWords", textBox_sequentialPriorityWords.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
 
             // IME連携
             Settings.SetUserIni("imeCooperationEnabled", checkBox_imeCooperationEnabled.Checked);

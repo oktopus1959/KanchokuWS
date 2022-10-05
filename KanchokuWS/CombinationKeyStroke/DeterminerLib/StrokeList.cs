@@ -503,11 +503,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                                                                                     //logger.DebugH(() => $"CHECK1: {tailKey.IsUpKey && hotList[0].IsComboShift && tailKey.IsSingleHittable}: hotList[0].IsComboShift={hotList[0].IsComboShift} and hotList[tailPos={overlapLen - 1}].IsUpKey && IsSingle");
                             logger.DebugH(() => $"CHECK1: {isTailKeyUp && tailKey.IsSingleHittable}: tailPos={overlapLen - 1}: isTailKeyUp && tailKey.IsSingleHittable");
                             logger.DebugH(() => $"CHECK2: {hotList[0].IsShiftableSpaceKey}: hotList[0].IsShiftableSpaceKey");
-                            logger.DebugH(() => $"CHECK3: {keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStrings.Contains(challengeList._toString())}: challengeList={challengeList._toString()}");
+                            logger.DebugH(() => $"CHECK3: {keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())}: challengeList={challengeList._toString()}");
                             //if (tailKey.IsUpKey && tailKey.IsSingleHittable && hotList[0].IsComboShift || // CHECK1: 対象リストの末尾キーが先にUPされた
                             if (isTailKeyUp && tailKey.IsSingleHittable ||  // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
                                 hotList[0].IsShiftableSpaceKey ||           // CHECK2: 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
-                                (keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStrings.Contains(challengeList._toString())) ||    // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
+                                (keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())) ||    // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
                                 (timingResult = isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) == 0)  // タイミングチェック
                             {
                                 // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する

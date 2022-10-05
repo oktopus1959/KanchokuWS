@@ -647,11 +647,14 @@ namespace KanchokuWS
         /// つまり、この時間帯に打鍵された文字キーは単打扱いとなる</summary>
         public static int ComboDisableIntervalTimeMs { get; set; } = 300;
 
+        /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列の並び</summary>
+        public static string SequentialPriorityWords { get; set; }
+
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列の集合</summary>
-        public static HashSet<string> SequentialPriorityWords { get; } = new HashSet<string>();
+        public static HashSet<string> SequentialPriorityWordSet { get; } = new HashSet<string>();
 
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列に対するキーコード列の集合</summary>
-        public static HashSet<string> SequentialPriorityWordKeyStrings { get; } = new HashSet<string>();
+        public static HashSet<string> SequentialPriorityWordKeyStringSet { get; } = new HashSet<string>();
 
         /// <summary>Spaceまたは機能キーのシフトキーがきたら、使い終わったキー(comboListにたまっているキー)を破棄する</summary>
         public static bool AbandonUsedKeysWhenSpecialComboShiftDown = true;
@@ -910,6 +913,8 @@ namespace KanchokuWS
             DefGuide2 = "";
             StrokeHelpExtraCharsPosition1 = false;
             StrokeHelpExtraCharsPosition2 = false;
+            SequentialPriorityWordSet.Clear();
+            SequentialPriorityWordKeyStringSet.Clear();
 
             //-------------------------------------------------------------------------------------
             // 基本設定
@@ -1127,6 +1132,9 @@ namespace KanchokuWS
             UseCombinationKeyTimer1 = GetString("useCombinationKeyTimer1")._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
             UseCombinationKeyTimer2 = GetString("useCombinationKeyTimer2")._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
             UseComboExtModKeyAsSingleHit = GetString("useComboExtModKeyAsSingleHit")._parseBool(true);          // 同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする
+
+            SequentialPriorityWords = GetString("sequentialPriorityWords", "てない").Trim();                 // 同時打鍵よりも順次打鍵のほうを優先させる文字列の並び
+            SequentialPriorityWordSet.UnionWith(SequentialPriorityWords._reSplit(@"[ \|]+"));                // 同時打鍵よりも順次打鍵のほうを優先させる文字列の集合
 
             //-------------------------------------------------------------------------------------
             // IME連携

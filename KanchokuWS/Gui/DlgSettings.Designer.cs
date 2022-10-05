@@ -139,13 +139,13 @@ namespace KanchokuWS.Gui
             this.label20 = new System.Windows.Forms.Label();
             this.tabPage_imeCombo = new System.Windows.Forms.TabPage();
             this.label_imeComboReload = new System.Windows.Forms.Label();
+            this.button_showDlgStrokeLog = new System.Windows.Forms.Button();
             this.button_imeFAQ = new System.Windows.Forms.Button();
             this.button_imeComboReload = new System.Windows.Forms.Button();
             this.groupBox50 = new System.Windows.Forms.GroupBox();
             this.checkBox_useComboExtModKeyAsSingleHit = new System.Windows.Forms.CheckBox();
             this.groupBox49 = new System.Windows.Forms.GroupBox();
-            this.label121 = new System.Windows.Forms.Label();
-            this.button_showDlgStrokeLog = new System.Windows.Forms.Button();
+            this.textBox_sequentialPriorityWords = new System.Windows.Forms.TextBox();
             this.groupBox39 = new System.Windows.Forms.GroupBox();
             this.comboBox_SandSAssignedPlane = new System.Windows.Forms.ComboBox();
             this.label115 = new System.Windows.Forms.Label();
@@ -1939,6 +1939,7 @@ namespace KanchokuWS.Gui
             // tabPage_imeCombo
             // 
             this.tabPage_imeCombo.Controls.Add(this.label_imeComboReload);
+            this.tabPage_imeCombo.Controls.Add(this.button_showDlgStrokeLog);
             this.tabPage_imeCombo.Controls.Add(this.button_imeFAQ);
             this.tabPage_imeCombo.Controls.Add(this.button_imeComboReload);
             this.tabPage_imeCombo.Controls.Add(this.groupBox50);
@@ -1972,6 +1973,19 @@ namespace KanchokuWS.Gui
             this.label_imeComboReload.Visible = false;
             this.label_imeComboReload.VisibleChanged += new System.EventHandler(this.label_imeComboReload_VisibleChanged);
             // 
+            // button_showDlgStrokeLog
+            // 
+            this.button_showDlgStrokeLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_showDlgStrokeLog.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_showDlgStrokeLog.Location = new System.Drawing.Point(382, 343);
+            this.button_showDlgStrokeLog.Name = "button_showDlgStrokeLog";
+            this.button_showDlgStrokeLog.Size = new System.Drawing.Size(77, 23);
+            this.button_showDlgStrokeLog.TabIndex = 8;
+            this.button_showDlgStrokeLog.Text = "打鍵ログ(&L)";
+            this.toolTip1.SetToolTip(this.button_showDlgStrokeLog, "打鍵ログ ダイアログを表示します");
+            this.button_showDlgStrokeLog.UseVisualStyleBackColor = true;
+            this.button_showDlgStrokeLog.Click += new System.EventHandler(this.button_showDlgStrokeLog_Click);
+            // 
             // button_imeFAQ
             // 
             this.button_imeFAQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -1979,7 +1993,7 @@ namespace KanchokuWS.Gui
             this.button_imeFAQ.Location = new System.Drawing.Point(10, 343);
             this.button_imeFAQ.Name = "button_imeFAQ";
             this.button_imeFAQ.Size = new System.Drawing.Size(69, 23);
-            this.button_imeFAQ.TabIndex = 5;
+            this.button_imeFAQ.TabIndex = 6;
             this.button_imeFAQ.Text = "FAQ(&F)";
             this.toolTip1.SetToolTip(this.button_imeFAQ, "「よくある質問と回答」ページのURLをブラウザで開きます");
             this.button_imeFAQ.UseVisualStyleBackColor = true;
@@ -1992,7 +2006,7 @@ namespace KanchokuWS.Gui
             this.button_imeComboReload.Location = new System.Drawing.Point(281, 343);
             this.button_imeComboReload.Name = "button_imeComboReload";
             this.button_imeComboReload.Size = new System.Drawing.Size(80, 23);
-            this.button_imeComboReload.TabIndex = 6;
+            this.button_imeComboReload.TabIndex = 7;
             this.button_imeComboReload.Text = "再読込(&R)";
             this.toolTip1.SetToolTip(this.button_imeComboReload, "各種ファイルの内容を再読み込みします。\r\n\r\n辞書を除く各種INIファイル、定義ファイルの内容をリロードして、\r\n内部の設定状態を更新します。\r\n");
             this.button_imeComboReload.UseVisualStyleBackColor = true;
@@ -2023,36 +2037,26 @@ namespace KanchokuWS.Gui
             // 
             // groupBox49
             // 
-            this.groupBox49.Controls.Add(this.label121);
-            this.groupBox49.Controls.Add(this.button_showDlgStrokeLog);
+            this.groupBox49.Controls.Add(this.textBox_sequentialPriorityWords);
             this.groupBox49.Location = new System.Drawing.Point(366, 218);
             this.groupBox49.Name = "groupBox49";
-            this.groupBox49.Size = new System.Drawing.Size(297, 48);
-            this.groupBox49.TabIndex = 6;
+            this.groupBox49.Size = new System.Drawing.Size(297, 87);
+            this.groupBox49.TabIndex = 5;
             this.groupBox49.TabStop = false;
-            this.groupBox49.Text = "打鍵ログ ダイアログ";
+            this.groupBox49.Text = "3キー同時打鍵より優先する順次打鍵文字列";
             // 
-            // label121
+            // textBox_sequentialPriorityWords
             // 
-            this.label121.AutoSize = true;
-            this.label121.Location = new System.Drawing.Point(9, 20);
-            this.label121.Name = "label121";
-            this.label121.Size = new System.Drawing.Size(207, 15);
-            this.label121.TabIndex = 15;
-            this.label121.Text = "打鍵されたキーや出力文字列のログを表示";
-            // 
-            // button_showDlgStrokeLog
-            // 
-            this.button_showDlgStrokeLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_showDlgStrokeLog.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_showDlgStrokeLog.Location = new System.Drawing.Point(223, 15);
-            this.button_showDlgStrokeLog.Name = "button_showDlgStrokeLog";
-            this.button_showDlgStrokeLog.Size = new System.Drawing.Size(66, 23);
-            this.button_showDlgStrokeLog.TabIndex = 0;
-            this.button_showDlgStrokeLog.Text = "表示(&L)";
-            this.toolTip1.SetToolTip(this.button_showDlgStrokeLog, "打鍵ログ ダイアログを表示します");
-            this.button_showDlgStrokeLog.UseVisualStyleBackColor = true;
-            this.button_showDlgStrokeLog.Click += new System.EventHandler(this.button_showDlgStrokeLog_Click);
+            this.textBox_sequentialPriorityWords.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_sequentialPriorityWords.Location = new System.Drawing.Point(14, 22);
+            this.textBox_sequentialPriorityWords.Multiline = true;
+            this.textBox_sequentialPriorityWords.Name = "textBox_sequentialPriorityWords";
+            this.textBox_sequentialPriorityWords.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox_sequentialPriorityWords.Size = new System.Drawing.Size(277, 58);
+            this.textBox_sequentialPriorityWords.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.textBox_sequentialPriorityWords, resources.GetString("textBox_sequentialPriorityWords.ToolTip"));
             // 
             // groupBox39
             // 
@@ -2411,7 +2415,7 @@ namespace KanchokuWS.Gui
             this.button_imeComboClose.Location = new System.Drawing.Point(480, 343);
             this.button_imeComboClose.Name = "button_imeComboClose";
             this.button_imeComboClose.Size = new System.Drawing.Size(80, 23);
-            this.button_imeComboClose.TabIndex = 7;
+            this.button_imeComboClose.TabIndex = 9;
             this.button_imeComboClose.Text = "閉じる(&C)";
             this.button_imeComboClose.UseVisualStyleBackColor = true;
             this.button_imeComboClose.Click += new System.EventHandler(this.button_imeComboClose_Click);
@@ -2423,7 +2427,7 @@ namespace KanchokuWS.Gui
             this.button_imeComboEnter.Location = new System.Drawing.Point(588, 343);
             this.button_imeComboEnter.Name = "button_imeComboEnter";
             this.button_imeComboEnter.Size = new System.Drawing.Size(75, 23);
-            this.button_imeComboEnter.TabIndex = 8;
+            this.button_imeComboEnter.TabIndex = 10;
             this.button_imeComboEnter.Text = "適用(&E)";
             this.toolTip1.SetToolTip(this.button_imeComboEnter, "設定内容を適用して kanchoku.user.ini に書き込みます");
             this.button_imeComboEnter.UseVisualStyleBackColor = true;
@@ -6995,8 +6999,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.CheckBox checkBox_combinationKeyTimeOnlyAfterSecond;
         private System.Windows.Forms.Label label120;
         private System.Windows.Forms.Button button_showDlgStrokeLog;
-        private System.Windows.Forms.GroupBox groupBox49;
-        private System.Windows.Forms.Label label121;
         private System.Windows.Forms.Label label_testCount;
         private System.Windows.Forms.GroupBox groupBox50;
         private System.Windows.Forms.CheckBox checkBox_useComboExtModKeyAsSingleHit;
@@ -7043,5 +7045,7 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Button button_ctrlReload;
         private System.Windows.Forms.ComboBox comboBox_vkbShowHideTemporaryKey;
         private System.Windows.Forms.Label label142;
+        private System.Windows.Forms.GroupBox groupBox49;
+        private System.Windows.Forms.TextBox textBox_sequentialPriorityWords;
     }
 }
