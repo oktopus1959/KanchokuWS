@@ -51,7 +51,7 @@ namespace KanchokuWS.Handler
         public delegate void DelegateSetStrokeHelpShiftPlane(int shiftPlane);
 
         /// <summary>指定キーに対する次打鍵テーブルの作成</summary>
-        public delegate void DelegateSetNextStrokeHelpDecKey(int decKey);
+        public delegate void DelegateSetNextStrokeHelpDecKey(List<int> decKeys);
 
         /// <summaryストロークログの表示</summary>
         public delegate void DelegateWriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bFirst, bool bTimer = false);
@@ -596,13 +596,13 @@ namespace KanchokuWS.Handler
         /// </summary>
         /// <param name="vkey">同時打鍵キーの仮想キーコード</param>
         /// <param name="decKey">同時打鍵キーのデコーダ用コード</param>
-        void handleComboKeyRepeat(int vkey, int decKey)
+        void handleComboKeyRepeat(int vkey, List<int> decKeys)
         {
             if (prevComboVkey == vkey) {
                 // KeyRepeat
                 if (!bComboKeyRepeat) {
-                    logger.DebugH(() => $"SetNextStrokeHelpDecKey({decKey})");
-                    SetNextStrokeHelpDecKey?.Invoke(decKey);
+                    logger.DebugH(() => $"SetNextStrokeHelpDecKey({decKeys._keyString()})");
+                    SetNextStrokeHelpDecKey?.Invoke(decKeys);
                     bComboKeyRepeat = true;
                 }
             } else {
@@ -619,7 +619,7 @@ namespace KanchokuWS.Handler
             if (prevComboVkey == vkey) {
                 if (bComboKeyRepeat) {
                     bComboKeyRepeat = false;
-                    SetNextStrokeHelpDecKey?.Invoke(-1);
+                    SetNextStrokeHelpDecKey?.Invoke(null);
                 }
                 prevComboVkey = -1;
             }

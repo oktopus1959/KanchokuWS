@@ -662,7 +662,7 @@ namespace KanchokuWS
 
         public int StrokeHelpShiftPlane { get; set; } = 0;
 
-        public int DecKeyForNextTableStrokeHelp { get; set; } = -1;
+        public List<int> DecKeysForNextTableStrokeHelp { get; set; } = new List<int>();
 
         public void MakeStrokeTables(string defFile)
         {
@@ -851,7 +851,8 @@ namespace KanchokuWS
                 if ((isPrimary && StrokeTables1._isEmpty()) || (!isPrimary && StrokeTables2._isEmpty())) {
                     tblDef = null;
                 } else {
-                    string[] nextTable = DecKeyForNextTableStrokeHelp >= 0 ? makeCharOrKeys("makeNextStrokeTable", DecKeyForNextTableStrokeHelp.ToString()) : null;
+                    string deckeysStr = DecKeysForNextTableStrokeHelp._notEmpty() ? DecKeysForNextTableStrokeHelp.Select(x => x.ToString())._join("\t") : null;
+                    string[] nextTable = deckeysStr._notEmpty() ? makeCharOrKeys("makeNextStrokeTable", deckeysStr) : null;
                     logger.DebugH(() => $"nextTable={nextTable._join(":")}");
                     if (nextTable != null) {
                         tblDef = new StrokeTableDef() { CharOrKeys = nextTable };

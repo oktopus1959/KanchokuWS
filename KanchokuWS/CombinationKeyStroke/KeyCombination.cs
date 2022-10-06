@@ -13,6 +13,11 @@ namespace KanchokuWS.CombinationKeyStroke
     /// </summary>
     class KeyCombination
     {
+        public static int MakeNonTerminalDuplicatableComboKey(int decKey)
+        {
+            return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.PLANE_DECKEY_NUM;
+        }
+
         public ShiftKeyKind ShiftKind { get; private set; }
 
         /// <summary>

@@ -782,13 +782,18 @@ namespace KanchokuWS
         /// 指定キーに対する次打鍵テーブルの作成
         /// </summary>
         /// <param name="decKey"></param>
-        private void SetNextStrokeHelpDecKey(int decKey)
+        private void SetNextStrokeHelpDecKey(List<int> decKeys)
         {
-            logger.InfoH(() => $"CALLED: decKey={decKey}");
-            if (decKey < DecoderKeys.EISU_COMBO_DECKEY_END) {
-                frmVkb.DecKeyForNextTableStrokeHelp = decKey;
-                frmVkb.DrawInitialVkb();
+            logger.InfoH(() => $"CALLED: decKeys={decKeys._keyString("empty")}");
+            frmVkb.DecKeysForNextTableStrokeHelp.Clear();
+            if (decKeys._notEmpty()) {
+                foreach (var dc in decKeys) {
+                    if (dc < DecoderKeys.EISU_COMBO_DECKEY_END) {
+                        frmVkb.DecKeysForNextTableStrokeHelp.Add(dc);
+                    }
+                }
             }
+            frmVkb.DrawInitialVkb();
         }
 
         private int prevFuncDeckey = 0;
@@ -1156,7 +1161,7 @@ namespace KanchokuWS
                 bRomanStrokeGuideMode = false;
                 IsVkbHiddenTemporay = false;
                 frmVkb.StrokeHelpShiftPlane = 0;
-                frmVkb.DecKeyForNextTableStrokeHelp = -1;
+                frmVkb.DecKeysForNextTableStrokeHelp.Clear();
                 frmVkb.DrawInitialVkb();
                 //Text = "漢直窓S - ON";
                 notifyIcon1.Icon = Properties.Resources.kanmini1;

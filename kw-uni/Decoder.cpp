@@ -427,7 +427,9 @@ public:
                 // 指定キーに対する次打鍵テーブルの作成
                 if (items.size() > 1 && !items[1].empty()) {
                     //OutParams = outParams;
-                    makeNextStrokeTable(utils::strToInt(items[1], -1));
+                    int deckey1 = utils::strToInt(items[1], -1);
+                    int deckey2 = items.size() > 2 && !items[2].empty() ? utils::strToInt(items[2], -1) : -1;
+                    makeNextStrokeTable(deckey1, deckey2);
                 }
             } else if (cmd == _T("getCharsOrderedByDeckey")) {
                 // Deckey順に並んだ通常文字列とシフト文字列を返す
@@ -768,12 +770,13 @@ public:
     }
 
     // 指定キーに対する次打鍵テーブルの作成
-    void makeNextStrokeTable(int decKey) {
-        LOG_INFO(_T("ENTER: decKey=%d"), decKey);
+    void makeNextStrokeTable(int decKey1, int decKey2) {
+        LOG_INFO(_T("ENTER: decKey1=%d, decKey2=%d"), decKey1, decKey2);
         OutParams->layout = (int)VkbLayout::Normal;
         clearKeyFaces();
-        if (ROOT_STROKE_NODE && decKey >= 0) {
-            StrokeTableNode* pn = dynamic_cast<StrokeTableNode*>(ROOT_STROKE_NODE->getNth(decKey));
+        if (ROOT_STROKE_NODE && decKey1 >= 0) {
+            StrokeTableNode* pn = dynamic_cast<StrokeTableNode*>(ROOT_STROKE_NODE->getNth(decKey1));
+            if (pn && decKey2 >= 0) pn = dynamic_cast<StrokeTableNode*>(pn->getNth(decKey2));
             if (pn) {
                 mchar_t* faces = STATE_COMMON->GetFaces();
                 size_t numFaces = STATE_COMMON->FacesSize();

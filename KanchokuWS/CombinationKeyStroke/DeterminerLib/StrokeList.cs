@@ -81,6 +81,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public Stroke Last => unprocList._getLast();
 
+        public KeyCombination GetKeyCombo()
+        {
+            return KeyCombinationPool.CurrentPool.GetEntry(unprocList);
+        }
+
         public Stroke FindSameStroke(int decKey)
         {
             int idx = FindSameIndex(decKey);

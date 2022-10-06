@@ -2071,6 +2071,13 @@ namespace Utils
             return list._notEmpty() ? list.Select((value, index) => (index, value)) : new (int index, T value)[0];
         }
 
+        /// <summary>
+        /// 要素を ":" で区切って並べて返す
+        /// </summary>
+        public static string _keyString(this IEnumerable<int> list, string emptyStr = "")
+        {
+            return list._notEmpty() ? list.Select(x => x.ToString())._join(":") : emptyStr;
+        }
     }
 
     /// <summary>

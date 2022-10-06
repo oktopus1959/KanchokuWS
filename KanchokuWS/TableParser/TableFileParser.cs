@@ -131,7 +131,8 @@ namespace KanchokuWS.TableParser
 
         int makeNonTerminalDuplicatableComboKey(int decKey)
         {
-            return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.PLANE_DECKEY_NUM;
+            //return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.PLANE_DECKEY_NUM;
+            return KeyCombination.MakeNonTerminalDuplicatableComboKey(decKey);
         }
 
         public Node GetNthRootNode(int n)

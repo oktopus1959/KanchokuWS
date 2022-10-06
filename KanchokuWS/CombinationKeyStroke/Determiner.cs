@@ -257,7 +257,7 @@ namespace KanchokuWS.CombinationKeyStroke
         /// </summary>
         /// <param name="decKey">押下されたキーのデコーダコード</param>
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
-        public void KeyDown(int decKey, bool bDecoderOn, Action<int> handleComboKeyRepeat)
+        public void KeyDown(int decKey, bool bDecoderOn, Action<List<int>> handleComboKeyRepeat)
         {
             DateTime dtNow = DateTime.Now;
             frmMain?.WriteStrokeLog(decKey, dtNow, true, strokeList.IsEmpty());
@@ -266,7 +266,7 @@ namespace KanchokuWS.CombinationKeyStroke
             HandleQueue();
         }
 
-        public KeyHandlerResult keyDown(int decKey, DateTime dt, bool bDecoderOn, Action<int> handleComboKeyRepeat)
+        public KeyHandlerResult keyDown(int decKey, DateTime dt, bool bDecoderOn, Action<List<int>> handleComboKeyRepeat)
         {
             logger.DebugH(() => $"\nENTER: decKey={decKey}");
 
@@ -298,10 +298,21 @@ namespace KanchokuWS.CombinationKeyStroke
                             // DecoderがOFFのときはキーリピート扱いとする
                             logger.DebugH("Decoder OFF, so repeat key");
                             result = Helper.MakeList(decKey);
-                        } else if (stroke.IsComboShift && handleComboKeyRepeat != null) {
+                        } else if ((stroke.IsComboShift || strokeList.Count == 2 && strokeList.First.IsComboShift) && handleComboKeyRepeat != null) {
                             // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出すだけで、キーリピートは行わない(つまりシフト扱い)
-                            logger.DebugH("Call ComboKeyRepeat Handler");
-                            handleComboKeyRepeat(stroke.ComboShiftDecKey);
+                            List<int> list = new List<int>();
+                            if (strokeList.Count == 1) {
+                                logger.DebugH(() => $"Call ComboKeyRepeat Handler: {stroke.ComboShiftDecKey}");
+                                list.Add(stroke.ComboShiftDecKey);
+                            } else if (strokeList.Count == 2) {
+                                var keyCombo = strokeList.GetKeyCombo();
+                                logger.DebugH(() => $"Call ComboKeyRepeat Handler: {keyCombo.DecKeysDebugString()}");
+                                if (keyCombo.DecKeyList._safeCount() >= 2) {
+                                    list.Add(keyCombo.DecKeyList[0]);
+                                    list.Add(KeyCombination.MakeNonTerminalDuplicatableComboKey(keyCombo.DecKeyList[1]));
+                                }
+                            }
+                            handleComboKeyRepeat(list);
                         } else if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
                             // キーリピートが可能なキー
                             logger.DebugH("non terminal and repeatable key");
