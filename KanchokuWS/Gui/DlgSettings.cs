@@ -816,6 +816,7 @@ namespace KanchokuWS.Gui
             checkBox_useCombinationKeyTimer1.Checked = Settings.UseCombinationKeyTimer1;
             checkBox_useCombinationKeyTimer2.Checked = Settings.UseCombinationKeyTimer2;
             checkBox_useComboExtModKeyAsSingleHit.Checked = Settings.UseComboExtModKeyAsSingleHit;
+            checkBox_threeKeysComboUnconditional.Checked = Settings.ThreeKeysComboUnconditional;
             textBox_sequentialPriorityWords.Text = Settings.SequentialPriorityWords._reReplace(@"\|", "\r\n");
 
             // IME連携
@@ -850,6 +851,7 @@ namespace KanchokuWS.Gui
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer1);
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer2);
             checkerImeCombo.Add(checkBox_useComboExtModKeyAsSingleHit);
+            checkerImeCombo.Add(checkBox_threeKeysComboUnconditional);
             checkerImeCombo.Add(textBox_sequentialPriorityWords);
 
             // IME連携
@@ -890,6 +892,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("useCombinationKeyTimer1", checkBox_useCombinationKeyTimer1.Checked);
             Settings.SetUserIni("useCombinationKeyTimer2", checkBox_useCombinationKeyTimer2.Checked);
             Settings.SetUserIni("useComboExtModKeyAsSingleHit", checkBox_useComboExtModKeyAsSingleHit.Checked);
+            Settings.SetUserIni("threeKeysComboUnconditional", checkBox_threeKeysComboUnconditional.Checked);
             Settings.SetUserIni("sequentialPriorityWords", textBox_sequentialPriorityWords.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
 
             // IME連携

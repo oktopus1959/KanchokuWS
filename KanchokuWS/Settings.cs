@@ -650,6 +650,9 @@ namespace KanchokuWS
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列の並び</summary>
         public static string SequentialPriorityWords { get; set; }
 
+        /// <summary>優先される順次打鍵以外の3キー同時打鍵なら無条件に判定</summary>
+        public static bool ThreeKeysComboUnconditional { get; set; } = false;
+
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列の集合</summary>
         public static HashSet<string> SequentialPriorityWordSet { get; } = new HashSet<string>();
 
@@ -1133,8 +1136,9 @@ namespace KanchokuWS
             UseCombinationKeyTimer2 = GetString("useCombinationKeyTimer2")._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
             UseComboExtModKeyAsSingleHit = GetString("useComboExtModKeyAsSingleHit")._parseBool(true);          // 同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする
 
+            ThreeKeysComboUnconditional = GetString("threeKeysComboUnconditional")._parseBool(false);        // 優先される順次打鍵以外の3キー同時打鍵なら無条件に判定
             SequentialPriorityWords = GetString("sequentialPriorityWords", "てない").Trim();                 // 同時打鍵よりも順次打鍵のほうを優先させる文字列の並び
-            SequentialPriorityWordSet.UnionWith(SequentialPriorityWords._reSplit(@"[ \|]+"));                // 同時打鍵よりも順次打鍵のほうを優先させる文字列の集合
+            SequentialPriorityWordSet.UnionWith(SequentialPriorityWords._reSplit(@"[ ,\|]+"));               // 同時打鍵よりも順次打鍵のほうを優先させる文字列の集合
 
             //-------------------------------------------------------------------------------------
             // IME連携

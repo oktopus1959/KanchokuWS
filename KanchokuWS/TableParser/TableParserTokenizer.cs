@@ -100,8 +100,9 @@ namespace KanchokuWS.TableParser
                             // 'defguide': 配字案内
                             handleStrokePosition();
                         } else if (lcDef._startsWith("sequen")) {
+                            // 'sequentialWords': 優先する順次打鍵
                             ReadStringToEol();
-                            Settings.SequentialPriorityWordSet.UnionWith(CurrentStr._strip()._reSplit(" +"));
+                            Settings.SequentialPriorityWordSet.UnionWith(CurrentStr._strip()._reSplit(@"[ ,]+"));
                             SkipToEndOfLine();
                         }
                     } else if (lcStr == "ifdef") {

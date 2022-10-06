@@ -504,7 +504,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             logger.DebugH(() => $"CHECK3: {Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())}: challengeList={challengeList._toString()}");
                             if (isTailKeyUp && tailKey.IsSingleHittable ||  // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
                                 hotList[0].IsShiftableSpaceKey ||           // CHECK2: 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
-                                (keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())) ||
+                                (Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())) ||
                                                                             // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
                                 (timingResult = isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) == 0)
                                                                             // CHECK1～CHECK3をすり抜けたらタイミングチェックをやる

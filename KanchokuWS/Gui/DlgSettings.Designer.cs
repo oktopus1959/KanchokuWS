@@ -506,6 +506,7 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.checkBox_threeKeysComboUnconditional = new System.Windows.Forms.CheckBox();
             this.textBox_onSelectedBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_onKanaTrainingMode = new KanchokuWS.Gui.ColorTextBox();
@@ -2037,10 +2038,11 @@ namespace KanchokuWS.Gui
             // 
             // groupBox49
             // 
+            this.groupBox49.Controls.Add(this.checkBox_threeKeysComboUnconditional);
             this.groupBox49.Controls.Add(this.textBox_sequentialPriorityWords);
             this.groupBox49.Location = new System.Drawing.Point(366, 218);
             this.groupBox49.Name = "groupBox49";
-            this.groupBox49.Size = new System.Drawing.Size(297, 87);
+            this.groupBox49.Size = new System.Drawing.Size(297, 100);
             this.groupBox49.TabIndex = 5;
             this.groupBox49.TabStop = false;
             this.groupBox49.Text = "3キー同時打鍵より優先する順次打鍵文字列";
@@ -2050,12 +2052,12 @@ namespace KanchokuWS.Gui
             this.textBox_sequentialPriorityWords.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_sequentialPriorityWords.Location = new System.Drawing.Point(14, 22);
+            this.textBox_sequentialPriorityWords.Location = new System.Drawing.Point(14, 39);
             this.textBox_sequentialPriorityWords.Multiline = true;
             this.textBox_sequentialPriorityWords.Name = "textBox_sequentialPriorityWords";
             this.textBox_sequentialPriorityWords.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox_sequentialPriorityWords.Size = new System.Drawing.Size(277, 58);
-            this.textBox_sequentialPriorityWords.TabIndex = 0;
+            this.textBox_sequentialPriorityWords.Size = new System.Drawing.Size(277, 54);
+            this.textBox_sequentialPriorityWords.TabIndex = 1;
             this.toolTip1.SetToolTip(this.textBox_sequentialPriorityWords, resources.GetString("textBox_sequentialPriorityWords.ToolTip"));
             // 
             // groupBox39
@@ -6221,6 +6223,18 @@ namespace KanchokuWS.Gui
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // checkBox_threeKeysComboUnconditional
+            // 
+            this.checkBox_threeKeysComboUnconditional.AutoSize = true;
+            this.checkBox_threeKeysComboUnconditional.Location = new System.Drawing.Point(16, 18);
+            this.checkBox_threeKeysComboUnconditional.Name = "checkBox_threeKeysComboUnconditional";
+            this.checkBox_threeKeysComboUnconditional.Size = new System.Drawing.Size(225, 19);
+            this.checkBox_threeKeysComboUnconditional.TabIndex = 0;
+            this.checkBox_threeKeysComboUnconditional.Text = "下記以外の3キー同時打鍵は無条件判定";
+            this.toolTip1.SetToolTip(this.checkBox_threeKeysComboUnconditional, "この項目をチェックすると、「優先する順次打鍵」として登録されたもの以外の\r\n3キー以上の同時打鍵の組み合わせに対しては、タイミングチェックを行わず、\r\n一瞬でも同" +
+        "時押しとなる時間帯があれば同時打鍵と判定します。");
+            this.checkBox_threeKeysComboUnconditional.UseVisualStyleBackColor = true;
+            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -7047,5 +7061,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label142;
         private System.Windows.Forms.GroupBox groupBox49;
         private System.Windows.Forms.TextBox textBox_sequentialPriorityWords;
+        private System.Windows.Forms.CheckBox checkBox_threeKeysComboUnconditional;
     }
 }

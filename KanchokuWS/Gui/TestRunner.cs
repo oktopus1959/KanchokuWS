@@ -173,6 +173,10 @@ namespace KanchokuWS.Gui
                         Settings.UseCombinationKeyTimer2 = false;
                         break;
 
+                    case "threeKeysComboUnconditional":
+                        Settings.ThreeKeysComboUnconditional = arg._parseBool(false);
+                        break;
+
                     case "break":
                     case "exit":
                     case "quit":
