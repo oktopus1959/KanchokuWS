@@ -170,6 +170,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             // 連続シフトの場合は、同時打鍵キーの数は最大2とする
             (List<int>, bool) getAndCheckCombo(List<Stroke> list)
             {
+                logger.DebugH(() => $"getAndCheckCombo: list={list._toString()}");
                 var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(list);
                 logger.DebugH(() =>
                     $"combo={(keyCombo == null ? "(none)" : "FOUND")}, decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, " +
@@ -185,11 +186,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             List<int> result = null;
             bool bKeyComboFound = false;
             if (comboList._isEmpty() && unprocList.Count == 2) {
-                // 最初の同時打鍵のケース
+                // 最初の同時打鍵のケース(2キーの場合のみを扱う)
                 logger.DebugH("Try first successive combo");
                 (result, bKeyComboFound) = getAndCheckCombo(unprocList);
                 if (result != null) {
                     // 同時打鍵候補があった
+                    logger.DebugH("combo found");
                     if (unprocList[0].IsPrefixShift ||
                         (((unprocList[0].IsComboShift && unprocList[1].TimeSpanMs(unprocList[0]) <= Settings.CombinationKeyMaxAllowedLeadTimeMs) ||
                           (!unprocList[0].IsComboShift && unprocList[1].TimeSpanMs(unprocList[0]) <= Settings.ComboKeyMaxAllowedPostfixTimeMs)) &&
@@ -204,6 +206,19 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     } else {
                         // どちらも単打を含むため、未確定の場合は、タイマーを有効にする
                         result = null;
+                        bTimer = true;
+                    }
+                } else if (!bKeyComboFound) {
+                    logger.DebugH("combo NOT found. Return first key as is");
+                    // 同時打鍵候補がないので、最初のキーをそのまま返す
+                    result = Helper.MakeList(unprocList[0].OrigDecoderKey);
+                    unprocList.RemoveAt(0);
+                    if (unprocList[0].IsJustSingleHit) {
+                        logger.DebugH("second key is just SingleHit. Return second key as is");
+                        result.Add(unprocList[0].OrigDecoderKey);
+                        unprocList.RemoveAt(0);
+                    } else if (unprocList[0].IsSingleHittable && unprocList[0].HasString) {
+                        logger.DebugH("second key is SingleHittable and HasString. Enable timer");
                         bTimer = true;
                     }
                 }

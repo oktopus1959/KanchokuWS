@@ -48,6 +48,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>単打可能なキーか<br/>ただし出力文字列が定義されていない打鍵もある</summary>
         public bool IsSingleHittable { get; private set; }
 
+        /// <summary>出力文字列が定義されているか</summary>
+        public bool HasString { get; private set; }
+
+        /// <summary>単打キーか<br/>同時打鍵が定義されていないか、または終端キー</summary>
+        public bool IsJustSingleHit { get; private set; }
+
         /// <summary>順次シフトキーか</summary>
         public bool IsSequentialShift { get; private set; }
 
@@ -128,6 +134,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             IsSequentialShift = KeyCombinationPool.IsSequential(OrigDecoderKey);
             var entry = KeyCombinationPool.CurrentPool.GetEntry(decKey);
             IsSingleHittable = entry == null || entry.DecKeyList != null;
+            IsJustSingleHit = entry == null || entry.IsTerminal;
+            HasString = entry != null && entry.DecKeyList != null;
             KeyDt = dt;
         }
 

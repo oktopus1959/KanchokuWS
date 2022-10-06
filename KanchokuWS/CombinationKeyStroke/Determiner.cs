@@ -288,7 +288,7 @@ namespace KanchokuWS.CombinationKeyStroke
                         //bool isStrokeListEmpty = strokeList.IsEmpty();
                         if (Settings.AbandonUsedKeysWhenSpecialComboShiftDown && DecoderKeys.IsSpaceOrFuncKey(decKey) && stroke.IsComboShift) {
                             // Spaceまたは機能キーのシフトキーがきたら、使い終わったキーを破棄する
-                            logger.DebugH(() => $"Abandon Used Keys When Special Combo Shift Down");
+                            logger.DebugH("Abandon Used Keys When Special Combo Shift Down");
                             strokeList.ClearComboList();
                         }
                         logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, StrokeList.Count={strokeList.Count}");
@@ -311,9 +311,11 @@ namespace KanchokuWS.CombinationKeyStroke
                                     }
                                 } else {
                                     // 第2打鍵以降の場合は、同時打鍵チェック
+                                    logger.DebugH("Check key combo");
                                     bool bTimer = false;
                                     result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer, out bUnconditional);
                                     if (result._isEmpty()) {
+                                        logger.DebugH("result is EMPTY");
                                         if (bTimer || strokeList.IsSuccessiveShift3rdOrLaterKey() /*strokeList.IsSuccessiveShift2ndOr3rdKey()*/) {
                                             logger.DebugH(() =>
                                                 $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}, TimerKind={(bTimer ? TimerKind.JustTwoComboKey : TimerKind.SecondOrLaterChar)}");
@@ -322,6 +324,12 @@ namespace KanchokuWS.CombinationKeyStroke
                                                 startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn,
                                                     bTimer ? TimerKind.JustTwoComboKey : TimerKind.SecondOrLaterChar);
                                             }
+                                        }
+                                    } else if (bTimer && strokeList.Count == 1) {
+                                        // 先頭のキーが result に追い出されて、今回のキーだけが残った
+                                        logger.DebugH("Time on");
+                                        if (Settings.UseCombinationKeyTimer2 && !DecoderKeys.IsSpaceOrFuncKey(decKey)) {
+                                            startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn, TimerKind.JustTwoComboKey);
                                         }
                                     }
                                 }
