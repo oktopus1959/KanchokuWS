@@ -37,15 +37,19 @@ namespace KanchokuWS.CombinationKeyStroke
         // タイマー
         System.Timers.Timer timerA;
         System.Timers.Timer timerB;
+        System.Timers.Timer timerC;
 
         int decKeyForTimerA = -1;
         int decKeyForTimerB = -1;
+        int decKeyForTimerC = -1;
 
         bool isDecoderOnA = false;
         bool isDecoderOnB = false;
+        bool isDecoderOnC = false;
 
         TimerKind kindForTimerA = TimerKind.None;
         TimerKind kindForTimerB = TimerKind.None;
+        TimerKind kindForTimerC = TimerKind.None;
 
         private void timerA_elapsed(Object sender, System.Timers.ElapsedEventArgs e)
         {
@@ -69,6 +73,17 @@ namespace KanchokuWS.CombinationKeyStroke
             }
         }
 
+        private void timerC_elapsed(Object sender, System.Timers.ElapsedEventArgs e)
+        {
+            logger.DebugH(() => $"TIMER-C ELAPSED: decKeyForTimerC={decKeyForTimerC}");
+            timerC?.Stop();
+            if (decKeyForTimerC >= 0) {
+                int dk = decKeyForTimerC;
+                decKeyForTimerC = -1;
+                KeyUp(dk, isDecoderOnC, kindForTimerC);
+            }
+        }
+
         public Action<List<int>, bool> KeyProcHandler { get; set; }
 
         public void InitializeTimer(FrmKanchoku frm)
@@ -77,10 +92,13 @@ namespace KanchokuWS.CombinationKeyStroke
             frmMain = frm;
             timerA = new System.Timers.Timer();
             timerB = new System.Timers.Timer();
+            timerC = new System.Timers.Timer();
             timerA.SynchronizingObject = frm;
             timerB.SynchronizingObject = frm;
+            timerC.SynchronizingObject = frm;
             timerA.Elapsed += timerA_elapsed;
             timerB.Elapsed += timerB_elapsed;
+            timerC.Elapsed += timerC_elapsed;
         }
 
         void startTimer(int ms, int decKey, bool bDecoderOn, TimerKind kind)
@@ -94,14 +112,21 @@ namespace KanchokuWS.CombinationKeyStroke
                 kindForTimerA = kind;
                 timerA.Interval = ms;
                 timerA.Start();
-                logger.DebugH(() => $"TIMER1 STARTED");
+                logger.DebugH(() => $"TIMER-A STARTED");
             } else if (timerB != null && !timerB.Enabled) {
                 decKeyForTimerB = decKey;
                 isDecoderOnB = bDecoderOn;
                 kindForTimerB = kind;
                 timerB.Interval = ms;
                 timerB.Start();
-                logger.DebugH(() => $"TIMER2 STARTED");
+                logger.DebugH(() => $"TIMER-B STARTED");
+            } else if (timerC != null && !timerC.Enabled) {
+                decKeyForTimerC = decKey;
+                isDecoderOnC = bDecoderOn;
+                kindForTimerC = kind;
+                timerC.Interval = ms;
+                timerC.Start();
+                logger.DebugH(() => $"TIMER-C STARTED");
             }
         }
 
@@ -153,6 +178,8 @@ namespace KanchokuWS.CombinationKeyStroke
             timerA = null;
             timerB?.Dispose();
             timerB = null;
+            timerC?.Dispose();
+            timerC = null;
         }
 
         /// <summary>
