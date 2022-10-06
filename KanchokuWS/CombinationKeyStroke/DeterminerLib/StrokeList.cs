@@ -418,7 +418,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             }
                             if (copyShiftLen > 0) {
                                 // true: 連続シフトキーのみ、comboListに移す
-                                copyToComboList(unprocList, copyShiftLen, true);
+                                copyToComboList(unprocList, copyShiftLen/*, true*/);
                                 logger.DebugH(() => $"copyToComboList={copyShiftLen}, successiveOnly: {ToDebugString()}");
                             }
                             if (discardLen > 0) {
@@ -499,16 +499,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             timingResult = 0;  // 同時打鍵の組合せが見つかった
                             Stroke tailKey = hotList[overlapLen - 1];
                             bool isTailKeyUp = hotList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
-                                                                                                    //logger.DebugH(() => $"CHECK0: {!hotList[0].IsSingleHittable}: hotList[0] NOT SINGLE");
-                                                                                                    //logger.DebugH(() => $"CHECK1: {tailKey.IsUpKey && hotList[0].IsComboShift && tailKey.IsSingleHittable}: hotList[0].IsComboShift={hotList[0].IsComboShift} and hotList[tailPos={overlapLen - 1}].IsUpKey && IsSingle");
                             logger.DebugH(() => $"CHECK1: {isTailKeyUp && tailKey.IsSingleHittable}: tailPos={overlapLen - 1}: isTailKeyUp && tailKey.IsSingleHittable");
                             logger.DebugH(() => $"CHECK2: {hotList[0].IsShiftableSpaceKey}: hotList[0].IsShiftableSpaceKey");
-                            logger.DebugH(() => $"CHECK3: {keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())}: challengeList={challengeList._toString()}");
-                            //if (tailKey.IsUpKey && tailKey.IsSingleHittable && hotList[0].IsComboShift || // CHECK1: 対象リストの末尾キーが先にUPされた
+                            logger.DebugH(() => $"CHECK3: {Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())}: challengeList={challengeList._toString()}");
                             if (isTailKeyUp && tailKey.IsSingleHittable ||  // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
                                 hotList[0].IsShiftableSpaceKey ||           // CHECK2: 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
-                                (keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())) ||    // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
-                                (timingResult = isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) == 0)  // タイミングチェック
+                                (keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())) ||
+                                                                            // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
+                                (timingResult = isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) == 0)
+                                                                            // CHECK1～CHECK3をすり抜けたらタイミングチェックをやる
                             {
                                 // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する
                                 logger.DebugH(() => $"COMBO CHECK PASSED: Overlap candidates found: overlapLen={overlapLen}, list={challengeList._toString()}");
@@ -518,9 +517,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                     // Oneshotなら使い回さず、今回かぎりとする
                                     logger.DebugH(() => $"OneshotShift");
                                 } else {
-                                    // Oneshot以外は使い回す
+                                    // Oneshot以外のシフトキーは使い回す
                                     logger.DebugH(() => $"Move to next combination: overlapLen={overlapLen}");
-                                    copyToComboList(hotList, overlapLen, false);
+                                    copyToComboList(hotList, overlapLen/*, false*/);
+                                    // 連続シフトキー以外はコピーしないようにした (薙刀式で J,W,Pが3打同時でなく、J,Wだけの同時と判定されたときに、Jだけをコピーするため)
                                 }
                                 // 見つかった
                                 return overlapLen;
@@ -567,11 +567,22 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return null;
         }
 
-        private void copyToComboList(List<Stroke> list, int len, bool bSuccessiveShiftOnly)
+        //private void copyToComboList(List<Stroke> list, int len, bool bSuccessiveShiftOnly)
+        //{
+        //    foreach (var s in list.Take(len)) {
+        //        if (!s.ToBeRemoved && (s.IsSuccessiveShift || (!bSuccessiveShiftOnly && !s.IsUpKey))) {
+        //            // !bSuccessiveShiftOnly なら非連続シフトキーでもKeyUpされていなければ comboListに移す
+        //            if (s.IsSuccessiveShift) s.SetCombined();
+        //            comboList.Add(s);
+        //        }
+        //    }
+        //}
+
+        /// <summary>削除対象でない連続シフトキーを</summary>
+        private void copyToComboList(List<Stroke> list, int len)
         {
             foreach (var s in list.Take(len)) {
-                if (!s.ToBeRemoved && s.IsSuccessiveShift || (!bSuccessiveShiftOnly && !s.IsUpKey)) {
-                    // !bSuccessiveShiftOnly なら非連続シフトキーでもKeyUpされていなければ comboListに移す
+                if (!s.ToBeRemoved && s.IsSuccessiveShift) {
                     if (s.IsSuccessiveShift) s.SetCombined();
                     comboList.Add(s);
                 }
