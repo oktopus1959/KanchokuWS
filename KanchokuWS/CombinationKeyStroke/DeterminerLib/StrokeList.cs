@@ -190,21 +190,24 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             List<int> result = null;
             bool bKeyComboFound = false;
-            if (comboList._isEmpty() && unprocList.Count == 2) {
-                // 最初の同時打鍵のケース(2キーの場合のみを扱う)
-                logger.DebugH("Try first successive combo");
-                (result, bKeyComboFound) = getAndCheckCombo(unprocList);
+            //if (comboList._isEmpty() && unprocList.Count == 2) {
+            if (Count == 2 && unprocList.Count >= 1) {
+                // 2キーの同時打鍵のケースの場合のみを扱う
+                logger.DebugH("Try 2 keys combo");
+                var strk1 = comboList._isEmpty() ? unprocList[0] : comboList[0];
+                var strk2 = comboList._isEmpty() ? unprocList[1] : unprocList[0];
+                (result, bKeyComboFound) = getAndCheckCombo(Helper.MakeList(strk1, strk2));
                 if (result != null) {
                     // 同時打鍵候補があった
                     logger.DebugH("combo found");
-                    if (unprocList[0].IsPrefixShift ||
-                        (((unprocList[0].IsComboShift && unprocList[1].TimeSpanMs(unprocList[0]) <= Settings.CombinationKeyMaxAllowedLeadTimeMs) ||
-                          (!unprocList[0].IsComboShift && unprocList[1].TimeSpanMs(unprocList[0]) <= Settings.ComboKeyMaxAllowedPostfixTimeMs)) &&
+                    if (strk1.IsPrefixShift ||
+                        (((strk1.IsComboShift && strk2.TimeSpanMs(strk1) <= Settings.CombinationKeyMaxAllowedLeadTimeMs) ||
+                          (!strk1.IsComboShift && strk2.TimeSpanMs(strk1) <= Settings.ComboKeyMaxAllowedPostfixTimeMs)) &&
                         (Settings.CombinationKeyMinTimeOnlyAfterSecond || Settings.CombinationKeyMinOverlappingTimeMs <= 0 || anyNotSingleHittable()))) {
                         // 前置シフトであるか、または第2打鍵までの時間が閾値以下で即時判定あるいは親指シフトのように非単打キーを含む場合
-                        if (KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey) {
+                        if (comboList._isEmpty() && KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey) {
                             // 連続シフトの場合は、同時打鍵に使用したキーを使い回す
-                            comboList.Add(unprocList[0].IsComboShift ? unprocList[0] : unprocList[1]);
+                            comboList.Add(strk1.IsComboShift ? strk1 : strk2);
                             comboList[0].SetCombined();
                         }
                         unprocList.Clear();
