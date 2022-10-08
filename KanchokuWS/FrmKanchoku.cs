@@ -1582,6 +1582,9 @@ namespace KanchokuWS
             // 第1打鍵待ち状態になったら、一時的な仮想鍵盤表示カウントをリセットする
             //if (decoderOutput.GetStrokeCount() < 1) Settings.VirtualKeyboardShowStrokeCountTemp = 0;
 
+            // 第2打鍵待ち状態になったら、第2打鍵待ちになった時刻をセットする
+            if (decoderOutput.GetStrokeCount() > 0) dtWaitSecondStroke = DateTime.Now;
+
             // 中央鍵盤文字列の取得
             getCenterString();
 
@@ -1648,7 +1651,8 @@ namespace KanchokuWS
                     // 第2打鍵以降の待ちで、何かVkey出力がある場合は、打鍵クリア
                     if (decoderOutput.IsDeckeyToVkey()) {
                         logger.DebugH(() => $"send CLEAR_STROKE_DECKEY");
-                        HandleDeckeyDecoder(decoderPtr, DecoderKeys.CLEAR_STROKE_DECKEY, 0, false, ref decoderOutput);
+                        //HandleDeckeyDecoder(decoderPtr, DecoderKeys.CLEAR_STROKE_DECKEY, 0, false, ref decoderOutput);
+                        sendClearStrokeToDecoder();
                     }
                     if (decoderOutput.numBackSpaces > 0) {
                         SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(null, decoderOutput.numBackSpaces, true);
@@ -1993,6 +1997,14 @@ namespace KanchokuWS
             }
         }
 
+        // 第2打鍵待ちになった時刻
+        private DateTime dtWaitSecondStroke = DateTime.MaxValue;
+
+        /// <summary>
+        /// メインタイマー
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (--activeWinInfoCount <= 0) {
@@ -2014,6 +2026,14 @@ namespace KanchokuWS
             }
 
             CombinationKeyStroke.Determiner.Singleton.HandleQueue();
+
+            // 第2打鍵待ちの場合は、それをキャンセルする
+            if (IsDecoderActive && decoderOutput.GetStrokeCount() > 0 && Settings.CancelSecondStrokeMillisec > 0) {
+                if (dtWaitSecondStroke._isValid() && dtWaitSecondStroke <= DateTime.Now.AddMilliseconds(-Settings.CancelSecondStrokeMillisec)) {
+                    dtWaitSecondStroke = DateTime.MaxValue;
+                    sendClearStrokeToDecoder();
+                }
+            }
 
             if (DateTime.Now >= saveDictsPlannedDt || (IsDecoderActive && DateTime.Now >= saveDictsChallengeDt)) {
                 reinitializeSaveDictsChallengeDt();

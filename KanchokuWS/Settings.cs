@@ -284,6 +284,9 @@ namespace KanchokuWS
         /// <summary>英字モード標識表示色</summary>
         public static string AlphaModeForeColor { get; private set; } = "Blue";
 
+        //-------------------------------------------------------------------------------------
+        // 各種時間設定
+        //-------------------------------------------------------------------------------------
         /// <summary>入力モードの標識の表示までのインターバル秒数</summary>
         public static int EffectiveKanjiModeMarkerShowIntervalSec => ShowVkbOrMaker ? KanjiModeMarkerShowIntervalSec : -1;
         public static int KanjiModeMarkerShowIntervalSec { get; private set; } = 0;
@@ -316,6 +319,9 @@ namespace KanchokuWS
 
         /// <summary>アクティブウィンドウの情報を取得する間隔(ミリ秒)</summary>
         public static int GetActiveWindowInfoIntervalMillisec { get; private set; } = 200;
+
+        /// <summary>第2打鍵をキャンセルするまでのする間隔(ミリ秒)</summary>
+        public static int CancelSecondStrokeMillisec { get; private set; } = 0;
 
         //-------------------------------------------------------------------------------------
         // 機能キー割当
@@ -1044,6 +1050,8 @@ namespace KanchokuWS
 
             VirtualKeyboardMoveGuardMillisec = GetString("virtualKeyboardMoveGuardMillisec")._parseInt(500)._lowLimit(0);
             GetActiveWindowInfoIntervalMillisec = GetString("activeWindowInfoIntervalMillisec")._parseInt(200)._lowLimit(100);
+
+            CancelSecondStrokeMillisec = GetString("cancelSecondStrokeMillisec")._parseInt(0);
 
             //-------------------------------------------------------------------------------------
             // Ctrlキー変換

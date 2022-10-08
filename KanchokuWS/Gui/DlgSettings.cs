@@ -626,6 +626,7 @@ namespace KanchokuWS.Gui
             textBox_preWmCharGuardMillisec.Text = $"{Settings.PreWmCharGuardMillisec}";
             textBox_activeWinInfoIntervalMillisec.Text = $"{Settings.GetActiveWindowInfoIntervalMillisec}";
             textBox_vkbMoveGuardMillisec.Text = $"{Settings.VirtualKeyboardMoveGuardMillisec}";
+            textBox_cancelSecondStrokeMillisec.Text = $"{Settings.CancelSecondStrokeMillisec}";
 
             // ノード重複の警告
             checkBox_duplicateWarningEnabled.Checked = Settings.DuplicateWarningEnabled;
@@ -670,6 +671,7 @@ namespace KanchokuWS.Gui
             checkerAdvanced.Add(textBox_preWmCharGuardMillisec);
             checkerAdvanced.Add(textBox_activeWinInfoIntervalMillisec);
             checkerAdvanced.Add(textBox_vkbMoveGuardMillisec);
+            checkerAdvanced.Add(textBox_cancelSecondStrokeMillisec);
 
             // ノード重複の警告
             checkerAdvanced.Add(checkBox_duplicateWarningEnabled);
@@ -733,6 +735,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("preWmCharGuardMillisec", textBox_preWmCharGuardMillisec.Text.Trim());
             Settings.SetUserIni("activeWindowInfoIntervalMillisec", textBox_activeWinInfoIntervalMillisec.Text.Trim());
             Settings.SetUserIni("virtualKeyboardMoveGuardMillisec", textBox_vkbMoveGuardMillisec.Text.Trim());
+            Settings.SetUserIni("cancelSecondStrokeMillisec", textBox_cancelSecondStrokeMillisec.Text.Trim());
 
             // ノード重複の警告
             Settings.SetUserIni("duplicateWarningEnabled", checkBox_duplicateWarningEnabled.Checked);
