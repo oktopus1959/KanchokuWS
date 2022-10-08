@@ -186,6 +186,7 @@ namespace KanchokuWS.TableParser
                             case "successive":
                             case "unordered":
                             case "mutual":
+                            case "":
                                 shiftKeyKind = ShiftKeyKind.UnorderedSuccessiveShift;
                                 break;
                             default:

@@ -724,7 +724,7 @@ namespace KanchokuWS.TableParser
         // 引数エラー
         public void ArgumentError(string arg) {
             logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
-            handleError(string.Format("引数 {0} が不正です。\r\nテーブルファイル {1} の {2}行目{3}がまちがっているようです：\r\n\r\n> {4} ...",
+            handleError(string.Format("引数 '{0}' が不正です。\r\nテーブルファイル {1} の {2}行目{3}がまちがっているようです：\r\n\r\n> {4} ...",
                 arg, blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
