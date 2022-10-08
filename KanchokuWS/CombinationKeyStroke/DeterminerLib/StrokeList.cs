@@ -216,7 +216,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         result = null;
                         bTimer = true;
                     }
-                } else if (!bKeyComboFound) {
+                } else if (!bKeyComboFound && unprocList[0].HasString) {
                     logger.DebugH("combo NOT found. Return first key as is");
                     // 同時打鍵候補がないので、最初のキーをそのまま返す
                     result = Helper.MakeList(unprocList[0].OrigDecoderKey);
@@ -417,7 +417,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                             //if (rule.bMoveShift) copyShiftLen = discardLen;
                                             copyShiftLen = discardLen;
                                             //if (rule.k1stShift == 2) bTemporaryComboDisabled = true;    // 順次打鍵なら次は一時的に同時打鍵判定をやめる
-                                            bPrevSequential = (rule.k1stShift == 2);
+                                            bPrevSequential = (rule.k1stShift == 2);    // 順次打鍵なら次は一時的に同時打鍵判定をやめる
                                             logger.DebugH(() => $"RULE({n}) APPLIED: outputLen={outputLen}, discardLen={discardLen}, copyShiftLen={copyShiftLen}, bPrevSequential={bPrevSequential}");
                                             break;
                                         }
@@ -432,12 +432,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             logger.DebugH(() => $"outputLen={outputLen}, copyShiftLen={copyShiftLen}, discardLen={discardLen}");
                             for (int i = 0; i < outputLen && i < unprocList.Count; ++i) {
                                 // Upされていない連続シフトキーは出力しない ⇒ これをやると薙刀式で JE と打ったのが同時打鍵と判定されなかったときに E(て)が出力されなくなるので、やめる
-                                //if (unprocList[i].IsUpKey || !unprocList[i].IsSuccessiveShift) {
+                                //if (unprocList[i].IsUpKey || !unprocList[i].IsSuccessiveShift)
+                                // 順次打鍵または文字を持つキーだけ、出力する
+                                if (unprocList[i].HasString || bPrevSequential) {
                                     result.Add(unprocList[i].OrigDecoderKey);
-                                //}
-                                // 同時打鍵でなく出力されたキーは comboList には移さない
-                                unprocList[i].SetToBeRemoved();
-                                logger.DebugH(() => $"ADD: result={result._keyString()}");
+                                    // 同時打鍵でなく出力されたキーは comboList には移さない
+                                    if (!bPrevSequential) unprocList[i].SetToBeRemoved();
+                                    logger.DebugH(() => $"ADD: result={result._keyString()}");
+                                }
                             }
                             if (copyShiftLen > 0) {
                                 // true: 連続シフトキーのみ、comboListに移す

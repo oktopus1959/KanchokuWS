@@ -31,7 +31,7 @@ convert(J<50>W<50>H<100>hIijw) = ぎゃぎょ
 
 comboMinTime(50)
 convert(K<55>J<36>k<10>W<99>j<34>w) = いぎ
-convert(W<111>J<1>w<69>E<70>j<74>e) = きで
+convert(W<111>J<1>w<69>E<90>j<74>e) = きで
 convert(K<55>J<96>k<10>W<99>j<34>w) = いあき
 convert(W<111>J<10>w<99>E<56>j<74>e) = きあて
 
@@ -82,8 +82,8 @@ convert(J<30>W<53>jEwe) = ぎて
 
 comboMinTime(50)
 convert(JWR<80>jwr) = ぎじ
-convert(FIOPiopf) = かるずべ
-convert(FKOPkopf) = かいずべ
+convert(FIOPiopf) = かるすへ
+convert(FKOPkopf) = かいすへ
 
 enableTimer2()
 convert(J<48>E<45>R<152>erj) = でじ
@@ -122,9 +122,11 @@ convert(KKKWEewk) = ごは
 
 ### 月 ###
 loadTable(tables/_test/tuki-2-263.pfx.tbl)
-convert(DUIdui) = えい
-convert(DDD<1000>UIdui) = えい
-convert(DDDUIdui) = えい
+comboMaxTime(100)
+comboMinTime(70)
+convert(DUIdui) = えみ
+convert(DDD<1000>UIdui) = えみ
+convert(DDDUIdui) = えみ
 convert(ALal) = ば
 convert(A{/}a[/]) = ぱ
 
@@ -254,7 +256,7 @@ comboMinTime(100)
 convert(DIid) = よ
 convert(DDDDKkIid) = よ
 convert(DDDDKIkid) = よ
-convert(DIO<40>dio) = よの
+convert(DIO<40>dio) = よえ
 
 comboMinTime(0) # 2打鍵以降も即時判定(Kが無視されること)
 convert(DKkIid) = よ
