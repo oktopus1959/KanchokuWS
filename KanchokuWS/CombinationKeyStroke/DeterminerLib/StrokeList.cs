@@ -601,13 +601,18 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         //    }
         //}
 
-        /// <summary>削除対象でない連続シフトキーを</summary>
+        /// <summary>
+        /// 削除対象でない連続シフトキーを comboList に移動する<br/>
+        /// 3キー以上なら、UPしたキー以外も移動する
+        /// </summary>
         private void copyToComboList(List<Stroke> list, int len)
         {
+            int movedLen = 0;
             foreach (var s in list.Take(len)) {
-                if (!s.ToBeRemoved && s.IsSuccessiveShift) {
+                if (!s.ToBeRemoved && (s.IsSuccessiveShift || (!s.IsUpKey && len >= 3 && movedLen < len - 1))) {
                     if (s.IsSuccessiveShift) s.SetCombined();
                     comboList.Add(s);
+                    ++movedLen;
                 }
             }
         }
