@@ -1245,6 +1245,7 @@ void StrokeTableNode::AssignFucntion(const wstring& keys, const wstring& name) {
 
     if (RootStrokeNode1) assignFucntion(RootStrokeNode1.get(), keys, name);
     if (RootStrokeNode2) assignFucntion(RootStrokeNode2.get(), keys, name);
+    if (RootStrokeNode3) assignFucntion(RootStrokeNode3.get(), keys, name);
 }
 
 // ストロークノードの更新
@@ -1252,10 +1253,12 @@ void StrokeTableNode::UpdateStrokeNodes(const wstring& strokeSource) {
     auto list = utils::split(strokeSource, '\n');
     if (RootStrokeNode1) StrokeTreeBuilder(_T("(none)"), list, false).ParseTableSource(RootStrokeNode1.get());
     if (RootStrokeNode2) StrokeTreeBuilder(_T("(none)"), list, false).ParseTableSource(RootStrokeNode2.get());
+    if (RootStrokeNode3) StrokeTreeBuilder(_T("(none)"), list, false).ParseTableSource(RootStrokeNode3.get());
 }
 
 // ストローク木を作成してそのルートを返す
 StrokeTableNode* StrokeTableNode::CreateStrokeTree(const wstring& tableFile, std::vector<wstring>& lines) {
+    LOG_INFOH(_T("CALLED: tableFile=%s, lines=%d"), tableFile.c_str(), lines.size());
     ROOT_STROKE_NODE = 0;
     ROOT_STROKE_NODE = StrokeTreeBuilder(tableFile, lines, true).CreateStrokeTree();
     RootStrokeNode1.reset(ROOT_STROKE_NODE);
@@ -1264,7 +1267,15 @@ StrokeTableNode* StrokeTableNode::CreateStrokeTree(const wstring& tableFile, std
 
 // ストローク木2を作成してそのルートを返す
 StrokeTableNode* StrokeTableNode::CreateStrokeTree2(const wstring& tableFile, std::vector<wstring>& lines) {
+    LOG_INFOH(_T("CALLED: tableFile=%s, lines=%d"), tableFile.c_str(), lines.size());
     RootStrokeNode2.reset(StrokeTreeBuilder(tableFile, lines, false).CreateStrokeTree());
     return RootStrokeNode2.get();
+}
+
+// ストローク木3を作成してそのルートを返す
+StrokeTableNode* StrokeTableNode::CreateStrokeTree3(const wstring& tableFile, std::vector<wstring>& lines) {
+    LOG_INFOH(_T("CALLED: tableFile=%s, lines=%d"), tableFile.c_str(), lines.size());
+    RootStrokeNode3.reset(StrokeTreeBuilder(tableFile, lines, false).CreateStrokeTree());
+    return RootStrokeNode3.get();
 }
 

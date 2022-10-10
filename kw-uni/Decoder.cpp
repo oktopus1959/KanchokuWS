@@ -228,6 +228,11 @@ public:
                 // 副テーブルファイルの構築
                 createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile2.tbl")), [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
             }
+
+            if (bForceSecondary || !SETTINGS->tableFile3.empty()) {
+                // 第3テーブルファイルの構築
+                createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile3.tbl")), [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree3(file, lines);});
+            }
         }
     }
 
@@ -379,12 +384,18 @@ public:
             } else if (cmd == _T("makeExtraCharsStrokePositionTable2")) {
                 // 副テーブルの外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
                 VkbTableMaker::MakeExtraCharsStrokePositionTable2(outParams->faceStrings);
+            } else if (cmd == _T("makeExtraCharsStrokePositionTable3")) {
+                // 第3テーブルの外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
+                VkbTableMaker::MakeExtraCharsStrokePositionTable3(outParams->faceStrings);
             } else if (cmd == _T("makeStrokePosition") || cmd == _T("makeStrokePosition1")) {
                 // アンシフトキー文字配列をストロークの位置に従って並べる
                 VkbTableMaker::MakeKeyCharsStrokePositionTable(outParams->faceStrings);
             } else if (cmd == _T("makeStrokePosition2")) {
                 // 第2テーブルから、アンシフトキー文字配列をストロークの位置に従って並べる
                 VkbTableMaker::MakeKeyCharsStrokePositionTable2(outParams->faceStrings);
+            } else if (cmd == _T("makeStrokePosition3")) {
+                // 第3テーブルから、アンシフトキー文字配列をストロークの位置に従って並べる
+                VkbTableMaker::MakeKeyCharsStrokePositionTable3(outParams->faceStrings);
             } else if (cmd == _T("makeShiftStrokePosition1")) {
                 // シフトキー文字配列をストロークの位置に従って並べる
                 VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable1(outParams->faceStrings, 1);
@@ -402,6 +413,10 @@ public:
                 // 副テーブルの指定のシフト面のキー文字配列をストロークの位置に従って並べる
                 size_t shiftPlane = items.size() >= 2 ? utils::strToInt(items[1]) : 0;
                 VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable2(outParams->faceStrings, shiftPlane);
+            } else if (cmd == _T("makeShiftPlaneStrokePosition3")) {
+                // 第3テーブルの指定のシフト面のキー文字配列をストロークの位置に従って並べる
+                size_t shiftPlane = items.size() >= 2 ? utils::strToInt(items[1]) : 0;
+                VkbTableMaker::MakeShiftPlaneKeyCharsStrokePositionTable3(outParams->faceStrings, shiftPlane);
             } else if (cmd == _T("makeComboStrokePosition")) {
                 // シフトキー文字配列をストロークの位置に従って並べる
                 VkbTableMaker::MakeCombinationKeyCharsStrokePositionTable(outParams->faceStrings);
@@ -464,6 +479,9 @@ public:
             } else if (cmd == _T("useCodeTable2")) {
                 // 副テーブルに切り替える
                 outParams->strokeTableNum = StrokeTableNode::UseStrokeTable2();
+            } else if (cmd == _T("useCodeTable3")) {
+                // 第3テーブルに切り替える
+                outParams->strokeTableNum = StrokeTableNode::UseStrokeTable3();
             } else if (cmd == _T("isKatakanaMode")) {
                 // カタカナモードか
                 if (STATE_COMMON->FindRunningState(_T("KatakanaState"))) outParams->resultFlags |=  (UINT32)ResultFlags::CurrentModeIsKatakana;

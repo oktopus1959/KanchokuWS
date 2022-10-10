@@ -607,11 +607,14 @@ namespace KanchokuWS
 
         private int selectedTable1 = 0;
         private int selectedTable2 = 0;
+        private int selectedTable3 = 0;
         private List<StrokeTableDef> StrokeTables1 = new List<StrokeTableDef>();
         private List<StrokeTableDef> StrokeTables2 = new List<StrokeTableDef>();
+        private List<StrokeTableDef> StrokeTables3 = new List<StrokeTableDef>();
 
         private List<string[]> shiftPlaneStrokeTables1;
         private List<string[]> shiftPlaneStrokeTables2;
+        private List<string[]> shiftPlaneStrokeTables3;
 
 
         private string[] initialVkbChars = new string[DecoderKeys.NORMAL_DECKEY_NUM] {
@@ -671,9 +674,11 @@ namespace KanchokuWS
 
             shiftPlaneStrokeTables1 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition1", x.ToString())).ToList();
             shiftPlaneStrokeTables2 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition2", x.ToString())).ToList();
+            shiftPlaneStrokeTables3 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition3", x.ToString())).ToList();
 
             StrokeTables1.Clear();
             StrokeTables2.Clear();
+            StrokeTables3.Clear();
 
             if (Settings.DefGuide1._notEmpty()) {
                 makeVkbStrokeTable1("reorderByFirstStrokePosition1", Settings.DefGuide1);
@@ -681,11 +686,17 @@ namespace KanchokuWS
             if (Settings.DefGuide2._notEmpty()) {
                 makeVkbStrokeTable2("reorderByFirstStrokePosition2", Settings.DefGuide2);
             }
+            if (Settings.DefGuide3._notEmpty()) {
+                makeVkbStrokeTable3("reorderByFirstStrokePosition3", Settings.DefGuide3);
+            }
             if (Settings.StrokeHelpExtraCharsPosition1) {
                 makeVkbStrokeTable1("makeExtraCharsStrokePositionTable1", null);
             }
             if (Settings.StrokeHelpExtraCharsPosition2) {
                 makeVkbStrokeTable1("makeExtraCharsStrokePositionTable2", null);
+            }
+            if (Settings.StrokeHelpExtraCharsPosition3) {
+                makeVkbStrokeTable1("makeExtraCharsStrokePositionTable3", null);
             }
 
             if (Helper.FileExists(filePath)) {
@@ -712,6 +723,8 @@ namespace KanchokuWS
                             makeVkbStrokeTable1($"makeStrokePosition", null);
                             // 副テーブルの単打用
                             makeVkbStrokeTable2($"makeStrokePosition2", null);
+                            // 第3テーブルの単打用
+                            makeVkbStrokeTable3($"makeStrokePosition3", null);
                         } else if (cmd == "shiftkeycharsposition") {
                             //makeVkbStrokeTable1("makeShiftStrokePosition1", null, false, false, true);
                             makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", "1", false, false, true);
@@ -757,6 +770,11 @@ namespace KanchokuWS
         private void makeVkbStrokeTable2(string cmd, string faces, bool drawFaces = false, bool kana = false, bool shiftPlane = false)
         {
             addStrokeTableDef(StrokeTables2, cmd, faces, drawFaces, kana, shiftPlane);
+        }
+
+        private void makeVkbStrokeTable3(string cmd, string faces, bool drawFaces = false, bool kana = false, bool shiftPlane = false)
+        {
+            addStrokeTableDef(StrokeTables3, cmd, faces, drawFaces, kana, shiftPlane);
         }
 
         private void addStrokeTableDef(List<StrokeTableDef> tblDefList, string cmd, string faces, bool drawFaces = false, bool kana = false, bool shiftPlane = false)
@@ -847,8 +865,9 @@ namespace KanchokuWS
                 // 第1打鍵待ちである
                 StrokeTableDef tblDef = null;
                 // 主コードテーブルか
-                bool isPrimary = frmMain.DecoderOutput.IsCurrentStrokeTablePrimary();
-                if ((isPrimary && StrokeTables1._isEmpty()) || (!isPrimary && StrokeTables2._isEmpty())) {
+                //bool isPrimary = frmMain.DecoderOutput.IsCurrentStrokeTablePrimary();
+                int tableNum = frmMain.DecoderOutput.strokeTableNum;
+                if (tableNum < 1 || tableNum > 3 || (tableNum == 1 && StrokeTables1._isEmpty()) || (tableNum == 2 && StrokeTables2._isEmpty()) || (tableNum == 3 && StrokeTables3._isEmpty())) {
                     tblDef = null;
                 } else {
                     string deckeysStr = DecKeysForNextTableStrokeHelp._notEmpty() ? DecKeysForNextTableStrokeHelp.Select(x => x.ToString())._join("\t") : null;
@@ -857,22 +876,27 @@ namespace KanchokuWS
                     if (nextTable != null) {
                         tblDef = new StrokeTableDef() { CharOrKeys = nextTable };
                     }
-                    else if (isPrimary) {
+                    else if (tableNum == 1) {
                         string[] shiftPlaneTbl = StrokeHelpShiftPlane > 0 ? shiftPlaneStrokeTables1._getNth(StrokeHelpShiftPlane) : null;
                         logger.DebugH(() => $"shiftPlaneStrokeTables[{StrokeHelpShiftPlane}]={shiftPlaneTbl._join(":")}");
                         tblDef = shiftPlaneTbl != null ? new StrokeTableDef() { CharOrKeys = shiftPlaneTbl, ShiftPlane = true }
                                : StrokeTables1[selectedTable1._lowLimit(0) % StrokeTables1.Count];
-                    } else {
+                    } else if (tableNum == 2) {
                         string[] shiftPlaneTbl = StrokeHelpShiftPlane > 0 ? shiftPlaneStrokeTables2._getNth(StrokeHelpShiftPlane) : null;
                         logger.DebugH(() => $"shiftPlaneStrokeTables[{StrokeHelpShiftPlane}]={shiftPlaneTbl._join(":")}");
                         tblDef = shiftPlaneTbl != null ? new StrokeTableDef() { CharOrKeys = shiftPlaneTbl, ShiftPlane = true }
                                : StrokeTables2[selectedTable2._lowLimit(0) % StrokeTables2.Count];
+                    } else if (tableNum == 3) {
+                        string[] shiftPlaneTbl = StrokeHelpShiftPlane > 0 ? shiftPlaneStrokeTables3._getNth(StrokeHelpShiftPlane) : null;
+                        logger.DebugH(() => $"shiftPlaneStrokeTables[{StrokeHelpShiftPlane}]={shiftPlaneTbl._join(":")}");
+                        tblDef = shiftPlaneTbl != null ? new StrokeTableDef() { CharOrKeys = shiftPlaneTbl, ShiftPlane = true }
+                               : StrokeTables3[selectedTable3._lowLimit(0) % StrokeTables3.Count];
                     }
                 }
                 if (tblDef == null) {
                     drawNormalVkb(initialVkbChars, true);
                 } else if (tblDef.Faces == null) {
-                    drawNormalVkb(tblDef.CharOrKeys, isPrimary && !tblDef.ShiftPlane, lastDeckey);
+                    drawNormalVkb(tblDef.CharOrKeys, tableNum == 1 && !tblDef.ShiftPlane, lastDeckey);
                 } else {
                     drawVkb5x10Table(tblDef);
                 }
@@ -949,14 +973,20 @@ namespace KanchokuWS
         /// <summary> 第1打鍵待ち受け時に表示するストロークテーブルの切り替え </summary>
         public void RotateStrokeTable(int delta = 1)
         {
-            logger.DebugH(() => $"CALLED: delta={delta}, IsCurrentStrokeTablePrimary()={frmMain.DecoderOutput.IsCurrentStrokeTablePrimary()}, StrokeTables1.Count={StrokeTables1?.Count},StrokeTables2.Count={StrokeTables2?.Count} ");
-            if (frmMain.DecoderOutput.IsCurrentStrokeTablePrimary() && StrokeTables1._notEmpty()) {
+            logger.DebugH(() =>
+                $"CALLED: delta={delta}, IsCurrentStrokeTablePrimary()={frmMain.DecoderOutput.IsCurrentStrokeTablePrimary()}, " +
+                $"StrokeTables1.Count={StrokeTables1?.Count},StrokeTables2.Count={StrokeTables2?.Count},StrokeTables3.Count={StrokeTables3?.Count}");
+            if (frmMain.DecoderOutput.strokeTableNum == 1 && StrokeTables1._notEmpty()) {
                 if (delta < 0) delta = StrokeTables1.Count - ((-delta) % StrokeTables1.Count);
                 selectedTable1 = (selectedTable1 + delta) % StrokeTables1.Count;
                 DrawVirtualKeyboardChars();
-            } else if (!frmMain.DecoderOutput.IsCurrentStrokeTablePrimary() && StrokeTables2._notEmpty()) {
+            } else if (frmMain.DecoderOutput.strokeTableNum == 2 && StrokeTables2._notEmpty()) {
                 if (delta < 0) delta = StrokeTables2.Count - ((-delta) % StrokeTables2.Count);
                 selectedTable2 = (selectedTable2 + delta) % StrokeTables2.Count;
+                DrawVirtualKeyboardChars();
+            } else if (frmMain.DecoderOutput.strokeTableNum == 3 && StrokeTables3._notEmpty()) {
+                if (delta < 0) delta = StrokeTables3.Count - ((-delta) % StrokeTables3.Count);
+                selectedTable3 = (selectedTable3 + delta) % StrokeTables3.Count;
                 DrawVirtualKeyboardChars();
             }
         }
@@ -1553,7 +1583,8 @@ namespace KanchokuWS
                     var color = Color.FromName(name);
                     if (!color.IsEmpty) return color;
                 }
-                return decoderOutput.IsCurrentStrokeTablePrimary() && !frmMain.IsSandSShiftedOneshot ? SystemColors.Window : Color.FromName(Settings.BgColorForSecondaryTable);
+                return decoderOutput.IsCurrentStrokeTablePrimary() && !frmMain.IsSandSShiftedOneshot ? SystemColors.Window
+                    : Settings.BgColorForSecondaryTable._notEmpty() ? Color.FromName(Settings.BgColorForSecondaryTable) : SystemColors.Window;
             }
 
             drawCenterChars(g, makeSpecifiedColor());

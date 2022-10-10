@@ -29,6 +29,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_KEY_VALUE(rootDir);
     SET_FILE_PATH(tableFile);
     SET_FILE_PATH(tableFile2);
+    SET_FILE_PATH(tableFile3);
     SET_FILE_PATH(charsDefFile);
     SET_FILE_PATH(easyCharsFile);
     SET_FILE_PATH(kanjiYomiFile);

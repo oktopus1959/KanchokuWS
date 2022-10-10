@@ -272,10 +272,12 @@ namespace KanchokuWS
         public const int TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY = TOGGLE_ROMAN_STROKE_GUIDE_DECKEY + 1;      // ひらがな読みによる打鍵ガイドのトグル
 
         public const int EXCHANGE_CODE_TABLE_DECKEY = TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY + 1;  // 漢直コード系(通常コード系と代替コード系)の入れ替え
-        public const int SELECT_CODE_TABLE1_DECKEY = EXCHANGE_CODE_TABLE_DECKEY + 1;            // テーブル1を選択
+        public const int EXCHANGE_CODE_TABLE2_DECKEY = EXCHANGE_CODE_TABLE_DECKEY + 1;          // 漢直コード系(通常コード系と代替コード系)の入れ替え; 3が選択されていたら2に切り替える
+        public const int SELECT_CODE_TABLE1_DECKEY = EXCHANGE_CODE_TABLE2_DECKEY + 1;           // テーブル1を選択
         public const int SELECT_CODE_TABLE2_DECKEY = SELECT_CODE_TABLE1_DECKEY + 1;             // テーブル2を選択
+        public const int SELECT_CODE_TABLE3_DECKEY = SELECT_CODE_TABLE2_DECKEY + 1;             // テーブル3を選択
 
-        public const int LEFT_SHIFT_BLOCKER_DECKEY = SELECT_CODE_TABLE2_DECKEY + 1;         // ブロッカーを左シフトする
+        public const int LEFT_SHIFT_BLOCKER_DECKEY = SELECT_CODE_TABLE3_DECKEY + 1;         // ブロッカーを左シフトする
         public const int RIGHT_SHIFT_BLOCKER_DECKEY = LEFT_SHIFT_BLOCKER_DECKEY + 1;        // ブロッカーを右シフトする
 
         public const int LEFT_SHIFT_MAZE_START_POS_DECKEY = RIGHT_SHIFT_BLOCKER_DECKEY + 1;         // 交ぜ書き開始位置を左シフトする

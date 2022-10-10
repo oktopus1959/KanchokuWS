@@ -186,7 +186,11 @@ namespace VkbTableMaker {
             for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
                 table[i] = 0;
             }
-            StrokeTableNode* node = tableId == 1 ? StrokeTableNode::RootStrokeNode1.get() : tableId == 2 ? StrokeTableNode::RootStrokeNode2.get() : ROOT_STROKE_NODE;
+            StrokeTableNode* node =
+                tableId == 1 ? StrokeTableNode::RootStrokeNode1.get()
+                : tableId == 2 ? StrokeTableNode::RootStrokeNode2.get()
+                : tableId == 3 ? StrokeTableNode::RootStrokeNode3.get()
+                : ROOT_STROKE_NODE;
             if (node) reorderByFirstStrokePosition(table, node, orderedChars, charSet, STROKE_SPACE_DECKEY, 0);
         }
     }
@@ -272,6 +276,11 @@ namespace VkbTableMaker {
         MakeExtraCharsStrokePositionTable(StrokeTableNode::RootStrokeNode2.get(), faces);
     }
 
+    // 第3テーブル用の外字を集めたストローク表を作成する
+    void MakeExtraCharsStrokePositionTable3(wchar_t* faces) {
+        MakeExtraCharsStrokePositionTable(StrokeTableNode::RootStrokeNode3.get(), faces);
+    }
+
     // 主テーブル用のキー文字を集めたストローク表を作成する
     void makeKeyCharsStrokePositionTable1(wchar_t* faces, size_t shiftPlane) {
         makeKeyCharsStrokePositionTable(StrokeTableNode::RootStrokeNode1.get(), faces, shiftPlane * PLANE_DECKEY_NUM, NORMAL_DECKEY_NUM);
@@ -280,6 +289,11 @@ namespace VkbTableMaker {
     // 副テーブル用のキー文字を集めたストローク表を作成する
     void makeKeyCharsStrokePositionTable2(wchar_t* faces, size_t shiftPlane) {
         makeKeyCharsStrokePositionTable(StrokeTableNode::RootStrokeNode2.get(), faces, shiftPlane * PLANE_DECKEY_NUM, NORMAL_DECKEY_NUM);
+    }
+
+    // 第3テーブル用のキー文字を集めたストローク表を作成する
+    void makeKeyCharsStrokePositionTable3(wchar_t* faces, size_t shiftPlane) {
+        makeKeyCharsStrokePositionTable(StrokeTableNode::RootStrokeNode3.get(), faces, shiftPlane * PLANE_DECKEY_NUM, NORMAL_DECKEY_NUM);
     }
 
     // 主テーブルに対して指定されたシフト面の単打ストローク表を作成する
@@ -294,6 +308,12 @@ namespace VkbTableMaker {
         makeKeyCharsStrokePositionTable2(faces, shiftPlane);
     }
 
+    // 第3テーブルに対して指定されたシフト面の単打ストローク表を作成する
+    void MakeShiftPlaneKeyCharsStrokePositionTable3(wchar_t* faces, size_t shiftPlane) {
+        LOG_INFO(_T("CALLED: shiftPlane=%d"), shiftPlane);
+        makeKeyCharsStrokePositionTable3(faces, shiftPlane);
+    }
+
     // 通常面の単打ストローク表を作成する
     void MakeKeyCharsStrokePositionTable(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
@@ -304,6 +324,12 @@ namespace VkbTableMaker {
     void MakeKeyCharsStrokePositionTable2(wchar_t* faces) {
         LOG_INFO(_T("CALLED"));
         makeKeyCharsStrokePositionTable2(faces, 0);
+    }
+
+    // 第3テーブルの通常面の単打ストローク表を作成する
+    void MakeKeyCharsStrokePositionTable3(wchar_t* faces) {
+        LOG_INFO(_T("CALLED"));
+        makeKeyCharsStrokePositionTable3(faces, 0);
     }
 
     // 同時打鍵面通常キー文字を集めたストローク表を作成する
@@ -534,6 +560,7 @@ namespace VkbTableMaker {
     void SaveDumpTable() {
         saveDebugTable(StrokeTableNode::RootStrokeNode1.get(), _T("tmp/dump-table1.txt"));
         saveDebugTable(StrokeTableNode::RootStrokeNode2.get(), _T("tmp/dump-table2.txt"));
+        saveDebugTable(StrokeTableNode::RootStrokeNode3.get(), _T("tmp/dump-table3.txt"));
     }
 
 }

@@ -490,13 +490,22 @@ int StrokeTableNode::UseStrokeTable2() {
     return GetCurrentStrokeTableNum();
 }
 
+// 第3ストローク木の使用
+int StrokeTableNode::UseStrokeTable3() {
+    if (RootStrokeNode3.get() != nullptr) RootStrokeNode = RootStrokeNode3.get();
+    return GetCurrentStrokeTableNum();
+}
+
 // 現在のストローク木の番号
 int StrokeTableNode::GetCurrentStrokeTableNum() { 
-    return RootStrokeNode == RootStrokeNode2.get() ? 2 : 1;
+    return RootStrokeNode == RootStrokeNode3.get() ? 3
+        : RootStrokeNode == RootStrokeNode2.get() ? 2
+        : 1;
 }
 
 std::unique_ptr<StrokeTableNode> StrokeTableNode::RootStrokeNode1;
 std::unique_ptr<StrokeTableNode> StrokeTableNode::RootStrokeNode2;
+std::unique_ptr<StrokeTableNode> StrokeTableNode::RootStrokeNode3;
 StrokeTableNode* StrokeTableNode::RootStrokeNode;
 
 // -------------------------------------------------------------------

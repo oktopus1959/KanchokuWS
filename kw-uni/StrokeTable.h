@@ -134,6 +134,9 @@ public:
     // ストローク木2を構築する
     static StrokeTableNode* CreateStrokeTree2(const wstring&, std::vector<wstring>&);
 
+    // ストローク木3を構築する
+    static StrokeTableNode* CreateStrokeTree3(const wstring&, std::vector<wstring>&);
+
     // 機能の再割り当て
     static void AssignFucntion(const wstring& keys, const wstring& name);
 
@@ -149,11 +152,15 @@ public:
     // 副ストローク木を使う
     static int UseStrokeTable2();
 
+    // 第3ストローク木を使う
+    static int UseStrokeTable3();
+
     // 現在のストローク木の番号
     static int GetCurrentStrokeTableNum();
 
     static std::unique_ptr<StrokeTableNode> RootStrokeNode1;
     static std::unique_ptr<StrokeTableNode> RootStrokeNode2;
+    static std::unique_ptr<StrokeTableNode> RootStrokeNode3;
     static StrokeTableNode* RootStrokeNode;
 };
 

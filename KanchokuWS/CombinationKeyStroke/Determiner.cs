@@ -172,7 +172,8 @@ namespace KanchokuWS.CombinationKeyStroke
         /// </summary>
         /// <param name="tableFile">主テーブルファイル名</param>
         /// <param name="tableFile2">副テーブルファイル名</param>
-        public void Initialize(string tableFile, string tableFile2, bool bTest = false)
+        /// <param name="tableFile3">第3テーブルファイル名</param>
+        public void Initialize(string tableFile, string tableFile2, string tableFile3, bool bTest = false)
         {
             Settings.ClearSpecificDecoderSettings();
             KeyCombinationPool.Initialize();
@@ -182,6 +183,10 @@ namespace KanchokuWS.CombinationKeyStroke
 
             if (tableFile2._notEmpty()) {
                 new TableFileParser().ParseTableFile(tableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.SingletonK2, KeyCombinationPool.SingletonA2, false, bTest);
+            }
+
+            if (tableFile3._notEmpty()) {
+                new TableFileParser().ParseTableFile(tableFile3, "tmp/tableFile3.tbl", KeyCombinationPool.SingletonK3, KeyCombinationPool.SingletonA3, false, bTest);
             }
         }
 

@@ -137,6 +137,7 @@ namespace KanchokuWS
         public const string TableFileDir = "tables";
         public static string TableFile { get; private set; }
         public static string TableFile2 { get; private set; }
+        public static string TableFile3 { get; private set; }
         public static string HistoryFile { get; private set; }
         //public static string HistoryUsedFile {get; private set; }
         //public static string HistoryExcludeFile {get; private set; }
@@ -401,11 +402,17 @@ namespace KanchokuWS
         /// <summary>配字案内2</summary>
         public static string DefGuide2 { get; set; }
 
+        /// <summary>配字案内3</summary>
+        public static string DefGuide3 { get; set; }
+
         /// <summary>デフォルトのストロークヘルプ1</summary>
         public static bool StrokeHelpExtraCharsPosition1 { get; set; }
 
         /// <summary>デフォルトのストロークヘルプ2</summary>
         public static bool StrokeHelpExtraCharsPosition2 { get; set; }
+
+        /// <summary>デフォルトのストロークヘルプ3</summary>
+        public static bool StrokeHelpExtraCharsPosition3 { get; set; }
 
         //-------------------------------------------------------------------------------------
         // Ctrlキー
@@ -1195,6 +1202,7 @@ namespace KanchokuWS
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
             TableFile = addDecoderSetting("tableFile", $"{TableFileDir}\\漢直系\\tutr.tbl");
             TableFile2 = addDecoderSetting("tableFile2", "");
+            TableFile3 = addDecoderSetting("tableFile3", "");
             KanjiYomiFile = addDecoderSetting("kanjiYomiFile", "kanji-yomi.txt");
             //addDecoderSetting("strokeHelpFile");
             HistoryFile = addDecoderSetting("historyFile", "kwhist.*.txt");

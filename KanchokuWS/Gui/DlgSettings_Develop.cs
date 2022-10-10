@@ -132,13 +132,13 @@ namespace KanchokuWS.Gui
             label_testCount.Text = msg;
         }
 
-        /// <summary>ファイル出力</summary>
+        /// <summary>ファイル出力(OBSOLETE)</summary>
         private void button_developSaveDebugTableFile_Click(object sender, EventArgs e)
         {
-            frmMain?.ExecCmdDecoder("SaveDumpTable", null);    // tmp/dump-table[12].txt (Decoder が実際に保持しているテーブルの内容をダンプしたもの)
+            //frmMain?.ExecCmdDecoder("SaveDumpTable", null);    // tmp/dump-table[13].txt (Decoder が実際に保持しているテーブルの内容をダンプしたもの)
 
-            KeyCombinationPool.SingletonK1?.DebugPrintFile("tmp/key-combination1.txt");
-            KeyCombinationPool.SingletonK2?.DebugPrintFile("tmp/key-combination2.txt");
+            //KeyCombinationPool.SingletonK1?.DebugPrintFile("tmp/key-combination1.txt");
+            //KeyCombinationPool.SingletonK2?.DebugPrintFile("tmp/key-combination2.txt");
 
             //if (Settings.TableFile._notEmpty()) new TableFileParser().ParseTableFile(Settings.TableFile, "tmp/tableFile1.tbl", KeyCombinationPool.Singleton1, true, true, false);
             //if (Settings.TableFile2._notEmpty()) new TableFileParser().ParseTableFile(Settings.TableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.Singleton2, false, true, false);

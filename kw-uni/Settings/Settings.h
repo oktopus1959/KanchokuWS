@@ -8,6 +8,7 @@ struct Settings {
     tstring rootDir;            // ルートフォルダ
     tstring tableFile;          // ストロークテーブル
     tstring tableFile2;         // ストロークテーブル2
+    tstring tableFile3;         // ストロークテーブル3
     tstring charsDefFile;       // Deckey から文字への変換
     tstring easyCharsFile;      // 簡易打鍵文字ファイル
     tstring kanjiYomiFile;      // 漢字読みファイル

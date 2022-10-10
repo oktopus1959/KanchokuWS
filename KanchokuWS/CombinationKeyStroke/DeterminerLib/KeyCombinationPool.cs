@@ -24,6 +24,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>副テーブル・英数用のCombinaitonPool</summary>        
         public static KeyCombinationPool SingletonA2 = new KeyCombinationPool() { bEisuMode = true };
 
+        /// <summary>第3テーブル用のCombinaitonPool</summary>        
+        public static KeyCombinationPool SingletonK3 = new KeyCombinationPool() { bEisuMode = false };
+
+        /// <summary>第3テーブル・英数用のCombinaitonPool</summary>        
+        public static KeyCombinationPool SingletonA3 = new KeyCombinationPool() { bEisuMode = true };
+
         private static KeyCombinationPool currentPoolK = SingletonK1;
 
         private static KeyCombinationPool currentPoolA = SingletonA1;
@@ -33,7 +39,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         private static string detectCurrentPool()
         {
-            return CurrentPool == SingletonK1 ? "K1" : CurrentPool == SingletonK2 ? "K2" : CurrentPool == SingletonA1 ? "A1" : "A2";
+            return CurrentPool == SingletonK1 ? "K1"
+                : CurrentPool == SingletonK2 ? "K2"
+                : CurrentPool == SingletonK3 ? "K3"
+                : CurrentPool == SingletonA1 ? "A1"
+                : CurrentPool == SingletonA2 ? "A2"
+                : "A3";
         }
 
         public static void Initialize()
@@ -43,6 +54,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             SingletonA1.Clear();
             SingletonK2.Clear();
             SingletonA2.Clear();
+            SingletonK3.Clear();
+            SingletonA3.Clear();
             currentPoolK = SingletonK1;
             currentPoolA = SingletonA1;
             CurrentPool = currentPoolA;
@@ -50,12 +63,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public static void ChangeCurrentPoolBySelectedTable(int tableNum, bool bDecoderOn)
         {
-            if (tableNum == 1) {
-                currentPoolK = SingletonK1;
-                currentPoolA = SingletonA1;
-            } else {
+            if (tableNum == 3) {
+                currentPoolK = SingletonK3;
+                currentPoolA = SingletonA3;
+            } else if (tableNum == 2) {
                 currentPoolK = SingletonK2;
                 currentPoolA = SingletonA2;
+            } else  {
+                currentPoolK = SingletonK1;
+                currentPoolA = SingletonA1;
             }
             ChangeCurrentPoolByDecoderMode(bDecoderOn);
             logger.DebugH(() => $"CurrentPool={detectCurrentPool()}, Enabled={CurrentPool.Enabled}");
