@@ -1432,6 +1432,7 @@ namespace KanchokuWS.Gui
             textBox_histKanjiWordMinLength.Text = $"{Settings.HistKanjiWordMinLength}";
             textBox_histKanjiWordMinLengthEx.Text = $"{Settings.HistKanjiWordMinLengthEx}";
             textBox_histKatakanaWordMinLength.Text = $"{Settings.HistKatakanaWordMinLength}";
+            textBox_histMaxLength.Text = $"{Settings.HistMaxLength}";
             textBox_histKanjiKeyLen.Text = $"{Settings.HistKanjiKeyLength}";
             textBox_histKatakanaKeyLen.Text = $"{Settings.HistKatakanaKeyLength}";
             textBox_histHiraganaKeyLen.Text = $"{Settings.HistHiraganaKeyLength}";
@@ -1472,6 +1473,7 @@ namespace KanchokuWS.Gui
             checkerHistory.Add(textBox_histKanjiWordMinLength);
             checkerHistory.Add(textBox_histKanjiWordMinLengthEx);
             checkerHistory.Add(textBox_histKatakanaWordMinLength);
+            checkerHistory.Add(textBox_histMaxLength);
             checkerHistory.Add(textBox_histKanjiKeyLen);
             checkerHistory.Add(textBox_histKatakanaKeyLen);
             checkerHistory.Add(textBox_histHiraganaKeyLen);
@@ -1515,9 +1517,10 @@ namespace KanchokuWS.Gui
             logger.InfoH("ENTER");
             frmMain?.DeactivateDecoderWithModifiersOff();
 
-            Settings.SetUserIni("histKatakanaWordMinLength", textBox_histKatakanaWordMinLength.Text.Trim());
             Settings.SetUserIni("histKanjiWordMinLength", textBox_histKanjiWordMinLength.Text.Trim());
             Settings.SetUserIni("histKanjiWordMinLengthEx", textBox_histKanjiWordMinLengthEx.Text.Trim());
+            Settings.SetUserIni("histKatakanaWordMinLength", textBox_histKatakanaWordMinLength.Text.Trim());
+            Settings.SetUserIni("histMaxLength", textBox_histMaxLength.Text.Trim());
             Settings.SetUserIni("histHiraganaKeyLength", textBox_histHiraganaKeyLen.Text.Trim());
             Settings.SetUserIni("histHorizontalCandMax", textBox_histHorizontalCandMax.Text.Trim());
             Settings.SetUserIni("histKatakanaKeyLength", textBox_histKatakanaKeyLen.Text.Trim());

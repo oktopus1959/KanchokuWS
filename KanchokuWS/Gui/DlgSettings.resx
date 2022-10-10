@@ -120,9 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -622,33 +619,6 @@ Ctrl-Shift修飾されたキーで、ブロッカーの解除となります。
 この数を大きくすると、履歴の先頭に不要な候補が残りやすくなるので、
 適当に調整してください。</value>
   </data>
-  <data name="label91.ToolTip" xml:space="preserve">
-    <value>交ぜ書きブロッカーとは、ミニバッファ(直前の出力内容)から交ぜ書き変換ための
-読みを取得する際に、出力の末尾から見ていって、「ここで取得をストップする」と
-いうフラグのことです。
-
-交ぜ書き変換では通常のブロッカーの他に交ぜ書き専用のブロッカーも用います。
-(通常のブロッカーは「機能キー割当」&gt;「ブロッカー設定/解除」を使って設定/解除
-を行えます)
-
-交ぜ書きブロッカーは、拡張修飾キーによるコマンドの leftShiftBlocker および
-rightShiftBlocker を呼び出すことで、左右に移動することができます。
-(拡張修飾キーについては「その他設定」&gt;「拡張修飾キー」を参照してください)
-
-たとえば、「女性のら致が」を変換すると「女性野良致が」になったりしますが、
-変換前に leftShiftBlocker を3回繰り返すと「女性の|ら致が」となるので、そこで
-変換すれば「女性の拉致が」になります。
-
-また、変換後の交ぜ書きブロッカーに対しても、
-「だいひょうしていあんする」⇒変換⇒「代表して|いあんする」
-　　⇒ leftShiftBlocker ⇒「代表し|ていあんする」⇒変換⇒「代表し|提案する」
-のような操作が行えます。
-
-交ぜ書き変換を実行すると、通常は変換形＋(活用)語尾の後ろにブロッカーが
-置かれますが、設定により、出力文字列の末尾に置くようにすることもできます。
-詳細については、「交ぜ書き変換」-「変換形＋活用語尾の後にブロッカーを置く」
-のツールチップを参照してください。</value>
-  </data>
   <data name="checkBox_mazeNoIfxConnectAny.ToolTip" xml:space="preserve">
     <value>名詞やサ変語幹に対して任意の語尾を許可します。
 
@@ -758,6 +728,33 @@ OFFにすると、変換文字列全体の末尾にブロッカーを置きま�
 
 なお、履歴候補を縦列鍵盤形式で表示する機能もあります。
 こちらは「機能キー割当」のところで設定してください。</value>
+  </data>
+  <data name="label91.ToolTip" xml:space="preserve">
+    <value>交ぜ書きブロッカーとは、ミニバッファ(直前の出力内容)から交ぜ書き変換ための
+読みを取得する際に、出力の末尾から見ていって、「ここで取得をストップする」と
+いうフラグのことです。
+
+交ぜ書き変換では通常のブロッカーの他に交ぜ書き専用のブロッカーも用います。
+(通常のブロッカーは「機能キー割当」&gt;「ブロッカー設定/解除」を使って設定/解除
+を行えます)
+
+交ぜ書きブロッカーは、拡張修飾キーによるコマンドの leftShiftBlocker および
+rightShiftBlocker を呼び出すことで、左右に移動することができます。
+(拡張修飾キーについては「その他設定」&gt;「拡張修飾キー」を参照してください)
+
+たとえば、「女性のら致が」を変換すると「女性野良致が」になったりしますが、
+変換前に leftShiftBlocker を3回繰り返すと「女性の|ら致が」となるので、そこで
+変換すれば「女性の拉致が」になります。
+
+また、変換後の交ぜ書きブロッカーに対しても、
+「だいひょうしていあんする」⇒変換⇒「代表して|いあんする」
+　　⇒ leftShiftBlocker ⇒「代表し|ていあんする」⇒変換⇒「代表し|提案する」
+のような操作が行えます。
+
+交ぜ書き変換を実行すると、通常は変換形＋(活用)語尾の後ろにブロッカーが
+置かれますが、設定により、出力文字列の末尾に置くようにすることもできます。
+詳細については、「交ぜ書き変換」-「変換形＋活用語尾の後にブロッカーを置く」
+のツールチップを参照してください。</value>
   </data>
   <data name="checkBox_mazeRightShiftYomiPos.ToolTip" xml:space="preserve">
     <value>ONにすると、「&gt;」で交ぜ書き読みの開始位置を右に移動します。

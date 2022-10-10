@@ -15,7 +15,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.0RC1";
+        public static string Version => "1.2.0";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -474,7 +474,7 @@ namespace KanchokuWS
         //------------------------------------------------------------------------------
         // 履歴
         //------------------------------------------------------------------------------
-        public static int HistMaxLength { get; private set; } = 20;
+        public static int HistMaxLength { get; private set; } = 10;
         public static int HistKatakanaWordMinLength { get; private set; } = 0;
         public static int HistKanjiWordMinLength { get; private set; } = 0;
         public static int HistKanjiWordMinLengthEx { get; private set; } = 0;
@@ -1213,6 +1213,7 @@ namespace KanchokuWS
 
             BackFileRotationGeneration = addDecoderSetting("backFileRotationGeneration", 3, 1); // 辞書ファイルの保存世代数
 
+            HistMaxLength = addDecoderSetting("histMaxLength", 10, 4);                          // 履歴登録対象となる文字列の最大長
             HistKatakanaWordMinLength = addDecoderSetting("histKatakanaWordMinLength", 4, 3);   // 履歴登録対象となるカタカナ文字列の最小長
             HistKanjiWordMinLength = addDecoderSetting("histKanjiWordMinLength", 4, 3);         // 履歴登録対象となる漢字文字列の最小長
             HistKanjiWordMinLengthEx = addDecoderSetting("histKanjiWordMinLengthEx", 2, 2);     // 履歴登録対象となる難打鍵文字を含む漢字文字列の最小長

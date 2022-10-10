@@ -23,7 +23,7 @@ struct Settings {
 
     int backFileRotationGeneration;         // 辞書ファイル保存世代数
 
-    size_t histMaxLength = 50;              // 履歴文字列の最大長
+    size_t histMaxLength = 10;              // 登録可能な履歴文字列の最大長
 
     size_t histKanjiWordMinLength = 4;      // 履歴登録対象となる漢字文字列の最小長
     size_t histKatakanaWordMinLength = 4;   // 履歴登録対象となるカタカナ文字列の最小長

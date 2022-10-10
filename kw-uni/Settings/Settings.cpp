@@ -45,6 +45,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
 
     SET_INT_VALUE(backFileRotationGeneration);
 
+    SET_INT_VALUE(histMaxLength);
     SET_INT_VALUE(histKanjiWordMinLength);
     SET_INT_VALUE(histKanjiWordMinLengthEx);
     SET_INT_VALUE(histKatakanaWordMinLength);
