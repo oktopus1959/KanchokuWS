@@ -1164,8 +1164,10 @@ namespace KanchokuWS
             IsDecoderActive = true;
             if (decoderOutput.strokeTableNum == 3) {
                 ExecCmdDecoder("useCodeTable1", null);  // コードテーブル1に入れ替え
+                CombinationKeyStroke.Determiner.Singleton.SelectKanchokuKeyCombinationPool(decoderOutput.strokeTableNum, IsDecoderActive);  // KeyCombinationPoolの入れ替え
+            } else {
+                CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolByDecoderMode(IsDecoderActive);  // 前回の漢直用Poolに切り替え
             }
-            CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolByDecoderMode(IsDecoderActive);
             try {
                 prevDeckey = -1;
                 if (frmSplash != null) closeSplash();
