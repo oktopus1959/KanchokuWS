@@ -2065,8 +2065,10 @@ namespace KanchokuWS
             // 第2打鍵待ちの場合は、それをキャンセルする
             if (IsDecoderActive && decoderOutput.GetStrokeCount() > 0 && Settings.CancelSecondStrokeMillisec > 0) {
                 if (dtWaitSecondStroke._isValid() && dtWaitSecondStroke <= DateTime.Now.AddMilliseconds(-Settings.CancelSecondStrokeMillisec)) {
-                    dtWaitSecondStroke = DateTime.MaxValue;
-                    sendClearStrokeToDecoder();
+                    if (!CombinationKeyStroke.Determiner.Singleton.IsWaitingSecondStrokeLocked) {
+                        dtWaitSecondStroke = DateTime.MaxValue;
+                        sendClearStrokeToDecoder();
+                    }
                 }
             }
 

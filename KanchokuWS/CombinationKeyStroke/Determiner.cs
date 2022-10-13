@@ -122,7 +122,7 @@ namespace KanchokuWS.CombinationKeyStroke
         private DateTime preRewriteDt = DateTime.MinValue;
 
         // 前キー
-        private int prevDownDecKey = -1;
+        //private int prevDownDecKey = -1;
 
         private void checkPreRewriteTime(int dk)
         {
@@ -242,6 +242,12 @@ namespace KanchokuWS.CombinationKeyStroke
             }
         }
 
+        // 直前のキー(オートリピートの判定に用いる)
+        int lastRepeatedDecKey = -1;
+
+        /// <summary>第2打鍵待ちでロックされている(勝手に第2打鍵待ちをキャンセルしない)</summary>
+        public bool IsWaitingSecondStrokeLocked { get; private set; } = false;
+
         /// <summary>
         /// キーの押下<br/>押下されたキーをキューに積み、可能であれば同時打鍵判定も行う
         /// </summary>
@@ -258,10 +264,10 @@ namespace KanchokuWS.CombinationKeyStroke
 
         public KeyHandlerResult keyDown(int decKey, DateTime dt, bool bDecoderOn, Action<List<int>> handleComboKeyRepeat)
         {
-            logger.DebugH(() => $"\nENTER: decKey={decKey}");
+            logger.DebugH(() => $"\nENTER: decKey={decKey}, lastRepeatedDecKey={lastRepeatedDecKey}");
 
             checkPreRewriteTime(decKey);
-            prevDownDecKey = decKey;
+            //prevDownDecKey = decKey;
             DateTime prevShiftUpDt = prevComboShiftKeyUpDt;
             prevComboShiftKeyUpDt = DateTime.MinValue;      // 何か押されたらクリアしておく
             if (KeyCombinationPool.IsComboShift(decKey)) prevShiftUpDt = DateTime.MinValue;
@@ -270,102 +276,113 @@ namespace KanchokuWS.CombinationKeyStroke
             bool bUnconditional = false;
 
             try {
+                bool bWaitSecondStroke = frmMain != null && !frmMain.IsDecoderWaitingFirstStroke();
+                if (!bWaitSecondStroke) IsWaitingSecondStrokeLocked = false;
+
                 var stroke = new Stroke(decKey, bDecoderOn, dt);
                 var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
-                if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
-                    // 終端、かつキーリピートが可能なキーだった(BacSpaceとか)ので、それを返す
-                    logger.DebugH("terminal and repeatable key");
-                    result = Helper.MakeList(decKey);
-                } else {
-                    logger.DebugH(() => stroke.DebugString());
 
-                    // キーリピートのチェック
-                    if (strokeList.DetectKeyRepeat(stroke)) {
-                        // キーリピートが発生した場合
-                        // キーリピート時は、リピートの終わりに1回だけ KeyUp が発生するので、そこで strokeListのUplistがクリアされる
-                        logger.DebugH("key repeatable detected");
-                        if (!bDecoderOn) {
-                            // DecoderがOFFのときはキーリピート扱いとする
-                            logger.DebugH("Decoder OFF, so repeat key");
-                            result = Helper.MakeList(decKey);
-                        } else if ((stroke.IsComboShift || strokeList.Count == 2 && strokeList.First.IsComboShift) && handleComboKeyRepeat != null) {
-                            // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出すだけで、キーリピートは行わない(つまりシフト扱い)
-                            List<int> list = new List<int>();
-                            if (strokeList.Count == 1) {
-                                logger.DebugH(() => $"Call ComboKeyRepeat Handler: {stroke.ComboShiftDecKey}");
-                                list.Add(stroke.ComboShiftDecKey);
-                            } else if (strokeList.Count == 2) {
-                                var keyCombo = strokeList.GetKeyCombo();
-                                logger.DebugH(() => $"Call ComboKeyRepeat Handler: {keyCombo.DecKeysDebugString()}");
-                                if (keyCombo.DecKeyList._safeCount() >= 2) {
-                                    list.Add(keyCombo.DecKeyList[0]);
-                                    list.Add(KeyCombination.MakeNonTerminalDuplicatableComboKey(keyCombo.DecKeyList[1]));
-                                }
-                            }
-                            handleComboKeyRepeat(list);
-                        } else if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
-                            // キーリピートが可能なキー
-                            logger.DebugH("non terminal and repeatable key");
-                            result = Helper.MakeList(decKey);
-                        } else {
-                            // キーリピートが不可なキーは無視
-                            logger.DebugH("Key repeat ignored");
-                        }
+                if (lastRepeatedDecKey == decKey && strokeList.IsEmpty() && combo == null && bDecoderOn && bWaitSecondStroke) {
+                    // 第2打鍵待ちで、同時打鍵でなくオートリピートされた場合はキーを無視する
+                    logger.DebugH("IGNORE auto repeat key");
+                    IsWaitingSecondStrokeLocked = true;
+                } else {
+                    lastRepeatedDecKey = decKey;
+                    if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
+                        // 終端、かつキーリピートが可能なキーだった(BacSpaceとか)ので、それを返す
+                        logger.DebugH("terminal and repeatable key");
+                        result = Helper.MakeList(decKey);
                     } else {
-                        // キーリピートではない通常の押下の場合は、同時打鍵判定を行う
-                        //bool isStrokeListEmpty = strokeList.IsEmpty();
-                        if (Settings.AbandonUsedKeysWhenSpecialComboShiftDown && DecoderKeys.IsSpaceOrFuncKey(decKey) && stroke.IsComboShift) {
-                            // Spaceまたは機能キーのシフトキーがきたら、使い終わったキーを破棄する
-                            logger.DebugH("Abandon Used Keys When Special Combo Shift Down");
-                            strokeList.ClearComboList();
-                        }
-                        logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, StrokeList.Count={strokeList.Count}");
-                        if ((combo != null && !combo.IsTerminal) || !strokeList.IsEmpty()) {
-                            // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だった
-                            if (Settings.ComboDisableIntervalTimeMs > 0 && !stroke.IsComboShift && (dt - prevShiftUpDt).TotalMilliseconds <= Settings.ComboDisableIntervalTimeMs) {
-                                // 同時打鍵シフトキーがUPされた後、指定のインターバル時間内に文字キーが打鍵されたので、それを単打として扱う
-                                logger.DebugH(() => 
-                                    $"Handle as SingleHit: elapsed time = {(dt - prevShiftUpDt).TotalMilliseconds}ms < ComboDisableIntervalTimeMs={Settings.ComboDisableIntervalTimeMs}ms");
+                        logger.DebugH(() => stroke.DebugString());
+
+                        // キーリピートのチェック
+                        if (strokeList.DetectKeyRepeat(stroke)) {
+                            // キーリピートが発生した場合
+                            // キーリピート時は、リピートの終わりに1回だけ KeyUp が発生するので、そこで strokeListのUplistがクリアされる
+                            logger.DebugH("key repeatable detected");
+                            if (!bDecoderOn) {
+                                // DecoderがOFFのときはキーリピート扱いとする
+                                logger.DebugH("Decoder OFF, so repeat key");
+                                result = Helper.MakeList(decKey);
+                            } else if ((stroke.IsComboShift || strokeList.Count == 2 && strokeList.First.IsComboShift) && handleComboKeyRepeat != null) {
+                                // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出すだけで、キーリピートは行わない(つまりシフト扱い)
+                                List<int> list = new List<int>();
+                                if (strokeList.Count == 1) {
+                                    logger.DebugH(() => $"Call ComboKeyRepeat Handler: {stroke.ComboShiftDecKey}");
+                                    list.Add(stroke.ComboShiftDecKey);
+                                } else if (strokeList.Count == 2) {
+                                    var keyCombo = strokeList.GetKeyCombo();
+                                    logger.DebugH(() => $"Call ComboKeyRepeat Handler: {keyCombo.DecKeysDebugString()}");
+                                    if (keyCombo.DecKeyList._safeCount() >= 2) {
+                                        list.Add(keyCombo.DecKeyList[0]);
+                                        list.Add(KeyCombination.MakeNonTerminalDuplicatableComboKey(keyCombo.DecKeyList[1]));
+                                    }
+                                }
+                                handleComboKeyRepeat(list);
+                            } else if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
+                                // キーリピートが可能なキー
+                                logger.DebugH("non terminal and repeatable key");
                                 result = Helper.MakeList(decKey);
                             } else {
-                                // 打鍵リストに追加して同時打鍵判定を行う
-                                strokeList.Add(stroke);
-                                if (strokeList.Count == 1) {
-                                    // 第1打鍵の場合
-                                    if (!stroke.IsComboShift) {
-                                        logger.DebugH(() => $"UseCombinationKeyTimer1={Settings.UseCombinationKeyTimer1}");
-                                        // 非同時打鍵キーの第1打鍵ならタイマーを起動する
-                                        if (Settings.UseCombinationKeyTimer1) {
-                                            startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
-                                        }
-                                    }
+                                // キーリピートが不可なキーは無視
+                                logger.DebugH("Key repeat ignored");
+                            }
+                        } else {
+                            // キーリピートではない通常の押下の場合は、同時打鍵判定を行う
+                            //bool isStrokeListEmpty = strokeList.IsEmpty();
+                            if (Settings.AbandonUsedKeysWhenSpecialComboShiftDown && DecoderKeys.IsSpaceOrFuncKey(decKey) && stroke.IsComboShift) {
+                                // Spaceまたは機能キーのシフトキーがきたら、使い終わったキーを破棄する
+                                logger.DebugH("Abandon Used Keys When Special Combo Shift Down");
+                                strokeList.ClearComboList();
+                            }
+                            logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, StrokeList.Count={strokeList.Count}");
+                            if ((combo != null && !combo.IsTerminal) || !strokeList.IsEmpty()) {
+                                // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だった
+                                if (Settings.ComboDisableIntervalTimeMs > 0 && !stroke.IsComboShift && (dt - prevShiftUpDt).TotalMilliseconds <= Settings.ComboDisableIntervalTimeMs) {
+                                    // 同時打鍵シフトキーがUPされた後、指定のインターバル時間内に文字キーが打鍵されたので、それを単打として扱う
+                                    logger.DebugH(() =>
+                                        $"Handle as SingleHit: elapsed time = {(dt - prevShiftUpDt).TotalMilliseconds}ms < ComboDisableIntervalTimeMs={Settings.ComboDisableIntervalTimeMs}ms");
+                                    result = Helper.MakeList(decKey);
                                 } else {
-                                    // 第2打鍵以降の場合は、同時打鍵チェック
-                                    logger.DebugH("Check key combo");
-                                    bool bTimer = false;
-                                    result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer, out bUnconditional);
-                                    if (result._isEmpty()) {
-                                        logger.DebugH("result is EMPTY");
-                                        if (bTimer || strokeList.IsSuccessiveShift3rdOrLaterKey() /*strokeList.IsSuccessiveShift2ndOr3rdKey()*/) {
-                                            logger.DebugH(() => $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}");
-                                            // タイマーが有効であるか、または同時打鍵シフト後の第2～3打鍵めの文字キーであって同時打鍵が未判定だったらタイマーを起動する
+                                    // 打鍵リストに追加して同時打鍵判定を行う
+                                    strokeList.Add(stroke);
+                                    if (strokeList.Count == 1) {
+                                        // 第1打鍵の場合
+                                        if (!stroke.IsComboShift) {
+                                            logger.DebugH(() => $"UseCombinationKeyTimer1={Settings.UseCombinationKeyTimer1}");
+                                            // 非同時打鍵キーの第1打鍵ならタイマーを起動する
+                                            if (Settings.UseCombinationKeyTimer1) {
+                                                startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
+                                            }
+                                        }
+                                    } else {
+                                        // 第2打鍵以降の場合は、同時打鍵チェック
+                                        logger.DebugH("Check key combo");
+                                        bool bTimer = false;
+                                        result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer, out bUnconditional);
+                                        if (result._isEmpty()) {
+                                            logger.DebugH("result is EMPTY");
+                                            if (bTimer || strokeList.IsSuccessiveShift3rdOrLaterKey() /*strokeList.IsSuccessiveShift2ndOr3rdKey()*/) {
+                                                logger.DebugH(() => $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}");
+                                                // タイマーが有効であるか、または同時打鍵シフト後の第2～3打鍵めの文字キーであって同時打鍵が未判定だったらタイマーを起動する
+                                                if (Settings.UseCombinationKeyTimer2 && !DecoderKeys.IsSpaceOrFuncKey(decKey)) {
+                                                    startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
+                                                }
+                                            }
+                                        } else if (bTimer && strokeList.Count == 1) {
+                                            // 先頭のキーが result に追い出されて、今回のキーだけが残った
+                                            logger.DebugH("Time on");
                                             if (Settings.UseCombinationKeyTimer2 && !DecoderKeys.IsSpaceOrFuncKey(decKey)) {
                                                 startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
                                             }
                                         }
-                                    } else if (bTimer && strokeList.Count == 1) {
-                                        // 先頭のキーが result に追い出されて、今回のキーだけが残った
-                                        logger.DebugH("Time on");
-                                        if (Settings.UseCombinationKeyTimer2 && !DecoderKeys.IsSpaceOrFuncKey(decKey)) {
-                                            startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
-                                        }
                                     }
                                 }
+                            } else {
+                                // 同時打鍵には使われないキーなので、そのまま返す
+                                logger.DebugH("Return ASIS");
+                                result = Helper.MakeList(decKey);
                             }
-                        } else {
-                            // 同時打鍵には使われないキーなので、そのまま返す
-                            logger.DebugH("Return ASIS");
-                            result = Helper.MakeList(decKey);
                         }
                     }
                 }
@@ -392,6 +409,7 @@ namespace KanchokuWS.CombinationKeyStroke
         public void KeyUp(int decKey, bool bDecoderOn, bool bTimer = false)
         {
             DateTime dtNow = DateTime.Now;
+            lastRepeatedDecKey = -1;
             logger.DebugH(() => $"\ndecKey={decKey}, DecoderOn={bDecoderOn}, bTimer={bTimer}, strokeList={strokeList.ToDebugString()}");
             if (!bTimer || (!strokeList.IsUnprocListEmpty && strokeList.Last.OrigDecoderKey == decKey))     // タイマーの場合は、最後に押下されたキーと一致しているか
             {
