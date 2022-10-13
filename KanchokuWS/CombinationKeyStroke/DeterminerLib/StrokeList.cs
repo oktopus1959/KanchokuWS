@@ -194,6 +194,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             if (Count == 2 && unprocList.Count >= 1) {
                 // 2キーの同時打鍵のケースの場合のみを扱う
                 logger.DebugH("Try 2 keys combo");
+                // comboList.Count == 0 なら unprocList.Count == 2 である
                 var strk1 = comboList._isEmpty() ? unprocList[0] : comboList[0];
                 var strk2 = comboList._isEmpty() ? unprocList[1] : unprocList[0];
                 (result, bKeyComboFound) = getAndCheckCombo(Helper.MakeList(strk1, strk2));
@@ -221,13 +222,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     // 同時打鍵候補がないので、最初のキーをそのまま返す
                     result = Helper.MakeList(unprocList[0].OrigDecoderKey);
                     unprocList.RemoveAt(0);
-                    if (unprocList[0].IsJustSingleHit) {
-                        logger.DebugH("second key is just SingleHit. Return second key as is");
-                        result.Add(unprocList[0].OrigDecoderKey);
-                        unprocList.RemoveAt(0);
-                    } else if (unprocList[0].IsSingleHittable && unprocList[0].HasString) {
-                        logger.DebugH("second key is SingleHittable and HasString. Enable timer");
-                        bTimer = true;
+                    if (unprocList._notEmpty()) {
+                        if (unprocList[0].IsJustSingleHit) {
+                            logger.DebugH("second key is just SingleHit. Return second key as is");
+                            result.Add(unprocList[0].OrigDecoderKey);
+                            unprocList.RemoveAt(0);
+                        } else if (unprocList[0].IsSingleHittable && unprocList[0].HasString) {
+                            logger.DebugH("second key is SingleHittable and HasString. Enable timer");
+                            bTimer = true;
+                        }
                     }
                 }
             } else if (Settings.CombinationKeyMinOverlappingTimeMs <= 0) {
