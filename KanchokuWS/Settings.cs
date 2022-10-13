@@ -976,7 +976,8 @@ namespace KanchokuWS
                 VirtualKeys.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, 0 , DeactiveKey);
             }
             if (DeactiveKeyWithCtrl == 0) {
-                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.TOGGLE_DECKEY, KeyModifiers.MOD_CONTROL , ActiveKeyWithCtrl);
+                // Ctrlありの場合はカレットへの追従を再開する
+                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY, KeyModifiers.MOD_CONTROL , ActiveKeyWithCtrl);
             } else {
                 VirtualKeys.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , ActiveKeyWithCtrl);
                 VirtualKeys.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DeactiveKeyWithCtrl);
