@@ -31,7 +31,7 @@ convert(J<50>W<50>H<100>hIijw) = ぎゃぎょ
 
 comboMinTime(50)
 convert(K<55>J<36>k<10>W<99>j<34>w) = いぎ
-convert(W<111>J<1>w<69>E<90>j<74>e) = きで
+convert(W<111>J<1>w<49>E<90>j<74>e) = きで
 convert(K<55>J<96>k<10>W<99>j<34>w) = いあき
 convert(W<111>J<10>w<99>E<56>j<74>e) = きあて
 

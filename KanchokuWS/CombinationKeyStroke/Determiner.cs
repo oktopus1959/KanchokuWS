@@ -190,25 +190,25 @@ namespace KanchokuWS.CombinationKeyStroke
             }
         }
 
-        /// <summary>
-        /// 選択されたテーブルファイルに合わせて、漢直用KeyComboPoolを入れ替える
-        /// </summary>
-        public void SelectKanchokuKeyCombinationPool(int tableNum, bool bDecoderOn)
-        {
-            KeyCombinationPool.ChangeCurrentPoolBySelectedTable(tableNum, bDecoderOn);
-        }
+        ///// <summary>
+        ///// 選択されたテーブルファイルに合わせて、漢直用KeyComboPoolを入れ替える
+        ///// </summary>
+        //public static void SelectKanchokuKeyCombinationPool(int tableNum, bool bDecoderOn)
+        //{
+        //    KeyCombinationPool.ChangeCurrentPoolBySelectedTable(tableNum, bDecoderOn);
+        //}
 
-        public void UsePrimaryPool(bool bDecoderOn)
-        {
-            KeyCombinationPool.UsePrimaryPool(bDecoderOn);
-        }
+        //public static void UsePrimaryPool(bool bDecoderOn)
+        //{
+        //    KeyCombinationPool.UsePrimaryPool(bDecoderOn);
+        //}
 
-        public void UseSecondaryPool(bool bDecoderOn)
-        {
-            KeyCombinationPool.UseSecondaryPool(bDecoderOn);
-        }
+        //public static void UseSecondaryPool(bool bDecoderOn)
+        //{
+        //    KeyCombinationPool.UseSecondaryPool(bDecoderOn);
+        //}
 
-        public bool IsEnabled => KeyCombinationPool.CurrentPool.Enabled;
+        //public static bool IsEnabled => KeyCombinationPool.CurrentPool.Enabled;
 
         /// <summary>
         /// 同時打鍵リストをクリアする

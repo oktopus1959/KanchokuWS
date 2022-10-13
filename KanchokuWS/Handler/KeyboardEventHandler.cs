@@ -952,7 +952,7 @@ namespace KanchokuWS.Handler
                 var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
                 kanchokuCode = vkeyQueue.Peek();
                 if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
-                    determiner.IsEnabled && mod == 0 &&
+                    currentPool.Enabled && mod == 0 &&
                     kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END &&
                     ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM ||
                     currentPool.GetEntry(kanchokuCode) != null)) {    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする
@@ -1117,12 +1117,12 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private void keyboardUpHandler(bool bDecoderOn, int vkey, bool leftCtrl, bool rightCtrl, uint modFlag)
         {
-            var determiner = CombinationKeyStroke.Determiner.Singleton;
-            if (/*(bDecoderOn || CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool.HasComboEffectiveAlways) &&*/
-                determiner.IsEnabled &&  !leftCtrl && !rightCtrl && modFlag == 0) {
+            var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
+            if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
+                currentPool.Enabled &&  !leftCtrl && !rightCtrl && modFlag == 0) {
                 int deckey = /* vkey == (int)Keys.Space ? DecoderKeys.STROKE_SPACE_DECKEY :*/ VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey); /* ここではまだ、Spaceはいったん文字として扱う */
                 if (deckey >= 0 && deckey < DecoderKeys.STROKE_DECKEY_END) {
-                    determiner.KeyUp(deckey, bDecoderOn);
+                    CombinationKeyStroke.Determiner.Singleton.KeyUp(deckey, bDecoderOn);
                 }
             }
             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={false}");

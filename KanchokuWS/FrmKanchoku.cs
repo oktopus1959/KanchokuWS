@@ -978,11 +978,10 @@ namespace KanchokuWS
                 if (!isKatakana) {
                     // カタカナモードでなければ、テーブルの入れ替えを行う
                     if (bSecond && decoderOutput.strokeTableNum == 3) {
-                        ExecCmdDecoder("useCodeTable2", null);  // コードテーブル2に入れ替え
+                        changeCodeTableAndCombinationPool("useCodeTable2");     // コードテーブル2に入れ替え
                     } else {
-                        ExecCmdDecoder("exchangeCodeTable", null);  // 漢直コードテーブルの入れ替え
+                        changeCodeTableAndCombinationPool("exchangeCodeTable");     // 漢直コードテーブルの入れ替え
                     }
-                    CombinationKeyStroke.Determiner.Singleton.SelectKanchokuKeyCombinationPool(decoderOutput.strokeTableNum, IsDecoderActive);  // KeyCombinationPoolの入れ替え
                     frmVkb.DrawVirtualKeyboardChars();
                     frmMode.SetKanjiMode();
                 }
@@ -1000,16 +999,21 @@ namespace KanchokuWS
                 InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);
                 if (toggleKatakana && !isKatakana) InvokeDecoder(DecoderKeys.TOGGLE_KATAKANA_CONVERSION_DECKEY, 0);
                 if (n == 1 && Settings.TableFile._notEmpty()) {
-                    ExecCmdDecoder("useCodeTable1", null);  // コードテーブル1に入れ替え
+                    changeCodeTableAndCombinationPool("useCodeTable1");     // コードテーブル1に入れ替え
                 } else if (n == 2 && Settings.TableFile2._notEmpty()) {
-                    ExecCmdDecoder("useCodeTable2", null);  // コードテーブル2に入れ替え
+                    changeCodeTableAndCombinationPool("useCodeTable2");     // コードテーブル2に入れ替え
                 } else if (n == 3 && Settings.TableFile3._notEmpty()) {
-                    ExecCmdDecoder("useCodeTable3", null);  // コードテーブル3に入れ替え
+                    changeCodeTableAndCombinationPool("useCodeTable3");     // コードテーブル3に入れ替え
                 }
-                CombinationKeyStroke.Determiner.Singleton.SelectKanchokuKeyCombinationPool(decoderOutput.strokeTableNum, IsDecoderActive);  // KeyCombinationPoolの入れ替え
                 frmVkb.DrawVirtualKeyboardChars();
                 frmMode.SetKanjiMode();
             }
+        }
+
+        private void changeCodeTableAndCombinationPool(string cmd)
+        {
+            ExecCmdDecoder(cmd, null);  // コードテーブルの切り替え
+            CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolBySelectedTable(decoderOutput.strokeTableNum, true);  // KeyCombinationPoolの入れ替え
         }
 
         /// <summary>SandS状態が一時的なシフト状態か</summary>
@@ -1163,8 +1167,7 @@ namespace KanchokuWS
             logger.InfoH(() => $"\nENTER");
             IsDecoderActive = true;
             if (decoderOutput.strokeTableNum == 3) {
-                ExecCmdDecoder("useCodeTable1", null);  // コードテーブル1に入れ替え
-                CombinationKeyStroke.Determiner.Singleton.SelectKanchokuKeyCombinationPool(decoderOutput.strokeTableNum, IsDecoderActive);  // KeyCombinationPoolの入れ替え
+                changeCodeTableAndCombinationPool("useCodeTable1");     // コードテーブル1に入れ替え
             } else {
                 CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolByDecoderMode(IsDecoderActive);  // 前回の漢直用Poolに切り替え
             }
@@ -1287,25 +1290,36 @@ namespace KanchokuWS
             }
 
             var activeWinCaretPos = ActiveWindowHandler.Singleton.ActiveWinCaretPos;
+
+            bool isValidCaretShape()
+            {
+                bool result = activeWinCaretPos.Width > 0 || activeWinCaretPos.Height > 0;
+                if (bLog) logger.Info("INVALID caret shape");
+                return result;
+            }
+
+            bool isValidCaretPos()
+            {
+                return
+                    (Math.Abs(activeWinCaretPos.X) >= NO_MOVE_OFFSET || Math.Abs(activeWinCaretPos.Y) >= NO_MOVE_OFFSET) &&
+                    (Math.Abs(activeWinCaretPos.X - prevCaretPos.X) >= NO_MOVE_OFFSET || Math.Abs(activeWinCaretPos.Y - prevCaretPos.Y) >= NO_MOVE_OFFSET);
+            }
+
             if (bFirstMove || (!this.IsVirtualKeyboardFreezed && !activeWinClassName.EndsWith(dlgVkbClassNameHash) && activeWinClassName._ne("SysShadow"))) {
-                if (bFirstMove || bMoveMandatory ||
-                    ((Math.Abs(activeWinCaretPos.X) >= NO_MOVE_OFFSET || Math.Abs(activeWinCaretPos.Y) >= NO_MOVE_OFFSET) &&
-                     (Math.Abs(activeWinCaretPos.X - prevCaretPos.X) >= NO_MOVE_OFFSET || Math.Abs(activeWinCaretPos.Y - prevCaretPos.Y) >= NO_MOVE_OFFSET) &&
-                     ActiveWindowHandler.Singleton.IsInValidCaretMargin(activeWinSettings))
-                   ) {
+                if (isValidCaretShape() && (bFirstMove || bMoveMandatory || (isValidCaretPos() && ActiveWindowHandler.Singleton.IsInValidCaretMargin(activeWinSettings)))) {
                     int xOffset = (activeWinSettings?.CaretOffset)._getNth(0, Settings.VirtualKeyboardOffsetX);
                     int yOffset = (activeWinSettings?.CaretOffset)._getNth(1, Settings.VirtualKeyboardOffsetY);
                     int xFixed = (activeWinSettings?.VkbFixedPos)._getNth(0, -1)._geZeroOr(Settings.VirtualKeyboardFixedPosX);
                     int yFixed = (activeWinSettings?.VkbFixedPos)._getNth(1, -1)._geZeroOr(Settings.VirtualKeyboardFixedPosY);
                     //double dpiRatio = 1.0; //FrmVkb.GetDeviceDpiRatio();
-                    if (bLog || bFirstMove) logger.Info($"CaretPos.X={activeWinCaretPos.X}, CaretPos.Y={activeWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}, xFixed={xFixed}, yFixed={yFixed}");
+                    if (bLog || bFirstMove) logger.InfoH($"CaretPos.X={activeWinCaretPos.X}, CaretPos.Y={activeWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}, xFixed={xFixed}, yFixed={yFixed}");
                     if (activeWinCaretPos.X >= 0) {
                         int cX = activeWinCaretPos.X;
                         int cY = activeWinCaretPos.Y;
                         int cW = activeWinCaretPos.Width;
                         int cH = activeWinCaretPos.Height;
                         if (bLog) {
-                            logger.Info($"MOVE: X={cX}, Y={cY}, W={cW}, H={cH}, OX={xOffset}, OY={yOffset}");
+                            logger.InfoH($"MOVE: X={cX}, Y={cY}, W={cW}, H={cH}, OX={xOffset}, OY={yOffset}");
                             if (Settings.LoggingActiveWindowInfo) {
                                 var dpis = ScreenInfo.Singleton.ScreenDpi.Select(x => $"{x}")._join(", ");
                                 frmVkb.SetTopText($"DR={dpis}, CX={cX},CY={cY},CW={cW},CH={cH},OX={xOffset},OY={yOffset}");
