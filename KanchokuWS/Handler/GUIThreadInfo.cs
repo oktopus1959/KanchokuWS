@@ -140,55 +140,76 @@ namespace KanchokuWS.Handler
             rect.Height = guiThreadInfo.rectCaret.iBottom - guiThreadInfo.rectCaret.iTop;
         }
 
-        RECT prevCaretRect;
-        uint sameCount = 0;
-        uint sameCountMax = 0;
-        uint invalidCaretPosCount = 0;
+        //RECT prevCaretRect;
+        //uint sameCount = 0;
+        //uint sameCountMax = 0;
+        //uint invalidCaretPosCount = 0;
 
         /// <summary> カレットのスクリーン座標を取得 </summary>
         /// <param name="rect"></param>
         /// <returns></returns>
-        public void GetScreenCaretPos(ref Rectangle rect)
+        public bool GetScreenCaretPos(ref Rectangle rect)
         {
             RECT rt;
-            GetForegroundWindowRect(out rt);
-
-            if (hwndFocus != IntPtr.Zero) {
-                // IAccessible を使ってカレット位置を取得する
-                getCaretPos(hwndFocus, ref rect, rt);
-                if (Logger.IsDebugEnabled) {
-                    if (bLog) logger.Debug($"prev: left={prevCaretRect.iLeft}, top={prevCaretRect.iTop}, right={prevCaretRect.iRight}, bottom={prevCaretRect.iBottom}");
-                    if (bLog) logger.Debug($"curr: left={rect.Left}, top={rect.Top}, right={rect.Right}, bottom={rect.Bottom}");
-                }
-                if (rect.Width == 0 && rect.Height == 0) {
-                    ++invalidCaretPosCount;
-                    if (invalidCaretPosCount < 3) {
-                        prevCaretRect.CopyToRectangle(ref rect);
-                    } else {
-                        prevCaretRect.CopyFromRectangle(rect);
+            if (GetForegroundWindowRect(out rt)) {
+                if (hwndFocus != IntPtr.Zero) {
+                    // IAccessible を使ってカレット位置を取得する
+                    if (getCaretPos(hwndFocus, ref rect, rt)) {
+                        if (Logger.IsDebugEnabled) {
+                            //if (bLog) logger.Debug($"prev: left={prevCaretRect.iLeft}, top={prevCaretRect.iTop}, right={prevCaretRect.iRight}, bottom={prevCaretRect.iBottom}");
+                            if (bLog) logger.Debug($"curr: left={rect.Left}, top={rect.Top}, right={rect.Right}, bottom={rect.Bottom}");
+                        }
+                        return true;
                     }
-                } else {
-                    invalidCaretPosCount = 0;
                 }
-                if (rect.Width != 0 || rect.Height != 0) {
-                    if (!prevCaretRect.EqualsToRectangle(rect)) {
-                        prevCaretRect.CopyFromRectangle(rect);
-                        sameCount = 0;
-                        return;
-                    } else {
-                        // 何回か同じ位置にカレットがある場合は仮想鍵盤をウィンドウ右下に位置させる 
-                        ++sameCount;
-                        if (bLog) logger.Debug(() => $"sameCount={sameCount}");
-                        if (sameCountMax == 0 || sameCount < sameCountMax) return;
-                    }
+                if (className._equalsTo("ConsoleWindowClass")) {
+                    // CMD.EXEの場合は右下に移動
+                    rect.X = rt.iRight - 250;
+                    rect.Y = rt.iBottom - 40;
+                    rect.Width = 2;
+                    rect.Height = 10;
+                    if (bLog) logger.Info($"Set caret pos for CMD.EXE: X={rect.X}, Y={rect.Y}, Width={rect.Width}, Height={rect.Height}");
                 }
             }
+            return false;
 
-            // カレット位置が取得できなかったか、何回か同じ位置にあったら、ウィンドウ右下に位置させる
-            rect.X = rt.iRight - 250;
-            rect.Y = rt.iBottom - 40;
-            rect.Width = 2;
-            rect.Height = 10;
+            // 取得に失敗したら、ウィンドウを移動しないようにした(以下、不要。いずれ削除)
+            //if (hwndFocus != IntPtr.Zero) {
+            //    // IAccessible を使ってカレット位置を取得する
+            //    getCaretPos(hwndFocus, ref rect, rt);
+            //    if (Logger.IsDebugEnabled) {
+            //        if (bLog) logger.Debug($"prev: left={prevCaretRect.iLeft}, top={prevCaretRect.iTop}, right={prevCaretRect.iRight}, bottom={prevCaretRect.iBottom}");
+            //        if (bLog) logger.Debug($"curr: left={rect.Left}, top={rect.Top}, right={rect.Right}, bottom={rect.Bottom}");
+            //    }
+            //    if (rect.Width == 0 && rect.Height == 0) {
+            //        ++invalidCaretPosCount;
+            //        if (invalidCaretPosCount < 3) {
+            //            prevCaretRect.CopyToRectangle(ref rect);
+            //        } else {
+            //            prevCaretRect.CopyFromRectangle(rect);
+            //        }
+            //    } else {
+            //        invalidCaretPosCount = 0;
+            //    }
+            //    if (rect.Width != 0 || rect.Height != 0) {
+            //        if (!prevCaretRect.EqualsToRectangle(rect)) {
+            //            prevCaretRect.CopyFromRectangle(rect);
+            //            sameCount = 0;
+            //            return;
+            //        } else {
+            //            // 何回か同じ位置にカレットがある場合は仮想鍵盤をウィンドウ右下に位置させる 
+            //            ++sameCount;
+            //            if (bLog) logger.Debug(() => $"sameCount={sameCount}");
+            //            if (sameCountMax == 0 || sameCount < sameCountMax) return;
+            //        }
+            //    }
+            //}
+
+            //// カレット位置が取得できなかったか、何回か同じ位置にあったら、ウィンドウ右下に位置させる
+            //rect.X = rt.iRight - 250;
+            //rect.Y = rt.iBottom - 40;
+            //rect.Width = 2;
+            //rect.Height = 10;
         }
 
         // アクティブウィンドウの ClassName
@@ -204,7 +225,9 @@ namespace KanchokuWS.Handler
         // 前面ウィンドウの位置とサイズ(RECT)を取得
         public bool GetForegroundWindowRect(out RECT rect)
         {
-            return GetWindowRect(hwndForeground, out rect);
+            bool result = GetWindowRect(hwndForeground, out rect);
+            if (bLog && !result) logger.Warn("GetWindowRect FAILED");
+            return result;
         }
 
         [DllImport("oleacc.dll")]
@@ -239,32 +262,46 @@ namespace KanchokuWS.Handler
         /// <returns></returns>
         private static bool getCaretPos(IntPtr handle, ref Rectangle rect, RECT winRect)
         {
-            if (bLog) logger.Debug(() => $"Check Caret for {(int)handle:x}");
+            if (bLog) logger.Info(() => $"Check Caret for {(int)handle:x}");
             Guid guidIAccessible = new Guid("{618736E0-3C3D-11CF-810C-00AA00389B71}");
             object obj = null;
             int retVal = AccessibleObjectFromWindow(handle, (uint)OBJID.CARET, ref guidIAccessible, ref obj);
             var iAccessible = (IAccessible)obj;
             if (iAccessible == null) {
-                if (bLog) logger.Debug("iAccessible is null");
-                rect.X = rect.Y = rect.Width = rect.Height = 0;
+                logger.Warn("iAccessible is null");
+                //if (bLog) logger.Info("iAccessible is null");
+                //rect.X = rect.Y = rect.Width = rect.Height = 0;
                 return false;
             }
 
             int left, top, width, height;
             dynamic varCaret = new Int32(); // 上記元ネタでは、 VARIANT を使っている (C++なので)。とりあえず dynamic にしてみたが・・・
 
-            iAccessible.accLocation(out left, out top, out width, out height, varCaret);
+            try {
+                iAccessible.accLocation(out left, out top, out width, out height, varCaret);
+            } catch (Exception ex) {
+                logger.Warn(ex.Message);
+                if (bLog) logger.Info(ex.StackTrace);
+                //rect.X = rect.Y = rect.Width = rect.Height = 0;
+                iAccessible = null;
+                return false;
+            }
+
+            iAccessible = null;
 
             // Effective Dpi を使ってみたが、Per-Momitor HiRes が true の場合は、dpiRate に応じた位置が返ってくるようなので、調整は不要のようだ
             //double dpiRate = ScreenInfo.GetScreenDpiRate(left, top);
             double dpiRate = 1.0;
-            if (bLog) logger.Debug(() => $"left={left}, top={top}, width={width}, height={height}, dpiRate={dpiRate:f3}");
+            if (bLog) logger.Info(() => $"left={left}, top={top}, width={width}, height={height}, dpiRate={dpiRate:f3}");
+            //if (left == 0 && top == 0 && width == 0 && height == 0) {
+            //    return false;
+            //}
+
             rect.X = winRect.iLeft + (int)((left - winRect.iLeft) / dpiRate);
             rect.Y = winRect.iTop + (int)((top - winRect.iTop) / dpiRate);
             rect.Width = width;
             rect.Height = height;
 
-            iAccessible = null;
             return true;
         }
 

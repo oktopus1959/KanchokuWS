@@ -127,11 +127,16 @@ namespace KanchokuWS.Handler
                 if (bLog) logger.Info(() => $"fgHan={(int)fgHan:x}H, focusHan={(int)focusHan:x}H");
 
                 // カレットのスクリーン座標を取得
-                guiThreadInfo.GetScreenCaretPos(ref activeWinCaretPos);
-                //getScreenCaretPosByOriginalWay(fgHan, ref ActiveWinCaretPos, bLog);   // やっぱりこのやり方だとうまく取れない場合あり
-                if (bLog) logger.Info(() => $"WndClass={ActiveWinClassName}: focus caret pos=({activeWinCaretPos.X}, {activeWinCaretPos.Y})");
+                if (guiThreadInfo.GetScreenCaretPos(ref activeWinCaretPos)) {
+                    //getScreenCaretPosByOriginalWay(fgHan, ref ActiveWinCaretPos, bLog);   // やっぱりこのやり方だとうまく取れない場合あり
+                    if (bLog) logger.Info(() => $"WndClass={ActiveWinClassName}: focus caret=({activeWinCaretPos.X}, {activeWinCaretPos.Y}, {activeWinCaretPos.Width}, {activeWinCaretPos.Height})");
 
-                if (focusHan != IntPtr.Zero || ActiveWinClassName._equalsTo("ConsoleWindowClass")) break;  // CMD Prompt の場合は Focus が取れないっぽい?
+                    if (focusHan != IntPtr.Zero || ActiveWinClassName._equalsTo("ConsoleWindowClass")) {
+                        // OK
+                        break;
+                    }
+                    // CMD Prompt の場合は Focus が取れないっぽい?
+                }
                 if (bLog || Logger.IsInfoEnabled) logger.Warn($"RETRY: count={count + 1}");
             }
 
@@ -287,7 +292,8 @@ namespace KanchokuWS.Handler
                         frmVkb.SetTopText(ActiveWinClassName);
                     }
                 } catch (Exception e) {
-                    logger.Error($"{e.Message}\n{e.StackTrace}");
+                    logger.Warn(e.Message);
+                    if (bLog) logger.InfoH(e.StackTrace);
                 }
             }
             if (bOK && moveWin != MoveWinType.Freeze) {
