@@ -402,9 +402,9 @@ namespace KanchokuWS.Gui
             this.label22 = new System.Windows.Forms.Label();
             this.button_histClose = new System.Windows.Forms.Button();
             this.button_histEnter = new System.Windows.Forms.Button();
-            this.checkBox_mazeRightShiftYomiPos = new System.Windows.Forms.CheckBox();
             this.groupBox34 = new System.Windows.Forms.GroupBox();
             this.label91 = new System.Windows.Forms.Label();
+            this.checkBox_mazeRightShiftYomiPos = new System.Windows.Forms.CheckBox();
             this.tabPage_misc = new System.Windows.Forms.TabPage();
             this.groupBox48 = new System.Windows.Forms.GroupBox();
             this.label123 = new System.Windows.Forms.Label();
@@ -1922,7 +1922,8 @@ namespace KanchokuWS.Gui
             this.textBox_cancelSecondStrokeMillisec.Size = new System.Drawing.Size(40, 19);
             this.textBox_cancelSecondStrokeMillisec.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox_cancelSecondStrokeMillisec, "第2打鍵待ちの状態をキャンセルするまでの時間(ミリ秒)\r\n\r\n複数ストロークによる打鍵列で、第2打鍵以降を待っているとき、\r\nここで指定した時間が経過したら、その" +
-        "状態をキャンセルして\r\n第1打鍵待ちに戻します。\r\n\r\n0 を設定すると第2打鍵待ちのキャンセルは行われません。");
+        "状態をキャンセルして\r\n第1打鍵待ちに戻します。\r\n\r\n0 を設定すると第2打鍵待ちのキャンセルは行われません。\r\n\r\nまた、キーのオートリピートが発生するまで" +
+        "押し続けると、一時的に\r\n第2打鍵のキャンセルを行わないようになります。");
             // 
             // label19
             // 
@@ -4971,18 +4972,6 @@ namespace KanchokuWS.Gui
             this.button_histEnter.UseVisualStyleBackColor = true;
             this.button_histEnter.Click += new System.EventHandler(this.button_histEnter_Click);
             // 
-            // checkBox_mazeRightShiftYomiPos
-            // 
-            this.checkBox_mazeRightShiftYomiPos.AutoSize = true;
-            this.checkBox_mazeRightShiftYomiPos.Location = new System.Drawing.Point(347, 330);
-            this.checkBox_mazeRightShiftYomiPos.Name = "checkBox_mazeRightShiftYomiPos";
-            this.checkBox_mazeRightShiftYomiPos.Size = new System.Drawing.Size(201, 19);
-            this.checkBox_mazeRightShiftYomiPos.TabIndex = 2;
-            this.checkBox_mazeRightShiftYomiPos.Text = "「>」で変換開始位置を右に移動する";
-            this.toolTip1.SetToolTip(this.checkBox_mazeRightShiftYomiPos, resources.GetString("checkBox_mazeRightShiftYomiPos.ToolTip"));
-            this.checkBox_mazeRightShiftYomiPos.UseVisualStyleBackColor = true;
-            this.checkBox_mazeRightShiftYomiPos.Visible = false;
-            // 
             // groupBox34
             // 
             this.groupBox34.Controls.Add(this.label91);
@@ -5003,6 +4992,18 @@ namespace KanchokuWS.Gui
             this.label91.TabIndex = 2;
             this.label91.Text = "詳細はツールチップで";
             this.toolTip1.SetToolTip(this.label91, resources.GetString("label91.ToolTip"));
+            // 
+            // checkBox_mazeRightShiftYomiPos
+            // 
+            this.checkBox_mazeRightShiftYomiPos.AutoSize = true;
+            this.checkBox_mazeRightShiftYomiPos.Location = new System.Drawing.Point(347, 330);
+            this.checkBox_mazeRightShiftYomiPos.Name = "checkBox_mazeRightShiftYomiPos";
+            this.checkBox_mazeRightShiftYomiPos.Size = new System.Drawing.Size(201, 19);
+            this.checkBox_mazeRightShiftYomiPos.TabIndex = 2;
+            this.checkBox_mazeRightShiftYomiPos.Text = "「>」で変換開始位置を右に移動する";
+            this.toolTip1.SetToolTip(this.checkBox_mazeRightShiftYomiPos, resources.GetString("checkBox_mazeRightShiftYomiPos.ToolTip"));
+            this.checkBox_mazeRightShiftYomiPos.UseVisualStyleBackColor = true;
+            this.checkBox_mazeRightShiftYomiPos.Visible = false;
             // 
             // tabPage_misc
             // 
