@@ -754,6 +754,7 @@ namespace {
                     resultList.PushHistory(key, s);
                 }
             }
+            _LOG_DEBUGH(_T("RESULT: resultList.size()=%d"), resultList.Size());
         }
 
         // '*' をはさんで、前半部の key1 と後半部の key2 にマッチする文字列集合を取得
@@ -783,15 +784,15 @@ namespace {
         void extract_and_copy_for_longer_than_4(const MString& key, size_t wlen, size_t pos) {
             auto subStr = key.substr(pos);
             auto subKey = subStr.substr(0, 4);
-            size_t gobiLen = SETTINGS->histMapGobiMaxLength;
+            size_t gobiLen = utils::isRomanString(subStr) ? 0 : SETTINGS->histMapGobiMaxLength;
             _LOG_DEBUGH(_T("subStr=%s, subKey=%s"), MAKE_WPTR(subStr), MAKE_WPTR(subKey));
             std::set<MString> set_ = utils::filter(hist4CharsDic.GetSet(subKey, 4), [subStr, gobiLen](const auto& s) {return utils::startsWithWildKey(s, subStr, gobiLen);});
-            _LOG_DEBUGH(_T("filter(hist4CharsDic.GetSet(subKey=%s, 4), startsWithWildKey(s, qKey=%s)): set_.size()=%d"), MAKE_WPTR(subKey), MAKE_WPTR(subStr), set_.size());
+            _LOG_DEBUGH(_T("filter(hist4CharsDic.GetSet(subKey=%s, 4), startsWithWildKey(s, qKey=%s, gobiLen=%d)): set_.size()=%d"), MAKE_WPTR(subKey), MAKE_WPTR(subStr), gobiLen, set_.size());
             if (!set_.empty()) {
                 //bool bWild = subStr.find('?') != MString::npos;
                 extract_and_copy(subStr, set_, wlen);
             }
-            _LOG_DEBUGH(_T("RESULT: resultList.size()=%d"), pos, resultList.Size());
+            _LOG_DEBUGH(_T("RESULT: pos=%d, resultList.size()=%d"), pos, resultList.Size());
         }
 
         // keyの末尾n文字にマッチする候補を取得して out に返す

@@ -21,7 +21,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 0
+#if 0 || defined(_DEBUG)
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -287,12 +287,15 @@ namespace {
                 if (outStr.empty()) outStr = outKey;
             } else {
                 size_t pos = outStr.find(VERT_BAR);     // '|' を含むか
-                if (pos < SETTINGS->histMapKeyMaxLength) {
+                _LOG_DEBUGH(_T("pos=%d, histMapKeyMaxLength=%d"), pos, SETTINGS->histMapKeyMaxLength);
+                if (pos <= SETTINGS->histMapKeyMaxLength) {
                     // histMap候補
                     outStr = utils::safe_substr(outStr, pos + 1);
+                    _LOG_DEBUGH(_T("histMap: outStr=%s, outKey=%s"), MAKE_WPTR(outStr), MAKE_WPTR(outKey));
                     if (outKey.size() > pos) {
                         // 変換キー('|'より前の部分)よりも入力された文字列キーが長い場合(例: "にら|韮" に対して「にらちされ」が入力されたような場合)
                         outStr.append(utils::safe_substr(outKey, pos));
+                        _LOG_DEBUGH(_T("histMap: outKey Appended: outStr=%s"), MAKE_WPTR(outStr));
                     }
                 }
                 if (outKey.size() < result.OrigKey.size()) {
@@ -300,6 +303,7 @@ namespace {
                     auto leadStr = result.OrigKey.substr(0, result.OrigKey.size() - outKey.size());
                     outStr = leadStr + outStr;
                     outKey = leadStr + outKey;
+                    _LOG_DEBUGH(_T("histMap: leadStr Appended: leadStr=%s"), MAKE_WPTR(leadStr));
                 }
             }
             _LOG_DEBUGH(_T("outStr=%s, outKey=%s"), MAKE_WPTR(outStr), MAKE_WPTR(outKey));
