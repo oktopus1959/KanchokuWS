@@ -233,7 +233,7 @@ public:
                 createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile2.tbl")), [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
             }
 
-            if (bForceSecondary || !SETTINGS->tableFile3.empty()) {
+            if (!SETTINGS->tableFile3.empty()) {
                 // 第3テーブルファイルの構築
                 createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile3.tbl")), [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree3(file, lines);});
             }
