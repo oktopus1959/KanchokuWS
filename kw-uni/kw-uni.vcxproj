@@ -180,6 +180,7 @@
     <ClInclude Include="KeysAndChars\DeckeyToChars.h" />
     <ClInclude Include="KeysAndChars\deckey_id_defs.h" />
     <ClInclude Include="KeysAndChars\EasyChars.h" />
+    <ClInclude Include="KeysAndChars\Eisu.h" />
     <ClInclude Include="KeysAndChars\Katakana.h" />
     <ClInclude Include="KeysAndChars\MyPrevChar.h" />
     <ClInclude Include="KeysAndChars\StrokeHelp.h" />
@@ -204,8 +205,6 @@
     <ClInclude Include="StringNode.h" />
     <ClInclude Include="StrokeTable.h" />
     <ClInclude Include="Constants.h" />
-    <ClInclude Include="debug.h" />
-    <ClInclude Include="DecoderMode.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="langedge\ctypeutil.hpp" />
     <ClInclude Include="pch.h" />
@@ -214,6 +213,12 @@
     <ClInclude Include="Template\Template.h" />
     <ClInclude Include="TranslationState.h" />
     <ClInclude Include="utils\file_utils.h" />
+    <ClInclude Include="utils\langedge\array_size.hpp" />
+    <ClInclude Include="utils\langedge\ctypeutil.hpp" />
+    <ClInclude Include="utils\langedge\exception.hpp" />
+    <ClInclude Include="utils\langedge\pathname.hpp" />
+    <ClInclude Include="utils\langedge\pathutil.hpp" />
+    <ClInclude Include="utils\langedge\tstring.hpp" />
     <ClInclude Include="utils\misc_utils.h" />
     <ClInclude Include="utils\path_utils.h" />
     <ClInclude Include="utils\string_type.h" />
@@ -231,6 +236,7 @@
     <ClCompile Include="KeysAndChars\DeckeyToChars.cpp" />
     <ClCompile Include="KeysAndChars\deckey_id_defs.cpp" />
     <ClCompile Include="KeysAndChars\EasyChars.cpp" />
+    <ClCompile Include="KeysAndChars\EisuState.cpp" />
     <ClCompile Include="KeysAndChars\KatakanaState.cpp" />
     <ClCompile Include="KeysAndChars\MyPrevCharState.cpp" />
     <ClCompile Include="KeysAndChars\StrokeHelp.cpp" />

@@ -290,6 +290,7 @@ namespace {
                 _LOG_DEBUGH(_T("pos=%d, histMapKeyMaxLength=%d"), pos, SETTINGS->histMapKeyMaxLength);
                 if (pos <= SETTINGS->histMapKeyMaxLength) {
                     // histMap候補
+                    if (pos + 1 < outStr.size() && outStr[pos + 1] == VERT_BAR) ++pos;  // '||' だったら1つ進める
                     outStr = utils::safe_substr(outStr, pos + 1);
                     _LOG_DEBUGH(_T("histMap: outStr=%s, outKey=%s"), MAKE_WPTR(outStr), MAKE_WPTR(outKey));
                     if (outKey.size() > pos) {
@@ -1376,6 +1377,9 @@ namespace {
                 STATE_COMMON->SetHistoryBlockFlag();
             }
             setCandidatesVKB(VkbLayout::Horizontal, HIST_CAND->GetCandWords(), HIST_CAND->GetCurrentKey());
+
+            // 英数モードはキャンセルする
+            if (pNext) pNext->handleEisuCancel();
 
             _LOG_DEBUGH(_T("LEAVE: prevOut=%s, numBS=%d"), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()), STATE_COMMON->GetBackspaceNum());
         }

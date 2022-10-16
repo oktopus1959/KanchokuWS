@@ -1221,7 +1221,7 @@ namespace KanchokuWS
             HistHiraganaKeyLength = addDecoderSetting("histHiraganaKeyLength", 2, 1);           // ひらがな始まり履歴の検索を行う際のキー長
             HistKatakanaKeyLength = addDecoderSetting("histKatakanaKeyLength", 2, 1);           // カタカナ履歴の検索を行う際のキー長
             HistKanjiKeyLength = addDecoderSetting("histKanjiKeyLength", 1, 1);                 // 漢字履歴の検索を行う際のキー長
-            HistMapKeyMaxLength = addDecoderSetting("histMapKeyMaxLength", 8, 4);               // 変換履歴キーの最大長
+            HistMapKeyMaxLength = addDecoderSetting("histMapKeyMaxLength", 16, 4);               // 変換履歴キーの最大長
             HistMapGobiMaxLength = addDecoderSetting("histMapGobiMaxLength", 2, 0);             // 変換履歴キーに付加できる語尾の最大長
             AutoHistSearchEnabled = addDecoderSetting("autoHistSearchEnabled", false);          // 自動履歴検索を行う
             //HistSearchByCtrlSpace = addDecoderSetting("histSearchByCtrlSpace", true);           // Ctrl-Space で履歴検索を行う

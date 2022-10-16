@@ -103,6 +103,36 @@ namespace Utils
         }
 
         /// <summary>
+        /// 英大文字か
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <returns></returns>
+        public static bool _isUpper(this char ch)
+        {
+            return ch >= 'A' && ch <= 'Z';
+        }
+
+        /// <summary>
+        /// 英小文字か
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <returns></returns>
+        public static bool _isLower(this char ch)
+        {
+            return ch >= 'a' && ch <= 'z';
+        }
+
+        /// <summary>
+        /// 英文字か
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <returns></returns>
+        public static bool _isAlphabet(this char ch)
+        {
+            return _isUpper(ch) || _isLower(ch);
+        }
+
+        /// <summary>
         /// 0 より大きければ自身を返し、0 以下なら defval を返す
         /// </summary>
         /// <param name="val"></param>

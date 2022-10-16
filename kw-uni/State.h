@@ -217,6 +217,9 @@ public:
     // 入力された DECKEY をディスパッチする
     virtual void dispatchDeckey(int deckey);
 
+    // EisuCancel ハンドラ
+    virtual void handleEisuCancel();
+
 protected:
     //--------------------------------------------------------------------
     // 以下、DECKEYハンドラのデフォルト実装

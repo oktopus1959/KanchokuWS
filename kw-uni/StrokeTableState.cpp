@@ -11,6 +11,7 @@
 #include "VkbTableMaker.h"
 #include "Settings.h"
 #include "KeysAndChars/MyPrevChar.h"
+#include "KeysAndChars/Eisu.h"
 
 #include "DeckeyToChars.h"
 #include "History/HistoryStayState.h"
@@ -97,6 +98,11 @@ namespace {
                 // キーボードフェイス文字を返すモード
                 LOG_INFO(_T("SetOutString"));
                 STATE_COMMON->SetOutString(myChar, 0);
+            } else if (myNode()->isRootStrokeTableNode() && myChar >= 'A' && myChar <= 'Z') {
+                // 英数モード
+                LOG_INFO(_T("SetNextNodeMaybe: Eisu"));
+                STATE_COMMON->SetOutString(myChar, 0);
+                SetNextNodeMaybe(EISU_NODE.get());
             } else {
                 LOG_INFO(_T("SetNextNodeMaybe"));
                 SetNextNodeMaybe(NEXT_NODE(deckey));

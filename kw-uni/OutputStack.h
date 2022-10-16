@@ -19,6 +19,7 @@ public:
     static const unsigned short FLAG_REWRITABLE_BEGIN = 32;
 
     static const size_t HIST_KEY_MAX_LEN = 8;   // 履歴用のキーの最大長
+    static const size_t HIST_ROMAN_KEY_MAX_LEN = 16;   // 英字履歴用のキーの最大長
 
 private:
     struct Moji {
@@ -473,7 +474,7 @@ public:
         if (key.size() >= 4) return key;
         key = GetLastJapaneseKey<T>(4);
         if (!key.empty()) return key;
-        return GetLastAsciiKey<T>(HIST_KEY_MAX_LEN);
+        return GetLastAsciiKey<T>(HIST_ROMAN_KEY_MAX_LEN);
     }
 
     // 末尾のアルファベット文字列をクリアする

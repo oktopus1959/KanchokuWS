@@ -1440,6 +1440,7 @@ namespace KanchokuWS
                 if (len < 0) len = LongVkeyCharSize;
                 StringBuilder sb = new StringBuilder();
                 sb.Append((nth + 1) % 10).Append(' ').Append(chars, pos, len);
+                if (pos + len < chars.Length && chars[pos + len] != '\0') sb.Append('…');
                 //logger.Info($"drawString={drawString}, nth={nth}, pos={pos}, len={len}");
                 if (sb.Length > 2) {
                     dgvHorizontal.Rows[nth].Cells[0].Value = sb.ToString();
@@ -1654,6 +1655,7 @@ namespace KanchokuWS
                 len = chars._findIndex(startPos, startPos + LongVkeyCharSize, '\0') - startPos;
                 if (len < 0) len = LongVkeyCharSize._highLimit(chars.Length);
                 drawString = new string(chars, startPos, len);
+                if (startPos + len < chars.Length && chars[startPos + len] != '\0') drawString = drawString + "…";
             }
             return drawString;
         }

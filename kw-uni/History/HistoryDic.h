@@ -57,8 +57,9 @@ public:
     }
 
     void PushHistory(const MString& key, const MString& word) {
+        auto result = HistResult{ origKey, key, utils::replace(word, MSTR_VERT_BAR_2, MSTR_VERT_BAR), isWildKey };
         if (!findSameEntry(word)) {
-            histories.push_back(HistResult{ origKey, key, word, isWildKey });
+            histories.push_back(result);
         }
     }
 

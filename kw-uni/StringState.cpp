@@ -9,7 +9,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughString)
 
-#if 0
+#if 0 || defined(_DEBUG)
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define _LOG_DEBUGH LOG_INFOH

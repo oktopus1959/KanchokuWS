@@ -747,11 +747,15 @@ namespace {
             size_t keylen = key.size();
             usedList.ExtractUsedWords(key, resultList, set_, wlen);
             _DEBUG_SENT(size_t n = 0);
-            for (const auto& s : set_) {
+            // set_ を vec に詰め替えてソートしてから回す。なお、'|' のままだと期待した順にならないので、'\t' に置換してからソートする(後で'|'に戻す)
+            std::vector<MString> vec;
+            std::transform(set_.begin(), set_.end(), std::back_inserter(vec), [](const auto& w) { return utils::replace_all(w, '|', '\t');});
+            std::sort(vec.begin(), vec.end());
+            for (const auto& s : vec) {
                 // keylen == 1 なら1文字単語は対象外
                 if ((wlen > 0 && s.size() == wlen) || (wlen == 0 && (keylen != 1 || s.size() >= 2)) && s != key) {
                     _DEBUG_SENT(if (n++ < 10) _LOG_DEBUGH(_T("resultList.PushHistory(key=%s, s=%s)"), MAKE_WPTR(key), MAKE_WPTR(s)));
-                    resultList.PushHistory(key, s);
+                    resultList.PushHistory(key, utils::replace_all(s, '\t', '|'));
                 }
             }
             _LOG_DEBUGH(_T("RESULT: resultList.size()=%d"), resultList.Size());
@@ -968,7 +972,10 @@ namespace {
         void WriteFile(utils::OfstreamWriter& writer) {
             LOG_INFO(_T("CALLED"));
             for (const auto& word : hashToStrMap.GetAllWords()) {
-                writer.writeLine(utils::utf8_encode(to_wstr(word)));
+                if (word.find(MSTR_VERT_BAR_2) == MString::npos) {
+                    // '||' を含むものは除く
+                    writer.writeLine(utils::utf8_encode(to_wstr(word)));
+                }
             }
             bDirty = false;
         }
@@ -1047,7 +1054,7 @@ namespace {
     typedef void (HistoryDic::* READ_FUNC)(const std::vector<wstring>& lines);
 
     // 履歴ファイルの読み込み
-    void readFile(const wstring& path, READ_FUNC func) {
+    void readFile(const wstring& path, READ_FUNC func, bool bWarn = true) {
         LOG_INFO(_T("open hist file: %s"), path.c_str());
         utils::IfstreamReader reader(path);
         if (reader.success()) {
@@ -1055,7 +1062,7 @@ namespace {
             (HISTORY_DIC.get()->*func)(reader.getAllLines());
             LOG_INFO(_T("close hist file: %s"), path.c_str());
         } else {
-            LOG_WARN(_T("Can't read hist file: %s"), path.c_str());
+            if (bWarn) LOG_WARN(_T("Can't read hist file: %s"), path.c_str());
         }
     };
 
@@ -1102,6 +1109,7 @@ int HistoryDic::CreateHistoryDic(const tstring& histFile) {
 
         size_t pos = path.find(_T("*"));
         readFile(replaceStar(path, pos, _T("entry")), &HistoryDic::ReadFile);
+        readFile(replaceStar(path, pos, _T("roman")), &HistoryDic::ReadFile, false);
         readFile(replaceStar(path, pos, _T("recent")), &HistoryDic::ReadUsedFile);
         readFile(replaceStar(path, pos, _T("exclude")), &HistoryDic::ReadExcludeFile);
         //readFile(replaceStar(path, pos, _T("ngram")), &HistoryDic::ReadNgramFile);

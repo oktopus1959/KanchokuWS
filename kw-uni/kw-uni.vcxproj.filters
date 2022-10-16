@@ -13,6 +13,60 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ソース ファイル\BushuComp">
+      <UniqueIdentifier>{f39c7ea7-c26f-4c74-992f-fae756095eac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\History">
+      <UniqueIdentifier>{6681c7a6-a30e-44c2-9fb4-bc938f41d83c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\KeysAndChars">
+      <UniqueIdentifier>{4e942085-1a22-4a5f-ac63-f461ece57fa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Mazegaki">
+      <UniqueIdentifier>{78ad2cda-0463-42f2-a282-4928a941d3f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\OneShot">
+      <UniqueIdentifier>{580e9f49-7d55-45a4-aed8-fe5772ae2fc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Reporting">
+      <UniqueIdentifier>{9cb53730-4d8b-47b7-9024-f43913ce86d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Settings">
+      <UniqueIdentifier>{6b79d4f0-c3d7-45dd-9b54-0d9761f41f95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Template">
+      <UniqueIdentifier>{8b7c1513-fc90-4f59-ba3f-0d8d50ad84d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\BushuComp">
+      <UniqueIdentifier>{c7a4a725-3c77-4ff0-b514-3482804d8e1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\History">
+      <UniqueIdentifier>{19d18409-df36-4564-b551-2329bf802601}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\KeysAndChars">
+      <UniqueIdentifier>{325b33a9-c7d2-4233-a174-927ad318e967}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Mazegaki">
+      <UniqueIdentifier>{6714d6b1-c147-4c78-880c-32ea970586c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\OneShot">
+      <UniqueIdentifier>{cc3daef6-bd0b-41de-a81c-ea47b1a66947}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Reporting">
+      <UniqueIdentifier>{08acd3d3-7536-4a21-969a-ddb3adf8ab50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Settings">
+      <UniqueIdentifier>{22c37778-8a31-441b-ab42-2eee4de1767d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Template">
+      <UniqueIdentifier>{5181c364-441b-43ab-bdf5-f48bf8b31a4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\utils">
+      <UniqueIdentifier>{c6079840-a42f-4608-aeff-049a7ab70316}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\utils\langedge">
+      <UniqueIdentifier>{2ab12722-7b0f-4acb-ab61-cb1b17e7a913}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -24,19 +78,10 @@
     <ClInclude Include="Decoder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="debug.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Constants.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DecoderMode.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Node.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="langedge\ctypeutil.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="State.h">
@@ -57,15 +102,6 @@
     <ClInclude Include="StartNode.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="BushuComp\BushuComp.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="BushuComp\BushuDic.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="BushuComp\BushuAssoc.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="FunctionNodeBuilder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -75,61 +111,13 @@
     <ClInclude Include="FunctionNodeBuilderList.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="utils\file_utils.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\misc_utils.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="utils\path_utils.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\string_type.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\string_utils.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="BushuComp\BushuAssocDic.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Mazegaki\Mazegaki.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Mazegaki\MazegakiDic.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="History\History.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="History\HistoryDic.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Reporting\ErrorHandler.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Reporting\Logger.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="KeysAndChars\EasyChars.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\IniAccessor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\KanchokuIni.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\Settings.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="KeysAndChars\StrokeHelp.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="StayState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="History\HistoryStayState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="EscapeNode.h">
@@ -138,41 +126,122 @@
     <ClInclude Include="StateCommonInfo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Template\Template.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="KeysAndChars\Zenkaku.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="KeysAndChars\VkbTableMaker.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="TranslationState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="KeysAndChars\Katakana.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="BushuComp\BushuAssoc.h">
+      <Filter>ヘッダー ファイル\BushuComp</Filter>
     </ClInclude>
-    <ClInclude Include="KeysAndChars\MyPrevChar.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="BushuComp\BushuAssocDic.h">
+      <Filter>ヘッダー ファイル\BushuComp</Filter>
+    </ClInclude>
+    <ClInclude Include="BushuComp\BushuComp.h">
+      <Filter>ヘッダー ファイル\BushuComp</Filter>
+    </ClInclude>
+    <ClInclude Include="BushuComp\BushuDic.h">
+      <Filter>ヘッダー ファイル\BushuComp</Filter>
+    </ClInclude>
+    <ClInclude Include="History\HistoryDic.h">
+      <Filter>ヘッダー ファイル\History</Filter>
+    </ClInclude>
+    <ClInclude Include="History\HistoryStayState.h">
+      <Filter>ヘッダー ファイル\History</Filter>
     </ClInclude>
     <ClInclude Include="KeysAndChars\deckey_id_defs.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\KeysAndChars</Filter>
     </ClInclude>
     <ClInclude Include="KeysAndChars\DeckeyToChars.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\KeysAndChars</Filter>
     </ClInclude>
-    <ClInclude Include="OneShot\OneShot.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="KeysAndChars\EasyChars.h">
+      <Filter>ヘッダー ファイル\KeysAndChars</Filter>
+    </ClInclude>
+    <ClInclude Include="KeysAndChars\Katakana.h">
+      <Filter>ヘッダー ファイル\KeysAndChars</Filter>
+    </ClInclude>
+    <ClInclude Include="KeysAndChars\MyPrevChar.h">
+      <Filter>ヘッダー ファイル\KeysAndChars</Filter>
+    </ClInclude>
+    <ClInclude Include="KeysAndChars\StrokeHelp.h">
+      <Filter>ヘッダー ファイル\KeysAndChars</Filter>
+    </ClInclude>
+    <ClInclude Include="KeysAndChars\VkbTableMaker.h">
+      <Filter>ヘッダー ファイル\KeysAndChars</Filter>
+    </ClInclude>
+    <ClInclude Include="KeysAndChars\Zenkaku.h">
+      <Filter>ヘッダー ファイル\KeysAndChars</Filter>
+    </ClInclude>
+    <ClInclude Include="Mazegaki\Mazegaki.h">
+      <Filter>ヘッダー ファイル\Mazegaki</Filter>
+    </ClInclude>
+    <ClInclude Include="Mazegaki\MazegakiDic.h">
+      <Filter>ヘッダー ファイル\Mazegaki</Filter>
     </ClInclude>
     <ClInclude Include="OneShot\HankakuKatakanaOneShot.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\OneShot</Filter>
     </ClInclude>
     <ClInclude Include="OneShot\KatakanaOneShot.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\OneShot</Filter>
+    </ClInclude>
+    <ClInclude Include="OneShot\OneShot.h">
+      <Filter>ヘッダー ファイル\OneShot</Filter>
     </ClInclude>
     <ClInclude Include="OneShot\PostRewriteOneShot.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\OneShot</Filter>
+    </ClInclude>
+    <ClInclude Include="Reporting\ErrorHandler.h">
+      <Filter>ヘッダー ファイル\Reporting</Filter>
+    </ClInclude>
+    <ClInclude Include="Reporting\Logger.h">
+      <Filter>ヘッダー ファイル\Reporting</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\IniAccessor.h">
+      <Filter>ヘッダー ファイル\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\KanchokuIni.h">
+      <Filter>ヘッダー ファイル\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\Settings.h">
+      <Filter>ヘッダー ファイル\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Template\Template.h">
+      <Filter>ヘッダー ファイル\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\file_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\misc_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\string_type.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\string_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="langedge\ctypeutil.hpp">
+      <Filter>ヘッダー ファイル\utils\langedge</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\langedge\array_size.hpp">
+      <Filter>ヘッダー ファイル\utils\langedge</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\langedge\exception.hpp">
+      <Filter>ヘッダー ファイル\utils\langedge</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\langedge\pathname.hpp">
+      <Filter>ヘッダー ファイル\utils\langedge</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\langedge\pathutil.hpp">
+      <Filter>ヘッダー ファイル\utils\langedge</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\langedge\tstring.hpp">
+      <Filter>ヘッダー ファイル\utils\langedge</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\langedge\ctypeutil.hpp">
+      <Filter>ヘッダー ファイル\utils\langedge</Filter>
+    </ClInclude>
+    <ClInclude Include="KeysAndChars\Eisu.h">
+      <Filter>ヘッダー ファイル\KeysAndChars</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -200,46 +269,10 @@
     <ClCompile Include="StartState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="BushuComp\BushuComp.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="BushuComp\BushuDic.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="BushuComp\BushuAssoc.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="FunctionNodeManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="StringState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="BushuComp\BushuAssocDic.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Mazegaki\Mazegaki.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Mazegaki\MazegakiDic.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="History\History.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="History\HistoryDic.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Reporting\ErrorHandler.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Reporting\Logger.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="KeysAndChars\EasyChars.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="KeysAndChars\StrokeHelp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="StayState.cpp">
@@ -248,50 +281,89 @@
     <ClCompile Include="EscapeState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Template\TemplateState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="KeysAndChars\ZenkakuState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\Settings.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="StateCommonInfo.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="OutputStack.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="KeysAndChars\VkbTableMaker.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="TranslationState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="KeysAndChars\KatakanaState.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="BushuComp\BushuAssoc.cpp">
+      <Filter>ソース ファイル\BushuComp</Filter>
     </ClCompile>
-    <ClCompile Include="KeysAndChars\MyPrevCharState.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="BushuComp\BushuAssocDic.cpp">
+      <Filter>ソース ファイル\BushuComp</Filter>
+    </ClCompile>
+    <ClCompile Include="BushuComp\BushuComp.cpp">
+      <Filter>ソース ファイル\BushuComp</Filter>
+    </ClCompile>
+    <ClCompile Include="BushuComp\BushuDic.cpp">
+      <Filter>ソース ファイル\BushuComp</Filter>
+    </ClCompile>
+    <ClCompile Include="History\History.cpp">
+      <Filter>ソース ファイル\History</Filter>
+    </ClCompile>
+    <ClCompile Include="History\HistoryDic.cpp">
+      <Filter>ソース ファイル\History</Filter>
     </ClCompile>
     <ClCompile Include="KeysAndChars\deckey_id_defs.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\KeysAndChars</Filter>
     </ClCompile>
     <ClCompile Include="KeysAndChars\DeckeyToChars.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\KeysAndChars</Filter>
     </ClCompile>
-    <ClCompile Include="OneShot\OneShotState.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="KeysAndChars\EasyChars.cpp">
+      <Filter>ソース ファイル\KeysAndChars</Filter>
+    </ClCompile>
+    <ClCompile Include="KeysAndChars\KatakanaState.cpp">
+      <Filter>ソース ファイル\KeysAndChars</Filter>
+    </ClCompile>
+    <ClCompile Include="KeysAndChars\MyPrevCharState.cpp">
+      <Filter>ソース ファイル\KeysAndChars</Filter>
+    </ClCompile>
+    <ClCompile Include="KeysAndChars\StrokeHelp.cpp">
+      <Filter>ソース ファイル\KeysAndChars</Filter>
+    </ClCompile>
+    <ClCompile Include="KeysAndChars\VkbTableMaker.cpp">
+      <Filter>ソース ファイル\KeysAndChars</Filter>
+    </ClCompile>
+    <ClCompile Include="KeysAndChars\ZenkakuState.cpp">
+      <Filter>ソース ファイル\KeysAndChars</Filter>
+    </ClCompile>
+    <ClCompile Include="Mazegaki\Mazegaki.cpp">
+      <Filter>ソース ファイル\Mazegaki</Filter>
+    </ClCompile>
+    <ClCompile Include="Mazegaki\MazegakiDic.cpp">
+      <Filter>ソース ファイル\Mazegaki</Filter>
     </ClCompile>
     <ClCompile Include="OneShot\HankakuKatakanaOneShotState.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\OneShot</Filter>
     </ClCompile>
     <ClCompile Include="OneShot\KatakanaOneShotState.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\OneShot</Filter>
+    </ClCompile>
+    <ClCompile Include="OneShot\OneShotState.cpp">
+      <Filter>ソース ファイル\OneShot</Filter>
     </ClCompile>
     <ClCompile Include="OneShot\PostRewriteOneShotState.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\OneShot</Filter>
+    </ClCompile>
+    <ClCompile Include="Reporting\ErrorHandler.cpp">
+      <Filter>ソース ファイル\Reporting</Filter>
+    </ClCompile>
+    <ClCompile Include="Reporting\Logger.cpp">
+      <Filter>ソース ファイル\Reporting</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\Settings.cpp">
+      <Filter>ソース ファイル\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Template\TemplateState.cpp">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="KeysAndChars\EisuState.cpp">
+      <Filter>ソース ファイル\KeysAndChars</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

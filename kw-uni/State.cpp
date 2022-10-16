@@ -11,6 +11,7 @@
 #include "Settings.h"
 #include "StrokeTable.h"
 #include "Mazegaki/Mazegaki.h"
+#include "KeysAndChars/Eisu.h"
 #include "KeysAndChars/Katakana.h"
 #include "KeysAndChars/Zenkaku.h"
 
@@ -86,24 +87,27 @@ void State::DoDeckeyPreProc(int deckey) {
             }
             _LOG_DEBUGH(_T("PATH-E"));
 
-            if (pNode && dynamic_cast<ZenkakuNode*>(pNode) == 0 && deckey == TOGGLE_ZENKAKU_CONVERSION_DECKEY) {
-                _LOG_DEBUGH(_T("CREATE: ZenkakuState"));
-                pNext = ZENKAKU_NODE->CreateState();
-                pNext->SetPrevState(this);
-                pNext->DoProcOnCreated();
-                deckey = -1;    // この後は dekcey の処理をやらない
-            } else if (pNode && dynamic_cast<KatakanaNode*>(pNode) == 0 && deckey == TOGGLE_KATAKANA_CONVERSION_DECKEY) {
-                _LOG_DEBUGH(_T("CREATE: KatakanaState"));
-                pNext = KATAKANA_NODE->CreateState();
-                pNext->SetPrevState(this);
-                pNext->DoProcOnCreated();
-                deckey = -1;    // この後は dekcey の処理をやらない
-            } else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokableKey(deckey)) {
-                // ルートストロークノードの生成
-                _LOG_DEBUGH(_T("CREATE: RootStrokeState"));
-                if (ROOT_STROKE_NODE) {
-                    pNext = ROOT_STROKE_NODE->CreateState();
+            if (pNode == 0 || dynamic_cast<EisuNode*>(pNode) == 0) {
+                // 英数ノードでない場合
+                if (pNode && dynamic_cast<ZenkakuNode*>(pNode) == 0 && deckey == TOGGLE_ZENKAKU_CONVERSION_DECKEY) {
+                    _LOG_DEBUGH(_T("CREATE: ZenkakuState"));
+                    pNext = ZENKAKU_NODE->CreateState();
                     pNext->SetPrevState(this);
+                    pNext->DoProcOnCreated();
+                    deckey = -1;    // この後は dekcey の処理をやらない
+                } else if (pNode && dynamic_cast<KatakanaNode*>(pNode) == 0 && deckey == TOGGLE_KATAKANA_CONVERSION_DECKEY) {
+                    _LOG_DEBUGH(_T("CREATE: KatakanaState"));
+                    pNext = KATAKANA_NODE->CreateState();
+                    pNext->SetPrevState(this);
+                    pNext->DoProcOnCreated();
+                    deckey = -1;    // この後は dekcey の処理をやらない
+                } else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokableKey(deckey)) {
+                    // ルートストロークノードの生成
+                    _LOG_DEBUGH(_T("CREATE: RootStrokeState"));
+                    if (ROOT_STROKE_NODE) {
+                        pNext = ROOT_STROKE_NODE->CreateState();
+                        pNext->SetPrevState(this);
+                    }
                 }
             }
         }
@@ -556,6 +560,9 @@ void State::handleZenkakuConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKe
 
 // handleKatakanaConversion デフォルトハンドラ
 void State::handleKatakanaConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(TOGGLE_KATAKANA_CONVERSION_DECKEY); }
+
+// handleEisuCancel デフォルトハンドラ
+void State::handleEisuCancel() { LOG_INFOH(_T("DO NOTHING")); }
 
 // handleClearStroke デフォルトハンドラ
 void State::handleClearStroke() { LOG_INFOH(_T("DO NOTHING")); }

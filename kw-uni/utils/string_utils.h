@@ -166,6 +166,8 @@ namespace {
         return result;
     }
 
+    const MString MSTR_VERT_BAR_2 = to_mstr(_T("||"));
+
     void push_back_wstr(mchar_t m, wstring& ws) {
         auto mp = decomp_mchar(m);
         if (mp.first != 0) ws.push_back(mp.first);
@@ -464,9 +466,20 @@ namespace utils
         return s.find(t) != MString::npos;
     }
 
+    inline MString replace(const MString& s, const MString& t, const MString& r) {
+        size_t pos = s.find(t);
+        return (pos == MString::npos) ? s : s.substr(0, pos) + r + s.substr(pos + t.size());
+    }
+
     inline tstring replace(const tstring& s, const wchar_t* t, const wchar_t* r) {
         size_t pos = s.find(t);
         return (pos == tstring::npos) ? s : s.substr(0, pos) + r + s.substr(pos + wcslen(t));
+    }
+
+    inline MString replace_all(const MString& s, mchar_t t, mchar_t r) {
+        MString result = s;
+        std::replace(result.begin(), result.end(), t, r);
+        return result;
     }
 
     inline tstring replace_all(const tstring& s, wchar_t t, wchar_t r) {
@@ -979,7 +992,7 @@ namespace utils
         for (size_t i = 0; i < qKey.size(); ++i) {
             if (i >= str.size()) return false;
             if (str[i] == VERT_BAR) {
-                return qKey.size() <= i + vertBarGobiMaxLen;
+                return qKey.size() <= i + vertBarGobiMaxLen;    // 語尾に余裕をもたせてマッチさせる
             }
             if (qKey[i] == '?') continue;
             if (qKey[i] != str[pos + i]) return false;
@@ -1001,6 +1014,20 @@ namespace utils
 
     inline tstring intToString(int val) {
         return std::to_wstring(val);
+    }
+
+    inline bool isRomanString(const MString& s) {
+        for (auto ch : s) {
+            if (!(ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z')) return false;
+        }
+        return true;
+    }
+
+    inline bool isRomanString(const wstring& s) {
+        for (auto ch : s) {
+            if (!(ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z')) return false;
+        }
+        return true;
     }
 
 #undef UTILS_BUFSIZ

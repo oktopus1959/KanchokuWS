@@ -16,6 +16,7 @@
 #include "KeysAndChars/MyPrevChar.h"
 #include "KeysAndChars/Zenkaku.h"
 #include "KeysAndChars/Katakana.h"
+#include "KeysAndChars/Eisu.h"
 #include "ErrorHandler.h"
 #include "Settings.h"
 #include "State.h"
@@ -136,6 +137,9 @@ public:
 
         // カタカナ変換ノードのSingleton生成
         KatakanaNode::CreateSingleton();
+
+        // 英数入力ノードのSingleton生成
+        EisuNode::CreateSingleton();
 
         // ストロークヘルプを求めておく
         StrokeHelp::GatherStrokeHelp();
@@ -664,7 +668,11 @@ public:
             for (auto& s : STATE_COMMON->LongVkeyCandidates()) {
                 size_t i = 0;
                 for (; i < s.size(); ++i) {
-                    if (i >= LONG_VKEY_CHAR_SIZE - 1 || pos + i >= maxlen) break;
+                    if (pos + i >= maxlen) break;
+                    if (i >= LONG_VKEY_CHAR_SIZE) {
+                        OutParams->faceStrings[pos + i - 1] = '…';
+                        break;
+                    }
                     OutParams->faceStrings[pos + i] = s[i];
                 }
                 OutParams->faceStrings[pos + i] = 0;
