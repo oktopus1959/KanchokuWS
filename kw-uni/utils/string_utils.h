@@ -37,6 +37,14 @@ namespace {
         return (m & 0xffff0000) != 0;
     }
 
+    inline wchar_t to_upper(wchar_t ch) { return wchar_t(langedge::CtypeUtil::toUpper(ch)); }
+
+    inline mchar_t to_upper(mchar_t ch) { return mchar_t(langedge::CtypeUtil::toUpper(ch)); }
+
+    inline wchar_t to_lower(wchar_t ch) { return wchar_t(langedge::CtypeUtil::toLower(ch)); }
+
+    inline mchar_t to_lower(mchar_t ch) { return mchar_t(langedge::CtypeUtil::toLower(ch)); }
+
     inline bool is_ascii_char(wchar_t ch) {
         return ch >= 0x20 && ch <= 0x7f;
     }

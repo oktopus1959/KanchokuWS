@@ -17,6 +17,8 @@
 #if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
@@ -101,7 +103,11 @@ namespace {
             if (iter != dic.end()) {
                 for (auto hsh : iter->second) {
                     const std::set<MString>& set_ = hashToStrMap.GetSet(hsh);
-                    if (!set_.empty()) result.insert(set_.begin(), set_.end());
+                    //if (!set_.empty()) result.insert(set_.begin(), set_.end());
+                    for (const MString& w : set_) {
+                        // '||' を '|' に置換しておく
+                        result.insert(utils::replace(w, MSTR_VERT_BAR_2, MSTR_VERT_BAR));
+                    }
                 }
             }
         }
@@ -374,6 +380,7 @@ namespace {
             size_t keylen = key.size();
             _DEBUG_SENT(size_t n = 0);
             for (const auto& w : usedList) {
+                //_DEBUG_SENT(if (w.find(VERT_BAR) != MString::npos) _LOG_DEBUGH(_T("VERT_BAR: %s"), MAKE_WPTR(w)));
                 if ((w.size() == wlen || (wlen == 0 && w.size() >= 2) || (wlen >= 9 && w.size() > 9)) && w != key && utils::contains(set_, w)) {
                     if (keylen != 1 || w.size() >= 2) {
                         // キーが1文字なら、候補列から1文字単語は除く
@@ -638,21 +645,35 @@ namespace {
             return true;
         }
 
+        // UTF8で書かれた辞書ソースを読み込む
+        void readFile(const std::vector<wstring>& lines, bool bReadOnly) {
+            LOG_INFO(_T("ENTER: %d lines, bReadOnly=%s"), lines.size(), BOOL_TO_WPTR(bReadOnly));
+            int logLevel = Logger::LogLevel;
+            Logger::LogLevel = 0;
+            for (const auto& line : lines) {
+                if (bReadOnly && line.find(_T("||")) == wstring::npos) {
+                    addHistDicEntry(to_mstr(utils::replace(line, _T("|"), _T("||"))), 1);
+                } else {
+                    addHistDicEntry(to_mstr(line), 1);
+                }
+            }
+            bDirty = false;
+            Logger::LogLevel = logLevel;
+            LOG_INFO(_T("LEAVE"));
+        }
+
     public:
         HistoryDicImpl() {
         }
 
         // UTF8で書かれた辞書ソースを読み込む
         void ReadFile(const std::vector<wstring>& lines) {
-            LOG_INFO(_T("ENTER: %d lines"), lines.size());
-            int logLevel = Logger::LogLevel;
-            Logger::LogLevel = 0;
-            for (const auto& line : lines) {
-                addHistDicEntry(to_mstr(line), 1);
-            }
-            bDirty = false;
-            Logger::LogLevel = logLevel;
-            LOG_INFO(_T("LEAVE"));
+            readFile(lines, false);
+        }
+
+        // UTF8で書かれた辞書ソースを読み込む
+        void ReadFileAsReadOnly(const std::vector<wstring>& lines) {
+            readFile(lines, true);
         }
 
     private:
@@ -750,7 +771,7 @@ namespace {
             // set_ を vec に詰め替えてソートしてから回す。なお、'|' のままだと期待した順にならないので、'\t' に置換してからソートする(後で'|'に戻す)
             std::vector<MString> vec;
             std::transform(set_.begin(), set_.end(), std::back_inserter(vec), [](const auto& w) { return utils::replace_all(w, '|', '\t');});
-            std::sort(vec.begin(), vec.end());
+            if (vec.size() < 1000) std::sort(vec.begin(), vec.end());
             for (const auto& s : vec) {
                 // keylen == 1 なら1文字単語は対象外
                 if ((wlen > 0 && s.size() == wlen) || (wlen == 0 && (keylen != 1 || s.size() >= 2)) && s != key) {
@@ -839,6 +860,7 @@ namespace {
 
 #define IS_LIST_EMPTY() (resultList.Empty())
 
+                bool bIsRomanKey = utils::isRomanString(key);
                 bool bListEmpty = IS_LIST_EMPTY();
                 bool bAll = SETTINGS->histGatherAllCandidates && bListEmpty;
 
@@ -860,7 +882,7 @@ namespace {
                 bListEmpty = IS_LIST_EMPTY();
 
                 // 上記がマッチせず、keyが6文字以上の場合には、key.substr(1) について試す
-                if ((bAll || bListEmpty) && keySize >= 6) {
+                if ((bAll || bListEmpty) && keySize >= 6 && !bIsRomanKey) {
                     // "□■■■■■" (6)
                     CHECK_LIST_EMPTY(5);
                     extract_and_copy_for_longer_than_4(key, minlen, 1);
@@ -868,7 +890,7 @@ namespace {
                 bListEmpty = IS_LIST_EMPTY();
 
                 // 上記がマッチせず、keyが7文字以上の場合には、末尾から6文字および5文字について試す
-                if ((bAll || bListEmpty) && keySize >= 7) {
+                if ((bAll || bListEmpty) && keySize >= 7 && !bIsRomanKey) {
                     if (keySize >= 8) {
                         // "□□■■■■■■" (8)
                         CHECK_LIST_EMPTY(6);
@@ -885,7 +907,7 @@ namespace {
                 bListEmpty = IS_LIST_EMPTY();
 
                 // Phase-B (4文字以下のマッチング)
-                if (bAll || bListEmpty) {
+                if ((bAll || bListEmpty) && (!bIsRomanKey || keySize <= 4)) {
                     size_t minKana = SETTINGS->histHiraganaKeyLength;
                     size_t minKata = SETTINGS->histKatakanaKeyLength;
                     size_t minKanj = SETTINGS->histKanjiKeyLength;
@@ -1109,7 +1131,7 @@ int HistoryDic::CreateHistoryDic(const tstring& histFile) {
 
         size_t pos = path.find(_T("*"));
         readFile(replaceStar(path, pos, _T("entry")), &HistoryDic::ReadFile);
-        readFile(replaceStar(path, pos, _T("roman")), &HistoryDic::ReadFile, false);
+        readFile(replaceStar(path, pos, _T("roman")), &HistoryDic::ReadFileAsReadOnly, false);
         readFile(replaceStar(path, pos, _T("recent")), &HistoryDic::ReadUsedFile);
         readFile(replaceStar(path, pos, _T("exclude")), &HistoryDic::ReadExcludeFile);
         //readFile(replaceStar(path, pos, _T("ngram")), &HistoryDic::ReadNgramFile);

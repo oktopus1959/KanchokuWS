@@ -22,6 +22,7 @@
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
@@ -36,6 +37,8 @@ namespace {
         DECLARE_CLASS_LOGGER;
 
         bool isPrevSpaceKey = false;
+
+        size_t firstTotalCnt = 0;
 
     public:
         // コンストラクタ
@@ -54,6 +57,8 @@ namespace {
         // 機能状態に対して生成時処理を実行する
         bool DoProcOnCreated() {
             _LOG_DEBUGH(_T("ENTER"));
+
+            firstTotalCnt = STATE_COMMON->GetTotalDecKeyCount();
 
             if (!STATE_COMMON->AddOrEraseRunningState(Name, this)) {
                 LOG_INFO(_T("Already same function had been running. Mark it unnecessary."));
@@ -78,7 +83,7 @@ namespace {
 
     public:
         // StrokeKey を処理する
-        void handleStrokeKeys(int deckey) {
+        void handleStrokeKeys(int deckey) override {
             wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
             LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), face=%c"), NAME_PTR, deckey, deckey, myChar);
             STATE_COMMON->AppendOrigString(myChar);
@@ -88,13 +93,30 @@ namespace {
             STATE_COMMON->SetOutString(myChar, 0);
 
             isPrevSpaceKey = false;
+            if (myChar >= 'A' && myChar <= 'Z' && STATE_COMMON->GetTotalDecKeyCount() == firstTotalCnt + 1) {
+                // 2文字目も英大文字だったら、英数モードを終了する
+                cancelMe();
+            }
             LOG_INFO(_T("LEAVE"));
         }
 
         // Shift飾修されたキー
-        void handleShiftKeys(int deckey) {
+        void handleShiftKeys(int deckey) override {
             _LOG_DEBUGH(_T("ENTER: %s, deckey=%x(%d)"), NAME_PTR, deckey, deckey);
             handleStrokeKeys(deckey);
+            _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
+        }
+
+        // 先頭文字の小文字化
+        void handleEisuLowerHead() override {
+            _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
+            auto romanStr = OUTPUT_STACK->GetLastAsciiKey<MString>(17);
+            if (!romanStr.empty() && romanStr.size() <= 16) {
+                if (is_upper_alphabet(romanStr[0])) {
+                    romanStr[0] = to_lower(romanStr[0]);
+                    STATE_COMMON->SetOutString(romanStr, romanStr.size());
+                }
+            }
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
 

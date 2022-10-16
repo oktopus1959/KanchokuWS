@@ -290,7 +290,7 @@ namespace {
                 _LOG_DEBUGH(_T("pos=%d, histMapKeyMaxLength=%d"), pos, SETTINGS->histMapKeyMaxLength);
                 if (pos <= SETTINGS->histMapKeyMaxLength) {
                     // histMap候補
-                    if (pos + 1 < outStr.size() && outStr[pos + 1] == VERT_BAR) ++pos;  // '||' だったら1つ進める
+                    if (pos + 1 < outStr.size() && outStr[pos + 1] == VERT_BAR) ++pos;  // '||' だったら1つ進める(HistoryDicで既に対処済みなので、多分、ここでは不要のはず)
                     outStr = utils::safe_substr(outStr, pos + 1);
                     _LOG_DEBUGH(_T("histMap: outStr=%s, outKey=%s"), MAKE_WPTR(outStr), MAKE_WPTR(outKey));
                     if (outKey.size() > pos) {

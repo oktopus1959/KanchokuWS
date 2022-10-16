@@ -1041,6 +1041,7 @@ namespace KanchokuWS
             {"katakanaconversion", DecoderKeys.TOGGLE_KATAKANA_CONVERSION_DECKEY},
             {"katakanaconversion1", DecoderKeys.TOGGLE_KATAKANA_CONVERSION1_DECKEY},
             {"katakanaconversion2", DecoderKeys.TOGGLE_KATAKANA_CONVERSION2_DECKEY},
+            {"eisulowerhead", DecoderKeys.EISU_LOWER_HEAD_DECKEY},
             {"romanstrokeguide", DecoderKeys.TOGGLE_ROMAN_STROKE_GUIDE_DECKEY},
             {"upperromanstrokeguide", DecoderKeys.TOGGLE_UPPER_ROMAN_STROKE_GUIDE_DECKEY},
             {"hiraganastrokeguide", DecoderKeys.TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY},

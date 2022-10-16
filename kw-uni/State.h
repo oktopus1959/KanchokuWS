@@ -220,6 +220,9 @@ public:
     // EisuCancel ハンドラ
     virtual void handleEisuCancel();
 
+    // EisuCancel ハンドラ
+    virtual void handleEisuLowerHead();
+
 protected:
     //--------------------------------------------------------------------
     // 以下、DECKEYハンドラのデフォルト実装
