@@ -328,8 +328,8 @@ namespace KanchokuWS
             logger.InfoH(() => $"FUNC_DECKEY_START={DecoderKeys.FUNC_DECKEY_START}");
             logger.InfoH(() => $"STROKE_DECKEY_END={DecoderKeys.STROKE_DECKEY_END}");
             logger.InfoH(() => $"COMBO_DECKEY_START={DecoderKeys.COMBO_DECKEY_START}");
-            logger.InfoH(() => $"EISU_COMBO_DECKEY_START={DecoderKeys.EISU_COMBO_DECKEY_START}");
             logger.InfoH(() => $"COMBO_EX_DECKEY_START={DecoderKeys.COMBO_EX_DECKEY_START}");
+            logger.InfoH(() => $"EISU_COMBO_DECKEY_START={DecoderKeys.EISU_COMBO_DECKEY_START}");
             logger.InfoH(() => $"EISU_COMBO_EX_DECKEY_START={DecoderKeys.EISU_COMBO_EX_DECKEY_START}");
             logger.InfoH(() => $"CTRL_DECKEY_START={DecoderKeys.CTRL_DECKEY_START}");
             logger.InfoH(() => $"CTRL_FUNC_DECKEY_START={DecoderKeys.CTRL_FUNC_DECKEY_START}");

@@ -221,7 +221,7 @@ public:
     virtual void handleEisuCancel();
 
     // EisuCancel ハンドラ
-    virtual void handleEisuLowerHead();
+    virtual void handleEisuDecapitalize();
 
 protected:
     //--------------------------------------------------------------------

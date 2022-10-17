@@ -36,9 +36,9 @@ namespace {
     class EisuState : public StrokeTranslationState {
         DECLARE_CLASS_LOGGER;
 
-        bool isPrevSpaceKey = false;
-
         size_t firstTotalCnt = 0;
+        size_t prevSpaceKeyCnt = 0;
+        size_t prevLowerHeadCnt = 0;
 
     public:
         // コンストラクタ
@@ -92,7 +92,6 @@ namespace {
             LOG_INFO(_T("SetOutString"));
             STATE_COMMON->SetOutString(myChar, 0);
 
-            isPrevSpaceKey = false;
             if (myChar >= 'A' && myChar <= 'Z' && STATE_COMMON->GetTotalDecKeyCount() == firstTotalCnt + 1) {
                 // 2文字目も英大文字だったら、英数モードを終了する
                 cancelMe();
@@ -108,13 +107,20 @@ namespace {
         }
 
         // 先頭文字の小文字化
-        void handleEisuLowerHead() override {
+        void handleEisuDecapitalize() override {
             _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
-            auto romanStr = OUTPUT_STACK->GetLastAsciiKey<MString>(17);
-            if (!romanStr.empty() && romanStr.size() <= 16) {
-                if (is_upper_alphabet(romanStr[0])) {
-                    romanStr[0] = to_lower(romanStr[0]);
-                    STATE_COMMON->SetOutString(romanStr, romanStr.size());
+            size_t checkCnt = prevLowerHeadCnt + 1;
+            prevLowerHeadCnt = STATE_COMMON->GetTotalDecKeyCount();
+            if (checkCnt == prevLowerHeadCnt) {
+                // 2回続けて呼ばれたらキャンセル
+                cancelMe();
+            } else {
+                auto romanStr = OUTPUT_STACK->GetLastAsciiKey<MString>(17);
+                if (!romanStr.empty() && romanStr.size() <= 16) {
+                    if (is_upper_alphabet(romanStr[0])) {
+                        romanStr[0] = to_lower(romanStr[0]);
+                        STATE_COMMON->SetOutString(romanStr, romanStr.size());
+                    }
                 }
             }
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
@@ -136,12 +142,13 @@ namespace {
         // Space の処理 -- 処理のキャンセル
         void handleSpaceKey() override {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            if (isPrevSpaceKey) {
+            size_t checkCnt = prevSpaceKeyCnt + 1;
+            prevSpaceKeyCnt = STATE_COMMON->GetTotalDecKeyCount();
+            if (checkCnt == prevSpaceKeyCnt) {
                 // 2回続けて呼ばれたらキャンセル
                 cancelMe();
             } else {
                 handleStrokeKeys(STROKE_SPACE_DECKEY);
-                isPrevSpaceKey = true;
             }
         }
 

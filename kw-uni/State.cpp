@@ -420,8 +420,8 @@ void State::dispatchDeckey(int deckey) {
         handleToggleBlocker();
     } else if (deckey == CANCEL_POST_REWRITE_DECKEY) {
         OUTPUT_STACK->cancelRewritable();
-    } else if (deckey == EISU_LOWER_HEAD_DECKEY) {
-        handleEisuLowerHead();
+    } else if (deckey == EISU_DECAPITALIZE_DECKEY) {
+        handleEisuDecapitalize();
     } else {
         if (handleFunctionKeys(deckey)) {
             _LOG_DEBUGH(_T("LEAVE: %s: FunctionKey handled, outStr=%s"), NAME_PTR, MAKE_WPTR(STATE_COMMON->OutString()));
@@ -566,8 +566,8 @@ void State::handleKatakanaConversion() { LOG_INFOH(_T("CALLED")); handleSpecialK
 // handleEisuCancel デフォルトハンドラ
 void State::handleEisuCancel() { LOG_INFOH(_T("DO NOTHING")); }
 
-// handleEisuLower デフォルトハンドラ
-void State::handleEisuLowerHead() { LOG_INFOH(_T("DO NOTHING")); }
+// handleEisuDecapitalize デフォルトハンドラ
+void State::handleEisuDecapitalize() { LOG_INFOH(_T("DO NOTHING")); }
 
 // handleClearStroke デフォルトハンドラ
 void State::handleClearStroke() { LOG_INFOH(_T("DO NOTHING")); }
