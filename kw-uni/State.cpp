@@ -564,7 +564,12 @@ void State::handleZenkakuConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKe
 void State::handleKatakanaConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(TOGGLE_KATAKANA_CONVERSION_DECKEY); }
 
 // handleEisuCancel デフォルトハンドラ
-void State::handleEisuCancel() { LOG_INFOH(_T("DO NOTHING")); }
+void State::handleEisuCancel() {
+    LOG_INFOH(_T("DO NOTHING"));
+    if (pNext) {
+        pNext->handleEisuCancel();
+    }
+}
 
 // handleEisuDecapitalize デフォルトハンドラ
 void State::handleEisuDecapitalize() { LOG_INFOH(_T("DO NOTHING")); }
