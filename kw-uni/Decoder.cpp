@@ -936,8 +936,8 @@ namespace {
 // デコーダを初期化する
 // 引数: 初期化パラメータ
 int InitializeDecoder(void* pDecoder, DecoderCommandParams* cmdParams) {
-    LOG_INFO(_T("\n======== kw-uni START ========"));
-    LOG_INFO(_T("LogLevel=%d, inOutData=%s"), Logger::LogLevel, cmdParams->inOutData);
+    LOG_INFO_UC(_T("\n======== kw-uni START ========"));
+    LOG_INFOH(_T("LogLevel=%d, inOutData=%s"), Logger::LogLevel, cmdParams->inOutData);
 
     // エラーハンドラの生成
     ErrorHandler::CreateSingleton();
@@ -952,7 +952,7 @@ int FinalizeDecoder(void* pDecoder) {
         Decoder* p = (Decoder*)pDecoder;
         p->Destroy();
         delete p;       // デコーダの終了時にデコーダインスタンスを破棄する
-        LOG_INFO(_T("======== kw-uni TERMINATED ========\n"));
+        LOG_INFO_UC(_T("======== kw-uni TERMINATED ========\n"));
         Logger::Close();
     };
     return invokeDecoderMethod(method_call, nullptr);
