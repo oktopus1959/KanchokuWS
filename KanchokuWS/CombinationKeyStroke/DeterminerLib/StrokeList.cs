@@ -528,12 +528,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             Stroke tailKey = hotList[overlapLen - 1];
                             bool isTailKeyUp = hotList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
                             logger.DebugH(() => $"CHECK1: {isTailKeyUp && tailKey.IsSingleHittable}: tailPos={overlapLen - 1}: isTailKeyUp && tailKey.IsSingleHittable");
-                            logger.DebugH(() => $"CHECK2: {hotList[0].IsShiftableSpaceKey}: hotList[0].IsShiftableSpaceKey");
-                            logger.DebugH(() => $"CHECK3: {Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())}: challengeList={challengeList._toString()}");
-                            if (isTailKeyUp && tailKey.IsSingleHittable ||  // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
-                                hotList[0].IsShiftableSpaceKey ||           // CHECK2: 先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
+                            logger.DebugH(() => $"CHECK2: {challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey}: challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey");
+                            logger.DebugH(() => "CHECK3: " +
+                                $"{Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())}" +
+                                $": challengeList={challengeList._toString()}");
+                            if (isTailKeyUp && tailKey.IsSingleHittable ||
+                                                // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
+                                challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey ||
+                                                // CHECK2: チャレンジリストの長さが2以下で、先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
                                 (Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())) ||
-                                                                            // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
+                                                // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
                                 (timingResult = isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) == 0)
                                                                             // CHECK1～CHECK3をすり抜けたらタイミングチェックをやる
                             {

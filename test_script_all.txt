@@ -217,6 +217,11 @@ enableTimer2()
 #convert({40}<162>J<94>F<33>j<95>f<1000>J<79>F<97>j<30>f<30>[40]) = ぃぃ
 convert(F<81>J<14>{40}<48>f<112>[40]<13>j) = の、
 
+comboMaxTime(50)
+comboMaxPostTime(50)
+enableTimer1
+convert({40}<9>O<89>X<28>[40]<23>o<60>x) = より
+
 ### 同時打鍵 ###
 loadTable(tables/_test/combo-test.tbl)
 comboMaxTime(100)
