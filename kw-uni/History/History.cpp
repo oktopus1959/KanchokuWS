@@ -21,7 +21,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 0 || defined(_DEBUG)
+#if 1 || defined(_DEBUG)
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -1033,15 +1033,21 @@ namespace {
                             size_t len0 = items[nItems - 2].size();
                             size_t len1 = items[nItems - 1].size();
                             if (len0 > 0 && len1 > 0 && len1 <= 4) {
+                                _LOG_DEBUGH(_T("WILDCARD: key=%s"), MAKE_WPTR(utils::last_substr(key9, len1 + 5)));
                                 return utils::last_substr(key9, len1 + 5);
                             }
                         }
                         // ワイルドカードパターンでなかった
+                        _LOG_DEBUGH(_T("NOT WILDCARD, GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey"));
                         // 出力文字から、ひらがな交じりやASCIIもキーとして取得する
                         auto jaKey = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>();
                         _LOG_DEBUGH(_T("HistSearch: jaKey=%s"), MAKE_WPTR(jaKey));
-                        if (jaKey.size() >= 9) return jaKey;    // 同種の文字列で9文以上取れたので、これをキーとする
+                        if (jaKey.size() >= 9 || (!jaKey.empty() && is_ascii_char(jaKey.back()))) {
+                            // 同種の文字列で9文以上取れたか、またはASCIIだったので、これをキーとする
+                            return jaKey;
+                        }
                         // 最終的には末尾8文字をキーとする('*' は含まない。'?' は含んでいる可能性あり)
+                        _LOG_DEBUGH(_T("HistSearch: tail_substr(key9, 8)=%s"), MAKE_WPTR(utils::tail_substr(key9, 8)));
                         return utils::tail_substr(key9, 8);
                     };
                     // キーの取得

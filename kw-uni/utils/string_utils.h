@@ -45,6 +45,10 @@ namespace {
 
     inline mchar_t to_lower(mchar_t ch) { return mchar_t(langedge::CtypeUtil::toLower(ch)); }
 
+    inline bool is_ascii_char(mchar_t ch) {
+        return ch >= 0x20 && ch <= 0x7f;
+    }
+
     inline bool is_ascii_char(wchar_t ch) {
         return ch >= 0x20 && ch <= 0x7f;
     }
