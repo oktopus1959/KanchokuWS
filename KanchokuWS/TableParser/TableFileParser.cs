@@ -150,14 +150,41 @@ namespace KanchokuWS.TableParser
             return TreeNode?.GetNthSubNode(n);
         }
 
-        public List<int> GetStrokeList(string word)
+        public List<string> GetStrokeList(string word)
         {
-            List<int> result = new List<int>();
-            foreach (var ch in word) {
-                int idx = RootTableNode.FindSubNode(ch.ToString());
-                if (idx >= 0) result.Add(idx);
+            List<string> result = new List<string>();
+            if (word._notEmpty()) {
+                getStrokeListSub(0, word, new List<int>(), result);
             }
             return result;
+        }
+
+        private void getStrokeListSub(int n, string word, List<int> strokes, List<string> result)
+        {
+            if (strokes.Count >= 4) return; // 3キーを超えるものは無視
+
+            if (n >= word.Length) {
+                logger.InfoH(() => $"PRIORITY WORD: {word}, keyString={strokes._keyString()}");
+                result.Add(strokes._keyString());
+                return;
+            }
+
+            string chStr = word[n].ToString();
+            int idx = RootTableNode.FindSubNode(chStr);
+            if (idx >= 0) {
+                getStrokeListSub(n + 1, word, Helper.MakeList(strokes, idx), result);
+            } else {
+                for (int i = 0; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
+                    Node node = RootTableNode.GetNthSubNode(i);
+                    if (node != null && node.IsTreeNode()) {
+                        idx = node.FindSubNode(chStr);
+                        if (idx >= 0) {
+                            getStrokeListSub(n + 1, word, Helper.MakeList(strokes, i, idx), result);
+                            getStrokeListSub(n + 1, word, Helper.MakeList(strokes, idx, i), result);
+                        }
+                    }
+                }
+            }
         }
 
         private string makePathStr(int dropTailLen = 0)
@@ -1184,7 +1211,11 @@ namespace KanchokuWS.TableParser
             // 優先する順次打鍵列
             foreach (var seq in Settings.SequentialPriorityWordSet) {
                 var strkList = GetStrokeList(seq);
-                Settings.SequentialPriorityWordKeyStringSet.Add(strkList._notEmpty() ? strkList._keyString() : seq);
+                if (strkList._notEmpty()) {
+                    Settings.SequentialPriorityWordKeyStringSet.UnionWith(strkList);
+                } else if (seq._safeContains(':')) {
+                    Settings.SequentialPriorityWordKeyStringSet.Add(seq);
+                }
             }
             logger.InfoH($"SequentialPriorityWordKeyStringSet={Settings.SequentialPriorityWordKeyStringSet._join(",")}");
 
