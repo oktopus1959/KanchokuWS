@@ -218,8 +218,11 @@ namespace KanchokuWS.CombinationKeyStroke
             strokeList.Clear();
         }
 
-        /// <summary>前回のComboシフトキーが解放された時刻</summary>
-        DateTime prevComboShiftKeyUpDt = DateTime.MinValue;
+        /// <summary>
+        /// 前回のComboシフトキーが解放された時刻<br/>
+        /// シフトキーの解放後、後置シフトを無効にする時間を計測する起点となる
+        /// </summary>
+        private DateTime prevComboShiftKeyUpDt = DateTime.MinValue;
 
         private Queue<Func<KeyHandlerResult>> procQueue = new Queue<Func<KeyHandlerResult>>();
 
@@ -267,10 +270,11 @@ namespace KanchokuWS.CombinationKeyStroke
             logger.DebugH(() => $"\nENTER: decKey={decKey}, lastRepeatedDecKey={lastRepeatedDecKey}");
 
             checkPreRewriteTime(decKey);
-            //prevDownDecKey = decKey;
-            DateTime prevShiftUpDt = prevComboShiftKeyUpDt;
-            prevComboShiftKeyUpDt = DateTime.MinValue;      // 何か押されたらクリアしておく
-            if (KeyCombinationPool.IsComboShift(decKey)) prevShiftUpDt = DateTime.MinValue;
+            if (KeyCombinationPool.IsComboShift(decKey)) {
+                // ShiftキーがDOWNされたら、後置シフトを無効にする時間を計測する起点をクリア
+                logger.DebugH("SHIFT KEY DOWN: CLEAR prevComboShiftKeyUpDt");
+                prevComboShiftKeyUpDt = DateTime.MinValue;
+            }
 
             List<int> result = null;
             bool bUnconditional = false;
@@ -338,10 +342,10 @@ namespace KanchokuWS.CombinationKeyStroke
                             logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, StrokeList.Count={strokeList.Count}");
                             if ((combo != null && !combo.IsTerminal) || !strokeList.IsEmpty()) {
                                 // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だった
-                                if (Settings.ComboDisableIntervalTimeMs > 0 && !stroke.IsComboShift && (dt - prevShiftUpDt).TotalMilliseconds <= Settings.ComboDisableIntervalTimeMs) {
+                                if (Settings.ComboDisableIntervalTimeMs > 0 && !stroke.IsComboShift && (dt - prevComboShiftKeyUpDt).TotalMilliseconds <= Settings.ComboDisableIntervalTimeMs) {
                                     // 同時打鍵シフトキーがUPされた後、指定のインターバル時間内に文字キーが打鍵されたので、それを単打として扱う
                                     logger.DebugH(() =>
-                                        $"Handle as SingleHit: elapsed time = {(dt - prevShiftUpDt).TotalMilliseconds}ms < ComboDisableIntervalTimeMs={Settings.ComboDisableIntervalTimeMs}ms");
+                                        $"Handle as SingleHit: elapsed time = {(dt - prevComboShiftKeyUpDt).TotalMilliseconds}ms < ComboDisableIntervalTimeMs={Settings.ComboDisableIntervalTimeMs}ms");
                                     result = Helper.MakeList(decKey);
                                 } else {
                                     // 打鍵リストに追加して同時打鍵判定を行う
@@ -398,6 +402,12 @@ namespace KanchokuWS.CombinationKeyStroke
             //    setPreRewriteTime(result.Last());
             //}
 
+            if (result._safeCount() == 1) {
+                // 結果が単打だったら prevComboShiftKeyUpDt をクリアしておく
+                logger.DebugH("SINGLE HIT: CLEAR prevComboShiftKeyUpDt");
+                prevComboShiftKeyUpDt = DateTime.MinValue;
+            }
+
             return new KeyHandlerResult() { list = result, bUncoditional = bUnconditional };
         }
 
@@ -428,7 +438,11 @@ namespace KanchokuWS.CombinationKeyStroke
 
             checkPreRewriteTime(decKey);
 
-            if (DecoderKeys.IsSpaceOrFuncKey(decKey) && KeyCombinationPool.IsComboShift(decKey)) prevComboShiftKeyUpDt = dt;
+            if (/*DecoderKeys.IsSpaceOrFuncKey(decKey) &&*/ KeyCombinationPool.IsComboShift(decKey)) {
+                // ShiftキーがUPされたら、後置シフトを無効にする時間を計測する起点をセット
+                logger.DebugH("SHIFT KEY UP: SET prevComboShiftKeyUpDt");
+                prevComboShiftKeyUpDt = dt;
+            }
 
             bool bUnconditional = false;
             var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, dt, bDecoderOn, out bUnconditional);
@@ -442,6 +456,12 @@ namespace KanchokuWS.CombinationKeyStroke
             //if (result._notEmpty() && bDecoderOn) {
             //    setPreRewriteTime(result.Last());
             //}
+
+            if (result._safeCount() == 1) {
+                // 結果が単打だったら prevComboShiftKeyUpDt をクリアしておく
+                logger.DebugH("SINGLE HIT: CLEAR prevComboShiftKeyUpDt");
+                prevComboShiftKeyUpDt = DateTime.MinValue;
+            }
 
             return new KeyHandlerResult() { list = result, bUncoditional = bUnconditional };
         }

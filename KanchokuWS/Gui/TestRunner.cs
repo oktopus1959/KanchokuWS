@@ -100,10 +100,10 @@ namespace KanchokuWS.Gui
                         Settings.CombinationKeyMinTimeOnlyAfterSecond = false;
                         Settings.UseCombinationKeyTimer1 = false;
                         Settings.UseCombinationKeyTimer2 = false;
-                        Settings.CombinationKeyMaxAllowedLeadTimeMs = arg._parseInt(100);
-                        Settings.ComboKeyMaxAllowedPostfixTimeMs = arg._parseInt(100);
-                        Settings.CombinationKeyMinOverlappingTimeMs = arg._parseInt(70);
-                        Settings.ComboDisableIntervalTimeMs = arg._parseInt(0);
+                        Settings.CombinationKeyMaxAllowedLeadTimeMs = 100;
+                        Settings.ComboKeyMaxAllowedPostfixTimeMs = 100;
+                        Settings.CombinationKeyMinOverlappingTimeMs = 70;
+                        Settings.ComboDisableIntervalTimeMs = 0;
                         shiftOffset = 0;
                         if (Logger.LogLevel >= Logger.LogLevelInfoH) {
                             KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.SingletonK2?.DebugPrint(true);
@@ -265,6 +265,7 @@ namespace KanchokuWS.Gui
                             case ",": dk = 37; break;
                             case ".": dk = 38; break;
                             case "/": dk = 39; break;
+                            case "space": case "sp":  dk = 40; break;
                             case "nfer": dk = 55; break;
                             case "xfer": dk = 56; break;
                         }
