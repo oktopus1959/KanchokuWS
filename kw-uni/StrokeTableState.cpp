@@ -98,7 +98,7 @@ namespace {
                 // キーボードフェイス文字を返すモード
                 LOG_INFO(_T("SetOutString"));
                 STATE_COMMON->SetOutString(myChar, 0);
-            } else if (myNode()->isRootStrokeTableNode() && myChar >= 'A' && myChar <= 'Z') {
+            } else if (SETTINGS->eisuModeEnabled && myNode()->isRootStrokeTableNode() && myChar >= 'A' && myChar <= 'Z') {
                 // 英数モード
                 LOG_INFO(_T("SetNextNodeMaybe: Eisu"));
                 STATE_COMMON->SetOutString(myChar, 0);

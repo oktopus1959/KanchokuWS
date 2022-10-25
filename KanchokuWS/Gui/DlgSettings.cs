@@ -1602,6 +1602,7 @@ namespace KanchokuWS.Gui
             checkBox_convertJaPeriod.Checked = Settings.ConvertJaPeriod;
             checkBox_convertJaComma.Checked = Settings.ConvertJaComma;
             checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
+            checkBox_eisuModeEnabled.Checked = Settings.EisuModeEnabled;
             checkBox_upperRomanStrokeGuide.Checked = Settings.UpperRomanStrokeGuide;
             textBox_kanjiYomiFile.Text = Settings.KanjiYomiFile;
             textBox_romanBushuCompPrefix.Text = Settings.RomanBushuCompPrefix;
@@ -1627,6 +1628,7 @@ namespace KanchokuWS.Gui
             checkerMiscSettings.Add(checkBox_convertJaPeriod);
             checkerMiscSettings.Add(checkBox_convertJaComma);
             checkerMiscSettings.Add(checkBox_removeOneStrokeByBackspace);
+            checkerMiscSettings.Add(checkBox_eisuModeEnabled);
             checkerMiscSettings.Add(checkBox_upperRomanStrokeGuide);
             checkerMiscSettings.Add(textBox_kanjiYomiFile);
             checkerMiscSettings.Add(textBox_romanBushuCompPrefix);
@@ -1656,6 +1658,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
             Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
             Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);
+            Settings.SetUserIni("eisuModeEnabled", checkBox_eisuModeEnabled.Checked);
             Settings.SetUserIni("upperRomanStrokeGuide", checkBox_upperRomanStrokeGuide.Checked);
             Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
             Settings.SetUserIni("romanBushuCompPrefix", textBox_romanBushuCompPrefix.Text);

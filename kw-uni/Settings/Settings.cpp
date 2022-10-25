@@ -88,6 +88,8 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_BOOL_VALUE(convertJaPeriod);
     SET_BOOL_VALUE(convertJaComma);
 
+    SET_BOOL_VALUE(eisuModeEnabled);
+
     SET_BOOL_VALUE(removeOneStrokeByBackspace);
 
     SET_BOOL_VALUE(yamanobeEnabled);

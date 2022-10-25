@@ -74,6 +74,8 @@ struct Settings {
     bool convertJaPeriod = false;           // 「。」と「．」を相互変換する
     bool convertJaComma = false;            // 「、」と「，」を相互変換する
 
+    bool eisuModeEnabled = false;           // 英大文字入力による英数モード移行が有効か
+
     bool removeOneStrokeByBackspace = false; // BS で直前打鍵のみを取り消す
 
     bool yamanobeEnabled = false;           // YAMANOBEアルゴリズムを有効にするか

@@ -557,6 +557,9 @@ namespace KanchokuWS
         /// <summary>「、」⇔「，」</summary>
         public static bool ConvertJaComma { get; set; } = false;
 
+        /// <summary>英大文字入力による英数モード移行が有効か</summary>
+        public static bool EisuModeEnabled { get; set; } = false;
+
         /// <summary>BS で全打鍵を取り消すか</summary>
         public static bool RemoveOneStrokeByBackspace { get; set; } = true;
 
@@ -1255,6 +1258,8 @@ namespace KanchokuWS
             HiraganaToKatakanaNormalPlane = addDecoderSetting("hiraToKataNormalPlane", false);                      // 「。」と「．」の相互変換
             ConvertJaPeriod = addDecoderSetting("convertJaPeriod", false);                      // 「。」と「．」の相互変換
             ConvertJaComma = addDecoderSetting("convertJaComma", false);                        // 「、」と「，」の相互変換
+
+            EisuModeEnabled = addDecoderSetting("eisuModeEnabled", false);                      // 英大文字入力による英数モード移行が有効か
 
             RemoveOneStrokeByBackspace = addDecoderSetting("removeOneStrokeByBackspace", "weakBS", false);  // BS で直前打鍵のみを取り消すか
 
