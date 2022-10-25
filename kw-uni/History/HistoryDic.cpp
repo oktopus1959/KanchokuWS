@@ -759,6 +759,12 @@ namespace {
         }
 
     private:
+        void pushCandidate(const MString& key, const MString& s, size_t& n) {
+            _DEBUG_SENT(if (n < 10) _LOG_DEBUGH(_T("resultList.PushHistory(key=%s, s=%s)"), MAKE_WPTR(key), MAKE_WPTR(s)));
+            resultList.PushHistory(key, utils::replace_all(s, '\t', '|'));
+            ++n;
+        }
+
         // resultList に最近使ったものから取得した候補を格納し、pasts には set_ に含まれるものでそれ以外の候補を格納する
         // wlen > 0 なら、その長さの候補だけを返す
         void extract_and_copy(const MString& key, std::set<MString>& set_, size_t wlen, bool bWild = false) {
@@ -767,17 +773,40 @@ namespace {
             resultList.SetKeyInfoIfFirst(key, bWild);
             size_t keylen = key.size();
             usedList.ExtractUsedWords(key, resultList, set_, wlen);
-            _DEBUG_SENT(size_t n = 0);
+
+            size_t n = 0;
             // set_ を vec に詰め替えてソートしてから回す。なお、'|' のままだと期待した順にならないので、'\t' に置換してからソートする(後で'|'に戻す)
             std::vector<MString> vec;
             std::transform(set_.begin(), set_.end(), std::back_inserter(vec), [](const auto& w) { return utils::replace_all(w, '|', '\t');});
             if (vec.size() < 1000) std::sort(vec.begin(), vec.end());
+            MString prevWord;
+            mchar_t tsu = _T("ツ")[0];
+            mchar_t to = _T("ト")[0];
             for (const auto& s : vec) {
                 // keylen == 1 なら1文字単語は対象外
                 if ((wlen > 0 && s.size() == wlen) || (wlen == 0 && (keylen != 1 || s.size() >= 2)) && s != key) {
-                    _DEBUG_SENT(if (n++ < 10) _LOG_DEBUGH(_T("resultList.PushHistory(key=%s, s=%s)"), MAKE_WPTR(key), MAKE_WPTR(s)));
-                    resultList.PushHistory(key, utils::replace_all(s, '\t', '|'));
+                    if (!prevWord.empty()) {
+                        if (s.back() == to && utils::safe_substr(prevWord, 0, prevWord.size() - 1) == utils::safe_substr(s, 0, s.size() - 1)) {
+                            // 末尾の 'ト' と 'ツ' 以外が一致したので、'ト'の方を優先する
+                            _LOG_DEBUGH(_T("FOUND SAME 'ト': %s"), MAKE_WPTR(s));
+                            pushCandidate(key, s, n);
+                            pushCandidate(key, prevWord, n);
+                        } else {
+                            pushCandidate(key, prevWord, n);
+                            pushCandidate(key, s, n);
+                        }
+                        prevWord.clear();
+                    }
+                    if (s.back() == tsu) {
+                        _LOG_DEBUGH(_T("FOUND 'ツ': %s"), MAKE_WPTR(s));
+                        prevWord = s;
+                    } else {
+                        pushCandidate(key, s, n);
+                    }
                 }
+            }
+            if (!prevWord.empty()) {
+                pushCandidate(key, prevWord, n);
             }
             _LOG_DEBUGH(_T("RESULT: resultList.size()=%d"), resultList.Size());
         }
