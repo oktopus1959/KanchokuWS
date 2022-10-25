@@ -172,19 +172,28 @@ namespace KanchokuWS.TableParser
             string chStr = word[n].ToString();
             int idx = RootTableNode.FindSubNode(chStr);
             if (idx >= 0) {
-                getStrokeListSub(n + 1, word, Helper.MakeList(strokes, idx), result);
+                getStrokeListSub(n + 1, word, makeList(strokes, idx), result);
             } else {
                 for (int i = 0; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
                     Node node = RootTableNode.GetNthSubNode(i);
                     if (node != null && node.IsTreeNode()) {
                         idx = node.FindSubNode(chStr);
                         if (idx >= 0) {
-                            getStrokeListSub(n + 1, word, Helper.MakeList(strokes, i, idx), result);
-                            getStrokeListSub(n + 1, word, Helper.MakeList(strokes, idx, i), result);
+                            getStrokeListSub(n + 1, word, makeList(strokes, i, idx), result);
+                            getStrokeListSub(n + 1, word, makeList(strokes, idx, i), result);
                         }
                     }
                 }
             }
+        }
+
+        private List<int> makeList(List<int> strokes, params int[] idxes)
+        {
+            List<int> result = new List<int>(strokes);
+            foreach (var x in idxes) {
+                if (!strokes.Contains(x)) result.Add(x);
+            }
+            return result;
         }
 
         private string makePathStr(int dropTailLen = 0)
