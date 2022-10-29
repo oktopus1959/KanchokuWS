@@ -530,13 +530,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             logger.DebugH(() => $"CHECK1: {isTailKeyUp && tailKey.IsSingleHittable}: tailPos={overlapLen - 1}: isTailKeyUp && tailKey.IsSingleHittable");
                             logger.DebugH(() => $"CHECK2: {challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey}: challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey");
                             logger.DebugH(() => "CHECK3: " +
-                                $"{Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())}" +
+                                $"{Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !isListContaindInSequentialPriorityWordKeySet(challengeList)}" +
                                 $": challengeList={challengeList._toString()}");
                             if (isTailKeyUp && tailKey.IsSingleHittable ||
                                                 // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
                                 challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey ||
                                                 // CHECK2: チャレンジリストの長さが2以下で、先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
-                                (Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !Settings.SequentialPriorityWordKeyStringSet.Contains(challengeList._toString())) ||
+                                (Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !isListContaindInSequentialPriorityWordKeySet(challengeList)) ||
                                                 // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
                                 (timingResult = isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) == 0)
                                                                             // CHECK1～CHECK3をすり抜けたらタイミングチェックをやる
@@ -571,6 +571,27 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             logger.DebugH(() => $"LEAVE: {(resultLen == 0 ? "NOT ": "")}FOUND: result={result._keyString()}, timingFailure={timingResult}, overlapLen={resultLen}: {ToDebugString()}");
             return resultLen;
+        }
+
+        private bool isListContaindInSequentialPriorityWordKeySet(List<Stroke> list)
+        {
+            int listLen = list._safeCount();
+            if (listLen < 2) return true;
+
+            var set = Settings.SequentialPriorityWordKeyStringSet;
+            var headSet = Settings.ThreeKeysComboPriorityHeadKeyStringSet;
+            var tailSet = Settings.ThreeKeysComboPriorityTailKeyStringSet;
+            var head1 = list.Take(1)._toString();
+            var head2 = list.Take(2)._toString();
+            var tail1 = list.Skip(listLen - 1)._toString();
+            var tail2 = list.Skip(listLen - 2)._toString();
+            if (headSet._notEmpty()) {
+                if (!headSet.Contains(head1) && !headSet.Contains(head2)) return true;
+            }
+            if (tailSet._notEmpty()) {
+                if (!tailSet.Contains(tail1) && !tailSet.Contains(tail2)) return true;
+            }
+            return set.Contains(list._toString()) || set.Contains($"{head1}:*") || set.Contains($"{head2}:*") || set.Contains($"*:{tail1}") || set.Contains($"*:{tail2}");
         }
 
         private KeyCombination findComboAny(List<List<Stroke>> subComboLists, List<Stroke> hotList)
@@ -672,8 +693,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         $"threshold={Settings.CombinationKeyMaxAllowedLeadTimeMs}ms/{Settings.ComboKeyMaxAllowedPostfixTimeMs}ms (Timing={result})");
                 }
             }
-            if (bSecondComboCheck || (result == 0 && !Settings.CombinationKeyMinTimeOnlyAfterSecond)) {
-                // 2文字目であるか、または、1文字目のリードタイムチェックをパスし、かつ、1文字目でも重複時間チェックが必要
+            if (result == 0) {
+                logger.DebugH(() => $"bSecondComboCheck={bSecondComboCheck}, list={list._toString()}, CombinationKeyMinTimeOnlyAfterSecond={Settings.CombinationKeyMinTimeOnlyAfterSecond}");
+            }
+            if (bSecondComboCheck || (result == 0 && (list._safeCount() > 2 || !Settings.CombinationKeyMinTimeOnlyAfterSecond))) {
+                // 2文字目であるか、または、1文字目のリードタイムチェックをパスし、かつ、3キー同時または1文字目でも重複時間チェックが必要
                 result = list.Any(x => x.OrigDecoderKey != tailStk.OrigDecoderKey && !x.IsUpKey && x.IsJustComboShift) ? 0 : 2;   // まだUPされていない非単打シフトキーがあるか
                 if (result == 0) {
                     // 非単打シフトキーがまだ解放されずに残っていたら同時打鍵と判定する
@@ -706,7 +730,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return !list._isEmpty();
         }
 
-        public static string _toString(this List<Stroke> list)
+        public static string _toString(this IEnumerable<Stroke> list)
         {
             return list?.Select(x => x.OrigDecoderKey.ToString())._join(":") ?? "";
         }

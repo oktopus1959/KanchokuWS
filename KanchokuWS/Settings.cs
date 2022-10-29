@@ -646,7 +646,7 @@ namespace KanchokuWS
         /// <summary>同時打鍵とみなす重複時間<br/>Nキー同時押しの状態からどれかのキーUPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす</summary>
         public static int CombinationKeyMinOverlappingTimeMs { get; set; } = 70;
 
-        /// <summary>２文字目以降についてのみ同時打鍵チェックを行う</summary>
+        /// <summary>２文字目以降についてのみ同時打鍵の重複時間チェックを行う</summary>
         public static bool CombinationKeyMinTimeOnlyAfterSecond { get; set; } = false;
 
         /// <summary>同時打鍵チェック用のタイマーを使用する</summary>
@@ -674,6 +674,12 @@ namespace KanchokuWS
 
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列に対するキーコード列の集合</summary>
         public static HashSet<string> SequentialPriorityWordKeyStringSet { get; } = new HashSet<string>();
+
+        /// <summary>同時打鍵を優先させる先頭キーコード列の集合</summary>
+        public static HashSet<string> ThreeKeysComboPriorityHeadKeyStringSet { get; } = new HashSet<string>();
+
+        /// <summary>同時打鍵を優先させる末尾キーコード列の集合</summary>
+        public static HashSet<string> ThreeKeysComboPriorityTailKeyStringSet { get; } = new HashSet<string>();
 
         /// <summary>Spaceまたは機能キーのシフトキーがきたら、使い終わったキー(comboListにたまっているキー)を破棄する</summary>
         public static bool AbandonUsedKeysWhenSpecialComboShiftDown = true;

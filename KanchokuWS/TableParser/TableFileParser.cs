@@ -152,46 +152,58 @@ namespace KanchokuWS.TableParser
 
         public List<string> GetStrokeList(string word)
         {
+            logger.InfoH(() => $"WORD: {word}");
             List<string> result = new List<string>();
             if (word._notEmpty()) {
-                getStrokeListSub(0, word, new List<int>(), result);
+                getStrokeListSub(0, word._reReplace(@"[。、ーぁ-龠]", @":$&:")._reReplace(@"::", @":")._reReplace(@"^:", @"")._reReplace(@":$", @"")._split(':'), new List<string>(), result);
             }
             return result;
         }
 
-        private void getStrokeListSub(int n, string word, List<int> strokes, List<string> result)
+        private void getStrokeListSub(int n, string[] word, List<string> strokes, List<string> result)
         {
+            if (n == 0) {
+                logger.InfoH(() => $"PRIORITY WORD({n}): {word._join(":")}");
+            }
+
             if (strokes.Count >= 4) return; // 3キーを超えるものは無視
 
             if (n >= word.Length) {
-                logger.InfoH(() => $"PRIORITY WORD: {word}, keyString={strokes._keyString()}");
-                result.Add(strokes._keyString());
+                logger.InfoH(() => $"PRIORITY WORD({n}): {word._join(":")}, keyString={strokes._join(":")}");
+                result.Add(strokes._join(":"));
                 return;
             }
 
             string chStr = word[n].ToString();
-            int idx = RootTableNode.FindSubNode(chStr);
-            if (idx >= 0) {
-                getStrokeListSub(n + 1, word, makeList(strokes, idx), result);
-            } else {
-                for (int i = 0; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
-                    Node node = RootTableNode.GetNthSubNode(i);
-                    if (node != null && node.IsTreeNode()) {
-                        idx = node.FindSubNode(chStr);
-                        if (idx >= 0) {
-                            getStrokeListSub(n + 1, word, makeList(strokes, i, idx), result);
-                            getStrokeListSub(n + 1, word, makeList(strokes, idx, i), result);
+            if (chStr._notEmpty()) {
+                if (chStr[0] >= 0x100) {
+                    int idx = RootTableNode.FindSubNode(chStr);
+                    if (idx >= 0) {
+                        getStrokeListSub(n + 1, word, makeList(strokes, idx), result);
+                    } else {
+                        for (int i = 0; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
+                            Node node = RootTableNode.GetNthSubNode(i);
+                            if (node != null && node.IsTreeNode()) {
+                                idx = node.FindSubNode(chStr);
+                                if (idx >= 0) {
+                                    getStrokeListSub(n + 1, word, makeList(strokes, i, idx), result);
+                                    getStrokeListSub(n + 1, word, makeList(strokes, idx, i), result);
+                                }
+                            }
                         }
                     }
+                } else {
+                    getStrokeListSub(n + 1, word, Helper.MakeList(strokes, chStr), result);
                 }
             }
         }
 
-        private List<int> makeList(List<int> strokes, params int[] idxes)
+        private List<string> makeList(List<string> strokes, params int[] idxes)
         {
-            List<int> result = new List<int>(strokes);
+            List<string> result = new List<string>(strokes);
             foreach (var x in idxes) {
-                if (!strokes.Contains(x)) result.Add(x);
+                var s = x.ToString();
+                if (!strokes.Contains(s)) result.Add(s);
             }
             return result;
         }
@@ -1221,12 +1233,22 @@ namespace KanchokuWS.TableParser
             foreach (var seq in Settings.SequentialPriorityWordSet) {
                 var strkList = GetStrokeList(seq);
                 if (strkList._notEmpty()) {
-                    Settings.SequentialPriorityWordKeyStringSet.UnionWith(strkList);
+                    foreach (var s in strkList) {
+                        if (s._startsWith("-:")) {
+                            Settings.ThreeKeysComboPriorityTailKeyStringSet.Add(s._safeSubstring(2));
+                        } else if (s._endsWith(":-")) {
+                            Settings.ThreeKeysComboPriorityHeadKeyStringSet.Add(s._safeSubstring(0, -2));
+                        } else {
+                            Settings.SequentialPriorityWordKeyStringSet.Add(s);
+                        }
+                    }
                 } else if (seq._safeContains(':')) {
                     Settings.SequentialPriorityWordKeyStringSet.Add(seq);
                 }
             }
             logger.InfoH($"SequentialPriorityWordKeyStringSet={Settings.SequentialPriorityWordKeyStringSet._join(",")}");
+            logger.InfoH($"ThreeKeysComboPriorityHeadKeyStringSet={Settings.ThreeKeysComboPriorityHeadKeyStringSet._join(",")}");
+            logger.InfoH($"ThreeKeysComboPriorityTailKeyStringSet={Settings.ThreeKeysComboPriorityTailKeyStringSet._join(",")}");
 
             // 全ノードの情報を OutputLines に書き出す
             RootTableNode.OutputLine(OutputLines);
