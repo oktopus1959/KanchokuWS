@@ -22,6 +22,32 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         private List<Stroke> comboList = new List<Stroke>();
 
         /// <summary>
+        /// 前回のComboシフトキーが解放された時刻をシフトキーごとに保存するマップ<br/>
+        /// シフトキーの解放後、後置シフトを無効にする時間を計測する起点となる
+        /// </summary>
+        private Dictionary<int, DateTime> prevComboShiftKeyUpDtMap = new Dictionary<int, DateTime>();
+
+        public DateTime GetPrevComboShiftKeyUpDt(int deckey)
+        {
+            return prevComboShiftKeyUpDtMap._safeGet(deckey, DateTime.MinValue);
+        }
+
+        public double GetElapsedTimeFromShiftKeyUp(Stroke stroke1, Stroke shiftStroke)
+        {
+            return stroke1.TimeSpanMs(GetPrevComboShiftKeyUpDt(shiftStroke.OrigDecoderKey));
+        }
+
+        public void SetPrevComboShiftKeyUpDt(int deckey, DateTime dt)
+        {
+            prevComboShiftKeyUpDtMap[deckey] = dt;
+        }
+
+        public void ClearPrevComboShiftKeyUpDt(int deckey)
+        {
+            prevComboShiftKeyUpDtMap[deckey] = DateTime.MinValue;
+        }
+
+        /// <summary>
         /// 与えられたリストの部分リストからなる集合(リスト)を返す
         /// </summary>
         /// <param name="list"></param>
@@ -200,11 +226,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 (result, bKeyComboFound) = getAndCheckCombo(Helper.MakeList(strk1, strk2));
                 if (result != null) {
                     // 同時打鍵候補があった
-                    logger.DebugH("combo found");
+                    double shiftTimeSpan = strk2.TimeSpanMs(strk1);
+                    double shiftUpElapse = GetElapsedTimeFromShiftKeyUp(strk1, strk2);
+                    logger.DebugH(() => $"combo found: isStroke2Shift={strk2.IsComboShift}, shiftTimeSpan={(int)shiftTimeSpan:f1}ms, shiftUpElapse={shiftUpElapse:f1}ms");
+                    bool stroke1Cond() => strk1.IsComboShift && shiftTimeSpan <= Settings.CombinationKeyMaxAllowedLeadTimeMs;
+                    bool stroke2Cond() => !strk1.IsComboShift &&
+                           (Settings.ComboDisableIntervalTimeMs <= 0 || shiftUpElapse >= Settings.ComboDisableIntervalTimeMs) &&
+                           shiftTimeSpan <= Settings.ComboKeyMaxAllowedPostfixTimeMs;
                     if (strk1.IsPrefixShift ||
-                        (((strk1.IsComboShift && strk2.TimeSpanMs(strk1) <= Settings.CombinationKeyMaxAllowedLeadTimeMs) ||
-                          (!strk1.IsComboShift && strk2.TimeSpanMs(strk1) <= Settings.ComboKeyMaxAllowedPostfixTimeMs)) &&
-                        (Settings.CombinationKeyMinTimeOnlyAfterSecond || Settings.CombinationKeyMinOverlappingTimeMs <= 0 || anyNotSingleHittable()))) {
+                        ((stroke1Cond() || stroke2Cond()) &&
+                         (Settings.CombinationKeyMinTimeOnlyAfterSecond || Settings.CombinationKeyMinOverlappingTimeMs <= 0 || anyNotSingleHittable()))) {
                         // 前置シフトであるか、または第2打鍵までの時間が閾値以下で即時判定あるいは親指シフトのように非単打キーを含む場合
                         if (comboList._isEmpty() && KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey) {
                             // 連続シフトの場合は、同時打鍵に使用したキーを使い回す
@@ -527,12 +558,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             timingResult = 0;  // 同時打鍵の組合せが見つかった
                             Stroke tailKey = hotList[overlapLen - 1];
                             bool isTailKeyUp = hotList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
-                            logger.DebugH(() => $"CHECK1: {isTailKeyUp && tailKey.IsSingleHittable}: tailPos={overlapLen - 1}: isTailKeyUp && tailKey.IsSingleHittable");
+                            logger.DebugH(() => $"CHECK1: {isTailKeyUp && tailKey.IsSingleHittable && !tailKey.IsShiftableSpaceKey}: tailPos={overlapLen - 1}: isTailKeyUp && tailKey.IsSingleHittable && !tailKey.IsShiftableSpaceKey");
                             logger.DebugH(() => $"CHECK2: {challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey}: challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey");
                             logger.DebugH(() => "CHECK3: " +
                                 $"{Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !isListContaindInSequentialPriorityWordKeySet(challengeList)}" +
                                 $": challengeList={challengeList._toString()}");
-                            if (isTailKeyUp && tailKey.IsSingleHittable ||
+                            if (isTailKeyUp && tailKey.IsSingleHittable && !tailKey.IsShiftableSpaceKey ||
                                                 // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
                                 challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey ||
                                                 // CHECK2: チャレンジリストの長さが2以下で、先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
@@ -684,13 +715,21 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     logger.DebugH(() => $"RESULT1={result == 0}: !bSecondComboCheck (True) && !ContainsUnorderedShiftKey={!KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey}");
                 } else {
                     double ms1 = list[0].TimeSpanMs(tailStk);
+                    bool isComboDisableInterval() => Settings.ComboDisableIntervalTimeMs > 0 &&
+                        GetElapsedTimeFromShiftKeyUp(list[0], tailStk) <= Settings.ComboDisableIntervalTimeMs;
                     result =
                         (list[0].IsComboShift && ms1 <= Settings.CombinationKeyMaxAllowedLeadTimeMs) ||
-                        (!list[0].IsComboShift && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs)
+                        (!list[0].IsComboShift && !isComboDisableInterval() && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs)
                         ? 0 : 1;
-                    logger.DebugH(() =>
-                        $"RESULT1={result == 0}: !bSecondComboCheck (True) && ms1={ms1:f2}ms <= " +
-                        $"threshold={Settings.CombinationKeyMaxAllowedLeadTimeMs}ms/{Settings.ComboKeyMaxAllowedPostfixTimeMs}ms (Timing={result})");
+                    if (Logger.IsInfoHEnabled) {
+                        logger.DebugH(() =>
+                            $"shiftUpElapseTime={GetElapsedTimeFromShiftKeyUp(list[0], tailStk):f1}, " +
+                            $"ComboDisableIntervalTimeMs={Settings.ComboDisableIntervalTimeMs}");
+                        logger.DebugH(() =>
+                            $"RESULT1={result == 0}: !bSecondComboCheck (True) && " +
+                            $"!isComboDisableInterval={(list[0].IsComboShift ? "D/C" : (!isComboDisableInterval()).ToString())} && ms1={ms1:f2}ms <= " +
+                            $"threshold={Settings.CombinationKeyMaxAllowedLeadTimeMs}ms/{Settings.ComboKeyMaxAllowedPostfixTimeMs}ms (Timing={result})");
+                    }
                 }
             }
             if (result == 0) {

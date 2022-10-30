@@ -659,7 +659,7 @@ namespace KanchokuWS
         /// <summary>同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする</summary>
         public static bool UseComboExtModKeyAsSingleHit { get; set; } = true;
 
-        /// <summary>Spaceまたは機能キーによる同時打鍵シフトキーがUPされた後、後置シフトを無効にする時間(ミリ秒)。<br/>
+        /// <summary>同時打鍵シフトキーがUPされた後、後置シフトを無効にする時間(ミリ秒)。<br/>
         /// つまり、この時間帯に打鍵された文字キーは単打扱いとなる</summary>
         public static int ComboDisableIntervalTimeMs { get; set; } = 300;
 
