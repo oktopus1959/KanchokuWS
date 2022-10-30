@@ -461,6 +461,7 @@ namespace KanchokuWS.Gui
             this.button_miscEnter = new System.Windows.Forms.Button();
             this.button_miscClose = new System.Windows.Forms.Button();
             this.groupBox27 = new System.Windows.Forms.GroupBox();
+            this.checkBox_eisuModeEnabled = new System.Windows.Forms.CheckBox();
             this.checkBox_removeOneStrokeByBackspace = new System.Windows.Forms.CheckBox();
             this.checkBox_convertJaComma = new System.Windows.Forms.CheckBox();
             this.checkBox_convertJaPeriod = new System.Windows.Forms.CheckBox();
@@ -527,7 +528,6 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.checkBox_eisuModeEnabled = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -5673,6 +5673,17 @@ namespace KanchokuWS.Gui
             this.groupBox27.TabStop = false;
             this.groupBox27.Text = "その他変換・機能";
             // 
+            // checkBox_eisuModeEnabled
+            // 
+            this.checkBox_eisuModeEnabled.AutoSize = true;
+            this.checkBox_eisuModeEnabled.Location = new System.Drawing.Point(9, 17);
+            this.checkBox_eisuModeEnabled.Name = "checkBox_eisuModeEnabled";
+            this.checkBox_eisuModeEnabled.Size = new System.Drawing.Size(190, 19);
+            this.checkBox_eisuModeEnabled.TabIndex = 0;
+            this.checkBox_eisuModeEnabled.Text = "英大文字押下で英数モードに移行";
+            this.toolTip1.SetToolTip(this.checkBox_eisuModeEnabled, resources.GetString("checkBox_eisuModeEnabled.ToolTip"));
+            this.checkBox_eisuModeEnabled.UseVisualStyleBackColor = true;
+            // 
             // checkBox_removeOneStrokeByBackspace
             // 
             this.checkBox_removeOneStrokeByBackspace.AutoSize = true;
@@ -6473,18 +6484,6 @@ namespace KanchokuWS.Gui
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // checkBox_eisuModeEnabled
-            // 
-            this.checkBox_eisuModeEnabled.AutoSize = true;
-            this.checkBox_eisuModeEnabled.Location = new System.Drawing.Point(9, 17);
-            this.checkBox_eisuModeEnabled.Name = "checkBox_eisuModeEnabled";
-            this.checkBox_eisuModeEnabled.Size = new System.Drawing.Size(190, 19);
-            this.checkBox_eisuModeEnabled.TabIndex = 0;
-            this.checkBox_eisuModeEnabled.Text = "英大文字押下で英数モードに移行";
-            this.toolTip1.SetToolTip(this.checkBox_eisuModeEnabled, "BS で直前のストロークのみを取り消します。\r\n\r\nチェックを外すと、第1打鍵からの全ストロークが取り消されます。\r\nT-Code のような2ストローク系の場合は" +
-        "どちらでも同じになりますが、\r\nTUT-Code などの多ストローク系の場合は、ストロークの途中で\r\nBS を押したときの挙動を切り替えることができます。\r\n");
-            this.checkBox_eisuModeEnabled.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
