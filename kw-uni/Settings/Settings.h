@@ -32,6 +32,7 @@ struct Settings {
     size_t histHiraganaKeyLength = 2;       // ひらがな履歴検索キーの長さ
     size_t histKatakanaKeyLength = 2;       // カタカナ履歴検索キーの長さ
     size_t histKanjiKeyLength = 1;          // 漢字履歴検索キーの長さ
+    size_t histRomanKeyLength = 4;          // ローマ字履歴検索キーの長さ
     //size_t histMapKeyLength = 1;            // 変換履歴検索キーの長さ
 
     size_t histMapKeyMaxLength = 16;        // 変換履歴キーの最大長

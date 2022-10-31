@@ -940,10 +940,10 @@ namespace {
                     size_t minKana = SETTINGS->histHiraganaKeyLength;
                     size_t minKata = SETTINGS->histKatakanaKeyLength;
                     size_t minKanj = SETTINGS->histKanjiKeyLength;
-                    size_t minUalpha = 2;
-                    _LOG_DEBUGH(_T("minKana=%d, minKata=%d, minKanj=%d"), minKana, minKata, minKanj);
+                    size_t minRoma = SETTINGS->histRomanKeyLength;
+                    _LOG_DEBUGH(_T("minKana=%d, minKata=%d, minKanj=%d, minRoma=%d"), minKana, minKata, minKanj, minRoma);
 
-                    auto checkFunc = [key, bCheckMinKeyLen, minKana, minKata, minKanj, minUalpha](size_t len) {
+                    auto checkFunc = [key, bCheckMinKeyLen, minKana, minKata, minKanj, minRoma](size_t len) {
                         _LOG_DEBUGH(_T("checkFunc(key=%s, bCheckMinKeyLen=%s, len=%d)"), MAKE_WPTR(key), BOOL_TO_WPTR(bCheckMinKeyLen), len);
                         size_t minMax = 4;
                         return key.size() >= len &&
@@ -951,7 +951,7 @@ namespace {
                              (len >= minKana && utils::is_hirakana(utils::safe_back(key, len))) ||
                              (len >= minKata && utils::is_katakana(utils::safe_back(key, len))) ||
                              (len >= minKanj && utils::is_kanji(utils::safe_back(key, len))) ||
-                             (len >= minUalpha && is_upper_alphabet(utils::safe_back(key, len)))
+                             (len >= minRoma && is_upper_alphabet(utils::safe_back(key, len)))
                             );
                     };
 

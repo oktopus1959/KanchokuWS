@@ -52,6 +52,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_INT_VALUE(histHiraganaKeyLength);
     SET_INT_VALUE(histKatakanaKeyLength);
     SET_INT_VALUE(histKanjiKeyLength);
+    SET_INT_VALUE(histRomanKeyLength);
     //SET_INT_VALUE(histMapKeyLength);
     SET_INT_VALUE(histMapKeyMaxLength);
     SET_INT_VALUE(histMapGobiMaxLength);
