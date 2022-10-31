@@ -92,10 +92,10 @@ namespace {
             LOG_INFO(_T("SetOutString"));
             STATE_COMMON->SetOutString(myChar, 0);
 
-            if (myChar >= 'A' && myChar <= 'Z' && STATE_COMMON->GetTotalDecKeyCount() == firstTotalCnt + 1) {
-                // 2文字目も英大文字だったら、英数モードを終了する
-                cancelMe();
-            }
+            //if (myChar >= 'A' && myChar <= 'Z' && STATE_COMMON->GetTotalDecKeyCount() == firstTotalCnt + 1) {
+            //    // 2文字目も英大文字だったら、英数モードを終了する
+            //    cancelMe();
+            //}
             LOG_INFO(_T("LEAVE"));
         }
 
