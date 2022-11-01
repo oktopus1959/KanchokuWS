@@ -228,8 +228,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     // 同時打鍵候補があった
                     double shiftTimeSpan = strk2.TimeSpanMs(strk1);
                     double shiftUpElapse = GetElapsedTimeFromShiftKeyUp(strk1, strk2);
-                    logger.DebugH(() => $"combo found: isStroke2Shift={strk2.IsComboShift}, shiftTimeSpan={(int)shiftTimeSpan:f1}ms, shiftUpElapse={shiftUpElapse:f1}ms");
-                    bool stroke1Cond() => strk1.IsComboShift && shiftTimeSpan <= Settings.CombinationKeyMaxAllowedLeadTimeMs;
+                    int maxAllowedTime() => Settings.CombinationKeyMaxAllowedLeadTimeMs2 > 0 && !strk1.IsSpaceOrFunc ? Settings.CombinationKeyMaxAllowedLeadTimeMs : Settings.CombinationKeyMaxAllowedLeadTimeMs;
+                    logger.DebugH(() => $"combo found: isStroke2Shift={strk2.IsComboShift}, shiftTimeSpan={(int)shiftTimeSpan:f1}ms, shiftUpElapse={shiftUpElapse:f1}ms, maxAllowedTime={maxAllowedTime()}");
+                    bool stroke1Cond() => strk1.IsComboShift && shiftTimeSpan <= maxAllowedTime();
                     bool stroke2Cond() => !strk1.IsComboShift &&
                            (Settings.ComboDisableIntervalTimeMs <= 0 || shiftUpElapse >= Settings.ComboDisableIntervalTimeMs) &&
                            shiftTimeSpan <= Settings.ComboKeyMaxAllowedPostfixTimeMs;
@@ -706,6 +707,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             logger.DebugH(() => $"list={list._toString()}, tailStk={tailStk.DebugString()}, bSecondComboCheck={bSecondComboCheck}");
             if (list._isEmpty()) return -1;
 
+            bool isSpaceOrFunc = list[0].IsSpaceOrFunc || tailStk.IsSpaceOrFunc;
             int result = 0;
             if (!bSecondComboCheck) {
                 // 1文字目ならリードタイムをチェック
@@ -714,11 +716,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     result = 0;
                     logger.DebugH(() => $"RESULT1={result == 0}: !bSecondComboCheck (True) && !ContainsUnorderedShiftKey={!KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey}");
                 } else {
+                    int maxTime = Settings.CombinationKeyMaxAllowedLeadTimeMs2 > 0 && !isSpaceOrFunc ? Settings.CombinationKeyMaxAllowedLeadTimeMs2 : Settings.CombinationKeyMaxAllowedLeadTimeMs;
                     double ms1 = list[0].TimeSpanMs(tailStk);
-                    bool isComboDisableInterval() => Settings.ComboDisableIntervalTimeMs > 0 &&
-                        GetElapsedTimeFromShiftKeyUp(list[0], tailStk) <= Settings.ComboDisableIntervalTimeMs;
+                    bool isComboDisableInterval() => Settings.ComboDisableIntervalTimeMs > 0 && GetElapsedTimeFromShiftKeyUp(list[0], tailStk) <= Settings.ComboDisableIntervalTimeMs;
                     result =
-                        (list[0].IsComboShift && ms1 <= Settings.CombinationKeyMaxAllowedLeadTimeMs) ||
+                        (list[0].IsComboShift && ms1 <= maxTime) ||
                         (!list[0].IsComboShift && !isComboDisableInterval() && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs)
                         ? 0 : 1;
                     if (Logger.IsInfoHEnabled) {
@@ -728,7 +730,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         logger.DebugH(() =>
                             $"RESULT1={result == 0}: !bSecondComboCheck (True) && " +
                             $"!isComboDisableInterval={(list[0].IsComboShift ? "D/C" : (!isComboDisableInterval()).ToString())} && ms1={ms1:f2}ms <= " +
-                            $"threshold={Settings.CombinationKeyMaxAllowedLeadTimeMs}ms/{Settings.ComboKeyMaxAllowedPostfixTimeMs}ms (Timing={result})");
+                            $"threshold={maxTime}ms/{Settings.ComboKeyMaxAllowedPostfixTimeMs}ms (Timing={result})");
                     }
                 }
             }
@@ -744,8 +746,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 } else {
                     // シフトキーが解放されている(または単打可能キーのみである)ので、最後のキー押下時刻との差分を求め、タイミング判定する
                     double ms2 = tailStk.TimeSpanMs(dtNow);
-                    result = ms2 >= Settings.CombinationKeyMinOverlappingTimeMs ? 0 : 2;
-                    logger.DebugH(() => $"RESULT2={result == 0}: ms2={ms2:f2}ms >= threshold={Settings.CombinationKeyMinOverlappingTimeMs}ms (Timing={result})");
+                    int minTime = Settings.CombinationKeyMinOverlappingTimeMs2 > 0 && !isSpaceOrFunc ? Settings.CombinationKeyMinOverlappingTimeMs2 : Settings.CombinationKeyMinOverlappingTimeMs;
+                    result = ms2 >= minTime ? 0 : 2;
+                    logger.DebugH(() => $"RESULT2={result == 0}: ms2={ms2:f2}ms >= threshold={minTime}ms (Timing={result})");
                 }
             }
             return result;

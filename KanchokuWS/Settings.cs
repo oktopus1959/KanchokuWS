@@ -641,11 +641,17 @@ namespace KanchokuWS
         /// <summary>同時打鍵判定を行う際の、第１打鍵に許容する最大のリード時間(ミリ秒)<br/>第２打鍵までにこの時間より長くかかったら、第1打鍵は同時とみなさない</summary>
         public static int CombinationKeyMaxAllowedLeadTimeMs { get; set; } = 0;
 
+        /// <summary>同、シフトキーが文字キーだった場合</summary>
+        public static int CombinationKeyMaxAllowedLeadTimeMs2 { get; set; } = 0;
+
         /// <summary>同時打鍵判定を行う際、第2打鍵がシフトキーだった場合に許容する最大のリード時間(ミリ秒)<br/>これにより、シフトキーがその直後の文字キーにかかりやすくなることが期待できる</summary>
         public static int ComboKeyMaxAllowedPostfixTimeMs { get; set; } = 0;
 
         /// <summary>同時打鍵とみなす重複時間<br/>Nキー同時押しの状態からどれかのキーUPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす</summary>
         public static int CombinationKeyMinOverlappingTimeMs { get; set; } = 70;
+
+        /// <summary>同、シフトキーが文字キーだった場合</summary>
+        public static int CombinationKeyMinOverlappingTimeMs2 { get; set; } = 70;
 
         /// <summary>２文字目以降についてのみ同時打鍵の重複時間チェックを行う</summary>
         public static bool CombinationKeyMinTimeOnlyAfterSecond { get; set; } = false;
@@ -1154,8 +1160,10 @@ namespace KanchokuWS
             // 同時打鍵
             //CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0);                          // 重複時間率
             CombinationKeyMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100);   // 許容リードタイム
+            CombinationKeyMaxAllowedLeadTimeMs2 = GetString("combinationMaxAllowedLeadTimeMs2")._parseInt(0);   // シフトキーが文字キーだった場合の許容リードタイム
             ComboKeyMaxAllowedPostfixTimeMs = GetString("comboMaxAllowedPostfixTimeMs")._parseInt(100)._highLimit(CombinationKeyMaxAllowedLeadTimeMs);  // 第2キーの許容リードタイム
             CombinationKeyMinOverlappingTimeMs = GetString("combinationKeyTimeMs")._parseInt(70);               // 重複時間
+            CombinationKeyMinOverlappingTimeMs2 = GetString("combinationKeyTimeMs2")._parseInt(0);              // シフトキーが文字キーだった場合の重複時間
             ComboDisableIntervalTimeMs = GetString("comboDisableIntervalTimeMs")._parseInt(0);                  // 同時打鍵シフトキーがUPされた後、前方へのシフトを無効にする時間
             CombinationKeyMinTimeOnlyAfterSecond = GetString("combinationKeyTimeOnlyAfterSecond")._parseBool(false);    // ２文字目以降についてのみ同時打鍵チェックを行う
             UseCombinationKeyTimer1 = GetString("useCombinationKeyTimer1")._parseBool(false);                   // 同時打鍵判定用タイマーを使用する

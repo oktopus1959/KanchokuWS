@@ -45,6 +45,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>漢直モード(デコーダOn)か</summary>
         public bool IsKanchokuMode { get; private set; }
 
+        /// <summary>スペースキーまたは機能キーか</summary>
+        public bool IsSpaceOrFunc => DecoderKeys.IsSpaceOrFuncKey(OrigDecoderKey);
+
         /// <summary>単打可能なキーか<br/>ただし出力文字列が定義されていない打鍵もある</summary>
         public bool IsSingleHittable { get; private set; }
 
@@ -73,7 +76,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public bool IsJustComboShift => IsComboShift && !IsSingleHittable;
 
         /// <summary>スペースキーまたは機能キーの同時打鍵シフトキーか</summary>
-        public bool IsSpaceOrFuncComboShift => DecoderKeys.IsSpaceOrFuncKey(OrigDecoderKey) && IsComboShift;
+        public bool IsSpaceOrFuncComboShift => IsSpaceOrFunc && IsComboShift;
 
         /// <summary>同時打鍵のシフトキーになったか</summary>
         public bool IsCombined { get; private set; }
