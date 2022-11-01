@@ -1166,10 +1166,15 @@ namespace KanchokuWS
         {
             logger.InfoH(() => $"\nENTER");
             IsDecoderActive = true;
-            if (decoderOutput.strokeTableNum == 3) {
-                changeCodeTableAndCombinationPool("useCodeTable1");     // コードテーブル1に入れ替え
+            var ctrlKeyState = SendInputHandler.GetCtrlKeyState();
+            if (Settings.SelectedTableActivatedWithCtrl > 0 && Settings.SelectedTableActivatedWithCtrl <= 2 && ctrlKeyState.AnyKeyDown) {
+                changeCodeTableAndCombinationPool($"useCodeTable{Settings.SelectedTableActivatedWithCtrl}");     // 指定のコードテーブルを選択
             } else {
-                CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolByDecoderMode(IsDecoderActive);  // 前回の漢直用Poolに切り替え
+                if (decoderOutput.strokeTableNum == 3) {
+                    changeCodeTableAndCombinationPool("useCodeTable1");     // コードテーブル1に入れ替え
+                } else {
+                    CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolByDecoderMode(IsDecoderActive);  // 前回の漢直用Poolに切り替え
+                }
             }
             try {
                 prevDeckey = -1;

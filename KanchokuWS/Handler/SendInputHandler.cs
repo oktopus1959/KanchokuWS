@@ -188,11 +188,10 @@ namespace KanchokuWS.Handler
 
         public static ModifierKeyState GetCtrlKeyState(bool bUp = false)
         {
-            return new ModifierKeyState() {
-                OperationUp = bUp,
-                LeftKeyDown = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0,
-                RightKeyDown = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0
-            };
+            return new ModifierKeyState(
+                bUp,
+                (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0,
+                (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0);
         }
 
         public static ModifierKeyState GetCtrlKeyState(ModifierKeyState state)
