@@ -112,6 +112,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return KeyCombinationPool.CurrentPool.GetEntry(unprocList);
         }
 
+        public bool IsTerminalCombo()
+        {
+            return ComboListCount == 0 && (GetKeyCombo()?.IsTerminal ?? false);
+        }
+
         public Stroke FindSameStroke(int decKey)
         {
             int idx = FindSameIndex(decKey);

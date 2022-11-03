@@ -305,10 +305,12 @@ namespace KanchokuWS.CombinationKeyStroke
                                     list.Add(stroke.ComboShiftDecKey);
                                 } else if (strokeList.Count == 2) {
                                     var keyCombo = strokeList.GetKeyCombo();
-                                    logger.DebugH(() => $"Call ComboKeyRepeat Handler: {keyCombo.DecKeysDebugString()}");
-                                    if (keyCombo.DecKeyList._safeCount() >= 2) {
-                                        list.Add(keyCombo.DecKeyList[0]);
-                                        list.Add(KeyCombination.MakeNonTerminalDuplicatableComboKey(keyCombo.DecKeyList[1]));
+                                    if (keyCombo != null) {
+                                        logger.DebugH(() => $"Call ComboKeyRepeat Handler: {keyCombo.DecKeysDebugString()}");
+                                        if (keyCombo.DecKeyList._safeCount() >= 2) {
+                                            list.Add(keyCombo.DecKeyList[0]);
+                                            list.Add(KeyCombination.MakeNonTerminalDuplicatableComboKey(keyCombo.DecKeyList[1]));
+                                        }
                                     }
                                 }
                                 handleComboKeyRepeat(list);
@@ -344,15 +346,15 @@ namespace KanchokuWS.CombinationKeyStroke
                                     }
                                 } else {
                                     // 第2打鍵以降の場合は、同時打鍵チェック
-                                    logger.DebugH("Check key combo");
+                                    logger.DebugH(() => $"Check key combo: strokeList={strokeList.ToDebugString()}");
                                     bool bTimer = false;
                                     result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer, out bUnconditional);
                                     if (result._isEmpty()) {
-                                        logger.DebugH("result is EMPTY");
+                                        logger.DebugH($"result is EMPTY: bTimer={bTimer}");
                                         if (bTimer || strokeList.IsSuccessiveShift3rdOrLaterKey() /*strokeList.IsSuccessiveShift2ndOr3rdKey()*/) {
                                             logger.DebugH(() => $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}");
-                                            // タイマーが有効であるか、または同時打鍵シフト後の第2～3打鍵めの文字キーであって同時打鍵が未判定だったらタイマーを起動する
-                                            if (Settings.UseCombinationKeyTimer2 && !DecoderKeys.IsSpaceOrFuncKey(decKey)) {
+                                            // タイマーが有効であるか、または同時打鍵シフト後の3打鍵め以降の文字キーであって、同時打鍵組合せが終端文字だったらタイマーを起動する
+                                            if (Settings.UseCombinationKeyTimer2 && !DecoderKeys.IsSpaceOrFuncKey(decKey) && strokeList.IsTerminalCombo()) {
                                                 startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
                                             }
                                         }
