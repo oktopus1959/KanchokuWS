@@ -21,7 +21,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 0 || defined(_DEBUG)
+#if 1 || defined(_DEBUG)
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -126,24 +126,26 @@ namespace {
             isHistInSearch = true;
             DelayedPushFrontSelectedWord();
             currentLen = len;
-            histCands = HISTORY_DIC->GetCandidates(key, currentKey, bCheckMinKeyLen, len);  // ここで currentKey は変更される
+            histCands = HISTORY_DIC->GetCandidates(key, currentKey, bCheckMinKeyLen, len);  // ここで currentKey は変更される (currentKey = resultKey)
             histResults.clear();
             utils::append(histResults, histCands.GetHistories());
-            _LOG_DEBUGH(_T("cands num=%d, currentKey=%s"), histResults.size(), MAKE_WPTR(currentKey));
+            _LOG_DEBUGH(_T("cands num=%d, new currentKey=%s"), histResults.size(), MAKE_WPTR(currentKey));
             return histResults;
         }
 
         const std::vector<MString> GetCandWords(const MString& key, bool bCheckMinKeyLen, int len) {
+            _LOG_DEBUGH(_T("CALLED: key=%s, bCheckMinKeyLen=%s, len=%d"), MAKE_WPTR(key), BOOL_TO_WPTR(bCheckMinKeyLen), len);
             GetCandidates(key, bCheckMinKeyLen, len);
             return GetCandWords();
         }
 
         // 取得済みの候補列を返す
-        const std::vector<HistResult>& GetCandidates() const {
-            return histResults;
-        }
+        //const std::vector<HistResult>& GetCandidates() const {
+        //    return histResults;
+        //}
 
         const std::vector<MString> GetCandWords() const {
+            _LOG_DEBUGH(_T("CALLED"));
             std::vector<MString> words;
             utils::transform_append(histResults, words, [](const HistResult& res) { return res.Word; });
             return words;
@@ -291,6 +293,7 @@ namespace {
                 if (pos <= SETTINGS->histMapKeyMaxLength) {
                     // histMap候補
                     if (pos + 1 < outStr.size() && outStr[pos + 1] == VERT_BAR) ++pos;  // '||' だったら1つ進める(HistoryDicで既に対処済みなので、多分、ここでは不要のはず)
+                    if (pos + 1 < outStr.size() && outStr[pos + 1] == HASH_MARK) ++pos;  // '|#' だったら1つ進める(# はローマ字変換の印)
                     outStr = utils::safe_substr(outStr, pos + 1);
                     _LOG_DEBUGH(_T("histMap: outStr=%s, outKey=%s"), MAKE_WPTR(outStr), MAKE_WPTR(outKey));
                     if (outKey.size() > pos) {
@@ -1056,7 +1059,8 @@ namespace {
                     if (!key.empty()) {
                         // キーが取得できた
                         //bool isAscii = is_ascii_char((wchar_t)utils::safe_back(key));
-                        _LOG_DEBUGH(_T("HistSearch: PATH 8: key=%s, prevKey=%s, maybeEditedBySubState=%s"), MAKE_WPTR(key), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevKey()), utils::boolToString(maybeEditedBySubState).c_str());
+                        _LOG_DEBUGH(_T("HistSearch: PATH 8: key=%s, prevKey=%s, maybeEditedBySubState=%s"),
+                            MAKE_WPTR(key), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevKey()), BOOL_TO_WPTR(maybeEditedBySubState));
                         auto histCandsChecker = [this](const std::vector<MString>& words, const MString& ky) {
                             _LOG_DEBUGH(_T("HistSearch: CANDS CHECKER: words.size()=%d, key=%s"), words.size(), MAKE_WPTR(ky));
                             if (words.empty() || (words.size() == 1 && (words[0].empty() || words[0] == ky))) {
@@ -1074,10 +1078,10 @@ namespace {
                             histCandsChecker(HIST_CAND->GetCandWords(key, bCheckMinKeyLen, 0), key);
                             // キーが短くなる可能性があるので再取得
                             key = HIST_CAND->GetCurrentKey();
-                            _LOG_DEBUGH(_T("HistSearch: PATH 9: currentKey=%s"), MAKE_WPTR(key));
+                            _LOG_DEBUGH(_T("HistSearch: PATH 10: currentKey=%s"), MAKE_WPTR(key));
                         } else {
                             // 前回の履歴検索と同じキーだった
-                            _LOG_DEBUGH(_T("HistSearch: PATH 10: Same as prev hist key"));
+                            _LOG_DEBUGH(_T("HistSearch: PATH 11: Same as prev hist key"));
                             histCandsChecker(HIST_CAND->GetCandWords(), key);
                         }
                     }

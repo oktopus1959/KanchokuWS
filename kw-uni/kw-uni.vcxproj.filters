@@ -243,6 +243,9 @@
     <ClInclude Include="KeysAndChars\Eisu.h">
       <Filter>ヘッダー ファイル\KeysAndChars</Filter>
     </ClInclude>
+    <ClInclude Include="KeysAndChars\RomanToKatakana.h">
+      <Filter>ヘッダー ファイル\KeysAndChars</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -363,6 +366,9 @@
       <Filter>ソース ファイル\Template</Filter>
     </ClCompile>
     <ClCompile Include="KeysAndChars\EisuState.cpp">
+      <Filter>ソース ファイル\KeysAndChars</Filter>
+    </ClCompile>
+    <ClCompile Include="KeysAndChars\RomanToKatakana.cpp">
       <Filter>ソース ファイル\KeysAndChars</Filter>
     </ClCompile>
   </ItemGroup>

@@ -11,10 +11,11 @@
 #include "HistoryDic.h"
 #include "EasyChars.h"
 #include "StrokeHelp.h"
+#include "RomanToKatakana.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 0
+#if 1
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define LOG_DEBUGH LOG_INFOH
@@ -782,7 +783,23 @@ namespace {
             MString prevWord;
             mchar_t tsu = _T("ツ")[0];
             mchar_t to = _T("ト")[0];
+            bool bRomanNeeded = utils::isAsciiString(key);
+            auto pushRomanEntry = [this, key]() {
+                _LOG_DEBUGH(_T("convertRomanToKatakana"));
+                resultList.PushHistory(key, key + MSTR_VERT_BAR + MSTR_HASH_MARK + RomanToKatakana::convertRomanToKatakana(key));
+            };
+
             for (const auto& s : vec) {
+                // 候補長がキーサイズを超えたら、ローマ字候補を追加
+                if (bRomanNeeded) {
+                    _LOG_DEBUGH(_T("check ROMAN key: s=%s"), MAKE_WPTR(s));
+                    size_t vbarPos = s.find_first_of('\t');
+                    if (vbarPos < s.size() && vbarPos > key.size()) {
+                        pushRomanEntry();
+                        bRomanNeeded = false;
+                    }
+                }
+
                 // keylen == 1 なら1文字単語は対象外
                 if ((wlen > 0 && s.size() == wlen) || (wlen == 0 && (keylen != 1 || s.size() >= 2)) && s != key) {
                     if (!prevWord.empty()) {
@@ -808,6 +825,9 @@ namespace {
             if (!prevWord.empty()) {
                 pushCandidate(key, prevWord, n);
             }
+            // 必要ならローマ字候補を追加
+            if (bRomanNeeded) pushRomanEntry();
+
             _LOG_DEBUGH(_T("RESULT: resultList.size()=%d"), resultList.Size());
         }
 
@@ -838,7 +858,7 @@ namespace {
         void extract_and_copy_for_longer_than_4(const MString& key, size_t wlen, size_t pos) {
             auto subStr = key.substr(pos);
             auto subKey = subStr.substr(0, 4);
-            size_t gobiLen = utils::isRomanString(subStr) ? 0 : SETTINGS->histMapGobiMaxLength;
+            size_t gobiLen = utils::isAsciiString(subStr) ? 0 : SETTINGS->histMapGobiMaxLength;
             _LOG_DEBUGH(_T("subStr=%s, subKey=%s"), MAKE_WPTR(subStr), MAKE_WPTR(subKey));
             std::set<MString> set_ = utils::filter(hist4CharsDic.GetSet(subKey, 4), [subStr, gobiLen](const auto& s) {return utils::startsWithWildKey(s, subStr, gobiLen);});
             _LOG_DEBUGH(_T("filter(hist4CharsDic.GetSet(subKey=%s, 4), startsWithWildKey(s, qKey=%s, gobiLen=%d)): set_.size()=%d"), MAKE_WPTR(subKey), MAKE_WPTR(subStr), gobiLen, set_.size());
@@ -889,9 +909,11 @@ namespace {
 
 #define IS_LIST_EMPTY() (resultList.Empty())
 
-                bool bIsRomanKey = utils::isRomanString(key);
+                bool bIsRomanKey = utils::isAsciiString(key);
                 bool bListEmpty = IS_LIST_EMPTY();
                 bool bAll = SETTINGS->histGatherAllCandidates && bListEmpty;
+
+                _LOG_DEBUGH(_T("bAll=%s"), BOOL_TO_WPTR(bAll));
 
 #define CHECK_LIST_EMPTY(n) \
             if (bListEmpty) {\
@@ -946,12 +968,13 @@ namespace {
                     auto checkFunc = [key, bCheckMinKeyLen, minKana, minKata, minKanj, minRoma](size_t len) {
                         _LOG_DEBUGH(_T("checkFunc(key=%s, bCheckMinKeyLen=%s, len=%d)"), MAKE_WPTR(key), BOOL_TO_WPTR(bCheckMinKeyLen), len);
                         size_t minMax = 4;
+                        mchar_t startChar = utils::safe_back(key, len);     // チェック対象keyの先頭文字
                         return key.size() >= len &&
                             (!bCheckMinKeyLen || len >= minMax ||
-                             (len >= minKana && utils::is_hirakana(utils::safe_back(key, len))) ||
-                             (len >= minKata && utils::is_katakana(utils::safe_back(key, len))) ||
-                             (len >= minKanj && utils::is_kanji(utils::safe_back(key, len))) ||
-                             (len >= minRoma && is_upper_alphabet(utils::safe_back(key, len)))
+                             (len >= minKana && utils::is_hirakana(startChar)) ||
+                             (len >= minKata && utils::is_katakana(startChar)) ||
+                             (len >= minKanj && utils::is_kanji(startChar)) ||
+                             (len >= minRoma && is_upper_alphabet(startChar))      // チェック対象keyが英大文字で始まっているか
                             );
                     };
 
@@ -988,7 +1011,13 @@ namespace {
                 }
 
                 if (resultList.Empty()) {
-                    resultKey.clear();
+                    if ((!bCheckMinKeyLen || key.size() >= SETTINGS->histRomanKeyLength) && is_ascii_str(key)) {
+                        _LOG_DEBUGH(_T("convertRomanToKatakana"));
+                        resultList.PushHistory(key, key + MSTR_VERT_BAR + MSTR_HASH_MARK + RomanToKatakana::convertRomanToKatakana(key));
+                        resultKey = key;   // 全体がマッチ
+                    } else {
+                        resultKey.clear();
+                    }
                 } else {
                     resultKey = resultKeyLen == 0 ? key : utils::last_substr(key, resultKeyLen);    // resultKeyLen == 0 なら全体がマッチ
                 }

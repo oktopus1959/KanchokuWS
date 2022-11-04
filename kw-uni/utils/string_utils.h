@@ -5,6 +5,8 @@
 namespace {
     const wchar_t VERT_BAR = '|';     // |
 
+    const wchar_t HASH_MARK = '#';    // #
+
     const wchar_t TOTEN = 0x3001;     // 、
 
     const wchar_t KUTEN = 0x3002;     // 。
@@ -27,9 +29,13 @@ namespace {
 
     const MString MSTR_SPACE = to_mstr(' ');
 
+    const MString MSTR_CHOON = to_mstr(_T("ー")[0]);
+
     const MString MSTR_THREE_DOTS = to_mstr(_T("…")[0]);
 
     const MString MSTR_VERT_BAR = to_mstr('|');
+
+    const MString MSTR_HASH_MARK = to_mstr('#');
 
     const mchar_t strip_delims[] = {' ', '\r', '\n' };
 
@@ -95,6 +101,38 @@ namespace {
 
     inline bool is_ascii_pair(const MString& ws) {
         return ws.size() >= 2 && is_ascii_pair(wchar_t(ws[0]), wchar_t(ws[1]));
+    }
+
+    inline bool is_ascii_str(const MString& s) {
+        if (s.empty()) return false;
+        for (auto c : s) {
+            if (!is_ascii_char(c)) return false;
+        }
+        return true;
+    }
+
+    inline bool is_ascii_str(const wstring& s) {
+        if (s.empty()) return false;
+        for (auto c : s) {
+            if (!is_ascii_char(c)) return false;
+        }
+        return true;
+    }
+
+    inline bool is_roman_str(const MString& s) {
+        if (s.empty()) return false;
+        for (auto c : s) {
+            if (!is_alphabet(c)) return false;
+        }
+        return true;
+    }
+
+    inline bool is_roman_str(const wstring& s) {
+        if (s.empty()) return false;
+        for (auto c : s) {
+            if (!is_alphabet(c)) return false;
+        }
+        return true;
     }
 
     // ワイルドカード('?' or '*')か
@@ -421,6 +459,18 @@ namespace utils
     inline tstring toUpper(const tstring& s) {
         tstring result(s.size(), 0);
         for (size_t i = 0; i < s.size(); ++i) result[i] = wchar_t(langedge::CtypeUtil::toUpper(s[i]));
+        return result;
+    }
+
+    inline tstring toUpperFromMS(const MString& s) {
+        tstring result(s.size(), 0);
+        for (size_t i = 0; i < s.size(); ++i) result[i] = wchar_t(langedge::CtypeUtil::toUpper(s[i]));
+        return result;
+    }
+
+    inline MString toUpperMS(const tstring& s) {
+        MString result(s.size(), 0);
+        for (size_t i = 0; i < s.size(); ++i) result[i] = mchar_t(langedge::CtypeUtil::toUpper(s[i]));
         return result;
     }
 
@@ -1029,17 +1079,19 @@ namespace utils
     }
 
     inline bool isRomanString(const MString& s) {
-        for (auto ch : s) {
-            if (!(ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z')) return false;
-        }
-        return true;
+        return is_roman_str(s);
     }
 
     inline bool isRomanString(const wstring& s) {
-        for (auto ch : s) {
-            if (!(ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z')) return false;
-        }
-        return true;
+        return is_roman_str(s);
+    }
+
+    inline bool isAsciiString(const MString& s) {
+        return is_ascii_str(s);
+    }
+
+    inline bool isAsciiString(const wstring& s) {
+        return is_ascii_str(s);
     }
 
 #undef UTILS_BUFSIZ

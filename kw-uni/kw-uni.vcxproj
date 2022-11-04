@@ -183,6 +183,7 @@
     <ClInclude Include="KeysAndChars\Eisu.h" />
     <ClInclude Include="KeysAndChars\Katakana.h" />
     <ClInclude Include="KeysAndChars\MyPrevChar.h" />
+    <ClInclude Include="KeysAndChars\RomanToKatakana.h" />
     <ClInclude Include="KeysAndChars\StrokeHelp.h" />
     <ClInclude Include="KeysAndChars\VkbTableMaker.h" />
     <ClInclude Include="KeysAndChars\Zenkaku.h" />
@@ -239,6 +240,7 @@
     <ClCompile Include="KeysAndChars\EisuState.cpp" />
     <ClCompile Include="KeysAndChars\KatakanaState.cpp" />
     <ClCompile Include="KeysAndChars\MyPrevCharState.cpp" />
+    <ClCompile Include="KeysAndChars\RomanToKatakana.cpp" />
     <ClCompile Include="KeysAndChars\StrokeHelp.cpp" />
     <ClCompile Include="KeysAndChars\VkbTableMaker.cpp" />
     <ClCompile Include="KeysAndChars\ZenkakuState.cpp" />
