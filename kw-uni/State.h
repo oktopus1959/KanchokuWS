@@ -223,7 +223,6 @@ public:
     // EisuCancel ハンドラ
     virtual void handleEisuDecapitalize();
 
-protected:
     //--------------------------------------------------------------------
     // 以下、DECKEYハンドラのデフォルト実装
  

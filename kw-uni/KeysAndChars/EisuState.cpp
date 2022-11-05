@@ -17,7 +17,7 @@
 
 #include "Eisu.h"
 
-#if 0 || defined(_DEBUG)
+#if 1 || defined(_DEBUG)
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
@@ -86,16 +86,21 @@ namespace {
         void handleStrokeKeys(int deckey) override {
             wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
             LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), face=%c"), NAME_PTR, deckey, deckey, myChar);
-            STATE_COMMON->AppendOrigString(myChar);
+            if (myChar == SETTINGS->eisuHistSearchChar) {
+                // 履歴検索の実行
+                HISTORY_STAY_STATE->handleNextCandTrigger();
+            } else {
+                STATE_COMMON->AppendOrigString(myChar);
 
-            // キーボードフェイス文字を返す
-            LOG_INFO(_T("SetOutString"));
-            STATE_COMMON->SetOutString(myChar, 0);
+                // キーボードフェイス文字を返す
+                LOG_INFO(_T("SetOutString"));
+                STATE_COMMON->SetOutString(myChar, 0);
 
-            //if (myChar >= 'A' && myChar <= 'Z' && STATE_COMMON->GetTotalDecKeyCount() == firstTotalCnt + 1) {
-            //    // 2文字目も英大文字だったら、英数モードを終了する
-            //    cancelMe();
-            //}
+                //if (myChar >= 'A' && myChar <= 'Z' && STATE_COMMON->GetTotalDecKeyCount() == firstTotalCnt + 1) {
+                //    // 2文字目も英大文字だったら、英数モードを終了する
+                //    cancelMe();
+                //}
+            }
             LOG_INFO(_T("LEAVE"));
         }
 
