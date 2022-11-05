@@ -254,6 +254,9 @@ public:
     // KatakanaConversion ハンドラ
     virtual void handleKatakanaConversion();
 
+    // EisuMode デフォルトハンドラ
+    virtual void handleEisuMode();
+
     // DecoderOff ハンドラ
     virtual void handleDecoderOff();
 

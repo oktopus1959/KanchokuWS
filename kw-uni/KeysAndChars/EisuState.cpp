@@ -131,6 +131,12 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
 
+        // EisuModeのトグル - 処理のキャンセル
+        void handleEisuMode() override {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            cancelMe();
+        }
+
         // FullEscape の処理 -- HISTORYを呼ぶ
         void handleFullEscape() override {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);

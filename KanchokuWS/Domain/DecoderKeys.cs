@@ -299,7 +299,8 @@ namespace KanchokuWS
         public const int DIRECT_SPACE_DECKEY = POST_PLANE_F_SHIFT_DECKEY + 1;               // デコーダを介さずに直接出力されるスペースキー
         public const int CANCEL_POST_REWRITE_DECKEY = DIRECT_SPACE_DECKEY + 1;              // 後置書き換えをキャンセルする
         public const int KANA_TRAINING_TOGGLE_DECKEY = CANCEL_POST_REWRITE_DECKEY + 1;      // かな入力練習モードのトグル
-        public const int EISU_DECAPITALIZE_DECKEY = KANA_TRAINING_TOGGLE_DECKEY + 1;        // 英数モードで先頭文字を小文字化する
+        public const int EISU_MODE_TOGGLE_DECKEY = KANA_TRAINING_TOGGLE_DECKEY + 1;         // 英数モードと通常モードのトグル
+        public const int EISU_DECAPITALIZE_DECKEY = EISU_MODE_TOGGLE_DECKEY + 1;            // 英数モードで先頭文字を小文字化する
 
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 

@@ -101,6 +101,12 @@ void State::DoDeckeyPreProc(int deckey) {
                     pNext->SetPrevState(this);
                     pNext->DoProcOnCreated();
                     deckey = -1;    // この後は dekcey の処理をやらない
+                } else if (pNode && dynamic_cast<EisuNode*>(pNode) == 0 && deckey == EISU_MODE_TOGGLE_DECKEY) {
+                    _LOG_DEBUGH(_T("CREATE: EisuState"));
+                    pNext = EISU_NODE->CreateState();
+                    pNext->SetPrevState(this);
+                    pNext->DoProcOnCreated();
+                    deckey = -1;    // この後は dekcey の処理をやらない
                 } else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokableKey(deckey)) {
                     // ルートストロークノードの生成
                     _LOG_DEBUGH(_T("CREATE: RootStrokeState"));
@@ -420,6 +426,8 @@ void State::dispatchDeckey(int deckey) {
         handleToggleBlocker();
     } else if (deckey == CANCEL_POST_REWRITE_DECKEY) {
         OUTPUT_STACK->cancelRewritable();
+    } else if (deckey == EISU_MODE_TOGGLE_DECKEY) {
+        handleEisuMode();
     } else if (deckey == EISU_DECAPITALIZE_DECKEY) {
         handleEisuDecapitalize();
     } else {
@@ -562,6 +570,9 @@ void State::handleZenkakuConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKe
 
 // handleKatakanaConversion デフォルトハンドラ
 void State::handleKatakanaConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(TOGGLE_KATAKANA_CONVERSION_DECKEY); }
+
+// handleEisuMode デフォルトハンドラ
+void State::handleEisuMode() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(EISU_MODE_TOGGLE_DECKEY); }
 
 // handleEisuCancel デフォルトハンドラ
 void State::handleEisuCancel() {
