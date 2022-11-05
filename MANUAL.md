@@ -2008,6 +2008,9 @@ KanchokuWS の動作がおかしいと思ったときに使用してみてくだ
   - mecab-ipadic のライセンスについては COPYING.mecab-ipadic を参照ください。
 - kwmaze.wiki.txt は、 Wikipedia 日本語版のタイトル部分に対して読みを付与したものです。
   - 全タイトルの半分くらいが採取されています。
+- kwhist.roman.txt は、国立国語研究所で作成された「UniDic」(https://clrd.ninjal.ac.jp/unidic/)
+  から抽出しました。したがって当ファイルには UniDic と同じ CC BY-NC-SA ライセンスが適用されます
+  (https://clrd.ninjal.ac.jp/unidic/faq.html#license)。
 
 ## 利用条件と免責
 - 本プログラムおよびソースコードの利用は無償かつ自由ですが、無保証です。

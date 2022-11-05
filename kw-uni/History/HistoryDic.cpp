@@ -766,6 +766,30 @@ namespace {
             ++n;
         }
 
+        std::vector<MString> splitByCapitalLetter(const MString& key) {
+            std::vector<MString> list;
+            if (!key.empty()) {
+                size_t startPos = 0;
+                size_t pos = 1;
+                while (pos < key.size()) {
+                    if (is_upper_alphabet(key[pos])) {
+                        list.push_back(utils::safe_substr(key, startPos, pos - startPos));
+                        startPos = pos;
+                    }
+                    ++pos;
+                }
+                if (startPos < key.size()) {
+                    list.push_back(utils::safe_substr(key, startPos));
+                }
+            }
+            return list;
+        }
+
+        void pushRomanEntry(const MString& key) {
+            _LOG_DEBUGH(_T("convertRomanToKatakana"));
+            resultList.PushHistory(key, key + MSTR_VERT_BAR + MSTR_HASH_MARK + RomanToKatakana::convertRomanToKatakana(key));
+        }
+
         // resultList に最近使ったものから取得した候補を格納し、pasts には set_ に含まれるものでそれ以外の候補を格納する
         // wlen > 0 なら、その長さの候補だけを返す
         void extract_and_copy(const MString& key, std::set<MString>& set_, size_t wlen, bool bWild = false) {
@@ -784,10 +808,6 @@ namespace {
             mchar_t tsu = _T("ツ")[0];
             mchar_t to = _T("ト")[0];
             bool bRomanNeeded = utils::isAsciiString(key);
-            auto pushRomanEntry = [this, key]() {
-                _LOG_DEBUGH(_T("convertRomanToKatakana"));
-                resultList.PushHistory(key, key + MSTR_VERT_BAR + MSTR_HASH_MARK + RomanToKatakana::convertRomanToKatakana(key));
-            };
 
             for (const auto& s : vec) {
                 // 候補長がキーサイズを超えたら、ローマ字候補を追加
@@ -795,7 +815,7 @@ namespace {
                     _LOG_DEBUGH(_T("check ROMAN key: s=%s"), MAKE_WPTR(s));
                     size_t vbarPos = s.find_first_of('\t');
                     if (vbarPos < s.size() && vbarPos > key.size()) {
-                        pushRomanEntry();
+                        pushRomanEntry(key);
                         bRomanNeeded = false;
                     }
                 }
@@ -826,7 +846,7 @@ namespace {
                 pushCandidate(key, prevWord, n);
             }
             // 必要ならローマ字候補を追加
-            if (bRomanNeeded) pushRomanEntry();
+            if (bRomanNeeded) pushRomanEntry(key);
 
             _LOG_DEBUGH(_T("RESULT: resultList.size()=%d"), resultList.Size());
         }
@@ -1011,9 +1031,33 @@ namespace {
                 }
 
                 if (resultList.Empty()) {
+                    // 履歴検索で結果がなかった場合
                     if ((!bCheckMinKeyLen || key.size() >= SETTINGS->histRomanKeyLength) && is_ascii_str(key)) {
-                        _LOG_DEBUGH(_T("convertRomanToKatakana"));
-                        resultList.PushHistory(key, key + MSTR_VERT_BAR + MSTR_HASH_MARK + RomanToKatakana::convertRomanToKatakana(key));
+                        // 英大文字で区切って検索、なければローマ字化
+                        auto words = splitByCapitalLetter(key);
+                        if (words.size() > 1) {
+                            _LOG_DEBUGH(_T("splitted words=%s"), MAKE_WPTR(utils::join(words, ':')));
+                            MString joinedWord;
+                            for (const auto& w : words) {
+                                // ここで候補取得処理の再帰呼び出し
+                                GetCandidates(w, resultKey, false, 0);
+                                //const HistResult& hr = resultList.findSameHistMapKey(w);
+                                const MString& rw = resultList.GetNthWord(0);
+                                size_t pos = rw.find_first_of(VERT_BAR);
+                                if (pos + 1 < rw.size()) {
+                                    ++pos;
+                                    if (rw[pos] == HASH_MARK) ++pos;
+                                    // 取得した結果を連結
+                                    joinedWord.append(rw.substr(pos));
+                                }
+                                resultKey.clear();
+                            }
+                            _LOG_DEBUGH(_T("Join Katakana"));
+                            resultList.ClearKeyInfo();
+                            resultList.PushHistory(key, key + MSTR_VERT_BAR + MSTR_HASH_MARK + joinedWord);
+                        } else {
+                            pushRomanEntry(key);
+                        }
                         resultKey = key;   // 全体がマッチ
                     } else {
                         resultKey.clear();

@@ -96,6 +96,14 @@ public:
             histories.insert(histories.begin() + 1, elem);
         }
     }
+
+    // 同じ履歴変換キーを探す
+    const HistResult& findSameHistMapKey(const MString& key) {
+        for (const auto& hr : histories) {
+            if (key == hr.Key && hr.Word.size() > key.size() && hr.Word[key.size()] == VERT_BAR) return hr;
+        }
+        return emptyResult;
+    }
 };
 
 // -------------------------------------------------------------------
