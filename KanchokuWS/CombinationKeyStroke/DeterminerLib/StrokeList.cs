@@ -21,30 +21,86 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         private List<Stroke> comboList = new List<Stroke>();
 
+        /// <summary>前回のComboシフトキーが解放された時刻をシフトキーとともに記憶しておく</summary>
+        class ComboShiftUpTimeInfo
+        {
+            public int PrevShiftKey { get; set; } = 0;
+            public DateTime UpDt { get; set; }
+            public bool ComboPressed { get; set; } = false;
+
+            public void Initialize()
+            {
+                logger.DebugH("PrevShiftKey.Initialize: CALLED");
+                PrevShiftKey = 0;
+                UpDt = DateTime.MinValue;
+                ComboPressed = false;
+            }
+
+            public void SetValues(int shiftDeckey, DateTime upDt)
+            {
+                PrevShiftKey = shiftDeckey;
+                UpDt = upDt;
+                ComboPressed = false;
+                logger.DebugH(() => $"PrevShiftKey.SetValues: CALLED: PrevShiftKey={PrevShiftKey}, UpDt={UpDt}");
+            }
+
+            public void CheckComboKeyDown(int deckey)
+            {
+                logger.DebugH(() => $"PrevShiftKey.CheckComboKeyDown: CALLED: deckey={deckey}");
+                if (PrevShiftKey != deckey) {
+                    if (ComboPressed) {
+                        Initialize();
+                    } else {
+                        logger.DebugH(() => $"PrevShiftKey.CheckComboKeyDown: ComboPressed: PrevShiftKey={PrevShiftKey}, deckey={deckey}");
+                        ComboPressed = true;
+                    }
+                }
+            }
+
+            public DateTime GetPrevComboShiftKeyUpDt(int shiftDeckey)
+            {
+                return PrevShiftKey == shiftDeckey ? UpDt : DateTime.MinValue;
+            }
+        }
+
+        // TODO: このあたりは不要のはず。後で削除する
+        ///// <summary>
+        ///// 前回のComboシフトキーが解放された時刻をシフトキーごとに保存するマップ<br/>
+        ///// シフトキーの解放後、後置シフトを無効にする時間を計測する起点となる
+        ///// </summary>
+        //private Dictionary<int, DateTime> prevComboShiftKeyUpDtMap = new Dictionary<int, DateTime>();
+
         /// <summary>
-        /// 前回のComboシフトキーが解放された時刻をシフトキーごとに保存するマップ<br/>
+        /// 前回のComboシフトキーが解放された時刻をシフトキーとともに記憶しておく<br/>
         /// シフトキーの解放後、後置シフトを無効にする時間を計測する起点となる
         /// </summary>
-        private Dictionary<int, DateTime> prevComboShiftKeyUpDtMap = new Dictionary<int, DateTime>();
+        private ComboShiftUpTimeInfo comboShiftUpTimeInfo = new ComboShiftUpTimeInfo();
 
-        public DateTime GetPrevComboShiftKeyUpDt(int deckey)
-        {
-            return prevComboShiftKeyUpDtMap._safeGet(deckey, DateTime.MinValue);
-        }
+        //public DateTime GetPrevComboShiftKeyUpDt(int deckey)
+        //{
+        //    return prevComboShiftKeyUpDtMap._safeGet(deckey, DateTime.MinValue);
+        //}
 
         public double GetElapsedTimeFromShiftKeyUp(Stroke stroke1, Stroke shiftStroke)
         {
-            return stroke1.TimeSpanMs(GetPrevComboShiftKeyUpDt(shiftStroke.OrigDecoderKey));
+            return stroke1.TimeSpanMs(comboShiftUpTimeInfo.GetPrevComboShiftKeyUpDt(shiftStroke.OrigDecoderKey));
         }
 
         public void SetPrevComboShiftKeyUpDt(int deckey, DateTime dt)
         {
-            prevComboShiftKeyUpDtMap[deckey] = dt;
+            //prevComboShiftKeyUpDtMap[deckey] = dt;
+            comboShiftUpTimeInfo.SetValues(deckey, dt);
         }
 
         public void ClearPrevComboShiftKeyUpDt(int deckey)
         {
-            prevComboShiftKeyUpDtMap[deckey] = DateTime.MinValue;
+            //prevComboShiftKeyUpDtMap[deckey] = DateTime.MinValue;
+            comboShiftUpTimeInfo.Initialize();
+        }
+
+        public void CheckComboShiftKeyUpDt(int deckey)
+        {
+            comboShiftUpTimeInfo.CheckComboKeyDown(deckey);
         }
 
         /// <summary>

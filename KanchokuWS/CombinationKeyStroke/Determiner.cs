@@ -265,6 +265,8 @@ namespace KanchokuWS.CombinationKeyStroke
 
             checkPreRewriteTime(decKey);
 
+            strokeList.CheckComboShiftKeyUpDt(decKey);
+
             List<int> result = null;
             bool bUnconditional = false;
 
