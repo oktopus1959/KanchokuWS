@@ -114,9 +114,6 @@
     <ClInclude Include="utils\path_utils.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="History\History.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="StayState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -245,6 +242,9 @@
     </ClInclude>
     <ClInclude Include="KeysAndChars\RomanToKatakana.h">
       <Filter>ヘッダー ファイル\KeysAndChars</Filter>
+    </ClInclude>
+    <ClInclude Include="History\History.h">
+      <Filter>ヘッダー ファイル\History</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

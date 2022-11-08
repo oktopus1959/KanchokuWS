@@ -17,7 +17,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
-#if 1 || defined(_DEBUG)
+#if 0 || defined(_DEBUG)
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define LOG_INFO LOG_INFOH

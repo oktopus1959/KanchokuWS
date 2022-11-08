@@ -17,6 +17,7 @@
 #include "KeysAndChars/Zenkaku.h"
 #include "KeysAndChars/Katakana.h"
 #include "KeysAndChars/Eisu.h"
+#include "KeysAndChars/RomanToKatakana.h"
 #include "ErrorHandler.h"
 #include "Settings.h"
 #include "State.h"
@@ -172,6 +173,9 @@ public:
         
         // settings の事前ロード
         if (bPreLoad) loadSettings(settings);
+
+        // ローマ字定義ファイルのロード
+        RomanToKatakana::ReadRomanDefFile(_T("kwroman.def.txt"));
 
         // ストローク木の構築
         createStrokeTrees();

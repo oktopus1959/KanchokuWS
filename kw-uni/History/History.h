@@ -5,7 +5,7 @@
 #include "FunctionNode.h"
 #include "HistoryStayState.h"
 
-#if 1
+#if 0
 #define HIST_LOG_DEBUGH LOG_INFOH
 #else
 #define HIST_LOG_DEBUGH(...) {}
