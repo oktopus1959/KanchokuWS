@@ -701,6 +701,11 @@ namespace KanchokuWS.Handler
         //    return contained;
         //}
 
+        private char hiraganaConv(char ch)
+        {
+            return Settings.ImeKatakanaToHiragana ? Helper.ConvertKatakanaToHiragana(ch) : ch;
+        }
+
         private void sendStringInputs(string str)
         {
             logger.DebugH(() => $"ENTER: str={str}");
@@ -716,10 +721,10 @@ namespace KanchokuWS.Handler
                     logger.DebugH(() => $"ImeEnabled={IMEHandler.ImeEnabled}, ImeSendInputInRoman={Settings.ImeSendInputInRoman}, ImeSendInputInKana={Settings.ImeSendInputInKana}");
                     if (IMEHandler.ImeEnabled /* && (str[i] == ' ' || !isUnicodeSendWindow())*/) {
                         if (Settings.ImeSendInputInRoman) {
-                            faceStr = str[i]._hiraganaToRoman();
+                            faceStr = hiraganaConv(str[i])._hiraganaToRoman();
                             if (faceStr._isEmpty()) logger.DebugH($"_hiraganaToRoman empty");
                         } else if (Settings.ImeSendInputInKana) {
-                            faceStr = str[i]._hiraganaToKeyface();
+                            faceStr = hiraganaConv(str[i])._hiraganaToKeyface();
                             if (faceStr._isEmpty()) logger.DebugH($"_hiraganaToKeyface empty");
                         }
                         if (faceStr._notEmpty()) {

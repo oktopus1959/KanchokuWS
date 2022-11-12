@@ -824,6 +824,7 @@ namespace KanchokuWS.Gui
 
             // IME連携
             checkBox_imeCooperationEnabled.Checked = Settings.ImeCooperationEnabled;
+            checkBox_imeKatakanaToHiragana.Checked = Settings.ImeKatakanaToHiragana;
             radioButton_imeSendInputInRoman.Checked = Settings.ImeSendInputInRoman;
             radioButton_imeSendInputInKana.Checked = Settings.ImeSendInputInKana;
             radioButton_imeSendInputInUnicode.Checked = !(Settings.ImeSendInputInRoman || Settings.ImeSendInputInKana);
@@ -859,6 +860,7 @@ namespace KanchokuWS.Gui
 
             // IME連携
             checkerImeCombo.Add(checkBox_imeCooperationEnabled);
+            checkerImeCombo.Add(checkBox_imeKatakanaToHiragana);
             checkerImeCombo.Add(radioButton_imeSendInputInRoman);
             checkerImeCombo.Add(radioButton_imeSendInputInKana);
             checkerImeCombo.Add(radioButton_imeSendInputInUnicode);
@@ -900,6 +902,7 @@ namespace KanchokuWS.Gui
 
             // IME連携
             Settings.SetUserIni("imeCooperationEnabled", checkBox_imeCooperationEnabled.Checked);
+            Settings.SetUserIni("imeKatakanaToHiragana", checkBox_imeKatakanaToHiragana.Checked);
             Settings.SetUserIni("imeSendInputInRoman", radioButton_imeSendInputInRoman.Checked);
             Settings.SetUserIni("imeSendInputInKana", radioButton_imeSendInputInKana.Checked);
             //Settings.SetUserIni("imeUnicodeClassNames", textBox_imeUnicodeClassNames.Text.Trim()._reReplace(@"[ \r\n]+", "|"));

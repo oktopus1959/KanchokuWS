@@ -357,19 +357,21 @@ namespace Utils
             return (s1._toSafe()._stripDq() + s2._toSafe()._stripDq())._quoteString(!dq);
         }
 
+        public static bool IsPureKatakana(char ch)
+        {
+            return ch >= 'ァ' && ch <= 'ヶ';
+        }
+
+        public static char ConvertKatakanaToHiragana(char ch)
+        {
+            return IsPureKatakana(ch) ? (char)(ch - 0x0060) : ch;
+        }
+
         public static string ConvertKatakanaToHiragana(string kataStr)
         {
-            bool is_pure_katakana(char ch) {
-                return ch >= 'ァ' && ch <= 'ヶ';
-            }
-
-            char katakana_to_hiragana(char ch) {
-                return (char)(ch - 0x0060);
-            }
-
             StringBuilder result = new StringBuilder();
             foreach (char kc in kataStr) {
-                result.Append((is_pure_katakana(kc) ? katakana_to_hiragana(kc) : kc));
+                result.Append(ConvertKatakanaToHiragana(kc));
             }
             return result.ToString();
         }

@@ -15,7 +15,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.1";
+        public static string Version => "1.2.1.1";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -709,6 +709,9 @@ namespace KanchokuWS
         /// <summary> IMEの状態に連携してON/OFFする </summary>
         public static bool ImeCooperationEnabled { get; set; } = false;
 
+        /// <summary> IMEにカタカナを送るときはひらがなに変換する </summary>
+        public static bool ImeKatakanaToHiragana { get; set; } = false;
+
         /// <summary> IMEに対してローマ字で送信する </summary>
         public static bool ImeSendInputInRoman { get; set; } = false;
 
@@ -1185,6 +1188,7 @@ namespace KanchokuWS
             //-------------------------------------------------------------------------------------
             // IME連携
             ImeCooperationEnabled = GetString("imeCooperationEnabled")._parseBool(false);
+            ImeKatakanaToHiragana = GetString("imeKatakanaToHiragana")._parseBool(false);
             ImeSendInputInRoman = GetString("imeSendInputInRoman")._parseBool(false);
             ImeSendInputInKana = GetString("imeSendInputInKana")._parseBool(false);
             //ImeUnicodeClassNames = GetString("imeUnicodeClassNames")._orElse("Edit|_WwG|SakuraView*").Trim();
