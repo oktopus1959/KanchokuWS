@@ -92,12 +92,12 @@ namespace KanchokuWS.Gui
         private static KeyOrFunction[] extModifiees;
 
         //public int AssignedKeyOrFuncNameColWidth {
-        //    get { return dataGridView2.Columns != null && dataGridView2.Columns.Count > 2 ? dataGridView2.Columns[2].Width : 0; }
+        //    get { return dataGridView_extModifier.Columns != null && dataGridView_extModifier.Columns.Count > 2 ? dataGridView_extModifier.Columns[2].Width : 0; }
         //}
         //public int AssignedKeyOrFuncNameColWidth { get; private set; }
 
         //public int AssignedKeyOrFuncDescColWidth {
-        //    get { return dataGridView2.Columns != null && dataGridView2.Columns.Count > 3 ? dataGridView2.Columns[3].Width : 0; }
+        //    get { return dataGridView_extModifier.Columns != null && dataGridView_extModifier.Columns.Count > 3 ? dataGridView_extModifier.Columns[3].Width : 0; }
         //}
         //public int AssignedKeyOrFuncDescColWidth { get; private set; }
 
@@ -140,9 +140,9 @@ namespace KanchokuWS.Gui
             comboBox_shiftPlaneOn._setItems(shiftPlaneNames);
             comboBox_shiftPlaneOff._setItems(shiftPlaneNames);
 
-            dataGridView1.Visible = false;
-            dataGridView2.Visible = true;
-            dataGridView3.Visible = false;
+            dataGridView_singleHit.Visible = false;
+            dataGridView_extModifier.Visible = true;
+            dataGridView_shiftPlane.Visible = false;
 
             //AssignedKeyOrFuncNameColWidth = Settings.AssignedKeyOrFuncNameColWidth._gtZeroOr(180);
             //AssignedKeyOrFuncDescColWidth = Settings.AssignedKeyOrFuncDescColWidth._gtZeroOr(290);
@@ -151,7 +151,7 @@ namespace KanchokuWS.Gui
             setDataGridViewForSingleHit();
             setDataGridViewForExtModifier();
 
-            defaultModkeyIndex = modifierKeys._findIndex(x => x.ModKey == VirtualKeys.DefaultExtModifierKey);
+            defaultModkeyIndex = modifierKeys._findIndex(x => x.ModKey == VirtualKeys.DefaultExtModifierKey)._lowLimit(0);
             comboBox_modKeys.SelectedIndex = (SelectedModKeysIndex >= 0 ? SelectedModKeysIndex : defaultModkeyIndex)._highLimit(comboBox_modKeys.Items.Count - 1);
             radioButton_modKeys.Checked = true;
         }
@@ -176,13 +176,13 @@ namespace KanchokuWS.Gui
             return modDef.ModName + marker;
         }
 
-        // 拡張シフト面割り当て用DGV(dataGridView3)の設定
+        // 拡張シフト面割り当て用DGV(dataGridView_shiftPlane)の設定
         private void setDataGridViewForShiftPlane()
         {
             double dpiRate = ScreenInfo.Singleton.PrimaryScreenDpiRate._lowLimit(1.0);
             int rowHeight = (int)(20 * dpiRate);
 
-            var dgv = dataGridView3;
+            var dgv = dataGridView_shiftPlane;
             dgv._defaultSetup(rowHeight, rowHeight);
             dgv._setDefaultFont(DgvHelpers.FontYUG9);
             dgv._setSelectionColorReadOnly();
@@ -203,7 +203,7 @@ namespace KanchokuWS.Gui
         private void renewShiftPlaneDgv()
         {
             //dgv3Locked = true;
-            var dgv = dataGridView3;
+            var dgv = dataGridView_shiftPlane;
             int num = dgv.Rows.Count._highLimit(modifierKeys.Length);
 
             for (int i = 0; i < num; ++i) {
@@ -224,13 +224,13 @@ namespace KanchokuWS.Gui
             //dgv3Locked = false;
         }
 
-        // 単打用DGV(dataGridView1)の設定
+        // 単打用DGV(dataGridView_singleHit)の設定
         private void setDataGridViewForSingleHit()
         {
             double dpiRate = ScreenInfo.Singleton.PrimaryScreenDpiRate._lowLimit(1.0);
             int rowHeight = (int)(20 * dpiRate);
 
-            var dgv = dataGridView1;
+            var dgv = dataGridView_singleHit;
             dgv._defaultSetup(rowHeight, rowHeight);
             dgv._setSelectionColorReadOnly();
             dgv._setDefaultFont(DgvHelpers.FontYUG9);
@@ -253,7 +253,7 @@ namespace KanchokuWS.Gui
         private void renewSingleHitDgv()
         {
             dgv1Locked = true;
-            var dgv = dataGridView1;
+            var dgv = dataGridView_singleHit;
             int num = dgv.Rows.Count;
 
             for (int i = 0; i < num; ++i) {
@@ -275,13 +275,13 @@ namespace KanchokuWS.Gui
             dgv1Locked = false;
         }
 
-        // 拡張修飾キー設定用DGV(dataGridView2)の設定
+        // 拡張修飾キー設定用DGV(dataGridView_extModifier)の設定
         private void setDataGridViewForExtModifier()
         {
             double dpiRate = ScreenInfo.Singleton.PrimaryScreenDpiRate._lowLimit(1.0);
             int rowHeight = (int)(20 * dpiRate);
 
-            var dgv = dataGridView2;
+            var dgv = dataGridView_extModifier;
             dgv._defaultSetup(rowHeight, rowHeight);
             dgv._setSelectionColorReadOnly();
             dgv._setDefaultFont(DgvHelpers.FontYUG9);
@@ -295,6 +295,8 @@ namespace KanchokuWS.Gui
             dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable("funcDesc", "機能説明", funcDescWidth));
 
             dgv.Rows.Add(normalKeyNames._safeCount() + extModifiees.Length);
+
+            renewExtModifierDgv();
         }
 
         private void renewExtModifierDgv()
@@ -305,7 +307,7 @@ namespace KanchokuWS.Gui
 
             dgv2Locked = true;
             uint modKey = modKeyDef.ModKey;
-            var dgv = dataGridView2;
+            var dgv = dataGridView_extModifier;
             int num = dgv.Rows.Count;
             int normalKeysNum = normalKeyNames._safeCount();
             var dict = VirtualKeys.ExtModifierKeyDefs._safeGet(modKey);
@@ -377,21 +379,21 @@ namespace KanchokuWS.Gui
         private void radioButtonCheckedChanged()
         {
             try {
-                dataGridView1.Visible = radioButton_singleHit.Checked;
-                dataGridView2.Visible = radioButton_modKeys.Checked;
-                dataGridView3.Visible = radioButton_shiftPlane.Checked;
+                dataGridView_singleHit.Visible = radioButton_singleHit.Checked;
+                dataGridView_extModifier.Visible = radioButton_modKeys.Checked;
+                dataGridView_shiftPlane.Visible = radioButton_shiftPlane.Checked;
                 panel_shiftPlaneHint.Visible = radioButton_shiftPlane.Checked;
 
                 if (radioButton_singleHit.Checked) {
-                    if (dataGridView1.Columns.Count > 3) {
-                        dataGridView1.Columns[2].Width = Settings.AssignedKeyOrFuncNameColWidth;
-                        dataGridView1.Columns[3].Width = Settings.AssignedKeyOrFuncDescColWidth;
+                    if (dataGridView_singleHit.Columns.Count > 3) {
+                        dataGridView_singleHit.Columns[2].Width = Settings.AssignedKeyOrFuncNameColWidth;
+                        dataGridView_singleHit.Columns[3].Width = Settings.AssignedKeyOrFuncDescColWidth;
                     }
                 }
                 if (radioButton_modKeys.Checked) {
-                    if (dataGridView2.Columns.Count > 3) {
-                        dataGridView2.Columns[2].Width = Settings.AssignedKeyOrFuncNameColWidth;
-                        dataGridView2.Columns[3].Width = Settings.AssignedKeyOrFuncDescColWidth;
+                    if (dataGridView_extModifier.Columns.Count > 3) {
+                        dataGridView_extModifier.Columns[2].Width = Settings.AssignedKeyOrFuncNameColWidth;
+                        dataGridView_extModifier.Columns[3].Width = Settings.AssignedKeyOrFuncDescColWidth;
                     }
                 }
                 if (!radioButton_singleHit.Checked) {
@@ -474,7 +476,7 @@ namespace KanchokuWS.Gui
             selectShiftPlane(false, comboBox_shiftPlaneOff.SelectedIndex);
         }
 
-        private void dataGridView2_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        private void dataGridView_extModifier_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (dgv2Locked) return;
 
@@ -484,7 +486,7 @@ namespace KanchokuWS.Gui
 
             if (e.ColumnIndex != TARGET_COL) return;
 
-            var dgv = dataGridView2;
+            var dgv = dataGridView_extModifier;
             int row = e.RowIndex;
             if (row < 0 || row >= dgv.Rows.Count) return;
 
@@ -513,7 +515,7 @@ namespace KanchokuWS.Gui
             logger.DebugH(() => $"LEAVE");
         }
 
-        private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        private void dataGridView_singleHit_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (dgv1Locked) return;
 
@@ -523,7 +525,7 @@ namespace KanchokuWS.Gui
 
             if (e.ColumnIndex != TARGET_COL) return;
 
-            var dgv = dataGridView1;
+            var dgv = dataGridView_singleHit;
             int row = e.RowIndex;
             if (row < 0 || row >= dgv.Rows.Count) return;
 
@@ -603,37 +605,37 @@ namespace KanchokuWS.Gui
             }
         }
 
-        private void dataGridView2_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void dataGridView_extModifier_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            dgvCellMouseClick(dataGridView2, e);
+            dgvCellMouseClick(dataGridView_extModifier, e);
         }
 
-        private void dataGridView2_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void dataGridView_extModifier_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            dgvCellMouseDoubleClick(dataGridView2, e);
+            dgvCellMouseDoubleClick(dataGridView_extModifier, e);
         }
 
-        private void dataGridView2_KeyDown(object sender, KeyEventArgs e)
+        private void dataGridView_extModifier_KeyDown(object sender, KeyEventArgs e)
         {
-            dgvKeyDown(dataGridView2, e);
+            dgvKeyDown(dataGridView_extModifier, e);
         }
 
-        private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void dataGridView_singleHit_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            dgvCellMouseClick(dataGridView1, e);
+            dgvCellMouseClick(dataGridView_singleHit, e);
         }
 
-        private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void dataGridView_singleHit_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            dgvCellMouseDoubleClick(dataGridView1, e);
+            dgvCellMouseDoubleClick(dataGridView_singleHit, e);
         }
 
-        private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
+        private void dataGridView_singleHit_KeyDown(object sender, KeyEventArgs e)
         {
-            dgvKeyDown(dataGridView1, e);
+            dgvKeyDown(dataGridView_singleHit, e);
         }
 
-        private bool selectModKey(int idx)
+        private bool changeSelectedModKey(int idx)
         {
             if (idx >= 0 && idx < comboBox_modKeys.Items.Count) {
                 comboBox_modKeys.SelectedIndex = idx;
@@ -647,31 +649,31 @@ namespace KanchokuWS.Gui
             comboBox.DroppedDown = true;
         }
 
-        private void dataGridView3_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void dataGridView_shiftPlane_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            selectModKey(e.RowIndex);
+            changeSelectedModKey(e.RowIndex);
         }
 
-        private void dataGridView3_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void dataGridView_shiftPlane_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (selectModKey(e.RowIndex)) {
+            if (changeSelectedModKey(e.RowIndex)) {
                 openComboBox(e.ColumnIndex < 3 ? comboBox_shiftPlaneOn : comboBox_shiftPlaneOff);
             }
         }
 
-        private void dataGridView1_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+        private void dataGridView_singleHit_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
         {
-            if (dataGridView1.Columns.Count > 3) {
-                Settings.AssignedKeyOrFuncNameColWidth = dataGridView1.Columns[2].Width;
-                Settings.AssignedKeyOrFuncDescColWidth = dataGridView1.Columns[3].Width;
+            if (dataGridView_singleHit.Columns.Count > 3) {
+                Settings.AssignedKeyOrFuncNameColWidth = dataGridView_singleHit.Columns[2].Width;
+                Settings.AssignedKeyOrFuncDescColWidth = dataGridView_singleHit.Columns[3].Width;
             }
         }
 
-        private void dataGridView2_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+        private void dataGridView_extModifier_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
         {
-            if (dataGridView2.Columns.Count > 3) {
-                Settings.AssignedKeyOrFuncNameColWidth = dataGridView2.Columns[2].Width;
-                Settings.AssignedKeyOrFuncDescColWidth = dataGridView2.Columns[3].Width;
+            if (dataGridView_extModifier.Columns.Count > 3) {
+                Settings.AssignedKeyOrFuncNameColWidth = dataGridView_extModifier.Columns[2].Width;
+                Settings.AssignedKeyOrFuncDescColWidth = dataGridView_extModifier.Columns[3].Width;
             }
         }
     }

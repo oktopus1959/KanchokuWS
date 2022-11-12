@@ -34,24 +34,24 @@ namespace KanchokuWS.Gui
             this.buttonCancel = new System.Windows.Forms.Button();
             this.label_modKeys = new System.Windows.Forms.Label();
             this.comboBox_modKeys = new System.Windows.Forms.ComboBox();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.dataGridView_extModifier = new System.Windows.Forms.DataGridView();
             this.comboBox_shiftPlaneOn = new System.Windows.Forms.ComboBox();
             this.label_shiftPlaneOn = new System.Windows.Forms.Label();
             this.comboBox_shiftPlaneOff = new System.Windows.Forms.ComboBox();
             this.label_shiftPlaneOff = new System.Windows.Forms.Label();
             this.radioButton_modKeys = new System.Windows.Forms.RadioButton();
             this.radioButton_singleHit = new System.Windows.Forms.RadioButton();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.dataGridView3 = new System.Windows.Forms.DataGridView();
+            this.dataGridView_singleHit = new System.Windows.Forms.DataGridView();
+            this.dataGridView_shiftPlane = new System.Windows.Forms.DataGridView();
             this.radioButton_shiftPlane = new System.Windows.Forms.RadioButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox_help = new System.Windows.Forms.GroupBox();
             this.panel_shiftPlaneHint = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_extModifier)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_singleHit)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_shiftPlane)).BeginInit();
             this.groupBox_help.SuspendLayout();
             this.panel_shiftPlaneHint.SuspendLayout();
             this.SuspendLayout();
@@ -112,23 +112,23 @@ namespace KanchokuWS.Gui
         "。");
             this.comboBox_modKeys.SelectedIndexChanged += new System.EventHandler(this.comboBox_modKeys_SelectedIndexChanged);
             // 
-            // dataGridView2
+            // dataGridView_extModifier
             // 
-            this.dataGridView2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.dataGridView_extModifier.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Location = new System.Drawing.Point(13, 31);
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.RowTemplate.Height = 21;
-            this.dataGridView2.Size = new System.Drawing.Size(600, 378);
-            this.dataGridView2.TabIndex = 4;
-            this.dataGridView2.TabStop = false;
-            this.dataGridView2.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView2_CellMouseClick);
-            this.dataGridView2.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView2_CellMouseDoubleClick);
-            this.dataGridView2.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellValueChanged);
-            this.dataGridView2.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.dataGridView2_ColumnWidthChanged);
-            this.dataGridView2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView2_KeyDown);
+            this.dataGridView_extModifier.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_extModifier.Location = new System.Drawing.Point(13, 31);
+            this.dataGridView_extModifier.Name = "dataGridView_extModifier";
+            this.dataGridView_extModifier.RowTemplate.Height = 21;
+            this.dataGridView_extModifier.Size = new System.Drawing.Size(600, 378);
+            this.dataGridView_extModifier.TabIndex = 4;
+            this.dataGridView_extModifier.TabStop = false;
+            this.dataGridView_extModifier.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_extModifier_CellMouseClick);
+            this.dataGridView_extModifier.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_extModifier_CellMouseDoubleClick);
+            this.dataGridView_extModifier.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_extModifier_CellValueChanged);
+            this.dataGridView_extModifier.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.dataGridView_extModifier_ColumnWidthChanged);
+            this.dataGridView_extModifier.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView_extModifier_KeyDown);
             // 
             // comboBox_shiftPlaneOn
             // 
@@ -212,38 +212,38 @@ namespace KanchokuWS.Gui
             this.radioButton_singleHit.UseVisualStyleBackColor = true;
             this.radioButton_singleHit.CheckedChanged += new System.EventHandler(this.radioButton_singleHit_CheckedChanged);
             // 
-            // dataGridView1
+            // dataGridView_singleHit
             // 
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.dataGridView_singleHit.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(13, 31);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowTemplate.Height = 21;
-            this.dataGridView1.Size = new System.Drawing.Size(600, 378);
-            this.dataGridView1.TabIndex = 3;
-            this.dataGridView1.TabStop = false;
-            this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
-            this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
-            this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValueChanged);
-            this.dataGridView1.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.dataGridView1_ColumnWidthChanged);
-            this.dataGridView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView1_KeyDown);
+            this.dataGridView_singleHit.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_singleHit.Location = new System.Drawing.Point(13, 31);
+            this.dataGridView_singleHit.Name = "dataGridView_singleHit";
+            this.dataGridView_singleHit.RowTemplate.Height = 21;
+            this.dataGridView_singleHit.Size = new System.Drawing.Size(600, 378);
+            this.dataGridView_singleHit.TabIndex = 3;
+            this.dataGridView_singleHit.TabStop = false;
+            this.dataGridView_singleHit.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_singleHit_CellMouseClick);
+            this.dataGridView_singleHit.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_singleHit_CellMouseDoubleClick);
+            this.dataGridView_singleHit.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_singleHit_CellValueChanged);
+            this.dataGridView_singleHit.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.dataGridView_singleHit_ColumnWidthChanged);
+            this.dataGridView_singleHit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView_singleHit_KeyDown);
             // 
-            // dataGridView3
+            // dataGridView_shiftPlane
             // 
-            this.dataGridView3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.dataGridView_shiftPlane.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView3.Location = new System.Drawing.Point(13, 31);
-            this.dataGridView3.Name = "dataGridView3";
-            this.dataGridView3.RowTemplate.Height = 21;
-            this.dataGridView3.Size = new System.Drawing.Size(600, 378);
-            this.dataGridView3.TabIndex = 5;
-            this.dataGridView3.TabStop = false;
-            this.dataGridView3.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView3_CellMouseClick);
-            this.dataGridView3.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView3_CellMouseDoubleClick);
+            this.dataGridView_shiftPlane.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_shiftPlane.Location = new System.Drawing.Point(13, 31);
+            this.dataGridView_shiftPlane.Name = "dataGridView_shiftPlane";
+            this.dataGridView_shiftPlane.RowTemplate.Height = 21;
+            this.dataGridView_shiftPlane.Size = new System.Drawing.Size(600, 378);
+            this.dataGridView_shiftPlane.TabIndex = 5;
+            this.dataGridView_shiftPlane.TabStop = false;
+            this.dataGridView_shiftPlane.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_shiftPlane_CellMouseClick);
+            this.dataGridView_shiftPlane.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_shiftPlane_CellMouseDoubleClick);
             // 
             // radioButton_shiftPlane
             // 
@@ -288,7 +288,7 @@ namespace KanchokuWS.Gui
             // panel_shiftPlaneHint
             // 
             this.panel_shiftPlaneHint.Controls.Add(this.label3);
-            this.panel_shiftPlaneHint.Location = new System.Drawing.Point(41, 240);
+            this.panel_shiftPlaneHint.Location = new System.Drawing.Point(40, 270);
             this.panel_shiftPlaneHint.Name = "panel_shiftPlaneHint";
             this.panel_shiftPlaneHint.Size = new System.Drawing.Size(222, 58);
             this.panel_shiftPlaneHint.TabIndex = 17;
@@ -309,10 +309,10 @@ namespace KanchokuWS.Gui
             this.ClientSize = new System.Drawing.Size(624, 441);
             this.Controls.Add(this.panel_shiftPlaneHint);
             this.Controls.Add(this.radioButton_shiftPlane);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.dataGridView_singleHit);
             this.Controls.Add(this.radioButton_singleHit);
             this.Controls.Add(this.radioButton_modKeys);
-            this.Controls.Add(this.dataGridView2);
+            this.Controls.Add(this.dataGridView_extModifier);
             this.Controls.Add(this.comboBox_shiftPlaneOff);
             this.Controls.Add(this.label_shiftPlaneOff);
             this.Controls.Add(this.comboBox_shiftPlaneOn);
@@ -321,7 +321,7 @@ namespace KanchokuWS.Gui
             this.Controls.Add(this.comboBox_modKeys);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.label_modKeys);
-            this.Controls.Add(this.dataGridView3);
+            this.Controls.Add(this.dataGridView_shiftPlane);
             this.Controls.Add(this.groupBox_help);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -330,9 +330,9 @@ namespace KanchokuWS.Gui
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "拡張修飾キー設定";
             this.Load += new System.EventHandler(this.DlgModConversion_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_extModifier)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_singleHit)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_shiftPlane)).EndInit();
             this.groupBox_help.ResumeLayout(false);
             this.groupBox_help.PerformLayout();
             this.panel_shiftPlaneHint.ResumeLayout(false);
@@ -347,15 +347,15 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Label label_modKeys;
         private System.Windows.Forms.ComboBox comboBox_modKeys;
-        private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.DataGridView dataGridView_extModifier;
         private System.Windows.Forms.ComboBox comboBox_shiftPlaneOn;
         private System.Windows.Forms.Label label_shiftPlaneOn;
         private System.Windows.Forms.ComboBox comboBox_shiftPlaneOff;
         private System.Windows.Forms.Label label_shiftPlaneOff;
         private System.Windows.Forms.RadioButton radioButton_modKeys;
         private System.Windows.Forms.RadioButton radioButton_singleHit;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridView dataGridView3;
+        private System.Windows.Forms.DataGridView dataGridView_singleHit;
+        private System.Windows.Forms.DataGridView dataGridView_shiftPlane;
         private System.Windows.Forms.RadioButton radioButton_shiftPlane;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.GroupBox groupBox_help;
