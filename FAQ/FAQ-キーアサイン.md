@@ -105,6 +105,8 @@ SandS, CapsLock, 英数, 無変換, 変換, 右シフト, 左右コントロー�
 |Activate|漢直モードに入る|
 |Deactivate|漢直モードから出る|
 |ExchangeCodeTable|主・副テーブルファイルを切り替える|
+|SelectCodeTable1|主テーブルファイルに切り替える|
+|SelectCodeTable2|副テーブルファイルに切り替える|
 |KanaTrainingToggle|かな入力練習モードと通常モードを切り替える|
 |ClearStroke|打鍵中のストロークを取り消して、第1打鍵待ちに戻る|
 |FullEscape|入力途中状態をクリアし、ミニバッファ末尾にブロッカーを置く|
@@ -112,6 +114,7 @@ SandS, CapsLock, 英数, 無変換, 変換, 右シフト, 左右コントロー�
 |BlockerToggle|ミニバッファ末尾のブロッカーを設定・解除する|
 |HistNext|履歴を先頭から選択|
 |HistPrev|履歴を末尾から選択|
+|VkbShowHide|仮想鍵盤の表示/非表示の切り替え|
 |HelpRotate|ストロークヘルプの正順回転|
 |HelpUnRotate|ストロークヘルプの逆順回転|
 |DateRotate|日時変換の入力(フォーマットの正順切替)|
@@ -123,6 +126,8 @@ SandS, CapsLock, 英数, 無変換, 変換, 右シフト, 左右コントロー�
 |HiraganaStrokeGuide|打鍵ガイドへのひらがなによる読み入力のON/OFF(読み入力OFF後にガイド開始)|
 |ZenkakuConversion|全角変換入力モードのON/OFF|
 |KatakanaConversion|カタカナ入力モードのON/OFF|
+|EisuModeToggle|英数モードと通常モードのトグル|
+|EisuDecapitalize|英数モードで先頭文字を小文字化する|
 |Space|Space に変換|
 |DirectSpace|デコーダを通さずに直接Spaceをアプリに送る|
 |ShiftSpace|Shift+Space に変換|
