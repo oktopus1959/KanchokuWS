@@ -120,6 +120,17 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="textBox_fixedPosClassNames.ToolTip" xml:space="preserve">
+    <value>ここに、仮想鍵盤を固定位置表示するウィンドウのClassNameを列挙します。
+1行1エントリで記述します。
+
+ウィンドウのClassNameの先頭部分がここのリストのどれかと一致すれば、
+そのウィンドウにテキストカーソルが入ったとき、仮想鍵盤が固定位置に移動
+します。
+
+ウィンドウのClassNameは、漢直モードに入り、仮想鍵盤を表示して、
+対象となるウィンドウをアクティブにすると、仮想鍵盤の上部に表示されます。</value>
+  </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

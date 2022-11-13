@@ -202,6 +202,15 @@ namespace KanchokuWS
         /// <summary>仮想鍵盤の位置を一時的に固定する</summary>
         public static bool VirtualKeyboardPosFixedTemporarily { get; set; } = false;
 
+        /// <summary>仮想鍵盤の位置を固定するウィンドウのClassName</summary>
+        public static string FixedPosClassNames { get; private set; }
+        private static HashSet<string> FixedPosClassNamesHash { get; set; } = new HashSet<string>();
+
+        public static bool IsFixedPosWinClass(string className)
+        {
+            return className._equalsTo("ConsoleWindowClass") || FixedPosClassNamesHash._safeContains(className._toLower());
+        }
+
         ///// <summary>ディスプレイのDPI比(標準96dpiとの比)</summary>
         //public static double DisplayScale { get; private set; } = 1.0;
 
@@ -1049,6 +1058,8 @@ namespace KanchokuWS
             var fixedPos = GetString("vkbFixedPos").Trim()._split(',').Select(x => x._parseInt(-1)).ToArray();
             VirtualKeyboardFixedPosX = fixedPos._getNth(0, -1);
             VirtualKeyboardFixedPosY = fixedPos._getNth(1, -1);
+            FixedPosClassNames = GetString("fixedPosClassNames", "").Trim();
+            FixedPosClassNamesHash = new HashSet<string>(FixedPosClassNames._toLower()._split('|'));
 
             //DisplayScale = GetString("displayScale")._parseDouble(1.0)._lowLimit(1.0);
 

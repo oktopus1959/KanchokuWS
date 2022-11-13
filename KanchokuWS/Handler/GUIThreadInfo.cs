@@ -162,18 +162,19 @@ namespace KanchokuWS.Handler
                         return true;
                     }
                 }
-                if (className._equalsTo("ConsoleWindowClass")) {
-                    // CMD.EXEの場合は右下に移動
-                    rect.X = rt.iRight - 250;
-                    rect.Y = rt.iBottom - 40;
-                    rect.Width = 2;
-                    rect.Height = 10;
-                    if (bLog) logger.Info($"Set caret pos for CMD.EXE: X={rect.X}, Y={rect.Y}, Width={rect.Width}, Height={rect.Height}");
-                }
+                // CMD.EXEの場合は固定位置に移動するようにしたので、下記は不要
+                //if (className._equalsTo("ConsoleWindowClass")) {
+                //    // CMD.EXEの場合は右下に移動
+                //    rect.X = rt.iRight - 250;
+                //    rect.Y = rt.iBottom - 40;
+                //    rect.Width = 2;
+                //    rect.Height = 10;
+                //    if (bLog) logger.Info($"Set caret pos for CMD.EXE: X={rect.X}, Y={rect.Y}, Width={rect.Width}, Height={rect.Height}");
+                //}
             }
             return false;
 
-            // 取得に失敗したら、ウィンドウを移動しないようにした(以下、不要。いずれ削除)
+            // 取得に失敗したら、ウィンドウを移動しないようにした(ので、以下、不要。いずれ削除)
             //if (hwndFocus != IntPtr.Zero) {
             //    // IAccessible を使ってカレット位置を取得する
             //    getCaretPos(hwndFocus, ref rect, rt);

@@ -1295,11 +1295,12 @@ namespace KanchokuWS
             }
 
             var activeWinCaretPos = ActiveWindowHandler.Singleton.ActiveWinCaretPos;
+            bool bFixedPosWinClass = Settings.IsFixedPosWinClass(activeWinClassName);
 
             bool isValidCaretShape()
             {
                 bool result = activeWinCaretPos.Width > 0 || activeWinCaretPos.Height > 0;
-                if (bLog) logger.Info("INVALID caret shape");
+                if (bLog && !result) logger.Info("INVALID caret shape");
                 return result;
             }
 
@@ -1316,6 +1317,8 @@ namespace KanchokuWS
                     int yOffset = (activeWinSettings?.CaretOffset)._getNth(1, Settings.VirtualKeyboardOffsetY);
                     int xFixed = (activeWinSettings?.VkbFixedPos)._getNth(0, -1)._geZeroOr(Settings.VirtualKeyboardFixedPosX);
                     int yFixed = (activeWinSettings?.VkbFixedPos)._getNth(1, -1)._geZeroOr(Settings.VirtualKeyboardFixedPosY);
+                    if (xFixed < 0 && bFixedPosWinClass) xFixed = Math.Abs(Settings.VirtualKeyboardFixedPosX);
+                    if (yFixed < 0 && bFixedPosWinClass) yFixed = Math.Abs(Settings.VirtualKeyboardFixedPosY);
                     //double dpiRatio = 1.0; //FrmVkb.GetDeviceDpiRatio();
                     if (bLog || bFirstMove) logger.InfoH($"CaretPos.X={activeWinCaretPos.X}, CaretPos.Y={activeWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}, xFixed={xFixed}, yFixed={yFixed}");
                     if (activeWinCaretPos.X >= 0) {

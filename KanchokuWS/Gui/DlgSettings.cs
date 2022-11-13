@@ -614,6 +614,7 @@ namespace KanchokuWS.Gui
             textBox_vkbFixedPosY.Text = $"{Math.Abs(Settings.VirtualKeyboardFixedPosY)}";
             radioButton_vkbRelativePos.Checked = Settings.VirtualKeyboardFixedPosX < 0 || Settings.VirtualKeyboardFixedPosY < 0;
             radioButton_vkbFixedPos.Checked = !radioButton_vkbRelativePos.Checked;
+            textBox_fixedPosClassNames.Text = Settings.FixedPosClassNames._reReplace(@"\|", "\r\n");
 
             comboBox_selectCtrlKeyItem(comboBox_vkbShowHideTemporaryKey, $"{Settings.VkbShowHideTemporaryKey}");
 
@@ -662,6 +663,7 @@ namespace KanchokuWS.Gui
             checkerAdvanced.Add(textBox_vkbFixedPosY);
             checkerAdvanced.Add(radioButton_vkbRelativePos);
             checkerAdvanced.Add(radioButton_vkbFixedPos);
+            checkerAdvanced.Add(textBox_fixedPosClassNames);
             checkerAdvanced.Add(comboBox_vkbShowHideTemporaryKey);
             //checkerAdvanced.Add(textBox_displayScale);
             checkerAdvanced.Add(textBox_kanjiModeInterval);
@@ -726,6 +728,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("vkbOffsetY", textBox_vkbOffsetY.Text.Trim());
             int factor = radioButton_vkbFixedPos.Checked ? 1 : -1;
             Settings.SetUserIni("vkbFixedPos", $"{textBox_vkbFixedPosX.Text.Trim()._parseInt(-1) * factor},{textBox_vkbFixedPosY.Text.Trim()._parseInt(-1) * factor}");
+            Settings.SetUserIni("fixedPosClassNames", textBox_fixedPosClassNames.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
             //Settings.SetUserIni("displayScale", textBox_displayScale.Text.Trim());
             Settings.SetUserIni("vkbShowHideTemporaryKey", comboBox_vkbShowHideTemporaryKey._getSelectedItemSplittedFirst(""));
             Settings.SetUserIni("kanjiModeMarkerShowIntervalSec", textBox_kanjiModeInterval.Text.Trim());

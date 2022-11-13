@@ -126,22 +126,31 @@ namespace KanchokuWS.Handler
                 focusHan = guiThreadInfo.hwndFocus;
                 if (bLog) logger.Info(() => $"fgHan={(int)fgHan:x}H, focusHan={(int)focusHan:x}H");
 
-                // カレットのスクリーン座標を取得
-                if (guiThreadInfo.GetScreenCaretPos(ref activeWinCaretPos)) {
-                    //getScreenCaretPosByOriginalWay(fgHan, ref ActiveWinCaretPos, bLog);   // やっぱりこのやり方だとうまく取れない場合あり
-                    if (bLog) logger.Info(() => $"WndClass={ActiveWinClassName}: focus caret=({activeWinCaretPos.X}, {activeWinCaretPos.Y}, {activeWinCaretPos.Width}, {activeWinCaretPos.Height})");
+                if (Settings.IsFixedPosWinClass(ActiveWinClassName)) {
+                    // 固定位置に移動するウィンドウクラス
+                    activeWinCaretPos.X = Math.Abs(Settings.VirtualKeyboardFixedPosX);
+                    activeWinCaretPos.Y = Math.Abs(Settings.VirtualKeyboardFixedPosY);
+                    activeWinCaretPos.Width = 2;
+                    activeWinCaretPos.Height = 10;
+                    break;
+                } else {
+                    // カレットのスクリーン座標を取得
+                    if (guiThreadInfo.GetScreenCaretPos(ref activeWinCaretPos)) {
+                        //getScreenCaretPosByOriginalWay(fgHan, ref ActiveWinCaretPos, bLog);   // やっぱりこのやり方だとうまく取れない場合あり
+                        if (bLog) logger.Info(() => $"WndClass={ActiveWinClassName}: focus caret=({activeWinCaretPos.X}, {activeWinCaretPos.Y}, {activeWinCaretPos.Width}, {activeWinCaretPos.Height})");
 
-                    if (focusHan != IntPtr.Zero || ActiveWinClassName._equalsTo("ConsoleWindowClass")) {
-                        // OK
-                        break;
+                        if (focusHan != IntPtr.Zero) {
+                            // OK
+                            break;
+                        }
+                        // CMD Prompt の場合は Focus が取れないっぽい?
                     }
-                    // CMD Prompt の場合は Focus が取れないっぽい?
+                    if (bLog || Logger.IsInfoEnabled) logger.Warn($"RETRY: count={count + 1}, WndClass={ActiveWinClassName}");
                 }
-                if (bLog || Logger.IsInfoEnabled) logger.Warn($"RETRY: count={count + 1}");
             }
 
             if (focusHan == IntPtr.Zero) {
-                if (bLog || Logger.IsInfoEnabled) logger.Warn("Can't get window handle with focus");
+                if (bLog || Logger.IsInfoEnabled) logger.Warn($"Can't get window handle with focus: WndClass={ActiveWinClassName}");
             }
             ActiveWinHandle = (focusHan == IntPtr.Zero) ? fgHan : focusHan;
 
