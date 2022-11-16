@@ -120,13 +120,14 @@ namespace {
                 // 2回続けて呼ばれたらキャンセル
                 cancelMe();
             } else {
-                auto romanStr = OUTPUT_STACK->GetLastAsciiKey<MString>(17);
-                if (!romanStr.empty() && romanStr.size() <= 16) {
-                    if (is_upper_alphabet(romanStr[0])) {
-                        romanStr[0] = to_lower(romanStr[0]);
-                        STATE_COMMON->SetOutString(romanStr, romanStr.size());
-                    }
-                }
+                //auto romanStr = OUTPUT_STACK->GetLastAsciiKey<MString>(17);
+                //if (!romanStr.empty() && romanStr.size() <= 16) {
+                //    if (is_upper_alphabet(romanStr[0])) {
+                //        romanStr[0] = to_lower(romanStr[0]);
+                //        STATE_COMMON->SetOutString(romanStr, romanStr.size());
+                //    }
+                //}
+                HISTORY_STAY_STATE->handleEisuDecapitalize();
             }
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }

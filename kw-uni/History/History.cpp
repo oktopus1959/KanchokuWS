@@ -928,6 +928,28 @@ namespace {
             handleFullEscape();
         }
 
+        // 先頭文字の小文字化
+        void handleEisuDecapitalize() override {
+            _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
+            auto romanStr = OUTPUT_STACK->GetLastAsciiKey<MString>(17);
+            if (!romanStr.empty() && romanStr.size() <= 16) {
+                if (is_upper_alphabet(romanStr[0])) {
+                    romanStr[0] = to_lower(romanStr[0]);
+                    STATE_COMMON->SetOutString(romanStr, romanStr.size());
+                }
+            }
+            _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
+        }
+
+        void commitHistory() override {
+            _LOG_DEBUGH(_T("CALLED"));
+            // 候補が選択されていれば、それを使用履歴の先頭にpushする
+            HIST_CAND->DelayedPushFrontSelectedWord();
+            // どれかの候補が選択されている状態なら、それを確定し、履歴キーをクリアしておく
+            HISTORY_STAY_NODE->ClearPrevHistState();
+            HIST_CAND->ClearKeyInfo();
+        }
+
     protected:
         // 事前チェック
         void DoPreCheck() {

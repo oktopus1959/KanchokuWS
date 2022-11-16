@@ -993,11 +993,12 @@ namespace KanchokuWS
         {
             logger.InfoH($"CALLED: n={n}");
             if (IsDecoderActive && (Settings.TableFile2._notEmpty() || Settings.TableFile3._notEmpty()) /*&& DecoderOutput.IsWaitingFirstStroke()*/) {
-                ExecCmdDecoder("isKatakanaMode", null);  // カタカナモードか
-                bool isKatakana = (decoderOutput.resultFlags & ResultFlags.CurrentModeIsKatakana) != 0;
-                InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);   // ここでカタカナモードが解除される
-                InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);
-                if (toggleKatakana && !isKatakana) InvokeDecoder(DecoderKeys.TOGGLE_KATAKANA_CONVERSION_DECKEY, 0);
+                //ExecCmdDecoder("isKatakanaMode", null);  // カタカナモードか
+                //bool isKatakana = (decoderOutput.resultFlags & ResultFlags.CurrentModeIsKatakana) != 0;
+                ExecCmdDecoder("commitHistory", null);                  // 履歴のコミットと初期化
+                InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // これで各種モードがクリアされる
+                InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // 念のため2回呼ぶ
+                //if (toggleKatakana && !isKatakana) InvokeDecoder(DecoderKeys.TOGGLE_KATAKANA_CONVERSION_DECKEY, 0);
                 if (n == 1 && Settings.TableFile._notEmpty()) {
                     changeCodeTableAndCombinationPool("useCodeTable1");     // コードテーブル1に入れ替え
                 } else if (n == 2 && Settings.TableFile2._notEmpty()) {
@@ -1165,6 +1166,15 @@ namespace KanchokuWS
         private void ActivateDecoder()
         {
             logger.InfoH(() => $"\nENTER");
+            if (IsDecoderActive) {
+                logger.InfoH("Decoder already activated");
+                ExecCmdDecoder("commitHistory", null);                  // 履歴のコミットと初期化
+                InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // これで各種モードがクリアされる
+                InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // 念のため2回呼ぶ
+                frmVkb.DrawVirtualKeyboardChars();
+                logger.InfoH("LEAVE");
+                return;
+            }
             IsDecoderActive = true;
             var ctrlKeyState = SendInputHandler.GetCtrlKeyState();
             if (Settings.SelectedTableActivatedWithCtrl > 0 && Settings.SelectedTableActivatedWithCtrl <= 2 && ctrlKeyState.AnyKeyDown) {

@@ -428,6 +428,8 @@ void State::dispatchDeckey(int deckey) {
         OUTPUT_STACK->cancelRewritable();
     } else if (deckey == EISU_MODE_TOGGLE_DECKEY) {
         handleEisuMode();
+    } else if (deckey == EISU_MODE_CANCEL_DECKEY) {
+        handleEisuCancel();
     } else if (deckey == EISU_DECAPITALIZE_DECKEY) {
         handleEisuDecapitalize();
     } else {

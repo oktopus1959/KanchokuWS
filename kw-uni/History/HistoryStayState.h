@@ -20,6 +20,10 @@ public:
 
     virtual void handleFullEscapeStayState() = 0;
 
+    virtual void handleEisuDecapitalize() = 0;
+
+    virtual void commitHistory() = 0;
+
 public:
     // 唯一のインスタンスを指すポインタ (寿命管理は CreateState() を呼び出したところがやる)
     static HistoryStayState* Singleton;

@@ -300,7 +300,8 @@ namespace KanchokuWS
         public const int CANCEL_POST_REWRITE_DECKEY = DIRECT_SPACE_DECKEY + 1;              // 後置書き換えをキャンセルする
         public const int KANA_TRAINING_TOGGLE_DECKEY = CANCEL_POST_REWRITE_DECKEY + 1;      // かな入力練習モードのトグル
         public const int EISU_MODE_TOGGLE_DECKEY = KANA_TRAINING_TOGGLE_DECKEY + 1;         // 英数モードと通常モードのトグル
-        public const int EISU_DECAPITALIZE_DECKEY = EISU_MODE_TOGGLE_DECKEY + 1;            // 英数モードで先頭文字を小文字化する
+        public const int EISU_MODE_CANCEL_DECKEY = EISU_MODE_TOGGLE_DECKEY + 1;             // 英数モードをキャンセルする
+        public const int EISU_DECAPITALIZE_DECKEY = EISU_MODE_CANCEL_DECKEY + 1;            // 英数モードで先頭文字を小文字化する
 
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 

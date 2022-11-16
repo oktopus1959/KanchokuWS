@@ -272,12 +272,7 @@ public:
 
     // デコーダ状態のリセット (Decoder が ON になったときに呼ばれる)
     void Reset() {
-        if (startState) {
-            LOG_INFOH(_T("\nENTER: states=%s (len=%d), flags=%u, numBS=%d, outLength=%d, stack=%s"),
-                startState->JoinedName().c_str(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
-                STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5).c_str());
-            startState->DeleteRemainingState();
-        }
+        deleteRemainingState();
         STATE_COMMON->ClearAllStateInfo();
         OUTPUT_STACK->pushNewLine();    // 履歴ブロッカーとして改行を追加
         if (startState) startState->Reactivate();
@@ -287,6 +282,22 @@ public:
                 startState->JoinedName().c_str(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
                 STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5).c_str());
         }
+    }
+
+    // 居残っている一時状態の削除
+    void deleteRemainingState() {
+        if (startState) {
+            LOG_INFOH(_T("\nENTER: states=%s (len=%d), flags=%u, numBS=%d, outLength=%d, stack=%s"),
+                startState->JoinedName().c_str(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
+                STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5).c_str());
+            startState->DeleteRemainingState();
+        }
+        STATE_COMMON->ClearStateInfo();
+    }
+
+    // 履歴のコミットと初期化
+    void commitHistory() {
+        HISTORY_STAY_STATE->commitHistory();
     }
 
     // デコーダが扱う辞書を保存する
@@ -508,6 +519,12 @@ public:
             } else if (cmd == _T("setKanaTrainingMode")) {
                 // かな入力練習モードのON/OFF
                 SETTINGS->kanaTrainingMode = (items.size() >= 2 && items[1] == _T("true"));
+            } else if (cmd == _T("deleteRemainingState")) {
+                // 居残っている一時状態の削除
+                deleteRemainingState();
+            } else if (cmd == _T("commitHistory")) {
+                // 履歴のコミットと初期化
+                commitHistory();
             } else if (cmd == _T("closeLogger")) {
                 Logger::Close();
             }

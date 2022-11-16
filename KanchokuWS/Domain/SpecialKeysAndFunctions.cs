@@ -164,6 +164,7 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_KATAKANA_CONVERSION1_DECKEY, 0, "KatakanaConversion1", "", "主テーブルを選択してカタカナ入力モードのON/OFF"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_KATAKANA_CONVERSION2_DECKEY, 0, "KatakanaConversion2", "", "副テーブルを選択してカタカナ入力モードのON/OFF"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.EISU_MODE_TOGGLE_DECKEY, 0, "EisuModeToggle", "", "英数モードと通常モードのトグル"),
+            new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.EISU_MODE_CANCEL_DECKEY, 0, "EisuModeCancel", "", "英数モードをキャンセルする"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.EISU_DECAPITALIZE_DECKEY, 0, "EisuDecapitalize", "", "英数モードで先頭文字を小文字化する"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY, 0, "LeftShiftBlocker", "", "交ぜ書きブロッカーの左移動 (交ぜ書き候補が縦列表示されている時に有効)"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY, 0, "RightShiftBlocker", "", "交ぜ書きブロッカーの右移動 (交ぜ書き候補が縦列表示されている時に有効)"),
