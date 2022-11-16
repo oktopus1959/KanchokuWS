@@ -242,7 +242,7 @@ namespace utils {
     template<typename T, typename U>
     inline U safe_get(const std::map<T, U>& dic, const T& key) {
         auto iter = dic.find(key);
-        return (iter != dic.end()) ? iter->second : T();
+        return (iter != dic.end()) ? iter->second : U();
     }
 
     inline time_t getSecondsFromEpochTime() {
