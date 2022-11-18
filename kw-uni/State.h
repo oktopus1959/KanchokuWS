@@ -223,6 +223,9 @@ public:
     // EisuCancel ハンドラ
     virtual void handleEisuDecapitalize();
 
+    // commit ハンドラ
+    virtual void handleCommitState();
+
     //--------------------------------------------------------------------
     // 以下、DECKEYハンドラのデフォルト実装
  

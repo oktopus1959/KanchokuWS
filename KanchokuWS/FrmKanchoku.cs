@@ -973,8 +973,11 @@ namespace KanchokuWS
                 ExecCmdDecoder("isKatakanaMode", null);  // カタカナモードか
                 bool isKatakana = (decoderOutput.resultFlags & ResultFlags.CurrentModeIsKatakana) != 0;
                 logger.InfoH(() => $"isKatakana={isKatakana}, resultFlags={decoderOutput.resultFlags:x}");
-                InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);
-                InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);
+                ExecCmdDecoder("commitHistory", null);                  // 履歴のコミットと初期化
+                //InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);
+                //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);
+                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0);      // これで各種モードがクリアされる
+                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0);      // 念のため2回呼ぶ
                 if (!isKatakana) {
                     // カタカナモードでなければ、テーブルの入れ替えを行う
                     if (bSecond && decoderOutput.strokeTableNum == 3) {
@@ -996,8 +999,10 @@ namespace KanchokuWS
                 //ExecCmdDecoder("isKatakanaMode", null);  // カタカナモードか
                 //bool isKatakana = (decoderOutput.resultFlags & ResultFlags.CurrentModeIsKatakana) != 0;
                 ExecCmdDecoder("commitHistory", null);                  // 履歴のコミットと初期化
-                InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // これで各種モードがクリアされる
-                InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // 念のため2回呼ぶ
+                //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // これで各種モードがクリアされる
+                //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // 念のため2回呼ぶ
+                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0);      // これで各種モードがクリアされる
+                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0);      // 念のため2回呼ぶ
                 //if (toggleKatakana && !isKatakana) InvokeDecoder(DecoderKeys.TOGGLE_KATAKANA_CONVERSION_DECKEY, 0);
                 if (n == 1 && Settings.TableFile._notEmpty()) {
                     changeCodeTableAndCombinationPool("useCodeTable1");     // コードテーブル1に入れ替え
@@ -1169,8 +1174,10 @@ namespace KanchokuWS
             if (IsDecoderActive) {
                 logger.InfoH("Decoder already activated");
                 ExecCmdDecoder("commitHistory", null);                  // 履歴のコミットと初期化
-                InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // これで各種モードがクリアされる
-                InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // 念のため2回呼ぶ
+                //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // これで各種モードがクリアされる
+                //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // 念のため2回呼ぶ
+                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0);      // これで各種モードがクリアされる
+                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0);      // 念のため2回呼ぶ
                 frmVkb.DrawVirtualKeyboardChars();
                 logger.InfoH("LEAVE");
                 return;

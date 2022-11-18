@@ -284,6 +284,12 @@ namespace {
             handleKeyPostProc();
         }
 
+        // CommitState の処理 -- 処理のコミット
+        void handleCommitState() override {
+            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            handleKeyPostProc();
+        }
+
         void handleCtrlKeys(int /*deckey*/) {
             setVkbCandidatesList();
         }

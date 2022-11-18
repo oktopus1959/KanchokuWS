@@ -176,6 +176,12 @@ namespace {
             setToRemoveAllStroke();
         }
 
+        // CommitState の処理 -- 処理のコミット
+        void handleCommitState() override {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            setToRemoveAllStroke();
+        }
+
         void handleEnter() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             // 前打鍵を出力する

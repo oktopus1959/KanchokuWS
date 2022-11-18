@@ -941,8 +941,14 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
         }
 
+        // CommitState の処理 -- 処理のコミット
+        void handleCommitState() override {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            commitHistory();
+        }
+
         void commitHistory() override {
-            _LOG_DEBUGH(_T("CALLED"));
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             // 候補が選択されていれば、それを使用履歴の先頭にpushする
             HIST_CAND->DelayedPushFrontSelectedWord();
             // どれかの候補が選択されている状態なら、それを確定し、履歴キーをクリアしておく

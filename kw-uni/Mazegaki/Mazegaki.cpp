@@ -448,6 +448,12 @@ namespace {
             handleKeyPostProc();
         }
 
+        // CommitState の処理 -- 処理のコミット
+        void handleCommitState() override {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            handleKeyPostProc();
+        }
+
         // その他のCtrlキー -- 処理のキャンセル
         void handleCtrlKeys(int /*deckey*/) {
             handleKeyPostProc();

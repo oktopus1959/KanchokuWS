@@ -422,6 +422,8 @@ void State::dispatchDeckey(int deckey) {
         handleEsc();
     } else if (deckey == CLEAR_STROKE_DECKEY) {
         handleClearStroke();
+    } else if (deckey == COMMIT_STATE_DECKEY) {
+        handleCommitState();
     } else if (deckey == TOGGLE_BLOCKER_DECKEY) {
         handleToggleBlocker();
     } else if (deckey == CANCEL_POST_REWRITE_DECKEY) {
@@ -589,6 +591,9 @@ void State::handleEisuDecapitalize() { LOG_INFOH(_T("DO NOTHING")); }
 
 // handleClearStroke デフォルトハンドラ
 void State::handleClearStroke() { LOG_INFOH(_T("DO NOTHING")); }
+
+// handleCommitState デフォルトハンドラ
+void State::handleCommitState() { LOG_INFOH(_T("DO NOTHING")); }
 
 // handleToggleBlocker デフォルトハンドラ
 void State::handleToggleBlocker() {

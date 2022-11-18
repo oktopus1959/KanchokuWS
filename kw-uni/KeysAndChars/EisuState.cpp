@@ -170,6 +170,12 @@ namespace {
             cancelMe();
         }
 
+        // CommitState の処理 -- 処理のコミット
+        void handleCommitState() override {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            handleEisuCancel();
+        }
+
         // モード標識文字を返す
         mchar_t GetModeMarker() override {
             return utils::safe_front(MY_NODE->getString());

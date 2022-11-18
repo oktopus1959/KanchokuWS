@@ -252,8 +252,9 @@ namespace KanchokuWS
 
         public const int SOFT_ESCAPE_DECKEY = TOGGLE_BLOCKER_DECKEY + 1;                // ESCの出力をせずに ESC同等のキャンセル動作を行う
         public const int CLEAR_STROKE_DECKEY = SOFT_ESCAPE_DECKEY + 1;                  // 途中まで打ったストロークのクリア
+        public const int COMMIT_STATE_DECKEY = CLEAR_STROKE_DECKEY + 1;                 // 状態をコミットする
 
-        public const int HISTORY_NEXT_SEARCH_DECKEY = CLEAR_STROKE_DECKEY + 1;          // 履歴検索実行&次候補選択キー
+        public const int HISTORY_NEXT_SEARCH_DECKEY = COMMIT_STATE_DECKEY + 1;          // 履歴検索実行&次候補選択キー
         public const int HISTORY_PREV_SEARCH_DECKEY = HISTORY_NEXT_SEARCH_DECKEY + 1;   // 履歴検索実行&前候補選択キー
 
         //public const int NEXT_CAND_TRIGGER_DECKEY = HISTORY_SEARCH_DECKEY + 1;      // 履歴検索開始&次の候補選択
