@@ -636,7 +636,7 @@ namespace KanchokuWS.Handler
         private bool onKeyboardDownHandler(int vkey, int scanCode, int extraInfo)
         {
             if (Settings.LoggingDecKeyInfo) {
-                logger.DebugH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}\n" + keyInfoManager.modifiersStateStr());
+                logger.InfoH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}\n" + keyInfoManager.modifiersStateStr());
             }
 
             // キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる
@@ -666,13 +666,13 @@ namespace KanchokuWS.Handler
 
                 if (!bDecoderOn && !bCtrl && modPressedOrShifted == 0 && vkey >= (int)Keys.Left && vkey <= (int)Keys.Down) {
                     // デコーダOFFで無修飾の矢印キーなら、システムに任せる
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"Normal Arrow Key");
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Normal Arrow Key");
                     return false;
                 }
 
                 var keyInfo = keyInfoManager.getModiferKeyInfoByVkey((uint)vkey);
                 if (keyInfo != null) {
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"{keyInfo.Name}Key Pressed: ctrl={bCtrl}, shift={bShift}, decoderOn={bDecoderOn}, modFlag={modFlag:x}, modPressedOrShifted={modPressedOrShifted:x}");
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"{keyInfo.Name}Key Pressed: ctrl={bCtrl}, shift={bShift}, decoderOn={bDecoderOn}, modFlag={modFlag:x}, modPressedOrShifted={modPressedOrShifted:x}");
                     if ((uint)vkey == VirtualKeys.SPACE) {
                         // Space
                         if (isSandSEnabled()) {
@@ -823,14 +823,14 @@ namespace KanchokuWS.Handler
                 }
                 // keyboardDownHandler()の呼び出し
                 if (Settings.LoggingDecKeyInfo) {
-                    logger.DebugH(() => $"CALL: keyboardDownHandler({vkey}, {leftCtrl}, {rightCtrl})\n" + keyInfoManager.modifiersStateStr());
+                    logger.InfoH(() => $"CALL: keyboardDownHandler({vkey}, {leftCtrl}, {rightCtrl})\n" + keyInfoManager.modifiersStateStr());
                 }
                 return keyboardDownHandler(vkey, leftCtrl, rightCtrl);
             }
 
             bool result = handleKeyDown();
             if (Settings.LoggingDecKeyInfo) {
-                logger.DebugH(() => $"LEAVE: result={result}, vkey={vkey:x}H({vkey}), extraInfo={extraInfo}\n" + keyInfoManager.modifiersStateStr());
+                logger.InfoH(() => $"LEAVE: result={result}, vkey={vkey:x}H({vkey}), extraInfo={extraInfo}\n" + keyInfoManager.modifiersStateStr());
             }
             return result;
         }
@@ -860,12 +860,12 @@ namespace KanchokuWS.Handler
                     // 拡張シフト面のコードを得る
                     kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
                     var shiftPlane = keyInfoManager.getShiftPlane(bDecoderOn, isSandSEnabled());
-                    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-A: shiftPlane={shiftPlane}, kanchokuCode={kanchokuCode}");
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"PATH-A: shiftPlane={shiftPlane}, kanchokuCode={kanchokuCode}");
                     if (shiftPlane != VirtualKeys.ShiftPlane_NONE && kanchokuCode < DecoderKeys.NORMAL_DECKEY_NUM) {
                         kanchokuCode += shiftPlane * DecoderKeys.PLANE_DECKEY_NUM;
                     }
                 }
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-B: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), modEx={modEx:x}, ctrl={ctrl}, shift={shift}");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"PATH-B: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), modEx={modEx:x}, ctrl={ctrl}, shift={shift}");
             }
 
             if (kanchokuCode < 0) {
@@ -884,7 +884,7 @@ namespace KanchokuWS.Handler
                         : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
                 }
                 if (kanchokuCode >= 0) mod = 0;     // 何かのコードに変換されたら、 Ctrl や Shift の修飾は無かったことにしておく
-                if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"PATH-C: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"PATH-C: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
             }
 
             // SandS の一時シフト状態をリセットする
@@ -982,7 +982,7 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool onKeyboardUpHandler(int vkey, int scanCode, int extraInfo)
         {
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
 
             int prevVkey = prevUpVkey;
             prevUpVkey = vkey;
@@ -1125,7 +1125,7 @@ namespace KanchokuWS.Handler
                     CombinationKeyStroke.Determiner.Singleton.KeyUp(deckey, bDecoderOn);
                 }
             }
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: result={false}");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE: result={false}");
         }
 
         public void SetInvokeHandlerToDeterminer()

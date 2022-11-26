@@ -142,7 +142,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             KeyDt = dt;
         }
 
-        public string DebugString() => $"DecKeyCode={OrigDecoderKey}, ModKeyCode={ModuloDecKey}, IsComobShift={IsComboShift}";
+        public string DebugString() => $"DecKeyCode={OrigDecoderKey}, ModuloKeyCode={ModuloDecKey}, IsComobShift={IsComboShift}";
 
     }
 }
