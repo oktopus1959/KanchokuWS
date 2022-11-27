@@ -1884,7 +1884,7 @@ namespace KanchokuWS
         private bool isTailPreRewriteChar(char[] str, int len = -1)
         {
             if (len < 0) len = str._strlen();
-            return len > 0 && Settings.PreRewriteTargetChars.Contains(str[len - 1]);
+            return len > 0 && (Settings.PreRewriteTargetChars.Contains('*') || Settings.PreRewriteTargetChars.Contains(str[len - 1]));
         }
 
         private bool isNormalDeckey(int deckey)
