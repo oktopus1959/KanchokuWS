@@ -100,9 +100,75 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         /// <summary>
-        /// 同時打鍵組合せ
+        /// 同時打鍵組合せ(テーブル記述順とソートされたものを登録)
         /// </summary>        
-        private Dictionary<string, KeyCombination> keyComboDict = new Dictionary<string, KeyCombination>();
+        class KeyComboDictionary
+        {
+
+            private Dictionary<string, KeyCombination> dict = new Dictionary<string, KeyCombination>();
+
+            public int Count { get { return dict.Count; } }
+
+            // 順不同の場合は、key はソートされている
+            public void Add(string key, KeyCombination combo, bool bForce)
+            {
+                if (bForce || !dict.ContainsKey(key)) dict[key] = combo;
+            }
+
+            // keyList は打鍵順のまま
+            public KeyCombination Get(List<int> keyList)
+            {
+                // まず打鍵順のままで取得してみる
+                var keyCombo = dict._safeGet(keyList._keyString());
+                if (keyCombo == null) {
+                    // ダメなら打鍵順をソートして取得してみる
+                    keyCombo = dict._safeGet(keyList._sortedKeyString());
+                }
+                return keyCombo;
+            }
+
+            public KeyCombination Get(int key)
+            {
+                return dict._safeGet(key._keyString());
+            }
+
+            public KeyCombination Get(string key)
+            {
+                return dict._safeGet(key);
+            }
+
+            public void Clear()
+            {
+                dict.Clear();
+            }
+
+            public void DebugPrint(bool bAll = false)
+            {
+                int i = 0;
+                foreach (var pair in dict) {
+                    //var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
+                    var key = pair.Key;
+                    var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
+                    if (bAll || i < 500) logger.DebugH($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal}");
+                    ++i;
+                }
+            }
+
+            public void GetDebugLines(List<string> lines)
+            {
+                foreach (var pair in dict) {
+                    //var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
+                    var key = pair.Key;
+                    var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
+                    lines.Add($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 同時打鍵組合せ(テーブル記述順とソートされたものを登録)
+        /// </summary>        
+        private KeyComboDictionary keyComboDict = new KeyComboDictionary();
 
         public int Count { get { return keyComboDict.Count; } }
 
@@ -157,34 +223,25 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>
         /// <param name="deckeyList">デコーダ向けのキーリスト</param>
         /// <param name="comboKeyList">同時打鍵検索用キーのリスト</param>
-        /// <param name="shiftKind">Prefixの場合は、先頭キーを固定した順列を生成する</param>
+        /// <param name="shiftKind">Prefixの場合は、与えられたキー順のみ有効</param>
         public void AddEntry(List<int> deckeyList, List<int> comboKeyList, ComboKind shiftKind, bool hasStr)
         {
             logger.DebugH(() =>
-                $"CALLED: keyList={KeyCombinationHelper.EncodeKeyList(deckeyList)}, comboShiftedKeyList={KeyCombinationHelper.EncodeKeyList(comboKeyList)}, " +
-                $"ShiftKeyKind={shiftKind}, HasString={hasStr}");
+                $"CALLED: keyList={deckeyList._keyString()}, comboShiftedKeyList={comboKeyList._keyString()}, ShiftKeyKind={shiftKind}, HasString={hasStr}");
+
             if (deckeyList._notEmpty() && comboKeyList._notEmpty()) {
-                var keyCombo = new KeyCombination(deckeyList, comboKeyList, shiftKind, hasStr);
-                void setKeyCombo(string k)
-                {
-                    if (hasStr || !keyComboDict.ContainsKey(k)) {
-                        // 文字を持つなら、他の順列と置き換える
-                        keyComboDict[k] = keyCombo;
-                    }
-                }
+                bool bUnordered = shiftKind >= ComboKind.UnorderedSuccessiveShift;
 
-                var primKey = KeyCombinationHelper.MakePrimaryKey(comboKeyList);
-                setKeyCombo(primKey);
+                // 順不同の場合同時打鍵列をソートする
+                if (bUnordered) comboKeyList = comboKeyList.OrderBy(x => x).ToList();
 
-                bool bFixedOrder = shiftKind == ComboKind.PrefixSuccessiveShift;
-                if (!bFixedOrder) {
-                    // 前置連続シフトの場合は、順序を固定してしまうので、ここの処理はそれ以外の場合にのみ必要
-                    foreach (var key in KeyCombinationHelper.MakePermutatedKeys(comboKeyList)) {
-                        setKeyCombo(key);
-                    }
-                }
+                // 順不同の場合はソートされた並びで登録、固定順の場合は配列テーブルに記述された並びで登録
+                string comboKeyStr = comboKeyList._keyString();
+                var keyCombo = new KeyCombination(deckeyList, comboKeyStr, shiftKind, hasStr);
+                keyComboDict.Add(comboKeyStr, keyCombo, hasStr);
 
-                comboSubKeys.UnionWith(KeyCombinationHelper.MakeSubKeys(comboKeyList, bFixedOrder));
+                // 部分キー文字列を蓄積しておく
+                comboSubKeys.UnionWith(comboKeyList._makeSubKeys(bUnordered));
             }
         }
 
@@ -194,10 +251,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             if (strokeList._isEmpty() || strokeList.All(x => x.IsCombined)) return null;
 
             // まずは打鍵されたキーをそのまま使って検索
-            var combo = keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKeyFromOrigDecKey(strokeList));
+            var combo = keyComboDict.Get(strokeList._toOrigDecKeyList());
             if (combo == null && strokeList.Any(x => x.OrigDecoderKey >= DecoderKeys.PLANE_DECKEY_NUM)) {
                 // 見つからない、かつ拡張シフトコードが含まれていれば、すべてModuloizeしたキーでも試す
-                combo = keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKeyFromModuloDecKey(strokeList));
+                combo = keyComboDict.Get(strokeList._toModuloDecKeyList());
             }
             return combo;
         }
@@ -222,10 +279,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return combo;
         }
 
-        public KeyCombination getEntry(int decKey)
+        private KeyCombination getEntry(int decKey)
         {
-            //return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(Stroke.ModuloizeKey(decKey)));
-            return keyComboDict._safeGet(KeyCombinationHelper.MakePrimaryKey(decKey));
+            //return keyComboDict.Get(KeyCombinationHelper.MakePrimaryKey(Stroke.ModuloizeKey(decKey)));
+            return keyComboDict.Get(decKey);
         }
 
         /// <summary>
@@ -235,16 +292,22 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             logger.DebugH($"ENTER: comboSubKeys.Count={comboSubKeys.Count}");
             int i = 0;
-            foreach (var key in comboSubKeys) {
+            foreach (var subkey in comboSubKeys) {
                 // 部分キーに対して、非終端マークをセット
-                if (i < 100) logger.DebugH(() => $"search keyString={key} => list={KeyCombinationHelper.EncodeKeyList(KeyCombinationHelper.DecodeKey(key))}");
-                var keyCombo = keyComboDict._safeGet(key);
+                //if (i < 100) logger.DebugH(() => $"search keyString={key} => list={KeyCombinationHelper.EncodeKeyList(KeyCombinationHelper.DecodeKey(key))}");
+                if (i < 100) logger.DebugH(() => $"search sub keyString={subkey}");
+                var keyCombo = keyComboDict.Get(subkey);
                 if (keyCombo == null) {
                     // 存在していなかった部分キーを追加
-                    if (i < 500) logger.DebugH($"Add non terminal subkey: {key}");
+                    if (i < 500) logger.DebugH($"Add non terminal subkey: {subkey}");
                     // 英数モードの場合は、1文字キーを単打可能に設定する
-                    List<int> dkList = bEisu && key._safeLength() == 1 ? KeyCombinationHelper.DecodeKey(key) : null;
-                    keyComboDict[key] = keyCombo = new KeyCombination(dkList, null, ComboKind.None, dkList._notEmpty());
+                    List<int> keyList = null;
+                    if (bEisu) {
+                        var list = subkey._decodeKeyStr();
+                        if (list._safeCount() == 1) keyList = list;
+                    }
+                    keyCombo = new KeyCombination(keyList, null, ComboKind.None, keyList._notEmpty());
+                    keyComboDict.Add(subkey, keyCombo, true);
                 }
                 keyCombo.SetNonTerminal();
                 ++i;
@@ -339,13 +402,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void DebugPrint(bool bAll = false)
         {
-            int i = 0;
-            foreach (var pair in keyComboDict) {
-                var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
-                var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
-                if (bAll || i < 500) logger.DebugH($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal}");
-                ++i;
-            }
+            keyComboDict.DebugPrint();
             foreach (var pair in ComboShiftKeys.Pairs) {
                 logger.DebugH($"ShiftKey: {pair.Key}={pair.Value}");
             }
@@ -357,11 +414,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
             List<string> lines = new List<string>();
             //lines.Add($"HasComboEffectiveAlways={HasComboEffectiveAlways}");
-            foreach (var pair in keyComboDict) {
-                var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
-                var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
-                lines.Add($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal}");
-            }
+            keyComboDict.GetDebugLines(lines);
             foreach (var pair in ComboShiftKeys.Pairs) {
                 lines.Add($"ShiftKey: {pair.Key}={pair.Value}");
             }

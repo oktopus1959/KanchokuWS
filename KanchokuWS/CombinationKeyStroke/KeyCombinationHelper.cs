@@ -17,203 +17,80 @@ namespace KanchokuWS.CombinationKeyStroke
         }
 
         /// <summary>
-        /// 保持している打鍵列と追加の打鍵から、検索キーを生成する
+        /// 保持している打鍵列のModuloDecKeyから、キーリストを生成する
+        /// </summary>
+        public static List<int> _toModuloDecKeyList(this IEnumerable<Stroke> keyList)
+        {
+            return keyList.Select(x => x.ModuloDecKey).ToList();
+        }
+
+        /// <summary>
+        /// 保持している打鍵列のOrigDecKeyから、キーリストを生成する
         /// </summary>
         /// <param name="keyList"></param>
         /// <param name="lastKey"></param>
         /// <returns></returns>
-        public static string MakePrimaryKey(IEnumerable<int> keyList, int lastKey = -1)
+        public static List<int> _toOrigDecKeyList(this IEnumerable<Stroke> keyList)
         {
-            var sb = new StringBuilder();
-            if (keyList._notEmpty()) {
-                foreach (var k in keyList) {
-                    sb.Append(makeChar(k));
-                }
-            }
-            if (lastKey >= 0) sb.Append(makeChar(lastKey));
-            return sb.ToString();
+            return keyList.Select(x => x.OrigDecoderKey).ToList();
         }
 
         /// <summary>
-        /// 保持している打鍵列のModuloDecKeyと追加の打鍵から、検索キーを生成する
-        /// </summary>
-        /// <param name="keyList"></param>
-        /// <param name="lastKey"></param>
-        /// <returns></returns>
-        public static string MakePrimaryKeyFromModuloDecKey(IEnumerable<Stroke> keyList, int lastKey = -1)
-        {
-            return MakePrimaryKey(keyList.Select(x => x.ModuloDecKey), lastKey);
-        }
-
-        /// <summary>
-        /// 保持している打鍵列のOrigDecKeyと追加の打鍵から、検索キーを生成する
-        /// </summary>
-        /// <param name="keyList"></param>
-        /// <param name="lastKey"></param>
-        /// <returns></returns>
-        public static string MakePrimaryKeyFromOrigDecKey(IEnumerable<Stroke> keyList, int lastKey = -1)
-        {
-            return MakePrimaryKey(keyList.Select(x => x.OrigDecoderKey), lastKey);
-        }
-
-        /// <summary>
-        /// 保持している打鍵列と追加の打鍵から、検索キーを生成する
-        /// </summary>
-        /// <param name="keyList"></param>
-        /// <param name="decKey"></param>
-        /// <returns></returns>
-        public static string MakePrimaryKey(int decKey)
-        {
-            return makeChar(decKey).ToString();
-        }
-
-        /// <summary>
-        /// PrimaryKey以外の順列置換されたキーのリストを返す
+        /// keyList を昇順にソートしたキー列(':'区切りの文字列)を返す
         /// </summary>
         /// <param name="keyList"></param>
         /// <returns></returns>
-        public static List<string> MakePermutatedKeys(List<int> keyList)
+        public static string _sortedKeyString(this IEnumerable<int> keyList)
         {
-            return makePermutatedKeys(keyList, false);
-        }
-
-        /// <summary>
-        /// PrimaryKey以外の順列置換されたキーのリストを返す<br/>bAll=true なら、PrimaryKeyも含めた全キーを返す
-        /// </summary>
-        /// <param name="keyList"></param>
-        /// <param name="bAll"></param>
-        /// <returns></returns>
-        private static List<string> makePermutatedKeys(List<int> keyList, bool bAll)
-        {
-            var result = new List<string>();
-            if (keyList._notEmpty()) {
-                if (keyList.Count == 1) {
-                    if (bAll) result.Add(makeString(keyList[0]));
-                } else if (keyList.Count == 2) {
-                    if (bAll) result.Add(makeString(keyList[0], keyList[1]));
-                    result.Add(makeString(keyList[1], keyList[0]));
-                } else if (keyList.Count == 3) {
-                    if (bAll) result.Add(makeString(keyList[0], keyList[1], keyList[2]));
-                    result.Add(makeString(keyList[0], keyList[2], keyList[1]));
-                    result.Add(makeString(keyList[1], keyList[0], keyList[2]));
-                    result.Add(makeString(keyList[1], keyList[2], keyList[0]));
-                    result.Add(makeString(keyList[2], keyList[0], keyList[1]));
-                    result.Add(makeString(keyList[2], keyList[1], keyList[0]));
-                } else {
-                    for (int i = 0; i < keyList.Count; ++i) {
-                        string ks = makeString(keyList[i]);
-                        var subList = keyList.Take(i).ToList();
-                        if (i < keyList.Count - 1) subList.AddRange(keyList.Skip(i + 1));
-                        bool bAllSub = bAll || i != 0;
-                        foreach (var k in makePermutatedKeys(subList, true)) {
-                            //logger.DebugH(() => $"ADD: {ks + k}");
-                            if (bAllSub) result.Add(ks + k);
-                            bAllSub = true;
-                        }
-                    }
-                    if (!bAll) result.RemoveAt(0);
-                }
-            }
-            return result;
+            return keyList.OrderBy(x => x)._keyString();
         }
 
         /// <summary>
         /// 全体よりも長さの短いリストの順列置換されたキーのリストを返す<br/>
-        /// bFixedOrder=trueなら、順序固定で末尾から1つずつ短くしたものを返す
+        /// bUnordered=trueなら、順序固定で1つずつ短くした全ての組合せを返す
+        /// bUnordered=falseなら、順序固定で末尾から1つずつ短くしたものを返す
         /// </summary>
         /// <param name="keyList"></param>
         /// <returns></returns>
-        public static List<string> MakeSubKeys(List<int> keyList, bool bFixedOrder)
+        public static List<string> _makeSubKeys(this List<int> keyList, bool bUnordered)
         {
             var result = new List<string>();
-            if (bFixedOrder) {
+            if (!bUnordered) {
                 // 順序固定で末尾から1つずつ短くしたものを採用
                 for (int len = keyList._safeCount() - 1; len >= 1; --len) {
-                    result.Add(makeString(keyList.Take(len)));
+                    result.Add(keyList.Take(len)._keyString());
                 }
             } else {
+                // 順序固定で1つずつ短くした全ての組合せを返す
                 if (keyList._safeCount() > 1) {
-                    makeSubKeys(keyList, result);
+                    // 長さが2以上になる組合せを登録
+                    addSubKeys(keyList, result);
+                    // 個々のキーを登録
                     foreach (var k in keyList) {
-                        result.Add(makeString(k));
+                        result.Add(k._keyString());
                     }
                 }
             }
             return result;
         }
 
-        // FixedOrder = false の時だけ呼ぶこと
-        private static void makeSubKeys(List<int> keyList, List<string> result)
+        // keyListが3つ以上のキーを持つ場合に、その部分リスト集合を result に追加する
+        // bUnordered = true の時だけ呼ぶこと
+        private static void addSubKeys(List<int> keyList, List<string> result)
         {
-            if (keyList != null && keyList.Count > 2) {
-                if (keyList.Count == 3) {
-                    result.Add(makeString(keyList[0], keyList[1]));
-                    result.Add(makeString(keyList[0], keyList[2]));
-                    result.Add(makeString(keyList[1], keyList[0]));
-                    result.Add(makeString(keyList[1], keyList[2]));
-                    result.Add(makeString(keyList[2], keyList[0]));
-                    result.Add(makeString(keyList[2], keyList[1]));
-                } else {
-                    for (int i = keyList.Count - 1; i >= 0; --i) {
-                        var subList = keyList.Take(i).ToList();
-                        if (i < keyList.Count - 1) subList.AddRange(keyList.Skip(i + 1));
-                        result.AddRange(makePermutatedKeys(subList, true));
-                        makeSubKeys(subList, result);
-                    }
+            if (keyList.Count > 3) {
+                for (int i = keyList.Count - 1; i >= 0; --i) {
+                    var subList = keyList.Take(i).ToList();
+                    if (i < keyList.Count - 1) subList.AddRange(keyList.Skip(i + 1));
+                    result.Add(subList._keyString());
+                    addSubKeys(subList, result);
                 }
+            } else if (keyList.Count == 3) {
+                result.Add(Helper.MakeList(keyList[0], keyList[1])._keyString());
+                result.Add(Helper.MakeList(keyList[0], keyList[2])._keyString());
+                result.Add(Helper.MakeList(keyList[1], keyList[2])._keyString());
             }
         }
 
-        public static int DecodeKey(char key)
-        {
-            return decodeChar(key);
-        }
-
-        public static List<int> DecodeKey(string key)
-        {
-            return key._notEmpty() ? key.Select(x => decodeChar(x)).ToList() : new List<int>();
-        }
-
-        public static string DecodeKeyString(string key)
-        {
-            return key._notEmpty() ? key.Select(x => decodeChar(x).ToString())._join(":") : "";
-        }
-
-        public static string EncodeKeyList(IEnumerable<int> keyList)
-        {
-            return keyList?.Select(x => x.ToString())._join(":") ?? "";
-        }
-
-        private static string makeString(int c)
-        {
-            return makeChar(c).ToString();
-        }
-
-        private static string makeString(int c1, int c2)
-        {
-            return new string(new char[] { makeChar(c1), makeChar(c2)});
-        }
-
-        private static string makeString(int c1, int c2, int c3)
-        {
-            return new string(new char[] { makeChar(c1), makeChar(c2), makeChar(c3)});
-        }
-
-        private static string makeString(IEnumerable<int> list)
-        {
-            var sb = new StringBuilder();
-            foreach (var c in list) sb.Append(makeChar(c));
-            return sb.ToString();
-        }
-
-        private static char makeChar(int ch)
-        {
-            return (char)(ch + 0x20);
-        }
-
-        private static int decodeChar(char ch)
-        {
-            return (char)(ch - 0x20);
-        }
     }
 }

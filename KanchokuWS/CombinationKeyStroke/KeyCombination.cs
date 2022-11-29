@@ -48,16 +48,18 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <summary>当同時打鍵組合せに割り当てられた出力文字列を得るためにデコーダに送信する DecoderKey のリスト</summary>
         public List<int> DecKeyList { get; private set; }
 
-        private List<int> _comboKeyList { get; set; }
+        //private List<int> _comboKeyList { get; set; }
+        /// <summary>同時打鍵組合せのデバッグ表示用文字列</summary>
+        private string _comboKeyStr { get; set; }
 
         /// <summary>
         /// コンストラクタ(keyListがnullの場合は、同時打鍵集合の部分集合であることを示す)
         /// </summary>
-        public KeyCombination(List<int> decKeyList, List<int> comboKeyList, ShiftKeyKind shiftKind, bool hasStr)
+        public KeyCombination(List<int> decKeyList, string comboKeyStr, ShiftKeyKind shiftKind, bool hasStr)
         {
             //ComboShiftedDecoderKeyList.Add(decKeyList, shiftKind);
             DecKeyList = decKeyList;
-            _comboKeyList = comboKeyList;
+            _comboKeyStr = comboKeyStr;
             ShiftKind = shiftKind;
             HasString = hasStr;
             //IsEffectiveAlways = effectiveAlways;
@@ -70,16 +72,27 @@ namespace KanchokuWS.CombinationKeyStroke
 
         public string ComboKeysDebugString()
         {
-            return _comboKeyList._keyString()._orElse("(empty)");
+            return _comboKeyStr._orElse("(empty)");
         }
 
     }
 
     public static class KeyCombinationExtension
     {
-        public static string _keyString(this List<int> list)
+        public static string _keyString(this IEnumerable<int> list)
         {
-            return list._notEmpty() ? list.Select(x => x.ToString())._join(":") : "";
+            return list._notEmpty() ? list.Select(x => x._keyString())._join(":") : "";
         }
+
+        public static string _keyString(this int key)
+        {
+            return key.ToString();
+        }
+
+        public static List<int> _decodeKeyStr(this string key)
+        {
+            return key._notEmpty() ? key._split(':').Select(x => x._parseInt()).ToList() : new List<int>();
+        }
+
     }
 }

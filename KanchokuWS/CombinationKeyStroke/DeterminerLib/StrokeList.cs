@@ -613,14 +613,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         logger.DebugH(() => $"COMBO SEARCH: searchKey={challengeList._toString()}");
 
                             var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(challengeList);
-                            logger.DebugH(() => $"COMBO RESULT: keyCombo.decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, HasString={keyCombo?.HasString ?? false}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
+                            logger.DebugH(() => $"COMBO RESULT: keyCombo.decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, " +
+                                $"HasString={keyCombo?.HasString ?? false}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
 
                         if (keyCombo != null && keyCombo.DecKeyList != null && keyCombo.HasString) {
                             //bComboFound = true; // 同時打鍵の組合せが見つかった
                             timingResult = 0;  // 同時打鍵の組合せが見つかった
                             Stroke tailKey = hotList[overlapLen - 1];
                             bool isTailKeyUp = hotList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
-                            logger.DebugH(() => $"CHECK1: {isTailKeyUp && tailKey.IsSingleHittable && !tailKey.IsShiftableSpaceKey}: tailPos={overlapLen - 1}: isTailKeyUp && tailKey.IsSingleHittable && !tailKey.IsShiftableSpaceKey");
+                            logger.DebugH(() => $"CHECK1: {isTailKeyUp && tailKey.IsSingleHittable && !tailKey.IsShiftableSpaceKey}: tailPos={overlapLen - 1}: " +
+                                $"isTailKeyUp && tailKey.IsSingleHittable && !tailKey.IsShiftableSpaceKey");
                             logger.DebugH(() => $"CHECK2: {challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey}: challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey");
                             logger.DebugH(() => "CHECK3: " +
                                 $"{Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !isListContaindInSequentialPriorityWordKeySet(challengeList)}" +
