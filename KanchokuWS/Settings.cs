@@ -1244,7 +1244,10 @@ namespace KanchokuWS
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
             TableFile = addDecoderSetting("tableFile", $"{TableFileDir}\\漢直系\\tutr.tbl");
             TableFile2 = addDecoderSetting("tableFile2", "");
+#if DEBUG
+#else
             TableFile3 = addDecoderSetting("tableFile3", "");
+#endif
             KanjiYomiFile = addDecoderSetting("kanjiYomiFile", "kanji-yomi.txt");
             //addDecoderSetting("strokeHelpFile");
             HistoryFile = addDecoderSetting("historyFile", "kwhist.*.txt");
