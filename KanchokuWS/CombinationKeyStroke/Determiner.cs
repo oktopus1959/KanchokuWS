@@ -239,6 +239,9 @@ namespace KanchokuWS.CombinationKeyStroke
             }
         }
 
+        // これまで押下されたキーの総数
+        int totalKeyDownCount = 0;
+
         // 直前のキー(オートリピートの判定に用いる)
         int lastRepeatedDecKey = -1;
 
@@ -250,11 +253,12 @@ namespace KanchokuWS.CombinationKeyStroke
         /// </summary>
         /// <param name="decKey">押下されたキーのデコーダコード</param>
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
-        public void KeyDown(int decKey, bool bDecoderOn, Action<List<int>> handleComboKeyRepeat)
+        public void KeyDown(int decKey, bool bDecoderOn, int keyDownCount, Action<List<int>> handleComboKeyRepeat)
         {
             DateTime dtNow = DateTime.Now;
             frmMain?.WriteStrokeLog(decKey, dtNow, true, strokeList.IsEmpty());
 
+            totalKeyDownCount = keyDownCount;
             procQueue.Enqueue(() => keyDown(decKey, dtNow, bDecoderOn, handleComboKeyRepeat));
             HandleQueue();
         }
@@ -424,8 +428,14 @@ namespace KanchokuWS.CombinationKeyStroke
 
             checkPreRewriteTime(decKey);
 
+            // 第1打鍵待ちに戻ったら、一時的な同時打鍵無効化をキャンセルする
+            checkStrokeCountReset();
+
             bool bUnconditional = false;
             var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, dt, bDecoderOn, out bUnconditional);
+
+            // 一時的な同時打鍵無効化になったら、チェックポイントの保存
+            saveCheckPointDeckeyCount();
 
             checkResultAgainstDecoderState(result);
 
@@ -450,6 +460,29 @@ namespace KanchokuWS.CombinationKeyStroke
             }
 
             return new KeyHandlerResult() { list = result, bUncoditional = bUnconditional };
+        }
+
+        int checkPointKeyDownCount = -1;
+
+        // チェックポイントの保存
+        private void saveCheckPointDeckeyCount()
+        {
+            logger.DebugH(() => $"ENTER: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}, totalKeyDownCount={totalKeyDownCount}");
+            if (strokeList.IsTemporaryComboDisabled && checkPointKeyDownCount < 0) {
+                checkPointKeyDownCount = totalKeyDownCount;
+            }
+            logger.DebugH(() => $"LEAVE: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}");
+        }
+
+        // 第1打鍵待ちに戻ったか
+        private void checkStrokeCountReset()
+        {
+            logger.DebugH(() => $"ENTER: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}, totalKeyDownCount={totalKeyDownCount}");
+            if (checkPointKeyDownCount >= 0 && totalKeyDownCount > checkPointKeyDownCount + 1) {
+                strokeList.IsTemporaryComboDisabled = false;
+                checkPointKeyDownCount = -1;
+            }
+            logger.DebugH(() => $"LEAVE: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}");
         }
 
         private void checkResultAgainstDecoderState(List<int> result)

@@ -226,6 +226,8 @@ namespace KanchokuWS.Gui
 
         int shiftOffset = 0;
 
+        int keyDownCount = 0;
+
         string convertKeySequence(string keys, bool bAll)
         {
             int prevLogLevel = Logger.LogLevel;
@@ -278,7 +280,8 @@ namespace KanchokuWS.Gui
 
             void keyDown(int decKey)
             {
-                CombinationKeyStroke.Determiner.Singleton.KeyDown(decKey + shiftOffset, true, null);
+                ++keyDownCount;
+                CombinationKeyStroke.Determiner.Singleton.KeyDown(decKey + shiftOffset, true, keyDownCount, null);
             }
 
             void keyUp(int decKey)

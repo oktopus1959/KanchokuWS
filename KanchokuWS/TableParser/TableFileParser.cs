@@ -97,8 +97,18 @@ namespace KanchokuWS.TableParser
         // ルートノードへのアクセッサ
         protected static Node RootTableNode => ParserContext.Singleton.rootTableNode;
 
-        protected bool isComboBlocked = false;
-        public bool IsInCombinationBlock => !isComboBlocked && isInCombinationBlock;
+        // ComboBlockerDepth
+        // ComboBlockerDepth はブロックのネストが増えるたびに decrement される
+        // これが 0 になったら、そこに同時打鍵無効化のブロッカーを設定する
+        public const int DEFAULT_DEPTH = 9999;
+
+        protected int ComboBlockerDepth => _comboBlockerDepth;
+
+        private int _comboBlockerDepth = DEFAULT_DEPTH;
+
+        private bool _isComboBlocked => _comboBlockerDepth <= 0;
+
+        public bool IsInCombinationBlock => !_isComboBlocked && isInCombinationBlock;
 
         // 当Parserによる解析内容を格納するツリーノード
         Node _treeNode;
@@ -245,12 +255,12 @@ namespace KanchokuWS.TableParser
         /// 部分木のトップノードになる場合は、treeNode.parentNode = null にしておくこと
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public TableParser(Node treeNode, CStrokeList strkList, bool bComboBlocked, int shiftPlane = -1)
+        public TableParser(Node treeNode, CStrokeList strkList, int comboBlockDepth, int shiftPlane = -1)
             : base()
         {
             _treeNode = treeNode;
             _strokeList = new CStrokeList(this, strkList);
-            isComboBlocked = bComboBlocked;
+            _comboBlockerDepth = comboBlockDepth;
             _shiftPlane = shiftPlane;
         }
 
@@ -406,20 +416,21 @@ namespace KanchokuWS.TableParser
 
         }
 
-        protected virtual TableParser AddTreeNode(int idx, bool bComboBlockerFound = false)
+        protected virtual TableParser AddTreeNode(int idx, int comboBlockerDepth = DEFAULT_DEPTH)
         {
             var strkList = StrokeList.WithLastStrokeAdded(idx);
-            if (IsInCombinationBlock && bComboBlockerFound) {
-                // ComboBlocker が見つかったので、ここでいったん同時打鍵列を登録しておく(末尾にダミーの -1 を追加して)
-                //addCombinationKey(strkList.WithLastStrokeAdded(-1), false);
+            int depth = comboBlockerDepth._min(_comboBlockerDepth) - 1;
+            bool bComboBlockerHit = depth == 0;
+            if (IsInCombinationBlock && bComboBlockerHit) {
+                // ComboBlocker が見つかったので、ここでいったん同時打鍵列を登録しておく
                 addCombinationKey(strkList, false);
             }
             //Node node = SetNodeOrNewTreeNodeAtLast(strkList, null);
-            Node node = SetOrMergeNthSubNode(idx, Node.MakeTreeNode(), bComboBlockerFound);
+            Node node = SetOrMergeNthSubNode(idx, Node.MakeTreeNode(), bComboBlockerHit);
             if (node != null && node.IsTreeNode()) {
                 // ComboDisabled になるのは、ComboBlockerが見つかった、その次からとなる
-                bool bComboBlocked = bComboBlockerFound || isComboBlocked;
-                return new TableParser(node, strkList, bComboBlocked);
+                //bool bComboBlocked = bComboBlockerFound || isComboBlocked;
+                return new TableParser(node, strkList, depth);
             } else {
                 return null;
             }
@@ -427,12 +438,12 @@ namespace KanchokuWS.TableParser
 
         public virtual ArrowParser MakeArrowParser(int arrowIdx)
         {
-            return new ArrowParser(TreeNode, StrokeList, arrowIdx, isComboBlocked);
+            return new ArrowParser(TreeNode, StrokeList, arrowIdx, ComboBlockerDepth);
         }
 
         protected ArrowBundleParser MakeArrowBundleParser(int nextArrowIdx)
         {
-            return new ArrowBundleParser(StrokeList, -1, nextArrowIdx, isComboBlocked);
+            return new ArrowBundleParser(StrokeList, -1, nextArrowIdx, ComboBlockerDepth);
         }
 
         // 前置書き換えパーザ
@@ -448,7 +459,7 @@ namespace KanchokuWS.TableParser
             }
 
             // 前置書き換えノード処理用のパーザを作成
-            var parser = new PreRewriteParser(TreeNode, StrokeList, targetStr, isComboBlocked);
+            var parser = new PreRewriteParser(TreeNode, StrokeList, targetStr, ComboBlockerDepth);
 
             logger.DebugH(() => $"LEAVE");
             return parser;
@@ -458,7 +469,7 @@ namespace KanchokuWS.TableParser
         protected PostRewriteParser MakePostRewriteParser(int idx)
         {
             // 後置書き換えノード処理用のパーザを作成
-            return new PostRewriteParser(TreeNode, StrokeList, idx, isComboBlocked);
+            return new PostRewriteParser(TreeNode, StrokeList, idx, ComboBlockerDepth);
         }
 
         public virtual void AddStringNode(int idx, bool bBare)
@@ -620,40 +631,19 @@ namespace KanchokuWS.TableParser
                 }
 
                 if (comboList._notEmpty()) {
-                    AddCombinationKeyCombo(comboList, shiftOffset, hasStr);
+                    bool comboBlocked = comboKeyCount > 0 && comboKeyCount < strkList.Count;
+#if DEBUG
+                    if (comboBlocked) {
+                        logger.DebugH($"comboKeyCount={comboKeyCount}, strkList.Count={strkList.Count}");
+                    }
+#endif
+                    AddCombinationKeyCombo(comboList, shiftOffset, hasStr, comboBlocked);
                 }
-
-                // var list = new List<int>(strkList.strokeList);
-                //// 先頭キーはシフト化
-                //if (IsInCombinationBlock) {
-                //    list[0] = makeComboDecKey(list[0]);
-                //    for (int i = 1; i < list.Count - 1; ++i) {
-                //        // 同時打鍵での中間キーは終端キーとの重複を避けるためシフト化しておく
-                //        list[i] = makeNonTerminalDuplicatableComboKey(list[i]);
-                //    }
-                //    AddCombinationKeyCombo(list, shiftOffset, hasStr);
-                //} else {
-                //    if (list[0] < DecoderKeys.PLANE_DECKEY_NUM) {
-                //        list[0] += shiftOffset;
-                //    }
-                //    if (list.Count == 1) {
-                //        AddCombinationKeyCombo(list, shiftOffset, hasStr);
-                //    } else {
-                //        if (keyComboPool != null) keyComboPool.ContainsSequentialShiftKey = true;
-                //        for (int i = 0; i < list.Count - 1; ++i) {
-                //            int dk = list[i];
-                //            if (!strkList.ComboFlagAt(i) && !sequentialShiftKeys.Contains(dk)) {
-                //                addSequentialShiftKey(dk, shiftOffset);
-                //                sequentialShiftKeys.Add(dk);
-                //            }
-                //        }
-                //    }
-                //}
             }
         }
 
         // 同時打鍵列の組合せを作成して登録しておく
-        protected void AddCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr)
+        protected void AddCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr, bool comboBlocked)
         {
             logger.DebugH(() => $"{deckeyList._keyString()}={CurrentStr}, shiftOffset={shiftOffset}, hasStr={hasStr}");
 #if DEBUG
@@ -663,7 +653,7 @@ namespace KanchokuWS.TableParser
 #endif
             var comboKeyList = deckeyList.Select(x => makeShiftedDecKey(x, shiftOffset)).ToList();      // 先頭キーのオフセットに合わせる
             keyComboPool?.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
-            keyComboPool?.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr);
+            keyComboPool?.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr, comboBlocked);
         }
 
         void addSequentialShiftKey(int decKey, int shiftOffset)
@@ -690,8 +680,8 @@ namespace KanchokuWS.TableParser
         /// コンストラクタ<br/>
         /// パーザ構築時点では、まだRewriteNodeは生成されない
         /// </summary>
-        public ArrowParser(Node treeNode, CStrokeList strkList, int arrowIdx, bool bComboBlocked)
-            : base(treeNode, strkList, bComboBlocked)
+        public ArrowParser(Node treeNode, CStrokeList strkList, int arrowIdx, int comboBlockerDepth)
+            : base(treeNode, strkList, comboBlockerDepth)
         {
             UnhandledArrowIndex = arrowIdx;
         }
@@ -701,11 +691,16 @@ namespace KanchokuWS.TableParser
         {
             logger.DebugH(() => $"ENTER: lineNum={LineNumber}, depth={Depth}, UnhandledArrowIndex={UnhandledArrowIndex}");
             //int arrowIdx = arrowIndex;
-            bool bComboBlockerFound = false;
+            int comboBlockerDepth = DEFAULT_DEPTH;
             if (PeekNextChar() == '|') {
                 // '>|' という形式だった
                 AdvanceCharPos(1);
-                bComboBlockerFound = true;
+                comboBlockerDepth = 1;
+                if (PeekNextChar() == '|') {
+                    // '>||' という形式だった
+                    AdvanceCharPos(1);
+                    comboBlockerDepth = 2;
+                }
             }
 
             readNextToken(true);
@@ -732,7 +727,7 @@ namespace KanchokuWS.TableParser
                 case TOKEN.LBRACE:
                     // ブロック開始
                     // ルートパーザの場合は、 UnhandledArrowIndex はすでに Shiftされている
-                    AddTreeNode(UnhandledArrowIndex, bComboBlockerFound)?.ParseNodeBlock();
+                    AddTreeNode(UnhandledArrowIndex, comboBlockerDepth)?.ParseNodeBlock();
                     break;
 
                 //AddLeafNode(currentToken, UnhandledArrowIndex);
@@ -765,7 +760,7 @@ namespace KanchokuWS.TableParser
             var strkList = StrokeList.WithLastStrokeAdded(UnhandledArrowIndex);
             //Node node = SetNodeOrNewTreeNodeAtLast(strkList, null);
             Node node = SetOrMergeNthSubNode(UnhandledArrowIndex, Node.MakeTreeNode());
-            return new ArrowParser(node, strkList, arrowIdx, isComboBlocked);
+            return new ArrowParser(node, strkList, arrowIdx, ComboBlockerDepth);
         }
 
     }
@@ -783,8 +778,8 @@ namespace KanchokuWS.TableParser
         /// コンストラクタ<br/>
         /// パーザ構築時点では、まだRewriteNodeは生成されない
         /// </summary>
-        public ArrowBundleParser(CStrokeList strkList, int lastStk, int nextArrowIdx, bool bComboBlocked)
-            : base(RootTableNode, strkList, bComboBlocked, lastStk)
+        public ArrowBundleParser(CStrokeList strkList, int lastStk, int nextArrowIdx, int comboBlockerDepth)
+            : base(RootTableNode, strkList, comboBlockerDepth, lastStk)
         {
             nextArrowIndex = nextArrowIdx;
         }
@@ -882,8 +877,8 @@ namespace KanchokuWS.TableParser
 
         protected bool bNested = false;
 
-        public RewriteParser(Node treeNode, CStrokeList strkList, int arrowIdx, bool bComboBlocked)
-            : base(treeNode, strkList, arrowIdx, bComboBlocked)
+        public RewriteParser(Node treeNode, CStrokeList strkList, int arrowIdx, int comboBlockerDepth)
+            : base(treeNode, strkList, arrowIdx, comboBlockerDepth)
         {
         }
 
@@ -956,8 +951,8 @@ namespace KanchokuWS.TableParser
         ///   先頭ならすでに targetStr として処理されているので -1 にしておく。
         ///   これにより '%X>' の直後に AddStringNode が呼ばれたら、idx=-1 になるので、先頭であることを検知できるようになる
         /// </summary>
-        public PreRewriteParser(Node treeNode, CStrokeList strkList, string targetStr, bool bComboBlocked)
-            : base(treeNode, strkList, -1, bComboBlocked)
+        public PreRewriteParser(Node treeNode, CStrokeList strkList, string targetStr, int comboBlockerDepth)
+            : base(treeNode, strkList, -1, comboBlockerDepth)
         {
             this.targetStr = targetStr;
         }
@@ -965,14 +960,14 @@ namespace KanchokuWS.TableParser
         // UnhandledArrowIndex の処理をした後、ネストされた新しいパーザを作成
         private PreRewriteParser makeNestedParser(int unhandledIdx = -1)
         {
-            return new PreRewriteParser(TreeNode, StrokeList, myTargetString(UnhandledArrowIndex), isComboBlocked) {
+            return new PreRewriteParser(TreeNode, StrokeList, myTargetString(UnhandledArrowIndex), ComboBlockerDepth) {
                 bNested = true,
                 UnhandledArrowIndex = unhandledIdx
             };
         }
 
         // ブロック処理(ネストされたパーザから呼ばれた場合は、通常のTableParserにする)
-        protected override TableParser AddTreeNode(int idx, bool _ = false)
+        protected override TableParser AddTreeNode(int idx, int _ = DEFAULT_DEPTH)
         {
             if (!bNested) {
                 // 最初のブロック処理(パーザをネストさせる)
@@ -988,7 +983,7 @@ namespace KanchokuWS.TableParser
                 Node treeNode = Node.MakeTreeNode();
                 if (upsertNodeToRootTable(idx, treeNode) != null) {
                     // 通常のTableParserを返す
-                    return new TableParser(treeNode, strkList, isComboBlocked);
+                    return new TableParser(treeNode, strkList, ComboBlockerDepth);
                 }
             }
             return null;
@@ -1045,8 +1040,8 @@ namespace KanchokuWS.TableParser
         /// コンストラクタ
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public PostRewriteParser(Node rewriteNode, CStrokeList strkList, int arrowIdx, bool bComboBlocked, string targetStr = null)
-            : base(rewriteNode, strkList, arrowIdx, bComboBlocked)
+        public PostRewriteParser(Node rewriteNode, CStrokeList strkList, int arrowIdx, int comboBlockerDepth, string targetStr = null)
+            : base(rewriteNode, strkList, arrowIdx, comboBlockerDepth)
         {
             this.targetStr = targetStr;
         }
@@ -1073,7 +1068,7 @@ namespace KanchokuWS.TableParser
         // &X,..,Y>{あ
         // というケース
         // ・後置書き換えではネストされたブロックは不可
-        protected override TableParser AddTreeNode(int idx, bool _ = false)
+        protected override TableParser AddTreeNode(int idx, int _ = DEFAULT_DEPTH)
         {
             if (bNested) {
                 ParseError("後置書き換えではブロックのネストはできません");
@@ -1091,7 +1086,7 @@ namespace KanchokuWS.TableParser
             // 逆に同時打鍵でない場合は、 TreeNode == RootNode のはず
             Node node = mergeNode(TreeNode, idx, Node.MakeRewriteTreeNode(myStr));
             if (node != null) {
-                return new PostRewriteParser(node, strkList, -1, isComboBlocked, targetStr) { bNested = true };
+                return new PostRewriteParser(node, strkList, -1, ComboBlockerDepth, targetStr) { bNested = true };
             } else {
                 return null;
             }
@@ -1121,7 +1116,7 @@ namespace KanchokuWS.TableParser
                     // 同時打鍵の場合はTreeNodeを挿入しておく必要がある
                     var strkList = StrokeList.WithLastStrokeAdded(prevIndex);
                     Node node = SetOrMergeNthSubNode(prevIndex, Node.MakeTreeNode());
-                    parser = new PostRewriteParser(node, strkList, arrowIdx, isComboBlocked, targetStr);
+                    parser = new PostRewriteParser(node, strkList, arrowIdx, ComboBlockerDepth, targetStr);
                 } else {
                     targetStr = myTargetString(prevIndex);
                 }
@@ -1176,7 +1171,7 @@ namespace KanchokuWS.TableParser
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
         public RootTableParser(bool bForKanchoku)
-            : base(RootTableNode, null, false)
+            : base(RootTableNode, null, DEFAULT_DEPTH)
         {
             isKanchokuModeParser = bForKanchoku;
         }
@@ -1296,7 +1291,7 @@ namespace KanchokuWS.TableParser
                     if (RootTableNode.GetNthSubNode(dk) == null &&
                         RootTableNode.GetNthSubNode(dk + comboDeckeyStart) != null) {
                         // 単打設定が存在せず、同時打鍵の先頭キーになっている場合は、単打設定を追加する
-                        AddCombinationKeyCombo(Helper.MakeList(dk), 0, true);  // 単打指定
+                        AddCombinationKeyCombo(Helper.MakeList(dk), 0, true, false);  // 単打指定
                         OutputLines.Add($"-{dk}>\"!{{{keyName}}}\"");
                     }
                 }

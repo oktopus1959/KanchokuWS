@@ -670,7 +670,9 @@ namespace KanchokuWS
         private static extern ushort GetAsyncKeyState(uint vkey);
 
         //------------------------------------------------------------------
-        private int deckeyTotalCount = 0;
+        public int DeckeyTotalCount { get; private set; } = 0;
+
+        public bool IsWaiting2ndStroke => decoderOutput.IsWaiting2ndStroke();
 
         private int prevRawDeckey = -1;
         private int rawDeckeyRepeatCount = 0;
@@ -811,7 +813,7 @@ namespace KanchokuWS
             int prevDeckey = prevFuncDeckey;
             prevFuncDeckey = deckey;
             int prevCount = prevFuncTotalCount;
-            prevFuncTotalCount = deckeyTotalCount;
+            prevFuncTotalCount = DeckeyTotalCount;
             try {
                 if (deckey == DecoderKeys.DATE_STRING_ROTATION_DECKEY) {
                     return !isActiveWinExcel() && rotateDateString(1);
@@ -838,7 +840,7 @@ namespace KanchokuWS
                         case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
                             return !isActiveWinExcel() && rotateDateString(-1);
                         case DecoderKeys.STROKE_HELP_DECKEY:
-                            if (prevDeckey != deckey || prevCount + 1 < deckeyTotalCount) {
+                            if (prevDeckey != deckey || prevCount + 1 < DeckeyTotalCount) {
                                 ShowStrokeHelp(null);
                             } else {
                                 ShowBushuCompHelp();
@@ -1551,8 +1553,8 @@ namespace KanchokuWS
         private bool InvokeDecoder(int deckey, uint mod)
         {
             if (IsDecoderActive) {
-                ++deckeyTotalCount;
-                logger.InfoH(() => $"\nRECEIVED deckey={(deckey < DecoderKeys.SPECIAL_DECKEY_ID_BASE ? $"{deckey}" : $"{deckey:x}H")}, totalCount={deckeyTotalCount}");
+                ++DeckeyTotalCount;
+                logger.InfoH(() => $"\nRECEIVED deckey={(deckey < DecoderKeys.SPECIAL_DECKEY_ID_BASE ? $"{deckey}" : $"{deckey:x}H")}, totalCount={DeckeyTotalCount}");
 
                 // DecKey 無限ループの検出
                 if (Settings.DeckeyInfiniteLoopDetectCount > 0) {

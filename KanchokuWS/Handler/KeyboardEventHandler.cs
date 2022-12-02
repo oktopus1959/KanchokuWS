@@ -835,6 +835,8 @@ namespace KanchokuWS.Handler
             return result;
         }
 
+        int keyDownCount = 0;
+
         /// <summary>キーボード押下時のハンドラ</summary>
         /// <param name="vkey"></param>
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
@@ -947,7 +949,8 @@ namespace KanchokuWS.Handler
             //    result = invokeHandler(kanchokuCode, mod);
             //}
             while (vkeyQueue.Count > 0) {
-                logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}, bDecoderOn={bDecoderOn}, mod={mod:x}H, kanchokuCode={kanchokuCode}");
+                ++keyDownCount;
+                logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}, bDecoderOn={bDecoderOn}, mod={mod:x}H, kanchokuCode={kanchokuCode}, keyDownCount={keyDownCount}");
                 var determiner = CombinationKeyStroke.Determiner.Singleton;
                 var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
                 kanchokuCode = vkeyQueue.Peek();
@@ -957,7 +960,7 @@ namespace KanchokuWS.Handler
                     ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM ||
                     currentPool.GetEntry(kanchokuCode) != null)) {    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする
                     // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
-                    determiner.KeyDown(kanchokuCode, bDecoderOn, (decKey) => handleComboKeyRepeat(vkey, decKey));
+                    determiner.KeyDown(kanchokuCode, bDecoderOn, keyDownCount, (decKey) => handleComboKeyRepeat(vkey, decKey));
                     result = true;
                 } else {
                     //WriteStrokeLog?.Invoke(kanchokuCode, DateTime.Now, true, true);

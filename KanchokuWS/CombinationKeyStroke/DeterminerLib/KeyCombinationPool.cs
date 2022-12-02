@@ -224,7 +224,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <param name="deckeyList">デコーダ向けのキーリスト</param>
         /// <param name="comboKeyList">同時打鍵検索用キーのリスト</param>
         /// <param name="shiftKind">Prefixの場合は、与えられたキー順のみ有効</param>
-        public void AddEntry(List<int> deckeyList, List<int> comboKeyList, ComboKind shiftKind, bool hasStr)
+        public void AddEntry(List<int> deckeyList, List<int> comboKeyList, ComboKind shiftKind, bool hasStr, bool comboBlocked)
         {
             logger.DebugH(() =>
                 $"CALLED: keyList={deckeyList._keyString()}, comboShiftedKeyList={comboKeyList._keyString()}, ShiftKeyKind={shiftKind}, HasString={hasStr}");
@@ -237,7 +237,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                 // 順不同の場合はソートされた並びで登録、固定順の場合は配列テーブルに記述された並びで登録
                 string comboKeyStr = comboKeyList._keyString();
-                var keyCombo = new KeyCombination(deckeyList, comboKeyStr, shiftKind, hasStr);
+                var keyCombo = new KeyCombination(deckeyList, comboKeyStr, shiftKind, hasStr, comboBlocked);
                 keyComboDict.Add(comboKeyStr, keyCombo, hasStr);
 
                 // 部分キー文字列を蓄積しておく
@@ -306,7 +306,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         var list = subkey._decodeKeyStr();
                         if (list._safeCount() == 1) keyList = list;
                     }
-                    keyCombo = new KeyCombination(keyList, null, ComboKind.None, keyList._notEmpty());
+                    keyCombo = new KeyCombination(keyList, null, ComboKind.None, keyList._notEmpty(), false);
                     keyComboDict.Add(subkey, keyCombo, true);
                 }
                 keyCombo.SetNonTerminal();

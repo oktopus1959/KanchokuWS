@@ -331,11 +331,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 logger.DebugH("Imediate Combo check");
                 if (comboList.Count >= 1 && unprocList.Count == 1) {
                     // 2文字目以降のケース
-                    logger.DebugH(() => $"Try second or later successive combo: bTemporaryComboDisabled={bTemporaryComboDisabled}");
-                    if (bTemporaryComboDisabled) {
+                    logger.DebugH(() => $"Try second or later successive combo: bTemporaryComboDisabled={IsTemporaryComboDisabled}");
+                    if (IsTemporaryComboDisabled) {
                         // 連続シフト版「月光」などで、先行してShiftキーが送出され、一時的に同時打鍵がOFFになっている場合
                         (result, bKeyComboFound) = getAndCheckCombo(Helper.MakeList(unprocList[0]));
-                        bTemporaryComboDisabled = false;
+                        IsTemporaryComboDisabled = false;
                     } else {
                         (result, bKeyComboFound) = getAndCheckCombo(Helper.MakeList(comboList, unprocList[0]));
                     }
@@ -417,8 +417,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             //new KeyComboRule(false, 0, 1, 0, 0, 0, 0, 1),   // COMBO無, ComboList無, 第1:DC/シ, 第2:DC/DC, 第3:有 ⇒ 0出, 1棄, MS (薙刀「(かるすへ)⇒ずべ」
         };
 
-        // 順次打鍵の場合に、シフトキーがUPされたら、一時的に同時打鍵検索をストップする
-        bool bTemporaryComboDisabled = false;
+        // ComboBlockerなどによって一時的に同時打鍵を無効化して順次打鍵になっているか
+        public bool IsTemporaryComboDisabled { get; set; }  = false;
 
         // 解放の場合
         public List<int> GetKeyCombinationWhenKeyUp(int decKey, DateTime dtNow, bool bDecoderOn, out bool bUnconditional)
@@ -429,7 +429,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             bUnconditional = false;
 
             try {
-                bool bPrevSequential = bTemporaryComboDisabled;
+                //bool bTempUnconditional = false;
+                bool bTempComboDisabled = IsTemporaryComboDisabled;
 
                 int upComboIdx = findAndMarkUpKey(comboList, decKey);
 
@@ -445,11 +446,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                         while (unprocList._notEmpty()) {
                             // 持ち越したキーリストの部分リストからなる集合(リスト)
-                            logger.DebugH(() => $"bPrevSequential={bPrevSequential}");
-                            //List<List<Stroke>> subComboLists = gatherSubList(bPrevSequential ? null : comboList);
-                            List<List<Stroke>> subComboLists = gatherSubList(comboList);
-                            //List<List<Stroke>> subComboLists = gatherSubList(comboList);
+                            logger.DebugH(() => $"bTempComboDisabled={bTempComboDisabled}");
+                            //List<List<Stroke>> subComboLists = gatherSubList(bTempComboDisabled ? null : comboList);
 
+                            bool bForceOutput = false;
                             int outputLen = 0;
                             int discardLen = 1;
                             int copyShiftLen = 1;
@@ -460,6 +460,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 if (s.IsUpKey || !s.IsComboShift) {
                                     logger.DebugH($"JUST 1 UNPROC KEY is UP KEY");
                                     if (s.IsSingleHittable || s.IsSequentialShift) {
+                                        // 単打可能または順次シフトだった
                                         logger.DebugH($"Single Hittable or SequentialShift");
                                         outputLen = 1;
                                     } else {
@@ -472,56 +473,75 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                     logger.DebugH($"JUST 1 UNPROC KEY is NOT UP KEY. Maybe RETRY and it's SHIFT KEY. BREAK.");
                                     break;
                                 }
-                            } else if (bPrevSequential) {
-                                logger.DebugH(() => $"PrevSequential={bPrevSequential}");
-                                var keyCombo = findComboAny(subComboLists, unprocList);
-                                if (keyCombo != null) {
-                                    logger.DebugH(() => $"COMBO FOUND (PrevSequential)");
-                                    outputLen = 1;
-                                    if (keyCombo.IsTerminal) {
-                                        // ここで順次シフトは終わり
-                                        bPrevSequential = false;
-                                        logger.DebugH(() => $"COMBO IS TERMINAL. PrevSequential={bPrevSequential}");
-                                    }
-                                } else {
-                                    logger.DebugH($"NO SEQUENTIAL COMBO. ABANDONED-2");
-                                }
+                            //} else if (bTempUnconditional) {
+                            //    logger.DebugH(() => $"TempUnconditional={bTempUnconditional}");
+                            //    var keyCombo = findComboAny(subComboLists, unprocList);
+                            //    if (keyCombo != null) {
+                            //        logger.DebugH(() => $"COMBO FOUND (TempUnconditional={bTempUnconditional})");
+                            //        outputLen = 1;
+                            //        if (keyCombo.IsTerminal) {
+                            //            // ここで無条件Comboは終わり
+                            //            bTempUnconditional = false;
+                            //            logger.DebugH(() => $"COMBO IS TERMINAL. TempUnconditional={bTempUnconditional}");
+                            //        }
+                            //    } else {
+                            //        logger.DebugH($"NO SEQUENTIAL COMBO. ABANDONED-2");
+                            //    }
+                            } else if (bTempComboDisabled) {
+                                // 同時打鍵が一時的に無効化されているので、順次打鍵として扱う
+                                logger.DebugH(() => $"bTempComboDisabled={bTempComboDisabled}");
+                                //result.Add(unprocList[0].OrigDecoderKey);
+                                //unprocList[0].SetToBeRemoved();
+                                bForceOutput = true;
+                                outputLen = 1;
+                                copyShiftLen = 0;
+                                discardLen = 1;
+                                logger.DebugH(() => $"ADD: result={result._keyString()}");
                             } else {
                                 //同時打鍵を見つける
+                                List<List<Stroke>> subComboLists = gatherSubList(comboList);
                                 int timingFailure = -1;
-                                int overlapLen = findCombo(result, subComboLists, unprocList, dtNow, bSecondComboCheck, bDecoderOn, out timingFailure);
+                                int overlapLen = findCombo(result, subComboLists, unprocList, dtNow, bSecondComboCheck, bDecoderOn, out timingFailure, out bTempComboDisabled);
                                 if (overlapLen > 0) {
                                     // 見つかった
-                                    logger.DebugH($"COMBO FOUND");
+                                    logger.DebugH($"COMBO FOUND: bTempComboDisabled={bTempComboDisabled}");
                                     bSecondComboCheck = true;
                                     outputLen = copyShiftLen = 0;  // 既に findCombo() の中でやっている
                                     discardLen = overlapLen;
                                 } else {
                                     // 見つからなかった
                                     bool bComboFound = timingFailure >= 0;
-                                    logger.DebugH(() => bComboFound ? (bPrevSequential ? "COMBO FOUND but PREV SEQUENTIAL" : $"COMBO FOUND but TIMING CHECK FAILED: {timingFailure}") : "COMBO NOT FOUND");
+                                    logger.DebugH(() => bComboFound ? $"COMBO FOUND but TIMING CHECK FAILED: {timingFailure}" : "COMBO NOT FOUND");
                                     bool bSomeKeyUp = unprocList.Any(x => x.IsUpKey);
                                     var s = unprocList[0];
-                                    logger.DebugH(() => $"comboList.Count={comboList.Count}, unprocList.Count={unprocList.Count}, ComboFound={bComboFound}, s.IsComboShift={s.IsComboShift}, s.IsSingle={s.IsSingleHittable}");
+                                    logger.DebugH(() => $"comboList.Count={comboList.Count}, unprocList.Count={unprocList.Count}, ComboFound={bComboFound}, s={s.DebugString()}");
                                     var t = unprocList._getNth(1);
-                                    logger.DebugH(() => $"RULE TRY: bComboFound={bComboFound}, someKeyUp={bSomeKeyUp}, ComboListEmpty={comboList._isEmpty()}, 1stSingle={s.IsSingleHittable}, 1stShift={s.IsComboShift}, 2ndSingle={t?.IsSingleHittable}, 2ndShift={t?.IsComboShift}, isShiftUP={comboList._notEmpty() && comboList.Any(x => x.IsUpKey)}");
+                                    logger.DebugH(() => $"RULE TRY: bComboFound={bComboFound}, someKeyUp={bSomeKeyUp}, ComboListEmpty={comboList._isEmpty()}, " +
+                                        $"2nd={t?.DebugString() ?? "none"}, 2ndShift={t?.IsComboShift}, isShiftUP={comboList._notEmpty() && comboList.Any(x => x.IsUpKey)}");
                                     int n = 1;
                                     foreach (var rule in keyComboRules) {
                                         if (rule.Apply(timingFailure, bSomeKeyUp, comboList, s, t)) {
+                                            // どれかのルールにヒットした
                                             outputLen = rule.outputLen;
                                             discardLen = rule.discardLen;
                                             //if (rule.bMoveShift) copyShiftLen = discardLen;
                                             copyShiftLen = discardLen;
-                                            //if (rule.k1stShift == 2) bTemporaryComboDisabled = true;    // 順次打鍵なら次は一時的に同時打鍵判定をやめる
-                                            bPrevSequential = (rule.k1stShift == 2);    // 順次打鍵なら次は一時的に同時打鍵判定をやめる
-                                            logger.DebugH(() => $"RULE({n}) APPLIED: outputLen={outputLen}, discardLen={discardLen}, copyShiftLen={copyShiftLen}, bPrevSequential={bPrevSequential}");
+                                            //if (rule.k1stShift == 2) {
+                                            //    // 前置連続シフト(or順次打鍵)の場合
+                                            //    bTempUnconditional = outputLen == 0;        // 
+                                            //    bTempComboDisabled = !bTempUnconditional;
+                                            //} else {
+                                            //    bTempUnconditional = false;
+                                            //    bTempComboDisabled = false;
+                                            //}
+                                            logger.DebugH(() => $"RULE({n}) APPLIED: outputLen={outputLen}, discardLen={discardLen}, copyShiftLen={copyShiftLen}");
                                             break;
                                         }
                                         ++n;
                                     }
                                     if (n > keyComboRules.Count) {
                                         logger.DebugH("NO RULE APPLIED");
-                                        bPrevSequential = false;
+                                        //bTempUnconditional = false;
                                     }
                                 }
                             }
@@ -529,11 +549,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             for (int i = 0; i < outputLen && i < unprocList.Count; ++i) {
                                 // Upされていない連続シフトキーは出力しない ⇒ これをやると薙刀式で JE と打ったのが同時打鍵と判定されなかったときに E(て)が出力されなくなるので、やめる
                                 //if (unprocList[i].IsUpKey || !unprocList[i].IsSuccessiveShift)
-                                // 順次打鍵または文字を持つキーだけ、出力する
-                                if (unprocList[i].HasString || bPrevSequential) {
-                                    result.Add(unprocList[i].OrigDecoderKey);
+                                var s = unprocList[i];
+                                // 強制出力か文字を持つか単打可能か順次シフトキーの場合だけ、出力する
+                                if (bForceOutput || s.HasString || s.IsSingleHittable || s.IsSequentialShift) {
+                                    result.Add(s.OrigDecoderKey);
                                     // 同時打鍵でなく出力されたキーは comboList には移さない
-                                    if (!bPrevSequential) unprocList[i].SetToBeRemoved();
+                                    s.SetToBeRemoved();
                                     logger.DebugH(() => $"ADD: result={result._keyString()}");
                                 }
                             }
@@ -569,8 +590,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         comboList.RemoveAt(i);
                     }
                 }
-                bTemporaryComboDisabled = comboList._notEmpty() && (bPrevSequential || KeyCombinationPool.CurrentPool.IsPrefixedOrSequentialShift && bSomeShiftKeyUp);
-                logger.DebugH(() => $"CLEANUP: UpKey or Oneshot in comboList Removed: bTemporaryComboDisabled={bTemporaryComboDisabled}, {ToDebugString()}");
+                //bTemporaryUnconditional = comboList._notEmpty() && (bTempUnconditional || KeyCombinationPool.CurrentPool.IsPrefixedOrSequentialShift && bSomeShiftKeyUp);
+                IsTemporaryComboDisabled = comboList._notEmpty() && bTempComboDisabled;
+                logger.DebugH(() => $"CLEANUP: UpKey or Oneshot in comboList Removed: bTemporaryComboDisabled={IsTemporaryComboDisabled}, {ToDebugString()}");
 
                 // 指定個数以上の打鍵が残っていたら警告をログ出力する
                 if (Count >= Settings.WarnThresholdKeyQueueCount) {
@@ -593,11 +615,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         /// <summary>同時打鍵を見つける<br/>見つかったら、処理された打鍵数を返す。見つからなかったら0を返す</summary>
-        private int findCombo(List<int> result, List<List<Stroke>> subComboLists, List<Stroke> hotList, DateTime dtNow, bool bSecondComboCheck, bool bDecoderOn, out int timingFailure)
+        private int findCombo(List<int> result, List<List<Stroke>> subComboLists, List<Stroke> hotList, DateTime dtNow, bool bSecondComboCheck, bool bDecoderOn,
+            out int timingFailure, out bool bComboBlocked)
         {
             logger.DebugH(() => $"ENTER: hotList={hotList._toString()}, bSecondComboCheck={bSecondComboCheck}");
 
             int timingResult = -1;
+            bool comboBlocked = false;
 
             int findFunc()
             {
@@ -616,9 +640,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             logger.DebugH(() => $"COMBO RESULT: keyCombo.decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, " +
                                 $"HasString={keyCombo?.HasString ?? false}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
 
-                        if (keyCombo != null && keyCombo.DecKeyList != null && keyCombo.HasString) {
+                        if (keyCombo != null && keyCombo.DecKeyList != null && (keyCombo.HasString || keyCombo.IsComboBlocked)) {
                             //bComboFound = true; // 同時打鍵の組合せが見つかった
                             timingResult = 0;  // 同時打鍵の組合せが見つかった
+                            comboBlocked = keyCombo.IsComboBlocked;
                             Stroke tailKey = hotList[overlapLen - 1];
                             bool isTailKeyUp = hotList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
                             logger.DebugH(() => $"CHECK1: {isTailKeyUp && tailKey.IsSingleHittable && !tailKey.IsShiftableSpaceKey}: tailPos={overlapLen - 1}: " +
@@ -665,6 +690,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             int resultLen = findFunc();
 
             timingFailure = timingResult;
+            bComboBlocked = comboBlocked;
 
             logger.DebugH(() => $"LEAVE: {(resultLen == 0 ? "NOT ": "")}FOUND: result={result._keyString()}, timingFailure={timingResult}, overlapLen={resultLen}: {ToDebugString()}");
             return resultLen;

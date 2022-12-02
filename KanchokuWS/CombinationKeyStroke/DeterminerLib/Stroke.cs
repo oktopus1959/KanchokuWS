@@ -75,6 +75,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>単打不可の同時打鍵のシフトキーか</summary>
         public bool IsJustComboShift => IsComboShift && !IsSingleHittable;
 
+        /// <summary>単打不可の同時打鍵のシフトキーか</summary>
+        public bool IsComboBlocked { get; private set; }
+
         /// <summary>スペースキーまたは機能キーの同時打鍵シフトキーか</summary>
         public bool IsSpaceOrFuncComboShift => IsSpaceOrFunc && IsComboShift;
 
@@ -139,10 +142,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             IsSingleHittable = entry == null || entry.DecKeyList != null;
             IsJustSingleHit = entry == null || entry.IsTerminal;
             HasString = entry != null && entry.DecKeyList != null;
+            IsComboBlocked = entry != null && entry.IsComboBlocked;
             KeyDt = dt;
         }
 
-        public string DebugString() => $"DecKeyCode={OrigDecoderKey}, ModuloKeyCode={ModuloDecKey}, IsComobShift={IsComboShift}";
+        public string DebugString() =>
+            $"DecKeyCode={OrigDecoderKey}, ModuloKeyCode={ModuloDecKey}, IsComobShift={IsComboShift}, IsSingleHittable={IsSingleHittable}, HasString={HasString}, IsComboBlocked={IsComboBlocked}";
 
     }
 }

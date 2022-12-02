@@ -42,6 +42,9 @@ namespace KanchokuWS.CombinationKeyStroke
         //public bool IsOneshot => ComboShiftedDecoderKeyList.ShiftKind == ShiftKeyKind.OneshotShift;
         public bool IsOneshotShift => ShiftKind == ShiftKeyKind.UnorderedOneshotShift;
 
+        /// <summary>同時打鍵ブロッカーにより、以降、順次打鍵になるか</summary>
+        public bool IsComboBlocked { get; set; } = false;
+
         ///// <summary>デコーダがOFFの時にも有効な同時打鍵か</summary>
         //public bool IsEffectiveAlways { get; private set; } = false;
 
@@ -55,13 +58,14 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <summary>
         /// コンストラクタ(keyListがnullの場合は、同時打鍵集合の部分集合であることを示す)
         /// </summary>
-        public KeyCombination(List<int> decKeyList, string comboKeyStr, ShiftKeyKind shiftKind, bool hasStr)
+        public KeyCombination(List<int> decKeyList, string comboKeyStr, ShiftKeyKind shiftKind, bool hasStr, bool comboBlocked)
         {
             //ComboShiftedDecoderKeyList.Add(decKeyList, shiftKind);
             DecKeyList = decKeyList;
             _comboKeyStr = comboKeyStr;
             ShiftKind = shiftKind;
             HasString = hasStr;
+            IsComboBlocked = comboBlocked;
             //IsEffectiveAlways = effectiveAlways;
         }
 
