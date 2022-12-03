@@ -84,9 +84,14 @@ namespace {
 
         // StrokeTableNode を処理する
         void handleStrokeKeys(int deckey) {
+            bool isRootCombo = IsRootKeyCombination();
             wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(origDeckey >= 0 ? origDeckey : deckey);
-            LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), face=%c, nodeDepth=%d"), NAME_PTR, deckey, deckey, myChar, DEPTH);
-            STATE_COMMON->AppendOrigString(myChar); // RootStrokeTableState が作成されたときに OrigString はクリアされている。この処理は @^ などへの対応のために必要
+            LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), face=%c, isRootCombo=%s, nodeDepth=%d"), NAME_PTR, deckey, deckey, myChar, BOOL_TO_WPTR(isRootCombo), DEPTH);
+            if (!isRootCombo) {
+                // RootStrokeTableState が作成されたときに OrigString はクリアされている。この処理は @^ などへの対応のために必要
+                // ただしRootStrokeTableStateが同時打鍵の開始だった場合は、OrigStringを返さない
+                STATE_COMMON->AppendOrigString(myChar);
+            }
 
             if (!myNode()->isRootStrokeTableNode() && !IsRootKeyCombination()) {
                 // 自身がRootStrokeNodeでなく、かつRootStrokeKeyが同時打鍵キーでなければ通常面に落としこむ
@@ -276,19 +281,19 @@ namespace {
 
     protected:
         // ルートキーは UNSHIFT されているか
-        //virtual bool IsRootKeyUnshifted() {
+        //bool IsRootKeyUnshifted() override {
         //    _LOG_DEBUGH(_T("CALLED: %s, unshifted=%s"), NAME_PTR, BOOL_TO_WPTR(bUnshifted));
         //    return bUnshifted;
         //}
 
         // ルートキーは平仮名化されているか
-        virtual bool IsRootKeyHiraganaized() {
+        bool IsRootKeyHiraganaized() override {
             _LOG_DEBUGH(_T("CALLED: %s, hiraganaized=%s"), NAME_PTR, BOOL_TO_WPTR(bHiraganaized));
             return bHiraganaized;
         }
 
         // ルートキーは同時打鍵キーか
-        virtual bool IsRootKeyCombination() {
+        bool IsRootKeyCombination() override {
             _LOG_DEBUGH(_T("CALLED: %s, combination=%s"), NAME_PTR, BOOL_TO_WPTR(bCombination));
             return bCombination;
         }
