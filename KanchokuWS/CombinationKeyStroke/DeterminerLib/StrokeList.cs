@@ -269,6 +269,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     $"Terminal={keyCombo?.IsTerminal ?? false}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
                 if (keyCombo != null && keyCombo.DecKeyList != null && keyCombo.IsTerminal) {
                     logger.DebugH("COMBO CHECK PASSED");
+                    IsTemporaryComboDisabled = keyCombo.IsComboBlocked;
                     return (new List<int>(keyCombo.DecKeyList), true);
                 }
                 logger.DebugH("COMBO CHECK FAILED");
@@ -462,10 +463,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                     logger.DebugH($"JUST 1 UNPROC KEY is UP KEY");
                                     if (s.IsSingleHittable || s.IsSequentialShift) {
                                         // 単打可能または順次シフトだった
-                                        logger.DebugH($"Single Hittable or SequentialShift");
+                                        logger.DebugH(() => $"Single Hittable={s.IsSingleHittable} or SequentialShift={s.IsSequentialShift}");
                                         outputLen = 1;
                                     } else {
-                                        logger.DebugH($"ABANDONED-1");
+                                        logger.DebugH(() => $"ABANDONED-1: Single Hittable={s.IsSingleHittable} and SequentialShift={s.IsSequentialShift}");
                                     }
                                 } else {
                                     // UPされていないシフトキーがある。多分、最初のループで処理されずに残ったものがRETRYで対象となった。

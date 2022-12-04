@@ -371,6 +371,8 @@ namespace KanchokuWS.CombinationKeyStroke
                                             startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
                                         }
                                     }
+                                    // 一時的な同時打鍵無効化になったら、チェックポイントの保存
+                                    saveCheckPointDeckeyCount();
                                 }
                             } else {
                                 // 同時打鍵には使われないキーなので、そのまま返す
@@ -464,21 +466,23 @@ namespace KanchokuWS.CombinationKeyStroke
 
         int checkPointKeyDownCount = -1;
 
-        // チェックポイントの保存
+        // 一時的な同時打鍵無効化のためのチェックポイントの保存
         private void saveCheckPointDeckeyCount()
         {
             logger.DebugH(() => $"ENTER: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}, totalKeyDownCount={totalKeyDownCount}");
-            if (strokeList.IsTemporaryComboDisabled && checkPointKeyDownCount < 0) {
-                checkPointKeyDownCount = totalKeyDownCount;
+            if (strokeList.IsTemporaryComboDisabled) {
+                if (checkPointKeyDownCount < 0) checkPointKeyDownCount = totalKeyDownCount;
+            } else {
+                checkPointKeyDownCount = -1;
             }
             logger.DebugH(() => $"LEAVE: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}");
         }
 
-        // 第1打鍵待ちに戻ったか
+        // 第1打鍵待ちに戻ったら、一時的な同時打鍵無効化を解除する
         private void checkStrokeCountReset()
         {
             logger.DebugH(() => $"ENTER: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}, totalKeyDownCount={totalKeyDownCount}");
-            if (checkPointKeyDownCount >= 0 && totalKeyDownCount > checkPointKeyDownCount + 1) {
+            if (checkPointKeyDownCount >= 0 && totalKeyDownCount > checkPointKeyDownCount + 1 && frmMain.IsDecoderWaitingFirstStroke()) {
                 strokeList.IsTemporaryComboDisabled = false;
                 checkPointKeyDownCount = -1;
             }

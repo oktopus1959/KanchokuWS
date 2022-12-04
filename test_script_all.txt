@@ -243,11 +243,15 @@ convert(J<59>K<20>jk) = いあ
 convert(J<50>K<80>jk) = き
 
 #### OKT (同時打鍵) ###
-#loadTable(tables/_test/okt.tbl)
+loadTable(tables/_test/okt.tbl)
 #rewriteMaxTime(100)
 #setShiftOffset(200)
-#convert(Dd<50>Ee) = ぽ
-#convert(DdEe) = 。し
+convert({0}[0]{0}[0]) = 11
+convert({1}[1]{1}[1]) = 22
+convert(AaAa) = 種
+convert(A<12>{40}<131>a<28>[40]<37>J<17>j) = 愉
+convert(A<12>{40}<131>J<17>a<28>[40]<37>j) = 愉
+clear()
 
 ### NICOLA ###
 loadTable(tables/_test/nicola.tbl)

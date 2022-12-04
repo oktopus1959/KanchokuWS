@@ -1638,7 +1638,7 @@ namespace KanchokuWS
 
             logger.InfoH(() =>
                 $"HandleDeckeyDecoder: RESULT: table#={decoderOutput.strokeTableNum}, strokeDepth={decoderOutput.GetStrokeCount()}, layout={decoderOutput.layout}, " +
-                $"numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}, topString={decoderOutput.topString}, " +
+                $"numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}, topString={decoderOutput.topString._toString()}, " +
                 $"IsDeckeyToVkey={decoderOutput.IsDeckeyToVkey()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
 
             // 第1打鍵待ち状態になったら、一時的な仮想鍵盤表示カウントをリセットする
@@ -1815,6 +1815,11 @@ namespace KanchokuWS
 
             // デコーダの呼び出し
             HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, ref decoderOutput);
+
+            logger.InfoH(() =>
+                $"HandleDeckeyDecoder: RESULT: table#={decoderOutput.strokeTableNum}, strokeDepth={decoderOutput.GetStrokeCount()}, layout={decoderOutput.layout}, " +
+                $"numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}, topString={decoderOutput.topString._toString()}, " +
+                $"IsDeckeyToVkey={decoderOutput.IsDeckeyToVkey()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
 
             bool bPreRewriteTarget = isTailPreRewriteChar(decoderOutput.outString);
             // 前置書き換え対象文字なら、許容時間をセットする
