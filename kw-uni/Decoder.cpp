@@ -94,7 +94,7 @@ public:
     }
 
     // 初期化
-    void Initialize(DecoderCommandParams* params) {
+    void Initialize(DecoderCommandParams* params) override {
         LOG_INFO(_T("ENTER"));
 
         // 状態の共有情報生成
@@ -151,7 +151,7 @@ public:
     }
 
     // 終了
-    void Destroy() {
+    void Destroy() override {
         LOG_INFO(_T("CALLED"));
     }
 
@@ -271,7 +271,7 @@ public:
     }
 
     // デコーダ状態のリセット (Decoder が ON になったときに呼ばれる)
-    void Reset() {
+    void Reset() override {
         deleteRemainingState();
         STATE_COMMON->ClearAllStateInfo();
         OUTPUT_STACK->pushNewLine();    // 履歴ブロッカーとして改行を追加
@@ -301,7 +301,7 @@ public:
     }
 
     // デコーダが扱う辞書を保存する
-    void SaveDicts() {
+    void SaveDicts() override {
         LOG_INFO(_T("CALLED"));
         if (BUSHU_DIC) {
             BUSHU_DIC->WriteBushuDic();
@@ -320,7 +320,7 @@ public:
     // コマンド実行
     // cmdParams->inOutData に "コマンド\t引数" の形でコマンドラインが格納されている
     // 結果は outParams で返す
-    void ExecCmd(DecoderCommandParams* cmdParams, DecoderOutParams* outParams) {
+    void ExecCmd(DecoderCommandParams* cmdParams, DecoderOutParams* outParams) override {
         LOG_INFOH(_T("ENTER: paramLen=%d, data=%s"), _tcslen(cmdParams->inOutData), cmdParams->inOutData);
 
         OutParams = outParams;
@@ -532,8 +532,9 @@ public:
     }
 
     // DECKEY処理
-    void HandleDeckey(int keyId, mchar_t targetChar, bool decodeKeyboardChar, DecoderOutParams* outParams) {
-        LOG_INFOH(_T("\nENTER: keyId=%xH(%d=%s), targetChar=%s, decodeKeyboardChar=%s"), keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId), to_wstr(targetChar).c_str(), BOOL_TO_WPTR(decodeKeyboardChar));
+    void HandleDeckey(int keyId, mchar_t targetChar, bool decodeKeyboardChar, bool upperRomanGuideMode, DecoderOutParams* outParams) override {
+        LOG_INFOH(_T("\nENTER: keyId=%xH(%d=%s), targetChar=%s, decodeKeyboardChar=%s, upperRomanGuideMode=%s"),
+            keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId), to_wstr(targetChar).c_str(), BOOL_TO_WPTR(decodeKeyboardChar), BOOL_TO_WPTR(upperRomanGuideMode));
         OutParams = outParams;
         initializeOutParams();
 
@@ -544,6 +545,7 @@ public:
         STATE_COMMON->IncrementTotalDecKeyCount();
         STATE_COMMON->CountSameDecKey(keyId);
         if (decodeKeyboardChar) STATE_COMMON->SetDecodeKeyboardCharMode();  // キーボードフェイス文字を返すモード
+        if (upperRomanGuideMode) STATE_COMMON->SetUpperRomanGuideMode();    // 英大文字による入力ガイドモード
         LOG_INFO(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
 
         // 同時打鍵コードなら、RootStrokeStateを削除しておく⇒と思ったが、実際にはそのようなケースがあったのでコメントアウト(「のにいると」で  KkDF のケース)
@@ -999,8 +1001,10 @@ int MakeInitialVkbTableDecoder(void* pDecoder, DecoderOutParams* table) {
 
 // DECKEYハンドラ
 // 引数: keyId = DECKEY ID, targetChar = 入力しようとしている文字
-int HandleDeckeyDecoder(void* pDecoder, int keyId, mchar_t targetChar, bool decodeKeyboardChar, DecoderOutParams* params) {
-    auto method_call = [pDecoder, keyId, targetChar, decodeKeyboardChar, params]() { ((Decoder*)pDecoder)->HandleDeckey(keyId, targetChar, decodeKeyboardChar, params); };
+int HandleDeckeyDecoder(void* pDecoder, int keyId, mchar_t targetChar, bool decodeKeyboardChar, bool upperRomanGuideMode, DecoderOutParams* params) {
+    auto method_call = [pDecoder, keyId, targetChar, decodeKeyboardChar, upperRomanGuideMode, params]() {
+        ((Decoder*)pDecoder)->HandleDeckey(keyId, targetChar, decodeKeyboardChar, upperRomanGuideMode, params);
+    };
     return invokeDecoderMethod(method_call, nullptr);
 }
 

@@ -147,6 +147,9 @@ class StateCommonInfo {
     // キーボード文字へのデコードを行う
     bool decodeKeyboardChar = false;
 
+    // 英大文字による入力ガイドモードか
+    bool upperRomanGuideMode = false;
+
 public:
     StateCommonInfo()
         : layout(VkbLayout::None)
@@ -210,6 +213,7 @@ public:
         outStringProcDone = false;
         convertHiraganaToKatakana = false;
         decodeKeyboardChar = false;
+        upperRomanGuideMode = false;
     }
 
     // デコーダのON時に呼び出される初期化
@@ -268,6 +272,9 @@ public:
 
     inline void SetDecodeKeyboardCharMode() { decodeKeyboardChar = true; }
     inline bool IsDecodeKeyboardCharMode() { return decodeKeyboardChar; }
+
+    inline void SetUpperRomanGuideMode() { upperRomanGuideMode = true; }
+    inline bool IsUpperRomanGuideMode() { return upperRomanGuideMode; }
 
     // 次の選択位置として pos を設定する。
     // pos < 0 なら未選択状態。ただし Horizontal なら先頭候補を優先候補として色付け
