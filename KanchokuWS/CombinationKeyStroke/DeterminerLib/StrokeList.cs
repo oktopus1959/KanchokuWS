@@ -450,6 +450,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             //List<List<Stroke>> subComboLists = gatherSubList(bTempComboDisabled ? null : comboList);
 
                             bool bForceOutput = false;
+                            bool bPrefixShiftMaybe = false;
                             int outputLen = 0;
                             int discardLen = 1;
                             int copyShiftLen = 1;
@@ -534,6 +535,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                             //    bTempUnconditional = false;
                                             //    bTempComboDisabled = false;
                                             //}
+                                            bPrefixShiftMaybe = (rule.k1stShift == 2);      // 連続シフト打鍵の可能性あり
+                                                                                            // この場合、連続シフト版月光で DKkIid と打鍵したとき、DK でこのルールが適用され、
+                                                                                            // D を残すことで次の I にシフトがかかり、「よ」が出るようになる
                                             logger.DebugH(() => $"RULE({n}) APPLIED: outputLen={outputLen}, discardLen={discardLen}, copyShiftLen={copyShiftLen}");
                                             break;
                                         }
@@ -553,8 +557,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 // 強制出力か文字を持つか単打可能か順次シフトキーの場合だけ、出力する
                                 if (bForceOutput || s.HasString || s.IsSingleHittable || s.IsSequentialShift) {
                                     result.Add(s.OrigDecoderKey);
-                                    // 同時打鍵でなく出力されたキーは comboList には移さない
-                                    s.SetToBeRemoved();
+                                    // 連続シフト打鍵の可能性がない場合、出力されたキーは comboList には移さない
+                                    if (!bPrefixShiftMaybe) s.SetToBeRemoved();
                                     logger.DebugH(() => $"ADD: result={result._keyString()}");
                                 }
                             }
