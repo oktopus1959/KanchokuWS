@@ -323,7 +323,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public void AddRepeatableKey(int keyCode)
         {
             logger.DebugH(() => $"CALLED: keyCode={keyCode}");
-            if (keyCode > 0) MiscKeys.AddRepeatableKey(keyCode);
+            if (keyCode >= 0) MiscKeys.AddRepeatableKey(keyCode);
         }
 
         public bool IsRepeatableKey(int keyCode)
@@ -339,7 +339,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         //public void AddPreRewriteKey(int keyCode)
         //{
         //    logger.DebugH(() => $"CALLED: keyCode={keyCode}");
-        //    if (keyCode > 0) MiscKeys.AddPreRewriteKey(keyCode);
+        //    if (keyCode >= 0) MiscKeys.AddPreRewriteKey(keyCode);
         //}
 
         //public bool IsPreRewriteKey(int keyCode)
@@ -355,7 +355,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public void AddComboShiftKey(int keyCode, ComboKind kind)
         {
             logger.DebugH(() => $"CALLED: keyCode={keyCode}, shiftKey={kind}");
-            if (keyCode > 0) ComboShiftKeys.AddShiftKey(keyCode, kind);
+            if (keyCode >= 0) ComboShiftKeys.AddShiftKey(keyCode, kind);
         }
 
         /// <summary>
