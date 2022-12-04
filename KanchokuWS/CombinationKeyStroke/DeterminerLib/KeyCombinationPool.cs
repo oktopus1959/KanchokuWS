@@ -252,7 +252,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             // まずは打鍵されたキーをそのまま使って検索
             var combo = keyComboDict.Get(strokeList._toOrigDecKeyList());
-            if (combo == null && strokeList.Any(x => x.OrigDecoderKey >= DecoderKeys.PLANE_DECKEY_NUM)) {
+            if (combo == null && strokeList.Any(x => x.OrigDecoderKey >= DecoderKeys.SHIFT_A_DECKEY_START)) {
                 // 見つからない、かつ拡張シフトコードが含まれていれば、すべてModuloizeしたキーでも試す
                 combo = keyComboDict.Get(strokeList._toModuloDecKeyList());
             }
@@ -272,7 +272,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public KeyCombination GetEntry(int origDecKey, int moduloDecKey)
         {
             var combo = getEntry(origDecKey);
-            if (combo == null && origDecKey >= DecoderKeys.PLANE_DECKEY_NUM) {
+            if (combo == null && origDecKey >= DecoderKeys.SHIFT_A_DECKEY_START) {
                 // 見つからない、かつ拡張シフトコードならば、Moduloizeしたキーでも試す
                 combo = getEntry(moduloDecKey);
             }

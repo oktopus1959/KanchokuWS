@@ -30,10 +30,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             public void Initialize()
             {
-                logger.DebugH("PrevShiftKey.Initialize: CALLED");
                 PrevShiftKey = 0;
                 UpDt = DateTime.MinValue;
                 ComboPressed = false;
+                logger.DebugH(() => $"LEAVE: PrevShiftKey={PrevShiftKey}, UpDt={UpDt}, ComboPressed={ComboPressed}");
             }
 
             public void SetValues(int shiftDeckey, DateTime upDt)
@@ -41,20 +41,22 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 PrevShiftKey = shiftDeckey;
                 UpDt = upDt;
                 ComboPressed = false;
-                logger.DebugH(() => $"PrevShiftKey.SetValues: CALLED: PrevShiftKey={PrevShiftKey}, UpDt={UpDt}");
+                logger.DebugH(() => $"LEAVE: PrevShiftKey={PrevShiftKey}, UpDt={UpDt}, ComboPressed={ComboPressed}");
             }
 
             public void CheckComboKeyDown(int deckey)
             {
-                logger.DebugH(() => $"PrevShiftKey.CheckComboKeyDown: CALLED: deckey={deckey}");
+                logger.DebugH(() => $"ENTER: PrevShiftKey={PrevShiftKey}, deckey={deckey}, ComboPressed={ComboPressed}");
                 if (PrevShiftKey != deckey) {
                     if (ComboPressed) {
+                        logger.DebugH(() => $"ComboPressed: DO Initialize");
                         Initialize();
                     } else {
-                        logger.DebugH(() => $"PrevShiftKey.CheckComboKeyDown: ComboPressed: PrevShiftKey={PrevShiftKey}, deckey={deckey}");
+                        logger.DebugH(() => $"transit to ComboPressed");
                         ComboPressed = true;
                     }
                 }
+                logger.DebugH(() => $"LEAVE: PrevShiftKey={PrevShiftKey}, deckey={deckey}, ComboPressed={ComboPressed}");
             }
 
             public DateTime GetPrevComboShiftKeyUpDt(int shiftDeckey)
