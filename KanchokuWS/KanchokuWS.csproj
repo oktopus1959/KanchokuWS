@@ -104,7 +104,7 @@
     <Compile Include="CommonState.cs" />
     <Compile Include="Domain\DecoderKeys.cs" />
     <Compile Include="Domain\DecoderKeyToChar.cs" />
-    <Compile Include="DecoderOutParams.cs" />
+    <Compile Include="DecoderParams.cs" />
     <Compile Include="Gui\DlgColorSelector.cs">
       <SubType>Form</SubType>
     </Compile>

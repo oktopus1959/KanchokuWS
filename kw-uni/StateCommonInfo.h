@@ -20,6 +20,16 @@ enum class VkbLayout {
     StrokeHelp = 51,
 };
 
+// inputFlags の詳細
+enum class InputFlags
+{
+    // 打鍵されたキーの文字をそのまま返す
+    DecodeKeyboardChar = 1,
+
+    // 英大文字ロ－マ字による打鍵ガイドモード
+    UpperRomanGuideMode = 2,
+};
+
 // resultFlags の詳細
 enum class ResultFlags
 {

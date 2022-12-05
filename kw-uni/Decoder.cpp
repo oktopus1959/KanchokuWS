@@ -532,7 +532,9 @@ public:
     }
 
     // DECKEY処理
-    void HandleDeckey(int keyId, mchar_t targetChar, bool decodeKeyboardChar, bool upperRomanGuideMode, DecoderOutParams* outParams) override {
+    void HandleDeckey(int keyId, mchar_t targetChar, int intputFlags, DecoderOutParams* outParams) override {
+        bool decodeKeyboardChar = (intputFlags & (int)InputFlags::DecodeKeyboardChar) != 0;
+        bool upperRomanGuideMode = (intputFlags & (int)InputFlags::UpperRomanGuideMode) != 0;
         LOG_INFOH(_T("\nENTER: keyId=%xH(%d=%s), targetChar=%s, decodeKeyboardChar=%s, upperRomanGuideMode=%s"),
             keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId), to_wstr(targetChar).c_str(), BOOL_TO_WPTR(decodeKeyboardChar), BOOL_TO_WPTR(upperRomanGuideMode));
         OutParams = outParams;
@@ -1001,10 +1003,8 @@ int MakeInitialVkbTableDecoder(void* pDecoder, DecoderOutParams* table) {
 
 // DECKEYハンドラ
 // 引数: keyId = DECKEY ID, targetChar = 入力しようとしている文字
-int HandleDeckeyDecoder(void* pDecoder, int keyId, mchar_t targetChar, bool decodeKeyboardChar, bool upperRomanGuideMode, DecoderOutParams* params) {
-    auto method_call = [pDecoder, keyId, targetChar, decodeKeyboardChar, upperRomanGuideMode, params]() {
-        ((Decoder*)pDecoder)->HandleDeckey(keyId, targetChar, decodeKeyboardChar, upperRomanGuideMode, params);
-    };
+int HandleDeckeyDecoder(void* pDecoder, int keyId, mchar_t targetChar, int inputFlags, DecoderOutParams* params) {
+    auto method_call = [pDecoder, keyId, targetChar, inputFlags, params]() { ((Decoder*)pDecoder)->HandleDeckey(keyId, targetChar, inputFlags, params); };
     return invokeDecoderMethod(method_call, nullptr);
 }
 

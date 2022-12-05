@@ -547,7 +547,7 @@ namespace KanchokuWS
         /// <summary> Decoder へ入力DECKEYキーを送信する </summary>
         /// <param name="decoder"></param>
         [DllImport("kw-uni.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern void HandleDeckeyDecoder(IntPtr decoder, int keyId, uint targetChar, bool decodeKeyboardChar, bool upperRomanGuideMode, ref DecoderOutParams outParams);
+        static extern void HandleDeckeyDecoder(IntPtr decoder, int keyId, uint targetChar, int inputFlags, ref DecoderOutParams outParams);
 
         /// <summary> Decoder へ各種データを送信する </summary>
         [DllImport("kw-uni.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -871,7 +871,7 @@ namespace KanchokuWS
                                     InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);   // やっぱり出力文字列をクリアしておく必要あり
                                                                                         //ExecCmdDecoder("setHiraganaBlocker", null);       // こっちだと、以前のひらがなが出力文字列に残ったりして、それを拾ってしまう
                                 } else {
-                                    //HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, false, ref decoderOutput); // こっちだと、見えなくなるだけで、ひらがな列が残ってしまう
+                                    //HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, 0, ref decoderOutput); // こっちだと、見えなくなるだけで、ひらがな列が残ってしまう
                                     ExecCmdDecoder("clearTailHiraganaStr", null);   // 物理的に読みのひらがな列を削除しておく必要あり
                                 }
                                 drawRomanOrHiraganaMode(false, bHiraganaStrokeGuideMode);
@@ -1624,6 +1624,14 @@ namespace KanchokuWS
             }
         }
 
+        private int makeInputFlags(bool romanStrokeGuideMode, bool upperRomanStrokeGuideMode)
+        {
+            int result = 0;
+            if (romanStrokeGuideMode) result |= DecoderInputFlags.DecodeKeyboardChar;
+            if (upperRomanStrokeGuideMode) result |= DecoderInputFlags.UpperRomanGuideMode;
+            return result;
+        }
+
         /// <summary>
         /// デコーダの呼び出し
         /// </summary>
@@ -1635,7 +1643,7 @@ namespace KanchokuWS
             logger.InfoH(() => $"targetChar={targetChar}, bRomanStrokeGuideMode={bRomanStrokeGuideMode}, bUpperRomanStrokeGuideMode={bUpperRomanStrokeGuideMode}");
 
             // デコーダの呼び出し
-            HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, bUpperRomanStrokeGuideMode, ref decoderOutput);
+            HandleDeckeyDecoder(decoderPtr, deckey, targetChar, makeInputFlags(bRomanStrokeGuideMode, bUpperRomanStrokeGuideMode), ref decoderOutput);
 
             logger.InfoH(() =>
                 $"HandleDeckeyDecoder: RESULT: table#={decoderOutput.strokeTableNum}, strokeDepth={decoderOutput.GetStrokeCount()}, layout={decoderOutput.layout}, " +
@@ -1714,7 +1722,7 @@ namespace KanchokuWS
                     // 第2打鍵以降の待ちで、何かVkey出力がある場合は、打鍵クリア
                     if (decoderOutput.IsDeckeyToVkey()) {
                         logger.DebugH(() => $"send CLEAR_STROKE_DECKEY");
-                        //HandleDeckeyDecoder(decoderPtr, DecoderKeys.CLEAR_STROKE_DECKEY, 0, false, false, ref decoderOutput);
+                        //HandleDeckeyDecoder(decoderPtr, DecoderKeys.CLEAR_STROKE_DECKEY, 0, 0, ref decoderOutput);
                         sendClearStrokeToDecoder();
                     }
                     if (decoderOutput.numBackSpaces > 0) {
@@ -1755,7 +1763,7 @@ namespace KanchokuWS
                         if (bFuncVkeyContained) {
                             logger.DebugH("PATH-5");
                             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
-                            HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, false, ref decoderOutput);
+                            HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, 0, ref decoderOutput);
                         }
                         // 前置書き換え対象文字なら、許容時間をセットする
                         CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(bPreRewriteTarget);
@@ -1816,7 +1824,7 @@ namespace KanchokuWS
                 $"targetChar={targetChar}, bRomanStrokeGuideMode={bRomanStrokeGuideMode}, bUpperRomanStrokeGuideMode={bUpperRomanStrokeGuideMode}");
 
             // デコーダの呼び出し
-            HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, bUpperRomanStrokeGuideMode, ref decoderOutput);
+            HandleDeckeyDecoder(decoderPtr, deckey, targetChar, makeInputFlags(bRomanStrokeGuideMode, bUpperRomanStrokeGuideMode), ref decoderOutput);
 
             logger.InfoH(() =>
                 $"HandleDeckeyDecoder: RESULT: table#={decoderOutput.strokeTableNum}, strokeDepth={decoderOutput.GetStrokeCount()}, layout={decoderOutput.layout}, " +
@@ -1843,7 +1851,7 @@ namespace KanchokuWS
                 $"targetChar={targetChar}, bRomanStrokeGuideMode={bRomanStrokeGuideMode}, bUpperRomanStrokeGuideMode={bUpperRomanStrokeGuideMode}");
 
             // デコーダの呼び出し
-            HandleDeckeyDecoder(decoderPtr, deckey, targetChar, bRomanStrokeGuideMode, bUpperRomanStrokeGuideMode, ref decoderOutput);
+            HandleDeckeyDecoder(decoderPtr, deckey, targetChar, makeInputFlags(bRomanStrokeGuideMode, bUpperRomanStrokeGuideMode), ref decoderOutput);
 
             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
             bool bFuncVkeyContained = isFuncVkeyContained(decoderOutput.outString);
@@ -1852,7 +1860,7 @@ namespace KanchokuWS
             SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
             if (bFuncVkeyContained) {
                 // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
-                HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, false, false, ref decoderOutput);
+                HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, 0, ref decoderOutput);
             }
             // 前置書き換え対象文字なら、許容時間をセットする
             CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(bPreRewriteTarget);
@@ -1873,7 +1881,7 @@ namespace KanchokuWS
         private void sendDeckeyToDecoder(int deckey)
         {
             logger.InfoH(() => $"CLLED: deckey={deckey:x}H({deckey})");
-            HandleDeckeyDecoder(decoderPtr, deckey, 0, false, false, ref decoderOutput);
+            HandleDeckeyDecoder(decoderPtr, deckey, 0, 0, ref decoderOutput);
             if (IsDecoderActive) {
                 // 仮想キーボードにヘルプや文字候補を表示
                 frmVkb.DrawVirtualKeyboardChars();

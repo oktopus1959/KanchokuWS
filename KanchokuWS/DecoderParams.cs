@@ -71,6 +71,18 @@ namespace KanchokuWS
     }
 
     /// <summary>
+    /// Decoder に対する入力フラグ
+    /// </summary>
+    public static class DecoderInputFlags
+    {
+        /// <summary>打鍵されたキーの文字をそのまま返す</summary>
+        public const int DecodeKeyboardChar = 1;
+
+        /// <summary>英大文字ロ－マ字による打鍵ガイドモード</summary>
+        public const int UpperRomanGuideMode = 2;
+    }
+
+    /// <summary>
     /// 次の入力で期待されるキーの型
     /// </summary>
     public static class ExpectedKeyType
