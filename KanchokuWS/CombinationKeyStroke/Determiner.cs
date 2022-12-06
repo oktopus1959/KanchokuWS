@@ -278,7 +278,9 @@ namespace KanchokuWS.CombinationKeyStroke
                 var stroke = new Stroke(decKey, bDecoderOn, dt);
                 var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
 
-                if (lastRepeatedDecKey == decKey && strokeList.IsEmpty() && combo == null && bDecoderOn && bWaitSecondStroke) {
+                logger.DebugH(() => $"combo={(combo == null ? "null" : combo.DecKeysDebugString())}");
+
+                if (lastRepeatedDecKey == decKey && strokeList.IsEmpty() && (combo == null || combo.IsSubKey) && bDecoderOn && bWaitSecondStroke) {
                     // 第2打鍵待ちで、同時打鍵でなくオートリピートされた場合はキーを無視する
                     logger.DebugH("IGNORE auto repeat key");
                     frmMain.IsWaitingSecondStrokeLocked = true;
@@ -408,10 +410,19 @@ namespace KanchokuWS.CombinationKeyStroke
         public void KeyUp(int decKey, bool bDecoderOn, bool bTimer = false)
         {
             DateTime dtNow = DateTime.Now;
-            lastRepeatedDecKey = -1;
+
+            bool bSameLastKey = !strokeList.IsUnprocListEmpty && strokeList.Last.OrigDecoderKey == decKey;
+
+            if (bTimer && bSameLastKey) {
+                // 漢直配列で第1打鍵がスペースキーとの同時打鍵の場合に、第1打鍵を長押しして第2打鍵待ちの状態でロックしようとすることがあるので、
+                // 押下中のキーと同じキーがタイマーによってKeyUpされたときは、キーリピート状態に移行する
+                lastRepeatedDecKey = decKey;
+            } else {
+                lastRepeatedDecKey = -1;
+            }
+
             logger.DebugH(() => $"\ndecKey={decKey}, DecoderOn={bDecoderOn}, bTimer={bTimer}, strokeList={strokeList.ToDebugString()}");
-            if (!bTimer || (!strokeList.IsUnprocListEmpty && strokeList.Last.OrigDecoderKey == decKey))     // タイマーの場合は、最後に押下されたキーと一致しているか
-            {
+            if (!bTimer || bSameLastKey) {    // タイマーの場合は、最後に押下されたキーと一致しているか
                 frmMain?.WriteStrokeLog(decKey, dtNow, false, false, bTimer);
                 procQueue.Enqueue(() => keyUp(decKey, dtNow, bTimer, bDecoderOn));
                 HandleQueue();

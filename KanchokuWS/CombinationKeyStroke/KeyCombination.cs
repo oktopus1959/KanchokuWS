@@ -51,6 +51,9 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <summary>当同時打鍵組合せに割り当てられた出力文字列を得るためにデコーダに送信する DecoderKey のリスト</summary>
         public List<int> DecKeyList { get; private set; }
 
+        /// <summary>当同時打鍵組合せは同時打鍵列の部分キーか</summary>
+        public bool IsSubKey => DecKeyList._isEmpty();
+
         //private List<int> _comboKeyList { get; set; }
         /// <summary>同時打鍵組合せのデバッグ表示用文字列</summary>
         private string _comboKeyStr { get; set; }
@@ -79,6 +82,10 @@ namespace KanchokuWS.CombinationKeyStroke
             return _comboKeyStr._orElse("(empty)");
         }
 
+        public string DebugString()
+        {
+            return ComboKeysDebugString() + "/" + DecKeysDebugString();
+        }
     }
 
     public static class KeyCombinationExtension
