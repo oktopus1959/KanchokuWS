@@ -242,6 +242,11 @@ convert(G<89>K<7>J<31>g<65>jk) = でき
 convert(J<59>K<20>jk) = いあ
 convert(J<50>K<80>jk) = き
 
+### 薙刀式 w/ 漢直 ###
+loadTable(tables/_test/naginata15.knj.tbl)
+convert(J<10>K<10>S<10>s<10>W<10>w<10>S<10>s<10>E<10>e<10>j<10>k) = 恋旅
+clear()
+
 #### OKT (同時打鍵) ###
 loadTable(tables/_test/okt.tbl)
 #rewriteMaxTime(100)
@@ -251,6 +256,7 @@ convert({1}[1]{1}[1]) = 22
 convert(AaAa) = 種
 convert(A<12>{40}<131>a<28>[40]<37>J<17>j) = 愉
 convert(A<12>{40}<131>J<17>a<28>[40]<37>j) = 愉
+convert({40}<10>O<10>o<10>8<10>~8<10>O<100>o<10>R<10>r<10>[40]) = 撤廃
 clear()
 
 ### NICOLA ###
