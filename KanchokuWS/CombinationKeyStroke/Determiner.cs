@@ -245,9 +245,6 @@ namespace KanchokuWS.CombinationKeyStroke
         // 直前のキー(オートリピートの判定に用いる)
         int lastRepeatedDecKey = -1;
 
-        /// <summary>第2打鍵待ちでロックされている(勝手に第2打鍵待ちをキャンセルしない)</summary>
-        public bool IsWaitingSecondStrokeLocked { get; private set; } = false;
-
         /// <summary>
         /// キーの押下<br/>押下されたキーをキューに積み、可能であれば同時打鍵判定も行う
         /// </summary>
@@ -276,7 +273,7 @@ namespace KanchokuWS.CombinationKeyStroke
 
             try {
                 bool bWaitSecondStroke = frmMain != null && !frmMain.IsDecoderWaitingFirstStroke();
-                if (!bWaitSecondStroke) IsWaitingSecondStrokeLocked = false;
+                if (!bWaitSecondStroke) frmMain.IsWaitingSecondStrokeLocked = false;
 
                 var stroke = new Stroke(decKey, bDecoderOn, dt);
                 var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
@@ -284,7 +281,7 @@ namespace KanchokuWS.CombinationKeyStroke
                 if (lastRepeatedDecKey == decKey && strokeList.IsEmpty() && combo == null && bDecoderOn && bWaitSecondStroke) {
                     // 第2打鍵待ちで、同時打鍵でなくオートリピートされた場合はキーを無視する
                     logger.DebugH("IGNORE auto repeat key");
-                    IsWaitingSecondStrokeLocked = true;
+                    frmMain.IsWaitingSecondStrokeLocked = true;
                 } else {
                     lastRepeatedDecKey = decKey;
                     if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {

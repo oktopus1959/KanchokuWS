@@ -1620,6 +1620,8 @@ namespace KanchokuWS
                 if (s._notEmpty()) {
                     targetChar = s[0];
                     if (s.Length > 1) targetChar = targetChar << 16 + s[1];
+                    // 第2打鍵待ちでロックする(勝手に第2打鍵待ちをキャンセルしない)
+                    IsWaitingSecondStrokeLocked = true;
                 }
             }
         }
@@ -2078,6 +2080,9 @@ namespace KanchokuWS
         // 第2打鍵待ちになった時刻
         private DateTime dtWaitSecondStroke = DateTime.MaxValue;
 
+        /// <summary>第2打鍵待ちでロックされている(勝手に第2打鍵待ちをキャンセルしない)</summary>
+        public bool IsWaitingSecondStrokeLocked { get; set; } = false;
+
         /// <summary>
         /// メインタイマー
         /// </summary>
@@ -2108,7 +2113,7 @@ namespace KanchokuWS
             // 第2打鍵待ちの場合は、それをキャンセルする
             if (IsDecoderActive && decoderOutput.GetStrokeCount() > 0 && Settings.CancelSecondStrokeMillisec > 0) {
                 if (dtWaitSecondStroke._isValid() && dtWaitSecondStroke <= DateTime.Now.AddMilliseconds(-Settings.CancelSecondStrokeMillisec)) {
-                    if (!CombinationKeyStroke.Determiner.Singleton.IsWaitingSecondStrokeLocked) {
+                    if (!IsWaitingSecondStrokeLocked) {
                         dtWaitSecondStroke = DateTime.MaxValue;
                         sendClearStrokeToDecoder();
                     }
