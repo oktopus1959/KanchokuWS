@@ -255,7 +255,7 @@ namespace KanchokuWS.Gui
             {
                 int start = ++pos;
                 while (pos < keysLen) {
-                    if (keys[pos] == ch) break;
+                    if ((ch != '\0' && keys[pos] == ch) || (ch == '\0' && !keys[pos]._isAlphaNum())) break;
                     ++pos;
                 }
                 if (pos > start) {
@@ -298,6 +298,9 @@ namespace KanchokuWS.Gui
                         keyDown(keyToDeckey._safeGet(k));
                     } else if (k >= 'a' && k <= 'z') {
                         keyUp(keyToDeckey._safeGet(toUpper(k)));
+                    } else if (k == '~') {
+                        k = keys[++pos];
+                        keyUp(keyToDeckey._safeGet(k));
                     } else if (k == '<') {
                         int ms = getDecKeyOrInt(ref pos, '>', true);
                         if (ms > 0) Helper.WaitMilliSeconds(ms);

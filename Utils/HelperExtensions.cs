@@ -133,6 +133,26 @@ namespace Utils
         }
 
         /// <summary>
+        /// 数字か
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <returns></returns>
+        public static bool _isNumber(this char ch)
+        {
+            return ch >= '0' && ch <= '9';
+        }
+
+        /// <summary>
+        /// 英数字か
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <returns></returns>
+        public static bool _isAlphaNum(this char ch)
+        {
+            return _isNumber(ch) || _isUpper(ch) || _isLower(ch);
+        }
+
+        /// <summary>
         /// 0 より大きければ自身を返し、0 以下なら defval を返す
         /// </summary>
         /// <param name="val"></param>
