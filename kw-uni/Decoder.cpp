@@ -535,8 +535,10 @@ public:
     void HandleDeckey(int keyId, mchar_t targetChar, int intputFlags, DecoderOutParams* outParams) override {
         bool decodeKeyboardChar = (intputFlags & (int)InputFlags::DecodeKeyboardChar) != 0;
         bool upperRomanGuideMode = (intputFlags & (int)InputFlags::UpperRomanGuideMode) != 0;
+
         LOG_INFOH(_T("\nENTER: keyId=%xH(%d=%s), targetChar=%s, decodeKeyboardChar=%s, upperRomanGuideMode=%s"),
             keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId), to_wstr(targetChar).c_str(), BOOL_TO_WPTR(decodeKeyboardChar), BOOL_TO_WPTR(upperRomanGuideMode));
+
         OutParams = outParams;
         initializeOutParams();
 

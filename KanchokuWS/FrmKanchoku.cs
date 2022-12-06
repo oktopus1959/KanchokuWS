@@ -1622,6 +1622,8 @@ namespace KanchokuWS
                     if (s.Length > 1) targetChar = targetChar << 16 + s[1];
                     // 第2打鍵待ちでロックする(勝手に第2打鍵待ちをキャンセルしない)
                     IsWaitingSecondStrokeLocked = true;
+                    // 単打で入力ガイドが終了する場合もあるので先にローマ字列をクリアしておく
+                    ExecCmdDecoder("clearTailRomanStr", null);
                 }
             }
         }
