@@ -279,7 +279,18 @@
 -J,K>||
 #include "../漢直系/tutr.tbl"
 ```
-
+ちなみに作者はこれを応用して、下記のようにスペースキーとの同時打鍵によって漢直の裏面配列を呼び出せるようにしています。
+実際の定義については、`tables/漢直系/okt.tbl` を参照してください。
+```
+;; 起点Comboで漢字読み置換(with句があるのでユーザー定義置換ファイルも使う)
+#yomiConvert with "user-yomi.txt"
+;; 起点Combo
+#combination
+-40>||
+#include "_subtables/okt-kanji.tbl"
+#end combination
+#yomiConvert end
+```
 
 ## 矢印記法とは何ですか
 テーブルファイルにおける最も基本的な記法です。以下のような形式で記述します。
