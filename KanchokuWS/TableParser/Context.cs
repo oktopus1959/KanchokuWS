@@ -310,7 +310,8 @@ namespace KanchokuWS.TableParser
                     if (strippedLowerLine._notEmpty() &&
                         (strippedLowerLine[0] != '#' ||
                         (!strippedLowerLine._safeContains("sands") && !strippedLowerLine._safeContains("combination") &&
-                         !strippedLowerLine._startsWith("#ifdef") && !strippedLowerLine._startsWith("#ifndef") &&
+                         !strippedLowerLine._startsWith("#if") &&
+                         //!strippedLowerLine._startsWith("#ifdef") && !strippedLowerLine._startsWith("#ifndef") &&
                          !strippedLowerLine._startsWith("#else") && !strippedLowerLine._startsWith("#endif")))) {
                         // コメントアウト
                         lines[idx] = ";;;; " + line;
