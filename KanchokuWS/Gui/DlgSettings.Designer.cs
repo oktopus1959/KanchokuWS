@@ -961,9 +961,9 @@ namespace KanchokuWS.Gui
             this.textBox_deckeyCharsFile.Name = "textBox_deckeyCharsFile";
             this.textBox_deckeyCharsFile.Size = new System.Drawing.Size(218, 19);
             this.textBox_deckeyCharsFile.TabIndex = 6;
-            this.toolTip1.SetToolTip(this.textBox_deckeyCharsFile, "HotKeyから文字への変換を定義するファイル\r\n\r\n打鍵されたキーを文字に変換してそのまま出力する場合に必要となる、\r\nHotKey⇒文字のマッピング定義ファイ" +
-        "ルを指定します。\r\n\r\nファイルの指定がない場合は、キーボードファイルと同種の定義ファイルが\r\n使用されます。\r\n例：キーボードファイルが 106.key なら" +
-        " chars.106.txt が使われる。");
+            this.toolTip1.SetToolTip(this.textBox_deckeyCharsFile, "漢直キーコードから文字への変換を定義するファイル\r\n\r\n打鍵されたキーを文字に変換してそのまま出力する場合に必要となる、\r\n漢直キーコード⇒文字のマッピング定義フ" +
+        "ァイルを指定します。\r\n\r\nファイルの指定がない場合は、キーボードファイルと同種の定義ファイルが\r\n使用されます。\r\n例：キーボードファイルが 106.key " +
+        "なら chars.106.txt が使われる");
             // 
             // label10
             // 
@@ -1484,7 +1484,8 @@ namespace KanchokuWS.Gui
             this.checkBox_dictsAutoSaveEnabled.Size = new System.Drawing.Size(137, 19);
             this.checkBox_dictsAutoSaveEnabled.TabIndex = 1;
             this.checkBox_dictsAutoSaveEnabled.Text = "辞書の自動保存を行う";
-            this.toolTip1.SetToolTip(this.checkBox_dictsAutoSaveEnabled, "辞書の自動保存を行う場合はチェックを入れてください。\r\n\r\n自動保存を行う場合は、さらに保存の実行間隔と、\r\n実行タイミングにおける待機時間も設定します。");
+            this.toolTip1.SetToolTip(this.checkBox_dictsAutoSaveEnabled, "辞書の自動保存を行う場合はチェックを入れてください。\r\n\r\n自動保存を行う場合は、さらに保存の実行間隔と、実行タイミングにおける\r\n待機時間も設定します。\r\n\r\n" +
+        "なお、自動保存実行の際、辞書の内容に変更がなければ、保存ファイルの\r\n更新は行われません。");
             this.checkBox_dictsAutoSaveEnabled.UseVisualStyleBackColor = true;
             this.checkBox_dictsAutoSaveEnabled.CheckedChanged += new System.EventHandler(this.checkBox_dictsAutoSaveEnabled_CheckedChanged);
             // 
@@ -1639,6 +1640,7 @@ namespace KanchokuWS.Gui
             this.button_getCurrentPos.Size = new System.Drawing.Size(95, 23);
             this.button_getCurrentPos.TabIndex = 6;
             this.button_getCurrentPos.Text = "現在位置取得";
+            this.toolTip1.SetToolTip(this.button_getCurrentPos, "現在の仮想鍵盤の位置を取得して、「固定表示位置」に設定します。");
             this.button_getCurrentPos.UseVisualStyleBackColor = true;
             this.button_getCurrentPos.Click += new System.EventHandler(this.button_getCurrentPos_Click);
             // 
