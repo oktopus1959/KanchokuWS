@@ -481,7 +481,7 @@ JISかなのタイピングを練習できるサイトやツールを利用し�
 
 ![Kana Training Mode 2](image/kana-training-mode-2.png)
 
-「かな入力練習モード」に入ると、下図のように仮想鍵盤の中央部が溥いピンク色に変わります。
+「かな入力練習モード」に入ると、下図のように仮想鍵盤の中央部が薄いピンク色に変わります。
 (この色は、設定ダイアログの「フォントと色」で変更できます。)
 
 ![Kana Training Mode Vkb](image/kana-training-mode-vkb.png)
