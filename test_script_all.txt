@@ -233,6 +233,16 @@ convert({sp}<5>W<142>w<23>[sp]<75>{,}<22>{sp}<111>[sp]<42>[,]) = だが
 comboDisableTime(200)
 convert({sp}<5>W<142>w<23>{,}<21>[sp]<75>[,]<177>K<22>{sp}<111>[sp]<42>k) = だがや
 
+### post.7 ###
+loadTable(tables/_test/noniiruto.post.7.tbl)
+comboMaxTime(100)
+comboMinTime(70)
+
+enableTimer1()
+enableTimer2()
+
+convert(D<95>F<57>{.}<40>d<9>{,}<24>f<105>[.]<18>[,]) = ような
+
 ### 同時打鍵 ###
 loadTable(tables/_test/combo-test.tbl)
 comboMaxTime(100)

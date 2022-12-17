@@ -294,16 +294,19 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     // 同時打鍵候補があった
                     double shiftTimeSpan = strk2.TimeSpanMs(strk1);
                     double shiftUpElapse = GetElapsedTimeFromShiftKeyUp(strk1, strk2);
-                    int maxAllowedTime() => Settings.CombinationKeyMaxAllowedLeadTimeMs2 > 0 && !strk1.IsSpaceOrFunc ? Settings.CombinationKeyMaxAllowedLeadTimeMs : Settings.CombinationKeyMaxAllowedLeadTimeMs;
-                    logger.DebugH(() => $"combo found: isStroke2Shift={strk2.IsComboShift}, shiftTimeSpan={(int)shiftTimeSpan:f1}ms, shiftUpElapse={shiftUpElapse:f1}ms, maxAllowedTime={maxAllowedTime()}");
+                    int maxAllowedTime() => Settings.CombinationKeyMaxAllowedLeadTimeMs2 > 0 && !strk1.IsSpaceOrFunc
+                        ? Settings.CombinationKeyMaxAllowedLeadTimeMs2
+                        : Settings.CombinationKeyMaxAllowedLeadTimeMs;
+                    logger.DebugH(() => $"combo found: " + 
+                        $"isStroke2Shift={strk2.IsComboShift}, shiftTimeSpan={(int)shiftTimeSpan:f1}ms, shiftUpElapse={shiftUpElapse:f1}ms, maxAllowedTime={maxAllowedTime()}");
                     bool stroke1Cond() => strk1.IsComboShift && shiftTimeSpan <= maxAllowedTime();
                     bool stroke2Cond() => !strk1.IsComboShift &&
                            (Settings.ComboDisableIntervalTimeMs <= 0 || shiftUpElapse >= Settings.ComboDisableIntervalTimeMs) &&
                            shiftTimeSpan <= Settings.ComboKeyMaxAllowedPostfixTimeMs;
-                    if (strk1.IsPrefixShift ||
+                    if ((strk1.IsPrefixShift && (comboList._isEmpty() || Settings.CombinationKeyMinOverlappingTimeMs <= 0)) ||
                         ((stroke1Cond() || stroke2Cond()) &&
                          (Settings.CombinationKeyMinTimeOnlyAfterSecond || Settings.CombinationKeyMinOverlappingTimeMs <= 0 || anyNotSingleHittable()))) {
-                        // 前置シフトであるか、または第2打鍵までの時間が閾値以下で即時判定あるいは親指シフトのように非単打キーを含む場合
+                        // (前置シフトの1文字目であるか、2文字目でも重複時間判定がない場合)、または(第2打鍵までの時間が閾値以下で即時判定あるいは親指シフトのように非単打キーを含む場合)
                         if (comboList._isEmpty() && KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey) {
                             // 連続シフトの場合は、同時打鍵に使用したキーを使い回す
                             comboList.Add(strk1.IsComboShift ? strk1 : strk2);
