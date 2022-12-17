@@ -189,7 +189,7 @@ namespace KanchokuWS.TableParser
 
             if (n >= word.Length) {
                 logger.InfoH(() => $"PRIORITY WORD({n}): {word._join(":")}, keyString={strokes._join(":")}");
-                result.Add(strokes._join(":"));
+                result.Add(strokes.Select(x => x._safeSubstring(-2))._join(":"));   // 100以上なら99以下に丸める
                 return;
             }
 
@@ -200,11 +200,12 @@ namespace KanchokuWS.TableParser
                     if (idx >= 0) {
                         getStrokeListSub(n + 1, word, makeList(strokes, idx), result);
                     } else {
-                        for (int i = 0; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
+                        for (int i = DecoderKeys.COMBO_DECKEY_START; i < DecoderKeys.COMBO_DECKEY_END; ++i) {
                             Node node = RootTableNode.GetNthSubNode(i);
                             if (node != null && node.IsTreeNode()) {
                                 idx = node.FindSubNode(chStr);
                                 if (idx >= 0) {
+                                    // 同時打鍵の組み合わせの場合に限り
                                     getStrokeListSub(n + 1, word, makeList(strokes, i, idx), result);
                                     getStrokeListSub(n + 1, word, makeList(strokes, idx, i), result);
                                 }
@@ -1241,25 +1242,27 @@ namespace KanchokuWS.TableParser
             }
 
             // 優先する順次打鍵列
-            foreach (var seq in Settings.SequentialPriorityWordSet) {
-                var strkList = GetStrokeList(seq);
-                if (strkList._notEmpty()) {
-                    foreach (var s in strkList) {
-                        if (s._startsWith("-:")) {
-                            Settings.ThreeKeysComboPriorityTailKeyStringSet.Add(s._safeSubstring(2));
-                        } else if (s._endsWith(":-")) {
-                            Settings.ThreeKeysComboPriorityHeadKeyStringSet.Add(s._safeSubstring(0, -2));
-                        } else {
-                            Settings.SequentialPriorityWordKeyStringSet.Add(s);
+            if (keyComboPool?.ContainsUnorderedShiftKey ?? false) {
+                foreach (var seq in Settings.SequentialPriorityWordSet) {
+                    var strkList = GetStrokeList(seq);
+                    if (strkList._notEmpty()) {
+                        foreach (var s in strkList) {
+                            if (s._startsWith("-:")) {
+                                Settings.ThreeKeysComboPriorityTailKeyStringSet.Add(s._safeSubstring(2));
+                            } else if (s._endsWith(":-")) {
+                                Settings.ThreeKeysComboPriorityHeadKeyStringSet.Add(s._safeSubstring(0, -2));
+                            } else {
+                                Settings.SequentialPriorityWordKeyStringSet.Add(s);
+                            }
                         }
+                    } else if (seq._safeContains(':')) {
+                        Settings.SequentialPriorityWordKeyStringSet.Add(seq);
                     }
-                } else if (seq._safeContains(':')) {
-                    Settings.SequentialPriorityWordKeyStringSet.Add(seq);
                 }
+                logger.InfoH($"SequentialPriorityWordKeyStringSet={Settings.SequentialPriorityWordKeyStringSet._join(",")}");
+                logger.InfoH($"ThreeKeysComboPriorityHeadKeyStringSet={Settings.ThreeKeysComboPriorityHeadKeyStringSet._join(",")}");
+                logger.InfoH($"ThreeKeysComboPriorityTailKeyStringSet={Settings.ThreeKeysComboPriorityTailKeyStringSet._join(",")}");
             }
-            logger.InfoH($"SequentialPriorityWordKeyStringSet={Settings.SequentialPriorityWordKeyStringSet._join(",")}");
-            logger.InfoH($"ThreeKeysComboPriorityHeadKeyStringSet={Settings.ThreeKeysComboPriorityHeadKeyStringSet._join(",")}");
-            logger.InfoH($"ThreeKeysComboPriorityTailKeyStringSet={Settings.ThreeKeysComboPriorityTailKeyStringSet._join(",")}");
 
             // 全ノードの情報を OutputLines に書き出す
             RootTableNode.OutputLine(OutputLines);
