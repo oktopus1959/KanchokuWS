@@ -1399,8 +1399,8 @@ namespace KanchokuWS.TableParser
                 parser.ParseDirectives();
                 ParserContext.FinalizeSingleton();
             } else {
-                //tableLines.Error($"テーブルファイル({filename})が開けません");
-                //tableLines.showErrorMessage();
+                tableLines.Error($"{(primary ? "主" : "副")}テーブルファイル({filename})が開けません\r\n設定ダイアログを開いて使用するファイルを選択しなおしてください。");
+                tableLines.showErrorMessage();
             }
 
             //tableLines.showErrorMessage();
