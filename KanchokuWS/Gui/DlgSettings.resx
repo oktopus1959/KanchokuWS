@@ -120,33 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="textBox_saveDictsCalmTime.ToolTip" xml:space="preserve">
-    <value>辞書の自動保存時刻になってからの待機時間を設定します(分単位)
-
-辞書の自動保存時刻になってから、漢直モードがONの時に、この待機時間が
-経過するまでキー入力操作が行なければ、実際に辞書の保存を実行します。
-何かキー入力操作が行われた場合は、ここで設定した時間だけ待機時間が
-延長されます。
-
-なお、辞書の自動保存時刻になった時に漢直モードがOFFであるか、あるいは
-その後に漢直モードがOFFになれば、その時点でも辞書の保存が実行されます。</value>
-  </data>
-  <data name="textBox_backFileRotationGeneration.ToolTip" xml:space="preserve">
-    <value>辞書ファイルの保存世代数を設定します。
-
-アプリ終了時（または辞書内容を保存て再起動時）には、既存の辞書
-ファイルが back ディレクトリにバックアップファイルとして保存されます。
-
-バックアップファイルは、ここで設定した世代数にわたって保存されます。
-
-バックアップファイルの名前には、末尾に世代を表す数字が付加されます。
-たとえば、履歴ファイルであれば、 back\\kwhist.user.txt.1 のような名前で
-保存されます。古い世代ほど、末尾の数字が大きくなります。
-</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -244,6 +217,30 @@ JIS 106キーボードの場合だと、以下のような漢直キーコード�
 ・・・
 #enableWarning overwrite
 で囲んでください。</value>
+  </data>
+  <data name="textBox_saveDictsCalmTime.ToolTip" xml:space="preserve">
+    <value>辞書の自動保存時刻になってからの待機時間を設定します(分単位)
+
+辞書の自動保存時刻になってから、漢直モードがONの時に、この待機時間が
+経過するまでキー入力操作が行なければ、実際に辞書の保存を実行します。
+何かキー入力操作が行われた場合は、ここで設定した時間だけ待機時間が
+延長されます。
+
+なお、辞書の自動保存時刻になった時に漢直モードがOFFであるか、あるいは
+その後に漢直モードがOFFになれば、その時点でも辞書の保存が実行されます。</value>
+  </data>
+  <data name="textBox_backFileRotationGeneration.ToolTip" xml:space="preserve">
+    <value>辞書ファイルの保存世代数を設定します。
+
+アプリ終了時（または辞書内容を保存て再起動時）には、既存の辞書
+ファイルが back ディレクトリにバックアップファイルとして保存されます。
+
+バックアップファイルは、ここで設定した世代数にわたって保存されます。
+
+バックアップファイルの名前には、末尾に世代を表す数字が付加されます。
+たとえば、履歴ファイルであれば、 back\\kwhist.user.txt.1 のような名前で
+保存されます。古い世代ほど、末尾の数字が大きくなります。
+</value>
   </data>
   <data name="checkBox_ignoreOtherHooker.ToolTip" xml:space="preserve">
     <value>他のキー変換ツールとの競合を解消します。
