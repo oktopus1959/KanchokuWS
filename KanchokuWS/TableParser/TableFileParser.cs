@@ -1230,6 +1230,11 @@ namespace KanchokuWS.TableParser
             // 拡張修飾キーが同時打鍵キーとして使われた場合は、そのキーの単打設定として本来のキー出力を追加する
             addExtModfierAsSingleHitKey();
 
+            //順次打鍵列の先頭キーを単打として追加する
+            if (isKanchokuModeParser) {
+                addSequentialHeadAsSingleHitKey();
+            }
+
             // 部分キーに対して、非終端マークをセット
             keyComboPool?.SetNonTerminalMarkForSubkeys(!isKanchokuModeParser);
             if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {
@@ -1304,6 +1309,20 @@ namespace KanchokuWS.TableParser
                 // とりあえず nfer と xfer だけ対応
                 addExtModAsSingleKey("nfer");
                 addExtModAsSingleKey("xfer");
+            }
+        }
+
+        /// <summary>順次打鍵列の先頭キーを単打として追加する</summary>
+        void addSequentialHeadAsSingleHitKey()
+        {
+            if (keyComboPool != null) {
+                for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
+                    if (RootTableNode.GetNthSubNode(idx)?.IsTreeNode() ?? false) {
+                        if (keyComboPool.GetEntry(idx) == null) {
+                            AddCombinationKeyCombo(Helper.MakeList(idx), 0, true, false);  // 単打指定
+                        }
+                    }
+                }
             }
         }
 
