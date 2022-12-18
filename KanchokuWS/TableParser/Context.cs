@@ -231,7 +231,9 @@ namespace KanchokuWS.TableParser
 
         public void ClearCurrentStr() { CurrentStr = ""; }
 
-        public string RewritePreTargetStr { get; set; }                    // 前置書き換え対象文字列
+        public string RewritePreTargetStr { get; set; }                     // 前置書き換え対象文字列
+
+        public string RewritePostChar { get; set; }                         // 後置書き換え文字
 
         /// <summary>コンストラクタ</summary>
         public TableLines()
@@ -699,7 +701,7 @@ namespace KanchokuWS.TableParser
         public void ParseError(string msg = null) {
             logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
             handleError(string.Format("{0}{1} {2} の {3}行{4}{5}文字目({6})がまちがっているようです：\r\n\r\n> {7} ...",
-                msg._notEmpty() ? msg + "\r\n" : "",
+                msg._notEmpty() ? msg + "\r\n\r\n" : "",
                 blockOrFile(),
                 blockInfoStack.CurrentBlockName,
                 calcErrorLineNumber(),

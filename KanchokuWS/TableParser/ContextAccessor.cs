@@ -89,6 +89,7 @@ namespace KanchokuWS.TableParser
         protected string CurrentStr => tableLines.CurrentStr;
         protected void ClearCurrentStr() { tableLines.ClearCurrentStr(); }
         protected string RewritePreTargetStr { get { return tableLines.RewritePreTargetStr; } set { tableLines.RewritePreTargetStr = value; } }
+        protected string RewritePostChar { get { return tableLines.RewritePostChar; } set { tableLines.RewritePostChar = value; } }
         protected void ReadAllLines(string filename, bool bPrimary, bool bForKanchoku) { tableLines.ReadAllLines(filename, bPrimary, bForKanchoku); }
         protected void IncludeFile() { tableLines.IncludeFile(); }
         protected void EndInclude() { tableLines.EndInclude(); }

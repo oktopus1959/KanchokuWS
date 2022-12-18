@@ -469,6 +469,21 @@ namespace KanchokuWS.TableParser
         // 後置書き換えパーザ
         protected PostRewriteParser MakePostRewriteParser(int idx)
         {
+            // 後置書き換え文字の指定がある
+            if (idx < 0 && RewritePostChar._notEmpty()) {
+                logger.DebugH(() => $"RewritePostChar={RewritePostChar}");
+                for (int i = 0; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
+                    if (RewritePostChar == GetNthRootNodeString(i)) {
+                        idx = i;
+                        logger.DebugH(() => $"RewritePostChar Index Found={idx}");
+                        break;
+                    }
+                }
+            }
+            if (idx < 0) {
+                ParseError($"単打面に存在しない後置書き換え文字: {RewritePostChar}");
+                idx = 49;
+            }
             // 後置書き換えノード処理用のパーザを作成
             return new PostRewriteParser(TreeNode, StrokeList, idx, ComboBlockerDepth);
         }

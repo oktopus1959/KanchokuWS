@@ -347,14 +347,14 @@ namespace KanchokuWS.TableParser
                         break;
 
                     case '%':
-                        if (parseArrow(true)) {
+                        if (parseArrow(true, false)) {
                             bRewriteEnabled = true;
                             return TOKEN.REWRITE_PRE;
                         }
                         break;
 
                     case '&':
-                        if (parseArrow()) {
+                        if (parseArrow(false, true)) {
                             bRewriteEnabled = true;
                             return TOKEN.REWRITE_POST;
                         }
@@ -487,13 +487,14 @@ namespace KanchokuWS.TableParser
         }
 
         // ARROW: /-[SsXxPp]?[0-9]+>/
-        protected bool parseArrow(bool bRewritePre = false)
+        protected bool parseArrow(bool bRewritePre = false, bool bRewritePost = false)
         {
             int shiftOffset = -1;
             int funckeyOffset = 0;
             bool bShiftPlane = false;
 
             RewritePreTargetStr = "";
+            RewritePostChar = "";
 
             if (PeekNextChar() == '"') {
                 ReadString();
@@ -535,6 +536,10 @@ namespace KanchokuWS.TableParser
                             if (bRewritePre) {
                                 // 前置書き換え対象文字列
                                 RewritePreTargetStr = s;
+                                return true;
+                            } else if (bRewritePost) {
+                                // 後置書き換え文字
+                                RewritePostChar = s;
                                 return true;
                             } else {
                                 ArrowIndex = placeHolders.Get(s);
