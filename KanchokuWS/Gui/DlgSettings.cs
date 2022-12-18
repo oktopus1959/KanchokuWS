@@ -884,7 +884,7 @@ namespace KanchokuWS.Gui
             frmMain?.DeactivateDecoderWithModifiersOff();
 
             // SandS
-            if (!Settings.SandSStateChangedTemporary) Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
+            Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
             Settings.SetUserIni("sandsEnabledWhenOffMode", checkBox_SandSEnabledWhenOffMode.Checked);
             Settings.SetUserIni("sandsAssignedPlane", comboBox_SandSAssignedPlane.SelectedIndex);
             Settings.SetUserIni("oneshotSandSEnabled", checkBox_OneshotSandSEnabled.Checked);

@@ -1258,7 +1258,7 @@ namespace KanchokuWS.TableParser
 
             if (Context.bRewriteEnabled) {
                 // 書き換えノードがあったら、SandSの疑似同時打鍵サポートをOFFにしておく
-                Settings.SandSEnablePostShift = false;
+                Settings.SandSEnablePostShiftCurrently = false;
             }
 
             // 優先する順次打鍵列

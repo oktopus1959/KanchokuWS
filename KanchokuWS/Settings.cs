@@ -629,7 +629,7 @@ namespace KanchokuWS
         //------------------------------------------------------------------------------
         /// <summary>SandS を有効にするか</summary>
         public static bool SandSEnabled { get; set; } = false;
-        public static bool SandSStateChangedTemporary { get; set; } = false;
+        public static bool SandSEnabledCurrently { get; set; } = false;
         public static bool SandSEnabledWhenOffMode { get; set; } = false;
 
         /// <summary>SandS に割り当てるシフト面</summary>
@@ -637,12 +637,14 @@ namespace KanchokuWS
 
         /// <summary>SandS 時の Space KeyUP を無視するか (Space単打による空白入力をやらない)</summary>
         public static bool OneshotSandSEnabled { get; set; } = false;
+        public static bool OneshotSandSEnabledCurrently { get; set; } = false;
 
         /// <summary>SandS 時の空白入力またはリピート入力までの時間</summary>
         public static int SandSEnableSpaceOrRepeatMillisec { get; set; } = 500;
 
         /// <summary>SandS 時の後置シフト出力(疑似同時打鍵サポート)</summary>
         public static bool SandSEnablePostShift { get; set; } = false;
+        public static bool SandSEnablePostShiftCurrently { get; set; } = false;
 
         /// <summary>SandS は通常シフトよりも優位か</summary>
         public static bool SandSSuperiorToShift { get; set; } = false;
@@ -1171,12 +1173,14 @@ namespace KanchokuWS
             //-------------------------------------------------------------------------------------
             // SandS
             SandSEnabled = GetString("sandsEnabled")._parseBool(false);                         // SandS を有効にするか
-            SandSStateChangedTemporary = false;
+            SandSEnabledCurrently = SandSEnabled;
             SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
             SandSAssignedPlane = GetString("sandsAssignedPlane")._parseInt(2, 0)._highLimit(7); // SandS に割り当てるシフト面
             OneshotSandSEnabled= GetString("oneshotSandSEnabled", "ignoreSpaceUpOnSandS", "")._parseBool(false);    // SandSのワンショットシフトを有効にするか
+            OneshotSandSEnabledCurrently = OneshotSandSEnabled;
             SandSEnableSpaceOrRepeatMillisec = GetString("sandsEnableSpaceOrRepeatMillisec")._parseInt(500);        // SandS 時の空白入力またはリピート入力までの時間
             SandSEnablePostShift = GetString("sandsEnablePostShift")._parseBool(false);         // SandS 時の後置シフト出力(疑似同時打鍵サポート)
+            SandSEnablePostShiftCurrently = SandSEnablePostShift;
 
             //-------------------------------------------------------------------------------------
             // 同時打鍵

@@ -223,7 +223,7 @@ namespace KanchokuWS.Handler
         private bool isSandSEnabled()
         {
             bool decoderActivated = isDecoderActivated();
-            return (Settings.SandSEnabled && decoderActivated) || (Settings.SandSEnabledWhenOffMode && !decoderActivated);
+            return (Settings.SandSEnabledCurrently && decoderActivated) || (Settings.SandSEnabledWhenOffMode && !decoderActivated);
         }
 
         /// <summary> 特殊キーの押下状態</summary>
@@ -686,14 +686,14 @@ namespace KanchokuWS.Handler
 
                             // SandSと同じシフト面を使う左Shiftまたは拡張修飾キーがシフト状態か(何か(拡張)シフトキーが Pressed だったら、Spaceキーが押されたことで Shifted に移行しているはず)
                             bool bShiftOnSamePlane = isSameShiftKeyAsSandSShifted(bDecoderOn);
-                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS Enabled: ShiftOnSamePlane={bShiftOnSamePlane}, SandSEnablePostShift={Settings.SandSEnablePostShift}");
+                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS Enabled: ShiftOnSamePlane={bShiftOnSamePlane}, SandSEnablePostShiftCurrently={Settings.SandSEnablePostShiftCurrently}");
                             if (bShiftOnSamePlane) {
                                 // SandSと同じシフト面を使う拡張修飾キーがシフト状態なら、シフト状態に遷移する
                                 setShifted();
                                 return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                             }
-                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS: IgnoreSpaceUpOnSandS={Settings.OneshotSandSEnabled}, ctrl={bCtrl}");
-                            if (Settings.OneshotSandSEnabled && bCtrl) {
+                            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS: IgnoreSpaceUpOnSandS={Settings.OneshotSandSEnabledCurrently}, ctrl={bCtrl}");
+                            if (Settings.OneshotSandSEnabledCurrently && bCtrl) {
                                 // SandS時に1回目のSpace単打を無視する設定の場合は、Ctrl+Space が打鍵されたらそれをシフト状態に遷移させる
                                 setShifted();
                                 return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
@@ -724,7 +724,7 @@ namespace KanchokuWS.Handler
                                         // キーリピートに移行しない閾値時間が設定されている or 前回のSpaceキー離放時から閾値時間を超過していた
                                         setShifted();
                                         // 後置シフトキーを送出する
-                                        if (Settings.SandSEnablePostShift && bDecoderOn) {
+                                        if (Settings.SandSEnablePostShiftCurrently && bDecoderOn) {
                                             logger.DebugH(() => $"CALL-1: invokeHandlerForPostSandSKey");
                                             invokeHandlerForPostSandSKey();
                                         }
@@ -815,7 +815,7 @@ namespace KanchokuWS.Handler
                 } else {
                     // 通常キーの場合は、すでに押下状態にあれば拡張修飾キーをSHIFT状態に遷移させる
                     keyInfoManager.makeExModKeyShifted(bDecoderOn);
-                    if (keyInfoManager.isSandSShifted() && bDecoderOn && Settings.SandSEnablePostShift) {
+                    if (keyInfoManager.isSandSShifted() && bDecoderOn && Settings.SandSEnablePostShiftCurrently) {
                         // SandS が SHIFTED に遷移していれば後置シフトキーも送出する
                         logger.DebugH(() => $"CALL-2: invokeHandlerForPostSandSKey");
                         invokeHandlerForPostSandSKey();
@@ -1054,14 +1054,17 @@ namespace KanchokuWS.Handler
                         var dtLimit = prevSpaceUpDt.AddMilliseconds(Settings.SandSEnableSpaceOrRepeatMillisec._geZeroOr(0));
                         var dtNow = DateTime.Now;
                         if (bPrevPressed || bPrevPressedOneshot) prevSpaceUpDt = dtNow;
-                        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS UP: IgnoreSpaceUpOnSandS={Settings.OneshotSandSEnabled}, dtLimit={dtLimit}, dtNow={dtNow}, ShiftedExModKey={keyInfoManager.getShiftedExModKey()}");
+                        if (Settings.LoggingDecKeyInfo) {
+                            logger.DebugH(() => $"SandS UP: IgnoreSpaceUpOnSandS={Settings.OneshotSandSEnabledCurrently}, " +
+                                $"dtLimit={dtLimit}, dtNow={dtNow}, ShiftedExModKey={keyInfoManager.getShiftedExModKey()}");
+                        }
                         if (keyInfoManager.getShiftedExModKey() != 0) {
                             // 何か拡張シフト状態だったら、Spaceキーは無視
                             if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS UP: Ignore Space");
                             return true;
                         } else if (bPrevPressed) {
                             // Spaceキーが1回押されただけの状態
-                            if (Settings.OneshotSandSEnabled && (prevVkey != vkey || dtNow > dtLimit) && isDecoderWaitingFirstStroke() == true) {
+                            if (Settings.OneshotSandSEnabledCurrently && (prevVkey != vkey || dtNow > dtLimit) && isDecoderWaitingFirstStroke() == true) {
                                 // SandS時のSpaceUpを一時シフト状態にする設定で、前回のキーがSPACEでないか前回のSpace打鍵から指定のms以上経過しており、今回が第1打鍵である
                                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS UP: SetShiftedOneshot");
                                 keyInfo.SetShiftedOneshot();

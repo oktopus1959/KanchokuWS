@@ -1320,8 +1320,8 @@ namespace KanchokuWS
         /// <summary>テーブルファイルor設定ダイアログで割り当てたSandSシフト面を優先する</summary>
         public static void AssignSanSPlane(int shiftPlane = 0)
         {
-            logger.DebugH(() => $"CALLED: SandSEnabled={Settings.SandSEnabled}, SandSAssignedPlane={Settings.SandSAssignedPlane}");
-            if (Settings.SandSEnabled) {
+            logger.DebugH(() => $"CALLED: SandSEnabled={Settings.SandSEnabledCurrently}, SandSAssignedPlane={Settings.SandSAssignedPlane}");
+            if (Settings.SandSEnabledCurrently) {
                 if (shiftPlane <= 0) shiftPlane = Settings.SandSAssignedPlane;
                 if (shiftPlane > 0 && shiftPlane < ShiftPlane_NUM) {
                     ShiftPlaneForShiftModKey.Add(KeyModifiers.MOD_SPACE, shiftPlane);

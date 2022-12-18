@@ -412,7 +412,7 @@ namespace KanchokuWS.TableParser
             var word = CurrentStr._toLower();
             if (word._isEmpty()) {
                 logger.InfoH("SandS");
-                Settings.SandSEnabled = true;
+                Settings.SandSEnabledCurrently = true;
                 int plane = VirtualKeys.GetSandSPlane();
                 if (plane > 0) {
                     shiftPlane = plane;
@@ -421,36 +421,35 @@ namespace KanchokuWS.TableParser
                     VirtualKeys.AssignSanSPlane(shiftPlane);
                 }
             } else if (word._startsWith("enable")) {
-                Settings.SandSEnabled = true;
+                Settings.SandSEnabledCurrently = true;
                 logger.InfoH("SandS enabled");
             } else if (word._startsWith("disable")) {
-                Settings.SandSEnabled = false;
+                Settings.SandSEnabledCurrently = false;
                 VirtualKeys.AddDisabledExtKey("space");
                 logger.InfoH("SandS disabled");
             } else if (word == "s") {
-                Settings.SandSEnabled = true;
+                Settings.SandSEnabledCurrently = true;
                 shiftPlane = 1;
                 VirtualKeys.AssignSanSPlane(shiftPlane);
             } else if (word.Length == 1 && word[0] >= 'a' && word[0] <= 'f') {
-                Settings.SandSEnabled = true;
+                Settings.SandSEnabledCurrently = true;
                 shiftPlane = word[0] - 'a' + 2;
                 VirtualKeys.AssignSanSPlane(shiftPlane);
             } else if (word._startsWith("enabeoneshot")) {
-                Settings.OneshotSandSEnabled = true;
+                Settings.OneshotSandSEnabledCurrently = true;
             } else if (word._startsWith("disabeoneshot")) {
-                Settings.OneshotSandSEnabled = false;
+                Settings.OneshotSandSEnabledCurrently = false;
             } else if (word._startsWith("enabepostshift")) {
-                Settings.SandSEnablePostShift = true;
+                Settings.SandSEnablePostShiftCurrently = true;
             } else if (word._startsWith("disabepostshift")) {
-                Settings.SandSEnablePostShift = false;
+                Settings.SandSEnablePostShiftCurrently = false;
             }
         }
 
-        void changeSandSState(bool bEnabled)
-        {
-            Settings.SandSEnabled = bEnabled;
-            Settings.SandSStateChangedTemporary = true;
-        }
+        //void changeSandSState(bool bEnabled)
+        //{
+        //    Settings.SandSEnabledCurrently = bEnabled;
+        //}
 
         // 拡張シフトキーに対するシフト面の割り当て
         void assignShiftPlane()
