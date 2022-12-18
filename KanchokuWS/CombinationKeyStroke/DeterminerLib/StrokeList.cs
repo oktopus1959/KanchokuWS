@@ -105,6 +105,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             comboShiftUpTimeInfo.CheckComboKeyDown(deckey);
         }
 
+        public bool IsComboBlocker()
+        {
+            var list = new List<Stroke>(comboList)._addRange(unprocList);
+            logger.DebugH(() => $"ENTER: list={list._toString()}");
+            bool result = KeyCombinationPool.CurrentPool.GetEntry(list)?.IsComboBlocked == true;
+            logger.DebugH(() => $"LEAVE: comboBlocker={result}");
+            return result;
+        }
+
         /// <summary>
         /// 与えられたリストの部分リストからなる集合(リスト)を返す
         /// </summary>
@@ -271,7 +280,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 logger.DebugH(() =>
                     $"combo={(keyCombo == null ? "(none)" : "FOUND")}, decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, " +
                     $"Terminal={keyCombo?.IsTerminal ?? false}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
-                if (keyCombo != null && keyCombo.DecKeyList != null && keyCombo.IsTerminal) {
+                if (keyCombo != null && keyCombo.DecKeyList != null && (keyCombo.IsTerminal || keyCombo.IsComboBlocked)) {
                     logger.DebugH("COMBO CHECK PASSED");
                     return new List<int>(keyCombo.DecKeyList);
                 }
@@ -297,16 +306,17 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     int maxAllowedTime() => Settings.CombinationKeyMaxAllowedLeadTimeMs2 > 0 && !strk1.IsSpaceOrFunc
                         ? Settings.CombinationKeyMaxAllowedLeadTimeMs2
                         : Settings.CombinationKeyMaxAllowedLeadTimeMs;
-                    logger.DebugH(() => $"combo found: " + 
+                    logger.DebugH(() => $"combo found: IsComboBlocked={keyCombo.IsComboBlocked}, " + 
                         $"isStroke2Shift={strk2.IsComboShift}, shiftTimeSpan={(int)shiftTimeSpan:f1}ms, shiftUpElapse={shiftUpElapse:f1}ms, maxAllowedTime={maxAllowedTime()}");
                     bool stroke1Cond() => strk1.IsComboShift && shiftTimeSpan <= maxAllowedTime();
                     bool stroke2Cond() => !strk1.IsComboShift &&
                            (Settings.ComboDisableIntervalTimeMs <= 0 || shiftUpElapse >= Settings.ComboDisableIntervalTimeMs) &&
                            shiftTimeSpan <= Settings.ComboKeyMaxAllowedPostfixTimeMs;
-                    if ((strk1.IsPrefixShift && (comboList._isEmpty() || Settings.CombinationKeyMinOverlappingTimeMs <= 0)) ||
+                    if (keyCombo.IsComboBlocked || (strk1.IsPrefixShift && (comboList._isEmpty() || Settings.CombinationKeyMinOverlappingTimeMs <= 0)) ||
                         ((stroke1Cond() || stroke2Cond()) &&
                          (Settings.CombinationKeyMinTimeOnlyAfterSecond || Settings.CombinationKeyMinOverlappingTimeMs <= 0 || anyNotSingleHittable()))) {
-                        // (前置シフトの1文字目であるか、2文字目でも重複時間判定がない場合)、または(第2打鍵までの時間が閾値以下で即時判定あるいは親指シフトのように非単打キーを含む場合)
+                        // (ComboBlockerの場合) または (前置シフトの1文字目であるか、2文字目でも重複時間判定がない場合)、
+                        // または (第2打鍵までの時間が閾値以下で即時判定あるいは親指シフトのように非単打キーを含む場合)
                         if (comboList._isEmpty() && KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey) {
                             // 連続シフトの場合は、同時打鍵に使用したキーを使い回す
                             comboList.Add(strk1.IsComboShift ? strk1 : strk2);
@@ -431,7 +441,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             //new KeyComboRule(false, 0, 1, 0, 0, 0, 0, 1),   // COMBO無, ComboList無, 第1:DC/シ, 第2:DC/DC, 第3:有 ⇒ 0出, 1棄, MS (薙刀「(かるすへ)⇒ずべ」
         };
 
-        // ComboBlockerなどによって一時的に同時打鍵を無効化して順次打鍵になっているか
+        /// <summary>ComboBlockerなどによって一時的に同時打鍵を無効化して順次打鍵になっているか</summary>
         public bool IsTemporaryComboDisabled { get; set; }  = false;
 
         // 解放の場合

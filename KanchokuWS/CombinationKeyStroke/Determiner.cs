@@ -262,7 +262,13 @@ namespace KanchokuWS.CombinationKeyStroke
 
         public KeyHandlerResult keyDown(int decKey, DateTime dt, bool bDecoderOn, Action<List<int>> handleComboKeyRepeat)
         {
-            logger.DebugH(() => $"\nENTER: decKey={decKey}, lastRepeatedDecKey={lastRepeatedDecKey}");
+            logger.DebugH(() => $"\nENTER: decKey={decKey}, lastRepeatedDecKey={lastRepeatedDecKey}, " +
+                $"IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, IsDecoderWaitingFirstStroke={frmMain?.IsDecoderWaitingFirstStroke()}");
+
+            if (frmMain.IsDecoderWaitingFirstStroke()) {
+                strokeList.IsTemporaryComboDisabled = false;
+                logger.DebugH(() => $"IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}");
+            }
 
             checkPreRewriteTime(decKey);
 
@@ -335,8 +341,10 @@ namespace KanchokuWS.CombinationKeyStroke
                                 logger.DebugH("Abandon Used Keys When Special Combo Shift Down");
                                 strokeList.ClearComboList();
                             }
-                            logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, StrokeList.Count={strokeList.Count}");
-                            if ((combo != null && !combo.IsTerminal) || !strokeList.IsEmpty()) {
+                            logger.DebugH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, " +
+                                $"StrokeList.Count={strokeList.Count}, bWaitSecondStroke={bWaitSecondStroke}, IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, ");
+                            if ((!bWaitSecondStroke || !strokeList.IsTemporaryComboDisabled) && ((combo != null && !combo.IsTerminal) || !strokeList.IsEmpty())) {
+                                // 第1打鍵待ちか、同時打鍵が有効であって、
                                 // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だった
                                 // 打鍵リストに追加して同時打鍵判定を行う
                                 strokeList.Add(stroke);
@@ -349,6 +357,10 @@ namespace KanchokuWS.CombinationKeyStroke
                                             startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
                                         }
                                     }
+                                } else if (frmMain?.IsDecoderWaitingFirstStroke() == true && strokeList.IsComboBlocker()) {
+                                    // ComboBlocker だったらここで KeyUp を実行
+                                    logger.DebugH(() => $"Call keyUp()");
+                                    return keyUp(decKey, dt, false, bDecoderOn);
                                 } else {
                                     // 第2打鍵以降の場合は、同時打鍵チェック
                                     logger.DebugH(() => $"Check key combo: strokeList={strokeList.ToDebugString()}");
@@ -371,7 +383,7 @@ namespace KanchokuWS.CombinationKeyStroke
                                         }
                                     }
                                     // 一時的な同時打鍵無効化になったら、チェックポイントの保存
-                                    saveCheckPointDeckeyCount();
+                                    //saveCheckPointDeckeyCount();
                                 }
                             } else {
                                 // 同時打鍵には使われないキーなので、そのまま返す
@@ -387,7 +399,7 @@ namespace KanchokuWS.CombinationKeyStroke
             }
 
             checkResultAgainstDecoderState(result);
-            logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}");
+            logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}, IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}");
 
             //if (result._notEmpty()) {
             //    setPreRewriteTime(result.Last());
@@ -439,13 +451,13 @@ namespace KanchokuWS.CombinationKeyStroke
             checkPreRewriteTime(decKey);
 
             // 第1打鍵待ちに戻ったら、一時的な同時打鍵無効化をキャンセルする
-            checkStrokeCountReset();
+            //checkStrokeCountReset();
 
             bool bUnconditional = false;
             var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, dt, bDecoderOn, out bUnconditional);
 
             // 一時的な同時打鍵無効化になったら、チェックポイントの保存
-            saveCheckPointDeckeyCount();
+            //saveCheckPointDeckeyCount();
 
             checkResultAgainstDecoderState(result);
 
@@ -472,30 +484,33 @@ namespace KanchokuWS.CombinationKeyStroke
             return new KeyHandlerResult() { list = result, bUncoditional = bUnconditional };
         }
 
-        int checkPointKeyDownCount = -1;
+        //int checkPointKeyDownCount = -1;
 
         // 一時的な同時打鍵無効化のためのチェックポイントの保存
-        private void saveCheckPointDeckeyCount()
-        {
-            logger.DebugH(() => $"ENTER: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}, totalKeyDownCount={totalKeyDownCount}");
-            if (strokeList.IsTemporaryComboDisabled) {
-                if (checkPointKeyDownCount < 0) checkPointKeyDownCount = totalKeyDownCount;
-            } else {
-                checkPointKeyDownCount = -1;
-            }
-            logger.DebugH(() => $"LEAVE: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}");
-        }
+        //private void saveCheckPointDeckeyCount()
+        //{
+        //    logger.DebugH(() => $"ENTER: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, " +
+        //        $"checkPointKeyDownCount={checkPointKeyDownCount}, totalKeyDownCount={totalKeyDownCount}");
+        //    if (strokeList.IsTemporaryComboDisabled) {
+        //        if (checkPointKeyDownCount < 0) checkPointKeyDownCount = totalKeyDownCount;
+        //    } else {
+        //        checkPointKeyDownCount = -1;
+        //    }
+        //    logger.DebugH(() => $"LEAVE: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}");
+        //}
 
         // 第1打鍵待ちに戻ったら、一時的な同時打鍵無効化を解除する
-        private void checkStrokeCountReset()
-        {
-            logger.DebugH(() => $"ENTER: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}, totalKeyDownCount={totalKeyDownCount}");
-            if (checkPointKeyDownCount >= 0 && totalKeyDownCount > checkPointKeyDownCount + 1 && frmMain.IsDecoderWaitingFirstStroke()) {
-                strokeList.IsTemporaryComboDisabled = false;
-                checkPointKeyDownCount = -1;
-            }
-            logger.DebugH(() => $"LEAVE: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}");
-        }
+        //private void checkStrokeCountReset()
+        //{
+        //    logger.DebugH(() => $"ENTER: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, " +
+        //        $"checkPointKeyDownCount={checkPointKeyDownCount}, totalKeyDownCount={totalKeyDownCount}, IsDecoderWaitingFirstStroke={frmMain.IsDecoderWaitingFirstStroke()}");
+        //    //if (checkPointKeyDownCount >= 0 && totalKeyDownCount > checkPointKeyDownCount + 1 && frmMain.IsDecoderWaitingFirstStroke()) {
+        //    if (frmMain.IsDecoderWaitingFirstStroke()) {
+        //        strokeList.IsTemporaryComboDisabled = false;
+        //        checkPointKeyDownCount = -1;
+        //    }
+        //    logger.DebugH(() => $"LEAVE: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}");
+        //}
 
         private void checkResultAgainstDecoderState(List<int> result)
         {
