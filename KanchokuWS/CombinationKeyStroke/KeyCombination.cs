@@ -100,6 +100,12 @@ namespace KanchokuWS.CombinationKeyStroke
             return key.ToString();
         }
 
+        public static int _keyLengh(this string key)
+        {
+            // key は数字列を : で連結した形をしている
+            return key._notEmpty() ? key.Length - key.Replace(":", "").Length + 1 : 0;
+        }
+
         public static List<int> _decodeKeyStr(this string key)
         {
             return key._notEmpty() ? key._split(':').Select(x => x._parseInt()).ToList() : new List<int>();

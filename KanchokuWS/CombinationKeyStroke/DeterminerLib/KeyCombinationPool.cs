@@ -295,22 +295,26 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             foreach (var subkey in comboSubKeys) {
                 // 部分キーに対して、非終端マークをセット
                 //if (i < 100) logger.DebugH(() => $"search keyString={key} => list={KeyCombinationHelper.EncodeKeyList(KeyCombinationHelper.DecodeKey(key))}");
-                if (i < 100) logger.DebugH(() => $"search sub keyString={subkey}");
+                int keylen = subkey._keyLengh();
                 var keyCombo = keyComboDict.Get(subkey);
-                if (keyCombo == null) {
-                    // 存在していなかった部分キーを追加
-                    if (i < 500) logger.DebugH($"Add non terminal subkey: {subkey}");
-                    // 英数モードの場合は、1文字キーを単打可能に設定する
-                    List<int> keyList = null;
-                    if (bEisu) {
-                        var list = subkey._decodeKeyStr();
-                        if (list._safeCount() == 1) keyList = list;
+                if (keyCombo == null || keylen < 3) {
+                    // 部分キーが存在して、その長さが3以上なら、非終端にはしない
+                    // ⇒「Sp,J,K,X」で「ぽ」、「Sp,X,J」で「りゃ」のようなケースで、「りゃ」のほうを出したい
+                    if (i < 500) logger.DebugH(() => $"Set sub keyString={subkey}");
+                    if (keyCombo == null) {
+                        // 存在していなかった部分キーを追加
+                        if (i < 500) logger.DebugH($"Add non terminal subkey: {subkey}");
+                        List<int> keyList = null;
+                        // 英数モードの場合は、1文字キーを単打可能に設定する
+                        if (bEisu && keylen == 1) {
+                            keyList = subkey._decodeKeyStr();
+                        }
+                        keyCombo = new KeyCombination(keyList, null, ComboKind.None, keyList._notEmpty(), false);
+                        keyComboDict.Add(subkey, keyCombo, true);
                     }
-                    keyCombo = new KeyCombination(keyList, null, ComboKind.None, keyList._notEmpty(), false);
-                    keyComboDict.Add(subkey, keyCombo, true);
+                    keyCombo.SetNonTerminal();
+                    ++i;
                 }
-                keyCombo.SetNonTerminal();
-                ++i;
             }
             logger.DebugH($"LEAVE");
         }
