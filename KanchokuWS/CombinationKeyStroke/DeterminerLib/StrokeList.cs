@@ -674,8 +674,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             comboBlocked = keyCombo.IsComboBlocked;     // 同時打鍵の一時無効化か
                             Stroke tailKey = hotList[overlapLen - 1];
                             bool isTailKeyUp = hotList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
-                            logger.DebugH(() => $"CHECK1: {isTailKeyUp && (tailKey.IsSingleHittable || comboBlocked) && !tailKey.IsShiftableSpaceKey}: tailPos={overlapLen - 1}: " +
-                                $"isTailKeyUp({isTailKeyUp}) && tailKey.IsSingleHittableOrComboBlocked({tailKey.IsSingleHittable || comboBlocked}) && !tailKey.IsShiftableSpaceKey({!tailKey.IsShiftableSpaceKey})");
+                            logger.DebugH(() => $"CHECK1: {isTailKeyUp && (comboBlocked || (tailKey.IsSingleHittable  && !tailKey.IsShiftableSpaceKey))}: tailPos={overlapLen - 1}: " +
+                                $"isTailKeyUp({isTailKeyUp}) && " + 
+                                $"(comboBlocked({comboBlocked}) || (tailKey.IsSingleHittable({tailKey.IsSingleHittable}) && !tailKey.IsShiftableSpaceKey({!tailKey.IsShiftableSpaceKey})))");
                             logger.DebugH(() => $"CHECK2: {challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey}: " +
                                 $"challengeList.Count({challengeList.Count}) < 3 ({challengeList.Count < 3}) && hotList[0].IsShiftableSpaceKey({hotList[0].IsShiftableSpaceKey})");
                             logger.DebugH(() => "CHECK3: " +
@@ -684,8 +685,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 $"keyCombo.DecKeyList.Count({keyCombo.DecKeyList._safeCount()}) >= 3 ({keyCombo.DecKeyList._safeCount() >= 3}) && " +
                                 $"!isListContaindInSequentialPriorityWordKeySet({challengeList._toString()})({!isListContaindInSequentialPriorityWordKeySet(challengeList)})" +
                                 $": challengeList={challengeList._toString()}");
-                            if (isTailKeyUp && (tailKey.IsSingleHittable || comboBlocked) && !tailKey.IsShiftableSpaceKey ||
-                                                // CHECK1: 対象リストの末尾キーが単打可能キーであり先にUPされた
+                            if (isTailKeyUp && (comboBlocked || (tailKey.IsSingleHittable  && !tailKey.IsShiftableSpaceKey)) ||
+                                                // CHECK1: 同時打鍵の一時無効化か、対象リストの末尾キーが単打可能キーであり先にUPされた
                                 challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey ||
                                                 // CHECK2: チャレンジリストの長さが2以下で、先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
                                 (Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !isListContaindInSequentialPriorityWordKeySet(challengeList)) ||
