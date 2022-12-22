@@ -508,9 +508,13 @@ namespace KanchokuWS.TableParser
 
         public void AddFunctionNode(int idx)
         {
-            logger.DebugH(() => $"ENTER: depth={Depth}, str={CurrentStr}");
+            AddFunctionNode(idx, CurrentStr);
+        }
+
+        public void AddFunctionNode(int idx, string funcMarker)
+        {
+            logger.DebugH(() => $"ENTER: depth={Depth}, str={funcMarker}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
-            var funcMarker = CurrentStr;
             addTerminalNode(idx, Node.MakeFunctionNode(funcMarker));
             if (IsPrimary) savePresetFunction(idx, funcMarker);
             logger.DebugH(() => $"LEAVE: depth={Depth}");
@@ -1198,7 +1202,12 @@ namespace KanchokuWS.TableParser
         /// </summary>
         public void ParseRootTable()
         {
-            logger.InfoH($"ENTER");
+            logger.InfoH("ENTER");
+
+            if (isKanchokuModeParser) {
+                // 漢直モードの場合、ルートテーブルの文字キーを @^ (MyChar機能)で埋めておく
+                fillRootStrokeTableByMyCharFunction();
+            }
 
             // トップレベルの解析(ArrowIndex はすでに Shiftされている)
             readNextToken(true);
@@ -1245,10 +1254,10 @@ namespace KanchokuWS.TableParser
             // 拡張修飾キーが同時打鍵キーとして使われた場合は、そのキーの単打設定として本来のキー出力を追加する
             addExtModfierAsSingleHitKey();
 
-            //順次打鍵列の先頭キーを単打として追加する
-            if (isKanchokuModeParser) {
-                addSequentialHeadAsSingleHitKey();
-            }
+            ////順次打鍵列の先頭キーを単打として追加する → 先にRootTableを '@^' で埋めたので、これは不要になった
+            //if (isKanchokuModeParser) {
+            //    addSequentialHeadAsSingleHitKey();
+            //}
 
             // 部分キーに対して、非終端マークをセット
             keyComboPool?.SetNonTerminalMarkForSubkeys(!isKanchokuModeParser);
@@ -1279,20 +1288,21 @@ namespace KanchokuWS.TableParser
                         Settings.SequentialPriorityWordKeyStringSet.Add(seq);
                     }
                 }
-                logger.InfoH($"SequentialPriorityWordKeyStringSet={Settings.SequentialPriorityWordKeyStringSet._join(",")}");
-                logger.InfoH($"ThreeKeysComboPriorityHeadKeyStringSet={Settings.ThreeKeysComboPriorityHeadKeyStringSet._join(",")}");
-                logger.InfoH($"ThreeKeysComboPriorityTailKeyStringSet={Settings.ThreeKeysComboPriorityTailKeyStringSet._join(",")}");
+                logger.InfoH(() => $"SequentialPriorityWordKeyStringSet={Settings.SequentialPriorityWordKeyStringSet._join(",")}");
+                logger.InfoH(() => $"ThreeKeysComboPriorityHeadKeyStringSet={Settings.ThreeKeysComboPriorityHeadKeyStringSet._join(",")}");
+                logger.InfoH(() => $"ThreeKeysComboPriorityTailKeyStringSet={Settings.ThreeKeysComboPriorityTailKeyStringSet._join(",")}");
             }
 
             // 全ノードの情報を OutputLines に書き出す
             RootTableNode.OutputLine(OutputLines);
 
-            if (isKanchokuModeParser) {
-                // 漢直モードの場合、ルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる
-                addMyCharFunctionInRootStrokeTable();
-            }
+            // 先にRootTableを '@^' で埋めたので、↓は不要になった
+            //if (isKanchokuModeParser) {
+            //    // 漢直モードの場合、ルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる
+            //    addMyCharFunctionInRootStrokeTable();
+            //}
 
-            logger.InfoH($"LEAVE: KeyCombinationPool.Count={keyComboPool?.Count}");
+            logger.InfoH(() => $"LEAVE: KeyCombinationPool.Count={keyComboPool?.Count}");
         }
 
         public void ParseDirectives()
@@ -1327,27 +1337,36 @@ namespace KanchokuWS.TableParser
             }
         }
 
-        /// <summary>順次打鍵列の先頭キーを単打として追加する</summary>
-        void addSequentialHeadAsSingleHitKey()
-        {
-            if (keyComboPool != null) {
-                for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
-                    if (RootTableNode.GetNthSubNode(idx)?.IsTreeNode() ?? false) {
-                        if (keyComboPool.GetEntry(idx) == null) {
-                            AddCombinationKeyCombo(Helper.MakeList(idx), 0, true, false);  // 単打指定
-                        }
-                    }
-                }
-            }
-        }
+        ///// <summary>順次打鍵列の先頭キーを単打として追加する</summary>
+        //void addSequentialHeadAsSingleHitKey()
+        //{
+        //    if (keyComboPool != null) {
+        //        for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
+        //            if (RootTableNode.GetNthSubNode(idx)?.IsTreeNode() ?? false) {
+        //                if (keyComboPool.GetEntry(idx) == null) {
+        //                    logger.InfoH(() => $"Add DUMMY Single Hit for SequentialHead");
+        //                    AddCombinationKeyCombo(Helper.MakeList(idx), 0, true, false);  // 単打指定
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
-        /// <summary>もしルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる</summary>
-        void addMyCharFunctionInRootStrokeTable()
+        ///// <summary>もしルートテーブルのキーに何も割り当てられていなかったら、@^ (MyChar機能)を割り当てる</summary>
+        //void addMyCharFunctionInRootStrokeTable()
+        //{
+        //    for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
+        //        if (RootTableNode.GetNthSubNode(idx) == null) {
+        //            OutputLines.Add($"-{idx}>@^");
+        //        }
+        //    }
+        //}
+
+        /// <summary>ルートテーブルの文字キーを @^ (MyChar機能)で埋めておく</summary>
+        void fillRootStrokeTableByMyCharFunction()
         {
             for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
-                if (RootTableNode.GetNthSubNode(idx) == null) {
-                    OutputLines.Add($"-{idx}>@^");
-                }
+                AddFunctionNode(idx, "^");
             }
         }
 
@@ -1376,7 +1395,7 @@ namespace KanchokuWS.TableParser
         /// <param name="pool">対象となる KeyComboPool</param>
         public void ParseTableFile(string filename, string outFilename, KeyCombinationPool poolK, KeyCombinationPool poolA, bool primary, bool bTest = false)
         {
-            logger.InfoH($"ENTER: filename={filename}");
+            logger.InfoH(() => $"ENTER: filename={filename}");
 
             List<string> outputLines = new List<string>();
 
@@ -1414,7 +1433,7 @@ namespace KanchokuWS.TableParser
                 SystemHelper.ShowWarningMessageBox(errorMsg);
             }
 
-            logger.InfoH($"LEAVE");
+            logger.InfoH("LEAVE");
         }
 
         /// <summary>
@@ -1425,7 +1444,7 @@ namespace KanchokuWS.TableParser
         /// <param name="pool">対象となる KeyComboPool</param>
         public void ReadDirectives(string filename, bool primary)
         {
-            logger.InfoH($"ENTER: filename={filename}");
+            logger.InfoH(() => $"ENTER: filename={filename}");
 
             TableLines tableLines = new TableLines();
             tableLines.ReadAllLines(filename, primary, true);
@@ -1442,7 +1461,7 @@ namespace KanchokuWS.TableParser
 
             //tableLines.showErrorMessage();
 
-            logger.InfoH($"LEAVE");
+            logger.InfoH("LEAVE");
         }
 
         private void writeAllLines(string filename, List<string> lines)
@@ -1450,9 +1469,9 @@ namespace KanchokuWS.TableParser
             if (filename._notEmpty()) {
                 var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
                 Helper.CreateDirectory(path._getDirPath());
-                logger.InfoH($"ENTER: path={path}");
+                logger.InfoH(() => $"ENTER: path={path}");
                 Helper.WriteLinesToFile(path, lines, (e) => logger.Error(e._getErrorMsg()));
-                logger.InfoH($"LEAVE");
+                logger.InfoH("LEAVE");
             }
         }
 
