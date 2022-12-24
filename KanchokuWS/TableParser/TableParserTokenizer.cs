@@ -24,8 +24,8 @@ namespace KanchokuWS.TableParser
 
         //protected StrokeTableNode rootTableNode => _rootTableNode != null ? _rootTableNode : context.rootTableNode;
 
-        /// <summary>グローバルなルートパーザか</summary>
-        public virtual bool IsRootParser => false;
+        /// <summary>ルートノードテーブルを持つパーザか</summary>
+        public virtual bool HasRootTable => false;
 
         ///// <summary>漢直モードのためのパーザか</summary>
         //protected bool IsKanchokuModeParser { get; set; } = false;
@@ -577,7 +577,7 @@ namespace KanchokuWS.TableParser
             } else {
                 if (shiftOffset < 0) {
                     // シフト面のルートノードで明示的にシフトプレフィックスがなければ、shiftOffset をセット
-                    shiftOffset = (shiftPlane > 0 && IsRootParser) ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;
+                    shiftOffset = (shiftPlane > 0 && HasRootTable) ? shiftPlane * DecoderKeys.PLANE_DECKEY_NUM : 0;
                 }
                 ArrowIndex += shiftOffset;
                 if (ArrowIndex < 0 || ArrowIndex >= DecoderKeys.EISU_COMBO_DECKEY_END) {

@@ -59,7 +59,7 @@ namespace KanchokuWS.TableParser
             var result = new CStrokeList(parser, this);
             if (lastStroke >= 0) {
                 // 先頭キーはシフト化
-                if (parser.IsRootParser) {
+                if (parser.HasRootTable) {
                     lastStroke = parser.ShiftDecKey(lastStroke);
                 } else {
                     // それ以外は Modulo
@@ -91,8 +91,8 @@ namespace KanchokuWS.TableParser
     {
         private static Logger logger = Logger.GetLogger();
 
-        // グローバルなルートパーザか
-        public override bool IsRootParser => Depth == 0;
+        /// <summary>ルートノードテーブルを持つパーザか</summary>
+        public override bool HasRootTable => Depth == 0;
 
         // ルートノードへのアクセッサ
         protected static Node RootTableNode => ParserContext.Singleton.rootTableNode;
@@ -118,9 +118,12 @@ namespace KanchokuWS.TableParser
         // ルートノードから当ノードに至るまでの打鍵リスト
         CStrokeList _strokeList = null;
 
-        // ルートパーザか否かの判定およびaddCombinationKey() で必要になる
+        // ルートパーザから当パーザに到る打鍵経路を表す
+        // addCombinationKey() や SetOrMergeNthSubNode() で必要になる
+        // 同時打鍵用にコードをシフトしておく必要はない(addCombinationKey()やSetOrMergeNthSubNode()でシフトされる)
         protected CStrokeList StrokeList => _strokeList;
 
+        // ルートパーザから当パーザに到る打鍵経路の深さを表す(0ならルートパーザ)
         protected int Depth => StrokeList.Count;
 
         // 当ノードの ShiftPlane
@@ -266,7 +269,7 @@ namespace KanchokuWS.TableParser
         }
 
         /// <summary>
-        /// n番目の子ノードをマージする(残ったほうのノードを返す)
+        /// node を(同時打鍵を考慮しつつ)idx番目の子ノードにマージする(残ったほうのノードを返す)
         /// </summary>
         /// <param name="tbl"></param>
         /// <param name="idx"></param>
@@ -276,8 +279,7 @@ namespace KanchokuWS.TableParser
         {
             if (IsInCombinationBlock) {
                 // 同時打鍵定義ブロック
-                int depth = Depth;
-                if (depth == 0) {
+                if (HasRootTable) {
                     // 同時打鍵の先頭キーは Combo化(単打ノードの重複を避ける)
                     idx = makeComboDecKey(idx);
                 } else if (node.IsTreeNode() && !bComboBlocked) {
@@ -332,7 +334,7 @@ namespace KanchokuWS.TableParser
             readNextToken();
             while (!bError && currentToken != TOKEN.RBRACE) { // '}' でブロックの終わり
                 int pos = idx;
-                if (IsRootParser) idx = ShiftDecKey(idx);   // ルートパーザの場合は、 idx を Shiftしておく
+                if (HasRootTable) idx = ShiftDecKey(idx);   // ルートパーザの場合は、 idx を Shiftしておく
                 switch (currentToken) {
                     case TOKEN.LBRACE:
                         AddTreeNode(idx)?.ParseNodeBlock();
@@ -412,11 +414,12 @@ namespace KanchokuWS.TableParser
                 readNextToken();
             }
 
-            if (Depth == 0) placeHolders.Initialize();
+            if (HasRootTable) placeHolders.Initialize();
             logger.DebugH(() => $"LEAVE: lineNum={LineNumber}, depth={Depth}, bError={bError}");
 
         }
 
+        /// <summary>新しいTreeNodeをidx番目の子ノードとして追加(SetOrMerge)する</summary>
         protected virtual TableParser AddTreeNode(int idx, int comboBlockerDepth = DEFAULT_DEPTH)
         {
             var strkList = StrokeList.WithLastStrokeAdded(idx);
@@ -493,7 +496,7 @@ namespace KanchokuWS.TableParser
             logger.Debug(() => $"ENTER: depth={Depth}, bBare={bBare}, str={CurrentStr}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
             addTerminalNode(idx, Node.MakeStringNode($"{ConvertKanji(CurrentStr)}", bBare));
-            if (IsRootParser && CurrentStr._startsWith("!{")) {
+            if (HasRootTable && CurrentStr._startsWith("!{")) {
                 // Repeatable Key
                 logger.DebugH(() => $"REPEATABLE");
                 keyComboPool?.AddRepeatableKey(idx);
@@ -863,7 +866,7 @@ namespace KanchokuWS.TableParser
                 readNextToken();
             }
 
-            if (Depth == 0) placeHolders.Initialize();
+            if (HasRootTable) placeHolders.Initialize();
             logger.DebugH(() => $"LEAVE: depth={Depth}");
 
             return myNode;
@@ -930,21 +933,24 @@ namespace KanchokuWS.TableParser
             return mergedNode;
         }
 
-        /// <summary>書き換え情報を格納する node を RootTable の idx 位置に upsert する。upsert に成功したら upsert先の RewriteNode を返す</summary>
+        /// <summary>書き換え情報を格納する node を NodeTable の idx 位置に upsert する。upsert に成功したら upsert先の RewriteNode を返す</summary>
         /// <param name="idx"></param>
         /// <param name="node"></param>
-        protected Node upsertNodeToRootTable(int idx, Node node)
+        protected Node upsertRewriteNodeToNodeTable(int idx, Node node /*, bool bRootTable */)
         {
-            int rewriteIdx = ShiftDecKey(idx);  // 矢印記法でないルートブロックの場合は、まだShiftされていないので、ここで Shift する必要あり
-            var rewriteNode = GetNthRootNode(rewriteIdx);
+            int rewriteIdx = TreeNode.IsRootTreeNode() ? ShiftDecKey(idx) : idx;  // 矢印記法でないルートブロックの場合は、まだShiftされていないので、ここで Shift する必要あり
+            //var rewriteNode = bRootTable ? GetNthRootNode(rewriteIdx) : GetNthSubNode(idx);
+            var rewriteNode = GetNthSubNode(rewriteIdx);
             if (rewriteNode != null) {
+                // 挿入先を RewriteNode に変身させる
                 // TODO: node.IsTreeNode() だったらどうする?
-                rewriteNode.AddRewriteMap();
+                rewriteNode.MakeRewritable();
             } else {
+                // 挿入先が空なので新規に RewriteNode を作成しておく
                 rewriteNode = SetOrMergeNthSubNode(rewriteIdx, Node.MakeRewriteNode());
             }
             if (rewriteNode.IsRewriteNode()) {
-                // RewriteNode がノード木に反映された場合に限り、node を upsert する
+                // 挿入先の rewriteNode が Rewritable である場合に限り、node を upsert する
                 rewriteNode.UpsertRewritePair(targetStr, node);
                 return rewriteNode;
             } else {
@@ -994,17 +1000,29 @@ namespace KanchokuWS.TableParser
                 // %X,,Y>{
                 // のケース
                 return makeNestedParser();
-            } else {
+            } else if (idx >= 0) {
                 // ネストされたパーザから呼ばれた場合は、通常のTableParserにする
                 // %X,,Y>{
                 //   -Z>{
                 // のケース
+                TableParser parser = null;
                 var strkList = StrokeList.WithLastStrokeAdded(idx);
-                Node treeNode = Node.MakeTreeNode();
-                if (upsertNodeToRootTable(idx, treeNode) != null) {
-                    // 通常のTableParserを返す
-                    return new TableParser(treeNode, strkList, ComboBlockerDepth);
+                if (IsInCombinationBlock) {
+                    // 同時打鍵の場合は、直前キー用にTreeNodeを挿入しておく必要がある
+                    Node node = SetOrMergeNthSubNode(idx, Node.MakeTreeNode());
+                    parser = new PreRewriteParser(node, strkList, targetStr, ComboBlockerDepth);
+                    UnhandledArrowIndex = -1;
+                } else {
+                    // 順次打鍵なら、直前キーを文字に変換して、それを書き換え対象文字とする
+                    Node treeNode = Node.MakeTreeNode();
+                    if (upsertRewriteNodeToNodeTable(idx, treeNode/*, true*/) != null) {
+                        // 通常のTableParserを返す
+                        parser = new TableParser(treeNode, strkList, ComboBlockerDepth);
+                    }
                 }
+                return parser;
+            } else {
+                logger.Warn($"Illegal index={idx}");
             }
             return null;
         }
@@ -1023,9 +1041,20 @@ namespace KanchokuWS.TableParser
         // ブロック内での後続矢印記法({ -Z,..,W>)の処理も含む
         protected override ArrowParser AddArrowNode(int arrowIdx)
         {
-            targetStr = myTargetString(UnhandledArrowIndex);
-            UnhandledArrowIndex = arrowIdx;
-            return this;
+            ArrowParser parser = this;
+            //targetStr = myTargetString(UnhandledArrowIndex);
+            if (IsInCombinationBlock) {
+                // 同時打鍵の場合は、直前キー用にTreeNodeを挿入しておく必要がある
+                var strkList = StrokeList.WithLastStrokeAdded(arrowIdx);
+                Node node = SetOrMergeNthSubNode(arrowIdx, Node.MakeTreeNode());
+                parser = new PreRewriteParser(node, strkList, targetStr, ComboBlockerDepth);
+                UnhandledArrowIndex = -1;
+            } else {
+                // 順次打鍵なら、直前キーを文字に変換して、それを書き換え対象文字とする
+                targetStr = myTargetString(UnhandledArrowIndex);
+                UnhandledArrowIndex = arrowIdx;
+            }
+            return parser;
         }
 
         // ここが呼ばれたとき、 idx にはテーブル内での index または矢印記法による UnhandledArrowIndex が入っており、これが書き換えノードのindexとなる
@@ -1037,8 +1066,7 @@ namespace KanchokuWS.TableParser
                 ParseError("前置書き換え記法には、少なくとも1つの後続キーが必要です。");
             } else {
                 // 書き換え情報を upsert する
-                //upsertNodeToRootTable(idx, Node.MakeRewriteNode(CurrentStr, bBare));
-                upsertNodeToRootTable(idx, Node.MakeStringNode(CurrentStr, bBare));
+                upsertRewriteNodeToNodeTable(idx, Node.MakeStringNode(CurrentStr, bBare) /*, false*/);
             }
             logger.DebugH("LEAVE");
         }
@@ -1133,11 +1161,12 @@ namespace KanchokuWS.TableParser
                 prefixStr = myPrefixString(prevIndex);
             } else {
                 if (IsInCombinationBlock) {
-                    // 同時打鍵の場合はTreeNodeを挿入しておく必要がある
+                    // 同時打鍵の場合は、直前キー用にTreeNodeを挿入しておく必要がある
                     var strkList = StrokeList.WithLastStrokeAdded(prevIndex);
                     Node node = SetOrMergeNthSubNode(prevIndex, Node.MakeTreeNode());
                     parser = new PostRewriteParser(node, strkList, arrowIdx, ComboBlockerDepth, targetStr);
                 } else {
+                    // 順次打鍵なら、直前キーを文字に変換して、それを書き換え対象文字とする
                     targetStr = myTargetString(prevIndex);
                 }
             }
@@ -1181,8 +1210,8 @@ namespace KanchokuWS.TableParser
     {
         private static Logger logger = Logger.GetLogger();
 
-        // グローバルなルートパーザか
-        public override bool IsRootParser => true;
+        /// <summary>ルートノードテーブルを持つパーザか</summary>
+        public override bool HasRootTable => true;
 
         bool isKanchokuModeParser = true;
 
