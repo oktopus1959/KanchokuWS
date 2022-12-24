@@ -128,10 +128,12 @@ convert(KKKWEewk) = ごは
 ### 月 ###
 loadTable(tables/_test/tuki-2-263.pfx.tbl)
 comboMaxTime(100)
-comboMinTime(70)
+comboMinTime(0)
 convert(DUIdui) = えみ
-convert(DDD<1000>UIdui) = えみ
-convert(DDDUIdui) = えみ
+convert(DDD<200>UIdui) = えみ
+comboMinTime(70)
+convert(DUI<200>dui) = えみ
+convert(DDDUI<200>dui) = えみ
 convert(ALal) = ば
 convert(A{/}a[/]) = ぱ
 

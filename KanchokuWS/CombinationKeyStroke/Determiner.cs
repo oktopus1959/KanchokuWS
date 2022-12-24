@@ -378,7 +378,7 @@ namespace KanchokuWS.CombinationKeyStroke
                                         }
                                     } else if (bTimer && strokeList.Count == 1) {
                                         // 先頭のキーが result に追い出されて、今回のキーだけが残った
-                                        logger.DebugH("Time on");
+                                        logger.DebugH("Timer on");
                                         if (Settings.UseCombinationKeyTimer2 && !DecoderKeys.IsSpaceOrFuncKey(decKey)) {
                                             startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
                                         }
