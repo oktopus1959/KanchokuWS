@@ -134,7 +134,7 @@ namespace KanchokuWS.TableParser
         public string CurrentDirPath {
             get {
                 var path = blockInfoList._isEmpty() ? "(empty)" : blockInfoList.Last().DirPath;
-                logger.DebugH(() => $"PATH: {path}");
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"PATH: {path}");
                 return path;
             }
         }
@@ -142,7 +142,7 @@ namespace KanchokuWS.TableParser
         public string CurrentBlockName {
             get {
                 var name = blockInfoList._isEmpty() ? "" : blockInfoList.Last().BlockName;
-                logger.DebugH(() => $"NAME: {name}");
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"NAME: {name}");
                 return name;
             }
         }
@@ -150,7 +150,7 @@ namespace KanchokuWS.TableParser
         public int CurrentOffset {
             get {
                 int offset = blockInfoList._isEmpty() ? 0 : blockInfoList.Last().CurrentOffset;
-                logger.DebugH(() => $"OFFSET: {offset}");
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"OFFSET: {offset}");
                 return offset;
             }
         }
@@ -168,14 +168,14 @@ namespace KanchokuWS.TableParser
         public void Pop(int nextLineNum)
         {
             var lastInfo = blockInfoList.Last();
-            logger.DebugH(() => string.Format("POP ENTER: nextLineNum={0}, dirPath={1}, blockName={2}, origLine={3}, offset={4}",
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => string.Format("POP ENTER: nextLineNum={0}, dirPath={1}, blockName={2}, origLine={3}, offset={4}",
                 nextLineNum, lastInfo.DirPath, lastInfo.BlockName, lastInfo.OrigLineNumber, lastInfo.CurrentOffset));
             int insertedTotalLineNum = nextLineNum - lastInfo.OrigLineNumber;
             blockInfoList._safePopBack();
             if (!blockInfoList._isEmpty()) {
                 var newLastInfo = blockInfoList._getLast();
                 newLastInfo.CurrentOffset += insertedTotalLineNum;
-                logger.DebugH(() => string.Format("POP LEAVE: newDirPath={0}, newBlockName={1}, newOrigLine={2}, newOffset={3}",
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => string.Format("POP LEAVE: newDirPath={0}, newBlockName={1}, newOrigLine={2}, newOffset={3}",
                     newLastInfo.DirPath, newLastInfo.BlockName, newLastInfo.OrigLineNumber, newLastInfo.CurrentOffset));
             }
         }
@@ -254,7 +254,7 @@ namespace KanchokuWS.TableParser
             List<string> lines = new List<string>();
             if (filename._notEmpty()) {
                 var includeFilePath = blockInfoStack.CurrentDirPath._joinPath(filename._canonicalPath());
-                logger.DebugH(() => $"ENTER: includeFilePath={includeFilePath}");
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: includeFilePath={includeFilePath}");
                 var contents = Helper.GetFileContent(includeFilePath, (e) => logger.Error(e._getErrorMsg()));
                 if (contents._notEmpty()) {
                     lines.AddRange(contents._safeReplace("\r", "")._split('\n'));
@@ -267,7 +267,7 @@ namespace KanchokuWS.TableParser
                     blockInfoStack.Push(includeFilePath._getDirPath(), filename, nextLineNum);
                 }
             }
-            logger.DebugH(() => $"LEAVE: num of lines={lines.Count}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: num of lines={lines.Count}");
             return lines;
         }
 
@@ -332,6 +332,7 @@ namespace KanchokuWS.TableParser
         {
             Initialize(bPrimary, bForKanchoku);
             tableLines.AddRange(readAllLines(filename, false));
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CurrentLine:{LineNumber}:{CurrentLine}");
         }
 
         /// <summary>
@@ -340,10 +341,10 @@ namespace KanchokuWS.TableParser
         /// </summary>
         /// <param name="bForKanchoku"></param>
         public void IncludeFile() {
-            logger.DebugH("CALLED");
+            if (Settings.LoggingTableFileInfo) logger.InfoH("CALLED");
             ReadWordOrString();
             var filename = CurrentStr;
-            logger.DebugH(() => $"INCLUDE: lineNum={LineNumber}, {filename}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"INCLUDE: lineNum={LineNumber}, {filename}");
             if (filename._notEmpty()) {
                 var lines = readAllLines(filename, true);
                 if (lines._isEmpty()) {
@@ -351,7 +352,7 @@ namespace KanchokuWS.TableParser
                     FileOpenError(filename);
                 } else {
                     tableLines.InsertRange(lineNumber + 1, lines);
-                    logger.DebugH(() => $"INCLUDE: {lines.Count} lines included");
+                    if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"INCLUDE: {lines.Count} lines included");
                 }
             } else {
                 ParseError("ファイル名が指定されていません。");
@@ -368,14 +369,14 @@ namespace KanchokuWS.TableParser
         {
             ReadWord();
             var blockName = CurrentStr;
-            logger.DebugH(() => $"CALLED: {blockName}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CALLED: {blockName}");
             List<string> lines = null;
             if (blockName._isEmpty()) {
                 ParseError("StoreLineBlock: blockName empty");
             } else {
                 lines = new List<string>();
                 linesMap[blockName] = lines;
-                logger.DebugH(() => $"SET: lineNum={LineNumber}, {blockName}");
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"SET: lineNum={LineNumber}, {blockName}");
             }
             while (GetNextLine()) {
                 if (CurrentLine._reMatch(@"^#end\b")) {
@@ -392,7 +393,7 @@ namespace KanchokuWS.TableParser
         public void LoadLineBlock()
         {
             var blockName = ReadWord();
-            logger.DebugH(() => $"CALLED: |{blockName}|");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CALLED: |{blockName}|");
             if (blockName._isEmpty()) {
                 ParseError("LoadLineBlock: blockName empty");
             } else if (blockInfoStack.Find(blockName)) {
@@ -403,7 +404,7 @@ namespace KanchokuWS.TableParser
                     logger.Error($"No stored lines for \"{blockName}\"");
                     NoSuchBlockError(blockName);
                 } else {
-                    logger.DebugH(() => $"InsertRange: {blockName}, {lines.Count} lines");
+                    if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"InsertRange: {blockName}, {lines.Count} lines");
                     tableLines.InsertRange(LineNumber, lines);
                     blockInfoStack.Push("", blockName, LineNumber);
                 }
@@ -415,7 +416,7 @@ namespace KanchokuWS.TableParser
         /// </summary>
         public void RewriteIfdefBlock(bool which)
         {
-            logger.DebugH(() => $"CALLED: block={which}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CALLED: block={which}");
             int lineNum = lineNumber;
             tableLines[lineNum] = ";;; " + tableLines[lineNum];
             ++lineNum;
@@ -479,7 +480,7 @@ namespace KanchokuWS.TableParser
                 sb.Append(c);
             }
             CurrentStr = sb.ToString();
-            logger.Debug(() => $"LEAVE: {CurrentStr}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CurrentStr: \"{CurrentStr}\"");
         }
 
         // 何らかのデリミタが来るまで読みこんで、currentStr に格納。スラッシュは文字列に含む。バックスラッシュも含まれる。
@@ -497,7 +498,7 @@ namespace KanchokuWS.TableParser
                 sb.Append(GetNextChar());
             }
             CurrentStr = sb.ToString();
-            logger.DebugH(() => $"LEAVE: {CurrentStr}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CurrentBareStr: <{CurrentStr}>");
         }
 
         /// <summary>
@@ -539,7 +540,7 @@ namespace KanchokuWS.TableParser
                 ++pos;
             }
             CurrentStr = sb.ToString();
-            logger.DebugH(() => $"LEAVE: {CurrentStr}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: {CurrentStr}");
         }
 
         /// <summary>
@@ -552,7 +553,7 @@ namespace KanchokuWS.TableParser
                 // '$' と次の1文字は必ずプレースホルダーに含める
                 readStringUpto(2, false, true, ',', '>');
             }
-            logger.DebugH(() => $"LEAVE: {CurrentStr}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: {CurrentStr}");
         }
 
         // 区切り文字が来るまで読みこんで、currentStr に格納。
@@ -626,6 +627,7 @@ namespace KanchokuWS.TableParser
                     return CurrentChar = '\0';
                 }
                 nextPos = 0;
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CurrentLine:{LineNumber}:{CurrentLine}");
             }
             if (nextPos < CurrentLine.Length) {
                 CurrentChar = CurrentLine[nextPos++];
@@ -646,6 +648,7 @@ namespace KanchokuWS.TableParser
             if (lineNumber >= tableLines.Count) {
                 return false;
             }
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CurrentLine:{LineNumber}:{CurrentLine}");
             return true;
         }
 
@@ -699,7 +702,7 @@ namespace KanchokuWS.TableParser
 
         // 解析エラー
         public void ParseError(string msg = null) {
-            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
             handleError(string.Format("{0}{1} {2} の {3}行{4}{5}文字目({6})がまちがっているようです：\r\n\r\n> {7} ...",
                 msg._notEmpty() ? msg + "\r\n\r\n" : "",
                 blockOrFile(),
@@ -726,42 +729,42 @@ namespace KanchokuWS.TableParser
 
         // 引数エラー
         public void ArgumentError(string arg) {
-            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH($"lineNumber={lineNumber}, nextPos={nextPos}");
             handleError(string.Format("引数 '{0}' が不正です。\r\nテーブルファイル {1} の {2}行目{3}がまちがっているようです：\r\n\r\n> {4} ...",
                 arg, blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // loadループエラー
         public void LoadLoopError(string name) {
-            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH($"lineNumber={lineNumber}, nextPos={nextPos}");
             handleError(string.Format("ブロック {0} のロードがループしています。\r\n{1} {2} の {3}行目{4}がまちがっているようです：\r\n\r\n> {5} ...",
                 name, blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // storeブロックが存在しない
         public void NoSuchBlockError(string name) {
-            logger.DebugH($"lineNumber={lineNumber}, nextPos={nextPos}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH($"lineNumber={lineNumber}, nextPos={nextPos}");
             handleError(string.Format("指定されたブロック {0} が存在しません。\r\n{1} {2} の {3}行目{4}がまちがっているようです：\r\n\r\n> {5} ...",
                 name, blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // ファイルの読み込みに失敗した場合
         public void FileOpenError(string filename) {
-            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
             handleError(string.Format("ファイル {0} を読み込めません。\r\nテーブルファイル {1} の {2}行目{3}がまちがっているようです：\r\n\r\n> {4} ...",
                 filename, blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // ノードの重複が発生した場合
         public void NodeDuplicateWarning() {
-            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
             handleWarning(string.Format("{0} {1} の {2}行目{3}でノードの重複が発生しました。意図したものであれば無視してください\r\n(#ignoreWarning overwrite を記述するとこの警告が出なくなります)：\r\n\r\n> {4} ...",
                 blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
         }
 
         // カラム0で予期しないLBRACEが発生
         public void UnexpectedLeftBraceAtColumn0Warning() {
-            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
             handleWarning(
                 string.Format("{0} {1} の {2}行目{3}の行頭にネストされた '{{' があります。意図したものであれば無視してください\r\n(#ignoreWarning braceLevel を記述するとこの警告が出なくなります)：\r\n\r\n> {4} ...",
                 blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));
@@ -769,7 +772,7 @@ namespace KanchokuWS.TableParser
 
         // カラム0で予期しないRBRACEが発生
         public void UnexpectedRightBraceAtColumn0Warning() {
-            logger.DebugH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"lineNumber={lineNumber}, nextPos={nextPos}");
             handleWarning(
                 string.Format("{0} {1} の {2}行目{3}の行頭にまだネスト中の '}}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述するとこの警告が出なくなります)：\r\n\r\n> {4} ...",
                 blockOrFile(), blockInfoStack.CurrentBlockName, calcErrorLineNumber(), parsedFileAndLinenum(), CurrentLine._safeSubstring(0, 50)));

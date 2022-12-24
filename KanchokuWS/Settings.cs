@@ -70,6 +70,9 @@ namespace KanchokuWS
         /// <summary>true の場合、仮想キーボードに関する情報をログ出力する</summary>
         public static bool LoggingVirtualKeyboardInfo { get; set; } = false;
 
+        /// <summary>true の場合、テーブルファイルに関する情報をログ出力する</summary>
+        public static bool LoggingTableFileInfo { get; set; } = false;
+
         /// <summary>Decoderキー処理後にウェイトを入れる(開発用; バグ等により処理対象ホットキーを keybd_event で送出することによる無限ループに対応する時間をかせぐ)</summary>
         public static bool DelayAfterProcessDeckey { get; private set; } = false;
 
@@ -88,7 +91,7 @@ namespace KanchokuWS
         /// <summary>隠しテーブルファイルフォルダを表示する</summary>        
         public static bool ShowHiddleFolder { get; private set; }
 
-        public static bool IsAnyDevFlagEnabled => LogLevel > 2 || LoggingDecKeyInfo || LoggingActiveWindowInfo || LoggingVirtualKeyboardInfo || BushuDicLogEnabled;
+        public static bool IsAnyDevFlagEnabled => LogLevel > 2 || LoggingDecKeyInfo || LoggingActiveWindowInfo || LoggingVirtualKeyboardInfo || LoggingTableFileInfo || BushuDicLogEnabled;
 
         //-------------------------------------------------------------------------------------
         // 基本設定
@@ -944,6 +947,7 @@ namespace KanchokuWS
             LoggingDecKeyInfo = GetString("loggingDecKeyInfo")._parseBool();
             //LoggingActiveWindowInfo = GetString("loggingActiveWindowInfo")._parseBool();
             LoggingVirtualKeyboardInfo = GetString("loggingVirtualKeyboardInfo")._parseBool();
+            LoggingTableFileInfo = GetString("loggingTableFileInfo")._parseBool();
             MultiAppEnabled = IsMultiAppEnabled();
             WarnThresholdKeyQueueCount = GetString("warnThresholdKeyQueueCount")._parseInt(6);
             OutputDebugTableFiles = GetString("outputDebugTableFiles")._parseBool();

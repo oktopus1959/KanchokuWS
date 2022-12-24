@@ -129,16 +129,16 @@ namespace KanchokuWS.TableParser
                         // #yomiConvert: 読み変換(kw-uni側で処理)
                         ReadWord();
                         var keyword = CurrentStr._toLower();
-                        logger.DebugH(() => $"YomiConversion: keyword={keyword}");
+                        if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"YomiConversion: keyword={keyword}");
                         if (keyword == "clear" || keyword == "end") {
                             kanjiConvMap?.Clear();
                         } else {
-                            logger.DebugH(() => $"YomiConversion: {Settings.KanjiYomiFile}");
+                            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"YomiConversion: {Settings.KanjiYomiFile}");
                             if (Settings.KanjiYomiFile._notEmpty()) readKanjiConvFile(Settings.KanjiYomiFile, true);
                             if (keyword == "with") {
                                 ReadWordOrString();
                                 if (CurrentStr._notEmpty()) {
-                                    logger.DebugH(() => $"YomiConversion: {CurrentStr}");
+                                    if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"YomiConversion: {CurrentStr}");
                                     readKanjiConvFile(CurrentStr, false);
                                 }
                             }
@@ -220,7 +220,7 @@ namespace KanchokuWS.TableParser
                                 shiftPlane = 0;
                                 break;
                             case "__inc":
-                                logger.DebugH(() => $"END INCLUDE/LOAD: lineNumber={LineNumber}");
+                                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"END INCLUDE/LOAD: lineNumber={LineNumber}");
                                 EndInclude();
                                 break;
                             //case "enabl":
@@ -261,7 +261,7 @@ namespace KanchokuWS.TableParser
                         }
                     } else {
                         // 上記以外は無視(コメント扱い) 
-                        logger.DebugH(() => $"#{CurrentStr}");
+                        if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"#{CurrentStr}");
                     }
                     SkipToEndOfLine();
                     continue;
@@ -468,10 +468,10 @@ namespace KanchokuWS.TableParser
         /// </summary>
         void handleSettings()
         {
-            logger.DebugH(() => $"CALLED: currentLine={CurrentLine}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CALLED: currentLine={CurrentLine}");
             ReadWord();
             var items = CurrentStr._split('=');
-            logger.DebugH(() => $"currentStr={CurrentStr}, items.Length={items._safeLength()}, items[0]={items._getFirst()}, items[1]={items._getSecond()}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"currentStr={CurrentStr}, items.Length={items._safeLength()}, items[0]={items._getFirst()}, items[1]={items._getSecond()}");
             if (items._safeLength() == 2 && items[0]._notEmpty()) {
                 var propName = items[0];
                 var strVal = items[1]._strip();
@@ -585,7 +585,7 @@ namespace KanchokuWS.TableParser
                     return false;
                 }
             }
-            logger.DebugH(() => $"arrowIndex={ArrowIndex}, shiftPlane={shiftPlane}, shiftOffset={shiftOffset}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"arrowIndex={ArrowIndex}, shiftPlane={shiftPlane}, shiftOffset={shiftOffset}");
             return true;
         }
 
@@ -673,12 +673,12 @@ namespace KanchokuWS.TableParser
             var reKatakanaMulti = @"[ァ-ン]{2,}";
             var reHiraganaMulti = @"[ぁ-ん]{2,}";
 
-            logger.DebugH(() => $"filename: {filename}, bOnlyYomi={bOnlyYomi}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"filename: {filename}, bOnlyYomi={bOnlyYomi}");
             var lines = Helper.ReadAllLines(KanchokuIni.MakeFullPath(filename), e => {
                 logger.Error($"Can't open: {filename}");
                 FileOpenError(filename);
             });
-            logger.DebugH(() => $"lines.size(): {lines.Length}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"lines.size(): {lines.Length}");
             if (lines._notEmpty() && kanjiConvMap != null) {
                 foreach (var line in lines) {
                     //var items = utils::split(utils::strip(std::regex_replace(std::regex_replace(line, reComment, _T("")), reBlank, _T(" "))), ' ');
@@ -711,7 +711,7 @@ namespace KanchokuWS.TableParser
                         }
                     }
                 }
-                logger.DebugH(() => $"kanjiConvMap.size(): {kanjiConvMap.Count()}");
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"kanjiConvMap.size(): {kanjiConvMap.Count()}");
             }
         }
 

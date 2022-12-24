@@ -24,6 +24,7 @@ namespace KanchokuWS.Gui
             checkBox_bushuDicLogEnabled.Checked = Settings.BushuDicLogEnabled;
             checkBox_loggingActiveWindowInfo.Checked = Settings.LoggingActiveWindowInfo;
             checkBox_loggingVirtualKeyboardInfo.Checked = Settings.LoggingVirtualKeyboardInfo;
+            checkBox_loggingTableFileInfo.Checked = Settings.LoggingTableFileInfo;
             checkBox_outputDebugTableFiles.Checked = Settings.OutputDebugTableFiles;
             checkBox_showHiddleFolder.Checked = Settings.ShowHiddleFolder;
             checkBox_multiAppEnabled.Checked = Settings.MultiAppEnabled;
@@ -42,6 +43,7 @@ namespace KanchokuWS.Gui
             checkerDevelop.Add(checkBox_bushuDicLogEnabled);
             checkerDevelop.Add(checkBox_loggingActiveWindowInfo);
             checkerDevelop.Add(checkBox_loggingVirtualKeyboardInfo);
+            checkerDevelop.Add(checkBox_loggingTableFileInfo);
             checkerDevelop.Add(checkBox_outputDebugTableFiles);
             checkerDevelop.Add(checkBox_showHiddleFolder);
             checkerDevelop.Add(checkBox_multiAppEnabled);
@@ -63,6 +65,7 @@ namespace KanchokuWS.Gui
             //Settings.SetUserIni("loggingActiveWindowInfo", checkBox_loggingActiveWindowInfo.Checked);
             Settings.LoggingActiveWindowInfo = checkBox_loggingActiveWindowInfo.Checked;
             Settings.SetUserIni("loggingVirtualKeyboardInfo", checkBox_loggingVirtualKeyboardInfo.Checked);
+            Settings.SetUserIni("loggingTableFileInfo", checkBox_loggingTableFileInfo.Checked);
             Settings.SetUserIni("outputDebugTableFiles", checkBox_outputDebugTableFiles.Checked);
             Settings.SetUserIni("showHiddleFolder", checkBox_showHiddleFolder.Checked);
             Settings.SetUserIni("multiAppEnabled", checkBox_multiAppEnabled.Checked);

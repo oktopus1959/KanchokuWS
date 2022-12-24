@@ -302,15 +302,15 @@ namespace KanchokuWS.TableParser
         //public string GetOutputString() { return outputStr; }
         public OutputString GetOutputString() { return outputStr; }
 
-        public bool IsBareString() { return outputStr.IsBare(); }
+        public bool IsBareString() { return outputStr?.IsBare() ?? false; }
 
-        public string GetBaseQuotedString() { return outputStr.GetBaseQuotedString(); }
+        public string GetBaseQuotedString() { return outputStr?.GetBaseQuotedString(); }
 
-        public string GetQuotedString() { return outputStr.GetQuotedString(); }
+        public string GetQuotedString() { return outputStr?.GetQuotedString(); }
 
-        public bool IsFunctionNode() { return outputStr.IsFunction(); }
+        public bool IsFunctionNode() { return outputStr?.IsFunction() ?? false; }
 
-        public bool IsStringNode() { return !IsFunctionNode() && !IsTreeNode() && !IsRewriteNode(); }
+        public bool IsStringNode() { return outputStr != null && !IsFunctionNode() && !IsTreeNode() && !IsRewriteNode(); }
 
         public bool IsRootTreeNode() { return subTable?.IsRoot ?? false; }
 
@@ -352,7 +352,7 @@ namespace KanchokuWS.TableParser
         private bool _merge(Node node)
         {
             bool bOverwrite = false;
-            if (node.outputStr._notEmpty() && node.outputStr._ne(outputStr)) {
+            if ((node.IsStringNode() || node.outputStr._notEmpty()) && node.outputStr._ne(outputStr)) {
                 if (outputStr._isEmpty() || IsFunctionNode() || !node.IsFunctionNode()) {
                     bOverwrite = outputStr._notEmpty() && !IsFunctionNode();
                     outputStr = node.outputStr;
@@ -389,7 +389,7 @@ namespace KanchokuWS.TableParser
 
         public void UpsertRewritePair(string tgtStr, Node rewriteNode)
         {
-            logger.DebugH(() => $"CALLED: tgtStr={tgtStr}, rewriteNode={rewriteNode.DebugString()}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CALLED: tgtStr={tgtStr}, rewriteNode={rewriteNode.DebugString()}");
             if (tgtStr._notEmpty() && rewriteNode != null) {
                 upsertRewrteMap(tgtStr, rewriteNode);
             }

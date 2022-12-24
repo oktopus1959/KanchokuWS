@@ -241,6 +241,7 @@ comboMinTime(70)
 enableTimer1()
 enableTimer2()
 
+convert(D<120>F<40>d<24>f) = よ
 convert(D<95>F<57>{.}<40>d<9>{,}<24>f<105>[.]<18>[,]) = ような
 
 ### 同時打鍵 ###

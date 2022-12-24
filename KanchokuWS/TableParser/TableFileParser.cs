@@ -323,7 +323,7 @@ namespace KanchokuWS.TableParser
         /// </summary>
         public void ParseNodeBlock()
         {
-            logger.DebugH(() => $"ENTER: lineNum={LineNumber}, strokeList={StrokeList.DebugString()}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: lineNum={LineNumber}, strokeList={StrokeList.DebugString()}");
 
             bool bError = false;
             int idx = 0;
@@ -377,7 +377,7 @@ namespace KanchokuWS.TableParser
                         //    // →たとえば、月光の連続シフトで「DKI」と打鍵したとき、「DK」でいったん同時打鍵成立と判定(出力は無し)して「K」を除去し、
                         //    // 次の「I」で「DI」⇒「よ」を出したいため。
                         //    // ただし、余計な同時打鍵候補が生成されることを防ぐため、固定順序の場合は、順序を置換した部分打鍵列を生成させないようにしておく必要あり。
-                        //    logger.DebugH(() => $"CALL addCombinationKey(false): prevToken={prevToken}, depth={depth}");
+                        //    if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CALL addCombinationKey(false): prevToken={prevToken}, depth={depth}");
                         //    using (pushStroke(idx)) {
                         //        addCombinationKey(false);
                         //    }
@@ -415,7 +415,7 @@ namespace KanchokuWS.TableParser
             }
 
             if (HasRootTable) placeHolders.Initialize();
-            logger.DebugH(() => $"LEAVE: lineNum={LineNumber}, depth={Depth}, bError={bError}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: lineNum={LineNumber}, depth={Depth}, bError={bError}");
 
         }
 
@@ -453,7 +453,7 @@ namespace KanchokuWS.TableParser
         // 前置書き換えパーザ
         protected PreRewriteParser MakePreRewriteParser(int idx)
         {
-            logger.DebugH(() => $"ENTER");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER");
 
             var targetStr = RewritePreTargetStr;
 
@@ -465,7 +465,7 @@ namespace KanchokuWS.TableParser
             // 前置書き換えノード処理用のパーザを作成
             var parser = new PreRewriteParser(TreeNode, StrokeList, targetStr, ComboBlockerDepth);
 
-            logger.DebugH(() => $"LEAVE");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE");
             return parser;
         }
 
@@ -474,11 +474,11 @@ namespace KanchokuWS.TableParser
         {
             // 後置書き換え文字の指定がある
             if (idx < 0 && RewritePostChar._notEmpty()) {
-                logger.DebugH(() => $"RewritePostChar={RewritePostChar}");
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"RewritePostChar={RewritePostChar}");
                 for (int i = 0; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
                     if (RewritePostChar == GetNthRootNodeString(i)) {
                         idx = i;
-                        logger.DebugH(() => $"RewritePostChar Index Found={idx}");
+                        if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"RewritePostChar Index Found={idx}");
                         break;
                     }
                 }
@@ -493,15 +493,15 @@ namespace KanchokuWS.TableParser
 
         public virtual void AddStringNode(int idx, bool bBare)
         {
-            logger.Debug(() => $"ENTER: depth={Depth}, bBare={bBare}, str={CurrentStr}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: depth={Depth}, bBare={bBare}, str={CurrentStr}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
             addTerminalNode(idx, Node.MakeStringNode($"{ConvertKanji(CurrentStr)}", bBare));
             if (HasRootTable && CurrentStr._startsWith("!{")) {
                 // Repeatable Key
-                logger.DebugH(() => $"REPEATABLE");
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"REPEATABLE");
                 keyComboPool?.AddRepeatableKey(idx);
             }
-            logger.Debug(() => $"LEAVE: depth={Depth}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: depth={Depth}");
         }
 
         protected virtual void AddStringPairNode()
@@ -516,11 +516,11 @@ namespace KanchokuWS.TableParser
 
         public void AddFunctionNode(int idx, string funcMarker)
         {
-            logger.DebugH(() => $"ENTER: depth={Depth}, str={funcMarker}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: depth={Depth}, str={funcMarker}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
             addTerminalNode(idx, Node.MakeFunctionNode(funcMarker));
             if (IsPrimary) savePresetFunction(idx, funcMarker);
-            logger.DebugH(() => $"LEAVE: depth={Depth}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: depth={Depth}");
         }
 
         void savePresetFunction(int idx, string marker)
@@ -657,7 +657,7 @@ namespace KanchokuWS.TableParser
                     bool comboBlocked = comboKeyCount > 0 && comboKeyCount < strkList.Count;
 #if DEBUG
                     if (comboBlocked) {
-                        logger.DebugH($"comboKeyCount={comboKeyCount}, strkList.Count={strkList.Count}");
+                        if (Settings.LoggingTableFileInfo) logger.InfoH($"comboKeyCount={comboKeyCount}, strkList.Count={strkList.Count}");
                     }
 #endif
                     AddCombinationKeyCombo(comboList, shiftOffset, hasStr, comboBlocked);
@@ -668,10 +668,10 @@ namespace KanchokuWS.TableParser
         // 同時打鍵列の組合せを作成して登録しておく
         protected void AddCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr, bool comboBlocked)
         {
-            logger.DebugH(() => $"{deckeyList._keyString()}={CurrentStr}, shiftOffset={shiftOffset}, hasStr={hasStr}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"{deckeyList._keyString()}={CurrentStr}, shiftOffset={shiftOffset}, hasStr={hasStr}");
 #if DEBUG
             if (deckeyList._keyString() == "826:127") {
-                logger.DebugH("HIT");
+                if (Settings.LoggingTableFileInfo) logger.InfoH("HIT");
             }
 #endif
             var comboKeyList = deckeyList.Select(x => makeShiftedDecKey(x, shiftOffset)).ToList();      // 先頭キーのオフセットに合わせる
@@ -712,7 +712,7 @@ namespace KanchokuWS.TableParser
         // 矢印記法(-\d+(,\d+)*>)の直後を解析して第1打鍵位置に従って配置する
         public void Parse()
         {
-            logger.DebugH(() => $"ENTER: lineNum={LineNumber}, depth={Depth}, UnhandledArrowIndex={UnhandledArrowIndex}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: lineNum={LineNumber}, depth={Depth}, UnhandledArrowIndex={UnhandledArrowIndex}");
             //int arrowIdx = arrowIndex;
             int comboBlockerDepth = DEFAULT_DEPTH;
             if (PeekNextChar() == '|') {
@@ -775,7 +775,7 @@ namespace KanchokuWS.TableParser
             }
 
             currentToken = TOKEN.IGNORE;    // いったん末端ノードの処理をしたら、矢印記法を抜けるまで無視
-            logger.DebugH(() => $"LEAVE: lineNum={LineNumber}, depth={Depth}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: lineNum={LineNumber}, depth={Depth}");
         } 
 
         protected virtual ArrowParser AddArrowNode(int arrowIdx)
@@ -810,7 +810,7 @@ namespace KanchokuWS.TableParser
         // 矢印束記法(-*>-nn>)を第1打鍵位置に従って配置する
         public Node Parse()
         {
-            logger.DebugH(() => $"ENTER: depth={Depth}, nextArrowIndex={nextArrowIndex}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: depth={Depth}, nextArrowIndex={nextArrowIndex}");
 
             Node myNode = null;
 
@@ -867,7 +867,7 @@ namespace KanchokuWS.TableParser
             }
 
             if (HasRootTable) placeHolders.Initialize();
-            logger.DebugH(() => $"LEAVE: depth={Depth}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: depth={Depth}");
 
             return myNode;
         }
@@ -1060,7 +1060,7 @@ namespace KanchokuWS.TableParser
         // ここが呼ばれたとき、 idx にはテーブル内での index または矢印記法による UnhandledArrowIndex が入っており、これが書き換えノードのindexとなる
         public override void AddStringNode(int idx, bool bBare)
         {
-            logger.DebugH(() => $"ENTER: bBare={bBare}, str={CurrentStr}, idx={idx}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: bBare={bBare}, str={CurrentStr}, idx={idx}");
             if (idx < 0) {
                 // %X>の直後に文字列がきたケース。
                 ParseError("前置書き換え記法には、少なくとも1つの後続キーが必要です。");
@@ -1068,7 +1068,7 @@ namespace KanchokuWS.TableParser
                 // 書き換え情報を upsert する
                 upsertRewriteNodeToNodeTable(idx, Node.MakeStringNode(CurrentStr, bBare) /*, false*/);
             }
-            logger.DebugH("LEAVE");
+            if (Settings.LoggingTableFileInfo) logger.InfoH("LEAVE");
         }
 
     }
@@ -1175,7 +1175,7 @@ namespace KanchokuWS.TableParser
 
         public override void AddStringNode(int idx, bool bBare)
         {
-            logger.DebugH(() => $"ENTER: bBare={bBare}, str={CurrentStr}, idx={idx}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: bBare={bBare}, str={CurrentStr}, idx={idx}");
             if (!TreeNode.IsRewriteNode()) {
                 // &X,..>の直後に文字列がきた
                 ParseError("後置書き換え記法には、ブロックが必要です。");
@@ -1183,7 +1183,7 @@ namespace KanchokuWS.TableParser
                 var tgtStr = prefixStr + GetNthRootNodeString(idx)._toSafe() + targetStr._toSafe();
                 TreeNode.UpsertRewritePair(tgtStr, Node.MakeStringNode(CurrentStr, bBare));
             }
-            logger.DebugH("LEAVE");
+            if (Settings.LoggingTableFileInfo) logger.InfoH("LEAVE");
         }
 
         // 書き換え文字列のペア
@@ -1191,14 +1191,14 @@ namespace KanchokuWS.TableParser
         {
             var str1 = StringPair._getNth(0);
             var str2 = StringPair._getNth(1);
-            logger.DebugH(() => $"ENTER: str1={str1.DebugString()}, str2={str2.DebugString()}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: str1={str1.DebugString()}, str2={str2.DebugString()}");
             if (str1._isEmpty() || str2._isEmpty()) {
                 ParseError("不正な書き換え文字列ペア");
             } else {
                 var tgtStr = str1.GetSafeString() + targetStr._toSafe();
                 TreeNode.UpsertRewritePair(tgtStr, Node.MakeStringNode(str2));
             }
-            logger.DebugH("LEAVE");
+            if (Settings.LoggingTableFileInfo) logger.InfoH("LEAVE");
         }
 
     }
@@ -1394,9 +1394,14 @@ namespace KanchokuWS.TableParser
         /// <summary>ルートテーブルの文字キーを @^ (MyChar機能)で埋めておく</summary>
         void fillRootStrokeTableByMyCharFunction()
         {
+            bool bLogging = Settings.LoggingTableFileInfo;
+            Settings.LoggingTableFileInfo = false;
+            if (bLogging) logger.InfoH("ENTER");
             for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
                 AddFunctionNode(idx, "^");
             }
+            if (bLogging) logger.InfoH("LEAVE");
+            Settings.LoggingTableFileInfo = bLogging;
         }
 
     }
@@ -1442,12 +1447,14 @@ namespace KanchokuWS.TableParser
             string errorMsg = "";
 
             // 漢直モードの解析
+            logger.InfoH(() => $"Analyze for KANCHOKU mode");
             TableLines tableLines = new TableLines();
             tableLines.ReadAllLines(filename, primary, true);
             if (tableLines.NotEmpty) {
                 parseRootTable(tableLines, poolK, true);
                 errorMsg = tableLines.getErrorMessage();
                 // 英数モードの解析
+                logger.InfoH(() => $"Analyze for EISU mode");
                 tableLines = new TableLines();
                 tableLines.ReadAllLines(filename, primary, false);
                 parseRootTable(tableLines, poolA, false);
