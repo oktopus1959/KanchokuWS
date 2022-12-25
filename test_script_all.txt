@@ -31,7 +31,7 @@ convert(J<50>W<50>H<100>hIijw) = ぎゃぎょ
 
 comboMinTime(50)
 convert(K<55>J<36>k<10>W<120>j<34>w) = いぎ
-convert(W<111>J<1>w<49>E<120>j<74>e) = きで
+convert(W<111>J<1>w<10>E<120>j<74>e) = きで
 convert(K<55>J<96>k<10>W<120>j<34>w) = いあき
 convert(W<111>J<10>w<99>E<56>j<74>e) = きあて
 
@@ -271,6 +271,12 @@ convert(A<12>{40}<131>a<28>[40]<37>J<17>j) = 愉
 convert(A<12>{40}<131>J<17>a<28>[40]<37>j) = 愉
 convert({40}<10>O<10>o<10>8<10>~8<10>O<100>o<10>R<10>r<10>[40]) = 撤廃
 clear()
+
+#### 同時打鍵 書き換え ###
+loadTable(tables/_test/combo_rewrite.tbl)
+convert({40}Kk[40]{40}Xx[40]) = ぼ
+convert({40}Kk[40]{40}Ww[40]) = ぴ
+convert({40}Kk[40]{40}Ss[40]) = ぱ
 
 ### NICOLA ###
 useComboExtModKeyAsSingleHit(false)
