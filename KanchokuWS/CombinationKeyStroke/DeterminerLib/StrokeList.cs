@@ -267,7 +267,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             // 1つは非単打キーがある
             bool anyNotSingleHittable()
             {
-                return unprocList.Any(x => !x.IsSingleHittable);
+                return unprocList.Any(x => !x.HasStringOrSingleHittable);
             }
 
             KeyCombination keyCombo = null;
@@ -332,17 +332,19 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         bTimer = true;
                         logger.DebugH("Undetermined. Return NULL result");
                     }
+                //} else if (keyCombo == null && unprocList[0].HasDecKeyList) {
                 } else if (keyCombo == null && unprocList[0].HasString) {
                     logger.DebugH("combo NOT found. Return first key as is");
                     // 同時打鍵候補がないので、最初のキーをそのまま返す
                     result = Helper.MakeList(unprocList[0].OrigDecoderKey);
-                    unprocList.RemoveAt(0);
+                    unprocList.RemoveAt(0); // 最初のキーを削除
                     if (unprocList._notEmpty()) {
+                        // 2番目のキーのチェック
                         if (unprocList[0].IsJustSingleHit) {
                             logger.DebugH("second key is just SingleHit. Return second key as is");
                             result.Add(unprocList[0].OrigDecoderKey);
                             unprocList.RemoveAt(0);
-                        } else if (unprocList[0].IsSingleHittable && unprocList[0].HasString) {
+                        } else if (unprocList[0].HasStringOrSingleHittable && unprocList[0].HasString /*unprocList[0].HasDecKeyList*/) {
                             logger.DebugH("second key is SingleHittable and HasString. Enable timer");
                             bTimer = true;
                         }
@@ -419,9 +421,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 return (timingFailure == timingFail || timingFailure == 0 && timingFail > 0)
                     && (anyComboKeyUp == 0 || (anyComboKeyUp == 1) == keyUp)
                     && (kComboListEmpty == 0 || (kComboListEmpty == 1) == comboList._isEmpty())
-                    && (k1stSingle == 0 || (k1stSingle == 1) == s.IsSingleHittable)
+                    && (k1stSingle == 0 || (k1stSingle == 1) == s.HasStringOrSingleHittable)
                     && (k1stShift == 0 || (k1stShift == 1) == s.IsComboShift || (k1stShift == 2) == s.IsSequentialShift)
-                    && (k2ndSingle == 0 || (k2ndSingle == 1) == (t != null && t.IsSingleHittable))
+                    && (k2ndSingle == 0 || (k2ndSingle == 1) == (t != null && t.HasStringOrSingleHittable))
                     && (k2ndShift == 0 || (k2ndShift == 1) == (t != null && t.IsComboShift) || (k2ndShift == 2) == (t != null && t.IsSequentialShift))
                     ;
             }
@@ -486,10 +488,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                     logger.DebugH($"JUST 1 UNPROC KEY is UP KEY");
                                     if (s.IsSingleHittable || s.IsSequentialShift) {
                                         // 単打可能または順次シフトだった
-                                        logger.DebugH(() => $"Single Hittable={s.IsSingleHittable} or SequentialShift={s.IsSequentialShift}");
+                                        logger.DebugH(() => $"IsSingleHittable={s.IsSingleHittable} or SequentialShift={s.IsSequentialShift}");
                                         outputLen = 1;
                                     } else {
-                                        logger.DebugH(() => $"ABANDONED-1: Single Hittable={s.IsSingleHittable} and SequentialShift={s.IsSequentialShift}");
+                                        logger.DebugH(() => $"ABANDONED-1: IsSingleHittable={s.IsSingleHittable} and SequentialShift={s.IsSequentialShift}");
                                     }
                                 } else {
                                     // UPされていないシフトキーがある。多分、最初のループで処理されずに残ったものがRETRYで対象となった。
@@ -575,11 +577,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             }
                             logger.DebugH(() => $"outputLen={outputLen}, copyShiftLen={copyShiftLen}, discardLen={discardLen}");
                             for (int i = 0; i < outputLen && i < unprocList.Count; ++i) {
-                                // Upされていない連続シフトキーは出力しない ⇒ これをやると薙刀式で JE と打ったのが同時打鍵と判定されなかったときに E(て)が出力されなくなるので、やめる
+                                // Upされていない連続シフトキーは出力しない ⇒ と思ったが、これをやると薙刀式で JE と打ったのが同時打鍵と判定されなかったときに E(て)が出力されなくなるので、やめる
                                 //if (unprocList[i].IsUpKey || !unprocList[i].IsSuccessiveShift)
                                 var s = unprocList[i];
                                 // 強制出力か文字を持つか単打可能か順次シフトキーの場合だけ、出力する
-                                if (bForceOutput || s.HasString || s.IsSingleHittable || s.IsSequentialShift) {
+                                if (bForceOutput || s.HasDecKeyList || s.HasStringOrSingleHittable || s.IsSequentialShift) {
                                     result.Add(s.OrigDecoderKey);
                                     // 連続シフト打鍵の可能性がない場合、出力されたキーは comboList には移さない
                                     if (!bPrefixShiftMaybe) s.SetToBeRemoved();
@@ -674,9 +676,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             comboBlocked = keyCombo.IsComboBlocked;     // 同時打鍵の一時無効化か
                             Stroke tailKey = hotList[overlapLen - 1];
                             bool isTailKeyUp = hotList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
-                            logger.DebugH(() => $"CHECK1: {isTailKeyUp && (comboBlocked || (tailKey.IsSingleHittable  && !tailKey.IsShiftableSpaceKey))}: tailPos={overlapLen - 1}: " +
+                            logger.DebugH(() => $"CHECK1: {isTailKeyUp && (comboBlocked || (tailKey.HasStringOrSingleHittable  && !tailKey.IsShiftableSpaceKey))}: tailPos={overlapLen - 1}: " +
                                 $"isTailKeyUp({isTailKeyUp}) && " + 
-                                $"(comboBlocked({comboBlocked}) || (tailKey.IsSingleHittable({tailKey.IsSingleHittable}) && !tailKey.IsShiftableSpaceKey({!tailKey.IsShiftableSpaceKey})))");
+                                $"(comboBlocked({comboBlocked}) || " +
+                                $"(tailKey.HasStringOrSingleHittable({tailKey.HasStringOrSingleHittable}) && !tailKey.IsShiftableSpaceKey({!tailKey.IsShiftableSpaceKey})))");
                             logger.DebugH(() => $"CHECK2: {challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey}: " +
                                 $"challengeList.Count({challengeList.Count}) < 3 ({challengeList.Count < 3}) && hotList[0].IsShiftableSpaceKey({hotList[0].IsShiftableSpaceKey})");
                             logger.DebugH(() => "CHECK3: " +
@@ -685,7 +688,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 $"keyCombo.DecKeyList.Count({keyCombo.DecKeyList._safeCount()}) >= 3 ({keyCombo.DecKeyList._safeCount() >= 3}) && " +
                                 $"!isListContaindInSequentialPriorityWordKeySet({challengeList._toString()})({!isListContaindInSequentialPriorityWordKeySet(challengeList)})" +
                                 $": challengeList={challengeList._toString()}");
-                            if (isTailKeyUp && (comboBlocked || (tailKey.IsSingleHittable  && !tailKey.IsShiftableSpaceKey)) ||
+                            if (isTailKeyUp && (comboBlocked || (tailKey.HasStringOrSingleHittable  && !tailKey.IsShiftableSpaceKey)) ||
                                                 // CHECK1: 同時打鍵の一時無効化か、対象リストの末尾キーが単打可能キーであり先にUPされた
                                 challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey ||
                                                 // CHECK2: チャレンジリストの長さが2以下で、先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件

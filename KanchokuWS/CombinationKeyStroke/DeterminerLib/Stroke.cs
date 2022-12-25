@@ -48,13 +48,19 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>スペースキーまたは機能キーか</summary>
         public bool IsSpaceOrFunc => DecoderKeys.IsSpaceOrFuncKey(OrigDecoderKey);
 
-        /// <summary>単打可能なキーか<br/>ただし出力文字列が定義されていない打鍵もある</summary>
+        /// <summary>単打可能なキーか<br/>同時打鍵として使われていない(entry == null)か、出力文字または機能が定義されている</summary>
         public bool IsSingleHittable { get; private set; }
 
-        /// <summary>出力文字列が定義されているか</summary>
+        /// <summary>単打可能なキーか<br/>同時打鍵として使われていない(entry == null)か、出力文字が定義されている</summary>
+        public bool HasStringOrSingleHittable { get; private set; }
+
+        /// <summary>出力文字が定義されているか<br/>同時打鍵として使われており(entry != null)、出力文字が定義されている</summary>
         public bool HasString { get; private set; }
 
-        /// <summary>単打キーか<br/>同時打鍵が定義されていないか、または終端キー</summary>
+        /// <summary>同時打鍵として使われており(entry != null)、デコーダに送られるキーを持つ<br/>ただし、出力される文字や機能が定義されているとは限らない</summary>
+        public bool HasDecKeyList { get; private set; }
+
+        /// <summary>単打キーか<br/>同時打鍵として使われていない(entry == null)か、終端キーである</summary>
         public bool IsJustSingleHit { get; private set; }
 
         /// <summary>順次シフトキーか</summary>
@@ -73,7 +79,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public bool IsComboShift { get; private set; }
 
         /// <summary>単打不可の同時打鍵のシフトキーか</summary>
-        public bool IsJustComboShift => IsComboShift && !IsSingleHittable;
+        public bool IsJustComboShift => IsComboShift && !HasStringOrSingleHittable;
 
         /// <summary>スペースキーまたは機能キーの同時打鍵シフトキーか</summary>
         public bool IsSpaceOrFuncComboShift => IsSpaceOrFunc && IsComboShift;
@@ -136,14 +142,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             IsComboShift = KeyCombinationPool.IsComboShift(OrigDecoderKey);
             IsSequentialShift = KeyCombinationPool.IsSequential(OrigDecoderKey);
             var entry = KeyCombinationPool.CurrentPool.GetEntry(decKey);
-            IsSingleHittable = entry == null || entry.DecKeyList != null;
-            IsJustSingleHit = entry == null || entry.IsTerminal;
-            HasString = entry != null && entry.DecKeyList != null;
+            IsSingleHittable = entry == null || entry.HasDecoderOutput;         // 同時打鍵として使われていない(entry == null)か、出力文字または機能が定義されている
+            HasStringOrSingleHittable = entry == null || entry.HasString;       // 同時打鍵として使われていない(entry == null)か、出力文字が定義されている
+            IsJustSingleHit = entry == null || entry.IsTerminal;                // 同時打鍵として使われていない(entry == null)か、終端キーである
+            HasDecKeyList = entry != null && entry.DecKeyList != null;          // 同時打鍵として使われており(entry != null)、デコーダに送られるキーを持つ
+            HasString = entry != null && entry.HasString;                       // 同時打鍵として使われており(entry != null)、出力文字が定義されている
             KeyDt = dt;
         }
 
         public string DebugString() =>
-            $"DecKeyCode={OrigDecoderKey}, ModuloKeyCode={ModuloDecKey}, IsComobShift={IsComboShift}, IsSingleHittable={IsSingleHittable}, HasString={HasString}";
+            $"DecKeyCode={OrigDecoderKey}, ModuloKeyCode={ModuloDecKey}, IsComobShift={IsComboShift}, HasStringOrSingleHittable={HasStringOrSingleHittable}, HasDecKeyList={HasDecKeyList}, HasString={HasString}";
 
     }
 }

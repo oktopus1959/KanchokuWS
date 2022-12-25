@@ -30,9 +30,9 @@ convert(W<20>J<20>H<40>hIiwj) = ぎゃぎょ
 convert(J<50>W<50>H<100>hIijw) = ぎゃぎょ
 
 comboMinTime(50)
-convert(K<55>J<36>k<10>W<99>j<34>w) = いぎ
-convert(W<111>J<1>w<49>E<90>j<74>e) = きで
-convert(K<55>J<96>k<10>W<99>j<34>w) = いあき
+convert(K<55>J<36>k<10>W<120>j<34>w) = いぎ
+convert(W<111>J<1>w<49>E<120>j<74>e) = きで
+convert(K<55>J<96>k<10>W<120>j<34>w) = いあき
 convert(W<111>J<10>w<99>E<56>j<74>e) = きあて
 
 comboMinTime(100)
@@ -273,21 +273,24 @@ convert({40}<10>O<10>o<10>8<10>~8<10>O<100>o<10>R<10>r<10>[40]) = 撤廃
 clear()
 
 ### NICOLA ###
+useComboExtModKeyAsSingleHit(false)
 loadTable(tables/_test/nicola.tbl)
 comboMaxTime(200)
 comboMinTime(70)
-convert(J<50>{nfer}<80>j[nfer]) = ど
+convert(J<50>{nfer}<80>j[nfer]) = ど       # 第2キーがシフトのケース
 #convert(J<80>{nfer}Kj<80>[nfer]k) = とぎ
 
 comboMaxTime(100)
-convert(J<200>{nfer}<80>j[nfer]) = と!{nfer}
-convert(J<200>{nfer}[nfer]j) = ど
+convert(J<200>{nfer}<80>j[nfer]) = と
+convert(J<200>{nfer}[nfer]j) = と
 convert({nfer}<200>Jj[nfer]) = ど
-convert({nfer}<200>J[nfer]j) = !{nfer}と
 
-enableTimer1()
-convert(J<50>{nfer}<80>j[nfer]) = ど
-convert(J<200>{nfer}[nfer]j) = と!{nfer}
+# 無変換を単打可能にする
+useComboExtModKeyAsSingleHit(true)
+loadTable(tables/_test/nicola.tbl)
+convert({nfer}<200>J[nfer]j) = !{nfer}と
+convert(J<200>{nfer}[nfer]j) = ど
+convert({nfer}[nfer]) = !{nfer} # 無変換の単打
 
 ### 月光(連続シフト) ###
 loadTable(tables/_test/gekko-20211106.pfx.tbl)
@@ -295,7 +298,8 @@ comboMinTime(100)
 convert(DIid) = よ
 convert(DDDDKkIid) = よ
 convert(DDDDKIkid) = よ
-convert(DIO<40>dio) = よえ
+convert(DIO<40>dio) = よの
+convert(DIO<140>dio) = よえ
 
 comboMinTime(0) # 2打鍵以降も即時判定(Kが無視されること)
 convert(DKkIid) = よ

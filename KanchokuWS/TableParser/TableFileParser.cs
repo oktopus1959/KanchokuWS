@@ -427,7 +427,7 @@ namespace KanchokuWS.TableParser
             bool bComboBlockerHit = depth == 0;
             if (IsInCombinationBlock && bComboBlockerHit) {
                 // ComboBlocker が見つかったので、ここでいったん同時打鍵列を登録しておく
-                addCombinationKey(strkList, false);
+                addCombinationKey(strkList, false, false);
             }
             //Node node = SetNodeOrNewTreeNodeAtLast(strkList, null);
             Node node = SetOrMergeNthSubNode(idx, Node.MakeTreeNode(), bComboBlockerHit);
@@ -495,7 +495,7 @@ namespace KanchokuWS.TableParser
         {
             if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: depth={Depth}, bBare={bBare}, str={CurrentStr}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
-            addTerminalNode(idx, Node.MakeStringNode($"{ConvertKanji(CurrentStr)}", bBare));
+            addTerminalNode(idx, Node.MakeStringNode($"{ConvertKanji(CurrentStr)}", bBare), true);
             if (HasRootTable && CurrentStr._startsWith("!{")) {
                 // Repeatable Key
                 if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"REPEATABLE");
@@ -518,7 +518,7 @@ namespace KanchokuWS.TableParser
         {
             if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: depth={Depth}, str={funcMarker}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
-            addTerminalNode(idx, Node.MakeFunctionNode(funcMarker));
+            addTerminalNode(idx, Node.MakeFunctionNode(funcMarker), false);
             if (IsPrimary) savePresetFunction(idx, funcMarker);
             if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: depth={Depth}");
         }
@@ -586,10 +586,10 @@ namespace KanchokuWS.TableParser
         /// </summary>
         /// <param name="prevNth"></param>
         /// <param name="lastNth"></param>
-        void addTerminalNode(int idx, Node node)
+        void addTerminalNode(int idx, Node node, bool bStr)
         {
             // 同時打鍵ブロックの外であっても、終端ノードであることを通知しておく必要がある
-            addCombinationKey(StrokeList.WithLastStrokeAdded(idx), true);
+            addCombinationKey(StrokeList.WithLastStrokeAdded(idx), bStr, !bStr);
 
             //SetNodeOrNewTreeNodeAtLast(StrokeList.WithLastStrokeAdded(idx), node);
             SetOrMergeNthSubNode(idx, node);
@@ -603,7 +603,7 @@ namespace KanchokuWS.TableParser
         /// </summary>
         /// <param name="strkList"></param>
         /// <param name="hasStr"></param>
-        protected void addCombinationKey(CStrokeList strkList, bool hasStr)
+        protected void addCombinationKey(CStrokeList strkList, bool hasStr, bool hasFunc)
         {
             if (!strkList.IsEmpty) {
                 int strk = 0;
@@ -660,13 +660,13 @@ namespace KanchokuWS.TableParser
                         if (Settings.LoggingTableFileInfo) logger.InfoH($"comboKeyCount={comboKeyCount}, strkList.Count={strkList.Count}");
                     }
 #endif
-                    AddCombinationKeyCombo(comboList, shiftOffset, hasStr, comboBlocked);
+                    AddCombinationKeyCombo(comboList, shiftOffset, hasStr, hasFunc, comboBlocked);
                 }
             }
         }
 
         // 同時打鍵列の組合せを作成して登録しておく
-        protected void AddCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr, bool comboBlocked)
+        protected void AddCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr, bool hasFunc, bool comboBlocked)
         {
             if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"{deckeyList._keyString()}={CurrentStr}, shiftOffset={shiftOffset}, hasStr={hasStr}");
 #if DEBUG
@@ -676,7 +676,7 @@ namespace KanchokuWS.TableParser
 #endif
             var comboKeyList = deckeyList.Select(x => makeShiftedDecKey(x, shiftOffset)).ToList();      // 先頭キーのオフセットに合わせる
             keyComboPool?.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
-            keyComboPool?.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr, comboBlocked);
+            keyComboPool?.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr, hasFunc, comboBlocked);
         }
 
         void addSequentialShiftKey(int decKey, int shiftOffset)
@@ -1128,7 +1128,9 @@ namespace KanchokuWS.TableParser
             idx = strkList.Last();
             if (IsInCombinationBlock) {
                 // 同時打鍵の場合
-                addCombinationKey(strkList, true);
+                bool bFunc = myStr?.IsFunction() ?? false;
+                bool bStr = !myStr._isEmpty() && !bFunc;
+                addCombinationKey(strkList, bStr, bFunc);
             }
             // 同時打鍵の場合は、TreeNodeは RootNodeの子ノードになっているはず。
             // 逆に同時打鍵でない場合は、 TreeNode == RootNode のはず
@@ -1353,7 +1355,7 @@ namespace KanchokuWS.TableParser
                     if (RootTableNode.GetNthSubNode(dk) == null &&
                         RootTableNode.GetNthSubNode(dk + comboDeckeyStart) != null) {
                         // 単打設定が存在せず、同時打鍵の先頭キーになっている場合は、単打設定を追加する
-                        AddCombinationKeyCombo(Helper.MakeList(dk), 0, true, false);  // 単打指定
+                        AddCombinationKeyCombo(Helper.MakeList(dk), 0, true, false, false);  // 出力文字列を持つ単打指定
                         OutputLines.Add($"-{dk}>\"!{{{keyName}}}\"");
                     }
                 }
@@ -1374,7 +1376,7 @@ namespace KanchokuWS.TableParser
         //            if (RootTableNode.GetNthSubNode(idx)?.IsTreeNode() ?? false) {
         //                if (keyComboPool.GetEntry(idx) == null) {
         //                    logger.InfoH(() => $"Add DUMMY Single Hit for SequentialHead");
-        //                    AddCombinationKeyCombo(Helper.MakeList(idx), 0, true, false);  // 単打指定
+        //                    AddDummySingleHitCombo(dk);
         //                }
         //            }
         //        }

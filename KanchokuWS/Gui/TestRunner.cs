@@ -136,6 +136,7 @@ namespace KanchokuWS.Gui
 
                     case "comboMaxTime":
                         Settings.CombinationKeyMaxAllowedLeadTimeMs = arg._parseInt(70);
+                        Settings.ComboKeyMaxAllowedPostfixTimeMs = arg._parseInt(70);
                         break;
 
                     case "comboMaxPostTime":
@@ -176,6 +177,10 @@ namespace KanchokuWS.Gui
 
                     case "threeKeysComboUnconditional":
                         Settings.ThreeKeysComboUnconditional = arg._parseBool(false);
+                        break;
+
+                    case "useComboExtModKeyAsSingleHit":
+                        Settings.UseComboExtModKeyAsSingleHit = arg._parseBool(true);
                         break;
 
                     case "break":
