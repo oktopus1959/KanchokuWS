@@ -97,6 +97,7 @@ convert(J<305>W<46>E<129>w<14>e<48>j) = ぎで
 convert(J<226>W<62>E<143>e<32>w<61>j) = ぎで
 
 comboMaxTime(50)
+comboMinTime(200)
 convert(EM<55>K<30>m<16>e<26>k) = てない
 
 comboMaxTime(100)
@@ -208,7 +209,7 @@ comboMinTime(70)
 #enableTimer1
 #enableTimer2
 
-convert({40}<50>J<48>K<48>[40]<56>j<72>k) = める
+convert({40}<50>J<48>K<8>[40]<56>j<72>k) = める
 convert(J<50>{40}<50>K<48>j<56>[40]<72>k) = めや
 
 comboMaxPostTime(48)
@@ -228,7 +229,7 @@ convert(F<81>J<14>{40}<48>f<112>[40]<13>j) = の、
 comboMaxTime(50)
 comboMaxPostTime(50)
 enableTimer1
-convert({40}<9>O<89>X<28>[40]<23>o<60>x) = より
+convert({40}<9>O<89>X<8>[40]<23>o<60>x) = より
 
 comboDisableTime(300)
 convert({sp}<5>W<142>w<23>[sp]<75>{,}<22>{sp}<111>[sp]<42>[,]) = だが

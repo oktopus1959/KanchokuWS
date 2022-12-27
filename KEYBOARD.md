@@ -12,13 +12,14 @@
 
 また、下記の単打可能な特殊キーは名前でも記述できます。
 
-|キー名|X記法|名前|
-|-|-|-|
+|キー名|X記法|名前|別名|
+|-|-|-|-|-|
 |半角/全角| X1|zenkaku|
-|CapsLock|X3|caps|
-|英数|X4|alnum|
-|無変換|X5|nfer|
-|変換|X6|xfer|
+|Tab| X2|tab|
+|CapsLock|X3|capslock|caps|
+|英数|X4|eisu|alnum|
+|無変換|X5|muhenkan|nfer|
+|変換|X6|henkan|xfer|
 |ひらがな|X7|kana|
 |右シフト|X20|rshift|
 |Insert|X10|ins|
