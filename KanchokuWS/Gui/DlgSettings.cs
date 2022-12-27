@@ -503,7 +503,7 @@ namespace KanchokuWS.Gui
             }
         }
 
-        // テーブルファイル名を取得
+        // テーブル表示名を取得
         string getTableName(string filepath)
         {
             var filename = filepath._getFileName();
@@ -522,7 +522,10 @@ namespace KanchokuWS.Gui
                 //logger.DebugH(() => $"content={content}");
                 var list = content._reScan(@"#define\s+display-name\s+""([^""]+)");
                 logger.DebugH(() => $"match: {list._getFirst()}, {list._getSecond()}, list.Count={list._safeCount()}");
-                if (list._safeCount() >= 2) return $"{list[1]} ({filename})";
+                if (list._safeCount() >= 2) {
+                    // DisplayName が見つかった
+                    return $"{list[1]} ({filename})";
+                }
             }
             return filename;
         }
@@ -549,11 +552,13 @@ namespace KanchokuWS.Gui
         private void comboBox_tableFile_DropDown(object sender, EventArgs e)
         {
             tableDirectory1 = comboBoxDropDown(comboBox_tableFile, tableDirectory1);
+            logger.InfoH(() => $"tableDirectory1={tableDirectory1}");
         }
 
         private void comboBox_tableFile2_DropDown(object sender, EventArgs e)
         {
             tableDirectory2 = comboBoxDropDown(comboBox_tableFile2, tableDirectory2);
+            logger.InfoH(() => $"tableDirectory2={tableDirectory2}");
         }
 
         private string comboBoxDropDown(ComboBox comboBox, string tableDir)
@@ -579,6 +584,7 @@ namespace KanchokuWS.Gui
 
         private (string, string) getTableFileDir(ComboBox comboBox, string tableDir)
         {
+            logger.InfoH(() => $"ENTER: tableDir={tableDir}");
             var rootDir = KanchokuIni.Singleton.KanchokuDir;
             var tableFile = getTableFileName(comboBox.Text);
             if (tableFile._startsWith(".")) {
@@ -588,9 +594,14 @@ namespace KanchokuWS.Gui
                 tableDir = tableFile._getDirPath()._orElse(Settings.TableFileDir);
             }
             var tableFileDir = rootDir._joinPath(tableDir);
-            if (Helper.DirectoryExists(tableFileDir)) return (tableFileDir, tableDir);
+            if (Helper.DirectoryExists(tableFileDir)) {
+                logger.InfoH(() => $"LEAVE: tableFileDir={tableFileDir}, tableDir={tableDir}");
+                return (tableFileDir, tableDir);
+            }
+
             tableDir = Settings.TableFileDir;
             tableFileDir = rootDir._joinPath(tableDir);
+            logger.InfoH(() => $"LEAVE: tableFileDir={(Helper.DirectoryExists(tableFileDir) ? tableFileDir : rootDir)}, tableDir={tableDir}");
             return (Helper.DirectoryExists(tableFileDir) ? tableFileDir : rootDir, tableDir);
         }
 
