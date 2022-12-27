@@ -194,6 +194,7 @@
     <ClInclude Include="OneShot\KatakanaOneShot.h" />
     <ClInclude Include="OneShot\OneShot.h" />
     <ClInclude Include="OneShot\PostRewriteOneShot.h" />
+    <ClInclude Include="OneShot\RewriteString.h" />
     <ClInclude Include="OutputStack.h" />
     <ClInclude Include="Reporting\ErrorHandler.h" />
     <ClInclude Include="Reporting\Logger.h" />

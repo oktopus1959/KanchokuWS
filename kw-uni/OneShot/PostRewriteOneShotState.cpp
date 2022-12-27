@@ -15,7 +15,7 @@
 
 #include "PostRewriteOneShot.h"
 
-#if 0
+#if 1
 #define _LOG_DEBUGH_FLAG (false)
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
@@ -125,6 +125,8 @@ namespace {
 // PostRewriteOneShotNode - 書き換えノード
 DEFINE_CLASS_LOGGER(PostRewriteOneShotNode);
 
+#include "RewriteString.h"
+
 // コンストラクタ
 PostRewriteOneShotNode::PostRewriteOneShotNode(const wstring& s, bool bBare)
 {
@@ -132,9 +134,10 @@ PostRewriteOneShotNode::PostRewriteOneShotNode(const wstring& s, bool bBare)
     wstring rewStr = s;
     size_t rewLen = 0;
     if (bBare) {
-        rewStr = utils::replace(rewStr, _T("/"), _T(""));
-        size_t pos = s.find('/', 0);
-        rewLen = pos < rewStr.size() ? rewStr.size() - pos : rewStr.empty() ? 0 : 1;
+        ANALYZE_REWRITE_STR(s, rewStr, rewLen);
+        //rewStr = utils::replace(rewStr, _T("/"), _T(""));
+        //size_t pos = s.find('/', 0);
+        //rewLen = pos < rewStr.size() ? rewStr.size() - pos : rewStr.empty() ? 0 : 1;
     }
     myRewriteInfo.rewriteStr = to_mstr(rewStr);
     myRewriteInfo.rewritableLen = rewLen;
@@ -155,19 +158,22 @@ State* PostRewriteOneShotNode::CreateState() {
 }
 
 void PostRewriteOneShotNode::addRewritePair(const wstring& key, const wstring& value, bool bBare, StrokeTableNode* pNode) {
-    LOG_INFO(_T("CALLED: key=%s, value=%s, bBare=%s, pNode=%p"), key.c_str(), value.c_str(), BOOL_TO_WPTR(bBare), pNode);
+    LOG_INFO(_T("ENTER: key=%s, value=%s, bBare=%s, pNode=%p"), key.c_str(), value.c_str(), BOOL_TO_WPTR(bBare), pNode);
     wstring rewStr = value;
     size_t rewLen = 0;
     if (bBare) {
-        rewStr = utils::replace(rewStr, _T("/"), _T(""));
-        size_t pos = value.find('/', 0);
-        rewLen = pos <= rewStr.size() ? rewStr.size() - pos : rewStr.size() == 1 ? 1 : 0;
+        ANALYZE_REWRITE_STR(value, rewStr, rewLen);
+        //rewStr = utils::replace(rewStr, _T("/"), _T(""));
+        //size_t pos = value.find('/', 0);
+        //rewLen = pos <= rewStr.size() ? rewStr.size() - pos : rewStr.size() == 1 ? 1 : 0;
     }
     if (pNode) {
         subTables.push_back(pNode);
     }
 
     rewriteMap[to_mstr(key)] = RewriteInfo(to_mstr(rewStr), rewLen, pNode);
+
+    LOG_INFO(_T("LEAVE: rewStr=%s, rewLen=%d"), rewStr.c_str(), rewLen);
 }
 
 const wstring PostRewriteOneShotNode::getDebugString() const {

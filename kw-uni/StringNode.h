@@ -2,6 +2,8 @@
 
 #include "Node.h"
 
+#include "OneShot/RewriteString.h"
+
 // -------------------------------------------------------------------
 // StringNode - 文字列を格納するノード
 class StringNode : public Node {
@@ -10,9 +12,12 @@ class StringNode : public Node {
          if (s.empty()) {   // 文字列がない場合
              str.clear();
          } else if (bRewritable) {           // 文字列がある場合 - 文字列を保存する
-             str = to_mstr(utils::replace(s, _T("/"), _T("")));
-             size_t pos = s.find('/', 0);
-             rewritableLen = pos <= str.size() ? str.size() - pos : str.empty() ? 0 : 1;
+             wstring ws;
+             ANALYZE_REWRITE_STR(s, ws, rewritableLen);
+             str = to_mstr(ws);
+             //str = to_mstr(utils::replace(s, _T("/"), _T("")));
+             //size_t pos = s.find('/', 0);
+             //rewritableLen = pos <= str.size() ? str.size() - pos : str.empty() ? 0 : 1;
          } else {
              str = to_mstr(s);
          }

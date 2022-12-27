@@ -246,6 +246,9 @@
     <ClInclude Include="History\History.h">
       <Filter>ヘッダー ファイル\History</Filter>
     </ClInclude>
+    <ClInclude Include="OneShot\RewriteString.h">
+      <Filter>ヘッダー ファイル\OneShot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
