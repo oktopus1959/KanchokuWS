@@ -477,6 +477,7 @@ namespace RomanToKatakana {
             ws.append(utils::toUpperFromMS(str));
             ws.append(_T("$"));
             size_t pos = 1;     // 先頭の $ は読み飛ばす
+            LOG_DEBUGH(_T("CHECK START: ws=%s, pos=%d"), ws.c_str(), pos);
             while (pos < ws.size()) {
                 bool found = false;
                 for (size_t n = 4; !found && n >= 1; --n) {
@@ -498,6 +499,12 @@ namespace RomanToKatakana {
                     }
                 }
                 if (!found) {
+                    // ローマ字に解釈できない文字があったら、先頭からその文字までを変換せずにそのまま使用する
+                    // 例: "AA:Roma" → 「AA:ローマ」になる
+                    LOG_DEBUGH(_T("NOT MATCH: pos=%d, char=%c"), pos, ws[pos]);
+                    if (pos > 0 && pos < ws.size() - 1) {
+                        result = str.substr(0, pos);
+                    }
                     ++pos;
                 }
             }

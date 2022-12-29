@@ -1039,18 +1039,23 @@ namespace {
                             _LOG_DEBUGH(_T("splitted words=%s"), MAKE_WPTR(utils::join(words, ':')));
                             MString joinedWord;
                             for (const auto& w : words) {
-                                // ここで候補取得処理の再帰呼び出し
-                                GetCandidates(w, resultKey, false, 0);
-                                //const HistResult& hr = resultList.findSameHistMapKey(w);
-                                const MString& rw = resultList.GetNthWord(0);
-                                size_t pos = rw.find_first_of(VERT_BAR);
-                                if (pos + 1 < rw.size()) {
-                                    ++pos;
-                                    if (rw[pos] == HASH_MARK) ++pos;
-                                    // 取得した結果を連結
-                                    joinedWord.append(rw.substr(pos));
+                                if (w.size() > 1) {
+                                    // ここで候補取得処理の再帰呼び出し
+                                    GetCandidates(w, resultKey, false, 0);
+                                    //const HistResult& hr = resultList.findSameHistMapKey(w);
+                                    const MString& rw = resultList.GetNthWord(0);
+                                    size_t pos = rw.find_first_of(VERT_BAR);
+                                    if (pos + 1 < rw.size()) {
+                                        ++pos;
+                                        if (rw[pos] == HASH_MARK) ++pos;
+                                        // 取得した結果を連結
+                                        joinedWord.append(rw.substr(pos));
+                                    }
+                                    resultKey.clear();
+                                } else if (!w.empty()) {
+                                    // 1文字なら変換せずにそのまま使用
+                                    joinedWord.append(1, w[0]);
                                 }
-                                resultKey.clear();
                             }
                             _LOG_DEBUGH(_T("Join Katakana"));
                             resultList.ClearKeyInfo();
