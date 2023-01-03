@@ -368,19 +368,25 @@ namespace KanchokuWS
             if (deckey < 0) return 0;
 
             bool bFunc = false;
-            if (deckey >= DecoderKeys.SHIFT_DECKEY_START && deckey < DecoderKeys.FUNC_DECKEY_START) {
+            if (deckey >= DecoderKeys.SHIFT_DECKEY_START && deckey < DecoderKeys.SHIFT_DECKEY_END) {
+                // SHIFT修飾DECKEY
                 deckey -= DecoderKeys.SHIFT_DECKEY_START;
-            }  else if (deckey >= DecoderKeys.FUNC_DECKEY_START && deckey < DecoderKeys.CTRL_DECKEY_START) {
+            }  else if (deckey >= DecoderKeys.FUNC_DECKEY_START && deckey < DecoderKeys.FUNC_DECKEY_END) {
+                // 機能DECKEY
                 deckey -= DecoderKeys.FUNC_DECKEY_START;
                 bFunc = true;
-            }  else if (deckey >= DecoderKeys.CTRL_DECKEY_START && deckey < DecoderKeys.CTRL_FUNC_DECKEY_START) {
+            }  else if (deckey >= DecoderKeys.CTRL_DECKEY_START && deckey < DecoderKeys.CTRL_DECKEY_END) {
+                // Ctrl修飾DECKEY
                 deckey -= DecoderKeys.CTRL_DECKEY_START;
-            }  else if (deckey >= DecoderKeys.CTRL_FUNC_DECKEY_START && deckey < DecoderKeys.CTRL_SHIFT_DECKEY_START) {
+            }  else if (deckey >= DecoderKeys.CTRL_FUNC_DECKEY_START && deckey < DecoderKeys.CTRL_FUNC_DECKEY_END) {
+                // Ctrl修飾機能DECKEY
                 deckey -= DecoderKeys.CTRL_FUNC_DECKEY_START;
                 bFunc = true;
-            }  else if (deckey >= DecoderKeys.CTRL_SHIFT_DECKEY_START && deckey < DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START) {
+            }  else if (deckey >= DecoderKeys.CTRL_SHIFT_DECKEY_START && deckey < DecoderKeys.CTRL_SHIFT_DECKEY_END) {
+                // Ctrl+Shift修飾DECKEY
                 deckey -= DecoderKeys.CTRL_SHIFT_DECKEY_START;
-            }  else if (deckey >= DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START && deckey < DecoderKeys.TOTAL_DECKEY_NUM) {
+            }  else if (deckey >= DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START && deckey < DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_END) {
+                // Ctrl+Shift修飾機能DECKEY
                 deckey -= DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START;
                 bFunc = true;
             }
