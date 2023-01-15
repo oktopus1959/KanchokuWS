@@ -90,6 +90,8 @@ namespace KanchokuWS.TableParser
         protected void ClearCurrentStr() { tableLines.ClearCurrentStr(); }
         protected string RewritePreTargetStr { get { return tableLines.RewritePreTargetStr; } set { tableLines.RewritePreTargetStr = value; } }
         protected string RewritePostChar { get { return tableLines.RewritePostChar; } set { tableLines.RewritePostChar = value; } }
+        protected void InsertAtNextPos(string s) { tableLines.InsertAtNextPos(s); }
+
         protected void ReadAllLines(string filename, bool bPrimary, bool bForKanchoku) { tableLines.ReadAllLines(filename, bPrimary, bForKanchoku); }
         protected void IncludeFile() { tableLines.IncludeFile(); }
         protected void EndInclude() { tableLines.EndInclude(); }
@@ -105,6 +107,7 @@ namespace KanchokuWS.TableParser
         protected string ReadWord() { return tableLines.ReadWord(); }
         protected OutputString ReadWordOrString() { return tableLines.ReadWordOrString(); }
         protected char PeekNextChar(int offset = 0) { return tableLines.PeekNextChar(offset); }
+        protected char PeekPrevChar() { return tableLines.PeekPrevChar(); }
         protected char GetNextChar() { return tableLines.GetNextChar(); }
         protected bool GetNextLine() { return tableLines.GetNextLine(); }
         protected void AdvanceCharPos(int offset) { tableLines.AdvanceCharPos(offset); }

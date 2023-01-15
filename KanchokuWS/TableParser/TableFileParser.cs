@@ -482,6 +482,22 @@ namespace KanchokuWS.TableParser
                         break;
                     }
                 }
+                if (idx < 0 && PeekPrevChar() == '>') {
+                    // 同時打鍵での後置書き換え設定で、文字が指定された場合 (`&ん>` のようなケース)
+                    for (int j = 0; idx < 0 && j < DecoderKeys.NORMAL_DECKEY_NUM; ++j) {
+                        var node = GetNthRootNode(j + DecoderKeys.COMBO_DECKEY_START);
+                        if (node != null && node.IsTreeNode()) {
+                            for (int i = 0; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
+                                if (RewritePostChar == (node.GetNthSubNode(i)?.GetOutputString())._toSafe()) {
+                                    idx = j;
+                                    InsertAtNextPos($",{i}>");  // 2打鍵目の挿入
+                                    if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"RewritePostChar Index Found=({idx}, {i})");
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
             if (idx < 0) {
                 ParseError($"単打面に存在しない後置書き換え文字: {RewritePostChar}");

@@ -235,6 +235,15 @@ namespace KanchokuWS.TableParser
 
         public string RewritePostChar { get; set; }                         // 後置書き換え文字
 
+        public void InsertAtNextPos(string s)
+        {
+            if (lineNumber < tableLines.Count) {
+                int pos = nextPos;
+                if (pos >= tableLines[lineNumber].Length) pos = tableLines[lineNumber].Length;
+                tableLines[lineNumber] = tableLines[lineNumber].Insert(pos, s);
+            }
+        }
+
         /// <summary>コンストラクタ</summary>
         public TableLines()
         {
@@ -618,6 +627,10 @@ namespace KanchokuWS.TableParser
 
         public char PeekNextChar(int offset = 0) {
             return ((nextPos + offset) < CurrentLine.Length) ? CurrentLine[nextPos + offset] : '\n';
+        }
+
+        public char PeekPrevChar() {
+            return (nextPos > 0 && nextPos - 1 < CurrentLine.Length) ? CurrentLine[nextPos - 1] : '\0';
         }
 
         public char GetNextChar() {
