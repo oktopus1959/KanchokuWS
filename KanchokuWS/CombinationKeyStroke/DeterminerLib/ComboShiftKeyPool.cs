@@ -60,13 +60,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 if (oldKind != ComboKind.None && kind <= ComboKind.PrefixSuccessiveShift) {
                     if (kind == ComboKind.SequentialShift || kind == ComboKind.PrefixSuccessiveShift) {
                         if (kind != oldKind && (oldKind == ComboKind.SequentialShift || oldKind == ComboKind.PrefixSuccessiveShift)) {
-                            logger.DebugH(() => $"MERGE: keyCode={keyCode}, Kind=PrefixOrSequentialShift");
+                            if (Settings.LoggingTableFileInfo) logger.DebugH(() => $"MERGE: keyCode={keyCode}, Kind=PrefixOrSequentialShift");
                             comboKindDict[keyCode] = ComboKind.PrefixOrSequentialShift;
                             ContainsSuccessiveShiftKey = true;
                         }
                     }
                 } else if (oldKind != ComboKind.UnorderedSuccessiveShift) { // UnorderedSuccessiveShift が最強
-                    logger.DebugH(() => $"ADD: keyCode={keyCode}, Kind={kind}");
+                    if (Settings.LoggingTableFileInfo) logger.DebugH(() => $"ADD: keyCode={keyCode}, Kind={kind}");
                     comboKindDict[keyCode] = kind;
                     if (IsUnorderedShift(kind)) ContainsUnorderedShiftKey = true;
                     if (IsSuccessiveShift(kind)) ContainsSuccessiveShiftKey = true;
@@ -87,7 +87,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void Clear()
         {
-            logger.DebugH("CALLED");
+            if (Settings.LoggingTableFileInfo) logger.DebugH("CALLED");
             comboKindDict.Clear();
             ContainsUnorderedShiftKey = false;
             ContainsSuccessiveShiftKey = false;

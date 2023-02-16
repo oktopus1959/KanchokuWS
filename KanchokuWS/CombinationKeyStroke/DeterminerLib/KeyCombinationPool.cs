@@ -49,7 +49,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public static void Initialize()
         {
-            logger.DebugH("CALLED");
+            if (Settings.LoggingTableFileInfo) logger.DebugH("CALLED");
             SingletonK1.Clear();
             SingletonA1.Clear();
             SingletonK2.Clear();
@@ -74,7 +74,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 currentPoolA = SingletonA1;
             }
             ChangeCurrentPoolByDecoderMode(bDecoderOn);
-            logger.DebugH(() => $"CurrentPool={detectCurrentPool()}, Enabled={CurrentPool.Enabled}");
+            if (Settings.LoggingTableFileInfo) logger.DebugH(() => $"CurrentPool={detectCurrentPool()}, Enabled={CurrentPool.Enabled}");
         }
 
         public static void ChangeCurrentPoolByDecoderMode(bool bDecoderOn)
@@ -84,7 +84,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             } else {
                 CurrentPool = currentPoolA;
             }
-            logger.DebugH(() => $"CurrentPool={detectCurrentPool()}, Enabled={CurrentPool.Enabled}");
+            if (Settings.LoggingTableFileInfo) logger.DebugH(() => $"CurrentPool={detectCurrentPool()}, Enabled={CurrentPool.Enabled}");
         }
 
         public static void UsePrimaryPool(bool bDecoderOn)
@@ -144,13 +144,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             public void DebugPrint(bool bAll = false)
             {
-                int i = 0;
-                foreach (var pair in dict) {
-                    //var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
-                    var key = pair.Key;
-                    var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
-                    if (bAll || i < 500) logger.DebugH($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal}");
-                    ++i;
+                if (Settings.LoggingTableFileInfo) {
+                    int i = 0;
+                    foreach (var pair in dict) {
+                        //var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
+                        var key = pair.Key;
+                        var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
+                        if (bAll || i < 500) logger.DebugH($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal}");
+                        ++i;
+                    }
                 }
             }
 
@@ -226,7 +228,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <param name="shiftKind">Prefixの場合は、与えられたキー順のみ有効</param>
         public void AddEntry(List<int> deckeyList, List<int> comboKeyList, ComboKind shiftKind, bool hasStr, bool hasFunc, bool comboBlocked)
         {
-            logger.DebugH(() =>
+            if (Settings.LoggingTableFileInfo) logger.DebugH(() =>
                 $"CALLED: keyList={deckeyList._keyString()}, comboShiftedKeyList={comboKeyList._keyString()}, ShiftKeyKind={shiftKind}, HasString={hasStr}");
 
             if (deckeyList._notEmpty() && comboKeyList._notEmpty()) {
@@ -290,20 +292,20 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// </summary>        
         public void SetNonTerminalMarkForSubkeys(bool bEisu)
         {
-            logger.DebugH($"ENTER: comboSubKeys.Count={comboSubKeys.Count}");
+            if (Settings.LoggingTableFileInfo) logger.DebugH($"ENTER: comboSubKeys.Count={comboSubKeys.Count}");
             int i = 0;
             foreach (var subkey in comboSubKeys) {
                 // 部分キーに対して、非終端マークをセット
-                //if (i < 100) logger.DebugH(() => $"search keyString={key} => list={KeyCombinationHelper.EncodeKeyList(KeyCombinationHelper.DecodeKey(key))}");
+                //if (i < 100) if (Settings.LoggingTableFileInfo) logger.DebugH(() => $"search keyString={key} => list={KeyCombinationHelper.EncodeKeyList(KeyCombinationHelper.DecodeKey(key))}");
                 int keylen = subkey._keyLengh();
                 var keyCombo = keyComboDict.Get(subkey);
                 if (keyCombo == null || keylen < 3) {
                     // 部分キーが存在して、その長さが3以上なら、非終端にはしない
                     // ⇒「Sp,J,K,X」で「ぽ」、「Sp,X,J」で「りゃ」のようなケースで、「りゃ」のほうを出したい
-                    if (i < 500) logger.DebugH(() => $"Set sub keyString={subkey}");
+                    if (i < 500 && Settings.LoggingTableFileInfo) logger.DebugH(() => $"Set sub keyString={subkey}");
                     if (keyCombo == null) {
                         // 存在していなかった部分キーを追加
-                        if (i < 500) logger.DebugH($"Add non terminal subkey: {subkey}");
+                        if (i < 500 && Settings.LoggingTableFileInfo) logger.DebugH($"Add non terminal subkey: {subkey}");
                         List<int> keyList = null;
                         // 英数モードの場合は、1文字キーを単打可能に設定する
                         if (bEisu && keylen == 1) {
@@ -317,7 +319,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     ++i;
                 }
             }
-            logger.DebugH($"LEAVE");
+            if (Settings.LoggingTableFileInfo) logger.DebugH($"LEAVE");
         }
 
         /// <summary>
@@ -327,7 +329,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <param name="kind"></param>
         public void AddRepeatableKey(int keyCode)
         {
-            logger.DebugH(() => $"CALLED: keyCode={keyCode}");
+            if (Settings.LoggingTableFileInfo) logger.DebugH(() => $"CALLED: keyCode={keyCode}");
             if (keyCode >= 0) MiscKeys.AddRepeatableKey(keyCode);
         }
 
@@ -359,7 +361,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <param name="kind"></param>
         public void AddComboShiftKey(int keyCode, ComboKind kind)
         {
-            logger.DebugH(() => $"CALLED: keyCode={keyCode}, shiftKey={kind}");
+            if (Settings.LoggingTableFileInfo) logger.DebugH(() => $"CALLED: keyCode={keyCode}, shiftKey={kind}");
             if (keyCode >= 0) ComboShiftKeys.AddShiftKey(keyCode, kind);
         }
 
@@ -407,11 +409,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void DebugPrint(bool bAll = false)
         {
-            keyComboDict.DebugPrint();
-            foreach (var pair in ComboShiftKeys.Pairs) {
-                logger.DebugH($"ShiftKey: {pair.Key}={pair.Value}");
+            if (Settings.LoggingTableFileInfo) {
+                keyComboDict.DebugPrint();
+                foreach (var pair in ComboShiftKeys.Pairs) {
+                    logger.DebugH($"ShiftKey: {pair.Key}={pair.Value}");
+                }
+                logger.DebugH($"{MiscKeys.DebugString()}");
             }
-            logger.DebugH($"{MiscKeys.DebugString()}");
         }
 
         public void DebugPrintFile(string filename)

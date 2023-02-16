@@ -174,7 +174,7 @@ namespace KanchokuWS.TableParser
 
         public List<string> GetStrokeList(string word)
         {
-            logger.InfoH(() => $"WORD: {word}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"WORD: {word}");
             List<string> result = new List<string>();
             if (word._notEmpty()) {
                 getStrokeListSub(0, word._reReplace(@"[。、ーぁ-龠]", @":$&:")._reReplace(@"::", @":")._reReplace(@"^:", @"")._reReplace(@":$", @"")._split(':'), new List<string>(), result);
@@ -185,13 +185,13 @@ namespace KanchokuWS.TableParser
         private void getStrokeListSub(int n, string[] word, List<string> strokes, List<string> result)
         {
             if (n == 0) {
-                logger.InfoH(() => $"PRIORITY WORD({n}): {word._join(":")}");
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"PRIORITY WORD({n}): {word._join(":")}");
             }
 
             if (strokes.Count >= 4) return; // 3キーを超えるものは無視
 
             if (n >= word.Length) {
-                logger.InfoH(() => $"PRIORITY WORD({n}): {word._join(":")}, keyString={strokes._join(":")}");
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"PRIORITY WORD({n}): {word._join(":")}, keyString={strokes._join(":")}");
                 result.Add(strokes.Select(x => x._safeSubstring(-2))._join(":"));   // 100以上なら99以下に丸める
                 return;
             }
@@ -1249,7 +1249,7 @@ namespace KanchokuWS.TableParser
         /// </summary>
         public void ParseRootTable()
         {
-            logger.InfoH("ENTER");
+            if (Settings.LoggingTableFileInfo) logger.InfoH("ENTER");
 
             if (isKanchokuModeParser) {
                 // 漢直モードの場合、ルートテーブルの文字キーを @^ (MyChar機能)で埋めておく
@@ -1335,9 +1335,11 @@ namespace KanchokuWS.TableParser
                         Settings.SequentialPriorityWordKeyStringSet.Add(seq);
                     }
                 }
-                logger.InfoH(() => $"SequentialPriorityWordKeyStringSet={Settings.SequentialPriorityWordKeyStringSet._join(",")}");
-                logger.InfoH(() => $"ThreeKeysComboPriorityHeadKeyStringSet={Settings.ThreeKeysComboPriorityHeadKeyStringSet._join(",")}");
-                logger.InfoH(() => $"ThreeKeysComboPriorityTailKeyStringSet={Settings.ThreeKeysComboPriorityTailKeyStringSet._join(",")}");
+                if (Settings.LoggingTableFileInfo) {
+                    logger.InfoH(() => $"SequentialPriorityWordKeyStringSet={Settings.SequentialPriorityWordKeyStringSet._join(",")}");
+                    logger.InfoH(() => $"ThreeKeysComboPriorityHeadKeyStringSet={Settings.ThreeKeysComboPriorityHeadKeyStringSet._join(",")}");
+                    logger.InfoH(() => $"ThreeKeysComboPriorityTailKeyStringSet={Settings.ThreeKeysComboPriorityTailKeyStringSet._join(",")}");
+                }
             }
 
             // 全ノードの情報を OutputLines に書き出す
@@ -1349,7 +1351,7 @@ namespace KanchokuWS.TableParser
             //    addMyCharFunctionInRootStrokeTable();
             //}
 
-            logger.InfoH(() => $"LEAVE: KeyCombinationPool.Count={keyComboPool?.Count}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: KeyCombinationPool.Count={keyComboPool?.Count}");
         }
 
         public void ParseDirectives()
@@ -1447,7 +1449,7 @@ namespace KanchokuWS.TableParser
         /// <param name="pool">対象となる KeyComboPool</param>
         public void ParseTableFile(string filename, string outFilename, KeyCombinationPool poolK, KeyCombinationPool poolA, bool primary, bool bTest = false)
         {
-            logger.InfoH(() => $"ENTER: filename={filename}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: filename={filename}");
 
             List<string> outputLines = new List<string>();
 
@@ -1465,14 +1467,14 @@ namespace KanchokuWS.TableParser
             string errorMsg = "";
 
             // 漢直モードの解析
-            logger.InfoH(() => $"Analyze for KANCHOKU mode");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"Analyze for KANCHOKU mode");
             TableLines tableLines = new TableLines();
             tableLines.ReadAllLines(filename, primary, true);
             if (tableLines.NotEmpty) {
                 parseRootTable(tableLines, poolK, true);
                 errorMsg = tableLines.getErrorMessage();
                 // 英数モードの解析
-                logger.InfoH(() => $"Analyze for EISU mode");
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"Analyze for EISU mode");
                 tableLines = new TableLines();
                 tableLines.ReadAllLines(filename, primary, false);
                 parseRootTable(tableLines, poolA, false);
@@ -1487,7 +1489,7 @@ namespace KanchokuWS.TableParser
                 SystemHelper.ShowWarningMessageBox(errorMsg);
             }
 
-            logger.InfoH("LEAVE");
+            if (Settings.LoggingTableFileInfo) logger.InfoH("LEAVE");
         }
 
         /// <summary>
@@ -1498,7 +1500,7 @@ namespace KanchokuWS.TableParser
         /// <param name="pool">対象となる KeyComboPool</param>
         public void ReadDirectives(string filename, bool primary)
         {
-            logger.InfoH(() => $"ENTER: filename={filename}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: filename={filename}");
 
             TableLines tableLines = new TableLines();
             tableLines.ReadAllLines(filename, primary, true);
@@ -1515,7 +1517,7 @@ namespace KanchokuWS.TableParser
 
             //tableLines.showErrorMessage();
 
-            logger.InfoH("LEAVE");
+            if (Settings.LoggingTableFileInfo) logger.InfoH("LEAVE");
         }
 
         private void writeAllLines(string filename, List<string> lines)
@@ -1523,9 +1525,9 @@ namespace KanchokuWS.TableParser
             if (filename._notEmpty()) {
                 var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
                 Helper.CreateDirectory(path._getDirPath());
-                logger.InfoH(() => $"ENTER: path={path}");
+                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: path={path}");
                 Helper.WriteLinesToFile(path, lines, (e) => logger.Error(e._getErrorMsg()));
-                logger.InfoH("LEAVE");
+                if (Settings.LoggingTableFileInfo) logger.InfoH("LEAVE");
             }
         }
 

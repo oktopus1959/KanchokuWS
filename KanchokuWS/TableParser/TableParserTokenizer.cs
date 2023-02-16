@@ -411,7 +411,7 @@ namespace KanchokuWS.TableParser
             ReadWord();
             var word = CurrentStr._toLower();
             if (word._isEmpty()) {
-                logger.InfoH("SandS");
+                if (Settings.LoggingTableFileInfo) logger.InfoH("SandS");
                 Settings.SandSEnabledCurrently = true;
                 int plane = VirtualKeys.GetSandSPlane();
                 if (plane > 0) {
@@ -422,11 +422,11 @@ namespace KanchokuWS.TableParser
                 }
             } else if (word._startsWith("enable")) {
                 Settings.SandSEnabledCurrently = true;
-                logger.InfoH("SandS enabled");
+                if (Settings.LoggingTableFileInfo) logger.InfoH("SandS enabled");
             } else if (word._startsWith("disable")) {
                 Settings.SandSEnabledCurrently = false;
                 VirtualKeys.AddDisabledExtKey("space");
-                logger.InfoH("SandS disabled");
+                if (Settings.LoggingTableFileInfo) logger.InfoH("SandS disabled");
             } else if (word == "s") {
                 Settings.SandSEnabledCurrently = true;
                 shiftPlane = 1;
