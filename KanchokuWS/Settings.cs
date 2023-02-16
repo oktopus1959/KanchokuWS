@@ -817,7 +817,7 @@ namespace KanchokuWS
 
         public static int GetLogLevel()
         {
-            return GetString("logLevel")._parseInt(Logger.LogLevelWarn)._lowLimit(0)._highLimit(Logger.LogLevelTrace);   // デフォルトは WARN
+            return GetString("logLevel")._parseInt(Logger.LogLevelError)._lowLimit(0)._highLimit(Logger.LogLevelTrace);   // デフォルトは ERROR
         }
 
         public static bool IsMultiAppEnabled()
