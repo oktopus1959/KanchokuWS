@@ -459,10 +459,17 @@ namespace RomanToKatakana {
             loadRomanDefLines(reader.getAllLines());
             LOG_INFOH(_T("close roman def: %s"), path.c_str());
         } else {
-            // ファイルがなかったらデフォルトを使う
+            //// ファイルがなかったらデフォルトを使う
+            //LOG_WARN(_T("Can't read roman def file: %s"), path.c_str());
+            //LOG_WARN(_T("Use default roman defs"));
+            //loadRomanDefLines(defaultRomanDef);
+            // ファイルがなかったら定義テーブルをクリアする
+            //LOG_WARN(_T("Can't read roman def file: %s"), path.c_str());
+            //LOG_WARN(_T("Use default roman defs"));
+            //loadRomanDefLines(defaultRomanDef);
             LOG_WARN(_T("Can't read roman def file: %s"), path.c_str());
-            LOG_WARN(_T("Use default roman defs"));
-            loadRomanDefLines(defaultRomanDef);
+            LOG_WARN(_T("Clear roman defs"));
+            romanKatakanaTbl.clear();
         }
     }
 
@@ -472,40 +479,44 @@ namespace RomanToKatakana {
         LOG_DEBUGH(_T("ENTER: str=%s"), MAKE_WPTR(str));
         MString result;
         if (!str.empty()) {
-            // ws: strをwstringに変換して前後に $ を付ける
-            wstring ws = _T("$");
-            ws.append(utils::toUpperFromMS(str));
-            ws.append(_T("$"));
-            size_t pos = 1;     // 先頭の $ は読み飛ばす
-            LOG_DEBUGH(_T("CHECK START: ws=%s, pos=%d"), ws.c_str(), pos);
-            while (pos < ws.size()) {
-                bool found = false;
-                for (size_t n = 4; !found && n >= 1; --n) {
-                    LOG_DEBUGH(_T("CHECK: ws.size=%d, pos=%d, n=%d"), ws.size(), pos, n);
-                    if (n <= ws.size() - pos) {
-                        wstring key = ws.substr(pos, n);
-                        LOG_DEBUGH(_T("CHECK: key=%s"), key.c_str());
-                        auto iter = romanKatakanaTbl.find(key);
-                        if (iter != romanKatakanaTbl.end()) {
-                            for (const auto& info : iter->second) {
-                                if (info.match(key, ws, pos)) {
-                                    result.append(to_mstr(info.katakanaStr));
-                                    pos += n;
-                                    found = true;
-                                    break;
+            if (romanKatakanaTbl.empty()) {
+                result = str;
+            } else {
+                // ws: strをwstringに変換して前後に $ を付ける
+                wstring ws = _T("$");
+                ws.append(utils::toUpperFromMS(str));
+                ws.append(_T("$"));
+                size_t pos = 1;     // 先頭の $ は読み飛ばす
+                LOG_DEBUGH(_T("CHECK START: ws=%s, pos=%d"), ws.c_str(), pos);
+                while (pos < ws.size()) {
+                    bool found = false;
+                    for (size_t n = 4; !found && n >= 1; --n) {
+                        LOG_DEBUGH(_T("CHECK: ws.size=%d, pos=%d, n=%d"), ws.size(), pos, n);
+                        if (n <= ws.size() - pos) {
+                            wstring key = ws.substr(pos, n);
+                            LOG_DEBUGH(_T("CHECK: key=%s"), key.c_str());
+                            auto iter = romanKatakanaTbl.find(key);
+                            if (iter != romanKatakanaTbl.end()) {
+                                for (const auto& info : iter->second) {
+                                    if (info.match(key, ws, pos)) {
+                                        result.append(to_mstr(info.katakanaStr));
+                                        pos += n;
+                                        found = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                if (!found) {
-                    // ローマ字に解釈できない文字があったら、先頭からその文字までを変換せずにそのまま使用する
-                    // 例: "AA:Roma" → 「AA:ローマ」になる
-                    LOG_DEBUGH(_T("NOT MATCH: pos=%d, char=%c"), pos, ws[pos]);
-                    if (pos > 0 && pos < ws.size() - 1) {
-                        result = str.substr(0, pos);
+                    if (!found) {
+                        // ローマ字に解釈できない文字があったら、先頭からその文字までを変換せずにそのまま使用する
+                        // 例: "AA:Roma" → 「AA:ローマ」になる
+                        LOG_DEBUGH(_T("NOT MATCH: pos=%d, char=%c"), pos, ws[pos]);
+                        if (pos > 0 && pos < ws.size() - 1) {
+                            result = str.substr(0, pos);
+                        }
+                        ++pos;
                     }
-                    ++pos;
                 }
             }
         }
