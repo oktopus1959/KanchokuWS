@@ -304,6 +304,7 @@ namespace KanchokuWS
         public const int EISU_MODE_CANCEL_DECKEY = EISU_MODE_TOGGLE_DECKEY + 1;             // 英数モードをキャンセルする
         public const int EISU_DECAPITALIZE_DECKEY = EISU_MODE_CANCEL_DECKEY + 1;            // 英数モードで先頭文字を小文字化する
 
+        public const int UNDEFINED_DECKEY = EISU_DECAPITALIZE_DECKEY + 1;                   // 未定義のキー
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 
         // END_OF_AUTO_MAKE

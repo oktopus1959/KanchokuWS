@@ -89,7 +89,7 @@ namespace {
             if (myChar == SETTINGS->eisuHistSearchChar) {
                 // 履歴検索の実行
                 HISTORY_STAY_STATE->handleNextCandTrigger();
-            } else {
+            } else if (deckey < NORMAL_DECKEY_NUM || (deckey >= SHIFT_DECKEY_START && deckey < (SHIFT_DECKEY_START + NORMAL_DECKEY_NUM))) {
                 STATE_COMMON->AppendOrigString(myChar);
 
                 // キーボードフェイス文字を返す
@@ -100,6 +100,10 @@ namespace {
                 //    // 2文字目も英大文字だったら、英数モードを終了する
                 //    cancelMe();
                 //}
+            } else {
+                // 通常キーでもシフトキーでもなかった
+                setThroughDeckeyFlag();
+                cancelMe();
             }
             LOG_INFO(_T("LEAVE"));
         }
@@ -134,6 +138,12 @@ namespace {
 
         // EisuModeのトグル - 処理のキャンセル
         void handleEisuMode() override {
+            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            cancelMe();
+        }
+
+        // handleUndefinedKey ハンドラ - 処理のキャンセル
+        void handleUndefinedDeckey(int ) override {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
             cancelMe();
         }

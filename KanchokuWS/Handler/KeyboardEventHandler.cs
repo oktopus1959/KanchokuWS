@@ -1200,6 +1200,9 @@ namespace KanchokuWS.Handler
                 //    return RotateDateString?.Invoke() ?? false;
                 //case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
                 //    return RotateReverseDateString?.Invoke() ?? false;
+                case -1:
+                    FuncDispatcher?.Invoke(DecoderKeys.UNDEFINED_DECKEY, 0);
+                    return false;
                 default:
                     if (kanchokuCode >= DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET && kanchokuCode < DecoderKeys.UNCONDITIONAL_DECKEY_END) {
                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}");

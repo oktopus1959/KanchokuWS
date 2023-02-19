@@ -434,6 +434,8 @@ void State::dispatchDeckey(int deckey) {
         handleEisuCancel();
     } else if (deckey == EISU_DECAPITALIZE_DECKEY) {
         handleEisuDecapitalize();
+    } else if (deckey == UNDEFINED_DECKEY) {
+        handleUndefinedDeckey(deckey);
     } else {
         if (handleFunctionKeys(deckey)) {
             _LOG_DEBUGH(_T("LEAVE: %s: FunctionKey handled, outStr=%s"), NAME_PTR, MAKE_WPTR(STATE_COMMON->OutString()));
@@ -540,6 +542,9 @@ void State::dispatchDeckey(int deckey) {
             break;
         }
     }
+
+    if (isThroughDeckey()) handleUndefinedDeckey(deckey);
+
     _LOG_DEBUGH(_T("LEAVE: %s: deckey=%xH(%d), outStr=%s"), NAME_PTR, deckey, deckey, MAKE_WPTR(STATE_COMMON->OutString()));
 }
 
@@ -555,7 +560,10 @@ void State::handleSpaceKey() { _LOG_DEBUGH(_T("CALLED")); handleStrokeKeys(STROK
 
 //-----------------------------------------------------------------------
 // 特殊キーデフォルトハンドラ
-void State::handleSpecialKeys(int /*deckey*/) { LOG_INFOH(_T("THROUGH")); setThroughDeckeyFlag(); }
+void State::handleSpecialKeys(int /*deckey*/) {
+    LOG_INFOH(_T("THROUGH"));
+    setThroughDeckeyFlag();
+}
 
 // FullEscape デフォルトハンドラ
 void State::handleFullEscape() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(FULL_ESCAPE_DECKEY); }
@@ -600,6 +608,12 @@ void State::handleToggleBlocker() {
     LOG_INFOH(_T("CALLED"));
     // ブロッカーをセット/リセットする
     OUTPUT_STACK->toggleLastBlocker();
+}
+
+// handleUndefinedKey デフォルトハンドラ
+void State::handleUndefinedDeckey(int ) {
+    // 何もしない
+    LOG_INFOH(_T("DO NOTHING"));
 }
 
 //-----------------------------------------------------------------------
@@ -679,13 +693,13 @@ void State::handleLeftRightMazeShift(int deckey) { LOG_INFO(_T("CALLED: deckey=%
 
 // RET/Enter ハンドラ
 void State::handleEnter() {
-    LOG_DEBUG(_T("Enter"));
+    _LOG_DEBUGH(_T("%s: Enter"), NAME_PTR);
     STATE_COMMON->SetAppendBackspaceStopperFlag();
     handleSpecialKeys(ENTER_DECKEY);
 }
 
 // ESC ハンドラ
-void State::handleEsc() { LOG_DEBUG(_T("Esc: currentDeckey=%d"), currentDeckey); if (currentDeckey == ESC_DECKEY) handleSpecialKeys(ESC_DECKEY); }
+void State::handleEsc() { _LOG_DEBUGH(_T("%s: Esc: currentDeckey=%d"), NAME_PTR, currentDeckey); if (currentDeckey == ESC_DECKEY) handleSpecialKeys(ESC_DECKEY); }
     
 // BS ハンドラ
 void State::handleBS() { _LOG_DEBUGH(_T("BackSpace")); setCharDeleteInfo(1); }

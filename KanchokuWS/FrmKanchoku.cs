@@ -949,6 +949,12 @@ namespace KanchokuWS
                             logger.InfoH(() => $"DIRECT_SPACE_DECKEY:{deckey}, mode={mod:x}H");
                             return sendVkeyFromDeckey(DecoderKeys.STROKE_SPACE_DECKEY, mod);
 
+                        case DecoderKeys.UNDEFINED_DECKEY:
+                            // 主に英数モードから抜けるために使う
+                            logger.InfoH(() => $"UNDEFINED_DECKEY:{deckey}");
+                            sendDeckeyToDecoder(deckey);
+                            return false;
+
                         default:
                             bPrevDtUpdate = true;
                             if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
@@ -1892,6 +1898,8 @@ namespace KanchokuWS
             logger.InfoH(() => $"CLLED: deckey={deckey:x}H({deckey})");
             HandleDeckeyDecoder(decoderPtr, deckey, 0, 0, ref decoderOutput);
             if (IsDecoderActive) {
+                // 中央鍵盤文字列の取得
+                getCenterString();
                 // 仮想キーボードにヘルプや文字候補を表示
                 frmVkb.DrawVirtualKeyboardChars();
             }

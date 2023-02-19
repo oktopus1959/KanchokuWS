@@ -189,6 +189,11 @@ protected:
         STATE_COMMON->SetDeckeyToVkeyFlag();
     }
 
+    // 入力されたDECKEYをそのままGUI返す
+    static bool isThroughDeckey() {
+        return STATE_COMMON->IsDeckeyToVkey();
+    }
+
     // 特殊キーをDECKEYとして登録する必要あり
     static void setSpecialDeckeys() {
         STATE_COMMON->SetSpecialDeckeyRequiredFlag();
@@ -268,6 +273,9 @@ public:
 
     // ToggleBlocker ハンドラ
     virtual void handleToggleBlocker();
+
+    // UndefinedDeckey ハンドラ
+    virtual void handleUndefinedDeckey(int deckey);
 
     //// Ctrl-A ～ Ctrl-Zハンドラ
     virtual void handleCtrlKeys(int deckey);

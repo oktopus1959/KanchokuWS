@@ -617,9 +617,9 @@ public:
 
         if (Logger::IsInfoHEnabled()) {
             //wstring stack = std::regex_replace(to_wstr(OUTPUT_STACK->OutputStackBackStr(10)), std::wregex(_T("\n")), _T("|"));
-            LOG_INFOH(_T("LEAVE: states=%s (len=%d), flags=%x, expKey=%d, layout=%d, numBS=%d, outLength=%d, stack=%s"),
+            LOG_INFOH(_T("LEAVE: states=%s (len=%d), flags=%x, expKey=%d, layout=%d, centerStr=%s, numBS=%d, outLength=%d, stack=%s"),
                 startState->JoinedName().c_str(), startState->ChainLength(), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetNextExpectedKeyType(),
-                STATE_COMMON->GetLayoutInt(), STATE_COMMON->GetBackspaceNum(), cpyLen, OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+                STATE_COMMON->GetLayoutInt(), outParams->centerString, STATE_COMMON->GetBackspaceNum(), cpyLen, OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
         }
     }
 
@@ -751,6 +751,7 @@ public:
 
     // 中央鍵盤への文字列コピー
     void copyToCenterString() {
+        LOG_DEBUG(_T("CALLED: STATE_COMMON->CenterString()=%s"), STATE_COMMON->CenterString().c_str());
         copyToCenterString(to_wstr(startState->JoinModeMarker()) + STATE_COMMON->CenterString());
     }
 
