@@ -1143,9 +1143,13 @@ namespace KanchokuWS
             var items = str._split2('|');
             int len1 = items._getFirst()._safeLength();
             int len2 = items._getSecond()._safeLength();
-            logger.InfoH(() => $"len1={len1}, len2={len2}, items[0]={items._getFirst()._safeSubstring(0, 20)}, items[1]={items._getSecond()._safeSubstring(0, 20)}");
-            if (len1 > 0 && len1 <= 20 && len2 <= 32 && items._getFirst()._safeIndexOf(' ') < 0) {
+            const int keyMaxLen = 32;
+            const int xferMaxLen = 64;
+            logger.InfoH(() => $"len1={len1}, len2={len2}, items[0]={items._getFirst()._safeSubstring(0, keyMaxLen)}, items[1]={items._getSecond()._safeSubstring(0, 64)}");
+            if (len1 > 0 && len1 <= keyMaxLen && len2 <= 64 && items._getFirst()._safeIndexOf(' ') < 0) {
                 ExecCmdDecoder("addHistEntry", str);
+            } else {
+                logger.Warn($"key length({len1}) is greater than {keyMaxLen} or xfer length ({len2}) is greater than {xferMaxLen}: {str}");
             }
         }
 
