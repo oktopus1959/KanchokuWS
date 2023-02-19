@@ -595,7 +595,10 @@ namespace {
                 HIST_CAND->ClearKeyInfo();
                 //if (result.KeyLen() >= 2) STATE_COMMON->SetHistoryBlockFlag();  // 1文字の場合は履歴検索の対象となる
                 // 出力された履歴に対しては、履歴の再検索の対象としない(変換形履歴の場合を除く)
-                if (result.Word.find(VERT_BAR) == MString::npos) STATE_COMMON->SetHistoryBlockFlag();
+                if (result.Word.find(VERT_BAR) == MString::npos) {
+                    _LOG_DEBUGH(_T("SetHistoryBlocker"));
+                    STATE_COMMON->SetHistoryBlockFlag();
+                }
             }
             handleKeyPostProc();
             _LOG_DEBUGH(_T("LEAVE"));
@@ -876,6 +879,7 @@ namespace {
             if (HISTORY_DIC) {
                 HIST_CAND->DelayedPushFrontSelectedWord();
                 STATE_COMMON->SetBothHistoryBlockFlag();
+                _LOG_DEBUGH(_T("SetBothHistoryBlocker"));
                 if (OUTPUT_STACK->isLastOutputStackCharKanjiOrKatakana()) {
                     // これまでの出力末尾が漢字またはカタカナであるなら
                     // 出力履歴の末尾の漢字列またはカタカナ列を取得して、それを履歴辞書に登録する
@@ -1156,7 +1160,7 @@ namespace {
 
                 LOG_INFO(_T("PATH 6: bCandSelectable=%s, bNoHistTemporary=%s"), BOOL_TO_WPTR(bCandSelectable), BOOL_TO_WPTR(bNoHistTemporary));
                 if (OUTPUT_STACK->isLastOutputStackCharBlocker()) {
-                    LOG_INFO(_T("PATH 7"));
+                    LOG_INFO(_T("PATH 7: LastOutputStackChar is Blocker"));
                     HISTORY_DIC->ClearNgramSet();
                 }
 
@@ -1410,8 +1414,9 @@ namespace {
             getLastHistKeyAndRewindOutput();    // 前回の履歴検索キー取得と出力スタックの巻き戻し予約(numBackSpacesに値をセット)
 
             setOutString(result);
-            if (!result.Word.empty() && result.Word.find(VERT_BAR) == MString::npos) {
-                // 何か履歴候補(変換形履歴以外)が選択されたら、ブロッカーを設定する (emptyの場合は元に戻ったので、ブロッカーを設定しない)
+            if (!result.Word.empty() && (result.Word.find(VERT_BAR) == MString::npos || utils::contains_ascii(result.Word))) {
+                // 何か履歴候補(英数字を含まない変換形履歴以外)が選択されたら、ブロッカーを設定する (emptyの場合は元に戻ったので、ブロッカーを設定しない)
+                _LOG_DEBUGH(_T("SetHistoryBlocker"));
                 STATE_COMMON->SetHistoryBlockFlag();
             }
             setCandidatesVKB(VkbLayout::Horizontal, HIST_CAND->GetCandWords(), HIST_CAND->GetCurrentKey());

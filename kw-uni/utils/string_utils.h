@@ -731,6 +731,15 @@ namespace utils
         return false;
     }
 
+    // ASCII文字を含むか
+    template<typename T>
+    inline bool contains_ascii(const T& s) {
+        for (size_t pos = 0; pos < s.size(); ++pos) {
+            if (s[pos] >= 0 && s[pos] < 0x80) return true;
+        }
+        return false;
+    }
+
     // 末尾の漢字またはカタカナ部分の長さを取得
     template<typename T>
     inline size_t count_tail_kanji_or_katakana(const T& s) {
