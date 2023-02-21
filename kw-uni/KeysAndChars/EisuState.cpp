@@ -37,8 +37,10 @@ namespace {
         DECLARE_CLASS_LOGGER;
 
         size_t firstTotalCnt = 0;
+        size_t firstSpaceKeyCnt = 0;
         size_t prevSpaceKeyCnt = 0;
         size_t prevLowerHeadCnt = 0;
+        size_t capitalCharCnt = 1;      // 状態が生成されたときはすでに先頭文字が入力されている
 
     public:
         // コンストラクタ
@@ -56,9 +58,18 @@ namespace {
 
         // 機能状態に対して生成時処理を実行する
         bool DoProcOnCreated() {
-            _LOG_DEBUGH(_T("ENTER"));
-
             firstTotalCnt = STATE_COMMON->GetTotalDecKeyCount();
+            auto prevCapitalCnt = MY_NODE->prevCapitalDeckeyCount;
+            MY_NODE->prevCapitalDeckeyCount = firstTotalCnt;
+
+            LOG_INFO(_T("ENTER: totalDeckeyCount=%d, prevCapitalCount=%d"), firstTotalCnt, prevCapitalCnt);
+
+            if (firstTotalCnt == prevCapitalCnt + 1) {
+                // 英大文字を連続して入力している状態なので、即抜ける
+                // この処理は、次の STATE_COMMON->AddOrEraseRunningState() よりも先にやっておく必要がある
+                LOG_INFO(_T("Continuously input capital chars. prevCapitalDeckeyCount=%d"), MY_NODE->prevCapitalDeckeyCount);
+                return false;
+            }
 
             if (!STATE_COMMON->AddOrEraseRunningState(Name, this)) {
                 LOG_INFO(_T("Already same function had been running. Mark it unnecessary."));
@@ -69,7 +80,7 @@ namespace {
             //setEisuModeMarker();
 
             // 前状態にチェインする
-            _LOG_DEBUGH(_T("LEAVE: CHAIN ME"));
+            LOG_INFO(_T("LEAVE: CHAIN ME"));
 
             return true;
         }
@@ -84,8 +95,9 @@ namespace {
     public:
         // StrokeKey を処理する
         void handleStrokeKeys(int deckey) override {
+            size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
             wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
-            LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), face=%c"), NAME_PTR, deckey, deckey, myChar);
+            _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), face=%c"), NAME_PTR, deckey, deckey, myChar);
             if (myChar == SETTINGS->eisuHistSearchChar) {
                 // 履歴検索の実行
                 HISTORY_STAY_STATE->handleNextCandTrigger();
@@ -93,19 +105,29 @@ namespace {
                 STATE_COMMON->AppendOrigString(myChar);
 
                 // キーボードフェイス文字を返す
-                LOG_INFO(_T("SetOutString"));
+                _LOG_DEBUGH(_T("SetOutString"));
                 STATE_COMMON->SetOutString(myChar, 0);
 
                 //if (myChar >= 'A' && myChar <= 'Z' && STATE_COMMON->GetTotalDecKeyCount() == firstTotalCnt + 1) {
                 //    // 2文字目も英大文字だったら、英数モードを終了する
                 //    cancelMe();
                 //}
+                if (myChar >= 'A' && myChar <= 'Z') {
+                    MY_NODE->prevCapitalDeckeyCount = totalCnt;
+                    if (++capitalCharCnt >= SETTINGS->eisuExitCapitalCharNum) {
+                        // N文字続けて英大文字だったら、英数モードを終了する
+                        cancelMe();
+                    }
+                } else {
+                    capitalCharCnt = 0;
+                }
+                _LOG_DEBUGH(_T("capitalCharCnt=%d"), capitalCharCnt);
             } else {
                 // 通常キーでもシフトキーでもなかった
                 setThroughDeckeyFlag();
                 cancelMe();
             }
-            LOG_INFO(_T("LEAVE"));
+            _LOG_DEBUGH(_T("LEAVE"));
         }
 
         // Shift飾修されたキー
@@ -163,13 +185,28 @@ namespace {
 
         // Space の処理 -- 処理のキャンセル
         void handleSpaceKey() override {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            size_t checkCnt = prevSpaceKeyCnt + 1;
-            prevSpaceKeyCnt = STATE_COMMON->GetTotalDecKeyCount();
-            if (checkCnt == prevSpaceKeyCnt) {
-                // 2回続けて呼ばれたらキャンセル
+            size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
+            size_t exitSpaceNum = SETTINGS->eisuExitSpaceNum;
+            _LOG_DEBUGH(_T("CALLED: %s: totalCnt=%d, firstCnt=%d, prevCnt=%d, exitNum=%d"), NAME_PTR, totalCnt, firstSpaceKeyCnt, prevSpaceKeyCnt, exitSpaceNum);
+            if (exitSpaceNum <= 1) {
+                if (exitSpaceNum == 1) {
+                    // Spaceの出力
+                    handleStrokeKeys(STROKE_SPACE_DECKEY);
+                }
+                // 1回のSpaceキー入力で、英数モードを抜ける
                 cancelMe();
+            } else if (totalCnt == prevSpaceKeyCnt + 1) {
+                // Spaceキーが連続入力された
+                prevSpaceKeyCnt = totalCnt;
+                if (firstSpaceKeyCnt + exitSpaceNum - 1 == totalCnt) {
+                    // 英数モードを抜ける回数に到達
+                    cancelMe();
+                } else {
+                    handleStrokeKeys(STROKE_SPACE_DECKEY);
+                }
             } else {
+                // 直前はSpaceキーでなかった
+                firstSpaceKeyCnt = prevSpaceKeyCnt = totalCnt;
                 handleStrokeKeys(STROKE_SPACE_DECKEY);
             }
         }
@@ -197,6 +234,7 @@ namespace {
         //}
 
         void cancelMe() {
+            _LOG_DEBUGH(_T("CALLED"));
             STATE_COMMON->AddOrEraseRunningState(Name, 0);  // 削除
             bUnnecessary = true;
             //STATE_COMMON->SetEisuModeMarkerClearFlag();

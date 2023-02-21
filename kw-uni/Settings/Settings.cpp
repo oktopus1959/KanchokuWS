@@ -97,6 +97,8 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_BOOL_VALUE(eisuModeEnabled);
     SET_CHAR_VALUE(eisuHistSearchChar);
     if (eisuHistSearchChar == '_') eisuHistSearchChar = ' ';
+    SET_INT_VALUE(eisuExitCapitalCharNum);
+    SET_INT_VALUE(eisuExitSpaceNum);
 
     SET_BOOL_VALUE(removeOneStrokeByBackspace);
 

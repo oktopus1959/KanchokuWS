@@ -17,6 +17,8 @@ public:
     // 当機能を表す文字を設定
     MString getString() const { return to_mstr(_T("Ａ")); }
 
+    size_t prevCapitalDeckeyCount = 0;
+
     static void CreateSingleton();
 
     static std::unique_ptr<EisuNode> Singleton;

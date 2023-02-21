@@ -579,6 +579,12 @@ namespace KanchokuWS
         /// <summary>英数モードから履歴検索を呼び出す文字</summary>
         public static string EisuHistSearchChar { get; set; }
 
+        /// <summary>英数モードを自動的に抜けるまでの大文字数</summary>
+        public static int EisuExitCapitalCharNum { get; set; } = 3;
+
+        /// <summary>英数モードを自動的に抜けるまでのSpaceキー数</summary>
+        public static int EisuExitSpaceNum { get; set; } = 2;
+
         /// <summary>BS で全打鍵を取り消すか</summary>
         public static bool RemoveOneStrokeByBackspace { get; set; } = true;
 
@@ -1311,6 +1317,8 @@ namespace KanchokuWS
 
             EisuModeEnabled = addDecoderSetting("eisuModeEnabled", false);                      // 英大文字入力による英数モード移行が有効か
             EisuHistSearchChar = addDecoderSetting("eisuHistSearchChar", ";");                  // 英数モードから履歴検索を呼び出す文字
+            EisuExitCapitalCharNum = addDecoderSetting("eisuExitCapitalCharNum", 3, 2);         // 英数モードを自動的に抜けるまでの大文字数
+            EisuExitSpaceNum = addDecoderSetting("eisuExitSpaceNum", 2, 0);                     // 英数モードを自動的に抜けるまでのSpaceキー数
 
             RemoveOneStrokeByBackspace = addDecoderSetting("removeOneStrokeByBackspace", "weakBS", false);  // BS で直前打鍵のみを取り消すか
 
