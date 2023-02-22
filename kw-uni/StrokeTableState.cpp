@@ -107,6 +107,7 @@ namespace {
                 // 英数モード
                 LOG_INFO(_T("SetNextNodeMaybe: Eisu"));
                 STATE_COMMON->SetOutString(myChar, 0);
+                if (EISU_NODE) EISU_NODE->blockerNeeded = true; // 入力済み末尾にブロッカーを設定する
                 SetNextNodeMaybe(EISU_NODE.get());
             } else {
                 LOG_INFO(_T("SetNextNodeMaybe"));

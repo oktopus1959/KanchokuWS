@@ -59,10 +59,14 @@ namespace {
         // 機能状態に対して生成時処理を実行する
         bool DoProcOnCreated() {
             firstTotalCnt = STATE_COMMON->GetTotalDecKeyCount();
-            auto prevCapitalCnt = MY_NODE->prevCapitalDeckeyCount;
+            auto prevCapitalCnt = MY_NODE->prevCapitalDeckeyCount;  // 前回の状態のときの大文字入力時のDeckeyカウント
             MY_NODE->prevCapitalDeckeyCount = firstTotalCnt;
 
             LOG_INFO(_T("ENTER: totalDeckeyCount=%d, prevCapitalCount=%d"), firstTotalCnt, prevCapitalCnt);
+
+            // 必要ならブロッカーを設定する
+            if (MY_NODE->blockerNeeded) OUTPUT_STACK->setHistBlocker();
+            MY_NODE->blockerNeeded = false;
 
             if (firstTotalCnt == prevCapitalCnt + 1) {
                 // 英大文字を連続して入力している状態なので、即抜ける

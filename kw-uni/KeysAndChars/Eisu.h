@@ -17,7 +17,12 @@ public:
     // 当機能を表す文字を設定
     MString getString() const { return to_mstr(_T("Ａ")); }
 
+    // 前回の状態のときの大文字入力時のDeckeyカウント
     size_t prevCapitalDeckeyCount = 0;
+
+    // 状態開始時に、末尾にブロッカーを設定するか
+    // 「Space」「Key」と分けて入力した時に、「K」の入力時に「Space」の末尾にブロッカーを設定したい
+    bool blockerNeeded = false;
 
     static void CreateSingleton();
 
