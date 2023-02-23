@@ -854,7 +854,7 @@ namespace KanchokuWS
         {
             var keyseq = GetString(attr);
             var origKeySeq = keyseq;
-            int idx = VirtualKeys.GetFuncKeyIndexByName(keyseq);
+            int idx = VKeyArrayFuncKeys.GetFuncKeyIndexByName(keyseq);
             if (idx >= 0) {
                 // "nfer" や "xfer" などの名前も使用可能とする
                 keyseq = $"X{idx}";

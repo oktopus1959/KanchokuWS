@@ -191,33 +191,33 @@ namespace KanchokuWS.Handler
                 scanCode != 0 && scanCode != YamabukiRscanCode &&
                 ((vkey >= 0 && vkey < 0xa0) ||
                  // RSHIFT の場合は、Ctrlキーが押されておらず、それが漢直トグルキーになっているか、または漢直モードでシフト単打が有効か、または拡張シフト面が定義されているとき
-                 //(vkey == VirtualKeys.RSHIFT && !ctrl && (Settings.ActiveKey == (uint)vkey || (isDecoderActivated() && isSingleShiftHitEffeciveOrShiftPlaneAssigned(vkey, KeyModifiers.MOD_RSHIFT, true)))) ||
+                 //(vkey == FuncVKeys.RSHIFT && !ctrl && (Settings.ActiveKey == (uint)vkey || (isDecoderActivated() && isSingleShiftHitEffeciveOrShiftPlaneAssigned(vkey, KeyModifiers.MOD_RSHIFT, true)))) ||
                  // RSHIFT の場合は、Ctrlキーが押されていないとき
-                 (vkey == VirtualKeys.RSHIFT && !ctrl) ||
+                 (vkey == FuncVKeys.RSHIFT && !ctrl) ||
                  (vkey >= 0xa6 && vkey < 0xf3) ||
                  (vkey >= 0xf5 && vkey < vkeyNum));
         }
 
         private bool ctrlKeyPressed()
         {
-            return (Settings.UseLeftControlToConversion && (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0)
-                || (Settings.UseRightControlToConversion && (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0);
+            return (Settings.UseLeftControlToConversion && (GetAsyncKeyState(FuncVKeys.LCONTROL) & 0x8000) != 0)
+                || (Settings.UseRightControlToConversion && (GetAsyncKeyState(FuncVKeys.RCONTROL) & 0x8000) != 0);
         }
 
         //private bool shiftKeyPressed(bool bWithOutCtrl)
         //{
-        //    return (!bWithOutCtrl && spaceKeyState == ExModKeyState.SHIFTED) || (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0;
+        //    return (!bWithOutCtrl && spaceKeyState == ExModKeyState.SHIFTED) || (GetAsyncKeyState(FuncVKeys.LSHIFT) & 0x8000) != 0 || (GetAsyncKeyState(FuncVKeys.RSHIFT) & 0x8000) != 0;
         //}
 
         private bool shiftKeyPressed(uint vkey)
         {
             // RSHIFTが押されている時はシフト状態とは判定しない
-            return (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0 || (vkey != VirtualKeys.RSHIFT && (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0);
+            return (GetAsyncKeyState(FuncVKeys.LSHIFT) & 0x8000) != 0 || (vkey != FuncVKeys.RSHIFT && (GetAsyncKeyState(FuncVKeys.RSHIFT) & 0x8000) != 0);
         }
 
         private bool isLshiftKeyPressed()
         {
-            return (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0;
+            return (GetAsyncKeyState(FuncVKeys.LSHIFT) & 0x8000) != 0;
         }
 
         private bool isSandSEnabled()
@@ -341,22 +341,22 @@ namespace KanchokuWS.Handler
         class ExModiferKeyInfoManager
         {
             /// <summary> スペースキーの押下状態</summary>
-            private ExModiferKeyInfo spaceKeyInfo = new ExModiferKeyInfo() { Vkey = VirtualKeys.SPACE, ModFlag = KeyModifiers.MOD_SPACE, Name = "SandS" };
+            private ExModiferKeyInfo spaceKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.SPACE, ModFlag = KeyModifiers.MOD_SPACE, Name = "SandS" };
 
             /// <summary> CapsLockキーの押下状態</summary>
-            private ExModiferKeyInfo capsKeyInfo = new ExModiferKeyInfo() { Vkey = VirtualKeys.CapsLock, ModFlag = KeyModifiers.MOD_CAPS, Name = "CapsLock" };
+            private ExModiferKeyInfo capsKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.CAPSLOCK, ModFlag = KeyModifiers.MOD_CAPS, Name = "CapsLock" };
 
             /// <summary> 英数キーの押下状態</summary>
-            private ExModiferKeyInfo alnumKeyInfo = new ExModiferKeyInfo() { Vkey = VirtualKeys.AlphaNum, ModFlag = KeyModifiers.MOD_ALNUM, Name = "AlpahNum" };
+            private ExModiferKeyInfo alnumKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.EISU, ModFlag = KeyModifiers.MOD_ALNUM, Name = "AlpahNum" };
 
             /// <summary> 無変換キーの押下状態</summary>
-            private ExModiferKeyInfo nferKeyInfo = new ExModiferKeyInfo() { Vkey = VirtualKeys.Nfer, ModFlag = KeyModifiers.MOD_NFER, Name = "Nfer" };
+            private ExModiferKeyInfo nferKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.MUHENKAN, ModFlag = KeyModifiers.MOD_NFER, Name = "Nfer" };
 
             /// <summary> 変換キーの押下状態</summary>
-            private ExModiferKeyInfo xferKeyInfo = new ExModiferKeyInfo() { Vkey = VirtualKeys.Xfer, ModFlag = KeyModifiers.MOD_XFER, Name = "Xfer" };
+            private ExModiferKeyInfo xferKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.HENKAN, ModFlag = KeyModifiers.MOD_XFER, Name = "Xfer" };
 
             /// <summary> RShiftキーの押下状態</summary>
-            private ExModiferKeyInfo rshiftKeyInfo = new ExModiferKeyInfo() { Vkey = VirtualKeys.RSHIFT, ModFlag = KeyModifiers.MOD_RSHIFT, Name = "RShift" };
+            private ExModiferKeyInfo rshiftKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.RSHIFT, ModFlag = KeyModifiers.MOD_RSHIFT, Name = "RShift" };
 
             /// <summary> その他キーの押下状態</summary>
             private ExModiferKeyInfo otherKeyState = new ExModiferKeyInfo() { Name = "Other" };
@@ -388,12 +388,12 @@ namespace KanchokuWS.Handler
             /// <summary> 拡張修飾キーの修飾フラグを得る</summary>
             public static uint getModFlagForExModVkey(uint vkey)
             {
-                if (vkey == VirtualKeys.CapsLock) return KeyModifiers.MOD_CAPS;
-                if (vkey == VirtualKeys.AlphaNum) return KeyModifiers.MOD_ALNUM;
-                if (vkey == VirtualKeys.Nfer) return KeyModifiers.MOD_NFER;
-                if (vkey == VirtualKeys.Xfer) return KeyModifiers.MOD_XFER;
-                if (vkey == VirtualKeys.RSHIFT) return KeyModifiers.MOD_RSHIFT;
-                if (vkey == VirtualKeys.SPACE) return KeyModifiers.MOD_SPACE;
+                if (vkey == FuncVKeys.CAPSLOCK) return KeyModifiers.MOD_CAPS;
+                if (vkey == FuncVKeys.EISU) return KeyModifiers.MOD_ALNUM;
+                if (vkey == FuncVKeys.MUHENKAN) return KeyModifiers.MOD_NFER;
+                if (vkey == FuncVKeys.HENKAN) return KeyModifiers.MOD_XFER;
+                if (vkey == FuncVKeys.RSHIFT) return KeyModifiers.MOD_RSHIFT;
+                if (vkey == FuncVKeys.SPACE) return KeyModifiers.MOD_SPACE;
                 return 0;
             }
 
@@ -642,9 +642,9 @@ namespace KanchokuWS.Handler
             // キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる
             bool handleKeyDown()
             {
-                bool leftShift = (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0;
-                bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-                bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+                bool leftShift = (GetAsyncKeyState(FuncVKeys.LSHIFT) & 0x8000) != 0;
+                bool leftCtrl = (GetAsyncKeyState(FuncVKeys.LCONTROL) & 0x8000) != 0;
+                bool rightCtrl = (GetAsyncKeyState(FuncVKeys.RCONTROL) & 0x8000) != 0;
                 bool bCtrl = leftCtrl || rightCtrl;
 
                 // とりあえず、やっつけコード
@@ -673,7 +673,7 @@ namespace KanchokuWS.Handler
                 var keyInfo = keyInfoManager.getModiferKeyInfoByVkey((uint)vkey);
                 if (keyInfo != null) {
                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"{keyInfo.Name}Key Pressed: ctrl={bCtrl}, shift={bShift}, decoderOn={bDecoderOn}, modFlag={modFlag:x}, modPressedOrShifted={modPressedOrShifted:x}");
-                    if ((uint)vkey == VirtualKeys.SPACE) {
+                    if ((uint)vkey == FuncVKeys.SPACE) {
                         // Space
                         if (isSandSEnabled()) {
                             void setShifted()
@@ -748,7 +748,7 @@ namespace KanchokuWS.Handler
                         }
                         // 上記以外はスペース入力として扱う。すでに押下状態にある拡張修飾キーをSHIFT状態に遷移させる
                         keyInfoManager.makeExModKeyShifted(bDecoderOn);
-                    } else if ((uint)vkey == VirtualKeys.RSHIFT) {
+                    } else if ((uint)vkey == FuncVKeys.RSHIFT) {
                         // RSHIFT
                         if (keyInfo.IsShiftPlaneAssigned(bDecoderOn)) {
                             // 拡張シフト面が割り当てられている場合
@@ -842,8 +842,8 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool keyboardDownHandler(int vkey, bool leftCtrl, bool rightCtrl)
         {
-            //bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-            //bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            //bool leftCtrl = (GetAsyncKeyState(FuncVKeys.LCONTROL) & 0x8000) != 0;
+            //bool rightCtrl = (GetAsyncKeyState(FuncVKeys.RCONTROL) & 0x8000) != 0;
             bool bDecoderOn = isDecoderActivated();
             bool ctrl = leftCtrl || rightCtrl;
             bool shift = shiftKeyPressed((uint)vkey);
@@ -990,9 +990,9 @@ namespace KanchokuWS.Handler
             int prevVkey = prevUpVkey;
             prevUpVkey = vkey;
 
-            bool leftShift = (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0;
-            bool leftCtrl = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-            bool rightCtrl = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            bool leftShift = (GetAsyncKeyState(FuncVKeys.LSHIFT) & 0x8000) != 0;
+            bool leftCtrl = (GetAsyncKeyState(FuncVKeys.LCONTROL) & 0x8000) != 0;
+            bool rightCtrl = (GetAsyncKeyState(FuncVKeys.RCONTROL) & 0x8000) != 0;
             bool bCtrl = leftCtrl || rightCtrl;
 
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"vkey={vkey:x}H({vkey}), leftCtrl={leftCtrl}, rightCtrl={rightCtrl}, leftShift={leftShift}");
@@ -1009,15 +1009,15 @@ namespace KanchokuWS.Handler
                     }
                 }
 
-                if (vkey == VirtualKeys.LCONTROL) {
+                if (vkey == FuncVKeys.LCONTROL) {
                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LCONTROL up");
                     checkAndInvoke(bLCtrlShifted);
                     bLCtrlShifted = false;
-                } else if (vkey == VirtualKeys.RCONTROL) {
+                } else if (vkey == FuncVKeys.RCONTROL) {
                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"RCONTROL up");
                     checkAndInvoke(bRCtrlShifted);
                     bRCtrlShifted = false;
-                } else if (vkey == VirtualKeys.LSHIFT) {
+                } else if (vkey == FuncVKeys.LSHIFT) {
                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LSHIFT up");
                     checkAndInvoke(bLShiftShifted);
                     bLShiftShifted = false;
@@ -1047,7 +1047,7 @@ namespace KanchokuWS.Handler
                 keyInfo.SetReleased();
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() =>
                     $"{keyInfo.Name}Key up: prevPressed={bPrevPressed}, prevPressedOneshot={bPrevPressedOneshot}, decoderOn={bDecoderOn}, modFlag={modFlag:x}, newKeyState={keyInfo.KeyState}");
-                if ((uint)vkey == VirtualKeys.SPACE) {
+                if ((uint)vkey == FuncVKeys.SPACE) {
                     // Space離放
                     if (isSandSEnabled()) {
                         SetStrokeHelpShiftPlane?.Invoke(0);
@@ -1085,7 +1085,7 @@ namespace KanchokuWS.Handler
                         keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, 0);
                     }
                     return false;
-                } else if ((uint)vkey == VirtualKeys.RSHIFT) {
+                } else if ((uint)vkey == FuncVKeys.RSHIFT) {
                     // RSHIFT
                     //if (keyInfo.IsShiftPlaneAssigned(bDecoderOn)) {
                     //    // 拡張シフト面が割り当てられている場合

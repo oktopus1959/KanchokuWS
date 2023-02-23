@@ -190,14 +190,14 @@ namespace KanchokuWS.Handler
         {
             return new ModifierKeyState(
                 bUp,
-                (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0,
-                (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0);
+                (GetAsyncKeyState(FuncVKeys.LCONTROL) & 0x8000) != 0,
+                (GetAsyncKeyState(FuncVKeys.RCONTROL) & 0x8000) != 0);
         }
 
         public static ModifierKeyState GetCtrlKeyState(ModifierKeyState state)
         {
-            state.LeftKeyDown = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-            state.RightKeyDown = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            state.LeftKeyDown = (GetAsyncKeyState(FuncVKeys.LCONTROL) & 0x8000) != 0;
+            state.RightKeyDown = (GetAsyncKeyState(FuncVKeys.RCONTROL) & 0x8000) != 0;
             return state;
         }
 
@@ -228,8 +228,8 @@ namespace KanchokuWS.Handler
         private static void upDownCtrlKeyInputs(InputInfo info)
         {
             var keyState = info.KeyState;
-            keyState.LeftKeyDown = (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0;
-            keyState.RightKeyDown = (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0;
+            keyState.LeftKeyDown = (GetAsyncKeyState(FuncVKeys.LCONTROL) & 0x8000) != 0;
+            keyState.RightKeyDown = (GetAsyncKeyState(FuncVKeys.RCONTROL) & 0x8000) != 0;
             logger.DebugH(() => $"bUp={keyState.OperationUp}, LeftKeyDown={keyState.LeftKeyDown}, RightKeyDown={keyState.RightKeyDown}");
 
             if (keyState.OperationUp) {
@@ -254,8 +254,8 @@ namespace KanchokuWS.Handler
         {
             var keyState = new ModifierKeyState(
                 bUp,
-                (GetAsyncKeyState(VirtualKeys.LCONTROL) & 0x8000) != 0,
-                (GetAsyncKeyState(VirtualKeys.RCONTROL) & 0x8000) != 0);
+                (GetAsyncKeyState(FuncVKeys.LCONTROL) & 0x8000) != 0,
+                (GetAsyncKeyState(FuncVKeys.RCONTROL) & 0x8000) != 0);
             logger.DebugH(() => $"bUp={keyState.OperationUp}, LeftKeyDown={keyState.LeftKeyDown}, RightKeyDown={keyState.RightKeyDown}");
 
             var info = new InputInfo(4, keyState);
@@ -356,8 +356,8 @@ namespace KanchokuWS.Handler
         {
             var keyState = new ModifierKeyState(
                 bUp,
-                (GetAsyncKeyState(VirtualKeys.LSHIFT) & 0x8000) != 0,
-                (GetAsyncKeyState(VirtualKeys.RSHIFT) & 0x8000) != 0);
+                (GetAsyncKeyState(FuncVKeys.LSHIFT) & 0x8000) != 0,
+                (GetAsyncKeyState(FuncVKeys.RSHIFT) & 0x8000) != 0);
             logger.DebugH(() => $"bUp={keyState.OperationUp}, leftShift={keyState.LeftKeyDown}, rightShift={keyState.RightKeyDown}");
 
             var info = new InputInfo(4, keyState);

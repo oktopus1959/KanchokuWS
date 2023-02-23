@@ -965,6 +965,7 @@ namespace KanchokuWS
                     }
                 } else {
                     // Decoder Inactive
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH("Decoder Inactive");
                     bPrevDtUpdate = true;
                     return sendVkeyFromDeckey(deckey, mod);
                 }
