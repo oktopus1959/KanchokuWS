@@ -744,6 +744,7 @@ namespace KanchokuWS.Handler
                     }
                     logger.DebugH($"send Unicode string");
                     char uniChar = str[i];
+                    // 同じ文字を続けてSendInputすると2文字めが落ちる現象に対応
                     if (uniChar >= 0x80 && uniChar == prevUniChar) Helper.WaitMilliSeconds(10);
                     //sendInputsUnicode(str[i]);
                     sendInputsRomanOrKanaUnicodeEx(str[i], true);

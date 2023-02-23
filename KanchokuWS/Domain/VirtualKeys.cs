@@ -292,7 +292,7 @@ namespace KanchokuWS
         /// NAME=xx の形式で、機能キーの仮想キーコード定義を記述できる
         /// </summary>
         /// <returns></returns>
-        public static bool readKeyboardFile()
+        public static bool ReadKeyboardFile()
         {
             logger.InfoH("ENTER");
 
@@ -351,7 +351,7 @@ namespace KanchokuWS
             return true;
         }
 
-        public static void setupDecKeyAndComboTable()
+        private static void setupDecKeyAndComboTable()
         {
             logger.InfoH($"ENTER");
             // 通常文字ストロークキー
@@ -392,7 +392,7 @@ namespace KanchokuWS
 
     }
 
-    public static class FaceCharVKey
+    public static class _FaceCharVKey
     {
         private static Dictionary<string, uint> faceToVkey = new Dictionary<string, uint>() {
             {" ", (uint)Keys.Space },
@@ -791,23 +791,23 @@ namespace KanchokuWS
 
         public static VKeyCombo EmptyCombo = new VKeyCombo(0, 0);
 
-        public static VKeyCombo CtrlC_VKeyCombo = new VKeyCombo(KeyModifiers.MOD_CONTROL, FaceCharVKey.FaceToVKey("C"));
+        public static VKeyCombo CtrlC_VKeyCombo = new VKeyCombo(KeyModifiers.MOD_CONTROL, _FaceCharVKey.FaceToVKey("C"));
 
-        public static VKeyCombo CtrlV_VKeyCombo = new VKeyCombo(KeyModifiers.MOD_CONTROL, FaceCharVKey.FaceToVKey("V"));
+        public static VKeyCombo CtrlV_VKeyCombo = new VKeyCombo(KeyModifiers.MOD_CONTROL, _FaceCharVKey.FaceToVKey("V"));
 
         public static uint GetVKeyFromFaceString(string face)
         {
-            return FaceCharVKey.FaceToVKey(face);
+            return _FaceCharVKey.FaceToVKey(face);
         }
 
         public static uint GetVKeyFromFaceChar(char face)
         {
-            return FaceCharVKey.CharToVKey(face);
+            return _FaceCharVKey.CharToVKey(face);
         }
 
-        public static VKeyCombo? GetVKeyComboFromFaceString(string face, bool ctrl, bool shift)
+        private static VKeyCombo? getVKeyComboFromFaceString(string face, bool ctrl, bool shift)
         {
-            uint vkey = FaceCharVKey.FaceToVKey(face);
+            uint vkey = _FaceCharVKey.FaceToVKey(face);
             if (vkey > 0 && vkey < 0x100) {
                 return new VKeyCombo(KeyModifiers.MakeModifier(ctrl, shift), vkey);
             }
@@ -816,7 +816,7 @@ namespace KanchokuWS
 
         public static char GetFaceCharFromVKey(uint vkey)
         {
-            return FaceCharVKey.VKeyToChar(vkey);
+            return _FaceCharVKey.VKeyToChar(vkey);
         }
 
         public static char GetFaceCharFromDecKey(int decKey)
@@ -907,7 +907,7 @@ namespace KanchokuWS
 
         public static int GetCtrlDecKeyOf(string face)
         {
-            uint vkey = FaceCharVKey.FaceToVKey(face);
+            uint vkey = _FaceCharVKey.FaceToVKey(face);
             return (vkey > 0) ? GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_CONTROL, vkey) : -1;
         }
 
@@ -936,7 +936,7 @@ namespace KanchokuWS
                 bRemove = true;
                 keyFace = keyFace.Replace("#", "");
             }
-            var combo = GetVKeyComboFromFaceString(keyFace, false, false);
+            var combo = getVKeyComboFromFaceString(keyFace, false, false);
             if (combo != null) {
                 if (bRemove) {
                     if (ctrlDeckey > 0) RemoveModConvertedDecKeyFromCombo(KeyModifiers.MOD_CONTROL, combo.Value.vkey);
@@ -951,22 +951,11 @@ namespace KanchokuWS
         public static void AddCtrlDeckeyAndCombo(string keyFace, int ctrlDeckey, int ctrlShiftDeckey)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"keyFace={keyFace}, ctrlDeckey={ctrlDeckey:x}H({ctrlDeckey}), , ctrlShiftDeckey={ctrlShiftDeckey:x}H({ctrlShiftDeckey})");
-            var combo = GetVKeyComboFromFaceString(keyFace, false, false);
+            var combo = getVKeyComboFromFaceString(keyFace, false, false);
             if (combo != null) {
                 if (ctrlDeckey > 0) AddDecKeyAndCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, combo.Value.vkey);
                 if (ctrlShiftDeckey > 0) AddDecKeyAndCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, combo.Value.vkey);
             }
-        }
-
-        /// <summary>
-        /// 仮想キーコードからなるキーボードファイル(106.keyとか)を読み込んで、仮想キーコードの配列を作成する<br/>
-        /// 仮想キーコードはDecKeyId順に並んでいる必要がある。<br/>
-        /// NAME=xx の形式で、機能キーの仮想キーコード定義を記述できる
-        /// </summary>
-        /// <returns></returns>
-        public static bool ReadKeyboardFile()
-        {
-            return StrokeVKeys.readKeyboardFile();
         }
 
         private static Dictionary<string, uint> modifierKeysFromName = new Dictionary<string, uint>() {
@@ -1262,7 +1251,7 @@ namespace KanchokuWS
                                         uint decVkey = 0;
                                         if (name._safeLength() == 1 && name._ge("a") && name._le("z")) {
                                             // Ctrl-A～Ctrl-Z
-                                            decVkey = FaceCharVKey.FaceToVKey(name._toUpper());
+                                            decVkey = _FaceCharVKey.FaceToVKey(name._toUpper());
                                             targetDeckey = DecoderKeys.DECKEY_CTRL_A + name[0] - 'a';
                                         } else if (targetDeckey >= DecoderKeys.FUNC_DECKEY_START && targetDeckey < DecoderKeys.FUNC_DECKEY_END) {
                                             // Ctrl+機能キー(特殊キー)(Ctrl+Tabとか)

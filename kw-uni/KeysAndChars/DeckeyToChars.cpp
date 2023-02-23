@@ -68,7 +68,7 @@ namespace {
 }
 
 void DeckeyToChars::ReadDefFile(const std::vector<wstring>& lines) {
-    LOG_DEBUG(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
 
     //size_t idx = 0;
     auto iter = lines.begin();

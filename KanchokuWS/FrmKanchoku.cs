@@ -273,7 +273,7 @@ namespace KanchokuWS
         /// <summary> キーボードファイルの読み込み (成功したら true, 失敗したら false を返す) </summary>
         private bool readKeyboardFile()
         {
-            if (!VirtualKeys.ReadKeyboardFile()) {
+            if (!StrokeVKeys.ReadKeyboardFile()) {
                 // キーボードファイルを読み込めなかったので終了する
                 logger.Error($"CLOSE: Can't read keyboard file");
                 //this.Close();
@@ -299,9 +299,7 @@ namespace KanchokuWS
             }
 
             // 文字定義ファイルの読み込み
-            //if (Settings.CharsDefFile._notEmpty()) {
-            //    DecoderKeyToChar.ReadCharsDefFile(Settings.CharsDefFile);
-            //}
+            DecoderKeyToChar.ReadCharsDefFile();
 
             // 追加の修飾キー定義ファイルの読み込み
             if (Settings.ExtraModifiersEnabled && Settings.ModConversionFile._notEmpty()) {
@@ -1956,6 +1954,21 @@ namespace KanchokuWS
                 ) {
 
                 if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET WINDOW");
+
+                var dkChar = DecoderKeyToChar.GetCharFromDecKey(deckey);
+                if (dkChar != '\0') {
+                    var vk = VirtualKeys.GetVKeyFromFaceChar(dkChar);
+                    if (vk != 0) {
+                        if (vk >= 0x100) {
+                            vk -= 0x100;
+                            mod |= KeyModifiers.MOD_SHIFT;
+                        }
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH($"SendVKeyCombo: {mod:x}H({mod}), {vk:x}H({vk})");
+                        SendInputHandler.Singleton.SendVKeyCombo(mod, vk, 1);
+                        if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: TRUE");
+                        return true;
+                    }
+                }
                 var combo = VirtualKeys.GetVKeyComboFromDecKey(deckey);
                 if (combo != null) {
                     if (Settings.LoggingDecKeyInfo) {

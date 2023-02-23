@@ -86,7 +86,7 @@ namespace {
         void handleStrokeKeys(int deckey) {
             bool isRootCombo = IsRootKeyCombination();
             wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(origDeckey >= 0 ? origDeckey : deckey);
-            LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), face=%c, isRootCombo=%s, nodeDepth=%d"), NAME_PTR, deckey, deckey, myChar, BOOL_TO_WPTR(isRootCombo), DEPTH);
+            LOG_INFO(_T("ENTER: %s: origDeckey=%xH(%d), deckey=%xH(%d), face=%c, isRootCombo=%s, nodeDepth=%d"), NAME_PTR, origDeckey, origDeckey, deckey, deckey, myChar, BOOL_TO_WPTR(isRootCombo), DEPTH);
             if (!isRootCombo) {
                 // RootStrokeTableState が作成されたときに OrigString はクリアされている。この処理は @^ などへの対応のために必要
                 // ただしRootStrokeTableStateが同時打鍵の開始だった場合は、OrigStringを返さない

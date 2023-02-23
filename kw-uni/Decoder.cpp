@@ -109,9 +109,6 @@ public:
         // GUIから送られてきた settings を読み込んで Settings::Singleton を構築
         createSettings(params->inOutData);
 
-        // Deckey から文字への変換インスタンスの構築
-        createDeckeyToCharsInstance();
-
         // settings の再ロードとストローク木の再構築
         reloadSettings(params->inOutData, false);
 
@@ -173,6 +170,9 @@ public:
         
         // settings の事前ロード
         if (bPreLoad) loadSettings(settings);
+
+        // Deckey から文字への変換インスタンスの構築
+        createDeckeyToCharsInstance();
 
         // ローマ字定義ファイルのロード
         RomanToKatakana::ReadRomanDefFile(_T("kwroman.def.txt"));
