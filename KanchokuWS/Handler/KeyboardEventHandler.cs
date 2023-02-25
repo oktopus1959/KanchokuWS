@@ -10,6 +10,8 @@ using Utils;
 
 namespace KanchokuWS.Handler
 {
+    using FuncVKeys = VKeyArrayFuncKeys.FuncVKeys;
+
     public class KeyboardEventHandler : IDisposable
     {
         private static Logger logger = Logger.GetLogger();

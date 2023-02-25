@@ -10,6 +10,8 @@ namespace KanchokuWS.Handler
 {
     using Keys = System.Windows.Forms.Keys;
 
+    using FuncVKeys = VKeyArrayFuncKeys.FuncVKeys;
+
     class SendInputHandler
     {
         private static Logger logger = Logger.GetLogger();

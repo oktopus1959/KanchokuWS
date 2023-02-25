@@ -1254,7 +1254,7 @@ namespace KanchokuWS
             BushuAssocFile = addDecoderSetting("bushuAssocFile", "kwassoc.txt");
             BushuFile = addDecoderSetting("bushuFile", "bushu", "kwbushu.rev");
             AutoBushuFile = addDecoderSetting("autoBushuFile", "bushuAuto", "kwbushu.aut");
-            CharsDefFile = addDecoderSetting("charsDefFile", $"chars.{KeyboardFile._split('.')._getNth(0)._orElse("106")}.txt");
+            CharsDefFile = addDecoderSetting("charsDefFile", $"chars.{KeyboardFile._split('.')._getNth(0)._toLower()._orElse("jp")}.txt");
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
             TableFile = addDecoderSetting("tableFile", $"{TableFileDir}\\漢直系\\tutr.tbl");
             TableFile2 = addDecoderSetting("tableFile2", "");

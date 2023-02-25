@@ -60,23 +60,6 @@ namespace KanchokuWS
 
     }
 
-    public class FuncVKeys
-    {
-        //public const uint BACK = 0x08;
-        public const uint CONTROL = 0x11;
-        public const uint LSHIFT = 0xa0;
-        public const uint RSHIFT = 0xa1;
-        public const uint LCONTROL = 0xa2;
-        public const uint RCONTROL = 0xa3;
-        public const uint SPACE = (uint)Keys.Space;
-
-        public const uint CAPSLOCK = 0x14;
-        public const uint EISU = 0xf0;
-        public const uint MUHENKAN = 0x1d;
-        public const uint HENKAN = 0x1c;
-        public const uint KANA = 0xf2;
-    }
-
     /// <summary>
     /// 修飾キーと仮想キーの組み合わせ
     /// </summary>
@@ -138,12 +121,30 @@ namespace KanchokuWS
 
     public class VKeyArrayFuncKeys
     {
+        public class FuncVKeys
+        {
+            //public const uint BACK = 0x08;
+            public const uint CONTROL = 0x11;
+            public const uint LSHIFT = 0xa0;
+            public const uint RSHIFT = 0xa1;
+            public const uint LCONTROL = 0xa2;
+            public const uint RCONTROL = 0xa3;
+            public const uint SPACE = (uint)Keys.Space;
+
+            // 以下は JP/US によってキーコードが変わるor無効になる可能性あり
+            public static uint CAPSLOCK => vkeyArrayFuncKeys[3];
+            public static uint EISU => vkeyArrayFuncKeys[4];
+            public static uint MUHENKAN => vkeyArrayFuncKeys[5];
+            public static uint HENKAN => vkeyArrayFuncKeys[6];
+            public static uint KANA => vkeyArrayFuncKeys[7];
+        }
+
         /// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)</summary>
         private static uint[] vkeyArrayFuncKeys = {
             // 0 - 4
-            /*Esc*/ 0x1b, /*半/全*/ 0xf3, /*Tab*/ 0x09, /*Caps*/ FuncVKeys.CAPSLOCK, /*英数*/ FuncVKeys.EISU,
+            /*Esc*/ 0x1b, /*半/全*/ 0xf3, /*Tab*/ 0x09, /*Caps*/ 0x14, /*英数*/ 0xf0,
             // 5 - 9
-            /*無変換*/ FuncVKeys.MUHENKAN, /*変換*/ FuncVKeys.HENKAN, /*かな*/ FuncVKeys.KANA, /*BS*/ 0x08, /*Enter*/ 0x0d,
+            /*無変換*/ 0x1d, /*変換*/ 0x1c, /*かな*/ 0xf2, /*BS*/ 0x08, /*Enter*/ 0x0d,
             // 10 - 14
             /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21,
             // 15 - 19
@@ -246,7 +247,7 @@ namespace KanchokuWS
         /// <summary> 打鍵で使われる仮想キー配列(DecKeyId順に並んでいる) </summary>
         private static uint[] strokeVKeys;
 
-        private static uint[] VKeyArray106 = new uint[] {
+        private static uint[] VKeyArrayJP = new uint[] {
             0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30,
             0x51, 0x57, 0x45, 0x52, 0x54, 0x59, 0x55, 0x49, 0x4f, 0x50,
             0x41, 0x53, 0x44, 0x46, 0x47, 0x48, 0x4a, 0x4b, 0x4c, 0xbb,
@@ -254,7 +255,17 @@ namespace KanchokuWS
             0x20, 0xbd, 0xde, 0xdc, 0xc0, 0xdb, 0xba, 0xdd, 0xe2, 0x00,
         };
 
+        private static uint[] VKeyArrayUS = new uint[] {
+            0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30,
+            0x51, 0x57, 0x45, 0x52, 0x54, 0x59, 0x55, 0x49, 0x4f, 0x50,
+            0x41, 0x53, 0x44, 0x46, 0x47, 0x48, 0x4a, 0x4b, 0x4c, 0xba,
+            0x5a, 0x58, 0x43, 0x56, 0x42, 0x4e, 0x4d, 0xbc, 0xbe, 0xbf,
+            0x20, 0xbd, 0xbb, 0xdc, 0xdb, 0xdd, 0xde, 0x00, 0x00, 0x00,
+        };
+
         private const uint capsVkeyWithShift = 0x14;    // 日本語キーボードだと Shift + 0x14 で CapsLock になる
+
+        public static bool IsJPmode { get; private set; } = true;
 
         public static uint getVKeyFromDecKey(int deckey)
         {
@@ -296,10 +307,14 @@ namespace KanchokuWS
         {
             logger.InfoH("ENTER");
 
-            var array = VKeyArray106;
-
-            var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.GetString("keyboard", "106.key"));
-            if (filePath._notEmpty()) {
+            var kbName = Settings.GetString("keyboard", "JP");
+            if (kbName._isEmpty() || kbName._toUpper() == "JP") {
+                strokeVKeys = VKeyArrayJP;
+            } else if (kbName._toUpper() == "US") {
+                strokeVKeys = VKeyArrayUS;
+                IsJPmode = false;
+            } else {
+                var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(kbName);
                 logger.Info($"keyboard file path={filePath}");
                 var allLines = Helper.GetFileContent(filePath, Encoding.UTF8);
                 if (allLines == null) {
@@ -309,20 +324,40 @@ namespace KanchokuWS
                 }
                 var lines = allLines._split('\n').Select(line => line.Trim().Replace(" ", "")).Where(line => line._notEmpty() && line[0] != '#' && line[0] != ';').ToArray();
 
+                List<uint> list = null;
+
+                // MODE=JP or MODE=US
+                if (lines._notEmpty()) {
+                    var items = lines._getFirst()._toUpper()._split('=');
+                    if (items._safeLength() == 2 && items[0] == "MODE") {
+                        if (items[1] == "JP") {
+                            list = VKeyArrayJP.ToList();
+                        } else if (items[1] == "US") {
+                            list = VKeyArrayUS.ToList();
+                            IsJPmode = false;
+                        }
+                    }
+                }
                 // ストロークキーの仮想キーコードを得る
-                var hexes = lines.  Where(line => line.IndexOf('=') < 0)._join("").TrimEnd(',')._split(',').ToArray();
-                array = hexes.Select(x => (uint)x._parseHex(0)).ToArray();
-                int idx = array._findIndex(x => x < 0 || x >= 0x100);
-                if (idx >= 0 && idx < array.Length) {
-                    logger.Warn($"Invalid keyboard def: file={filePath}, {idx}th: {hexes[idx]}");
-                    SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}の{idx}番目のキー定義({hexes[idx]})が誤っています。");
-                    return false;
+                var hexes = lines.Where(line => line.IndexOf('=') < 0)._join("").TrimEnd(',')._split(',').ToArray();
+                if (hexes._notEmpty()) {
+                    list = hexes.Select(x => (uint)x._parseHex(0)).ToList();
+                    int idx = list.FindIndex(x => x < 0 || x >= 0x100);
+                    if (idx >= 0 && idx < list.Count) {
+                        logger.Warn($"Invalid keyboard def: file={filePath}, {idx}th: {hexes[idx]}");
+                        SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}の{idx}番目のキー定義({hexes[idx]})が誤っています。");
+                        return false;
+                    }
+                    //if (list.Count < DecoderKeys.NORMAL_DECKEY_NUM) {
+                    //    logger.Warn($"No sufficient keyboard def: file={filePath}, total {list.Length} defs");
+                    //    SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}のキー定義の数({list.Length})が不足しています。");
+                    //    return false;
+                    //}
+                    for (int i = list.Count; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) list.Add(0);
                 }
-                if (array.Length < DecoderKeys.NORMAL_DECKEY_NUM) {
-                    logger.Warn($"No sufficient keyboard def: file={filePath}, total {array.Length} defs");
-                    SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}のキー定義の数({array.Length})が不足しています。");
-                    return false;
-                }
+
+                if (list._isEmpty()) list = VKeyArrayJP.ToList();
+
                 // NAME=xx の形式で、機能キー(Esc, BS, Enter, 矢印キーなど)の仮想キーコード定義を得る
                 foreach (var line in lines) {
                     var items = line._toLower()._split('=');
@@ -339,11 +374,9 @@ namespace KanchokuWS
                         }
                     }
                 }
-
+                strokeVKeys = list.ToArray();
             }
-            logger.Info(() => $"keyboard keyNum={array.Length}, array={array.Select(x => x.ToString("x"))._join(", ")}");
-
-            strokeVKeys = array;
+            logger.Info(() => $"keyboard keyNum={strokeVKeys.Length}, array={strokeVKeys.Select(x => x.ToString("x"))._join(", ")}");
 
             setupDecKeyAndComboTable();
 
@@ -394,7 +427,7 @@ namespace KanchokuWS
 
     public static class _FaceCharVKey
     {
-        private static Dictionary<string, uint> faceToVkey = new Dictionary<string, uint>() {
+        private static Dictionary<string, uint> faceToVkeyJP = new Dictionary<string, uint>() {
             {" ", (uint)Keys.Space },
             {"SPACE", (uint)Keys.Space },
             {"0", (uint)Keys.D0 },
@@ -434,50 +467,133 @@ namespace KanchokuWS
             {"Y", (uint)Keys.Y },
             {"Z", (uint)Keys.Z },
             { "COLON", (uint)Keys.Oem1 },       // ba
-            { ":", (uint)Keys.Oem1 },       // ba
-            { "*", (uint)Keys.Oem1 + 0x100 },       // ba
+            { ":", (uint)Keys.Oem1 },           // ba
+            { "*", (uint)Keys.Oem1 },           // ba
             { "PLUS", (uint)Keys.Oemplus },     // bb
-            { ";", (uint)Keys.Oemplus },     // bb
-            { "+", (uint)Keys.Oemplus + 0x100 },     // bb
+            { ";", (uint)Keys.Oemplus },        // bb
+            { "+", (uint)Keys.Oemplus },        // bb
             { "COMMA", (uint)Keys.Oemcomma },   // bc
-            { ",", (uint)Keys.Oemcomma },   // bc
-            { "<", (uint)Keys.Oemcomma + 0x100 },   // bc
+            { ",", (uint)Keys.Oemcomma },       // bc
+            { "<", (uint)Keys.Oemcomma },       // bc
             { "MINUS", (uint)Keys.OemMinus },   // bd
-            { "-", (uint)Keys.OemMinus },   // bd
-            { "=", (uint)Keys.OemMinus + 0x100 },   // bd
+            { "-", (uint)Keys.OemMinus },       // bd
+            { "=", (uint)Keys.OemMinus },       // bd
             { "PERIOD", (uint)Keys.OemPeriod }, // be
-            { ".", (uint)Keys.OemPeriod }, // be
-            { ">", (uint)Keys.OemPeriod + 0x100 }, // be
+            { ".", (uint)Keys.OemPeriod },      // be
+            { ">", (uint)Keys.OemPeriod },      // be
             { "SLASH", (uint)Keys.Oem2 },       // bf
-            { "/", (uint)Keys.Oem2 },       // bf
-            { "?", (uint)Keys.Oem2 + 0x100 },       // bf
+            { "/", (uint)Keys.Oem2 },           // bf
+            { "?", (uint)Keys.Oem2 },           // bf
             { "BQUOTE", (uint)Keys.Oem3 },      // c0/106
-            { "@", (uint)Keys.Oem3 },      // c0/106
-            { "`", (uint)Keys.Oem3 + 0x100 },      // c0/106
+            { "@", (uint)Keys.Oem3 },           // c0/106
+            { "`", (uint)Keys.Oem3 },           // c0/106
             { "OEM4", (uint)Keys.Oem4 },        // db
-            { "[", (uint)Keys.Oem4 },        // db
-            { "{", (uint)Keys.Oem4 + 0x100 },        // db
+            { "[", (uint)Keys.Oem4 },           // db
+            { "{", (uint)Keys.Oem4 },           // db
             { "OEM5", (uint)Keys.Oem5 },        // dc
-            { "\\", (uint)Keys.Oem5 },        // dc
-            { "|", (uint)Keys.Oem5 + 0x100 },        // dc
+            { "\\", (uint)Keys.Oem5 },          // dc
+            { "|", (uint)Keys.Oem5 },           // dc
             { "OEM6", (uint)Keys.Oem6 },        // dd
-            { "]", (uint)Keys.Oem6 },        // dd
-            { "}", (uint)Keys.Oem6 + 0x100 },        // dd
+            { "]", (uint)Keys.Oem6 },           // dd
+            { "}", (uint)Keys.Oem6 },           // dd
             { "OEM7", (uint)Keys.Oem7 },        // de
-            { "^", (uint)Keys.Oem7 },        // de
-            { "~", (uint)Keys.Oem7 + 0x100 },        // de
+            { "^", (uint)Keys.Oem7 },           // de
+            { "~", (uint)Keys.Oem7 },           // de
+            { "OEM8", (uint)Keys.Oem8 },        // df
+            { "OEM102", (uint)Keys.Oem102 },    // e2/106
+            { "＼", (uint)Keys.Oem102 },        // e2/106
+            { "_", (uint)Keys.Oem102 },         // de
+        }; // faceToVkeyJP
+
+        private static Dictionary<string, uint> faceToVkeyUS = new Dictionary<string, uint>() {
+            {" ", (uint)Keys.Space },
+            {"SPACE", (uint)Keys.Space },
+            {"0", (uint)Keys.D0 },
+            {"1", (uint)Keys.D1 },
+            {"2", (uint)Keys.D2 },
+            {"3", (uint)Keys.D3 },
+            {"4", (uint)Keys.D4 },
+            {"5", (uint)Keys.D5 },
+            {"6", (uint)Keys.D6 },
+            {"7", (uint)Keys.D7 },
+            {"8", (uint)Keys.D8 },
+            {"9", (uint)Keys.D9 },
+            {"A", (uint)Keys.A },
+            {"B", (uint)Keys.B },
+            {"C", (uint)Keys.C },
+            {"D", (uint)Keys.D },
+            {"E", (uint)Keys.E },
+            {"F", (uint)Keys.F },
+            {"G", (uint)Keys.G },
+            {"H", (uint)Keys.H },
+            {"I", (uint)Keys.I },
+            {"J", (uint)Keys.J },
+            {"K", (uint)Keys.K },
+            {"L", (uint)Keys.L },
+            {"M", (uint)Keys.M },
+            {"N", (uint)Keys.N },
+            {"O", (uint)Keys.O },
+            {"P", (uint)Keys.P },
+            {"Q", (uint)Keys.Q },
+            {"R", (uint)Keys.R },
+            {"S", (uint)Keys.S },
+            {"T", (uint)Keys.T },
+            {"U", (uint)Keys.U },
+            {"V", (uint)Keys.V },
+            {"W", (uint)Keys.W },
+            {"X", (uint)Keys.X },
+            {"Y", (uint)Keys.Y },
+            {"Z", (uint)Keys.Z },
+            { "@", (uint)Keys.D2 },
+            { "^", (uint)Keys.D6 },
+            { "&", (uint)Keys.D7 },
+            { "*", (uint)Keys.D8 },
+            { "(", (uint)Keys.D9 },
+            { ")", (uint)Keys.D0 },
+            { ";", (uint)Keys.Oem1 },           // ba
+            { ":", (uint)Keys.Oem1},            // ba
+            { "COLON", (uint)Keys.Oem1},        // ba
+            { "=", (uint)Keys.Oemplus },        // bb
+            { "+", (uint)Keys.Oemplus },        // bb
+            { "PLUS", (uint)Keys.Oemplus },     // bb
+            { "COMMA", (uint)Keys.Oemcomma },   // bc
+            { ",", (uint)Keys.Oemcomma },       // bc
+            { "<", (uint)Keys.Oemcomma },       // bc
+            { "MINUS", (uint)Keys.OemMinus },   // bd
+            { "-", (uint)Keys.OemMinus },       // bd
+            { "_", (uint)Keys.OemMinus },       // de
+            { "PERIOD", (uint)Keys.OemPeriod }, // be
+            { ".", (uint)Keys.OemPeriod },      // be
+            { ">", (uint)Keys.OemPeriod },      // be
+            { "SLASH", (uint)Keys.Oem2 },       // bf
+            { "/", (uint)Keys.Oem2 },           // bf
+            { "?", (uint)Keys.Oem2 },           // bf
+            { "BQUOTE", (uint)Keys.Oem3 },      // c0
+            { "`", (uint)Keys.Oem3 },           // c0
+            { "~", (uint)Keys.Oem3 },           // c0
+            { "OEM4", (uint)Keys.Oem4 },        // db
+            { "[", (uint)Keys.Oem4 },           // db
+            { "{", (uint)Keys.Oem4 },           // db
+            { "OEM5", (uint)Keys.Oem5 },        // dc
+            { "\\", (uint)Keys.Oem5 },          // dc
+            { "|", (uint)Keys.Oem5 },           // dc
+            { "OEM6", (uint)Keys.Oem6 },        // dd
+            { "]", (uint)Keys.Oem6 },           // dd
+            { "}", (uint)Keys.Oem6 },           // dd
+            { "OEM7", (uint)Keys.Oem7 },        // de
+            { "'", (uint)Keys.Oem7 },           // de
+            { "\"", (uint)Keys.Oem7 },          // de
             { "OEM8", (uint)Keys.Oem8 },        // df
             { "OEM102", (uint)Keys.Oem102 },    // e2/106
             { "＼", (uint)Keys.Oem102 },    // e2/106
-            { "_", (uint)Keys.Oem102 + 0x100 },        // de
-        };
+        }; // faceToVkeyUS
 
         public static uint FaceToVKey(string face)
         {
-            return faceToVkey._safeGet(face);
+            return (StrokeVKeys.IsJPmode ? faceToVkeyJP : faceToVkeyUS)._safeGet(face);
         }
 
-        private static Dictionary<char, uint> charToVkey = new Dictionary<char, uint>() {
+        private static Dictionary<char, uint> charToVkeyJP = new Dictionary<char, uint>() {
             {' ', (uint)Keys.Space },
             {'1', (uint)Keys.D1 },
             {'2', (uint)Keys.D2 },
@@ -553,38 +669,140 @@ namespace KanchokuWS
             {'Z', (uint)Keys.Z + 0x100 },
             {'z', (uint)Keys.Z },
             {'っ', (uint)Keys.Z + 0x100 },
-            { ';', (uint)Keys.Oemplus },     // bb
-            { '+', (uint)Keys.Oemplus + 0x100 },     // bb
-            { ',', (uint)Keys.Oemcomma },   // bc
+            { ';', (uint)Keys.Oemplus },            // bb
+            { '+', (uint)Keys.Oemplus + 0x100 },    // bb
+            { ',', (uint)Keys.Oemcomma },           // bc
             { '<', (uint)Keys.Oemcomma + 0x100 },   // bc
-            { '.', (uint)Keys.OemPeriod }, // be
-            { '>', (uint)Keys.OemPeriod + 0x100 }, // be
-            { '-', (uint)Keys.OemMinus },   // bd
+            { '.', (uint)Keys.OemPeriod },          // be
+            { '>', (uint)Keys.OemPeriod + 0x100 },  // be
+            { '-', (uint)Keys.OemMinus },           // bd
             { '=', (uint)Keys.OemMinus + 0x100 },   // bd
-            { ':', (uint)Keys.Oem1 },       // ba
+            { ':', (uint)Keys.Oem1 },               // ba
             { '*', (uint)Keys.Oem1 + 0x100 },       // ba
-            { '/', (uint)Keys.Oem2 },       // bf
+            { '/', (uint)Keys.Oem2 },               // bf
             { '?', (uint)Keys.Oem2 + 0x100 },       // bf
-            { '@', (uint)Keys.Oem3 },      // c0/106
-            { '`', (uint)Keys.Oem3 + 0x100 },      // c0/106
-            { '[', (uint)Keys.Oem4 },        // db
-            { '{', (uint)Keys.Oem4 + 0x100 },        // db
-            { '\\', (uint)Keys.Oem5 },        // dc
-            { '|', (uint)Keys.Oem5 + 0x100 },        // dc
-            { ']', (uint)Keys.Oem6 },        // dd
-            { '}', (uint)Keys.Oem6 + 0x100 },        // dd
-            { '^', (uint)Keys.Oem7 },        // de
-            { '~', (uint)Keys.Oem7 + 0x100 },        // de
-            { '＼', (uint)Keys.Oem102 },        // e1
-            { '_', (uint)Keys.Oem102 + 0x100 },        // e1
-        };
+            { '@', (uint)Keys.Oem3 },               // c0/106
+            { '`', (uint)Keys.Oem3 + 0x100 },       // c0/106
+            { '[', (uint)Keys.Oem4 },               // db
+            { '{', (uint)Keys.Oem4 + 0x100 },       // db
+            { '\\', (uint)Keys.Oem5 },              // dc
+            { '|', (uint)Keys.Oem5 + 0x100 },       // dc
+            { ']', (uint)Keys.Oem6 },               // dd
+            { '}', (uint)Keys.Oem6 + 0x100 },       // dd
+            { '^', (uint)Keys.Oem7 },               // de
+            { '~', (uint)Keys.Oem7 + 0x100 },       // de
+            { '＼', (uint)Keys.Oem102 },            // e2
+            { '_', (uint)Keys.Oem102 + 0x100 },     // e2
+        }; // charToVkeyJP
+
+        private static Dictionary<char, uint> charToVkeyUS = new Dictionary<char, uint>() {
+            {' ', (uint)Keys.Space },
+            {'1', (uint)Keys.D1 },
+            {'2', (uint)Keys.D2 },
+            {'3', (uint)Keys.D3 },
+            {'4', (uint)Keys.D4 },
+            {'5', (uint)Keys.D5 },
+            {'6', (uint)Keys.D6 },
+            {'7', (uint)Keys.D7 },
+            {'8', (uint)Keys.D8 },
+            {'9', (uint)Keys.D9 },
+            {'0', (uint)Keys.D0 },
+            {')', (uint)Keys.D0 + 0x100 },
+            {'を', (uint)Keys.D0 + 0x100 },
+            {'!', (uint)Keys.D1 + 0x100 },
+            {'@', (uint)Keys.D2 + 0x100 },
+            {'#', (uint)Keys.D3 + 0x100 },
+            {'$', (uint)Keys.D4 + 0x100 },
+            {'%', (uint)Keys.D5 + 0x100 },
+            {'^', (uint)Keys.D6 + 0x100 },
+            {'&', (uint)Keys.D7 + 0x100 },
+            {'*', (uint)Keys.D8 + 0x100 },
+            {'(', (uint)Keys.D9 + 0x100 },
+            {'A', (uint)Keys.A + 0x100 },
+            {'a', (uint)Keys.A },
+            {'B', (uint)Keys.B + 0x100 },
+            {'b', (uint)Keys.B },
+            {'C', (uint)Keys.C + 0x100 },
+            {'c', (uint)Keys.C },
+            {'D', (uint)Keys.D + 0x100 },
+            {'d', (uint)Keys.D },
+            {'E', (uint)Keys.E + 0x100 },
+            {'e', (uint)Keys.E },
+            {'ぃ', (uint)Keys.E + 0x100 },
+            {'F', (uint)Keys.F + 0x100 },
+            {'f', (uint)Keys.F },
+            {'G', (uint)Keys.G + 0x100 },
+            {'g', (uint)Keys.G },
+            {'H', (uint)Keys.H + 0x100 },
+            {'h', (uint)Keys.H },
+            {'I', (uint)Keys.I + 0x100 },
+            {'i', (uint)Keys.I },
+            {'J', (uint)Keys.J + 0x100 },
+            {'j', (uint)Keys.J },
+            {'K', (uint)Keys.K + 0x100 },
+            {'k', (uint)Keys.K },
+            {'L', (uint)Keys.L + 0x100 },
+            {'l', (uint)Keys.L },
+            {'M', (uint)Keys.M + 0x100 },
+            {'m', (uint)Keys.M },
+            {'N', (uint)Keys.N + 0x100 },
+            {'n', (uint)Keys.N },
+            {'O', (uint)Keys.O + 0x100 },
+            {'o', (uint)Keys.O },
+            {'P', (uint)Keys.P + 0x100 },
+            {'p', (uint)Keys.P },
+            {'Q', (uint)Keys.Q + 0x100 },
+            {'q', (uint)Keys.Q },
+            {'R', (uint)Keys.R + 0x100 },
+            {'r', (uint)Keys.R },
+            {'S', (uint)Keys.S + 0x100 },
+            {'s', (uint)Keys.S },
+            {'T', (uint)Keys.T + 0x100 },
+            {'t', (uint)Keys.T },
+            {'U', (uint)Keys.U + 0x100 },
+            {'u', (uint)Keys.U },
+            {'V', (uint)Keys.V + 0x100 },
+            {'v', (uint)Keys.V },
+            {'W', (uint)Keys.W + 0x100 },
+            {'w', (uint)Keys.W },
+            {'X', (uint)Keys.X + 0x100 },
+            {'x', (uint)Keys.X },
+            {'Y', (uint)Keys.Y + 0x100 },
+            {'y', (uint)Keys.Y },
+            {'Z', (uint)Keys.Z + 0x100 },
+            {'z', (uint)Keys.Z },
+            {'っ', (uint)Keys.Z + 0x100 },
+            { ';', (uint)Keys.Oem1 },               // ba
+            { ':', (uint)Keys.Oem1 + 0x100 },       // ba
+            { '=', (uint)Keys.Oemplus },            // bb
+            { '+', (uint)Keys.Oemplus + 0x100 },    // bb
+            { ',', (uint)Keys.Oemcomma },           // bc
+            { '<', (uint)Keys.Oemcomma + 0x100 },   // bc
+            { '-', (uint)Keys.OemMinus },           // bd
+            { '_', (uint)Keys.OemMinus + 0x100 },   // bd
+            { '.', (uint)Keys.OemPeriod },          // be
+            { '>', (uint)Keys.OemPeriod + 0x100 },  // be
+            { '/', (uint)Keys.Oem2 },               // bf
+            { '?', (uint)Keys.Oem2 + 0x100 },       // bf
+            { '`', (uint)Keys.Oem3 },               // c0
+            { '~', (uint)Keys.Oem3 + 0x100 },       // c0
+            { '[', (uint)Keys.Oem4 },               // db
+            { '{', (uint)Keys.Oem4 + 0x100 },       // db
+            { '\\', (uint)Keys.Oem5 },              // dc
+            { '＼', (uint)Keys.Oem5 },              // dc
+            { '|', (uint)Keys.Oem5 + 0x100 },       // dc
+            { ']', (uint)Keys.Oem6 },               // dd
+            { '}', (uint)Keys.Oem6 + 0x100 },       // dd
+            { '\'', (uint)Keys.Oem7 },              // de
+            { '"', (uint)Keys.Oem7 + 0x100 },       // de
+        }; // charToVkeyUS
 
         public static uint CharToVKey(char ch)
         {
-            return charToVkey._safeGet(ch);
+            return (StrokeVKeys.IsJPmode ?  charToVkeyJP : charToVkeyUS)._safeGet(ch);
         }
 
-        private static Dictionary<uint, char> vkeyToChar = new Dictionary<uint, char>() {
+        private static Dictionary<uint, char> vkeyToCharJP = new Dictionary<uint, char>() {
             { (uint)Keys.Space,' ' },
             { (uint)Keys.D1,'1' },
             { (uint)Keys.D2,'2' },
@@ -636,11 +854,65 @@ namespace KanchokuWS
             { (uint)Keys.Oem102, '＼' },        // e1
             { (uint)Keys.IMEConvert, '変' },        // 1c
             { (uint)Keys.IMENonconvert, '無' },        // 1d
-        };
+        }; // vkeyToCharJP
+
+        private static Dictionary<uint, char> vkeyToCharUS = new Dictionary<uint, char>() {
+            { (uint)Keys.Space,' ' },
+            { (uint)Keys.D1,'1' },
+            { (uint)Keys.D2,'2' },
+            { (uint)Keys.D3,'3' },
+            { (uint)Keys.D4,'4' },
+            { (uint)Keys.D5,'5' },
+            { (uint)Keys.D6,'6' },
+            { (uint)Keys.D7,'7' },
+            { (uint)Keys.D8,'8' },
+            { (uint)Keys.D9,'9' },
+            { (uint)Keys.D0,'0' },
+            { (uint)Keys.A,'a' },
+            { (uint)Keys.B,'b' },
+            { (uint)Keys.C,'c' },
+            { (uint)Keys.D,'d' },
+            { (uint)Keys.E,'e' },
+            { (uint)Keys.F,'f' },
+            { (uint)Keys.G,'g' },
+            { (uint)Keys.H,'h' },
+            { (uint)Keys.I,'i' },
+            { (uint)Keys.J,'j' },
+            { (uint)Keys.K,'k' },
+            { (uint)Keys.L,'l' },
+            { (uint)Keys.M,'m' },
+            { (uint)Keys.N,'n' },
+            { (uint)Keys.O,'o' },
+            { (uint)Keys.P,'p' },
+            { (uint)Keys.Q,'q' },
+            { (uint)Keys.R,'r' },
+            { (uint)Keys.S,'s' },
+            { (uint)Keys.T,'t' },
+            { (uint)Keys.U,'u' },
+            { (uint)Keys.V,'v' },
+            { (uint)Keys.W,'w' },
+            { (uint)Keys.X,'x' },
+            { (uint)Keys.Y,'y' },
+            { (uint)Keys.Z,'z' },
+            { (uint)Keys.Oemplus, '=' },    // bb
+            { (uint)Keys.Oemcomma, ',' },   // bc
+            { (uint)Keys.OemPeriod, '.' },  // be
+            { (uint)Keys.OemMinus, '-' },   // bd
+            { (uint)Keys.Oem1, ';' },       // ba
+            { (uint)Keys.Oem2, '/' },       // bf
+            { (uint)Keys.Oem3, '`' },       // c0/106
+            { (uint)Keys.Oem4, '[' },       // db
+            { (uint)Keys.Oem5, '\\' },      // dc
+            { (uint)Keys.Oem6, ']' },       // dd
+            { (uint)Keys.Oem7, '\'' },      // de
+            { (uint)Keys.Oem102, '＼' },    // e1
+            { (uint)Keys.IMEConvert, '変' },        // 1c
+            { (uint)Keys.IMENonconvert, '無' },        // 1d
+        }; // vkeyToCharUS
 
         public static char VKeyToChar(uint vk)
         {
-            return vkeyToChar._safeGet(vk);
+            return (StrokeVKeys.IsJPmode ? vkeyToCharJP : vkeyToCharUS)._safeGet(vk);
         }
 
     }
@@ -795,10 +1067,10 @@ namespace KanchokuWS
 
         public static VKeyCombo CtrlV_VKeyCombo = new VKeyCombo(KeyModifiers.MOD_CONTROL, _FaceCharVKey.FaceToVKey("V"));
 
-        public static uint GetVKeyFromFaceString(string face)
-        {
-            return _FaceCharVKey.FaceToVKey(face);
-        }
+        //public static uint GetVKeyFromFaceString(string face)
+        //{
+        //    return _FaceCharVKey.FaceToVKey(face);
+        //}
 
         public static uint GetVKeyFromFaceChar(char face)
         {
