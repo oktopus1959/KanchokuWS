@@ -37,6 +37,8 @@ namespace KanchokuWS.Gui
             this.button_document = new System.Windows.Forms.Button();
             this.button_restart = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.comboBox_deckeyCharsFile = new System.Windows.Forms.ComboBox();
+            this.comboBox_keyboardFile = new System.Windows.Forms.ComboBox();
             this.comboBox_tableFile2 = new System.Windows.Forms.ComboBox();
             this.comboBox_tableFile = new System.Windows.Forms.ComboBox();
             this.button_openTableFile2 = new System.Windows.Forms.Button();
@@ -55,7 +57,6 @@ namespace KanchokuWS.Gui
             this.textBox_easyCharsFile = new System.Windows.Forms.TextBox();
             this.label44 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
-            this.textBox_deckeyCharsFile = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.textBox_historyFile = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -65,7 +66,6 @@ namespace KanchokuWS.Gui
             this.label5 = new System.Windows.Forms.Label();
             this.textBox_bushuCompFile = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.textBox_keyboardFile = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.radioButton_noVkb = new System.Windows.Forms.RadioButton();
@@ -707,6 +707,8 @@ namespace KanchokuWS.Gui
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.comboBox_deckeyCharsFile);
+            this.groupBox2.Controls.Add(this.comboBox_keyboardFile);
             this.groupBox2.Controls.Add(this.comboBox_tableFile2);
             this.groupBox2.Controls.Add(this.comboBox_tableFile);
             this.groupBox2.Controls.Add(this.button_openTableFile2);
@@ -725,7 +727,6 @@ namespace KanchokuWS.Gui
             this.groupBox2.Controls.Add(this.textBox_easyCharsFile);
             this.groupBox2.Controls.Add(this.label44);
             this.groupBox2.Controls.Add(this.label18);
-            this.groupBox2.Controls.Add(this.textBox_deckeyCharsFile);
             this.groupBox2.Controls.Add(this.label10);
             this.groupBox2.Controls.Add(this.textBox_historyFile);
             this.groupBox2.Controls.Add(this.label7);
@@ -735,7 +736,6 @@ namespace KanchokuWS.Gui
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.textBox_bushuCompFile);
             this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Controls.Add(this.textBox_keyboardFile);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox2.Location = new System.Drawing.Point(271, 10);
@@ -744,6 +744,32 @@ namespace KanchokuWS.Gui
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "ファイル";
+            // 
+            // comboBox_deckeyCharsFile
+            // 
+            this.comboBox_deckeyCharsFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox_deckeyCharsFile.DropDownWidth = 400;
+            this.comboBox_deckeyCharsFile.FormattingEnabled = true;
+            this.comboBox_deckeyCharsFile.Location = new System.Drawing.Point(129, 88);
+            this.comboBox_deckeyCharsFile.Name = "comboBox_deckeyCharsFile";
+            this.comboBox_deckeyCharsFile.Size = new System.Drawing.Size(218, 23);
+            this.comboBox_deckeyCharsFile.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.comboBox_deckeyCharsFile, resources.GetString("comboBox_deckeyCharsFile.ToolTip"));
+            this.comboBox_deckeyCharsFile.DropDown += new System.EventHandler(this.comboBox_deckeyCharsFile_DropDown);
+            // 
+            // comboBox_keyboardFile
+            // 
+            this.comboBox_keyboardFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox_keyboardFile.DropDownWidth = 400;
+            this.comboBox_keyboardFile.FormattingEnabled = true;
+            this.comboBox_keyboardFile.Location = new System.Drawing.Point(129, 13);
+            this.comboBox_keyboardFile.Name = "comboBox_keyboardFile";
+            this.comboBox_keyboardFile.Size = new System.Drawing.Size(218, 23);
+            this.comboBox_keyboardFile.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.comboBox_keyboardFile, resources.GetString("comboBox_keyboardFile.ToolTip"));
+            this.comboBox_keyboardFile.DropDown += new System.EventHandler(this.comboBox_keyboardFile_DropDown);
             // 
             // comboBox_tableFile2
             // 
@@ -961,19 +987,6 @@ namespace KanchokuWS.Gui
             this.label18.TabIndex = 16;
             this.label18.Text = "主テーブルファイル";
             // 
-            // textBox_deckeyCharsFile
-            // 
-            this.textBox_deckeyCharsFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_deckeyCharsFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_deckeyCharsFile.Location = new System.Drawing.Point(129, 90);
-            this.textBox_deckeyCharsFile.Name = "textBox_deckeyCharsFile";
-            this.textBox_deckeyCharsFile.Size = new System.Drawing.Size(218, 19);
-            this.textBox_deckeyCharsFile.TabIndex = 6;
-            this.toolTip1.SetToolTip(this.textBox_deckeyCharsFile, "漢直キーコードから文字への変換を定義するファイル\r\n\r\n打鍵されたキーを文字に変換してそのまま出力する場合に必要となる、\r\n漢直キーコード⇒文字のマッピング定義フ" +
-        "ァイルを指定します。\r\n\r\nファイルの指定がない場合は、キーボードファイルと同種の定義ファイルが\r\n使用されます。\r\n例：キーボードファイルが 106.key " +
-        "なら chars.106.txt が使われる");
-            // 
             // label10
             // 
             this.label10.AutoSize = true;
@@ -1064,17 +1077,6 @@ namespace KanchokuWS.Gui
             this.label4.Size = new System.Drawing.Size(113, 15);
             this.label4.TabIndex = 2;
             this.label4.Text = "部首合成辞書ファイル";
-            // 
-            // textBox_keyboardFile
-            // 
-            this.textBox_keyboardFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_keyboardFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_keyboardFile.Location = new System.Drawing.Point(129, 15);
-            this.textBox_keyboardFile.Name = "textBox_keyboardFile";
-            this.textBox_keyboardFile.Size = new System.Drawing.Size(218, 19);
-            this.textBox_keyboardFile.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_keyboardFile, resources.GetString("textBox_keyboardFile.ToolTip"));
             // 
             // label1
             // 
@@ -6927,7 +6929,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.TextBox textBox_easyCharsFile;
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.TextBox textBox_deckeyCharsFile;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox textBox_historyFile;
         private System.Windows.Forms.Label label7;
@@ -6937,7 +6938,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBox_bushuCompFile;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox_keyboardFile;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label label37;
@@ -7330,5 +7330,7 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label147;
         private System.Windows.Forms.TextBox textBox_eisuExitSpaceNum;
         private System.Windows.Forms.Label label148;
+        private System.Windows.Forms.ComboBox comboBox_keyboardFile;
+        private System.Windows.Forms.ComboBox comboBox_deckeyCharsFile;
     }
 }

@@ -318,8 +318,8 @@ namespace KanchokuWS.Gui
             checkBox_confirmOnClose.Checked = Settings.ConfirmOnClose;
 
             // ファイル
-            textBox_keyboardFile.Text = Settings.KeyboardFile;
-            textBox_deckeyCharsFile.Text = Settings.GetString("charsDefFile");
+            comboBox_keyboardFile.Text = getKeyboardName(Settings.KeyboardFile);
+            comboBox_deckeyCharsFile.Text = getKeyboardName(Settings.GetString("charsDefFile"));
             textBox_easyCharsFile.Text = Settings.EasyCharsFile;
             textBox_strokeHelpFile.Text = Settings.StrokeHelpFile;
             textBox_bushuCompFile.Text = Settings.BushuFile;
@@ -368,8 +368,8 @@ namespace KanchokuWS.Gui
             checkerBasic.Add(checkBox_confirmOnClose);
 
             // ファイル
-            checkerBasic.Add(textBox_keyboardFile);
-            checkerBasic.Add(textBox_deckeyCharsFile);
+            checkerBasic.Add(comboBox_keyboardFile);
+            checkerBasic.Add(comboBox_deckeyCharsFile);
             checkerBasic.Add(textBox_easyCharsFile);
             checkerBasic.Add(comboBox_tableFile);
             checkerBasic.Add(comboBox_tableFile2);
@@ -393,6 +393,13 @@ namespace KanchokuWS.Gui
             var items = tableFileSpec._strip()._reScan(@" \(([^()]+)\)$");
             logger.DebugH(() => $"{items._getFirst()}, {items._getNth(1)}, {items._getNth(2)}, {items._getNth(3)}");
             return items._getNth(1)._orElse(tableFileSpec._strip());
+        }
+
+        string getKeyboardFileName(string keyboardFileSpec)
+        {
+            var items = keyboardFileSpec._strip()._reScan(@" \(([^()]+)\)$");
+            logger.DebugH(() => $"{items._getFirst()}, {items._getNth(1)}, {items._getNth(2)}, {items._getNth(3)}");
+            return items._getNth(1)._orElse(keyboardFileSpec._strip());
         }
 
         private void button_basicEnter_Click(object sender, EventArgs e)
@@ -419,8 +426,8 @@ namespace KanchokuWS.Gui
             //Settings.SetUserIni("topBoxMode", checkBox_hideTopText.Checked ? "hideOnSelect" : "showAlways");
 
             // ファイル
-            Settings.SetUserIni("keyboard", textBox_keyboardFile.Text.Trim());
-            Settings.SetUserIni("charsDefFile", textBox_deckeyCharsFile.Text.Trim());
+            Settings.SetUserIni("keyboard", getKeyboardFileName(comboBox_keyboardFile.Text));
+            Settings.SetUserIni("charsDefFile", getKeyboardFileName(comboBox_deckeyCharsFile.Text));
             Settings.SetUserIni("easyCharsFile", textBox_easyCharsFile.Text.Trim());
             Settings.SetUserIni("tableFile", getTableFileName(comboBox_tableFile.Text));
             Settings.SetUserIni("tableFile2", getTableFileName(comboBox_tableFile2.Text));
@@ -531,6 +538,27 @@ namespace KanchokuWS.Gui
             return filename;
         }
 
+        // キーボード表示名を取得
+        string getKeyboardName(string filepath)
+        {
+            var filename = filepath._getFileName();
+            if (filename._notEmpty() && filename._toLower() != "jp" && filename._toLower() != "us") {
+                filepath = KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KeyboardFileDir, filename);
+
+                var content = Helper.GetFileHead(filepath, 2048)._strip();
+                if (content._notEmpty()) {
+                    //logger.DebugH(() => $"content={content}");
+                    var list = content._reScan(@"# *NAME\s*[=:]\s*(.+)");
+                    logger.DebugH(() => $"match: {list._getFirst()}, {list._getSecond()}, list.Count={list._safeCount()}");
+                    if (list._safeCount() >= 2) {
+                        // DisplayName が見つかった
+                        return $"{list[1]} ({filename})";
+                    }
+                }
+            }
+            return filename;
+        }
+
         private string[] getDirectoryNames(string tableDir)
         {
             IEnumerable<string> getEffectiveDirNames(string dirPath)
@@ -552,17 +580,17 @@ namespace KanchokuWS.Gui
 
         private void comboBox_tableFile_DropDown(object sender, EventArgs e)
         {
-            tableDirectory1 = comboBoxDropDown(comboBox_tableFile, tableDirectory1);
+            tableDirectory1 = comboBox_table_DropDown(comboBox_tableFile, tableDirectory1);
             logger.InfoH(() => $"tableDirectory1={tableDirectory1}");
         }
 
         private void comboBox_tableFile2_DropDown(object sender, EventArgs e)
         {
-            tableDirectory2 = comboBoxDropDown(comboBox_tableFile2, tableDirectory2);
+            tableDirectory2 = comboBox_table_DropDown(comboBox_tableFile2, tableDirectory2);
             logger.InfoH(() => $"tableDirectory2={tableDirectory2}");
         }
 
-        private string comboBoxDropDown(ComboBox comboBox, string tableDir)
+        private string comboBox_table_DropDown(ComboBox comboBox, string tableDir)
         {
             (var absTableDir, var relTabledir) = getTableFileDir(comboBox, tableDir);
             var dirList = getDirectoryNames(absTableDir);
@@ -571,6 +599,23 @@ namespace KanchokuWS.Gui
             comboBox.Items.AddRange(dirList);
             comboBox.Items.AddRange(fileList);
             return relTabledir;
+        }
+
+        private void comboBox_keyboardFile_DropDown(object sender, EventArgs e)
+        {
+            comboBox_keyboardFile.Items.Clear();
+            comboBox_keyboardFile.Items.Add("JP");
+            comboBox_keyboardFile.Items.Add("US");
+            var fileList = Helper.GetFiles(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KeyboardFileDir), "*.key").Select(x => getKeyboardName(x)).ToArray();
+            comboBox_keyboardFile.Items.AddRange(fileList);
+        }
+
+        private void comboBox_deckeyCharsFile_DropDown(object sender, EventArgs e)
+        {
+            comboBox_deckeyCharsFile.Items.Clear();
+            comboBox_deckeyCharsFile.Items.Add("");
+            var fileList = Helper.GetFiles(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KeyboardFileDir), "chars.*.txt").Select(x => getKeyboardName(x)).ToArray();
+            comboBox_deckeyCharsFile.Items.AddRange(fileList);
         }
 
         private void comboBox_tableFile_SelectedIndexChanged(object sender, EventArgs e)
@@ -2528,7 +2573,10 @@ namespace KanchokuWS.Gui
         private void button_openKeyboardFile_Click(object sender, EventArgs e)
         {
             logger.InfoH("CALLED");
-            openFileByTxtAssociatedProgram(Settings.KeyboardFile);
+            var filename = getKeyboardFileName(comboBox_keyboardFile.Text);
+            if (filename._notEmpty() && filename._toLower() != "jp" && filename._toLower() != "us") {
+                openFileByTxtAssociatedProgram(Settings.KeyboardFileDir._joinPath(filename));
+            }
         }
 
         private void button_openTableFile_Click(object sender, EventArgs e)
@@ -2546,7 +2594,10 @@ namespace KanchokuWS.Gui
         private void button_openKeyCharMapFile_Click(object sender, EventArgs e)
         {
             logger.InfoH("CALLED");
-            openFileByTxtAssociatedProgram(Settings.CharsDefFile);
+            var filename = getKeyboardFileName(comboBox_deckeyCharsFile.Text);
+            if (filename._notEmpty()) {
+                openFileByTxtAssociatedProgram(Settings.KeyboardFileDir._joinPath(filename));
+            }
         }
 
         private void button_openEasyCharsFile_Click(object sender, EventArgs e)
@@ -2647,6 +2698,7 @@ namespace KanchokuWS.Gui
         {
             comboBox_ctrlKey_setItems(comboBox_vkbShowHideTemporaryKey);
         }
+
     }
 }
 

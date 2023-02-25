@@ -145,6 +145,8 @@ namespace KanchokuWS
         public static string EasyCharsFile { get; private set; }
 
         public const string TableFileDir = "tables";
+        public const string KeyboardFileDir = "tables/_keyboard";
+
         public static string TableFile { get; private set; }
         public static string TableFile2 { get; private set; }
         public static string TableFile3 { get; private set; }
@@ -1259,9 +1261,13 @@ namespace KanchokuWS
             BushuAssocFile = addDecoderSetting("bushuAssocFile", "kwassoc.txt");
             BushuFile = addDecoderSetting("bushuFile", "bushu", "kwbushu.rev");
             AutoBushuFile = addDecoderSetting("autoBushuFile", "bushuAuto", "kwbushu.aut");
-            var kbName = KeyboardFile._split('.')._getNth(0);
-            if (kbName._notEmpty() && (kbName._toLower() == "jp" || kbName._toLower() == "us")) kbName = null;
-            CharsDefFile = addDecoderSetting("charsDefFile", kbName._notEmpty() ? $"tables/_keyboard/chars.{kbName}.txt" : "");
+            var charsDefFile = GetString("charsDefFile");
+            if (charsDefFile._isEmpty()) {
+                var kbName = KeyboardFile._split('.')._getNth(0);
+                if (kbName._notEmpty() && (kbName._toLower() == "jp" || kbName._toLower() == "us")) kbName = null;
+                if (kbName._notEmpty()) charsDefFile = $"chars.{kbName}.txt";
+            }
+            CharsDefFile = setDecoderSetting("charsDefFile", charsDefFile._notEmpty() ? KeyboardFileDir._joinPath(charsDefFile) : "");
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
             TableFile = addDecoderSetting("tableFile", $"{TableFileDir}\\漢直系\\tutr.tbl");
             TableFile2 = addDecoderSetting("tableFile2", "");

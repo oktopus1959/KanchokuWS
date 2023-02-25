@@ -66,7 +66,7 @@ namespace KanchokuWS.Domain
             normalChars = null;
             shiftedChars = null;
 
-            var filename = Settings.GetString("charsDefFile");
+            var filename = Settings.CharsDefFile;
             if (filename._notEmpty()) {
                 var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
                 logger.Info($"charsDefFile path={filePath}");
@@ -74,7 +74,7 @@ namespace KanchokuWS.Domain
                 var allLines = Helper.GetFileContent(filePath, Encoding.UTF8);
                 if (allLines == null) {
                     logger.Error($"Can't read charsDefFile: {filePath}");
-                    SystemHelper.ShowErrorMessageBox($"キー・文字マップファイル({filePath}の読み込みに失敗しました。");
+                    SystemHelper.ShowErrorMessageBox($"キー・文字マップファイル({filePath})の読み込みに失敗しました。");
                     return false;
                 }
 

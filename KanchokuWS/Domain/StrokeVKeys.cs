@@ -83,7 +83,7 @@ namespace KanchokuWS.Domain
                 strokeVKeys = VKeyArrayUS;
                 IsJPmode = false;
             } else {
-                var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath("tables/_keyboard", kbName);
+                var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KeyboardFileDir, kbName);
                 logger.Info($"keyboard file path={filePath}");
                 var allLines = Helper.GetFileContent(filePath, Encoding.UTF8);
                 if (allLines == null) {
