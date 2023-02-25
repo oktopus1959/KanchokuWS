@@ -70,6 +70,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\StrokeVKeys.cs" />
+    <Compile Include="Domain\VKeyArrayFuncKeys.cs" />
     <Compile Include="Gui\DlgSettings_Develop.cs">
       <SubType>Form</SubType>
     </Compile>

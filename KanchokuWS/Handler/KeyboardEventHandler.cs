@@ -10,7 +10,9 @@ using Utils;
 
 namespace KanchokuWS.Handler
 {
-    using FuncVKeys = VKeyArrayFuncKeys.FuncVKeys;
+    using KeyModifiers = Domain.KeyModifiers;
+    using VirtualKeys = Domain.VirtualKeys;
+    using FuncVKeys = Domain.VKeyArrayFuncKeys.FuncVKeys;
 
     public class KeyboardEventHandler : IDisposable
     {

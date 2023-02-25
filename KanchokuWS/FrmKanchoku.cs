@@ -16,6 +16,9 @@ using Utils;
 
 namespace KanchokuWS
 {
+    using KeyModifiers = Domain.KeyModifiers;
+    using VirtualKeys = Domain.VirtualKeys;
+
     public partial class FrmKanchoku : Form
     {
         private static Logger logger = Logger.GetLogger();
@@ -273,7 +276,7 @@ namespace KanchokuWS
         /// <summary> キーボードファイルの読み込み (成功したら true, 失敗したら false を返す) </summary>
         private bool readKeyboardFile()
         {
-            if (!StrokeVKeys.ReadKeyboardFile()) {
+            if (!Domain.StrokeVKeys.ReadKeyboardFile()) {
                 // キーボードファイルを読み込めなかったので終了する
                 logger.Error($"CLOSE: Can't read keyboard file");
                 //this.Close();
@@ -299,7 +302,7 @@ namespace KanchokuWS
             }
 
             // 文字定義ファイルの読み込み
-            DecoderKeyToChar.ReadCharsDefFile();
+            Domain.DecoderKeyToChar.ReadCharsDefFile();
 
             // 追加の修飾キー定義ファイルの読み込み
             if (Settings.ExtraModifiersEnabled && Settings.ModConversionFile._notEmpty()) {
@@ -1955,7 +1958,7 @@ namespace KanchokuWS
 
                 if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET WINDOW");
 
-                var dkChar = DecoderKeyToChar.GetCharFromDecKey(deckey);
+                var dkChar = Domain.DecoderKeyToChar.GetCharFromDecKey(deckey);
                 if (dkChar != '\0') {
                     var vk = VirtualKeys.GetVKeyFromFaceChar(dkChar);
                     if (vk != 0) {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Utils;
 
-namespace KanchokuWS
+namespace KanchokuWS.Domain
 {
     /// <summary>
     /// DecKey から文字への変換を行うクラス

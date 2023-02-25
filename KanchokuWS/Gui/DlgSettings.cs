@@ -14,6 +14,7 @@ using Utils;
 
 namespace KanchokuWS.Gui
 {
+    using VirtualKeys = Domain.VirtualKeys;
     public partial class DlgSettings : Form
     {
         private static Logger logger = Logger.GetLogger();

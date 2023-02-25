@@ -8,9 +8,12 @@ using Utils;
 
 namespace KanchokuWS.Handler
 {
+    using KeyModifiers = Domain.KeyModifiers;
+    using VirtualKeys = Domain.VirtualKeys;
+    using FuncVKeys = Domain.VKeyArrayFuncKeys.FuncVKeys;
+
     using Keys = System.Windows.Forms.Keys;
 
-    using FuncVKeys = VKeyArrayFuncKeys.FuncVKeys;
 
     class SendInputHandler
     {

@@ -9,6 +9,9 @@ using Utils;
 
 namespace KanchokuWS
 {
+    using KeyModifiers = Domain.KeyModifiers;
+    using VirtualKeys = Domain.VirtualKeys;
+
     public class KeyOrFunction
     {
         public uint AttrFlag { get; private set; }

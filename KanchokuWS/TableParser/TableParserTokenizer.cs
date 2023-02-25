@@ -9,6 +9,7 @@ using Utils;
 
 namespace KanchokuWS.TableParser
 {
+    using VirtualKeys = Domain.VirtualKeys;
     using ShiftKeyKind = ComboShiftKeyPool.ComboKind;
 
     /// <summary>

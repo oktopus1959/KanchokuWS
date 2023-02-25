@@ -9,6 +9,10 @@ using Utils;
 
 namespace KanchokuWS
 {
+    using KeyModifiers = Domain.KeyModifiers;
+    using VirtualKeys = Domain.VirtualKeys;
+    using VKeyArrayFuncKeys = Domain.VKeyArrayFuncKeys;
+
     public static class Settings
     {
         private static Logger logger = Logger.GetLogger();
@@ -1251,7 +1255,7 @@ namespace KanchokuWS
             DecoderSettings["logLevel"] = LogLevel.ToString();
             DecoderSettings["rootDir"] = KanchokuIni.Singleton.KanchokuDir;
             DecoderSettings["firstUse"] = $"{!UserKanchokuIni.Singleton.IsIniFileExist}";
-            DecoderSettings["isJPmode"] = $"{StrokeVKeys.IsJPmode}";
+            DecoderSettings["isJPmode"] = $"{Domain.StrokeVKeys.IsJPmode}";
             BushuAssocFile = addDecoderSetting("bushuAssocFile", "kwassoc.txt");
             BushuFile = addDecoderSetting("bushuFile", "bushu", "kwbushu.rev");
             AutoBushuFile = addDecoderSetting("autoBushuFile", "bushuAuto", "kwbushu.aut");

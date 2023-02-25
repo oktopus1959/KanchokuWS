@@ -11,6 +11,9 @@ using Utils;
 
 namespace KanchokuWS.Gui
 {
+    using KeyModifiers = Domain.KeyModifiers;
+    using VirtualKeys = Domain.VirtualKeys;
+
     public partial class DlgModConversion : Form
     {
         private static Logger logger = Logger.GetLogger();

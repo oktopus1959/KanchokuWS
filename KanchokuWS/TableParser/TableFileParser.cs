@@ -9,6 +9,7 @@ using KanchokuWS.CombinationKeyStroke.DeterminerLib;
 
 namespace KanchokuWS.TableParser
 {
+    using VirtualKeys = Domain.VirtualKeys;
     using ShiftKeyKind = ComboShiftKeyPool.ComboKind;
 
     // ルートノードから当ノードに至るまでの打鍵リスト

@@ -15,6 +15,8 @@ using Utils;
 
 namespace KanchokuWS
 {
+    using VirtualKeys = Domain.VirtualKeys;
+
     public partial class FrmVirtualKeyboard : Form
     {
         private static Logger logger = Logger.GetLogger();
