@@ -215,7 +215,7 @@ public:
     void createDeckeyToCharsInstance() {
 
         auto filePath = SETTINGS->charsDefFile;
-        LOG_INFO(_T("charsDefFile=%s"), filePath.c_str());
+        LOG_INFOH(_T("charsDefFile=%s"), filePath.c_str());
         //if (filePath.empty()) {
         //    ErrorHandler::Error(_T("「charsDefFile=(ファイル名)」の設定がまちがっているようです"));
         //}

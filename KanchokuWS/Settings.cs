@@ -1000,7 +1000,7 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             // ファイル設定
-            KeyboardFile = GetString("keyboard", "106.key");
+            KeyboardFile = GetString("keyboard", "JP");
 
             StrokeHelpFile = GetString("strokeHelpFile", "stroke-help.txt");
 
@@ -1251,10 +1251,13 @@ namespace KanchokuWS
             DecoderSettings["logLevel"] = LogLevel.ToString();
             DecoderSettings["rootDir"] = KanchokuIni.Singleton.KanchokuDir;
             DecoderSettings["firstUse"] = $"{!UserKanchokuIni.Singleton.IsIniFileExist}";
+            DecoderSettings["isJPmode"] = $"{StrokeVKeys.IsJPmode}";
             BushuAssocFile = addDecoderSetting("bushuAssocFile", "kwassoc.txt");
             BushuFile = addDecoderSetting("bushuFile", "bushu", "kwbushu.rev");
             AutoBushuFile = addDecoderSetting("autoBushuFile", "bushuAuto", "kwbushu.aut");
-            CharsDefFile = addDecoderSetting("charsDefFile", $"chars.{KeyboardFile._split('.')._getNth(0)._toLower()._orElse("jp")}.txt");
+            var kbName = KeyboardFile._split('.')._getNth(0);
+            if (kbName._notEmpty() && (kbName._toLower() == "jp" || kbName._toLower() == "us")) kbName = null;
+            CharsDefFile = addDecoderSetting("charsDefFile", kbName._notEmpty() ? $"tables/_keyboard/chars.{kbName}.txt" : "");
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
             TableFile = addDecoderSetting("tableFile", $"{TableFileDir}\\漢直系\\tutr.tbl");
             TableFile2 = addDecoderSetting("tableFile2", "");

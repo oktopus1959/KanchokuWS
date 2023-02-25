@@ -13,6 +13,46 @@ namespace KanchokuWS
     {
         private static Logger logger = Logger.GetLogger();
 
+        private static char[] QwertyCharsJP = {
+         '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+         'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
+         'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
+         'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',
+         ' ', '-', '^', '\\', '@', '[', ':', ']', '\\', '\0'
+        };
+
+        private static char[] QwertyShiftedCharsJP = {
+            '!', '"', '#', '$', '%', '&', '\'', '(', ')', '\0',
+            'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
+            'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', '+',
+            'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?',
+            ' ', '=', '~', '|', '`', '{', '*', '}', '_', '\0'
+        };
+
+        private static char[] QwertyCharsUS = {
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+            'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
+            'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
+            'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',
+            ' ', '-', '^', '\\', '@', '[', ':', ']', '\\', '\0'
+        };
+
+        private static char[] QwertyShiftedCharsUS = {
+            '!', '"', '#', '$', '%', '&', '\'', '(', ')', '\0',
+            'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
+            'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', '+',
+            'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?',
+            ' ', '=', '~', '|', '`', '{', '*', '}', '_', '\0'
+        };
+
+        private static char[] QwertyChars() {
+            return (StrokeVKeys.IsJPmode ? QwertyCharsJP : QwertyCharsUS);
+        }
+
+        private static char[] QwertyShiftedChars() {
+            return (StrokeVKeys.IsJPmode ? QwertyShiftedCharsJP : QwertyShiftedCharsUS);
+        }
+
         private static List<char> normalChars = null;
         private static List<char> shiftedChars = null;
 
@@ -56,6 +96,21 @@ namespace KanchokuWS
                             if (ch >= 0x20 && ch < 0x7f) charList.Add(ch);
                         }
                         logger.InfoH($"charList=|{charList.ToArray()._toString()}|, len={charList.Count}");
+                    }
+                }
+                if (shiftedChars._isEmpty()) {
+                    var normalQwerty = QwertyChars();
+                    var shiftedQwerty = QwertyShiftedChars();
+                    for (int i = 0; i < normalChars.Count; ++i) {
+                        char ch = normalChars[i];
+                        char sc = '\0';
+                        for (int j = 0; j < normalQwerty.Length; ++j) {
+                            if (ch == normalQwerty[j]) {
+                                sc = shiftedQwerty[j];
+                                break;
+                            }
+                        }
+                        shiftedChars.Add(sc);
                     }
                 }
             }

@@ -5,6 +5,8 @@
 struct Settings {
     bool firstUse;              // 最初の起動か
 
+    bool isJPmode = true;       // キーボードがJPモードか
+
     tstring rootDir;            // ルートフォルダ
     tstring tableFile;          // ストロークテーブル
     tstring tableFile2;         // ストロークテーブル2

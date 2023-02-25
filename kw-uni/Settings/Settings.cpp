@@ -30,6 +30,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
 #define RESET_STROKE_FUNC(k) StrokeTableNode::AssignFucntion(utils::safe_get(dict, tstring(_T(k ## "KeySeq"))), _T(k))
 
     SET_BOOL_VALUE(firstUse);
+    SET_BOOL_VALUE(isJPmode);
 
     SET_KEY_VALUE(rootDir);
     SET_FILE_PATH(tableFile);
