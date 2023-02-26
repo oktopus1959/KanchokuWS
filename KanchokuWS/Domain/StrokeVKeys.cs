@@ -153,6 +153,9 @@ namespace KanchokuWS.Domain
             return true;
         }
 
+        /// <summary>
+        /// 仮想キーとそれをSHIFT修飾したキーに対する DecKey の登録
+        /// </summary>
         private static void setupDecKeyAndComboTable()
         {
             logger.InfoH($"ENTER");

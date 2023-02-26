@@ -282,6 +282,7 @@ namespace KanchokuWS.Domain
             { "＼", (uint)Keys.Oem102 },    // e2/106
         }; // faceToVkeyUS
 
+        /// <summary>キー文字から、その仮想キーコードを得る</summary>
         public static uint FaceToVKey(string face)
         {
             return (StrokeVKeys.IsJPmode ? faceToVkeyJP : faceToVkeyUS)._safeGet(face);
@@ -491,6 +492,7 @@ namespace KanchokuWS.Domain
             { '"', (uint)Keys.Oem7 + 0x100 },       // de
         }; // charToVkeyUS
 
+        /// <summary>文字コードから、その仮想キーコードを得る</summary>
         public static uint CharToVKey(char ch)
         {
             return (StrokeVKeys.IsJPmode ?  charToVkeyJP : charToVkeyUS)._safeGet(ch);
@@ -604,6 +606,7 @@ namespace KanchokuWS.Domain
             { (uint)Keys.IMENonconvert, '無' },        // 1d
         }; // vkeyToCharUS
 
+        /// <summary>仮想キーコードから、その文字コードを得る</summary>
         public static char VKeyToChar(uint vk)
         {
             return (StrokeVKeys.IsJPmode ? vkeyToCharJP : vkeyToCharUS)._safeGet(vk);
@@ -766,25 +769,41 @@ namespace KanchokuWS.Domain
         //    return _FaceCharVKey.FaceToVKey(face);
         //}
 
+        /// <summary>
+        /// 文字コードから仮想キーコードを得る
+        /// </summary>
         public static uint GetVKeyFromFaceChar(char face)
         {
             return _FaceCharVKey.CharToVKey(face);
         }
 
-        private static VKeyCombo? getVKeyComboFromFaceString(string face, bool ctrl, bool shift)
-        {
-            uint vkey = _FaceCharVKey.FaceToVKey(face);
-            if (vkey > 0 && vkey < 0x100) {
-                return new VKeyCombo(KeyModifiers.MakeModifier(ctrl, shift), vkey);
-            }
-            return null;
-        }
+        ///// <summary>
+        ///// キー文字とCtrl/Shiftから、仮想キーコンボを作成する
+        ///// </summary>
+        ///// <param name="face"></param>
+        ///// <param name="ctrl"></param>
+        ///// <param name="shift"></param>
+        ///// <returns></returns>
+        //private static VKeyCombo? getVKeyComboFromFaceString(string face, bool ctrl, bool shift)
+        //{
+        //    uint vkey = _FaceCharVKey.FaceToVKey(face);
+        //    if (vkey > 0 && vkey < 0x100) {
+        //        return new VKeyCombo(KeyModifiers.MakeModifier(ctrl, shift), vkey);
+        //    }
+        //    return null;
+        //}
 
+        /// <summary>
+        /// DECKEY から仮想キーコードを得る
+        /// </summary>
         public static char GetFaceCharFromVKey(uint vkey)
         {
             return _FaceCharVKey.VKeyToChar(vkey);
         }
 
+        /// <summary>
+        /// DECKEY から文字コードを得る。打鍵ログ出力で使用される
+        /// </summary>
         public static char GetFaceCharFromDecKey(int decKey)
         {
             return GetFaceCharFromVKey(GetVKeyComboFromDecKey(decKey)?.vkey ?? 0);
@@ -795,10 +814,13 @@ namespace KanchokuWS.Domain
         /// </summary>
         private static VKeyCombo?[] VKeyComboFromDecKey;
 
+        /// <summary>
+        /// DECKEY id から仮想キーと修飾子のコンビネーションを得る
+        /// </summary>
         public static VKeyCombo? GetVKeyComboFromDecKey(int deckey)
         {
             var combo = VKeyComboFromDecKey._getNth(deckey);
-            logger.DebugH(() => $"deckey={deckey:x}H({deckey}), combo.mod={(combo.HasValue ? combo.Value.modifier : 0):x}, combo.vkey={(combo.HasValue ? combo.Value.vkey : 0)}");
+            logger.Info(() => $"deckey={deckey:x}H({deckey}), combo.mod={(combo.HasValue ? combo.Value.modifier : 0):x}, combo.vkey={(combo.HasValue ? combo.Value.vkey : 0)}");
             return combo;
         }
 
@@ -816,7 +838,7 @@ namespace KanchokuWS.Domain
         /// xfer, nfer など特殊キーに割り当てられている DecoderKey を登録
         /// </summary>
         /// <param name="deckey"></param>
-        public static void AddSpecialDeckey(string name, int deckey)
+        private static void addSpecialDeckey(string name, int deckey)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"name={name}, deckey={deckey:x}H({deckey})");
             if (deckey > 0) {
@@ -827,13 +849,14 @@ namespace KanchokuWS.Domain
             }
         }
 
-        public static void AddModifiedDeckey(int deckey, uint mod, uint vkey)
+        private static void addModifiedDeckey(int deckey, uint mod, uint vkey)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"deckey={deckey:x}H({deckey}), mod={mod:x}H, vkey={vkey:x}H({vkey})");
             var combo = new VKeyCombo(mod, vkey);
             VKeyComboFromDecKey[deckey] = combo;
         }
 
+        /// <summary>修飾子と仮想キーコードの組みとDecKeyの間の相互変換を登録する</summary>
         public static void AddDecKeyAndCombo(int deckey, uint mod, uint vkey, bool bFromComboOnly = false)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"deckey={deckey:x}H({deckey}), mod={mod:x}H, vkey={vkey:x}H({vkey})");
@@ -842,13 +865,19 @@ namespace KanchokuWS.Domain
             DecKeyFromVKeyCombo[combo.SerialValue] = deckey;
         }
 
-        public static void AddModConvertedDecKeyFromCombo(int deckey, uint mod, uint vkey)
+        /// <summary>
+        /// Settingsで設定されたCtrlキー変換やmod-conversionによるキー変換を登録する
+        /// </summary>
+        /// <param name="deckey"></param>
+        /// <param name="mod"></param>
+        /// <param name="vkey"></param>
+        private static void addModConvertedDecKeyFromCombo(int deckey, uint mod, uint vkey)
         {
             logger.Debug(() => $"deckey={deckey:x}H({deckey}), mod={mod:x}H, vkey={vkey:x}H({vkey})");
             ModConvertedDecKeyFromVKeyCombo[VKeyCombo.CalcSerialValue(mod, vkey)] = deckey;
         }
 
-        public static void RemoveModConvertedDecKeyFromCombo(uint mod, uint vkey)
+        private static void removeModConvertedDecKeyFromCombo(uint mod, uint vkey)
         {
             logger.Debug(() => $"mod={mod:x}H, vkey={vkey:x}H({vkey})");
             try {
@@ -856,21 +885,29 @@ namespace KanchokuWS.Domain
             } catch { }
         }
 
+        /// <summary>修飾子と仮想キーコードの組みから、DecKey を得る</summary>
         public static int GetDecKeyFromCombo(uint mod, uint vkey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CALLED: mod={mod:x}H({mod}), vkey={vkey:x}H({vkey})");
-            return DecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
-        }
-
-        public static int GetModConvertedDecKeyFromCombo(uint mod, uint vkey)
-        {
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"CALLED: mod={mod:x}H({mod}), vkey={vkey:x}H({vkey})");
-            int deckey = ModConvertedDecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
-            if (deckey <= 0) { deckey = GetDecKeyFromCombo(mod, vkey); }
-            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"deckey={deckey:x}H({deckey})");
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"ENTER: mod={mod:x}H({mod}), vkey={vkey:x}H({vkey})");
+            int deckey = DecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"LEAVE: deckey={deckey:x}H({deckey})");
             return deckey;
         }
 
+        /// <summary>修飾子と仮想キーコードの組みから、Modキーによるシフト変換されたDECKEY を得る</summary>
+        public static int GetModConvertedDecKeyFromCombo(uint mod, uint vkey)
+        {
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"ENTER: mod={mod:x}H({mod}), vkey={vkey:x}H({vkey})");
+            int deckey = ModConvertedDecKeyFromVKeyCombo._safeGet(VKeyCombo.CalcSerialValue(mod, vkey), -1);
+            if (deckey <= 0) { deckey = GetDecKeyFromCombo(mod, vkey); }
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"LEAVE: deckey={deckey:x}H({deckey})");
+            return deckey;
+        }
+
+        /// <summary>
+        /// キー文字から、Ctrlキー修飾されたDECKEY を得る<br/>
+        /// 現状、使用しているのは Ctrl-J のみ
+        /// </summary>
         public static int GetCtrlDecKeyOf(string face)
         {
             uint vkey = _FaceCharVKey.FaceToVKey(face);
@@ -895,6 +932,9 @@ namespace KanchokuWS.Domain
             logger.InfoH("LEAVE");
         }
 
+        /// <summary>
+        /// Ctrl修飾されたDecKeyの登録 (Settingsから呼ばれる)
+        /// </summary>
         public static void AddCtrlDeckeyFromCombo(string keyFace, int ctrlDeckey, int ctrlShiftDeckey)
         {
             bool bRemove = false;
@@ -902,25 +942,31 @@ namespace KanchokuWS.Domain
                 bRemove = true;
                 keyFace = keyFace.Replace("#", "");
             }
-            var combo = getVKeyComboFromFaceString(keyFace, false, false);
-            if (combo != null) {
+            uint vkey = _FaceCharVKey.FaceToVKey(keyFace);
+            if (vkey > 0 && vkey < 0x100) {
                 if (bRemove) {
-                    if (ctrlDeckey > 0) RemoveModConvertedDecKeyFromCombo(KeyModifiers.MOD_CONTROL, combo.Value.vkey);
-                    if (ctrlShiftDeckey > 0) RemoveModConvertedDecKeyFromCombo(KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, combo.Value.vkey);
+                    if (ctrlDeckey > 0) removeModConvertedDecKeyFromCombo(KeyModifiers.MOD_CONTROL, vkey);
+                    if (ctrlShiftDeckey > 0) removeModConvertedDecKeyFromCombo(KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, vkey);
                 } else {
-                    if (ctrlDeckey > 0) AddModConvertedDecKeyFromCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, combo.Value.vkey);
-                    if (ctrlShiftDeckey > 0) AddModConvertedDecKeyFromCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, combo.Value.vkey);
+                    if (ctrlDeckey > 0) addModConvertedDecKeyFromCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, vkey);
+                    if (ctrlShiftDeckey > 0) addModConvertedDecKeyFromCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, vkey);
                 }
             }
         }
 
+        /// <summary>
+        /// Ctrl修飾されたDecKeyとVKeyの相互登録 (Settingsから呼ばれる)
+        /// </summary>
+        /// <param name="keyFace"></param>
+        /// <param name="ctrlDeckey"></param>
+        /// <param name="ctrlShiftDeckey"></param>
         public static void AddCtrlDeckeyAndCombo(string keyFace, int ctrlDeckey, int ctrlShiftDeckey)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"keyFace={keyFace}, ctrlDeckey={ctrlDeckey:x}H({ctrlDeckey}), , ctrlShiftDeckey={ctrlShiftDeckey:x}H({ctrlShiftDeckey})");
-            var combo = getVKeyComboFromFaceString(keyFace, false, false);
-            if (combo != null) {
-                if (ctrlDeckey > 0) AddDecKeyAndCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, combo.Value.vkey);
-                if (ctrlShiftDeckey > 0) AddDecKeyAndCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, combo.Value.vkey);
+            uint vkey = _FaceCharVKey.FaceToVKey(keyFace);
+            if (vkey > 0 && vkey < 0x100) {
+                if (ctrlDeckey > 0) AddDecKeyAndCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, vkey);
+                if (ctrlShiftDeckey > 0) AddDecKeyAndCombo(ctrlShiftDeckey, KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_SHIFT, vkey);
             }
         }
 
@@ -1225,7 +1271,7 @@ namespace KanchokuWS.Domain
                                             targetDeckey += DecoderKeys.CTRL_FUNC_DECKEY_START - DecoderKeys.FUNC_DECKEY_START;
                                         }
                                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
-                                        if (targetDeckey > 0) AddModifiedDeckey(targetDeckey, KeyModifiers.MOD_CONTROL, decVkey);
+                                        if (targetDeckey > 0) addModifiedDeckey(targetDeckey, KeyModifiers.MOD_CONTROL, decVkey);
                                     }
 
                                     if (targetDeckey == 0) {
@@ -1241,7 +1287,7 @@ namespace KanchokuWS.Domain
                                     } else if (!ctrl) {
                                         // Ctrl修飾なしの特殊キーだったので、漢直コードから変換テーブルに登録しておく
                                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"AddSpecialDeckey: name={name}, targetDeckey={targetDeckey:x}H({targetDeckey})");
-                                        AddSpecialDeckey(name, targetDeckey);
+                                        addSpecialDeckey(name, targetDeckey);
                                     }
                                 }
 
@@ -1259,7 +1305,7 @@ namespace KanchokuWS.Domain
                                         // 拡張修飾キー設定
                                         modCount[modKey] = modCount._safeGet(modKey) + 1;
                                         ExtModifierKeyDefs._safeGetOrNewInsert(modKey)[modifieeDeckey] = target;
-                                        AddModConvertedDecKeyFromCombo(targetDeckey, modKey, vkey);
+                                        addModConvertedDecKeyFromCombo(targetDeckey, modKey, vkey);
                                     }
                                     continue;
                                 }
@@ -1337,9 +1383,9 @@ namespace KanchokuWS.Domain
                 }
             }
 
-            logger.DebugH(() => $"mod={modKey:x}H({modKey}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
+            logger.Info(() => $"mod={modKey:x}H({modKey}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
             if (modKey != 0 && shiftPlane > 0) {
-                logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{modKey}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{modKey}] = {shiftPlaneWhenOff}");
+                logger.Info(() => $"shiftPlaneForShiftFuncKey[{modKey}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{modKey}] = {shiftPlaneWhenOff}");
                 ShiftPlaneForShiftModKey.Add(modKey, shiftPlane);
                 ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, shiftPlaneWhenOff);
             }
@@ -1349,7 +1395,7 @@ namespace KanchokuWS.Domain
         /// <summary>テーブルファイルor設定ダイアログで割り当てたSandSシフト面を優先する</summary>
         public static void AssignSanSPlane(int shiftPlane = 0)
         {
-            logger.DebugH(() => $"CALLED: SandSEnabled={Settings.SandSEnabledCurrently}, SandSAssignedPlane={Settings.SandSAssignedPlane}");
+            logger.Info(() => $"CALLED: SandSEnabled={Settings.SandSEnabledCurrently}, SandSAssignedPlane={Settings.SandSAssignedPlane}");
             if (Settings.SandSEnabledCurrently) {
                 if (shiftPlane <= 0) shiftPlane = Settings.SandSAssignedPlane;
                 if (shiftPlane > 0 && shiftPlane < ShiftPlane_NUM) {
@@ -1405,7 +1451,7 @@ namespace KanchokuWS.Domain
             sb.Append("\n## Extra modifier settings ##\n");
             foreach (var pair in ExtModifierKeyDefs) {
                 var keyName = getModifierNameByKey(pair.Key);
-                logger.DebugH(() => $"modKey={pair.Key}, keyName={keyName}, dict.Size={pair.Value.Count}");
+                logger.Info(() => $"modKey={pair.Key}, keyName={keyName}, dict.Size={pair.Value.Count}");
                 if (keyName._notEmpty()) {
                     foreach (var p in pair.Value) {
                         var deckey = p.Key;
