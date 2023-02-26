@@ -749,7 +749,7 @@ namespace KanchokuWS.Gui
             // 
             this.comboBox_deckeyCharsFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox_deckeyCharsFile.DropDownWidth = 400;
+            this.comboBox_deckeyCharsFile.DropDownWidth = 270;
             this.comboBox_deckeyCharsFile.FormattingEnabled = true;
             this.comboBox_deckeyCharsFile.Location = new System.Drawing.Point(129, 88);
             this.comboBox_deckeyCharsFile.Name = "comboBox_deckeyCharsFile";
@@ -762,7 +762,7 @@ namespace KanchokuWS.Gui
             // 
             this.comboBox_keyboardFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox_keyboardFile.DropDownWidth = 400;
+            this.comboBox_keyboardFile.DropDownWidth = 270;
             this.comboBox_keyboardFile.FormattingEnabled = true;
             this.comboBox_keyboardFile.Location = new System.Drawing.Point(129, 13);
             this.comboBox_keyboardFile.Name = "comboBox_keyboardFile";
@@ -992,9 +992,9 @@ namespace KanchokuWS.Gui
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(15, 91);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(114, 15);
+            this.label10.Size = new System.Drawing.Size(113, 15);
             this.label10.TabIndex = 14;
-            this.label10.Text = "キー・文字マップファイル";
+            this.label10.Text = "英数字テーブルファイル";
             // 
             // textBox_historyFile
             // 
