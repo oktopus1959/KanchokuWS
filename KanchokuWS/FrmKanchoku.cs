@@ -2274,6 +2274,12 @@ namespace KanchokuWS
             KanaTrainingModeToggle();
         }
 
+        /// <summary> 漢直WSの一時停止/再開 </summary>
+        private void Stop_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Settings.DecoderStopped = !Settings.DecoderStopped;
+            Stop_ToolStripMenuItem.Text = Settings.DecoderStopped ? "再開" : "一時停止";
+        }
     }
 
 }

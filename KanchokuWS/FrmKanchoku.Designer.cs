@@ -46,6 +46,7 @@
             this.終了ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.Stop_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,15 +66,16 @@
             this.ReadDic_ToolStripMenuItem,
             this.toolStripSeparator1,
             this.Restart_ToolStripMenuItem,
+            this.Stop_ToolStripMenuItem,
             this.toolStripMenuItem1,
             this.終了ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(123, 126);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 170);
             // 
             // 設定画面ToolStripMenuItem
             // 
             this.設定画面ToolStripMenuItem.Name = "設定画面ToolStripMenuItem";
-            this.設定画面ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.設定画面ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.設定画面ToolStripMenuItem.Text = "設定画面";
             this.設定画面ToolStripMenuItem.ToolTipText = "設定ダイアログを開きます";
             this.設定画面ToolStripMenuItem.Click += new System.EventHandler(this.Settings_ToolStripMenuItem_Click);
@@ -81,7 +83,7 @@
             // Reload_ToolStripMenuItem
             // 
             this.Reload_ToolStripMenuItem.Name = "Reload_ToolStripMenuItem";
-            this.Reload_ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.Reload_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.Reload_ToolStripMenuItem.Text = "再読込";
             this.Reload_ToolStripMenuItem.ToolTipText = "設定や定義ファイルの再読み込み";
             this.Reload_ToolStripMenuItem.Click += new System.EventHandler(this.ReloadSettings_ToolStripMenuItem_Click);
@@ -94,7 +96,7 @@
             this.ReadBushuDic_ToolStripMenuItem,
             this.ReadMazeWikipediaDic_ToolStripMenuItem});
             this.ReadDic_ToolStripMenuItem.Name = "ReadDic_ToolStripMenuItem";
-            this.ReadDic_ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.ReadDic_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.ReadDic_ToolStripMenuItem.Text = "その他";
             // 
             // ExchangeTable_ToolStripMenuItem
@@ -128,7 +130,7 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(119, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // Restart_ToolStripMenuItem
             // 
@@ -136,7 +138,7 @@
             this.RestartWithSave_ToolStripMenuItem,
             this.RestartWithDiscard_ToolStripMenuItem});
             this.Restart_ToolStripMenuItem.Name = "Restart_ToolStripMenuItem";
-            this.Restart_ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.Restart_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.Restart_ToolStripMenuItem.Text = "再起動";
             // 
             // RestartWithSave_ToolStripMenuItem
@@ -156,12 +158,12 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(119, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
             // 
             // 終了ToolStripMenuItem
             // 
             this.終了ToolStripMenuItem.Name = "終了ToolStripMenuItem";
-            this.終了ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.終了ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.終了ToolStripMenuItem.Text = "終了";
             this.終了ToolStripMenuItem.Click += new System.EventHandler(this.Exit_ToolStripMenuItem_Click);
             // 
@@ -179,6 +181,14 @@
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // Stop_ToolStripMenuItem
+            // 
+            this.Stop_ToolStripMenuItem.Name = "Stop_ToolStripMenuItem";
+            this.Stop_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.Stop_ToolStripMenuItem.Text = "一時停止";
+            this.Stop_ToolStripMenuItem.ToolTipText = "一時停止すると、入力されたキーコードをそのままシステムに返すようになります";
+            this.Stop_ToolStripMenuItem.Click += new System.EventHandler(this.Stop_ToolStripMenuItem_Click);
             // 
             // FrmKanchoku
             // 
@@ -220,6 +230,7 @@
         private System.Windows.Forms.ToolStripMenuItem ExchangeTable_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem Reload_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem KanaTrainingMode_ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem Stop_ToolStripMenuItem;
     }
 }
 

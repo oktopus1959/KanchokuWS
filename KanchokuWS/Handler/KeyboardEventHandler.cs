@@ -639,6 +639,8 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool onKeyboardDownHandler(int vkey, int scanCode, int extraInfo)
         {
+            if (Settings.DecoderStopped) return false;
+
             if (Settings.LoggingDecKeyInfo) {
                 logger.InfoH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}\n" + keyInfoManager.modifiersStateStr());
             }
@@ -989,6 +991,8 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool onKeyboardUpHandler(int vkey, int scanCode, int extraInfo)
         {
+            if (Settings.DecoderStopped) return false;
+
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
 
             int prevVkey = prevUpVkey;
