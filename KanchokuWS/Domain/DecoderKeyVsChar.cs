@@ -9,16 +9,16 @@ namespace KanchokuWS.Domain
     /// <summary>
     /// DecKey から文字への変換を行うクラス
     /// </summary>
-    public static class DecoderKeyToChar
+    public static class DecoderKeyVsChar
     {
         private static Logger logger = Logger.GetLogger();
 
         private static char[] QwertyCharsJP = {
-         '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-         'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
-         'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
-         'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',
-         ' ', '-', '^', '\\', '@', '[', ':', ']', '\\', '\0'
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+            'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
+            'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
+            'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',
+            ' ', '-', '^', '\\', '@', '[', ':', ']', '\\', '\0'
         };
 
         private static char[] QwertyShiftedCharsJP = {
@@ -34,27 +34,30 @@ namespace KanchokuWS.Domain
             'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
             'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
             'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',
-            ' ', '-', '^', '\\', '@', '[', ':', ']', '\\', '\0'
+            ' ', '-', '=', '\\', '[', ']', '\'', '`', '\0', '\0'
         };
 
         private static char[] QwertyShiftedCharsUS = {
-            '!', '"', '#', '$', '%', '&', '\'', '(', ')', '\0',
+            '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
             'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
-            'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', '+',
+            'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':',
             'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?',
-            ' ', '=', '~', '|', '`', '{', '*', '}', '_', '\0'
+            ' ', '_', '+', '|', '{', '}', '"', '~', '\0', '\0'
         };
 
         private static char[] QwertyChars() {
-            return (StrokeVKeys.IsJPmode ? QwertyCharsJP : QwertyCharsUS);
+            return (VKeyVsDecoderKey.IsJPmode ? QwertyCharsJP : QwertyCharsUS);
         }
 
         private static char[] QwertyShiftedChars() {
-            return (StrokeVKeys.IsJPmode ? QwertyShiftedCharsJP : QwertyShiftedCharsUS);
+            return (VKeyVsDecoderKey.IsJPmode ? QwertyShiftedCharsJP : QwertyShiftedCharsUS);
         }
 
         private static List<char> normalChars = null;
+        private static List<string> normalKeyNames = null;
         private static List<char> shiftedChars = null;
+
+        public static List<string> NormalKeyNames => normalKeyNames;
 
         /// <summary>
         /// キー・文字マップファイル(chars.106.txtとか)を読み込んで、DecKeyから文字への配列を作成する<br/>
@@ -66,6 +69,7 @@ namespace KanchokuWS.Domain
             Settings.ShortcutKeyConversionEnabled = true;
             normalChars = null;
             shiftedChars = null;
+            int yenPos = 43;
 
             var filename = Settings.CharsDefFile;
             if (filename._notEmpty()) {
@@ -90,15 +94,19 @@ namespace KanchokuWS.Domain
                             charList = shiftedChars;
                         } else if (line.StartsWith("## END")) {
                             charList = null;
+                        } else if (line._startsWith("## YEN=")) {
+                            yenPos = line._safeSubstring(7)._parseInt(-1);
                         } else if (line.StartsWith("## SHORTCUT=disabl")) {
                             Settings.ShortcutKeyConversionEnabled = false;
                         }
-                    } else if (charList != null) {
-                        logger.InfoH($"line=|{line}|, len={line.Length}");
-                        foreach (var ch in line) {
-                            if (ch >= 0x20 && ch < 0x7f) charList.Add(ch);
+                    } else {
+                        if (charList != null) {
+                            logger.InfoH($"line=|{line}|, len={line.Length}");
+                            foreach (var ch in line) {
+                                if (ch >= 0x20 && ch < 0x7f) charList.Add(ch);
+                            }
+                            logger.InfoH($"charList=|{charList.ToArray()._toString()}|, len={charList.Count}");
                         }
-                        logger.InfoH($"charList=|{charList.ToArray()._toString()}|, len={charList.Count}");
                     }
                 }
                 if (shiftedChars._isEmpty()) {
@@ -116,6 +124,22 @@ namespace KanchokuWS.Domain
                         shiftedChars.Add(sc);
                     }
                 }
+            }
+
+            normalKeyNames = new List<string>();
+            string nameSpace = "Space";
+            foreach (char ch in normalChars != null ? normalChars.ToArray() : QwertyChars()) {
+                if (ch == ' ') {
+                    normalKeyNames.Add(nameSpace);
+                    nameSpace = "N/A";  // 2つ目以降のSpaceはN/Aとする
+                } else if (ch == '\\') {
+                    normalKeyNames.Add("＼");
+                } else {
+                    normalKeyNames.Add(ch.ToString()._toUpper());
+                }
+            }
+            if (yenPos >= 0 && yenPos < normalKeyNames.Count) {
+                normalKeyNames[yenPos] = "￥";
             }
 
             logger.InfoH("LEAVE");
@@ -139,5 +163,6 @@ namespace KanchokuWS.Domain
                 return '\0';
             }
         }
+
     }
 }

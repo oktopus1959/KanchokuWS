@@ -1267,7 +1267,7 @@ namespace KanchokuWS
             DecoderSettings["logLevel"] = LogLevel.ToString();
             DecoderSettings["rootDir"] = KanchokuIni.Singleton.KanchokuDir;
             DecoderSettings["firstUse"] = $"{!UserKanchokuIni.Singleton.IsIniFileExist}";
-            DecoderSettings["isJPmode"] = $"{Domain.StrokeVKeys.IsJPmode}";
+            DecoderSettings["isJPmode"] = $"{Domain.VKeyVsDecoderKey.IsJPmode}";
             BushuAssocFile = addDecoderSetting("bushuAssocFile", "kwassoc.txt");
             BushuFile = addDecoderSetting("bushuFile", "bushu", "kwbushu.rev");
             AutoBushuFile = addDecoderSetting("autoBushuFile", "bushuAuto", "kwbushu.aut");

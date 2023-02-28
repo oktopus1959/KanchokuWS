@@ -9,7 +9,7 @@ using Utils;
 
 namespace KanchokuWS.Domain
 {
-    static class StrokeVKeys
+    static class VKeyVsDecoderKey
     {
         private static Logger logger = Logger.GetLogger();
 

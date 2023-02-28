@@ -70,7 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain\StrokeVKeys.cs" />
+    <Compile Include="Domain\VKeyVsDecoderKey.cs" />
     <Compile Include="Domain\VKeyArrayFuncKeys.cs" />
     <Compile Include="Gui\DlgSettings_Develop.cs">
       <SubType>Form</SubType>
@@ -105,7 +105,7 @@
     <Compile Include="CombinationKeyStroke\DeterminerLib\StrokeList.cs" />
     <Compile Include="CommonState.cs" />
     <Compile Include="Domain\DecoderKeys.cs" />
-    <Compile Include="Domain\DecoderKeyToChar.cs" />
+    <Compile Include="Domain\DecoderKeyVsChar.cs" />
     <Compile Include="DecoderParams.cs" />
     <Compile Include="Gui\DlgColorSelector.cs">
       <SubType>Form</SubType>

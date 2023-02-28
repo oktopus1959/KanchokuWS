@@ -276,7 +276,7 @@ namespace KanchokuWS
         /// <summary> キーボードファイルの読み込み (成功したら true, 失敗したら false を返す) </summary>
         private bool readKeyboardFile()
         {
-            if (!Domain.StrokeVKeys.ReadKeyboardFile()) {
+            if (!Domain.VKeyVsDecoderKey.ReadKeyboardFile()) {
                 // キーボードファイルを読み込めなかったので終了する
                 logger.Error($"CLOSE: Can't read keyboard file");
                 //this.Close();
@@ -302,7 +302,7 @@ namespace KanchokuWS
             }
 
             // 文字定義ファイルの読み込み
-            Domain.DecoderKeyToChar.ReadCharsDefFile();
+            Domain.DecoderKeyVsChar.ReadCharsDefFile();
 
             // 追加の修飾キー定義ファイルの読み込み
             if (Settings.ExtraModifiersEnabled && Settings.ModConversionFile._notEmpty()) {
@@ -1961,7 +1961,7 @@ namespace KanchokuWS
 
                 if (Settings.ShortcutKeyConversionEnabled || !SendInputHandler.IsAltKeyPressed()) {
                     // CtrlやAltなどのショートカットキーの変換をやるか、または Altキーが押されていなかった
-                    var dkChar = Domain.DecoderKeyToChar.GetCharFromDecKey(deckey);
+                    var dkChar = Domain.DecoderKeyVsChar.GetCharFromDecKey(deckey);
                     if (dkChar != '\0') {
                         var vk = VirtualKeys.GetVKeyFromFaceChar(dkChar);
                         if (vk != 0) {

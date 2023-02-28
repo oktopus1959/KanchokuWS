@@ -13,6 +13,7 @@ namespace KanchokuWS.Gui
 {
     using KeyModifiers = Domain.KeyModifiers;
     using VirtualKeys = Domain.VirtualKeys;
+    using DecoderKeyVsChar = Domain.DecoderKeyVsChar;
 
     public partial class DlgModConversion : Form
     {
@@ -35,60 +36,60 @@ namespace KanchokuWS.Gui
             "拡張シフトF",
         };
 
-        private static string[] qwertyKeyNames = new string[] {
-            "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
-            "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
-            "A", "S", "D", "F", "G", "H", "J", "K", "L",  ";",
-            "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/",
-            "Space", "-", "^", "￥", "@", "[", ":", "]", "＼", "N/A"
-        };
+        //private static string[] qwertyKeyNames = new string[] {
+        //    "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
+        //    "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
+        //    "A", "S", "D", "F", "G", "H", "J", "K", "L",  ";",
+        //    "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/",
+        //    "Space", "-", "^", "￥", "@", "[", ":", "]", "＼", "N/A"
+        //};
 
-        private static List<string> normalKeyNames = null;
+        //private static List<string> normalKeyNames = null;
 
-        private void readCharsDefFile()
-        {
-            if (normalKeyNames == null) {
-                if (Settings.CharsDefFile._notEmpty()) {
-                    var lines = Helper.GetFileContent(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.CharsDefFile))._safeReplace("\r", "")._split('\n');
-                    if (lines._notEmpty()) {
-                        normalKeyNames = new List<string>();
-                        int i = 0;
-                        while (i < lines.Length) {
-                            var line = lines[i++];
-                            if (line._startsWith("## NORMAL")) {
-                                bool bSpace = false;
-                                while (i < lines.Length) {
-                                    line = lines[i++];
-                                    if (line._startsWith("## END")) break;
-                                    foreach (var ch in line) {
-                                        if (ch == ' ') {
-                                            if (bSpace) {
-                                                normalKeyNames.Add("N/A");
-                                            } else {
-                                                normalKeyNames.Add("Space");
-                                                bSpace = true;
-                                            }
-                                        } else if (ch == '\\') {
-                                            normalKeyNames.Add("＼");
-                                        } else {
-                                            normalKeyNames.Add(ch.ToString()._toUpper());
-                                        }
-                                    }
-                                }
-                            } else if (line._startsWith("## YEN=")) {
-                                int yenPos = line._safeSubstring(7)._parseInt(-1);
-                                if (yenPos >= 0 && yenPos < normalKeyNames.Count) {
-                                    normalKeyNames[yenPos] = "￥";
-                                }
-                            }
-                        }
-                    }
-                }
-                if (normalKeyNames._isEmpty()) {
-                    normalKeyNames = qwertyKeyNames.ToList();
-                }
-            }
-        }
+        //private void readCharsDefFile()
+        //{
+        //    if (normalKeyNames == null) {
+        //        if (Settings.CharsDefFile._notEmpty()) {
+        //            var lines = Helper.GetFileContent(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.CharsDefFile))._safeReplace("\r", "")._split('\n');
+        //            if (lines._notEmpty()) {
+        //                normalKeyNames = new List<string>();
+        //                int i = 0;
+        //                while (i < lines.Length) {
+        //                    var line = lines[i++];
+        //                    if (line._startsWith("## NORMAL")) {
+        //                        bool bSpace = false;
+        //                        while (i < lines.Length) {
+        //                            line = lines[i++];
+        //                            if (line._startsWith("## END")) break;
+        //                            foreach (var ch in line) {
+        //                                if (ch == ' ') {
+        //                                    if (bSpace) {
+        //                                        normalKeyNames.Add("N/A");
+        //                                    } else {
+        //                                        normalKeyNames.Add("Space");
+        //                                        bSpace = true;
+        //                                    }
+        //                                } else if (ch == '\\') {
+        //                                    normalKeyNames.Add("＼");
+        //                                } else {
+        //                                    normalKeyNames.Add(ch.ToString()._toUpper());
+        //                                }
+        //                            }
+        //                        }
+        //                    } else if (line._startsWith("## YEN=")) {
+        //                        int yenPos = line._safeSubstring(7)._parseInt(-1);
+        //                        if (yenPos >= 0 && yenPos < normalKeyNames.Count) {
+        //                            normalKeyNames[yenPos] = "￥";
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        if (normalKeyNames._isEmpty()) {
+        //            normalKeyNames = qwertyKeyNames.ToList();
+        //        }
+        //    }
+        //}
 
         private static KeyOrFunction[] singleHitKeys;
 
@@ -107,7 +108,7 @@ namespace KanchokuWS.Gui
         /// <summary>コンストラクタ</summary>
         public DlgModConversion()
         {
-            readCharsDefFile();
+            //readCharsDefFile();
             modifierKeys = SpecialKeysAndFunctions.GetModifierKeys(name => !VirtualKeys.IsDisabledExtKey(name._toLower()));
             PLANE_ASIGNABLE_MOD_KEYS_NUM = modifierKeys.Where(x => x.IsExtModifier).Count();
             extModifiees = SpecialKeysAndFunctions.GetModifieeKeys();
@@ -124,7 +125,7 @@ namespace KanchokuWS.Gui
 
         public static void Initialize()
         {
-            normalKeyNames = null;
+            //normalKeyNames = null;
         }
 
         private int defaultModkeyIndex = 0;
@@ -166,7 +167,7 @@ namespace KanchokuWS.Gui
             string marker = "";
             var dict = VirtualKeys.ExtModifierKeyDefs._safeGet(modDef.ModKey);
             if (dict != null) {
-                int normalKeysNum = normalKeyNames._safeCount();
+                int normalKeysNum = DecoderKeyVsChar.NormalKeyNames._safeCount();
                 int num = normalKeysNum  + extModifiees.Length;
                 for (int i = 0; i < num; ++i) {
                     int deckey = i < normalKeysNum ? i : extModifiees[i - normalKeysNum].DecKey;
@@ -297,7 +298,7 @@ namespace KanchokuWS.Gui
             dgv.Columns.Add(dgv._makeTextBoxColumn_Sortable("funcName", "割り当てキー/機能名", funcNameWidth, DgvHelpers.HIGHLIGHT_SELECTION_COLOR));
             dgv.Columns.Add(dgv._makeTextBoxColumn_ReadOnly_Sortable("funcDesc", "機能説明", funcDescWidth));
 
-            dgv.Rows.Add(normalKeyNames._safeCount() + extModifiees.Length);
+            dgv.Rows.Add(DecoderKeyVsChar.NormalKeyNames._safeCount() + extModifiees.Length);
 
             renewExtModifierDgv();
         }
@@ -312,12 +313,12 @@ namespace KanchokuWS.Gui
             uint modKey = modKeyDef.ModKey;
             var dgv = dataGridView_extModifier;
             int num = dgv.Rows.Count;
-            int normalKeysNum = normalKeyNames._safeCount();
+            int normalKeysNum = DecoderKeyVsChar.NormalKeyNames._safeCount();
             var dict = VirtualKeys.ExtModifierKeyDefs._safeGet(modKey);
             for (int i = 0; i < num; ++i) {
                 dgv.Rows[i].Cells[0].Value = i;
                 if (i < normalKeysNum) {
-                    dgv.Rows[i].Cells[1].Value = normalKeyNames[i];
+                    dgv.Rows[i].Cells[1].Value = DecoderKeyVsChar.NormalKeyNames[i];
                 } else {
                     dgv.Rows[i].Cells[1].Value = extModifiees[i - normalKeysNum].Name;
                 }
@@ -501,7 +502,7 @@ namespace KanchokuWS.Gui
                 uint modKey = modKeyDef.ModKey;
                 var dict = VirtualKeys.ExtModifierKeyDefs._safeGetOrNewInsert(modKey);
 
-                int normalKeysNum = normalKeyNames._safeCount();
+                int normalKeysNum = DecoderKeyVsChar.NormalKeyNames._safeCount();
                 int deckey = row < normalKeysNum ? row : extModifiees[row - normalKeysNum].DecKey;
                 var target = dgv.Rows[row].Cells[TARGET_COL].Value?.ToString() ?? "";
                 if (target._notEmpty()) {

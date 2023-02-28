@@ -285,7 +285,7 @@ namespace KanchokuWS.Domain
         /// <summary>キー文字から、その仮想キーコードを得る</summary>
         public static uint FaceToVKey(string face)
         {
-            return (StrokeVKeys.IsJPmode ? faceToVkeyJP : faceToVkeyUS)._safeGet(face);
+            return (VKeyVsDecoderKey.IsJPmode ? faceToVkeyJP : faceToVkeyUS)._safeGet(face);
         }
 
         private static Dictionary<char, uint> charToVkeyJP = new Dictionary<char, uint>() {
@@ -495,7 +495,7 @@ namespace KanchokuWS.Domain
         /// <summary>文字コードから、その仮想キーコードを得る</summary>
         public static uint CharToVKey(char ch)
         {
-            return (StrokeVKeys.IsJPmode ?  charToVkeyJP : charToVkeyUS)._safeGet(ch);
+            return (VKeyVsDecoderKey.IsJPmode ?  charToVkeyJP : charToVkeyUS)._safeGet(ch);
         }
 
         private static Dictionary<uint, char> vkeyToCharJP = new Dictionary<uint, char>() {
@@ -609,7 +609,7 @@ namespace KanchokuWS.Domain
         /// <summary>仮想キーコードから、その文字コードを得る</summary>
         public static char VKeyToChar(uint vk)
         {
-            return (StrokeVKeys.IsJPmode ? vkeyToCharJP : vkeyToCharUS)._safeGet(vk);
+            return (VKeyVsDecoderKey.IsJPmode ? vkeyToCharJP : vkeyToCharUS)._safeGet(vk);
         }
 
     }
@@ -1220,7 +1220,7 @@ namespace KanchokuWS.Domain
                                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modName={modName}, modifiee={modifiee}, target={target}, modDeckey={modDeckey}, modifieeDeckey={modifieeDeckey})");
 
                                 // 被修飾キーの仮想キーコード: 特殊キー名(esc, tab, ins, ...)または漢直コード(00～49)から、それに該当する仮想キーコードを得る
-                                uint vkey = StrokeVKeys.getVKeyFromDecKey(modifieeDeckey);
+                                uint vkey = VKeyVsDecoderKey.getVKeyFromDecKey(modifieeDeckey);
                                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"vkey={vkey}");
                                 if (vkey == 0) {
                                     // 被修飾キーが指定されていない場合は、拡張修飾キーまたは特殊キーの単打とみなす
@@ -1267,7 +1267,7 @@ namespace KanchokuWS.Domain
                                             targetDeckey = DecoderKeys.DECKEY_CTRL_A + name[0] - 'a';
                                         } else if (targetDeckey >= DecoderKeys.FUNC_DECKEY_START && targetDeckey < DecoderKeys.FUNC_DECKEY_END) {
                                             // Ctrl+機能キー(特殊キー)(Ctrl+Tabとか)
-                                            decVkey = StrokeVKeys.getVKeyFromDecKey(targetDeckey);
+                                            decVkey = VKeyVsDecoderKey.getVKeyFromDecKey(targetDeckey);
                                             targetDeckey += DecoderKeys.CTRL_FUNC_DECKEY_START - DecoderKeys.FUNC_DECKEY_START;
                                         }
                                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
