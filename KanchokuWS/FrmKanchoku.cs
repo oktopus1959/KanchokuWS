@@ -1947,10 +1947,11 @@ namespace KanchokuWS
 
         private bool sendVkeyFromDeckey(int deckey, uint mod)
         {
-            var keyState = SendInputHandler.GetCtrlKeyState();
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={keyState.LeftKeyDown}, rightCtrl={keyState.RightKeyDown}");
-            if ((!keyState.LeftKeyDown && !keyState.RightKeyDown) || isCtrlKeyConversionEffectiveWindow()                 // Ctrlキーが押されていないか、Ctrl修飾を受け付けるWindowClassか
-                //|| deckey < DecoderKeys.STROKE_DECKEY_END                                                       // 通常のストロークキーは通す
+            var ctrlKeyState = SendInputHandler.GetCtrlKeyState();
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={ctrlKeyState.LeftKeyDown}, rightCtrl={ctrlKeyState.RightKeyDown}");
+            if ((!ctrlKeyState.LeftKeyDown && !ctrlKeyState.RightKeyDown)                                       // Ctrlキーが押されていないか、
+                || isCtrlKeyConversionEffectiveWindow()                                                         // Ctrl修飾を受け付けるWindowClassか
+                //|| deckey < DecoderKeys.STROKE_DECKEY_END                                                     // 通常のストロークキーは通す
                 || deckey < DecoderKeys.NORMAL_DECKEY_NUM                                                       // 通常のストロークキーは通す
                 || deckey >= DecoderKeys.CTRL_DECKEY_START && deckey < DecoderKeys.CTRL_DECKEY_END              // Ctrl-A～Ctrl-Z は通す
                 || deckey >= DecoderKeys.CTRL_SHIFT_DECKEY_START && deckey < DecoderKeys.CTRL_SHIFT_DECKEY_END  // Ctrl-Shift-A～Ctrl-Shift-Z は通す
@@ -1958,18 +1959,21 @@ namespace KanchokuWS
 
                 if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET WINDOW");
 
-                var dkChar = Domain.DecoderKeyToChar.GetCharFromDecKey(deckey);
-                if (dkChar != '\0') {
-                    var vk = VirtualKeys.GetVKeyFromFaceChar(dkChar);
-                    if (vk != 0) {
-                        if (vk >= 0x100) {
-                            vk -= 0x100;
-                            mod |= KeyModifiers.MOD_SHIFT;
+                if (Settings.ShortcutKeyConversionEnabled || !SendInputHandler.IsAltKeyPressed()) {
+                    // CtrlやAltなどのショートカットキーの変換をやるか、または Altキーが押されていなかった
+                    var dkChar = Domain.DecoderKeyToChar.GetCharFromDecKey(deckey);
+                    if (dkChar != '\0') {
+                        var vk = VirtualKeys.GetVKeyFromFaceChar(dkChar);
+                        if (vk != 0) {
+                            if (vk >= 0x100) {
+                                vk -= 0x100;
+                                mod |= KeyModifiers.MOD_SHIFT;
+                            }
+                            if (Settings.LoggingDecKeyInfo) logger.InfoH($"SendVKeyCombo: {mod:x}H({mod}), {vk:x}H({vk})");
+                            SendInputHandler.Singleton.SendVKeyCombo(mod, vk, 1);
+                            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: TRUE");
+                            return true;
                         }
-                        if (Settings.LoggingDecKeyInfo) logger.InfoH($"SendVKeyCombo: {mod:x}H({mod}), {vk:x}H({vk})");
-                        SendInputHandler.Singleton.SendVKeyCombo(mod, vk, 1);
-                        if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: TRUE");
-                        return true;
                     }
                 }
                 var combo = VirtualKeys.GetVKeyComboFromDecKey(deckey);

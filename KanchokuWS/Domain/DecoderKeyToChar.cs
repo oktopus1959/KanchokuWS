@@ -63,6 +63,7 @@ namespace KanchokuWS.Domain
         {
             logger.InfoH("ENTER");
 
+            Settings.ShortcutKeyConversionEnabled = true;
             normalChars = null;
             shiftedChars = null;
 
@@ -83,12 +84,14 @@ namespace KanchokuWS.Domain
                 List<char> charList = null;
                 foreach (var line in allLines._split('\n')) {
                     if (line.StartsWith("## ")) {
-                        if (line.Contains("NORMAL")) {
+                        if (line.StartsWith("## NORMAL")) {
                             charList = normalChars;
-                        } else if (line.Contains("SHIFT")) {
+                        } else if (line.StartsWith("## SHIFT")) {
                             charList = shiftedChars;
-                        } else if (line.Contains("END")) {
+                        } else if (line.StartsWith("## END")) {
                             charList = null;
+                        } else if (line.StartsWith("## SHORTCUT=disabl")) {
+                            Settings.ShortcutKeyConversionEnabled = false;
                         }
                     } else if (charList != null) {
                         logger.InfoH($"line=|{line}|, len={line.Length}");

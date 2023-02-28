@@ -868,7 +868,7 @@ namespace KanchokuWS.Domain
         /// <summary>
         /// Settingsで設定されたCtrlキー変換やmod-conversionによるキー変換を登録する
         /// </summary>
-        /// <param name="deckey"></param>
+        /// <param name="deckey">英字変換後のDecKey(TODO: 要確認)</param>
         /// <param name="mod"></param>
         /// <param name="vkey"></param>
         private static void addModConvertedDecKeyFromCombo(int deckey, uint mod, uint vkey)

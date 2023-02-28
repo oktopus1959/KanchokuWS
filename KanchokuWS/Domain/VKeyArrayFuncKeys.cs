@@ -15,6 +15,7 @@ namespace KanchokuWS.Domain
         {
             //public const uint BACK = 0x08;
             public const uint CONTROL = 0x11;
+            public const uint ALT = 0x12;
             public const uint LSHIFT = 0xa0;
             public const uint RSHIFT = 0xa1;
             public const uint LCONTROL = 0xa2;

@@ -206,6 +206,11 @@ namespace KanchokuWS.Handler
             return state;
         }
 
+        public static bool IsAltKeyPressed()
+        {
+            return (GetAsyncKeyState(FuncVKeys.ALT) & 0x8000) != 0;
+        }
+
         class InputInfo
         {
             public INPUT[] Inputs;
