@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+using KanchokuWS.Domain;
 using Utils;
 
 namespace KanchokuWS.Handler
 {
-    using KeyModifiers = Domain.KeyModifiers;
-    using VirtualKeys = Domain.VirtualKeys;
-    using FuncVKeys = Domain.VKeyArrayFuncKeys.FuncVKeys;
+    using FuncVKeys = VKeyArrayFuncKeys.FuncVKeys;
 
     public class KeyboardEventHandler : IDisposable
     {
@@ -863,10 +862,10 @@ namespace KanchokuWS.Handler
 
             if (kanchokuCode < 0 && modEx != 0 && !ctrl && !shift) {
                 // 拡張シフトが有効なのは、Ctrlキーが押されておらず、Shiftも押されていないか、Shift+SpaceをSandSとして扱わない場合とする
-                kanchokuCode = VirtualKeys.GetModConvertedDecKeyFromCombo(modEx, (uint)vkey);
+                kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(modEx, (uint)vkey);
                 if (kanchokuCode < 0) {
                     // 拡張シフト面のコードを得る
-                    kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
+                    kanchokuCode = VKeyComboRepository.GetDecKeyFromCombo(0, (uint)vkey);
                     var shiftPlane = keyInfoManager.getShiftPlane(bDecoderOn, isSandSEnabled());
                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"PATH-A: shiftPlane={shiftPlane}, kanchokuCode={kanchokuCode}");
                     if (shiftPlane != VirtualKeys.ShiftPlane_NONE && kanchokuCode < DecoderKeys.NORMAL_DECKEY_NUM) {
@@ -879,17 +878,17 @@ namespace KanchokuWS.Handler
             if (kanchokuCode < 0) {
                 if (leftCtrl) {
                     // mod-conversion.txt で lctrl に定義されているものを検索
-                    kanchokuCode = VirtualKeys.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_LCTRL, (uint)vkey);
+                    kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_LCTRL, (uint)vkey);
                 }
                 if (kanchokuCode < 0 && rightCtrl) {
                     // mod-conversion.txt で rctrl に定義されているものを検索
-                    kanchokuCode = VirtualKeys.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_RCTRL, (uint)vkey);
+                    kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_RCTRL, (uint)vkey);
                 }
                 if (kanchokuCode < 0) {
                     kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || shift
-                        ? VirtualKeys.GetModConvertedDecKeyFromCombo(mod, (uint)vkey)
+                        ? VKeyComboRepository.GetModConvertedDecKeyFromCombo(mod, (uint)vkey)
                         // : vkey == (int)Keys.Space ? DecoderKeys.STROKE_SPACE_DECKEY     // キーDown時のスペースは、いったんそのまま扱う(Up時に変換する)
-                        : VirtualKeys.GetDecKeyFromCombo(mod, (uint)vkey);
+                        : VKeyComboRepository.GetDecKeyFromCombo(mod, (uint)vkey);
                 }
                 if (kanchokuCode >= 0) mod = 0;     // 何かのコードに変換されたら、 Ctrl や Shift の修飾は無かったことにしておく
                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"PATH-C: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
@@ -1010,7 +1009,7 @@ namespace KanchokuWS.Handler
                 void checkAndInvoke(bool bShifted)
                 {
                     if (!bShifted && /*bDecoderOn &&*/ VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc((uint)vkey)) {
-                        int kanchokuCode = VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey);
+                        int kanchokuCode = VKeyComboRepository.GetDecKeyFromCombo(0, (uint)vkey);
                         if (kanchokuCode >= 0) {
                             invokeHandler(kanchokuCode, 0);
                         }
@@ -1134,7 +1133,7 @@ namespace KanchokuWS.Handler
             var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
             if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
                 currentPool.Enabled &&  !leftCtrl && !rightCtrl && modFlag == 0) {
-                int deckey = /* vkey == (int)Keys.Space ? DecoderKeys.STROKE_SPACE_DECKEY :*/ VirtualKeys.GetDecKeyFromCombo(0, (uint)vkey); /* ここではまだ、Spaceはいったん文字として扱う */
+                int deckey = /* vkey == (int)Keys.Space ? DecoderKeys.STROKE_SPACE_DECKEY :*/ VKeyComboRepository.GetDecKeyFromCombo(0, (uint)vkey); /* ここではまだ、Spaceはいったん文字として扱う */
                 if (deckey >= 0 && deckey < DecoderKeys.STROKE_DECKEY_END) {
                     CombinationKeyStroke.Determiner.Singleton.KeyUp(deckey, bDecoderOn);
                 }

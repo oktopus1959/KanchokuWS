@@ -148,7 +148,8 @@ namespace KanchokuWS.Domain
         }
 
         /// <summary>
-        /// DecKey からそれに対応する文字を取得する
+        /// DecKey からそれに対応する文字を取得する<br/>
+        /// デフォルトのJP/US配列の場合は 0 を返す
         /// </summary>
         /// <param name="deckey"></param>
         /// <param name="bShift"></param>
@@ -162,6 +163,14 @@ namespace KanchokuWS.Domain
             } else {
                 return '\0';
             }
+        }
+
+        /// <summary>
+        /// DECKEY から文字コードを得る。デフォルトのJP/US配列の場合でも文字が返る。打鍵ログ出力で使用される
+        /// </summary>
+        public static char GetFaceCharFromDecKey(int decKey)
+        {
+            return GetCharFromDecKey(decKey)._gtZeroOr(CharVsVKey.GetFaceCharFromVKey(VKeyComboRepository.GetVKeyComboFromDecKey(decKey)?.vkey ?? 0));
         }
 
     }

@@ -5,12 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using Utils;
+using KanchokuWS.Domain;
 
 namespace KanchokuWS.Handler
 {
-    using KeyModifiers = Domain.KeyModifiers;
-    using VirtualKeys = Domain.VirtualKeys;
-    using FuncVKeys = Domain.VKeyArrayFuncKeys.FuncVKeys;
+    using FuncVKeys = VKeyArrayFuncKeys.FuncVKeys;
 
     using Keys = System.Windows.Forms.Keys;
 
@@ -558,7 +557,7 @@ namespace KanchokuWS.Handler
             }
             if (sb.Length > 0) {
                 string name = sb.ToString();
-                uint vkey = VirtualKeys.GetFuncVkeyByName(name);
+                uint vkey = VKeyArrayFuncKeys.GetFuncVkeyByName(name);
                 //logger.DebugH(() => $"vkey={vkey:x} by FuncKey");
                 if (vkey == 0) vkey = VirtualKeys.GetAlphabetVkeyByName(name);
                 //logger.DebugH(() => $"vkey={vkey:x} by Alphabet");
@@ -681,7 +680,7 @@ namespace KanchokuWS.Handler
 
         private static void sendInputsRomanOrKanaUnicodeEx(char fc, bool bOnlyASCII)
         {
-            uint vk = !bOnlyASCII || fc < 0x80 ? VirtualKeys.GetVKeyFromFaceChar(fc) : 0;
+            uint vk = !bOnlyASCII || fc < 0x80 ? CharVsVKey.GetVKeyFromFaceChar(fc) : 0;
             if (vk > 0) {
                 using (var guard = new ShiftKeyDownGuard(vk >= 0x100)) {
                     // Vkey
@@ -850,7 +849,7 @@ namespace KanchokuWS.Handler
                         logger.DebugH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
                         Helper.WaitMilliSeconds(waitMs);
                     }
-                    SendVKeyCombo(VirtualKeys.CtrlV_VKeyCombo.modifier, VirtualKeys.CtrlV_VKeyCombo.vkey, 1);
+                    SendVKeyCombo(VKeyComboRepository.CtrlV_VKeyCombo.modifier, VKeyComboRepository.CtrlV_VKeyCombo.vkey, 1);
                 }
 
                 LastOutputDt = DateTime.Now;

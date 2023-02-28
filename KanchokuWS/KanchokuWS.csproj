@@ -70,6 +70,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\CharVsVKey.cs" />
+    <Compile Include="Domain\VKeyComboRepository.cs" />
+    <Compile Include="Domain\KeyModifiers.cs" />
     <Compile Include="Domain\VKeyVsDecoderKey.cs" />
     <Compile Include="Domain\VKeyArrayFuncKeys.cs" />
     <Compile Include="Gui\DlgSettings_Develop.cs">

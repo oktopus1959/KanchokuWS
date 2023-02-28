@@ -164,9 +164,9 @@ namespace KanchokuWS.Domain
                 uint vkey = getVKeyFromDecKey(id);
                 if (vkey > 0) {
                     // Normal
-                    VirtualKeys.AddDecKeyAndCombo(id, 0, vkey);
+                    VKeyComboRepository.AddDecKeyAndCombo(id, 0, vkey);
                     // Shifted
-                    VirtualKeys.AddDecKeyAndCombo(DecoderKeys.SHIFT_DECKEY_START + id, KeyModifiers.MOD_SHIFT, vkey);
+                    VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_DECKEY_START + id, KeyModifiers.MOD_SHIFT, vkey);
                     // Ctrl
                     //AddDecKeyAndCombo(DecoderKeys.CTRL_DECKEY_START + id, KeyModifiers.MOD_CONTROL, vkey);
                     // Ctrl+Shift
@@ -179,9 +179,9 @@ namespace KanchokuWS.Domain
                 uint vkey = getVKeyFromDecKey(DecoderKeys.FUNC_DECKEY_START + id);
                 if (vkey > 0) {
                     // Normal
-                    VirtualKeys.AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, 0, vkey);
+                    VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, 0, vkey);
                     // Shift
-                    if (vkey == capsVkeyWithShift) VirtualKeys.AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, KeyModifiers.MOD_SHIFT, vkey);
+                    if (vkey == capsVkeyWithShift) VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, KeyModifiers.MOD_SHIFT, vkey);
                     // Ctrl
                     //AddDecKeyAndCombo(DecoderKeys.CTRL_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL, vkey);
                     // Ctrl+Shifted
@@ -190,7 +190,7 @@ namespace KanchokuWS.Domain
             }
 
             // Shift+Tab
-            VirtualKeys.AddDecKeyAndCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Tab);
+            VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Tab);
             //AddModConvertedDecKeyFromCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Tab);
             logger.InfoH($"LEAVE");
         }

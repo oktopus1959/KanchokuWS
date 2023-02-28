@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using KanchokuWS.Domain;
 using KanchokuWS.Handler;
 using KanchokuWS.Gui;
 using KanchokuWS.TableParser;
@@ -16,9 +17,6 @@ using Utils;
 
 namespace KanchokuWS
 {
-    using KeyModifiers = Domain.KeyModifiers;
-    using VirtualKeys = Domain.VirtualKeys;
-
     public partial class FrmKanchoku : Form
     {
         private static Logger logger = Logger.GetLogger();
@@ -87,7 +85,7 @@ namespace KanchokuWS
         public void WriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bFirst, bool bTimer = false)
         {
             if (IsDecoderActive && dlgStrokeLog != null) {
-                char faceCh = bTimer && decKey < 0 ? '\0' : VirtualKeys.GetFaceCharFromDecKey(decKey)._gtZeroOr('?');
+                char faceCh = bTimer && decKey < 0 ? '\0' : DecoderKeyVsChar.GetFaceCharFromDecKey(decKey)._gtZeroOr('?');
                 if (bDown && faceCh >= 'a' && faceCh <= 'z') faceCh = (char)(faceCh - 0x20);
                 string msg = $"{(bTimer ? "*Up " : bDown ? "Down" : "Up  ")} | " + (faceCh != '\0' ? $"'{faceCh}'" : "N/A");
                 logger.DebugH(() => $"WriteStrokeLog: {msg}");
@@ -215,6 +213,11 @@ namespace KanchokuWS
 
             // SendInputハンドラの作成
             SendInputHandler.CreateSingleton();
+
+            // 初期化
+            VKeyComboRepository.Initialize();
+            VirtualKeys.Initialize();
+            DlgModConversion.Initialize();
 
             // キーボードファイルの読み込み
             bool resultOK = readKeyboardFile();
@@ -1111,7 +1114,7 @@ namespace KanchokuWS
         {
             try {
                 // Ctrl-C を送る
-                SendInputHandler.Singleton.SendVKeyCombo(VirtualKeys.CtrlC_VKeyCombo.modifier, VirtualKeys.CtrlC_VKeyCombo.vkey, 1);
+                SendInputHandler.Singleton.SendVKeyCombo(VKeyComboRepository.CtrlC_VKeyCombo.modifier, VKeyComboRepository.CtrlC_VKeyCombo.vkey, 1);
                 Helper.WaitMilliSeconds(100);
                 if (Clipboard.ContainsText()) {
                     //文字列データがあるときはこれを取得する
@@ -1593,7 +1596,7 @@ namespace KanchokuWS
                 }
 
                 // Ctrl-J と Ctrl-M
-                if ((Settings.UseCtrlJasEnter && VirtualKeys.GetCtrlDecKeyOf("J") == deckey) /*|| (Settings.UseCtrlMasEnter && VirtualKeys.GetCtrlDecKeyOf("M") == deckey)*/) {
+                if ((Settings.UseCtrlJasEnter && VKeyComboRepository.GetCtrlDecKeyOf("J") == deckey) /*|| (Settings.UseCtrlMasEnter && VKeyComboRepository.GetCtrlDecKeyOf("M") == deckey)*/) {
                     deckey = DecoderKeys.ENTER_DECKEY;
                 }
 
@@ -1963,7 +1966,7 @@ namespace KanchokuWS
                     // CtrlやAltなどのショートカットキーの変換をやるか、または Altキーが押されていなかった
                     var dkChar = Domain.DecoderKeyVsChar.GetCharFromDecKey(deckey);
                     if (dkChar != '\0') {
-                        var vk = VirtualKeys.GetVKeyFromFaceChar(dkChar);
+                        var vk = CharVsVKey.GetVKeyFromFaceChar(dkChar);
                         if (vk != 0) {
                             if (vk >= 0x100) {
                                 vk -= 0x100;
@@ -1976,7 +1979,7 @@ namespace KanchokuWS
                         }
                     }
                 }
-                var combo = VirtualKeys.GetVKeyComboFromDecKey(deckey);
+                var combo = VKeyComboRepository.GetVKeyComboFromDecKey(deckey);
                 if (combo != null) {
                     if (Settings.LoggingDecKeyInfo) {
                         logger.InfoH($"SEND: combo.modifier={combo.Value.modifier:x}H({combo.Value.modifier}), "
@@ -2209,6 +2212,7 @@ namespace KanchokuWS
             keDispatcher.Reinitialize();
 
             // 初期化
+            VKeyComboRepository.Initialize();
             VirtualKeys.Initialize();
             DlgModConversion.Initialize();
 

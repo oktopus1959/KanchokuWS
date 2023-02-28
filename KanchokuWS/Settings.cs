@@ -5,14 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 
+using KanchokuWS.Domain;
 using Utils;
 
 namespace KanchokuWS
 {
-    using KeyModifiers = Domain.KeyModifiers;
-    using VirtualKeys = Domain.VirtualKeys;
-    using VKeyArrayFuncKeys = Domain.VKeyArrayFuncKeys;
-
     public static class Settings
     {
         private static Logger logger = Logger.GetLogger();
@@ -1034,17 +1031,17 @@ namespace KanchokuWS
 
             // デコーダON/OFF系機能の呼び出し
             if (DeactiveKey == 0) {
-                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.TOGGLE_DECKEY, 0 , ActiveKey);
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.TOGGLE_DECKEY, 0 , ActiveKey);
             } else {
-                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, 0 , ActiveKey);
-                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, 0 , DeactiveKey);
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, 0 , ActiveKey);
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, 0 , DeactiveKey);
             }
             if (DeactiveKeyWithCtrl == 0) {
                 // Ctrlありの場合はカレットへの追従を再開する
-                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY, KeyModifiers.MOD_CONTROL , ActiveKeyWithCtrl);
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY, KeyModifiers.MOD_CONTROL , ActiveKeyWithCtrl);
             } else {
-                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , ActiveKeyWithCtrl);
-                VirtualKeys.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DeactiveKeyWithCtrl);
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , ActiveKeyWithCtrl);
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DeactiveKeyWithCtrl);
             }
 
             //-------------------------------------------------------------------------------------
@@ -1061,7 +1058,7 @@ namespace KanchokuWS
 
             // 一時的な仮想鍵盤の表示/非表示
             VkbShowHideTemporaryKey = GetString("vkbShowHideTemporaryKey", "").Trim();
-            if (VkbShowHideTemporaryKey._notEmpty()) VirtualKeys.AddCtrlDeckeyAndCombo(VkbShowHideTemporaryKey, DecoderKeys.VKB_SHOW_HIDE_DECKEY, DecoderKeys.VKB_SHOW_HIDE_DECKEY);
+            if (VkbShowHideTemporaryKey._notEmpty()) VKeyComboRepository.AddCtrlDeckeyAndCombo(VkbShowHideTemporaryKey, DecoderKeys.VKB_SHOW_HIDE_DECKEY, DecoderKeys.VKB_SHOW_HIDE_DECKEY);
 
             //-------------------------------------------------------------------------------------
             // フォントと色の設定
@@ -1147,21 +1144,21 @@ namespace KanchokuWS
             CtrlKeyConvertedToPageDown = GetString("ctrlKeyToPageDown", "#");
             CtrlKeyConvertedToDateString = GetString("ctrlKeyToDateString", "#");
 
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToBackSpace, DecoderKeys.BS_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDelete, DecoderKeys.DEL_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToLeftArrow, DecoderKeys.LEFT_ARROW_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToRightArrow, DecoderKeys.RIGHT_ARROW_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToUpArrow, DecoderKeys.UP_ARROW_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDownArrow, DecoderKeys.DOWN_ARROW_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToHome, DecoderKeys.HOME_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEnd, DecoderKeys.END_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEsc, DecoderKeys.ESC_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToTab, DecoderKeys.TAB_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEnter, DecoderKeys.ENTER_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToInsert, DecoderKeys.INS_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToPageUp, DecoderKeys.PAGE_UP_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToPageDown, DecoderKeys.PAGE_DOWN_DECKEY, 0);
-            VirtualKeys.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDateString, DecoderKeys.DATE_STRING_ROTATION_DECKEY, DecoderKeys.DATE_STRING_UNROTATION_DECKEY);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToBackSpace, DecoderKeys.BS_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDelete, DecoderKeys.DEL_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToLeftArrow, DecoderKeys.LEFT_ARROW_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToRightArrow, DecoderKeys.RIGHT_ARROW_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToUpArrow, DecoderKeys.UP_ARROW_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDownArrow, DecoderKeys.DOWN_ARROW_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToHome, DecoderKeys.HOME_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEnd, DecoderKeys.END_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEsc, DecoderKeys.ESC_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToTab, DecoderKeys.TAB_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEnter, DecoderKeys.ENTER_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToInsert, DecoderKeys.INS_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToPageUp, DecoderKeys.PAGE_UP_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToPageDown, DecoderKeys.PAGE_DOWN_DECKEY, 0);
+            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDateString, DecoderKeys.DATE_STRING_ROTATION_DECKEY, DecoderKeys.DATE_STRING_UNROTATION_DECKEY);
 
             UseLeftControlToConversion = GetString("useLeftControlToConversion")._parseBool(true);
             UseRightControlToConversion = GetString("useRightControlToConversion")._parseBool(false);
@@ -1307,7 +1304,7 @@ namespace KanchokuWS
             HistMapGobiMaxLength = addDecoderSetting("histMapGobiMaxLength", 2, 0);             // 変換履歴キーに付加できる語尾の最大長
             AutoHistSearchEnabled = addDecoderSetting("autoHistSearchEnabled", false);          // 自動履歴検索を行う
             //HistSearchByCtrlSpace = addDecoderSetting("histSearchByCtrlSpace", true);           // Ctrl-Space で履歴検索を行う
-            //VirtualKeys.AddCtrlDeckeyAndCombo(" ", DecoderKeys.CTRL_SPACE_DECKEY, 0);           // 登録
+            //VKeyComboRepository.AddCtrlDeckeyAndCombo(" ", DecoderKeys.CTRL_SPACE_DECKEY, 0);           // 登録
             //HistSearchByShiftSpace = addDecoderSetting("histSearchByShiftSpace", true);         // Shift-Space で履歴検索を行う
             SelectFirstCandByEnter = addDecoderSetting("selectFirstCandByEnter", false);        // Enter で最初の履歴検索候補を選択する
             HistDelDeckeyId = addDecoderSetting("histDelDeckeyId", "histDelHotkeyId", 41, 41);  // 履歴削除を呼び出すDecKeyのID
@@ -1354,11 +1351,11 @@ namespace KanchokuWS
 
             // キー割当
             HistorySearchCtrlKey = GetString("histSearchCtrlKey");                              // 履歴検索&選択を行うCtrlキー
-            VirtualKeys.AddCtrlDeckeyAndCombo(HistorySearchCtrlKey, DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY, DecoderKeys.HISTORY_PREV_SEARCH_DECKEY);   // 登録
+            VKeyComboRepository.AddCtrlDeckeyAndCombo(HistorySearchCtrlKey, DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY, DecoderKeys.HISTORY_PREV_SEARCH_DECKEY);   // 登録
             FullEscapeKey = GetString("fullEscapeKey", "G").Trim();
-            VirtualKeys.AddCtrlDeckeyAndCombo(FullEscapeKey, DecoderKeys.FULL_ESCAPE_DECKEY, DecoderKeys.UNBLOCK_DECKEY);
+            VKeyComboRepository.AddCtrlDeckeyAndCombo(FullEscapeKey, DecoderKeys.FULL_ESCAPE_DECKEY, DecoderKeys.UNBLOCK_DECKEY);
             StrokeHelpRotationKey = GetString("strokeHelpRotationKey", "T").Trim();   // T
-            VirtualKeys.AddCtrlDeckeyAndCombo(StrokeHelpRotationKey, DecoderKeys.STROKE_HELP_ROTATION_DECKEY, DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
+            VKeyComboRepository.AddCtrlDeckeyAndCombo(StrokeHelpRotationKey, DecoderKeys.STROKE_HELP_ROTATION_DECKEY, DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
 
             DecoderSpecialDeckeys.Clear();
             DecoderSpecialDeckeys.Add(DecoderKeys.FULL_ESCAPE_DECKEY);

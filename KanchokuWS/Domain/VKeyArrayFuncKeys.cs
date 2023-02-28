@@ -115,6 +115,19 @@ namespace KanchokuWS.Domain
             return n;
         }
 
+        public static uint GetFuncVkeyByName(string name)
+        {
+            if (name._toLower() == "space") {
+                return (uint)Keys.Space;
+            }
+            if (name._toLower().StartsWith("vk")) {
+                // "VKxx" のケース
+                int vk = name._safeSubstring(2)._parseHex();
+                if (vk > 0 && vk < 0xff) return (uint)vk;
+            }
+            return getVKey(GetFuncKeyIndexByName(name));
+        }
+
         public static uint getVKey(int fkeyIdx)
         {
             return fkeyIdx >= 0 && fkeyIdx < vkeyArrayFuncKeys.Length ? vkeyArrayFuncKeys[fkeyIdx] : 0;
