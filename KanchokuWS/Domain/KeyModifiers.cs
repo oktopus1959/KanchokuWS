@@ -50,9 +50,9 @@ namespace KanchokuWS.Domain
         // VKEY に対する modifier LSHIFT
         public const uint MOD_LSHIFT = 0x20000;
 
-        public static uint MakeModifier(bool ctrl, bool shift)
+        public static uint MakeModifier(bool alt, bool ctrl, bool shift)
         {
-            return (ctrl ? MOD_CONTROL : 0) + (shift ? MOD_SHIFT : 0);
+            return (alt ? MOD_ALT : 0) + (ctrl ? MOD_CONTROL : 0) + (shift ? MOD_SHIFT : 0);
         }
 
     }

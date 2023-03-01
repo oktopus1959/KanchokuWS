@@ -9,8 +9,6 @@ using KanchokuWS.Domain;
 
 namespace KanchokuWS.Handler
 {
-    using FuncVKeys = VKeyArrayFuncKeys.FuncVKeys;
-
     using Keys = System.Windows.Forms.Keys;
 
 
@@ -557,9 +555,9 @@ namespace KanchokuWS.Handler
             }
             if (sb.Length > 0) {
                 string name = sb.ToString();
-                uint vkey = VKeyArrayFuncKeys.GetFuncVkeyByName(name);
+                uint vkey = VKeyVsDecoderKey.GetFuncVkeyByName(name);
                 //logger.DebugH(() => $"vkey={vkey:x} by FuncKey");
-                if (vkey == 0) vkey = VirtualKeys.GetAlphabetVkeyByName(name);
+                if (vkey == 0) vkey = AlphabetVKeys.GetAlphabetVkeyByName(name);
                 //logger.DebugH(() => $"vkey={vkey:x} by Alphabet");
                 if (vkey > 0) {
                     if (bLCtrl) {

@@ -9,14 +9,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
+using KanchokuWS.Domain;
 using KanchokuWS.Gui;
 using KanchokuWS.Handler;
 using Utils;
 
 namespace KanchokuWS
 {
-    using VirtualKeys = Domain.VirtualKeys;
-
     public partial class FrmVirtualKeyboard : Form
     {
         private static Logger logger = Logger.GetLogger();
@@ -674,9 +673,9 @@ namespace KanchokuWS
             var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(defFile);
             if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH(() => $"ENTER: filePath={filePath}");
 
-            shiftPlaneStrokeTables1 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition1", x.ToString())).ToList();
-            shiftPlaneStrokeTables2 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition2", x.ToString())).ToList();
-            shiftPlaneStrokeTables3 = Helper.MakeRange(VirtualKeys.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition3", x.ToString())).ToList();
+            shiftPlaneStrokeTables1 = Helper.MakeRange(ShiftPlane.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition1", x.ToString())).ToList();
+            shiftPlaneStrokeTables2 = Helper.MakeRange(ShiftPlane.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition2", x.ToString())).ToList();
+            shiftPlaneStrokeTables3 = Helper.MakeRange(ShiftPlane.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition3", x.ToString())).ToList();
 
             StrokeTables1.Clear();
             StrokeTables2.Clear();
@@ -718,8 +717,8 @@ namespace KanchokuWS
                         } else if (cmd == "extracharsposition") {
                             makeVkbStrokeTable1("makeExtraCharsStrokePositionTable", null);
                         } else if (cmd == "sands") {
-                            makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", VirtualKeys.GetSandSPlane().ToString(), false, false, true);
-                            makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", VirtualKeys.GetSandSPlane().ToString(), false, false, true);
+                            makeVkbStrokeTable1("makeShiftPlaneStrokePosition1", ShiftPlane.GetSandSPlane().ToString(), false, false, true);
+                            makeVkbStrokeTable2("makeShiftPlaneStrokePosition2", ShiftPlane.GetSandSPlane().ToString(), false, false, true);
                         } else if (cmd == "keycharsposition") {
                             // 主テーブルの単打用
                             makeVkbStrokeTable1($"makeStrokePosition", null);

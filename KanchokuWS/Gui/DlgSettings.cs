@@ -10,11 +10,11 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+using KanchokuWS.Domain;
 using Utils;
 
 namespace KanchokuWS.Gui
 {
-    using VirtualKeys = Domain.VirtualKeys;
     public partial class DlgSettings : Form
     {
         private static Logger logger = Logger.GetLogger();
@@ -2679,7 +2679,7 @@ namespace KanchokuWS.Gui
             try {
                 using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite)) {
                     using (var sw = new System.IO.StreamWriter(fs, Encoding.UTF8)) {
-                        sw.Write(VirtualKeys.MakeModConversionContents());
+                        sw.Write(ExtraModifiers.MakeModConversionContents());
                     }
                 }
             } catch (Exception e) {

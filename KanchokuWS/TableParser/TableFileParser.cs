@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utils;
+using KanchokuWS.Domain;
 using KanchokuWS.CombinationKeyStroke;
 using KanchokuWS.CombinationKeyStroke.DeterminerLib;
 
 namespace KanchokuWS.TableParser
 {
-    using VirtualKeys = Domain.VirtualKeys;
     using ShiftKeyKind = ComboShiftKeyPool.ComboKind;
 
     // ルートノードから当ノードに至るまでの打鍵リスト
@@ -1369,7 +1369,7 @@ namespace KanchokuWS.TableParser
         {
             void addExtModAsSingleKey(string keyName)
             {
-                int dk = VirtualKeys.GetFuncDeckeyByName(keyName);
+                int dk = VKeyVsDecoderKey.GetFuncDeckeyByName(keyName);
                 if (dk >= 0) {
                     if (RootTableNode.GetNthSubNode(dk) == null &&
                         RootTableNode.GetNthSubNode(dk + comboDeckeyStart) != null) {

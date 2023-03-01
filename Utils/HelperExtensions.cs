@@ -772,7 +772,7 @@ namespace Utils
         /// <param name="start"></param>
         /// <param name="len"></param>
         /// <returns></returns>
-        static public string _safeSubstring(this string str, int start, int len = 0)
+        static public string _safeSubstring(this string str, int start, int len = 1000000000)
         {
             if (!string.IsNullOrEmpty(str))
             {
@@ -783,7 +783,7 @@ namespace Utils
                 }
                 if (start >= str.Length) return "";
 
-                if (len <= 0) {
+                if (len < 0) {
                     len = str.Length + len - start;
                 }
                 if (len < 0 || start + len > str.Length)
@@ -798,7 +798,7 @@ namespace Utils
         /// <summary>
         /// 文字列長の範囲を超えても例外を起こさない部分文字列取得。start が 負なら文字列の末尾から。len が0以下なら末尾から(-len)まで。
         /// </summary>
-        static public string _substring(this string str, int start, int len = 0)
+        static public string _substring(this string str, int start, int len = 1000000000)
         {
             return str._safeSubstring(start, len);
         }

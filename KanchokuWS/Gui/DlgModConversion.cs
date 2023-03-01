@@ -7,14 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using KanchokuWS.Domain;
 using Utils;
 
 namespace KanchokuWS.Gui
 {
-    using KeyModifiers = Domain.KeyModifiers;
-    using VirtualKeys = Domain.VirtualKeys;
-    using DecoderKeyVsChar = Domain.DecoderKeyVsChar;
-
     public partial class DlgModConversion : Form
     {
         private static Logger logger = Logger.GetLogger();
@@ -109,7 +107,7 @@ namespace KanchokuWS.Gui
         public DlgModConversion()
         {
             //readCharsDefFile();
-            modifierKeys = SpecialKeysAndFunctions.GetModifierKeys(name => !VirtualKeys.IsDisabledExtKey(name._toLower()));
+            modifierKeys = SpecialKeysAndFunctions.GetModifierKeys(name => !ExtraModifiers.IsDisabledExtKey(name._toLower()));
             PLANE_ASIGNABLE_MOD_KEYS_NUM = modifierKeys.Where(x => x.IsExtModifier).Count();
             extModifiees = SpecialKeysAndFunctions.GetModifieeKeys();
             singleHitKeys = SpecialKeysAndFunctions.GetSingleHitKeys();
@@ -155,7 +153,7 @@ namespace KanchokuWS.Gui
             setDataGridViewForSingleHit();
             setDataGridViewForExtModifier();
 
-            defaultModkeyIndex = modifierKeys._findIndex(x => x.ModKey == VirtualKeys.DefaultExtModifierKey)._lowLimit(0);
+            defaultModkeyIndex = modifierKeys._findIndex(x => x.ModKey == ExtraModifiers.DefaultExtModifierKey)._lowLimit(0);
             comboBox_modKeys.SelectedIndex = (SelectedModKeysIndex >= 0 ? SelectedModKeysIndex : defaultModkeyIndex)._highLimit(comboBox_modKeys.Items.Count - 1);
             radioButton_modKeys.Checked = true;
         }
@@ -165,7 +163,7 @@ namespace KanchokuWS.Gui
             if (modDef == null) return "";
 
             string marker = "";
-            var dict = VirtualKeys.ExtModifierKeyDefs._safeGet(modDef.ModKey);
+            var dict = ExtraModifiers.ExtModifierKeyDefs._safeGet(modDef.ModKey);
             if (dict != null) {
                 int normalKeysNum = DecoderKeyVsChar.NormalKeyNames._safeCount();
                 int num = normalKeysNum  + extModifiees.Length;
@@ -215,8 +213,8 @@ namespace KanchokuWS.Gui
                 dgv.Rows[i].Cells[1].Value = getModifiedDescription(modifierKeys[i]);
                 if (i < PLANE_ASIGNABLE_MOD_KEYS_NUM) {
                     uint modKey = modifierKeys[i].ModKey;
-                    dgv.Rows[i].Cells[2].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKey.GetPlane(modKey)) ?? "";
-                    dgv.Rows[i].Cells[3].Value = shiftPlaneNames._getNth((int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff.GetPlane(modKey)) ?? "";
+                    dgv.Rows[i].Cells[2].Value = shiftPlaneNames._getNth((int)ShiftPlane.ShiftPlaneForShiftModKey.GetPlane(modKey)) ?? "";
+                    dgv.Rows[i].Cells[3].Value = shiftPlaneNames._getNth((int)ShiftPlane.ShiftPlaneForShiftModKeyWhenDecoderOff.GetPlane(modKey)) ?? "";
                 } else if (modifierKeys._getNth(i)?.ModKey == KeyModifiers.MOD_SHIFT) {
                     dgv.Rows[i].Cells[2].Value = "通常シフト";
                     dgv.Rows[i].Cells[3].Value = "通常シフト";
@@ -267,7 +265,7 @@ namespace KanchokuWS.Gui
                 dgv.Rows[i].Cells[1].Value = kof.ModName._orElse(kof.Name);
                 string assigned = "";
                 string desc = "";
-                var target = VirtualKeys.SingleHitDefs._safeGet(kof.DecKey);
+                var target = ExtraModifiers.SingleHitDefs._safeGet(kof.DecKey);
                 if (target._notEmpty()) {
                     kof = SpecialKeysAndFunctions.GetKeyOrFuncByName(target);
                     assigned = kof != null ? kof.Name : target;
@@ -314,7 +312,7 @@ namespace KanchokuWS.Gui
             var dgv = dataGridView_extModifier;
             int num = dgv.Rows.Count;
             int normalKeysNum = DecoderKeyVsChar.NormalKeyNames._safeCount();
-            var dict = VirtualKeys.ExtModifierKeyDefs._safeGet(modKey);
+            var dict = ExtraModifiers.ExtModifierKeyDefs._safeGet(modKey);
             for (int i = 0; i < num; ++i) {
                 dgv.Rows[i].Cells[0].Value = i;
                 if (i < normalKeysNum) {
@@ -352,8 +350,8 @@ namespace KanchokuWS.Gui
                 uint modKey = modKeyDef?.ModKey ?? 0;
                 bool bAssignable = idx >= 0 && idx < PLANE_ASIGNABLE_MOD_KEYS_NUM;
                 if (bAssignable) {
-                    comboBox_shiftPlaneOn.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModKey.GetPlane(modKey);
-                    comboBox_shiftPlaneOff.SelectedIndex = (int)VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff.GetPlane(modKey);
+                    comboBox_shiftPlaneOn.SelectedIndex = (int)ShiftPlane.ShiftPlaneForShiftModKey.GetPlane(modKey);
+                    comboBox_shiftPlaneOff.SelectedIndex = (int)ShiftPlane.ShiftPlaneForShiftModKeyWhenDecoderOff.GetPlane(modKey);
                 }
 
                 bool shiftPlaneVisible = !radioButton_singleHit.Checked && bAssignable;
@@ -454,13 +452,13 @@ namespace KanchokuWS.Gui
                 var modKeyDef = modifierKeys._getNth(modkeyIdx);
                 if (modKeyDef == null) return;
 
-                if (idx < VirtualKeys.ShiftPlane_NUM) {
+                if (idx < ShiftPlane.ShiftPlane_NUM) {
                     uint modKey = modKeyDef.ModKey;
                     if (bOn) {
-                        VirtualKeys.ShiftPlaneForShiftModKey.Add(modKey, idx);
+                        ShiftPlane.ShiftPlaneForShiftModKey.Add(modKey, idx);
                         if (modKey == KeyModifiers.MOD_SPACE) Settings.SandSAssignedPlane = idx;
                     } else {
-                        VirtualKeys.ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, idx);
+                        ShiftPlane.ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, idx);
                     }
                 }
 
@@ -500,7 +498,7 @@ namespace KanchokuWS.Gui
 
             try {
                 uint modKey = modKeyDef.ModKey;
-                var dict = VirtualKeys.ExtModifierKeyDefs._safeGetOrNewInsert(modKey);
+                var dict = ExtraModifiers.ExtModifierKeyDefs._safeGetOrNewInsert(modKey);
 
                 int normalKeysNum = DecoderKeyVsChar.NormalKeyNames._safeCount();
                 int deckey = row < normalKeysNum ? row : extModifiees[row - normalKeysNum].DecKey;
@@ -539,9 +537,9 @@ namespace KanchokuWS.Gui
             try {
                 var target = dgv.Rows[row].Cells[TARGET_COL].Value?.ToString() ?? "";
                 if (target._notEmpty()) {
-                    VirtualKeys.SingleHitDefs[deckey] = target;
+                    ExtraModifiers.SingleHitDefs[deckey] = target;
                 } else {
-                    if (VirtualKeys.SingleHitDefs.ContainsKey(deckey)) VirtualKeys.SingleHitDefs.Remove(deckey);
+                    if (ExtraModifiers.SingleHitDefs.ContainsKey(deckey)) ExtraModifiers.SingleHitDefs.Remove(deckey);
                 }
                 renewSingleHitDgv();
 

@@ -71,10 +71,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\CharVsVKey.cs" />
+    <Compile Include="Domain\ExtraModifiers.cs" />
+    <Compile Include="Domain\ShiftPlane.cs" />
     <Compile Include="Domain\VKeyComboRepository.cs" />
     <Compile Include="Domain\KeyModifiers.cs" />
     <Compile Include="Domain\VKeyVsDecoderKey.cs" />
-    <Compile Include="Domain\VKeyArrayFuncKeys.cs" />
     <Compile Include="Gui\DlgSettings_Develop.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -201,7 +202,6 @@
     <Compile Include="CombinationKeyStroke\Factories.cs" />
     <Compile Include="CombinationKeyStroke\KeyCombinationHelper.cs" />
     <Compile Include="Domain\SpecialKeysAndFunctions.cs" />
-    <Compile Include="Domain\VirtualKeys.cs" />
     <Compile Include="TableParser\ContextAccessor.cs" />
     <Compile Include="TableParser\TableParserTokenizer.cs" />
     <Compile Include="TableParser\TOKEN.cs" />

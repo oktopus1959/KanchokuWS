@@ -11,8 +11,6 @@ using Utils;
 
 namespace KanchokuWS.Handler
 {
-    using FuncVKeys = VKeyArrayFuncKeys.FuncVKeys;
-
     public class KeyboardEventHandler : IDisposable
     {
         private static Logger logger = Logger.GetLogger();
@@ -42,7 +40,7 @@ namespace KanchokuWS.Handler
         public delegate void DelegateSetSandSShiftedOneshot();
 
         /// <summary>デコーダ機能のディスパッチ</summary>
-        public delegate bool DelegateDecoderFuncDispatcher(int deckey, uint mod);
+        public delegate bool DelegateDecoderFuncDispatcher(int deckey, int normalDeckey, uint mod);
 
         /// <summary>修飾キー付きvkeyをSendInputする</summary>
         public delegate bool DelegateSendInputVkeyWithMod(uint mod, uint vkey);
@@ -201,6 +199,11 @@ namespace KanchokuWS.Handler
                  (vkey >= 0xf5 && vkey < vkeyNum));
         }
 
+        private static bool isAltKeyPressed()
+        {
+            return (GetAsyncKeyState(FuncVKeys.ALT) & 0x8000) != 0;
+        }
+
         private bool ctrlKeyPressed()
         {
             return (Settings.UseLeftControlToConversion && (GetAsyncKeyState(FuncVKeys.LCONTROL) & 0x8000) != 0)
@@ -298,8 +301,8 @@ namespace KanchokuWS.Handler
             /// <summary> シフト単打が有効か</summary>
             public bool IsSingleShiftHitEffecive(bool bCtrl)
             {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:Vkey={Vkey}, bCtrl={bCtrl}, ActiveKey={Settings.ActiveKey}, ActiveKeyWithCtrl={Settings.ActiveKeyWithCtrl}, IsExModKeyIndexAssignedForDecoderFunc={VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc(Vkey)}");
-                bool bEffective = (Settings.ActiveKey == Vkey && (!bCtrl || Settings.ActiveKeyWithCtrl != Vkey)) || VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc(Vkey);
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:Vkey={Vkey}, bCtrl={bCtrl}, ActiveKey={Settings.ActiveKey}, ActiveKeyWithCtrl={Settings.ActiveKeyWithCtrl}, IsExModKeyIndexAssignedForDecoderFunc={ExtraModifiers.IsExModKeyIndexAssignedForDecoderFunc(Vkey)}");
+                bool bEffective = (Settings.ActiveKey == Vkey && (!bCtrl || Settings.ActiveKeyWithCtrl != Vkey)) || ExtraModifiers.IsExModKeyIndexAssignedForDecoderFunc(Vkey);
                 if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:IsSingleShiftHitEffecive={bEffective}");
                 return bEffective;
             }
@@ -316,7 +319,7 @@ namespace KanchokuWS.Handler
             private bool isShiftPlaneAssignedOn()
             {
                 if (bShiftPlaneAssignedOn == null) {
-                    bShiftPlaneAssignedOn = Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftModFlag(ModFlag, true);
+                    bShiftPlaneAssignedOn = Settings.ExtraModifiersEnabled && ShiftPlane.IsShiftPlaneAssignedForShiftModFlag(ModFlag, true);
                 }
                 if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:decoderOn=True: IsShiftPlaneAssigned={bShiftPlaneAssignedOn}");
                 return bShiftPlaneAssignedOn.Value;
@@ -325,7 +328,7 @@ namespace KanchokuWS.Handler
             private bool isShiftPlaneAssignedOff()
             {
                 if (bShiftPlaneAssignedOff == null) {
-                    bShiftPlaneAssignedOff = Settings.ExtraModifiersEnabled && VirtualKeys.IsShiftPlaneAssignedForShiftModFlag(ModFlag, false);
+                    bShiftPlaneAssignedOff = Settings.ExtraModifiersEnabled && ShiftPlane.IsShiftPlaneAssignedForShiftModFlag(ModFlag, false);
                 }
                 if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:decoderOn=False: IsShiftPlaneAssigned={bShiftPlaneAssignedOff}");
                 return bShiftPlaneAssignedOff.Value;
@@ -455,19 +458,19 @@ namespace KanchokuWS.Handler
 
             public int getShiftPlane(bool bDecoderOn, bool bSandSEnabled)
             {
-                if (capsKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_CAPS, bDecoderOn);
-                if (alnumKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_ALNUM, bDecoderOn);
-                if (nferKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_NFER, bDecoderOn);
-                if (xferKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_XFER, bDecoderOn);
-                if (rshiftKeyInfo.Shifted) return VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_RSHIFT, bDecoderOn);
+                if (capsKeyInfo.Shifted) return ShiftPlane.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_CAPS, bDecoderOn);
+                if (alnumKeyInfo.Shifted) return ShiftPlane.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_ALNUM, bDecoderOn);
+                if (nferKeyInfo.Shifted) return ShiftPlane.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_NFER, bDecoderOn);
+                if (xferKeyInfo.Shifted) return ShiftPlane.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_XFER, bDecoderOn);
+                if (rshiftKeyInfo.Shifted) return ShiftPlane.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_RSHIFT, bDecoderOn);
                 if (spaceKeyInfo.ShiftedOrOneshot) {
                     if (Settings.SandSSuperiorToShift || !rshiftKeyInfo.Shifted) {
-                        var plane = VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, bDecoderOn);
-                        if (plane == VirtualKeys.ShiftPlane_NONE && bSandSEnabled) plane = VirtualKeys.ShiftPlane_SHIFT;
+                        var plane = ShiftPlane.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, bDecoderOn);
+                        if (plane == ShiftPlane.ShiftPlane_NONE && bSandSEnabled) plane = ShiftPlane.ShiftPlane_SHIFT;
                         return plane;
                     }
                 }
-                return VirtualKeys.ShiftPlane_NONE;
+                return ShiftPlane.ShiftPlane_NONE;
             }
 
             public ExModiferKeyInfo.ExModKeyState getSandSKeyState()
@@ -522,16 +525,16 @@ namespace KanchokuWS.Handler
         private bool isSameShiftKeyAsSandS(uint fkey, bool bDecoderOn)
         {
             if (Settings.LoggingDecKeyInfo) logger.DebugH($"fkey={fkey:x}H");
-            var plane_sands = VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, bDecoderOn);
+            var plane_sands = ShiftPlane.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, bDecoderOn);
             if (fkey != 0) {
-                var plane_fkey = VirtualKeys.GetShiftPlaneFromShiftModFlag(fkey, bDecoderOn);
+                var plane_fkey = ShiftPlane.GetShiftPlaneFromShiftModFlag(fkey, bDecoderOn);
                 if (Settings.LoggingDecKeyInfo) logger.DebugH($"plane_fkey={plane_fkey}, plane_sands={plane_sands}");
                 return plane_fkey == plane_sands;
             }
             if (isLshiftKeyPressed()) {
                 // 左シフトキーが押されている場合は、SandSが通常シフト面か否かをチェック
-                if (Settings.LoggingDecKeyInfo) logger.DebugH($"plane_Lshift={VirtualKeys.ShiftPlane_SHIFT}, plane_sands={plane_sands}");
-                return plane_sands == VirtualKeys.ShiftPlane_SHIFT;
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"plane_Lshift={ShiftPlane.ShiftPlane_SHIFT}, plane_sands={plane_sands}");
+                return plane_sands == ShiftPlane.ShiftPlane_SHIFT;
             }
             return false;
         }
@@ -556,20 +559,20 @@ namespace KanchokuWS.Handler
 
         private int getShiftPlaneDeckeyForSandS(bool bDecoderOn)
         {
-            switch (VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, bDecoderOn)) {
-                case VirtualKeys.ShiftPlane_SHIFT:
+            switch (ShiftPlane.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, bDecoderOn)) {
+                case ShiftPlane.ShiftPlane_SHIFT:
                     return DecoderKeys.POST_NORMAL_SHIFT_DECKEY;
-                case VirtualKeys.ShiftPlane_A:
+                case ShiftPlane.ShiftPlane_A:
                     return DecoderKeys.POST_PLANE_A_SHIFT_DECKEY;
-                case VirtualKeys.ShiftPlane_B:
+                case ShiftPlane.ShiftPlane_B:
                     return DecoderKeys.POST_PLANE_B_SHIFT_DECKEY;
-                case VirtualKeys.ShiftPlane_C:
+                case ShiftPlane.ShiftPlane_C:
                     return DecoderKeys.POST_PLANE_C_SHIFT_DECKEY;
-                case VirtualKeys.ShiftPlane_D:
+                case ShiftPlane.ShiftPlane_D:
                     return DecoderKeys.POST_PLANE_D_SHIFT_DECKEY;
-                case VirtualKeys.ShiftPlane_E:
+                case ShiftPlane.ShiftPlane_E:
                     return DecoderKeys.POST_PLANE_E_SHIFT_DECKEY;
-                case VirtualKeys.ShiftPlane_F:
+                case ShiftPlane.ShiftPlane_F:
                     return DecoderKeys.POST_PLANE_F_SHIFT_DECKEY;
                 default:
                     return 0;
@@ -579,7 +582,7 @@ namespace KanchokuWS.Handler
         private void invokeHandlerForPostSandSKey()
         {
             int deckey = getShiftPlaneDeckeyForSandS(true);
-            if (deckey > 0) invokeHandler(deckey, 0);
+            if (deckey > 0) invokeHandler(deckey, -1, 0);
         }
 
         /// <summary> extraInfo=0 の時のキー押下時のリザルトフラグ </summary>
@@ -684,7 +687,7 @@ namespace KanchokuWS.Handler
                             void setShifted()
                             {
                                 if (!keyInfo.Shifted) {
-                                    SetStrokeHelpShiftPlane?.Invoke(VirtualKeys.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, true));   // SanS用のストロークヘルプ指定
+                                    SetStrokeHelpShiftPlane?.Invoke(ShiftPlane.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, true));   // SanS用のストロークヘルプ指定
                                 }
                                 keyInfo.SetShifted();
                             }
@@ -842,6 +845,26 @@ namespace KanchokuWS.Handler
 
         int keyDownCount = 0;
 
+        private struct DecKeyInfo
+        {
+            int kanchokuCode;
+            int normalDecKey;
+            uint modifiers;
+
+            public DecKeyInfo(int kc, int nc, uint mod)
+            {
+                kanchokuCode = kc;
+                normalDecKey = nc;
+                modifiers = mod;
+            }
+        }
+
+        //private const int vkeyQueueMaxSize = 4;
+
+        //private Queue<int> vkeyQueue = new Queue<int>();
+
+        private static bool bHandlerBusy = false;
+
         /// <summary>キーボード押下時のハンドラ</summary>
         /// <param name="vkey"></param>
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
@@ -852,11 +875,14 @@ namespace KanchokuWS.Handler
             bool bDecoderOn = isDecoderActivated();
             bool ctrl = leftCtrl || rightCtrl;
             bool shift = shiftKeyPressed((uint)vkey);
-            uint mod = KeyModifiers.MakeModifier(ctrl, shift);
+            bool alt = isAltKeyPressed();
+            uint mod = KeyModifiers.MakeModifier(alt, ctrl, shift);
             uint modEx = keyInfoManager.getShiftedExModKey();
             if (modEx == 0 && keyInfoManager.isSandSShiftedOneshot()) modEx = KeyModifiers.MOD_SPACE;
 
-            int kanchokuCode = VirtualKeys.GetKanchokuToggleDecKey(mod, (uint)vkey); // 漢直モードのトグルをやるキーか
+            //int normalDecKey = VKeyComboRepository.GetDecKeyFromVKey((uint)vkey);
+            int normalDecKey = VKeyVsDecoderKey.GetDecKeyFromVKey((uint)vkey);
+            int kanchokuCode = VKeyComboRepository.GetKanchokuToggleDecKey(mod, (uint)vkey); // 漢直モードのトグルをやるキーか
 
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ENTER: kanchokuCode={kanchokuCode}, mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
 
@@ -865,10 +891,10 @@ namespace KanchokuWS.Handler
                 kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(modEx, (uint)vkey);
                 if (kanchokuCode < 0) {
                     // 拡張シフト面のコードを得る
-                    kanchokuCode = VKeyComboRepository.GetDecKeyFromCombo(0, (uint)vkey);
+                    kanchokuCode = normalDecKey;
                     var shiftPlane = keyInfoManager.getShiftPlane(bDecoderOn, isSandSEnabled());
                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"PATH-A: shiftPlane={shiftPlane}, kanchokuCode={kanchokuCode}");
-                    if (shiftPlane != VirtualKeys.ShiftPlane_NONE && kanchokuCode < DecoderKeys.NORMAL_DECKEY_NUM) {
+                    if (shiftPlane != ShiftPlane.ShiftPlane_NONE && kanchokuCode < DecoderKeys.NORMAL_DECKEY_NUM) {
                         kanchokuCode += shiftPlane * DecoderKeys.PLANE_DECKEY_NUM;
                     }
                 }
@@ -913,8 +939,8 @@ namespace KanchokuWS.Handler
             //    return result;
             //}
 
-            //if (kanchokuCode == DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY && kanchokuCode != VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)) {
-            //    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-B: result=False, historySearchCtrlKey={Settings.HistorySearchCtrlKey}, kanchokuCode={VirtualKeys.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)}");
+            //if (kanchokuCode == DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY && kanchokuCode != VKeyComboRepository.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)) {
+            //    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-B: result=False, historySearchCtrlKey={Settings.HistorySearchCtrlKey}, kanchokuCode={VKeyComboRepository.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)}");
             //    return false;
             //}
 
@@ -930,17 +956,20 @@ namespace KanchokuWS.Handler
             //    logger.DebugH(() => $"LEAVE-C: result=True");
             //    return true;
             //}
-            if (vkeyQueue.Count < vkeyQueueMaxSize) {
-                vkeyQueue.Enqueue(kanchokuCode);
-            } else {
-                logger.Warn("vkeyQueue OVERFLOW!!!");
-                return true;
-            }
-            if (vkeyQueue.Count > 1) {
-                logger.Warn(() => "bHandlerBusy");
-                return true;
-            }
-            bool result = true;
+
+            //if (vkeyQueue.Count < vkeyQueueMaxSize) {
+            //    vkeyQueue.Enqueue(kanchokuCode);
+            //} else {
+            //    logger.Warn("vkeyQueue OVERFLOW!!!");
+            //    return true;
+            //}
+            //if (vkeyQueue.Count > 1) {
+            //    logger.Warn(() => "bHandlerBusy");
+            //    return true;
+            //}
+
+            //bool result = true;
+
             //if (bDecoderOn && mod == 0 &&
             //    kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END) {
             //    // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
@@ -953,12 +982,37 @@ namespace KanchokuWS.Handler
             //} else {
             //    result = invokeHandler(kanchokuCode, mod);
             //}
-            while (vkeyQueue.Count > 0) {
+            //while (vkeyQueue.Count > 0) {
+            //    ++keyDownCount;
+            //    logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}, bDecoderOn={bDecoderOn}, mod={mod:x}H, kanchokuCode={kanchokuCode}, keyDownCount={keyDownCount}");
+            //    var determiner = CombinationKeyStroke.Determiner.Singleton;
+            //    var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
+            //    kanchokuCode = vkeyQueue.Peek();
+            //    if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
+            //        currentPool.Enabled && mod == 0 &&
+            //        kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END &&
+            //        ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM ||
+            //        currentPool.GetEntry(kanchokuCode) != null)) {    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする
+            //        // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
+            //        determiner.KeyDown(kanchokuCode, bDecoderOn, keyDownCount, (decKey) => handleComboKeyRepeat(vkey, decKey));
+            //        result = true;
+            //    } else {
+            //        //WriteStrokeLog?.Invoke(kanchokuCode, DateTime.Now, true, true);
+            //        result = invokeHandler(kanchokuCode, mod);
+            //    }
+            //    kanchokuCode = vkeyQueue.Dequeue();
+            //    //if (vkeyQueue.Count > 0) logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
+            //}
+
+            bool result = true;
+            if (bHandlerBusy) {
+                logger.WarnH("Handler Busy");
+            } else {
+                bHandlerBusy = true;
                 ++keyDownCount;
-                logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}, bDecoderOn={bDecoderOn}, mod={mod:x}H, kanchokuCode={kanchokuCode}, keyDownCount={keyDownCount}");
+                logger.InfoH(() => $"bDecoderOn={bDecoderOn}, mod={mod:x}H, kanchokuCode={kanchokuCode}, normalDecKey={normalDecKey}, keyDownCount={keyDownCount}");
                 var determiner = CombinationKeyStroke.Determiner.Singleton;
                 var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
-                kanchokuCode = vkeyQueue.Peek();
                 if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
                     currentPool.Enabled && mod == 0 &&
                     kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END &&
@@ -968,19 +1022,13 @@ namespace KanchokuWS.Handler
                     determiner.KeyDown(kanchokuCode, bDecoderOn, keyDownCount, (decKey) => handleComboKeyRepeat(vkey, decKey));
                     result = true;
                 } else {
-                    //WriteStrokeLog?.Invoke(kanchokuCode, DateTime.Now, true, true);
-                    result = invokeHandler(kanchokuCode, mod);
+                    result = invokeHandler(kanchokuCode, normalDecKey, mod);
                 }
-                kanchokuCode = vkeyQueue.Dequeue();
-                //if (vkeyQueue.Count > 0) logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
+                bHandlerBusy = false;
             }
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE: result={result}");
             return result;
         }
-
-        private const int vkeyQueueMaxSize = 4;
-
-        private Queue<int> vkeyQueue = new Queue<int>();
 
         private int prevUpVkey = -1;
 
@@ -1008,10 +1056,10 @@ namespace KanchokuWS.Handler
                 // とりあえず、やっつけコード
                 void checkAndInvoke(bool bShifted)
                 {
-                    if (!bShifted && /*bDecoderOn &&*/ VirtualKeys.IsExModKeyIndexAssignedForDecoderFunc((uint)vkey)) {
+                    if (!bShifted && /*bDecoderOn &&*/ ExtraModifiers.IsExModKeyIndexAssignedForDecoderFunc((uint)vkey)) {
                         int kanchokuCode = VKeyComboRepository.GetDecKeyFromCombo(0, (uint)vkey);
                         if (kanchokuCode >= 0) {
-                            invokeHandler(kanchokuCode, 0);
+                            invokeHandler(kanchokuCode, -1, 0);
                         }
                     }
                 }
@@ -1152,7 +1200,7 @@ namespace KanchokuWS.Handler
             bool result = true;
             if (keyList._notEmpty()) {
                 foreach (var k in keyList) {
-                    result = invokeHandler(k, 0, bUnconditional) && result;
+                    result = invokeHandler(k, -1, 0, bUnconditional) && result;
                 }
             }
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE: result={result}");
@@ -1162,7 +1210,7 @@ namespace KanchokuWS.Handler
         /// <summary> キーボードハンドラの処理中か </summary>
         private bool bInvokeHandlerBusy = false;
 
-        private bool invokeHandler(int kanchokuCode, uint mod, bool bUnconditional = false)
+        private bool invokeHandler(int kanchokuCode, int normalDecKey, uint mod, bool bUnconditional = false)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() =>
                 $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), mod={mod:x}H({mod}), bUnconditional={bUnconditional}, " +
@@ -1170,9 +1218,11 @@ namespace KanchokuWS.Handler
 
             bool result = false;
 
-            if (!bInvokeHandlerBusy) {
+            if (bInvokeHandlerBusy) {
+                logger.WarnH("Handler Busy");
+            } else {
                 bInvokeHandlerBusy = true;
-                result = _invokeHandler(kanchokuCode, mod, bUnconditional);
+                result = _invokeHandler(kanchokuCode, normalDecKey, mod, bUnconditional);
             }
             bInvokeHandlerBusy = false;
 
@@ -1181,7 +1231,7 @@ namespace KanchokuWS.Handler
             return result;
         }
 
-        private bool _invokeHandler(int kanchokuCode, uint mod, bool bUnconditional)
+        private bool _invokeHandler(int kanchokuCode, int normalDecKey, uint mod, bool bUnconditional)
         {
             switch (kanchokuCode) {
                 case DecoderKeys.TOGGLE_DECKEY:
@@ -1208,8 +1258,7 @@ namespace KanchokuWS.Handler
                 //case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
                 //    return RotateReverseDateString?.Invoke() ?? false;
                 case -1:
-                    FuncDispatcher?.Invoke(DecoderKeys.UNDEFINED_DECKEY, 0);
-                    return false;
+                    return FuncDispatcher?.Invoke(DecoderKeys.UNDEFINED_DECKEY, normalDecKey, mod) ?? false;
                 default:
                     if (kanchokuCode >= DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET && kanchokuCode < DecoderKeys.UNCONDITIONAL_DECKEY_END) {
                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}");
@@ -1221,13 +1270,13 @@ namespace KanchokuWS.Handler
                     }
                     //if (kanchokuCode == DecoderKeys.STROKE_SPACE_DECKEY) {
                     //    // ここでSpaceの変換を行う
-                    //    int deckey = VirtualKeys.GetDecKeyFromCombo(0, (uint)Keys.Space);
+                    //    int deckey = VKeyComboRepository.GetDecKeyFromCombo(0, (uint)Keys.Space);
                     //    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"SPACE: GetDecKeyFromCombo={deckey}");
                     //    if (deckey >= 0) kanchokuCode = deckey;
                     //}
                     if (kanchokuCode >= 0) {
                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"FuncDispatcher: kanchokuCode={kanchokuCode}");
-                        return FuncDispatcher?.Invoke(kanchokuCode, mod) ?? false;
+                        return FuncDispatcher?.Invoke(kanchokuCode, normalDecKey, mod) ?? false;
                     }
                     return false;
             }

@@ -72,7 +72,7 @@ namespace KanchokuWS.Domain
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"name={name}, deckey={deckey:x}H({deckey})");
             if (deckey > 0) {
-                uint vk = VKeyArrayFuncKeys.GetFuncVkeyByName(name);
+                uint vk = VKeyVsDecoderKey.GetFuncVkeyByName(name);
                 if (vk > 0) {
                     VKeyComboFromDecKey[deckey] = new VKeyCombo(0, vk);
                 }
@@ -163,6 +163,12 @@ namespace KanchokuWS.Domain
             return combo;
         }
 
+        /// <summary>仮想キーコードから、DecKey を得る</summary>
+        public static int GetDecKeyFromVKey(uint vkey)
+        {
+            return GetDecKeyFromCombo(0, vkey);
+        }
+
         /// <summary>修飾子と仮想キーコードの組みから、DecKey を得る</summary>
         public static int GetDecKeyFromCombo(uint mod, uint vkey)
         {
@@ -205,7 +211,14 @@ namespace KanchokuWS.Domain
         public static int GetCtrlDecKeyOf(string face)
         {
             uint vkey = CharVsVKey.GetVKeyFromFaceStr(face);
-            return (vkey > 0) ? VKeyComboRepository.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_CONTROL, vkey) : -1;
+            return (vkey > 0) ? GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_CONTROL, vkey) : -1;
+        }
+
+        /// <summary> 漢直モードのトグルをやるキーか </summary>
+        public static int GetKanchokuToggleDecKey(uint mod, uint vkey)
+        {
+            int kanchokuCodeWithMod = GetModConvertedDecKeyFromCombo(mod, vkey);
+            return (kanchokuCodeWithMod >= DecoderKeys.TOGGLE_DECKEY && kanchokuCodeWithMod <= DecoderKeys.DEACTIVE2_DECKEY) ? kanchokuCodeWithMod : -1;
         }
 
     }

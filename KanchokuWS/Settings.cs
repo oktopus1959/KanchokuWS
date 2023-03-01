@@ -867,7 +867,7 @@ namespace KanchokuWS
         {
             var keyseq = GetString(attr);
             var origKeySeq = keyseq;
-            int idx = VKeyArrayFuncKeys.GetFuncKeyIndexByName(keyseq);
+            int idx = VKeyVsDecoderKey.GetFuncKeyIndexByName(keyseq);
             if (idx >= 0) {
                 // "nfer" や "xfer" などの名前も使用可能とする
                 keyseq = $"X{idx}";
@@ -875,7 +875,7 @@ namespace KanchokuWS
             setDecoderSetting(attr, keyseq);
             if (keyseq._safeLength() > 1 && (keyseq[0] == 'X' || keyseq[0] == 'x')) {
                 int ix = keyseq._safeSubstring(1)._parseInt(-1);
-                if (ix >= 0) VirtualKeys.AddExModVkeyAssignedForDecoderFuncByIndex(ix);
+                if (ix >= 0) ExtraModifiers.AddExModVkeyAssignedForDecoderFuncByIndex(ix);
             }
             return origKeySeq;
         }

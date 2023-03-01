@@ -148,13 +148,13 @@ namespace KanchokuWS.Domain
         }
 
         /// <summary>
-        /// DecKey からそれに対応する文字を取得する<br/>
+        /// DecKey からそれに対応する配列変換された文字を取得する<br/>
         /// デフォルトのJP/US配列の場合は 0 を返す
         /// </summary>
         /// <param name="deckey"></param>
         /// <param name="bShift"></param>
         /// <returns></returns>
-        public static char GetCharFromDecKey(int deckey)
+        public static char GetArrangedCharFromDecKey(int deckey)
         {
             if (deckey >= 0 && deckey < DecoderKeys.NORMAL_DECKEY_NUM) {
                 return normalChars._getNth(deckey, '\0');
@@ -170,7 +170,19 @@ namespace KanchokuWS.Domain
         /// </summary>
         public static char GetFaceCharFromDecKey(int decKey)
         {
-            return GetCharFromDecKey(decKey)._gtZeroOr(CharVsVKey.GetFaceCharFromVKey(VKeyComboRepository.GetVKeyComboFromDecKey(decKey)?.vkey ?? 0));
+            //return GetArrangedCharFromDecKey(decKey)._gtZeroOr(CharVsVKey.GetFaceCharFromVKey(VKeyComboRepository.GetVKeyComboFromDecKey(decKey)?.vkey ?? 0));
+            var ch = GetArrangedCharFromDecKey(decKey);
+            if (ch == '\0') {
+                if (decKey >= 0 && decKey < DecoderKeys.NORMAL_DECKEY_NUM) {
+                    ch = QwertyChars()._getNth(decKey);
+                } else {
+                    decKey -= DecoderKeys.SHIFT_DECKEY_START;
+                    if (decKey >= 0 && decKey < DecoderKeys.NORMAL_DECKEY_NUM) {
+                        ch = QwertyShiftedChars()._getNth(decKey);
+                    }
+                }
+            }
+            return ch;
         }
 
     }

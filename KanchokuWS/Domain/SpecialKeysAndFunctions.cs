@@ -10,7 +10,6 @@ using Utils;
 namespace KanchokuWS
 {
     using KeyModifiers = Domain.KeyModifiers;
-    using VirtualKeys = Domain.VirtualKeys;
 
     public class KeyOrFunction
     {

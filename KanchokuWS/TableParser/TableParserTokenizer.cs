@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using KanchokuWS.Domain;
 using KanchokuWS.CombinationKeyStroke.DeterminerLib;
 using Utils;
 
 namespace KanchokuWS.TableParser
 {
-    using VirtualKeys = Domain.VirtualKeys;
     using ShiftKeyKind = ComboShiftKeyPool.ComboKind;
 
     /// <summary>
@@ -245,7 +245,7 @@ namespace KanchokuWS.TableParser
                     } else if (lcStr == "disableextkey") {
                         // 拡張修飾キーの無効化
                         ReadWord();
-                        if (CurrentStr._notEmpty()) VirtualKeys.AddDisabledExtKey(CurrentStr);
+                        if (CurrentStr._notEmpty()) ExtraModifiers.AddDisabledExtKey(CurrentStr);
                     } else if (lcStr == "ignorewarning" || lcStr == "enablewarning") {
                         // 各種警告の無効化/有効化
                         bool flag = lcStr.StartsWith("ignore");
@@ -414,28 +414,28 @@ namespace KanchokuWS.TableParser
             if (word._isEmpty()) {
                 if (Settings.LoggingTableFileInfo) logger.InfoH("SandS");
                 Settings.SandSEnabledCurrently = true;
-                int plane = VirtualKeys.GetSandSPlane();
+                int plane = ShiftPlane.GetSandSPlane();
                 if (plane > 0) {
                     shiftPlane = plane;
                 } else {
                     shiftPlane = 2;
-                    VirtualKeys.AssignSanSPlane(shiftPlane);
+                    ShiftPlane.AssignSanSPlane(shiftPlane);
                 }
             } else if (word._startsWith("enable")) {
                 Settings.SandSEnabledCurrently = true;
                 if (Settings.LoggingTableFileInfo) logger.InfoH("SandS enabled");
             } else if (word._startsWith("disable")) {
                 Settings.SandSEnabledCurrently = false;
-                VirtualKeys.AddDisabledExtKey("space");
+                ExtraModifiers.AddDisabledExtKey("space");
                 if (Settings.LoggingTableFileInfo) logger.InfoH("SandS disabled");
             } else if (word == "s") {
                 Settings.SandSEnabledCurrently = true;
                 shiftPlane = 1;
-                VirtualKeys.AssignSanSPlane(shiftPlane);
+                ShiftPlane.AssignSanSPlane(shiftPlane);
             } else if (word.Length == 1 && word[0] >= 'a' && word[0] <= 'f') {
                 Settings.SandSEnabledCurrently = true;
                 shiftPlane = word[0] - 'a' + 2;
-                VirtualKeys.AssignSanSPlane(shiftPlane);
+                ShiftPlane.AssignSanSPlane(shiftPlane);
             } else if (word._startsWith("enabeoneshot")) {
                 Settings.OneshotSandSEnabledCurrently = true;
             } else if (word._startsWith("disabeoneshot")) {
@@ -457,7 +457,7 @@ namespace KanchokuWS.TableParser
         {
             ReadWord();
             if (CurrentStr._notEmpty()) {
-                bool resultOK = VirtualKeys.AssignShiftPlane(CurrentStr);
+                bool resultOK = ShiftPlane.AssignShiftPlane(CurrentStr);
                 if (!resultOK) {
                     ParseError("assignShiftPlane");
                 }
@@ -554,7 +554,7 @@ namespace KanchokuWS.TableParser
                         if (c == 'N' || c == 'n') {
                             shiftOffset = 0;
                         } else if (c == 'S' || c == 's' || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {
-                            shiftOffset = VirtualKeys.CalcShiftOffset(c);
+                            shiftOffset = ExtraModifiers.CalcShiftOffset(c);
                         } else if (c == 'X' || c == 'x') {
                             shiftOffset = 0;
                             funckeyOffset = DecoderKeys.FUNC_DECKEY_START;

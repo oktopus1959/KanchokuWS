@@ -216,7 +216,7 @@ namespace KanchokuWS
 
             // 初期化
             VKeyComboRepository.Initialize();
-            VirtualKeys.Initialize();
+            ExtraModifiers.Initialize();
             DlgModConversion.Initialize();
 
             // キーボードファイルの読み込み
@@ -309,11 +309,11 @@ namespace KanchokuWS
 
             // 追加の修飾キー定義ファイルの読み込み
             if (Settings.ExtraModifiersEnabled && Settings.ModConversionFile._notEmpty()) {
-                complexCommandStr = VirtualKeys.ReadExtraModConversionFile(Settings.ModConversionFile);
+                complexCommandStr = ExtraModifiers.ReadExtraModConversionFile(Settings.ModConversionFile);
             }
 
             // 設定ダイアログで割り当てたSandSシフト面による上書き
-            VirtualKeys.AssignSanSPlane();
+            ShiftPlane.AssignSanSPlane();
 
             // 漢字読みファイルの読み込み
             if (Settings.KanjiYomiFile._notEmpty()) {
@@ -777,7 +777,7 @@ namespace KanchokuWS
         {
             logger.InfoH(() => $"CALLED: shiftPlane={shiftPlane}, IsDecoderActive={IsDecoderActive}");
             if (IsDecoderActive) {
-                if (shiftPlane >= 0 && shiftPlane < VirtualKeys.ShiftPlane_NUM) {
+                if (shiftPlane >= 0 && shiftPlane < ShiftPlane.ShiftPlane_NUM) {
                     frmVkb.StrokeHelpShiftPlane = shiftPlane;
                     if (frmVkb.IsCurrentNormalVkb) frmVkb.DrawInitialVkb();
                 }
@@ -810,9 +810,9 @@ namespace KanchokuWS
         /// </summary>
         /// <param name="deckey"></param>
         /// <returns></returns>
-        private bool FuncDispatcher(int deckey, uint mod)
+        private bool FuncDispatcher(int deckey, int normalDeckey, uint mod)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}H({deckey}), mod={mod:x}({mod})");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}H({deckey}), normalDeckey={normalDeckey:x}H({normalDeckey}), mod={mod:x}({mod})");
             bool bPrevDtUpdate = false;
             int prevDeckey = prevFuncDeckey;
             prevFuncDeckey = deckey;
@@ -957,7 +957,11 @@ namespace KanchokuWS
                             // 主に英数モードから抜けるために使う
                             logger.InfoH(() => $"UNDEFINED_DECKEY:{deckey}");
                             sendDeckeyToDecoder(deckey);
-                            return false;
+                            if (normalDeckey >= 0 && normalDeckey < DecoderKeys.NORMAL_DECKEY_NUM) {
+                                return sendVkeyFromDeckey(normalDeckey, mod);
+                            } else {
+                                return false;
+                            }
 
                         default:
                             bPrevDtUpdate = true;
@@ -971,7 +975,12 @@ namespace KanchokuWS
                     // Decoder Inactive
                     if (Settings.LoggingDecKeyInfo) logger.InfoH("Decoder Inactive");
                     bPrevDtUpdate = true;
-                    return sendVkeyFromDeckey(deckey, mod);
+                    if (deckey >= 0 && deckey != DecoderKeys.UNDEFINED_DECKEY) {
+                        return sendVkeyFromDeckey(deckey, mod);
+                    } else if (normalDeckey >= 0) {
+                        return sendVkeyFromDeckey(normalDeckey, mod);
+                    }
+                    return false;
                 }
             } finally {
                 prevDeckey = deckey;
@@ -1962,9 +1971,9 @@ namespace KanchokuWS
 
                 if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET WINDOW");
 
-                if (Settings.ShortcutKeyConversionEnabled || !SendInputHandler.IsAltKeyPressed()) {
+                if (Settings.ShortcutKeyConversionEnabled || (mod & KeyModifiers.MOD_ALT) == 0) {
                     // CtrlやAltなどのショートカットキーの変換をやるか、または Altキーが押されていなかった
-                    var dkChar = Domain.DecoderKeyVsChar.GetCharFromDecKey(deckey);
+                    var dkChar = Domain.DecoderKeyVsChar.GetArrangedCharFromDecKey(deckey);
                     if (dkChar != '\0') {
                         var vk = CharVsVKey.GetVKeyFromFaceChar(dkChar);
                         if (vk != 0) {
@@ -2213,7 +2222,7 @@ namespace KanchokuWS
 
             // 初期化
             VKeyComboRepository.Initialize();
-            VirtualKeys.Initialize();
+            ExtraModifiers.Initialize();
             DlgModConversion.Initialize();
 
             // キーボードファイルの読み込み
