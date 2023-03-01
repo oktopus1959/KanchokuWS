@@ -11,16 +11,19 @@ namespace Utils
     public class Logger : IDisposable
     {
         public const int LogLevelError = 1;
-        public const int LogLevelWarn = 2;
-        public const int LogLevelInfoH = 3;
-        public const int LogLevelInfo = 4;
-        public const int LogLevelDebugH = 5;
-        public const int LogLevelDebug = 6;
-        public const int LogLevelTrace = 7;
+        public const int LogLevelWarnH = 2;
+        public const int LogLevelWarn = 3;
+        public const int LogLevelInfoH = 4;
+        public const int LogLevelInfo = 5;
+        public const int LogLevelDebugH = 6;
+        public const int LogLevelDebug = 7;
+        public const int LogLevelTrace = 8;
 
         public static string LogFilename { get; set; }
 
         public static void EnableError() { LogLevel = LogLevelError; }
+
+        public static void EnableWarnH() { LogLevel = LogLevelWarnH; }
 
         public static void EnableWarn() { LogLevel = LogLevelWarn; }
 
@@ -214,6 +217,24 @@ namespace Utils
             [CallerLineNumber] int lineNumber = -1)
         {
             if (LogLevel >= LogLevelWarn && func != null) {
+                writeLog("WARN", $"{ClassName}.{method}", lineNumber, func());
+            }
+        }
+
+        public void WarnH(string msg,
+            [CallerMemberName] string method = "",
+            [CallerLineNumber] int lineNumber = -1)
+        {
+            if (LogLevel >= LogLevelWarnH) {
+                writeLog("WARN", $"{ClassName}.{method}", lineNumber, msg);
+            }
+        }
+
+        public void WarnH(Func<string> func,
+            [CallerMemberName] string method = "",
+            [CallerLineNumber] int lineNumber = -1)
+        {
+            if (LogLevel >= LogLevelWarnH && func != null) {
                 writeLog("WARN", $"{ClassName}.{method}", lineNumber, func());
             }
         }

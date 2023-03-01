@@ -102,7 +102,7 @@ namespace KanchokuWS
         /// <summary>隠しテーブルファイルフォルダを表示する</summary>        
         public static bool ShowHiddleFolder { get; private set; }
 
-        public static bool IsAnyDevFlagEnabled => LogLevel > 2 || LoggingDecKeyInfo || LoggingActiveWindowInfo || LoggingVirtualKeyboardInfo || LoggingTableFileInfo || BushuDicLogEnabled;
+        public static bool IsAnyDevFlagEnabled => LogLevel > Logger.LogLevelWarn || LoggingDecKeyInfo || LoggingActiveWindowInfo || LoggingVirtualKeyboardInfo || LoggingTableFileInfo || BushuDicLogEnabled;
 
         //-------------------------------------------------------------------------------------
         // 基本設定
@@ -836,7 +836,7 @@ namespace KanchokuWS
 
         public static int GetLogLevel()
         {
-            return GetString("logLevel")._parseInt(Logger.LogLevelError)._lowLimit(0)._highLimit(Logger.LogLevelTrace);   // デフォルトは ERROR
+            return GetString("logLevel")._parseInt(Logger.LogLevelWarnH)._lowLimit(0)._highLimit(Logger.LogLevelTrace);   // デフォルトは WarnH
         }
 
         public static bool IsMultiAppEnabled()

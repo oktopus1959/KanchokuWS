@@ -33,12 +33,13 @@ class Logger {
 
 public:
     static const int LogLevelError = 1;
-    static const int LogLevelWarn = 2;
-    static const int LogLevelInfoH = 3;
-    static const int LogLevelInfo = 4;
-    static const int LogLevelDebugH = 5;
-    static const int LogLevelDebug = 6;
-    static const int LogLevelTrace = 7;
+    static const int LogLevelWarnH = 2;
+    static const int LogLevelWarn = 3;
+    static const int LogLevelInfoH = 4;
+    static const int LogLevelInfo = 5;
+    static const int LogLevelDebugH = 6;
+    static const int LogLevelDebug = 7;
+    static const int LogLevelTrace = 8;
 
 public:
     static int LogLevel;
@@ -48,6 +49,8 @@ public:
     static inline void EnableLogger() { LogLevel = LogLevelError; }
 
     static inline void EnableError() { LogLevel = LogLevelError; }
+
+    static inline void EnableWarnH() { LogLevel = LogLevelWarnH; }
 
     static inline void EnableWarn() { LogLevel = LogLevelWarn; }
 
@@ -64,6 +67,8 @@ public:
     //static void UseDefaultEncoding() { useDefaultEncoding = true; }
 
     static inline bool IsErrorEnabled() { return LogLevel >= LogLevelError; }
+
+    static inline bool IsWarnHEnabled() { return LogLevel >= LogLevelWarnH; }
 
     static inline bool IsWarnEnabled() { return LogLevel >= LogLevelWarn; }
 
@@ -140,6 +145,10 @@ public:
         writeLog("WARN ", method, file, line, msg);
     }
 
+    inline void WarnH(const tstring& msg, const char* method, const char* file, int line) {
+        writeLog("WARNH", method, file, line, msg);
+    }
+
     inline void Error(const tstring& msg, const char* method, const char* file, int line) {
         writeLog("ERROR", method, file, line, msg);
     }
@@ -183,6 +192,7 @@ public:
 #define LOG_INFO_COND(flag, ...) if (flag && Logger::IsInfoEnabled()) logger.InfoH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
 #define LOG_INFO_UC(...)    logger.Info(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
 #define LOG_WARN(...)       logger.Warn(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
+#define LOG_WARNH(...)       logger.WarnH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
 #define LOG_ERROR(...)      logger.Error(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
 
 #ifndef _DEBUG
