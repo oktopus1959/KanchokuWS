@@ -82,6 +82,7 @@ namespace KanchokuWS
             dlgStrokeLog = null;
         }
 
+        ///// <summaryストロークログの表示</summary>
         public void WriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bFirst, bool bTimer = false)
         {
             if (IsDecoderActive && dlgStrokeLog != null) {
@@ -93,6 +94,7 @@ namespace KanchokuWS
             }
         }
 
+        ///// <summaryストロークログの表示</summary>
         public void WriteStrokeLog(string str)
         {
             if (IsDecoderActive && dlgStrokeLog != null) {
@@ -136,7 +138,7 @@ namespace KanchokuWS
 
         private const int timerInterval = 100;
 
-        private KeyboardEventHandler keDispatcher { get; set; }
+        private KeyboardEventHandler keHandler { get; set; }
 
         /// <summary>
         /// 複合コマンド文字列
@@ -147,9 +149,9 @@ namespace KanchokuWS
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public FrmKanchoku(KeyboardEventHandler dispatcher)
+        public FrmKanchoku(KeyboardEventHandler handler)
         {
-            keDispatcher = dispatcher;
+            keHandler = handler;
 
             // スクリーン情報の取得
             ScreenInfo.CreateSingleton();
@@ -252,8 +254,8 @@ namespace KanchokuWS
             timer1.Start();
             logger.Info("Timer Started");
 
-            // キーボードイベントのディスパッチ開始
-            initializeKeyboardEventDispatcher();
+            // キーボードイベントハンドラの初期化(フックの開始など)
+            keHandler.Initialize(this);
         }
 
         // 各種サンプルから本番ファイルをコピー(もし無ければ)
@@ -279,7 +281,7 @@ namespace KanchokuWS
         /// <summary> キーボードファイルの読み込み (成功したら true, 失敗したら false を返す) </summary>
         private bool readKeyboardFile()
         {
-            if (!Domain.VKeyVsDecoderKey.ReadKeyboardFile()) {
+            if (!Domain.DecoderKeyVsVKey.ReadKeyboardFile()) {
                 // キーボードファイルを読み込めなかったので終了する
                 logger.Error($"CLOSE: Can't read keyboard file");
                 //this.Close();
@@ -418,7 +420,6 @@ namespace KanchokuWS
 
             // 各種Timer処理が終了するのを待つ
             Helper.WaitMilliSeconds(200);
-            Logger.EnableInfoH();
             logger.WriteInfo("==== KANCHOKU WS TERMINATED ====\n");
         }
 
@@ -692,7 +693,7 @@ namespace KanchokuWS
         /// <summary> Decoder の ON/OFF 状態 </summary>
         public bool IsDecoderActive { get; private set; } = false;
 
-        private bool isDecoderActivated()
+        public bool IsDecoderActivated()
         {
             return IsDecoderActive;
         }
@@ -704,64 +705,8 @@ namespace KanchokuWS
 
         public bool IsVkbShown => Settings.VirtualKeyboardShowStrokeCountEffective > 0 && Settings.VirtualKeyboardShowStrokeCountEffective <= decoderOutput.GetStrokeCount() + 1;
 
-        /// <summary>
-        /// KeyboardHookから呼び出されるキーボードダウンイベントハンドラ<br/>
-        /// キーを処理した場合は true を返す。システムにキーの処理をさせる場合は false を返す。
-        /// </summary>
-        /// <param name="vkey"></param>
-        /// <param name="extraInfo"></param>
-        /// <returns></returns>
-        public bool OnKeyboardDownHandler(int vkey, int extraInfo)
-        {
-            logger.DebugH(() => $"CALLED: vkey={vkey}, extraInfo={extraInfo}");
-            return IsDecoderActive;
-        }
-
-        /// <summary>
-        /// KeyboardHookから呼び出されるキーボードアップイベントハンドラ<br/>
-        /// キーを処理した場合は true を返す。システムにキーの処理をさせる場合は false を返す。
-        /// </summary>
-        /// <param name="vkey"></param>
-        /// <param name="extraInfo"></param>
-        /// <returns></returns>
-        public bool OnKeyboardUpHandler(int vkey, int extraInfo)
-        {
-            logger.DebugH(() => $"CALLED: vkey={vkey}, extraInfo={extraInfo}");
-            return IsDecoderActive;
-        }
-
-        private void initializeKeyboardEventDispatcher()
-        {
-            logger.InfoH("ENTER");
-
-            keDispatcher.SetInvokeHandlerToDeterminer();
-
-            keDispatcher.OnKeyDown = OnKeyboardDownHandler;
-            keDispatcher.OnKeyUp = OnKeyboardUpHandler;
-            keDispatcher.ToggleDecoder = ToggleDecoder;
-            keDispatcher.ActivateDecoder = ActivateDecoder;
-            keDispatcher.DeactivateDecoder = DeactivateDecoderWithModifiersOff;
-            keDispatcher.IsDecoderActivated = isDecoderActivated;
-            keDispatcher.IsDecoderWaitingFirstStroke = IsDecoderWaitingFirstStroke;
-            keDispatcher.SetSandSShiftedOneshot = setSandSShiftedOneshot;
-            keDispatcher.FuncDispatcher = FuncDispatcher;
-            keDispatcher.SendInputVkeyWithMod = SendInputVkeyWithMod;
-            keDispatcher.InvokeDecoderUnconditionally = InvokeDecoderUnconditionally;
-            keDispatcher.SetStrokeHelpShiftPlane = SetStrokeHelpShiftPlane;
-            keDispatcher.SetNextStrokeHelpDecKey = SetNextStrokeHelpDecKey;
-            keDispatcher.WriteStrokeLog = WriteStrokeLog;
-            //keDispatcher.RotateReverseStrokeHelp = rotateReverseStrokeHelp;
-            //keDispatcher.RotateDateString = rotateDateString;
-            //keDispatcher.RotateReverseDateString = rotateReverseDateString;
-            //keDispatcher.InvokeDecoder = InvokeDecoder;
-
-            // キーボードイベントのディスパッチ開始
-            keDispatcher.InstallKeyboardHook();
-            logger.InfoH("LEAVE");
-        }
-
         /// <summary>無条件にデコーダを呼び出す</summary>
-        private bool InvokeDecoderUnconditionally(int deckey, uint mod)
+        public bool InvokeDecoderUnconditionally(int deckey, uint mod)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}H({deckey}), mod={mod}H({mod})");
             if (IsDecoderActive)
@@ -773,7 +718,7 @@ namespace KanchokuWS
 
         /// <summary>ストロークヘルプを表示するシフト面を設定する</summary>
         /// <param name="shiftPlane"></param>
-        private void SetStrokeHelpShiftPlane(int shiftPlane)
+        public void SetStrokeHelpShiftPlane(int shiftPlane)
         {
             logger.InfoH(() => $"CALLED: shiftPlane={shiftPlane}, IsDecoderActive={IsDecoderActive}");
             if (IsDecoderActive) {
@@ -788,7 +733,7 @@ namespace KanchokuWS
         /// 指定キーに対する次打鍵テーブルの作成
         /// </summary>
         /// <param name="decKey"></param>
-        private void SetNextStrokeHelpDecKey(List<int> decKeys)
+        public void SetNextStrokeHelpDecKey(List<int> decKeys)
         {
             logger.InfoH(() => $"CALLED: decKeys={decKeys._keyString("empty")}");
             frmVkb.DecKeysForNextTableStrokeHelp.Clear();
@@ -806,11 +751,11 @@ namespace KanchokuWS
         private int prevFuncTotalCount = 0;
 
         /// <summary>
-        /// UI側のハンドラー
+        ///デコーダ機能のディスパッチ
         /// </summary>
         /// <param name="deckey"></param>
         /// <returns></returns>
-        private bool FuncDispatcher(int deckey, int normalDeckey, uint mod)
+        public bool FuncDispatcher(int deckey, int normalDeckey, uint mod)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}H({deckey}), normalDeckey={normalDeckey:x}H({normalDeckey}), mod={mod:x}({mod})");
             bool bPrevDtUpdate = false;
@@ -1049,7 +994,7 @@ namespace KanchokuWS
         public bool IsSandSShiftedOneshot { get; private set; } = false;
 
         /// <summary>SandS状態を一時的なシフト状態にする</summary>
-        private void setSandSShiftedOneshot()
+        public void SetSandSShiftedOneshot()
         {
             logger.InfoH("CALLED");
             if (IsDecoderActive) {
@@ -1060,16 +1005,28 @@ namespace KanchokuWS
             }
         }
 
+        /// <summary>
+        /// 打鍵ヘルプのローテーション<br/>
+        /// ローテーションを行わない場合は false を返す
+        /// </summary>
         private bool rotateStrokeHelp()
         {
             return rotateStrokeHelp(1);
         }
 
+        /// <summary>
+        /// 打鍵ヘルプの逆ローテーション<br/>
+        /// ローテーションを行わない場合は false を返す
+        /// </summary>
         private bool rotateReverseStrokeHelp()
         {
             return rotateStrokeHelp(-1);
         }
 
+        /// <summary>
+        /// 打鍵ヘルプを direction 方向にローテーション<br/>
+        /// ローテーションを行わない場合は false を返す
+        /// </summary>
         private bool rotateStrokeHelp(int direction)
         {
             logger.InfoH(() => $"CALLED: IsDecoderActive={IsDecoderActive}");
@@ -1103,6 +1060,10 @@ namespace KanchokuWS
             return ActiveWindowHandler.Singleton.ActiveWinClassName._startsWith("EXCEL");
         }
 
+        /// <summary>
+        /// 日付を direction 方向にローテーション<br/>
+        /// ローテーションを行わない場合は false を返す
+        /// </summary>
         private bool rotateDateString(int direction)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: direction={direction}");
@@ -1176,7 +1137,7 @@ namespace KanchokuWS
         // 開発者用の設定がONになっているとき、漢直モードのON/OFFを10回繰り返したら警告を出す
         private int devFlagsOnWarningCount = 0;
 
-        private void ToggleDecoder()
+        public void ToggleDecoder()
         {
             ToggleActiveState(true);
         }
@@ -1195,7 +1156,7 @@ namespace KanchokuWS
             logger.InfoH("LEAVE");
         }
 
-        private void ActivateDecoder()
+        public void ActivateDecoder()
         {
             logger.InfoH(() => $"\nENTER");
             if (IsDecoderActive) {
@@ -2013,7 +1974,7 @@ namespace KanchokuWS
         }
 
         /// <summary>修飾キー付きvkeyをSendInputする</summary>
-        private bool SendInputVkeyWithMod(uint mod, uint vkey)
+        public bool SendInputVkeyWithMod(uint mod, uint vkey)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: mod={mod}H({mod}), vkey={vkey}H({vkey})");
             SendInputHandler.Singleton.SendVKeyCombo(mod, vkey, 1);
@@ -2218,7 +2179,7 @@ namespace KanchokuWS
             logger.InfoH("ENTER");
 
             // キーボードハンドラの再初期化
-            keDispatcher.Reinitialize();
+            keHandler.Reinitialize();
 
             // 初期化
             VKeyComboRepository.Initialize();

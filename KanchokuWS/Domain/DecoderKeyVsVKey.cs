@@ -21,11 +21,11 @@ namespace KanchokuWS.Domain
         public const uint SPACE = (uint)Keys.Space;
 
         // 以下は JP/US によってキーコードが変わるor無効になる可能性あり
-        public static uint CAPSLOCK => VKeyVsDecoderKey.GetFuncVKeyByIndex(3);
-        public static uint EISU => VKeyVsDecoderKey.GetFuncVKeyByIndex(4);
-        public static uint MUHENKAN => VKeyVsDecoderKey.GetFuncVKeyByIndex(5);
-        public static uint HENKAN => VKeyVsDecoderKey.GetFuncVKeyByIndex(6);
-        public static uint KANA => VKeyVsDecoderKey.GetFuncVKeyByIndex(7);
+        public static uint CAPSLOCK => DecoderKeyVsVKey.GetFuncVKeyByIndex(3);
+        public static uint EISU => DecoderKeyVsVKey.GetFuncVKeyByIndex(4);
+        public static uint MUHENKAN => DecoderKeyVsVKey.GetFuncVKeyByIndex(5);
+        public static uint HENKAN => DecoderKeyVsVKey.GetFuncVKeyByIndex(6);
+        public static uint KANA => DecoderKeyVsVKey.GetFuncVKeyByIndex(7);
     }
 
     static class AlphabetVKeys
@@ -39,7 +39,7 @@ namespace KanchokuWS.Domain
         }
     }
 
-    static class VKeyVsDecoderKey
+    static class DecoderKeyVsVKey
     {
         private static Logger logger = Logger.GetLogger();
 

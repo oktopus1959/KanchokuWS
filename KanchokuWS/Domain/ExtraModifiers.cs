@@ -37,7 +37,7 @@ namespace KanchokuWS.Domain
         /// <summary> インデックスで指定される拡張修飾キー(space, Caps, alnum, nfer, xfer, Rshift)をデコーダ機能に割り当てられたキーの集合に追加 </summary>
         public static void AddExModVkeyAssignedForDecoderFuncByIndex(int idx)
         {
-            var vkey = VKeyVsDecoderKey.GetFuncVKeyByIndex(idx);
+            var vkey = DecoderKeyVsVKey.GetFuncVKeyByIndex(idx);
             if (vkey > 0) decoderFuncAssignedExModKeys.Add(vkey);
         }
 
@@ -315,11 +315,11 @@ namespace KanchokuWS.Domain
                                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modName={modName}, modifiee={modifiee}, target={target}, modDeckey={modDeckey}, modifieeDeckey={modifieeDeckey})");
 
                                 // 被修飾キーの仮想キーコード: 特殊キー名(esc, tab, ins, ...)または漢直コード(00～49)から、それに該当する仮想キーコードを得る
-                                uint vkey = VKeyVsDecoderKey.GetVKeyFromDecKey(modifieeDeckey);
+                                uint vkey = DecoderKeyVsVKey.GetVKeyFromDecKey(modifieeDeckey);
                                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"vkey={vkey}");
                                 if (vkey == 0) {
                                     // 被修飾キーが指定されていない場合は、拡張修飾キーまたは特殊キーの単打とみなす
-                                    vkey = VKeyVsDecoderKey.GetFuncVkeyByName(modName);  
+                                    vkey = DecoderKeyVsVKey.GetFuncVkeyByName(modName);  
                                 } else {
                                     // 被修飾キーが指定されている場合は、拡張修飾キーの修飾フラグを取得
                                     modKey = GetModifierKeyByName(modName);
@@ -362,7 +362,7 @@ namespace KanchokuWS.Domain
                                             targetDeckey = DecoderKeys.DECKEY_CTRL_A + name[0] - 'a';
                                         } else if (targetDeckey >= DecoderKeys.FUNC_DECKEY_START && targetDeckey < DecoderKeys.FUNC_DECKEY_END) {
                                             // Ctrl+機能キー(特殊キー)(Ctrl+Tabとか)
-                                            decVkey = VKeyVsDecoderKey.GetVKeyFromDecKey(targetDeckey);
+                                            decVkey = DecoderKeyVsVKey.GetVKeyFromDecKey(targetDeckey);
                                             targetDeckey += DecoderKeys.CTRL_FUNC_DECKEY_START - DecoderKeys.FUNC_DECKEY_START;
                                         }
                                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");

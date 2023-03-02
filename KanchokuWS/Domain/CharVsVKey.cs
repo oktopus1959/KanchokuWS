@@ -487,19 +487,19 @@ namespace KanchokuWS.Domain
         /// <summary>キー文字から、その仮想キーコードを得る</summary>
         public static uint getFaceToVKey(string face)
         {
-            return (VKeyVsDecoderKey.IsJPmode ? faceToVkeyJP : faceToVkeyUS)._safeGet(face);
+            return (DecoderKeyVsVKey.IsJPmode ? faceToVkeyJP : faceToVkeyUS)._safeGet(face);
         }
 
         /// <summary>文字コードから、その仮想キーコードを得る</summary>
         public static uint getCharToVKey(char ch)
         {
-            return (VKeyVsDecoderKey.IsJPmode ?  charToVkeyJP : charToVkeyUS)._safeGet(ch);
+            return (DecoderKeyVsVKey.IsJPmode ?  charToVkeyJP : charToVkeyUS)._safeGet(ch);
         }
 
         /// <summary>仮想キーコードから、その文字コードを得る</summary>
         public static char getVKeyToChar(uint vk)
         {
-            return (VKeyVsDecoderKey.IsJPmode ? vkeyToCharJP : vkeyToCharUS)._safeGet(vk);
+            return (DecoderKeyVsVKey.IsJPmode ? vkeyToCharJP : vkeyToCharUS)._safeGet(vk);
         }
 
     } // class _FaceCharVKey

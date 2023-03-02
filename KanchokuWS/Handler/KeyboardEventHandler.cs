@@ -15,140 +15,55 @@ namespace KanchokuWS.Handler
     {
         private static Logger logger = Logger.GetLogger();
 
-        /// <summary>Ctrlキー変換の有効なウィンドウクラスか</summary>
-        public delegate bool DelegateCtrlConversionEffectiveChecker();
-
-        /// <summary>キーイベント</summary>
-        public delegate bool DelegateOnKeyEvent(int vkey, int extraInfo);
-
-        /// <summary>デコーダ ON/OFF </summary>
-        public delegate void DelegateToggleDecoder();
-
-        /// <summary>デコーダ ON </summary>
-        public delegate void DelegateActivateDecoder();
-
-        /// <summary>デコーダ OFF </summary>
-        public delegate void DelegateDeactivateDecoder();
+        private FrmKanchoku frmKanchoku = null;
 
         /// <summary>デコーダが ON か</summary>
-        public delegate bool DelegateIsDecoderActivated();
-
-        /// <summary>デコーダが第2打鍵以降待ちか </summary>
-        public delegate bool DelegateIsDecoderWaitingFirstStroke();
-
-        /// <summary>SandS状態を一時的なシフト状態にする</summary>
-        public delegate void DelegateSetSandSShiftedOneshot();
-
-        /// <summary>デコーダ機能のディスパッチ</summary>
-        public delegate bool DelegateDecoderFuncDispatcher(int deckey, int normalDeckey, uint mod);
-
-        /// <summary>修飾キー付きvkeyをSendInputする</summary>
-        public delegate bool DelegateSendInputVkeyWithMod(uint mod, uint vkey);
-
-        /// <summary>無条件にデコーダを呼び出す</summary>
-        public delegate bool DelegateInvokeDecoderUnconditionally(int deckey, uint mod);
-
-        /// <summary>ストロークヘルプのシフト面の設定</summary>
-        public delegate void DelegateSetStrokeHelpShiftPlane(int shiftPlane);
-
-        /// <summary>指定キーに対する次打鍵テーブルの作成</summary>
-        public delegate void DelegateSetNextStrokeHelpDecKey(List<int> decKeys);
-
-        /// <summaryストロークログの表示</summary>
-        public delegate void DelegateWriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bFirst, bool bTimer = false);
-
-        ///// <summary>打鍵ヘルプのローテーション<br/>ローテーションを行わない場合は false を返す</summary>
-        //public delegate bool DelegateRotateStrokeHelp();
-
-        ///// <summary>打鍵ヘルプの逆ローテーション<br/>ローテーションを行わない場合は false を返す</summary>
-        //public delegate bool DelegateRotateReverseStrokeHelp();
-
-        ///// <summary>日付出力のローテーション<br/>日付出力を行わない場合は false を返す</summary>
-        //public delegate bool DelegateRotateDateString();
-
-        ///// <summary>日付出力の逆ローテーション<br/>日付出力を行わない場合は false を返す</summary>
-        //public delegate bool DelegateRotateReverseDateString();
-
-        ///// <summary>デコーダキーに変換してデコーダを呼び出す<br/>デコーダ呼び出しを行わない場合は false を返す</summary>
-        //public delegate bool DelegateInvokeDecoder(int decKey);
-
-        ///// <summary>Ctrlキー変換の有効なウィンドウクラスか</summary>
-        //public DelegateCtrlConversionEffectiveChecker CtrlConversionEffectiveChecker { get; set; }
-
-        /// <summary>キーダウン</summary>
-        public DelegateOnKeyEvent OnKeyDown { get; set; }
-
-        /// <summary>キーアップ</summary>
-        public DelegateOnKeyEvent OnKeyUp { get; set; }
-
-        /// <summary>デコーダ ON/OFF </summary>
-        public DelegateToggleDecoder ToggleDecoder { get; set; }
-
-        /// <summary>デコーダ ON </summary>
-        public DelegateActivateDecoder ActivateDecoder { get; set; }
-
-        /// <summary>デコーダ OFF </summary>
-        public DelegateDeactivateDecoder DeactivateDecoder { get; set; }
-
-        /// <summary>デコーダが ON か</summary>
-        public DelegateIsDecoderActivated IsDecoderActivated { get; set; }
-
         private bool isDecoderActivated() {
-            return IsDecoderActivated?.Invoke() ?? false;
+            return frmKanchoku?.IsDecoderActivated() ?? false;
         }
 
         /// <summary>デコーダが第1打鍵待ちか </summary>
-        public DelegateIsDecoderWaitingFirstStroke IsDecoderWaitingFirstStroke { get; set; }
-
         private bool isDecoderWaitingFirstStroke() {
-            return IsDecoderWaitingFirstStroke?.Invoke() == true;
+            return frmKanchoku?.IsDecoderWaitingFirstStroke() == true;
         }
-
-        /// <summary>SandS状態を一時的なシフト状態にする</summary>
-        public DelegateSetSandSShiftedOneshot SetSandSShiftedOneshot { get; set; }
-
-        /// <summary>デコーダ機能のディスパッチ</summary>
-        public DelegateDecoderFuncDispatcher FuncDispatcher { get; set; }
-
-        /// <summary>修飾キー付きvkeyをSendInputする</summary>
-        public DelegateSendInputVkeyWithMod SendInputVkeyWithMod { get; set; }
-
-        /// <summary>無条件にデコーダを呼び出す</summary>
-        public DelegateInvokeDecoderUnconditionally InvokeDecoderUnconditionally { get; set; }
-
-        /// <summary>打鍵ヘルプのシフト面を設定</summary>
-        public DelegateSetStrokeHelpShiftPlane SetStrokeHelpShiftPlane { get; set; }
-
-        /// <summary>指定キーに対する次打鍵テーブルの作成</summary>
-        public DelegateSetNextStrokeHelpDecKey SetNextStrokeHelpDecKey { get; set; }
-
-        /// <summaryストロークログの表示</summary>
-        public DelegateWriteStrokeLog WriteStrokeLog { get; set; }
-
-        ///// <summary>打鍵ヘルプのローテーション<br/>ローテーションを行わない場合は false を返す</summary>
-        //public DelegateRotateStrokeHelp RotateStrokeHelp { get; set; }
-
-        ///// <summary>打鍵ヘルプの逆ローテーション<br/>ローテーションを行わない場合は false を返す</summary>
-        //public DelegateRotateReverseStrokeHelp RotateReverseStrokeHelp { get; set; }
-
-        ///// <summary>日付出力のローテーション<br/>日付出力を行わない場合は false を返す</summary>
-        //public DelegateRotateDateString RotateDateString { get; set; }
-
-        ///// <summary>日付出力の逆ローテーション<br/>日付出力を行わない場合は false を返す</summary>
-        //public DelegateRotateReverseDateString RotateReverseDateString { get; set; }
-
-        ///// <summary>デコーダキーに変換してデコーダを呼び出す<br/>デコーダ呼び出しを行わない場合は false を返す</summary>
-        //public DelegateInvokeDecoder InvokeDecoder { get; set; }
-
-        private bool bHooked = false;
 
         /// <summary>コンストラクタ</summary>
         public KeyboardEventHandler()
         {
-            //clearKeyCodeTable();
         }
 
-        public void InstallKeyboardHook()
+        /// <summary>
+        /// 初期化
+        /// </summary>
+        public void Initialize(FrmKanchoku frm)
+        {
+            logger.InfoH("ENTER");
+
+            frmKanchoku = frm;
+
+            setInvokeHandlerToDeterminer();
+
+            // キーボードイベントのディスパッチ開始
+            installKeyboardHook();
+
+            logger.InfoH("LEAVE");
+        }
+
+        /// <summary> 内部状態の再初期化</summary>
+        public void Reinitialize()
+        {
+            keyInfoManager.Reinitialize();
+        }
+
+        /// <summary>
+        /// キーボードフックされているか
+        /// </summary>
+        private bool bHooked = false;
+
+        /// <summary>
+        /// キーボードフックを設定する
+        /// </summary>
+        private void installKeyboardHook()
         {
             logger.InfoH($"ENTER");
             KeyboardHook.OnKeyDownEvent = onKeyboardDownHandler;
@@ -158,7 +73,10 @@ namespace KanchokuWS.Handler
             logger.InfoH($"LEAVE");
         }
 
-        public void ReleaseKeyboardHook()
+        /// <summary>
+        /// キーボードフックを解放する
+        /// </summary>
+        private void releaseKeyboardHook()
         {
             logger.InfoH($"ENTER");
             if (bHooked) {
@@ -171,7 +89,7 @@ namespace KanchokuWS.Handler
 
         public void Dispose()
         {
-            ReleaseKeyboardHook();
+            releaseKeyboardHook();
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -512,12 +430,6 @@ namespace KanchokuWS.Handler
         /// <summary> 拡張修飾キーの押下状態の管理オブジェクト</summary>
         ExModiferKeyInfoManager keyInfoManager = new ExModiferKeyInfoManager();
 
-        /// <summary> 内部状態の再初期化</summary>
-        public void Reinitialize()
-        {
-            keyInfoManager.Reinitialize();
-        }
-
         /// <summary>
         /// SandS と同じシフト面を使う拡張シフトキーか
         /// </summary>
@@ -608,7 +520,7 @@ namespace KanchokuWS.Handler
                 // KeyRepeat
                 if (!bComboKeyRepeat) {
                     logger.DebugH(() => $"SetNextStrokeHelpDecKey({decKeys._keyString()})");
-                    SetNextStrokeHelpDecKey?.Invoke(decKeys);
+                    frmKanchoku?.SetNextStrokeHelpDecKey(decKeys);
                     bComboKeyRepeat = true;
                 }
             } else {
@@ -625,7 +537,7 @@ namespace KanchokuWS.Handler
             if (prevComboVkey == vkey) {
                 if (bComboKeyRepeat) {
                     bComboKeyRepeat = false;
-                    SetNextStrokeHelpDecKey?.Invoke(null);
+                    frmKanchoku?.SetNextStrokeHelpDecKey(null);
                 }
                 prevComboVkey = -1;
             }
@@ -641,6 +553,7 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool onKeyboardDownHandler(int vkey, int scanCode, int extraInfo)
         {
+            // 一時停止?
             if (Settings.DecoderStopped) return false;
 
             if (Settings.LoggingDecKeyInfo) {
@@ -687,7 +600,7 @@ namespace KanchokuWS.Handler
                             void setShifted()
                             {
                                 if (!keyInfo.Shifted) {
-                                    SetStrokeHelpShiftPlane?.Invoke(ShiftPlane.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, true));   // SanS用のストロークヘルプ指定
+                                    frmKanchoku?.SetStrokeHelpShiftPlane(ShiftPlane.GetShiftPlaneFromShiftModFlag(KeyModifiers.MOD_SPACE, true));   // SanS用のストロークヘルプ指定
                                 }
                                 keyInfo.SetShifted();
                             }
@@ -881,7 +794,7 @@ namespace KanchokuWS.Handler
             if (modEx == 0 && keyInfoManager.isSandSShiftedOneshot()) modEx = KeyModifiers.MOD_SPACE;
 
             //int normalDecKey = VKeyComboRepository.GetDecKeyFromVKey((uint)vkey);
-            int normalDecKey = VKeyVsDecoderKey.GetDecKeyFromVKey((uint)vkey);
+            int normalDecKey = DecoderKeyVsVKey.GetDecKeyFromVKey((uint)vkey);
             int kanchokuCode = VKeyComboRepository.GetKanchokuToggleDecKey(mod, (uint)vkey); // 漢直モードのトグルをやるキーか
 
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ENTER: kanchokuCode={kanchokuCode}, mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
@@ -923,87 +836,6 @@ namespace KanchokuWS.Handler
             // SandS の一時シフト状態をリセットする
             keyInfoManager.resetSandSShiftedOneshot();
 
-            //if (kanchokuCode < 0) {
-            //    bool result = false;
-            //    if (spaceKeyState == ExModKeyState.SHIFTED) {
-            //        // SandS により Shift モードになっている場合は、SendInput で Shift down をエミュレートする
-            //        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS");
-            //        try {
-            //            bHandlerBusy = true;
-            //            result = SendInputVkeyWithMod?.Invoke(mod, (uint)vkey) ?? false;
-            //        } finally {
-            //            bHandlerBusy = false;
-            //        }
-            //    }
-            //    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-A: result={result}");
-            //    return result;
-            //}
-
-            //if (kanchokuCode == DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY && kanchokuCode != VKeyComboRepository.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)) {
-            //    if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE-B: result=False, historySearchCtrlKey={Settings.HistorySearchCtrlKey}, kanchokuCode={VKeyComboRepository.GetCtrlDecKeyOf(Settings.HistorySearchCtrlKey)}");
-            //    return false;
-            //}
-
-            // どうやら KeyboardHook で CallNextHookEx を呼ばないと次のキー入力の処理に移らないみたいだが、
-            // 将来必要になるかもしれないので、下記処理を残しておく
-            // ⇒タイマー処理を入れたらbusyが発生するようになったので復活
-            //if (bHandlerBusy) {
-            //    logger.Warn(() => "bHandlerBusy=True");
-            //    if (vkeyQueue.Count < vkeyQueueMaxSize) {
-            //        vkeyQueue.Enqueue(kanchokuCode);
-            //        if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
-            //    }
-            //    logger.DebugH(() => $"LEAVE-C: result=True");
-            //    return true;
-            //}
-
-            //if (vkeyQueue.Count < vkeyQueueMaxSize) {
-            //    vkeyQueue.Enqueue(kanchokuCode);
-            //} else {
-            //    logger.Warn("vkeyQueue OVERFLOW!!!");
-            //    return true;
-            //}
-            //if (vkeyQueue.Count > 1) {
-            //    logger.Warn(() => "bHandlerBusy");
-            //    return true;
-            //}
-
-            //bool result = true;
-
-            //if (bDecoderOn && mod == 0 &&
-            //    kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END) {
-            //    // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
-            //    var keyList = CombinationKeyStroke.Determiner.Singleton.KeyDown(kanchokuCode, (decKey) => handleComboKeyRepeat(vkey, decKey));
-            //    if (keyList._notEmpty()) {
-            //        foreach (var k in keyList) {
-            //            result = invokeHandler(k, 0);
-            //        }
-            //    }
-            //} else {
-            //    result = invokeHandler(kanchokuCode, mod);
-            //}
-            //while (vkeyQueue.Count > 0) {
-            //    ++keyDownCount;
-            //    logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}, bDecoderOn={bDecoderOn}, mod={mod:x}H, kanchokuCode={kanchokuCode}, keyDownCount={keyDownCount}");
-            //    var determiner = CombinationKeyStroke.Determiner.Singleton;
-            //    var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
-            //    kanchokuCode = vkeyQueue.Peek();
-            //    if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
-            //        currentPool.Enabled && mod == 0 &&
-            //        kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END &&
-            //        ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM ||
-            //        currentPool.GetEntry(kanchokuCode) != null)) {    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする
-            //        // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
-            //        determiner.KeyDown(kanchokuCode, bDecoderOn, keyDownCount, (decKey) => handleComboKeyRepeat(vkey, decKey));
-            //        result = true;
-            //    } else {
-            //        //WriteStrokeLog?.Invoke(kanchokuCode, DateTime.Now, true, true);
-            //        result = invokeHandler(kanchokuCode, mod);
-            //    }
-            //    kanchokuCode = vkeyQueue.Dequeue();
-            //    //if (vkeyQueue.Count > 0) logger.InfoH(() => $"vkeyQueue.Count={vkeyQueue.Count}");
-            //}
-
             bool result = true;
             if (bHandlerBusy) {
                 logger.WarnH("Handler Busy");
@@ -1014,14 +846,17 @@ namespace KanchokuWS.Handler
                 var determiner = CombinationKeyStroke.Determiner.Singleton;
                 var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
                 if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
-                    currentPool.Enabled && mod == 0 &&
-                    kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END &&
-                    ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM ||
-                    currentPool.GetEntry(kanchokuCode) != null)) {    // 特殊キーなら同時打鍵テーブルに使われていなければ直接 invokeする
-                    // KeyDown時処理を呼び出し、同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
+                    mod == 0 &&                                                                         // 修飾子がない
+                    currentPool.Enabled &&                                                              // 同時打鍵定義が有効
+                    kanchokuCode >= 0 && kanchokuCode < DecoderKeys.STROKE_DECKEY_END &&                // 機能コード以外
+                    ((kanchokuCode % DecoderKeys.PLANE_DECKEY_NUM) < DecoderKeys.NORMAL_DECKEY_NUM ||   // 通常キーであるか、
+                     currentPool.GetEntry(kanchokuCode) != null)                                        // 特殊キーであっても同時打鍵テーブルで使われている
+                    ) {
+                    // KeyDown時処理を呼び出す。同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
                     determiner.KeyDown(kanchokuCode, bDecoderOn, keyDownCount, (decKey) => handleComboKeyRepeat(vkey, decKey));
                     result = true;
                 } else {
+                    // 直接ハンドラを呼び出す
                     result = invokeHandler(kanchokuCode, normalDecKey, mod);
                 }
                 bHandlerBusy = false;
@@ -1038,6 +873,7 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool onKeyboardUpHandler(int vkey, int scanCode, int extraInfo)
         {
+            // 一時停止?
             if (Settings.DecoderStopped) return false;
 
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
@@ -1105,7 +941,7 @@ namespace KanchokuWS.Handler
                 if ((uint)vkey == FuncVKeys.SPACE) {
                     // Space離放
                     if (isSandSEnabled()) {
-                        SetStrokeHelpShiftPlane?.Invoke(0);
+                        frmKanchoku?.SetStrokeHelpShiftPlane(0);
                         var dtLimit = prevSpaceUpDt.AddMilliseconds(Settings.SandSEnableSpaceOrRepeatMillisec._geZeroOr(0));
                         var dtNow = DateTime.Now;
                         if (bPrevPressed || bPrevPressedOneshot) prevSpaceUpDt = dtNow;
@@ -1123,7 +959,7 @@ namespace KanchokuWS.Handler
                                 // SandS時のSpaceUpを一時シフト状態にする設定で、前回のキーがSPACEでないか前回のSpace打鍵から指定のms以上経過しており、今回が第1打鍵である
                                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"SandS UP: SetShiftedOneshot");
                                 keyInfo.SetShiftedOneshot();
-                                SetSandSShiftedOneshot?.Invoke();
+                                frmKanchoku?.SetSandSShiftedOneshot();
                                 return true;
                             }
                             // Spaceキーを送出
@@ -1189,7 +1025,7 @@ namespace KanchokuWS.Handler
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE: result={false}");
         }
 
-        public void SetInvokeHandlerToDeterminer()
+        private void setInvokeHandlerToDeterminer()
         {
             CombinationKeyStroke.Determiner.Singleton.KeyProcHandler = (keyList, bUncond) => invokeHandlerForKeyList(keyList, bUncond);
         }
@@ -1235,48 +1071,34 @@ namespace KanchokuWS.Handler
         {
             switch (kanchokuCode) {
                 case DecoderKeys.TOGGLE_DECKEY:
-                    ToggleDecoder?.Invoke();
+                    frmKanchoku?.ToggleDecoder();
                     return true;
                 case DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY:
                     Settings.VirtualKeyboardPosFixedTemporarily = false;
-                    ToggleDecoder?.Invoke();
+                    frmKanchoku?.ToggleDecoder();
                     return true;
                 case DecoderKeys.ACTIVE_DECKEY:
                 case DecoderKeys.ACTIVE2_DECKEY:
-                    ActivateDecoder?.Invoke();
+                    frmKanchoku?.ActivateDecoder();
                     return true;
                 case DecoderKeys.DEACTIVE_DECKEY:
                 case DecoderKeys.DEACTIVE2_DECKEY:
-                    DeactivateDecoder?.Invoke();
+                    frmKanchoku?.DeactivateDecoder();
                     return true;
-                //case DecoderKeys.STROKE_HELP_ROTATION_DECKEY:
-                //    return RotateStrokeHelp?.Invoke() ?? false;
-                //case DecoderKeys.STROKE_HELP_UNROTATION_DECKEY:
-                //    return RotateReverseStrokeHelp?.Invoke() ?? false;
-                //case DecoderKeys.DATE_STRING_ROTATION_DECKEY:
-                //    return RotateDateString?.Invoke() ?? false;
-                //case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
-                //    return RotateReverseDateString?.Invoke() ?? false;
                 case -1:
-                    return FuncDispatcher?.Invoke(DecoderKeys.UNDEFINED_DECKEY, normalDecKey, mod) ?? false;
+                    return frmKanchoku?.FuncDispatcher(DecoderKeys.UNDEFINED_DECKEY, normalDecKey, mod) ?? false;
                 default:
                     if (kanchokuCode >= DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET && kanchokuCode < DecoderKeys.UNCONDITIONAL_DECKEY_END) {
                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}");
-                        return InvokeDecoderUnconditionally?.Invoke(kanchokuCode - DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET, mod) ?? false;
+                        return frmKanchoku?.InvokeDecoderUnconditionally(kanchokuCode - DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET, mod) ?? false;
                     }
                     if (bUnconditional) {
                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}, bUncond={bUnconditional}");
-                        return InvokeDecoderUnconditionally?.Invoke(kanchokuCode, mod) ?? false;
+                        return frmKanchoku?.InvokeDecoderUnconditionally(kanchokuCode, mod) ?? false;
                     }
-                    //if (kanchokuCode == DecoderKeys.STROKE_SPACE_DECKEY) {
-                    //    // ここでSpaceの変換を行う
-                    //    int deckey = VKeyComboRepository.GetDecKeyFromCombo(0, (uint)Keys.Space);
-                    //    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"SPACE: GetDecKeyFromCombo={deckey}");
-                    //    if (deckey >= 0) kanchokuCode = deckey;
-                    //}
                     if (kanchokuCode >= 0) {
                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"FuncDispatcher: kanchokuCode={kanchokuCode}");
-                        return FuncDispatcher?.Invoke(kanchokuCode, normalDecKey, mod) ?? false;
+                        return frmKanchoku?.FuncDispatcher(kanchokuCode, normalDecKey, mod) ?? false;
                     }
                     return false;
             }

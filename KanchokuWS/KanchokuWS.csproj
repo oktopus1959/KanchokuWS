@@ -75,7 +75,7 @@
     <Compile Include="Domain\ShiftPlane.cs" />
     <Compile Include="Domain\VKeyComboRepository.cs" />
     <Compile Include="Domain\KeyModifiers.cs" />
-    <Compile Include="Domain\VKeyVsDecoderKey.cs" />
+    <Compile Include="Domain\DecoderKeyVsVKey.cs" />
     <Compile Include="Gui\DlgSettings_Develop.cs">
       <SubType>Form</SubType>
     </Compile>

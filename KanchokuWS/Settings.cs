@@ -867,7 +867,7 @@ namespace KanchokuWS
         {
             var keyseq = GetString(attr);
             var origKeySeq = keyseq;
-            int idx = VKeyVsDecoderKey.GetFuncKeyIndexByName(keyseq);
+            int idx = DecoderKeyVsVKey.GetFuncKeyIndexByName(keyseq);
             if (idx >= 0) {
                 // "nfer" や "xfer" などの名前も使用可能とする
                 keyseq = $"X{idx}";
@@ -1264,7 +1264,7 @@ namespace KanchokuWS
             DecoderSettings["logLevel"] = LogLevel.ToString();
             DecoderSettings["rootDir"] = KanchokuIni.Singleton.KanchokuDir;
             DecoderSettings["firstUse"] = $"{!UserKanchokuIni.Singleton.IsIniFileExist}";
-            DecoderSettings["isJPmode"] = $"{Domain.VKeyVsDecoderKey.IsJPmode}";
+            DecoderSettings["isJPmode"] = $"{Domain.DecoderKeyVsVKey.IsJPmode}";
             BushuAssocFile = addDecoderSetting("bushuAssocFile", "kwassoc.txt");
             BushuFile = addDecoderSetting("bushuFile", "bushu", "kwbushu.rev");
             AutoBushuFile = addDecoderSetting("autoBushuFile", "bushuAuto", "kwbushu.aut");

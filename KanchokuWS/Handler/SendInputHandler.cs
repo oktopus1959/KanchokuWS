@@ -555,7 +555,7 @@ namespace KanchokuWS.Handler
             }
             if (sb.Length > 0) {
                 string name = sb.ToString();
-                uint vkey = VKeyVsDecoderKey.GetFuncVkeyByName(name);
+                uint vkey = DecoderKeyVsVKey.GetFuncVkeyByName(name);
                 //logger.DebugH(() => $"vkey={vkey:x} by FuncKey");
                 if (vkey == 0) vkey = AlphabetVKeys.GetAlphabetVkeyByName(name);
                 //logger.DebugH(() => $"vkey={vkey:x} by Alphabet");

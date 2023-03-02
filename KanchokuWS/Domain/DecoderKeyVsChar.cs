@@ -46,11 +46,11 @@ namespace KanchokuWS.Domain
         };
 
         private static char[] QwertyChars() {
-            return (VKeyVsDecoderKey.IsJPmode ? QwertyCharsJP : QwertyCharsUS);
+            return (DecoderKeyVsVKey.IsJPmode ? QwertyCharsJP : QwertyCharsUS);
         }
 
         private static char[] QwertyShiftedChars() {
-            return (VKeyVsDecoderKey.IsJPmode ? QwertyShiftedCharsJP : QwertyShiftedCharsUS);
+            return (DecoderKeyVsVKey.IsJPmode ? QwertyShiftedCharsJP : QwertyShiftedCharsUS);
         }
 
         private static List<char> normalChars = null;
