@@ -1369,7 +1369,7 @@ namespace KanchokuWS.TableParser
         {
             void addExtModAsSingleKey(string keyName)
             {
-                int dk = DecoderKeyVsVKey.GetFuncDeckeyByName(keyName);
+                int dk = DecoderKeyVsVKey.GetFuncDecKeyByName(keyName);
                 if (dk >= 0) {
                     if (RootTableNode.GetNthSubNode(dk) == null &&
                         RootTableNode.GetNthSubNode(dk + comboDeckeyStart) != null) {

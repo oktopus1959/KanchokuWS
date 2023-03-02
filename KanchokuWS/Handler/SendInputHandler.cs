@@ -847,7 +847,7 @@ namespace KanchokuWS.Handler
                         logger.DebugH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
                         Helper.WaitMilliSeconds(waitMs);
                     }
-                    SendVKeyCombo(VKeyComboRepository.CtrlV_VKeyCombo.modifier, VKeyComboRepository.CtrlV_VKeyCombo.vkey, 1);
+                    SendVKeyCombo(KeyModifiers.MOD_CONTROL, (uint)Keys.V, 1);
                 }
 
                 LastOutputDt = DateTime.Now;

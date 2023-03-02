@@ -86,7 +86,7 @@ namespace KanchokuWS
         public void WriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bFirst, bool bTimer = false)
         {
             if (IsDecoderActive && dlgStrokeLog != null) {
-                char faceCh = bTimer && decKey < 0 ? '\0' : DecoderKeyVsChar.GetFaceCharFromDecKey(decKey)._gtZeroOr('?');
+                char faceCh = bTimer && decKey < 0 ? '\0' : DecoderKeyVsChar.GetArrangedFaceCharFromDecKey(decKey)._gtZeroOr('?');
                 if (bDown && faceCh >= 'a' && faceCh <= 'z') faceCh = (char)(faceCh - 0x20);
                 string msg = $"{(bTimer ? "*Up " : bDown ? "Down" : "Up  ")} | " + (faceCh != '\0' ? $"'{faceCh}'" : "N/A");
                 logger.DebugH(() => $"WriteStrokeLog: {msg}");
@@ -1084,7 +1084,7 @@ namespace KanchokuWS
         {
             try {
                 // Ctrl-C を送る
-                SendInputHandler.Singleton.SendVKeyCombo(VKeyComboRepository.CtrlC_VKeyCombo.modifier, VKeyComboRepository.CtrlC_VKeyCombo.vkey, 1);
+                SendInputHandler.Singleton.SendVKeyCombo(KeyModifiers.MOD_CONTROL, (uint)Keys.C, 1);
                 Helper.WaitMilliSeconds(100);
                 if (Clipboard.ContainsText()) {
                     //文字列データがあるときはこれを取得する
@@ -1949,11 +1949,11 @@ namespace KanchokuWS
                         }
                     }
                 }
-                var combo = VKeyComboRepository.GetVKeyComboFromDecKey(deckey);
+                var combo = VKeyComboRepository.GetKeyComboFromDecKey(deckey);
                 if (combo != null) {
                     if (Settings.LoggingDecKeyInfo) {
                         logger.InfoH($"SEND: combo.modifier={combo.Value.modifier:x}H({combo.Value.modifier}), "
-                            + $"combo.vkey={combo.Value.vkey:x}H({combo.Value.vkey}), "
+                            + $"combo.normalDecKey={combo.Value.normalDecKey:x}H({combo.Value.normalDecKey}), "
                             + $"ctrl={(combo.Value.modifier & KeyModifiers.MOD_CONTROL) != 0}, "
                             + $"mod={mod:x}H({mod})");
                     }
@@ -1962,7 +1962,7 @@ namespace KanchokuWS
                     //} else {
                     //    SendInputHandler.Singleton.SendVKeyCombo(combo.Value, 1);
                     //}
-                    SendInputHandler.Singleton.SendVKeyCombo((combo.Value.modifier != 0 ? combo.Value.modifier : mod), combo.Value.vkey, 1);
+                    SendInputHandler.Singleton.SendVKeyCombo((combo.Value.modifier != 0 ? combo.Value.modifier : mod), DecoderKeyVsVKey.GetVKeyFromDecKey(combo.Value.normalDecKey), 1);
                     if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: TRUE");
                     return true;
                 } else {

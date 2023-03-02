@@ -515,13 +515,13 @@ namespace KanchokuWS.Domain
             return _FaceCharVKey.getFaceToVKey(face);
         }
 
-        /// <summary>JP/US モードに対応して、文字コードからその仮想キーコードを得る</summary>
+        /// <summary>JP/US モードに対応して、文字コードからその仮想キーコードを得る<br/>対応するものがなければ 0 を返す</summary>
         public static uint GetVKeyFromFaceChar(char face)
         {
             return _FaceCharVKey.getCharToVKey(face);
         }
 
-        /// <summary>JP/US モードに対応して、仮想キーコードからその文字コードを得る</summary>
+        /// <summary>JP/US モードに対応して、仮想キーコードからその文字コードを得る<br/>対応するものがなければ '\0' を返す</summary>
         public static char GetFaceCharFromVKey(uint vkey)
         {
             return _FaceCharVKey.getVKeyToChar(vkey);

@@ -537,6 +537,18 @@ namespace Utils
             return array._notEmpty() ? string.Join(delim, array) : "";
         }
 
+        public static int _findIndex<T>(this T[] array, T val) where T: IComparable
+        {
+            if (array != null)
+            {
+                for (int idx = 0; idx < array.Length; ++idx)
+                {
+                    if (array[idx].CompareTo(val) == 0) return idx;
+                }
+            }
+            return -1;
+        }
+
         public static int _findIndex<T>(this T[] array, Func<T, bool> predicate)
         {
             if (array != null)

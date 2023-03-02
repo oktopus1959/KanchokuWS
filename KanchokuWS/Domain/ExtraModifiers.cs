@@ -13,7 +13,7 @@ namespace KanchokuWS.Domain
         private static Logger logger = Logger.GetLogger();
 
         /// <summary> デコーダ機能に割り当てられた拡張修飾キー(space, Caps, alnum, nfer, xfer, Rshift)のVkeyを集めた集合 </summary>
-        private static HashSet<uint> decoderFuncAssignedExModKeys = new HashSet<uint>();
+        private static HashSet<int> decoderFuncAssignedExModKeys = new HashSet<int>();
 
         /// <summary>無効化された拡張修飾キー</summary>
         private static HashSet<string> disabledExtKeys;
@@ -23,28 +23,27 @@ namespace KanchokuWS.Domain
         public static void Initialize()
         {
             logger.InfoH("CALLED");
-            decoderFuncAssignedExModKeys = new HashSet<uint>();
+            decoderFuncAssignedExModKeys = new HashSet<int>();
             disabledExtKeys = new HashSet<string>();
             disabledExtKeyLines.Clear();
         }
 
         /// <summary> 拡張修飾キー(space, Caps, alnum, nfer, xfer, Rshift)をデコーダ機能に割り当てられたキーの集合に追加 </summary>
-        public static void AddExModVkeyAssignedForDecoderFuncByVkey(uint vkey)
+        public static void AddExModVkeyAssignedForDecoderFuncByVkey(int deckey)
         {
-            decoderFuncAssignedExModKeys.Add(vkey);
+            decoderFuncAssignedExModKeys.Add(deckey);
         }
 
         /// <summary> インデックスで指定される拡張修飾キー(space, Caps, alnum, nfer, xfer, Rshift)をデコーダ機能に割り当てられたキーの集合に追加 </summary>
         public static void AddExModVkeyAssignedForDecoderFuncByIndex(int idx)
         {
-            var vkey = DecoderKeyVsVKey.GetFuncVKeyByIndex(idx);
-            if (vkey > 0) decoderFuncAssignedExModKeys.Add(vkey);
+            if (idx > 0) decoderFuncAssignedExModKeys.Add(DecoderKeys.FUNC_DECKEY_START + idx);
         }
 
         /// <summary> 拡張修飾キー(space, Caps, alnum, nfer, xfer, Rshift)がデコーダ機能に割り当てられているか </summary>
-        public static bool IsExModKeyIndexAssignedForDecoderFunc(uint vkey)
+        public static bool IsExModKeyIndexAssignedForDecoderFunc(int exModeDeckey)
         {
-            return decoderFuncAssignedExModKeys.Contains(vkey);
+            return decoderFuncAssignedExModKeys.Contains(exModeDeckey);
         }
 
         public static void AddDisabledExtKey(string name)
@@ -311,15 +310,16 @@ namespace KanchokuWS.Domain
 
                                 uint modKey = 0;
                                 int modDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modName);
-                                int modifieeDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modifiee)._gtZeroOr(modifiee._parseInt(-1));
+                                int modifieeDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modifiee)._geZeroOr(modifiee._parseInt(-1));
                                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modName={modName}, modifiee={modifiee}, target={target}, modDeckey={modDeckey}, modifieeDeckey={modifieeDeckey})");
 
-                                // 被修飾キーの仮想キーコード: 特殊キー名(esc, tab, ins, ...)または漢直コード(00～49)から、それに該当する仮想キーコードを得る
-                                uint vkey = DecoderKeyVsVKey.GetVKeyFromDecKey(modifieeDeckey);
-                                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"vkey={vkey}");
-                                if (vkey == 0) {
+                                //// 被修飾キーの仮想キーコード: 特殊キー名(esc, tab, ins, ...)または漢直コード(00～49)から、それに該当する仮想キーコードを得る
+                                //uint vkey = DecoderKeyVsVKey.GetVKeyFromDecKey(modifieeDeckey);
+                                //if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"vkey={vkey}");
+                                if (modifieeDeckey < 0) {
                                     // 被修飾キーが指定されていない場合は、拡張修飾キーまたは特殊キーの単打とみなす
-                                    vkey = DecoderKeyVsVKey.GetFuncVkeyByName(modName);  
+                                    //vkey = DecoderKeyVsVKey.GetFuncVkeyByName(modName);  
+                                    modifieeDeckey = modDeckey;
                                 } else {
                                     // 被修飾キーが指定されている場合は、拡張修飾キーの修飾フラグを取得
                                     modKey = GetModifierKeyByName(modName);
@@ -355,14 +355,14 @@ namespace KanchokuWS.Domain
                                     targetDeckey = specialDecKeysFromName._safeGet(name);
                                     if (ctrl) {
                                         // Ctrlキーの登録
-                                        uint decVkey = 0;
+                                        int decVkey = 0;
                                         if (name._safeLength() == 1 && name._ge("a") && name._le("z")) {
                                             // Ctrl-A～Ctrl-Z
-                                            decVkey = CharVsVKey.GetVKeyFromFaceStr(name._toUpper());
+                                            decVkey = DecoderKeyVsChar.GetArrangedDecKeyFromFaceChar(name._toUpper()._getFirst());
                                             targetDeckey = DecoderKeys.DECKEY_CTRL_A + name[0] - 'a';
                                         } else if (targetDeckey >= DecoderKeys.FUNC_DECKEY_START && targetDeckey < DecoderKeys.FUNC_DECKEY_END) {
                                             // Ctrl+機能キー(特殊キー)(Ctrl+Tabとか)
-                                            decVkey = DecoderKeyVsVKey.GetVKeyFromDecKey(targetDeckey);
+                                            decVkey = targetDeckey;
                                             targetDeckey += DecoderKeys.CTRL_FUNC_DECKEY_START - DecoderKeys.FUNC_DECKEY_START;
                                         }
                                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
@@ -386,21 +386,21 @@ namespace KanchokuWS.Domain
                                     }
                                 }
 
-                                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modKey={modKey:x}H, vkey={vkey:x}H, targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, name={name}");
+                                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modKey={modKey:x}H, modifieeDeckey={modifieeDeckey:x}H, targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, name={name}");
 
-                                if (vkey > 0 && targetDeckey > 0) {
+                                if (modifieeDeckey >= 0 && targetDeckey > 0) {
                                     if (modKey == 0) {
                                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Single Hit");
                                         // キー単打の場合は、キーの登録だけで、拡張シフトB面の割り当てはやらない
-                                        VKeyComboRepository.AddDecKeyAndCombo(targetDeckey, 0, vkey, true);  // targetDeckey から vkey(拡張修飾キー)への逆マップは不要
-                                        AddExModVkeyAssignedForDecoderFuncByVkey(vkey);
+                                        VKeyComboRepository.AddDecKeyAndCombo(targetDeckey, 0, modifieeDeckey, true);  // targetDeckey から modifieeDeckey(拡張修飾キー)への逆マップは不要
+                                        AddExModVkeyAssignedForDecoderFuncByVkey(modifieeDeckey);
                                         SingleHitDefs[modDeckey] = target;
                                     } else {
                                         if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Extra Modifier");
                                         // 拡張修飾キー設定
                                         modCount[modKey] = modCount._safeGet(modKey) + 1;
                                         ExtModifierKeyDefs._safeGetOrNewInsert(modKey)[modifieeDeckey] = target;
-                                        VKeyComboRepository.AddModConvertedDecKeyFromCombo(targetDeckey, modKey, vkey);
+                                        VKeyComboRepository.AddModConvertedDecKeyFromCombo(targetDeckey, modKey, modifieeDeckey);
                                     }
                                     continue;
                                 }

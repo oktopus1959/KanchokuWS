@@ -43,6 +43,8 @@ namespace KanchokuWS.Handler
 
             setInvokeHandlerToDeterminer();
 
+            keyInfoManager = new ExModiferKeyInfoManager();
+
             // キーボードイベントのディスパッチ開始
             installKeyboardHook();
 
@@ -165,6 +167,7 @@ namespace KanchokuWS.Handler
             }
 
             public uint Vkey = 0;
+            public int Deckey = 0;
             public uint ModFlag = 0;
             public ExModKeyState KeyState = ExModKeyState.RELEASED;
 
@@ -219,8 +222,8 @@ namespace KanchokuWS.Handler
             /// <summary> シフト単打が有効か</summary>
             public bool IsSingleShiftHitEffecive(bool bCtrl)
             {
-                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:Vkey={Vkey}, bCtrl={bCtrl}, ActiveKey={Settings.ActiveKey}, ActiveKeyWithCtrl={Settings.ActiveKeyWithCtrl}, IsExModKeyIndexAssignedForDecoderFunc={ExtraModifiers.IsExModKeyIndexAssignedForDecoderFunc(Vkey)}");
-                bool bEffective = (Settings.ActiveKey == Vkey && (!bCtrl || Settings.ActiveKeyWithCtrl != Vkey)) || ExtraModifiers.IsExModKeyIndexAssignedForDecoderFunc(Vkey);
+                if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:Vkey={Vkey}, Deckey={Deckey}, bCtrl={bCtrl}, ActiveKey={Settings.ActiveKey}, ActiveKeyWithCtrl={Settings.ActiveKeyWithCtrl}, IsExModKeyIndexAssignedForDecoderFunc={ExtraModifiers.IsExModKeyIndexAssignedForDecoderFunc(Deckey)}");
+                bool bEffective = (Settings.ActiveKey == Vkey && (!bCtrl || Settings.ActiveKeyWithCtrl != Vkey)) || ExtraModifiers.IsExModKeyIndexAssignedForDecoderFunc(Deckey);
                 if (Settings.LoggingDecKeyInfo) logger.DebugH($"{Name}:IsSingleShiftHitEffecive={bEffective}");
                 return bEffective;
             }
@@ -265,22 +268,22 @@ namespace KanchokuWS.Handler
         class ExModiferKeyInfoManager
         {
             /// <summary> スペースキーの押下状態</summary>
-            private ExModiferKeyInfo spaceKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.SPACE, ModFlag = KeyModifiers.MOD_SPACE, Name = "SandS" };
+            private ExModiferKeyInfo spaceKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.SPACE, Deckey = DecoderKeys.STROKE_SPACE_DECKEY, ModFlag = KeyModifiers.MOD_SPACE, Name = "SandS" };
 
             /// <summary> CapsLockキーの押下状態</summary>
-            private ExModiferKeyInfo capsKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.CAPSLOCK, ModFlag = KeyModifiers.MOD_CAPS, Name = "CapsLock" };
+            private ExModiferKeyInfo capsKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.CAPSLOCK, Deckey = DecoderKeys.CAPS_DECKEY, ModFlag = KeyModifiers.MOD_CAPS, Name = "CapsLock" };
 
             /// <summary> 英数キーの押下状態</summary>
-            private ExModiferKeyInfo alnumKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.EISU, ModFlag = KeyModifiers.MOD_ALNUM, Name = "AlpahNum" };
+            private ExModiferKeyInfo alnumKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.EISU, Deckey = DecoderKeys.ALNUM_DECKEY, ModFlag = KeyModifiers.MOD_ALNUM, Name = "AlpahNum" };
 
             /// <summary> 無変換キーの押下状態</summary>
-            private ExModiferKeyInfo nferKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.MUHENKAN, ModFlag = KeyModifiers.MOD_NFER, Name = "Nfer" };
+            private ExModiferKeyInfo nferKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.MUHENKAN, Deckey = DecoderKeys.NFER_DECKEY, ModFlag = KeyModifiers.MOD_NFER, Name = "Nfer" };
 
             /// <summary> 変換キーの押下状態</summary>
-            private ExModiferKeyInfo xferKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.HENKAN, ModFlag = KeyModifiers.MOD_XFER, Name = "Xfer" };
+            private ExModiferKeyInfo xferKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.HENKAN, Deckey = DecoderKeys.XFER_DECKEY, ModFlag = KeyModifiers.MOD_XFER, Name = "Xfer" };
 
             /// <summary> RShiftキーの押下状態</summary>
-            private ExModiferKeyInfo rshiftKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.RSHIFT, ModFlag = KeyModifiers.MOD_RSHIFT, Name = "RShift" };
+            private ExModiferKeyInfo rshiftKeyInfo = new ExModiferKeyInfo() { Vkey = FuncVKeys.RSHIFT, Deckey = DecoderKeys.RIGHT_SHIFT_DECKEY, ModFlag = KeyModifiers.MOD_RSHIFT, Name = "RShift" };
 
             /// <summary> その他キーの押下状態</summary>
             private ExModiferKeyInfo otherKeyState = new ExModiferKeyInfo() { Name = "Other" };
@@ -300,24 +303,32 @@ namespace KanchokuWS.Handler
             /// <summary> 拡張修飾キーからキー状態を得る</summary>
             public ExModiferKeyInfo getModiferKeyInfoByVkey(uint vkey)
             {
+                if (Settings.LoggingDecKeyInfo) { logger.DebugH($"CALLED: vkey={vkey}, nfer.Vkey={nferKeyInfo.Vkey}, xfer.Vkey={xferKeyInfo.Vkey}"); }
+
                 if (vkey == capsKeyInfo.Vkey) return capsKeyInfo;
                 if (vkey == alnumKeyInfo.Vkey) return alnumKeyInfo;
                 if (vkey == nferKeyInfo.Vkey) return nferKeyInfo;
                 if (vkey == xferKeyInfo.Vkey) return xferKeyInfo;
                 if (vkey == rshiftKeyInfo.Vkey) return rshiftKeyInfo;
                 if (vkey == spaceKeyInfo.Vkey) return spaceKeyInfo;
+
+                if (Settings.LoggingDecKeyInfo) { logger.DebugH($"LEAVE: no result"); }
                 return null;
             }
 
             /// <summary> 拡張修飾キーの修飾フラグを得る</summary>
             public static uint getModFlagForExModVkey(uint vkey)
             {
+                if (Settings.LoggingDecKeyInfo) { logger.DebugH($"CALLED: vkey={vkey}, MUHENKAN={FuncVKeys.MUHENKAN}, HENKAN={FuncVKeys.HENKAN}"); }
+
                 if (vkey == FuncVKeys.CAPSLOCK) return KeyModifiers.MOD_CAPS;
                 if (vkey == FuncVKeys.EISU) return KeyModifiers.MOD_ALNUM;
                 if (vkey == FuncVKeys.MUHENKAN) return KeyModifiers.MOD_NFER;
                 if (vkey == FuncVKeys.HENKAN) return KeyModifiers.MOD_XFER;
                 if (vkey == FuncVKeys.RSHIFT) return KeyModifiers.MOD_RSHIFT;
                 if (vkey == FuncVKeys.SPACE) return KeyModifiers.MOD_SPACE;
+
+                if (Settings.LoggingDecKeyInfo) { logger.DebugH($"LEAVE: no result"); }
                 return 0;
             }
 
@@ -428,7 +439,7 @@ namespace KanchokuWS.Handler
         }
 
         /// <summary> 拡張修飾キーの押下状態の管理オブジェクト</summary>
-        ExModiferKeyInfoManager keyInfoManager = new ExModiferKeyInfoManager();
+        ExModiferKeyInfoManager keyInfoManager = null;
 
         /// <summary>
         /// SandS と同じシフト面を使う拡張シフトキーか
@@ -795,13 +806,15 @@ namespace KanchokuWS.Handler
 
             //int normalDecKey = VKeyComboRepository.GetDecKeyFromVKey((uint)vkey);
             int normalDecKey = DecoderKeyVsVKey.GetDecKeyFromVKey((uint)vkey);
-            int kanchokuCode = VKeyComboRepository.GetKanchokuToggleDecKey(mod, (uint)vkey); // 漢直モードのトグルをやるキーか
+            int kanchokuCode = VKeyComboRepository.GetKanchokuToggleDecKey(mod, normalDecKey); // 漢直モードのトグルをやるキーか
 
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ENTER: kanchokuCode={kanchokuCode}, mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
+            if (Settings.LoggingDecKeyInfo) {
+                logger.InfoH(() => $"ENTER: kanchokuCode={kanchokuCode}, normalDecKey={normalDecKey}, mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
+            }
 
             if (kanchokuCode < 0 && modEx != 0 && !ctrl && !shift) {
                 // 拡張シフトが有効なのは、Ctrlキーが押されておらず、Shiftも押されていないか、Shift+SpaceをSandSとして扱わない場合とする
-                kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(modEx, (uint)vkey);
+                kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(modEx, normalDecKey);
                 if (kanchokuCode < 0) {
                     // 拡張シフト面のコードを得る
                     kanchokuCode = normalDecKey;
@@ -817,17 +830,17 @@ namespace KanchokuWS.Handler
             if (kanchokuCode < 0) {
                 if (leftCtrl) {
                     // mod-conversion.txt で lctrl に定義されているものを検索
-                    kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_LCTRL, (uint)vkey);
+                    kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_LCTRL, normalDecKey);
                 }
                 if (kanchokuCode < 0 && rightCtrl) {
                     // mod-conversion.txt で rctrl に定義されているものを検索
-                    kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_RCTRL, (uint)vkey);
+                    kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_RCTRL, normalDecKey);
                 }
                 if (kanchokuCode < 0) {
                     kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || shift
-                        ? VKeyComboRepository.GetModConvertedDecKeyFromCombo(mod, (uint)vkey)
+                        ? VKeyComboRepository.GetModConvertedDecKeyFromCombo(mod, normalDecKey)
                         // : vkey == (int)Keys.Space ? DecoderKeys.STROKE_SPACE_DECKEY     // キーDown時のスペースは、いったんそのまま扱う(Up時に変換する)
-                        : VKeyComboRepository.GetDecKeyFromCombo(mod, (uint)vkey);
+                        : VKeyComboRepository.GetDecKeyFromCombo(mod, normalDecKey);
                 }
                 if (kanchokuCode >= 0) mod = 0;     // 何かのコードに変換されたら、 Ctrl や Shift の修飾は無かったことにしておく
                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"PATH-C: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
@@ -892,8 +905,9 @@ namespace KanchokuWS.Handler
                 // とりあえず、やっつけコード
                 void checkAndInvoke(bool bShifted)
                 {
-                    if (!bShifted && /*bDecoderOn &&*/ ExtraModifiers.IsExModKeyIndexAssignedForDecoderFunc((uint)vkey)) {
-                        int kanchokuCode = VKeyComboRepository.GetDecKeyFromCombo(0, (uint)vkey);
+                    int normalDecKey = DecoderKeyVsVKey.GetDecKeyFromVKey((uint)vkey);
+                    if (!bShifted && /*bDecoderOn &&*/ ExtraModifiers.IsExModKeyIndexAssignedForDecoderFunc(normalDecKey)) {
+                        int kanchokuCode = VKeyComboRepository.GetDecKeyFromCombo(0, normalDecKey);
                         if (kanchokuCode >= 0) {
                             invokeHandler(kanchokuCode, -1, 0);
                         }
@@ -1017,7 +1031,8 @@ namespace KanchokuWS.Handler
             var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
             if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
                 currentPool.Enabled &&  !leftCtrl && !rightCtrl && modFlag == 0) {
-                int deckey = /* vkey == (int)Keys.Space ? DecoderKeys.STROKE_SPACE_DECKEY :*/ VKeyComboRepository.GetDecKeyFromCombo(0, (uint)vkey); /* ここではまだ、Spaceはいったん文字として扱う */
+                //int deckey = /* vkey == (int)Keys.Space ? DecoderKeys.STROKE_SPACE_DECKEY :*/ VKeyComboRepository.GetDecKeyFromCombo(0, normalDecKey); /* ここではまだ、Spaceはいったん文字として扱う */
+                int deckey = DecoderKeyVsVKey.GetDecKeyFromVKey((uint)vkey);
                 if (deckey >= 0 && deckey < DecoderKeys.STROKE_DECKEY_END) {
                     CombinationKeyStroke.Determiner.Singleton.KeyUp(deckey, bDecoderOn);
                 }

@@ -168,7 +168,7 @@ namespace KanchokuWS.Domain
         /// <summary>
         /// DECKEY から文字コードを得る。デフォルトのJP/US配列の場合でも文字が返る。打鍵ログ出力で使用される
         /// </summary>
-        public static char GetFaceCharFromDecKey(int decKey)
+        public static char GetArrangedFaceCharFromDecKey(int decKey)
         {
             //return GetArrangedCharFromDecKey(decKey)._gtZeroOr(CharVsVKey.GetFaceCharFromVKey(VKeyComboRepository.GetVKeyComboFromDecKey(decKey)?.vkey ?? 0));
             var ch = GetArrangedCharFromDecKey(decKey);
@@ -183,6 +183,45 @@ namespace KanchokuWS.Domain
                 }
             }
             return ch;
+        }
+
+        /// <summary>
+        /// 文字コードから、それに対応する生のDecKeyを得る<br/>対応するものがなければ -1 を返す
+        /// </summary>
+        /// <param name="face"></param>
+        /// <returns></returns>
+        public static int GetRawDecKeyFromFaceChar(char face)
+        {
+            // dvorak など、生であっても noramlChars が notEmpty() なものがあるので、下のような回り道が必要
+            return DecoderKeyVsVKey.GetDecKeyFromVKey(CharVsVKey.GetVKeyFromFaceChar(face));
+        }
+
+        /// <summary>
+        /// 文字コードから、それに対応する、配列変換されたDecKeyを得る<br/>対応するものがなければ -1 を返す
+        /// </summary>
+        /// <param name="face"></param>
+        /// <returns></returns>
+        public static int GetArrangedDecKeyFromFaceChar(char face)
+        {
+            if (Settings.ShortcutKeyConversionEnabled && normalChars._notEmpty()) {
+                return normalChars.FindIndex(ch => ch == face);
+            } else {
+                return QwertyChars()._findIndex(face);
+            }
+        }
+
+        /// <summary>
+        /// キー名から、それに対応する、配列変換されたDecKeyを得る<br/>対応するものがなければ -1 を返す
+        /// </summary>
+        /// <param name="face"></param>
+        /// <returns></returns>
+        public static int GetArrangedDecKeyFromFaceStr(string keyFace)
+        {
+            int deckey = DecoderKeyVsVKey.GetDecKeyFromFaceStr(keyFace);
+            if (deckey >= 0 && deckey < DecoderKeys.NORMAL_DECKEY_NUM && Settings.ShortcutKeyConversionEnabled && normalChars._notEmpty()) {
+                deckey = GetArrangedDecKeyFromFaceChar(QwertyChars()._getNth(deckey));
+            }
+            return deckey;
         }
 
     }

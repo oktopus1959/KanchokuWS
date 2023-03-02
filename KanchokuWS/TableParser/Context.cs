@@ -85,18 +85,18 @@ namespace KanchokuWS.TableParser
             placeHolders["at"] = 44;
             placeHolders[":"] = 46;
             placeHolders["cl"] = 46;
-            placeHolders["ej"] = DecoderKeyVsVKey.GetFuncDeckeyByName("zenkaku");
-            placeHolders["hz"] = DecoderKeyVsVKey.GetFuncDeckeyByName("zenkaku");
-            placeHolders["tab"] = DecoderKeyVsVKey.GetFuncDeckeyByName("tab");
-            placeHolders["caps"] = DecoderKeyVsVKey.GetFuncDeckeyByName("caps");
-            placeHolders["capslock"] = DecoderKeyVsVKey.GetFuncDeckeyByName("caps");
-            placeHolders["alnum"] = DecoderKeyVsVKey.GetFuncDeckeyByName("alnum");
-            placeHolders["eisu"] = DecoderKeyVsVKey.GetFuncDeckeyByName("alnum");
-            placeHolders["nfer"] = DecoderKeyVsVKey.GetFuncDeckeyByName("nfer");
-            placeHolders["muhenkan"] = DecoderKeyVsVKey.GetFuncDeckeyByName("nfer");
-            placeHolders["xfer"] = DecoderKeyVsVKey.GetFuncDeckeyByName("xfer");
-            placeHolders["henkan"] = DecoderKeyVsVKey.GetFuncDeckeyByName("xfer");
-            placeHolders["kana"] = DecoderKeyVsVKey.GetFuncDeckeyByName("kana");
+            placeHolders["ej"] = DecoderKeyVsVKey.GetFuncDecKeyByName("zenkaku");
+            placeHolders["hz"] = DecoderKeyVsVKey.GetFuncDecKeyByName("zenkaku");
+            placeHolders["tab"] = DecoderKeyVsVKey.GetFuncDecKeyByName("tab");
+            placeHolders["caps"] = DecoderKeyVsVKey.GetFuncDecKeyByName("caps");
+            placeHolders["capslock"] = DecoderKeyVsVKey.GetFuncDecKeyByName("caps");
+            placeHolders["alnum"] = DecoderKeyVsVKey.GetFuncDecKeyByName("alnum");
+            placeHolders["eisu"] = DecoderKeyVsVKey.GetFuncDecKeyByName("alnum");
+            placeHolders["nfer"] = DecoderKeyVsVKey.GetFuncDecKeyByName("nfer");
+            placeHolders["muhenkan"] = DecoderKeyVsVKey.GetFuncDecKeyByName("nfer");
+            placeHolders["xfer"] = DecoderKeyVsVKey.GetFuncDecKeyByName("xfer");
+            placeHolders["henkan"] = DecoderKeyVsVKey.GetFuncDecKeyByName("xfer");
+            placeHolders["kana"] = DecoderKeyVsVKey.GetFuncDecKeyByName("kana");
         }
     }
 

@@ -21,11 +21,11 @@ namespace KanchokuWS.Domain
         public const uint SPACE = (uint)Keys.Space;
 
         // 以下は JP/US によってキーコードが変わるor無効になる可能性あり
-        public static uint CAPSLOCK => DecoderKeyVsVKey.GetFuncVKeyByIndex(3);
-        public static uint EISU => DecoderKeyVsVKey.GetFuncVKeyByIndex(4);
-        public static uint MUHENKAN => DecoderKeyVsVKey.GetFuncVKeyByIndex(5);
-        public static uint HENKAN => DecoderKeyVsVKey.GetFuncVKeyByIndex(6);
-        public static uint KANA => DecoderKeyVsVKey.GetFuncVKeyByIndex(7);
+        public static uint CAPSLOCK => DecoderKeyVsVKey.GetFuncVKeyByDecKey(DecoderKeys.CAPS_DECKEY);
+        public static uint EISU => DecoderKeyVsVKey.GetFuncVKeyByDecKey(DecoderKeys.ALNUM_DECKEY);
+        public static uint MUHENKAN => DecoderKeyVsVKey.GetFuncVKeyByDecKey(DecoderKeys.NFER_DECKEY);
+        public static uint HENKAN => DecoderKeyVsVKey.GetFuncVKeyByDecKey(DecoderKeys.XFER_DECKEY);
+        public static uint KANA => DecoderKeyVsVKey.GetFuncVKeyByDecKey(DecoderKeys.KANA_DECKEY);
     }
 
     static class AlphabetVKeys
@@ -154,68 +154,88 @@ namespace KanchokuWS.Domain
             return functionalVKeys._getNth(idx);
         }
 
+        /// <summary>
+        /// 機能キーに対する VKeyテーブルから、そのDecKeyに該当する VKey を取得する
+        /// </summary>
+        /// <param name="idx"></param>
+        /// <returns></returns>
+        public static uint GetFuncVKeyByDecKey(int deckey)
+        {
+            return functionalVKeys._getNth(deckey - DecoderKeys.FUNC_DECKEY_START);
+        }
+
+        /// <summary>
+        /// 機能キーの名前から、それに対応する DecKey を得る<br/>
+        /// 対応するDecKeyがなければ -1 を返す
+        ///</summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static int GetFuncDecKeyByName(string name)
+        {
+            switch (name._toLower()) {
+                case "esc": case "escape": return DecoderKeys.ESC_DECKEY;
+                case "zenkaku": return DecoderKeys.CTRL_HANZEN_DECKEY;
+                case "tab": return DecoderKeys.TAB_DECKEY;
+                case "caps": case "capslock": return DecoderKeys.CAPS_DECKEY;
+                case "alnum": case "alphanum": case "eisu": return DecoderKeys.ALNUM_DECKEY;
+                case "nfer": case "muhenkan": return DecoderKeys.NFER_DECKEY;
+                case "xfer": case "henkan": return DecoderKeys.XFER_DECKEY;
+                case "kana": case "hiragana": return DecoderKeys.KANA_DECKEY;
+                case "bs": case "back": case "backspace": return DecoderKeys.BS_DECKEY;
+                case "enter": return DecoderKeys.ENTER_DECKEY;
+                case "ins": case "insert": return DecoderKeys.INS_DECKEY;
+                case "del": case "delete": return DecoderKeys.DEL_DECKEY;
+                case "home": return DecoderKeys.HOME_DECKEY;
+                case "end": return DecoderKeys.END_DECKEY;
+                case "pgup": case "pageup": return DecoderKeys.PAGE_UP_DECKEY;
+                case "pgdn": case "pagedown": return DecoderKeys.PAGE_DOWN_DECKEY;
+                case "up": case "uparrow": return DecoderKeys.UP_ARROW_DECKEY;
+                case "down": case "downarrow": return DecoderKeys.DOWN_ARROW_DECKEY;
+                case "left": case "leftarrow": return DecoderKeys.LEFT_ARROW_DECKEY;
+                case "right": case "rightarrow": return DecoderKeys.RIGHT_ARROW_DECKEY;
+                case "lctrl": return DecoderKeys.LEFT_CONTROL_DECKEY;
+                case "rctrl": return DecoderKeys.RIGHT_CONTROL_DECKEY;
+                case "lshift": return DecoderKeys.LEFT_SHIFT_DECKEY;
+                case "rshift": return DecoderKeys.RIGHT_SHIFT_DECKEY;
+                case "scrlock": return DecoderKeys.SCR_LOCK_DECKEY;
+                case "pause": return DecoderKeys.PAUSE_DECKEY;
+                case "imeon": return DecoderKeys.IME_ON_DECKEY;
+                case "imeoff": return DecoderKeys.IME_OFF_DECKEY;
+                case "f1": case "f01": return DecoderKeys.F1_DECKEY;
+                case "f2": case "f02": return DecoderKeys.F2_DECKEY;
+                case "f3": case "f03": return DecoderKeys.F3_DECKEY;
+                case "f4": case "f04": return DecoderKeys.F4_DECKEY;
+                case "f5": case "f05": return DecoderKeys.F5_DECKEY;
+                case "f6": case "f06": return DecoderKeys.F6_DECKEY;
+                case "f7": case "f07": return DecoderKeys.F7_DECKEY;
+                case "f8": case "f08": return DecoderKeys.F1_DECKEY;
+                case "f9": case "f09": return DecoderKeys.F9_DECKEY;
+                case "f10": return DecoderKeys.F10_DECKEY;
+                case "f11": return DecoderKeys.F11_DECKEY;
+                case "f12": return DecoderKeys.F12_DECKEY;
+                case "f13": return DecoderKeys.F13_DECKEY;
+                case "f14": return DecoderKeys.F14_DECKEY;
+                case "f15": return DecoderKeys.F15_DECKEY;
+                case "f16": return DecoderKeys.F16_DECKEY;
+                case "f17": return DecoderKeys.F17_DECKEY;
+                case "f18": return DecoderKeys.F18_DECKEY;
+                case "f19": return DecoderKeys.F19_DECKEY;
+                case "f20": return DecoderKeys.F20_DECKEY;
+                //case "f21": return DecoderKeys.F21_DECKEY;
+                //case "f22": return DecoderKeys.F22_DECKEY;
+                //case "f23": return DecoderKeys.F23_DECKEY;
+                //case "f24": return DecoderKeys.F24_DECKEY;
+                default: return -1;
+            }
+        }
+
         /// <summary>機能キーの名前から、VKeyテーブルにおいてそれに対応するインデックスを得る (-1なら該当せず)</summary>
         /// <param name="name"></param>
         /// <returns></returns>
         public static int GetFuncKeyIndexByName(string name)
         {
-            int n = -1;
-            switch (name._toLower()) {
-                case "esc": case "escape": n = DecoderKeys.ESC_DECKEY; break;
-                case "zenkaku": n = DecoderKeys.CTRL_HANZEN_DECKEY; break;
-                case "tab": n = DecoderKeys.TAB_DECKEY; break;
-                case "caps": case "capslock": n = DecoderKeys.CAPS_DECKEY; break;
-                case "alnum": case "alphanum": case "eisu": n = DecoderKeys.ALNUM_DECKEY; break;
-                case "nfer": case "muhenkan": n = DecoderKeys.NFER_DECKEY; break;
-                case "xfer": case "henkan": n = DecoderKeys.XFER_DECKEY; break;
-                case "kana": case "hiragana": n = DecoderKeys.KANA_DECKEY; break;
-                case "bs": case "back": case "backspace": n = DecoderKeys.BS_DECKEY; break;
-                case "enter": n = DecoderKeys.ENTER_DECKEY; break;
-                case "ins": case "insert": n = DecoderKeys.INS_DECKEY; break;
-                case "del": case "delete": n = DecoderKeys.DEL_DECKEY; break;
-                case "home": n = DecoderKeys.HOME_DECKEY; break;
-                case "end": n = DecoderKeys.END_DECKEY; break;
-                case "pgup": case "pageup": n = DecoderKeys.PAGE_UP_DECKEY; break;
-                case "pgdn": case "pagedown": n = DecoderKeys.PAGE_DOWN_DECKEY; break;
-                case "up": case "uparrow": n = DecoderKeys.UP_ARROW_DECKEY; break;
-                case "down": case "downarrow": n = DecoderKeys.DOWN_ARROW_DECKEY; break;
-                case "left": case "leftarrow": n = DecoderKeys.LEFT_ARROW_DECKEY; break;
-                case "right": case "rightarrow": n = DecoderKeys.RIGHT_ARROW_DECKEY; break;
-                case "lctrl": n = DecoderKeys.LEFT_CONTROL_DECKEY; break;
-                case "rctrl": n = DecoderKeys.RIGHT_CONTROL_DECKEY; break;
-                case "lshift": n = DecoderKeys.LEFT_SHIFT_DECKEY; break;
-                case "rshift": n = DecoderKeys.RIGHT_SHIFT_DECKEY; break;
-                case "scrlock": n = DecoderKeys.SCR_LOCK_DECKEY; break;
-                case "pause": n = DecoderKeys.PAUSE_DECKEY; break;
-                case "imeon": n = DecoderKeys.IME_ON_DECKEY; break;
-                case "imeoff": n = DecoderKeys.IME_OFF_DECKEY; break;
-                case "f1": case "f01": n = DecoderKeys.F1_DECKEY; break;
-                case "f2": case "f02": n = DecoderKeys.F2_DECKEY; break;
-                case "f3": case "f03": n = DecoderKeys.F3_DECKEY; break;
-                case "f4": case "f04": n = DecoderKeys.F4_DECKEY; break;
-                case "f5": case "f05": n = DecoderKeys.F5_DECKEY; break;
-                case "f6": case "f06": n = DecoderKeys.F6_DECKEY; break;
-                case "f7": case "f07": n = DecoderKeys.F7_DECKEY; break;
-                case "f8": case "f08": n = DecoderKeys.F1_DECKEY; break;
-                case "f9": case "f09": n = DecoderKeys.F9_DECKEY; break;
-                case "f10": n = DecoderKeys.F10_DECKEY; break;
-                case "f11": n = DecoderKeys.F11_DECKEY; break;
-                case "f12": n = DecoderKeys.F12_DECKEY; break;
-                case "f13": n = DecoderKeys.F13_DECKEY; break;
-                case "f14": n = DecoderKeys.F14_DECKEY; break;
-                case "f15": n = DecoderKeys.F15_DECKEY; break;
-                case "f16": n = DecoderKeys.F16_DECKEY; break;
-                case "f17": n = DecoderKeys.F17_DECKEY; break;
-                case "f18": n = DecoderKeys.F18_DECKEY; break;
-                case "f19": n = DecoderKeys.F19_DECKEY; break;
-                case "f20": n = DecoderKeys.F20_DECKEY; break;
-                //case "f21": n = DecoderKeys.F21_DECKEY; break;
-                //case "f22": n = DecoderKeys.F22_DECKEY; break;
-                //case "f23": n = DecoderKeys.F23_DECKEY; break;
-                //case "f24": n = DecoderKeys.F24_DECKEY; break;
-                default: n = -1; break;
-            }
-            return n >= 0 ? n - DecoderKeys.FUNC_DECKEY_START : n;
+            int deckey = GetFuncDecKeyByName(name);
+            return deckey >= 0 ? deckey - DecoderKeys.FUNC_DECKEY_START : deckey;
         }
 
         /// <summary>
@@ -238,13 +258,11 @@ namespace KanchokuWS.Domain
         }
 
         /// <summary>
-        /// 機能キーの名前から、それに対応する DecKey を得る<br/>
-        /// 対応するDecKeyがなければ -1 を返す
+        /// キー名から、それに対応するDecKeyを得る<br/>対応するものがなければ -1 を返す
         /// </summary>
-        public static int GetFuncDeckeyByName(string name)
+        public static int GetDecKeyFromFaceStr(string keyFace)
         {
-            int dk = GetFuncKeyIndexByName(name);
-            return dk >= 0 ? DecoderKeys.FUNC_DECKEY_START + dk : -1;
+            return GetDecKeyFromVKey(CharVsVKey.GetVKeyFromFaceStr(keyFace));
         }
 
         /// <summary>
@@ -255,7 +273,14 @@ namespace KanchokuWS.Domain
         /// <returns></returns>
         public static int GetDecKeyFromVKey(uint vkey)
         {
-            return normalVKeys._findIndex(x => x == vkey);
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: vkey={vkey:x}H({vkey})");
+            int deckey = normalVKeys._findIndex(vkey);
+            if (deckey < 0) {
+                deckey = functionalVKeys._findIndex(vkey);
+                if (deckey >= 0) deckey += DecoderKeys.FUNC_DECKEY_START;
+            }
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: deckey={deckey}");
+            return deckey;
         }
 
         /// <summary>
@@ -390,36 +415,30 @@ namespace KanchokuWS.Domain
             logger.InfoH($"ENTER");
             // 通常文字ストロークキー
             for (int id = 0; id < DecoderKeys.NORMAL_DECKEY_NUM; ++id) {
-                uint vkey = GetVKeyFromDecKey(id);
-                if (vkey > 0) {
-                    // Normal
-                    VKeyComboRepository.AddDecKeyAndCombo(id, 0, vkey);
-                    // Shifted
-                    VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_DECKEY_START + id, KeyModifiers.MOD_SHIFT, vkey);
-                    // Ctrl
-                    //AddDecKeyAndCombo(DecoderKeys.CTRL_DECKEY_START + id, KeyModifiers.MOD_CONTROL, vkey);
-                    // Ctrl+Shift
-                    //AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, vkey);
-                }
+                // Normal
+                VKeyComboRepository.AddDecKeyAndCombo(id, 0, id);
+                // Shifted
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_DECKEY_START + id, KeyModifiers.MOD_SHIFT, id);
+                // Ctrl
+                //AddDecKeyAndCombo(DecoderKeys.CTRL_DECKEY_START + id, KeyModifiers.MOD_CONTROL, id);
+                // Ctrl+Shift
+                //AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, id);
             }
 
             // 機能キー(RSHFTも登録される)
-            for (int id = 0; id < DecoderKeys.FUNC_DECKEY_NUM; ++id) {
-                uint vkey = GetVKeyFromDecKey(DecoderKeys.FUNC_DECKEY_START + id);
-                if (vkey > 0) {
-                    // Normal
-                    VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, 0, vkey);
-                    // Shift
-                    if (vkey == capsVkeyWithShift) VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, KeyModifiers.MOD_SHIFT, vkey);
-                    // Ctrl
-                    //AddDecKeyAndCombo(DecoderKeys.CTRL_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL, vkey);
-                    // Ctrl+Shifted
-                    //AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, vkey);
-                }
+            for (int id = DecoderKeys.FUNC_DECKEY_START; id < DecoderKeys.FUNC_DECKEY_END; ++id) {
+                // Normal
+                VKeyComboRepository.AddDecKeyAndCombo(id, 0, id);
+                // Shift
+                //if (id == capsVkeyWithShift) VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, KeyModifiers.MOD_SHIFT, id);
+                // Ctrl
+                //AddDecKeyAndCombo(DecoderKeys.CTRL_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL, id);
+                // Ctrl+Shifted
+                //AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, id);
             }
 
             // Shift+Tab
-            VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Tab);
+            VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, DecoderKeys.TAB_DECKEY);
             //AddModConvertedDecKeyFromCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Tab);
             logger.InfoH($"LEAVE");
         }

@@ -1031,17 +1031,17 @@ namespace KanchokuWS
 
             // デコーダON/OFF系機能の呼び出し
             if (DeactiveKey == 0) {
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.TOGGLE_DECKEY, 0 , ActiveKey);
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.TOGGLE_DECKEY, 0 , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKey));
             } else {
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, 0 , ActiveKey);
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, 0 , DeactiveKey);
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, 0 , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKey));
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, 0 , DecoderKeyVsVKey.GetDecKeyFromVKey(DeactiveKey));
             }
             if (DeactiveKeyWithCtrl == 0) {
                 // Ctrlありの場合はカレットへの追従を再開する
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY, KeyModifiers.MOD_CONTROL , ActiveKeyWithCtrl);
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY, KeyModifiers.MOD_CONTROL , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKeyWithCtrl));
             } else {
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , ActiveKeyWithCtrl);
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DeactiveKeyWithCtrl);
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKeyWithCtrl));
+                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DecoderKeyVsVKey.GetDecKeyFromVKey(DeactiveKeyWithCtrl));
             }
 
             //-------------------------------------------------------------------------------------
