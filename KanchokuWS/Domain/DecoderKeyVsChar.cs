@@ -45,6 +45,10 @@ namespace KanchokuWS.Domain
             ' ', '_', '+', '|', '{', '}', '"', '~', '\0', '\0'
         };
 
+        private static char[] FuncChars = {
+            '脱', '全', 'Ｔ', '大', '英', '無', '変', 'カ', '削', '入'
+        };
+
         private static char[] QwertyChars() {
             return (DecoderKeyVsVKey.IsJPmode ? QwertyCharsJP : QwertyCharsUS);
         }
@@ -71,10 +75,10 @@ namespace KanchokuWS.Domain
             shiftedChars = null;
             int yenPos = 43;
 
-            var filename = Settings.CharsDefFile;
+            var filename = Settings.GetString("charsDefFile");
             if (filename._notEmpty()) {
-                var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
-                logger.Info($"charsDefFile path={filePath}");
+                var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KeyboardFileDir, filename);
+                logger.InfoH($"charsDefFile path={filePath}");
 
                 var allLines = Helper.GetFileContent(filePath, Encoding.UTF8);
                 if (allLines == null) {
@@ -98,6 +102,7 @@ namespace KanchokuWS.Domain
                             yenPos = line._safeSubstring(7)._parseInt(-1);
                         } else if (line.StartsWith("## SHORTCUT=disabl")) {
                             Settings.ShortcutKeyConversionEnabled = false;
+                            logger.InfoH("ShortcutKeyConversion: Disabled");
                         }
                     } else {
                         if (charList != null) {
@@ -115,10 +120,14 @@ namespace KanchokuWS.Domain
                     for (int i = 0; i < normalChars.Count; ++i) {
                         char ch = normalChars[i];
                         char sc = '\0';
-                        for (int j = 0; j < normalQwerty.Length; ++j) {
-                            if (ch == normalQwerty[j]) {
-                                sc = shiftedQwerty[j];
-                                break;
+                        if (ch == '\\') {
+                            sc = i == yenPos ? '|' : '_';
+                        } else {
+                            for (int j = 0; j < normalQwerty.Length; ++j) {
+                                if (ch == normalQwerty[j]) {
+                                    sc = shiftedQwerty[j];
+                                    break;
+                                }
                             }
                         }
                         shiftedChars.Add(sc);
@@ -156,13 +165,19 @@ namespace KanchokuWS.Domain
         /// <returns></returns>
         public static char GetArrangedCharFromDecKey(int deckey)
         {
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: deckey={deckey}");
+
+            char result = '\0';
             if (deckey >= 0 && deckey < DecoderKeys.NORMAL_DECKEY_NUM) {
-                return normalChars._getNth(deckey, '\0');
+                result = normalChars._getNth(deckey, '\0');
+            } else if (deckey >= DecoderKeys.FUNC_DECKEY_START && deckey < DecoderKeys.FUNC_DECKEY_END) {
+                result = FuncChars._getNth(deckey - DecoderKeys.FUNC_DECKEY_START, '\0');
             } else if (deckey >= DecoderKeys.SHIFT_DECKEY_START && deckey < DecoderKeys.SHIFT_DECKEY_START + DecoderKeys.NORMAL_DECKEY_NUM) {
-                return shiftedChars._getNth(deckey - DecoderKeys.SHIFT_DECKEY_START, '\0');
-            } else {
-                return '\0';
+                result = shiftedChars._getNth(deckey - DecoderKeys.SHIFT_DECKEY_START, '\0');
             }
+
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: result={result}");
+            return result;
         }
 
         /// <summary>
@@ -203,9 +218,18 @@ namespace KanchokuWS.Domain
         /// <returns></returns>
         public static int GetArrangedDecKeyFromFaceChar(char face)
         {
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: face={face}, ShortcutKeyConversionEnabled={Settings.ShortcutKeyConversionEnabled}, normalChars={normalChars._notEmpty()}");
+
+            if (face == '\0') {
+                if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: error result=-1");
+                return -1;
+            }
+
             if (Settings.ShortcutKeyConversionEnabled && normalChars._notEmpty()) {
+                if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: conv result={normalChars.FindIndex(ch => ch == face)}");
                 return normalChars.FindIndex(ch => ch == face);
             } else {
+                if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: raw result={QwertyChars()._findIndex(face)}");
                 return QwertyChars()._findIndex(face);
             }
         }
@@ -217,10 +241,11 @@ namespace KanchokuWS.Domain
         /// <returns></returns>
         public static int GetArrangedDecKeyFromFaceStr(string keyFace)
         {
-            int deckey = DecoderKeyVsVKey.GetDecKeyFromFaceStr(keyFace);
-            if (deckey >= 0 && deckey < DecoderKeys.NORMAL_DECKEY_NUM && Settings.ShortcutKeyConversionEnabled && normalChars._notEmpty()) {
-                deckey = GetArrangedDecKeyFromFaceChar(QwertyChars()._getNth(deckey));
-            }
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: keyFace={keyFace}, ShortcutKeyConversionEnabled={Settings.ShortcutKeyConversionEnabled}, normalChars={normalChars._notEmpty()}");
+
+            int deckey = GetArrangedDecKeyFromFaceChar(CharVsVKey.GetCharFromFaceStr(keyFace));
+
+            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: deckey={deckey}");
             return deckey;
         }
 

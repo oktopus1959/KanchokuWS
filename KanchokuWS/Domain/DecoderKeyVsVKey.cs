@@ -416,9 +416,9 @@ namespace KanchokuWS.Domain
             // 通常文字ストロークキー
             for (int id = 0; id < DecoderKeys.NORMAL_DECKEY_NUM; ++id) {
                 // Normal
-                VKeyComboRepository.AddDecKeyAndCombo(id, 0, id);
+                KeyComboRepository.AddDecKeyAndCombo(id, 0, id);
                 // Shifted
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_DECKEY_START + id, KeyModifiers.MOD_SHIFT, id);
+                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_DECKEY_START + id, KeyModifiers.MOD_SHIFT, id);
                 // Ctrl
                 //AddDecKeyAndCombo(DecoderKeys.CTRL_DECKEY_START + id, KeyModifiers.MOD_CONTROL, id);
                 // Ctrl+Shift
@@ -428,7 +428,7 @@ namespace KanchokuWS.Domain
             // 機能キー(RSHFTも登録される)
             for (int id = DecoderKeys.FUNC_DECKEY_START; id < DecoderKeys.FUNC_DECKEY_END; ++id) {
                 // Normal
-                VKeyComboRepository.AddDecKeyAndCombo(id, 0, id);
+                KeyComboRepository.AddDecKeyAndCombo(id, 0, id);
                 // Shift
                 //if (id == capsVkeyWithShift) VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, KeyModifiers.MOD_SHIFT, id);
                 // Ctrl
@@ -438,7 +438,7 @@ namespace KanchokuWS.Domain
             }
 
             // Shift+Tab
-            VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, DecoderKeys.TAB_DECKEY);
+            KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, DecoderKeys.TAB_DECKEY);
             //AddModConvertedDecKeyFromCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Tab);
             logger.InfoH($"LEAVE");
         }

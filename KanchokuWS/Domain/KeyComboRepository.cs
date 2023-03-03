@@ -56,7 +56,7 @@ namespace KanchokuWS.Domain
 
     //}
 
-    static class VKeyComboRepository
+    static class KeyComboRepository
     {
         private static Logger logger = Logger.GetLogger();
 
@@ -130,13 +130,13 @@ namespace KanchokuWS.Domain
         /// <param name="arrgDeckey"></param>
         public static void AddModConvertedDecKeyFromCombo(int modDeckey, uint mod, int arrgDeckey)
         {
-            logger.Debug(() => $"modDeckey={modDeckey:x}H({modDeckey}), mod={mod:x}H, arrgDeckey={arrgDeckey:x}H({arrgDeckey})");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modDeckey={modDeckey:x}H({modDeckey}), mod={mod:x}H, arrgDeckey={arrgDeckey:x}H({arrgDeckey})");
             ModConvertedDecKeyFromKeyCombo[KeyCombo.CalcSerialValue(mod, arrgDeckey)] = modDeckey;
         }
 
         private static void RemoveModConvertedDecKeyFromCombo(uint mod, int arrgDeckey)
         {
-            logger.Debug(() => $"mod={mod:x}H, arrgDeckey={arrgDeckey:x}H({arrgDeckey})");
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"mod={mod:x}H, arrgDeckey={arrgDeckey:x}H({arrgDeckey})");
             try {
                 ModConvertedDecKeyFromKeyCombo.Remove(KeyCombo.CalcSerialValue(mod, arrgDeckey));
             } catch { }
@@ -147,6 +147,7 @@ namespace KanchokuWS.Domain
         /// </summary>
         public static void AddCtrlDeckeyFromCombo(string keyFace, int ctrlDeckey, int ctrlShiftDeckey)
         {
+            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"keyFace={keyFace}, ctrlDeckey={ctrlDeckey}, ctrlShiftDeckey={ctrlShiftDeckey}");
             bool bRemove = false;
             if (keyFace._startsWith("#")) {
                 bRemove = true;
@@ -186,7 +187,7 @@ namespace KanchokuWS.Domain
         public static KeyCombo? GetKeyComboFromDecKey(int deckey)
         {
             var combo = KeyComboFromDecKey._getNth(deckey);
-            logger.Info(() => $"deckey={deckey:x}H({deckey}), combo.mod={(combo.HasValue ? combo.Value.modifier : 0):x}, combo.normalDecKey={(combo.HasValue ? combo.Value.normalDecKey : 0)}");
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"deckey={deckey:x}H({deckey}), combo.mod={(combo.HasValue ? combo.Value.modifier : 0):x}, combo.normalDecKey={(combo.HasValue ? combo.Value.normalDecKey : 0)}");
             return combo;
         }
 

@@ -73,7 +73,7 @@
     <Compile Include="Domain\CharVsVKey.cs" />
     <Compile Include="Domain\ExtraModifiers.cs" />
     <Compile Include="Domain\ShiftPlane.cs" />
-    <Compile Include="Domain\VKeyComboRepository.cs" />
+    <Compile Include="Domain\KeyComboRepository.cs" />
     <Compile Include="Domain\KeyModifiers.cs" />
     <Compile Include="Domain\DecoderKeyVsVKey.cs" />
     <Compile Include="Gui\DlgSettings_Develop.cs">

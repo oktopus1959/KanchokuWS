@@ -502,6 +502,12 @@ namespace KanchokuWS.Domain
             return (DecoderKeyVsVKey.IsJPmode ? vkeyToCharJP : vkeyToCharUS)._safeGet(vk);
         }
 
+        /// <summary>文字名から、その文字コードを得る</summary>
+        public static char getFaceStrToChar(string face)
+        {
+            return getVKeyToChar(getFaceToVKey(face));
+        }
+
     } // class _FaceCharVKey
 
     /// <summary>
@@ -525,6 +531,12 @@ namespace KanchokuWS.Domain
         public static char GetFaceCharFromVKey(uint vkey)
         {
             return _FaceCharVKey.getVKeyToChar(vkey);
+        }
+
+        /// <summary>JP/US モードに対応して、キー名からその文字コードを得る<br/>対応するものがなければ '\0' を返す</summary>
+        public static char GetCharFromFaceStr(string face)
+        {
+            return _FaceCharVKey.getFaceStrToChar(face);
         }
 
     }

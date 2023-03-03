@@ -796,9 +796,9 @@ namespace KanchokuWS.Handler
         /// <param name="n">キーダウンの数</param>
         public void SendVKeyCombo(uint modifier, uint vkey, int n)
         {
-            logger.DebugH(() => $"CALLED: modifier={modifier:x}H, vkey={vkey:x}H, numKeys={n}");
+            if (Settings.LoggingDecKeyInfo)logger.InfoH(() => $"ENTER: modifier={modifier:x}H, vkey={vkey:x}H, numKeys={n}");
             if (syncPostVkey.BusyCheck()) {
-                logger.DebugH(() => $"IGNORED: numKeys={n}");
+                if (Settings.LoggingDecKeyInfo)logger.InfoH(() => $"LEAVE: IGNORED: numKeys={n}");
                 return;
             }
             using (syncPostVkey) {
@@ -819,6 +819,7 @@ namespace KanchokuWS.Handler
                     RevertCtrlKey(ctrlState);
                 }
             }
+            if (Settings.LoggingDecKeyInfo)logger.InfoH("LEAVE");
         }
 
         /// <summary>

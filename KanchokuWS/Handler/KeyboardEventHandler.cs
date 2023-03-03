@@ -806,7 +806,7 @@ namespace KanchokuWS.Handler
 
             //int normalDecKey = VKeyComboRepository.GetDecKeyFromVKey((uint)vkey);
             int normalDecKey = DecoderKeyVsVKey.GetDecKeyFromVKey((uint)vkey);
-            int kanchokuCode = VKeyComboRepository.GetKanchokuToggleDecKey(mod, normalDecKey); // 漢直モードのトグルをやるキーか
+            int kanchokuCode = KeyComboRepository.GetKanchokuToggleDecKey(mod, normalDecKey); // 漢直モードのトグルをやるキーか
 
             if (Settings.LoggingDecKeyInfo) {
                 logger.InfoH(() => $"ENTER: kanchokuCode={kanchokuCode}, normalDecKey={normalDecKey}, mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
@@ -814,7 +814,7 @@ namespace KanchokuWS.Handler
 
             if (kanchokuCode < 0 && modEx != 0 && !ctrl && !shift) {
                 // 拡張シフトが有効なのは、Ctrlキーが押されておらず、Shiftも押されていないか、Shift+SpaceをSandSとして扱わない場合とする
-                kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(modEx, normalDecKey);
+                kanchokuCode = KeyComboRepository.GetModConvertedDecKeyFromCombo(modEx, normalDecKey);
                 if (kanchokuCode < 0) {
                     // 拡張シフト面のコードを得る
                     kanchokuCode = normalDecKey;
@@ -830,17 +830,17 @@ namespace KanchokuWS.Handler
             if (kanchokuCode < 0) {
                 if (leftCtrl) {
                     // mod-conversion.txt で lctrl に定義されているものを検索
-                    kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_LCTRL, normalDecKey);
+                    kanchokuCode = KeyComboRepository.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_LCTRL, normalDecKey);
                 }
                 if (kanchokuCode < 0 && rightCtrl) {
                     // mod-conversion.txt で rctrl に定義されているものを検索
-                    kanchokuCode = VKeyComboRepository.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_RCTRL, normalDecKey);
+                    kanchokuCode = KeyComboRepository.GetModConvertedDecKeyFromCombo(KeyModifiers.MOD_RCTRL, normalDecKey);
                 }
                 if (kanchokuCode < 0) {
                     kanchokuCode = (Settings.GlobalCtrlKeysEnabled && ((Settings.UseLeftControlToConversion && leftCtrl) || (Settings.UseRightControlToConversion && rightCtrl))) || shift
-                        ? VKeyComboRepository.GetModConvertedDecKeyFromCombo(mod, normalDecKey)
+                        ? KeyComboRepository.GetModConvertedDecKeyFromCombo(mod, normalDecKey)
                         // : vkey == (int)Keys.Space ? DecoderKeys.STROKE_SPACE_DECKEY     // キーDown時のスペースは、いったんそのまま扱う(Up時に変換する)
-                        : VKeyComboRepository.GetDecKeyFromCombo(mod, normalDecKey);
+                        : KeyComboRepository.GetDecKeyFromCombo(mod, normalDecKey);
                 }
                 if (kanchokuCode >= 0) mod = 0;     // 何かのコードに変換されたら、 Ctrl や Shift の修飾は無かったことにしておく
                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"PATH-C: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), ctrl={ctrl}, shift={shift}");
@@ -907,7 +907,7 @@ namespace KanchokuWS.Handler
                 {
                     int normalDecKey = DecoderKeyVsVKey.GetDecKeyFromVKey((uint)vkey);
                     if (!bShifted && /*bDecoderOn &&*/ ExtraModifiers.IsExModKeyIndexAssignedForDecoderFunc(normalDecKey)) {
-                        int kanchokuCode = VKeyComboRepository.GetDecKeyFromCombo(0, normalDecKey);
+                        int kanchokuCode = KeyComboRepository.GetDecKeyFromCombo(0, normalDecKey);
                         if (kanchokuCode >= 0) {
                             invokeHandler(kanchokuCode, -1, 0);
                         }

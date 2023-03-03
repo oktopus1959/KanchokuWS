@@ -86,10 +86,11 @@ namespace KanchokuWS
         public void WriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bFirst, bool bTimer = false)
         {
             if (IsDecoderActive && dlgStrokeLog != null) {
+                logger.InfoH(() => $"ENTER: decKey={decKey}");
                 char faceCh = bTimer && decKey < 0 ? '\0' : DecoderKeyVsChar.GetArrangedFaceCharFromDecKey(decKey)._gtZeroOr('?');
                 if (bDown && faceCh >= 'a' && faceCh <= 'z') faceCh = (char)(faceCh - 0x20);
                 string msg = $"{(bTimer ? "*Up " : bDown ? "Down" : "Up  ")} | " + (faceCh != '\0' ? $"'{faceCh}'" : "N/A");
-                logger.DebugH(() => $"WriteStrokeLog: {msg}");
+                logger.InfoH(() => $"WriteStrokeLog: {msg}");
                 appenStrokeLog(msg, dt, bFirst);
             }
         }
@@ -99,7 +100,7 @@ namespace KanchokuWS
         {
             if (IsDecoderActive && dlgStrokeLog != null) {
                 string msg = $"Out  | '{str}'";
-                logger.DebugH(() => $"WriteStrokeLog: {msg}");
+                logger.InfoH(() => $"WriteStrokeLog: {msg}");
                 appenStrokeLog(msg, DateTime.Now, false);
                 //if (CombinationKeyStroke.Determiner.Singleton.IsStrokeListEmpty()) FlushStrokeLog();
             }
@@ -217,12 +218,15 @@ namespace KanchokuWS
             SendInputHandler.CreateSingleton();
 
             // 初期化
-            VKeyComboRepository.Initialize();
+            KeyComboRepository.Initialize();
             ExtraModifiers.Initialize();
             DlgModConversion.Initialize();
 
             // キーボードファイルの読み込み
-            bool resultOK = readKeyboardFile();
+            bool resultOK = readKeyboardFileAndCharsDefFile();
+
+            //// 文字定義ファイルの読み込み
+            //DecoderKeyVsChar.ReadCharsDefFile();
 
             // 設定ファイルの読み込み
             Settings.ReadIniFile();
@@ -278,16 +282,23 @@ namespace KanchokuWS
             copySampleFile("mod-conversion.txt");
         }
 
-        /// <summary> キーボードファイルの読み込み (成功したら true, 失敗したら false を返す) </summary>
-        private bool readKeyboardFile()
+        /// <summary> キーボードファイルと文字定義ファイルの読み込み (成功したら true, 失敗したら false を返す) </summary>
+        private bool readKeyboardFileAndCharsDefFile()
         {
-            if (!Domain.DecoderKeyVsVKey.ReadKeyboardFile()) {
+            // kanchoku.ini からキーボードと英字配列の設定を読み込む
+            Settings.ReadIniFileForKeyboardAndCharLayout();
+
+            if (!DecoderKeyVsVKey.ReadKeyboardFile()) {
                 // キーボードファイルを読み込めなかったので終了する
                 logger.Error($"CLOSE: Can't read keyboard file");
                 //this.Close();
                 frmSplash?.Fallback();
                 return false;
             }
+
+            // 英字配列ファイルの読み込み
+            DecoderKeyVsChar.ReadCharsDefFile();
+
             return true;
         }
 
@@ -306,8 +317,8 @@ namespace KanchokuWS
                 new TableFileParser().ReadDirectives(Settings.TableFile2, false);
             }
 
-            // 文字定義ファイルの読み込み
-            Domain.DecoderKeyVsChar.ReadCharsDefFile();
+            //// 文字定義ファイルの読み込み
+            //DecoderKeyVsChar.ReadCharsDefFile();
 
             // 追加の修飾キー定義ファイルの読み込み
             if (Settings.ExtraModifiersEnabled && Settings.ModConversionFile._notEmpty()) {
@@ -896,14 +907,14 @@ namespace KanchokuWS
 
                         case DecoderKeys.DIRECT_SPACE_DECKEY:
                             logger.InfoH(() => $"DIRECT_SPACE_DECKEY:{deckey}, mode={mod:x}H");
-                            return sendVkeyFromDeckey(DecoderKeys.STROKE_SPACE_DECKEY, mod);
+                            return sendVkeyFromDeckey(DecoderKeys.STROKE_SPACE_DECKEY, -1, mod);
 
                         case DecoderKeys.UNDEFINED_DECKEY:
                             // 主に英数モードから抜けるために使う
                             logger.InfoH(() => $"UNDEFINED_DECKEY:{deckey}");
                             sendDeckeyToDecoder(deckey);
                             if (normalDeckey >= 0 && normalDeckey < DecoderKeys.NORMAL_DECKEY_NUM) {
-                                return sendVkeyFromDeckey(normalDeckey, mod);
+                                return sendVkeyFromDeckey(normalDeckey, -1, mod);
                             } else {
                                 return false;
                             }
@@ -913,7 +924,7 @@ namespace KanchokuWS
                             if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
                                 return InvokeDecoder(deckey, mod);
                             } else {
-                                return sendVkeyFromDeckey(deckey, mod);
+                                return sendVkeyFromDeckey(deckey, normalDeckey, mod);
                             }
                     }
                 } else {
@@ -921,9 +932,9 @@ namespace KanchokuWS
                     if (Settings.LoggingDecKeyInfo) logger.InfoH("Decoder Inactive");
                     bPrevDtUpdate = true;
                     if (deckey >= 0 && deckey != DecoderKeys.UNDEFINED_DECKEY) {
-                        return sendVkeyFromDeckey(deckey, mod);
+                        return sendVkeyFromDeckey(deckey, normalDeckey, mod);
                     } else if (normalDeckey >= 0) {
-                        return sendVkeyFromDeckey(normalDeckey, mod);
+                        return sendVkeyFromDeckey(normalDeckey, -1, mod);
                     }
                     return false;
                 }
@@ -1566,7 +1577,7 @@ namespace KanchokuWS
                 }
 
                 // Ctrl-J と Ctrl-M
-                if ((Settings.UseCtrlJasEnter && VKeyComboRepository.GetCtrlDecKeyOf("J") == deckey) /*|| (Settings.UseCtrlMasEnter && VKeyComboRepository.GetCtrlDecKeyOf("M") == deckey)*/) {
+                if ((Settings.UseCtrlJasEnter && KeyComboRepository.GetCtrlDecKeyOf("J") == deckey) /*|| (Settings.UseCtrlMasEnter && VKeyComboRepository.GetCtrlDecKeyOf("M") == deckey)*/) {
                     deckey = DecoderKeys.ENTER_DECKEY;
                 }
 
@@ -1728,7 +1739,7 @@ namespace KanchokuWS
                     // 他のVKey送出(もしあれば)
                     if (decoderOutput.IsDeckeyToVkey()) {
                         logger.DebugH("PATH-3");
-                        sendKeyFlag = sendVkeyFromDeckey(deckey, mod);
+                        sendKeyFlag = sendVkeyFromDeckey(deckey, -1, mod);
                         //nPreKeys += 1;
                     }
 
@@ -1918,13 +1929,22 @@ namespace KanchokuWS
             bRomanMode = bRoman;
         }
 
-        private bool sendVkeyFromDeckey(int deckey, uint mod)
+        private bool sendVkeyFromDeckey(int deckey, int normalDeckey, uint mod)
         {
             var ctrlKeyState = SendInputHandler.GetCtrlKeyState();
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={ctrlKeyState.LeftKeyDown}, rightCtrl={ctrlKeyState.RightKeyDown}");
+
+            // CtrlやAltなどのショートカットキーの変換をやるか、または Altキーが押されていなかった
+            bool bShortcutConversion = Settings.ShortcutKeyConversionEnabled ||
+                (!ctrlKeyState.LeftKeyDown && !ctrlKeyState.RightKeyDown &&
+                 (mod & (KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_LCTRL | KeyModifiers.MOD_RCTRL | KeyModifiers.MOD_ALT)) == 0);
+
+            if (Settings.LoggingDecKeyInfo) {
+                logger.InfoH($"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={ctrlKeyState.LeftKeyDown}, rightCtrl={ctrlKeyState.RightKeyDown}, shortcutConv={bShortcutConversion}");
+            }
+
             if ((!ctrlKeyState.LeftKeyDown && !ctrlKeyState.RightKeyDown)                                       // Ctrlキーが押されていないか、
                 || isCtrlKeyConversionEffectiveWindow()                                                         // Ctrl修飾を受け付けるWindowClassか
-                //|| deckey < DecoderKeys.STROKE_DECKEY_END                                                     // 通常のストロークキーは通す
+                                                                                                                //|| deckey < DecoderKeys.STROKE_DECKEY_END                                                     // 通常のストロークキーは通す
                 || deckey < DecoderKeys.NORMAL_DECKEY_NUM                                                       // 通常のストロークキーは通す
                 || deckey >= DecoderKeys.CTRL_DECKEY_START && deckey < DecoderKeys.CTRL_DECKEY_END              // Ctrl-A～Ctrl-Z は通す
                 || deckey >= DecoderKeys.CTRL_SHIFT_DECKEY_START && deckey < DecoderKeys.CTRL_SHIFT_DECKEY_END  // Ctrl-Shift-A～Ctrl-Shift-Z は通す
@@ -1932,43 +1952,60 @@ namespace KanchokuWS
 
                 if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET WINDOW");
 
-                if (Settings.ShortcutKeyConversionEnabled || (mod & KeyModifiers.MOD_ALT) == 0) {
-                    // CtrlやAltなどのショートカットキーの変換をやるか、または Altキーが押されていなかった
+                if (bShortcutConversion) {
+                    // ショートカットキーの変換をやる
                     var dkChar = Domain.DecoderKeyVsChar.GetArrangedCharFromDecKey(deckey);
                     if (dkChar != '\0') {
                         var vk = CharVsVKey.GetVKeyFromFaceChar(dkChar);
                         if (vk != 0) {
+                            if (Settings.LoggingDecKeyInfo) { logger.InfoH($"SEND1: mod={mod:x}H({mod}), vkey={vk:x}H({vk})"); }
                             if (vk >= 0x100) {
                                 vk -= 0x100;
                                 mod |= KeyModifiers.MOD_SHIFT;
                             }
-                            if (Settings.LoggingDecKeyInfo) logger.InfoH($"SendVKeyCombo: {mod:x}H({mod}), {vk:x}H({vk})");
+                            if (Settings.LoggingDecKeyInfo) logger.InfoH($"SendVKeyCombo: mod={mod:x}H({mod}), vkey={vk:x}H({vk})");
                             SendInputHandler.Singleton.SendVKeyCombo(mod, vk, 1);
                             if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: TRUE");
                             return true;
                         }
                     }
                 }
-                var combo = VKeyComboRepository.GetKeyComboFromDecKey(deckey);
+                var combo = KeyComboRepository.GetKeyComboFromDecKey(deckey);
                 if (combo != null) {
                     if (Settings.LoggingDecKeyInfo) {
-                        logger.InfoH($"SEND: combo.modifier={combo.Value.modifier:x}H({combo.Value.modifier}), "
+                        logger.InfoH($"SEND2: combo.modifier={combo.Value.modifier:x}H({combo.Value.modifier}), "
                             + $"combo.normalDecKey={combo.Value.normalDecKey:x}H({combo.Value.normalDecKey}), "
                             + $"ctrl={(combo.Value.modifier & KeyModifiers.MOD_CONTROL) != 0}, "
                             + $"mod={mod:x}H({mod})");
                     }
-                    //if (deckey < DecoderKeys.FUNCTIONAL_DECKEY_ID_BASE) {
-                    //    SendInputHandler.Singleton.SendVirtualKey(combo.Value.vkey, 1);
-                    //} else {
-                    //    SendInputHandler.Singleton.SendVKeyCombo(combo.Value, 1);
-                    //}
-                    SendInputHandler.Singleton.SendVKeyCombo((combo.Value.modifier != 0 ? combo.Value.modifier : mod), DecoderKeyVsVKey.GetVKeyFromDecKey(combo.Value.normalDecKey), 1);
+                    uint _mod = combo.Value.modifier != 0 ? combo.Value.modifier : mod;
+                    int normDeckey = combo.Value.normalDecKey;
+                    uint vk = 0;
+                    if (bShortcutConversion) {
+                        // ショートカットキーの変換をやる
+                        vk = CharVsVKey.GetVKeyFromFaceChar(DecoderKeyVsChar.GetArrangedCharFromDecKey(normDeckey));
+                    }
+                    if (vk == 0) vk = DecoderKeyVsVKey.GetVKeyFromDecKey(normDeckey);
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"SendVKeyCombo: mod={_mod:x}H({_mod}), vkey={vk:x}H({vk})");
+                    SendInputHandler.Singleton.SendVKeyCombo(_mod, vk, 1);
                     if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: TRUE");
                     return true;
                 } else {
                     if (Settings.LoggingDecKeyInfo) logger.InfoH($"NO VKEY COMBO for deckey={deckey:x}H({deckey})");
                 }
+            } else if (Settings.ShortcutKeyConversionEnabled && (mod & KeyModifiers.MOD_CONTROL) == 0 && normalDeckey >= 0 && normalDeckey < DecoderKeys.NORMAL_DECKEY_NUM) {
+                // Ctrl修飾を受け付けないウィンドウへのCtrl修飾キーの送信であり、ショートカットキーの変換をやる (PuTTYとか)
+                if (Settings.LoggingDecKeyInfo) { logger.InfoH($"SEND3: mod={mod:x}H({mod}), normalDeckey={normalDeckey:x}H({normalDeckey})"); }
+                // ショートカットキーの変換をやる
+                uint vk = CharVsVKey.GetVKeyFromFaceChar(DecoderKeyVsChar.GetArrangedCharFromDecKey(normalDeckey));
+                if (vk > 0) {
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"SendVKeyCombo: mod=CTRL, vkey={vk:x}H({vk})");
+                    SendInputHandler.Singleton.SendVKeyCombo(KeyModifiers.MOD_CONTROL, vk, 1);
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: TRUE");
+                    return true;
+                }
             }
+
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: FALSE");
             return false;
         }
@@ -2182,12 +2219,15 @@ namespace KanchokuWS
             keHandler.Reinitialize();
 
             // 初期化
-            VKeyComboRepository.Initialize();
+            KeyComboRepository.Initialize();
             ExtraModifiers.Initialize();
             DlgModConversion.Initialize();
 
             // キーボードファイルの読み込み
-            bool resultOK = readKeyboardFile();
+            bool resultOK = readKeyboardFileAndCharsDefFile();
+
+            //// 文字定義ファイルの読み込み
+            //DecoderKeyVsChar.ReadCharsDefFile();
 
             // 設定ファイルの読み込み
             Settings.ReadIniFile();

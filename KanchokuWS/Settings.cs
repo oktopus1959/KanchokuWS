@@ -975,6 +975,26 @@ namespace KanchokuWS
 
         //------------------------------------------------------------------------------
         /// <summary>
+        /// kanchoku.ini からキーボードと英字配列の設定を読み込む
+        /// </summary>
+        /// <returns></returns>
+        public static void ReadIniFileForKeyboardAndCharLayout()
+        {
+            // キーボードファイル設定
+            KeyboardFile = GetString("keyboard", "JP");
+
+            // 英数文字テーブルファイル
+            var charsDefFile = GetString("charsDefFile");
+            if (charsDefFile._isEmpty()) {
+                var kbName = KeyboardFile._split('.')._getNth(0);
+                if (kbName._notEmpty() && (kbName._toLower() == "jp" || kbName._toLower() == "us")) kbName = null;
+                if (kbName._notEmpty()) charsDefFile = $"chars.{kbName}.txt";
+            }
+            CharsDefFile = charsDefFile._notEmpty() ? KeyboardFileDir._joinPath(charsDefFile) : "";
+        }
+
+        //------------------------------------------------------------------------------
+        /// <summary>
         /// kanchoku.ini から各種設定を読み込む
         /// </summary>
         /// <returns></returns>
@@ -1012,9 +1032,11 @@ namespace KanchokuWS
             //ShowHiddleFolder = GetString("showHiddleFolder")._parseBool();
 
             //-------------------------------------------------------------------------------------
-            // ファイル設定
-            KeyboardFile = GetString("keyboard", "JP");
+            // キーボードと英数字配列設定
+            ReadIniFileForKeyboardAndCharLayout();
 
+            //-------------------------------------------------------------------------------------
+            // ファイル設定
             StrokeHelpFile = GetString("strokeHelpFile", "stroke-help.txt");
 
             //-------------------------------------------------------------------------------------
@@ -1031,17 +1053,17 @@ namespace KanchokuWS
 
             // デコーダON/OFF系機能の呼び出し
             if (DeactiveKey == 0) {
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.TOGGLE_DECKEY, 0 , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKey));
+                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.TOGGLE_DECKEY, 0 , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKey));
             } else {
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, 0 , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKey));
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, 0 , DecoderKeyVsVKey.GetDecKeyFromVKey(DeactiveKey));
+                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, 0 , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKey));
+                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, 0 , DecoderKeyVsVKey.GetDecKeyFromVKey(DeactiveKey));
             }
             if (DeactiveKeyWithCtrl == 0) {
                 // Ctrlありの場合はカレットへの追従を再開する
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY, KeyModifiers.MOD_CONTROL , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKeyWithCtrl));
+                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY, KeyModifiers.MOD_CONTROL , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKeyWithCtrl));
             } else {
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKeyWithCtrl));
-                VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DecoderKeyVsVKey.GetDecKeyFromVKey(DeactiveKeyWithCtrl));
+                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKeyWithCtrl));
+                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DecoderKeyVsVKey.GetDecKeyFromVKey(DeactiveKeyWithCtrl));
             }
 
             //-------------------------------------------------------------------------------------
@@ -1058,7 +1080,7 @@ namespace KanchokuWS
 
             // 一時的な仮想鍵盤の表示/非表示
             VkbShowHideTemporaryKey = GetString("vkbShowHideTemporaryKey", "").Trim();
-            if (VkbShowHideTemporaryKey._notEmpty()) VKeyComboRepository.AddCtrlDeckeyAndCombo(VkbShowHideTemporaryKey, DecoderKeys.VKB_SHOW_HIDE_DECKEY, DecoderKeys.VKB_SHOW_HIDE_DECKEY);
+            if (VkbShowHideTemporaryKey._notEmpty()) KeyComboRepository.AddCtrlDeckeyAndCombo(VkbShowHideTemporaryKey, DecoderKeys.VKB_SHOW_HIDE_DECKEY, DecoderKeys.VKB_SHOW_HIDE_DECKEY);
 
             //-------------------------------------------------------------------------------------
             // フォントと色の設定
@@ -1144,21 +1166,21 @@ namespace KanchokuWS
             CtrlKeyConvertedToPageDown = GetString("ctrlKeyToPageDown", "#");
             CtrlKeyConvertedToDateString = GetString("ctrlKeyToDateString", "#");
 
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToBackSpace, DecoderKeys.BS_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDelete, DecoderKeys.DEL_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToLeftArrow, DecoderKeys.LEFT_ARROW_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToRightArrow, DecoderKeys.RIGHT_ARROW_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToUpArrow, DecoderKeys.UP_ARROW_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDownArrow, DecoderKeys.DOWN_ARROW_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToHome, DecoderKeys.HOME_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEnd, DecoderKeys.END_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEsc, DecoderKeys.ESC_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToTab, DecoderKeys.TAB_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEnter, DecoderKeys.ENTER_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToInsert, DecoderKeys.INS_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToPageUp, DecoderKeys.PAGE_UP_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToPageDown, DecoderKeys.PAGE_DOWN_DECKEY, 0);
-            VKeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDateString, DecoderKeys.DATE_STRING_ROTATION_DECKEY, DecoderKeys.DATE_STRING_UNROTATION_DECKEY);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToBackSpace, DecoderKeys.BS_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDelete, DecoderKeys.DEL_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToLeftArrow, DecoderKeys.LEFT_ARROW_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToRightArrow, DecoderKeys.RIGHT_ARROW_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToUpArrow, DecoderKeys.UP_ARROW_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDownArrow, DecoderKeys.DOWN_ARROW_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToHome, DecoderKeys.HOME_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEnd, DecoderKeys.END_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEsc, DecoderKeys.ESC_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToTab, DecoderKeys.TAB_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToEnter, DecoderKeys.ENTER_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToInsert, DecoderKeys.INS_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToPageUp, DecoderKeys.PAGE_UP_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToPageDown, DecoderKeys.PAGE_DOWN_DECKEY, 0);
+            KeyComboRepository.AddCtrlDeckeyFromCombo(CtrlKeyConvertedToDateString, DecoderKeys.DATE_STRING_ROTATION_DECKEY, DecoderKeys.DATE_STRING_UNROTATION_DECKEY);
 
             UseLeftControlToConversion = GetString("useLeftControlToConversion")._parseBool(true);
             UseRightControlToConversion = GetString("useRightControlToConversion")._parseBool(false);
@@ -1268,13 +1290,13 @@ namespace KanchokuWS
             BushuAssocFile = addDecoderSetting("bushuAssocFile", "kwassoc.txt");
             BushuFile = addDecoderSetting("bushuFile", "bushu", "kwbushu.rev");
             AutoBushuFile = addDecoderSetting("autoBushuFile", "bushuAuto", "kwbushu.aut");
-            var charsDefFile = GetString("charsDefFile");
-            if (charsDefFile._isEmpty()) {
-                var kbName = KeyboardFile._split('.')._getNth(0);
-                if (kbName._notEmpty() && (kbName._toLower() == "jp" || kbName._toLower() == "us")) kbName = null;
-                if (kbName._notEmpty()) charsDefFile = $"chars.{kbName}.txt";
-            }
-            CharsDefFile = setDecoderSetting("charsDefFile", charsDefFile._notEmpty() ? KeyboardFileDir._joinPath(charsDefFile) : "");
+            //var charsDefFile = GetString("charsDefFile");
+            //if (charsDefFile._isEmpty()) {
+            //    var kbName = KeyboardFile._split('.')._getNth(0);
+            //    if (kbName._notEmpty() && (kbName._toLower() == "jp" || kbName._toLower() == "us")) kbName = null;
+            //    if (kbName._notEmpty()) charsDefFile = $"chars.{kbName}.txt";
+            //}
+            setDecoderSetting("charsDefFile", CharsDefFile);
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
             TableFile = addDecoderSetting("tableFile", $"{TableFileDir}\\漢直系\\tutr.tbl");
             TableFile2 = addDecoderSetting("tableFile2", "");
@@ -1351,11 +1373,11 @@ namespace KanchokuWS
 
             // キー割当
             HistorySearchCtrlKey = GetString("histSearchCtrlKey");                              // 履歴検索&選択を行うCtrlキー
-            VKeyComboRepository.AddCtrlDeckeyAndCombo(HistorySearchCtrlKey, DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY, DecoderKeys.HISTORY_PREV_SEARCH_DECKEY);   // 登録
+            KeyComboRepository.AddCtrlDeckeyAndCombo(HistorySearchCtrlKey, DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY, DecoderKeys.HISTORY_PREV_SEARCH_DECKEY);   // 登録
             FullEscapeKey = GetString("fullEscapeKey", "G").Trim();
-            VKeyComboRepository.AddCtrlDeckeyAndCombo(FullEscapeKey, DecoderKeys.FULL_ESCAPE_DECKEY, DecoderKeys.UNBLOCK_DECKEY);
+            KeyComboRepository.AddCtrlDeckeyAndCombo(FullEscapeKey, DecoderKeys.FULL_ESCAPE_DECKEY, DecoderKeys.UNBLOCK_DECKEY);
             StrokeHelpRotationKey = GetString("strokeHelpRotationKey", "T").Trim();   // T
-            VKeyComboRepository.AddCtrlDeckeyAndCombo(StrokeHelpRotationKey, DecoderKeys.STROKE_HELP_ROTATION_DECKEY, DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
+            KeyComboRepository.AddCtrlDeckeyAndCombo(StrokeHelpRotationKey, DecoderKeys.STROKE_HELP_ROTATION_DECKEY, DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
 
             DecoderSpecialDeckeys.Clear();
             DecoderSpecialDeckeys.Add(DecoderKeys.FULL_ESCAPE_DECKEY);
