@@ -1183,7 +1183,9 @@ namespace KanchokuWS
             }
             IsDecoderActive = true;
             var ctrlKeyState = SendInputHandler.GetCtrlKeyState();
-            if (Settings.SelectedTableActivatedWithCtrl > 0 && Settings.SelectedTableActivatedWithCtrl <= 2 && ctrlKeyState.AnyKeyDown) {
+            if (Settings.SelectedTableActivatedWithoutCtrl > 0 && Settings.SelectedTableActivatedWithoutCtrl <= 2 && !ctrlKeyState.AnyKeyDown) {
+                changeCodeTableAndCombinationPool($"useCodeTable{Settings.SelectedTableActivatedWithoutCtrl}");  // 指定のコードテーブルを選択
+            } else if (Settings.SelectedTableActivatedWithCtrl > 0 && Settings.SelectedTableActivatedWithCtrl <= 2 && ctrlKeyState.AnyKeyDown) {
                 changeCodeTableAndCombinationPool($"useCodeTable{Settings.SelectedTableActivatedWithCtrl}");     // 指定のコードテーブルを選択
             } else {
                 if (decoderOutput.strokeTableNum == 3) {

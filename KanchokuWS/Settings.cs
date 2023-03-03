@@ -112,6 +112,9 @@ namespace KanchokuWS
         /// <summary>Ctrl修飾ありで Decoder をアクティブにするホットキーの仮想キーコード</summary> 
         public static uint ActiveKeyWithCtrl { get; private set; } = 0x1c;
 
+        /// <summary>Ctrl修飾なしで Decoder をアクティブにしたときに選択するテーブルの番号</summary> 
+        public static int SelectedTableActivatedWithoutCtrl { get; set; } = 0;
+
         /// <summary>Ctrl修飾ありで Decoder をアクティブにしたときに選択するテーブルの番号</summary> 
         public static int SelectedTableActivatedWithCtrl { get; set; } = 0;
 
@@ -1045,6 +1048,7 @@ namespace KanchokuWS
             ActiveKeyWithCtrl = (uint)GetString("hotKey")._parseHex(0)._lowLimit(0);
             if (ActiveKey == 0 && ActiveKeyWithCtrl == 0) ActiveKeyWithCtrl = 0xdc;
 
+            SelectedTableActivatedWithoutCtrl = GetString("selectedTableActivatedWithoutCtrl")._parseInt(0)._lowLimit(0)._highLimit(3);
             SelectedTableActivatedWithCtrl = GetString("selectedTableActivatedWithCtrl")._parseInt(0)._lowLimit(0)._highLimit(3);
 
             // 漢直モードOFFキー
