@@ -141,6 +141,8 @@ namespace KanchokuWS
         /// <summary>キーボードファイル</summary>
         public static string KeyboardFile { get; private set; }
 
+        public static string CharsDefFile { get; private set; }
+
         /// <summary>打鍵ヘルプ定義ファイル</summary>
         public static string StrokeHelpFile { get; private set; }
 
@@ -151,7 +153,6 @@ namespace KanchokuWS
         public static string BushuAssocFile { get; private set; }
         public static string BushuFile { get; private set; }
         public static string AutoBushuFile { get; private set; }
-        public static string CharsDefFile { get; private set; }
         public static string EasyCharsFile { get; private set; }
 
         public const string TableFileDir = "tables";
@@ -1037,6 +1038,9 @@ namespace KanchokuWS
             //-------------------------------------------------------------------------------------
             // キーボードと英数字配列設定
             ReadIniFileForKeyboardAndCharLayout();
+
+            // CtrlやAltのようなショートカット(アクセラレータ)キーに対する英字変換を有効にするか
+            ShortcutKeyConversionEnabled = GetString("shortcutKeyConversionEnabled")._parseBool(true);
 
             //-------------------------------------------------------------------------------------
             // ファイル設定

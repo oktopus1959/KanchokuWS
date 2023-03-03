@@ -37,6 +37,7 @@ namespace KanchokuWS.Gui
             this.button_document = new System.Windows.Forms.Button();
             this.button_restart = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.checkBox_shortcutKeyConversionDisabled = new System.Windows.Forms.CheckBox();
             this.comboBox_deckeyCharsFile = new System.Windows.Forms.ComboBox();
             this.comboBox_keyboardFile = new System.Windows.Forms.ComboBox();
             this.comboBox_tableFile2 = new System.Windows.Forms.ComboBox();
@@ -657,12 +658,12 @@ namespace KanchokuWS.Gui
             this.label_initialMsg.AutoSize = true;
             this.label_initialMsg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label_initialMsg.ForeColor = System.Drawing.Color.DarkRed;
-            this.label_initialMsg.Location = new System.Drawing.Point(274, 270);
+            this.label_initialMsg.Location = new System.Drawing.Point(271, 290);
             this.label_initialMsg.Name = "label_initialMsg";
-            this.label_initialMsg.Size = new System.Drawing.Size(304, 60);
+            this.label_initialMsg.Size = new System.Drawing.Size(379, 45);
             this.label_initialMsg.TabIndex = 10;
-            this.label_initialMsg.Text = "本体アイコンはタスクトレイに格納されています。\r\nこのダイアログは本体アイコンの右クリックメニューからも開けます。\r\nテキストボックス、ドロップダウン、チェックボ" +
-    "ックスなどの上に\r\nマウスポインタを置くとツールチップが表示されます。";
+            this.label_initialMsg.Text = "本体アイコンはタスクトレイに格納されています。このダイアログは本体アイコンの\r\n右クリックメニューからも開けます。テキストボックス、ドロップダウン、チェックボック" +
+    "ス\r\nなどの上にマウスポインタを置くとツールチップが表示されます。";
             this.label_initialMsg.Visible = false;
             // 
             // label_reloadBasic
@@ -707,6 +708,7 @@ namespace KanchokuWS.Gui
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.checkBox_shortcutKeyConversionDisabled);
             this.groupBox2.Controls.Add(this.comboBox_deckeyCharsFile);
             this.groupBox2.Controls.Add(this.comboBox_keyboardFile);
             this.groupBox2.Controls.Add(this.comboBox_tableFile2);
@@ -740,10 +742,22 @@ namespace KanchokuWS.Gui
             this.groupBox2.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox2.Location = new System.Drawing.Point(271, 10);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(392, 258);
+            this.groupBox2.Size = new System.Drawing.Size(392, 278);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "ファイル";
+            // 
+            // checkBox_shortcutKeyConversionDisabled
+            // 
+            this.checkBox_shortcutKeyConversionDisabled.AutoSize = true;
+            this.checkBox_shortcutKeyConversionDisabled.Location = new System.Drawing.Point(142, 63);
+            this.checkBox_shortcutKeyConversionDisabled.Name = "checkBox_shortcutKeyConversionDisabled";
+            this.checkBox_shortcutKeyConversionDisabled.Size = new System.Drawing.Size(201, 19);
+            this.checkBox_shortcutKeyConversionDisabled.TabIndex = 4;
+            this.checkBox_shortcutKeyConversionDisabled.Text = "CtrlやAlt修飾の時は配列変換しない";
+            this.toolTip1.SetToolTip(this.checkBox_shortcutKeyConversionDisabled, "チェックを入れると、Ctrl や Alt などとの同時打鍵の際、\r\n英数字テーブルによる配列変換を行いません。\r\n\r\n単打およびシフトキーとの同時打鍵の時だけ配列" +
+        "変更\r\nしたい場合は、ここにチェックを入れてください。\r\n\r\n");
+            this.checkBox_shortcutKeyConversionDisabled.UseVisualStyleBackColor = true;
             // 
             // comboBox_deckeyCharsFile
             // 
@@ -751,10 +765,10 @@ namespace KanchokuWS.Gui
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox_deckeyCharsFile.DropDownWidth = 270;
             this.comboBox_deckeyCharsFile.FormattingEnabled = true;
-            this.comboBox_deckeyCharsFile.Location = new System.Drawing.Point(129, 88);
+            this.comboBox_deckeyCharsFile.Location = new System.Drawing.Point(129, 37);
             this.comboBox_deckeyCharsFile.Name = "comboBox_deckeyCharsFile";
             this.comboBox_deckeyCharsFile.Size = new System.Drawing.Size(218, 23);
-            this.comboBox_deckeyCharsFile.TabIndex = 6;
+            this.comboBox_deckeyCharsFile.TabIndex = 2;
             this.toolTip1.SetToolTip(this.comboBox_deckeyCharsFile, resources.GetString("comboBox_deckeyCharsFile.ToolTip"));
             this.comboBox_deckeyCharsFile.DropDown += new System.EventHandler(this.comboBox_deckeyCharsFile_DropDown);
             // 
@@ -777,10 +791,10 @@ namespace KanchokuWS.Gui
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox_tableFile2.DropDownWidth = 400;
             this.comboBox_tableFile2.FormattingEnabled = true;
-            this.comboBox_tableFile2.Location = new System.Drawing.Point(129, 63);
+            this.comboBox_tableFile2.Location = new System.Drawing.Point(129, 108);
             this.comboBox_tableFile2.Name = "comboBox_tableFile2";
             this.comboBox_tableFile2.Size = new System.Drawing.Size(218, 23);
-            this.comboBox_tableFile2.TabIndex = 4;
+            this.comboBox_tableFile2.TabIndex = 7;
             this.toolTip1.SetToolTip(this.comboBox_tableFile2, "打鍵から文字への副変換テーブルファイルの設定\r\n\r\nファイルの内容は主テーブルファイルと同様です。\r\n切り替えコマンドまたは右クリックメニューの\r\n「再読込 > " +
         "主・副テーブル切り替え」により、\r\n主・副テーブルファイルを切り替えることができます。\r\n");
             this.comboBox_tableFile2.DropDown += new System.EventHandler(this.comboBox_tableFile2_DropDown);
@@ -792,10 +806,10 @@ namespace KanchokuWS.Gui
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox_tableFile.DropDownWidth = 400;
             this.comboBox_tableFile.FormattingEnabled = true;
-            this.comboBox_tableFile.Location = new System.Drawing.Point(129, 38);
+            this.comboBox_tableFile.Location = new System.Drawing.Point(129, 84);
             this.comboBox_tableFile.Name = "comboBox_tableFile";
             this.comboBox_tableFile.Size = new System.Drawing.Size(218, 23);
-            this.comboBox_tableFile.TabIndex = 2;
+            this.comboBox_tableFile.TabIndex = 5;
             this.toolTip1.SetToolTip(this.comboBox_tableFile, "打鍵から文字への主変換テーブルファイルの設定\r\n\r\n変換テーブルには、ホットキーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることに" +
         "より、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\n別のファイルを選択した場合は、「適用」を実行するとその内容が反映\r\nされます。\r\nテーブルの内容を修正し" +
         "た場合は、「再読込」を実行するとその内容が\r\n反映されます。\r\n");
@@ -805,10 +819,10 @@ namespace KanchokuWS.Gui
             // button_openTableFile2
             // 
             this.button_openTableFile2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openTableFile2.Location = new System.Drawing.Point(352, 62);
+            this.button_openTableFile2.Location = new System.Drawing.Point(352, 108);
             this.button_openTableFile2.Name = "button_openTableFile2";
             this.button_openTableFile2.Size = new System.Drawing.Size(34, 23);
-            this.button_openTableFile2.TabIndex = 5;
+            this.button_openTableFile2.TabIndex = 8;
             this.button_openTableFile2.Text = "開く";
             this.toolTip1.SetToolTip(this.button_openTableFile2, "副テーブルファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行する" +
         "と、\r\nその内容が反映されます。\r\n");
@@ -818,7 +832,7 @@ namespace KanchokuWS.Gui
             // label104
             // 
             this.label104.AutoSize = true;
-            this.label104.Location = new System.Drawing.Point(15, 66);
+            this.label104.Location = new System.Drawing.Point(15, 112);
             this.label104.Name = "label104";
             this.label104.Size = new System.Drawing.Size(89, 15);
             this.label104.TabIndex = 35;
@@ -827,10 +841,10 @@ namespace KanchokuWS.Gui
             // button_openHistoryFile
             // 
             this.button_openHistoryFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openHistoryFile.Location = new System.Drawing.Point(352, 231);
+            this.button_openHistoryFile.Location = new System.Drawing.Point(352, 252);
             this.button_openHistoryFile.Name = "button_openHistoryFile";
             this.button_openHistoryFile.Size = new System.Drawing.Size(34, 23);
-            this.button_openHistoryFile.TabIndex = 19;
+            this.button_openHistoryFile.TabIndex = 20;
             this.button_openHistoryFile.Text = "開く";
             this.toolTip1.SetToolTip(this.button_openHistoryFile, "入力履歴(entry)ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n");
             this.button_openHistoryFile.UseVisualStyleBackColor = true;
@@ -839,10 +853,10 @@ namespace KanchokuWS.Gui
             // button_openMazeFile
             // 
             this.button_openMazeFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openMazeFile.Location = new System.Drawing.Point(352, 207);
+            this.button_openMazeFile.Location = new System.Drawing.Point(352, 228);
             this.button_openMazeFile.Name = "button_openMazeFile";
             this.button_openMazeFile.Size = new System.Drawing.Size(34, 23);
-            this.button_openMazeFile.TabIndex = 17;
+            this.button_openMazeFile.TabIndex = 18;
             this.button_openMazeFile.Text = "開く";
             this.toolTip1.SetToolTip(this.button_openMazeFile, "ユーザー交ぜ書き辞書ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n");
             this.button_openMazeFile.UseVisualStyleBackColor = true;
@@ -851,10 +865,10 @@ namespace KanchokuWS.Gui
             // button_bushuAssocFile
             // 
             this.button_bushuAssocFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_bushuAssocFile.Location = new System.Drawing.Point(352, 183);
+            this.button_bushuAssocFile.Location = new System.Drawing.Point(352, 204);
             this.button_bushuAssocFile.Name = "button_bushuAssocFile";
             this.button_bushuAssocFile.Size = new System.Drawing.Size(34, 23);
-            this.button_bushuAssocFile.TabIndex = 15;
+            this.button_bushuAssocFile.TabIndex = 16;
             this.button_bushuAssocFile.Text = "開く";
             this.toolTip1.SetToolTip(this.button_bushuAssocFile, "部首連想辞書ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n");
             this.button_bushuAssocFile.UseVisualStyleBackColor = true;
@@ -863,10 +877,10 @@ namespace KanchokuWS.Gui
             // button_openBushuCompFile
             // 
             this.button_openBushuCompFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openBushuCompFile.Location = new System.Drawing.Point(352, 159);
+            this.button_openBushuCompFile.Location = new System.Drawing.Point(352, 180);
             this.button_openBushuCompFile.Name = "button_openBushuCompFile";
             this.button_openBushuCompFile.Size = new System.Drawing.Size(34, 23);
-            this.button_openBushuCompFile.TabIndex = 13;
+            this.button_openBushuCompFile.TabIndex = 14;
             this.button_openBushuCompFile.Text = "開く";
             this.toolTip1.SetToolTip(this.button_openBushuCompFile, "部首合成辞書および自動部首合成辞書ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。");
             this.button_openBushuCompFile.UseVisualStyleBackColor = true;
@@ -875,10 +889,10 @@ namespace KanchokuWS.Gui
             // button_openStrokeHelpFile
             // 
             this.button_openStrokeHelpFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openStrokeHelpFile.Location = new System.Drawing.Point(352, 135);
+            this.button_openStrokeHelpFile.Location = new System.Drawing.Point(352, 156);
             this.button_openStrokeHelpFile.Name = "button_openStrokeHelpFile";
             this.button_openStrokeHelpFile.Size = new System.Drawing.Size(34, 23);
-            this.button_openStrokeHelpFile.TabIndex = 11;
+            this.button_openStrokeHelpFile.TabIndex = 12;
             this.button_openStrokeHelpFile.Text = "開く";
             this.toolTip1.SetToolTip(this.button_openStrokeHelpFile, "打鍵ヘルプファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行する" +
         "と、\r\nその内容が反映されます。");
@@ -888,10 +902,10 @@ namespace KanchokuWS.Gui
             // button_openEasyCharsFile
             // 
             this.button_openEasyCharsFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openEasyCharsFile.Location = new System.Drawing.Point(352, 111);
+            this.button_openEasyCharsFile.Location = new System.Drawing.Point(352, 132);
             this.button_openEasyCharsFile.Name = "button_openEasyCharsFile";
             this.button_openEasyCharsFile.Size = new System.Drawing.Size(34, 23);
-            this.button_openEasyCharsFile.TabIndex = 9;
+            this.button_openEasyCharsFile.TabIndex = 10;
             this.button_openEasyCharsFile.Text = "開く";
             this.toolTip1.SetToolTip(this.button_openEasyCharsFile, "容易打鍵文字ファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行す" +
         "ると、\r\nその内容が反映されます。");
@@ -901,10 +915,10 @@ namespace KanchokuWS.Gui
             // button_openKeyCharMapFile
             // 
             this.button_openKeyCharMapFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openKeyCharMapFile.Location = new System.Drawing.Point(352, 87);
+            this.button_openKeyCharMapFile.Location = new System.Drawing.Point(352, 37);
             this.button_openKeyCharMapFile.Name = "button_openKeyCharMapFile";
             this.button_openKeyCharMapFile.Size = new System.Drawing.Size(34, 23);
-            this.button_openKeyCharMapFile.TabIndex = 7;
+            this.button_openKeyCharMapFile.TabIndex = 3;
             this.button_openKeyCharMapFile.Text = "開く";
             this.toolTip1.SetToolTip(this.button_openKeyCharMapFile, "キー・文字マップファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。");
             this.button_openKeyCharMapFile.UseVisualStyleBackColor = true;
@@ -913,10 +927,10 @@ namespace KanchokuWS.Gui
             // button_openTableFile
             // 
             this.button_openTableFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_openTableFile.Location = new System.Drawing.Point(352, 38);
+            this.button_openTableFile.Location = new System.Drawing.Point(352, 84);
             this.button_openTableFile.Name = "button_openTableFile";
             this.button_openTableFile.Size = new System.Drawing.Size(34, 23);
-            this.button_openTableFile.TabIndex = 3;
+            this.button_openTableFile.TabIndex = 6;
             this.button_openTableFile.Text = "開く";
             this.toolTip1.SetToolTip(this.button_openTableFile, "主テーブルファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。\r\n\r\nファイルの内容を修正した場合は、「再読込」を実行する" +
         "と、\r\nその内容が反映されます。\r\n");
@@ -940,17 +954,17 @@ namespace KanchokuWS.Gui
             this.textBox_strokeHelpFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_strokeHelpFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_strokeHelpFile.Location = new System.Drawing.Point(129, 137);
+            this.textBox_strokeHelpFile.Location = new System.Drawing.Point(129, 158);
             this.textBox_strokeHelpFile.Name = "textBox_strokeHelpFile";
             this.textBox_strokeHelpFile.Size = new System.Drawing.Size(218, 19);
-            this.textBox_strokeHelpFile.TabIndex = 10;
+            this.textBox_strokeHelpFile.TabIndex = 11;
             this.toolTip1.SetToolTip(this.textBox_strokeHelpFile, "仮想鍵盤に表示する打鍵ヘルプ表を定義するファイル\r\n\r\n仮想鍵盤が第1打鍵待ちになっている状態で表示される\r\n打鍵表を定義します。\r\n\r\n複数のパターンを定義でき" +
         "ます。\r\nそれらは第1打鍵ヘルプローテーションキー(Ctrl-Tなど)によって\r\n切り替えることができます。");
             // 
             // label47
             // 
             this.label47.AutoSize = true;
-            this.label47.Location = new System.Drawing.Point(15, 139);
+            this.label47.Location = new System.Drawing.Point(15, 160);
             this.label47.Name = "label47";
             this.label47.Size = new System.Drawing.Size(94, 15);
             this.label47.TabIndex = 32;
@@ -961,17 +975,17 @@ namespace KanchokuWS.Gui
             this.textBox_easyCharsFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_easyCharsFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_easyCharsFile.Location = new System.Drawing.Point(129, 113);
+            this.textBox_easyCharsFile.Location = new System.Drawing.Point(129, 135);
             this.textBox_easyCharsFile.Name = "textBox_easyCharsFile";
             this.textBox_easyCharsFile.Size = new System.Drawing.Size(218, 19);
-            this.textBox_easyCharsFile.TabIndex = 8;
+            this.textBox_easyCharsFile.TabIndex = 9;
             this.toolTip1.SetToolTip(this.textBox_easyCharsFile, "容易に打鍵できる文字を定義するファイル\r\n\r\n交ぜ書き変換で、これらの文字を含む候補を出さないようにしたり、\r\n容易に打鍵できる短い文字列を履歴登録しないようにす" +
         "るために\r\n使われます。\r\nそれ以外にも打鍵ヘルプの表示などでも利用されます。");
             // 
             // label44
             // 
             this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(15, 115);
+            this.label44.Location = new System.Drawing.Point(15, 136);
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(113, 15);
             this.label44.TabIndex = 18;
@@ -981,7 +995,7 @@ namespace KanchokuWS.Gui
             // 
             this.label18.AutoSize = true;
             this.label18.ForeColor = System.Drawing.Color.DarkRed;
-            this.label18.Location = new System.Drawing.Point(15, 42);
+            this.label18.Location = new System.Drawing.Point(15, 88);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(89, 15);
             this.label18.TabIndex = 16;
@@ -990,7 +1004,7 @@ namespace KanchokuWS.Gui
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(15, 91);
+            this.label10.Location = new System.Drawing.Point(15, 41);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(113, 15);
             this.label10.TabIndex = 14;
@@ -1001,16 +1015,16 @@ namespace KanchokuWS.Gui
             this.textBox_historyFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_historyFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_historyFile.Location = new System.Drawing.Point(129, 233);
+            this.textBox_historyFile.Location = new System.Drawing.Point(129, 254);
             this.textBox_historyFile.Name = "textBox_historyFile";
             this.textBox_historyFile.Size = new System.Drawing.Size(218, 19);
-            this.textBox_historyFile.TabIndex = 18;
+            this.textBox_historyFile.TabIndex = 19;
             this.toolTip1.SetToolTip(this.textBox_historyFile, resources.GetString("textBox_historyFile.ToolTip"));
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(15, 235);
+            this.label7.Location = new System.Drawing.Point(15, 256);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(89, 15);
             this.label7.TabIndex = 8;
@@ -1021,16 +1035,16 @@ namespace KanchokuWS.Gui
             this.textBox_mazegakiFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_mazegakiFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_mazegakiFile.Location = new System.Drawing.Point(129, 209);
+            this.textBox_mazegakiFile.Location = new System.Drawing.Point(129, 230);
             this.textBox_mazegakiFile.Name = "textBox_mazegakiFile";
             this.textBox_mazegakiFile.Size = new System.Drawing.Size(218, 19);
-            this.textBox_mazegakiFile.TabIndex = 16;
+            this.textBox_mazegakiFile.TabIndex = 17;
             this.toolTip1.SetToolTip(this.textBox_mazegakiFile, resources.GetString("textBox_mazegakiFile.ToolTip"));
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(15, 211);
+            this.label6.Location = new System.Drawing.Point(15, 232);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(108, 15);
             this.label6.TabIndex = 6;
@@ -1041,10 +1055,10 @@ namespace KanchokuWS.Gui
             this.textBox_bushuAssocFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_bushuAssocFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_bushuAssocFile.Location = new System.Drawing.Point(129, 185);
+            this.textBox_bushuAssocFile.Location = new System.Drawing.Point(129, 206);
             this.textBox_bushuAssocFile.Name = "textBox_bushuAssocFile";
             this.textBox_bushuAssocFile.Size = new System.Drawing.Size(218, 19);
-            this.textBox_bushuAssocFile.TabIndex = 14;
+            this.textBox_bushuAssocFile.TabIndex = 15;
             this.toolTip1.SetToolTip(this.textBox_bushuAssocFile, "部首連想の定義を記述したファイルを設定\r\n\r\n部首連想辞書ファイルは漢直窓S終了時に自動的に内容が上書きされるので、\r\nこのファイルをエディタ等で編集する場合は漢" +
         "直を終了させてから行ってください。\r\n\r\n記述フォーマットについては、「ドキュメント」または「辞書登録」タブの「部首連想」\r\nテキストボックスのツールチップを参" +
         "照してください。");
@@ -1052,7 +1066,7 @@ namespace KanchokuWS.Gui
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(15, 187);
+            this.label5.Location = new System.Drawing.Point(15, 208);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(113, 15);
             this.label5.TabIndex = 4;
@@ -1063,16 +1077,16 @@ namespace KanchokuWS.Gui
             this.textBox_bushuCompFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_bushuCompFile.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_bushuCompFile.Location = new System.Drawing.Point(129, 161);
+            this.textBox_bushuCompFile.Location = new System.Drawing.Point(129, 182);
             this.textBox_bushuCompFile.Name = "textBox_bushuCompFile";
             this.textBox_bushuCompFile.Size = new System.Drawing.Size(218, 19);
-            this.textBox_bushuCompFile.TabIndex = 12;
+            this.textBox_bushuCompFile.TabIndex = 13;
             this.toolTip1.SetToolTip(this.textBox_bushuCompFile, resources.GetString("textBox_bushuCompFile.ToolTip"));
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(15, 163);
+            this.label4.Location = new System.Drawing.Point(15, 184);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(113, 15);
             this.label4.TabIndex = 2;
@@ -7333,5 +7347,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label148;
         private System.Windows.Forms.ComboBox comboBox_keyboardFile;
         private System.Windows.Forms.ComboBox comboBox_deckeyCharsFile;
+        private System.Windows.Forms.CheckBox checkBox_shortcutKeyConversionDisabled;
     }
 }

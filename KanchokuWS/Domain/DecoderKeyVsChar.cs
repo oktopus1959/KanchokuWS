@@ -70,7 +70,7 @@ namespace KanchokuWS.Domain
         {
             logger.InfoH("ENTER");
 
-            Settings.ShortcutKeyConversionEnabled = true;
+            //Settings.ShortcutKeyConversionEnabled = true;
             normalChars = null;
             shiftedChars = null;
             int yenPos = 43;
@@ -100,9 +100,9 @@ namespace KanchokuWS.Domain
                             charList = null;
                         } else if (line._startsWith("## YEN=")) {
                             yenPos = line._safeSubstring(7)._parseInt(-1);
-                        } else if (line.StartsWith("## SHORTCUT=disabl")) {
-                            Settings.ShortcutKeyConversionEnabled = false;
-                            logger.InfoH("ShortcutKeyConversion: Disabled");
+                        //} else if (line.StartsWith("## SHORTCUT=disabl")) {
+                        //    Settings.ShortcutKeyConversionEnabled = false;
+                        //    logger.InfoH("ShortcutKeyConversion: Disabled");
                         }
                     } else {
                         if (charList != null) {

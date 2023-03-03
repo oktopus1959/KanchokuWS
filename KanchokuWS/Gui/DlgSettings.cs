@@ -320,6 +320,7 @@ namespace KanchokuWS.Gui
             // ファイル
             comboBox_keyboardFile.Text = getKeyboardName(Settings.KeyboardFile);
             comboBox_deckeyCharsFile.Text = getKeyboardName(Settings.GetString("charsDefFile"));
+            checkBox_shortcutKeyConversionDisabled.Checked = !Settings.ShortcutKeyConversionEnabled;
             textBox_easyCharsFile.Text = Settings.EasyCharsFile;
             textBox_strokeHelpFile.Text = Settings.StrokeHelpFile;
             textBox_bushuCompFile.Text = Settings.BushuFile;
@@ -370,6 +371,7 @@ namespace KanchokuWS.Gui
             // ファイル
             checkerBasic.Add(comboBox_keyboardFile);
             checkerBasic.Add(comboBox_deckeyCharsFile);
+            checkerBasic.Add(checkBox_shortcutKeyConversionDisabled);
             checkerBasic.Add(textBox_easyCharsFile);
             checkerBasic.Add(comboBox_tableFile);
             checkerBasic.Add(comboBox_tableFile2);
@@ -428,6 +430,7 @@ namespace KanchokuWS.Gui
             // ファイル
             Settings.SetUserIni("keyboard", getKeyboardFileName(comboBox_keyboardFile.Text));
             Settings.SetUserIni("charsDefFile", getKeyboardFileName(comboBox_deckeyCharsFile.Text));
+            Settings.SetUserIni("shortcutKeyConversionEnabled", !checkBox_shortcutKeyConversionDisabled.Checked);
             Settings.SetUserIni("easyCharsFile", textBox_easyCharsFile.Text.Trim());
             Settings.SetUserIni("tableFile", getTableFileName(comboBox_tableFile.Text));
             Settings.SetUserIni("tableFile2", getTableFileName(comboBox_tableFile2.Text));
