@@ -1243,7 +1243,7 @@ namespace {
         // ↓の処理 -- 次候補を返す
         void handleDownArrow() {
             _LOG_DEBUGH(_T("CALLED: %s: bCandSelectable=%s"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable));
-            if (SETTINGS->useArrowKeyToSelectCandidate && bCandSelectable) {
+            if (SETTINGS->useArrowToSelCand && bCandSelectable) {
                 setCandSelectIsCalled();
                 getNextCandidate();
             } else {
@@ -1255,7 +1255,7 @@ namespace {
         // ↑の処理 -- 前候補を返す
         void handleUpArrow() {
             _LOG_DEBUGH(_T("CALLED: %s: bCandSelectable=%s"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable));
-            if (SETTINGS->useArrowKeyToSelectCandidate && bCandSelectable) {
+            if (SETTINGS->useArrowToSelCand && bCandSelectable) {
                 setCandSelectIsCalled();
                 getPrevCandidate();
             } else {

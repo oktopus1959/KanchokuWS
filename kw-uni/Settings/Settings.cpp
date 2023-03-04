@@ -72,7 +72,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_UINT_VALUE(histHorizontalCandMax);
     SET_BOOL_VALUE(histMoveShortestAt2nd);
 
-    SET_BOOL_VALUE(useArrowKeyToSelectCandidate);
+    SET_BOOL_VALUE(useArrowToSelCand);
     SET_BOOL_VALUE(selectHistCandByTab);
 
     SET_BOOL_VALUE(mazeHistRegisterAnyway);
@@ -101,7 +101,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_INT_VALUE(eisuExitCapitalCharNum);
     SET_INT_VALUE(eisuExitSpaceNum);
 
-    SET_BOOL_VALUE(removeOneStrokeByBackspace);
+    SET_BOOL_VALUE(removeOneByBS);
 
     SET_BOOL_VALUE(yamanobeEnabled);
     SET_BOOL_VALUE(autoBushuComp);
@@ -122,8 +122,8 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     RESET_STROKE_FUNC("bushuAssocDirect");
     RESET_STROKE_FUNC("katakanaMode");
     RESET_STROKE_FUNC("katakanaOneShot");
-    RESET_STROKE_FUNC("hankakuKatakanaOneShot");
-    RESET_STROKE_FUNC("blockerSetterOneShot");
+    RESET_STROKE_FUNC("hanKataOneShot");
+    RESET_STROKE_FUNC("blkSetOneShot");
     //if (GET_BOOL_VALUE(mazegakiByShiftSpace)) StrokeTableNode::AssignFucntion(utils::format(_T("%d"), DECKEY_STROKE_49), _T("mazegaki"));
 
     // for Debug

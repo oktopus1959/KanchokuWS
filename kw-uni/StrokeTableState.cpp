@@ -156,7 +156,7 @@ namespace {
 
         void handleBS() {
             LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
-            if (SETTINGS->removeOneStrokeByBackspace) {
+            if (SETTINGS->removeOneByBS) {
                 // 自ステートだけを削除(上位のストロークステートは残す)
                 bUnnecessary = true;
             } else {

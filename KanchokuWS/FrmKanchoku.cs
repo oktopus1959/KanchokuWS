@@ -618,7 +618,9 @@ namespace KanchokuWS
         /// <summary> デコーダにコマンドを送信する(エラーなら false を返す)</summary> 
         public bool ExecCmdDecoder(string cmd, string data, bool bInit = false)
         {
-            logger.InfoH(() => $"ENTER: cmd={cmd}, bInit={bInit}, dataLen={data._safeLength()}, data={data}");
+            logger.InfoH(() => $"ENTER: cmd={cmd}, bInit={bInit}, dataLen={data._safeLength()}, inOutData.size={IN_OUT_DATA_SIZE}, data=\n{data}");
+            if (data._safeLength() >= IN_OUT_DATA_SIZE) logger.WarnH($"dataLen({data._safeLength()}) exceeds inOutData.size({IN_OUT_DATA_SIZE})");
+
             bool resultFlag = true;
             if (decoderPtr != IntPtr.Zero) {
                 var prm = new DecoderCommandParams() {
@@ -653,7 +655,7 @@ namespace KanchokuWS
                     }
                     var errMsg = prm.inOutData._toString();
                     if (result == 1) {
-                        logger.Warn(errMsg);
+                        logger.WarnH(errMsg);
                         SystemHelper.ShowWarningMessageBox(errMsg);
                     } else {
                         logger.Error(errMsg);
@@ -662,7 +664,7 @@ namespace KanchokuWS
                     }
                 } else if (result < 0) {
                     var errMsg = "Some error occured when Decoder called";
-                    logger.Warn(errMsg);
+                    logger.WarnH(errMsg);
                     SystemHelper.ShowWarningMessageBox(errMsg);
                 }
             }

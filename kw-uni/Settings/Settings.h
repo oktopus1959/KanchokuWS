@@ -50,8 +50,8 @@ struct Settings {
 
     bool histMoveShortestAt2nd = false;     // 最短長履歴文字列を2番目に表示する
 
-    bool useArrowKeyToSelectCandidate = true;   // 矢印キーで履歴候補選択を行う
-    bool selectHistCandByTab = true;            // Tabキーで履歴候補選択を行う
+    bool useArrowToSelCand = true;          // 矢印キーで履歴候補選択を行う
+    bool selectHistCandByTab = true;        // Tabキーで履歴候補選択を行う
     //bool handleShiftSpaceAsNormalSpace = true;    // Shift-Space を通常の Space として扱う (ただし histSearchByShiftSpace が優先)
 
     bool histGatherAllCandidates = true;    // キーの開始位置をずらして全履歴候補を取得するか
@@ -82,7 +82,7 @@ struct Settings {
     size_t eisuExitCapitalCharNum = 3;      // 英数モードを自動的に抜けるまでの大文字数
     size_t eisuExitSpaceNum = 2;            // 英数モードを自動的に抜けるまでのSpace数
 
-    bool removeOneStrokeByBackspace = false; // BS で直前打鍵のみを取り消す
+    bool removeOneByBS = false;             // BS で直前打鍵のみを取り消す
 
     bool yamanobeEnabled = false;           // YAMANOBEアルゴリズムを有効にするか
     bool autoBushuComp = false;             // 自動部首合成を行う

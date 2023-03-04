@@ -985,7 +985,8 @@ namespace KanchokuWS
         public static void ReadIniFileForKeyboardAndCharLayout()
         {
             // キーボードファイル設定
-            KeyboardFile = GetString("keyboard", "JP");
+            //KeyboardFile = GetString("keyboard", "JP");
+            KeyboardFile = GetString("keyboard", "106.key");
 
             // 英数文字テーブルファイル
             var charsDefFile = GetString("charsDefFile");
@@ -1342,7 +1343,7 @@ namespace KanchokuWS
             HistHorizontalCandMax = addDecoderSetting("histHorizontalCandMax", 10, 1, 10);      // 履歴候補の横列鍵盤表示の際の最大候補数
             HistMoveShortestAt2nd = addDecoderSetting("histMoveShortestAt2nd", false);          // 最短長履歴文字列を2番目に表示する
             HistAllowFromMiddleChar = addDecoderSetting("histAllowFromMiddleChar", true);       // 出力漢字列やカタカナ列の途中からでも自動履歴検索を行う(@TODO)
-            UseArrowKeyToSelectCandidate = addDecoderSetting("useArrowKeyToSelectCandidate", true);    // 矢印キーで履歴候補選択を行う
+            UseArrowKeyToSelectCandidate = addDecoderSetting("useArrowToSelCand", true);        // 矢印キーで履歴候補選択を行う
             SelectHistCandByTab = addDecoderSetting("selectHistCandByTab", true);               // Tabキーで履歴候補選択を行う
             //HandleShiftSpaceAsNormalSpace = addDecoderSetting("handleShiftSpaceAsNormalSpace", true);  // Shift+Space を通常 Space しとて扱う(HistSearchByShiftSpaceがfalseの場合)
 
@@ -1370,7 +1371,7 @@ namespace KanchokuWS
             EisuExitCapitalCharNum = addDecoderSetting("eisuExitCapitalCharNum", 3, 2);         // 英数モードを自動的に抜けるまでの大文字数
             EisuExitSpaceNum = addDecoderSetting("eisuExitSpaceNum", 2, 0);                     // 英数モードを自動的に抜けるまでのSpaceキー数
 
-            RemoveOneStrokeByBackspace = addDecoderSetting("removeOneStrokeByBackspace", "weakBS", false);  // BS で直前打鍵のみを取り消すか
+            RemoveOneStrokeByBackspace = addDecoderSetting("removeOneByBS", "weakBS", false);   // BS で直前打鍵のみを取り消すか
 
             YamanobeEnabled = addDecoderSetting("yamanobeEnabled", false);                      // YAMANOBEアルゴリズムを有効にするか
             AutoBushuComp = addDecoderSetting("autoBushuComp", false);                          // 自動首部合成を有効にするか
@@ -1418,9 +1419,9 @@ namespace KanchokuWS
             if (KatakanaModeKeySeq._notEmpty()) FunctionKeySeqSet.Add(KatakanaModeKeySeq);
             KatakanaOneShotKeySeq = addDecoderKeySeqSetting("katakanaOneShotKeySeq");
             if (KatakanaOneShotKeySeq._notEmpty()) FunctionKeySeqSet.Add(KatakanaOneShotKeySeq);
-            HankakuKatakanaOneShotKeySeq = addDecoderKeySeqSetting("hankakuKatakanaOneShotKeySeq");
+            HankakuKatakanaOneShotKeySeq = addDecoderKeySeqSetting("hanKataOneShotKeySeq");
             if (HankakuKatakanaOneShotKeySeq._notEmpty()) FunctionKeySeqSet.Add(HankakuKatakanaOneShotKeySeq);
-            BlockerSetterOneShotKeySeq = addDecoderKeySeqSetting("blockerSetterOneShotKeySeq");
+            BlockerSetterOneShotKeySeq = addDecoderKeySeqSetting("blkSetOneShotKeySeq");
             if (BlockerSetterOneShotKeySeq._notEmpty()) FunctionKeySeqSet.Add(BlockerSetterOneShotKeySeq);
 
             ZenkakuModeKeySeq_Preset = "";

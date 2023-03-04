@@ -1241,8 +1241,8 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("bushuAssocKeySeq", revertPresetString(textBox_bushuAssocKeySeq.Text));
             Settings.SetUserIni("bushuAssocDirectKeySeq", revertPresetString(textBox_bushuAssocDirectKeySeq.Text));
             Settings.SetUserIni("katakanaOneShotKeySeq", revertPresetString(textBox_katakanaOneShotKeySeq.Text));
-            Settings.SetUserIni("hankakuKatakanaOneShotKeySeq", revertPresetString(textBox_hankakuKatakanaOneShotKeySeq.Text));
-            Settings.SetUserIni("blockerSetterOneShotKeySeq", revertPresetString(textBox_blockerSetterOneShotKeySeq.Text));
+            Settings.SetUserIni("hanKataOneShotKeySeq", revertPresetString(textBox_hankakuKatakanaOneShotKeySeq.Text));
+            Settings.SetUserIni("blkSetOneShotKeySeq", revertPresetString(textBox_blockerSetterOneShotKeySeq.Text));
 
             Settings.ReadIniFile();
             // 各種定義ファイルの再読み込み
@@ -1595,7 +1595,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("histSearchCtrlKey", makeCtrlKeyConversion(checkBox_historySearchKey, comboBox_historySearchKey));
             //Settings.SetUserIni("histSearchByShiftSpace", checkBox_histSearchByShiftSpace.Checked);
             Settings.SetUserIni("selectFirstCandByEnter", checkBox_selectFirstCandByEnter.Checked);
-            Settings.SetUserIni("useArrowKeyToSelectCandidate", checkBox_useArrowKeyToSelectCand.Checked);
+            Settings.SetUserIni("useArrowToSelCand", checkBox_useArrowKeyToSelectCand.Checked);
             Settings.SetUserIni("selectHistCandByTab", checkBox_selectHistCandByTab.Checked);
             Settings.SetUserIni("histDelDeckeyId", comboBox_histDelDeckeyId.Text.Trim()._substring(0, 2));
             Settings.SetUserIni("histNumDeckeyId", comboBox_histNumDeckeyId.Text.Trim()._substring(0, 2));
@@ -1729,7 +1729,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("hiraToKataNormalPlane", checkBox_convertHiraganaToKatakanaNormalPlane.Checked);
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
             Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
-            Settings.SetUserIni("removeOneStrokeByBackspace", checkBox_removeOneStrokeByBackspace.Checked);
+            Settings.SetUserIni("removeOneByBS", checkBox_removeOneStrokeByBackspace.Checked);
             Settings.SetUserIni("eisuModeEnabled", checkBox_eisuModeEnabled.Checked);
             Settings.SetUserIni("eisuHistSearchChar", textBox_eisuHistSearchChar.Text);
             Settings.SetUserIni("eisuExitCapitalCharNum", textBox_eisuExitCapitalCharNum.Text);
