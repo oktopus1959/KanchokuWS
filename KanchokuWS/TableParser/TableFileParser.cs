@@ -1523,13 +1523,7 @@ namespace KanchokuWS.TableParser
 
         private void writeAllLines(string filename, List<string> lines)
         {
-            if (filename._notEmpty()) {
-                var path = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
-                Helper.CreateDirectory(path._getDirPath());
-                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: path={path}");
-                Helper.WriteLinesToFile(path, lines, (e) => logger.Error(e._getErrorMsg()));
-                if (Settings.LoggingTableFileInfo) logger.InfoH("LEAVE");
-            }
+            KanchokuHelper.WriteAllLinesToFile(filename, lines);
         }
 
     }

@@ -34,61 +34,6 @@ namespace KanchokuWS.Gui
             "拡張シフトF",
         };
 
-        //private static string[] qwertyKeyNames = new string[] {
-        //    "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
-        //    "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
-        //    "A", "S", "D", "F", "G", "H", "J", "K", "L",  ";",
-        //    "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/",
-        //    "Space", "-", "^", "￥", "@", "[", ":", "]", "＼", "N/A"
-        //};
-
-        //private static List<string> normalKeyNames = null;
-
-        //private void readCharsDefFile()
-        //{
-        //    if (normalKeyNames == null) {
-        //        if (Settings.CharsDefFile._notEmpty()) {
-        //            var lines = Helper.GetFileContent(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.CharsDefFile))._safeReplace("\r", "")._split('\n');
-        //            if (lines._notEmpty()) {
-        //                normalKeyNames = new List<string>();
-        //                int i = 0;
-        //                while (i < lines.Length) {
-        //                    var line = lines[i++];
-        //                    if (line._startsWith("## NORMAL")) {
-        //                        bool bSpace = false;
-        //                        while (i < lines.Length) {
-        //                            line = lines[i++];
-        //                            if (line._startsWith("## END")) break;
-        //                            foreach (var ch in line) {
-        //                                if (ch == ' ') {
-        //                                    if (bSpace) {
-        //                                        normalKeyNames.Add("N/A");
-        //                                    } else {
-        //                                        normalKeyNames.Add("Space");
-        //                                        bSpace = true;
-        //                                    }
-        //                                } else if (ch == '\\') {
-        //                                    normalKeyNames.Add("＼");
-        //                                } else {
-        //                                    normalKeyNames.Add(ch.ToString()._toUpper());
-        //                                }
-        //                            }
-        //                        }
-        //                    } else if (line._startsWith("## YEN=")) {
-        //                        int yenPos = line._safeSubstring(7)._parseInt(-1);
-        //                        if (yenPos >= 0 && yenPos < normalKeyNames.Count) {
-        //                            normalKeyNames[yenPos] = "￥";
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        if (normalKeyNames._isEmpty()) {
-        //            normalKeyNames = qwertyKeyNames.ToList();
-        //        }
-        //    }
-        //}
-
         private static KeyOrFunction[] singleHitKeys;
 
         private static KeyOrFunction[] extModifiees;

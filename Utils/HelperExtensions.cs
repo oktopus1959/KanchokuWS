@@ -632,6 +632,9 @@ namespace Utils
             return len >= 0 ? len : array._safeLength();
         }
 
+        /// <summary>
+        /// '\0' の手前までの文字列を作成する
+        /// </summary>
         public static string _toString(this char[] array)
         {
             return array != null ? new string(array, 0, array._strlen()) : "";

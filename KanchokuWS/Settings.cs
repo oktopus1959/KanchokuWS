@@ -141,7 +141,9 @@ namespace KanchokuWS
         /// <summary>キーボードファイル</summary>
         public static string KeyboardFile { get; private set; }
 
-        public static string CharsDefFile { get; private set; }
+        //public static string CharsDefFile { get; private set; }
+
+        public static string TempCharsDefFile { get; set; }
 
         /// <summary>打鍵ヘルプ定義ファイル</summary>
         public static string StrokeHelpFile { get; private set; }
@@ -995,7 +997,7 @@ namespace KanchokuWS
                 if (kbName._notEmpty() && (kbName._toLower() == "jp" || kbName._toLower() == "us")) kbName = null;
                 if (kbName._notEmpty()) charsDefFile = $"chars.{kbName}.txt";
             }
-            CharsDefFile = charsDefFile._notEmpty() ? KeyboardFileDir._joinPath(charsDefFile) : "";
+            //CharsDefFile = charsDefFile._notEmpty() ? KeyboardFileDir._joinPath(charsDefFile) : "";
         }
 
         //------------------------------------------------------------------------------
@@ -1305,7 +1307,7 @@ namespace KanchokuWS
             //    if (kbName._notEmpty() && (kbName._toLower() == "jp" || kbName._toLower() == "us")) kbName = null;
             //    if (kbName._notEmpty()) charsDefFile = $"chars.{kbName}.txt";
             //}
-            setDecoderSetting("charsDefFile", CharsDefFile);
+            setDecoderSetting("charsDefFile", TempCharsDefFile);
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
             TableFile = addDecoderSetting("tableFile", $"{TableFileDir}\\漢直系\\tutr.tbl");
             TableFile2 = addDecoderSetting("tableFile2", "");

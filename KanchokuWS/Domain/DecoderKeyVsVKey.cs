@@ -70,29 +70,10 @@ namespace KanchokuWS.Domain
         /// <summary> 機能キーの VKeyの配列</summary>
         private static uint[] functionalVKeys;
 
-        ///// <summary> 機能キー (Esc, 半/全, Tab, Caps, 英数, 無変換, 変換, かな, BS, Enter, Ins, Del, Home, End, PgUp, PgDn, ↑, ↓, ←, →)</summary>
-        //private static uint[] vkeyArrayFuncKeys = {
-        //    // 0 - 9
-        //    /*Esc*/ 0x1b, /*半/全*/ 0xf3, /*Tab*/ 0x09, /*Caps*/ 0x14, /*英数*/ 0xf0, /*無変換*/ 0x1d, /*変換*/ 0x1c, /*かな*/ 0xf2, /*BS*/ 0x08, /*Enter*/ 0x0d,
-        //    // 10 - 19
-        //    /*Ins*/ 0x2d, /*Del*/ 0x2e, /*Home*/ 0x24, /*End*/ 0x23, /*PgUp*/ 0x21, /*PgDn*/ 0x22, /*↑*/ 0x26, /*↓*/ 0x28, /*←*/ 0x25, /*→*/ 0x27,
-        //    // 20 - 23
-        //    /*Lctrl*/ FuncVKeys.LCONTROL, /*Rctrl*/ FuncVKeys.RCONTROL, /*Lshift*/ FuncVKeys.LSHIFT, /*Rshift*/ FuncVKeys.RSHIFT,
-        //    // 24 - 27
-        //    /*ScrLock*/ 0x91, /*Pause*/ 0x13, /*IME ON*/ 0x16, /*IME OFF*/ 0x1a,
-        //    // 28 - 37
-        //    /*F1*/ 0x70, /*F2*/ 0x71, /*F3*/ 0x72, /*F4*/ 0x73, /*F5*/ 0x74, /*F6*/ 0x75, /*F7*/ 0x76, /*F8*/ 0x77, /*F9*/ 0x78, /*F10*/ 0x79,
-        //    // 38 - 47
-        //    /*F11*/ 0x7a, /*F12*/ 0x7b, /*F13*/ 0x7c, /*F14*/ 0x7d, /*F15*/ 0x7e, /*F16*/ 0x7f, /*F17*/ 0x80, /*F18*/ 0x81, /*F19*/ 0x82, /*F20*/ 0x83,
-        //    // /*F21*/ 0x84, /*F22*/ 0x85, /*F23*/ 0x86, /*F24*/ 0x87,
-        //};
-
-        // 日本語キーボードだと Shift + 0x14 で CapsLock になる
-        private const uint capsVkeyWithShift = 0x14;
-
         // 機能キー配列の初期化 (エラーがあったら、その行を返す)
         private static void initFunctionalVKeys()
         {
+            logger.InfoH("CALLED");
             functionalVKeys = new uint[DecoderKeys.FUNC_DECKEY_NUM];
             functionalVKeys[DecoderKeys.ESC_DECKEY - DecoderKeys.FUNC_DECKEY_START] = (uint)Keys.Escape;
             functionalVKeys[DecoderKeys.HANZEN_DECKEY - DecoderKeys.FUNC_DECKEY_START] = 0xf3;
@@ -143,6 +124,9 @@ namespace KanchokuWS.Domain
             functionalVKeys[DecoderKeys.F19_DECKEY - DecoderKeys.FUNC_DECKEY_START] = (uint)Keys.F19;
             functionalVKeys[DecoderKeys.F20_DECKEY - DecoderKeys.FUNC_DECKEY_START] = (uint)Keys.F20;
         }
+
+        //// 日本語キーボードだと Shift + 0x14 で CapsLock になる
+        //private const uint capsVkeyWithShift = 0x14;
 
         /// <summary>
         /// 機能キーに対する VKeyテーブルから、そのインデックスに該当する VKey を取得する
@@ -258,6 +242,19 @@ namespace KanchokuWS.Domain
         }
 
         /// <summary>
+        /// QwertyのDecKey Indexに相当する、使用されているキーボード配列によるDecKeyを取得する
+        /// </summary>
+        /// <param name="idx"></param>
+        /// <returns></returns>
+        public static int GetDecKeyFromQwertyIndex(int idx)
+        {
+            if (normalVKeys._isEmpty()) return idx;
+            uint vk = normalVKeys._getNth(idx);
+            if (vk == 0) return -1;
+            return (IsJPmode ? VKeyArrayJP : VKeyArrayUS)._findIndex(vk);
+        }
+
+        /// <summary>
         /// キー名から、それに対応するDecKeyを得る<br/>対応するものがなければ -1 を返す
         /// </summary>
         public static int GetDecKeyFromFaceStr(string keyFace)
@@ -324,9 +321,12 @@ namespace KanchokuWS.Domain
         {
             logger.InfoH("ENTER");
 
+            IsJPmode = true;
+
             initFunctionalVKeys();
 
             var kbName = Settings.GetString("keyboard", "JP");
+            logger.InfoH(() => $"kbName={kbName}");
             if (kbName._isEmpty() || kbName._toUpper() == "JP") {
                 normalVKeys = VKeyArrayJP;
             } else if (kbName._toUpper() == "US") {
@@ -334,72 +334,79 @@ namespace KanchokuWS.Domain
                 IsJPmode = false;
             } else {
                 var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KeyboardFileDir, kbName);
-                logger.Info($"keyboard file path={filePath}");
+                logger.InfoH(() => $"keyboard file path={filePath}");
                 var allLines = Helper.GetFileContent(filePath, Encoding.UTF8);
                 if (allLines == null) {
                     logger.Error($"Can't read keyboard file: {filePath}");
-                    SystemHelper.ShowErrorMessageBox($"キーボード定義ファイル({filePath}の読み込みに失敗しました。");
-                    return false;
-                }
-                var lines = allLines._split('\n').Select(line => line.Trim().Replace(" ", "")).Where(line => line._notEmpty() && line[0] != '#' && line[0] != ';').ToArray();
+                    SystemHelper.ShowErrorMessageBox($"キーボード定義ファイル({filePath})の読み込みに失敗しました。\r\n日本語キーボードに設定します。");
+                    normalVKeys = VKeyArrayJP;
+                } else {
+                    var lines = allLines._split('\n').Select(line => line.Trim().Replace(" ", "")).Where(line => line._notEmpty() && line[0] != '#' && line[0] != ';').ToArray();
 
-                List<uint> list = null;
+                    List<uint> list = null;
 
-                // MODE=JP or MODE=US
-                if (lines._notEmpty()) {
-                    var items = lines._getFirst()._toUpper()._split('=');
-                    if (items._safeLength() == 2 && items[0] == "MODE") {
-                        if (items[1] == "JP") {
-                            list = VKeyArrayJP.ToList();
-                        } else if (items[1] == "US") {
-                            list = VKeyArrayUS.ToList();
-                            IsJPmode = false;
+                    // MODE=JP or MODE=US
+                    if (lines._notEmpty()) {
+                        var items = lines._getFirst()._toUpper()._split('=');
+                        if (items._safeLength() == 2 && items[0]._toUpper() == "MODE") {
+                            if (items[1]._toUpper() == "JP") {
+                                list = VKeyArrayJP.ToList();
+                            } else if (items[1]._toUpper() == "US") {
+                                list = VKeyArrayUS.ToList();
+                                IsJPmode = false;
+                            }
                         }
                     }
-                }
-                // ストロークキーの仮想キーコードを得る
-                var hexes = lines.Where(line => line.IndexOf('=') < 0)._join("").TrimEnd(',')._split(',').ToArray();
-                if (hexes._notEmpty()) {
-                    list = hexes.Select(x => (uint)x._parseHex(0)).ToList();
-                    int idx = list.FindIndex(x => x < 0 || x >= 0x100);
-                    if (idx >= 0 && idx < list.Count) {
-                        logger.Warn($"Invalid keyboard def: file={filePath}, {idx}th: {hexes[idx]}");
-                        SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}の{idx}番目のキー定義({hexes[idx]})が誤っています。");
-                        return false;
+                    // ストロークキーの仮想キーコードを得る
+                    List<string> errLines = new List<string>();
+                    var hexes = lines.Where(line => line.IndexOf('=') < 0)._join("").TrimEnd(',')._split(',').ToArray();
+                    if (hexes._notEmpty()) {
+                        list = hexes.Select(x => (uint)x._parseHex(0)).ToList();
+                        int idx = list.FindIndex(x => x < 0 || x >= 0x100);
+                        if (idx >= 0 && idx < list.Count) {
+                            logger.WarnH($"Invalid keyboard def: file={filePath}, {idx}th: {hexes[idx]}");
+                            errLines.Add($"    {idx}番目のキー定義({hexes[idx]})");
+                        }
+                        //if (list.Count < DecoderKeys.NORMAL_DECKEY_NUM) {
+                        //    logger.Warn($"No sufficient keyboard def: file={filePath}, total {list.Length} defs");
+                        //    SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}のキー定義の数({list.Length})が不足しています。");
+                        //    return false;
+                        //}
+                        for (int i = list.Count; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) list.Add(0);
                     }
-                    //if (list.Count < DecoderKeys.NORMAL_DECKEY_NUM) {
-                    //    logger.Warn($"No sufficient keyboard def: file={filePath}, total {list.Length} defs");
-                    //    SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}のキー定義の数({list.Length})が不足しています。");
-                    //    return false;
-                    //}
-                    for (int i = list.Count; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) list.Add(0);
-                }
+                    if (errLines._notEmpty()) {
+                        SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath})の\r\n{errLines.Take(5)._join("\r\n")}\r\nが誤っています。");
+                    }
 
-                if (list._isEmpty()) list = VKeyArrayJP.ToList();
+                    if (list._isEmpty()) list = VKeyArrayJP.ToList();
 
-                normalVKeys = list.ToArray();
+                    normalVKeys = list.ToArray();
 
-                // 機能キー
-                // NAME=xx の形式で、機能キー(Esc, BS, Enter, 矢印キーなど)の仮想キーコード定義を得る
-                foreach (var line in lines) {
-                    var items = line._toLower()._split('=');
-                    if (items._safeLength() == 2 && items[0]._notEmpty() && items[1]._notEmpty()) {
-                        int n = -1;
-                        int vk = items[1]._parseHex();
-                        if (vk >= 0 && vk < 0x100) {
-                            n = GetFuncKeyIndexByName(items[0]);
+                    // 機能キー
+                    // NAME=xx の形式で、機能キー(Esc, BS, Enter, 矢印キーなど)の仮想キーコード定義を得る
+                    errLines.Clear();
+                    foreach (var line in lines) {
+                        var items = line._toLower()._split('=');
+                        if (items._safeLength() == 2 && items[0]._notEmpty() && items[1]._notEmpty() && items[0]._toUpper() != "MODE") {
+                            int n = -1;
+                            int vk = items[1]._parseHex();
+                            if (vk >= 0 && vk < 0x100) {
+                                n = GetFuncKeyIndexByName(items[0]);
+                            }
+                            if (n >= 0 && n < functionalVKeys.Length) {
+                                functionalVKeys[n] = (uint)vk;
+                            } else {
+                                logger.WarnH($"Invalid functional key def: file={filePath}, line: {line}");
+                                errLines.Add("    "+ line);
+                            }
                         }
-                        if (n >= 0 && n < functionalVKeys.Length) {
-                            functionalVKeys[n] = (uint)vk;
-                        } else {
-                            logger.Warn($"Invalid functional key def: file={filePath}, line: {line}");
-                            SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}の行 {line} が誤っています。");
-                            return false;
-                        }
+                    }
+                    if (errLines._notEmpty()) {
+                        SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath})の\r\n{errLines.Take(5)._join("\r\n")}\r\nが誤っています。");
                     }
                 }
             }
-            logger.Info(() => $"keyboard keyNum={normalVKeys.Length}, array={normalVKeys.Select(x => x.ToString("x"))._join(", ")}");
+            logger.InfoH(() => $"keyboard mode={(IsJPmode ? "JP" : "US")}, keyNum={normalVKeys.Length}, array={normalVKeys.Select(x => x.ToString("x"))._join(", ")}");
 
             setupDecKeyAndComboTable();
 
@@ -419,27 +426,16 @@ namespace KanchokuWS.Domain
                 KeyComboRepository.AddDecKeyAndCombo(id, 0, id);
                 // Shifted
                 KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_DECKEY_START + id, KeyModifiers.MOD_SHIFT, id);
-                // Ctrl
-                //AddDecKeyAndCombo(DecoderKeys.CTRL_DECKEY_START + id, KeyModifiers.MOD_CONTROL, id);
-                // Ctrl+Shift
-                //AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, id);
             }
 
-            // 機能キー(RSHFTも登録される)
+            // 機能キー
             for (int id = DecoderKeys.FUNC_DECKEY_START; id < DecoderKeys.FUNC_DECKEY_END; ++id) {
                 // Normal
                 KeyComboRepository.AddDecKeyAndCombo(id, 0, id);
-                // Shift
-                //if (id == capsVkeyWithShift) VKeyComboRepository.AddDecKeyAndCombo(DecoderKeys.FUNC_DECKEY_START + id, KeyModifiers.MOD_SHIFT, id);
-                // Ctrl
-                //AddDecKeyAndCombo(DecoderKeys.CTRL_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL, id);
-                // Ctrl+Shifted
-                //AddDecKeyAndCombo(DecoderKeys.CTRL_SHIFT_FUNC_DECKEY_START + id, KeyModifiers.MOD_CONTROL + KeyModifiers.MOD_SHIFT, id);
             }
 
             // Shift+Tab
             KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, DecoderKeys.TAB_DECKEY);
-            //AddModConvertedDecKeyFromCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, (uint)Keys.Tab);
             logger.InfoH($"LEAVE");
         }
 

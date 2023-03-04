@@ -297,7 +297,7 @@ namespace KanchokuWS
             }
 
             // 英字配列ファイルの読み込み
-            DecoderKeyVsChar.ReadCharsDefFile();
+            Settings.TempCharsDefFile = DecoderKeyVsChar.ReadCharsDefFile();
 
             return true;
         }
@@ -618,7 +618,7 @@ namespace KanchokuWS
         /// <summary> デコーダにコマンドを送信する(エラーなら false を返す)</summary> 
         public bool ExecCmdDecoder(string cmd, string data, bool bInit = false)
         {
-            logger.InfoH(() => $"ENTER: cmd={cmd}, bInit={bInit}, dataLen={data._safeLength()}, inOutData.size={IN_OUT_DATA_SIZE}, data=\n{data}");
+            logger.InfoH(() => $"ENTER: cmd={cmd}, bInit={bInit}, dataLen={data._safeLength()}, inOutData.size={IN_OUT_DATA_SIZE}, data={(data._safeLength() > 100 ? "\n" : "")}{data}");
             if (data._safeLength() >= IN_OUT_DATA_SIZE) logger.WarnH($"dataLen({data._safeLength()}) exceeds inOutData.size({IN_OUT_DATA_SIZE})");
 
             bool resultFlag = true;
@@ -2219,9 +2219,6 @@ namespace KanchokuWS
         {
             logger.InfoH("ENTER");
 
-            // キーボードハンドラの再初期化
-            keHandler.Reinitialize();
-
             // 初期化
             KeyComboRepository.Initialize();
             ExtraModifiers.Initialize();
@@ -2229,6 +2226,9 @@ namespace KanchokuWS
 
             // キーボードファイルの読み込み
             bool resultOK = readKeyboardFileAndCharsDefFile();
+
+            // キーボードハンドラの再初期化
+            keHandler.Reinitialize();
 
             //// 文字定義ファイルの読み込み
             //DecoderKeyVsChar.ReadCharsDefFile();

@@ -607,8 +607,8 @@ namespace KanchokuWS.Gui
         private void comboBox_keyboardFile_DropDown(object sender, EventArgs e)
         {
             comboBox_keyboardFile.Items.Clear();
-            comboBox_keyboardFile.Items.Add("JP");
-            comboBox_keyboardFile.Items.Add("US");
+            //comboBox_keyboardFile.Items.Add("JP");
+            //comboBox_keyboardFile.Items.Add("US");
             var fileList = Helper.GetFiles(KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KeyboardFileDir), "*.key").Select(x => getKeyboardName(x)).ToArray();
             comboBox_keyboardFile.Items.AddRange(fileList);
         }

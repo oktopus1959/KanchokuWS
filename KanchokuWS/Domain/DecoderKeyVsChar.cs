@@ -64,74 +64,98 @@ namespace KanchokuWS.Domain
         public static List<string> NormalKeyNames => normalKeyNames;
 
         /// <summary>
-        /// キー・文字マップファイル(chars.106.txtとか)を読み込んで、DecKeyから文字への配列を作成する<br/>
+        /// キー・文字マップファイル(英数字テーブルファイル、chars.106.txtとか)を読み込んで、DecKeyから文字への配列を作成する<br/>
+        /// デコーダーに渡す一時的な英数字テーブルファイルを作成して、そのファイル名を返す
         /// </summary>
-        public static bool ReadCharsDefFile()
+        public static string ReadCharsDefFile()
         {
             logger.InfoH("ENTER");
 
             //Settings.ShortcutKeyConversionEnabled = true;
-            normalChars = null;
-            shiftedChars = null;
-            int yenPos = 43;
+            normalChars = new List<char>();
+            shiftedChars = new List<char>();
+            int yenPos = DecoderKeyVsVKey.IsJPmode ? -1 : -2;
 
-            var filename = Settings.GetString("charsDefFile");
-            if (filename._notEmpty()) {
-                var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KeyboardFileDir, filename);
-                logger.InfoH($"charsDefFile path={filePath}");
+            var charsDefFile = Settings.GetString("charsDefFile");
+            logger.InfoH(() => $"orig charsDefFile={charsDefFile}");
+            if (charsDefFile._isEmpty()) {
+                var kbName = Settings.KeyboardFile._split('.')._getNth(0);
+                //if (kbName._notEmpty() && (kbName._toLower() == "jp" || kbName._toLower() == "us")) kbName = null;
+                if (kbName._notEmpty()) charsDefFile = $"chars.{kbName}.txt";
+            }
+            logger.InfoH(() => $"charsDefFile={charsDefFile}");
+            if (charsDefFile._notEmpty()) {
+                var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KeyboardFileDir, charsDefFile);
 
-                var allLines = Helper.GetFileContent(filePath, Encoding.UTF8);
-                if (allLines == null) {
-                    logger.Error($"Can't read charsDefFile: {filePath}");
-                    SystemHelper.ShowErrorMessageBox($"キー・文字マップファイル({filePath})の読み込みに失敗しました。");
-                    return false;
-                }
-
-                normalChars = new List<char>();
-                shiftedChars = new List<char>();
-                List<char> charList = null;
-                foreach (var line in allLines._split('\n')) {
-                    if (line.StartsWith("## ")) {
-                        if (line.StartsWith("## NORMAL")) {
-                            charList = normalChars;
-                        } else if (line.StartsWith("## SHIFT")) {
-                            charList = shiftedChars;
-                        } else if (line.StartsWith("## END")) {
-                            charList = null;
-                        } else if (line._startsWith("## YEN=")) {
-                            yenPos = line._safeSubstring(7)._parseInt(-1);
-                        //} else if (line.StartsWith("## SHORTCUT=disabl")) {
-                        //    Settings.ShortcutKeyConversionEnabled = false;
-                        //    logger.InfoH("ShortcutKeyConversion: Disabled");
-                        }
-                    } else {
-                        if (charList != null) {
-                            logger.InfoH($"line=|{line}|, len={line.Length}");
-                            foreach (var ch in line) {
-                                if (ch >= 0x20 && ch < 0x7f) charList.Add(ch);
-                            }
-                            logger.InfoH($"charList=|{charList.ToArray()._toString()}|, len={charList.Count}");
-                        }
+                string allLines = null;
+                if (!Helper.FileExists(filePath)) {
+                    logger.InfoH(() => $"charsDefFile not found: {filePath}");
+                } else {
+                    logger.InfoH(() => $"read charsDefFile path={filePath}");
+                    allLines = Helper.GetFileContent(filePath, Encoding.UTF8);
+                    if (allLines == null) {
+                        logger.Error($"Can't read charsDefFile: {filePath}");
+                        SystemHelper.ShowErrorMessageBox($"英数字テーブルファイル({filePath})の読み込みに失敗しました。\r\nデフォルトの英数字テーブルを使用します。");
                     }
                 }
-                if (shiftedChars._isEmpty()) {
-                    var normalQwerty = QwertyChars();
-                    var shiftedQwerty = QwertyShiftedChars();
-                    for (int i = 0; i < normalChars.Count; ++i) {
-                        char ch = normalChars[i];
-                        char sc = '\0';
-                        if (ch == '\\') {
-                            sc = i == yenPos ? '|' : '_';
+                if (allLines._notEmpty()) {
+                    List<char> charList = null;
+                    foreach (var line in allLines._split('\n')) {
+                        if (line.StartsWith("## ")) {
+                            if (line.StartsWith("## NORMAL")) {
+                                charList = normalChars;
+                            } else if (line.StartsWith("## SHIFT")) {
+                                charList = shiftedChars;
+                            } else if (line.StartsWith("## END")) {
+                                charList = null;
+                            } else if (line._startsWith("## YEN=")) {
+                                yenPos = line._safeSubstring(7)._parseInt(-1);
+                                //} else if (line.StartsWith("## SHORTCUT=disabl")) {
+                                //    Settings.ShortcutKeyConversionEnabled = false;
+                                //    logger.InfoH("ShortcutKeyConversion: Disabled");
+                            }
                         } else {
-                            for (int j = 0; j < normalQwerty.Length; ++j) {
-                                if (ch == normalQwerty[j]) {
-                                    sc = shiftedQwerty[j];
-                                    break;
+                            if (charList != null) {
+                                logger.InfoH($"line=|{line}|, len={line.Length}");
+                                foreach (var ch in line) {
+                                    if (ch == '\\') {
+                                        if (yenPos < 0) {
+                                            yenPos = yenPos == -1 ? charList.Count : -1;    // US mode のときは -2 から -1 にする
+                                        }
+                                    }
+                                    if (ch >= 0x20 && ch < 0x7f) charList.Add(ch);
                                 }
+                                logger.InfoH($"charList=|{charList.ToArray()._toString()}|, len={charList.Count}");
                             }
                         }
-                        shiftedChars.Add(sc);
                     }
+                }
+            }
+            if (normalChars._isEmpty()) {
+                logger.InfoH("make default normal chars");
+                var normalQwerty = QwertyChars();
+                for (int i = 0; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
+                    normalChars.Add(normalQwerty._getNth(DecoderKeyVsVKey.GetDecKeyFromQwertyIndex(i)));
+                }
+            }
+            if (shiftedChars._isEmpty()) {
+                logger.InfoH("make default shifted chars");
+                var normalQwerty = QwertyChars();
+                var shiftedQwerty = QwertyShiftedChars();
+                for (int i = 0; i < normalChars.Count; ++i) {
+                    char ch = normalChars[i];
+                    char sc = '\0';
+                    if (ch == '\\') {
+                        sc = (!DecoderKeyVsVKey.IsJPmode || i == yenPos) ? '|' : '_';
+                    } else {
+                        for (int j = 0; j < normalQwerty.Length; ++j) {
+                            if (ch == normalQwerty[j]) {
+                                sc = shiftedQwerty[j];
+                                break;
+                            }
+                        }
+                    }
+                    shiftedChars.Add(sc);
                 }
             }
 
@@ -151,9 +175,31 @@ namespace KanchokuWS.Domain
                 normalKeyNames[yenPos] = "￥";
             }
 
-            logger.InfoH("LEAVE");
-            return true;
+            var tmpCharsDefFile = "tmp/chars.current.txt";
+            writeCharDefFileForDecoder(tmpCharsDefFile, yenPos);
 
+            logger.InfoH("LEAVE");
+            return tmpCharsDefFile;
+
+        }
+
+        private static void writeCharDefFileForDecoder(string filename, int yenPos)
+        {
+            logger.InfoH(() => $"filename={filename}, yenPos={yenPos}");
+
+            List<string> lines = new List<string>();
+            lines.Add("## NORMAL");
+            lines.Add(new string(normalChars != null ? normalChars.ToArray() : QwertyChars()).Replace('\0', ' '));
+            lines.Add("## END");
+            if (yenPos >= 0) lines.Add($"## YEN={yenPos}");
+            if (shiftedChars._notEmpty()) {
+                lines.Add("## SHIFT");
+                lines.Add(new string(shiftedChars.ToArray()).Replace('\0', ' '));
+                lines.Add("## END");
+            }
+
+            logger.InfoH(() => $"lines=\n{lines._join("\n")}");
+            KanchokuHelper.WriteAllLinesToFile(filename, lines);
         }
 
         /// <summary>

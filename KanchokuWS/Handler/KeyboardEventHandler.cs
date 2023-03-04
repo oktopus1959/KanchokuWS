@@ -256,9 +256,10 @@ namespace KanchokuWS.Handler
             }
 
             /// <summary> 内部状態の再初期化</summary>
-            public void Reinitialize()
+            public void Reinitialize(uint vkey)
             {
-                logger.InfoH($"ENTER: {Name}");
+                logger.InfoH(() => $"ENTER: {Name}, vkey={vkey}");
+                Vkey = vkey;
                 bShiftPlaneAssignedOn = null;
                 bShiftPlaneAssignedOff = null;
             }
@@ -291,13 +292,13 @@ namespace KanchokuWS.Handler
             public void Reinitialize()
             {
                 logger.InfoH($"ENTER");
-                spaceKeyInfo.Reinitialize();
-                capsKeyInfo.Reinitialize();
-                alnumKeyInfo.Reinitialize();
-                nferKeyInfo.Reinitialize();
-                xferKeyInfo.Reinitialize();
-                rshiftKeyInfo.Reinitialize();
-                otherKeyState.Reinitialize();
+                spaceKeyInfo.Reinitialize(FuncVKeys.SPACE);
+                capsKeyInfo.Reinitialize(FuncVKeys.CAPSLOCK);
+                alnumKeyInfo.Reinitialize(FuncVKeys.EISU);
+                nferKeyInfo.Reinitialize(FuncVKeys.MUHENKAN);
+                xferKeyInfo.Reinitialize(FuncVKeys.HENKAN);
+                rshiftKeyInfo.Reinitialize(FuncVKeys.RSHIFT);
+                otherKeyState.Reinitialize(0);
             }
 
             /// <summary> 拡張修飾キーからキー状態を得る</summary>
@@ -855,7 +856,7 @@ namespace KanchokuWS.Handler
             } else {
                 bHandlerBusy = true;
                 ++keyDownCount;
-                logger.InfoH(() => $"bDecoderOn={bDecoderOn}, mod={mod:x}H, kanchokuCode={kanchokuCode}, normalDecKey={normalDecKey}, keyDownCount={keyDownCount}");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"bDecoderOn={bDecoderOn}, mod={mod:x}H, kanchokuCode={kanchokuCode}, normalDecKey={normalDecKey}, keyDownCount={keyDownCount}");
                 var determiner = CombinationKeyStroke.Determiner.Singleton;
                 var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
                 if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
