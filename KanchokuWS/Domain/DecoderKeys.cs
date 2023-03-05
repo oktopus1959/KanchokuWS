@@ -244,7 +244,7 @@ namespace KanchokuWS
         public const int STROKE_HELP_UNROTATION_DECKEY = STROKE_HELP_ROTATION_DECKEY + 1;   // 打鍵ヘルプ逆ローテーションキー
 
         public const int DATE_STRING_ROTATION_DECKEY = STROKE_HELP_UNROTATION_DECKEY + 1;   // 今日の日付文字列を正順に出力
-        public const int DATE_STRING_UNROTATION_DECKEY = DATE_STRING_ROTATION_DECKEY + 1;   // 今日の日付文字列を逆順に出力
+        public const int DATE_STRING_UNROTATION_DECKEY = DATE_STRING_ROTATION_DECKEY + 1;   // 今日の日付文字列を逆順に出力 (10)
 
         public const int FULL_ESCAPE_DECKEY = DATE_STRING_UNROTATION_DECKEY + 1;        // モードを抜けたり、履歴ブロックをしたりする
         public const int UNBLOCK_DECKEY = FULL_ESCAPE_DECKEY + 1;                       // 改行コード除去と履歴ブロックの解除
@@ -261,7 +261,7 @@ namespace KanchokuWS
         //public const int PREV_CAND_TRIGGER_DECKEY = NEXT_CAND_TRIGGER_DECKEY + 1;   // 履歴検索開始&前の候補選択
 
         public const int STROKE_HELP_DECKEY = HISTORY_PREV_SEARCH_DECKEY + 1;              // ストロークヘルプ
-        public const int BUSHU_COMP_HELP_DECKEY = STROKE_HELP_DECKEY + 1;                  // 部首合成ヘルプ
+        public const int BUSHU_COMP_HELP_DECKEY = STROKE_HELP_DECKEY + 1;                  // 部首合成ヘルプ (20)
 
         public const int TOGGLE_ZENKAKU_CONVERSION_DECKEY = BUSHU_COMP_HELP_DECKEY + 1;             // 全角変換のトグル
         public const int TOGGLE_KATAKANA_CONVERSION_DECKEY = TOGGLE_ZENKAKU_CONVERSION_DECKEY + 1;  // カタカナ変換のトグル
@@ -274,7 +274,7 @@ namespace KanchokuWS
 
         public const int EXCHANGE_CODE_TABLE_DECKEY = TOGGLE_HIRAGANA_STROKE_GUIDE_DECKEY + 1;  // 漢直コード系(通常コード系と代替コード系)の入れ替え
         public const int EXCHANGE_CODE_TABLE2_DECKEY = EXCHANGE_CODE_TABLE_DECKEY + 1;          // 漢直コード系(通常コード系と代替コード系)の入れ替え; 3が選択されていたら2に切り替える
-        public const int SELECT_CODE_TABLE1_DECKEY = EXCHANGE_CODE_TABLE2_DECKEY + 1;           // テーブル1を選択
+        public const int SELECT_CODE_TABLE1_DECKEY = EXCHANGE_CODE_TABLE2_DECKEY + 1;           // テーブル1を選択 (30)
         public const int SELECT_CODE_TABLE2_DECKEY = SELECT_CODE_TABLE1_DECKEY + 1;             // テーブル2を選択
         public const int SELECT_CODE_TABLE3_DECKEY = SELECT_CODE_TABLE2_DECKEY + 1;             // テーブル3を選択
 
@@ -289,7 +289,7 @@ namespace KanchokuWS
         public const int COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY = MODE_TOGGLE_FOLLOW_CARET_DECKEY + 1; // 文字列をコピーして、それをデコーダの辞書に登録する
 
         public const int PSEUDO_SPACE_DECKEY = COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY + 1;       // 疑似スペースキー
-        public const int POST_NORMAL_SHIFT_DECKEY = PSEUDO_SPACE_DECKEY + 1;                // 後置通常シフトキー
+        public const int POST_NORMAL_SHIFT_DECKEY = PSEUDO_SPACE_DECKEY + 1;                // 後置通常シフトキー (40)
         public const int POST_PLANE_A_SHIFT_DECKEY = POST_NORMAL_SHIFT_DECKEY + 1;          // 後置拡張シフトAキー
         public const int POST_PLANE_B_SHIFT_DECKEY = POST_PLANE_A_SHIFT_DECKEY + 1;         // 後置拡張シフトBキー
         public const int POST_PLANE_C_SHIFT_DECKEY = POST_PLANE_B_SHIFT_DECKEY + 1;         // 後置拡張シフトCキー
@@ -300,7 +300,7 @@ namespace KanchokuWS
         public const int DIRECT_SPACE_DECKEY = POST_PLANE_F_SHIFT_DECKEY + 1;               // デコーダを介さずに直接出力されるスペースキー
         public const int CANCEL_POST_REWRITE_DECKEY = DIRECT_SPACE_DECKEY + 1;              // 後置書き換えをキャンセルする
         public const int KANA_TRAINING_TOGGLE_DECKEY = CANCEL_POST_REWRITE_DECKEY + 1;      // かな入力練習モードのトグル
-        public const int EISU_MODE_TOGGLE_DECKEY = KANA_TRAINING_TOGGLE_DECKEY + 1;         // 英数モードと通常モードのトグル
+        public const int EISU_MODE_TOGGLE_DECKEY = KANA_TRAINING_TOGGLE_DECKEY + 1;         // 英数モードと通常モードのトグル (50)
         public const int EISU_MODE_CANCEL_DECKEY = EISU_MODE_TOGGLE_DECKEY + 1;             // 英数モードをキャンセルする
         public const int EISU_DECAPITALIZE_DECKEY = EISU_MODE_CANCEL_DECKEY + 1;            // 英数モードで先頭文字を小文字化する
 

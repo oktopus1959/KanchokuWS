@@ -34,7 +34,7 @@ namespace KanchokuWS.Domain
             'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
             'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
             'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',
-            ' ', '-', '=', '\\', '[', ']', '\'', '`', '\0', '\0'
+            ' ', '-', '=', '\\', '[', ']', '\'', '`', '\\', '\0'
         };
 
         private static char[] QwertyShiftedCharsUS = {
@@ -42,7 +42,7 @@ namespace KanchokuWS.Domain
             'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
             'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':',
             'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?',
-            ' ', '_', '+', '|', '{', '}', '"', '~', '\0', '\0'
+            ' ', '_', '+', '|', '{', '}', '"', '~', '_', '\0'
         };
 
         private static char[] FuncChars = {
@@ -131,22 +131,24 @@ namespace KanchokuWS.Domain
                     }
                 }
             }
-            if (normalChars._isEmpty()) {
-                logger.InfoH("make default normal chars");
+            if (normalChars.Count < DecoderKeys.NORMAL_DECKEY_NUM) {
+                logger.InfoH("fill rest of normalChars by default qwerty chars");
                 var normalQwerty = QwertyChars();
-                for (int i = 0; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
-                    normalChars.Add(normalQwerty._getNth(DecoderKeyVsVKey.GetDecKeyFromQwertyIndex(i)));
+                for (int i = normalChars.Count; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
+                    char ch = normalQwerty._getNth(DecoderKeyVsVKey.GetDecKeyFromQwertyIndex(i));
+                    if (ch == '\\' && yenPos < 0) { yenPos = yenPos == -1 ? i : -1; }
+                    normalChars.Add(ch);
                 }
             }
-            if (shiftedChars._isEmpty()) {
-                logger.InfoH("make default shifted chars");
+            if (shiftedChars.Count < normalChars.Count) {
+                logger.InfoH("fill rest of shiftedChars by shifted normalChars");
                 var normalQwerty = QwertyChars();
                 var shiftedQwerty = QwertyShiftedChars();
-                for (int i = 0; i < normalChars.Count; ++i) {
+                for (int i = shiftedChars.Count; i < normalChars.Count; ++i) {
                     char ch = normalChars[i];
                     char sc = '\0';
                     if (ch == '\\') {
-                        sc = (!DecoderKeyVsVKey.IsJPmode || i == yenPos) ? '|' : '_';
+                        sc = (DecoderKeyVsVKey.IsJPmode && i == yenPos) || (!DecoderKeyVsVKey.IsJPmode && i != yenPos) ? '|' : '_';
                     } else {
                         for (int j = 0; j < normalQwerty.Length; ++j) {
                             if (ch == normalQwerty[j]) {
