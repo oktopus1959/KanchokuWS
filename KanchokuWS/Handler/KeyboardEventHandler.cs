@@ -566,7 +566,8 @@ namespace KanchokuWS.Handler
         private bool onKeyboardDownHandler(int vkey, int scanCode, int extraInfo)
         {
             // 一時停止?
-            if (Settings.DecoderStopped) return false;
+            if (Settings.SuspendByPauseKey && vkey == (int)Keys.Pause) frmKanchoku?.DecoderSuspendToggle();
+            if (Settings.DecoderSuspended) return false;
 
             if (Settings.LoggingDecKeyInfo) {
                 logger.InfoH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}\n" + keyInfoManager.modifiersStateStr());
@@ -888,7 +889,7 @@ namespace KanchokuWS.Handler
         private bool onKeyboardUpHandler(int vkey, int scanCode, int extraInfo)
         {
             // 一時停止?
-            if (Settings.DecoderStopped) return false;
+            if (Settings.DecoderSuspended) return false;
 
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
 

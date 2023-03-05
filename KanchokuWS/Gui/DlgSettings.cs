@@ -313,9 +313,10 @@ namespace KanchokuWS.Gui
             //checkBox_hideTopText.Checked = Settings.GetString("topBoxMode")._toLower()._equalsTo("hideonselect");
             //checkBox_hideTopText.Enabled = radioButton_modeMarker.Checked;
 
-            // 開始・終了
+            // 開始・終了・一時停止
             textBox_splashWindowShowDuration.Text = $"{Settings.SplashWindowShowDuration}";
             checkBox_confirmOnClose.Checked = Settings.ConfirmOnClose;
+            checkBox_suspendByPauseKey.Checked = Settings.SuspendByPauseKey;
 
             // ファイル
             comboBox_keyboardFile.Text = getKeyboardName(Settings.KeyboardFile);
@@ -364,9 +365,10 @@ namespace KanchokuWS.Gui
             checkerBasic.Add(textBox_vkbShowStrokeCount);
             //checkerBasic.Add(checkBox_hideTopText);
 
-            // 開始・終了
+            // 開始・終了・一時停止
             checkerBasic.Add(textBox_splashWindowShowDuration);
             checkerBasic.Add(checkBox_confirmOnClose);
+            checkerBasic.Add(checkBox_suspendByPauseKey);
 
             // ファイル
             checkerBasic.Add(comboBox_keyboardFile);
@@ -412,9 +414,10 @@ namespace KanchokuWS.Gui
 
             label_initialMsg.Hide();
 
-            // スプラッシュウィンドウ
+            // 開始・終了・一時停止
             Settings.SetUserIni("splashWindowShowDuration", textBox_splashWindowShowDuration.Text.Trim());
             Settings.SetUserIni("confirmOnClose", checkBox_confirmOnClose.Checked);
+            Settings.SetUserIni("suspendByPauseKey", checkBox_suspendByPauseKey.Checked);
 
             // 漢直モードトグルキー
             Settings.SetUserIni("unmodifiedHotKey", comboBox_unmodifiedToggleKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));

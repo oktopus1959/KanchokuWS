@@ -77,6 +77,7 @@ namespace KanchokuWS.Gui
             this.button_Reload = new System.Windows.Forms.Button();
             this.label_okResultBasic = new System.Windows.Forms.Label();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
+            this.checkBox_suspendByPauseKey = new System.Windows.Forms.CheckBox();
             this.checkBox_confirmOnClose = new System.Windows.Forms.CheckBox();
             this.textBox_splashWindowShowDuration = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
@@ -782,7 +783,9 @@ namespace KanchokuWS.Gui
             this.comboBox_keyboardFile.Name = "comboBox_keyboardFile";
             this.comboBox_keyboardFile.Size = new System.Drawing.Size(218, 23);
             this.comboBox_keyboardFile.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.comboBox_keyboardFile, resources.GetString("comboBox_keyboardFile.ToolTip"));
+            this.toolTip1.SetToolTip(this.comboBox_keyboardFile, "キーボードのJP/USの別、または特殊なレイアウトのキーボードファイルを選択します。\r\n\r\n通常のQWERTYキーボードの場合は、 QWERTY[JP](または[" +
+        "US]) を選択します。\r\n\r\n自作キーボードなどQWERTY以外の場合は、そのレイアウトを記述したキーボード\r\nファイルを選択します。\r\n\r\n詳細については、" +
+        "「FAQ-基本編」-「キーボードの選択」を参照してください。");
             this.comboBox_keyboardFile.DropDown += new System.EventHandler(this.comboBox_keyboardFile_DropDown);
             // 
             // comboBox_tableFile2
@@ -1205,16 +1208,29 @@ namespace KanchokuWS.Gui
             // 
             // groupBox13
             // 
+            this.groupBox13.Controls.Add(this.checkBox_suspendByPauseKey);
             this.groupBox13.Controls.Add(this.checkBox_confirmOnClose);
             this.groupBox13.Controls.Add(this.textBox_splashWindowShowDuration);
             this.groupBox13.Controls.Add(this.label24);
             this.groupBox13.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox13.Location = new System.Drawing.Point(11, 227);
             this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(254, 61);
+            this.groupBox13.Size = new System.Drawing.Size(254, 83);
             this.groupBox13.TabIndex = 3;
             this.groupBox13.TabStop = false;
-            this.groupBox13.Text = "開始・終了";
+            this.groupBox13.Text = "開始・終了・一時停止";
+            // 
+            // checkBox_suspendByPauseKey
+            // 
+            this.checkBox_suspendByPauseKey.AutoSize = true;
+            this.checkBox_suspendByPauseKey.Location = new System.Drawing.Point(21, 59);
+            this.checkBox_suspendByPauseKey.Name = "checkBox_suspendByPauseKey";
+            this.checkBox_suspendByPauseKey.Size = new System.Drawing.Size(181, 19);
+            this.checkBox_suspendByPauseKey.TabIndex = 2;
+            this.checkBox_suspendByPauseKey.Text = "Pauseキーで一時停止・再開する";
+            this.toolTip1.SetToolTip(this.checkBox_suspendByPauseKey, "Pauseキーで漢直WSの動作を一時的に停止する場合は\r\nここをチェックしてください。\r\n\r\nなお、タスクトレイアイコンの右クリックメニューからも\r\n一時停止・再" +
+        "開を行うことができます。");
+            this.checkBox_suspendByPauseKey.UseVisualStyleBackColor = true;
             // 
             // checkBox_confirmOnClose
             // 
@@ -1222,7 +1238,7 @@ namespace KanchokuWS.Gui
             this.checkBox_confirmOnClose.Location = new System.Drawing.Point(21, 37);
             this.checkBox_confirmOnClose.Name = "checkBox_confirmOnClose";
             this.checkBox_confirmOnClose.Size = new System.Drawing.Size(114, 19);
-            this.checkBox_confirmOnClose.TabIndex = 3;
+            this.checkBox_confirmOnClose.TabIndex = 1;
             this.checkBox_confirmOnClose.Text = "終了時に確認する";
             this.toolTip1.SetToolTip(this.checkBox_confirmOnClose, "当アプリ終了時の確認ダイアログの有無\r\n\r\n当アプリは、以下のいずれかを右クリックして表示される\r\nコンテキストメニューから「終了」を選択すると終了できます。\r\n" +
         "その際に確認ダイアログを表示するかどうかを設定します。\r\n\r\n・ タスクトレイのアイコン\r\n・仮想鍵盤\r\n・モード標識\r\n");
@@ -7348,5 +7364,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.ComboBox comboBox_keyboardFile;
         private System.Windows.Forms.ComboBox comboBox_deckeyCharsFile;
         private System.Windows.Forms.CheckBox checkBox_shortcutKeyConversionDisabled;
+        private System.Windows.Forms.CheckBox checkBox_suspendByPauseKey;
     }
 }

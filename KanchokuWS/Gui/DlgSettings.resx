@@ -120,47 +120,21 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="comboBox_deckeyCharsFile.ToolTip" xml:space="preserve">
-    <value>漢直キーコードから英数字・記号への変換を定義するファイル
+    <value>漢直キーコードから英数字・記号への変換を定義するファイルを選択します。
 
-打鍵されたキーを英数字や記号に変換してそのまま出力する場合に
-必要となる、漢直キーコード⇒文字のマッピング定義ファイルを指定します。
+打鍵されたキーを英数字や記号に変換してそのまま出力する場合に必要となる、
+漢直キーコード⇒文字のマッピング定義ファイルを指定します。
 
-ファイルの指定がない場合は、キーボードファイルと同種の定義ファイルが
-使用されます。
+ファイルの指定がない場合は、キーボードファイルと同種の定義ファイルが使用されます。
 例：キーボードファイルが 106.key なら chars.106.txt が使われる
 
-同種の定義ファイルが存在しない場合は、キーボードファイルから自動生成
-します。
+同種の定義ファイルが存在しない場合は、キーボードファイルから自動生成します。
 
-利用者がファイルを作成する場合は、 tables/_keyboard フォルダ配下に、
-chars.*.txt という名前で作成してください。</value>
-  </data>
-  <data name="comboBox_keyboardFile.ToolTip" xml:space="preserve">
-    <value>キーボードのJP/USの別、または特殊なレイアウトのキーボードファイルを選択します。
-
-通常のQWERTYキーボードの場合は、 QWERTY[JP](または[US]) を選択します。
-
-自作キーボードなどQWERTY以外の場合は、そのレイアウトを記述したキーボードファイルを
-選択します。
-
-利用者がキーボードファイルを作成する場合は、 tables/_keyboard フォルダ配下に
-*.key という名前で作成してください。
-
-「漢直キー」の並び順に、該当するキーに対する16進表記の仮想キーコードを記述します。
-このテーブルを用いて、キーが打鍵されたときに通知される仮想キーコードが、デコーダで
-扱える漢直キーコードに変換されます。
-
-文字打鍵用の漢直キーには、0 ～ 99 のコードが割り振られています。
-ファイルに記述するのは、そのうちの 0～49  の範囲に相当する仮想キーコードです。
-
-JIS 106キーボードの場合だと、以下のような漢直キーコードになります。
-最上段： 「1」= 0, 「2」=1, ..., 「0」=9、
-　上段： 「q」=10, ..., 「p」=19、
-　中段： 「a」=20, ..., 「;」=29,
-　下段： 「z」=30, ..., 「/」=39
-スペースキー=40
-「-」=41, 「^」=42, 「¥」=43, 「@」=44, 「[」=45, 「:」=46, 「]」=47, 「＼」=48</value>
+詳細については、「FAQ-基本編」-「英数字数号配列の選択」を参照してください。</value>
   </data>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定

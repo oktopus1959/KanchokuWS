@@ -2266,6 +2266,12 @@ namespace KanchokuWS
             }
         }
 
+        public void DecoderSuspendToggle()
+        {
+            Settings.DecoderSuspended = !Settings.DecoderSuspended;
+            Stop_ToolStripMenuItem.Text = Settings.DecoderSuspended ? "再開" : "一時停止";
+        }
+
         private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             logger.Info("CALLED");
@@ -2299,9 +2305,9 @@ namespace KanchokuWS
         /// <summary> 漢直WSの一時停止/再開 </summary>
         private void Stop_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Settings.DecoderStopped = !Settings.DecoderStopped;
-            Stop_ToolStripMenuItem.Text = Settings.DecoderStopped ? "再開" : "一時停止";
+            DecoderSuspendToggle();
         }
+
     }
 
 }

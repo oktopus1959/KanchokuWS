@@ -59,7 +59,10 @@ namespace KanchokuWS
         //-------------------------------------------------------------------------------------
         // 一時停止
         //-------------------------------------------------------------------------------------
-        public static bool DecoderStopped { get; set; } = false;
+        public static bool DecoderSuspended { get; set; } = false;
+
+        /// <summary>Pauseキーで一時停止・再開する</summary>
+        public static bool SuspendByPauseKey { get; set; } = false;
 
         //-------------------------------------------------------------------------------------
         // CtrlやAltのようなショートカット(アクセラレータ)キーに対する英字変換を有効にするか
@@ -1025,6 +1028,7 @@ namespace KanchokuWS
             //AutoOffWhenBurstKeyIn = GetString("autoOffWhenBurstKeyIn")._parseBool();
             SplashWindowShowDuration = GetString("splashWindowShowDuration")._parseInt(60)._lowLimit(0);
             ConfirmOnClose = GetString("confirmOnClose")._parseBool(true);
+            SuspendByPauseKey = GetString("suspendByPauseKey")._parseBool(false);
 
             //-------------------------------------------------------------------------------------
             // デバッグ用設定
