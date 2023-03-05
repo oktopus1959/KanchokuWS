@@ -61,6 +61,8 @@ namespace KanchokuWS.Domain
         private static List<string> normalKeyNames = null;
         private static List<char> shiftedChars = null;
 
+        public static char[] NormalChars => normalChars.ToArray();
+
         public static List<string> NormalKeyNames => normalKeyNames;
 
         /// <summary>

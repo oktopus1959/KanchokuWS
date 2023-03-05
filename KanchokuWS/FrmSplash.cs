@@ -80,6 +80,10 @@ namespace KanchokuWS
 
         public bool IsKanchokuTerminated { get; set; } = false;
 
+        public delegate void DelegateSplashClosedListener();
+
+        public DelegateSplashClosedListener SplashClosedListener { get; set; }
+
         public void Fallback()
         {
             TopMost = false;
@@ -127,6 +131,7 @@ namespace KanchokuWS
         {
             timer1.Stop();
             logger.Info("Timer Stopped");
+            SplashClosedListener?.Invoke();
         }
 
     }

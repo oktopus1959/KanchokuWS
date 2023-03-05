@@ -245,7 +245,7 @@ namespace KanchokuWS
             //Text = "漢直窓S";
 
             // 仮想鍵盤フォームを隠す
-            frmVkb.Hide();
+            if (!Settings.ShowEisuVkb || Settings.SplashWindowShowDuration > 0) frmVkb.Hide();
             frmVkb.Opacity = 100;
 
             if (frmSplash != null) frmSplash.IsKanchokuReady = true;
@@ -494,6 +494,7 @@ namespace KanchokuWS
                 var frm = new FrmSplash(sec);
                 frm.Show();
                 frmSplash = frm;
+                frmSplash.SplashClosedListener = splashClosedListener;
                 Helper.WaitMilliSeconds(50);        // 直ちに表示されるようにするために、DoEvents を呼び出してちょっと待つ
             }
         }
@@ -515,6 +516,12 @@ namespace KanchokuWS
                     frmSplash = null;
                 }
             }
+        }
+
+        private void splashClosedListener()
+        {
+            logger.InfoH("CALLED");
+            if (Settings.ShowEisuVkb) frmVkb.Show();
         }
 
         //------------------------------------------------------------------
@@ -1255,7 +1262,11 @@ namespace KanchokuWS
             if (decoderPtr != IntPtr.Zero) {
                 handleKeyDecoder(DecoderKeys.DEACTIVE_DECKEY, 0);   // DecoderOff の処理をやる
                 if (bModifiersOff) SendInputHandler.Singleton.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
-                frmVkb.Hide();
+                if (Settings.ShowEisuVkb) {
+                    frmVkb.DrawEisuVkb();
+                } else {
+                    frmVkb.Hide();
+                }
                 frmMode.Hide();
                 notifyIcon1.Icon = Properties.Resources.kanmini0;
                 frmMode.SetKanjiMode();
@@ -1472,6 +1483,7 @@ namespace KanchokuWS
                 frmVkb.MakeStrokeTables(Settings.StrokeHelpFile);
                 // DecKeyハンドラの初期化
                 //DecKeyHandler.Initialize(this.Handle);
+                if (Settings.ShowEisuVkb) frmVkb.DrawEisuVkb();
             }
 
             logger.Info("LEAVE");
@@ -1528,6 +1540,7 @@ namespace KanchokuWS
                 MakeInitialVkbTableDecoder(decoderPtr, ref decoderOutput);
                 frmVkb.CopyInitialVkbTable(decoderOutput.faceStrings);
             }
+            frmVkb.CopyEisuVkbTable(DecoderKeyVsChar.NormalChars);
             logger.Info("LEAVE");
         }
 
@@ -2270,6 +2283,15 @@ namespace KanchokuWS
         {
             Settings.DecoderSuspended = !Settings.DecoderSuspended;
             Stop_ToolStripMenuItem.Text = Settings.DecoderSuspended ? "再開" : "一時停止";
+            if (Settings.DecoderSuspended) {
+                DeactivateDecoderWithModifiersOff();
+                frmVkb.Hide();
+            } else {
+                if (Settings.ShowEisuVkb) {
+                    frmVkb.DrawEisuVkb();
+                    frmVkb.Show();
+                }
+            }
         }
 
         private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)

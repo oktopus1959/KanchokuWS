@@ -186,6 +186,9 @@ namespace KanchokuWS
         /// <summary>仮想鍵盤またはモード標識を表示する</summary>
         public static bool ShowVkbOrMaker { get; set; } = true;
 
+        /// <summary>英数モード時に仮想鍵盤を表示する</summary>
+        public static bool ShowEisuVkb { get; set; } = false;
+
         /// <summary>N打鍵目に仮想鍵盤を表示する(0なら仮想鍵盤を表示しない)</summary>
         public static int VirtualKeyboardShowStrokeCount { get; set; } = 1;
         public static int VirtualKeyboardShowStrokeCountTemp { get; set; } = 0;
@@ -1029,6 +1032,8 @@ namespace KanchokuWS
             SplashWindowShowDuration = GetString("splashWindowShowDuration")._parseInt(60)._lowLimit(0);
             ConfirmOnClose = GetString("confirmOnClose")._parseBool(true);
             SuspendByPauseKey = GetString("suspendByPauseKey")._parseBool(false);
+
+            ShowEisuVkb = GetString("showEisuVkb")._parseBool(false);
 
             //-------------------------------------------------------------------------------------
             // デバッグ用設定

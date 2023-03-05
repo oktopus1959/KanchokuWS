@@ -306,6 +306,7 @@ namespace KanchokuWS.Gui
             selectModeToggleKeyItem(comboBox_modifiedOffKey, Settings.GetString("offHotKey").Replace("X", ""));
 
             // 仮想鍵盤表示
+            checkBox_showEisuVkb.Checked = Settings.ShowEisuVkb;
             radioButton_noVkb.Checked = !Settings.ShowVkbOrMaker;
             radioButton_normalVkb.Checked = Settings.ShowVkbOrMaker && Settings.VirtualKeyboardShowStrokeCount > 0;
             radioButton_modeMarker.Checked = Settings.ShowVkbOrMaker && !radioButton_normalVkb.Checked;
@@ -359,6 +360,7 @@ namespace KanchokuWS.Gui
             checkerBasic.Add(comboBox_modifiedOffKey);
 
             // 仮想鍵盤表示
+            checkerBasic.Add(checkBox_showEisuVkb);
             checkerBasic.Add(radioButton_normalVkb);
             checkerBasic.Add(radioButton_modeMarker);
             checkerBasic.Add(radioButton_noVkb);
@@ -426,6 +428,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("offHotKey", comboBox_modifiedOffKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));
 
             // 仮想鍵盤表示
+            Settings.SetUserIni("showEisuVkb", checkBox_showEisuVkb.Checked);
             Settings.SetUserIni("vkbShowStrokeCount", $"{textBox_vkbShowStrokeCount.Text._parseInt(1)._lowLimit(0) * (radioButton_normalVkb.Checked ? 1 : -1)}");
             Settings.SetUserIni("showVkbOrMaker", !radioButton_noVkb.Checked);
             //Settings.SetUserIni("topBoxMode", checkBox_hideTopText.Checked ? "hideOnSelect" : "showAlways");
@@ -459,6 +462,16 @@ namespace KanchokuWS.Gui
             //frmMain?.ReloadDefFiles();
 
             //frmMain?.ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+
+            // 英数用仮想鍵盤の再表示
+            if (frmMain?.IsDecoderActivated() != true) {
+                if (Settings.ShowEisuVkb) {
+                    frmVkb.DrawEisuVkb();
+                    frmVkb.Show();
+                } else {
+                    frmVkb.Hide();
+                }
+            }
 
             //SystemHelper.ShowInfoMessageBox("設定しました");
             label_okResultBasic.Show();

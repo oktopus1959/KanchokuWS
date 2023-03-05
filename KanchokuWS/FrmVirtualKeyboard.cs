@@ -626,6 +626,14 @@ namespace KanchokuWS
             "・", "・", "・", "・", "・", "・", "・", "・", "・", "・",
         };
 
+        private string[] eisuVkbChars = new string[DecoderKeys.NORMAL_DECKEY_NUM] {
+            "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
+            "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
+            "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
+            "　", "　", "　", "　", "　", "　", "　", "　", "　", "　",
+            "・", "・", "・", "・", "・", "・", "・", "・", "・", "・",
+        };
+
         private string[] kanaOutChars = {
             "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわ ん を",
             "ぁぃぅぇぉがぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょゕ  ゖ ゎゐゔゑ ",
@@ -835,6 +843,15 @@ namespace KanchokuWS
             }
         }
 
+        public void CopyEisuVkbTable(char[] table)
+        {
+            if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH($"CALLED");
+            int len = Math.Min(table.Length, eisuVkbChars.Length);
+            for (int i = 0; i < len; ++i) {
+                eisuVkbChars[i] = table[i].ToString()._toUpper();
+            }
+        }
+
         //public void CopyHiraganaVkbTable(char[] table)
         //{
         //    copyKanaVkbTable(table, kanaVkbChars[0]);
@@ -905,6 +922,11 @@ namespace KanchokuWS
             } else {
                 this.Hide();
             }
+        }
+
+        public void DrawEisuVkb()
+        {
+            drawNormalVkb(eisuVkbChars, false);
         }
 
         /// <summary>chars に含まれる文字を、その第1打鍵位置に表示する</summary>
