@@ -341,7 +341,7 @@ namespace KanchokuWS.Domain
                     SystemHelper.ShowErrorMessageBox($"キーボード定義ファイル({filePath})の読み込みに失敗しました。\r\n日本語キーボードに設定します。");
                     normalVKeys = VKeyArrayJP;
                 } else {
-                    var lines = allLines._split('\n').Select(line => line.Trim().Replace(" ", "")).Where(line => line._notEmpty() && line[0] != '#' && line[0] != ';').ToArray();
+                    var lines = allLines._split('\n').Select(line => line.Trim().Replace(" ", "")).Where(line => line._notEmpty() && line[0] != '#').ToArray();
 
                     List<uint> list = null;
 
@@ -359,13 +359,16 @@ namespace KanchokuWS.Domain
                     }
                     // ストロークキーの仮想キーコードを得る
                     List<string> errLines = new List<string>();
-                    var hexes = lines.Where(line => line.IndexOf('=') < 0)._join("").TrimEnd(',')._split(',').ToArray();
-                    if (hexes._notEmpty()) {
-                        list = hexes.Select(x => (uint)x._parseHex(0)).ToList();
+                    var vkeys = lines.Where(line => line.EndsWith(","))._join("").TrimEnd(',')._split(',').ToArray();
+                    if (vkeys._safeLength() < 41) {
+                        vkeys = lines.Where(line => line.EndsWith("|"))._join("").TrimEnd('|')._split('|').ToArray();
+                    }
+                    if (vkeys._safeLength() >= 41) {
+                        list = vkeys.Select(x => x.Length == 1 ? CharVsVKey.GetVKeyFromFaceChar(x._toLower()[0]) : (uint)x._parseHex(0)).ToList();
                         int idx = list.FindIndex(x => x < 0 || x >= 0x100);
                         if (idx >= 0 && idx < list.Count) {
-                            logger.WarnH($"Invalid keyboard def: file={filePath}, {idx}th: {hexes[idx]}");
-                            errLines.Add($"    {idx}番目のキー定義({hexes[idx]})");
+                            logger.WarnH($"Invalid keyboard def: file={filePath}, {idx}th: {vkeys[idx]}");
+                            errLines.Add($"    {idx}番目のキー定義({vkeys[idx]})");
                         }
                         //if (list.Count < DecoderKeys.NORMAL_DECKEY_NUM) {
                         //    logger.Warn($"No sufficient keyboard def: file={filePath}, total {list.Length} defs");
@@ -373,6 +376,9 @@ namespace KanchokuWS.Domain
                         //    return false;
                         //}
                         for (int i = list.Count; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) list.Add(0);
+                    } else if (vkeys._notEmpty()) {
+                        logger.WarnH($"Invalid keyboard def: file={filePath}, vkey num={vkeys._safeLength()}: less than 41");
+                        SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath})で記述されているキーの数が不足しています。\r\n    キー数={vkeys._safeLength()}");
                     }
                     if (errLines._notEmpty()) {
                         SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath})の\r\n{errLines.Take(5)._join("\r\n")}\r\nが誤っています。");
@@ -386,18 +392,20 @@ namespace KanchokuWS.Domain
                     // NAME=xx の形式で、機能キー(Esc, BS, Enter, 矢印キーなど)の仮想キーコード定義を得る
                     errLines.Clear();
                     foreach (var line in lines) {
-                        var items = line._toLower()._split('=');
-                        if (items._safeLength() == 2 && items[0]._notEmpty() && items[1]._notEmpty() && items[0]._toUpper() != "MODE") {
-                            int n = -1;
-                            int vk = items[1]._parseHex();
-                            if (vk >= 0 && vk < 0x100) {
-                                n = GetFuncKeyIndexByName(items[0]);
-                            }
-                            if (n >= 0 && n < functionalVKeys.Length) {
-                                functionalVKeys[n] = (uint)vk;
-                            } else {
-                                logger.WarnH($"Invalid functional key def: file={filePath}, line: {line}");
-                                errLines.Add("    "+ line);
+                        if (!line.EndsWith(",") && !line.EndsWith("|")) {
+                            var items = line._toLower()._split('=');
+                            if (items._safeLength() == 2 && items[0]._notEmpty() && items[1]._notEmpty() && items[0]._toUpper() != "MODE") {
+                                int n = -1;
+                                int vk = items[1]._parseHex();
+                                if (vk >= 0 && vk < 0x100) {
+                                    n = GetFuncKeyIndexByName(items[0]);
+                                }
+                                if (n >= 0 && n < functionalVKeys.Length) {
+                                    functionalVKeys[n] = (uint)vk;
+                                } else {
+                                    logger.WarnH($"Invalid functional key def: file={filePath}, line: {line}");
+                                    errLines.Add("    " + line);
+                                }
                             }
                         }
                     }
@@ -412,6 +420,12 @@ namespace KanchokuWS.Domain
 
             logger.InfoH("LEAVE");
             return true;
+        }
+
+        private static uint getVkey(string vk)
+        {
+            vk = vk._strip("\"");
+            return vk.Length == 1 ? CharVsVKey.GetVKeyFromFaceChar(vk._toLower()[0]) : (uint)vk._parseHex(0);
         }
 
         /// <summary>

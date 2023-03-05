@@ -28,43 +28,13 @@ namespace KanchokuWS.Domain
             return ((mod & 0xffff) << 16) + ((uint)deckey & 0xffff);
         }
 
-        //public static KeyCombo MakeCtrlKeyCombo(char ch)
-        //{
-        //    return new KeyCombo(KeyModifiers.MOD_CONTROL, DecoderKeyVsChar.GetArrangedDecKeyFromFaceChar(ch));
-        //}
     }
-
-    ///// <summary>
-    ///// 修飾キーと仮想キーの組み合わせ
-    ///// </summary>
-    //struct VKeyCombo {
-    //    public uint modifier;
-    //    public uint vkey;
-
-    //    public VKeyCombo(uint mod, uint vk)
-    //    {
-    //        modifier = mod;
-    //        vkey = vk;
-    //    }
-
-    //    public uint SerialValue => CalcSerialValue(modifier, vkey);
-
-    //    public static uint CalcSerialValue(uint mod, uint vkey)
-    //    {
-    //        return ((mod & 0xffff) << 16) + (vkey & 0xffff);
-    //    }
-
-    //}
 
     static class KeyComboRepository
     {
         private static Logger logger = Logger.GetLogger();
 
         public static KeyCombo EmptyCombo = new KeyCombo(0, 0);
-
-        //public static KeyCombo CtrlC_KeyCombo = KeyCombo.MakeCtrlKeyCombo('C');
-
-        //public static KeyCombo CtrlV_KeyCombo = KeyCombo.MakeCtrlKeyCombo('V');
 
         /// <summary>
         /// DECKEY id から仮想キーコンビネーションを得るための配列
@@ -191,12 +161,6 @@ namespace KanchokuWS.Domain
             return combo;
         }
 
-        ///// <summary>仮想キーコードから、DecKey を得る</summary>
-        //public static int GetDecKeyFromVKey(uint vkey)
-        //{
-        //    return GetDecKeyFromCombo(0, vkey);
-        //}
-
         /// <summary>修飾子と仮想キーコードの組みから、DecKey を得る</summary>
         public static int GetDecKeyFromCombo(uint mod, int noramlDeckey)
         {
@@ -215,22 +179,6 @@ namespace KanchokuWS.Domain
             if (Settings.LoggingDecKeyInfo) logger.Info(() => $"LEAVE: deckey={deckey:x}H({deckey})");
             return deckey;
         }
-
-        ///// <summary>
-        ///// キー文字とCtrl/Shiftから、仮想キーコンボを作成する
-        ///// </summary>
-        ///// <param name="face"></param>
-        ///// <param name="ctrl"></param>
-        ///// <param name="shift"></param>
-        ///// <returns></returns>
-        //private static KeyCombo? getKeyComboFromFaceString(string face, bool ctrl, bool shift)
-        //{
-        //    uint vkey = CharVsVKey.FaceToVKey(face);
-        //    if (vkey > 0 && vkey < 0x100) {
-        //        return new KeyCombo(KeyModifiers.MakeModifier(ctrl, shift), vkey);
-        //    }
-        //    return null;
-        //}
 
         /// <summary>
         /// キー文字から、Ctrlキー修飾されたDECKEY を得る<br/>

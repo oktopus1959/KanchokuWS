@@ -46,7 +46,7 @@ namespace KanchokuWS.Domain
         };
 
         private static char[] FuncChars = {
-            '脱', '全', 'Ｔ', '大', '英', '無', '変', 'カ', '削', '入'
+            '脱', '全', 'Ｔ', '大', '英', '無', '変', 'カ', '退', '入', '挿', '削', '居', '終', 
         };
 
         private static char[] QwertyChars() {
