@@ -276,6 +276,7 @@
   <ItemGroup>
     <Content Include="kanchoku.ico" />
     <Content Include="Resources\kanchoku.ico" />
+    <Content Include="Resources\kanmini2.ico" />
     <Content Include="Resources\kanmini0.ico" />
     <Content Include="Resources\kanmini1.ico" />
   </ItemGroup>

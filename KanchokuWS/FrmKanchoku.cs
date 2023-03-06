@@ -2286,7 +2286,9 @@ namespace KanchokuWS
             if (Settings.DecoderSuspended) {
                 DeactivateDecoderWithModifiersOff();
                 frmVkb.Hide();
+                notifyIcon1.Icon = Properties.Resources.kanmini2;
             } else {
+                notifyIcon1.Icon = Properties.Resources.kanmini0;
                 if (Settings.ShowEisuVkb) {
                     frmVkb.DrawEisuVkb();
                     frmVkb.Show();

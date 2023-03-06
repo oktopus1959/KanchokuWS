@@ -89,5 +89,15 @@ namespace KanchokuWS.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   (アイコン) に類似した型 System.Drawing.Icon のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Icon kanmini2 {
+            get {
+                object obj = ResourceManager.GetObject("kanmini2", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }
