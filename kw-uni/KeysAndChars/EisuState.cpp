@@ -105,6 +105,7 @@ namespace {
             if (myChar == SETTINGS->eisuHistSearchChar) {
                 // 履歴検索の実行
                 HISTORY_STAY_STATE->handleNextCandTrigger();
+                MY_NODE->prevHistSearchDeckeyCount = totalCnt;
             } else if (deckey < NORMAL_DECKEY_NUM || (deckey >= SHIFT_DECKEY_START && deckey < (SHIFT_DECKEY_START + NORMAL_DECKEY_NUM))) {
                 STATE_COMMON->AppendOrigString(myChar);
 

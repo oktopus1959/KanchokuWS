@@ -20,6 +20,9 @@ public:
     // 前回の状態のときの大文字入力時のDeckeyカウント
     size_t prevCapitalDeckeyCount = 0;
 
+    // 前回の履歴検索呼び出し時のDeckeyカウント
+    size_t prevHistSearchDeckeyCount = 0;
+
     // 状態開始時に、末尾にブロッカーを設定するか
     // 「Space」「Key」と分けて入力した時に、「K」の入力時に「Space」の末尾にブロッカーを設定したい
     bool blockerNeeded = false;

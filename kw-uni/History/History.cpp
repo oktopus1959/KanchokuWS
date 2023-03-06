@@ -15,6 +15,7 @@
 #include "OutputStack.h"
 #include "StrokeHelp.h"
 #include "BushuComp/BushuComp.h"
+#include "Eisu.h"
 
 #include "History.h"
 #include "HistoryDic.h"
@@ -1363,13 +1364,27 @@ namespace {
 
         // Esc の処理 -- 処理のキャンセル
         void handleEsc() {
-            _LOG_DEBUGH(_T("CALLED: %s, bCandSelectable=%s, SelectPos=%d"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable), HIST_CAND->GetSelectPos());
+            _LOG_DEBUGH(_T("CALLED: %s, bCandSelectable=%s, SelectPos=%d, EisuPrevCount=%d, TotalCount=%d"),
+                NAME_PTR, BOOL_TO_WPTR(bCandSelectable), HIST_CAND->GetSelectPos(), EISU_NODE ? EISU_NODE->prevHistSearchDeckeyCount : 0, STATE_COMMON->GetTotalDecKeyCount());
             if (bCandSelectable && HIST_CAND->GetSelectPos() >= 0) {
+                _LOG_DEBUGH(_T("Some Cand Selected"));
                 // どれかの候補が選択されている状態なら、選択のリセット
-                resetCandSelect();
-                // 一時的にマニュアル操作フラグを立てることで、DoOutStringProc() から historySearch() を呼ぶときに履歴再検索が実行されるようにする
-                bManualTemporary = true;
+                if (EISU_NODE && STATE_COMMON->GetTotalDecKeyCount() == EISU_NODE->prevHistSearchDeckeyCount + 1) {
+                    // 直前に英数モードから履歴検索された場合
+                    _LOG_DEBUGH(_T("SetNextNode: EISU_NODE"));
+                    resetCandSelect(false);     // false: 仮想鍵盤表示を履歴選択モードにしない
+                    // 一時的にこのフラグを立てることにより、履歴検索を行わないようにする
+                    bNoHistTemporary = true;
+                    // 再度、英数モード状態に入る
+                    SetNextNodeMaybe(EISU_NODE.get());
+                    //STATE_COMMON->SetNormalVkbLayout();
+                } else {
+                    resetCandSelect(true);
+                    // 一時的にマニュアル操作フラグを立てることで、DoOutStringProc() から historySearch() を呼ぶときに履歴再検索が実行されるようにする
+                    bManualTemporary = true;
+                }
             } else {
+                _LOG_DEBUGH(_T("Nod Cand Selected"));
                 // 一時的にこのフラグを立てることにより、履歴検索を行わないようにする
                 bNoHistTemporary = true;
                 // Esc処理が必要なものがあればそれをやる。なければアクティブウィンドウにEscを送る
@@ -1380,6 +1395,7 @@ namespace {
                 //// 完全に抜ける
                 //handleFullEscape();
             }
+            _LOG_DEBUGH(_T("LEAVE"));
         }
 
         //// Ctrl-U
@@ -1403,13 +1419,14 @@ namespace {
         }
 
         // 選択のリセット
-        void resetCandSelect() {
+        void resetCandSelect(bool bSetVkb) {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            outputHistResult(HIST_CAND->ClearSelectPos());
+            outputHistResult(HIST_CAND->ClearSelectPos(), bSetVkb);
             STATE_COMMON->SetWaitingCandSelect(-1);
         }
 
-        void outputHistResult(const HistResult& result) {
+        // 履歴結果出力 (bSetVKb = false なら、仮想鍵盤表示を履歴選択モードにしない; 英数モードから履歴検索をした直後のESCのケース)
+        void outputHistResult(const HistResult& result, bool bSetVkb = true) {
             _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
             getLastHistKeyAndRewindOutput();    // 前回の履歴検索キー取得と出力スタックの巻き戻し予約(numBackSpacesに値をセット)
 
@@ -1419,7 +1436,7 @@ namespace {
                 _LOG_DEBUGH(_T("SetHistoryBlocker"));
                 STATE_COMMON->SetHistoryBlockFlag();
             }
-            setCandidatesVKB(VkbLayout::Horizontal, HIST_CAND->GetCandWords(), HIST_CAND->GetCurrentKey());
+            if (bSetVkb) setCandidatesVKB(VkbLayout::Horizontal, HIST_CAND->GetCandWords(), HIST_CAND->GetCurrentKey());
 
             // 英数モードはキャンセルする
             if (pNext) pNext->handleEisuCancel();
