@@ -574,12 +574,15 @@ namespace KanchokuWS.Handler
                 logger.InfoH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}\n" + keyInfoManager.modifiersStateStr());
             }
 
+            if (DecoderKeyVsVKey.IsUSonJPmode || DecoderKeyVsVKey.IsEisuDisabled) {
+                // EISU disabled
+                // 英数キーはCapsに変換
+                if (vkey == 0xf0) vkey = 0x14;
+            }
             if (DecoderKeyVsVKey.IsUSonJPmode) {
                 // US-on-JP Mode
                 // 半/全キーは 0xf3 に寄せる
                 if (vkey == 0xf4) vkey = 0xf3;
-                // 英数キーはCapsに変換
-                if (vkey == 0xf0) vkey = 0x14;
             } else {
                 // JP or US Mode
                 // 半/全キーは、false(システム側による処理) を返す

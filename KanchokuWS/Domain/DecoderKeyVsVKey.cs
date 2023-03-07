@@ -53,6 +53,11 @@ namespace KanchokuWS.Domain
         /// </summary>
         public static bool IsUSonJPmode { get; private set; } = false;
 
+        /// <summary>
+        /// 「英数」キーを無効にする設定なら true
+        /// </summary>
+        public static bool IsEisuDisabled { get; private set; } = false;
+
         /// <summary> 打鍵で使われる仮想キー配列(DecKeyId順に並んでいる) </summary>
         private static uint[] normalVKeys;
 
@@ -363,6 +368,9 @@ namespace KanchokuWS.Domain
                                 if (items[1]._toUpper() == "USONJP") {
                                     logger.InfoH(() => $"US on JP mode");
                                     IsUSonJPmode = true;
+                                } else if (items[1]._toUpper()._startsWith("EISUDIS")) {
+                                    logger.InfoH(() => $"EISU disabled");
+                                    IsEisuDisabled = true;
                                 }
                             }
                         }
