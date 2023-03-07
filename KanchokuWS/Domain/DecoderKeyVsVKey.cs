@@ -48,6 +48,11 @@ namespace KanchokuWS.Domain
         /// </summary>
         public static bool IsJPmode { get; private set; } = true;
 
+        /// <summary>
+        /// キーボード設定がUS on JPモードなら true
+        /// </summary>
+        public static bool IsUSonJPmode { get; private set; } = false;
+
         /// <summary> 打鍵で使われる仮想キー配列(DecKeyId順に並んでいる) </summary>
         private static uint[] normalVKeys;
 
@@ -349,11 +354,16 @@ namespace KanchokuWS.Domain
                     if (lines._notEmpty()) {
                         var items = lines._getFirst()._toUpper()._split('=');
                         if (items._safeLength() == 2 && items[0]._toUpper() == "MODE") {
-                            if (items[1]._toUpper() == "JP") {
-                                list = VKeyArrayJP.ToList();
-                            } else if (items[1]._toUpper() == "US") {
+                            if (items[1]._toUpper() == "US") {
+                                logger.InfoH(() => $"US mode");
                                 list = VKeyArrayUS.ToList();
                                 IsJPmode = false;
+                            } else {
+                                list = VKeyArrayJP.ToList();
+                                if (items[1]._toUpper() == "USONJP") {
+                                    logger.InfoH(() => $"US on JP mode");
+                                    IsUSonJPmode = true;
+                                }
                             }
                         }
                     }

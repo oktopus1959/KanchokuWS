@@ -115,8 +115,9 @@ namespace KanchokuWS.Handler
                  //(vkey == FuncVKeys.RSHIFT && !ctrl && (Settings.ActiveKey == (uint)vkey || (isDecoderActivated() && isSingleShiftHitEffeciveOrShiftPlaneAssigned(vkey, KeyModifiers.MOD_RSHIFT, true)))) ||
                  // RSHIFT の場合は、Ctrlキーが押されていないとき
                  (vkey == FuncVKeys.RSHIFT && !ctrl) ||
-                 (vkey >= 0xa6 && vkey < 0xf3) ||
-                 (vkey >= 0xf5 && vkey < vkeyNum));
+                 //(vkey >= 0xa6 && vkey < 0xf3) ||
+                 //(vkey >= 0xf5 && vkey < vkeyNum));
+                 (vkey >= 0xa6 && vkey < vkeyNum));
         }
 
         private static bool isAltKeyPressed()
@@ -573,6 +574,18 @@ namespace KanchokuWS.Handler
                 logger.InfoH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}\n" + keyInfoManager.modifiersStateStr());
             }
 
+            if (DecoderKeyVsVKey.IsUSonJPmode) {
+                // US-on-JP Mode
+                // 半/全キーは 0xf3 に寄せる
+                if (vkey == 0xf4) vkey = 0xf3;
+                // 英数キーはCapsに変換
+                if (vkey == 0xf0) vkey = 0x14;
+            } else {
+                // JP or US Mode
+                // 半/全キーは、false(システム側による処理) を返す
+                if (vkey == 0xf3 || vkey == 0xf4) return false;
+            }
+
             // キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる
             bool handleKeyDown()
             {
@@ -892,6 +905,9 @@ namespace KanchokuWS.Handler
             if (Settings.DecoderSuspended) return false;
 
             if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
+
+            // 半/全キーは、US-on-JP モードなら true(入力破棄; つまり無視) JPモードなら false (システム処理; つまりIMEのON/OFF)を返す
+            if (vkey == 0xf3 || vkey == 0xf4) return DecoderKeyVsVKey.IsUSonJPmode;
 
             int prevVkey = prevUpVkey;
             prevUpVkey = vkey;
