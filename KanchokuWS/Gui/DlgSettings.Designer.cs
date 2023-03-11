@@ -1126,9 +1126,9 @@ namespace KanchokuWS.Gui
             this.checkBox_showEisuVkb.AutoSize = true;
             this.checkBox_showEisuVkb.Location = new System.Drawing.Point(14, 19);
             this.checkBox_showEisuVkb.Name = "checkBox_showEisuVkb";
-            this.checkBox_showEisuVkb.Size = new System.Drawing.Size(196, 19);
+            this.checkBox_showEisuVkb.Size = new System.Drawing.Size(208, 19);
             this.checkBox_showEisuVkb.TabIndex = 0;
-            this.checkBox_showEisuVkb.Text = "英数モード時に仮想鍵盤を表示する";
+            this.checkBox_showEisuVkb.Text = "英数字モード時に仮想鍵盤を表示する";
             this.toolTip1.SetToolTip(this.checkBox_showEisuVkb, "デコーダーがOFFの時も仮想鍵盤を表示する場合は\r\nここをチェックしてください。\r\n\r\nまだ慣れていない英数字テーブルファイルを選択して\r\nいるような場合に有用で" +
         "しょう。");
             this.checkBox_showEisuVkb.UseVisualStyleBackColor = true;
