@@ -190,7 +190,7 @@ namespace KanchokuWS
             // kanchoku.user.ini が存在しなければ、初期状態で作成しておく
             if (!UserKanchokuIni.Singleton.IsIniFileExist) {
                 logger.WriteInfo("kanchoku.user.ini not found. Create.");
-                UserKanchokuIni.Singleton.SetInt("logLevel", Logger.LogLevelWarn);
+                UserKanchokuIni.Singleton.SetInt("logLevel", Logger.LogLevelWarnH);
             }
             // デバッグ用設定の読み込み
             Settings.ReadIniFileForDebug();
