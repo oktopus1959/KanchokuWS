@@ -614,11 +614,12 @@ namespace KanchokuWS.Handler
                 uint modFlag = ExModiferKeyInfoManager.getModFlagForExModVkey((uint)vkey);
                 uint modPressedOrShifted = keyInfoManager.getPressedOrShiftedExModFlag();
 
-                if (!bDecoderOn && !bCtrl && modPressedOrShifted == 0 && vkey >= (int)Keys.Left && vkey <= (int)Keys.Down) {
-                    // デコーダOFFで無修飾の矢印キーなら、システムに任せる
-                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Normal Arrow Key");
-                    return false;
-                }
+                // この処理は、keyboardDownHandler() 内でやるようにした
+                //if (!bDecoderOn && !bCtrl && modPressedOrShifted == 0 && vkey >= (int)Keys.Left && vkey <= (int)Keys.Down) {
+                //    // デコーダOFFで無修飾の矢印キーなら、システムに任せる
+                //    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Normal Arrow Key");
+                //    return false;
+                //}
 
                 var keyInfo = keyInfoManager.getModiferKeyInfoByVkey((uint)vkey);
                 if (keyInfo != null) {
@@ -866,6 +867,13 @@ namespace KanchokuWS.Handler
 
             // SandS の一時シフト状態をリセットする
             keyInfoManager.resetSandSShiftedOneshot();
+
+            if (!bDecoderOn && (kanchokuCode < 0 || normalDecKey <= 0 || (kanchokuCode == normalDecKey && normalDecKey >= DecoderKeys.FUNC_DECKEY_START))) {
+                // デコーダーがOFFで、どの DecoderKey にもヒモ付けられていないか、または通常キーでもないキーが押されたら、そのままシステムに処理させる
+                // ⇒ Astah など、なぜか自身で キーボード入力を監視していると思われるソフトがあるため
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE: false: Decoder=OFF, no assigned deckey and not normal key");
+                return false;
+            }
 
             bool result = true;
             if (bHandlerBusy) {
