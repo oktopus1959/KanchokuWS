@@ -58,6 +58,22 @@ namespace KanchokuWS.Domain
         /// </summary>
         public static bool IsEisuDisabled { get; private set; } = false;
 
+        /// <summary> 仮想キーからDecKeyへのテーブル </summary>
+        private static int[] vkeyTable = new int[256];
+
+        private static void initializeVKeyTable()
+        {
+            for (int i = 0; i < vkeyTable.Length; ++i) vkeyTable[i] = -1;
+            for (int i = 0; i < normalVKeys.Length; ++i) {
+                uint vk = normalVKeys[i];
+                if (vk < vkeyTable.Length) vkeyTable[vk] = i;
+            }
+            for (int i = 0; i < functionalVKeys.Length; ++i) {
+                uint vk = functionalVKeys[i];
+                if (vk < vkeyTable.Length) vkeyTable[vk] = i + DecoderKeys.FUNC_DECKEY_START;
+            }
+        }
+
         /// <summary> 打鍵で使われる仮想キー配列(DecKeyId順に並んでいる) </summary>
         private static uint[] normalVKeys;
 
@@ -281,11 +297,12 @@ namespace KanchokuWS.Domain
         public static int GetDecKeyFromVKey(uint vkey)
         {
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: vkey={vkey:x}H({vkey})");
-            int deckey = normalVKeys._findIndex(vkey);
-            if (deckey < 0) {
-                deckey = functionalVKeys._findIndex(vkey);
-                if (deckey >= 0) deckey += DecoderKeys.FUNC_DECKEY_START;
-            }
+            //int deckey = normalVKeys._findIndex(vkey);
+            //if (deckey < 0) {
+            //    deckey = functionalVKeys._findIndex(vkey);
+            //    if (deckey >= 0) deckey += DecoderKeys.FUNC_DECKEY_START;
+            //}
+            int deckey = vkey < vkeyTable.Length ? vkeyTable[vkey] : -1;
             if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: deckey={deckey}");
             return deckey;
         }
@@ -388,11 +405,6 @@ namespace KanchokuWS.Domain
                             logger.WarnH($"Invalid keyboard def: file={filePath}, {idx}th: {vkeys[idx]}");
                             errLines.Add($"    {idx}番目のキー定義({vkeys[idx]})");
                         }
-                        //if (list.Count < DecoderKeys.NORMAL_DECKEY_NUM) {
-                        //    logger.Warn($"No sufficient keyboard def: file={filePath}, total {list.Length} defs");
-                        //    SystemHelper.ShowWarningMessageBox($"キーボード定義ファイル({filePath}のキー定義の数({list.Length})が不足しています。");
-                        //    return false;
-                        //}
                         for (int i = list.Count; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) list.Add(0);
                     } else if (vkeys._notEmpty()) {
                         logger.WarnH($"Invalid keyboard def: file={filePath}, vkey num={vkeys._safeLength()}: less than 41");
@@ -433,6 +445,8 @@ namespace KanchokuWS.Domain
                 }
             }
             logger.InfoH(() => $"keyboard mode={(IsJPmode ? "JP" : "US")}, keyNum={normalVKeys.Length}, array={normalVKeys.Select(x => x.ToString("x"))._join(", ")}");
+
+            initializeVKeyTable();
 
             setupDecKeyAndComboTable();
 
