@@ -104,17 +104,17 @@ namespace KanchokuWS.Handler
         private const int YamabukiRscanCode = 0x7f;
 
         /// <summary> 漢直として有効なキーか</summary>
-        private bool isEffectiveVkey(int vkey, int scanCode, int extraInfo, bool ctrl)
+        private bool isEffectiveVkey(uint vkey, int scanCode, int extraInfo, bool ctrl)
         {
             // 0xa0 = LSHIFT, 0xa1 = RSHIFT, 0xa2=LCTRL, 0xa3=RCTRL, 0xa4=LALT, 0xa5 = RALT, 0xf3 = Zenkaku, 0xf4 = Kanji
             return
                 (Settings.IgnoreOtherHooker ? extraInfo == 0 : extraInfo != SendInputHandler.MyMagicNumber) &&
                 scanCode != 0 && scanCode != YamabukiRscanCode &&
-                ((vkey >= 0 && vkey < 0xa0) ||
+                ((vkey > 0 && vkey < 0xa0) ||
                  // RSHIFT の場合は、Ctrlキーが押されておらず、それが漢直トグルキーになっているか、または漢直モードでシフト単打が有効か、または拡張シフト面が定義されているとき
-                 //(vkey == FuncVKeys.RSHIFT && !ctrl && (Settings.ActiveKey == (uint)vkey || (isDecoderActivated() && isSingleShiftHitEffeciveOrShiftPlaneAssigned(vkey, KeyModifiers.MOD_RSHIFT, true)))) ||
+                 //(vkey == FuncVKeys.RSHIFT && !ctrl && (Settings.ActiveKey == vkey || (isDecoderActivated() && isSingleShiftHitEffeciveOrShiftPlaneAssigned(vkey, KeyModifiers.MOD_RSHIFT, true)))) ||
                  // RSHIFT の場合は、Ctrlキーが押されていないとき
-                 (vkey == FuncVKeys.RSHIFT && !ctrl) ||
+                 (vkey == FuncVKeys.RSHIFT && (!ctrl || Settings.ActiveKeyWithCtrl == vkey || Settings.ActiveKeyWithCtrl2 == vkey || Settings.SelectedTableActivatedWithCtrl == vkey || Settings.DeactiveKeyWithCtrl == vkey)) ||
                  //(vkey >= 0xa6 && vkey < 0xf3) ||
                  //(vkey >= 0xf5 && vkey < vkeyNum));
                  (vkey >= 0xa6 && vkey < vkeyNum));
@@ -520,14 +520,14 @@ namespace KanchokuWS.Handler
 
         /// <summary> 同時打鍵キーのリピート中か(仮想鍵盤に表示する打鍵ガイドを切り替えるのに使う) </summary>
         private bool bComboKeyRepeat = false;
-        private int prevComboVkey = -1;
+        private uint prevComboVkey = 0;
 
         /// <summary>
         /// 同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
         /// </summary>
         /// <param name="vkey">同時打鍵キーの仮想キーコード</param>
         /// <param name="decKey">同時打鍵キーのデコーダ用コード</param>
-        void handleComboKeyRepeat(int vkey, List<int> decKeys)
+        void handleComboKeyRepeat(uint vkey, List<int> decKeys)
         {
             if (prevComboVkey == vkey) {
                 // KeyRepeat
@@ -545,14 +545,14 @@ namespace KanchokuWS.Handler
         /// 同時打鍵キーのオートリピートが終了したら打鍵ガイドを元に戻す
         /// </summary>
         /// <param name="vkey"></param>
-        void handleComboKeyRepeatStop(int vkey)
+        void handleComboKeyRepeatStop(uint vkey)
         {
             if (prevComboVkey == vkey) {
                 if (bComboKeyRepeat) {
                     bComboKeyRepeat = false;
                     frmKanchoku?.SetNextStrokeHelpDecKey(null);
                 }
-                prevComboVkey = -1;
+                prevComboVkey = 0;
             }
         }
 
@@ -564,10 +564,10 @@ namespace KanchokuWS.Handler
         /// <param name="vkey"></param>
         /// <param name="extraInfo"></param>
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
-        private bool onKeyboardDownHandler(int vkey, int scanCode, int extraInfo)
+        private bool onKeyboardDownHandler(uint vkey, int scanCode, int extraInfo)
         {
             // 一時停止?
-            if (Settings.SuspendByPauseKey && vkey == (int)Keys.Pause) frmKanchoku?.DecoderSuspendToggle();
+            if (Settings.SuspendByPauseKey && vkey == (uint)Keys.Pause) frmKanchoku?.DecoderSuspendToggle();
             if (Settings.DecoderSuspended) return false;
 
             if (Settings.LoggingDecKeyInfo) {
@@ -609,9 +609,9 @@ namespace KanchokuWS.Handler
                     return false;
                 }
 
-                bool bShift = shiftKeyPressed((uint)vkey);
+                bool bShift = shiftKeyPressed(vkey);
                 bool bDecoderOn = isDecoderActivated();
-                uint modFlag = ExModiferKeyInfoManager.getModFlagForExModVkey((uint)vkey);
+                uint modFlag = ExModiferKeyInfoManager.getModFlagForExModVkey(vkey);
                 uint modPressedOrShifted = keyInfoManager.getPressedOrShiftedExModFlag();
 
                 // この処理は、keyboardDownHandler() 内でやるようにした
@@ -621,10 +621,10 @@ namespace KanchokuWS.Handler
                 //    return false;
                 //}
 
-                var keyInfo = keyInfoManager.getModiferKeyInfoByVkey((uint)vkey);
+                var keyInfo = keyInfoManager.getModiferKeyInfoByVkey(vkey);
                 if (keyInfo != null) {
                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"{keyInfo.Name}Key Pressed: ctrl={bCtrl}, shift={bShift}, decoderOn={bDecoderOn}, modFlag={modFlag:x}, modPressedOrShifted={modPressedOrShifted:x}");
-                    if ((uint)vkey == FuncVKeys.SPACE) {
+                    if (vkey == FuncVKeys.SPACE) {
                         // Space
                         if (isSandSEnabled()) {
                             void setShifted()
@@ -699,7 +699,7 @@ namespace KanchokuWS.Handler
                         }
                         // 上記以外はスペース入力として扱う。すでに押下状態にある拡張修飾キーをSHIFT状態に遷移させる
                         keyInfoManager.makeExModKeyShifted(bDecoderOn);
-                    } else if ((uint)vkey == FuncVKeys.RSHIFT) {
+                    } else if (vkey == FuncVKeys.RSHIFT) {
                         // RSHIFT
                         if (keyInfo.IsShiftPlaneAssigned(bDecoderOn)) {
                             // 拡張シフト面が割り当てられている場合
@@ -811,20 +811,20 @@ namespace KanchokuWS.Handler
         /// <summary>キーボード押下時のハンドラ</summary>
         /// <param name="vkey"></param>
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
-        private bool keyboardDownHandler(int vkey, bool leftCtrl, bool rightCtrl)
+        private bool keyboardDownHandler(uint vkey, bool leftCtrl, bool rightCtrl)
         {
             //bool leftCtrl = (GetAsyncKeyState(FuncVKeys.LCONTROL) & 0x8000) != 0;
             //bool rightCtrl = (GetAsyncKeyState(FuncVKeys.RCONTROL) & 0x8000) != 0;
             bool bDecoderOn = isDecoderActivated();
             bool ctrl = leftCtrl || rightCtrl;
-            bool shift = shiftKeyPressed((uint)vkey);
+            bool shift = shiftKeyPressed(vkey);
             bool alt = isAltKeyPressed();
             uint mod = KeyModifiers.MakeModifier(alt, ctrl, shift);
             uint modEx = keyInfoManager.getShiftedExModKey();
             if (modEx == 0 && keyInfoManager.isSandSShiftedOneshot()) modEx = KeyModifiers.MOD_SPACE;
 
-            //int normalDecKey = VKeyComboRepository.GetDecKeyFromVKey((uint)vkey);
-            int normalDecKey = DecoderKeyVsVKey.GetDecKeyFromVKey((uint)vkey);
+            //int normalDecKey = VKeyComboRepository.GetDecKeyFromVKey(vkey);
+            int normalDecKey = DecoderKeyVsVKey.GetDecKeyFromVKey(vkey);
             int kanchokuCode = KeyComboRepository.GetKanchokuToggleDecKey(mod, normalDecKey); // 漢直モードのトグルをやるキーか
 
             if (Settings.LoggingDecKeyInfo) {
@@ -904,13 +904,13 @@ namespace KanchokuWS.Handler
             return result;
         }
 
-        private int prevUpVkey = -1;
+        private uint prevUpVkey = 0;
 
         /// <summary>キーアップ時のハンドラ</summary>
         /// <param name="vkey"></param>
         /// <param name="extraInfo"></param>
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
-        private bool onKeyboardUpHandler(int vkey, int scanCode, int extraInfo)
+        private bool onKeyboardUpHandler(uint vkey, int scanCode, int extraInfo)
         {
             // 一時停止?
             if (Settings.DecoderSuspended) return false;
@@ -920,7 +920,7 @@ namespace KanchokuWS.Handler
             // 半/全キーは、US-on-JP モードなら true(入力破棄; つまり無視) JPモードなら false (システム処理; つまりIMEのON/OFF)を返す
             if (vkey == 0xf3 || vkey == 0xf4) return DecoderKeyVsVKey.IsUSonJPmode;
 
-            int prevVkey = prevUpVkey;
+            uint prevVkey = prevUpVkey;
             prevUpVkey = vkey;
 
             bool leftShift = (GetAsyncKeyState(FuncVKeys.LSHIFT) & 0x8000) != 0;
@@ -934,7 +934,7 @@ namespace KanchokuWS.Handler
                 // とりあえず、やっつけコード
                 void checkAndInvoke(bool bShifted)
                 {
-                    int normalDecKey = DecoderKeyVsVKey.GetDecKeyFromVKey((uint)vkey);
+                    int normalDecKey = DecoderKeyVsVKey.GetDecKeyFromVKey(vkey);
                     if (!bShifted && /*bDecoderOn &&*/ ExtraModifiers.IsExModKeyIndexAssignedForDecoderFunc(normalDecKey)) {
                         int kanchokuCode = KeyComboRepository.GetDecKeyFromCombo(0, normalDecKey);
                         if (kanchokuCode >= 0) {
@@ -972,8 +972,8 @@ namespace KanchokuWS.Handler
 
             bool bDecoderOn = isDecoderActivated();
 
-            uint modFlag = ExModiferKeyInfoManager.getModFlagForExModVkey((uint)vkey);
-            var keyInfo = keyInfoManager.getModiferKeyInfoByVkey((uint)vkey);
+            uint modFlag = ExModiferKeyInfoManager.getModFlagForExModVkey(vkey);
+            var keyInfo = keyInfoManager.getModiferKeyInfoByVkey(vkey);
             //bool result = false;
             if (keyInfo != null) {
                 bool bPrevPressed = keyInfo.Pressed;
@@ -981,7 +981,7 @@ namespace KanchokuWS.Handler
                 keyInfo.SetReleased();
                 if (Settings.LoggingDecKeyInfo) logger.DebugH(() =>
                     $"{keyInfo.Name}Key up: prevPressed={bPrevPressed}, prevPressedOneshot={bPrevPressedOneshot}, decoderOn={bDecoderOn}, modFlag={modFlag:x}, newKeyState={keyInfo.KeyState}");
-                if ((uint)vkey == FuncVKeys.SPACE) {
+                if (vkey == FuncVKeys.SPACE) {
                     // Space離放
                     if (isSandSEnabled()) {
                         frmKanchoku?.SetStrokeHelpShiftPlane(0);
@@ -1019,7 +1019,7 @@ namespace KanchokuWS.Handler
                         keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, 0);
                     }
                     return false;
-                } else if ((uint)vkey == FuncVKeys.RSHIFT) {
+                } else if (vkey == FuncVKeys.RSHIFT) {
                     // RSHIFT
                     //if (keyInfo.IsShiftPlaneAssigned(bDecoderOn)) {
                     //    // 拡張シフト面が割り当てられている場合
@@ -1055,13 +1055,13 @@ namespace KanchokuWS.Handler
         /// <summary>キーボードUP時のハンドラ</summary>
         /// <param name="vkey"></param>
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
-        private void keyboardUpHandler(bool bDecoderOn, int vkey, bool leftCtrl, bool rightCtrl, uint modFlag)
+        private void keyboardUpHandler(bool bDecoderOn, uint vkey, bool leftCtrl, bool rightCtrl, uint modFlag)
         {
             var currentPool = CombinationKeyStroke.DeterminerLib.KeyCombinationPool.CurrentPool;
             if (/*(bDecoderOn || currentPool.HasComboEffectiveAlways) &&*/
                 currentPool.Enabled &&  !leftCtrl && !rightCtrl && modFlag == 0) {
                 //int deckey = /* vkey == (int)Keys.Space ? DecoderKeys.STROKE_SPACE_DECKEY :*/ VKeyComboRepository.GetDecKeyFromCombo(0, normalDecKey); /* ここではまだ、Spaceはいったん文字として扱う */
-                int deckey = DecoderKeyVsVKey.GetDecKeyFromVKey((uint)vkey);
+                int deckey = DecoderKeyVsVKey.GetDecKeyFromVKey(vkey);
                 if (deckey >= 0 && deckey < DecoderKeys.STROKE_DECKEY_END) {
                     CombinationKeyStroke.Determiner.Singleton.KeyUp(deckey, bDecoderOn);
                 }
@@ -1115,11 +1115,12 @@ namespace KanchokuWS.Handler
         {
             switch (kanchokuCode) {
                 case DecoderKeys.TOGGLE_DECKEY:
-                    frmKanchoku?.ToggleDecoder();
+                    frmKanchoku?.ToggleDecoder(0);
                     return true;
                 case DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY:
+                case DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY2:
                     Settings.VirtualKeyboardPosFixedTemporarily = false;
-                    frmKanchoku?.ToggleDecoder();
+                    frmKanchoku?.ToggleDecoder(kanchokuCode == DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY ? 1 : 2);
                     return true;
                 case DecoderKeys.ACTIVE_DECKEY:
                 case DecoderKeys.ACTIVE2_DECKEY:

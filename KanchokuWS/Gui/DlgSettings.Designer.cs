@@ -1403,6 +1403,7 @@ namespace KanchokuWS.Gui
             "1c (変換)",
             "1d (無変換)",
             "f2 (かな/カナ)",
+            "a1 (右シフト)",
             "20 (Space)"});
             this.comboBox_modifiedToggleKey.Location = new System.Drawing.Point(134, 41);
             this.comboBox_modifiedToggleKey.Name = "comboBox_modifiedToggleKey";

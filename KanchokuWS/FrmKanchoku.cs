@@ -1157,17 +1157,17 @@ namespace KanchokuWS
         // 開発者用の設定がONになっているとき、漢直モードのON/OFFを10回繰り返したら警告を出す
         private int devFlagsOnWarningCount = 0;
 
-        public void ToggleDecoder()
+        public void ToggleDecoder(int activatorCode = 0)
         {
-            ToggleActiveState(true);
+            ToggleActiveState(true, activatorCode);
         }
 
         // アクティブと非アクティブを切り替える
-        public void ToggleActiveState(bool bRevertCtrl = false)
+        public void ToggleActiveState(bool bRevertCtrl = false, int activatorCode = 0)
         {
             logger.InfoH(() => $"ENTER");
             if (!IsDecoderActive) {
-                ActivateDecoder();
+                ActivateDecoder(activatorCode);
             } else {
                 var keyState = SendInputHandler.GetCtrlKeyState(true);
                 DeactivateDecoder(!bRevertCtrl);
@@ -1176,7 +1176,7 @@ namespace KanchokuWS
             logger.InfoH("LEAVE");
         }
 
-        public void ActivateDecoder()
+        public void ActivateDecoder(int activatorCode = 0)
         {
             logger.InfoH(() => $"\nENTER");
             if (IsDecoderActive) {
@@ -1192,10 +1192,21 @@ namespace KanchokuWS
             }
             IsDecoderActive = true;
             var ctrlKeyState = SendInputHandler.GetCtrlKeyState();
-            if (Settings.SelectedTableActivatedWithoutCtrl > 0 && Settings.SelectedTableActivatedWithoutCtrl <= 2 && !ctrlKeyState.AnyKeyDown) {
-                changeCodeTableAndCombinationPool($"useCodeTable{Settings.SelectedTableActivatedWithoutCtrl}");  // 指定のコードテーブルを選択
-            } else if (Settings.SelectedTableActivatedWithCtrl > 0 && Settings.SelectedTableActivatedWithCtrl <= 2 && ctrlKeyState.AnyKeyDown) {
-                changeCodeTableAndCombinationPool($"useCodeTable{Settings.SelectedTableActivatedWithCtrl}");     // 指定のコードテーブルを選択
+            if (activatorCode > 2) activatorCode = 0;
+            int codeTable = 0;
+            if (activatorCode <= 0) {
+                if (Settings.SelectedTableActivatedWithoutCtrl > 0 && Settings.SelectedTableActivatedWithoutCtrl <= 2 && !ctrlKeyState.AnyKeyDown) {
+                    codeTable = Settings.SelectedTableActivatedWithoutCtrl;
+                } else if (Settings.SelectedTableActivatedWithCtrl > 0 && Settings.SelectedTableActivatedWithCtrl <= 2 && ctrlKeyState.AnyKeyDown) {
+                    codeTable = Settings.SelectedTableActivatedWithCtrl;
+                }
+            } else if (activatorCode == 1) {
+                    codeTable = Settings.SelectedTableActivatedWithCtrl;
+            } else if (activatorCode == 2) {
+                    codeTable = Settings.SelectedTableActivatedWithCtrl2;
+            }
+            if (codeTable > 0) {
+                changeCodeTableAndCombinationPool($"useCodeTable{codeTable}");  // 指定のコードテーブルを選択
             } else {
                 if (decoderOutput.strokeTableNum == 3) {
                     changeCodeTableAndCombinationPool("useCodeTable1");     // コードテーブル1に入れ替え

@@ -285,8 +285,9 @@ namespace KanchokuWS
         public const int RIGHT_SHIFT_MAZE_START_POS_DECKEY = LEFT_SHIFT_MAZE_START_POS_DECKEY + 1;  // 交ぜ書き開始位置を右シフトする
 
         public const int MODE_TOGGLE_FOLLOW_CARET_DECKEY = RIGHT_SHIFT_MAZE_START_POS_DECKEY + 1;   // 仮想鍵盤をカレットに再追従させて、漢直モードのトグル
+        public const int MODE_TOGGLE_FOLLOW_CARET_DECKEY2 = MODE_TOGGLE_FOLLOW_CARET_DECKEY + 1;    // 仮想鍵盤をカレットに再追従させて、漢直モードのトグル
 
-        public const int COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY = MODE_TOGGLE_FOLLOW_CARET_DECKEY + 1; // 文字列をコピーして、それをデコーダの辞書に登録する
+        public const int COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY = MODE_TOGGLE_FOLLOW_CARET_DECKEY2 + 1; // 文字列をコピーして、それをデコーダの辞書に登録する
 
         public const int PSEUDO_SPACE_DECKEY = COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY + 1;       // 疑似スペースキー
         public const int POST_NORMAL_SHIFT_DECKEY = PSEUDO_SPACE_DECKEY + 1;                // 後置通常シフトキー (40)

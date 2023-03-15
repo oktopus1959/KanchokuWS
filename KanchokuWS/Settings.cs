@@ -114,12 +114,16 @@ namespace KanchokuWS
         public static uint ActiveKey { get; private set; } = 0x1c;
         /// <summary>Ctrl修飾ありで Decoder をアクティブにするホットキーの仮想キーコード</summary> 
         public static uint ActiveKeyWithCtrl { get; private set; } = 0x1c;
+        /// <summary>Ctrl修飾ありで Decoder をアクティブにするホットキーの仮想キーコード</summary> 
+        public static uint ActiveKeyWithCtrl2 { get; private set; } = 0x1c;
 
         /// <summary>Ctrl修飾なしで Decoder をアクティブにしたときに選択するテーブルの番号</summary> 
         public static int SelectedTableActivatedWithoutCtrl { get; set; } = 0;
 
         /// <summary>Ctrl修飾ありで Decoder をアクティブにしたときに選択するテーブルの番号</summary> 
         public static int SelectedTableActivatedWithCtrl { get; set; } = 0;
+        /// <summary>Ctrl修飾ありで Decoder をアクティブにしたときに選択するテーブルの番号その</summary> 
+        public static int SelectedTableActivatedWithCtrl2 { get; set; } = 0;
 
         /// <summary>Ctrl修飾なしで Decoder を非アクティブにするホットキーの仮想キーコード</summary> 
         public static uint DeactiveKey { get; private set; } = 0;
@@ -1062,28 +1066,37 @@ namespace KanchokuWS
             // 漢直モードトグルキー
             ActiveKey = (uint)GetString("unmodifiedHotKey")._parseHex(0)._lowLimit(0);
             ActiveKeyWithCtrl = (uint)GetString("hotKey")._parseHex(0)._lowLimit(0);
+            ActiveKeyWithCtrl2 = (uint)GetString("hotKey2")._parseHex(0)._lowLimit(0);
             if (ActiveKey == 0 && ActiveKeyWithCtrl == 0) ActiveKeyWithCtrl = 0xdc;
 
             SelectedTableActivatedWithoutCtrl = GetString("selectedTableActivatedWithoutCtrl")._parseInt(0)._lowLimit(0)._highLimit(3);
             SelectedTableActivatedWithCtrl = GetString("selectedTableActivatedWithCtrl")._parseInt(0)._lowLimit(0)._highLimit(3);
+            SelectedTableActivatedWithCtrl2 = GetString("selectedTableActivatedWithCtrl2")._parseInt(0)._lowLimit(0)._highLimit(3);
 
             // 漢直モードOFFキー
             DeactiveKey = (uint)GetString("unmodifiedOffHotKey")._parseHex(0)._lowLimit(0);
             DeactiveKeyWithCtrl = (uint)GetString("offHotKey")._parseHex(0)._lowLimit(0);
 
             // デコーダON/OFF系機能の呼び出し
-            if (DeactiveKey == 0) {
-                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.TOGGLE_DECKEY, 0 , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKey));
-            } else {
-                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, 0 , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKey));
-                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, 0 , DecoderKeyVsVKey.GetDecKeyFromVKey(DeactiveKey));
+            if (ActiveKey != 0) {
+                if (DeactiveKey == 0) {
+                    KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.TOGGLE_DECKEY, 0, DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKey));
+                } else {
+                    KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, 0, DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKey));
+                    KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, 0, DecoderKeyVsVKey.GetDecKeyFromVKey(DeactiveKey));
+                }
             }
-            if (DeactiveKeyWithCtrl == 0) {
-                // Ctrlありの場合はカレットへの追従を再開する
-                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY, KeyModifiers.MOD_CONTROL , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKeyWithCtrl));
-            } else {
-                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKeyWithCtrl));
-                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, KeyModifiers.MOD_CONTROL , DecoderKeyVsVKey.GetDecKeyFromVKey(DeactiveKeyWithCtrl));
+            if (ActiveKeyWithCtrl != 0) {
+                if (DeactiveKeyWithCtrl == 0) {
+                    // Ctrlありの場合はカレットへの追従を再開する
+                    KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY, KeyModifiers.MOD_CONTROL, DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKeyWithCtrl));
+                } else {
+                    KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.ACTIVE_DECKEY, KeyModifiers.MOD_CONTROL, DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKeyWithCtrl));
+                    KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.DEACTIVE_DECKEY, KeyModifiers.MOD_CONTROL, DecoderKeyVsVKey.GetDecKeyFromVKey(DeactiveKeyWithCtrl));
+                }
+            }
+            if (ActiveKeyWithCtrl2 != 0) {
+                KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.MODE_TOGGLE_FOLLOW_CARET_DECKEY2, KeyModifiers.MOD_CONTROL, DecoderKeyVsVKey.GetDecKeyFromVKey(ActiveKeyWithCtrl2));
             }
 
             //-------------------------------------------------------------------------------------
