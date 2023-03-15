@@ -62,7 +62,7 @@ namespace KanchokuWS.Gui
             if (Settings.DlgModConversionHeight > 0) Height = Settings.DlgModConversionHeight;
             if (Settings.DlgModConversionWidth > 0) Width = Settings.DlgModConversionWidth;
 
-            //CancelButton = buttonCancel;
+            CancelButton = buttonCancel;
             DialogResult = DialogResult.None;
         }
 
