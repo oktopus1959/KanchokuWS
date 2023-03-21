@@ -66,7 +66,7 @@ namespace KanchokuWS.Gui
                 ++lineNum;
                 void appendError(string msg)
                 {
-                    logger.Warn(msg);
+                    logger.WarnH(msg);
                     sb.Append(msg).Append($":\n>> ").Append(lineNum).Append(": ").Append(line).Append("\n\n");
                 }
 
@@ -323,8 +323,11 @@ namespace KanchokuWS.Gui
                 CombinationKeyStroke.Determiner.Singleton.KeyProcHandler = oldFunc;
             }
 
+            var result = sb.ToString();
+            logger.InfoH($"result={result}");
+
             Logger.LogLevel = prevLogLevel;
-            return sb.ToString();
+            return result;
         }
 
         List<string> readAllLines(string filepath)

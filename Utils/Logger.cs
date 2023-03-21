@@ -226,7 +226,7 @@ namespace Utils
             [CallerLineNumber] int lineNumber = -1)
         {
             if (LogLevel >= LogLevelWarnH) {
-                writeLog("WARN", $"{ClassName}.{method}", lineNumber, msg);
+                writeLog("WARNH", $"{ClassName}.{method}", lineNumber, msg);
             }
         }
 
@@ -235,7 +235,7 @@ namespace Utils
             [CallerLineNumber] int lineNumber = -1)
         {
             if (LogLevel >= LogLevelWarnH && func != null) {
-                writeLog("WARN", $"{ClassName}.{method}", lineNumber, func());
+                writeLog("WARNH", $"{ClassName}.{method}", lineNumber, func());
             }
         }
 
