@@ -245,11 +245,17 @@ comboMinTime(50)
 #enableTimer1
 #enableTimer2
 
-# Space, E, O, .., o : 3打同時の末尾以外が先に上がる
-convert({40}<33>E<86>O<50>I<55>o<22>e<19<i><6>[40]) = しょう
+# Space, E, O, .., o : 3打同時の末尾が先に上がる
+convert({40}<33>E<86>O<50>I<55>o<22>e<19>i<6>[40]) = しょう
 # Space, E, O, .., e : 3打同時の末尾以外が先に上がる
-convert({40}<33>E<86>O<50>I<55>e<22>o<19<i><6>[40]) = じよう
+convert({40}<33>E<86>O<50>I<55>e<22>o<19>i<6>[40]) = じよう
 
+comboMaxTime(100)
+comboMaxPostTime(70)
+convert(S<35>{40}<120>s<20>[40]) = ば
+
+comboMinTime(200)
+convert({40}<35>S<110>U<20>s<20>[40]<50>u) = ばか
 
 ### post.7 ###
 loadTable(tables/_test/noniiruto.post.7.tbl)

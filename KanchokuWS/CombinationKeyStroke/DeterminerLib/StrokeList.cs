@@ -551,6 +551,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                             // どれかのルールにヒットした
                                             outputLen = rule.outputLen;
                                             discardLen = rule.discardLen;
+                                            if (outputLen > 0) bSecondComboCheck = true;
                                             //if (rule.bMoveShift) copyShiftLen = discardLen;
                                             copyShiftLen = discardLen;
                                             //if (rule.k1stShift == 2) {
@@ -676,19 +677,21 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             comboBlocked = keyCombo.IsComboBlocked;     // 同時打鍵の一時無効化か
                             Stroke tailKey = hotList[overlapLen - 1];
                             bool isTailKeyUp = hotList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
-                            logger.DebugH(() => $"CHECK1: {isTailKeyUp && (comboBlocked || (tailKey.HasStringOrSingleHittable  && !tailKey.IsShiftableSpaceKey))}: tailPos={overlapLen - 1}: " +
-                                $"isTailKeyUp({isTailKeyUp}) && " + 
-                                $"(comboBlocked({comboBlocked}) || " +
-                                $"(tailKey.HasStringOrSingleHittable({tailKey.HasStringOrSingleHittable}) && !tailKey.IsShiftableSpaceKey({!tailKey.IsShiftableSpaceKey})))");
-                            logger.DebugH(() => $"CHECK2: {challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey}: " +
-                                $"challengeList.Count({challengeList.Count}) < 3 ({challengeList.Count < 3}) && hotList[0].IsShiftableSpaceKey({hotList[0].IsShiftableSpaceKey})");
-                            logger.DebugH(() => "CHECK3: " +
-                                $"{Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !isListContaindInSequentialPriorityWordKeySet(challengeList)}: " +
-                                $"ThreeKeysComboUnconditional({Settings.ThreeKeysComboUnconditional}) && " +
-                                $"keyCombo.DecKeyList.Count({keyCombo.DecKeyList._safeCount()}) >= 3 ({keyCombo.DecKeyList._safeCount() >= 3}) && " +
-                                $"!isListContaindInSequentialPriorityWordKeySet({challengeList._toString()})({!isListContaindInSequentialPriorityWordKeySet(challengeList)})" +
-                                $": challengeList={challengeList._toString()}");
-                            if (isTailKeyUp && (comboBlocked || (tailKey.HasStringOrSingleHittable  && !tailKey.IsShiftableSpaceKey)) ||
+                            if (Logger.IsDebugHEnabled) {
+                                logger.DebugH(() => $"CHECK1: {isTailKeyUp && (comboBlocked || (tailKey.HasStringOrSingleHittable && !tailKey.IsShiftableSpaceKey))}: tailPos={overlapLen - 1}: " +
+                                    $"isTailKeyUp({isTailKeyUp}) && " +
+                                    $"(comboBlocked({comboBlocked}) || " +
+                                    $"(tailKey.HasStringOrSingleHittable({tailKey.HasStringOrSingleHittable}) && !tailKey.IsShiftableSpaceKey({!tailKey.IsShiftableSpaceKey})))");
+                                logger.DebugH(() => $"CHECK2: {challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey}: " +
+                                    $"challengeList.Count({challengeList.Count}) < 3 ({challengeList.Count < 3}) && hotList[0].IsShiftableSpaceKey({hotList[0].IsShiftableSpaceKey})");
+                                logger.DebugH(() => "CHECK3: " +
+                                    $"{Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !isListContaindInSequentialPriorityWordKeySet(challengeList)}: " +
+                                    $"ThreeKeysComboUnconditional({Settings.ThreeKeysComboUnconditional}) && " +
+                                    $"keyCombo.DecKeyList.Count({keyCombo.DecKeyList._safeCount()}) >= 3 ({keyCombo.DecKeyList._safeCount() >= 3}) && " +
+                                    $"!isListContaindInSequentialPriorityWordKeySet({challengeList._toString()})({!isListContaindInSequentialPriorityWordKeySet(challengeList)})" +
+                                    $": challengeList={challengeList._toString()}");
+                            }
+                            if ((isTailKeyUp && (comboBlocked || (tailKey.HasStringOrSingleHittable  && !tailKey.IsShiftableSpaceKey))) ||
                                                 // CHECK1: 同時打鍵の一時無効化か、対象リストの末尾キーが単打可能キーであり先にUPされた
                                 challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey ||
                                                 // CHECK2: チャレンジリストの長さが2以下で、先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
@@ -830,7 +833,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return list;
         }
 
-        // タイミングによる同時打鍵判定関数
+        // タイミングによる同時打鍵判定関数(ここでは isTailKeyUp == False として扱う)
         // result: 0: 判定OK, 1:1文字目チェックNG, 2:2文字目チェックNG
         private int isCombinationTiming(List<Stroke> list, Stroke tailStk, DateTime dtNow, bool bSecondComboCheck)
         {
@@ -871,15 +874,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
             if (bSecondComboCheck || (result == 0 && (list._safeCount() > 2 || !Settings.CombinationKeyMinTimeOnlyAfterSecond))) {
                 // 2文字目であるか、または、1文字目のリードタイムチェックをパスし、かつ、3キー同時または1文字目でも重複時間チェックが必要
-                result = list.Any(x => x.OrigDecoderKey != tailStk.OrigDecoderKey && !x.IsUpKey && x.IsJustComboShift) ? 0 : 2;   // まだUPされていない非単打シフトキーがあるか
-                if (result == 0) {
-                    // 非単打シフトキーがまだ解放されずに残っていたら同時打鍵と判定する
-                    logger.DebugH(() => $"RESULT2={result == 0}: bSecondComboCheck && ALIVE SHIFT Key found");
+                // ここでは tailKey より前のキーがUPされたものとして扱う。ただし、list中にUPされたキーがあるとは限らない)
+                if (list.All(x => !x.IsUpKey)) {
+                    // list中のキーがすべて解放されずに残っていたら同時打鍵とは判定しない
+                    result = bSecondComboCheck ? 2 : 1;
+                    logger.DebugH(() => $"RESULT2=False: All keys in list are ALIVE (Timing={result})");
                 } else {
                     // シフトキーが解放されている(または単打可能キーのみである)ので、最後のキー押下時刻との差分を求め、タイミング判定する
                     double ms2 = tailStk.TimeSpanMs(dtNow);
                     int minTime = Settings.CombinationKeyMinOverlappingTimeMs2 > 0 && !isSpaceOrFunc ? Settings.CombinationKeyMinOverlappingTimeMs2 : Settings.CombinationKeyMinOverlappingTimeMs;
-                    result = ms2 >= minTime ? 0 : 2;
+                    result = ms2 >= minTime ? 0 : bSecondComboCheck ? 2 : 1;
                     logger.DebugH(() => $"RESULT2={result == 0}: ms2={ms2:f2}ms >= threshold={minTime}ms (Timing={result})");
                 }
             }
