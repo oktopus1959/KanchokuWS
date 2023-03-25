@@ -843,9 +843,9 @@ namespace KanchokuWS.Handler
                     // BSを送る
                     SendString(null, 0, numBS);
                     // Ctrl-V を送る (SendVirtualKeys の中でも upDownCtrlKey/revertCtrlKey をやっている)
-                    if (numBS > 0 && Settings.PreWmCharGuardMillisec > 0) {
-                        int waitMs = (int)(Math.Pow(numBS, Settings.ReductionExponet._lowLimit(0.5)) * Settings.PreWmCharGuardMillisec);
-                        logger.DebugH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreWmCharGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
+                    if (numBS > 0 && Settings.PreCtrlVGuardMillisec > 0) {
+                        int waitMs = (int)(Math.Pow(numBS, Settings.ReductionExponet._lowLimit(0.5)) * Settings.PreCtrlVGuardMillisec);
+                        logger.DebugH(() => $"Wait {waitMs} ms: PreWmCharGuardMillisec={Settings.PreCtrlVGuardMillisec}, numBS={numBS}, reductionExp={Settings.ReductionExponet}");
                         Helper.WaitMilliSeconds(waitMs);
                     }
                     SendVKeyCombo(KeyModifiers.MOD_CONTROL, (uint)Keys.V, 1);

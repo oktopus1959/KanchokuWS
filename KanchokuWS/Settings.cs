@@ -82,22 +82,22 @@ namespace KanchokuWS
         public static bool LoggingActiveWindowInfo { get; set; } = false;
 
         /// <summary>true の場合、仮想キーボードに関する情報をログ出力する</summary>
-        public static bool LoggingVirtualKeyboardInfo { get; set; } = false;
+        public static bool LoggingVirtualKeyboardInfo { get; set; }
 
         /// <summary>true の場合、テーブルファイルに関する情報をログ出力する</summary>
-        public static bool LoggingTableFileInfo { get; set; } = false;
+        public static bool LoggingTableFileInfo { get; set; }
 
         /// <summary>Decoderキー処理後にウェイトを入れる(開発用; バグ等により処理対象ホットキーを keybd_event で送出することによる無限ループに対応する時間をかせぐ)</summary>
-        public static bool DelayAfterProcessDeckey { get; private set; } = false;
+        //public static bool DelayAfterProcessDeckey { get; private set; } = false;
 
         /// <summary>二重起動を許可する</summary>
-        public static bool MultiAppEnabled { get; private set; } = false;
+        public static bool MultiAppEnabled { get; private set; }
 
         /// <summary>部首合成ログを有効にする</summary>
         public static bool BushuDicLogEnabled { get; private set; }
 
         /// <summary>指定個数以上の打鍵が残っていたら警告をログ出力する</summary>        
-        public static int WarnThresholdKeyQueueCount { get; private set; } = 6;
+        public static int WarnThresholdKeyQueueCount { get; private set; }
 
         /// <summary>デバッグ用のテーブルファイルを出力する</summary>        
         public static bool OutputDebugTableFiles { get; private set; }
@@ -111,33 +111,33 @@ namespace KanchokuWS
         // 基本設定
         //-------------------------------------------------------------------------------------
         /// <summary>Ctrl修飾なしで Decoder をアクティブにするホットキーの仮想キーコード</summary> 
-        public static uint ActiveKey { get; private set; } = 0x1c;
+        public static uint ActiveKey { get; private set; }
         /// <summary>Ctrl修飾ありで Decoder をアクティブにするホットキーの仮想キーコード</summary> 
-        public static uint ActiveKeyWithCtrl { get; private set; } = 0x1c;
+        public static uint ActiveKeyWithCtrl { get; private set; }
         /// <summary>Ctrl修飾ありで Decoder をアクティブにするホットキーの仮想キーコード</summary> 
-        public static uint ActiveKeyWithCtrl2 { get; private set; } = 0x1c;
+        public static uint ActiveKeyWithCtrl2 { get; private set; }
 
         /// <summary>Ctrl修飾なしで Decoder をアクティブにしたときに選択するテーブルの番号</summary> 
-        public static int SelectedTableActivatedWithoutCtrl { get; set; } = 0;
+        public static int SelectedTableActivatedWithoutCtrl { get; set; }
 
         /// <summary>Ctrl修飾ありで Decoder をアクティブにしたときに選択するテーブルの番号</summary> 
-        public static int SelectedTableActivatedWithCtrl { get; set; } = 0;
+        public static int SelectedTableActivatedWithCtrl { get; set; }
         /// <summary>Ctrl修飾ありで Decoder をアクティブにしたときに選択するテーブルの番号その</summary> 
-        public static int SelectedTableActivatedWithCtrl2 { get; set; } = 0;
+        public static int SelectedTableActivatedWithCtrl2 { get; set; }
 
         /// <summary>Ctrl修飾なしで Decoder を非アクティブにするホットキーの仮想キーコード</summary> 
-        public static uint DeactiveKey { get; private set; } = 0;
+        public static uint DeactiveKey { get; private set; }
         /// <summary>Ctrl修飾ありで Decoder を非アクティブにするホットキーの仮想キーコード</summary> 
-        public static uint DeactiveKeyWithCtrl { get; private set; } = 0;
+        public static uint DeactiveKeyWithCtrl { get; private set; }
 
-        public static uint DeactiveKeyEffective => DeactiveKey != 0 ? DeactiveKey : ActiveKey;
-        public static uint DeactiveKeyWithCtrlEffective => DeactiveKeyWithCtrl != 0 ? DeactiveKeyWithCtrl : ActiveKeyWithCtrl;
+        //public static uint DeactiveKeyEffective => DeactiveKey != 0 ? DeactiveKey : ActiveKey;
+        //public static uint DeactiveKeyWithCtrlEffective => DeactiveKeyWithCtrl != 0 ? DeactiveKeyWithCtrl : ActiveKeyWithCtrl;
 
         /// <summary>スプラッシュウィンドウの表示時間</summary>
-        public static int SplashWindowShowDuration { get; private set; } = 60;
+        public static int SplashWindowShowDuration { get; private set; }
 
         /// <summary>終了時に確認ダイアログを出す</summary>
-        public static bool ConfirmOnClose { get; private set; } = true;
+        public static bool ConfirmOnClose { get; private set; }
 
         /// <summary>再起動時に確認ダイアログを出す</summary>
         public static bool ConfirmOnRestart { get; private set; } = true;
@@ -188,13 +188,13 @@ namespace KanchokuWS
             OnSelect,
         }
         /// <summary>仮想鍵盤またはモード標識を表示する</summary>
-        public static bool ShowVkbOrMaker { get; set; } = true;
+        public static bool ShowVkbOrMaker { get; set; }
 
         /// <summary>英数モード時に仮想鍵盤を表示する</summary>
-        public static bool ShowEisuVkb { get; set; } = false;
+        public static bool ShowEisuVkb { get; set; }
 
         /// <summary>N打鍵目に仮想鍵盤を表示する(0なら仮想鍵盤を表示しない)</summary>
-        public static int VirtualKeyboardShowStrokeCount { get; set; } = 1;
+        public static int VirtualKeyboardShowStrokeCount { get; set; }
         public static int VirtualKeyboardShowStrokeCountTemp { get; set; } = 0;
         public static int VirtualKeyboardShowStrokeCountEffective =>
             VirtualKeyboardShowStrokeCount <= 0 || (VirtualKeyboardShowStrokeCountTemp > 0 && VirtualKeyboardShowStrokeCountTemp < VirtualKeyboardShowStrokeCount)
@@ -220,16 +220,16 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary>カレットと仮想鍵盤の相対位置: X方向</summary>
-        public static int VirtualKeyboardOffsetX { get; private set; } = 2;
+        public static int VirtualKeyboardOffsetX { get; private set; }
 
         /// <summary>カレットと仮想鍵盤の相対位置: Y方向</summary>
-        public static int VirtualKeyboardOffsetY { get; private set; } = 2;
+        public static int VirtualKeyboardOffsetY { get; private set; }
 
         /// <summary>仮想鍵盤の固定位置: X方向</summary>
-        public static int VirtualKeyboardFixedPosX { get; private set; } = -1;
+        public static int VirtualKeyboardFixedPosX { get; private set; }
 
         /// <summary>仮想鍵盤の固定位置: Y方向</summary>
-        public static int VirtualKeyboardFixedPosY { get; private set; } = -1;
+        public static int VirtualKeyboardFixedPosY { get; private set; }
 
         /// <summary>仮想鍵盤の位置を一時的に固定する</summary>
         public static bool VirtualKeyboardPosFixedTemporarily { get; set; } = false;
@@ -247,53 +247,53 @@ namespace KanchokuWS
         //public static double DisplayScale { get; private set; } = 1.0;
 
         /// <summary>ファイル保存世代数</summary>
-        public static int BackFileRotationGeneration { get; private set; } = 3;
+        public static int BackFileRotationGeneration { get; private set; }
 
-        /// <summary>辞書保存インターバルタイム(分)</summary>
-        public static int SaveDictsIntervalTime { get; private set; } = 60;
+        /// <summary>辞書保存インターバルタイム(分)(負の場合は「保存を行う」チェックボックスをOFFにする)</summary>
+        public static int SaveDictsIntervalTime { get; private set; }
 
         /// <summary>辞書保存に適した平穏な時間(分)</summary>
-        public static int SaveDictsCalmTime { get; private set; } = 1;
+        public static int SaveDictsCalmTime { get; private set; }
 
         /// <summary>自身以外のキーボードフックツールからの出力を無視する</summary>
-        public static bool IgnoreOtherHooker { get; private set; } = true;
+        public static bool IgnoreOtherHooker { get; private set; }
 
         /// <summary> 文字送出時にコピー&ペーストを行う文字数の閾値 </summary>
-        public static int MinLeghthViaClipboard { get; set; } = 5;
+        public static int MinLeghthViaClipboard { get; set; }
 
         /// <summary> 同時打鍵ではないテーブルで、ノード重複の警告を表示するか </summary>
-        public static bool DuplicateWarningEnabled { get; set; } = false;
+        public static bool DuplicateWarningEnabled { get; set; }
 
         //-------------------------------------------------------------------------------------
         /// <summary>DecKeyの無限ループを検出する回数</summary>
-        public static int DeckeyInfiniteLoopDetectCount { get; private set; } = 1000;
+        public static int DeckeyInfiniteLoopDetectCount { get; private set; }
 
         /// <summary>キーリピートが発生したことを認識するまでの時間(ミリ秒)</summary>
-        public static int KeyRepeatDetectMillisec { get; private set; } = 100;
+        public static int KeyRepeatDetectMillisec { get; private set; }
 
         ///// <summary>キーリピートなどで短時間に大量のキー入力があったら強制的にデコーダをOFFにする</summary>
-        //public static bool AutoOffWhenBurstKeyIn { get; private set; } = false;
+        //public static bool AutoOffWhenBurstKeyIn { get; private set; }
 
         //-------------------------------------------------------------------------------------
         // フォントと色
         //-------------------------------------------------------------------------------------
-        public static string NormalVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
-        public static string CenterVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
-        public static string VerticalVkbFontSpec { get; private set; } = "@MS Gothic|9|0|0";
-        public static string HorizontalVkbFontSpec { get; private set; } = "MS Gothic|9";
-        public static string MiniBufVkbFontSpec { get; private set; } = "MS Gothic|9";
-        public static float VerticalFontHeightFactor { get; private set; } = 1.0f;
+        public static string NormalVkbFontSpec { get; private set; }
+        public static string CenterVkbFontSpec { get; private set; }
+        public static string VerticalVkbFontSpec { get; private set; }
+        public static string HorizontalVkbFontSpec { get; private set; }
+        public static string MiniBufVkbFontSpec { get; private set; }
+        public static float VerticalFontHeightFactor { get; private set; }
 
         /// <summary>仮想鍵盤の最上段セルの背景色</summary>
-        public static string BgColorTopLevelCells { get; private set; } = "GhostWhite";
+        public static string BgColorTopLevelCells { get; private set; }
         /// <summary>仮想鍵盤の中央寄りセルの背景色</summary>
-        public static string BgColorCenterSideCells { get; private set; } = "FloralWhite";
+        public static string BgColorCenterSideCells { get; private set; }
         /// <summary>仮想鍵盤の上下段セルの背景色</summary>
-        public static string BgColorHighLowLevelCells { get; private set; } = "LightCyan";
+        public static string BgColorHighLowLevelCells { get; private set; }
         /// <summary>仮想鍵盤の中段セルの背景色</summary>
-        public static string BgColorMiddleLevelCells { get; private set; } = "PaleGreen";
+        public static string BgColorMiddleLevelCells { get; private set; }
         /// <summary>次打鍵セルの背景色</summary>
-        public static string BgColorNextStrokeCell { get; private set; } = "LightPink";
+        public static string BgColorNextStrokeCell { get; private set; }
 
         /// <summary>第2打鍵以降を待っているときの仮想中央鍵盤の背景色</summary>
         public static string BgColorOnWaiting2ndStroke { get; private set; }
@@ -327,46 +327,46 @@ namespace KanchokuWS
         public static string KanjiModeMarker2ndForeColor { get; private set; }
 
         /// <summary>英字モード標識表示色</summary>
-        public static string AlphaModeForeColor { get; private set; } = "Blue";
+        public static string AlphaModeForeColor { get; private set; }
 
         //-------------------------------------------------------------------------------------
         // 各種時間設定
         //-------------------------------------------------------------------------------------
         /// <summary>入力モードの標識の表示までのインターバル秒数</summary>
         public static int EffectiveKanjiModeMarkerShowIntervalSec => ShowVkbOrMaker ? KanjiModeMarkerShowIntervalSec : -1;
-        public static int KanjiModeMarkerShowIntervalSec { get; private set; } = 0;
+        public static int KanjiModeMarkerShowIntervalSec { get; private set; }
 
         ///// <summary>漢直モード標識表示のミリ秒</summary>
         //public static int KanjiModeMarkerShowMillisec { get; private set; } = -1;
 
         /// <summary>英字モード標識表示のミリ秒</summary>
         public static int EffectiveAlphaModeMarkerShowMillisec => ShowVkbOrMaker ? AlphaModeMarkerShowMillisec : 0;
-        public static int AlphaModeMarkerShowMillisec { get; private set; } = 1000;
+        public static int AlphaModeMarkerShowMillisec { get; private set; }
 
         /// <summary>モード標識表示のためのループ処理におけるポーリングインターバルミリ秒 (1000固定)</summary>
         public static int ModeMarkerProcLoopPollingMillisec { get; private set; } = 1000;
 
         //-------------------------------------------------------------------------------------
         /// <summary>Ctrlキーを keybd_event でKEY_UP してから BS を PostMessage するまでの待ち時間(ミリ秒)</summary>
-        public static int CtrlKeyUpGuardMillisec { get; private set; } = 10;
+        public static int CtrlKeyUpGuardMillisec { get; private set; }
 
         /// <summary>BS を PostMessage してから Ctrlキーを keybd_event でKEY_DOWN するまでの待ち時間(ミリ秒)</summary>
-        public static int CtrlKeyDownGuardMillisec { get; private set; } = 10;
+        //public static int CtrlKeyDownGuardMillisec { get; private set; }
 
-        /// <summary>部首合成時など、BSを送出してから少し待ってからWM_CHARによる文字送出をしないと先にWM_CHARが処理されたりするので、少し待ち時間が必要(ミリ秒)</summary>
-        public static int PreWmCharGuardMillisec { get; private set; } = 25;
+        /// <summary>Ctrl+Vによる文字列ペーストの前の待ち時間(ミリ秒)</summary>
+        public static int PreCtrlVGuardMillisec { get; private set; }
 
         /// <summary>文字数を減少させるための指数</summary>
-        public static double ReductionExponet { get; private set; } = 0.7;
+        public static double ReductionExponet { get; private set; }
 
         /// <summary>キー入力後に仮想鍵盤をカレット位置に移動するまでの待ち時間(ミリ秒)</summary>
-        public static int VirtualKeyboardMoveGuardMillisec { get; private set; } = 500;
+        public static int VirtualKeyboardMoveGuardMillisec { get; private set; }
 
         /// <summary>アクティブウィンドウの情報を取得する間隔(ミリ秒)</summary>
-        public static int GetActiveWindowInfoIntervalMillisec { get; private set; } = 200;
+        public static int GetActiveWindowInfoIntervalMillisec { get; private set; }
 
         /// <summary>第2打鍵をキャンセルするまでのする間隔(ミリ秒)</summary>
-        public static int CancelSecondStrokeMillisec { get; private set; } = 0;
+        public static int CancelSecondStrokeMillisec { get; private set; }
 
         //-------------------------------------------------------------------------------------
         // 機能キー割当
@@ -462,13 +462,13 @@ namespace KanchokuWS
         // Ctrlキー
         //-------------------------------------------------------------------------------------
         /// <summary>グローバルなコントロールキーを有効にするか </summary>
-        public static bool GlobalCtrlKeysEnabled { get; set; } = false;
+        public static bool GlobalCtrlKeysEnabled { get; set; }
 
         /// <summary>左コントロールキーを変換に使う</summary>
-        public static bool UseLeftControlToConversion { get; private set; } = false;
+        public static bool UseLeftControlToConversion { get; private set; }
 
         /// <summary>右コントロールキーを変換に使う</summary>
-        public static bool UseRightControlToConversion { get; private set; } = false;
+        public static bool UseRightControlToConversion { get; private set; }
 
         /// <summary>BackSpace に変換するCtrlキー </summary>
         public static string CtrlKeyConvertedToBackSpace { get; private set; }
@@ -497,56 +497,56 @@ namespace KanchokuWS
         public static string CtrlKeyConvertedToPageDown { get; private set; }
 
         /// <summary>ウィンドウClassNameリストを対象リストとして扱うか</summary>
-        public static bool UseClassNameListAsInclusion { get; private set; } = false;
+        public static bool UseClassNameListAsInclusion { get; private set; }
 
         /// <summary>Ctrl修飾キー変換の対象(または対象外)となるウィンドウのClassName</summary>
         public static string CtrlKeyTargetClassNames { get; private set; }
         public static HashSet<string> CtrlKeyTargetClassNamesHash { get; private set; } = new HashSet<string>();
 
         /// <summary>Ctrl-J を Enter と同じように扱う </summary>
-        public static bool UseCtrlJasEnter { get; private set; } = false;
+        public static bool UseCtrlJasEnter { get; private set; }
 
         ///// <summary>Ctrl-M を Enter と同じように扱う </summary>
-        //public static bool UseCtrlMasEnter { get; private set; } = false;
+        //public static bool UseCtrlMasEnter { get; private set; }
 
         /// <summary>日付に変換するCtrlキー </summary>
         public static string CtrlKeyConvertedToDateString { get; private set; }
 
         /// <summary>今日の日付を出力フォーマット </summary>
-        public static string DateStringFormat { get; private set; } = "yyyy/M/d";
+        public static string DateStringFormat { get; private set; }
 
         //------------------------------------------------------------------------------
         // 履歴
         //------------------------------------------------------------------------------
-        public static int HistMaxLength { get; private set; } = 10;
-        public static int HistKatakanaWordMinLength { get; private set; } = 4;
-        public static int HistKanjiWordMinLength { get; private set; } = 4;
-        public static int HistKanjiWordMinLengthEx { get; private set; } = 2;
-        public static int HistHiraganaKeyLength { get; private set; } = 2;
-        public static int HistKatakanaKeyLength { get; private set; } = 2;
-        public static int HistKanjiKeyLength { get; private set; } = 2;
-        public static int HistRomanKeyLength { get; private set; } = 4;
-        public static int HistMapKeyMaxLength { get; private set; } = 16;        // 変換履歴キーの最大長
-        public static int HistMapGobiMaxLength { get; private set; } = 2;        // 変換履歴キーに付加できる語尾の最大長
+        public static int HistMaxLength { get; private set; }
+        public static int HistKatakanaWordMinLength { get; private set; }
+        public static int HistKanjiWordMinLength { get; private set; }
+        public static int HistKanjiWordMinLengthEx { get; private set; }
+        public static int HistHiraganaKeyLength { get; private set; }
+        public static int HistKatakanaKeyLength { get; private set; }
+        public static int HistKanjiKeyLength { get; private set; }
+        public static int HistRomanKeyLength { get; private set; }
+        public static int HistMapKeyMaxLength { get; private set; }             // 変換履歴キーの最大長
+        public static int HistMapGobiMaxLength { get; private set; }            // 変換履歴キーに付加できる語尾の最大長
 
         /// <summary>自動履歴検索</summary>
-        public static bool AutoHistSearchEnabled { get; private set; } = false;
-        //public static bool HistSearchByCtrlSpace { get; private set; } = false;
-        //public static bool HistSearchByShiftSpace { get; private set; } = false;
+        public static bool AutoHistSearchEnabled { get; private set; }
+        //public static bool HistSearchByCtrlSpace { get; private set; }
+        //public static bool HistSearchByShiftSpace { get; private set; }
         /// <summary>Enterで先頭候補を選択</summary>
-        public static bool SelectFirstCandByEnter { get; private set; } = false;
-        public static bool HistAllowFromMiddleChar { get; private set; } = false;
-        public static int HistDelDeckeyId { get; private set; } = 0;
-        public static int HistNumDeckeyId { get; private set; } = 0;
+        public static bool SelectFirstCandByEnter { get; private set; }
+        public static bool HistAllowFromMiddleChar { get; private set; }
+        public static int HistDelDeckeyId { get; private set; }
+        public static int HistNumDeckeyId { get; private set; }
 
-        public static int HistHorizontalCandMax { get; private set; } = 0;
-        public static bool HistMoveShortestAt2nd { get; private set; } = false;
+        public static int HistHorizontalCandMax { get; private set; }
+        public static bool HistMoveShortestAt2nd { get; private set; }
 
         /// <summary>矢印キーで候補を選択</summary>
-        public static bool UseArrowKeyToSelectCandidate { get; set; } = true;
+        public static bool UseArrowKeyToSelectCandidate { get; set; }
         //public static bool HandleShiftSpaceAsNormalSpace { get; set; } = true;
         /// <summary>Tabで候補を選択</summary>
-        public static bool SelectHistCandByTab { get; private set; } = true;
+        public static bool SelectHistCandByTab { get; private set; }
 
         /// <summary>履歴検索&選択するCtrlキー </summary>
         public static string HistorySearchCtrlKey { get; private set; }
@@ -562,99 +562,99 @@ namespace KanchokuWS
         // 交ぜ書き
         //------------------------------------------------------------------------------
         //public static bool MazegakiByShiftSpace { get; set; } = true;
-        public static bool MazegakiSelectFirstCand { get; set; } = true;
-        public static int MazeYomiMaxLen { get; private set; } = 10;
-        public static int MazeGobiMaxLen { get; private set; } = 3;
-        public static int MazeNoIfxGobiMaxLen { get; private set; } = 3;
-        public static int MazeGobiLikeTailLen { get; private set; } = 2;
+        public static bool MazegakiSelectFirstCand { get; set; }
+        public static int MazeYomiMaxLen { get; private set; }
+        public static int MazeGobiMaxLen { get; private set; }
+        //public static int MazeNoIfxGobiMaxLen { get; private set; } = 3;
+        public static int MazeGobiLikeTailLen { get; private set; }
 
-        public static bool MazeBlockerTail { get; set; } = false;
-        public static bool MazeRemoveHeadSpace { get; set; } = false;
+        public static bool MazeBlockerTail { get; set; }
+        public static bool MazeRemoveHeadSpace { get; set; }
 
-        public static bool MazeRightShiftYomiPos { get; set; } = false;
+        public static bool MazeRightShiftYomiPos { get; set; }
 
         /// <summary>無活用語の語尾に漢字を許可する</summary>
-        public static bool MazeNoIfxConnectKanji { get; set; } = false;
+        public static bool MazeNoIfxConnectKanji { get; set; }
 
         /// <summary>無活用語の語尾に任意文字を許可する</summary>
-        public static bool MazeNoIfxConnectAny { get; set; } = false;
+        public static bool MazeNoIfxConnectAny { get; set; }
 
         /// <summary>交ぜ書き変換での選択を強制的に履歴登録する(除外登録されていたら復活する)</summary>
-        public static bool MazeHistRegisterAnyway { get; set; } = false;
+        public static bool MazeHistRegisterAnyway { get; set; }
 
         /// <summary>交ぜ書き変換を履歴登録する際の最小長</summary>
-        public static int MazeHistRegisterMinLen { get; set; } = 1;
+        public static int MazeHistRegisterMinLen { get; set; }
 
         //------------------------------------------------------------------------------
         // 各種変換
         //------------------------------------------------------------------------------
         /// <summary>平仮名⇒カタカナ変換</summary>
-        public static bool ConvertShiftedHiraganaToKatakana { get; set; } = false;
+        public static bool ConvertShiftedHiraganaToKatakana { get; set; }
 
         /// <summary>平仮名⇒カタカナ変換を実行するシフト面</summary>
-        public static int HiraganaToKatakanaShiftPlane { get; set; } = 0;
+        public static int HiraganaToKatakanaShiftPlane { get; set; }
 
         /// <summary>通常面の平仮名⇒カタカナ変換を実行</summary>
-        public static bool HiraganaToKatakanaNormalPlane { get; set; } = false;
+        public static bool HiraganaToKatakanaNormalPlane { get; set; }
 
         /// <summary>「。」⇔「．」</summary>
-        public static bool ConvertJaPeriod { get; set; } = false;
+        public static bool ConvertJaPeriod { get; set; }
         /// <summary>「、」⇔「，」</summary>
-        public static bool ConvertJaComma { get; set; } = false;
+        public static bool ConvertJaComma { get; set; }
 
         /// <summary>英大文字入力による英数モード移行が有効か</summary>
-        public static bool EisuModeEnabled { get; set; } = false;
+        public static bool EisuModeEnabled { get; set; }
 
         /// <summary>英数モードから履歴検索を呼び出す文字</summary>
         public static string EisuHistSearchChar { get; set; }
 
         /// <summary>英数モードを自動的に抜けるまでの大文字数</summary>
-        public static int EisuExitCapitalCharNum { get; set; } = 3;
+        public static int EisuExitCapitalCharNum { get; set; }
 
         /// <summary>英数モードを自動的に抜けるまでのSpaceキー数</summary>
-        public static int EisuExitSpaceNum { get; set; } = 2;
+        public static int EisuExitSpaceNum { get; set; }
 
         /// <summary>BS で全打鍵を取り消すか</summary>
-        public static bool RemoveOneStrokeByBackspace { get; set; } = true;
+        public static bool RemoveOneStrokeByBackspace { get; set; }
 
         /// <summary> 拡張修飾キーを有効にするか</summary>
-        public static bool ExtraModifiersEnabled { get; set; } = false;
+        public static bool ExtraModifiersEnabled { get; set; }
 
         /// <summary> 修飾キー定義ファイル</summary>
         public static string ModConversionFile { get; private set; }
 
         /// <summary> 拡張修飾キー設定ダイアログの幅</summary>
-        public static int DlgModConversionWidth { get; set; } = 0;
+        public static int DlgModConversionWidth { get; set; }
 
         /// <summary> 拡張修飾キー設定ダイアログの高さ</summary>
-        public static int DlgModConversionHeight { get; set; } = 0;
+        public static int DlgModConversionHeight { get; set; }
 
         /// <summary> 割り当てキー／機能名カラムの幅</summary>
-        public static int AssignedKeyOrFuncNameColWidth { get; set; } = 0;
+        public static int AssignedKeyOrFuncNameColWidth { get; set; }
 
         /// <summary> 割り当てキー／機能説明カラムの幅</summary>
-        public static int AssignedKeyOrFuncDescColWidth { get; set; } = 0;
+        public static int AssignedKeyOrFuncDescColWidth { get; set; }
 
         /// <summary> キー／機能名設定ダイアログの副</summary>
-        public static int DlgKeywordSelectorWidth { get; set; } = 0;
+        public static int DlgKeywordSelectorWidth { get; set; }
 
         /// <summary> キー／機能名設定ダイアログの高さ</summary>
-        public static int DlgKeywordSelectorHeight { get; set; } = 0;
+        public static int DlgKeywordSelectorHeight { get; set; }
 
         /// <summary>YAMANOBEアルゴリズムを有効にするか</summary>
-        public static bool YamanobeEnabled { get; set; } = false;
+        public static bool YamanobeEnabled { get; set; }
 
         /// <summary>自動首部合成を有効にするか</summary>
-        public static bool AutoBushuComp { get; set; } = false;
+        public static bool AutoBushuComp { get; set; }
 
         /// <summary>部首連想直接出力の回数</summary>
-        public static int BushuAssocSelectCount { get; set; } = 1;
+        public static int BushuAssocSelectCount { get; set; }
 
         /// <summary>ローマ字読みによる打鍵ガイドを有効にするか</summary>
-        public static bool UpperRomanStrokeGuide { get; set; } = false;
+        public static bool UpperRomanStrokeGuide { get; set; }
 
         /// <summary>前打鍵位置の背景色を変えて表示するか</summary>
-        public static bool ShowLastStrokeByDiffBackColor { get; set; } = false;
+        public static bool ShowLastStrokeByDiffBackColor { get; set; }
 
         /// <summary>ローマ字テーブル出力時の部首合成用プレフィックス</summary>
         public static string RomanBushuCompPrefix { get; set; }
@@ -666,70 +666,70 @@ namespace KanchokuWS
         // SandS
         //------------------------------------------------------------------------------
         /// <summary>SandS を有効にするか</summary>
-        public static bool SandSEnabled { get; set; } = false;
-        public static bool SandSEnabledCurrently { get; set; } = false;
-        public static bool SandSEnabledWhenOffMode { get; set; } = false;
+        public static bool SandSEnabled { get; set; }
+        public static bool SandSEnabledCurrently { get; set; }
+        public static bool SandSEnabledWhenOffMode { get; set; }
 
         /// <summary>SandS に割り当てるシフト面</summary>
-        public static int SandSAssignedPlane { get; set; } = 0;
+        public static int SandSAssignedPlane { get; set; }
 
         /// <summary>SandS 時の Space KeyUP を無視するか (Space単打による空白入力をやらない)</summary>
-        public static bool OneshotSandSEnabled { get; set; } = false;
-        public static bool OneshotSandSEnabledCurrently { get; set; } = false;
+        public static bool OneshotSandSEnabled { get; set; }
+        public static bool OneshotSandSEnabledCurrently { get; set; }
 
         /// <summary>SandS 時の空白入力またはリピート入力までの時間</summary>
-        public static int SandSEnableSpaceOrRepeatMillisec { get; set; } = 500;
+        public static int SandSEnableSpaceOrRepeatMillisec { get; set; }
 
         /// <summary>SandS 時の後置シフト出力(疑似同時打鍵サポート)</summary>
-        public static bool SandSEnablePostShift { get; set; } = false;
-        public static bool SandSEnablePostShiftCurrently { get; set; } = false;
+        public static bool SandSEnablePostShift { get; set; }
+        public static bool SandSEnablePostShiftCurrently { get; set; }
 
         /// <summary>SandS は通常シフトよりも優位か</summary>
-        public static bool SandSSuperiorToShift { get; set; } = false;
+        public static bool SandSSuperiorToShift { get; set; }
 
         /// <summary>Shift+SpaceをSandS として扱う</summary>
-        public static bool HandleShiftSpaceAsSandS { get; set; } = true;
+        public static bool HandleShiftSpaceAsSandS { get; set; }
 
         //------------------------------------------------------------------------------
         // 同時打鍵判定
         //------------------------------------------------------------------------------
         /// <summary>同時打鍵判定を行う際の、第１打鍵に許容する最大のリード時間(ミリ秒)<br/>第２打鍵までにこの時間より長くかかったら、第1打鍵は同時とみなさない</summary>
-        public static int CombinationKeyMaxAllowedLeadTimeMs { get; set; } = 0;
+        public static int CombinationKeyMaxAllowedLeadTimeMs { get; set; }
 
         /// <summary>同、シフトキーが文字キーだった場合</summary>
-        public static int CombinationKeyMaxAllowedLeadTimeMs2 { get; set; } = 0;
+        public static int CombinationKeyMaxAllowedLeadTimeMs2 { get; set; }
 
         /// <summary>同時打鍵判定を行う際、第2打鍵がシフトキーだった場合に許容する最大のリード時間(ミリ秒)<br/>これにより、シフトキーがその直後の文字キーにかかりやすくなることが期待できる</summary>
-        public static int ComboKeyMaxAllowedPostfixTimeMs { get; set; } = 0;
+        public static int ComboKeyMaxAllowedPostfixTimeMs { get; set; }
 
         /// <summary>同時打鍵とみなす重複時間<br/>Nキー同時押しの状態からどれかのキーUPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす</summary>
-        public static int CombinationKeyMinOverlappingTimeMs { get; set; } = 70;
+        public static int CombinationKeyMinOverlappingTimeMs { get; set; }
 
         /// <summary>同、シフトキーが文字キーだった場合</summary>
-        public static int CombinationKeyMinOverlappingTimeMs2 { get; set; } = 70;
+        public static int CombinationKeyMinOverlappingTimeMs2 { get; set; }
 
         /// <summary>２文字目以降についてのみ同時打鍵の重複時間チェックを行う</summary>
-        public static bool CombinationKeyMinTimeOnlyAfterSecond { get; set; } = false;
+        public static bool CombinationKeyMinTimeOnlyAfterSecond { get; set; }
 
         /// <summary>同時打鍵チェック用のタイマーを使用する</summary>
-        public static bool UseCombinationKeyTimer1 { get; set; } = false;
-        public static bool UseCombinationKeyTimer2 { get; set; } = false;
+        public static bool UseCombinationKeyTimer1 { get; set; }
+        public static bool UseCombinationKeyTimer2 { get; set; }
 
         ///// <summary>同時打鍵とみなす重複率<br/>第１打鍵と第２打鍵の重複時間が第２打鍵の時間に対してここで設定したパーセンテージを超えたら、同時打鍵とみなす</summary>
-        //public static int CombinationKeyTimeRate { get; set; } = 0;
+        //public static int CombinationKeyTimeRate { get; set; }
 
         /// <summary>同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする</summary>
-        public static bool UseComboExtModKeyAsSingleHit { get; set; } = true;
+        public static bool UseComboExtModKeyAsSingleHit { get; set; }
 
         /// <summary>同時打鍵シフトキーがUPされた後、後置シフトを無効にする時間(ミリ秒)。<br/>
-        /// つまり、この時間帯に打鍵された文字キーは単打扱いとなる</summary>
-        public static int ComboDisableIntervalTimeMs { get; set; } = 300;
+        /// つまり、この時間帯に打鍵された文字キーは、その後どんな短い間隔でシフトキーが押されても単打扱いとなる</summary>
+        public static int ComboDisableIntervalTimeMs { get; set; }
 
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列の並び</summary>
         public static string SequentialPriorityWords { get; set; }
 
         /// <summary>優先される順次打鍵以外の3キー同時打鍵なら無条件に判定</summary>
-        public static bool ThreeKeysComboUnconditional { get; set; } = false;
+        public static bool ThreeKeysComboUnconditional { get; set; }
 
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列の集合</summary>
         public static HashSet<string> SequentialPriorityWordSet { get; } = new HashSet<string>();
@@ -744,44 +744,44 @@ namespace KanchokuWS
         public static HashSet<string> ThreeKeysComboPriorityTailKeyStringSet { get; } = new HashSet<string>();
 
         /// <summary>Spaceまたは機能キーのシフトキーがきたら、使い終わったキー(comboListにたまっているキー)を破棄する</summary>
-        public static bool AbandonUsedKeysWhenSpecialComboShiftDown = true;
+        public static bool AbandonUsedKeysWhenSpecialComboShiftDown { get; set; } = true;
 
         /// <summary>3番目以降の同時打鍵キーは最初に解放される必要があるか<br/>
         /// true の場合は、3打鍵同時の場合に、3番目に押されたキーが最初に解放された場合に限り、同時打鍵と判定する。
         /// ⇒ が、これはイマイチ(確実に3番目のキーを最初に解放するのが難しい)ので、廃案とする
         /// </summary>
-        public static bool ThirdComboKeyNeedToBeReleaseFirst { get; set; } = false;
+        //public static bool ThirdComboKeyNeedToBeReleaseFirst { get; set; }
 
         //------------------------------------------------------------------------------
         // IME連携
         //------------------------------------------------------------------------------
         /// <summary> IMEの状態に連携してON/OFFする </summary>
-        public static bool ImeCooperationEnabled { get; set; } = false;
+        public static bool ImeCooperationEnabled { get; set; }
 
         /// <summary> IMEにカタカナを送るときはひらがなに変換する </summary>
-        public static bool ImeKatakanaToHiragana { get; set; } = false;
+        public static bool ImeKatakanaToHiragana { get; set; }
 
         /// <summary> IMEに対してローマ字で送信する </summary>
-        public static bool ImeSendInputInRoman { get; set; } = false;
+        public static bool ImeSendInputInRoman { get; set; }
 
         /// <summary> IMEに対してカナで送信する </summary>
-        public static bool ImeSendInputInKana { get; set; } = false;
+        public static bool ImeSendInputInKana { get; set; }
 
         /// <summary>IMEにUnicodeで文字送出する対象となるウィンドウのClassName</summary>
         public static string ImeUnicodeClassNames { get; private set; }
         public static HashSet<string> ImeUnicodeClassNamesHash { get; private set; } = new HashSet<string>();
 
         /// <summary>かな入力練習モードか</summary>
-        public static bool KanaTrainingMode { get; set; } = false;
+        public static bool KanaTrainingMode { get; set; }
 
         //------------------------------------------------------------------------------
         // 書き換えシステム
         //------------------------------------------------------------------------------
         /// <summary>遅延許容時間の適用対象となる前置書き換え対象文字集合</summary>
-        public static string PreRewriteTargetChars { get; set; } = "";
+        public static string PreRewriteTargetChars { get; set; }
 
         /// <summary>前置書き換え時の遅延許容時間</summary>
-        public static int PreRewriteAllowedDelayTimeMs { get; set; } = 0;
+        public static int PreRewriteAllowedDelayTimeMs { get; set; }
 
         //------------------------------------------------------------------------------
         // ウィンドウClassName
@@ -1067,7 +1067,7 @@ namespace KanchokuWS
             ActiveKey = (uint)GetString("unmodifiedHotKey")._parseHex(0)._lowLimit(0);
             ActiveKeyWithCtrl = (uint)GetString("hotKey")._parseHex(0)._lowLimit(0);
             ActiveKeyWithCtrl2 = (uint)GetString("hotKey2")._parseHex(0)._lowLimit(0);
-            if (ActiveKey == 0 && ActiveKeyWithCtrl == 0) ActiveKeyWithCtrl = 0xdc;
+            if (ActiveKey == 0 && ActiveKeyWithCtrl == 0) ActiveKeyWithCtrl = 0xdc;         // 0xdc = ￥
 
             SelectedTableActivatedWithoutCtrl = GetString("selectedTableActivatedWithoutCtrl")._parseInt(0)._lowLimit(0)._highLimit(3);
             SelectedTableActivatedWithCtrl = GetString("selectedTableActivatedWithCtrl")._parseInt(0)._lowLimit(0)._highLimit(3);
@@ -1117,13 +1117,13 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             // フォントと色の設定
-            NormalVkbFontSpec = GetString("normalFont", "MS Gothic | 10");
-            CenterVkbFontSpec = GetString("centerFont", "@MS Gothic | 9");
-            VerticalVkbFontSpec = GetString("verticalFont", "@MS Gothic | 9");
-            HorizontalVkbFontSpec = GetString("horizontalFont", "MS Gothic | 9");
-            MiniBufVkbFontSpec = GetString("minibufFont", "MS Gothic | 9");
+            NormalVkbFontSpec = GetString("normalFont", "Meiryo | 10");
+            CenterVkbFontSpec = GetString("centerFont", "@Meiryo | 9");
+            VerticalVkbFontSpec = GetString("verticalFont", "@Meiryo | 9");
+            HorizontalVkbFontSpec = GetString("horizontalFont", "Meiryo | 9");
+            MiniBufVkbFontSpec = GetString("minibufFont", "Meiryo | 9");
             {
-                var factor = GetString("verticalFontHeightFactor", "1.00")._parseDouble();
+                var factor = GetString("verticalFontHeightFactor", "0.70")._parseDouble();
                 VerticalFontHeightFactor = factor._isNaN() ? 1.0f : (float)factor;
             }
 
@@ -1170,8 +1170,8 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             CtrlKeyUpGuardMillisec = GetString("ctrlKeyUpGuardMillisec")._parseInt(15)._lowLimit(0);
-            CtrlKeyDownGuardMillisec = GetString("ctrlKeyDownGuardMillisec")._parseInt(0)._lowLimit(0);     // これが 0 より大きいとCTRLキーDOWNと誤認識される可能性が高まる
-            PreWmCharGuardMillisec = GetString("preWmCharGuardMillisec")._parseInt(25)._lowLimit(0);
+            //CtrlKeyDownGuardMillisec = GetString("ctrlKeyDownGuardMillisec")._parseInt(0)._lowLimit(0);     // これが 0 より大きいとCTRLキーDOWNと誤認識される可能性が高まる
+            PreCtrlVGuardMillisec = GetString("preWmCharGuardMillisec")._parseInt(25)._lowLimit(0);
             ReductionExponet = GetString("reductionExponent")._parseDouble(0.7)._lowLimit(0.5);
 
             VirtualKeyboardMoveGuardMillisec = GetString("virtualKeyboardMoveGuardMillisec")._parseInt(500)._lowLimit(0);
@@ -1268,7 +1268,7 @@ namespace KanchokuWS
             ComboKeyMaxAllowedPostfixTimeMs = GetString("comboMaxAllowedPostfixTimeMs")._parseInt(100)._highLimit(CombinationKeyMaxAllowedLeadTimeMs);  // 第2キーの許容リードタイム
             CombinationKeyMinOverlappingTimeMs = GetString("combinationKeyTimeMs")._parseInt(70);               // 重複時間
             CombinationKeyMinOverlappingTimeMs2 = GetString("combinationKeyTimeMs2")._parseInt(0);              // シフトキーが文字キーだった場合の重複時間
-            ComboDisableIntervalTimeMs = GetString("comboDisableIntervalTimeMs")._parseInt(0);                  // 同時打鍵シフトキーがUPされた後、前方へのシフトを無効にする時間
+            ComboDisableIntervalTimeMs = GetString("comboDisableIntervalTimeMs")._parseInt(0);                  // 同時打鍵シフトキーがUPされた後、後置シフトを無効にする時間
             CombinationKeyMinTimeOnlyAfterSecond = GetString("combinationKeyTimeOnlyAfterSecond")._parseBool(false);    // ２文字目以降についてのみ同時打鍵チェックを行う
             UseCombinationKeyTimer1 = GetString("useCombinationKeyTimer1")._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
             UseCombinationKeyTimer2 = GetString("useCombinationKeyTimer2")._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
@@ -1399,7 +1399,7 @@ namespace KanchokuWS
 
             YamanobeEnabled = addDecoderSetting("yamanobeEnabled", false);                      // YAMANOBEアルゴリズムを有効にするか
             AutoBushuComp = addDecoderSetting("autoBushuComp", false);                          // 自動首部合成を有効にするか
-            BushuAssocSelectCount = addDecoderSetting("bushuAssocSelectCount", 1, 1, 5);        // 部首連想直接出力の回数
+            BushuAssocSelectCount = addDecoderSetting("bushuAssocSelectCount", 1, 1, 10);       // 部首連想直接出力の回数
 
             RomanBushuCompPrefix = addDecoderSetting("romanBushuCompPrefix", "");               // ローマ字テーブル出力時の部首合成用プレフィックス
             RomanSecPlanePrefix = addDecoderSetting("romanSecPlanePrefix", ":");                // 裏面定義文字に対するローマ字出力時のプレフィックス

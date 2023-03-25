@@ -700,7 +700,7 @@ namespace KanchokuWS.Gui
             textBox_alphaModeShowTime.Text = $"{Settings.AlphaModeMarkerShowMillisec}";
 
             // 各種待ち時間
-            textBox_preWmCharGuardMillisec.Text = $"{Settings.PreWmCharGuardMillisec}";
+            textBox_preWmCharGuardMillisec.Text = $"{Settings.PreCtrlVGuardMillisec}";
             textBox_activeWinInfoIntervalMillisec.Text = $"{Settings.GetActiveWindowInfoIntervalMillisec}";
             textBox_vkbMoveGuardMillisec.Text = $"{Settings.VirtualKeyboardMoveGuardMillisec}";
             textBox_cancelSecondStrokeMillisec.Text = $"{Settings.CancelSecondStrokeMillisec}";
