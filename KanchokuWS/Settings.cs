@@ -282,6 +282,7 @@ namespace KanchokuWS
         public static string VerticalVkbFontSpec { get; private set; }
         public static string HorizontalVkbFontSpec { get; private set; }
         public static string MiniBufVkbFontSpec { get; private set; }
+        public static string SpecifiedVerticalFontHeightFactor { get; private set; }
         public static float VerticalFontHeightFactor { get; private set; }
 
         /// <summary>仮想鍵盤の最上段セルの背景色</summary>
@@ -1122,9 +1123,21 @@ namespace KanchokuWS
             VerticalVkbFontSpec = GetString("verticalFont", "@Meiryo | 9");
             HorizontalVkbFontSpec = GetString("horizontalFont", "Meiryo | 9");
             MiniBufVkbFontSpec = GetString("minibufFont", "Meiryo | 9");
+            SpecifiedVerticalFontHeightFactor = GetString("verticalFontHeightFactor");
             {
-                var factor = GetString("verticalFontHeightFactor", "0.70")._parseDouble();
-                VerticalFontHeightFactor = factor._isNaN() ? 1.0f : (float)factor;
+                var factor = SpecifiedVerticalFontHeightFactor._parseDouble();
+                if (factor._isNaN()) {
+                    SpecifiedVerticalFontHeightFactor = "";
+                    var vfont = VerticalVkbFontSpec._toLower();
+                    if (vfont.StartsWith("@meiryo") || vfont.StartsWith("meiryo") || vfont.StartsWith("@yu ") || vfont.StartsWith("yu ") ||
+                        vfont.StartsWith("@メイリオ") || vfont.StartsWith("メイリオ") || vfont.StartsWith("@游") || vfont.StartsWith("游")) {
+                        VerticalFontHeightFactor = 0.7f;
+                    } else {
+                        VerticalFontHeightFactor = 1.0f;
+                    }
+                } else {
+                    VerticalFontHeightFactor = (float)factor;
+                }
             }
 
             //-------------------------------------------------------------------------------------
@@ -1478,6 +1491,12 @@ namespace KanchokuWS
             logger.InfoH(() => $"LEAVE");
 
             return true;
+        }
+
+        public static string GetVerticalFontHeightFactorStr(string strFactor)
+        {
+            var factor = strFactor._parseDouble();
+            return !factor._isNaN() && factor != VerticalFontHeightFactor ? strFactor : "";
         }
 
         //------------------------------------------------------------------------------

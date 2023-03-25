@@ -1021,6 +1021,8 @@ namespace KanchokuWS.Gui
         //-----------------------------------------------------------------------------------
         // フォント・色設定
         //-----------------------------------------------------------------------------------
+        private string currentVerticalFontHeightFactort = "";
+
         void readSettings_tabFontColor()
         {
             // 仮想鍵盤フォント
@@ -1029,7 +1031,8 @@ namespace KanchokuWS.Gui
             textBox_verticalFont.Text = Settings.VerticalVkbFontSpec;
             textBox_horizontalFont.Text = Settings.HorizontalVkbFontSpec;
             textBox_minibufFont.Text = Settings.MiniBufVkbFontSpec;
-            textBox_verticalFontHeightFactor.Text = $"{Settings.VerticalFontHeightFactor:f2}";
+            currentVerticalFontHeightFactort = $"{Settings.VerticalFontHeightFactor:f2}";
+            textBox_verticalFontHeightFactor.Text = currentVerticalFontHeightFactort;
 
             // 通常鍵盤背景色
             textBox_topLevelBackColor.Text = Settings.BgColorTopLevelCells;
@@ -1109,7 +1112,9 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("verticalFont", textBox_verticalFont.Text.Trim());
             Settings.SetUserIni("horizontalFont", textBox_horizontalFont.Text.Trim());
             Settings.SetUserIni("minibufFont", textBox_minibufFont.Text.Trim());
-            Settings.SetUserIni("verticalFontHeightFactor", textBox_verticalFontHeightFactor.Text.Trim());
+            if (textBox_verticalFontHeightFactor.Text.Trim()._ne(currentVerticalFontHeightFactort)) {
+                Settings.SetUserIni("verticalFontHeightFactor", textBox_verticalFontHeightFactor.Text.Trim());
+            }
 
             // 通常鍵盤背景色
             Settings.SetUserIni("bgColorTopLevelCells", textBox_topLevelBackColor.Text.Trim());
@@ -2234,7 +2239,7 @@ namespace KanchokuWS.Gui
             label_execResultFile.Show();
         }
 
-        private string makeFontSpec(string oldSpec, bool bVertical)
+        private string makeFontSpec(string oldSpec /*, bool bVertical*/)
         {
             var result = oldSpec;
 
@@ -2251,7 +2256,7 @@ namespace KanchokuWS.Gui
             fd.ShowEffects = false;
             if (fd.ShowDialog() == DialogResult.OK) {
                 result = $"{(fd.Font.GdiVerticalFont ? "@" : "")}{fd.Font.Name} | {Math.Round(fd.Font.SizeInPoints)}";
-                if (bVertical) result = result +$" | {items._getNth(2)._orElse("0")} | {items._getNth(3)._orElse("0")}";
+                //if (bVertical) result = result +$" | {items._getNth(2)._orElse("0")} | {items._getNth(3)._orElse("0")}";
             }
             fd.Dispose();
             fnt?.Dispose();
@@ -2261,27 +2266,27 @@ namespace KanchokuWS.Gui
 
         private void button_normalDlg_Click(object sender, EventArgs e)
         {
-            textBox_normalFont.Text = makeFontSpec(textBox_normalFont.Text, true);
+            textBox_normalFont.Text = makeFontSpec(textBox_normalFont.Text /*, false*/);
         }
 
         private void button_centerDlg_Click(object sender, EventArgs e)
         {
-            textBox_centerFont.Text = makeFontSpec(textBox_centerFont.Text, true);
+            textBox_centerFont.Text = makeFontSpec(textBox_centerFont.Text /*, true*/);
         }
 
         private void button_verticalDlg_Click(object sender, EventArgs e)
         {
-            textBox_verticalFont.Text = makeFontSpec(textBox_verticalFont.Text, true);
+            textBox_verticalFont.Text = makeFontSpec(textBox_verticalFont.Text /*, true*/);
         }
 
         private void button_horizontalDlg_Click(object sender, EventArgs e)
         {
-            textBox_horizontalFont.Text = makeFontSpec(textBox_horizontalFont.Text, false);
+            textBox_horizontalFont.Text = makeFontSpec(textBox_horizontalFont.Text /*, false*/);
         }
 
         private void button_minibufDlg_Click(object sender, EventArgs e)
         {
-            textBox_minibufFont.Text = makeFontSpec(textBox_minibufFont.Text, false);
+            textBox_minibufFont.Text = makeFontSpec(textBox_minibufFont.Text /*, false*/);
         }
 
         private void textBox_dateStringFormat_Enter(object sender, EventArgs e)
