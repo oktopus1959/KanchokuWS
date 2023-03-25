@@ -665,11 +665,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         if (overlapLen < minLen) break;
 
                         var challengeList = makeComboChallengeList(subList, hotList.Take(overlapLen));
-                        logger.DebugH(() => $"COMBO SEARCH: searchKey={challengeList._toString()}");
+                        logger.DebugH(() => $"COMBO SEARCH: challengeList={challengeList._toString()}");
 
-                            var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(challengeList);
-                            logger.DebugH(() => $"COMBO RESULT: keyCombo.decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, " +
-                                $"HasString={keyCombo?.HasString ?? false}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
+                        var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(challengeList);
+                        logger.DebugH(() => $"COMBO RESULT: keyCombo.decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, " +
+                            $"HasString={keyCombo?.HasString ?? false}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
 
                         if (keyCombo != null && keyCombo.DecKeyList != null && (keyCombo.HasString || keyCombo.IsComboBlocked)) {
                             //bComboFound = true; // 同時打鍵の組合せが見つかった
@@ -677,10 +677,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             comboBlocked = keyCombo.IsComboBlocked;     // 同時打鍵の一時無効化か
                             Stroke tailKey = hotList[overlapLen - 1];
                             bool isTailKeyUp = hotList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
-                            if (Logger.IsDebugHEnabled) {
-                                logger.DebugH(() => $"CHECK1: {isTailKeyUp && (comboBlocked || (tailKey.HasStringOrSingleHittable && !tailKey.IsShiftableSpaceKey))}: tailPos={overlapLen - 1}: " +
+                            if (Logger.IsInfoHEnabled) {
+                                logger.DebugH(() =>
+                                    $"CHECK1: {isTailKeyUp && (comboBlocked || challengeList[0].IsShiftableSpaceKey || (tailKey.HasStringOrSingleHittable && !tailKey.IsShiftableSpaceKey))}: " +
+                                    $"tailPos={overlapLen - 1}: " +
                                     $"isTailKeyUp({isTailKeyUp}) && " +
-                                    $"(comboBlocked({comboBlocked}) || " +
+                                    $"(comboBlocked({comboBlocked}) || challengeList[0].IsShiftableSpaceKey={challengeList[0].IsShiftableSpaceKey}" +
                                     $"(tailKey.HasStringOrSingleHittable({tailKey.HasStringOrSingleHittable}) && !tailKey.IsShiftableSpaceKey({!tailKey.IsShiftableSpaceKey})))");
                                 logger.DebugH(() => $"CHECK2: {challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey}: " +
                                     $"challengeList.Count({challengeList.Count}) < 3 ({challengeList.Count < 3}) && hotList[0].IsShiftableSpaceKey({hotList[0].IsShiftableSpaceKey})");
@@ -691,10 +693,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                     $"!isListContaindInSequentialPriorityWordKeySet({challengeList._toString()})({!isListContaindInSequentialPriorityWordKeySet(challengeList)})" +
                                     $": challengeList={challengeList._toString()}");
                             }
-                            if ((isTailKeyUp && (comboBlocked || (tailKey.HasStringOrSingleHittable  && !tailKey.IsShiftableSpaceKey))) ||
-                                                // CHECK1: 同時打鍵の一時無効化か、対象リストの末尾キーが単打可能キーであり先にUPされた
+                            if ((isTailKeyUp && (comboBlocked || challengeList[0].IsShiftableSpaceKey || (tailKey.HasStringOrSingleHittable  && !tailKey.IsShiftableSpaceKey))) ||
+                                                // CHECK1: 対象リストの末尾キーが先にUPされており、同時打鍵の一時無効化か、先頭キーがシフト可能スペースキーか、末尾キーが単打可能キーだった
                                 challengeList.Count < 3 && hotList[0].IsShiftableSpaceKey ||
-                                                // CHECK2: チャレンジリストの長さが2以下で、先頭キーがシフト可能なスペースキーだった⇒スペースキーならタイミングは考慮せず無条件
+                                                // CHECK2: チャレンジリストの長さが2以下で、先頭キーがシフト可能なスペースキーだった
+                                                // ⇒連続シフトでない、最初のスペースキーとの同時打鍵ならタイミングは考慮せず無条件
                                 (Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !isListContaindInSequentialPriorityWordKeySet(challengeList)) ||
                                                 // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
                                 (timingResult = isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) == 0)
@@ -772,7 +775,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     if (overlapLen < minLen) break;
 
                     var challengeList = makeComboChallengeList(subList, hotList.Take(overlapLen));
-                    logger.DebugH(() => $"COMBO SEARCH: searchKey={challengeList._toString()}");
+                    logger.DebugH(() => $"COMBO SEARCH: challengeList={challengeList._toString()}");
 
                     var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(challengeList);
                     logger.DebugH(() => $"COMBO RESULT: keyCombo.decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");

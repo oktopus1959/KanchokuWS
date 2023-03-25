@@ -239,7 +239,7 @@ convert({sp}<5>W<142>w<23>{,}<21>[sp]<75>[,]<177>K<22>{sp}<111>[sp]<42>k) = だ�
 ### 12 ###
 loadTable(tables/_test/noniiruto.12.tbl)
 comboMaxTime(70)
-comboMaxPostTime(50)
+comboMaxPostTime(200)
 comboMinTime(50)
 
 #enableTimer1
@@ -250,10 +250,14 @@ convert({40}<33>E<86>O<50>I<55>o<22>e<19>i<6>[40]) = しょう
 # Space, E, O, .., e : 3打同時の末尾以外が先に上がる
 convert({40}<33>E<86>O<50>I<55>e<22>o<19>i<6>[40]) = じよう
 
-comboMaxTime(100)
-comboMaxPostTime(70)
+comboMaxTime(500)
 convert(S<35>{40}<120>s<20>[40]) = ば
 
+comboMinTime(100)
+convert({40}<471>{45}<112>[45]<32>{45}<48>[45]<100>[40]) = ……
+convert({40}<471>U<112>u<32>U<48>u<100>[40]) = そそ
+
+comboMaxTime(100)
 comboMinTime(200)
 convert({40}<35>S<110>U<20>s<20>[40]<50>u) = ばか
 
