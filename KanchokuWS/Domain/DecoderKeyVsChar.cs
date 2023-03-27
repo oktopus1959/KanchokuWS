@@ -255,11 +255,11 @@ namespace KanchokuWS.Domain
         /// </summary>
         /// <param name="face"></param>
         /// <returns></returns>
-        public static int GetRawDecKeyFromFaceChar(char face)
-        {
-            // dvorak など、生であっても noramlChars が notEmpty() なものがあるので、下のような回り道が必要
-            return DecoderKeyVsVKey.GetDecKeyFromVKey(CharVsVKey.GetVKeyFromFaceChar(face));
-        }
+        //public static int GetRawDecKeyFromFaceChar(char face)
+        //{
+        //    // dvorak など、生であっても noramlChars が notEmpty() なものがあるので、下のような回り道が必要
+        //    return DecoderKeyVsVKey.GetDecKeyFromVKey(CharVsVKey.GetVKeyFromFaceChar(face));
+        //}
 
         /// <summary>
         /// 文字コードから、それに対応する、配列変換されたDecKeyを得る<br/>対応するものがなければ -1 を返す

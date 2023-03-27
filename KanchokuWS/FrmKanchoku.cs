@@ -1984,7 +1984,7 @@ namespace KanchokuWS
                     // ショートカットキーの変換をやる
                     var dkChar = Domain.DecoderKeyVsChar.GetArrangedCharFromDecKey(deckey);
                     if (dkChar != '\0') {
-                        var vk = CharVsVKey.GetVKeyFromFaceChar(dkChar);
+                        var vk = CharVsVKey.GetVKeyFromFaceChar(dkChar, deckey);
                         if (vk != 0) {
                             if (Settings.LoggingDecKeyInfo) { logger.InfoH($"SEND1: mod={mod:x}H({mod}), vkey={vk:x}H({vk})"); }
                             if (vk >= 0x100) {
@@ -2011,7 +2011,7 @@ namespace KanchokuWS
                     uint vk = 0;
                     if (bShortcutConversion) {
                         // ショートカットキーの変換をやる
-                        vk = CharVsVKey.GetVKeyFromFaceChar(DecoderKeyVsChar.GetArrangedCharFromDecKey(normDeckey));
+                        vk = CharVsVKey.GetVKeyFromFaceChar(DecoderKeyVsChar.GetArrangedCharFromDecKey(normDeckey), deckey);
                     }
                     if (vk == 0) vk = DecoderKeyVsVKey.GetVKeyFromDecKey(normDeckey);
                     if (Settings.LoggingDecKeyInfo) logger.InfoH($"SendVKeyCombo: mod={_mod:x}H({_mod}), vkey={vk:x}H({vk})");
@@ -2025,7 +2025,7 @@ namespace KanchokuWS
                 // Ctrl修飾を受け付けないウィンドウへのCtrl修飾キーの送信であり、ショートカットキーの変換をやる (PuTTYとか)
                 if (Settings.LoggingDecKeyInfo) { logger.InfoH($"SEND3: mod={mod:x}H({mod}), normalDeckey={normalDeckey:x}H({normalDeckey})"); }
                 // ショートカットキーの変換をやる
-                uint vk = CharVsVKey.GetVKeyFromFaceChar(DecoderKeyVsChar.GetArrangedCharFromDecKey(normalDeckey));
+                uint vk = CharVsVKey.GetVKeyFromFaceChar(DecoderKeyVsChar.GetArrangedCharFromDecKey(normalDeckey), deckey);
                 if (vk > 0) {
                     if (Settings.LoggingDecKeyInfo) logger.InfoH($"SendVKeyCombo: mod=CTRL, vkey={vk:x}H({vk})");
                     SendInputHandler.Singleton.SendVKeyCombo(KeyModifiers.MOD_CONTROL, vk, 1);

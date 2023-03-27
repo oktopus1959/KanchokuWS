@@ -454,11 +454,11 @@ namespace KanchokuWS.Domain
             return true;
         }
 
-        private static uint getVkey(string vk)
-        {
-            vk = vk._strip("\"");
-            return vk.Length == 1 ? CharVsVKey.GetVKeyFromFaceChar(vk._toLower()[0]) : (uint)vk._parseHex(0);
-        }
+        //private static uint getVkey(string vk)
+        //{
+        //    vk = vk._strip("\"");
+        //    return vk.Length == 1 ? CharVsVKey.GetVKeyFromFaceChar(vk._toLower()[0]) : (uint)vk._parseHex(0);
+        //}
 
         /// <summary>
         /// 仮想キーとそれをSHIFT修飾したキーに対する DecKey の登録

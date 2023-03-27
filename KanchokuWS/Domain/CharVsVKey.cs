@@ -491,8 +491,9 @@ namespace KanchokuWS.Domain
         }
 
         /// <summary>文字コードから、その仮想キーコードを得る</summary>
-        public static uint getCharToVKey(char ch)
+        public static uint getCharToVKey(char ch, int deckey = -1)
         {
+            if (ch == '\\' && deckey == 48 && DecoderKeyVsVKey.IsJPmode) return (uint)Keys.Oem102;
             return (DecoderKeyVsVKey.IsJPmode ?  charToVkeyJP : charToVkeyUS)._safeGet(ch);
         }
 
@@ -522,9 +523,9 @@ namespace KanchokuWS.Domain
         }
 
         /// <summary>JP/US モードに対応して、文字コードからその仮想キーコードを得る<br/>対応するものがなければ 0 を返す</summary>
-        public static uint GetVKeyFromFaceChar(char face)
+        public static uint GetVKeyFromFaceChar(char face, int deckey = -1)
         {
-            return _FaceCharVKey.getCharToVKey(face);
+            return _FaceCharVKey.getCharToVKey(face, deckey);
         }
 
         /// <summary>JP/US モードに対応して、仮想キーコードからその文字コードを得る<br/>対応するものがなければ '\0' を返す</summary>
