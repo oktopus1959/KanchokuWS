@@ -295,11 +295,17 @@ namespace KanchokuWS.Handler
         /// <summary>
         /// Ctrlキーの事前上げ
         /// </summary>
-        /// <param name="leftCtrl"></param>
-        /// <param name="rightCtrl"></param>
         private static ModifierKeyState upCtrlKeyInputs()
         {
             return upDownCtrlKeyInputs(true);
+        }
+
+        /// <summary>
+        /// Ctrlキーの事前下げ
+        /// </summary>
+        private static ModifierKeyState downCtrlKeyInputs()
+        {
+            return upDownCtrlKeyInputs(false);
         }
 
         /// <summary>
@@ -386,11 +392,17 @@ namespace KanchokuWS.Handler
         /// <summary>
         /// Shiftキーの事前上げ
         /// </summary>
-        /// <param name="leftShift"></param>
-        /// <param name="rightShift"></param>
-        private static void upShiftKeyInputs()
+        private static ModifierKeyState upShiftKeyInputs()
         {
-            upDownShiftKeyInputs(true);
+            return upDownShiftKeyInputs(true);
+        }
+
+        /// <summary>
+        /// Shiftキーの事前下げ
+        /// </summary>
+        private static ModifierKeyState downShiftKeyInputs()
+        {
+            return upDownShiftKeyInputs(false);
         }
 
         /// <summary>
@@ -655,6 +667,29 @@ namespace KanchokuWS.Handler
             updateLastOutputDt(bMoveVkbAtOnce);
         }
 
+        private bool isShiftLeftArrowDeleteComboUsed()
+        {
+            return ActiveWindowHandler.Singleton.ActiveWinClassName._equalsTo("_WwG");
+        }
+
+        private void sendBackSpaces(int num, bool bDelete)
+        {
+            logger.DebugH(() => $"CALLED: len={num}, bDelete={bDelete}");
+
+            if (num >= 4 && isShiftLeftArrowDeleteComboUsed()) {
+                logger.DebugH(() => $"SHIFT + LEFTARROW*{num} + DELETE");
+                // Shift下げ
+                var shiftState = downShiftKeyInputs();
+                // Vkey送出
+                sendInputsVkey((uint)Keys.Left, num);
+                if (bDelete) sendInputsVkey((uint)Keys.Delete, 1);
+                // Shift戻し
+                RevertShiftKey(shiftState);
+            } else {
+                sendInputsVkey((uint)Keys.Back, num);
+            }
+        }
+
         private static void sendInputsVkey(ushort vkey)
         {
             logger.DebugH(() => $"CALLED: vkey={vkey}");
@@ -776,7 +811,8 @@ namespace KanchokuWS.Handler
             logger.DebugH($"upCtrl");
 
             // Backspace
-            sendInputsVkey(VK_BACK, numBS);
+            //sendInputsVkey(VK_BACK, numBS);
+            sendBackSpaces(numBS, strLen <= 0);
 
             // 文字列
             if (strLen > 0) {
