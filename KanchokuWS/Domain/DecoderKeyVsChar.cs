@@ -65,6 +65,10 @@ namespace KanchokuWS.Domain
 
         public static List<string> NormalKeyNames => normalKeyNames;
 
+        private static int _yenDecKey = -1;
+
+        public static int YenDecKey => _yenDecKey;
+
         /// <summary>
         /// キー・文字マップファイル(英数字テーブルファイル、chars.106.txtとか)を読み込んで、DecKeyから文字への配列を作成する<br/>
         /// デコーダーに渡す一時的な英数字テーブルファイルを作成して、そのファイル名を返す
@@ -76,7 +80,7 @@ namespace KanchokuWS.Domain
             //Settings.ShortcutKeyConversionEnabled = true;
             normalChars = new List<char>();
             shiftedChars = new List<char>();
-            int yenPos = DecoderKeyVsVKey.IsJPmode ? -1 : -2;
+            _yenDecKey = DecoderKeyVsVKey.IsJPmode ? -1 : -2;
 
             var charsDefFile = Settings.GetString("charsDefFile");
             logger.InfoH(() => $"orig charsDefFile={charsDefFile}");
@@ -111,7 +115,7 @@ namespace KanchokuWS.Domain
                             } else if (line.StartsWith("## END")) {
                                 charList = null;
                             } else if (line._startsWith("## YEN=")) {
-                                yenPos = line._safeSubstring(7)._parseInt(-1);
+                                _yenDecKey = line._safeSubstring(7)._parseInt(-1);
                                 //} else if (line.StartsWith("## SHORTCUT=disabl")) {
                                 //    Settings.ShortcutKeyConversionEnabled = false;
                                 //    logger.InfoH("ShortcutKeyConversion: Disabled");
@@ -121,8 +125,8 @@ namespace KanchokuWS.Domain
                                 logger.InfoH($"line=|{line}|, len={line.Length}");
                                 foreach (var ch in line) {
                                     if (ch == '\\') {
-                                        if (yenPos < 0) {
-                                            yenPos = yenPos == -1 ? charList.Count : -1;    // US mode のときは -2 から -1 にする
+                                        if (_yenDecKey < 0) {
+                                            _yenDecKey = _yenDecKey == -1 ? charList.Count : -1;    // US mode のときは -2 から -1 にする
                                         }
                                     }
                                     if (ch >= 0x20 && ch < 0x7f) charList.Add(ch);
@@ -138,7 +142,7 @@ namespace KanchokuWS.Domain
                 var normalQwerty = QwertyChars();
                 for (int i = normalChars.Count; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
                     char ch = normalQwerty._getNth(DecoderKeyVsVKey.GetDecKeyFromQwertyIndex(i));
-                    if (ch == '\\' && yenPos < 0) { yenPos = yenPos == -1 ? i : -1; }
+                    if (ch == '\\' && _yenDecKey < 0) { _yenDecKey = _yenDecKey == -1 ? i : -1; }
                     normalChars.Add(ch);
                 }
             }
@@ -150,7 +154,7 @@ namespace KanchokuWS.Domain
                     char ch = normalChars[i];
                     char sc = '\0';
                     if (ch == '\\') {
-                        sc = (DecoderKeyVsVKey.IsJPmode && i == yenPos) || (!DecoderKeyVsVKey.IsJPmode && i != yenPos) ? '|' : '_';
+                        sc = (DecoderKeyVsVKey.IsJPmode && i == _yenDecKey) || (!DecoderKeyVsVKey.IsJPmode && i != _yenDecKey) ? '|' : '_';
                     } else {
                         for (int j = 0; j < normalQwerty.Length; ++j) {
                             if (ch == normalQwerty[j]) {
@@ -175,27 +179,27 @@ namespace KanchokuWS.Domain
                     normalKeyNames.Add(ch.ToString()._toUpper());
                 }
             }
-            if (yenPos >= 0 && yenPos < normalKeyNames.Count) {
-                normalKeyNames[yenPos] = "￥";
+            if (_yenDecKey >= 0 && _yenDecKey < normalKeyNames.Count) {
+                normalKeyNames[_yenDecKey] = "￥";
             }
 
             var tmpCharsDefFile = "tmp/chars.current.txt";
-            writeCharDefFileForDecoder(tmpCharsDefFile, yenPos);
+            writeCharDefFileForDecoder(tmpCharsDefFile);
 
             logger.InfoH("LEAVE");
             return tmpCharsDefFile;
 
         }
 
-        private static void writeCharDefFileForDecoder(string filename, int yenPos)
+        private static void writeCharDefFileForDecoder(string filename)
         {
-            logger.InfoH(() => $"filename={filename}, yenPos={yenPos}");
+            logger.InfoH(() => $"filename={filename}, yenPos={_yenDecKey}");
 
             List<string> lines = new List<string>();
             lines.Add("## NORMAL");
             lines.Add(new string(normalChars != null ? normalChars.ToArray() : QwertyChars()).Replace('\0', ' '));
             lines.Add("## END");
-            if (yenPos >= 0) lines.Add($"## YEN={yenPos}");
+            if (_yenDecKey >= 0) lines.Add($"## YEN={_yenDecKey}");
             if (shiftedChars._notEmpty()) {
                 lines.Add("## SHIFT");
                 lines.Add(new string(shiftedChars.ToArray()).Replace('\0', ' '));
