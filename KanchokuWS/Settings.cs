@@ -259,10 +259,22 @@ namespace KanchokuWS
         public static bool IgnoreOtherHooker { get; private set; }
 
         /// <summary> 文字送出時にコピー&ペーストを行う文字数の閾値 </summary>
-        public static int MinLeghthViaClipboard { get; set; }
+        public static int MinLeghthViaClipboard { get; private set; }
+
+        /// <summary> N文字以上の削除にBSではなく Shift+LeftArrow+Deleteを使う </summary>
+        public static int NumBSforShiftLeftArrowDelete { get; private set; }
+
+        /// <summary> N文字以上の削除にBSではなく Shift+LeftArrow+Deleteを使うウィンドウ </summary>
+        public static string ShiftLeftArrowDeleteClassNames { get; private set; }
+        private static HashSet<string> ShiftLeftArrowDeleteClassNamesHash { get; set; } = new HashSet<string>();
+
+        public static bool IsShiftLeftArrowDeleteComboUsed(int numBS, string className)
+        {
+            return NumBSforShiftLeftArrowDelete > 0 && numBS >= NumBSforShiftLeftArrowDelete && ShiftLeftArrowDeleteClassNamesHash._safeContains(className._toLower());
+        }
 
         /// <summary> 同時打鍵ではないテーブルで、ノード重複の警告を表示するか </summary>
-        public static bool DuplicateWarningEnabled { get; set; }
+        public static bool DuplicateWarningEnabled { get; private set; }
 
         //-------------------------------------------------------------------------------------
         /// <summary>DecKeyの無限ループを検出する回数</summary>
@@ -1105,6 +1117,13 @@ namespace KanchokuWS
 
             // 文字送出時にコピー&ペーストを行う文字数の閾値
             MinLeghthViaClipboard = GetString("minLeghthViaClipboard")._parseInt(0)._lowLimit(0);
+
+            // N文字以上の削除にBSではなく Shift+LeftArrow+Deleteを使う
+            NumBSforShiftLeftArrowDelete = GetString("numBSforShiftLeftArrowDelete")._parseInt(0)._lowLimit(0);
+
+            // N文字以上の削除にBSではなく Shift+LeftArrow+Deleteを使うウィンドウ
+            ShiftLeftArrowDeleteClassNames = GetString("shiftLeftArrowDeleteClassNames").Trim();
+            ShiftLeftArrowDeleteClassNamesHash = new HashSet<string>(ShiftLeftArrowDeleteClassNames._toLower()._split('|'));
 
             // 自身以外のキーボードフックツールからの出力を無視する
             IgnoreOtherHooker = GetString("ignoreOtherHooker")._parseBool(false);

@@ -714,6 +714,10 @@ namespace KanchokuWS.Gui
             // クリップボード経由
             textBox_minLeghthViaClipboard.Text = $"{Settings.MinLeghthViaClipboard}";
 
+            // 文字列削除に Shift + ← + Deleteを使う
+            textBox_numBSforShiftLeftArrowDelete.Text = $"{Settings.NumBSforShiftLeftArrowDelete}";
+            textBox_shiftLeftArrowDeleteClassNames.Text = Settings.ShiftLeftArrowDeleteClassNames._reReplace(@"\|", "\r\n");
+
             // 自身以外のキーボードフックツールからの出力を無視する
             checkBox_ignoreOtherHooker.Checked = Settings.IgnoreOtherHooker;
 
@@ -759,6 +763,10 @@ namespace KanchokuWS.Gui
 
             // クリップボード経由
             checkerAdvanced.Add(textBox_minLeghthViaClipboard);
+
+            // 文字列削除に Shift + ← + Deleteを使う
+            checkerAdvanced.Add(textBox_numBSforShiftLeftArrowDelete);
+            checkerAdvanced.Add(textBox_shiftLeftArrowDeleteClassNames);
 
             // 自身以外のキーボードフックツールからの出力を無視する
             checkerAdvanced.Add(checkBox_ignoreOtherHooker);
@@ -824,6 +832,10 @@ namespace KanchokuWS.Gui
 
             // クリップボード経由
             Settings.SetUserIni("minLeghthViaClipboard", textBox_minLeghthViaClipboard.Text.Trim());
+
+            // 文字列削除に Shift + ← + Deleteを使う
+            Settings.SetUserIni("numBSforShiftLeftArrowDelete", textBox_numBSforShiftLeftArrowDelete.Text.Trim());
+            Settings.SetUserIni("shiftLeftArrowDeleteClassNames", textBox_shiftLeftArrowDeleteClassNames.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
 
             // 自身以外のキーボードフックツールからの出力を無視する
             Settings.SetUserIni("ignoreOtherHooker", checkBox_ignoreOtherHooker.Checked);

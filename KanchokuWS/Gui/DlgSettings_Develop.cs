@@ -133,6 +133,10 @@ namespace KanchokuWS.Gui
         private void button_defaultLogLevel_Click(object sender, EventArgs e)
         {
             comboBox_logLevel.SelectedIndex = 2;
+            checkBox_loggingDecKeyInfo.Checked = false;
+            checkBox_loggingActiveWindowInfo.Checked = false;
+            checkBox_loggingVirtualKeyboardInfo.Checked = false;
+            checkBox_loggingTableFileInfo.Checked = false;
         }
 
         private void displayTestCount(string msg)

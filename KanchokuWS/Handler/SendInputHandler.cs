@@ -667,16 +667,16 @@ namespace KanchokuWS.Handler
             updateLastOutputDt(bMoveVkbAtOnce);
         }
 
-        private bool isShiftLeftArrowDeleteComboUsed()
+        private bool isShiftLeftArrowDeleteComboUsed(int numBS)
         {
-            return ActiveWindowHandler.Singleton.ActiveWinClassName._equalsTo("_WwG");
+            return Settings.IsShiftLeftArrowDeleteComboUsed(numBS, ActiveWindowHandler.Singleton.ActiveWinClassName);
         }
 
         private void sendBackSpaces(int num, bool bDelete)
         {
             logger.DebugH(() => $"CALLED: len={num}, bDelete={bDelete}");
 
-            if (num >= 4 && isShiftLeftArrowDeleteComboUsed()) {
+            if (isShiftLeftArrowDeleteComboUsed(num)) {
                 logger.DebugH(() => $"SHIFT + LEFTARROW*{num} + DELETE");
                 // Shift下げ
                 var shiftState = downShiftKeyInputs();
