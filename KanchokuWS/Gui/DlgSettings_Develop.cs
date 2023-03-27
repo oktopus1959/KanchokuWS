@@ -130,6 +130,11 @@ namespace KanchokuWS.Gui
             }
         }
 
+        private void button_defaultLogLevel_Click(object sender, EventArgs e)
+        {
+            comboBox_logLevel.SelectedIndex = 2;
+        }
+
         private void displayTestCount(string msg)
         {
             label_testCount.Text = msg;
