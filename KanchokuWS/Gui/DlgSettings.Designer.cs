@@ -1509,7 +1509,7 @@ namespace KanchokuWS.Gui
             this.groupBox33.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox33.Location = new System.Drawing.Point(329, 79);
             this.groupBox33.Name = "groupBox33";
-            this.groupBox33.Size = new System.Drawing.Size(306, 70);
+            this.groupBox33.Size = new System.Drawing.Size(306, 68);
             this.groupBox33.TabIndex = 4;
             this.groupBox33.TabStop = false;
             this.groupBox33.Text = "　　 文字以上の削除に Shif+左矢印+Delを使うウィンドウ";
@@ -1522,10 +1522,10 @@ namespace KanchokuWS.Gui
             this.textBox_shiftLeftArrowDeleteClassNames.Multiline = true;
             this.textBox_shiftLeftArrowDeleteClassNames.Name = "textBox_shiftLeftArrowDeleteClassNames";
             this.textBox_shiftLeftArrowDeleteClassNames.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox_shiftLeftArrowDeleteClassNames.Size = new System.Drawing.Size(270, 44);
+            this.textBox_shiftLeftArrowDeleteClassNames.Size = new System.Drawing.Size(270, 40);
             this.textBox_shiftLeftArrowDeleteClassNames.TabIndex = 8;
-            this.toolTip1.SetToolTip(this.textBox_shiftLeftArrowDeleteClassNames, "ここに、指定文字以上の削除に Shift + ← + Delete を使うウィンドウの\r\nClassNameを列挙します。1行1エントリで記述します。\r\n\r\nWo" +
-        "rd の場合は _WwG を指定します。");
+            this.toolTip1.SetToolTip(this.textBox_shiftLeftArrowDeleteClassNames, "ここに、指定文字以上の削除に Shift + ← + Delete を使うウィンドウの\r\nClassNameを列挙します。\r\n\r\n1行1エントリで記述します。(C" +
+        "trl+Enter で改行)\r\n\r\nWord の場合は _WwG を指定します。");
             // 
             // textBox_numBSforShiftLeftArrowDelete
             // 
@@ -1536,13 +1536,13 @@ namespace KanchokuWS.Gui
             this.textBox_numBSforShiftLeftArrowDelete.Size = new System.Drawing.Size(27, 19);
             this.textBox_numBSforShiftLeftArrowDelete.TabIndex = 0;
             this.textBox_numBSforShiftLeftArrowDelete.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.toolTip1.SetToolTip(this.textBox_numBSforShiftLeftArrowDelete, "文字列の削除に BS ではなく Shift + ← + Delete を使う場合の\r\n文字数を指定します。\r\n\r\nWord など、 BS による文字削除が遅い場合" +
-        "に指定してください。\r\n\r\n0 の場合は、必ず BS が用いられます。");
+            this.toolTip1.SetToolTip(this.textBox_numBSforShiftLeftArrowDelete, "交ぜ書き変換や英字列置換の際の文字列削除に、 BS ではなく\r\nShift + ← + Delete を使う場合の文字数を指定します。\r\n\r\nWord など、 B" +
+        "S による文字削除が遅い場合に指定してください。\r\n\r\n0 の場合は、必ず BS が用いられます。");
             // 
             // groupBox51
             // 
             this.groupBox51.Controls.Add(this.checkBox_duplicateWarningEnabled);
-            this.groupBox51.Location = new System.Drawing.Point(329, 291);
+            this.groupBox51.Location = new System.Drawing.Point(329, 289);
             this.groupBox51.Name = "groupBox51";
             this.groupBox51.Size = new System.Drawing.Size(247, 46);
             this.groupBox51.TabIndex = 7;
@@ -1569,7 +1569,7 @@ namespace KanchokuWS.Gui
             this.groupBox28.Controls.Add(this.textBox_saveDictsIntervalTime);
             this.groupBox28.Controls.Add(this.textBox_backFileRotationGeneration);
             this.groupBox28.Controls.Add(this.label57);
-            this.groupBox28.Location = new System.Drawing.Point(329, 155);
+            this.groupBox28.Location = new System.Drawing.Point(329, 152);
             this.groupBox28.Name = "groupBox28";
             this.groupBox28.Size = new System.Drawing.Size(306, 80);
             this.groupBox28.TabIndex = 5;
@@ -1655,7 +1655,7 @@ namespace KanchokuWS.Gui
             // groupBox41
             // 
             this.groupBox41.Controls.Add(this.checkBox_ignoreOtherHooker);
-            this.groupBox41.Location = new System.Drawing.Point(329, 241);
+            this.groupBox41.Location = new System.Drawing.Point(329, 238);
             this.groupBox41.Name = "groupBox41";
             this.groupBox41.Size = new System.Drawing.Size(247, 44);
             this.groupBox41.TabIndex = 6;
@@ -4512,9 +4512,7 @@ namespace KanchokuWS.Gui
             this.textBox_targetClassNames.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBox_targetClassNames.Size = new System.Drawing.Size(293, 54);
             this.textBox_targetClassNames.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.textBox_targetClassNames, "ここに変換対象(または対象外)となるウィンドウのClassNameを列挙します。\r\n1行1エントリで記述します。\r\n\r\nウィンドウのClassNameの先頭部分が" +
-        "ここのリストのどれかと一致すれば、\r\nそれを対象(または対象外)と判断します。\r\n\r\nウィンドウのClassNameは、漢直モードに入り、仮想鍵盤を表示して、\r" +
-        "\n対象となるウィンドウをアクティブにすると、仮想鍵盤の上部に表示されます。");
+            this.toolTip1.SetToolTip(this.textBox_targetClassNames, resources.GetString("textBox_targetClassNames.ToolTip"));
             this.textBox_targetClassNames.Enter += new System.EventHandler(this.textBox_targetClassNames_Enter);
             this.textBox_targetClassNames.Leave += new System.EventHandler(this.textBox_targetClassNames_Leave);
             // 

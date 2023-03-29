@@ -260,7 +260,8 @@ extraInfo の値が当ツールの設定したものだけを無視するよう�
   </data>
   <data name="textBox_fixedPosClassNames.ToolTip" xml:space="preserve">
     <value>ここに、仮想鍵盤を固定位置表示するウィンドウのClassNameを列挙します。
-1行1エントリで記述します。
+
+1行1エントリで記述します。(Ctrl+Enter で改行)
 
 ウィンドウのClassNameの先頭部分がここのリストのどれかと一致すれば、
 そのウィンドウにテキストカーソルが入ったとき、仮想鍵盤が固定位置に移動
@@ -563,7 +564,8 @@ Ctrl打鍵の直後に Ctlrl+Shift 打鍵すると取り消しになります。
   <data name="textBox_dateStringFormat.ToolTip" xml:space="preserve">
     <value>日時変換キーで出力する日時のフォーマットを設定します。
 
-1行1エントリで、複数のフォーマットを設定できます。
+1行1エントリで、複数のフォーマットを設定できます。(Ctrl+Enter で改行)
+
 フォーマットが複数ある場合、 Ctrlキー (Ctrl+Shiftキー) を連続して打鍵すると、
 使用するフォーマットが次々と切り替わります。
 Ctrlキー の場合は1つめから正順に、 Ctrl+Shiftキー の場合は末尾から逆順に
@@ -605,6 +607,16 @@ Ctrl-Shift修飾されたキーで、ブロッカーの解除となります。
 
 これは、履歴検索、交ぜ書き変換、部首合成など、後置式の機能
 全般に影響します。</value>
+  </data>
+  <data name="textBox_targetClassNames.ToolTip" xml:space="preserve">
+    <value>ここに変換対象(または対象外)となるウィンドウのClassNameを列挙します。
+1行1エントリで記述します。(Ctrl+Enter で改行)
+
+ウィンドウのClassNameの先頭部分がここのリストのどれかと一致すれば、
+それを対象(または対象外)と判断します。
+
+ウィンドウのClassNameは、漢直モードに入り、仮想鍵盤を表示して、
+対象となるウィンドウをアクティブにすると、仮想鍵盤の上部に表示されます。</value>
   </data>
   <data name="textBox_mazeHistRegisterMinLen.ToolTip" xml:space="preserve">
     <value>交ぜ書き変換履歴を登録する最小語幹長を設定
