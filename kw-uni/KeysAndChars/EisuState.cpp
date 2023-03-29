@@ -64,8 +64,8 @@ namespace {
 
             LOG_INFO(_T("ENTER: totalDeckeyCount=%d, prevCapitalCount=%d"), firstTotalCnt, prevCapitalCnt);
 
-            // 必要ならブロッカーを設定する
-            if (MY_NODE->blockerNeeded) OUTPUT_STACK->setHistBlocker();
+            // ブロッカーフラグを先に取得しておく
+            bool blockerNeeded = MY_NODE->blockerNeeded;
             MY_NODE->blockerNeeded = false;
 
             if (firstTotalCnt == prevCapitalCnt + 1) {
@@ -81,6 +81,8 @@ namespace {
                 return false;
             }
 
+            // 必要ならブロッカーを設定する
+            if (blockerNeeded) OUTPUT_STACK->setHistBlocker();
             //setEisuModeMarker();
 
             // 前状態にチェインする
