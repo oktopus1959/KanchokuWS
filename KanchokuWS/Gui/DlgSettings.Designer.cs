@@ -1925,9 +1925,7 @@ namespace KanchokuWS.Gui
             this.textBox_minLeghthViaClipboard.Size = new System.Drawing.Size(40, 19);
             this.textBox_minLeghthViaClipboard.TabIndex = 0;
             this.textBox_minLeghthViaClipboard.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.toolTip1.SetToolTip(this.textBox_minLeghthViaClipboard, "クリップボード経由で文字を送出する場合の最小文字数を設定します。\r\n\r\n対象ウィンドウへに送出される文字列の文字数がこの数より小さい場合は、\r\n文字列全体を Se" +
-        "ndInput により送出します。\r\n\r\n設定された文字数以上の場合は、送出文字列をいったんクリップボードに\r\nコピーした後、Ctrl-V を送出します。\r\n\r" +
-        "\n0 を設定すると、クリップボード経由による送出を行いません。");
+            this.toolTip1.SetToolTip(this.textBox_minLeghthViaClipboard, resources.GetString("textBox_minLeghthViaClipboard.ToolTip"));
             // 
             // label53
             // 

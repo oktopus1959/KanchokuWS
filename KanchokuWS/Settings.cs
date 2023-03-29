@@ -1203,7 +1203,7 @@ namespace KanchokuWS
             //-------------------------------------------------------------------------------------
             CtrlKeyUpGuardMillisec = GetString("ctrlKeyUpGuardMillisec")._parseInt(15)._lowLimit(0);
             //CtrlKeyDownGuardMillisec = GetString("ctrlKeyDownGuardMillisec")._parseInt(0)._lowLimit(0);     // これが 0 より大きいとCTRLキーDOWNと誤認識される可能性が高まる
-            PreCtrlVGuardMillisec = GetString("preWmCharGuardMillisec")._parseInt(25)._lowLimit(0);
+            PreCtrlVGuardMillisec = GetString("preWmCharGuardMillisec")._parseInt(30)._lowLimit(0);
             ReductionExponet = GetString("reductionExponent")._parseDouble(0.7)._lowLimit(0.5);
 
             VirtualKeyboardMoveGuardMillisec = GetString("virtualKeyboardMoveGuardMillisec")._parseInt(500)._lowLimit(0);

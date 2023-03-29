@@ -870,7 +870,7 @@ namespace KanchokuWS.Handler
 
             if (activeWinHandle != IntPtr.Zero && ((str._notEmpty() && str[0] != 0) || numBS > 0)) {
                 int len = str._isEmpty() ? 0 : str._strlen();     // 終端までの長さを取得
-                if (bForceString || Settings.MinLeghthViaClipboard <= 0 || len < Settings.MinLeghthViaClipboard) {
+                if (bForceString || Settings.MinLeghthViaClipboard <= 0 || len < Settings.MinLeghthViaClipboard || isShiftLeftArrowDeleteComboUsed(numBS)) {
                     // 自前で送出
                     SendString(str, len, numBS);
                 } else {
