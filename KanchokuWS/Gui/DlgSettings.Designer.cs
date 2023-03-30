@@ -1544,7 +1544,7 @@ namespace KanchokuWS.Gui
             this.groupBox51.Controls.Add(this.checkBox_duplicateWarningEnabled);
             this.groupBox51.Location = new System.Drawing.Point(329, 289);
             this.groupBox51.Name = "groupBox51";
-            this.groupBox51.Size = new System.Drawing.Size(247, 46);
+            this.groupBox51.Size = new System.Drawing.Size(258, 46);
             this.groupBox51.TabIndex = 7;
             this.groupBox51.TabStop = false;
             this.groupBox51.Text = "テーブルファイル読み込み時の重複チェック";
@@ -1657,7 +1657,7 @@ namespace KanchokuWS.Gui
             this.groupBox41.Controls.Add(this.checkBox_ignoreOtherHooker);
             this.groupBox41.Location = new System.Drawing.Point(329, 238);
             this.groupBox41.Name = "groupBox41";
-            this.groupBox41.Size = new System.Drawing.Size(247, 44);
+            this.groupBox41.Size = new System.Drawing.Size(258, 44);
             this.groupBox41.TabIndex = 6;
             this.groupBox41.TabStop = false;
             this.groupBox41.Text = "他のキー変換ツールとの競合解消";
@@ -1667,9 +1667,9 @@ namespace KanchokuWS.Gui
             this.checkBox_ignoreOtherHooker.AutoSize = true;
             this.checkBox_ignoreOtherHooker.Location = new System.Drawing.Point(22, 21);
             this.checkBox_ignoreOtherHooker.Name = "checkBox_ignoreOtherHooker";
-            this.checkBox_ignoreOtherHooker.Size = new System.Drawing.Size(158, 19);
+            this.checkBox_ignoreOtherHooker.Size = new System.Drawing.Size(232, 19);
             this.checkBox_ignoreOtherHooker.TabIndex = 0;
-            this.checkBox_ignoreOtherHooker.Text = "extraInfo == 0 のみを処理";
+            this.checkBox_ignoreOtherHooker.Text = "他ツールによるキー変換がない場合のみ処理";
             this.toolTip1.SetToolTip(this.checkBox_ignoreOtherHooker, resources.GetString("checkBox_ignoreOtherHooker.ToolTip"));
             this.checkBox_ignoreOtherHooker.UseVisualStyleBackColor = true;
             // 

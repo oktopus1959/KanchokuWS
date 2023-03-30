@@ -103,12 +103,15 @@ namespace KanchokuWS.Handler
         /// <summary>やまぶきRが送ってくる SendInput の scanCode </summary>
         private const int YamabukiRscanCode = 0x7f;
 
+        /// <summary>他のアプリからキーコードがINJECTされた </summary>
+        private const uint LLKHF_INJECTED = 0x10;
+
         /// <summary> 漢直として有効なキーか</summary>
-        private bool isEffectiveVkey(uint vkey, int scanCode, int extraInfo, bool ctrl)
+        private bool isEffectiveVkey(uint vkey, int scanCode, uint flags, int extraInfo, bool ctrl)
         {
             // 0xa0 = LSHIFT, 0xa1 = RSHIFT, 0xa2=LCTRL, 0xa3=RCTRL, 0xa4=LALT, 0xa5 = RALT, 0xf3 = Zenkaku, 0xf4 = Kanji
             return
-                (Settings.IgnoreOtherHooker ? extraInfo == 0 : extraInfo != SendInputHandler.MyMagicNumber) &&
+                (Settings.IgnoreOtherHooker ? (flags & LLKHF_INJECTED) == 0 : extraInfo != SendInputHandler.MyMagicNumber) &&
                 scanCode != 0 && scanCode != YamabukiRscanCode &&
                 ((vkey > 0 && vkey < 0xa0) ||
                  // RSHIFT の場合は、Ctrlキーが押されておらず、それが漢直トグルキーになっているか、または漢直モードでシフト単打が有効か、または拡張シフト面が定義されているとき
@@ -564,7 +567,7 @@ namespace KanchokuWS.Handler
         /// <param name="vkey"></param>
         /// <param name="extraInfo"></param>
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
-        private bool onKeyboardDownHandler(uint vkey, int scanCode, int extraInfo)
+        private bool onKeyboardDownHandler(uint vkey, int scanCode, uint flags, int extraInfo)
         {
             // 一時停止?
             if (Settings.SuspendByPauseKey && vkey == (uint)Keys.Pause) frmKanchoku?.DecoderSuspendToggle();
@@ -604,7 +607,7 @@ namespace KanchokuWS.Handler
                 if (extraInfo == 0 && leftShift) bLShiftShifted = true;  // 左SHIFTがＯＮのときに何かキーが押されたら左SHIFTをシフト状態にする
                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"bLCtrlShifted={bLCtrlShifted}, bRCtrlShifted={bRCtrlShifted}, bLShiftShifted={bLShiftShifted}");
 
-                if (!isEffectiveVkey(vkey, scanCode, extraInfo, bCtrl)) {
+                if (!isEffectiveVkey(vkey, scanCode, flags, extraInfo, bCtrl)) {
                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"not EffectiveVkey");
                     return false;
                 }
@@ -910,7 +913,7 @@ namespace KanchokuWS.Handler
         /// <param name="vkey"></param>
         /// <param name="extraInfo"></param>
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
-        private bool onKeyboardUpHandler(uint vkey, int scanCode, int extraInfo)
+        private bool onKeyboardUpHandler(uint vkey, int scanCode, uint flags, int extraInfo)
         {
             // 一時停止?
             if (Settings.DecoderSuspended) return false;
@@ -965,7 +968,7 @@ namespace KanchokuWS.Handler
             // 同時打鍵キーのオートリピートが終了したら打鍵ガイドを元に戻す
             handleComboKeyRepeatStop(vkey);
 
-            if (!isEffectiveVkey(vkey, scanCode, extraInfo, leftCtrl || rightCtrl)) {
+            if (!isEffectiveVkey(vkey, scanCode, flags, extraInfo, leftCtrl || rightCtrl)) {
                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"LEAVE: result=False, not EffectiveVkey");
                 return false;
             }

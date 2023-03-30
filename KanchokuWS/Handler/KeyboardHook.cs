@@ -64,9 +64,9 @@ namespace KanchokuWS.Handler
         private static IntPtr hookId = IntPtr.Zero;
         #endregion
 
-        public delegate bool DelegateOnKeyDownEvent(uint vkey, int scanCode, int extraInfo);
+        public delegate bool DelegateOnKeyDownEvent(uint vkey, int scanCode, uint flags, int extraInfo);
 
-        public delegate bool DelegateOnKeyUpEvent(uint vkey, int scanCode, int extraInfo);
+        public delegate bool DelegateOnKeyUpEvent(uint vkey, int scanCode, uint flags, int extraInfo);
 
         public static DelegateOnKeyDownEvent OnKeyDownEvent { get; set; }
 
@@ -111,7 +111,7 @@ namespace KanchokuWS.Handler
                 var kb = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"\nKeyDown: vkCode={kb.vkCode:x}H({kb.vkCode}), Scan={kb.scanCode:x}({kb.scanCode}), flag={kb.flags:x}, time={kb.time}, extraInfo={kb.dwExtraInfo}");
                 //var vkCode = kb.vkCode;
-                if (OnKeyDownEvent?.Invoke(kb.vkCode, (int)kb.scanCode, (int)kb.dwExtraInfo) ?? false) {
+                if (OnKeyDownEvent?.Invoke(kb.vkCode, (int)kb.scanCode, (uint)kb.flags, (int)kb.dwExtraInfo) ?? false) {
                     // 呼び出し先で処理が行われたので、システム側ではキー入力を破棄
                     return IntPtrDone;
                 }
@@ -119,7 +119,7 @@ namespace KanchokuWS.Handler
                 var kb = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"\nKeyUp: vkCode={kb.vkCode:x}H({kb.vkCode}), Scan={kb.scanCode:x}({kb.scanCode}), flag={kb.flags:x}, time={kb.time}, extraInfo={kb.dwExtraInfo}");
                 //var vkCode = kb.vkCode;
-                if (OnKeyUpEvent?.Invoke(kb.vkCode, (int)kb.scanCode, (int)kb.dwExtraInfo) ?? false) {
+                if (OnKeyUpEvent?.Invoke(kb.vkCode, (int)kb.scanCode, (uint)kb.flags, (int)kb.dwExtraInfo) ?? false) {
                     // 呼び出し先で処理が行われたので、システム側ではキー入力を破棄
                     return IntPtrDone;
                 }
