@@ -694,6 +694,21 @@ namespace KanchokuWS
         [DllImport("user32.dll")]
         private static extern ushort GetAsyncKeyState(uint vkey);
 
+        private bool isCtrlKeyPressed()
+        {
+            return (GetAsyncKeyState(FuncVKeys.CONTROL) & 0x8000) != 0;
+        }
+
+        private bool isShiftKeyPressed()
+        {
+            return (GetAsyncKeyState(FuncVKeys.SHIFT) & 0x8000) != 0;
+        }
+
+        private bool isAltKeyPressed()
+        {
+            return (GetAsyncKeyState(FuncVKeys.ALT) & 0x8000) != 0;
+        }
+
         //------------------------------------------------------------------
         public int DeckeyTotalCount { get; private set; } = 0;
 
@@ -2082,7 +2097,17 @@ namespace KanchokuWS
         {
             logger.Info("CALLED");
             if (((MouseEventArgs)e).Button == MouseButtons.Left) {
-                ToggleActiveState();
+                if (isShiftKeyPressed()) {
+                    DecoderSuspendToggle();
+                } else {
+                    bool bCtrl = isCtrlKeyPressed();
+                    bool bDlg = Settings.OpenSettingsDlgWhenIconClicked;
+                    if ((bCtrl && !bDlg) || (!bCtrl && bDlg)) {
+                        openSettingsDialog();
+                    } else {
+                        ToggleActiveState();
+                    }
+                }
             }
         }
 
@@ -2342,7 +2367,6 @@ namespace KanchokuWS
         {
             DecoderSuspendToggle();
         }
-
     }
 
 }

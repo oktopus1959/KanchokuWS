@@ -12,6 +12,7 @@ namespace KanchokuWS.Domain
     static class FuncVKeys
     {
         //public const uint BACK = 0x08;
+        public const uint SHIFT = 0x10;
         public const uint CONTROL = 0x11;
         public const uint ALT = 0x12;
         public const uint LSHIFT = 0xa0;

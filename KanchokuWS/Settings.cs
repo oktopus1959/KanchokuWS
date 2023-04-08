@@ -142,6 +142,9 @@ namespace KanchokuWS
         /// <summary>再起動時に確認ダイアログを出す</summary>
         public static bool ConfirmOnRestart { get; private set; } = true;
 
+        /// <summary>アイコンクリック時に設定ダイアログを出す</summary>
+        public static bool OpenSettingsDlgWhenIconClicked { get; private set; } = false;
+
         //-------------------------------------------------------------------------------------
         // 各種ファイル
         //-------------------------------------------------------------------------------------
@@ -1049,8 +1052,8 @@ namespace KanchokuWS
             SplashWindowShowDuration = GetString("splashWindowShowDuration")._parseInt(60)._lowLimit(0);
             ConfirmOnClose = GetString("confirmOnClose")._parseBool(true);
             SuspendByPauseKey = GetString("suspendByPauseKey")._parseBool(false);
-
             ShowEisuVkb = GetString("showEisuVkb")._parseBool(false);
+            OpenSettingsDlgWhenIconClicked = GetString("openSettingsDlgWhenIconClicked")._parseBool(false);
 
             //-------------------------------------------------------------------------------------
             // デバッグ用設定
