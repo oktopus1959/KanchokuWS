@@ -1542,6 +1542,7 @@ namespace KanchokuWS.Gui
             comboBox_selectCtrlKeyItem(comboBox_historySearchKey, $"{Settings.HistorySearchCtrlKey.Replace("#", "")}");
             //checkBox_histSearchByShiftSpace.Checked = Settings.HistSearchByShiftSpace;
             checkBox_selectFirstCandByEnter.Checked = Settings.SelectFirstCandByEnter;
+            checkBox_newLineWhenHistEnter.Checked = Settings.NewLineWhenHistEnter;
             //checkBox_autoHistEnabled_CheckedChanged(null, null);
             checkBox_useArrowKeyToSelectCand.Checked = Settings.UseArrowKeyToSelectCandidate;
             checkBox_selectHistCandByTab.Checked = Settings.SelectHistCandByTab;
@@ -1582,6 +1583,7 @@ namespace KanchokuWS.Gui
             checkerHistory.Add(comboBox_historySearchKey);
             //checkerHistory.Add(checkBox_histSearchByShiftSpace);
             checkerHistory.Add(checkBox_selectFirstCandByEnter);
+            checkerHistory.Add(checkBox_newLineWhenHistEnter);
             //checkerHistory.Add(checkBox_autoHistEnabled_CheckedChanged);
             checkerHistory.Add(checkBox_useArrowKeyToSelectCand);
             checkerHistory.Add(checkBox_selectHistCandByTab);
@@ -1628,6 +1630,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("histSearchCtrlKey", makeCtrlKeyConversion(checkBox_historySearchKey, comboBox_historySearchKey));
             //Settings.SetUserIni("histSearchByShiftSpace", checkBox_histSearchByShiftSpace.Checked);
             Settings.SetUserIni("selectFirstCandByEnter", checkBox_selectFirstCandByEnter.Checked);
+            Settings.SetUserIni("newLineWhenHistEnter", checkBox_newLineWhenHistEnter.Checked);
             Settings.SetUserIni("useArrowToSelCand", checkBox_useArrowKeyToSelectCand.Checked);
             Settings.SetUserIni("selectHistCandByTab", checkBox_selectHistCandByTab.Checked);
             Settings.SetUserIni("histDelDeckeyId", comboBox_histDelDeckeyId.Text.Trim()._substring(0, 2));

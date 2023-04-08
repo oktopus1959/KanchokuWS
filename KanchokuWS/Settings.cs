@@ -551,6 +551,7 @@ namespace KanchokuWS
         //public static bool HistSearchByShiftSpace { get; private set; }
         /// <summary>Enterで先頭候補を選択</summary>
         public static bool SelectFirstCandByEnter { get; private set; }
+        public static bool NewLineWhenHistEnter { get; private set; }
         public static bool HistAllowFromMiddleChar { get; private set; }
         public static int HistDelDeckeyId { get; private set; }
         public static int HistNumDeckeyId { get; private set; }
@@ -1397,6 +1398,7 @@ namespace KanchokuWS
             //VKeyComboRepository.AddCtrlDeckeyAndCombo(" ", DecoderKeys.CTRL_SPACE_DECKEY, 0);           // 登録
             //HistSearchByShiftSpace = addDecoderSetting("histSearchByShiftSpace", true);         // Shift-Space で履歴検索を行う
             SelectFirstCandByEnter = addDecoderSetting("selectFirstCandByEnter", false);        // Enter で最初の履歴検索候補を選択する
+            NewLineWhenHistEnter = addDecoderSetting("newLineWhenHistEnter", false);            // 履歴候補選択時のEnterではつねに改行する
             HistDelDeckeyId = addDecoderSetting("histDelDeckeyId", "histDelHotkeyId", 41, 41);  // 履歴削除を呼び出すDecKeyのID
             HistNumDeckeyId = addDecoderSetting("histNumDeckeyId", "histNumHotkeyId", 45, 41);  // 履歴文字数指定を呼び出すDecKeyのID
             HistHorizontalCandMax = addDecoderSetting("histHorizontalCandMax", 10, 1, 10);      // 履歴候補の横列鍵盤表示の際の最大候補数

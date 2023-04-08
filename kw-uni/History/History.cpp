@@ -114,7 +114,7 @@ namespace {
         }
 
         bool IsHistInSearch() {
-            _LOG_DEBUGH(_T("CALLED: HistInSearch=%s"), BOOL_TO_WPTR(isHistInSearch));
+            //_LOG_DEBUGH(_T("CALLED: HistInSearch=%s"), BOOL_TO_WPTR(isHistInSearch));
             return isHistInSearch;
         }
 
@@ -277,7 +277,7 @@ namespace {
 
         // 選択された履歴候補を出力(これが呼ばれた時点で、すでにキーの先頭まで巻き戻すように plannedNumBS が設定されていること)
         void setOutString(const HistResult& result) {
-            _LOG_DEBUGH(_T("CALLED: result.OrigKey=%s, result.Key=%s, result.Word=%s, keyLen=%d, wildKey=%s, prevOutStr=%s, prevKey=%s, plannedNumBS=%d"), \
+            _LOG_DEBUGH(_T("ENTER: result.OrigKey=%s, result.Key=%s, result.Word=%s, keyLen=%d, wildKey=%s, prevOutStr=%s, prevKey=%s, plannedNumBS=%d"), \
                 MAKE_WPTR(result.OrigKey), MAKE_WPTR(result.Key), MAKE_WPTR(result.Word), result.KeyLen(), BOOL_TO_WPTR(result.WildKey), \
                 MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevKey()), STATE_COMMON->GetBackspaceNum());
 
@@ -317,7 +317,7 @@ namespace {
             HISTORY_STAY_NODE->SetPrevHistState(outStr, outKey);
 
             //_LOG_DEBUGH(_T("prevOutString=%s, isPrevHistKeyUsed=%s"), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()), BOOL_TO_WPTR(HISTORY_STAY_NODE->IsPrevHistKeyUsed()));
-            _LOG_DEBUGH(_T("prevOutString=%s"), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()));
+            _LOG_DEBUGH(_T("LEAVE: prevOutString=%s"), MAKE_WPTR(HISTORY_STAY_NODE->GetPrevOutString()));
         }
 
         // 前回の履歴検索の出力と現在の出力文字列(改行以降)の末尾を比較し、同じであれば前回の履歴検索のキーを取得する
@@ -677,7 +677,7 @@ namespace {
         // RET/Enter の処理 -- 第1候補を返す
         void handleEnter() {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            handleStrokeKeys(20);   // 'a'
+            handleStrokeKeys(20);   // 'a' -- 縦列候補の左端を示す
             handleKeyPostProc();
         }
 
@@ -830,6 +830,17 @@ namespace {
 
         // 状態管理のほうで記録している最新ホットキーと比較し、今回が履歴候補選択キーだったか
         bool wasCandSelectCalled() { return candSelectDeckey >= 0 && candSelectDeckey == STATE_COMMON->GetDeckey(); }
+
+        // 呼び出されたのは編集用キーか
+        bool isEditingFuncDecKey() {
+            int deckey = STATE_COMMON->GetDeckey();
+            return deckey >= HOME_DECKEY && deckey <= RIGHT_ARROW_DECKEY;
+        }
+
+        // 呼び出されたのはENTERキーか
+        bool isEnterDecKey() {
+            return STATE_COMMON->GetDeckey() == ENTER_DECKEY;
+        }
 
         // 後続状態で出力スタックが変更された可能性あり
         bool maybeEditedBySubState = false;
@@ -1147,8 +1158,12 @@ namespace {
             if (bCandSelectable && wasCandSelectCalled()) {
                 LOG_INFO(_T("PATH 3: by SelectionKey"));
                 // 履歴選択キーによる処理だった場合
-                if (bCandSelectable) {
-                    LOG_INFO(_T("PATH 4"));
+                if (isEnterDecKey()) {
+                    LOG_INFO(_T("PATH 4-A: handleEnter"));
+                    bCandSelectable = false;
+                    OUTPUT_STACK->pushNewLine();
+                } else {
+                    LOG_INFO(_T("PATH 4-B: handleArrow"));
                     // この処理は、GUI側で候補の背景色を変更するのと矢印キーをホットキーにするために必要
                     LOG_INFO(_T("Set selectedPos=%d"), HIST_CAND->GetSelectPos());
                     STATE_COMMON->SetWaitingCandSelect(HIST_CAND->GetSelectPos());
@@ -1176,7 +1191,12 @@ namespace {
 
                 LOG_INFO(_T("PATH 9: bNoHistTemporary=%s"), BOOL_TO_WPTR(bNoHistTemporary));
                 if (!bNoHistTemporary) {
-                    historySearch(bManualTemporary);
+                    if (isEditingFuncDecKey()) {
+                        // 編集用キーが呼び出されたので、全ブロッカーを置く
+                        OUTPUT_STACK->pushNewLine();
+                    } else {
+                        historySearch(bManualTemporary);
+                    }
                 }
                 //bNoHistTemporary = false;
                 //bManualTemporary = false;
@@ -1243,7 +1263,7 @@ namespace {
 
         // ↓の処理 -- 次候補を返す
         void handleDownArrow() {
-            _LOG_DEBUGH(_T("CALLED: %s: bCandSelectable=%s"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable));
+            _LOG_DEBUGH(_T("ENTER: %s: bCandSelectable=%s"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable));
             if (SETTINGS->useArrowToSelCand && bCandSelectable) {
                 setCandSelectIsCalled();
                 getNextCandidate();
@@ -1251,11 +1271,12 @@ namespace {
                 _LOG_DEBUGH(_T("candSelectDeckey=%x"), candSelectDeckey);
                 HistoryStayState::handleDownArrow();
             }
+            _LOG_DEBUGH(_T("LEAVE"));
         }
 
         // ↑の処理 -- 前候補を返す
         void handleUpArrow() {
-            _LOG_DEBUGH(_T("CALLED: %s: bCandSelectable=%s"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable));
+            _LOG_DEBUGH(_T("ENTER: %s: bCandSelectable=%s"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable));
             if (SETTINGS->useArrowToSelCand && bCandSelectable) {
                 setCandSelectIsCalled();
                 getPrevCandidate();
@@ -1263,6 +1284,7 @@ namespace {
                 _LOG_DEBUGH(_T("candSelectDeckey=%x"), candSelectDeckey);
                 HistoryStayState::handleUpArrow();
             }
+            _LOG_DEBUGH(_T("LEAVE"));
         }
 
         // FullEscapeの処理 -- 履歴選択状態から抜けて、履歴検索文字列の遡及ブロッカーをセット
@@ -1321,11 +1343,12 @@ namespace {
         
         // RET/Enter の処理
         void handleEnter() {
-            _LOG_DEBUGH(_T("CALLED: %s: bCandSelectable=%s, selectPos=%d"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable), HIST_CAND->GetSelectPos());
+            _LOG_DEBUGH(_T("ENTER: %s: bCandSelectable=%s, selectPos=%d"), NAME_PTR, BOOL_TO_WPTR(bCandSelectable), HIST_CAND->GetSelectPos());
             if (SETTINGS->selectFirstCandByEnter && bCandSelectable && HIST_CAND->GetSelectPos() < 0) {
                 // 選択可能状態かつ候補未選択なら第1候補を返す。
-                _LOG_DEBUGH(_T("CALL: getNextCandidate()"));
-                getNextCandidate();
+                _LOG_DEBUGH(_T("CALL: getNextCandidate(false)"));
+                setCandSelectIsCalled();
+                getNextCandidate(false);
             } else if (bCandSelectable && HIST_CAND->GetSelectPos() >= 0) {
                 _LOG_DEBUGH(_T("CALL: HISTORY_STAY_NODE->ClearPrevHistState(); HIST_CAND->ClearKeyInfo(); bManualTemporary = true"));
                 // どれかの候補が選択されている状態なら、それを確定し、履歴キーをクリアしておく
@@ -1333,6 +1356,10 @@ namespace {
                 HIST_CAND->ClearKeyInfo();
                 // 一時的にマニュアル操作フラグを立てることで、DoOutStringProc() から historySearch() を呼ぶときに履歴再検索が実行されるようにする
                 bManualTemporary = true;
+                if (SETTINGS->newLineWhenHistEnter) {
+                    // 履歴候補選択時のEnterではつねに改行するなら、確定後、Enter処理を行う
+                    HistoryStayState::handleEnter();
+                }
             } else {
                 // それ以外は通常のEnter処理
                 _LOG_DEBUGH(_T("CALL: AddNewHistEntryOnEnter()"));
@@ -1407,15 +1434,15 @@ namespace {
 
     private:
         // 次の候補を返す処理
-        void getNextCandidate() {
+        void getNextCandidate(bool bSetVkb = true) {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            outputHistResult(HIST_CAND->GetNext());
+            outputHistResult(HIST_CAND->GetNext(), bSetVkb);
         }
 
         // 前の候補を返す処理
-        void getPrevCandidate() {
+        void getPrevCandidate(bool bSetVkb = true) {
             _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
-            outputHistResult(HIST_CAND->GetPrev());
+            outputHistResult(HIST_CAND->GetPrev(), bSetVkb);
         }
 
         // 選択のリセット
@@ -1426,7 +1453,7 @@ namespace {
         }
 
         // 履歴結果出力 (bSetVKb = false なら、仮想鍵盤表示を履歴選択モードにしない; 英数モードから履歴検索をした直後のESCのケース)
-        void outputHistResult(const HistResult& result, bool bSetVkb = true) {
+        void outputHistResult(const HistResult& result, bool bSetVkb) {
             _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
             getLastHistKeyAndRewindOutput();    // 前回の履歴検索キー取得と出力スタックの巻き戻し予約(numBackSpacesに値をセット)
 

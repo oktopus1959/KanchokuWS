@@ -44,6 +44,7 @@ struct Settings {
     //bool histSearchByCtrlSpace = false;     // Ctrl-Space で履歴検索を行う
     //bool histSearchByShiftSpace = false;    // Shift-Space で履歴検索を行う
     bool selectFirstCandByEnter = false;    // 履歴の第1候補をEnterキーで選択する
+    bool newLineWhenHistEnter = false;      // 履歴候補選択時のEnterではつねに改行する
     int histDelDeckeyId = 41;               // 履歴削除のDecKeyID
     int histNumDeckeyId = 45;               // 履歴文字数指定のDecKeyID
     size_t histHorizontalCandMax = 5;       // 履歴候補の横列鍵盤表示の際の最大数

@@ -67,6 +67,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     //SET_BOOL_VALUE(histSearchByCtrlSpace);
     //SET_BOOL_VALUE(histSearchByShiftSpace);
     SET_BOOL_VALUE(selectFirstCandByEnter);
+    SET_BOOL_VALUE(newLineWhenHistEnter);
     SET_INT_VALUE(histDelDeckeyId);
     SET_INT_VALUE(histNumDeckeyId);
     SET_UINT_VALUE(histHorizontalCandMax);
