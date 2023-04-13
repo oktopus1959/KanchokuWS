@@ -152,7 +152,7 @@ namespace {
     }
 
     MojiPair decomp_mchar(mchar_t m) {
-        return MojiPair{ m >> 16, m & 0xffff };
+        return MojiPair{ (wchar_t)(m >> 16), (wchar_t)(m & 0xffff) };
     }
 
     mchar_t make_mchar(wchar_t first, wchar_t second) {
