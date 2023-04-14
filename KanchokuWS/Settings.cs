@@ -384,6 +384,9 @@ namespace KanchokuWS
         /// <summary>第2打鍵をキャンセルするまでのする間隔(ミリ秒)</summary>
         public static int CancelSecondStrokeMillisec { get; private set; }
 
+        /// <summary>BSで文字削除してから書き換え文字列を出力するまでの待ち時間(ミリ秒)</summary>
+        //public static int AfterBSWaitMillisec { get; private set; }
+
         //-------------------------------------------------------------------------------------
         // 機能キー割当
         //-------------------------------------------------------------------------------------
@@ -811,6 +814,7 @@ namespace KanchokuWS
             public int[] VkbFixedPos;
             public int CtrlUpWaitMillisec = -1;
             public int CtrlDownWaitMillisec = -1;
+            public int AfterBSWaitMillisec = 0;
         }
 
         private static Dictionary<string, WindowsClassSettings> winClassSettings = new Dictionary<string, WindowsClassSettings>();
@@ -997,7 +1001,7 @@ namespace KanchokuWS
 
             LogLevel = GetLogLevel();
             LoggingDecKeyInfo = GetString("loggingDecKeyInfo")._parseBool();
-            //LoggingActiveWindowInfo = GetString("loggingActiveWindowInfo")._parseBool();
+            LoggingActiveWindowInfo = GetString("loggingActiveWindowInfo")._parseBool();
             LoggingVirtualKeyboardInfo = GetString("loggingVirtualKeyboardInfo")._parseBool();
             LoggingTableFileInfo = GetString("loggingTableFileInfo")._parseBool();
             MultiAppEnabled = IsMultiAppEnabled();
@@ -1208,6 +1212,7 @@ namespace KanchokuWS
             CtrlKeyUpGuardMillisec = GetString("ctrlKeyUpGuardMillisec")._parseInt(15)._lowLimit(0);
             //CtrlKeyDownGuardMillisec = GetString("ctrlKeyDownGuardMillisec")._parseInt(0)._lowLimit(0);     // これが 0 より大きいとCTRLキーDOWNと誤認識される可能性が高まる
             PreCtrlVGuardMillisec = GetString("preWmCharGuardMillisec")._parseInt(30)._lowLimit(0);
+            //AfterBSWaitMillisec = GetString("afterBSWaitMillisec")._parseInt(0)._lowLimit(0);
             ReductionExponet = GetString("reductionExponent")._parseDouble(0.7)._lowLimit(0.5);
 
             VirtualKeyboardMoveGuardMillisec = GetString("virtualKeyboardMoveGuardMillisec")._parseInt(500)._lowLimit(0);
@@ -1345,6 +1350,7 @@ namespace KanchokuWS
                         VkbFixedPos = parseIntArray(GetStringFromSection(name, "vkbFixedPos", "")),
                         CtrlUpWaitMillisec = GetStringFromSection(name, "ctrlUpWaitMillisec", "-1")._parseInt(-1),
                         CtrlDownWaitMillisec = GetStringFromSection(name, "ctrlDownWaitMillisec", "-1")._parseInt(-1),
+                        AfterBSWaitMillisec = GetStringFromSection(name, "afterBSWaitMillisec", "0")._parseInt(0),
                     };
                 }
             }

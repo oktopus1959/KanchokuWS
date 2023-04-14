@@ -672,21 +672,29 @@ namespace KanchokuWS.Handler
             return Settings.IsShiftLeftArrowDeleteComboUsed(numBS, ActiveWindowHandler.Singleton.ActiveWinClassName);
         }
 
+        private void waitAfterBS()
+        {
+            int millisec = Settings.GetWinClassSettings(ActiveWindowHandler.Singleton.ActiveWinClassName)?.AfterBSWaitMillisec ?? 0;
+            if (millisec > 0) Helper.WaitMilliSeconds(millisec);
+        }
+
         private void sendBackSpaces(int num, bool bDelete)
         {
             logger.DebugH(() => $"CALLED: len={num}, bDelete={bDelete}");
 
-            if (isShiftLeftArrowDeleteComboUsed(num)) {
-                logger.DebugH(() => $"SHIFT + LEFTARROW*{num} + DELETE");
-                // Shift下げ
-                var shiftState = downShiftKeyInputs();
-                // Vkey送出
-                sendInputsVkey((uint)Keys.Left, num);
-                if (bDelete) sendInputsVkey((uint)Keys.Delete, 1);
-                // Shift戻し
-                RevertShiftKey(shiftState);
-            } else {
-                sendInputsVkey((uint)Keys.Back, num);
+            if (num > 0) {
+                if (isShiftLeftArrowDeleteComboUsed(num)) {
+                    logger.DebugH(() => $"SHIFT + LEFTARROW*{num} + DELETE");
+                    // Shift下げ
+                    var shiftState = downShiftKeyInputs();
+                    // Vkey送出
+                    sendInputsVkey((uint)Keys.Left, num);
+                    if (bDelete) sendInputsVkey((uint)Keys.Delete, 1);
+                    // Shift戻し
+                    RevertShiftKey(shiftState);
+                } else {
+                    sendInputsVkey((uint)Keys.Back, num);
+                }
             }
         }
 
@@ -816,6 +824,7 @@ namespace KanchokuWS.Handler
 
             // 文字列
             if (strLen > 0) {
+                if (numBS > 0) waitAfterBS();
                 sendStringInputs(extractSubString(str._toString()));
             }
 
