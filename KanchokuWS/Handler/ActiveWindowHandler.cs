@@ -250,6 +250,8 @@ namespace KanchokuWS.Handler
             MoveMandatory = 2,
         }
 
+        public bool IsVkbWinActive { get; private set; } = false;
+
         public void GetActiveWindowInfo(Action<bool, bool, bool> actionMoveWindow, FrmVirtualKeyboard frmVkb)
         {
             getActiveWindowInfo(actionMoveWindow, frmVkb, MoveWinType.MoveIfAny, Settings.LoggingActiveWindowInfo /*&& Logger.IsDebugEnabled*/);
@@ -296,7 +298,8 @@ namespace KanchokuWS.Handler
                     GetActiveWindowHandle(bLog);
                     bOK = true;
                     bDiffWin = ActiveWinClassName._ne(prevClassName);
-                    if (bDiffWin && frmVkb != null && !frmVkb.IsMyWinClassName(ActiveWinClassName)) {
+                    IsVkbWinActive = frmVkb.IsMyWinClassName(ActiveWinClassName);
+                    if (bDiffWin && frmVkb != null && !IsVkbWinActive) {
                         // 直前のものとクラス名が異なっていれば、それを仮想鍵盤上部に表示する (ただし、仮想鍵盤自身を除く)
                         frmVkb.SetTopText(ActiveWinClassName);
                     }

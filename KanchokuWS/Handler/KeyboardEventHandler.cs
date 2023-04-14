@@ -569,6 +569,9 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool onKeyboardDownHandler(uint vkey, int scanCode, uint flags, int extraInfo)
         {
+            // VirtualKeyboard がActiveの場合は、システムに返す
+            if (ActiveWindowHandler.Singleton.IsVkbWinActive) return false;
+
             // Pauseで一時停止?
             if (Settings.SuspendByPauseKey && vkey == (uint)Keys.Pause) {
                 frmKanchoku?.DecoderSuspendToggle();
@@ -919,6 +922,9 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool onKeyboardUpHandler(uint vkey, int scanCode, uint flags, int extraInfo)
         {
+            // VirtualKeyboard がActiveの場合は、システムに返す
+            if (ActiveWindowHandler.Singleton.IsVkbWinActive) return false;
+
             // Pauseで一時停止?
             if (Settings.SuspendByPauseKey && vkey == (uint)Keys.Pause) {
                 return true;

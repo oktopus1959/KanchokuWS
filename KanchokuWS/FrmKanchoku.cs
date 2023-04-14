@@ -2195,7 +2195,7 @@ namespace KanchokuWS
                     initialSettingsDialogOpened = true; // 今回限りの起動とする
                     openSettingsDialog(true);
                 }
-                ActiveWindowHandler.Singleton.GetActiveWindowInfo(moveVkbWindow, frmVkb);
+                if (frmSplash == null) ActiveWindowHandler.Singleton.GetActiveWindowInfo(moveVkbWindow, frmVkb);
                 activeWinInfoCount = Settings.GetActiveWindowInfoIntervalMillisec / timerInterval;
             }
 

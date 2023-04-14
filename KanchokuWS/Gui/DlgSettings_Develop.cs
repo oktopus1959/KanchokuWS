@@ -62,8 +62,8 @@ namespace KanchokuWS.Gui
             Logger.LogLevel = comboBox_logLevel.SelectedIndex;
             Settings.SetUserIni("loggingDecKeyInfo", checkBox_loggingDecKeyInfo.Checked);
             Settings.SetUserIni("bushuDicLogEnabled", checkBox_bushuDicLogEnabled.Checked);
-            //Settings.SetUserIni("loggingActiveWindowInfo", checkBox_loggingActiveWindowInfo.Checked);
-            Settings.LoggingActiveWindowInfo = checkBox_loggingActiveWindowInfo.Checked;
+            Settings.SetUserIni("loggingActiveWindowInfo", checkBox_loggingActiveWindowInfo.Checked);
+            //Settings.LoggingActiveWindowInfo = checkBox_loggingActiveWindowInfo.Checked;
             Settings.SetUserIni("loggingVirtualKeyboardInfo", checkBox_loggingVirtualKeyboardInfo.Checked);
             Settings.SetUserIni("loggingTableFileInfo", checkBox_loggingTableFileInfo.Checked);
             Settings.SetUserIni("outputDebugTableFiles", checkBox_outputDebugTableFiles.Checked);

@@ -463,6 +463,8 @@ namespace KanchokuWS
             int cellWidth = (int)VkbNormalWidth - 1;
             int cellHeight = (int)VkbCellHeight;
             dgv.RowTemplate.Height = cellHeight;
+            if (dgv.Columns.Count <= 0) return;
+
             if (dgv.Columns.Count > 0) { dgv.Columns[0].Width = cellWidth; }
             if (renewHorizontalFontInfo()) { dgv._setDefaultFont(horizontalFontInfo.MyFont); }
             //dgv.Top = topTextBox.Top + topTextBox.Height - 1;
@@ -1860,5 +1862,14 @@ namespace KanchokuWS
             frmMain.KanaTrainingModeToggle();
         }
 
+        private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            topTextBox.Copy();
+        }
+
+        private void contextMenuStrip2_Opened(object sender, EventArgs e)
+        {
+            topTextBox.SelectAll();
+        }
     }
 }

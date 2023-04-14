@@ -30,6 +30,10 @@ namespace Utils
             switch (e.KeyChar) {
                 case '\u0003':
                     //Ctrl-C
+                    if (Text._notEmpty() && SelectionLength <= 0) {
+                        Clipboard.SetText(Text);
+                        e.Handled = true;
+                    }
                     return;
                 case '\u0016':
                     //Ctrl-V
