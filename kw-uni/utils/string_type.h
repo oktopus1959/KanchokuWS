@@ -13,7 +13,8 @@ typedef std::string tstring;
 typedef char char_t;
 #endif
 
-typedef uint32_t mchar_t;
+//typedef uint32_t mchar_t;
+typedef char32_t mchar_t;
 
 typedef std::basic_string<mchar_t> MString;
 

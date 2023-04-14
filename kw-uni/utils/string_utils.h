@@ -507,6 +507,7 @@ namespace utils
     }
 
     inline size_t get_hash(const MString& s) {
+        //return std::hash<const mchar_t*>()(s.c_str());
         return std::hash<MString>()(s);
     }
 
