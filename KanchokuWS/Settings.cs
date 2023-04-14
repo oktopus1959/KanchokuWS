@@ -1130,7 +1130,7 @@ namespace KanchokuWS
             NumBSforShiftLeftArrowDelete = GetString("numBSforShiftLeftArrowDelete")._parseInt(0)._lowLimit(0);
 
             // N文字以上の削除にBSではなく Shift+LeftArrow+Deleteを使うウィンドウ
-            ShiftLeftArrowDeleteClassNames = GetString("shiftLeftArrowDeleteClassNames", "_WwG").Trim();
+            ShiftLeftArrowDeleteClassNames = GetString("shiftLeftArrowDeleteClassNames").Trim();
             ShiftLeftArrowDeleteClassNamesHash = new HashSet<string>(ShiftLeftArrowDeleteClassNames._toLower()._split('|'));
 
             // 自身以外のキーボードフックツールからの出力を無視する

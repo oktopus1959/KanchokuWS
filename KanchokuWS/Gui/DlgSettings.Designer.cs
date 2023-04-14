@@ -94,9 +94,6 @@ namespace KanchokuWS.Gui
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tabPage_advanced = new System.Windows.Forms.TabPage();
-            this.groupBox33 = new System.Windows.Forms.GroupBox();
-            this.textBox_shiftLeftArrowDeleteClassNames = new System.Windows.Forms.TextBox();
-            this.textBox_numBSforShiftLeftArrowDelete = new System.Windows.Forms.TextBox();
             this.groupBox51 = new System.Windows.Forms.GroupBox();
             this.checkBox_duplicateWarningEnabled = new System.Windows.Forms.CheckBox();
             this.groupBox28 = new System.Windows.Forms.GroupBox();
@@ -379,6 +376,7 @@ namespace KanchokuWS.Gui
             this.checkBox_mazeBlockerTail = new System.Windows.Forms.CheckBox();
             this.checkBox_mazegakiSelectFirstCand = new System.Windows.Forms.CheckBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.checkBox_newLineWhenHistEnter = new System.Windows.Forms.CheckBox();
             this.checkBox_selectHistCandByTab = new System.Windows.Forms.CheckBox();
             this.label111 = new System.Windows.Forms.Label();
             this.checkBox_useArrowKeyToSelectCand = new System.Windows.Forms.CheckBox();
@@ -386,7 +384,6 @@ namespace KanchokuWS.Gui
             this.label43 = new System.Windows.Forms.Label();
             this.comboBox_histDelDeckeyId = new System.Windows.Forms.ComboBox();
             this.label42 = new System.Windows.Forms.Label();
-            this.checkBox_selectFirstCandByEnter = new System.Windows.Forms.CheckBox();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
             this.label121 = new System.Windows.Forms.Label();
             this.textBox_histMaxLength = new System.Windows.Forms.TextBox();
@@ -405,6 +402,7 @@ namespace KanchokuWS.Gui
             this.textBox_histKatakanaKeyLen = new System.Windows.Forms.TextBox();
             this.textBox_histHiraganaKeyLen = new System.Windows.Forms.TextBox();
             this.checkBox_historySearchKey = new System.Windows.Forms.CheckBox();
+            this.checkBox_selectFirstCandByEnter = new System.Windows.Forms.CheckBox();
             this.checkBox_autoHistEnabled = new System.Windows.Forms.CheckBox();
             this.label21 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
@@ -547,7 +545,6 @@ namespace KanchokuWS.Gui
             this.textBox_alphaModeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.Gui.ColorTextBox();
-            this.checkBox_newLineWhenHistEnter = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -555,7 +552,6 @@ namespace KanchokuWS.Gui
             this.groupBox13.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPage_advanced.SuspendLayout();
-            this.groupBox33.SuspendLayout();
             this.groupBox51.SuspendLayout();
             this.groupBox28.SuspendLayout();
             this.groupBox41.SuspendLayout();
@@ -1484,7 +1480,6 @@ namespace KanchokuWS.Gui
             // 
             // tabPage_advanced
             // 
-            this.tabPage_advanced.Controls.Add(this.groupBox33);
             this.tabPage_advanced.Controls.Add(this.groupBox51);
             this.tabPage_advanced.Controls.Add(this.groupBox28);
             this.tabPage_advanced.Controls.Add(this.groupBox41);
@@ -1503,50 +1498,13 @@ namespace KanchokuWS.Gui
             this.tabPage_advanced.ToolTipText = "より詳細・高度な情報・振る舞いの設定";
             this.tabPage_advanced.UseVisualStyleBackColor = true;
             // 
-            // groupBox33
-            // 
-            this.groupBox33.Controls.Add(this.textBox_shiftLeftArrowDeleteClassNames);
-            this.groupBox33.Controls.Add(this.textBox_numBSforShiftLeftArrowDelete);
-            this.groupBox33.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox33.Location = new System.Drawing.Point(329, 79);
-            this.groupBox33.Name = "groupBox33";
-            this.groupBox33.Size = new System.Drawing.Size(306, 68);
-            this.groupBox33.TabIndex = 4;
-            this.groupBox33.TabStop = false;
-            this.groupBox33.Text = "　　 文字以上の削除に Shif+左矢印+Delを使うウィンドウ";
-            // 
-            // textBox_shiftLeftArrowDeleteClassNames
-            // 
-            this.textBox_shiftLeftArrowDeleteClassNames.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_shiftLeftArrowDeleteClassNames.Location = new System.Drawing.Point(29, 21);
-            this.textBox_shiftLeftArrowDeleteClassNames.Multiline = true;
-            this.textBox_shiftLeftArrowDeleteClassNames.Name = "textBox_shiftLeftArrowDeleteClassNames";
-            this.textBox_shiftLeftArrowDeleteClassNames.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox_shiftLeftArrowDeleteClassNames.Size = new System.Drawing.Size(270, 40);
-            this.textBox_shiftLeftArrowDeleteClassNames.TabIndex = 8;
-            this.toolTip1.SetToolTip(this.textBox_shiftLeftArrowDeleteClassNames, "ここに、指定文字以上の削除に Shift + ← + Delete を使うウィンドウの\r\nClassNameを列挙します。\r\n\r\n1行1エントリで記述します。(C" +
-        "trl+Enter で改行)\r\n\r\nWord の場合は _WwG を指定します。");
-            // 
-            // textBox_numBSforShiftLeftArrowDelete
-            // 
-            this.textBox_numBSforShiftLeftArrowDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_numBSforShiftLeftArrowDelete.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_numBSforShiftLeftArrowDelete.Location = new System.Drawing.Point(8, 0);
-            this.textBox_numBSforShiftLeftArrowDelete.Name = "textBox_numBSforShiftLeftArrowDelete";
-            this.textBox_numBSforShiftLeftArrowDelete.Size = new System.Drawing.Size(27, 19);
-            this.textBox_numBSforShiftLeftArrowDelete.TabIndex = 0;
-            this.textBox_numBSforShiftLeftArrowDelete.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.toolTip1.SetToolTip(this.textBox_numBSforShiftLeftArrowDelete, "交ぜ書き変換や英字列置換の際の文字列削除に、 BS ではなく\r\nShift + ← + Delete を使う場合の文字数を指定します。\r\n\r\nWord など、 B" +
-        "S による文字削除が遅い場合に指定してください。\r\n\r\n0 の場合は、必ず BS が用いられます。");
-            // 
             // groupBox51
             // 
             this.groupBox51.Controls.Add(this.checkBox_duplicateWarningEnabled);
-            this.groupBox51.Location = new System.Drawing.Point(329, 289);
+            this.groupBox51.Location = new System.Drawing.Point(329, 260);
             this.groupBox51.Name = "groupBox51";
-            this.groupBox51.Size = new System.Drawing.Size(258, 46);
-            this.groupBox51.TabIndex = 7;
+            this.groupBox51.Size = new System.Drawing.Size(306, 46);
+            this.groupBox51.TabIndex = 6;
             this.groupBox51.TabStop = false;
             this.groupBox51.Text = "テーブルファイル読み込み時の重複チェック";
             // 
@@ -1570,10 +1528,10 @@ namespace KanchokuWS.Gui
             this.groupBox28.Controls.Add(this.textBox_saveDictsIntervalTime);
             this.groupBox28.Controls.Add(this.textBox_backFileRotationGeneration);
             this.groupBox28.Controls.Add(this.label57);
-            this.groupBox28.Location = new System.Drawing.Point(329, 152);
+            this.groupBox28.Location = new System.Drawing.Point(329, 77);
             this.groupBox28.Name = "groupBox28";
             this.groupBox28.Size = new System.Drawing.Size(306, 80);
-            this.groupBox28.TabIndex = 5;
+            this.groupBox28.TabIndex = 3;
             this.groupBox28.TabStop = false;
             this.groupBox28.Text = "辞書ファイル";
             // 
@@ -1656,10 +1614,10 @@ namespace KanchokuWS.Gui
             // groupBox41
             // 
             this.groupBox41.Controls.Add(this.checkBox_ignoreOtherHooker);
-            this.groupBox41.Location = new System.Drawing.Point(329, 238);
+            this.groupBox41.Location = new System.Drawing.Point(329, 210);
             this.groupBox41.Name = "groupBox41";
-            this.groupBox41.Size = new System.Drawing.Size(258, 44);
-            this.groupBox41.TabIndex = 6;
+            this.groupBox41.Size = new System.Drawing.Size(306, 44);
+            this.groupBox41.TabIndex = 5;
             this.groupBox41.TabStop = false;
             this.groupBox41.Text = "他のキー変換ツールとの競合解消";
             // 
@@ -1913,7 +1871,7 @@ namespace KanchokuWS.Gui
             this.groupBox26.Location = new System.Drawing.Point(329, 8);
             this.groupBox26.Name = "groupBox26";
             this.groupBox26.Size = new System.Drawing.Size(306, 63);
-            this.groupBox26.TabIndex = 3;
+            this.groupBox26.TabIndex = 2;
             this.groupBox26.TabStop = false;
             this.groupBox26.Text = "クリップボード経由の文字送出";
             // 
@@ -1963,10 +1921,10 @@ namespace KanchokuWS.Gui
             this.groupBox16.Controls.Add(this.textBox_deckeyInfiniteLoopDetectCount);
             this.groupBox16.Controls.Add(this.label33);
             this.groupBox16.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox16.Location = new System.Drawing.Point(7, 330);
+            this.groupBox16.Location = new System.Drawing.Point(329, 164);
             this.groupBox16.Name = "groupBox16";
             this.groupBox16.Size = new System.Drawing.Size(306, 40);
-            this.groupBox16.TabIndex = 2;
+            this.groupBox16.TabIndex = 4;
             this.groupBox16.TabStop = false;
             this.groupBox16.Text = "無限ループ検出";
             // 
@@ -4764,6 +4722,18 @@ namespace KanchokuWS.Gui
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "履歴選択・削除";
             // 
+            // checkBox_newLineWhenHistEnter
+            // 
+            this.checkBox_newLineWhenHistEnter.AutoSize = true;
+            this.checkBox_newLineWhenHistEnter.Location = new System.Drawing.Point(20, 18);
+            this.checkBox_newLineWhenHistEnter.Name = "checkBox_newLineWhenHistEnter";
+            this.checkBox_newLineWhenHistEnter.Size = new System.Drawing.Size(213, 19);
+            this.checkBox_newLineWhenHistEnter.TabIndex = 0;
+            this.checkBox_newLineWhenHistEnter.Text = "Enterキーで選択確定と同時に改行する";
+            this.toolTip1.SetToolTip(this.checkBox_newLineWhenHistEnter, "履歴検索で横列表示された候補が選択されている状態の時、\r\nEnterキーで選択確定と同時に改行も行うか否かを設定します。\r\n\r\n当設定をOFFにすると、選択確定は" +
+        "しますが、改行は出力されません。\r\n");
+            this.checkBox_newLineWhenHistEnter.UseVisualStyleBackColor = true;
+            // 
             // checkBox_selectHistCandByTab
             // 
             this.checkBox_selectHistCandByTab.AutoSize = true;
@@ -4853,19 +4823,6 @@ namespace KanchokuWS.Gui
             this.label42.Size = new System.Drawing.Size(130, 15);
             this.label42.TabIndex = 18;
             this.label42.Text = "履歴削除キーの漢直コード";
-            // 
-            // checkBox_selectFirstCandByEnter
-            // 
-            this.checkBox_selectFirstCandByEnter.AutoSize = true;
-            this.checkBox_selectFirstCandByEnter.Location = new System.Drawing.Point(40, 100);
-            this.checkBox_selectFirstCandByEnter.Name = "checkBox_selectFirstCandByEnter";
-            this.checkBox_selectFirstCandByEnter.Size = new System.Drawing.Size(180, 19);
-            this.checkBox_selectFirstCandByEnter.TabIndex = 4;
-            this.checkBox_selectFirstCandByEnter.Text = "Enterキーで先頭候補を選択する";
-            this.toolTip1.SetToolTip(this.checkBox_selectFirstCandByEnter, "自動履歴検索で横列表示された候補の先頭候補を\nEnterキーで選択するかを設定します。\n\n当設定をOFFに設定してあるのに、つい選択するつもりで\nEnterを押し" +
-        "てしまった場合は、出力先ウィンドウでEnter前の\n位置にカレットを移動させてからブロッカーを解除して手動で\n履歴検索を実行してください。\n\nなお、履歴候補が縦" +
-        "列表示されている状態では、先頭候補が\nEnterキーで選択されます。");
-            this.checkBox_selectFirstCandByEnter.UseVisualStyleBackColor = true;
             // 
             // groupBox14
             // 
@@ -5078,6 +5035,19 @@ namespace KanchokuWS.Gui
         "tNext, HistPrev の呼び出しを\n設定することでも可能です。");
             this.checkBox_historySearchKey.UseVisualStyleBackColor = true;
             this.checkBox_historySearchKey.CheckedChanged += new System.EventHandler(this.checkBox_historySearchKey_CheckedChanged);
+            // 
+            // checkBox_selectFirstCandByEnter
+            // 
+            this.checkBox_selectFirstCandByEnter.AutoSize = true;
+            this.checkBox_selectFirstCandByEnter.Location = new System.Drawing.Point(40, 100);
+            this.checkBox_selectFirstCandByEnter.Name = "checkBox_selectFirstCandByEnter";
+            this.checkBox_selectFirstCandByEnter.Size = new System.Drawing.Size(180, 19);
+            this.checkBox_selectFirstCandByEnter.TabIndex = 4;
+            this.checkBox_selectFirstCandByEnter.Text = "Enterキーで先頭候補を選択する";
+            this.toolTip1.SetToolTip(this.checkBox_selectFirstCandByEnter, "自動履歴検索で横列表示された候補の先頭候補を\nEnterキーで選択するかを設定します。\n\n当設定をOFFに設定してあるのに、つい選択するつもりで\nEnterを押し" +
+        "てしまった場合は、出力先ウィンドウでEnter前の\n位置にカレットを移動させてからブロッカーを解除して手動で\n履歴検索を実行してください。\n\nなお、履歴候補が縦" +
+        "列表示されている状態では、先頭候補が\nEnterキーで選択されます。");
+            this.checkBox_selectFirstCandByEnter.UseVisualStyleBackColor = true;
             // 
             // checkBox_autoHistEnabled
             // 
@@ -6777,18 +6747,6 @@ namespace KanchokuWS.Gui
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
-            // checkBox_newLineWhenHistEnter
-            // 
-            this.checkBox_newLineWhenHistEnter.AutoSize = true;
-            this.checkBox_newLineWhenHistEnter.Location = new System.Drawing.Point(20, 18);
-            this.checkBox_newLineWhenHistEnter.Name = "checkBox_newLineWhenHistEnter";
-            this.checkBox_newLineWhenHistEnter.Size = new System.Drawing.Size(213, 19);
-            this.checkBox_newLineWhenHistEnter.TabIndex = 0;
-            this.checkBox_newLineWhenHistEnter.Text = "Enterキーで選択確定と同時に改行する";
-            this.toolTip1.SetToolTip(this.checkBox_newLineWhenHistEnter, "履歴検索で横列表示された候補が選択されている状態の時、\r\nEnterキーで選択確定と同時に改行も行うか否かを設定します。\r\n\r\n当設定をOFFにすると、選択確定は" +
-        "しますが、改行は出力されません。\r\n");
-            this.checkBox_newLineWhenHistEnter.UseVisualStyleBackColor = true;
-            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -6817,8 +6775,6 @@ namespace KanchokuWS.Gui
             this.groupBox1.PerformLayout();
             this.tabPage_advanced.ResumeLayout(false);
             this.tabPage_advanced.PerformLayout();
-            this.groupBox33.ResumeLayout(false);
-            this.groupBox33.PerformLayout();
             this.groupBox51.ResumeLayout(false);
             this.groupBox51.PerformLayout();
             this.groupBox28.ResumeLayout(false);
@@ -7450,9 +7406,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.CheckBox checkBox_suspendByPauseKey;
         private System.Windows.Forms.CheckBox checkBox_showEisuVkb;
         private System.Windows.Forms.Button button_defaultLogLevel;
-        private System.Windows.Forms.GroupBox groupBox33;
-        private System.Windows.Forms.TextBox textBox_shiftLeftArrowDeleteClassNames;
-        private System.Windows.Forms.TextBox textBox_numBSforShiftLeftArrowDelete;
         private System.Windows.Forms.CheckBox checkBox_newLineWhenHistEnter;
     }
 }
