@@ -1871,5 +1871,11 @@ namespace KanchokuWS
         {
             topTextBox.SelectAll();
         }
+
+        private void PasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            topTextBox.Paste();
+            if (topTextBox.Text._notEmpty()) sendWord(topTextBox.Text);
+        }
     }
 }

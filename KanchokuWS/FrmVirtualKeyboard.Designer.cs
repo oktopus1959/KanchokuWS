@@ -46,16 +46,17 @@ namespace KanchokuWS
             this.終了ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.pictureBox_Main = new System.Windows.Forms.PictureBox();
-            this.dgvHorizontal = new System.Windows.Forms.DataGridView();
-            this.pictureBox_measureFontSize = new System.Windows.Forms.PictureBox();
+            this.topTextBox = new Utils.TextBoxRO();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.topTextBox = new Utils.TextBoxRO();
+            this.dgvHorizontal = new System.Windows.Forms.DataGridView();
+            this.pictureBox_measureFontSize = new System.Windows.Forms.PictureBox();
+            this.PasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Main)).BeginInit();
+            this.contextMenuStrip2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvHorizontal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_measureFontSize)).BeginInit();
-            this.contextMenuStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
@@ -196,6 +197,34 @@ namespace KanchokuWS
             this.pictureBox_Main.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_Main_MouseDown);
             this.pictureBox_Main.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_Main_MouseMove);
             // 
+            // topTextBox
+            // 
+            this.topTextBox.actionOnPaste = null;
+            this.topTextBox.ContextMenuStrip = this.contextMenuStrip2;
+            this.topTextBox.Location = new System.Drawing.Point(1, 1);
+            this.topTextBox.Name = "topTextBox";
+            this.topTextBox.Size = new System.Drawing.Size(201, 19);
+            this.topTextBox.TabIndex = 29;
+            this.topTextBox.TabStop = false;
+            this.toolTip1.SetToolTip(this.topTextBox, "ここに文字列をペーストすると以下のアクションを実行します。\r\n　1文字：ストロークヘルプの表示\r\n　■=□□…：■に対して□□…部首連想(エイリアス)を定義\r\n　" +
+        "上記以外の文字列：入力履歴への強制登録(削除マークを無視)");
+            // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CopyToolStripMenuItem,
+            this.PasteToolStripMenuItem});
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuStrip2.Opened += new System.EventHandler(this.contextMenuStrip2_Opened);
+            // 
+            // CopyToolStripMenuItem
+            // 
+            this.CopyToolStripMenuItem.Name = "CopyToolStripMenuItem";
+            this.CopyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.CopyToolStripMenuItem.Text = "コピ－";
+            this.CopyToolStripMenuItem.Click += new System.EventHandler(this.CopyToolStripMenuItem_Click);
+            // 
             // dgvHorizontal
             // 
             this.dgvHorizontal.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -217,32 +246,12 @@ namespace KanchokuWS
             this.pictureBox_measureFontSize.TabStop = false;
             this.pictureBox_measureFontSize.Visible = false;
             // 
-            // contextMenuStrip2
+            // PasteToolStripMenuItem
             // 
-            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CopyToolStripMenuItem});
-            this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(181, 48);
-            this.contextMenuStrip2.Opened += new System.EventHandler(this.contextMenuStrip2_Opened);
-            // 
-            // CopyToolStripMenuItem
-            // 
-            this.CopyToolStripMenuItem.Name = "CopyToolStripMenuItem";
-            this.CopyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.CopyToolStripMenuItem.Text = "コピ－";
-            this.CopyToolStripMenuItem.Click += new System.EventHandler(this.CopyToolStripMenuItem_Click);
-            // 
-            // topTextBox
-            // 
-            this.topTextBox.actionOnPaste = null;
-            this.topTextBox.ContextMenuStrip = this.contextMenuStrip2;
-            this.topTextBox.Location = new System.Drawing.Point(1, 1);
-            this.topTextBox.Name = "topTextBox";
-            this.topTextBox.Size = new System.Drawing.Size(201, 19);
-            this.topTextBox.TabIndex = 29;
-            this.topTextBox.TabStop = false;
-            this.toolTip1.SetToolTip(this.topTextBox, "ここに文字列をペーストすると以下のアクションを実行します。\r\n　1文字：ストロークヘルプの表示\r\n　■=□□…：■に対して□□…部首連想(エイリアス)を定義\r\n　" +
-        "上記以外の文字列：入力履歴への強制登録(削除マークを無視)");
+            this.PasteToolStripMenuItem.Name = "PasteToolStripMenuItem";
+            this.PasteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.PasteToolStripMenuItem.Text = "貼り付け";
+            this.PasteToolStripMenuItem.Click += new System.EventHandler(this.PasteToolStripMenuItem_Click);
             // 
             // FrmVirtualKeyboard
             // 
@@ -267,9 +276,9 @@ namespace KanchokuWS
             this.VisibleChanged += new System.EventHandler(this.DlgVirtualKeyboard_VisibleChanged);
             this.contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Main)).EndInit();
+            this.contextMenuStrip2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvHorizontal)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_measureFontSize)).EndInit();
-            this.contextMenuStrip2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -298,5 +307,6 @@ namespace KanchokuWS
         private System.Windows.Forms.ToolStripMenuItem KanaTrainingMode_ToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem CopyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem PasteToolStripMenuItem;
     }
 }
