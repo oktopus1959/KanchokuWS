@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 def make_toc_line(s)
-    return "[#{s}](\##{s.gsub(/ +/, '-').gsub(/[.,()\/、。「」]/,'')})"
+    return "[#{s}](\##{s.gsub(/ +/, '-').gsub(/[.,()\/、。・「」]/,'')})"
 end
 
 while line = gets

@@ -4,8 +4,7 @@
 KanchokuWS (漢直WS) は、[漢直Win（漢直窓）](https://github.com/kanchoku/kw)の使い勝手を受け継ぎ、
 かつ、利用者を徹底的に甘やかすことを目標として新たに開発された、
 Windows 用の漢字直接入力ツールです。
-また、複数キーの同時打鍵もサポートしているので、
-各種かな配列の実装プラットフォーム(エミュレータ)として利用することもできます。
+また、英字配列や各種かな配列の実装プラットフォーム(エミュレータ)として利用することもできます。
 
 本書は 漢直WS のインストール、起動および終了について説明したものです。
 やりたいことから調べるには[FAQ](FAQ.md)を、
@@ -85,11 +84,14 @@ zipファイルをダウンロードして展開した直後には、以下の�
 
 ![Kw Uni Error](image/kw-uni-error.png)
 
-この場合は、「vc_redist.x86 download」で検索をしてヒットする Microsoft のサイト
-（2021年9月19日現在だと「[最新のサポートされる Visual C++ のダウンロード](https://support.microsoft.com/ja-jp/topic/%E6%9C%80%E6%96%B0%E3%81%AE%E3%82%B5%E3%83%9D%E3%83%BC%E3%83%88%E3%81%95%E3%82%8C%E3%82%8B-visual-c-%E3%81%AE%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89-2647da03-1eea-4433-9aff-95f26a218cc0)」）
-から、x86用の Visual C++ 再頒布可能パッケージ (vc_redist.x86.exe)をダウンロードして、
+
+この場合は、「[vc_redist.x86.exe](https://aka.ms/vs/17/release/vc_redist.x86.exe)」をダウンロードして、
 インストールしてください。
-これは VC++ で作成されたプログラムを実行する際に必要となるもので、Microsoft社が提供しているものです。
+これは Visual C++ で作成されたプログラムを実行するのに必要なパッケージで、Microsoft社が提供しているものです。
+
+詳細については、「vc_redist.x86 download」で検索をしてヒットする Microsoft のサイト
+（2023年4月15日現在だと「[最新のサポートされる Visual C++ 再頒布可能パッケージのダウンロード](https://learn.microsoft.com/ja-jp/cpp/windows/latest-supported-vc-redist?view=msvc-170)」）
+を参照してください。
 
 ![Vc Redist.X86](image/vc_redist.x86.png)
 
