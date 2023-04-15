@@ -569,9 +569,6 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool onKeyboardDownHandler(uint vkey, int scanCode, uint flags, int extraInfo)
         {
-            // VirtualKeyboard がActiveの場合は、システムに返す
-            if (ActiveWindowHandler.Singleton.IsVkbWinActive) return false;
-
             // Pauseで一時停止?
             if (Settings.SuspendByPauseKey && vkey == (uint)Keys.Pause) {
                 frmKanchoku?.DecoderSuspendToggle();
@@ -841,6 +838,9 @@ namespace KanchokuWS.Handler
                 logger.InfoH(() => $"ENTER: kanchokuCode={kanchokuCode}, normalDecKey={normalDecKey}, mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
             }
 
+            // 漢直トグルでなく、VirtualKeyboard がActiveの場合は、システムに返す
+            if (kanchokuCode < 0 && ActiveWindowHandler.Singleton.IsVkbWinActive) return false;
+
             if (kanchokuCode < 0 && modEx != 0 && !ctrl && !shift) {
                 // 拡張シフトが有効なのは、Ctrlキーが押されておらず、Shiftも押されていないか、Shift+SpaceをSandSとして扱わない場合とする
                 kanchokuCode = KeyComboRepository.GetModConvertedDecKeyFromCombo(modEx, normalDecKey);
@@ -922,9 +922,6 @@ namespace KanchokuWS.Handler
         /// <returns>キー入力を破棄する場合は true を返す。flase を返すとシステム側でキー入力処理が行われる</returns>
         private bool onKeyboardUpHandler(uint vkey, int scanCode, uint flags, int extraInfo)
         {
-            // VirtualKeyboard がActiveの場合は、システムに返す
-            if (ActiveWindowHandler.Singleton.IsVkbWinActive) return false;
-
             // Pauseで一時停止?
             if (Settings.SuspendByPauseKey && vkey == (uint)Keys.Pause) {
                 return true;
@@ -1064,6 +1061,9 @@ namespace KanchokuWS.Handler
                     return false;
                 }
             }
+
+            // VirtualKeyboard がActiveの場合は、システムに返す
+            if (ActiveWindowHandler.Singleton.IsVkbWinActive) return false;
 
             keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, modFlag);
             return false;
