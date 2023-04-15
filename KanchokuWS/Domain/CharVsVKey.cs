@@ -493,7 +493,7 @@ namespace KanchokuWS.Domain
         /// <summary>文字コードから、その仮想キーコードを得る</summary>
         public static uint getCharToVKey(char ch, int deckey = -1)
         {
-            if (ch == '\\' && deckey != DecoderKeyVsChar.YenDecKey && DecoderKeyVsVKey.IsJPmode) return (uint)Keys.Oem102;
+            if (ch == '\\' && deckey >= 0 && DecoderKeyVsChar.YenDecKey >= 0 && deckey != DecoderKeyVsChar.YenDecKey && DecoderKeyVsVKey.IsJPmode) return (uint)Keys.Oem102;
             return (DecoderKeyVsVKey.IsJPmode ?  charToVkeyJP : charToVkeyUS)._safeGet(ch);
         }
 

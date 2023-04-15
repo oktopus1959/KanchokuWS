@@ -578,7 +578,9 @@ namespace KanchokuWS.Handler
             if (Settings.DecoderSuspended) return false;
 
             if (Settings.LoggingDecKeyInfo) {
-                logger.InfoH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}\n" + keyInfoManager.modifiersStateStr());
+                logger.InfoH(() =>
+                    $"\nENTER: IsVkbWinActive={ActiveWindowHandler.Singleton.IsVkbWinActive}, vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}\n" +
+                    keyInfoManager.modifiersStateStr());
             }
 
             if (DecoderKeyVsVKey.IsUSonJPmode || DecoderKeyVsVKey.IsEisuDisabled) {
@@ -929,7 +931,10 @@ namespace KanchokuWS.Handler
             // 一時停止?
             if (Settings.DecoderSuspended) return false;
 
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"\nENTER: vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
+            if (Settings.LoggingDecKeyInfo) {
+                logger.InfoH(() =>
+                    $"\nENTER: IsVkbWinActive={ActiveWindowHandler.Singleton.IsVkbWinActive}, vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
+            }
 
             // 半/全キーは、US-on-JP モードなら true(入力破棄; つまり無視) JPモードなら false (システム処理; つまりIMEのON/OFF)を返す
             if (vkey == 0xf3 || vkey == 0xf4) return DecoderKeyVsVKey.IsUSonJPmode;
