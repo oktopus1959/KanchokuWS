@@ -168,11 +168,19 @@ namespace KanchokuWS
             Opacity = 0;
 
             DpiChanged += dpiChangedHandler;
+
+            //Microsoft.Win32.SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         }
 
         private void dpiChangedHandler(object sender, DpiChangedEventArgs e)
         {
             logger.InfoH(() => $"CALLED: new dpi={e.DeviceDpiNew}");
+        }
+
+        private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
+        {
+            logger.InfoH("CALLED");
+            ScreenInfo.Singleton?.GetScreenInfo();
         }
 
         //------------------------------------------------------------------

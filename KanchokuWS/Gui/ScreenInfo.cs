@@ -33,7 +33,7 @@ namespace KanchokuWS.Gui
             return Singleton;
         }
             
-        private void GetScreenInfo()
+        public void GetScreenInfo()
         {
             ScreenRects = Screen.AllScreens.Select(s => new Rectangle(s.Bounds.X, s.Bounds.Y, s.Bounds.Width, s.Bounds.Height)).ToList();
             ScreenDpi = Screen.AllScreens.Select(s => {
