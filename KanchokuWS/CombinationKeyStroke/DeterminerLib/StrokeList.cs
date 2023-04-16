@@ -484,6 +484,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             if (comboList._isEmpty() && unprocList.Count == 1) {
                                 logger.DebugH($"NO COMBO SHIFT and JUST 1 UNPROC KEY");
                                 var s = unprocList[0];
+                                logger.DebugH(() => $"unprocList.First={s.DebugString()}");
                                 if (s.IsUpKey || !s.IsComboShift) {
                                     logger.DebugH($"JUST 1 UNPROC KEY is UP KEY");
                                     if (s.IsSingleHittable || s.IsSequentialShift) {
