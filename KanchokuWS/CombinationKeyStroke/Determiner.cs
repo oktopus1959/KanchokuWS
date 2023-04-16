@@ -262,7 +262,7 @@ namespace KanchokuWS.CombinationKeyStroke
 
         public KeyHandlerResult keyDown(int decKey, DateTime dt, bool bDecoderOn, Action<List<int>> handleComboKeyRepeat)
         {
-            logger.DebugH(() => $"\nENTER: decKey={decKey}, lastRepeatedDecKey={lastRepeatedDecKey}, " +
+            logger.DebugH(() => $"\nENTER: decKey={decKey}, lastRepeatedDecKey={lastRepeatedDecKey}, strokeList=[{strokeList.ToDebugString()}], " +
                 $"IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, IsDecoderWaitingFirstStroke={frmMain?.IsDecoderWaitingFirstStroke()}");
 
             if (frmMain.IsDecoderWaitingFirstStroke()) {
@@ -284,16 +284,16 @@ namespace KanchokuWS.CombinationKeyStroke
                 var stroke = new Stroke(decKey, bDecoderOn, dt);
                 var combo = KeyCombinationPool.CurrentPool.GetEntry(stroke);
 
-                logger.DebugH(() => $"combo={(combo == null ? "null" : combo.DecKeysDebugString())}");
+                logger.DebugH(() => $"combo={(combo == null ? "null" : combo.DecKeysDebugString())}, DecoderOn={bDecoderOn}, WaitSecondStroke={bWaitSecondStroke}");
 
-                if (lastRepeatedDecKey == decKey && strokeList.IsEmpty() && (combo == null || combo.IsSubKey) && bDecoderOn && bWaitSecondStroke) {
-                    // 第2打鍵待ちで、同時打鍵でなくオートリピートされた場合はキーを無視する
+                if (lastRepeatedDecKey == decKey && /*strokeList.IsEmpty() && (combo == null || combo.IsSubKey) &&*/ bDecoderOn && bWaitSecondStroke) {
+                    // 第2打鍵待ちでオートリピートされた場合、同時打鍵か否かに関係なく、キーを無視して第2打鍵待ち状態を継続する
                     logger.DebugH("IGNORE auto repeat key");
                     frmMain.IsWaitingSecondStrokeLocked = true;
                 } else {
                     lastRepeatedDecKey = decKey;
                     if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
-                        // 終端、かつキーリピートが可能なキーだった(BacSpaceとか)ので、それを返す
+                        // 終端、かつキーリピートが可能なキーだった(BackSpaceとか)ので、それを返す
                         logger.DebugH("terminal and repeatable key");
                         result = Helper.MakeList(decKey);
                     } else {
@@ -400,7 +400,9 @@ namespace KanchokuWS.CombinationKeyStroke
             }
 
             checkResultAgainstDecoderState(result);
-            logger.DebugH(() => $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}, IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}");
+            logger.DebugH(() =>
+                $"LEAVE: result={result._keyString()._orElse("empty")}, {strokeList.ToDebugString()}, " +
+                $"IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, lastRepeatedDecKey={lastRepeatedDecKey}");
 
             //if (result._notEmpty()) {
             //    setPreRewriteTime(result.Last());
@@ -430,11 +432,11 @@ namespace KanchokuWS.CombinationKeyStroke
                 // 漢直配列で第1打鍵がスペースキーとの同時打鍵の場合に、第1打鍵を長押しして第2打鍵待ちの状態でロックしようとすることがあるので、
                 // 押下中のキーと同じキーがタイマーによってKeyUpされたときは、キーリピート状態に移行する
                 lastRepeatedDecKey = decKey;
-            } else {
+            } else if (!bTimer) {
                 lastRepeatedDecKey = -1;
             }
 
-            logger.DebugH(() => $"\ndecKey={decKey}, DecoderOn={bDecoderOn}, bTimer={bTimer}, strokeList={strokeList.ToDebugString()}");
+            logger.DebugH(() => $"\ndecKey={decKey}, lastRepeatedDecKey={lastRepeatedDecKey}, DecoderOn={bDecoderOn}, bTimer={bTimer}, strokeList={strokeList.ToDebugString()}");
             if (!bTimer || bSameLastKey) {    // タイマーの場合は、最後に押下されたキーと一致しているか
                 frmMain?.WriteStrokeLog(decKey, dtNow, false, false, bTimer);
                 procQueue.Enqueue(() => keyUp(decKey, dtNow, bTimer, bDecoderOn));
