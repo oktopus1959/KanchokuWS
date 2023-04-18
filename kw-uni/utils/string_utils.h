@@ -37,6 +37,8 @@ namespace {
 
     const MString MSTR_HASH_MARK = to_mstr('#');
 
+    const MString MSTR_CMD_HEADER = MString({mchar_t('!'), mchar_t('{')});
+
     const mchar_t strip_delims[] = {' ', '\r', '\n' };
 
     inline bool is_paired_mchar(mchar_t m) {

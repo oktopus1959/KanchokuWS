@@ -1100,7 +1100,7 @@ namespace {
                     // キーの取得
                     MString key = keyGetter();
                     _LOG_DEBUGH(_T("HistSearch: LastJapaneseKey=%s"), MAKE_WPTR(key));
-                    if (!key.empty()) {
+                    if (!key.empty() && key.find(MSTR_CMD_HEADER) > key.size()) {
                         // キーが取得できた
                         //bool isAscii = is_ascii_char((wchar_t)utils::safe_back(key));
                         _LOG_DEBUGH(_T("HistSearch: PATH 8: key=%s, prevKey=%s, maybeEditedBySubState=%s"),
