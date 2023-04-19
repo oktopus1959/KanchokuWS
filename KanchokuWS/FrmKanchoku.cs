@@ -49,6 +49,9 @@ namespace KanchokuWS
             ShowWindow(frmMode.Handle, SW_SHOWNA);   // NonActive
         }
 
+
+        private Queue<String> strokeLogQueue = new Queue<String>();
+
         private DlgStrokeLog dlgStrokeLog = null;
 
         private DateTime strokeLogLastDt;
@@ -63,6 +66,9 @@ namespace KanchokuWS
                 dlgStrokeLog._showTopMost();
             } else {
                 dlgStrokeLog = new DlgStrokeLog(NotifyToCloseDlgStrokeLog, frmFocus);
+                if (strokeLogQueue._notEmpty()) {
+                    dlgStrokeLog.WriteLog(strokeLogQueue._join(""));
+                }
                 dlgStrokeLog.Show();
                 MoveWindow(dlgStrokeLog.Handle, left, top, dlgStrokeLog.Width, dlgStrokeLog.Height, true);
                 sbStrokeLog.Clear();
@@ -82,25 +88,27 @@ namespace KanchokuWS
             dlgStrokeLog = null;
         }
 
-        ///// <summaryストロークログの表示</summary>
+        /// <summaryストロークログの表示</summary>
         public void WriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bFirst, bool bTimer = false)
         {
-            if (IsDecoderActive && dlgStrokeLog != null) {
-                logger.InfoH(() => $"ENTER: decKey={decKey}");
+            if (IsDecoderActive /*&& dlgStrokeLog != null*/) {
+                logger.InfoH("ENTER");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"decKey={decKey}");
                 char faceCh = bTimer && decKey < 0 ? '\0' : DecoderKeyVsChar.GetArrangedFaceCharFromDecKey(decKey)._gtZeroOr('?');
                 if (bDown && faceCh >= 'a' && faceCh <= 'z') faceCh = (char)(faceCh - 0x20);
                 string msg = $"{(bTimer ? "*Up " : bDown ? "Down" : "Up  ")} | " + (faceCh != '\0' ? $"'{faceCh}'" : "N/A");
-                logger.InfoH(() => $"WriteStrokeLog: {msg}");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"WriteStrokeLog: {msg}");
                 appenStrokeLog(msg, dt, bFirst);
+                logger.InfoH("LEAVE");
             }
         }
 
-        ///// <summaryストロークログの表示</summary>
+        /// <summaryストロークログの表示</summary>
         public void WriteStrokeLog(string str)
         {
-            if (IsDecoderActive && dlgStrokeLog != null) {
+            if (IsDecoderActive /*&& dlgStrokeLog != null*/) {
                 string msg = $"Out  | '{str}'";
-                logger.InfoH(() => $"WriteStrokeLog: {msg}");
+                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"WriteStrokeLog: {msg}");
                 appenStrokeLog(msg, DateTime.Now, false);
                 //if (CombinationKeyStroke.Determiner.Singleton.IsStrokeListEmpty()) FlushStrokeLog();
             }
@@ -111,13 +119,22 @@ namespace KanchokuWS
             string sDiff = "    --";
             int diffMs = strokeLogLastDt._isValid() ? (int)Math.Round((dt - strokeLogLastDt).TotalMilliseconds) : 100000;
             if (bFirst || diffMs >= 1000) {
-                sbStrokeLog.Append($"--- time --- | diff ms\r\n");
+                //sbStrokeLog.Append($"--- time --- | diff ms\r\n");
+                appendStringBufferAndQueue($"--- time --- | diff ms\r\n");
                 //if (diffMs >= 60000) diffMs = 0;
             } else {
                 sDiff = $"{diffMs,6:#,0}";
             }
-            sbStrokeLog.Append($"{dt.ToString("HH:mm:ss.fff")} | {sDiff} | {msg}\r\n");
+            //sbStrokeLog.Append($"{dt.ToString("HH:mm:ss.fff")} | {sDiff} | {msg}\r\n");
+            appendStringBufferAndQueue($"{dt.ToString("HH:mm:ss.fff")} | {sDiff} | {msg}\r\n");
             strokeLogLastDt = dt;
+        }
+
+        private void appendStringBufferAndQueue(string msg)
+        {
+            strokeLogQueue.Enqueue(msg);
+            if (strokeLogQueue.Count > 100) strokeLogQueue.Dequeue();
+            if (dlgStrokeLog != null) sbStrokeLog.Append(msg);
         }
 
         public void FlushStrokeLog()
