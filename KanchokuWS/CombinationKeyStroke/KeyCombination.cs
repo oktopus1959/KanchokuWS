@@ -47,6 +47,11 @@ namespace KanchokuWS.CombinationKeyStroke
         public bool HasDecoderOutput => HasString || HasFunction;
 
         /// <summary>
+        /// 文字キーのみの組合せか<br/>すなわちスペースキーや機能キーを含まない組合せか
+        /// </summary>
+        public bool OnlyCharacterKeys { get; private set; } = false;
+
+        /// <summary>
         /// Oneshotの同時打鍵か<br/>すなわち、当組合せの同時打鍵が発生したら、それ打鍵列は次に持ち越さずに破棄されるか
         /// </summary>
         //public bool IsOneshot => ComboShiftedDecoderKeyList.ShiftKind == ShiftKeyKind.OneshotShift;
@@ -68,6 +73,11 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <summary>同時打鍵組合せのデバッグ表示用文字列</summary>
         private string _comboKeyStr { get; set; }
 
+        private bool containsOnlyCharKeys(List<int> decKeyList)
+        {
+            return decKeyList._notEmpty() && decKeyList.All(dk => dk >= 0 && !DecoderKeys.IsSpaceOrFuncKey(DeterminerLib.Stroke.ModuloizeKey(dk)));
+        }
+
         /// <summary>
         /// コンストラクタ(keyListがnullの場合は、同時打鍵集合の部分集合であることを示す)
         /// </summary>
@@ -80,6 +90,7 @@ namespace KanchokuWS.CombinationKeyStroke
             HasString = hasStr;
             HasFunction = hasFunc;
             IsComboBlocked = comboBlocked;
+            OnlyCharacterKeys = containsOnlyCharKeys(decKeyList);
             //IsEffectiveAlways = effectiveAlways;
         }
 

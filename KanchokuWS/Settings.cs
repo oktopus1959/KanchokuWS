@@ -16,7 +16,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.4";
+        public static string Version => "1.2.4.1";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -754,6 +754,9 @@ namespace KanchokuWS
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列の集合</summary>
         public static HashSet<string> SequentialPriorityWordSet { get; } = new HashSet<string>();
 
+        /// <summary>文字キーのみの同時打鍵組合せの場合は、被覆Comboとするか</summary>
+        public static bool OnlyCharKeysComboShouldBeCoveringCombo { get; set; }
+
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列に対するキーコード列の集合</summary>
         public static HashSet<string> SequentialPriorityWordKeyStringSet { get; } = new HashSet<string>();
 
@@ -1318,6 +1321,7 @@ namespace KanchokuWS
             ThreeKeysComboUnconditional = GetString("threeKeysComboUnconditional")._parseBool(false);        // 優先される順次打鍵以外の3キー同時打鍵なら無条件に判定
             SequentialPriorityWords = GetString("sequentialPriorityWords", "てない").Trim();                 // 同時打鍵よりも順次打鍵のほうを優先させる文字列の並び
             SequentialPriorityWordSet.UnionWith(SequentialPriorityWords._reSplit(@"[ ,\|]+"));               // 同時打鍵よりも順次打鍵のほうを優先させる文字列の集合
+            OnlyCharKeysComboShouldBeCoveringCombo = GetString("onlyCharKeysComboShouldBeCoveringCombo")._parseBool(false);     // 文字キーのみの同時打鍵組合せの場合は、被覆Comboとするか
 
             //-------------------------------------------------------------------------------------
             // IME連携

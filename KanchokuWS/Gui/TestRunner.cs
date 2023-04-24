@@ -39,6 +39,7 @@ namespace KanchokuWS.Gui
             Settings.CombinationKeyMinTimeOnlyAfterSecond = false;
             Settings.UseCombinationKeyTimer1 = false;
             Settings.UseCombinationKeyTimer2 = false;
+            Settings.OnlyCharKeysComboShouldBeCoveringCombo = false;
 
             var regex = new Regex(@"^\s*(\w+)(?:\(([^)]*)\)(?:\s*=\s*([^\s]+))?)?");
             var sb = new StringBuilder();
