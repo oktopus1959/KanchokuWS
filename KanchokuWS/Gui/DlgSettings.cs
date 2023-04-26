@@ -909,6 +909,7 @@ namespace KanchokuWS.Gui
             checkBox_combinationKeyTimeOnlyAfterSecond.Checked = Settings.CombinationKeyMinTimeOnlyAfterSecond;
             checkBox_useCombinationKeyTimer1.Checked = Settings.UseCombinationKeyTimer1;
             checkBox_useCombinationKeyTimer2.Checked = Settings.UseCombinationKeyTimer2;
+            checkBox_onlyCharKeysComboShouldBeCoveringCombo.Checked = Settings.OnlyCharKeysComboShouldBeCoveringCombo;
             checkBox_useComboExtModKeyAsSingleHit.Checked = Settings.UseComboExtModKeyAsSingleHit;
             checkBox_threeKeysComboUnconditional.Checked = Settings.ThreeKeysComboUnconditional;
             textBox_sequentialPriorityWords.Text = Settings.SequentialPriorityWords._reReplace(@"\|", "\r\n");
@@ -945,6 +946,7 @@ namespace KanchokuWS.Gui
             checkerImeCombo.Add(checkBox_combinationKeyTimeOnlyAfterSecond);
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer1);
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer2);
+            checkerImeCombo.Add(checkBox_onlyCharKeysComboShouldBeCoveringCombo);
             checkerImeCombo.Add(checkBox_useComboExtModKeyAsSingleHit);
             checkerImeCombo.Add(checkBox_threeKeysComboUnconditional);
             checkerImeCombo.Add(textBox_sequentialPriorityWords);
@@ -987,6 +989,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("combinationKeyTimeOnlyAfterSecond", checkBox_combinationKeyTimeOnlyAfterSecond.Checked);
             Settings.SetUserIni("useCombinationKeyTimer1", checkBox_useCombinationKeyTimer1.Checked);
             Settings.SetUserIni("useCombinationKeyTimer2", checkBox_useCombinationKeyTimer2.Checked);
+            Settings.SetUserIni("onlyCharKeysComboShouldBeCoveringCombo", checkBox_onlyCharKeysComboShouldBeCoveringCombo.Checked);
             Settings.SetUserIni("useComboExtModKeyAsSingleHit", checkBox_useComboExtModKeyAsSingleHit.Checked);
             Settings.SetUserIni("threeKeysComboUnconditional", checkBox_threeKeysComboUnconditional.Checked);
             Settings.SetUserIni("sequentialPriorityWords", textBox_sequentialPriorityWords.Text.Trim()._reReplace(@"[\r\n]+", "|"));

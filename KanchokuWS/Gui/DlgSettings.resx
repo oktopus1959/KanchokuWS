@@ -134,6 +134,18 @@
 
 詳細については、「FAQ-基本編」-「英数字数号配列の選択」を参照してください。</value>
   </data>
+  <data name="comboBox_tableFile2.ToolTip" xml:space="preserve">
+    <value>打鍵から文字への副変換テーブルファイルの設定
+
+ファイルの内容は主テーブルファイルと同様です。
+右クリックメニューの「再読込 &gt; 主・副テーブル切り替え」により、
+主・副テーブルファイルを切り替えることができます。
+
+また、拡張修飾キー設定で「ExchangeCodeTable」を何かの
+キーに割り当てておき、それを実行することでも切り替えられます。
+拡張修飾キーを設定するには、「修飾キー」タブで「拡張修飾キー」を
+有効にして、「編集」をクリックしてください。</value>
+  </data>
   <data name="textBox_historyFile.ToolTip" xml:space="preserve">
     <value>入力履歴ファイルの設定
 
@@ -378,6 +390,19 @@ SandS の拡張シフト面にテーブルファイルの裏面定義を行っ�
 
 ワンショットシフト状態の場合に、Spaceキーを単打すると空白が1つ出力され、
 Spaceキーを押下状態にするとリピート出力となります。</value>
+  </data>
+  <data name="checkBox_onlyCharKeysComboShouldBeCoveringCombo.ToolTip" xml:space="preserve">
+    <value>これにチェックを入れると、文字キー同士による同時打鍵では、第1打鍵キーを
+最後に離鍵した場合にのみ、同時打鍵と判定されるようになります。
+この場合、第1打鍵のほうが先に離鍵された場合は、（キーロールオーバーが
+あったとしても）それぞれのキーの単打として扱われます。
+
+例：E→「し」、O→「よ」、EO→「しょ」という同時打鍵設定がある場合
+↓をキーの押下、↑をキーの離鍵として、
+E↓ O↓ O↑ E↑→「しょ」
+E↓ O↓ E↑ O↑→「しよ」
+となる。
+</value>
   </data>
   <data name="textBox_comboDisableIntervalTimeMs.ToolTip" xml:space="preserve">
     <value>相互同時打鍵のシフトキーが解放された後、次に押下される文字キーを

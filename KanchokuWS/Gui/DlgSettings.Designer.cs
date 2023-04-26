@@ -169,6 +169,7 @@ namespace KanchokuWS.Gui
             this.radioButton_imeSendInputInKana = new System.Windows.Forms.RadioButton();
             this.radioButton_imeSendInputInRoman = new System.Windows.Forms.RadioButton();
             this.groupBox45 = new System.Windows.Forms.GroupBox();
+            this.checkBox_onlyCharKeysComboShouldBeCoveringCombo = new System.Windows.Forms.CheckBox();
             this.textBox_comboMaxAllowedPostfixTimeMs = new System.Windows.Forms.TextBox();
             this.label140 = new System.Windows.Forms.Label();
             this.textBox_comboDisableIntervalTimeMs = new System.Windows.Forms.TextBox();
@@ -760,7 +761,7 @@ namespace KanchokuWS.Gui
             this.checkBox_shortcutKeyConversionDisabled.TabIndex = 4;
             this.checkBox_shortcutKeyConversionDisabled.Text = "CtrlやAlt修飾の時は配列変換しない";
             this.toolTip1.SetToolTip(this.checkBox_shortcutKeyConversionDisabled, "チェックを入れると、Ctrl や Alt などとの同時打鍵の際、\r\n英数字テーブルによる配列変換を行いません。\r\n\r\n単打およびシフトキーとの同時打鍵の時だけ配列" +
-        "変更\r\nしたい場合は、ここにチェックを入れてください。\r\n\r\n");
+        "変更したい\r\n（Ctrl-Z, X, C, V などはそのままにしたい）\r\n場合は、ここにチェックを入れてください。");
             this.checkBox_shortcutKeyConversionDisabled.UseVisualStyleBackColor = true;
             // 
             // comboBox_deckeyCharsFile
@@ -801,8 +802,7 @@ namespace KanchokuWS.Gui
             this.comboBox_tableFile2.Name = "comboBox_tableFile2";
             this.comboBox_tableFile2.Size = new System.Drawing.Size(218, 23);
             this.comboBox_tableFile2.TabIndex = 7;
-            this.toolTip1.SetToolTip(this.comboBox_tableFile2, "打鍵から文字への副変換テーブルファイルの設定\r\n\r\nファイルの内容は主テーブルファイルと同様です。\r\n切り替えコマンドまたは右クリックメニューの\r\n「再読込 > " +
-        "主・副テーブル切り替え」により、\r\n主・副テーブルファイルを切り替えることができます。\r\n");
+            this.toolTip1.SetToolTip(this.comboBox_tableFile2, resources.GetString("comboBox_tableFile2.ToolTip"));
             this.comboBox_tableFile2.DropDown += new System.EventHandler(this.comboBox_tableFile2_DropDown);
             this.comboBox_tableFile2.SelectedIndexChanged += new System.EventHandler(this.comboBox_tableFile2_SelectedIndexChanged);
             // 
@@ -816,9 +816,8 @@ namespace KanchokuWS.Gui
             this.comboBox_tableFile.Name = "comboBox_tableFile";
             this.comboBox_tableFile.Size = new System.Drawing.Size(218, 23);
             this.comboBox_tableFile.TabIndex = 5;
-            this.toolTip1.SetToolTip(this.comboBox_tableFile, "打鍵から文字への主変換テーブルファイルの設定\r\n\r\n変換テーブルには、漢直キーから文字または機能へマッピングを記述します。\r\nこのマッピングを入れ子にすることによ" +
-        "り、2打鍵以上に対する文字定義が\r\n可能です。\r\n\r\n別のファイルを選択した場合は、「適用」を実行するとその内容が反映\r\nされます。\r\nテーブルの内容を修正した" +
-        "場合は、「再読込」を実行するとその内容が\r\n反映されます。\r\n");
+            this.toolTip1.SetToolTip(this.comboBox_tableFile, "打鍵から文字への主変換テーブルファイルの設定\r\n\r\n別のファイルを選択した場合は、「適用」を実行するとその内容が反映されます。\r\nテーブルの内容を修正した場合は、" +
+        "「再読込」を実行するとその内容が反映されます。\r\n\r\n変換テーブルの記述方法については、「FAQ 配列作成編」を参照ください。");
             this.comboBox_tableFile.DropDown += new System.EventHandler(this.comboBox_tableFile_DropDown);
             this.comboBox_tableFile.SelectedIndexChanged += new System.EventHandler(this.comboBox_tableFile_SelectedIndexChanged);
             // 
@@ -926,7 +925,7 @@ namespace KanchokuWS.Gui
             this.button_openKeyCharMapFile.Size = new System.Drawing.Size(34, 23);
             this.button_openKeyCharMapFile.TabIndex = 3;
             this.button_openKeyCharMapFile.Text = "開く";
-            this.toolTip1.SetToolTip(this.button_openKeyCharMapFile, "キー・文字マップファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。");
+            this.toolTip1.SetToolTip(this.button_openKeyCharMapFile, "英数字テーブルファイルを開きます。\r\n\r\n拡張子 \".txt\" に関連付けられたプログラムが起動されます。");
             this.button_openKeyCharMapFile.UseVisualStyleBackColor = true;
             this.button_openKeyCharMapFile.Click += new System.EventHandler(this.button_openKeyCharMapFile_Click);
             // 
@@ -2213,7 +2212,7 @@ namespace KanchokuWS.Gui
             this.groupBox39.Controls.Add(this.checkBox_SandSEnabled);
             this.groupBox39.Location = new System.Drawing.Point(7, 9);
             this.groupBox39.Name = "groupBox39";
-            this.groupBox39.Size = new System.Drawing.Size(351, 149);
+            this.groupBox39.Size = new System.Drawing.Size(351, 116);
             this.groupBox39.TabIndex = 0;
             this.groupBox39.TabStop = false;
             this.groupBox39.Text = "SandS (Space and Shift)";
@@ -2250,10 +2249,10 @@ namespace KanchokuWS.Gui
             // checkBox_SandSEnablePostShift
             // 
             this.checkBox_SandSEnablePostShift.AutoSize = true;
-            this.checkBox_SandSEnablePostShift.Location = new System.Drawing.Point(12, 126);
+            this.checkBox_SandSEnablePostShift.Location = new System.Drawing.Point(177, 64);
             this.checkBox_SandSEnablePostShift.Name = "checkBox_SandSEnablePostShift";
             this.checkBox_SandSEnablePostShift.Size = new System.Drawing.Size(134, 19);
-            this.checkBox_SandSEnablePostShift.TabIndex = 5;
+            this.checkBox_SandSEnablePostShift.TabIndex = 4;
             this.checkBox_SandSEnablePostShift.Text = "疑似同時打鍵サポート";
             this.toolTip1.SetToolTip(this.checkBox_SandSEnablePostShift, resources.GetString("checkBox_SandSEnablePostShift.ToolTip"));
             this.checkBox_SandSEnablePostShift.UseVisualStyleBackColor = true;
@@ -2261,10 +2260,10 @@ namespace KanchokuWS.Gui
             // textBox_SandSEnableSpaceOrRepeatMillisec
             // 
             this.textBox_SandSEnableSpaceOrRepeatMillisec.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_SandSEnableSpaceOrRepeatMillisec.Location = new System.Drawing.Point(12, 103);
+            this.textBox_SandSEnableSpaceOrRepeatMillisec.Location = new System.Drawing.Point(10, 87);
             this.textBox_SandSEnableSpaceOrRepeatMillisec.Name = "textBox_SandSEnableSpaceOrRepeatMillisec";
             this.textBox_SandSEnableSpaceOrRepeatMillisec.Size = new System.Drawing.Size(35, 19);
-            this.textBox_SandSEnableSpaceOrRepeatMillisec.TabIndex = 4;
+            this.textBox_SandSEnableSpaceOrRepeatMillisec.TabIndex = 5;
             this.textBox_SandSEnableSpaceOrRepeatMillisec.Text = "500";
             this.textBox_SandSEnableSpaceOrRepeatMillisec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_SandSEnableSpaceOrRepeatMillisec, resources.GetString("textBox_SandSEnableSpaceOrRepeatMillisec.ToolTip"));
@@ -2273,7 +2272,7 @@ namespace KanchokuWS.Gui
             // 
             this.label103.AutoSize = true;
             this.label103.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label103.Location = new System.Drawing.Point(47, 105);
+            this.label103.Location = new System.Drawing.Point(45, 89);
             this.label103.Name = "label103";
             this.label103.Size = new System.Drawing.Size(187, 15);
             this.label103.TabIndex = 5;
@@ -2282,22 +2281,22 @@ namespace KanchokuWS.Gui
             // checkBox_OneshotSandSEnabled
             // 
             this.checkBox_OneshotSandSEnabled.AutoSize = true;
-            this.checkBox_OneshotSandSEnabled.Location = new System.Drawing.Point(12, 83);
+            this.checkBox_OneshotSandSEnabled.Location = new System.Drawing.Point(177, 43);
             this.checkBox_OneshotSandSEnabled.Name = "checkBox_OneshotSandSEnabled";
-            this.checkBox_OneshotSandSEnabled.Size = new System.Drawing.Size(220, 19);
+            this.checkBox_OneshotSandSEnabled.Size = new System.Drawing.Size(168, 19);
             this.checkBox_OneshotSandSEnabled.TabIndex = 3;
-            this.checkBox_OneshotSandSEnabled.Text = "Space単打でワンショットシフト状態にする";
+            this.checkBox_OneshotSandSEnabled.Text = "Space単打でワンショットシフト";
             this.toolTip1.SetToolTip(this.checkBox_OneshotSandSEnabled, resources.GetString("checkBox_OneshotSandSEnabled.ToolTip"));
             this.checkBox_OneshotSandSEnabled.UseVisualStyleBackColor = true;
             // 
             // checkBox_SandSEnabledWhenOffMode
             // 
             this.checkBox_SandSEnabledWhenOffMode.AutoSize = true;
-            this.checkBox_SandSEnabledWhenOffMode.Location = new System.Drawing.Point(12, 63);
+            this.checkBox_SandSEnabledWhenOffMode.Location = new System.Drawing.Point(12, 64);
             this.checkBox_SandSEnabledWhenOffMode.Name = "checkBox_SandSEnabledWhenOffMode";
-            this.checkBox_SandSEnabledWhenOffMode.Size = new System.Drawing.Size(201, 19);
+            this.checkBox_SandSEnabledWhenOffMode.Size = new System.Drawing.Size(154, 19);
             this.checkBox_SandSEnabledWhenOffMode.TabIndex = 2;
-            this.checkBox_SandSEnabledWhenOffMode.Text = "デコーダOFF時に SandS を有効にする";
+            this.checkBox_SandSEnabledWhenOffMode.Text = "デコーダOFF時に有効にする";
             this.toolTip1.SetToolTip(this.checkBox_SandSEnabledWhenOffMode, "デコーダがOFFのときに SandS 方式を有効にします。");
             this.checkBox_SandSEnabledWhenOffMode.UseVisualStyleBackColor = true;
             // 
@@ -2306,9 +2305,9 @@ namespace KanchokuWS.Gui
             this.checkBox_SandSEnabled.AutoSize = true;
             this.checkBox_SandSEnabled.Location = new System.Drawing.Point(12, 43);
             this.checkBox_SandSEnabled.Name = "checkBox_SandSEnabled";
-            this.checkBox_SandSEnabled.Size = new System.Drawing.Size(198, 19);
+            this.checkBox_SandSEnabled.Size = new System.Drawing.Size(151, 19);
             this.checkBox_SandSEnabled.TabIndex = 1;
-            this.checkBox_SandSEnabled.Text = "デコーダON時に SandS を有効にする";
+            this.checkBox_SandSEnabled.Text = "デコーダON時に有効にする";
             this.toolTip1.SetToolTip(this.checkBox_SandSEnabled, "デコーダがONのときに SandS 方式を有効にします。");
             this.checkBox_SandSEnabled.UseVisualStyleBackColor = true;
             // 
@@ -2378,6 +2377,7 @@ namespace KanchokuWS.Gui
             // 
             // groupBox45
             // 
+            this.groupBox45.Controls.Add(this.checkBox_onlyCharKeysComboShouldBeCoveringCombo);
             this.groupBox45.Controls.Add(this.textBox_comboMaxAllowedPostfixTimeMs);
             this.groupBox45.Controls.Add(this.label140);
             this.groupBox45.Controls.Add(this.textBox_comboDisableIntervalTimeMs);
@@ -2391,12 +2391,23 @@ namespace KanchokuWS.Gui
             this.groupBox45.Controls.Add(this.checkBox_useCombinationKeyTimer1);
             this.groupBox45.Controls.Add(this.label116);
             this.groupBox45.Controls.Add(this.label114);
-            this.groupBox45.Location = new System.Drawing.Point(7, 164);
+            this.groupBox45.Location = new System.Drawing.Point(7, 133);
             this.groupBox45.Name = "groupBox45";
-            this.groupBox45.Size = new System.Drawing.Size(351, 171);
+            this.groupBox45.Size = new System.Drawing.Size(351, 194);
             this.groupBox45.TabIndex = 1;
             this.groupBox45.TabStop = false;
             this.groupBox45.Text = "同時打鍵の判定条件 (AとBの AND 判定 )";
+            // 
+            // checkBox_onlyCharKeysComboShouldBeCoveringCombo
+            // 
+            this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.AutoSize = true;
+            this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.Location = new System.Drawing.Point(13, 170);
+            this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.Name = "checkBox_onlyCharKeysComboShouldBeCoveringCombo";
+            this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.Size = new System.Drawing.Size(286, 19);
+            this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.TabIndex = 7;
+            this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.Text = "文字キー同士の同時打鍵は第1打鍵を最後に離鍵する";
+            this.toolTip1.SetToolTip(this.checkBox_onlyCharKeysComboShouldBeCoveringCombo, resources.GetString("checkBox_onlyCharKeysComboShouldBeCoveringCombo.ToolTip"));
+            this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.UseVisualStyleBackColor = true;
             // 
             // textBox_comboMaxAllowedPostfixTimeMs
             // 
@@ -7407,5 +7418,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.CheckBox checkBox_showEisuVkb;
         private System.Windows.Forms.Button button_defaultLogLevel;
         private System.Windows.Forms.CheckBox checkBox_newLineWhenHistEnter;
+        private System.Windows.Forms.CheckBox checkBox_onlyCharKeysComboShouldBeCoveringCombo;
     }
 }
