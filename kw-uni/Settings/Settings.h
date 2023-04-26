@@ -79,7 +79,7 @@ struct Settings {
     bool convertJaComma = false;            // 「、」と「，」を相互変換する
 
     bool eisuModeEnabled = false;           // 英大文字入力による英数モード移行が有効か
-    wchar_t eisuHistSearchChar = ';';       // 英数モードから履歴検索を呼び出す文字
+    wchar_t eisuHistSearchChar = '\0';      // 英数モードから履歴検索を呼び出す文字
     size_t eisuExitCapitalCharNum = 3;      // 英数モードを自動的に抜けるまでの大文字数
     size_t eisuExitSpaceNum = 2;            // 英数モードを自動的に抜けるまでのSpace数
 

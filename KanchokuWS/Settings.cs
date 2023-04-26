@@ -1438,7 +1438,7 @@ namespace KanchokuWS
             ConvertJaComma = addDecoderSetting("convertJaComma", false);                        // 「、」と「，」の相互変換
 
             EisuModeEnabled = addDecoderSetting("eisuModeEnabled", false);                      // 英大文字入力による英数モード移行が有効か
-            EisuHistSearchChar = addDecoderSetting("eisuHistSearchChar", ";");                  // 英数モードから履歴検索を呼び出す文字
+            EisuHistSearchChar = addDecoderSetting("eisuHistSearchChar", "");                   // 英数モードから履歴検索を呼び出す文字
             EisuExitCapitalCharNum = addDecoderSetting("eisuExitCapitalCharNum", 3, 2);         // 英数モードを自動的に抜けるまでの大文字数
             EisuExitSpaceNum = addDecoderSetting("eisuExitSpaceNum", 2, 0);                     // 英数モードを自動的に抜けるまでのSpaceキー数
 
