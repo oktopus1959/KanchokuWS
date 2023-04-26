@@ -464,7 +464,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                 if (unprocList._notEmpty()) {
                     int upKeyIdx = findAndMarkUpKey(unprocList, decKey);
-                    logger.DebugH(() => $"upComboIdx={upComboIdx}, upKeyIdx={upKeyIdx}");
+                    int upKeyIdxFromTail = upKeyIdx >= 0 ? unprocList._safeCount() - upKeyIdx - 1 : -1;
+                    logger.DebugH(() => $"upComboIdx={upComboIdx}, upKeyIdx={upKeyIdx}, upKeyIdxFromTail={upKeyIdxFromTail}");
 
                     if (upComboIdx >= 0 || upKeyIdx >= 0) {
                         result = new List<int>();
@@ -472,7 +473,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         bool bSecondComboCheck = comboList._notEmpty();
                         logger.DebugH(() => $"START while: {ToDebugString()}, bSecondComboCheck={bSecondComboCheck}");
 
-                        while (unprocList._notEmpty()) {
+                        while (unprocList._notEmpty() /*&& (upKeyIdxFromTail < 0 || unprocList.Count > upKeyIdxFromTail)*/) {
                             // 持ち越したキーリストの部分リストからなる集合(リスト)
                             logger.DebugH(() => $"bTempComboDisabled={bTempComboDisabled}");
                             //List<List<Stroke>> subComboLists = gatherSubList(bTempComboDisabled ? null : comboList);
@@ -531,16 +532,23 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 //同時打鍵を見つける
                                 List<List<Stroke>> subComboLists = gatherSubList(comboList);
                                 int timingFailure = -1;
-                                int overlapLen = findCombo(result, subComboLists, unprocList, dtNow, bSecondComboCheck, bDecoderOn, out timingFailure, out bTempComboDisabled);
+                                int overlapLen = findCombo(result, subComboLists, unprocList, upKeyIdxFromTail, dtNow, bSecondComboCheck, bDecoderOn, out timingFailure, out bTempComboDisabled);
                                 if (overlapLen > 0) {
                                     // 見つかった
-                                    logger.DebugH($"COMBO FOUND: bTempComboDisabled={bTempComboDisabled}");
+                                    logger.DebugH(() => $"COMBO FOUND: bTempComboDisabled={bTempComboDisabled}");
                                     bSecondComboCheck = true;
                                     outputLen = copyShiftLen = 0;  // 既に findCombo() の中でやっている
                                     discardLen = overlapLen;
                                 } else if (timingFailure == COVERING_COMBO_FAILED) {
-                                    outputLen = discardLen = 1;
-                                    copyShiftLen = 0;
+                                    logger.DebugH($"COMBO FOUND but COVERING_COMBO_FAILED");
+                                    if (upKeyIdxFromTail >= 0 && unprocList.Count > upKeyIdxFromTail) {
+                                        outputLen = discardLen = unprocList.Count - upKeyIdxFromTail;
+                                        copyShiftLen = 0;
+                                        logger.DebugH(() => $"COVERING_COMBO_FAILED: outputLen={outputLen}");
+                                    } else {
+                                        logger.DebugH(() => $"COVERING_COMBO_FAILED: break; upKeyIdxFromTail={upKeyIdxFromTail}, unprocList.Count={unprocList.Count}");
+                                        break;
+                                    }
                                 } else {
                                     // 見つからなかった
                                     bool bComboFound = timingFailure >= 0;
@@ -652,10 +660,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         /// <summary>同時打鍵を見つける<br/>見つかったら、処理された打鍵数を返す。見つからなかったら0を返す</summary>
-        private int findCombo(List<int> result, List<List<Stroke>> subComboLists, List<Stroke> unprocList, DateTime dtNow, bool bSecondComboCheck, bool bDecoderOn,
+        private int findCombo(List<int> result, List<List<Stroke>> subComboLists, List<Stroke> unprocList, int upKeyIdxFromTail, DateTime dtNow, bool bSecondComboCheck, bool bDecoderOn,
             out int timingFailure, out bool bComboBlocked)
         {
-            logger.DebugH(() => $"ENTER: unprocList={unprocList._toString()}, bSecondComboCheck={bSecondComboCheck}");
+            logger.DebugH(() => $"ENTER: unprocList={unprocList._toString()}, upKeyIdxFromTail={upKeyIdxFromTail}, bSecondComboCheck={bSecondComboCheck}");
 
             int timingResult = -1;
             bool comboBlocked = false;
@@ -663,6 +671,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             int findFunc()
             {
                 int overlapLen = unprocList.Count;
+                int upKeyIdx = upKeyIdxFromTail >= 0 ? unprocList.Count - upKeyIdxFromTail - 1 : -1;
                 while (overlapLen >= 1) {
                     logger.DebugH(() => $"WHILE: overlapLen={overlapLen}");
                     foreach (var subList in subComboLists) {
@@ -679,8 +688,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                         if (keyCombo != null && keyCombo.DecKeyList != null && (keyCombo.HasString || keyCombo.IsComboBlocked)) {
                             //bComboFound = true; // 同時打鍵の組合せが見つかった
-                            bool isTailKeyUp = unprocList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
-                            //bool isTailKeyUp = upKeyIdx >= overlapLen - 1;    // 末尾キー以降のキーがUPされた←これはダメ(unprocListが短くなった2回目以降の呼び出しでエラーになる)
+                            //bool isTailKeyUp = unprocList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
+                            bool isTailKeyUp = upKeyIdx >= 0 && upKeyIdx >= overlapLen - 1;    // 末尾キー以降のキーがUPされた
                             bool bCheckCoveringCombo = !Settings.OnlyCharKeysComboShouldBeCoveringCombo || !keyCombo.OnlyCharacterKeys || isTailKeyUp;
                             if (Logger.IsInfoHEnabled) {
                                 logger.DebugH(() => $"CHECK_COVERING_COMBO: {bCheckCoveringCombo}: " +

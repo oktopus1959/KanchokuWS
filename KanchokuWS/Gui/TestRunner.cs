@@ -39,6 +39,8 @@ namespace KanchokuWS.Gui
             Settings.CombinationKeyMinTimeOnlyAfterSecond = false;
             Settings.UseCombinationKeyTimer1 = false;
             Settings.UseCombinationKeyTimer2 = false;
+            Settings.ThreeKeysComboUnconditional = false;
+            Settings.UseComboExtModKeyAsSingleHit = false;
             Settings.OnlyCharKeysComboShouldBeCoveringCombo = false;
 
             var regex = new Regex(@"^\s*(\w+)(?:\(([^)]*)\)(?:\s*=\s*([^\s]+))?)?");
@@ -101,6 +103,9 @@ namespace KanchokuWS.Gui
                         Settings.CombinationKeyMinTimeOnlyAfterSecond = false;
                         Settings.UseCombinationKeyTimer1 = false;
                         Settings.UseCombinationKeyTimer2 = false;
+                        Settings.ThreeKeysComboUnconditional = false;
+                        Settings.UseComboExtModKeyAsSingleHit = false;
+                        Settings.OnlyCharKeysComboShouldBeCoveringCombo = false;
                         Settings.CombinationKeyMaxAllowedLeadTimeMs = 100;
                         Settings.ComboKeyMaxAllowedPostfixTimeMs = 100;
                         Settings.CombinationKeyMinOverlappingTimeMs = 70;
@@ -182,6 +187,10 @@ namespace KanchokuWS.Gui
 
                     case "useComboExtModKeyAsSingleHit":
                         Settings.UseComboExtModKeyAsSingleHit = arg._parseBool(true);
+                        break;
+
+                    case "onlyCharKeysComboShouldBeCoveringCombo":
+                        Settings.OnlyCharKeysComboShouldBeCoveringCombo = arg._parseBool(true);
                         break;
 
                     case "break":

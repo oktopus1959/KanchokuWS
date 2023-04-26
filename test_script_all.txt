@@ -261,6 +261,20 @@ comboMaxTime(100)
 comboMinTime(200)
 convert({40}<35>S<110>U<20>s<20>[40]<50>u) = ばか
 
+### 13 ###
+loadTable(tables/_test/noniiruto.13.tbl)
+comboMaxTime(70)
+comboMaxPostTime(200)
+comboMinTime(200)
+
+onlyCharKeysComboShouldBeCoveringCombo = true
+
+# E, O, o, e
+convert(E<86>O<5>o<22>e) = しょ
+
+# E, O, I, o, i, e
+convert(E<86>O<5><5>I<10>o<10>i<22>e) = しょう
+
 ### post.7 ###
 loadTable(tables/_test/noniiruto.post.7.tbl)
 comboMaxTime(100)
