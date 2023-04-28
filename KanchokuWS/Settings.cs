@@ -717,7 +717,7 @@ namespace KanchokuWS
         public static int CombinationKeyMaxAllowedLeadTimeMs { get; set; }
 
         /// <summary>同、シフトキーが文字キーだった場合</summary>
-        public static int CombinationKeyMaxAllowedLeadTimeMs2 { get; set; }
+        //public static int CombinationKeyMaxAllowedLeadTimeMs2 { get; set; }
 
         /// <summary>同時打鍵判定を行う際、第2打鍵がシフトキーだった場合に許容する最大のリード時間(ミリ秒)<br/>これにより、シフトキーがその直後の文字キーにかかりやすくなることが期待できる</summary>
         public static int ComboKeyMaxAllowedPostfixTimeMs { get; set; }
@@ -1308,7 +1308,7 @@ namespace KanchokuWS
             // 同時打鍵
             //CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0);                          // 重複時間率
             CombinationKeyMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100);   // 許容リードタイム
-            CombinationKeyMaxAllowedLeadTimeMs2 = GetString("combinationMaxAllowedLeadTimeMs2")._parseInt(0);   // シフトキーが文字キーだった場合の許容リードタイム
+            //CombinationKeyMaxAllowedLeadTimeMs2 = GetString("combinationMaxAllowedLeadTimeMs2")._parseInt(0);   // シフトキーが文字キーだった場合の許容リードタイム
             ComboKeyMaxAllowedPostfixTimeMs = GetString("comboMaxAllowedPostfixTimeMs")._parseInt(100)._highLimit(CombinationKeyMaxAllowedLeadTimeMs);  // 第2キーの許容リードタイム
             CombinationKeyMinOverlappingTimeMs = GetString("combinationKeyTimeMs")._parseInt(70);               // 重複時間
             CombinationKeyMinOverlappingTimeMs2 = GetString("combinationKeyTimeMs2")._parseInt(0);              // シフトキーが文字キーだった場合の重複時間

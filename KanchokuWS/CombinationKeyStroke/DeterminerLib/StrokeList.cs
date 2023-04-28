@@ -284,7 +284,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     logger.DebugH("COMBO CHECK PASSED");
                     return new List<int>(keyCombo.DecKeyList);
                 }
-                logger.DebugH("COMBO CHECK FAILED");
+                logger.DebugH("KeyDown COMBO CHECK FAILED");
                 return null;
             }
 
@@ -296,28 +296,41 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 // 2キーの同時打鍵のケースの場合のみを扱う
                 logger.DebugH("Try 2 keys combo");
                 // comboList.Count == 0 なら unprocList.Count == 2 である
-                var strk1 = comboList._isEmpty() ? unprocList[0] : comboList[0];
-                var strk2 = comboList._isEmpty() ? unprocList[1] : unprocList[0];
+                bool isStrk1Unproc = comboList._isEmpty();
+                var strk1 = isStrk1Unproc ? unprocList[0] : comboList[0];
+                var strk2 = isStrk1Unproc ? unprocList[1] : unprocList[0];
                 result = getAndCheckCombo(Helper.MakeList(strk1, strk2));
                 if (result != null) {
                     // 同時打鍵候補があった
                     double shiftTimeSpan = strk2.TimeSpanMs(strk1);
                     double shiftUpElapse = GetElapsedTimeFromShiftKeyUp(strk1, strk2);
-                    int maxAllowedTime() => Settings.CombinationKeyMaxAllowedLeadTimeMs2 > 0 && !strk1.IsSpaceOrFunc
-                        ? Settings.CombinationKeyMaxAllowedLeadTimeMs2
-                        : Settings.CombinationKeyMaxAllowedLeadTimeMs;
-                    logger.DebugH(() => $"combo found: IsComboBlocked={keyCombo.IsComboBlocked}, " + 
-                        $"isStroke2Shift={strk2.IsComboShift}, shiftTimeSpan={(int)shiftTimeSpan:f1}ms, shiftUpElapse={shiftUpElapse:f1}ms, maxAllowedTime={maxAllowedTime()}");
-                    bool stroke1Cond() => strk1.IsComboShift && shiftTimeSpan <= maxAllowedTime();
-                    bool stroke2Cond() => !strk1.IsComboShift &&
+                    bool stroke1ShiftCond() => strk1.IsComboShift && (!isStrk1Unproc || shiftTimeSpan <= Settings.CombinationKeyMaxAllowedLeadTimeMs);
+                    bool stroke2ShiftCond() => !strk1.IsComboShift &&
                            (Settings.ComboDisableIntervalTimeMs <= 0 || shiftUpElapse >= Settings.ComboDisableIntervalTimeMs) &&
                            shiftTimeSpan <= Settings.ComboKeyMaxAllowedPostfixTimeMs;
-                    if (keyCombo.IsComboBlocked || (strk1.IsPrefixShift && (comboList._isEmpty() || Settings.CombinationKeyMinOverlappingTimeMs <= 0)) ||
-                        ((stroke1Cond() || stroke2Cond()) &&
-                         (Settings.CombinationKeyMinTimeOnlyAfterSecond || Settings.CombinationKeyMinOverlappingTimeMs <= 0 || anyNotSingleHittable()))) {
+                    if (Logger.IsInfoHEnabled) {
+                        logger.DebugH("KeyDown COMBO FOUND:");
+                        logger.DebugH(() => $"stroke-1: {(isStrk1Unproc ? "unprocList[0]" : "comboList[0]")}, {(strk1.IsComboShift ? "IS" : "NOT")} ComboShift");
+                        logger.DebugH(() => $"stroke-2: {(isStrk1Unproc ? "unprocList[1]" : "unprocList[0]")}, {(strk2.IsComboShift ? "IS" : "NOT")} ComboShift");
+                        logger.DebugH(() => $"!isStrk1Unproc({!isStrk1Unproc}) || shiftTimeSpan={(int)shiftTimeSpan:f1}ms <= maxAllowedTime={Settings.CombinationKeyMaxAllowedLeadTimeMs}");
+                        logger.DebugH(() => $"shiftUpElapse={shiftUpElapse:f1}ms >= ComboDisableIntervalTimeMs={Settings.ComboDisableIntervalTimeMs}");
+                        logger.DebugH(() => $"shiftTimeSpan={(int)shiftTimeSpan:f1}ms <= ComboKeyMaxAllowedPostfixTimeMs={Settings.ComboKeyMaxAllowedPostfixTimeMs}");
+                        logger.DebugH(() => $"IsComboBlocked => {keyCombo.IsComboBlocked} || \n" +
+                            $"(stroke-1.IsPrefixShift({strk1.IsPrefixShift}) && (comboList._isEmpty={isStrk1Unproc} || " +
+                                $"(ComboKeyMinOverlappingTimeMs({Settings.CombinationKeyMinOverlappingTimeMs}) <= 0)({Settings.CombinationKeyMinOverlappingTimeMs <= 0}))) => " +
+                                $"{strk1.IsPrefixShift && (isStrk1Unproc || Settings.CombinationKeyMinOverlappingTimeMs <= 0)} || \n" +
+                            $"((stroke1Cond({stroke1ShiftCond()}) || stroke2Cond({stroke2ShiftCond()})):{stroke1ShiftCond() || stroke2ShiftCond()} && \n" +
+                            $"    (ComboKeyMinTimeOnlyAfterSecond({Settings.CombinationKeyMinTimeOnlyAfterSecond}) || " +
+                                $"ComboKeyMinOverlappingTimeMs({Settings.CombinationKeyMinOverlappingTimeMs}) <= 0({Settings.CombinationKeyMinOverlappingTimeMs <= 0}) || " +
+                                $"anyNotSingleHittable({anyNotSingleHittable()}))) => " +
+                                $"{(stroke1ShiftCond() || stroke2ShiftCond()) && (Settings.CombinationKeyMinTimeOnlyAfterSecond || Settings.CombinationKeyMinOverlappingTimeMs <= 0 || anyNotSingleHittable())}");
+                    }
+                    if (keyCombo.IsComboBlocked || (strk1.IsPrefixShift && (isStrk1Unproc || Settings.CombinationKeyMinOverlappingTimeMs <= 0)) ||
                         // (ComboBlockerの場合) または (前置シフトの1文字目であるか、2文字目でも重複時間判定がない場合)、
-                        // または (第2打鍵までの時間が閾値以下で即時判定あるいは親指シフトのように非単打キーを含む場合)
-                        if (comboList._isEmpty() && KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey) {
+                        (!strk1.IsPrefixShift && isStrk1Unproc && (stroke1ShiftCond() || stroke2ShiftCond()) &&
+                         (Settings.CombinationKeyMinTimeOnlyAfterSecond || Settings.CombinationKeyMinOverlappingTimeMs <= 0 || anyNotSingleHittable()))) {
+                        // または (前置シフトでない1文字目であり、1文字目には第2打鍵までの時間制約を適用しないか、第2打鍵までの時間が閾値以下で即時判定あるいは親指シフトのように非単打キーを含む場合)
+                        if (isStrk1Unproc && KeyCombinationPool.CurrentPool.ContainsSuccessiveShiftKey) {
                             // 連続シフトの場合は、同時打鍵に使用したキーを使い回す
                             comboList.Add(strk1.IsComboShift ? strk1 : strk2);
                             comboList[0].SetCombined();
@@ -325,12 +338,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         unprocList.Clear();
                         // 同時打鍵列の処理をした場合は、これ以降順次打鍵になるか否かをチェックしておく
                         IsTemporaryComboDisabled = keyCombo.IsComboBlocked;
-                        logger.DebugH(() => $"result={result._keyString()}, IsTemporaryComboDisabled={IsTemporaryComboDisabled}");
+                        logger.DebugH(() => $"KeyDown COMBO result={result._keyString()}, IsTemporaryComboDisabled={IsTemporaryComboDisabled}");
                     } else {
                         // どちらも単打を含むため、未確定の場合は、タイマーを有効にする
                         result = null;
                         bTimer = true;
-                        logger.DebugH("Undetermined. Return NULL result");
+                        logger.DebugH("KeyDown COMBO Undetermined. Return NULL result");
                     }
                 //} else if (keyCombo == null && unprocList[0].HasDecKeyList) {
                 } else if (keyCombo == null && unprocList[0].HasString) {
@@ -878,7 +891,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     result = 0;
                     logger.DebugH(() => $"RESULT1={result == 0}: !bSecondComboCheck (True) && !ContainsUnorderedShiftKey={!KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey}");
                 } else {
-                    int maxTime = Settings.CombinationKeyMaxAllowedLeadTimeMs2 > 0 && !isSpaceOrFunc ? Settings.CombinationKeyMaxAllowedLeadTimeMs2 : Settings.CombinationKeyMaxAllowedLeadTimeMs;
+                    int maxTime = Settings.CombinationKeyMaxAllowedLeadTimeMs;
                     double ms1 = list[0].TimeSpanMs(tailStk);
                     bool isComboDisableInterval() => Settings.ComboDisableIntervalTimeMs > 0 && GetElapsedTimeFromShiftKeyUp(list[0], tailStk) <= Settings.ComboDisableIntervalTimeMs;
                     result =
@@ -886,8 +899,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         (!list[0].IsComboShift && !isComboDisableInterval() && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs)
                         ? 0 : 1;
                     if (Logger.IsInfoHEnabled) {
-                        logger.DebugH(() => $"isSpaceOrFunc={isSpaceOrFunc}, " +
-                            $"CombinationKeyMaxAllowedLeadTimeMs={Settings.CombinationKeyMaxAllowedLeadTimeMs}, CombinationKeyMaxAllowedLeadTimeMs2={Settings.CombinationKeyMaxAllowedLeadTimeMs2}");
+                        logger.DebugH(() => $"isSpaceOrFunc={isSpaceOrFunc}, CombinationKeyMaxAllowedLeadTimeMs={Settings.CombinationKeyMaxAllowedLeadTimeMs}");
                         logger.DebugH(() => $"ComboDisableIntervalTimeMs={Settings.ComboDisableIntervalTimeMs}, ElapsedTimeFromShiftKeyUp={GetElapsedTimeFromShiftKeyUp(list[0], tailStk):f1}");
                         logger.DebugH(() => $"list[0].IsComboShift={list[0].IsComboShift} && (ms1({ms1}) <= maxTime({maxTime}))={ms1 <= maxTime}");
                         logger.DebugH(() => $"!list[0].IsComboShift={!list[0].IsComboShift} && !isComboDisableInterval={!isComboDisableInterval()} && " +

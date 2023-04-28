@@ -112,7 +112,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>キー打鍵時の時刻</summary>
         public DateTime KeyDt { get; private set; }
 
-        /// <summary>キーが重複している時間(ミリ秒)</summary>
+        /// <summary>キーの押下間隔(ミリ秒)</summary>
         public double TimeSpanMs(Stroke stk)
         {
             return stk.KeyDt >= KeyDt ? (stk.KeyDt - KeyDt).TotalMilliseconds : (KeyDt - stk.KeyDt).TotalMilliseconds;

@@ -361,3 +361,7 @@ comboMinTime(50)
 enableTimer2()
 convert(D<39>I<61>O<64>i<29>od) = よえ
 
+comboMaxTime(200)
+comboMinTime(100)
+disableFirstComboCheck
+convert(D<62>H<28>I<57>d<28>h<43>i) = おい
