@@ -57,6 +57,11 @@ namespace KanchokuWS.CombinationKeyStroke
         //public bool IsOneshot => ComboShiftedDecoderKeyList.ShiftKind == ShiftKeyKind.OneshotShift;
         public bool IsOneshotShift => ShiftKind == ShiftKeyKind.UnorderedOneshotShift;
 
+        /// <summary>
+        /// 順序不定の組合せか
+        /// </summary>
+        public bool IsUnordered => DeterminerLib.ComboShiftKeyPool.IsUnorderedShift(ShiftKind);
+
         /// <summary>同時打鍵ブロッカーにより、以降、順次打鍵になるか</summary>
         public bool IsComboBlocked { get; set; } = false;
 

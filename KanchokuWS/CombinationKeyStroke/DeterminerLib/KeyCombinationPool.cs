@@ -174,6 +174,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public int Count { get { return keyComboDict.Count; } }
 
+        /// <summary>
+        /// 固定順の組合せを検索するための辞書
+        /// </summary>        
+        private KeyComboDictionary orderedComboDict = new KeyComboDictionary();
+
         private bool bEisuMode = false;
 
         // 英数用か
@@ -241,6 +246,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 string comboKeyStr = comboKeyList._keyString();
                 var keyCombo = new KeyCombination(deckeyList, comboKeyStr, shiftKind, hasStr, hasFunc, comboBlocked);
                 keyComboDict.Add(comboKeyStr, keyCombo, hasStr);
+
+                if (!bUnordered) {
+                    // 固定順のやつは、後で順不定のやつに含まれたら非終端にするために、ここでorderedComboDictに登録しておく
+                    orderedComboDict.Add(comboKeyList.OrderBy(x => x)._keyString(), keyCombo, true);
+                }
 
                 // 部分キー文字列を蓄積しておく
                 comboSubKeys.UnionWith(comboKeyList._makeSubKeys(bUnordered));
@@ -317,6 +327,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         keyComboDict.Add(subkey, keyCombo, true);
                     }
                     keyCombo.SetNonTerminal();
+
+                    // 固定順
+                    if (keylen >= 2) {
+                        var orderedSubkey = subkey._split(':').Select(x => x._parseInt()).OrderBy(x => x)._keyString();
+                        keyCombo = orderedComboDict.Get(orderedSubkey);
+                        if (keyCombo != null) {
+                            if (i < 500 && Settings.LoggingTableFileInfo) logger.DebugH(() => $"Set nonterminal for ordered sub keyString={orderedSubkey}");
+                            keyCombo.SetNonTerminal();
+                        }
+                    }
                     ++i;
                 }
             }
