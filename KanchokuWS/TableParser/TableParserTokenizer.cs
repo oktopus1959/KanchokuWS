@@ -49,6 +49,45 @@ namespace KanchokuWS.TableParser
         {
         }
 
+        /// <summary>指定した文字列の、ルートテーブルにおける位置を返す</summary>
+        int getRootTableIndex(string s)
+        {
+            return ParserContext.Singleton.rootTableNode.FindSubNode(s);
+        }
+
+        /// <summary>指定した文字列の、テーブルにおける位置を再帰的に検索して返す</summary>
+        int getTableIndexRecursive(string s)
+        {
+            var rootTable = ParserContext.Singleton.rootTableNode;
+            if (rootTable == null) return -1;
+
+            int idx = rootTable.FindSubNode(s);
+            if (idx >= 0) return idx;
+
+            for (int i = 0; i < rootTable.GetSubNodeNum(); ++i) {
+                var subNode = rootTable.GetNthSubNode(i);
+                if (subNode != null && subNode.HasSubNode()) {
+                    idx = subNode.FindSubNode(s);
+                    if (idx >= 0) return idx;
+                }
+            }
+
+            for (int i = 0; i < rootTable.GetSubNodeNum(); ++i) {
+                var subNode = rootTable.GetNthSubNode(i);
+                if (subNode != null && subNode.HasSubNode()) {
+                    for (int j = 0; j < subNode.GetSubNodeNum(); ++j) {
+                        var node = subNode.GetNthSubNode(j);
+                        if (node != null && node.HasSubNode()) {
+                            idx = node.FindSubNode(s);
+                            if (idx >= 0) return idx;
+                        }
+                    }
+                }
+            }
+
+            return -1;
+        }
+
         // 現在のトークンをチェックする
         bool isCurrentToken(TOKEN target)
         {
@@ -64,13 +103,13 @@ namespace KanchokuWS.TableParser
         }
 
         /// <summary>トークンひとつ読んで currentToken にセット</summary>
-        protected void readNextToken(bool bSkipNL = false)
+        protected void readNextToken(bool bSkipNL = false, bool bOnlyDirectives = false)
         {
-            currentToken = getToken(bSkipNL);
+            currentToken = getToken(bSkipNL, bOnlyDirectives);
         }
 
         /// <summary>トークンを読む</summary>
-        TOKEN getToken(bool bSkipNL)
+        TOKEN getToken(bool bSkipNL, bool bOnlyDirectives = false)
         {
             ArrowIndex = -1;
             while (true) {
@@ -264,6 +303,11 @@ namespace KanchokuWS.TableParser
                         // 上記以外は無視(コメント扱い) 
                         if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"#{CurrentStr}");
                     }
+                    SkipToEndOfLine();
+                    continue;
+                }
+
+                if (bOnlyDirectives) {
                     SkipToEndOfLine();
                     continue;
                 }
@@ -544,8 +588,11 @@ namespace KanchokuWS.TableParser
                             } else {
                                 ArrowIndex = placeHolders.Get(s);
                                 if (ArrowIndex < 0) {
-                                    ParseError($"parseArrow: 定義されていないプレースホルダー: {s}");
-                                    return false;
+                                    ArrowIndex = getTableIndexRecursive(s);  // 単打文字
+                                    if (ArrowIndex < 0) {
+                                        ParseError($"parseArrow: 定義されていないプレースホルダー: {s}");
+                                        return false;
+                                    }
                                 }
                             }
                         }

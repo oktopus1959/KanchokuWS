@@ -1357,10 +1357,10 @@ namespace KanchokuWS.TableParser
 
         public void ParseDirectives()
         {
-            readNextToken();
+            readNextToken(false, true);
             while (currentToken != TOKEN.END) {
                 SkipToEndOfLine();
-                readNextToken();
+                readNextToken(false, true);
             }
         }
 
