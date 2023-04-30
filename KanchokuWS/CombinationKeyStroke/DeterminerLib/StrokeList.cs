@@ -279,8 +279,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 keyCombo = KeyCombinationPool.CurrentPool.GetEntry(list);
                 logger.DebugH(() =>
                     $"combo={(keyCombo == null ? "(none)" : "FOUND")}, decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, " +
-                    $"Terminal={keyCombo?.IsTerminal ?? false}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
-                if (keyCombo != null && keyCombo.DecKeyList != null && (keyCombo.IsTerminal || keyCombo.IsComboBlocked)) {
+                    $"Terminal={keyCombo?.IsTerminal ?? false}, isComboBlocked={keyCombo?.IsComboBlocked ?? false}, " +
+                    $"OnlyCharKeysComboShouldBeCoveringCombo={Settings.OnlyCharKeysComboShouldBeCoveringCombo}, OnlyCharacterKeys={keyCombo?.OnlyCharacterKeys ?? false}" +
+                    $"comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
+                if (keyCombo != null && keyCombo.DecKeyList != null && (keyCombo.IsTerminal || keyCombo.IsComboBlocked) &&
+                    (!Settings.OnlyCharKeysComboShouldBeCoveringCombo || !keyCombo.OnlyCharacterKeys)) {
                     logger.DebugH("COMBO CHECK PASSED");
                     return new List<int>(keyCombo.DecKeyList);
                 }
