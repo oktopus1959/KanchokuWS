@@ -309,11 +309,17 @@ namespace KanchokuWS.Gui
             try {
                 for (int pos = 0; pos < keysLen; ++pos) {
                     char k = keys[pos];
-                    if (k >= '0' && k <= '9' || k >= 'A' && k <= 'Z') {
+                    if (k == 'S' && pos + 1 < keysLen && keys[pos + 1] == 'P') {
+                        ++pos;
+                        keyDown(40);
+                    } else if (k == 's' && pos + 1 < keysLen && keys[pos + 1] == 'p') {
+                        ++pos;
+                        keyUp(40);
+                    } else if (k >= '0' && k <= '9' || k >= 'A' && k <= 'Z') {
                         keyDown(keyToDeckey._safeGet(k));
                     } else if (k >= 'a' && k <= 'z') {
                         keyUp(keyToDeckey._safeGet(toUpper(k)));
-                    } else if (k == '~') {
+                    } else if (k == '~' && pos + 1 < keysLen) {
                         k = keys[++pos];
                         keyUp(keyToDeckey._safeGet(k));
                     } else if (k == '<') {
