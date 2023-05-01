@@ -275,6 +275,13 @@ convert(E<86>O<5>o<22>e) = しょ
 # E, O, I, o, i, e
 convert(E<86>O<5><5>I<10>o<10>i<22>e) = しょう
 
+comboMaxTime(100)
+comboMaxPostTime(50)
+comboMinTime(100)
+
+# T, SP, W, t, w, sp
+
+convert(T<58>SP<52>W<29>t<98>w<45>sp) = くだ
 ### 13a ###
 loadTable(tables/_test/noniiruto.13a.tbl)
 comboMaxTime(70)
