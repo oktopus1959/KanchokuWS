@@ -1448,7 +1448,7 @@ namespace KanchokuWS.TableParser
         /// <param name="filename"></param>
         /// <param name="outFilename"></param>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public void ParseTableFile(string filename, string outFilename, KeyCombinationPool poolK, KeyCombinationPool poolA, bool primary, bool bTest = false)
+        public void ParseTableFile(string filename, string outFilename, KeyCombinationPool poolK, KeyCombinationPool poolA, int tableNo, bool bTest = false)
         {
             if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: filename={filename}");
 
@@ -1461,7 +1461,7 @@ namespace KanchokuWS.TableParser
                 parser.ParseRootTable();
                 //writeAllLines(outFilename, ParserContext.Singleton.OutputLines);
                 outputLines.AddRange(ParserContext.Singleton.OutputLines);
-                writeAllLines($"tmp/parsedTableFile{(bKanchoku ? 'K' : 'A')}{(primary ? 1 : 2)}.txt", ParserContext.Singleton.tableLines.GetLines());
+                writeAllLines($"tmp/parsedTableFile{(bKanchoku ? 'K' : 'A')}{tableNo}.txt", ParserContext.Singleton.tableLines.GetLines());
                 ParserContext.FinalizeSingleton();
             }
 
@@ -1470,14 +1470,14 @@ namespace KanchokuWS.TableParser
             // 漢直モードの解析
             if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"Analyze for KANCHOKU mode");
             TableLines tableLines = new TableLines();
-            tableLines.ReadAllLines(filename, primary, true);
+            tableLines.ReadAllLines(filename, tableNo == 1, true);
             if (tableLines.NotEmpty) {
                 parseRootTable(tableLines, poolK, true);
                 errorMsg = tableLines.getErrorMessage();
                 // 英数モードの解析
                 if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"Analyze for EISU mode");
                 tableLines = new TableLines();
-                tableLines.ReadAllLines(filename, primary, false);
+                tableLines.ReadAllLines(filename, tableNo == 1, false);
                 parseRootTable(tableLines, poolA, false);
                 if (errorMsg._isEmpty()) errorMsg = tableLines.getErrorMessage();
                 // 解析結果の出力

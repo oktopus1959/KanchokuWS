@@ -92,7 +92,7 @@ namespace KanchokuWS.TableParser
         protected string RewritePostChar { get { return tableLines.RewritePostChar; } set { tableLines.RewritePostChar = value; } }
         protected void InsertAtNextPos(string s) { tableLines.InsertAtNextPos(s); }
 
-        protected void ReadAllLines(string filename, bool bPrimary, bool bForKanchoku) { tableLines.ReadAllLines(filename, bPrimary, bForKanchoku); }
+        //protected void ReadAllLines(string filename, bool bPrimary, bool bForKanchoku) { tableLines.ReadAllLines(filename, bPrimary, bForKanchoku); }
         protected void IncludeFile() { tableLines.IncludeFile(); }
         protected void EndInclude() { tableLines.EndInclude(); }
         protected void StoreLineBlock() { tableLines.StoreLineBlock(); }
