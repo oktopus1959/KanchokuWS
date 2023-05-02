@@ -156,13 +156,15 @@ Google日本語入力のローマ字テーブル設定では「入力」「出�
 
 #### 同時打鍵で前置書き換えを行う
 `#combination` ディレクティブで囲まれた場所に記述することで、同時打鍵による書き換え設定も可能です。
-次図は、「M+カンマ」の同時打鍵で、「き」を「きゃ」などに書き換える例です。
+次図は、「Space, S」の同時打鍵で、「、」を「ぱ」に書き換える例です。
 
-![Post Rewrite Pair](image/post-rewrite-pair.png)
+![Pre Rewrite Pair1](image/pre-rewrite-pair1.png)
 
-上図では `{` の直後に `"!{Left}"` と記述されているので、
-直前の出力文字が「き」「に」「り」以外の場合は、
-左矢印キーが出力されます(通常はテキストカーソルの左移動となる)。
+同時打鍵の書き方には他に次のようなものがあります。
+
+![Pre Rewrite Pair2](image/pre-rewrite-pair2.png)
+
+![Pre Rewrite Pair3](image/pre-rewrite-pair3.png)
 
 #### 後続キーが複数打鍵からなる場合
 ローマ字で「sha」を「しゃ」に定義したい場合、`{ }` のブロックを使わず、
