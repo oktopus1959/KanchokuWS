@@ -235,7 +235,7 @@ namespace KanchokuWS.Domain
         }
 
         /// <summary>
-        /// DECKEY から文字コードを得る。デフォルトのJP/US配列の場合でも文字が返る。打鍵ログ出力で使用される
+        /// DECKEY から文字コードを得る。デフォルトのJP/US配列の場合でも文字が返る。打鍵ログ出力と書き換えシステムでの @^ で使用される
         /// </summary>
         public static char GetArrangedFaceCharFromDecKey(int decKey)
         {

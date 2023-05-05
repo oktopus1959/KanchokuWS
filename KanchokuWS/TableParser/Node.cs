@@ -44,9 +44,18 @@ namespace KanchokuWS.TableParser
             return str._toSafe();
         }
 
-        public string GetBaseQuotedString()
+        public string GetBaseQuotedString(int deckey)
         {
-            return (IsFunction() ? str._safeSubstring(1) : str)._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")._quoteString(isBare);
+            string s = str;
+            if (IsFunction()) {
+                s = str._safeSubstring(1);
+                if (s == "^" && deckey >= 0) {
+                    // 後置書き換えのキーが機能キーの @^ だったら、そのキーに対応する文字を出力文字とする
+                    var ch = Domain.DecoderKeyVsChar.GetArrangedFaceCharFromDecKey(deckey);
+                    if (ch > 0) return $"\"{ch.ToString()}\"";
+                }
+            }
+            return s._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")._quoteString(isBare);
         }
 
         public string GetQuotedString()
@@ -304,7 +313,7 @@ namespace KanchokuWS.TableParser
 
         public bool IsBareString() { return outputStr?.IsBare() ?? false; }
 
-        public string GetBaseQuotedString() { return outputStr?.GetBaseQuotedString(); }
+        public string GetBaseQuotedString(int deckey) { return outputStr?.GetBaseQuotedString(deckey); }
 
         public string GetQuotedString() { return outputStr?.GetQuotedString(); }
 
@@ -473,7 +482,7 @@ namespace KanchokuWS.TableParser
                 string leaderStr = list._notEmpty() ? $"-{list.Select(x => x.ToString())._join(">-")}>" : "";
                 if (rewriteMap._notEmpty()) {
                     // 書き換えノード
-                    outLines.Add(leaderStr + "@{" + GetBaseQuotedString());
+                    outLines.Add(leaderStr + "@{" + GetBaseQuotedString(list._notEmpty() ? list.Last(): -1));
                     rewriteMap.ForEach((key, node) => {
                         // 書き換えMapの先のノードは、文字列ノードかツリーノードとみなす
                         if (key._notEmpty() && node != null) {
