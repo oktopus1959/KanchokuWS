@@ -290,7 +290,7 @@ namespace KanchokuWS.TableParser
             }
             (Node mergedNode, bool bOverwrite) = TreeNode.SetOrMergeNthSubNode(idx, node);
             if (bOverwrite && (Settings.DuplicateWarningEnabled || IsInCombinationBlock) && !bIgnoreWarningOverwrite) {
-                logger.Warn($"DUPLICATED: {CurrentLine}");
+                logger.WarnH($"DUPLICATED: {CurrentLine}");
                 NodeDuplicateWarning();
             }
             return mergedNode;
@@ -956,7 +956,7 @@ namespace KanchokuWS.TableParser
             int tgtIdx = ShiftDecKey(idx);  // 矢印記法でないルートブロックの場合は、まだShiftされていないので、ここで Shift する必要あり
             (Node mergedNode, bool bOverwrite) = treeNode.SetOrMergeNthSubNode(tgtIdx, node);
             if (bOverwrite && (Settings.DuplicateWarningEnabled || IsInCombinationBlock) && !bIgnoreWarningOverwrite) {
-                logger.Warn($"DUPLICATED: {CurrentLine}");
+                logger.WarnH($"DUPLICATED: {CurrentLine}");
                 NodeDuplicateWarning();
             }
             return mergedNode;
@@ -983,7 +983,7 @@ namespace KanchokuWS.TableParser
                 rewriteNode.UpsertRewritePair(targetStr, node);
                 return rewriteNode;
             } else {
-                logger.Warn("RewriteNode NOT merged");
+                logger.WarnH("RewriteNode NOT merged");
                 return null;
             }
         }
@@ -1051,7 +1051,7 @@ namespace KanchokuWS.TableParser
                 }
                 return parser;
             } else {
-                logger.Warn($"Illegal index={idx}");
+                logger.WarnH($"Illegal index={idx}");
             }
             return null;
         }

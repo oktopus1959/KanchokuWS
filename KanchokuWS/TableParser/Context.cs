@@ -806,8 +806,8 @@ namespace KanchokuWS.TableParser
         // 警告処理
         void handleWarning(string msg) {
             if (numWarnLog++ < 10) {
-                logger.Warn(msg);
-                logger.Warn("lines=\n" + MakeErrorLines());
+                logger.WarnH(msg);
+                logger.WarnH("lines=\n" + MakeErrorLines());
                 // エラーメッセージを投げる
                 Warn(msg);
             }

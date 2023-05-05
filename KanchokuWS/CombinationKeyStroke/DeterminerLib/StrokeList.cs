@@ -657,10 +657,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                 // 指定個数以上の打鍵が残っていたら警告をログ出力する
                 if (Count >= Settings.WarnThresholdKeyQueueCount) {
-                    logger.Warn($"strokeList.Count={Count}");
+                    logger.WarnH($"strokeList.Count={Count}");
                     if (Count >= Settings.WarnThresholdKeyQueueCount + 5) {
                         // さらにそれを5個以上、上回っていたら、安全のためキューをクリアしておく
-                        logger.Warn($"Clear strokeList");
+                        logger.WarnH($"Clear strokeList");
                         Clear();
                     }
                 }

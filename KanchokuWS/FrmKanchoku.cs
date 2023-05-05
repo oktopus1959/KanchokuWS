@@ -1190,7 +1190,7 @@ namespace KanchokuWS
             if (len1 > 0 && len1 <= keyMaxLen && len2 <= 64 && items._getFirst()._safeIndexOf(' ') < 0) {
                 ExecCmdDecoder("addHistEntry", str);
             } else {
-                logger.Warn($"key length({len1}) is greater than {keyMaxLen} or xfer length ({len2}) is greater than {xferMaxLen}: {str}");
+                logger.WarnH($"key length({len1}) is greater than {keyMaxLen} or xfer length ({len2}) is greater than {xferMaxLen}: {str}");
             }
         }
 
@@ -1628,7 +1628,7 @@ namespace KanchokuWS
                         if ((rawDeckeyRepeatCount % 100) == 0) logger.InfoH(() => $"rawDeckeyRepeatCount={rawDeckeyRepeatCount}");
                         if (rawDeckeyRepeatCount > Settings.DeckeyInfiniteLoopDetectCount) {
                             logger.Error($"rawDeckeyRepeatCount exceeded threshold: deckey={deckey:x}H({deckey}), count={rawDeckeyRepeatCount}, threshold={Settings.DeckeyInfiniteLoopDetectCount}");
-                            logger.Warn("Force close");
+                            logger.WarnH("Force close");
                             this.Close();
                         }
                     } else {
