@@ -300,16 +300,19 @@ namespace KanchokuWS.TableParser
         {
             public static int calcRow(int idx, int currentRow)
             {
+                idx %= DecoderKeys.PLANE_DECKEY_NUM;
                 if (idx <= 40) return idx / 10;
                 return currentRow;
             }
 
             public static int calcOverrunIndex(int idx)
             {
-                if (idx == 10) return 41;
-                if (idx == 20) return 44;
-                if (idx == 30) return 46;
-                if (idx == 40) return 48;
+                int factor = idx / DecoderKeys.PLANE_DECKEY_NUM;
+                idx %= DecoderKeys.PLANE_DECKEY_NUM;
+                if (idx == 10) return factor * DecoderKeys.PLANE_DECKEY_NUM + 41;
+                if (idx == 20) return factor * DecoderKeys.PLANE_DECKEY_NUM + 44;
+                if (idx == 30) return factor * DecoderKeys.PLANE_DECKEY_NUM + 46;
+                if (idx == 40) return factor * DecoderKeys.PLANE_DECKEY_NUM + 48;
                 return idx;
             }
 
