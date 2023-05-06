@@ -539,6 +539,7 @@ namespace KanchokuWS.TableParser
             RewritePostChar = "";
 
             if (PeekNextChar() == '"') {
+                AdvanceCharPos(1);
                 ReadString();
             } else if (PeekNextChar() == '$') {
                 ReadPlaceHolderName();
@@ -692,6 +693,7 @@ namespace KanchokuWS.TableParser
             AdvanceCharPos(spaceLen);       // 空白の直後の位置に移動
 
             if (PeekNextChar() == '"') {
+                AdvanceCharPos(1);
                 ReadString();
                 bBare = false;
             } else {
