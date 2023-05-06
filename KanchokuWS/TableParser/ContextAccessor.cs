@@ -44,7 +44,7 @@ namespace KanchokuWS.TableParser
             get { return Context.bRewriteEnabled; }
             set { Context.bRewriteEnabled = value; }
         }
-        protected HashSet<string> definedNames => Context.definedNames;
+        protected Dictionary<string, string> definedNames => Context.definedNames;
         protected bool isInCombinationBlock => Context.isInCombinationBlock;
         protected bool isInSuccCombinationBlock => Context.isInSuccCombinationBlock;
         protected ShiftKeyKind shiftKeyKind {
@@ -97,7 +97,7 @@ namespace KanchokuWS.TableParser
         protected void EndInclude() { tableLines.EndInclude(); }
         protected void StoreLineBlock() { tableLines.StoreLineBlock(); }
         protected void LoadLineBlock() { tableLines.LoadLineBlock(); }
-        protected void RewriteIfdefBlock(HashSet<string> definedNames) { tableLines.RewriteIfBlock(definedNames); }
+        protected void RewriteIfdefBlock(Dictionary<string, string> definedNames) { tableLines.RewriteIfBlock(definedNames); }
         protected void ReadString() { tableLines.ReadString(); }
         protected void ReadBareString(char c = '\0') { tableLines.ReadBareString(c); }
         protected void ReadStringToEol() { tableLines.ReadStringToEol(); }

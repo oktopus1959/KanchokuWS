@@ -424,12 +424,12 @@ namespace KanchokuWS.TableParser
         /// <summary>if(n)def else endif ブロックで偽となる方をコメントアウトする<br/>
         /// - which : true = else側をコメントアウト; false = if(n)def 側をコメントアウト
         /// </summary>
-        public void RewriteIfBlock(HashSet<string> definedNames)
+        public void RewriteIfBlock(Dictionary<string, string> definedNames)
         {
             rewriteIfBlock(lineNumber, true, definedNames);
         }
 
-        public int rewriteIfBlock(int lineNum, bool bOpenBlock, HashSet<string> definedNames)
+        public int rewriteIfBlock(int lineNum, bool bOpenBlock, Dictionary<string, string> definedNames)
         {
             var line = tableLines[lineNum];
             if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: lineNum={lineNum}: {line}");
@@ -441,9 +441,10 @@ namespace KanchokuWS.TableParser
             if (directive._notEmpty()) {
                 bool flag;
                 if (directive == "if") {
-                    flag = arg._notEmpty() && arg != "0" && arg._toLower() != "false";
+                    var defArg = arg._notEmpty() ? definedNames._safeGet(arg) : null;
+                    flag = arg._notEmpty() && arg != "0" && arg._toLower() != "false" && (defArg._isEmpty() || (defArg != "0" && defArg._toLower() != "false"));
                 } else {
-                    flag = arg._notEmpty() && definedNames.Contains(arg);
+                    flag = arg._notEmpty() && definedNames.ContainsKey(arg);
                     if (directive == "ifndef") {
                         flag = !flag;
                     }
@@ -459,7 +460,7 @@ namespace KanchokuWS.TableParser
         }
 
         // true側 (#else ～ #endif をコメントアウト)
-        private int rewriteIfTrueBlock(int lineNum, bool bOpenBlock, HashSet<string> definedNames)
+        private int rewriteIfTrueBlock(int lineNum, bool bOpenBlock, Dictionary<string, string> definedNames)
         {
             while (lineNum < tableLines.Count) {
                 int curLn = lineNum++;
@@ -485,7 +486,7 @@ namespace KanchokuWS.TableParser
         }
 
         // false側 (#if ～ #else をコメントアウト)
-        private int rewriteIfFalseBlock(int lineNum, bool bOpenBlock, HashSet<string> definedNames)
+        private int rewriteIfFalseBlock(int lineNum, bool bOpenBlock, Dictionary<string, string> definedNames)
         {
             while (lineNum < tableLines.Count) {
                 var line = tableLines[lineNum];
@@ -656,7 +657,7 @@ namespace KanchokuWS.TableParser
                     } else if (c == ';' || (c == '/' && PeekNextChar() == '/')) {
                         SkipToEndOfLine();
                     } else {
-                        readWordSub(c);
+                        CurrentStr = readWordSub(c);
                         bBare = true;
                     }
                 }
@@ -905,7 +906,7 @@ namespace KanchokuWS.TableParser
 
         public bool bRewriteEnabled = false;         // 書き換えノードがあった
 
-        public HashSet<string> definedNames = new HashSet<string>();
+        public Dictionary<string, string> definedNames = new Dictionary<string, string>();
 
         // 同時打鍵定義ブロックの中か
         //public bool isInCombinationBlock => shiftKeyKind != ShiftKeyKind.None;

@@ -133,17 +133,24 @@ namespace KanchokuWS.TableParser
                         //outputNewLines();
                         //OutputLines.Add(CurrentLine); // define はすべてフロント側で処理するようにした
                         ReadWord();
-                        if (CurrentStr._startsWith("display")) OutputLines.Add(";; " + CurrentLine); // display-name だけ出力する
-                        if (CurrentStr._notEmpty()) definedNames.Add(CurrentStr);
-                        var lcDef = CurrentStr._toLower();
-                        if (lcDef._equalsTo("defguide")) {
-                            // 'defguide': 配字案内
-                            handleStrokePosition();
-                        } else if (lcDef._startsWith("sequen")) {
-                            // 'sequentialWords': 優先する順次打鍵
-                            ReadStringToEol();
-                            Settings.SequentialPriorityWordSet.UnionWith(CurrentStr._strip()._reSplit(@"[ ,]+"));
-                            SkipToEndOfLine();
+                        var defKey = CurrentStr;
+                        if (defKey._startsWith("display")) {
+                            OutputLines.Add(";; " + CurrentLine); // display-name だけ出力する
+                        } else if (defKey._notEmpty()) {
+                            var lcDef = defKey._toLower();
+                            if (lcDef._equalsTo("defguide")) {
+                                // 'defguide': 配字案内
+                                handleStrokePosition();
+                            } else if (lcDef._startsWith("sequen")) {
+                                // 'sequentialWords': 優先する順次打鍵
+                                ReadStringToEol();
+                                Settings.SequentialPriorityWordSet.UnionWith(CurrentStr._strip()._reSplit(@"[ ,]+"));
+                                SkipToEndOfLine();
+                            } else {
+                                // define KEY VALUE
+                                ReadWordOrString();
+                                definedNames[defKey] = CurrentStr;
+                            }
                         }
                     } else if (lcStr._startsWith("if")) {
                         RewriteIfdefBlock(definedNames);
@@ -167,9 +174,10 @@ namespace KanchokuWS.TableParser
                             if (Settings.KanjiYomiFile._notEmpty()) readKanjiConvFile(Settings.KanjiYomiFile, true);
                             if (keyword == "with") {
                                 ReadWordOrString();
-                                if (CurrentStr._notEmpty()) {
-                                    if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"YomiConversion: {CurrentStr}");
-                                    readKanjiConvFile(CurrentStr, false);
+                                var convFileKey = definedNames._safeGet(CurrentStr)._orElse(CurrentStr);
+                                if (convFileKey._notEmpty()) {
+                                    if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"YomiConversion: {convFileKey}");
+                                    readKanjiConvFile(convFileKey, false);
                                 }
                             }
                         }
@@ -554,8 +562,11 @@ namespace KanchokuWS.TableParser
                 // TOKEN.PLACE_HOLDER
                 ArrowIndex = placeHolders.Get(s._safeSubstring(1));
                 if (ArrowIndex < 0) {
-                    ParseError($"parseArrow: 定義されていないプレースホルダー: {s}");
-                    return false;
+                    ArrowIndex = placeHolders.Get(definedNames._safeGet(s._safeSubstring(1)));
+                    if (ArrowIndex < 0) {
+                        ParseError($"parseArrow: 定義されていないプレースホルダー: {s}");
+                        return false;
+                    }
                 }
             } else {
                 ArrowIndex = s._parseInt(-1);
