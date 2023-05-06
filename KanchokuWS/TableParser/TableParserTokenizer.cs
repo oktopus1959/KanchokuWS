@@ -145,18 +145,8 @@ namespace KanchokuWS.TableParser
                             Settings.SequentialPriorityWordSet.UnionWith(CurrentStr._strip()._reSplit(@"[ ,]+"));
                             SkipToEndOfLine();
                         }
-                    } else if (lcStr == "if") {
-                        ReadWord();
-                        bool flag = CurrentStr._notEmpty() && CurrentStr != "0" && CurrentStr._toLower() != "false";
-                        RewriteIfdefBlock(flag);
-                    } else if (lcStr == "ifdef") {
-                        ReadWord();
-                        bool flag = CurrentStr._notEmpty() && definedNames.Contains(CurrentStr);
-                        RewriteIfdefBlock(flag);
-                    } else if (lcStr == "ifndef") {
-                        ReadWord();
-                        bool flag = CurrentStr._notEmpty() && definedNames.Contains(CurrentStr);
-                        RewriteIfdefBlock(!flag);
+                    } else if (lcStr._startsWith("if")) {
+                        RewriteIfdefBlock(definedNames);
                     } else if (lcStr == "else") {
                     } else if (lcStr == "endif") {
                     } else if (lcStr == "store") {

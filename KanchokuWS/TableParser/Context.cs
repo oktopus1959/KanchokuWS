@@ -424,47 +424,85 @@ namespace KanchokuWS.TableParser
         /// <summary>if(n)def else endif ブロックで偽となる方をコメントアウトする<br/>
         /// - which : true = else側をコメントアウト; false = if(n)def 側をコメントアウト
         /// </summary>
-        public void RewriteIfdefBlock(bool which)
+        public void RewriteIfBlock(HashSet<string> definedNames)
         {
-            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CALLED: block={which}");
-            int lineNum = lineNumber;
-            tableLines[lineNum] = ";;; " + tableLines[lineNum];
+            rewriteIfBlock(lineNumber, true, definedNames);
+        }
+
+        public int rewriteIfBlock(int lineNum, bool bOpenBlock, HashSet<string> definedNames)
+        {
+            var line = tableLines[lineNum];
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: lineNum={lineNum}: {line}");
+            tableLines[lineNum] = ";;; " + line;
             ++lineNum;
-            if (which) {
-                while (lineNum < tableLines.Count) {
-                    if (tableLines[lineNum]._startsWith("#else")) {
-                        while (lineNum < tableLines.Count) {
-                            tableLines[lineNum] = ";;; " + tableLines[lineNum];
-                            if (tableLines[lineNum]._startsWith(";;; #endif")) {
-                                break;
-                            }
-                            ++lineNum;
-                        }
-                        return;
-                    } else if (tableLines[lineNum]._startsWith("#endif")) {
-                        tableLines[lineNum] = ";;; " + tableLines[lineNum];
-                        return;
+            var items = line._reScan(@"^#\s*(if\w*)(\s+(\w+))?");
+            var directive = items._getSecond();
+            var arg = items._getNth(3);
+            if (directive._notEmpty()) {
+                bool flag;
+                if (directive == "if") {
+                    flag = arg._notEmpty() && arg != "0" && arg._toLower() != "false";
+                } else {
+                    flag = arg._notEmpty() && definedNames.Contains(arg);
+                    if (directive == "ifndef") {
+                        flag = !flag;
                     }
-                    ++lineNum;
                 }
-            } else {
-                while (lineNum < tableLines.Count) {
-                    tableLines[lineNum] = ";;; " + tableLines[lineNum];
-                    if (tableLines[lineNum]._startsWith(";;; #else")) {
-                        while (lineNum < tableLines.Count) {
-                            if (tableLines[lineNum]._startsWith("#endif")) {
-                                tableLines[lineNum] = ";;; #endif";
-                                return;
-                            }
-                            ++lineNum;
-                        }
-                        return;
-                    } else if (tableLines[lineNum]._startsWith(";;; #endif")) {
-                        return;
-                    }
-                    ++lineNum;
+                if (flag) {
+                    rewriteIfTrueBlock(lineNum, bOpenBlock, definedNames);
+                } else {
+                    rewriteIfFalseBlock(lineNum, bOpenBlock, definedNames);
                 }
             }
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: lineNum={lineNum}");
+            return lineNum;
+        }
+
+        // true側 (#else ～ #endif をコメントアウト)
+        private int rewriteIfTrueBlock(int lineNum, bool bOpenBlock, HashSet<string> definedNames)
+        {
+            while (lineNum < tableLines.Count) {
+                int curLn = lineNum++;
+                var line = tableLines[curLn];
+                if (line._getFirst() == '#') {
+                    var items = line._reScan(@"^#\s*(if|else|endif)");
+                    var directive = items._getSecond();
+                    if (directive._notEmpty()) {
+                        if (directive == "if") {
+                            lineNum = rewriteIfBlock(curLn, true, definedNames);
+                        } else {
+                            tableLines[curLn] = ";;; " + line;
+                            if (bOpenBlock && directive == "else") {
+                                // ここから false側
+                                lineNum = rewriteIfFalseBlock(lineNum, false, definedNames);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            return lineNum;
+        }
+
+        // false側 (#if ～ #else をコメントアウト)
+        private int rewriteIfFalseBlock(int lineNum, bool bOpenBlock, HashSet<string> definedNames)
+        {
+            while (lineNum < tableLines.Count) {
+                var line = tableLines[lineNum];
+                tableLines[lineNum] = ";;; " + line;
+                ++lineNum;
+                if (line._getFirst() == '#') {
+                    if (line._reMatch(@"^#\s*if")) {                            // ネストされた #if
+                        lineNum = rewriteIfFalseBlock(lineNum, false, definedNames);
+                    } else if (bOpenBlock && line._reMatch($@"#\s*else")) {     // 同レベルのオープンな #else
+                        lineNum = rewriteIfTrueBlock(lineNum, true, definedNames);
+                        break;
+                    } else if (line._reMatch($@"#\s*endif")) {                  // 同レベルの #endif
+                        break;
+                    }
+                }
+            }
+            return lineNum;
         }
 
         // '"' が来るまで読みこんで、currentStr に格納。
