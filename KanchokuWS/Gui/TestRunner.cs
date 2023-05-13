@@ -110,6 +110,7 @@ namespace KanchokuWS.Gui
                         Settings.ComboKeyMaxAllowedPostfixTimeMs = 100;
                         Settings.CombinationKeyMinOverlappingTimeMs = 70;
                         Settings.ComboDisableIntervalTimeMs = 0;
+                        Settings.PreRewriteAllowedDelayTimeMs = 1000;
                         shiftOffset = 0;
                         if (Logger.LogLevel >= Logger.LogLevelInfoH) {
                             KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.SingletonK2?.DebugPrint(true);
@@ -310,9 +311,11 @@ namespace KanchokuWS.Gui
                 for (int pos = 0; pos < keysLen; ++pos) {
                     char k = keys[pos];
                     if (k == 'S' && pos + 1 < keysLen && keys[pos + 1] == 'P') {
+                        // SP
                         ++pos;
                         keyDown(40);
                     } else if (k == 's' && pos + 1 < keysLen && keys[pos + 1] == 'p') {
+                        // sp
                         ++pos;
                         keyUp(40);
                     } else if (k >= '0' && k <= '9' || k >= 'A' && k <= 'Z') {

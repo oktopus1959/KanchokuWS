@@ -126,12 +126,11 @@ namespace KanchokuWS.CombinationKeyStroke
 
         private void checkPreRewriteTime(int dk)
         {
-            if (/*Stroke.ModuloizeKey(prevDecKey) != Stroke.ModuloizeKey(dk) && */ //たぶんこの処理は不要(同じキーの連打は時間チェックをしない)。後で削除
-                preRewriteDt._isValid() &&
+            if (preRewriteDt._isValid() &&
                 Settings.PreRewriteAllowedDelayTimeMs > 0 &&
                 (DateTime.Now - preRewriteDt).TotalMilliseconds > Settings.PreRewriteAllowedDelayTimeMs)
             {
-                logger.DebugH($"CALL cancelPreRewrite");
+                logger.DebugH($"CALL cancelPreRewrite: PreRewriteAllowedDelayTimeMs={Settings.PreRewriteAllowedDelayTimeMs}");
                 frmMain?.ExecCmdDecoder("cancelPreRewrite", null);
             }
         }
