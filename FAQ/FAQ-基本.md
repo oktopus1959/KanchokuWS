@@ -744,15 +744,19 @@ KanchokuWSのアップデートの際などに誤ってこのファイルを上�
 
 ![Eisu Mode Example](image/eisu-mode-example.png)
 
-英数モードには `EisuModeToggle` （[拡張修飾キー](FAQ-キーアサイン.md#拡張修飾キーの割り当て)）
+英数モードには `EisuModeToggle` （「[拡張修飾キー](FAQ-キーアサイン.md#拡張修飾キーの割り当て)」を参照）
 を実行することでも入れます。
 `ESC` を打鍵していったん英数モードから抜けてしまった後でも、
 `EisuModeToggle` を実行すればモードを抜ける前の状態に戻ります。
 
+`EisuModeToggle` を、たとえば下図のように「英数」キーの単打に割り当てておくと便利かもしれません。
+
+![Eisu Key For Mode Toggle](image/eisu-key-for-mode-toggle.png)
+
 #### 先頭文字の小文字化
-英数モードで EisuDecapitalize （「[拡張修飾キー](FAQ-キーアサイン.md#拡張修飾キーの割り当て)」参照）を実行すると、
+英数モードで `EisuDecapitalize` （「[拡張修飾キー](FAQ-キーアサイン.md#拡張修飾キーの割り当て)」参照）を実行すると、
 先頭文字を小文字化します。
-たとえば、EisuDecapitalize を `Ctrl-L` に割り当てた上で、「IPhone」と入力した後 `Ctrl-L` を打鍵すると
+たとえば、`EisuDecapitalize` を `Ctrl-L` に割り当てた上で、「IPhone」と入力した後 `Ctrl-L` を打鍵すると
 「iPhone」に変換されます。
 
 #### 英字列をカタカナに変換する
