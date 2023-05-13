@@ -333,6 +333,7 @@ loadTable(tables/_test/combo_rewrite.tbl)
 convert({40}Kk[40]{40}Xx[40]) = ぼ
 convert({40}Kk[40]{40}Ww[40]) = ぴ
 convert({40}Kk[40]{40}Ss[40]) = ぱ
+convert(Q<94>q<40>J<10>K<130>k<35>j) = きょう
 
 ### NICOLA ###
 useComboExtModKeyAsSingleHit(false)

@@ -1160,8 +1160,8 @@ namespace KanchokuWS.TableParser
             idx = strkList.Last();
             if (IsInCombinationBlock) {
                 // 同時打鍵の場合
-                bool bFunc = myStr?.IsFunction() ?? false;
-                bool bStr = !myStr._isEmpty() && !bFunc;
+                bool bStr = myStr._notEmpty();
+                bool bFunc = (myStr?.IsFunction() ?? false) || !bStr;    // 出力文字がなければ、機能キーとして扱う
                 addCombinationKey(strkList, bStr, bFunc);
             }
             // 同時打鍵の場合は、TreeNodeは RootNodeの子ノードになっているはず。
