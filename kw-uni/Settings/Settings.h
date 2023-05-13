@@ -50,6 +50,7 @@ struct Settings {
     size_t histHorizontalCandMax = 5;       // 履歴候補の横列鍵盤表示の際の最大数
 
     bool histMoveShortestAt2nd = false;     // 最短長履歴文字列を2番目に表示する
+    bool showHistCandsFromFirst = true;     // 最初の履歴選択から横列候補表示を行うか
 
     bool useArrowToSelCand = true;          // 矢印キーで履歴候補選択を行う
     bool selectHistCandByTab = true;        // Tabキーで履歴候補選択を行う

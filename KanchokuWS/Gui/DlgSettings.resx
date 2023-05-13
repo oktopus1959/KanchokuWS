@@ -282,20 +282,6 @@ extraInfo の値が当ツールの設定したものだけを無視するよう�
 ウィンドウのClassNameは、漢直モードに入り、仮想鍵盤を表示して、
 対象となるウィンドウをアクティブにすると、仮想鍵盤の上部に表示されます。</value>
   </data>
-  <data name="textBox_minLeghthViaClipboard.ToolTip" xml:space="preserve">
-    <value>クリップボード経由で文字を送出する場合の最小文字数を設定します。
-
-対象ウィンドウへに送出される文字列の文字数がこの数より小さい場合は、
-文字列全体を SendInput により送出します。
-
-設定された文字数以上の場合は、送出文字列をいったんクリップボードに
-コピーした後、Ctrl-V を送出します。
-
-0 を設定すると、クリップボード経由による送出を行いません。
-
-また、次項の「N文字以上の削除にShift+左矢印+Delを使う」が有効な
-場合もクリップボード経由による送出を行いません。</value>
-  </data>
   <data name="checkBox_threeKeysComboUnconditional.ToolTip" xml:space="preserve">
     <value>この項目をチェックすると、3キー以上の同時押しについて、左の「同時打鍵の
 判定条件」を無視するようになります。

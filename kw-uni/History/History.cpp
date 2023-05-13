@@ -1112,7 +1112,10 @@ namespace {
                                 // 候補が1つだけで、keyに一致するときは履歴選択状態にはしない
                             } else {
                                 _LOG_DEBUGH(_T("HistSearch: CANDS CHECKER-B"));
-                                setCandidatesVKB(VkbLayout::Horizontal, words, ky);
+                                if (SETTINGS->showHistCandsFromFirst) {
+                                    // 初回の履歴選択でも横列候補表示を行う
+                                    setCandidatesVKB(VkbLayout::Horizontal, words, ky);
+                                }
                             }
                         };
                         if (key != HISTORY_STAY_NODE->GetPrevKey() || maybeEditedBySubState || bManual) {
@@ -1216,6 +1219,9 @@ namespace {
             // 今回、履歴選択用ホットキーだったことを保存
             setCandSelectIsCalled();
 
+            // 初回から履歴候補の横列表示をするか、または2回目以降の履歴検索の場合は、履歴候補の横列表示あり
+            bool bShowHistCands = SETTINGS->showHistCandsFromFirst || bCandSelectable;
+
             if (!bCandSelectable) {
                 // 履歴候補選択可能状態でなければ、前回の履歴検索との比較、新しい履歴検索の開始
                 historySearch(true);
@@ -1223,9 +1229,9 @@ namespace {
             if (bCandSelectable) {
                 LOG_INFO(_T("CandSelectable: bNext=%s"), BOOL_TO_WPTR(bNext));
                 if (bNext)
-                    getNextCandidate();
+                    getNextCandidate(bShowHistCands);
                 else
-                    getPrevCandidate();
+                    getPrevCandidate(bShowHistCands);
             } else {
                 LOG_INFO(_T("NOP"));
             }
@@ -1454,7 +1460,7 @@ namespace {
 
         // 履歴結果出力 (bSetVKb = false なら、仮想鍵盤表示を履歴選択モードにしない; 英数モードから履歴検索をした直後のESCのケース)
         void outputHistResult(const HistResult& result, bool bSetVkb) {
-            _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("ENTER: %s: bSetVkb=%s"), NAME_PTR, BOOL_TO_WPTR(bSetVkb));
             getLastHistKeyAndRewindOutput();    // 前回の履歴検索キー取得と出力スタックの巻き戻し予約(numBackSpacesに値をセット)
 
             setOutString(result);

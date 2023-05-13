@@ -1544,6 +1544,7 @@ namespace KanchokuWS.Gui
             checkBox_historySearchKey.Checked = Settings.HistorySearchCtrlKey._notEmpty() && !Settings.HistorySearchCtrlKey.StartsWith("#");
             comboBox_selectCtrlKeyItem(comboBox_historySearchKey, $"{Settings.HistorySearchCtrlKey.Replace("#", "")}");
             //checkBox_histSearchByShiftSpace.Checked = Settings.HistSearchByShiftSpace;
+            checkBox_showHistCandsFromFirst.Checked = !Settings.ShowHistCandsFromFirst;
             checkBox_selectFirstCandByEnter.Checked = Settings.SelectFirstCandByEnter;
             checkBox_newLineWhenHistEnter.Checked = Settings.NewLineWhenHistEnter;
             //checkBox_autoHistEnabled_CheckedChanged(null, null);
@@ -1585,6 +1586,7 @@ namespace KanchokuWS.Gui
             checkerHistory.Add(checkBox_historySearchKey);
             checkerHistory.Add(comboBox_historySearchKey);
             //checkerHistory.Add(checkBox_histSearchByShiftSpace);
+            checkerHistory.Add(checkBox_showHistCandsFromFirst);
             checkerHistory.Add(checkBox_selectFirstCandByEnter);
             checkerHistory.Add(checkBox_newLineWhenHistEnter);
             //checkerHistory.Add(checkBox_autoHistEnabled_CheckedChanged);
@@ -1632,6 +1634,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("autoHistSearchEnabled", checkBox_autoHistEnabled.Checked);
             Settings.SetUserIni("histSearchCtrlKey", makeCtrlKeyConversion(checkBox_historySearchKey, comboBox_historySearchKey));
             //Settings.SetUserIni("histSearchByShiftSpace", checkBox_histSearchByShiftSpace.Checked);
+            Settings.SetUserIni("showHistCandsFromFirst", !checkBox_showHistCandsFromFirst.Checked);
             Settings.SetUserIni("selectFirstCandByEnter", checkBox_selectFirstCandByEnter.Checked);
             Settings.SetUserIni("newLineWhenHistEnter", checkBox_newLineWhenHistEnter.Checked);
             Settings.SetUserIni("useArrowToSelCand", checkBox_useArrowKeyToSelectCand.Checked);
