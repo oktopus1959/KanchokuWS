@@ -52,6 +52,16 @@ namespace KanchokuWS.CombinationKeyStroke
         public bool OnlyCharacterKeys { get; private set; } = false;
 
         /// <summary>
+        /// 文字キー(スペースキーや機能キー)以外を2つ以上含むか
+        /// </summary>
+        public bool ContainsTwoCharacterKeys => CharacterKeysCount >= 2;
+
+        /// <summary>
+        /// 文字キー(スペースキーや機能キー以外)の数
+        /// </summary>
+        public int CharacterKeysCount { get; private set; } = 0;
+
+        /// <summary>
         /// Oneshotの同時打鍵か<br/>すなわち、当組合せの同時打鍵が発生したら、それ打鍵列は次に持ち越さずに破棄されるか
         /// </summary>
         //public bool IsOneshot => ComboShiftedDecoderKeyList.ShiftKind == ShiftKeyKind.OneshotShift;
@@ -78,6 +88,11 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <summary>同時打鍵組合せのデバッグ表示用文字列</summary>
         private string _comboKeyStr { get; set; }
 
+        private void countCharKeys(List<int> decKeyList)
+        {
+            CharacterKeysCount = decKeyList._isEmpty() ? 0 : decKeyList.Where(dk => dk >= 0 && !DecoderKeys.IsSpaceOrFuncKey(DeterminerLib.Stroke.ModuloizeKey(dk))).Count();
+        }
+
         private bool containsOnlyCharKeys(List<int> decKeyList)
         {
             return decKeyList._notEmpty() && decKeyList.All(dk => dk >= 0 && !DecoderKeys.IsSpaceOrFuncKey(DeterminerLib.Stroke.ModuloizeKey(dk)));
@@ -95,7 +110,8 @@ namespace KanchokuWS.CombinationKeyStroke
             HasString = hasStr;
             HasFunction = hasFunc;
             IsComboBlocked = comboBlocked;
-            OnlyCharacterKeys = containsOnlyCharKeys(decKeyList);
+            countCharKeys(decKeyList);
+            OnlyCharacterKeys = CharacterKeysCount > 0 && decKeyList._safeCount() == CharacterKeysCount;
             //IsEffectiveAlways = effectiveAlways;
         }
 

@@ -371,10 +371,10 @@ namespace KanchokuWS.CombinationKeyStroke
                                     result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer, out bUnconditional);
                                     if (result._isEmpty()) {
                                         logger.DebugH($"result is EMPTY: bTimer={bTimer}");
-                                        if (bTimer || strokeList.IsSuccessiveShift3rdOrLaterKey() /*strokeList.IsSuccessiveShift2ndOr3rdKey()*/) {
+                                        if (bTimer || strokeList.Count == 2 /* strokeList.IsSuccessiveShift3rdOrLaterKey() /*strokeList.IsSuccessiveShift2ndOr3rdKey()*/) {
                                             logger.DebugH(() => $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}, " +
                                                 $"NotSpaceNorFuncKey={!DecoderKeys.IsSpaceOrFuncKey(decKey)}, IsTerminalCombo()={strokeList.IsTerminalCombo()}");
-                                            // タイマーが有効であるか、または同時打鍵シフト後の3打鍵め以降の文字キーであって、同時打鍵組合せが終端文字だったらタイマーを起動する
+                                            // タイマーが有効であるか、または同時打鍵シフトの2打鍵め文字キーであって、同時打鍵組合せが終端文字だったらタイマーを起動する
                                             if (Settings.UseCombinationKeyTimer2 && !DecoderKeys.IsSpaceOrFuncKey(decKey) && strokeList.IsTerminalCombo()) {
                                                 startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
                                             }

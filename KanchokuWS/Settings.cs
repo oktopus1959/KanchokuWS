@@ -725,10 +725,16 @@ namespace KanchokuWS
         /// <summary>同時打鍵判定を行う際、第2打鍵がシフトキーだった場合に許容する最大のリード時間(ミリ秒)<br/>これにより、シフトキーがその直後の文字キーにかかりやすくなることが期待できる</summary>
         public static int ComboKeyMaxAllowedPostfixTimeMs { get; set; }
 
-        /// <summary>同時打鍵とみなす重複時間<br/>Nキー同時押しの状態からどれかのキーUPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす</summary>
+        /// <summary>
+        /// 同時打鍵とみなす重複時間<br/>
+        /// Nキー同時押しの状態からどれかのキーUPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす
+        /// </summary>
         public static int CombinationKeyMinOverlappingTimeMs { get; set; }
 
-        /// <summary>同、シフトキーが文字キーだった場合</summary>
+        /// <summary>
+        /// シフトキーが文字キーだった場合の、同時打鍵とみなす重複時間<br/>
+        /// Nキー同時押しの状態からどれかのキーUPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす
+        /// </summary>
         public static int CombinationKeyMinOverlappingTimeMs2 { get; set; }
 
         /// <summary>２文字目以降についてのみ同時打鍵の重複時間チェックを行う</summary>

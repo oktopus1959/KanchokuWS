@@ -209,11 +209,11 @@ comboMinTime(70)
 #enableTimer1
 #enableTimer2
 
-convert({40}<50>J<48>K<8>[40]<56>j<72>k) = める
-convert(J<50>{40}<50>K<48>j<56>[40]<72>k) = めや
+convert(SP<50>J<48>K<8>sp<56>j<72>k) = める
+convert(J<50>SP<50>K<48>j<56>sp<72>k) = めや
 
 comboMaxPostTime(48)
-convert(J<50>{40}<50>K<48>j<56>[40]<72>k) = いや
+convert(J<50>SP<50>K<48>j<56>sp<72>k) = いや
 
 ### 10a ###
 loadTable(tables/_test/noniiruto.10a.tbl)
@@ -223,20 +223,23 @@ comboMinTime(70)
 enableTimer1()
 enableTimer2()
 
-#convert({40}<162>J<94>F<33>j<95>f<1000>J<79>F<97>j<30>f<30>[40]) = ぃぃ
-convert(F<81>J<14>{40}<48>f<112>[40]<13>j) = の、
+#convert(SP<162>J<94>F<33>j<95>f<1000>J<79>F<97>j<30>f<30>sp) = ぃぃ
+convert(F<81>J<14>SP<48>f<112>sp<13>j) = の、
 
 comboMaxTime(50)
 comboMaxPostTime(50)
 enableTimer1
-convert({40}<9>O<89>X<8>[40]<23>o<60>x) = より
+convert(SP<9>O<89>X<8>sp<23>o<60>x) = より
 
 disableTimer1
 disableTimer2
 comboDisableTime(300)
 convert({sp}<5>W<142>w<23>[sp]<75>{,}<22>{sp}<111>[sp]<42>[,]) = だが
+
+comboMaxTime(100)
+comboMaxPostTime(70)
 comboDisableTime(100)
-convert(SP<5>W<142>w<23>{,}<21>sp<75>[,]<150>K<22>SP<111>sp<42>k) = だがや
+convert(SP<5>W<142>w<23>{,}<21>sp<75>[,]<150>K<2>SP<111>sp<42>k) = だがや
 
 ### 12 ###
 loadTable(tables/_test/noniiruto.12.tbl)
@@ -248,20 +251,27 @@ comboMinTime(50)
 #enableTimer2
 
 # Space, E, O, .., o : 3打同時の末尾が先に上がる
-convert({40}<33>E<86>O<50>I<55>o<22>e<19>i<6>[40]) = しょう
+convert(SP<33>E<86>O<50>I<55>o<22>e<19>i<6>sp) = しょう
+
+onlyCharKeysComboShouldBeCoveringCombo(true)
+
 # Space, E, O, .., e : 3打同時の末尾以外が先に上がる
-convert({40}<33>E<86>O<50>I<55>e<22>o<19>i<6>[40]) = じよう
+convert(SP<33>E<86>O<50>I<55>e<22>o<19>i<6>sp) = じよう
+
+enableTimer2
+# Space, E, O, .., e : タイマーで O が先に上がる
+convert(SP<33>E<86>O<50>I<55>e<22>o<19>i<6>sp) = じよう
 
 comboMaxTime(500)
-convert(S<35>{40}<120>s<20>[40]) = ば
+convert(S<35>SP<120>s<20>sp) = ば
 
 comboMinTime(100)
-convert({40}<471>{45}<112>[45]<32>{45}<48>[45]<100>[40]) = ……
-convert({40}<471>U<112>u<32>U<48>u<100>[40]) = そそ
+convert(SP<471>{45}<112>[45]<32>{45}<48>[45]<100>sp) = ……
+convert(SP<471>U<112>u<32>U<48>u<100>sp) = そそ
 
 comboMaxTime(100)
 comboMinTime(200)
-convert({40}<35>S<110>U<20>s<20>[40]<50>u) = ばか
+convert(SP<35>S<110>U<20>s<20>sp<50>u) = ばか
 
 ### 13 ###
 loadTable(tables/_test/noniiruto.13.tbl)
@@ -291,7 +301,33 @@ comboMaxPostTime(200)
 comboMinTime(200)
 
 # SP, E, O, o, e, SP
-convert({40}<51>E<56>O<160>o<10>e<13>[40]) = じょ
+convert(SP<51>E<56>O<160>o<10>e<13>sp) = じょ
+
+### 13b ###
+loadTable(tables/_test/noniiruto.13b.tbl)
+comboMaxTime(100)
+comboMinTime(70)
+
+# K, SP, A, sp, k, a
+convert(K<7>SP<131>A<91>sp<15>k<38>a) = ぷ
+
+# SP E O I e o i sp
+convert(SP<178>E<87>O<49>I<40>e<55>o<33>i<33>sp) = じよう
+
+# SP E O e o sp
+convert(SP<98>E<55>O<72>e<38>o<33>sp) = じよ
+convert(SP<111>E<85>O<73>e<20>o<33>sp) = じよ
+
+enableTimer1
+enableTimer2
+comboDisableTime(200)
+
+# SP E O e o sp
+convert(SP<98>E<55>O<72>e<38>o<33>sp) = じよ
+convert(SP<111>E<85>O<73>e<20>o<33>sp) = じよ
+
+# E O I o i e
+convert(E<87>O<81>I<110>o<18>i<89>e) = しょう
 
 ### post.7 ###
 loadTable(tables/_test/noniiruto.post.7.tbl)
@@ -325,9 +361,9 @@ loadTable(tables/_test/okt.tbl)
 convert({0}[0]{0}[0]) = 11
 convert({1}[1]{1}[1]) = 22
 convert(AaAa) = 種
-convert(A<12>{40}<131>a<28>[40]<37>J<17>j) = 愉
-convert(A<12>{40}<131>J<17>a<28>[40]<37>j) = 愉
-convert({40}<10>O<10>o<10>8<10>~8<10>O<100>o<10>R<10>r<10>[40]) = 撤廃
+convert(A<12>SP<131>a<28>sp<37>J<17>j) = 愉
+convert(A<12>SP<131>J<17>a<28>sp<37>j) = 愉
+convert(SP<10>O<10>o<10>8<10>~8<10>O<100>o<10>R<10>r<10>sp) = 撤廃
 clear()
 
 #### 同時打鍵 書き換え ###
@@ -336,9 +372,9 @@ comboMaxTime(100)
 comboMinTime(70)
 comboDisableTime(10)
 rewriteMaxTime(1000)
-convert({40}Kk[40]{40}Xx[40]) = ぼ
-convert({40}Kk[40]{40}Ww[40]) = ぴ
-convert({40}Kk[40]{40}Ss[40]) = ぱ
+convert(SPKkspSPXxsp) = ぼ
+convert(SPKkspSPWwsp) = ぴ
+convert(SPKkspSPSssp) = ぱ
 convert(Q<94>q<40>SP<10>K<130>k<35>sp) = きょう
 convert(SP<18>Q<112>sp<31>q<70>K<10>SP<130>k<35>sp) = ぎょう
 
