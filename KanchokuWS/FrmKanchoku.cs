@@ -284,7 +284,7 @@ namespace KanchokuWS
             logger.Info("Timer Started");
 
             // キーボードイベントハンドラの初期化(フックの開始など)
-            keHandler.Initialize(this);
+            keHandler.Initialize(this, frmVkb);
         }
 
         // 各種サンプルから本番ファイルをコピー(もし無ければ)

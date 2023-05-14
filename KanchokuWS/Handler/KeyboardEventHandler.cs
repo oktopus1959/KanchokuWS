@@ -17,6 +17,8 @@ namespace KanchokuWS.Handler
 
         private FrmKanchoku frmKanchoku = null;
 
+        private FrmVirtualKeyboard frmVkb = null;
+
         /// <summary>デコーダが ON か</summary>
         private bool isDecoderActivated() {
             return frmKanchoku?.IsDecoderActivated() ?? false;
@@ -27,6 +29,12 @@ namespace KanchokuWS.Handler
             return frmKanchoku?.IsDecoderWaitingFirstStroke() == true;
         }
 
+        /// <summary>仮想鍵盤のミニバッファにフォーカスがあるか </summary>
+        private bool isVkbTopTextFocused()
+        {
+            return frmVkb?.IsTopTextFocused ?? false;
+        }
+
         /// <summary>コンストラクタ</summary>
         public KeyboardEventHandler()
         {
@@ -35,11 +43,12 @@ namespace KanchokuWS.Handler
         /// <summary>
         /// 初期化
         /// </summary>
-        public void Initialize(FrmKanchoku frm)
+        public void Initialize(FrmKanchoku frm, FrmVirtualKeyboard vkb)
         {
             logger.InfoH("ENTER");
 
             frmKanchoku = frm;
+            frmVkb = vkb;
 
             setInvokeHandlerToDeterminer();
 
@@ -579,7 +588,7 @@ namespace KanchokuWS.Handler
 
             if (Settings.LoggingDecKeyInfo) {
                 logger.InfoH(() =>
-                    $"\nENTER: IsVkbWinActive={ActiveWindowHandler.Singleton.IsVkbWinActive}, vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}\n" +
+                    $"\nENTER: IsVkbTopTextFocused={isVkbTopTextFocused()}, vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}\n" +
                     keyInfoManager.modifiersStateStr());
             }
 
@@ -840,8 +849,8 @@ namespace KanchokuWS.Handler
                 logger.InfoH(() => $"ENTER: kanchokuCode={kanchokuCode}, normalDecKey={normalDecKey}, mod={mod:x}H({mod}), modEx={modEx:x}H({modEx}), vkey={vkey:x}H({vkey}), ctrl={ctrl}, shift={shift}");
             }
 
-            // 漢直トグルでなく、VirtualKeyboard がActiveの場合は、システムに返す
-            if (kanchokuCode < 0 && ActiveWindowHandler.Singleton.IsVkbWinActive) return false;
+            // 漢直トグルでなく、VirtualKeyboard のミニバッファがActiveの場合は、システムに返す
+            if (kanchokuCode < 0 && isVkbTopTextFocused()) return false;
 
             if (kanchokuCode < 0 && modEx != 0 && !ctrl && !shift) {
                 // 拡張シフトが有効なのは、Ctrlキーが押されておらず、Shiftも押されていないか、Shift+SpaceをSandSとして扱わない場合とする
@@ -933,7 +942,7 @@ namespace KanchokuWS.Handler
 
             if (Settings.LoggingDecKeyInfo) {
                 logger.InfoH(() =>
-                    $"\nENTER: IsVkbWinActive={ActiveWindowHandler.Singleton.IsVkbWinActive}, vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
+                    $"\nENTER: IsVkbTopTextFocused={isVkbTopTextFocused()}, vkey={vkey:x}H({vkey}), scanCode={scanCode:x}H, extraInfo={extraInfo}");
             }
 
             // 半/全キーは、US-on-JP モードなら true(入力破棄; つまり無視) JPモードなら false (システム処理; つまりIMEのON/OFF)を返す
@@ -1067,8 +1076,8 @@ namespace KanchokuWS.Handler
                 }
             }
 
-            // VirtualKeyboard がActiveの場合は、システムに返す
-            if (ActiveWindowHandler.Singleton.IsVkbWinActive) return false;
+            // VirtualKeyboard のミニバッファがActiveの場合は、システムに返す
+            if (isVkbTopTextFocused()) return false;
 
             keyboardUpHandler(bDecoderOn, vkey, leftCtrl, rightCtrl, modFlag);
             return false;

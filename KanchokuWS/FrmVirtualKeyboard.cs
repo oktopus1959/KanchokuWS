@@ -65,6 +65,10 @@ namespace KanchokuWS
             return winClassName._orElse(ActiveWindowHandler.Singleton.ActiveWinClassName)._endsWith(dlgVkbClassNameHash);
         }
 
+        /// <summary> ミニバッファにフォーカスがあるか </summary>
+        public bool IsTopTextFocused => topTextBox.Focused;
+
+
         /// <summary> ストローク文字横書きフォント </summary>
         private Font strokeCharFont;
         /// <summary> ストロークキー横書きフォント </summary>
