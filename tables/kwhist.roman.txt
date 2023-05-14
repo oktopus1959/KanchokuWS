@@ -26981,7 +26981,6 @@ Positional|ポジショナル
 Positioner|ポジショナー
 Positioning|ポジショニング
 Positioning|ポジションニング
-Positive|ポジチブ
 Positive|ポジティブ
 Positively|ポジティブリー
 Positivism|ポジティビズム
@@ -37635,5 +37634,6 @@ Login|ログイン
 Logout|ログアウト
 Portal|ポータル
 Quota|クォータ
+Stake|ステーク
 Stream|ストリーム
 Usecase|ユースケース
