@@ -109,6 +109,7 @@ namespace KanchokuWS.Gui
                         Settings.CombinationKeyMaxAllowedLeadTimeMs = 100;
                         Settings.ComboKeyMaxAllowedPostfixTimeMs = 100;
                         Settings.CombinationKeyMinOverlappingTimeMs = 70;
+                        Settings.CombinationKeyMinOverlappingTimeMs3 = 0;
                         Settings.ComboDisableIntervalTimeMs = 0;
                         Settings.PreRewriteAllowedDelayTimeMs = 1000;
                         shiftOffset = 0;
@@ -139,6 +140,10 @@ namespace KanchokuWS.Gui
 
                     case "comboMinTime":
                         Settings.CombinationKeyMinOverlappingTimeMs = arg._parseInt(70);
+                        break;
+
+                    case "comboMinTime3":
+                        Settings.CombinationKeyMinOverlappingTimeMs3 = arg._parseInt(70);
                         break;
 
                     case "comboMaxTime":

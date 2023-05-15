@@ -853,26 +853,30 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// 削除対象でない連続シフトキーを comboList に移動する<br/>
         /// 2キー以上なら、UPしたシフトキーは移動しない
         /// (「のにいると」で SP E O I e o i sp のケースで、E を combo に移動してしまうと 「E O → しょ」が有効になってしまうため)
-        /// 3キー以上なら、UPしたキー以外も移動する
+        /// 3キー以上なら、連続シフトキー以外も移動する(薙刀式の「ぎゃぎょ」(J W H h O o w j)のようなケース)
+        /// ただし、comboList に入るキー(連続シフトにかかわるキー)は2キーまでとする
         /// </summary>
         private void copyToComboList(List<Stroke> list, int len)
         {
             logger.DebugH(() => $"CALLED: list={list._toString()}, len={len}");
-            int movedLen = 0;
-            foreach (var s in list.Take(len)) {
-                if (!s.ToBeRemoved && ((s.IsSuccessiveShift && (len < 2 || !s.IsUpKey)) || (!s.IsUpKey && len >= 3 && movedLen < len - 1))) {
-                    if (s.IsSuccessiveShift) s.SetCombined();
-                    comboList.Add(s);
-                    ++movedLen;
-                }
-            }
-            if (movedLen == 0 && len >= 2) {
-                // 1つも移動できなかったら、UPしたシフトキーを移動する
+            int movedLen = comboList.Count;
+            if (movedLen < 2) {
                 foreach (var s in list.Take(len)) {
-                    if (!s.ToBeRemoved && s.IsSuccessiveShift) {
+                    if (!s.ToBeRemoved && ((s.IsSuccessiveShift && ((movedLen == 0 && len == 1) || !s.IsUpKey)) || (!s.IsUpKey && len >= 3 && movedLen < len - 1))) {
                         if (s.IsSuccessiveShift) s.SetCombined();
                         comboList.Add(s);
-                        break;
+                        ++movedLen;
+                        if (movedLen >= 2) return;
+                    }
+                }
+                if (movedLen == 0 && len >= 2) {
+                    // 1つも移動できなかったら、UPしたシフトキーを移動する
+                    foreach (var s in list.Take(len)) {
+                        if (!s.ToBeRemoved && s.IsSuccessiveShift) {
+                            if (s.IsSuccessiveShift) s.SetCombined();
+                            comboList.Add(s);
+                            break;
+                        }
                     }
                 }
             }
@@ -956,7 +960,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 } else {
                     // シフトキーが解放されている(または単打可能キーのみである)ので、最後のキー押下時刻との差分を求め、タイミング判定する
                     double ms2 = tailStk.TimeSpanMs(dtNow);
-                    int minTime = Settings.CombinationKeyMinOverlappingTimeMs2 > 0 && !isSpaceOrFunc ? Settings.CombinationKeyMinOverlappingTimeMs2 : Settings.CombinationKeyMinOverlappingTimeMs;
+                    int minTime = 
+                        Settings.CombinationKeyMinOverlappingTimeMs3 > 0 && list._safeCount() >= 3 ? Settings.CombinationKeyMinOverlappingTimeMs3 :
+                        Settings.CombinationKeyMinOverlappingTimeMs2 > 0 && !isSpaceOrFunc ? Settings.CombinationKeyMinOverlappingTimeMs2 :
+                        Settings.CombinationKeyMinOverlappingTimeMs;
                     result = ms2 >= minTime ? 0 : bSecondComboCheck ? 2 : 1;
                     logger.DebugH(() => $"RESULT2={result == 0}: ms2={ms2:f2}ms >= minOverlappingTime={minTime}ms (Timing={result})");
                 }

@@ -106,7 +106,7 @@ enableTimer1()
 enableTimer2()
 
 convert(J<111>C<112>j<31>c) = ば
-convert(J<66>W<52>P<137>j<38>p<236>w) = ぎゅ
+convert(J<66>W<52>P<137>j<38>p<36>w) = ぎゅ
 convert(J<113>F<0>j<54>O<89>f<24>o) = あず
 
 comboDisableTime(0)
@@ -279,7 +279,7 @@ comboMaxTime(70)
 comboMaxPostTime(200)
 comboMinTime(200)
 
-onlyCharKeysComboShouldBeCoveringCombo = true
+onlyCharKeysComboShouldBeCoveringCombo(true)
 
 # E, O, o, e
 convert(E<86>O<5>o<22>e) = しょ
@@ -328,6 +328,21 @@ convert(SP<111>E<85>O<73>e<20>o<33>sp) = じよ
 
 # E O I o i e
 convert(E<87>O<81>I<110>o<18>i<89>e) = しょう
+
+onlyCharKeysComboShouldBeCoveringCombo(true)
+# SP E O I e o i sp
+convert(SP<51>E<6>O<50>I<27>e<25>o<8>i<33>sp) = じよう
+
+# SP E O I o e i sp
+convert(SP<51>E<6>O<50>I<27>o<25>e<8>i<33>sp) = じょう
+
+# SP S s E O e I o i sp
+convert(SP<10>Uu<33>E<71>O<72>e<15>I<56>o<66>i<33>sp) = そじよう
+
+onlyCharKeysComboShouldBeCoveringCombo(false)
+comboMinTime3(200)
+# SP S s E O e I o i sp
+convert(SP<10>Uu<33>E<71>O<72>e<15>I<56>o<66>i<33>sp) = そじよう
 
 ### post.7 ###
 loadTable(tables/_test/noniiruto.post.7.tbl)
