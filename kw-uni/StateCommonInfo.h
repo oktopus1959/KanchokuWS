@@ -68,6 +68,9 @@ enum class ResultFlags
 
     // 現在カタカナモード
     CurrentModeIsKatakana = 0x800,
+
+    // 現在英数モード
+    CurrentModeIsEisu = 0x1000,
 };
 
 /// <summary>
@@ -262,6 +265,7 @@ public:
     //inline void SetToggleInitialStrokeHelp() { SetResultFlag(ResultFlags::ToggleInitialStrokeHelp); }
     inline void SetDontMoveVirtualKeyboard() { SetResultFlag(ResultFlags::DontMoveVirtualKeyboard); }
     inline void SetCurrentModeIsKatakana() { SetResultFlag(ResultFlags::CurrentModeIsKatakana); }
+    inline void SetCurrentModeIsEisu() { SetResultFlag(ResultFlags::CurrentModeIsEisu); }
 
     inline void SetWaiting2ndStroke() { nextExpectedKeyType = ExpectedKeyType::SecondStroke; }
     inline void SetMazeCandSelecting() { nextExpectedKeyType = ExpectedKeyType::MazeCandSelecting; }

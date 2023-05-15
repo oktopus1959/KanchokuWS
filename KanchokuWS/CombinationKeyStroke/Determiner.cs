@@ -294,7 +294,11 @@ namespace KanchokuWS.CombinationKeyStroke
                     frmMain.IsWaitingSecondStrokeLocked = true;
                 } else {
                     lastRepeatedDecKey = decKey;
-                    if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
+                    if (frmMain.DecoderOutput.IsDecoderEisuMode()) {
+                        // デコーダが英数モードだったので、そのまま返す
+                        logger.DebugH("decoder is EISU mode");
+                        result = Helper.MakeList(decKey);
+                    } else if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
                         // 終端、かつキーリピートが可能なキーだった(BackSpaceとか)ので、それを返す
                         logger.DebugH("terminal and repeatable key");
                         result = Helper.MakeList(decKey);

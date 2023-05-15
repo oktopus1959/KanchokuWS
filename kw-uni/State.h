@@ -166,6 +166,9 @@ protected:
     // 例：次ストロークが取り消されたので、自ストロークも初期状態に戻す
     virtual void CheckNextState();
 
+    // 自身の状態をチェックして後処理するのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
+    virtual void CheckMyState();
+
     // 常駐機能か
     virtual bool IsStay() const;
 

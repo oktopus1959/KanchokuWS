@@ -128,6 +128,8 @@ namespace KanchokuWS
         public const uint DontMoveVirtualKeyboard = 0x100;
         /// <summary> 現在カタカナモード</summary>
         public const uint CurrentModeIsKatakana = 0x800;
+        /// <summary> 現在英数モード</summary>
+        public const uint CurrentModeIsEisu = 0x1000;
     }
 
     /// <summary> 拡張メソッド</summary>
@@ -170,6 +172,9 @@ namespace KanchokuWS
 
         /// <summary>仮想鍵盤を移動させないか(仮想鍵盤自身がアクティブになっているなど)</summary>
         public static bool IsVirtualKeyboardFreezed(this DecoderOutParams output) { return (output.resultFlags & ResultFlags.DontMoveVirtualKeyboard) != 0; }
+
+        /// <summary>デコーダが英数モードになっているか</summary>
+        public static bool IsDecoderEisuMode(this DecoderOutParams output) { return (output.resultFlags & ResultFlags.CurrentModeIsEisu) != 0; }
 
         /// <summary> 当文字の何打鍵目か</summary>
         /// <param name="output"></param>

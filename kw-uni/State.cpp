@@ -126,7 +126,7 @@ void State::DoDeckeyPreProc(int deckey) {
         _LOG_DEBUGH(_T("PATH-G"));
         // 後続状態があれば、そちらを呼び出す ⇒ 新しい後続ノードがあればそれを一時的に記憶しておく(後半部で処理する)
         //pNextNodeMaybe = pNext->HandleDeckey(deckey);
-        pNext->HandleDeckey(deckey);
+        pNext->HandleDeckey(deckey);    // ここは pNext->DoDeckeyPreProc(deckey); のほうが良いように思えるが、実際にはうまくいかない。将来的に見直す。
         SetNextNodeMaybe(pNext->NextNodeMaybe());
     } else {
         _LOG_DEBUGH(_T("PATH-H"));
@@ -183,6 +183,7 @@ void State::DoPostCheckChain() {
     } else if (IS_LOG_DEBUGH_ENABLED) {
         _LOG_DEBUGH(_T("STOP: %s"), NAME_PTR);
     }
+    CheckMyState();
     _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
 }
 
@@ -273,7 +274,12 @@ void State::MarkUnnecessaryFromThis() {
 
 // 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
 void State::CheckNextState() {
-    LOG_DEBUG(_T("CALLED: %s: false"), NAME_PTR);
+    LOG_DEBUG(_T("CALLED: %s: default"), NAME_PTR);
+}
+
+// 自身の状態をチェックして後処理するのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
+void State::CheckMyState() {
+    LOG_DEBUG(_T("CALLED: %s: default"), NAME_PTR);
 }
 
 //// ストローク機能をすべて削除するか

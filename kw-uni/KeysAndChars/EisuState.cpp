@@ -57,7 +57,7 @@ namespace {
 #define MY_NODE ((EisuNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
+        bool DoProcOnCreated() override {
             firstTotalCnt = STATE_COMMON->GetTotalDecKeyCount();
             auto prevCapitalCnt = MY_NODE->prevCapitalDeckeyCount;  // 前回の状態のときの大文字入力時のDeckeyカウント
             MY_NODE->prevCapitalDeckeyCount = firstTotalCnt;
@@ -85,10 +85,20 @@ namespace {
             if (blockerNeeded) OUTPUT_STACK->setHistBlocker();
             //setEisuModeMarker();
 
+            // 英数モードフラグの設定
+            CheckMyState();
+
             // 前状態にチェインする
             LOG_INFO(_T("LEAVE: CHAIN ME"));
 
             return true;
+        }
+
+        // 自身の状態をチェックして後処理するのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
+        void CheckMyState() override {
+            LOG_DEBUGH(_T("CALLED: %s, Unnecessary=%s"), NAME_PTR, BOOL_TO_WPTR(bUnnecessary));
+            // 英数モードフラグの設定
+            if (!bUnnecessary) STATE_COMMON->SetCurrentModeIsEisu();
         }
 
         // 履歴検索を初期化する状態か
