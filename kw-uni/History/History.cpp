@@ -480,7 +480,7 @@ namespace {
             if (key.empty()) {
                 _LOG_DEBUGH(_T("History key is EMPTY: CALL OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey()"));
                 // まだ検索していなければ、出力文字列から、検索キーを取得(ひらがな交じりやASCIIもキーとして取得する)
-                key = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>();
+                key = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>(SETTINGS->histMapKeyMaxLength);
                 //key = STATE_COMMON->GetLastKanjiOrKatakanaKey();
             }
             _LOG_DEBUGH(_T("new Japanese key=%s"), MAKE_WPTR(key));
@@ -547,7 +547,7 @@ namespace {
                     bDeleteMode = false;
                     //const wstring key = STATE_COMMON->GetLastKanjiOrKatakanaKey();
                     // ひらがな交じりやASCIIもキーとして取得する
-                    const auto key = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>();
+                    const auto key = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>(SETTINGS->histMapKeyMaxLength);
                     _LOG_DEBUGH(_T("key=%s"), MAKE_WPTR(key));
                     candLen = 0;
                     HIST_CAND->GetCandidates(key, false, candLen);
@@ -947,8 +947,8 @@ namespace {
         // 先頭文字の小文字化
         void handleEisuDecapitalize() override {
             _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
-            auto romanStr = OUTPUT_STACK->GetLastAsciiKey<MString>(17);
-            if (!romanStr.empty() && romanStr.size() <= 16) {
+            auto romanStr = OUTPUT_STACK->GetLastAsciiKey<MString>(SETTINGS->histMapKeyMaxLength + 1);
+            if (!romanStr.empty() && romanStr.size() <= SETTINGS->histMapKeyMaxLength) {
                 if (is_upper_alphabet(romanStr[0])) {
                     romanStr[0] = to_lower(romanStr[0]);
                     STATE_COMMON->SetOutString(romanStr, romanStr.size());
@@ -1087,7 +1087,7 @@ namespace {
                         // ワイルドカードパターンでなかった
                         _LOG_DEBUGH(_T("NOT WILDCARD, GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey"));
                         // 出力文字から、ひらがな交じりやASCIIもキーとして取得する
-                        auto jaKey = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>();
+                        auto jaKey = OUTPUT_STACK->GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey<MString>(SETTINGS->histMapKeyMaxLength);
                         _LOG_DEBUGH(_T("HistSearch: jaKey=%s"), MAKE_WPTR(jaKey));
                         if (jaKey.size() >= 9 || (!jaKey.empty() && is_ascii_char(jaKey.back()))) {
                             // 同種の文字列で9文以上取れたか、またはASCIIだったので、これをキーとする

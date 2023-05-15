@@ -469,12 +469,12 @@ public:
     // 3文字以下だったら、ひらがなも含めて4文字まで取り出す
     // 末尾に漢字、カタカナ、ひらがながなかったら、ASCII文字列を取り出す
     template<typename T>
-    inline T GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey() const {
+    inline T GetLastKanjiOrKatakanaOrHirakanaOrAsciiKey(size_t asciiMaxLen) const {
         T key = GetLastKanjiOrKatakanaKey<T>(HIST_KEY_MAX_LEN);
         if (key.size() >= 4) return key;
         key = GetLastJapaneseKey<T>(4);
         if (!key.empty()) return key;
-        return GetLastAsciiKey<T>(HIST_ROMAN_KEY_MAX_LEN);
+        return GetLastAsciiKey<T>(asciiMaxLen);
     }
 
     // 末尾のアルファベット文字列をクリアする
