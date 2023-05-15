@@ -8861,8 +8861,8 @@ Dahlia|ダリア
 Dahlia|ダリヤ
 Dahrendorf|ダーレンドルフ
 Daidalos|ダイダロス
+Daily|デイリー
 Daily|デーリー
-Daily|デーリーズ
 Daimler|ダイムラー
 Daimon|ダイモーン
 Daimon|ダイモン
@@ -12955,7 +12955,6 @@ Florist|フロリスト
 Flounder|フラウンダー
 Flourish|フローリシュ
 Flourish|フローリッシュ
-Flow|フロ
 Flow|フロー
 Flowchart|フローチャート
 Flower|フラワー
@@ -37612,6 +37611,7 @@ Wrapper|ラッパー
 Alias|エイリアス
 Attach|アタッチ
 Combinator|コンビネータ
+Daemon|デーモン
 Endpoint|エンドポイント
 Layer|レイヤー
 Layer|レイヤ
@@ -37634,6 +37634,7 @@ Login|ログイン
 Logout|ログアウト
 Portal|ポータル
 Quota|クォータ
+Refinement|リファインメント
 Stake|ステーク
 Stream|ストリーム
 Usecase|ユースケース
