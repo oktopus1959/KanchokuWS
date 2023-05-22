@@ -31686,9 +31686,7 @@ Solovyov|ソロビヨフ
 Solso|ソルソ
 Soluble|ソリュブル
 Solud|ソリュード
-Solution|ソリューシオンズ
 Solution|ソリューション
-Solution|ソリューションズ
 Solution|ソルーション
 Solutre|ソリュートレ
 Solvay|ソルベー
@@ -37610,9 +37608,11 @@ Window|ウィンドウ
 Wrapper|ラッパー
 Alias|エイリアス
 Attach|アタッチ
+Collaboration|コラボレーション
 Combinator|コンビネータ
 Daemon|デーモン
 Endpoint|エンドポイント
+Iterative|イテレーティブ
 Layer|レイヤー
 Layer|レイヤ
 Layout|レイアウト
