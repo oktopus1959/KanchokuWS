@@ -6577,10 +6577,10 @@ namespace KanchokuWS.Gui
             // checkBox_showHiddleFolder
             // 
             this.checkBox_showHiddleFolder.AutoSize = true;
-            this.checkBox_showHiddleFolder.Location = new System.Drawing.Point(220, 78);
+            this.checkBox_showHiddleFolder.Location = new System.Drawing.Point(21, 98);
             this.checkBox_showHiddleFolder.Name = "checkBox_showHiddleFolder";
             this.checkBox_showHiddleFolder.Size = new System.Drawing.Size(115, 19);
-            this.checkBox_showHiddleFolder.TabIndex = 8;
+            this.checkBox_showHiddleFolder.TabIndex = 9;
             this.checkBox_showHiddleFolder.Text = "隠しフォルダの表示";
             this.checkBox_showHiddleFolder.UseVisualStyleBackColor = true;
             // 
@@ -6630,7 +6630,7 @@ namespace KanchokuWS.Gui
             this.button_developSaveDebugTableFile.Location = new System.Drawing.Point(448, 56);
             this.button_developSaveDebugTableFile.Name = "button_developSaveDebugTableFile";
             this.button_developSaveDebugTableFile.Size = new System.Drawing.Size(104, 23);
-            this.button_developSaveDebugTableFile.TabIndex = 10;
+            this.button_developSaveDebugTableFile.TabIndex = 11;
             this.button_developSaveDebugTableFile.Text = "テーブル出力(&F)";
             this.button_developSaveDebugTableFile.UseVisualStyleBackColor = true;
             this.button_developSaveDebugTableFile.Visible = false;
@@ -6643,7 +6643,7 @@ namespace KanchokuWS.Gui
             this.button_developTest.Location = new System.Drawing.Point(477, 91);
             this.button_developTest.Name = "button_developTest";
             this.button_developTest.Size = new System.Drawing.Size(75, 23);
-            this.button_developTest.TabIndex = 12;
+            this.button_developTest.TabIndex = 13;
             this.button_developTest.Text = "テスト(&T)";
             this.button_developTest.UseVisualStyleBackColor = true;
             this.button_developTest.Click += new System.EventHandler(this.button_developTest_Click);
@@ -6655,28 +6655,27 @@ namespace KanchokuWS.Gui
             this.checkBox_testAll.Location = new System.Drawing.Point(430, 98);
             this.checkBox_testAll.Name = "checkBox_testAll";
             this.checkBox_testAll.Size = new System.Drawing.Size(50, 19);
-            this.checkBox_testAll.TabIndex = 11;
+            this.checkBox_testAll.TabIndex = 12;
             this.checkBox_testAll.Text = "全件";
             this.checkBox_testAll.UseVisualStyleBackColor = true;
             // 
             // checkBox_bushuDicLogEnabled
             // 
             this.checkBox_bushuDicLogEnabled.AutoSize = true;
-            this.checkBox_bushuDicLogEnabled.Location = new System.Drawing.Point(153, 97);
+            this.checkBox_bushuDicLogEnabled.Location = new System.Drawing.Point(220, 78);
             this.checkBox_bushuDicLogEnabled.Name = "checkBox_bushuDicLogEnabled";
             this.checkBox_bushuDicLogEnabled.Size = new System.Drawing.Size(168, 19);
-            this.checkBox_bushuDicLogEnabled.TabIndex = 5;
+            this.checkBox_bushuDicLogEnabled.TabIndex = 8;
             this.checkBox_bushuDicLogEnabled.Text = "部首合成結果をログ出力する";
             this.checkBox_bushuDicLogEnabled.UseVisualStyleBackColor = true;
-            this.checkBox_bushuDicLogEnabled.Visible = false;
             // 
             // checkBox_multiAppEnabled
             // 
             this.checkBox_multiAppEnabled.AutoSize = true;
-            this.checkBox_multiAppEnabled.Location = new System.Drawing.Point(21, 97);
+            this.checkBox_multiAppEnabled.Location = new System.Drawing.Point(142, 98);
             this.checkBox_multiAppEnabled.Name = "checkBox_multiAppEnabled";
             this.checkBox_multiAppEnabled.Size = new System.Drawing.Size(126, 19);
-            this.checkBox_multiAppEnabled.TabIndex = 9;
+            this.checkBox_multiAppEnabled.TabIndex = 10;
             this.checkBox_multiAppEnabled.Text = "二重起動を許可する";
             this.checkBox_multiAppEnabled.UseVisualStyleBackColor = true;
             // 
@@ -6750,6 +6749,7 @@ namespace KanchokuWS.Gui
             this.dgvAbout.RowTemplate.Height = 21;
             this.dgvAbout.Size = new System.Drawing.Size(240, 150);
             this.dgvAbout.TabIndex = 0;
+            this.dgvAbout.TabStop = false;
             this.dgvAbout.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAbout_CellContentClick);
             // 
             // button_developClose

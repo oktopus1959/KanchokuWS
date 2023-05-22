@@ -137,6 +137,7 @@ namespace KanchokuWS.Gui
             checkBox_loggingActiveWindowInfo.Checked = false;
             checkBox_loggingVirtualKeyboardInfo.Checked = false;
             checkBox_loggingTableFileInfo.Checked = false;
+            checkBox_bushuDicLogEnabled.Checked = false;
         }
 
         private void displayTestCount(string msg)
