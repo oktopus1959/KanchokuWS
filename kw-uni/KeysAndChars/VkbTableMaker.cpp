@@ -432,7 +432,8 @@ namespace VkbTableMaker {
                     wstring strPath = utils::replace(origPath, _T(" "), pfx2);
                     if (strPath.find(' ') == wstring::npos) {
                         // 2つ以上の空白文字を含まないものだけを対象とする
-                        if (/*!sp->isConverted() ||*/ origPath.front() == ' ') {
+                        if (origPath.find(' ') == wstring::npos || origPath.front() == ' ') {
+                            // 空白を含まないか、または先頭のみが空白文字
                             writer.writeLine(utils::utf8_encode(
                                 utils::format(_T("%s\t%s"), strPath.c_str(), MAKE_WPTR(ms))));
                         } else {
@@ -488,7 +489,7 @@ namespace VkbTableMaker {
                 if (!np) break;
 
                 StringNode* sp = dynamic_cast<StringNode*>(np);
-                if (!sp /*|| sp->isConverted()*/) continue;
+                if (!sp) continue;
 
                 auto ms = sp->getString();
                 if (ms.empty()) continue;
