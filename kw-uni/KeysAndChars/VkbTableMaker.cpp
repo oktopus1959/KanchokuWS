@@ -435,10 +435,10 @@ namespace VkbTableMaker {
                         if (origPath.find(' ') == wstring::npos || origPath.front() == ' ') {
                             // 空白を含まないか、または先頭のみが空白文字
                             writer.writeLine(utils::utf8_encode(
-                                utils::format(_T("%s\t%s"), strPath.c_str(), MAKE_WPTR(ms))));
+                                utils::format(_T("%s\t\t%s"), strPath.c_str(), MAKE_WPTR(ms))));
                         } else {
                             writer.writeLine(utils::utf8_encode(
-                                utils::format(_T("%s%s\t%s"),
+                                utils::format(_T("%s%s\t\t%s"),
                                     pfx2,
                                     strPath.c_str(),
                                     MAKE_WPTR(ms))));
