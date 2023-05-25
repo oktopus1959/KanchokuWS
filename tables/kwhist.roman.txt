@@ -37635,6 +37635,7 @@ Logout|ログアウト
 Portal|ポータル
 Quota|クォータ
 Refinement|リファインメント
+Spective|スペクティブ
 Stake|ステーク
 Stream|ストリーム
 Usecase|ユースケース
