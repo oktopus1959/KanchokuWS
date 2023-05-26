@@ -956,6 +956,9 @@ namespace KanchokuWS.TableParser
             return kanjiConvMap._safeGet(k)._orElse(k);
         }
 
+        /// <summary>キー文字に到るストロークパスを得る辞書</summary>
+        public Dictionary<string, CStrokeList> strokePathDict = new Dictionary<string, CStrokeList>();
+
         /// <summary>
         /// コンストラクタ
         /// </summary>

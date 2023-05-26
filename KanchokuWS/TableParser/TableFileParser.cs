@@ -78,9 +78,9 @@ namespace KanchokuWS.TableParser
             return len > 0 ? strokeList.Take(len).Select(x => parser.GetNthRootNodeString(x))._join("") : "";
         }
 
-        public string DebugString()
+        public string StrokePathString(string delim, int skip = 0, int len = 100)
         {
-            return strokeList._keyString();
+            return strokeList.Skip(skip).Take(len).Select(x => x.ToString())._join(delim);
         }
 
     }
@@ -97,6 +97,9 @@ namespace KanchokuWS.TableParser
 
         // ルートノードへのアクセッサ
         protected static Node RootTableNode => ParserContext.Singleton.rootTableNode;
+
+        /// <summary>キー文字に到るストロークパスを得る辞書</summary>
+        protected static Dictionary<string, CStrokeList> StrokePathDict => ParserContext.Singleton.strokePathDict;
 
         // ComboBlockerDepth
         // ComboBlockerDepth はブロックのネストが増えるたびに decrement される
@@ -327,7 +330,7 @@ namespace KanchokuWS.TableParser
         /// </summary>
         public void ParseNodeBlock()
         {
-            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: lineNum={LineNumber}, strokeList={StrokeList.DebugString()}");
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: lineNum={LineNumber}, strokeList={StrokeList.StrokePathString(":")}");
 
             bool bError = false;
             int idx = 0;
@@ -479,39 +482,12 @@ namespace KanchokuWS.TableParser
             // 後置書き換え文字の指定がある
             if (idx < 0 && RewritePostChar._notEmpty()) {
                 if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"RewritePostChar={RewritePostChar}");
-                for (int i = 0; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
-                    if (RewritePostChar == GetNthRootNodeString(i)) {
-                        idx = i;
-                        if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"RewritePostChar Index Found={idx}");
-                        break;
-                    }
-                }
-                if (idx < 0 && PeekPrevChar() == '>') {
-                    // 同時打鍵での後置書き換え設定で、文字が指定された場合 (`&ん>` のようなケース)
-                    int cntCand = 0;
-                    int idx2nd = -1;
-                    for (int j = 0; j < DecoderKeys.NORMAL_DECKEY_NUM; ++j) {
-                        var node = GetNthRootNode(j + DecoderKeys.COMBO_DECKEY_START);
-                        if (node != null && node.IsTreeNode()) {
-                            int cnt = 0;
-                            for (int i = 0; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
-                                var s = (node.GetNthSubNode(i)?.GetOutputString())._toSafe();
-                                if (s._notEmpty()) {
-                                    ++cnt;
-                                    if (RewritePostChar == s && cnt > cntCand) {
-                                        // なるべく文字が多く定義されている面を選ぶ
-                                        idx = j;
-                                        idx2nd = i;
-                                        cntCand = cnt;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (idx2nd >= 0) {
-                        InsertAtNextPos($",{idx2nd}>");  // 2打鍵目の挿入
-                        if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"RewritePostChar Index Found=({idx}, {idx2nd})");
+                var strokeList = StrokePathDict._safeGet(RewritePostChar);
+                if (strokeList != null && !strokeList.IsEmpty) {
+                    idx = strokeList.At(0);
+                    if (strokeList.Count > 1) {
+                        InsertAtNextPos($",{strokeList.StrokePathString(",", 1)}{PeekPrevChar()}");  // 2打鍵目以降の挿入
+                        if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"RewritePostChar Index Found=({strokeList.StrokePathString(",")})");
                     }
                 }
             }
@@ -527,7 +503,12 @@ namespace KanchokuWS.TableParser
         {
             if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: depth={Depth}, bBare={bBare}, str={CurrentStr}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
-            addTerminalNode(idx, Node.MakeStringNode($"{ConvertKanji(CurrentStr)}", bBare), true);
+            string str = ConvertKanji(CurrentStr);
+            addTerminalNode(idx, Node.MakeStringNode($"{str}", bBare), true);
+            if (!StrokePathDict.ContainsKey(str)) {
+                // 初めての文字ならストロークパスを登録
+                StrokePathDict[str] = StrokeList.WithLastStrokeAdded(idx);
+            }
             if (HasRootTable && CurrentStr._startsWith("!{")) {
                 // Repeatable Key
                 if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"REPEATABLE");
@@ -1188,19 +1169,24 @@ namespace KanchokuWS.TableParser
         // 後置書き換え用の後続矢印記法
         protected override ArrowParser AddArrowNode(int arrowIdx)
         {
+            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: prevIndex={UnhandledArrowIndex}, arrowIdx={arrowIdx}");
             ArrowParser parser = this;
             int prevIndex = UnhandledArrowIndex;
             UnhandledArrowIndex = arrowIdx;
             if (bNested) {
                 prefixStr = myPrefixString(prevIndex);
             } else {
-                if (IsInCombinationBlock) {
-                    // 同時打鍵の場合は、直前キー用にTreeNodeを挿入しておく必要がある
+                Node node = TreeNode.GetNthSubNode(prevIndex);
+                if (IsInCombinationBlock || (node != null && node.IsTreeNode())) {
+                    // 同時打鍵または多ストロークの途中打鍵の場合
+                    if (IsInCombinationBlock) {
+                        // 同時打鍵の場合は、直前キー用にTreeNodeを挿入しておいたり、いろいろ処理が必要
+                        node = SetOrMergeNthSubNode(prevIndex, Node.MakeTreeNode());
+                    }
                     var strkList = StrokeList.WithLastStrokeAdded(prevIndex);
-                    Node node = SetOrMergeNthSubNode(prevIndex, Node.MakeTreeNode());
                     parser = new PostRewriteParser(node, strkList, arrowIdx, ComboBlockerDepth, targetStr);
                 } else {
-                    // 順次打鍵なら、直前キーを文字に変換して、それを書き換え対象文字とする
+                    // 単打の順次打鍵なら、直前キーを文字に変換して、それを書き換え対象文字とする
                     targetStr = myTargetString(prevIndex);
                 }
             }
