@@ -36,11 +36,11 @@ class StringNode : public Node {
     State* CreateState();
 
     // 出力用文字列を返す
-     MString getString() const { return str; }
+     MString getString() const override { return str; }
 
-    size_t getRewritableLen() const { return rewritableLen; }
+    size_t getRewritableLen() const override { return rewritableLen; }
 
-    NodeType getNodeType() const { return NodeType::String; }
+    NodeType getNodeType() const override { return NodeType::String; }
 
     //bool isConverted() const { return bConverted; }
 

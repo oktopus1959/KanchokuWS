@@ -38,7 +38,7 @@ size_t StrokeHelp::gatherStrokeHelp(StrokeTableNode* pNode, size_t pos, size_t d
             if (blk->isStrokeTableNode()) {
                 temp[depth] = (int)i;
                 pos = gatherStrokeHelp((StrokeTableNode*)blk, pos, depth + 1);
-            } else if (blk->isStringNode()) {
+            } else if (blk->isStringLikeNode()) {
                 if (pos + depth + 2 > STROKE_HELP_ARRAY_SIZE) break;
                 if (blk->getString().size() == 1) {
                     strokeHelpMap[utils::safe_front(blk->getString())] = Singleton->strokeHelpArray + pos;

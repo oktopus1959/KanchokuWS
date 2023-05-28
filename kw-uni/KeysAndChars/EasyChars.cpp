@@ -15,7 +15,7 @@ namespace {
     void addNStrokeChars(StrokeTableNode* node, size_t start, size_t deckeyNum, size_t depth) {
         for (size_t i = start; i < deckeyNum; ++i) {
             auto blk = node->getNth(i);
-            if (blk && blk->isStringNode()) {
+            if (blk && blk->isStringLikeNode()) {
                 EASY_CHARS->AddEasyChar(utils::safe_front(blk->getString()));
             } else if (depth > 1 && blk && blk->isStrokeTableNode()) {
                 addNStrokeChars((StrokeTableNode*)blk, start, deckeyNum, depth - 1);

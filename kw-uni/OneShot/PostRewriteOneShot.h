@@ -61,9 +61,11 @@ public:
     // 当ノードを処理する State インスタンスを作成する
     State* CreateState();
 
-    MString getString() const { return myRewriteInfo.rewriteStr; }
+    NodeType getNodeType() const override { return NodeType::Rewrite; }
 
-    size_t getRewritableLen() const { return myRewriteInfo.rewritableLen; }
+    MString getString() const override { return myRewriteInfo.rewriteStr; }
+
+    size_t getRewritableLen() const override { return myRewriteInfo.rewritableLen; }
 
     const RewriteInfo& getRewriteInfo() const { return myRewriteInfo; }
 

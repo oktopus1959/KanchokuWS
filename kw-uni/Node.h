@@ -14,6 +14,7 @@ enum class NodeType {
     Stroke,     // ストロークテーブルノード
     String,     // 文字列ノード
     Function,   // 機能ノード
+    Rewrite,    // 書き換えノード
     None,
 };
 
@@ -30,6 +31,8 @@ namespace {
             return _T("String");
         case NodeType::Function:
             return _T("Function");
+        case NodeType::Rewrite:
+            return _T("Rewrite");
         }
         return _T("None");
     }
@@ -75,6 +78,12 @@ public:
 
     // 機能ノードか
     inline bool isFunctionNode() const { return isNodeTypeOf(NodeType::Function); }
+
+    // 書き換えノードか
+    inline bool isRewriteNode() const { return isNodeTypeOf(NodeType::Rewrite); }
+
+    // 文字列ノードまたは書き換えノードか
+    inline bool isStringLikeNode() const { return isStringNode() || isRewriteNode(); };
 
 };
 

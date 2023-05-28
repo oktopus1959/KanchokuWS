@@ -434,7 +434,8 @@ bool StrokeTableNode::getStrokeListSub(const MString& target, std::vector<int>& 
                 if (pn->getStrokeListSub(target, list, bFull)) return true;
                 list.pop_back();
             } else {
-                StringNode* cn = dynamic_cast<StringNode*>(p);
+                Node* cn = dynamic_cast<StringNode*>(p);
+                if (!cn) cn = dynamic_cast<PostRewriteOneShotNode*>(p);
                 if (cn && target == cn->getString()) {
                     list.push_back((int)i);
                     return true;

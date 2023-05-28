@@ -10,6 +10,8 @@
 
 #include "VkbTableMaker.h"
 #include "OneShot/PostRewriteOneShot.h"
+#include "BushuComp/BushuDic.h"
+
 //#define OUT_TABLE_SIZE 200
 //#define VKB_TABLE_SIZE 50
 
@@ -59,7 +61,7 @@ namespace VkbTableMaker {
             if (blk) {
                 if (blk->isStrokeTableNode()) {
                     makeStrokeKeysTable(table, pSet, (StrokeTableNode*)blk, idxMap, firstIdx, secondIdx, depth + 1);
-                } else if (blk->isStringNode()) {
+                } else if (blk->isStringLikeNode()) {
                     auto iter = idxMap.find((wchar_t)blk->getString()[0]);
                     if (iter != idxMap.end()) {
                         if (table) {
@@ -146,9 +148,9 @@ namespace VkbTableMaker {
             if (blk) {
                 if (blk->isStrokeTableNode()) {
                     reorderByFirstStrokePosition(table, (StrokeTableNode*)blk, orderedChars, charSet, firstLevelIdx, depth + 1);
-                } else if (blk->isStringNode() || (depth == 0 && blk->isFunctionNode() && (dynamic_cast<MyCharNode*>(blk) || dynamic_cast<PrevCharNode*>(blk)))) {
+                } else if (blk->isStringLikeNode() || (depth == 0 && blk->isFunctionNode() && (dynamic_cast<MyCharNode*>(blk) || dynamic_cast<PrevCharNode*>(blk)))) {
                     wchar_t ch = 0;
-                    if (blk->isStringNode()) {
+                    if (blk->isStringLikeNode()) {
                         auto ms = blk->getString();
                         if (ms.size() == 1) {
                             auto iter = charSet.find((wchar_t)ms[0]);
@@ -219,7 +221,7 @@ namespace VkbTableMaker {
                     size_t offset = (i % 10) < 5 ? 0 : 5;
                     for (size_t j = 0; j < 6 && ch == 0; ++j) {
                         Node* sb = ((StrokeTableNode*)blk)->getNth(order1[j] + offset);
-                        if (sb && sb->isStringNode()) {
+                        if (sb && sb->isStringLikeNode()) {
                             ch = utils::safe_front(sb->getString());
                         }
                     }
@@ -235,7 +237,7 @@ namespace VkbTableMaker {
                     size_t offset = (i % 10) < 5 ? 0 : 5;
                     for (size_t j = 0; j < 5 && ch == 0; ++j) {
                         Node* sb = ((StrokeTableNode*)blk)->getNth(order2[j] + offset);
-                        if (sb && sb->isStringNode()) {
+                        if (sb && sb->isStringLikeNode()) {
                             ch = (wchar_t)utils::safe_front(sb->getString());
                         }
                     }
@@ -255,7 +257,7 @@ namespace VkbTableMaker {
                 if (blk) {
                     if (blk->isStrokeTableNode()) {
                         ch = _T("□")[0];
-                    } else if (blk->isStringNode() || blk->isFunctionNode()) {
+                    } else if (blk->isStringLikeNode() || blk->isFunctionNode()) {
                         ch = utils::safe_front(blk->getString());
                     } else {
                         ch = _T("・")[0];
@@ -395,11 +397,11 @@ namespace VkbTableMaker {
     }
 
     // ローマ字テーブルを作成してファイルに書き出す
-    // prefix: 部首合成用, prefix2: 裏面定義用
-    void SaveRomanStrokeTable(const wchar_t* prefix, const wchar_t* prefix2) {
+    // trigger: 部首合成用, prefix2: 裏面定義用
+    void SaveRomanStrokeTable(const wchar_t* trigger, const wchar_t* prefix2) {
         if (!StrokeTableNode::RootStrokeNode1) return;
 
-        _LOG_DEBUGH(_T("CALLED: prefix=%s, prefix2=%s"), prefix, prefix2);
+        _LOG_DEBUGH(_T("CALLED: trigger=%s, prefix2=%s"), trigger, prefix2);
 
         utils::OfstreamWriter writer(utils::joinPath(SETTINGS->rootDir, _T("roman-stroke-table.txt")));
         if (writer.success()) {
@@ -418,7 +420,8 @@ namespace VkbTableMaker {
                 wstring origPath = convDeckeysToWstring(traverser.getPath());
                 if (origPath.empty()) continue;
 
-                StringNode* sp = dynamic_cast<StringNode*>(np);
+                Node* sp = dynamic_cast<StringNode*>(np);
+                if (!sp) sp = dynamic_cast<PostRewriteOneShotNode*>(np);
                 if (sp) {
                     auto ms = sp->getString();
                     if (ms.empty() || ms.find(cmdMarker) != MString::npos) continue;
@@ -456,8 +459,9 @@ namespace VkbTableMaker {
                 }
             }
             // 部首合成から
-            if (prefix && wcslen(prefix) > 0) {
-                _LOG_DEBUGH(_T("BUSHU_COMP: prefix=%s"), prefix);
+            if (trigger && wcslen(trigger) > 1) {
+                // 前置
+                _LOG_DEBUGH(_T("BUSHU_COMP: trigger=%s"), trigger);
                 for (const auto& line : readBushuFile()) {
                     if (line.size() == 3) {
                         auto list1 = utils::replace(convDeckeysToWstring(StrokeTableNode::RootStrokeNode1->getStrokeList(to_mstr(line.substr(1, 1)), false)), _T(" "), pfx2);
@@ -465,13 +469,19 @@ namespace VkbTableMaker {
                         if (!list1.empty() && !list2.empty()) {
                             writer.writeLine(utils::utf8_encode(
                                 utils::format(_T("%s%s%s\t%s"),
-                                    prefix,
+                                    trigger,
                                     list1.c_str(),
                                     list2.c_str(),
                                     line.substr(0, 1).c_str())));
                         }
                     }
                 }
+            }
+            // 部首合成から
+            if (trigger && wcslen(trigger) == 1) {
+                // 後置
+                _LOG_DEBUGH(_T("BUSHU_COMP: postfix=%s"), trigger);
+                if (BUSHU_DIC) BUSHU_DIC->ExportPostfixBushuCompDefs(writer, trigger);
             }
         }
     }
@@ -488,7 +498,8 @@ namespace VkbTableMaker {
                 Node* np = traverser.getNext();
                 if (!np) break;
 
-                StringNode* sp = dynamic_cast<StringNode*>(np);
+                Node* sp = dynamic_cast<StringNode*>(np);
+                if (!sp) sp = dynamic_cast<PostRewriteOneShotNode*>(np);
                 if (!sp) continue;
 
                 auto ms = sp->getString();
@@ -525,7 +536,8 @@ namespace VkbTableMaker {
                 }
                 if (origPath.empty()) continue;
 
-                StringNode* sp = dynamic_cast<StringNode*>(np);
+                Node* sp = dynamic_cast<StringNode*>(np);
+                if (!sp) sp = dynamic_cast<PostRewriteOneShotNode*>(np);
                 if (sp) {
                     auto ms = sp->getString();
 
