@@ -24,6 +24,7 @@
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define LOG_INFO LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 //#define LOG_TRACE LOG_INFO
@@ -567,6 +568,24 @@ namespace {
                         LOG_INFOH(_T("PostRewriteOneShotNode merged: pp(%p)=%s, tblNum=%d, cn(%p)=%s"), pp, pp->getDebugString().c_str(), pp->getSubTableNum(), cp, cp->getDebugString().c_str());
                         delete childNode;
                     } else {
+                        if (pp) {
+                            StrokeTableNode* tp = dynamic_cast<StrokeTableNode*>(childNode);
+                            if (pp && tp) {
+                                // 書き換えノードに対してテーブルノードをマージする
+                                tp->mergeRewriteNode(pp);   // この中で pp は delete される
+                                parentNode->swapNthChild(n, childNode);
+                                LOG_INFOH(_T("MERGE: StrokeTableNode merged into PostRewriteOneShotNode: tp(%p), prwp(%p)=%s"), tp, tp->getRewriteNode(), tp->getRewriteNode()->getDebugString().c_str());
+                                return;
+                            }
+                        } else if (cp) {
+                            StrokeTableNode* tp = pn ? dynamic_cast<StrokeTableNode*>(pn) : 0;
+                            if (tp) {
+                                // テーブルノードに対して書き換えノードをマージする(
+                                tp->mergeRewriteNode(cp);   // この中で cp は delete される
+                                LOG_INFOH(_T("MERGE: PostRewriteOneShotNode merged into StrokeTableNode: tp(%p), prwp(%p)=%s"), tp, tp->getRewriteNode(), tp->getRewriteNode()->getDebugString().c_str());
+                                return;
+                            }
+                        }
                         // 後からのほうで上書きする(前のやつは delete される)
                         parentNode->setNthChild(n, childNode);
                     }

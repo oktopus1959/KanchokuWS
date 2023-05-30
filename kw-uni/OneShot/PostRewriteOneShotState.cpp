@@ -84,32 +84,17 @@ namespace {
         bool DoProcOnCreated() {
             _LOG_DEBUGH(_T("ENTER: %s"), MY_NODE->getDebugString().c_str());
 
-            bool bRewrited = false;
-            size_t maxlen = SETTINGS->kanaTrainingMode ? 0 : 8;     // かな入力練習モードなら書き換えをやらない
-            while (maxlen > 0) {
-                _LOG_DEBUGH(_T("maxlen=%d"), maxlen);
-                const MString targetStr = OUTPUT_STACK->backStringWhileOnlyRewritable(maxlen);
-                _LOG_DEBUGH(_T("targetStr=%s"), MAKE_WPTR(targetStr));
-                if (targetStr.empty()) break;
-
-                const RewriteInfo* rewInfo = MY_NODE->getRewriteInfo(targetStr);
-                if (rewInfo) {
-                    int numBS = targetStr.size();
-                    _LOG_DEBUGH(_T("REWRITE: outStr=%s, rewritableLen=%d, subTable=%p, numBS=%d"), MAKE_WPTR(rewInfo->rewriteStr), rewInfo->rewritableLen, rewInfo->subTable, numBS);
-                    HISTORY_STAY_STATE->SetTranslatedOutString(rewInfo->rewriteStr, rewInfo->rewritableLen, numBS);
-                    if (rewInfo->subTable) {
-                        SetNextNodeMaybe(rewInfo->subTable);
-                    }
-                    bRewrited = true;
-                    break;
+            const RewriteInfo* rewInfo;
+            size_t numBS;
+            std::tie(rewInfo, numBS) = MY_NODE->matchWithTailString();
+            if (rewInfo) {
+                HISTORY_STAY_STATE->SetTranslatedOutString(rewInfo->rewriteStr, rewInfo->rewritableLen, numBS);
+                if (rewInfo->subTable) {
+                    SetNextNodeMaybe(rewInfo->subTable);
                 }
-
-                maxlen = targetStr.size() - 1;
-            }
-            if (!bRewrited) {
+            } else {
                 HISTORY_STAY_STATE->SetTranslatedOutString(MY_NODE->getString(), MY_NODE->getRewritableLen());
             }
-
             // チェイン不要
             _LOG_DEBUGH(_T("LEAVE: NO CHAIN"));
 
@@ -174,6 +159,26 @@ void PostRewriteOneShotNode::addRewritePair(const wstring& key, const wstring& v
     rewriteMap[to_mstr(key)] = RewriteInfo(to_mstr(rewStr), rewLen, pNode);
 
     LOG_INFO(_T("LEAVE: rewStr=%s, rewLen=%d"), rewStr.c_str(), rewLen);
+}
+
+// 末尾文字列にマッチする RewriteInfo を取得する
+std::tuple<const RewriteInfo*, size_t> PostRewriteOneShotNode::matchWithTailString() const {
+    size_t maxlen = SETTINGS->kanaTrainingMode && ROOT_STROKE_NODE->hasOnlyUsualRewriteNdoe() ? 0 : 8;     // かな入力練習モードで濁点のみなら書き換えをやらない
+    while (maxlen > 0) {
+        _LOG_DEBUGH(_T("maxlen=%d"), maxlen);
+        const MString targetStr = OUTPUT_STACK->backStringWhileOnlyRewritable(maxlen);
+        _LOG_DEBUGH(_T("targetStr=%s"), MAKE_WPTR(targetStr));
+        if (targetStr.empty()) break;
+
+        const RewriteInfo* rewInfo = getRewriteInfo(targetStr);
+        if (rewInfo) {
+            _LOG_DEBUGH(_T("REWRITE_INFO found: outStr=%s, rewritableLen=%d, subTable=%p, numBS=%d"), MAKE_WPTR(rewInfo->rewriteStr), rewInfo->rewritableLen, rewInfo->subTable, numBS);
+            return { rewInfo, targetStr.size() };
+        }
+
+        maxlen = targetStr.size() - 1;
+    }
+    return { 0, 0 };
 }
 
 const wstring PostRewriteOneShotNode::getDebugString() const {

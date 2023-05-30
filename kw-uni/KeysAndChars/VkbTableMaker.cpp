@@ -454,7 +454,7 @@ namespace VkbTableMaker {
                     // 後置書き換え(空白を含まないものだけ)
                     PostRewriteOneShotNode* prnp = dynamic_cast<PostRewriteOneShotNode*>(np);
                     if (prnp) {
-                        writer.writeLine(utils::utf8_encode(makeRewriteDefLine(_T(""), origPath, prnp->getRewriteInfo())));
+                        if (!prnp->getString().empty()) writer.writeLine(utils::utf8_encode(makeRewriteDefLine(_T(""), origPath, prnp->getRewriteInfo())));
                         for (auto pair : prnp->getRewriteMap()) {
                             writer.writeLine(utils::utf8_encode(makeRewriteDefLine(to_wstr(pair.first), origPath, pair.second)));
                         }
@@ -554,7 +554,7 @@ namespace VkbTableMaker {
                     // 後置書き換え
                     PostRewriteOneShotNode* prnp = dynamic_cast<PostRewriteOneShotNode*>(np);
                     if (prnp) {
-                        writer.writeLine(utils::utf8_encode(makeRewriteDefLine(_T(""), origPath, prnp->getRewriteInfo())));
+                        if (!prnp->getString().empty()) writer.writeLine(utils::utf8_encode(makeRewriteDefLine(_T(""), origPath, prnp->getRewriteInfo())));
                         for (auto pair : prnp->getRewriteMap()) {
                             writer.writeLine(utils::utf8_encode(makeRewriteDefLine(to_wstr(pair.first), origPath, pair.second)));
                         }

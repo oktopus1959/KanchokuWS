@@ -7,6 +7,8 @@
 #include "FunctionNode.h"
 #include "Node.h"
 
+class PostRewriteOneShotNode;
+
 // -------------------------------------------------------------------
 // ストローク木のトラバーサ
 class StrokeTreeTraverser {
@@ -14,6 +16,7 @@ class StrokeTreeTraverser {
     std::vector<int> path;
 
     bool bFull = false;
+    bool bRewriteTable = false;
 
 public:
     StrokeTreeTraverser(class StrokeTableNode*, bool);
@@ -39,8 +42,11 @@ private:
     // 全ストロークノードが不要になったら true (ステートの作成時にクリアする)
     bool bRemoveAllStroke = false;
 
-    // 後置書き換え機能ありか
+    // 後置書き換え子ノードありか
     int iHasPostRewriteNode = 0;
+
+    // 当ノードに対する書き換え定義
+    PostRewriteOneShotNode* rewriteNode = 0;
 
 public:
     // コンストラクタ
@@ -68,11 +74,14 @@ public:
 
     NodeType getNodeType() const { return _depth == 0 ? NodeType::RootStroke : NodeType::Stroke; }
 
-    // 後置書き換え機能ありか
+    // 後置書き換え子ノードありか
     bool hasPostRewriteNode();
 
+    // (半)濁点のみの後置書き換え子ノードがあるか
+    bool hasOnlyUsualRewriteNdoe();
+
 private:
-    int findPostRewriteNode();
+    int findPostRewriteNode(int result);
 
 public:
     /* StrokeTableNode 独自メソッド */
@@ -91,6 +100,22 @@ public:
             children[n] = node;
         }
     }
+
+    // n番目の子ノードとスワップする
+    inline Node* swapNthChild(size_t n, Node* node) {
+        Node* old = 0;
+        if (n < children.size()) {
+            old = children[n];
+            children[n] = node;
+        }
+        return old;
+    }
+
+    // 後置書き換えノードを取得
+    PostRewriteOneShotNode* getRewriteNode();
+
+    // 後置書き換えノードをマージ
+    void mergeRewriteNode(PostRewriteOneShotNode* node);
 
 public:
     // 子ノード数を返す

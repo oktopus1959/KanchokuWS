@@ -110,8 +110,20 @@ namespace {
                 if (EISU_NODE) EISU_NODE->blockerNeeded = true; // 入力済み末尾にブロッカーを設定する
                 SetNextNodeMaybe(EISU_NODE.get());
             } else {
+                Node* np = NEXT_NODE(deckey);
+                StrokeTableNode* tp = np ? dynamic_cast<StrokeTableNode*>(np) : 0;
+                PostRewriteOneShotNode* rp = tp ? tp->getRewriteNode() : 0;
+                if (rp) {
+                    const RewriteInfo* rewInfo;
+                    std::tie(rewInfo, std::ignore) = rp->matchWithTailString();
+                    if (rewInfo) {
+                        // 入力文字列にマッチする書き換えノードを持つ
+                        np = rp;
+                        LOG_INFO(_T("REWRITE node matched"));
+                    }
+                }
                 LOG_INFO(_T("SetNextNodeMaybe"));
-                SetNextNodeMaybe(NEXT_NODE(deckey));
+                SetNextNodeMaybe(np);
             }
             if (!NextNodeMaybe() || !NextNodeMaybe()->isStrokeTableNode()) {
                 // 次ノードがストロークノードでないか、ストロークテーブルノード以外(文字ノードや機能ノードなど)ならば、全ストロークを削除対象とする
@@ -399,6 +411,7 @@ namespace {
 // デストラクタ
 StrokeTableNode::~StrokeTableNode() {
     _LOG_DEBUGH(_T("CALLED: destructor: ptr=%p"), this);
+    delete rewriteNode;
     for (auto p : children) {
         delete p;       // 子ノードの削除 (デストラクタ)
     }
@@ -421,6 +434,21 @@ void StrokeTableNode::CopyChildrenFace(mchar_t* faces, size_t facesSize) {
     _LOG_DEBUGH(_T("LEAVE"));
 }
 
+// 後置書き換えノードを取得
+PostRewriteOneShotNode* StrokeTableNode::getRewriteNode() {
+    return rewriteNode;
+}
+
+// 後置書き換えノードをマージ
+void StrokeTableNode::mergeRewriteNode(PostRewriteOneShotNode* node) {
+    if (rewriteNode) {
+        rewriteNode->merge(*node);
+        delete(node);
+    } else {
+        rewriteNode = node;
+    }
+    rewriteNode->clearRewriteString();
+}
 
 // 指定文字に至るストローク列を返す
 bool StrokeTableNode::getStrokeListSub(const MString& target, std::vector<int>& list, bool bFull) {
@@ -461,29 +489,45 @@ void StrokeTableNode::MakeStrokeGuide(const wstring& targetChars, int tableId) {
     }
 }
 
+// 後置書き換え子ノードありか
 bool StrokeTableNode::hasPostRewriteNode() {
     if (iHasPostRewriteNode == 0) {
-        iHasPostRewriteNode = findPostRewriteNode();
+        iHasPostRewriteNode = findPostRewriteNode(-1);
         LOG_INFOH(_T("iHasPostRewriteNode: %d"), iHasPostRewriteNode);
     }
     return iHasPostRewriteNode > 0;
 }
 
-int StrokeTableNode::findPostRewriteNode() {
+// (半)濁点のみの後置書き換え子ノードがあるか
+bool StrokeTableNode::hasOnlyUsualRewriteNdoe() {
+    if (iHasPostRewriteNode == 0) {
+        iHasPostRewriteNode = findPostRewriteNode(-1);
+        LOG_INFOH(_T("iHasPostRewriteNode: %d"), iHasPostRewriteNode);
+    }
+    return iHasPostRewriteNode == 1;
+}
+
+int StrokeTableNode::findPostRewriteNode(int result) {
     for (Node* p : children) {
         if (p) {
             StrokeTableNode* pn = dynamic_cast<StrokeTableNode*>(p);
             if (pn) {
-                if (pn->findPostRewriteNode() > 0) return 1;
+                if (pn->getRewriteNode()) return 2;
+                result = pn->findPostRewriteNode(result);
+                if (result > 1) return 2;
             } else {
-                if (dynamic_cast<PostRewriteOneShotNode*>(p) || dynamic_cast<DakutenOneShotNode*>(p)) {
-                    LOG_INFOH(_T("LEAVE: 1"));
-                    return 1;
+                if (dynamic_cast<DakutenOneShotNode*>(p)) {
+                    LOG_INFOH(_T("DakutenOneShotNode FOUND"));
+                    result = 1;
+                } else if (dynamic_cast<PostRewriteOneShotNode*>(p)) {
+                    LOG_INFOH(_T("LEAVE: 2"));
+                    return 2;
                 }
             }
         }
     }
-    return -1;
+    LOG_INFOH(_T("LEAVE: %d"), result);
+    return result;
 }
 
 // -------------------------------------------------------------------
@@ -537,7 +581,13 @@ StrokeTreeTraverser::StrokeTreeTraverser(class StrokeTableNode* p, bool full) : 
 Node* StrokeTreeTraverser::getNext() {
     while (!tblList.empty()) {
         StrokeTableNode* pn = tblList.back();
-        int nodePos = path.back() + 1;
+        int nodePos = 0;
+        if (bRewriteTable) {
+            path.push_back(nodePos);
+            bRewriteTable = false;
+        } else {
+            nodePos = path.back() + 1;
+        }
         while (nodePos < (int)pn->numChildren()) {
             if (!bFull && nodePos >= NORMAL_DECKEY_NUM * 2) break;
 
@@ -551,6 +601,11 @@ Node* StrokeTreeTraverser::getNext() {
                     pn = pp;
                     tblList.push_back(pn);
                     nodePos = 0;
+                    // 後置書き換えノードを持つテーブルノード
+                    if (pp->getRewriteNode()) {
+                        bRewriteTable = true;
+                        return pp->getRewriteNode();
+                    }
                     path.push_back(nodePos);
                     continue;
                 }

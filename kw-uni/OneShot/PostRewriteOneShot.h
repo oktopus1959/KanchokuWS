@@ -69,6 +69,8 @@ public:
 
     const RewriteInfo& getRewriteInfo() const { return myRewriteInfo; }
 
+    void clearRewriteString() { myRewriteInfo.rewriteStr.clear(); }
+
     void addRewritePair(const wstring& key, const wstring& value, bool bBare, StrokeTableNode* pNode);
 
     void merge(PostRewriteOneShotNode& rewNode) {
@@ -82,6 +84,9 @@ public:
         auto iter = rewriteMap.find(key);
         return iter == rewriteMap.end() ? 0 : &(iter->second);
     }
+
+    // 末尾文字列にマッチする RewriteInfo を取得する
+    std::tuple<const RewriteInfo*, size_t> matchWithTailString() const;
 
     const std::map<MString, RewriteInfo>& getRewriteMap() const { return rewriteMap; }
 
