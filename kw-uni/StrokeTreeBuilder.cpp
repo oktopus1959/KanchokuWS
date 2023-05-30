@@ -1279,3 +1279,24 @@ StrokeTableNode* StrokeTableNode::CreateStrokeTree3(const wstring& tableFile, st
     return RootStrokeNode3.get();
 }
 
+namespace {
+    void gatherStrokeChars(std::set<mchar_t>& charSet, StrokeTableNode* node) {
+        for (size_t i = 0; i < PLANE_DECKEY_NUM; ++i) {
+            auto blk = node->getNth(i);
+            if (blk && blk->isStringLikeNode()) {
+                charSet.insert(utils::safe_front(blk->getString()));
+            } else if (blk && blk->isStrokeTableNode()) {
+                gatherStrokeChars(charSet, (StrokeTableNode*)blk);
+            }
+        }
+    };
+
+}
+
+// ストローク可能文字を収集
+std::set<mchar_t> StrokeTableNode::GatherStrokeChars() {
+    LOG_INFO(_T("CALLED"));
+    std::set<mchar_t> charSet;
+    if (ROOT_STROKE_NODE) gatherStrokeChars(charSet, ROOT_STROKE_NODE);
+    return charSet;
+}

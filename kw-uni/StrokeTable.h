@@ -140,6 +140,9 @@ public:
     // 機能の再割り当て
     static void AssignFucntion(const wstring& keys, const wstring& name);
 
+    // ストローク可能文字を収集
+    static std::set<mchar_t> GatherStrokeChars();
+
     // ストロークノードの更新
     static void UpdateStrokeNodes(const wstring& strokeSource);
 

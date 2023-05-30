@@ -117,18 +117,22 @@ namespace utils {
 
         inline bool fail() { return _fail; }
 
+        inline size_t count() { return _count; }
+
         // 1行書き込み。
         // appendNL == true (デフォルト)なら行末の NL を追加
         // appendNL == false なら行末に NL を付加しない
         inline void writeLine(const std::string& line, bool appendNL = true) {
             ofs.write(line.c_str(), line.size());
             if (appendNL) ofs.write("\n", 1);
+            ++_count;
         }
 
     private:
         std::ofstream ofs;
         bool _fail = true;
         bool _append = false;
+        size_t _count = 0;
     };
    
 } // namespace utils

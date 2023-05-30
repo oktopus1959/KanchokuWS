@@ -2,6 +2,10 @@
 
 #include "Logger.h"
 
+namespace utils {
+    class OfstreamWriter;
+}
+
 // -------------------------------------------------------------------
 // 部首合成辞書クラス
 class BushuDic{
@@ -54,6 +58,9 @@ public:
 
     //仮想鍵盤に部首合成ヘルプの情報を設定する
     virtual bool CopyBushuCompHelpToVkbFaces(mchar_t ch, wchar_t* faces, size_t kbLen, size_t kbNum, bool bSetAssoc = false) = 0;
+
+    //後置部首合成定義を書き出す
+    virtual void ExportPostfixBushuCompDefs(utils::OfstreamWriter& writer, const wchar_t* postfix) = 0;
 };
 
 #define BUSHU_DIC (BushuDic::Singleton)

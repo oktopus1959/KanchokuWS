@@ -406,7 +406,7 @@ namespace VkbTableMaker {
         utils::OfstreamWriter writer(utils::joinPath(SETTINGS->rootDir, _T("roman-stroke-table.txt")));
         if (writer.success()) {
             // テーブルファイルから
-            bool bPostRewrite = StrokeTableNode::RootStrokeNode1->hasPostRewriteNode();
+            //bool bPostRewrite = StrokeTableNode::RootStrokeNode1->hasPostRewriteNode();
 
             auto pfx2 = prefix2 && wcslen(prefix2) > 0 ? prefix2 : !SETTINGS->romanSecPlanePrefix.empty() ? SETTINGS->romanSecPlanePrefix.c_str() : _T(":");
             MString cmdMarker = to_mstr(_T("!{"));
@@ -421,14 +421,16 @@ namespace VkbTableMaker {
                 if (origPath.empty()) continue;
 
                 Node* sp = dynamic_cast<StringNode*>(np);
-                if (!sp) sp = dynamic_cast<PostRewriteOneShotNode*>(np);
                 if (sp) {
                     auto ms = sp->getString();
                     if (ms.empty() || ms.find(cmdMarker) != MString::npos) continue;
 
-                    if (bPostRewrite) {
-                        size_t rewritableLen = sp->getRewritableLen();
-                        if (rewritableLen > 0) ms.insert(rewritableLen > ms.size() ? 0 : ms.size() - rewritableLen, 1, '\t');   // 「次の入力」の位置に TAB を挿入しておく
+                    wchar_t tab[] = { '\t', 0 };
+
+                    size_t rewritableLen = sp->getRewritableLen();
+                    if (rewritableLen > 0) {
+                        ms.insert(rewritableLen > ms.size() ? 0 : ms.size() - rewritableLen, 1, '\t');   // 「次の入力」の位置に TAB を挿入しておく
+                        tab[0] = '\0';
                     }
 
                     // 最初に出現する空白はromanSecPlanePrefixで置換
@@ -438,12 +440,13 @@ namespace VkbTableMaker {
                         if (origPath.find(' ') == wstring::npos || origPath.front() == ' ') {
                             // 空白を含まないか、または先頭のみが空白文字
                             writer.writeLine(utils::utf8_encode(
-                                utils::format(_T("%s\t\t%s"), strPath.c_str(), MAKE_WPTR(ms))));
+                                utils::format(_T("%s\t%s%s"), strPath.c_str(), tab, MAKE_WPTR(ms))));
                         } else {
                             writer.writeLine(utils::utf8_encode(
-                                utils::format(_T("%s%s\t\t%s"),
+                                utils::format(_T("%s%s\t%s%s"),
                                     pfx2,
                                     strPath.c_str(),
+                                    tab,
                                     MAKE_WPTR(ms))));
                         }
                     }
@@ -521,7 +524,7 @@ namespace VkbTableMaker {
         utils::OfstreamWriter writer(utils::joinPath(SETTINGS->rootDir, outfile));
         if (writer.success()) {
             // テーブルファイルから
-            bool bPostRewrite = tbl->hasPostRewriteNode();
+            //bool bPostRewrite = tbl->hasPostRewriteNode();
 
             // 文字から、その文字の打鍵列へのマップに追加 (通常面)
             StrokeTreeTraverser traverser(tbl, true);
@@ -537,13 +540,12 @@ namespace VkbTableMaker {
                 if (origPath.empty()) continue;
 
                 Node* sp = dynamic_cast<StringNode*>(np);
-                if (!sp) sp = dynamic_cast<PostRewriteOneShotNode*>(np);
                 if (sp) {
                     auto ms = sp->getString();
 
-                    if (bPostRewrite) {
-                        size_t rewritableLen = sp->getRewritableLen();
-                        if (rewritableLen > 0) ms.insert(rewritableLen > ms.size() ? 0 : ms.size() - rewritableLen, 1, '/');   // 「次の入力」の位置に '/' を挿入しておく
+                    size_t rewritableLen = sp->getRewritableLen();
+                    if (rewritableLen > 0) {
+                        ms.insert(rewritableLen > ms.size() ? 0 : ms.size() - rewritableLen, 1, '/');   // 「次の入力」の位置に '/' を挿入しておく
                     }
 
                     writer.writeLine(utils::utf8_encode(

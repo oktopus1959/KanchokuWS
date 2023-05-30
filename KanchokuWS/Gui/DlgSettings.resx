@@ -120,9 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="comboBox_deckeyCharsFile.ToolTip" xml:space="preserve">
     <value>漢直キーコードから英数字・記号への変換を定義するファイルを選択します。
 
@@ -872,6 +869,20 @@ rightShiftBlocker を呼び出すことで、左右に移動することがで�
 
 なお、ローマ字テーブルとは異なり、こちらは打鍵列に空白文字を含むものも
 出力されます。</value>
+  </data>
+  <data name="textBox_romanBushuCompPrefix.ToolTip" xml:space="preserve">
+    <value>ローマ字テーブル出力時の部首合成トリガー文字列
+
+他の文字用のローマ字列と重ならない文字列を設定します。
+(たとえば、前置部首合成用の打鍵列など)
+
+1文字の場合は、後置部首合成定義を出力します。
+この場合、出力される漢字は常用漢字の範囲に限定されますが、
+「目＋里」→「瞳」のような部品を使った合成も登録されます。
+
+2文字以上の場合は、前置部首合成定義を出力します。
+部首合成定義ファイル(kwbushu.rev)の内容に指定の文字列を
+前置させてそのまま出力します。</value>
   </data>
   <data name="button_saveRomanTableFile.ToolTip" xml:space="preserve">
     <value>ローマ字テーブルを作成してファイル出力します。

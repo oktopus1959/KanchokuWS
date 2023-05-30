@@ -9,6 +9,7 @@
 #include "OutputStack.h"
 #include "StrokeHelp.h"
 #include "EasyChars.h"
+#include "StrokeTable.h"
 #include "BushuDic.h"
 #include "BushuAssoc.h"
 #include "BushuAssocDic.h"
@@ -29,10 +30,15 @@ namespace {
         class parts_t {
             uint32_t data;
 
+            wchar_t parts[2] = { 0, 0 };
+
         public:
             parts_t() : data(0) { }
 
-            parts_t(wchar_t a, wchar_t b) : data((a << 16) + b) { }
+            parts_t(wchar_t a, wchar_t b) : data((a << 16) + b) {
+                parts[0] = a;
+                parts[1] = b;
+            }
 
             inline bool operator==(uint32_t p) const { return data == p; }
 
@@ -40,8 +46,8 @@ namespace {
 
             inline bool operator<(parts_t p) const { return data < p.data; }
 
-            inline wchar_t a() const { return data >> 16; }
-            inline wchar_t b() const { return data & 0xffff; }
+            inline wchar_t a() const { return parts[0]; }
+            inline wchar_t b() const { return parts[1]; }
 
             inline bool empty() const { return data == 0; }
             inline bool notEmpty() const { return data != 0; }
@@ -56,7 +62,22 @@ namespace {
         std::map<mchar_t, bool> strokableMap;
 
         // 等価マップ
-        std::map<mchar_t, mchar_t> equivMap;
+        std::map<mchar_t, std::set<wchar_t>> equivMap;
+
+        std::set<wchar_t> emptyEquiv;
+
+        inline const std::set<wchar_t>& findEquiv(mchar_t c) {
+            auto it = equivMap.find(c);
+            return it == equivMap.end() ? emptyEquiv : it->second;
+        }
+
+        inline void addEquiv(mchar_t a, mchar_t b) {
+            auto it = equivMap.find(a);
+            if (it == equivMap.end()) {
+                equivMap[a] = std::set<wchar_t>();
+            }
+            equivMap[a].insert((wchar_t)b);
+        }
 
         // 合成辞書
         std::map<parts_t, mchar_t> compMap;
@@ -87,15 +108,39 @@ namespace {
             auto it = entries.find(c);
             return it == entries.end() ? parts_t() : it->second;
         }
-        inline mchar_t findEquiv(mchar_t c) {
-            auto it = equivMap.find(c);
-            return it == equivMap.end() ? c : it->second;
-        }
-        inline mchar_t findComp(mchar_t a, mchar_t b) {
+
+        inline mchar_t findComp(wchar_t a, wchar_t b) {
             if (a == 0 || b == 0) return 0;
-            auto it = compMap.find(parts_t((wchar_t)a, (wchar_t)b));
+            auto it = compMap.find(parts_t(a, b));
             return it == compMap.end() ? 0 : it->second;
         }
+
+        inline mchar_t findComp(const std::set<wchar_t>& as, wchar_t b) {
+            for (auto a : as) {
+                auto it = compMap.find(parts_t(a, b));
+                return it == compMap.end() ? 0 : it->second;
+            }
+            return 0;
+        }
+
+        inline mchar_t findComp(wchar_t a, const std::set<wchar_t>& bs) {
+            for (auto b : bs) {
+                auto it = compMap.find(parts_t(a, b));
+                return it == compMap.end() ? 0 : it->second;
+            }
+            return 0;
+        }
+
+        inline mchar_t findComp(const std::set<wchar_t>& as, const std::set<wchar_t>& bs) {
+            for (auto a : as) {
+                for (auto b : bs) {
+                    auto it = compMap.find(parts_t(a, b));
+                    return it == compMap.end() ? 0 : it->second;
+                }
+            }
+            return 0;
+        }
+
         inline void addBody(mchar_t ch, mchar_t body) {
             auto it = partsBodiesMap.find(ch);
             if (it == partsBodiesMap.end()) {
@@ -103,9 +148,16 @@ namespace {
             }
             partsBodiesMap[ch].insert(body);
         }
+
         inline const std::set<mchar_t>& getBodies(mchar_t ch) {
             auto it = partsBodiesMap.find(ch);
             return it == partsBodiesMap.end() ? emptySet : it->second;
+        }
+
+#define _PARTS_MAX 100
+
+        inline bool isComposableParts(mchar_t ch) {
+            return (!utils::is_hiragana(ch) && !utils::is_katakana(ch) && getBodies(ch).size() <= _PARTS_MAX);
         }
 
         //inline UINT32 partsToUint32(wchar_t a, wchar_t b) { return ((UINT32)a << 16) + ((UINT32)b & 0xffff); }
@@ -118,7 +170,7 @@ namespace {
 
     public:
         void ReadFile(const std::vector<wstring>& lines) {
-            LOG_INFO(_T("ENTER: lines num=%d"), lines.size());
+            LOG_INFOH(_T("ENTER: lines num=%d"), lines.size());
 
             // 作業領域
             std::wregex reComment(_T("^# "));
@@ -141,12 +193,12 @@ namespace {
                 if (Logger::IsInfoEnabled()) lastLine = line;
             }
 
-            LOG_INFO(_T("LEAVE: last line=%s"), lastLine.c_str());
+            LOG_INFOH(_T("LEAVE: last line=%s"), lastLine.c_str());
         }
 
         // 辞書内容の保存
         void WriteFile(utils::OfstreamWriter& writer) {
-            LOG_INFO(_T("CALLED: addedEntries.size()=%d"), addedEntries.size());
+            LOG_INFOH(_T("CALLED: addedEntries.size()=%d"), addedEntries.size());
             for (const auto& line : addedEntries) {
                 writer.writeLine(utils::utf8_encode(line));
             }
@@ -159,7 +211,7 @@ namespace {
 
         // 自動部首合成用辞書の読み込み
         void ReadAutoDicFile(const std::vector<wstring>& lines) {
-            LOG_INFO(_T("ENTER: lines num=%d"), lines.size());
+            LOG_INFOH(_T("ENTER: lines num=%d"), lines.size());
 
             // 作業領域
             std::wregex reComment(_T("^# "));
@@ -173,12 +225,12 @@ namespace {
                 addAutoBushuEntry(line, false);
             }
 
-            LOG_INFO(_T("LEAVE"));
+            LOG_INFOH(_T("LEAVE"));
         }
 
         // 自動合成辞書内容の保存
         void WriteAutoDicFile(utils::OfstreamWriter& writer) {
-            LOG_INFO(_T("CALLED: autoBushuDict.size()=%d"), autoBushuDict.size());
+            LOG_INFOH(_T("CALLED: autoBushuDict.size()=%d"), autoBushuDict.size());
             std::set<wstring> set_;
             for (const auto& pair : autoBushuDict) {
                 set_.insert(to_wstr(MString(1, pair.second) + pair.first));
@@ -193,26 +245,26 @@ namespace {
             return bAutoDirty;
         }
 
-        void MakeStrokableMap() {
+        void MakeStrokableMap() override {
             for (auto pair : partsBodiesMap) {
                 strokableMap[pair.first] = STROKE_HELP->Find(pair.first);
             }
         }
 
         // 1エントリの追加 (ここで追加したエントリは、保存時に辞書ファイルに追記される)
-        void AddBushuEntry(const wstring& line) {
+        void AddBushuEntry(const wstring& line) override {
             addedEntries.push_back(line);
             addBushuEntry(line);
         }
 
         // 1自動エントリの追加 (ここで追加したエントリは、保存時に辞書ファイルに追記される)
-        void AddAutoBushuEntry(const wstring& line) {
+        void AddAutoBushuEntry(const wstring& line) override {
             bAutoDirty = true;
             addAutoBushuEntry(line, true);
         }
 
         // a と b を組み合わせてできる自動合成文字を探す。
-        mchar_t FindAutoComposite(mchar_t ca, mchar_t cb) {
+        mchar_t FindAutoComposite(mchar_t ca, mchar_t cb) override {
             auto finder = [this](mchar_t a, mchar_t b) {
                 MString key;
                 key.push_back(a);
@@ -244,8 +296,8 @@ namespace {
                 addBody(a, c);
                 if (b == wchar_t('\r') || b == wchar_t('\n') || b == 0) {
                     // "CA" → A ≡ C (等価文字)
-                    equivMap[c] = a;
-                    equivMap[a] = c;
+                    addEquiv(a, c);
+                    addEquiv(c, a);
                 } else {
                     // CAB → C = A + B (部品)
                     parts_t comp = parts_t(a, b);
@@ -276,7 +328,7 @@ namespace {
             }
         }
 
-        void AddAutoBushuEntry(mchar_t a, mchar_t b, mchar_t c) {
+        void AddAutoBushuEntry(mchar_t a, mchar_t b, mchar_t c) override {
             if (a != 0 && b != 0 && c != 0) {
                 MString key = make_mstring(a, b);
                 _LOG_DEBUGH(_T("key=%s, val=%c"), MAKE_WPTR(key), c);
@@ -329,7 +381,7 @@ namespace {
         // prev != 0 なら、まず prev を探し、さらにその次の合成文字を探してそれを返す(やり直し用)。
         // 見つからなかった場合は 0 を返す。
         // ここでは元祖漢直窓の山辺アルゴリズムを基本として、いくつか改良を加えてある。
-        mchar_t FindComposite(mchar_t ca, mchar_t cb, mchar_t prev) {
+        mchar_t FindComposite(mchar_t ca, mchar_t cb, mchar_t prev) override {
             _LOG_INFOH(_T("ENTER: ca=%c, cb=%c, prev=%c"), ca, cb, prev);
             mchar_t c = findCompSub((wchar_t)ca, (wchar_t)cb, prev);
             if (c == 0 && prev != 0) c = findCompSub((wchar_t)ca, (wchar_t)cb, 0);    // retry from the beginning
@@ -368,24 +420,24 @@ namespace {
     }
 
             // それぞれの等価文字
-            wchar_t eqa = (wchar_t)findEquiv(ca);
-            wchar_t eqb = (wchar_t)findEquiv(cb);
+            const std::set<wchar_t>& eqa = findEquiv(ca);
+            const std::set<wchar_t>& eqb = findEquiv(cb);
 
             // まず、足し算(逆順の足し算も先にやっておく)
             CHECK_AND_RETURN("A1", findComp(ca, cb));
             CHECK_AND_RETURN("A2", findComp(cb, ca));
 
-            _LOG_INFOH(_T("EQUIV: eqa=%c, eqb=%c"), eqa, eqb);
+            _LOG_INFOH(_T("EQUIV: eqa=%c, eqb=%c"), eqa.empty() ? '-' : *eqa.begin(), eqb.empty() ? '-' : *eqb.begin());
 
             // 等価文字を使って足し算
-            if (eqb != cb) CHECK_AND_RETURN("B1", findComp(ca, eqb));
-            if (eqa != ca) CHECK_AND_RETURN("B2", findComp(eqa, cb));
-            if (eqb != cb) CHECK_AND_RETURN("B3", findComp(eqb, ca));
-            if (eqa != ca) CHECK_AND_RETURN("B4", findComp(cb, eqa));
+            CHECK_AND_RETURN("B1", findComp(ca, eqb));
+            CHECK_AND_RETURN("B2", findComp(eqa, cb));
+            CHECK_AND_RETURN("B3", findComp(eqb, ca));
+            CHECK_AND_RETURN("B4", findComp(cb, eqa));
 
             // 等価文字同士で足し算
-            if (eqa != ca || eqb != cb) CHECK_AND_RETURN("C1", findComp(eqa, eqb));
-            if (eqa != ca || eqb != cb) CHECK_AND_RETURN("C2", findComp(eqb, eqa));
+            CHECK_AND_RETURN("C1", findComp(eqa, eqb));
+            CHECK_AND_RETURN("C2", findComp(eqb, eqa));
 
             // ここまでで合成文字が見つからなければ、部品を使う
             wchar_t a1, a2, b1, b2;
@@ -396,13 +448,13 @@ namespace {
 
             // 引き算
             if (a1 && a2) {
-                if (a2 == cb || a2 == eqb) CHECK_AND_RETURN("F1", a1);     // a1 = ca - cb(eqb)
-                if (a1 == cb || a1 == eqb) CHECK_AND_RETURN("F2", a2);     // a2 = ca - cb(eqb)
+                if (a2 == cb || eqb.find(a2) != eqb.end()) CHECK_AND_RETURN("F1", a1);     // a1 = ca - cb(eqb)
+                if (a1 == cb || eqb.find(a1) != eqb.end()) CHECK_AND_RETURN("F2", a2);     // a2 = ca - cb(eqb)
             }
             // 引き算(逆順)
             if (b1 && b2) {
-                if (b2 == ca || b2 == eqa) CHECK_AND_RETURN("G1", b1);     // b1 = cb - ca(eqa)
-                if (b1 == ca || b1 == eqa) CHECK_AND_RETURN("G2", b2);     // b2 = cb - ca(eqa)
+                if (b2 == ca || eqa.find(b2) != eqa.end()) CHECK_AND_RETURN("G1", b1);     // b1 = cb - ca(eqa)
+                if (b1 == ca || eqa.find(b1) != eqa.end()) CHECK_AND_RETURN("G2", b2);     // b2 = cb - ca(eqa)
             }
 
             if (SETTINGS->yamanobeEnabled) {
@@ -412,28 +464,28 @@ namespace {
                     _LOG_INFOH(_T(tag ## "1-Y-ADD: x1=%c, x2=%c, y=%c"), _NC(x1), _NC(x2), _NC(y)); \
                     mchar_t z; \
                     if ((z = findComp(x1, y)) != 0) { \
-                        _LOG_INFOH(_T(tag ## "1-Y-ADD(x1+y)=%c"), z); \
-                        CHECK_AND_RETURN(tag ## "1-Y-ADD((x1+y)+x2):", findComp(z, x2)); /* X = X1 + X2 のとき、 (X1 + Y) + X2 を出したい */ \
-                        CHECK_AND_RETURN(tag ## "1-Y-ADD(x2+(x1+y)):", findComp(x2, z)); /* X = X1 + X2 のとき、 X2 + (X1 + Y) を出したい */ \
+                        _LOG_INFOH(_T(tag ## "1-Y-ADD(x1+y)=%c"), (wchar_t)z); \
+                        CHECK_AND_RETURN(tag ## "1-Y-ADD((x1+y)+x2):", findComp((wchar_t)z, x2)); /* X = X1 + X2 のとき、 (X1 + Y) + X2 を出したい */ \
+                        CHECK_AND_RETURN(tag ## "1-Y-ADD(x2+(x1+y)):", findComp(x2, (wchar_t)z)); /* X = X1 + X2 のとき、 X2 + (X1 + Y) を出したい */ \
                     } \
                     if ((z = findComp(x2, y)) != 0) { \
-                        _LOG_INFOH(_T(tag ## "1-Y-ADD(x2+y)=%c"), z); \
-                        CHECK_AND_RETURN(tag ## "1-Y-ADD(x1+(x2+y)):", findComp(x1, z)); /* X = X1 + X2 のとき、 X1 + (X2 + Y) を出したい */ \
-                        CHECK_AND_RETURN(tag ## "1-Y-ADD((x2+y)+x1):", findComp(z, x1)); /* X = X1 + X2 のとき、 (X2 + Y) + X1 を出したい */ \
+                        _LOG_INFOH(_T(tag ## "1-Y-ADD(x2+y)=%c"), (wchar_t)z); \
+                        CHECK_AND_RETURN(tag ## "1-Y-ADD(x1+(x2+y)):", findComp(x1, (wchar_t)z)); /* X = X1 + X2 のとき、 X1 + (X2 + Y) を出したい */ \
+                        CHECK_AND_RETURN(tag ## "1-Y-ADD((x2+y)+x1):", findComp((wchar_t)z, x1)); /* X = X1 + X2 のとき、 (X2 + Y) + X1 を出したい */ \
                     } \
                 }
 #define YAMANOBE_ADD_B(tag, x, y1, y2) { \
                     _LOG_INFOH(_T(tag ## "2-Y-ADD: x=%c, y1=%c, y2=%c"), _NC(x), _NC(y1), _NC(y2)); \
                     mchar_t z; \
                     if ((z = findComp(x, y1)) != 0) { \
-                        _LOG_INFOH(_T(tag ## "2-Y-ADD(x+y1)=%c"), z); \
-                        CHECK_AND_RETURN(tag ## "2-Y-ADD((x+y1)+y2):", findComp(z, y2)); /* Y = Y1 + Y2 のとき、 (X + Y1) + Y2 を出したい */ \
-                        CHECK_AND_RETURN(tag ## "2-Y-ADD(y2+(x+y1)):", findComp(y2, z)); /* Y = Y1 + Y2 のとき、 Y2 + (X + Y1) を出したい */ \
+                        _LOG_INFOH(_T(tag ## "2-Y-ADD(x+y1)=%c"), (wchar_t)z); \
+                        CHECK_AND_RETURN(tag ## "2-Y-ADD((x+y1)+y2):", findComp((wchar_t)z, y2)); /* Y = Y1 + Y2 のとき、 (X + Y1) + Y2 を出したい */ \
+                        CHECK_AND_RETURN(tag ## "2-Y-ADD(y2+(x+y1)):", findComp(y2, (wchar_t)z)); /* Y = Y1 + Y2 のとき、 Y2 + (X + Y1) を出したい */ \
                     } \
                     if ((z = findComp(x, y2)) != 0) { \
-                        _LOG_INFOH(_T(tag ## "2-Y-ADD(x+y2)=%c"), z); \
-                        CHECK_AND_RETURN(tag ## "2-Y-ADD(y1+(x+y2)):", findComp(y1, z)); /* Y = Y1 + Y2 のとき、 Y1 + (X + Y2) を出したい */ \
-                        CHECK_AND_RETURN(tag ## "2-Y-ADD((x+y2)+y1):", findComp(z, y1)); /* Y = Y1 + Y2 のとき、 (X + Y2) + Y1 を出したい */ \
+                        _LOG_INFOH(_T(tag ## "2-Y-ADD(x+y2)=%c"), (wchar_t)z); \
+                        CHECK_AND_RETURN(tag ## "2-Y-ADD(y1+(x+y2)):", findComp(y1, (wchar_t)z)); /* Y = Y1 + Y2 のとき、 Y1 + (X + Y2) を出したい */ \
+                        CHECK_AND_RETURN(tag ## "2-Y-ADD((x+y2)+y1):", findComp((wchar_t)z, y1)); /* Y = Y1 + Y2 のとき、 (X + Y2) + Y1 を出したい */ \
                     } \
                 }
 
@@ -571,64 +623,76 @@ namespace {
             // 再帰足し算(一方の文字から合成できる文字を使って足し算)
             // (瞳=目+童 という定義があるとき、目+立 または 目+里 で 瞳 を合成する)
             // ただし、等価文字およびひらがな部品は除く
-#define ADD_BY_COMPOSITE(tag, cz, z, x) \
+#define ADD_BY_COMPOSITE1(tag, cz, eqz, x) \
+            if (cz) CHECK_AND_RETURN(tag ## "(cz,x)", findComp(cz, x)); \
+            if (!eqz.empty()) CHECK_AND_RETURN(tag ## "(eqz,x)", findComp(eqz, x)); \
+            if (cz) CHECK_AND_RETURN(tag ## "(x,cz)", findComp(x, cz)); \
+            if (!eqz.empty()) CHECK_AND_RETURN(tag ## "(x,eqz)", findComp(x, eqz))
+
+#define ADD_BY_COMPOSITE2(tag, cz, z, x) \
             _LOG_INFOH(_T(tag ## ": cz=%c, z=%c, x=%c"), _NC(cz), _NC(z), _NC(x)); \
             if (cz) CHECK_AND_RETURN(tag ## "(cz,x)", findComp(cz, x)); \
             if (z && z != cz) CHECK_AND_RETURN(tag ## "(z,x)", findComp(z, x)); \
             if (cz) CHECK_AND_RETURN(tag ## "(x,cz)", findComp(x, cz)); \
             if (z && z != cz) CHECK_AND_RETURN(tag ## "(x,z)", findComp(x, z))
 
-#define _PARTS_MAX 100
-
-            if (!utils::is_hiragana(cb) && getBodies(cb).size() <= _PARTS_MAX) {
+            if (isComposableParts(cb)) {
                 for (auto x : getBodies(cb)) {
-                    ADD_BY_COMPOSITE("T1", ca, eqa, x);
+                    ADD_BY_COMPOSITE1("T1", ca, eqa, (wchar_t)x);
                 }
             }
-            if (eqb && eqb != cb && !utils::is_hiragana(eqb) && getBodies(eqb).size() <= _PARTS_MAX) {
-                for (auto x : getBodies(eqb)) {
-                    ADD_BY_COMPOSITE("T2", ca, eqa, x);
+            for (auto eb : eqb) {
+                if (isComposableParts(eb)) {
+                    for (auto x : getBodies(eb)) {
+                        ADD_BY_COMPOSITE1("T2", ca, eqa, (wchar_t)x);
+                    }
                 }
             }
 
             // 同、逆順
-            if (!utils::is_hiragana(ca) && getBodies(ca).size() <= _PARTS_MAX) {
+            if (isComposableParts(ca)) {
                 for (auto x : getBodies(ca)) {
-                    ADD_BY_COMPOSITE("T3", cb, eqb, x);
+                    ADD_BY_COMPOSITE1("T3", cb, eqb, (wchar_t)x);
                 }
             }
-            if (eqa && eqa != ca && !utils::is_hiragana(eqa) && getBodies(eqa).size() <= _PARTS_MAX) {
-                for (auto x : getBodies(eqa)) {
-                    ADD_BY_COMPOSITE("T4", cb, eqb, x);
+            for (auto ea : eqa) {
+                if (isComposableParts(ea)) {
+                    for (auto x : getBodies(ea)) {
+                        ADD_BY_COMPOSITE1("T4", cb, eqb, (wchar_t)x);
+                    }
                 }
             }
 
             // 部品との合成を試す
-            if (!utils::is_hiragana(cb) && getBodies(cb).size() <= _PARTS_MAX) {
+            if (isComposableParts(cb)) {
                 for (auto x : getBodies(cb)) {
-                    ADD_BY_COMPOSITE("U1", a1, a2, x);   // Aの部品との合成を試す
+                    ADD_BY_COMPOSITE2("U1", a1, a2, (wchar_t)x);   // Aの部品との合成を試す
                 }
             }
-            if (eqb && eqb != cb && !utils::is_hiragana(eqb) && getBodies(eqb).size() <= _PARTS_MAX) {
-                for (auto x : getBodies(eqb)) {
-                    ADD_BY_COMPOSITE("U2", a1, a2, x);   // Aの部品との合成を試す
+            for (auto eb : eqb) {
+                if (isComposableParts(eb)) {
+                    for (auto x : getBodies(eb)) {
+                        ADD_BY_COMPOSITE2("U2", a1, a2, (wchar_t)x);   // Aの部品との合成を試す
+                    }
                 }
             }
 
             // 同、逆順
-            if (!utils::is_hiragana(ca) && getBodies(ca).size() <= _PARTS_MAX) {
+            if (isComposableParts(ca)) {
                 for (auto x : getBodies(ca)) {
-                    ADD_BY_COMPOSITE("U3", b1, b2, x);   // Bの部品との合成を試す
+                    ADD_BY_COMPOSITE2("U3", b1, b2, (wchar_t)x);   // Bの部品との合成を試す
                 }
             }
-            if (eqa && eqa != ca && !utils::is_hiragana(eqa) && getBodies(eqa).size() <= _PARTS_MAX) {
-                for (auto x : getBodies(eqa)) {
-                    ADD_BY_COMPOSITE("U4", b1, b2, x);   // Bの部品との合成を試す
+            for (auto ea : eqa) {
+                if (isComposableParts(ea)) {
+                    for (auto x : getBodies(ea)) {
+                        ADD_BY_COMPOSITE2("U4", b1, b2, (wchar_t)x);   // Bの部品との合成を試す
+                    }
                 }
             }
 
             // 同じ文字同士の合成の場合は、等価文字を出力する
-            if (ca == cb && eqa != 0 && eqa != ca) CHECK_AND_RETURN("V", eqa);
+            if (ca == cb && !eqa.empty()) CHECK_AND_RETURN("V", *eqa.begin());
 
             LOG_DEBUGH(_T("result: NULL"));
             return 0;
@@ -646,8 +710,7 @@ namespace {
         // m の部品文字は先頭に追加する
         // 記号類は末尾に追加する
         // firstLevel の文字はさらにその後に追加する。
-        void GatherDerivedMoji(mchar_t m, std::vector<mchar_t>& list)
-        {
+        void GatherDerivedMoji(mchar_t m, std::vector<mchar_t>& list) override {
             //int origLen = list.size();
             std::vector<mchar_t> symList;
             std::vector<mchar_t> fsList;
@@ -690,7 +753,7 @@ namespace {
         }
 
         //仮想鍵盤に部首合成ヘルプの情報を設定する
-        bool CopyBushuCompHelpToVkbFaces(mchar_t ch, wchar_t* faces, size_t kbLen, size_t kbNum, bool bSetAssoc) {
+        bool CopyBushuCompHelpToVkbFaces(mchar_t ch, wchar_t* faces, size_t kbLen, size_t kbNum, bool bSetAssoc) override {
             auto gatherBodies = [this](mchar_t x) {
                 std::vector<wchar_t> result;
                 std::vector<wchar_t> temp;
@@ -760,6 +823,201 @@ namespace {
             return true;
         }
 
+    private:
+        std::set<mchar_t> popularCharSet;
+
+        inline bool isPopular(mchar_t ch) { return popularCharSet.find(ch) != popularCharSet.end(); }
+
+        // 常用・人名漢字
+        const wchar_t* popularChars =
+            L"人一日大年出本中子見国言上分生手自行者二間事思時気会十家女三前的方入小地合後目長場代私下立部学物月田何来彼話体動社知理山内同心発高実作当新世今書度明五戦力名金性対意用男主通関文屋感郎業定政持道外取所現"
+            L"最化四先民身不口川東相多法全聞情野考向平成軍開教経信近以語面連問原顔正機九次数美回食表八声水報真味界無少要海変結切重天神記木集和員引公画死安兵親六治決太氏衛強使込朝受島解市期様村活頭題万組仕白指説七能"
+            L"京葉第流然初足円在門調笑品電議直着保別夫音選元権特義父利制続風北石車進夜伝母加助点産務件命番落付得半戸好空有違吉殺起運置料士返藤論楽際歳色帰歩井悪広店反町形百光首勝必土係由愛都住江西売放確過張約馬状待"
+            L"古想始官交読千米配若終資常果呼校武共計残判役城院他総術支送族両乗団松映応済線買設右供格病打視早勢御断式質師台党告深存争室覚史側飛参可態営府突巻容姿育之介建南構認位達転左皇宮守満消任医蔵止造居離根予路字"
+            L"座工寺基客急船図追隊査背観誰黒素息価将伊改県撃失泉老良示振号像職王識警花優投英細局難種証走念寄商青谷害奥派僕佐頼横友再増紀統答差火苦器収段異血護紙俺歌渡与注条演算赤備独象清技州申例働景領春抜遠橋源芸影"
+            L"型絶館眼香負福企旅球酒君験量察写望久婚単押割限戻科求津案談降妻岡境熱策浮階等末宗区波提去幸研移域飲肉草周昭越服接鉄密司登頃銀類検未材個康沢協茶各究帯規秀歴編興裏精洋率抱比坂評装監崎省鮮税激徳挙志労競処"
+            L"退費非囲喜辺敷系河織製娘端逃探極遺防低犯薬園疑林導緒静具席房速街舞宿森程丸胸陸倒寝宅兄療絵諸尾株破秋堂従庭管婦仲革余敵展訪担冷効暮腹賞危毎星許復似片並底険描週修財遊温軽録腰我著乱章雑殿載響秘布恐攻値角"
+            L"暗習健仏積裁試夏隠永誌夢環援故幕減略準委痛富督倉弟刻鳴令刊施焼欲途曲耳完里願罪圧額印嫌池陽臣庫継亡散障貴農掛板昨整怒衆恋羽及専逆腕盛玄留礼短普岩竹児毛列恵版授雪弾宇養驚払奈推給況樹為阿敗雄捕刀被雨岸超"
+            L"豊忘含弁植妙模補抗級休暴課瞬称跡触玉晴華因震折億肩劇迎傷悲闘港責筋訳除射善刺黙柄刑節述輪困脱浅鳥厳純犬博陣薄阪閉吸奇忠夕固染巨講微髪標束縁眠壁午般湯捨駆衣替麻甲央藩骨彦齢易照云迫層踏窓弱討聖典剣症祖築"
+            L"納勤昔脳便適弥融航快浜郷翌旧吹惑柳拠奉筆壊換益群句属候爆功捜帝賀魚堀油怖叫伸創辞泣憶幹否露矢承雲握練儀紹聴包庁測占混倍乳襲借徴荒詰飯栄床丁憲則禁順駅閣昼枚救厚皮陰繰那冬輸操智騒己濃魔遅簡撮携姉隣孫丈煙"
+            L"黄曜宣徒届遣訴絡茂採釣批誘核哲豪傾締欠鹿就迷滅仰瀬洗互鼻致伏宝也杉患審才延律希避吾揺甘湾浦沈至販裕更盟欧執崩鬼酸砂尊拡紅漢複歯泊銃荷維盗枝縄詩廃充依鏡幼仮吐慣請晩眺沖躍威勇屈勘徹斎謝昇艦寿催舎仁菜季衝"
+            L"液箱到券脚虎祭潮袋穴怪仙燃輝緊頂唇杯忍毒狂札牛奪診竜脇債鈴僧卒掲伯副皆敬熊針妹拝浴浪梅悩看俊汚摘灯項霊坊垣慢扱渉招涙如停寒了縮詳旦汗恥慮雅砲謀懐愚郵舌駄奴幅豆童又銭抑侍疲虫宙埋範舟棒貨龍肌臓塩潜酔呂還"
+            L"丹亜亀沼巡頰均湖臭慶距釈侵僚貧損悟猫隆裂尋貸旗羅揮辛票乃稲胞双懸稿塚盤災曹尽嫁繁即軒績帳飾沿獲伴唐狭干添剤姓誤魅契掘邪挑免爵択籍珍廊析訓預輩敏署鶴虚努往趣烈索匂漁摩菊緑滑沙裸孝綱邸弘勉邦揚卓騎墓姫畳孔"
+            L"耐須臨献脈咲貿芝踊唱封亭誕貫兆偽奮桜熟柱排透棄駐削奏幻祝麗逮誠炎炭椅寛斉穂柔幾兼飼促雇乾尚彩鋭暖俗較傍坐肝畑濡笠峰氷抵恩吞誇網隅渋冊賛糸魂牧控紛嬉募薩昌戒没既脅靖征覆郡丘佳叔託哀肥朗柴慎悠眉拒概顧硬腐"
+            L"塗挨孤拶憎却泥賊荘宏匠悔朋獄滞脂粉遇淡浩購併崇唯劉垂詞岐俳筒斜嬢陥掃償鑑勧葬焦丞剛膨廷紫銘鎌菌稼偶譲随猛李遂冒泰翼忙凄序扉是寸賃偵澄殊緩頑塔賢拾紋撫麦庄溜糖煮芳刷惨歓嶋晋虐旨凝圏卵鷹拭涯貞堅倫揃壇呉這"
+            L"械暇皿辰貌塞噴婆岳祈嘉蹴膳尺桂罰漏灰朱召覧摑漂汁溶寂嘆泳禅浄其翔酷喋刃漫磨霧暑粒喫棚袖壮旬机彫靴庵需偉鎖貯匹縦粧綿慌穏贈枠謎誉逸駒凍惜措瓶晶琴摂拍稽礎遭帽掌鍋弓克据胆跳縛祐鎮雷涼頁恨顕殖寧湧棋淳巧綾浸"
+            L"秒桃隔班甚妊祉獣疾塾潟湿幡撲塊槍絞履苗芋冗陶励陳篠藝陀喧猿於葛傘蒸禄啓劣撤殴盾貰衰栗滝慰馴蛇梨癖潤菓鉢洲戯腸偏駕巣宴耕炉棟洞狩陛鴨磁潔膜乏祥曾淵舗抽桐駿睡括貢犠粗卑貼蘭牲帆挿翻胡羊枕錯謙鉱珠蓄儲伍拓鼓"
+            L"膚粋尉胃后粘披徐悦堪挟冠郊愉蘇此狼尿蝶誓憂蔦繫簿糧架筈芽軸輔蓋銅圭盆紗凶妃哉庶秩裾幽凡猪惚漠拙郁嘩恒暦峠篇宰蒼蛮窮擦爪稚夷辱嵐憤癒疎溢彰蓮肺傑拘頻緯妖豚或藍矛鍛繊縫把楼捉漬紳飽宛閥旋坪菩崖幌鶏鈍峡溝逢"
+            L"朴軌瓦喪墨疫貝鮎遍梁堺濁缶扇枯拳乙酵辻馳堤宋阻桑雀虜綺牡恭鐘喰剰慈径培擁郭尖砕汰勃翁絹譜陵痴笛昧訟駈漱肪塀蒲碁惣敢塁洛滴暁胴菱謡秦紐卿飢麿欄艶菅怠恰欺弦泡晃敦伐餅寮昂符厄奔昆亮噌椎懇唄渦襟吟覇衡畜呈隙"
+            L"娠循懲錦棲叡猟幣附箇梶醜軟箸濯戚喚窺紺某鋼褒魯蒙惹赴媒隈遮窯侯隻茎壌蜜尼肢赦酬戴詠斗宜殻墳炊碑柏伺瘦但奨践滋毅儒沸薦磯曇栽刈閑錠扶妥妨苑萩詣胎窟巾蜂忌賑漕烏粛囚諏鉛肯桶燥搭諭辿阜喝享騰嗣鵜巳勅襖篤孟勲"
+            L"埼堵曖只燈詐國笹綴稀焚岬曽條霞暫播讃雰爽盃燭肖瞳詮倭諾零柿芯淀莫詫董訂蔭捧楚汲蕎汽薫竿隷碗鳩俵傳窪遷枢肘麓兎帥漆酌庇頓賠渇慕叶裡蠟婿妄慨匿寅渓眸穿眞聡遥侮髄穀勿瑞蟹鳳薪轄臥洪牙迅該逐杏釘楠廣墜餓淋楊芥"
+            L"錬桟琉樺賄盲鯨佑侶荻迦袴艇杜俣堕忽旭槽憩僅閲獅鞘柵禰畔睦蝦唆悼俱茜吏穫酢玲砦函苔賜腎瑠琶伽帖瓜簞簾嶺羨搬琵剖畿宵拐峯醸闇猶鷲絆諮畏泌槌轟愁橘冴薙逝稔朽硫厨瞭殆甥擬仔叙弊累煩裳輿梯藻蚊牽且蹟鋳蔽茨雛汝棺"
+            L"註鷗舵裟吻曳隼斐芭藁硝晒舶租摺倣謹抹虹捻娯箕臼鞄撒槻鋒凌蛍蕉芦窒湊韓桁玩冶袈栓蔣鯉閃掠寡櫓鞍砥畝淑嫡迂屯糾凰纏櫻翠而檜鎧秤莉肴衿陪雌峨舷昏葵葡允筑霜殉紡榊梓庸套些韻繕搾椿燕樋刹岸嵯堆禍磐祇檀茅雁煎姻杭"
+            L"閤蟬斑冥遙粥抄拷遜旺蔓壕准耶勾廉亨捲爾屑榎螺礁萬縞壱鴻畠樫升挽芙灘卸耗倖兜謁璃坑擢串鳶黎稜弔惟賓塡卯叢廟巌丑耽俄痢煌嚇濫萄俸伎湛梢灼蒔椀柑慧巴按暢甫粟邑凸顚鯛瞥坦詔繡禱凜晦圃凹錆凱櫛俠跨鍬諒煉胤罷曝巷"
+            L"漸汐栖掬訣牟峻纂撰冨賦杵弧歎糊佛褐弛綸欽來堰碧憧魁瑛汎劫斯謂欣玖沫捷姪斥彬瀕傭楓亦厘迄倦紘矯犀萌毘窃遼颯戟嵩蓬瑚焔喬卜哨茉遵萱醬逗惰禎蕃蚕膏鵬乎錫倹宥款嘗斡亘沌竪笙悉槙肋沓渚尤檎絢憾怜茄戊佃蕾馨絃肇蒐"
+            L"偲楕湘媛凪勁托奄宕蕪錐綜燦珂蓑捺已衷圓亥桔迭渥蕗彗柚窄箔熙嘱應壬脹煤鼎鋸墾瓢蓉堯誼彌與團澪饗埴脩惠硯廿椋汀疋惇碩琳槇笈釧匡鰯姥榛逓釉皓耀壽劾鞠凧恢雫毬莞菖酪匁禮萊灸奎德椰塑痘朕娩麒珈諺稟竺牒紬緋縣虞諦"
+            L"徽鷺丙閏榮琥爲櫂斤杷祁穣芹寬橙庚柾珀梧朔弐琢豹皐徠竣枇苺桧彪謄繭璽勺錘銑頒"
+            ;
+
+    public:
+        //後置部首合成定義を書き出す
+        void ExportPostfixBushuCompDefs(utils::OfstreamWriter& writer, const wchar_t* postfix) override {
+            LOG_INFOH(_T("ENTER: writer.count=%d"), writer.count());
+
+            if (popularCharSet.empty()) {
+                const wchar_t* p = popularChars;
+                while (*p) {
+                    popularCharSet.insert(*p++);
+                }
+            }
+
+            // ストローク可能文字
+            std::set<mchar_t> strokableChars = StrokeTableNode::GatherStrokeChars();
+
+            auto isStrokable = [&strokableChars](mchar_t ch) { return strokableChars.find(ch) != strokableChars.end(); };
+
+            std::map<wstring, wstring> revMap;
+            std::set<wstring> doneSet;
+
+
+            wchar_t buf[3] = { 0, 0, 0 };
+            wchar_t rev[3] = { 0, 0, 0 };
+
+            size_t MAX_LINES = 7500;
+
+            auto writeComp = [this, &writer, MAX_LINES, postfix, &doneSet](mchar_t c, const wchar_t* comp) {
+                if (writer.count() < MAX_LINES) {
+                    wstring cs = to_wstr(c);
+                    if (isPopular(c) && doneSet.find(comp) == doneSet.end()) {
+                        writer.writeLine(utils::utf8_encode(
+                            utils::format(_T("%s%s\t\t%s"),
+                                comp,
+                                postfix,
+                                cs.c_str())));
+                        doneSet.insert(comp);
+                    }
+                }
+                return writer.count() < MAX_LINES;
+            };
+
+            for (const auto& pair : compMap) {
+                mchar_t c = pair.second;
+                wchar_t a = pair.first.a();
+                wchar_t b = pair.first.b();
+                // 順方向の足し算
+                if (isStrokable(a) && isStrokable(b)) {
+                    buf[0] = a;
+                    buf[1] = b;
+                    if (!writeComp(c, buf)) break;
+                    rev[0] = b;
+                    rev[1] = a;
+                    revMap[rev] = to_wstr(pair.second);
+                }
+#if 0
+                // 引き算
+                buf[0] = (wchar_t)c;
+                buf[1] = a;
+                tmpMap[buf] = to_wstr(b);
+                buf[1] = b;
+                tmpMap[buf] = to_wstr(a);
+#endif
+                // 部品
+                if (isPopular(c)) {
+                    if (isStrokable(b)) {
+                        buf[1] = b;
+                        rev[0] = b;
+                        auto pa = findParts(a);
+                        wchar_t _a = pa.a();
+                        wchar_t _b = pa.b();
+                        if (_a && isStrokable(_a) && isComposableParts(_a)) {
+                            buf[0] = _a;
+                            if (!writeComp(c, buf)) break;
+                            rev[1] = _a;
+                            revMap[rev] = to_wstr(c);
+                        }
+                        if (_b && isStrokable(_b)&& isComposableParts(_b)) {
+                            buf[0] = _b;
+                            if (!writeComp(c, buf)) break;
+                            rev[1] = _b;
+                            revMap[rev] = to_wstr(c);
+                        }
+                    }
+                    if (isStrokable(a)) {
+                        buf[0] = a;
+                        rev[1] = a;
+                        auto pb = findParts(b);
+                        wchar_t _a = pb.a();
+                        wchar_t _b = pb.b();
+                        if (_a && isStrokable(_a) && isComposableParts(_a)) {
+                            buf[1] = _a;
+                            if (!writeComp(c, buf)) break;
+                            rev[0] = _a;
+                            revMap[rev] = to_wstr(c);
+                        }
+                        if (_b && isStrokable(_b) && isComposableParts(_b)) {
+                            buf[1] = _b;
+                            if (!writeComp(c, buf)) break;
+                            rev[0] = _b;
+                            revMap[rev] = to_wstr(c);
+                        }
+                    }
+                }
+                // 等価
+                if (isStrokable(b)) {
+                    buf[1] = b;
+                    rev[0] = b;
+                    for (auto ea : findEquiv(a)) {
+                        if (isStrokable(ea)) {
+                            buf[0] = ea;
+                            if (!writeComp(c, buf)) break;
+                            rev[1] = ea;
+                            revMap[rev] = to_wstr(c);
+                        }
+                    }
+                }
+                if (isStrokable(a)) {
+                    buf[0] = a;
+                    rev[1] = a;
+                    for (auto eb : findEquiv(b)) {
+                        if (isStrokable(eb)) {
+                            buf[1] = eb;
+                            if (!writeComp(c, buf)) break;
+                            rev[0] = eb;
+                            revMap[rev] = to_wstr(c);
+                        }
+                    }
+                }
+            }
+
+            LOG_INFOH(_T("Reverse: writer.count=%d, revMap.size=%d"), writer.count(), revMap.size());
+
+            for (const auto& pair : revMap) {
+                if (doneSet.find(pair.first) == doneSet.end()) {
+                    writer.writeLine(utils::utf8_encode(
+                        utils::format(_T("%s%s\t%s"),
+                            pair.first.c_str(),
+                            postfix,
+                            pair.second.c_str())));
+                    if (writer.count() >= MAX_LINES) break;
+                }
+            }
+
+            LOG_INFOH(_T("LEAVE: writer.count=%d"), writer.count());
+        }
+
+    private:
+        inline void writeComp(utils::OfstreamWriter& writer, const wchar_t* postfix, mchar_t c, const wchar_t* comp, std::map<wstring, wstring>& tmpMap) {
+            wstring cs = to_wstr(c);
+            if (isPopular(c)) {
+                writer.writeLine(utils::utf8_encode(
+                    utils::format(_T("%s%s\t\t%s"),
+                        comp,
+                        postfix,
+                        cs.c_str())));
+            } else {
+                tmpMap[comp] = cs;
+            }
+        }
     };
     DEFINE_CLASS_LOGGER(BushuDicImpl);
 
@@ -774,11 +1032,11 @@ namespace {
     DEFINE_LOCAL_LOGGER(BushuDic);
 
     bool readBushuFile(const tstring& path, BushuDicImpl* pDic) {
-        LOG_INFO(_T("open bushu file: %s"), path.c_str());
+        LOG_INFOH(_T("open bushu file: %s"), path.c_str());
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             pDic->ReadFile(reader.getAllLines());
-            LOG_INFO(_T("close bushu file: %s"), path.c_str());
+            LOG_INFOH(_T("close bushu file: %s"), path.c_str());
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
             LOG_WARN(_T("Can't read bushu file: %s"), path.c_str());
@@ -789,7 +1047,7 @@ namespace {
     }
 
     bool writeBushuFile(const tstring& path, BushuDicImpl* pDic) {
-        LOG_INFO(_T("write bushu file: %s, dirty=%s"), path.c_str(), BOOL_TO_WPTR(pDic && pDic->IsDirty()));
+        LOG_INFOH(_T("write bushu file: %s, dirty=%s"), path.c_str(), BOOL_TO_WPTR(pDic && pDic->IsDirty()));
         if (!path.empty() && pDic) {
             if (pDic->IsDirty()) {
                 if (utils::copyFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
@@ -805,17 +1063,17 @@ namespace {
     }
 
     bool readAutoBushuFile(const tstring& path, BushuDicImpl* pDic) {
-        LOG_INFO(_T("open auto bushu file: %s"), path.c_str());
+        LOG_INFOH(_T("open auto bushu file: %s"), path.c_str());
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             pDic->ReadAutoDicFile(reader.getAllLines());
-            LOG_INFO(_T("close bushu file: %s"), path.c_str());
+            LOG_INFOH(_T("close bushu file: %s"), path.c_str());
         }
         return true;
     }
 
     bool writeAutoBushuFile(const tstring& path, BushuDicImpl* pDic) {
-        LOG_INFO(_T("write auto bushu file: %s, dirty=%s"), path.c_str(), BOOL_TO_WPTR(pDic && pDic->IsAutoDirty()));
+        LOG_INFOH(_T("write auto bushu file: %s, dirty=%s"), path.c_str(), BOOL_TO_WPTR(pDic && pDic->IsAutoDirty()));
         if (!path.empty() && pDic) {
             if (pDic->IsAutoDirty()) {
                 if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
@@ -834,10 +1092,10 @@ namespace {
 // 部首合成辞書を作成する(ファイルが指定されていなくても作成する)
 // エラーがあったら例外を投げる
 int BushuDic::CreateBushuDic(const tstring& bushuFile, const tstring& autoBushuFile) {
-    LOG_INFO(_T("ENTER"));
+    LOG_INFOH(_T("ENTER"));
 
     if (Singleton != 0) {
-        LOG_INFO(_T("already created: bushu file: %s"), bushuFile.c_str());
+        LOG_INFOH(_T("already created: bushu file: %s"), bushuFile.c_str());
         return 0;
     }
 
@@ -850,13 +1108,13 @@ int BushuDic::CreateBushuDic(const tstring& bushuFile, const tstring& autoBushuF
         result = -1;
     }
 
-    LOG_INFO(_T("LEAVE: result=%d"), result);
+    LOG_INFOH(_T("LEAVE: result=%d"), result);
     return result;
 }
 
 // 部首合成辞書を読み込む
 void BushuDic::ReadBushuDic(const tstring& path) {
-    LOG_INFO(_T("CALLED: path=%s"), path.c_str());
+    LOG_INFOH(_T("CALLED: path=%s"), path.c_str());
     if (!path.empty() && Singleton) {
         readBushuFile(path, (BushuDicImpl*)Singleton.get());
     }
@@ -864,13 +1122,13 @@ void BushuDic::ReadBushuDic(const tstring& path) {
 
 // 部首合成辞書ファイルに書き込む
 void BushuDic::WriteBushuDic(const tstring& path) {
-    LOG_INFO(_T("CALLED: path=%s"), path.c_str());
+    LOG_INFOH(_T("CALLED: path=%s"), path.c_str());
     writeBushuFile(path, (BushuDicImpl*)Singleton.get());
 }
 
 // 自動部首合成辞書を読み込む
 void BushuDic::ReadAutoBushuDic(const tstring& path) {
-    LOG_INFO(_T("CALLED: path=%s"), path.c_str());
+    LOG_INFOH(_T("CALLED: path=%s"), path.c_str());
     if (!path.empty() && Singleton) {
         readAutoBushuFile(path, (BushuDicImpl*)Singleton.get());
     }
@@ -878,7 +1136,7 @@ void BushuDic::ReadAutoBushuDic(const tstring& path) {
 
 // 自動部首合成辞書ファイルに書き込む
 void BushuDic::WriteAutoBushuDic(const tstring& path) {
-    LOG_INFO(_T("CALLED: path=%s"), path.c_str());
+    LOG_INFOH(_T("CALLED: path=%s"), path.c_str());
     writeAutoBushuFile(path, (BushuDicImpl*)Singleton.get());
 }
 

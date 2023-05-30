@@ -5516,7 +5516,7 @@ namespace KanchokuWS.Gui
             this.textBox_romanSecPlanePrefix.Name = "textBox_romanSecPlanePrefix";
             this.textBox_romanSecPlanePrefix.Size = new System.Drawing.Size(69, 19);
             this.textBox_romanSecPlanePrefix.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.textBox_romanSecPlanePrefix, "裏面定義文字用ローマ字出力時のプレフィックス\r\n\r\nテーブルファイルの yomiConvert で定義した裏面文字に対する\r\nローマ字列を定義する際に、他の文字用" +
+            this.toolTip1.SetToolTip(this.textBox_romanSecPlanePrefix, "ローマ字出力時の裏面定義文字用プレフィックス\r\n\r\nテーブルファイルの yomiConvert で定義した裏面文字に対する\r\nローマ字列を定義する際に、他の文字用" +
         "のローマ字列と重なら\r\nないようにするためのプレフィックス文字列を設定します。\r\n\r\nまた、 Try-Code のようにストークに空白文字を含む場合も、その\r\n" +
         "空白文字を設定されたプレフィックス文字で置換します。");
             // 
@@ -5526,9 +5526,9 @@ namespace KanchokuWS.Gui
             this.label102.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label102.Location = new System.Drawing.Point(14, 21);
             this.label102.Name = "label102";
-            this.label102.Size = new System.Drawing.Size(114, 15);
+            this.label102.Size = new System.Drawing.Size(89, 15);
             this.label102.TabIndex = 38;
-            this.label102.Text = "部首合成プレフィックス";
+            this.label102.Text = "部首合成トリガー";
             // 
             // textBox_romanBushuCompPrefix
             // 
@@ -5539,7 +5539,7 @@ namespace KanchokuWS.Gui
             this.textBox_romanBushuCompPrefix.Name = "textBox_romanBushuCompPrefix";
             this.textBox_romanBushuCompPrefix.Size = new System.Drawing.Size(69, 19);
             this.textBox_romanBushuCompPrefix.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.textBox_romanBushuCompPrefix, "部首合成用ローマ字出力時のプレフィックス\r\n\r\n他の文字用のローマ字列と重ならない文字列を設定します。\r\n(たとえば、前置部首合成用の打鍵列など)");
+            this.toolTip1.SetToolTip(this.textBox_romanBushuCompPrefix, resources.GetString("textBox_romanBushuCompPrefix.ToolTip"));
             // 
             // button_saveRomanTableFile
             // 
