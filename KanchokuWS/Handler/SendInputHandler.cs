@@ -789,7 +789,9 @@ namespace KanchokuWS.Handler
                             sendInputsRomanOrKanaUnicode(faceStr);
                             continue;
                         } else {
-                            logger.DebugH($"_hiraganaToKeyface empty");
+                            logger.DebugH($"send SPACE for other than KanaMoji in KanaTrainingMode");
+                            sendInputsRomanOrKanaUnicode(" ");
+                            continue;
                         }
                     }
                     logger.DebugH($"send Unicode string");
