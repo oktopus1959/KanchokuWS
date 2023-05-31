@@ -378,8 +378,10 @@ namespace KanchokuWS.CombinationKeyStroke
                                         if (bTimer || strokeList.Count == 2 /* strokeList.IsSuccessiveShift3rdOrLaterKey() /*strokeList.IsSuccessiveShift2ndOr3rdKey()*/) {
                                             logger.DebugH(() => $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}, " +
                                                 $"NotSpaceNorFuncKey={!DecoderKeys.IsSpaceOrFuncKey(decKey)}, IsTerminalCombo()={strokeList.IsTerminalCombo()}");
-                                            // タイマーが有効であるか、または同時打鍵シフトの2打鍵め文字キーであって、同時打鍵組合せが終端文字だったらタイマーを起動する
-                                            if (Settings.UseCombinationKeyTimer2 && !DecoderKeys.IsSpaceOrFuncKey(decKey) && strokeList.IsTerminalCombo()) {
+                                            // タイマーが有効であるか、または同時打鍵シフトの2打鍵め文字キーであって、同時打鍵組合せが終端文字であり、
+                                            // かつ、先頭が文字キーでないか文字キーのみの同時打鍵組合せの場合が被覆Comboではない、だったらタイマーを起動する
+                                            if (Settings.UseCombinationKeyTimer2 && !DecoderKeys.IsSpaceOrFuncKey(decKey) && strokeList.IsTerminalCombo() &&
+                                                (DecoderKeys.IsSpaceOrFuncKey(strokeList.First.OrigDecoderKey) || !Settings.OnlyCharKeysComboShouldBeCoveringCombo)) {
                                                 startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
                                             }
                                         }
