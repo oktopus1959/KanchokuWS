@@ -335,7 +335,7 @@ namespace KanchokuWS.Handler
 
             var inputs = new INPUT[2];
             var info = new InputInfo(2, state);
-            
+
             // Ctrl戻し
             revertCtrlKeyInputs(info);
             logger.DebugH(() => $"revert: idx={info.Index}");
@@ -756,6 +756,69 @@ namespace KanchokuWS.Handler
             return Settings.ImeKatakanaToHiragana ? Helper.ConvertKatakanaToHiragana(ch) : ch;
         }
 
+        // かな入力練習モードの時に使うタイマー
+        // 書き換え文字があるときに、それをいったんストックしておき、制限時間を過ぎてもBSによる削除がなければ出力する)
+        System.Timers.Timer timerForWaitingChar = null;
+        // 書き換え対象文字のストック
+        private char waitingCharWhenKanaTraining = '\0';
+
+        public void InitializePreRewriteTimer(FrmKanchoku frm)
+        {
+            logger.InfoH(() => $"CALLED: waitTime={Settings.PreRewriteWaitTimeMsWhenTrainingMode}, preRewriteTargetChars={Settings.PreRewriteTargetChars}");
+            if (timerForWaitingChar == null) {
+                timerForWaitingChar = new System.Timers.Timer();
+                timerForWaitingChar.SynchronizingObject = frm;
+                timerForWaitingChar.Elapsed += timerForWaitingChar_elapsed;
+                logger.InfoH(() => $"TIMER Initialized");
+            }
+        }
+
+        private void timerForWaitingChar_elapsed(Object sender, System.Timers.ElapsedEventArgs e)
+        {
+            logger.DebugH(() => $"ENTER: TIMER ELAPSED");
+            timerForWaitingChar?.Stop();
+            sendWaitingCharWhenKanaTraining();
+            logger.DebugH(() => $"LEAVE");
+        }
+
+        private void sendWaitingCharWhenKanaTraining()
+        {
+            if (waitingCharWhenKanaTraining != '\0') {
+                string faceStr = waitingCharWhenKanaTraining._hiraganaToKeyface();
+                if (faceStr._notEmpty()) {
+                    logger.DebugH(() => $"sendInputsRomanOrKanaUnicode({waitingCharWhenKanaTraining}:{faceStr})");
+                    sendInputsRomanOrKanaUnicode(faceStr);
+                }
+                waitingCharWhenKanaTraining = '\0';
+            }
+        }
+
+        private bool pushWaitingCharWhenKanaTraining(char ch)
+        {
+            logger.DebugH(() => $"CALLED: ch={ch}, preRewriteWaitTimeMs={Settings.PreRewriteWaitTimeMsWhenTrainingMode})");
+            if (Settings.PreRewriteWaitTimeMsWhenTrainingMode <= 0) return false;   // 待ち時間が 0 以下ならストックしない
+
+            timerForWaitingChar?.Stop();
+            sendWaitingCharWhenKanaTraining();
+            waitingCharWhenKanaTraining = ch;
+            if (timerForWaitingChar != null) {
+                timerForWaitingChar.Interval = Settings.PreRewriteWaitTimeMsWhenTrainingMode;
+                timerForWaitingChar.Start();
+            }
+            return true;
+        }
+
+        private int clearOrSendWaitingCharWhenKanaTraining(int numBS)
+        {
+            logger.DebugH(() => $"CALLED: numBS={numBS}, waitingChar={waitingCharWhenKanaTraining})");
+            if (numBS > 0 && waitingCharWhenKanaTraining != '\0') {
+                waitingCharWhenKanaTraining = '\0';
+                --numBS;
+            }
+            sendWaitingCharWhenKanaTraining();
+            return numBS;
+        }
+
         private void sendStringInputs(string str)
         {
             logger.DebugH(() => $"ENTER: str={str}");
@@ -786,7 +849,15 @@ namespace KanchokuWS.Handler
                     } else if (Settings.KanaTrainingMode) {
                         faceStr = str[i]._hiraganaToKeyface();
                         if (faceStr._notEmpty()) {
-                            sendInputsRomanOrKanaUnicode(faceStr);
+                            bool stocked = false;
+                            if (i == strLen - 1 && (Settings.PreRewriteTargetChars.Contains('*') || Settings.PreRewriteTargetChars.Contains(str[i]))) {
+                                // かな入力練習モードのときは末尾文字が指定の文字なら、バッファに積む
+                                logger.DebugH(() => $"i={i}, strLen={strLen}");
+                                stocked = pushWaitingCharWhenKanaTraining(str[i]);
+                            }
+                            if (!stocked) {
+                                sendInputsRomanOrKanaUnicode(faceStr);
+                            }
                             continue;
                         } else {
                             logger.DebugH($"send SPACE for other than KanaMoji in KanaTrainingMode");
@@ -822,6 +893,7 @@ namespace KanchokuWS.Handler
 
             // Backspace
             //sendInputsVkey(VK_BACK, numBS);
+            numBS = clearOrSendWaitingCharWhenKanaTraining(numBS);
             sendBackSpaces(numBS, strLen <= 0);
 
             // 文字列

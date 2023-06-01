@@ -2330,6 +2330,7 @@ namespace KanchokuWS
             if (IsDecoderActive) {
                 Settings.KanaTrainingMode = !Settings.KanaTrainingMode;
                 if (Settings.KanaTrainingMode) {
+                    SendInputHandler.Singleton.InitializePreRewriteTimer(this);
                     ExecCmdDecoder("setKanaTrainingMode", "true");
                     ExecCmdDecoder("setAutoHistSearchEnabled", "false");
                 } else {

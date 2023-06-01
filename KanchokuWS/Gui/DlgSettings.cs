@@ -1720,6 +1720,7 @@ namespace KanchokuWS.Gui
             textBox_romanSecPlanePrefix.Text = Settings.RomanSecPlanePrefix;
             textBox_preRewriteTargetChars.Text = $"{Settings.PreRewriteTargetChars}";
             textBox_preRewriteAllowedDelayTimeMs.Text = $"{Settings.PreRewriteAllowedDelayTimeMs}";
+            textBox_preRewriteWaitTimeMsWhenTrainingMode.Text = $"{Settings.PreRewriteWaitTimeMsWhenTrainingMode}";
         }
 
         private void setMiscSettingsStatusChecker()
@@ -1749,6 +1750,7 @@ namespace KanchokuWS.Gui
             checkerMiscSettings.Add(textBox_romanSecPlanePrefix);
             checkerMiscSettings.Add(textBox_preRewriteTargetChars);
             checkerMiscSettings.Add(textBox_preRewriteAllowedDelayTimeMs);
+            checkerMiscSettings.Add(textBox_preRewriteWaitTimeMsWhenTrainingMode);
 
             checkerAll.Add(checkerMiscSettings);
         }
@@ -1782,6 +1784,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("romanSecPlanePrefix", textBox_romanSecPlanePrefix.Text);
             Settings.SetUserIni("preRewriteTargetChars", textBox_preRewriteTargetChars.Text.Trim());
             Settings.SetUserIni("preRewriteAllowedDelayTimeMs", textBox_preRewriteAllowedDelayTimeMs.Text.Trim());
+            Settings.SetUserIni("preRewriteWaitTimeMsWhenTrainingMode", textBox_preRewriteWaitTimeMsWhenTrainingMode.Text.Trim());
 
             Settings.ReadIniFile();
             // 各種定義ファイルの再読み込み
