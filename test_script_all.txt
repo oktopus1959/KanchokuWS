@@ -440,3 +440,11 @@ comboMaxTime(200)
 comboMinTime(100)
 disableFirstComboCheck
 convert(D<62>H<28>I<57>d<28>h<43>i) = おい
+
+### かものはし ###
+loadTable(tables/_test/kamonohasi-1.3.tbl)
+convert(EYey) = らん
+convert(EVev) = れん
+convert(YWyw) = ぽ
+convert(ZHzh) = ぐん
+

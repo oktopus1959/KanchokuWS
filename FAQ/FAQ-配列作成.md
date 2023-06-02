@@ -29,7 +29,9 @@
 - [同じ構造のテーブルの記述を省略したい](#同じ構造のテーブルの記述を省略したい)
 - [別のテーブルファイルを使い回したい](#別のテーブルファイルを使い回したい)
 - かな配列と漢直配列を同時に使用したい
-- [選択時に表示される説明文を設定したい](#選択時に表示される説明文を設定したい)
+- [ファイル選択時に表示される説明文を設定したい](#ファイル選択時に表示される説明文を設定したい)
+- [テーブルファイルの中で、配列固有の設定を記述したい](#テーブルファイルの中で配列固有の設定を記述したい)
+
 
 ## 新しい配列(テーブルファイル)を作成したい
 配列は、`tables` フォルダの配下にある `.tbl` という拡張子を持つテキストファイルで定義します。
@@ -462,7 +464,7 @@ SandS と同様に「無変換」や「変換」もシフトキーとして使�
 テーブルファイルは、インクルード元ファイルからの相対パスで記述してください。
 
 
-## 選択時に表示される説明文を設定したい
+## ファイル選択時に表示される説明文を設定したい
 テーブルファイル選択用のコンボボックスに表示される説明文を設定するのには `#define display-name`
 を使います。
 
@@ -470,4 +472,65 @@ SandS と同様に「無変換」や「変換」もシフトキーとして使�
 
 `#define display-name`
 の後にダブルクォートで囲んで説明文を記述します。
+
+## テーブルファイルの中で、配列固有の設定を記述したい
+テーブルファイルの中で次のように記述すると、同時打鍵やIME、書き換えシステムなどに関する、
+配列固有の設定を行うことができます。
+
+```
+#set PROPERTY_NAME=VALUE
+```
+
+たとえば `#set combinationMaxAllowedLeadTimeMs=80` と記述すると下図のように
+「第1キー押下から第2キー押下までの時間」が設定できます。
+
+![Set Value In Tbl File](image/set-value-in-tbl-file.png)
+
+上図を見ると分かりますが、設定した項目については入力コントロールが無効化されて、値が変更できないようになります。
+これは、テーブルファイルによる配列固有の設定によって、
+kanchoku.user.ini のグローバルな設定が上書きされないようにするためです。
+
+テーブルファイルから設定できる項目は以下のとおりです。
+
+|プロパティ名|設定項目|
+|-|-|
+|SandSEnabled|漢直/かなモードでSandSを有効にするか|
+|sandsEnabledWhenOffMode|漢直/かなモードOFFでSandSを有効にするか|
+|sandsAssignedPlane|SandSを割り当てる面<br/>(0:通常面, 1:シフト面, 2:シフトA面, ..., 7:シフトF面)|
+|oneshotSandSEnabled|スペース単打によるワンショットSandSを有効にするか|
+|sandsEnablePostShift|疑似同時打鍵をサポートするか|
+|sandsEnableSpaceOrRepeatMillisec|スペース再打鍵によるスペース入力またはリピート開始までの時間(ミリ秒)|
+|combinationMaxAllowedLeadTimeMs|同時打鍵判定で、第1キー押下から第2キー押下までの許容時間(ミリ秒)|
+|comboMaxAllowedPostfixTimeMs|同時打鍵判定で、第2キーがシフトキーの場合の制限時間(ミリ秒)|
+|useCombinationKeyTimer1|同時打鍵判定で、第1打鍵が文字キーの場合にタイマーを使用するか|
+|combinationKeyTimeMs|同時打鍵判定で、同時押し状態からキー解放までの下限時間(ミリ秒)|
+|combinationKeyTimeOnlyAfterSecond|同時打鍵判定で、同時打鍵の1文字目には上記条件を適用しないか|
+|useCombinationKeyTimer2|同時打鍵判定で、第2打鍵以降のキー押下でタイマーを使用するか|
+|comboDisableIntervalTimeMs|同時打鍵判定で、シフトキーの解放後、後置シフトを無効にする時間(ミリ秒)|
+|onlyCharKeysComboShouldBeCoveringCombo|同時打鍵判定で、文字キー同士の同時打鍵は第1打鍵を最後に離鍵した場合に限るか|
+|imeCooperationEnabled|IMEの状態に合わせてデコーダをON/OFFするか|
+|imeSendInputInRoman|IMEのローマ字入力モードに対応するか|
+|imeSendInputInKana|IMEのかな入力モードに対応するか|
+|imeKatakanaToHiragana|IMEの入力モード対応時にカタカナをひらがなに変更するか|
+|useComboExtModKeyAsSingleHit|「変換」キーと「無変換」キーについて、単打の場合は本来のキーとして機能させるか|
+|threeKeysComboUnconditional|設定されている文字列以外の3キー同時押しを無条件に同時打鍵と判定するか|
+|preRewriteTargetChars|書き換えシステムにおいて、自動確定の対象となる文字集合|
+|preRewriteAllowedDelayTimeMs|書き換えシステムにおいて、上記文字が入力されてから自動で確定するまでの時間(ミリ秒)|
+|preRewriteWaitTimeMsWhenTrainingMode|かな入力練習モードで、上記文字が入力されてから出力されるまでの待ち時間(ミリ秒)|
+|zenkakuModeKeySeq|機能呼出: 「全角変換(モード)」機能の呼び出しキー(列)|
+|zenkakuOneCharKeySeq|機能呼出: 「全角変換(1文字)」機能の呼び出しキー(列)|
+|katakanaModeKeySeq|機能呼出: 「カタカナ変換(モー)」機能の呼び出しキー(列)|
+|nextThroughKeySeq|機能呼出: 「次打鍵スルー」機能の呼び出しキー(列)|
+|historyKeySeq|機能呼出: 「履歴検索」機能の呼び出しキー(列)|
+|historyOneCharKeySeq|機能呼出: 「履歴検索(1文字)」機能の呼び出しキー(列)|
+|historyFewCharsKeySeq|機能呼出: 「履歴検索(数文字)」機能の呼び出しキー(列)|
+|mazegakiKeySeq|機能呼出: 「交ぜ書き変換」機能の呼び出しキー(列)|
+|bushuCompKeySeq|機能呼出: 「部首合成」機能の呼び出しキー(列)|
+|bushuAssocKeySeq|機能呼出: 「連想文字検索」機能の呼び出しキー(列)|
+|bushuAssocDirectKeySeq|機能呼出: 「連想直接変換」機能の呼び出しキー(列)|
+|katakanaOneShotKeySeq|機能呼出: 「カタカナ変換(一括)」機能の呼び出しキー(列)|
+|hanKataOneShotKeySeq|機能呼出: 「半角カタカナ変換」機能の呼び出しキー(列)|
+|blkSetOneShotKeySeq|機能呼出: 「ブロッカー設定/解除」機能の呼び出しキー(列)|
+
+実際の設定例については、`tables\その他\roman.tbl` または `tables\かな系\noniiruto.tbl` を参照ください。
 

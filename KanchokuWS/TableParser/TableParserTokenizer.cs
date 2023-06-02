@@ -520,17 +520,8 @@ namespace KanchokuWS.TableParser
             if (items._safeLength() == 2 && items[0]._notEmpty()) {
                 var propName = items[0];
                 var strVal = items[1]._strip();
-#if false
-                const int errorVal = -999999;
-                int iVal = strVal._parseInt(errorVal);
-                if (iVal != errorVal && Settings.SetValueByName(propName, iVal)) return;
-                if (strVal._toLower()._equalsTo("true") && Settings.SetValueByName(propName, true)) return;
-                if (strVal._toLower()._equalsTo("false") && Settings.SetValueByName(propName, false)) return;
-                if (Settings.SetValueByName(propName, strVal._stripDq())) return;
-#else
                 Settings.SetInternalValue(propName, strVal);
                 return;
-#endif
             }
             ParseError("handleSettings");
         }

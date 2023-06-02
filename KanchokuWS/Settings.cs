@@ -16,7 +16,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.5.1";
+        public static string Version => "1.2.6";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -32,23 +32,6 @@ namespace KanchokuWS
         /// <param name="propName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-#if false
-        public static bool SetValueByName<T>(string propName, T value)
-        {
-            logger.DebugH(() => $"CALLED: propName={propName}, value={value}");
-            try {
-                Type myClass = typeof(Settings);
-                var prop = myClass.GetProperty(propName, BindingFlags.Static | BindingFlags.Public);
-                prop.SetValue(myClass, value, BindingFlags.Static, null, null, null);
-                var decoderPropName = propName._safeSubstring(0, 1)._toLower() + propName._safeSubstring(1);
-                specificDecoderSettings[decoderPropName] = value.ToString();
-                return true;
-            } catch (Exception e) {
-                logger.WarnH(e._getErrorMsgShort());
-                return false;
-            }
-        }
-#else
         public static void SetInternalValue(string propName, string value)
         {
             logger.DebugH(() => $"CALLED: propName={propName}, value={value}");
@@ -58,7 +41,6 @@ namespace KanchokuWS
                 logger.WarnH(e._getErrorMsgShort());
             }
         }
-#endif
 
         public static string GetInternalValue(string key)
         {

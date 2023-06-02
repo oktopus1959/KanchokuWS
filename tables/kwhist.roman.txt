@@ -37632,6 +37632,7 @@ Use|ユース
 Cloud|クラウド
 Login|ログイン
 Logout|ログアウト
+Plane|プレーン
 Portal|ポータル
 Quota|クォータ
 Refinement|リファインメント
