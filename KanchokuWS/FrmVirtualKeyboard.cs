@@ -685,7 +685,7 @@ namespace KanchokuWS
         public void MakeStrokeTables(string defFile)
         {
             var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(defFile);
-            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"ENTER: filePath={filePath}");
+            logger.InfoH(() => $"ENTER: filePath={filePath}");
 
             shiftPlaneStrokeTables1 = Helper.MakeRange(ShiftPlane.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition1", x.ToString())).ToList();
             shiftPlaneStrokeTables2 = Helper.MakeRange(ShiftPlane.ShiftPlane_NUM).Select(x => makeCharOrKeys($"makeShiftPlaneStrokePosition2", x.ToString())).ToList();
@@ -774,7 +774,7 @@ namespace KanchokuWS
                     }
                 }
             }
-            if (Settings.LoggingVirtualKeyboardInfo) logger.Info("LEAVE");
+            logger.InfoH("LEAVE");
         }
 
         private void makeVkbStrokeTable1(string cmd, string faces, bool drawFaces = false, bool kana = false, bool shiftPlane = false)

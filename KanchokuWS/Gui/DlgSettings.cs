@@ -888,6 +888,11 @@ namespace KanchokuWS.Gui
             }
         }
 
+        void setEnabled(Control ctrl, string key)
+        {
+            ctrl.Enabled = !Settings.IsInternalValueSet(key);
+        } 
+
         //-----------------------------------------------------------------------------------
         // IME・同時打鍵
         //-----------------------------------------------------------------------------------
@@ -895,31 +900,58 @@ namespace KanchokuWS.Gui
         {
             // SandS
             checkBox_SandSEnabled.Checked = Settings.SandSEnabled;
+            setEnabled(checkBox_SandSEnabled, Settings.SandSEnabled_PropName);
             checkBox_SandSEnabledWhenOffMode.Checked = Settings.SandSEnabledWhenOffMode;
+            setEnabled(checkBox_SandSEnabledWhenOffMode, Settings.SandSEnabledWhenOffMode_PropName);
+            setEnabled(checkBox_SandSEnabledWhenOffMode, Settings.SandSEnabled_PropName);
             comboBox_SandSAssignedPlane.SelectedIndex = Settings.SandSAssignedPlane._lowLimit(0)._highLimit(7);
+            setEnabled(comboBox_SandSAssignedPlane, Settings.SandSAssignedPlane_PropName);
+            setEnabled(comboBox_SandSAssignedPlane, Settings.SandSEnabled_PropName);
             checkBox_OneshotSandSEnabled.Checked = Settings.OneshotSandSEnabled;
+            setEnabled(checkBox_OneshotSandSEnabled, Settings.OneshotSandSEnabled_PropName);
+            setEnabled(checkBox_OneshotSandSEnabled, Settings.SandSEnabled_PropName);
             textBox_SandSEnableSpaceOrRepeatMillisec.Text = $"{Settings.SandSEnableSpaceOrRepeatMillisec}";
+            setEnabled(textBox_SandSEnableSpaceOrRepeatMillisec, Settings.SandSEnableSpaceOrRepeatMillisec_PropName);
+            setEnabled(textBox_SandSEnableSpaceOrRepeatMillisec, Settings.SandSEnabled_PropName);
             checkBox_SandSEnablePostShift.Checked = Settings.SandSEnablePostShift;
+            setEnabled(checkBox_SandSEnablePostShift, Settings.SandSEnablePostShift_PropName);
+            setEnabled(checkBox_SandSEnablePostShift, Settings.SandSEnabled_PropName);
 
             // 同時打鍵
             textBox_combinationMaxAllowedLeadTimeMs.Text = $"{Settings.CombinationKeyMaxAllowedLeadTimeMs}";
+            setEnabled(textBox_combinationMaxAllowedLeadTimeMs, Settings.CombinationKeyMaxAllowedLeadTimeMs_PropName);
             textBox_comboMaxAllowedPostfixTimeMs.Text = $"{Settings.ComboKeyMaxAllowedPostfixTimeMs}";
+            setEnabled(textBox_comboMaxAllowedPostfixTimeMs, Settings.ComboKeyMaxAllowedPostfixTimeMs_PropName);
             textBox_combinationKeyTimeMs.Text = $"{Settings.CombinationKeyMinOverlappingTimeMs}";
+            setEnabled(textBox_combinationKeyTimeMs, Settings.CombinationKeyMinOverlappingTimeMs_PropName);
             textBox_comboDisableIntervalTimeMs.Text = $"{Settings.ComboDisableIntervalTimeMs}";
+            setEnabled(textBox_comboDisableIntervalTimeMs, Settings.ComboDisableIntervalTimeMs_PropName);
             checkBox_combinationKeyTimeOnlyAfterSecond.Checked = Settings.CombinationKeyMinTimeOnlyAfterSecond;
+            setEnabled(checkBox_combinationKeyTimeOnlyAfterSecond, Settings.CombinationKeyMinTimeOnlyAfterSecond_PropName);
             checkBox_useCombinationKeyTimer1.Checked = Settings.UseCombinationKeyTimer1;
+            setEnabled(checkBox_useCombinationKeyTimer1, Settings.UseCombinationKeyTimer1_PropName);
             checkBox_useCombinationKeyTimer2.Checked = Settings.UseCombinationKeyTimer2;
+            setEnabled(checkBox_useCombinationKeyTimer2, Settings.UseCombinationKeyTimer2_PropName);
             checkBox_onlyCharKeysComboShouldBeCoveringCombo.Checked = Settings.OnlyCharKeysComboShouldBeCoveringCombo;
+            setEnabled(checkBox_onlyCharKeysComboShouldBeCoveringCombo, Settings.OnlyCharKeysComboShouldBeCoveringCombo_PropName);
             checkBox_useComboExtModKeyAsSingleHit.Checked = Settings.UseComboExtModKeyAsSingleHit;
+            setEnabled(checkBox_useComboExtModKeyAsSingleHit, Settings.UseComboExtModKeyAsSingleHit_PropName);
             checkBox_threeKeysComboUnconditional.Checked = Settings.ThreeKeysComboUnconditional;
+            setEnabled(checkBox_threeKeysComboUnconditional, Settings.ThreeKeysComboUnconditional_PropName);
             textBox_sequentialPriorityWords.Text = Settings.SequentialPriorityWords._reReplace(@"\|", "\r\n");
+            setEnabled(textBox_sequentialPriorityWords, Settings.SequentialPriorityWords_PropName);
 
             // IME連携
             checkBox_imeCooperationEnabled.Checked = Settings.ImeCooperationEnabled;
+            setEnabled(checkBox_imeCooperationEnabled, Settings.ImeCooperationEnabled_PropName);
             checkBox_imeKatakanaToHiragana.Checked = Settings.ImeKatakanaToHiragana;
+            setEnabled(checkBox_imeKatakanaToHiragana, Settings.ImeKatakanaToHiragana_PropName);
             radioButton_imeSendInputInRoman.Checked = Settings.ImeSendInputInRoman;
+            setEnabled(radioButton_imeSendInputInRoman, Settings.ImeSendInputInRoman_PropName);
             radioButton_imeSendInputInKana.Checked = Settings.ImeSendInputInKana;
+            setEnabled(radioButton_imeSendInputInKana, Settings.ImeSendInputInKana_PropName);
             radioButton_imeSendInputInUnicode.Checked = !(Settings.ImeSendInputInRoman || Settings.ImeSendInputInKana);
+            setEnabled(radioButton_imeSendInputInUnicode, Settings.ImeSendInputInRoman_PropName);
             //textBox_imeUnicodeClassNames.Text = Settings.ImeUnicodeClassNames._reReplace(@"\|", "\r\n");
 
         }
@@ -974,31 +1006,31 @@ namespace KanchokuWS.Gui
             frmMain?.DeactivateDecoderWithModifiersOff();
 
             // SandS
-            Settings.SetUserIni("sandsEnabled", checkBox_SandSEnabled.Checked);
-            Settings.SetUserIni("sandsEnabledWhenOffMode", checkBox_SandSEnabledWhenOffMode.Checked);
-            Settings.SetUserIni("sandsAssignedPlane", comboBox_SandSAssignedPlane.SelectedIndex);
-            Settings.SetUserIni("oneshotSandSEnabled", checkBox_OneshotSandSEnabled.Checked);
-            Settings.SetUserIni("sandsEnableSpaceOrRepeatMillisec", textBox_SandSEnableSpaceOrRepeatMillisec.Text);
-            Settings.SetUserIni("sandsEnablePostShift", checkBox_SandSEnablePostShift.Checked);
+            Settings.SetUserIni(Settings.SandSEnabled_PropName, checkBox_SandSEnabled.Checked);
+            Settings.SetUserIni(Settings.SandSEnabledWhenOffMode_PropName, checkBox_SandSEnabledWhenOffMode.Checked);
+            Settings.SetUserIni(Settings.SandSAssignedPlane_PropName, comboBox_SandSAssignedPlane.SelectedIndex);
+            Settings.SetUserIni(Settings.OneshotSandSEnabled_PropName, checkBox_OneshotSandSEnabled.Checked);
+            Settings.SetUserIni(Settings.SandSEnableSpaceOrRepeatMillisec_PropName, textBox_SandSEnableSpaceOrRepeatMillisec.Text);
+            Settings.SetUserIni(Settings.SandSEnablePostShift_PropName, checkBox_SandSEnablePostShift.Checked);
 
             // 同時打鍵
-            Settings.SetUserIni("combinationMaxAllowedLeadTimeMs", textBox_combinationMaxAllowedLeadTimeMs.Text.Trim());
-            Settings.SetUserIni("comboMaxAllowedPostfixTimeMs", textBox_comboMaxAllowedPostfixTimeMs.Text.Trim());
-            Settings.SetUserIni("combinationKeyTimeMs", textBox_combinationKeyTimeMs.Text.Trim());
-            Settings.SetUserIni("comboDisableIntervalTimeMs", textBox_comboDisableIntervalTimeMs.Text.Trim());
-            Settings.SetUserIni("combinationKeyTimeOnlyAfterSecond", checkBox_combinationKeyTimeOnlyAfterSecond.Checked);
-            Settings.SetUserIni("useCombinationKeyTimer1", checkBox_useCombinationKeyTimer1.Checked);
-            Settings.SetUserIni("useCombinationKeyTimer2", checkBox_useCombinationKeyTimer2.Checked);
-            Settings.SetUserIni("onlyCharKeysComboShouldBeCoveringCombo", checkBox_onlyCharKeysComboShouldBeCoveringCombo.Checked);
-            Settings.SetUserIni("useComboExtModKeyAsSingleHit", checkBox_useComboExtModKeyAsSingleHit.Checked);
-            Settings.SetUserIni("threeKeysComboUnconditional", checkBox_threeKeysComboUnconditional.Checked);
-            Settings.SetUserIni("sequentialPriorityWords", textBox_sequentialPriorityWords.Text.Trim()._reReplace(@"[\r\n]+", "|"));
+            Settings.SetUserIni(Settings.CombinationKeyMaxAllowedLeadTimeMs_PropName, textBox_combinationMaxAllowedLeadTimeMs.Text.Trim());
+            Settings.SetUserIni(Settings.ComboKeyMaxAllowedPostfixTimeMs_PropName, textBox_comboMaxAllowedPostfixTimeMs.Text.Trim());
+            Settings.SetUserIni(Settings.CombinationKeyMinOverlappingTimeMs_PropName, textBox_combinationKeyTimeMs.Text.Trim());
+            Settings.SetUserIni(Settings.ComboDisableIntervalTimeMs_PropName, textBox_comboDisableIntervalTimeMs.Text.Trim());
+            Settings.SetUserIni(Settings.CombinationKeyMinTimeOnlyAfterSecond_PropName, checkBox_combinationKeyTimeOnlyAfterSecond.Checked);
+            Settings.SetUserIni(Settings.UseCombinationKeyTimer1_PropName, checkBox_useCombinationKeyTimer1.Checked);
+            Settings.SetUserIni(Settings.UseCombinationKeyTimer2_PropName, checkBox_useCombinationKeyTimer2.Checked);
+            Settings.SetUserIni(Settings.OnlyCharKeysComboShouldBeCoveringCombo_PropName, checkBox_onlyCharKeysComboShouldBeCoveringCombo.Checked);
+            Settings.SetUserIni(Settings.UseComboExtModKeyAsSingleHit_PropName, checkBox_useComboExtModKeyAsSingleHit.Checked);
+            Settings.SetUserIni(Settings.ThreeKeysComboUnconditional_PropName, checkBox_threeKeysComboUnconditional.Checked);
+            Settings.SetUserIni(Settings.SequentialPriorityWords_PropName, textBox_sequentialPriorityWords.Text.Trim()._reReplace(@"[\r\n]+", "|"));
 
             // IME連携
-            Settings.SetUserIni("imeCooperationEnabled", checkBox_imeCooperationEnabled.Checked);
-            Settings.SetUserIni("imeKatakanaToHiragana", checkBox_imeKatakanaToHiragana.Checked);
-            Settings.SetUserIni("imeSendInputInRoman", radioButton_imeSendInputInRoman.Checked);
-            Settings.SetUserIni("imeSendInputInKana", radioButton_imeSendInputInKana.Checked);
+            Settings.SetUserIni(Settings.ImeCooperationEnabled_PropName, checkBox_imeCooperationEnabled.Checked);
+            Settings.SetUserIni(Settings.ImeKatakanaToHiragana_PropName, checkBox_imeKatakanaToHiragana.Checked);
+            Settings.SetUserIni(Settings.ImeSendInputInRoman_PropName, radioButton_imeSendInputInRoman.Checked);
+            Settings.SetUserIni(Settings.ImeSendInputInKana_PropName, radioButton_imeSendInputInKana.Checked);
             //Settings.SetUserIni("imeUnicodeClassNames", textBox_imeUnicodeClassNames.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
 
             // 各種定義ファイルの再読み込み
@@ -1197,19 +1229,33 @@ namespace KanchokuWS.Gui
         void readSettings_tabKeyAssign()
         {
             textBox_zenkakuModeKeySeq.Text = Settings.ZenkakuModeKeySeq._orElse(() => makePresetString(Settings.ZenkakuModeKeySeq_Preset));
+            setEnabled(textBox_zenkakuModeKeySeq, Settings.ZenkakuModeKeySeq_PropName);
             textBox_zenkakuOneCharKeySeq.Text = Settings.ZenkakuOneCharKeySeq._orElse(() => makePresetString(Settings.ZenkakuOneCharKeySeq_Preset));
+            setEnabled(textBox_zenkakuOneCharKeySeq, Settings.ZenkakuOneCharKeySeq_PropName);
             textBox_katakanaModeKeySeq.Text = Settings.KatakanaModeKeySeq._orElse(() => makePresetString(Settings.KatakanaModeKeySeq_Preset));
+            setEnabled(textBox_katakanaModeKeySeq, Settings.KatakanaModeKeySeq_PropName);
             textBox_nextThroughKeySeq.Text = Settings.NextThroughKeySeq._orElse(() => makePresetString(Settings.NextThroughKeySeq_Preset));
+            setEnabled(textBox_nextThroughKeySeq, Settings.NextThroughKeySeq_PropName);
             textBox_historyKeySeq.Text = Settings.HistoryKeySeq._orElse(() => makePresetString(Settings.HistoryKeySeq_Preset));
+            setEnabled(textBox_historyKeySeq, Settings.HistoryKeySeq_PropName);
             textBox_historyOneCharKeySeq.Text = Settings.HistoryOneCharKeySeq._orElse(() => makePresetString(Settings.HistoryOneCharKeySeq_Preset));
+            setEnabled(textBox_historyOneCharKeySeq, Settings.HistoryOneCharKeySeq_PropName);
             textBox_historyFewCharsKeySeq.Text = Settings.HistoryFewCharsKeySeq._orElse(() => makePresetString(Settings.HistoryFewCharsKeySeq_Preset));
+            setEnabled(textBox_historyFewCharsKeySeq, Settings.HistoryFewCharsKeySeq_PropName);
             textBox_mazegakiKeySeq.Text = Settings.MazegakiKeySeq._orElse(() => makePresetString(Settings.MazegakiKeySeq_Preset));
+            setEnabled(textBox_mazegakiKeySeq, Settings.MazegakiKeySeq_PropName);
             textBox_bushuCompKeySeq.Text = Settings.BushuCompKeySeq._orElse(() => makePresetString(Settings.BushuCompKeySeq_Preset));
+            setEnabled(textBox_bushuCompKeySeq, Settings.BushuCompKeySeq_PropName);
             textBox_bushuAssocKeySeq.Text = Settings.BushuAssocKeySeq._orElse(() => makePresetString(Settings.BushuAssocKeySeq_Preset));
+            setEnabled(textBox_bushuAssocKeySeq, Settings.BushuAssocKeySeq_PropName);
             textBox_bushuAssocDirectKeySeq.Text = Settings.BushuAssocDirectKeySeq._orElse(() => makePresetString(Settings.BushuAssocDirectKeySeq_Preset));
+            setEnabled(textBox_bushuAssocDirectKeySeq, Settings.BushuAssocDirectKeySeq_PropName);
             textBox_katakanaOneShotKeySeq.Text = Settings.KatakanaOneShotKeySeq._orElse(() => makePresetString(Settings.KatakanaOneShotKeySeq_Preset));
+            setEnabled(textBox_katakanaOneShotKeySeq, Settings.KatakanaOneShotKeySeq_PropName);
             textBox_hankakuKatakanaOneShotKeySeq.Text = Settings.HankakuKatakanaOneShotKeySeq._orElse(() => makePresetString(Settings.HankakuKatakanaOneShotKeySeq_Preset));
+            setEnabled(textBox_hankakuKatakanaOneShotKeySeq, Settings.HankakuKatakanaOneShotKeySeq_PropName);
             textBox_blockerSetterOneShotKeySeq.Text = Settings.BlockerSetterOneShotKeySeq._orElse(() => makePresetString(Settings.BlockerSetterOneShotKeySeq_Preset));
+            setEnabled(textBox_blockerSetterOneShotKeySeq, Settings.BlockerSetterOneShotKeySeq_PropName);
         }
 
         string makePresetString(string preset)
@@ -1280,7 +1326,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("hanKataOneShotKeySeq", revertPresetString(textBox_hankakuKatakanaOneShotKeySeq.Text));
             Settings.SetUserIni("blkSetOneShotKeySeq", revertPresetString(textBox_blockerSetterOneShotKeySeq.Text));
 
-            Settings.ReadIniFile();
+            Settings.ReadIniFile(false);
             // 各種定義ファイルの再読み込み
             frmMain?.ReloadSettingsAndDefFiles();
 
@@ -1478,7 +1524,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("extraModifiersEnabled", checkBox_extraModifiersEnabled.Checked);
             Settings.SetUserIni("modConversionFile", textBox_modConversionFile.Text);
 
-            Settings.ReadIniFile();
+            Settings.ReadIniFile(false);
             // 各種定義ファイルの再読み込み
             frmMain?.ReloadSettingsAndDefFiles();
 
@@ -1655,7 +1701,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("histMapGobiMaxLength", textBox_histMapGobiMaxLength.Text.Trim());
             Settings.SetUserIni("mazeHistRegisterMinLen", textBox_mazeHistRegisterMinLen.Text.Trim());
 
-            Settings.ReadIniFile();
+            Settings.ReadIniFile(false);
             // 各種定義ファイルの再読み込み
             frmMain?.ReloadSettingsAndDefFiles();
 
@@ -1719,8 +1765,11 @@ namespace KanchokuWS.Gui
             textBox_romanBushuCompPrefix.Text = Settings.RomanBushuCompPrefix;
             textBox_romanSecPlanePrefix.Text = Settings.RomanSecPlanePrefix;
             textBox_preRewriteTargetChars.Text = $"{Settings.PreRewriteTargetChars}";
+            setEnabled(textBox_preRewriteTargetChars, Settings.PreRewriteTargetChars_PropName);
             textBox_preRewriteAllowedDelayTimeMs.Text = $"{Settings.PreRewriteAllowedDelayTimeMs}";
+            setEnabled(textBox_preRewriteAllowedDelayTimeMs, Settings.PreRewriteAllowedDelayTimeMs_PropName);
             textBox_preRewriteWaitTimeMsWhenTrainingMode.Text = $"{Settings.PreRewriteWaitTimeMsWhenTrainingMode}";
+            setEnabled(textBox_preRewriteWaitTimeMsWhenTrainingMode, Settings.PreRewriteWaitTimeMsWhenTrainingMode_PropName);
         }
 
         private void setMiscSettingsStatusChecker()
@@ -1782,11 +1831,11 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
             Settings.SetUserIni("romanBushuCompPrefix", textBox_romanBushuCompPrefix.Text);
             Settings.SetUserIni("romanSecPlanePrefix", textBox_romanSecPlanePrefix.Text);
-            Settings.SetUserIni("preRewriteTargetChars", textBox_preRewriteTargetChars.Text.Trim());
-            Settings.SetUserIni("preRewriteAllowedDelayTimeMs", textBox_preRewriteAllowedDelayTimeMs.Text.Trim());
-            Settings.SetUserIni("preRewriteWaitTimeMsWhenTrainingMode", textBox_preRewriteWaitTimeMsWhenTrainingMode.Text.Trim());
+            Settings.SetUserIni(Settings.PreRewriteTargetChars_PropName, textBox_preRewriteTargetChars.Text.Trim());
+            Settings.SetUserIni(Settings.PreRewriteAllowedDelayTimeMs_PropName, textBox_preRewriteAllowedDelayTimeMs.Text.Trim());
+            Settings.SetUserIni(Settings.PreRewriteWaitTimeMsWhenTrainingMode_PropName, textBox_preRewriteWaitTimeMsWhenTrainingMode.Text.Trim());
 
-            Settings.ReadIniFile();
+            Settings.ReadIniFile(false);
             // 各種定義ファイルの再読み込み
             frmMain?.ReloadSettingsAndDefFiles();
 
@@ -2200,6 +2249,7 @@ namespace KanchokuWS.Gui
             //checkBox_hideTopText.Enabled = radioButton_modeMarker.Checked;
         }
 
+        // タブの切り替え
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             SelectedTabIndex = tabControl1.SelectedIndex;
@@ -2216,6 +2266,7 @@ namespace KanchokuWS.Gui
                 case "tabPage_imeCombo":
                     AcceptButton = button_imeComboEnter;
                     CancelButton = button_imeComboClose;
+                    readSettings_tabImeCombo();
                     break;
                 case "tabPage_fontColor":
                     AcceptButton = button_fontColorEnter;
@@ -2224,6 +2275,7 @@ namespace KanchokuWS.Gui
                 case "tabPage_keyAssign":
                     AcceptButton = button_keyAssignEnter;
                     CancelButton = button_keyAssignClose;
+                    readSettings_tabKeyAssign();
                     break;
                 case "tabPage_ctrlKeys":
                     AcceptButton = button_ctrlEnter;
@@ -2236,6 +2288,7 @@ namespace KanchokuWS.Gui
                 case "tabPage_misc":
                     AcceptButton = button_miscEnter;
                     CancelButton = button_miscClose;
+                    readSettings_tabMiscSettings();
                     break;
                 case "tabPage_register":
                     AcceptButton = button_registerClose;

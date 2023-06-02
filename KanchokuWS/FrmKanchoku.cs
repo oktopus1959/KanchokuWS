@@ -254,7 +254,7 @@ namespace KanchokuWS
             //DecoderKeyVsChar.ReadCharsDefFile();
 
             // 設定ファイルの読み込み
-            Settings.ReadIniFile();
+            Settings.ReadIniFile(true);
 
             if (!resultOK) return;
 
@@ -358,8 +358,11 @@ namespace KanchokuWS
                 KanjiYomiTable.ReadKanjiYomiFile(Settings.KanjiYomiFile);
             }
 
-            // 同時打鍵設定の読み込み
+            // 初期化とテーブルファイルの読み込み、同時打鍵組合せ辞書の作成
             CombinationKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, Settings.TableFile2, Settings.TableFile3);
+
+            // 設定ファイルの再読み込み
+            Settings.ReadIniFile(false);
 
             logger.InfoH("LEAVE");
         }
@@ -2308,7 +2311,7 @@ namespace KanchokuWS
             //DecoderKeyVsChar.ReadCharsDefFile();
 
             // 設定ファイルの読み込み
-            Settings.ReadIniFile();
+            Settings.ReadIniFile(true);
 
             if (!resultOK) return;
 

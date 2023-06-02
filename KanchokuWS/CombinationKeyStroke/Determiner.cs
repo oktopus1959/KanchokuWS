@@ -167,7 +167,7 @@ namespace KanchokuWS.CombinationKeyStroke
         }
 
         /// <summary>
-        /// 初期化と同時打鍵組合せ辞書の読み込み
+        /// 初期化とテーブルファイルの読み込み、同時打鍵組合せ辞書の作成
         /// </summary>
         /// <param name="tableFile">主テーブルファイル名</param>
         /// <param name="tableFile2">副テーブルファイル名</param>

@@ -23,7 +23,7 @@ namespace SettingsWS
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 //ScreenInfo.GetScreenInfo();   // ここでやっても正しい値が取得できなかったので、ダイアログのコンストラクタでやるようにした
-                Settings.ReadIniFile();
+                Settings.ReadIniFile(true);
                 Application.Run(new KanchokuWS.Gui.DlgSettings(null, null, null));
             } finally {
                 MultiAppChecker.Release();

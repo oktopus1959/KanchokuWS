@@ -12,7 +12,7 @@ namespace KanchokuWS
 {
     public static class Settings
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
@@ -20,6 +20,11 @@ namespace KanchokuWS
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
+        /// <summary> テーブルファイルなど内部で設定された値 </summary>
+        private static Dictionary<string, string> internalSetValues = new Dictionary<string, string>();
+
+        public static bool IsInternalValueSet(string key) => internalSetValues.ContainsKey(key._toLower());
+
         /// <summary>
         /// 名前で指定されたプロパティに値を設定する
         /// </summary>
@@ -27,6 +32,7 @@ namespace KanchokuWS
         /// <param name="propName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
+#if false
         public static bool SetValueByName<T>(string propName, T value)
         {
             logger.DebugH(() => $"CALLED: propName={propName}, value={value}");
@@ -38,16 +44,27 @@ namespace KanchokuWS
                 specificDecoderSettings[decoderPropName] = value.ToString();
                 return true;
             } catch (Exception e) {
-                logger.Warn(e._getErrorMsgShort());
+                logger.WarnH(e._getErrorMsgShort());
                 return false;
             }
         }
-
-        public static void ClearSpecificDecoderSettings()
+#else
+        public static void SetInternalValue(string propName, string value)
         {
-            logger.DebugH(() => $"CALLED");
-            specificDecoderSettings.Clear();
+            logger.DebugH(() => $"CALLED: propName={propName}, value={value}");
+            try {
+                internalSetValues[propName._toLower()] = value;
+            } catch (Exception e) {
+                logger.WarnH(e._getErrorMsgShort());
+            }
         }
+#endif
+
+        public static string GetInternalValue(string key)
+        {
+            return internalSetValues._safeGet(key._toLower());
+        }
+        //-------------------------------------------------------------------------------------
 
         /// <summary> ドキュメントへのURL </summary>
         public static string ReadmeUrl => "https://github.com/oktopus1959/KanchokuWS#readme";
@@ -392,58 +409,72 @@ namespace KanchokuWS
         //-------------------------------------------------------------------------------------
         /// <summary>全角変換(モード)を呼び出す打鍵列</summary>
         public static string ZenkakuModeKeySeq { get; set; }
+        public static string ZenkakuModeKeySeq_PropName = "zenkakuModeKeySeq";
         public static string ZenkakuModeKeySeq_Preset { get; set; }
 
         /// <summary>全角変換(1文字)を呼び出す打鍵列</summary>
         public static string ZenkakuOneCharKeySeq { get; set; }
+        public static string ZenkakuOneCharKeySeq_PropName = "zenkakuOneCharKeySeq"; 
         public static string ZenkakuOneCharKeySeq_Preset { get; set; }
 
         /// <summary>次打鍵スルーを呼び出す打鍵列</summary>
         public static string NextThroughKeySeq { get; set; }
+        public static string NextThroughKeySeq_PropName = "nextThroughKeySeq"; 
         public static string NextThroughKeySeq_Preset { get; set; }
 
         /// <summary>履歴検索を呼び出す打鍵列</summary>
         public static string HistoryKeySeq { get; set; }
+        public static string HistoryKeySeq_PropName = "historyKeySeq"; 
         public static string HistoryKeySeq_Preset { get; set; }
 
         /// <summary>履歴検索(1文字)を呼び出す打鍵列</summary>
         public static string HistoryOneCharKeySeq { get; set; }
+        public static string HistoryOneCharKeySeq_PropName = "historyOneCharKeySeq"; 
         public static string HistoryOneCharKeySeq_Preset { get; set; }
 
         /// <summary>履歴検索(1～3文字)を呼び出す打鍵列</summary>
         public static string HistoryFewCharsKeySeq { get; set; }
+        public static string HistoryFewCharsKeySeq_PropName = "historyFewCharsKeySeq"; 
         public static string HistoryFewCharsKeySeq_Preset { get; set; }
 
         /// <summary>交ぜ書きを呼び出す打鍵列</summary>
         public static string MazegakiKeySeq { get; set; }
+        public static string MazegakiKeySeq_PropName = "mazegakiKeySeq"; 
         public static string MazegakiKeySeq_Preset { get; set; }
 
         /// <summary>部首合成を呼び出す打鍵列</summary>
         public static string BushuCompKeySeq { get; set; }
+        public static string BushuCompKeySeq_PropName = "bushuCompKeySeq";
         public static string BushuCompKeySeq_Preset { get; set; }
 
         /// <summary>連想文字検索を呼び出す打鍵列</summary>
         public static string BushuAssocKeySeq { get; set; }
+        public static string BushuAssocKeySeq_PropName = "bushuAssocKeySeq";
         public static string BushuAssocKeySeq_Preset { get; set; }
 
         /// <summary>連想直接変換を呼び出す打鍵列</summary>
         public static string BushuAssocDirectKeySeq { get; set; }
+        public static string BushuAssocDirectKeySeq_PropName = "bushuAssocDirectKeySeq";
         public static string BushuAssocDirectKeySeq_Preset { get; set; }
 
         /// <summary>カタカナ変換(モード)を呼び出す打鍵列</summary>
         public static string KatakanaModeKeySeq { get; set; }
+        public static string KatakanaModeKeySeq_PropName = "katakanaModeKeySeq";
         public static string KatakanaModeKeySeq_Preset { get; set; }
 
         /// <summary>カタカナ変換(一括)を呼び出す打鍵列</summary>
         public static string KatakanaOneShotKeySeq { get; set; }
+        public static string KatakanaOneShotKeySeq_PropName = "katakanaOneShotKeySeq";
         public static string KatakanaOneShotKeySeq_Preset { get; set; }
 
         /// <summary>半角カタカナ変換(一括)を呼び出す打鍵列</summary>
         public static string HankakuKatakanaOneShotKeySeq { get; set; }
+        public static string HankakuKatakanaOneShotKeySeq_PropName = "hanKataOneShotKeySeq";
         public static string HankakuKatakanaOneShotKeySeq_Preset { get; set; }
 
         /// <summary>ブロッカー設定を呼び出す打鍵列</summary>
         public static string BlockerSetterOneShotKeySeq { get; set; }
+        public static string BlockerSetterOneShotKeySeq_PropName = "blkSetOneShotKeySeq";
         public static string BlockerSetterOneShotKeySeq_Preset { get; set; }
 
         public static HashSet<string> FunctionKeySeqSet = new HashSet<string>();
@@ -690,21 +721,27 @@ namespace KanchokuWS
         //------------------------------------------------------------------------------
         /// <summary>SandS を有効にするか</summary>
         public static bool SandSEnabled { get; set; }
+        public static string SandSEnabled_PropName = "sandsEnabled";
         public static bool SandSEnabledCurrently { get; set; }
         public static bool SandSEnabledWhenOffMode { get; set; }
+        public static string SandSEnabledWhenOffMode_PropName = "sandsEnabledWhenOffMode";
 
         /// <summary>SandS に割り当てるシフト面</summary>
         public static int SandSAssignedPlane { get; set; }
+        public static string SandSAssignedPlane_PropName = "sandsAssignedPlane";
 
         /// <summary>SandS 時の Space KeyUP を無視するか (Space単打による空白入力をやらない)</summary>
         public static bool OneshotSandSEnabled { get; set; }
+        public static string OneshotSandSEnabled_PropName = "oneshotSandSEnabled";
         public static bool OneshotSandSEnabledCurrently { get; set; }
 
         /// <summary>SandS 時の空白入力またはリピート入力までの時間</summary>
         public static int SandSEnableSpaceOrRepeatMillisec { get; set; }
+        public static string SandSEnableSpaceOrRepeatMillisec_PropName = "sandsEnableSpaceOrRepeatMillisec";
 
         /// <summary>SandS 時の後置シフト出力(疑似同時打鍵サポート)</summary>
         public static bool SandSEnablePostShift { get; set; }
+        public static string SandSEnablePostShift_PropName = "sandsEnablePostShift";
         public static bool SandSEnablePostShiftCurrently { get; set; }
 
         /// <summary>SandS は通常シフトよりも優位か</summary>
@@ -718,59 +755,72 @@ namespace KanchokuWS
         //------------------------------------------------------------------------------
         /// <summary>同時打鍵判定を行う際の、第１打鍵に許容する最大のリード時間(ミリ秒)<br/>第２打鍵までにこの時間より長くかかったら、第1打鍵は同時とみなさない</summary>
         public static int CombinationKeyMaxAllowedLeadTimeMs { get; set; }
+        public static string CombinationKeyMaxAllowedLeadTimeMs_PropName = "combinationMaxAllowedLeadTimeMs";
 
         /// <summary>同、シフトキーが文字キーだった場合</summary>
         //public static int CombinationKeyMaxAllowedLeadTimeMs2 { get; set; }
 
         /// <summary>同時打鍵判定を行う際、第2打鍵がシフトキーだった場合に許容する最大のリード時間(ミリ秒)<br/>これにより、シフトキーがその直後の文字キーにかかりやすくなることが期待できる</summary>
         public static int ComboKeyMaxAllowedPostfixTimeMs { get; set; }
+        public static string ComboKeyMaxAllowedPostfixTimeMs_PropName = "comboMaxAllowedPostfixTimeMs";
 
         /// <summary>
         /// 同時打鍵とみなす重複時間<br/>
         /// Nキー同時押しの状態からどれかのキーUPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす
         /// </summary>
         public static int CombinationKeyMinOverlappingTimeMs { get; set; }
+        public static string CombinationKeyMinOverlappingTimeMs_PropName = "combinationKeyTimeMs";
 
         /// <summary>
         /// シフトキーが文字キーだった場合の、同時打鍵とみなす重複時間<br/>
         /// Nキー同時押しの状態からどれかのキーUPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす
         /// </summary>
         public static int CombinationKeyMinOverlappingTimeMs2 { get; set; }
+        public static string CombinationKeyMinOverlappingTimeMs2_PropName = "combinationKeyTimeMs2";
 
         /// <summary>
         /// 3キー以上の同時押しの場合に、同時打鍵とみなす重複時間<br/>
         /// Nキー同時押しの状態からどれかのキーUPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす
         /// </summary>
         public static int CombinationKeyMinOverlappingTimeMs3 { get; set; }
+        public static string CombinationKeyMinOverlappingTimeMs3_PropName = "combinationKeyTimeMs3";
 
         /// <summary>２文字目以降についてのみ同時打鍵の重複時間チェックを行う</summary>
         public static bool CombinationKeyMinTimeOnlyAfterSecond { get; set; }
+        public static string CombinationKeyMinTimeOnlyAfterSecond_PropName = "combinationKeyTimeOnlyAfterSecond";
 
         /// <summary>同時打鍵チェック用のタイマーを使用する</summary>
         public static bool UseCombinationKeyTimer1 { get; set; }
+        public static string UseCombinationKeyTimer1_PropName = "useCombinationKeyTimer1";
         public static bool UseCombinationKeyTimer2 { get; set; }
+        public static string UseCombinationKeyTimer2_PropName = "useCombinationKeyTimer2";
 
         ///// <summary>同時打鍵とみなす重複率<br/>第１打鍵と第２打鍵の重複時間が第２打鍵の時間に対してここで設定したパーセンテージを超えたら、同時打鍵とみなす</summary>
         //public static int CombinationKeyTimeRate { get; set; }
 
         /// <summary>同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする</summary>
         public static bool UseComboExtModKeyAsSingleHit { get; set; }
+        public static string UseComboExtModKeyAsSingleHit_PropName = "useComboExtModKeyAsSingleHit";
 
         /// <summary>同時打鍵シフトキーがUPされた後、後置シフトを無効にする時間(ミリ秒)。<br/>
         /// つまり、この時間帯に打鍵された文字キーは、その後どんな短い間隔でシフトキーが押されても単打扱いとなる</summary>
         public static int ComboDisableIntervalTimeMs { get; set; }
+        public static string ComboDisableIntervalTimeMs_PropName = "comboDisableIntervalTimeMs";
 
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列の並び</summary>
         public static string SequentialPriorityWords { get; set; }
+        public static string SequentialPriorityWords_PropName = "sequentialPriorityWords";
 
         /// <summary>優先される順次打鍵以外の3キー同時打鍵なら無条件に判定</summary>
         public static bool ThreeKeysComboUnconditional { get; set; }
+        public static string ThreeKeysComboUnconditional_PropName = "threeKeysComboUnconditional";
 
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列の集合</summary>
         public static HashSet<string> SequentialPriorityWordSet { get; } = new HashSet<string>();
 
         /// <summary>文字キーのみの同時打鍵組合せの場合は、被覆Comboとするか</summary>
         public static bool OnlyCharKeysComboShouldBeCoveringCombo { get; set; }
+        public static string OnlyCharKeysComboShouldBeCoveringCombo_PropName = "onlyCharKeysComboShouldBeCoveringCombo";
 
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列に対するキーコード列の集合</summary>
         public static HashSet<string> SequentialPriorityWordKeyStringSet { get; } = new HashSet<string>();
@@ -795,15 +845,19 @@ namespace KanchokuWS
         //------------------------------------------------------------------------------
         /// <summary> IMEの状態に連携してON/OFFする </summary>
         public static bool ImeCooperationEnabled { get; set; }
+        public static string ImeCooperationEnabled_PropName = "imeCooperationEnabled";
 
         /// <summary> IMEにカタカナを送るときはひらがなに変換する </summary>
         public static bool ImeKatakanaToHiragana { get; set; }
+        public static string ImeKatakanaToHiragana_PropName = "imeKatakanaToHiragana";
 
         /// <summary> IMEに対してローマ字で送信する </summary>
         public static bool ImeSendInputInRoman { get; set; }
+        public static string ImeSendInputInRoman_PropName = "imeSendInputInRoman";
 
         /// <summary> IMEに対してカナで送信する </summary>
         public static bool ImeSendInputInKana { get; set; }
+        public static string ImeSendInputInKana_PropName = "imeSendInputInKana";
 
         /// <summary>IMEにUnicodeで文字送出する対象となるウィンドウのClassName</summary>
         public static string ImeUnicodeClassNames { get; private set; }
@@ -817,15 +871,18 @@ namespace KanchokuWS
         //------------------------------------------------------------------------------
         /// <summary>遅延許容時間の適用対象となる前置書き換え対象文字集合</summary>
         public static string PreRewriteTargetChars { get; set; } = "";
+        public static string PreRewriteTargetChars_PropName = "preRewriteTargetChars";
 
         /// <summary>前置書き換え時の遅延許容時間</summary>
         public static int PreRewriteAllowedDelayTimeMs { get; set; }
+        public static string PreRewriteAllowedDelayTimeMs_PropName = "preRewriteAllowedDelayTimeMs";
 
         /// <summary>かな入力練習モードのときに無視する前置書き換え対象文字</summary>
         //public static string PreRewriteCharsIgnoredWhenTrainingMode { get; set; } = "";
 
         /// <summary>かな入力練習モードのときの書き換え対象文字の出力待ち時間</summary>
         public static int PreRewriteWaitTimeMsWhenTrainingMode { get; set; }
+        public static string PreRewriteWaitTimeMsWhenTrainingMode_PropName = "preRewriteWaitTimeMsWhenTrainingMode";
 
         //------------------------------------------------------------------------------
         // ウィンドウClassName
@@ -864,35 +921,53 @@ namespace KanchokuWS
 
         private static Dictionary<string, string> specificDecoderSettings { get; set; } = new Dictionary<string, string>();
 
+        public static void ClearSpecificDecoderSettings()
+        {
+            logger.DebugH(() => $"CALLED");
+            specificDecoderSettings.Clear();
+        }
+
         public static string SerializedDecoderSettings =>
             DecoderSettings.Select(pair => $"{pair.Key}={(specificDecoderSettings.ContainsKey(pair.Key) ? specificDecoderSettings[pair.Key] : pair.Value)}")._join("\n");
 
         //------------------------------------------------------------------------------
         public static string GetString(string attr, string defval = "")
         {
-            return UserKanchokuIni.Singleton.GetString(attr)._orElse(() => KanchokuIni.Singleton.GetString(attr, defval));
+            return GetInternalValue(attr)._orElse(
+                () => UserKanchokuIni.Singleton.GetString(attr)._orElse(
+                    () => KanchokuIni.Singleton.GetString(attr, defval)));
         }
 
         // kanchoku.user.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
         public static string GetStringEx(string attr, string defvalInit, string defval = "")
         {
-            return UserKanchokuIni.Singleton.GetStringEx(attr, defvalInit)._orElse(() => KanchokuIni.Singleton.GetString(attr, defval));
+            return GetInternalValue(attr)._orElse(
+                () => UserKanchokuIni.Singleton.GetStringEx(attr, defvalInit)._orElse(
+                    () => KanchokuIni.Singleton.GetString(attr, defval)));
         }
 
         public static string GetString(string attr, string attrOld, string defval)
         {
-            return UserKanchokuIni.Singleton.GetString(attr)._orElse(() => UserKanchokuIni.Singleton.GetString(attrOld))._orElse(() => KanchokuIni.Singleton.GetString(attrOld, defval));
+            return GetInternalValue(attr)._orElse(
+                () => UserKanchokuIni.Singleton.GetString(attr)._orElse(
+                    () => UserKanchokuIni.Singleton.GetString(attrOld))._orElse(
+                        () => KanchokuIni.Singleton.GetString(attrOld, defval)));
         }
 
         // kanchoku.user.ini が存在しない時のデフォルト値を設定できる(デフォルトの辞書ファイルなどを設定して、それが存在しなくてもエラーにしない処理をするため)
         public static string GetStringEx(string attr, string attrOld, string defvalInit, string defval)
         {
-            return UserKanchokuIni.Singleton.GetStringEx(attr, defvalInit)._orElse(() => UserKanchokuIni.Singleton.GetStringEx(attrOld, defvalInit))._orElse(() => KanchokuIni.Singleton.GetString(attrOld, defval));
+            return GetInternalValue(attr)._orElse(
+                () => UserKanchokuIni.Singleton.GetStringEx(attr, defvalInit)._orElse(
+                    () => UserKanchokuIni.Singleton.GetStringEx(attrOld, defvalInit))._orElse(
+                        () => KanchokuIni.Singleton.GetString(attrOld, defval)));
         }
 
         public static string GetStringFromSection(string section, string attr, string defval = "")
         {
-            return UserKanchokuIni.Singleton.GetStringFromSection(section, attr)._orElse(() => KanchokuIni.Singleton.GetStringFromSection(section, attr, defval));
+            return GetInternalValue(attr)._orElse(
+                () => UserKanchokuIni.Singleton.GetStringFromSection(section, attr)._orElse(
+                    () => KanchokuIni.Singleton.GetStringFromSection(section, attr, defval)));
         }
 
         public static int GetLogLevel()
@@ -1059,19 +1134,43 @@ namespace KanchokuWS
         /// <summary>
         /// kanchoku.ini から各種設定を読み込む
         /// </summary>
+        /// <param name="bFirst">true: 一回目、 false: 二回目</param>
         /// <returns></returns>
-        public static bool ReadIniFile()
+        public static bool ReadIniFile(bool bFirst)
         {
-            logger.InfoH(() => $"ENTER");
+            logger.InfoH(() => $"ENTER: {(bFirst ? "First" : "Second")}");
 
-            //-------------------------------------------------------------------------------------
-            // 設定のクリア
-            DefGuide1 = "";
-            DefGuide2 = "";
-            StrokeHelpExtraCharsPosition1 = false;
-            StrokeHelpExtraCharsPosition2 = false;
-            SequentialPriorityWordSet.Clear();
-            SequentialPriorityWordKeyStringSet.Clear();
+            if (bFirst) {
+                // 1回目はテーブルファイルによる設定をクリア（iniファイルによる設定だけを読み込む）
+                internalSetValues.Clear();
+                DefGuide1 = "";
+                DefGuide2 = "";
+                StrokeHelpExtraCharsPosition1 = false;
+                StrokeHelpExtraCharsPosition2 = false;
+                SequentialPriorityWordSet.Clear();
+                SequentialPriorityWordKeyStringSet.Clear();
+
+                // テーブルファイルで設定される機能呼び出しキー設定
+                ZenkakuModeKeySeq_Preset = "";
+                ZenkakuOneCharKeySeq_Preset = "";
+                NextThroughKeySeq_Preset = "";
+                HistoryKeySeq_Preset = "";
+                HistoryOneCharKeySeq_Preset = "";
+                HistoryFewCharsKeySeq_Preset = "";
+                MazegakiKeySeq_Preset = "";
+                BushuCompKeySeq_Preset = "";
+                BushuAssocKeySeq_Preset = "";
+                BushuAssocDirectKeySeq_Preset = "";
+                KatakanaModeKeySeq_Preset = "";
+                KatakanaOneShotKeySeq_Preset = "";
+                HankakuKatakanaOneShotKeySeq_Preset = "";
+                BlockerSetterOneShotKeySeq_Preset = "";
+            } else if (internalSetValues._isEmpty()) {
+                // 1回目と2回目の間で、テーブルファイルの読み込みが行われている
+                // internalSetValues に何も値がセットされていなければ、何もせずに返る
+                logger.InfoH("LEAVE: do nothing");
+                return false;
+            }
 
             //-------------------------------------------------------------------------------------
             // 基本設定
@@ -1315,52 +1414,52 @@ namespace KanchokuWS
 
             //-------------------------------------------------------------------------------------
             // SandS
-            SandSEnabled = GetString("sandsEnabled")._parseBool(false);                         // SandS を有効にするか
+            SandSEnabled = GetString(SandSEnabled_PropName)._parseBool(false);                         // SandS を有効にするか
             SandSEnabledCurrently = SandSEnabled;
-            SandSEnabledWhenOffMode = GetString("sandsEnabledWhenOffMode")._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
-            SandSAssignedPlane = GetString("sandsAssignedPlane")._parseInt(2, 0)._highLimit(7); // SandS に割り当てるシフト面
-            OneshotSandSEnabled= GetString("oneshotSandSEnabled", "ignoreSpaceUpOnSandS", "")._parseBool(false);    // SandSのワンショットシフトを有効にするか
+            SandSEnabledWhenOffMode = GetString(SandSEnabledWhenOffMode_PropName)._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
+            SandSAssignedPlane = GetString(SandSAssignedPlane_PropName)._parseInt(2, 0)._highLimit(7); // SandS に割り当てるシフト面
+            OneshotSandSEnabled= GetString(OneshotSandSEnabled_PropName, "ignoreSpaceUpOnSandS", "")._parseBool(false);    // SandSのワンショットシフトを有効にするか
             OneshotSandSEnabledCurrently = OneshotSandSEnabled;
-            SandSEnableSpaceOrRepeatMillisec = GetString("sandsEnableSpaceOrRepeatMillisec")._parseInt(500);        // SandS 時の空白入力またはリピート入力までの時間
-            SandSEnablePostShift = GetString("sandsEnablePostShift")._parseBool(false);         // SandS 時の後置シフト出力(疑似同時打鍵サポート)
+            SandSEnableSpaceOrRepeatMillisec = GetString(SandSEnableSpaceOrRepeatMillisec_PropName)._parseInt(500);        // SandS 時の空白入力またはリピート入力までの時間
+            SandSEnablePostShift = GetString(SandSEnablePostShift_PropName)._parseBool(false);         // SandS 時の後置シフト出力(疑似同時打鍵サポート)
             SandSEnablePostShiftCurrently = SandSEnablePostShift;
 
             //-------------------------------------------------------------------------------------
             // 同時打鍵
             //CombinationKeyTimeRate = GetString("combinationKeyTimeRate")._parseInt(0);                          // 重複時間率
-            CombinationKeyMaxAllowedLeadTimeMs = GetString("combinationMaxAllowedLeadTimeMs")._parseInt(100);   // 許容リードタイム
+            CombinationKeyMaxAllowedLeadTimeMs = GetString(CombinationKeyMaxAllowedLeadTimeMs_PropName)._parseInt(100);   // 許容リードタイム
             //CombinationKeyMaxAllowedLeadTimeMs2 = GetString("combinationMaxAllowedLeadTimeMs2")._parseInt(0);   // シフトキーが文字キーだった場合の許容リードタイム
-            ComboKeyMaxAllowedPostfixTimeMs = GetString("comboMaxAllowedPostfixTimeMs")._parseInt(100)._highLimit(CombinationKeyMaxAllowedLeadTimeMs);  // 第2キーの許容リードタイム
-            CombinationKeyMinOverlappingTimeMs = GetString("combinationKeyTimeMs")._parseInt(70);               // 重複時間
-            CombinationKeyMinOverlappingTimeMs2 = GetString("combinationKeyTimeMs2")._parseInt(0);              // シフトキーが文字キーだった場合の重複時間
-            CombinationKeyMinOverlappingTimeMs3 = GetString("combinationKeyTimeMs3")._parseInt(70)._lowLimit(CombinationKeyMinOverlappingTimeMs);   // 3キー以上同時の場合の重複時間
-            ComboDisableIntervalTimeMs = GetString("comboDisableIntervalTimeMs")._parseInt(0);                  // 同時打鍵シフトキーがUPされた後、後置シフトを無効にする時間
-            CombinationKeyMinTimeOnlyAfterSecond = GetString("combinationKeyTimeOnlyAfterSecond")._parseBool(false);    // ２文字目以降についてのみ同時打鍵チェックを行う
-            UseCombinationKeyTimer1 = GetString("useCombinationKeyTimer1")._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
-            UseCombinationKeyTimer2 = GetString("useCombinationKeyTimer2")._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
-            UseComboExtModKeyAsSingleHit = GetString("useComboExtModKeyAsSingleHit")._parseBool(true);          // 同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする
+            ComboKeyMaxAllowedPostfixTimeMs = GetString(ComboKeyMaxAllowedPostfixTimeMs_PropName)._parseInt(100)._highLimit(CombinationKeyMaxAllowedLeadTimeMs);  // 第2キーの許容リードタイム
+            CombinationKeyMinOverlappingTimeMs = GetString(CombinationKeyMinOverlappingTimeMs_PropName)._parseInt(70);               // 重複時間
+            CombinationKeyMinOverlappingTimeMs2 = GetString(CombinationKeyMinOverlappingTimeMs2_PropName)._parseInt(0);              // シフトキーが文字キーだった場合の重複時間
+            CombinationKeyMinOverlappingTimeMs3 = GetString(CombinationKeyMinOverlappingTimeMs3_PropName)._parseInt(70)._lowLimit(CombinationKeyMinOverlappingTimeMs);   // 3キー以上同時の場合の重複時間
+            ComboDisableIntervalTimeMs = GetString(ComboDisableIntervalTimeMs_PropName)._parseInt(0);                  // 同時打鍵シフトキーがUPされた後、後置シフトを無効にする時間
+            CombinationKeyMinTimeOnlyAfterSecond = GetString(CombinationKeyMinTimeOnlyAfterSecond_PropName)._parseBool(false);    // ２文字目以降についてのみ同時打鍵チェックを行う
+            UseCombinationKeyTimer1 = GetString(UseCombinationKeyTimer1_PropName)._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
+            UseCombinationKeyTimer2 = GetString(UseCombinationKeyTimer2_PropName)._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
+            UseComboExtModKeyAsSingleHit = GetString(UseComboExtModKeyAsSingleHit_PropName)._parseBool(true);          // 同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする
 
-            ThreeKeysComboUnconditional = GetString("threeKeysComboUnconditional")._parseBool(false);        // 優先される順次打鍵以外の3キー同時打鍵なら無条件に判定
-            SequentialPriorityWords = GetString("sequentialPriorityWords", "てない").Trim();                 // 同時打鍵よりも順次打鍵のほうを優先させる文字列の並び
+            ThreeKeysComboUnconditional = GetString(ThreeKeysComboUnconditional_PropName)._parseBool(false);        // 優先される順次打鍵以外の3キー同時打鍵なら無条件に判定
+            SequentialPriorityWords = GetString(SequentialPriorityWords_PropName, "てない").Trim();                 // 同時打鍵よりも順次打鍵のほうを優先させる文字列の並び
             SequentialPriorityWordSet.UnionWith(SequentialPriorityWords._reSplit(@"[ ,\|]+"));               // 同時打鍵よりも順次打鍵のほうを優先させる文字列の集合
-            OnlyCharKeysComboShouldBeCoveringCombo = GetString("onlyCharKeysComboShouldBeCoveringCombo")._parseBool(false);     // 文字キーのみの同時打鍵組合せの場合は、被覆Comboとするか
+            OnlyCharKeysComboShouldBeCoveringCombo = GetString(OnlyCharKeysComboShouldBeCoveringCombo_PropName)._parseBool(false);     // 文字キーのみの同時打鍵組合せの場合は、被覆Comboとするか
 
             //-------------------------------------------------------------------------------------
             // IME連携
-            ImeCooperationEnabled = GetString("imeCooperationEnabled")._parseBool(false);
-            ImeKatakanaToHiragana = GetString("imeKatakanaToHiragana")._parseBool(false);
-            ImeSendInputInRoman = GetString("imeSendInputInRoman")._parseBool(false);
-            ImeSendInputInKana = GetString("imeSendInputInKana")._parseBool(false);
+            ImeCooperationEnabled = GetString(ImeCooperationEnabled_PropName)._parseBool(false);
+            ImeKatakanaToHiragana = GetString(ImeKatakanaToHiragana_PropName)._parseBool(false);
+            ImeSendInputInRoman = GetString(ImeSendInputInRoman_PropName)._parseBool(false);
+            ImeSendInputInKana = GetString(ImeSendInputInKana_PropName)._parseBool(false);
             //ImeUnicodeClassNames = GetString("imeUnicodeClassNames")._orElse("Edit|_WwG|SakuraView*").Trim();
             //ImeUnicodeClassNames = GetString("imeUnicodeClassNames").Trim();
             //ImeUnicodeClassNamesHash = new HashSet<string>(ImeUnicodeClassNames.Trim()._toLower()._split('|'));
 
             //------------------------------------------------------------------------------
             // 書き換えシステム
-            PreRewriteTargetChars  = GetString("preRewriteTargetChars")._orElse("。、");                            // 遅延許容時間の適用対象となる前置書き換え対象文字集合
-            PreRewriteAllowedDelayTimeMs = GetString("preRewriteAllowedDelayTimeMs")._parseInt(250);                // 前置書き換え許容遅延タイム
+            PreRewriteTargetChars  = GetString(PreRewriteTargetChars_PropName)._orElse("。、");                            // 遅延許容時間の適用対象となる前置書き換え対象文字集合
+            PreRewriteAllowedDelayTimeMs = GetString(PreRewriteAllowedDelayTimeMs_PropName)._parseInt(250);                // 前置書き換え許容遅延タイム
             //PreRewriteCharsIgnoredWhenTrainingMode  = GetString("preRewriteCharsIgnoredWhenTrainingMode");          // かな入力練習モードのときに無視する前置書き換え対象文字
-            PreRewriteWaitTimeMsWhenTrainingMode  = GetString("preRewriteWaitTimeMsWhenTrainingMode")._parseInt(100);  // かな入力練習モードのときの書き換え対象文字の出力待ち時間
+            PreRewriteWaitTimeMsWhenTrainingMode  = GetString(PreRewriteWaitTimeMsWhenTrainingMode_PropName)._parseInt(100);  // かな入力練習モードのときの書き換え対象文字の出力待ち時間
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定
@@ -1491,49 +1590,34 @@ namespace KanchokuWS
             DecoderSpecialDeckeys.Add(DecoderKeys.STROKE_HELP_UNROTATION_DECKEY);
 
             FunctionKeySeqSet.Clear();
-            ZenkakuModeKeySeq = addDecoderKeySeqSetting("zenkakuModeKeySeq");
+            ZenkakuModeKeySeq = addDecoderKeySeqSetting(ZenkakuModeKeySeq_PropName);
             if (ZenkakuModeKeySeq._notEmpty()) FunctionKeySeqSet.Add(ZenkakuModeKeySeq);
-            ZenkakuOneCharKeySeq = addDecoderKeySeqSetting("zenkakuOneCharKeySeq");
+            ZenkakuOneCharKeySeq = addDecoderKeySeqSetting(ZenkakuOneCharKeySeq_PropName);
             if (ZenkakuOneCharKeySeq._notEmpty()) FunctionKeySeqSet.Add(ZenkakuOneCharKeySeq);
-            NextThroughKeySeq = addDecoderKeySeqSetting("nextThroughKeySeq");
+            NextThroughKeySeq = addDecoderKeySeqSetting(NextThroughKeySeq_PropName);
             if (NextThroughKeySeq._notEmpty()) FunctionKeySeqSet.Add(NextThroughKeySeq);
-            HistoryKeySeq = addDecoderKeySeqSetting("historyKeySeq");
+            HistoryKeySeq = addDecoderKeySeqSetting(HistoryKeySeq_PropName);
             if (HistoryKeySeq._notEmpty()) FunctionKeySeqSet.Add(HistoryKeySeq);
-            HistoryOneCharKeySeq = addDecoderKeySeqSetting("historyOneCharKeySeq");
+            HistoryOneCharKeySeq = addDecoderKeySeqSetting(HistoryOneCharKeySeq_PropName);
             if (HistoryOneCharKeySeq._notEmpty()) FunctionKeySeqSet.Add(HistoryOneCharKeySeq);
-            HistoryFewCharsKeySeq = addDecoderKeySeqSetting("historyFewCharsKeySeq");
+            HistoryFewCharsKeySeq = addDecoderKeySeqSetting(HistoryFewCharsKeySeq_PropName);
             if (HistoryFewCharsKeySeq._notEmpty()) FunctionKeySeqSet.Add(HistoryFewCharsKeySeq);
-            MazegakiKeySeq = addDecoderKeySeqSetting("mazegakiKeySeq");
+            MazegakiKeySeq = addDecoderKeySeqSetting(MazegakiKeySeq_PropName);
             if (MazegakiKeySeq._notEmpty()) FunctionKeySeqSet.Add(MazegakiKeySeq);
-            BushuCompKeySeq = addDecoderKeySeqSetting("bushuCompKeySeq");
+            BushuCompKeySeq = addDecoderKeySeqSetting(BushuCompKeySeq_PropName);
             if (BushuCompKeySeq._notEmpty()) FunctionKeySeqSet.Add(BushuCompKeySeq);
-            BushuAssocKeySeq = addDecoderKeySeqSetting("bushuAssocKeySeq");
+            BushuAssocKeySeq = addDecoderKeySeqSetting(BushuAssocKeySeq_PropName);
             if (BushuAssocKeySeq._notEmpty()) FunctionKeySeqSet.Add(BushuAssocKeySeq);
-            BushuAssocDirectKeySeq = addDecoderKeySeqSetting("bushuAssocDirectKeySeq");
+            BushuAssocDirectKeySeq = addDecoderKeySeqSetting(BushuAssocDirectKeySeq_PropName);
             if (BushuAssocDirectKeySeq._notEmpty()) FunctionKeySeqSet.Add(BushuAssocDirectKeySeq);
-            KatakanaModeKeySeq = addDecoderKeySeqSetting("katakanaModeKeySeq");
+            KatakanaModeKeySeq = addDecoderKeySeqSetting(KatakanaModeKeySeq_PropName);
             if (KatakanaModeKeySeq._notEmpty()) FunctionKeySeqSet.Add(KatakanaModeKeySeq);
-            KatakanaOneShotKeySeq = addDecoderKeySeqSetting("katakanaOneShotKeySeq");
+            KatakanaOneShotKeySeq = addDecoderKeySeqSetting(KatakanaOneShotKeySeq_PropName);
             if (KatakanaOneShotKeySeq._notEmpty()) FunctionKeySeqSet.Add(KatakanaOneShotKeySeq);
-            HankakuKatakanaOneShotKeySeq = addDecoderKeySeqSetting("hanKataOneShotKeySeq");
+            HankakuKatakanaOneShotKeySeq = addDecoderKeySeqSetting(HankakuKatakanaOneShotKeySeq_PropName);
             if (HankakuKatakanaOneShotKeySeq._notEmpty()) FunctionKeySeqSet.Add(HankakuKatakanaOneShotKeySeq);
-            BlockerSetterOneShotKeySeq = addDecoderKeySeqSetting("blkSetOneShotKeySeq");
+            BlockerSetterOneShotKeySeq = addDecoderKeySeqSetting(BlockerSetterOneShotKeySeq_PropName);
             if (BlockerSetterOneShotKeySeq._notEmpty()) FunctionKeySeqSet.Add(BlockerSetterOneShotKeySeq);
-
-            ZenkakuModeKeySeq_Preset = "";
-            ZenkakuOneCharKeySeq_Preset = "";
-            NextThroughKeySeq_Preset = "";
-            HistoryKeySeq_Preset = "";
-            HistoryOneCharKeySeq_Preset = "";
-            HistoryFewCharsKeySeq_Preset = "";
-            MazegakiKeySeq_Preset = "";
-            BushuCompKeySeq_Preset = "";
-            BushuAssocKeySeq_Preset = "";
-            BushuAssocDirectKeySeq_Preset = "";
-            KatakanaModeKeySeq_Preset = "";
-            KatakanaOneShotKeySeq_Preset = "";
-            HankakuKatakanaOneShotKeySeq_Preset = "";
-            BlockerSetterOneShotKeySeq_Preset = "";
 
             // for Debug
             //addDecoderSetting("debughState", false);
@@ -1566,7 +1650,7 @@ namespace KanchokuWS
 
         public static void SetUserIni(string key, string value)
         {
-            UserKanchokuIni.Singleton.SetString(key, value);
+            if (!IsInternalValueSet(key)) UserKanchokuIni.Singleton.SetString(key, value);
         }
 
         public static int GetUserIniInt(string key)
@@ -1576,12 +1660,12 @@ namespace KanchokuWS
 
         public static void SetUserIni(string key, int value)
         {
-            UserKanchokuIni.Singleton.SetInt(key, value);
+            if (!IsInternalValueSet(key)) UserKanchokuIni.Singleton.SetInt(key, value);
         }
 
         public static void SetUserIni(string key, bool value)
         {
-            UserKanchokuIni.Singleton.SetBool(key, value);
+            if (!IsInternalValueSet(key)) UserKanchokuIni.Singleton.SetBool(key, value);
         }
     }
 }
