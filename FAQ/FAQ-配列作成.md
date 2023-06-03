@@ -496,7 +496,7 @@ kanchoku.user.ini のグローバルな設定が上書きされないように�
 |-|-|
 |SandSEnabled|漢直/かなモードでSandSを有効にするか|
 |sandsEnabledWhenOffMode|漢直/かなモードOFFでSandSを有効にするか|
-|sandsAssignedPlane|SandSを割り当てる面<br/>(0:通常面, 1:シフト面, 2:シフトA面, ..., 7:シフトF面)|
+|sandsAssignedPlane|SandSを割り当てる面 (0:通常面, 1:シフト面, 2:シフトA面, ..., 7:シフトF面)|
 |oneshotSandSEnabled|スペース単打によるワンショットSandSを有効にするか|
 |sandsEnablePostShift|疑似同時打鍵をサポートするか|
 |sandsEnableSpaceOrRepeatMillisec|スペース再打鍵によるスペース入力またはリピート開始までの時間(ミリ秒)|
@@ -531,6 +531,94 @@ kanchoku.user.ini のグローバルな設定が上書きされないように�
 |katakanaOneShotKeySeq|機能呼出: 「カタカナ変換(一括)」機能の呼び出しキー(列)|
 |hanKataOneShotKeySeq|機能呼出: 「半角カタカナ変換」機能の呼び出しキー(列)|
 |blkSetOneShotKeySeq|機能呼出: 「ブロッカー設定/解除」機能の呼び出しキー(列)|
+
+設定例: 「のにいると」
+```
+;; ---------------------------------------------------------
+;; 当テーブル固有のパラメータ設定
+;; ---------------------------------------------------------
+;; 漢直/かなモードでSandSを有効にするか
+;;#set SandSEnabled=false
+;; 漢直/かなモードOFFでSandSを有効にするか
+;;#set sandsEnabledWhenOffMode=false
+;; SandSを割り当てる面 (0:通常面, 1:シフト面, 2:シフトA面, ..., 7:シフトF面)
+;;#set sandsAssignedPlane=
+;; スペース単打によるワンショットSandSを有効にするか
+;;#set oneshotSandSEnabled=false
+;; 疑似同時打鍵をサポートするか
+;;#set sandsEnablePostShift=false
+;; スペース再打鍵によるスペース入力またはリピート開始までの時間(ミリ秒)
+;;#set sandsEnableSpaceOrRepeatMillisec=
+
+;; 同時打鍵判定で、第1キー押下から第2キー押下までの許容時間(ミリ秒)
+#set combinationMaxAllowedLeadTimeMs=100
+;; 同時打鍵判定で、第2キーがシフトキーの場合の制限時間(ミリ秒)
+#set comboMaxAllowedPostfixTimeMs=50
+;; 同時打鍵判定で、第1打鍵が文字キーの場合にタイマーを使用するか
+#set useCombinationKeyTimer1=true
+;; 同時打鍵判定で、同時押し状態からキー解放までの下限時間(ミリ秒)
+#set combinationKeyTimeMs=70
+;; 同時打鍵判定で、同時打鍵の1文字目には上記条件を適用しないか
+#set combinationKeyTimeOnlyAfterSecond=true
+;; 同時打鍵判定で、第2打鍵以降のキー押下でタイマーを使用するか
+#set useCombinationKeyTimer2=true
+;; 同時打鍵判定で、シフトキーの解放後、後置シフトを無効にする時間(ミリ秒)
+#set comboDisableIntervalTimeMs=200
+;; 同時打鍵判定で、文字キー同士の同時打鍵は第1打鍵を最後に離鍵した場合に限るか
+#set onlyCharKeysComboShouldBeCoveringCombo=true
+
+;; IMEの状態に合わせてデコーダをON/OFFするか
+#set imeCooperationEnabled=false
+;; IMEのローマ字入力モードに対応するか
+#set imeKatakanaToHiragana=true
+;; IMEのかな入力モードに対応するか
+#set imeSendInputInRoman=true
+;; IMEの入力モード対応時にカタカナをひらがなに変更するか
+#set imeSendInputInKana=false
+
+;; 「変換」キーと「無変換」キーについて、単打の場合は本来のキーとして機能させるか
+#set useComboExtModKeyAsSingleHit=true
+;; 設定されている文字列以外の3キー同時押しを無条件に同時打鍵と判定するか
+#set threeKeysComboUnconditional=false
+;; 3キー同時押しのときに順次打鍵判定が優先される文字列
+#define sequentialWords る。 やに だ、 ば、 う。 い。 より
+
+;; 書き換えシステムにおいて、自動確定の対象となる文字集合
+#set preRewriteTargetChars=。、っ*
+;; 書き換えシステムにおいて、上記文字が入力されてから自動で確定するまでの時間(ミリ秒)
+#set preRewriteAllowedDelayTimeMs=1000
+;; かな入力練習モードで、上記文字が入力されてから出力されるまでの待ち時間(ミリ秒)
+#set preRewriteWaitTimeMsWhenTrainingMode=100
+
+;; 機能呼出: 「全角変換(モード)」機能の呼び出しキー(列)
+;;#set zenkakuModeKeySeq=
+;; 機能呼出: 「全角変換(1文字)」機能の呼び出しキー(列)
+;;#set zenkakuOneCharKeySeq=
+;; 機能呼出: 「カタカナ変換(モー)」機能の呼び出しキー(列)
+;;#set katakanaModeKeySeq=
+;; 機能呼出: 「次打鍵スルー」機能の呼び出しキー(列)
+;;#set nextThroughKeySeq=
+;; 機能呼出: 「履歴検索」機能の呼び出しキー(列)
+;;#set historyKeySeq=44
+;; 機能呼出: 「履歴検索(1文字)」機能の呼び出しキー(列)
+;;#set historyOneCharKeySeq=
+;; 機能呼出: 「履歴検索(数文字)」機能の呼び出しキー(列)
+;;#set historyFewCharsKeySeq=
+;; 機能呼出: 「交ぜ書き変換」機能の呼び出しキー(列)
+;;#set mazegakiKeySeq=23,26
+;; 機能呼出: 「部首合成」機能の呼び出しキー(列)
+;;#set bushuCompKeySeq=26,23
+;; 機能呼出: 「連想文字検索」機能の呼び出しキー(列)
+;;#set bushuAssocKeySeq=
+;; 機能呼出: 「連想直接変換」機能の呼び出しキー(列)
+;;#set bushuAssocDirectKeySeq=46
+;; 機能呼出: 「カタカナ変換(一括)」機能の呼び出しキー(列)
+;;#set katakanaOneShotKeySeq=
+;; 機能呼出: 「半角カタカナ変換」機能の呼び出しキー(列)
+;;#set hanKataOneShotKeySeq=
+;; 機能呼出: 「ブロッカー設定/解除」機能の呼び出しキー(列)
+;;#set blkSetOneShotKeySeq=
+```
 
 実際の設定例については、`tables\その他\roman.tbl` または `tables\かな系\noniiruto.tbl` を参照ください。
 
