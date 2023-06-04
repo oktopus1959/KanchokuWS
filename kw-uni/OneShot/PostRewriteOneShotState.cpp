@@ -172,7 +172,7 @@ std::tuple<const RewriteInfo*, size_t> PostRewriteOneShotNode::matchWithTailStri
 
         const RewriteInfo* rewInfo = getRewriteInfo(targetStr);
         if (rewInfo) {
-            _LOG_DEBUGH(_T("REWRITE_INFO found: outStr=%s, rewritableLen=%d, subTable=%p, numBS=%d"), MAKE_WPTR(rewInfo->rewriteStr), rewInfo->rewritableLen, rewInfo->subTable, numBS);
+            _LOG_DEBUGH(_T("REWRITE_INFO found: outStr=%s, rewritableLen=%d, subTable=%p"), MAKE_WPTR(rewInfo->rewriteStr), rewInfo->rewritableLen, rewInfo->subTable);
             return { rewInfo, targetStr.size() };
         }
 

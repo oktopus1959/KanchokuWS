@@ -44,6 +44,20 @@ namespace KanchokuWS.TableParser
             return str._toSafe();
         }
 
+        public string GetBareString(int deckey)
+        {
+            string s = str._toSafe();
+            if (IsFunction()) {
+                s = str._safeSubstring(1);
+                if (s == "^" && deckey >= 0) {
+                    // 後置書き換えのキーが機能キーの @^ だったら、そのキーに対応する文字を出力文字とする
+                    var ch = Domain.DecoderKeyVsChar.GetArrangedFaceCharFromDecKey(deckey);
+                    if (ch > 0) return ch.ToString();
+                }
+            }
+            return s;
+        }
+
         public string GetBaseQuotedString(int deckey)
         {
             string s = str;
@@ -55,12 +69,19 @@ namespace KanchokuWS.TableParser
                     if (ch > 0) return $"\"{ch.ToString()}\"";
                 }
             }
-            return s._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")._quoteString(isBare);
+            //return s._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")._quoteString(isBare);
+            return makeQuotedString(s, isBare);
         }
 
         public string GetQuotedString()
         {
-            return str._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")._quoteString(isBare);
+            //return str._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")._quoteString(isBare);
+            return makeQuotedString(str, isBare);
+        }
+
+        private static string makeQuotedString(string s, bool isBare)
+        {
+            return s._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")._quoteString(isBare);
         }
 
         public bool EqualsTo(OutputString s)
@@ -312,6 +333,8 @@ namespace KanchokuWS.TableParser
         public OutputString GetOutputString() { return outputStr; }
 
         public bool IsBareString() { return outputStr?.IsBare() ?? false; }
+
+        public string GetBareString(int deckey) { return outputStr?.GetBareString(deckey) ?? ""; }
 
         public string GetBaseQuotedString(int deckey) { return outputStr?.GetBaseQuotedString(deckey); }
 

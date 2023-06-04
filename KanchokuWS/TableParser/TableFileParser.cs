@@ -168,7 +168,7 @@ namespace KanchokuWS.TableParser
 
         public string GetNthRootNodeString(int n)
         {
-            return (GetNthRootNode(n)?.GetOutputString())._toSafe();
+            return (GetNthRootNode(n)?.GetOutputString())?.GetBareString(n) ?? "";
         }
 
         public Node GetNthSubNode(int n)
@@ -370,7 +370,7 @@ namespace KanchokuWS.TableParser
                         break;
 
                     case TOKEN.STRING_PAIR:
-                        AddStringPairNode();
+                        AddStringPairNode(idx);
                         break;
 
                     case TOKEN.PLACE_HOLDER:
@@ -517,7 +517,7 @@ namespace KanchokuWS.TableParser
             if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: depth={Depth}");
         }
 
-        protected virtual void AddStringPairNode()
+        protected virtual void AddStringPairNode(int idx)
         {
             ParseError($"unexpected token: {currentToken}");
         }
@@ -1207,7 +1207,7 @@ namespace KanchokuWS.TableParser
         }
 
         // 書き換え文字列のペア
-        protected override void AddStringPairNode()
+        protected override void AddStringPairNode(int idx)
         {
             var str1 = StringPair._getNth(0);
             var str2 = StringPair._getNth(1);
@@ -1215,7 +1215,7 @@ namespace KanchokuWS.TableParser
             if (str1._isEmpty() || str2._isEmpty()) {
                 ParseError("不正な書き換え文字列ペア");
             } else {
-                var tgtStr = str1.GetSafeString() + targetStr._toSafe();
+                var tgtStr = str1.GetBareString(idx) + targetStr._toSafe();
                 TreeNode.UpsertRewritePair(tgtStr, Node.MakeStringNode(str2));
             }
             if (Settings.LoggingTableFileInfo) logger.InfoH("LEAVE");
