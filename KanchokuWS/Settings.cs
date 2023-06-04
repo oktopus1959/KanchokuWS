@@ -1438,8 +1438,8 @@ namespace KanchokuWS
 
             //------------------------------------------------------------------------------
             // 書き換えシステム
-            PreRewriteTargetChars  = GetString(PreRewriteTargetChars_PropName)._orElse("。、");                            // 遅延許容時間の適用対象となる前置書き換え対象文字集合
-            PreRewriteAllowedDelayTimeMs = GetString(PreRewriteAllowedDelayTimeMs_PropName)._parseInt(250);                // 前置書き換え許容遅延タイム
+            PreRewriteTargetChars  = GetString(PreRewriteTargetChars_PropName)._orElse("。、");                               // 遅延許容時間の適用対象となる前置書き換え対象文字集合
+            PreRewriteAllowedDelayTimeMs = GetString(PreRewriteAllowedDelayTimeMs_PropName)._parseInt(0);                     // 前置書き換え許容遅延タイム
             //PreRewriteCharsIgnoredWhenTrainingMode  = GetString("preRewriteCharsIgnoredWhenTrainingMode");          // かな入力練習モードのときに無視する前置書き換え対象文字
             PreRewriteWaitTimeMsWhenTrainingMode  = GetString(PreRewriteWaitTimeMsWhenTrainingMode_PropName)._parseInt(100);  // かな入力練習モードのときの書き換え対象文字の出力待ち時間
 
