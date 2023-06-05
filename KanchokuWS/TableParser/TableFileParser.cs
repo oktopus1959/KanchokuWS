@@ -370,7 +370,7 @@ namespace KanchokuWS.TableParser
                         break;
 
                     case TOKEN.STRING_PAIR:
-                        AddStringPairNode(idx);
+                        AddStringPairNode();
                         break;
 
                     case TOKEN.PLACE_HOLDER:
@@ -517,7 +517,7 @@ namespace KanchokuWS.TableParser
             if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: depth={Depth}");
         }
 
-        protected virtual void AddStringPairNode(int idx)
+        public virtual void AddStringPairNode(OutputString[] stringPair = null)
         {
             ParseError($"unexpected token: {currentToken}");
         }
@@ -778,9 +778,10 @@ namespace KanchokuWS.TableParser
                     AddFunctionNode(UnhandledArrowIndex);
                     break;
 
-                //case TOKEN.STRING_PAIR:
-                //    addStringPairNode();
-                //    break;
+                case TOKEN.STRING_PAIR:
+                    OutputString[] stringPair = Helper.Array(StringPair[0], StringPair[1]);
+                    AddTreeNode(UnhandledArrowIndex, comboBlockerDepth)?.AddStringPairNode(stringPair);
+                    break;
 
                 default:
                     ParseError("PreRewriteParser-addArrowNode");
@@ -1207,15 +1208,16 @@ namespace KanchokuWS.TableParser
         }
 
         // 書き換え文字列のペア
-        protected override void AddStringPairNode(int idx)
+        public override void AddStringPairNode(OutputString[] stringPair = null)
         {
-            var str1 = StringPair._getNth(0);
-            var str2 = StringPair._getNth(1);
+            if (stringPair == null) stringPair = StringPair;
+            var str1 = stringPair._getNth(0);
+            var str2 = stringPair._getNth(1);
             if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: str1={str1.DebugString()}, str2={str2.DebugString()}");
             if (str1._isEmpty() || str2._isEmpty()) {
                 ParseError("不正な書き換え文字列ペア");
             } else {
-                var tgtStr = str1.GetBareString(idx) + targetStr._toSafe();
+                var tgtStr = str1.GetBareString(-1) + targetStr._toSafe();
                 TreeNode.UpsertRewritePair(tgtStr, Node.MakeStringNode(str2));
             }
             if (Settings.LoggingTableFileInfo) logger.InfoH("LEAVE");

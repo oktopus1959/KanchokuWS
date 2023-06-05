@@ -108,6 +108,15 @@ namespace KanchokuWS.TableParser
             currentToken = getToken(bSkipNL, bOnlyDirectives);
         }
 
+        //private static System.Text.RegularExpressions.Regex reOneshotPostRewrite1 =
+        //    new System.Text.RegularExpressions.Regex(@"&([ぁ-んァ-ヶー－一-龠々])\s*>\s*([ぁ-んァ-ヶー－一-龠々]+)\s*:\s*([ぁ-んァ-ヶー－一-龠々]+)\s*(?:;.*)?$");
+
+        //private static System.Text.RegularExpressions.Regex reOneshotPostRewrite2 =
+        //    new System.Text.RegularExpressions.Regex(@"&([ぁ-んァ-ヶー－一-龠々]+)([ぁ-んァ-ヶー－一-龠々])\s*>\s*([ぁ-んァ-ヶー－一-龠々]+)\s*(?:;.*)?$");
+
+        private static System.Text.RegularExpressions.Regex reOneshotPostRewrite =
+            new System.Text.RegularExpressions.Regex(@"&([A-Za-z0-9ぁ-んァ-ヶー－一-龠々]+)([A-Za-z0-9ぁ-んァ-ヶー－一-龠々])\s*>\s*([A-Za-z0-9ぁ-んァ-ヶー－一-龠々]+)\s*(?:;.*)?$");
+
         /// <summary>トークンを読む</summary>
         TOKEN getToken(bool bSkipNL, bool bOnlyDirectives = false)
         {
@@ -535,6 +544,12 @@ namespace KanchokuWS.TableParser
 
             RewritePreTargetStr = "";
             RewritePostChar = "";
+
+            var matched = CurrentLine._reScan(reOneshotPostRewrite);
+            if (matched._safeCount() >= 4) {
+                // 「&過乗>過剰」のようなケースは「&乗>過:過剰」に変換
+                SetCurrentLine($"&{matched[2]}>{matched[1]}:{matched[3]}");
+            }
 
             if (PeekNextChar() == '"') {
                 AdvanceCharPos(1);

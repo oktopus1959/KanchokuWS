@@ -238,11 +238,20 @@ namespace KanchokuWS.TableParser
 
         public void InsertAtNextPos(string s)
         {
+            InsertAtPos(nextPos, s);
+        }
+
+        public void InsertAtPos(int pos, string s)
+        {
             if (lineNumber < tableLines.Count) {
-                int pos = nextPos;
                 if (pos >= tableLines[lineNumber].Length) pos = tableLines[lineNumber].Length;
                 tableLines[lineNumber] = tableLines[lineNumber].Insert(pos, s);
             }
+        }
+
+        public void SetCurrentLine(string line)
+        {
+            tableLines[lineNumber] = line;
         }
 
         /// <summary>コンストラクタ</summary>
