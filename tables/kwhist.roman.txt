@@ -8,6 +8,7 @@ Aashram|アシュラム
 Abaca|アバカ
 Abacavir|アバカビル
 Abahn|アバン
+Abandoneds|アバンダンズ
 Abandoned|アバンダンド
 Abbazia|アバッツィア
 Abbe|アッベ
@@ -58,6 +59,7 @@ Ablaut|アプラウト
 Able|アブル
 Able|エーブル
 Abnormal|アブノーマル
+Aboards|アボーズ
 Aboard|アボード
 Abolition|アポリション
 Abolitionist|アボリショニスト
@@ -145,6 +147,7 @@ Accipiter|アキピテル
 Accius|アクキウス
 Accius|アッキウス
 Accommodation|アコモデーション
+Accords|アコーズ
 Accord|アコード
 Accordion|アコーディオン
 Accordion|アコーデオン
@@ -173,6 +176,7 @@ Acetamide|アセトアミド
 Acetamide|アセタミド
 Acetaminophen|アセトアミノフェン
 Acetaminophenol|アセトアミノフェノール
+Acetamiprids|アセタミプリズ
 Acetamiprid|アセタミプリド
 Acetanilide|アセトアニリド
 Acetate|アセテート
@@ -217,10 +221,12 @@ Achiote|アチョーテ
 Achondrite|エーコンドライト
 Achromycin|アクロマイシン
 Achronot|アハロノット
+Acids|アシッズ
 Acid|アシッド
+Acids|アシーズ
 Acid|アシード
 Acidheads|アシッドヘッズ
-Acidheads|アシッドヘッド
+Acidhead|アシッドヘッド
 Acidosis|アシドーシス
 Acidosis|アチドージス
 Acipenser|アキペンセル
@@ -267,11 +273,13 @@ Acting|アクティング
 Actinide|アクチニド
 Actinin|アクチニン
 Actinium|アクチニウム
+Actinoids|アクチノイズ
 Actinoid|アクチノイド
 Actinolaimidae|アクティノライムス
 Actinomycin|アクチノマイシン
 Action|アクション
 Activate|アクティベート
+Activateds|アクティベーティッズ
 Activated|アクティベーティッド
 Activator|アクチベーター
 Activator|アクティベーター
@@ -301,6 +309,7 @@ Acute|アキュート
 Acutosquqmeus|アクトスクアメウス
 Acyclovir|アシクロビル
 Acyl|アシル
+Ads|アズ
 Ad|アド
 Ada|エーダ
 Adagietto|アダージェット
@@ -338,6 +347,7 @@ Address|アドレス
 Ade|エード
 Adefovir|アデホビル
 Adelaide|アデレード
+Adelards|アデラーズ
 Adelard|アデラード
 Adele|アデーレ
 Adelheid|アーデルハイト
@@ -346,6 +356,7 @@ Aden|アデン
 Adenauer|アデナウアー
 Adenine|アデニン
 Adeno|アデノ
+Adenoids|アデノイズ
 Adenoid|アデノイド
 Adenosine|アデノシン
 Adenovirus|アデノウイルス
@@ -415,6 +426,7 @@ Adult|アダルト
 Adulyadej|アダンヤデット
 Advance|アドバンス
 Advanced|アドバンスト
+Advanceds|アドバンスズ
 Advanced|アドバンスド
 Advantage|アドバンテージ
 Advantage|アドバンテッジ
@@ -544,6 +556,7 @@ Agar|アガー
 Agaricus|アガリクス
 Agaricus|アガリスク
 Agarose|アガロース
+Agarwoods|アガーウッズ
 Agarwood|アガーウッド
 Agat|アガット
 Agata|アガタ
@@ -552,6 +565,7 @@ Agathos|アガトス
 Agave|アガーベ
 Agave|アゲーブ
 Age|エージ
+Ageds|エージズ
 Aged|エージド
 Ageism|エージズム
 Agency|エージェンシー
@@ -617,11 +631,15 @@ Agrotrade|アグロトレード
 Aguardiente|アグアルディエンテ
 Aguinaldo|アギナルド
 Ahasuerus|アハシュエロス
+Aheads|アヘッズ
 Ahead|アヘッド
 Ahimsa|アヒムサ
 Ahimsa|アヒムサー
+Ahmads|アフマズ
 Ahmad|アフマド
+Ahmadabads|アフメダーバーズ
 Ahmadabad|アフメダーバード
+Ahmadinejads|アハマディネジャズ
 Ahmadinejad|アハマディネジャド
 Ahmet|アーメット
 Ahnenerbe|アーネンエルベ
@@ -631,8 +649,10 @@ Aias|アイアス
 Aias|エージャックス
 Aibo|アイボ
 Aichinger|アイヒンガー
+Aids|エーズ
 Aid|エード
 Aida|アイーダ
+Aideds|エーデッズ
 Aided|エーデッド
 Aidem|アイデム
 Aigis|アイギス
@@ -695,6 +715,7 @@ Akbarov|アクバロフ
 Akerlof|アカロフ
 Akhmatova|アフマートワ
 Akia|アキア
+Akkads|アッカズ
 Akkad|アッカド
 Akko|アッコン
 Akmeizm|アクメイズム
@@ -854,7 +875,9 @@ Alfonsin|アルフォンシン
 Alfonso|アルフォンソ
 Alfonso|アルフォンソー
 Alfred|アルフレート
+Alfreds|アルフレッズ
 Alfred|アルフレッド
+Alfreds|アルフレズ
 Alfred|アルフレド
 Alfredo|アルフレード
 Alg|アルグ
@@ -899,6 +922,7 @@ Alizadeh|アリザデー
 Alizarin|アリザリン
 Aljibe|アルヒーベ
 Alkali|アルカリ
+Alkaloids|アルカロイズ
 Alkaloid|アルカロイド
 Alkane|アルカン
 Alkanol|アルカノール
@@ -909,7 +933,9 @@ Alkibiades|アルキビアデス
 Alkoxy|アルコキシ
 Alkoxyalkylamine|アルコキシアルキルアミン
 Alkoxypoly|アルコキシポリ
+Alkyds|アルキッズ
 Alkyd|アルキッド
+Alkyds|アルキズ
 Alkyd|アルキド
 Alkyl|アルキル
 Alkylate|アルキラート
@@ -936,6 +962,7 @@ Allende|アジェンデ
 Allergan|アラガン
 Allergen|アレルゲン
 Allergie|アレルギー
+Allerods|アレレーズ
 Allerod|アレレード
 Allerton|アラートン
 Allfinanz|アルフィナンツ
@@ -943,6 +970,7 @@ Allgemeine|アルゲマイネ
 Alliance|アライアンス
 Allicin|アリシン
 Allie|アリー
+Allieds|アライズ
 Allied|アライド
 Alligator|アリゲーター
 Alligator|アルリガトル
@@ -980,7 +1008,9 @@ Almaz|アルマーズ
 Almero|アルメロ
 Almighty|オールマイティ
 Almighty|オールマイティー
+Almonds|アーモンズ
 Almond|アーモンド
+Almonds|アマンズ
 Almond|アマンド
 Almoner|アーモナー
 Almus|アルムス
@@ -1074,6 +1104,7 @@ Amadio|アマディオ
 Amakusaensis|アマクサエンシス
 Amalgam|アマルガム
 Amalgamate|アマルガメート
+Amalgamateds|アマルガメーテッズ
 Amalgamated|アマルガメーテッド
 Amalia|アマーリア
 Amalia|アマリア
@@ -1268,6 +1299,7 @@ Amoxicillin|アモキシシリン
 Amoxicillin|アモキシリン
 Amparo|アンペラ
 Ampere|アンペア
+Ampersands|アンパサンズ
 Ampersand|アンパサンド
 Ampex|アンペックス
 Amphetamine|アンフェタミン
@@ -1308,6 +1340,7 @@ Amyl|アミル
 Amylase|アミラーゼ
 Amylcinnamic|アミルシンナミック
 Amylin|アミリン
+Amyloids|アミロイズ
 Amyloid|アミロイド
 Amyloidosis|アミロイドーシス
 Amylopectin|アミロペクチン
@@ -1397,7 +1430,9 @@ Ancona|アンコーナ
 Ancona|アンコナ
 Ancre|アンクル
 Ancus|アンクス
+Ands|アンズ
 And|アンド
+Ands|エンズ
 And|エンド
 Andalucia|アンダルシーア
 Andalucia|アンダルシア
@@ -1435,6 +1470,7 @@ Androgynous|アンドロギヌス
 Androgynous|アンドロギュヌス
 Androgynous|アンドロギュノス
 Androgynous|アンドロジナス
+Androids|アンドロイズ
 Android|アンドロイド
 Andromache|アンドロマケ
 Andromaque|アンドロマック
@@ -1450,6 +1486,7 @@ Anemometer|アネモメーター
 Anemone|アネモネ
 Anergy|アナジー
 Anergy|アネルギー
+Aneroids|アネロイズ
 Aneroid|アネロイド
 Anesthesia|アナステージア
 Anesthesia|アネステシア
@@ -1795,6 +1832,7 @@ Appearance|アピアランス
 Appearance|アピアレンス
 Appellation|アペラシオン
 Appena|アペーナ
+Appends|アペンズ
 Append|アペンド
 Appendix|アペンディックス
 Appennino|アッペンニーノ
@@ -1808,6 +1846,7 @@ Appliance|アプライアンス
 Application|アプリ
 Application|アプリケーション
 Applicator|アプリケーター
+Applieds|アプライズ
 Applied|アプライド
 Applique|アップリケ
 Applique|アプリケ
@@ -1880,6 +1919,7 @@ Arafat|アラファト
 Arafura|アラフラ
 Aragon|アラゴン
 Araguaia|アラグアイア
+Aramids|アラミズ
 Aramid|アラミド
 Aranidipine|アラニジピン
 Aranjuez|アランフェス
@@ -1919,7 +1959,9 @@ Archer|アーチャー
 Archery|アーチェリー
 Archetype|アーキタイプ
 Archeus|アルケウス
+Archibalds|アーチボーズ
 Archibald|アーチボード
+Archibalds|アーチボルズ
 Archibald|アーチボルド
 Archie|アーチー
 Architect|アーキテクツ
@@ -2035,6 +2077,7 @@ Armand|アルマン
 Armando|アルマンド
 Armature|アーマチュア
 Armchair|アームチェア
+Armeds|アームズ
 Armed|アームド
 Armenia|アルメニア
 Armenia|アルメニヤ
@@ -2045,6 +2088,7 @@ Arming|アーミング
 Armitage|アーミテージ
 Armoire|アーモワール
 Armor|アーマー
+Armoreds|アーマーズ
 Armored|アーマード
 Armory|アーモリー
 Armstrong|アームストロング
@@ -2056,6 +2100,7 @@ Arnica|アーニカ
 Arnica|アルニカ
 Arno|アルノー
 Arnold|アーノルト
+Arnolds|アーノルズ
 Arnold|アーノルド
 Arnolfini|アルノルフィーニ
 Arnot|アーノット
@@ -2070,6 +2115,7 @@ Aronia|アロニア
 Arora|アローラ
 Arosa|アローザ
 Arotinolol|アロチノロール
+Arounds|アラウンズ
 Around|アラウンド
 Arowana|アロワナ
 Arpege|アルページュ
@@ -2154,8 +2200,10 @@ Arya|アーリア
 Arya|アーリヤ
 Arya|アリアン
 Aryl|アリール
+Arytenoids|アリテノイズ
 Arytenoid|アリテノイド
 As|アズ
+Asads|アサズ
 Asad|アサド
 Asana|アーサナ
 Asanga|アサンガ
@@ -2165,6 +2213,7 @@ Asbest|アスベスト
 Asbury|アズベリー
 Ascanius|アスカニウス
 Ascaridole|アスカリドール
+Ascends|アセンズ
 Ascend|アセンド
 Ascendant|アセンダント
 Ascension|アセンション
@@ -2180,11 +2229,13 @@ Asda|アズダ
 Asea|アセア
 Asefi|アセフィ
 Asen|アセン
+Asgards|アスガルズ
 Asgard|アスガルド
 Ash|アッシュ
 Asha|アシャ
 Ashanti|アシャンティ
 Ashcroft|アシュクロフト
+Ashdods|アシュドズ
 Ashdod|アシュドド
 Asheim|アシアイム
 Ashes|アーシェス
@@ -2197,8 +2248,11 @@ Ashkenazi|アシュケナジー
 Ashkenazim|アシュケナジム
 Ashkhabad|アシガバート
 Ashkhabad|アシガバット
+Ashkhabads|アシハバーズ
 Ashkhabad|アシハバード
+Ashkhabads|アシュカバーズ
 Ashkhabad|アシュカバード
+Ashkhabads|アシュババーズ
 Ashkhabad|アシュババード
 Ashley|アシュリー
 Ashley|アシュレー
@@ -2288,10 +2342,12 @@ Assisi|アッシジ
 Assist|アシスト
 Assistance|アシスタンス
 Assistant|アシスタント
+Assisteds|アシステッズ
 Assisted|アシステッド
 Associate|アソシェート
 Associate|アソシエーツ
 Associate|アソシエート
+Associateds|アソシエーテッズ
 Associated|アソシエーテッド
 Association|アソシアシオン
 Association|アソシエーション
@@ -2314,6 +2370,7 @@ Asterisk|アスタ
 Asterisk|アスタリスク
 Asterisk|アステリスク
 Asterism|アステリズム
+Asteroids|アステロイズ
 Asteroid|アステロイド
 Astete|アステテ
 Astheno|アセノ
@@ -2343,6 +2400,7 @@ Astrology|アストロロジー
 Astron|アストロン
 Astronomy|アストロノミー
 Astruc|アストリュック
+Astruds|アストラッズ
 Astrud|アストラッド
 Asturias|アストゥーリアス
 Asturias|アストゥリアス
@@ -2434,12 +2492,14 @@ Atropurpurea|アトロプルプレア
 Atropurpureum|アトロパープレウム
 Attache|アタッシェ
 Attache|アタッシュ
+Attacheds|アタッシュズ
 Attached|アタッシュド
 Attachment|アタッチメント
 Attack|アタック
 Attacker|アタッカー
 Attacker|アタッカーズ
 Attenborough|アテンボロー
+Attends|アテンズ
 Attend|アテンド
 Attendant|アテンダント
 Attenir|アテニア
@@ -2472,6 +2532,7 @@ Aubrey|オブリ
 Auburn|オーバン
 Aubusson|オービュソン
 Aubusson|オーブッソン
+Aucklands|オークランズ
 Auckland|オークランド
 Auction|オークション
 Auctioneer|オークショニア
@@ -2504,7 +2565,9 @@ Augarten|アウガルテン
 Auger|オーガー
 Augmentation|オーグメンテーション
 Augmented|オーギュメント
+Augmenteds|オーグメンティズ
 Augmented|オーグメンティド
+Augmenteds|オーグメンテッズ
 Augmented|オーグメンテッド
 Augstin|アグスティン
 Augusta|オーガスタ
@@ -2568,6 +2631,7 @@ Australia|オース
 Australia|オーストラリア
 Australia|オーストラリヤ
 Australian|オーストラリアン
+Australoids|オーストラロイズ
 Australoid|オーストラロイド
 Australopithecus|アウストラロピテクス
 Australopithecus|オーストラロピテクス
@@ -2689,7 +2753,9 @@ Avoplex|アボプレックス
 Avoriaz|アボリアッツ
 Avventura|アベンチュラ
 Awake|アウェーク
+Awards|アオーズ
 Award|アオード
+Awards|アワーズ
 Award|アワード
 Aware|アウェア
 Awareness|アウェアネス
@@ -2702,6 +2768,7 @@ Axa|アクサ
 Axe|アシェー
 Axel|アクセル
 Axetoxystyrene|アセトキシスチレン
+Axfords|アックスフォーズ
 Axford|アックスフォード
 Axion|アキシオン
 Axis|アキシス
@@ -2813,10 +2880,13 @@ Backed|バックト
 Backen|バッケン
 Backer|バッカー
 Backgammon|バックギャモン
-Background|バックグラウンズ
+Backgrounds|バックグラウンズ
 Background|バックグラウンド
+Backgrounds|バックグランズ
 Background|バックグランド
+Backgrounds|バッググランズ
 Background|バッググランド
+Backhands|バックハンズ
 Backhand|バックハンド
 Backhaus|バックハウス
 Backhoe|バックホー
@@ -2824,6 +2894,7 @@ Backing|バッキング
 Backlash|バックラッシ
 Backlash|バックラッシュ
 Backlog|バックログ
+Backlunds|バックランズ
 Backlund|バックランド
 Backman|バックマン
 Backpack|バックパック
@@ -2832,6 +2903,7 @@ Backs|バックス
 Backstage|バックステージ
 Backstop|バックストップ
 Backup|バックアップ
+Backwards|バックワーズ
 Backward|バックワード
 Backwardation|バックワーデーション
 Baclofen|バクロフェン
@@ -2843,6 +2915,7 @@ Bacteria|バクテリア
 Bacteria|バクテリヤ
 Bacteriophage|バクテリオファージ
 Baculovirus|バキュロウイルス
+Bads|バッズ
 Bad|バッド
 Badagry|バダグリー
 Badcock|バドコック
@@ -2861,6 +2934,7 @@ Badrutt|バッドルット
 Badura|バドゥーラ
 Baedeker|ベーデカー
 Baedeker|ベデカー
+Baerwalds|ベアワルズ
 Baerwald|ベアワルド
 Baetyl|ベテル
 Baez|バエス
@@ -2876,8 +2950,11 @@ Bagasse|バガス
 Bagatelle|バガテル
 Bagay|バガイ
 Bagaza|バガザ
+Bagdads|バクダッズ
 Bagdad|バクダッド
+Bagdads|バグダーズ
 Bagdad|バグダード
+Bagdads|バグダッズ
 Bagdad|バグダッド
 Bagehot|バジョット
 Bagel|ベーグル
@@ -2912,6 +2989,7 @@ Baileyi|バイレーイ
 Bailly|バイイ
 Bain|ベイン
 Bains|バン
+Bairds|ベアーズ
 Baird|ベアード
 Bairnsdale|バーンズデール
 Baiser|ビゼ
@@ -2921,6 +2999,7 @@ Baja|バハ
 Bakar|バカール
 Bakayoko|バカヨコ
 Baked|ベークト
+Bakeds|ベークズ
 Baked|ベークド
 Bakelite|ベークライト
 Baker|ベーカー
@@ -2948,6 +3027,7 @@ Balcarce|バルカルセ
 Balcerowicz|バルツェロビッチ
 Balcony|バルコニー
 Balcony|バルコン
+Balds|ボールズ
 Bald|ボールド
 Baldassare|バルダッサーレ
 Baldrige|ボルドリッジ
@@ -2997,6 +3077,7 @@ Bambara|バンバラ
 Bamberg|バンベルク
 Bambi|バンビ
 Bamboche|バンボッシュ
+Bamfords|バムフォーズ
 Bamford|バムフォード
 Bamiyan|バーミアン
 Bamiyan|バーミヤーン
@@ -3092,6 +3173,7 @@ Barbarous|バーバラス
 Barbarus|バルバロス
 Barbary|バルバリー
 Barbatus|バルバトゥス
+Barbeds|バーブズ
 Barbed|バーブド
 Barbell|バーベル
 Barber|バーバー
@@ -3230,6 +3312,7 @@ Bassist|ベーシスト
 Basso|バッソ
 Bassoon|バスーン
 Bastard|バスター
+Bastards|バスターズ
 Bastard|バスタード
 Basten|バステン
 Bastiat|バスティア
@@ -3270,6 +3353,7 @@ Battambang|バタンバン
 Battambang|バッタンバン
 Batter|バッター
 Batter|バッターズ
+Battereds|バターズ
 Battered|バタード
 Batterer|バタラー
 Battersea|バタシー
@@ -3345,6 +3429,7 @@ Bean|ビーンズ
 Bear|ベア
 Bear|ベアー
 Bear|ベアーズ
+Beards|ビーアズ
 Beard|ビーアド
 Beardsley|ビアズリー
 Beardsley|ビアズレー
@@ -3408,8 +3493,11 @@ Becky|ベッキー
 Beclomethasone|ベクロメタゾン
 Become|ビカム
 Becquerel|ベクレル
+Beds|ベッズ
 Bed|ベッド
+Bedfords|ベッドフォーズ
 Bedford|ベッドフォード
+Bedfords|ベドフォーズ
 Bedford|ベドフォード
 Bedlamp|ベッドランプ
 Bedlington|ベドリントン
@@ -3453,6 +3541,7 @@ Behaviorism|ビヘービアリズム
 Behemoth|ビヒモス
 Behemoth|ベヘモス
 Behenoyl|ベヘノイル
+Behinds|ビハインズ
 Behind|ビハインド
 Behrens|ベーレンス
 Beige|ベージュ
@@ -3524,7 +3613,7 @@ Benbrook|ベンブルック
 Bencaroc|ベンチャロン
 Bench|ベンチ
 Bencyclane|ベンシクラン
-Bend|ベンズ
+Bends|ベンズ
 Bend|ベンド
 Bender|ベンダー
 Bendigo|ベンディゴ
@@ -3639,7 +3728,9 @@ Benzylcycloheptyl|ベンジルシクロヘプチル
 Benzylidene|ベンジリデン
 Benzylphenoxy|ベンジルフェノキシ
 Benzylpiperidine|ベンジルピペリジン
+Beograds|ベオグラーズ
 Beograd|ベオグラード
+Beograds|ベルグラーズ
 Beograd|ベルグラード
 Bepridil|ベプリジル
 Beranger|ベランジェ
@@ -3692,7 +3783,9 @@ Bern|ベルン
 Bernabeu|ベルナベウ
 Bernadette|ベルナデット
 Bernanos|ベルナノス
+Bernards|バーナーズ
 Bernard|バーナード
+Bernards|バナーズ
 Bernard|バナード
 Bernard|ベルナール
 Bernardin|ベルナルダン
@@ -3707,6 +3800,7 @@ Bernstein|バーンステイン
 Bernstein|ベルンシュタイン
 Bernt|バーント
 Berry|ベリー
+Berscheids|バーシェーズ
 Berscheid|バーシェード
 Berserk|ベルセルク
 Bertalanffy|ベルタランフィ
@@ -3763,6 +3857,7 @@ Bewegt|ベビークト
 Bexleyheath|ベクスリーヒース
 Beylik|ベーリク
 Beyonce|ビヨンセ
+Beyonds|ビヨンズ
 Beyond|ビヨンド
 Bezafibrate|ベザフィブラート
 Bezeklik|ベゼクリク
@@ -3804,12 +3899,14 @@ Bibliomania|ビブリオマニア
 Bicalutamide|ビカルタミド
 Bicha|ビーシュ
 Bichon|ビション
+Bicoids|ビコイズ
 Bicoid|ビコイド
 Bicology|バイコロジー
 Bicolor|バイカラー
 Bicultural|バイカルチャル
 Bicycle|バイシクル
 Bicyclo|ビシクロ
+Bids|ビッズ
 Bid|ビッド
 Bidault|ビドー
 Bidder|ビダー
@@ -3863,10 +3960,13 @@ Bilis|ビリリ
 Bilius|ビリウス
 Bill|ビル
 Billabong|ビラボン
+Billboards|ビルボーズ
 Billboard|ビルボード
 Billet|ビレット
-Billiards|ビリアード
-Billiards|ビリヤード
+Billiard|ビリアード
+Billiards|ビリアーズ
+Billiard|ビリヤード
+Billiards|ビリヤーズ
 Billiken|ビリケン
 Billing|ビリング
 Billingsley|ビリングズリー
@@ -3885,10 +3985,12 @@ Binding|バインディング
 Bindung|ビンディング
 Binelli|ビネリ
 Binet|ビネ
+Binfords|ビンフォーズ
 Binford|ビンフォード
 Bingo|ビンゴ
 Biniou|ビニウ
 Binnacle|ビナクル
+Binods|ビノーズ
 Binod|ビノード
 Binswanger|ビンスワンガー
 Bint|ビント
@@ -3939,6 +4041,7 @@ Bipyridinium|ビピリジニウム
 Biran|ビラン
 Birba|ビルバ
 Birch|バーチ
+Birds|バーズ
 Bird|バード
 Birdie|バーディ
 Birdie|バーディー
@@ -4006,6 +4109,7 @@ Blackburn|ブラックバーン
 Blackett|ブラケット
 Blackie|ブラッキー
 Blacklist|ブラックリスト
+Blacksods|ブラックソッズ
 Blacksod|ブラックソッド
 Blade|ブレード
 Blague|ブラーグ
@@ -4035,6 +4139,7 @@ Blast|ブラスト
 Blaster|ブラスター
 Blau|ブラウ
 Blavatsky|ブラバツキー
+Blaxlands|ブラックスランズ
 Blaxland|ブラックスランド
 Blazer|ブレーザース
 Blazer|ブレーザーズ
@@ -4044,14 +4149,18 @@ Bleach|ブリーチ
 Bleb|ブレブ
 Bledging|ブリッジング
 Bledorn|ブレドルン
+Blends|ブレンズ
 Blend|ブレンド
+Blendeds|ブレンディッズ
 Blended|ブレンディッド
+Blendeds|ブレンデッズ
 Blended|ブレンデッド
 Blender|ブレンダー
 Bleo|ブレオ
 Bleomycin|ブレオマイシン
 Bless|ブレス
 Blik|ブリキ
+Blinds|ブラインズ
 Blind|ブラインド
 Blindenanstalt|ブリンデンアンシュタルト
 Blinder|ブラインダー
@@ -4063,6 +4172,7 @@ Blister|ブリスター
 Blitz|ブリッツ
 Blitzer|ブリッツァー
 Blixen|ブリクセン
+Blizzards|ブリザーズ
 Blizzard|ブリザード
 Bloch|ブロック
 Block|ブロック
@@ -4073,9 +4183,11 @@ Blocking|ブロッキング
 Blocksberg|ブロックスベルク
 Blog|ブログ
 Blonanserin|ブロナンセリン
+Blonds|ブロンズ
 Blond|ブロンド
 Blond|ブロンドス
 Blondie|ブロンディ
+Bloods|ブラッズ
 Blood|ブラッド
 Bloody|ブラッディ
 Bloody|ブラッディー
@@ -4120,8 +4232,10 @@ Bly|ブライ
 Bmx|ビメックス
 Boa|ボア
 Boar|ボアー
+Boards|ボーズ
 Board|ボード
 Board|ボール
+Boards|ボールズ
 Board|ボールド
 Boarding|ボーディング
 Boardman|ボードマン
@@ -4166,7 +4280,9 @@ Body|ボディ
 Body|ボディー
 Bodybuilding|ボディービル
 Bodybuilding|ボディービルディング
+Bodyguards|ボディーガーズ
 Bodyguard|ボディーガード
+Bodyguards|ボディガーズ
 Bodyguard|ボディガード
 Boeing|ボーイング
 Boeotia|ボイオティア
@@ -4192,12 +4308,14 @@ Bohemund|ボエモン
 Bohm|ベーム
 Bohme|ベーメ
 Bohmen|ベーメン
+Bohmerlands|ベーメルランズ
 Bohmerland|ベーメルランド
 Bohnen|ボーネン
 Bohr|ボーア
 Boidin|ボワダン
 Boiga|ボイガ
 Boil|ボイル
+Boileds|ボイルズ
 Boiled|ボイルド
 Boiler|ボイラ
 Boiler|ボイラー
@@ -4210,7 +4328,9 @@ Boissonade|ボワソナード
 Boito|ボーイト
 Bojinov|ボイノフ
 Bokosuka|ボコスカ
+Bolands|ボーランズ
 Boland|ボーランド
+Bolds|ボールズ
 Bold|ボールド
 Bolero|ボレロ
 Boletus|ボレタス
@@ -4219,6 +4339,7 @@ Bolick|ボーリック
 Bolide|ボリード
 Bolivar|ボリバル
 Bolivia|ボリビア
+Bollards|ボラーズ
 Bollard|ボラード
 Bollenback|ボーレンバック
 Bollinger|ボリンジャー
@@ -4259,6 +4380,7 @@ Bonapartism|ボナパルチズム
 Bonapartism|ボナパルティズム
 Bonapartist|ボナパリスト
 Bonbon|ボンボン
+Bonds|ボンズ
 Bond|ボンド
 Bondage|ボンテージ
 Bondage|ボンデージ
@@ -4408,6 +4530,7 @@ Botticelli|ボティチェリ
 Botticini|ボッティチーニ
 Bottle|ボトル
 Bottled|ボトルト
+Bottleds|ボトルズ
 Bottled|ボトルド
 Bottling|ボトリング
 Bottom|ボトム
@@ -4437,8 +4560,10 @@ Bouillon|ブイヨン
 Boulangerie|ブーランジェリー
 Boulangerie|ブーランジュリー
 Boulding|ボールディング
+Boulevards|ブールバーズ
 Boulevard|ブールバード
 Boulevard|ブールバール
+Boulevards|ブルバーズ
 Boulevard|ブルバード
 Boulevard|ブルバール
 Boulez|ブーレーズ
@@ -4449,7 +4574,7 @@ Boumedienne|ブーメディエン
 Bounce|バウンス
 Bouncer|バウンサー
 Bouncing|バウンシング
-Bound|バウンズ
+Bounds|バウンズ
 Bound|バウンド
 Boundary|バウンダリ
 Boundary|バウンダリー
@@ -4504,6 +4629,7 @@ Boy|ボイ
 Boycott|ボイコット
 Boydii|ボイデー
 Boyer|ボワイエ
+Boyfriends|ボーイフレンズ
 Boyfriend|ボーイフレンド
 Boyish|ボーイッシュ
 Boyle|ボイル
@@ -4524,6 +4650,7 @@ Bracketing|ブラケッティング
 Bracketing|ブラケティング
 Bracteatum|ブラクテアツム
 Bradbury|ブラッドベリ
+Bradfords|ブラッドフォーズ
 Bradford|ブラッドフォード
 Bradley|ブラッドリー
 Bradley|ブラッドレー
@@ -4543,6 +4670,7 @@ Brahmaputra|ブラマプートラ
 Brahmi|ブラーフミー
 Brahms|ブラームス
 Braid|ブレート
+Braids|ブレーズ
 Braid|ブレード
 Brain|ブレーン
 Brain|ブレイン
@@ -4556,6 +4684,7 @@ Braley|ブラレー
 Bramador|ブラマドール
 Branch|ブランチ
 Brancusi|ブランクーシ
+Brands|ブランズ
 Brand|ブランド
 Brandade|ブランダード
 Brandenburg|ブランデンブルク
@@ -4592,6 +4721,7 @@ Brazelton|ブラゼルトン
 Brazil|ブラジル
 Brazzi|ブラッツィ
 Brea|ブレア
+Breads|ブレッズ
 Bread|ブレッド
 Break|ブレーク
 Breaker|ブレーカ
@@ -4627,6 +4757,7 @@ Brenner|ブレンナー
 Brent|ブレント
 Brentano|ブレンターノ
 Brentano|ブレンタノ
+Brentwoods|ブレントウッズ
 Brentwood|ブレントウッド
 Brescia|ブレシア
 Brescia|ブレシャ
@@ -4655,6 +4786,7 @@ Bricolage|ブリコラージュ
 Bridal|ブライダル
 Bride|ブライド
 Brider|ブリデ
+Bridesmaids|ブライドメーズ
 Bridesmaid|ブライドメード
 Bridge|ブリッジ
 Bridges|ブリッジェス
@@ -4713,7 +4845,9 @@ Britten|ブリテン
 Brix|ブリックス
 Brixton|ブリクストン
 Brixton|ブリックストン
+Broads|ブローズ
 Broad|ブロード
+Broadbands|ブロードバンズ
 Broadband|ブロードバンド
 Broadbenti|ブロアドベンティ
 Broadcast|ブロードキャスト
@@ -4820,6 +4954,7 @@ Brunetti|ブルネッティ
 Brunetto|ブルネット
 Brunfels|ブルンフェルス
 Brunhild|ブリュンヒルデ
+Brunhilds|ブリュンヒルズ
 Brunhild|ブリュンヒルド
 Brunhoff|ブリュノフ
 Bruni|ブルーニ
@@ -4913,6 +5048,7 @@ Buffon|ビュフォン
 Buffon|ブッフォン
 Buffon|ブフォン
 Bufo|ブフォ
+Bufosteroids|ブホステロイズ
 Bufosteroid|ブホステロイド
 Bug|バグ
 Bug|バグズ
@@ -4926,6 +5062,7 @@ Bugle|ビューグル
 Buick|ビューイック
 Buick|ビュイック
 Build|ビルト
+Builds|ビルズ
 Build|ビルド
 Builder|ビルダ
 Builder|ビルダー
@@ -5111,6 +5248,7 @@ Butoxybenzyl|ブトキシベンジル
 Butropium|ブトロピウム
 Butter|バタ
 Butter|バター
+Butterfields|バターフィールズ
 Butterfield|バターフィールド
 Butterfly|バタフライ
 Butterworth|バターワース
@@ -5145,18 +5283,21 @@ Buynuiy|ブイヌイ
 Buzino|ブツィーノ
 Buzkashi|ブズカシ
 Buzz|バズ
+Buzzards|バザーズ
 Buzzard|バザード
 Buzzer|フザー
 Buzzer|ブザー
 By|バーイ
 By|バイ
 Byambasuren|ビャンバスレン
+Byards|バイアーズ
 Byard|バイアード
 Bydlo|ビドロ
 Bydlo|ブイドロ
 Bye|バーイ
 Bye|バイ
 Bypass|バイパス
+Byrds|バーズ
 Byrd|バード
 Byron|バイロン
 Byte|バイト
@@ -5338,6 +5479,7 @@ Callanwolde|キャランウォルド
 Callaway|キャラウェー
 Callaway|キャロウェー
 Calle|カルレ
+Calleds|コールズ
 Called|コールド
 Callegari|カレガリ
 Callicarpa|カルリカルパ
@@ -5463,6 +5605,7 @@ Canadian|カナディアン
 Canal|カナル
 Canal|キャナル
 Canape|カナッペ
+Canards|カナーズ
 Canard|カナード
 Canard|カナール
 Canard|キャナール
@@ -5593,6 +5736,7 @@ Capillary|キャピラリ
 Capillary|キャピラリー
 Capital|キャッペトー
 Capital|キャピタル
+Capitalands|キャピタランズ
 Capitaland|キャピタランド
 Capitalism|キャピタリズム
 Capitalist|キャピタリスト
@@ -5608,6 +5752,7 @@ Capoeira|カポエラ
 Capone|カポネ
 Capotasto|カポタスト
 Capote|カポーティ
+Cappeds|キャップズ
 Capped|キャップド
 Cappuccini|カプチン
 Cappuccino|カプチーノ
@@ -5626,6 +5771,7 @@ Capron|ケプロン
 Capryl|カプリル
 Capsaicin|カプサイシン
 Capsanthin|カプサンチン
+Capsids|キャプシズ
 Capsid|キャプシド
 Capsorubin|カプソルビン
 Captafol|カプタホール
@@ -5710,8 +5856,10 @@ Carbuncle|カーバンクル
 Carburetor|キャブレーター
 Carburetor|キャブレター
 Carcassonne|カルカッソンヌ
+Carcinoids|カルチノイズ
 Carcinoid|カルチノイド
 Carcinoma|カルシノーマ
+Cards|カーズ
 Card|カード
 Cardamon|カルダモン
 Cardano|カルダーノ
@@ -5723,6 +5871,7 @@ Cardigan|カーディガン
 Cardigan|カーデガン
 Cardinal|カーディナル
 Cardinal|カルディナル
+Cardioids|カージオイズ
 Cardioid|カージオイド
 Cardioscope|カルジオスコープ
 Cardioversion|カーディオバージョン
@@ -5769,7 +5918,9 @@ Carlo|カルロ
 Carlos|カーロス
 Carlos|カルロス
 Carlotta|カルロッタ
+Carlsbads|カールスバッズ
 Carlsbad|カールスバッド
+Carlsbads|カールズバッズ
 Carlsbad|カールズバッド
 Carlsberg|カールスバーグ
 Carlsbergensis|カールスベルゲンシス
@@ -5815,7 +5966,9 @@ Carolingian|カロリンジアン
 Carolinian|カロリニアン
 Carotene|カロチン
 Carotene|カロテン
+Carotenoids|カロチノイズ
 Carotenoid|カロチノイド
+Carotenoids|カロテノイズ
 Carotenoid|カロテノイド
 Carp|カープ
 Carpaccio|カルパッチオ
@@ -5888,6 +6041,7 @@ Carvalho|カルバリョ
 Carvilius|カルウィリウス
 Carving|カービング
 Cary|ケーリー
+Caryatids|カリアティーズ
 Caryatid|カリアティード
 Carzinophilin|カルジノフィリン
 Carzinophilin|カルチノフィリン
@@ -6075,6 +6229,7 @@ Cattleya|カトレヤ
 Cattrall|キャトラル
 Catulle|カチュール
 Catullus|カトゥルス
+Caucasoids|コーカソイズ
 Caucasoid|コーカソイド
 Caucasus|コーカサス
 Cauchy|コーシー
@@ -6168,6 +6323,7 @@ Cellosolve|セロソルブ
 Cellular|セルラー
 Cellulase|セルラーゼ
 Celluloid|セル
+Celluloids|セルロイズ
 Celluloid|セルロイド
 Cellulose|セルロース
 Cellulose|セルローズ
@@ -6208,6 +6364,7 @@ Centric|セントリック
 Centring|センタリング
 Centro|セントロ
 Centro|チェントロ
+Centroids|セントロイズ
 Centroid|セントロイド
 Centurion|センチュリオン
 Century|サンチュリ
@@ -6220,6 +6377,7 @@ Cephalosporin|セファロスポリン
 Cephalosporinase|セファロスポリナーゼ
 Cephamycin|セファマイシン
 Cepharanthine|セファランチン
+Cepheids|セファイズ
 Cepheid|セファイド
 Cepheus|ケフェウス
 Cepheus|シフュース
@@ -6280,7 +6438,9 @@ Chablis|シャブリ
 Chacon|チャコン
 Chaconne|シャコンヌ
 Chacott|チャコット
+Chads|チャーズ
 Chad|チャード
+Chads|チャズ
 Chad|チャド
 Chadara|チャダール
 Chador|チャドル
@@ -6409,6 +6569,7 @@ Charcoal|チャコール
 Chardin|シャルダン
 Chardonnay|シャルドネ
 Charge|チャージ
+Chargeds|チャージズ
 Charged|チャージド
 Charging|チャージング
 Chariot|チャリオット
@@ -6442,6 +6603,7 @@ Charrier|シャリエ
 Charriere|シャリエール
 Chart|チャート
 Charter|チャーター
+Chartereds|チャーターズ
 Chartered|チャータード
 Chartism|チャーティズム
 Chartist|チャーチスト
@@ -6530,6 +6692,7 @@ Chemical|ケミカル
 Chemical|ケミカルス
 Chemical|ケミカルズ
 Chemie|セーミ
+Chemigrounds|ケミグランズ
 Chemiground|ケミグランド
 Cheminee|シュミネ
 Chemise|シミーズ
@@ -6570,7 +6733,9 @@ Cheshire|チシャ
 Chess|チェス
 Chest|チェスト
 Chester|チェスター
+Chesterfields|チェスターフィールズ
 Chesterfield|チェスターフィールド
+Chesterfields|チェスタフィールズ
 Chesterfield|チェスタフィールド
 Chesterton|チェスタートン
 Chesterton|チェスタトン
@@ -6623,11 +6788,13 @@ Chignon|シニヨン
 Chihuahua|チワワ
 Chikatilo|チカチーロ
 Chilavert|チラベルト
+Childs|チャイルズ
 Child|チャイルド
 Childers|チルダーズ
 Childline|チャイルドライン
 Children|チルドレン
 Chile|チリ
+Chilleds|チルズ
 Chilled|チルド
 Chiller|チラー
 Chilling|チリング
@@ -6640,6 +6807,7 @@ Chimento|キメント
 Chimera|キマイラ
 Chimera|キメラ
 Chimera|シメール
+Chimids|チミズ
 Chimid|チミド
 Chimney|チムニー
 Chimpanzee|チンパンジー
@@ -6788,12 +6956,14 @@ Choochoo|チューチュー
 Chop|チャップ
 Chop|チョップ
 Chopin|ショパン
+Choppeds|チョップズ
 Chopped|チョップド
 Chopper|チョッパ
 Chopper|チョッパー
 Chora|チョラ
 Choral|コーラル
 Choral|コラール
+Chords|コーズ
 Chord|コード
 Choreographer|コリオグラファー
 Choreography|コレオグラフィー
@@ -6896,6 +7066,7 @@ Cicatricosus|キカトリコスス
 Cicero|キケロ
 Cicero|キケロー
 Cicerone|チチェローネ
+Cichlids|シクリッズ
 Cichlid|シクリッド
 Cicli|チクリ
 Ciclopirox|シクロピロクス
@@ -6997,6 +7168,7 @@ Civilian|シビリアン
 Civilization|シビライゼーション
 Civilization|シビリゼーション
 Civitas|キビタス
+Clads|クラッズ
 Clad|クラッド
 Cladosporium|クラドスポリウム
 Cladribine|クラドリビン
@@ -7012,6 +7184,7 @@ Clamart|クラマール
 Clamp|クランプ
 Clan|クラーン
 Clan|クラン
+Clannads|クラナズ
 Clannad|クラナド
 Clapham|クラパム
 Clapperton|クラッパートン
@@ -7077,6 +7250,7 @@ Claves|クラベス
 Clavia|クラビア
 Clavibacter|クラビバクター
 Clavicembalo|クラビチェンバロ
+Clavichords|クラビコーズ
 Clavichord|クラビコード
 Clavigera|クラビゲラ
 Clavius|クラビウス
@@ -7140,6 +7314,7 @@ Cleric|クレリック
 Clerk|クラーク
 Clethodim|クレトジム
 Cleve|クリーブ
+Clevelands|クリーブランズ
 Cleveland|クリーブランド
 Clever|クレバー
 Cleves|クレーブ
@@ -7213,6 +7388,7 @@ Clorprenaline|クロルプレナリン
 Clos|クロ
 Clos|クロー
 Close|クローズ
+Closeds|クローズズ
 Closed|クローズド
 Closer|クローザー
 Closet|クローゼット
@@ -7224,8 +7400,10 @@ Closure|クロージャー
 Cloth|クロース
 Cloth|クロス
 Clothe|クローズ
+Clothoids|クロソイズ
 Clothoid|クロソイド
 Clotiapine|クロチアピン
+Clotteds|クロテッズ
 Clotted|クロテッド
 Clouet|クルーエ
 Clove|クローブ
@@ -7245,6 +7423,7 @@ Clustering|クラスタリング
 Clutch|クラッチ
 Clutter|クラッター
 Clyde|クライド
+Clyffords|クリフォーズ
 Clyfford|クリフォード
 Cnidus|クニドス
 Coacervate|コアセルベート
@@ -7262,6 +7441,7 @@ Coastal|コースタル
 Coaster|コースター
 Coat|コーツ
 Coat|コート
+Coateds|コーテッズ
 Coated|コーテッド
 Coating|コーティング
 Cobaea|コベア
@@ -7305,6 +7485,7 @@ Cocoyl|ココイル
 Cocteau|コクトー
 Cocu|コキュ
 Cocu|コキュー
+Cods|コッズ
 Cod|コッド
 Coda|コーダ
 Code|コード
@@ -7377,6 +7558,7 @@ Colbert|コルベール
 Colbert|コルベル
 Colby|コルビー
 Colchicum|コルチカム
+Colds|コールズ
 Cold|コールド
 Cole|コール
 Colegio|コレヒオ
@@ -7411,6 +7593,7 @@ Collagenase|コラゲナーゼ
 Collapse|コラプス
 Collar|カラー
 Collateral|コラテラル
+Collateralizeds|コラテライズズ
 Collateralized|コラテライズド
 Collator|コレーター
 Collect|コレクト
@@ -7440,12 +7623,14 @@ Collette|コレット
 Collimator|コリメーター
 Collinear|コーリニア
 Collinear|コリニア
+Collingwoods|コリングウッズ
 Collingwood|コリングウッド
 Collins|コリンズ
 Collision|コリジョン
 Collocation|コロケーション
 Collodi|コロディ
 Collodion|コロジオン
+Colloids|コロイズ
 Colloid|コロイド
 Colloidal|コロイダル
 Collonges|コロンジュ
@@ -7478,6 +7663,7 @@ Color|カラーズ
 Colorado|コロラド
 Coloratura|コロラチュラ
 Coloratura|コロラトゥーラ
+Coloreds|カラーズ
 Colored|カラード
 Colorful|カラフル
 Coloring|カラーリング
@@ -7510,6 +7696,7 @@ Combination|コンビ
 Combination|コンビネーション
 Combinatorial|コンビナトリアル
 Combine|コンバイン
+Combineds|コンバインズ
 Combined|コンバインド
 Combo|コンボ
 Come|カム
@@ -7536,6 +7723,7 @@ Coming|カミング
 Comitia|コミティア
 Comma|カンマ
 Comma|コンマ
+Commands|コマンズ
 Command|コマンド
 Commander|コマンダー
 Commander|コンマンダー
@@ -7561,6 +7749,7 @@ Commission|コミッション
 Commission|コンミッション
 Commissioner|コミッショナー
 Commit|コミット
+Commiteds|コミッテッズ
 Commited|コミッテッド
 Commitment|コミットメント
 Committee|コミッティー
@@ -7643,6 +7832,7 @@ Compiler|コンパイラー
 Complementary|コンプリメンタリー
 Complete|コンプリート
 Complete|コンプレ
+Completeds|コンプリーティッズ
 Completed|コンプリーティッド
 Completion|コンプリーション
 Completion|コンプリッション
@@ -7652,7 +7842,9 @@ Complexity|コンプレキシティ
 Complexity|コンプレキシティー
 Complexity|コンプレクシティ
 Compliance|コンプライアンス
+Complicateds|コンプリケーティッズ
 Complicated|コンプリケーティッド
+Complicateds|コンプリケーテッズ
 Complicated|コンプリケーテッド
 Complimenti|コンプリメンテ
 Component|コンポ
@@ -7664,6 +7856,7 @@ Composition|コンポジション
 Compost|コンポスト
 Compostela|コンポステラ
 Compote|コンポート
+Compounds|コンパウンズ
 Compound|コンパウンド
 Comprador|コンプラドール
 Comprehensive|コンプリヘンシブ
@@ -7819,7 +8012,9 @@ Conpact|パクト
 Conquer|コンカー
 Conquest|コンクエスト
 Conquistador|コンキスタドール
+Conrads|コンラーズ
 Conrad|コンラード
+Conrads|コンラッズ
 Conrad|コンラッド
 Conscious|コンシャス
 Consciousness|コンシャスネス
@@ -7854,6 +8049,7 @@ Constantinopolis|コンスタンティノポリス
 Constanze|コンスタンツェ
 Constellation|コンステレーション
 Constitution|コンスティチューション
+Constraineds|コンストレインズ
 Constrained|コンストレインド
 Construct|コンストラクト
 Construction|コンスト
@@ -7932,6 +8128,7 @@ Contributor|コントリビューター
 Contricao|コンチリサン
 Control|コントロール
 Control|コントロールズ
+Controlleds|コントロールズ
 Controlled|コントロールド
 Controller|コントローラ
 Controller|コントローラー
@@ -8034,6 +8231,7 @@ Corbusier|コルビュジエ
 Corcoran|コーコラン
 Corcoran|コルコラン
 Corcovado|コルコバード
+Cords|コーズ
 Cord|コード
 Corda|コルダ
 Cordaites|コルダイテス
@@ -8081,6 +8279,7 @@ Cornet|コルネ
 Cornet|コルネット
 Cornflake|コーンフレーク
 Cornflake|コーンフレークス
+Cornfords|コンフォーズ
 Cornford|コンフォード
 Cornice|コーニス
 Cornice|コルニーチェ
@@ -8105,6 +8304,7 @@ Corot|コロー
 Corozo|コロゾ
 Corpocracy|コーポクラシー
 Corporate|コーポレート
+Corporateds|コーポレーテッズ
 Corporated|コーポレーテッド
 Corporation|コーポレーション
 Corporatism|コーポラティズム
@@ -8114,12 +8314,14 @@ Correct|コレクト
 Correcteur|コレクトゥール
 Correctly|コレクトリー
 Corregidor|コレヒドール
+Corresponds|コレスポンズ
 Correspond|コレスポンド
 Correspondence|コレスポンデンス
 Correspondent|コレスポンデント
 Corridor|コリドー
 Corriedale|コリデール
 Corriere|コリエーレ
+Corrugateds|コルゲーテッズ
 Corrugated|コルゲーテッド
 Corruption|コラプション
 Corsa|コルサ
@@ -8135,6 +8337,7 @@ Cortazar|コルターサル
 Cortes|コルテース
 Cortes|コルテス
 Corti|コルチ
+Corticoids|コルチコイズ
 Corticoid|コルチコイド
 Corticorelin|コルチコレリン
 Corticotropin|コルチコトロピン
@@ -8211,6 +8414,7 @@ Cottingham|コッティンガム
 Cotton|カタン
 Cotton|コットン
 Cotton|コットンズ
+Cottonwoods|コットンウッズ
 Cottonwood|コットンウッド
 Cottrell|コットレル
 Coubertin|クーベルタン
@@ -8222,6 +8426,7 @@ Couleur|クルール
 Coulis|クーリ
 Couloir|クーロワール
 Coulomb|クーロン
+Coulthards|クルサーズ
 Coulthard|クルサード
 Coumaphos|クマホス
 Coumarin|クマリン
@@ -8287,6 +8492,7 @@ Cover|カバーズ
 Coverage|カバーレッジ
 Coverage|カバレージ
 Coverage|カバレッジ
+Covereds|カバーズ
 Covered|カバード
 Covering|カバーリング
 Covington|コビントン
@@ -8334,7 +8540,9 @@ Crate|クレート
 Crater|クレータ
 Crater|クレーター
 Cravate|クラバット
+Crawfords|クローフォーズ
 Crawford|クローフォード
+Crawfords|クロフォーズ
 Crawford|クロフォード
 Crawl|クロール
 Crawler|クローラ
@@ -8350,6 +8558,7 @@ Crazy|クレージー
 Creak|クリーク
 Cream|クリーム
 Cream|クレーム
+Creameds|クリームズ
 Creamed|クリームド
 Creamer|クリーマー
 Creaming|クリーミング
@@ -8465,6 +8674,7 @@ Cronstadt|クロンスタッド
 Crookshanks|クルックシャンクス
 Crooner|クルーナー
 Crop|クロップ
+Croppeds|クロップズ
 Cropped|クロップド
 Croppers|クロッパー
 Croppers|クロッパーズ
@@ -8481,7 +8691,9 @@ Crossing|クロッシング
 Crossing|クロッシングズ
 Crossover|クロスオーバ
 Crossover|クロスオーバー
+Crossroads|クロスローズ
 Crossroad|クロスロード
+Crosswords|クロスワーズ
 Crossword|クロスワード
 Crotch|クロッチ
 Croton|クロトン
@@ -8492,6 +8704,7 @@ Croup|クルップ
 Crouton|クルトン
 Crouzon|クルゾン
 Crow|クロー
+Crowds|クラウズ
 Crowd|クラウド
 Crowding|クラウディング
 Crowley|クラウリー
@@ -8513,6 +8726,7 @@ Crusader|クルセーダーズ
 Crusader|クルセダー
 Crusader|クルセダース
 Crusader|クルセダーズ
+Crusheds|クラッシュズ
 Crushed|クラッシュド
 Crusher|クラッシャー
 Crusoe|クルーソー
@@ -8587,11 +8801,14 @@ Culture|カルチェア
 Culture|カルチャ
 Culture|カルチャー
 Culture|カルチュア
+Cultureds|カルチャーズ
 Cultured|カルチャード
 Cumene|クメン
 Cumin|クミン
+Cummerbunds|カマーバンズ
 Cummerbund|カマーバンド
 Cumparsita|クンパルシータ
+Cunards|キュナーズ
 Cunard|キュナード
 Cuneo|クーネオ
 Cuniculi|クニクリ
@@ -8610,7 +8827,9 @@ Cup|カップス
 Cuper|クーペル
 Cupertino|クパティーノ
 Cupiagua|クピアグア
+Cupids|キューピッズ
 Cupid|キューピッド
+Cupids|クピズ
 Cupid|クピド
 Cupido|クピド
 Cupola|キューポラ
@@ -8674,6 +8893,7 @@ Cushion|クッション
 Cushioning|クッショニング
 Cushka|クシュカ
 Cusp|カスプ
+Custards|カスターズ
 Custard|カスタード
 Custer|カスター
 Custodial|カストーディアル
@@ -8752,6 +8972,7 @@ Cycloheximide|シクロヘキシミド
 Cyclohexylamine|シクロヘキシルアミン
 Cyclohexylbiphenyl|シクロヘキシルビフェニル
 Cyclohexylene|シクロヘキシレン
+Cycloids|サイクロイズ
 Cycloid|サイクロイド
 Cyclon|サイクロン
 Cyclopentadienyl|シクロペンタジエニル
@@ -8840,6 +9061,7 @@ Dacca|ダッカー
 Dacha|ダーチャ
 Dachshund|ダックス
 Dachshund|ダックスフント
+Dachshunds|ダックスフンズ
 Dachshund|ダックスフンド
 Dacite|デーサイト
 Dacoit|ダコイト
@@ -8929,6 +9151,7 @@ Dandyism|ダンディズム
 Dane|デーン
 Danforth|ダンフォース
 Danger|デンジャー
+Dangerfields|デンジャーフィールズ
 Dangerfield|デンジャーフィールド
 Dangerous|デンジャラス
 Dangling|ダングリング
@@ -8940,6 +9163,7 @@ Danilov|ダニロフ
 Danilovich|ダニーロビチ
 Danilovich|ダニーロビッチ
 Danish|デニッシュ
+Danishmends|ダニシュメンズ
 Danishmend|ダニシュメンド
 Danke|ダンケ
 Danner|ダナー
@@ -8976,6 +9200,7 @@ Darling|ダーリング
 Darlington|ダーリントン
 Darmabala|ダルマバラ
 Darning|ダーニング
+Darolds|ダロルズ
 Darold|ダロルド
 Daropate|ダロパート
 Darra|ダラ
@@ -8997,6 +9222,7 @@ Dasain|ダサイン
 Dasatinib|ダサチニブ
 Dash|ダーシ
 Dash|ダッシュ
+Dashboards|ダッシュボーズ
 Dashboard|ダッシュボード
 Dashkova|ダーシュコバ
 Data|データ
@@ -9026,12 +9252,17 @@ Davao|ダバオ
 Dave|デーブ
 David|ダビデ
 David|デービット
+Davids|デービッズ
 David|デービッド
+Davids|デービズ
 David|デービド
 David|ディビット
+Davids|ディビッズ
 David|ディビッド
+Davids|ディビズ
 David|ディビド
 David|デビット
+Davids|デビッズ
 David|デビッド
 Davidianus|ダビディアヌス
 Davidov|ダビドフ
@@ -9061,6 +9292,7 @@ Dawson|ドーソン
 Day|デー
 Day|デーズ
 Daypack|デーパック
+Deads|デッズ
 Dead|デッド
 Deadline|デッドライン
 Deadlock|デッドロック
@@ -9242,6 +9474,7 @@ Delavirdine|デラビルジン
 Delaware|デラウェア
 Delaware|デラウエア
 Delay|ディレー
+Delayeds|ディレーズ
 Delayed|ディレード
 Delchev|デルチェフ
 Delegation|デリゲーション
@@ -9284,7 +9517,9 @@ Deluxe|デラックス
 Demagog|デマゴーグ
 Demagogie|デマ
 Demagogie|デマゴギー
+Demands|ディマンズ
 Demand|ディマンド
+Demands|デマンズ
 Demand|デマンド
 Demarche|デーマーシュ
 Demarco|デマルコ
@@ -9345,7 +9580,9 @@ Denebola|デネボラ
 Denel|デネル
 Dengue|デング
 Denham|デナム
+Denieds|ディナイズ
 Denied|ディナイド
+Denieds|デナイズ
 Denied|デナイド
 Denier|デニール
 Denilson|デニウソン
@@ -9385,6 +9622,7 @@ Departure|デパーチャー
 Depaysement|デペーズマン
 Depeche|ディペーシュ
 Depeche|ディペッシュ
+Depends|ディペンズ
 Depend|ディペンド
 Dependent|ディペンデント
 Depinay|デピネ
@@ -9430,6 +9668,7 @@ Dersu|デルスー
 Des|デ
 Desacetylbufotalin|デスアセチルブホタリン
 Desafinado|デザフィナード
+Desafinards|デサフィナーズ
 Desafinard|デサフィナード
 Desailly|デサイ
 Desailly|デサイー
@@ -9444,12 +9683,14 @@ Descriptor|デスクリプター
 Desdemona|デスデモナ
 Deseo|デセオ
 Desert|デザート
+Deserteds|デザーテッズ
 Deserted|デザーテッド
 Desiccator|デシケータ
 Desiccator|デシケーター
 Design|ディザイン
 Design|デザイン
 Design|デザインズ
+Designateds|デジグネーテッズ
 Designated|デジグネーテッド
 Designator|デジグネーター
 Designer|デザイナ
@@ -9494,6 +9735,7 @@ Detail|ディテール
 Detail|ディテールズ
 Detail|ディティール
 Detail|デテール
+Detaileds|ディテールズ
 Detailed|ディテールド
 Detection|ディテクション
 Detective|ディティクティブ
@@ -9557,8 +9799,10 @@ Dexter|デクスター
 Dextran|デキストラン
 Dextrin|デキストリン
 Dextrose|デキストロース
+Dhanbads|ダンバーズ
 Dhanbad|ダンバード
 Dhanyabaad|ダンニャバート
+Dhanyawaads|ダンニャワーズ
 Dhanyawaad|ダンニャワード
 Dharmapaala|ダルマパーラ
 Dharmawati|ダルマワティ
@@ -9600,14 +9844,16 @@ Diaminotoluene|ジアミノトルエン
 Diammineglycolato|ジアンミングリコラト
 Diamond|ギヤマン
 Diamond|ダイア
+Diamonds|ダイアモンズ
 Diamond|ダイアモンド
 Diamond|ダイヤ
-Diamond|ダイヤモンズ
+Diamonds|ダイヤモンズ
 Diamond|ダイヤモンド
 Diamond|デアマン
 Diamond|ディアマン
 Diamont|ディアモント
 Diamox|ダイヤモックス
+Diampromids|ジアンプロミズ
 Diampromid|ジアンプロミド
 Diana|ダイアナ
 Dianetics|ダイアネティックス
@@ -9716,6 +9962,7 @@ Die|ダイ
 Dieci|ディエテ
 Dieffenbachia|ディフェンバキア
 Diego|ディエゴ
+Diehards|ダイハーズ
 Diehard|ダイハード
 Diem|ジエム
 Diem|ディエム
@@ -10096,6 +10343,7 @@ Distracter|ディストラクター
 Distraction|ディストラクション
 Distraction|デストラクション
 Distributal|ディストリビュータル
+Distributeds|ディストリビューテッズ
 Distributed|ディストリビューテッド
 Distribution|ディストリビューション
 Distributional|ディストリビューショナル
@@ -10155,8 +10403,11 @@ Divo|ディボ
 Divot|ディボット
 Dixie|ディキシー
 Dixie|デキシー
+Dixielands|ディキシーランズ
 Dixieland|ディキシーランド
+Dixielands|ディクシランズ
 Dixieland|ディクシランド
+Dixielands|デキシーランズ
 Dixieland|デキシーランド
 Diyarbakir|ディヤールバクル
 Diyarbakir|ディヤルバクル
@@ -10314,6 +10565,7 @@ Domus|ドムス
 Don|ドン
 Dona|ドニャ
 Donahue|ドナヒュー
+Donalds|ドナルズ
 Donald|ドナルド
 Donatello|ドナテルロ
 Donath|ドーナット
@@ -10421,6 +10673,7 @@ Down|ダウンズ
 Downer|ダウナー
 Downhill|ダウンヒル
 Downing|ダウニング
+Downloads|ダウンローズ
 Download|ダウンロード
 Downsizing|ダウンサイジング
 Dowsing|ダウジング
@@ -10485,6 +10738,7 @@ Drawers|ズロース
 Drawing|ドローイング
 Drawn|ドロン
 Drayton|ドレートン
+Dreads|ドレッズ
 Dread|ドレッド
 Dreadlocks|ドレッドロック
 Dreadnought|ドレッドノート
@@ -10514,6 +10768,7 @@ Dreyfus|ドライファス
 Dreyfus|ドレーファス
 Dribble|ドリブル
 Dribbler|ドリブラー
+Drieds|ドライズ
 Dried|ドライド
 Drier|ドライア
 Drier|ドライヤ
@@ -10539,6 +10794,7 @@ Driveway|ドライブウェー
 Driveway|ドライブウエー
 Driving|ドライビング
 Drogba|ドログバ
+Droids|ドロイズ
 Droid|ドロイド
 Droit|ドロイト
 Drole|ドロール
@@ -10565,16 +10821,19 @@ Drug|ドラック
 Drug|ドラッグ
 Drugstore|ドラッグストア
 Drugstore|ドラッグストアー
+Druids|ドルイズ
 Druid|ドルイド
 Drum|ドラム
 Drum|ドラムス
 Drum|ドラムズ
 Drummer|ドラマー
 Drumming|ドラミング
+Drummonds|ドラモンズ
 Drummond|ドラモンド
 Drummondii|ドラモンディー
 Drusus|ドルスス
 Dry|ドライ
+Dryads|ドライアーズ
 Dryad|ドライアード
 Dryas|ドリアス
 Drypoint|ドライポイント
@@ -10612,6 +10871,7 @@ Ducking|ダッキング
 Duckling|ダックリン
 Duckling|ダックリング
 Duct|ダクト
+Ducteds|ダクテッズ
 Ducted|ダクテッド
 Ductile|ダクタイル
 Duddits|ダディッツ
@@ -10681,6 +10941,7 @@ Dunsany|ダンセーニ
 Dunst|ダンスト
 Dunya|ドゥーニャ
 Duo|デュオ
+Duofolds|デュオフォールズ
 Duofold|デュオフォールド
 Duomo|ドゥオーモ
 Duomo|ドゥオモ
@@ -10831,6 +11092,7 @@ Ecclesia|エケレジヤ
 Ecclestone|エクレストン
 Eccrine|エクリン
 Ecdysone|エクジソン
+Ecdysteroids|エクジステロイズ
 Ecdysteroid|エクジステロイド
 Echalote|エシャレット
 Echalote|エシャロット
@@ -10925,11 +11187,12 @@ Editor|エディトール
 Editorial|エディトリアル
 Edmilson|エジミウソン
 Edmond|エドモン
-Edmond|エドモンド
 Edmonds|エドモンズ
+Edmond|エドモンド
 Edmonton|エドモントン
 Edmontosaurus|エドモントサウルス
 Edmund|エトムント
+Edmunds|エドマンズ
 Edmund|エドマンド
 Edmunt|エドムント
 Edouard|エドアール
@@ -10942,11 +11205,15 @@ Eduardo|エドゥアルド
 Education|エデュケーション
 Educator|エデュケーター
 Edvard|エドバルト
+Edvards|エドバルズ
 Edvard|エドバルド
 Edwadsiella|エドワジエラ
+Edwards|エドバーズ
 Edward|エドバード
 Edward|エドワート
+Edwards|エドワーズ
 Edward|エドワード
+Edwards|エドワルズ
 Edward|エドワルド
 Edwin|エドウィン
 Edwin|エドウイン
@@ -11006,6 +11273,7 @@ Eichengreen|アイケングリーン
 Eichmann|アイヒマン
 Eicke|アイケ
 Eickstedt|アイクシュテット
+Eicosanoids|エーコサノイズ
 Eicosanoid|エーコサノイド
 Eicosapetaen|エーコサペンタエン
 Eicosapetaen|エーコサペントエン
@@ -11065,7 +11333,9 @@ El|エル
 Elaborate|エラボレート
 Elaboration|エラボレーション
 Elaine|イレイン
+Elands|イランズ
 Eland|イランド
+Elands|エランズ
 Eland|エランド
 Elaphe|エラフェ
 Elaphurus|エラフルス
@@ -11086,6 +11356,7 @@ Elder|エルダー
 Elderberry|エルダーベリー
 Elderberry|エルダベリー
 Elderly|エルダリー
+Eldersvelds|エルダースベルズ
 Eldersveld|エルダースベルド
 Eldridge|エルドリッチ
 Elea|エレア
@@ -11094,7 +11365,9 @@ Eleanor|エリナー
 Eleanor|エリノア
 Eleanor|エレノア
 Elecom|エレコム
+Electeds|イレクテッズ
 Elected|イレクテッド
+Electeds|エレクテッズ
 Elected|エレクテッド
 Election|イレクション
 Election|エレクション
@@ -11133,6 +11406,7 @@ Elephas|エレファス
 Eletriptan|エレトリプタン
 Eleusis|エレウシース
 Eleusis|エレウシス
+Elevateds|エレベーテッズ
 Elevated|エレベーテッド
 Elevation|エレベーション
 Elevator|エレベータ
@@ -11172,6 +11446,7 @@ Elizabeth|エリザベス
 Elizabeth|エリザベト
 Elizabethan|エリザベサン
 Elk|エルク
+Elkhounds|エルクハウンズ
 Elkhound|エルクハウンド
 Ellery|エラリー
 Ellesmere|エルズミーア
@@ -11180,6 +11455,7 @@ Ellesse|エレッセ
 Ellington|エリングトン
 Ellington|エリントン
 Ellis|エリス
+Ellwoods|エルウッズ
 Ellwood|エルウッド
 Elm|エルム
 Elm|エルムズ
@@ -11217,6 +11493,7 @@ Embalming|エンバーミング
 Embankment|エンバンクメント
 Embargo|エンバーゴー
 Embassy|エンバシー
+Embeddeds|エンベデッズ
 Embedded|エンベデッド
 Embedding|エンベッディング
 Emberiza|エンベリザ
@@ -11230,6 +11507,7 @@ Embryo|エンブリオ
 Emedastine|エメダスチン
 Emelenzia|エメレンツィア
 Emelianenko|エメリヤーエンコ
+Emeralds|エメラルズ
 Emerald|エメラルド
 Emergency|イマーゼンシー
 Emergency|エマージェンシ
@@ -11322,6 +11600,7 @@ Encounter|エンカウンター
 Encourage|エンカレッジ
 Encyclopaedia|エンサイクロペディア
 Encyclopediste|アンシクロペディスト
+Ends|エンズ
 End|エンド
 Endeavor|エンデバー
 Endell|エンデル
@@ -11364,6 +11643,7 @@ Enfant|アンファン
 Enflurane|エンフルラン
 Enforcement|エンフォースメント
 Engage|エンゲージ
+Engageds|エンゲージズ
 Engaged|エンゲージド
 Engagement|アンガージュマン
 Engagement|アンガジュマン
@@ -11377,11 +11657,13 @@ Engineer|エンジニア
 Engineer|エンジニアー
 Engineer|エンジニアズ
 Engineering|エンジニアリング
+Englands|イングランズ
 England|イングランド
 English|イングリッシュ
 Engram|エングラム
 Engress|エングレス
 Enhance|エンハンス
+Enhanceds|エンハンスズ
 Enhanced|エンハンスド
 Enhancer|エンハンサー
 Enigmatic|エニグマティック
@@ -11949,6 +12231,7 @@ Eucharist|エウカリスチア
 Eucharist|ユーカリスト
 Euchilus|エウキルス
 Eucken|オイケン
+Euclids|ユークリッズ
 Euclid|ユークリッド
 Euclid|ユークリト
 Eucomis|ユーコミス
@@ -12089,6 +12372,7 @@ Exbury|エクスバリー
 Excalibur|エクスカリバー
 Excavator|エキスカベーター
 Excavator|エクスカベーター
+Exceeds|エクシーズ
 Exceed|エクシード
 Excel|エクセル
 Excellence|エクセランス
@@ -12149,8 +12433,11 @@ Exoticism|エキゾチシズム
 Exoticism|エキゾチズム
 Exoticism|エキゾティシズム
 Exoticism|エグゾティスム
+Expands|エキスパンズ
 Expand|エキスパンド
+Expands|エクスパンズ
 Expand|エクスパンド
+Expandeds|エキスパンデッズ
 Expanded|エキスパンデッド
 Expander|エキスパンダー
 Expander|エクスパンダー
@@ -12189,6 +12476,7 @@ Expression|エクスプレッション
 Expressionism|エクスプレッショニズム
 Exquise|エキスキーズ
 Exquise|エクスキーズ
+Extends|エクステンズ
 Extend|エクステンド
 Extender|エクステンダー
 Extension|エクステンション
@@ -12230,6 +12518,7 @@ Eylimi|エリュミ
 Eze|エズ
 Ezekiel|エゼキエル
 Ezistenzphilosophie|イグジステンツフィロソフィー
+Ezzards|イザーズ
 Ezzard|イザード
 Fab|ファブ
 Faber|ファーバー
@@ -12305,6 +12594,7 @@ Fairway|フェアウェー
 Fairway|フェアウエー
 Fairweather|フェアウェザー
 Fairy|フェアリー
+Fairylands|フェアリーランズ
 Fairyland|フェアリーランド
 Faith|フェース
 Fake|フェーク
@@ -12360,7 +12650,9 @@ Fantillusion|ファンティリュージョン
 Fantz|ファンツ
 Fanu|ファニュ
 Fanucci|ファヌッチ
+Farads|ファラッズ
 Farad|ファラッド
+Farads|ファラズ
 Farad|ファラド
 Faraday|ファラデー
 Faraday|ファラディ
@@ -12369,12 +12661,14 @@ Farce|ファース
 Farce|ファルス
 Farcie|ファルシ
 Fard|ファール
+Fareeds|ファリーズ
 Fareed|ファリード
 Farewell|フェアウェル
 Farfalle|ファルファッレ
 Farghani|ファルガーニー
 Fargo|ファーゴ
 Fargue|ファルグ
+Farids|ファリッズ
 Farid|ファリッド
 Farigoule|ファリグール
 Farm|ファーム
@@ -12459,6 +12753,7 @@ Feasibility|フィージビリティー
 Feasibility|フィジビリティ
 Feast|フィースト
 Feather|フェザー
+Feathereds|フェザーズ
 Feathered|フェザード
 Feathering|フェザリング
 Feature|フィーチャー
@@ -12478,11 +12773,13 @@ Fedora|フェドラ
 Fedorenko|フェドレンコ
 Fedwire|フェッドワイヤー
 Fee|フィー
+Feeds|フィーズ
 Feed|フィード
 Feedback|フィードバック
 Feeder|フィーダ
 Feeder|フィーダー
 Feeder|フィダー
+Feedforwards|フィードフォワーズ
 Feedforward|フィードフォワード
 Feeding|フィーディング
 Feel|フィール
@@ -12661,7 +12958,7 @@ Fidelity|フィデリティ
 Fidelity|フィデリティー
 Fides|ヒーデス
 Fiedler|フィードラー
-Field|フィールズ
+Fields|フィールズ
 Field|フィールド
 Fielder|フィールダー
 Fielding|フィールディング
@@ -12710,6 +13007,7 @@ Filippo|フィリポ
 Fill|フィル
 Fill|フイル
 Filldam|フイルダム
+Filleds|フィルズ
 Filled|フィルド
 Filler|フィラ
 Filler|フィラー
@@ -12767,6 +13065,7 @@ Finisher|フィニッシャー
 Finishing|フィニシング
 Finishing|フィニッシング
 Finite|ファイナイト
+Finlands|フィンランズ
 Finland|フィンランド
 Finlandia|フィンランディア
 Finlay|フィンレー
@@ -12814,9 +13113,11 @@ Fit|フィッツ
 Fit|フィット
 Fitch|フィッチ
 Fitness|フィットネス
+Fitteds|フィッテッズ
 Fitted|フィッテッド
 Fitting|フィッティング
 Fitting|フィッテング
+Fitzgeralds|フィッツジェラルズ
 Fitzgerald|フィッツジェラルド
 Fitzrandolph|フィッツランドルフ
 Fitzroya|フィトズロイア
@@ -12831,7 +13132,7 @@ Fixer|フィクサー
 Fixing|フィキシング
 Fizz|フィーズ
 Fizz|フィズ
-Fjord|フィヨルズ
+Fjords|フィヨルズ
 Fjord|フィヨルド
 Flabra|フラブラ
 Flabsweat|フラブスウェット
@@ -12851,6 +13152,7 @@ Flame|フレーム
 Flamenco|フラメンコ
 Flamingo|フラミンゴ
 Flaminio|フラミニオ
+Flamsteeds|フラムスチーズ
 Flamsteed|フラムスチード
 Flan|フラン
 Flanders|フランダース
@@ -12884,6 +13186,7 @@ Flavin|フラビン
 Flavirostris|フラビロストリス
 Flavivirus|フラビウイルス
 Flavone|フラボン
+Flavonoids|フラボノイズ
 Flavonoid|フラボノイド
 Flavonol|フラボノール
 Flavor|フレーバー
@@ -12959,6 +13262,7 @@ Flow|フロー
 Flowchart|フローチャート
 Flower|フラワー
 Flower|フラワーズ
+Floyds|フロイズ
 Floyd|フロイド
 Fluazifop|フルアジホップ
 Fluazinam|フルアジナム
@@ -12967,9 +13271,13 @@ Fludrocortisone|フルドロコルチゾン
 Flufenamic|フルフェナム
 Flugel|フリューゲル
 Flugel|フリューゲルス
+Fluids|フリュイズ
 Fluid|フリュイド
+Fluids|フルーズ
 Fluid|フルード
+Fluids|フルイッズ
 Fluid|フルイッド
+Fluids|フルイズ
 Fluid|フルイド
 Fluke|フロック
 Flumazenil|フルマゼニル
@@ -13039,7 +13347,7 @@ Foil|フォイル
 Foil|ホイル
 Fokker|フォッカー
 Folafola|フォラフォラ
-Fold|フォールズ
+Folds|フォールズ
 Fold|フォールド
 Folder|フォルダ
 Folder|フォルダー
@@ -13084,7 +13392,7 @@ Fontanesi|フォンタネージ
 Fontbrune|フォンブリューヌ
 Fontec|フォンテック
 Fonvizin|フォンビージン
-Food|フーズ
+Foods|フーズ
 Food|フード
 Fool|フール
 Fool|フールズ
@@ -13106,11 +13414,13 @@ Forbes|フォーブス
 Forbes|フォーブズ
 Forbidden|フォビドゥン
 Force|フォース
+Fords|フォーズ
 Ford|フォード
 Fordism|フォーディズム
 Fore|フォー
 Fore|フォア
 Forecast|フォーカスト
+Forehands|フォアハンズ
 Forehand|フォアハンド
 Foreign|フォーリン
 Foreigner|フォーリナー
@@ -13184,6 +13494,7 @@ Forty|フォーティー
 Forum|フーラム
 Forum|フォーラム
 Forum|フォールム
+Forwards|フォワーズ
 Forward|フォワード
 Forwarder|フォワーダー
 Forwarding|フォアワーディング
@@ -13295,6 +13606,7 @@ Freak|フリーク
 Freak|フリークス
 Frechett|フレーチェット
 Frechett|フレチェット
+Freds|フレッズ
 Fred|フレッド
 Freddie|フレディ
 Freddie|フレディー
@@ -13302,6 +13614,7 @@ Frederick|フレデリク
 Frederick|フレデリック
 Free|フリー
 Freedom|フリーダム
+Freehands|フリーハンズ
 Freehand|フリーハンド
 Freelance|フリーランス
 Freesia|フリージア
@@ -13352,9 +13665,11 @@ Fricandeau|フリカンドー
 Fricassee|フリカッセ
 Friction|フリクション
 Friday|フライデー
+Frieds|フライズ
 Fried|フライド
 Friedan|フリーダン
 Friedkin|フリードキン
+Friedlands|フリードランズ
 Friedland|フリードランド
 Friedlander|フリードランダー
 Friedman|フリードマン
@@ -13362,14 +13677,16 @@ Friedreich|フリードライヒ
 Friedrich|フリートリヒ
 Friedrich|フリードリッヒ
 Friedrich|フリードリヒ
-Friend|フレンズ
+Friends|フレンズ
 Friend|フレンド
 Friendee|フレンディ
 Friendly|フレンドリ
 Friendly|フレンドリー
 Fries|フリース
 Friesland|フリースラント
+Frieslands|フリースランズ
 Friesland|フリースランド
+Frieslands|フリーズランズ
 Friesland|フリーズランド
 Frigate|フリゲート
 Frill|フリル
@@ -13469,7 +13786,9 @@ Fun|ファン
 Function|ファンクション
 Functional|ファンクショナル
 Functionalism|ファンクショナリズム
+Funds|ファウンズ
 Fund|ファウンド
+Funds|ファンズ
 Fund|ファンド
 Fundamentalism|ファンダメンタリズム
 Fundamentalist|ファンダメンタリスト
@@ -13551,6 +13870,7 @@ Gagnon|ギャニオン
 Gaia|ガイア
 Gaillac|ガイヤック
 Gaillac|ガヤック
+Gaillards|ギャラーズ
 Gaillard|ギャラード
 Gaillarde|ガイヤルド
 Gaillon|ガイヨン
@@ -13771,6 +14091,7 @@ Gatch|ギャッジ
 Gatch|ギャッチ
 Gate|ゲート
 Gateau|ガトー
+Gateds|ゲーテッズ
 Gated|ゲーテッド
 Gatekeeper|ゲートキーパ
 Gatekeeper|ゲートキーパー
@@ -13778,6 +14099,7 @@ Gateway|ゲートウェー
 Gateway|ゲートウエー
 Gath|ガト
 Gather|ギャザー
+Gathereds|ギャザーズ
 Gathered|ギャザード
 Gathright|ギャスライト
 Gatifloxacin|ガチフロキサシン
@@ -13826,6 +14148,7 @@ Gayane|ガイーヌ
 Gayatri|ガーヤトリー
 Gayatri|ガヤトリ
 Gayatri|ガヤトリー
+Gaylords|ゲーローズ
 Gaylord|ゲーロード
 Gayoom|ガユーム
 Gaza|ガザ
@@ -13848,7 +14171,9 @@ Gear|ギアー
 Gear|ギヤ
 Gear|ギヤー
 Gear|ギヤズ
+Geareds|ギアーズ
 Geared|ギアード
+Geareds|ギヤーズ
 Geared|ギヤード
 Gearhart|ギアハート
 Gebhard|ゲープハルト
@@ -13908,6 +14233,7 @@ General|ゼネラル
 General|ヘネラル
 Generalist|ジェネラリスト
 Generalist|ゼネラリスト
+Generalizeds|ジェネラライズズ
 Generalized|ジェネラライズド
 Generalpause|ゲネラルパウゼ
 Generate|ジェネレート
@@ -13967,6 +14293,7 @@ Geoffrey|ジョフリー
 Geogeum|ジョージウム
 Geographical|ジオグラフィカル
 Geography|ジオグラフィー
+Geoids|ジオイズ
 Geoid|ジオイド
 Geomag|ジオマグ
 Geometry|ジオメトリ
@@ -14025,6 +14352,7 @@ Gerstmann|ゲルストマン
 Gerstner|ガースナー
 Gertler|ガートラー
 Gertrude|ジェルトリュード
+Gerunds|ジェランズ
 Gerund|ジェランド
 Gerundio|ジェルンディオ
 Gesellschaft|ゲゼルシャフト
@@ -14098,6 +14426,7 @@ Gide|ジッド
 Gidon|ギドン
 Gieben|ギーセン
 Giedion|ギーディオン
+Gielguds|ギールグッズ
 Gielgud|ギールグッド
 Gieseking|ギーゼキング
 Gift|ギフト
@@ -14293,7 +14622,8 @@ Glucagon|グルカゴン
 Glucan|グルカン
 Gluck|グルック
 Glucocerebrosidase|グルコセレブロシダーゼ
-Glucocorticoids|グルココルチコイド
+Glucocorticoid|グルココルチコイド
+Glucocorticoids|グルココルチコイズ
 Glucomannan|グルコマンナン
 Gluconate|グルコネート
 Gluconic|グルコン
@@ -14370,9 +14700,12 @@ Goblet|ゴブレット
 Goblin|ゴブリン
 Goccetto|ゴチェット
 Goclenius|ゴクレニウス
+Gods|ゴッズ
 God|ゴッド
 Godard|ゴダール
+Goddards|ゴダーズ
 Goddard|ゴダード
+Goddards|ゴッダーズ
 Goddard|ゴッダード
 Godetia|ゴデチア
 Godfrey|ゴドフリー
@@ -14405,7 +14738,7 @@ Goim|ゴイム
 Going|ゴーイング
 Gokhale|ゴーカレー
 Golconda|ゴルコンダ
-Gold|ゴールズ
+Golds|ゴールズ
 Gold|ゴールド
 Golden|ゴールデン
 Golding|ゴールディング
@@ -14425,6 +14758,7 @@ Goliath|ゴリアテ
 Golkar|ゴルカル
 Gollancz|ゴランツ
 Gollum|ゴラム
+Golmuds|ゴルムズ
 Golmud|ゴルムド
 Golovin|ゴロビン
 Gom|ゴム
@@ -14445,17 +14779,20 @@ Gong|ゴング
 Gonna|ガナ
 Gonzaga|ゴンザーガ
 Good|グー
+Goods|グーッズ
 Good|グーッド
 Good|グート
 Good|グッ
 Good|グット
+Goods|グッズ
 Good|グッド
 Goodall|グドール
+Goodlads|グッドラーズ
 Goodlad|グッドラード
+Goodlads|グッドラッズ
 Goodlad|グッドラッド
 Goodman|グッドマン
 Goodness|グッドネス
-Goods|グッズ
 Goods|グッツ
 Goodwill|グッドウィル
 Goodwill|グッドウイル
@@ -14510,6 +14847,7 @@ Gothic|ゴジック
 Gothic|ゴス
 Gothic|ゴチック
 Gothic|ゴッシク
+Gotlands|ゴトランズ
 Gotland|ゴトランド
 Gotra|ゴートラ
 Gottfried|ゴットフリート
@@ -14540,6 +14878,7 @@ Government|ガバメント
 Governor|ガバナ
 Governor|ガバナー
 Govinda|ゴービンダ
+Gowlands|ゴーランズ
 Gowland|ゴーランド
 Gown|ガウン
 Goya|ゴヤ
@@ -14564,7 +14903,9 @@ Gradation|グラデーショナル
 Gradation|グラデーション
 Grade|グラード
 Grade|グレード
+Gradeds|グレーディッズ
 Graded|グレーディッド
+Gradeds|グレーディズ
 Graded|グレーディド
 Grader|グレーダー
 Gradient|グラジエント
@@ -14601,6 +14942,7 @@ Granaten|グラナーテ
 Grand|グラン
 Grand|グランダ
 Grand|グランデ
+Grands|グランズ
 Grand|グランド
 Granderson|グランダーソン
 Grandet|グランデ
@@ -14656,6 +14998,7 @@ Gravy|グレービ
 Gravy|グレービー
 Grawp|グロープ
 Gray|グレー
+Grayhounds|グレーハウンズ
 Grayhound|グレーハウンド
 Grayish|グレーイシュ
 Grayish|グレイッシュ
@@ -14679,9 +15022,11 @@ Greenamyre|グリーナマイヤー
 Greenaway|グリーナウェー
 Greenbelt|グリーンベルト
 Greenberg|グリーンバーグ
+Greenfields|グリーンフィールズ
 Greenfield|グリーンフィールド
 Greenish|グリーニッシュ
 Greenish|グリニッシュ
+Greenlands|グリーンランズ
 Greenland|グリーンランド
 Greenock|グリーノック
 Greenwich|グリニジ
@@ -14720,6 +15065,7 @@ Greville|グレビル
 Grew|グルー
 Grey|グレー
 Grid|グリット
+Grids|グリッズ
 Grid|グリッド
 Grief|グリーフ
 Grieg|グリーグ
@@ -14738,10 +15084,12 @@ Grihya|グリヤ
 Grill|グリル
 Grille|グリエ
 Grille|グリル
+Grilleds|グリルズ
 Grilled|グリルド
 Grimaudan|グリモーダン
 Grimm|グリム
 Grimmelshausen|グリンメルスハウゼン
+Grinds|グラインズ
 Grind|グラインド
 Grindelwald|グリンデルバルト
 Grindelwald|グリンデルワルト
@@ -14803,9 +15151,11 @@ Grotewohl|グローテボル
 Grotrian|グロトリアン
 Grotta|グロッタ
 Grotta|グロット
-Ground|グラウンズ
+Grounds|グラウンズ
 Ground|グラウンド
+Grounds|グランズ
 Ground|グランド
+Groundeds|グラウンデッズ
 Grounded|グラウンデッド
 Grounder|グラウンダー
 Grounder|ゴロ
@@ -14834,6 +15184,7 @@ Grumiaux|グリュミオー
 Grumman|グラマン
 Grumpy|グランピー
 Grunnings|グラニングス
+Grunwalds|グランワルズ
 Grunwald|グランワルド
 Grunwald|グリューンバルト
 Grunwedel|グリュンベーデル
@@ -14878,7 +15229,9 @@ Guarantee|ギャラ
 Guarantee|ギャランティ
 Guarantee|ギャランティー
 Guarany|グアラニ
+Guards|ガーズ
 Guard|ガード
+Guards|グアルズ
 Guard|グアルド
 Guardia|ガーディア
 Guardian|ガーディアン
@@ -14922,8 +15275,10 @@ Guiding|ガイディング
 Guiel|ガイエル
 Guignol|ギニョール
 Guilbert|ギルベール
+Guilds|ギルズ
 Guild|ギルド
 Guilder|ギルダー
+Guilfords|ギルフォーズ
 Guilford|ギルフォード
 Guillain|ギラン
 Guillaume|ギョーム
@@ -15106,6 +15461,7 @@ Hagen|ヘーゲン
 Haggis|ハギス
 Hagith|ハギト
 Hagonoy|アゴノイ
+Hagrids|ハグリッズ
 Hagrid|ハグリッド
 Hahnela|ハーネラ
 Hahnemann|ハーネマン
@@ -15137,6 +15493,7 @@ Halation|ハレーション
 Halazepam|ハラゼパム
 Halcinonide|ハルシノニド
 Halcion|ハルシオン
+Halds|ハルズ
 Hald|ハルド
 Haldeman|ホールドマン
 Hale|ヘール
@@ -15198,6 +15555,7 @@ Hamburg|ハンブルク
 Hamburg|ハンブルグ
 Hamburger|ハンバーガー
 Hamburger|ハンブルガー
+Hameds|ハメズ
 Hamed|ハメド
 Hameln|ハーメルン
 Hameln|ハムリン
@@ -15213,6 +15571,7 @@ Hamlet|ハムレット
 Hammer|ハマー
 Hammer|ハンマ
 Hammer|ハンマー
+Hammerheads|ハンマーヘッズ
 Hammerhead|ハンマーヘッド
 Hammering|ハンマリング
 Hammerklavier|ハンマークラビア
@@ -15220,12 +15579,15 @@ Hammerklavier|ハンメルクラビエ
 Hammerstein|ハマースタイン
 Hammett|ハメット
 Hammock|ハンモック
+Hammonds|ハモンズ
 Hammond|ハモンド
 Hammurabi|ハムラビ
 Hammurabi|ハンムラビ
 Hamnett|ハムネット
 Hampden|ハンプデン
+Hampsteads|ハムステッズ
 Hampstead|ハムステッド
+Hampsteads|ハンプステッズ
 Hampstead|ハンプステッド
 Hamster|ハムスター
 Hamtramck|ハムトラミク
@@ -15233,7 +15595,7 @@ Hamza|ハムザ
 Han|ハン
 Hana|ハナ
 Hanau|ハーナウ
-Hand|ハンズ
+Hands|ハンズ
 Hand|ハンド
 Handan|ハンダン
 Handbag|ハンドバック
@@ -15291,9 +15653,11 @@ Hanuman|ハヌマーン
 Hanuman|ハヌマン
 Haole|ハオレ
 Hapag|ハパク
+Hapgoods|ハプグッズ
 Hapgood|ハプグッド
 Haplotype|ハプロタイプ
 Happe|ハッペ
+Happeneds|ハプンズ
 Happened|ハプンド
 Happening|ハプニング
 Happiness|ハピネス
@@ -15306,6 +15670,7 @@ Haptic|ハプティック
 Haptoglobin|ハプトグロビン
 Hapy|ハピ
 Harahap|ハラハプ
+Haralds|ハラルズ
 Harald|ハラルド
 Haram|ハラーム
 Harare|ハラレ
@@ -15315,6 +15680,7 @@ Harbin|ハルビン
 Harbin|ハルピン
 Harbor|ハーバー
 Harboring|ハーバリング
+Hards|ハーズ
 Hard|ハード
 Hardenberg|ハルデンベルク
 Hardenbergia|ハーデンベルギア
@@ -15365,6 +15731,7 @@ Harnoncourt|アーノンクール
 Harp|ハープ
 Harpagon|アルパゴン
 Harpoon|ハープーン
+Harpsichords|ハープシコーズ
 Harpsichord|ハープシコード
 Harrelson|ハレルソン
 Harrier|ハリアー
@@ -15374,11 +15741,13 @@ Harriman|ハリマン
 Harris|ハリス
 Harrison|ハリスン
 Harrison|ハリソン
-Harrod|ハロッド
 Harrods|ハロッズ
+Harrod|ハロッド
 Harsh|ハーシュ
 Harte|ハート
+Hartfords|ハートフォーズ
 Hartford|ハートフォード
+Hartfords|ハートフォズ
 Hartford|ハートフォド
 Hartinah|ハルティナ
 Hartley|ハルトリー
@@ -15387,6 +15756,7 @@ Hartog|ハートック
 Hartshorne|ハートショーン
 Hartwig|ハルトビッヒ
 Hartwig|ハルトビヒ
+Harvards|ハーバーズ
 Harvard|ハーバード
 Harvester|ハーベスター
 Harvey|ハーベー
@@ -15395,6 +15765,7 @@ Harz|ハルツ
 Harzburgite|ハルツバーガイト
 Hase|ハーゼ
 Hash|ハッシュ
+Hasheds|ハッシュズ
 Hashed|ハッシュド
 Hashish|ハシーシュ
 Hashish|ハシシ
@@ -15405,6 +15776,7 @@ Hashish|ハッシッシ
 Hasidism|ハシディズム
 Haskins|ハスキンズ
 Hassall|ハッサル
+Hassids|ハシッズ
 Hassid|ハシッド
 Hasta|アスタ
 Hastert|ハスタート
@@ -15423,6 +15795,7 @@ Haudricourt|オドリクール
 Hauer|ハウワー
 Hauler|ホーラー
 Haunch|ハンチ
+Haunteds|ホーンテッズ
 Haunted|ホーンテッド
 Hauptmann|ハウプトマン
 Hausa|ハウサ
@@ -15456,13 +15829,14 @@ Hayek|ハイエク
 Hayruddin|ハイルッディン
 Hayter|ヘーター
 Hazah|ハーザー
+Hazards|ハザーズ
 Hazard|ハザード
 Haze|ヘーズ
 Hazel|ヘーゼル
 Hazelnuts|ヘーゼルナッツ
 Hazem|ハゼム
 Hazlitt|ハズリット
-Head|ヘッズ
+Heads|ヘッズ
 Head|ヘッド
 Header|ヘッダ
 Header|ヘッダー
@@ -15476,6 +15850,7 @@ Headphone|ヘッドホン
 Headquarter|ヘッドクウォーター
 Headquarter|ヘッドクオーター
 Headset|ヘッドセット
+Headwords|ヘッドワーズ
 Headword|ヘッドワード
 Healer|ヒーラー
 Healey|ヒーリー
@@ -15516,7 +15891,9 @@ Hedge|ヘッジ
 Hedgehog|ヘッジホッグ
 Hedging|ヘッジング
 Hedin|ヘディン
+Hedlands|ヘッドランズ
 Hedland|ヘッドランド
+Hedlunds|ヘドランズ
 Hedlund|ヘドランド
 Hedonic|ヘドニック
 Hedonism|ヘドニズム
@@ -15535,6 +15912,7 @@ Heidegger|ハイデガー
 Heidegger|ハイデッガー
 Heidelberg|ハイデルベルク
 Heidelberg|ハイデルベルグ
+Heidfelds|ハイドフェルズ
 Heidfeld|ハイドフェルド
 Heidi|ハイジ
 Height|ハイト
@@ -15558,12 +15936,14 @@ Heisenberg|ハイゼンベルグ
 Heiter|ハイター
 Heitor|エートル
 Hejar|ヘジャル
+Helds|ヘルズ
 Held|ヘルド
 Helene|ヘレーネ
 Helical|ヘリカル
 Helicase|ヘリカーゼ
 Helichrysum|ヘリクリサム
 Helicobacter|ヘリコバクター
+Helicoids|ヘリコイズ
 Helicoid|ヘリコイド
 Heliconia|ヘリコニア
 Helicopter|ヘリ
@@ -15594,6 +15974,7 @@ Hello|ハロ
 Hello|ハロー
 Hellstrom|ヘルストロム
 Helly|ヘリー
+Helmands|ヘルマンズ
 Helmand|ヘルマンド
 Helmet|ヘル
 Helmet|ヘルメット
@@ -15671,6 +16052,7 @@ Herakles|ハーキュリス
 Herakles|ヘーラクレース
 Herakles|ヘラクレス
 Herakles|ヘルクレス
+Heralds|ヘラルズ
 Herald|ヘラルド
 Herb|ハーブ
 Herb|ハーブス
@@ -15686,7 +16068,9 @@ Herculaneum|ヘルクラーヌム
 Herculaneum|ヘルクラネウム
 Herder|ヘルダー
 Here|ヒア
+Herefords|ヘレフォーズ
 Hereford|ヘレフォード
+Herends|ヘレンズ
 Herend|ヘレンド
 Herfindahl|ハーフィンダール
 Hering|ヘーリング
@@ -15733,6 +16117,7 @@ Hershiser|ハーシュハイザー
 Hertfordshire|ハートフォードシア
 Hertfordshire|ハートフォードシャー
 Hertz|ヘルツ
+Hertzfelds|ハーツフェルズ
 Hertzfeld|ハーツフェルド
 Hertzsprung|ヘルツシュプルング
 Hervouet|エルブエット
@@ -15845,6 +16230,7 @@ Highbrow|ハイブラウ
 Highbrow|ハイブロー
 Highbush|ハイブッシュ
 Higher|ハイヤー
+Highlands|ハイランズ
 Highland|ハイランド
 Highlander|ハイランダー
 Highlife|ハイライフ
@@ -15870,12 +16256,14 @@ Hilarius|ヒラリウス
 Hilbert|ヒルベルト
 Hildebrand|ヒルデブラント
 Hildegard|ヒルデガルト
+Hildegards|ヒルデガルズ
 Hildegard|ヒルデガルド
 Hilgers|ヒルガース
 Hill|ヒル
 Hill|ヒルズ
 Hillary|ヒラリー
 Hillbilly|ヒルビリー
+Hilliards|ヒリヤーズ
 Hilliard|ヒリヤード
 Hillman|ヒルマン
 Hills|ヒリス
@@ -15888,10 +16276,12 @@ Himalayan|ヒマラヤン
 Himas|ハイムズ
 Himba|ヒンバ
 Himself|ヒムセルフ
+Hinds|ハインズ
 Hind|ハインド
 Hindemith|ヒンデミット
 Hindenburg|ヒンデンブルク
 Hindenburg|ヒンデンブルグ
+Hindereds|ヒンダーズ
 Hindered|ヒンダード
 Hindu|ヒンズー
 Hindu|ヒンドー
@@ -15904,6 +16294,7 @@ Hingle|ヒングル
 Hinkie|ヒンキー
 Hint|ヒント
 Hinterland|ヒンターラント
+Hinterlands|ヒンターランズ
 Hinterland|ヒンターランド
 Hinukh|ギヌフ
 Hip|ヒップ
@@ -16010,6 +16401,7 @@ Hoki|ホキ
 Hokunalin|ホクナリン
 Holbein|ホルバイン
 Holbein|ホルベイン
+Holds|ホールズ
 Hold|ホールド
 Holden|ホールデン
 Holder|ホールダー
@@ -16028,6 +16420,7 @@ Holiday|ホリデー
 Holism|ホーリズム
 Holistic|ホーリスティック
 Holistic|ホリスティック
+Hollands|ホランズ
 Holland|ホランド
 Hollerith|ホレリス
 Holliday|ホリデー
@@ -16040,6 +16433,7 @@ Holloway|ホロウエー
 Hollweg|ホルベーグ
 Hollweg|ホルベルグ
 Hollyhock|ホリホック
+Hollywoods|ハリウッズ
 Hollywood|ハリウッド
 Holmes|ホームズ
 Holmium|ホルミウム
@@ -16088,6 +16482,7 @@ Homestay|ホームステー
 Homestretch|ホームストレッチ
 Hometown|ホームタウン
 Homing|ホーミング
+Hominids|ホミニズ
 Hominid|ホミニド
 Hominization|ホミニゼーション
 Hommage|オマージュ
@@ -16129,7 +16524,9 @@ Honore|ノレ
 Honu|ホヌ
 Hoo|フー
 Hooch|ホーホ
+Hoods|フーズ
 Hood|フード
+Hoods|フッズ
 Hood|フッド
 Hoogenband|ホーヘンバント
 Hook|フック
@@ -16227,6 +16624,7 @@ Houdan|ウーダン
 Houdon|ウードン
 Hough|ハフ
 Houllier|ウリエ
+Hounds|ハウンズ
 Hound|ハウンド
 Hour|アワー
 House|ハウス
@@ -16242,7 +16640,9 @@ Hovercraft|ホーバークラフト
 Hovercraft|ホバークラフト
 Hovering|ホバリング
 How|ハウ
+Howards|ハワーズ
 Howard|ハワード
+Howards|ホワーズ
 Howard|ホワード
 Howe|ハウ
 Howells|ハウエルズ
@@ -16254,7 +16654,9 @@ Htawgaw|タウガウ
 Huahine|フアヒネ
 Huang|ホアング
 Hub|ハブ
+Hubbards|ハッバーズ
 Hubbard|ハッバード
+Hubbards|ハバーズ
 Hubbard|ハバード
 Hubble|ハッブル
 Huddinge|フディンゲ
@@ -16306,6 +16708,7 @@ Humanistic|ヒューマニスティック
 Humanite|ユマニテ
 Humanity|ヒューマニティ
 Humanity|ヒューマニティー
+Humanoids|ヒューマノイズ
 Humanoid|ヒューマノイド
 Humboldt|フンボルト
 Hume|ヒューム
@@ -16358,7 +16761,9 @@ Hurwitz|フルビッツ
 Husaberg|フサベル
 Husak|フサーク
 Husayn|フサイン
-Husband|ハズ
+Husbands|ハズ
+Husband|ハド
+Husbands|ハズバンズ
 Husband|ハズバンド
 Huser|ヒューザー
 Husk|ハスク
@@ -16393,6 +16798,7 @@ Hyaluronidase|ヒアルロニダーゼ
 Hyams|ハイアムズ
 Hyannis|ハイアニス
 Hybrid|ハイブリット
+Hybrids|ハイブリッズ
 Hybrid|ハイブリッド
 Hybridization|ハイブリダイゼーション
 Hybridoma|ハイブリドーマ
@@ -16542,7 +16948,9 @@ Icchantika|イッチャンティカ
 Ice|アイス
 Icebox|アイスボックス
 Icebreaker|アイスブレーカー
+Iceds|アイスズ
 Iced|アイスド
+Icelands|アイスランズ
 Iceland|アイスランド
 Iceman|アイスマン
 Ichthyol|イヒチオール
@@ -16561,6 +16969,7 @@ Iconologie|イコノロジー
 Iconoscope|アイコノスコープ
 Ictalurus|イクタルルス
 Icy|アイシー
+Ids|イズ
 Id|イド
 Idaho|アイダホ
 Idant|イダント
@@ -16591,6 +17000,7 @@ Ideologue|イデオローグ
 Idiom|イディオム
 Idiomatic|イディオマティック
 Idiomatic|イデオマティック
+Iditarods|アイディタロッズ
 Iditarod|アイディタロッド
 Idle|アイドル
 Idling|アイドリング
@@ -16643,8 +17053,11 @@ Ikspiari|イクスピアリ
 Ile|イル
 Ilense|イレンセ
 Ileus|イレウス
+Ilfords|イルフォーズ
 Ilford|イルフォード
+Iliads|イリアーズ
 Iliad|イリアード
+Iliads|イリアッズ
 Iliad|イリアッド
 Iliadis|イリアディス
 Iliau|イリアウ
@@ -16669,6 +17082,7 @@ Illusion|イルージョン
 Illusional|イリュージョナル
 Illusionism|イリュージョニズム
 Illusionist|イリュージョニスト
+Illustrateds|イラストレーテッズ
 Illustrated|イラストレーテッド
 Illustration|イラスト
 Illustration|イラストレーション
@@ -16725,6 +17139,7 @@ Iminodipropyl|イミノジプロピル
 Iminoethanophenanthro|イミノエタノフェナントロ
 Imipramine|イミプラミン
 Imiprothrin|イミプロトリン
+Imiquimods|イミキモズ
 Imiquimod|イミキモド
 Imitation|イミテーション
 Imitator|イミテーター
@@ -16817,7 +17232,9 @@ Inco|インコ
 Incognito|インコグニート
 Income|インカム
 Incomplete|インコンプリート
+Incorporateds|インコーポレーテッズ
 Incorporated|インコーポレーテッド
+Incorporateds|インコーポレーテツズ
 Incorporated|インコーポレーテツド
 Increment|インクリメント
 Incremental|インクリメンタル
@@ -16918,6 +17335,7 @@ Inferiority|インフェリオリティー
 Inferno|インフェルノ
 Inferno|インヘルノ
 Infidel|インフィデル
+Infields|インフィールズ
 Infield|インフィールド
 Infini|アンフィニ
 Infinite|インフィニット
@@ -16939,6 +17357,7 @@ Informatic|インフォーマティック
 Informatic|インフォマティクス
 Information|インフォーメーション
 Information|インフォメーション
+Informeds|インフォームズ
 Informed|インフォームド
 Informel|アンフォルメル
 Infra|アンフラ
@@ -16958,6 +17377,7 @@ Ingot|インゴット
 Ingrassia|イングラーシア
 Ingress|イングレス
 Ingrid|イングリット
+Ingrids|イングリッズ
 Ingrid|イングリッド
 Ingush|イングーシ
 Ingushetiya|イングシェーチア
@@ -16994,6 +17414,7 @@ Injector|インジェクター
 Ink|インキ
 Ink|インク
 Inkatha|インカタ
+Inkstands|インクスタンズ
 Inkstand|インクスタンド
 Inlay|インレー
 Inlet|インレット
@@ -17153,6 +17574,7 @@ Internationalism|インターナショナリズム
 Internationalist|インターナショナリスト
 Internationalization|インターナショナリゼーション
 Internationalize|インターナショナライズ
+Internationalizeds|インターナショナライズズ
 Internationalized|インターナショナライズド
 Internet|インターネット
 Internship|インターンシップ
@@ -17228,6 +17650,7 @@ Inverness|インバーネス
 Inverness|インバネス
 Inverse|インバース
 Invertase|インベルターゼ
+Inverteds|インバーテッズ
 Inverted|インバーテッド
 Inverter|インバータ
 Inverter|インバーター
@@ -17283,6 +17706,7 @@ Iran|イラン
 Iranian|イラニアン
 Iraq|イラク
 Iraschko|イラシュコ
+Irelands|アイルランズ
 Ireland|アイルランド
 Irenaeus|エーレナイオス
 Irenaeus|エーレナエウス
@@ -17353,7 +17777,9 @@ Isis|イシス
 Iskra|イスクラ
 Islam|イスラーム
 Islam|イスラム
+Islamabads|イスラマバーズ
 Islamabad|イスラマバード
+Islands|アイランズ
 Island|アイランド
 Islander|アイランダー
 Islander|アイランダーズ
@@ -17363,6 +17789,7 @@ Isley|アイズリー
 Isley|アイズレー
 Ism|イズム
 Ismet|イスメット
+Isnads|イスナーズ
 Isnad|イスナード
 Iso|イソ
 Isoaminile|イソアミニル
@@ -17373,6 +17800,7 @@ Isobutoxypentyl|イソブトキシペンチル
 Isobutylene|イソブチレン
 Isobutyryl|イソブチリル
 Isobuzole|イソブゾール
+Isocarboxazids|イソカルボキサジズ
 Isocarboxazid|イソカルボキサジド
 Isochrony|アイソクロニー
 Isoconazole|イソコナゾール
@@ -17381,6 +17809,7 @@ Isocyanate|イソシアネート
 Isocyanatomethyl|イソシアナトメチル
 Isocyanuric|イソシアヌル
 Isoflavone|イソフラボン
+Isoflavonoids|イソフラボノイズ
 Isoflavonoid|イソフラボノイド
 Isoflurane|イソフルラン
 Isoflurophate|イソフルロフェート
@@ -17398,6 +17827,7 @@ Isoleucyl|イソロイシル
 Isolina|イゾリーナ
 Isometric|アイソメトリック
 Isometric|アイソメトリックス
+Isoniazids|イソニアジズ
 Isoniazid|イソニアジド
 Isooctane|イソオクタン
 Isopentyl|イソペンチル
@@ -17460,6 +17890,7 @@ Iteration|イタレーション
 Iterator|イテレーター
 Ithaca|イサカ
 Ituri|イトゥリ
+Iupoids|ルポイズ
 Iupoid|ルポイド
 Ivan|イバン
 Ivan|イワン
@@ -17520,6 +17951,7 @@ Jackman|ジャックマン
 Jacks|ジャックス
 Jackson|ジャクスン
 Jackson|ジャクソン
+Jacobabads|ジャコババーズ
 Jacobabad|ジャコババード
 Jacobian|ヤコビアン
 Jacobite|ジャコバイト
@@ -17533,7 +17965,9 @@ Jacoby|ジャコビー
 Jacopone|ヤコポーネ
 Jacqard|ジャカール
 Jacqard|ジャッカール
+Jacquards|ジャカーズ
 Jacquard|ジャカード
+Jacquards|ジャガーズ
 Jacquard|ジャガード
 Jacqueline|ジャクリーヌ
 Jacqueline|ジャクリーン
@@ -17568,6 +18002,7 @@ Jakob|ヤコブ
 Jakob|ヤコプ
 Jakobson|ヤーコブソン
 Jalal|ジャラル
+Jalalabads|ジャララバーズ
 Jalalabad|ジャララバード
 Jalappe|ヤラッパ
 Jallianwala|ジャリアンワーラー
@@ -17644,6 +18079,7 @@ Japonol|ハポニョール
 Jaque|チョッキ
 Jar|ジャー
 Jardin|ジャルダン
+Jareds|ジャレズ
 Jared|ジャレド
 Jargon|ジャーゴン
 Jargon|ジャルゴン
@@ -17680,6 +18116,7 @@ Je|ジュ
 Jealousy|ジェラシー
 Jean|ジャン
 Jeans|ジーンズ
+Jeds|ジェズ
 Jed|ジェド
 Jeep|ジープ
 Jeepney|ジプニー
@@ -17703,6 +18140,7 @@ Jenner|ジェンナー
 Jensen|イエンセン
 Jenson|ジェンソン
 Jeppe|イエッペ
+Jereds|ジェレズ
 Jered|ジェレド
 Jeremiah|エレミア
 Jeremiah|エレミヤ
@@ -17753,10 +18191,13 @@ Jib|ジブ
 Jicky|ジッキー
 Jig|ジグ
 Jigger|ジガー
+Jigheads|ジグヘッズ
 Jighead|ジグヘッド
 Jigsaw|ジグソー
 Jigsaw|ジグゾー
+Jihads|ジハーズ
 Jihad|ジハード
+Jihads|ジハズ
 Jihad|ジハド
 Jimbaran|ジンバラン
 Jimenez|ヒメネス
@@ -17787,6 +18228,7 @@ Jobs|ジョブス
 Jobs|ジョブズ
 Jochem|ヨヘム
 Jockey|ジョッキー
+Jods|ヨーズ
 Jod|ヨード
 Jodel|ヨーデル
 Jodhpur|ジョードプル
@@ -18120,6 +18562,7 @@ Karl|カール
 Karl|カルル
 Karloff|カーロフ
 Karlova|カレル
+Karlsbads|カルルスバーズ
 Karlsbad|カルルスバード
 Karlsplatz|カールスプラッツ
 Karlsruhe|カールシュルーエ
@@ -18205,6 +18648,7 @@ Keep|キープ
 Keeper|キーパー
 Keeping|キーピング
 Keepist|キーピスト
+Keeshonds|キースホンズ
 Keeshond|キースホンド
 Keffer|ケッファ
 Keitel|カイテル
@@ -18218,6 +18662,7 @@ Kellermann|ケレルマン
 Kells|ケルズ
 Kelly|ケリー
 Kelmscott|ケルムスコット
+Keloids|ケロイズ
 Keloid|ケロイド
 Kelp|ケルプ
 Kelpie|ケルピー
@@ -18229,6 +18674,7 @@ Kempas|ケンパス
 Kenaf|ケナフ
 Kendall|ケンダル
 Kennan|ケナン
+Kennards|ケナーズ
 Kennard|ケナード
 Kennedy|ケネディ
 Kennel|ケネル
@@ -18296,6 +18742,7 @@ Ketone|ケトン
 Ketophenylbutazone|ケトフェニルブタゾン
 Ketose|ケトース
 Ketosis|ケトーシス
+Ketosteroids|ケトステロイズ
 Ketosteroid|ケトステロイド
 Ketotifen|ケトチフェン
 Kettering|ケタリング
@@ -18304,6 +18751,7 @@ Ketupa|ケトゥパ
 Kew|キュー
 Kewpie|キューピー
 Key|キー
+Keyboards|キーボーズ
 Keyboard|キーボード
 Keyboardist|キーボーディスト
 Keyless|キーレス
@@ -18375,8 +18823,9 @@ Kick|キック
 Kickboxing|キックボクシング
 Kicker|キッカー
 Kicking|キッキング
-Kid|キッズ
+Kids|キッズ
 Kid|キッド
+Kidds|キッズ
 Kidd|キッド
 Kiddy|キディ
 Kiddy|キディー
@@ -18405,6 +18854,7 @@ Kilim|ケレム
 Kilimanjaro|キリマンジャロ
 Kilkenny|キルケニー
 Kill|キル
+Killeds|キルズ
 Killed|キルド
 Killeen|キリーン
 Killer|キラー
@@ -18419,6 +18869,7 @@ Kilogramme|キログラム
 Kilohertz|キロヘルツ
 Kilometre|キロメートル
 Kilonewton|キロニュートン
+Kilorads|キロラズ
 Kilorad|キロラド
 Kilt|キルト
 Kilusang|キルサン
@@ -18492,6 +18943,7 @@ Kirghiz|クルグズ
 Kiribati|キリバス
 Kirilenko|キリレンコ
 Kirillitsa|キリル
+Kirklands|カークランズ
 Kirkland|カークランド
 Kirov|キーロフ
 Kirriemuir|キリミューア
@@ -18582,6 +19034,7 @@ Knigge|クニッゲ
 Knight|ナイツ
 Knight|ナイト
 Knit|ニット
+Knitteds|ニッテッズ
 Knitted|ニッテッド
 Knitter|ニッター
 Knob|ノッブ
@@ -18872,6 +19325,7 @@ Kyasanur|キャサヌール
 Kyasanur|キャサヌル
 Kyawtawgyi|チャウットージー
 Kyawtawgyi|チャウトージー
+Kydlands|キードランズ
 Kydland|キードランド
 Kydonos|キュドノス
 Kyklops|キュクロプス
@@ -18935,6 +19389,7 @@ Lactulose|ラクツロース
 Lactylphenetidine|ラクチルフェネチジン
 Lacuna|ラクナ
 Lacy|レーシー
+Lads|ラッズ
 Lad|ラッド
 Ladakh|ラダク
 Ladder|ラダー
@@ -18966,6 +19421,7 @@ Lafcadio|ラフカデオ
 Laffer|ラッファー
 Laffitte|ラフィット
 Laffrey|ラフレー
+Lafonds|ラフォンズ
 Lafond|ラフォンド
 Laforgue|ラフォルグ
 Lag|ラグ
@@ -18975,6 +19431,7 @@ Lagenorynchus|ラゲノリュンクス
 Lager|ラーゲリ
 Lager|ラーゲル
 Lager|ラガー
+Lagerfelds|ラガーフェルズ
 Lagerfeld|ラガーフェルド
 Lagerlof|ラーゲルレーブ
 Lagoon|ラグーン
@@ -18986,6 +19443,7 @@ Lahore|ラーホール
 Lahore|ラホール
 Laicite|ライシテ
 Lailaps|ライラプス
+Lairds|レアーズ
 Laird|レアード
 Laisser|レッセ
 Lake|レーク
@@ -19024,6 +19482,7 @@ Lamey|ラメー
 Lamia|ラミア
 Lamina|ラミナ
 Laminate|ラミネート
+Laminateds|ラミネーテッズ
 Laminated|ラミネーテッド
 Lamination|ラミネーション
 Laminin|ラミニン
@@ -19037,6 +19496,7 @@ Lamouchi|ラムーシ
 Lamouchi|ラムシ
 Lamoureux|ラムルー
 Lamp|ランプ
+Lampards|ランパーズ
 Lampard|ランパード
 Lampos|ランポス
 Lampsilis|ランプシリス
@@ -19052,6 +19512,7 @@ Lancet|ランセット
 Lanchester|ランチェスター
 Lancia|ランチア
 Lancome|ランコム
+Lands|ランズ
 Land|ランド
 Landcruiser|ランクル
 Lander|ランダー
@@ -19093,6 +19554,7 @@ Lantana|ランタナ
 Lantern|ランタン
 Lanthan|ランタン
 Lanthanide|ランタニド
+Lanthanoids|ランタノイズ
 Lanthanoid|ランタノイド
 Lantschner|ランチュナー
 Lanvin|ランバーン
@@ -19110,6 +19572,7 @@ Lapinova|ラピノーバ
 Laplanche|ラプランシュ
 Laptop|ラップトップ
 Laramie|ララミー
+Lards|ラーズ
 Lard|ラード
 Laredo|ラレド
 Large|ラージ
@@ -19186,6 +19649,7 @@ Lattimore|ラチモーア
 Lattimore|ラティモア
 Latvia|ラトビア
 Lauan|ラワン
+Lauds|ローズ
 Laud|ロード
 Lauder|ローダ
 Lauder|ローダー
@@ -19248,6 +19712,7 @@ Lawyer|ロイヤー
 Laxa|ラクサ
 Laxoberon|ラキソベロン
 Lay|レー
+Layards|レーアーズ
 Layard|レーアード
 Layer|レーヤ
 Layer|レーヤー
@@ -19264,6 +19729,7 @@ Lazy|レージー
 Lazy|レゼー
 Le|ル
 Leachman|リーチマン
+Leads|リーズ
 Lead|リード
 Leader|リーダー
 Leadership|リーダーシップ
@@ -19395,6 +19861,7 @@ Lengthening|レンクサニング
 Leni|レニ
 Lenihan|レニハン
 Lenin|レーニン
+Leningrads|レニングラーズ
 Leningrad|レニングラード
 Leniusculus|レニウスクルス
 Lennenkampf|レンネンカンプ
@@ -19410,8 +19877,10 @@ Lenz|レンツ
 Lenzar|レンザー
 Leo|レーオ
 Leo|レオ
+Leonards|レオナーズ
 Leonard|レオナード
 Leonard|レオナール
+Leonards|レオナルズ
 Leonard|レオナルド
 Leone|レオーネ
 Leonel|レオネル
@@ -19419,6 +19888,7 @@ Leonhard|レオンハルト
 Leonhardi|レオンハルディ
 Leoni|レオーニ
 Leoni|レオニ
+Leonids|レオニーズ
 Leonid|レオニード
 Leonidovich|レオニードビチ
 Leonor|レオノール
@@ -19426,13 +19896,16 @@ Leonora|レオノーラ
 Leonore|レオノーレ
 Leonotis|レオノチス
 Leontief|レオンチェフ
+Leopards|レオパーズ
 Leopard|レオパード
 Leopardus|レオパルドゥス
 Leopold|レーオポルト
 Leopold|レオポルト
+Leopolds|レオポルズ
 Leopold|レオポルド
 Leopoldskron|レオポルトスクロン
 Leopon|レオポン
+Leotards|レオターズ
 Leotard|レオタード
 Lepage|ルパージュ
 Lepcha|レプチャ
@@ -19513,7 +19986,9 @@ Leveling|レベリング
 Lever|レバー
 Leverage|レバリッジ
 Leverage|レバレッジ
+Leverageds|レーバリッジズ
 Leveraged|レーバリッジド
+Leverageds|レバレッジズ
 Leveraged|レバレッジド
 Levi|リビ
 Levi|レビ
@@ -19538,6 +20013,7 @@ Lewisia|ルイシア
 Lewisite|ルイサイト
 Lexical|レキシカル
 Lexicalize|レキシカライズ
+Lexicalizeds|レキシカライズズ
 Lexicalized|レキシカライズド
 Lexicon|レキシコン
 Lexington|レキシントン
@@ -19572,6 +20048,7 @@ Libertine|リバティーンズ
 Liberty|リバチー
 Liberty|リバティ
 Liberty|リバティー
+Libeskinds|リベスキンズ
 Libeskind|リベスキンド
 Libido|リビド
 Libido|リビドー
@@ -19599,6 +20076,7 @@ Lichtenstein|リキテンスタイン
 Lichterfelde|リヒターフェルデ
 Licinius|リキニウス
 Licorice|リコリス
+Lids|リッズ
 Lid|リッド
 Liddell|リデル
 Lidice|リジツェ
@@ -19616,6 +20094,7 @@ Liebknecht|リープクネヒト
 Liechtenstein|リヒテンシュタイン
 Liechtenstein|リヒテンスタイン
 Lied|リート
+Lieds|リーズ
 Lied|リード
 Liefde|リーフデ
 Liege|リエージュ
@@ -19636,6 +20115,7 @@ Lifter|リフタ
 Lifter|リフター
 Lifting|リフティング
 Ligachev|リガチョフ
+Ligands|リガンズ
 Ligand|リガンド
 Ligase|リガーゼ
 Ligature|リガチャー
@@ -19651,9 +20131,11 @@ Lignin|リグニン
 Ligroin|リグロイン
 Ligure|リグリア
 Like|ライク
+Likelihoods|ライクリーフッズ
 Likelihood|ライクリーフッド
 Likert|リッカート
 Likhachev|リハチョフ
+Likuds|リクーズ
 Likud|リクード
 Lilac|ライラック
 Lilas|リラ
@@ -19678,8 +20160,11 @@ Liminality|リミナリティー
 Limit|リミッツ
 Limit|リミット
 Limitation|リミテーション
+Limiteds|リミッティッズ
 Limited|リミッティッド
+Limiteds|リミティズ
 Limited|リミティド
+Limiteds|リミテッズ
 Limited|リミテッド
 Limiter|リミッタ
 Limiter|リミッター
@@ -19762,6 +20247,7 @@ Linoleum|リノリウム
 Linoleum|リノリューム
 Linotype|ライノタイプ
 Linsang|リンサン
+Linseeds|リンシーズ
 Linseed|リンシード
 Lint|リント
 Linter|リンター
@@ -19783,10 +20269,12 @@ Liparis|リパリス
 Lipase|リパーゼ
 Lipatti|リパッティ
 Lipchitz|リプシッツ
+Lipids|リピズ
 Lipid|リピド
 Lipidosis|リピドーシス
 Lipitor|リピトール
 Lipo|リポ
+Lipoids|リポイズ
 Lipoid|リポイド
 Liposome|リポソーム
 Liposome|リポゾーム
@@ -19799,8 +20287,11 @@ Lipunan|リプナン
 Liqueur|リキュール
 Liqueur|リケール
 Liquid|リキット
+Liquids|リキッズ
 Liquid|リキッド
+Liquids|リクイッズ
 Liquid|リクイッド
+Liquids|リクイズ
 Liquid|リクイド
 Liquidity|リクイディティー
 Liquor|リカー
@@ -19871,6 +20362,7 @@ Livre|リーブル
 Liz|リーズ
 Liz|リズ
 Lizarazu|リザラズ
+Lizards|リザーズ
 Lizard|リザード
 Lizzy|リジー
 Ljokelsoy|ヨケルソイ
@@ -19880,8 +20372,10 @@ Llama|リャマ
 Llanos|リャノ
 Llanos|リャノス
 Llodra|ロドラ
+Lloyds|ロイズ
 Lloyd|ロイド
 Llywelyn|ルウェリン
+Loads|ローズ
 Load|ロード
 Loading|ロージング
 Loading|ローディング
@@ -19925,6 +20419,7 @@ Locker|ロッカー
 Lockerbie|ロッカビー
 Locket|ロケット
 Lockhart|ロックハート
+Lockheeds|ロッキーズ
 Lockheed|ロッキード
 Locri|ロクリ
 Locus|ローカス
@@ -19961,6 +20456,7 @@ Logotype|ロゴタイプ
 Logrono|ログロニョ
 Logue|ローグ
 Logunov|ログノフ
+Logwoods|ログウッズ
 Logwood|ログウッド
 Lohan|ローハン
 Lohan|ロハン
@@ -19972,11 +20468,12 @@ Lokayata|ローカーヤタ
 Loken|ローケン
 Loligo|ロリゴ
 Lolita|ロリータ
-Lollard|ロラーズ
+Lollards|ロラーズ
 Lollard|ロラード
 Lollipop|ロリポップ
 Lollobrigida|ロロブリジーダ
 Lombard|ロンバート
+Lombards|ロンバーズ
 Lombard|ロンバード
 Lombard|ロンバール
 Lombardi|ロンバルディ
@@ -20008,6 +20505,7 @@ Looks|ルックス
 Lookup|ルックアップ
 Loony|ルーニー
 Loop|ループ
+Loopeds|ループズ
 Looped|ループド
 Looping|ルーピング
 Loople|ループル
@@ -20022,6 +20520,7 @@ Lopinavir|ロピナビル
 Lopro|ロプロ
 Loratadine|ロラタジン
 Lorca|ロルカ
+Lords|ローズ
 Lord|ロード
 Loreal|ロレアル
 Lorelei|ローレライ
@@ -20057,6 +20556,7 @@ Lotus|ローチュス
 Lotus|ロートス
 Loubet|ルーベ
 Louboutin|ルブタン
+Louds|ラウズ
 Loud|ラウド
 Louder|ラウダー
 Loudness|ラウドネス
@@ -20072,7 +20572,9 @@ Louwaege|ルワージュ
 Lovage|ラビッジ
 Love|ラブ
 Love|ラブズ
+Lovebirds|ラブバーズ
 Lovebird|ラブバード
+Lovegoods|ラブグッズ
 Lovegood|ラブグッド
 Lovelace|ラブレース
 Lovell|ロベル
@@ -20328,6 +20830,7 @@ Maccabaeus|マカバイ
 Maccabaeus|マカベア
 Maccabaeus|マカベウス
 Macchina|マッキナ
+Macdonalds|マクドナルズ
 Macdonald|マクドナルド
 Macdowell|マクダウェル
 Mace|メース
@@ -20373,6 +20876,7 @@ Macro|マクロ
 Macrobiotic|マクロビオティック
 Macrocephalus|マクロケファルス
 Macrophomina|マクロフォミナ
+Mads|マッズ
 Mad|マッド
 Mada|マーダ
 Madagascar|マダガスカル
@@ -20397,7 +20901,9 @@ Madonna|マドンナ
 Madras|マドラス
 Madre|マードレ
 Madrid|マドリー
+Madrids|マドリーズ
 Madrid|マドリード
+Madrids|マドリッズ
 Madrid|マドリッド
 Madrigal|マドリガル
 Madrigale|マドリガーレ
@@ -20469,6 +20975,7 @@ Magyar|マジャール
 Mahaaviira|マハービーラ
 Mahaaviira|マハービラ
 Mahabharata|マハーバーラタ
+Mahads|マハーズ
 Mahad|マハード
 Mahaffey|マハッフィー
 Mahaffey|マハフィー
@@ -20503,6 +21010,7 @@ Mahogany|マホガニー
 Mahren|メーレン
 Mahshi|マフシー
 Maiasaura|マイアサウラ
+Maids|メーズ
 Maid|メード
 Maiden|メーデン
 Mail|メール
@@ -20566,6 +21074,7 @@ Malaetele|マラエテレ
 Malafon|マラフォン
 Malaguena|マラゲーニャ
 Malakoff|マラコフ
+Malamuds|マラムッズ
 Malamud|マラムッド
 Malandrino|マランドリーノ
 Malaparte|マラパルテ
@@ -20651,6 +21160,7 @@ Man|マンズ
 Man|メンズ
 Manado|メナド
 Manage|マネージ
+Manageds|マネージズ
 Managed|マネージド
 Management|マネージメント
 Management|マネジメント
@@ -20703,6 +21213,7 @@ Mandy|マンディ
 Manet|マネ
 Maneuver|マニューバー
 Maneuver|マヌーバー
+Manfreds|マンフレッズ
 Manfred|マンフレッド
 Manfredine|マンフレディーネ
 Mangaia|マンガイア
@@ -20713,6 +21224,7 @@ Mangiare|マンジャーレ
 Mangler|マングラー
 Mango|マンゴ
 Mango|マンゴー
+Mangolds|マンゴールズ
 Mangold|マンゴールド
 Mangosteen|マンゴスチン
 Mangosteen|マンゴスティン
@@ -20735,10 +21247,13 @@ Manifestation|マニフェステーション
 Manifestation|マニュフィスティーション
 Manifesto|マニフェスト
 Manifesto|マニュフェスト
+Manifolds|マニホールズ
 Manifold|マニホールド
+Manifolds|マニホルズ
 Manifold|マニホルド
 Manila|マニラ
 Manilow|マニロー
+Manipulateds|マニピュレーテッズ
 Manipulated|マニピュレーテッド
 Manipulation|マニピュレーション
 Manipulator|マニピュレータ
@@ -20748,6 +21263,7 @@ Manipulator|マニュピュレーター
 Manitoba|マニトバ
 Manitou|マニトー
 Mankiewicz|マンキーウィッツ
+Mankinds|マンカインズ
 Mankind|マンカインド
 Manley|マンリー
 Manley|マンレー
@@ -20778,6 +21294,7 @@ Manon|マノン
 Manostat|マノスタット
 Manpower|マンパワー
 Manser|マンサー
+Mansfields|マンスフィールズ
 Mansfield|マンスフィールド
 Mansion|マンション
 Manstein|マンシュタイン
@@ -20909,6 +21426,7 @@ Marienhafe|マリーエンハーフェ
 Marienhafe|マリエンハーフェ
 Marietta|マリエッタ
 Marietta|メリエッタ
+Marigolds|マリーゴールズ
 Marigold|マリーゴールド
 Marijuana|マリファナ
 Marijuana|マリュワナ
@@ -20976,6 +21494,7 @@ Marnier|マニエ
 Marnier|マルニエ
 Maroon|マルーン
 Marozsan|マロジャーン
+Marquands|マーカンズ
 Marquand|マーカンド
 Marquez|マルケス
 Marquinhos|マルキーニョス
@@ -20987,6 +21506,7 @@ Marrakesh|マラケッシュ
 Marranos|マラーノ
 Marranos|マラノ
 Marriage|マリッジ
+Marrieds|マリーズ
 Married|マリード
 Marriott|マリオット
 Marron|マロン
@@ -21049,6 +21569,7 @@ Marxist|マルキシスト
 Marxist|マルキスト
 Mary|メアリ
 Mary|メアリー
+Marylands|メリーランズ
 Maryland|メリーランド
 Marzipan|マジパン
 Marzocchi|マルゾッキ
@@ -21074,10 +21595,12 @@ Maserati|マセラティ
 Maseru|マセル
 Mash|マッシュ
 Mashburn|マシュバーン
+Masheds|マッシュズ
 Mashed|マッシュド
 Masher|マッシャー
 Masina|マシーナ
 Mask|マスク
+Maskeds|マスクズ
 Masked|マスクド
 Masker|マスカー
 Masking|マスキング
@@ -21127,6 +21650,7 @@ Mata|マータ
 Matadi|マタディ
 Matador|マタドール
 Matanikau|マタニカウ
+Matcheds|マッチズ
 Matched|マッチド
 Matching|マッチング
 Mate|マテ
@@ -21274,7 +21798,9 @@ Mcclintock|マクリントック
 Mcclintock|マックリントック
 Mccluskey|マクラスキー
 Mcconaughey|マコノヒー
+Mccords|マコーズ
 Mccord|マコード
+Mccords|マッコーズ
 Mccord|マッコード
 Mccormick|マコーミック
 Mccormick|マッコーミック
@@ -21286,6 +21812,7 @@ Mcculloch|マッククロッシュ
 Mcdonnell|マクダネル
 Mcdonnell|マクドネル
 Mcdonnell|マグダネル
+Mcdormands|マクドーマンズ
 Mcdormand|マクドーマンド
 Mcdougall|マクドゥーガル
 Mcgee|マッギー
@@ -21302,6 +21829,7 @@ Mckinley|マッキンレー
 Mckinnell|マッキンネル
 Mckinney|マッキニー
 Mckinney|マッキンニー
+Mcleods|マクローズ
 Mcleod|マクロード
 Mclerran|マクレラン
 Mcluhan|マクルーハン
@@ -21317,6 +21845,7 @@ Mcneil|マックニール
 Mcnish|マクニッシュ
 Mcphail|マックフェール
 Mcqueen|マックイーン
+Meads|ミーズ
 Mead|ミード
 Meadow|メドー
 Meadow|メドゥー
@@ -21370,6 +21899,7 @@ Medias|メリヤス
 Mediator|メディエータ
 Mediator|メディエーター
 Medic|メディック
+Medicaids|メディケーズ
 Medicaid|メディケード
 Medical|メジカル
 Medical|メディカル
@@ -21530,6 +22060,7 @@ Menace|メナス
 Menam|メナム
 Menamin|メナミン
 Menaquinone|メナキノン
+Menards|メナーズ
 Menard|メナード
 Mendeleev|メンデレーエフ
 Mendeleev|メンデレーフ
@@ -21643,6 +22174,7 @@ Merlet|メルレ
 Merlot|メルロー
 Merluza|メルルーサ
 Merlyn|マーリン
+Mermaids|マーメーズ
 Mermaid|マーメード
 Mernissi|メルニーシー
 Merogony|メロゴニー
@@ -21716,6 +22248,7 @@ Metallic|メタリック
 Metallica|メタリカ
 Metallikon|メタリコン
 Metallise|メタリゼ
+Metalliseds|メタライズズ
 Metallised|メタライズド
 Metallocene|メタロセン
 Metamorphose|メタモルフォーズ
@@ -21735,6 +22268,7 @@ Metazocine|メタゾシン
 Meteor|メテオ
 Meteore|メテオール
 Meteorite|メテオリット
+Meteoroids|メテオロイズ
 Meteoroid|メテオロイド
 Meter|ミーター
 Meter|ミーターズ
@@ -21760,9 +22294,12 @@ Methicone|メチコン
 Methimazole|メチマゾール
 Methionine|メチオニン
 Methionyl|メチオニル
+Methods|メソーズ
 Method|メソード
+Methods|メソッズ
 Method|メソッド
 Method|メトーデ
+Methods|メトーズ
 Method|メトード
 Methodist|メソジスト
 Methodist|メソディスト
@@ -21915,6 +22452,7 @@ Mexiletine|メキシレチン
 Meyer|ムイエ
 Meyerbeer|マイヤーベーア
 Meyerbeer|マイヤベーア
+Meyerholds|メーエルホリズ
 Meyerhold|メーエルホリド
 Meyrowitz|メーロウィッツ
 Meyrowitz|メーロウィツ
@@ -21989,12 +22527,14 @@ Micrometer|ミクロメーター
 Micron|ミクロン
 Micronesia|ミクロネシア
 Micronewton|マイクロニュートン
+Micronizeds|マイクロナイズズ
 Micronized|マイクロナイズド
 Microphon|マイク
 Microphone|マイクロホン
 Microprocessor|マイクロプロセッサ
 Microprocessor|マイクロプロセッサー
 Micropterus|ミクロプテルス
+Microseconds|マイクロセカンズ
 Microsecond|マイクロセカンド
 Microsporum|ミクロスポルム
 Microsurgery|マイクロサージェリー
@@ -22002,6 +22542,7 @@ Microsurgery|マイクロサージャリー
 Microtome|ミクロトーム
 Microvita|マイクロバイタ
 Microwave|マイクロウエーブ
+Mids|ミッズ
 Mid|ミッド
 Midas|ミダース
 Midas|ミダス
@@ -22019,6 +22560,7 @@ Midget|ミゼット
 Midi|ミディ
 Midian|ミデアン
 Midian|ミディアン
+Midlands|ミッドランズ
 Midland|ミッドランド
 Midnight|ミッドナイト
 Midodrine|ミドドリン
@@ -22027,6 +22569,7 @@ Midvale|ミッドベール
 Midway|ミッドウェー
 Midwest|ミッドウエスト
 Miel|ミエル
+Mifsuds|ミフスッズ
 Mifsud|ミフスッド
 Miglio|ミリア
 Miglio|ミリオ
@@ -22051,6 +22594,7 @@ Mikoyan|ミコヤン
 Milanese|ミラネーゼ
 Milano|ミラノ
 Milano|ミラン
+Milds|マイルズ
 Mild|マイルド
 Mile|マイル
 Mile|マイルズ
@@ -22075,10 +22619,12 @@ Milker|ミルカー
 Milkteath|ミルクティース
 Milky|ミルキー
 Mill|ミル
+Millards|ミラーズ
 Millard|ミラード
 Millcassee|ミルカッセ
 Mille|ミッレ
 Mille|ミレ
+Milleds|ミルズ
 Milled|ミルド
 Millefeuille|ミルフィーユ
 Millefeuille|ミルフィユ
@@ -22108,6 +22654,7 @@ Millitorr|ミリトル
 Milliwatt|ミリワット
 Mills|ミルス
 Mills|ミルズ
+Millwoods|ミルウッズ
 Millwood|ミルウッド
 Milne|ミルン
 Milner|ミルナー
@@ -22137,6 +22684,7 @@ Mince|メンチ
 Mincer|ミンサー
 Minchey|ミンチー
 Mincing|ミンシング
+Minds|マインズ
 Mind|マインド
 Mindell|ミンデル
 Mindorensis|ミンドレンシス
@@ -22232,12 +22780,14 @@ Misanthrope|ミザントロープ
 Miscast|ミスキャスト
 Miscella|ミセラ
 Misch|ミッシュ
+Misclassifieds|ミスクラシファイズ
 Misclassified|ミスクラシファイド
 Miserable|ミゼラブル
 Misery|ミザリー
 Misery|ミゼリー
 Mishnah|ミシナ
 Mishnah|ミシュナ
+Misleads|ミスリーズ
 Mislead|ミスリード
 Mismatch|ミスマッチ
 Misogyny|ミソジニー
@@ -22288,6 +22838,7 @@ Miucha|ミウーシャ
 Mix|ミックス
 Mixed|ミクスト
 Mixed|ミックスト
+Mixeds|ミックスズ
 Mixed|ミックスド
 Mixer|ミキサー
 Mixer|ミクサ
@@ -22298,6 +22849,7 @@ Mixture|ミキスチュア
 Mixture|ミクスチャー
 Mixture|ミクスチュア
 Mizoram|ミゾラム
+Mjods|ミョーズ
 Mjod|ミョード
 Moabi|モアビ
 Moai|モアイ
@@ -22323,6 +22875,7 @@ Mocatta|モカッタ
 Moccasin|モカシン
 Mocha|モカ
 Mock|モック
+Mockingbirds|モッキングバーズ
 Mockingbird|モッキングバード
 Mockler|モックラー
 Modafinil|モダフィニル
@@ -22378,6 +22931,7 @@ Mogadiscio|モガディシュ
 Moggridge|モグリッジ
 Mogilev|モギリョフ
 Mogol|モール
+Mohads|モハズ
 Mohad|モハド
 Mohair|モヘア
 Mohippa|ミューヒッパ
@@ -22399,8 +22953,10 @@ Moisturizing|モイスチャライジング
 Mol|モル
 Mola|モラ
 Molasses|モラセス
+Molds|モールズ
 Mold|モールド
 Moldau|モルダウ
+Moldeds|モールデッズ
 Molded|モールデッド
 Molder|モルダー
 Molding|モールディング
@@ -22430,6 +22986,7 @@ Mometasone|モメタゾン
 Mommesin|モメサン
 Mompou|モンポー
 Monaco|モナコ
+Monads|モナズ
 Monad|モナド
 Monarch|モナーク
 Monarchomachi|モナルコマキ
@@ -22459,6 +23016,7 @@ Mong|ムアン
 Mongol|モンゴール
 Mongol|モンゴル
 Mongolia|モンゴリア
+Mongoloids|モンゴロイズ
 Mongoloid|モンゴロイド
 Mongoos|マングース
 Monilia|モニリア
@@ -22469,10 +23027,12 @@ Monitor|モニトール
 Monitoring|モニタリング
 Monk|モンク
 Monkey|モンキー
+Monkshoods|モンクスフーズ
 Monkshood|モンクスフード
 Monmorency|モンモラシー
 Mono|モノ
 Monoamine|モノアミン
+Monochords|モノコーズ
 Monochord|モノコード
 Monochrome|モノクロ
 Monochrome|モノクローム
@@ -22583,6 +23143,7 @@ Monumental|モニュメンタル
 Monuments|モニュマン
 Monza|モンザ
 Monza|モンツァ
+Moods|ムーズ
 Mood|ムード
 Moodist|ムーディスト
 Moody|ムーディー
@@ -22597,6 +23158,7 @@ Moor|モーロ
 Moore|ムーア
 Moosbrugger|モースブルッガー
 Mop|モップ
+Mopeds|モペッズ
 Moped|モペッド
 Mopso|モプソ
 Mopty|モプティ
@@ -22620,6 +23182,7 @@ Moravia|モラービア
 Moravia|モラビア
 Morazan|モラサン
 Mordent|モルデント
+Mordreds|モルドレッズ
 Mordred|モルドレッド
 More|モア
 More|モアー
@@ -22646,6 +23209,7 @@ Morille|モリーユ
 Morillon|モリヨン
 Morin|モラン
 Morin|モリン
+Morlands|モーランズ
 Morland|モーランド
 Morlet|モルレー
 Morning|モーニング
@@ -22763,12 +23327,14 @@ Moule|ムール
 Moulin|ムーラン
 Moulmein|モルメイン
 Mouly|ムレ
+Mounds|マウンズ
 Mound|マウンド
 Mount|マウント
 Mountain|マウンテン
 Mountain|マウンテンズ
 Mountaineer|マウンテニア
 Mountbatten|マウントバッテン
+Mounteds|マウンテッズ
 Mounted|マウンテッド
 Mounting|マウンティング
 Mouretania|モレタニア
@@ -22828,6 +23394,7 @@ Mucho|ムーチョ
 Mucin|ムチン
 Muco|ムコ
 Mucosta|ムコスタ
+Muds|マッズ
 Mud|マッド
 Muddle|マドル
 Muddler|マドラー
@@ -22846,17 +23413,29 @@ Mughal|ムガル
 Mugler|ミュグレー
 Muhajirun|ムハージルーン
 Muhammad|マホメット
+Muhammads|マホメッズ
 Muhammad|マホメッド
+Muhammads|ムハマッズ
 Muhammad|ムハマッド
+Muhammads|ムハマズ
 Muhammad|ムハマド
+Muhammads|ムハメッズ
 Muhammad|ムハメッド
+Muhammads|ムハメズ
 Muhammad|ムハメド
+Muhammads|ムハンマズ
 Muhammad|ムハンマド
+Muhammads|モハマッズ
 Muhammad|モハマッド
+Muhammads|モハマズ
 Muhammad|モハマド
+Muhammads|モハメッズ
 Muhammad|モハメッド
+Muhammads|モハメズ
 Muhammad|モハメド
+Muhammads|モハンマズ
 Muhammad|モハンマド
+Muhammads|モハンメズ
 Muhammad|モハンメド
 Muhlenbergii|ミューレンバーグ
 Muhlenbergii|ミューレンベルグ
@@ -22865,6 +23444,7 @@ Muhsam|ミューザム
 Muir|ミュア
 Muito|ムイト
 Mujahideen|ムジャヒディン
+Mujtahids|ムジュタヒズ
 Mujtahid|ムジュタヒド
 Mukral|ムクラール
 Mulato|ムラート
@@ -22885,6 +23465,7 @@ Mullite|ムライト
 Mulroney|マルルーニー
 Multan|ムルタン
 Multi|マルチ
+Multibands|マルチバンズ
 Multiband|マルチバンド
 Multicarrier|マルチキャリア
 Multicarrier|マルチキャリヤ
@@ -22994,6 +23575,7 @@ Mussolini|ムッソリニ
 Must|マスト
 Mustang|マスタング
 Mustang|ムスタング
+Mustards|マスターズ
 Mustard|マスタード
 Mutans|ミュータンス
 Mutant|ミュータント
@@ -23038,6 +23620,7 @@ Myoglobin|ミオグロビン
 Myopathy|ミオパシー
 Myosin|ミオシン
 Myrcene|ミルセン
+Myriads|ミリアズ
 Myriad|ミリアド
 Myristic|ミリスチン
 Myristoyl|ミリストイル
@@ -23099,8 +23682,10 @@ Nairobi|ナイロビ
 Naive|ナイーブ
 Naj|ナージ
 Najaf|ナジャフ
+Najds|ナジズ
 Najd|ナジド
 Nak|ナク
+Nakeds|ネーキッズ
 Naked|ネーキッド
 Nakhodka|ナホトカ
 Nakhon|ナコーン
@@ -23108,6 +23693,7 @@ Nakpadon|ナクパドン
 Nakuru|ナクル
 Nalanda|ナーランダ
 Nalanda|ナーランダー
+Naleds|ナレズ
 Naled|ナレド
 Nalfurafine|ナルフラフィン
 Nalick|ナリック
@@ -23130,6 +23716,7 @@ Nangka|ナンカ
 Nannerl|ナンネル
 Nano|ナノ
 Nanos|ナノス
+Nanoseconds|ナノセカンズ
 Nanosecond|ナノセカンド
 Nanotechnology|ナノテク
 Nanotechnology|ナノテクノロジー
@@ -23181,6 +23768,7 @@ Nareks|ナレクス
 Naringin|ナリンギン
 Narkissos|ナルキッスス
 Narkissos|ナルキッソス
+Narods|ナローズ
 Narod|ナロード
 Narodniki|ナロードニキ
 Narragansett|ナラガンセット
@@ -23189,6 +23777,7 @@ Narration|ナレーション
 Narrative|ナラティブ
 Narratology|ナラトロジー
 Narrator|ナレーター
+Narrowbands|ナローバンズ
 Narrowband|ナローバンド
 Narrowboat|ナローボート
 Narvaez|ナルバーエス
@@ -23325,9 +23914,9 @@ Nectarine|ネクタリン
 Nedaplatin|ネダプラチン
 Nederlanden|ネーデルラント
 Nederlanden|ネーデルランド
+Needs|ニーズ
 Need|ニード
 Needle|ニードル
-Needs|ニーズ
 Neet|ニート
 Nefertiti|ネフェルティティ
 Negative|ネガチブ
@@ -23350,7 +23939,9 @@ Negrito|ネグリト
 Negritude|ネグリチュード
 Negro|ニグロ
 Negro|ネグロ
+Negroids|ニグロイズ
 Negroid|ニグロイド
+Negroids|ネグロイズ
 Negroid|ネグロイド
 Negroponte|ネグロポンテ
 Nehru|ネルー
@@ -23415,6 +24006,7 @@ Neptune|ネプチューン
 Neptunium|ネプチニウム
 Neptunium|ネプツニウム
 Nerchinsk|ネルチンスク
+Nerds|ナーズ
 Nerd|ナード
 Nerine|ネリネ
 Nero|ネロ
@@ -23435,7 +24027,8 @@ Nestorius|ネストリウ
 Nestorius|ネストリウス
 Net|ネッツ
 Net|ネット
-Netherlands|ネザーランド
+Netherland|ネザーランド
+Netherlands|ネザーランズ
 Netilmicin|ネチルマイシン
 Netizen|ネチズン
 Netizen|ネティズン
@@ -23487,6 +24080,7 @@ Newburgh|ニューバーグ
 Newcastle|ニューカッスル
 Newcombe|ニューカム
 Newcomer|ニューカマー
+Newfoundlands|ニューファンドランズ
 Newfoundland|ニューファンドランド
 Newman|ニューマン
 Newport|ニューポート
@@ -23607,6 +24201,7 @@ Nimda|ニムダ
 Nimes|ニーム
 Nimetazepam|ニメタゼパム
 Nimitz|ニミッツ
+Nimrods|ニムロッズ
 Nimrod|ニムロッド
 Nimustine|ニムスチン
 Nine|ナイン
@@ -23695,6 +24290,7 @@ Noce|ノーチェ
 Noctilux|ノクチルックス
 Nocturnal|ノクターナル
 Nocturne|ノクターン
+Nods|ノッズ
 Nod|ノッド
 Node|ノード
 Nodule|ノジュール
@@ -23717,9 +24313,11 @@ Nokes|ノークス
 Nokie|ノーキー
 Nolan|ノーラン
 Nolana|ノラナ
+Nolands|ノーランズ
 Noland|ノーランド
 Nolde|ノルデ
 Nolvadex|ノルバデックス
+Nomads|ノマズ
 Nomad|ノマド
 Nomadic|ノマディック
 Nomadisme|ノマディスム
@@ -23758,6 +24356,7 @@ Nonsense|ノンセンス
 Nonstop|ノンストップ
 Nontitle|ノンタイトル
 Nonverbal|ノンバーバル
+Nonwords|ノンワーズ
 Nonword|ノンワード
 Nonyl|ノニル
 Noodle|ヌードル
@@ -23795,6 +24394,7 @@ Normalization|ノーマリゼーション
 Normalize|ノーマライズ
 Norman|ノーマン
 Norman|ノルマン
+Normands|ノルマンズ
 Normand|ノルマンド
 Normandie|ノルマンジー
 Normandie|ノルマンディ
@@ -23814,6 +24414,7 @@ Northanger|ノーサンガー
 Northeast|ノースイースト
 Northern|ノーザン
 Northrop|ノースロップ
+Northumberlands|ノーサンバーランズ
 Northumberland|ノーサンバーランド
 Norton|ノートン
 Norvasc|ノルバスク
@@ -23840,6 +24441,7 @@ Notchback|ノッチバック
 Note|ノーツ
 Note|ノート
 Notebook|ノートブック
+Noteds|ノーテッズ
 Noted|ノーテッド
 Noten|ノッテン
 Nothing|ナッシング
@@ -23887,7 +24489,9 @@ Novella|ノベッラ
 Novelli|ノブエリ
 Novelty|ノベルティ
 Novelty|ノベルティー
+Novgorods|ノブゴロッズ
 Novgorod|ノブゴロッド
+Novgorods|ノブゴロズ
 Novgorod|ノブゴロド
 Novi|ノビ
 Novice|ナバス
@@ -23911,7 +24515,9 @@ Nuclear|ニュークリア
 Nuclear|ニュークリアー
 Nuclear|ニュクリア
 Nuclease|ヌクレアーゼ
+Nucleocapsids|ヌクレオカプシズ
 Nucleocapsid|ヌクレオカプシド
+Nucleocapsids|ヌクレオキャプシズ
 Nucleocapsid|ヌクレオキャプシド
 Nucleoside|ヌクレオシド
 Nucleosome|ヌクレオソーム
@@ -23974,6 +24580,7 @@ Nyckelharpa|ニッケルハルパ
 Nyctereutes|ニクテレウテス
 Nyctereutes|ニュクテレウテス
 Nyerere|ニエレレ
+Nygaards|ニガーズ
 Nygaard|ニガード
 Nyiragongo|ニーラゴンゴ
 Nylon|ナイロン
@@ -24007,6 +24614,7 @@ Obelisk|オベリスク
 Oben|オーベン
 Oberdorfer|オーバードーファー
 Oberhausen|オーバーハウゼン
+Oberlands|オーベルランズ
 Oberland|オーベルランド
 Oberlin|オーバーリン
 Obermann|オーベルマン
@@ -24056,6 +24664,7 @@ Occultism|オカルティズム
 Occultist|オカルティスト
 Occupation|オキュペーション
 Occupational|オキュペーショナル
+Occupieds|オキュパイズ
 Occupied|オキュパイド
 Occur|オカー
 Occurrence|オカランス
@@ -24105,10 +24714,10 @@ Octreotide|オクトレオチド
 Octyl|オクチル
 Octylphenol|オクチルフェノール
 Odalisque|オダリスク
+Odds|オッズ
 Odd|オッド
 Oddball|オッドボール
 Oddball|オドボール
-Odds|オッズ
 Ode|オード
 Ode|オードゥ
 Odeion|オーデーオン
@@ -24139,7 +24748,9 @@ Oedipus|オイディーポス
 Oedipus|オイディプス
 Oenothera|オエノセラ
 Oerlikon|エリコン
+Oersteds|エールステッズ
 Oersted|エールステッド
+Oersteds|エルステッズ
 Oersted|エルステッド
 Oetken|エートケン
 Of|オブ
@@ -24180,9 +24791,11 @@ Ogonyok|アガニョーク
 Ohio|オハイオ
 Ohlin|オリーン
 Ohm|オーム
+Ohrids|オフリズ
 Ohrid|オフリド
 Ohtembaar|オテムバール
 Oil|オイル
+Oileds|オイルズ
 Oiled|オイルド
 Oily|オイリー
 Oimyakon|オイミャコン
@@ -24216,6 +24829,7 @@ Olanzapine|オランザピン
 Olate|オラート
 Olazabal|オラサバル
 Olbers|オルバース
+Olds|オールズ
 Old|オールド
 Oldeb|オルデブ
 Oldenbarnevelt|オルデンバルネフェルト
@@ -24269,6 +24883,7 @@ Olvera|オルベラ
 Olympia|オランピア
 Olympia|オリュンピア
 Olympia|オリンピア
+Olympiads|オリンピアーズ
 Olympiad|オリンピアード
 Olympic|オリムピック
 Olympic|オリンピック
@@ -24305,6 +24920,7 @@ Onanie|オナ
 Onanie|オナニー
 Onanism|オナニズム
 Onassis|オナシス
+Onboards|オンボーズ
 Onboard|オンボード
 Onca|オンカ
 Once|オンセ
@@ -24336,6 +24952,7 @@ Onslow|オンズロー
 Ontario|オンタリオ
 Ontology|オントロギー
 Ontology|オントロジー
+Onwards|オンワーズ
 Onward|オンワード
 Onyx|オニキス
 Onyx|オニックス
@@ -24350,11 +24967,13 @@ Opalescent|オパレッセント
 Opaque|オペーク
 Opel|オペル
 Open|オープン
+Openeds|オープンズ
 Opened|オープンド
 Opener|オープナー
 Opening|オープニング
 Openly|オープンリー
 Opera|オペラ
+Operands|オペランズ
 Operand|オペランド
 Operant|オペラント
 Operating|オペレーチング
@@ -24377,6 +24996,7 @@ Ophicleide|オフィクレード
 Ophiolite|オフィオライト
 Opinion|オピニオーネ
 Opinion|オピニオン
+Opioids|オピオイズ
 Opioid|オピオイド
 Opisthotropis|オピストトロピス
 Opium|オピウム
@@ -24445,12 +25065,14 @@ Orbital|オービタル
 Orbiter|オービター
 Orca|オルカ
 Orcein|オルセイン
+Orchards|オーチャーズ
 Orchard|オーチャード
 Orchestra|オーケストラ
 Orchestra|オケ
 Orchestra|オルケストラ
 Orchestration|オーケストレーション
 Orchestrion|オーケストリオン
+Orchids|オーキッズ
 Orchid|オーキッド
 Orconectes|オルコネクテス
 Orczy|オルツィ
@@ -24505,8 +25127,11 @@ Oriental|オリエンタル
 Orientalism|オリエンタリズム
 Orientalist|オリエンタリスト
 Orientation|オリエンテーション
+Orienteds|オリエンティッズ
 Oriented|オリエンティッド
+Orienteds|オリエンテッズ
 Oriented|オリエンテッド
+Orienteds|オリエンテズ
 Oriented|オリエンテド
 Orienteering|オリエンテーリング
 Orifice|オリフィス
@@ -24594,6 +25219,7 @@ Oscilloscope|オシロスコープ
 Oscilloscope|オッシロスコープ
 Oseas|オゼアス
 Oseltamivir|オセルタミビル
+Osgoods|オズグッズ
 Osgood|オズグッド
 Osier|オージア
 Osirak|オシラク
@@ -24604,6 +25230,7 @@ Osman|オースマン
 Osman|オスマン
 Osmium|オスミウム
 Osmium|オスミューム
+Osmonds|オズモンズ
 Osmond|オズモンド
 Osnabruck|オスナブリュック
 Ossein|オセイン
@@ -24622,6 +25249,7 @@ Ostracism|オストラシズム
 Ostrich|オーストリッチ
 Ostrich|オストリッチ
 Oswald|オズワルト
+Oswalds|オズワルズ
 Oswald|オズワルド
 Oswaldo|オスワルド
 Oswiecim|オシフィエンチム
@@ -24651,6 +25279,7 @@ Ouagadougou|ワガドゥグー
 Ouch|アウチ
 Ouchakov|ウシャーコフ
 Ouchakov|ウシャコフ
+Ouds|ウーズ
 Oud|ウード
 Oui|ウイ
 Oulunsalo|オールンサロ
@@ -24703,15 +25332,18 @@ Over|オーバー
 Overcoat|オーバーコート
 Overcome|オーバーカム
 Overflow|オーバーフロー
+Overhands|オーバーハンズ
 Overhand|オーバーハンド
 Overhang|オーバーハング
 Overhaul|オーバーホール
+Overheads|オーバーヘッズ
 Overhead|オーバーヘッド
 Overheat|オーバーヒート
 Overholser|オーバーホルサー
 Overlap|オーバーラップ
 Overlap|オーバラップ
 Overlay|オーバーレー
+Overloads|オーバーローズ
 Overload|オーバーロード
 Overpayment|オーバーペイメント
 Override|オーバーライド
@@ -24757,8 +25389,11 @@ Oxazolidinone|オキサゾリジノン
 Oxbridge|オックスブリッジ
 Oxenberg|オクセンバーグ
 Oxetacaine|オキセタカイン
+Oxfords|オキスフォーズ
 Oxford|オキスフォード
+Oxfords|オクスフォーズ
 Oxford|オクスフォード
+Oxfords|オックスフォーズ
 Oxford|オックスフォード
 Oxfordshire|オックスフォードシャー
 Oxiconazole|オキシコナゾール
@@ -24771,6 +25406,7 @@ Oximeter|オキシメーター
 Oxitropium|オキシトロピウム
 Oxley|オクスレー
 Oxman|オクスマン
+Oxnards|オクスナーズ
 Oxnard|オクスナード
 Oxocyclopentaneheptanoic|オキソシクロペンタンヘプタン
 Oxocyclopentyl|オキソシクロペンチル
@@ -24852,6 +25488,7 @@ Packing|パッキン
 Packing|パッキング
 Paclitaxel|パクリタキセル
 Pad|パット
+Pads|パッズ
 Pad|パッド
 Padangbai|パダンバイ
 Padder|パッダー
@@ -24897,6 +25534,7 @@ Pahlawi|パフラビー
 Pahlevi|パーレビ
 Pahlevi|パーレビー
 Paia|パイア
+Paids|ペーズ
 Paid|ペード
 Paideia|パイデーア
 Pain|ペイン
@@ -25449,6 +26087,7 @@ Pax|パックス
 Paxton|パクストン
 Pay|ペー
 Payable|ペーヤブル
+Payloads|ペーローズ
 Payload|ペーロード
 Payment|ペーメント
 Paysan|ペーザン
@@ -25566,6 +26205,7 @@ Pelton|ペルトン
 Pemba|ペンバ
 Pembantu|プンバントゥ
 Pembroke|ペンブローク
+Pemetrexeds|ペメトレキセズ
 Pemetrexed|ペメトレキセド
 Pemirolast|ペミロラスト
 Pemmican|ペミカン
@@ -25590,6 +26230,7 @@ Pendolino|ペンドリーノ
 Pendulum|ペンデュラム
 Penelope|ペネローペ
 Penelope|ペネロペ
+Penfields|ペンフィールズ
 Penfield|ペンフィールド
 Penguin|ペンギン
 Penguin|ペンギンズ
@@ -25736,6 +26377,7 @@ Perikles|ペリクレース
 Perikles|ペリクレス
 Perillaldehyde|ペリラアルデヒド
 Perillaldehyde|ペリルアルデヒド
+Periods|ピリオズ
 Period|ピリオド
 Perioikoi|ペリオイコイ
 Peripatos|ペリパトス
@@ -25854,7 +26496,9 @@ Petrie|ペトリ
 Petro|ペトロ
 Petrochemia|ペトロヘミア
 Petrodollar|ペトロダラー
+Petrograds|ペテログラーズ
 Petrograd|ペテログラード
+Petrograds|ペトログラーズ
 Petrograd|ペトログラード
 Petrol|ペトロール
 Petrolatum|ペテロラタム
@@ -26180,6 +26824,7 @@ Picket|ピケット
 Picketing|ピケッティング
 Picketing|ピケティング
 Picking|ピッキング
+Pickleds|ピックルズ
 Pickled|ピックルド
 Pickles|ピクル
 Pickles|ピクルス
@@ -26189,7 +26834,9 @@ Picloram|ピクロラム
 Picnic|ピクニック
 Pico|ピコ
 Picocurie|ピコキュリー
+Picofarads|ピコファッラズ
 Picofarad|ピコファッラド
+Picofarads|ピコファラズ
 Picofarad|ピコファラド
 Picoline|ピコリン
 Picoperidamine|ピコペリダミン
@@ -26213,6 +26860,7 @@ Pie|ピエ
 Piece|ピーシズ
 Piece|ピース
 Piece|ピエス
+Pieds|パイズ
 Pied|パイド
 Piedigrotta|ピエディグロッタ
 Piega|ピエガ
@@ -26449,6 +27097,7 @@ Pittoresque|ピトレスク
 Pitts|ピッツ
 Pittsburgh|ビッツバーグ
 Pittsburgh|ピッツバーグ
+Pittsfields|ピッツフィールズ
 Pittsfield|ピッツフィールド
 Pity|ピティー
 Piu|ピウ
@@ -26467,6 +27116,7 @@ Pizza|ピツァ
 Pizzicato|ピチカート
 Pizzicato|ピッチカート
 Pizzicato|ピッツィカート
+Placards|プラカーズ
 Placard|プラカード
 Place|プレース
 Placebo|プラシーボ
@@ -26506,6 +27156,7 @@ Planter|プランター
 Planula|プラヌラ
 Plasma|プラズマ
 Plasmagene|プラズマジーン
+Plasmids|プラスミズ
 Plasmid|プラスミド
 Plasminogen|プラスミノーゲン
 Plasmodium|プラスモディウム
@@ -26567,6 +27218,7 @@ Please|プリーズ
 Please|プリーズー
 Pleasure|プレジャー
 Pleasure|プレジャーズ
+Pleateds|プリーテッズ
 Pleated|プリーテッド
 Pleats|プリーツ
 Plebs|プレブス
@@ -26637,6 +27289,7 @@ Pocketable|ポッケタブル
 Poco|ポーコ
 Pocock|ポーコック
 Pocock|ポコック
+Pods|ポッズ
 Pod|ポッド
 Podgorica|ポドゴリツァ
 Podocarpus|ポドカルプス
@@ -26669,6 +27322,7 @@ Poincare|ポワンカレ
 Poinsettia|ポインセチア
 Point|ポインツ
 Point|ポイント
+Pointeds|ポインテッズ
 Pointed|ポインテッド
 Pointer|ポインタ
 Pointer|ポインター
@@ -26695,6 +27349,7 @@ Pokhara|ポカラ
 Pokka|ポッカ
 Pokrovsky|ポクロフスキー
 Polaire|ポーラ
+Polands|ポーランズ
 Poland|ポーランド
 Polanyi|ボランニー
 Polanyi|ポランニー
@@ -26702,7 +27357,9 @@ Polaris|ポラリス
 Polarity|ポラリティー
 Polarograph|ポーラログラフ
 Polarography|ポーラログラフィー
+Polaroids|ポーラロイズ
 Polaroid|ポーラロイド
+Polaroids|ポラロイズ
 Polaroid|ポラロイド
 Polder|ポルダー
 Pole|ポール
@@ -26737,7 +27394,9 @@ Poliziano|ポリツィアーノ
 Polka|ポルカ
 Polke|ポルケ
 Pollachius|ポルラキウス
+Pollands|ポランズ
 Polland|ポランド
+Pollards|ポラーズ
 Pollard|ポラード
 Pollen|ポーレン
 Polley|ポーリ
@@ -26869,6 +27528,7 @@ Ponape|ポナペ
 Ponceau|ポンソー
 Poncelet|ポンスレ
 Poncho|ポンチョ
+Ponds|ポンズ
 Pond|ポンド
 Ponge|ポンジュ
 Pons|ポンス
@@ -26955,6 +27615,7 @@ Portici|ポルティチ
 Portico|ポルチコ
 Porting|ポーティング
 Portion|ポーション
+Portlands|ポルトランズ
 Portland|ポルトランド
 Portman|ポートマン
 Porto|ポート
@@ -26991,9 +27652,11 @@ Possibility|ポシビリティー
 Possible|ポシブル
 Possible|ポッシブル
 Postal|ポスタル
+Postcards|ポストカーズ
 Postcard|ポストカード
 Postcolonialism|ポストコロニアリズム
 Postcompetitive|ポストコンペティティブ
+Posteds|ポステッズ
 Posted|ポステッド
 Postel|ポステル
 Poster|ポスター
@@ -27019,6 +27682,7 @@ Potenz|ポテンツ
 Potenza|ポテンザ
 Pothos|ポトス
 Potlatch|ポトラッチ
+Potloods|ポットローズ
 Potlood|ポットロード
 Potluck|ポトラック
 Potomac|ポトマック
@@ -27037,7 +27701,9 @@ Pouilly|プイイ
 Poulenc|プーラン
 Poulenc|プーランク
 Poulet|プーレ
+Pounds|パウンズ
 Pound|パウンド
+Pounds|ポンズ
 Pound|ポンド
 Pour|プール
 Pourpoint|プールポアン
@@ -27049,6 +27715,7 @@ Powell|パウェル
 Powell|パウエル
 Power|パワ
 Power|パワー
+Powereds|パワーズ
 Powered|パワード
 Powerful|パワフル
 Powerful|パワフルズ
@@ -27084,6 +27751,7 @@ Pramoedya|プラムディヤ
 Prange|プランゲ
 Pranoprofen|プラノプロフェン
 Praparat|プレパラート
+Prasads|プラサーズ
 Prasad|プラサード
 Praseodym|プラセオジム
 Praslin|プラズラン
@@ -27122,6 +27790,7 @@ Prefab|プレハブ
 Prefab|プレファブ
 Prefabrication|プレファブリケーション
 Preference|プレファレンス
+Preferreds|プリファーズ
 Preferred|プリファード
 Prefix|プレフィックス
 Pregna|プレグナ
@@ -27138,6 +27807,7 @@ Prelude|プレリュード
 Prelusion|プレリューション
 Prelusion|プレリュージョン
 Prem|プレム
+Premchands|プレームチャンズ
 Premchand|プレームチャンド
 Premiata|プレミアータ
 Premier|プルミエール
@@ -27148,8 +27818,10 @@ Premium|プレミオ
 Premutation|プレミューテーション
 Prenier|プルニエ
 Prepaid|プリペート
+Prepaids|プリペーズ
 Prepaid|プリペード
 Preparation|プリパレーション
+Prepareds|プリペアーズ
 Prepared|プリペアード
 Preppie|プレッピー
 Preproduction|プリプロダクション
@@ -27169,7 +27841,9 @@ Present|プレゼント
 Presentation|プレゼン
 Presentation|プレゼンテーション
 Preserve|プリザーブ
+Preserveds|プリザーズ
 Preserved|プリザード
+Preserveds|プリザーブズ
 Preserved|プリザーブド
 Preset|プリセット
 Presidency|プレジデンシー
@@ -27181,6 +27855,7 @@ Presper|プレスパー
 Press|プレス
 Presse|プレッセ
 Pressed|プレスト
+Presseds|プレスズ
 Pressed|プレスド
 Presser|プレッサー
 Pressing|プレッシング
@@ -27282,6 +27957,7 @@ Probabilistic|プロバブリスティック
 Probability|プロバビリティー
 Probarbus|プロバルブス
 Probe|プローブ
+Probenecids|プロベネシズ
 Probenecid|プロベネシド
 Probiotic|プロバイオティクス
 Probiotic|プロバイオティック
@@ -27522,6 +28198,7 @@ Protopterus|プロトプテルス
 Prototype|プロト
 Prototype|プロトタイプ
 Prototyping|プロトタイピング
+Prouds|プラウズ
 Proud|プラウド
 Proust|プルースト
 Prouty|プローティ
@@ -27597,6 +28274,7 @@ Publicity|パブリシティー
 Publishing|パブリシング
 Publishing|パブリッシング
 Puccini|プッチーニ
+Puds|プーズ
 Pud|プード
 Pudding|プティング
 Pudding|プディング
@@ -27666,6 +28344,7 @@ Punitive|ピューニティブ
 Punk|パンク
 Punk|パンクス
 Punt|パント
+Puntlands|プントランズ
 Puntland|プントランド
 Punto|プント
 Punxsutawney|パンクサトーニー
@@ -27700,6 +28379,7 @@ Purplish|パープリッシュ
 Purpose|パーパス
 Purpurata|パープラタ
 Purse|パース
+Pursennids|プルセニズ
 Pursennid|プルセニド
 Purser|パーサー
 Purusha|プルシャ
@@ -27732,8 +28412,10 @@ Pylori|ピロリ
 Pym|ピム
 Pyotr|ピョートル
 Pyracantha|ピラカンサ
+Pyramids|ピラミーズ
 Pyramid|ピラミード
 Pyramid|ピラミット
+Pyramids|ピラミッズ
 Pyramid|ピラミッド
 Pyramiding|ピラミッディング
 Pyramix|ピラミックス
@@ -27748,8 +28430,10 @@ Pyrazolidinedione|ピラゾリジンジオン
 Pyrazolone|ピラゾロン
 Pyrene|ピレン
 Pyrenees|ピレネー
+Pyrenoids|ピレノイズ
 Pyrenoid|ピレノイド
 Pyrethrin|ピレトリン
+Pyrethroids|ピレスロイズ
 Pyrethroid|ピレスロイド
 Pyrex|パイレックス
 Pyridaphenthion|ピリダフェンチオン
@@ -27831,7 +28515,9 @@ Quackenbos|カツケンボス
 Quackenbos|クエッケンボス
 Quackenbos|クエツケンボス
 Quackenbos|クワッケンボス
+Quads|クアッズ
 Quad|クアッド
+Quads|クワッズ
 Quad|クワッド
 Quade|クエード
 Quadrado|クアドラード
@@ -27900,8 +28586,11 @@ Queenie|クイーニー
 Queenie|クウィーニー
 Queensboro|クイーンズボロ
 Queensboro|クウィーンズボロ
+Queenslands|クイーンズランズ
 Queensland|クイーンズランド
+Queenslands|クインスランズ
 Queensland|クインスランド
+Queenslands|クインズランズ
 Queensland|クインズランド
 Queenstown|クイーンズタウン
 Queenstown|クインズタウン
@@ -28015,6 +28704,7 @@ Racket|ラケット
 Rackham|ラッカム
 Racking|ラッキング
 Racquets|ラケッツ
+Rads|ラズ
 Rad|ラド
 Radar|レーダ
 Radar|レーダー
@@ -28069,6 +28759,7 @@ Ragaz|ラガーツ
 Ragazza|ラガッツァ
 Ragdoll|ラグドール
 Rage|レージ
+Raggeds|ラッジズ
 Ragged|ラッジド
 Raggedy|ラゲディー
 Raglan|ラグラン
@@ -28083,13 +28774,16 @@ Rahmen|ラーメン
 Rahmen|ラウメン
 Raiatea|ライアテア
 Raichle|ライケル
+Raids|レーズ
 Raid|レード
 Raider|レーダー
 Raider|レーダース
 Raider|レーダーズ
 Raikkonen|ライコネン
 Rail|レール
+Raileds|レールズ
 Railed|レールド
+Railroads|レールローズ
 Railroad|レールロード
 Raimi|ライミ
 Raimundo|ライムンド
@@ -28151,12 +28845,15 @@ Ramsauer|ラムザウアー
 Ramsgate|ラムスゲート
 Ramstedt|ラムステッド
 Ramus|ラムス
+Ranalds|ラナルズ
 Ranald|ラナルド
 Ranariddh|ラナリット
 Rancho|ランチョ
+Rancids|ランシッズ
 Rancid|ランシッド
 Ranciere|ランシエール
 Rand|ラント
+Rands|ランズ
 Rand|ランド
 Randle|ランドル
 Random|ランダム
@@ -28263,6 +28960,7 @@ Raynal|レーナル
 Raynal|レナル
 Raynaud|レーノー
 Raynaud|レノー
+Raynolds|レーノルズ
 Raynold|レーノルド
 Rayo|ラーヨ
 Rayon|レーヨン
@@ -28278,6 +28976,7 @@ Reactive|リアクティブ
 Reactor|リアクタ
 Reactor|リアクター
 Reactor|リアクトル
+Reads|リーズ
 Read|リード
 Readability|リーダビリティ
 Readability|リーダビリティー
@@ -28325,9 +29024,12 @@ Rebate|リベート
 Rebirth|リバース
 Reboot|リブート
 Reborn|リボーン
+Rebounds|リバウンズ
 Rebound|リバウンド
+Rebounds|リバンズ
 Rebound|リバンド
 Rebuild|リビルト
+Rebuilds|リビルズ
 Rebuild|リビルド
 Reburning|リバーニング
 Recall|リコール
@@ -28371,10 +29073,13 @@ Reclining|リクライング
 Recognition|リコグニッション
 Recognition|レコグニション
 Recognize|レコグナイズ
+Recognizeds|レコグナイズズ
 Recognized|レコグナイズド
 Recognizer|レコグナイザー
 Recoil|リコイル
+Recommends|リコメンズ
 Recommend|リコメンド
+Recommends|レコメンズ
 Recommend|レコメンド
 Recommendation|リコメンデーション
 Recondo|リーコンドー
@@ -28383,7 +29088,7 @@ Reconfirm|リコンファーム
 Reconnaissance|リコネッサンス
 Reconquista|レコンキスタ
 Reconstruction|リコンストラクション
-Record|レコーズ
+Records|レコーズ
 Record|レコード
 Recordable|レコーダブル
 Recorder|リコーダー
@@ -28408,6 +29113,7 @@ Recursive|リカーシブ
 Recycle|リサイクル
 Recycler|リサイクラー
 Recycling|リサイクリング
+Reds|レッズ
 Red|レッド
 Reddish|レディッシュ
 Redesign|リデザイン
@@ -28422,6 +29128,7 @@ Reduce|リデュース
 Reduction|リダクション
 Redundancy|リダンダンシー
 Reebok|リーボック
+Reeds|リーズ
 Reed|リード
 Reef|リーフ
 Reel|リール
@@ -28474,6 +29181,7 @@ Refresh|リフレッシュ
 Refresher|リフレッシャー
 Refreshment|リフレッシュメント
 Refugee|レフュジー
+Refunds|リファンズ
 Refund|リファンド
 Refuse|リヒューズ
 Refuse|リフューズ
@@ -28547,6 +29255,7 @@ Rejuvenate|リジュブネート
 Rejuvenation|リジャビュネーション
 Rejuvenation|リジュベネーション
 Relacher|ルラシェ
+Relateds|リレーテッズ
 Related|リレーテッド
 Relation|リレーション
 Relation|リレーションズ
@@ -28724,6 +29433,7 @@ Residence|レジデンス
 Resident|レジデント
 Residential|レジデンシャル
 Resin|レジン
+Resinoids|レジノイズ
 Resinoid|レジノイド
 Resist|レジスト
 Resistance|レジスタン
@@ -28767,6 +29477,7 @@ Restore|リストア
 Restore|レストア
 Restrainer|レストレーナー
 Restrict|リストリクト
+Restricteds|リストリクテッズ
 Restricted|リストリクテッド
 Restructuring|リストラ
 Restructuring|リストラクチャリング
@@ -28820,6 +29531,7 @@ Reuters|ロイター
 Revaluation|リバリュエーション
 Reve|レーブ
 Reveal|リビール
+Revealeds|リビールズ
 Revealed|リビールド
 Revenge|リベンジ
 Revenger|リベンジャー
@@ -28839,6 +29551,7 @@ Revital|リバイタル
 Revitalize|リバイタライズ
 Revival|リバイバル
 Revivalist|リバイバリスト
+Revlimids|レブリミズ
 Revlimid|レブリミド
 Revlon|レブロン
 Revolution|レブ
@@ -28848,6 +29561,7 @@ Revolver|リボルバー
 Revolver|レボルバー
 Revolving|リボルビング
 Revox|ルボックス
+Rewards|リワーズ
 Reward|リワード
 Rewritable|リライタブル
 Rewrite|リライト
@@ -28856,6 +29570,7 @@ Rex|レックス
 Reye|ライ
 Reykjavik|レーキャビク
 Reyna|レーナ
+Reynards|レーナーズ
 Reynard|レーナード
 Reynolds|レーノルズ
 Reynolds|レノルズ
@@ -28928,8 +29643,8 @@ Riccia|リシア
 Rice|ライス
 Ricercare|リチェルカーレ
 Rich|リッチ
-Richard|リチャード
 Richards|リチャーズ
+Richard|リチャード
 Richardson|リチャードソン
 Richardson|リチャルドソン
 Riche|リッシェ
@@ -28939,6 +29654,7 @@ Richemont|リシュモン
 Richer|リッチャー
 Richesse|リシェス
 Richie|リッチー
+Richmonds|リッチモンズ
 Richmond|リッチモンド
 Richness|リッチネス
 Richter|リクター
@@ -28984,6 +29700,7 @@ Rigging|リギング
 Riggs|リグス
 Right|ライツ
 Right|ライト
+Rigids|リジッズ
 Rigid|リジッド
 Rigo|リーゴ
 Rigoletto|リゴレット
@@ -29031,7 +29748,9 @@ Ripper|リッパー
 Rippl|リップル
 Ripple|リップル
 Ripple|リプル
+Rippleds|リップルズ
 Rippled|リップルド
+Ripplewoods|リップルウッズ
 Ripplewood|リップルウッド
 Ris|リ
 Riserva|リゼルバ
@@ -29066,7 +29785,9 @@ Riveter|リベッター
 Riviera|リビエラ
 Rivoli|リボリ
 Rixen|リキセン
+Riyads|リアズ
 Riyad|リアド
+Riyads|リヤズ
 Riyad|リヤド
 Riyal|リヤール
 Riyal|リヤル
@@ -29075,10 +29796,12 @@ Rizamat|リザマート
 Rizhskaya|リーシュスカヤ
 Rizla|リズラ
 Roach|ローチ
+Roads|ローズ
 Road|ロード
 Roadside|ロードサイド
 Roadster|ロードスター
 Roadwork|ロードワーク
+Roalds|ロアルズ
 Roald|ロアルド
 Roaming|ローミング
 Roanoke|ロアノーク
@@ -29130,6 +29853,7 @@ Rocking|ロッキン
 Rocking|ロッキング
 Rockoon|ロックーン
 Rococo|ロココ
+Rods|ロッズ
 Rod|ロッド
 Roddick|ロディック
 Roddy|ローディ
@@ -29235,7 +29959,9 @@ Rooibos|ルイボス
 Rook|ルーク
 Rookie|ルーキー
 Rookie|ルーキーズ
+Rookwoods|ルックウッズ
 Rookwood|ルックウッド
+Rookwoods|ロックウッズ
 Rookwood|ロックウッド
 Rooley|ルーリー
 Room|ルーム
@@ -29265,8 +29991,11 @@ Rosacea|ロザケア
 Rosales|ロサレス
 Rosalie|ロザリ
 Rosalie|ロザリー
+Rosalinds|ロザリンズ
 Rosalind|ロザリンド
+Rosamonds|ロザモンズ
 Rosamond|ロザモンド
+Rosands|ローザンズ
 Rosand|ローザンド
 Rosaniline|ローズアニリン
 Rosario|ロサリオ
@@ -29286,6 +30015,7 @@ Rosenman|ローゼンマン
 Rosenthal|ローゼンサール
 Rosenthal|ローゼンタール
 Rosette|ロゼット
+Rosewoods|ローズウッズ
 Rosewood|ローズウッド
 Rosier|ロジエール
 Rosiers|ロジェ
@@ -29329,8 +30059,11 @@ Rothko|ロスコ
 Rothman|ロスマン
 Rothorm|ロートホルン
 Rothschild|ロートシルト
+Rothschilds|ロスシルズ
 Rothschild|ロスシルド
+Rothschilds|ロスチールズ
 Rothschild|ロスチールド
+Rothschilds|ロスチャイルズ
 Rothschild|ロスチャイルド
 Rothschild|ロトシルト
 Rothschildi|ロトスキルディ
@@ -29356,7 +30089,9 @@ Rouillard|ロイヤール
 Rouille|ルイユ
 Roulette|ルーレット
 Roulette|ルレット
+Rounds|ラウンズ
 Round|ラウンド
+Rounds|ランズ
 Round|ランド
 Rourke|ローク
 Rous|ラウス
@@ -29383,7 +30118,9 @@ Rowel|ラウエル
 Rowena|ロウェナ
 Rowing|ローイング
 Rowland|ローラント
+Rowlands|ローランズ
 Rowland|ローランド
+Rowlands|ロランズ
 Rowland|ロランド
 Roxa|ローシャ
 Roxane|ロクサーヌ
@@ -29434,6 +30171,7 @@ Rudi|ルディ
 Rudiment|ルーディメント
 Rudolf|ルドルフ
 Rudolfinum|ルドルフィヌム
+Rudyards|ラドヤーズ
 Rudyard|ラドヤード
 Rue|リュ
 Rufinus|ルフィヌス
@@ -29452,7 +30190,9 @@ Rumaila|ルマイラ
 Rumania|ルーマニア
 Rumania|ルーマニヤ
 Rumba|ルンバ
+Rumfords|ラムフォーズ
 Rumford|ラムフォード
+Rumfords|ランフォーズ
 Rumford|ランフォード
 Rumor|ルーモア
 Rump|ランプ
@@ -29493,6 +30233,7 @@ Ruth|ルス
 Ruth|ルツ
 Ruthenia|ルテニア
 Ruthenium|ルテニウム
+Rutherfords|ラザフォーズ
 Rutherford|ラザフォード
 Rutile|ルチル
 Rutin|ルチン
@@ -29567,7 +30308,9 @@ Sacral|サクラル
 Sacral|セクラル
 Sacrament|サクラメント
 Sacramento|サクラメント
+Sacreds|セークリッズ
 Sacred|セークリッド
+Sacreds|セークレッズ
 Sacred|セークレッド
 Sadat|サダト
 Saddle|サドル
@@ -29584,6 +30327,7 @@ Sadra|サドラー
 Safari|サファリ
 Safavi|サファビー
 Safe|セーフ
+Safeguards|セーフガーズ
 Safeguard|セーフガード
 Safety|セーフティ
 Safety|セーフティー
@@ -29611,6 +30355,7 @@ Sahel|サヘル
 Sahlins|サーリンズ
 Sahne|ザーネ
 Saia|サアヤ
+Saids|サイーズ
 Said|サイード
 Saigon|サイゴン
 Saigon|セーゴン
@@ -29689,6 +30434,7 @@ Salsa|サルサ
 Salsify|サルシファイ
 Salta|サルタ
 Saltasaurus|サルタサウルス
+Salteds|ソルテッズ
 Salted|ソルテッド
 Saltimbocca|サルティンボッカ
 Salty|ソルティ
@@ -29712,6 +30458,7 @@ Samar|サマル
 Samara|サマーラ
 Samaranch|サマランチ
 Samarium|サマリウム
+Samarkands|サマルカンズ
 Samarkand|サマルカンド
 Samarra|サーマッラー
 Samarra|サマッラ
@@ -29757,7 +30504,7 @@ Sanction|サンクション
 Sanctuary|サンクチュアリ
 Sanctuary|サンクチュアリー
 Sanctus|サンクトゥス
-Sand|サンズ
+Sands|サンズ
 Sand|サンド
 Sand|サンドー
 Sandakan|サンダカン
@@ -29863,6 +30610,7 @@ Saratoga|サラトガ
 Saratov|サラトフ
 Sarawak|サラワク
 Sarbanes|サーベンス
+Sarcoids|サルコイズ
 Sarcoid|サルコイド
 Sarcoidosis|サルコイドーシス
 Sarcosine|サルコシン
@@ -29889,6 +30637,7 @@ Sark|サーク
 Sarkomycin|ザルコマイシン
 Sarnath|サールナート
 Sarnath|サルナート
+Sarods|サロッズ
 Sarod|サロッド
 Saros|サロス
 Sarpogrelate|サルポグレラート
@@ -29919,6 +30668,7 @@ Satcom|サトコム
 Satellite|サテライト
 Satin|サテン
 Satisfaction|サティスファクション
+Satisfieds|サティスファイズ
 Satisfied|サティスファイド
 Satow|サトー
 Satterthwait|サタスウェート
@@ -30063,6 +30813,7 @@ Scenery|シーナリー
 Scenic|シーニック
 Scenic|セニック
 Scent|セント
+Scenteds|センテッズ
 Scented|センテッド
 Sceptic|スケプティック
 Schale|シャーレ
@@ -30117,6 +30868,7 @@ Schirach|シーラハ
 Schisma|シスマ
 Schizo|スキゾ
 Schizo|スキッゾ
+Schizoids|スキッツォイズ
 Schizoid|スキッツォイド
 Schizophrenia|シゾ
 Schizophrenia|スキゾフレニア
@@ -30279,6 +31031,7 @@ Scopolamine|スコポラミン
 Scopophilia|スコポフィリー
 Score|スコア
 Score|スコアー
+Scoreboards|スコアボーズ
 Scoreboard|スコアボード
 Scorebook|スコアブック
 Scorer|スコアラー
@@ -30288,6 +31041,7 @@ Scoring|スコアリング
 Scorpion|スコーピオ
 Scorpion|スコーピオン
 Scotch|スコッチ
+Scotlands|スコットランズ
 Scotland|スコットランド
 Scott|スコット
 Scottish|スコテッシュ
@@ -30299,6 +31053,7 @@ Scoville|スコビル
 Scowcroft|スコークロフト
 Scrabble|スクラブル
 Scramble|スクランブル
+Scrambleds|スクランブルズ
 Scrambled|スクランブルド
 Scranton|スクラントン
 Scrap|スクラップ
@@ -30313,6 +31068,7 @@ Scream|スクリーム
 Scream|スクリム
 Screaming|スクリーミング
 Scree|スクリー
+Screeds|スクリーズ
 Screed|スクリード
 Screen|スクリーン
 Screening|スクリーニング
@@ -30336,6 +31092,7 @@ Scruple|スクルペル
 Scuba|スキューバ
 Scuba|スキューバー
 Scuba|スクーバ
+Scuds|スカッズ
 Scud|スカッド
 Scudder|スカダー
 Scull|スカール
@@ -30354,6 +31111,7 @@ Scylla|スキュラ
 Scythe|サイズ
 Sea|シー
 Sea|シーズ
+Seafoods|シーフーズ
 Seafood|シーフード
 Seagaia|シーガイア
 Seagal|セーガル
@@ -30398,6 +31156,7 @@ Secbutabarbital|セクブタバルビタール
 Secobarbital|セコバルビタール
 Secochola|セココラ
 Secocholesta|セココレスタ
+Secondhands|セカンドハンズ
 Secondhand|セカンドハンド
 Secondhand|セコハン
 Secopregna|セコプレグナ
@@ -30430,7 +31189,7 @@ Sedoso|セドッソ
 Seduction|セダクション
 See|スィー
 Seeckt|ゼークト
-Seed|シーズ
+Seeds|シーズ
 Seed|シード
 Seedorf|セードルフ
 Seeger|シーガー
@@ -30443,6 +31202,7 @@ Seer|シアー
 Seersucker|シアサッカー
 Seesaw|シーソー
 Seeshaupt|ゼースハウプト
+Sefarads|セファラーズ
 Sefarad|セファラード
 Sefeco|セーフコ
 Sefeco|セフィコ
@@ -30499,6 +31259,7 @@ Selinus|セリヌス
 Seljuk|セルジューク
 Seljuk|セルジュク
 Selkirk|セルカーク
+Sellafields|セラフィールズ
 Sellafield|セラフィールド
 Seller|セラー
 Selleria|セレリア
@@ -30555,6 +31316,7 @@ Senang|スナン
 Senanque|セナンク
 Senate|セナート
 Senator|セネター
+Sends|センズ
 Send|センド
 Sendero|センデロ
 Senecio|セネシオ
@@ -30814,6 +31576,7 @@ Shame|シェーム
 Shamir|シャミア
 Shampoo|シャンプ
 Shampoo|シャンプー
+Shands|シャンズ
 Shand|シャンド
 Shandy|シャンデー
 Shandy|シャンディー
@@ -30833,6 +31596,7 @@ Share|シェア
 Share|シェアー
 Share|シェアーズ
 Sharecropper|シェアクロッパー
+Shareds|シェアーズ
 Shared|シェアード
 Shareholder|シェアホールダー
 Sharffen|シャーフェンバーガー
@@ -30848,6 +31612,7 @@ Sharpener|シャープナー
 Shashlyk|シャシリック
 Shasta|シャスター
 Shave|シェーブ
+Shaveds|シェーブズ
 Shaved|シェーブド
 Shaver|シェーバ
 Shaver|シェーバー
@@ -30868,6 +31633,7 @@ Sheath|シース
 Sheathe|シーズ
 Sheave|シーブ
 Shechem|シケム
+Sheds|シェッズ
 Shed|シェッド
 Sheene|シーン
 Sheep|シープ
@@ -30875,6 +31641,7 @@ Sheepdog|シープドッグ
 Sheet|シーツ
 Sheet|シート
 Sheeting|シーチング
+Sheffields|シェフィールズ
 Sheffield|シェフィールド
 Shekel|シケル
 Sheldrake|シェルドレーク
@@ -30891,8 +31658,11 @@ Shelving|シェルビング
 Shem|シェム
 Shengelaya|シェンゲラーヤ
 Shenin|シェーニン
+Shepards|シェパーズ
 Shepard|シェパード
+Shepherds|シェパーズ
 Shepherd|シェパード
+Shepherds|セパーズ
 Shepherd|セパード
 Sheqel|シェケル
 Sherbet|シャーベット
@@ -30906,9 +31676,12 @@ Sherpa|シェルパ
 Sherry|シェリー
 Sherry|シェリス
 Sherwin|シャーウィン
+Sherwoods|シャーウッズ
 Sherwood|シャーウッド
 Shestov|シェストフ
+Shetlands|シェットランズ
 Shetland|シェットランド
+Shetlands|シェトランズ
 Shetland|シェトランド
 Shevardnadze|シェワルナゼ
 Shevchenko|シェフチェンコ
@@ -30917,8 +31690,8 @@ Shevyryov|シェビリョーフ
 Shia|シーア
 Shibam|シバーム
 Shidax|シダックス
-Shield|シールド
 Shields|シールズ
+Shield|シールド
 Shiene|シーネ
 Shift|シフト
 Shifting|シフチング
@@ -30969,6 +31742,7 @@ Shoreditch|ショアディッチ
 Shoreline|ショアライン
 Shores|ショアーズ
 Short|ショート
+Shortbreads|ショートブレッズ
 Shortbread|ショートブレッド
 Shortcake|ショートケーキ
 Shortcut|ショートカット
@@ -30986,6 +31760,7 @@ Showcase|ショーケース
 Shower|シャワー
 Showmanship|ショーマンシップ
 Showroom|ショールーム
+Shreds|シュレッズ
 Shred|シュレッド
 Shredder|シュレッダ
 Shredder|シュレッダー
@@ -30994,6 +31769,7 @@ Shrewsbury|シュルーズベリ
 Shrimp|シュリンプ
 Shrine|シュライン
 Shrink|シュリンク
+Shrouds|シュラウズ
 Shroud|シュラウド
 Shrug|シュラッグ
 Shuba|シューバ
@@ -31059,6 +31835,7 @@ Siecle|シェークル
 Siegel|シーゲル
 Siegel|ジーゲル
 Siegfried|ジークフリート
+Siegfrieds|ジークフリーズ
 Siegfried|ジークフリード
 Siemens|シーメンス
 Siemens|ジーメンス
@@ -31075,11 +31852,15 @@ Sifter|シフター
 Sigerson|シガーソン
 Sighet|シゲット
 Sigiriya|シギリヤ
+Sigismonds|シジスモンズ
 Sigismond|シジスモンド
 Siglo|シグロ
 Sigmar|ジグマー
+Sigmoids|シグモイズ
 Sigmoid|シグモイド
+Sigmunds|シグマンズ
 Sigmund|シグマンド
+Sigmunds|シグムンズ
 Sigmund|シグムンド
 Sigmund|ジークムント
 Sigmund|ジクムント
@@ -31196,6 +31977,7 @@ Sinatra|シナトラ
 Sincerity|シンセリティ
 Sincerity|シンセリティー
 Sinclair|シンクレア
+Sindbads|シンドバッズ
 Sindbad|シンドバッド
 Sindelfingen|ジンデルフィンゲン
 Sindhi|シンディー
@@ -31301,6 +32083,7 @@ Skagerrak|スカゲラック
 Skandia|スカンディア
 Skarn|スカルン
 Skate|スケート
+Skateboards|スケートボーズ
 Skateboard|スケートボード
 Skateboard|スケボー
 Skater|スケーター
@@ -31321,6 +32104,7 @@ Sketcher|スケッチャーズ
 Sketchy|スケッチー
 Ski|スキー
 Skibbes|スキッブス
+Skids|スキッズ
 Skid|スキッド
 Skidder|スキッダー
 Skidding|スキッディング
@@ -31328,6 +32112,7 @@ Skier|スキーヤー
 Skiff|スキフ
 Skiing|スキーイング
 Skill|スキル
+Skilleds|スキルズ
 Skilled|スキルド
 Skillet|スキレット
 Skim|スキム
@@ -31336,6 +32121,7 @@ Skimmia|スキミア
 Skimming|スキミング
 Skin|スキン
 Skin|スキンズ
+Skinheads|スキンヘッズ
 Skinhead|スキンヘッド
 Skinner|スキナー
 Skinny|スキニー
@@ -31494,6 +32280,7 @@ Smocking|スモッキング
 Smoerrebroed|スモーブロー
 Smog|スモッグ
 Smoke|スモーク
+Smokeds|スモークズ
 Smoked|スモークド
 Smoker|スモーカー
 Smoker|スモーカーズ
@@ -31508,11 +32295,13 @@ Smoothie|スムージー
 Smoothie|スムージーズ
 Smoothing|スムージング
 Smoothness|スムーズネス
+Smorgasbords|スモーガスボーズ
 Smorgasbord|スモーガスボード
 Smythe|スマイス
 Snack|スナック
 Snake|スネーク
 Snake|スネークス
+Snakewoods|スネークウッズ
 Snakewood|スネークウッド
 Snap|スナップ
 Snape|スネープ
@@ -31521,6 +32310,7 @@ Snare|スネア
 Snare|スネアー
 Snatch|スナッチ
 Snatcher|スナッチャー
+Sneads|スニーズ
 Snead|スニード
 Sneak|スニーク
 Sneaker|スニーカー
@@ -31537,11 +32327,13 @@ Snob|スノッブ
 Snobbey|スノッバリー
 Snobbism|スノビスム
 Snobbism|スノビズム
+Snoods|スヌーズ
 Snood|スヌード
 Snooze|スヌーズ
 Snorkack|スノーカック
 Snorkeling|シュノーケリング
 Snow|スノー
+Snowboards|スノーボーズ
 Snowboard|スノーボード
 Snowboard|スノボ
 Snowboard|スノボー
@@ -31645,6 +32437,7 @@ Solar|ソーラー
 Solaria|ソラリア
 Solaris|ソラリス
 Solarization|ソラリゼーション
+Solds|ソールズ
 Sold|ソールド
 Solder|ソルダ
 Solder|ソルダー
@@ -31652,13 +32445,16 @@ Soldier|ソルジャー
 Soldum|ソルダム
 Sole|ソレ
 Solea|ソレア
+Soledads|ソレダーズ
 Soledad|ソレダード
 Soleil|ソレーユ
+Solenoids|ソレノイズ
 Solenoid|ソレノイド
 Solenopsis|ソレノプシス
 Solfege|ソルフェージュ
 Solferino|ソルフェリーノ
 Solferino|ソルフェリノ
+Solids|ソリッズ
 Solid|ソリッド
 Solidarity|ソリダリティー
 Solidus|ソリダス
@@ -31685,6 +32481,7 @@ Solon|ソロン
 Solovyov|ソロビヨフ
 Solso|ソルソ
 Soluble|ソリュブル
+Soluds|ソリューズ
 Solud|ソリュード
 Solution|ソリューション
 Solution|ソルーション
@@ -31741,6 +32538,7 @@ Songwriter|ソングライター
 Sonic|ソニック
 Sonic|ソニックス
 Sonnei|ソンネー
+Sonnenfelds|ソネンフェルズ
 Sonnenfeld|ソネンフェルド
 Sonnet|ソネット
 Sonny|サニー
@@ -31760,6 +32558,7 @@ Sophia|ソフィア
 Sophist|ソフィスト
 Sophistes|ソピステース
 Sophisticate|ソフィスティケート
+Sophisticateds|ソフィスティケーテッズ
 Sophisticated|ソフィスティケーテッド
 Sophistication|ソフィスティケーション
 Sophokles|ソフォクレス
@@ -31804,7 +32603,7 @@ Sou|スー
 Souffle|スフレ
 Soukous|スークース
 Soul|ソール
-Sound|サウンズ
+Sounds|サウンズ
 Sound|サウンド
 Sounder|サウンダ
 Sounder|サウンダー
@@ -31927,6 +32726,7 @@ Species|スピーシーズ
 Specific|スペシフィック
 Specification|スペシフィケーション
 Specificity|スペシフィシティー
+Specifieds|スペシファイズ
 Specified|スペシファイド
 Speciosa|スペキオサ
 Speciosus|スペキオスス
@@ -31941,7 +32741,9 @@ Spectrum|スペクトラム
 Specular|スペキュラー
 Speculation|スペキュレーション
 Speech|スピーチ
+Speeds|スピーズ
 Speed|スピード
+Speededs|スピーデッズ
 Speeded|スピーデッド
 Speedy|スピーディ
 Speedy|スピーディー
@@ -31964,12 +32766,14 @@ Sphere|スフィアー
 Sphere|スフェア
 Spherometer|スフェロメーター
 Sphingo|スフィンゴ
+Sphingolipids|スフィンゴリピッズ
 Sphingolipid|スフィンゴリピッド
 Sphinx|スフィンクス
 Spiano|スピアーノ
 Spica|スピカ
 Spiccato|スピッカート
 Spice|スパイス
+Spiceds|スパイスズ
 Spiced|スパイスド
 Spicy|スパイシー
 Spider|スパイダー
@@ -32020,6 +32824,7 @@ Spirula|スピルラ
 Spit|スピット
 Spitball|スピットボール
 Spitfire|スピットファイア
+Spitheads|スピットヘッズ
 Spithead|スピットヘッド
 Spitz|スピッツ
 Spitzer|シュピッツァー
@@ -32037,6 +32842,7 @@ Split|スプリット
 Spode|スポード
 Spoil|スポイル
 Spoil|スポイルズ
+Spoileds|スポイルズ
 Spoiled|スポイルド
 Spoiler|スポイラー
 Spokane|スポーケン
@@ -32049,6 +32855,7 @@ Spondeios|スポンディオス
 Sponge|スポンジ
 Sponging|スポンジング
 Sponsor|スポンサー
+Sponsoreds|スポンサーズ
 Sponsored|スポンサード
 Spontaneity|スポンタニアティー
 Spontaneity|スポンタニエティー
@@ -32077,6 +32884,7 @@ Sporty|スポーティー
 Spot|スポッツ
 Spot|スポット
 Spotlight|スポットライト
+Spotteds|スポッテッズ
 Spotted|スポッテッド
 Spotter|スポッター
 Spotting|スポッティング
@@ -32089,6 +32897,7 @@ Sprawl|スプロール
 Spray|スプレー
 Sprayer|スプレーヤー
 Sprayer|スプレヤー
+Spreads|スプレッズ
 Spread|スプレッド
 Spreader|スプレダー
 Spreader|スプレッダ
@@ -32125,6 +32934,7 @@ Sputtering|スパッタリング
 Spy|スパイ
 Spykman|スパイクマン
 Spyware|スパイウェア
+Squads|スクワッズ
 Squad|スクワッド
 Squalene|スクアレン
 Squall|スコール
@@ -32142,6 +32952,7 @@ Squawker|スコーカー
 Squeeze|スクイーズ
 Squeeze|スクイズ
 Squeezer|スクイーザー
+Squids|スクイズ
 Squid|スクイド
 Squires|スクワイア
 Squires|スクワイアー
@@ -32174,6 +32985,7 @@ Stahanov|スターハノフ
 Stahanov|スタハノフ
 Stain|ステイン
 Stain|ステン
+Staineds|ステンズ
 Stained|ステンド
 Stainless|ステンレス
 Stakeholder|ステークホールダー
@@ -32195,19 +33007,22 @@ Stampede|スタンピード
 Stan|スタン
 Stance|スタンス
 Stanchion|スタンション
+Stands|スタンズ
 Stand|スタンド
-Standard|スタンダーズ
+Standards|スタンダーズ
 Standard|スタンダード
 Standby|スタンバイ
 Stander|スタンダー
 Standing|スタンディング
 Standish|スタンディッシュ
+Stanfords|スタンフォーズ
 Stanford|スタンフォード
 Stanisaw|スタニスワフ
 Stanislavsky|スタニスラフスキー
 Stanley|スタンリ
 Stanley|スタンリー
 Stanley|スタンレー
+Stannards|スタナーズ
 Stannard|スタナード
 Stans|シュタンス
 Stanton|スタントン
@@ -32220,9 +33035,11 @@ Stapler|ステープラー
 Stapleton|ステープルトン
 Star|スター
 Star|スターズ
+Starboards|スターボーズ
 Starboard|スターボード
 Starbucks|スターバックス
 Starch|スターチ
+Starcheds|スターチズ
 Starched|スターチド
 Stardom|スターダム
 Stardust|スターダスト
@@ -32279,6 +33096,7 @@ Stealth|ステルス
 Steam|スチーム
 Steamboat|シチンボール
 Steamboat|スチームボート
+Steameds|スチームズ
 Steamed|スチームド
 Steamer|スチーマ
 Steamer|スチーマー
@@ -32355,6 +33173,7 @@ Stern|シュテルン
 Stern|スターン
 Sternberg|スターンバーグ
 Sternbergia|ステルンベルギア
+Steroids|ステロイズ
 Steroid|ステロイド
 Sterol|ステロール
 Stetson|ステットソン
@@ -32372,6 +33191,7 @@ Stevia|ステビア
 Stevioside|ステビオサイド
 Stevioside|ステビオシド
 Stew|シチュー
+Stewards|スチュワーズ
 Steward|スチュワード
 Stewardess|スチュアーデス
 Stewardess|スチュワーデス
@@ -32408,6 +33228,7 @@ Still|スチル
 Still|スティル
 Stiller|スティラー
 Stiller|スティルレル
+Stillfrieds|スティルフリーズ
 Stillfried|スティルフリード
 Stilwell|スティルウェル
 Stimalamer|スチマラマー
@@ -32432,6 +33253,7 @@ Stockhausen|シュトックハウゼン
 Stockholm|ストックホルム
 Stocking|ストッキング
 Stocking|ストッキングス
+Stockyards|ストックヤーズ
 Stockyard|ストックヤード
 Stoddert|ストッダート
 Stoianovich|ストイアノビッチ
@@ -32472,7 +33294,9 @@ Storche|シュトルヒ
 Store|ストア
 Store|ストアー
 Store|ストアーズ
+Storeds|ストアーズ
 Stored|ストアード
+Storeds|ストアズ
 Stored|ストアド
 Storge|ストルゲ
 Storia|ストーリア
@@ -32508,6 +33332,7 @@ Strainer|ストレーナ
 Strainer|ストレーナー
 Straits|ストレーツ
 Strambotto|ストランボット
+Strands|ストランズ
 Strand|ストランド
 Strandkorb|シュトラントコルプ
 Strandkorb|ストラントコルプ
@@ -32568,6 +33393,7 @@ Stretch|ストレッチ
 Stretcher|ストレッチャー
 Stretching|ストレッチング
 Streusel|シュトロイゼル
+Stricklands|ストリックランズ
 Strickland|ストリックランド
 Strida|ストライダ
 Stride|ストライド
@@ -32617,6 +33443,7 @@ Structural|ストラクチュアル
 Structure|ストラクチャ
 Structure|ストラクチャー
 Structure|ストラクチュア
+Structureds|ストラクチャーズ
 Structured|ストラクチャード
 Structuring|ストラクチャリング
 Struggle|ストラッグル
@@ -32633,7 +33460,7 @@ Stube|シュトゥーベ
 Stucco|スタッコ
 Stuckenschmidt|シュトゥッケンシュミット
 Stuckey|スタッキー
-Stud|スタッズ
+Studs|スタッズ
 Stud|スタッド
 Studebaker|スチュードベーカー
 Student|スチューデンツ
@@ -32646,7 +33473,6 @@ Studio|スチュデオ
 Studiolo|ストゥディオロ
 Studless|スタットレス
 Studless|スタッドレス
-Studs|スタッズ
 Study|スタディ
 Study|スタディー
 Study|スタディーズ
@@ -32736,7 +33562,9 @@ Sucralose|スクラロース
 Sucrose|シュークロース
 Sucrose|スクロース
 Suction|サクション
+Suds|シューズ
 Sud|シュード
+Suds|シュッズ
 Sud|シュッド
 Sudan|スーダン
 Sudbury|サドベリー
@@ -32805,6 +33633,7 @@ Sulfo|スルホ
 Sulfometuron|スルホメチュロン
 Sulfometuron|スルホメツロン
 Sulfonal|スルホナール
+Sulfonamids|スルフォンアミズ
 Sulfonamid|スルフォンアミド
 Sulfonatobenzyl|スルホナトベンジル
 Sulfone|スルフォン
@@ -32886,6 +33715,7 @@ Superior|スペリオール
 Superior|スペリオル
 Superman|スーパーマン
 Supermarket|スーパーマーケット
+Supermotards|スーパーモターズ
 Supermotard|スーパーモタード
 Superoxide|スーパーオキサイド
 Superstar|スーパースター
@@ -32930,6 +33760,7 @@ Surface|サーフェース
 Surface|サーフェス
 Surfacer|サーフェーサー
 Surfacer|サフェーサー
+Surfboards|サーフボーズ
 Surfboard|サーフボード
 Surfer|サーファー
 Surfer|サーファーズ
@@ -32955,6 +33786,7 @@ Surrealisme|シュルレアリズム
 Surrealist|シュールレアリスト
 Surrealist|シュルレアリスト
 Surrender|サレンダー
+Surrounds|サラウンズ
 Surround|サラウンド
 Surstromming|シュールストレーミング
 Surstromming|シュールストレミング
@@ -32973,7 +33805,9 @@ Susanne|スザンネ
 Susanne|ズザンネ
 Susceptible|サセプティブル
 Suspects|サスペクツ
+Suspends|サスペンズ
 Suspend|サスペンド
+Suspendeds|サスペンデッズ
 Suspended|サスペンデッド
 Suspender|サスペンダー
 Suspense|サスペンス
@@ -32990,7 +33824,9 @@ Sustainability|サステイナビリティー
 Sustainability|サステナビリティ
 Sutcliffe|サットクリフ
 Sutcliffe|サトクリフ
+Sutherlands|サザーランズ
 Sutherland|サザーランド
+Sutherlands|サザランズ
 Sutherland|サザランド
 Sutlej|サトレジ
 Sutra|スートラ
@@ -33035,6 +33871,7 @@ Swatch|スウォッチ
 Swatch|スワッチ
 Sway|スウェー
 Sway|スエー
+Swazilands|スワジランズ
 Swaziland|スワジランド
 Sweat|スウェット
 Sweat|スエット
@@ -33090,17 +33927,21 @@ Swisher|スウィッシャー
 Switch|スイッチ
 Switch|スウィッチ
 Switchback|スイッチバック
+Switchboards|スイッチボーズ
 Switchboard|スイッチボード
 Switcher|スイッチャー
 Switching|スイッチング
 Swithin|スイシン
+Switzerlands|スイッツァランズ
 Switzerland|スイッツァランド
+Switzerlands|スイッツランズ
 Switzerland|スイッツランド
 Swivel|スイブル
 Swivel|スイベル
 Swoosh|スーッシュ
 Swoosh|スウーシュ
 Swoosh|スウォッシュ
+Swords|ソーズ
 Sword|ソード
 Swordtail|ソードテール
 Sybill|シビル
@@ -33156,10 +33997,12 @@ Synchronicity|シンクロニシティ
 Synchronicity|シンクロニシティー
 Synchronization|シンクロナイゼーション
 Synchronize|シンクロナイズ
+Synchronizeds|シンクロナイズズ
 Synchronized|シンクロナイズド
 Synchronizer|シンクロナイザー
 Synchronous|シンクロナス
 Synchrotron|シンクロトロン
+Syncopateds|シンコペーテッズ
 Syncopated|シンコペーテッド
 Syncopation|シンコペーション
 Syncretism|シンクレティズム
@@ -33193,6 +34036,7 @@ Synthesizer|シンセサイザー
 Synthetase|シンテターゼ
 Synthetic|シンセティック
 Synthetisme|サンテティスム
+Synthroids|シンスロイズ
 Synthroid|シンスロイド
 Syon|サイアン
 Syon|サイオン
@@ -33209,6 +34053,7 @@ Systematic|システマチック
 Systematic|システマティック
 Systemic|システミック
 Szafarnia|シャファルニャ
+Szilards|シラーズ
 Szilard|シラード
 Taacoba|ターコバ
 Taaroa|ターロア
@@ -33228,6 +34073,7 @@ Tablecloth|テーブルクロース
 Tablecloth|テーブルクロス
 Tablet|タブレット
 Tablier|タブリエ
+Tabloids|タブロイズ
 Tabloid|タブロイド
 Taboo|タブー
 Tabor|ターボル
@@ -33254,6 +34100,7 @@ Tactical|タクティカル
 Tactician|タクティシャン
 Tactics|タクティクス
 Tadalafil|タダラフィル
+Tadds|タッズ
 Tadd|タッド
 Tadeusz|タデウシ
 Tadeusz|タデウシュ
@@ -33291,7 +34138,9 @@ Taillight|テールライト
 Tailor|テーラ
 Tailor|テーラー
 Tailor|テーラース
+Tailoreds|テーラーズ
 Tailored|テーラード
+Tailoreds|テラーズ
 Tailored|テラード
 Taine|テーヌ
 Taint|テイント
@@ -33342,6 +34191,7 @@ Tamakloe|タマクロー
 Tamarau|タマラオ
 Tamarillo|タマリロ
 Tamarin|タマリン
+Tamarinds|タマリンズ
 Tamarind|タマリンド
 Tamarisk|タマリスク
 Tamas|タマス
@@ -33412,6 +34262,7 @@ Tape|テープ
 Tapenade|タプナード
 Taper|テーパ
 Taper|テーパー
+Tapereds|テーパーズ
 Tapered|テーパード
 Tapestry|タピストリー
 Tapestry|タピスリ
@@ -33421,6 +34272,7 @@ Tapestry|タペスリー
 Taping|テーピング
 Tapioca|タピオカ
 Tappet|タペット
+Taqlids|タクリーズ
 Taqlid|タクリード
 Tar|タール
 Tara|タラ
@@ -33512,6 +34364,7 @@ Taut|タウト
 Tautology|トートロジー
 Tavern|タバーン
 Taverna|タベルナ
+Tawhids|タウヒーズ
 Tawhid|タウヒード
 Tax|タックス
 Taxane|タキサン
@@ -33550,6 +34403,7 @@ Teaspoon|ティースプーン
 Teatime|ティータイム
 Teatro|テアトロ
 Tebacon|テバコン
+Tebufenpyrads|テブフェンピラズ
 Tebufenpyrad|テブフェンピラド
 Tecate|テカテ
 Teceleukin|テセロイキン
@@ -33674,6 +34528,7 @@ Tempelhof|テンペルホーフ
 Temper|テンパー
 Tempera|テンペラ
 Temperament|テンペラメント
+Tempereds|テンパーズ
 Tempered|テンパード
 Tempering|テンパリング
 Tempest|テムペスト
@@ -33690,6 +34545,7 @@ Temposchwung|テンポシュブング
 Temps|タン
 Temptation|テンプテーション
 Temptation|テンプテーションズ
+Tempteds|テンプティッズ
 Tempted|テンプティッド
 Tempur|テンピュール
 Ten|テン
@@ -33761,6 +34617,7 @@ Ternate|テルナテ
 Terodiline|テロジリン
 Teroldego|テロルデゴ
 Terpene|テルペン
+Terpenoids|テルペノイズ
 Terpenoid|テルペノイド
 Terphenyl|テルフェニル
 Terpineol|テルピネオール
@@ -33813,6 +34670,7 @@ Tetrachlorodifluoroethane|テトラクロロジフルオロエタン
 Tetrachloroethylene|テトラクロロエチレン
 Tetrachloroethylthio|テトラクロロエチルチオ
 Tetracycline|テトラサイクリン
+Tetrads|テトラッズ
 Tetrad|テトラッド
 Tetradecylamine|テトラデシルアミン
 Tetraethoxysilane|テトラエトキシシラン
@@ -33833,6 +34691,7 @@ Tetramethyldiamino|テトラメチルジアミノ
 Tetramethylthiuram|テトラメチルチウラム
 Tetranitrate|テトラナイトレート
 Tetranitrate|テトラニトラート
+Tetrapods|テトラポッズ
 Tetrapod|テトラポッド
 Tetraspis|テトラスピス
 Tetrazole|テトラゾール
@@ -33861,9 +34720,11 @@ Texture|テクスチャ
 Texture|テクスチャー
 Texture|テクスチュア
 Texture|テクスチュアー
+Textureds|テクスチャーズ
 Textured|テクスチャード
 Thackeray|サッカレー
 Thailand|タイ
+Thailands|タイランズ
 Thailand|タイランド
 Thaksin|タクシン
 Thalassemia|サラセミア
@@ -34039,8 +34900,8 @@ Thioxanthen|チオキサンテン
 Thioxanthone|チオキサントン
 Thira|ティーラ
 Thira|ティラ
-Third|サード
 Thirds|サーズ
+Third|サード
 Thirteen|サーティーン
 Thirteenth|サーティーンス
 Thirtieth|サーティース
@@ -34075,6 +34936,7 @@ Thorne|ソーン
 Thorne|ソーンズ
 Thoron|トロン
 Thoroughbred|サラブレット
+Thoroughbreds|サラブレッズ
 Thoroughbred|サラブレッド
 Thorsten|トルステン
 Thorvaldsens|トーバルセン
@@ -34083,10 +34945,12 @@ Thoukydides|ツキディデス
 Thoukydides|トゥーキューディデース
 Thoukydides|トゥキディデス
 Thoukydides|トゥキュディデス
+Thousands|サウザンズ
 Thousand|サウザンド
 Thousandth|サウザンス
 Thracia|トラキア
 Thread|スレ
+Threads|スレッズ
 Thread|スレッド
 Threading|スレッディング
 Threat|スレット
@@ -34095,7 +34959,9 @@ Threo|トレオ
 Threonine|スレオニン
 Threonine|トレオニン
 Threonyl|トレオニル
+Thresholds|スレッショールズ
 Threshold|スレッショールド
+Thresholds|スレッショルズ
 Threshold|スレッショルド
 Thrift|スリフト
 Thrill|スリル
@@ -34124,6 +34990,7 @@ Thunberg|ツンベルグ
 Thunberg|トゥーンベリ
 Thunberg|トゥンベルグ
 Thunder|サンダー
+Thunderbirds|サンダーバーズ
 Thunderbird|サンダーバード
 Thunderbolt|サンダーボルト
 Thunen|チューネン
@@ -34134,6 +35001,7 @@ Thuringen|チューリンゲン
 Thuringiensis|チューリンゲンシス
 Thurman|サーマン
 Thurow|サロー
+Thylakoids|チラコイズ
 Thylakoid|チラコイド
 Thyme|タイム
 Thymine|チミン
@@ -34178,6 +35046,7 @@ Tiepin|タイピン
 Tiepolo|ティエポロ
 Tier|ティア
 Tier|ティアー
+Tiereds|ティアーズ
 Tiered|ティアード
 Tiergarten|ティヤーガルテン
 Tierney|ティアニー
@@ -34267,6 +35136,7 @@ Tirpitz|ティルピッツ
 Tirsi|ティルシ
 Tisang|チサン
 Tissaphernes|ティッサペルネス
+Tisserands|ティスランズ
 Tisserand|ティスランド
 Tissue|ティシュ
 Tissue|ティシュー
@@ -34317,6 +35187,7 @@ Tocoferil|トコフェリル
 Tocopherol|トコフェロール
 Today|ツデー
 Today|トゥデー
+Todds|トッズ
 Todd|トッド
 Toddler|トドラー
 Todor|トドール
@@ -34569,6 +35440,7 @@ Townwear|タウンウエア
 Toxaphene|トキサフェン
 Toxic|トキシック
 Toxin|トキシン
+Toxoids|トキソイズ
 Toxoid|トキソイド
 Toxoplasma|トキソプラズマ
 Toy|トーイ
@@ -34593,6 +35465,7 @@ Traction|トラクション
 Tractor|トラクタ
 Tractor|トラクター
 Tracy|トラシー
+Trads|トラッズ
 Trad|トラッド
 Trade|トレーズ
 Trade|トレード
@@ -34609,6 +35482,7 @@ Trafalgar|トラファルガー
 Trafalgar|トラファルガル
 Traffic|トラヒック
 Traffic|トラフィック
+Traffords|トラッフォーズ
 Trafford|トラッフォード
 Tragedy|トラジェディー
 Tragedy|トラジディー
@@ -34621,6 +35495,7 @@ Trailing|トレーリング
 Train|トレ
 Train|トレーン
 Train|トレイン
+Traineds|トレインズ
 Trained|トレインド
 Trainer|トレーナー
 Training|トレーニング
@@ -34709,6 +35584,7 @@ Travoprost|トラボプロスト
 Trawl|トロール
 Tray|トレー
 Trazodone|トラゾドン
+Treads|トレッズ
 Tread|トレッド
 Treadmill|トレッドミル
 Treasure|トレジャー
@@ -34736,6 +35612,7 @@ Tremoille|トレモイユ
 Tremolo|トレモロ
 Trench|トレンチ
 Trencher|トレンチャー
+Trends|トレンズ
 Trend|トレンド
 Trendelenburg|トレンデレンブルク
 Trendelenburg|トレンデレンブルグ
@@ -34758,6 +35635,7 @@ Treviso|トレビゾ
 Trezeguet|トレゼゲ
 Tri|トリ
 Triac|トライアック
+Triads|トライアッズ
 Triad|トライアッド
 Triade|トリアーデ
 Trial|トライアル
@@ -34885,6 +35763,7 @@ Trioxane|トリオキサン
 Trip|トリップ
 Triple|トリプル
 Triplet|トリプレット
+Tripods|トリポッズ
 Tripod|トリポッド
 Tripoli|トリポリ
 Tripper|トリッパー
@@ -34914,8 +35793,10 @@ Trivial|トリビアル
 Trivialism|トリビアリズム
 Trivulziano|トリブルツィオ
 Trixylyl|トリキシリル
+Trobriands|トロブリアンズ
 Trobriand|トロブリアンド
 Troche|トローチ
+Trochoids|トロコイズ
 Trochoid|トロコイド
 Trochophora|トロコフォア
 Trochophora|トロコフォラ
@@ -35018,6 +35899,7 @@ Tsar|ツァール
 Tsar|ツアリー
 Tsavo|ツァボ
 Tschumi|チュミ
+Tsegmeds|ツェグミズ
 Tsegmed|ツェグミド
 Tsentrosoyuz|ツェントロソユーズ
 Tserennadmidin|ツェレンナドミディン
@@ -35044,6 +35926,7 @@ Tudor|チュードル
 Tuesday|チューズデー
 Tuff|タフ
 Tufo|トゥーフォ
+Tufteds|タフテッズ
 Tufted|タフテッド
 Tufting|タフティング
 Tugboat|タグボート
@@ -35161,7 +36044,9 @@ Tuzla|トゥズラ
 Tverskaya|トベルスカヤ
 Tversky|トゥベルスキー
 Twa|トゥワ
+Tweeds|ツイーズ
 Tweed|ツイード
+Tweeds|トウィーズ
 Tweed|トウィード
 Tween|トゥイーン
 Tweet|ツイート
@@ -35205,6 +36090,7 @@ Twitter|ツイッター
 Two|ツー
 Two|トゥー
 Twombly|トゥオンブリ
+Twyfords|トワイフォーズ
 Twyford|トワイフォード
 Tylenol|タイレノール
 Tylliria|ティリリア
@@ -35247,6 +36133,7 @@ Tyrosyl|チロジル
 Tzara|ツァラ
 Tzaung|サウン
 Tzolkin|ツォルキン
+Ubaids|ウバイズ
 Ubaid|ウバイド
 Ubbly|ウッカリー
 Ubiquitin|ユビキチン
@@ -35271,6 +36158,7 @@ Uighur|ウィグル
 Uighur|ウイグル
 Uilta|ウィルタ
 Uitti|ウィッティ
+Uklads|ウクラーズ
 Uklad|ウクラード
 Ukraina|ウクライナ
 Ukrainka|ウクラインカ
@@ -35324,7 +36212,9 @@ Uncontrol|アンコントロール
 Uncover|アンカバー
 Uncut|アンカット
 Und|ウント
+Undaunteds|アンドーンティッズ
 Undaunted|アンドーンティッド
+Undaunteds|アンドーンテッズ
 Undaunted|アンドーンテッド
 Undecane|ウンデカン
 Undecanium|ウンデカニウム
@@ -35334,13 +36224,17 @@ Under|アンダー
 Underachiever|アンダーアチーバー
 Undercut|アンダーカット
 Underground|アングラ
+Undergrounds|アンダーグラウンズ
 Underground|アンダーグラウンド
+Underhands|アンダーハンズ
 Underhand|アンダーハンド
 Underline|アンダーライン
 Underlying|アンダーライイング
 Undershirt|アンダーシャツ
 Understand|アンダースタン
+Understands|アンダースタンズ
 Understand|アンダースタンド
+Understands|アンダスタンズ
 Understand|アンダスタンド
 Underwear|アンダーウェア
 Underwear|アンダーウェアー
@@ -35352,6 +36246,7 @@ Undo|アンドゥ
 Undo|アンドゥー
 Undulata|ウンドゥラタ
 Undurraga|ウンドラーガ
+Uneeds|ユニーズ
 Uneed|ユニード
 Unfair|アンフェア
 Unfair|アンフェアー
@@ -35366,6 +36261,7 @@ Unicorn|ユニコーンズ
 Unicorne|ウニコール
 Uniden|ユニデン
 Unification|ユニフィケーション
+Unifieds|ユニファイズ
 Unified|ユニファイド
 Uniform|ユニフォーム
 Uniform|ユニホーム
@@ -35392,7 +36288,9 @@ Unit|ユニット
 Unitarian|ユニテリアン
 Unitary|ユニタリー
 Unite|ユナイト
+Uniteds|ユナイティッズ
 United|ユナイティッド
+Uniteds|ユナイテッズ
 United|ユナイテッド
 Unitika|ユニチカ
 Uniting|ユナイティング
@@ -35409,22 +36307,28 @@ Unknown|アンノーン
 Unloader|アンローダー
 Unlucky|アンラッキー
 Unmarked|アンマークト
+Unmarrieds|アンマリーズ
 Unmarried|アンマリード
+Unmatcheds|アンマッチズ
 Unmatched|アンマッチド
 Uno|ウノ
 Unoprostone|ウノプロストン
+Unpaids|アンペーズ
 Unpaid|アンペード
 Unplayable|アンプレアブル
 Unplayable|アンプレヤブル
+Unpluggeds|アンプラグズ
 Unplugged|アンプラグド
 Unreve|アンレーブ
 Unschuld|ウンシュルト
 Unterlinden|ウンテルリンデン
 Unterwalden|ウンターバルデン
 Untie|アンタイ
+Untieds|アンタイズ
 Untied|アンタイド
 Untouchable|アンタチャブル
 Untouchable|アンタッチャブル
+Untraineds|アントレインズ
 Untrained|アントレインド
 Untying|アンタイイング
 Uny|ユニー
@@ -35433,13 +36337,16 @@ Uova|ウォーバ
 Uovo|ウオーボ
 Up|アップ
 Up|アップス
+Upanishads|ウパニシャーズ
 Upanishad|ウパニシャード
 Upanishad|ウパニシャット
+Upanishads|ウパニシャッズ
 Upanishad|ウパニシャッド
 Update|アップデート
 Updike|アップダイク
 Upgrade|アップグレード
 Uplink|アップリンク
+Uploads|アップローズ
 Upload|アップロード
 Uploader|ロダ
 Upon|アポン
@@ -35455,6 +36362,7 @@ Uptown|アップタウン
 Ur|ウル
 Ura|ウラー
 Uracil|ウラシル
+Urads|ウラッズ
 Urad|ウラッド
 Uraeus|ウラエウス
 Urai|ウライ
@@ -35558,7 +36466,9 @@ Vadis|バジス
 Vadis|バディス
 Vadis|ブジス
 Vaduz|ファドーツ
+Vagabonds|バガブンズ
 Vagabond|バガブンド
+Vagabonds|バガボンズ
 Vagabond|バガボンド
 Vagina|バギナ
 Vagina|バジャイナ
@@ -35639,6 +36549,7 @@ Vandalism|バンダリズム
 Vandegrift|バンデグリフト
 Vandenberg|バンデンバーグ
 Vane|ベーン
+Vanguards|バンガーズ
 Vanguard|バンガード
 Vanilla|バニラ
 Vanille|バニーユ
@@ -35751,6 +36662,7 @@ Veggey|ベギー
 Vehicle|ビークル
 Vehicle|ビヒクル
 Veil|ベール
+Veineds|ベインズ
 Veined|ベインド
 Veio|ベーオ
 Vejvoda|ベーボダ
@@ -35776,6 +36688,7 @@ Vendor|ベンダ
 Vendor|ベンダー
 Veneer|ベニア
 Veneer|ベニヤ
+Veneereds|ベニヤズ
 Veneered|ベニヤド
 Venet|ブネ
 Venetian|ベネシャン
@@ -35892,6 +36805,7 @@ Vespucci|ベスプッチ
 Vest|ベスト
 Vesta|ウェスタ
 Vesta|ベスタ
+Vestads|ベスターズ
 Vestad|ベスタード
 Vestax|ベスタクス
 Vesuvio|ウェスウィウス
@@ -36047,6 +36961,7 @@ Vinegar|ビネガー
 Viner|ビネル
 Vines|ビニエス
 Vineta|ビネタ
+Vineyards|ビンヤーズ
 Vineyard|ビンヤード
 Vining|バイニング
 Vinitaly|ビニタリー
@@ -36092,6 +37007,7 @@ Virgin|バジン
 Virginal|バージナル
 Virginia|バージニア
 Viridian|ビリジアン
+Viroids|ウイロイズ
 Viroid|ウイロイド
 Viron|ビロン
 Virtual|バーチャル
@@ -36180,7 +37096,9 @@ Vivendi|ビベンディ
 Vivero|ビベロ
 Viviani|ビビアーニ
 Vivid|ビビット
+Vivids|ビビッズ
 Vivid|ビビッド
+Vivids|ビビズ
 Vivid|ビビド
 Vivier|ビビエ
 Vivre|ビブレ
@@ -36230,6 +37148,7 @@ Vogue|ボーグ
 Voice|ボイス
 Voici|ボワシ
 Voicing|ボイシング
+Voids|ボイズ
 Void|ボイド
 Voila|ボアラ
 Voildemort|ボル
@@ -36243,6 +37162,7 @@ Volatility|ボラリティ
 Volcano|ボルケーノ
 Voleur|ボラー
 Volga|ボルガ
+Volgograds|ボルゴグラーズ
 Volgograd|ボルゴグラード
 Volitional|ボリショナル
 Volker|フェルカー
@@ -36330,6 +37250,7 @@ Wabby|ウェビー
 Wache|バッヘ
 Wachsler|ワクスラー
 Wackernagels|バッカーナーゲル
+Wads|ワッズ
 Wad|ワッド
 Wadding|ウォッディング
 Wade|ウェード
@@ -36342,7 +37263,9 @@ Wafer|ウェハ
 Wafer|ウェハー
 Wafer|ウエーハ
 Wafer|ウエハー
+Waferboards|ウェファーボーズ
 Waferboard|ウェファーボード
+Waferboards|ウエハーボーズ
 Waferboard|ウエハーボード
 Wafers|ウェハース
 Wafers|ウェファース
@@ -36359,7 +37282,9 @@ Wagner|ワグナー
 Wagon|ワゴン
 Wagram|バグラム
 Wahhabiyah|ワッハービー
+Wahids|ワヒーズ
 Wahid|ワヒード
+Wahids|ワヒズ
 Wahid|ワヒド
 Wahl|ウワール
 Wahlberg|ウォールバーグ
@@ -36386,7 +37311,9 @@ Waiver|ウエーバー
 Wajda|ワイダ
 Wake|ウェーク
 Wake|ウエーク
+Wakefields|ウェークフィールズ
 Wakefield|ウェークフィールド
+Wakefields|ウエーキフヒールズ
 Wakefield|ウエーキフヒールド
 Wakeman|ウエークマン
 Wal|ワール
@@ -36394,6 +37321,7 @@ Walcott|ウォルコット
 Walden|ウォールデン
 Walden|ウォルデン
 Waldersee|ワルデルジー
+Waldfelds|バルトフェルズ
 Waldfeld|バルトフェルド
 Waldheim|ワルトハイム
 Waldo|ウォルドー
@@ -36431,6 +37359,7 @@ Wallet|ウォレット
 Wallet|ワーレット
 Wallet|ワレット
 Wallicus|ワルリクス
+Wallingfords|ウォリングフォーズ
 Wallingford|ウォリングフォード
 Wallon|ワロン
 Wally|ワリー
@@ -36457,6 +37386,7 @@ Waltz|ウォルツ
 Waltz|ワルツ
 Walworth|ウォルワース
 Wampum|ワンパム
+Wands|ワンズ
 Wand|ワンド
 Wanderers|ワンダラーズ
 Wanderung|ワンデルング
@@ -36468,6 +37398,7 @@ Wanna|ウォナ
 Want|ウォンツ
 Want|ウォント
 Want|ウオンツ
+Wanteds|ウォンテッズ
 Wanted|ウォンテッド
 Wapiti|ワピチ
 Wappen|ワッペン
@@ -36476,6 +37407,7 @@ War|ウォーズ
 War|ウオー
 Warburg|ワールブルク
 Warburg|ワールブルグ
+Wards|ウォーズ
 Ward|ウォード
 Warden|ウオーデン
 Warden|ワーデン
@@ -36553,6 +37485,7 @@ Water|ウォーラー
 Water|ウォター
 Water|ウオーター
 Waterer|ウォターラー
+Waterfields|ウォーターフィールズ
 Waterfield|ウォーターフィールド
 Waterfront|ウォーターフロント
 Waterhouse|ウォーターハウス
@@ -36581,6 +37514,7 @@ Way|ウェーズ
 Way|ウェイー
 Way|ウエー
 Wayang|ワヤン
+Waylands|ウェランズ
 Wayland|ウェランド
 Wayne|ウェイン
 Wayne|ウエイン
@@ -36632,17 +37566,22 @@ Wedel|ベーデル
 Wedeln|ウェーデルン
 Wedge|ウェッジ
 Wedge|ウエッジ
+Wedgwoods|ウェッジウッズ
 Wedgwood|ウェッジウッド
+Wedgwoods|ウエッジウッズ
 Wedgwood|ウエッジウッド
 Wednesday|ウェンズデー
 Wednesday|ウエンズデー
 Weds|ウェッズ
+Weeds|ウィーズ
 Weed|ウィード
 Week|ウィーク
 Week|ウィークス
 Week|ウイーク
 Weekday|ウイークデー
+Weekends|ウィークエンズ
 Weekend|ウィークエンド
+Weekends|ウイークエンズ
 Weekend|ウイークエンド
 Weekender|ウイークエンダー
 Weekly|ウィークリー
@@ -36682,6 +37621,7 @@ Weinstein|ワインスタイン
 Weir|ウィアー
 Weir|ウェア
 Weir|ウエア
+Weirds|ウィアーズ
 Weird|ウィアード
 Weisgerber|バイスゲルバー
 Weiss|ワイス
@@ -36753,18 +37693,22 @@ Westinghouse|ウェスチンハウス
 Westinghouse|ウェスティングハウス
 Westminster|ウェストミンスター
 Westminster|ウエストミンスター
+Westmorelands|ウエストモーランズ
 Westmoreland|ウエストモーランド
+Westmorlands|ウエストモーランズ
 Westmorland|ウエストモーランド
 Weston|ウェストン
 Weston|ウエストン
 Westphalia|ウェストファリア
 Westphalia|ウエストファリア
+Westwoods|ウェストウッズ
 Westwood|ウェストウッド
 Westy|ウェスティー
 Wet|ウェット
 Wet|ウエット
 Wetmore|ウェットモア
 Wewak|ウエワク
+Wexfords|ウェックスフォーズ
 Wexford|ウェックスフォード
 Wexler|ウェクスラー
 Weymouth|ウェーマス
@@ -36807,11 +37751,13 @@ Whitaker|ウイテカー
 Whitaker|ホイッテカー
 Whitby|ホイットビー
 White|ホワイト
+Whiteboards|ホワイトボーズ
 Whiteboard|ホワイトボード
 Whitelogist|ホワイトロジスト
 Whitener|ホワイトナー
 Whiteness|ホワイトネス
 Whitfield|フヒットフィルト
+Whitfields|ホイットフィールズ
 Whitfield|ホイットフィールド
 Whitissimo|ホワイティシモ
 Whitlam|ホイットラム
@@ -36825,6 +37771,7 @@ Whitworth|ウイットワース
 Who|フー
 Whodunit|フーダニット
 Whole|ホール
+Wholefoods|ホールフーズ
 Wholefood|ホールフード
 Wholesale|ホールセール
 Why|ホワイ
@@ -36856,9 +37803,11 @@ Wiki|ウィキ
 Wilbur|ウィルバー
 Wilcoxon|ウィルコクスン
 Wilcoxon|ウィルコクソン
+Wilds|ワイルズ
 Wild|ワイルド
 Wilde|ワイルド
 Wilder|ワイルダー
+Wildwoods|ワイルドウッズ
 Wildwood|ワイルドウッド
 Wilfried|ビルフリート
 Wilhelm|ウィルヘルム
@@ -36871,6 +37820,7 @@ Wilkon|ビルコン
 Will|ウィル
 Will|ウイル
 Willamette|ウィラメット
+Willards|ウィラーズ
 Willard|ウィラード
 Willcom|ウィルコム
 Willem|ウィーレム
@@ -36922,8 +37872,9 @@ Winchester|ウィンチェスター
 Winckelmann|ウィンケルマン
 Winckelmann|ウインケンマン
 Winckelmann|ビンケルマン
-Wind|ウィンズ
+Winds|ウィンズ
 Wind|ウィンド
+Winds|ウインズ
 Wind|ウインド
 Windbreaker|ウインドブレーカー
 Windelband|ビンデルバント
@@ -36953,6 +37904,7 @@ Wing|ウイングス
 Wing|ウイングズ
 Wingert|ビンゲルト
 Winglet|ウィングレット
+Winifreds|ウィニフレッズ
 Winifred|ウィニフレッド
 Wink|ウィンク
 Wink|ウインク
@@ -36980,6 +37932,7 @@ Winterthur|ウィンタトゥール
 Winthrop|ウインスロップ
 Wintomylon|ウイントマイロン
 Winton|ウィントン
+Winwoods|ウィンウッズ
 Winwood|ウィンウッド
 Wipe|ワイプ
 Wiper|ワイパー
@@ -37018,7 +37971,7 @@ Witter|ウィッター
 Wittgenstein|ウィトゲンシュタイン
 Wittgenstein|ビトゲンシュタイン
 Wittmann|ビットマン
-Wizard|ウィザーズ
+Wizards|ウィザーズ
 Wizard|ウィザード
 Wizengamot|ウィゼンガモット
 Wobbe|ウォッベ
@@ -37057,16 +38010,20 @@ Wombat|ウォンバット
 Wonder|ワンダー
 Wonderful|ワンダフル
 Wonderful|ワンダホー
+Wonderlands|ワンダーランズ
 Wonderland|ワンダーランド
 Wonka|ワンカ
+Woods|ウッズ
 Wood|ウッド
+Woodards|ウッダーズ
 Woodard|ウッダード
+Woodlands|ウッドランズ
 Woodland|ウッドランド
 Woodley|ウッドレー
 Woodpecker|ウッドペッカー
 Woodrow|ウッドロー
-Woods|ウッズ
 Woodstock|ウッドストック
+Woodwards|ウッドワーズ
 Woodward|ウッドワード
 Woody|ウッディ
 Woody|ウッディー
@@ -37084,7 +38041,7 @@ Woosnam|ウーズナム
 Wop|ワップ
 Worcester|ウースター
 Worcester|ウスター
-Word|ワーズ
+Words|ワーズ
 Word|ワード
 Wording|ワーディング
 Wordsworth|ウォーズウォース
@@ -37103,17 +38060,19 @@ Worker|ワーカー
 Worker|ワーカーズ
 Working|ワーキング
 Workshop|ワークショップ
-World|ワールズ
+Worlds|ワールズ
 World|ワールド
 Worm|ワーム
 Worms|ボルムス
 Worse|ワース
 Worst|ワースト
+Worsteds|ウーステッズ
 Worsted|ウーステッド
 Wort|ワート
 Worth|ワース
 Worthington|ワージントン
 Wotton|ウォットン
+Woulds|ウッズ
 Would|ウッド
 Would|ウッドゥ
 Wow|ワウ
@@ -37124,6 +38083,7 @@ Wrangel|ウランゲリ
 Wrangham|ランガム
 Wrangler|ラングラー
 Wrap|ラップ
+Wraparounds|ラップアラウンズ
 Wraparound|ラップアラウンド
 Wrapping|ラッピング
 Wreath|リース
@@ -37141,6 +38101,7 @@ Writer|ライター
 Writer|ライターズ
 Writing|ライティング
 Wudu|ウドゥー
+Wujuds|ウジューズ
 Wujud|ウジュード
 Wunderkammer|ブンダーカンマー
 Wuppertal|ブッパタール
@@ -37226,6 +38187,7 @@ Yanni|ヤニー
 Yaounde|ヤウンデ
 Yap|ヤップ
 Yaponskii|ヤポンスキー
+Yards|ヤーズ
 Yard|ヤード
 Yard|ヤール
 Yardage|ヤーデージ
@@ -37236,6 +38198,7 @@ Yarn|ヤン
 Yarovizatsiya|ヤロビザーチャ
 Yarrow|ヤーロー
 Yaser|ヤセル
+Yazds|ヤズズ
 Yazd|ヤズド
 Year|イアーズ
 Year|イヤー
@@ -37274,6 +38237,7 @@ Yggdrasill|ユグドラシル
 Yiddish|イーディッシュ
 Yiddish|イッディシュ
 Yiddish|イディッシュ
+Yields|イールズ
 Yield|イールド
 Yitzhak|イツァク
 Yitzhak|イツハーク
@@ -37396,6 +38360,7 @@ Zart|ツァールト
 Zatopek|ザトペック
 Zavot|ザボート
 Zawose|ザウォセ
+Zayids|ザーイズ
 Zayid|ザーイド
 Zazie|ザジ
 Zbigniew|ズビグニュー
@@ -37520,7 +38485,8 @@ Zoetrope|ゾートロープ
 Zogby|ゾグビー
 Zogu|ゾグ
 Zogu|ゾグー
-Zoids|ゾイド
+Zoid|ゾイド
+Zoids|ゾイズ
 Zola|ゾラ
 Zoladex|ゾラデックス
 Zolaism|ゾライズム
@@ -37580,11 +38546,11 @@ Zyklus|チクルス
 Zyklus|ツィクルス
 Zymase|チマーゼ
 Zyzomys|ジュゾミュス
+Binds|バインズ
 Bind|バインド
 Cap|キャップ
 Chain|チェイン
 Consul|コンサル
-Cover|カバー
 Dia|ダイヤ
 Dia|ダイア
 Dialog|ダイアログ
@@ -37608,7 +38574,6 @@ Window|ウィンドウ
 Wrapper|ラッパー
 Alias|エイリアス
 Attach|アタッチ
-Collaboration|コラボレーション
 Combinator|コンビネータ
 Daemon|デーモン
 Endpoint|エンドポイント
@@ -37622,6 +38587,7 @@ Online|オンライン
 Pan|パン
 Panasonic|パナソニック
 Parser|パーザ
+Passwords|パスワーズ
 Password|パスワード
 Recovery|リカバリー
 Reflection|リフレクション
@@ -37629,10 +38595,12 @@ Serialize|シリアライズ
 Synchronizer|シンクロナイザ
 Taste|テイスト
 Use|ユース
+Clouds|クラウズ
 Cloud|クラウド
 Login|ログイン
 Logout|ログアウト
 Plane|プレーン
+Play|プレイ
 Portal|ポータル
 Quota|クォータ
 Refinement|リファインメント
@@ -37640,3 +38608,5 @@ Spective|スペクティブ
 Stake|ステーク
 Stream|ストリーム
 Usecase|ユースケース
+Workloads|ワークローズ
+Workload|ワークロード
