@@ -72,6 +72,9 @@ private:
     // インスタンス自体はUI側で用意するため、こちら側で delete してはいけない
     DecoderOutParams* OutParams;
 
+    // UI側から送られてきた設定情報の保存
+    wstring decoderSettings;
+
     // デコーダ状態の始点
     std::unique_ptr<Node> startNode;
     std::unique_ptr<State> startState;
@@ -94,7 +97,7 @@ public:
     }
 
     // 初期化
-    void Initialize(DecoderCommandParams* params) override {
+    void initializeDecoder() {
         LOG_INFO(_T("ENTER"));
 
         // 状態の共有情報生成
@@ -107,10 +110,10 @@ public:
         FunctionNodeManager::AddFunctionNodeBuilders();
 
         // GUIから送られてきた settings を読み込んで Settings::Singleton を構築
-        createSettings(params->inOutData);
+        createSettings();
 
         // settings の再ロードとストローク木の再構築
-        reloadSettings(params->inOutData, false);
+        reloadSettings(false);
 
         // 始状態
         startNode.reset(new StartNode());
@@ -152,24 +155,34 @@ public:
         LOG_INFO(_T("CALLED"));
     }
 
+    // settings の事前受け取り
+    void presendSettings(bool bFirst, const wstring & settings) {
+        LOG_INFO(_T("ENTER: %s: settings=%s"), bFirst?_T("FIRST"):_T("NEXT"), settings.c_str());
+        if (bFirst) {
+            decoderSettings = settings;
+        } else {
+            decoderSettings += settings;
+        }
+    }
+    
     // GUIから送られてきた settings を読み込んで Settings::Singleton を構築
-    void createSettings(const wstring& settings) {
+    void createSettings() {
         LOG_INFO(_T("ENTER"));
 
         SETTINGS.reset(new Settings);
 
         // settings のロード
-        loadSettings(settings);
+        loadSettings(decoderSettings);
 
         LOG_INFO(_T("LEAVE"));
     }
     
     // settings の再ロードとストローク木の再構築
-    void reloadSettings(const wstring & settings, bool bPreLoad = true) {
-        LOG_INFO(_T("ENTER: settings=%s"), settings.c_str());
-        
+    void reloadSettings(bool bPreLoad = true) {
+        LOG_INFO(_T("ENTER"));
+       
         // settings の事前ロード
-        if (bPreLoad) loadSettings(settings);
+        if (bPreLoad) loadSettings(decoderSettings);
 
         // Deckey から文字への変換インスタンスの構築
         createDeckeyToCharsInstance();
@@ -181,7 +194,7 @@ public:
         createStrokeTrees();
 
         // settings の再ロード
-        loadSettings(settings);
+        loadSettings(decoderSettings);
 
         // 簡易打鍵文字を集める
         EasyChars::GatherEasyChars();
@@ -321,7 +334,11 @@ public:
     // cmdParams->inOutData に "コマンド\t引数" の形でコマンドラインが格納されている
     // 結果は outParams で返す
     void ExecCmd(DecoderCommandParams* cmdParams, DecoderOutParams* outParams) override {
-        LOG_INFOH(_T("ENTER: paramLen=%d, data=%s"), _tcslen(cmdParams->inOutData), cmdParams->inOutData);
+        if (Logger::IsInfoHEnabled()) {
+            size_t len = _tcslen(cmdParams->inOutData);
+            wstring data(cmdParams->inOutData, 200);
+            LOG_INFOH(_T("ENTER: paramLen=%d, data=%s"), len, data.c_str());
+        }
 
         OutParams = outParams;
 
@@ -329,7 +346,16 @@ public:
         if (!items.empty()) {
             const auto& cmd = items[0];
             LOG_INFO(_T("cmd=%s, items.size()=%d"), cmd.c_str(), items.size());
-            if (cmd == _T("addHistEntry") && HISTORY_DIC) {
+            if (cmd == _T("presendSettings")) {
+                // 設定の先行送出
+                if (items.size() > 2 && !items[2].empty()) presendSettings(utils::toLower(items[1]) == _T("true"), items[2]);
+            } else if (cmd == _T("initializeDecoder")) {
+                initializeDecoder();
+            } else if (cmd == _T("reloadSettings")) {
+                // 設定の再読み込み
+                //if (items.size() > 1 && !items[1].empty()) reloadSettings(items[1]);
+                reloadSettings();
+            } else if (cmd == _T("addHistEntry") && HISTORY_DIC) {
                 // 履歴登録
                 if (items.size() >= 2 && !items[1].empty()) {
                     HISTORY_DIC->AddNewEntryAnyway(to_mstr(items[1]));
@@ -468,9 +494,6 @@ public:
             } else if (cmd == _T("getCharsOrderedByDeckey")) {
                 // Deckey順に並んだ通常文字列とシフト文字列を返す
                 getCharsOrderedByDeckey(outParams);
-            } else if (cmd == _T("reloadSettings")) {
-                // 設定の再読み込み
-                if (items.size() > 1 && !items[1].empty()) reloadSettings(items[1]);
             } else if (cmd == _T("createStrokeTrees")) {
                 // ストローク木の再構築
                 createStrokeTrees(items.size() >= 2 && !items[1].empty());
@@ -963,15 +986,14 @@ namespace {
 
 // デコーダを初期化する
 // 引数: 初期化パラメータ
-int InitializeDecoder(void* pDecoder, DecoderCommandParams* cmdParams) {
+int InitializeDecoder(void* , DecoderCommandParams* ) {
     LOG_INFO_UC(_T("\n======== kw-uni START ========"));
-    LOG_INFOH(_T("LogLevel=%d, inOutData=%s"), Logger::LogLevel, cmdParams->inOutData);
+    LOG_INFOH(_T("LogLevel=%d"), Logger::LogLevel);
 
     // エラーハンドラの生成
     ErrorHandler::CreateSingleton();
 
-    auto method_call = [pDecoder, cmdParams]() { ((Decoder*)pDecoder)->Initialize(cmdParams); };
-    return invokeDecoderMethod(method_call, cmdParams);
+    return 0;
 }
 
 // デコーダを終了する

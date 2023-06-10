@@ -385,6 +385,21 @@ namespace KanchokuWS
             logger.InfoH(() => $"SPECIAL_DECKEY_ID_BASE={DecoderKeys.SPECIAL_DECKEY_ID_BASE}");
         }
 
+        /// <summary> デコーダ用の設定を事前にロードしておく </summary>
+        private void presendDecoderSettings()
+        {
+            string settings = Settings.SerializedDecoderSettings;
+            int pos = 0;
+            int sendSize = 1024;
+            bool bFirst = true;
+            while (pos + sendSize < settings.Length) {
+                ExecCmdDecoder("presendSettings", $"{bFirst}\t{settings.Substring(pos, sendSize)}");
+                pos += sendSize;
+                bFirst = false;
+            }
+            ExecCmdDecoder("presendSettings", $"{bFirst}\t{settings.Substring(pos)}");
+        }
+
         private void updateStrokeNodesByComplexCommands()
         {
             if (complexCommandStr._notEmpty()) {
@@ -403,7 +418,8 @@ namespace KanchokuWS
             ReadDefFiles();
 
             // デコーダの再設定(ここでストローク木も構築される)
-            ExecCmdDecoder("reloadSettings", Settings.SerializedDecoderSettings);
+            presendDecoderSettings();
+            ExecCmdDecoder("reloadSettings", "");
 
             updateStrokeNodesByComplexCommands();
 
@@ -1550,11 +1566,13 @@ namespace KanchokuWS
                 logger.InfoH("ENTER");
                 decoderPtr = CreateDecoder(Logger.LogLevel);         // UI側のLogLevelに合わせる
 
-                //ExecCmdDecoder(null, KanchokuIni.Singleton.IniFilePath, true);
-                if (!ExecCmdDecoder(null, Settings.SerializedDecoderSettings, true)) {
+                if (!ExecCmdDecoder(null, "", true)) {
                     logger.Error($"CLOSE: Decoder initialize error");
-                    //PostMessage(this.Handle, WM_Defs.WM_CLOSE, 0, 0);
-                    //this._invoke(() => this.Close());
+                    return false;
+                }
+                presendDecoderSettings();
+                if (!ExecCmdDecoder("initializeDecoder", "")) {
+                    logger.Error($"CLOSE: Decoder initialize error");
                     return false;
                 }
 

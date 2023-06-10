@@ -81,8 +81,8 @@ public:
     // デストラクタ
     virtual ~Decoder() { }
 
-    // 初期化
-    virtual void Initialize(DecoderCommandParams* params) = 0;
+    //// 初期化
+    //virtual void Initialize(DecoderCommandParams* params) = 0;
 
     // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
     virtual void MakeInitialVkbTable(DecoderOutParams* table) = 0;
