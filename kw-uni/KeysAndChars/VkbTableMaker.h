@@ -61,6 +61,9 @@ namespace VkbTableMaker {
     // ひらがなに到る第1打鍵集合を取得する
     const std::set<int>& GetHiraganaFirstDeckeys();
 
+    // 指定文字に至るストローク列をフェイス文字列として返す
+    wstring ConvCharToStrokeString(mchar_t ch);
+
     // 打鍵列からローマ字テーブルを作成してファイルに書き出す
     void SaveRomanStrokeTable(const wchar_t* = 0, const wchar_t* = 0);
 

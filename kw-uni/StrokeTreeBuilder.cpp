@@ -1254,9 +1254,24 @@ namespace {
         }
     }
 
+    void gatherStrokeChars(std::set<mchar_t>& charSet, StrokeTableNode* node) {
+        for (size_t i = 0; i < PLANE_DECKEY_NUM; ++i) {
+            auto blk = node->getNth(i);
+            if (blk && blk->isStringLikeNode() && blk->getString().size() == 1) {
+                mchar_t ch = utils::safe_front(blk->getString());
+                if (ch >= 0x100) charSet.insert(ch);    // 半角文字は除く
+            } else if (blk && blk->isStrokeTableNode()) {
+                gatherStrokeChars(charSet, (StrokeTableNode*)blk);
+            }
+        }
+    };
+
 } // namespace
 
 DEFINE_CLASS_LOGGER(StrokeTableNode);
+
+// ストローク可能な文字の集合
+std::set<mchar_t> StrokeTableNode::strokableChars;
 
 // 機能の再割り当て
 void StrokeTableNode::AssignFucntion(const wstring& keys, const wstring& name) {
@@ -1281,6 +1296,8 @@ StrokeTableNode* StrokeTableNode::CreateStrokeTree(const wstring& tableFile, std
     ROOT_STROKE_NODE = 0;
     ROOT_STROKE_NODE = StrokeTreeBuilder(tableFile, lines, true).CreateStrokeTree();
     RootStrokeNode1.reset(ROOT_STROKE_NODE);
+    strokableChars.clear();
+    gatherStrokeChars(strokableChars, ROOT_STROKE_NODE);
     return ROOT_STROKE_NODE;
 }
 
@@ -1298,24 +1315,15 @@ StrokeTableNode* StrokeTableNode::CreateStrokeTree3(const wstring& tableFile, st
     return RootStrokeNode3.get();
 }
 
-namespace {
-    void gatherStrokeChars(std::set<mchar_t>& charSet, StrokeTableNode* node) {
-        for (size_t i = 0; i < PLANE_DECKEY_NUM; ++i) {
-            auto blk = node->getNth(i);
-            if (blk && blk->isStringLikeNode()) {
-                charSet.insert(utils::safe_front(blk->getString()));
-            } else if (blk && blk->isStrokeTableNode()) {
-                gatherStrokeChars(charSet, (StrokeTableNode*)blk);
-            }
-        }
-    };
-
-}
-
 // ストローク可能文字を収集
 std::set<mchar_t> StrokeTableNode::GatherStrokeChars() {
     LOG_INFO(_T("CALLED"));
     std::set<mchar_t> charSet;
     if (ROOT_STROKE_NODE) gatherStrokeChars(charSet, ROOT_STROKE_NODE);
     return charSet;
+}
+
+// ストローク可能文字か
+bool StrokeTableNode::IsStrokable(mchar_t ch) {
+    return strokableChars.find(ch) != strokableChars.end();
 }

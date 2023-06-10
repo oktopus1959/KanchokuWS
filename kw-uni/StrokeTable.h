@@ -142,6 +142,9 @@ private:
     // 指定文字に至るストローク列を返す
     bool getStrokeListSub(const MString& target, std::vector<int>& list, bool bFull);
 
+    // ストローク可能な文字の集合
+    static std::set<mchar_t> strokableChars;
+
 public:
     // 指定文字に至るストローク列を返す
     std::vector<int> getStrokeList(const MString& target, bool bFull) {
@@ -167,6 +170,9 @@ public:
 
     // ストローク可能文字を収集
     static std::set<mchar_t> GatherStrokeChars();
+
+    // ストローク可能文字か
+    static bool IsStrokable(mchar_t ch);
 
     // ストロークノードの更新
     static void UpdateStrokeNodes(const wstring& strokeSource);

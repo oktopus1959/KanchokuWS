@@ -77,6 +77,14 @@ namespace {
         return ch >= '0' && ch <= '9';
     }
 
+    inline bool is_wide_numeral(wchar_t ch) {
+        return ch >= L'０' && ch <= L'９';
+    }
+
+    inline wchar_t make_halfwide_nummeral(wchar_t ch) {
+        return (ch - L'０') + '0';
+    }
+
     inline bool is_high_surrogate(wchar_t ch) {
         return ch >= 0xd800 && ch <= 0xdbff;
     }

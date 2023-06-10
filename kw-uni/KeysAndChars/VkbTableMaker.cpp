@@ -396,6 +396,12 @@ namespace VkbTableMaker {
         return line;
     }
 
+
+    // 指定文字に至るストローク列をフェイス文字列として返す
+    wstring ConvCharToStrokeString(mchar_t ch) {
+        return convDeckeysToWstring(StrokeTableNode::RootStrokeNode1->getStrokeList(to_mstr(ch), false));
+    }
+
     // ローマ字テーブルを作成してファイルに書き出す
     // trigger: 部首合成用, prefix2: 裏面定義用
     void SaveRomanStrokeTable(const wchar_t* trigger, const wchar_t* prefix2) {
@@ -467,8 +473,8 @@ namespace VkbTableMaker {
                 _LOG_DEBUGH(_T("BUSHU_COMP: trigger=%s"), trigger);
                 for (const auto& line : readBushuFile()) {
                     if (line.size() == 3) {
-                        auto list1 = utils::replace(convDeckeysToWstring(StrokeTableNode::RootStrokeNode1->getStrokeList(to_mstr(line.substr(1, 1)), false)), _T(" "), pfx2);
-                        auto list2 = utils::replace(convDeckeysToWstring(StrokeTableNode::RootStrokeNode1->getStrokeList(to_mstr(line.substr(2, 1)), false)), _T(" "), pfx2);
+                        auto list1 = utils::replace(ConvCharToStrokeString(line[1]), _T(" "), pfx2);
+                        auto list2 = utils::replace(ConvCharToStrokeString(line[2]), _T(" "), pfx2);
                         if (!list1.empty() && !list2.empty()) {
                             writer.writeLine(utils::utf8_encode(
                                 utils::format(_T("%s%s%s\t%s"),

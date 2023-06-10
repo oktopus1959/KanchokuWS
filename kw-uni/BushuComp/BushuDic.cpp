@@ -13,6 +13,7 @@
 #include "BushuDic.h"
 #include "BushuAssoc.h"
 #include "BushuAssocDic.h"
+#include "VkbTableMaker.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughBushu)
 
@@ -39,6 +40,13 @@ namespace {
                 parts[0] = a;
                 parts[1] = b;
             }
+
+            inline void set(wchar_t a, wchar_t b) {
+                data = (a << 16) + b;
+                parts[0] = a;
+                parts[1] = b;
+            }
+            inline void exchange() { set(parts[1], parts[0]); }
 
             inline bool operator==(uint32_t p) const { return data == p; }
 
@@ -752,82 +760,7 @@ namespace {
             if (fsList.size() > 0) list.insert(list.end(), fsList.begin(), fsList.end());
         }
 
-        //仮想鍵盤に部首合成ヘルプの情報を設定する
-        bool CopyBushuCompHelpToVkbFaces(mchar_t ch, wchar_t* faces, size_t kbLen, size_t kbNum, bool bSetAssoc) override {
-            auto gatherBodies = [this](mchar_t x) {
-                std::vector<wchar_t> result;
-                std::vector<wchar_t> temp;
-                for (auto ch : getBodies(x)) {
-                    mchar_t c = (mchar_t)ch;
-                    if (EASY_CHARS->IsEasyChar(c)) {
-                        LOG_DEBUG(_T("EasyChar: %c"), c);
-                        result.push_back((wchar_t)c);
-                    } else if (STROKE_HELP->Find(c)) {
-                        LOG_DEBUG(_T("SecondLevel Char: %c"), c);
-                        temp.push_back((wchar_t)c);
-                    }
-                }
-                utils::append(result, temp);
-                return result;
-            };
-
-            // クリアしておく
-            size_t numFaces = kbLen * kbNum;
-            for (size_t i = 0; i < numFaces; i += kbLen) {
-                faces[i] = faces[i + 1] = 0;
-            }
-
-            auto parts = findParts(ch);
-            if (parts.empty()) {
-                for (auto c : gatherBodies(ch)) {
-                    parts = findParts(c);
-                    faces[kbLen * 4] = c;
-                    wchar_t a = parts.a();
-                    wchar_t b = parts.b();
-                    faces[kbLen * 5] = a == ch ? b : a;
-                    return true;
-                }
-                return false;
-            }
-
-            wchar_t a = parts.a();
-            wchar_t b = parts.b();
-
-            if (bSetAssoc) setAssocTarget(a, b, ch);
-
-            size_t leftIn = (kbNum / 2) - 1;
-            size_t rightIn = leftIn + 1;
-            faces[kbLen * leftIn] = a; faces[kbLen * leftIn + 1] = 0;
-            faces[kbLen * rightIn] = b; faces[kbLen * rightIn + 1] = 0;
-
-            size_t pos = kbLen * (leftIn - 1);
-            if (!EASY_CHARS->IsEasyChar(a)) {
-                for (auto c : gatherBodies(a)) {
-                    faces[pos] = c; faces[pos + 1] = 0;
-                    if (pos == 0) break;
-                    pos -= kbLen;
-                }
-            }
-            for (; pos > 0; pos -= kbLen) faces[pos] = 0;
-
-            pos = kbLen * (rightIn + 1);
-            if (!EASY_CHARS->IsEasyChar(b)) {
-                for (auto c : gatherBodies(b)) {
-                    faces[pos] = c; faces[pos + 1] = 0;
-                    if (pos == numFaces) break;
-                    pos += kbLen;
-                }
-            }
-            for (; pos < numFaces; pos += kbLen) faces[pos] = 0;
-
-            return true;
-        }
-
     private:
-        std::set<mchar_t> popularCharSet;
-
-        inline bool isPopular(mchar_t ch) { return popularCharSet.find(ch) != popularCharSet.end(); }
-
         // 常用・人名漢字
         const wchar_t* popularChars =
             L"人一日大年出本中子見国言上分生手自行者二間事思時気会十家女三前的方入小地合後目長場代私下立部学物月田何来彼話体動社知理山内同心発高実作当新世今書度明五戦力名金性対意用男主通関文屋感郎業定政持道外取所現"
@@ -859,22 +792,196 @@ namespace {
             L"徽鷺丙閏榮琥爲櫂斤杷祁穣芹寬橙庚柾珀梧朔弐琢豹皐徠竣枇苺桧彪謄繭璽勺錘銑頒"
             ;
 
+        std::map<mchar_t, size_t> fullPopularCharMap;
+
+        std::map<mchar_t, size_t> freqPopularCharMap;
+
+#define FREQ_POPULAR_CHAR_NUM 500
+#define MAX_SIZE_T  static_cast<size_t>(-1)
+
+        void gatherPopularChars() {
+            if (fullPopularCharMap.empty()) {
+                const wchar_t* p = popularChars;
+                size_t idx = 0;
+                while (*p) {
+                    wchar_t ch = *p++;
+                    if (fullPopularCharMap.find(ch) == fullPopularCharMap.end()) fullPopularCharMap[ch] = idx;
+                    if (idx < FREQ_POPULAR_CHAR_NUM) {
+                        if (freqPopularCharMap.find(ch) == freqPopularCharMap.end()) freqPopularCharMap[ch] = idx;
+                    }
+                    ++idx;
+                }
+            }
+        }
+
+        inline size_t popularIndex(mchar_t ch) {
+            if (fullPopularCharMap.empty()) { gatherPopularChars(); }
+            auto pair = fullPopularCharMap.find(ch);
+            return pair == fullPopularCharMap.end() ? MAX_SIZE_T : pair->second;
+        }
+
+        inline bool isPopular(mchar_t ch) {
+            return popularIndex(ch) != MAX_SIZE_T;
+        }
+
+        inline size_t freqPopularIndex(mchar_t ch) {
+            if (freqPopularCharMap.empty()) { gatherPopularChars(); }
+            auto pair = freqPopularCharMap.find(ch);
+            return pair == freqPopularCharMap.end() ? -1 : pair->second;
+        }
+
+        inline bool isFreqPopular(mchar_t ch) {
+            return utils::is_punct(ch) || utils::is_hiragana(ch) || utils::is_katakana(ch) || freqPopularIndex(ch) != MAX_SIZE_T;
+        }
+
+        inline bool isEasyOrFreqPopular(mchar_t ch) {
+            return EASY_CHARS->IsEasyChar(ch) || isFreqPopular(ch);
+        }
+
+        inline bool isStrokableOrNumeral(mchar_t ch) { return StrokeTableNode::IsStrokable(ch) || (ch < 0xffff && (is_numeral((wchar_t)ch) || is_wide_numeral((wchar_t)ch))); }
+
+#define MINIMUM_BODIES 0
+#define MINIMAL_BODIES 1
+#define FULL_BODIES 2
+
+        void gatherPopularBodies(mchar_t ch, std::vector<wchar_t>& bodies, int level) {
+            std::set<wchar_t> usedChars;
+            std::vector<std::pair<wchar_t, size_t>> easyChars;
+            std::vector<std::pair<wchar_t, size_t>> popChars;
+            std::vector<std::pair<wchar_t, size_t>> otherChars;
+
+            auto classifyChar = [this, &easyChars, &popChars, &otherChars](mchar_t c) {
+                if (isStrokableOrNumeral(c)) {
+                    size_t idx = popularIndex(c);
+                    std::pair<wchar_t, size_t> pair((wchar_t)c, idx);
+                    if (EASY_CHARS->IsEasyChar(c)) {
+                        easyChars.push_back(pair);
+                    } else if (idx != MAX_SIZE_T) {
+                        popChars.push_back(pair);
+                    } else if (c >= 0x100) {
+                        // 半角は除く
+                        otherChars.push_back(pair);
+                    }
+                }
+            };
+            // 自身
+            if (isStrokableOrNumeral(ch)) {
+                if (level > MINIMUM_BODIES || isEasyOrFreqPopular(ch)) {
+                    bodies.push_back((wchar_t)ch);
+                    usedChars.insert((wchar_t)ch);
+                }
+            }
+            // 等値文字
+            for (auto ec : findEquiv(ch)) {
+                if (isStrokableOrNumeral(ec)) {
+                    if (level > MINIMUM_BODIES || isEasyOrFreqPopular(ch)) {
+                        bodies.push_back((wchar_t)ec);
+                        usedChars.insert(ec);
+                    }
+                }
+            }
+            if (level == MINIMUM_BODIES || (level == MINIMAL_BODIES && !usedChars.empty())) return;
+
+            classifyChar(ch);
+            for (auto c : getBodies(ch)) classifyChar(c);
+
+            auto sortAndAppend = [this, &bodies, &usedChars, level](std::vector<std::pair<wchar_t, size_t>>& pairVec) {
+                if (!pairVec.empty()) {
+                    std::sort(pairVec.begin(), pairVec.end(), [](const auto& p, const auto& q) { return p.second < q.second; });
+                    for (const auto& p : pairVec) {
+                        wchar_t c = p.first;
+                        if (usedChars.find(c) == usedChars.end() && isStrokableOrNumeral(c)) {
+                            bodies.push_back(c);
+                            usedChars.insert(c);
+                        }
+                        if (level < FULL_BODIES) return true;
+                    }
+                }
+                return false;
+            };
+            if (sortAndAppend(easyChars)) return;
+            if (sortAndAppend(popChars)) return;
+            if (sortAndAppend(otherChars)) return;
+        }
+
+        std::vector<wchar_t> gatherBodies(mchar_t x) {
+            std::vector<wchar_t> result;
+            gatherPopularBodies(x, result, FULL_BODIES);
+            return result;
+        }
+
+        // 指定文字を部首合成できる文字の組合せを集める
+        void gatherBushuCompPartsCandidate(parts_t parts, std::vector<wchar_t>& partsA, std::vector<wchar_t>& partsB, int level) {
+            if (!parts.empty()) {
+                gatherPopularBodies(parts.a(), partsA, level);
+                gatherPopularBodies(parts.b(), partsB, level);
+            }
+        }
+
+    public:
+        //仮想鍵盤に部首合成ヘルプの情報を設定する
+        bool CopyBushuCompHelpToVkbFaces(mchar_t ch, wchar_t* faces, size_t kbLen, size_t kbNum, bool bSetAssoc) override {
+            // クリアしておく
+            size_t numFaces = kbLen * kbNum;
+            for (size_t i = 0; i < numFaces; i += kbLen) {
+                faces[i] = faces[i + 1] = 0;
+            }
+
+            auto parts = findParts(ch);
+            if (parts.empty()) {
+                // 引き算
+                for (auto c : gatherBodies(ch)) {
+                    parts = findParts(c);
+                    faces[kbLen * 4] = c;
+                    wchar_t a = parts.a();
+                    wchar_t b = parts.b();
+                    faces[kbLen * 5] = a == ch ? b : a;
+                    return true;
+                }
+                return false;
+            }
+
+            if (bSetAssoc) {
+                wchar_t a = parts.a();
+                wchar_t b = parts.b();
+                setAssocTarget(a, b, ch);
+            }
+
+            size_t leftIn = (kbNum / 2) - 1;
+            size_t rightIn = leftIn + 1;
+            std::vector<wchar_t> partsA;
+            std::vector<wchar_t> partsB;
+            gatherBushuCompPartsCandidate(findParts(ch), partsA, partsB, FULL_BODIES);
+
+            if (!partsA.empty() && !partsB.empty()) {
+                // for partsA
+                size_t pos = kbLen * leftIn;
+                for (auto c : partsA) {
+                    faces[pos] = c; faces[pos + 1] = 0;
+                    if (pos == 0) break;
+                    pos -= kbLen;
+                }
+                for (; pos > 0; pos -= kbLen) faces[pos] = 0;
+                // for partsB
+                pos = kbLen * rightIn;
+                for (auto c : partsB) {
+                    faces[pos] = c; faces[pos + 1] = 0;
+                    if (pos == numFaces) break;
+                    pos += kbLen;
+                }
+                for (; pos < numFaces; pos += kbLen) faces[pos] = 0;
+            }
+            return true;
+        }
+
+    private:
     public:
         //後置部首合成定義を書き出す
         void ExportPostfixBushuCompDefs(utils::OfstreamWriter& writer, const wchar_t* postfix) override {
             LOG_INFOH(_T("ENTER: writer.count=%d"), writer.count());
 
-            if (popularCharSet.empty()) {
-                const wchar_t* p = popularChars;
-                while (*p) {
-                    popularCharSet.insert(*p++);
-                }
-            }
-
-            // ストローク可能文字
-            std::set<mchar_t> strokableChars = StrokeTableNode::GatherStrokeChars();
-
-            auto isStrokable = [&strokableChars](mchar_t ch) { return strokableChars.find(ch) != strokableChars.end(); };
+            //// ストローク可能文字
+            //std::set<mchar_t> strokableChars = StrokeTableNode::GatherStrokeChars();
 
             std::map<wstring, wstring> revMap;
             std::set<wstring> doneSet;
@@ -883,14 +990,16 @@ namespace {
             wchar_t buf[3] = { 0, 0, 0 };
             wchar_t rev[3] = { 0, 0, 0 };
 
-            size_t MAX_LINES = 7500;
+#define TAB_TAB  "\t\t"
+
+            size_t MAX_LINES = 7500;        // TAB_TAB を "\t" にして「次の入力」でなく「出力」にしてやっても、MAXはせいぜい8000以下だった
 
             auto writeComp = [this, &writer, MAX_LINES, postfix, &doneSet](mchar_t c, const wchar_t* comp) {
                 if (writer.count() < MAX_LINES) {
                     wstring cs = to_wstr(c);
-                    if (isPopular(c) && doneSet.find(comp) == doneSet.end()) {
+                    if (/*isPopular(c) &&*/ doneSet.find(comp) == doneSet.end()) {
                         writer.writeLine(utils::utf8_encode(
-                            utils::format(_T("%s%s\t\t%s"),
+                            utils::format(_T("%s%s" TAB_TAB "%s"),
                                 comp,
                                 postfix,
                                 cs.c_str())));
@@ -900,19 +1009,71 @@ namespace {
                 return writer.count() < MAX_LINES;
             };
 
-            for (const auto& pair : compMap) {
-                mchar_t c = pair.second;
-                wchar_t a = pair.first.a();
-                wchar_t b = pair.first.b();
-                // 順方向の足し算
-                if (isStrokable(a) && isStrokable(b)) {
-                    buf[0] = a;
-                    buf[1] = b;
-                    if (!writeComp(c, buf)) break;
-                    rev[0] = b;
-                    rev[1] = a;
-                    revMap[rev] = to_wstr(pair.second);
+            auto WRITE_CANDS = [this, &writeComp, &revMap, &buf, &rev](mchar_t c, const std::vector<wchar_t>& partsA, const std::vector<wchar_t>& partsB) {
+                size_t ia = 0;
+                size_t ib = 0;
+                for (wchar_t a : partsA) {
+                    for (wchar_t b : partsB) {
+                        if (c != a && c != b) {
+                            buf[0] = a;
+                            buf[1] = b;
+                            if (!writeComp(c, buf)) break;
+                            if (isPopular(c) && !is_numeral(buf[1])) {
+                                rev[0] = b;
+                                rev[1] = a;
+                                revMap[rev] = to_wstr(c);
+                            }
+                        }
+                        if (++ib >= 2) break;
+                    }
+                    if (++ia >= 3) break;
                 }
+            };
+#if 0
+            // 自動部首合成組み合わせの出力
+            for (const auto& pair : autoBushuDict) {
+                if (writer.count() >= MAX_LINES) break;
+                if (pair.first.size() == 2 && pair.second != '-') {
+                    mchar_t a = pair.first[0];
+                    mchar_t b = pair.first[1];
+                    if (isEasyOrFreqPopular(a) && isEasyOrFreqPopular(b)) {
+                        writer.writeLine(utils::utf8_encode(
+                            utils::format(_T("%s%s" TAB_TAB "%s"),
+                                (to_wstr(a) + VkbTableMaker::ConvCharToStrokeString(b)).c_str(),
+                                to_wstr(pair.second).c_str())));
+                        doneSet.insert(to_wstr(pair.first));
+                    }
+                }
+            }
+#endif
+            // 部首合成組み合わせの出力
+            for (const auto& pair : compMap) {
+                parts_t parts = pair.first;
+                mchar_t c = pair.second;
+                if (isStrokableOrNumeral(c) && isEasyOrFreqPopular(c)) continue;       // ストローク可能で頻度が高ければ対象外
+
+                if (!isPopular(c)) continue;                            // 常用・人名でなければ対象外
+
+                bool bAdded = false;
+
+                // 順方向の足し算
+                std::vector<wchar_t> partsA;
+                std::vector<wchar_t> partsB;
+
+                // 数字は2番目の部品にする
+                if (is_numeral(parts.a()) || is_wide_numeral(parts.a())) {
+                    parts.exchange();
+                }
+                // 数字は半角にする
+                if (is_wide_numeral(parts.b())) {
+                    parts.set(parts.a(), make_halfwide_nummeral(parts.b()));
+                }
+
+                // 頻度の高い部品の組み合わせか
+                gatherBushuCompPartsCandidate(parts, partsA, partsB, MINIMUM_BODIES);
+                WRITE_CANDS(c, partsA, partsB);
+
+                if (bAdded) continue;
 #if 0
                 // 引き算
                 buf[0] = (wchar_t)c;
@@ -921,80 +1082,48 @@ namespace {
                 buf[1] = b;
                 tmpMap[buf] = to_wstr(a);
 #endif
-                // 部品
-                if (isPopular(c)) {
-                    if (isStrokable(b)) {
-                        buf[1] = b;
-                        rev[0] = b;
-                        auto pa = findParts(a);
-                        wchar_t _a = pa.a();
-                        wchar_t _b = pa.b();
-                        if (_a && isStrokable(_a) && isComposableParts(_a)) {
-                            buf[0] = _a;
-                            if (!writeComp(c, buf)) break;
-                            rev[1] = _a;
-                            revMap[rev] = to_wstr(c);
+                // 頻度の低い部品の組み合わせか
+                partsA.clear();
+                partsB.clear();
+                gatherBushuCompPartsCandidate(parts, partsA, partsB, MINIMAL_BODIES);
+                WRITE_CANDS(c, partsA, partsB);
+
+                // 下位部品
+                wchar_t a = parts.a();
+                wchar_t b = parts.b();
+                if (isPopular(c) && (!isEasyOrFreqPopular(a) || !isEasyOrFreqPopular(b))) {
+                    auto ADD_COMPO_BY_SUBPARTS = [this, c, &buf, &rev, &writeComp, &revMap](wchar_t x, wchar_t y, size_t px, size_t py) {
+                        if (c != y && isEasyOrFreqPopular(y)) {
+                            buf[py] = y;
+                            rev[px] = y;
+                            auto pa = findParts(x);
+                            wchar_t _a = pa.a();
+                            wchar_t _b = pa.b();
+                            if (_a && c != _a && isStrokableOrNumeral(_a) && isEasyOrFreqPopular(_a) && isComposableParts(_a)) {
+                                buf[px] = _a;
+                                if (writeComp(c, buf)) return;
+                                rev[py] = _a;
+                                revMap[rev] = to_wstr(c);
+                            }
+                            if (_b && c != _b && isStrokableOrNumeral(_b) && isEasyOrFreqPopular(_b) && isComposableParts(_b)) {
+                                buf[px] = _b;
+                                if (!writeComp(c, buf)) return;
+                                rev[py] = _b;
+                                revMap[rev] = to_wstr(c);
+                            }
                         }
-                        if (_b && isStrokable(_b)&& isComposableParts(_b)) {
-                            buf[0] = _b;
-                            if (!writeComp(c, buf)) break;
-                            rev[1] = _b;
-                            revMap[rev] = to_wstr(c);
-                        }
-                    }
-                    if (isStrokable(a)) {
-                        buf[0] = a;
-                        rev[1] = a;
-                        auto pb = findParts(b);
-                        wchar_t _a = pb.a();
-                        wchar_t _b = pb.b();
-                        if (_a && isStrokable(_a) && isComposableParts(_a)) {
-                            buf[1] = _a;
-                            if (!writeComp(c, buf)) break;
-                            rev[0] = _a;
-                            revMap[rev] = to_wstr(c);
-                        }
-                        if (_b && isStrokable(_b) && isComposableParts(_b)) {
-                            buf[1] = _b;
-                            if (!writeComp(c, buf)) break;
-                            rev[0] = _b;
-                            revMap[rev] = to_wstr(c);
-                        }
-                    }
-                }
-                // 等価
-                if (isStrokable(b)) {
-                    buf[1] = b;
-                    rev[0] = b;
-                    for (auto ea : findEquiv(a)) {
-                        if (isStrokable(ea)) {
-                            buf[0] = ea;
-                            if (!writeComp(c, buf)) break;
-                            rev[1] = ea;
-                            revMap[rev] = to_wstr(c);
-                        }
-                    }
-                }
-                if (isStrokable(a)) {
-                    buf[0] = a;
-                    rev[1] = a;
-                    for (auto eb : findEquiv(b)) {
-                        if (isStrokable(eb)) {
-                            buf[1] = eb;
-                            if (!writeComp(c, buf)) break;
-                            rev[0] = eb;
-                            revMap[rev] = to_wstr(c);
-                        }
-                    }
+                    };
+                    ADD_COMPO_BY_SUBPARTS(a, b, 0, 1);
+                    ADD_COMPO_BY_SUBPARTS(b, a, 1, 0);
                 }
             }
 
+            // 逆順
             LOG_INFOH(_T("Reverse: writer.count=%d, revMap.size=%d"), writer.count(), revMap.size());
-
             for (const auto& pair : revMap) {
                 if (doneSet.find(pair.first) == doneSet.end()) {
                     writer.writeLine(utils::utf8_encode(
-                        utils::format(_T("%s%s\t%s"),
+                        utils::format(_T("%s%s" TAB_TAB "%s"),
                             pair.first.c_str(),
                             postfix,
                             pair.second.c_str())));
@@ -1006,6 +1135,7 @@ namespace {
         }
 
     private:
+#if 0
         inline void writeComp(utils::OfstreamWriter& writer, const wchar_t* postfix, mchar_t c, const wchar_t* comp, std::map<wstring, wstring>& tmpMap) {
             wstring cs = to_wstr(c);
             if (isPopular(c)) {
@@ -1018,6 +1148,7 @@ namespace {
                 tmpMap[comp] = cs;
             }
         }
+#endif
     };
     DEFINE_CLASS_LOGGER(BushuDicImpl);
 
