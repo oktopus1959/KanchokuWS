@@ -88,6 +88,7 @@ struct Settings {
 
     bool yamanobeEnabled = false;           // YAMANOBEアルゴリズムを有効にするか
     bool autoBushuComp = false;             // 自動部首合成を行う
+    size_t autoBushuCompMinCount = 1;       // 自動首部合成を有効にする最小合成回数
 
     tstring romanBushuCompPrefix;           // ローマ字テーブル出力時の部首合成用プレフィックス
     tstring romanSecPlanePrefix;            // 裏面定義文字に対するローマ字出力時のプレフィックス

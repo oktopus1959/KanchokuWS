@@ -416,6 +416,8 @@ namespace KanchokuWS.Gui
             this.checkBox_mazeRightShiftYomiPos = new System.Windows.Forms.CheckBox();
             this.tabPage_misc = new System.Windows.Forms.TabPage();
             this.groupBox48 = new System.Windows.Forms.GroupBox();
+            this.textBox_preRewriteWaitTimeMsWhenTrainingMode = new System.Windows.Forms.TextBox();
+            this.label149 = new System.Windows.Forms.Label();
             this.label123 = new System.Windows.Forms.Label();
             this.textBox_preRewriteTargetChars = new System.Windows.Forms.TextBox();
             this.label122 = new System.Windows.Forms.Label();
@@ -434,6 +436,8 @@ namespace KanchokuWS.Gui
             this.label_miscReload = new System.Windows.Forms.Label();
             this.button_miscReload = new System.Windows.Forms.Button();
             this.groupBox38 = new System.Windows.Forms.GroupBox();
+            this.label150 = new System.Windows.Forms.Label();
+            this.textBox_autoBushuCompMinCount = new System.Windows.Forms.TextBox();
             this.checkBox_yamanobeEnabled = new System.Windows.Forms.CheckBox();
             this.label54 = new System.Windows.Forms.Label();
             this.textBox_bushuAssocSelectCount = new System.Windows.Forms.TextBox();
@@ -547,8 +551,6 @@ namespace KanchokuWS.Gui
             this.textBox_alphaModeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_2ndStrokeForeColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_modeForeColor = new KanchokuWS.Gui.ColorTextBox();
-            this.textBox_preRewriteWaitTimeMsWhenTrainingMode = new System.Windows.Forms.TextBox();
-            this.label149 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -5213,6 +5215,28 @@ namespace KanchokuWS.Gui
             this.groupBox48.TabStop = false;
             this.groupBox48.Text = "書き換えシステム";
             // 
+            // textBox_preRewriteWaitTimeMsWhenTrainingMode
+            // 
+            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.Location = new System.Drawing.Point(254, 64);
+            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.Name = "textBox_preRewriteWaitTimeMsWhenTrainingMode";
+            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.Size = new System.Drawing.Size(45, 19);
+            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.TabIndex = 6;
+            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this.textBox_preRewriteWaitTimeMsWhenTrainingMode, "かな入力練習モードのときに、書き換え対象文字を出力するまでの\r\n待ち時間を設定します。\r\n\r\n書き換え対象文字の入力後に、ここで設定した時間以内にBSが送られて\r" +
+        "\n書き換えが発生すれば、対象文字はシステムに送られません。\r\n\r\nブリ中トロやカモノハシなど、句読点を書き換えの前置文字として使う配列で\r\nタイプウェルなどの練" +
+        "習ツールを利用する際に有用です。");
+            // 
+            // label149
+            // 
+            this.label149.AutoSize = true;
+            this.label149.Location = new System.Drawing.Point(8, 66);
+            this.label149.Name = "label149";
+            this.label149.Size = new System.Drawing.Size(224, 15);
+            this.label149.TabIndex = 7;
+            this.label149.Text = "かな入力練習モードでの出力待ち時間(ミリ秒)";
+            // 
             // label123
             // 
             this.label123.AutoSize = true;
@@ -5410,6 +5434,8 @@ namespace KanchokuWS.Gui
             // 
             // groupBox38
             // 
+            this.groupBox38.Controls.Add(this.label150);
+            this.groupBox38.Controls.Add(this.textBox_autoBushuCompMinCount);
             this.groupBox38.Controls.Add(this.checkBox_yamanobeEnabled);
             this.groupBox38.Controls.Add(this.label54);
             this.groupBox38.Controls.Add(this.textBox_bushuAssocSelectCount);
@@ -5420,6 +5446,27 @@ namespace KanchokuWS.Gui
             this.groupBox38.TabIndex = 4;
             this.groupBox38.TabStop = false;
             this.groupBox38.Text = "部首合成・連想直接置換";
+            // 
+            // label150
+            // 
+            this.label150.AutoSize = true;
+            this.label150.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label150.Location = new System.Drawing.Point(152, 43);
+            this.label150.Name = "label150";
+            this.label150.Size = new System.Drawing.Size(139, 15);
+            this.label150.TabIndex = 42;
+            this.label150.Text = "回以上の実行で有効にする";
+            // 
+            // textBox_autoBushuCompMinCount
+            // 
+            this.textBox_autoBushuCompMinCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_autoBushuCompMinCount.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_autoBushuCompMinCount.Location = new System.Drawing.Point(115, 40);
+            this.textBox_autoBushuCompMinCount.Name = "textBox_autoBushuCompMinCount";
+            this.textBox_autoBushuCompMinCount.Size = new System.Drawing.Size(36, 19);
+            this.textBox_autoBushuCompMinCount.TabIndex = 2;
+            this.textBox_autoBushuCompMinCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this.textBox_autoBushuCompMinCount, resources.GetString("textBox_autoBushuCompMinCount.ToolTip"));
             // 
             // checkBox_yamanobeEnabled
             // 
@@ -5436,7 +5483,7 @@ namespace KanchokuWS.Gui
             // 
             this.label54.AutoSize = true;
             this.label54.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label54.Location = new System.Drawing.Point(8, 63);
+            this.label54.Location = new System.Drawing.Point(8, 64);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(137, 15);
             this.label54.TabIndex = 40;
@@ -5446,10 +5493,10 @@ namespace KanchokuWS.Gui
             // 
             this.textBox_bushuAssocSelectCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_bushuAssocSelectCount.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_bushuAssocSelectCount.Location = new System.Drawing.Point(151, 61);
+            this.textBox_bushuAssocSelectCount.Location = new System.Drawing.Point(151, 62);
             this.textBox_bushuAssocSelectCount.Name = "textBox_bushuAssocSelectCount";
             this.textBox_bushuAssocSelectCount.Size = new System.Drawing.Size(36, 19);
-            this.textBox_bushuAssocSelectCount.TabIndex = 2;
+            this.textBox_bushuAssocSelectCount.TabIndex = 3;
             this.textBox_bushuAssocSelectCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_bushuAssocSelectCount, "連想直接置換の試行回数を設定します。(最大5回)\r\n\r\n連想直接置換機能を連続して呼び出すと、連想文字一覧の\r\n先頭から順に出力文字を取得して置換していきます。\r" +
         "\n\r\n試行回数を超えて連想直接置換を呼び出した場合は、連想\r\n文字一覧からの選択画面に遷移します。");
@@ -5459,9 +5506,9 @@ namespace KanchokuWS.Gui
             this.checkBox_autoBushuComp.AutoSize = true;
             this.checkBox_autoBushuComp.Location = new System.Drawing.Point(11, 41);
             this.checkBox_autoBushuComp.Name = "checkBox_autoBushuComp";
-            this.checkBox_autoBushuComp.Size = new System.Drawing.Size(159, 19);
+            this.checkBox_autoBushuComp.Size = new System.Drawing.Size(107, 19);
             this.checkBox_autoBushuComp.TabIndex = 1;
-            this.checkBox_autoBushuComp.Text = "自動部首合成を有効にする";
+            this.checkBox_autoBushuComp.Text = "自動部首合成を";
             this.toolTip1.SetToolTip(this.checkBox_autoBushuComp, resources.GetString("checkBox_autoBushuComp.ToolTip"));
             this.checkBox_autoBushuComp.UseVisualStyleBackColor = true;
             // 
@@ -6778,28 +6825,6 @@ namespace KanchokuWS.Gui
             this.toolTip1.SetToolTip(this.textBox_modeForeColor, "第1打鍵待ち時のモード標識文字の色\r\n\r\n仮想鍵盤ではなくモード標識を表示している場合に、\r\n第1打鍵を待っている時の文字色を設定します。\r\n（ここをクリックする" +
         "と設定ダイアログが開きます。）");
             // 
-            // textBox_preRewriteWaitTimeMsWhenTrainingMode
-            // 
-            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.Location = new System.Drawing.Point(254, 64);
-            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.Name = "textBox_preRewriteWaitTimeMsWhenTrainingMode";
-            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.Size = new System.Drawing.Size(45, 19);
-            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.TabIndex = 6;
-            this.textBox_preRewriteWaitTimeMsWhenTrainingMode.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.toolTip1.SetToolTip(this.textBox_preRewriteWaitTimeMsWhenTrainingMode, "かな入力練習モードのときに、書き換え対象文字を出力するまでの\r\n待ち時間を設定します。\r\n\r\n書き換え対象文字の入力後に、ここで設定した時間以内にBSが送られて\r" +
-        "\n書き換えが発生すれば、対象文字はシステムに送られません。\r\n\r\nブリ中トロやカモノハシなど、句読点を書き換えの前置文字として使う配列で\r\nタイプウェルなどの練" +
-        "習ツールを利用する際に有用です。");
-            // 
-            // label149
-            // 
-            this.label149.AutoSize = true;
-            this.label149.Location = new System.Drawing.Point(8, 66);
-            this.label149.Name = "label149";
-            this.label149.Size = new System.Drawing.Size(224, 15);
-            this.label149.TabIndex = 7;
-            this.label149.Text = "かな入力練習モードでの出力待ち時間(ミリ秒)";
-            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -7464,5 +7489,7 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.CheckBox checkBox_showHistCandsFromFirst;
         private System.Windows.Forms.TextBox textBox_preRewriteWaitTimeMsWhenTrainingMode;
         private System.Windows.Forms.Label label149;
+        private System.Windows.Forms.Label label150;
+        private System.Windows.Forms.TextBox textBox_autoBushuCompMinCount;
     }
 }

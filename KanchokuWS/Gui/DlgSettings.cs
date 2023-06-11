@@ -1744,6 +1744,7 @@ namespace KanchokuWS.Gui
             // その他変換
             checkBox_yamanobeEnabled.Checked = Settings.YamanobeEnabled;
             checkBox_autoBushuComp.Checked = Settings.AutoBushuComp;
+            textBox_autoBushuCompMinCount.Text = $"{Settings.AutoBushuCompMinCount}";
             textBox_bushuAssocSelectCount.Text = $"{Settings.BushuAssocSelectCount}";
             checkBox_convertShiftedHiraganaToKatakana.Checked = Settings.ConvertShiftedHiraganaToKatakana;
             switch (Settings.HiraganaToKatakanaShiftPlane) {
@@ -1780,6 +1781,7 @@ namespace KanchokuWS.Gui
             checkerMiscSettings.ControlEnabler = tabMiscStatusChanged;
             checkerMiscSettings.Add(checkBox_yamanobeEnabled);
             checkerMiscSettings.Add(checkBox_autoBushuComp);
+            checkerMiscSettings.Add(textBox_autoBushuCompMinCount);
             checkerMiscSettings.Add(textBox_bushuAssocSelectCount);
             checkerMiscSettings.Add(checkBox_convertShiftedHiraganaToKatakana);
             checkerMiscSettings.Add(radioButton_normalShift);
@@ -1816,6 +1818,7 @@ namespace KanchokuWS.Gui
             logger.InfoH("ENTER");
             Settings.SetUserIni("yamanobeEnabled", checkBox_yamanobeEnabled.Checked);
             Settings.SetUserIni("autoBushuComp", checkBox_autoBushuComp.Checked);
+            Settings.SetUserIni("autoBushuCompMinCount", textBox_autoBushuCompMinCount.Text);
             Settings.SetUserIni("bushuAssocSelectCount", textBox_bushuAssocSelectCount.Text);
             Settings.SetUserIni("convertShiftedHiraganaToKatakana", checkBox_convertShiftedHiraganaToKatakana.Checked);
             Settings.SetUserIni("hiraToKataShiftPlane", radioButton_shiftA.Checked ? 2 : radioButton_shiftB.Checked ? 3 : 1);

@@ -683,6 +683,9 @@ namespace KanchokuWS
         /// <summary>自動首部合成を有効にするか</summary>
         public static bool AutoBushuComp { get; set; }
 
+        /// <summary>自動首部合成を有効にする最小合成回数</summary>
+        public static int AutoBushuCompMinCount { get; set; }
+
         /// <summary>部首連想直接出力の回数</summary>
         public static int BushuAssocSelectCount { get; set; }
 
@@ -1552,6 +1555,7 @@ namespace KanchokuWS
 
             YamanobeEnabled = addDecoderSetting("yamanobeEnabled", false);                      // YAMANOBEアルゴリズムを有効にするか
             AutoBushuComp = addDecoderSetting("autoBushuComp", false);                          // 自動首部合成を有効にするか
+            AutoBushuCompMinCount = addDecoderSetting("autoBushuCompMinCount", 1, 1);           // 自動首部合成を有効にする最小合成回数
             BushuAssocSelectCount = addDecoderSetting("bushuAssocSelectCount", 1, 1, 10);       // 部首連想直接出力の回数
 
             RomanBushuCompPrefix = addDecoderSetting("romanBushuCompPrefix", "");               // ローマ字テーブル出力時の部首合成用プレフィックス

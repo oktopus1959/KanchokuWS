@@ -105,8 +105,13 @@ namespace {
         // 文字リスト用(文字リストから除外する文字の集合)
         std::set<wchar_t> firstLevel;
 
+        struct AutoBushuTarget {
+            mchar_t target;
+            size_t count;
+        };
+
         // 自動部首合成用辞書
-        std::map<MString, mchar_t> autoBushuDict;
+        std::map<MString, AutoBushuTarget> autoBushuDict;
 
         // 自動部首合成用辞書が修正された
         bool bAutoDirty = false;
@@ -230,7 +235,11 @@ namespace {
 
             for (auto& line : lines) {
                 if (line.empty() || std::regex_match(line, reComment)) continue;   // 空行や "# " で始まる行は読み飛ばす
-                addAutoBushuEntry(line, false);
+                auto items = utils::split(line, '\t');
+                if (!items.empty()) {
+                    size_t cnt = items.size() > 1 ? utils::strToInt(items[1], 1) : 1;
+                    addAutoBushuEntry(to_mstr(items[0]), cnt, false, false);
+                }
             }
 
             LOG_INFOH(_T("LEAVE"));
@@ -241,7 +250,7 @@ namespace {
             LOG_INFOH(_T("CALLED: autoBushuDict.size()=%d"), autoBushuDict.size());
             std::set<wstring> set_;
             for (const auto& pair : autoBushuDict) {
-                set_.insert(to_wstr(MString(1, pair.second) + pair.first));
+                set_.insert(utils::format(_T("%s\t%d"), MAKE_WPTR(MString(1, pair.second.target) + pair.first), pair.second.count));
             }
             for (const auto& s : set_) {
                 writer.writeLine(utils::utf8_encode(s));
@@ -265,10 +274,12 @@ namespace {
             addBushuEntry(line);
         }
 
-        // 1自動エントリの追加 (ここで追加したエントリは、保存時に辞書ファイルに追記される)
+        // 1自動エントリの強制追加 (無効化も兼ねる; ここで追加したエントリは、保存時に辞書ファイルに追記される)
         void AddAutoBushuEntry(const wstring& line) override {
-            bAutoDirty = true;
-            addAutoBushuEntry(line, true);
+            MString mline = to_mstr(line);
+            if (mline.size() == 3) {
+                addAutoBushuEntry(mline, SETTINGS->autoBushuCompMinCount, true, true);
+            }
         }
 
         // a と b を組み合わせてできる自動合成文字を探す。
@@ -279,8 +290,14 @@ namespace {
                 key.push_back(b);
                 _LOG_DEBUGH(_T("key=%s"), MAKE_WPTR(key));
                 auto iter = autoBushuDict.find(key);
-                _LOG_DEBUGH(_T("iter->second=%c"), ((iter != autoBushuDict.end()) ? iter->second : 0x20));
-                return (iter != autoBushuDict.end() && iter->second != '-') ? iter->second : 0; // ターゲットが '-' なら変換しない
+                _LOG_DEBUGH(_T("iter->second.target=%c"), ((iter != autoBushuDict.end()) ? iter->second.target : 0x20));
+                if (iter != autoBushuDict.end() && iter->second.target != '-' && iter->second.count >= SETTINGS->autoBushuCompMinCount) {
+                    // 参照回数が閾値以上のエントリが見つかったので、さらに参照回数をインクリメントしておく
+                    bAutoDirty = true;
+                    iter->second.count++;
+                    return iter->second.target;
+                }
+                return (mchar_t)0; // ターゲットが '-' だったり、最小呼び出し回数に達していなければ変換しない
             };
             //mchar_t result = finder(ca, cb);
             //if (result != 0) return result;
@@ -321,30 +338,42 @@ namespace {
 
         bool isInvalidAutoBushuKey(const MString& key) {
             auto iter = autoBushuDict.find(key);
-            return iter != autoBushuDict.end() && iter->second == '-';
+            return iter != autoBushuDict.end() && iter->second.target == '-';
         }
 
         // 自動エントリの追加 (形式は CAB)
-        void addAutoBushuEntry(const wstring& line, bool bForce) {
-            auto mline = to_mstr(line);
-            if (mline.size() >= 3) {
-                auto key = mline.substr(1);
-                if (bForce || !isInvalidAutoBushuKey(key)) {
-                    // 強制またはターゲットが '-' でない組み合わせの場合に再登録する
-                    autoBushuDict[key] = mline[0];
+        void addAutoBushuEntry(const MString& line, size_t cnt, bool bForce, bool bDirty) {
+            if (line.size() >= 3) {
+                mchar_t target = line[0];
+                auto key = line.substr(1);
+                auto iter = autoBushuDict.find(key);
+                if (bForce || target == '-' || iter == autoBushuDict.end() || iter->second.target != '-') {
+                    // 強制または無効化または組合せが存在しないまたはターゲットが '-' でない組み合わせの場合に再登録する
+                    if (target == '-') cnt = 0;
+                    if (!bForce && iter != autoBushuDict.end()) {
+                        if (iter->second.target == target) {
+                            iter->second.count += cnt;
+                        } else {
+                            iter->second.count = cnt;
+                        }
+                    } else {
+                        autoBushuDict[key] = AutoBushuTarget{ line[0], cnt };
+                    }
+                    if (bDirty) bAutoDirty = true;
                 }
             }
         }
 
         void AddAutoBushuEntry(mchar_t a, mchar_t b, mchar_t c) override {
             if (a != 0 && b != 0 && c != 0) {
-                MString key = make_mstring(a, b);
-                _LOG_DEBUGH(_T("key=%s, val=%c"), MAKE_WPTR(key), c);
-                if (!isInvalidAutoBushuKey(key)) {
-                    // ターゲットが '-' である組み合わせは、再登録しない(無視される)
-                    autoBushuDict[key] = c;
-                    bAutoDirty = true;
-                }
+                _LOG_DEBUGH(_T("key=%s, val=%c"), MAKE_WPTR(make_mstring(a, b)), MAKE_WPTR(c));
+                addAutoBushuEntry(make_mstring(c, a, b), 1, false, true);
+                //MString key = make_mstring(a, b);
+                //if (!isInvalidAutoBushuKey(key)) {
+                //    // ターゲットが '-' である組み合わせは、再登録しない(無視される)
+                //    autoBushuDict[key] = c;
+                //    bAutoDirty = true;
+                //}
             }
         }
 
@@ -1029,23 +1058,25 @@ namespace {
                     if (++ia >= 3) break;
                 }
             };
-#if 0
+
             // 自動部首合成組み合わせの出力
-            for (const auto& pair : autoBushuDict) {
-                if (writer.count() >= MAX_LINES) break;
-                if (pair.first.size() == 2 && pair.second != '-') {
-                    mchar_t a = pair.first[0];
-                    mchar_t b = pair.first[1];
-                    if (isEasyOrFreqPopular(a) && isEasyOrFreqPopular(b)) {
-                        writer.writeLine(utils::utf8_encode(
-                            utils::format(_T("%s%s" TAB_TAB "%s"),
-                                (to_wstr(a) + VkbTableMaker::ConvCharToStrokeString(b)).c_str(),
-                                to_wstr(pair.second).c_str())));
-                        doneSet.insert(to_wstr(pair.first));
+            if (SETTINGS->autoBushuComp) {
+                for (const auto& pair : autoBushuDict) {
+                    if (writer.count() >= MAX_LINES) break;
+                    if (pair.first.size() == 2 && pair.second.target != '-' && pair.second.count >= SETTINGS->autoBushuCompMinCount) {
+                        mchar_t a = pair.first[0];
+                        mchar_t b = pair.first[1];
+                        if (isEasyOrFreqPopular(a) && isEasyOrFreqPopular(b)) {
+                            writer.writeLine(utils::utf8_encode(
+                                utils::format(_T("%s" TAB_TAB "%s"),
+                                    (to_wstr(a) + VkbTableMaker::ConvCharToStrokeString(b)).c_str(),
+                                    to_wstr(pair.second.target).c_str())));
+                            doneSet.insert(to_wstr(pair.first));
+                        }
                     }
                 }
             }
-#endif
+
             // 部首合成組み合わせの出力
             for (const auto& pair : compMap) {
                 parts_t parts = pair.first;
