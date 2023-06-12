@@ -454,9 +454,17 @@ namespace KanchokuWS.Gui
 
             checkerBasic.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
+            // 同時打鍵・IME設定も呼んでおく
+            readSettings_tabImeCombo();
+            checkerImeCombo.Reinitialize();
+
             // 機能キー割当も呼んでおく
             readSettings_tabKeyAssign();
-            checkerKeyAssign.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+            checkerKeyAssign.Reinitialize();
+
+            // その他設定も呼んでおく
+            readSettings_tabMiscSettings();
+            checkerMiscSettings.Reinitialize();
 
             // 各種定義ファイルの再読み込み
             //frmMain?.ReloadDefFiles();
