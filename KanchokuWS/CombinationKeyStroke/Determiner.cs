@@ -128,7 +128,7 @@ namespace KanchokuWS.CombinationKeyStroke
         {
             if (preRewriteDt._isValid() &&
                 Settings.PreRewriteAllowedDelayTimeMs > 0 &&
-                (DateTime.Now - preRewriteDt).TotalMilliseconds > Settings.PreRewriteAllowedDelayTimeMs)
+                (HRDateTime.Now - preRewriteDt).TotalMilliseconds > Settings.PreRewriteAllowedDelayTimeMs)
             {
                 logger.DebugH($"CALL cancelPreRewrite: PreRewriteAllowedDelayTimeMs={Settings.PreRewriteAllowedDelayTimeMs}");
                 frmMain?.ExecCmdDecoder("cancelPreRewrite", null);
@@ -139,7 +139,7 @@ namespace KanchokuWS.CombinationKeyStroke
         {
             if (bPreRewriteTarget) {
                 logger.DebugH("Set PreRewrite DateTime");
-                preRewriteDt = DateTime.Now;
+                preRewriteDt = HRDateTime.Now;
             } else {
                 logger.DebugH("Reset PreRewrite DateTime");
                 preRewriteDt = DateTime.MinValue;
@@ -150,7 +150,7 @@ namespace KanchokuWS.CombinationKeyStroke
         //{
         //    if (KeyCombinationPool.CurrentPool.IsPreRewriteKey(dk)) {
         //        logger.DebugH($"set PreRewrite DateTime");
-        //        preRewriteDt = DateTime.Now;
+        //        preRewriteDt = HRDateTime.Now;
         //    } else {
         //        preRewriteDt = DateTime.MinValue;
         //    }
@@ -253,7 +253,7 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
         public void KeyDown(int decKey, bool bDecoderOn, int keyDownCount, Action<List<int>> handleComboKeyRepeat)
         {
-            DateTime dtNow = DateTime.Now;
+            DateTime dtNow = HRDateTime.Now;
             frmMain?.WriteStrokeLog(decKey, dtNow, true, strokeList.IsEmpty());
 
             totalKeyDownCount = keyDownCount;
@@ -433,7 +433,7 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <returns>出力文字列が確定すれば、それを出力するためのデコーダコード列を返す。<br/>確定しなければ null を返す</returns>
         public void KeyUp(int decKey, bool bDecoderOn, bool bTimer = false)
         {
-            DateTime dtNow = DateTime.Now;
+            DateTime dtNow = HRDateTime.Now;
 
             bool bSameLastKey = !strokeList.IsUnprocListEmpty && strokeList.Last.OrigDecoderKey == decKey;
             bool bSpaceKeyRepeated = bDecoderOn && bAutoRepeated && decKey == 40 && lastRepeatedDecKey == 40 && strokeList.DetectKeyRepeat(decKey);

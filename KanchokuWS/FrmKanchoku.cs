@@ -109,7 +109,7 @@ namespace KanchokuWS
             if (IsDecoderActive /*&& dlgStrokeLog != null*/) {
                 string msg = $"Out  | '{str}'";
                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"WriteStrokeLog: {msg}");
-                appenStrokeLog(msg, DateTime.Now, false);
+                appenStrokeLog(msg, HRDateTime.Now, false);
                 //if (CombinationKeyStroke.Determiner.Singleton.IsStrokeListEmpty()) FlushStrokeLog();
             }
         }
@@ -147,7 +147,7 @@ namespace KanchokuWS
 
         private void flushStrokeLogByTimer()
         {
-            if (sbStrokeLog.Length > 0 && IsDecoderActive && dlgStrokeLog != null && DateTime.Now > strokeLogLastDt.AddMilliseconds(300))
+            if (sbStrokeLog.Length > 0 && IsDecoderActive && dlgStrokeLog != null && HRDateTime.Now > strokeLogLastDt.AddMilliseconds(300))
                 FlushStrokeLog();
         }
 
@@ -208,6 +208,8 @@ namespace KanchokuWS
         /// <param name="e"></param>
         private async void FrmKanchoku_Load(object sender, EventArgs e)
         {
+            HRDateTime.AdjustHiResNow();
+
             logger.WriteInfo($"\n\n==== KANCHOKU WS START (LogLevel={Logger.LogLevel}) ====");
 
             IMEHandler.MainWnd = this.Handle;
@@ -1008,7 +1010,7 @@ namespace KanchokuWS
                 }
             } finally {
                 prevDeckey = deckey;
-                if (bPrevDtUpdate) prevDecDt = DateTime.Now;
+                if (bPrevDtUpdate) prevDecDt = HRDateTime.Now;
             }
         }
 
@@ -1238,6 +1240,9 @@ namespace KanchokuWS
         public void ActivateDecoder(int activatorCode = 0)
         {
             logger.InfoH(() => $"\nENTER");
+
+            HRDateTime.AdjustHiResNow();
+
             if (IsDecoderActive) {
                 logger.InfoH("Decoder already activated");
                 ExecCmdDecoder("commitHistory", null);                  // 履歴のコミットと初期化
@@ -1660,7 +1665,7 @@ namespace KanchokuWS
 
                 // 前回がCtrlキー修飾されたDecKeyで、その処理終了時刻の5ミリ秒以内に次のキーがきたら、それを無視する。
                 // そうしないと、キー入力が滞留して、CtrlキーのプログラムによるUP/DOWN処理とユーザー操作によるそれとがコンフリクトする可能性が高まる
-                if (prevDeckey >= DecoderKeys.CTRL_DECKEY_START && prevDecDt.AddMilliseconds(5) >= DateTime.Now) {
+                if (prevDeckey >= DecoderKeys.CTRL_DECKEY_START && prevDecDt.AddMilliseconds(5) >= HRDateTime.Now) {
                     logger.InfoH("SKIP");
                     return false;
                 }
@@ -1744,7 +1749,7 @@ namespace KanchokuWS
             //if (decoderOutput.GetStrokeCount() < 1) Settings.VirtualKeyboardShowStrokeCountTemp = 0;
 
             // 第2打鍵待ち状態になったら、第2打鍵待ちになった時刻をセットする
-            if (decoderOutput.GetStrokeCount() > 0) dtWaitSecondStroke = DateTime.Now;
+            if (decoderOutput.GetStrokeCount() > 0) dtWaitSecondStroke = HRDateTime.Now;
 
             // 中央鍵盤文字列の取得
             getCenterString();
@@ -2119,7 +2124,7 @@ namespace KanchokuWS
                 dateStrDeckeyCount %= items.Length + 1;
             var dtStr = "";
             if (dateStrDeckeyCount > 0) {
-                var dtNow = DateTime.Now.AddDays(dayOffset);
+                var dtNow = HRDateTime.Now.AddDays(dayOffset);
                 var fmt = items._getNth(dateStrDeckeyCount - 1)._strip();
                 if (Settings.LoggingDecKeyInfo) logger.InfoH($"count={dateStrDeckeyCount}, fmt={fmt}");
                 if (fmt._isEmpty()) return;
@@ -2201,7 +2206,7 @@ namespace KanchokuWS
         private void reinitializeSaveDictsChallengeDt()
         {
             if (Settings.SaveDictsIntervalTime > 0) {
-                saveDictsChallengeDt = DateTime.Now.AddMinutes(Settings.SaveDictsIntervalTime);
+                saveDictsChallengeDt = HRDateTime.Now.AddMinutes(Settings.SaveDictsIntervalTime);
                 saveDictsPlannedDt = saveDictsChallengeDt.AddMinutes(Settings.SaveDictsCalmTime);
             } else {
                 saveDictsChallengeDt = DateTime.MaxValue;
@@ -2215,7 +2220,7 @@ namespace KanchokuWS
 
         private void renewSaveDictsPlannedDt()
         {
-            var dtNow = DateTime.Now;
+            var dtNow = HRDateTime.Now;
             if (dtNow >= saveDictsChallengeDt) {
                 saveDictsPlannedDt = dtNow.AddMinutes(Settings.SaveDictsCalmTime);
                 logger.DebugH($"saveDictsPlannedDt={saveDictsPlannedDt}");
@@ -2257,7 +2262,7 @@ namespace KanchokuWS
 
             // 第2打鍵待ちの場合は、それをキャンセルする
             if (IsDecoderActive && decoderOutput.GetStrokeCount() > 0 && Settings.CancelSecondStrokeMillisec > 0) {
-                if (dtWaitSecondStroke._isValid() && dtWaitSecondStroke <= DateTime.Now.AddMilliseconds(-Settings.CancelSecondStrokeMillisec)) {
+                if (dtWaitSecondStroke._isValid() && dtWaitSecondStroke <= HRDateTime.Now.AddMilliseconds(-Settings.CancelSecondStrokeMillisec)) {
                     if (!IsWaitingSecondStrokeLocked) {
                         dtWaitSecondStroke = DateTime.MaxValue;
                         sendClearStrokeToDecoder();
@@ -2265,7 +2270,7 @@ namespace KanchokuWS
                 }
             }
 
-            if (DateTime.Now >= saveDictsPlannedDt || (IsDecoderActive && DateTime.Now >= saveDictsChallengeDt)) {
+            if (HRDateTime.Now >= saveDictsPlannedDt || (IsDecoderActive && HRDateTime.Now >= saveDictsChallengeDt)) {
                 reinitializeSaveDictsChallengeDt();
                 if (decoderPtr != IntPtr.Zero) {
                     logger.InfoH("CALL SaveDictsDecoder");

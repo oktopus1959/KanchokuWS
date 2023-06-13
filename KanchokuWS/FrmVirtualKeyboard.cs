@@ -1817,7 +1817,7 @@ namespace KanchokuWS
         private void DlgVirtualKeyboard_VisibleChanged(object sender, EventArgs e)
         {
             CommonState.VkbVisible = this.Visible;
-            CommonState.VkbVisibiltyChangedDt = DateTime.Now;
+            CommonState.VkbVisibiltyChangedDt = HRDateTime.Now;
         }
 
         // 辞書内容を保存して再起動

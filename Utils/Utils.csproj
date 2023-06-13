@@ -47,6 +47,7 @@
     <Compile Include="BoolObject.cs" />
     <Compile Include="GuiHelpers.cs" />
     <Compile Include="GuiStatusChecker.cs" />
+    <Compile Include="HRDateTime.cs" />
     <Compile Include="TextBoxRO.cs">
       <SubType>Component</SubType>
     </Compile>

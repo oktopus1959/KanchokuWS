@@ -162,7 +162,7 @@ namespace KanchokuWS.Handler
         private void updateLastOutputDt(bool bMoveVkbAtOnce = false)
         {
             // Enterキーだったら、すぐに仮想鍵盤を移動するように MinValue とする
-            LastOutputDt = bMoveVkbAtOnce ? DateTime.MinValue : DateTime.Now;
+            LastOutputDt = bMoveVkbAtOnce ? DateTime.MinValue : HRDateTime.Now;
         }
 
         private static void initializeKeyboardInput(ref INPUT input)
@@ -970,7 +970,7 @@ namespace KanchokuWS.Handler
                     SendVKeyCombo(KeyModifiers.MOD_CONTROL, (uint)Keys.V, 1);
                 }
 
-                LastOutputDt = DateTime.Now;
+                LastOutputDt = HRDateTime.Now;
             }
         }
 

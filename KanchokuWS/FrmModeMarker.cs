@@ -209,8 +209,8 @@ namespace KanchokuWS
                 if (iAlphaMode == 1) {
                     iAlphaMode = 2;
                     showMyForm();
-                    alphaModeHideDt = DateTime.Now.AddMilliseconds((Settings.EffectiveAlphaModeMarkerShowMillisec > 0 ? Settings.EffectiveAlphaModeMarkerShowMillisec : 1000) - 20);
-                } else if (alphaModeHideDt < DateTime.Now) {
+                    alphaModeHideDt = HRDateTime.Now.AddMilliseconds((Settings.EffectiveAlphaModeMarkerShowMillisec > 0 ? Settings.EffectiveAlphaModeMarkerShowMillisec : 1000) - 20);
+                } else if (alphaModeHideDt < HRDateTime.Now) {
                     iAlphaMode = 0;
                     this.Hide();
                     this.label1.Text = KanchokuModeFace;

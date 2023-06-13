@@ -196,8 +196,8 @@ namespace KanchokuWS.Handler
 
         public void LoggingCaretInfo(Settings.WindowsClassSettings settings)
         {
-            if (prevLogDt1.AddSeconds(3) < DateTime.Now) {
-                prevLogDt1 = DateTime.Now;
+            if (prevLogDt1.AddSeconds(3) < HRDateTime.Now) {
+                prevLogDt1 = HRDateTime.Now;
                 var caretMargin = settings?.ValidCaretMargin;
                 if (caretMargin != null) {
                     GUIThreadInfo.RECT rect;
@@ -271,10 +271,10 @@ namespace KanchokuWS.Handler
                     ++busyCount;
                     if (lastBusyDt._notValid()) {
                         // 初回のビジー
-                        lastBusyDt = DateTime.Now;
-                    } else if (DateTime.Now >= lastBusyDt.AddSeconds(5)) {
+                        lastBusyDt = HRDateTime.Now;
+                    } else if (HRDateTime.Now >= lastBusyDt.AddSeconds(5)) {
                         // 前回ビジーから5秒経過したら、busyCount をビジー時刻をクリア
-                        lastBusyDt = DateTime.Now;
+                        lastBusyDt = HRDateTime.Now;
                         if (busyCount >= 5) {
                             // この5秒間にビジーが5回以上あったら、busyFlag をクリアする。
                             // この間、微妙なタイマー割り込みでbusyFlagがONのままになって、ビジーを繰り返している可能性もあるので。
@@ -311,7 +311,7 @@ namespace KanchokuWS.Handler
             if (bOK && moveWin != MoveWinType.Freeze) {
                 // 強制移動でない場合は、頻繁に移動しないように、最後のキー出力が終わってNms経過したらウィンドウを移動する
                 bool bMandatory = moveWin == MoveWinType.MoveMandatory;
-                if (bMandatory || DateTime.Now >= (SendInputHandler.Singleton?.LastOutputDt.AddMilliseconds(Settings.VirtualKeyboardMoveGuardMillisec) ?? DateTime.MaxValue))
+                if (bMandatory || HRDateTime.Now >= (SendInputHandler.Singleton?.LastOutputDt.AddMilliseconds(Settings.VirtualKeyboardMoveGuardMillisec) ?? DateTime.MaxValue))
                     actionMoveWindow?.Invoke(bDiffWin, bMandatory, bLog);
             }
             if (bLog) logger.Info(() => $"LEAVE: ActiveWinClassName={ActiveWinClassName}");

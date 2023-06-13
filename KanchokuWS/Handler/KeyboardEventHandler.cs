@@ -689,7 +689,7 @@ namespace KanchokuWS.Handler
                                     // すでにスペースキーが押下されている(キーリピート)
                                     if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"prevSpaceUpDt={prevSpaceUpDt}.{prevSpaceUpDt:fff}");
                                     if (Settings.SandSEnableSpaceOrRepeatMillisec <= 0 ||
-                                        DateTime.Now > prevSpaceUpDt.AddMilliseconds(Settings.SandSEnableSpaceOrRepeatMillisec + KEY_REPEAT_INTERVAL)) {
+                                        HRDateTime.Now > prevSpaceUpDt.AddMilliseconds(Settings.SandSEnableSpaceOrRepeatMillisec + KEY_REPEAT_INTERVAL)) {
                                         // キーリピートに移行しない閾値時間が設定されている or 前回のSpaceキー離放時から閾値時間を超過していた
                                         setShifted();
                                         // 後置シフトキーを送出する
@@ -1014,7 +1014,7 @@ namespace KanchokuWS.Handler
                     if (isSandSEnabled()) {
                         frmKanchoku?.SetStrokeHelpShiftPlane(0);
                         var dtLimit = prevSpaceUpDt.AddMilliseconds(Settings.SandSEnableSpaceOrRepeatMillisec._geZeroOr(0));
-                        var dtNow = DateTime.Now;
+                        var dtNow = HRDateTime.Now;
                         if (bPrevPressed || bPrevPressedOneshot) prevSpaceUpDt = dtNow;
                         if (Settings.LoggingDecKeyInfo) {
                             logger.DebugH(() => $"SandS UP: IgnoreSpaceUpOnSandS={Settings.OneshotSandSEnabledCurrently}, " +

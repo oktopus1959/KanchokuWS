@@ -277,7 +277,7 @@ namespace Utils
                     msg = msg._safeSubstring(nlCnt);
                 }
                 try {
-                    sw.WriteLine($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff")} {level} [{caller}({line})] {msg}");
+                    sw.WriteLine($"{HRDateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff")} {level} [{caller}({line})] {msg}");
                     sw.Flush();
                 } catch { }
             }
