@@ -961,8 +961,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     // シフトキーが解放されている(または単打可能キーのみである)ので、最後のキー押下時刻との差分を求め、タイミング判定する
                     double ms2 = tailStk.TimeSpanMs(dtNow);
                     int minTime = 
-                        Settings.CombinationKeyMinOverlappingTimeMs3 > 0 && list._safeCount() >= 3 ? Settings.CombinationKeyMinOverlappingTimeMs3 :
-                        Settings.CombinationKeyMinOverlappingTimeMs2 > 0 && !isSpaceOrFunc ? Settings.CombinationKeyMinOverlappingTimeMs2 :
+                        //Settings.CombinationKeyMinOverlappingTimeMs3 > 0 && list._safeCount() >= 3 ? Settings.CombinationKeyMinOverlappingTimeMs3 :
+                        //Settings.CombinationKeyMinOverlappingTimeMs2 > 0 && !isSpaceOrFunc ? Settings.CombinationKeyMinOverlappingTimeMs2 :
                         Settings.CombinationKeyMinOverlappingTimeMs;
                     result = ms2 >= minTime ? 0 : bSecondComboCheck ? 2 : 1;
                     logger.DebugH(() => $"RESULT2={result == 0}: ms2={ms2:f2}ms >= minOverlappingTime={minTime}ms (Timing={result})");

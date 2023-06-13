@@ -339,10 +339,10 @@ convert(SP<51>E<6>O<50>I<27>o<25>e<8>i<33>sp) = じょう
 # SP S s E O e I o i sp
 convert(SP<10>Uu<33>E<71>O<72>e<15>I<56>o<66>i<33>sp) = そじよう
 
-onlyCharKeysComboShouldBeCoveringCombo(false)
-comboMinTime3(200)
-# SP S s E O e I o i sp
-convert(SP<10>Uu<33>E<71>O<72>e<15>I<56>o<66>i<33>sp) = そじよう
+##onlyCharKeysComboShouldBeCoveringCombo(false)
+##comboMinTime3(200)
+### SP S s E O e I o i sp
+##convert(SP<10>Uu<33>E<71>O<72>e<15>I<56>o<66>i<33>sp) = そじよう
 
 ### post.7 ###
 loadTable(tables/_test/noniiruto.post.7.tbl)
