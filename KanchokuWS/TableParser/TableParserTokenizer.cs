@@ -466,7 +466,8 @@ namespace KanchokuWS.TableParser
             var word = CurrentStr._toLower();
             if (word._isEmpty()) {
                 if (Settings.LoggingTableFileInfo) logger.InfoH("SandS");
-                Settings.SandSEnabledCurrently = true;
+                //Settings.SandSEnabledCurrently = true;
+                setSandSEnabled(true);
                 int plane = ShiftPlane.GetSandSPlane();
                 if (plane > 0) {
                     shiftPlane = plane;
@@ -475,29 +476,52 @@ namespace KanchokuWS.TableParser
                     ShiftPlane.AssignSanSPlane(shiftPlane);
                 }
             } else if (word._startsWith("enable")) {
-                Settings.SandSEnabledCurrently = true;
+                //Settings.SandSEnabledCurrently = true;
+                setSandSEnabled(true);
                 if (Settings.LoggingTableFileInfo) logger.InfoH("SandS enabled");
             } else if (word._startsWith("disable")) {
-                Settings.SandSEnabledCurrently = false;
+                //Settings.SandSEnabledCurrently = false;
+                setSandSEnabled(false);
                 ExtraModifiers.AddDisabledExtKey("space");
                 if (Settings.LoggingTableFileInfo) logger.InfoH("SandS disabled");
             } else if (word == "s") {
-                Settings.SandSEnabledCurrently = true;
+                //Settings.SandSEnabledCurrently = true;
+                setSandSEnabled(true);
                 shiftPlane = 1;
                 ShiftPlane.AssignSanSPlane(shiftPlane);
             } else if (word.Length == 1 && word[0] >= 'a' && word[0] <= 'f') {
-                Settings.SandSEnabledCurrently = true;
+                //Settings.SandSEnabledCurrently = true;
+                setSandSEnabled(true);
                 shiftPlane = word[0] - 'a' + 2;
                 ShiftPlane.AssignSanSPlane(shiftPlane);
             } else if (word._startsWith("enabeoneshot")) {
-                Settings.OneshotSandSEnabledCurrently = true;
+                //Settings.OneshotSandSEnabledCurrently = true;
+                setOneshotSandSEnabled(true);
             } else if (word._startsWith("disabeoneshot")) {
-                Settings.OneshotSandSEnabledCurrently = false;
+                //Settings.OneshotSandSEnabledCurrently = false;
+                setOneshotSandSEnabled(false);
             } else if (word._startsWith("enabepostshift")) {
-                Settings.SandSEnablePostShiftCurrently = true;
+                //Settings.SandSEnablePostShiftCurrently = true;
+                setSandSEnablePostShift(true);
             } else if (word._startsWith("disabepostshift")) {
-                Settings.SandSEnablePostShiftCurrently = false;
+                //Settings.SandSEnablePostShiftCurrently = false;
+                setSandSEnablePostShift(false);
             }
+        }
+
+        private void setSandSEnabled(bool enabled)
+        {
+            Settings.SetInternalValue("sandsEnabled", $"{enabled}");
+        }
+
+        private void setOneshotSandSEnabled(bool enabled)
+        {
+            Settings.SetInternalValue("oneshotSandSEnabled", $"{enabled}");
+        }
+
+        private void setSandSEnablePostShift(bool enabled)
+        {
+            Settings.SetInternalValue("sandsEnablePostShift", $"{enabled}");
         }
 
         //void changeSandSState(bool bEnabled)
