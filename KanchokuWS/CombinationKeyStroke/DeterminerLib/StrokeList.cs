@@ -928,6 +928,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     double elapsedTimeFromPrevShiftKeyUp = GetElapsedTimeFromPrevShiftKeyUp(strk1st, strk2nd);
                     bool isComboDisableInterval() => Settings.ComboDisableIntervalTimeMs > 0 && elapsedTimeFromPrevShiftKeyUp <= Settings.ComboDisableIntervalTimeMs;
                     result =
+                        list.Count >= 4 ||      // 4キー以上の同時打鍵ならリードタイムの時間制約は無視する(第1、第2打鍵にシフトキーがくるとは限らないため)
                         //(strk1st.IsComboShift && !tailStk.IsComboShift && ms1 <= maxTime) ||
                         //(tailStk.IsComboShift && !isComboDisableInterval() && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs)
                         (strk1st.IsComboShift && !strk2nd.IsComboShift && ms1 <= maxLeadTime) ||
