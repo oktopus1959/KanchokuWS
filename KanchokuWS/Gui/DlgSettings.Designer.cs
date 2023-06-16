@@ -636,7 +636,7 @@ namespace KanchokuWS.Gui
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.ShowToolTips = true;
-            this.tabControl1.Size = new System.Drawing.Size(684, 401);
+            this.tabControl1.Size = new System.Drawing.Size(684, 421);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
@@ -657,7 +657,7 @@ namespace KanchokuWS.Gui
             this.tabPage_basic.Location = new System.Drawing.Point(4, 24);
             this.tabPage_basic.Name = "tabPage_basic";
             this.tabPage_basic.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_basic.Size = new System.Drawing.Size(676, 373);
+            this.tabPage_basic.Size = new System.Drawing.Size(676, 393);
             this.tabPage_basic.TabIndex = 1;
             this.tabPage_basic.Text = "基本設定";
             this.tabPage_basic.ToolTipText = "基本的な情報・振る舞いの設定";
@@ -681,7 +681,7 @@ namespace KanchokuWS.Gui
             this.label_reloadBasic.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label_reloadBasic.AutoSize = true;
             this.label_reloadBasic.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_reloadBasic.Location = new System.Drawing.Point(282, 325);
+            this.label_reloadBasic.Location = new System.Drawing.Point(282, 345);
             this.label_reloadBasic.Name = "label_reloadBasic";
             this.label_reloadBasic.Size = new System.Drawing.Size(77, 15);
             this.label_reloadBasic.TabIndex = 11;
@@ -693,7 +693,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_document.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_document.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_document.Location = new System.Drawing.Point(138, 343);
+            this.button_document.Location = new System.Drawing.Point(138, 363);
             this.button_document.Name = "button_document";
             this.button_document.Size = new System.Drawing.Size(82, 23);
             this.button_document.TabIndex = 5;
@@ -706,7 +706,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_restart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_restart.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_restart.Location = new System.Drawing.Point(7, 343);
+            this.button_restart.Location = new System.Drawing.Point(7, 363);
             this.button_restart.Name = "button_restart";
             this.button_restart.Size = new System.Drawing.Size(80, 23);
             this.button_restart.TabIndex = 9;
@@ -1204,7 +1204,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_Reload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_Reload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_Reload.Location = new System.Drawing.Point(281, 343);
+            this.button_Reload.Location = new System.Drawing.Point(281, 363);
             this.button_Reload.Name = "button_Reload";
             this.button_Reload.Size = new System.Drawing.Size(80, 23);
             this.button_Reload.TabIndex = 6;
@@ -1218,7 +1218,7 @@ namespace KanchokuWS.Gui
             this.label_okResultBasic.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_okResultBasic.AutoSize = true;
             this.label_okResultBasic.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultBasic.Location = new System.Drawing.Point(594, 325);
+            this.label_okResultBasic.Location = new System.Drawing.Point(594, 345);
             this.label_okResultBasic.Name = "label_okResultBasic";
             this.label_okResultBasic.Size = new System.Drawing.Size(65, 15);
             this.label_okResultBasic.TabIndex = 8;
@@ -1288,7 +1288,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_basicClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_basicClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_basicClose.Location = new System.Drawing.Point(480, 343);
+            this.button_basicClose.Location = new System.Drawing.Point(480, 363);
             this.button_basicClose.Name = "button_basicClose";
             this.button_basicClose.Size = new System.Drawing.Size(80, 23);
             this.button_basicClose.TabIndex = 7;
@@ -1300,7 +1300,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_basicEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_basicEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_basicEnter.Location = new System.Drawing.Point(588, 343);
+            this.button_basicEnter.Location = new System.Drawing.Point(588, 363);
             this.button_basicEnter.Name = "button_basicEnter";
             this.button_basicEnter.Size = new System.Drawing.Size(75, 23);
             this.button_basicEnter.TabIndex = 8;
@@ -1496,7 +1496,7 @@ namespace KanchokuWS.Gui
             this.tabPage_advanced.Controls.Add(this.groupBox6);
             this.tabPage_advanced.Location = new System.Drawing.Point(4, 24);
             this.tabPage_advanced.Name = "tabPage_advanced";
-            this.tabPage_advanced.Size = new System.Drawing.Size(676, 373);
+            this.tabPage_advanced.Size = new System.Drawing.Size(676, 393);
             this.tabPage_advanced.TabIndex = 3;
             this.tabPage_advanced.Text = "詳細設定";
             this.tabPage_advanced.ToolTipText = "より詳細・高度な情報・振る舞いの設定";
@@ -1961,7 +1961,7 @@ namespace KanchokuWS.Gui
             this.label_okResultAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_okResultAdvanced.AutoSize = true;
             this.label_okResultAdvanced.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultAdvanced.Location = new System.Drawing.Point(594, 325);
+            this.label_okResultAdvanced.Location = new System.Drawing.Point(594, 345);
             this.label_okResultAdvanced.Name = "label_okResultAdvanced";
             this.label_okResultAdvanced.Size = new System.Drawing.Size(65, 15);
             this.label_okResultAdvanced.TabIndex = 10;
@@ -1973,7 +1973,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_advancedClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_advancedClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_advancedClose.Location = new System.Drawing.Point(480, 343);
+            this.button_advancedClose.Location = new System.Drawing.Point(480, 363);
             this.button_advancedClose.Name = "button_advancedClose";
             this.button_advancedClose.Size = new System.Drawing.Size(80, 23);
             this.button_advancedClose.TabIndex = 8;
@@ -1985,7 +1985,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_advancedEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_advancedEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_advancedEnter.Location = new System.Drawing.Point(588, 343);
+            this.button_advancedEnter.Location = new System.Drawing.Point(588, 363);
             this.button_advancedEnter.Name = "button_advancedEnter";
             this.button_advancedEnter.Size = new System.Drawing.Size(75, 23);
             this.button_advancedEnter.TabIndex = 9;
@@ -2091,7 +2091,7 @@ namespace KanchokuWS.Gui
             this.tabPage_imeCombo.Controls.Add(this.label117);
             this.tabPage_imeCombo.Location = new System.Drawing.Point(4, 24);
             this.tabPage_imeCombo.Name = "tabPage_imeCombo";
-            this.tabPage_imeCombo.Size = new System.Drawing.Size(676, 373);
+            this.tabPage_imeCombo.Size = new System.Drawing.Size(676, 393);
             this.tabPage_imeCombo.TabIndex = 10;
             this.tabPage_imeCombo.Text = "同時打鍵・IME";
             this.tabPage_imeCombo.ToolTipText = "同時打鍵やIMEにかかわる設定";
@@ -2102,7 +2102,7 @@ namespace KanchokuWS.Gui
             this.label_imeComboReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label_imeComboReload.AutoSize = true;
             this.label_imeComboReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_imeComboReload.Location = new System.Drawing.Point(202, 347);
+            this.label_imeComboReload.Location = new System.Drawing.Point(202, 367);
             this.label_imeComboReload.Name = "label_imeComboReload";
             this.label_imeComboReload.Size = new System.Drawing.Size(77, 15);
             this.label_imeComboReload.TabIndex = 38;
@@ -2112,9 +2112,9 @@ namespace KanchokuWS.Gui
             // 
             // button_showDlgStrokeLog
             // 
-            this.button_showDlgStrokeLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_showDlgStrokeLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_showDlgStrokeLog.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_showDlgStrokeLog.Location = new System.Drawing.Point(382, 343);
+            this.button_showDlgStrokeLog.Location = new System.Drawing.Point(382, 363);
             this.button_showDlgStrokeLog.Name = "button_showDlgStrokeLog";
             this.button_showDlgStrokeLog.Size = new System.Drawing.Size(77, 23);
             this.button_showDlgStrokeLog.TabIndex = 8;
@@ -2125,9 +2125,9 @@ namespace KanchokuWS.Gui
             // 
             // button_imeFAQ
             // 
-            this.button_imeFAQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_imeFAQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_imeFAQ.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_imeFAQ.Location = new System.Drawing.Point(10, 343);
+            this.button_imeFAQ.Location = new System.Drawing.Point(10, 363);
             this.button_imeFAQ.Name = "button_imeFAQ";
             this.button_imeFAQ.Size = new System.Drawing.Size(69, 23);
             this.button_imeFAQ.TabIndex = 6;
@@ -2140,7 +2140,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_imeComboReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_imeComboReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_imeComboReload.Location = new System.Drawing.Point(281, 343);
+            this.button_imeComboReload.Location = new System.Drawing.Point(281, 363);
             this.button_imeComboReload.Name = "button_imeComboReload";
             this.button_imeComboReload.Size = new System.Drawing.Size(80, 23);
             this.button_imeComboReload.TabIndex = 7;
@@ -2575,7 +2575,7 @@ namespace KanchokuWS.Gui
             this.label_okResultImeCombo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_okResultImeCombo.AutoSize = true;
             this.label_okResultImeCombo.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultImeCombo.Location = new System.Drawing.Point(594, 325);
+            this.label_okResultImeCombo.Location = new System.Drawing.Point(594, 345);
             this.label_okResultImeCombo.Name = "label_okResultImeCombo";
             this.label_okResultImeCombo.Size = new System.Drawing.Size(65, 15);
             this.label_okResultImeCombo.TabIndex = 13;
@@ -2587,7 +2587,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_imeComboClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_imeComboClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_imeComboClose.Location = new System.Drawing.Point(480, 343);
+            this.button_imeComboClose.Location = new System.Drawing.Point(480, 363);
             this.button_imeComboClose.Name = "button_imeComboClose";
             this.button_imeComboClose.Size = new System.Drawing.Size(80, 23);
             this.button_imeComboClose.TabIndex = 9;
@@ -2599,7 +2599,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_imeComboEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_imeComboEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_imeComboEnter.Location = new System.Drawing.Point(588, 343);
+            this.button_imeComboEnter.Location = new System.Drawing.Point(588, 363);
             this.button_imeComboEnter.Name = "button_imeComboEnter";
             this.button_imeComboEnter.Size = new System.Drawing.Size(75, 23);
             this.button_imeComboEnter.TabIndex = 10;
@@ -2630,7 +2630,7 @@ namespace KanchokuWS.Gui
             this.tabPage_fontColor.Controls.Add(this.button_fontColorEnter);
             this.tabPage_fontColor.Location = new System.Drawing.Point(4, 24);
             this.tabPage_fontColor.Name = "tabPage_fontColor";
-            this.tabPage_fontColor.Size = new System.Drawing.Size(676, 373);
+            this.tabPage_fontColor.Size = new System.Drawing.Size(676, 393);
             this.tabPage_fontColor.TabIndex = 7;
             this.tabPage_fontColor.Text = "フォントと色";
             this.tabPage_fontColor.ToolTipText = "仮想鍵盤のフォントと色に関する設定";
@@ -3054,7 +3054,7 @@ namespace KanchokuWS.Gui
             this.label_okResultFontColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_okResultFontColor.AutoSize = true;
             this.label_okResultFontColor.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultFontColor.Location = new System.Drawing.Point(594, 291);
+            this.label_okResultFontColor.Location = new System.Drawing.Point(594, 311);
             this.label_okResultFontColor.Name = "label_okResultFontColor";
             this.label_okResultFontColor.Size = new System.Drawing.Size(65, 15);
             this.label_okResultFontColor.TabIndex = 11;
@@ -3066,7 +3066,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_fontColorClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_fontColorClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_fontColorClose.Location = new System.Drawing.Point(587, 343);
+            this.button_fontColorClose.Location = new System.Drawing.Point(587, 363);
             this.button_fontColorClose.Name = "button_fontColorClose";
             this.button_fontColorClose.Size = new System.Drawing.Size(80, 23);
             this.button_fontColorClose.TabIndex = 5;
@@ -3078,7 +3078,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_fontColorEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_fontColorEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_fontColorEnter.Location = new System.Drawing.Point(587, 313);
+            this.button_fontColorEnter.Location = new System.Drawing.Point(587, 333);
             this.button_fontColorEnter.Name = "button_fontColorEnter";
             this.button_fontColorEnter.Size = new System.Drawing.Size(80, 23);
             this.button_fontColorEnter.TabIndex = 6;
@@ -3104,7 +3104,7 @@ namespace KanchokuWS.Gui
             this.tabPage_keyAssign.Controls.Add(this.groupBox29);
             this.tabPage_keyAssign.Location = new System.Drawing.Point(4, 24);
             this.tabPage_keyAssign.Name = "tabPage_keyAssign";
-            this.tabPage_keyAssign.Size = new System.Drawing.Size(676, 373);
+            this.tabPage_keyAssign.Size = new System.Drawing.Size(676, 393);
             this.tabPage_keyAssign.TabIndex = 8;
             this.tabPage_keyAssign.Text = "機能呼出";
             this.tabPage_keyAssign.ToolTipText = "交ぜ書き、部首合成、カナ変換などの機能を呼び出す打鍵列の設定";
@@ -3133,7 +3133,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_keyAssignTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_keyAssignTable.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_keyAssignTable.Location = new System.Drawing.Point(65, 343);
+            this.button_keyAssignTable.Location = new System.Drawing.Point(65, 363);
             this.button_keyAssignTable.Name = "button_keyAssignTable";
             this.button_keyAssignTable.Size = new System.Drawing.Size(82, 23);
             this.button_keyAssignTable.TabIndex = 2;
@@ -3193,7 +3193,7 @@ namespace KanchokuWS.Gui
             this.label_keyAssignReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label_keyAssignReload.AutoSize = true;
             this.label_keyAssignReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_keyAssignReload.Location = new System.Drawing.Point(202, 347);
+            this.label_keyAssignReload.Location = new System.Drawing.Point(202, 367);
             this.label_keyAssignReload.Name = "label_keyAssignReload";
             this.label_keyAssignReload.Size = new System.Drawing.Size(77, 15);
             this.label_keyAssignReload.TabIndex = 36;
@@ -3205,7 +3205,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_keyAssignReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_keyAssignReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_keyAssignReload.Location = new System.Drawing.Point(281, 343);
+            this.button_keyAssignReload.Location = new System.Drawing.Point(281, 363);
             this.button_keyAssignReload.Name = "button_keyAssignReload";
             this.button_keyAssignReload.Size = new System.Drawing.Size(80, 23);
             this.button_keyAssignReload.TabIndex = 3;
@@ -3219,7 +3219,7 @@ namespace KanchokuWS.Gui
             this.label_okResultKeyAssign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_okResultKeyAssign.AutoSize = true;
             this.label_okResultKeyAssign.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultKeyAssign.Location = new System.Drawing.Point(594, 325);
+            this.label_okResultKeyAssign.Location = new System.Drawing.Point(594, 345);
             this.label_okResultKeyAssign.Name = "label_okResultKeyAssign";
             this.label_okResultKeyAssign.Size = new System.Drawing.Size(65, 15);
             this.label_okResultKeyAssign.TabIndex = 13;
@@ -3252,7 +3252,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_keyAssignClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_keyAssignClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_keyAssignClose.Location = new System.Drawing.Point(480, 343);
+            this.button_keyAssignClose.Location = new System.Drawing.Point(480, 363);
             this.button_keyAssignClose.Name = "button_keyAssignClose";
             this.button_keyAssignClose.Size = new System.Drawing.Size(80, 23);
             this.button_keyAssignClose.TabIndex = 4;
@@ -3264,7 +3264,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_keyAssignEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_keyAssignEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_keyAssignEnter.Location = new System.Drawing.Point(588, 343);
+            this.button_keyAssignEnter.Location = new System.Drawing.Point(588, 363);
             this.button_keyAssignEnter.Name = "button_keyAssignEnter";
             this.button_keyAssignEnter.Size = new System.Drawing.Size(75, 23);
             this.button_keyAssignEnter.TabIndex = 5;
@@ -3730,7 +3730,7 @@ namespace KanchokuWS.Gui
             this.tabPage_ctrlKeys.Controls.Add(this.groupBox11);
             this.tabPage_ctrlKeys.Location = new System.Drawing.Point(4, 24);
             this.tabPage_ctrlKeys.Name = "tabPage_ctrlKeys";
-            this.tabPage_ctrlKeys.Size = new System.Drawing.Size(676, 373);
+            this.tabPage_ctrlKeys.Size = new System.Drawing.Size(676, 393);
             this.tabPage_ctrlKeys.TabIndex = 5;
             this.tabPage_ctrlKeys.Text = "修飾キー";
             this.tabPage_ctrlKeys.ToolTipText = "Ctrlキーやその他の拡張修飾キーによる機能呼び出し設定";
@@ -3741,7 +3741,7 @@ namespace KanchokuWS.Gui
             this.label_ctrlReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label_ctrlReload.AutoSize = true;
             this.label_ctrlReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_ctrlReload.Location = new System.Drawing.Point(321, 325);
+            this.label_ctrlReload.Location = new System.Drawing.Point(321, 345);
             this.label_ctrlReload.Name = "label_ctrlReload";
             this.label_ctrlReload.Size = new System.Drawing.Size(77, 15);
             this.label_ctrlReload.TabIndex = 36;
@@ -3753,7 +3753,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_ctrlReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_ctrlReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_ctrlReload.Location = new System.Drawing.Point(320, 343);
+            this.button_ctrlReload.Location = new System.Drawing.Point(320, 363);
             this.button_ctrlReload.Name = "button_ctrlReload";
             this.button_ctrlReload.Size = new System.Drawing.Size(80, 23);
             this.button_ctrlReload.TabIndex = 5;
@@ -4395,7 +4395,7 @@ namespace KanchokuWS.Gui
             this.label_okResultCtrlKeys.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_okResultCtrlKeys.AutoSize = true;
             this.label_okResultCtrlKeys.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultCtrlKeys.Location = new System.Drawing.Point(594, 325);
+            this.label_okResultCtrlKeys.Location = new System.Drawing.Point(594, 345);
             this.label_okResultCtrlKeys.Name = "label_okResultCtrlKeys";
             this.label_okResultCtrlKeys.Size = new System.Drawing.Size(65, 15);
             this.label_okResultCtrlKeys.TabIndex = 24;
@@ -4407,7 +4407,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_ctrlClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_ctrlClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_ctrlClose.Location = new System.Drawing.Point(480, 343);
+            this.button_ctrlClose.Location = new System.Drawing.Point(480, 363);
             this.button_ctrlClose.Name = "button_ctrlClose";
             this.button_ctrlClose.Size = new System.Drawing.Size(80, 23);
             this.button_ctrlClose.TabIndex = 6;
@@ -4419,7 +4419,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_ctrlEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_ctrlEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_ctrlEnter.Location = new System.Drawing.Point(588, 343);
+            this.button_ctrlEnter.Location = new System.Drawing.Point(588, 363);
             this.button_ctrlEnter.Name = "button_ctrlEnter";
             this.button_ctrlEnter.Size = new System.Drawing.Size(75, 23);
             this.button_ctrlEnter.TabIndex = 7;
@@ -4527,7 +4527,7 @@ namespace KanchokuWS.Gui
             this.tabPage_history.Controls.Add(this.checkBox_mazeRightShiftYomiPos);
             this.tabPage_history.Location = new System.Drawing.Point(4, 24);
             this.tabPage_history.Name = "tabPage_history";
-            this.tabPage_history.Size = new System.Drawing.Size(676, 373);
+            this.tabPage_history.Size = new System.Drawing.Size(676, 393);
             this.tabPage_history.TabIndex = 4;
             this.tabPage_history.Text = "履歴・交ぜ書き";
             this.tabPage_history.ToolTipText = "履歴機能と交ぜ書き変換機能に関する設定";
@@ -4944,7 +4944,7 @@ namespace KanchokuWS.Gui
             this.label_okResultHist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_okResultHist.AutoSize = true;
             this.label_okResultHist.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultHist.Location = new System.Drawing.Point(594, 327);
+            this.label_okResultHist.Location = new System.Drawing.Point(594, 347);
             this.label_okResultHist.Name = "label_okResultHist";
             this.label_okResultHist.Size = new System.Drawing.Size(65, 15);
             this.label_okResultHist.TabIndex = 19;
@@ -5123,7 +5123,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_histClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_histClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_histClose.Location = new System.Drawing.Point(480, 343);
+            this.button_histClose.Location = new System.Drawing.Point(480, 363);
             this.button_histClose.Name = "button_histClose";
             this.button_histClose.Size = new System.Drawing.Size(80, 23);
             this.button_histClose.TabIndex = 5;
@@ -5135,7 +5135,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_histEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_histEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_histEnter.Location = new System.Drawing.Point(588, 343);
+            this.button_histEnter.Location = new System.Drawing.Point(588, 363);
             this.button_histEnter.Name = "button_histEnter";
             this.button_histEnter.Size = new System.Drawing.Size(75, 23);
             this.button_histEnter.TabIndex = 6;
@@ -5193,7 +5193,7 @@ namespace KanchokuWS.Gui
             this.tabPage_misc.Controls.Add(this.groupBox27);
             this.tabPage_misc.Location = new System.Drawing.Point(4, 24);
             this.tabPage_misc.Name = "tabPage_misc";
-            this.tabPage_misc.Size = new System.Drawing.Size(676, 373);
+            this.tabPage_misc.Size = new System.Drawing.Size(676, 393);
             this.tabPage_misc.TabIndex = 9;
             this.tabPage_misc.Text = "その他設定";
             this.tabPage_misc.ToolTipText = "打鍵ガイドや書き換えシステムなどに関する設定";
@@ -5411,7 +5411,7 @@ namespace KanchokuWS.Gui
             this.label_miscReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label_miscReload.AutoSize = true;
             this.label_miscReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_miscReload.Location = new System.Drawing.Point(321, 325);
+            this.label_miscReload.Location = new System.Drawing.Point(321, 345);
             this.label_miscReload.Name = "label_miscReload";
             this.label_miscReload.Size = new System.Drawing.Size(77, 15);
             this.label_miscReload.TabIndex = 34;
@@ -5423,7 +5423,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_miscReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_miscReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_miscReload.Location = new System.Drawing.Point(320, 343);
+            this.button_miscReload.Location = new System.Drawing.Point(320, 363);
             this.button_miscReload.Name = "button_miscReload";
             this.button_miscReload.Size = new System.Drawing.Size(80, 23);
             this.button_miscReload.TabIndex = 8;
@@ -5658,7 +5658,7 @@ namespace KanchokuWS.Gui
             this.label_okResultMisc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_okResultMisc.AutoSize = true;
             this.label_okResultMisc.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultMisc.Location = new System.Drawing.Point(594, 325);
+            this.label_okResultMisc.Location = new System.Drawing.Point(594, 345);
             this.label_okResultMisc.Name = "label_okResultMisc";
             this.label_okResultMisc.Size = new System.Drawing.Size(65, 15);
             this.label_okResultMisc.TabIndex = 25;
@@ -5670,7 +5670,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_miscEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_miscEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_miscEnter.Location = new System.Drawing.Point(588, 343);
+            this.button_miscEnter.Location = new System.Drawing.Point(588, 363);
             this.button_miscEnter.Name = "button_miscEnter";
             this.button_miscEnter.Size = new System.Drawing.Size(75, 23);
             this.button_miscEnter.TabIndex = 10;
@@ -5683,7 +5683,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_miscClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_miscClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_miscClose.Location = new System.Drawing.Point(480, 343);
+            this.button_miscClose.Location = new System.Drawing.Point(480, 363);
             this.button_miscClose.Name = "button_miscClose";
             this.button_miscClose.Size = new System.Drawing.Size(80, 23);
             this.button_miscClose.TabIndex = 9;
@@ -5860,7 +5860,7 @@ namespace KanchokuWS.Gui
             this.tabPage_register.Location = new System.Drawing.Point(4, 24);
             this.tabPage_register.Name = "tabPage_register";
             this.tabPage_register.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_register.Size = new System.Drawing.Size(676, 373);
+            this.tabPage_register.Size = new System.Drawing.Size(676, 393);
             this.tabPage_register.TabIndex = 0;
             this.tabPage_register.Text = "辞書登録";
             this.tabPage_register.ToolTipText = "各種辞書への登録";
@@ -5871,7 +5871,7 @@ namespace KanchokuWS.Gui
             this.label_okResultRegister.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_okResultRegister.AutoSize = true;
             this.label_okResultRegister.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultRegister.Location = new System.Drawing.Point(401, 326);
+            this.label_okResultRegister.Location = new System.Drawing.Point(401, 346);
             this.label_okResultRegister.Name = "label_okResultRegister";
             this.label_okResultRegister.Size = new System.Drawing.Size(65, 15);
             this.label_okResultRegister.TabIndex = 27;
@@ -5882,7 +5882,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_registerClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_registerClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_registerClose.Location = new System.Drawing.Point(588, 343);
+            this.button_registerClose.Location = new System.Drawing.Point(588, 363);
             this.button_registerClose.Name = "button_registerClose";
             this.button_registerClose.Size = new System.Drawing.Size(75, 23);
             this.button_registerClose.TabIndex = 25;
@@ -5894,7 +5894,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_registerEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_registerEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_registerEnter.Location = new System.Drawing.Point(395, 344);
+            this.button_registerEnter.Location = new System.Drawing.Point(395, 364);
             this.button_registerEnter.Name = "button_registerEnter";
             this.button_registerEnter.Size = new System.Drawing.Size(75, 23);
             this.button_registerEnter.TabIndex = 26;
@@ -5908,7 +5908,7 @@ namespace KanchokuWS.Gui
             this.label98.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label98.AutoSize = true;
             this.label98.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label98.Location = new System.Drawing.Point(103, 325);
+            this.label98.Location = new System.Drawing.Point(103, 345);
             this.label98.Name = "label98";
             this.label98.Size = new System.Drawing.Size(117, 15);
             this.label98.TabIndex = 24;
@@ -5991,7 +5991,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_restartWithNoSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_restartWithNoSave.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_restartWithNoSave.Location = new System.Drawing.Point(102, 343);
+            this.button_restartWithNoSave.Location = new System.Drawing.Point(102, 363);
             this.button_restartWithNoSave.Name = "button_restartWithNoSave";
             this.button_restartWithNoSave.Size = new System.Drawing.Size(80, 23);
             this.button_restartWithNoSave.TabIndex = 15;
@@ -6006,7 +6006,7 @@ namespace KanchokuWS.Gui
             this.label_execResultFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_execResultFile.AutoSize = true;
             this.label_execResultFile.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_execResultFile.Location = new System.Drawing.Point(262, 325);
+            this.label_execResultFile.Location = new System.Drawing.Point(262, 345);
             this.label_execResultFile.Name = "label_execResultFile";
             this.label_execResultFile.Size = new System.Drawing.Size(65, 15);
             this.label_execResultFile.TabIndex = 14;
@@ -6018,7 +6018,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_saveAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_saveAll.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_saveAll.Location = new System.Drawing.Point(254, 343);
+            this.button_saveAll.Location = new System.Drawing.Point(254, 363);
             this.button_saveAll.Name = "button_saveAll";
             this.button_saveAll.Size = new System.Drawing.Size(80, 23);
             this.button_saveAll.TabIndex = 6;
@@ -6342,7 +6342,7 @@ namespace KanchokuWS.Gui
             this.tabPage_develop.Controls.Add(this.button_developClose);
             this.tabPage_develop.Location = new System.Drawing.Point(4, 24);
             this.tabPage_develop.Name = "tabPage_develop";
-            this.tabPage_develop.Size = new System.Drawing.Size(676, 373);
+            this.tabPage_develop.Size = new System.Drawing.Size(676, 393);
             this.tabPage_develop.TabIndex = 2;
             this.tabPage_develop.Text = "情報";
             this.tabPage_develop.ToolTipText = "当アプリの情報と開発者用設定";
@@ -6350,9 +6350,9 @@ namespace KanchokuWS.Gui
             // 
             // button_developReload
             // 
-            this.button_developReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_developReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_developReload.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_developReload.Location = new System.Drawing.Point(588, 265);
+            this.button_developReload.Location = new System.Drawing.Point(588, 285);
             this.button_developReload.Name = "button_developReload";
             this.button_developReload.Size = new System.Drawing.Size(75, 23);
             this.button_developReload.TabIndex = 2;
@@ -6366,7 +6366,7 @@ namespace KanchokuWS.Gui
             this.label_okResultDevelop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_okResultDevelop.AutoSize = true;
             this.label_okResultDevelop.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_okResultDevelop.Location = new System.Drawing.Point(592, 296);
+            this.label_okResultDevelop.Location = new System.Drawing.Point(592, 316);
             this.label_okResultDevelop.Name = "label_okResultDevelop";
             this.label_okResultDevelop.Size = new System.Drawing.Size(65, 15);
             this.label_okResultDevelop.TabIndex = 13;
@@ -6378,7 +6378,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_developEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_developEnter.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_developEnter.Location = new System.Drawing.Point(588, 314);
+            this.button_developEnter.Location = new System.Drawing.Point(588, 334);
             this.button_developEnter.Name = "button_developEnter";
             this.button_developEnter.Size = new System.Drawing.Size(75, 23);
             this.button_developEnter.TabIndex = 3;
@@ -6389,6 +6389,7 @@ namespace KanchokuWS.Gui
             // 
             // groupBox15
             // 
+            this.groupBox15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox15.Controls.Add(this.button_defaultLogLevel);
             this.groupBox15.Controls.Add(this.checkBox_loggingTableFileInfo);
             this.groupBox15.Controls.Add(this.checkBox_showHiddleFolder);
@@ -6407,7 +6408,7 @@ namespace KanchokuWS.Gui
             this.groupBox15.Controls.Add(this.comboBox_logLevel);
             this.groupBox15.Controls.Add(this.label29);
             this.groupBox15.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox15.Location = new System.Drawing.Point(12, 253);
+            this.groupBox15.Location = new System.Drawing.Point(12, 270);
             this.groupBox15.Name = "groupBox15";
             this.groupBox15.Size = new System.Drawing.Size(558, 119);
             this.groupBox15.TabIndex = 1;
@@ -6458,6 +6459,7 @@ namespace KanchokuWS.Gui
             // 
             // label_testCount
             // 
+            this.label_testCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_testCount.AutoSize = true;
             this.label_testCount.Location = new System.Drawing.Point(250, 99);
             this.label_testCount.MinimumSize = new System.Drawing.Size(174, 15);
@@ -6512,7 +6514,7 @@ namespace KanchokuWS.Gui
             // 
             // checkBox_testAll
             // 
-            this.checkBox_testAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox_testAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox_testAll.AutoSize = true;
             this.checkBox_testAll.Location = new System.Drawing.Point(430, 98);
             this.checkBox_testAll.Name = "checkBox_testAll";
@@ -6618,7 +6620,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_developClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_developClose.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_developClose.Location = new System.Drawing.Point(588, 343);
+            this.button_developClose.Location = new System.Drawing.Point(588, 363);
             this.button_developClose.Name = "button_developClose";
             this.button_developClose.Size = new System.Drawing.Size(75, 23);
             this.button_developClose.TabIndex = 4;
@@ -6829,7 +6831,7 @@ namespace KanchokuWS.Gui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(684, 401);
+            this.ClientSize = new System.Drawing.Size(684, 421);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
