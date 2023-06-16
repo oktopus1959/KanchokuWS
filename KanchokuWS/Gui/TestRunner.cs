@@ -142,9 +142,9 @@ namespace KanchokuWS.Gui
                         Settings.CombinationKeyMinOverlappingTimeMs = arg._parseInt(70);
                         break;
 
-                    //case "comboMinTime3":
-                    //    Settings.CombinationKeyMinOverlappingTimeMs3 = arg._parseInt(70);
-                    //    break;
+                    case "comboMinTime3":
+                        Settings.CombinationKeyMinOverlappingTimeMs3 = arg._parseInt(70);
+                        break;
 
                     case "comboMaxTime":
                         Settings.CombinationKeyMaxAllowedLeadTimeMs = arg._parseInt(70);

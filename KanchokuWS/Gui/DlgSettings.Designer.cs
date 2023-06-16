@@ -169,6 +169,9 @@ namespace KanchokuWS.Gui
             this.radioButton_imeSendInputInKana = new System.Windows.Forms.RadioButton();
             this.radioButton_imeSendInputInRoman = new System.Windows.Forms.RadioButton();
             this.groupBox45 = new System.Windows.Forms.GroupBox();
+            this.label152 = new System.Windows.Forms.Label();
+            this.textBox_combinationKeyTimeMs3 = new System.Windows.Forms.TextBox();
+            this.label151 = new System.Windows.Forms.Label();
             this.checkBox_onlyCharKeysComboShouldBeCoveringCombo = new System.Windows.Forms.CheckBox();
             this.textBox_comboMaxAllowedPostfixTimeMs = new System.Windows.Forms.TextBox();
             this.label140 = new System.Windows.Forms.Label();
@@ -2384,6 +2387,9 @@ namespace KanchokuWS.Gui
             // 
             // groupBox45
             // 
+            this.groupBox45.Controls.Add(this.label152);
+            this.groupBox45.Controls.Add(this.textBox_combinationKeyTimeMs3);
+            this.groupBox45.Controls.Add(this.label151);
             this.groupBox45.Controls.Add(this.checkBox_onlyCharKeysComboShouldBeCoveringCombo);
             this.groupBox45.Controls.Add(this.textBox_comboMaxAllowedPostfixTimeMs);
             this.groupBox45.Controls.Add(this.label140);
@@ -2400,15 +2406,44 @@ namespace KanchokuWS.Gui
             this.groupBox45.Controls.Add(this.label114);
             this.groupBox45.Location = new System.Drawing.Point(7, 133);
             this.groupBox45.Name = "groupBox45";
-            this.groupBox45.Size = new System.Drawing.Size(351, 194);
+            this.groupBox45.Size = new System.Drawing.Size(351, 212);
             this.groupBox45.TabIndex = 1;
             this.groupBox45.TabStop = false;
             this.groupBox45.Text = "同時打鍵の判定条件 (AとBの AND 判定 )";
             // 
+            // label152
+            // 
+            this.label152.AutoSize = true;
+            this.label152.Location = new System.Drawing.Point(295, 142);
+            this.label152.Name = "label152";
+            this.label152.Size = new System.Drawing.Size(58, 15);
+            this.label152.TabIndex = 25;
+            this.label152.Text = "ミリ秒以上";
+            // 
+            // textBox_combinationKeyTimeMs3
+            // 
+            this.textBox_combinationKeyTimeMs3.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox_combinationKeyTimeMs3.Location = new System.Drawing.Point(248, 140);
+            this.textBox_combinationKeyTimeMs3.Name = "textBox_combinationKeyTimeMs3";
+            this.textBox_combinationKeyTimeMs3.Size = new System.Drawing.Size(45, 19);
+            this.textBox_combinationKeyTimeMs3.TabIndex = 23;
+            this.textBox_combinationKeyTimeMs3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this.textBox_combinationKeyTimeMs3, "3キー以上の同時押しが発生した場合に、それを同時打健と\r\n判定するのに必要な押下時間の最小時間を設定します。\r\n\r\nこの時間を大きめに設定すると、単打のつもりで連" +
+        "続的に3キー以上を\r\n押下した場合でも、それを同時打鍵とは判定されにくくなります。");
+            // 
+            // label151
+            // 
+            this.label151.AutoSize = true;
+            this.label151.Location = new System.Drawing.Point(32, 142);
+            this.label151.Name = "label151";
+            this.label151.Size = new System.Drawing.Size(216, 15);
+            this.label151.TabIndex = 24;
+            this.label151.Text = "3キー以上同時の場合のキー解放までの時間";
+            // 
             // checkBox_onlyCharKeysComboShouldBeCoveringCombo
             // 
             this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.AutoSize = true;
-            this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.Location = new System.Drawing.Point(13, 170);
+            this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.Location = new System.Drawing.Point(12, 190);
             this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.Name = "checkBox_onlyCharKeysComboShouldBeCoveringCombo";
             this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.Size = new System.Drawing.Size(286, 19);
             this.checkBox_onlyCharKeysComboShouldBeCoveringCombo.TabIndex = 7;
@@ -2439,7 +2474,7 @@ namespace KanchokuWS.Gui
             // textBox_comboDisableIntervalTimeMs
             // 
             this.textBox_comboDisableIntervalTimeMs.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_comboDisableIntervalTimeMs.Location = new System.Drawing.Point(285, 146);
+            this.textBox_comboDisableIntervalTimeMs.Location = new System.Drawing.Point(284, 166);
             this.textBox_comboDisableIntervalTimeMs.Name = "textBox_comboDisableIntervalTimeMs";
             this.textBox_comboDisableIntervalTimeMs.Size = new System.Drawing.Size(45, 19);
             this.textBox_comboDisableIntervalTimeMs.TabIndex = 6;
@@ -2449,7 +2484,7 @@ namespace KanchokuWS.Gui
             // label141
             // 
             this.label141.AutoSize = true;
-            this.label141.Location = new System.Drawing.Point(9, 148);
+            this.label141.Location = new System.Drawing.Point(8, 168);
             this.label141.Name = "label141";
             this.label141.Size = new System.Drawing.Size(274, 15);
             this.label141.TabIndex = 20;
@@ -2611,7 +2646,7 @@ namespace KanchokuWS.Gui
             // label117
             // 
             this.label117.AutoSize = true;
-            this.label117.Location = new System.Drawing.Point(7, 337);
+            this.label117.Location = new System.Drawing.Point(4, 363);
             this.label117.Name = "label117";
             this.label117.Size = new System.Drawing.Size(204, 30);
             this.label117.TabIndex = 11;
@@ -6408,9 +6443,9 @@ namespace KanchokuWS.Gui
             this.groupBox15.Controls.Add(this.comboBox_logLevel);
             this.groupBox15.Controls.Add(this.label29);
             this.groupBox15.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox15.Location = new System.Drawing.Point(12, 270);
+            this.groupBox15.Location = new System.Drawing.Point(12, 265);
             this.groupBox15.Name = "groupBox15";
-            this.groupBox15.Size = new System.Drawing.Size(558, 119);
+            this.groupBox15.Size = new System.Drawing.Size(558, 122);
             this.groupBox15.TabIndex = 1;
             this.groupBox15.TabStop = false;
             this.groupBox15.Text = "開発者用設定";
@@ -6419,7 +6454,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_defaultLogLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_defaultLogLevel.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_defaultLogLevel.Location = new System.Drawing.Point(152, 15);
+            this.button_defaultLogLevel.Location = new System.Drawing.Point(152, 18);
             this.button_defaultLogLevel.Name = "button_defaultLogLevel";
             this.button_defaultLogLevel.Size = new System.Drawing.Size(56, 23);
             this.button_defaultLogLevel.TabIndex = 1;
@@ -6461,7 +6496,7 @@ namespace KanchokuWS.Gui
             // 
             this.label_testCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label_testCount.AutoSize = true;
-            this.label_testCount.Location = new System.Drawing.Point(250, 99);
+            this.label_testCount.Location = new System.Drawing.Point(250, 100);
             this.label_testCount.MinimumSize = new System.Drawing.Size(174, 15);
             this.label_testCount.Name = "label_testCount";
             this.label_testCount.Size = new System.Drawing.Size(174, 15);
@@ -6491,7 +6526,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_developSaveDebugTableFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_developSaveDebugTableFile.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_developSaveDebugTableFile.Location = new System.Drawing.Point(448, 56);
+            this.button_developSaveDebugTableFile.Location = new System.Drawing.Point(448, 59);
             this.button_developSaveDebugTableFile.Name = "button_developSaveDebugTableFile";
             this.button_developSaveDebugTableFile.Size = new System.Drawing.Size(104, 23);
             this.button_developSaveDebugTableFile.TabIndex = 11;
@@ -6504,7 +6539,7 @@ namespace KanchokuWS.Gui
             // 
             this.button_developTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_developTest.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button_developTest.Location = new System.Drawing.Point(477, 91);
+            this.button_developTest.Location = new System.Drawing.Point(477, 94);
             this.button_developTest.Name = "button_developTest";
             this.button_developTest.Size = new System.Drawing.Size(75, 23);
             this.button_developTest.TabIndex = 13;
@@ -7493,5 +7528,8 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label149;
         private System.Windows.Forms.Label label150;
         private System.Windows.Forms.TextBox textBox_autoBushuCompMinCount;
+        private System.Windows.Forms.Label label152;
+        private System.Windows.Forms.TextBox textBox_combinationKeyTimeMs3;
+        private System.Windows.Forms.Label label151;
     }
 }

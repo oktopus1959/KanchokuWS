@@ -932,6 +932,8 @@ namespace KanchokuWS.Gui
             setEnabled(textBox_comboMaxAllowedPostfixTimeMs, Settings.ComboKeyMaxAllowedPostfixTimeMs_PropName);
             textBox_combinationKeyTimeMs.Text = $"{Settings.CombinationKeyMinOverlappingTimeMs}";
             setEnabled(textBox_combinationKeyTimeMs, Settings.CombinationKeyMinOverlappingTimeMs_PropName);
+            textBox_combinationKeyTimeMs3.Text = $"{Settings.CombinationKeyMinOverlappingTimeMs3}";
+            setEnabled(textBox_combinationKeyTimeMs3, Settings.CombinationKeyMinOverlappingTimeMs3_PropName);
             textBox_comboDisableIntervalTimeMs.Text = $"{Settings.ComboDisableIntervalTimeMs}";
             setEnabled(textBox_comboDisableIntervalTimeMs, Settings.ComboDisableIntervalTimeMs_PropName);
             checkBox_combinationKeyTimeOnlyAfterSecond.Checked = Settings.CombinationKeyMinTimeOnlyAfterSecond;
@@ -982,6 +984,7 @@ namespace KanchokuWS.Gui
             checkerImeCombo.Add(textBox_combinationMaxAllowedLeadTimeMs);
             checkerImeCombo.Add(textBox_comboMaxAllowedPostfixTimeMs);
             checkerImeCombo.Add(textBox_combinationKeyTimeMs);
+            checkerImeCombo.Add(textBox_combinationKeyTimeMs3);
             checkerImeCombo.Add(textBox_comboDisableIntervalTimeMs);
             checkerImeCombo.Add(checkBox_combinationKeyTimeOnlyAfterSecond);
             checkerImeCombo.Add(checkBox_useCombinationKeyTimer1);
@@ -1025,6 +1028,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni(Settings.CombinationKeyMaxAllowedLeadTimeMs_PropName, textBox_combinationMaxAllowedLeadTimeMs.Text.Trim());
             Settings.SetUserIni(Settings.ComboKeyMaxAllowedPostfixTimeMs_PropName, textBox_comboMaxAllowedPostfixTimeMs.Text.Trim());
             Settings.SetUserIni(Settings.CombinationKeyMinOverlappingTimeMs_PropName, textBox_combinationKeyTimeMs.Text.Trim());
+            Settings.SetUserIni(Settings.CombinationKeyMinOverlappingTimeMs3_PropName, textBox_combinationKeyTimeMs3.Text.Trim());
             Settings.SetUserIni(Settings.ComboDisableIntervalTimeMs_PropName, textBox_comboDisableIntervalTimeMs.Text.Trim());
             Settings.SetUserIni(Settings.CombinationKeyMinTimeOnlyAfterSecond_PropName, checkBox_combinationKeyTimeOnlyAfterSecond.Checked);
             Settings.SetUserIni(Settings.UseCombinationKeyTimer1_PropName, checkBox_useCombinationKeyTimer1.Checked);

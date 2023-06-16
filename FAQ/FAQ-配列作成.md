@@ -504,6 +504,7 @@ kanchoku.user.ini のグローバルな設定が上書きされないように�
 |comboMaxAllowedPostfixTimeMs|整数|同時打鍵判定で、第2キーがシフトキーの場合の制限時間(ミリ秒)|
 |useCombinationKeyTimer1|bool|同時打鍵判定で、第1打鍵が文字キーの場合にタイマーを使用するか|
 |combinationKeyTimeMs|整数|同時打鍵判定で、同時押し状態からキー解放までの下限時間(ミリ秒)|
+|combinationKeyTimeMs3|整数|3キー以上の同時打鍵判定で、同時押し状態からキー解放までの下限時間(ミリ秒)|
 |combinationKeyTimeOnlyAfterSecond|bool|同時打鍵判定で、同時打鍵の1文字目には上記条件を適用しないか|
 |useCombinationKeyTimer2|bool|同時打鍵判定で、第2打鍵以降のキー押下でタイマーを使用するか|
 |comboDisableIntervalTimeMs|整数|同時打鍵判定で、シフトキーの解放後、後置シフトを無効にする時間(ミリ秒)|
@@ -558,6 +559,8 @@ kanchoku.user.ini のグローバルな設定が上書きされないように�
 #set useCombinationKeyTimer1=true
 ;; 同時打鍵判定で、同時押し状態からキー解放までの下限時間(ミリ秒)
 #set combinationKeyTimeMs=70
+;; 3キー以上の同時打鍵判定で、同時押し状態からキー解放までの下限時間(ミリ秒)
+#set combinationKeyTimeMs3=100
 ;; 同時打鍵判定で、同時打鍵の1文字目には上記条件を適用しないか
 #set combinationKeyTimeOnlyAfterSecond=true
 ;; 同時打鍵判定で、第2打鍵以降のキー押下でタイマーを使用するか

@@ -767,8 +767,8 @@ namespace KanchokuWS
         /// 3キー以上の同時押しの場合に、同時打鍵とみなす重複時間<br/>
         /// Nキー同時押しの状態からどれかのキーUPまで重複時間がここで設定した時間(millisec)以上なら、同時打鍵とみなす
         /// </summary>
-        //public static int CombinationKeyMinOverlappingTimeMs3 { get; set; }
-        //public static string CombinationKeyMinOverlappingTimeMs3_PropName = "combinationKeyTimeMs3";
+        public static int CombinationKeyMinOverlappingTimeMs3 { get; set; }
+        public static string CombinationKeyMinOverlappingTimeMs3_PropName = "combinationKeyTimeMs3";
 
         /// <summary>２文字目以降についてのみ同時打鍵の重複時間チェックを行う</summary>
         public static bool CombinationKeyMinTimeOnlyAfterSecond { get; set; }
@@ -1417,7 +1417,7 @@ namespace KanchokuWS
             ComboKeyMaxAllowedPostfixTimeMs = GetString(ComboKeyMaxAllowedPostfixTimeMs_PropName)._parseInt(100)._highLimit(CombinationKeyMaxAllowedLeadTimeMs);  // 第2キーの許容リードタイム
             CombinationKeyMinOverlappingTimeMs = GetString(CombinationKeyMinOverlappingTimeMs_PropName)._parseInt(70);               // 重複時間
             //CombinationKeyMinOverlappingTimeMs2 = GetString(CombinationKeyMinOverlappingTimeMs2_PropName)._parseInt(0);              // シフトキーが文字キーだった場合の重複時間
-            //CombinationKeyMinOverlappingTimeMs3 = GetString(CombinationKeyMinOverlappingTimeMs3_PropName)._parseInt(0)._lowLimit(CombinationKeyMinOverlappingTimeMs);   // 3キー以上同時の場合の重複時間
+            CombinationKeyMinOverlappingTimeMs3 = GetString(CombinationKeyMinOverlappingTimeMs3_PropName)._parseInt(0)._lowLimit(CombinationKeyMinOverlappingTimeMs);   // 3キー以上同時の場合の重複時間
             ComboDisableIntervalTimeMs = GetString(ComboDisableIntervalTimeMs_PropName)._parseInt(0);                  // 同時打鍵シフトキーがUPされた後、後置シフトを無効にする時間
             CombinationKeyMinTimeOnlyAfterSecond = GetString(CombinationKeyMinTimeOnlyAfterSecond_PropName)._parseBool(false);    // ２文字目以降についてのみ同時打鍵チェックを行う
             UseCombinationKeyTimer1 = GetString(UseCombinationKeyTimer1_PropName)._parseBool(false);                   // 同時打鍵判定用タイマーを使用する
