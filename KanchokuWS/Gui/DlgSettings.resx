@@ -282,6 +282,17 @@ extraInfo の値が当ツールの設定したものだけを無視するよう�
 ウィンドウのClassNameは、漢直モードに入り、仮想鍵盤を表示して、
 対象となるウィンドウをアクティブにすると、仮想鍵盤の上部に表示されます。</value>
   </data>
+  <data name="checkBox_useComboExtModKeyAsSingleHit.ToolTip" xml:space="preserve">
+    <value>この項目をチェックすると、テーブルファイルで「変換」キー、「無変換」キー、
+「ImeOn」キーおよび「ImeOff」キーを同時打鍵キーとして使用するような
+設定をしている場合でも、単打の場合は、それらのキー本来のキーとして
+機能するようになります。
+
+例： NICOLA(親指シフト)で「無変換」「変換」を親指シフトキーに割り当て
+ている場合に、それらのキーを単打した場合は、本来の「無変換」「変換」
+キーとして機能する。(たとえば、IMEの OFF/ON など)
+</value>
+  </data>
   <data name="checkBox_threeKeysComboUnconditional.ToolTip" xml:space="preserve">
     <value>この項目をチェックすると、3キー以上の同時押しについて、左の「同時打鍵の
 判定条件」を無視するようになります。

@@ -2160,7 +2160,7 @@ namespace KanchokuWS.Gui
             this.groupBox50.Size = new System.Drawing.Size(297, 48);
             this.groupBox50.TabIndex = 4;
             this.groupBox50.TabStop = false;
-            this.groupBox50.Text = "「変換」キーと「無変換」キー";
+            this.groupBox50.Text = "「変換」「無変換」「ImeOn」「ImeOff」キー";
             // 
             // checkBox_useComboExtModKeyAsSingleHit
             // 
@@ -2170,9 +2170,7 @@ namespace KanchokuWS.Gui
             this.checkBox_useComboExtModKeyAsSingleHit.Size = new System.Drawing.Size(214, 19);
             this.checkBox_useComboExtModKeyAsSingleHit.TabIndex = 0;
             this.checkBox_useComboExtModKeyAsSingleHit.Text = "単打の場合は本来のキーとして機能する";
-            this.toolTip1.SetToolTip(this.checkBox_useComboExtModKeyAsSingleHit, "この項目をチェックすると、テーブルファイルで「変換」キーや「無変換」キーを\n同時打鍵キーとして設定している場合でも、単打の場合は、本来のキーと\nして機能するように" +
-        "なります。\n\n例： NICOLA(親指シフト)で「無変換」「変換」を親指シフトキーに割り当て\nている場合に、それらのキーを単打した場合は、本来の「無変換」「変換" +
-        "」\nキーとして機能する。(たとえば、IMEの OFF/ON など)\n");
+            this.toolTip1.SetToolTip(this.checkBox_useComboExtModKeyAsSingleHit, resources.GetString("checkBox_useComboExtModKeyAsSingleHit.ToolTip"));
             this.checkBox_useComboExtModKeyAsSingleHit.UseVisualStyleBackColor = true;
             // 
             // groupBox49
@@ -5230,7 +5228,7 @@ namespace KanchokuWS.Gui
             this.tabPage_misc.Name = "tabPage_misc";
             this.tabPage_misc.Size = new System.Drawing.Size(676, 393);
             this.tabPage_misc.TabIndex = 9;
-            this.tabPage_misc.Text = "その他設定";
+            this.tabPage_misc.Text = "変換・書換・他";
             this.tabPage_misc.ToolTipText = "打鍵ガイドや書き換えシステムなどに関する設定";
             this.tabPage_misc.UseVisualStyleBackColor = true;
             // 

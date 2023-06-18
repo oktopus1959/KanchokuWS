@@ -97,6 +97,8 @@ namespace KanchokuWS.TableParser
             placeHolders["xfer"] = DecoderKeyVsVKey.GetFuncDecKeyByName("xfer");
             placeHolders["henkan"] = DecoderKeyVsVKey.GetFuncDecKeyByName("xfer");
             placeHolders["kana"] = DecoderKeyVsVKey.GetFuncDecKeyByName("kana");
+            placeHolders["imeon"] = DecoderKeyVsVKey.GetFuncDecKeyByName("imeon");
+            placeHolders["imeoff"] = DecoderKeyVsVKey.GetFuncDecKeyByName("imeoff");
         }
     }
 

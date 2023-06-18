@@ -1384,9 +1384,11 @@ namespace KanchokuWS.TableParser
             }
 
             if (Settings.UseComboExtModKeyAsSingleHit) {
-                // とりあえず nfer と xfer だけ対応
+                // とりあえず nfer/xfer/imeon/imeoff だけ対応
                 addExtModAsSingleKey("nfer");
                 addExtModAsSingleKey("xfer");
+                addExtModAsSingleKey("imeon");
+                addExtModAsSingleKey("imeoff");
             }
         }
 
