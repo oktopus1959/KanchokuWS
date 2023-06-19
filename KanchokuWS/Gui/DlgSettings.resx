@@ -840,6 +840,19 @@ rightShiftBlocker を呼び出すことで、左右に移動することがで�
 また、ブロッカーを右端に移動させてから、さらに "&gt;" を打鍵した場合も
 変換開始位置の右移動になります。</value>
   </data>
+  <data name="textBox_preRewriteAllowedDelayTimeMs2.ToolTip" xml:space="preserve">
+    <value>前項の文字集合に対して書き換えを許容する遅延時間を設定します。
+
+書き換え対象文字の入力後に、ここで設定した時間以上に間をあけて
+後続キーを打鍵した場合は、書き換えを行いません。(自動確定)
+
+なお、 0 を設定した場合は無限の遅延を許容する(自動確定しない)
+設定となります。
+
+例：対象文字に「n」を追加し、「ローマ字配列」で n→k と続けて打鍵する
+・n→k間の遅延が設定値以下の場合 ⇒ 「んk」を出力
+・n→k間の遅延が設定値より大きい場合 ⇒「nk」を出力</value>
+  </data>
   <data name="textBox_preRewriteTargetChars.ToolTip" xml:space="preserve">
     <value>自動確定、すなわち書き換え許容時間設定の対象となる文字集合を
 設定します。

@@ -1781,6 +1781,8 @@ namespace KanchokuWS.Gui
             setEnabled(textBox_preRewriteTargetChars, Settings.PreRewriteTargetChars_PropName);
             textBox_preRewriteAllowedDelayTimeMs.Text = $"{Settings.PreRewriteAllowedDelayTimeMs}";
             setEnabled(textBox_preRewriteAllowedDelayTimeMs, Settings.PreRewriteAllowedDelayTimeMs_PropName);
+            textBox_preRewriteAllowedDelayTimeMs2.Text = $"{Settings.PreRewriteAllowedDelayTimeMs2}";
+            setEnabled(textBox_preRewriteAllowedDelayTimeMs2, Settings.PreRewriteAllowedDelayTimeMs2_PropName);
             textBox_preRewriteWaitTimeMsWhenTrainingMode.Text = $"{Settings.PreRewriteWaitTimeMsWhenTrainingMode}";
             setEnabled(textBox_preRewriteWaitTimeMsWhenTrainingMode, Settings.PreRewriteWaitTimeMsWhenTrainingMode_PropName);
         }
@@ -1813,6 +1815,7 @@ namespace KanchokuWS.Gui
             checkerMiscSettings.Add(textBox_romanSecPlanePrefix);
             checkerMiscSettings.Add(textBox_preRewriteTargetChars);
             checkerMiscSettings.Add(textBox_preRewriteAllowedDelayTimeMs);
+            checkerMiscSettings.Add(textBox_preRewriteAllowedDelayTimeMs2);
             checkerMiscSettings.Add(textBox_preRewriteWaitTimeMsWhenTrainingMode);
 
             checkerAll.Add(checkerMiscSettings);
@@ -1848,6 +1851,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("romanSecPlanePrefix", textBox_romanSecPlanePrefix.Text);
             Settings.SetUserIni(Settings.PreRewriteTargetChars_PropName, textBox_preRewriteTargetChars.Text.Trim());
             Settings.SetUserIni(Settings.PreRewriteAllowedDelayTimeMs_PropName, textBox_preRewriteAllowedDelayTimeMs.Text.Trim());
+            Settings.SetUserIni(Settings.PreRewriteAllowedDelayTimeMs2_PropName, textBox_preRewriteAllowedDelayTimeMs2.Text.Trim());
             Settings.SetUserIni(Settings.PreRewriteWaitTimeMsWhenTrainingMode_PropName, textBox_preRewriteWaitTimeMsWhenTrainingMode.Text.Trim());
 
             Settings.ReadIniFile(false);

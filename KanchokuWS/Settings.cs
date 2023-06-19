@@ -858,9 +858,13 @@ namespace KanchokuWS
         public static string PreRewriteTargetChars { get; set; } = "";
         public static string PreRewriteTargetChars_PropName = "preRewriteTargetChars";
 
-        /// <summary>前置書き換え時の遅延許容時間</summary>
+        /// <summary>指定の文字集合に対する前置書き換え時の遅延許容時間</summary>
         public static int PreRewriteAllowedDelayTimeMs { get; set; }
         public static string PreRewriteAllowedDelayTimeMs_PropName = "preRewriteAllowedDelayTimeMs";
+
+        /// <summary>上記以外の文字に対する前置書き換え時の遅延許容時間</summary>
+        public static int PreRewriteAllowedDelayTimeMs2 { get; set; }
+        public static string PreRewriteAllowedDelayTimeMs2_PropName = "preRewriteAllowedDelayTimeMs2";
 
         /// <summary>かな入力練習モードのときに無視する前置書き換え対象文字</summary>
         //public static string PreRewriteCharsIgnoredWhenTrainingMode { get; set; } = "";
@@ -1441,8 +1445,9 @@ namespace KanchokuWS
 
             //------------------------------------------------------------------------------
             // 書き換えシステム
-            PreRewriteTargetChars  = GetString(PreRewriteTargetChars_PropName)._orElse("。、");                               // 遅延許容時間の適用対象となる前置書き換え対象文字集合
-            PreRewriteAllowedDelayTimeMs = GetString(PreRewriteAllowedDelayTimeMs_PropName)._parseInt(0);                     // 前置書き換え許容遅延タイム
+            PreRewriteTargetChars  = GetString(PreRewriteTargetChars_PropName)._orElse("。、");                       // 遅延許容時間の適用対象となる前置書き換え対象文字集合
+            PreRewriteAllowedDelayTimeMs = GetString(PreRewriteAllowedDelayTimeMs_PropName)._parseInt(0);             // 指定の文字集合に対する前置書き換え時の遅延許容時間
+            PreRewriteAllowedDelayTimeMs2 = GetString(PreRewriteAllowedDelayTimeMs2_PropName)._parseInt(0);           // 上記以外の文字に対する前置書き換え時の遅延許容時間
             //PreRewriteCharsIgnoredWhenTrainingMode  = GetString("preRewriteCharsIgnoredWhenTrainingMode");          // かな入力練習モードのときに無視する前置書き換え対象文字
             PreRewriteWaitTimeMsWhenTrainingMode  = GetString(PreRewriteWaitTimeMsWhenTrainingMode_PropName)._parseInt(100);  // かな入力練習モードのときの書き換え対象文字の出力待ち時間
 

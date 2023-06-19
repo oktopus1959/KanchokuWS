@@ -112,6 +112,7 @@ namespace KanchokuWS.Gui
                         //Settings.CombinationKeyMinOverlappingTimeMs3 = 0;
                         Settings.ComboDisableIntervalTimeMs = 0;
                         Settings.PreRewriteAllowedDelayTimeMs = 1000;
+                        Settings.PreRewriteAllowedDelayTimeMs2 = 3000;
                         shiftOffset = 0;
                         if (Logger.LogLevel >= Logger.LogLevelInfoH) {
                             KanchokuWS.CombinationKeyStroke.DeterminerLib.KeyCombinationPool.SingletonK2?.DebugPrint(true);
@@ -161,6 +162,10 @@ namespace KanchokuWS.Gui
 
                     case "rewriteMaxTime":
                         Settings.PreRewriteAllowedDelayTimeMs = arg._parseInt(200);
+                        break;
+
+                    case "rewriteMaxTime2":
+                        Settings.PreRewriteAllowedDelayTimeMs2 = arg._parseInt(1000);
                         break;
 
                     case "enableFirstComboCheck":

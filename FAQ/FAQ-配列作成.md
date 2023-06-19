@@ -513,10 +513,11 @@ kanchoku.user.ini のグローバルな設定が上書きされないように�
 |imeSendInputInRoman|bool|IMEのローマ字入力モードに対応するか|
 |imeSendInputInKana|bool|IMEのかな入力モードに対応するか|
 |imeKatakanaToHiragana|bool|IMEの入力モード対応時にカタカナをひらがなに変更するか|
-|useComboExtModKeyAsSingleHit|bool|「変換」キーと「無変換」キーについて、単打の場合は本来のキーとして機能させるか|
+|useComboExtModKeyAsSingleHit|bool|「変換」「無変換」「ImeOn」「ImeOff」キーについて、単打の場合は本来のキーとして機能させるか|
 |threeKeysComboUnconditional|bool|設定されている文字列以外の3キー同時押しを無条件に同時打鍵と判定するか|
 |preRewriteTargetChars|文字列|書き換えシステムにおいて、自動確定の対象となる文字集合|
 |preRewriteAllowedDelayTimeMs|整数|書き換えシステムにおいて、上記文字が入力されてから自動で確定するまでの時間(ミリ秒)|
+|preRewriteAllowedDelayTimeMs2|整数|書き換えシステムにおいて、上記以外の文字が入力されてから自動で確定するまでの時間(ミリ秒)|
 |preRewriteWaitTimeMsWhenTrainingMode|整数|かな入力練習モードで、上記文字が入力されてから出力されるまでの待ち時間(ミリ秒)|
 |zenkakuModeKeySeq|整数(列)|機能呼出: 「全角変換(モード)」機能の呼び出しキー(列)|
 |zenkakuOneCharKeySeq|整数(列)|機能呼出: 「全角変換(1文字)」機能の呼び出しキー(列)|
@@ -587,9 +588,11 @@ kanchoku.user.ini のグローバルな設定が上書きされないように�
 #define sequentialWords る。 やに だ、 ば、 う。 い。 より
 
 ;; 書き換えシステムにおいて、自動確定の対象となる文字集合
-#set preRewriteTargetChars=。、っ*
+#set preRewriteTargetChars=。、
 ;; 書き換えシステムにおいて、上記文字が入力されてから自動で確定するまでの時間(ミリ秒)
-#set preRewriteAllowedDelayTimeMs=1000
+#set preRewriteAllowedDelayTimeMs=200
+;; 書き換えシステムにおいて、上記以外の文字が入力されてから自動で確定するまでの時間(ミリ秒)
+#set preRewriteAllowedDelayTimeMs2=1500
 ;; かな入力練習モードで、上記文字が入力されてから出力されるまでの待ち時間(ミリ秒)
 #set preRewriteWaitTimeMsWhenTrainingMode=100
 
