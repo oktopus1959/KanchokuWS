@@ -275,6 +275,9 @@ namespace KanchokuWS
             return NumBSforShiftLeftArrowDelete > 0 && numBS >= NumBSforShiftLeftArrowDelete && ShiftLeftArrowDeleteClassNamesHash._safeContains(className._toLower());
         }
 
+        /// <summary>BS で全打鍵を取り消すか</summary>
+        public static bool RemoveOneStrokeByBackspace { get; set; }
+
         /// <summary> 同時打鍵ではないテーブルで、ノード重複の警告を表示するか </summary>
         public static bool DuplicateWarningEnabled { get; private set; }
 
@@ -650,9 +653,6 @@ namespace KanchokuWS
         /// <summary>英数モードを自動的に抜けるまでのSpaceキー数</summary>
         public static int EisuExitSpaceNum { get; set; }
 
-        /// <summary>BS で全打鍵を取り消すか</summary>
-        public static bool RemoveOneStrokeByBackspace { get; set; }
-
         /// <summary> 拡張修飾キーを有効にするか</summary>
         public static bool ExtraModifiersEnabled { get; set; }
 
@@ -680,10 +680,10 @@ namespace KanchokuWS
         /// <summary>YAMANOBEアルゴリズムを有効にするか</summary>
         public static bool YamanobeEnabled { get; set; }
 
-        /// <summary>自動首部合成を有効にするか</summary>
-        public static bool AutoBushuComp { get; set; }
+        /// <summary>自動部首合成を有効にするか</summary>
+        //public static bool AutoBushuComp { get; set; }
 
-        /// <summary>自動首部合成を有効にする最小合成回数</summary>
+        /// <summary>自動部首合成を有効にする最小合成回数</summary>
         public static int AutoBushuCompMinCount { get; set; }
 
         /// <summary>部首連想直接出力の回数</summary>
@@ -1559,8 +1559,8 @@ namespace KanchokuWS
             RemoveOneStrokeByBackspace = addDecoderSetting("removeOneByBS", "weakBS", false);   // BS で直前打鍵のみを取り消すか
 
             YamanobeEnabled = addDecoderSetting("yamanobeEnabled", false);                      // YAMANOBEアルゴリズムを有効にするか
-            AutoBushuComp = addDecoderSetting("autoBushuComp", false);                          // 自動首部合成を有効にするか
-            AutoBushuCompMinCount = addDecoderSetting("autoBushuCompMinCount", 1, 1);           // 自動首部合成を有効にする最小合成回数
+            bool bAutoBushuComp = GetString("autoBushuComp")._parseBool(false);                 // 自動首部合成を有効にするか(旧フラグ)
+            AutoBushuCompMinCount = addDecoderSetting("autoBushuCompMinCount", bAutoBushuComp ? 1 : 0, 0);   // 自動首部合成を有効にする最小合成回数
             BushuAssocSelectCount = addDecoderSetting("bushuAssocSelectCount", 1, 1, 10);       // 部首連想直接出力の回数
 
             RomanBushuCompPrefix = addDecoderSetting("romanBushuCompPrefix", "");               // ローマ字テーブル出力時の部首合成用プレフィックス

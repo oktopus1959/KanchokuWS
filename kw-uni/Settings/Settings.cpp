@@ -106,7 +106,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     SET_BOOL_VALUE(removeOneByBS);
 
     SET_BOOL_VALUE(yamanobeEnabled);
-    SET_BOOL_VALUE(autoBushuComp);
+    //SET_BOOL_VALUE(autoBushuComp);
     SET_INT_VALUE(autoBushuCompMinCount);
 
     SET_KEY_VALUE(romanBushuCompPrefix);

@@ -931,7 +931,7 @@ namespace {
                 _LOG_DEBUGH(_T("%s: SetOutStringWithRewritableLen(%s, %d, %d)"), NAME_PTR, MAKE_WPTR(xlatStr), xlatStr == outStr ? rewritableLen : 0, numBS);
                 STATE_COMMON->SetOutStringWithRewritableLen(xlatStr, xlatStr == outStr ? rewritableLen : 0, numBS);
             } else {
-                if (!SETTINGS->autoBushuComp || !BUSHU_COMP_NODE->ReduceByAutoBushu(outStr)) {
+                if (SETTINGS->autoBushuCompMinCount < 1 || !BUSHU_COMP_NODE->ReduceByAutoBushu(outStr)) {
                     _LOG_DEBUGH(_T("%s: SetOutStringWithRewritableLen(%s, %d, %d)"), NAME_PTR, MAKE_WPTR(outStr), rewritableLen, numBS);
                     STATE_COMMON->SetOutStringWithRewritableLen(outStr, rewritableLen, numBS);
                 }

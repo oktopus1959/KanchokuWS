@@ -87,7 +87,7 @@ struct Settings {
     bool removeOneByBS = false;             // BS で直前打鍵のみを取り消す
 
     bool yamanobeEnabled = false;           // YAMANOBEアルゴリズムを有効にするか
-    bool autoBushuComp = false;             // 自動部首合成を行う
+    //bool autoBushuComp = false;             // 自動部首合成を行う
     size_t autoBushuCompMinCount = 1;       // 自動首部合成を有効にする最小合成回数
 
     tstring romanBushuCompPrefix;           // ローマ字テーブル出力時の部首合成用プレフィックス

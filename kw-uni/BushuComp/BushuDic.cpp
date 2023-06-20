@@ -1060,7 +1060,7 @@ namespace {
             };
 
             // 自動部首合成組み合わせの出力
-            if (SETTINGS->autoBushuComp) {
+            if (SETTINGS->autoBushuCompMinCount > 0) {
                 for (const auto& pair : autoBushuDict) {
                     if (writer.count() >= MAX_LINES) break;
                     if (pair.first.size() == 2 && pair.second.target != '-' && pair.second.count >= SETTINGS->autoBushuCompMinCount) {
