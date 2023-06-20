@@ -759,7 +759,7 @@ KanchokuWSのアップデートの際などに誤ってこのファイルを上�
 ![Noshow Hist Cand First](image/noshow-hist-cand-first.png)
 
 ## 英数モード
-「その他設定」>「その他変換・機能」>「英大文字押下で英数モードに移行」にチェックを入れると、
+「変換・書換」>「英数入力モード」>「英大文字押下で英数モードに移行」にチェックを入れると、
 `Shift-A` などで英大文字を入力したときに「英数モード」に移行するようになります。
 
 ![Eisu Mode](image/eisu-mode.png)

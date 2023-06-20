@@ -735,6 +735,12 @@ namespace KanchokuWS.Gui
             textBox_saveDictsIntervalTime.Text = $"{Math.Abs(Settings.SaveDictsIntervalTime)}";
             textBox_saveDictsCalmTime.Text = $"{Settings.SaveDictsCalmTime}";
 
+            // 打鍵ガイド
+            checkBox_upperRomanStrokeGuide.Checked = Settings.UpperRomanStrokeGuide;
+            textBox_kanjiYomiFile.Text = Settings.KanjiYomiFile;
+
+            checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
+
             //checkBox_autoOffWhenBurstKeyIn.Checked = Settings.GetString("autoOffWhenBurstKeyIn")._parseBool();
         }
 
@@ -784,6 +790,12 @@ namespace KanchokuWS.Gui
             checkerAdvanced.Add(checkBox_dictsAutoSaveEnabled);
             checkerAdvanced.Add(textBox_saveDictsIntervalTime);
             checkerAdvanced.Add(textBox_saveDictsCalmTime);
+
+            // 打鍵ガイド
+            checkerAdvanced.Add(checkBox_upperRomanStrokeGuide);
+            checkerAdvanced.Add(textBox_kanjiYomiFile);
+
+            checkerAdvanced.Add(checkBox_removeOneStrokeByBackspace);
 
             //checkerAdvanced.Add(checkBox_autoOffWhenBurstKeyIn);
 
@@ -859,6 +871,12 @@ namespace KanchokuWS.Gui
             // 各種定義ファイルの再読み込み
             frmMain?.ReloadSettingsAndDefFiles();
 
+            // 打鍵ガイド
+            Settings.SetUserIni("upperRomanStrokeGuide", checkBox_upperRomanStrokeGuide.Checked);
+            Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
+
+            Settings.SetUserIni("removeOneByBS", checkBox_removeOneStrokeByBackspace.Checked);
+
             readSettings_tabAdvanced();
             checkerAdvanced.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
@@ -882,6 +900,17 @@ namespace KanchokuWS.Gui
                 textBox_vkbFixedPosX.Text = frmVkb.Left.ToString();
                 textBox_vkbFixedPosY.Text = frmVkb.Top.ToString();
             }
+        }
+
+        private void button_openKanjiYomiFile_Click(object sender, EventArgs e)
+        {
+            logger.InfoH("CALLED");
+            //try {
+            //    if (Settings.KanjiYomiFile._notEmpty()) {
+            //        System.Diagnostics.Process.Start(TableFileDir._joinPath(Settings.KanjiYomiFile));
+            //    }
+            //} catch { }
+            openFileByTxtAssociatedProgram(Settings.KanjiYomiFile);
         }
 
         private void button_advancedClose_Click(object sender, EventArgs e)
@@ -1755,7 +1784,7 @@ namespace KanchokuWS.Gui
         {
             // その他変換
             checkBox_yamanobeEnabled.Checked = Settings.YamanobeEnabled;
-            checkBox_autoBushuComp.Checked = Settings.AutoBushuComp;
+            //checkBox_autoBushuComp.Checked = Settings.AutoBushuComp;
             textBox_autoBushuCompMinCount.Text = $"{Settings.AutoBushuCompMinCount}";
             textBox_bushuAssocSelectCount.Text = $"{Settings.BushuAssocSelectCount}";
             checkBox_convertShiftedHiraganaToKatakana.Checked = Settings.ConvertShiftedHiraganaToKatakana;
@@ -1768,13 +1797,10 @@ namespace KanchokuWS.Gui
             checkBox_convertHiraganaToKatakanaNormalPlane.Checked = Settings.HiraganaToKatakanaNormalPlane;
             checkBox_convertJaPeriod.Checked = Settings.ConvertJaPeriod;
             checkBox_convertJaComma.Checked = Settings.ConvertJaComma;
-            checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
             checkBox_eisuModeEnabled.Checked = Settings.EisuModeEnabled;
             textBox_eisuHistSearchChar.Text = Settings.EisuHistSearchChar;
             textBox_eisuExitCapitalCharNum.Text = $"{Settings.EisuExitCapitalCharNum}";
             textBox_eisuExitSpaceNum.Text = $"{Settings.EisuExitSpaceNum}";
-            checkBox_upperRomanStrokeGuide.Checked = Settings.UpperRomanStrokeGuide;
-            textBox_kanjiYomiFile.Text = Settings.KanjiYomiFile;
             textBox_romanBushuCompPrefix.Text = Settings.RomanBushuCompPrefix;
             textBox_romanSecPlanePrefix.Text = Settings.RomanSecPlanePrefix;
             textBox_preRewriteTargetChars.Text = $"{Settings.PreRewriteTargetChars}";
@@ -1794,7 +1820,7 @@ namespace KanchokuWS.Gui
             checkerMiscSettings.CtlToBeEnabled = button_miscEnter;
             checkerMiscSettings.ControlEnabler = tabMiscStatusChanged;
             checkerMiscSettings.Add(checkBox_yamanobeEnabled);
-            checkerMiscSettings.Add(checkBox_autoBushuComp);
+            //checkerMiscSettings.Add(checkBox_autoBushuComp);
             checkerMiscSettings.Add(textBox_autoBushuCompMinCount);
             checkerMiscSettings.Add(textBox_bushuAssocSelectCount);
             checkerMiscSettings.Add(checkBox_convertShiftedHiraganaToKatakana);
@@ -1804,13 +1830,10 @@ namespace KanchokuWS.Gui
             checkerMiscSettings.Add(checkBox_convertHiraganaToKatakanaNormalPlane);
             checkerMiscSettings.Add(checkBox_convertJaPeriod);
             checkerMiscSettings.Add(checkBox_convertJaComma);
-            checkerMiscSettings.Add(checkBox_removeOneStrokeByBackspace);
             checkerMiscSettings.Add(checkBox_eisuModeEnabled);
             checkerMiscSettings.Add(textBox_eisuHistSearchChar);
             checkerMiscSettings.Add(textBox_eisuExitCapitalCharNum);
             checkerMiscSettings.Add(textBox_eisuExitSpaceNum);
-            checkerMiscSettings.Add(checkBox_upperRomanStrokeGuide);
-            checkerMiscSettings.Add(textBox_kanjiYomiFile);
             checkerMiscSettings.Add(textBox_romanBushuCompPrefix);
             checkerMiscSettings.Add(textBox_romanSecPlanePrefix);
             checkerMiscSettings.Add(textBox_preRewriteTargetChars);
@@ -1832,7 +1855,7 @@ namespace KanchokuWS.Gui
         {
             logger.InfoH("ENTER");
             Settings.SetUserIni("yamanobeEnabled", checkBox_yamanobeEnabled.Checked);
-            Settings.SetUserIni("autoBushuComp", checkBox_autoBushuComp.Checked);
+            //Settings.SetUserIni("autoBushuComp", checkBox_autoBushuComp.Checked);
             Settings.SetUserIni("autoBushuCompMinCount", textBox_autoBushuCompMinCount.Text);
             Settings.SetUserIni("bushuAssocSelectCount", textBox_bushuAssocSelectCount.Text);
             Settings.SetUserIni("convertShiftedHiraganaToKatakana", checkBox_convertShiftedHiraganaToKatakana.Checked);
@@ -1840,13 +1863,10 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("hiraToKataNormalPlane", checkBox_convertHiraganaToKatakanaNormalPlane.Checked);
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
             Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
-            Settings.SetUserIni("removeOneByBS", checkBox_removeOneStrokeByBackspace.Checked);
             Settings.SetUserIni("eisuModeEnabled", checkBox_eisuModeEnabled.Checked);
             Settings.SetUserIni("eisuHistSearchChar", textBox_eisuHistSearchChar.Text);
             Settings.SetUserIni("eisuExitCapitalCharNum", textBox_eisuExitCapitalCharNum.Text);
             Settings.SetUserIni("eisuExitSpaceNum", textBox_eisuExitSpaceNum.Text);
-            Settings.SetUserIni("upperRomanStrokeGuide", checkBox_upperRomanStrokeGuide.Checked);
-            Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
             Settings.SetUserIni("romanBushuCompPrefix", textBox_romanBushuCompPrefix.Text);
             Settings.SetUserIni("romanSecPlanePrefix", textBox_romanSecPlanePrefix.Text);
             Settings.SetUserIni(Settings.PreRewriteTargetChars_PropName, textBox_preRewriteTargetChars.Text.Trim());
@@ -1881,17 +1901,6 @@ namespace KanchokuWS.Gui
             radioButton_normalShift.Enabled = checkBox_convertShiftedHiraganaToKatakana.Checked;
             radioButton_shiftA.Enabled = checkBox_convertShiftedHiraganaToKatakana.Checked;
             radioButton_shiftB.Enabled = checkBox_convertShiftedHiraganaToKatakana.Checked;
-        }
-
-        private void button_openKanjiYomiFile_Click(object sender, EventArgs e)
-        {
-            logger.InfoH("CALLED");
-            //try {
-            //    if (Settings.KanjiYomiFile._notEmpty()) {
-            //        System.Diagnostics.Process.Start(TableFileDir._joinPath(Settings.KanjiYomiFile));
-            //    }
-            //} catch { }
-            openFileByTxtAssociatedProgram(Settings.KanjiYomiFile);
         }
 
         private void button_miscReload_Click(object sender, EventArgs e)
