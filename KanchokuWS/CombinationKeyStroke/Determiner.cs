@@ -126,42 +126,45 @@ namespace KanchokuWS.CombinationKeyStroke
         // 前キー
         //private int prevDownDecKey = -1;
 
+        private void cancelPreRewriteTime()
+        {
+            logger.DebugH($"CALLED");
+            preRewriteDt = DateTime.MinValue;
+            frmMain?.ExecCmdDecoder("cancelPreRewrite", null);
+        }
+
         private void checkPreRewriteTime(int dk)
         {
-            //if (preRewriteDt._isValid() &&
-            //    Settings.PreRewriteAllowedDelayTimeMs > 0 &&
-            //    (HRDateTime.Now - preRewriteDt).TotalMilliseconds > Settings.PreRewriteAllowedDelayTimeMs)
-            //{
-            //    logger.DebugH($"CALL cancelPreRewrite: PreRewriteAllowedDelayTimeMs={Settings.PreRewriteAllowedDelayTimeMs}");
-            //    frmMain?.ExecCmdDecoder("cancelPreRewrite", null);
-            //}
-            logger.DebugH($"CALLED: preRewriteDt={preRewriteDt}, isPreRewriteTarget={isPreRewriteTarget}");
+            logger.DebugH(() => $"CALLED: preRewriteDt={preRewriteDt}, isPreRewriteTarget={isPreRewriteTarget}");
             if (preRewriteDt._isValid()) {
                 int delayTime = isPreRewriteTarget ? Settings.PreRewriteAllowedDelayTimeMs : Settings.PreRewriteAllowedDelayTimeMs2;
                 double elapsedTime = (HRDateTime.Now - preRewriteDt).TotalMilliseconds;
-                logger.DebugH($"delayTime={delayTime}, elapsedTime={elapsedTime:f3}");
+                logger.DebugH(() => $"delayTime={delayTime}, elapsedTime={elapsedTime:f3}");
                 if (delayTime > 0 && elapsedTime > delayTime) {
-                    logger.DebugH($"CALL cancelPreRewrite");
-                    preRewriteDt = DateTime.MinValue;
-                    frmMain?.ExecCmdDecoder("cancelPreRewrite", null);
+                    cancelPreRewriteTime();
                 } else {
                     logger.DebugH($"DO NOTHING");
                 }
             }
         }
 
-        public void SetPreRewriteTime(bool bPreRewriteTarget)
+        private static bool isTailPreRewriteChar(string str)
         {
-            logger.DebugH($"CALLED: bPreRewriteTarget={bPreRewriteTarget}");
-            //if (bPreRewriteTarget) {
-            //    logger.DebugH("Set PreRewrite DateTime");
-            //    preRewriteDt = HRDateTime.Now;
-            //} else {
-            //    logger.DebugH("Reset PreRewrite DateTime");
-            //    preRewriteDt = DateTime.MinValue;
-            //}
-            isPreRewriteTarget = bPreRewriteTarget;
-            preRewriteDt = HRDateTime.Now;
+            return str._notEmpty() && (Settings.PreRewriteTargetChars.Contains('*') || Settings.PreRewriteTargetChars.Contains(str.Last()));
+        }
+
+        public void SetPreRewriteTime(string outStr)
+        {
+            logger.DebugH(() => $"ENTER: outStr={outStr}");
+            if (outStr._isEmpty() || outStr.Last()._isAscii()) {
+                if (preRewriteDt._isValid()) {
+                    cancelPreRewriteTime();
+                }
+            } else {
+                isPreRewriteTarget = isTailPreRewriteChar(outStr);
+                preRewriteDt = HRDateTime.Now;
+            }
+            logger.DebugH(() => $"LEAVE: isPreRewriteTarget={isPreRewriteTarget}, preRewriteDt={preRewriteDt}");
         }
 
         public void Dispose()

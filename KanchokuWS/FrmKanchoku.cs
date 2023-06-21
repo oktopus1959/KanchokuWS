@@ -1848,7 +1848,6 @@ namespace KanchokuWS
                         logger.DebugH("PATH-4");
                         // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
                         bool bFuncVkeyContained = isFuncVkeyContained(outString, outLen);
-                        bool bPreRewriteTarget = isTailPreRewriteChar(outString, outLen);
                         int numBS = decoderOutput.numBackSpaces;
                         int leadLen = calcSameLeadingLen(outString, outLen, numBS);
                         var outStr = leadLen > 0 ? outString.Skip(leadLen).ToArray() : outString;
@@ -1861,7 +1860,7 @@ namespace KanchokuWS
                             HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, 0, ref decoderOutput);
                         }
                         // 前置書き換え対象文字なら、許容時間をセットする
-                        CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(bPreRewriteTarget);
+                        CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(outString._toString());
                     }
                 }
                 logger.DebugH("PATH-6");
@@ -1926,9 +1925,8 @@ namespace KanchokuWS
                 $"numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}, topString={decoderOutput.topString._toString()}, " +
                 $"IsDeckeyToVkey={decoderOutput.IsDeckeyToVkey()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
 
-            bool bPreRewriteTarget = isTailPreRewriteChar(decoderOutput.outString);
             // 前置書き換え対象文字なら、許容時間をセットする
-            CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(bPreRewriteTarget);
+            CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(decoderOutput.outString._toString());
 
             var result = decoderOutput.outString._toString();
             numBS = decoderOutput.numBackSpaces;
@@ -1950,7 +1948,6 @@ namespace KanchokuWS
 
             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
             bool bFuncVkeyContained = isFuncVkeyContained(decoderOutput.outString);
-            bool bPreRewriteTarget = isTailPreRewriteChar(decoderOutput.outString);
             // BSと文字送出(もしあれば)
             SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
             if (bFuncVkeyContained) {
@@ -1958,7 +1955,7 @@ namespace KanchokuWS
                 HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, 0, ref decoderOutput);
             }
             // 前置書き換え対象文字なら、許容時間をセットする
-            CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(bPreRewriteTarget);
+            CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(decoderOutput.outString._toString());
         }
 
         /// <summary>
@@ -1994,12 +1991,6 @@ namespace KanchokuWS
                 pos = str._findIndex(pos + 1, len, '!');
             }
             return false;
-        }
-
-        private bool isTailPreRewriteChar(char[] str, int len = -1)
-        {
-            if (len < 0) len = str._strlen();
-            return len > 0 && (Settings.PreRewriteTargetChars.Contains('*') || Settings.PreRewriteTargetChars.Contains(str[len - 1]));
         }
 
         private bool isNormalDeckey(int deckey)

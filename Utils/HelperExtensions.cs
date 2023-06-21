@@ -153,6 +153,16 @@ namespace Utils
         }
 
         /// <summary>
+        /// ASCII文字か
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <returns></returns>
+        public static bool _isAscii(this char ch)
+        {
+            return ch < 0x100;
+        }
+
+        /// <summary>
         /// 0 より大きければ自身を返し、0 以下なら defval を返す
         /// </summary>
         /// <param name="val"></param>
