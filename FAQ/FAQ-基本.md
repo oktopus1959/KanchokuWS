@@ -58,9 +58,13 @@
 ![Tasktray](image/tasktray.png)
 
 を、Ctrlキーを押しながらクリックしてください。
- <p style="margin-left:2em; font-size:small">
-<code>kanchoku.user.ini</code> に <code>openSettingsDlgWhenIconClicked=true</code> という行を追加すると、
-Ctrlキーを押さずにアイコンをクリックするだけで設定画面を開くようになります。 </p>
+
+なお、設定ダイアログの「詳細設定」>「その他設定」>「タスクトレイアイコンの左クリックで設定ダイアログを開く」
+にチェックを入れると、タスクトレイアイコンを左クリックするだけで設定ダイアログを開くようになります。
+（そのかわり漢直モードのON/OFFは、Ctrlキーを押しながら左クリックとなります）
+
+![Tasktray Icon Click](image/tasktray-icon-click.png)
+
 
 #### タスクトレイアイコン、または仮想鍵盤を右クリック
 タスクトレイアイコン、または仮想鍵盤

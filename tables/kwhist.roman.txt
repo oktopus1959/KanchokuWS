@@ -38610,6 +38610,7 @@ Spective|スペクティブ
 Stake|ステーク
 Stream|ストリーム
 Tradeoff|トレードオフ
+Tray|トレイ
 Usecase|ユースケース
 Workloads|ワークローズ
 Workload|ワークロード

@@ -1246,7 +1246,7 @@ namespace KanchokuWS
             ShiftLeftArrowDeleteClassNamesHash = new HashSet<string>(ShiftLeftArrowDeleteClassNames._toLower()._split('|'));
 
             // 自身以外のキーボードフックツールからの出力を無視する
-            IgnoreOtherHooker = GetString("ignoreOtherHooker")._parseBool(false);
+            IgnoreOtherHooker = GetString("ignoreOtherHooker")._parseBool(true);
 
             // 同時打鍵ではないテーブルで、ノード重複の警告を表示するか
             DuplicateWarningEnabled = GetString("duplicateWarningEnabled")._parseBool(false);

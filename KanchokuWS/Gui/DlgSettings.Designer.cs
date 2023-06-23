@@ -134,6 +134,7 @@ namespace KanchokuWS.Gui
             this.textBox_preWmCharGuardMillisec = new System.Windows.Forms.TextBox();
             this.label31 = new System.Windows.Forms.Label();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
+            this.checkBox_openSettingsDlgWhenIconClicked = new System.Windows.Forms.CheckBox();
             this.checkBox_removeOneStrokeByBackspace = new System.Windows.Forms.CheckBox();
             this.checkBox_ignoreOtherHooker = new System.Windows.Forms.CheckBox();
             this.checkBox_duplicateWarningEnabled = new System.Windows.Forms.CheckBox();
@@ -454,12 +455,13 @@ namespace KanchokuWS.Gui
             this.label_miscRomanOut = new System.Windows.Forms.Label();
             this.label_miscReload = new System.Windows.Forms.Label();
             this.button_miscReload = new System.Windows.Forms.Button();
+            this.checkBox_autoBushuComp = new System.Windows.Forms.CheckBox();
             this.groupBox38 = new System.Windows.Forms.GroupBox();
+            this.label122 = new System.Windows.Forms.Label();
             this.textBox_autoBushuCompMinCount = new System.Windows.Forms.TextBox();
             this.checkBox_yamanobeEnabled = new System.Windows.Forms.CheckBox();
             this.label54 = new System.Windows.Forms.Label();
             this.textBox_bushuAssocSelectCount = new System.Windows.Forms.TextBox();
-            this.checkBox_autoBushuComp = new System.Windows.Forms.CheckBox();
             this.groupBox37 = new System.Windows.Forms.GroupBox();
             this.checkBox_convertHiraganaToKatakanaNormalPlane = new System.Windows.Forms.CheckBox();
             this.radioButton_shiftB = new System.Windows.Forms.RadioButton();
@@ -537,7 +539,6 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.label122 = new System.Windows.Forms.Label();
             this.textBox_onSelectedBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_firstCandidateBackColor = new KanchokuWS.Gui.ColorTextBox();
             this.textBox_onKanaTrainingMode = new KanchokuWS.Gui.ColorTextBox();
@@ -1587,7 +1588,7 @@ namespace KanchokuWS.Gui
             this.groupBox28.Size = new System.Drawing.Size(319, 84);
             this.groupBox28.TabIndex = 4;
             this.groupBox28.TabStop = false;
-            this.groupBox28.Text = "辞書ファイル";
+            this.groupBox28.Text = "辞書ファイル保存";
             // 
             // checkBox_dictsAutoSaveEnabled
             // 
@@ -1954,6 +1955,7 @@ namespace KanchokuWS.Gui
             // 
             // groupBox16
             // 
+            this.groupBox16.Controls.Add(this.checkBox_openSettingsDlgWhenIconClicked);
             this.groupBox16.Controls.Add(this.checkBox_removeOneStrokeByBackspace);
             this.groupBox16.Controls.Add(this.checkBox_ignoreOtherHooker);
             this.groupBox16.Controls.Add(this.checkBox_duplicateWarningEnabled);
@@ -1962,10 +1964,23 @@ namespace KanchokuWS.Gui
             this.groupBox16.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox16.Location = new System.Drawing.Point(328, 206);
             this.groupBox16.Name = "groupBox16";
-            this.groupBox16.Size = new System.Drawing.Size(319, 112);
+            this.groupBox16.Size = new System.Drawing.Size(319, 132);
             this.groupBox16.TabIndex = 5;
             this.groupBox16.TabStop = false;
             this.groupBox16.Text = "その他設定";
+            // 
+            // checkBox_openSettingsDlgWhenIconClicked
+            // 
+            this.checkBox_openSettingsDlgWhenIconClicked.AutoSize = true;
+            this.checkBox_openSettingsDlgWhenIconClicked.Location = new System.Drawing.Point(22, 43);
+            this.checkBox_openSettingsDlgWhenIconClicked.Name = "checkBox_openSettingsDlgWhenIconClicked";
+            this.checkBox_openSettingsDlgWhenIconClicked.Size = new System.Drawing.Size(280, 19);
+            this.checkBox_openSettingsDlgWhenIconClicked.TabIndex = 1;
+            this.checkBox_openSettingsDlgWhenIconClicked.Text = "タスクトレイ アイコンの左クリックで設定ダイアログを開く";
+            this.toolTip1.SetToolTip(this.checkBox_openSettingsDlgWhenIconClicked, "ここのチェックの有無により、タスクトレイ アイコンをクリックしたときの\r\n動作が以下のように変わります。\r\n\r\nチェックなし:\r\n　　アイコンの左クリック → 漢" +
+        "直モードのON/OFF\r\n　　アイコンのCtrl+左クリック → 設定ダイアログを開く\r\n\r\nチェックあり:\r\n　　アイコンの左クリック → 設定ダイアログを開" +
+        "く\r\n　　アイコンのCtrl+左クリック → 漢直モードのON/OFF\r\n");
+            this.checkBox_openSettingsDlgWhenIconClicked.UseVisualStyleBackColor = true;
             // 
             // checkBox_removeOneStrokeByBackspace
             // 
@@ -1982,10 +1997,10 @@ namespace KanchokuWS.Gui
             // checkBox_ignoreOtherHooker
             // 
             this.checkBox_ignoreOtherHooker.AutoSize = true;
-            this.checkBox_ignoreOtherHooker.Location = new System.Drawing.Point(22, 65);
+            this.checkBox_ignoreOtherHooker.Location = new System.Drawing.Point(22, 85);
             this.checkBox_ignoreOtherHooker.Name = "checkBox_ignoreOtherHooker";
             this.checkBox_ignoreOtherHooker.Size = new System.Drawing.Size(283, 19);
-            this.checkBox_ignoreOtherHooker.TabIndex = 2;
+            this.checkBox_ignoreOtherHooker.TabIndex = 3;
             this.checkBox_ignoreOtherHooker.Text = "他のキー変換ツールによるキー変換がない場合のみ処理";
             this.toolTip1.SetToolTip(this.checkBox_ignoreOtherHooker, resources.GetString("checkBox_ignoreOtherHooker.ToolTip"));
             this.checkBox_ignoreOtherHooker.UseVisualStyleBackColor = true;
@@ -1993,10 +2008,10 @@ namespace KanchokuWS.Gui
             // checkBox_duplicateWarningEnabled
             // 
             this.checkBox_duplicateWarningEnabled.AutoSize = true;
-            this.checkBox_duplicateWarningEnabled.Location = new System.Drawing.Point(22, 43);
+            this.checkBox_duplicateWarningEnabled.Location = new System.Drawing.Point(22, 64);
             this.checkBox_duplicateWarningEnabled.Name = "checkBox_duplicateWarningEnabled";
             this.checkBox_duplicateWarningEnabled.Size = new System.Drawing.Size(249, 19);
-            this.checkBox_duplicateWarningEnabled.TabIndex = 1;
+            this.checkBox_duplicateWarningEnabled.TabIndex = 2;
             this.checkBox_duplicateWarningEnabled.Text = "テーブルファイル読み込み時に重複チェックを行う";
             this.toolTip1.SetToolTip(this.checkBox_duplicateWarningEnabled, resources.GetString("checkBox_duplicateWarningEnabled.ToolTip"));
             this.checkBox_duplicateWarningEnabled.UseVisualStyleBackColor = true;
@@ -2005,10 +2020,10 @@ namespace KanchokuWS.Gui
             // 
             this.textBox_deckeyInfiniteLoopDetectCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_deckeyInfiniteLoopDetectCount.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_deckeyInfiniteLoopDetectCount.Location = new System.Drawing.Point(209, 86);
+            this.textBox_deckeyInfiniteLoopDetectCount.Location = new System.Drawing.Point(209, 106);
             this.textBox_deckeyInfiniteLoopDetectCount.Name = "textBox_deckeyInfiniteLoopDetectCount";
             this.textBox_deckeyInfiniteLoopDetectCount.Size = new System.Drawing.Size(45, 19);
-            this.textBox_deckeyInfiniteLoopDetectCount.TabIndex = 3;
+            this.textBox_deckeyInfiniteLoopDetectCount.TabIndex = 4;
             this.textBox_deckeyInfiniteLoopDetectCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_deckeyInfiniteLoopDetectCount, "キーボードフックの無限ループ検出回数\n\nキーボードフックで処理されたキー入力は、当アプリ独自の extraInfo を設定してから\nSendInput を呼び出す" +
         "ようにして、無限ループに陥ることのないようにしています。\n\n万一、無限ループに陥った場合にそれを検出するための呼び出し回数を設定します。\n同じキーの呼び出しがこ" +
@@ -2017,7 +2032,7 @@ namespace KanchokuWS.Gui
             // label33
             // 
             this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(19, 88);
+            this.label33.Location = new System.Drawing.Point(20, 108);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(184, 15);
             this.label33.TabIndex = 4;
@@ -5657,6 +5672,18 @@ namespace KanchokuWS.Gui
             this.button_miscReload.UseVisualStyleBackColor = true;
             this.button_miscReload.Click += new System.EventHandler(this.button_miscReload_Click);
             // 
+            // checkBox_autoBushuComp
+            // 
+            this.checkBox_autoBushuComp.AutoSize = true;
+            this.checkBox_autoBushuComp.Location = new System.Drawing.Point(51, 363);
+            this.checkBox_autoBushuComp.Name = "checkBox_autoBushuComp";
+            this.checkBox_autoBushuComp.Size = new System.Drawing.Size(107, 19);
+            this.checkBox_autoBushuComp.TabIndex = 1;
+            this.checkBox_autoBushuComp.Text = "自動部首合成を";
+            this.toolTip1.SetToolTip(this.checkBox_autoBushuComp, resources.GetString("checkBox_autoBushuComp.ToolTip"));
+            this.checkBox_autoBushuComp.UseVisualStyleBackColor = true;
+            this.checkBox_autoBushuComp.Visible = false;
+            // 
             // groupBox38
             // 
             this.groupBox38.Controls.Add(this.label122);
@@ -5670,6 +5697,16 @@ namespace KanchokuWS.Gui
             this.groupBox38.TabIndex = 0;
             this.groupBox38.TabStop = false;
             this.groupBox38.Text = "部首合成・連想直接置換";
+            // 
+            // label122
+            // 
+            this.label122.AutoSize = true;
+            this.label122.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label122.Location = new System.Drawing.Point(35, 44);
+            this.label122.Name = "label122";
+            this.label122.Size = new System.Drawing.Size(268, 15);
+            this.label122.TabIndex = 43;
+            this.label122.Text = "回以上の手動合成実行で自動部首合成を有効にする";
             // 
             // textBox_autoBushuCompMinCount
             // 
@@ -5712,18 +5749,6 @@ namespace KanchokuWS.Gui
             this.textBox_bushuAssocSelectCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_bushuAssocSelectCount, "連想直接置換の試行回数を設定します。(最大5回)\r\n\r\n連想直接置換機能を連続して呼び出すと、連想文字一覧の\r\n先頭から順に出力文字を取得して置換していきます。\r" +
         "\n\r\n試行回数を超えて連想直接置換を呼び出した場合は、連想\r\n文字一覧からの選択画面に遷移します。");
-            // 
-            // checkBox_autoBushuComp
-            // 
-            this.checkBox_autoBushuComp.AutoSize = true;
-            this.checkBox_autoBushuComp.Location = new System.Drawing.Point(51, 363);
-            this.checkBox_autoBushuComp.Name = "checkBox_autoBushuComp";
-            this.checkBox_autoBushuComp.Size = new System.Drawing.Size(107, 19);
-            this.checkBox_autoBushuComp.TabIndex = 1;
-            this.checkBox_autoBushuComp.Text = "自動部首合成を";
-            this.toolTip1.SetToolTip(this.checkBox_autoBushuComp, resources.GetString("checkBox_autoBushuComp.ToolTip"));
-            this.checkBox_autoBushuComp.UseVisualStyleBackColor = true;
-            this.checkBox_autoBushuComp.Visible = false;
             // 
             // groupBox37
             // 
@@ -6662,16 +6687,6 @@ namespace KanchokuWS.Gui
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // label122
-            // 
-            this.label122.AutoSize = true;
-            this.label122.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label122.Location = new System.Drawing.Point(35, 44);
-            this.label122.Name = "label122";
-            this.label122.Size = new System.Drawing.Size(268, 15);
-            this.label122.TabIndex = 43;
-            this.label122.Text = "回以上の手動合成実行で自動部首合成を有効にする";
-            // 
             // textBox_onSelectedBackColor
             // 
             this.textBox_onSelectedBackColor.BackColor = System.Drawing.Color.White;
@@ -7528,5 +7543,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.CheckBox checkBox_removeOneStrokeByBackspace;
         private System.Windows.Forms.GroupBox groupBox33;
         private System.Windows.Forms.Label label122;
+        private System.Windows.Forms.CheckBox checkBox_openSettingsDlgWhenIconClicked;
     }
 }

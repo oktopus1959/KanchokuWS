@@ -451,7 +451,6 @@ namespace KanchokuWS.Gui
             frmMain?.ReloadSettingsAndDefFiles();
 
             readSettings_tabBasic();
-
             checkerBasic.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
             // 同時打鍵・IME設定も呼んでおく
@@ -740,6 +739,7 @@ namespace KanchokuWS.Gui
             textBox_kanjiYomiFile.Text = Settings.KanjiYomiFile;
 
             checkBox_removeOneStrokeByBackspace.Checked = Settings.RemoveOneStrokeByBackspace;
+            checkBox_openSettingsDlgWhenIconClicked.Checked = Settings.OpenSettingsDlgWhenIconClicked;
 
             //checkBox_autoOffWhenBurstKeyIn.Checked = Settings.GetString("autoOffWhenBurstKeyIn")._parseBool();
         }
@@ -796,6 +796,7 @@ namespace KanchokuWS.Gui
             checkerAdvanced.Add(textBox_kanjiYomiFile);
 
             checkerAdvanced.Add(checkBox_removeOneStrokeByBackspace);
+            checkerAdvanced.Add(checkBox_openSettingsDlgWhenIconClicked);
 
             //checkerAdvanced.Add(checkBox_autoOffWhenBurstKeyIn);
 
@@ -865,17 +866,18 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("saveDictsIntervalTime", (checkBox_dictsAutoSaveEnabled.Checked ? "" : "-") + textBox_saveDictsIntervalTime.Text.Trim());
             Settings.SetUserIni("saveDictsCalmTime", textBox_saveDictsCalmTime.Text.Trim());
 
-            //Settings.SetUserIni("autoOffWhenBurstKeyIn", checkBox_autoOffWhenBurstKeyIn.Checked);
-
-            //Settings.ReadIniFile();
-            // 各種定義ファイルの再読み込み
-            frmMain?.ReloadSettingsAndDefFiles();
-
             // 打鍵ガイド
             Settings.SetUserIni("upperRomanStrokeGuide", checkBox_upperRomanStrokeGuide.Checked);
             Settings.SetUserIni("kanjiYomiFile", textBox_kanjiYomiFile.Text);
 
             Settings.SetUserIni("removeOneByBS", checkBox_removeOneStrokeByBackspace.Checked);
+            Settings.SetUserIni("openSettingsDlgWhenIconClicked", checkBox_openSettingsDlgWhenIconClicked.Checked);
+
+            //Settings.SetUserIni("autoOffWhenBurstKeyIn", checkBox_autoOffWhenBurstKeyIn.Checked);
+
+            //Settings.ReadIniFile();
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
 
             readSettings_tabAdvanced();
             checkerAdvanced.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
@@ -1078,7 +1080,6 @@ namespace KanchokuWS.Gui
             frmMain?.ReloadSettingsAndDefFiles();
 
             readSettings_tabImeCombo();
-
             checkerImeCombo.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
             label_okResultImeCombo.Show();
@@ -1233,7 +1234,6 @@ namespace KanchokuWS.Gui
             frmMain?.ReloadSettingsAndDefFiles();
 
             readSettings_tabFontColor();
-
             checkerFontColor.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
 
             // 各種定義ファイルの再読み込み
