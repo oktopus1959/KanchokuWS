@@ -111,14 +111,14 @@ comboMinTime(200)
 comboMinTime3(200)
 convert(EM<55>K<30>m<16>e<26>k) = てない
 
-comboMaxTime(100)
+comboMaxTime(120)
 comboMinTime(70)
 comboMinTime3(70)
 enableTimer1()
 enableTimer2()
 
 convert(J<111>C<112>j<31>c) = ば
-convert(J<66>W<52>P<137>j<38>p<36>w) = ぎゅ
+convert(J<30>W<52>P<137>j<38>p<36>w) = ぎゅ
 convert(J<113>F<0>j<54>O<89>f<24>o) = あず
 
 comboDisableTime(0)
