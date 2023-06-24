@@ -148,7 +148,7 @@ namespace KanchokuWS.CombinationKeyStroke
             }
         }
 
-        private static bool isTailPreRewriteChar(string str)
+        public static bool IsTailPreRewriteChar(string str)
         {
             return str._notEmpty() && (Settings.PreRewriteTargetChars.Contains('*') || Settings.PreRewriteTargetChars.Contains(str.Last()));
         }
@@ -161,7 +161,7 @@ namespace KanchokuWS.CombinationKeyStroke
                     cancelPreRewriteTime();
                 }
             } else {
-                isPreRewriteTarget = isTailPreRewriteChar(outStr);
+                isPreRewriteTarget = IsTailPreRewriteChar(outStr);
                 preRewriteDt = HRDateTime.Now;
             }
             logger.DebugH(() => $"LEAVE: isPreRewriteTarget={isPreRewriteTarget}, preRewriteDt={preRewriteDt}");

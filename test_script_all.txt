@@ -5,12 +5,14 @@ convert(KRkr) = 日
 ### ふじこ ###
 loadTable(tables/_test/fujiko.tbl)
 comboMinTime(10)
+comboMinTime3(10)
 convert(ASDFJKL{;}<30>asdfjkl[;]) = くぁwせdrftgyふじこlp!{Enter}
 
 ### 薙刀式 ###
 loadTable(tables/_test/naginata15.tbl)
 comboMaxTime(100)
 comboMinTime(0)
+comboMinTime3(0)
 convert(Jj) = あ
 convert(Ff) = か
 convert(Ii) = る
@@ -30,21 +32,25 @@ convert(W<20>J<20>H<40>hIiwj) = ぎゃぎょ
 convert(J<50>W<50>H<100>hIijw) = ぎゃぎょ
 
 comboMinTime(50)
+comboMinTime3(50)
 convert(K<55>J<36>k<10>W<120>j<34>w) = いぎ
 convert(W<111>J<1>w<10>E<120>j<74>e) = きで
 convert(K<55>J<96>k<10>W<120>j<34>w) = いあき
 convert(W<111>J<10>w<99>E<56>j<74>e) = きあて
 
 comboMinTime(100)
+comboMinTime3(100)
 convert(FJ<40>fj) = かあ
 disableFirstComboCheck
 convert(FJ<40>fj) = が
 convert(UF<40>uf) = ざ
 comboMinTime(20)
+comboMinTime3(20)
 convert(FJ<50>fj) = が
 
 enableFirstComboCheck
 comboMinTime(20)
+comboMinTime3(20)
 convert(W<50>J<50>H<100>hwj) = ぎゃ
 convert(XHM<50>xhm) = ぴゃ
 convert(XMH<50>xhm) = ぴゃ
@@ -61,6 +67,7 @@ convert(Q<50>Jjq) = ぁ
 
 comboMaxTime(80)
 comboMinTime(80)
+comboMinTime3(80)
 convert(J<120>Wjw) = あき
 convert(JJJ<120>Wjw) = あき
 convert(J<10>W<80>R<4>jwr) = ぎし
@@ -68,6 +75,7 @@ convert(JWRrjw) = ぎじ
 
 comboMaxTime(120)
 comboMinTime(20)
+comboMinTime3(20)
 convert(JKjk) = あい
 convert(JKkj) = あい
 convert(KJkj) = いあ
@@ -81,6 +89,7 @@ convert(J<30>W<53>jRwr) = ぎし
 convert(J<30>W<53>jEwe) = ぎて
 
 comboMinTime(50)
+comboMinTime3(50)
 convert(JWR<80>jwr) = ぎじ
 convert(FIOPiopf) = かるすへ
 convert(FKOPkopf) = かいすへ
@@ -91,6 +100,7 @@ convert(J<32>W<93>jRwr) = ぎし
 
 comboMaxTime(50)
 comboMinTime(70)
+comboMinTime3(70)
 enableTimer1
 enableTimer2
 convert(J<305>W<46>E<129>w<14>e<48>j) = ぎで
@@ -98,10 +108,12 @@ convert(J<226>W<62>E<143>e<32>w<61>j) = ぎで
 
 comboMaxTime(50)
 comboMinTime(200)
+comboMinTime3(200)
 convert(EM<55>K<30>m<16>e<26>k) = てない
 
 comboMaxTime(100)
 comboMinTime(70)
+comboMinTime3(70)
 enableTimer1()
 enableTimer2()
 
@@ -117,6 +129,7 @@ convert(Jj<50>W<45>J<96>j<12>w<50>D<15>J<96>d<16>j) = あぎとあ
 ### 新下駄 ###
 loadTable(tables/_test/shin-geta.tbl)
 comboMinTime(20)
+comboMinTime3(20)
 convert(KW<40>kw) = ご
 convert(KWwk) = ご
 convert(WK<40>wk) = ご
@@ -130,9 +143,11 @@ convert(KKKWEewk) = ごは
 loadTable(tables/_test/tuki-2-263.pfx.tbl)
 comboMaxTime(100)
 comboMinTime(0)
+comboMinTime3(0)
 convert(DUIdui) = えみ
 convert(DDD<200>UIdui) = えみ
 comboMinTime(70)
+comboMinTime3(70)
 convert(DUI<200>dui) = えみ
 convert(DDDUI<200>dui) = えみ
 convert(ALal) = ば
@@ -176,6 +191,7 @@ convert(DLdlAa) = ました
 loadTable(tables/_test/noniiruto.6.tbl)
 comboMaxTime(100)
 comboMinTime(70)
+comboMinTime3(70)
 rewriteMaxTime(300)
 convert(Ff) = の
 convert(DdFf) = よ
@@ -205,6 +221,7 @@ loadTable(tables/_test/noniiruto.10.tbl)
 comboMaxTime(100)
 comboMaxPostTime(100)
 comboMinTime(70)
+comboMinTime3(70)
 
 #enableTimer1
 #enableTimer2
@@ -219,6 +236,7 @@ convert(J<50>SP<50>K<48>j<56>sp<72>k) = いや
 loadTable(tables/_test/noniiruto.10a.tbl)
 comboMaxTime(100)
 comboMinTime(70)
+comboMinTime3(70)
 
 enableTimer1()
 enableTimer2()
@@ -246,6 +264,7 @@ loadTable(tables/_test/noniiruto.12.tbl)
 comboMaxTime(70)
 comboMaxPostTime(200)
 comboMinTime(50)
+comboMinTime3(50)
 
 #enableTimer1
 #enableTimer2
@@ -266,11 +285,13 @@ comboMaxTime(500)
 convert(S<35>SP<120>s<20>sp) = ば
 
 comboMinTime(100)
+comboMinTime3(100)
 convert(SP<471>{45}<112>[45]<32>{45}<48>[45]<100>sp) = ……
 convert(SP<471>U<112>u<32>U<48>u<100>sp) = そそ
 
 comboMaxTime(100)
 comboMinTime(200)
+comboMinTime3(200)
 convert(SP<35>S<110>U<20>s<20>sp<50>u) = ばか
 
 ### 13 ###
@@ -278,6 +299,7 @@ loadTable(tables/_test/noniiruto.13.tbl)
 comboMaxTime(70)
 comboMaxPostTime(200)
 comboMinTime(200)
+comboMinTime3(200)
 
 onlyCharKeysComboShouldBeCoveringCombo(true)
 
@@ -290,6 +312,7 @@ convert(E<86>O<5><5>I<10>o<10>i<22>e) = しょう
 comboMaxTime(100)
 comboMaxPostTime(50)
 comboMinTime(100)
+comboMinTime3(100)
 
 # T, SP, W, t, w, sp
 
@@ -299,6 +322,7 @@ loadTable(tables/_test/noniiruto.13a.tbl)
 comboMaxTime(70)
 comboMaxPostTime(200)
 comboMinTime(200)
+comboMinTime3(200)
 
 # SP, E, O, o, e, SP
 convert(SP<51>E<56>O<160>o<10>e<13>sp) = じょ
@@ -307,6 +331,7 @@ convert(SP<51>E<56>O<160>o<10>e<13>sp) = じょ
 loadTable(tables/_test/noniiruto.13b.tbl)
 comboMaxTime(100)
 comboMinTime(70)
+comboMinTime3(70)
 
 # K, SP, A, sp, k, a
 convert(K<7>SP<131>A<91>sp<15>k<38>a) = ぷ
@@ -348,6 +373,7 @@ convert(SP<10>Uu<33>E<71>O<72>e<15>I<56>o<66>i<33>sp) = そじよう
 loadTable(tables/_test/noniiruto.post.7.tbl)
 comboMaxTime(100)
 comboMinTime(70)
+comboMinTime3(70)
 
 enableTimer1()
 enableTimer2()
@@ -359,6 +385,7 @@ convert(D<95>F<57>{.}<40>d<9>{,}<24>f<105>[.]<18>[,]) = ような
 loadTable(tables/_test/combo-test.tbl)
 comboMaxTime(100)
 comboMinTime(70)
+comboMinTime3(70)
 convert(E<18>W<53>O<33>I<9>ew<100>oi) = みえ
 convert(G<89>K<7>J<31>g<65>jk) = でき
 convert(J<59>K<20>jk) = いあ
@@ -385,8 +412,11 @@ clear()
 loadTable(tables/_test/combo_rewrite.tbl)
 comboMaxTime(100)
 comboMinTime(70)
+comboMinTime3(70)
 comboDisableTime(10)
-rewriteMaxTime(1000)
+rewriteTargetChars(、。)
+rewriteMaxTime(500)
+rewriteMaxTime2(2000)
 convert(SPKkspSPXxsp) = ぼ
 convert(SPKkspSPWwsp) = ぴ
 convert(SPKkspSPSssp) = ぱ
@@ -398,6 +428,7 @@ useComboExtModKeyAsSingleHit(false)
 loadTable(tables/_test/nicola.tbl)
 comboMaxTime(200)
 comboMinTime(70)
+comboMinTime3(70)
 convert(J<50>{nfer}<80>j[nfer]) = ど       # 第2キーがシフトのケース
 #convert(J<80>{nfer}Kj<80>[nfer]k) = とぎ
 
@@ -416,6 +447,7 @@ convert({nfer}[nfer]) = !{nfer} # 無変換の単打
 ### 月光(連続シフト) ###
 loadTable(tables/_test/gekko-20211106.pfx.tbl)
 comboMinTime(100)
+comboMinTime3(100)
 convert(DIid) = よ
 convert(DDDDKkIid) = よ
 convert(DDDDKIkid) = よ
@@ -423,21 +455,25 @@ convert(DIO<40>dio) = よの
 convert(DIO<140>dio) = よえ
 
 comboMinTime(0) # 2打鍵以降も即時判定(Kが無視されること)
+comboMinTime3(0) # 2打鍵以降も即時判定(Kが無視されること)
 convert(DKkIid) = よ
 convert(DDDDKkIid) = よ
 convert(DDDDKIkid) = よ
 convert(DIO<40>dio) = よえ
 
 comboMinTime(80)
+comboMinTime3(80)
 convert(DIO<120>dio) = よえ
 convert(DIOoid) = よえ
 
 comboMinTime(50)
+comboMinTime3(50)
 enableTimer2()
 convert(D<39>I<61>O<64>i<29>od) = よえ
 
 comboMaxTime(200)
 comboMinTime(100)
+comboMinTime3(100)
 disableFirstComboCheck
 convert(D<62>H<28>I<57>d<28>h<43>i) = おい
 

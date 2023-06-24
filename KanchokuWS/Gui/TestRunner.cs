@@ -160,6 +160,10 @@ namespace KanchokuWS.Gui
                         Settings.ComboDisableIntervalTimeMs = arg._parseInt(300);
                         break;
 
+                    case "rewriteTargetChars":
+                        Settings.PreRewriteTargetChars = arg._toSafe();
+                        break;
+
                     case "rewriteMaxTime":
                         Settings.PreRewriteAllowedDelayTimeMs = arg._parseInt(200);
                         break;

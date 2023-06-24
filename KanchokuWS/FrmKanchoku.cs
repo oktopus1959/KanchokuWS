@@ -1926,7 +1926,8 @@ namespace KanchokuWS
                 $"IsDeckeyToVkey={decoderOutput.IsDeckeyToVkey()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
 
             // 前置書き換え対象文字なら、許容時間をセットする
-            CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(decoderOutput.outString._toString());
+            if (decoderOutput.outString._strlen() > 0 || decoderOutput.numBackSpaces > 0)
+                CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(decoderOutput.outString._toString());
 
             var result = decoderOutput.outString._toString();
             numBS = decoderOutput.numBackSpaces;
@@ -1955,7 +1956,8 @@ namespace KanchokuWS
                 HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, 0, ref decoderOutput);
             }
             // 前置書き換え対象文字なら、許容時間をセットする
-            CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(decoderOutput.outString._toString());
+            if (decoderOutput.outString._strlen() > 0 || decoderOutput.numBackSpaces > 0)
+                CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(decoderOutput.outString._toString());
         }
 
         /// <summary>
