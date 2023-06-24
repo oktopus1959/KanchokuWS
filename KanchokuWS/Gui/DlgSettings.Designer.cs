@@ -5437,7 +5437,7 @@ namespace KanchokuWS.Gui
             this.groupBox48.Controls.Add(this.textBox_preRewriteTargetChars);
             this.groupBox48.Controls.Add(this.textBox_preRewriteAllowedDelayTimeMs);
             this.groupBox48.Controls.Add(this.label99);
-            this.groupBox48.Location = new System.Drawing.Point(7, 102);
+            this.groupBox48.Location = new System.Drawing.Point(7, 104);
             this.groupBox48.Name = "groupBox48";
             this.groupBox48.Size = new System.Drawing.Size(310, 111);
             this.groupBox48.TabIndex = 1;
@@ -5528,7 +5528,7 @@ namespace KanchokuWS.Gui
             // 
             this.groupBox42.Controls.Add(this.button_saveEelllJsTableFile);
             this.groupBox42.Controls.Add(this.label_miscEelllJsOut);
-            this.groupBox42.Location = new System.Drawing.Point(7, 294);
+            this.groupBox42.Location = new System.Drawing.Point(7, 296);
             this.groupBox42.Name = "groupBox42";
             this.groupBox42.Size = new System.Drawing.Size(309, 46);
             this.groupBox42.TabIndex = 3;
@@ -5569,7 +5569,7 @@ namespace KanchokuWS.Gui
             this.groupBox40.Controls.Add(this.textBox_romanBushuCompPrefix);
             this.groupBox40.Controls.Add(this.button_saveRomanTableFile);
             this.groupBox40.Controls.Add(this.label_miscRomanOut);
-            this.groupBox40.Location = new System.Drawing.Point(7, 219);
+            this.groupBox40.Location = new System.Drawing.Point(7, 221);
             this.groupBox40.Name = "groupBox40";
             this.groupBox40.Size = new System.Drawing.Size(309, 67);
             this.groupBox40.TabIndex = 2;
@@ -5693,7 +5693,7 @@ namespace KanchokuWS.Gui
             this.groupBox38.Controls.Add(this.textBox_bushuAssocSelectCount);
             this.groupBox38.Location = new System.Drawing.Point(7, 9);
             this.groupBox38.Name = "groupBox38";
-            this.groupBox38.Size = new System.Drawing.Size(310, 88);
+            this.groupBox38.Size = new System.Drawing.Size(310, 90);
             this.groupBox38.TabIndex = 0;
             this.groupBox38.TabStop = false;
             this.groupBox38.Text = "部首合成・連想直接置換";
@@ -5721,7 +5721,7 @@ namespace KanchokuWS.Gui
             // checkBox_yamanobeEnabled
             // 
             this.checkBox_yamanobeEnabled.AutoSize = true;
-            this.checkBox_yamanobeEnabled.Location = new System.Drawing.Point(11, 20);
+            this.checkBox_yamanobeEnabled.Location = new System.Drawing.Point(12, 20);
             this.checkBox_yamanobeEnabled.Name = "checkBox_yamanobeEnabled";
             this.checkBox_yamanobeEnabled.Size = new System.Drawing.Size(206, 19);
             this.checkBox_yamanobeEnabled.TabIndex = 0;
@@ -5733,22 +5733,22 @@ namespace KanchokuWS.Gui
             // 
             this.label54.AutoSize = true;
             this.label54.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label54.Location = new System.Drawing.Point(8, 64);
+            this.label54.Location = new System.Drawing.Point(8, 67);
             this.label54.Name = "label54";
-            this.label54.Size = new System.Drawing.Size(137, 15);
+            this.label54.Size = new System.Drawing.Size(161, 15);
             this.label54.TabIndex = 40;
-            this.label54.Text = "連想直接置換の試行回数";
+            this.label54.Text = "連想直接置換の候補試行回数";
             // 
             // textBox_bushuAssocSelectCount
             // 
             this.textBox_bushuAssocSelectCount.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_bushuAssocSelectCount.Location = new System.Drawing.Point(149, 62);
+            this.textBox_bushuAssocSelectCount.Location = new System.Drawing.Point(172, 65);
             this.textBox_bushuAssocSelectCount.Name = "textBox_bushuAssocSelectCount";
             this.textBox_bushuAssocSelectCount.Size = new System.Drawing.Size(36, 19);
             this.textBox_bushuAssocSelectCount.TabIndex = 2;
             this.textBox_bushuAssocSelectCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.toolTip1.SetToolTip(this.textBox_bushuAssocSelectCount, "連想直接置換の試行回数を設定します。(最大5回)\r\n\r\n連想直接置換機能を連続して呼び出すと、連想文字一覧の\r\n先頭から順に出力文字を取得して置換していきます。\r" +
-        "\n\r\n試行回数を超えて連想直接置換を呼び出した場合は、連想\r\n文字一覧からの選択画面に遷移します。");
+            this.toolTip1.SetToolTip(this.textBox_bushuAssocSelectCount, "連想直接置換の候補試行回数を設定します。(最大5回)\r\n\r\n連想直接置換機能を連続して呼び出すと、連想文字一覧の\r\n先頭から順に出力文字候補を取得して置換していき" +
+        "ます。\r\n\r\n試行回数を超えて連想直接置換を呼び出した場合は、連想\r\n文字一覧からの選択画面に遷移します。");
             // 
             // groupBox37
             // 
