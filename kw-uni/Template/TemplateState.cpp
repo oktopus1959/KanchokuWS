@@ -47,13 +47,13 @@ namespace {
 
          // Strokeキー を処理する
         void handleStrokeKeys(int deckey) {
-            LOG_DEBUG(_T("CALLED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+            LOG_DEBUG(_T("CALLED: {}: deckey={:x}H({})"), NAME_PTR, deckey, deckey);
             STATE_COMMON->SetOutString(make_fullwide_char(DECKEY_TO_CHARS->GetCharFromDeckey(deckey)), 0);
         }
 
         // Esc の処理 -- 処理のキャンセル
         void handleEsc() {
-            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            LOG_DEBUG(_T("CALLED: {}"), NAME_PTR);
             bUnnecessary = true;
         }
 

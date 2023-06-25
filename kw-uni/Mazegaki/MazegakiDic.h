@@ -33,17 +33,17 @@ public:
     static std::unique_ptr<MazegakiDic> Singleton;
 
     // 交ぜ書き辞書インスタンスを生成する
-    static int CreateMazegakiDic(const tstring&);
+    static int CreateMazegakiDic(StringRef);
 
     // 交ぜ書き辞書ファイルを読み込む
-    static void ReadMazegakiDic(const tstring& filename);
+    static void ReadMazegakiDic(StringRef filename);
 
     // 交ぜ書き辞書ファイルに書き込む(SETTINGS->mazegakiFile)
     static void WriteMazegakiDic();
 
-    static void WriteMazegakiDic(const tstring&, bool, bool);
+    static void WriteMazegakiDic(StringRef, bool, bool);
 
-    virtual bool AddMazeDicEntry(const wstring& line, bool bUser, bool bPrim) = 0;
+    virtual bool AddMazeDicEntry(StringRef line, bool bUser, bool bPrim) = 0;
 
     // 指定の見出し語に対する変換候補のセットを取得する
     virtual const std::vector<MazeResult>& GetCandidates(const MString& key, bool bPrim = false) = 0;
@@ -52,13 +52,13 @@ public:
     virtual void SelectCandidate(const MString& target, bool bRegMazeHist) = 0;
 
     // 指定の読みと変換形を持つユーザー辞書エントリを削除
-    virtual void DeleteEntry(const wstring& yomi, const MString& xfer) = 0;
+    virtual void DeleteEntry(StringRef yomi, const MString& xfer) = 0;
 
     // 交ぜ書き辞書が空か
     virtual bool IsEmpty() = 0;
 
     // 交ぜ書き辞書ファイルの読み込み
-    virtual void ReadFile(const std::vector<wstring>& lines, bool bUser, bool bPrim) = 0;
+    virtual void ReadFile(const std::vector<String>& lines, bool bUser, bool bPrim) = 0;
 
     // 優先辞書が書き換えられたか
     virtual bool IsPrimaryDicDirty() = 0;

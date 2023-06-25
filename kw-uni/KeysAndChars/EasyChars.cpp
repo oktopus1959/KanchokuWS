@@ -25,7 +25,7 @@ namespace {
 
     // Nストローク文字を追加
     void addNStrokeChars(size_t start, size_t deckeyNum, size_t depth) {
-        LOG_INFO(_T("start=%d, deckeyNum=%d, depth=%d"), start, deckeyNum, depth);
+        LOG_INFO(_T("start={}, deckeyNum={}, depth={}"), start, deckeyNum, depth);
         if (ROOT_STROKE_NODE) addNStrokeChars(ROOT_STROKE_NODE, start, deckeyNum, depth);
     }
 }
@@ -40,24 +40,24 @@ void EasyChars::GatherEasyChars() {
     LOG_INFOH(_T("ENTER"));
 
     if (Singleton) {
-        LOG_INFOH(_T("Already created. Do cleaning: Singleton=%p"), Singleton.get());
+        LOG_INFOH(_T("Already created. Do cleaning: Singleton={:p}"), (void*)Singleton.get());
         Singleton->CleanUp();
     } else {
         Singleton.reset(new EasyChars());
-        LOG_INFOH(_T("New Singleton = %p"), Singleton.get());
+        LOG_INFOH(_T("New Singleton = {:p}"), (void*)Singleton.get());
     }
 
     auto easyCharsFile = SETTINGS->easyCharsFile;
     if (!easyCharsFile.empty()) {
-        LOG_INFOH(_T("open easy chars file: %s"), easyCharsFile.c_str());
+        LOG_INFOH(_T("open easy chars file: {}"), easyCharsFile);
         utils::IfstreamReader reader(easyCharsFile);
         if (reader.success()) {
             for (const auto& line : reader.getAllLines()) {
-                LOG_INFO(_T("line=%s"), line.c_str());
+                LOG_INFO(_T("line={}"), line);
                 auto ln = utils::strip(line);
                 if (ln.empty() || ln[0] == '#') continue;
 
-                LOG_INFOH(_T("line=%s"), line.c_str());
+                LOG_INFOH(_T("line={}"), line);
 
                 // 最上段を使わないレベル1の2ストローク
                 if (utils::toLower(ln) == _T("includefirstlevel")) {
@@ -84,8 +84,8 @@ void EasyChars::GatherEasyChars() {
             }
         } else {
             // エラーメッセージを表示
-            LOG_ERROR(_T("Can't read easyChars file: %s"), easyCharsFile.c_str());
-            ERROR_HANDLER->Warn(utils::format(_T("簡易打鍵文字ファイル(%s)が開けません"), easyCharsFile.c_str()));
+            LOG_ERROR(_T("Can't read easyChars file: {}"), easyCharsFile);
+            ERROR_HANDLER->Warn(std::format(_T("簡易打鍵文字ファイル({})が開けません"), easyCharsFile));
         }
     }
     LOG_INFOH(_T("LEAVE"));
@@ -95,12 +95,12 @@ void EasyChars::DumpEasyCharsMemory(int n) {
     if (Singleton) {
         const std::set<mchar_t>& set_ = Singleton->GetCharsSet();
         unsigned long* p = (unsigned long*)(&set_);
-        LOG_INFOH(_T("%d: %p=%08x,%08x,%08x,%08x,%08x,%08x,%08x,%08x"), n, p, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]);
+        LOG_INFOH(_T("{}: {:p}={:08x},{:08x},{:08x},{:08x},{:08x},{:08x},{:08x},{:08x}"), n, (void*)p, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]);
         MString chars;
         for (auto x : set_) {
             chars.push_back(x);
         }
-        LOG_INFOH(_T("CHARS: %s"), MAKE_WPTR(chars));
+        LOG_INFOH(_T("CHARS: {}"), to_wstr(chars));
     }
 }
 

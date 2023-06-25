@@ -40,16 +40,16 @@ public:
     static std::unique_ptr<BushuAssocDic> Singleton;
 
     // 部首連想入力辞書インスタンスを生成する
-    static int CreateBushuAssocDic(const tstring&);
+    static int CreateBushuAssocDic(const String&);
 
     // 部首連想辞書ファイルを読み込んでマージする
-    static void MergeBushuAssocDic(const tstring&);
+    static void MergeBushuAssocDic(const String&);
 
     // 部首連想辞書ファイルに書き込む(SETTINGS->bushuAssocFile)
     static void WriteBushuAssocDic();
 
     // 部首連想辞書ファイルに書き込む
-    static void WriteBushuAssocDic(const tstring&);
+    static void WriteBushuAssocDic(const String&);
 
     // 部首連想辞書が空か
     virtual bool IsEmpty() const = 0;
@@ -65,16 +65,16 @@ public:
     virtual void SelectTarget(mchar_t k, mchar_t t) = 0;
 
     // 部首連想入力辞書ファイルの読み込み
-    virtual void ReadFile(const std::vector<wstring>& lines) = 0;
+    virtual void ReadFile(const std::vector<String>& lines) = 0;
 
     // 辞書ファイルの内容を既に読み込んだリストにマージする
-    virtual void MergeFile(const std::vector<wstring>& lines) = 0;
+    virtual void MergeFile(const std::vector<String>& lines) = 0;
 
     // 辞書ファイルの内容の書き出し
     virtual void WriteFile(utils::OfstreamWriter&) = 0;
 
     // 1エントリのマージ
-    virtual void MergeEntry(const wstring& line) = 0;
+    virtual void MergeEntry(const String& line) = 0;
 };
 
 // 部首連想辞書のシングルトン

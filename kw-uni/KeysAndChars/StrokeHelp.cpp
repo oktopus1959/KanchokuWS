@@ -14,7 +14,7 @@ namespace {
 // Decoder.cpp で生成される
 std::unique_ptr<StrokeHelp> StrokeHelp::Singleton;
 
-StrokeHelp::StrokeHelp() {
+StrokeHelp::StrokeHelp() : temp{} {
     strokeHelpArray = new int[STROKE_HELP_ARRAY_SIZE];
 }
 
@@ -55,7 +55,7 @@ size_t StrokeHelp::gatherStrokeHelp(StrokeTableNode* pNode, size_t pos, size_t d
 }
 
 namespace {
-    wstring strokeMarkers = _T("◎●○△");
+    String strokeMarkers = _T("◎●○△");
 
     //仮想鍵盤にストロークヘルプの情報を設定する (faces は 1セルが 2 wchar で構成されることに注意)
     template<typename T>

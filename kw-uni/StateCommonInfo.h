@@ -150,9 +150,9 @@ class StateCommonInfo {
     VkbLayout layout;
 
     // 仮想鍵盤に出力される文字(列)
-    wstring centerString;
+    String centerString;
     mchar_t faces[NORMAL_DECKEY_NUM] = { 0 };
-    std::vector<wstring> longVkeyCandidates;
+    std::vector<String> longVkeyCandidates;
 
     // 交ぜ書きブロッカーの設定位置(末尾からのオフセット; SetMazegakiBlockFlag とともに用いられる)
     size_t mazeBlockerPos = 0;
@@ -294,7 +294,7 @@ public:
     // pos < 0 なら未選択状態。ただし Horizontal なら先頭候補を優先候補として色付け
     // Vertical の場合は、pos == -1 なら先頭が優先候補、 pos < -1 なら色付けなし
     inline void SetWaitingCandSelect(int pos) {
-        LOG_DEBUGH(_T("CALLED: pos=%d"), pos);
+        LOG_DEBUGH(_T("CALLED: pos={}"), pos);
         nextSelectPos = pos;
     }
 
@@ -349,9 +349,9 @@ public:
     inline void SetBackspaceNum(size_t numBS) { numBackSpaces = numBS; }
     inline size_t GetBackspaceNum() const { return numBackSpaces; }
 
-    inline const wstring& CenterString() { return centerString; }
+    inline StringRef CenterString() { return centerString; }
     inline void SetCenterString(mchar_t ch) { centerString = wchar_t(ch); }
-    inline void SetCenterString(const wstring& ws) { centerString = ws; }
+    inline void SetCenterString(StringRef ws) { centerString = ws; }
 
     inline mchar_t* GetFaces() { return faces; }
     inline size_t FacesSize() { return utils::array_length(faces); }
@@ -366,7 +366,7 @@ public:
     inline void SetNormalVkbLayout() { SetVkbLayout(VkbLayout::Normal); }
     inline void SetStrokeHelpVkbLayout() { SetVkbLayout(VkbLayout::StrokeHelp); }
 
-    inline const std::vector<wstring>& LongVkeyCandidates() { return longVkeyCandidates; }
+    inline const std::vector<String>& LongVkeyCandidates() { return longVkeyCandidates; }
 
 private:
     void setCenterString(mchar_t center);
@@ -398,15 +398,15 @@ public:
 
 private:
     // 実行されている状態
-    std::map<wstring, State*> runningStates;
+    std::map<String, State*> runningStates;
 
 public:
     // 指定の名前の状態が実行されているか
     // 既に実行されていれば、それを削除して true を返す
     // p == null なら削除のみ行う
-    bool AddOrEraseRunningState(const wstring& stateName, State* p);
+    bool AddOrEraseRunningState(StringRef stateName, State* p);
 
-    bool FindRunningState(const wstring& stateName);
+    bool FindRunningState(StringRef stateName);
 
     void ClearRunningStates();
 
@@ -440,6 +440,8 @@ public:
     void CopyStrokeHelpToVkbFaces();
 
 public:
+    static String GetVkbLayoutStr(VkbLayout);
+
     static std::unique_ptr<StateCommonInfo> Singleton;
 
     static void CreateSingleton();

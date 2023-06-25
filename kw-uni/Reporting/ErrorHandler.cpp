@@ -16,7 +16,7 @@ void ErrorHandler::Clear() {
 }
 
 // エラー情報を格納
-void ErrorHandler::setErrorInfo(int level, const wstring& msg) {
+void ErrorHandler::setErrorInfo(int level, StringRef msg) {
     if (errorLevel < level) errorLevel = level;
     if (errorMsg.size() + msg.size() < 800) {
         if (level >= 2 || errorMsg.size() + msg.size() < 500) {
@@ -27,12 +27,12 @@ void ErrorHandler::setErrorInfo(int level, const wstring& msg) {
 }
 
 // エラー情報を格納
-void ErrorHandler::Error(const wstring& msg) {
+void ErrorHandler::Error(StringRef msg) {
     setErrorInfo(2, msg);
     //throw ERROR_HANDLER.get();
 }
 
 // 警告情報を格納
-void ErrorHandler::Warn(const wstring& msg) {
+void ErrorHandler::Warn(StringRef msg) {
     setErrorInfo(1, msg);
 }

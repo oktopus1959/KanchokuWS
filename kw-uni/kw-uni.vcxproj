@@ -21,34 +21,35 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{fd80c5cf-ae17-4882-92da-8820a8fc027c}</ProjectGuid>
+    <ProjectGuid>{B9E16D99-9611-46B2-AA3A-2B7069AD4A0E}</ProjectGuid>
     <RootNamespace>kwuni</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>kw-uni</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -80,9 +81,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>../bin/$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>../bin/$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -96,7 +101,8 @@
       <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -119,7 +125,8 @@
       <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
       <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -138,6 +145,9 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -155,6 +165,9 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -208,23 +221,39 @@
     <ClInclude Include="StrokeTable.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="langedge\ctypeutil.hpp" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Decoder.h" />
     <ClInclude Include="Template\Template.h" />
     <ClInclude Include="TranslationState.h" />
+    <ClInclude Include="utils\exception.h" />
     <ClInclude Include="utils\file_utils.h" />
-    <ClInclude Include="utils\langedge\array_size.hpp" />
     <ClInclude Include="utils\langedge\ctypeutil.hpp" />
-    <ClInclude Include="utils\langedge\exception.hpp" />
-    <ClInclude Include="utils\langedge\pathname.hpp" />
-    <ClInclude Include="utils\langedge\pathutil.hpp" />
-    <ClInclude Include="utils\langedge\tstring.hpp" />
+    <ClInclude Include="utils\Lazy.h" />
     <ClInclude Include="utils\misc_utils.h" />
     <ClInclude Include="utils\path_utils.h" />
+    <ClInclude Include="utils\ptr_utils.h" />
+    <ClInclude Include="utils\regex_utils.h" />
+    <ClInclude Include="utils\std_utils.h" />
     <ClInclude Include="utils\string_type.h" />
     <ClInclude Include="utils\string_utils.h" />
+    <ClInclude Include="utils\transform_utils.h" />
+    <ClInclude Include="utils\xsvparser.hpp" />
+    <ClInclude Include="utils\xsv_parser.h" />
+    <ClInclude Include="util\exception.h" />
+    <ClInclude Include="util\file_utils.h" />
+    <ClInclude Include="util\Lazy.h" />
+    <ClInclude Include="util\misc_utils.h" />
+    <ClInclude Include="util\my_utils.h" />
+    <ClInclude Include="util\path_utils.h" />
+    <ClInclude Include="util\ptr_utils.h" />
+    <ClInclude Include="util\regex_utils.h" />
+    <ClInclude Include="util\std_utils.h" />
+    <ClInclude Include="util\string_type.h" />
+    <ClInclude Include="util\string_utils.h" />
+    <ClInclude Include="util\transform_utils.h" />
+    <ClInclude Include="util\xsvparser.hpp" />
+    <ClInclude Include="util\xsv_parser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BushuComp\BushuComp.cpp" />
@@ -273,6 +302,7 @@
     <ClCompile Include="StrokeTableState.cpp" />
     <ClCompile Include="Template\TemplateState.cpp" />
     <ClCompile Include="TranslationState.cpp" />
+    <ClCompile Include="utils\utf_utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

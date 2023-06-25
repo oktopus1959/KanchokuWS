@@ -20,8 +20,6 @@ namespace {
             Initialize(logger.ClassNameT(), pN);
         }
 
-#define NAME_PTR (Name.c_str())
-
         // 状態に対して生成時処理を実行する
         bool DoProcOnCreated() {
             LOG_DEBUG(_T("CALLED: EscapeState"));
@@ -31,7 +29,7 @@ namespace {
 
         void handleStrokeKeys(int deckey) {
             wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
-            LOG_DEBUG(_T("CALLED: %s: deckey=%xH(%d), face=%c"), NAME_PTR, deckey, deckey, myChar);
+            LOG_DEBUG(_T("CALLED: {}: deckey={:x}H({}), face={}"), Name, deckey, deckey, myChar);
             STATE_COMMON->SetOutString(myChar);
             bUnncessary = true;
         }

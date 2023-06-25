@@ -3,6 +3,7 @@
 //#include "pch.h"
 #include "string_type.h"
 #include "misc_utils.h"
+#include "transform_utils.h"
 
 #include "Logger.h"
 
@@ -41,7 +42,7 @@ public:
         push(MString(str));
     }
 
-    inline void push(const wstring& str) {
+    inline void push(StringRef str) {
         push(to_mstr(str));
     }
 
@@ -287,13 +288,13 @@ public:
         size_t pos = size();
         size_t minpos = maxlen >= size() ? 0 : size() - maxlen;
         size_t maxpos = pos;
-        __LOG_DEBUGH(_T("ENTER: size=%d, maxlen=%d, pos=%d, minpos=%d, maxpos=%d"), size(), maxlen, pos, minpos, maxpos);
+        __LOG_DEBUGH(_T("ENTER: size={}, maxlen={}, pos={}, minpos={}, maxpos={}"), size(), maxlen, pos, minpos, maxpos);
         while (pos > minpos) {
             size_t npos = pos - 1;
-            __LOG_DEBUGH(_T("npos=%d, chr=%c, flag=%x"), npos, (wchar_t)stack[npos].chr, stack[npos].flag);
+            __LOG_DEBUGH(_T("npos={}, chr={}, flag={:x}"), npos, (wchar_t)stack[npos].chr, stack[npos].flag);
             if ((stack[npos].flag & flagUpto) != 0 && (stack[npos].flag & ~flagUpto) == flag) {
                 maxpos = npos;
-                __LOG_DEBUGH(_T("new maxpos=%d"), maxpos);
+                __LOG_DEBUGH(_T("new maxpos={}"), maxpos);
             }
             if (stack[npos].chr == '\n' || (stack[npos].flag & ~flagUpto) != flag) {
                 __LOG_DEBUGH(_T("break"));
@@ -301,7 +302,7 @@ public:
             }
             pos = npos;
         }
-        __LOG_DEBUGH(_T("LEAVE: result len=%d"), size() - maxpos);
+        __LOG_DEBUGH(_T("LEAVE: result len={}"), size() - maxpos);
         return size() - maxpos;
     }
 #undef __LOG_DEBUGH
@@ -388,7 +389,7 @@ public:
     //inline const OutputStack& OutStack() { return outputStack; }
 
     inline MString OutputStackBackStr(size_t len) const { return backStringFull(len); }
-    wstring OutputStackBackStrForDebug(size_t len) const;
+    String OutputStackBackStrForDebug(size_t len) const;
 
     inline mchar_t OutputStackLastChar() const { return back(); }
     inline mchar_t LastOutStackChar() const { return OutputStackLastChar(); }

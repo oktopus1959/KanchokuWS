@@ -1,18 +1,38 @@
 #pragma once
 
-#include "string_type.h"
-#include "langedge/pathname.hpp"
-#include "langedge/pathutil.hpp"
+#include "string_utils.h"
 
 namespace utils {
+    // 正規化されたパスを返す
+    // 何かエラーになったら元のパスを返す
+    inline String canonicalizePath(const std::filesystem::path& path) {
+        try {
+            return std::filesystem::weakly_canonical(path).wstring();
+        }
+        catch (...) {
+            return path;
+        }
+    }
+
+    // 正規化されたパスを返す
+    // 何かエラーになったら元のパスを返す
+    inline String canonicalizePath(StringRef path) {
+        return canonicalizePath(std::filesystem::path(path));
+    }
+
     // path の親ディレクトリを返す
-    inline tstring getParentDirPath(const tstring& path) {
-        return langedge::PathName::parentDirectory(path);
+    inline String getParentDirPath(StringRef path) {
+        return std::filesystem::path(path).parent_path().wstring();
     }
 
     // path のファイル名の部分を返す
-    inline tstring getFileName(const tstring& path) {
-        return langedge::PathName::extractFileName(path);
+    inline String getFileName(StringRef path) {
+        auto p = std::filesystem::path(path);
+        if (p.has_filename()) {
+            return p.filename().wstring();
+        } else {
+            return path;
+        }
     }
 
     /** ディレクトリを作成する.
@@ -21,76 +41,118 @@ namespace utils {
      * @retval true 成功
      * @retval false 失敗
      */
-    inline bool makeDirectory(const tstring& path) {
-        return langedge::makeDirectory(path);
-    }
-
-    // 2つの path を結合する。後者が絶対パスなら、後者を返す
-    inline tstring joinPath(const tstring& path1, const tstring& path2) {
-        if (langedge::PathName::isAbsolutePath(path2)) {
-            return path2;
-        } else {
-            return langedge::canonicalizePath(langedge::PathName::joinPathName(path1, path2));
+    inline bool makeDirectory(StringRef path) {
+        try {
+            return std::filesystem::create_directories(path);
+        } catch (...) {
+            return false;
         }
     }
 
+    // 2つの path を結合する。後者が絶対パスなら、後者を返す
+    inline String joinPath(StringRef path1, StringRef path2) {
+        auto p1 = std::filesystem::path(path1);
+        auto p2 = std::filesystem::path(path2);
+        if (p2.is_absolute()) {
+            return p2.wstring();
+        } else {
+            try {
+                return canonicalizePath(p1.append(path2));
+            } catch (...) {
+                return path1 + std::filesystem::path::preferred_separator + path2;
+            }
+        }
+
+    }
+
+    // 2つの path を結合する。後者が絶対パスなら、後者を返す
+    inline String join_path(StringRef path1, StringRef path2) {
+        return joinPath(path1, path2);
+    }
+
     // path のデリミタの正規化
-    inline tstring canonicalizePathDelimiter(const tstring& path) {
+    inline String canonicalizePathDelimiter(StringRef path) {
         return utils::replace_all(path, '/', '\\');
     }
 
     // カレントディレクトリの取得
-    inline tstring getCurrentDirName() {
+    inline String getCurrentDirName() {
         TCHAR dirName[MAX_PATH + 1];
         GetCurrentDirectory(_countof(dirName), dirName);
         return dirName;
     }
 
     // ファイルが存在するか
-    inline bool isFileExistent(const tstring& path) {
-        return langedge::isFileExistent(path);
+    inline bool isFileExistent(StringRef path) noexcept {
+        std::error_code ec;
+        bool result = std::filesystem::exists(path, ec);
+        return !ec && result;
+    }
+
+    inline bool exists_path(StringRef path) {
+        return isFileExistent(path);
     }
 
     // ファイルの削除
-    inline void removeFile(const tstring& path) {
-        langedge::removeFile(path);
+    inline bool removeFile(StringRef path) {
+        std::error_code ec;
+        bool result = std::filesystem::remove(path, ec);
+        return !ec && result;
+    }
+
+    // ファイルが存在すれば削除する
+    inline bool removeFileIfExists(StringRef path) {
+        if (isFileExistent(path)) return removeFile(path);
+        return false;
     }
 
     // ファイルの move
-    inline void moveFile(const tstring& src, const tstring& dest) {
+    inline void moveFile(StringRef src, StringRef dest) {
         if (isFileExistent(src) && !dest.empty()) {
             if (isFileExistent(dest)) removeFile(dest);
-            _trename(src.c_str(), dest.c_str());
+            std::error_code ec;
+            std::filesystem::rename(src.c_str(), dest.c_str(), ec);
         }
     }
 
     // ファイルの copy
-    inline void copyFile(const tstring& src, const tstring& dest) {
+    inline void copyFile(StringRef src, StringRef dest) {
         CopyFile(src.c_str(), dest.c_str(), FALSE);
     }
 
+    using sx = utils::StringUtil;
+
     // ファイルを back ディレクトリに移動(backファイルのローテートもやる)
-    inline bool moveFileToBackDirWithRotation(const tstring& path, int genNum = 3, bool bCopy = false) {
+    inline bool moveFileToBackDirWithRotation(StringRef path, int genNum = 3, bool bCopy = false) {
         // path と同じ階層に back ディレクトリを作成
-        auto backDirPath = utils::joinPath(utils::getParentDirPath(path), _T("back"));
+        auto backDirPath = utils::joinPath(utils::getParentDirPath(path), L"back");
         if (!utils::makeDirectory(backDirPath)) return false;
 
         // backファイルのローテーション
-        auto backFilePathFmt = utils::joinPath(backDirPath, utils::getFileName(path)) + _T(".%d");
+        auto backFilePath = utils::joinPath(backDirPath, utils::getFileName(path)) + L".";
         while (genNum > 1) {
-            utils::moveFile(utils::format(backFilePathFmt.c_str(), genNum - 1), utils::format(backFilePathFmt.c_str(), genNum));
+            utils::moveFile(sx::catAny(backFilePath, genNum - 1), sx::catAny(backFilePath, genNum));
             --genNum;
         }
-        // path を back/filename.back に move or copy
+        // path を back/filename.1 に move or copy
         if (bCopy)
-            utils::copyFile(path, utils::format(backFilePathFmt.c_str(), 1));
+            utils::copyFile(path, sx::catAny(backFilePath, 1));
         else
-            utils::moveFile(path, utils::format(backFilePathFmt.c_str(), 1));
+            utils::moveFile(path, sx::catAny(backFilePath, 1));
         return true;
     }
 
     // ファイルを back ディレクトリにコピー(backファイルのローテートもやる)
-    inline bool copyFileToBackDirWithRotation(const tstring& path, int genNum = 3) {
+    inline bool copyFileToBackDirWithRotation(StringRef path, int genNum = 3) {
         return moveFileToBackDirWithRotation(path, genNum, true);
     }
-}
+} // namespace utils
+
+// Path の拡張メソッドクラス
+struct PathUtil {
+    static inline bool exists(StringRef path) {
+        return utils::isFileExistent(path);
+    }
+
+};
+

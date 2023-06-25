@@ -41,6 +41,8 @@
 #ifndef LANGEDGE_CTYPE_HPP
 #define LANGEDGE_CTYPE_HPP
 
+#pragma warning(disable:5054)
+
 namespace langedge {
 
 //----------------------------------------------------------------------
@@ -284,6 +286,7 @@ typedef Ctype_Utilities<0> CtypeUtil;
 
 } // namespace langedge
 
+#pragma warning(default:5054)
 
 #endif // LANGEDGE_CTYPE_HPP
 

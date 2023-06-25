@@ -43,7 +43,7 @@ public:
 // 直前の自動部首合成文字と比較して、やり直しをする
 #define HANDLE_ESC_FOR_AUTO_COMP() \
     if (BUSHU_DIC && BUSHU_COMP_NODE && (BUSHU_COMP_NODE->IsPrevAuto || BUSHU_COMP_NODE->IsPrevAutoCancel)) { \
-        LOG_DEBUGH(_T("HANDLE_ESC_FOR_AUTO_COMP: %s"), NAME_PTR); \
+        LOG_DEBUGH(_T("HANDLE_ESC_FOR_AUTO_COMP: {}"), Name); \
         size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount(); \
         if (totalCnt <= BUSHU_COMP_NODE->PrevTotalCount + 2) { \
             mchar_t outChar = OUTPUT_STACK->isLastOutputStackCharBlocker() ? 0 : OUTPUT_STACK->LastOutStackChar(); \

@@ -45,8 +45,8 @@ class BushuAssocExNode : public BushuAssocNode {
 
     MString getString() const { return to_mstr(_T("▽")); }
 
-    mchar_t PrevKey;
-    mchar_t PrevAssoc;
+    mchar_t PrevKey = '\0';
+    mchar_t PrevAssoc = '\0';
     //time_t PrevAssocSec = 0;     // 直前の部首連想実行の時刻
     size_t PrevTotalCount = 0;  // 直前の部首連想実行時のトータルカウント
     size_t Count = 0;           // 1回目または2回目の呼び出しであることをチェックするためのカウント

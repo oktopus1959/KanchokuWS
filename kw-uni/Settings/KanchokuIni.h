@@ -8,9 +8,9 @@ class KanchokuIni : public IniAccessor {
 public:
     KanchokuIni() { }
 
-    KanchokuIni(const wstring& iniFile) : IniAccessor(iniFile, _T("kanchoku")) { }
+    KanchokuIni(StringRef iniFile) : IniAccessor(iniFile, _T("kanchoku")) { }
 
-    std::wstring ParentDir() const { return utils::getParentDirPath(GetIniFilePath()); }
+    String ParentDir() const { return utils::getParentDirPath(GetIniFilePath()); }
 
     static std::unique_ptr<KanchokuIni> Singleton;
 };

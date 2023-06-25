@@ -37,7 +37,7 @@ private:
 
     size_t _depth;
 
-    wstring nodeMarker = _T("□");
+    String nodeMarker = _T("□");
 
     // 全ストロークノードが不要になったら true (ステートの作成時にクリアする)
     bool bRemoveAllStroke = false;
@@ -154,19 +154,19 @@ public:
     }
 
     // ストロークガイドの構築
-    void MakeStrokeGuide(const wstring& targetChars, int tableId);
+    void MakeStrokeGuide(StringRef targetChars, int tableId);
 
     // ストローク木を構築する
-    static StrokeTableNode* CreateStrokeTree(const wstring&, std::vector<wstring>&);
+    static StrokeTableNode* CreateStrokeTree(StringRef, std::vector<String>&);
 
     // ストローク木2を構築する
-    static StrokeTableNode* CreateStrokeTree2(const wstring&, std::vector<wstring>&);
+    static StrokeTableNode* CreateStrokeTree2(StringRef, std::vector<String>&);
 
     // ストローク木3を構築する
-    static StrokeTableNode* CreateStrokeTree3(const wstring&, std::vector<wstring>&);
+    static StrokeTableNode* CreateStrokeTree3(StringRef, std::vector<String>&);
 
     // 機能の再割り当て
-    static void AssignFucntion(const wstring& keys, const wstring& name);
+    static void AssignFucntion(StringRef keys, StringRef name);
 
     // ストローク可能文字を収集
     static std::set<mchar_t> GatherStrokeChars();
@@ -175,7 +175,7 @@ public:
     static bool IsStrokable(mchar_t ch);
 
     // ストロークノードの更新
-    static void UpdateStrokeNodes(const wstring& strokeSource);
+    static void UpdateStrokeNodes(StringRef strokeSource);
 
     // 主・副ストローク木の入れ替え
     static int ExchangeStrokeTable();

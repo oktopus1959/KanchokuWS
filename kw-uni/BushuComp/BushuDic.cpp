@@ -17,8 +17,6 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughBushu)
 
-#define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
-
 namespace {
     // -------------------------------------------------------------------
     // 部首合成辞書の実装クラス
@@ -94,7 +92,7 @@ namespace {
         std::map<mchar_t, std::set<mchar_t>> partsBodiesMap;
 
         // 保存時に辞書ファイルに追加されるエントリ
-        std::vector<wstring> addedEntries;
+        std::vector<String> addedEntries;
 
         // 戻値用の空集合
         std::set<mchar_t> emptySet;
@@ -182,8 +180,8 @@ namespace {
         }
 
     public:
-        void ReadFile(const std::vector<wstring>& lines) {
-            LOG_INFOH(_T("ENTER: lines num=%d"), lines.size());
+        void ReadFile(const std::vector<String>& lines) {
+            LOG_INFOH(_T("ENTER: lines num={}"), lines.size());
 
             // 作業領域
             std::wregex reComment(_T("^# "));
@@ -196,22 +194,22 @@ namespace {
             partsBodiesMap.clear();
             addedEntries.clear();
 
-            wstring lastLine;
+            String lastLine;
 
             for (auto& line : lines) {
                 if (line.empty() || std::regex_match(line, reComment)) continue;   // 空行や "# " で始まる行は読み飛ばす
 
                 addBushuEntry(line);
 
-                if (Logger::IsInfoEnabled()) lastLine = line;
+                if (Reporting::Logger::IsInfoEnabled()) lastLine = line;
             }
 
-            LOG_INFOH(_T("LEAVE: last line=%s"), lastLine.c_str());
+            LOG_INFOH(_T("LEAVE: last line={}"), lastLine);
         }
 
         // 辞書内容の保存
         void WriteFile(utils::OfstreamWriter& writer) {
-            LOG_INFOH(_T("CALLED: addedEntries.size()=%d"), addedEntries.size());
+            LOG_INFOH(_T("CALLED: addedEntries.size()={}"), addedEntries.size());
             for (const auto& line : addedEntries) {
                 writer.writeLine(utils::utf8_encode(line));
             }
@@ -223,8 +221,8 @@ namespace {
         }
 
         // 自動部首合成用辞書の読み込み
-        void ReadAutoDicFile(const std::vector<wstring>& lines) {
-            LOG_INFOH(_T("ENTER: lines num=%d"), lines.size());
+        void ReadAutoDicFile(const std::vector<String>& lines) {
+            LOG_INFOH(_T("ENTER: lines num={}"), lines.size());
 
             // 作業領域
             std::wregex reComment(_T("^# "));
@@ -247,10 +245,10 @@ namespace {
 
         // 自動合成辞書内容の保存
         void WriteAutoDicFile(utils::OfstreamWriter& writer) {
-            LOG_INFOH(_T("CALLED: autoBushuDict.size()=%d"), autoBushuDict.size());
-            std::set<wstring> set_;
+            LOG_INFOH(_T("CALLED: autoBushuDict.size()={}"), autoBushuDict.size());
+            std::set<String> set_;
             for (const auto& pair : autoBushuDict) {
-                set_.insert(utils::format(_T("%s\t%d"), MAKE_WPTR(MString(1, pair.second.target) + pair.first), pair.second.count));
+                set_.insert(std::format(_T("{}\t{}"), to_wstr(MString(1, pair.second.target) + pair.first), pair.second.count));
             }
             for (const auto& s : set_) {
                 writer.writeLine(utils::utf8_encode(s));
@@ -269,13 +267,13 @@ namespace {
         }
 
         // 1エントリの追加 (ここで追加したエントリは、保存時に辞書ファイルに追記される)
-        void AddBushuEntry(const wstring& line) override {
+        void AddBushuEntry(StringRef line) override {
             addedEntries.push_back(line);
             addBushuEntry(line);
         }
 
         // 1自動エントリの強制追加 (無効化も兼ねる; ここで追加したエントリは、保存時に辞書ファイルに追記される)
-        void AddAutoBushuEntry(const wstring& line) override {
+        void AddAutoBushuEntry(StringRef line) override {
             MString mline = to_mstr(line);
             if (mline.size() == 3) {
                 addAutoBushuEntry(mline, SETTINGS->autoBushuCompMinCount, true, true);
@@ -288,9 +286,9 @@ namespace {
                 MString key;
                 key.push_back(a);
                 key.push_back(b);
-                _LOG_DEBUGH(_T("key=%s"), MAKE_WPTR(key));
+                _LOG_DEBUGH(_T("key={}"), to_wstr(key));
                 auto iter = autoBushuDict.find(key);
-                _LOG_DEBUGH(_T("iter->second.target=%c"), ((iter != autoBushuDict.end()) ? iter->second.target : 0x20));
+                _LOG_DEBUGH(_T("iter->second.target={}"), ((iter != autoBushuDict.end()) ? iter->second.target : 0x20));
                 if (iter != autoBushuDict.end() && iter->second.target != '-' && iter->second.count >= SETTINGS->autoBushuCompMinCount) {
                     // 参照回数が閾値以上のエントリが見つかったので、さらに参照回数をインクリメントしておく
                     bAutoDirty = true;
@@ -308,14 +306,14 @@ namespace {
 
     private:
         // エントリの追加
-        void addBushuEntry(const wstring& line) {
+        void addBushuEntry(StringRef line) {
             auto mline = to_mstr(line);
             size_t pos = 0;
             mchar_t c = pos < mline.size() ? mline[pos++] : 0;
             wchar_t a = (wchar_t)(pos < mline.size() ? mline[pos++] : 0);
             wchar_t b = (wchar_t)(pos < mline.size() ? mline[pos++] : 0);
 
-            if (Logger::IsDebugEnabled() && is_paired_mchar(c)) LOG_DEBUG(_T("Surrogate pair=%s"), line.c_str());
+            if (Reporting::Logger::IsDebugEnabled() && is_paired_mchar(c)) LOG_DEBUG(_T("Surrogate pair={}"), line);
 
             if (c != 0 && a != 0) {
                 addBody(a, c);
@@ -366,7 +364,7 @@ namespace {
 
         void AddAutoBushuEntry(mchar_t a, mchar_t b, mchar_t c) override {
             if (a != 0 && b != 0 && c != 0) {
-                _LOG_DEBUGH(_T("key=%s, val=%c"), MAKE_WPTR(make_mstring(a, b)), MAKE_WPTR(c));
+                _LOG_DEBUGH(_T("key={}, val={}"), to_wstr(make_mstring(a, b)), to_wstr(c));
                 addAutoBushuEntry(make_mstring(c, a, b), 1, false, true);
                 //MString key = make_mstring(a, b);
                 //if (!isInvalidAutoBushuKey(key)) {
@@ -412,14 +410,15 @@ namespace {
             setAssocTarget(cb, tgt);
         }
 
-#define _LOG_INFOH(...) if (SETTINGS->bushuDicLogEnabled || SETTINGS->debughBushu) logger.InfoH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
+//#define _LOG_INFOH(...) if (SETTINGS->bushuDicLogEnabled || SETTINGS->debughBushu) logger.InfoH(std::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
+#define _LOG_INFOH(...) if (SETTINGS->bushuDicLogEnabled || SETTINGS->debughBushu) {}
     public:
         // a と b を組み合わせてできる合成文字を探す。
         // prev != 0 なら、まず prev を探し、さらにその次の合成文字を探してそれを返す(やり直し用)。
         // 見つからなかった場合は 0 を返す。
         // ここでは元祖漢直窓の山辺アルゴリズムを基本として、いくつか改良を加えてある。
         mchar_t FindComposite(mchar_t ca, mchar_t cb, mchar_t prev) override {
-            _LOG_INFOH(_T("ENTER: ca=%c, cb=%c, prev=%c"), ca, cb, prev);
+            _LOG_INFOH(_T("ENTER: ca={}, cb={}, prev={}"), ca, cb, prev);
             mchar_t c = findCompSub((wchar_t)ca, (wchar_t)cb, prev);
             if (c == 0 && prev != 0) c = findCompSub((wchar_t)ca, (wchar_t)cb, 0);    // retry from the beginning
             if (c != 0) {
@@ -429,7 +428,7 @@ namespace {
                     AddAutoBushuEntry(ca, cb, c);
                 }
             }
-            _LOG_INFOH(_T("LEAVE: result=%c"), c);
+            _LOG_INFOH(_T("LEAVE: result={}"), c);
             return c;
         }
 
@@ -443,13 +442,14 @@ namespace {
             mchar_t r;
 
 #define _NC(x) (x?x:0x20)
+#define MAKE_LSTR(x, y) L #x #y
 #define CHECK_AND_RETURN(tag, x) {\
         r = (x);\
         if (r != 0 && r != ca && r != cb) { \
             if (r == prev) { \
                 bFound = true; \
             } else if (bFound && skipChars.find(r) == skipChars.end()) { \
-                _LOG_INFOH(_T(tag ## "result=%s"), MAKE_WPTR(r)); \
+                _LOG_INFOH(MAKE_LSTR(tag, "result={}"), to_wstr(r)); \
                 return (mchar_t)r; \
             } \
             skipChars.insert(r); \
@@ -464,7 +464,7 @@ namespace {
             CHECK_AND_RETURN("A1", findComp(ca, cb));
             CHECK_AND_RETURN("A2", findComp(cb, ca));
 
-            _LOG_INFOH(_T("EQUIV: eqa=%c, eqb=%c"), eqa.empty() ? '-' : *eqa.begin(), eqb.empty() ? '-' : *eqb.begin());
+            _LOG_INFOH(_T("EQUIV: eqa={}, eqb={}"), eqa.empty() ? '-' : *eqa.begin(), eqb.empty() ? '-' : *eqb.begin());
 
             // 等価文字を使って足し算
             CHECK_AND_RETURN("B1", findComp(ca, eqb));
@@ -481,7 +481,7 @@ namespace {
             decompose(ca, a1, a2);       // a := a1 + a2
             decompose(cb, b1, b2);       // b := b1 + b2
 
-            _LOG_INFOH(L"PARTS: a1=%c, a2=%c, b1=%c, b2=%c", _NC(a1), _NC(a2), _NC(b1), _NC(b2));
+            _LOG_INFOH(L"PARTS: a1={}, a2={}, b1={}, b2={}", _NC(a1), _NC(a2), _NC(b1), _NC(b2));
 
             // 引き算
             if (a1 && a2) {
@@ -498,31 +498,31 @@ namespace {
                 // YAMANOBE_ADD
                 // たとえば、準 = 淮十、隼 = 隹十 のとき、シ隼 ⇒ 準 を出したい
 #define YAMANOBE_ADD_A(tag, x1, x2, y) { \
-                    _LOG_INFOH(_T(tag ## "1-Y-ADD: x1=%c, x2=%c, y=%c"), _NC(x1), _NC(x2), _NC(y)); \
+                    _LOG_INFOH(MAKE_LSTR(tag, "1-Y-ADD: x1={}, x2={}, y={}"), _NC(x1), _NC(x2), _NC(y)); \
                     mchar_t z; \
                     if ((z = findComp(x1, y)) != 0) { \
-                        _LOG_INFOH(_T(tag ## "1-Y-ADD(x1+y)=%c"), (wchar_t)z); \
-                        CHECK_AND_RETURN(tag ## "1-Y-ADD((x1+y)+x2):", findComp((wchar_t)z, x2)); /* X = X1 + X2 のとき、 (X1 + Y) + X2 を出したい */ \
-                        CHECK_AND_RETURN(tag ## "1-Y-ADD(x2+(x1+y)):", findComp(x2, (wchar_t)z)); /* X = X1 + X2 のとき、 X2 + (X1 + Y) を出したい */ \
+                        _LOG_INFOH(MAKE_LSTR(tag, "1-Y-ADD(x1+y)={}"), (wchar_t)z); \
+                        CHECK_AND_RETURN(#tag "1-Y-ADD((x1+y)+x2):", findComp((wchar_t)z, x2)); /* X = X1 + X2 のとき、 (X1 + Y) + X2 を出したい */ \
+                        CHECK_AND_RETURN(#tag  "1-Y-ADD(x2+(x1+y)):", findComp(x2, (wchar_t)z)); /* X = X1 + X2 のとき、 X2 + (X1 + Y) を出したい */ \
                     } \
                     if ((z = findComp(x2, y)) != 0) { \
-                        _LOG_INFOH(_T(tag ## "1-Y-ADD(x2+y)=%c"), (wchar_t)z); \
-                        CHECK_AND_RETURN(tag ## "1-Y-ADD(x1+(x2+y)):", findComp(x1, (wchar_t)z)); /* X = X1 + X2 のとき、 X1 + (X2 + Y) を出したい */ \
-                        CHECK_AND_RETURN(tag ## "1-Y-ADD((x2+y)+x1):", findComp((wchar_t)z, x1)); /* X = X1 + X2 のとき、 (X2 + Y) + X1 を出したい */ \
+                        _LOG_INFOH(MAKE_LSTR(tag, "1-Y-ADD(x2+y)={}"), (wchar_t)z); \
+                        CHECK_AND_RETURN(#tag  "1-Y-ADD(x1+(x2+y)):", findComp(x1, (wchar_t)z)); /* X = X1 + X2 のとき、 X1 + (X2 + Y) を出したい */ \
+                        CHECK_AND_RETURN(#tag  "1-Y-ADD((x2+y)+x1):", findComp((wchar_t)z, x1)); /* X = X1 + X2 のとき、 (X2 + Y) + X1 を出したい */ \
                     } \
                 }
 #define YAMANOBE_ADD_B(tag, x, y1, y2) { \
-                    _LOG_INFOH(_T(tag ## "2-Y-ADD: x=%c, y1=%c, y2=%c"), _NC(x), _NC(y1), _NC(y2)); \
+                    _LOG_INFOH(MAKE_LSTR(tag, "2-Y-ADD: x={}, y1={}, y2={}"), _NC(x), _NC(y1), _NC(y2)); \
                     mchar_t z; \
                     if ((z = findComp(x, y1)) != 0) { \
-                        _LOG_INFOH(_T(tag ## "2-Y-ADD(x+y1)=%c"), (wchar_t)z); \
-                        CHECK_AND_RETURN(tag ## "2-Y-ADD((x+y1)+y2):", findComp((wchar_t)z, y2)); /* Y = Y1 + Y2 のとき、 (X + Y1) + Y2 を出したい */ \
-                        CHECK_AND_RETURN(tag ## "2-Y-ADD(y2+(x+y1)):", findComp(y2, (wchar_t)z)); /* Y = Y1 + Y2 のとき、 Y2 + (X + Y1) を出したい */ \
+                        _LOG_INFOH(MAKE_LSTR(tag, "2-Y-ADD(x+y1)={}"), (wchar_t)z); \
+                        CHECK_AND_RETURN(#tag  "2-Y-ADD((x+y1)+y2):", findComp((wchar_t)z, y2)); /* Y = Y1 + Y2 のとき、 (X + Y1) + Y2 を出したい */ \
+                        CHECK_AND_RETURN(#tag  "2-Y-ADD(y2+(x+y1)):", findComp(y2, (wchar_t)z)); /* Y = Y1 + Y2 のとき、 Y2 + (X + Y1) を出したい */ \
                     } \
                     if ((z = findComp(x, y2)) != 0) { \
-                        _LOG_INFOH(_T(tag ## "2-Y-ADD(x+y2)=%c"), (wchar_t)z); \
-                        CHECK_AND_RETURN(tag ## "2-Y-ADD(y1+(x+y2)):", findComp(y1, (wchar_t)z)); /* Y = Y1 + Y2 のとき、 Y1 + (X + Y2) を出したい */ \
-                        CHECK_AND_RETURN(tag ## "2-Y-ADD((x+y2)+y1):", findComp((wchar_t)z, y1)); /* Y = Y1 + Y2 のとき、 (X + Y2) + Y1 を出したい */ \
+                        _LOG_INFOH(MAKE_LSTR(tag, "2-Y-ADD(x+y2)={}"), (wchar_t)z); \
+                        CHECK_AND_RETURN(#tag  "2-Y-ADD(y1+(x+y2)):", findComp(y1, (wchar_t)z)); /* Y = Y1 + Y2 のとき、 Y1 + (X + Y2) を出したい */ \
+                        CHECK_AND_RETURN(#tag  "2-Y-ADD((x+y2)+y1):", findComp((wchar_t)z, y1)); /* Y = Y1 + Y2 のとき、 (X + Y2) + Y1 を出したい */ \
                     } \
                 }
 
@@ -543,11 +543,11 @@ namespace {
                 // YAMANOBE_SUBTRACT
                 // たとえば、準 = 淮十、隼 = 隹十 のとき、シ準 ⇒ 隼 を出したい
 #define YAMANOBE_SUBTRACT(tag, x, x1, x2, y, y1, y2, z1, z2) \
-                _LOG_INFOH(_T(tag ## "-Y-SUB: x=%c, x1=%c, x2=%c, y=%c, y1=%c, y2=%c, z1=%c, z2=%c"), _NC(x), _NC(x1), _NC(x2), _NC(y), _NC(y1), _NC(y2), _NC(z1), _NC(z2)); \
-                if ((z1 != 0 && x2 == z1) || (z2 != 0 && x2 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x1,y):", findComp(x1, y));  /* A := (X1 + X2) + Y && X2 == B ならば X1 + Y (= A - X2) を出したい */ \
-                if ((z1 != 0 && x1 == z1) || (z2 != 0 && x1 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x2,y):", findComp(x2, y));  /* A := (X1 + X2) + Y && X1 == B ならば X2 + Y (= A - X1) を出したい */ \
-                if ((z1 != 0 && y2 == z1) || (z2 != 0 && y2 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x,y1):", findComp(x, y1));  /* A := X + (Y1 + Y2) && Y2 == B ならば X + Y1 (= A - Y2) を出したい */ \
-                if ((z1 != 0 && y1 == z1) || (z2 != 0 && y1 == z2)) CHECK_AND_RETURN(tag ## "-Y-SUB(x,y2):", findComp(x, y2));  /* A := X + (Y1 + Y2) && Y1 == B ならば X + Y2 (= A - Y1) を出したい */
+                _LOG_INFOH(L #tag "-Y-SUB: x={}, x1={}, x2={}, y={}, y1={}, y2={}, z1={}, z2={}", _NC(x), _NC(x1), _NC(x2), _NC(y), _NC(y1), _NC(y2), _NC(z1), _NC(z2)); \
+                if ((z1 != 0 && x2 == z1) || (z2 != 0 && x2 == z2)) CHECK_AND_RETURN(#tag  "-Y-SUB(x1,y):", findComp(x1, y));  /* A := (X1 + X2) + Y && X2 == B ならば X1 + Y (= A - X2) を出したい */ \
+                if ((z1 != 0 && x1 == z1) || (z2 != 0 && x1 == z2)) CHECK_AND_RETURN(#tag  "-Y-SUB(x2,y):", findComp(x2, y));  /* A := (X1 + X2) + Y && X1 == B ならば X2 + Y (= A - X1) を出したい */ \
+                if ((z1 != 0 && y2 == z1) || (z2 != 0 && y2 == z2)) CHECK_AND_RETURN(#tag  "-Y-SUB(x,y1):", findComp(x, y1));  /* A := X + (Y1 + Y2) && Y2 == B ならば X + Y1 (= A - Y2) を出したい */ \
+                if ((z1 != 0 && y1 == z1) || (z2 != 0 && y1 == z2)) CHECK_AND_RETURN(#tag  "-Y-SUB(x,y2):", findComp(x, y2));  /* A := X + (Y1 + Y2) && Y1 == B ならば X + Y2 (= A - Y1) を出したい */
 
                 if (a1 && a2) {
                     wchar_t a11, a12, a21, a22;
@@ -661,17 +661,17 @@ namespace {
             // (瞳=目+童 という定義があるとき、目+立 または 目+里 で 瞳 を合成する)
             // ただし、等価文字およびひらがな部品は除く
 #define ADD_BY_COMPOSITE1(tag, cz, eqz, x) \
-            if (cz) CHECK_AND_RETURN(tag ## "(cz,x)", findComp(cz, x)); \
-            if (!eqz.empty()) CHECK_AND_RETURN(tag ## "(eqz,x)", findComp(eqz, x)); \
-            if (cz) CHECK_AND_RETURN(tag ## "(x,cz)", findComp(x, cz)); \
-            if (!eqz.empty()) CHECK_AND_RETURN(tag ## "(x,eqz)", findComp(x, eqz))
+            if (cz) CHECK_AND_RETURN(#tag  "(cz,x)", findComp(cz, x)); \
+            if (!eqz.empty()) CHECK_AND_RETURN(#tag  "(eqz,x)", findComp(eqz, x)); \
+            if (cz) CHECK_AND_RETURN(#tag  "(x,cz)", findComp(x, cz)); \
+            if (!eqz.empty()) CHECK_AND_RETURN(#tag  "(x,eqz)", findComp(x, eqz))
 
 #define ADD_BY_COMPOSITE2(tag, cz, z, x) \
-            _LOG_INFOH(_T(tag ## ": cz=%c, z=%c, x=%c"), _NC(cz), _NC(z), _NC(x)); \
-            if (cz) CHECK_AND_RETURN(tag ## "(cz,x)", findComp(cz, x)); \
-            if (z && z != cz) CHECK_AND_RETURN(tag ## "(z,x)", findComp(z, x)); \
-            if (cz) CHECK_AND_RETURN(tag ## "(x,cz)", findComp(x, cz)); \
-            if (z && z != cz) CHECK_AND_RETURN(tag ## "(x,z)", findComp(x, z))
+            _LOG_INFOH(MAKE_LSTR(tag, ": cz={}, z={}, x={}"), _NC(cz), _NC(z), _NC(x)); \
+            if (cz) CHECK_AND_RETURN(#tag  "(cz,x)", findComp(cz, x)); \
+            if (z && z != cz) CHECK_AND_RETURN(#tag  "(z,x)", findComp(z, x)); \
+            if (cz) CHECK_AND_RETURN(#tag  "(x,cz)", findComp(x, cz)); \
+            if (z && z != cz) CHECK_AND_RETURN(#tag  "(x,z)", findComp(x, z))
 
             if (isComposableParts(cb)) {
                 for (auto x : getBodies(cb)) {
@@ -1006,14 +1006,14 @@ namespace {
     private:
     public:
         //後置部首合成定義を書き出す
-        void ExportPostfixBushuCompDefs(utils::OfstreamWriter& writer, const wchar_t* postfix) override {
-            LOG_INFOH(_T("ENTER: writer.count=%d"), writer.count());
+        void ExportPostfixBushuCompDefs(utils::OfstreamWriter& writer, StringRef postfix) override {
+            LOG_INFOH(_T("ENTER: writer.count={}"), writer.count());
 
             //// ストローク可能文字
             //std::set<mchar_t> strokableChars = StrokeTableNode::GatherStrokeChars();
 
-            std::map<wstring, wstring> revMap;
-            std::set<wstring> doneSet;
+            std::map<String, String> revMap;
+            std::set<String> doneSet;
 
 
             wchar_t buf[3] = { 0, 0, 0 };
@@ -1025,13 +1025,13 @@ namespace {
 
             auto writeComp = [this, &writer, MAX_LINES, postfix, &doneSet](mchar_t c, const wchar_t* comp) {
                 if (writer.count() < MAX_LINES) {
-                    wstring cs = to_wstr(c);
+                    String cs = to_wstr(c);
                     if (/*isPopular(c) &&*/ doneSet.find(comp) == doneSet.end()) {
                         writer.writeLine(utils::utf8_encode(
-                            utils::format(_T("%s%s" TAB_TAB "%s"),
+                            std::format(_T("{}{}" TAB_TAB "{}"),
                                 comp,
                                 postfix,
-                                cs.c_str())));
+                                cs)));
                         doneSet.insert(comp);
                     }
                 }
@@ -1068,9 +1068,9 @@ namespace {
                         mchar_t b = pair.first[1];
                         if (isEasyOrFreqPopular(a) && isEasyOrFreqPopular(b)) {
                             writer.writeLine(utils::utf8_encode(
-                                utils::format(_T("%s" TAB_TAB "%s"),
-                                    (to_wstr(a) + VkbTableMaker::ConvCharToStrokeString(b)).c_str(),
-                                    to_wstr(pair.second.target).c_str())));
+                                std::format(_T("{}" TAB_TAB "{}"),
+                                    to_wstr(a) + VkbTableMaker::ConvCharToStrokeString(b),
+                                    to_wstr(pair.second.target))));
                             doneSet.insert(to_wstr(pair.first));
                         }
                     }
@@ -1150,31 +1150,31 @@ namespace {
             }
 
             // 逆順
-            LOG_INFOH(_T("Reverse: writer.count=%d, revMap.size=%d"), writer.count(), revMap.size());
+            LOG_INFOH(_T("Reverse: writer.count={}, revMap.size={}"), writer.count(), revMap.size());
             for (const auto& pair : revMap) {
                 if (doneSet.find(pair.first) == doneSet.end()) {
                     writer.writeLine(utils::utf8_encode(
-                        utils::format(_T("%s%s" TAB_TAB "%s"),
-                            pair.first.c_str(),
+                        std::format(_T("{}{}" TAB_TAB "{}"),
+                            pair.first,
                             postfix,
-                            pair.second.c_str())));
+                            pair.second)));
                     if (writer.count() >= MAX_LINES) break;
                 }
             }
 
-            LOG_INFOH(_T("LEAVE: writer.count=%d"), writer.count());
+            LOG_INFOH(_T("LEAVE: writer.count={}"), writer.count());
         }
 
     private:
 #if 0
-        inline void writeComp(utils::OfstreamWriter& writer, const wchar_t* postfix, mchar_t c, const wchar_t* comp, std::map<wstring, wstring>& tmpMap) {
-            wstring cs = to_wstr(c);
+        inline void writeComp(utils::OfstreamWriter& writer, const wchar_t* postfix, mchar_t c, const wchar_t* comp, std::map<String, String>& tmpMap) {
+            String cs = to_wstr(c);
             if (isPopular(c)) {
                 writer.writeLine(utils::utf8_encode(
-                    utils::format(_T("%s%s\t\t%s"),
+                    utils::format(_T("{}{}\t\t{}"),
                         comp,
                         postfix,
-                        cs.c_str())));
+                        cs)));
             } else {
                 tmpMap[comp] = cs;
             }
@@ -1193,23 +1193,23 @@ std::unique_ptr<BushuDic> BushuDic::Singleton;
 namespace {
     DEFINE_LOCAL_LOGGER(BushuDic);
 
-    bool readBushuFile(const tstring& path, BushuDicImpl* pDic) {
-        LOG_INFOH(_T("open bushu file: %s"), path.c_str());
+    bool readBushuFile(StringRef path, BushuDicImpl* pDic) {
+        LOG_INFOH(_T("open bushu file: {}"), path);
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             pDic->ReadFile(reader.getAllLines());
-            LOG_INFOH(_T("close bushu file: %s"), path.c_str());
+            LOG_INFOH(_T("close bushu file: {}"), path);
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
-            LOG_WARN(_T("Can't read bushu file: %s"), path.c_str());
-            ERROR_HANDLER->Warn(utils::format(_T("部首合成入力辞書ファイル(%s)が開けません"), path.c_str()));
+            LOG_WARN(_T("Can't read bushu file: {}"), path);
+            ERROR_HANDLER->Warn(std::format(_T("部首合成入力辞書ファイル({})が開けません"), path));
             return false;
         }
         return true;
     }
 
-    bool writeBushuFile(const tstring& path, BushuDicImpl* pDic) {
-        LOG_INFOH(_T("write bushu file: %s, dirty=%s"), path.c_str(), BOOL_TO_WPTR(pDic && pDic->IsDirty()));
+    bool writeBushuFile(StringRef path, BushuDicImpl* pDic) {
+        LOG_INFOH(_T("write bushu file: {}, dirty={}"), path, pDic && pDic->IsDirty());
         if (!path.empty() && pDic) {
             if (pDic->IsDirty()) {
                 if (utils::copyFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
@@ -1224,18 +1224,18 @@ namespace {
         return false;
     }
 
-    bool readAutoBushuFile(const tstring& path, BushuDicImpl* pDic) {
-        LOG_INFOH(_T("open auto bushu file: %s"), path.c_str());
+    bool readAutoBushuFile(StringRef path, BushuDicImpl* pDic) {
+        LOG_INFOH(_T("open auto bushu file: {}"), path);
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             pDic->ReadAutoDicFile(reader.getAllLines());
-            LOG_INFOH(_T("close bushu file: %s"), path.c_str());
+            LOG_INFOH(_T("close bushu file: {}"), path);
         }
         return true;
     }
 
-    bool writeAutoBushuFile(const tstring& path, BushuDicImpl* pDic) {
-        LOG_INFOH(_T("write auto bushu file: %s, dirty=%s"), path.c_str(), BOOL_TO_WPTR(pDic && pDic->IsAutoDirty()));
+    bool writeAutoBushuFile(StringRef path, BushuDicImpl* pDic) {
+        LOG_INFOH(_T("write auto bushu file: {}, dirty={}"), path, pDic && pDic->IsAutoDirty());
         if (!path.empty() && pDic) {
             if (pDic->IsAutoDirty()) {
                 if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
@@ -1253,11 +1253,11 @@ namespace {
 
 // 部首合成辞書を作成する(ファイルが指定されていなくても作成する)
 // エラーがあったら例外を投げる
-int BushuDic::CreateBushuDic(const tstring& bushuFile, const tstring& autoBushuFile) {
+int BushuDic::CreateBushuDic(StringRef bushuFile, StringRef autoBushuFile) {
     LOG_INFOH(_T("ENTER"));
 
     if (Singleton != 0) {
-        LOG_INFOH(_T("already created: bushu file: %s"), bushuFile.c_str());
+        LOG_INFOH(_T("already created: bushu file: {}"), bushuFile);
         return 0;
     }
 
@@ -1270,35 +1270,35 @@ int BushuDic::CreateBushuDic(const tstring& bushuFile, const tstring& autoBushuF
         result = -1;
     }
 
-    LOG_INFOH(_T("LEAVE: result=%d"), result);
+    LOG_INFOH(_T("LEAVE: result={}"), result);
     return result;
 }
 
 // 部首合成辞書を読み込む
-void BushuDic::ReadBushuDic(const tstring& path) {
-    LOG_INFOH(_T("CALLED: path=%s"), path.c_str());
+void BushuDic::ReadBushuDic(StringRef path) {
+    LOG_INFOH(_T("CALLED: path={}"), path);
     if (!path.empty() && Singleton) {
         readBushuFile(path, (BushuDicImpl*)Singleton.get());
     }
 }
 
 // 部首合成辞書ファイルに書き込む
-void BushuDic::WriteBushuDic(const tstring& path) {
-    LOG_INFOH(_T("CALLED: path=%s"), path.c_str());
+void BushuDic::WriteBushuDic(StringRef path) {
+    LOG_INFOH(_T("CALLED: path={}"), path);
     writeBushuFile(path, (BushuDicImpl*)Singleton.get());
 }
 
 // 自動部首合成辞書を読み込む
-void BushuDic::ReadAutoBushuDic(const tstring& path) {
-    LOG_INFOH(_T("CALLED: path=%s"), path.c_str());
+void BushuDic::ReadAutoBushuDic(StringRef path) {
+    LOG_INFOH(_T("CALLED: path={}"), path);
     if (!path.empty() && Singleton) {
         readAutoBushuFile(path, (BushuDicImpl*)Singleton.get());
     }
 }
 
 // 自動部首合成辞書ファイルに書き込む
-void BushuDic::WriteAutoBushuDic(const tstring& path) {
-    LOG_INFOH(_T("CALLED: path=%s"), path.c_str());
+void BushuDic::WriteAutoBushuDic(StringRef path) {
+    LOG_INFOH(_T("CALLED: path={}"), path);
     writeAutoBushuFile(path, (BushuDicImpl*)Singleton.get());
 }
 

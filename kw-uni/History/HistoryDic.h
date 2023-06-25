@@ -119,19 +119,19 @@ public:
     static std::unique_ptr<HistoryDic> Singleton;
 
     // 履歴入力辞書インスタンスを生成する
-    static int CreateHistoryDic(const tstring&);
+    static int CreateHistoryDic(const String&);
 
     // 辞書ファイルへの内容の書き出し
     static void WriteHistoryDic();
 
     // 辞書ファイルへの内容の書き出し
-    static void WriteHistoryDic(const tstring&);
+    static void WriteHistoryDic(const String&);
 
     // 履歴入力辞書ファイルの読み込み
-    virtual void ReadFile(const std::vector<wstring>& lines) = 0;
+    virtual void ReadFile(const std::vector<String>& lines) = 0;
 
     // 履歴入力辞書ファイルの読み込み(読み込み専用辞書)
-    virtual void ReadFileAsReadOnly(const std::vector<wstring>& lines) = 0;
+    virtual void ReadFileAsReadOnly(const std::vector<String>& lines) = 0;
 
     // 登録
     virtual void AddNewEntry(const MString& line) = 0;
@@ -166,7 +166,7 @@ public:
     virtual bool IsHistDicDirty() const = 0;
 
     // 使用辞書の読み込み
-    virtual void ReadUsedFile(const std::vector<wstring>& lines) = 0;
+    virtual void ReadUsedFile(const std::vector<String>& lines) = 0;
 
     // 使用辞書内容の保存
     virtual void WriteUsedFile(utils::OfstreamWriter& writer) = 0;
@@ -174,7 +174,7 @@ public:
     virtual bool IsUsedDicDirty() const = 0;
 
     // 除外辞書の読み込み
-    virtual void ReadExcludeFile(const std::vector<wstring>& lines) = 0;
+    virtual void ReadExcludeFile(const std::vector<String>& lines) = 0;
 
     // 除外辞書内容の保存
     virtual void WriteExcludeFile(utils::OfstreamWriter& writer) = 0;
@@ -182,7 +182,7 @@ public:
     virtual bool IsExcludeDicDirty() const = 0;
 
     // Nグラム辞書の読み込み
-    virtual void ReadNgramFile(const std::vector<wstring>& lines) = 0;
+    virtual void ReadNgramFile(const std::vector<String>& lines) = 0;
 
     // Nグラム辞書内容の保存
     virtual void WriteNgramFile(utils::OfstreamWriter& writer) = 0;

@@ -9,25 +9,25 @@
 DEFINE_LOCAL_LOGGER(Settings);
 
 namespace {
-    inline tstring make_path(const tstring& dirpath, const tstring& filepath) {
+    inline String make_path(StringRef dirpath, StringRef filepath) {
         return filepath.empty() ? filepath : utils::joinPath(dirpath, filepath);
     }
 
-    inline wchar_t safe_get_head_char(const tstring& s) {
+    inline wchar_t safe_get_head_char(StringRef s) {
         return s.empty() ? '\0' : s[0];
     }
 }
 
-void Settings::SetValues(const std::map<tstring, tstring>& dict) {
+void Settings::SetValues(const std::map<String, String>& dict) {
 
-#define SET_KEY_VALUE(k) k = utils::safe_get(dict, tstring(_T(#k))); LOG_INFO(_T(#k ## "=%s"), k.c_str())
-#define SET_FILE_PATH(k) k = make_path(SETTINGS->rootDir, utils::safe_get(dict, tstring(_T(#k)))); LOG_INFO(_T(#k ## "=%s"), k.c_str())
-#define SET_CHAR_VALUE(k) k = safe_get_head_char(utils::safe_get(dict, tstring(_T(#k)))); LOG_INFO(_T(#k ## "=%c"), k)
-#define SET_INT_VALUE(k) k = utils::strToInt(utils::safe_get(dict, tstring(_T(#k)))); LOG_INFO(_T(#k ## "=%d"), k)
-#define SET_UINT_VALUE(k) k = (size_t)utils::strToInt(utils::safe_get(dict, tstring(_T(#k)))); LOG_INFO(_T(#k ## "=%d"), k)
-#define SET_BOOL_VALUE(k) k = utils::strToBool(utils::safe_get(dict, tstring(_T(#k)))); LOG_INFO(_T(#k ## "=%s"), utils::boolToString(k).c_str())
-#define GET_BOOL_VALUE(k) utils::strToBool(utils::safe_get(dict, tstring(_T(#k))))
-#define RESET_STROKE_FUNC(k) StrokeTableNode::AssignFucntion(utils::safe_get(dict, tstring(_T(k ## "KeySeq"))), _T(k))
+#define SET_KEY_VALUE(k) k = utils::safe_get(dict, String(_T(#k))); LOG_INFO(_T(#k "={}"), k)
+#define SET_FILE_PATH(k) k = make_path(SETTINGS->rootDir, utils::safe_get(dict, String(_T(#k)))); LOG_INFO(_T(#k "={}"), k)
+#define SET_CHAR_VALUE(k) k = safe_get_head_char(utils::safe_get(dict, String(_T(#k)))); LOG_INFO(_T(#k "={}"), k)
+#define SET_INT_VALUE(k) k = utils::strToInt(utils::safe_get(dict, String(_T(#k)))); LOG_INFO(_T(#k "={}"), k)
+#define SET_UINT_VALUE(k) k = (size_t)utils::strToInt(utils::safe_get(dict, String(_T(#k)))); LOG_INFO(_T(#k "={}"), k)
+#define SET_BOOL_VALUE(k) k = utils::strToBool(utils::safe_get(dict, String(_T(#k)))); LOG_INFO(_T(#k "={}"), k)
+#define GET_BOOL_VALUE(k) utils::strToBool(utils::safe_get(dict, String(_T(#k))))
+#define RESET_STROKE_FUNC(k) StrokeTableNode::AssignFucntion(utils::safe_get(dict, String(_T(k "KeySeq"))), _T(k))
 
     SET_BOOL_VALUE(firstUse);
     SET_BOOL_VALUE(isJPmode);
@@ -127,7 +127,7 @@ void Settings::SetValues(const std::map<tstring, tstring>& dict) {
     RESET_STROKE_FUNC("katakanaOneShot");
     RESET_STROKE_FUNC("hanKataOneShot");
     RESET_STROKE_FUNC("blkSetOneShot");
-    //if (GET_BOOL_VALUE(mazegakiByShiftSpace)) StrokeTableNode::AssignFucntion(utils::format(_T("%d"), DECKEY_STROKE_49), _T("mazegaki"));
+    //if (GET_BOOL_VALUE(mazegakiByShiftSpace)) StrokeTableNode::AssignFucntion(utils::format(_T("{}"), DECKEY_STROKE_49), _T("mazegaki"));
 
     // for Debug
     SET_BOOL_VALUE(debughState);

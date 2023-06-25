@@ -16,14 +16,14 @@ namespace VkbTableMaker {
     void MakeVkbKatakanaTable(wchar_t* table);
 
     // 指定の文字配列をストロークキー配列に変換
-    void MakeStrokeKeysTable(wchar_t* table, const wchar_t* targetChars);
+    void MakeStrokeKeysTable(wchar_t* table, StringRef targetChars);
 
     // 指定の文字配列を第1ストロークの位置に従って並べかえる
-    void ReorderByFirstStrokePosition(wchar_t* table, const wchar_t* targetChars, int tableId);
+    void ReorderByFirstStrokePosition(wchar_t* table, StringRef targetChars, int tableId);
 
     // 指定の文字配列をストロークの位置に従って並べかえる
     // node: ストロークテーブルノード, table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
-    void ReorderByStrokePosition(StrokeTableNode* node, wchar_t* table, const wstring& targetChars, int tableId);
+    void ReorderByStrokePosition(StrokeTableNode* node, wchar_t* table, StringRef targetChars, int tableId);
 
     // 主テーブル用の外字を集めたストローク表を作成する
     void MakeExtraCharsStrokePositionTable1(wchar_t* faces);
@@ -62,10 +62,10 @@ namespace VkbTableMaker {
     const std::set<int>& GetHiraganaFirstDeckeys();
 
     // 指定文字に至るストローク列をフェイス文字列として返す
-    wstring ConvCharToStrokeString(mchar_t ch);
+    String ConvCharToStrokeString(mchar_t ch);
 
     // 打鍵列からローマ字テーブルを作成してファイルに書き出す
-    void SaveRomanStrokeTable(const wchar_t* = 0, const wchar_t* = 0);
+    void SaveRomanStrokeTable(StringRef, StringRef);
 
     // eelll/JS用テーブルを作成してファイルに書き出す
     void SaveEelllJsTable();

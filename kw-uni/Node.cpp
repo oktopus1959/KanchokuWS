@@ -17,6 +17,6 @@
 DEFINE_CLASS_LOGGER(Node);
 
 Node::~Node() {
-    _LOG_DEBUGH(_T("CALLED: destructor: ptr=%p"), this);
+    _LOG_DEBUGH(_T("CALLED: destructor: ptr={:p}"), (void*)this);
 };
 

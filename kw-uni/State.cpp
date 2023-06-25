@@ -28,14 +28,12 @@
 
 DEFINE_CLASS_LOGGER(State);
 
-#define NAME_PTR    Name.c_str()
-
 // デストラクタのデフォルト
 State::~State() {
-    LOG_DEBUG(_T("ENTER: Destructor: %s"), NAME_PTR);
+    LOG_DEBUG(_T("ENTER: Destructor: {}"), Name);
     delete pNext;       // デストラクタ -- 後続状態を削除する
     pNext = nullptr;
-    LOG_DEBUG(_T("LEAVE: Destructor: %s"), NAME_PTR);
+    LOG_DEBUG(_T("LEAVE: Destructor: {}"), Name);
 }
 
 // 状態の再アクティブ化 (何かやりたい場合はオーバーライドする)
@@ -47,8 +45,8 @@ void State::Reactivate() {
 // DECKEY 処理の流れ
 // 新ノードが未処理の場合は、ここで NULL 以外が返されるので、親状態で処理する
 void State::HandleDeckey(int deckey) {
-    LOG_INFO(_T("ENTER: %s: deckey=%xH(%d), totalCount=%d, NextNode=%s, outStr=%s"),
-        NAME_PTR, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME_PTR(NextNodeMaybe()), MAKE_WPTR(STATE_COMMON->OutString()));
+    LOG_INFO(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
+        Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), MAKE_WPTR(STATE_COMMON->OutString()));
     currentDeckey = deckey;
     // 事前チェック
     DoPreCheck();
@@ -58,14 +56,14 @@ void State::HandleDeckey(int deckey) {
     DoIntermediateCheck();
     // 後処理
     DoDeckeyPostProc();
-    LOG_INFO(_T("LEAVE: %s, NextNode=%s, outStr=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()), MAKE_WPTR(STATE_COMMON->OutString()));
+    LOG_INFO(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), MAKE_WPTR(STATE_COMMON->OutString()));
     //return pNextNodeMaybe;
 }
 
 // DECKEY処理の前半部の処理。
 // 後続状態があればそちらに移譲。なければここでホットキーをディスパッチ。
 void State::DoDeckeyPreProc(int deckey) {
-    _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), NextState=%s, NextNode=%s"), NAME_PTR, deckey, deckey, STATE_NAME_PTR(pNext), NODE_NAME_PTR(NextNodeMaybe()));
+    _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), Name, deckey, deckey, STATE_NAME_PTR(pNext), NODE_NAME(NextNodeMaybe()));
     if (IsModeState()) {
         // モード状態(HistoryStayState や TranslationState など)のための前処理
         _LOG_DEBUGH(_T("PATH-A"));
@@ -79,7 +77,7 @@ void State::DoDeckeyPreProc(int deckey) {
                 // ブロッカーや読み開始位置を左右にシフト -- 読み位置がシフトされて再変換モードになったら、交ぜ書き状態を生成する
                 if (MAZEGAKI_INFO->LeftRightShiftBlockerOrStartPos(deckey, [this]() {if (MAZEGAKI_INFO->IsReXferMode()) SetNextNodeMaybe(MAZEGAKI_NODE_PTR);})) {
                     //シフトできた場合
-                    _LOG_DEBUGH(_T("LeftRightShiftBlockerOrStartPos: SUCCEEDED\nLEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
+                    _LOG_DEBUGH(_T("LeftRightShiftBlockerOrStartPos: SUCCEEDED\nLEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
                     return;
                 }
                 _LOG_DEBUGH(_T("PATH-D"));
@@ -121,7 +119,7 @@ void State::DoDeckeyPreProc(int deckey) {
     _LOG_DEBUGH(_T("PATH-F"));
     //pNextNodeMaybe = nullptr;
     ClearNextNodeMaybe();
-    _LOG_DEBUGH(_T("NextState=%s"), STATE_NAME_PTR(pNext));
+    _LOG_DEBUGH(_T("NextState={}"), STATE_NAME_PTR(pNext));
     if (pNext) {
         _LOG_DEBUGH(_T("PATH-G"));
         // 後続状態があれば、そちらを呼び出す ⇒ 新しい後続ノードがあればそれを一時的に記憶しておく(後半部で処理する)
@@ -133,22 +131,22 @@ void State::DoDeckeyPreProc(int deckey) {
         // 後続状態がなければ、ここでDECKEYをディスパッチする
         dispatchDeckey(deckey);
     }
-    _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
+    _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
 }
 
 // DECKEY処理の後半部の処理。
 // 不要になった後続状態の削除と、新しい後続状態の生成とチェイン。
 void State::DoDeckeyPostProc() {
-    _LOG_DEBUGH(_T("ENTER: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
+    _LOG_DEBUGH(_T("ENTER: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
     // 後続状態チェインに対して事後チェック
     DoPostCheckChain();
     //// 不要な後続状態を削除
     //DeleteUnnecessarySuccessorState();
     while (NextNodeMaybe() && !IsUnnecessary()) {
-        _LOG_DEBUGH(_T("PATH-0: NextNodeMaybe=%p"), NextNodeMaybe());
+        _LOG_DEBUGH(_T("PATH-0: NextNodeMaybe={:p}"), (void*)NextNodeMaybe());
         // 新しい後続ノードが生成されており、自身が不要状態でないならば、ここで後続ノードの処理を行う
         // (自身が不要状態ならば、この後、前接状態に戻り、そこで後続ノードが処理される)
-        _LOG_DEBUGH(_T("nextNode: %s"), NODE_NAME_PTR(NextNodeMaybe()));
+        _LOG_DEBUGH(_T("nextNode: {}"), NODE_NAME(NextNodeMaybe()));
         // 後続状態を作成
         State* ps = NextNodeMaybe()->CreateState();
         _LOG_DEBUGH(_T("PATH-A"));
@@ -158,39 +156,39 @@ void State::DoDeckeyPostProc() {
         // ストロークノード以外は、ここで何らかの出力処理をするはず
         if (ps->DoProcOnCreated()) {
             // 必要があれば後続ノードから生成した新状態をチェインする
-            _LOG_DEBUGH(_T("%s: appendSuccessorState: %s"), NAME_PTR, ps->NAME_PTR);
+            _LOG_DEBUGH(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
             pNext = ps;
             ps->pPrev = this;
             _LOG_DEBUGH(_T("PATH-C"));
         } else {
             SetNextNodeMaybe(ps->NextNodeMaybe());   // 新しい後続ノードがあるかもしれないのでここでセットしておく
-            _LOG_DEBUGH(_T("NextNodeMaybe=%p"), NextNodeMaybe());
+            _LOG_DEBUGH(_T("NextNodeMaybe={:p}"), (void*)NextNodeMaybe());
             delete ps;  // 後続状態の生成時処理の結果、後続状態は不要になったので削除する
             _LOG_DEBUGH(_T("PATH-D"));
         }
         _LOG_DEBUGH(_T("PATH-E"));
     }
-    _LOG_DEBUGH(_T("LEAVE: %s, NextNode=%s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
+    _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
 }
 
 // 後続状態チェインに対して事後チェック
 void State::DoPostCheckChain() {
-    _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
+    _LOG_DEBUGH(_T("ENTER: {}"), Name);
     if (pNext) {
         pNext->DoPostCheckChain();
         CheckNextState();
         DeleteUnnecessarySuccessorState();
     } else if (IS_LOG_DEBUGH_ENABLED) {
-        _LOG_DEBUGH(_T("STOP: %s"), NAME_PTR);
+        _LOG_DEBUGH(_T("STOP: {}"), Name);
     }
     CheckMyState();
-    _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
+    _LOG_DEBUGH(_T("LEAVE: {}"), Name);
 }
 
 // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
 bool State::DoProcOnCreated() {
     // Do nothing
-    _LOG_DEBUGH(_T("CALLED: %s: DEFAULT"), NAME_PTR);
+    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT"), Name);
     return false;
 }
 
@@ -201,48 +199,48 @@ MString State::TranslateString(const MString& outStr) {
 
 // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
 void State::DoOutStringProcChain() {
-    LOG_INFO(_T("ENTER: %s: outStr=%s"), NAME_PTR, MAKE_WPTR(STATE_COMMON->OutString()));
+    LOG_INFO(_T("ENTER: {}: outStr={}"), Name, MAKE_WPTR(STATE_COMMON->OutString()));
     if (pNext) pNext->DoOutStringProcChain();
     if (!STATE_COMMON->IsOutStringProcDone()) DoOutStringProc();
-    LOG_INFO(_T("LEAVE: %s: outStr=%s"), NAME_PTR, MAKE_WPTR(STATE_COMMON->OutString()));
+    LOG_INFO(_T("LEAVE: {}: outStr={}"), Name, MAKE_WPTR(STATE_COMMON->OutString()));
 }
 
 // 最終的な出力履歴が整ったところで呼び出される処理
 void State::DoOutStringProc() {
-    LOG_INFO(_T("ENTER: %s"), NAME_PTR);
+    LOG_INFO(_T("ENTER: {}"), Name);
     // 何もしない
-    LOG_INFO(_T("LEAVE: %s"), NAME_PTR);
+    LOG_INFO(_T("LEAVE: {}"), Name);
 }
 
 // ノードから生成した状態を後接させ、その状態を常駐させる
 void State::ChainAndStay(Node* np) {
-    _LOG_DEBUGH(_T("ENTER: %s, nextNode: %s"), NAME_PTR, NODE_NAME_PTR(NextNodeMaybe()));
+    _LOG_DEBUGH(_T("ENTER: {}, nextNode: {}"), Name, NODE_NAME(NextNodeMaybe()));
     if (np) {
         if (pNext) {
             pNext->ChainAndStay(np);
         } else {
             auto ps = np->CreateState();
             ps->DoProcOnCreated();
-            LOG_DEBUG(_T("%s: appendSuccessorState: %s"), NAME_PTR, ps->NAME_PTR);
+            LOG_DEBUG(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
             pNext = ps;
             ps->pPrev = this;
         }
     }
-    _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
+    _LOG_DEBUGH(_T("LEAVE: {}"), Name);
 }
 
 // 居残っている一時状態の削除(デコーダのOFF->ON時に呼ばれる)
 void State::DeleteRemainingState() {
-    LOG_DEBUG(_T("ENTER: %s: next=%s"), NAME_PTR, (pNext ? pNext->NAME_PTR : _T("NULL")));
+    LOG_DEBUG(_T("ENTER: {}: next={}"), Name, (pNext ? pNext->Name : _T("NULL")));
     if (pNext) {
         pNext->DeleteRemainingState();
         if (!pNext->IsStay()) {
-            LOG_DEBUG(_T("delete next=%s"), pNext->NAME_PTR);
+            LOG_DEBUG(_T("delete next={}"), pNext->Name);
             delete pNext;       // 居残っている一時状態の削除(デコーダのOFF->ON時に呼ばれる)
             pNext = 0;
         }
     }
-    LOG_DEBUG(_T("LEAVE: %s"), NAME_PTR);
+    LOG_DEBUG(_T("LEAVE: {}"), Name);
 }
 
 bool State::IsStay() const {
@@ -252,69 +250,67 @@ bool State::IsStay() const {
 
 // 履歴検索を初期化する状態か
 bool State::IsHistoryReset() {
-    _LOG_DEBUGH(_T("CALLED: %s: True (default)"), NAME_PTR);
+    _LOG_DEBUGH(_T("CALLED: {}: True (default)"), Name);
     return true;
 }
-
-#define UNNECESSARY_PTR (utils::boolToString(bUnnecessary).c_str())
 
 // 不要になった状態か
 // 必要に応じてオーバーライドすること。
 bool State::IsUnnecessary() {
-    LOG_DEBUG(_T("CALLED: %s: %s"), NAME_PTR, UNNECESSARY_PTR);
+    LOG_DEBUG(_T("CALLED: {}: {}"), Name, bUnnecessary);
     return bUnnecessary;
 }
 
 // この状態以降を不要としてマークする
 void State::MarkUnnecessaryFromThis() {
-    LOG_INFO(_T("CALLED: %s"), NAME_PTR);
+    LOG_INFO(_T("CALLED: {}"), Name);
     bUnnecessary = true;
     if (pNext) pNext->MarkUnnecessaryFromThis();
 }
 
 // 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
 void State::CheckNextState() {
-    LOG_DEBUG(_T("CALLED: %s: default"), NAME_PTR);
+    LOG_DEBUG(_T("CALLED: {}: default"), Name);
 }
 
 // 自身の状態をチェックして後処理するのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
 void State::CheckMyState() {
-    LOG_DEBUG(_T("CALLED: %s: default"), NAME_PTR);
+    LOG_DEBUG(_T("CALLED: {}: default"), Name);
 }
 
 //// ストローク機能をすべて削除するか
 //bool State::IsToRemoveAllStroke() const {
-//    LOG_DEBUG(_T("CALLED: %s: false"), NAME_PTR);
+//    LOG_DEBUG(_T("CALLED: {}: false"), Name);
 //    return false;
 //}
 
 // 不要とマークされた後続状態を削除する
 void State::DeleteUnnecessarySuccessorState() {
-    _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
+    _LOG_DEBUGH(_T("ENTER: {}"), Name);
     if (pNext) {
         if (pNext->IsUnnecessary()) {
-            _LOG_DEBUGH(_T("DELETE NEXT: %s"), pNext->Name.c_str());
+            _LOG_DEBUGH(_T("DELETE NEXT: {}"), pNext->Name);
             delete pNext;       // 不要とマークされた後続状態を削除する
             pNext = nullptr;
         }
     }
-    _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
+    _LOG_DEBUGH(_T("LEAVE: {}"), Name);
 }
 
 // 入力・変換モード標識を連結して返す
 MString State::JoinModeMarker() {
-    LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+    LOG_DEBUG(_T("CALLED: {}"), Name);
     MString modeMarker;
     JoinModeMarker(modeMarker);
     return modeMarker;
 }
 
 void State::JoinModeMarker(MString& modeMarkers) {
-    LOG_DEBUG(_T("ENTER: %s, marker=%s"), NAME_PTR, MAKE_WPTR(modeMarkers));
+    LOG_DEBUG(_T("ENTER: {}, marker={}"), Name, MAKE_WPTR(modeMarkers));
     mchar_t mch = GetModeMarker();
     if (mch != 0) modeMarkers.push_back(mch);
     if (pNext) pNext->JoinModeMarker(modeMarkers);
-    LOG_DEBUG(_T("LEAVE: %s, marker=%s"), NAME_PTR, MAKE_WPTR(modeMarkers));
+    LOG_DEBUG(_T("LEAVE: {}, marker={}"), Name, MAKE_WPTR(modeMarkers));
 }
 
 // モード標識文字を返す
@@ -373,7 +369,7 @@ size_t State::StrokeTableChainLength() {
     if (pNext) {
         len = pNext->StrokeTableChainLength();
     }
-    LOG_DEBUG(_T("LEAVE: %s, len=%d"), NAME_PTR, len);
+    LOG_DEBUG(_T("LEAVE: {}, len={}"), Name, len);
     return len;
 }
 
@@ -397,16 +393,16 @@ void State::copyStrokeHelpToVkbFaces() {
 
 // 入力された DECKEY をディスパッチする
 void State::dispatchDeckey(int deckey) {
-    _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+    _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({})"), Name, deckey, deckey);
     if (deckey < 0) {
-        _LOG_DEBUGH(_T("LEAVE: DO NOTHING: %s: deckey=%xH(%d), outStr=%s"), NAME_PTR, deckey, deckey, MAKE_WPTR(STATE_COMMON->OutString()));
+        _LOG_DEBUGH(_T("LEAVE: DO NOTHING: {}: deckey={:x}H({}), outStr={}"), Name, deckey, deckey, MAKE_WPTR(STATE_COMMON->OutString()));
         return;
     }
     //pStateResult->Iniitalize();
     if (isNormalStrokeKey(deckey)) {
         if (deckey == STROKE_SPACE_DECKEY) {
             handleSpaceKey();
-            _LOG_DEBUGH(_T("LEAVE: %s: SpaceKey handled, outStr=%s"), NAME_PTR, MAKE_WPTR(STATE_COMMON->OutString()));
+            _LOG_DEBUGH(_T("LEAVE: {}: SpaceKey handled, outStr={}"), Name, MAKE_WPTR(STATE_COMMON->OutString()));
             return;
         }
         handleStrokeKeys(deckey);
@@ -444,11 +440,11 @@ void State::dispatchDeckey(int deckey) {
         handleUndefinedDeckey(deckey);
     } else {
         if (handleFunctionKeys(deckey)) {
-            _LOG_DEBUGH(_T("LEAVE: %s: FunctionKey handled, outStr=%s"), NAME_PTR, MAKE_WPTR(STATE_COMMON->OutString()));
+            _LOG_DEBUGH(_T("LEAVE: {}: FunctionKey handled, outStr={}"), Name, MAKE_WPTR(STATE_COMMON->OutString()));
             return;
         }
 
-        _LOG_DEBUGH(_T("DISPATH FUNCTION KEY: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+        _LOG_DEBUGH(_T("DISPATH FUNCTION KEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
         switch (deckey) {
         case LEFT_TRIANGLE_DECKEY:
             handleLeftTriangle();
@@ -471,7 +467,7 @@ void State::dispatchDeckey(int deckey) {
         //    break;
         case ENTER_DECKEY:
             handleEnter();
-            _LOG_DEBUGH(_T("%s: Enter Key handled"), NAME_PTR);
+            _LOG_DEBUGH(_T("{}: Enter Key handled"), Name);
             break;
         case ESC_DECKEY:
             handleEsc();
@@ -532,18 +528,18 @@ void State::dispatchDeckey(int deckey) {
         //    break;
         default:
             if (isShiftedKey(deckey)) {
-                _LOG_DEBUGH(_T("SHIFTED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+                _LOG_DEBUGH(_T("SHIFTED: {}: deckey={:x}H({})"), Name, deckey, deckey);
                 handleShiftKeys(deckey);
                 break;
             } else if (isCtrledKey(deckey)) {
-                _LOG_DEBUGH(_T("CTRLKEY: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+                _LOG_DEBUGH(_T("CTRLKEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
                 handleCtrlKeys(deckey);
             } else if (deckey >= 0) {
-                _LOG_DEBUGH(_T("DEFAULT: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+                _LOG_DEBUGH(_T("DEFAULT: {}: deckey={:x}H({})"), Name, deckey, deckey);
                 // 半全, 英数/Caps, 無変換, 変換, ひらがな
                 handleStrokeKeys(deckey);
             } else {
-                _LOG_DEBUGH(_T("DO NOTHING: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+                _LOG_DEBUGH(_T("DO NOTHING: {}: deckey={:x}H({})"), Name, deckey, deckey);
             }
             break;
         }
@@ -551,13 +547,13 @@ void State::dispatchDeckey(int deckey) {
 
     if (isThroughDeckey()) handleUndefinedDeckey(deckey);
 
-    _LOG_DEBUGH(_T("LEAVE: %s: deckey=%xH(%d), outStr=%s"), NAME_PTR, deckey, deckey, MAKE_WPTR(STATE_COMMON->OutString()));
+    _LOG_DEBUGH(_T("LEAVE: {}: deckey={:x}H({}), outStr={}"), Name, deckey, deckey, MAKE_WPTR(STATE_COMMON->OutString()));
 }
 
 //-----------------------------------------------------------------------
 // ストロークキーデフォルトハンドラ
 void State::handleStrokeKeys(int _DEBUG_SENT(hk)) {
-    _LOG_DEBUGH(_T("DO NOTHING: setThroughDeckeyFlag: deckey=%xH(%d)"), hk, hk);
+    _LOG_DEBUGH(_T("DO NOTHING: setThroughDeckeyFlag: deckey={:x}H({})"), hk, hk);
     setThroughDeckeyFlag();
 }
 
@@ -632,7 +628,7 @@ void State::handleDecoderOff() { LOG_INFOH(_T("CALLED")); }
 bool State::handleFunctionKeys(int
 _DEBUG_SENT(hk)
 ) {
-    _LOG_DEBUGH(_T("DO NOTHING: deckey=%xH(%d)"), hk, hk);
+    _LOG_DEBUGH(_T("DO NOTHING: deckey={:x}H({})"), hk, hk);
     return false;
 }
 
@@ -654,7 +650,7 @@ void State::handleRightTriangle() { handleShiftKeys(RIGHT_TRIANGLE_DECKEY); }
 void State::handleQuestion() { handleShiftKeys(QUESTION_DECKEY); }
 
 // left/right maze shift keys
-void State::handleLeftRightMazeShift(int deckey) { LOG_INFO(_T("CALLED: deckey=%xH(%d)"), deckey, deckey); }
+void State::handleLeftRightMazeShift(int deckey) { LOG_INFO(_T("CALLED: deckey={:x}H({})"), deckey, deckey); }
 
 //-----------------------------------------------------------------------
 //// Shift+Space ハンドラ
@@ -699,13 +695,13 @@ void State::handleLeftRightMazeShift(int deckey) { LOG_INFO(_T("CALLED: deckey=%
 
 // RET/Enter ハンドラ
 void State::handleEnter() {
-    _LOG_DEBUGH(_T("%s: Enter"), NAME_PTR);
+    _LOG_DEBUGH(_T("{}: Enter"), Name);
     STATE_COMMON->SetAppendBackspaceStopperFlag();
     handleSpecialKeys(ENTER_DECKEY);
 }
 
 // ESC ハンドラ
-void State::handleEsc() { _LOG_DEBUGH(_T("%s: Esc: currentDeckey=%d"), NAME_PTR, currentDeckey); if (currentDeckey == ESC_DECKEY) handleSpecialKeys(ESC_DECKEY); }
+void State::handleEsc() { _LOG_DEBUGH(_T("{}: Esc: currentDeckey={}"), Name, currentDeckey); if (currentDeckey == ESC_DECKEY) handleSpecialKeys(ESC_DECKEY); }
     
 // BS ハンドラ
 void State::handleBS() { _LOG_DEBUGH(_T("BackSpace")); setCharDeleteInfo(1); }

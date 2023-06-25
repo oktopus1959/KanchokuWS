@@ -26,8 +26,6 @@
 #define EX_NODE BUSHU_ASSOC_EX_NODE
 #define SAFE_CHAR(ch) (ch > 0 ? ch : ' ')
 
-#define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
-
 namespace {
     // -------------------------------------------------------------------
 #define N_SUB_LIST 10
@@ -146,17 +144,16 @@ namespace {
         ~BushuAssocState() { };
 
 #define MY_NODE ((BushuAssocNode*)pNode)
-#define NAME_PTR (Name.c_str())
 
         // 機能状態に対して生成時処理を実行する
         bool DoProcOnCreated() {
-            _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("ENTER: {}"), Name);
 
             size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
             mchar_t outChar = OUTPUT_STACK->isLastOutputStackCharBlocker() ? 0 : OUTPUT_STACK->LastOutStackChar();
 
             // 直前の出力文字と比較して、部首連想のやり直しをする
-            _LOG_DEBUGH(_T("DeckeyCount=%d, PrevTotalCount=%d, AssocCount=%d, outChar=%c, PrevAssoc=%c, PrevKey=%c"), totalCnt, EX_NODE->PrevTotalCount, EX_NODE->Count, SAFE_CHAR(outChar), SAFE_CHAR(EX_NODE->PrevAssoc), SAFE_CHAR(EX_NODE->PrevKey));
+            _LOG_DEBUGH(_T("DeckeyCount={}, PrevTotalCount={}, AssocCount={}, outChar={}, PrevAssoc={}, PrevKey={}"), totalCnt, EX_NODE->PrevTotalCount, EX_NODE->Count, SAFE_CHAR(outChar), SAFE_CHAR(EX_NODE->PrevAssoc), SAFE_CHAR(EX_NODE->PrevKey));
             if (EX_NODE->PrevKey != 0 && totalCnt <= EX_NODE->PrevTotalCount + 2 && EX_NODE->PrevAssoc == outChar) {
                 outChar = EX_NODE->PrevKey;
                 STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す
@@ -169,18 +166,18 @@ namespace {
                 setVkbCandidatesList();
                 // 前状態にチェインする
                 // STATE_COMMON->SetOutStringProcDone();        // ここでやってもよいが、「最終的な出力履歴が整ったところで呼び出される処理」のところでも必要になる
-                _LOG_DEBUGH(_T("LEAVE: %s: CHAIN"), NAME_PTR);
+                _LOG_DEBUGH(_T("LEAVE: {}: CHAIN"), Name);
                 return true;
             }
 
-            _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("LEAVE: {}"), Name);
             // チェイン不要
             return false;
         }
 
         // Strokeキー を処理する
         void handleStrokeKeys(int deckey) {
-            _LOG_DEBUGH(_T("CALLED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+            _LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({})"), Name, deckey, deckey);
             //EX_NODE->PrevAssocSec = utils::getSecondsFromEpochTime();
             EX_NODE->PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
             EX_NODE->Count = 10;    // 10 は最大値の意味で使っている
@@ -211,42 +208,42 @@ namespace {
 
         //// Ctrl-Space の処理 -- 第1候補を返す
         //void handleCtrlSpace() {
-        //    LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+        //    LOG_DEBUG(_T("CALLED: {}"), Name);
         //    handleStrokeKeys(20);   // 'a'
         //    handleKeyPostProc();
         //}
 
         //// Shift-Space の処理 -- 第1候補を返す
         //void handleShiftSpace() {
-        //    LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+        //    LOG_DEBUG(_T("CALLED: {}"), Name);
         //    handleStrokeKeys(20);   // 'a'
         //    handleKeyPostProc();
         //}
 
         //// Ctrl-Shift-Space の処理 -- 第1候補を返す
         //void handleCtrlShiftSpace() {
-        //    LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+        //    LOG_DEBUG(_T("CALLED: {}"), Name);
         //    handleStrokeKeys(20);   // 'a'
         //    handleKeyPostProc();
         //}
 
         // NextCandTrigger の処理 -- 第1候補を返す
         void handleNextCandTrigger() {
-            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            LOG_DEBUG(_T("CALLED: {}"), Name);
             handleStrokeKeys(20);   // 'a'
             handleKeyPostProc();
         }
 
         // PrevCandTrigger の処理 -- 第1候補を返す
         void handlePrevCandTrigger() {
-            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            LOG_DEBUG(_T("CALLED: {}"), Name);
             handleStrokeKeys(20);   // 'a'
             handleKeyPostProc();
         }
 
         // RET/Enter の処理 -- 第1候補を返す
         void handleEnter() {
-            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            LOG_DEBUG(_T("CALLED: {}"), Name);
             handleStrokeKeys(20);   // 'a'
             handleKeyPostProc();
         }
@@ -263,30 +260,30 @@ namespace {
 
         // Ctrl-H/BS の処理 -- 処理のキャンセル
         void handleBS() {
-            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            LOG_DEBUG(_T("CALLED: {}"), Name);
             handleKeyPostProc();
         }
 
         //void handleCtrlH() {
-        //    LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+        //    LOG_DEBUG(_T("CALLED: {}"), Name);
         //    handleBS();
         //}
 
         // FullEscapeの処理 -- 処理のキャンセル
         void handleFullEscape() {
-            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            LOG_DEBUG(_T("CALLED: {}"), Name);
             handleKeyPostProc();
         }
 
         // Esc の処理 -- 処理のキャンセル
         void handleEsc() {
-            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            LOG_DEBUG(_T("CALLED: {}"), Name);
             handleKeyPostProc();
         }
 
         // CommitState の処理 -- 処理のコミット
         void handleCommitState() override {
-            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            LOG_DEBUG(_T("CALLED: {}"), Name);
             handleKeyPostProc();
         }
 
@@ -300,9 +297,9 @@ namespace {
 
         // 最終的な出力履歴が整ったところで呼び出される処理
         void DoOutStringProc() {
-            _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("ENTER: {}"), Name);
             STATE_COMMON->SetOutStringProcDone();   // 何かキー入力により再表示の可能性があるので、ここでも必要(この後は、もはや履歴検索などは不要)
-            _LOG_DEBUGH(_T("LEAVE: %s, IsOutStringProcDone=%s"), NAME_PTR, BOOL_TO_WPTR(STATE_COMMON->IsOutStringProcDone()));
+            _LOG_DEBUGH(_T("LEAVE: {}, IsOutStringProcDone={}"), Name, STATE_COMMON->IsOutStringProcDone());
         }
 
     protected:
@@ -326,7 +323,6 @@ namespace {
     DEFINE_CLASS_LOGGER(BushuAssocState);
 
 #undef MY_NODE
-#undef NAME_PTR
 
     // -------------------------------------------------------------------
     // 拡長部首連想入力機能状態クラス (最初とN回目までは候補の選択、N+1回目で一覧表示)
@@ -342,7 +338,6 @@ namespace {
 
         ~BushuAssocExState() { };
 
-#define NAME_PTR (Name.c_str())
 #ifndef _DEBUG
 #define ALLOWANCE_SEC 5
 #else
@@ -350,9 +345,9 @@ namespace {
 #endif
         // 機能状態に対して生成時処理を実行する
         bool DoProcOnCreated() {
-            _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("ENTER: {}"), Name);
             size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
-            //_LOG_DEBUGH(_T("ENTER: %s, count=%d"), NAME_PTR, cnt);
+            //_LOG_DEBUGH(_T("ENTER: {}, count={}"), Name, cnt);
 
             mchar_t outChar = OUTPUT_STACK->isLastOutputStackCharBlocker() ? 0 : OUTPUT_STACK->LastOutStackChar();
 
@@ -363,14 +358,14 @@ namespace {
                 // 直前の部首合成文字と比較して、やり直しをする
                 //time_t now = utils::getSecondsFromEpochTime();
                 if (BUSHU_COMP_NODE) {
-                    _LOG_DEBUGH(_T("DeckeyCount=%d, PrevTotalCount=%d, outChar=%c, PrevComp=%c, PrevAuto=%s"), \
-                        totalCnt, BUSHU_COMP_NODE->PrevTotalCount, SAFE_CHAR(outChar), SAFE_CHAR(BUSHU_COMP_NODE->PrevComp), BOOL_TO_WPTR(BUSHU_COMP_NODE->IsPrevAuto));
+                    _LOG_DEBUGH(_T("DeckeyCount={}, PrevTotalCount={}, outChar={}, PrevComp={}, PrevAuto={}"), \
+                        totalCnt, BUSHU_COMP_NODE->PrevTotalCount, SAFE_CHAR(outChar), SAFE_CHAR(BUSHU_COMP_NODE->PrevComp), BUSHU_COMP_NODE->IsPrevAuto);
                     if (totalCnt <= BUSHU_COMP_NODE->PrevTotalCount + 2) {
                         mchar_t m1 = BUSHU_COMP_NODE->PrevBushu1;
                         mchar_t m2 = BUSHU_COMP_NODE->PrevBushu2;
                         if (BUSHU_COMP_NODE->PrevComp == outChar) {
                             // 末尾の出力文字が直前の部首合成文字と同じ
-                            _LOG_DEBUGH(_T("PATH-A: m1=%c, m2=%c, outChar=%c"), _SAFE_CHAR(m1), _SAFE_CHAR(m2), _SAFE_CHAR(outChar));
+                            _LOG_DEBUGH(_T("PATH-A: m1={}, m2={}, outChar={}"), _SAFE_CHAR(m1), _SAFE_CHAR(m2), _SAFE_CHAR(outChar));
                             // outChar を探し、さらにその次の候補を返す
                             BUSHU_COMP_NODE->IsPrevAuto = false;
                             MString cs = BUSHU_COMP_NODE->ReduceByBushu(m1, m2, outChar);
@@ -381,7 +376,7 @@ namespace {
                                 copyStrokeHelpToVkbFaces();
                                 //やり直し合成した文字を履歴に登録
                                 if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(cs, 1));
-                                _LOG_DEBUGH(_T("LEAVE: %s: Reduce by using swapped bushu"), NAME_PTR);
+                                _LOG_DEBUGH(_T("LEAVE: {}: Reduce by using swapped bushu"), Name);
                                 return false;
                             }
                         }
@@ -390,13 +385,13 @@ namespace {
                 _LOG_DEBUGH(_T("PATH-C"));
 
                 // 直前の出力文字と比較して、部首連想のやり直しをする
-                _LOG_DEBUGH(_T("DeckeyCount=%d, PrevTotalCount=%d, AssocCount=%d, outChar=%c, PrevAssoc=%c, PrevKey=%c"), totalCnt, EX_NODE->PrevTotalCount, EX_NODE->Count, SAFE_CHAR(outChar), SAFE_CHAR(EX_NODE->PrevAssoc), SAFE_CHAR(EX_NODE->PrevKey));
+                _LOG_DEBUGH(_T("DeckeyCount={}, PrevTotalCount={}, AssocCount={}, outChar={}, PrevAssoc={}, PrevKey={}"), totalCnt, EX_NODE->PrevTotalCount, EX_NODE->Count, SAFE_CHAR(outChar), SAFE_CHAR(EX_NODE->PrevAssoc), SAFE_CHAR(EX_NODE->PrevKey));
                 if (EX_NODE->PrevKey != 0 && totalCnt <= EX_NODE->PrevTotalCount + 2 && EX_NODE->PrevAssoc == outChar) {
                     outChar = EX_NODE->PrevKey;
                 } else {
                     EX_NODE->Count = 0;
                 }
-                _LOG_DEBUGH(_T("Count=%d, outChar=%c, "), EX_NODE->Count, SAFE_CHAR(outChar));
+                _LOG_DEBUGH(_T("Count={}, outChar={}, "), EX_NODE->Count, SAFE_CHAR(outChar));
 
                 if (outChar != 0 && currentList.FindEntry(outChar)) {
                     _LOG_DEBUGH(_T("PATH-D"));
@@ -408,13 +403,13 @@ namespace {
                         }
                     }
                     if (cnt < SETTINGS->bushuAssocSelectCount) {
-                        _LOG_DEBUGH(_T("SELECT HEAD: count=%d"), cnt);
+                        _LOG_DEBUGH(_T("SELECT HEAD: count={}"), cnt);
                         // N回目までなら先頭またはN文字目を返す
                         handleStrokeKeys(cnt);
                         // カウントを更新
                         EX_NODE->Count = cnt + 1;
                     } else {
-                        _LOG_DEBUGH(_T("REVERT: %c"), outChar);
+                        _LOG_DEBUGH(_T("REVERT: {}"), (wchar_t)outChar);
                         currentList.FindEntry(outChar);
                         //STATE_COMMON->outString.resize(1);
                         STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す
@@ -427,14 +422,14 @@ namespace {
                     }
                 }
             }
-            _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("LEAVE: {}"), Name);
             // チェイン不要
             return false;
         }
 
         //// Strokeキー を処理する
         //void handleStrokeKeys(int deckey) {
-        //    _LOG_DEBUGH(_T("CALLED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+        //    _LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({})"), Name, deckey, deckey);
         //    //bool bRetry = EX_NODE->PrevKey == currentList.GetKey();
         //    //const MString& word = currentList.SelectNthTarget(deckey >= STROKE_SPACE_DECKEY ? (bRetry ? 1 : 0) : deckey);    // スペース以上なら先頭を選択
         //    //STATE_COMMON->SetOutString(word);
@@ -519,7 +514,7 @@ Node* BushuAssocNodeBuilder::CreateNode() {
     // 部首連想辞書の読み込み(ファイルが指定されていなくても、辞書は構築する)
     // 部首連想入力辞書ファイル名
     auto bushuAssocFile = SETTINGS->bushuAssocFile;
-    LOG_INFO(_T("bushuAssoc=%s"), bushuAssocFile.c_str());
+    LOG_INFO(_T("bushuAssoc={}"), bushuAssocFile);
     //if (bushuAssocFile.empty()) {
     //    ERROR_HANDLER->Warn(_T("「bushuAssoc=(ファイル名)」の設定がまちがっているようです"));
     //}

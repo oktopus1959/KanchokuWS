@@ -17,7 +17,7 @@
 namespace RomanToKatakana {
     DEFINE_NAMESPACE_LOGGER(RomanToKatakana);
 
-    std::vector<wstring> defaultRomanDef = {
+    std::vector<String> defaultRomanDef = {
             _T("-\tー"),
             _T("A\tア"),
             _T("I\tイ"),
@@ -307,22 +307,22 @@ namespace RomanToKatakana {
 
     class RomanRewriteInfo {
     private:
-        std::vector<wstring> preChars;      // 対象文字列より前の部分の文字クラス列
-        std::vector<wstring> postChars;     // 対象文字列より後の部分の文字クラス列
+        std::vector<String> preChars;      // 対象文字列より前の部分の文字クラス列
+        std::vector<String> postChars;     // 対象文字列より後の部分の文字クラス列
 
-        bool matchCharClass(wchar_t ch, const wstring& cc) const {
-            LOG_DEBUGH(_T("CALLED: ch=%c, cc=%s"), ch, cc.c_str());
+        bool matchCharClass(wchar_t ch, StringRef cc) const {
+            LOG_DEBUGH(_T("CALLED: ch={}, cc={}"), ch, cc);
             if (cc.empty()) return true;
             wchar_t co = ch == '$' ? '$' : isVowel(ch) ? '@' : '%';
             if (cc[0] == '^') {
-                return cc.find(ch, 1) == wstring::npos && cc.find(co, 1) == wstring::npos;
+                return cc.find(ch, 1) == String::npos && cc.find(co, 1) == String::npos;
             } else {
-                return cc.find(ch) != wstring::npos || cc.find(co) != wstring::npos;
+                return cc.find(ch) != String::npos || cc.find(co) != String::npos;
             }
         }
 
     public:
-        wstring katakanaStr;                // 変換後のカタカナ
+        String katakanaStr;                // 変換後のカタカナ
 
     public:
         RomanRewriteInfo() {
@@ -339,7 +339,7 @@ namespace RomanToKatakana {
             return *this;
         }
 
-        void addCharClass(const wstring& cc, bool bPre) {
+        void addCharClass(StringRef cc, bool bPre) {
             if (bPre) {
                 preChars.push_back(cc);
             } else {
@@ -353,8 +353,8 @@ namespace RomanToKatakana {
             }
         }
 
-        bool match(const wstring& key, const wstring& w, size_t pos) const {
-            LOG_DEBUGH(_T("CALLED: key=%s, word=%s, pos=%d, pre=%s, post=%s"), key.c_str(), w.c_str(), pos, utils::join(preChars, _T(":")).c_str(), utils::join(postChars, _T(":")).c_str());
+        bool match(StringRef key, StringRef w, size_t pos) const {
+            LOG_DEBUGH(_T("CALLED: key={}, word={}, pos={}, pre={}, post={}"), key, w, pos, utils::join(preChars, _T(":")), utils::join(postChars, _T(":")));
             if (pos < preChars.size()) return false;
             if (pos + key.size() + postChars.size() > w.size()) return false;
             if (!preChars.empty()) {
@@ -375,15 +375,15 @@ namespace RomanToKatakana {
             return true;
         }
 
-        wstring toString() {
-            return utils::format(_T("pre=%s, post=%s, katakana=%s"), utils::join(preChars, _T(":")).c_str(), utils::join(postChars, _T(":")).c_str(), katakanaStr.c_str());
+        String toString() {
+            return std::format(_T("pre={}, post={}, katakana={}"), utils::join(preChars, _T(":")), utils::join(postChars, _T(":")), katakanaStr);
         }
     };
 
-    std::map<wstring, std::vector<RomanRewriteInfo>> romanKatakanaTbl;
+    std::map<String, std::vector<RomanRewriteInfo>> romanKatakanaTbl;
 
-    std::vector<wstring> _split(const wstring& s) {
-        std::vector<wstring> items;
+    std::vector<String> _split(StringRef s) {
+        std::vector<String> items;
         size_t p = s.find_first_not_of(_T(" \t"));
         if (p < s.size()) {
             size_t q = s.find_first_of(_T(" \t"), p + 1);
@@ -399,7 +399,7 @@ namespace RomanToKatakana {
         return items;
     }
 
-    void loadRomanDefLines(const std::vector<wstring>& lines) {
+    void loadRomanDefLines(const std::vector<String>& lines) {
         romanKatakanaTbl.clear();
         for (const auto& line : lines) {
             if (!line.empty()) {
@@ -407,8 +407,8 @@ namespace RomanToKatakana {
                 if (items.size() == 2 && !items[0].empty() && !items[1].empty() && items[0][0] != '#' ) {
                     RomanRewriteInfo info;
                     info.katakanaStr = items[1];
-                    wstring def = items[0];
-                    wstring key;
+                    String def = items[0];
+                    String key;
                     size_t i = 0;
                     size_t p = 0;
                     while (i < def.size()) {
@@ -435,7 +435,7 @@ namespace RomanToKatakana {
                     }
                     if (!key.empty()) {
                         if (!isVowel(key.back())) info.addTailConsonant();
-                        LOG_DEBUGH(_T("ADD: line=%s %s, key=%s, info=%s"), items[0].c_str(), items[1].c_str(), key.c_str(), info.toString().c_str());
+                        LOG_DEBUGH(_T("ADD: line={} {}, key={}, info={}"), items[0], items[1], key, info.toString());
                         auto iter = romanKatakanaTbl.find(key);
                         if (iter == romanKatakanaTbl.end()) {
                             romanKatakanaTbl[key] = std::vector<RomanRewriteInfo>();
@@ -451,23 +451,23 @@ namespace RomanToKatakana {
     }
 
     // ローマ字定義ファイルを読み込む
-    void ReadRomanDefFile(const wstring& defFile) {
-        LOG_INFOH(_T("open roman def file: %s"), defFile.c_str());
+    void ReadRomanDefFile(StringRef defFile) {
+        LOG_INFOH(_T("open roman def file: {}"), defFile);
         auto path = utils::joinPath(SETTINGS->rootDir, defFile);
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             loadRomanDefLines(reader.getAllLines());
-            LOG_INFOH(_T("close roman def: %s"), path.c_str());
+            LOG_INFOH(_T("close roman def: {}"), path);
         } else {
             //// ファイルがなかったらデフォルトを使う
-            //LOG_WARN(_T("Can't read roman def file: %s"), path.c_str());
+            //LOG_WARN(_T("Can't read roman def file: {}"), path);
             //LOG_WARN(_T("Use default roman defs"));
             //loadRomanDefLines(defaultRomanDef);
             // ファイルがなかったら定義テーブルをクリアする
-            //LOG_WARN(_T("Can't read roman def file: %s"), path.c_str());
+            //LOG_WARN(_T("Can't read roman def file: {}"), path);
             //LOG_WARN(_T("Use default roman defs"));
             //loadRomanDefLines(defaultRomanDef);
-            LOG_WARN(_T("Can't read roman def file: %s"), path.c_str());
+            LOG_WARN(_T("Can't read roman def file: {}"), path);
             LOG_WARN(_T("Clear roman defs"));
             romanKatakanaTbl.clear();
         }
@@ -476,25 +476,25 @@ namespace RomanToKatakana {
     // ローマ字をカタカタナに変換する
     // 文字クラス: %=子音, @=母音, $=単語末, ^=文字クラスに含まれないもの
     MString convertRomanToKatakana(const MString& str) {
-        LOG_DEBUGH(_T("ENTER: str=%s"), MAKE_WPTR(str));
+        LOG_DEBUGH(_T("ENTER: str={}"), to_wstr(str));
         MString result;
         if (!str.empty()) {
             if (romanKatakanaTbl.empty()) {
                 result = str;
             } else {
                 // ws: strをwstringに変換して前後に $ を付ける
-                wstring ws = _T("$");
+                String ws = _T("$");
                 ws.append(utils::toUpperFromMS(str));
                 ws.append(_T("$"));
                 size_t pos = 1;     // 先頭の $ は読み飛ばす
-                LOG_DEBUGH(_T("CHECK START: ws=%s, pos=%d"), ws.c_str(), pos);
+                LOG_DEBUGH(_T("CHECK START: ws={}, pos={}"), ws, pos);
                 while (pos < ws.size()) {
                     bool found = false;
                     for (size_t n = 4; !found && n >= 1; --n) {
-                        LOG_DEBUGH(_T("CHECK: ws.size=%d, pos=%d, n=%d"), ws.size(), pos, n);
+                        LOG_DEBUGH(_T("CHECK: ws.size={}, pos={}, n={}"), ws.size(), pos, n);
                         if (n <= ws.size() - pos) {
-                            wstring key = ws.substr(pos, n);
-                            LOG_DEBUGH(_T("CHECK: key=%s"), key.c_str());
+                            String key = ws.substr(pos, n);
+                            LOG_DEBUGH(_T("CHECK: key={}"), key);
                             auto iter = romanKatakanaTbl.find(key);
                             if (iter != romanKatakanaTbl.end()) {
                                 for (const auto& info : iter->second) {
@@ -511,7 +511,7 @@ namespace RomanToKatakana {
                     if (!found) {
                         // ローマ字に解釈できない文字があったら、先頭からその文字までを変換せずにそのまま使用する
                         // 例: "AA:Roma" → 「AA:ローマ」になる
-                        LOG_DEBUGH(_T("NOT MATCH: pos=%d, char=%c"), pos, ws[pos]);
+                        LOG_DEBUGH(_T("NOT MATCH: pos={}, char={}"), pos, ws[pos]);
                         if (pos > 0 && pos < ws.size() - 1) {
                             result = str.substr(0, pos);
                         }
@@ -520,7 +520,7 @@ namespace RomanToKatakana {
                 }
             }
         }
-        LOG_DEBUGH(_T("LEAVE: result=%s"), MAKE_WPTR(result));
+        LOG_DEBUGH(_T("LEAVE: result={}"), to_wstr(result));
         return result;
     }
 }

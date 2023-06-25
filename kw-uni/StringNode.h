@@ -8,11 +8,11 @@
 // StringNode - 文字列を格納するノード
 class StringNode : public Node {
  public:
-     StringNode(const wstring& s, /*bool converted,*/ bool bRewritable) : /*bConverted(converted),*/ rewritableLen(0) {
+     StringNode(StringRef s, /*bool converted,*/ bool bRewritable) : /*bConverted(converted),*/ rewritableLen(0) {
          if (s.empty()) {   // 文字列がない場合
              str.clear();
          } else if (bRewritable) {           // 文字列がある場合 - 文字列を保存する
-             wstring ws;
+             String ws;
              ANALYZE_REWRITE_STR(s, ws, rewritableLen);
              str = to_mstr(ws);
              //str = to_mstr(utils::replace(s, _T("/"), _T("")));
@@ -23,7 +23,7 @@ class StringNode : public Node {
          }
      }
 
-     StringNode(wchar_t ch) {
+     StringNode(wchar_t ch) : rewritableLen(0){
          str.clear();
          if (ch != 0) {
              str.push_back(ch);

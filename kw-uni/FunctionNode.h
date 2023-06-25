@@ -5,5 +5,5 @@
 
 class FunctionNode : public Node {
 public:
-    NodeType getNodeType() const { return NodeType::Function; }
+    NodeType getNodeType() const { return NodeType::FunctionT; }
 };

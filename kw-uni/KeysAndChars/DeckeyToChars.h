@@ -17,9 +17,9 @@ class DeckeyToChars {
 public:
     static std::unique_ptr<DeckeyToChars> Singleton;
 
-    static int CreateSingleton(const tstring& filepath);
+    static int CreateSingleton(StringRef filepath);
 
-    void ReadDefFile(const std::vector<wstring>&);
+    void ReadDefFile(const std::vector<String>&);
 
     wchar_t GetCharFromDeckey(int deckeyId, wchar_t defChar = '?') {
         if (deckeyId >= 0) {

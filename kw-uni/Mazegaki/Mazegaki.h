@@ -129,7 +129,7 @@ public:
 
 // 交ぜ書き変換結果を元に戻す
 #define HANDLE_ESC_FOR_MAZEGAKI() \
-    LOG_DEBUGH(_T("HANDLE_ESC_FOR_MAZEGAKI: %s"), NAME_PTR); \
+    LOG_DEBUGH(_T("HANDLE_ESC_FOR_MAZEGAKI: {}"), Name); \
     if (MAZEGAKI_INFO && MAZEGAKI_INFO->RevertPrevXfer()) return;
 
 // -------------------------------------------------------------------

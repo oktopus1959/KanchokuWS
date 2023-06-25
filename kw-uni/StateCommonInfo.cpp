@@ -13,6 +13,27 @@ DEFINE_CLASS_LOGGER(StateCommonInfo);
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
 
+String StateCommonInfo::GetVkbLayoutStr(VkbLayout lo) {
+    switch (lo) {
+    case VkbLayout::None:
+        return L"None";
+    case VkbLayout::TwoSides:
+        return L"TwoSides";
+    case VkbLayout::Vertical:
+        return L"Vertical";
+    case VkbLayout::BushuCompHelp:
+        return L"BushuCompHelp";
+    case VkbLayout::Horizontal:
+        return L"Horizontal";
+    case VkbLayout::Normal:
+        return L"Normal";
+    case VkbLayout::StrokeHelp:
+        return L"StrokeHelp";
+    default:
+        return L"None";
+    }
+}
+
 std::unique_ptr<StateCommonInfo> StateCommonInfo::Singleton;
 
 void StateCommonInfo::CreateSingleton() {
@@ -31,7 +52,7 @@ void StateCommonInfo::setCenterString(mchar_t center) {
 // 仮想鍵盤と受渡しするための文字をセットする
 // lo : レイアウト, fcs:左右鍵盤にセットする文字列
 void StateCommonInfo::setVirtualKeyboardStrings(VkbLayout lo, const mchar_t* fcs) {
-    LOG_DEBUG(_T("layout=%d"), lo);
+    LOG_DEBUG(_T("layout={}"), GetVkbLayoutStr(lo));
     SetVkbLayout(lo);
     for (int i = 0; i < NORMAL_DECKEY_NUM; ++i) faces[i] = fcs ? fcs[i] : 0;
     for (auto& s : longVkeyCandidates) s.clear();
@@ -40,7 +61,7 @@ void StateCommonInfo::setVirtualKeyboardStrings(VkbLayout lo, const mchar_t* fcs
 // 仮想鍵盤と受渡しするための文字をセットする
 // lo : レイアウト, longKeys: 縦列または横列鍵盤にセットする文字列
 void StateCommonInfo::setVirtualKeyboardStrings(VkbLayout lo, const std::vector<MString>& verticals, size_t pos) {
-    LOG_DEBUG(_T("layout=%d"), lo);
+    LOG_DEBUG(_T("layout={}"), GetVkbLayoutStr(lo));
     SetVkbLayout(lo);
     for (int i = 0; i < NORMAL_DECKEY_NUM; ++i) faces[i] = 0;
     for (size_t n = 0; n < longVkeyCandidates.size(); ++n) {
@@ -57,7 +78,7 @@ void StateCommonInfo::setVirtualKeyboardStrings(VkbLayout lo, const std::vector<
 // 既に実行されていれば、それを削除して false を返す
 // 実行されていなければ、map に追加する (true を返す)
 // pState == null なら削除のみ行う
-bool StateCommonInfo::AddOrEraseRunningState(const wstring& stateName, State* pState) {
+bool StateCommonInfo::AddOrEraseRunningState(StringRef stateName, State* pState) {
     auto iter = runningStates.find(stateName);
     if (iter != runningStates.end()) {
         if (iter->second) iter->second->MarkUnnecessaryFromThis();
@@ -69,7 +90,7 @@ bool StateCommonInfo::AddOrEraseRunningState(const wstring& stateName, State* pS
     }
 }
 
-bool StateCommonInfo::FindRunningState(const wstring& stateName) {
+bool StateCommonInfo::FindRunningState(StringRef stateName) {
     return runningStates.find(stateName) != runningStates.end();
 }
 

@@ -242,7 +242,6 @@ namespace {
 
         ~HankakuKatakanaOneShotState() { };
 
-#define NAME_PTR (Name.c_str())
 #define MY_NODE ((HankakuKatakanaOneShotNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する

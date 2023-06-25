@@ -36,7 +36,6 @@ namespace {
 
         ~MyCharState() { };
 
-#define NAME_PTR (Name.c_str())
 #define MY_NODE ((MyCharNode*)pNode)
 
         // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
@@ -62,7 +61,6 @@ namespace {
 
         ~PrevCharState() { };
 
-#define NAME_PTR (Name.c_str())
 #define MY_NODE ((MyCharNode*)pNode)
 
         // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)

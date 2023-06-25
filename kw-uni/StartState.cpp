@@ -12,12 +12,10 @@ public:
         Initialize(logger.ClassNameT(), pN);
     }
 
-#define NAME_PTR    Name.c_str()
-
     //void handleBS() { LOG_DEBUG(_T("BackSpace")); setCharDeleteInfo(1); /*STATE_COMMON->SetSpecialDeckeyOnStartStateFlag();*/ }
 
     void handleEnter() {
-        LOG_DEBUG(_T("Enter: %s"), NAME_PTR);
+        LOG_DEBUG(_T("Enter: {}"), Name);
         HISTORY_STAY_STATE->AddNewHistEntryOnEnter();
         State::handleEnter();
     }

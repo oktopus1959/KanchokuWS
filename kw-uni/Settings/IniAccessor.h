@@ -5,22 +5,22 @@
 
 class IniAccessor {
 private:
-    tstring IniFilePath;
+    String IniFilePath;
 
-    tstring Section;
+    String Section;
 
 public:
     inline IniAccessor() {}
 
-    inline IniAccessor(const tstring& path, const tstring& section)
+    inline IniAccessor(StringRef path, StringRef section)
         : IniFilePath(path), Section(section)
     {
     }
 
-    const tstring& GetIniFilePath() const { return IniFilePath; }
+    StringRef GetIniFilePath() const { return IniFilePath; }
 
-    inline std::vector<tstring> getSectionNames(int& err) const {
-        std::vector<tstring> result;
+    inline std::vector<String> getSectionNames(int& err) const {
+        std::vector<String> result;
         err = 0;
         TCHAR buf[1024];
         if (GetPrivateProfileSectionNames(buf, _countof(buf), IniFilePath.c_str()) >= sizeof(buf) - 2) {
@@ -33,26 +33,26 @@ public:
         return result;
     }
 
-    inline tstring getAttributeStringBySection(const tstring& section, const tstring& attr, const tstring& defVal = _T("")) const {
+    inline String getAttributeStringBySection(StringRef section, StringRef attr, StringRef defVal = _T("")) const {
         TCHAR value[1024];
         GetPrivateProfileString(section.c_str(), attr.c_str(), defVal.c_str(), value, _countof(value), IniFilePath.c_str());
         return value;
     }
 
-    inline tstring getAttributeString(const tstring& attr, const tstring& defVal = _T("")) const {
+    inline String getAttributeString(StringRef attr, StringRef defVal = _T("")) const {
         return getAttributeStringBySection(Section, attr, defVal);
     }
 
-    inline int getAttributeInt(const tstring& attr, int defVal, int base = 10) const {
-        return std::stoi(getAttributeString(attr, utils::to_tstring(defVal)), 0, base);
+    inline int getAttributeInt(StringRef attr, int defVal, int base = 10) const {
+        return std::stoi(getAttributeString(attr, utils::to_wstring(defVal)), 0, base);
     }
 
-    inline int getAttributeHex(const tstring& attr, const tstring& defVal = _T("0")) const {
+    inline int getAttributeHex(StringRef attr, StringRef defVal = _T("0")) const {
         return std::stoi(getAttributeString(attr, defVal), 0, 16);
     }
 
-    inline void writeAttributeInt(const tstring& attr, int val) const {
-        WritePrivateProfileString(Section.c_str(), attr.c_str(), utils::to_tstring(val).c_str(), IniFilePath.c_str());
+    inline void writeAttributeInt(StringRef attr, int val) const {
+        WritePrivateProfileString(Section.c_str(), attr.c_str(), utils::to_wstring(val).c_str(), IniFilePath.c_str());
     }
 
 };

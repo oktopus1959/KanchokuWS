@@ -48,7 +48,6 @@ namespace {
             LOG_INFO(_T("CALLED: DESTRUCTOR"));
         };
 
-#define NAME_PTR (Name.c_str())
 #define MY_NODE ((KatakanaNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
@@ -72,7 +71,7 @@ namespace {
         // 履歴検索を初期化する状態か
         bool IsHistoryReset() {
             bool result = (pNext && pNext->IsHistoryReset());
-            _LOG_DEBUGH(_T("CALLED: %s: result=%s"), NAME_PTR, BOOL_TO_WPTR(result));
+            _LOG_DEBUGH(_T("CALLED: {}: result={}"), Name, result);
             return result;
         }
 
@@ -89,7 +88,7 @@ namespace {
     public:
         // 文字列を変換
         MString TranslateString(const MString& outStr) override {
-            _LOG_DEBUGH(_T("ENTER: %s: outStr=%s"), NAME_PTR, MAKE_WPTR(outStr));
+            _LOG_DEBUGH(_T("ENTER: {}: outStr={}"), Name, to_wstr(outStr));
             MString result;
             if (pNext) {
                 result = translate(pNext->TranslateString(outStr));
@@ -97,32 +96,32 @@ namespace {
                 result = translate(outStr);
                 setKatakanaModeMarker();
             }
-            _LOG_DEBUGH(_T("LEAVE: %s, translated=%s"), NAME_PTR, MAKE_WPTR(result));
+            _LOG_DEBUGH(_T("LEAVE: {}, translated={}"), Name, to_wstr(result));
             return result;
         }
 
         // FullEscape の処理 -- HISTORYを呼ぶ
         void handleFullEscape() override {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
             //cancelMe();
             HISTORY_STAY_STATE->handleFullEscapeStayState();
         }
 
         // Esc の処理 -- 処理のキャンセル
         void handleEsc() override {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
             cancelMe();
         }
 
         // KatakanaConversionの処理 - 処理のキャンセル
         void handleKatakanaConversion() override {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
             cancelMe();
         }
 
         // CommitState の処理 -- 処理のコミット
         void handleCommitState() override {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
             cancelMe();
         }
 

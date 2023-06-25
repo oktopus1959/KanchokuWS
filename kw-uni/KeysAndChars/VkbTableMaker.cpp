@@ -40,13 +40,13 @@ namespace VkbTableMaker {
     }
 
     //----------------------------------------------------------------------------
-    wstring hiraganaArray1 = _T("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわ ん を");
+    String hiraganaArray1 = _T("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわ ん を");
 
-    wstring hiraganaArray2 = _T("ぁぃぅぇぉがぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょゕ  ゖ ゎゐゔゑ ");
+    String hiraganaArray2 = _T("ぁぃぅぇぉがぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょゕ  ゖ ゎゐゔゑ ");
 
-    wstring katakanaArray1 = _T("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤ ユ ヨラリルレロワ ン ヲ");
+    String katakanaArray1 = _T("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤ ユ ヨラリルレロワ ン ヲ");
 
-    wstring katakanaArray2 = _T("ァィゥェォガギグゲゴザジズゼゾダヂヅデド     バビブベボパピプペポャ ュ ョヵ  ヶ ヮヰヴヱ ");
+    String katakanaArray2 = _T("ァィゥェォガギグゲゴザジズゼゾダヂヅデド     バビブベボパピプペポャ ュ ョヵ  ヶ ヮヰヴヱ ");
 
     // ひらがなに到る第1打鍵集合
     std::set<int> hiraganaFirstIndexes;
@@ -79,7 +79,7 @@ namespace VkbTableMaker {
     }
 
     // 指定の文字配列をストロークキー配列に変換
-    void MakeStrokeKeysTable(wchar_t* table, const wchar_t* targetChars) {
+    void MakeStrokeKeysTable(wchar_t* table, StringRef targetChars) {
         LOG_INFO(_T("CALLED"));
         if (ROOT_STROKE_NODE) {
             std::map<wchar_t, size_t> indexMap;
@@ -94,7 +94,7 @@ namespace VkbTableMaker {
         }
     }
 
-    void setIndexMap(std::map<wchar_t, size_t>& map, const wstring& kanaArray1, const wstring& kanaArray2) {
+    void setIndexMap(std::map<wchar_t, size_t>& map, StringRef kanaArray1, StringRef kanaArray2) {
         for (size_t i = 0; i < VKB_TABLE_SIZE && i < kanaArray1.size(); ++i) {
             map[kanaArray1[i]] = i;
         }
@@ -103,7 +103,7 @@ namespace VkbTableMaker {
         }
     }
 
-    void makeKanaTable(wchar_t* table, const wstring& kanaArray1, const wstring& kanaArray2) {
+    void makeKanaTable(wchar_t* table, StringRef kanaArray1, StringRef kanaArray2) {
         if (ROOT_STROKE_NODE) {
             std::map<wchar_t, size_t> indexMap;
             setIndexMap(indexMap, kanaArray1, kanaArray2);
@@ -141,7 +141,7 @@ namespace VkbTableMaker {
     }
 
     //----------------------------------------------------------------------------
-    void reorderByFirstStrokePosition(wchar_t* table, StrokeTableNode* pNode, const wstring& orderedChars, const std::set<wchar_t>& charSet, size_t firstLevelIdx, size_t depth) {
+    void reorderByFirstStrokePosition(wchar_t* table, StrokeTableNode* pNode, StringRef orderedChars, const std::set<wchar_t>& charSet, size_t firstLevelIdx, size_t depth) {
         for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
             if (depth == 0) firstLevelIdx = i;
             Node* blk = pNode->getNth(i);
@@ -168,7 +168,7 @@ namespace VkbTableMaker {
                             buf[1] = table[firstLevelIdx * 2];
                             buf[2] = 0;
                             size_t pos = orderedChars.find_first_of(buf);
-                            if (pos != wstring::npos) table[firstLevelIdx * 2] = orderedChars[pos];
+                            if (pos != String::npos) table[firstLevelIdx * 2] = orderedChars[pos];
                         } else {
                             table[firstLevelIdx * 2] = ch;
                         }
@@ -180,11 +180,10 @@ namespace VkbTableMaker {
 
     // 指定の文字配列を第1ストロークの位置に従って並べかえる
     // table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
-    void ReorderByFirstStrokePosition(wchar_t* table, const wchar_t* targetChars, int tableId) {
-        LOG_INFO(_T("CALLED: targetChars=%s"), targetChars);
+    void ReorderByFirstStrokePosition(wchar_t* table, StringRef targetChars, int tableId) {
+        LOG_INFO(_T("CALLED: targetChars={}"), targetChars);
         if (ROOT_STROKE_NODE) {
-            wstring orderedChars = targetChars;
-            std::set<wchar_t> charSet(orderedChars.begin(), orderedChars.end());
+            std::set<wchar_t> charSet(targetChars.begin(), targetChars.end());
             for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
                 table[i] = 0;
             }
@@ -193,14 +192,14 @@ namespace VkbTableMaker {
                 : tableId == 2 ? StrokeTableNode::RootStrokeNode2.get()
                 : tableId == 3 ? StrokeTableNode::RootStrokeNode3.get()
                 : ROOT_STROKE_NODE;
-            if (node) reorderByFirstStrokePosition(table, node, orderedChars, charSet, STROKE_SPACE_DECKEY, 0);
+            if (node) reorderByFirstStrokePosition(table, node, targetChars, charSet, STROKE_SPACE_DECKEY, 0);
         }
     }
 
     // 指定の文字配列をストロークの位置に従って並べかえる
     // node: ストロークテーブルノード, table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
-    void ReorderByStrokePosition(StrokeTableNode* node, wchar_t* table, const wstring& targetChars, int tableId) {
-        LOG_INFO(_T("CALLED: targetChars=%s"), targetChars.c_str());
+    void ReorderByStrokePosition(StrokeTableNode* node, wchar_t* table, StringRef targetChars, int tableId) {
+        LOG_INFO(_T("CALLED: targetChars={}"), targetChars);
         std::set<wchar_t> charSet(targetChars.begin(), targetChars.end());
         for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
             table[i] = 0;
@@ -300,19 +299,19 @@ namespace VkbTableMaker {
 
     // 主テーブルに対して指定されたシフト面の単打ストローク表を作成する
     void MakeShiftPlaneKeyCharsStrokePositionTable1(wchar_t* faces, size_t shiftPlane) {
-        LOG_INFO(_T("CALLED: shiftPlane=%d"), shiftPlane);
+        LOG_INFO(_T("CALLED: shiftPlane={}"), shiftPlane);
         makeKeyCharsStrokePositionTable1(faces, shiftPlane);
     }
 
     // 副テーブルに対して指定されたシフト面の単打ストローク表を作成する
     void MakeShiftPlaneKeyCharsStrokePositionTable2(wchar_t* faces, size_t shiftPlane) {
-        LOG_INFO(_T("CALLED: shiftPlane=%d"), shiftPlane);
+        LOG_INFO(_T("CALLED: shiftPlane={}"), shiftPlane);
         makeKeyCharsStrokePositionTable2(faces, shiftPlane);
     }
 
     // 第3テーブルに対して指定されたシフト面の単打ストローク表を作成する
     void MakeShiftPlaneKeyCharsStrokePositionTable3(wchar_t* faces, size_t shiftPlane) {
-        LOG_INFO(_T("CALLED: shiftPlane=%d"), shiftPlane);
+        LOG_INFO(_T("CALLED: shiftPlane={}"), shiftPlane);
         makeKeyCharsStrokePositionTable3(faces, shiftPlane);
     }
 
@@ -360,16 +359,16 @@ namespace VkbTableMaker {
     }
 
     //----------------------------------------------------------------------------
-    std::vector<wstring> readBushuFile() {
+    std::vector<String> readBushuFile() {
         utils::IfstreamReader reader(SETTINGS->bushuFile);
         if (reader.success()) {
             return reader.getAllLines();
         }
-        return std::vector<wstring>();
+        return std::vector<String>();
     }
 
-    wstring convDeckeysToWstring(std::vector<int> deckeys) {
-        wstring result;
+    String convDeckeysToWstring(std::vector<int> deckeys) {
+        String result;
         for (auto deckey : deckeys) {
             int dk = deckey % PLANE_DECKEY_NUM;
             if (dk >= NORMAL_DECKEY_NUM) {
@@ -383,8 +382,8 @@ namespace VkbTableMaker {
         return result;
     }
 
-    wstring makeRewriteDefLine(const wstring& prev, const wstring& path, const RewriteInfo& info) {
-        wstring line = prev;
+    String makeRewriteDefLine(StringRef prev, StringRef path, const RewriteInfo& info) {
+        String line = prev;
         line.append(path);
         line.push_back('\t');
         line.append(to_wstr(info.getOutStr()));
@@ -398,23 +397,23 @@ namespace VkbTableMaker {
 
 
     // 指定文字に至るストローク列をフェイス文字列として返す
-    wstring ConvCharToStrokeString(mchar_t ch) {
+    String ConvCharToStrokeString(mchar_t ch) {
         return convDeckeysToWstring(StrokeTableNode::RootStrokeNode1->getStrokeList(to_mstr(ch), false));
     }
 
     // ローマ字テーブルを作成してファイルに書き出す
     // trigger: 部首合成用, prefix2: 裏面定義用
-    void SaveRomanStrokeTable(const wchar_t* trigger, const wchar_t* prefix2) {
+    void SaveRomanStrokeTable(StringRef trigger, StringRef prefix2) {
         if (!StrokeTableNode::RootStrokeNode1) return;
 
-        _LOG_DEBUGH(_T("CALLED: trigger=%s, prefix2=%s"), trigger, prefix2);
+        _LOG_DEBUGH(_T("CALLED: trigger={}, prefix2={}"), trigger, prefix2);
 
         utils::OfstreamWriter writer(utils::joinPath(SETTINGS->rootDir, _T("roman-stroke-table.txt")));
         if (writer.success()) {
             // テーブルファイルから
             //bool bPostRewrite = StrokeTableNode::RootStrokeNode1->hasPostRewriteNode();
 
-            auto pfx2 = prefix2 && wcslen(prefix2) > 0 ? prefix2 : !SETTINGS->romanSecPlanePrefix.empty() ? SETTINGS->romanSecPlanePrefix.c_str() : _T(":");
+            auto pfx2 = !prefix2.empty() ? prefix2 : !SETTINGS->romanSecPlanePrefix.empty() ? SETTINGS->romanSecPlanePrefix : _T(":");
             MString cmdMarker = to_mstr(_T("!{"));
 
             // 文字から、その文字の打鍵列へのマップに追加 (通常面)
@@ -423,7 +422,7 @@ namespace VkbTableMaker {
                 Node* np = traverser.getNext();
                 if (!np) break;
 
-                wstring origPath = convDeckeysToWstring(traverser.getPath());
+                String origPath = convDeckeysToWstring(traverser.getPath());
                 if (origPath.empty()) continue;
 
                 Node* sp = dynamic_cast<StringNode*>(np);
@@ -440,23 +439,23 @@ namespace VkbTableMaker {
                     }
 
                     // 最初に出現する空白はromanSecPlanePrefixで置換
-                    wstring strPath = utils::replace(origPath, _T(" "), pfx2);
-                    if (strPath.find(' ') == wstring::npos) {
+                    String strPath = utils::replace(origPath, _T(" "), pfx2);
+                    if (strPath.find(' ') == String::npos) {
                         // 2つ以上の空白文字を含まないものだけを対象とする
-                        if (origPath.find(' ') == wstring::npos || origPath.front() == ' ') {
+                        if (origPath.find(' ') == String::npos || origPath.front() == ' ') {
                             // 空白を含まないか、または先頭のみが空白文字
                             writer.writeLine(utils::utf8_encode(
-                                utils::format(_T("%s\t%s%s"), strPath.c_str(), tab, MAKE_WPTR(ms))));
+                                std::format(_T("{}\t{}{}"), strPath, tab, to_wstr(ms))));
                         } else {
                             writer.writeLine(utils::utf8_encode(
-                                utils::format(_T("%s%s\t%s%s"),
+                                std::format(_T("{}{}\t{}{}"),
                                     pfx2,
-                                    strPath.c_str(),
+                                    strPath,
                                     tab,
-                                    MAKE_WPTR(ms))));
+                                    to_wstr(ms))));
                         }
                     }
-                } else if (origPath.find(' ') == wstring::npos) {
+                } else if (origPath.find(' ') == String::npos) {
                     // 後置書き換え(空白を含まないものだけ)
                     PostRewriteOneShotNode* prnp = dynamic_cast<PostRewriteOneShotNode*>(np);
                     if (prnp) {
@@ -468,28 +467,28 @@ namespace VkbTableMaker {
                 }
             }
             // 部首合成から
-            if (trigger && wcslen(trigger) > 1) {
+            if (trigger.size() > 1) {
                 // 前置
-                _LOG_DEBUGH(_T("BUSHU_COMP: trigger=%s"), trigger);
+                _LOG_DEBUGH(_T("BUSHU_COMP: trigger={}"), trigger);
                 for (const auto& line : readBushuFile()) {
                     if (line.size() == 3) {
                         auto list1 = utils::replace(ConvCharToStrokeString(line[1]), _T(" "), pfx2);
                         auto list2 = utils::replace(ConvCharToStrokeString(line[2]), _T(" "), pfx2);
                         if (!list1.empty() && !list2.empty()) {
                             writer.writeLine(utils::utf8_encode(
-                                utils::format(_T("%s%s%s\t%s"),
+                                std::format(_T("{}{}{}\t{}"),
                                     trigger,
-                                    list1.c_str(),
-                                    list2.c_str(),
-                                    line.substr(0, 1).c_str())));
+                                    list1,
+                                    list2,
+                                    line.substr(0, 1))));
                         }
                     }
                 }
             }
             // 部首合成から
-            if (trigger && wcslen(trigger) == 1) {
+            if (trigger.size() == 1) {
                 // 後置
-                _LOG_DEBUGH(_T("BUSHU_COMP: postfix=%s"), trigger);
+                _LOG_DEBUGH(_T("BUSHU_COMP: postfix={}"), trigger);
                 if (BUSHU_DIC) BUSHU_DIC->ExportPostfixBushuCompDefs(writer, trigger);
             }
         }
@@ -518,13 +517,13 @@ namespace VkbTableMaker {
                 if (path.empty() || path[0] >= NORMAL_DECKEY_NUM) continue;
 
                 writer.writeLine(utils::utf8_encode(
-                    utils::format(_T("%s=%s"), MAKE_WPTR(ms), convDeckeysToWstring(path).c_str())));
+                    std::format(_T("{}={}"), to_wstr(ms), convDeckeysToWstring(path))));
             }
         }
     }
 
     // デバッグ用テーブルを作成してファイルに書き出す
-    void saveDebugTable(StrokeTableNode* tbl, const wstring& outfile) {
+    void saveDebugTable(StrokeTableNode* tbl, StringRef outfile) {
         if (!tbl) return;
 
         utils::OfstreamWriter writer(utils::joinPath(SETTINGS->rootDir, outfile));
@@ -538,7 +537,7 @@ namespace VkbTableMaker {
                 Node* np = traverser.getNext();
                 if (!np) break;
 
-                wstring origPath;
+                String origPath;
                 for (int x : traverser.getPath()) {
                     if (!origPath.empty()) origPath.push_back(':');
                     origPath.append(std::to_wstring(x));
@@ -555,7 +554,7 @@ namespace VkbTableMaker {
                     }
 
                     writer.writeLine(utils::utf8_encode(
-                        utils::format(_T("%s\t\"%s\""), origPath.c_str(), MAKE_WPTR(ms))));
+                        std::format(_T("{}\t\"{}\""), origPath, to_wstr(ms))));
                 } else {
                     // 後置書き換え
                     PostRewriteOneShotNode* prnp = dynamic_cast<PostRewriteOneShotNode*>(np);
@@ -569,7 +568,7 @@ namespace VkbTableMaker {
                         FunctionNode* fp = dynamic_cast<FunctionNode*>(np);
                         if (fp) {
                             writer.writeLine(utils::utf8_encode(
-                                utils::format(_T("%s\t@%s"), origPath.c_str(), MAKE_WPTR(fp->getString()))));
+                                std::format(_T("{}\t@{}"), origPath, to_wstr(fp->getString()))));
                         }
                     }
                 }

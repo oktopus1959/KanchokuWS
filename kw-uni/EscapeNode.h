@@ -16,7 +16,7 @@ public:
 
     MString getString() const { return to_mstr(_T("＼")); }
 
-    NodeType getNodeType() const { return NodeType::Function; }
+    NodeType getNodeType() const { return NodeType::FunctionT; }
 };
 
 #include "FunctionNodeBuilder.h"

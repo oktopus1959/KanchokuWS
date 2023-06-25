@@ -25,8 +25,6 @@
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
 
-#define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
-
 namespace {
     // -------------------------------------------------------------------
     // 後置部首合成機能状態クラス
@@ -55,7 +53,7 @@ namespace {
                 }
             } else {
                 MString comp = BUSHU_COMP_NODE->ReduceByBushu(m1, m2);
-                LOG_DEBUG(_T("COMP: %s"), MAKE_WPTR(comp));
+                LOG_DEBUG(_T("COMP: {}"), to_wstr(comp));
                 STATE_COMMON->SetOutString(comp);
                 if (!comp.empty()) {
                     setCharDeleteInfo(2);
@@ -102,8 +100,8 @@ MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
         bool prevAuto = IsPrevAuto;
         IsPrevAuto = false;
         mchar_t outChar = OUTPUT_STACK->isLastOutputStackCharBlocker() ? 0 : OUTPUT_STACK->LastOutStackChar();
-        _LOG_DEBUGH(_T("CALLED: m1=%c, m2=%c, prev=%c, prevTotalCount=%d, prevCnt=%d, outChar=%c, PrevComp=%c, PrevAuto=%s"), \
-            VALIDATE_CHAR(m1), VALIDATE_CHAR(m2), VALIDATE_CHAR(prev), totalCnt, prevCnt, VALIDATE_CHAR(outChar), VALIDATE_CHAR(PrevComp), BOOL_TO_WPTR(prevAuto));
+        _LOG_DEBUGH(_T("CALLED: m1={}, m2={}, prev={}, prevTotalCount={}, prevCnt={}, outChar={}, PrevComp={}, PrevAuto={}"), \
+            VALIDATE_CHAR(m1), VALIDATE_CHAR(m2), VALIDATE_CHAR(prev), totalCnt, prevCnt, VALIDATE_CHAR(outChar), VALIDATE_CHAR(PrevComp), prevAuto);
         if (!prevAuto || totalCnt > prevCnt + 2 || outChar == 0 || outChar != PrevComp) {
             mchar_t m = BUSHU_DIC->FindComposite(m1, m2, prev);
             PrevBushu1 = m1;
@@ -123,7 +121,7 @@ bool BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
         size_t prevTotalCnt = PrevTotalCount;
         PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
         size_t firstStrokeCnt = STATE_COMMON->GetFirstStrokeKeyCount();
-        _LOG_DEBUGH(_T("CALLED: mstr=%s, prevTotalCount=%d, firstStrokeKeyCount=%d"), MAKE_WPTR(mstr), prevTotalCnt, firstStrokeCnt);
+        _LOG_DEBUGH(_T("CALLED: mstr={}, prevTotalCount={}, firstStrokeKeyCount={}"), to_wstr(mstr), prevTotalCnt, firstStrokeCnt);
         if (prevTotalCnt + 1 == firstStrokeCnt) {
             mchar_t m1 = OUTPUT_STACK->LastOutStackChar(0);
             mchar_t m2 = mstr[0];
@@ -134,7 +132,7 @@ bool BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
             IsPrevAuto = false;
             IsPrevAutoCancel = false;
             //PrevCompSec = utils::getSecondsFromEpochTime();
-            _LOG_DEBUGH(_T("m1=%c, m2=%c, m=%c"), m1, m2, m);
+            _LOG_DEBUGH(_T("m1={}, m2={}, m={}"), (wchar_t)m1, (wchar_t)m2, (wchar_t)m);
             if (m != 0) {
                 MString ms = to_mstr(m);
                 STATE_COMMON->SetOutString(ms);
@@ -171,7 +169,7 @@ Node* BushuCompNodeBuilder::CreateNode() {
     // 部首合成辞書ファイル名
     auto bushuFile = SETTINGS->bushuFile;
     auto auotBushuFile = SETTINGS->autoBushuFile;
-    LOG_INFO(_T("bushuFile=%s, autoBushuFile=%s"), bushuFile.c_str(), auotBushuFile.c_str());
+    LOG_INFO(_T("bushuFile={}, autoBushuFile={}"), bushuFile, auotBushuFile);
 
     //if (bushuFile.empty()) {
     //    ERROR_HANDLER->Warn(_T("「bushu=(ファイル名)」の設定がまちがっているようです"));

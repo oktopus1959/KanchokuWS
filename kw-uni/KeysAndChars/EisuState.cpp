@@ -53,7 +53,6 @@ namespace {
             LOG_INFO(_T("CALLED: DESTRUCTOR"));
         };
 
-#define NAME_PTR (Name.c_str())
 #define MY_NODE ((EisuNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
@@ -62,7 +61,7 @@ namespace {
             auto prevCapitalCnt = MY_NODE->prevCapitalDeckeyCount;  // 前回の状態のときの大文字入力時のDeckeyカウント
             MY_NODE->prevCapitalDeckeyCount = firstTotalCnt;
 
-            LOG_INFO(_T("ENTER: totalDeckeyCount=%d, prevCapitalCount=%d"), firstTotalCnt, prevCapitalCnt);
+            LOG_INFO(_T("ENTER: totalDeckeyCount={}, prevCapitalCount={}"), firstTotalCnt, prevCapitalCnt);
 
             // ブロッカーフラグを先に取得しておく
             bool blockerNeeded = MY_NODE->blockerNeeded;
@@ -71,7 +70,7 @@ namespace {
             if (firstTotalCnt == prevCapitalCnt + 1) {
                 // 英大文字を連続して入力している状態なので、即抜ける
                 // この処理は、次の STATE_COMMON->AddOrEraseRunningState() よりも先にやっておく必要がある
-                LOG_INFO(_T("Continuously input capital chars. prevCapitalDeckeyCount=%d"), MY_NODE->prevCapitalDeckeyCount);
+                LOG_INFO(_T("Continuously input capital chars. prevCapitalDeckeyCount={}"), MY_NODE->prevCapitalDeckeyCount);
                 return false;
             }
 
@@ -96,7 +95,7 @@ namespace {
 
         // 自身の状態をチェックして後処理するのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
         void CheckMyState() override {
-            LOG_DEBUGH(_T("CALLED: %s, Unnecessary=%s"), NAME_PTR, BOOL_TO_WPTR(bUnnecessary));
+            LOG_DEBUGH(_T("CALLED: {}, Unnecessary={}"), Name, BOOL_TO_WPTR(bUnnecessary));
             // 英数モードフラグの設定
             if (!bUnnecessary) STATE_COMMON->SetCurrentModeIsEisu();
         }
@@ -104,7 +103,7 @@ namespace {
         // 履歴検索を初期化する状態か
         bool IsHistoryReset() {
             bool result = (pNext && pNext->IsHistoryReset());
-            _LOG_DEBUGH(_T("CALLED: %s: result=%s"), NAME_PTR, BOOL_TO_WPTR(result));
+            _LOG_DEBUGH(_T("CALLED: {}: result={}"), Name, BOOL_TO_WPTR(result));
             return result;
         }
 
@@ -113,7 +112,7 @@ namespace {
         void handleStrokeKeys(int deckey) override {
             size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
             wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
-            _LOG_DEBUGH(_T("ENTER: %s: deckey=%xH(%d), face=%c"), NAME_PTR, deckey, deckey, myChar);
+            _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), face={}"), Name, deckey, deckey, myChar);
             if (myChar == SETTINGS->eisuHistSearchChar && is_lower_alphabet(OUTPUT_STACK->back())) {
                 // 履歴検索の実行(末尾文字が英小文字でないと発動させない; "CO" の後の場合は、'O' がキーになるが、この場合は発動させない)
                 HISTORY_STAY_STATE->handleNextCandTrigger();
@@ -138,7 +137,7 @@ namespace {
                 } else {
                     capitalCharCnt = 0;
                 }
-                _LOG_DEBUGH(_T("capitalCharCnt=%d"), capitalCharCnt);
+                _LOG_DEBUGH(_T("capitalCharCnt={}"), capitalCharCnt);
             } else {
                 // 通常キーでもシフトキーでもなかった
                 setThroughDeckeyFlag();
@@ -149,14 +148,14 @@ namespace {
 
         // Shift飾修されたキー
         void handleShiftKeys(int deckey) override {
-            _LOG_DEBUGH(_T("ENTER: %s, deckey=%x(%d)"), NAME_PTR, deckey, deckey);
+            _LOG_DEBUGH(_T("ENTER: {}, deckey={:x}({})"), Name, deckey, deckey);
             handleStrokeKeys(deckey);
-            _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
 
         // 先頭文字の小文字化
         void handleEisuDecapitalize() override {
-            _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("ENTER: {}"), Name);
             size_t checkCnt = prevLowerHeadCnt + 1;
             prevLowerHeadCnt = STATE_COMMON->GetTotalDecKeyCount();
             if (checkCnt == prevLowerHeadCnt) {
@@ -172,31 +171,31 @@ namespace {
                 //}
                 HISTORY_STAY_STATE->handleEisuDecapitalize();
             }
-            _LOG_DEBUGH(_T("LEAVE: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
 
         // EisuModeのトグル - 処理のキャンセル
         void handleEisuMode() override {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
             cancelMe();
         }
 
         // handleUndefinedKey ハンドラ - 処理のキャンセル
         void handleUndefinedDeckey(int ) override {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
             cancelMe();
         }
 
         // FullEscape の処理 -- HISTORYを呼ぶ
         void handleFullEscape() override {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
             //cancelMe();
             HISTORY_STAY_STATE->handleFullEscapeStayState();
         }
 
         // Esc の処理 -- 処理のキャンセル
         void handleEsc() override {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
             cancelMe();
         }
 
@@ -204,7 +203,7 @@ namespace {
         void handleSpaceKey() override {
             size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
             size_t exitSpaceNum = SETTINGS->eisuExitSpaceNum;
-            _LOG_DEBUGH(_T("CALLED: %s: totalCnt=%d, firstCnt=%d, prevCnt=%d, exitNum=%d"), NAME_PTR, totalCnt, firstSpaceKeyCnt, prevSpaceKeyCnt, exitSpaceNum);
+            _LOG_DEBUGH(_T("CALLED: {}: totalCnt={}, firstCnt={}, prevCnt={}, exitNum={}"), Name, totalCnt, firstSpaceKeyCnt, prevSpaceKeyCnt, exitSpaceNum);
             if (exitSpaceNum <= 1) {
                 if (exitSpaceNum == 1) {
                     // Spaceの出力
@@ -230,13 +229,13 @@ namespace {
 
         // EisuCancel - 処理のキャンセル
         void handleEisuCancel() override {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
             cancelMe();
         }
 
         // CommitState の処理 -- 処理のコミット
         void handleCommitState() override {
-            _LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
             handleEisuCancel();
         }
 

@@ -54,7 +54,7 @@ public:
 
     // 文字列状態に対して生成時処理を実行する
     bool DoProcOnCreated() {
-        _LOG_DEBUGH(_T("ENTER: StringState: str=%s, rewLen=%d"), MAKE_WPTR(myNode()->getString()), myNode()->getRewritableLen());
+        _LOG_DEBUGH(_T("ENTER: StringState: str={}, rewLen={}"), to_wstr(myNode()->getString()), myNode()->getRewritableLen());
         HISTORY_STAY_STATE->SetTranslatedOutString(xlat(myNode()->getString()), myNode()->getRewritableLen());
         _LOG_DEBUGH(_T("LEAVE: StringState"));
         // チェイン不要

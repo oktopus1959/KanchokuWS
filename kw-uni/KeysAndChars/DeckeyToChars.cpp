@@ -4,6 +4,7 @@
 #include "ErrorHandler.h"
 #include "DeckeyToChars.h"
 #include "Settings.h"
+#include "Logger.h"
 
 namespace {
     wchar_t QwertyCharsJP[NORMAL_DECKEY_NUM] = {
@@ -53,8 +54,8 @@ DEFINE_CLASS_LOGGER(DeckeyToChars);
 
 std::unique_ptr<DeckeyToChars> DeckeyToChars::Singleton;
 
-int DeckeyToChars::CreateSingleton(const tstring& filePath) {
-    LOG_INFOH(_T("ENTER: filePath=<%s>, kbMode=%s"), filePath.c_str(), SETTINGS->isJPmode ? L"JP" : L"US");
+int DeckeyToChars::CreateSingleton(StringRef filePath) {
+    LOG_INFOH(_T("ENTER: filePath=<{}>, kbMode={}"), filePath, SETTINGS->isJPmode ? L"JP" : L"US");
 
     Singleton.reset(new DeckeyToChars());
 
@@ -63,16 +64,16 @@ int DeckeyToChars::CreateSingleton(const tstring& filePath) {
     Singleton->yenPos = QwertyYenPos;
 
     if (!filePath.empty()) {
-        LOG_INFOH(_T("open chars def file: %s"), filePath.c_str());
+        LOG_INFOH(_T("open chars def file: {}"), filePath);
 
         utils::IfstreamReader reader(filePath);
         if (reader.success()) {
             Singleton->ReadDefFile(reader.getAllLines());
-            LOG_INFOH(_T("close chars def file: %s"), filePath.c_str());
+            LOG_INFOH(_T("close chars def file: {}"), filePath);
         } else {
             // エラーメッセージを表示
-            LOG_ERROR(_T("Can't read chars def file: %s"), filePath.c_str());
-            ERROR_HANDLER->Warn(utils::format(_T("漢直キー⇒文字定義ファイル(%s)が開けません"), filePath.c_str()));
+            LOG_ERROR(L"Can't read chars def file: {}", filePath);
+            ERROR_HANDLER->Warn(std::format(_T("漢直キー⇒文字定義ファイル({})が開けません"), filePath));
         }
     }
     LOG_INFOH(_T("LEAVE"));
@@ -81,10 +82,10 @@ int DeckeyToChars::CreateSingleton(const tstring& filePath) {
 
 namespace {
     template<size_t N>
-    void storeChars(std::vector<wstring>::const_iterator iter, std::vector<wstring>::const_iterator end, wchar_t (&buf)[N]) {
+    void storeChars(std::vector<String>::const_iterator iter, std::vector<String>::const_iterator end, wchar_t (&buf)[N]) {
         size_t pos = 0;
         for (; iter != end; ++iter) {
-            const wstring& line = *iter;
+            StringRef line = *iter;
             if (utils::startsWith(line, _T("## END"))) break;
             for (auto ch : line) {
                 if (pos >= N) break;
@@ -94,13 +95,13 @@ namespace {
     }
 }
 
-void DeckeyToChars::ReadDefFile(const std::vector<wstring>& lines) {
+void DeckeyToChars::ReadDefFile(const std::vector<String>& lines) {
     LOG_INFO(_T("CALLED"));
 
     bool shifted = false;
     auto iter = lines.begin();
     for ( ; iter != lines.end(); ++iter) {
-        const wstring& line = *iter;
+        StringRef line = *iter;
 
         if (utils::startsWith(line, _T("## NORMAL"))) {
             storeChars(++iter, lines.end(), normalChars);

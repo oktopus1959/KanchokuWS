@@ -36,7 +36,7 @@ public:
         return utils::safe_substr(rewriteStr, getOutStrLen());
     }
 
-    wstring getDebugStr() const {
+    String getDebugStr() const {
         return to_wstr(getOutStr()) + _T("/") + to_wstr(getNextStr());
     }
 };
@@ -54,7 +54,7 @@ class PostRewriteOneShotNode : public FunctionNode {
     std::vector<StrokeTableNode*> subTables;
 
 public:
-    PostRewriteOneShotNode(const wstring& s, bool bBare);
+    PostRewriteOneShotNode(StringRef s, bool bBare);
 
     ~PostRewriteOneShotNode();
 
@@ -71,7 +71,7 @@ public:
 
     void clearRewriteString() { myRewriteInfo.rewriteStr.clear(); }
 
-    void addRewritePair(const wstring& key, const wstring& value, bool bBare, StrokeTableNode* pNode);
+    void addRewritePair(StringRef key, StringRef value, bool bBare, StrokeTableNode* pNode);
 
     void merge(PostRewriteOneShotNode& rewNode) {
         rewriteMap.insert(rewNode.rewriteMap.begin(), rewNode.rewriteMap.end());
@@ -92,7 +92,7 @@ public:
 
     size_t getSubTableNum() const { return subTables.size(); }
 
-    const wstring getDebugString() const;
+    const String getDebugString() const;
 };
 
 // -------------------------------------------------------------------
@@ -102,10 +102,10 @@ class DakutenOneShotNode : public PostRewriteOneShotNode {
 
     MString markStr;
 
-    wstring postfix;
+    String postfix;
 
 public:
-    DakutenOneShotNode(wstring markStr);
+    DakutenOneShotNode(String markStr);
 
     ~DakutenOneShotNode();
 
@@ -115,7 +115,7 @@ public:
     // 当機能を表す文字を設定
     MString getString() const { return markStr; }
 
-    wstring getPostfix() const { return postfix; }
+    String getPostfix() const { return postfix; }
 };
 
 // -------------------------------------------------------------------

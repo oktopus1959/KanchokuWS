@@ -13,7 +13,7 @@ void OutputStack::CreateSingleton() {
     Singleton.reset(new OutputStack());
 }
 
-wstring OutputStack::OutputStackBackStrForDebug(size_t len) const {
+String OutputStack::OutputStackBackStrForDebug(size_t len) const {
     return std::regex_replace(to_wstr(OUTPUT_STACK->OutputStackBackStr(len)), std::wregex(_T("\n")), _T("|"));
 }
 
@@ -32,7 +32,7 @@ void OutputStack::_resize() {
 // bWithFlag = true なら、FLAG のセットしてある文字の後に "|" を付加する
 // extraBarPos > 0 なら、末尾から extraBarPos位置に "|" を付加する
 MString OutputStack::tail_string(size_t tailLen, size_t tailMaxlen, bool bWithFlag, size_t extraBarPos) const {
-    LOG_DEBUGH(_T("ENTER: tailLen=%d, tailMaxLen=%d, bWithFlag=%d, extraBarPos=%d"), tailLen, tailMaxlen, bWithFlag, extraBarPos);
+    LOG_DEBUGH(_T("ENTER: tailLen={}, tailMaxLen={}, bWithFlag={}, extraBarPos={}"), tailLen, tailMaxlen, bWithFlag, extraBarPos);
     mchar_t buf[OUTPUT_STACK_MAXSIZE + 8];
     size_t stackSize = size();
     if (tailLen > OUTPUT_STACK_MAXSIZE) tailLen = OUTPUT_STACK_MAXSIZE;
@@ -47,8 +47,8 @@ MString OutputStack::tail_string(size_t tailLen, size_t tailMaxlen, bool bWithFl
         if (bWithFlag && ((stack[pos].flag & ~(FLAG_BLOCK_KATA | FLAG_REWRITABLE | FLAG_REWRITABLE_BEGIN)) != 0)) buf[i++] = '|';
         ++pos;
     }
-    LOG_DEBUGH(_T("i=%d"), i);
+    LOG_DEBUGH(_T("i={}"), i);
     buf[i] = 0;
-    LOG_DEBUGH(_T("LEAVE: result=%s"), MAKE_WPTR(buf));
+    LOG_DEBUGH(_T("LEAVE: result={}"), to_wstr(buf));
     return buf;
 }

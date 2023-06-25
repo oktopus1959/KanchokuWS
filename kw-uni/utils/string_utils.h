@@ -1,8 +1,16 @@
 #pragma once
 
+#include <regex>
+#include <stdarg.h>
+
+#include "std_utils.h"
 #include "string_type.h"
+#include "langedge/ctypeutil.hpp"
+
+//#define _WC(p) (_T(p)[0])
 
 namespace {
+
     const wchar_t VERT_BAR = '|';     // |
 
     const wchar_t HASH_MARK = '#';    // #
@@ -31,7 +39,7 @@ namespace {
 
     const MString MSTR_CHOON = to_mstr(_T("ー")[0]);
 
-    const MString MSTR_THREE_DOTS = to_mstr(_T("…")[0]);
+    const MString MSTR_THREE_DOTS = to_mstr(L'…');
 
     const MString MSTR_VERT_BAR = to_mstr('|');
 
@@ -53,11 +61,11 @@ namespace {
 
     inline mchar_t to_lower(mchar_t ch) { return mchar_t(langedge::CtypeUtil::toLower(ch)); }
 
-    inline bool is_ascii_char(mchar_t ch) {
-        return ch >= 0x20 && ch <= 0x7f;
-    }
+    //inline bool is_ascii_char(mchar_t ch) {
+    //    return ch >= 0x20 && ch <= 0x7f;
+    //}
 
-    inline bool is_ascii_char(wchar_t ch) {
+    inline bool is_ascii_char(char32_t ch) {
         return ch >= 0x20 && ch <= 0x7f;
     }
 
@@ -105,7 +113,7 @@ namespace {
         return is_ascii_char(ch1) && is_ascii_char(ch2);
     }
 
-    inline bool is_ascii_pair(const wstring& ws) {
+    inline bool is_ascii_pair(StringRef ws) {
         return ws.size() >= 2 && is_ascii_pair(ws[0], ws[1]);
     }
 
@@ -121,7 +129,7 @@ namespace {
         return true;
     }
 
-    inline bool is_ascii_str(const wstring& s) {
+    inline bool is_ascii_str(StringRef s) {
         if (s.empty()) return false;
         for (auto c : s) {
             if (!is_ascii_char(c)) return false;
@@ -137,7 +145,7 @@ namespace {
         return true;
     }
 
-    inline bool is_roman_str(const wstring& s) {
+    inline bool is_roman_str(StringRef s) {
         if (s.empty()) return false;
         for (auto c : s) {
             if (!is_alphabet(c)) return false;
@@ -162,7 +170,7 @@ namespace {
     }
 
     MojiPair decomp_mchar(mchar_t m) {
-        return MojiPair{ (wchar_t)(m >> 16), (wchar_t)(m & 0xffff) };
+        return MojiPair{ static_cast<wchar_t>(m >> 16), static_cast<wchar_t>(m & 0xffff) };
     }
 
     mchar_t make_mchar(wchar_t first, wchar_t second) {
@@ -180,11 +188,11 @@ namespace {
         }
     }
 
-    mchar_t make_mchar(const wstring& ws) {
+    mchar_t make_mchar(StringRef ws) {
         return ws.empty() ? 0 : ws.size() == 1 || !is_surrogate_pair(ws[0], ws[1]) ? ws[0] : make_mchar(ws[0], ws[1]);
     }
 
-    mchar_t make_mchar(const wstring& ws, size_t* ppos) {
+    mchar_t make_mchar(StringRef ws, size_t* ppos) {
         size_t pos = *ppos;
         *ppos = pos + 1;
         if (pos >= ws.size()) {
@@ -197,11 +205,11 @@ namespace {
         return make_mchar(ws[pos], ws[pos + 1]);
     }
 
-    mchar_t make_mchar_with_ascii(const wstring& ws) {
+    mchar_t make_mchar_with_ascii(StringRef ws) {
         return ws.empty() ? 0 : ws.size() == 1 || !is_surrogate_pair(ws[0], ws[1]) || !is_ascii_pair(ws[0], ws[1]) ? ws[0] : make_mchar(ws[0], ws[1]);
     }
 
-    MString to_mstr(const wstring& ws) {
+    MString to_mstr(StringRef ws) {
         MString result;
         size_t pos = 0;
         while (pos < ws.size()) result.push_back(make_mchar(ws, &pos));
@@ -228,36 +236,36 @@ namespace {
 
     const MString MSTR_VERT_BAR_2 = to_mstr(_T("||"));
 
-    void push_back_wstr(mchar_t m, wstring& ws) {
+    void push_back_wstr(mchar_t m, String& ws) {
         auto mp = decomp_mchar(m);
         if (mp.first != 0) ws.push_back(mp.first);
         if (mp.second != 0) ws.push_back(mp.second);
     }
 
-    wstring to_wstr(mchar_t m) {
-        wstring result;
+    String to_wstr(mchar_t m) {
+        String result;
         push_back_wstr(m, result);
         return result;
     }
 
-    wstring to_wstr(const MString& mstr) {
-        wstring result;
+    String to_wstr(const MString& mstr) {
+        String result;
         for (auto m : mstr) {
             push_back_wstr(m, result);
         }
         return result;
     }
 
-    wstring to_wstr(const std::vector<mchar_t>& mstr) {
-        wstring result;
+    String to_wstr(const std::vector<mchar_t>& mstr) {
+        String result;
         for (auto m : mstr) {
             push_back_wstr(m, result);
         }
         return result;
     }
 
-    wstring to_wstr(const std::vector<mchar_t>& mstr, size_t begin, size_t len) {
-        wstring result;
+    String to_wstr(const std::vector<mchar_t>& mstr, size_t begin, size_t len) {
+        String result;
         size_t end = begin + len;
         if (end > mstr.size()) end = mstr.size();
         for (size_t i = begin; i < end; ++i) {
@@ -267,7 +275,7 @@ namespace {
     }
 
     // cpyLen で指定された長さの文字列を wp 配列に追加する。末尾には 0 が付加される。wp は十分な長さを確保しておくこと。コピーした長さを返す。
-    size_t append_wstr(const wstring& ws, wchar_t* wp, size_t cpyLen) {
+    size_t append_wstr(StringRef ws, wchar_t* wp, size_t cpyLen) {
         const size_t maxlen = 1024;
         size_t p = 0;
         for (; p < maxlen - 1; ++p) {
@@ -298,15 +306,15 @@ namespace {
         return append_wstr(to_wstr(mch), wp, 2);
     }
 
-    wstring make_wstring(wchar_t a, wchar_t b) {
-        wstring result(2, 0);
+    String make_wstring(wchar_t a, wchar_t b) {
+        String result(2, 0);
         result[0] = a;
         result[1] = b;
         return result;
     }
 
-    wstring make_wstring(wchar_t c, wchar_t a, wchar_t b) {
-        wstring result(3, 0);
+    String make_wstring(wchar_t c, wchar_t a, wchar_t b) {
+        String result(3, 0);
         result[0] = c;
         result[1] = a;
         result[2] = b;
@@ -333,15 +341,17 @@ namespace utils
 {
 #define UTILS_BUFSIZ 2048
 
+#ifdef _WINDOWS_
     // hWnd で指定されたウインドウのクラス名を取得する
-    inline tstring getClassNameFromHwnd(HWND hWnd) {
+    inline String getClassNameFromHwnd(HWND hWnd) {
         TCHAR s[UTILS_BUFSIZ];
         GetClassName(hWnd, s, _countof(s));
         return s;
     }
+#endif
 
     template<typename T>
-    inline tstring to_tstring(T val) {
+    inline String to_wstring(T val) {
 #ifdef _UNICODE
         return std::to_wstring(val);
 #else
@@ -349,67 +359,45 @@ namespace utils
 #endif
     }
 
-    inline tstring vformat(const TCHAR* fmt, va_list list) {
-#ifdef _UNICODE
-        wchar_t buf[UTILS_BUFSIZ];
-        wvsprintf(buf, fmt, list);
-#else
-        char buf[UTILS_BUFSIZ];
-        vsprintf_s(buf, fmt, list);
-#endif
-        return buf;
-    }
 
-    inline tstring format(const TCHAR* fmt, ...) {
-        va_list ap;
-        va_start(ap, fmt);
-        tstring msg = vformat(fmt, ap);
-        va_end(ap);
-        return msg;
-    }
+    bool ConvWstrToU8str(StringRef wstr, std::string& u8Str);
 
-    // 参照型を引数にとる va_list は許可されないので、引数をそのまま返す
-    inline tstring format(const tstring& fmt) {
-        return fmt;
-    }
-
-    inline std::string formatA(const char* fmt, ...) {
-        va_list ap;
-        va_start(ap, fmt);
-
-        char buf[UTILS_BUFSIZ];
-        vsprintf_s(buf, fmt, ap);
-
-        va_end(ap);
-
-        return buf;
+    /**
+    * Convert a wide Unicode string to an UTF8 string
+    */
+    inline std::string utf8_encode(StringRef wstr)
+    {
+        std::string utf8str;
+        if (!wstr.empty()) ConvWstrToU8str(wstr, utf8str);
+        return utf8str;
     }
 
     /**
     * Convert a wide Unicode string to an UTF8 string
     */
-    inline std::string utf8_encode(const std::wstring& wstr)
+    inline std::vector<uchar_t> utf8_byte_encode(StringRef wstr)
     {
-        if (wstr.empty()) return std::string();
-        int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
-        std::string strTo((size_t)size_needed, 0);
-        WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
-        return strTo;
+        Vector<uchar_t> result;
+        for (auto ch : utf8_encode(wstr)) {
+            result.push_back((uchar_t)ch);
+        }
+        return result;
     }
+
+    bool ConvU8strToWstr(const std::string& u8Str, String& wstr);
 
     /**
     * Convert an UTF8 string to a wide Unicode String
     */
-    inline std::wstring utf8_decode(const std::string& str)
+    inline String utf8_decode(const std::string& str)
     {
-        if (str.empty()) return std::wstring();
-        int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
-        std::wstring wstrTo((size_t)size_needed, 0);
-        MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
-        return wstrTo;
+        String wstr;
+        if (!str.empty()) ConvU8strToWstr(str, wstr);
+        return wstr;
+
     }
 
-    // wchar_t to mbs (buffer は最低4バイト分確保しておくこと)
+    // wchar_t to mbs (_buffer は最低4バイト分確保しておくこと)
     inline int wc_to_mbs(wchar_t wc, unsigned char* buffer)
     {
         size_t size;
@@ -430,7 +418,7 @@ namespace utils
         }
     }
 
-    inline std::string ws_to_mbs(const wstring& ws)
+    inline std::string ws_to_mbs(StringRef ws)
     {
         size_t size;
         char buffer[UTILS_BUFSIZ];
@@ -453,7 +441,7 @@ namespace utils
 
     // 数値に変換
     // int に変換
-    inline int strToInt(const tstring& s, int defval = 0) {
+    inline int strToInt(StringRef s, int defval = 0) {
         try {
             return std::stoi(s);
         }
@@ -472,7 +460,7 @@ namespace utils
     }
 
     // hex int に変換
-    inline int strToHex(const tstring& s, int defval = 0) {
+    inline int strToHex(StringRef s, int defval = 0) {
         try {
             return std::stoi(s, nullptr, 16);
         }
@@ -481,38 +469,56 @@ namespace utils
         }
     }
 
+    inline float strToFloat(StringRef s, float defval = 0.0) {
+        try {
+            return std::stof(s, nullptr);
+        }
+        catch (...) {
+            return defval;
+        }
+    }
+
+    inline double strToDouble(StringRef s, double defval = 0.0) {
+        try {
+            return std::stod(s, nullptr);
+        }
+        catch (...) {
+            return defval;
+        }
+    }
+
     // toupper
-    inline tstring toUpper(const tstring& s) {
-        tstring result(s.size(), 0);
+    inline String toUpper(StringRef s) {
+        String result(s.size(), 0);
         for (size_t i = 0; i < s.size(); ++i) result[i] = wchar_t(langedge::CtypeUtil::toUpper(s[i]));
         return result;
     }
 
-    inline tstring toUpperFromMS(const MString& s) {
-        tstring result(s.size(), 0);
+    inline String toUpperFromMS(const MString& s) {
+        String result(s.size(), 0);
         for (size_t i = 0; i < s.size(); ++i) result[i] = wchar_t(langedge::CtypeUtil::toUpper(s[i]));
         return result;
     }
 
-    inline MString toUpperMS(const tstring& s) {
+    inline MString toUpperMS(StringRef s) {
         MString result(s.size(), 0);
         for (size_t i = 0; i < s.size(); ++i) result[i] = mchar_t(langedge::CtypeUtil::toUpper(s[i]));
         return result;
     }
 
     // tolower
-    inline tstring toLower(const tstring& s) {
-        tstring result(s.size(), 0);
+    inline String toLower(StringRef s) {
+        String result(s.size(), 0);
         for (size_t i = 0; i < s.size(); ++i) result[i] = wchar_t(langedge::CtypeUtil::toLower(s[i]));
         return result;
     }
 
     // bool に変換
-    inline bool strToBool(const tstring& s) {
-        return toLower(s) == _T("true");
+    inline bool strToBool(StringRef s) {
+        return toLower(s) == L"true";
     }
 
-    inline bool startsWith(const tstring& s, const tstring& t) {
+    inline bool startsWith(StringRef s, StringRef t) {
         return s.size() >= t.size() && std::equal(std::begin(t), std::end(t), std::begin(s));
     }
 
@@ -520,7 +526,7 @@ namespace utils
         return s.size() >= t.size() && std::equal(std::begin(t), std::end(t), std::begin(s));
     }
 
-    inline bool endsWith(const tstring& s, const tstring& t) {
+    inline bool endsWith(StringRef s, StringRef t) {
         return s.size() >= t.size() && std::equal(std::rbegin(t), std::rend(t), std::rbegin(s));
     }
 
@@ -528,16 +534,15 @@ namespace utils
         return s.size() >= t.size() && std::equal(std::rbegin(t), std::rend(t), std::rbegin(s));
     }
 
-    inline size_t get_hash(const tstring& s) {
-        return std::hash<tstring>()(s);
+    inline size_t get_hash(StringRef s) {
+        return std::hash<String>()(s);
     }
 
     inline size_t get_hash(const MString& s) {
-        //return std::hash<const mchar_t*>()(s.c_str());
         return std::hash<MString>()(s);
     }
 
-    inline tstring safe_substr(const tstring& s, size_t start, size_t len = std::string::npos) {
+    inline String safe_substr(StringRef s, size_t start, size_t len = std::string::npos) {
         if (start >= s.size()) start = s.size();
         return s.substr(start, len);
     }
@@ -547,8 +552,8 @@ namespace utils
         return s.substr(start, len);
     }
 
-    inline bool contains(const tstring& s, const wchar_t* t) {
-        return s.find(t) != tstring::npos;
+    inline bool contains(StringRef s, const wchar_t* t) {
+        return s.find(t) != String::npos;
     }
 
     inline bool contains(const MString& s, const mchar_t* t) {
@@ -560,9 +565,9 @@ namespace utils
         return (pos == MString::npos) ? s : s.substr(0, pos) + r + s.substr(pos + t.size());
     }
 
-    inline tstring replace(const tstring& s, const wchar_t* t, const wchar_t* r) {
+    inline String replace(StringRef s, StringRef t, StringRef r) {
         size_t pos = s.find(t);
-        return (pos == tstring::npos) ? s : s.substr(0, pos) + r + s.substr(pos + wcslen(t));
+        return (pos == String::npos) ? s : s.substr(0, pos) + r + s.substr(pos + t.size());
     }
 
     inline MString replace_all(const MString& s, mchar_t t, mchar_t r) {
@@ -571,10 +576,14 @@ namespace utils
         return result;
     }
 
-    inline tstring replace_all(const tstring& s, wchar_t t, wchar_t r) {
-        tstring result = s;
+    inline String replace_all(StringRef s, wchar_t t, wchar_t r) {
+        String result = s;
         std::replace(result.begin(), result.end(), t, r);
         return result;
+    }
+
+    inline String replace_all(StringRef s, StringRef t, StringRef r) {
+        return std::regex_replace(s, std::wregex(t), r);
     }
 
     inline void remove(MString& s, mchar_t t) {
@@ -582,13 +591,13 @@ namespace utils
         if (pos < s.size()) s.erase(pos);
     }
 
-    inline void remove(tstring& s, wchar_t t) {
+    inline void remove(String& s, wchar_t t) {
         size_t pos = s.find(t);
         if (pos < s.size()) s.erase(pos);
     }
 
     // 文字列の末尾の n 文字からなら部分文字列を返す
-    inline tstring last_substr(const tstring& s, size_t n) {
+    inline String last_substr(StringRef s, size_t n) {
         size_t len = s.size();
         return n <= len ? s.substr(len - n) : s;
     }
@@ -598,7 +607,7 @@ namespace utils
         return n <= len ? s.substr(len - n) : s;
     }
 
-    inline tstring tail_substr(const tstring& s, size_t n) {
+    inline String tail_substr(StringRef s, size_t n) {
         return last_substr(s, n);
     }
 
@@ -683,8 +692,8 @@ namespace utils
         return !is_japanese_char(ch);
     }
 
-    inline wstring convert_star_and_question_to_hankaku(const wchar_t* wp) {
-        wstring result;
+    inline String convert_star_and_question_to_hankaku(const wchar_t* wp) {
+        String result;
         while (*wp != '\0') {
             if (*wp == 0xff0a)
                 result.push_back('*');
@@ -705,8 +714,8 @@ namespace utils
         return result;
     }
 
-    inline wstring convert_hiragana_to_katakana(const wstring& wstr) {
-        wstring result;
+    inline String convert_hiragana_to_katakana(StringRef wstr) {
+        String result;
         for (auto wc : wstr) {
             result.push_back((wchar_t)(is_hiragana(wc) ? hiragana_to_katakana(wc) : wc));
         }
@@ -721,8 +730,8 @@ namespace utils
         return result;
     }
 
-    inline wstring convert_katakana_to_hiragana(const wstring& wstr) {
-        wstring result;
+    inline String convert_katakana_to_hiragana(StringRef wstr) {
+        String result;
         for (auto wc : wstr) {
             result.push_back((wchar_t)(is_pure_katakana(wc) ? katakana_to_hiragana(wc) : wc));
         }
@@ -890,12 +899,12 @@ namespace utils
     }
 
     // 文字列を指定の長さに縮める
-    inline tstring str_shrink(const tstring& s, size_t len) {
+    inline String str_shrink(StringRef s, size_t len) {
         if (len >= s.size()) return s;
         size_t head = len / 2;
         size_t tail = len - head - 1;
         if ((head + tail) >= len) --tail;
-        return s.substr(0, head) + _T("…") + last_substr(s, tail);
+        return s.substr(0, head) + L"…" + last_substr(s, tail);
     }
 
     inline MString str_shrink(const MString& s, size_t len) {
@@ -909,40 +918,159 @@ namespace utils
     /**
     * split
     */
-#define SPLIT(T) \
+    template<class T>
+    inline bool __is_equals_to(T x, T d) { return x == d; }
+
+    template<class T>
+    inline bool __is_contained(T x, const T* d) {
+        if (d == 0) return false;
+        while (*d) {
+            if (x == *d) return true;
+            ++d;
+        }
+        return false;
+    }
+
+#define SPLIT(T, N, F) \
         std::vector<T> elems; \
         T item; \
         for (auto ch : s) { \
-            if (ch == delim) { \
-                if (!item.empty() || !elems.empty()) { \
-                    elems.push_back(item); \
-                } \
+            if ((N == 0 || elems.size() + 1 < N) && F(ch, delim)) { \
+                /*if (!item.empty() || !elems.empty()) { */ \
+                elems.push_back(item); \
+                /*}*/ \
                 item.clear(); \
             } else { \
                 item += ch; \
             } \
         } \
-        if (!item.empty()) \
+        /*if (!item.empty())*/ \
             elems.push_back(item); \
         return elems;
 
-    // delim で分割する。先頭が delim の場合、そのdelimは削除してから分割する
-    inline std::vector<wstring> split(const wstring& s, TCHAR delim) {
-        SPLIT(wstring)
+    // delim で分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
+    inline std::vector<std::string> split(const std::string& s, char delim) {
+        SPLIT(std::string, 0, __is_equals_to);
     }
 
-    // delim で分割する。先頭が delim の場合、そのdelimは削除してから分割する
+    // delim で分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
+    inline std::vector<std::string> split(const std::string& s, const char* delim) {
+        SPLIT(std::string, 0, __is_contained);
+    }
+
+    // delim で分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
+    inline std::vector<String> split(StringRef s, wchar_t delim) {
+        SPLIT(String, 0, __is_equals_to);
+    }
+
+    // delim に含まれる文字で分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
+    inline std::vector<String> split(StringRef s, const wchar_t* delim) {
+        SPLIT(String, 0, __is_contained);
+    }
+
+    // delim で分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
     inline std::vector<MString> split(const MString& s, mchar_t delim) {
-        SPLIT(MString)
+        SPLIT(MString, 0, __is_equals_to)
+    }
+
+    // delim で n 個に分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
+    inline std::vector<String> split(StringRef s, size_t n, wchar_t delim) {
+        SPLIT(String, n, __is_equals_to)
+    }
+
+    // delim に含まれる文字で n 個に分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
+    inline std::vector<String> split(StringRef s, size_t n, const wchar_t* delim) {
+        SPLIT(String, n, __is_contained)
+    }
+
+    // delim で n 個に分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
+    inline std::vector<MString> split(const MString& s, size_t n, mchar_t delim) {
+        SPLIT(MString, n, __is_equals_to)
     }
 #undef SPLIT
+
+    // 正規表現 delim で n 個に分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
+    inline std::vector<String> reSplit(StringRef s, size_t n, const std::wregex& reDelim) {
+        std::vector<String> result;
+        String ss = s;
+        std::wsmatch m;
+        if (n == 0) n = (size_t)INT_MAX;
+        if (n > 1) {
+            while (std::regex_search(ss, m, reDelim)) {
+                result.push_back(m.prefix());
+                ss = m.suffix();
+                if (ss.empty() || result.size() + 1 == n) break;
+            }
+        }
+        result.push_back(ss);
+        return result;
+    }
+
+    // 正規表現 delim で n 個に分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
+    inline std::vector<String> reSplit(StringRef s, size_t n, StringRef delim) {
+        return reSplit(s, n, std::wregex(delim));
+    }
+
+    // 正規表現 delim で分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
+    inline std::vector<String> reSplit(StringRef s, const std::wregex& reDelim) {
+        return reSplit(s, 0, reDelim);
+    }
+
+    // 正規表現 delim で分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
+    inline std::vector<String> reSplit(StringRef s, StringRef delim) {
+        return reSplit(s, 0, std::wregex(delim));
+    }
+
+    // 正規表現 pで置換する
+    inline String reReplace(StringRef s, const std::wregex& p, StringRef r) {
+        return std::regex_replace(s, p, r);
+    }
+
+    // 正規表現 pで置換する
+    inline String reReplace(StringRef s, StringRef p, StringRef r) {
+        return std::regex_replace(s, std::wregex(p), r);
+    }
+
+    // 正規表現にマッチする要素を取り出す
+    // 正規表現 p は s 全体にマッチする必要がある。
+    // 最初のカッコにマッチするものが戻値の 0 番目の要素になる
+    inline std::vector<String> reScan(StringRef s, const std::wregex& p) {
+        std::vector<String> result;
+
+        std::wsmatch m;
+        if (std::regex_match(s, m, p) && m.size() > 1) {
+            std::copy(m.begin() + 1, m.end(), std::back_inserter(result));
+        }
+
+        return result;
+    }
+
+    // 正規表現にマッチする要素を取り出す
+    // 正規表現 p は s 全体にマッチする必要がある。
+    // 最初のカッコにマッチするものが戻値の 0 番目の要素になる
+    inline std::vector<String> reScan(StringRef s, StringRef p) {
+        return reScan(s, std::wregex(p));
+    }
 
     /**
     * join
     */
-    inline wstring join(const std::vector<wstring>& list, const wstring& delim, size_t maxElem = 0)
+    inline String join(const std::vector<String>& list, wchar_t delim, size_t maxElem = 0)
     {
-        wstring result;
+        String result;
+        if (maxElem == 0) maxElem = list.size();
+        size_t n = 0;
+        for (auto& e : list) {
+            if (n++ >= maxElem) break;
+            if (!result.empty()) result.push_back(delim);
+            result.append(e);
+        }
+        return result;
+    }
+
+    inline String join(const std::vector<String>& list, StringRef delim, size_t maxElem = 0)
+    {
+        String result;
         if (maxElem == 0) maxElem = list.size();
         size_t n = 0;
         for (auto& e : list) {
@@ -953,9 +1081,10 @@ namespace utils
         return result;
     }
 
-    inline wstring join(const std::vector<int>& list, const wstring& delim, size_t maxElem = 0)
+    template<typename T>
+    inline String join_primitive(const std::vector<T>& list, StringRef delim, size_t maxElem = 0)
     {
-        wstring result;
+        String result;
         if (maxElem == 0) maxElem = list.size();
         size_t n = 0;
         for (auto& e : list) {
@@ -964,6 +1093,11 @@ namespace utils
             result.append(std::to_wstring(e));
         }
         return result;
+    }
+
+    inline String join(const std::vector<int>& list, StringRef delim, size_t maxElem = 0)
+    {
+        return join_primitive(list, delim, maxElem);
     }
 
     inline MString join(const std::vector<MString>& list, mchar_t delim, size_t maxElem = 0)
@@ -979,9 +1113,9 @@ namespace utils
         return result;
     }
 
-    inline wstring join(const std::set<wstring>& list, const wstring& delim, size_t maxElem = 0)
+    inline String join(const std::set<String>& list, StringRef delim, size_t maxElem = 0)
     {
-        wstring result;
+        String result;
         if (maxElem == 0) maxElem = list.size();
         size_t n = 0;
         for (auto& e : list) {
@@ -1008,12 +1142,12 @@ namespace utils
     /**
     * strip
     */
-    inline wstring strip(const wstring& s, const wstring& delims = _T(" \r\n"))
+    inline String strip(StringRef s, StringRef delims = L" \r\n")
     {
-        wstring result;
+        String result;
 
         auto left = s.find_first_not_of(delims);
-        if (left != wstring::npos) {
+        if (left != String::npos) {
             // 左側にデリミタ以外の文字が見つかった
             auto right = s.find_last_not_of(delims);
             result = s.substr(left, right - left + 1);
@@ -1021,7 +1155,7 @@ namespace utils
         return result;
     }
 
-    inline MString strip(const MString& s, const wstring& delims)
+    inline MString strip(const MString& s, StringRef delims)
     {
         MString result;
 
@@ -1048,7 +1182,7 @@ namespace utils
         return result;
     }
 
-    inline TCHAR safe_front(const tstring& s) {
+    inline TCHAR safe_front(StringRef s) {
         return s.empty() ? TCHAR('\0') : s[0];
     }
 
@@ -1056,14 +1190,14 @@ namespace utils
         return s.empty() ? mchar_t('\0') : s[0];
     }
 
-    inline TCHAR safe_back(const tstring& s) {
+    inline TCHAR safe_back(StringRef s) {
         return s.empty() ? TCHAR('\0') : s[s.size() - 1];
     }
 
     inline mchar_t safe_back(const MString& s) {
         return s.empty() ? mchar_t('\0') : s[s.size() - 1];
     }
-    inline TCHAR safe_back(const tstring& s, size_t n) {
+    inline TCHAR safe_back(StringRef s, size_t n) {
         return s.size() < n ? TCHAR('\0') : s[s.size() - n];
     }
 
@@ -1071,8 +1205,8 @@ namespace utils
         return s.size() < n ? mchar_t('\0') : s[s.size() - n];
     }
 
-    inline wstring wildcard_to_regex(const wstring& s) {
-        wstring result;
+    inline String wildcard_to_regex(StringRef s) {
+        String result;
         for (wchar_t mch : s) {
             if (mch == '?') {
                 result.append(1, '.');
@@ -1090,7 +1224,7 @@ namespace utils
         for (size_t i = 0; i < qKey.size(); ++i) {
             if (i >= str.size()) return false;
             if (str[i] == VERT_BAR) {
-                return qKey.size() <= i + vertBarGobiMaxLen;    // 語尾に余裕をもたせてマッチさせる
+                return qKey.size() <= i + vertBarGobiMaxLen;
             }
             if (qKey[i] == '?') continue;
             if (qKey[i] != str[pos + i]) return false;
@@ -1106,19 +1240,11 @@ namespace utils
         return str.size() >= qKey.size() && match_key_containing_question(str, str.size() - qKey.size(), qKey, 0);
     }
 
-    inline tstring boolToString(bool flag) {
-        return flag ? _T("True") : _T("False");
-    }
-
-    inline tstring intToString(int val) {
-        return std::to_wstring(val);
-    }
-
     inline bool isRomanString(const MString& s) {
         return is_roman_str(s);
     }
 
-    inline bool isRomanString(const wstring& s) {
+    inline bool isRomanString(StringRef s) {
         return is_roman_str(s);
     }
 
@@ -1126,11 +1252,218 @@ namespace utils
         return is_ascii_str(s);
     }
 
-    inline bool isAsciiString(const wstring& s) {
+    inline bool isAsciiString(StringRef s) {
         return is_ascii_str(s);
     }
 
+    inline String boolToString(bool flag) {
+        return flag ? L"True" : L"False";
+    }
+
+    inline String intToString(int val) {
+        return std::to_wstring(val);
+    }
+
+    template<class T>
+    inline int stringToInt(const T& s, int emptyVal = 0, int errVal = 0) {
+        try {
+            return s.empty() ? emptyVal : std::stoi(s);
+        }
+        catch (...) {
+            return errVal;
+        }
+    }
+
+    template<class T>
+    inline int parseInt(const T& s, int errVal = 0) {
+        return stringToInt(s, errVal, errVal);
+    }
+
+    inline String doubleToString(double val) {
+        return std::to_wstring(val);
+    }
+
+    // 可変個の引数を stringstream で連結する
+    template<class T>
+    class any_concatenator {
+        std::basic_stringstream<T> ss;
+
+
+        std::basic_string<T> concatenateAny() {
+            return ss.str();
+        }
+
+    public:
+        template<class Head, class... Tail>
+        std::basic_string<T> concatenateAny(Head&& head, Tail&&... tail) {
+            ss << head;
+            return concatenateAny(std::forward<Tail>(tail)...);
+        }
+    };
+
+    template<class... Args>
+    inline std::string concatAny(Args... args) {
+        return any_concatenator<char>().concatenateAny(args...);
+    }
+
+    template<class... Args>
+    inline String wconcatAny(Args... args) {
+        return any_concatenator<wchar_t>().concatenateAny(args...);
+    }
+
 #undef UTILS_BUFSIZ
+
+    struct StringUtil {
+        static inline bool notEmpty(StringRef s) {
+            return !s.empty();
+        }
+
+        static inline int toInt(StringRef s, int emptyVal = 0, int errVal = 0) {
+            return utils::stringToInt(s, emptyVal, errVal);
+        }
+
+        static inline int parseInt(StringRef s, int errVal = 0) {
+            return utils::parseInt(s, errVal);
+        }
+
+        static inline float parseFloat(StringRef s, float errVal = 0.0) {
+            return utils::strToFloat(s, errVal);
+        }
+
+        static inline double parseDouble(StringRef s, double errVal = 0.0) {
+            return utils::strToDouble(s, errVal);
+        }
+
+        static inline String trim(StringRef s) {
+            return utils::strip(s);
+        }
+
+        static inline String strip(StringRef s) {
+            return utils::strip(s);
+        }
+
+        static inline String trim(StringRef s, StringRef delim) {
+            return utils::strip(s, delim);
+        }
+
+        static inline String strip(StringRef s, StringRef delim) {
+            return utils::strip(s, delim);
+        }
+
+        template<class... Args>
+        static inline String catAny(Args... args) {
+            return utils::wconcatAny(args...);
+        }
+
+        template<class T>
+        static inline String toStr(T v) {
+            return std::to_wstring(v);
+        }
+
+    };
+
+    namespace VectorStringUtil {
+        static inline String join(const Vector<String>& vs, wchar_t delim, size_t maxElem = 0) {
+            return utils::join(vs, delim, maxElem);
+        }
+
+        static inline String join(const Vector<String>& vs, StringRef delim, size_t maxElem = 0) {
+            return utils::join(vs, delim, maxElem);
+        }
+    };
+
+#if 0
+    // String の拡張メソッドクラス
+    template<class S>
+    struct StringExtension_ {
+        S s;
+
+        StringExtension_(StringRef s) : s(s) { }
+
+        // コピーコンストラクタは禁止(dangling reference を防止するため、左辺値を作らせない)
+        StringExtension_(const StringExtension_&) = delete;
+
+        StringRef str() {
+            //std::cout << "str() called" << std::endl;
+            return s;
+        }
+
+        operator String() {
+            //std::cout << "cast operator called" << std::endl;
+            return s;
+        }
+
+        bool notEmpty() const {
+            return !s.empty();
+        }
+
+        int toInt(int emptyVal = 0, int errVal = 0) {
+            return utils::stringToInt(s, emptyVal, errVal);
+        }
+
+        int parseInt(int errVal = 0) const {
+            return utils::parseInt(s, errVal);
+        }
+
+        StringExtension_<String> trim() const {
+            return utils::strip(s);
+        }
+
+        String _trim() const {
+            return utils::strip(s);
+        }
+
+        StringExtension_<String> strip() const {
+            return utils::strip(s);
+        }
+
+        String _strip() const {
+            return utils::strip(s);
+        }
+
+        StringExtension_<String> trim(StringRef delim) const {
+            return utils::strip(s, delim);
+        }
+
+        String _trim(StringRef delim) const {
+            return utils::strip(s, delim);
+        }
+
+        StringExtension_<String> strip(StringRef delim) const {
+            return utils::strip(s, delim);
+        }
+
+        String _strip(StringRef delim) const {
+            return utils::strip(s, delim);
+        }
+
+        template<class... Args>
+        String cat(Args... args) {
+            return utils::wconcatAny(args...);
+        }
+
+        // static methods
+        template<class T>
+        static String toStr(T v) {
+            return std::to_string(v);
+        }
+
+    };
+
+    // 先頭の StringExtension は、操作対象の文字列のコピーを防ぐため、const参照を保持するようにする
+    // const参照でバインドするので、操作対象が一時オブジェクトであっても、一連の操作が完了するまでその寿命が延長される
+    using StringExtension = StringExtension_<StringRef>;
+
+    // Vector<String> の拡張メソッドクラス
+    struct VectorStringExtension {
+        const Vector<String>& sv;
+
+        String join(StringRef delim, size_t maxElem = 0) {
+            return utils::join(sv, delim, maxElem);
+        }
+    };
+#endif
+
 } // namespace utils
 
 #define MAKE_WPTR(ms) to_wstr(ms).c_str()

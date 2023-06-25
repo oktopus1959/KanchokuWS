@@ -34,7 +34,6 @@ namespace {
 
         ~KatakanaOneShotState() { };
 
-#define NAME_PTR (Name.c_str())
 #define MY_NODE ((KatakanaOneShotNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
@@ -43,7 +42,7 @@ namespace {
 
             auto outStr = OUTPUT_STACK->GetLastHiraganaStr<MString>(true);
             size_t numBS = outStr.size();
-            _LOG_DEBUGH(_T("H->K: outStr=%s, numBS=%d"), MAKE_WPTR(outStr), numBS);
+            _LOG_DEBUGH(_T("H->K: outStr={}, numBS={}"), to_wstr(outStr), numBS);
             if (SETTINGS->mazeRemoveHeadSpace && numBS > 0 && outStr[0] == ' ') {
                 // 全読みの先頭の空白を削除
                 _LOG_DEBUGH(_T("REMOVE_HEAD_SPACE"));
@@ -56,7 +55,7 @@ namespace {
             } else {
                 outStr = OUTPUT_STACK->GetLastKatakanaStr<MString>();
                 numBS = outStr.size();
-                _LOG_DEBUGH(_T("K->H: outStr=%s, numBS=%d"), MAKE_WPTR(outStr), numBS);
+                _LOG_DEBUGH(_T("K->H: outStr={}, numBS={}"), to_wstr(outStr), numBS);
                 if (!outStr.empty()) {
                     // ひらがなに変換して置換する
                     STATE_COMMON->SetOutString(utils::convert_katakana_to_hiragana(outStr), numBS);

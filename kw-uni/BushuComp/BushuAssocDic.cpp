@@ -47,7 +47,7 @@ namespace {
         BushuAssocEntryImpl(mchar_t k = 0) : key(k) {
         }
 
-        void ReadLine(const wstring& line) {
+        void ReadLine(StringRef line) {
             MString mline = to_mstr(line);
             key = mline[0];
             bool bFixed = false;
@@ -77,7 +77,7 @@ namespace {
         size_t GetPosFixed() const { return posFixed; }
 
         std::string MakeDicLine() {
-            wstring line;
+            String line;
             line.append(to_wstr(key));
             line.append(_T("="));
             size_t len = posFixed + 10;    // 固定位置以外に10文字まで保存
@@ -211,7 +211,7 @@ namespace {
         * 先頭が # ならコメント行。
         * 空行は無視。
         */
-        void ReadFile(const std::vector<wstring>& lines) {
+        void ReadFile(const std::vector<String>& lines) {
             for (auto& _ln : lines) {
                 auto line = utils::strip(_ln);
                 if (line.empty() || isDelim(line[0]) || line[0] == '#') continue;   // 空行や # で始まる行は読み飛ばす
@@ -234,7 +234,7 @@ namespace {
         }
 
         // 辞書ファイルの内容を既に読み込んだリストにマージする
-        void MergeFile(const std::vector<wstring>& lines) {
+        void MergeFile(const std::vector<String>& lines) {
             // 現状のものを保存
             std::map<mchar_t, BushuAssocEntryImpl*> tempEntries;
             std::copy(bscEntries.begin(), bscEntries.end(), std::inserter(tempEntries, tempEntries.end()));
@@ -285,8 +285,8 @@ namespace {
         }
 
         // 1エントリのマージ
-        void MergeEntry(const wstring& ln) {
-            LOG_INFO(_T("CALLED: ln=%s"), ln.c_str());
+        void MergeEntry(StringRef ln) {
+            LOG_INFO(_T("CALLED: ln={}"), ln);
             auto line = utils::strip(ln);
             if (line.empty() || isDelim(line[0]) || line[0] == '#') return;   // 空行や # で始まる行は無視
 
@@ -341,11 +341,11 @@ DEFINE_CLASS_LOGGER(BushuAssocDic);
 std::unique_ptr<BushuAssocDic> BushuAssocDic::Singleton;
 
 // 部首連想辞書の読み込み(ファイルが指定されていなくても、辞書は構築する)
-int BushuAssocDic::CreateBushuAssocDic(const tstring& bushuAssocFile) {
+int BushuAssocDic::CreateBushuAssocDic(StringRef bushuAssocFile) {
     LOG_INFO(_T("ENTER"));
 
     if (Singleton != 0) {
-        LOG_INFO(_T("already created: bushu file: %s"), bushuAssocFile.c_str());
+        LOG_INFO(_T("already created: bushu file: {}"), bushuAssocFile);
         return 0;
     }
 
@@ -353,16 +353,16 @@ int BushuAssocDic::CreateBushuAssocDic(const tstring& bushuAssocFile) {
     Singleton.reset(new BushuAssocDicImpl());
 
     if (!bushuAssocFile.empty()) {
-        LOG_INFO(_T("open bushu assoc file: %s"), bushuAssocFile.c_str());
+        LOG_INFO(_T("open bushu assoc file: {}"), bushuAssocFile);
 
         utils::IfstreamReader reader(bushuAssocFile);
         if (reader.success()) {
             Singleton->ReadFile(reader.getAllLines());
-            LOG_INFO(_T("close bushu assoc file: %s"), bushuAssocFile.c_str());
+            LOG_INFO(_T("close bushu assoc file: {}"), bushuAssocFile);
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
-            LOG_WARN(_T("Can't read bushu assoc file: %s"), bushuAssocFile.c_str());
-            ERROR_HANDLER->Warn(utils::format(_T("部首連想入力辞書ファイル(%s)が開けません"), bushuAssocFile.c_str()));
+            LOG_WARN(_T("Can't read bushu assoc file: {}"), bushuAssocFile);
+            ERROR_HANDLER->Warn(std::format(_T("部首連想入力辞書ファイル({})が開けません"), bushuAssocFile));
         }
     }
 
@@ -371,24 +371,24 @@ int BushuAssocDic::CreateBushuAssocDic(const tstring& bushuAssocFile) {
 }
 
 // 部首連想辞書ファイルを読み込んでマージする
-void BushuAssocDic::MergeBushuAssocDic(const tstring& path) {
-    LOG_INFO(_T("CALLED: path=%s"), path.c_str());
+void BushuAssocDic::MergeBushuAssocDic(StringRef path) {
+    LOG_INFO(_T("CALLED: path={}"), path);
     if (!path.empty() && Singleton) {
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             Singleton->MergeFile(reader.getAllLines());
-            LOG_INFO(_T("close bushu assoc file: %s"), path.c_str());
+            LOG_INFO(_T("close bushu assoc file: {}"), path);
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
-            LOG_WARN(_T("Can't read bushu assoc file: %s"), path.c_str());
-            ERROR_HANDLER->Warn(utils::format(_T("部首連想入力辞書ファイル(%s)が開けません"), path.c_str()));
+            LOG_WARN(_T("Can't read bushu assoc file: {}"), path);
+            ERROR_HANDLER->Warn(std::format(_T("部首連想入力辞書ファイル({})が開けません"), path));
         }
     }
 }
 
 // 部首連想辞書ファイルに書き込む
-void BushuAssocDic::WriteBushuAssocDic(const tstring& path) {
-    LOG_INFO(_T("CALLED: path=%s"), path.c_str());
+void BushuAssocDic::WriteBushuAssocDic(StringRef path) {
+    LOG_INFO(_T("CALLED: path={}"), path);
     if (!path.empty() && Singleton) {
         if (Singleton->IsDirty() || SETTINGS->firstUse) {
             if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {

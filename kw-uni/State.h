@@ -39,7 +39,7 @@ protected:
 
     // この状態が処理の対象とするノード
     // 他で管理されているので、ここで delete してはならない
-    Node* pNode;
+    Node* pNode = 0;
 
 public:
     inline void SetPrevState(State* pp) { pPrev = pp; }
@@ -49,7 +49,7 @@ protected:
     //State(const Node* pN) : pNode(pN) { }
 
     // 初期化
-    virtual void Initialize(const tstring& name, Node* pN) {
+    virtual void Initialize(StringRef name, Node* pN) {
         Name = name;
         pNode = pN;
     }
@@ -59,17 +59,17 @@ protected:
     // (デストラクタは自クラスの vtbl を参照するので)
     // したがって、pure virtual 宣言されたメソッドをデストラクタから呼びたければデストラクタも pure virtual にする必要あり。
     // ここでは Name() を pure virtual にするのを諦めた。
-    //virtual tstring Name() const/* = 0*/;
+    //virtual String Name() const/* = 0*/;
     // で結局メンバ変数で持つことにした。
-    tstring Name;
+    String Name;
 
 public:
     // デストラクタ
     virtual ~State();
 
-    inline tstring GetName() const { return Name; }
+    inline String GetName() const { return Name; }
 
-    inline tstring JoinedName() const {
+    inline String JoinedName() const {
         if (pNext) {
             return Name + _T("-") + pNext->JoinedName();
         } else {

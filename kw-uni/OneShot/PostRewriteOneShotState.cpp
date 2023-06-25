@@ -30,7 +30,7 @@ namespace {
 
     // -------------------------------------------------------------------
     // 濁音
-    std::map<wstring, wstring> dakuonDic = {
+    std::map<String, String> dakuonDic = {
         { _T("か"), _T("が")},
         { _T("き"), _T("ぎ")},
         { _T("く"), _T("ぐ")},
@@ -53,7 +53,7 @@ namespace {
         { _T("ほ"), _T("ぼ")},
     };
 
-    std::map<wstring, wstring> handakuonDic = {
+    std::map<String, String> handakuonDic = {
         { _T("は"), _T("ぱ")},
         { _T("ひ"), _T("ぴ")},
         { _T("ふ"), _T("ぷ")},
@@ -69,20 +69,19 @@ namespace {
     public:
         // コンストラクタ
         PostRewriteOneShotState(PostRewriteOneShotNode* pN) {
-            LOG_INFO(_T("CALLED: constructor: this=%p, NodePtr=%p"), this, pN);
+            LOG_INFO(_T("CALLED: constructor: this={:p}, NodePtr={:p}"), (void*)this, (void*)pN);
             Initialize(logger.ClassNameT(), pN);
         }
 
         ~PostRewriteOneShotState() {
-            LOG_INFO(_T("CALLED: destructor: ptr=%p"), this);
+            LOG_INFO(_T("CALLED: destructor: ptr={:p}"), (void*)this);
         };
 
-#define NAME_PTR (Name.c_str())
 #define MY_NODE ((PostRewriteOneShotNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
         bool DoProcOnCreated() {
-            _LOG_DEBUGH(_T("ENTER: %s"), MY_NODE->getDebugString().c_str());
+            _LOG_DEBUGH(_T("ENTER: {}"), MY_NODE->getDebugString());
 
             const RewriteInfo* rewInfo;
             size_t numBS;
@@ -113,10 +112,10 @@ DEFINE_CLASS_LOGGER(PostRewriteOneShotNode);
 #include "RewriteString.h"
 
 // コンストラクタ
-PostRewriteOneShotNode::PostRewriteOneShotNode(const wstring& s, bool bBare)
+PostRewriteOneShotNode::PostRewriteOneShotNode(StringRef s, bool bBare)
 {
-    LOG_INFO(_T("ENTER: constructor: ptr=%p, s=%s, bBare=%s"), this, s.c_str(), BOOL_TO_WPTR(bBare));
-    wstring rewStr = s;
+    LOG_INFO(_T("ENTER: constructor: ptr={:p}, s={}, bBare={}"), (void*)this, s, bBare);
+    String rewStr = s;
     size_t rewLen = 0;
     if (bBare) {
         ANALYZE_REWRITE_STR(s, rewStr, rewLen);
@@ -126,12 +125,12 @@ PostRewriteOneShotNode::PostRewriteOneShotNode(const wstring& s, bool bBare)
     }
     myRewriteInfo.rewriteStr = to_mstr(rewStr);
     myRewriteInfo.rewritableLen = rewLen;
-    LOG_INFO(_T("LEAVE: myStr=%s, myRewriteLen=%d"), rewStr.c_str(), rewLen);
+    LOG_INFO(_T("LEAVE: myStr={}, myRewriteLen={}"), rewStr, rewLen);
 }
 
 // デストラクタ
 PostRewriteOneShotNode::~PostRewriteOneShotNode() {
-    LOG_INFO(_T("CALLED: destructor: ptr=%p"), this);
+    LOG_INFO(_T("CALLED: destructor: ptr={:p}"), (void*)this);
     for (auto p : subTables) {
         delete p;
     }
@@ -142,9 +141,9 @@ State* PostRewriteOneShotNode::CreateState() {
     return new PostRewriteOneShotState(this);
 }
 
-void PostRewriteOneShotNode::addRewritePair(const wstring& key, const wstring& value, bool bBare, StrokeTableNode* pNode) {
-    LOG_INFO(_T("ENTER: key=%s, value=%s, bBare=%s, pNode=%p"), key.c_str(), value.c_str(), BOOL_TO_WPTR(bBare), pNode);
-    wstring rewStr = value;
+void PostRewriteOneShotNode::addRewritePair(StringRef key, StringRef value, bool bBare, StrokeTableNode* pNode) {
+    LOG_INFO(_T("ENTER: key={}, value={}, bBare={}, pNode={:p}"), key, value, bBare, (void*)pNode);
+    String rewStr = value;
     size_t rewLen = 0;
     if (bBare) {
         ANALYZE_REWRITE_STR(value, rewStr, rewLen);
@@ -158,21 +157,21 @@ void PostRewriteOneShotNode::addRewritePair(const wstring& key, const wstring& v
 
     rewriteMap[to_mstr(key)] = RewriteInfo(to_mstr(rewStr), rewLen, pNode);
 
-    LOG_INFO(_T("LEAVE: rewStr=%s, rewLen=%d"), rewStr.c_str(), rewLen);
+    LOG_INFO(_T("LEAVE: rewStr={}, rewLen={}"), rewStr, rewLen);
 }
 
 // 末尾文字列にマッチする RewriteInfo を取得する
 std::tuple<const RewriteInfo*, size_t> PostRewriteOneShotNode::matchWithTailString() const {
     size_t maxlen = SETTINGS->kanaTrainingMode && ROOT_STROKE_NODE->hasOnlyUsualRewriteNdoe() ? 0 : 8;     // かな入力練習モードで濁点のみなら書き換えをやらない
     while (maxlen > 0) {
-        _LOG_DEBUGH(_T("maxlen=%d"), maxlen);
+        _LOG_DEBUGH(_T("maxlen={}"), maxlen);
         const MString targetStr = OUTPUT_STACK->backStringWhileOnlyRewritable(maxlen);
-        _LOG_DEBUGH(_T("targetStr=%s"), MAKE_WPTR(targetStr));
+        _LOG_DEBUGH(_T("targetStr={}"), to_wstr(targetStr));
         if (targetStr.empty()) break;
 
         const RewriteInfo* rewInfo = getRewriteInfo(targetStr);
         if (rewInfo) {
-            _LOG_DEBUGH(_T("REWRITE_INFO found: outStr=%s, rewritableLen=%d, subTable=%p"), MAKE_WPTR(rewInfo->rewriteStr), rewInfo->rewritableLen, rewInfo->subTable);
+            _LOG_DEBUGH(_T("REWRITE_INFO found: outStr={}, rewritableLen={}, subTable={:p}"), to_wstr(rewInfo->rewriteStr), rewInfo->rewritableLen, (void*)rewInfo->subTable);
             return { rewInfo, targetStr.size() };
         }
 
@@ -181,8 +180,8 @@ std::tuple<const RewriteInfo*, size_t> PostRewriteOneShotNode::matchWithTailStri
     return { 0, 0 };
 }
 
-const wstring PostRewriteOneShotNode::getDebugString() const {
-    wstring result = _T("myStr: \"");
+const String PostRewriteOneShotNode::getDebugString() const {
+    String result = _T("myStr: \"");
     result.append(myRewriteInfo.getDebugStr()).append(_T("\", rewriteMap="));
     bool bFirst = true;
     for (auto pair : rewriteMap) {
@@ -198,7 +197,7 @@ const wstring PostRewriteOneShotNode::getDebugString() const {
 DEFINE_CLASS_LOGGER(DakutenOneShotNode);
 
 // コンストラクタ
-DakutenOneShotNode::DakutenOneShotNode(wstring mkstr)
+DakutenOneShotNode::DakutenOneShotNode(String mkstr)
     : PostRewriteOneShotNode(mkstr, false), markStr(to_mstr(mkstr)), postfix(mkstr)
 {
     LOG_INFO(_T("CALLED: constructor"));

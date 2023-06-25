@@ -1,5 +1,3 @@
-#include "Logger.h"
-
 #include "StrokeTable.h"
 #include "StayState.h"
 #include "Mazegaki/Mazegaki.h"
@@ -7,8 +5,6 @@
 #include "BushuComp/BushuDic.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
-
-#define NAME_PTR    Name.c_str()
 
 // Esc の処理
 void StayState::handleEsc() {

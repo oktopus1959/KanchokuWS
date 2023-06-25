@@ -26,8 +26,6 @@
 #define _LOG_DEBUG_COND LOG_INFO_COND
 #endif
 
-#define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
-
 #define _WCHAR(ws)  (_T(ws)[0])
 
 // 語幹のみでもOK
@@ -125,7 +123,7 @@ namespace {
     }
 
     // 活用型->活用語尾のマップ
-    std::map<wstring, const wchar_t**> gobiMap = {
+    std::map<String, const wchar_t**> gobiMap = {
         { _T("一"), IFX_RU_1 },
         { _T("る:1"), IFX_RU_1 },
         { _T("く"), IFX_KU_5 },
@@ -153,7 +151,7 @@ namespace {
         _WCHAR("ち"), _WCHAR("て"), _WCHAR("に"), _WCHAR("ね"), _WCHAR("び"), _WCHAR("べ"), _WCHAR("み"), _WCHAR("め"), _WCHAR("り"), _WCHAR("れ"), };
 
     // イ段・エ段でも五段活用するもの
-    std::set<wstring> GoDan = {
+    std::set<String> GoDan = {
         _T("い入"), _T("い要"), _T("い煎"), _T("い陥"), _T("い参"), _T("え帰"), _T("え返"), _T("え覆"), _T("え翻"), _T("え蘇"), _T("え甦"),
         _T("き切"), _T("き斬"), _T("き伐"), _T("け嘲"), _T("け蹴"), _T("け耽"), 
         _T("ぎ切"), _T("ぎ脂"), _T("ぎ限"), _T("ぎ遮"), _T("ぎ契"), _T("ぎ握"), _T("げ茂"), _T("げ繁"), _T("げ陰"), 
@@ -190,24 +188,24 @@ namespace {
         MString stem;               // 読み(語幹)(「たべ」)
         MString xfer;               // 変換形(語幹)(「食べ」)
         const wchar_t** inflexList; // 語尾リスト
-        wstring ifxGobi;            // 活用語尾
-        wstring origYomi;           // 元の読み形(語尾情報含む)
+        String ifxGobi;            // 活用語尾
+        String origYomi;           // 元の読み形(語尾情報含む)
         bool userDic;               // ユーザ辞書由来
         bool deleted;               // 削除フラグ
 
     public:
-        static MazeEntry* CreateEntry(const wstring& yomi, const wstring xfer, bool bUser) {
+        static MazeEntry* CreateEntry(StringRef yomi, const String xfer, bool bUser) {
             size_t pos = yomi.find_first_of('/');
-            if (pos == wstring::npos) {
+            if (pos == String::npos) {
                 // 語尾指定がない ⇒ 無活用
                 return new MazeEntry{ to_mstr(yomi), to_mstr(xfer), IFX_NONE, _T("無"), yomi, bUser };
             } else {
                 // 語尾指定あり
-                wstring gobi = yomi.substr(pos + 1);
+                String gobi = yomi.substr(pos + 1);
                 //if (gobi == _T("る") && std::regex_match(gobi, IchiDan))
                 if (pos > 0 && gobi == _T("る") && IchiDan.find(yomi[pos - 1]) != IchiDan.end()) {
                     // 語幹末尾が「イ段」または「エ段」であり、五段活用する語尾でなければ一段活用とみなす
-                    wstring ts;
+                    String ts;
                     if (pos > 0) {
                         ts += yomi[pos - 1];
                         ts += xfer.back();
@@ -222,7 +220,7 @@ namespace {
 
         // 変換形＋活用語尾の長さを返す(後でブロッカーの設定位置になる)
         size_t GetXferPlusGobiLen(const MString& resultStr) const {
-            size_t xferLen = min(xfer.size(), resultStr.size());
+            size_t xferLen = std::min(xfer.size(), resultStr.size());
             //if ((inflexList != IFX_NONE && inflexList != IFX_ADV && inflexList != IFX_SURU) && xferLen < resultStr.size()) { //}
                 //// サ変以外の活用語で、語尾がある場合は、その語尾も変換形に含める
             if (inflexList != IFX_ADV && xferLen < resultStr.size()) {
@@ -267,7 +265,7 @@ namespace {
             return entry;
         }
 
-        const MazeEntry* AddEntry(const wstring& yomi, const wstring& xfer, bool bUser = false) {
+        const MazeEntry* AddEntry(StringRef yomi, StringRef xfer, bool bUser = false) {
             return AddEntry(MazeEntry::CreateEntry(yomi, xfer, bUser));
         }
 
@@ -280,7 +278,7 @@ namespace {
 
     // ユーザー辞書エントリのリストのクラス
     class UserDicEntries {
-        std::map<wstring, std::vector<const MazeEntry*>> userEntries;
+        std::map<String, std::vector<const MazeEntry*>> userEntries;
 
         std::vector<const MazeEntry*> emptyList;
 
@@ -295,7 +293,7 @@ namespace {
             return bDirty;
         }
 
-        void AddUserEntries(const wstring& yomi, const std::vector<const MazeEntry*>& entries) {
+        void AddUserEntries(StringRef yomi, const std::vector<const MazeEntry*>& entries) {
             auto iter = userEntries.find(yomi);
             if (iter == userEntries.end()) {
                 userEntries[yomi] = entries;
@@ -305,16 +303,16 @@ namespace {
             bDirty = true;
         }
 
-        const std::vector<const MazeEntry*>& FindEntries(const wstring& yomi) {
+        const std::vector<const MazeEntry*>& FindEntries(StringRef yomi) {
             auto iter = userEntries.find(yomi);
             return iter == userEntries.end() ? emptyList : iter->second;
         }
 
-        const std::map<wstring, std::vector<const MazeEntry*>>& GetAllEntries() const {
+        const std::map<String, std::vector<const MazeEntry*>>& GetAllEntries() const {
             return userEntries;
         }
 
-        void DeleteEntry(const wstring& yomi, const MString& xfer) {
+        void DeleteEntry(StringRef yomi, const MString& xfer) {
             for (auto p : FindEntries(yomi)) {
                 if (p->xfer == xfer) {
                     ((MazeEntry*)p)->deleted = true;
@@ -348,13 +346,13 @@ namespace {
             return bDirty;
         }
 
-        void AddPrimaryEntry(const wstring& yomi, const wstring& xfer) {
+        void AddPrimaryEntry(StringRef yomi, StringRef xfer) {
             entries[to_mstr(yomi)] = to_mstr(xfer);
             bDirty = true;
         }
 
         bool AddPrimaryEntryIfNeeded(const MString& yomi, const MString& xfer) {
-            _LOG_DEBUGH(_T("ENTER: yomi=%s, xfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(xfer));
+            _LOG_DEBUGH(_T("ENTER: yomi={}, xfer={}"), to_wstr(yomi), to_wstr(xfer));
             bool flag = false;
             auto iter = entries.find(yomi);
             if (iter == entries.end()) {
@@ -362,18 +360,18 @@ namespace {
                 bDirty = true;
                 flag = true;
             }
-            _LOG_DEBUGH(_T("LEAVE: result=%s"), BOOL_TO_WPTR(flag));
+            _LOG_DEBUGH(_T("LEAVE: result={}"), flag);
             return flag;
         }
 
         void DeletePrimaryEntry(const MString& yomi) {
-            _LOG_DEBUGH(_T("CALLED: yomi=%s"), MAKE_WPTR(yomi));
+            _LOG_DEBUGH(_T("CALLED: yomi={}"), to_wstr(yomi));
             entries.erase(yomi);
         }
 
         const MString& FindEntry(const MString& yomi) {
             auto iter = entries.find(yomi);
-            LOG_DEBUG(_T("yomi=%s, found=%s"), MAKE_WPTR(yomi), BOOL_TO_WPTR(iter == entries.end()));
+            LOG_DEBUG(_T("yomi={}, found={}"), to_wstr(yomi), iter == entries.end());
             return iter == entries.end() ? EMPTY_MSTR : iter->second;
         }
 
@@ -425,7 +423,7 @@ namespace {
                     } else {
                         iter->second.insert(pEntry);
                     }
-                    _LOG_DEBUGH(_T("mazeDic.size()=%d"), mazeDic.size());
+                    _LOG_DEBUGH(_T("mazeDic.size()={}"), mazeDic.size());
                 }
             }
         }
@@ -438,7 +436,7 @@ namespace {
 
     private:
         // MazeEntry を生成して登録
-        void addEntries(const wstring& yomi, const std::vector<wstring>& list, bool bUser) {
+        void addEntries(StringRef yomi, const std::vector<String>& list, bool bUser) {
             std::vector<const MazeEntry*> users;
             for (const auto& xfer : list) {
                 const MazeEntry* pEntry = MazeEntries.AddEntry(yomi, xfer, bUser);
@@ -453,26 +451,26 @@ namespace {
         }
 
         // UTF8で書かれた辞書ソースを読み込む
-        void ReadFile(const std::vector<wstring>& lines, bool bUser, bool bPrim) {
-            LOG_INFO(_T("ENTER: lines.size()=%d, mazeDic.size()=%d, MazeEntries.size()=%d"), lines.size(), mazeDic.size(), MazeEntries.GetList().size());
-            Logger::SaveAndSetLevel(Logger::LogLevelWarn);
-            //Logger::SaveAndSetLevel(Logger::LogLevelInfoH);
+        void ReadFile(const std::vector<String>& lines, bool bUser, bool bPrim) {
+            LOG_INFO(_T("ENTER: lines.size()={}, mazeDic.size()={}, MazeEntries.size()={}"), lines.size(), mazeDic.size(), MazeEntries.GetList().size());
+            Reporting::Logger::SaveAndSetLevel(Reporting::Logger::LogLevelWarn);
+            //Reporting::Logger::SaveAndSetLevel(Reporting::Logger::LogLevelInfoH);
             for (const auto& line : lines) {
                 AddMazeDicEntry(line, bUser, bPrim);
             }
-            Logger::RestoreLevel();
+            Reporting::Logger::RestoreLevel();
             if (bUser) {
                 UserEntries.ClearDirtyFlag();   // ファイルから読み込んだ場合はダーティフラグをクリアしておく
             }
             if (bPrim) {
                 PrimaryEntries.ClearDirtyFlag();   // ファイルから読み込んだ場合はダーティフラグをクリアしておく
             }
-            LOG_INFO(_T("LEAVE: mazeDic.size()=%d, MazeEntries.size()=%d"), mazeDic.size(), MazeEntries.GetList().size());
+            LOG_INFO(_T("LEAVE: mazeDic.size()={}, MazeEntries.size()={}"), mazeDic.size(), MazeEntries.GetList().size());
         }
 
         // 一行の辞書ソース文字列を解析して辞書に登録する
-        bool AddMazeDicEntry(const wstring& line, bool bUser, bool bPrim) {
-            _LOG_DEBUGH(_T("ENTER: line=%s"), line.c_str());
+        bool AddMazeDicEntry(StringRef line, bool bUser, bool bPrim) {
+            _LOG_DEBUGH(_T("ENTER: line={}"), line);
             auto items = utils::filter_not_empty(utils::split(utils::strip(line), ' '));
             // 「見出し<空白>/?登録語/...」という形式でなければ、何もしない (登録語列の先頭は '/' でなくてもよい)
             if (items.size() != 2 || items[0].empty() || items[1].empty() /*|| items[1][0] != '/'*/) return false;
@@ -514,28 +512,28 @@ namespace {
         // 入力文字列中の部分ひらがな列または漢字列について、読みまたは変換形の中の一致する部分を探す
         // 「*」は任意長の文字列、「?」は任意の1文字とマッチする
         bool matcher(const MString& keyStem, size_t pos, size_t len, const MString& ms, size_t& mpos, bool debugFlag = false) {
-            _LOG_DEBUG_COND(debugFlag, _T("ENTER: keyStem=%s, pos=%d, len=%d, ms=%s, mpos=%d"), MAKE_WPTR(keyStem), pos, len, MAKE_WPTR(ms), mpos);
+            _LOG_DEBUG_COND(debugFlag, _T("ENTER: keyStem={}, pos={}, len={}, ms={}, mpos={}"), to_wstr(keyStem), pos, len, to_wstr(ms), mpos);
             if (pos + len >= keyStem.size()) {
                 // 末尾のマッチングの場合
                 bool tailStar = pos < keyStem.size() && keyStem.find('*', pos) != MString::npos;
                 size_t tlen = len - (tailStar ? 1 : 0);
                 if (mpos + tlen > ms.size()) return false;   // 読み(変換形)の文字数が足りないので不一致とする
                 if (!tailStar) mpos = ms.size() - len;
-                _LOG_DEBUG_COND(debugFlag, _T("tailStar=%s, pos=%d, tlen=%d, mpos=%d"), BOOL_TO_WPTR(tailStar), pos, tlen, mpos);
+                _LOG_DEBUG_COND(debugFlag, _T("tailStar={}, pos={}, tlen={}, mpos={}"), tailStar, pos, tlen, mpos);
                 if (pos == 0 && mpos > 0) {
                     // 先頭マッチングでもあるが、長さが合わず、末尾マッチングによる移動でmsの比較先頭位置ずれた
-                    _LOG_DEBUG_COND(debugFlag, _T("LEAVE: UNMATCH-1: FALSE: pos=%d, mpos=%d"), pos, mpos);
+                    _LOG_DEBUG_COND(debugFlag, _T("LEAVE: UNMATCH-1: FALSE: pos={}, mpos={}"), pos, mpos);
                     return false;
                 }
             }
 
             size_t mpos1 = mpos;
             while (mpos < ms.length()) {
-                _LOG_DEBUG_COND(debugFlag, _T("LOOP-1: mpos=%d, len=%d"), mpos, len);
+                _LOG_DEBUG_COND(debugFlag, _T("LOOP-1: mpos={}, len={}"), mpos, len);
                 size_t i = 0;
                 for (; i < len; ++i) {
                     auto kch = keyStem[pos + i];
-                    _LOG_DEBUG_COND(debugFlag, _T("LOOP-2: i=%d, pos=%d, kch=%c"), i, pos, kch);
+                    _LOG_DEBUG_COND(debugFlag, _T("LOOP-2: i={}, pos={}, kch={}"), i, pos, (wchar_t)kch);
                     if (kch == '*') {
                         size_t next_pos = pos + i + 1;
                         if (next_pos >= pos + len) {
@@ -548,13 +546,13 @@ namespace {
                     }
                     ++mpos;
                     if (mpos > ms.length()) {
-                        _LOG_DEBUG_COND(debugFlag, _T("OVERRUN: mpos=%d, ms.length()=%d"), mpos, ms.length());
+                        _LOG_DEBUG_COND(debugFlag, _T("OVERRUN: mpos={}, ms.length()={}"), mpos, ms.length());
                         break;
                     }
-                    _LOG_DEBUG_COND(debugFlag, _T("CHECK: kch=%c, mpos=%d, ms[%d]=%c"), kch, mpos, mpos - 1, ms[mpos - 1]);
+                    _LOG_DEBUG_COND(debugFlag, _T("CHECK: kch={}, mpos={}, ms[{}]={}"), (wchar_t)kch, mpos, mpos - 1, (wchar_t)ms[mpos - 1]);
                     if (kch == '?' || kch == ms[mpos - 1]) continue; // 一致したので次の文字へ
                     // 不一致だった
-                    _LOG_DEBUG_COND(debugFlag, _T("UNMATCHED: pos=%d"), pos);
+                    _LOG_DEBUG_COND(debugFlag, _T("UNMATCHED: pos={}"), pos);
                     if (pos == 0) {
                         _LOG_DEBUG_COND(debugFlag, _T("LEAVE: UNMATCH-2: FALSE"));
                         return false;     // 先頭の場合は、位置移動不可なので、不一致とする
@@ -617,21 +615,21 @@ namespace {
             }
             changePoses.push_back(pos);     // end
 
-            _LOG_DEBUG_COND(debugFlag, _T("changePoses.size=%d"), changePoses.size());
+            _LOG_DEBUG_COND(debugFlag, _T("changePoses.size={}"), changePoses.size());
             size_t xpos = 0;
             size_t ypos = 0;
             for (size_t i = 0; i < changePoses.size() - 1; ++i) {
                 pos = changePoses[i];
                 size_t len = changePoses[i + 1] - pos;
-                _LOG_DEBUG_COND(debugFlag, _T("bXfer=%s"), BOOL_TO_WPTR(bXfer));
+                _LOG_DEBUG_COND(debugFlag, _T("bXfer={}"), bXfer);
                 if (bXfer) {
-                    _LOG_DEBUG_COND(debugFlag, _T("CALL: matcher(keyStem=%s, pos=%d, len=%d, xfer=%s, xpos=%d)"), MAKE_WPTR(keyStem), pos, len, MAKE_WPTR(pEntry->xfer), xpos);
+                    _LOG_DEBUG_COND(debugFlag, _T("CALL: matcher(keyStem={}, pos={}, len={}, xfer={}, xpos={})"), to_wstr(keyStem), pos, len, to_wstr(pEntry->xfer), xpos);
                     if (!matcher(keyStem, pos, len, pEntry->xfer, xpos, debugFlag)) {
                         _LOG_DEBUG_COND(debugFlag, _T("order_matched=FALSE"));
                         return false;
                     }
                 } else {
-                    _LOG_DEBUG_COND(debugFlag, _T("CALL: matcher(keyStem=%s, pos=%d, len=%d, stem=%s, ypos=%d)"), MAKE_WPTR(keyStem), pos, len, MAKE_WPTR(pEntry->stem), ypos);
+                    _LOG_DEBUG_COND(debugFlag, _T("CALL: matcher(keyStem={}, pos={}, len={}, stem={}, ypos={})"), to_wstr(keyStem), pos, len, to_wstr(pEntry->stem), ypos);
                     if (!matcher(keyStem, pos, len, pEntry->stem, ypos, debugFlag)) {
                         _LOG_DEBUG_COND(debugFlag, _T("order_matched=FALSE"));
                         return false;
@@ -661,8 +659,8 @@ namespace {
 #pragma warning(disable:4100)
             // 出力された変換形を蓄積しておく
             void StockOutput(const MazeEntry* pEntry, const MString& yomiStem, const MString& output, const MString& outXfer, bool debugFlag = false) {
-                _LOG_DEBUG_COND(debugFlag, _T("stemlen=%d, stem=%s, yomiStem=%s, output=%s, outXfer=%s"), \
-                    pEntry->stem.size(), MAKE_WPTR(pEntry->stem), MAKE_WPTR(yomiStem), BOOL_TO_WPTR(pEntry->userDic), MAKE_WPTR(output), MAKE_WPTR(outXfer));
+                _LOG_DEBUG_COND(debugFlag, _T("stemlen={}, stem={}, yomiStem={}, output={}, outXfer={}"), \
+                    pEntry->stem.size(), to_wstr(pEntry->stem), to_wstr(yomiStem), pEntry->userDic, to_wstr(output), to_wstr(outXfer));
 
                 // 同じ出力形のものを探す
                 auto sameFinder = [output](const std::vector<CandidateEntry>& entries) {
@@ -685,7 +683,7 @@ namespace {
                         easyEntries.erase(iter2); // erase entry with same output
                     }
                     difficultEntries.insert(difficultEntries.begin(), CAND_ENTRY);
-                    _LOG_DEBUG_COND(debugFlag, _T("USER: yomi=%s, outXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
+                    _LOG_DEBUG_COND(debugFlag, _T("USER: yomi={}, outXfer={}"), to_wstr(yomi), to_wstr(outXfer));
                 } else {
                     bool bAllEasy = EASY_CHARS->AllContainedIn(pEntry->xfer);
                     // 全て容易打鍵文字なら easyEntries を使う
@@ -696,19 +694,19 @@ namespace {
                         size_t stemLen = pEntry->stem.size();
                         if (mazeSearch && !pEntries->empty() && stemLen <= pEntries->front().EntryPtr->stem.size()) {
                             // 漢字交じり読みの場合は、語幹の短い方を優先
-                            _LOG_DEBUG_COND(debugFlag, _T("SHORTER: stem=%s, yomi=%s, outXfer=%s"), MAKE_WPTR(pEntry->stem), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
+                            _LOG_DEBUG_COND(debugFlag, _T("SHORTER: stem={}, yomi={}, outXfer={}"), to_wstr(pEntry->stem), to_wstr(yomi), to_wstr(outXfer));
                             auto it = pEntries->begin();
                             for (; it != pEntries->end(); ++it) { if (stemLen < it->EntryPtr->stem.size()) break; }
                             pEntries->insert(it, CAND_ENTRY);
                         } else if (!mazeSearch && !pEntries->empty() && stemLen >= pEntries->front().EntryPtr->stem.size()) {
                             // ひらがなだけなら、語幹の長い方を優先
-                            _LOG_DEBUG_COND(debugFlag, _T("LONGER: stem=%s, yomi=%s, outXfer=%s"), MAKE_WPTR(pEntry->stem), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
+                            _LOG_DEBUG_COND(debugFlag, _T("LONGER: stem={}, yomi={}, outXfer={}"), to_wstr(pEntry->stem), to_wstr(yomi), to_wstr(outXfer));
                             auto it = pEntries->begin();
                             for (; it != pEntries->end(); ++it) { if (stemLen > it->EntryPtr->stem.size()) break; }
                             pEntries->insert(it, CAND_ENTRY);
                         } else {
                             //それ以外は末尾に追加
-                            _LOG_DEBUG_COND(debugFlag, _T("PUSH_BACK: yomi=%s, outXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(outXfer));
+                            _LOG_DEBUG_COND(debugFlag, _T("PUSH_BACK: yomi={}, outXfer={}"), to_wstr(yomi), to_wstr(outXfer));
                             pEntries->push_back(CAND_ENTRY);
                         }
                     }
@@ -718,9 +716,9 @@ namespace {
 #pragma warning(pop)
 
             void SerializeEntries(std::vector<CandidateEntry>& outCands) {
-                _LOG_DEBUGH(_T("fullMatchEntries: syomi=%s, num=%d"), MAKE_WPTR(yomi), difficultEntries.size());
+                _LOG_DEBUGH(_T("fullMatchEntries: syomi={}, num={}"), to_wstr(yomi), difficultEntries.size());
                 serializeEntries(difficultEntries, outCands);
-                _LOG_DEBUGH(_T("easyEntries: syomi=%s, num=%d"), MAKE_WPTR(yomi), easyEntries.size());
+                _LOG_DEBUGH(_T("easyEntries: syomi={}, num={}"), to_wstr(yomi), easyEntries.size());
                 serializeEntries(easyEntries, outCands);
             }
 
@@ -735,7 +733,7 @@ namespace {
                         // 同じ変換形のものは先頭に挿入
                         outCands.insert(outCands.begin(), ent);
                         primInserted = true;
-                        _LOG_DEBUG_COND(n < 5, _T("INSERT: PRIM_YOMI: yomi=%s, xfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(primXfer));
+                        _LOG_DEBUG_COND(n < 5, _T("INSERT: PRIM_YOMI: yomi={}, xfer={}"), to_wstr(yomi), to_wstr(primXfer));
                     } else {
                         if (!primInserted) {
                             const auto* pEnt = ent.EntryPtr;
@@ -743,12 +741,12 @@ namespace {
                             if (!origXfer.empty() && origXfer == pEnt->xfer) {
                                 // 元の読み(語尾あり)が優先辞書に登録されていれば、その変換形を先頭に挿入
                                 outCands.insert(outCands.begin(), ent);
-                                _LOG_DEBUG_COND(n < 5, _T("INSERT: ORIG_YOMI: yomi=%s, xfer=%s"), pEnt->origYomi.c_str(), MAKE_WPTR(origXfer));
+                                _LOG_DEBUG_COND(n < 5, _T("INSERT: ORIG_YOMI: yomi={}, xfer={}"), pEnt->origYomi, to_wstr(origXfer));
                                 continue;
                             }
                         }
                         outCands.push_back(ent);
-                        _LOG_DEBUG_COND(n < 5, _T("PUSH_BACK: yomi=%s, primXfer=%s"), MAKE_WPTR(yomi), MAKE_WPTR(ent.EntryPtr->xfer));
+                        _LOG_DEBUG_COND(n < 5, _T("PUSH_BACK: yomi={}, primXfer={}"), to_wstr(yomi), to_wstr(ent.EntryPtr->xfer));
                     }
                     _DEBUG_SENT(++n);
                 }
@@ -771,8 +769,8 @@ namespace {
         public:
             // 出力された変換形を蓄積しておく
             void StockOutput(const MString& yomi, const MString& keyStem, bool mazeSearch, const MazeEntry* pEntry, const MString& output, const MString& outXfer, bool debugFlag = false) {
-                _LOG_DEBUG_COND(debugFlag, _T("yomi=%s, mazeSearch=%s, stem=%s, userDic=%s, output=%s, outXfer=%s"), \
-                    MAKE_WPTR(yomi), BOOL_TO_WPTR(mazeSearch), MAKE_WPTR(pEntry->stem), BOOL_TO_WPTR(pEntry->userDic), MAKE_WPTR(output), MAKE_WPTR(outXfer));
+                _LOG_DEBUG_COND(debugFlag, _T("yomi={}, mazeSearch={}, stem={}, userDic={}, output={}, outXfer={}"), \
+                    to_wstr(yomi), mazeSearch, to_wstr(pEntry->stem), pEntry->userDic, to_wstr(output), to_wstr(outXfer));
 
                 find_or_new(yomi, mazeSearch).StockOutput(pEntry, keyStem, output, outXfer, debugFlag);
             }
@@ -780,7 +778,7 @@ namespace {
             void SerializeOutput(std::vector<CandidateEntry>& mazeCands) {
                 // 長い読みから順にやる
                 for (std::map<MString, candidates_t>::reverse_iterator ri = candidates.rbegin(); ri != candidates.rend(); ++ri) {
-                    _LOG_DEBUGH(_T("yomi=%s"), MAKE_WPTR(ri->first));
+                    _LOG_DEBUGH(_T("yomi={}"), to_wstr(ri->first));
                     std::vector<CandidateEntry> outCands;
                     ri->second.SerializeEntries(outCands);
                     mazeCands.insert(mazeCands.end(), outCands.begin(), outCands.end());
@@ -792,7 +790,7 @@ namespace {
         // 指定の見出し語に対する変換候補のセットを取得する
         // 「か山」⇒「火山」より先に「海山」や「影山」が出てきてしまうのを防ぐ ⇒ 読みの短いほうを優先することで「火山」を先に出せる
         const std::vector<MazeResult>& GetCandidates(const MString& key, bool bPrim) {
-            LOG_INFOH(_T("\nENTER: key=%s, bPrim=%s"), MAKE_WPTR(key), BOOL_TO_WPTR(bPrim));
+            LOG_INFOH(_T("\nENTER: key={}, bPrim={}"), to_wstr(key), bPrim);
             mazeCandidates.clear();
             mazeResult.clear();
             // 読み語幹＋語尾の長さごとに候補を保持しておくためのベクトル
@@ -802,11 +800,11 @@ namespace {
             if (!key.empty()) {
                 size_t stemMinLen = count_head_wildcard(key) + 1;   // 読みの部分にはワイルドカード以外の文字が少なくとも1文字は必要
                 if (stemMinLen <= key.size()) {
-                    _LOG_DEBUGH(_T("stemMinLen=%d"), stemMinLen);
-                    size_t tailHiraganaLen = min(utils::count_tail_hiragana_including_punct(key), key.size() - stemMinLen);
-                    size_t gobiMaxLen = min(tailHiraganaLen, SETTINGS->mazeGobiMaxLen);
+                    _LOG_DEBUGH(_T("stemMinLen={}"), stemMinLen);
+                    size_t tailHiraganaLen = std::min(utils::count_tail_hiragana_including_punct(key), key.size() - stemMinLen);
+                    size_t gobiMaxLen = std::min(tailHiraganaLen, SETTINGS->mazeGobiMaxLen);
                     stemMinLen = key.size() > gobiMaxLen ? key.size() - gobiMaxLen : 1;
-                    _LOG_DEBUGH(_T("tailHiraganaLen=%d, mazeGobiMaxLen=%d, gobiMaxLen=%d, stemMinLen=%d"), tailHiraganaLen, SETTINGS->mazeGobiMaxLen, gobiMaxLen, stemMinLen);
+                    _LOG_DEBUGH(_T("tailHiraganaLen={}, mazeGobiMaxLen={}, gobiMaxLen={}, stemMinLen={}"), tailHiraganaLen, SETTINGS->mazeGobiMaxLen, gobiMaxLen, stemMinLen);
                     // やはり語尾にひらがな以外も含めてしまうと多々問題が生じるので、語尾はひらがなに限ることにする
                     // (2021/11/27)
                     // ⇒と思ったが、「ぶんき /分岐/」しか登録がないときに「分き点」も変換できるようにしたい
@@ -817,8 +815,8 @@ namespace {
                     //size_t minStemTailKanjiKataLen = utils::count_tail_kanji(key.substr(0, stemMinLen));
                     // minStemTailKanjiKataLen:stemMinLenの語幹の末尾漢字・カタカナ文字列長
                     size_t minStemTailKanjiKataLen = utils::count_tail_kanji_or_katakana(key.substr(0, stemMinLen));
-                    _LOG_DEBUGH(_T("minStemTailKanjiKataLen=%d, stemMinLen=%d, mazeNoIfxConnectKanji=%s, mazeNoIfxConnectAny=%s"), \
-                        minStemTailKanjiKataLen, stemMinLen, BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectKanji), BOOL_TO_WPTR(SETTINGS->mazeNoIfxConnectAny));
+                    _LOG_DEBUGH(_T("minStemTailKanjiKataLen={}, stemMinLen={}, mazeNoIfxConnectKanji={}, mazeNoIfxConnectAny={}"), \
+                        minStemTailKanjiKataLen, stemMinLen, SETTINGS->mazeNoIfxConnectKanji, SETTINGS->mazeNoIfxConnectAny);
                     if (minStemTailKanjiKataLen == stemMinLen) {
                         // 交ぜ書き変換対象の先頭部が漢字だけだった場合は、stemMinLen をインクリメントして、漢字以外を含める
                         stemMinLen += 1;
@@ -831,7 +829,7 @@ namespace {
                         }
                     }
 
-                    _LOG_DEBUGH(_T("stemMinLen=%d"), stemMinLen);
+                    _LOG_DEBUGH(_T("stemMinLen={}"), stemMinLen);
                     std::set<const MazeEntry*> entrySet;
                     bool mazeSearch = false;
                     bool mazeStar = false;
@@ -860,7 +858,7 @@ namespace {
 
                     size_t stemLen = stemMinLen;    // 最短語幹から始める
                     while (!entrySet.empty()) {
-                        _LOG_DEBUGH(_T("\nentrySet.size()=%d, stemLen=%d, mazeSearch=%s"), entrySet.size(), stemLen, BOOL_TO_WPTR(mazeSearch));
+                        _LOG_DEBUGH(_T("\nentrySet.size()={}, stemLen={}, mazeSearch={}"), entrySet.size(), stemLen, mazeSearch);
                         // 長い語幹にマッチしたほうを優先
                         // 同じ語幹長の場合は、エントリの読みの短いほうが優先
                         // 同じ読みなら、ユーザー辞書を優先
@@ -873,9 +871,9 @@ namespace {
                         _DEBUG_SENT(int _n = 0);
                         for (auto p : entrySet) {
                             bool debugFlag = _DEBUG_FLAG(_n < 5);
-                            _LOG_DEBUG_COND(debugFlag, _T("key=%s, keyStem=%s, mazeSearch=%s, mazeStar=%s, p->ifxGobi=%s, p->stem=%s, p->xfer=%s, user=%s, deleted=%s"),
-                                MAKE_WPTR(key), MAKE_WPTR(keyStem), BOOL_TO_WPTR(mazeSearch), BOOL_TO_WPTR(mazeStar),
-                                p->ifxGobi.c_str(), MAKE_WPTR(p->stem), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic), BOOL_TO_WPTR(p->deleted));
+                            _LOG_DEBUG_COND(debugFlag, _T("key={}, keyStem={}, mazeSearch={}, mazeStar={}, p->ifxGobi={}, p->stem={}, p->xfer={}, user={}, deleted={}"),
+                                to_wstr(key), to_wstr(keyStem), mazeSearch, mazeStar,
+                                p->ifxGobi, to_wstr(p->stem), to_wstr(p->xfer), p->userDic, p->deleted);
                             if (p->deleted) continue;
                             _LOG_DEBUG_COND(debugFlag, _T("CP-A"));
                             // 読み語幹の先頭部が変換形と一致したものは除外(「代表しゃ」が「代表/する」の語幹+「し」にマッチするケースや「経い」→「経」のケース)
@@ -892,7 +890,7 @@ namespace {
                                     _LOG_DEBUG_COND(debugFlag, _T("CP-D"));
                                     // 語尾がない⇒無活用または語幹OKの活用型か
                                     if (find_gobi(p->inflexList, (int)STEM_OK) == 0) {
-                                        _LOG_DEBUG_COND(debugFlag, _T("No gobi found: %s: STEM_OK, userDic=%s"), MAKE_WPTR(p->xfer), BOOL_TO_WPTR(p->userDic));
+                                        _LOG_DEBUG_COND(debugFlag, _T("No gobi found: {}: STEM_OK, userDic={}"), to_wstr(p->xfer), p->userDic);
                                         mazeCands.StockOutput(key, keyStem, mazeSearch, p, p->xfer, p->xfer, debugFlag);
                                     }
                                 } else {
@@ -901,7 +899,7 @@ namespace {
                                     // (「がいる」が「我いる」になったりしないようにするために,語幹が1文字の無活用語は採用しないようにしてみたが、やはり目とか手とかあるので、いったん様子見)
                                     int gobiLen = find_gobi(p->inflexList, stemLen, key.c_str() + stemLen);
                                     if (gobiLen >= 0) {
-                                        _LOG_DEBUG_COND(debugFlag, _T("gobi found: %s: %c, gobiLen=%d, userDic=%s"), MAKE_WPTR(p->xfer), key[stemLen], gobiLen, BOOL_TO_WPTR(p->userDic));
+                                        _LOG_DEBUG_COND(debugFlag, _T("gobi found: {}: {}, gobiLen={}, userDic={}"), to_wstr(p->xfer), (wchar_t)key[stemLen], gobiLen, p->userDic);
                                         size_t yomiLen = stemLen + gobiLen;
                                         mazeCands.StockOutput(key.substr(0, yomiLen), keyStem, mazeSearch, p, p->xfer + key.substr(stemLen), p->xfer + key.substr(stemLen, gobiLen), debugFlag);
                                     }
@@ -913,18 +911,18 @@ namespace {
 
                         // 語幹長を延ばす
                         if (stemLen >= key.size()) {
-                            _LOG_DEBUGH(_T("stemLen: %d: END"), stemLen);
+                            _LOG_DEBUGH(_T("stemLen: {}: END"), stemLen);
                             break;
                         }
                         auto nextCh = key[stemLen++];
                         auto iter = mazeDic.find(nextCh);
                         if (iter == mazeDic.end()) {
-                            _LOG_DEBUGH(_T("mazeDic.find(%c): not found: END"), nextCh);
+                            _LOG_DEBUGH(_T("mazeDic.find({}): not found: END"), (wchar_t)nextCh);
                             break;
                         }
-                        _LOG_DEBUGH(_T("mazeDic.find(%c): found size=%d"), nextCh, iter->second.size());
+                        _LOG_DEBUGH(_T("mazeDic.find({}): found size={}"), (wchar_t)nextCh, iter->second.size());
                         utils::apply_intersection(entrySet, iter->second);
-                        _LOG_DEBUGH(_T("intersection applied entrySet.size=%d"), entrySet.size());
+                        _LOG_DEBUGH(_T("intersection applied entrySet.size={}"), entrySet.size());
                     }
                     _LOG_DEBUGH(_T("entrySet LOOP: END\n"));
                     
@@ -932,7 +930,7 @@ namespace {
             }
             // 結果を集める
             mazeCands.SerializeOutput(mazeCandidates);
-            _LOG_DEBUGH(_T("mazeCandidates.size()=%d"), mazeCandidates.size());
+            _LOG_DEBUGH(_T("mazeCandidates.size()={}"), mazeCandidates.size());
 
             // 結果を返す
             for (const auto& c : mazeCandidates) {
@@ -940,31 +938,31 @@ namespace {
             }
 #ifdef _DEBUG
             if (IS_LOG_DEBUGH_ENABLED) {
-                std::vector<wstring> xfers;
+                std::vector<String> xfers;
                 std::transform(mazeResult.begin(), mazeResult.end(), std::back_inserter(xfers), [](const MazeResult& r) { return to_wstr(r.resultStr);});
-                _LOG_DEBUGH(_T("maze results: %s"), utils::join(xfers, _T(","), 20).c_str());
+                _LOG_DEBUGH(_T("maze results: {}"), utils::join(xfers, _T(","), 20));
             }
 #endif
-            LOG_INFOH(_T("LEAVE: maze entries=%d"), mazeResult.size());
+            LOG_INFOH(_T("LEAVE: maze entries={}"), mazeResult.size());
             return mazeResult;
         }
 
         // GetCandidates() が返した候補のうち output を持つものを選択して変換履歴登録と優先辞書にコピー
         void SelectCandidate(const MString& output, bool bRegMazeHist) {
-            _LOG_DEBUGH(_T("ENTER: output=%s, mazeCandidates.size()=%d, bRegMazeHist=%s"), MAKE_WPTR(output), mazeCandidates.size(), BOOL_TO_WPTR(bRegMazeHist));
+            _LOG_DEBUGH(_T("ENTER: output={}, mazeCandidates.size()={}, bRegMazeHist={}"), to_wstr(output), mazeCandidates.size(), bRegMazeHist);
             if (!mazeCandidates.empty()) {
                 const MString& firstYomi = mazeCandidates[0].yomi;
-                _LOG_DEBUGH(_T("firstYomi=%s"), MAKE_WPTR(firstYomi));
+                _LOG_DEBUGH(_T("firstYomi={}"), to_wstr(firstYomi));
                 for (size_t n = 0; n < mazeCandidates.size(); ++n) {
-                    _LOG_DEBUGH(_T("%d: yomi=%s, output=%s"), n, MAKE_WPTR(mazeCandidates[n].yomi), MAKE_WPTR(mazeCandidates[n].output));
+                    _LOG_DEBUGH(_T("{}: yomi={}, output={}"), n, to_wstr(mazeCandidates[n].yomi), to_wstr(mazeCandidates[n].output));
                     if (mazeCandidates[n].output == output) {
                         // まず、変換履歴登録
                         const MString& myYomi = mazeCandidates[n].yomi;
                         const MString& yomiStem = mazeCandidates[n].yomiStem;
                         MString origYomi = mazeCandidates[n].EntryPtr->GetTrimmedYomi();
                         const MString& xfer = mazeCandidates[n].EntryPtr->xfer;
-                        LOG_INFOH(_T("firstYomi=%s, myYomi=%s, yomiStem=%s, origYomi=%s, xfer=%s, mazeHistRegisterMinLen=%d"), \
-                            MAKE_WPTR(firstYomi), MAKE_WPTR(myYomi), MAKE_WPTR(yomiStem), MAKE_WPTR(origYomi), MAKE_WPTR(xfer), SETTINGS->mazeHistRegisterMinLen);
+                        LOG_INFOH(_T("firstYomi={}, myYomi={}, yomiStem={}, origYomi={}, xfer={}, mazeHistRegisterMinLen={}"), \
+                            to_wstr(firstYomi), to_wstr(myYomi), to_wstr(yomiStem), to_wstr(origYomi), to_wstr(xfer), SETTINGS->mazeHistRegisterMinLen);
                         if (bRegMazeHist && SETTINGS->mazeHistRegisterMinLen > 0 && yomiStem.size() >= SETTINGS->mazeHistRegisterMinLen && yomiStem != xfer) {
                             // 無条件先頭候補出力モードではなく、語幹長が設定長以上の場合のみ変換履歴登録する
                             auto mazeHistRegister = [](const MString& s) {
@@ -974,7 +972,7 @@ namespace {
                                     HISTORY_DIC->AddNewEntry(s);
                                 }
                             };
-                            LOG_INFOH(_T("mazeHistRegister(%s)"), MAKE_WPTR(yomiStem + MSTR_VERT_BAR + xfer));
+                            LOG_INFOH(_T("mazeHistRegister({})"), to_wstr(yomiStem + MSTR_VERT_BAR + xfer));
                             mazeHistRegister(yomiStem + MSTR_VERT_BAR + xfer);
                         }
                         // それを優先辞書に登録する
@@ -989,7 +987,7 @@ namespace {
         }
 
         // 指定の読みと変換形を持つユーザー辞書エントリを削除
-        void DeleteEntry(const wstring& yomi, const MString& xfer) {
+        void DeleteEntry(StringRef yomi, const MString& xfer) {
             UserEntries.DeleteEntry(yomi, xfer);
         }
 
@@ -1007,7 +1005,7 @@ namespace {
 
             std::set<MString> xfers;    // 同じ変換形のチェック用
             for (const auto& pair : UserEntries.GetAllEntries()) {
-                wstring line;
+                String line;
                 line.append(pair.first);                // 読み
                 line.append(_T(" /"));
                 bool bFound = false;
@@ -1041,7 +1039,7 @@ namespace {
 
             std::set<MString> xfers;    // 同じ変換形のチェック用
             for (const auto& pair : PrimaryEntries.GetAllEntries()) {
-                wstring line;
+                String line;
                 line.append(to_wstr(pair.first));                // 読み
                 line.append(_T(" /"));
                 line.append(to_wstr(pair.second));  // 変換形
@@ -1065,11 +1063,11 @@ std::unique_ptr<MazegakiDic> MazegakiDic::Singleton;
 // 交ぜ書き辞書ファイル読み込んで、内部辞書を作成する(ファイル名は '|'で区切って複数指定可能)
 // xxx.user.yyy が存在しない場合は、xxx.*.yyy というファイル名を含んでいること
 // エラーがあったら例外を投げる
-int MazegakiDic::CreateMazegakiDic(const tstring& mazeFile) {
-    LOG_INFO(_T("ENTER: %s"), mazeFile.c_str());
+int MazegakiDic::CreateMazegakiDic(StringRef mazeFile) {
+    LOG_INFO(_T("ENTER: {}"), mazeFile);
 
     if (Singleton != 0) {
-        LOG_INFO(_T("already created: maze file: %s"), mazeFile.c_str());
+        LOG_INFO(_T("already created: maze file: {}"), mazeFile);
         return 0;
     }
 
@@ -1083,51 +1081,51 @@ int MazegakiDic::CreateMazegakiDic(const tstring& mazeFile) {
     for (const auto& name : utils::split(mazeFile, '|')) {
         if (name.empty()) continue;
 
-        if (name.find(_T(".*.")) != wstring::npos) continue;    // パターンファイルは無視
+        if (name.find(_T(".*.")) != String::npos) continue;    // パターンファイルは無視
 
-        bool bUser = utils::toLower(name).find(_T(".user.")) != wstring::npos;  // ユーザ辞書か
-        bool bPrim = utils::toLower(name).find(_T(".prim.")) != wstring::npos;  // 優先辞書か
+        bool bUser = utils::toLower(name).find(_T(".user.")) != String::npos;  // ユーザ辞書か
+        bool bPrim = utils::toLower(name).find(_T(".prim.")) != String::npos;  // 優先辞書か
 
         auto path = utils::joinPath(SETTINGS->rootDir, name);
-        LOG_INFO(_T("open maze file: %s"), path.c_str());
+        LOG_INFO(_T("open maze file: {}"), path);
 
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             //pImpl->ReadFile(utils::IfstreamReader(path).getAllLines());
             pImpl->ReadFile(reader.getAllLines(), bUser, bPrim);
-            LOG_INFO(_T("close maze file: %s"), path.c_str());
+            LOG_INFO(_T("close maze file: {}"), path);
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
-            LOG_ERROR(_T("Can't read maze file: %s"), path.c_str());
-            ERROR_HANDLER->Warn(utils::format(_T("交ぜ書き辞書ファイル(%s)が開けません"), path.c_str()));
+            LOG_ERROR(_T("Can't read maze file: {}"), path);
+            ERROR_HANDLER->Warn(std::format(_T("交ぜ書き辞書ファイル({})が開けません"), path));
             result = -1;
         }
     }
 #endif
 
-    LOG_INFO(_T("LEAVE: result=%d"), result);
+    LOG_INFO(_T("LEAVE: result={}"), result);
     return result;
 }
 
 // 交ぜ書き辞書ファイルを追加で読み込む(kwmaze.wiki.txtとか)
-void MazegakiDic::ReadMazegakiDic(const tstring& filename) {
+void MazegakiDic::ReadMazegakiDic(StringRef filename) {
         auto path = utils::joinPath(SETTINGS->rootDir, filename);
-        LOG_INFO(_T("open maze file: %s"), path.c_str());
+        LOG_INFO(_T("open maze file: {}"), path);
 
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             Singleton->ReadFile(reader.getAllLines(), false, false);
-            LOG_INFO(_T("close maze file: %s"), path.c_str());
+            LOG_INFO(_T("close maze file: {}"), path);
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
-            LOG_ERROR(_T("Can't read maze file: %s"), path.c_str());
-            ERROR_HANDLER->Warn(utils::format(_T("交ぜ書き辞書ファイル(%s)が開けません"), path.c_str()));
+            LOG_ERROR(_T("Can't read maze file: {}"), path);
+            ERROR_HANDLER->Warn(std::format(_T("交ぜ書き辞書ファイル({})が開けません"), path));
         }
 }
 
 // 交ぜ書き辞書ファイルに書き込む
-void MazegakiDic::WriteMazegakiDic(const tstring& path, bool bUser, bool bPrim) {
-    LOG_INFO(_T("CALLED: path=%s, bUser=%s, bPrim=%s"), path.c_str(), BOOL_TO_WPTR(bUser), BOOL_TO_WPTR(bPrim));
+void MazegakiDic::WriteMazegakiDic(StringRef path, bool bUser, bool bPrim) {
+    LOG_INFO(_T("CALLED: path={}, bUser={}, bPrim={}"), path, bUser, bPrim);
     if (!path.empty() && Singleton && !Singleton->IsEmpty()) {
         if (bPrim) {
             if (Singleton->IsPrimaryDicDirty()) {
@@ -1154,28 +1152,28 @@ void MazegakiDic::WriteMazegakiDic(const tstring& path, bool bUser, bool bPrim) 
 // 交ぜ書き辞書ファイルに書き込む
 void MazegakiDic::WriteMazegakiDic() {
     if (!SETTINGS->mazegakiFile.empty()) {
-        wstring primDic;
-        wstring userDic;
+        String primDic;
+        String userDic;
         for (const auto& nm : utils::split(SETTINGS->mazegakiFile, '|')) {
             auto lname = utils::toLower(nm);
-            if (lname.find(_T(".prim.")) != wstring::npos) {
+            if (lname.find(_T(".prim.")) != String::npos) {
                 // 指定の優先辞書名があった
                 primDic = nm;
-                LOG_INFO(_T("primary maze filename found: %s"), primDic.c_str());
+                LOG_INFO(_T("primary maze filename found: {}"), primDic);
                 break;
-            } else if (lname.find(_T(".user.")) != wstring::npos) {
+            } else if (lname.find(_T(".user.")) != String::npos) {
                 // 指定のユーザ辞書名があった
                 userDic = nm;
-                LOG_INFO(_T("user maze filename found: %s"), userDic.c_str());
+                LOG_INFO(_T("user maze filename found: {}"), userDic);
                 break;
             } else {
                 // パターンファイル(xxx.*.yyy) があれば xxx.user.yyy に変える
                 size_t pos = lname.find(_T(".*."));
-                if (pos != wstring::npos) {
+                if (pos != String::npos) {
                     if (primDic.empty()) primDic = nm.substr(0, pos + 1) + _T("prim") + nm.substr(pos + 2);
                     if (userDic.empty()) userDic = nm.substr(0, pos + 1) + _T("user") + nm.substr(pos + 2);
-                    LOG_INFO(_T("replaced primary maze filename: %s"), primDic.c_str());
-                    LOG_INFO(_T("replaced user maze filename: %s"), userDic.c_str());
+                    LOG_INFO(_T("replaced primary maze filename: {}"), primDic);
+                    LOG_INFO(_T("replaced user maze filename: {}"), userDic);
                 }
             }
         }
@@ -1184,11 +1182,11 @@ void MazegakiDic::WriteMazegakiDic() {
         if (userDic.empty()) userDic = _T("kwmaze.user.dic");       // デフォルトのユーザー辞書名
 
         auto path = utils::joinPath(SETTINGS->rootDir, userDic);
-        LOG_INFO(_T("save user maze file: %s"), path.c_str());
+        LOG_INFO(_T("save user maze file: {}"), path);
         WriteMazegakiDic(path, true, false);
 
         path = utils::joinPath(SETTINGS->rootDir, primDic);
-        LOG_INFO(_T("save primary maze file: %s"), path.c_str());
+        LOG_INFO(_T("save primary maze file: {}"), path);
         WriteMazegakiDic(path, false, true);
     }
 }

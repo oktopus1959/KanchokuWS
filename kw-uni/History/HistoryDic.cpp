@@ -24,8 +24,6 @@
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
 
-#define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
-
 namespace {
     // -------------------------------------------------------------------
     typedef size_t HashVal;
@@ -147,7 +145,7 @@ namespace {
 
         // key の末尾n文字にマッチする文字列集合を取得する('?' も考慮, ただし少なくとも1文字は'?'以外を含む)
         std::set<MString> GetSet(const MString& key, size_t n) {
-            _LOG_DEBUGH(_T("ENTER: key=%s, n=%d"), MAKE_WPTR(key), n);
+            _LOG_DEBUGH(_T("ENTER: key={}, n={}"), to_wstr(key), n);
             std::set<MString> result;
             std::set<MString> histMaps; // '|' を含む候補
             size_t start = n >= key.size() ? 0 : key.size() - n;
@@ -183,7 +181,7 @@ namespace {
                 }
                 auto mch = key[start + i];
                 if (mch == '?') {
-                    _LOG_DEBUGH(_T("'?' found in key=%s: start=%d, i=%d"), MAKE_WPTR(key), start, i);
+                    _LOG_DEBUGH(_T("'?' found in key={}: start={}, i={}"), to_wstr(key), start, i);
                     quesPoses.push_back(i);
                     // '?' なら全部にマッチするとみなし、長さだけをチェック
                     if (i > 0 && !result.empty()) {
@@ -206,14 +204,14 @@ namespace {
                 }
                 if (result.empty()) break;
             }
-            _LOG_DEBUGH(_T("result.size=%d, histMaps.size()=%d"), result.size(), histMaps.size());
+            _LOG_DEBUGH(_T("result.size={}, histMaps.size()={}"), result.size(), histMaps.size());
             utils::apply_union(result, histMaps);
             if (!quesPoses.empty()) {
                 // '?' があった
-                _LOG_DEBUGH(_T("'?' pos=%d, %d, %d"), quesPoses.size() > 0 ? quesPoses[0] : -1, quesPoses.size() > 1 ? quesPoses[1] : -1, quesPoses.size() > 2 ? quesPoses[2] : -1);
+                _LOG_DEBUGH(_T("'?' pos={}, {}, {}"), quesPoses.size() > 0 ? quesPoses[0] : -1, quesPoses.size() > 1 ? quesPoses[1] : -1, quesPoses.size() > 2 ? quesPoses[2] : -1);
                 std::set<MString> newResult;
                 for (auto w : result) {
-                    _LOG_DEBUGH(_T("CHECK: w=%s"), MAKE_WPTR(w));
+                    _LOG_DEBUGH(_T("CHECK: w={}"), to_wstr(w));
                     size_t vbarPos = w.find_first_of(VERT_BAR);
                     bool bFound = true;
                     for (auto i : quesPoses) {
@@ -223,7 +221,7 @@ namespace {
                         }
                     }
                     if (bFound) {
-                        _LOG_DEBUGH(_T("'?' match: w=%s"), MAKE_WPTR(w));
+                        _LOG_DEBUGH(_T("'?' match: w={}"), to_wstr(w));
                         newResult.insert(w);
                     }
                 }
@@ -232,9 +230,9 @@ namespace {
                 } else {
                     result = newResult;
                 }
-                _LOG_DEBUGH(_T("'?' found: result.size=%d"), result.size());
+                _LOG_DEBUGH(_T("'?' found: result.size={}"), result.size());
             }
-            _LOG_DEBUGH(_T("LEAVE: result.size=%d"), result.size());
+            _LOG_DEBUGH(_T("LEAVE: result.size={}"), result.size());
             return result;
         }
 
@@ -258,7 +256,7 @@ namespace {
                     result = utils::filter(temp_set, [key2](const MString& w) {return utils::endsWithWildKey(w, key2);});
                     if (!result.empty()) {
                         size_t key_size = key0.size() - start;
-                        _LOG_DEBUGH(_T("result.size=%d, keyMatchLen=%d"), result.size(), key_size);
+                        _LOG_DEBUGH(_T("result.size={}, keyMatchLen={}"), result.size(), key_size);
                         return key_size;
                     }
                 }
@@ -295,9 +293,9 @@ namespace {
 
     public:
         // UTF8で書かれた辞書ソースを読み込む
-        void ReadFile(const std::vector<wstring>& lines) {
-            LOG_INFO(_T("ENTER: %d lines"), lines.size());
-            std::set<wstring> used;
+        void ReadFile(const std::vector<String>& lines) {
+            LOG_INFO(_T("ENTER: {} lines"), lines.size());
+            std::set<String> used;
             for (const auto& w : lines) {
                 if (!utils::contains(used, w)) {
                     usedList.push_back(to_mstr(w));
@@ -310,7 +308,7 @@ namespace {
         }
 
         void PushEntry(const MString& word, size_t minlen = 2) {
-            _LOG_DEBUGH(_T("CALLED: word=%s, minlen=%d"), MAKE_WPTR(word), minlen);
+            _LOG_DEBUGH(_T("CALLED: word={}, minlen={}"), to_wstr(word), minlen);
             clearRevertPos();
             if (word.size() >= minlen) {
                 if (!usedList.empty()) {
@@ -319,9 +317,9 @@ namespace {
                 }
                 usedList.insert(usedList.begin(), word);
                 if (usedList.size() >= MAX_SIZE + EXTRA_SIZE) {
-                    _LOG_DEBUGH(_T("EXTRA entries erasing...: size=%d"), usedList.size());
+                    _LOG_DEBUGH(_T("EXTRA entries erasing...: size={}"), usedList.size());
                     usedList.erase(usedList.begin() + MAX_SIZE, usedList.end());
-                    _LOG_DEBUGH(_T("EXTRA entries erased: size=%d"), usedList.size());
+                    _LOG_DEBUGH(_T("EXTRA entries erased: size={}"), usedList.size());
                 }
                 bDirty = true;
             }
@@ -329,7 +327,7 @@ namespace {
 
         // 指定の単語と先頭単語の入れ替え。指定単語が存在しなければ先頭に追加
         void SwapEntry(const MString& word) {
-            LOG_DEBUG(_T("CALLED: word=%s"), MAKE_WPTR(word));
+            LOG_DEBUG(_T("CALLED: word={}"), to_wstr(word));
             clearRevertPos();
             if (!word.empty()) {
                 if (!usedList.empty()) {
@@ -352,7 +350,7 @@ namespace {
             LOG_DEBUG(_T("CALLED"));
             if (revertPos > 0 && revertPos <= usedList.size()) {
                 auto w = usedList[0];
-                LOG_DEBUG(_T("word=%s"), MAKE_WPTR(w));
+                LOG_DEBUG(_T("word={}"), to_wstr(w));
                 usedList.insert(usedList.begin() + revertPos, w);
                 usedList.erase(usedList.begin());
                 bDirty = true;
@@ -362,7 +360,7 @@ namespace {
 
         void RemoveEntry(const MString& word) {
             clearRevertPos();
-            LOG_DEBUG(_T("CALLED: word=%s"), MAKE_WPTR(word));
+            LOG_DEBUG(_T("CALLED: word={}"), to_wstr(word));
             if (!usedList.empty()) {
                 utils::erase(usedList, word);
                 bDirty = true;
@@ -377,19 +375,19 @@ namespace {
         // ・wlen >= 9 なら単語長 >= 9
         // ・ただし、キーが1文字(keylen==1)なら、候補列から1文字単語は除く
         void ExtractUsedWords(const MString& key, HistResultList& outvec, std::set<MString>& set_, size_t wlen = 0) {
-            LOG_DEBUG(_T("CALLED: key=%s, wlen=%d"), MAKE_WPTR(key), wlen);
+            LOG_DEBUG(_T("CALLED: key={}, wlen={}"), to_wstr(key), wlen);
             size_t keylen = key.size();
             _DEBUG_SENT(size_t n = 0);
             for (const auto& w : usedList) {
-                //_DEBUG_SENT(if (w.find(VERT_BAR) != MString::npos) _LOG_DEBUGH(_T("VERT_BAR: %s"), MAKE_WPTR(w)));
+                //_DEBUG_SENT(if (w.find(VERT_BAR) != MString::npos) _LOG_DEBUGH(_T("VERT_BAR: {}"), to_wstr(w)));
                 if ((w.size() == wlen || (wlen == 0 && w.size() >= 2) || (wlen >= 9 && w.size() > 9)) && w != key && utils::contains(set_, w)) {
                     if (keylen != 1 || w.size() >= 2) {
                         // キーが1文字なら、候補列から1文字単語は除く
                         _DEBUG_SENT(\
                             if (n < 10) { \
-                                _LOG_DEBUGH(_T("outvec.PushHistory(key=%s, w=%s)"), MAKE_WPTR(key), MAKE_WPTR(w)); \
+                                _LOG_DEBUGH(_T("outvec.PushHistory(key={}, w={})"), to_wstr(key), to_wstr(w)); \
                             } else if (n == 10) { \
-                                _LOG_DEBUGH(_T("and %d entries..."), usedList.size() - 10); \
+                                _LOG_DEBUGH(_T("and {} entries..."), usedList.size() - 10); \
                             }\
                             ++n);
                         outvec.PushHistory(key, w);
@@ -405,7 +403,7 @@ namespace {
         // ・1 <= maxlen <= 3 なら難打鍵文字を含むものだけ
         // ・maxlen >= 9 なら単語長 >= 9
         void ExtractUsedWords(const MString& key, HistResultList& outvec, size_t n, size_t minlen = 0, size_t maxlen = 0) {
-            LOG_DEBUG(_T("CALLED: size=%d, minlen=%d, maxlen=%d"), n, minlen, maxlen);
+            LOG_DEBUG(_T("CALLED: size={}, minlen={}, maxlen={}"), n, minlen, maxlen);
             auto checkCond = [minlen, maxlen](const MString& w) {
                 if (w.size() >= minlen && w.size() <= maxlen && (maxlen > 3 || !EASY_CHARS->AllContainedIn(w))) return true;
                 if (maxlen == 0 && w.size() >= 2) return true;
@@ -415,7 +413,7 @@ namespace {
             size_t i = 0;
             for (const auto& w : usedList) {
                 if (w != key && checkCond(w)) {
-                    _LOG_DEBUGH_COND((i < 10), _T("outvec.PushHistory(key=%s, w=%s)"), MAKE_WPTR(key), MAKE_WPTR(w));
+                    _LOG_DEBUGH_COND((i < 10), _T("outvec.PushHistory(key={}, w={})"), to_wstr(key), to_wstr(w));
                     outvec.PushHistory(key, w);
                     if (++i >= n) break;
                 }
@@ -458,8 +456,8 @@ namespace {
 
     public:
         // UTF8で書かれた辞書ソースを読み込む
-        void ReadFile(const std::vector<wstring>& lines) {
-            LOG_INFO(_T("ENTER: %d lines"), lines.size());
+        void ReadFile(const std::vector<String>& lines) {
+            LOG_INFO(_T("ENTER: {} lines"), lines.size());
             for (const auto& w : lines) {
                 AddEntry(to_mstr(w));
             }
@@ -517,8 +515,8 @@ namespace {
 
     public:
         // UTF8で書かれた辞書ソースを読み込む
-        void ReadFile(const std::vector<wstring>& lines) {
-            LOG_INFO(_T("ENTER: %d lines"), lines.size());
+        void ReadFile(const std::vector<String>& lines) {
+            LOG_INFO(_T("ENTER: {} lines"), lines.size());
             for (const auto& line : lines) {
                 auto items = utils::split(to_mstr(line), ',');
                 if (items.size() >= 2) {
@@ -538,7 +536,7 @@ namespace {
         void WriteFile(utils::OfstreamWriter& writer) {
             for (const auto& pair : ngramFreqMap) {
                 if (pair.first.size() >= 2 && pair.second > 0) {
-                    writer.writeLine(utils::utf8_encode(utils::format(_T("%s,%d"), MAKE_WPTR(pair.first), pair.second)));
+                    writer.writeLine(utils::utf8_encode(std::format(_T("{},{}"), to_wstr(pair.first), pair.second)));
                 }
             }
             bDirty = false;
@@ -556,7 +554,7 @@ namespace {
 
 #define NGRAM_FREQ_THRESHOLD 3
         bool AddNgramEntry(const MString& ngram) {
-            LOG_DEBUG(_T("addNgramEntry=%s"), MAKE_WPTR(ngram));
+            LOG_DEBUG(_T("addNgramEntry={}"), to_wstr(ngram));
             if (utils::is_kanji_or_katakana_str(ngram)) return false;
 
             size_t count = 0;
@@ -577,7 +575,7 @@ namespace {
 #define NGRAM_MAX_LEN 10
         // Nグラム登録
         std::vector<MString> AddNgramEntries(const MString& word) {
-            LOG_DEBUG(_T("AddNgramEntries=%s"), MAKE_WPTR(word));
+            LOG_DEBUG(_T("AddNgramEntries={}"), to_wstr(word));
             std::vector<MString> entryTargets;
             if (word.size() >= NGRAM_MIN_LEN && seenNgrams.find(word) == seenNgrams.end()) {
                 seenNgrams.insert(word);
@@ -590,7 +588,7 @@ namespace {
                 }
                 bDirty = true;
             } else {
-                LOG_DEBUG(_T("word=\"%s\" is already seen."), MAKE_WPTR(word));
+                LOG_DEBUG(_T("word=\"{}\" is already seen."), to_wstr(word));
             }
             return entryTargets;
         }
@@ -629,7 +627,7 @@ namespace {
     private:
         // 一行の辞書ソース文字列を解析して辞書に登録する
         bool addHistDicEntry(const MString& line, size_t minlen = 2, bool bForce = false) {
-            LOG_DEBUG(_T("CALLED: %s, minlen=%d"), MAKE_WPTR(line), minlen);
+            LOG_DEBUG(_T("CALLED: {}, minlen={}"), to_wstr(line), minlen);
             auto word = utils::strip(line);
             // 空白行または1文字以下、あるいは強制登録でなくて、先頭が '#' or ';' の場合は、何もしない
             if (word.size() < minlen || (!bForce && (word[0] == '#' || word[0] == ';'))) return false;
@@ -647,19 +645,19 @@ namespace {
         }
 
         // UTF8で書かれた辞書ソースを読み込む
-        void readFile(const std::vector<wstring>& lines, bool bReadOnly) {
-            LOG_INFO(_T("ENTER: %d lines, bReadOnly=%s"), lines.size(), BOOL_TO_WPTR(bReadOnly));
-            int logLevel = Logger::LogLevel;
-            Logger::LogLevel = 0;
+        void readFile(const std::vector<String>& lines, bool bReadOnly) {
+            LOG_INFO(_T("ENTER: {} lines, bReadOnly={}"), lines.size(), bReadOnly);
+            int logLevel = Reporting::Logger::LogLevel;
+            Reporting::Logger::LogLevel = 0;
             for (const auto& line : lines) {
-                if (bReadOnly && line.find(_T("||")) == wstring::npos) {
+                if (bReadOnly && line.find(_T("||")) == String::npos) {
                     addHistDicEntry(to_mstr(utils::replace(line, _T("|"), _T("||"))), 1);
                 } else {
                     addHistDicEntry(to_mstr(line), 1);
                 }
             }
             bDirty = false;
-            Logger::LogLevel = logLevel;
+            Reporting::Logger::LogLevel = logLevel;
             LOG_INFO(_T("LEAVE"));
         }
 
@@ -668,18 +666,18 @@ namespace {
         }
 
         // UTF8で書かれた辞書ソースを読み込む
-        void ReadFile(const std::vector<wstring>& lines) {
+        void ReadFile(const std::vector<String>& lines) {
             readFile(lines, false);
         }
 
         // UTF8で書かれた辞書ソースを読み込む
-        void ReadFileAsReadOnly(const std::vector<wstring>& lines) {
+        void ReadFileAsReadOnly(const std::vector<String>& lines) {
             readFile(lines, true);
         }
 
     private:
         inline void addNewEntry(const MString& word, bool bForce = false, size_t minlen = 2) {
-            LOG_DEBUG(_T("CALLED: word=%s, bForce=%d"), MAKE_WPTR(word), bForce);
+            LOG_DEBUG(_T("CALLED: word={}, bForce={}"), to_wstr(word), bForce);
             if (bForce || !exclList.Find(word)) {
                 usedList.PushEntry(word, minlen);
                 addHistDicEntry(word, minlen, bForce);
@@ -687,7 +685,7 @@ namespace {
         }
 
         inline void addNewHistDicEntry(const MString& word, bool bForce = false, size_t minlen = 2) {
-            LOG_DEBUG(_T("CALLED: word=%s, bForce=%d"), MAKE_WPTR(word), bForce);
+            LOG_DEBUG(_T("CALLED: word={}, bForce={}"), to_wstr(word), bForce);
             if (bForce || !exclList.Find(word)) {
                 addHistDicEntry(word, minlen);
             }
@@ -695,7 +693,7 @@ namespace {
 
         void addNgramEntry(const MString& ngram) {
             if (ngramDic.AddNgramEntry(ngram)) {
-                LOG_INFO(_T("addNewGgramEntry=%s"), MAKE_WPTR(ngram));
+                LOG_INFO(_T("addNewGgramEntry={}"), to_wstr(ngram));
                 addNewEntry(ngram);
             }
         }
@@ -703,7 +701,7 @@ namespace {
     public:
         // 新規登録
         void AddNewEntry(const MString& word) {
-            _LOG_DEBUGH(_T("CALLED: word=%s"), MAKE_WPTR(word));
+            _LOG_DEBUGH(_T("CALLED: word={}"), to_wstr(word));
             if (word.empty()) return;
             if (!STROKE_HELP->Find(utils::safe_back(word))) {
                 // 末尾文字がストローク可能文字でなければ、履歴に登録しておく
@@ -752,7 +750,7 @@ namespace {
 
         // 指定の見出し語のエントリを削除する
         void DeleteEntry(const MString& word) {
-            LOG_INFO(_T("CALLED: %s"), MAKE_WPTR(word));
+            LOG_INFO(_T("CALLED: {}"), to_wstr(word));
             usedList.RemoveEntry(word);
             hashToStrMap.Remove(word);
             exclList.AddEntry(word);
@@ -761,7 +759,7 @@ namespace {
 
     private:
         void pushCandidate(const MString& key, const MString& s, size_t& n) {
-            _DEBUG_SENT(if (n < 10) _LOG_DEBUGH(_T("resultList.PushHistory(key=%s, s=%s)"), MAKE_WPTR(key), MAKE_WPTR(s)));
+            _DEBUG_SENT(if (n < 10) _LOG_DEBUGH(_T("resultList.PushHistory(key={}, s={})"), to_wstr(key), to_wstr(s)));
             resultList.PushHistory(key, utils::replace_all(s, '\t', '|'));
             ++n;
         }
@@ -794,7 +792,7 @@ namespace {
         // wlen > 0 なら、その長さの候補だけを返す
         void extract_and_copy(const MString& key, std::set<MString>& set_, size_t wlen, bool bWild = false) {
             if (!bWild) bWild = key.find('?') != MString::npos;
-            _LOG_DEBUGH(_T("extract_and_copy(key=%s, bWild=%s, set_.size()=%d, wlen=%d"), MAKE_WPTR(key), BOOL_TO_WPTR(bWild), set_.size(), wlen);
+            _LOG_DEBUGH(_T("extract_and_copy(key={}, bWild={}, set_.size()={}, wlen={}"), to_wstr(key), bWild, set_.size(), wlen);
             resultList.SetKeyInfoIfFirst(key, bWild);
             size_t keylen = key.size();
             usedList.ExtractUsedWords(key, resultList, set_, wlen);
@@ -812,7 +810,7 @@ namespace {
             for (const auto& s : vec) {
                 // 候補長がキーサイズを超えたら、ローマ字候補を追加
                 if (bRomanNeeded) {
-                    _LOG_DEBUGH(_T("check ROMAN key: s=%s"), MAKE_WPTR(s));
+                    _LOG_DEBUGH(_T("check ROMAN key: s={}"), to_wstr(s));
                     size_t vbarPos = s.find_first_of('\t');
                     if (vbarPos < s.size() && vbarPos > key.size()) {
                         pushRomanEntry(key);
@@ -825,7 +823,7 @@ namespace {
                     if (!prevWord.empty()) {
                         if (s.back() == to && utils::safe_substr(prevWord, 0, prevWord.size() - 1) == utils::safe_substr(s, 0, s.size() - 1)) {
                             // 末尾の 'ト' と 'ツ' 以外が一致したので、'ト'の方を優先する
-                            _LOG_DEBUGH(_T("FOUND SAME 'ト': %s"), MAKE_WPTR(s));
+                            _LOG_DEBUGH(_T("FOUND SAME 'ト': {}"), to_wstr(s));
                             pushCandidate(key, s, n);
                             pushCandidate(key, prevWord, n);
                         } else {
@@ -835,7 +833,7 @@ namespace {
                         prevWord.clear();
                     }
                     if (s.back() == tsu) {
-                        _LOG_DEBUGH(_T("FOUND 'ツ': %s"), MAKE_WPTR(s));
+                        _LOG_DEBUGH(_T("FOUND 'ツ': {}"), to_wstr(s));
                         prevWord = s;
                     } else {
                         pushCandidate(key, s, n);
@@ -848,7 +846,7 @@ namespace {
             // 必要ならローマ字候補を追加
             if (bRomanNeeded) pushRomanEntry(key);
 
-            _LOG_DEBUGH(_T("RESULT: resultList.size()=%d"), resultList.Size());
+            _LOG_DEBUGH(_T("RESULT: resultList.size()={}"), resultList.Size());
         }
 
         // '*' をはさんで、前半部の key1 と後半部の key2 にマッチする文字列集合を取得
@@ -862,11 +860,11 @@ namespace {
                 std::set<MString> set_;
                 const MString& key1 = items[itemsSize - 2];
                 const MString& key2 = items[itemsSize - 1];
-                _LOG_DEBUGH(_T("hist4CharsDic.FindMatchingWords(%s, %s)"), MAKE_WPTR(key1), MAKE_WPTR(key2));
+                _LOG_DEBUGH(_T("hist4CharsDic.FindMatchingWords({}, {})"), to_wstr(key1), to_wstr(key2));
                 matchLen = hist4CharsDic.FindMatchingWords(key1, key2, set_) + key2.size() + 1;
-                _LOG_DEBUGH(_T("matchLen=%d, set_.size()=%d"), matchLen, set_.size());
+                _LOG_DEBUGH(_T("matchLen={}, set_.size()={}"), matchLen, set_.size());
                 extract_and_copy(utils::last_substr(key, matchLen), set_, 0, true);
-                _LOG_DEBUGH(_T("resultList.size()=%d"), resultList.Size());
+                _LOG_DEBUGH(_T("resultList.size()={}"), resultList.Size());
             }
             return matchLen;
         }
@@ -879,20 +877,20 @@ namespace {
             auto subStr = key.substr(pos);
             auto subKey = subStr.substr(0, 4);
             size_t gobiLen = utils::isAsciiString(subStr) ? 0 : SETTINGS->histMapGobiMaxLength;
-            _LOG_DEBUGH(_T("subStr=%s, subKey=%s"), MAKE_WPTR(subStr), MAKE_WPTR(subKey));
+            _LOG_DEBUGH(_T("subStr={}, subKey={}"), to_wstr(subStr), to_wstr(subKey));
             std::set<MString> set_ = utils::filter(hist4CharsDic.GetSet(subKey, 4), [subStr, gobiLen](const auto& s) {return utils::startsWithWildKey(s, subStr, gobiLen);});
-            _LOG_DEBUGH(_T("filter(hist4CharsDic.GetSet(subKey=%s, 4), startsWithWildKey(s, qKey=%s, gobiLen=%d)): set_.size()=%d"), MAKE_WPTR(subKey), MAKE_WPTR(subStr), gobiLen, set_.size());
+            _LOG_DEBUGH(_T("filter(hist4CharsDic.GetSet(subKey={}, 4), startsWithWildKey(s, qKey={}, gobiLen={})): set_.size()={}"), to_wstr(subKey), to_wstr(subStr), gobiLen, set_.size());
             if (!set_.empty()) {
                 //bool bWild = subStr.find('?') != MString::npos;
                 extract_and_copy(subStr, set_, wlen);
             }
-            _LOG_DEBUGH(_T("RESULT: pos=%d, resultList.size()=%d"), pos, resultList.Size());
+            _LOG_DEBUGH(_T("RESULT: pos={}, resultList.size()={}"), pos, resultList.Size());
         }
 
         // keyの末尾n文字にマッチする候補を取得して out に返す
         // wlen は候補文字列の長さに関する制約
         void extract_and_copy_for_tail_n(const MString& key, size_t n, size_t wlen = 0) {
-            _LOG_DEBUGH(_T("CALLED: key=%s, n=%d, wlen=%d)"), MAKE_WPTR(key), n, wlen);
+            _LOG_DEBUGH(_T("CALLED: key={}, n={}, wlen={})"), to_wstr(key), n, wlen);
             std::set<MString> set_ = hist4CharsDic.GetSet(key, n);
             if (!set_.empty()) {
                 //MString tailKey = utils::last_substr(key, n);
@@ -909,12 +907,12 @@ namespace {
         // bCheckMinKeyLen = false なら、キー長チェックをやらない
         const HistResultList& GetCandidates(const MString& key, MString& resultKey, bool bCheckMinKeyLen, int len)
         {
-            _LOG_DEBUGH(_T("ENTER: key=%s, bCheckMinKeyLen=%s, len=%d"), MAKE_WPTR(key), BOOL_TO_WPTR(bCheckMinKeyLen), len);
+            _LOG_DEBUGH(_T("ENTER: key={}, bCheckMinKeyLen={}, len={}"), to_wstr(key), bCheckMinKeyLen, len);
             // 結果を返すためのリストをクリアしておく
             resultList.ClearKeyInfo();
             size_t minlen = len >= 0 ? len : 2;
-            size_t maxlen = len >= 0 ? len : max(minlen, (size_t)abs(len));
-            _LOG_DEBUGH(_T("minlen=%d, maxlen=%d"), minlen, maxlen);
+            size_t maxlen = len >= 0 ? len : std::max(minlen, (size_t)abs(len));
+            _LOG_DEBUGH(_T("minlen={}, maxlen={}"), minlen, maxlen);
             if (key.empty()) {
                 // ここでは len < 0 の場合も考慮
                 usedList.ExtractUsedWords(key, resultList, 100, minlen, maxlen);
@@ -933,7 +931,7 @@ namespace {
                 bool bListEmpty = IS_LIST_EMPTY();
                 bool bAll = SETTINGS->histGatherAllCandidates && bListEmpty;
 
-                _LOG_DEBUGH(_T("bAll=%s"), BOOL_TO_WPTR(bAll));
+                _LOG_DEBUGH(_T("bAll={}"), bAll);
 
 #define CHECK_LIST_EMPTY(n) \
             if (bListEmpty) {\
@@ -983,10 +981,10 @@ namespace {
                     size_t minKata = SETTINGS->histKatakanaKeyLength;
                     size_t minKanj = SETTINGS->histKanjiKeyLength;
                     size_t minRoma = SETTINGS->histRomanKeyLength;
-                    _LOG_DEBUGH(_T("minKana=%d, minKata=%d, minKanj=%d, minRoma=%d"), minKana, minKata, minKanj, minRoma);
+                    _LOG_DEBUGH(_T("minKana={}, minKata={}, minKanj={}, minRoma={}"), minKana, minKata, minKanj, minRoma);
 
                     auto checkFunc = [key, bCheckMinKeyLen, minKana, minKata, minKanj, minRoma](size_t len) {
-                        _LOG_DEBUGH(_T("checkFunc(key=%s, bCheckMinKeyLen=%s, len=%d)"), MAKE_WPTR(key), BOOL_TO_WPTR(bCheckMinKeyLen), len);
+                        _LOG_DEBUGH(_T("checkFunc(key={}, bCheckMinKeyLen={}, len={})"), to_wstr(key), bCheckMinKeyLen, len);
                         size_t minMax = 4;
                         mchar_t startChar = utils::safe_back(key, len);     // チェック対象keyの先頭文字
                         return key.size() >= len &&
@@ -1001,7 +999,7 @@ namespace {
                     if (checkFunc(4)) {
                         CHECK_LIST_EMPTY(4);
                         extract_and_copy_for_tail_n(key, 4, minlen);
-                        _LOG_DEBUGH(_T("histDic4: resultList.size()=%d"), resultList.Size());
+                        _LOG_DEBUGH(_T("histDic4: resultList.size()={}"), resultList.Size());
                     }
                     bListEmpty = IS_LIST_EMPTY();
 
@@ -1009,21 +1007,21 @@ namespace {
                         if (checkFunc(3)) {
                             CHECK_LIST_EMPTY(3);
                             extract_and_copy_for_tail_n(key, 3, minlen);
-                            _LOG_DEBUGH(_T("histDic3: resultList.size()=%d"), resultList.Size());
+                            _LOG_DEBUGH(_T("histDic3: resultList.size()={}"), resultList.Size());
                         }
                         bListEmpty = IS_LIST_EMPTY();
                         if (bAll || bListEmpty) {
                             if (checkFunc(2)) {
                                 CHECK_LIST_EMPTY(2);
                                 extract_and_copy_for_tail_n(key, 2, minlen);
-                                _LOG_DEBUGH(_T("histDic2: resultList.size()=%d"), resultList.Size());
+                                _LOG_DEBUGH(_T("histDic2: resultList.size()={}"), resultList.Size());
                             }
                             bListEmpty = IS_LIST_EMPTY();
                             if (bAll || bListEmpty) {
                                 if (checkFunc(1)) {
                                     CHECK_LIST_EMPTY(1);
                                     extract_and_copy_for_tail_n(key, 1, minlen);
-                                    _LOG_DEBUGH(_T("histDic1: resultList.size()=%d"), resultList.Size());
+                                    _LOG_DEBUGH(_T("histDic1: resultList.size()={}"), resultList.Size());
                                 }
                             }
                         }
@@ -1036,7 +1034,7 @@ namespace {
                         // 英大文字で区切って検索、なければローマ字化
                         auto words = splitByCapitalLetter(key);
                         if (words.size() > 1) {
-                            _LOG_DEBUGH(_T("splitted words=%s"), MAKE_WPTR(utils::join(words, ':')));
+                            _LOG_DEBUGH(_T("splitted words={}"), to_wstr(utils::join(words, ':')));
                             MString joinedWord;
                             for (const auto& w : words) {
                                 if (w.size() > 1) {
@@ -1070,7 +1068,7 @@ namespace {
                 } else {
                     resultKey = resultKeyLen == 0 ? key : utils::last_substr(key, resultKeyLen);    // resultKeyLen == 0 なら全体がマッチ
                 }
-                _LOG_DEBUGH(_T("resultKey=%s, resultKeyLen=%d, resultList.size()=%d"), MAKE_WPTR(resultKey), resultKeyLen, resultList.Size());
+                _LOG_DEBUGH(_T("resultKey={}, resultKeyLen={}, resultList.size()={}"), to_wstr(resultKey), resultKeyLen, resultList.Size());
             }
 
             if (SETTINGS->histMoveShortestAt2nd) {
@@ -1078,7 +1076,7 @@ namespace {
                 resultList.MoveShortestHistAt2nd();
             }
 
-            _LOG_DEBUGH(_T("LEAVE: resultKey=%s, resultList.size()=%d"), MAKE_WPTR(resultKey), resultList.Size());
+            _LOG_DEBUGH(_T("LEAVE: resultKey={}, resultList.size()={}"), to_wstr(resultKey), resultList.Size());
             return resultList;
         }
 
@@ -1115,7 +1113,7 @@ namespace {
         }
 
         // 使用辞書の読み込み
-        void ReadUsedFile(const std::vector<wstring>& lines) {
+        void ReadUsedFile(const std::vector<String>& lines) {
             LOG_INFO(_T("CALLED"));
             usedList.ReadFile(lines);
         }
@@ -1131,7 +1129,7 @@ namespace {
         }
 
         // 除外辞書の読み込み
-        void ReadExcludeFile(const std::vector<wstring>& lines) {
+        void ReadExcludeFile(const std::vector<String>& lines) {
             LOG_INFO(_T("CALLED"));
             exclList.ReadFile(lines);
         }
@@ -1147,7 +1145,7 @@ namespace {
         }
 
         // Nグラム辞書の読み込み
-        void ReadNgramFile(const std::vector<wstring>& lines) {
+        void ReadNgramFile(const std::vector<String>& lines) {
             LOG_INFO(_T("CALLED"));
             ngramDic.ReadFile(lines);
         }
@@ -1176,30 +1174,30 @@ std::unique_ptr<HistoryDic> HistoryDic::Singleton;
 namespace {
     DEFINE_NAMESPACE_LOGGER(HistoryDic_Local);
 
-    wstring replaceStar(const wstring& path, size_t pos, const wchar_t* name) {
+    String replaceStar(StringRef path, size_t pos, const wchar_t* name) {
         return path.substr(0, pos) + name + path.substr(pos + 1);
     }
 
-    typedef void (HistoryDic::* READ_FUNC)(const std::vector<wstring>& lines);
+    typedef void (HistoryDic::* READ_FUNC)(const std::vector<String>& lines);
 
     // 履歴ファイルの読み込み
-    void readFile(const wstring& path, READ_FUNC func, bool bWarn = true) {
-        LOG_INFO(_T("open hist file: %s"), path.c_str());
+    void readFile(StringRef path, READ_FUNC func, bool bWarn = true) {
+        LOG_INFO(_T("open hist file: {}"), path);
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             // ファイル読み込み
             (HISTORY_DIC.get()->*func)(reader.getAllLines());
-            LOG_INFO(_T("close hist file: %s"), path.c_str());
+            LOG_INFO(_T("close hist file: {}"), path);
         } else {
-            if (bWarn) LOG_WARN(_T("Can't read hist file: %s"), path.c_str());
+            if (bWarn) LOG_WARN(_T("Can't read hist file: {}"), path);
         }
     };
 
     typedef void (HistoryDic::* WRITE_FUNC)(utils::OfstreamWriter&);
 
     // 辞書ファイルの内容の書き出し
-    void writeFile(const wstring& path, WRITE_FUNC func) {
-        LOG_INFO(_T("CALLED: path=%s"), path.c_str());
+    void writeFile(StringRef path, WRITE_FUNC func) {
+        LOG_INFO(_T("CALLED: path={}"), path);
         if (!path.empty() && HISTORY_DIC) {
             utils::OfstreamWriter writer(path);
             if (writer.success()) {
@@ -1214,11 +1212,11 @@ namespace {
 // ファイルに名は * を含むこと(例: xxxx.*.yyy)。
 // * の部分を {entry,recent,exclude,ngram} に置換したファイルが読み込まれる
 // エラーがあったら例外を投げる
-int HistoryDic::CreateHistoryDic(const tstring& histFile) {
-    LOG_INFO(_T("ENTER: histFile=%s"), histFile.c_str());
+int HistoryDic::CreateHistoryDic(StringRef histFile) {
+    LOG_INFO(_T("ENTER: histFile={}"), histFile);
 
     if (Singleton != 0) {
-        LOG_INFO(_T("already created: hist file: %s"), histFile.c_str());
+        LOG_INFO(_T("already created: hist file: {}"), histFile);
         return 0;
     }
 
@@ -1226,15 +1224,15 @@ int HistoryDic::CreateHistoryDic(const tstring& histFile) {
     Singleton.reset(new HistoryDicImpl());
 
     if (!histFile.empty()) {
-        wstring filename = histFile;
+        String filename = histFile;
         if (!utils::contains(filename, _T("*"))) {
             // エラーメッセージを表示
-            LOG_WARN(_T("hist file should be a wildcard form such as 'xxxx.*.yyy': %s"), filename.c_str());
-            ERROR_HANDLER->Warn(utils::format(_T("入力履歴ファイル(%s)はワイルドード文字(*)を含む形式である必要があります。\r\nデフォルトのファイル名パターン 'kwhist.*.txt' を使用します。"), filename.c_str()));
+            LOG_WARN(_T("hist file should be a wildcard form such as 'xxxx.*.yyy': {}"), filename);
+            ERROR_HANDLER->Warn(std::format(_T("入力履歴ファイル({})はワイルドード文字(*)を含む形式である必要があります。\r\nデフォルトのファイル名パターン 'kwhist.*.txt' を使用します。"), filename));
             filename = _T("kwhist.*.txt");
         }
         auto path = utils::joinPath(SETTINGS->rootDir, filename);
-        LOG_INFO(_T("open history file: %s"), path.c_str());
+        LOG_INFO(_T("open history file: {}"), path);
 
         size_t pos = path.find(_T("*"));
         readFile(replaceStar(path, pos, _T("entry")), &HistoryDic::ReadFile);
@@ -1248,8 +1246,8 @@ int HistoryDic::CreateHistoryDic(const tstring& histFile) {
 }
 
 // 辞書ファイルの内容の書き出し
-void HistoryDic::WriteHistoryDic(const tstring& histFile) {
-    LOG_INFO(_T("CALLED: path=%s"), histFile.c_str());
+void HistoryDic::WriteHistoryDic(StringRef histFile) {
+    LOG_INFO(_T("CALLED: path={}"), histFile);
     if (Singleton) {
         auto path = utils::joinPath(SETTINGS->rootDir, utils::contains(histFile, _T("*")) ? histFile : _T("kwhist.*.txt"));
         size_t pos = path.find(_T("*"));

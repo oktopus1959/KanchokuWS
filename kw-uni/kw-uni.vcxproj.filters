@@ -61,11 +61,14 @@
     <Filter Include="ヘッダー ファイル\Template">
       <UniqueIdentifier>{5181c364-441b-43ab-bdf5-f48bf8b31a4e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\utils">
+      <UniqueIdentifier>{320a55d4-1b4f-46a4-94d1-c89ce6f10ea8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ヘッダー ファイル\utils">
-      <UniqueIdentifier>{c6079840-a42f-4608-aeff-049a7ab70316}</UniqueIdentifier>
+      <UniqueIdentifier>{cae61296-8dea-483b-b4fe-cf2ffe9614aa}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\utils\langedge">
-      <UniqueIdentifier>{2ab12722-7b0f-4acb-ab61-cb1b17e7a913}</UniqueIdentifier>
+      <UniqueIdentifier>{ee9dd71e-4a94-4483-965d-f44d50939d8c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -204,39 +207,6 @@
     <ClInclude Include="Template\Template.h">
       <Filter>ヘッダー ファイル\Template</Filter>
     </ClInclude>
-    <ClInclude Include="utils\file_utils.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\misc_utils.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\string_type.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\string_utils.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="langedge\ctypeutil.hpp">
-      <Filter>ヘッダー ファイル\utils\langedge</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\langedge\array_size.hpp">
-      <Filter>ヘッダー ファイル\utils\langedge</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\langedge\exception.hpp">
-      <Filter>ヘッダー ファイル\utils\langedge</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\langedge\pathname.hpp">
-      <Filter>ヘッダー ファイル\utils\langedge</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\langedge\pathutil.hpp">
-      <Filter>ヘッダー ファイル\utils\langedge</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\langedge\tstring.hpp">
-      <Filter>ヘッダー ファイル\utils\langedge</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\langedge\ctypeutil.hpp">
-      <Filter>ヘッダー ファイル\utils\langedge</Filter>
-    </ClInclude>
     <ClInclude Include="KeysAndChars\Eisu.h">
       <Filter>ヘッダー ファイル\KeysAndChars</Filter>
     </ClInclude>
@@ -248,6 +218,87 @@
     </ClInclude>
     <ClInclude Include="OneShot\RewriteString.h">
       <Filter>ヘッダー ファイル\OneShot</Filter>
+    </ClInclude>
+    <ClInclude Include="util\exception.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\file_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\Lazy.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\misc_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\my_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\path_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\ptr_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\regex_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\std_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\string_type.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\string_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\transform_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\xsv_parser.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="util\xsvparser.hpp">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\exception.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\file_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Lazy.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\misc_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\ptr_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\regex_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\std_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\string_type.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\string_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\transform_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\xsv_parser.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\xsvparser.hpp">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\langedge\ctypeutil.hpp">
+      <Filter>ヘッダー ファイル\utils\langedge</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -359,9 +410,6 @@
     <ClCompile Include="Reporting\ErrorHandler.cpp">
       <Filter>ソース ファイル\Reporting</Filter>
     </ClCompile>
-    <ClCompile Include="Reporting\Logger.cpp">
-      <Filter>ソース ファイル\Reporting</Filter>
-    </ClCompile>
     <ClCompile Include="Settings\Settings.cpp">
       <Filter>ソース ファイル\Settings</Filter>
     </ClCompile>
@@ -373,6 +421,12 @@
     </ClCompile>
     <ClCompile Include="KeysAndChars\RomanToKatakana.cpp">
       <Filter>ソース ファイル\KeysAndChars</Filter>
+    </ClCompile>
+    <ClCompile Include="Reporting\Logger.cpp">
+      <Filter>ソース ファイル\Reporting</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\utf_utils.cpp">
+      <Filter>ソース ファイル\utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

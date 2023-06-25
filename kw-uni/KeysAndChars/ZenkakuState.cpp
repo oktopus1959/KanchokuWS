@@ -36,7 +36,6 @@ namespace {
 
         ~ZenkakuState() { };
 
-#define NAME_PTR (Name.c_str())
 #define MY_NODE ((ZenkakuNode*)pNode)
 
         // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
@@ -53,7 +52,7 @@ namespace {
 
          // Strokeキー を処理する
         void handleStrokeKeys(int deckey) {
-            LOG_DEBUG(_T("CALLED: %s: deckey=%xH(%d)"), NAME_PTR, deckey, deckey);
+            LOG_DEBUG(_T("CALLED: {}: deckey={:x}H({})"), Name, deckey, deckey);
             if (deckey >= FUNC_DECKEY_START) {
                 // 機能キーだったら処理をキャンセルする
                 LOG_DEBUG(_T("CANCELED"));
@@ -66,7 +65,7 @@ namespace {
 
          // Shiftキーで修飾されたキーを処理する
         void handleShiftKeys(int deckey) {
-            LOG_DEBUG(_T("CALLED: %s: deckey=%xH(%d), char=%c"), NAME_PTR, deckey, deckey);
+            LOG_DEBUG(_T("CALLED: {}: deckey={:x}H({}), char={}"), Name, deckey, deckey);
             STATE_COMMON->ClearOrigString();
             outputZenkakuCharFromDeckey(deckey);
         }
@@ -79,19 +78,19 @@ namespace {
 
         // FullEscape の処理 -- 処理のキャンセル
         void handleFullEscape() {
-            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            LOG_DEBUG(_T("CALLED: {}"), Name);
             cancelMe();
         }
 
         // Esc の処理 -- 処理のキャンセル
         void handleEsc() {
-            LOG_DEBUG(_T("CALLED: %s"), NAME_PTR);
+            LOG_DEBUG(_T("CALLED: {}"), Name);
             cancelMe();
         }
 
         // ZenkakuConversionの処理 - 処理のキャンセル
         void handleZenkakuConversion() {
-            LOG_DEBUGH(_T("CALLED: %s"), NAME_PTR);
+            LOG_DEBUGH(_T("CALLED: {}"), Name);
             cancelMe();
         }
 
@@ -135,7 +134,7 @@ namespace {
 
         // 不要な状態になったか
         void DoIntermediateCheck() {
-            _LOG_DEBUGH(_T("ENTER: %s"), NAME_PTR);
+            _LOG_DEBUGH(_T("ENTER: {}"), Name);
             // 1文字処理したら自状態は不要になる
             cancelMe();
         }

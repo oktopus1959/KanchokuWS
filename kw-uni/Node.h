@@ -13,13 +13,13 @@ enum class NodeType {
     RootStroke, // ルートストロークテーブルノード
     Stroke,     // ストロークテーブルノード
     String,     // 文字列ノード
-    Function,   // 機能ノード
+    FunctionT,   // 機能ノード
     Rewrite,    // 書き換えノード
     None,
 };
 
 namespace {
-    inline tstring nodeTypeName(NodeType nt) {
+    inline String nodeTypeName(NodeType nt) {
         switch (nt) {
         case NodeType::Start:
             return _T("StartNode");
@@ -29,7 +29,7 @@ namespace {
             return _T("Stroke");
         case NodeType::String:
             return _T("String");
-        case NodeType::Function:
+        case NodeType::FunctionT:
             return _T("Function");
         case NodeType::Rewrite:
             return _T("Rewrite");
@@ -38,7 +38,7 @@ namespace {
     }
 }
 
-#define NODE_NAME_PTR(n) (n == 0 ? _T("None") : nodeTypeName(n->getNodeType()).c_str())
+#define NODE_NAME(n) (n == 0 ? _T("None") : nodeTypeName(n->getNodeType()))
 
 // -------------------------------------------------------------------
 // ノードの基底クラス (抽象クラス)
@@ -77,7 +77,7 @@ public:
     inline bool isStrokeTableNode() const { return isRootStrokeTableNode() || isNodeTypeOf(NodeType::Stroke); }
 
     // 機能ノードか
-    inline bool isFunctionNode() const { return isNodeTypeOf(NodeType::Function); }
+    inline bool isFunctionNode() const { return isNodeTypeOf(NodeType::FunctionT); }
 
     // 書き換えノードか
     inline bool isRewriteNode() const { return isNodeTypeOf(NodeType::Rewrite); }

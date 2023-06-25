@@ -9,24 +9,24 @@ class ErrorHandler {
 
     int errorLevel = 0;
 
-    wstring errorMsg;
+    String errorMsg;
 
     // エラー情報を格納
-    void setErrorInfo(int level, const wstring& msg);
+    void setErrorInfo(int level, StringRef msg);
 
 public:
     // 初期化
     void Clear();
 
     // エラー情報を格納し、例外を送出
-    void Error(const wstring& msg);
+    void Error(StringRef msg);
 
     // 警告情報を格納するが、継続する
-    void Warn(const wstring& msg);
+    void Warn(StringRef msg);
 
     int GetErrorLevel() const { return errorLevel; }
 
-    const wstring& GetErrorMsg() const { return errorMsg; }
+    StringRef GetErrorMsg() const { return errorMsg; }
 
 public:
     static std::unique_ptr<ErrorHandler> Singleton;

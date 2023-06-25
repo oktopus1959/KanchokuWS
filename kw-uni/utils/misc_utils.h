@@ -1,5 +1,9 @@
 #pragma once
 
+#include "string_utils.h"
+
+#define GE_ZEOR_OR(x, y) ((x) >= 0 ? (x) : (y))
+
 // 種々の utils を収める
 namespace utils {
     template <typename T, size_t SIZE>
@@ -125,91 +129,25 @@ namespace utils {
         return 0;
     }
 
-    /**
-    * filter
-    */
-    template <typename T, typename P>
-    inline std::vector<T> filter(const std::vector<T>& container, P predicate) {
-        std::vector<T> result;
-        std::copy_if(container.begin(), container.end(), std::back_inserter(result), predicate);
-        return result;
+    template<typename T>
+    inline int find_index(const std::vector<T>& container, const T& val) {
+        for (size_t i = 0; i < container.size(); ++i) {
+            if (container[i] == val) return (int)i;
+        }
+        return -1;
     }
 
-    template <typename T, typename P>
-    inline std::set<T> filter(const std::set<T>& container, P predicate) {
-        std::set<T> result;
-        std::copy_if(container.begin(), container.end(), std::inserter(result, result.end()), predicate);
-        return result;
-    }
-
-    /**
-    * filter not_empty string
-    */
-    //template <typename C>
-    //inline C filter_not_empty(const C& list) {
-    //     return filter(list, [](wstring s) { return !s.empty(); });
-    //}
-
-    template <typename T>
-    inline std::vector<T> filter_not_empty(const std::vector<T>& list) {
-         return filter(list, [](T s) { return !s.empty(); });
-    }
-
-    /**
-    * transform to same type of container
-    */
-    template <typename C, typename F>
-    inline C transform(const C& container, F func) {
-        C result;
-        std::transform(container.begin(), container.end(), std::inserter(result, result.end()), func);
-        return result;
-    }
-
-    /**
-    * transform and append (vector)
-    */
-    template <typename T, typename U, typename F>
-    inline void transform_append(const std::vector<T>& src, std::vector<U>& dest, F func) {
-        std::transform(src.begin(), src.end(), std::back_inserter(dest), func);
-    }
-
-    /**
-    * transform and copy to other type of container
-    */
-    template <typename C, typename D, typename F>
-    inline void transform_append(const C& src, D& dest, F func) {
-        std::transform(src.begin(), src.end(), std::inserter(dest, dest.end()), func);
-    }
-
-    /**
-    * transform and insert (vector)
-    */
-    template <typename T, typename Iter, typename F>
-    inline void transform_insert(const std::vector<T>& src, Iter iter, F func) {
-        std::transform(src.begin(), src.end(), std::inserter(iter), func);
-    }
-
-    /**
-    * to_vector
-    */
-    template <typename T, typename U, typename V, template<typename, typename, typename> typename C>
-    inline std::vector<T> to_vector(const C<T, U, V> &container) {
-        return std::vector<T>(container.begin(), container.end());
-    }
-
-    /**
-    * to_ptr_vector
-    */
-    inline std::vector<const char_t*> to_ptr_vector(const std::vector<wstring>& list) {
-        std::vector<const char_t*> result;
-        transform_append(list, result, [](const wstring& s) { return s.c_str(); });
-        return result;
+    inline void trim_and_copy(const std::vector<String>& src, std::vector<String>& dest) {
+        for (const auto& s : src) {
+            auto ss = utils::strip(s);
+            if (!ss.empty() && ss[0] != '#') dest.push_back(ss);
+        }
     }
 
     // safe_front()
-    inline tstring safe_front(const std::vector<tstring>& vec) {
+    inline String safe_front(const std::vector<String>& vec) {
         if (vec.empty()) {
-            return _T("");
+            return L"";
         } else {
             return vec.front();
         }
@@ -223,9 +161,9 @@ namespace utils {
         }
     }
 
-    inline tstring safe_front(const std::set<tstring>& st) {
+    inline String safe_front(const std::set<String>& st) {
         if (st.empty()) {
-            return _T("");
+            return L"";
         } else {
             return *st.begin();
         }
@@ -245,9 +183,56 @@ namespace utils {
         return (iter != dic.end()) ? iter->second : U();
     }
 
+    template<typename T, typename U>
+    inline U safe_get(const std::map<T, U>& dic, const T& key, const U& defVal) {
+        auto iter = dic.find(key);
+        return (iter != dic.end()) ? iter->second : defVal;
+    }
+
+    template<typename T, typename U>
+    inline void get_keys_and_values(const std::map<T, U>& map, std::vector<T>& keys, std::vector<U>& values) {
+        for (const auto& pair : map) {
+            keys.push_back(pair.first);
+            values.push_back(pair.second);
+        }
+    }
+
     inline time_t getSecondsFromEpochTime() {
         return time(nullptr);
     }
 
+    template<class T>
+    struct VectorUtil {
+        /**
+        * transform to another type of container
+        */
+        template <typename C, typename F>
+        static inline std::vector<T> transform(const C& container, F func) {
+            std::vector<T> result;
+            std::transform(container.begin(), container.end(), std::back_inserter(result), func);
+            return result;
+        }
+
+    };
+
+    struct MapUtil {
+        template<class K, class V>
+        static inline bool containsKey(std::map<K, V> map, const K& key) {
+            auto iter = map.find(key);
+            return iter != map.end();
+        }
+
+        template<class K, class V>
+        static inline std::pair<bool, V> get(std::map<K, V> map, const K& key) {
+            auto iter = map.find(key);
+            return iter != map.end() ? std::pair<bool, V>{true, iter->second()} : std::pair<bool, V>{false, V()};
+        }
+
+        template<class K, class V>
+        static inline const V& getOrElse(std::map<K, V> map, const K& key, const V& elseVal) {
+            auto iter = map.find(key);
+            return iter != map.end() ? iter->second() : elseVal;
+        }
+    };
 } // namespace utils
 

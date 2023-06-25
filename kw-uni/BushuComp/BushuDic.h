@@ -24,17 +24,17 @@ public:
     static std::unique_ptr<BushuDic> Singleton;
 
     // 部首合成辞書インスタンスを生成する
-    static int CreateBushuDic(const tstring&, const tstring&);
+    static int CreateBushuDic(StringRef, StringRef);
 
     // 部首合成辞書を読み込む
-    static void ReadBushuDic(const tstring&);
+    static void ReadBushuDic(StringRef);
 
     // 部首合成辞書ファイルに書き込む
-    static void WriteBushuDic(const tstring& path);
+    static void WriteBushuDic(StringRef path);
     static void WriteBushuDic();
 
     // 部首合成エントリの追加
-    virtual void AddBushuEntry(const wstring&) = 0;
+    virtual void AddBushuEntry(StringRef) = 0;
     virtual void MakeStrokableMap() = 0;
 
     // a と b を組み合わせてできる合成文字を探す。
@@ -43,14 +43,14 @@ public:
     virtual void GatherDerivedMoji(mchar_t m, std::vector<mchar_t>& list) = 0;
 
     // 自動部首合成辞書を読み込む
-    static void ReadAutoBushuDic(const tstring&);
+    static void ReadAutoBushuDic(StringRef);
 
     // 自動部首合成辞書ファイルに書き込む
-    static void WriteAutoBushuDic(const tstring& path);
+    static void WriteAutoBushuDic(StringRef path);
     static void WriteAutoBushuDic();
 
     // 自動部首合成エントリの追加
-    virtual void AddAutoBushuEntry(const wstring&) = 0;
+    virtual void AddAutoBushuEntry(StringRef) = 0;
     virtual void AddAutoBushuEntry(mchar_t a, mchar_t b, mchar_t c) = 0;
 
     // a と b を組み合わせてできる自動合成文字を探す。
@@ -60,7 +60,7 @@ public:
     virtual bool CopyBushuCompHelpToVkbFaces(mchar_t ch, wchar_t* faces, size_t kbLen, size_t kbNum, bool bSetAssoc = false) = 0;
 
     //後置部首合成定義を書き出す
-    virtual void ExportPostfixBushuCompDefs(utils::OfstreamWriter& writer, const wchar_t* postfix) = 0;
+    virtual void ExportPostfixBushuCompDefs(utils::OfstreamWriter& writer, StringRef postfix) = 0;
 };
 
 #define BUSHU_DIC (BushuDic::Singleton)

@@ -30,8 +30,6 @@
 //#define LOG_TRACE LOG_INFO
 #endif
 
-#define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
-
 namespace {
     DEFINE_NAMESPACE_LOGGER(StrokeTreeBuilder);
 
@@ -51,7 +49,7 @@ namespace {
         REWRITE,        // @{ : 後置書き換え
     };
 
-    inline wstring getTokenString(TOKEN token) {
+    inline String getTokenString(TOKEN token) {
         switch (token) {
         case TOKEN::END: return _T("END");
         case TOKEN::LBRACE: return _T("LBRACE");
@@ -88,8 +86,8 @@ namespace {
     }
 
     // 機能ノードの生成
-    Node* createFunctionNode(wstring marker, int prevNum, int ) {
-        LOG_DEBUG(_T("marker=%s, prevNum=%d, myNum=%d"), marker.c_str(), prevNum, 0);
+    Node* createFunctionNode(String marker, int prevNum, int ) {
+        LOG_DEBUG(_T("marker={}, prevNum={}, myNum={}"), marker, prevNum, 0);
         if (prevNum < 0) prevNum = 0;
         switch (utils::safe_front(marker)) {
         //case BuiltInMarker::MyChar:
@@ -113,14 +111,14 @@ namespace {
         DECLARE_CLASS_LOGGER;
 
         struct BlockInfo {
-            wstring DirPath;        // インクルードする場合の起動ディレクトリ
-            wstring BlockName;      // ファイル名やブロック名
+            String DirPath;        // インクルードする場合の起動ディレクトリ
+            String BlockName;      // ファイル名やブロック名
             size_t OrigLineNumber;  // ブロックの開始行番号(0起点)
             size_t CurrentOffset;   // 当ブロック内での行番号を算出するための、真の起点から現在行におけるオフセット行数
 
             BlockInfo() { }
 
-            BlockInfo(const wstring& dirPath, const wstring& name, size_t lineNum, size_t off)
+            BlockInfo(StringRef dirPath, StringRef name, size_t lineNum, size_t off)
                 : DirPath(dirPath), BlockName(name), OrigLineNumber(lineNum), CurrentOffset(off) { }
 
             BlockInfo(const BlockInfo& info)
@@ -129,29 +127,29 @@ namespace {
 
         std::vector<BlockInfo> blockInfoStack;
 
-        wstring safeDirPath(const wstring& dirPath) {
-            wstring path = dirPath;
+        String safeDirPath(StringRef dirPath) {
+            String path = dirPath;
             if (path.empty() && !blockInfoStack.empty()) {
                 path = blockInfoStack.back().DirPath;
             }
             return path;
         }
 
-        wstring emptyStr = _T("");
+        String emptyStr = _T("");
 
     public:
-        const wstring& CurrentDirPath() {
-            _LOG_DEBUGH(_T("PATH: %s"), blockInfoStack.empty() ? _T("(empty)") : blockInfoStack.back().DirPath.c_str());
+        StringRef CurrentDirPath() {
+            _LOG_DEBUGH(_T("PATH: {}"), blockInfoStack.empty() ? _T("(empty)") : blockInfoStack.back().DirPath);
             return blockInfoStack.empty() ? emptyStr : blockInfoStack.back().DirPath;
         }
 
-        const wstring& CurrentBlockName() {
-            _LOG_DEBUGH(_T("NAME: %s"), blockInfoStack.empty() ? _T("empty") : blockInfoStack.back().BlockName.c_str());
+        StringRef CurrentBlockName() {
+            _LOG_DEBUGH(_T("NAME: {}"), blockInfoStack.empty() ? _T("empty") : blockInfoStack.back().BlockName);
             return blockInfoStack.empty() ? emptyStr : blockInfoStack.back().BlockName;
         }
 
         size_t CurrentOffset() {
-            _LOG_DEBUGH(_T("OFFSET: %d"), blockInfoStack.empty() ? 0 : blockInfoStack.back().CurrentOffset);
+            _LOG_DEBUGH(_T("OFFSET: {}"), blockInfoStack.empty() ? 0 : blockInfoStack.back().CurrentOffset);
             return blockInfoStack.empty() ? 0 : blockInfoStack.back().CurrentOffset;
         }
 
@@ -159,19 +157,19 @@ namespace {
             return lineNum - CurrentOffset();
         }
 
-        void Push(const wstring& dirPath, const wstring& name, size_t lineNum) {
+        void Push(StringRef dirPath, StringRef name, size_t lineNum) {
             blockInfoStack.push_back(BlockInfo(dirPath, name, lineNum, lineNum));
         }
 
         void Pop(size_t nextLineNum) {
-            _LOG_DEBUGH(_T("PUSH ENTER: nextLineNum=%d, dirPath=%s, blockName=%s, origLine=%d, offset=%d"), 
-                nextLineNum, blockInfoStack.back().DirPath.c_str(), blockInfoStack.back().BlockName.c_str(), blockInfoStack.back().OrigLineNumber, blockInfoStack.back().CurrentOffset);
+            _LOG_DEBUGH(_T("PUSH ENTER: nextLineNum={}, dirPath={}, blockName={}, origLine={}, offset={}"), 
+                nextLineNum, blockInfoStack.back().DirPath, blockInfoStack.back().BlockName, blockInfoStack.back().OrigLineNumber, blockInfoStack.back().CurrentOffset);
             size_t insertedTotalLineNum = nextLineNum - blockInfoStack.back().OrigLineNumber;
             blockInfoStack.pop_back();
             if (!blockInfoStack.empty()) {
                 blockInfoStack.back().CurrentOffset += insertedTotalLineNum;
-                _LOG_DEBUGH(_T("PUSH LEAVE: dirPath=%s, blockName=%s, origLine=%d, offset=%d"),
-                    blockInfoStack.back().DirPath.c_str(), blockInfoStack.back().BlockName.c_str(), blockInfoStack.back().OrigLineNumber, blockInfoStack.back().CurrentOffset);
+                _LOG_DEBUGH(_T("PUSH LEAVE: dirPath={}, blockName={}, origLine={}, offset={}"),
+                    blockInfoStack.back().DirPath, blockInfoStack.back().BlockName, blockInfoStack.back().OrigLineNumber, blockInfoStack.back().CurrentOffset);
             }
         }
     };
@@ -184,26 +182,26 @@ namespace {
 
         bool bPrimaryTable = false;
 
-        std::vector<wstring>& tableLines;
+        std::vector<String>& tableLines;
 
         TOKEN currentToken = TOKEN::END;   // 最後に読んだトークン
-        wstring currentStr;                 // 文字列トークン
+        String currentStr;                 // 文字列トークン
         int arrowIndex = -1;                // ARROWインデックス
         size_t lineNumber = 0;              // 今読んでる行数
 
-        wstring currentLine;                // 現在解析中の行
+        String currentLine;                // 現在解析中の行
         size_t nextPos = 0;                 // 次の文字位置
-        char_t currentChar = 0;             // 次の文字
+        wchar_t currentChar = 0;             // 次の文字
 
         //bool bPostRewriteNodeFound = false; // 後置書き換え機能ノードがあったか
 
         // ブロック情報のスタック
         BlockInfoStack blockInfoStack;
 
-        //std::map<wstring, wstring> defines; // 定義
+        //std::map<String, String> defines; // 定義
 
-        //wstring getAndRemoveDefines(const wstring& key) {
-        //    wstring result;
+        //String getAndRemoveDefines(StringRef key) {
+        //    String result;
         //    auto iter = defines.find(key);
         //    if (iter != defines.end()) {
         //        result = iter->second;
@@ -222,12 +220,12 @@ namespace {
         std::vector<int> strokes;
 
         // 定義列マップ
-        std::map<wstring, std::shared_ptr<std::vector<wstring>>> linesMap;
+        std::map<String, std::shared_ptr<std::vector<String>>> linesMap;
 
         //// 漢字置換マップ
-        //std::map<wstring, wstring> kanjiConvMap;
+        //std::map<String, String> kanjiConvMap;
 
-        //const wstring& conv_kanji(const wstring& k) {
+        //StringRef conv_kanji(StringRef k) {
         //    auto iter = kanjiConvMap.find(k);
         //    return iter == kanjiConvMap.end() ? k : iter->second;
         //}
@@ -236,12 +234,12 @@ namespace {
         // コンストラクタ
         // lines: ソースとなるテーブル定義
         // bPrimary: 主テーブルなら true を渡す。副テーブルや後からの定義差し込みなら false を渡す
-        StrokeTreeBuilder(const wstring& tableFile, std::vector<wstring>& lines, bool bPrimary)
+        StrokeTreeBuilder(StringRef tableFile, std::vector<String>& lines, bool bPrimary)
             : tableLines(lines), bPrimaryTable(bPrimary) {
             blockInfoStack.Push(SETTINGS->rootDir, tableFile, 0);
             if (!tableLines.empty()) {
                 currentLine = tableLines[0];
-                _LOG_DEBUGH(_T("currentLine(1)=%s"), currentLine.c_str());
+                _LOG_DEBUGH(_T("currentLine(1)={}"), currentLine);
             }
         }
 
@@ -311,8 +309,8 @@ namespace {
         }
 
         StrokeTableNode* makeSubTree(StrokeTableNode* tblNode, int depth, int prevNth) {
-            //wstring myGuideChars = getAndRemoveDefines(_T("defguide"));   // フロントエンドでサポート
-            _LOG_DEBUGH(_T("ENTER: tblNode=%p, depth=%d, parevNth=%d"), tblNode, depth, prevNth);
+            //String myGuideChars = getAndRemoveDefines(_T("defguide"));   // フロントエンドでサポート
+            _LOG_DEBUGH(_T("ENTER: tblNode={:p}, depth={}, parevNth={}"), (void*)tblNode, depth, prevNth);
 
             if (tblNode == 0) tblNode = new StrokeTableNode(depth);
             int shiftPlaneOffset = depth == 0 ? shiftPlane * PLANE_DECKEY_NUM : 0;   // shift面によるオフセットは、ルートストロークだけに適用する
@@ -320,7 +318,7 @@ namespace {
             bool isPrevDelim = true;
             readNextToken(depth);
             while (currentToken != TOKEN::RBRACE) { // '}' でブロックの終わり
-                _LOG_DEBUGH(_T("token=%s"), getTokenString(currentToken).c_str());
+                _LOG_DEBUGH(_T("token={}"), getTokenString(currentToken));
                 switch (currentToken) {
                 case TOKEN::ARROW:
                     createNodePositionedByArrow(tblNode, prevNth, arrowIndex);
@@ -332,7 +330,7 @@ namespace {
                     break;
 
                 case TOKEN::LBRACE:
-                    if (shiftPlane == COMBO_SHIFT_PLANE) { _LOG_DEBUGH(_T("LBRACE: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), lineNumber + 1, depth, shiftPlane, prevNth, n + shiftPlaneOffset); }
+                    if (shiftPlane == COMBO_SHIFT_PLANE) { _LOG_DEBUGH(_T("LBRACE: line={}, depth={}, shiftPlane={}, prevNth={}, nth={}"), lineNumber + 1, depth, shiftPlane, prevNth, n + shiftPlaneOffset); }
                 case TOKEN::STRING:             // "str" : 文字列ノード
                 case TOKEN::BARE_STRING:        // str : 文字列ノード
                 case TOKEN::FUNCTION:           // @c : 機能ノード
@@ -358,7 +356,7 @@ namespace {
             }
 
             //if (!myGuideChars.empty()) {
-            //    _LOG_DEBUGH(_T("DEFGUID: %s"), myGuideChars.c_str());
+            //    _LOG_DEBUGH(_T("DEFGUID: {}"), myGuideChars);
             //    tblNode->MakeStrokeGuide(myGuideChars, bPrimaryTable);
             //}
 
@@ -369,15 +367,15 @@ namespace {
 
         void createNodePositionedByArrow(StrokeTableNode* tblNode, int prevNth, int idx) {
             int nextDepth = tblNode->depth() + 1;
-            LOG_DEBUG(_T("ENTER: currentLine=%s, nextDepth=%d, idx=%d, prevN=%d"), currentLine.c_str(), nextDepth, idx, prevNth);
+            LOG_DEBUG(_T("ENTER: currentLine={}, nextDepth={}, idx={}, prevN={}"), currentLine, nextDepth, idx, prevNth);
             Node* node = tblNode->getNth(idx);
             if (node && node->isStrokeTableNode()) {
-                LOG_DEBUG(_T("tblNode[%d] has been created"), idx);
+                LOG_DEBUG(_T("tblNode[{}] has been created"), idx);
                 createNodePositionedByArrowSub(dynamic_cast<StrokeTableNode*>(node), nextDepth, prevNth, idx);
             } else {
                 //tblNode->setNthChild(idx, createNodePositionedByArrowSub(0, nextDepth, prevNth, idx));
                 setNthChildNode(tblNode, idx, createNodePositionedByArrowSub(0, nextDepth, prevNth, idx));
-                LOG_DEBUG(_T("tblNode->setNthChild(%d)"), idx);
+                LOG_DEBUG(_T("tblNode->setNthChild({})"), idx);
             }
             LOG_DEBUG(_T("LEAVE"));
         }
@@ -394,14 +392,14 @@ namespace {
             Node* p = createNode(currentToken, depth, prevNth, nth);
             if (tblNode) {
                 setNthChildNode(tblNode, nth, p);
-                _LOG_DEBUGH(_T("tblNode->setNthChild(%d)"), nth);
+                _LOG_DEBUGH(_T("tblNode->setNthChild({})"), nth);
             }
             return p;
         }
 
         // 矢印束記法(-*>-nn>)を第1打鍵位置に従って配置する
         void allocateArrowBundle(StrokeTableNode* tblNode, int depth, int nextArrowIdx) {
-            _LOG_DEBUGH(_T("tblNode=%p, depth=%d, nextArrowIdx=%d"), tblNode, depth, nextArrowIdx);
+            _LOG_DEBUGH(_T("tblNode={:p}, depth={}, nextArrowIdx={}"), (void*)tblNode, depth, nextArrowIdx);
 
             if (!tblNode) return;
 
@@ -453,7 +451,7 @@ namespace {
         }
 
         StrokeTableNode* getNodePositionedByArrowBundle(StrokeTableNode* tblNode, int idx) {
-            _LOG_DEBUGH(_T("CALLED: currentLine=%d, idx=%d"), lineNumber, idx);
+            _LOG_DEBUGH(_T("CALLED: currentLine={}, idx={}"), lineNumber, idx);
             Node* node = tblNode->getNth(idx);
             if (node && node->isStrokeTableNode()) return dynamic_cast<StrokeTableNode*>(node);
 
@@ -464,7 +462,7 @@ namespace {
         }
 
         Node* createNode(TOKEN token, int depth, int prevNth, int nth/*, bool bArrowBundle = false*/) {
-            _LOG_DEBUGH(_T("ENTER: token=%s, depth=%d, prevNth=%d, nth=%d"), getTokenString(token).c_str(), depth, prevNth, nth);
+            _LOG_DEBUGH(_T("ENTER: token={}, depth={}, prevNth={}, nth={}"), getTokenString(token), depth, prevNth, nth);
             Node* pResult = 0;
             bool bBareStr = token == TOKEN::BARE_STRING;
             switch (token) {
@@ -481,8 +479,8 @@ namespace {
 
             case TOKEN::STRING:            // "str" : 文字列ノード
             case TOKEN::BARE_STRING:       // str : 文字列ノード
-                LOG_TRACE(_T("STRING: %d:%d=%s, shiftPlane=%d"), lineNumber + 1, nth, currentStr.c_str(), shiftPlane);
-                if (shiftPlane == COMBO_SHIFT_PLANE) { _LOG_DEBUGH(_T("STRING: %s: line=%d, depth=%d, shiftPlane=%d, prevNth=%d, nth=%d"), currentStr.c_str(), lineNumber + 1, depth, shiftPlane, prevNth, nth); }
+                LOG_TRACE(_T("STRING: {}:{}={}, shiftPlane={}"), lineNumber + 1, nth, currentStr, shiftPlane);
+                if (shiftPlane == COMBO_SHIFT_PLANE) { _LOG_DEBUGH(_T("STRING: {}: line={}, depth={}, shiftPlane={}, prevNth={}, nth={}"), currentStr, lineNumber + 1, depth, shiftPlane, prevNth, nth); }
                 if (currentStr.empty()) {
                     _LOG_DEBUGH(_T("empty str"));
                     break;
@@ -491,11 +489,11 @@ namespace {
                 //    LOG_TRACE(_T("kanjiConvMap.empty()"));
                 //    pResult = new StringNode(currentStr, false, bBareStr);
                 //} else {
-                //    wstring convStr = conv_kanji(currentStr);
+                //    String convStr = conv_kanji(currentStr);
                 //    pResult = new StringNode(convStr, true, false);
                 //}
                 pResult = new StringNode(currentStr, /*false,*/ bBareStr);
-                _LOG_DEBUGH(_T("new StringNode(%s)"), currentStr.c_str());
+                _LOG_DEBUGH(_T("new StringNode({})"), currentStr);
                 break;
 
             case TOKEN::FUNCTION:          // @c : 機能ノード
@@ -510,7 +508,7 @@ namespace {
                 parseError();
                 break;
             }
-            _LOG_DEBUGH(_T("LEAVE: %s: ptr=%p"), getTokenString(token).c_str(), pResult);
+            _LOG_DEBUGH(_T("LEAVE: {}: ptr={:p}"), getTokenString(token), (void*)pResult);
             return pResult;
         }
 
@@ -525,10 +523,10 @@ namespace {
             while (currentToken != TOKEN::RBRACE) { // '}' でブロックの終わり
                 auto items = utils::split(utils::strip(currentLine), '\t');
                 if (items.size() == 2) {
-                    _LOG_DEBUGH(_T("REWRITE: %s -> %s"), items[0].c_str(), items[1].c_str());
+                    _LOG_DEBUGH(_T("REWRITE: {} -> {}"), items[0], items[1]);
                     auto key = utils::strip(items[0], _T("\""));
                     if (items[1] == _T("{")) {
-                        _LOG_DEBUGH(_T("REWRITE: Add SubTable"), items[0].c_str(), items[1].c_str());
+                        _LOG_DEBUGH(_T("REWRITE: Add SubTable"), items[0], items[1]);
                         skipToEndOfLine();
                         auto p = makeSubTree(0, 1, 0);
                         rewNode->addRewritePair(key, _T(""), false, p);
@@ -546,7 +544,7 @@ namespace {
             }
 
             //bPostRewriteNodeFound = true;
-            _LOG_DEBUGH(_T("LEAVE: rewNode=%p"), rewNode);
+            _LOG_DEBUGH(_T("LEAVE: rewNode={:p}"), (void*)rewNode);
             return rewNode;
         }
 
@@ -555,8 +553,8 @@ namespace {
             if (parentNode && childNode) {
                 Node* pn = parentNode->getNth(n);   // 既存ノード
                 if (pn) {
-                    _LOG_DEBUGH(_T("OVERWRITE: pn=%s(%p), str=%s, cn=%s(%p), str=%s"),
-                        NODE_NAME_PTR(pn), pn, pn->getString().c_str(), NODE_NAME_PTR(childNode), childNode, childNode->getString().c_str());
+                    _LOG_DEBUGH(_T("OVERWRITE: pn={}({:p}), str={}, cn={}({:p}), str={}"),
+                        NODE_NAME(pn), (void*)pn, to_wstr(pn->getString()), NODE_NAME(childNode), (void*)childNode, to_wstr(childNode->getString()));
                 }
                 if (!isInCombinationBlock) {
                     // 同時打鍵ブロック以外ならば上書きOK
@@ -565,7 +563,8 @@ namespace {
                     if (pp && cp) {
                         // 後置書き換えが重複した場合は、書き換え規則のマージ
                         pp->merge(*cp);
-                        LOG_INFOH(_T("PostRewriteOneShotNode merged: pp(%p)=%s, tblNum=%d, cn(%p)=%s"), pp, pp->getDebugString().c_str(), pp->getSubTableNum(), cp, cp->getDebugString().c_str());
+                        LOG_INFOH(_T("PostRewriteOneShotNode merged: pp({:p})={}, tblNum={}, cn({:p})={}"),
+                            (void*)pp, pp->getDebugString(), pp->getSubTableNum(), (void*)cp, cp->getDebugString());
                         delete childNode;
                     } else {
                         if (pp) {
@@ -574,7 +573,8 @@ namespace {
                                 // 書き換えノードに対してテーブルノードをマージする
                                 tp->mergeRewriteNode(pp);   // この中で pp は delete される
                                 parentNode->swapNthChild(n, childNode);
-                                LOG_INFOH(_T("MERGE: StrokeTableNode merged into PostRewriteOneShotNode: tp(%p), prwp(%p)=%s"), tp, tp->getRewriteNode(), tp->getRewriteNode()->getDebugString().c_str());
+                                LOG_INFOH(_T("MERGE: StrokeTableNode merged into PostRewriteOneShotNode: tp({:p}), prwp({:p})={}"),
+                                    (void*)tp, (void*)tp->getRewriteNode(), tp->getRewriteNode()->getDebugString());
                                 return;
                             }
                         } else if (cp) {
@@ -582,7 +582,8 @@ namespace {
                             if (tp) {
                                 // テーブルノードに対して書き換えノードをマージする(
                                 tp->mergeRewriteNode(cp);   // この中で cp は delete される
-                                LOG_INFOH(_T("MERGE: PostRewriteOneShotNode merged into StrokeTableNode: tp(%p), prwp(%p)=%s"), tp, tp->getRewriteNode(), tp->getRewriteNode()->getDebugString().c_str());
+                                LOG_INFOH(_T("MERGE: PostRewriteOneShotNode merged into StrokeTableNode: tp({:p}), prwp({:p})={}"),
+                                    (void*)tp, (void*)tp->getRewriteNode(), tp->getRewriteNode()->getDebugString());
                                 return;
                             }
                         }
@@ -598,7 +599,7 @@ namespace {
                         // 重複していて、新子ノードが機能ノードなら無視
                     } else {
                         // 重複していて、既存ノードも新子ノードも機能ノード以外なら警告
-                        LOG_WARN(_T("DUPLICATED: %s"), currentLine.c_str());
+                        LOG_WARN(_T("DUPLICATED: {}"), currentLine);
                         nodeDuplicateWarning();
                     }
                 }
@@ -620,7 +621,7 @@ namespace {
         // トークンひとつ読んで currentToken にセット
         void readNextToken(int depth) {
             currentToken = getToken(depth);
-            LOG_DEBUG(_T("currentToken=%s"), getTokenString(currentToken).c_str());
+            LOG_DEBUG(_T("currentToken={}"), getTokenString(currentToken));
         }
 
         bool bIgnoreWarningAll = false;
@@ -635,30 +636,30 @@ namespace {
                 switch (getNextChar()) {
                 case '#': {
                     // '#include', '#define', '#strokePosition', '#*shift*', '#overlapping', '#yomiConvert', '#store', '#load', '#end', '#ignoreWarning' または '#' 以降、行末までコメント
-                    wstring filename;
+                    String filename;
                     readWord();
                     auto lcStr = utils::toLower(currentStr);
                     if (lcStr == _T("include")) {
                         readWordOrString();
                         filename = currentStr;
-                        _LOG_DEBUGH(_T("INCLUDE: lineNum=%d, %s"), lineNumber + 1, filename.c_str());
+                        _LOG_DEBUGH(_T("INCLUDE: lineNum={}, {}"), lineNumber + 1, filename);
                     } else if (lcStr == _T("define")) {
                         readWord();
                         if (!currentStr.empty()) {
-                            wstring key = currentStr;
+                            String key = currentStr;
                             readWordOrString();
                             //defines[key] = currentStr;
-                            _LOG_DEBUGH(_T("DEFINE: lineNum=%d, %s=%s"), lineNumber + 1, key.c_str(), currentStr.c_str());
+                            _LOG_DEBUGH(_T("DEFINE: lineNum={}, {}={}"), lineNumber + 1, key, currentStr);
                         }
                     } else if (lcStr == _T("store")) {
-                        std::shared_ptr<std::vector<wstring>> lines;
+                        std::shared_ptr<std::vector<String>> lines;
                         readWord();
                         if (currentStr.empty()) {
                             parseError();
                         } else {
-                            lines.reset(new std::vector<wstring>());
+                            lines.reset(new std::vector<String>());
                             linesMap[currentStr] = lines;
-                            _LOG_DEBUGH(_T("SET: lineNum=%d, %s"), lineNumber + 1, currentStr.c_str());
+                            _LOG_DEBUGH(_T("SET: lineNum={}, {}"), lineNumber + 1, currentStr);
                         }
                         while (getNextLine()) {
                             if (utils::startsWith(currentLine, _T("#end"))) {
@@ -678,7 +679,7 @@ namespace {
                             if (iter == linesMap.end()) {
                                 parseError();
                             } else {
-                                _LOG_DEBUGH(_T("LOAD: %s"), currentStr.c_str());
+                                _LOG_DEBUGH(_T("LOAD: {}"), currentStr);
                                 auto lines = iter->second;
                                 size_t nextLineNum = lineNumber + 1;
                                 tableLines.insert(tableLines.begin() + nextLineNum, lines->begin(), lines->end());
@@ -690,16 +691,16 @@ namespace {
                     //} else if (utils::startsWith(lcStr, _T("yomiconv"))) {
                     //    readWord();
                     //    auto keyword = currentStr;
-                    //    _LOG_DEBUGH(_T("YomiConversion: keyword=%s"), keyword.c_str());
+                    //    _LOG_DEBUGH(_T("YomiConversion: keyword={}"), keyword);
                     //    if (keyword == _T("clear") || keyword == _T("end")) {
                     //        kanjiConvMap.clear();
                     //    } else {
-                    //        _LOG_DEBUGH(_T("YomiConversion: %s"), SETTINGS->kanjiYomiFile.c_str());
+                    //        _LOG_DEBUGH(_T("YomiConversion: {}"), SETTINGS->kanjiYomiFile);
                     //        if (!SETTINGS->kanjiYomiFile.empty()) readKanjiConvFile(SETTINGS->kanjiYomiFile, true);
                     //        if (keyword == _T("with")) {
                     //            readWordOrString();
                     //            if (!currentStr.empty()) {
-                    //                _LOG_DEBUGH(_T("YomiConversion: %s"), currentStr.c_str());
+                    //                _LOG_DEBUGH(_T("YomiConversion: {}"), currentStr);
                     //                readKanjiConvFile(currentStr, false);
                     //            }
                     //        }
@@ -709,7 +710,7 @@ namespace {
                     //} else if (lcStr == _T("strokePosition")) {   
                     //    readWordOrString();
                     //    defines[_T("defguide")] = currentStr;
-                    //    _LOG_DEBUGH(_T("StrokePosition: %s"), currentStr.c_str());
+                    //    _LOG_DEBUGH(_T("StrokePosition: {}"), currentStr);
 
                     } else if (lcStr == _T("noshift") || lcStr == _T("normal")) {
                         shiftPlane = 0;
@@ -728,18 +729,18 @@ namespace {
                     } else if (lcStr == _T("shiftf")) {
                         shiftPlane = 7;
                     } else if (lcStr == _T("combination") || lcStr == _T("overlapping")) {
-                        _LOG_DEBUGH(_T("START Combination: %s"), currentLine.c_str());
+                        _LOG_DEBUGH(_T("START Combination: {}"), currentLine);
                         isInCombinationBlock = true;
                         skipToEndOfLine();
                     } else if (lcStr == _T("end")) {
                         readWord();
                         auto word = utils::toLower(currentStr);
-                        _LOG_DEBUGH(_T("end %s"), word.c_str());
+                        _LOG_DEBUGH(_T("end {}"), word);
                         if (word == _T("combination") || word == _T("overlapping")) {
-                            _LOG_DEBUGH(_T("END Combination: %s"), currentLine.c_str());
+                            _LOG_DEBUGH(_T("END Combination: {}"), currentLine);
                             isInCombinationBlock = false;
                         } else if (word == _T("__include__")) {
-                            _LOG_DEBUGH(_T("END INCLUDE/LOAD: lineNumber=%d"), lineNumber);
+                            _LOG_DEBUGH(_T("END INCLUDE/LOAD: lineNumber={}"), lineNumber);
                             blockInfoStack.Pop(lineNumber + 1);
                         } else if (word == _T("shift")) {
                             shiftPlane = 0;
@@ -755,7 +756,7 @@ namespace {
                             bIgnoreWarningBraceLevel = true;
                         }
                     } else {
-                        _LOG_DEBUGH(_T("#%s"), currentStr.c_str());
+                        _LOG_DEBUGH(_T("#{}"), currentStr);
                     }
                     currentStr.clear();
                     skipToEndOfLine();
@@ -814,7 +815,7 @@ namespace {
                     return TOKEN::STRING;
 
                 case '-': {
-                    char_t c = getNextChar();
+                    wchar_t c = getNextChar();
                     if (c == '*') {
                         // 矢印束記法
                         if (parseArrowBundle()) return TOKEN::ARROW_BUNDLE;
@@ -847,7 +848,7 @@ namespace {
             // 「\」は、単に次の一文字をエスケープするだけで、
             // 「"\n"」「"\t"」「"\ooo"」は未対応。
             while (true) {
-                char_t c = getNextChar();
+                wchar_t c = getNextChar();
                 if (c == '\r' || c == '\n' || c == 0) {
                     parseError();
                 }
@@ -881,13 +882,13 @@ namespace {
                 getNextChar();
                 currentStr.append(1, c);
             }
-            _LOG_DEBUGH(_T("RESULT: %s"), currentStr.c_str());
+            _LOG_DEBUGH(_T("RESULT: {}"), currentStr);
         }
 
         // 空白またはカンマが来るまで読みこんで、currentStr に格納。
         void readMarker() {
             while (true) {
-                char_t c = peekNextChar();
+                wchar_t c = peekNextChar();
                 if (c <= ' ' || c == ',') {
                     if (currentStr.empty()) parseError();
                     return;
@@ -900,7 +901,7 @@ namespace {
         // 行末までの範囲で次の空白文字またはコメント文字までを読み込んで、currentStr に格納。
         void readWord() {
             currentStr.clear();
-            char_t c = skipSpace();
+            wchar_t c = skipSpace();
             if (c <= ' ') return;
 
             if (c == ';' || (c == '/' && peekNextChar() == '/')) {
@@ -924,7 +925,7 @@ namespace {
         // 行末までの間で、文字列または単語を読み込む
         void readWordOrString() {
             currentStr.clear();
-            char_t c = skipSpace();
+            wchar_t c = skipSpace();
             if (c > ' ') {
                 if (c == '"') {
                     readString();
@@ -937,19 +938,19 @@ namespace {
         }
 
         // 空白文字を読み飛ばす
-        char_t skipSpace() {
+        wchar_t skipSpace() {
             while (true) {
-                char_t c = getNextChar();
+                wchar_t c = getNextChar();
                 if (c == '\r' || c == '\n' || c == 0 || c > ' ')  return c;
             }
         }
 
         // ARROW: /-[SsXxPp]?[0-9]+>/
-        bool parseArrow(int depth, char_t c) {
+        bool parseArrow(int depth, wchar_t c) {
             int shiftOffset = -1;
             int funckeyOffset = 0;
             bool bShiftPlane = false;
-            //char_t c = getNextChar();
+            //wchar_t c = getNextChar();
             if (c == 'N' || c == 'n') {
                 shiftOffset = 0;
                 c = getNextChar();
@@ -1001,7 +1002,7 @@ namespace {
 
         // ARROW_BUNLE: -*>-nn>
         bool parseArrowBundle() {
-            char_t c = getNextChar();
+            wchar_t c = getNextChar();
             if (c != '>') parseError();
             c = getNextChar();
             if (c != '-') parseError();
@@ -1018,14 +1019,14 @@ namespace {
             return true;
         }
 
-        char_t getNextChar() {
+        wchar_t getNextChar() {
             if (nextPos > currentLine.size()) {
                 ++lineNumber;
                 if (lineNumber >= tableLines.size()) {
                     return currentChar = 0;
                 }
                 currentLine = tableLines[lineNumber];
-                LOG_DEBUG(_T("currentLine(%d)=%s"), lineNumber + 1, currentLine.c_str());
+                LOG_DEBUG(_T("currentLine({})={}"), lineNumber + 1, currentLine);
                 nextPos = 0;
             }
             if (nextPos < currentLine.size()) {
@@ -1037,7 +1038,7 @@ namespace {
             return currentChar;
         }
 
-        char_t peekNextChar() {
+        wchar_t peekNextChar() {
             return (nextPos < currentLine.size()) ? currentLine[nextPos] : '\0';
         }
 
@@ -1047,7 +1048,7 @@ namespace {
                 return false;
             }
             currentLine = tableLines[lineNumber];
-            _LOG_DEBUGH(_T("currentLine(%d)=%s"), lineNumber + 1, currentLine.c_str());
+            _LOG_DEBUGH(_T("currentLine({})={}"), lineNumber + 1, currentLine);
             return true;
         }
 
@@ -1056,9 +1057,9 @@ namespace {
             currentChar = '\n';
         }
 
-        void readFile(const wstring& filename) {
+        void readFile(StringRef filename) {
             auto includeFilePath = utils::joinPath(blockInfoStack.CurrentDirPath(), utils::canonicalizePathDelimiter(filename));
-            _LOG_DEBUGH(_T("INCLUDE: FILE PATH: %s"), includeFilePath.c_str());
+            _LOG_DEBUGH(_T("INCLUDE: FILE PATH: {}"), includeFilePath);
             auto reader = utils::IfstreamReader(includeFilePath);
             if (reader.success()) {
                 auto lines = reader.getAllLines();
@@ -1067,7 +1068,7 @@ namespace {
                 tableLines.insert(tableLines.begin() + nextLineNum, lines.begin(), lines.end());
                 blockInfoStack.Push(utils::getParentDirPath(includeFilePath), filename, nextLineNum);
             } else {
-                LOG_ERROR(_T("Can't open: %s"), includeFilePath.c_str());
+                LOG_ERROR(_T("Can't open: {}"), includeFilePath);
                 fileOpenError(filename);
             }
         }
@@ -1080,16 +1081,16 @@ namespace {
         //// ③漢字
         //// bOnlyYomi == true なら、エントリの上書き禁止でカタカナをひらがなに変換
         //// bOnlyYomi == false なら、エントリの上書きOKで、カタカナはそのまま
-        //void readKanjiConvFile(const wstring& filename, bool bOnlyYomi) {
+        //void readKanjiConvFile(StringRef filename, bool bOnlyYomi) {
         //    std::wregex reComment(_T("#.*"));
         //    std::wregex reBlank(_T("[\\t ]+"));
         //    std::wregex reKatakanaMulti(_T("[ァ-ン]{2,}"));
         //    std::wregex reHiraganaMulti(_T("[ぁ-ん]{2,}"));
-        //    _LOG_DEBUGH(_T("filename: %s, bOnlyYomi=%s"), filename.c_str(), BOOL_TO_WPTR(bOnlyYomi));
+        //    _LOG_DEBUGH(_T("filename: {}, bOnlyYomi={}"), filename, bOnlyYomi);
         //    auto reader = utils::IfstreamReader(utils::joinPath(SETTINGS->rootDir, filename));
         //    if (reader.success()) {
         //        auto lines = reader.getAllLines();
-        //        _LOG_DEBUGH(_T("lines.size(): %d"), lines.size());
+        //        _LOG_DEBUGH(_T("lines.size(): {}"), lines.size());
         //        for (auto line : lines) {
         //            auto items = utils::split(utils::strip(std::regex_replace(std::regex_replace(line, reComment, _T("")), reBlank, _T(" "))), ' ');
         //            if (items.size() >= 2) {
@@ -1116,14 +1117,14 @@ namespace {
         //                }
         //            }
         //        }
-        //        _LOG_DEBUGH(_T("kanjiConvMap.size(): %d"), kanjiConvMap.size());
+        //        _LOG_DEBUGH(_T("kanjiConvMap.size(): {}"), kanjiConvMap.size());
         //    } else {
-        //        LOG_ERROR(_T("Can't open: %s"), filename.c_str());
+        //        LOG_ERROR(_T("Can't open: {}"), filename);
         //        fileOpenError(filename);
         //    }
         //}
 
-        inline wstring blockOrFile() {
+        inline String blockOrFile() {
             return blockInfoStack.CurrentDirPath().empty() ? _T("ブロック") : _T("テーブルファイル");
         }
 
@@ -1138,58 +1139,58 @@ namespace {
 
         // 解析に失敗した場合
         void parseError() {
-            _LOG_DEBUGH(_T("lineNumber=%d, nextPos=%d"), lineNumber, nextPos);
+            _LOG_DEBUGH(_T("lineNumber={}, nextPos={}"), lineNumber, nextPos);
             wchar_t buf[2] = { currentChar, 0 };
-            handleError(utils::format(_T("%s %s の %d行 %d文字目('%s')がまちがっているようです：\r\n> %s ..."), \
-                blockOrFile().c_str(), blockInfoStack.CurrentBlockName().c_str(), calcErrorLineNumber(), calcErrorColumn(), buf, currentLine.substr(0, 50).c_str()));
+            handleError(std::format(_T("{} {} の {}行 {}文字目('{}')がまちがっているようです：\r\n> {} ..."), \
+                blockOrFile(), blockInfoStack.CurrentBlockName(), calcErrorLineNumber(), calcErrorColumn(), buf, currentLine.substr(0, 50)));
         }
 
         // ファイルの読み込みに失敗した場合
-        void fileOpenError(const wstring& filename) {
-            _LOG_DEBUGH(_T("lineNumber=%d, nextPos=%d"), lineNumber, nextPos);
-            handleError(utils::format(_T("ファイル %s を読み込めません。\r\nテーブルファイル %s の %d行目がまちがっているようです：\r\n> %s ..."), \
-                filename.c_str(), blockInfoStack.CurrentBlockName().c_str(), calcErrorLineNumber(), currentLine.substr(0, 50).c_str()));
+        void fileOpenError(StringRef filename) {
+            _LOG_DEBUGH(_T("lineNumber={}, nextPos={}"), lineNumber, nextPos);
+            handleError(std::format(_T("ファイル {} を読み込めません。\r\nテーブルファイル {} の {}行目がまちがっているようです：\r\n> {} ..."), \
+                filename, blockInfoStack.CurrentBlockName(), calcErrorLineNumber(), currentLine.substr(0, 50)));
         }
 
         // ノードの重複が発生した場合
         void nodeDuplicateWarning() {
-            _LOG_DEBUGH(_T("lineNumber=%d, nextPos=%d"), lineNumber, nextPos);
-            handleWarning(utils::format(_T("%s %s の %d行目でノードの重複が発生しました：\r\n> %s ..."), \
-                blockOrFile().c_str(), blockInfoStack.CurrentBlockName().c_str(), calcErrorLineNumber(), currentLine.substr(0, 50).c_str()));
+            _LOG_DEBUGH(_T("lineNumber={}, nextPos={}"), lineNumber, nextPos);
+            handleWarning(std::format(_T("{} {} の {}行目でノードの重複が発生しました：\r\n> {} ..."), \
+                blockOrFile(), blockInfoStack.CurrentBlockName(), calcErrorLineNumber(), currentLine.substr(0, 50)));
         }
 
         // カラム0で予期しないLBRACEが発生
         void unexpectedLeftBraceAtColumn0Warning() {
-            _LOG_DEBUGH(_T("lineNumber=%d, nextPos=%d"), lineNumber, nextPos);
-            handleWarning(utils::format(_T("%s %s の %d行目の行頭にネストされた '{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> %s ..."), \
-                blockOrFile().c_str(), blockInfoStack.CurrentBlockName().c_str(), calcErrorLineNumber(), currentLine.substr(0, 50).c_str()));
+            _LOG_DEBUGH(_T("lineNumber={}, nextPos={}"), lineNumber, nextPos);
+            handleWarning(std::format(_T("{} {} の {}行目の行頭にネストされた '{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {} ..."), \
+                blockOrFile(), blockInfoStack.CurrentBlockName(), calcErrorLineNumber(), currentLine.substr(0, 50)));
         }
 
         // カラム0で予期しないRBRACEが発生
         void unexpectedRightBraceAtColumn0Warning() {
-            _LOG_DEBUGH(_T("lineNumber=%d, nextPos=%d"), lineNumber, nextPos);
-            handleWarning(utils::format(_T("%s %s の %d行目の行頭にまだネスト中の '}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> %s ..."), \
-                blockOrFile().c_str(), blockInfoStack.CurrentBlockName().c_str(), calcErrorLineNumber(), currentLine.substr(0, 50).c_str()));
+            _LOG_DEBUGH(_T("lineNumber={}, nextPos={}"), lineNumber, nextPos);
+            handleWarning(std::format(_T("{} {} の {}行目の行頭にまだネスト中の '}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {} ..."), \
+                blockOrFile(), blockInfoStack.CurrentBlockName(), calcErrorLineNumber(), currentLine.substr(0, 50)));
         }
 
         // エラー処理
-        void handleError(const wstring& msg) {
+        void handleError(StringRef msg) {
             LOG_ERROR(msg);
-            LOG_ERROR(_T("lines=\n%s"), makeErrorLines().c_str());
+            LOG_ERROR(_T("lines=\n{}"), makeErrorLines());
             // エラーメッセージを投げる
             ERROR_HANDLER->Error(msg);
         }
 
         // 警告ー処理
-        void handleWarning(const wstring& msg) {
+        void handleWarning(StringRef msg) {
             LOG_WARN(msg);
-            LOG_WARN(_T("lines=\n%s"), makeErrorLines().c_str());
+            LOG_WARN(_T("lines=\n{}"), makeErrorLines());
             // エラーメッセージを投げる
             ERROR_HANDLER->Warn(msg);
         }
 
-        wstring makeErrorLines() {
-            wstring lines;
+        String makeErrorLines() {
+            String lines;
             for (size_t i = 9; i > 0; --i) {
                 if (lineNumber >= i) lines = lines + tableLines[lineNumber - i] + _T("\n");
             }
@@ -1203,8 +1204,8 @@ namespace {
     DEFINE_CLASS_LOGGER(StrokeTreeBuilder);
 
     // 機能の再割り当て
-    void assignFucntion(StrokeTableNode* pNode, const wstring& keys, const wstring& name) {
-        _LOG_DEBUGH(_T("CALLED: keys=%s, name=%s"), keys.c_str(), name.c_str());
+    void assignFucntion(StrokeTableNode* pNode, StringRef keys, StringRef name) {
+        _LOG_DEBUGH(_T("CALLED: keys={}, name={}"), keys, name);
 
         if (pNode == 0 || keys.empty()) return;
 
@@ -1241,7 +1242,7 @@ namespace {
                 // 未割り当て、または機能ノードならばOK
                 if (idx == keyCodes.size()) {
                     // 打鍵列の最後まで行った
-                    _LOG_DEBUGH(_T("RESET: depth=%d, key=%d, name=%s"), idx, key, name.c_str());
+                    _LOG_DEBUGH(_T("RESET: depth={}, key={}, name={}"), idx, key, name);
                     pNode->setNthChild(key, FunctionNodeManager::CreateFunctionNodeByName(name));
                 }
                 break;
@@ -1274,7 +1275,7 @@ DEFINE_CLASS_LOGGER(StrokeTableNode);
 std::set<mchar_t> StrokeTableNode::strokableChars;
 
 // 機能の再割り当て
-void StrokeTableNode::AssignFucntion(const wstring& keys, const wstring& name) {
+void StrokeTableNode::AssignFucntion(StringRef keys, StringRef name) {
     if (keys.empty()) return;
 
     if (RootStrokeNode1) assignFucntion(RootStrokeNode1.get(), keys, name);
@@ -1283,7 +1284,7 @@ void StrokeTableNode::AssignFucntion(const wstring& keys, const wstring& name) {
 }
 
 // ストロークノードの更新
-void StrokeTableNode::UpdateStrokeNodes(const wstring& strokeSource) {
+void StrokeTableNode::UpdateStrokeNodes(StringRef strokeSource) {
     auto list = utils::split(strokeSource, '\n');
     if (RootStrokeNode1) StrokeTreeBuilder(_T("(none)"), list, false).ParseTableSource(RootStrokeNode1.get());
     if (RootStrokeNode2) StrokeTreeBuilder(_T("(none)"), list, false).ParseTableSource(RootStrokeNode2.get());
@@ -1291,8 +1292,8 @@ void StrokeTableNode::UpdateStrokeNodes(const wstring& strokeSource) {
 }
 
 // ストローク木を作成してそのルートを返す
-StrokeTableNode* StrokeTableNode::CreateStrokeTree(const wstring& tableFile, std::vector<wstring>& lines) {
-    LOG_INFOH(_T("CALLED: tableFile=%s, lines=%d"), tableFile.c_str(), lines.size());
+StrokeTableNode* StrokeTableNode::CreateStrokeTree(StringRef tableFile, std::vector<String>& lines) {
+    LOG_INFOH(_T("CALLED: tableFile={}, lines={}"), tableFile, lines.size());
     ROOT_STROKE_NODE = 0;
     ROOT_STROKE_NODE = StrokeTreeBuilder(tableFile, lines, true).CreateStrokeTree();
     RootStrokeNode1.reset(ROOT_STROKE_NODE);
@@ -1302,15 +1303,15 @@ StrokeTableNode* StrokeTableNode::CreateStrokeTree(const wstring& tableFile, std
 }
 
 // ストローク木2を作成してそのルートを返す
-StrokeTableNode* StrokeTableNode::CreateStrokeTree2(const wstring& tableFile, std::vector<wstring>& lines) {
-    LOG_INFOH(_T("CALLED: tableFile=%s, lines=%d"), tableFile.c_str(), lines.size());
+StrokeTableNode* StrokeTableNode::CreateStrokeTree2(StringRef tableFile, std::vector<String>& lines) {
+    LOG_INFOH(_T("CALLED: tableFile={}, lines={}"), tableFile, lines.size());
     RootStrokeNode2.reset(StrokeTreeBuilder(tableFile, lines, false).CreateStrokeTree());
     return RootStrokeNode2.get();
 }
 
 // ストローク木3を作成してそのルートを返す
-StrokeTableNode* StrokeTableNode::CreateStrokeTree3(const wstring& tableFile, std::vector<wstring>& lines) {
-    LOG_INFOH(_T("CALLED: tableFile=%s, lines=%d"), tableFile.c_str(), lines.size());
+StrokeTableNode* StrokeTableNode::CreateStrokeTree3(StringRef tableFile, std::vector<String>& lines) {
+    LOG_INFOH(_T("CALLED: tableFile={}, lines={}"), tableFile, lines.size());
     RootStrokeNode3.reset(StrokeTreeBuilder(tableFile, lines, false).CreateStrokeTree());
     return RootStrokeNode3.get();
 }

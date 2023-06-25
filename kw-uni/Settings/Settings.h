@@ -7,21 +7,21 @@ struct Settings {
 
     bool isJPmode = true;       // キーボードがJPモードか
 
-    tstring rootDir;            // ルートフォルダ
-    tstring tableFile;          // ストロークテーブル
-    tstring tableFile2;         // ストロークテーブル2
-    tstring tableFile3;         // ストロークテーブル3
-    tstring charsDefFile;       // Deckey から文字への変換
-    tstring easyCharsFile;      // 簡易打鍵文字ファイル
-    tstring kanjiYomiFile;      // 漢字読みファイル
-    tstring bushuFile;          // 部首合成辞書
-    tstring autoBushuFile;      // 自動部首合成辞書
-    tstring bushuAssocFile;     // 部首連想辞書
-    tstring mazegakiFile;       // 交ぜ書き辞書
-    tstring historyFile;        // 履歴
-    tstring historyUsedFile;    // 使用順
-    tstring historyExcludeFile; // 履歴排除
-    tstring historyNgramFile;   // Nグラム履歴
+    String rootDir;            // ルートフォルダ
+    String tableFile;          // ストロークテーブル
+    String tableFile2;         // ストロークテーブル2
+    String tableFile3;         // ストロークテーブル3
+    String charsDefFile;       // Deckey から文字への変換
+    String easyCharsFile;      // 簡易打鍵文字ファイル
+    String kanjiYomiFile;      // 漢字読みファイル
+    String bushuFile;          // 部首合成辞書
+    String autoBushuFile;      // 自動部首合成辞書
+    String bushuAssocFile;     // 部首連想辞書
+    String mazegakiFile;       // 交ぜ書き辞書
+    String historyFile;        // 履歴
+    String historyUsedFile;    // 使用順
+    String historyExcludeFile; // 履歴排除
+    String historyNgramFile;   // Nグラム履歴
 
     int backFileRotationGeneration;         // 辞書ファイル保存世代数
 
@@ -90,8 +90,8 @@ struct Settings {
     //bool autoBushuComp = false;             // 自動部首合成を行う
     size_t autoBushuCompMinCount = 1;       // 自動首部合成を有効にする最小合成回数
 
-    tstring romanBushuCompPrefix;           // ローマ字テーブル出力時の部首合成用プレフィックス
-    tstring romanSecPlanePrefix;            // 裏面定義文字に対するローマ字出力時のプレフィックス
+    String romanBushuCompPrefix;           // ローマ字テーブル出力時の部首合成用プレフィックス
+    String romanSecPlanePrefix;            // 裏面定義文字に対するローマ字出力時のプレフィックス
 
     bool kanaTrainingMode = false;          // かな入力練習モードか
 
@@ -109,7 +109,7 @@ struct Settings {
     bool bushuDicLogEnabled = false;        // bushuDic で InfoH を有効にする
 
 public:
-    void SetValues(const std::map<tstring, tstring>&);
+    void SetValues(const std::map<String, String>&);
 
     static std::unique_ptr<Settings> Singleton;
 };

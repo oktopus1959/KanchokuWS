@@ -8,20 +8,20 @@
 class FunctionNodeManager {
     DECLARE_CLASS_LOGGER;
 
-    static std::map<tstring, FunctionNodeBuilder*> funcNodeMap;
+    static std::map<String, FunctionNodeBuilder*> funcNodeMap;
 
-    static std::map<tstring, FunctionNodeBuilder*> funcNameMap;
+    static std::map<String, FunctionNodeBuilder*> funcNameMap;
 
-    static void addFunctionNodeBuilder(const tstring&, const tstring&, FunctionNodeBuilder*);
+    static void addFunctionNodeBuilder(StringRef, StringRef, FunctionNodeBuilder*);
 
 public:
     static void AddFunctionNodeBuilders();
 
-    static Node* CreateFunctionNode(const tstring& funcSpec);
+    static Node* CreateFunctionNode(StringRef funcSpec);
 
-    static Node* CreateFunctionNodeByName(const tstring& funcName);
+    static Node* CreateFunctionNodeByName(StringRef funcName);
 
-    static inline FunctionNodeBuilder* GetFuncNodeBuilder(const tstring& name) {
+    static inline FunctionNodeBuilder* GetFuncNodeBuilder(StringRef name) {
         auto iter = funcNameMap.find(name);
         return iter == funcNameMap.end() ? nullptr : iter->second;
     }

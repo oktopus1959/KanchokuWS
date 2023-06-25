@@ -24,150 +24,169 @@
 //   - LOG_TRACE(...)
 // -------------------------------------------------------------------
 
+#include "std_utils.h"
 #include "string_utils.h"
 
-class FileWriter;
+namespace Reporting {
+    class FileWriter;
 
-class Logger {
-    static int SaveLevel;
+    class Logger {
+        static int SaveLevel;
 
-public:
-    static const int LogLevelError = 1;
-    static const int LogLevelWarnH = 2;
-    static const int LogLevelWarn = 3;
-    static const int LogLevelInfoH = 4;
-    static const int LogLevelInfo = 5;
-    static const int LogLevelDebugH = 6;
-    static const int LogLevelDebug = 7;
-    static const int LogLevelTrace = 8;
+    public:
+        static const int LogLevelError = 1;
+        static const int LogLevelWarnH = 2;
+        static const int LogLevelWarn = 3;
+        static const int LogLevelInfoH = 4;
+        static const int LogLevelInfo = 5;
+        static const int LogLevelDebugH = 6;
+        static const int LogLevelDebug = 7;
+        static const int LogLevelTrace = 8;
 
-public:
-    static int LogLevel;
+    public:
+        static int LogLevel;
 
-    static tstring LogFilename;
+        static String LogFilename;
 
-    static inline void EnableLogger() { LogLevel = LogLevelError; }
+        static inline void EnableLogger() { LogLevel = LogLevelError; }
 
-    static inline void EnableError() { LogLevel = LogLevelError; }
+        static inline void EnableError() { LogLevel = LogLevelError; }
 
-    static inline void EnableWarnH() { LogLevel = LogLevelWarnH; }
+        static inline void EnableWarnH() { LogLevel = LogLevelWarnH; }
 
-    static inline void EnableWarn() { LogLevel = LogLevelWarn; }
+        static inline void EnableWarn() { LogLevel = LogLevelWarn; }
 
-    static inline void EnableInfoH() { LogLevel = LogLevelInfoH; }
+        static inline void EnableInfoH() { LogLevel = LogLevelInfoH; }
 
-    static inline void EnableInfo() { LogLevel = LogLevelInfo; }
+        static inline void EnableInfo() { LogLevel = LogLevelInfo; }
 
-    static inline void EnableDebugH() { LogLevel = LogLevelDebugH; }
+        static inline void EnableDebugH() { LogLevel = LogLevelDebugH; }
 
-    static inline void EnableDebug() { LogLevel = LogLevelDebug; }
+        static inline void EnableDebug() { LogLevel = LogLevelDebug; }
 
-    static inline void EnableTrace() { LogLevel = LogLevelTrace; }
+        static inline void EnableTrace() { LogLevel = LogLevelTrace; }
 
-    //static void UseDefaultEncoding() { useDefaultEncoding = true; }
+        //static void UseDefaultEncoding() { useDefaultEncoding = true; }
 
-    static inline bool IsErrorEnabled() { return LogLevel >= LogLevelError; }
+        static inline bool IsErrorEnabled() { return LogLevel >= LogLevelError; }
 
-    static inline bool IsWarnHEnabled() { return LogLevel >= LogLevelWarnH; }
+        static inline bool IsWarnEnabledH() { return LogLevel >= LogLevelWarnH; }
 
-    static inline bool IsWarnEnabled() { return LogLevel >= LogLevelWarn; }
+        static inline bool IsWarnEnabled() { return LogLevel >= LogLevelWarn; }
 
-    static inline bool IsInfoHEnabled() { return LogLevel >= LogLevelInfoH; }
+        static inline bool IsInfoHEnabled() { return LogLevel >= LogLevelInfoH; }
 
-    static inline bool IsInfoEnabled() { return LogLevel >= LogLevelInfo; }
+        static inline bool IsInfoEnabled() { return LogLevel >= LogLevelInfo; }
 
-    static inline bool IsDebugHEnabled() { return LogLevel >= LogLevelDebugH; }
+        static inline bool IsDebugHEnabled() { return LogLevel >= LogLevelDebugH; }
 
-    static inline bool IsDebugEnabled() { return LogLevel >= LogLevelDebug; }
+        static inline bool IsDebugEnabled() { return LogLevel >= LogLevelDebug; }
 
-    static inline bool IsTraceEnabled() { return LogLevel >= LogLevelTrace; }
+        static inline bool IsTraceEnabled() { return LogLevel >= LogLevelTrace; }
 
-    static inline void SaveAndSetLevel(int level) {
-        SaveLevel = LogLevel;
-        if (LogLevel > level) LogLevel = level;
-    }
+        static inline void SaveAndSetLevel(int level) {
+            SaveLevel = LogLevel;
+            if (LogLevel > level) LogLevel = level;
+        }
 
-    static inline void RestoreLevel() {
-        LogLevel = SaveLevel;
-    }
-    //static bool useDefaultEncoding;
+        static inline void RestoreLevel() {
+            LogLevel = SaveLevel;
+        }
+        //static bool useDefaultEncoding;
 
-    //static wstring m_logFilePath;
+        //static String m_logFilePath;
 
-public:
-    static inline Logger GetLogger(const char* className, const TCHAR* classNameT) {
-        return Logger(className, classNameT);
-    }
+    public:
+        static inline Logger GetLogger(const std::string& className, StringRef classNameT) {
+            return Logger(className, classNameT);
+        }
 
-private:
-    std::string _className;
-    tstring _classNameT;
+        static void WriteLog(const std::string& msg);
+        static void WriteLog(const String& msg);
 
-    static FileWriter* m_fw;
+    private:
+        std::string _className;
+        String _classNameT;
 
-    void writeLog(const char* level, const char* method, const char* file, int line, const tstring& msg);
+        static std::unique_ptr<FileWriter> fileWriterPtr;
+        static bool initializeFileWriter();
 
-public:
-    inline Logger(const char* className, const TCHAR* classNameT)
-        : _className(className), _classNameT(classNameT)
-    { }
+        void writeLog(const std::string& level, const std::string& method, const std::string& /*file*/, int line, StringRef msg);
 
-    ~Logger() {
-        Close();
-    }
+    public:
+        inline Logger(const std::string& className, StringRef classNameT)
+            : _className(className), _classNameT(classNameT)
+        { }
 
-    static void Close();
+        ~Logger() {
+            Close();
+        }
 
-    inline const std::string& ClassName() const { return _className; }
-    inline const tstring& ClassNameT() const { return _classNameT; }
+        static void Close();
 
-    inline void Trace(const tstring& msg, const char* method, const char* file, int line) {
-        writeLog("TRACE", method, file, line, msg);
-    }
+        inline const std::string& ClassName() const { return _className; }
+        inline const String& ClassNameT() const { return _classNameT; }
 
-    inline void Debug(const tstring& msg, const char* method, const char* file, int line) {
-        writeLog("DEBUG", method, file, line, msg);
-    }
+        inline void Trace(const String& msg, const std::string& method, const std::string& file, int line) {
+            writeLog("TRACE", method, file, line, msg);
+        }
 
-    inline void DebugH(const tstring& msg, const char* method, const char* file, int line) {
-        writeLog("DEBUH", method, file, line, msg);
-    }
+        inline void Debug(const String& msg, const std::string& method, const std::string& file, int line) {
+            writeLog("DEBUG", method, file, line, msg);
+        }
 
-    inline void Info(const tstring& msg, const char* method, const char* file, int line) {
-        writeLog("INFO ", method, file, line, msg);
-    }
+        inline void DebugH(const String& msg, const std::string& method, const std::string& file, int line) {
+            writeLog("DEBUH", method, file, line, msg);
+        }
 
-    inline void InfoH(const tstring& msg, const char* method, const char* file, int line) {
-        writeLog("INFOH", method, file, line, msg);
-    }
+        inline void Info(const String& msg, const std::string& method, const std::string& file, int line) {
+            writeLog("INFO ", method, file, line, msg);
+        }
 
-    inline void Warn(const tstring& msg, const char* method, const char* file, int line) {
-        writeLog("WARN ", method, file, line, msg);
-    }
+        inline void InfoH(const String& msg, const std::string& method, const std::string& file, int line) {
+            writeLog("INFOH", method, file, line, msg);
+        }
 
-    inline void WarnH(const tstring& msg, const char* method, const char* file, int line) {
-        writeLog("WARNH", method, file, line, msg);
-    }
+        inline void Warn(const String& msg, const std::string& method, const std::string& file, int line) {
+            writeLog("WARN ", method, file, line, msg);
+        }
 
-    inline void Error(const tstring& msg, const char* method, const char* file, int line) {
-        writeLog("ERROR", method, file, line, msg);
-    }
+        inline void WarnH(const String& msg, const std::string& method, const std::string& file, int line) {
+            writeLog("WARNH", method, file, line, msg);
+        }
 
-};
+        inline void Error(const String& msg, const std::string& method, const std::string& file, int line) {
+            writeLog("ERROR", method, file, line, msg);
+        }
 
-#define DECLARE_CLASS_LOGGER        static Logger logger
-#define DEFINE_CLASS_LOGGER(name)   Logger name::logger = Logger::GetLogger(#name, _T(#name))
-#define DEFINE_GLOBAL_LOGGER()   Logger logger = Logger::GetLogger("GLOBAL", _T("GLOBAL"))
-#define DEFINE_LOCAL_LOGGER(name)   Logger logger = Logger::GetLogger("LOCAL." ## #name, _T("LOCAL." ## #name))
-#define DEFINE_NAMESPACE_LOGGER(name)   Logger logger = Logger::GetLogger("NAMESPACE." ## #name, _T("NAMESPACE." ## #name))
+    };
 
-#define IS_LOG_DEBUGH_ENABLED   (Logger::IsDebugHEnabled()) 
+#define EXTERN_LOGGER                   extern Reporting::Logger logger
+#define DECLARE_LOGGER                  EXTERN_LOGGER
+#define DECLARE_CLASS_LOGGER            static Reporting::Logger logger
+
+#define DEFINE_QUALIFIED_LOGGER(name)   Reporting::Logger name::logger = Reporting::Logger::GetLogger(#name, _T(#name))
+#define DEFINE_CLASS_LOGGER(name)       DEFINE_QUALIFIED_LOGGER(name)
+
+#define DEFINE_LOGGER_STR(name)         Reporting::Logger logger = Reporting::Logger::GetLogger(name, _T(name))
+#define DEFINE_LOGGER(name)             DEFINE_LOGGER_STR(#name)
+#define DEFINE_GLOBAL_LOGGER()          DEFINE_LOGGER_STR("GLOBAL")
+#define DEFINE_LOCAL_LOGGER(name)       DEFINE_LOGGER_STR("LOCAL." #name)
+#define DEFINE_NAMESPACE_LOGGER(name)   DEFINE_LOGGER_STR("NAMESPACE." #name)
+
+#define IS_LOG_DEBUGH_ENABLED   (Reporting::Logger::IsDebugHEnabled()) 
 
 #define _SAFE_CHAR(ch) (ch > 0 ? ch : ' ')
+
+#define LOG_REPORT(level, fmt, ...)       logger.level(__VA_OPT__(std::format)(fmt __VA_OPT__(,) __VA_ARGS__), __func__, __FILE__, __LINE__)
+#define LOG_LEVEL_ENABLED(level)          Is ## level ## Enabled
+#define LOG_REPORT_COND(level, fmt, ...)  if (Reporting::Logger::LOG_LEVEL_ENABLED(level)()) LOG_REPORT(level, fmt, __VA_ARGS__)
 
 #ifndef _DEBUG
 #define LOG_TRACE(...)      {}
 #define LOG_DEBUG(...)      {}
+#define LOG_DEBUG_MSG(msg)  {}
+#define LOG_DEBUG_CAT(args) {}
 #define LOG_DEBUGH(...)     {}
 #define _LOG_DEBUGH(...)    {}
 #define _LOG_DEBUGH_COND(flag, ...)    {}
@@ -175,32 +194,32 @@ public:
 #define _DEBUG_SENT(x)      
 #define _DEBUG_FLAG(x)      false
 #else
-#define LOG_TRACE(...)      if (Logger::IsTraceEnabled()) logger.Trace(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
-#define LOG_DEBUG(...)      if (Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
-#define LOG_DEBUGH(...)     if (Logger::IsDebugHEnabled()) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
-#define _LOG_DEBUGH(...)    if (Logger::IsDebugHEnabled()) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__); \
-                            else if (Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
-#define _LOG_DEBUG_COND(flag, ...)  if (flag && Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
-#define _LOG_DEBUGH_COND(flag, ...)  if (flag && Logger::IsDebugHEnabled()) logger.DebugH(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
+#define LOG_TRACE(fmt, ...)   LOG_REPORT_COND(Trace, fmt, __VA_ARGS__)
+#define LOG_DEBUG(fmt, ...)   LOG_REPORT_COND(Debug, fmt, __VA_ARGS__)
+#define LOG_DEBUGH(fmt, ...)  LOG_REPORT_COND(DebugH, fmt, __VA_ARGS__)
+#define _LOG_DEBUGH(fmt, ...) LOG_REPORT_COND(DebugH, fmt, __VA_ARGS__); else LOG_REPORT_COND(Debug, fmt, __VA_ARGS__)
+#define _LOG_DEBUG_COND(flag, fmt, ...)   if (flag) LOG_REPORT_COND(Debug, fmt, __VA_ARGS__)
+#define _LOG_DEBUGH_COND(flag, fmt, ...)  if (flag) LOG_REPORT_COND(DebugH, fmt, __VA_ARGS__)
 #define _DEBUG_SENT(x)      x
 #define _DEBUG_FLAG(x)      (x)
 #endif
 
-#define LOG_INFO(...)       if (Logger::IsInfoEnabled())  logger.Info(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
-#define LOG_INFOH(...)      if (Logger::IsInfoHEnabled()) logger.InfoH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
-#define LOG_INFOH_COND(flag, ...) if (flag && Logger::IsInfoHEnabled()) logger.InfoH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
-#define LOG_INFO_COND(flag, ...) if (flag && Logger::IsInfoEnabled()) logger.InfoH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
-#define LOG_INFO_UC(...)    logger.Info(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
-#define LOG_WARN(...)       logger.Warn(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
-#define LOG_WARNH(...)       logger.WarnH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
-#define LOG_ERROR(...)      logger.Error(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__)
+#define LOG_INFO(fmt, ...)  LOG_REPORT_COND(Info, fmt, __VA_ARGS__)
+#define LOG_INFOH(fmt, ...) LOG_REPORT_COND(InfoH, fmt, __VA_ARGS__)
+#define LOG_INFOH_COND(flag, fmt, ...) if (flag) LOG_REPORT_COND(InfoH, fmt, __VA_ARGS__)
+#define LOG_INFO_COND(flag, fmt, ...)  if (flag) LOG_REPORT_COND(InfoH, fmt, __VA_ARGS__)
+#define LOG_INFO_UC(fmt, ...) LOG_REPORT(Info, fmt, __VA_ARGS__)
+#define LOG_WARN(fmt, ...)  LOG_REPORT(Warn, fmt, __VA_ARGS__)
+#define LOG_WARNH(fmt, ...)  LOG_REPORT(WarnH, fmt, __VA_ARGS__)
+#define LOG_ERROR(fmt, ...) LOG_REPORT(Error, fmt, __VA_ARGS__)
 
 #ifndef _DEBUG
 #define LOG_DEBUG_INFOH     LOG_DEBUG
 #else
-#define LOG_DEBUG_INFOH(...) if (LOG_DEBUG_INFOH_FLAG) {\
-                                if (Logger::IsInfoHEnabled()) logger.InfoH(utils::format(__VA_ARGS__).c_str(), __func__, __FILE__, __LINE__);\
+#define LOG_DEBUG_INFOH(fmt, ...) if (LOG_DEBUG_INFOH_FLAG) {\
+                                if (Reporting::Logger::IsInfoHEnabled()) logger.InfoH(__VA_OPT__(std::format)(fmt __VA_OPT__(,) __VA_ARGS__), __func__, __FILE__, __LINE__);\
                             } else {\
-                                if (Logger::IsDebugEnabled()) logger.Debug(utils::format(__VA_ARGS__), __func__, __FILE__, __LINE__);\
+                                if (Reporting::Logger::IsDebugEnabled()) logger.Debug(__VA_OPT__(std::format)(fmt __VA_OPT__(,) __VA_ARGS__), __func__, __FILE__, __LINE__);\
                             }
 #endif
+}

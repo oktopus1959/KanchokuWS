@@ -36,8 +36,6 @@
 #include "Mazegaki/Mazegaki.h"
 #include "Mazegaki/MazegakiDic.h"
 
-#define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
-
 #define _LOG_DEBUGH_FLAG true
 #if 0 || defined(_DEBUG)
 #define IS_LOG_DEBUGH_ENABLED true
@@ -73,7 +71,7 @@ private:
     DecoderOutParams* OutParams;
 
     // UI側から送られてきた設定情報の保存
-    wstring decoderSettings;
+    String decoderSettings;
 
     // デコーダ状態の始点
     std::unique_ptr<Node> startNode;
@@ -156,8 +154,8 @@ public:
     }
 
     // settings の事前受け取り
-    void presendSettings(bool bFirst, const wstring & settings) {
-        LOG_INFO(_T("ENTER: %s: settings=%s"), bFirst?_T("FIRST"):_T("NEXT"), settings.c_str());
+    void presendSettings(bool bFirst, const String & settings) {
+        LOG_INFO(_T("ENTER: {}: settings={}"), bFirst?_T("FIRST"):_T("NEXT"), settings);
         if (bFirst) {
             decoderSettings = settings;
         } else {
@@ -203,21 +201,21 @@ public:
     }
 
     // settings のロード
-    void loadSettings(const wstring & settings) {
-        LOG_INFO(_T("ENTER: settings=%s"), settings.c_str());
+    void loadSettings(const String & settings) {
+        LOG_INFO(_T("ENTER: settings={}"), settings);
         
-        std::map<tstring, tstring> key_vals;
+        std::map<String, String> key_vals;
 
         for (auto item : utils::split(settings, '\n')) {
-            LOG_INFO(_T("item=%s"), item.c_str());
+            LOG_INFO(_T("item={}"), item);
             auto pair = utils::split(item, '=');
             if (pair.size() == 2) {
                 key_vals[pair[0]] = pair[1];
             }
         }
 
-        int logLevel = utils::strToInt(utils::safe_get(key_vals, tstring(_T("logLevel"))));
-        if (logLevel > 0) Logger::LogLevel = logLevel;
+        int logLevel = utils::strToInt(utils::safe_get(key_vals, String(_T("logLevel"))));
+        if (logLevel > 0) Reporting::Logger::LogLevel = logLevel;
 
         SETTINGS->SetValues(key_vals);
 
@@ -228,7 +226,7 @@ public:
     void createDeckeyToCharsInstance() {
 
         auto filePath = SETTINGS->charsDefFile;
-        LOG_INFOH(_T("charsDefFile=%s"), filePath.c_str());
+        LOG_INFOH(_T("charsDefFile={}"), filePath);
         //if (filePath.empty()) {
         //    ErrorHandler::Error(_T("「charsDefFile=(ファイル名)」の設定がまちがっているようです"));
         //}
@@ -243,23 +241,23 @@ public:
             ERROR_HANDLER->Error(_T("「tableFile=(ファイル名)」の設定がまちがっているようです"));
         } else {
             // 主テーブルファイルの構築
-            createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile1.tbl")), [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree(file, lines);});
+            createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile1.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree(file, lines);});
 
             if (bForceSecondary || !SETTINGS->tableFile2.empty()) {
                 // 副テーブルファイルの構築
-                createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile2.tbl")), [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
+                createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile2.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
             }
 
             if (!SETTINGS->tableFile3.empty()) {
                 // 第3テーブルファイルの構築
-                createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile3.tbl")), [](const wstring& file, std::vector<wstring>& lines) {StrokeTableNode::CreateStrokeTree3(file, lines);});
+                createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile3.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree3(file, lines);});
             }
         }
     }
 
     // テーブルファイルを読み込んでストローク木を作成する
-    void createStrokeTree(const tstring& tableFile, void(*treeCreator)(const wstring&, std::vector<wstring>&)) {
-        LOG_INFO(_T("ENTER: tableFile=%s"), tableFile.c_str());
+    void createStrokeTree(const String& tableFile, void(*treeCreator)(const String&, std::vector<String>&)) {
+        LOG_INFO(_T("ENTER: tableFile={}"), tableFile);
 
         utils::IfstreamReader reader(tableFile);
         if (reader.success()) {
@@ -267,11 +265,11 @@ public:
             auto lines = reader.getAllLines();
             // ストロークノード木の構築
             treeCreator(tableFile, lines);
-            LOG_INFO(_T("close table file: %s"), tableFile.c_str());
+            LOG_INFO(_T("close table file: {}"), tableFile);
         } else {
             // エラー
-            LOG_ERROR(_T("Can't read table file: %s"), tableFile.c_str());
-            ERROR_HANDLER->Error(utils::format(_T("テーブルファイル(%s)が開けません"), tableFile.c_str()));
+            LOG_ERROR(_T("Can't read table file: {}"), tableFile);
+            ERROR_HANDLER->Error(std::format(_T("テーブルファイル({})が開けません"), tableFile));
         }
 
         LOG_INFO(_T("LEAVE"));
@@ -291,18 +289,18 @@ public:
         if (startState) startState->Reactivate();
         if (MAZEGAKI_INFO) MAZEGAKI_INFO->Initialize(false);
         if (startState) {
-            LOG_INFOH(_T("LEAVE: states=%s (len=%d), flags=%u, numBS=%d, outLength=%d, stack=%s\n"),
-                startState->JoinedName().c_str(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
-                STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5).c_str());
+            LOG_INFOH(_T("LEAVE: states={} (len={}), flags={:x}, numBS={}, outLength={}, stack={}\n"),
+                startState->JoinedName(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
+                STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5));
         }
     }
 
     // 居残っている一時状態の削除
     void deleteRemainingState() {
         if (startState) {
-            LOG_INFOH(_T("\nENTER: states=%s (len=%d), flags=%u, numBS=%d, outLength=%d, stack=%s"),
-                startState->JoinedName().c_str(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
-                STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5).c_str());
+            LOG_INFOH(_T("\nENTER: states={} (len={}), flags={:x}, numBS={}, outLength={}, stack={}"),
+                startState->JoinedName(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
+                STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5));
             startState->DeleteRemainingState();
         }
         STATE_COMMON->ClearStateInfo();
@@ -334,10 +332,10 @@ public:
     // cmdParams->inOutData に "コマンド\t引数" の形でコマンドラインが格納されている
     // 結果は outParams で返す
     void ExecCmd(DecoderCommandParams* cmdParams, DecoderOutParams* outParams) override {
-        if (Logger::IsInfoHEnabled()) {
-            size_t len = _tcslen(cmdParams->inOutData);
-            wstring data(cmdParams->inOutData, 200);
-            LOG_INFOH(_T("ENTER: paramLen=%d, data=%s"), len, data.c_str());
+        if (Reporting::Logger::IsInfoHEnabled()) {
+            size_t len = wcslen(cmdParams->inOutData);
+            String data(cmdParams->inOutData, 200);
+            LOG_INFOH(_T("ENTER: paramLen={}, data={}"), len, data);
         }
 
         OutParams = outParams;
@@ -345,7 +343,7 @@ public:
         auto items = utils::split(cmdParams->inOutData, '\t');
         if (!items.empty()) {
             const auto& cmd = items[0];
-            LOG_INFO(_T("cmd=%s, items.size()=%d"), cmd.c_str(), items.size());
+            LOG_INFO(_T("cmd={}, items.size()={}"), cmd, items.size());
             if (cmd == _T("presendSettings")) {
                 // 設定の先行送出
                 if (items.size() > 2 && !items[2].empty()) presendSettings(utils::toLower(items[1]) == _T("true"), items[2]);
@@ -395,7 +393,7 @@ public:
                 // 部首連想辞書の保存
                 BUSHU_ASSOC_DIC->WriteBushuAssocDic();
             } else if (cmd == _T("addMazegakiEntry")) {
-                LOG_DEBUGH(_T("addMazegakiEntry: %s"), items.size() >= 2 && !items[1].empty() ? items[1].c_str() : _T("none"));
+                LOG_DEBUGH(_T("addMazegakiEntry: {}"), items.size() >= 2 && !items[1].empty() ? items[1] : _T("none"));
                 if (MAZEGAKI_DIC && items.size() >= 2 && !items[1].empty()) {
                     // 交ぜ書きエントリの追加
                     MAZEGAKI_DIC->AddMazeDicEntry(items[1], true, false);
@@ -467,16 +465,16 @@ public:
                 VkbTableMaker::MakeCombinationKeyCharsStrokePositionTable(outParams->faceStrings);
             } else if (cmd == _T("makeStrokeKeysTable") && items.size() >= 2 && !items[1].empty()) {
                 // 指定の文字配列をストロークキー配列に変換
-                VkbTableMaker::MakeStrokeKeysTable(outParams->faceStrings, items[1].c_str());
+                VkbTableMaker::MakeStrokeKeysTable(outParams->faceStrings, items[1]);
             } else if (cmd == _T("reorderByFirstStrokePosition") && items.size() >= 2 && !items[1].empty()) {
                 // 指定の文字配列を第1ストロークの位置に従って並べかえる
-                VkbTableMaker::ReorderByFirstStrokePosition(outParams->faceStrings, items[1].c_str(), 0);
+                VkbTableMaker::ReorderByFirstStrokePosition(outParams->faceStrings, items[1], 0);
             } else if (cmd == _T("reorderByFirstStrokePosition1") && items.size() >= 2 && !items[1].empty()) {
                 // 指定の文字配列を第1ストロークの位置に従って並べかえる
-                VkbTableMaker::ReorderByFirstStrokePosition(outParams->faceStrings, items[1].c_str(), 1);
+                VkbTableMaker::ReorderByFirstStrokePosition(outParams->faceStrings, items[1], 1);
             } else if (cmd == _T("reorderByFirstStrokePosition2") && items.size() >= 2 && !items[1].empty()) {
                 // 指定の文字配列を第1ストロークの位置に従って並べかえる
-                VkbTableMaker::ReorderByFirstStrokePosition(outParams->faceStrings, items[1].c_str(), 2);
+                VkbTableMaker::ReorderByFirstStrokePosition(outParams->faceStrings, items[1], 2);
             } else if (cmd == _T("makeHiraganaTable")) {
                 // ひらがな50音図の作成
                 makeHiraganaTable(outParams);
@@ -505,7 +503,7 @@ public:
                 setBackspaceBlocker();
             } else if (cmd == _T("SaveRomanStrokeTable")) {
                 // ローマ字テーブルを作成してファイルに書き出す
-                VkbTableMaker::SaveRomanStrokeTable(items.size() >= 2 ? items[1].c_str() : 0, items.size() >= 3 ? items[2].c_str() : 0);
+                VkbTableMaker::SaveRomanStrokeTable(items.size() >= 2 ? items[1] : 0, items.size() >= 3 ? items[2] : 0);
             } else if (cmd == _T("SaveEelllJsTable")) {
                 // eelll/JS用テーブルを作成してファイルに書き出す
                 VkbTableMaker::SaveEelllJsTable();
@@ -549,7 +547,7 @@ public:
                 // 履歴のコミットと初期化
                 commitHistory();
             } else if (cmd == _T("closeLogger")) {
-                Logger::Close();
+                Reporting::Logger::Close();
             }
         }
     }
@@ -559,8 +557,8 @@ public:
         bool decodeKeyboardChar = (intputFlags & (int)InputFlags::DecodeKeyboardChar) != 0;
         bool upperRomanGuideMode = (intputFlags & (int)InputFlags::UpperRomanGuideMode) != 0;
 
-        LOG_INFOH(_T("\nENTER: keyId=%xH(%d=%s), targetChar=%s, decodeKeyboardChar=%s, upperRomanGuideMode=%s"),
-            keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId), to_wstr(targetChar).c_str(), BOOL_TO_WPTR(decodeKeyboardChar), BOOL_TO_WPTR(upperRomanGuideMode));
+        LOG_INFOH(_T("\nENTER: keyId={:x}H({}={}), targetChar={}, decodeKeyboardChar={}, upperRomanGuideMode={}"),
+            keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId), to_wstr(targetChar), decodeKeyboardChar, upperRomanGuideMode);
 
         OutParams = outParams;
         initializeOutParams();
@@ -573,7 +571,7 @@ public:
         STATE_COMMON->CountSameDecKey(keyId);
         if (decodeKeyboardChar) STATE_COMMON->SetDecodeKeyboardCharMode();  // キーボードフェイス文字を返すモード
         if (upperRomanGuideMode) STATE_COMMON->SetUpperRomanGuideMode();    // 英大文字による入力ガイドモード
-        LOG_INFO(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+        LOG_INFO(_T("outStack={}"), OUTPUT_STACK->OutputStackBackStrForDebug(10));
 
         // 同時打鍵コードなら、RootStrokeStateを削除しておく⇒と思ったが、実際にはそのようなケースがあったのでコメントアウト(「のにいると」で  KkDF のケース)
         //if (keyId >= COMBO_DECKEY_START && keyId < EISU_COMBO_DECKEY_END) {
@@ -585,8 +583,8 @@ public:
         // DecKey処理を呼ぶ
         startState->HandleDeckey(keyId);
 
-        LOG_INFO(_T("OUTPUT: outString=\"%s\", origString=\"%s\", flags=%x, numBS=%d"), \
-            MAKE_WPTR(STATE_COMMON->OutString()), MAKE_WPTR(STATE_COMMON->OrigString()), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetBackspaceNum());
+        LOG_INFO(_T("OUTPUT: outString=\"{}\", origString=\"{}\", flags={:x}, numBS={}"), \
+            to_wstr(STATE_COMMON->OutString()), to_wstr(STATE_COMMON->OrigString()), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetBackspaceNum());
 
         // アクティブウィンドウへの送出文字列
         size_t maxLen = utils::array_length(OutParams->outString);
@@ -600,37 +598,37 @@ public:
         OutParams->strokeTableNum = StrokeTableNode::GetCurrentStrokeTableNum();
 
         // 出力履歴に BackSpaces を反映
-        LOG_INFO(_T("pop numBS=%d, outStack=%s"), OutParams->numBackSpaces, OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+        LOG_INFO(_T("pop numBS={}, outStack={}"), OutParams->numBackSpaces, OUTPUT_STACK->OutputStackBackStrForDebug(10));
         OUTPUT_STACK->pop(OutParams->numBackSpaces);
         // 出力文字列を履歴に反映 (全角の＊と？は半角に変換しておく⇒ワイルドカードを含む交ぜ書き変換で使う)
-        LOG_INFO(_T("outStr=%s, outStack=%s"), OutParams->outString, OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+        LOG_INFO(_T("outStr={}, outStack={}"), OutParams->outString, OUTPUT_STACK->OutputStackBackStrForDebug(10));
         OUTPUT_STACK->push(utils::convert_star_and_question_to_hankaku(OutParams->outString));
-        //wstring stack = std::regex_replace(to_wstr(OUTPUT_STACK->backStringFull(10)), std::wregex(_T("\n")), _T("|"));
-        LOG_INFO(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+        //String stack = std::regex_replace(to_wstr(OUTPUT_STACK->backStringFull(10)), std::wregex(_T("\n")), _T("|"));
+        LOG_INFO(_T("outStack={}"), OUTPUT_STACK->OutputStackBackStrForDebug(10));
         // 出力履歴に BackSpaceStopper を反映
         if (STATE_COMMON->IsAppendBackspaceStopper()) { OUTPUT_STACK->pushNewLine(); }
         // 出力履歴に HistoryBlock を反映
         if (STATE_COMMON->IsSetHistoryBlockFlag()) {
             OUTPUT_STACK->setHistBlocker();
-            _LOG_DEBUGH(_T("OUTPUT_STACK->setHistBlocker(): %s"), MAKE_WPTR(OUTPUT_STACK->backStringWithFlagUpto(20)));
+            _LOG_DEBUGH(_T("OUTPUT_STACK->setHistBlocker(): {}"), to_wstr(OUTPUT_STACK->backStringWithFlagUpto(20)));
         }
         // 出力履歴に MazeBlock を反映
         if (STATE_COMMON->IsSetMazegakiBlockFlag()) {
             OUTPUT_STACK->setMazeBlocker(STATE_COMMON->GetMazegakiBlockerPosition());
-            _LOG_DEBUGH(_T("OUTPUT_STACK->setMazeBlocker(): %s"), MAKE_WPTR(OUTPUT_STACK->backStringWithFlagUpto(20)));
+            _LOG_DEBUGH(_T("OUTPUT_STACK->setMazeBlocker(): {}"), to_wstr(OUTPUT_STACK->backStringWithFlagUpto(20)));
         }
         // 出力履歴に Rewritable を反映
-        _LOG_DEBUGH(_T("OUTPUT_STACK->setRewritable(%d)"), STATE_COMMON->RewritableLen());
+        _LOG_DEBUGH(_T("OUTPUT_STACK->setRewritable({})"), STATE_COMMON->RewritableLen());
         OUTPUT_STACK->setRewritable(STATE_COMMON->RewritableLen());
 
         int strokeTableChainLen = startState->StrokeTableChainLength();
-        _LOG_DEBUGH(_T("strokeTableChainLen=%d"), strokeTableChainLen);
-        STATE_COMMON->SetStrokeCount(max(strokeTableChainLen - 1, 0));
+        _LOG_DEBUGH(_T("strokeTableChainLen={}"), strokeTableChainLen);
+        STATE_COMMON->SetStrokeCount(std::max(strokeTableChainLen - 1, 0));
         if (strokeTableChainLen >= 2) {
             STATE_COMMON->SetWaiting2ndStroke();
             if (STATE_COMMON->GetLayout() == VkbLayout::None) STATE_COMMON->SetNormalVkbLayout();
         }
-        _LOG_DEBUGH(_T("STATE_COMMON->StrokeCount=%d"), STATE_COMMON->GetStrokeCount());
+        _LOG_DEBUGH(_T("STATE_COMMON->StrokeCount={}"), STATE_COMMON->GetStrokeCount());
 
         // 最終的な出力履歴が整ったところで呼び出される処理
         if (!STATE_COMMON->IsOutStringProcDone() && !STATE_COMMON->IsWaiting2ndStroke()) startState->DoOutStringProcChain();
@@ -638,11 +636,11 @@ public:
         // ヘルプや候補文字列
         setHelpOrCandidates(targetChar);
 
-        if (Logger::IsInfoHEnabled()) {
-            //wstring stack = std::regex_replace(to_wstr(OUTPUT_STACK->OutputStackBackStr(10)), std::wregex(_T("\n")), _T("|"));
-            LOG_INFOH(_T("LEAVE: states=%s (len=%d), flags=%x, expKey=%d, layout=%d, centerStr=%s, numBS=%d, outLength=%d, stack=%s"),
-                startState->JoinedName().c_str(), startState->ChainLength(), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetNextExpectedKeyType(),
-                STATE_COMMON->GetLayoutInt(), outParams->centerString, STATE_COMMON->GetBackspaceNum(), cpyLen, OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+        if (Reporting::Logger::IsInfoHEnabled()) {
+            //String stack = std::regex_replace(to_wstr(OUTPUT_STACK->OutputStackBackStr(10)), std::wregex(_T("\n")), _T("|"));
+            LOG_INFOH(_T("LEAVE: states={} (len={}), flags={:x}, expKey={}, layout={}, centerStr={}, numBS={}, outLength={}, stack={}"),
+                startState->JoinedName(), startState->ChainLength(), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetNextExpectedKeyType(),
+                STATE_COMMON->GetLayoutInt(), outParams->centerString, STATE_COMMON->GetBackspaceNum(), cpyLen, OUTPUT_STACK->OutputStackBackStrForDebug(10));
         }
     }
 
@@ -656,13 +654,13 @@ public:
     // 末尾のローマ字列を削除
     void clearTailRomanStr() {
         OUTPUT_STACK->ClearTailAlaphabetStr();
-        _LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+        _LOG_DEBUGH(_T("outStack={}"), OUTPUT_STACK->OutputStackBackStrForDebug(10));
     }
 
     // 末尾のひらがな列を削除
     void clearTailHiraganaStr() {
         OUTPUT_STACK->ClearTailHiraganaStr();
-        _LOG_DEBUGH(_T("outStack=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(10).c_str());
+        _LOG_DEBUGH(_T("outStack={}"), OUTPUT_STACK->OutputStackBackStrForDebug(10));
     }
 
     // 末尾にひらがなブロッカーを設定
@@ -673,7 +671,7 @@ public:
     // ヘルプや候補文字列
     void setHelpOrCandidates(mchar_t targetChar) {
         //if (startState->StrokeTableChainLength() >= 2) STATE_COMMON->SetWaiting2ndStroke();
-        LOG_DEBUG(_T("layout=%d, nextExp=%d"), STATE_COMMON->GetLayoutInt(), (int)STATE_COMMON->GetNextExpectedKeyType());
+        LOG_DEBUG(_T("layout={}, nextExp={}"), STATE_COMMON->GetLayoutInt(), (int)STATE_COMMON->GetNextExpectedKeyType());
         OutParams->nextExpectedKeyType = (int)STATE_COMMON->GetNextExpectedKeyType();
         OutParams->strokeCount = (int)STATE_COMMON->GetStrokeCount();
         OutParams->nextSelectPos = (int)STATE_COMMON->GetNextSelectPos();
@@ -683,11 +681,11 @@ public:
 
         if (ROOT_STROKE_NODE && targetChar != 0 && OutParams->strokeCount > 0) {
             auto list = ROOT_STROKE_NODE->getStrokeList(to_mstr(targetChar), true);
-            LOG_DEBUG(_T("strokeList=%s, targetChar=%c"), utils::join(list, _T(":")).c_str(), targetChar);
+            LOG_DEBUG(_T("strokeList={}, targetChar={:c}"), utils::join(list, _T(":")), (wchar_t)targetChar);
             if (!list.empty()) {
                 if (list.size() > (size_t)OutParams->strokeCount) {
                     OutParams->nextStrokeDeckey = list[OutParams->strokeCount];
-                    LOG_DEBUG(_T("OutParams->nextStrokeDeckey=%d"), OutParams->nextStrokeDeckey);
+                    LOG_DEBUG(_T("OutParams->nextStrokeDeckey={}"), OutParams->nextStrokeDeckey);
                 }
             }
         }
@@ -774,19 +772,19 @@ public:
 
     // 中央鍵盤への文字列コピー
     void copyToCenterString() {
-        LOG_DEBUG(_T("CALLED: STATE_COMMON->CenterString()=%s"), STATE_COMMON->CenterString().c_str());
+        LOG_DEBUG(_T("CALLED: STATE_COMMON->CenterString()={}"), STATE_COMMON->CenterString());
         copyToCenterString(to_wstr(startState->JoinModeMarker()) + STATE_COMMON->CenterString());
     }
 
     void copyToCenterString(wchar_t ch) {
-        LOG_DEBUG(_T("ENTER: centerString=%c"), ch);
+        LOG_DEBUG(_T("ENTER: centerString={}"), ch);
         OutParams->centerString[0] = ch;
         OutParams->centerString[1] = 0;
         LOG_DEBUG(_T("LEAVE"));
     }
 
-    void copyToCenterString(const wstring& s) {
-        LOG_DEBUG(_T("ENTER: centerString=%s"), s.c_str());
+    void copyToCenterString(const String& s) {
+        LOG_DEBUG(_T("ENTER: centerString={}"), s);
         size_t i = 0;
         size_t maxlen = utils::array_length(OutParams->centerString) - 1;
         for (; i < maxlen; ++i) {
@@ -798,35 +796,35 @@ public:
     }
 
     mchar_t copyToTopString() {
-        _LOG_DEBUGH(_T("\nENTER: outStackStr=%s"), OUTPUT_STACK->OutputStackBackStrForDebug(32).c_str());
+        _LOG_DEBUGH(_T("\nENTER: outStackStr={}"), OUTPUT_STACK->OutputStackBackStrForDebug(32));
         size_t origLen = 0;
         // 打鍵途中なら打鍵中のキー文字列もミニバッファに表示する(ただし書き換えが存在しない場合のみ)
         // 書き換えありの場合、OrigString に '?' がアペンドされてしまうと、後で書き換えのときに同一部分判定で問題が生じるため
         if (STATE_COMMON->IsWaiting2ndStroke() && !(ROOT_STROKE_NODE && ROOT_STROKE_NODE->hasPostRewriteNode())) origLen = STATE_COMMON->OrigString().size();
         size_t topBufSize = utils::array_length(OutParams->topString);
         size_t prevMazeLen = MAZEGAKI_INFO ? MAZEGAKI_INFO->GetPrevOutputLen() : 0;
-        _LOG_DEBUGH(_T("topBufSize=%d, origLen=%d, prevMazeLen=%d"), topBufSize, origLen, prevMazeLen);
+        _LOG_DEBUGH(_T("topBufSize={}, origLen={}, prevMazeLen={}"), topBufSize, origLen, prevMazeLen);
         auto s = OUTPUT_STACK->OutputStackBackStrWithFlagUpto(topBufSize - origLen - 1, prevMazeLen);        // ブロッカーを反映した文字列を取得
-        _LOG_DEBUGH(_T("OutputStackBackStrWithFlagUpto(%d)=%s"), (topBufSize - origLen - 1), MAKE_WPTR(s));
+        _LOG_DEBUGH(_T("OutputStackBackStrWithFlagUpto({})={}"), (topBufSize - origLen - 1), to_wstr(s));
         size_t pos = copy_mstr(s, OutParams->topString, topBufSize);
         if (origLen > 0) copy_mstr(STATE_COMMON->OrigString(), OutParams->topString + pos, origLen);
         mchar_t lastChar = origLen == 0 ? OUTPUT_STACK->OutputStackLastChar() : 0;
-        _LOG_DEBUGH(_T("LEAVE: OutParams->topString=%s, lastChar=%s"), OutParams->topString, MAKE_WPTR(lastChar));
+        _LOG_DEBUGH(_T("LEAVE: OutParams->topString={}, lastChar={}"), OutParams->topString, to_wstr(lastChar));
         return lastChar;
     }
 
     // ストロークヘルプの作成
-    void makeStrokeHelp(const wstring& ws) {
+    void makeStrokeHelp(const String& ws) {
         makeStrokeHelp(ws, false);
     }
 
     // 部首合成ヘルプの作成
-    void makeBushuCompHelp(const wstring& ws) {
+    void makeBushuCompHelp(const String& ws) {
         makeStrokeHelp(ws, true);
     }
 
-    void makeStrokeHelp(const wstring& ws, bool bBushuComp) {
-        LOG_INFO(_T("ENTER: %s, bushuComp=%s"), ws.c_str(), BOOL_TO_WPTR(bBushuComp));
+    void makeStrokeHelp(const String& ws, bool bBushuComp) {
+        LOG_INFO(_T("ENTER: {}, bushuComp={}"), ws, bBushuComp);
         auto ms = !ws.empty() ? to_mstr(ws) : OUTPUT_STACK->OutputStackBackStr(1);
         if (!ms.empty()) {
             OutParams->layout = (int)VkbLayout::StrokeHelp;
@@ -843,12 +841,12 @@ public:
                 }
             }
         }
-        LOG_INFO(_T("LEAVE: layout=%d"), OutParams->layout);
+        LOG_INFO(_T("LEAVE: layout={}"), OutParams->layout);
     }
 
     // 指定キーに対する次打鍵テーブルの作成
     void makeNextStrokeTable(int decKey1, int decKey2) {
-        LOG_INFO(_T("ENTER: decKey1=%d, decKey2=%d"), decKey1, decKey2);
+        LOG_INFO(_T("ENTER: decKey1={}, decKey2={}"), decKey1, decKey2);
         OutParams->layout = (int)VkbLayout::Normal;
         clearKeyFaces();
         if (ROOT_STROKE_NODE && decKey1 >= 0) {
@@ -864,7 +862,7 @@ public:
                 }
             }
         }
-        LOG_INFO(_T("LEAVE: layout=%d"), OutParams->layout);
+        LOG_INFO(_T("LEAVE: layout={}"), OutParams->layout);
     }
 
     // ひらがな50音図配列を作成する (あかさたなはまやらわ、ぁがざだばぱゃ)
@@ -889,8 +887,8 @@ public:
     }
 
     // 連想辞書から定義文字列を読み出してくる
-    void readBushuAssoc(const wstring& ws, wchar_t* buffer) {
-        LOG_INFOH(_T("CALLED: ws=%s"), ws.c_str());
+    void readBushuAssoc(const String& ws, wchar_t* buffer) {
+        LOG_INFOH(_T("CALLED: ws={}"), ws);
         buffer[0] = 0;
         if (!ws.empty()) {
             if (BUSHU_ASSOC_DIC) {
@@ -913,7 +911,7 @@ public:
     }
 
     // 後から部分的にストローク定義を解析してストローク木に差し込む
-    void updateStrokeNodes(const wstring& ws) {
+    void updateStrokeNodes(const String& ws) {
         StrokeTableNode::UpdateStrokeNodes(ws);
     }
 
@@ -941,11 +939,11 @@ namespace {
 // 引数: LogLevel (0 ならログ出力を抑制する。3: INFO, 4:DEBUG, 5:TRACE)
 void* CreateDecoder(int logLevel) {
     try {
-        Logger::LogLevel = logLevel;
-        Logger::LogFilename = _T("kw-uni.log");
+        Reporting::Logger::LogLevel = logLevel;
+        Reporting::Logger::LogFilename = _T("kw-uni.log");
         return new DecoderImpl();
     }
-    catch (tstring msg) {
+    catch (String msg) {
         LOG_ERROR(msg);
         return 0;
     }
@@ -973,7 +971,7 @@ namespace {
                 return pErr->GetErrorLevel();
             }
         }
-        catch (tstring msg) {
+        catch (String msg) {
             LOG_ERROR(msg);
         }
         catch (...) {
@@ -988,7 +986,7 @@ namespace {
 // 引数: 初期化パラメータ
 int InitializeDecoder(void* , DecoderCommandParams* ) {
     LOG_INFO_UC(_T("\n======== kw-uni START ========"));
-    LOG_INFOH(_T("LogLevel=%d"), Logger::LogLevel);
+    LOG_INFOH(_T("LogLevel={}"), Reporting::Logger::LogLevel);
 
     // エラーハンドラの生成
     ErrorHandler::CreateSingleton();
@@ -1003,7 +1001,7 @@ int FinalizeDecoder(void* pDecoder) {
         p->Destroy();
         delete p;       // デコーダの終了時にデコーダインスタンスを破棄する
         LOG_INFO_UC(_T("======== kw-uni TERMINATED ========\n"));
-        Logger::Close();
+        Reporting::Logger::Close();
     };
     return invokeDecoderMethod(method_call, nullptr);
 }

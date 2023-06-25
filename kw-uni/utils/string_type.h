@@ -1,22 +1,17 @@
 #pragma once
 
 #include <string>
-#include <tchar.h>
 
-#ifdef _UNICODE
-typedef std::wstring tstring;
-typedef std::wstring wstring;
-typedef wchar_t char_t;
-using std::wstring;
-#else
-typedef std::string tstring;
-typedef char char_t;
+#ifndef _T
+#define _T(x) L ## x
 #endif
 
-//typedef uint32_t mchar_t;
-typedef char32_t mchar_t;
+using uchar_t = unsigned char;
 
-typedef std::basic_string<mchar_t> MString;
+//using mchar_t = uint32_t;
+using mchar_t = char32_t;
+
+using MString = std::basic_string<mchar_t>;
 
 struct MojiPair {
     wchar_t first;
