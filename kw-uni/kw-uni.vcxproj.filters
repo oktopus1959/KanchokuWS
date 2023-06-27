@@ -249,9 +249,6 @@
     <ClInclude Include="util\string_type.h">
       <Filter>ヘッダー ファイル\utils</Filter>
     </ClInclude>
-    <ClInclude Include="util\string_utils.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
     <ClInclude Include="util\transform_utils.h">
       <Filter>ヘッダー ファイル\utils</Filter>
     </ClInclude>

@@ -46,7 +46,7 @@ void State::Reactivate() {
 // 新ノードが未処理の場合は、ここで NULL 以外が返されるので、親状態で処理する
 void State::HandleDeckey(int deckey) {
     LOG_INFO(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
-        Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), MAKE_WPTR(STATE_COMMON->OutString()));
+        Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
     currentDeckey = deckey;
     // 事前チェック
     DoPreCheck();
@@ -56,14 +56,14 @@ void State::HandleDeckey(int deckey) {
     DoIntermediateCheck();
     // 後処理
     DoDeckeyPostProc();
-    LOG_INFO(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), MAKE_WPTR(STATE_COMMON->OutString()));
+    LOG_INFO(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
     //return pNextNodeMaybe;
 }
 
 // DECKEY処理の前半部の処理。
 // 後続状態があればそちらに移譲。なければここでホットキーをディスパッチ。
 void State::DoDeckeyPreProc(int deckey) {
-    _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), Name, deckey, deckey, STATE_NAME_PTR(pNext), NODE_NAME(NextNodeMaybe()));
+    _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), Name, deckey, deckey, STATE_NAME(pNext), NODE_NAME(NextNodeMaybe()));
     if (IsModeState()) {
         // モード状態(HistoryStayState や TranslationState など)のための前処理
         _LOG_DEBUGH(_T("PATH-A"));
@@ -119,7 +119,7 @@ void State::DoDeckeyPreProc(int deckey) {
     _LOG_DEBUGH(_T("PATH-F"));
     //pNextNodeMaybe = nullptr;
     ClearNextNodeMaybe();
-    _LOG_DEBUGH(_T("NextState={}"), STATE_NAME_PTR(pNext));
+    _LOG_DEBUGH(_T("NextState={}"), STATE_NAME(pNext));
     if (pNext) {
         _LOG_DEBUGH(_T("PATH-G"));
         // 後続状態があれば、そちらを呼び出す ⇒ 新しい後続ノードがあればそれを一時的に記憶しておく(後半部で処理する)
@@ -199,10 +199,10 @@ MString State::TranslateString(const MString& outStr) {
 
 // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
 void State::DoOutStringProcChain() {
-    LOG_INFO(_T("ENTER: {}: outStr={}"), Name, MAKE_WPTR(STATE_COMMON->OutString()));
+    LOG_INFO(_T("ENTER: {}: outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
     if (pNext) pNext->DoOutStringProcChain();
     if (!STATE_COMMON->IsOutStringProcDone()) DoOutStringProc();
-    LOG_INFO(_T("LEAVE: {}: outStr={}"), Name, MAKE_WPTR(STATE_COMMON->OutString()));
+    LOG_INFO(_T("LEAVE: {}: outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
 }
 
 // 最終的な出力履歴が整ったところで呼び出される処理
@@ -306,11 +306,11 @@ MString State::JoinModeMarker() {
 }
 
 void State::JoinModeMarker(MString& modeMarkers) {
-    LOG_DEBUG(_T("ENTER: {}, marker={}"), Name, MAKE_WPTR(modeMarkers));
+    LOG_DEBUG(_T("ENTER: {}, marker={}"), Name, to_wstr(modeMarkers));
     mchar_t mch = GetModeMarker();
     if (mch != 0) modeMarkers.push_back(mch);
     if (pNext) pNext->JoinModeMarker(modeMarkers);
-    LOG_DEBUG(_T("LEAVE: {}, marker={}"), Name, MAKE_WPTR(modeMarkers));
+    LOG_DEBUG(_T("LEAVE: {}, marker={}"), Name, to_wstr(modeMarkers));
 }
 
 // モード標識文字を返す
@@ -395,14 +395,14 @@ void State::copyStrokeHelpToVkbFaces() {
 void State::dispatchDeckey(int deckey) {
     _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({})"), Name, deckey, deckey);
     if (deckey < 0) {
-        _LOG_DEBUGH(_T("LEAVE: DO NOTHING: {}: deckey={:x}H({}), outStr={}"), Name, deckey, deckey, MAKE_WPTR(STATE_COMMON->OutString()));
+        _LOG_DEBUGH(_T("LEAVE: DO NOTHING: {}: deckey={:x}H({}), outStr={}"), Name, deckey, deckey, to_wstr(STATE_COMMON->OutString()));
         return;
     }
     //pStateResult->Iniitalize();
     if (isNormalStrokeKey(deckey)) {
         if (deckey == STROKE_SPACE_DECKEY) {
             handleSpaceKey();
-            _LOG_DEBUGH(_T("LEAVE: {}: SpaceKey handled, outStr={}"), Name, MAKE_WPTR(STATE_COMMON->OutString()));
+            _LOG_DEBUGH(_T("LEAVE: {}: SpaceKey handled, outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
             return;
         }
         handleStrokeKeys(deckey);
@@ -440,7 +440,7 @@ void State::dispatchDeckey(int deckey) {
         handleUndefinedDeckey(deckey);
     } else {
         if (handleFunctionKeys(deckey)) {
-            _LOG_DEBUGH(_T("LEAVE: {}: FunctionKey handled, outStr={}"), Name, MAKE_WPTR(STATE_COMMON->OutString()));
+            _LOG_DEBUGH(_T("LEAVE: {}: FunctionKey handled, outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
             return;
         }
 
@@ -547,7 +547,7 @@ void State::dispatchDeckey(int deckey) {
 
     if (isThroughDeckey()) handleUndefinedDeckey(deckey);
 
-    _LOG_DEBUGH(_T("LEAVE: {}: deckey={:x}H({}), outStr={}"), Name, deckey, deckey, MAKE_WPTR(STATE_COMMON->OutString()));
+    _LOG_DEBUGH(_T("LEAVE: {}: deckey={:x}H({}), outStr={}"), Name, deckey, deckey, to_wstr(STATE_COMMON->OutString()));
 }
 
 //-----------------------------------------------------------------------

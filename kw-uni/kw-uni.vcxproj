@@ -252,7 +252,6 @@
     <ClInclude Include="util\regex_utils.h" />
     <ClInclude Include="util\std_utils.h" />
     <ClInclude Include="util\string_type.h" />
-    <ClInclude Include="util\string_utils.h" />
     <ClInclude Include="util\transform_utils.h" />
     <ClInclude Include="util\xsvparser.hpp" />
     <ClInclude Include="util\xsv_parser.h" />

@@ -1466,5 +1466,3 @@ namespace utils
 
 } // namespace utils
 
-#define MAKE_WPTR(ms) to_wstr(ms).c_str()
-#define BOOL_TO_WPTR(f) (utils::boolToString(f).c_str())
