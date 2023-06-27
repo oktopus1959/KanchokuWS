@@ -116,7 +116,7 @@ namespace {
         }
 
         void cancelMe() {
-            bUnnecessary = true;
+            MarkUnnecessary();
             STATE_COMMON->SetZenkakuModeMarkerClearFlag();
         }
     };

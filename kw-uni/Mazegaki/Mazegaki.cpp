@@ -490,7 +490,7 @@ namespace {
         void handleKeyPostProc() {
             STATE_COMMON->ClearVkbLayout();
             //STATE_COMMON->RemoveFunctionState();
-            bUnnecessary = true;
+            MarkUnnecessary();
         }
 
         // 交ぜ書き候補を鍵盤にセットする

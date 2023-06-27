@@ -306,7 +306,7 @@ namespace {
         void handleKeyPostProc(bool bStrokeHelp = false) {
             STATE_COMMON->ClearVkbLayout();
             //STATE_COMMON->RemoveFunctionState();
-            bUnnecessary = true;
+            MarkUnnecessary();
             if (bStrokeHelp) copyStrokeHelpToVkbFaces();
         }
 

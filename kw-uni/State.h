@@ -26,9 +26,19 @@ class State {
     // 現在処理中のキー
     int currentDeckey = 0;
 
-protected:
+private:
     // 不要フラグ
     bool bUnnecessary = false;
+
+protected:
+    // 不要フラグをセット
+    inline void MarkUnnecessary() {
+        bUnnecessary = true;
+    }
+
+public:
+    // 不要になった状態か
+    virtual bool IsUnnecessary();
 
 protected:
     // 前の状態
@@ -128,9 +138,6 @@ public:
 
     // 状態チェインの長さ
     inline size_t ChainLength() { return pNext == 0 ? 1 : pNext->ChainLength() + 1; }
-
-    // 不要になった状態か
-    virtual bool IsUnnecessary();
 
     // 文字列を変換
     virtual MString TranslateString(const MString&);

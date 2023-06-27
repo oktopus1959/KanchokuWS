@@ -732,7 +732,7 @@ namespace {
             HIST_CAND->ClearKeyInfo();
             STATE_COMMON->ClearVkbLayout();
             //STATE_COMMON->RemoveFunctionState();
-            bUnnecessary = true;
+            MarkUnnecessary();
         }
 
     };

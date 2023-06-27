@@ -36,7 +36,7 @@ namespace {
         inline StrokeTableNode* myNode() const { return (StrokeTableNode*)pNode; }
 
         void setToRemoveAllStroke() {
-            bUnnecessary = true;
+            MarkUnnecessary();
             myNode()->setToRemoveAllStroke();
         }
 
@@ -163,7 +163,7 @@ namespace {
             LOG_DEBUG(_T("CALLED: {}"), Name);
             if (SETTINGS->removeOneByBS) {
                 // 自ステートだけを削除(上位のストロークステートは残す)
-                bUnnecessary = true;
+                MarkUnnecessary();
             } else {
                 // 全打鍵の取り消し
                 setToRemoveAllStroke();
@@ -212,9 +212,9 @@ namespace {
         //}
 
         // 不要になったら自身を削除する
-        bool IsUnnecessary() {
-            LOG_DEBUG(_T("CALLED: {}: {}"), Name, bUnnecessary);
-            return bUnnecessary || myNode()->isToRemoveAllStroke();
+        bool IsUnnecessary() override {
+            LOG_DEBUG(_T("CALLED: {}: {}"), Name, State::IsUnnecessary());
+            return State::IsUnnecessary() || myNode()->isToRemoveAllStroke();
         }
 
         // 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
@@ -353,7 +353,7 @@ namespace {
         // Shift+Space を通常Spaceとして扱う
         //void handleShiftSpaceAsNormalSpace() {
         //    LOG_DEBUG(_T("CALLED: {}"), Name);
-        //    bUnnecessary = true;            // これをやらないと、RootStrokeTable が残ってしまう
+        //    MarkUnnecessary();            // これをやらないと、RootStrokeTable が残ってしまう
         //    State::handleShiftKeys(SHIFT_SPACE_DECKEY);
         //}
 
@@ -373,7 +373,7 @@ namespace {
         void handleBS() {
             LOG_DEBUG(_T("CALLED: {}"), Name);
             setCharDeleteInfo(1);
-            bUnnecessary = true;
+            MarkUnnecessary();
         }
 
         // 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
@@ -386,7 +386,7 @@ namespace {
             }
             if (pNext && pNext->IsUnnecessary()) {
                 // 次状態が不要になったらルートストロークテーブルも不要
-                bUnnecessary = true;
+                MarkUnnecessary();
                 _LOG_DEBUGH(_T("REMOVE ALL: {}"), Name);
             }
         }

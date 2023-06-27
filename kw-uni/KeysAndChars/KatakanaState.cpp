@@ -137,7 +137,7 @@ namespace {
 
         void cancelMe() {
             STATE_COMMON->AddOrEraseRunningState(Name, 0);  // 削除
-            bUnnecessary = true;
+            MarkUnnecessary();
             STATE_COMMON->SetKatakanaModeMarkerClearFlag();
         }
     };

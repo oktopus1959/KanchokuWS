@@ -148,6 +148,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
       <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils</AdditionalIncludeDirectories>
+      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -168,6 +169,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
       <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils</AdditionalIncludeDirectories>
+      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

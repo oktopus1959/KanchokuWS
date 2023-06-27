@@ -95,15 +95,15 @@ namespace {
 
         // 自身の状態をチェックして後処理するのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
         void CheckMyState() override {
-            LOG_DEBUGH(_T("CALLED: {}, Unnecessary={}"), Name, BOOL_TO_WPTR(bUnnecessary));
+            LOG_DEBUGH(_T("CALLED: {}, Unnecessary={}"), Name, IsUnnecessary());
             // 英数モードフラグの設定
-            if (!bUnnecessary) STATE_COMMON->SetCurrentModeIsEisu();
+            if (!IsUnnecessary()) STATE_COMMON->SetCurrentModeIsEisu();
         }
 
         // 履歴検索を初期化する状態か
         bool IsHistoryReset() {
             bool result = (pNext && pNext->IsHistoryReset());
-            _LOG_DEBUGH(_T("CALLED: {}: result={}"), Name, BOOL_TO_WPTR(result));
+            _LOG_DEBUGH(_T("CALLED: {}: result={}"), Name, result);
             return result;
         }
 
@@ -252,7 +252,7 @@ namespace {
         void cancelMe() {
             _LOG_DEBUGH(_T("CALLED"));
             STATE_COMMON->AddOrEraseRunningState(Name, 0);  // 削除
-            bUnnecessary = true;
+            MarkUnnecessary();
             //STATE_COMMON->SetEisuModeMarkerClearFlag();
         }
     };

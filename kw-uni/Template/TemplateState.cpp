@@ -54,7 +54,7 @@ namespace {
         // Esc の処理 -- 処理のキャンセル
         void handleEsc() {
             LOG_DEBUG(_T("CALLED: {}"), NAME_PTR);
-            bUnnecessary = true;
+            MarkUnnecessary();
         }
 
     };
