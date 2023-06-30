@@ -191,7 +191,7 @@
     <ClInclude Include="FunctionNodeManager.h" />
     <ClInclude Include="History\History.h" />
     <ClInclude Include="History\HistoryDic.h" />
-    <ClInclude Include="History\HistoryStayState.h" />
+    <ClInclude Include="History\HistoryResidentState.h" />
     <ClInclude Include="KeysAndChars\DeckeyToChars.h" />
     <ClInclude Include="KeysAndChars\deckey_id_defs.h" />
     <ClInclude Include="KeysAndChars\EasyChars.h" />
@@ -218,7 +218,7 @@
     <ClInclude Include="Settings\Settings.h" />
     <ClInclude Include="StartNode.h" />
     <ClInclude Include="StateCommonInfo.h" />
-    <ClInclude Include="StayState.h" />
+    <ClInclude Include="ResidentState.h" />
     <ClInclude Include="StringNode.h" />
     <ClInclude Include="StrokeTable.h" />
     <ClInclude Include="Constants.h" />
@@ -288,7 +288,7 @@
     <ClCompile Include="Settings\Settings.cpp" />
     <ClCompile Include="StartState.cpp" />
     <ClCompile Include="StateCommonInfo.cpp" />
-    <ClCompile Include="StayState.cpp" />
+    <ClCompile Include="ResidentState.cpp" />
     <ClCompile Include="StringState.cpp" />
     <ClCompile Include="StrokeTreeBuilder.cpp" />
     <ClCompile Include="dllmain.cpp" />

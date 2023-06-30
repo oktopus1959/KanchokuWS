@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Logger.h"
-#include "History/HistoryStayState.h"
+#include "History/HistoryResidentState.h"
 #include "StrokeTable.h"
 #include "Mazegaki/Mazegaki.h"
 

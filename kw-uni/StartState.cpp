@@ -1,11 +1,11 @@
 #include "Logger.h"
 
 #include "StartNode.h"
-#include "StayState.h"
-#include "History/HistoryStayState.h"
+#include "ResidentState.h"
+#include "History/HistoryResidentState.h"
 
 // 始状態 -- 仮想鍵盤のモード管理も行う
-class StartState : public StayState {
+class StartState : public ResidentState {
     DECLARE_CLASS_LOGGER;
 public:
     StartState(StartNode* pN) {

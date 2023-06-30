@@ -1,10 +1,10 @@
 #pragma once
 
-#include "StayState.h"
+#include "ResidentState.h"
 
 // -------------------------------------------------------------------
 // 履歴入力(常駐)機能状態(抽象)クラス
-class HistoryStayState : public StayState {
+class HistoryResidentState : public ResidentState {
 public:
     // Enter時の新しい履歴の追加
     virtual void AddNewHistEntryOnEnter() = 0;
@@ -18,7 +18,7 @@ public:
     // Ctrl-H ハンドラ
     //void handleCtrlH() { setCharDeleteInfo(1); }
 
-    virtual void handleFullEscapeStayState() = 0;
+    virtual void handleFullEscapeResidentState() = 0;
 
     virtual void handleEisuDecapitalize() = 0;
 
@@ -26,7 +26,7 @@ public:
 
 public:
     // 唯一のインスタンスを指すポインタ (寿命管理は CreateState() を呼び出したところがやる)
-    static HistoryStayState* Singleton;
+    static HistoryResidentState* Singleton;
 };
 
-#define HISTORY_STAY_STATE (HistoryStayState::Singleton)
+#define HISTORY_STAY_STATE (HistoryResidentState::Singleton)

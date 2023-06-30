@@ -13,7 +13,7 @@
 #include "StrokeTable.h"
 #include "OutputStack.h"
 #include "TranslationState.h"
-#include "History//HistoryStayState.h"
+#include "History//HistoryResidentState.h"
 
 #include "Katakana.h"
 
@@ -104,7 +104,7 @@ namespace {
         void handleFullEscape() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             //cancelMe();
-            HISTORY_STAY_STATE->handleFullEscapeStayState();
+            HISTORY_STAY_STATE->handleFullEscapeResidentState();
         }
 
         // Esc の処理 -- 処理のキャンセル

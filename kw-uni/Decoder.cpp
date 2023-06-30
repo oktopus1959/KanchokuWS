@@ -118,8 +118,8 @@ public:
         startState.reset(startNode->CreateState());
 
         // 履歴入力機能を生成して常駐させる
-        HistoryStayNode::CreateSingleton();
-        startState->ChainAndStay(HISTORY_STAY_NODE.get());
+        HistoryResidentNode::CreateSingleton();
+        startState->ChainAndStayResident(HISTORY_STAY_NODE.get());
         // 必要があれば、ここにその他の常駐機能を追加する
        
         // PrevCharNode - 直前キー文字を返すノードのSingleton生成

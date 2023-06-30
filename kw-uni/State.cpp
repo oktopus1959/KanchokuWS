@@ -65,7 +65,7 @@ void State::HandleDeckey(int deckey) {
 void State::DoDeckeyPreProc(int deckey) {
     _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), Name, deckey, deckey, STATE_NAME(pNext), NODE_NAME(NextNodeMaybe()));
     if (IsModeState()) {
-        // モード状態(HistoryStayState や TranslationState など)のための前処理
+        // モード状態(HistoryResidentState や TranslationState など)のための前処理
         _LOG_DEBUGH(_T("PATH-A"));
         // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
         // つまり、状態チェーンの末端であって、打鍵中でない場合
@@ -213,11 +213,11 @@ void State::DoOutStringProc() {
 }
 
 // ノードから生成した状態を後接させ、その状態を常駐させる
-void State::ChainAndStay(Node* np) {
+void State::ChainAndStayResident(Node* np) {
     _LOG_DEBUGH(_T("ENTER: {}, nextNode: {}"), Name, NODE_NAME(NextNodeMaybe()));
     if (np) {
         if (pNext) {
-            pNext->ChainAndStay(np);
+            pNext->ChainAndStayResident(np);
         } else {
             auto ps = np->CreateState();
             ps->DoProcOnCreated();
@@ -234,7 +234,7 @@ void State::DeleteRemainingState() {
     LOG_DEBUG(_T("ENTER: {}: next={}"), Name, (pNext ? pNext->Name : _T("NULL")));
     if (pNext) {
         pNext->DeleteRemainingState();
-        if (!pNext->IsStay()) {
+        if (!pNext->IsResident()) {
             LOG_DEBUG(_T("delete next={}"), pNext->Name);
             delete pNext;       // 居残っている一時状態の削除(デコーダのOFF->ON時に呼ばれる)
             pNext = 0;
@@ -243,7 +243,7 @@ void State::DeleteRemainingState() {
     LOG_DEBUG(_T("LEAVE: {}"), Name);
 }
 
-bool State::IsStay() const {
+bool State::IsResident() const {
     LOG_DEBUG(_T("CALLED: false"));
     return false;
 }

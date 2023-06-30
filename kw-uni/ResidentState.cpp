@@ -1,5 +1,5 @@
 #include "StrokeTable.h"
-#include "StayState.h"
+#include "ResidentState.h"
 #include "Mazegaki/Mazegaki.h"
 #include "BushuComp/BushuComp.h"
 #include "BushuComp/BushuDic.h"
@@ -7,7 +7,7 @@
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
 // Esc の処理
-void StayState::handleEsc() {
+void ResidentState::handleEsc() {
     HANDLE_ESC_FOR_MAZEGAKI();
     HANDLE_ESC_FOR_AUTO_COMP();
 
@@ -20,5 +20,5 @@ void StayState::handleEsc() {
 //
 //}
 
-DEFINE_CLASS_LOGGER(StayState);
+DEFINE_CLASS_LOGGER(ResidentState);
 

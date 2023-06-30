@@ -3,7 +3,7 @@
 #include "Logger.h"
 
 #include "FunctionNode.h"
-#include "HistoryStayState.h"
+#include "HistoryResidentState.h"
 
 #if 0
 #define HIST_LOG_DEBUGH LOG_INFOH
@@ -91,8 +91,8 @@ public:
 };
 
 // -------------------------------------------------------------------
-// HistoryStayNode - 履歴入力機能常駐ノード
-class HistoryStayNode : public FunctionNode {
+// HistoryResidentNode - 履歴入力機能常駐ノード
+class HistoryResidentNode : public FunctionNode {
     DECLARE_CLASS_LOGGER;
 private:
     // 履歴選択により出力された文字列
@@ -102,9 +102,9 @@ private:
     MString prevKey;
 
 public:
-     HistoryStayNode();
+     HistoryResidentNode();
 
-     ~HistoryStayNode();
+     ~HistoryResidentNode();
 
     // 当ノードを処理する State インスタンスを作成する
      State* CreateState();
@@ -144,6 +144,6 @@ public:
     static void CreateSingleton();
 
     // 履歴機能常駐ノードのSingleton
-    static std::unique_ptr<HistoryStayNode> Singleton;
+    static std::unique_ptr<HistoryResidentNode> Singleton;
 };
-#define HISTORY_STAY_NODE (HistoryStayNode::Singleton)
+#define HISTORY_STAY_NODE (HistoryResidentNode::Singleton)

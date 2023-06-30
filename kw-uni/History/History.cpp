@@ -11,7 +11,7 @@
 #include "Settings.h"
 #include "ErrorHandler.h"
 #include "Node.h"
-#include "StayState.h"
+#include "ResidentState.h"
 #include "OutputStack.h"
 #include "StrokeHelp.h"
 #include "BushuComp/BushuComp.h"
@@ -810,7 +810,7 @@ namespace {
 
     // -------------------------------------------------------------------
     // 履歴入力(常駐)機能状態クラス
-    class HistoryStayStateImpl : public HistoryStayState, public HistoryStateBase {
+    class HistoryResidentStateImpl : public HistoryResidentState, public HistoryStateBase {
         DECLARE_CLASS_LOGGER;
 
         //MString prevKey;
@@ -844,15 +844,15 @@ namespace {
 
     public:
         // コンストラクタ
-        HistoryStayStateImpl(HistoryStayNode* pN) : HistoryStateBase(pN) {
+        HistoryResidentStateImpl(HistoryResidentNode* pN) : HistoryStateBase(pN) {
             LOG_INFO(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
-        ~HistoryStayStateImpl() { };
+        ~HistoryResidentStateImpl() { };
 
         //// 常駐状態か
-        //bool IsStay() const {
+        //bool IsResident() const {
         //    return true;
         //}
 
@@ -934,7 +934,7 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
 
-        void handleFullEscapeStayState() {
+        void handleFullEscapeResidentState() {
             handleFullEscape();
         }
 
@@ -985,7 +985,7 @@ namespace {
         }
 
         //// ノードから生成した状態を後接させ、その状態を常駐させる(ここでは 0 が渡ってくるはず)
-        //void ChainAndStay(Node* ) {
+        //void ChainAndStayResident(Node* ) {
         //    // 前状態にチェインする
         //    LOG_DEBUG(_T("Chain: {}"), Name);
         //    STATE_COMMON->ChainMe();
@@ -1269,7 +1269,7 @@ namespace {
                 getNextCandidate();
             } else {
                 _LOG_DEBUGH(_T("candSelectDeckey={:x}"), candSelectDeckey);
-                HistoryStayState::handleDownArrow();
+                HistoryResidentState::handleDownArrow();
             }
             _LOG_DEBUGH(_T("LEAVE"));
         }
@@ -1282,7 +1282,7 @@ namespace {
                 getPrevCandidate();
             } else {
                 _LOG_DEBUGH(_T("candSelectDeckey={:x}"), candSelectDeckey);
-                HistoryStayState::handleUpArrow();
+                HistoryResidentState::handleUpArrow();
             }
             _LOG_DEBUGH(_T("LEAVE"));
         }
@@ -1310,7 +1310,7 @@ namespace {
                 setCandSelectIsCalled();
                 getNextCandidate();
             } else {
-                HistoryStayState::handleTab();
+                HistoryResidentState::handleTab();
             }
         }
 
@@ -1321,7 +1321,7 @@ namespace {
                 setCandSelectIsCalled();
                 getPrevCandidate();
             } else {
-                HistoryStayState::handleShiftTab();
+                HistoryResidentState::handleShiftTab();
             }
         }
 
@@ -1330,7 +1330,7 @@ namespace {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             HISTORY_STAY_NODE->ClearPrevHistState();
             HIST_CAND->ClearKeyInfo();
-            HistoryStayState::handleBS();
+            HistoryResidentState::handleBS();
         }
 
         // DecoderOff の処理
@@ -1338,7 +1338,7 @@ namespace {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             // Enter と同じ扱いにする
             AddNewHistEntryOnEnter();
-            HistoryStayState::handleDecoderOff();
+            HistoryResidentState::handleDecoderOff();
         }
         
         // RET/Enter の処理
@@ -1358,13 +1358,13 @@ namespace {
                 bManualTemporary = true;
                 if (SETTINGS->newLineWhenHistEnter) {
                     // 履歴候補選択時のEnterではつねに改行するなら、確定後、Enter処理を行う
-                    HistoryStayState::handleEnter();
+                    HistoryResidentState::handleEnter();
                 }
             } else {
                 // それ以外は通常のEnter処理
                 _LOG_DEBUGH(_T("CALL: AddNewHistEntryOnEnter()"));
                 AddNewHistEntryOnEnter();
-                HistoryStayState::handleEnter();
+                HistoryResidentState::handleEnter();
             }
             _LOG_DEBUGH(_T("LEAVE"));
         }
@@ -1385,7 +1385,7 @@ namespace {
         //    } else {
         //        // Enterと同じ扱い
         //        AddNewHistEntryOnEnter();
-        //        HistoryStayState::handleCtrlJ();
+        //        HistoryResidentState::handleCtrlJ();
         //    }
         //}
 
@@ -1415,10 +1415,10 @@ namespace {
                 // 一時的にこのフラグを立てることにより、履歴検索を行わないようにする
                 bNoHistTemporary = true;
                 // Esc処理が必要なものがあればそれをやる。なければアクティブウィンドウにEscを送る
-                StayState::handleEsc();
+                ResidentState::handleEsc();
                 //// 何も候補が選択されていない状態なら履歴選択状態から抜ける
                 //STATE_COMMON->SetHistoryBlockFlag();
-                //HistoryStayState::handleEsc();
+                //HistoryResidentState::handleEsc();
                 //// 完全に抜ける
                 //handleFullEscape();
             }
@@ -1472,12 +1472,12 @@ namespace {
         }
 
     };
-    DEFINE_CLASS_LOGGER(HistoryStayStateImpl);
+    DEFINE_CLASS_LOGGER(HistoryResidentStateImpl);
 
 } // namespace
 
 // 履歴入力(常駐)機能状態インスタンスの Singleton
-HistoryStayState* HistoryStayState::Singleton;
+HistoryResidentState* HistoryResidentState::Singleton;
 
 // -------------------------------------------------------------------
 // HistoryNode - 履歴入力機能ノード
@@ -1571,26 +1571,26 @@ Node* HistoryOneCharNodeBuilder::CreateNode() {
 }
 
 // -------------------------------------------------------------------
-// HistoryStayNode - 履歴入力機能 常駐ノード
-DEFINE_CLASS_LOGGER(HistoryStayNode);
+// HistoryResidentNode - 履歴入力機能 常駐ノード
+DEFINE_CLASS_LOGGER(HistoryResidentNode);
 
 // コンストラクタ
-HistoryStayNode::HistoryStayNode() {
+HistoryResidentNode::HistoryResidentNode() {
     LOG_INFO(_T("CALLED: constructor"));
 }
 
 // デストラクタ
-HistoryStayNode::~HistoryStayNode() {
+HistoryResidentNode::~HistoryResidentNode() {
 }
 
 // 当ノードを処理する State インスタンスを作成する
-State* HistoryStayNode::CreateState() {
-    HISTORY_STAY_STATE = new HistoryStayStateImpl(this);
+State* HistoryResidentNode::CreateState() {
+    HISTORY_STAY_STATE = new HistoryResidentStateImpl(this);
     return HISTORY_STAY_STATE;
 }
 
 // 履歴機能常駐ノードの生成
-void HistoryStayNode::CreateSingleton() {
+void HistoryResidentNode::CreateSingleton() {
     // 履歴入力辞書ファイル名
     auto histFile = SETTINGS->historyFile;
     LOG_INFO(_T("histFile={}"), histFile);
@@ -1599,9 +1599,9 @@ void HistoryStayNode::CreateSingleton() {
     HistoryDic::CreateHistoryDic(histFile);
 
     HIST_CAND.reset(new HistCandidates());
-    HISTORY_STAY_NODE.reset(new HistoryStayNode());
+    HISTORY_STAY_NODE.reset(new HistoryResidentNode());
 }
 
 // Singleton
-std::unique_ptr<HistoryStayNode> HistoryStayNode::Singleton;
+std::unique_ptr<HistoryResidentNode> HistoryResidentNode::Singleton;
 

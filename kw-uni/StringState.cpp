@@ -5,7 +5,7 @@
 
 #include "StringNode.h"
 #include "State.h"
-#include "History/HistoryStayState.h"
+#include "History/HistoryResidentState.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughString)
 

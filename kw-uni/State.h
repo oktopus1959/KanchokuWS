@@ -125,7 +125,7 @@ public:
     virtual void DoOutStringProc();
 
     // ノードから生成した状態を後接させ、その状態を常駐させる
-    virtual void ChainAndStay(Node*);
+    virtual void ChainAndStayResident(Node*);
 
     // 居残っている一時状態の削除(常駐ノードなら false を返す)
     virtual void DeleteRemainingState();
@@ -177,7 +177,7 @@ protected:
     virtual void CheckMyState();
 
     // 常駐機能か
-    virtual bool IsStay() const;
+    virtual bool IsResident() const;
 
     //仮想鍵盤にストロークヘルプの情報を設定する
     void copyStrokeHelpToVkbFaces(wchar_t ch);
