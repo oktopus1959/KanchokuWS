@@ -204,6 +204,7 @@
     <ClInclude Include="KeysAndChars\Zenkaku.h" />
     <ClInclude Include="Mazegaki\Mazegaki.h" />
     <ClInclude Include="Mazegaki\MazegakiDic.h" />
+    <ClInclude Include="ModalState.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="OneShot\HankakuKatakanaOneShot.h" />
     <ClInclude Include="OneShot\KatakanaOneShot.h" />
@@ -277,6 +278,7 @@
     <ClCompile Include="KeysAndChars\ZenkakuState.cpp" />
     <ClCompile Include="Mazegaki\Mazegaki.cpp" />
     <ClCompile Include="Mazegaki\MazegakiDic.cpp" />
+    <ClCompile Include="ModalState.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="OneShot\HankakuKatakanaOneShotState.cpp" />
     <ClCompile Include="OneShot\KatakanaOneShotState.cpp" />

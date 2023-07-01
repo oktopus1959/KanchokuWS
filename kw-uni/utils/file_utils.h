@@ -166,7 +166,7 @@ namespace utils {
         inline void read(std::vector<String>& vec) {
             size_t size = (size_t)read_ulong();
             std::vector<wchar_t> buf(size);
-            ifs.read(reinterpret_cast<char*>(buf.data()), buf.size() * sizeof(wchar_t));
+            ifs.read(reinterpret_cast<char*>(buf.data()), (std::streamsize)buf.size() * sizeof(wchar_t));
             wchar_t* p = buf.data();
             vec.clear();
             while (p < buf.data() + size) {

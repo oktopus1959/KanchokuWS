@@ -2,9 +2,10 @@
 
 #include "Logger.h"
 #include "State.h"
+#include "ModalState.h"
 
 // 常駐状態のベースクラス
-class ResidentState : public State {
+class ResidentState : public State, public ModalState {
     DECLARE_CLASS_LOGGER;
 
 public:
@@ -22,8 +23,8 @@ public:
     void handleEsc();
 
 protected:
-    // モード状態か
-    bool IsModeState() { return true; }
+    // モード状態の処理
+    bool DoModalStateProc(int deckey) override { return HandleModalState(this, deckey); }
 
 };
 

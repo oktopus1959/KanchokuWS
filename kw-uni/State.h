@@ -8,6 +8,7 @@
 #include "DeckeyToChars.h"
 #include "StateCommonInfo.h"
 #include "Node.h"
+#include "ModalState.h"
 
 #define UNSHIFT_DECKEY(x) (x % PLANE_DECKEY_NUM)
 #define DECKEY_TO_SHIFT_PLANE(x) (x / PLANE_DECKEY_NUM)
@@ -18,6 +19,8 @@
 // デコーダ状態の基底クラス
 class State {
     DECLARE_CLASS_LOGGER;
+
+    friend ModalState;
 
     // 次の状態を生成する元となるノード
     // これは状態生成の時に一時的に使用されるだけ
@@ -53,6 +56,12 @@ protected:
 
 public:
     inline void SetPrevState(State* pp) { pPrev = pp; }
+
+    inline State* NextState() { return pNext; }
+
+    inline State* SetNextState(State* p) { return pNext = p; }
+
+    inline Node* MyNode() { return pNode; }
 
 protected:
     //// コンストラクタ -- 派生クラスでコンストラクタを定義しなくて済むようにするため、下記 Initialize を使うようにした
@@ -115,6 +124,9 @@ public:
     // 事前チェック
     virtual void DoPreCheck() { }
 
+    // モード状態の処理
+    virtual bool DoModalStateProc(int /*deckey*/) { return false; }
+
     // 中間チェック
     virtual void DoIntermediateCheck() { }
 
@@ -157,8 +169,8 @@ public:
     virtual mchar_t GetModeMarker();
 
 protected:
-    // モード状態か
-    virtual bool IsModeState() { return false; }
+    // モード状態の処理
+    virtual void DoModalStateProc(State*) { /* Do nothing */ }
 
     // 次の処理のためのノードをセットする
     void SetNextNodeMaybe(Node* pN) { pNextNodeMaybe = pN; }
