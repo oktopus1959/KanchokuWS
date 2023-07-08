@@ -112,7 +112,7 @@ namespace {
             cancelMe();
         }
 
-        // その他の特殊キー
+        // その他の特殊キー (常駐の履歴機能があればそれを呼び出す)
         void handleSpecialKeys(int deckey) {
             LOG_DEBUG(_T("CALLED: {}, deckey={}"), Name, deckey);
             if (HISTORY_RESIDENT_STATE) {
