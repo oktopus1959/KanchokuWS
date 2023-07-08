@@ -5,7 +5,7 @@
 #include "ModalState.h"
 
 // 常駐状態のベースクラス
-class ResidentState : public State, public ModalState {
+class ResidentState : public ModalState {
     DECLARE_CLASS_LOGGER;
 
 public:
@@ -21,10 +21,6 @@ public:
 
     // Esc の処理
     void handleEsc();
-
-protected:
-    // モード状態の処理
-    bool DoModalStateProc(int deckey) override { return HandleModalState(this, deckey); }
 
 };
 

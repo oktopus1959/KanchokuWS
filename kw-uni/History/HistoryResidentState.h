@@ -29,4 +29,4 @@ public:
     static HistoryResidentState* Singleton;
 };
 
-#define HISTORY_STAY_STATE (HistoryResidentState::Singleton)
+#define HISTORY_RESIDENT_STATE (HistoryResidentState::Singleton)

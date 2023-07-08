@@ -12,7 +12,6 @@
 #include "State.h"
 #include "StrokeTable.h"
 #include "OutputStack.h"
-#include "TranslationState.h"
 #include "History//HistoryResidentState.h"
 
 #include "Eisu.h"
@@ -33,7 +32,7 @@ namespace {
 
     // -------------------------------------------------------------------
     // 英数入力機能クラス
-    class EisuState : public StrokeTranslationState {
+    class EisuState : public State {
         DECLARE_CLASS_LOGGER;
 
         size_t firstTotalCnt = 0;
@@ -115,7 +114,7 @@ namespace {
             _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), face={}"), Name, deckey, deckey, myChar);
             if (myChar == SETTINGS->eisuHistSearchChar && is_lower_alphabet(OUTPUT_STACK->back())) {
                 // 履歴検索の実行(末尾文字が英小文字でないと発動させない; "CO" の後の場合は、'O' がキーになるが、この場合は発動させない)
-                HISTORY_STAY_STATE->handleNextCandTrigger();
+                HISTORY_RESIDENT_STATE->handleNextCandTrigger();
                 MY_NODE->prevHistSearchDeckeyCount = totalCnt;
             } else if (deckey < NORMAL_DECKEY_NUM || (deckey >= SHIFT_DECKEY_START && deckey < (SHIFT_DECKEY_START + NORMAL_DECKEY_NUM))) {
                 STATE_COMMON->AppendOrigString(myChar);
@@ -169,7 +168,7 @@ namespace {
                 //        STATE_COMMON->SetOutString(romanStr, romanStr.size());
                 //    }
                 //}
-                HISTORY_STAY_STATE->handleEisuDecapitalize();
+                HISTORY_RESIDENT_STATE->handleEisuDecapitalize();
             }
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
@@ -190,7 +189,7 @@ namespace {
         void handleFullEscape() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             //cancelMe();
-            HISTORY_STAY_STATE->handleFullEscapeResidentState();
+            HISTORY_RESIDENT_STATE->handleFullEscapeResidentState();
         }
 
         // Esc の処理 -- 処理のキャンセル

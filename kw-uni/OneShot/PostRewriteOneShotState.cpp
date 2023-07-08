@@ -87,12 +87,12 @@ namespace {
             size_t numBS;
             std::tie(rewInfo, numBS) = MY_NODE->matchWithTailString();
             if (rewInfo) {
-                HISTORY_STAY_STATE->SetTranslatedOutString(rewInfo->rewriteStr, rewInfo->rewritableLen, numBS);
+                HISTORY_RESIDENT_STATE->SetTranslatedOutString(rewInfo->rewriteStr, rewInfo->rewritableLen, numBS);
                 if (rewInfo->subTable) {
                     SetNextNodeMaybe(rewInfo->subTable);
                 }
             } else {
-                HISTORY_STAY_STATE->SetTranslatedOutString(MY_NODE->getString(), MY_NODE->getRewritableLen());
+                HISTORY_RESIDENT_STATE->SetTranslatedOutString(MY_NODE->getString(), MY_NODE->getRewritableLen());
             }
             // チェイン不要
             _LOG_DEBUGH(_T("LEAVE: NO CHAIN"));

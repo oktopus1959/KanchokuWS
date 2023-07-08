@@ -11,7 +11,6 @@
 #include "Node.h"
 #include "State.h"
 #include "OutputStack.h"
-#include "TranslationState.h"
 #include "History//HistoryResidentState.h"
 
 #include "Zenkaku.h"
@@ -24,17 +23,19 @@ namespace {
 
     // -------------------------------------------------------------------
     // 全角変換機能クラス
-    class ZenkakuState : public TranslationState {
+    class ZenkakuState : public State {
         DECLARE_CLASS_LOGGER;
 
     public:
         // コンストラクタ
         ZenkakuState(ZenkakuNode* pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFO(_T("CALLED: CONSTRUCTOR"));
             Initialize(logger.ClassNameT(), pN);
         }
 
-        ~ZenkakuState() { };
+        ~ZenkakuState() {
+            LOG_INFO(_T("CALLED: DESTRUCTOR"));
+        };
 
 #define MY_NODE ((ZenkakuNode*)pNode)
 
@@ -111,7 +112,7 @@ namespace {
             STATE_COMMON->SetZenkakuModeMarkerShowFlag();
             if (wch > 0) {
                 //STATE_COMMON->SetOutString(wch, 0);
-                HISTORY_STAY_STATE->SetTranslatedOutString(MString(1, wch), 0);
+                HISTORY_RESIDENT_STATE->SetTranslatedOutString(MString(1, wch), 0);
             }
         }
 

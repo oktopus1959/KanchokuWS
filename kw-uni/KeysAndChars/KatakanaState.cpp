@@ -12,7 +12,6 @@
 #include "State.h"
 #include "StrokeTable.h"
 #include "OutputStack.h"
-#include "TranslationState.h"
 #include "History//HistoryResidentState.h"
 
 #include "Katakana.h"
@@ -34,7 +33,7 @@ namespace {
 
     // -------------------------------------------------------------------
     // カタカナ変換機能クラス
-    class KatakanaState : public StrokeTranslationState {
+    class KatakanaState : public ModalState {
         DECLARE_CLASS_LOGGER;
 
     public:
@@ -104,13 +103,24 @@ namespace {
         void handleFullEscape() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             //cancelMe();
-            HISTORY_STAY_STATE->handleFullEscapeResidentState();
+            HISTORY_RESIDENT_STATE->handleFullEscapeResidentState();
         }
 
         // Esc の処理 -- 処理のキャンセル
         void handleEsc() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             cancelMe();
+        }
+
+        // その他の特殊キー
+        void handleSpecialKeys(int deckey) {
+            LOG_DEBUG(_T("CALLED: {}, deckey={}"), Name, deckey);
+            if (HISTORY_RESIDENT_STATE) {
+                // 常駐の履歴機能があればそれを呼び出す
+                HISTORY_RESIDENT_STATE->dispatchDeckey(deckey);
+            } else {
+                State::handleSpecialKeys(deckey);
+            }
         }
 
         // KatakanaConversionの処理 - 処理のキャンセル

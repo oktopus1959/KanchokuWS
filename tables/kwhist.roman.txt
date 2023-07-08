@@ -6662,7 +6662,6 @@ Cheating|チーティング
 Chebyshev|チェビシェフ
 Chechen|チェチェン
 Check|チェック
-Check|チッキ
 Checker|チェッカー
 Checker|チェッカーズ
 Checkpoint|チェックポイント
@@ -38593,6 +38592,7 @@ Synchronizer|シンクロナイザ
 Taste|テイスト
 Use|ユース
 Cache|キャッシュ
+Check|✓
 Clouds|クラウズ
 Cloud|クラウド
 Login|ログイン

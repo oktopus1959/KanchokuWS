@@ -126,9 +126,6 @@
     <ClInclude Include="StateCommonInfo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="TranslationState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="BushuComp\BushuAssoc.h">
       <Filter>ヘッダー ファイル\BushuComp</Filter>
     </ClInclude>
@@ -342,9 +339,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="OutputStack.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="TranslationState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="BushuComp\BushuAssoc.cpp">

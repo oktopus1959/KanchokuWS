@@ -1,11 +1,10 @@
 #pragma once
 
 #include "Logger.h"
-
-class State;
+#include "State.h"
 
 // 変換系状態のクラス
-class ModalState {
+class ModalState : public State {
     DECLARE_CLASS_LOGGER;
 
 public:
@@ -15,8 +14,8 @@ public:
     }
 
 protected:
-    // モード状態の処理
-    bool HandleModalState(State* pState, int deckey);
+    // DECKEY処理の前半部
+    void DoDeckeyPreProc(int deckey) override;
 
 };
 

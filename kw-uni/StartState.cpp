@@ -16,7 +16,7 @@ public:
 
     void handleEnter() {
         LOG_DEBUG(_T("Enter: {}"), Name);
-        HISTORY_STAY_STATE->AddNewHistEntryOnEnter();
+        HISTORY_RESIDENT_STATE->AddNewHistEntryOnEnter();
         State::handleEnter();
     }
 };

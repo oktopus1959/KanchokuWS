@@ -17,7 +17,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
-#if 1 || defined(_DEBUG)
+#if 0 || defined(_DEBUG)
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
 #define LOG_INFO LOG_INFOH
@@ -65,23 +65,17 @@ void State::HandleDeckey(int deckey) {
 // 非仮想関数
 void State::DoDeckeyPreProc(int deckey) {
     _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), Name, deckey, deckey, STATE_NAME(pNext), NODE_NAME(NextNodeMaybe()));
-    if (DoModalStateProc(deckey)) {
-        _LOG_DEBUGH(_T("LEAVE: ModalStateProc DONE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
-        return;
-    }
-
-    _LOG_DEBUGH(_T("PATH-F"));
     //pNextNodeMaybe = nullptr;
     ClearNextNodeMaybe();
     _LOG_DEBUGH(_T("NextState={}"), STATE_NAME(pNext));
     if (pNext) {
-        _LOG_DEBUGH(_T("PATH-G"));
+        _LOG_DEBUGH(_T("NextState: FOUND"));
         // 後続状態があれば、そちらを呼び出す ⇒ 新しい後続ノードがあればそれを一時的に記憶しておく(後半部で処理する)
         //pNextNodeMaybe = pNext->HandleDeckey(deckey);
         pNext->HandleDeckey(deckey);    // ここは pNext->DoDeckeyPreProc(deckey); のほうが良いように思えるが、実際にはうまくいかない。将来的に見直す。
         SetNextNodeMaybe(pNext->NextNodeMaybe());
     } else {
-        _LOG_DEBUGH(_T("PATH-H"));
+        _LOG_DEBUGH(_T("NextState: NOT FOUND"));
         // 後続状態がなければ、ここでDECKEYをディスパッチする
         dispatchDeckey(deckey);
     }

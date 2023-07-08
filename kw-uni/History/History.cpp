@@ -275,14 +275,14 @@ namespace {
         void setOutString(const HistResult& result) {
             _LOG_DEBUGH(_T("ENTER: result.OrigKey={}, result.Key={}, result.Word={}, keyLen={}, wildKey={}, prevOutStr={}, prevKey={}, plannedNumBS={}"), \
                 to_wstr(result.OrigKey), to_wstr(result.Key), to_wstr(result.Word), result.KeyLen(), result.WildKey, \
-                to_wstr(HISTORY_STAY_NODE->GetPrevOutString()), to_wstr(HISTORY_STAY_NODE->GetPrevKey()), STATE_COMMON->GetBackspaceNum());
+                to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()), to_wstr(HISTORY_RESIDENT_NODE->GetPrevKey()), STATE_COMMON->GetBackspaceNum());
 
             MString outStr = result.Word;
             MString outKey = result.Key;
             if (outStr.empty()) {
                 // 未選択状態だったら、出力文字列を元に戻す
-                outKey = HISTORY_STAY_NODE->GetPrevKey();
-                outStr = HISTORY_STAY_NODE->GetPrevOutString();
+                outKey = HISTORY_RESIDENT_NODE->GetPrevKey();
+                outStr = HISTORY_RESIDENT_NODE->GetPrevOutString();
                 if (outStr.empty()) outStr = outKey;
             } else {
                 size_t pos = outStr.find(VERT_BAR);     // '|' を含むか
@@ -310,24 +310,24 @@ namespace {
             _LOG_DEBUGH(_T("outStr={}, outKey={}"), to_wstr(outStr), to_wstr(outKey));
 
             STATE_COMMON->SetOutString(outStr);
-            HISTORY_STAY_NODE->SetPrevHistState(outStr, outKey);
+            HISTORY_RESIDENT_NODE->SetPrevHistState(outStr, outKey);
 
-            //_LOG_DEBUGH(_T("prevOutString={}, isPrevHistKeyUsed={}"), to_wstr(HISTORY_STAY_NODE->GetPrevOutString()), HISTORY_STAY_NODE->IsPrevHistKeyUsed());
-            _LOG_DEBUGH(_T("LEAVE: prevOutString={}"), to_wstr(HISTORY_STAY_NODE->GetPrevOutString()));
+            //_LOG_DEBUGH(_T("prevOutString={}, isPrevHistKeyUsed={}"), to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()), HISTORY_RESIDENT_NODE->IsPrevHistKeyUsed());
+            _LOG_DEBUGH(_T("LEAVE: prevOutString={}"), to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()));
         }
 
         // 前回の履歴検索の出力と現在の出力文字列(改行以降)の末尾を比較し、同じであれば前回の履歴検索のキーを取得する
         // この時、出力スタックは、キーだけを残し、追加出力部分は巻き戻し予約される(numBackSpacesに値をセット)
-        // 前回が空キーだった場合は、返値も空キーになるので、HISTORY_STAY_NODE->PrevKeyLen == 0 かどうかで前回と同じキーであるか否かを判断すること
+        // 前回が空キーだった場合は、返値も空キーになるので、HISTORY_RESIDENT_NODE->PrevKeyLen == 0 かどうかで前回と同じキーであるか否かを判断すること
         // ここに来る場合には、以下の3つの状態がありえる:
         // ①まだ履歴検索がなされていない状態
         // ②検索が実行されたが、出力文字列にはキーだけが表示されている状態
         // ③横列のどれかの候補が選択されて出力文字列に反映されている状態
         MString getLastHistKeyAndRewindOutput() {
             // 前回の履歴検索の出力
-            //bool bPrevHistUsed = HISTORY_STAY_NODE->IsPrevHistKeyUsed();
-            const auto& prevKey = HISTORY_STAY_NODE->GetPrevKey();
-            const auto& prevOut = HISTORY_STAY_NODE->GetPrevOutString();
+            //bool bPrevHistUsed = HISTORY_RESIDENT_NODE->IsPrevHistKeyUsed();
+            const auto& prevKey = HISTORY_RESIDENT_NODE->GetPrevKey();
+            const auto& prevOut = HISTORY_RESIDENT_NODE->GetPrevOutString();
             //_LOG_DEBUGH(_T("isPrevHistUsed={}, prevOut={}, prevKey={}"), bPrevHistUsed, to_wstr(prevOut), to_wstr(prevKey));
             _LOG_DEBUGH(_T("prevOut={}, prevKey={}"), to_wstr(prevOut), to_wstr(prevKey));
 
@@ -339,13 +339,13 @@ namespace {
                 // ②検索が実行されたが、出力文字列にはキーだけが表示されている状態
                 _LOG_DEBUGH(_T("CURRENT: SetOutString(str={}, numBS={})"), to_wstr(prevKey), prevKey.size());
                 STATE_COMMON->SetOutString(prevKey, prevKey.size());
-                HISTORY_STAY_NODE->SetPrevHistState(prevKey, prevKey);
+                HISTORY_RESIDENT_NODE->SetPrevHistState(prevKey, prevKey);
                 _LOG_DEBUGH(_T("CURRENT: prevKey={}"), to_wstr(prevKey));
             } else {
                 // ③横列のどれかの候補が選択されて出力文字列に反映されている状態
                 _LOG_DEBUGH(_T("REVERT and NEW HIST: SetOutString(str={}, numBS={})"), to_wstr(prevKey), prevOut.size());
                 STATE_COMMON->SetOutString(prevKey, prevOut.size());
-                HISTORY_STAY_NODE->SetPrevHistState(prevKey, prevKey);
+                HISTORY_RESIDENT_NODE->SetPrevHistState(prevKey, prevKey);
                 _LOG_DEBUGH(_T("REVERT and NEW HIST: prevKey={}"), to_wstr(prevKey));
             }
 
@@ -356,7 +356,7 @@ namespace {
         // 前回の履歴選択の出力と現在の出力文字列(改行以降)の末尾が同一であるか
         bool isLastHistOutSameAsCurrentOut() {
             // 前回の履歴選択の出力
-            MString prevOut = HISTORY_STAY_NODE->GetPrevOutString();
+            MString prevOut = HISTORY_RESIDENT_NODE->GetPrevOutString();
             // 出力スタックから、上記と同じ長さの末尾文字列を取得
             auto lastJstr = OUTPUT_STACK->GetLastJapaneseStr<MString>(prevOut.size());
             bool result = !prevOut.empty() && lastJstr == prevOut;
@@ -484,7 +484,7 @@ namespace {
             setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandWords(key, false, candLen), key);
 
             // 検索キーの設定
-            HISTORY_STAY_NODE->SetPrevHistKeyState(HIST_CAND->GetOrigKey());
+            HISTORY_RESIDENT_NODE->SetPrevHistKeyState(HIST_CAND->GetOrigKey());
 
             // 未選択状態にセットする
             _LOG_DEBUGH(_T("Set Unselected"));
@@ -728,7 +728,7 @@ namespace {
     protected:
         void handleKeyPostProc() {
             _LOG_DEBUGH(_T("CALLED: handleKeyPostProc"));
-            HISTORY_STAY_NODE->ClearPrevHistState();
+            HISTORY_RESIDENT_NODE->ClearPrevHistState();
             HIST_CAND->ClearKeyInfo();
             STATE_COMMON->ClearVkbLayout();
             //STATE_COMMON->RemoveFunctionState();
@@ -758,7 +758,7 @@ namespace {
             if (!HISTORY_DIC) return false;
 
             // 前回履歴キーのクリア
-            HISTORY_STAY_NODE->ClearPrevHistState();
+            HISTORY_RESIDENT_NODE->ClearPrevHistState();
             HIST_CAND->ClearKeyInfo();
 
             // 2～3文字履歴の取得
@@ -793,7 +793,7 @@ namespace {
             if (!HISTORY_DIC) return false;
 
             // 前回履歴キーのクリア
-            HISTORY_STAY_NODE->ClearPrevHistState();
+            HISTORY_RESIDENT_NODE->ClearPrevHistState();
             HIST_CAND->ClearKeyInfo();
 
             // 1文字履歴の取得
@@ -867,7 +867,7 @@ namespace {
             maybeEditedBySubState = false;
             bCandSelectable = false;
             _LOG_DEBUGH(_T("bCandSelectable=False"));
-            HISTORY_STAY_NODE->ClearPrevHistState();     // まだ履歴検索が行われていないということを表す
+            HISTORY_RESIDENT_NODE->ClearPrevHistState();     // まだ履歴検索が行われていないということを表す
             HIST_CAND->ClearKeyInfo();      // まだ履歴検索が行われていないということを表す
         }
 
@@ -962,7 +962,7 @@ namespace {
             // 候補が選択されていれば、それを使用履歴の先頭にpushする
             HIST_CAND->DelayedPushFrontSelectedWord();
             // どれかの候補が選択されている状態なら、それを確定し、履歴キーをクリアしておく
-            HISTORY_STAY_NODE->ClearPrevHistState();
+            HISTORY_RESIDENT_NODE->ClearPrevHistState();
             HIST_CAND->ClearKeyInfo();
         }
 
@@ -978,7 +978,7 @@ namespace {
                 //prevKey.clear();
                 _LOG_DEBUGH(_T("Set Reinitialized=true"));
                 maybeEditedBySubState = true;
-                HISTORY_STAY_NODE->ClearPrevHistState();    // まだ履歴検索が行われていない状態にしておく
+                HISTORY_RESIDENT_NODE->ClearPrevHistState();    // まだ履歴検索が行われていない状態にしておく
                 HIST_CAND->ClearKeyInfo();      // まだ履歴検索が行われていないということを表す
             }
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
@@ -1042,7 +1042,7 @@ namespace {
                 // こうしておかないと、自動履歴検索OFFのとき、たとえば、
                 // 「エッ」⇒Ctrl+Space⇒「エッセンス」⇒Esc⇒「エッ」⇒「セ」追加⇒出力「エッセ」、キー=「エッ」のまま⇒再検索⇒「エッセセンス」となる
                 _LOG_DEBUGH(_T("Not Hist Search mode: Clear PrevKey"));
-                HISTORY_STAY_NODE->ClearPrevHistState();
+                HISTORY_RESIDENT_NODE->ClearPrevHistState();
                 HIST_CAND->ClearKeyInfo();
             } else {
                 // 履歴検索可能状態である
@@ -1098,7 +1098,7 @@ namespace {
                         // キーが取得できた
                         //bool isAscii = is_ascii_char((wchar_t)utils::safe_back(key));
                         _LOG_DEBUGH(_T("HistSearch: PATH 8: key={}, prevKey={}, maybeEditedBySubState={}"),
-                            to_wstr(key), to_wstr(HISTORY_STAY_NODE->GetPrevKey()), maybeEditedBySubState);
+                            to_wstr(key), to_wstr(HISTORY_RESIDENT_NODE->GetPrevKey()), maybeEditedBySubState);
                         auto histCandsChecker = [this](const std::vector<MString>& words, const MString& ky) {
                             _LOG_DEBUGH(_T("HistSearch: CANDS CHECKER: words.size()={}, key={}"), words.size(), to_wstr(ky));
                             if (words.empty() || (words.size() == 1 && (words[0].empty() || words[0] == ky))) {
@@ -1112,7 +1112,7 @@ namespace {
                                 }
                             }
                         };
-                        if (key != HISTORY_STAY_NODE->GetPrevKey() || maybeEditedBySubState || bManual) {
+                        if (key != HISTORY_RESIDENT_NODE->GetPrevKey() || maybeEditedBySubState || bManual) {
                             _LOG_DEBUGH(_T("HistSearch: PATH 9: different key"));
                             //bool bCheckMinKeyLen = !bManual && utils::is_hiragana(key[0]);       // 自動検索かつ、キー先頭がひらがなならキー長チェックをやる
                             bool bCheckMinKeyLen = !bManual;                                     // 自動検索ならキー長チェックをやる
@@ -1127,13 +1127,13 @@ namespace {
                         }
                     }
                     _LOG_DEBUGH(_T("HistSearch: SetPrevHistKeyState(key={})"), to_wstr(key));
-                    HISTORY_STAY_NODE->SetPrevHistKeyState(key);
+                    HISTORY_RESIDENT_NODE->SetPrevHistKeyState(key);
                     _LOG_DEBUGH(_T("DONE HistSearch"));
                 }
             }
 
             // この処理は、GUI側で候補の背景色を変更するために必要
-            if (isHotCandidateReady(HISTORY_STAY_NODE->GetPrevKey(), HIST_CAND->GetCandWords())) {
+            if (isHotCandidateReady(HISTORY_RESIDENT_NODE->GetPrevKey(), HIST_CAND->GetCandWords())) {
                 _LOG_DEBUGH(_T("PATH 14"));
                 // 何がしかの文字出力があり、それをキーとする履歴候補があった場合 -- 未選択状態にセットする
                 _LOG_DEBUGH(_T("Set Unselected"));
@@ -1180,7 +1180,7 @@ namespace {
                 // 前回の履歴検索との比較、新しい履歴検索の開始
                 if (bNoHistTemporary) {
                     // 一時的に履歴検索が不可になっている場合は、キーと出力文字列を比較して、異った状態になっていたら可に戻す
-                    MString prevKey = HISTORY_STAY_NODE->GetPrevKey();
+                    MString prevKey = HISTORY_RESIDENT_NODE->GetPrevKey();
                     MString outStr = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(prevKey.size());
                     bNoHistTemporary = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(prevKey.size()) == prevKey;
                     LOG_INFO(_T("PATH 8: bNoHistTemporary={}: prevKey={}, outStr={}"), bNoHistTemporary, to_wstr(prevKey), to_wstr(outStr));
@@ -1328,7 +1328,7 @@ namespace {
         // Ctrl-H/BS の処理 -- 履歴検索の初期化
         void handleBS() {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            HISTORY_STAY_NODE->ClearPrevHistState();
+            HISTORY_RESIDENT_NODE->ClearPrevHistState();
             HIST_CAND->ClearKeyInfo();
             HistoryResidentState::handleBS();
         }
@@ -1350,9 +1350,9 @@ namespace {
                 setCandSelectIsCalled();
                 getNextCandidate(false);
             } else if (bCandSelectable && HIST_CAND->GetSelectPos() >= 0) {
-                _LOG_DEBUGH(_T("CALL: HISTORY_STAY_NODE->ClearPrevHistState(); HIST_CAND->ClearKeyInfo(); bManualTemporary = true"));
+                _LOG_DEBUGH(_T("CALL: HISTORY_RESIDENT_NODE->ClearPrevHistState(); HIST_CAND->ClearKeyInfo(); bManualTemporary = true"));
                 // どれかの候補が選択されている状態なら、それを確定し、履歴キーをクリアしておく
-                HISTORY_STAY_NODE->ClearPrevHistState();
+                HISTORY_RESIDENT_NODE->ClearPrevHistState();
                 HIST_CAND->ClearKeyInfo();
                 // 一時的にマニュアル操作フラグを立てることで、DoOutStringProc() から historySearch() を呼ぶときに履歴再検索が実行されるようにする
                 bManualTemporary = true;
@@ -1468,7 +1468,7 @@ namespace {
             // 英数モードはキャンセルする
             if (pNext) pNext->handleEisuCancel();
 
-            _LOG_DEBUGH(_T("LEAVE: prevOut={}, numBS={}"), to_wstr(HISTORY_STAY_NODE->GetPrevOutString()), STATE_COMMON->GetBackspaceNum());
+            _LOG_DEBUGH(_T("LEAVE: prevOut={}, numBS={}"), to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()), STATE_COMMON->GetBackspaceNum());
         }
 
     };
@@ -1585,8 +1585,8 @@ HistoryResidentNode::~HistoryResidentNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryResidentNode::CreateState() {
-    HISTORY_STAY_STATE = new HistoryResidentStateImpl(this);
-    return HISTORY_STAY_STATE;
+    HISTORY_RESIDENT_STATE = new HistoryResidentStateImpl(this);
+    return HISTORY_RESIDENT_STATE;
 }
 
 // 履歴機能常駐ノードの生成
@@ -1599,7 +1599,7 @@ void HistoryResidentNode::CreateSingleton() {
     HistoryDic::CreateHistoryDic(histFile);
 
     HIST_CAND.reset(new HistCandidates());
-    HISTORY_STAY_NODE.reset(new HistoryResidentNode());
+    HISTORY_RESIDENT_NODE.reset(new HistoryResidentNode());
 }
 
 // Singleton

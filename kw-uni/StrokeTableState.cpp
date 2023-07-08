@@ -156,7 +156,7 @@ namespace {
         //    LOG_DEBUG(_T("CALLED: {}, origString=\"{}\""), Name, to_wstr(STATE_COMMON->OrigString()));
         //    setToRemoveAllStroke();
         //    STATE_COMMON->OutputOrigString();
-        //    HISTORY_STAY_STATE->AddNewHistEntryOnSomeChar();
+        //    HISTORY_RESIDENT_STATE->AddNewHistEntryOnSomeChar();
         //}
 
         void handleBS() {

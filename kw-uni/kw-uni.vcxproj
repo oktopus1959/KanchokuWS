@@ -228,7 +228,6 @@
     <ClInclude Include="State.h" />
     <ClInclude Include="Decoder.h" />
     <ClInclude Include="Template\Template.h" />
-    <ClInclude Include="TranslationState.h" />
     <ClInclude Include="utils\exception.h" />
     <ClInclude Include="utils\file_utils.h" />
     <ClInclude Include="utils\langedge\ctypeutil.hpp" />
@@ -304,7 +303,6 @@
     <ClCompile Include="Decoder.cpp" />
     <ClCompile Include="StrokeTableState.cpp" />
     <ClCompile Include="Template\TemplateState.cpp" />
-    <ClCompile Include="TranslationState.cpp" />
     <ClCompile Include="utils\utf_utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

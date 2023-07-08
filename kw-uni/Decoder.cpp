@@ -119,7 +119,7 @@ public:
 
         // 履歴入力機能を生成して常駐させる
         HistoryResidentNode::CreateSingleton();
-        startState->ChainAndStayResident(HISTORY_STAY_NODE.get());
+        startState->ChainAndStayResident(HISTORY_RESIDENT_NODE.get());
         // 必要があれば、ここにその他の常駐機能を追加する
        
         // PrevCharNode - 直前キー文字を返すノードのSingleton生成
@@ -308,7 +308,7 @@ public:
 
     // 履歴のコミットと初期化
     void commitHistory() {
-        HISTORY_STAY_STATE->commitHistory();
+        HISTORY_RESIDENT_STATE->commitHistory();
     }
 
     // デコーダが扱う辞書を保存する

@@ -11,7 +11,6 @@
 #include "Node.h"
 #include "State.h"
 #include "OutputStack.h"
-#include "TranslationState.h"
 #include "History//HistoryResidentState.h"
 
 #include "MyPrevChar.h"

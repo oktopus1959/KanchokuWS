@@ -146,4 +146,4 @@ public:
     // 履歴機能常駐ノードのSingleton
     static std::unique_ptr<HistoryResidentNode> Singleton;
 };
-#define HISTORY_STAY_NODE (HistoryResidentNode::Singleton)
+#define HISTORY_RESIDENT_NODE (HistoryResidentNode::Singleton)

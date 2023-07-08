@@ -8,7 +8,7 @@
 #include "DeckeyToChars.h"
 #include "StateCommonInfo.h"
 #include "Node.h"
-#include "ModalState.h"
+//#include "ModalState.h"
 
 #define UNSHIFT_DECKEY(x) (x % PLANE_DECKEY_NUM)
 #define DECKEY_TO_SHIFT_PLANE(x) (x / PLANE_DECKEY_NUM)
@@ -20,7 +20,7 @@
 class State {
     DECLARE_CLASS_LOGGER;
 
-    friend ModalState;
+    //friend ModalState;
 
     // 次の状態を生成する元となるノード
     // これは状態生成の時に一時的に使用されるだけ
@@ -62,6 +62,9 @@ public:
     inline State* SetNextState(State* p) { return pNext = p; }
 
     inline Node* MyNode() { return pNode; }
+
+    // 次の処理のためのノードを取得する
+    Node* NextNodeMaybe() const { return pNextNodeMaybe; }
 
 protected:
     //// コンストラクタ -- 派生クラスでコンストラクタを定義しなくて済むようにするため、下記 Initialize を使うようにした
@@ -105,10 +108,11 @@ public:
     // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
     void DoOutStringProcChain();
 
-private:
+protected:
     // DECKEY処理の前半部
-    void DoDeckeyPreProc(int deckey);
+    virtual void DoDeckeyPreProc(int deckey);
 
+private:
     // DECKEY処理の後半部
     void DoDeckeyPostProc();
 
@@ -124,11 +128,11 @@ public:
     // 事前チェック
     virtual void DoPreCheck() { }
 
-    // モード状態の処理
-    virtual bool DoModalStateProc(int /*deckey*/) { return false; }
-
     // 中間チェック
     virtual void DoIntermediateCheck() { }
+
+    // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
+    virtual bool DoProcOnCreated();
 
     // 状態の再アクティブ化
     virtual void Reactivate();
@@ -169,16 +173,10 @@ public:
     virtual mchar_t GetModeMarker();
 
 protected:
-    // モード状態の処理
-    virtual void DoModalStateProc(State*) { /* Do nothing */ }
-
     // 次の処理のためのノードをセットする
     void SetNextNodeMaybe(Node* pN) { pNextNodeMaybe = pN; }
 
     void ClearNextNodeMaybe() { pNextNodeMaybe = nullptr; }
-
-    // 次の処理のためのノードを取得する
-    Node* NextNodeMaybe() const { return pNextNodeMaybe; }
 
     // 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
     // 例：ストロークの末尾まで到達して、ストロークチェイン全体が不要になった
@@ -196,9 +194,6 @@ protected:
 
     //仮想鍵盤にストロークヘルプの情報を設定する(outStringの先頭文字)
     void copyStrokeHelpToVkbFaces();
-
-    // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
-    virtual bool DoProcOnCreated();
 
     // 文字削除をリザルト情報にセットする
     // 引数は、削除する文字数
