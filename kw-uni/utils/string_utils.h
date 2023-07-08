@@ -47,7 +47,7 @@ namespace {
 
     const MString MSTR_CMD_HEADER = MString({mchar_t('!'), mchar_t('{')});
 
-    const mchar_t strip_delims[] = {' ', '\r', '\n' };
+    const mchar_t strip_delims[] = {' ', '\r', '\n', '\0' };
 
     inline bool is_paired_mchar(mchar_t m) {
         return (m & 0xffff0000) != 0;
