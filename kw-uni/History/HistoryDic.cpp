@@ -20,6 +20,7 @@
 #define _DEBUG_FLAG(x) (x)
 #define LOG_DEBUGH LOG_INFOH
 #define LOG_DEBUG LOG_INFOH
+#define LOG_INFO LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
@@ -138,9 +139,12 @@ namespace {
         }
 
         void Insert(const MString& word) {
+            LOG_DEBUG(_T("ENTER: word={}"), to_wstr(word));
             for (size_t i = 0; i < histCharDics.size() && i < word.size(); ++i) {
+                LOG_DEBUG(_T("histCharDics[{}].Insert({}, {})"), i, (wchar_t)word[i], to_wstr(word));
                 histCharDics[i].Insert(word[i], word);
             }
+            LOG_DEBUG(_T("LEAVE"));
         }
 
         // key の末尾n文字にマッチする文字列集合を取得する('?' も考慮, ただし少なくとも1文字は'?'以外を含む)
@@ -627,10 +631,14 @@ namespace {
     private:
         // 一行の辞書ソース文字列を解析して辞書に登録する
         bool addHistDicEntry(const MString& line, size_t minlen = 2, bool bForce = false) {
-            LOG_DEBUG(_T("CALLED: {}, minlen={}"), to_wstr(line), minlen);
+            LOG_DEBUG(_T("ENTER: line={}, minlen={}"), to_wstr(line), minlen);
             auto word = utils::strip(line);
+            LOG_DEBUG(_T("word={}"), to_wstr(word));
             // 空白行または1文字以下、あるいは強制登録でなくて、先頭が '#' or ';' の場合は、何もしない
-            if (word.size() < minlen || (!bForce && (word[0] == '#' || word[0] == ';'))) return false;
+            if (word.size() < minlen || (!bForce && (word[0] == '#' || word[0] == ';'))) {
+                LOG_DEBUG(_T("LEAVE: false"));
+                return false;
+            }
 
             if (!hashToStrMap.FindWord(word)) {
                 //histDic1.Insert(word);
@@ -641,6 +649,7 @@ namespace {
                 hashToStrMap.Insert(word);
             }
             bDirty = true;
+            LOG_DEBUG(_T("LEAVE: true"));
             return true;
         }
 
@@ -648,7 +657,7 @@ namespace {
         void readFile(const std::vector<String>& lines, bool bReadOnly) {
             LOG_INFO(_T("ENTER: {} lines, bReadOnly={}"), lines.size(), bReadOnly);
             int logLevel = Reporting::Logger::LogLevel;
-            Reporting::Logger::LogLevel = 0;
+            if (lines.size() > 10) Reporting::Logger::LogLevel = 0;
             for (const auto& line : lines) {
                 if (bReadOnly && line.find(_T("||")) == String::npos) {
                     addHistDicEntry(to_mstr(utils::replace(line, _T("|"), _T("||"))), 1);
@@ -784,7 +793,7 @@ namespace {
         }
 
         void pushRomanEntry(const MString& key) {
-            _LOG_DEBUGH(_T("convertRomanToKatakana"));
+            _LOG_DEBUGH(_T("convertRomanToKatakana: key={}"), to_wstr(key));
             resultList.PushHistory(key, key + MSTR_VERT_BAR + MSTR_HASH_MARK + RomanToKatakana::convertRomanToKatakana(key));
         }
 
@@ -792,7 +801,7 @@ namespace {
         // wlen > 0 なら、その長さの候補だけを返す
         void extract_and_copy(const MString& key, std::set<MString>& set_, size_t wlen, bool bWild = false) {
             if (!bWild) bWild = key.find('?') != MString::npos;
-            _LOG_DEBUGH(_T("extract_and_copy(key={}, bWild={}, set_.size()={}, wlen={}"), to_wstr(key), bWild, set_.size(), wlen);
+            _LOG_DEBUGH(_T("extract_and_copy(key={}, bWild={}, wlen={}, set_.size()={}, set_.begin()={}"), to_wstr(key), bWild, wlen, set_.size(), set_.empty() ? L"(none)" : to_wstr(*set_.begin()));
             resultList.SetKeyInfoIfFirst(key, bWild);
             size_t keylen = key.size();
             usedList.ExtractUsedWords(key, resultList, set_, wlen);
@@ -950,7 +959,7 @@ namespace {
                 }
                 bListEmpty = IS_LIST_EMPTY();
 
-                // 上記がマッチせず、keyが6文字以上の場合には、key.substr(1) について試す
+                // 上記がマッチせず、keyが6文字以上の非romanキーの場合には、key.substr(1) について試す
                 if ((bAll || bListEmpty) && keySize >= 6 && !bIsRomanKey) {
                     // "□■■■■■" (6)
                     CHECK_LIST_EMPTY(5);
@@ -958,7 +967,7 @@ namespace {
                 }
                 bListEmpty = IS_LIST_EMPTY();
 
-                // 上記がマッチせず、keyが7文字以上の場合には、末尾から6文字および5文字について試す
+                // 上記がマッチせず、keyが7文字以上の非romanキーの場合には、末尾から6文字および5文字について試す
                 if ((bAll || bListEmpty) && keySize >= 7 && !bIsRomanKey) {
                     if (keySize >= 8) {
                         // "□□■■■■■■" (8)
@@ -1003,21 +1012,21 @@ namespace {
                     }
                     bListEmpty = IS_LIST_EMPTY();
 
-                    if (bAll || bListEmpty) {
+                    if ((bAll || bListEmpty) && (!bIsRomanKey || keySize <= 3)) {
                         if (checkFunc(3)) {
                             CHECK_LIST_EMPTY(3);
                             extract_and_copy_for_tail_n(key, 3, minlen);
                             _LOG_DEBUGH(_T("histDic3: resultList.size()={}"), resultList.Size());
                         }
                         bListEmpty = IS_LIST_EMPTY();
-                        if (bAll || bListEmpty) {
+                        if ((bAll || bListEmpty) && (!bIsRomanKey || keySize <= 2)) {
                             if (checkFunc(2)) {
                                 CHECK_LIST_EMPTY(2);
                                 extract_and_copy_for_tail_n(key, 2, minlen);
                                 _LOG_DEBUGH(_T("histDic2: resultList.size()={}"), resultList.Size());
                             }
                             bListEmpty = IS_LIST_EMPTY();
-                            if (bAll || bListEmpty) {
+                            if ((bAll || bListEmpty) && (!bIsRomanKey || keySize <= 1)) {
                                 if (checkFunc(1)) {
                                     CHECK_LIST_EMPTY(1);
                                     extract_and_copy_for_tail_n(key, 1, minlen);
@@ -1029,8 +1038,10 @@ namespace {
                 }
 
                 if (resultList.Empty()) {
+                    _LOG_DEBUGH(_T("resultList.Empty"));
                     // 履歴検索で結果がなかった場合
                     if ((!bCheckMinKeyLen || key.size() >= SETTINGS->histRomanKeyLength) && is_ascii_str(key)) {
+                        _LOG_DEBUGH(_T("find ASCII key: {}"), to_wstr(key));
                         // 英大文字で区切って検索、なければローマ字化
                         auto words = splitByCapitalLetter(key);
                         if (words.size() > 1) {
