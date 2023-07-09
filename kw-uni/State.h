@@ -103,7 +103,7 @@ public:
     // カスタマイズ不可なメソッド
 
     // 入力された DECKEY を処理する(これは全状態で共通の処理)
-    void HandleDeckey(int deckey);
+    void HandleDeckeyChain(int deckey);
 
     // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
     void DoOutStringProcChain();

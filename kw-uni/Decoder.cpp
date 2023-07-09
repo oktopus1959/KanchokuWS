@@ -576,12 +576,12 @@ public:
         // 同時打鍵コードなら、RootStrokeStateを削除しておく⇒と思ったが、実際にはそのようなケースがあったのでコメントアウト(「のにいると」で  KkDF のケース)
         //if (keyId >= COMBO_DECKEY_START && keyId < EISU_COMBO_DECKEY_END) {
         //    _LOG_DEBUGH(_T("\nENTER: Clear stroke"));
-        //    startState->HandleDeckey(CLEAR_STROKE_DECKEY);
+        //    startState->HandleDeckeyChain(CLEAR_STROKE_DECKEY);
         //    _LOG_DEBUGH(_T("LEAVE: Clear stroke\n"));
         //}
 
         // DecKey処理を呼ぶ
-        startState->HandleDeckey(keyId);
+        startState->HandleDeckeyChain(keyId);
 
         LOG_INFO(_T("OUTPUT: outString=\"{}\", origString=\"{}\", flags={:x}, numBS={}"), \
             to_wstr(STATE_COMMON->OutString()), to_wstr(STATE_COMMON->OrigString()), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetBackspaceNum());

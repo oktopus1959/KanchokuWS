@@ -20,7 +20,7 @@ public:
     }
 
     // Esc の処理
-    void handleEsc();
+    void handleEsc() override;
 
 };
 

@@ -44,7 +44,8 @@ void State::Reactivate() {
 
 // DECKEY 処理の流れ
 // 新ノードが未処理の場合は、ここで NULL 以外が返されるので、親状態で処理する
-void State::HandleDeckey(int deckey) {
+// 非仮想関数
+void State::HandleDeckeyChain(int deckey) {
     LOG_INFO(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
         Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
     currentDeckey = deckey;
@@ -72,7 +73,7 @@ void State::DoDeckeyPreProc(int deckey) {
         _LOG_DEBUGH(_T("NextState: FOUND"));
         // 後続状態があれば、そちらを呼び出す ⇒ 新しい後続ノードがあればそれを一時的に記憶しておく(後半部で処理する)
         //pNextNodeMaybe = pNext->HandleDeckey(deckey);
-        pNext->HandleDeckey(deckey);    // ここは pNext->DoDeckeyPreProc(deckey); のほうが良いように思えるが、実際にはうまくいかない。将来的に見直す。
+        pNext->HandleDeckeyChain(deckey);    // ここは pNext->DoDeckeyPreProc(deckey); のほうが良いように思えるが、実際にはうまくいかない。将来的に見直す。
         SetNextNodeMaybe(pNext->NextNodeMaybe());
     } else {
         _LOG_DEBUGH(_T("NextState: NOT FOUND"));
