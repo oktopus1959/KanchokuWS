@@ -25,11 +25,13 @@ struct Settings {
 
     int backFileRotationGeneration;         // 辞書ファイル保存世代数
 
-    size_t histMaxLength = 10;              // 登録可能な履歴文字列の最大長
+    size_t histMaxLength = 10;              // 自動履歴登録可能な履歴文字列の最大長
 
-    size_t histKanjiWordMinLength = 4;      // 履歴登録対象となる漢字文字列の最小長
-    size_t histKatakanaWordMinLength = 4;   // 履歴登録対象となるカタカナ文字列の最小長
-    size_t histKanjiWordMinLengthEx = 2;    // 履歴登録対象となる難打鍵文字を含む漢字文字列の最小長
+    size_t histKanjiWordMinLength = 4;      // 自動履歴登録対象となる漢字文字列の最小長
+    size_t histKanjiWordMaxLength = 5;      // 自動履歴登録対象となる漢字文字列の最大長
+    size_t histKatakanaWordMinLength = 4;   // 自動履歴登録対象となるカタカナ文字列の最小長
+    size_t histKatakanaWordMaxLength = 8;   // 自動履歴登録対象となるカタカナ文字列の最大長
+    size_t histKanjiWordMinLengthEx = 2;    // 自動履歴登録対象となる難打鍵文字を含む漢字文字列の最小長
 
     size_t histHiraganaKeyLength = 2;       // ひらがな履歴検索キーの長さ
     size_t histKatakanaKeyLength = 2;       // カタカナ履歴検索キーの長さ

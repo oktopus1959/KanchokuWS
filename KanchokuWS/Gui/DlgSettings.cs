@@ -1619,9 +1619,11 @@ namespace KanchokuWS.Gui
         {
             // 履歴関連
             textBox_histKanjiWordMinLength.Text = $"{Settings.HistKanjiWordMinLength}";
+            textBox_histKanjiWordMaxLength.Text = $"{Settings.HistKanjiWordMaxLength}";
             textBox_histKanjiWordMinLengthEx.Text = $"{Settings.HistKanjiWordMinLengthEx}";
             textBox_histKatakanaWordMinLength.Text = $"{Settings.HistKatakanaWordMinLength}";
-            textBox_histMaxLength.Text = $"{Settings.HistMaxLength}";
+            textBox_histKatakanaWordMaxLength.Text = $"{Settings.HistKatakanaWordMaxLength}";
+            //textBox_histMaxLength.Text = $"{Settings.HistMaxLength}";
             textBox_histKanjiKeyLen.Text = $"{Settings.HistKanjiKeyLength}";
             textBox_histKatakanaKeyLen.Text = $"{Settings.HistKatakanaKeyLength}";
             textBox_histHiraganaKeyLen.Text = $"{Settings.HistHiraganaKeyLength}";
@@ -1662,9 +1664,11 @@ namespace KanchokuWS.Gui
             checkerHistory.CtlToBeEnabled = button_histEnter;
             checkerHistory.ControlEnabler = tabHistoryStatusChanged;
             checkerHistory.Add(textBox_histKanjiWordMinLength);
+            checkerHistory.Add(textBox_histKanjiWordMaxLength);
             checkerHistory.Add(textBox_histKanjiWordMinLengthEx);
             checkerHistory.Add(textBox_histKatakanaWordMinLength);
-            checkerHistory.Add(textBox_histMaxLength);
+            checkerHistory.Add(textBox_histKatakanaWordMaxLength);
+            //checkerHistory.Add(textBox_histMaxLength);
             checkerHistory.Add(textBox_histKanjiKeyLen);
             checkerHistory.Add(textBox_histKatakanaKeyLen);
             checkerHistory.Add(textBox_histHiraganaKeyLen);
@@ -1711,9 +1715,11 @@ namespace KanchokuWS.Gui
             frmMain?.DeactivateDecoderWithModifiersOff();
 
             Settings.SetUserIni("histKanjiWordMinLength", textBox_histKanjiWordMinLength.Text.Trim());
+            Settings.SetUserIni("histKanjiWordMaxLength", textBox_histKanjiWordMaxLength.Text.Trim());
             Settings.SetUserIni("histKanjiWordMinLengthEx", textBox_histKanjiWordMinLengthEx.Text.Trim());
             Settings.SetUserIni("histKatakanaWordMinLength", textBox_histKatakanaWordMinLength.Text.Trim());
-            Settings.SetUserIni("histMaxLength", textBox_histMaxLength.Text.Trim());
+            Settings.SetUserIni("histKatakanaWordMaxLength", textBox_histKatakanaWordMaxLength.Text.Trim());
+            //Settings.SetUserIni("histMaxLength", textBox_histMaxLength.Text.Trim());
             Settings.SetUserIni("histHiraganaKeyLength", textBox_histHiraganaKeyLen.Text.Trim());
             Settings.SetUserIni("histHorizontalCandMax", textBox_histHorizontalCandMax.Text.Trim());
             Settings.SetUserIni("histKatakanaKeyLength", textBox_histKatakanaKeyLen.Text.Trim());

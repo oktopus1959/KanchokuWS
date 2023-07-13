@@ -53,8 +53,10 @@ void Settings::SetValues(const std::map<String, String>& dict) {
 
     SET_INT_VALUE(histMaxLength);
     SET_INT_VALUE(histKanjiWordMinLength);
+    SET_INT_VALUE(histKanjiWordMaxLength);
     SET_INT_VALUE(histKanjiWordMinLengthEx);
     SET_INT_VALUE(histKatakanaWordMinLength);
+    SET_INT_VALUE(histKatakanaWordMaxLength);
     SET_INT_VALUE(histHiraganaKeyLength);
     SET_INT_VALUE(histKatakanaKeyLength);
     SET_INT_VALUE(histKanjiKeyLength);

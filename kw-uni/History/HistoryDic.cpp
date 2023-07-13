@@ -723,12 +723,10 @@ namespace {
                     addNewHistDicEntry(utils::last_substr(word, 1), false, 1);
                 }
             }
-            if (word.size() <= SETTINGS->histMaxLength &&
-                (word.size() >= SETTINGS->histKatakanaWordMinLength ||
-                 word.find(VERT_BAR) != MString::npos ||
-                 (utils::is_kanji(word[0]) &&
-                    (word.size() >= SETTINGS->histKanjiWordMinLength ||
-                    (word.size() >= SETTINGS->histKanjiWordMinLengthEx && !EASY_CHARS->AllContainedIn(word)))))) {
+            if ((utils::is_katakana(word[0]) && word.size() >= SETTINGS->histKatakanaWordMinLength && word.size() <= SETTINGS->histKatakanaWordMaxLength) ||
+                (utils::is_kanji(word[0]) &&
+                    (word.size() >= SETTINGS->histKanjiWordMinLength || (word.size() >= SETTINGS->histKanjiWordMinLengthEx && !EASY_CHARS->AllContainedIn(word))) &&
+                    word.size() <= SETTINGS->histKanjiWordMaxLength)) {
                 //std::wregex reEntry(_T(".*(.{3,}).*\\1.*"));
                 //if (std::regex_match(word, reEntry)) {
                 //    LOG_DEBUG(_T("REGEX_MATCH! Maybe garbage"));

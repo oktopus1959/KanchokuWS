@@ -555,7 +555,9 @@ namespace KanchokuWS
         //------------------------------------------------------------------------------
         public static int HistMaxLength { get; private set; }
         public static int HistKatakanaWordMinLength { get; private set; }
+        public static int HistKatakanaWordMaxLength { get; private set; }
         public static int HistKanjiWordMinLength { get; private set; }
+        public static int HistKanjiWordMaxLength { get; private set; }
         public static int HistKanjiWordMinLengthEx { get; private set; }
         public static int HistHiraganaKeyLength { get; private set; }
         public static int HistKatakanaKeyLength { get; private set; }
@@ -1506,10 +1508,14 @@ namespace KanchokuWS
 
             BackFileRotationGeneration = addDecoderSetting("backFileRotationGeneration", 3, 1); // 辞書ファイルの保存世代数
 
-            HistMaxLength = addDecoderSetting("histMaxLength", 10, 4);                          // 自動履歴登録対象となる文字列の最大長
             HistKatakanaWordMinLength = addDecoderSetting("histKatakanaWordMinLength", 4, 3);   // 自動履歴登録対象となるカタカナ文字列の最小長
+            HistKatakanaWordMaxLength = addDecoderSetting("histKatakanaWordMaxLength", 8, 8);   // 自動履歴登録対象となるカタカナ文字列の最大長
             HistKanjiWordMinLength = addDecoderSetting("histKanjiWordMinLength", 4, 3);         // 自動履歴登録対象となる漢字文字列の最小長
+            HistKanjiWordMaxLength = addDecoderSetting("histKanjiWordMaxLength", 6, 6);         // 自動履歴登録対象となる漢字文字列の最大長
             HistKanjiWordMinLengthEx = addDecoderSetting("histKanjiWordMinLengthEx", 2, 2);     // 自動履歴登録対象となる難打鍵文字を含む漢字文字列の最小長
+            //HistMaxLength = addDecoderSetting("histMaxLength", 10, 4);                          // 自動履歴登録対象となる文字列の最大長
+            HistMaxLength = HistKatakanaWordMaxLength._max(HistKanjiWordMaxLength);             // 自動履歴登録対象となる文字列の最大長
+            setDecoderSetting("histMaxLength", $"{HistMaxLength}");
             HistHiraganaKeyLength = addDecoderSetting("histHiraganaKeyLength", 2, 1);           // ひらがな始まり履歴の自動検索を行う際のキー長
             HistKatakanaKeyLength = addDecoderSetting("histKatakanaKeyLength", 2, 1);           // カタカナ履歴の自動検索を行う際のキー長
             HistKanjiKeyLength = addDecoderSetting("histKanjiKeyLength", 1, 1);                 // 漢字履歴の自動検索を行う際のキー長
