@@ -681,7 +681,8 @@ namespace KanchokuWS.TableParser
         // 同時打鍵列の組合せを作成して登録しておく
         protected void AddCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr, bool hasFunc, bool comboBlocked)
         {
-            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"{deckeyList._keyString()}={CurrentStr}, shiftOffset={shiftOffset}, hasStr={hasStr}");
+            if (Settings.LoggingTableFileInfo)
+                logger.InfoH(() => $"{deckeyList._keyString()}={CurrentStr}, shiftOffset={shiftOffset}, hasStr={hasStr}, comboBlocked={comboBlocked}");
 #if DEBUG
             if (deckeyList._keyString() == "826:127") {
                 if (Settings.LoggingTableFileInfo) logger.InfoH("HIT");
@@ -689,7 +690,7 @@ namespace KanchokuWS.TableParser
 #endif
             var comboKeyList = deckeyList.Select(x => makeShiftedDecKey(x, shiftOffset)).ToList();      // 先頭キーのオフセットに合わせる
             keyComboPool?.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
-            keyComboPool?.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr, hasFunc, comboBlocked);
+            keyComboPool?.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr, hasFunc, comboBlocked, isStackLikeCombo);
         }
 
         void addSequentialShiftKey(int decKey, int shiftOffset)

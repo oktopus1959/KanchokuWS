@@ -38595,6 +38595,7 @@ Cache|キャッシュ
 Check|✓
 Clouds|クラウズ
 Cloud|クラウド
+Divergence|ダイバージェンス
 Login|ログイン
 Logout|ログアウト
 Plane|プレーン
@@ -38606,6 +38607,7 @@ Realtime|リアルタイム
 Refinement|リファインメント
 Sequential|シーケンシャル
 Sharding|シャーディング
+Simulate|シミュレート
 Spective|スペクティブ
 Stake|ステーク
 Stream|ストリーム

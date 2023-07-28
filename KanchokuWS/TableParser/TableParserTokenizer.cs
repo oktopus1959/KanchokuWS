@@ -244,6 +244,10 @@ namespace KanchokuWS.TableParser
                                 ArgumentError(CurrentStr);
                                 break;
                         }
+                        ReadWord();
+                        if (CurrentStr._toLower() == "stacklike") {
+                            isStackLikeCombo = true;
+                        }
                     //} else if (lcStr == "enablecomboonboth" || lcStr == "enablealways" || lcStr == "enabledalways") {
                     //    // #enableAlways: デコーダOFFでも有効
                     //    //bComboEffectiveAlways = true;
@@ -261,6 +265,7 @@ namespace KanchokuWS.TableParser
                             case "combi":
                             case "overl":
                                 shiftKeyKind = ShiftKeyKind.None;
+                                isStackLikeCombo = false;
                                 break;
                             case "shift":
                             case "sands":

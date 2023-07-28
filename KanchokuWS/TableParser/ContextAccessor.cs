@@ -51,6 +51,10 @@ namespace KanchokuWS.TableParser
             get { return Context.shiftKeyKind; }
             set { Context.shiftKeyKind = value; }
         }
+        protected bool isStackLikeCombo {
+            get { return Context.isStackLikeCombo; }
+            set { Context.isStackLikeCombo = value; }
+        }
         //protected bool bComboEffectiveAlways {
         //    get { return Context.bComboEffectiveAlways; }
         //    set { Context.bComboEffectiveAlways = value; }

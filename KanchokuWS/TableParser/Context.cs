@@ -929,6 +929,9 @@ namespace KanchokuWS.TableParser
         // 同時打鍵によるシフト種別
         public ShiftKeyKind shiftKeyKind = ShiftKeyKind.None;
 
+        // 先打ち後離しのスタック型同時打鍵か
+        public bool isStackLikeCombo = false;
+
         // 定義列マップ
         public Dictionary<string, List<string>> linesMap = new Dictionary<string, List<string>>();
 

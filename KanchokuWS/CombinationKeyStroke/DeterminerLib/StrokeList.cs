@@ -279,11 +279,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 keyCombo = KeyCombinationPool.CurrentPool.GetEntry(list);
                 logger.DebugH(() =>
                     $"combo={(keyCombo == null ? "(none)" : "FOUND")}, decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, " +
-                    $"Terminal={keyCombo?.IsTerminal ?? false}, isComboBlocked={keyCombo?.IsComboBlocked ?? false}, " +
+                    $"Terminal={keyCombo?.IsTerminal ?? false}, isComboBlocked={keyCombo?.IsComboBlocked ?? false}, isStackLike={keyCombo?.IsStackLikeCombo ?? false}" +
                     $"OnlyCharKeysComboShouldBeCoveringCombo={Settings.OnlyCharKeysComboShouldBeCoveringCombo}, ContainsTwoCharacterKeys={keyCombo?.ContainsTwoCharacterKeys ?? false}" +
                     $"comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
                 if (keyCombo != null && keyCombo.DecKeyList != null && (keyCombo.IsTerminal || keyCombo.IsComboBlocked) &&
-                    (!Settings.OnlyCharKeysComboShouldBeCoveringCombo || !keyCombo.ContainsTwoCharacterKeys)) {
+                    !((Settings.OnlyCharKeysComboShouldBeCoveringCombo || keyCombo.IsStackLikeCombo) && keyCombo.ContainsTwoCharacterKeys)) {
                     logger.DebugH("COMBO CHECK PASSED");
                     return new List<int>(keyCombo.DecKeyList);
                 }
@@ -714,11 +714,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             //bComboFound = true; // 同時打鍵の組合せが見つかった
                             //bool isTailKeyUp = unprocList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
                             bool isTailKeyUp = upKeyIdx >= 0 && upKeyIdx >= overlapLen - 1;    // 末尾キー以降のキーがUPされた
-                            bool bCoveringComboCheckPassed = !Settings.OnlyCharKeysComboShouldBeCoveringCombo || !keyCombo.ContainsTwoCharacterKeys || isTailKeyUp;
+                            bool bCoveringComboCheckPassed =
+                                !((Settings.OnlyCharKeysComboShouldBeCoveringCombo || keyCombo.IsStackLikeCombo) && keyCombo.ContainsTwoCharacterKeys) || isTailKeyUp;
                             if (Logger.IsInfoHEnabled) {
                                 logger.DebugH(() => $"COVERING_COMBO_CHECK_PASSED: {bCoveringComboCheckPassed}: " +
-                                    $"!OnlyCharKeysComboShouldBeCoveringCombo={!Settings.OnlyCharKeysComboShouldBeCoveringCombo} || " +
-                                    $"!ContainsTwoCharacterKeys={!keyCombo.ContainsTwoCharacterKeys} || isTailKeyUp={isTailKeyUp}");
+                                    $"!((OnlyCharKeysComboShouldBeCoveringCombo={!Settings.OnlyCharKeysComboShouldBeCoveringCombo} || " +
+                                    $"IsStackLikeCombo={keyCombo.IsStackLikeCombo}) && " +
+                                    $"ContainsTwoCharacterKeys={!keyCombo.ContainsTwoCharacterKeys}) || isTailKeyUp={isTailKeyUp}");
                             }
                             if (bCoveringComboCheckPassed) {
                                 timingResult = 0;  // 同時打鍵の組合せが見つかった
@@ -747,7 +749,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                         // ⇒連続シフトでない、最初のスペースキーとの同時打鍵ならタイミングは考慮せず無条件
                                     (Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !isListContaindInSequentialPriorityWordKeySet(challengeList)) ||
                                         // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
-                                    (timingResult = isCombinationTiming(challengeList, tailKey, dtNow, bSecondComboCheck)) == 0)
+                                    (timingResult = isCombinationTiming(keyCombo, challengeList, tailKey, dtNow, bSecondComboCheck)) == 0)
                                         // CHECK1～CHECK3をすり抜けたらタイミングチェックをやる
                                 {
                                     // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する
@@ -905,9 +907,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         // タイミングによる同時打鍵判定関数(ここでは isTailKeyUp == False として扱う)
         // result: 0: 判定OK, 1:1文字目チェックNG, 2:2文字目チェックNG
-        private int isCombinationTiming(List<Stroke> list, Stroke tailStk, DateTime dtNow, bool bSecondComboCheck)
+        private int isCombinationTiming(KeyCombination keyCombo, List<Stroke> list, Stroke tailStk, DateTime dtNow, bool bSecondComboCheck)
         {
-            logger.DebugH(() => $"list={list._toString()}, tailStk={tailStk.DebugString()}, bSecondComboCheck={bSecondComboCheck}");
+            logger.DebugH(() => $"unordered={keyCombo.IsUnordered}, list={list._toString()}, tailStk={tailStk.DebugString()}, bSecondComboCheck={bSecondComboCheck}");
             if (list._isEmpty()) return -1;
 
             var strk1st = list[0];
@@ -916,10 +918,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             int result = 0;
             if (!bSecondComboCheck) {
                 // 1文字目ならリードタイムをチェック
-                if (!KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey) {
-                    // 相互シフトを含まないならば、1文字目の時間制約は気にしない
+                if (!keyCombo.IsUnordered) {
+                    // 相互シフトでなければ、1文字目の時間制約は気にしない
                     result = 0;
-                    logger.DebugH(() => $"RESULT1={result == 0}: !bSecondComboCheck (True) && !ContainsUnorderedShiftKey={!KeyCombinationPool.CurrentPool.ContainsUnorderedShiftKey}");
+                    logger.DebugH(() => $"RESULT1={result == 0}: !bSecondComboCheck (True) && !IsUnorderd={!keyCombo.IsUnordered}");
                 } else {
                     int maxLeadTime = Settings.CombinationKeyMaxAllowedLeadTimeMs;
                     //double ms1 = strk1st.TimeSpanMs(tailStk);

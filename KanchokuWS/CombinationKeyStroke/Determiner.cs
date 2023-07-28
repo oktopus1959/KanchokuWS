@@ -389,9 +389,9 @@ namespace KanchokuWS.CombinationKeyStroke
                                         if (bTimer || strokeList.Count == 2 /* strokeList.IsSuccessiveShift3rdOrLaterKey() /*strokeList.IsSuccessiveShift2ndOr3rdKey()*/) {
                                             logger.DebugH(() => $"UseCombinationKeyTimer2={Settings.UseCombinationKeyTimer2}, " +
                                                 $"NotSpaceNorFuncKey={!DecoderKeys.IsSpaceOrFuncKey(decKey)}, IsTerminalCombo()={strokeList.IsTerminalCombo()}");
-                                            // タイマーが有効であるか、または同時打鍵シフトの2打鍵め文字キーであって、同時打鍵組合せが終端文字であり、
+                                            // タイマーが有効であるか、または同時打鍵シフトの2打鍵めの非シフト文字キーであって、同時打鍵組合せが終端文字であり、
                                             // かつ、先頭が文字キーでないか文字キーのみの同時打鍵組合せの場合が被覆Comboではない、だったらタイマーを起動する
-                                            if (Settings.UseCombinationKeyTimer2 && !DecoderKeys.IsSpaceOrFuncKey(decKey) && strokeList.IsTerminalCombo() &&
+                                            if (Settings.UseCombinationKeyTimer2 && !stroke.IsComboShift && !DecoderKeys.IsSpaceOrFuncKey(decKey) && strokeList.IsTerminalCombo() &&
                                                 (DecoderKeys.IsSpaceOrFuncKey(strokeList.First.OrigDecoderKey) || !Settings.OnlyCharKeysComboShouldBeCoveringCombo)) {
                                                 startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
                                             }
@@ -399,7 +399,7 @@ namespace KanchokuWS.CombinationKeyStroke
                                     } else if (bTimer && strokeList.Count == 1) {
                                         // 先頭のキーが result に追い出されて、今回のキーだけが残った
                                         logger.DebugH("Timer on");
-                                        if (Settings.UseCombinationKeyTimer2 && !DecoderKeys.IsSpaceOrFuncKey(decKey)) {
+                                        if (Settings.UseCombinationKeyTimer2 && !stroke.IsComboShift && !DecoderKeys.IsSpaceOrFuncKey(decKey)) {
                                             startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
                                         }
                                     }

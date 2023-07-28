@@ -52,6 +52,11 @@ namespace KanchokuWS.CombinationKeyStroke
         public bool OnlyCharacterKeys { get; private set; } = false;
 
         /// <summary>
+        /// 先打ち後離しのスタック型同時打鍵か
+        /// </summary>
+        public bool IsStackLikeCombo { get; private set; } = false;
+
+        /// <summary>
         /// 文字キー(スペースキーや機能キー)以外を2つ以上含むか
         /// </summary>
         public bool ContainsTwoCharacterKeys => CharacterKeysCount >= 2;
@@ -101,7 +106,7 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <summary>
         /// コンストラクタ(keyListがnullの場合は、同時打鍵集合の部分集合であることを示す)
         /// </summary>
-        public KeyCombination(List<int> decKeyList, string comboKeyStr, ShiftKeyKind shiftKind, bool hasStr, bool hasFunc, bool comboBlocked)
+        public KeyCombination(List<int> decKeyList, string comboKeyStr, ShiftKeyKind shiftKind, bool hasStr, bool hasFunc, bool comboBlocked, bool stackLike)
         {
             //ComboShiftedDecoderKeyList.Add(decKeyList, shiftKind);
             DecKeyList = decKeyList;
@@ -110,6 +115,7 @@ namespace KanchokuWS.CombinationKeyStroke
             HasString = hasStr;
             HasFunction = hasFunc;
             IsComboBlocked = comboBlocked;
+            IsStackLikeCombo = stackLike;
             countCharKeys(decKeyList);
             OnlyCharacterKeys = CharacterKeysCount > 0 && decKeyList._safeCount() == CharacterKeysCount;
             //IsEffectiveAlways = effectiveAlways;
