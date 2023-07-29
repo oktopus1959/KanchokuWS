@@ -706,14 +706,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         }
                         challengedSet.Add(challengeStr);
 
-                        var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(challengeList);
+                        //bool isTailKeyUp = unprocList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
+                        bool isTailKeyUp = upKeyIdx >= 0 && upKeyIdx >= overlapLen - 1;    // 末尾キー以降のキーがUPされた
+                        logger.DebugH(() => $"isTailKeyUp={isTailKeyUp} upKeyIdx={upKeyIdx} overlapLen={overlapLen}");
+
+                        var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(challengeList, isTailKeyUp);
                         logger.DebugH(() => $"COMBO RESULT: keyCombo.decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, " +
                             $"HasDecoderOutput={keyCombo?.HasDecoderOutput ?? false}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
 
                         if (keyCombo != null && keyCombo.DecKeyList != null && (keyCombo.HasDecoderOutput || keyCombo.IsComboBlocked)) {
                             //bComboFound = true; // 同時打鍵の組合せが見つかった
-                            //bool isTailKeyUp = unprocList.Skip(overlapLen - 1).Any(x => x.IsUpKey);    // 末尾キー以降のキーがUPされた
-                            bool isTailKeyUp = upKeyIdx >= 0 && upKeyIdx >= overlapLen - 1;    // 末尾キー以降のキーがUPされた
                             bool bCoveringComboCheckPassed =
                                 !((Settings.OnlyCharKeysComboShouldBeCoveringCombo || keyCombo.IsStackLikeCombo) && keyCombo.ContainsTwoCharacterKeys) || isTailKeyUp;
                             if (Logger.IsInfoHEnabled) {
@@ -814,31 +816,31 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return set.Contains(list._toString()) || set.Contains($"{head1}:*") || set.Contains($"{head2}:*") || set.Contains($"*:{tail1}") || set.Contains($"*:{tail2}");
         }
 
-        private KeyCombination findComboAny(List<List<Stroke>> subComboLists, List<Stroke> unprocList)
-        {
-            logger.DebugH(() => $"ENTER: unprocList={unprocList._toString()}");
+        //private KeyCombination findComboAny(List<List<Stroke>> subComboLists, List<Stroke> unprocList)
+        //{
+        //    logger.DebugH(() => $"ENTER: unprocList={unprocList._toString()}");
 
-            int overlapLen = unprocList.Count;
-            while (overlapLen >= 1) {
-                logger.DebugH(() => $"WHILE: overlapLen={overlapLen}");
-                foreach (var subList in subComboLists) {
-                    int minLen = subList._isEmpty() ? 2 : 1;    // subList(comboListの部分列)が空なら、hotListのほうから2つ以上必要
-                    logger.DebugH(() => $"FOREACH: subList={subList._toString()}, minLen={minLen}");
-                    if (overlapLen < minLen) break;
+        //    int overlapLen = unprocList.Count;
+        //    while (overlapLen >= 1) {
+        //        logger.DebugH(() => $"WHILE: overlapLen={overlapLen}");
+        //        foreach (var subList in subComboLists) {
+        //            int minLen = subList._isEmpty() ? 2 : 1;    // subList(comboListの部分列)が空なら、hotListのほうから2つ以上必要
+        //            logger.DebugH(() => $"FOREACH: subList={subList._toString()}, minLen={minLen}");
+        //            if (overlapLen < minLen) break;
 
-                    var challengeList = makeComboChallengeList(subList, unprocList.Take(overlapLen));
-                    logger.DebugH(() => $"COMBO SEARCH: challengeList={challengeList._toString()}");
+        //            var challengeList = makeComboChallengeList(subList, unprocList.Take(overlapLen));
+        //            logger.DebugH(() => $"COMBO SEARCH: challengeList={challengeList._toString()}");
 
-                    var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(challengeList);
-                    logger.DebugH(() => $"COMBO RESULT: keyCombo.decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
-                    if (keyCombo != null) return keyCombo;
-                }
-                --overlapLen;
-            }
-            // 見つからなかった
-            logger.DebugH(() => $"LEAVE: overlapLen=0");
-            return null;
-        }
+        //            var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(challengeList);
+        //            logger.DebugH(() => $"COMBO RESULT: keyCombo.decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
+        //            if (keyCombo != null) return keyCombo;
+        //        }
+        //        --overlapLen;
+        //    }
+        //    // 見つからなかった
+        //    logger.DebugH(() => $"LEAVE: overlapLen=0");
+        //    return null;
+        //}
 
         //private void copyToComboList(List<Stroke> list, int len, bool bSuccessiveShiftOnly)
         //{

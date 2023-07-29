@@ -116,15 +116,25 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
 
             // keyList は打鍵順のまま
-            public KeyCombination Get(List<int> keyList)
+            public KeyCombination Get(List<int> keyList, bool bStackLikePreffered)
             {
                 // まず打鍵順のままで取得してみる
-                var keyCombo = dict._safeGet(keyList._keyString());
-                if (keyCombo == null) {
-                    // ダメなら打鍵順をソートして取得してみる
-                    keyCombo = dict._safeGet(keyList._sortedKeyString());
-                }
-                return keyCombo;
+                var keystr = keyList._keyString();
+                var keyCombo = dict._safeGet(keystr);
+                var keyComboStackLike = dict._safeGet(keystr + "*");
+                if (bStackLikePreffered && keyComboStackLike != null) return keyComboStackLike;
+                if (keyCombo != null) return keyCombo;
+                if (keyComboStackLike != null) return keyComboStackLike;
+
+                // ダメなら打鍵順をソートして取得してみる
+                keystr = keyList._sortedKeyString();
+                keyCombo = dict._safeGet(keystr);
+                keyComboStackLike = dict._safeGet(keystr + "*");
+                if (bStackLikePreffered && keyComboStackLike != null && keyComboStackLike.IsUnordered) return keyComboStackLike;
+                if (keyCombo != null && keyCombo.IsUnordered) return keyCombo;
+                if (keyComboStackLike != null && keyComboStackLike.IsUnordered) return keyComboStackLike;
+
+                return null;
             }
 
             public KeyCombination Get(int key)
@@ -147,10 +157,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 if (Settings.LoggingTableFileInfo) {
                     int i = 0;
                     foreach (var pair in dict) {
-                        //var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
-                        var key = pair.Key;
-                        var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
-                        if (bAll || i < 500) logger.DebugH($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal}");
+                        if (bAll || i < 500) {
+                            logger.DebugH(makeDebugLine(pair));
+                        }
                         ++i;
                     }
                 }
@@ -159,11 +168,39 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             public void GetDebugLines(List<string> lines)
             {
                 foreach (var pair in dict) {
-                    //var key = KeyCombinationHelper.DecodeKeyString(pair.Key);
-                    var key = pair.Key;
-                    var deckeys = pair.Value.DecKeysDebugString()._orElse("NONE");
-                    lines.Add($"{key}={deckeys} HasString={pair.Value.HasString} Terminal={pair.Value.IsTerminal}");
+                    lines.Add(makeDebugLine(pair));
                 }
+            }
+
+            private string makeDebugLine(KeyValuePair<string, KeyCombination> pair)
+            {
+                var key = pair.Key;
+                var val = pair.Value;
+                var deckeys = val.DecKeysDebugString()._orElse("NONE");
+                var sb = new StringBuilder();
+                sb.Append("Combo=");
+                switch (val.ShiftKind) {
+                    case ComboKind.None:
+                        sb.Append("None");
+                        break;
+                    case ComboKind.SequentialShift:
+                        sb.Append("Sequential");
+                        break;
+                    case ComboKind.PrefixOrSequentialShift:
+                        sb.Append("PrefixSequential");
+                        break;
+                    case ComboKind.PrefixSuccessiveShift:
+                        sb.Append("Ordered");
+                        break;
+                    case ComboKind.UnorderedSuccessiveShift:
+                        sb.Append("Mutual");
+                        break;
+                    case ComboKind.UnorderedOneshotShift:
+                        sb.Append("MutualOneshot");
+                        break;
+                }
+                if (val.IsStackLikeCombo) sb.Append(" StackLike");
+                return $"{key}={deckeys} HasString={val.HasString} Terminal={val.IsTerminal} {sb.ToString()}";
             }
         }
 
@@ -244,6 +281,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
                 // 順不同の場合はソートされた並びで登録、固定順の場合は配列テーブルに記述された並びで登録
                 string comboKeyStr = comboKeyList._keyString();
+
+                // 先押し後離し方式の場合は、キー文字列に '*' を付加しておき、通常方式とは区別できるようにしておく
+                if (stackLike) comboKeyStr += "*";
+
                 var keyCombo = new KeyCombination(deckeyList, comboKeyStr, shiftKind, hasStr, hasFunc, comboBlocked, stackLike);
                 keyComboDict.Add(comboKeyStr, keyCombo, hasStr);
 
@@ -257,16 +298,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
-        public KeyCombination GetEntry(IEnumerable<Stroke> strokeList)
+        public KeyCombination GetEntry(IEnumerable<Stroke> strokeList, bool bStackLikePreffered = true)
         {
             // ストロークリストが空であるか、あるいは全てのストロークがシフトされていたら、null
             if (strokeList._isEmpty() || strokeList.All(x => x.IsCombined)) return null;
 
             // まずは打鍵されたキーをそのまま使って検索
-            var combo = keyComboDict.Get(strokeList._toOrigDecKeyList());
+            var combo = keyComboDict.Get(strokeList._toOrigDecKeyList(), bStackLikePreffered);
             if (combo == null && strokeList.Any(x => x.OrigDecoderKey >= DecoderKeys.SHIFT_A_DECKEY_START)) {
                 // 見つからない、かつ拡張シフトコードが含まれていれば、すべてModuloizeしたキーでも試す
-                combo = keyComboDict.Get(strokeList._toModuloDecKeyList());
+                combo = keyComboDict.Get(strokeList._toModuloDecKeyList(), bStackLikePreffered);
             }
             return combo;
         }
@@ -328,7 +369,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     }
                     keyCombo.SetNonTerminal();
 
-                    // 固定順
+                    // 順不定のサブキーになっている固定順キーがあったら、それを非終端としてマークしておく
                     if (keylen >= 2) {
                         var orderedSubkey = subkey._split(':').Select(x => x._parseInt()).OrderBy(x => x)._keyString();
                         keyCombo = orderedComboDict.Get(orderedSubkey);

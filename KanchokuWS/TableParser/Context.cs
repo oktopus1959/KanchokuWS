@@ -942,7 +942,10 @@ namespace KanchokuWS.TableParser
         public KeyCombinationPool keyComboPool;
 
         // COMBO用のDecKeyの開始位置
-        public int comboDeckeyStart = 0;
+        public int comboDeckeyStart {
+            get { return _comboDeckeyStart + (isStackLikeCombo ? DecoderKeys.PLANE_DECKEY_NUM : 0); }
+        }
+        private int _comboDeckeyStart = 0;
 
         // 出力用のバッファ
         public List<string> OutputLines = new List<string>();
@@ -982,7 +985,7 @@ namespace KanchokuWS.TableParser
         {
             this.tableLines = tableLines;
             keyComboPool = pool;
-            comboDeckeyStart = comboDkStart;
+            _comboDeckeyStart = comboDkStart;
         }
 
         public static void CreateSingleton(TableLines tableLines, KeyCombinationPool pool, int comboDkStart)
