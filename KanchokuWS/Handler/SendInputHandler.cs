@@ -536,35 +536,47 @@ namespace KanchokuWS.Handler
             bool bLShift = false;
             bool bRShift = false;
             bool bRight = false;
+            bool bRepeatCnt = false;
+            int repeatCount = 0;
             var sb = new StringBuilder();
             while (pos < strLen) {
                 var ch = str[pos];
                 if (ch == '}') break;
-                if (ch == '<') {
-                    bRight = false;
-                } else if (ch == '>') {
-                    bRight = true;
-                } else if (ch == '^') {
-                    // Ctrl
-                    if (bRight) {
-                        bRCtrl = true;
-                    } else {
-                        bLCtrl = true;
+                if (bRepeatCnt) {
+                    if (ch >= '0' && ch <= '9') {
+                        repeatCount = repeatCount * 10 + (ch - '0');
                     }
-                    bRight = false;
-                } else if (ch == '+') {
-                    // Shift
-                    if (bRight) {
-                        bRShift = true;
-                    } else {
-                        bLShift = true;
-                    }
-                    bRight = false;
                 } else {
-                    sb.Append(ch);
+                    if (ch == '<') {
+                        bRight = false;
+                    } else if (ch == '>') {
+                        bRight = true;
+                    } else if (ch == '^') {
+                        // Ctrl
+                        if (bRight) {
+                            bRCtrl = true;
+                        } else {
+                            bLCtrl = true;
+                        }
+                        bRight = false;
+                    } else if (ch == '+') {
+                        // Shift
+                        if (bRight) {
+                            bRShift = true;
+                        } else {
+                            bLShift = true;
+                        }
+                        bRight = false;
+                    } else if (ch == ' ' || ch == ',' || ch == ':') {
+                        bRepeatCnt = true;
+                    } else {
+                        sb.Append(ch);
+                    }
                 }
                 ++pos;
             }
+            if (repeatCount == 0) repeatCount = 1;
+
             if (sb.Length > 0) {
                 string name = sb.ToString();
                 uint vkey = DecoderKeyVsVKey.GetFuncVkeyByName(name);
@@ -589,7 +601,9 @@ namespace KanchokuWS.Handler
                         setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
                     }
                     // キー送出
-                    idx = setVkeyInputs((ushort)vkey, inputs, idx);
+                    for (int i = 0; i < repeatCount; ++i) {
+                        idx = setVkeyInputs((ushort)vkey, inputs, idx);
+                    }
                     if (bLShift) {
                         // 左Shift戻し
                         setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
