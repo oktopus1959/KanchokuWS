@@ -935,16 +935,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         list.Count >= 4 ||      // 4キー以上の同時打鍵ならリードタイムの時間制約は無視する(第1、第2打鍵にシフトキーがくるとは限らないため)
                         //(strk1st.IsComboShift && !tailStk.IsComboShift && ms1 <= maxTime) ||
                         //(tailStk.IsComboShift && !isComboDisableInterval() && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs)
-                        (strk1st.IsComboShift && !strk2nd.IsComboShift && ms1 <= maxLeadTime) ||
-                        (strk2nd.IsComboShift && !isComboDisableInterval() && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs)
+                        ((strk1st.IsSpaceOrFuncComboShift || strk1st.IsComboShift && !strk2nd.IsComboShift) && (ms1 <= maxLeadTime || list.Count > 2)) ||
+                        (!strk1st.IsComboShift && strk2nd.IsComboShift && !isComboDisableInterval() && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs)
                         ? 0 : 1;
                     if (Logger.IsInfoHEnabled) {
                         logger.DebugH(() => $"isSpaceOrFunc={isSpaceOrFunc}, CombinationKeyMaxAllowedLeadTimeMs={Settings.CombinationKeyMaxAllowedLeadTimeMs}");
                         logger.DebugH(() => $"ComboDisableIntervalTimeMs={Settings.ComboDisableIntervalTimeMs}, ElapsedTimeFromShiftKeyUp={elapsedTimeFromPrevShiftKeyUp:f1}");
                         //logger.DebugH(() => $"strk1st.IsComboShift={strk1st.IsComboShift} && !tailStk.IsComboShift={!tailStk.IsComboShift} && (ms1({ms1}) <= maxTime({maxTime}))={ms1 <= maxTime}");
-                        logger.DebugH(() => $"strk1st.IsComboShift={strk1st.IsComboShift} && !strk2nd.IsComboShift={!strk2nd.IsComboShift} && (ms1({ms1}) <= maxTime({maxLeadTime}))={ms1 <= maxLeadTime}");
+                        logger.DebugH(() => $"(strk1st.IsSpaceOrFuncComboShift={strk1st.IsSpaceOrFuncComboShift} || strk1st.IsComboShift={strk1st.IsComboShift} && !strk2nd.IsComboShift={!strk2nd.IsComboShift}) && ((ms1({ms1}) <= maxTime({maxLeadTime}))={ms1 <= maxLeadTime} || (list.Count({list.Count}) > 2)={list.Count > 2})");
                         //logger.DebugH(() => $"tailStk.IsComboShift={tailStk.IsComboShift} && !isComboDisableInterval={!isComboDisableInterval()} && " +
-                        logger.DebugH(() => $"strk2nd.IsComboShift={strk2nd.IsComboShift} && !isComboDisableInterval={!isComboDisableInterval()} && " +
+                        logger.DebugH(() => $"!strk1st.IsComboShift={!strk1st.IsComboShift} && strk2nd.IsComboShift={strk2nd.IsComboShift} && !isComboDisableInterval={!isComboDisableInterval()} && " +
                             $"(ms1({ms1}) <= MaxAllowedTimeToPostShiftKey({Settings.ComboKeyMaxAllowedPostfixTimeMs}))={ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs}");
                         logger.DebugH(() => $"RESULT1={result == 0}: !bSecondComboCheck (True) && " +
                             $"!isComboDisableInterval={(strk1st.IsComboShift ? "D/C" : (!isComboDisableInterval()).ToString())} && ms1={ms1:f2}ms <= " +
