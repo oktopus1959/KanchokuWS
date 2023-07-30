@@ -336,6 +336,8 @@ comboMinTime3(70)
 # K, SP, A, sp, k, a
 convert(K<7>SP<131>A<91>sp<15>k<38>a) = ぷ
 
+onlyCharKeysComboShouldBeCoveringCombo(true)
+
 # SP E O I e o i sp
 convert(SP<178>E<87>O<49>I<40>e<55>o<33>i<33>sp) = じよう
 
@@ -354,7 +356,6 @@ convert(SP<111>E<85>O<73>e<20>o<33>sp) = じよ
 # E O I o i e
 convert(E<87>O<81>I<110>o<18>i<89>e) = しょう
 
-onlyCharKeysComboShouldBeCoveringCombo(true)
 # SP E O I e o i sp
 convert(SP<51>E<6>O<50>I<27>e<25>o<8>i<33>sp) = じよう
 

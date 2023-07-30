@@ -717,7 +717,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         if (keyCombo != null && keyCombo.DecKeyList != null && (keyCombo.HasDecoderOutput || keyCombo.IsComboBlocked)) {
                             //bComboFound = true; // 同時打鍵の組合せが見つかった
                             bool bCoveringComboCheckPassed =
-                                !((Settings.OnlyCharKeysComboShouldBeCoveringCombo || keyCombo.IsStackLikeCombo) && keyCombo.ContainsTwoCharacterKeys) || isTailKeyUp;
+                                !((Settings.OnlyCharKeysComboShouldBeCoveringCombo && keyCombo.ContainsTwoCharacterKeys) || keyCombo.IsStackLikeCombo) || isTailKeyUp;
                             if (Logger.IsInfoHEnabled) {
                                 logger.DebugH(() => $"COVERING_COMBO_CHECK_PASSED: {bCoveringComboCheckPassed}: " +
                                     $"!((OnlyCharKeysComboShouldBeCoveringCombo={!Settings.OnlyCharKeysComboShouldBeCoveringCombo} || " +
@@ -935,7 +935,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         list.Count >= 4 ||      // 4キー以上の同時打鍵ならリードタイムの時間制約は無視する(第1、第2打鍵にシフトキーがくるとは限らないため)
                         //(strk1st.IsComboShift && !tailStk.IsComboShift && ms1 <= maxTime) ||
                         //(tailStk.IsComboShift && !isComboDisableInterval() && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs)
-                        ((strk1st.IsSpaceOrFuncComboShift || strk1st.IsComboShift && !strk2nd.IsComboShift) && (ms1 <= maxLeadTime || list.Count > 2)) ||
+                        (strk1st.IsSpaceOrFuncComboShift  && list.Count > 2) ||
+                        (strk1st.IsComboShift /*&& !strk2nd.IsComboShift */ && ms1 <= maxLeadTime) ||
                         (!strk1st.IsComboShift && strk2nd.IsComboShift && !isComboDisableInterval() && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs)
                         ? 0 : 1;
                     if (Logger.IsInfoHEnabled) {
