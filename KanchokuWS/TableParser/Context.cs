@@ -528,6 +528,7 @@ namespace KanchokuWS.TableParser
                 char c = GetNextChar();
                 if (c == '\r' || c == '\n' || c == 0) {
                     ParseError("ReadString: unexpected EOL or EOF");
+                    break;
                 }
                 if (c == '"') {
                     // 文字列の終わり
