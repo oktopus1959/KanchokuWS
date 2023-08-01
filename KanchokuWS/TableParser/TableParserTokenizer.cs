@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using KanchokuWS.Domain;
 using KanchokuWS.CombinationKeyStroke.DeterminerLib;
 using Utils;
+using KanchokuWS.Handler;
 
 namespace KanchokuWS.TableParser
 {
@@ -160,6 +161,15 @@ namespace KanchokuWS.TableParser
                                 ReadWordOrString();
                                 definedNames[defKey] = CurrentStr;
                             }
+                        }
+                    } else if (lcStr == "definekey") {
+                        // 機能キーの別名定義
+                        ReadWord();
+                        var alias = CurrentStr;
+                        ReadWord();
+                        var keyname = CurrentStr;
+                        if (alias._notEmpty() && keyname._notEmpty()) {
+                            SendInputHandler.Singleton?.AddFunctionalKeyAlias(alias, keyname);
                         }
                     } else if (lcStr._startsWith("if")) {
                         RewriteIfdefBlock(definedNames);

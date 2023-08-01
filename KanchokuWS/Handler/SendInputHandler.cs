@@ -41,6 +41,17 @@ namespace KanchokuWS.Handler
         {
         }
 
+        /// <summary>
+        /// 機能キー名の別名定義
+        /// </summary>
+        private Dictionary<string, string> functionalKeyAliases = new Dictionary<string, string>();
+
+        public void AddFunctionalKeyAlias(string alias, string name)
+        {
+            logger.InfoH(() => $"CALLED: alias={alias}, keyname={name}");
+            functionalKeyAliases._safeAdd(alias, name);
+        }
+
         // cf. http://pgcenter.web.fc2.com/contents/csharp_sendinput.html
         // cf. https://www.pinvoke.net/default.aspx/user32.sendinput
 
@@ -527,9 +538,6 @@ namespace KanchokuWS.Handler
         private int sendFuncKeyInputs(string str, int pos, int strLen)
         {
             logger.DebugH(() => $"CALLED: str={str}, pos={pos}, strLen={strLen}");
-            var info = new InputInfo(5);
-            INPUT[] inputs = info.Inputs;
-            int idx = info.Index;
 
             bool bLCtrl = false;
             bool bRCtrl = false;
@@ -577,8 +585,14 @@ namespace KanchokuWS.Handler
             }
             if (repeatCount == 0) repeatCount = 1;
 
+            var info = new InputInfo(repeatCount + 5);
+            INPUT[] inputs = info.Inputs;
+            int idx = info.Index;
+
             if (sb.Length > 0) {
                 string name = sb.ToString();
+                name = functionalKeyAliases._safeGet(name, name);
+                logger.InfoH(() => $"alias={sb}, key={name}");
                 uint vkey = DecoderKeyVsVKey.GetFuncVkeyByName(name);
                 //logger.DebugH(() => $"vkey={vkey:x} by FuncKey");
                 if (vkey == 0) vkey = AlphabetVKeys.GetAlphabetVkeyByName(name);

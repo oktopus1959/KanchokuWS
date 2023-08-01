@@ -362,7 +362,7 @@ namespace KanchokuWS.TableParser
         /// </summary>
         /// <param name="bForKanchoku"></param>
         public void IncludeFile() {
-            if (Settings.LoggingTableFileInfo) logger.InfoH("CALLED");
+            if (Settings.LoggingTableFileInfo) logger.InfoH("ENTER");
             ReadWordOrString();
             var filename = CurrentStr;
             if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"INCLUDE: lineNum={LineNumber}, {filename}");
@@ -373,7 +373,7 @@ namespace KanchokuWS.TableParser
                     FileOpenError(filename);
                 } else {
                     tableLines.InsertRange(lineNumber + 1, lines);
-                    if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"INCLUDE: {lines.Count} lines included");
+                    if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: {lines.Count} lines included");
                 }
             } else {
                 ParseError("ファイル名が指定されていません。");
