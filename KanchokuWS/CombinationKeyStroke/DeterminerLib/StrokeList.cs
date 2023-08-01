@@ -348,8 +348,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         bTimer = true;
                         logger.DebugH("KeyDown COMBO Undetermined. Return NULL result");
                     }
-                //} else if (keyCombo == null && unprocList[0].HasDecKeyList) {
-                } else if (keyCombo == null && unprocList[0].HasString) {
+                } else if (keyCombo == null && unprocList[0].HasString /*HasDecKeyList*/) {
                     logger.DebugH("combo NOT found. Return first key as is");
                     // 同時打鍵候補がないので、最初のキーをそのまま返す
                     result = Helper.MakeList(unprocList[0].OrigDecoderKey);

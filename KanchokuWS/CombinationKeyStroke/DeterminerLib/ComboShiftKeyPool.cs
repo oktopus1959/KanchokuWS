@@ -33,6 +33,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public static bool IsPrefixShift(ComboKind kind) { return kind == ComboKind.PrefixOrSequentialShift || kind == ComboKind.PrefixSuccessiveShift; }
 
+        public static bool IsUnorderedSuccessiveShift(ComboKind kind) { return kind == ComboKind.UnorderedSuccessiveShift; }
+
         public static bool IsUnorderedShift(ComboKind kind) { return kind >= ComboKind.UnorderedSuccessiveShift; }
 
         public static bool IsOneshotShift(ComboKind kind) { return kind == ComboKind.UnorderedOneshotShift; }

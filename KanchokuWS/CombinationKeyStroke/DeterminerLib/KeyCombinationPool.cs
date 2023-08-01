@@ -225,7 +225,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public bool Enabled => Count > 0;
 
         // 同時打鍵組合せの部分キーの順列集合(これらは、最後に非終端となるキー順列として使う)
-        private HashSet<string> comboSubKeys = new HashSet<string>();
+        private Dictionary<string, bool> comboSubKeys = new Dictionary<string, bool>();
 
         /// <summary>
         /// ShiftKeyとして扱いうるキー
@@ -294,7 +294,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 }
 
                 // 部分キー文字列を蓄積しておく
-                comboSubKeys.UnionWith(comboKeyList._makeSubKeys(bUnordered));
+                foreach (var ks in comboKeyList._makeSubKeys(bUnordered)) {
+                    if (!comboSubKeys.ContainsKey(ks) || bUnordered) {
+                        // 未登録または順不定だったら上書き登録
+                        // (つまり、固定順より順不定を優先させておく; これは SetNonTerminalMarkForSubkeys()と KeyComboDictionary.Get() で必要となる)
+                        comboSubKeys[ks] = bUnordered;
+                    }
+                }
             }
         }
 
@@ -345,9 +351,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             if (Settings.LoggingTableFileInfo) logger.DebugH($"ENTER: comboSubKeys.Count={comboSubKeys.Count}");
             int i = 0;
-            foreach (var subkey in comboSubKeys) {
+            foreach (var pair in comboSubKeys) {
                 // 部分キーに対して、非終端マークをセット
                 //if (i < 100) if (Settings.LoggingTableFileInfo) logger.DebugH(() => $"search keyString={key} => list={KeyCombinationHelper.EncodeKeyList(KeyCombinationHelper.DecodeKey(key))}");
+                string subkey = pair.Key;
+                ComboKind shiftKind = pair.Value ? ComboKind.UnorderedSuccessiveShift : ComboKind.None;
                 int keylen = subkey._keyLengh();
                 var keyCombo = keyComboDict.Get(subkey);
                 if (keyCombo == null || keylen < 3) {
@@ -364,7 +372,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             // 薙刀式で HJ をImeOnに割り当てている場に H, J を単打できるようにするために必要
                             keyList = subkey._decodeKeyStr();
                         }
-                        keyCombo = new KeyCombination(keyList, null, ComboKind.None, keyList._notEmpty(), false, false, false);
+                        keyCombo = new KeyCombination(keyList, null, shiftKind, keyList._notEmpty(), false, false, false);
                         keyComboDict.Add(subkey, keyCombo, true);
                     }
                     keyCombo.SetNonTerminal();
@@ -415,6 +423,26 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         //{
         //    return MiscKeys.IsPreRewrite(keyCode);
         //}
+
+        /// <summary>
+        /// ShiftKeyとして扱いうるキーの設定
+        /// </summary>
+        /// <param name="keyCodes"></param>
+        /// <param name="kind"></param>
+        public void AddComboShiftKeys(List<int> keyCodes, ComboKind kind)
+        {
+            if (Settings.LoggingTableFileInfo) logger.DebugH(() => $"CALLED: keyCode={keyCodes._keyString()}, shiftKey={kind}");
+            if (keyCodes._notEmpty()) {
+                if (keyCodes[0] >= 0) ComboShiftKeys.AddShiftKey(keyCodes[0], kind);
+                if (keyCodes.Count > 1 && !DecoderKeys.IsSpaceOrFuncKey(keyCodes[0]) && DeterminerLib.ComboShiftKeyPool.IsUnorderedSuccessiveShift(kind)) {
+                    // 先頭キーが文字キーで、相互連続シフト可能なら、第2打鍵以降もシフトキーとして登録
+                    // (薙刀式で「よ」をシフトキーとして拗音定義した場合に、「き」が第1打鍵の場合も連続シフト可能にするため)
+                    foreach (var kc in keyCodes.Skip(1)) {
+                        if (kc >= 0) ComboShiftKeys.AddShiftKey(kc, kind);
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// ShiftKeyとして扱いうるキーの設定

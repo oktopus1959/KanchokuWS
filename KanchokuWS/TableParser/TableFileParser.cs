@@ -689,7 +689,7 @@ namespace KanchokuWS.TableParser
             }
 #endif
             var comboKeyList = deckeyList.Select(x => makeShiftedDecKey(x, shiftOffset)).ToList();      // 先頭キーのオフセットに合わせる
-            keyComboPool?.AddComboShiftKey(comboKeyList[0], shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
+            keyComboPool?.AddComboShiftKeys(comboKeyList, shiftKeyKind); // 元の拡張シフトキーコードに戻して、同時打鍵キーとして登録
             keyComboPool?.AddEntry(deckeyList, comboKeyList, shiftKeyKind, hasStr, hasFunc, comboBlocked, isStackLikeCombo);
         }
 
