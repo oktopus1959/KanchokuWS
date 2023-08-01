@@ -473,6 +473,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             return ComboShiftKeyPool.IsComboShift(CurrentPool.GetShiftKeyKind(keyCode));
         }
 
+        /// <summary>keyCode が SpaceOrFuncComboShiftKeyとしても扱われるか否かを返す</summary>
+        public static bool IsSpaceOrFuncComboShift(int keyCode)
+        {
+            return DecoderKeys.IsSpaceOrFuncKey(keyCode) && IsComboShift(keyCode);
+        }
+
         /// <summary>keyCode が連続シフトとしても扱われるか否かを返す</summary>
         public static bool IsComboSuccessive(int keyCode)
         {

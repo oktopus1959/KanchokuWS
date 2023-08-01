@@ -502,7 +502,7 @@ namespace KanchokuWS.CombinationKeyStroke
             //    setPreRewriteTime(result.Last());
             //}
 
-            if (KeyCombinationPool.IsComboShift(decKey)) {
+            if (KeyCombinationPool.IsSpaceOrFuncComboShift(decKey)) {
                 if (result._safeCount() == 1) {
                     // 結果が単打だったら prevComboShiftKeyUpDt をクリアしておく
                     logger.DebugH("SINGLE HIT: CLEAR prevComboShiftKeyUpDt");
