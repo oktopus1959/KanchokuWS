@@ -326,6 +326,10 @@ namespace KanchokuWS.CombinationKeyStroke
                                 // DecoderがOFFのときはキーリピート扱いとする
                                 logger.DebugH("Decoder OFF, so repeat key");
                                 result = Helper.MakeList(decKey);
+                            } else if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
+                                // キーリピートが可能なキー
+                                logger.DebugH("non terminal and repeatable key");
+                                result = Helper.MakeList(decKey);
                             } else if ((stroke.IsComboShift || strokeList.Count == 2 && strokeList.First.IsComboShift) && handleComboKeyRepeat != null) {
                                 // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出すだけで、キーリピートは行わない(つまりシフト扱い)
                                 List<int> list = new List<int>();
@@ -343,10 +347,6 @@ namespace KanchokuWS.CombinationKeyStroke
                                     }
                                 }
                                 handleComboKeyRepeat(list);
-                            } else if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
-                                // キーリピートが可能なキー
-                                logger.DebugH("non terminal and repeatable key");
-                                result = Helper.MakeList(decKey);
                             } else {
                                 // キーリピートが不可なキーは無視
                                 logger.DebugH("Key repeat ignored");
