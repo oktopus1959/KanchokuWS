@@ -817,9 +817,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         /// <summary>
         /// 削除対象でない連続シフトキーを comboList に移動する<br/>
-        /// 2キー以上なら、UPしたシフトキーは移動しない
-        /// (「のにいると」で SP E O I e o i sp のケースで、E を combo に移動してしまうと 「E O → しょ」が有効になってしまうため)
-        /// 3キー以上なら、連続シフトキー以外も移動する(薙刀式の「ぎゃぎょ」(J W H h O o w j)のようなケース)
         /// ただし、comboList に入るキー(連続シフトにかかわるキー)は2キーまでとする
         /// </summary>
         private void copyToComboList(List<Stroke> list, int len)
@@ -833,9 +830,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         comboList.Add(s);
                         ++movedLen;
                         if (movedLen >= 2) return;
-                        // Spaceなどのシフトキーが追加されたら、以降のシフトキーは追加しない
-                        // (「のにいると」で SP E O I e o i sp のケースで、「SP E」→「じ」の後、E も combo に移動してしまうと 「E O → しょ」が有効になってしまうため)
-                        if (comboList[0].IsSpaceOrFuncComboShift) return;
                     }
                 }
             }
