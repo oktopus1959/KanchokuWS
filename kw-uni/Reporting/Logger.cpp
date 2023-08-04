@@ -43,7 +43,7 @@ namespace Reporting {
 		}
 
 		void Close() {
-			if (m_hFile != INVALID_HANDLE_VALUE) {
+			if (m_hFile != NULL && m_hFile != INVALID_HANDLE_VALUE) {
 				FlushFileBuffers(m_hFile);
 				CloseHandle(m_hFile);
 				m_hFile = INVALID_HANDLE_VALUE;
@@ -70,7 +70,7 @@ namespace Reporting {
 							hRet = create_file(m_logfilepath);
 						}
 					}
-					if (hRet == INVALID_HANDLE_VALUE) {
+					if (hRet == NULL || hRet == INVALID_HANDLE_VALUE) {
 						m_fileCreationFailed = true;
 						return;
 					}
@@ -79,7 +79,6 @@ namespace Reporting {
 				m_hFile = hRet;
 			}
 			catch (...) {
-				m_hFile = INVALID_HANDLE_VALUE;
 				throw;
 			}
 		}
@@ -103,8 +102,8 @@ namespace Reporting {
 
 	bool Logger::initializeFileWriter() {
 		if (!fileWriterPtr) {
-			if (Logger::LogFilename.empty()) return false;
-			fileWriterPtr.reset(new FileWriter(Logger::LogFilename));
+			if (Logger::_logFilename.empty()) return false;
+			fileWriterPtr.reset(new FileWriter(Logger::_logFilename));
 		}
 		return true;
 	}
@@ -127,13 +126,22 @@ namespace Reporting {
 	}
 
 	//-----------------------------------------------------------------------------
-	int Logger::SaveLevel = 0;
-	int Logger::LogLevel = Logger::LogLevelWarn;
+	int Logger::_saveLevel = 0;
+	int Logger::_logLevel = Logger::LogLevelWarn;
 
-	String Logger::LogFilename;
+	String Logger::_logFilename;
+
+	void Logger::SetLogLevel(int logLevel) {
+		_logLevel = logLevel;
+		if (logLevel <= LogLevelWarn) Close();
+	}
+
+	void Logger::SetLogFilename(StringRef logFilename) {
+		_logFilename = logFilename;
+	}
 
 	void Logger::Close() {
-		LogFilename.clear();
+		//_logFilename.clear();
 		fileWriterPtr.reset();
 	}
 
@@ -162,6 +170,7 @@ namespace Reporting {
 			} else {
 				_write_log(*fileWriterPtr, level, _className, method, line, msg);
 			}
+			if (LogLevel() <= LogLevelWarn) Close();
 		}
 	}
 }

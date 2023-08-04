@@ -258,6 +258,8 @@ namespace KanchokuWS
             // 設定ファイルの読み込み
             Settings.ReadIniFile(true);
 
+            Logger.Close();
+
             if (!resultOK) return;
 
             // 各種定義ファイルの読み込み
@@ -478,6 +480,7 @@ namespace KanchokuWS
             // 各種Timer処理が終了するのを待つ
             Helper.WaitMilliSeconds(200);
             logger.WriteInfo("==== KANCHOKU WS TERMINATED ====\n");
+            Logger.Close();
         }
 
         private bool bRestart = false;

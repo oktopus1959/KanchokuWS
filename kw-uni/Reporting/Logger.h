@@ -31,7 +31,7 @@ namespace Reporting {
     class FileWriter;
 
     class Logger {
-        static int SaveLevel;
+        static int _saveLevel;
 
     public:
         static const int LogLevelError = 1;
@@ -43,54 +43,60 @@ namespace Reporting {
         static const int LogLevelDebug = 7;
         static const int LogLevelTrace = 8;
 
+    private:
+        static int _logLevel;
+
+        static String _logFilename;
+
     public:
-        static int LogLevel;
+        static int LogLevel() { return _logLevel; }
+        static void SetLogLevel(int logLevel);
 
-        static String LogFilename;
+        static void SetLogFilename(StringRef logFilename);
 
-        static inline void EnableLogger() { LogLevel = LogLevelError; }
+        static inline void EnableLogger() { SetLogLevel(LogLevelError); }
 
-        static inline void EnableError() { LogLevel = LogLevelError; }
+        static inline void EnableError() { SetLogLevel(LogLevelError); }
 
-        static inline void EnableWarnH() { LogLevel = LogLevelWarnH; }
+        static inline void EnableWarnH() { SetLogLevel(LogLevelWarnH); }
 
-        static inline void EnableWarn() { LogLevel = LogLevelWarn; }
+        static inline void EnableWarn() { SetLogLevel(LogLevelWarn); }
 
-        static inline void EnableInfoH() { LogLevel = LogLevelInfoH; }
+        static inline void EnableInfoH() { SetLogLevel(LogLevelInfoH); }
 
-        static inline void EnableInfo() { LogLevel = LogLevelInfo; }
+        static inline void EnableInfo() { SetLogLevel(LogLevelInfo); }
 
-        static inline void EnableDebugH() { LogLevel = LogLevelDebugH; }
+        static inline void EnableDebugH() { SetLogLevel(LogLevelDebugH); }
 
-        static inline void EnableDebug() { LogLevel = LogLevelDebug; }
+        static inline void EnableDebug() { SetLogLevel(LogLevelDebug); }
 
-        static inline void EnableTrace() { LogLevel = LogLevelTrace; }
+        static inline void EnableTrace() { SetLogLevel(LogLevelTrace); }
 
         //static void UseDefaultEncoding() { useDefaultEncoding = true; }
 
-        static inline bool IsErrorEnabled() { return LogLevel >= LogLevelError; }
+        static inline bool IsErrorEnabled() { return LogLevel() >= LogLevelError; }
 
-        static inline bool IsWarnEnabledH() { return LogLevel >= LogLevelWarnH; }
+        static inline bool IsWarnEnabledH() { return LogLevel() >= LogLevelWarnH; }
 
-        static inline bool IsWarnEnabled() { return LogLevel >= LogLevelWarn; }
+        static inline bool IsWarnEnabled() { return LogLevel() >= LogLevelWarn; }
 
-        static inline bool IsInfoHEnabled() { return LogLevel >= LogLevelInfoH; }
+        static inline bool IsInfoHEnabled() { return LogLevel() >= LogLevelInfoH; }
 
-        static inline bool IsInfoEnabled() { return LogLevel >= LogLevelInfo; }
+        static inline bool IsInfoEnabled() { return LogLevel() >= LogLevelInfo; }
 
-        static inline bool IsDebugHEnabled() { return LogLevel >= LogLevelDebugH; }
+        static inline bool IsDebugHEnabled() { return LogLevel() >= LogLevelDebugH; }
 
-        static inline bool IsDebugEnabled() { return LogLevel >= LogLevelDebug; }
+        static inline bool IsDebugEnabled() { return LogLevel() >= LogLevelDebug; }
 
-        static inline bool IsTraceEnabled() { return LogLevel >= LogLevelTrace; }
+        static inline bool IsTraceEnabled() { return LogLevel() >= LogLevelTrace; }
 
         static inline void SaveAndSetLevel(int level) {
-            SaveLevel = LogLevel;
-            if (LogLevel > level) LogLevel = level;
+            _saveLevel = LogLevel();
+            if (LogLevel() > level) SetLogLevel(level);
         }
 
         static inline void RestoreLevel() {
-            LogLevel = SaveLevel;
+            SetLogLevel(_saveLevel);
         }
         //static bool useDefaultEncoding;
 
@@ -179,6 +185,7 @@ namespace Reporting {
 #define _SAFE_CHAR(ch) (ch > 0 ? ch : ' ')
 
 #define LOG_REPORT(level, fmt, ...)       logger.level(__VA_OPT__(std::format)(fmt __VA_OPT__(,) __VA_ARGS__), __func__, __FILE__, __LINE__)
+
 #define LOG_LEVEL_ENABLED(level)          Is ## level ## Enabled
 #define LOG_REPORT_COND(level, fmt, ...)  if (Reporting::Logger::LOG_LEVEL_ENABLED(level)()) LOG_REPORT(level, fmt, __VA_ARGS__)
 

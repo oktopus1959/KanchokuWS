@@ -656,8 +656,8 @@ namespace {
         // UTF8で書かれた辞書ソースを読み込む
         void readFile(const std::vector<String>& lines, bool bReadOnly) {
             LOG_INFO(_T("ENTER: {} lines, bReadOnly={}"), lines.size(), bReadOnly);
-            int logLevel = Reporting::Logger::LogLevel;
-            if (lines.size() > 10) Reporting::Logger::LogLevel = 0;
+            int logLevel = Reporting::Logger::LogLevel();
+            if (lines.size() > 10) Reporting::Logger::SetLogLevel(0);
             for (const auto& line : lines) {
                 if (bReadOnly && line.find(_T("||")) == String::npos) {
                     addHistDicEntry(to_mstr(utils::replace(line, _T("|"), _T("||"))), 1);
@@ -666,7 +666,7 @@ namespace {
                 }
             }
             bDirty = false;
-            Reporting::Logger::LogLevel = logLevel;
+            Reporting::Logger::SetLogLevel(logLevel);
             LOG_INFO(_T("LEAVE"));
         }
 

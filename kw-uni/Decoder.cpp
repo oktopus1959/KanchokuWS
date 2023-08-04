@@ -215,7 +215,7 @@ public:
         }
 
         int logLevel = utils::strToInt(utils::safe_get(key_vals, String(_T("logLevel"))));
-        if (logLevel > 0) Reporting::Logger::LogLevel = logLevel;
+        if (logLevel > 0) Reporting::Logger::SetLogLevel(logLevel);
 
         SETTINGS->SetValues(key_vals);
 
@@ -503,7 +503,7 @@ public:
                 setBackspaceBlocker();
             } else if (cmd == _T("SaveRomanStrokeTable")) {
                 // ローマ字テーブルを作成してファイルに書き出す
-                VkbTableMaker::SaveRomanStrokeTable(items.size() >= 2 ? items[1] : 0, items.size() >= 3 ? items[2] : 0);
+                VkbTableMaker::SaveRomanStrokeTable(items.size() >= 2 ? items[1] : L"", items.size() >= 3 ? items[2] : L"");
             } else if (cmd == _T("SaveEelllJsTable")) {
                 // eelll/JS用テーブルを作成してファイルに書き出す
                 VkbTableMaker::SaveEelllJsTable();
@@ -939,8 +939,8 @@ namespace {
 // 引数: LogLevel (0 ならログ出力を抑制する。3: INFO, 4:DEBUG, 5:TRACE)
 void* CreateDecoder(int logLevel) {
     try {
-        Reporting::Logger::LogLevel = logLevel;
-        Reporting::Logger::LogFilename = _T("kw-uni.log");
+        Reporting::Logger::SetLogLevel(logLevel);
+        Reporting::Logger::SetLogFilename(_T("kw-uni.log"));
         return new DecoderImpl();
     }
     catch (String msg) {
@@ -986,7 +986,8 @@ namespace {
 // 引数: 初期化パラメータ
 int InitializeDecoder(void* , DecoderCommandParams* ) {
     LOG_INFO_UC(_T("\n======== kw-uni START ========"));
-    LOG_INFOH(_T("LogLevel={}"), Reporting::Logger::LogLevel);
+    LOG_INFOH(_T("LogLevel={}"), Reporting::Logger::LogLevel());
+    Reporting::Logger::Close();
 
     // エラーハンドラの生成
     ErrorHandler::CreateSingleton();

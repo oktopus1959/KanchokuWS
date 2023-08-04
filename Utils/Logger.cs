@@ -49,10 +49,19 @@ namespace Utils
 
         public static bool IsTraceEnabled => LogLevel >= LogLevelTrace;
 
-        public static int LogLevel { get; set; } = 0;
+        public static int LogLevel {
+            get { return m_logLevel; }
+            set {
+                m_logLevel = value;
+                if (m_logLevel <= LogLevelWarn) {
+                    Close();
+                }
+            }
+        }
 
         private static bool useDefaultEncoding { get; set; } = false;
 
+        private static int m_logLevel = 0;
         private static string m_logFilePath;
         private static System.IO.StreamWriter m_sw = null;
         private static object m_sync = new object();
@@ -84,7 +93,7 @@ namespace Utils
                     m_sw = new System.IO.StreamWriter(m_logFilePath, true, useDefaultEncoding ? Encoding.Default : Encoding.UTF8);
                 } catch {
                     m_sw = null;
-                    LogFilename = null;
+                    //LogFilename = null;
                 }
             }
             return m_sw;
@@ -97,7 +106,7 @@ namespace Utils
 
         public static void Close()
         {
-            LogFilename = null;
+            //LogFilename = null;
             if (m_sw != null) {
                 lock (m_sync) {
                     try {
@@ -279,6 +288,7 @@ namespace Utils
                 try {
                     sw.WriteLine($"{HRDateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff")} {level} [{caller}({line})] {msg}");
                     sw.Flush();
+                    if (LogLevel <= LogLevelWarn) Close();
                 } catch { }
             }
         }
