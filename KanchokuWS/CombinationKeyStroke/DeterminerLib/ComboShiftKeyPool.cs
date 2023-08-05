@@ -50,6 +50,17 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool ContainsSuccessiveShiftKey { get; private set; } = false;
 
+        /// <summary>4つ以上の同時打鍵の先頭キーになっているもの</summary>
+        private HashSet<int> majorComboKeys = new HashSet<int>();
+
+        public void AddMajorComboKey(int keyCode)
+        {
+            logger.InfoH(() => $"CALLED: ADD: {keyCode}");
+            majorComboKeys.Add(keyCode);
+        }
+
+        public bool IsMajorComboKey(int keyCode) => majorComboKeys.Contains(keyCode);
+
         /// <summary>
         /// ShiftKeyとして扱いうるキーの設定
         /// </summary>

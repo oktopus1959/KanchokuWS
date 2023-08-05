@@ -83,6 +83,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         //    return prevComboShiftKeyUpDtMap._safeGet(deckey, DateTime.MinValue);
         //}
 
+        /// <summary>直前のShiftキーからの経過時間を取得<br/>shiftStrokeはSpaceまたは機能キー</summary>
         public double GetElapsedTimeFromPrevShiftKeyUp(Stroke stroke1, Stroke shiftStroke)
         {
             return stroke1.TimeSpanMs(comboShiftUpTimeInfo.GetPrevComboShiftKeyUpDt(shiftStroke.OrigDecoderKey));
@@ -853,7 +854,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
             var strk1st = list[0];
             var strk2nd = list[1];
-            bool isSpaceOrFunc = strk1st.IsSpaceOrFunc || strk2nd.IsSpaceOrFunc || tailStk.IsSpaceOrFunc;
+            //bool isSpaceOrFunc = strk1st.IsSpaceOrFunc || strk2nd.IsSpaceOrFunc || tailStk.IsSpaceOrFunc;
             int result = 0;
             if (!bSecondComboCheck) {
                 // 1文字目ならリードタイムをチェック
@@ -871,7 +872,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     result =
                         list.Count >= 4 ||      // 4キー以上の同時打鍵ならリードタイムの時間制約は無視する(第1、第2打鍵にシフトキーがくるとは限らないため)
                         (strk1st.IsSpaceOrFuncComboShift  && list.Count > 2) ||
-                        (strk2nd.IsSpaceOrFuncComboShift && !isComboDisableInterval() && ms1 <= maxLeadTime && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs) ||
+                        (strk2nd.IsMainComboShift && !isComboDisableInterval() && ms1 <= maxLeadTime && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs) ||
                         (!strk2nd.IsSpaceOrFuncComboShift && ms1 <= maxLeadTime && (strk1st.IsComboShift || strk2nd.IsComboShift && ms1 <= Settings.ComboKeyMaxAllowedPostfixTimeMs))
                         ? 0 : 1;
                     if (Logger.IsInfoHEnabled) {

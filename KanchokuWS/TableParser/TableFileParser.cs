@@ -1311,6 +1311,9 @@ namespace KanchokuWS.TableParser
             //    addSequentialHeadAsSingleHitKey();
             //}
 
+            // ComboShiftキーのうち、4つ以上のcomboの先頭キーになっているものを Major キーとして登録
+            keyComboPool?.AddMajorComboShiftKeys();
+
             // 部分キーに対して、非終端マークをセット
             keyComboPool?.SetNonTerminalMarkForSubkeys(!isKanchokuModeParser);
             if (Logger.IsInfoHEnabled && logger.IsInfoHPromoted) {

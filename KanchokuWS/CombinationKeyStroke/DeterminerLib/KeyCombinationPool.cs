@@ -147,6 +147,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 return dict._safeGet(key);
             }
 
+            public IEnumerable<KeyCombination> GetKeyComboList()
+            {
+                return dict.Values;
+            }
+
             public void Clear()
             {
                 dict.Clear();
@@ -456,6 +461,30 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         }
 
         /// <summary>
+        /// 登録されている ComboShiftキーのうち、4つ以上のcomboの先頭キーになっているもの
+        /// </summary>
+        public void AddMajorComboShiftKeys()
+        {
+            if (Settings.LoggingTableFileInfo) logger.DebugH(() => $"CALLED");
+            Dictionary<int, int> comboCounts = new Dictionary<int, int>();
+            foreach (var keyCombo in keyComboDict.GetKeyComboList()) {
+                if (keyCombo.IsUnordered) {
+                    int firstKey = keyCombo.DecKeyList._getFirst();
+                    if (comboCounts.ContainsKey(firstKey)) {
+                        comboCounts[firstKey] += 1;
+                    } else {
+                        comboCounts[firstKey] = 1;
+                    }
+                }
+            }
+            foreach (var pair in comboCounts) {
+                if (pair.Value >= 4) {
+                    ComboShiftKeys.AddMajorComboKey(Stroke.ModuloizeKey(pair.Key));
+                }
+            }
+        }
+
+        /// <summary>
         /// keyCode の ComboKind を返す。<br/>
         /// 0 なら ShiftKey としては扱わない<br/>
         /// 1以上なら、ShiftKeyとしての優先度となる(1が最優先)
@@ -465,6 +494,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public ComboKind GetShiftKeyKind(int keyCode)
         {
             return ComboShiftKeys.GetComboKind(keyCode);
+        }
+
+        /// <summary>keyCode がMajorなComboシフトか否かを返す</summary>
+        public bool IsMajorComboShift(int keyCode)
+        {
+            return ComboShiftKeys.IsMajorComboKey(keyCode);
         }
 
         /// <summary>keyCode が ComboShiftKeyとしても扱われるか否かを返す</summary>

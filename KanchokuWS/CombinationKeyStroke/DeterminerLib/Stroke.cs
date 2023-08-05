@@ -78,11 +78,17 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// <summary>同時打鍵のシフトキーか</summary>
         public bool IsComboShift { get; private set; }
 
+        /// <summary>同時打鍵のMajorシフトキーか</summary>
+        public bool IsMajorComboShift { get; private set; }
+
         /// <summary>単打不可の同時打鍵のシフトキーか</summary>
         public bool IsJustComboShift => IsComboShift && !HasStringOrSingleHittable;
 
         /// <summary>スペースキーまたは機能キーの同時打鍵シフトキーか</summary>
         public bool IsSpaceOrFuncComboShift => IsSpaceOrFunc && IsComboShift;
+
+        /// <summary>スペースキーまたは機能キーまたはMajorな同時打鍵シフトキーか</summary>
+        public bool IsMainComboShift => (IsMajorComboShift || IsSpaceOrFunc) && IsComboShift;
 
         /// <summary>同時打鍵のシフトキーになったか</summary>
         public bool IsCombined { get; private set; }
@@ -136,11 +142,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             OrigDecoderKey = decKey;
             IsKanchokuMode = bDecoderOn;
-            IsSuccessiveShift = KeyCombinationPool.IsComboSuccessive(OrigDecoderKey);
-            IsOneshotShift = KeyCombinationPool.IsComboOneshot(OrigDecoderKey);
-            IsPrefixShift = KeyCombinationPool.IsComboPrefix(OrigDecoderKey);
-            IsComboShift = KeyCombinationPool.IsComboShift(OrigDecoderKey);
-            IsSequentialShift = KeyCombinationPool.IsSequential(OrigDecoderKey);
+            IsSuccessiveShift = KeyCombinationPool.IsComboSuccessive(decKey);
+            IsOneshotShift = KeyCombinationPool.IsComboOneshot(decKey);
+            IsPrefixShift = KeyCombinationPool.IsComboPrefix(decKey);
+            IsComboShift = KeyCombinationPool.IsComboShift(decKey);
+            IsSequentialShift = KeyCombinationPool.IsSequential(decKey);
+            IsMajorComboShift = KeyCombinationPool.CurrentPool.IsMajorComboShift(decKey);
             var entry = KeyCombinationPool.CurrentPool.GetEntry(decKey);
             IsSingleHittable = entry == null || entry.HasDecoderOutput;         // 同時打鍵として使われていない(entry == null)か、出力文字または機能が定義されている
             HasStringOrSingleHittable = entry == null || entry.HasString;       // 同時打鍵として使われていない(entry == null)か、出力文字が定義されている
