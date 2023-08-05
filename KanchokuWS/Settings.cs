@@ -846,6 +846,10 @@ namespace KanchokuWS
         public static bool ImeSendInputInKana { get; set; }
         public static string ImeSendInputInKana_PropName = "imeSendInputInKana";
 
+        /// <summary> IMEに対してUnicodeで送信する </summary>
+        public static bool ImeSendInputInUnicode { get; set; }
+        public static string ImeSendInputInUnicode_PropName = "imeSendInputInUnicode";
+
         /// <summary>IMEにUnicodeで文字送出する対象となるウィンドウのClassName</summary>
         public static string ImeUnicodeClassNames { get; private set; }
         public static HashSet<string> ImeUnicodeClassNamesHash { get; private set; } = new HashSet<string>();
@@ -1441,6 +1445,8 @@ namespace KanchokuWS
             ImeKatakanaToHiragana = GetString(ImeKatakanaToHiragana_PropName)._parseBool(false);
             ImeSendInputInRoman = GetString(ImeSendInputInRoman_PropName)._parseBool(false);
             ImeSendInputInKana = GetString(ImeSendInputInKana_PropName)._parseBool(false);
+            ImeSendInputInUnicode = GetString(ImeSendInputInUnicode_PropName)._parseBool(false);
+            if (!ImeSendInputInRoman && !ImeSendInputInKana && !ImeSendInputInUnicode) ImeSendInputInRoman = true;
             //ImeUnicodeClassNames = GetString("imeUnicodeClassNames")._orElse("Edit|_WwG|SakuraView*").Trim();
             //ImeUnicodeClassNames = GetString("imeUnicodeClassNames").Trim();
             //ImeUnicodeClassNamesHash = new HashSet<string>(ImeUnicodeClassNames.Trim()._toLower()._split('|'));

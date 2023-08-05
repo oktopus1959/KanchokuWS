@@ -991,8 +991,8 @@ namespace KanchokuWS.Gui
             setEnabled(radioButton_imeSendInputInRoman, Settings.ImeSendInputInRoman_PropName);
             radioButton_imeSendInputInKana.Checked = Settings.ImeSendInputInKana;
             setEnabled(radioButton_imeSendInputInKana, Settings.ImeSendInputInKana_PropName);
-            radioButton_imeSendInputInUnicode.Checked = !(Settings.ImeSendInputInRoman || Settings.ImeSendInputInKana);
-            setEnabled(radioButton_imeSendInputInUnicode, Settings.ImeSendInputInRoman_PropName);
+            radioButton_imeSendInputInUnicode.Checked = Settings.ImeSendInputInUnicode;
+            setEnabled(radioButton_imeSendInputInUnicode, Settings.ImeSendInputInUnicode_PropName);
             //textBox_imeUnicodeClassNames.Text = Settings.ImeUnicodeClassNames._reReplace(@"\|", "\r\n");
 
         }
