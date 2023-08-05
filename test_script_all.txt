@@ -111,20 +111,20 @@ comboMinTime(200)
 comboMinTime3(200)
 convert(EM<55>K<30>m<16>e<26>k) = てない
 
-comboMaxTime(120)
+comboMaxTime(150)
 comboMinTime(70)
 comboMinTime3(70)
 enableTimer1()
 enableTimer2()
 
-convert(J<111>C<112>j<31>c) = ば
+convert(J<70>C<112>j<31>c) = ば
 convert(J<30>W<52>P<137>j<38>p<36>w) = ぎゅ
-convert(J<113>F<0>j<54>O<89>f<24>o) = あず
+convert(J<70>F<0>j<54>O<89>f<24>o) = あず
 
 comboDisableTime(0)
 convert(Jj<50>W<45>J<96>j<12>w<50>D<15>J<96>d<16>j) = あぎど
-comboDisableTime(300)
-convert(Jj<50>W<45>J<96>j<12>w<50>D<15>J<96>d<16>j) = あぎとあ
+#comboDisableTime(300)
+#convert(Jj<50>W<45>J<96>j<12>w<50>D<15>J<96>d<16>j) = あぎとあ
 
 ### 新下駄 ###
 loadTable(tables/_test/shin-geta.tbl)
@@ -310,13 +310,10 @@ convert(E<86>O<5>o<22>e) = しょ
 convert(E<86>O<5><5>I<10>o<10>i<22>e) = しょう
 
 comboMaxTime(100)
-comboMaxPostTime(50)
+comboMaxPostTime(30)
 comboMinTime(100)
 comboMinTime3(100)
 
-# T, SP, W, t, w, sp
-
-convert(T<58>SP<52>W<29>t<98>w<45>sp) = くだ
 ### 13a ###
 loadTable(tables/_test/noniiruto.13a.tbl)
 comboMaxTime(70)
@@ -369,6 +366,20 @@ onlyCharKeysComboShouldBeCoveringCombo(false)
 comboMinTime3(200)
 # SP S s E O e I o i sp
 convert(SP<10>Uu<33>E<71>O<72>e<15>I<56>o<66>i<33>sp) = そじよう
+
+### 14 ###
+loadTable(tables/_test/noniiruto.14a.tbl)
+comboMaxTime(200)
+comboMaxPostTime(30)
+comboMinTime(100)
+comboMinTime3(100)
+
+# T, SP, W, t, w, sp
+
+convert(T<78>SP<52>W<29>t<98>w<45>sp) = くだ
+
+# SP, E, J, j, {.}, [.], O, o
+convert(SP<0>E<0>J<0>j<0>{.}<0>[.]<0>O<0>o<0>e<0>sp) = じゃじゅじょ
 
 ### post.7 ###
 loadTable(tables/_test/noniiruto.post.7.tbl)
@@ -477,6 +488,10 @@ comboMinTime(100)
 comboMinTime3(100)
 disableFirstComboCheck
 convert(D<62>H<28>I<57>d<28>h<43>i) = おい
+
+### ビームナギナタ ###
+loadTable(tables/_test/beam-naginata-II.v1_0.tbl)
+convert({41}AIJR<100>[41]aijr) = じょーん
 
 ### かものはし ###
 loadTable(tables/_test/kamonohasi-1.3.tbl)
