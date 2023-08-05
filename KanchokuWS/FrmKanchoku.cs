@@ -338,6 +338,9 @@ namespace KanchokuWS
 
             logConstant();
 
+            // シフト面設定の初期化
+            ShiftPlane.InitializeShiftPlaneForShiftModKey();
+
             // テーブルファイルの先読み（各種制約の設定）
             if (Settings.TableFile._notEmpty()) {
                 new TableFileParser().ReadDirectives(Settings.TableFile, true);
@@ -353,9 +356,6 @@ namespace KanchokuWS
             if (Settings.ExtraModifiersEnabled && Settings.ModConversionFile._notEmpty()) {
                 complexCommandStr = ExtraModifiers.ReadExtraModConversionFile(Settings.ModConversionFile);
             }
-
-            // 設定ダイアログで割り当てたSandSシフト面による上書き
-            ShiftPlane.AssignSanSPlane();
 
             // 漢字読みファイルの読み込み
             if (Settings.KanjiYomiFile._notEmpty()) {

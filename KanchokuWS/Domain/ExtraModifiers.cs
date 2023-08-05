@@ -267,7 +267,7 @@ namespace KanchokuWS.Domain
         public static string ReadExtraModConversionFile(string filename)
         {
             logger.InfoH("ENTER");
-            ShiftPlane.InitializeShiftPlaneForShiftModKey();
+            //ShiftPlane.InitializeShiftPlaneForShiftModKey();
             SingleHitDefs.Clear();
             ExtModifierKeyDefs.Clear();
             disabledExtKeyLines.Clear();

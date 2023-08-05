@@ -483,12 +483,10 @@ namespace KanchokuWS.TableParser
                 if (Settings.LoggingTableFileInfo) logger.InfoH("SandS");
                 //Settings.SandSEnabledCurrently = true;
                 setSandSEnabled(true);
-                int plane = ShiftPlane.GetSandSPlane();
-                if (plane > 0) {
-                    shiftPlane = plane;
-                } else {
+                shiftPlane = ShiftPlane.GetSandSPlane();
+                if (shiftPlane <= 0) {
                     shiftPlane = 2;
-                    ShiftPlane.AssignSanSPlane(shiftPlane);
+                    ShiftPlane.AssignSandSPlane(shiftPlane);
                 }
             } else if (word._startsWith("enable")) {
                 //Settings.SandSEnabledCurrently = true;
@@ -503,12 +501,14 @@ namespace KanchokuWS.TableParser
                 //Settings.SandSEnabledCurrently = true;
                 setSandSEnabled(true);
                 shiftPlane = 1;
-                ShiftPlane.AssignSanSPlane(shiftPlane);
+                ShiftPlane.AssignSandSPlane(shiftPlane);
+                Settings.SetInternalValue(Settings.SandSAssignedPlane_PropName, $"{shiftPlane}");
             } else if (word.Length == 1 && word[0] >= 'a' && word[0] <= 'f') {
                 //Settings.SandSEnabledCurrently = true;
                 setSandSEnabled(true);
                 shiftPlane = word[0] - 'a' + 2;
-                ShiftPlane.AssignSanSPlane(shiftPlane);
+                ShiftPlane.AssignSandSPlane(shiftPlane);
+                Settings.SetInternalValue(Settings.SandSAssignedPlane_PropName, $"{shiftPlane}");
             } else if (word._startsWith("enabeoneshot")) {
                 //Settings.OneshotSandSEnabledCurrently = true;
                 setOneshotSandSEnabled(true);

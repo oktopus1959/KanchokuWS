@@ -1413,6 +1413,7 @@ namespace KanchokuWS
             SandSEnabledCurrently = SandSEnabled;
             SandSEnabledWhenOffMode = GetString(SandSEnabledWhenOffMode_PropName)._parseBool(false);   // 漢直OFFの時もSandS を有効にするか
             SandSAssignedPlane = GetString(SandSAssignedPlane_PropName)._parseInt(2, 0)._highLimit(7); // SandS に割り当てるシフト面
+            ShiftPlane.AssignSandSPlane();
             OneshotSandSEnabled= GetString(OneshotSandSEnabled_PropName, "ignoreSpaceUpOnSandS", "")._parseBool(false);    // SandSのワンショットシフトを有効にするか
             OneshotSandSEnabledCurrently = OneshotSandSEnabled;
             SandSEnableSpaceOrRepeatMillisec = GetString(SandSEnableSpaceOrRepeatMillisec_PropName)._parseInt(500);        // SandS 時の空白入力またはリピート入力までの時間

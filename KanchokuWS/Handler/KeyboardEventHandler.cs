@@ -859,7 +859,7 @@ namespace KanchokuWS.Handler
                     // 拡張シフト面のコードを得る
                     kanchokuCode = normalDecKey;
                     var shiftPlane = keyInfoManager.getShiftPlane(bDecoderOn, isSandSEnabled());
-                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"PATH-A: shiftPlane={shiftPlane}, kanchokuCode={kanchokuCode}");
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"PATH-A: shiftPlane={shiftPlane}, kanchokuCode={kanchokuCode}, isSandSEnabled={isSandSEnabled()}");
                     if (shiftPlane != ShiftPlane.ShiftPlane_NONE && kanchokuCode < DecoderKeys.NORMAL_DECKEY_NUM) {
                         kanchokuCode += shiftPlane * DecoderKeys.PLANE_DECKEY_NUM;
                     }
