@@ -193,7 +193,7 @@ namespace KanchokuWS.TableParser
                             if (Settings.KanjiYomiFile._notEmpty()) readKanjiConvFile(Settings.KanjiYomiFile, true);
                             if (keyword == "with") {
                                 ReadWordOrString();
-                                var convFileKey = definedNames._safeGet(CurrentStr)._orElse(CurrentStr);
+                                var convFileKey = definedNames._safeGet(CurrentStr, CurrentStr);
                                 if (convFileKey._notEmpty()) {
                                     if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"YomiConversion: {convFileKey}");
                                     readKanjiConvFile(convFileKey, false);
@@ -306,7 +306,11 @@ namespace KanchokuWS.TableParser
                     } else if (lcStr == "disableextkey") {
                         // 拡張修飾キーの無効化
                         ReadWord();
-                        if (CurrentStr._notEmpty()) ExtraModifiers.AddDisabledExtKey(CurrentStr);
+                        if (CurrentStr._notEmpty()) {
+                            var keyName = definedNames._safeGet(CurrentStr, CurrentStr._toLower());
+                            ExtraModifiers.AddDisabledExtKey(keyName);
+                            if (keyName._equalsTo("space")) setSandSEnabled(false);
+                        }
                     } else if (lcStr == "ignorewarning" || lcStr == "enablewarning") {
                         // 各種警告の無効化/有効化
                         bool flag = lcStr.StartsWith("ignore");
