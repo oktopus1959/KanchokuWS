@@ -48,12 +48,16 @@ namespace KanchokuWS.Domain
 
         public static void AddDisabledExtKey(string name)
         {
-            disabledExtKeys.Add(name._toLower());
+            var canonicalName = SpecialKeysAndFunctions.GetCanonicalName(name);
+            logger.InfoH(() => $"CALLED: ADD: canonicalName={canonicalName}");
+            disabledExtKeys.Add(canonicalName);
         }
 
         public static bool IsDisabledExtKey(string name)
         {
-            return disabledExtKeys.Contains(name._toLower());
+            var canonicalName = SpecialKeysAndFunctions.GetCanonicalName(name);
+            logger.InfoH(() => $"CALLED: Contains(canonicalName={canonicalName}): {disabledExtKeys.Contains(canonicalName)}");
+            return disabledExtKeys.Contains(canonicalName);
         }
 
         public static void AddDisabledExtKeyLine(string line)
@@ -301,8 +305,8 @@ namespace KanchokuWS.Domain
                                 string modifiee = items[1];
                                 string target = origItems[2]._strip()._stripDq();
 
-                                if (IsDisabledExtKey(modName) && modifiee._isEmpty()) {
-                                    // 単打でなく、無効にされた拡張修飾キーだった
+                                if (IsDisabledExtKey(modName) /*&& modifiee._isEmpty()*/) {
+                                    // /*単打でなく、*/ 無効にされた拡張修飾キーだった
                                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modName={modName} is disabled");
                                     AddDisabledExtKeyLine(rawLine);
                                     continue;
@@ -333,6 +337,7 @@ namespace KanchokuWS.Domain
                                             }
                                             ++pn;
                                         }
+                                        logger.InfoH(() => $"ShiftPlaneForShiftModKey.Add({modName})");
                                         ShiftPlane.ShiftPlaneForShiftModKey.Add(modKey, pn);
                                         ShiftPlane.ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, pn);
                                     }

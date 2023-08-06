@@ -235,7 +235,7 @@ namespace KanchokuWS.TableParser
                     } else if (lcStr == "combination" || lcStr == "overlapping") {
                         // #combination: 同時打鍵設定
                         ReadWord();
-                        switch (CurrentStr._toLower()) {
+                        switch (definedNames._safeGet(CurrentStr, CurrentStr)._toLower()) {
                             case "prefix":
                             case "preshift":
                             case "ordered":

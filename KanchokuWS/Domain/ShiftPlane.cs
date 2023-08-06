@@ -112,6 +112,7 @@ namespace KanchokuWS.Domain
             ShiftPlaneForShiftModKeyWhenDecoderOff.Clear();
 
             // SHIFTなら標準シフト面をデフォルトとしておく
+            logger.InfoH(() => $"ShiftPlaneForShiftModKey.Add(Shift)");
             ShiftPlaneForShiftModKey.Add(KeyModifiers.MOD_SHIFT, ShiftPlane_SHIFT);
             ShiftPlaneForShiftModKeyWhenDecoderOff.Add(KeyModifiers.MOD_SHIFT, ShiftPlane_SHIFT);
         }
@@ -167,6 +168,7 @@ namespace KanchokuWS.Domain
             logger.Info(() => $"mod={modKey:x}H({modKey}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
             if (modKey != 0 && shiftPlane > 0) {
                 logger.Info(() => $"shiftPlaneForShiftFuncKey[{modKey}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{modKey}] = {shiftPlaneWhenOff}");
+                logger.InfoH(() => $"ShiftPlaneForShiftModKey.Add({items[0]})");
                 ShiftPlaneForShiftModKey.Add(modKey, shiftPlane);
                 ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, shiftPlaneWhenOff);
             }
@@ -180,6 +182,7 @@ namespace KanchokuWS.Domain
             if (Settings.SandSEnabledCurrently) {
                 if (shiftPlane <= 0) shiftPlane = Settings.SandSAssignedPlane;
                 if (shiftPlane > 0 && shiftPlane < ShiftPlane_NUM) {
+                    logger.InfoH(() => $"ShiftPlaneForShiftModKey.Add(SandS)");
                     ShiftPlaneForShiftModKey.Add(KeyModifiers.MOD_SPACE, shiftPlane);
                 }
             }

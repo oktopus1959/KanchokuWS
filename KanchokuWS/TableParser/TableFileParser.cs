@@ -501,7 +501,7 @@ namespace KanchokuWS.TableParser
 
         public virtual void AddStringNode(int idx, bool bBare)
         {
-            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"ENTER: depth={Depth}, bBare={bBare}, str={CurrentStr}");
+            if (Settings.LoggingTableFileInfo) logger.Info(() => $"ENTER: depth={Depth}, bBare={bBare}, str={CurrentStr}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
             string str = ConvertKanji(CurrentStr);
             addTerminalNode(idx, Node.MakeStringNode($"{str}", bBare), true);
@@ -511,10 +511,10 @@ namespace KanchokuWS.TableParser
             }
             if (HasRootTable && CurrentStr._startsWith("!{")) {
                 // Repeatable Key
-                if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"REPEATABLE");
+                if (Settings.LoggingTableFileInfo) logger.Info(() => $"REPEATABLE");
                 keyComboPool?.AddRepeatableKey(idx);
             }
-            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"LEAVE: depth={Depth}");
+            if (Settings.LoggingTableFileInfo) logger.Info(() => $"LEAVE: depth={Depth}");
         }
 
         public virtual void AddStringPairNode(OutputString[] stringPair = null)
@@ -682,7 +682,7 @@ namespace KanchokuWS.TableParser
         protected void AddCombinationKeyCombo(List<int> deckeyList, int shiftOffset, bool hasStr, bool hasFunc, bool comboBlocked)
         {
             if (Settings.LoggingTableFileInfo)
-                logger.InfoH(() => $"{deckeyList._keyString()}={CurrentStr}, shiftOffset={shiftOffset}, hasStr={hasStr}, comboBlocked={comboBlocked}");
+                logger.Info(() => $"{deckeyList._keyString()}={CurrentStr}, shiftOffset={shiftOffset}, hasStr={hasStr}, comboBlocked={comboBlocked}");
 #if DEBUG
             if (deckeyList._keyString() == "826:127") {
                 if (Settings.LoggingTableFileInfo) logger.InfoH("HIT");

@@ -215,6 +215,11 @@ namespace KanchokuWS
             return GetKeyOrFuncByName(name)?.DecKey ?? -1;
         }
 
+        public static string GetCanonicalName(string name, bool defaultLower = true)
+        {
+            return GetKeyOrFuncByName(name)?.Name ?? (defaultLower ? name._toLower() : null);
+        }
+
         public static KeyOrFunction GetKeyOrFuncByDeckey(int deckey)
         {
             return specialKeysAndFunctions._getNth(specialKeysAndFunctions._findIndex(x => x.MatchDeckey(deckey)));

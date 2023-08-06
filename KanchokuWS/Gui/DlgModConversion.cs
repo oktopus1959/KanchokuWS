@@ -399,11 +399,15 @@ namespace KanchokuWS.Gui
 
                 if (idx < ShiftPlane.ShiftPlane_NUM) {
                     uint modKey = modKeyDef.ModKey;
-                    if (bOn) {
-                        ShiftPlane.ShiftPlaneForShiftModKey.Add(modKey, idx);
-                        if (modKey == KeyModifiers.MOD_SPACE) Settings.SandSAssignedPlane = idx;
-                    } else {
-                        ShiftPlane.ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, idx);
+                    if (!ExtraModifiers.IsDisabledExtKey(modKeyDef.Name)) {
+                        if (bOn) {
+                            logger.InfoH(() => $"ShiftPlaneForShiftModKey.Add({modKeyDef.Name})");
+                            ShiftPlane.ShiftPlaneForShiftModKey.Add(modKey, idx);
+                            if (modKey == KeyModifiers.MOD_SPACE) Settings.SandSAssignedPlane = idx;
+                        } else {
+                            logger.InfoH(() => $"ShiftPlaneForShiftModKeyWhenDecoderOff.Add({modKeyDef.Name})");
+                            ShiftPlane.ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, idx);
+                        }
                     }
                 }
 

@@ -333,7 +333,7 @@ namespace KanchokuWS.TableParser
                     if (strippedLowerLine._notEmpty() &&
                         (strippedLowerLine[0] != '#' ||
                         (!strippedLowerLine._safeContains("sands") && !strippedLowerLine._safeContains("combination") &&
-                         !strippedLowerLine._startsWith("#if") &&
+                         !strippedLowerLine._startsWith("#define") && !strippedLowerLine._startsWith("#if") &&
                          //!strippedLowerLine._startsWith("#ifdef") && !strippedLowerLine._startsWith("#ifndef") &&
                          !strippedLowerLine._startsWith("#else") && !strippedLowerLine._startsWith("#endif")))) {
                         // コメントアウト
@@ -559,7 +559,7 @@ namespace KanchokuWS.TableParser
                 sb.Append(GetNextChar());
             }
             CurrentStr = sb.ToString();
-            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CurrentBareStr: <{CurrentStr}>");
+            if (Settings.LoggingTableFileInfo) logger.Info(() => $"CurrentBareStr: <{CurrentStr}>");
         }
 
         /// <summary>
