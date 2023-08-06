@@ -304,6 +304,7 @@ namespace KanchokuWS.CombinationKeyStroke
                     bAutoRepeated = true;
                     frmMain.IsWaitingSecondStrokeLocked = true;
                 } else {
+                    if (lastRepeatedDecKey != decKey) bAutoRepeated = false;
                     lastRepeatedDecKey = decKey;
                     if (frmMain.DecoderOutput.IsDecoderEisuMode()) {
                         // デコーダが英数モードだったので、そのまま返す
@@ -446,8 +447,11 @@ namespace KanchokuWS.CombinationKeyStroke
         {
             DateTime dtNow = HRDateTime.Now;
 
+            logger.InfoH(() =>
+                $"\nCALLED: decKey={decKey}, DecoderOn={bDecoderOn}, bTimer={bTimer}, lastRepeatedDecKey={lastRepeatedDecKey}, " +
+                $"bAutoRepeated={bAutoRepeated}, lastRepeatedDecKey={lastRepeatedDecKey}, strokeList={strokeList.ToDebugString()}");
             bool bSameLastKey = !strokeList.IsUnprocListEmpty && strokeList.Last.OrigDecoderKey == decKey;
-            bool bSpaceKeyRepeated = bDecoderOn && bAutoRepeated && decKey == 40 && lastRepeatedDecKey == 40 && strokeList.DetectKeyRepeat(decKey);
+            bool bComboShiftKeyRepeated = bDecoderOn && bAutoRepeated && KeyCombinationPool.IsComboShift(decKey) && lastRepeatedDecKey == decKey && strokeList.DetectKeyRepeat(decKey);
 
             bAutoRepeated = false;
 
@@ -456,16 +460,16 @@ namespace KanchokuWS.CombinationKeyStroke
                 // 押下中のキーと同じキーがタイマーによってKeyUpされたときは、キーリピート状態に移行する
                 lastRepeatedDecKey = decKey;
                 bAutoRepeated = true;
-                bSpaceKeyRepeated = false;
+                bComboShiftKeyRepeated = false;
             } else if (!bTimer) {
                 lastRepeatedDecKey = -1;
             }
 
             logger.DebugH(() =>
-                $"\ndecKey={decKey}, lastRepeatedDecKey={lastRepeatedDecKey}, DecoderOn={bDecoderOn}, bTimer={bTimer}, strokeList={strokeList.ToDebugString()}, SpeceKeyRepeated={bSpaceKeyRepeated}");
-            if (bSpaceKeyRepeated) {
-                // スペースキーがリピートされている状態だったら、それを無視
-                logger.DebugH("REPEATED SPACE KEY IGNORED");
+                $"decKey={decKey}, lastRepeatedDecKey={lastRepeatedDecKey}, ComboShiftKeyRepeated={bComboShiftKeyRepeated}");
+            if (bComboShiftKeyRepeated) {
+                // ComboShiftキーがリピートされている状態だったら、それを無視
+                logger.DebugH("REPEATED COMBO SHIFT KEY IGNORED");
                 strokeList.Clear();
             } else if (!bTimer || bSameLastKey) {    // タイマーの場合は、最後に押下されたキーと一致しているか
                 frmMain?.WriteStrokeLog(decKey, dtNow, false, false, bTimer);

@@ -106,6 +106,12 @@ namespace KanchokuWS.Domain
             return GetShiftPlaneFromShiftModFlag(modFlag, bDecoderOn) != ShiftPlane_NONE;
         }
 
+        public static void InitializeShiftPlane()
+        {
+            ShiftPlaneForShiftModKey.Clear();
+            ShiftPlaneForShiftModKeyWhenDecoderOff.Clear();
+        }
+
         public static void InitializeShiftPlaneForShiftModKey()
         {
             ShiftPlaneForShiftModKey.Clear();

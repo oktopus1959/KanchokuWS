@@ -248,6 +248,7 @@ namespace KanchokuWS
             KeyComboRepository.Initialize();
             ExtraModifiers.Initialize();
             DlgModConversion.Initialize();
+            ShiftPlane.InitializeShiftPlane();
 
             // キーボードファイルの読み込み
             bool resultOK = readKeyboardFileAndCharsDefFile();
@@ -2322,6 +2323,7 @@ namespace KanchokuWS
             KeyComboRepository.Initialize();
             ExtraModifiers.Initialize();
             DlgModConversion.Initialize();
+            ShiftPlane.InitializeShiftPlane();
 
             // キーボードファイルの読み込み
             bool resultOK = readKeyboardFileAndCharsDefFile();
