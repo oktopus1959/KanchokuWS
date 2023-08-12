@@ -86,11 +86,11 @@ namespace KanchokuWS
             // 
             this.label_version.AutoSize = true;
             this.label_version.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label_version.Location = new System.Drawing.Point(47, 18);
+            this.label_version.Location = new System.Drawing.Point(48, 18);
             this.label_version.Name = "label_version";
-            this.label_version.Size = new System.Drawing.Size(77, 12);
+            this.label_version.Size = new System.Drawing.Size(71, 12);
             this.label_version.TabIndex = 6;
-            this.label_version.Text = "漢直窓S Ver.";
+            this.label_version.Text = "漢直WS Ver.";
             // 
             // label_initializing
             // 
