@@ -33,7 +33,7 @@ convert(J<50>W<50>H<100>hIijw) = ぎゃぎょ
 
 comboMinTime(50)
 comboMinTime3(50)
-convert(K<55>J<36>k<10>W<120>j<34>w) = いぎ
+convert(K<55>J<16>k<10>W<120>j<34>w) = いぎ
 convert(W<111>J<1>w<10>E<120>j<74>e) = きで
 convert(K<55>J<96>k<10>W<120>j<34>w) = いあき
 convert(W<111>J<10>w<99>E<56>j<74>e) = きあて
@@ -92,7 +92,7 @@ comboMinTime(50)
 comboMinTime3(50)
 convert(JWR<80>jwr) = ぎじ
 convert(FIOPiopf) = かるすへ
-convert(FKOPkopf) = かいすへ
+convert(FKOPkopf) = かいずべ
 
 enableTimer2()
 convert(J<48>E<45>R<152>erj) = でじ
@@ -380,6 +380,16 @@ convert(T<78>SP<52>W<29>t<98>w<45>sp) = くだ
 
 # SP, E, J, j, {.}, [.], O, o
 convert(SP<0>E<0>J<0>j<0>{.}<0>[.]<0>O<0>o<0>e<0>sp) = じゃじゅじょ
+
+### 15 ###
+loadTable(tables/_test/noniiruto.15a.tbl)
+
+# Q, {.}, {,}, [.], [,], q
+convert(Q<0>{.}<0>{,}<0>[.]<0>[,]<0>q) = きゅう
+
+# SP, E, {.}, {,}, [.], [,], e, sp
+convert(SP<0>E<166>{.}<49>{,}<142>[.]<10>[,]<133>e<0>sp) = じゅう
+
 
 ### post.7 ###
 loadTable(tables/_test/noniiruto.post.7.tbl)
