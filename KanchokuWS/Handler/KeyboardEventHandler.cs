@@ -623,7 +623,8 @@ namespace KanchokuWS.Handler
                 if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"bLCtrlShifted={bLCtrlShifted}, bRCtrlShifted={bRCtrlShifted}, bLShiftShifted={bLShiftShifted}");
 
                 if (!isEffectiveVkey(vkey, scanCode, flags, extraInfo, bCtrl)) {
-                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"not EffectiveVkey");
+                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"not EffectiveVkey{(extraInfo == 0 ? " and clear StrokeList" : "")}");
+                    if (extraInfo == 0) CombinationKeyStroke.Determiner.Singleton.Clear();     // 同時打鍵キューのクリア
                     return false;
                 }
 

@@ -158,6 +158,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void Clear()
         {
+            logger.DebugH(() => $"CALLED");
             comboList.Clear();
             unprocList.Clear();
         }
