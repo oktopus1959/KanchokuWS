@@ -852,6 +852,12 @@ public:
         if (ROOT_STROKE_NODE && decKey1 >= 0) {
             StrokeTableNode* pn = dynamic_cast<StrokeTableNode*>(ROOT_STROKE_NODE->getNth(decKey1));
             if (pn && decKey2 >= 0) pn = dynamic_cast<StrokeTableNode*>(pn->getNth(decKey2));
+            if (!pn && decKey1 >= COMBO_DECKEY_START && decKey1 < STACKLIKE_COMBO_DECKEY_START) {
+                // 通常の同時打鍵シフトでなく、StackLikeのほうが使われているケース
+                LOG_INFO(_T("NEXT TRY (StackLike): decKey1={}, decKey2={}"), decKey1 + PLANE_DECKEY_NUM, decKey2);
+                pn = dynamic_cast<StrokeTableNode*>(ROOT_STROKE_NODE->getNth(decKey1 + PLANE_DECKEY_NUM));
+                if (pn && decKey2 >= 0) pn = dynamic_cast<StrokeTableNode*>(pn->getNth(decKey2));
+            }
             if (pn) {
                 mchar_t* faces = STATE_COMMON->GetFaces();
                 size_t numFaces = STATE_COMMON->FacesSize();
@@ -860,6 +866,8 @@ public:
                     //OutParams->faceStrings[i] = STATE_COMMON->faces[i];
                     set_facestr(faces[i], OutParams->faceStrings + i * 2);
                 }
+            } else {
+                LOG_INFO(_T("StrokeTable NOT FOUND"));
             }
         }
         LOG_INFO(_T("LEAVE: layout={}"), OutParams->layout);

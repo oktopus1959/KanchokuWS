@@ -915,7 +915,7 @@ namespace KanchokuWS.Handler
                      currentPool.GetEntry(kanchokuCode) != null)                                        // 特殊キーであっても同時打鍵テーブルで使われている
                     ) {
                     // KeyDown時処理を呼び出す。同時打鍵キーのオートリピートが開始されたら打鍵ガイドを切り替える
-                    determiner.KeyDown(kanchokuCode, bDecoderOn, keyDownCount, (decKey) => handleComboKeyRepeat(vkey, decKey));
+                    determiner.KeyDown(kanchokuCode, bDecoderOn, keyDownCount, (decKeys) => handleComboKeyRepeat(vkey, decKeys));
                     result = true;
                 } else {
                     // 直接ハンドラを呼び出す
