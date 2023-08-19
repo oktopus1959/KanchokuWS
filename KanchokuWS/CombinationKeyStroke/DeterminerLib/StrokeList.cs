@@ -535,7 +535,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     }
                 }
                 //bTemporaryUnconditional = comboList._notEmpty() && (bTempUnconditional || KeyCombinationPool.CurrentPool.IsPrefixedOrSequentialShift && bSomeShiftKeyUp);
-                IsTemporaryComboDisabled = comboList._notEmpty() && bTempComboDisabled;
+                //IsTemporaryComboDisabled = comboList._notEmpty() && bTempComboDisabled;
+                IsTemporaryComboDisabled = bTempComboDisabled;
                 logger.DebugH(() => $"CLEANUP: UpKey or Oneshot in comboList Removed: bTemporaryComboDisabled={IsTemporaryComboDisabled}, {ToDebugString()}");
 
                 // 指定個数以上の打鍵が残っていたら警告をログ出力する
