@@ -49,8 +49,8 @@ void State::HandleDeckeyChain(int deckey) {
     LOG_INFO(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
         Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
     currentDeckey = deckey;
-    // 事前チェック
-    DoPreCheck();
+    // 履歴常駐状態の事前チェック
+    DoHistoryResidentPreCheck();
     // 前処理
     DoDeckeyPreProc(deckey);
     // 中間チェック
@@ -66,6 +66,10 @@ void State::HandleDeckeyChain(int deckey) {
 // 非仮想関数
 void State::DoDeckeyPreProc(int deckey) {
     _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), Name, deckey, deckey, STATE_NAME(pNext), NODE_NAME(NextNodeMaybe()));
+
+    // ModalStateの前処理(デフォルトでは何もしない)
+    DoModalStatePreProc(deckey);
+
     //pNextNodeMaybe = nullptr;
     ClearNextNodeMaybe();
     _LOG_DEBUGH(_T("NextState={}"), STATE_NAME(pNext));

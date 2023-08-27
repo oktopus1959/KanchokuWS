@@ -5,10 +5,11 @@
 // -------------------------------------------------------------------
 // 履歴入力(常駐)機能状態(抽象)クラス
 class HistoryResidentState : public ResidentState {
-public:
-    // 事前チェック
-    void DoPreCheck() override = 0;
+protected:
+    // 履歴常駐状態の事前チェック
+    void DoHistoryResidentPreCheck() override = 0;
 
+public:
     // Enter時の新しい履歴の追加
     virtual void AddNewHistEntryOnEnter() = 0;
 

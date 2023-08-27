@@ -109,8 +109,14 @@ public:
     void DoOutStringProcChain();
 
 protected:
+    // 履歴常駐状態の事前チェック
+    virtual void DoHistoryResidentPreCheck() { /* デフォルトでは何もしない */ }
+
     // DECKEY処理の前半部
-    virtual void DoDeckeyPreProc(int deckey);
+    void DoDeckeyPreProc(int deckey);
+
+    // ModalStateの前処理
+    virtual void DoModalStatePreProc(int /*deckey*/) { /* デフォルトでは何もしない */ }
 
 private:
     // DECKEY処理の後半部
@@ -125,11 +131,8 @@ private:
 public:
     // カスタマイズ可能なメソッド
 
-    // 事前チェック
-    virtual void DoPreCheck() { }
-
     // 中間チェック
-    virtual void DoIntermediateCheck() { }
+    virtual void DoIntermediateCheck() { /* デフォルトでは何もしない */ }
 
     // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
     virtual bool DoProcOnCreated();

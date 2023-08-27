@@ -17,12 +17,9 @@
 
 DEFINE_CLASS_LOGGER(ModalState);
 
-// DECKEY処理の前半部
-// モード状態の処理
-// 状態チェーンをたどる。後続状態があればそちらに移譲。なければここでホットキーをディスパッチ。
-void ModalState::DoDeckeyPreProc(int deckey) {
+// モード状態(HistoryResidentState や KatakanaState, EisuState など)のための前処理
+void ModalState::DoModalStatePreProc(int deckey) {
     _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), Name, deckey, deckey, STATE_NAME(pNext), NODE_NAME(NextNodeMaybe()));
-    // モード状態(HistoryResidentState や KatakanaState, EisuState など)のための前処理
     // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
     // つまり、状態チェーンの末端であって、打鍵中でない場合
     if (!pNext) {
@@ -74,7 +71,6 @@ void ModalState::DoDeckeyPreProc(int deckey) {
             }
         }
     }
-    State::DoDeckeyPreProc(deckey);
 
     _LOG_DEBUGH(_T("LEAVE: false: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
 }

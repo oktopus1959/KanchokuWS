@@ -967,8 +967,8 @@ namespace {
         }
 
     protected:
-        // 事前チェック
-        void DoPreCheck() {
+        // 履歴常駐状態の事前チェック
+        void DoHistoryResidentPreCheck() {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             maybeEditedBySubState = false;
             // 常駐モード

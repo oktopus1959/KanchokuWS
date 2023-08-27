@@ -14,8 +14,8 @@ public:
     }
 
 protected:
-    // DECKEY処理の前半部
-    void DoDeckeyPreProc(int deckey) override;
+    // ModalStateの前処理
+    void DoModalStatePreProc(int deckey) override;
 
 };
 
