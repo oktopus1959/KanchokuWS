@@ -17,6 +17,7 @@ namespace {
 
     public:
         EscapeState(EscapeNode* pN) {
+            LOG_INFOH(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -58,7 +59,10 @@ EscapeNode::~EscapeNode() {
 }
 
 // 当ノードを処理する State インスタンスを作成する
-State* EscapeNode::CreateState() { return new EscapeState(this); }
+State* EscapeNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
+    return new EscapeState(this);
+}
 
 // -------------------------------------------------------------------
 // EscapeNodeBuilder - 1文字履歴機能ノードビルダー

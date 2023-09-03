@@ -22,7 +22,7 @@ namespace {
     public:
         // コンストラクタ
         BlockerSetterState(Node* pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFOH(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -65,6 +65,7 @@ BlockerSetterNode::~BlockerSetterNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* BlockerSetterNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
     return new BlockerSetterState(this);
 }
 

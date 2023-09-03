@@ -69,12 +69,12 @@ namespace {
     public:
         // コンストラクタ
         PostRewriteOneShotState(PostRewriteOneShotNode* pN) {
-            LOG_INFO(_T("CALLED: constructor: this={:p}, NodePtr={:p}"), (void*)this, (void*)pN);
+            LOG_INFOH(_T("CALLED: constructor: this={:p}, NodePtr={:p}"), (void*)this, (void*)pN);
             Initialize(logger.ClassNameT(), pN);
         }
 
         ~PostRewriteOneShotState() {
-            LOG_INFO(_T("CALLED: destructor: ptr={:p}"), (void*)this);
+            LOG_INFOH(_T("CALLED: destructor: ptr={:p}"), (void*)this);
         };
 
 #define MY_NODE ((PostRewriteOneShotNode*)pNode)
@@ -138,6 +138,7 @@ PostRewriteOneShotNode::~PostRewriteOneShotNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* PostRewriteOneShotNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
     return new PostRewriteOneShotState(this);
 }
 
@@ -214,6 +215,7 @@ DakutenOneShotNode::~DakutenOneShotNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* DakutenOneShotNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
     return new PostRewriteOneShotState(this);
 }
 

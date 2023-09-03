@@ -236,7 +236,7 @@ namespace {
     public:
         // コンストラクタ
         HankakuKatakanaOneShotState(HankakuKatakanaOneShotNode* pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFOH(_T("CALLED: ctor"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -288,6 +288,7 @@ HankakuKatakanaOneShotNode::~HankakuKatakanaOneShotNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* HankakuKatakanaOneShotNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
     return new HankakuKatakanaOneShotState(this);
 }
 

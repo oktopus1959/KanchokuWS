@@ -44,7 +44,7 @@ namespace {
     public:
         // コンストラクタ
         EisuState(EisuNode* pN) {
-            LOG_INFO(_T("CALLED: CONSTRUCTOR"));
+            LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -84,7 +84,7 @@ namespace {
             //setEisuModeMarker();
 
             // 英数モードフラグの設定
-            CheckMyState();
+            if (!IsUnnecessary()) STATE_COMMON->SetCurrentModeIsEisu();
 
             // 前状態にチェインする
             LOG_INFO(_T("LEAVE: CHAIN ME"));
@@ -92,16 +92,9 @@ namespace {
             return true;
         }
 
-        // 自身の状態をチェックして後処理するのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
-        void CheckMyState() override {
-            LOG_DEBUGH(_T("CALLED: {}, Unnecessary={}"), Name, IsUnnecessary());
-            // 英数モードフラグの設定
-            if (!IsUnnecessary()) STATE_COMMON->SetCurrentModeIsEisu();
-        }
-
         // 履歴検索を初期化する状態か
         bool IsHistoryReset() {
-            bool result = (pNext && pNext->IsHistoryReset());
+            bool result = (NextState() && NextState()->IsHistoryReset());
             _LOG_DEBUGH(_T("CALLED: {}: result={}"), Name, result);
             return result;
         }
@@ -286,7 +279,7 @@ EisuNode::~EisuNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* EisuNode::CreateState() {
-    LOG_INFO(_T("CALLED"));
+    LOG_INFOH(_T("CALLED"));
     return new EisuState(this);
 }
 

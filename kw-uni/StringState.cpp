@@ -49,6 +49,7 @@ private:
 
 public:
     StringState(StringNode* pN) {
+        LOG_INFOH(_T("CALLED: ctor"));
         Initialize(logger.ClassNameT(), pN);
     }
 
@@ -63,7 +64,12 @@ public:
 };
 DEFINE_CLASS_LOGGER(StringState);
 
+DEFINE_CLASS_LOGGER(StringNode);
+
 // 開始ノード
 // 当ノードを処理する State インスタンスを作成する
-State* StringNode::CreateState() { return new StringState(this); }
+State* StringNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
+    return new StringState(this);
+}
 

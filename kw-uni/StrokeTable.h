@@ -39,9 +39,6 @@ private:
 
     String nodeMarker = _T("□");
 
-    // 全ストロークノードが不要になったら true (ステートの作成時にクリアする)
-    bool bRemoveAllStroke = false;
-
     // 後置書き換え子ノードありか
     int iHasPostRewriteNode = 0;
 
@@ -126,16 +123,6 @@ public:
     // 木の根からの深さを返す
     inline size_t depth() const {
         return _depth;
-    }
-
-    // 全ストロークノードが不要になった
-    inline void setToRemoveAllStroke() {
-        bRemoveAllStroke = true;
-    }
-
-    // 全ストロークノードが不要になったか
-    inline bool isToRemoveAllStroke() {
-        return bRemoveAllStroke;
     }
 
 private:

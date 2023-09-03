@@ -33,7 +33,7 @@ namespace {
     public:
         // コンストラクタ
         BushuCompState(BushuCompNode* pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFOH(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -86,6 +86,7 @@ BushuCompNode::~BushuCompNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* BushuCompNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
     return new BushuCompState(this);
 }
 

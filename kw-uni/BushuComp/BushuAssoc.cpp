@@ -137,7 +137,7 @@ namespace {
     public:
         // コンストラクタ
         BushuAssocState(BushuAssocNode* pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFOH(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -296,7 +296,7 @@ namespace {
         }
 
         // 最終的な出力履歴が整ったところで呼び出される処理
-        void DoOutStringProc() {
+        void DoOutStringProc() override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             STATE_COMMON->SetOutStringProcDone();   // 何かキー入力により再表示の可能性があるので、ここでも必要(この後は、もはや履歴検索などは不要)
             _LOG_DEBUGH(_T("LEAVE: {}, IsOutStringProcDone={}"), Name, STATE_COMMON->IsOutStringProcDone());
@@ -332,7 +332,7 @@ namespace {
     public:
         // コンストラクタ
         BushuAssocExState(BushuAssocExNode* pN) : BushuAssocState(pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFOH(_T("CALLED"));
             Name = logger.ClassNameT();
         }
 
@@ -464,6 +464,7 @@ BushuAssocExNode::~BushuAssocExNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* BushuAssocExNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
     return new BushuAssocExState(this);
 }
 
@@ -501,6 +502,7 @@ BushuAssocNode::~BushuAssocNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* BushuAssocNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
     return new BushuAssocState(this);
 }
 

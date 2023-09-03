@@ -31,9 +31,30 @@ DEFINE_CLASS_LOGGER(State);
 // デストラクタのデフォルト
 State::~State() {
     LOG_DEBUG(_T("ENTER: Destructor: {}"), Name);
-    delete pNext;       // デストラクタ -- 後続状態を削除する
-    pNext = nullptr;
+    DeleteNextState();
     LOG_DEBUG(_T("LEAVE: Destructor: {}"), Name);
+}
+
+// 次の状態をセット
+State* State::SetNextState(State* p) {
+    LOG_DEBUG(_T("ENTER: {}, NextState={}"), Name, p->GetName());
+    if (pNext) {
+        LOG_WARNH(L"Next State is NOT Empty: {}", pNext->GetName());
+    }
+    pNext = p;
+    if (p) p->pPrev = this;
+    // 二重の状態生成処理を避けるために、次のノードをクリアしておく
+    ClearNextNodeMaybe();
+    LOG_DEBUG(_T("LEAVE: {}: NextNode cleared"), Name);
+    return pNext;
+}
+
+// 後続状態を削除する
+void State::DeleteNextState() {
+    LOG_DEBUG(_T("ENTER: {}, NextState={}"), Name, pNext ? pNext->GetName() : L"none");
+    delete pNext;
+    pNext = nullptr;
+    LOG_DEBUG(_T("LEAVE: {}"), Name);
 }
 
 // 状態の再アクティブ化 (何かやりたい場合はオーバーライドする)
@@ -42,64 +63,46 @@ void State::Reactivate() {
     if (pNext) pNext->Reactivate();
 }
 
-// DECKEY 処理の流れ
-// 新ノードが未処理の場合は、ここで NULL 以外が返されるので、親状態で処理する
-// 非仮想関数
+// DECKEY 処理の前半部
 void State::HandleDeckeyChain(int deckey) {
     LOG_INFO(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
         Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
-    currentDeckey = deckey;
-    // 履歴常駐状態の事前チェック
+    // 履歴常駐状態の事前チェック(デフォルトでは何もしない)
     DoHistoryResidentPreCheck();
-    // 前処理
-    DoDeckeyPreProc(deckey);
-    // 中間チェック
-    DoIntermediateCheck();
-    // 後処理
-    DoDeckeyPostProc();
-    LOG_INFO(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
-    //return pNextNodeMaybe;
-}
-
-// DECKEY処理の前半部の処理。
-// 状態チェーンをたどる。後続状態があればそちらに移譲。なければここでホットキーをディスパッチ。
-// 非仮想関数
-void State::DoDeckeyPreProc(int deckey) {
-    _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), Name, deckey, deckey, STATE_NAME(pNext), NODE_NAME(NextNodeMaybe()));
 
     // ModalStateの前処理(デフォルトでは何もしない)
     DoModalStatePreProc(deckey);
 
-    //pNextNodeMaybe = nullptr;
     ClearNextNodeMaybe();
+
     _LOG_DEBUGH(_T("NextState={}"), STATE_NAME(pNext));
     if (pNext) {
         _LOG_DEBUGH(_T("NextState: FOUND"));
-        // 後続状態があれば、そちらを呼び出す ⇒ 新しい後続ノードがあればそれを一時的に記憶しておく(後半部で処理する)
-        //pNextNodeMaybe = pNext->HandleDeckey(deckey);
-        pNext->HandleDeckeyChain(deckey);    // ここは pNext->DoDeckeyPreProc(deckey); のほうが良いように思えるが、実際にはうまくいかない。将来的に見直す。
-        SetNextNodeMaybe(pNext->NextNodeMaybe());
+        // 後続状態があれば、そちらを呼び出す
+        pNext->HandleDeckeyChain(deckey);
     } else {
         _LOG_DEBUGH(_T("NextState: NOT FOUND"));
         // 後続状態がなければ、ここでDECKEYをディスパッチする
         dispatchDeckey(deckey);
     }
-    _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+
+    LOG_INFO(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
 }
 
-// DECKEY処理の後半部の処理。
+// DECKEY処理の後半部の処理(非仮想関数)。
 // 不要になった後続状態の削除と、新しい後続状態の生成とチェイン。
 void State::DoDeckeyPostProc() {
     _LOG_DEBUGH(_T("ENTER: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
-    // 後続状態チェインに対して事後チェック
-    DoPostCheckChain();
-    //// 不要な後続状態を削除
-    //DeleteUnnecessarySuccessorState();
+    if (pNext) {
+        // 先に状態チェーンの末尾の方の処理をやる
+        pNext->DoDeckeyPostProc();
+        // 不要な後続状態を削除
+        DeleteUnnecessarySuccessorState();
+    }
     while (NextNodeMaybe() && !IsUnnecessary()) {
-        _LOG_DEBUGH(_T("PATH-0: NextNodeMaybe={:p}"), (void*)NextNodeMaybe());
+        _LOG_DEBUGH(_T("PATH-0: NextNodeMaybe={}"), NODE_NAME(NextNodeMaybe()));
         // 新しい後続ノードが生成されており、自身が不要状態でないならば、ここで後続ノードの処理を行う
         // (自身が不要状態ならば、この後、前接状態に戻り、そこで後続ノードが処理される)
-        _LOG_DEBUGH(_T("nextNode: {}"), NODE_NAME(NextNodeMaybe()));
         // 後続状態を作成
         State* ps = NextNodeMaybe()->CreateState();
         _LOG_DEBUGH(_T("PATH-A"));
@@ -109,33 +112,20 @@ void State::DoDeckeyPostProc() {
         // ストロークノード以外は、ここで何らかの出力処理をするはず
         if (ps->DoProcOnCreated()) {
             // 必要があれば後続ノードから生成した新状態をチェインする
-            _LOG_DEBUGH(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
-            pNext = ps;
-            ps->pPrev = this;
             _LOG_DEBUGH(_T("PATH-C"));
+            _LOG_DEBUGH(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
+            SetNextState(ps);
+            ps->pPrev = this;
         } else {
+            // 後続状態の生成時処理の結果、後続状態は不要になった
+            _LOG_DEBUGH(_T("PATH-D"));
             SetNextNodeMaybe(ps->NextNodeMaybe());   // 新しい後続ノードがあるかもしれないのでここでセットしておく
             _LOG_DEBUGH(_T("NextNodeMaybe={:p}"), (void*)NextNodeMaybe());
-            delete ps;  // 後続状態の生成時処理の結果、後続状態は不要になったので削除する
-            _LOG_DEBUGH(_T("PATH-D"));
+            delete ps;  // 不要になった後続状態を削除する
         }
         _LOG_DEBUGH(_T("PATH-E"));
     }
     _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
-}
-
-// 後続状態チェインに対して事後チェック
-void State::DoPostCheckChain() {
-    _LOG_DEBUGH(_T("ENTER: {}"), Name);
-    if (pNext) {
-        pNext->DoPostCheckChain();
-        CheckNextState();
-        DeleteUnnecessarySuccessorState();
-    } else if (IS_LOG_DEBUGH_ENABLED) {
-        _LOG_DEBUGH(_T("STOP: {}"), Name);
-    }
-    CheckMyState();
-    _LOG_DEBUGH(_T("LEAVE: {}"), Name);
 }
 
 // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
@@ -166,16 +156,16 @@ void State::DoOutStringProc() {
 }
 
 // ノードから生成した状態を後接させ、その状態を常駐させる
-void State::ChainAndStayResident(Node* np) {
+void State::CreateStateAndStayResidentAtEndOfChain(Node* np) {
     _LOG_DEBUGH(_T("ENTER: {}, nextNode: {}"), Name, NODE_NAME(NextNodeMaybe()));
     if (np) {
         if (pNext) {
-            pNext->ChainAndStayResident(np);
+            pNext->CreateStateAndStayResidentAtEndOfChain(np);
         } else {
             auto ps = np->CreateState();
             ps->DoProcOnCreated();
             LOG_DEBUG(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
-            pNext = ps;
+            SetNextState(ps);
             ps->pPrev = this;
         }
     }
@@ -189,8 +179,7 @@ void State::DeleteRemainingState() {
         pNext->DeleteRemainingState();
         if (!pNext->IsResident()) {
             LOG_DEBUG(_T("delete next={}"), pNext->Name);
-            delete pNext;       // 居残っている一時状態の削除(デコーダのOFF->ON時に呼ばれる)
-            pNext = 0;
+            DeleteNextState();       // 居残っている一時状態の削除(デコーダのOFF->ON時に呼ばれる)
         }
     }
     LOG_DEBUG(_T("LEAVE: {}"), Name);
@@ -221,30 +210,15 @@ void State::MarkUnnecessaryFromThis() {
     if (pNext) pNext->MarkUnnecessaryFromThis();
 }
 
-// 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
-void State::CheckNextState() {
-    LOG_DEBUG(_T("CALLED: {}: default"), Name);
-}
-
-// 自身の状態をチェックして後処理するのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
-void State::CheckMyState() {
-    LOG_DEBUG(_T("CALLED: {}: default"), Name);
-}
-
-//// ストローク機能をすべて削除するか
-//bool State::IsToRemoveAllStroke() const {
-//    LOG_DEBUG(_T("CALLED: {}: false"), Name);
-//    return false;
-//}
-
 // 不要とマークされた後続状態を削除する
 void State::DeleteUnnecessarySuccessorState() {
     _LOG_DEBUGH(_T("ENTER: {}"), Name);
     if (pNext) {
         if (pNext->IsUnnecessary()) {
             _LOG_DEBUGH(_T("DELETE NEXT: {}"), pNext->Name);
-            delete pNext;       // 不要とマークされた後続状態を削除する
-            pNext = nullptr;
+            // 次ノードがあれば、それを移動しておく
+            if (pNext->NextNodeMaybe() && !NextNodeMaybe()) SetNextNodeMaybe(pNext->NextNodeMaybe());
+            DeleteNextState();       // 不要とマークされた後続状態を削除する
         }
     }
     _LOG_DEBUGH(_T("LEAVE: {}"), Name);
@@ -654,7 +628,10 @@ void State::handleEnter() {
 }
 
 // ESC ハンドラ
-void State::handleEsc() { _LOG_DEBUGH(_T("{}: Esc: currentDeckey={}"), Name, currentDeckey); if (currentDeckey == ESC_DECKEY) handleSpecialKeys(ESC_DECKEY); }
+void State::handleEsc() {
+    _LOG_DEBUGH(_T("{}: Esc: currentDeckey={}"), Name, STATE_COMMON->CurrentDecKey());
+    if (STATE_COMMON->CurrentDecKey() == ESC_DECKEY) handleSpecialKeys(ESC_DECKEY);
+}
     
 // BS ハンドラ
 void State::handleBS() { _LOG_DEBUGH(_T("BackSpace")); setCharDeleteInfo(1); }

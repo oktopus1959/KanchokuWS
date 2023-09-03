@@ -19,10 +19,10 @@ DEFINE_CLASS_LOGGER(ModalState);
 
 // モード状態(HistoryResidentState や KatakanaState, EisuState など)のための前処理
 void ModalState::DoModalStatePreProc(int deckey) {
-    _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), Name, deckey, deckey, STATE_NAME(pNext), NODE_NAME(NextNodeMaybe()));
+    _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), Name, deckey, deckey, STATE_NAME(NextState()), NODE_NAME(NextNodeMaybe()));
     // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
     // つまり、状態チェーンの末端であって、打鍵中でない場合
-    if (!pNext) {
+    if (!NextState()) {
         _LOG_DEBUGH(_T("NextNode FOUND"));
         // 交ぜ書き状態から抜けた直後にブロッカーや変換開始位置のシフトをやる場合のための処理
         if (MAZEGAKI_INFO && !MAZEGAKI_INFO->IsInMazegakiMode()) {
@@ -42,31 +42,24 @@ void ModalState::DoModalStatePreProc(int deckey) {
             // 英数ノードでない場合
             if (pNode && dynamic_cast<ZenkakuNode*>(pNode) == 0 && deckey == TOGGLE_ZENKAKU_CONVERSION_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: ZenkakuState"));
-                pNext = SetNextState(ZENKAKU_NODE->CreateState());
-                pNext->SetPrevState(this);
-                pNext->DoProcOnCreated();
+                SetNextState(ZENKAKU_NODE->CreateState())->DoProcOnCreated();
                 deckey = -1;    // この後は deckey の処理をやらない
             }
             else if (pNode && dynamic_cast<KatakanaNode*>(pNode) == 0 && deckey == TOGGLE_KATAKANA_CONVERSION_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: KatakanaState"));
-                pNext = SetNextState(KATAKANA_NODE->CreateState());
-                pNext->SetPrevState(this);
-                pNext->DoProcOnCreated();
+                SetNextState(KATAKANA_NODE->CreateState())->DoProcOnCreated();
                 deckey = -1;    // この後は deckey の処理をやらない
             }
             else if (pNode && dynamic_cast<EisuNode*>(pNode) == 0 && deckey == EISU_MODE_TOGGLE_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: EisuState"));
-                pNext = SetNextState(EISU_NODE->CreateState());
-                pNext->SetPrevState(this);
-                pNext->DoProcOnCreated();
+                SetNextState(EISU_NODE->CreateState())->DoProcOnCreated();
                 deckey = -1;    // この後は deckey の処理をやらない
             }
             else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokableKey(deckey)) {
                 // ルートストロークノードの生成
-                _LOG_DEBUGH(_T("CREATE: RootStrokeState"));
+                _LOG_DEBUGH(_T("CREATE: RootStrokeTableState"));
                 if (ROOT_STROKE_NODE) {
-                    pNext = SetNextState(ROOT_STROKE_NODE->CreateState());
-                    pNext->SetPrevState(this);
+                    SetNextState(ROOT_STROKE_NODE->CreateState());
                 }
             }
         }

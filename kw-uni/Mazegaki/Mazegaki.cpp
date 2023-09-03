@@ -149,7 +149,7 @@ namespace {
     public:
         // コンストラクタ
         MazegakiState(MazegakiNode* pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFOH(_T("CALLED: ctor"));
             Initialize(logger.ClassNameT(), pN);
             MAZEGAKI_INFO->Initialize(true);
         }
@@ -531,6 +531,7 @@ MazegakiNode::~MazegakiNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* MazegakiNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
     return new MazegakiState(this);
 }
 

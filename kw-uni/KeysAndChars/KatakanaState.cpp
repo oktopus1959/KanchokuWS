@@ -39,7 +39,7 @@ namespace {
     public:
         // コンストラクタ
         KatakanaState(KatakanaNode* pN) {
-            LOG_INFO(_T("CALLED: CONSTRUCTOR"));
+            LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -69,7 +69,7 @@ namespace {
 
         // 履歴検索を初期化する状態か
         bool IsHistoryReset() {
-            bool result = (pNext && pNext->IsHistoryReset());
+            bool result = (NextState() && NextState()->IsHistoryReset());
             _LOG_DEBUGH(_T("CALLED: {}: result={}"), Name, result);
             return result;
         }
@@ -89,8 +89,8 @@ namespace {
         MString TranslateString(const MString& outStr) override {
             _LOG_DEBUGH(_T("ENTER: {}: outStr={}"), Name, to_wstr(outStr));
             MString result;
-            if (pNext) {
-                result = translate(pNext->TranslateString(outStr));
+            if (NextState()) {
+                result = translate(NextState()->TranslateString(outStr));
             } else {
                 result = translate(outStr);
                 setKatakanaModeMarker();
@@ -171,7 +171,7 @@ KatakanaNode::~KatakanaNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* KatakanaNode::CreateState() {
-    LOG_INFO(_T("CALLED"));
+    LOG_INFOH(_T("CALLED"));
     return new KatakanaState(this);
 }
 

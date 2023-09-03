@@ -29,7 +29,7 @@ namespace {
     public:
         // コンストラクタ
         ZenkakuState(ZenkakuNode* pN) {
-            LOG_INFO(_T("CALLED: CONSTRUCTOR"));
+            LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -141,6 +141,7 @@ namespace {
 
     public:
         ZenkakuOneState(ZenkakuOneNode* pN) : ZenkakuState(pN) {
+            LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
             Name = logger.ClassNameT();
         }
 
@@ -178,7 +179,7 @@ ZenkakuNode::~ZenkakuNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* ZenkakuNode::CreateState() {
-    LOG_INFO(_T("CALLED"));
+    LOG_INFOH(_T("CALLED"));
     return new ZenkakuState(ZenkakuNode::Singleton.get());
 }
 
@@ -207,7 +208,7 @@ ZenkakuOneNode::~ZenkakuOneNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* ZenkakuOneNode::CreateState() {
-    LOG_INFO(_T("CALLED"));
+    LOG_INFOH(_T("CALLED"));
     return new ZenkakuOneState(this);
 }
 

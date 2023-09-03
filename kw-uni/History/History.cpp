@@ -439,7 +439,7 @@ namespace {
     public:
         // コンストラクタ
         HistoryState(HistoryNode* pN) : HistoryStateBase(pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFOH(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -496,7 +496,7 @@ namespace {
         }
 
         // 最終的な出力履歴が整ったところで呼び出される処理
-        void DoOutStringProc() {
+        void DoOutStringProc() override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
 
             //if (pNext) pNext->DoOutStringProc();
@@ -517,7 +517,7 @@ namespace {
 
         // 履歴検索を初期化する状態か
         bool IsHistoryReset() {
-            bool result = (pNext && pNext->IsHistoryReset());
+            bool result = (NextState() && NextState()->IsHistoryReset());
             _LOG_DEBUGH(_T("CALLED: {}: result={}"), Name, result);
             return result;
         }
@@ -745,7 +745,7 @@ namespace {
     public:
         // コンストラクタ
         HistoryFewCharsState(HistoryFewCharsNode* pN) : HistoryState(pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFOH(_T("CALLED"));
             Name = logger.ClassNameT();
         }
 
@@ -780,7 +780,7 @@ namespace {
     public:
         // コンストラクタ
         HistoryOneCharState(HistoryOneCharNode* pN) : HistoryState(pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFOH(_T("CALLED"));
             Name = logger.ClassNameT();
         }
 
@@ -845,7 +845,7 @@ namespace {
     public:
         // コンストラクタ
         HistoryResidentStateImpl(HistoryResidentNode* pN) : HistoryStateBase(pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_INFOH(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -859,7 +859,7 @@ namespace {
         // 状態の再アクティブ化
         void Reactivate() {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            if (pNext) pNext->Reactivate();
+            if (NextState()) NextState()->Reactivate();
             // ちょっと下以の意図が不明
             //maybeEditedBySubState = true;
             //DoOutStringProc();
@@ -873,7 +873,7 @@ namespace {
 
         // 履歴検索を初期化する状態か
         bool IsHistoryReset() {
-            bool result = (pNext && pNext->IsHistoryReset());
+            bool result = (NextState() && NextState()->IsHistoryReset());
             _LOG_DEBUGH(_T("CALLED: {}: result={}"), Name, result);
             return result;
         }
@@ -920,8 +920,8 @@ namespace {
         // 文字列を変換して出力、その後、履歴の追加
         void SetTranslatedOutString(const MString& outStr, size_t rewritableLen, int numBS = -1) {
             _LOG_DEBUGH(_T("ENTER: {}: outStr={}, rewritableLen={}, numBS={}"), Name, to_wstr(outStr), rewritableLen, numBS);
-            if (pNext) {
-                MString xlatStr = pNext->TranslateString(outStr);
+            if (NextState()) {
+                MString xlatStr = NextState()->TranslateString(outStr);
                 _LOG_DEBUGH(_T("{}: SetOutStringWithRewritableLen({}, {}, {})"), Name, to_wstr(xlatStr), xlatStr == outStr ? rewritableLen : 0, numBS);
                 STATE_COMMON->SetOutStringWithRewritableLen(xlatStr, xlatStr == outStr ? rewritableLen : 0, numBS);
             } else {
@@ -968,7 +968,7 @@ namespace {
 
     protected:
         // 履歴常駐状態の事前チェック
-        void DoHistoryResidentPreCheck() {
+        void DoHistoryResidentPreCheck() override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             maybeEditedBySubState = false;
             // 常駐モード
@@ -1466,7 +1466,7 @@ namespace {
             if (bSetVkb) setCandidatesVKB(VkbLayout::Horizontal, HIST_CAND->GetCandWords(), HIST_CAND->GetCurrentKey());
 
             // 英数モードはキャンセルする
-            if (pNext) pNext->handleEisuCancel();
+            if (NextState()) NextState()->handleEisuCancel();
 
             _LOG_DEBUGH(_T("LEAVE: prevOut={}, numBS={}"), to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()), STATE_COMMON->GetBackspaceNum());
         }
@@ -1494,6 +1494,7 @@ HistoryNode::~HistoryNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
     return new HistoryState(this);
 }
 
@@ -1533,6 +1534,7 @@ HistoryFewCharsNode::~HistoryFewCharsNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryFewCharsNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
     return new HistoryFewCharsState(this);
 }
 
@@ -1559,6 +1561,7 @@ HistoryOneCharNode::~HistoryOneCharNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryOneCharNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
     return new HistoryOneCharState(this);
 }
 
@@ -1585,6 +1588,7 @@ HistoryResidentNode::~HistoryResidentNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryResidentNode::CreateState() {
+    LOG_INFOH(_T("CALLED"));
     HISTORY_RESIDENT_STATE = new HistoryResidentStateImpl(this);
     return HISTORY_RESIDENT_STATE;
 }

@@ -22,12 +22,15 @@ class State {
 
     //friend ModalState;
 
+    // 状態チェーンの前の状態
+    State* pPrev = 0;
+
+    // 状態チェーンの次の状態
+    State* pNext = 0;
+
     // 次の状態を生成する元となるノード
     // これは状態生成の時に一時的に使用されるだけ
     Node* pNextNodeMaybe= 0;
-
-    // 現在処理中のキー
-    int currentDeckey = 0;
 
 private:
     // 不要フラグ
@@ -44,22 +47,20 @@ public:
     virtual bool IsUnnecessary();
 
 protected:
-    // 前の状態
-    State* pPrev = 0;
-
-    // 次の状態
-    State* pNext = 0;
-
     // この状態が処理の対象とするノード
     // 他で管理されているので、ここで delete してはならない
     Node* pNode = 0;
 
 public:
-    inline void SetPrevState(State* pp) { pPrev = pp; }
-
     inline State* NextState() { return pNext; }
 
-    inline State* SetNextState(State* p) { return pNext = p; }
+    // 状態チェーンの次の状態をセット
+    State* SetNextState(State* p);
+
+    inline State* PrevState() { return pPrev; }
+
+    // 後続状態を削除する
+    void DeleteNextState();
 
     inline Node* MyNode() { return pNode; }
 
@@ -102,9 +103,6 @@ public:
 public:
     // カスタマイズ不可なメソッド
 
-    // 入力された DECKEY を処理する(これは全状態で共通の処理)
-    void HandleDeckeyChain(int deckey);
-
     // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
     void DoOutStringProcChain();
 
@@ -112,24 +110,21 @@ protected:
     // 履歴常駐状態の事前チェック
     virtual void DoHistoryResidentPreCheck() { /* デフォルトでは何もしない */ }
 
-    // DECKEY処理の前半部
-    void DoDeckeyPreProc(int deckey);
-
     // ModalStateの前処理
     virtual void DoModalStatePreProc(int /*deckey*/) { /* デフォルトでは何もしない */ }
 
-private:
+protected:
     // DECKEY処理の後半部
     void DoDeckeyPostProc();
-
-    // 後続状態チェインに対して事後チェック
-    void DoPostCheckChain();
 
     // 不要とマークされた後続状態を削除する (HandleDeckeyから呼ばれる)
     void DeleteUnnecessarySuccessorState();
 
 public:
     // カスタマイズ可能なメソッド
+
+    // 入力された DECKEY を処理する
+    virtual void HandleDeckeyChain(int deckey);
 
     // 中間チェック
     virtual void DoIntermediateCheck() { /* デフォルトでは何もしない */ }
@@ -144,7 +139,7 @@ public:
     virtual void DoOutStringProc();
 
     // ノードから生成した状態を後接させ、その状態を常駐させる
-    virtual void ChainAndStayResident(Node*);
+    virtual void CreateStateAndStayResidentAtEndOfChain(Node*);
 
     // 居残っている一時状態の削除(常駐ノードなら false を返す)
     virtual void DeleteRemainingState();
@@ -181,13 +176,13 @@ protected:
 
     void ClearNextNodeMaybe() { pNextNodeMaybe = nullptr; }
 
-    // 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
-    // 例：ストロークの末尾まで到達して、ストロークチェイン全体が不要になった
-    // 例：次ストロークが取り消されたので、自ストロークも初期状態に戻す
-    virtual void CheckNextState();
+    //// 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
+    //// 例：ストロークの末尾まで到達して、ストロークチェイン全体が不要になった
+    //// 例：次ストロークが取り消されたので、自ストロークも初期状態に戻す
+    //virtual void CheckNextState();
 
-    // 自身の状態をチェックして後処理するのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
-    virtual void CheckMyState();
+    //// 自身の状態をチェックして後処理するのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
+    //virtual void CheckMyState();
 
     // 常駐機能か
     virtual bool IsResident() const;

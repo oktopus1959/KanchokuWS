@@ -32,16 +32,21 @@ namespace {
     private:
         DECLARE_CLASS_LOGGER;
 
+        // 全打鍵状態を削除するか (checkNextState()により前状態に伝播)
+        bool bRemoveAllStroke = false;
+
     protected:
         inline StrokeTableNode* myNode() const { return (StrokeTableNode*)pNode; }
 
+        // 全打鍵状態を削除する
         void setToRemoveAllStroke() {
             MarkUnnecessary();
-            myNode()->setToRemoveAllStroke();
+            bRemoveAllStroke = true;
         }
 
+        // 全打鍵状態を削除するか
         bool isToRemoveAllStroke() {
-            return myNode()->isToRemoveAllStroke();
+            return bRemoveAllStroke;
         }
 
         int origDeckey = -1;
@@ -49,26 +54,43 @@ namespace {
 
         // ルートキーは UNSHIFT されているか
         //virtual bool IsRootKeyUnshifted() {
-        //    auto p = dynamic_cast<StrokeTableState*>(pPrev);
+        //    auto p = dynamic_cast<StrokeTableState*>(PrevState());
         //    return p != nullptr ? p->IsRootKeyUnshifted() : false;
         //}
 
         // ルートキーは平仮名化されているか
         virtual bool IsRootKeyHiraganaized() {
-            auto p = dynamic_cast<StrokeTableState*>(pPrev);
+            auto p = dynamic_cast<StrokeTableState*>(PrevState());
             return p != nullptr ? p->IsRootKeyHiraganaized() : false;
         }
 
         // ルートキーは同時打鍵キーか
         virtual bool IsRootKeyCombination() {
-            auto p = dynamic_cast<StrokeTableState*>(pPrev);
+            auto p = dynamic_cast<StrokeTableState*>(PrevState());
             return p != nullptr ? p->IsRootKeyCombination() : false;
         }
 
     public:
         // コンストラクタ
         StrokeTableState(StrokeTableNode* pN) {
+            LOG_INFOH(_T("CALLED: ctor"));
             Initialize(logger.ClassNameT(), pN);
+        }
+
+        // DECKEY 処理の流れ
+        void HandleDeckeyChain(int deckey) override {
+            LOG_INFO(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
+                Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
+            // 前処理
+            State::HandleDeckeyChain(deckey);   // ここで dispatchDeckey() → handleStrokeKeys() が呼ばれる
+
+            // 次状態の処理
+            checkNextState();
+
+            // 不要になった後続状態を削除
+            DeleteUnnecessarySuccessorState();
+
+            LOG_INFO(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
         }
 
 #define DEPTH           (myNode() ? myNode()->depth(): -1)
@@ -214,19 +236,21 @@ namespace {
         // 不要になったら自身を削除する
         bool IsUnnecessary() override {
             LOG_DEBUG(_T("CALLED: {}: {}"), Name, State::IsUnnecessary());
-            return State::IsUnnecessary() || myNode()->isToRemoveAllStroke();
+            return State::IsUnnecessary() || isToRemoveAllStroke();
         }
 
-        // 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
-        void CheckNextState() {
+        // 次状態の処理
+        // ストロークの末尾まで到達して、ストロークチェイン全体が不要になった
+        // 次ストロークが取り消されたので、自ストロークも初期状態に戻す
+        virtual void checkNextState() {
             LOG_DEBUG(_T("CALLED: {}"), Name);
-            if (pNext) {
-                auto ps = dynamic_cast<StrokeTableState*>(pNext);
+            if (NextState()) {
+                auto ps = dynamic_cast<StrokeTableState*>(NextState());
                 if (ps && ps->isToRemoveAllStroke()) {
                     // ストロークテーブルチェイン全体の削除
                     setToRemoveAllStroke();
                     _LOG_DEBUGH(_T("REMOVE ALL: {}"), Name);
-                } else if (pNext->IsUnnecessary()) {
+                } else if (NextState()->IsUnnecessary()) {
                     // 次状態が取り消されたら、origString を縮めておく
                     STATE_COMMON->PopOrigString();
                     // ルートでなければ打鍵ヘルプを再セットする
@@ -248,8 +272,8 @@ namespace {
         // ストロークテーブルチェインの長さ(テーブルのレベル)
         size_t StrokeTableChainLength() {
             size_t len = myNode()->depth() + 1;
-            if (pNext) {
-                len = pNext->StrokeTableChainLength();
+            if (NextState()) {
+                len = NextState()->StrokeTableChainLength();
             }
             LOG_DEBUG(_T("LEAVE: {}, len={}"), Name, len);
             return len;
@@ -306,6 +330,7 @@ namespace {
         // コンストラクタ
         RootStrokeTableState(StrokeTableNode* pN)
             : StrokeTableState(pN) {
+            LOG_INFOH(_T("CALLED: ctor"));
             Name = logger.ClassNameT();
             STATE_COMMON->ClearOrigString();
         }
@@ -377,14 +402,16 @@ namespace {
         }
 
         // 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
-        void CheckNextState() {
+        // 例：ストロークの末尾まで到達して、ストロークチェイン全体が不要になった
+        // 例：次ストロークが取り消されたので、自ストロークも初期状態に戻す
+        void checkNextState() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            StrokeTableState::CheckNextState();
+            StrokeTableState::checkNextState();
             if (bHiraganaized) {
                 _LOG_DEBUGH(_T("SET SHIFTED HIRAGANA: {}"), Name);
                 STATE_COMMON->SetHiraganaToKatakana();   // Shift入力された平仮名だった
             }
-            if (pNext && pNext->IsUnnecessary()) {
+            if (NextState() && NextState()->IsUnnecessary()) {
                 // 次状態が不要になったらルートストロークテーブルも不要
                 MarkUnnecessary();
                 _LOG_DEBUGH(_T("REMOVE ALL: {}"), Name);
@@ -410,7 +437,7 @@ StrokeTableNode::~StrokeTableNode() {
 
 // 当ノードを処理する State インスタンスを作成する (depth == 0 ならルートStateを返す)
 State* StrokeTableNode::CreateState() {
-    bRemoveAllStroke = false;
+    LOG_INFOH(_T("CALLED"));
     return depth() == 0 ? new RootStrokeTableState(this) : new StrokeTableState(this);
 }
 
@@ -571,7 +598,6 @@ StrokeTreeTraverser::StrokeTreeTraverser(class StrokeTableNode* p, bool full) : 
 
 Node* StrokeTreeTraverser::getNext() {
     while (!tblList.empty()) {
-        StrokeTableNode* pn = tblList.back();
         int nodePos = 0;
         if (bRewriteTable) {
             path.push_back(nodePos);
@@ -579,7 +605,8 @@ Node* StrokeTreeTraverser::getNext() {
         } else {
             nodePos = path.back() + 1;
         }
-        while (nodePos < (int)pn->numChildren()) {
+        StrokeTableNode* pn = tblList.back();
+        while (pn && nodePos < (int)pn->numChildren()) {
             if (!bFull && nodePos >= NORMAL_DECKEY_NUM * 2) break;
 
             Node* p = pn->getNth(nodePos);

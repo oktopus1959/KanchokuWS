@@ -7,6 +7,8 @@
 // -------------------------------------------------------------------
 // StringNode - 文字列を格納するノード
 class StringNode : public Node {
+    DECLARE_CLASS_LOGGER;
+
  public:
      StringNode(StringRef s, /*bool converted,*/ bool bRewritable) : /*bConverted(converted),*/ rewritableLen(0) {
          if (s.empty()) {   // 文字列がない場合

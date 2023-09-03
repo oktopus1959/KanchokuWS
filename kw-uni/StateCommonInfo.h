@@ -116,6 +116,9 @@ class StateCommonInfo {
     // 第1ストローク時のキーカウント
     size_t firstStrokeKeyCount = 0;
 
+    // 現在のデコーダキー
+    int currentDecKey = -1;
+
     // 直前のデコーダキー
     int prevDecKey = -1;
 
@@ -170,6 +173,14 @@ public:
         longVkeyCandidates.resize(LONG_VKEY_NUM);
     }
 
+    inline void SetCurrentDecKey(int deckey) {
+        currentDecKey = deckey;
+    }
+
+    inline int CurrentDecKey() const {
+        return currentDecKey;
+    }
+
     inline void IncrementTotalDecKeyCount() {
         ++totalDecKeyCount;
     }
@@ -214,6 +225,7 @@ public:
 
     // DECKEY 処理ごとに呼び出される初期化
     void ClearStateInfo() {
+        currentDecKey = -1;
         numBackSpaces = 0;
         resultFlags = 0;
         nextExpectedKeyType = ExpectedKeyType::None;
