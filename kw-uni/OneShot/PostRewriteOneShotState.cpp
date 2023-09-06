@@ -13,6 +13,7 @@
 #include "OutputStack.h"
 #include "History/History.h"
 
+#include "RewriteString.h"
 #include "PostRewriteOneShot.h"
 
 #if 0
@@ -118,10 +119,8 @@ PostRewriteOneShotNode::PostRewriteOneShotNode(StringRef s, bool bBare)
     String rewStr = s;
     size_t rewLen = 0;
     if (bBare) {
-        ANALYZE_REWRITE_STR(s, rewStr, rewLen);
-        //rewStr = utils::replace(rewStr, _T("/"), _T(""));
-        //size_t pos = s.find('/', 0);
-        //rewLen = pos < rewStr.size() ? rewStr.size() - pos : rewStr.empty() ? 0 : 1;
+        // 出力定義文字列を解析して、分離記号の '/' を取り除き、書き換え対象文字列の長さを得る
+        rewStr = RewriteString::AnalyzeRewriteString(s, rewLen);
     }
     myRewriteInfo.rewriteStr = to_mstr(rewStr);
     myRewriteInfo.rewritableLen = rewLen;
@@ -147,10 +146,8 @@ void PostRewriteOneShotNode::addRewritePair(StringRef key, StringRef value, bool
     String rewStr = value;
     size_t rewLen = 0;
     if (bBare) {
-        ANALYZE_REWRITE_STR(value, rewStr, rewLen);
-        //rewStr = utils::replace(rewStr, _T("/"), _T(""));
-        //size_t pos = value.find('/', 0);
-        //rewLen = pos <= rewStr.size() ? rewStr.size() - pos : rewStr.size() == 1 ? 1 : 0;
+        // 出力定義文字列を解析して、分離記号の '/' を取り除き、書き換え対象文字列の長さを得る
+        rewStr = RewriteString::AnalyzeRewriteString(value, rewLen);
     }
     if (pNode) {
         subTables.push_back(pNode);

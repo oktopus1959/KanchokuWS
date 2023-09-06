@@ -38613,6 +38613,8 @@ Stake|ステーク
 Stream|ストリーム
 Tradeoff|トレードオフ
 Tray|トレイ
+Downstream|ダウンストリーム
+Upstream|アップストリーム
 Usecase|ユースケース
 Workloads|ワークローズ
 Workload|ワークロード

@@ -283,6 +283,7 @@
     <ClCompile Include="OneShot\KatakanaOneShotState.cpp" />
     <ClCompile Include="OneShot\OneShotState.cpp" />
     <ClCompile Include="OneShot\PostRewriteOneShotState.cpp" />
+    <ClCompile Include="OneShot\RewriteString.cpp" />
     <ClCompile Include="OutputStack.cpp" />
     <ClCompile Include="Reporting\ErrorHandler.cpp" />
     <ClCompile Include="Reporting\Logger.cpp" />

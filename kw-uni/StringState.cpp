@@ -4,6 +4,7 @@
 #include "Settings.h"
 
 #include "StringNode.h"
+#include "OneShot/RewriteString.h"
 #include "State.h"
 #include "History/HistoryResidentState.h"
 
@@ -65,6 +66,30 @@ public:
 DEFINE_CLASS_LOGGER(StringState);
 
 DEFINE_CLASS_LOGGER(StringNode);
+
+// 文字列ノード
+// コンストラクタ
+StringNode::StringNode(StringRef s, bool bRewritable) : rewritableLen(0) {
+    if (s.empty()) {            // 文字列がない場合
+         str.clear();
+    } else if (bRewritable) {   // 文字列がある場合 - 文字列を保存する
+        // 出力定義文字列を解析して、分離記号の '/' を取り除き、書き換え対象文字列の長さを得る
+        String ws = RewriteString::AnalyzeRewriteString(s, rewritableLen);
+        str = to_mstr(ws);
+        //str = to_mstr(utils::replace(s, _T("/"), _T("")));
+        //size_t pos = s.find('/', 0);
+        //rewritableLen = pos <= str.size() ? str.size() - pos : str.empty() ? 0 : 1;
+    } else {
+        str = to_mstr(s);
+    }
+}
+
+StringNode::StringNode(wchar_t ch) : rewritableLen(0){
+    str.clear();
+    if (ch != 0) {
+        str.push_back(ch);
+    }
+}
 
 // 開始ノード
 // 当ノードを処理する State インスタンスを作成する

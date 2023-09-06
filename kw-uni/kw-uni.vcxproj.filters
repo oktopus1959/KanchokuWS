@@ -425,5 +425,8 @@
     <ClCompile Include="ModalState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="OneShot\RewriteString.cpp">
+      <Filter>ソース ファイル\OneShot</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

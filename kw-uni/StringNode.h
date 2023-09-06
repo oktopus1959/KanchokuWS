@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Node.h"
-
 #include "OneShot/RewriteString.h"
 
 // -------------------------------------------------------------------
@@ -9,28 +8,10 @@
 class StringNode : public Node {
     DECLARE_CLASS_LOGGER;
 
- public:
-     StringNode(StringRef s, /*bool converted,*/ bool bRewritable) : /*bConverted(converted),*/ rewritableLen(0) {
-         if (s.empty()) {   // 文字列がない場合
-             str.clear();
-         } else if (bRewritable) {           // 文字列がある場合 - 文字列を保存する
-             String ws;
-             ANALYZE_REWRITE_STR(s, ws, rewritableLen);
-             str = to_mstr(ws);
-             //str = to_mstr(utils::replace(s, _T("/"), _T("")));
-             //size_t pos = s.find('/', 0);
-             //rewritableLen = pos <= str.size() ? str.size() - pos : str.empty() ? 0 : 1;
-         } else {
-             str = to_mstr(s);
-         }
-     }
+public:
+    StringNode(StringRef s, bool bRewritable);
 
-     StringNode(wchar_t ch) : rewritableLen(0){
-         str.clear();
-         if (ch != 0) {
-             str.push_back(ch);
-         }
-     }
+    StringNode(wchar_t ch);
 
     ~StringNode() { }
 
