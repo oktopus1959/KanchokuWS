@@ -1411,7 +1411,7 @@ namespace {
                     bManualTemporary = true;
                 }
             } else {
-                _LOG_DEBUGH(_T("Nod Cand Selected"));
+                _LOG_DEBUGH(_T("No Cand Selected"));
                 // 一時的にこのフラグを立てることにより、履歴検索を行わないようにする
                 bNoHistTemporary = true;
                 // Esc処理が必要なものがあればそれをやる。なければアクティブウィンドウにEscを送る

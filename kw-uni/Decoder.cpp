@@ -567,6 +567,7 @@ public:
 
         // 各種状態を初期化してから
         STATE_COMMON->ClearStateInfo();
+        STATE_COMMON->SetCurrentDecKey(keyId);
         STATE_COMMON->IncrementTotalDecKeyCount();
         STATE_COMMON->CountSameDecKey(keyId);
         if (decodeKeyboardChar) STATE_COMMON->SetDecodeKeyboardCharMode();  // キーボードフェイス文字を返すモード
