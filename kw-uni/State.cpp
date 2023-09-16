@@ -90,15 +90,24 @@ void State::HandleDeckeyChain(int deckey) {
 }
 
 // DECKEY処理の後半部の処理(非仮想関数)。
-// 不要になった後続状態の削除と、新しい後続状態の生成とチェイン。
-void State::DoDeckeyPostProc() {
+// 後続状態の処理チェイン。
+void State::DoDeckeyPostProcChain() {
     _LOG_DEBUGH(_T("ENTER: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
     if (pNext) {
         // 先に状態チェーンの末尾の方の処理をやる
-        pNext->DoDeckeyPostProc();
-        // 不要な後続状態を削除
-        DeleteUnnecessarySuccessorState();
+        pNext->DoDeckeyPostProcChain();
     }
+    DoDeckeyPostProc();
+    _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+}
+
+// 不要になった後続状態の削除と、新しい後続状態の生成
+void State::DoDeckeyPostProc() {
+    _LOG_DEBUGH(_T("ENTER: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+    // 不要な後続状態を削除
+    DeleteUnnecessarySuccessorState();
+
+    // 新しい後続状態の生成
     while (NextNodeMaybe() && !IsUnnecessary()) {
         _LOG_DEBUGH(_T("PATH-0: NextNodeMaybe={}"), NODE_NAME(NextNodeMaybe()));
         // 新しい後続ノードが生成されており、自身が不要状態でないならば、ここで後続ノードの処理を行う

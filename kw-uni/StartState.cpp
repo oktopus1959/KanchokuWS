@@ -23,7 +23,7 @@ public:
         // 中間チェック
         DoIntermediateCheck();
         // 後処理
-        DoDeckeyPostProc();
+        DoDeckeyPostProcChain();
         LOG_INFO(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
         //return pNextNodeMaybe;
     }

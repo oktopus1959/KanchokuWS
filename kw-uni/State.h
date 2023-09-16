@@ -115,6 +115,7 @@ protected:
 
 protected:
     // DECKEY処理の後半部
+    void DoDeckeyPostProcChain();
     void DoDeckeyPostProc();
 
     // 不要とマークされた後続状態を削除する (HandleDeckeyから呼ばれる)
