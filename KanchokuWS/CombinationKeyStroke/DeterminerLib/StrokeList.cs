@@ -629,14 +629,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                         $": challengeList={challengeList._toString()}");
                                 }
                                 if ((isTailKeyUp && (comboBlocked || challengeList[0].IsShiftableSpaceKey || (tailKey.HasStringOrSingleHittable && !tailKey.IsShiftableSpaceKey))) ||
-                                    // CHECK1: 対象リストの末尾キーが先にUPされており、同時打鍵の一時無効化か、先頭キーがシフト可能スペースキーか、末尾キーが単打可能キーだった
+                                      // CHECK1: 対象リストの末尾キーが先にUPされており、同時打鍵の一時無効化か、先頭キーがシフト可能スペースキーか、末尾キーが単打可能キーだった
                                     challengeList.Count < 3 && unprocList[0].IsShiftableSpaceKey ||
-                                    // CHECK2: チャレンジリストの長さが2以下で、先頭キーがシフト可能なスペースキーだった
-                                    // ⇒連続シフトでない、最初のスペースキーとの同時打鍵ならタイミングは考慮せず無条件
+                                      // CHECK2: チャレンジリストの長さが2以下で、先頭キーがシフト可能なスペースキーだった
+                                      // ⇒連続シフトでない、最初のスペースキーとの同時打鍵ならタイミングは考慮せず無条件
                                     (Settings.ThreeKeysComboUnconditional && keyCombo.DecKeyList._safeCount() >= 3 && !isListContaindInSequentialPriorityWordKeySet(challengeList)) ||
-                                    // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
+                                      // CHECK3: 3打鍵以上の同時打鍵で、順次優先でなければタイミングチェックをやらない
                                     (timingResult = isCombinationTiming(keyCombo, challengeList, tailKey, dtNow, bSecondComboCheck)) == 0)
-                                // CHECK1～CHECK3をすり抜けたらタイミングチェックをやる
+                                      // CHECK1～CHECK3をすり抜けたらタイミングチェックをやる
                                 {
                                     // 同時打鍵が見つかった(かつ、同時打鍵の条件を満たしている)ので、それを出力する
                                     logger.DebugH(() => $"COMBO CHECK PASSED: Overlap candidates found: overlapLen={overlapLen}, list={challengeList._toString()}");
@@ -794,6 +794,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 int minTime =
                     Settings.CombinationKeyMinOverlappingTimeMs3 > Settings.CombinationKeyMinOverlappingTimeMs && list._safeCount() >= 3 ? Settings.CombinationKeyMinOverlappingTimeMs3 :
                     //Settings.CombinationKeyMinOverlappingTimeMs2 > 0 && !isSpaceOrFunc ? Settings.CombinationKeyMinOverlappingTimeMs2 :
+                    //(Settings.CharKeyComboMinOverlappingTime > 0 && !strk1st.IsSpaceOrFunc && !strk2nd.IsSpaceOrFunc) ? Settings.CharKeyComboMinOverlappingTime :
                     Settings.CombinationKeyMinOverlappingTimeMs;
                 result = ms2 >= minTime ? 0 : bSecondComboCheck ? 2 : 1;
                 logger.DebugH(() => $"RESULT2={result == 0}: ms2={ms2:f2}ms >= minOverlappingTime={minTime}ms (Timing={result})");
