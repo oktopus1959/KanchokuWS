@@ -981,6 +981,8 @@ namespace KanchokuWS.Gui
             setEnabled(checkBox_threeKeysComboUnconditional, Settings.ThreeKeysComboUnconditional_PropName);
             textBox_sequentialPriorityWords.Text = Settings.SequentialPriorityWords._reReplace(@"\|", "\r\n");
             setEnabled(textBox_sequentialPriorityWords, Settings.SequentialPriorityWords_PropName);
+            textBox_charKeyComboMinOverlappingTime.Text = $"{Settings.CharKeyComboMinOverlappingTime}";
+            setEnabled(textBox_charKeyComboMinOverlappingTime, Settings.CharKeyComboMinOverlappingTime_PropName);
 
             // IME連携
             checkBox_imeCooperationEnabled.Checked = Settings.ImeCooperationEnabled;
@@ -1024,6 +1026,7 @@ namespace KanchokuWS.Gui
             checkerImeCombo.Add(checkBox_useComboExtModKeyAsSingleHit);
             checkerImeCombo.Add(checkBox_threeKeysComboUnconditional);
             checkerImeCombo.Add(textBox_sequentialPriorityWords);
+            checkerImeCombo.Add(textBox_charKeyComboMinOverlappingTime);
 
             // IME連携
             checkerImeCombo.Add(checkBox_imeCooperationEnabled);
@@ -1068,6 +1071,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni(Settings.UseComboExtModKeyAsSingleHit_PropName, checkBox_useComboExtModKeyAsSingleHit.Checked);
             Settings.SetUserIni(Settings.ThreeKeysComboUnconditional_PropName, checkBox_threeKeysComboUnconditional.Checked);
             Settings.SetUserIni(Settings.SequentialPriorityWords_PropName, textBox_sequentialPriorityWords.Text.Trim()._reReplace(@"[\r\n]+", "|"));
+            Settings.SetUserIni(Settings.CharKeyComboMinOverlappingTime_PropName, textBox_charKeyComboMinOverlappingTime.Text.Trim());
 
             // IME連携
             Settings.SetUserIni(Settings.ImeCooperationEnabled_PropName, checkBox_imeCooperationEnabled.Checked);
