@@ -790,11 +790,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 // 2文字目であるか、または、1文字目のリードタイムチェックをパスし、かつ、3キー同時または1文字目でも重複時間チェックが必要
                 // ここでは tailKey より前のキーがUPされたものとして扱う。ただし、list中にUPされたキーがあるとは限らない)
                 // シフトキーが解放されている(または単打可能キーのみである)ので、最後のキー押下時刻との差分を求め、タイミング判定する
+
+                // 文字キー同士の同時打鍵の場合は、それ用の閾値が用意されていればそれを使う。その場合、第1打鍵と第2打鍵の押下間隔分を閾値に上乗せずる。
+                // (つまり、第1打鍵と第2打鍵の間をすばやく押下したほうが同時打鍵と判定されやすくなるということ)
+                int minTimeCharKeys = (Settings.CharKeyComboMinOverlappingTime > 0 && !strk1st.IsSpaceOrFunc && !strk2nd.IsSpaceOrFunc)
+                    ? Settings.CharKeyComboMinOverlappingTime + (int)strk1st.TimeSpanMs(strk2nd) : 0;
                 double ms2 = tailStk.TimeSpanMs(dtNow);
                 int minTime =
                     Settings.CombinationKeyMinOverlappingTimeMs3 > Settings.CombinationKeyMinOverlappingTimeMs && list._safeCount() >= 3 ? Settings.CombinationKeyMinOverlappingTimeMs3 :
                     //Settings.CombinationKeyMinOverlappingTimeMs2 > 0 && !isSpaceOrFunc ? Settings.CombinationKeyMinOverlappingTimeMs2 :
-                    //(Settings.CharKeyComboMinOverlappingTime > 0 && !strk1st.IsSpaceOrFunc && !strk2nd.IsSpaceOrFunc) ? Settings.CharKeyComboMinOverlappingTime :
+                    minTimeCharKeys > 0 ? minTimeCharKeys :
                     Settings.CombinationKeyMinOverlappingTimeMs;
                 result = ms2 >= minTime ? 0 : bSecondComboCheck ? 2 : 1;
                 logger.DebugH(() => $"RESULT2={result == 0}: ms2={ms2:f2}ms >= minOverlappingTime={minTime}ms (Timing={result})");

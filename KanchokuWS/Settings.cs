@@ -16,7 +16,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.8.2";
+        public static string Version => "1.2.8.3";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -809,9 +809,9 @@ namespace KanchokuWS
         public static bool OnlyCharKeysComboShouldBeCoveringCombo { get; set; }
         public static string OnlyCharKeysComboShouldBeCoveringCombo_PropName = "onlyCharKeysComboShouldBeCoveringCombo";
 
-        /// <summary>2つの文字キーの同時打鍵の場合の最小重複時間(先押し後離し方式の場合でも、これ以上の時間押されていたら同時打鍵とみなす)</summary>
-        //public static int CharKeyComboMinOverlappingTime { get; set; }
-        //public static string CharKeyComboMinOverlappingTime_PropName = "charKeyComboMinOverlappingTime";
+        /// <summary>2つの文字キーの同時打鍵の場合の最小重複時間(ここに第1打鍵と第2打鍵間の押下時間差分が上乗せされる)</summary>
+        public static int CharKeyComboMinOverlappingTime { get; set; }
+        public static string CharKeyComboMinOverlappingTime_PropName = "charKeyComboMinOverlappingTime";
 
         /// <summary>同時打鍵よりも順次打鍵のほうを優先させる文字列に対するキーコード列の集合</summary>
         public static HashSet<string> SequentialPriorityWordKeyStringSet { get; } = new HashSet<string>();
@@ -1443,7 +1443,7 @@ namespace KanchokuWS
             SequentialPriorityWords = GetString(SequentialPriorityWords_PropName, "てない").Trim();                 // 同時打鍵よりも順次打鍵のほうを優先させる文字列の並び
             SequentialPriorityWordSet.UnionWith(SequentialPriorityWords._reSplit(@"[ ,\|]+"));                      // 同時打鍵よりも順次打鍵のほうを優先させる文字列の集合
             OnlyCharKeysComboShouldBeCoveringCombo = GetString(OnlyCharKeysComboShouldBeCoveringCombo_PropName)._parseBool(false);     // 文字キーのみの同時打鍵組合せの場合は、被覆Comboとするか
-            //CharKeyComboMinOverlappingTime = GetString(CharKeyComboMinOverlappingTime_PropName)._parseInt(0);       // 2つの文字キーの同時打鍵の場合の最小重複時間(先押し後離し方式の場合でも、これ以上の時間押されていたら同時打鍵とみなす)
+            CharKeyComboMinOverlappingTime = GetString(CharKeyComboMinOverlappingTime_PropName)._parseInt(0);       // 2つの文字キーの同時打鍵の場合の最小重複時間
 
             //-------------------------------------------------------------------------------------
             // IME連携
