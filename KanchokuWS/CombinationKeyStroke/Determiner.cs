@@ -185,6 +185,7 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <param name="tableFile3">第3テーブルファイル名</param>
         public void Initialize(string tableFile, string tableFile2, string tableFile3, bool bTest = false)
         {
+            logger.InfoH("ENTER");
             Settings.ClearSpecificDecoderSettings();
             KeyCombinationPool.Initialize();
             Clear();
@@ -198,6 +199,7 @@ namespace KanchokuWS.CombinationKeyStroke
             if (tableFile3._notEmpty()) {
                 new TableFileParser().ParseTableFile(tableFile3, "tmp/tableFile3.tbl", KeyCombinationPool.SingletonK3, KeyCombinationPool.SingletonA3, 3, bTest);
             }
+            logger.InfoH("LEAVE");
         }
 
         ///// <summary>
@@ -225,7 +227,17 @@ namespace KanchokuWS.CombinationKeyStroke
         /// </summary>
         public void Clear()
         {
+            logger.DebugH(() => $"CALLED");
             strokeList.Clear();
+        }
+
+        /// <summary>
+        /// 未処理の同時打鍵リストをクリアする
+        /// </summary>
+        public void ClearUnprocList()
+        {
+            logger.DebugH(() => $"CALLED");
+            strokeList.ClearUnprocList();
         }
 
         private Queue<Func<KeyHandlerResult>> procQueue = new Queue<Func<KeyHandlerResult>>();

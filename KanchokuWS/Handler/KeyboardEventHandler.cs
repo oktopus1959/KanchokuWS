@@ -624,7 +624,7 @@ namespace KanchokuWS.Handler
 
                 if (!isEffectiveVkey(vkey, scanCode, flags, extraInfo, bCtrl)) {
                     if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"not EffectiveVkey{(extraInfo == 0 ? " and clear StrokeList" : "")}");
-                    if (extraInfo == 0) CombinationKeyStroke.Determiner.Singleton.Clear();     // 同時打鍵キューのクリア
+                    if (extraInfo == 0) CombinationKeyStroke.Determiner.Singleton.ClearUnprocList();     // 未処理の同時打鍵キューのクリア
                     return false;
                 }
 

@@ -151,8 +151,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public int UnprocListCount => unprocList.Count;
         public int Count => comboList.Count + unprocList.Count;
 
+        public void ClearUnprocList()
+        {
+            logger.DebugH(() => $"CALLED");
+            unprocList.Clear();
+        }
+
         public void ClearComboList()
         {
+            logger.DebugH(() => $"CALLED");
             comboList.Clear();
         }
 
