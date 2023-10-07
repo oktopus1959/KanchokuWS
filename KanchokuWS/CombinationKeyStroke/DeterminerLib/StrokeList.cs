@@ -621,11 +621,12 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 Stroke tailKey = unprocList[overlapLen - 1];
                                 if (Logger.IsInfoHEnabled) {
                                     logger.DebugH(() =>
-                                        $"CHECK1: {isTailKeyUp && (comboBlocked || challengeList[0].IsShiftableSpaceKey || (tailKey.HasStringOrSingleHittable && !tailKey.IsShiftableSpaceKey))}: " +
-                                        $"tailPos={overlapLen - 1}: " +
-                                        $"isTailKeyUp({isTailKeyUp}) && " +
-                                        $"(comboBlocked({comboBlocked}) || challengeList[0].IsShiftableSpaceKey={challengeList[0].IsShiftableSpaceKey}" +
-                                        $"(tailKey.HasStringOrSingleHittable({tailKey.HasStringOrSingleHittable}) && !tailKey.IsShiftableSpaceKey({!tailKey.IsShiftableSpaceKey})))");
+                                        //$"CHECK1: {isTailKeyUp && (comboBlocked || challengeList[0].IsShiftableSpaceKey || (tailKey.HasStringOrSingleHittable && !tailKey.IsShiftableSpaceKey))}: " +
+                                        //$"tailPos={overlapLen - 1}: " +
+                                        //$"isTailKeyUp({isTailKeyUp}) && " +
+                                        //$"(comboBlocked({comboBlocked}) || challengeList[0].IsShiftableSpaceKey={challengeList[0].IsShiftableSpaceKey} || " +
+                                        //$"(tailKey.HasStringOrSingleHittable({tailKey.HasStringOrSingleHittable}) && !tailKey.IsShiftableSpaceKey({!tailKey.IsShiftableSpaceKey})))");
+                                        $"CHECK1: {isTailKeyUp}: isTailKeyUp({isTailKeyUp})");
                                     logger.DebugH(() => $"CHECK2: {challengeList.Count < 3 && unprocList[0].IsShiftableSpaceKey}: " +
                                         $"challengeList.Count({challengeList.Count}) < 3 ({challengeList.Count < 3}) && unprocList[0].IsShiftableSpaceKey({unprocList[0].IsShiftableSpaceKey})");
                                     logger.DebugH(() => "CHECK3: " +
@@ -635,8 +636,10 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                         $"!isListContaindInSequentialPriorityWordKeySet({challengeList._toString()})({!isListContaindInSequentialPriorityWordKeySet(challengeList)})" +
                                         $": challengeList={challengeList._toString()}");
                                 }
-                                if ((isTailKeyUp && (comboBlocked || challengeList[0].IsShiftableSpaceKey || (tailKey.HasStringOrSingleHittable && !tailKey.IsShiftableSpaceKey))) ||
-                                      // CHECK1: 対象リストの末尾キーが先にUPされており、同時打鍵の一時無効化か、先頭キーがシフト可能スペースキーか、末尾キーが単打可能キーだった
+                                //if ((isTailKeyUp && (comboBlocked || challengeList[0].IsShiftableSpaceKey || (tailKey.HasStringOrSingleHittable && !tailKey.IsShiftableSpaceKey))) ||
+                                //      // CHECK1: 対象リストの末尾キーが先にUPされており、同時打鍵の一時無効化か、先頭キーがシフト可能スペースキーか、末尾キーが単打可能キーだった
+                                if (isTailKeyUp ||
+                                      // CHECK1: 対象リストの末尾キーが先にUPされていた(NICOLAで 「J<200>NFER<30>nfer<30>j」は200msの間が空いてもNFERが有効になって「ど」になってしまうことに注意)
                                     challengeList.Count < 3 && unprocList[0].IsShiftableSpaceKey ||
                                       // CHECK2: チャレンジリストの長さが2以下で、先頭キーがシフト可能なスペースキーだった
                                       // ⇒連続シフトでない、最初のスペースキーとの同時打鍵ならタイミングは考慮せず無条件
@@ -802,6 +805,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 // (つまり、第1打鍵と第2打鍵の間をすばやく押下したほうが同時打鍵と判定されやすくなるということ)
                 int minTimeCharKeys = (Settings.CharKeyComboMinOverlappingTime > 0 && !strk1st.IsSpaceOrFunc && !strk2nd.IsSpaceOrFunc)
                     ? Settings.CharKeyComboMinOverlappingTime + (int)strk1st.TimeSpanMs(strk2nd) : 0;
+                logger.DebugH(() => $"minTimeCharKeys={minTimeCharKeys}: CharKeyComboMinOverlappingTime={Settings.CharKeyComboMinOverlappingTime}, " +
+                                    $"!strk1st.IsSpaceOrFunc={!strk1st.IsSpaceOrFunc}, !strk2nd.IsSpaceOrFunc={!strk2nd.IsSpaceOrFunc}");
                 double ms2 = tailStk.TimeSpanMs(dtNow);
                 int minTime =
                     Settings.CombinationKeyMinOverlappingTimeMs3 > Settings.CombinationKeyMinOverlappingTimeMs && list._safeCount() >= 3 ? Settings.CombinationKeyMinOverlappingTimeMs3 :
