@@ -390,6 +390,9 @@ convert(Q<0>{.}<0>{,}<0>[.]<0>[,]<0>q) = きゅう
 # SP, E, {.}, {,}, [.], [,], e, sp
 convert(SP<0>E<166>{.}<49>{,}<142>[.]<10>[,]<133>e<0>sp) = じゅう
 
+### 15b ###
+loadTable(tables/_test/noniiruto.15b.tbl)
+convert(J<30>SP<51>X<143>x<17>sp<2>j) = やほ
 
 ### post.7 ###
 loadTable(tables/_test/noniiruto.post.7.tbl)

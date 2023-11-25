@@ -600,7 +600,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         logger.DebugH(() => $"isTailKeyUp={isTailKeyUp} upKeyIdx={upKeyIdx} overlapLen={overlapLen}");
 
                         var keyCombo = KeyCombinationPool.CurrentPool.GetEntry(challengeList, isTailKeyUp);
-                        logger.DebugH(() => $"COMBO {(keyCombo == null ? "NOT " : "")}FOUND");
+                        logger.DebugH(() => $"COMBO CANDIDATE {(keyCombo == null ? "NOT " : "")}FOUND");
 
                         if (keyCombo != null) {
                             // 同時打鍵の組合せが見つかった(有効なキーコード列を持たない部分Comboかもしれないが)
@@ -814,10 +814,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 logger.DebugH(() => $"minTimeCharKeys={minTimeCharKeys}: CharKeyComboMinOverlappingTime={Settings.CharKeyComboMinOverlappingTime}, " +
                                     $"!strk1st.IsSpaceOrFunc={!strk1st.IsSpaceOrFunc}, !strk2nd.IsSpaceOrFunc={!strk2nd.IsSpaceOrFunc}");
                 double ms2 = tailStk.TimeSpanMs(dtNow);
+                logger.DebugH(() => $"CombinationKeyMinOverlappingTimeMs={Settings.CombinationKeyMinOverlappingTimeMs}, " +
+                                    $"CombinationKeyMinOverlappingTimeMs3={Settings.CombinationKeyMinOverlappingTimeMs3}, " +
+                                    $"CombinationKeyMinOverlappingTimeForSecond={Settings.CombinationKeyMinOverlappingTimeForSecond}");
                 int minTime =
                     Settings.CombinationKeyMinOverlappingTimeMs3 > Settings.CombinationKeyMinOverlappingTimeMs && list._safeCount() >= 3 ? Settings.CombinationKeyMinOverlappingTimeMs3 :
                     //Settings.CombinationKeyMinOverlappingTimeMs2 > 0 && !isSpaceOrFunc ? Settings.CombinationKeyMinOverlappingTimeMs2 :
                     minTimeCharKeys > 0 ? minTimeCharKeys :
+                    Settings.CombinationKeyMinOverlappingTimeForSecond > Settings.CombinationKeyMinOverlappingTimeMs ? Settings.CombinationKeyMinOverlappingTimeForSecond :
                     Settings.CombinationKeyMinOverlappingTimeMs;
                 result = ms2 >= minTime ? 0 : bSecondComboCheck ? 2 : 1;
                 logger.DebugH(() => $"RESULT2={result == 0}: ms2={ms2:f2}ms >= minOverlappingTime={minTime}ms (Timing={result})");

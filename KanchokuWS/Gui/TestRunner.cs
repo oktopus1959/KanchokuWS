@@ -148,6 +148,10 @@ namespace KanchokuWS.Gui
                         Settings.CombinationKeyMinOverlappingTimeMs3 = arg._parseInt(70);
                         break;
 
+                    case "comboMinTimeForSecond":
+                        Settings.CombinationKeyMinOverlappingTimeForSecond = arg._parseInt(70);
+                        break;
+
                     case "charKeysComboMinTime":
                         Settings.CharKeyComboMinOverlappingTime = arg._parseInt(70);
                         break;

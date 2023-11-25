@@ -776,6 +776,10 @@ namespace KanchokuWS
         public static bool CombinationKeyMinTimeOnlyAfterSecond { get; set; }
         public static string CombinationKeyMinTimeOnlyAfterSecond_PropName = "combinationKeyTimeOnlyAfterSecond";
 
+        /// <summary>２文字目以降の同時打鍵の重複時間</summary>
+        public static int CombinationKeyMinOverlappingTimeForSecond { get; set; }
+        public static string CombinationKeyMinOverlappingTimeForSecond_PropName = "combinationKeyMinOverlappingTimeForSecond";
+
         /// <summary>同時打鍵チェック用のタイマーを使用する</summary>
         public static bool UseCombinationKeyTimer1 { get; set; }
         public static string UseCombinationKeyTimer1_PropName = "useCombinationKeyTimer1";
@@ -1434,7 +1438,8 @@ namespace KanchokuWS
             //CombinationKeyMinOverlappingTimeMs2 = GetString(CombinationKeyMinOverlappingTimeMs2_PropName)._parseInt(0);              // シフトキーが文字キーだった場合の重複時間
             CombinationKeyMinOverlappingTimeMs3 = GetString(CombinationKeyMinOverlappingTimeMs3_PropName)._parseInt(0)._lowLimit(CombinationKeyMinOverlappingTimeMs);   // 3キー以上同時の場合の重複時間
             ComboDisableIntervalTimeMs = GetString(ComboDisableIntervalTimeMs_PropName)._parseInt(0);               // 同時打鍵シフトキーがUPされた後、後置シフトを無効にする時間
-            CombinationKeyMinTimeOnlyAfterSecond = GetString(CombinationKeyMinTimeOnlyAfterSecond_PropName)._parseBool(false);    // ２文字目以降についてのみ同時打鍵チェックを行う
+            CombinationKeyMinTimeOnlyAfterSecond = GetString(CombinationKeyMinTimeOnlyAfterSecond_PropName)._parseBool(false);      // ２文字目以降についてのみ同時打鍵チェックを行う
+            CombinationKeyMinOverlappingTimeForSecond = GetString(CombinationKeyMinOverlappingTimeForSecond_PropName)._parseInt(0)._lowLimit(CombinationKeyMinOverlappingTimeMs); // ２文字目以降の同時打鍵の重複時間
             UseCombinationKeyTimer1 = GetString(UseCombinationKeyTimer1_PropName)._parseBool(false);                // 同時打鍵判定用タイマーを使用する
             UseCombinationKeyTimer2 = GetString(UseCombinationKeyTimer2_PropName)._parseBool(false);                // 同時打鍵判定用タイマーを使用する
             UseComboExtModKeyAsSingleHit = GetString(UseComboExtModKeyAsSingleHit_PropName)._parseBool(true);       // 同時打鍵キーとして使う「無変換」や「変換」を単打キーとしても使えるようにする
