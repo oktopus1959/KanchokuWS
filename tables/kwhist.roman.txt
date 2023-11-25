@@ -38613,6 +38613,7 @@ Stake|ステーク
 Stream|ストリーム
 Tradeoff|トレードオフ
 Tray|トレイ
+Typing|タイピング
 Downstream|ダウンストリーム
 Upstream|アップストリーム
 Usecase|ユースケース

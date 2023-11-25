@@ -717,23 +717,29 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         /// <summary>
         /// 削除対象でない連続シフトキーを comboList に移動する<br/>
+        /// 非文字キー(Spaceなど)を優先する(SP+J→や、SP+X→ほ、J+X→ぽ、のとき、J+SP+Xで「やぽ」にならないようにする
         /// ただし、comboList に入るキー(連続シフトにかかわるキー)は2キーまでとする
         /// </summary>
         private void copyToComboList(List<Stroke> list, int len)
         {
-            logger.DebugH(() => $"CALLED: list={list._toString()}, len={len}");
+            logger.DebugH(() => $"ENTER: list={list._toString()}, len={len}; comboList={comboList._toString()}");
             int movedLen = comboList.Count;
             if (movedLen < 2) {
                 foreach (var s in list.Take(len)) {
                     logger.DebugH(() => $"key={s.OrigDecoderKey}:{!s.ToBeRemoved && s.IsSuccessiveShift} :!s.ToBeRemoved={!s.ToBeRemoved} && s.IsSuccessiveShift={s.IsSuccessiveShift}");
                     if (!s.ToBeRemoved && s.IsSuccessiveShift) {
                         s.SetCombined();
-                        comboList.Add(s);
+                        if (s.IsSpaceOrFuncComboShift) {
+                            comboList.Insert(0, s);
+                        } else {
+                            comboList.Add(s);
+                        }
                         ++movedLen;
-                        if (movedLen >= 2) return;
+                        if (movedLen >= 2) break;
                     }
                 }
             }
+            logger.DebugH(() => $"LEAVE: comboList={comboList._toString()}");
         }
 
         /// <summary>同時打鍵のチャレンジ列を作成する</summary>
