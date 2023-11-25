@@ -1099,7 +1099,7 @@ namespace KanchokuWS
         /// <returns></returns>
         public static void ReadIniFileForDebug()
         {
-            logger.InfoH(() => $"CALLED");
+            logger.Info(() => $"CALLED");
 
             LogLevel = GetLogLevel();
             LoggingDecKeyInfo = GetString("loggingDecKeyInfo")._parseBool();
@@ -1141,7 +1141,7 @@ namespace KanchokuWS
         /// <returns></returns>
         public static bool ReadIniFile(bool bFirst)
         {
-            logger.InfoH(() => $"ENTER: {(bFirst ? "First" : "Second")}");
+            logger.Info(() => $"ENTER: {(bFirst ? "First" : "Second")}");
 
             if (bFirst) {
                 // 1回目はテーブルファイルによる設定をクリア（iniファイルによる設定だけを読み込む）
@@ -1171,7 +1171,7 @@ namespace KanchokuWS
             } else if (internalSetValues._isEmpty()) {
                 // 1回目と2回目の間で、テーブルファイルの読み込みが行われている
                 // internalSetValues に何も値がセットされていなければ、何もせずに返る
-                logger.InfoH("LEAVE: do nothing");
+                logger.Info("LEAVE: do nothing");
                 return false;
             }
 
@@ -1645,7 +1645,7 @@ namespace KanchokuWS
             //addDecoderSetting("debughKatakana", false);
             BushuDicLogEnabled = addDecoderSetting("bushuDicLogEnabled", false);
 
-            logger.InfoH(() => $"LEAVE");
+            logger.Info(() => $"LEAVE");
 
             return true;
         }

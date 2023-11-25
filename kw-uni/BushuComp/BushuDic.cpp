@@ -181,7 +181,7 @@ namespace {
 
     public:
         void ReadFile(const std::vector<String>& lines) {
-            LOG_INFOH(_T("ENTER: lines num={}"), lines.size());
+            LOG_INFO(_T("ENTER: lines num={}"), lines.size());
 
             // 作業領域
             std::wregex reComment(_T("^# "));
@@ -204,12 +204,12 @@ namespace {
                 if (Reporting::Logger::IsInfoEnabled()) lastLine = line;
             }
 
-            LOG_INFOH(_T("LEAVE: last line={}"), lastLine);
+            LOG_INFO(_T("LEAVE: last line={}"), lastLine);
         }
 
         // 辞書内容の保存
         void WriteFile(utils::OfstreamWriter& writer) {
-            LOG_INFOH(_T("CALLED: addedEntries.size()={}"), addedEntries.size());
+            LOG_INFO(_T("CALLED: addedEntries.size()={}"), addedEntries.size());
             for (const auto& line : addedEntries) {
                 writer.writeLine(utils::utf8_encode(line));
             }
@@ -222,7 +222,7 @@ namespace {
 
         // 自動部首合成用辞書の読み込み
         void ReadAutoDicFile(const std::vector<String>& lines) {
-            LOG_INFOH(_T("ENTER: lines num={}"), lines.size());
+            LOG_INFO(_T("ENTER: lines num={}"), lines.size());
 
             // 作業領域
             std::wregex reComment(_T("^# "));
@@ -240,12 +240,12 @@ namespace {
                 }
             }
 
-            LOG_INFOH(_T("LEAVE"));
+            LOG_INFO(_T("LEAVE"));
         }
 
         // 自動合成辞書内容の保存
         void WriteAutoDicFile(utils::OfstreamWriter& writer) {
-            LOG_INFOH(_T("CALLED: autoBushuDict.size()={}"), autoBushuDict.size());
+            LOG_INFO(_T("CALLED: autoBushuDict.size()={}"), autoBushuDict.size());
             std::set<String> set_;
             for (const auto& pair : autoBushuDict) {
                 set_.insert(std::format(_T("{}\t{}"), to_wstr(MString(1, pair.second.target) + pair.first), pair.second.count));
@@ -410,15 +410,15 @@ namespace {
             setAssocTarget(cb, tgt);
         }
 
-//#define _LOG_INFOH(...) if (SETTINGS->bushuDicLogEnabled || SETTINGS->debughBushu) logger.InfoH(std::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
-#define _LOG_INFOH(...) if (SETTINGS->bushuDicLogEnabled || SETTINGS->debughBushu) {}
+//#define _LOG_INFO(...) if (SETTINGS->bushuDicLogEnabled || SETTINGS->debughBushu) logger.InfoH(std::format(__VA_ARGS__), __func__, __FILE__, __LINE__)
+#define _LOG_INFO(...) if (SETTINGS->bushuDicLogEnabled || SETTINGS->debughBushu) {}
     public:
         // a と b を組み合わせてできる合成文字を探す。
         // prev != 0 なら、まず prev を探し、さらにその次の合成文字を探してそれを返す(やり直し用)。
         // 見つからなかった場合は 0 を返す。
         // ここでは元祖漢直窓の山辺アルゴリズムを基本として、いくつか改良を加えてある。
         mchar_t FindComposite(mchar_t ca, mchar_t cb, mchar_t prev) override {
-            _LOG_INFOH(_T("ENTER: ca={}, cb={}, prev={}"), ca, cb, prev);
+            _LOG_INFO(_T("ENTER: ca={}, cb={}, prev={}"), ca, cb, prev);
             mchar_t c = findCompSub((wchar_t)ca, (wchar_t)cb, prev);
             if (c == 0 && prev != 0) c = findCompSub((wchar_t)ca, (wchar_t)cb, 0);    // retry from the beginning
             if (c != 0) {
@@ -428,7 +428,7 @@ namespace {
                     AddAutoBushuEntry(ca, cb, c);
                 }
             }
-            _LOG_INFOH(_T("LEAVE: result={}"), c);
+            _LOG_INFO(_T("LEAVE: result={}"), c);
             return c;
         }
 
@@ -449,7 +449,7 @@ namespace {
             if (r == prev) { \
                 bFound = true; \
             } else if (bFound && skipChars.find(r) == skipChars.end()) { \
-                _LOG_INFOH(MAKE_LSTR(tag, "result={}"), to_wstr(r)); \
+                _LOG_INFO(MAKE_LSTR(tag, "result={}"), to_wstr(r)); \
                 return (mchar_t)r; \
             } \
             skipChars.insert(r); \
@@ -464,7 +464,7 @@ namespace {
             CHECK_AND_RETURN("A1", findComp(ca, cb));
             CHECK_AND_RETURN("A2", findComp(cb, ca));
 
-            _LOG_INFOH(_T("EQUIV: eqa={}, eqb={}"), eqa.empty() ? '-' : *eqa.begin(), eqb.empty() ? '-' : *eqb.begin());
+            _LOG_INFO(_T("EQUIV: eqa={}, eqb={}"), eqa.empty() ? '-' : *eqa.begin(), eqb.empty() ? '-' : *eqb.begin());
 
             // 等価文字を使って足し算
             CHECK_AND_RETURN("B1", findComp(ca, eqb));
@@ -481,7 +481,7 @@ namespace {
             decompose(ca, a1, a2);       // a := a1 + a2
             decompose(cb, b1, b2);       // b := b1 + b2
 
-            _LOG_INFOH(L"PARTS: a1={}, a2={}, b1={}, b2={}", _NC(a1), _NC(a2), _NC(b1), _NC(b2));
+            _LOG_INFO(L"PARTS: a1={}, a2={}, b1={}, b2={}", _NC(a1), _NC(a2), _NC(b1), _NC(b2));
 
             // 引き算
             if (a1 && a2) {
@@ -498,29 +498,29 @@ namespace {
                 // YAMANOBE_ADD
                 // たとえば、準 = 淮十、隼 = 隹十 のとき、シ隼 ⇒ 準 を出したい
 #define YAMANOBE_ADD_A(tag, x1, x2, y) { \
-                    _LOG_INFOH(MAKE_LSTR(tag, "1-Y-ADD: x1={}, x2={}, y={}"), _NC(x1), _NC(x2), _NC(y)); \
+                    _LOG_INFO(MAKE_LSTR(tag, "1-Y-ADD: x1={}, x2={}, y={}"), _NC(x1), _NC(x2), _NC(y)); \
                     mchar_t z; \
                     if ((z = findComp(x1, y)) != 0) { \
-                        _LOG_INFOH(MAKE_LSTR(tag, "1-Y-ADD(x1+y)={}"), (wchar_t)z); \
+                        _LOG_INFO(MAKE_LSTR(tag, "1-Y-ADD(x1+y)={}"), (wchar_t)z); \
                         CHECK_AND_RETURN(#tag "1-Y-ADD((x1+y)+x2):", findComp((wchar_t)z, x2)); /* X = X1 + X2 のとき、 (X1 + Y) + X2 を出したい */ \
                         CHECK_AND_RETURN(#tag  "1-Y-ADD(x2+(x1+y)):", findComp(x2, (wchar_t)z)); /* X = X1 + X2 のとき、 X2 + (X1 + Y) を出したい */ \
                     } \
                     if ((z = findComp(x2, y)) != 0) { \
-                        _LOG_INFOH(MAKE_LSTR(tag, "1-Y-ADD(x2+y)={}"), (wchar_t)z); \
+                        _LOG_INFO(MAKE_LSTR(tag, "1-Y-ADD(x2+y)={}"), (wchar_t)z); \
                         CHECK_AND_RETURN(#tag  "1-Y-ADD(x1+(x2+y)):", findComp(x1, (wchar_t)z)); /* X = X1 + X2 のとき、 X1 + (X2 + Y) を出したい */ \
                         CHECK_AND_RETURN(#tag  "1-Y-ADD((x2+y)+x1):", findComp((wchar_t)z, x1)); /* X = X1 + X2 のとき、 (X2 + Y) + X1 を出したい */ \
                     } \
                 }
 #define YAMANOBE_ADD_B(tag, x, y1, y2) { \
-                    _LOG_INFOH(MAKE_LSTR(tag, "2-Y-ADD: x={}, y1={}, y2={}"), _NC(x), _NC(y1), _NC(y2)); \
+                    _LOG_INFO(MAKE_LSTR(tag, "2-Y-ADD: x={}, y1={}, y2={}"), _NC(x), _NC(y1), _NC(y2)); \
                     mchar_t z; \
                     if ((z = findComp(x, y1)) != 0) { \
-                        _LOG_INFOH(MAKE_LSTR(tag, "2-Y-ADD(x+y1)={}"), (wchar_t)z); \
+                        _LOG_INFO(MAKE_LSTR(tag, "2-Y-ADD(x+y1)={}"), (wchar_t)z); \
                         CHECK_AND_RETURN(#tag  "2-Y-ADD((x+y1)+y2):", findComp((wchar_t)z, y2)); /* Y = Y1 + Y2 のとき、 (X + Y1) + Y2 を出したい */ \
                         CHECK_AND_RETURN(#tag  "2-Y-ADD(y2+(x+y1)):", findComp(y2, (wchar_t)z)); /* Y = Y1 + Y2 のとき、 Y2 + (X + Y1) を出したい */ \
                     } \
                     if ((z = findComp(x, y2)) != 0) { \
-                        _LOG_INFOH(MAKE_LSTR(tag, "2-Y-ADD(x+y2)={}"), (wchar_t)z); \
+                        _LOG_INFO(MAKE_LSTR(tag, "2-Y-ADD(x+y2)={}"), (wchar_t)z); \
                         CHECK_AND_RETURN(#tag  "2-Y-ADD(y1+(x+y2)):", findComp(y1, (wchar_t)z)); /* Y = Y1 + Y2 のとき、 Y1 + (X + Y2) を出したい */ \
                         CHECK_AND_RETURN(#tag  "2-Y-ADD((x+y2)+y1):", findComp((wchar_t)z, y1)); /* Y = Y1 + Y2 のとき、 (X + Y2) + Y1 を出したい */ \
                     } \
@@ -543,7 +543,7 @@ namespace {
                 // YAMANOBE_SUBTRACT
                 // たとえば、準 = 淮十、隼 = 隹十 のとき、シ準 ⇒ 隼 を出したい
 #define YAMANOBE_SUBTRACT(tag, x, x1, x2, y, y1, y2, z1, z2) \
-                _LOG_INFOH(L #tag "-Y-SUB: x={}, x1={}, x2={}, y={}, y1={}, y2={}, z1={}, z2={}", _NC(x), _NC(x1), _NC(x2), _NC(y), _NC(y1), _NC(y2), _NC(z1), _NC(z2)); \
+                _LOG_INFO(L #tag "-Y-SUB: x={}, x1={}, x2={}, y={}, y1={}, y2={}, z1={}, z2={}", _NC(x), _NC(x1), _NC(x2), _NC(y), _NC(y1), _NC(y2), _NC(z1), _NC(z2)); \
                 if ((z1 != 0 && x2 == z1) || (z2 != 0 && x2 == z2)) CHECK_AND_RETURN(#tag  "-Y-SUB(x1,y):", findComp(x1, y));  /* A := (X1 + X2) + Y && X2 == B ならば X1 + Y (= A - X2) を出したい */ \
                 if ((z1 != 0 && x1 == z1) || (z2 != 0 && x1 == z2)) CHECK_AND_RETURN(#tag  "-Y-SUB(x2,y):", findComp(x2, y));  /* A := (X1 + X2) + Y && X1 == B ならば X2 + Y (= A - X1) を出したい */ \
                 if ((z1 != 0 && y2 == z1) || (z2 != 0 && y2 == z2)) CHECK_AND_RETURN(#tag  "-Y-SUB(x,y1):", findComp(x, y1));  /* A := X + (Y1 + Y2) && Y2 == B ならば X + Y1 (= A - Y2) を出したい */ \
@@ -667,7 +667,7 @@ namespace {
             if (!eqz.empty()) CHECK_AND_RETURN(#tag  "(x,eqz)", findComp(x, eqz))
 
 #define ADD_BY_COMPOSITE2(tag, cz, z, x) \
-            _LOG_INFOH(MAKE_LSTR(tag, ": cz={}, z={}, x={}"), _NC(cz), _NC(z), _NC(x)); \
+            _LOG_INFO(MAKE_LSTR(tag, ": cz={}, z={}, x={}"), _NC(cz), _NC(z), _NC(x)); \
             if (cz) CHECK_AND_RETURN(#tag  "(cz,x)", findComp(cz, x)); \
             if (z && z != cz) CHECK_AND_RETURN(#tag  "(z,x)", findComp(z, x)); \
             if (cz) CHECK_AND_RETURN(#tag  "(x,cz)", findComp(x, cz)); \
@@ -735,7 +735,7 @@ namespace {
             return 0;
         }
 #undef _NC
-#undef _LOG_INFOH
+#undef _LOG_INFO
 #undef CHECK_AND_RETURN
 #undef YAMANOBE_ADD_A
 #undef YAMANOBE_ADD_B
@@ -1007,7 +1007,7 @@ namespace {
     public:
         //後置部首合成定義を書き出す
         void ExportPostfixBushuCompDefs(utils::OfstreamWriter& writer, StringRef postfix) override {
-            LOG_INFOH(_T("ENTER: writer.count={}"), writer.count());
+            LOG_INFO(_T("ENTER: writer.count={}"), writer.count());
 
             //// ストローク可能文字
             //std::set<mchar_t> strokableChars = StrokeTableNode::GatherStrokeChars();
@@ -1150,7 +1150,7 @@ namespace {
             }
 
             // 逆順
-            LOG_INFOH(_T("Reverse: writer.count={}, revMap.size={}"), writer.count(), revMap.size());
+            LOG_INFO(_T("Reverse: writer.count={}, revMap.size={}"), writer.count(), revMap.size());
             for (const auto& pair : revMap) {
                 if (doneSet.find(pair.first) == doneSet.end()) {
                     writer.writeLine(utils::utf8_encode(
@@ -1162,7 +1162,7 @@ namespace {
                 }
             }
 
-            LOG_INFOH(_T("LEAVE: writer.count={}"), writer.count());
+            LOG_INFO(_T("LEAVE: writer.count={}"), writer.count());
         }
 
     private:
@@ -1194,11 +1194,11 @@ namespace {
     DEFINE_LOCAL_LOGGER(BushuDic);
 
     bool readBushuFile(StringRef path, BushuDicImpl* pDic) {
-        LOG_INFOH(_T("open bushu file: {}"), path);
+        LOG_INFO(_T("open bushu file: {}"), path);
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             pDic->ReadFile(reader.getAllLines());
-            LOG_INFOH(_T("close bushu file: {}"), path);
+            LOG_INFO(_T("close bushu file: {}"), path);
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
             LOG_WARN(_T("Can't read bushu file: {}"), path);
@@ -1209,7 +1209,7 @@ namespace {
     }
 
     bool writeBushuFile(StringRef path, BushuDicImpl* pDic) {
-        LOG_INFOH(_T("write bushu file: {}, dirty={}"), path, pDic && pDic->IsDirty());
+        LOG_INFO(_T("write bushu file: {}, dirty={}"), path, pDic && pDic->IsDirty());
         if (!path.empty() && pDic) {
             if (pDic->IsDirty()) {
                 if (utils::copyFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
@@ -1225,17 +1225,17 @@ namespace {
     }
 
     bool readAutoBushuFile(StringRef path, BushuDicImpl* pDic) {
-        LOG_INFOH(_T("open auto bushu file: {}"), path);
+        LOG_INFO(_T("open auto bushu file: {}"), path);
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             pDic->ReadAutoDicFile(reader.getAllLines());
-            LOG_INFOH(_T("close bushu file: {}"), path);
+            LOG_INFO(_T("close bushu file: {}"), path);
         }
         return true;
     }
 
     bool writeAutoBushuFile(StringRef path, BushuDicImpl* pDic) {
-        LOG_INFOH(_T("write auto bushu file: {}, dirty={}"), path, pDic && pDic->IsAutoDirty());
+        LOG_INFO(_T("write auto bushu file: {}, dirty={}"), path, pDic && pDic->IsAutoDirty());
         if (!path.empty() && pDic) {
             if (pDic->IsAutoDirty()) {
                 if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
@@ -1254,10 +1254,10 @@ namespace {
 // 部首合成辞書を作成する(ファイルが指定されていなくても作成する)
 // エラーがあったら例外を投げる
 int BushuDic::CreateBushuDic(StringRef bushuFile, StringRef autoBushuFile) {
-    LOG_INFOH(_T("ENTER"));
+    LOG_INFO(_T("ENTER"));
 
     if (Singleton != 0) {
-        LOG_INFOH(_T("already created: bushu file: {}"), bushuFile);
+        LOG_INFO(_T("already created: bushu file: {}"), bushuFile);
         return 0;
     }
 
@@ -1270,13 +1270,13 @@ int BushuDic::CreateBushuDic(StringRef bushuFile, StringRef autoBushuFile) {
         result = -1;
     }
 
-    LOG_INFOH(_T("LEAVE: result={}"), result);
+    LOG_INFO(_T("LEAVE: result={}"), result);
     return result;
 }
 
 // 部首合成辞書を読み込む
 void BushuDic::ReadBushuDic(StringRef path) {
-    LOG_INFOH(_T("CALLED: path={}"), path);
+    LOG_INFO(_T("CALLED: path={}"), path);
     if (!path.empty() && Singleton) {
         readBushuFile(path, (BushuDicImpl*)Singleton.get());
     }
@@ -1284,13 +1284,13 @@ void BushuDic::ReadBushuDic(StringRef path) {
 
 // 部首合成辞書ファイルに書き込む
 void BushuDic::WriteBushuDic(StringRef path) {
-    LOG_INFOH(_T("CALLED: path={}"), path);
+    LOG_INFO(_T("CALLED: path={}"), path);
     writeBushuFile(path, (BushuDicImpl*)Singleton.get());
 }
 
 // 自動部首合成辞書を読み込む
 void BushuDic::ReadAutoBushuDic(StringRef path) {
-    LOG_INFOH(_T("CALLED: path={}"), path);
+    LOG_INFO(_T("CALLED: path={}"), path);
     if (!path.empty() && Singleton) {
         readAutoBushuFile(path, (BushuDicImpl*)Singleton.get());
     }
@@ -1298,7 +1298,7 @@ void BushuDic::ReadAutoBushuDic(StringRef path) {
 
 // 自動部首合成辞書ファイルに書き込む
 void BushuDic::WriteAutoBushuDic(StringRef path) {
-    LOG_INFOH(_T("CALLED: path={}"), path);
+    LOG_INFO(_T("CALLED: path={}"), path);
     writeAutoBushuFile(path, (BushuDicImpl*)Singleton.get());
 }
 

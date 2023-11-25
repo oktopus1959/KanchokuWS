@@ -236,7 +236,7 @@ namespace {
     public:
         // コンストラクタ
         HankakuKatakanaOneShotState(HankakuKatakanaOneShotNode* pN) {
-            LOG_INFOH(_T("CALLED: ctor"));
+            LOG_INFO(_T("CALLED: ctor"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -278,17 +278,17 @@ DEFINE_CLASS_LOGGER(HankakuKatakanaOneShotNode);
 
 // コンストラクタ
 HankakuKatakanaOneShotNode::HankakuKatakanaOneShotNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
 HankakuKatakanaOneShotNode::~HankakuKatakanaOneShotNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
 State* HankakuKatakanaOneShotNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new HankakuKatakanaOneShotState(this);
 }
 

@@ -55,7 +55,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void AddMajorComboKey(int keyCode)
         {
-            logger.InfoH(() => $"CALLED: ADD: {keyCode}");
+            logger.Info(() => $"CALLED: ADD: {keyCode}");
             majorComboKeys.Add(keyCode);
         }
 

@@ -29,7 +29,7 @@ namespace {
     public:
         // コンストラクタ
         MyCharState(MyCharNode* pN) {
-            LOG_INFOH(_T("CALLED"));
+            LOG_INFO(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -54,7 +54,7 @@ namespace {
 
     public:
         PrevCharState(PrevCharNode* pN) {
-            LOG_INFOH(_T("CALLED"));
+            LOG_INFO(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -93,7 +93,7 @@ MyCharNode::~MyCharNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* MyCharNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new MyCharState(this);
 }
 
@@ -113,7 +113,7 @@ PrevCharNode::~PrevCharNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* PrevCharNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new PrevCharState(this);
 }
 

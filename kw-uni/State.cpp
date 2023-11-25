@@ -20,10 +20,10 @@
 #if 0 || defined(_DEBUG)
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_INFO LOG_INFOH
-#define LOG_DEBUG LOG_INFOH
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define LOG_DEBUGH LOG_INFO
+#define LOG_DEBUG LOG_INFO
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 DEFINE_CLASS_LOGGER(State);
@@ -65,7 +65,7 @@ void State::Reactivate() {
 
 // DECKEY 処理の前半部
 void State::HandleDeckeyChain(int deckey) {
-    LOG_INFO(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
+    LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
         Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
     // 履歴常駐状態の事前チェック(デフォルトでは何もしない)
     DoHistoryResidentPreCheck();
@@ -86,7 +86,7 @@ void State::HandleDeckeyChain(int deckey) {
         dispatchDeckey(deckey);
     }
 
-    LOG_INFO(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
+    LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
 }
 
 // DECKEY処理の後半部の処理(非仮想関数)。
@@ -151,17 +151,17 @@ MString State::TranslateString(const MString& outStr) {
 
 // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
 void State::DoOutStringProcChain() {
-    LOG_INFO(_T("ENTER: {}: outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
+    LOG_DEBUGH(_T("ENTER: {}: outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
     if (pNext) pNext->DoOutStringProcChain();
     if (!STATE_COMMON->IsOutStringProcDone()) DoOutStringProc();
-    LOG_INFO(_T("LEAVE: {}: outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
+    LOG_DEBUGH(_T("LEAVE: {}: outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
 }
 
 // 最終的な出力履歴が整ったところで呼び出される処理
 void State::DoOutStringProc() {
-    LOG_INFO(_T("ENTER: {}"), Name);
+    LOG_DEBUGH(_T("ENTER: {}"), Name);
     // 何もしない
-    LOG_INFO(_T("LEAVE: {}"), Name);
+    LOG_DEBUGH(_T("LEAVE: {}"), Name);
 }
 
 // ノードから生成した状態を後接させ、その状態を常駐させる
@@ -214,7 +214,7 @@ bool State::IsUnnecessary() {
 
 // この状態以降を不要としてマークする
 void State::MarkUnnecessaryFromThis() {
-    LOG_INFO(_T("CALLED: {}"), Name);
+    LOG_DEBUGH(_T("CALLED: {}"), Name);
     bUnnecessary = true;
     if (pNext) pNext->MarkUnnecessaryFromThis();
 }
@@ -499,51 +499,51 @@ void State::handleSpaceKey() { _LOG_DEBUGH(_T("CALLED")); handleStrokeKeys(STROK
 //-----------------------------------------------------------------------
 // 特殊キーデフォルトハンドラ
 void State::handleSpecialKeys(int /*deckey*/) {
-    LOG_INFOH(_T("THROUGH"));
+    LOG_INFO(_T("THROUGH"));
     setThroughDeckeyFlag();
 }
 
 // FullEscape デフォルトハンドラ
-void State::handleFullEscape() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(FULL_ESCAPE_DECKEY); }
+void State::handleFullEscape() { LOG_INFO(_T("CALLED")); handleSpecialKeys(FULL_ESCAPE_DECKEY); }
 
 // Unblock デフォルトハンドラ
-void State::handleUnblock() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(UNBLOCK_DECKEY); }
+void State::handleUnblock() { LOG_INFO(_T("CALLED")); handleSpecialKeys(UNBLOCK_DECKEY); }
 
 // handleNextCandTrigger デフォルトハンドラ
-void State::handleNextCandTrigger() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(HISTORY_NEXT_SEARCH_DECKEY); }
+void State::handleNextCandTrigger() { LOG_INFO(_T("CALLED")); handleSpecialKeys(HISTORY_NEXT_SEARCH_DECKEY); }
 
 // handlePrevCandTrigger デフォルトハンドラ
-void State::handlePrevCandTrigger() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(HISTORY_PREV_SEARCH_DECKEY); }
+void State::handlePrevCandTrigger() { LOG_INFO(_T("CALLED")); handleSpecialKeys(HISTORY_PREV_SEARCH_DECKEY); }
 
 // handleZenkakuConversion デフォルトハンドラ
-void State::handleZenkakuConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(TOGGLE_ZENKAKU_CONVERSION_DECKEY); }
+void State::handleZenkakuConversion() { LOG_INFO(_T("CALLED")); handleSpecialKeys(TOGGLE_ZENKAKU_CONVERSION_DECKEY); }
 
 // handleKatakanaConversion デフォルトハンドラ
-void State::handleKatakanaConversion() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(TOGGLE_KATAKANA_CONVERSION_DECKEY); }
+void State::handleKatakanaConversion() { LOG_INFO(_T("CALLED")); handleSpecialKeys(TOGGLE_KATAKANA_CONVERSION_DECKEY); }
 
 // handleEisuMode デフォルトハンドラ
-void State::handleEisuMode() { LOG_INFOH(_T("CALLED")); handleSpecialKeys(EISU_MODE_TOGGLE_DECKEY); }
+void State::handleEisuMode() { LOG_INFO(_T("CALLED")); handleSpecialKeys(EISU_MODE_TOGGLE_DECKEY); }
 
 // handleEisuCancel デフォルトハンドラ
 void State::handleEisuCancel() {
-    LOG_INFOH(_T("DO NOTHING"));
+    LOG_INFO(_T("DO NOTHING"));
     if (pNext) {
         pNext->handleEisuCancel();
     }
 }
 
 // handleEisuDecapitalize デフォルトハンドラ
-void State::handleEisuDecapitalize() { LOG_INFOH(_T("DO NOTHING")); }
+void State::handleEisuDecapitalize() { LOG_INFO(_T("DO NOTHING")); }
 
 // handleClearStroke デフォルトハンドラ
-void State::handleClearStroke() { LOG_INFOH(_T("DO NOTHING")); }
+void State::handleClearStroke() { LOG_INFO(_T("DO NOTHING")); }
 
 // handleCommitState デフォルトハンドラ
-void State::handleCommitState() { LOG_INFOH(_T("DO NOTHING")); }
+void State::handleCommitState() { LOG_INFO(_T("DO NOTHING")); }
 
 // handleToggleBlocker デフォルトハンドラ
 void State::handleToggleBlocker() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     // ブロッカーをセット/リセットする
     OUTPUT_STACK->toggleLastBlocker();
 }
@@ -551,12 +551,12 @@ void State::handleToggleBlocker() {
 // handleUndefinedKey デフォルトハンドラ
 void State::handleUndefinedDeckey(int ) {
     // 何もしない
-    LOG_INFOH(_T("DO NOTHING"));
+    LOG_INFO(_T("DO NOTHING"));
 }
 
 //-----------------------------------------------------------------------
 // DecoderOff デフォルトハンドラ
-void State::handleDecoderOff() { LOG_INFOH(_T("CALLED")); }
+void State::handleDecoderOff() { LOG_INFO(_T("CALLED")); }
 
 //-----------------------------------------------------------------------
 // 機能キー前処理ハンドラ
@@ -570,11 +570,11 @@ _DEBUG_SENT(hk)
 
 //-----------------------------------------------------------------------
 // Ctrlキー デフォルトハンドラ
-void State::handleCtrlKeys(int /*deckey*/) { LOG_INFOH(_T("CALLED")); setThroughDeckeyFlag(); }
+void State::handleCtrlKeys(int /*deckey*/) { LOG_INFO(_T("CALLED")); setThroughDeckeyFlag(); }
 
 //-----------------------------------------------------------------------
 // Shiftキー デフォルトハンドラ
-void State::handleShiftKeys(int /*deckey*/) { LOG_INFOH(_T("DEFAULT")); STATE_COMMON->OutputDeckeyChar(); }
+void State::handleShiftKeys(int /*deckey*/) { LOG_INFO(_T("DEFAULT")); STATE_COMMON->OutputDeckeyChar(); }
 
 // < ハンドラ
 void State::handleLeftTriangle() { handleShiftKeys(LEFT_TRIANGLE_DECKEY); }
@@ -586,7 +586,15 @@ void State::handleRightTriangle() { handleShiftKeys(RIGHT_TRIANGLE_DECKEY); }
 void State::handleQuestion() { handleShiftKeys(QUESTION_DECKEY); }
 
 // left/right maze shift keys
-void State::handleLeftRightMazeShift(int deckey) { LOG_INFO(_T("CALLED: deckey={:x}H({})"), deckey, deckey); }
+void State::handleLeftRightMazeShift(int
+#if defined(_DEBUG)
+    deckey
+#endif
+) {
+#if defined(_DEBUG)
+    LOG_DEBUGH(_T("CALLED: deckey={:x}H({})"), deckey, deckey);
+#endif
+}
 
 //-----------------------------------------------------------------------
 //// Shift+Space ハンドラ

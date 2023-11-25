@@ -26,9 +26,9 @@
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_INFO LOG_INFOH
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 // 縦列鍵盤または横列鍵盤の数
@@ -257,7 +257,7 @@ namespace {
         // コンストラクタ
         HistoryStateBase(const Node* pN)
             : pNode_(pN), BaseName(logger.ClassNameT()) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
         }
 
         ~HistoryStateBase() { };
@@ -439,7 +439,7 @@ namespace {
     public:
         // コンストラクタ
         HistoryState(HistoryNode* pN) : HistoryStateBase(pN) {
-            LOG_INFOH(_T("CALLED"));
+            LOG_INFO(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -745,7 +745,7 @@ namespace {
     public:
         // コンストラクタ
         HistoryFewCharsState(HistoryFewCharsNode* pN) : HistoryState(pN) {
-            LOG_INFOH(_T("CALLED"));
+            LOG_INFO(_T("CALLED"));
             Name = logger.ClassNameT();
         }
 
@@ -780,7 +780,7 @@ namespace {
     public:
         // コンストラクタ
         HistoryOneCharState(HistoryOneCharNode* pN) : HistoryState(pN) {
-            LOG_INFOH(_T("CALLED"));
+            LOG_INFO(_T("CALLED"));
             Name = logger.ClassNameT();
         }
 
@@ -845,7 +845,7 @@ namespace {
     public:
         // コンストラクタ
         HistoryResidentStateImpl(HistoryResidentNode* pN) : HistoryStateBase(pN) {
-            LOG_INFOH(_T("CALLED"));
+            LOG_INFO(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -1035,7 +1035,7 @@ namespace {
 
         // 前回の履歴検索との比較、新しい履歴検索の開始 (bManual=trueなら自動モードでなくても履歴検索を実行する)
         void historySearch(bool bManual) {
-            LOG_INFO(_T("ENTER: auto={}, manual={}, maybeEditedBySubState={}, histInSearch={}"), \
+            LOG_DEBUGH(_T("ENTER: auto={}, manual={}, maybeEditedBySubState={}, histInSearch={}"), \
                 SETTINGS->autoHistSearchEnabled, bManual, maybeEditedBySubState, HIST_CAND->IsHistInSearch());
             if (!SETTINGS->autoHistSearchEnabled && !bManual) {
                 // 履歴検索状態ではないので、前回キーをクリアしておく。
@@ -1050,7 +1050,7 @@ namespace {
                 // 前回の履歴選択の出力と現在の出力文字列(改行以降)の末尾を比較する。
                 // たとえば前回「中」で履歴検索し「中納言家持」が履歴出力されており、現在の出力スタックが「・・・中納言家持」なら true が返る
                 bool bSameOut = !bManual && isLastHistOutSameAsCurrentOut();
-                LOG_INFO(_T("bSameOut={}, maybeEditedBySubState={}, histInSearch={}"), \
+                LOG_DEBUGH(_T("bSameOut={}, maybeEditedBySubState={}, histInSearch={}"), \
                     bSameOut, maybeEditedBySubState, HIST_CAND->IsHistInSearch());
                 if (bSameOut && !maybeEditedBySubState && HIST_CAND->IsHistInSearch()) {
                     // 前回履歴出力が取得できた、つまり出力文字列の末尾が前回の履歴選択と同じ出力だったら、出力文字列をキーとした履歴検索はやらない
@@ -1143,37 +1143,37 @@ namespace {
             }
             maybeEditedBySubState = false;
 
-            LOG_INFO(_T("LEAVE"));
+            LOG_DEBUGH(_T("LEAVE"));
         }
 
     public:
         // 最終的な出力履歴が整ったところで呼び出される処理
         void DoOutStringProc() {
-            LOG_INFO(_T("\nENTER: {}: {}"), Name, OUTPUT_STACK->OutputStackBackStrForDebug(10));
-            LOG_INFO(_T("PATH 2: bCandSelectable={}"), bCandSelectable);
+            LOG_DEBUGH(_T("\nENTER: {}: {}"), Name, OUTPUT_STACK->OutputStackBackStrForDebug(10));
+            LOG_DEBUGH(_T("PATH 2: bCandSelectable={}"), bCandSelectable);
 
             if (bCandSelectable && wasCandSelectCalled()) {
-                LOG_INFO(_T("PATH 3: by SelectionKey"));
+                LOG_DEBUGH(_T("PATH 3: by SelectionKey"));
                 // 履歴選択キーによる処理だった場合
                 if (isEnterDecKey()) {
-                    LOG_INFO(_T("PATH 4-A: handleEnter"));
+                    LOG_DEBUGH(_T("PATH 4-A: handleEnter"));
                     bCandSelectable = false;
                     OUTPUT_STACK->pushNewLine();
                 } else {
-                    LOG_INFO(_T("PATH 4-B: handleArrow"));
+                    LOG_DEBUGH(_T("PATH 4-B: handleArrow"));
                     // この処理は、GUI側で候補の背景色を変更するのと矢印キーをホットキーにするために必要
-                    LOG_INFO(_T("Set selectedPos={}"), HIST_CAND->GetSelectPos());
+                    LOG_DEBUGH(_T("Set selectedPos={}"), HIST_CAND->GetSelectPos());
                     STATE_COMMON->SetWaitingCandSelect(HIST_CAND->GetSelectPos());
                 }
             } else {
-                LOG_INFO(_T("PATH 5: by Other Input"));
+                LOG_DEBUGH(_T("PATH 5: by Other Input"));
                 // その他の文字出力だった場合
                 HIST_CAND->DelayedPushFrontSelectedWord();
                 bCandSelectable = false;
 
-                LOG_INFO(_T("PATH 6: bCandSelectable={}, bNoHistTemporary={}"), bCandSelectable, bNoHistTemporary);
+                LOG_DEBUGH(_T("PATH 6: bCandSelectable={}, bNoHistTemporary={}"), bCandSelectable, bNoHistTemporary);
                 if (OUTPUT_STACK->isLastOutputStackCharBlocker()) {
-                    LOG_INFO(_T("PATH 7: LastOutputStackChar is Blocker"));
+                    LOG_DEBUGH(_T("PATH 7: LastOutputStackChar is Blocker"));
                     HISTORY_DIC->ClearNgramSet();
                 }
 
@@ -1183,10 +1183,10 @@ namespace {
                     MString prevKey = HISTORY_RESIDENT_NODE->GetPrevKey();
                     MString outStr = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(prevKey.size());
                     bNoHistTemporary = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(prevKey.size()) == prevKey;
-                    LOG_INFO(_T("PATH 8: bNoHistTemporary={}: prevKey={}, outStr={}"), bNoHistTemporary, to_wstr(prevKey), to_wstr(outStr));
+                    LOG_DEBUGH(_T("PATH 8: bNoHistTemporary={}: prevKey={}, outStr={}"), bNoHistTemporary, to_wstr(prevKey), to_wstr(outStr));
                 }
 
-                LOG_INFO(_T("PATH 9: bNoHistTemporary={}"), bNoHistTemporary);
+                LOG_DEBUGH(_T("PATH 9: bNoHistTemporary={}"), bNoHistTemporary);
                 if (!bNoHistTemporary) {
                     if (isEditingFuncDecKey()) {
                         // 編集用キーが呼び出されたので、全ブロッカーを置く
@@ -1202,12 +1202,12 @@ namespace {
             bNoHistTemporary = false;
             bManualTemporary = false;
 
-            LOG_INFO(_T("LEAVE: {}\n"), Name);
+            LOG_DEBUGH(_T("LEAVE: {}\n"), Name);
         }
 
         // (Ctrl or Shift)+Space の処理 -- 履歴検索の開始、次の候補を返す
         void handleNextOrPrevCandTrigger(bool bNext) {
-            LOG_INFO(_T("\nCALLED: {}: bCandSelectable={}, selectPos={}, bNext={}"), Name, bCandSelectable, HIST_CAND->GetSelectPos(), bNext);
+            LOG_DEBUGH(_T("\nCALLED: {}: bCandSelectable={}, selectPos={}, bNext={}"), Name, bCandSelectable, HIST_CAND->GetSelectPos(), bNext);
             // これにより、前回のEnterによる改行点挿入やFullEscapeによるブロッカーフラグが削除される⇒(2021/12/18)workしなくなっていたので、いったん削除
             //OUTPUT_STACK->clearFlagAndPopNewLine();
             // 今回、履歴選択用ホットキーだったことを保存
@@ -1221,13 +1221,13 @@ namespace {
                 historySearch(true);
             }
             if (bCandSelectable) {
-                LOG_INFO(_T("CandSelectable: bNext={}"), bNext);
+                LOG_DEBUGH(_T("CandSelectable: bNext={}"), bNext);
                 if (bNext)
                     getNextCandidate(bShowHistCands);
                 else
                     getPrevCandidate(bShowHistCands);
             } else {
-                LOG_INFO(_T("NOP"));
+                LOG_DEBUGH(_T("NOP"));
             }
         }
 
@@ -1485,7 +1485,7 @@ DEFINE_CLASS_LOGGER(HistoryNode);
 
 // コンストラクタ
 HistoryNode::HistoryNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
@@ -1494,7 +1494,7 @@ HistoryNode::~HistoryNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new HistoryState(this);
 }
 
@@ -1507,12 +1507,12 @@ DEFINE_CLASS_LOGGER(HistoryNodeBuilder);
 Node* HistoryNodeBuilder::CreateNode() {
     //// 履歴入力辞書ファイル名
     //auto histFile = SETTINGS->historyFile;
-    //LOG_INFO(_T("histFile={}"), histFile);
+    //LOG_DEBUGH(_T("histFile={}"), histFile);
     ////if (histFile.empty()) {
     ////    ERROR_HANDLER->Warn(_T("「history=(ファイル名)」の設定がまちがっているようです"));
     ////}
     //// 履歴入力辞書の読み込み(ファイル名の指定がなくても辞書自体は構築する)
-    //LOG_INFO(_T("CALLED: histFile={}"), histFile);
+    //LOG_DEBUGH(_T("CALLED: histFile={}"), histFile);
     //HistoryDic::CreateHistoryDic(histFile);
 
     HISTORY_NODE = new HistoryNode();
@@ -1525,7 +1525,7 @@ DEFINE_CLASS_LOGGER(HistoryFewCharsNode);
 
 // コンストラクタ
 HistoryFewCharsNode::HistoryFewCharsNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
@@ -1534,7 +1534,7 @@ HistoryFewCharsNode::~HistoryFewCharsNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryFewCharsNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new HistoryFewCharsState(this);
 }
 
@@ -1552,7 +1552,7 @@ DEFINE_CLASS_LOGGER(HistoryOneCharNode);
 
 // コンストラクタ
 HistoryOneCharNode::HistoryOneCharNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
@@ -1561,7 +1561,7 @@ HistoryOneCharNode::~HistoryOneCharNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryOneCharNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new HistoryOneCharState(this);
 }
 
@@ -1579,7 +1579,7 @@ DEFINE_CLASS_LOGGER(HistoryResidentNode);
 
 // コンストラクタ
 HistoryResidentNode::HistoryResidentNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
@@ -1588,7 +1588,7 @@ HistoryResidentNode::~HistoryResidentNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryResidentNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     HISTORY_RESIDENT_STATE = new HistoryResidentStateImpl(this);
     return HISTORY_RESIDENT_STATE;
 }
@@ -1597,9 +1597,9 @@ State* HistoryResidentNode::CreateState() {
 void HistoryResidentNode::CreateSingleton() {
     // 履歴入力辞書ファイル名
     auto histFile = SETTINGS->historyFile;
-    LOG_INFO(_T("histFile={}"), histFile);
+    LOG_DEBUGH(_T("histFile={}"), histFile);
     // 履歴入力辞書の読み込み(ファイル名の指定がなくても辞書自体は構築する)
-    LOG_INFO(_T("CALLED: histFile={}"), histFile);
+    LOG_DEBUGH(_T("CALLED: histFile={}"), histFile);
     HistoryDic::CreateHistoryDic(histFile);
 
     HIST_CAND.reset(new HistCandidates());

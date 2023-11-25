@@ -20,10 +20,10 @@
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_INFO LOG_INFOH
-#define LOG_DEBUG LOG_INFOH
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define LOG_DEBUGH LOG_INFO
+#define LOG_DEBUG LOG_INFO
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 namespace VkbTableMaker {
@@ -80,7 +80,7 @@ namespace VkbTableMaker {
 
     // 指定の文字配列をストロークキー配列に変換
     void MakeStrokeKeysTable(wchar_t* table, StringRef targetChars) {
-        LOG_INFO(_T("CALLED"));
+        LOG_DEBUGH(_T("CALLED"));
         if (ROOT_STROKE_NODE) {
             std::map<wchar_t, size_t> indexMap;
 
@@ -118,13 +118,13 @@ namespace VkbTableMaker {
 
     // ひらがな50音図配列を作成する (あかさたなはまやらわ、ぁがざだばぱゃ)
     void MakeVkbHiraganaTable(wchar_t* table) {
-        LOG_INFO(_T("CALLED"));
+        LOG_DEBUGH(_T("CALLED"));
         makeKanaTable(table, hiraganaArray1, hiraganaArray2);
     }
 
     // カタカナ50音図配列を作成する (アカサタナハマヤラワ、ァガザダバパャヮ)
     void MakeVkbKatakanaTable(wchar_t* table) {
-        LOG_INFO(_T("CALLED"));
+        LOG_DEBUGH(_T("CALLED"));
         makeKanaTable(table, katakanaArray1, katakanaArray2);
     }
 
@@ -181,7 +181,7 @@ namespace VkbTableMaker {
     // 指定の文字配列を第1ストロークの位置に従って並べかえる
     // table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
     void ReorderByFirstStrokePosition(wchar_t* table, StringRef targetChars, int tableId) {
-        LOG_INFO(_T("CALLED: targetChars={}"), targetChars);
+        LOG_DEBUGH(_T("CALLED: targetChars={}"), targetChars);
         if (ROOT_STROKE_NODE) {
             std::set<wchar_t> charSet(targetChars.begin(), targetChars.end());
             for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
@@ -199,7 +199,7 @@ namespace VkbTableMaker {
     // 指定の文字配列をストロークの位置に従って並べかえる
     // node: ストロークテーブルノード, table: 出力先のテーブル, targetChars: 並べ替えたい文字配列
     void ReorderByStrokePosition(StrokeTableNode* node, wchar_t* table, StringRef targetChars, int tableId) {
-        LOG_INFO(_T("CALLED: targetChars={}"), targetChars);
+        LOG_DEBUGH(_T("CALLED: targetChars={}"), targetChars);
         std::set<wchar_t> charSet(targetChars.begin(), targetChars.end());
         for (size_t i = 0; i < OUT_TABLE_SIZE; ++i) {
             table[i] = 0;
@@ -210,7 +210,7 @@ namespace VkbTableMaker {
     //----------------------------------------------------------------------------
     // 外字(左→左または右→右でどちらかに数字キーを含むもの)を集めたストローク表を作成する
     void MakeExtraCharsStrokePositionTable(StrokeTableNode* rootStrokeNode, wchar_t* faces) {
-        LOG_INFO(_T("CALLED"));
+        LOG_DEBUGH(_T("CALLED"));
         if (rootStrokeNode) {
             size_t order1[6] = { 12, 22, 13, 23, 11, 21 };
             for (size_t i = 0; i < 10; ++i) {
@@ -299,50 +299,50 @@ namespace VkbTableMaker {
 
     // 主テーブルに対して指定されたシフト面の単打ストローク表を作成する
     void MakeShiftPlaneKeyCharsStrokePositionTable1(wchar_t* faces, size_t shiftPlane) {
-        LOG_INFO(_T("CALLED: shiftPlane={}"), shiftPlane);
+        LOG_DEBUGH(_T("CALLED: shiftPlane={}"), shiftPlane);
         makeKeyCharsStrokePositionTable1(faces, shiftPlane);
     }
 
     // 副テーブルに対して指定されたシフト面の単打ストローク表を作成する
     void MakeShiftPlaneKeyCharsStrokePositionTable2(wchar_t* faces, size_t shiftPlane) {
-        LOG_INFO(_T("CALLED: shiftPlane={}"), shiftPlane);
+        LOG_DEBUGH(_T("CALLED: shiftPlane={}"), shiftPlane);
         makeKeyCharsStrokePositionTable2(faces, shiftPlane);
     }
 
     // 第3テーブルに対して指定されたシフト面の単打ストローク表を作成する
     void MakeShiftPlaneKeyCharsStrokePositionTable3(wchar_t* faces, size_t shiftPlane) {
-        LOG_INFO(_T("CALLED: shiftPlane={}"), shiftPlane);
+        LOG_DEBUGH(_T("CALLED: shiftPlane={}"), shiftPlane);
         makeKeyCharsStrokePositionTable3(faces, shiftPlane);
     }
 
     // 通常面の単打ストローク表を作成する
     void MakeKeyCharsStrokePositionTable(wchar_t* faces) {
-        LOG_INFO(_T("CALLED"));
+        LOG_DEBUGH(_T("CALLED"));
         makeKeyCharsStrokePositionTable1(faces, 0);
     }
 
     // 第2テーブルの通常面の単打ストローク表を作成する
     void MakeKeyCharsStrokePositionTable2(wchar_t* faces) {
-        LOG_INFO(_T("CALLED"));
+        LOG_DEBUGH(_T("CALLED"));
         makeKeyCharsStrokePositionTable2(faces, 0);
     }
 
     // 第3テーブルの通常面の単打ストローク表を作成する
     void MakeKeyCharsStrokePositionTable3(wchar_t* faces) {
-        LOG_INFO(_T("CALLED"));
+        LOG_DEBUGH(_T("CALLED"));
         makeKeyCharsStrokePositionTable3(faces, 0);
     }
 
     // 同時打鍵面通常キー文字を集めたストローク表を作成する
     void MakeCombinationKeyCharsStrokePositionTable(wchar_t* faces) {
-        LOG_INFO(_T("CALLED"));
+        LOG_DEBUGH(_T("CALLED"));
         makeKeyCharsStrokePositionTable1(faces, COMBO_SHIFT_PLANE);
     }
 
     //----------------------------------------------------------------------------
     // 初期打鍵表(下端機能キー以外は空白)の作成
     void MakeInitialVkbTable(wchar_t* faces) {
-        LOG_INFO(_T("CALLED"));
+        LOG_DEBUGH(_T("CALLED"));
         if (ROOT_STROKE_NODE) {
             for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
                 set_facestr(0, faces + i * 2);

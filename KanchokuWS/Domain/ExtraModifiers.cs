@@ -22,7 +22,7 @@ namespace KanchokuWS.Domain
 
         public static void Initialize()
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             decoderFuncAssignedExModKeys = new HashSet<int>();
             disabledExtKeys = new HashSet<string>();
             disabledExtKeyLines.Clear();
@@ -49,14 +49,14 @@ namespace KanchokuWS.Domain
         public static void AddDisabledExtKey(string name)
         {
             var canonicalName = SpecialKeysAndFunctions.GetCanonicalName(name);
-            logger.InfoH(() => $"CALLED: ADD: canonicalName={canonicalName}");
+            logger.Info(() => $"CALLED: ADD: canonicalName={canonicalName}");
             disabledExtKeys.Add(canonicalName);
         }
 
         public static bool IsDisabledExtKey(string name)
         {
             var canonicalName = SpecialKeysAndFunctions.GetCanonicalName(name);
-            logger.InfoH(() => $"CALLED: Contains(canonicalName={canonicalName}): {disabledExtKeys.Contains(canonicalName)}");
+            logger.Info(() => $"CALLED: Contains(canonicalName={canonicalName}): {disabledExtKeys.Contains(canonicalName)}");
             return disabledExtKeys.Contains(canonicalName);
         }
 
@@ -270,7 +270,7 @@ namespace KanchokuWS.Domain
         /// </summary>
         public static string ReadExtraModConversionFile(string filename)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             //ShiftPlane.InitializeShiftPlaneForShiftModKey();
             SingleHitDefs.Clear();
             ExtModifierKeyDefs.Clear();
@@ -278,7 +278,7 @@ namespace KanchokuWS.Domain
             var sbCompCmds = new StringBuilder();   // 複合コマンド定義文字列
             if (filename._notEmpty()) {
                 var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
-                if (Settings.LoggingDecKeyInfo) logger.InfoH($"modConversion file path={filePath}");
+                if (Settings.LoggingDecKeyInfo) logger.Info($"modConversion file path={filePath}");
                 var lines = Helper.GetFileContent(filePath, Encoding.UTF8);
                 if (lines == null) {
                     logger.Error($"Can't read modConversion file: {filePath}");
@@ -289,7 +289,7 @@ namespace KanchokuWS.Domain
                 int nl = 0;
                 foreach (var rawLine in lines._split('\n')) {
                     ++nl;
-                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"line({nl}): {rawLine}");
+                    if (Settings.LoggingDecKeyInfo) logger.Info(() => $"line({nl}): {rawLine}");
                     var origLine = rawLine._reReplace("#.*", "").Trim();
                     var line = origLine.Replace(" ", "")._toLower();
                     if (line._notEmpty() && line[0] != '#') {
@@ -307,7 +307,7 @@ namespace KanchokuWS.Domain
 
                                 if (IsDisabledExtKey(modName) /*&& modifiee._isEmpty()*/) {
                                     // /*単打でなく、*/ 無効にされた拡張修飾キーだった
-                                    if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modName={modName} is disabled");
+                                    if (Settings.LoggingDecKeyInfo) logger.Info(() => $"modName={modName} is disabled");
                                     AddDisabledExtKeyLine(rawLine);
                                     continue;
                                 }
@@ -315,11 +315,11 @@ namespace KanchokuWS.Domain
                                 uint modKey = 0;
                                 int modDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modName);
                                 int modifieeDeckey = SpecialKeysAndFunctions.GetDeckeyByName(modifiee)._geZeroOr(modifiee._parseInt(-1));
-                                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modName={modName}, modifiee={modifiee}, target={target}, modDeckey={modDeckey}, modifieeDeckey={modifieeDeckey})");
+                                if (Settings.LoggingDecKeyInfo) logger.Info(() => $"modName={modName}, modifiee={modifiee}, target={target}, modDeckey={modDeckey}, modifieeDeckey={modifieeDeckey})");
 
                                 //// 被修飾キーの仮想キーコード: 特殊キー名(esc, tab, ins, ...)または漢直コード(00～49)から、それに該当する仮想キーコードを得る
                                 //uint vkey = DecoderKeyVsVKey.GetVKeyFromDecKey(modifieeDeckey);
-                                //if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"vkey={vkey}");
+                                //if (Settings.LoggingDecKeyInfo) logger.Info(() => $"vkey={vkey}");
                                 if (modifieeDeckey < 0) {
                                     // 被修飾キーが指定されていない場合は、拡張修飾キーまたは特殊キーの単打とみなす
                                     //vkey = DecoderKeyVsVKey.GetFuncVkeyByName(modName);  
@@ -337,7 +337,7 @@ namespace KanchokuWS.Domain
                                             }
                                             ++pn;
                                         }
-                                        logger.InfoH(() => $"ShiftPlaneForShiftModKey.Add({modName})");
+                                        logger.Info(() => $"ShiftPlaneForShiftModKey.Add({modName})");
                                         ShiftPlane.ShiftPlaneForShiftModKey.Add(modKey, pn);
                                         ShiftPlane.ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, pn);
                                     }
@@ -353,7 +353,7 @@ namespace KanchokuWS.Domain
                                 var name = target.Replace("^", "")._toLower();
                                 int targetDeckey = convertUnconditional(parseShiftPlaneDeckey(target));   // まず、拡張シフト面も含めた漢直コードとして解析する
 
-                                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"ctrl={ctrl}, name={name}, targetDeckey={targetDeckey:x}H({targetDeckey})");
+                                if (Settings.LoggingDecKeyInfo) logger.Info(() => $"ctrl={ctrl}, name={name}, targetDeckey={targetDeckey:x}H({targetDeckey})");
 
                                 if (targetDeckey < 0) {
                                     // 変換先は拡張シフト面も含めた漢直コードではなかったので、特殊キーとして解析する
@@ -370,7 +370,7 @@ namespace KanchokuWS.Domain
                                             decVkey = targetDeckey;
                                             targetDeckey += DecoderKeys.CTRL_FUNC_DECKEY_START - DecoderKeys.FUNC_DECKEY_START;
                                         }
-                                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
+                                        if (Settings.LoggingDecKeyInfo) logger.Info(() => $"targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, decVkey={decVkey:x}H({decVkey})");
                                         if (targetDeckey > 0) KeyComboRepository.AddModifiedDeckey(targetDeckey, KeyModifiers.MOD_CONTROL, decVkey);
                                     }
 
@@ -386,22 +386,22 @@ namespace KanchokuWS.Domain
                                         }
                                     } else if (!ctrl) {
                                         // Ctrl修飾なしの特殊キーだったので、漢直コードから変換テーブルに登録しておく
-                                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"AddSpecialDeckey: name={name}, targetDeckey={targetDeckey:x}H({targetDeckey})");
+                                        if (Settings.LoggingDecKeyInfo) logger.Info(() => $"AddSpecialDeckey: name={name}, targetDeckey={targetDeckey:x}H({targetDeckey})");
                                         KeyComboRepository.AddSpecialDeckey(name, targetDeckey);
                                     }
                                 }
 
-                                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modKey={modKey:x}H, modifieeDeckey={modifieeDeckey:x}H, targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, name={name}");
+                                if (Settings.LoggingDecKeyInfo) logger.Info(() => $"modKey={modKey:x}H, modifieeDeckey={modifieeDeckey:x}H, targetDeckey={targetDeckey:x}H({targetDeckey}), ctrl={ctrl}, name={name}");
 
                                 if (modifieeDeckey >= 0 && targetDeckey > 0) {
                                     if (modKey == 0) {
-                                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Single Hit");
+                                        if (Settings.LoggingDecKeyInfo) logger.Info(() => $"Single Hit");
                                         // キー単打の場合は、キーの登録だけで、拡張シフトB面の割り当てはやらない
                                         KeyComboRepository.AddDecKeyAndCombo(targetDeckey, 0, modifieeDeckey, true);  // targetDeckey から modifieeDeckey(拡張修飾キー)への逆マップは不要
                                         AddExModVkeyAssignedForDecoderFuncByVkey(modifieeDeckey);
                                         SingleHitDefs[modDeckey] = target;
                                     } else {
-                                        if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"Extra Modifier");
+                                        if (Settings.LoggingDecKeyInfo) logger.Info(() => $"Extra Modifier");
                                         // 拡張修飾キー設定
                                         modCount[modKey] = modCount._safeGet(modKey) + 1;
                                         ExtModifierKeyDefs._safeGetOrNewInsert(modKey)[modifieeDeckey] = target;
@@ -422,7 +422,7 @@ namespace KanchokuWS.Domain
                     }
                 }
             }
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
             return sbCompCmds.ToString();
         }
 
@@ -477,7 +477,7 @@ namespace KanchokuWS.Domain
             sb.Append("\n## Extra modifier settings ##\n");
             foreach (var pair in ExtModifierKeyDefs) {
                 var keyName = GetModifierNameByKey(pair.Key);
-                logger.Info(() => $"modKey={pair.Key}, keyName={keyName}, dict.Size={pair.Value.Count}");
+                logger.DebugH(() => $"modKey={pair.Key}, keyName={keyName}, dict.Size={pair.Value.Count}");
                 if (keyName._notEmpty()) {
                     foreach (var p in pair.Value) {
                         var deckey = p.Key;

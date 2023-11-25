@@ -286,7 +286,7 @@ namespace {
 
         // 1エントリのマージ
         void MergeEntry(StringRef ln) {
-            LOG_INFO(_T("CALLED: ln={}"), ln);
+            LOG_DEBUGH(_T("CALLED: ln={}"), ln);
             auto line = utils::strip(ln);
             if (line.empty() || isDelim(line[0]) || line[0] == '#') return;   // 空行や # で始まる行は無視
 
@@ -342,10 +342,10 @@ std::unique_ptr<BushuAssocDic> BushuAssocDic::Singleton;
 
 // 部首連想辞書の読み込み(ファイルが指定されていなくても、辞書は構築する)
 int BushuAssocDic::CreateBushuAssocDic(StringRef bushuAssocFile) {
-    LOG_INFO(_T("ENTER"));
+    LOG_DEBUGH(_T("ENTER"));
 
     if (Singleton != 0) {
-        LOG_INFO(_T("already created: bushu file: {}"), bushuAssocFile);
+        LOG_DEBUGH(_T("already created: bushu file: {}"), bushuAssocFile);
         return 0;
     }
 
@@ -353,12 +353,12 @@ int BushuAssocDic::CreateBushuAssocDic(StringRef bushuAssocFile) {
     Singleton.reset(new BushuAssocDicImpl());
 
     if (!bushuAssocFile.empty()) {
-        LOG_INFO(_T("open bushu assoc file: {}"), bushuAssocFile);
+        LOG_DEBUGH(_T("open bushu assoc file: {}"), bushuAssocFile);
 
         utils::IfstreamReader reader(bushuAssocFile);
         if (reader.success()) {
             Singleton->ReadFile(reader.getAllLines());
-            LOG_INFO(_T("close bushu assoc file: {}"), bushuAssocFile);
+            LOG_DEBUGH(_T("close bushu assoc file: {}"), bushuAssocFile);
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
             LOG_WARN(_T("Can't read bushu assoc file: {}"), bushuAssocFile);
@@ -366,18 +366,18 @@ int BushuAssocDic::CreateBushuAssocDic(StringRef bushuAssocFile) {
         }
     }
 
-    LOG_INFO(_T("LEAVE"));
+    LOG_DEBUGH(_T("LEAVE"));
     return 0;
 }
 
 // 部首連想辞書ファイルを読み込んでマージする
 void BushuAssocDic::MergeBushuAssocDic(StringRef path) {
-    LOG_INFO(_T("CALLED: path={}"), path);
+    LOG_DEBUGH(_T("CALLED: path={}"), path);
     if (!path.empty() && Singleton) {
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             Singleton->MergeFile(reader.getAllLines());
-            LOG_INFO(_T("close bushu assoc file: {}"), path);
+            LOG_DEBUGH(_T("close bushu assoc file: {}"), path);
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
             LOG_WARN(_T("Can't read bushu assoc file: {}"), path);
@@ -388,13 +388,13 @@ void BushuAssocDic::MergeBushuAssocDic(StringRef path) {
 
 // 部首連想辞書ファイルに書き込む
 void BushuAssocDic::WriteBushuAssocDic(StringRef path) {
-    LOG_INFO(_T("CALLED: path={}"), path);
+    LOG_DEBUGH(_T("CALLED: path={}"), path);
     if (!path.empty() && Singleton) {
         if (Singleton->IsDirty() || SETTINGS->firstUse) {
             if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
                 utils::OfstreamWriter writer(path);
                 if (writer.success()) {
-                    LOG_INFO(_T("WriteFile"));
+                    LOG_DEBUGH(_T("WriteFile"));
                     Singleton->WriteFile(writer);
                 }
             }

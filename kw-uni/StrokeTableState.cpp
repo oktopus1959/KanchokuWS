@@ -20,9 +20,9 @@
 #if 0 || defined(_DEBUG)
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_INFO LOG_INFOH
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 namespace {
@@ -73,13 +73,13 @@ namespace {
     public:
         // コンストラクタ
         StrokeTableState(StrokeTableNode* pN) {
-            LOG_INFOH(_T("CALLED: ctor"));
+            LOG_INFO(_T("CALLED: ctor"));
             Initialize(logger.ClassNameT(), pN);
         }
 
         // DECKEY 処理の流れ
         void HandleDeckeyChain(int deckey) override {
-            LOG_INFO(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
+            LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
                 Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
             // 前処理
             State::HandleDeckeyChain(deckey);   // ここで dispatchDeckey() → handleStrokeKeys() が呼ばれる
@@ -90,7 +90,7 @@ namespace {
             // 不要になった後続状態を削除
             DeleteUnnecessarySuccessorState();
 
-            LOG_INFO(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
+            LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
         }
 
 #define DEPTH           (myNode() ? myNode()->depth(): -1)
@@ -101,7 +101,7 @@ namespace {
         void handleStrokeKeys(int deckey) {
             bool isRootCombo = IsRootKeyCombination();
             wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(origDeckey >= 0 ? origDeckey : deckey);
-            LOG_INFO(_T("ENTER: {}: origDeckey={:x}H({}), deckey={:x}H({}), face={}, isRootCombo={}, nodeDepth={}"), Name, origDeckey, origDeckey, deckey, deckey, myChar, isRootCombo, DEPTH);
+            LOG_DEBUGH(_T("ENTER: {}: origDeckey={:x}H({}), deckey={:x}H({}), face={}, isRootCombo={}, nodeDepth={}"), Name, origDeckey, origDeckey, deckey, deckey, myChar, isRootCombo, DEPTH);
             if (!isRootCombo) {
                 // RootStrokeTableState が作成されたときに OrigString はクリアされている。この処理は @^ などへの対応のために必要
                 // ただしRootStrokeTableStateが同時打鍵の開始だった場合は、OrigStringを返さない
@@ -112,15 +112,15 @@ namespace {
                 // 自身がRootStrokeNodeでなく、かつRootStrokeKeyが同時打鍵キーでなければ通常面に落としこむ
                 // 同時打鍵の場合は、重複回避のため、第２キーはシフト化されてくる場合がある。その場合は、UNSHIFTしない
                 deckey = UNSHIFT_DECKEY(deckey);
-                LOG_INFO(_T("UNSHIFT_DECKEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
+                LOG_DEBUGH(_T("UNSHIFT_DECKEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
             }
             if (STATE_COMMON->IsDecodeKeyboardCharMode()) {
                 // キーボードフェイス文字を返すモード
-                LOG_INFO(_T("SetOutString"));
+                LOG_DEBUGH(_T("SetOutString"));
                 STATE_COMMON->SetOutString(myChar, 0);
             } else if (SETTINGS->eisuModeEnabled && !STATE_COMMON->IsUpperRomanGuideMode() && myNode()->isRootStrokeTableNode() && myChar >= 'A' && myChar <= 'Z') {
                 // 英数モード
-                LOG_INFO(_T("SetNextNodeMaybe: Eisu"));
+                LOG_DEBUGH(_T("SetNextNodeMaybe: Eisu"));
                 STATE_COMMON->SetOutString(myChar, 0);
                 if (EISU_NODE) EISU_NODE->blockerNeeded = true; // 入力済み末尾にブロッカーを設定する
                 SetNextNodeMaybe(EISU_NODE.get());
@@ -134,22 +134,22 @@ namespace {
                     if (rewInfo) {
                         // 入力文字列にマッチする書き換えノードを持つ
                         np = rp;
-                        LOG_INFO(_T("REWRITE node matched"));
+                        LOG_DEBUGH(_T("REWRITE node matched"));
                     }
                 }
-                LOG_INFO(_T("SetNextNodeMaybe"));
+                LOG_DEBUGH(_T("SetNextNodeMaybe"));
                 SetNextNodeMaybe(np);
             }
             if (!NextNodeMaybe() || !NextNodeMaybe()->isStrokeTableNode()) {
                 // 次ノードがストロークノードでないか、ストロークテーブルノード以外(文字ノードや機能ノードなど)ならば、全ストロークを削除対象とする
-                LOG_INFO(_T("{}: RemoveAllStroke: NEXT_NODE={}, DecodeKeyboardCharMode={}"), Name, NODE_NAME(NextNodeMaybe()), STATE_COMMON->IsDecodeKeyboardCharMode());
+                LOG_DEBUGH(_T("{}: RemoveAllStroke: NEXT_NODE={}, DecodeKeyboardCharMode={}"), Name, NODE_NAME(NextNodeMaybe()), STATE_COMMON->IsDecodeKeyboardCharMode());
                 setToRemoveAllStroke();
             }
             if (deckey < NORMAL_DECKEY_NUM && IsRootKeyHiraganaized()) {
                 _LOG_DEBUGH(_T("{}, rootKeyHiraganaized={}"), Name, IsRootKeyHiraganaized());
                 STATE_COMMON->SetHiraganaToKatakana();   // 通常面の平仮名を片仮名に変換するモード
             }
-            LOG_INFO(_T("LEAVE"));
+            LOG_DEBUGH(_T("LEAVE"));
         }
 
         // Shift飾修されたキー
@@ -330,7 +330,7 @@ namespace {
         // コンストラクタ
         RootStrokeTableState(StrokeTableNode* pN)
             : StrokeTableState(pN) {
-            LOG_INFOH(_T("CALLED: ctor"));
+            LOG_INFO(_T("CALLED: ctor"));
             Name = logger.ClassNameT();
             STATE_COMMON->ClearOrigString();
         }
@@ -437,7 +437,7 @@ StrokeTableNode::~StrokeTableNode() {
 
 // 当ノードを処理する State インスタンスを作成する (depth == 0 ならルートStateを返す)
 State* StrokeTableNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return depth() == 0 ? new RootStrokeTableState(this) : new StrokeTableState(this);
 }
 
@@ -511,7 +511,7 @@ void StrokeTableNode::MakeStrokeGuide(StringRef targetChars, int tableId) {
 bool StrokeTableNode::hasPostRewriteNode() {
     if (iHasPostRewriteNode == 0) {
         iHasPostRewriteNode = findPostRewriteNode(-1);
-        LOG_INFOH(_T("iHasPostRewriteNode: {}"), iHasPostRewriteNode);
+        LOG_INFO(_T("iHasPostRewriteNode: {}"), iHasPostRewriteNode);
     }
     return iHasPostRewriteNode > 0;
 }
@@ -520,7 +520,7 @@ bool StrokeTableNode::hasPostRewriteNode() {
 bool StrokeTableNode::hasOnlyUsualRewriteNdoe() {
     if (iHasPostRewriteNode == 0) {
         iHasPostRewriteNode = findPostRewriteNode(-1);
-        LOG_INFOH(_T("iHasPostRewriteNode: {}"), iHasPostRewriteNode);
+        LOG_INFO(_T("iHasPostRewriteNode: {}"), iHasPostRewriteNode);
     }
     return iHasPostRewriteNode == 1;
 }
@@ -535,16 +535,16 @@ int StrokeTableNode::findPostRewriteNode(int result) {
                 if (result > 1) return 2;
             } else {
                 if (dynamic_cast<DakutenOneShotNode*>(p)) {
-                    LOG_INFOH(_T("DakutenOneShotNode FOUND"));
+                    LOG_INFO(_T("DakutenOneShotNode FOUND"));
                     result = 1;
                 } else if (dynamic_cast<PostRewriteOneShotNode*>(p)) {
-                    LOG_INFOH(_T("LEAVE: 2"));
+                    LOG_INFO(_T("LEAVE: 2"));
                     return 2;
                 }
             }
         }
     }
-    LOG_INFOH(_T("LEAVE: {}"), result);
+    LOG_INFO(_T("LEAVE: {}"), result);
     return result;
 }
 

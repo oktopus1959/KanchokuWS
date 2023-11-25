@@ -100,7 +100,7 @@ namespace KanchokuWS.Domain
         // 機能キー配列の初期化 (エラーがあったら、その行を返す)
         private static void initFunctionalVKeys()
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             functionalVKeys = new uint[DecoderKeys.FUNC_DECKEY_NUM];
             functionalVKeys[DecoderKeys.ESC_DECKEY - DecoderKeys.FUNC_DECKEY_START] = (uint)Keys.Escape;
             functionalVKeys[DecoderKeys.HANZEN_DECKEY - DecoderKeys.FUNC_DECKEY_START] = 0xf3;
@@ -297,14 +297,14 @@ namespace KanchokuWS.Domain
         /// <returns></returns>
         public static int GetDecKeyFromVKey(uint vkey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: vkey={vkey:x}H({vkey})");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"ENTER: vkey={vkey:x}H({vkey})");
             //int deckey = normalVKeys._findIndex(vkey);
             //if (deckey < 0) {
             //    deckey = functionalVKeys._findIndex(vkey);
             //    if (deckey >= 0) deckey += DecoderKeys.FUNC_DECKEY_START;
             //}
             int deckey = vkey < vkeyTable.Length ? vkeyTable[vkey] : -1;
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: deckey={deckey}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: deckey={deckey}");
             return deckey;
         }
 
@@ -347,14 +347,14 @@ namespace KanchokuWS.Domain
         /// <returns></returns>
         public static bool ReadKeyboardFile()
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
 
             IsJPmode = true;
 
             initFunctionalVKeys();
 
             var kbName = Settings.GetString("keyboard", "JP");
-            logger.InfoH(() => $"kbName={kbName}");
+            logger.Info(() => $"kbName={kbName}");
             if (kbName._isEmpty() || kbName._toUpper() == "JP") {
                 normalVKeys = VKeyArrayJP;
             } else if (kbName._toUpper() == "US") {
@@ -362,7 +362,7 @@ namespace KanchokuWS.Domain
                 IsJPmode = false;
             } else {
                 var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KeyboardFileDir, kbName);
-                logger.InfoH(() => $"keyboard file path={filePath}");
+                logger.Info(() => $"keyboard file path={filePath}");
                 var allLines = Helper.GetFileContent(filePath, Encoding.UTF8);
                 if (allLines == null) {
                     logger.Error($"Can't read keyboard file: {filePath}");
@@ -378,16 +378,16 @@ namespace KanchokuWS.Domain
                         var items = lines._getFirst()._toUpper()._split('=');
                         if (items._safeLength() == 2 && items[0]._toUpper() == "MODE") {
                             if (items[1]._toUpper() == "US") {
-                                logger.InfoH(() => $"US mode");
+                                logger.Info(() => $"US mode");
                                 list = VKeyArrayUS.ToList();
                                 IsJPmode = false;
                             } else {
                                 list = VKeyArrayJP.ToList();
                                 if (items[1]._toUpper() == "USONJP") {
-                                    logger.InfoH(() => $"US on JP mode");
+                                    logger.Info(() => $"US on JP mode");
                                     IsUSonJPmode = true;
                                 } else if (items[1]._toUpper()._startsWith("EISUDIS")) {
-                                    logger.InfoH(() => $"EISU disabled");
+                                    logger.Info(() => $"EISU disabled");
                                     IsEisuDisabled = true;
                                 }
                             }
@@ -445,13 +445,13 @@ namespace KanchokuWS.Domain
                     }
                 }
             }
-            logger.InfoH(() => $"keyboard mode={(IsJPmode ? "JP" : "US")}, keyNum={normalVKeys.Length}, array={normalVKeys.Select(x => x.ToString("x"))._join(", ")}");
+            logger.Info(() => $"keyboard mode={(IsJPmode ? "JP" : "US")}, keyNum={normalVKeys.Length}, array={normalVKeys.Select(x => x.ToString("x"))._join(", ")}");
 
             initializeVKeyTable();
 
             setupDecKeyAndComboTable();
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
             return true;
         }
 
@@ -466,7 +466,7 @@ namespace KanchokuWS.Domain
         /// </summary>
         private static void setupDecKeyAndComboTable()
         {
-            logger.InfoH($"ENTER");
+            logger.Info($"ENTER");
             // 通常文字ストロークキー
             for (int id = 0; id < DecoderKeys.NORMAL_DECKEY_NUM; ++id) {
                 // Normal
@@ -483,7 +483,7 @@ namespace KanchokuWS.Domain
 
             // Shift+Tab
             KeyComboRepository.AddDecKeyAndCombo(DecoderKeys.SHIFT_TAB_DECKEY, KeyModifiers.MOD_SHIFT, DecoderKeys.TAB_DECKEY);
-            logger.InfoH($"LEAVE");
+            logger.Info($"LEAVE");
         }
 
     }

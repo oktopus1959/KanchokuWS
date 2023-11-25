@@ -22,8 +22,8 @@
 #if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 namespace {
@@ -47,7 +47,7 @@ namespace {
     public:
         // 読みに対する全交ぜ書き候補を取得する
         const std::vector<MazeResult>& GetAllCandidates(const MString& yomiFull) {
-            LOG_INFOH(_T("ENTER: yomiFull={}"), to_wstr(yomiFull));
+            LOG_INFO(_T("ENTER: yomiFull={}"), to_wstr(yomiFull));
             mazeCandidates.clear();
             cand2len.clear();
             firstCandYomi.clear();
@@ -120,13 +120,13 @@ namespace {
 
         // n番目の候補を選択 ⇒ 必要ならユーザー辞書に追加
         void SelectNth(size_t n, bool bJustOneOrManualSelected) {
-            LOG_INFOH(_T("CALLED: n={}, bJustOneOrManualSelected={}, mazeCandidates.size()={}"), n, bJustOneOrManualSelected, mazeCandidates.size());
+            LOG_INFO(_T("CALLED: n={}, bJustOneOrManualSelected={}, mazeCandidates.size()={}"), n, bJustOneOrManualSelected, mazeCandidates.size());
             if (n < mazeCandidates.size()) {
                 auto resultStr = mazeCandidates[n].resultStr;
                 size_t len = GetYomiLen(mazeCandidates[n].resultStr);
-                LOG_INFOH(_T("resultStr={}, firstCandYomi={}, yomiLen={}"), to_wstr(resultStr), to_wstr(firstCandYomi), len);
+                LOG_INFO(_T("resultStr={}, firstCandYomi={}, yomiLen={}"), to_wstr(resultStr), to_wstr(firstCandYomi), len);
                 // 再検索して、変換履歴への登録と優先辞書に追加する
-                LOG_INFOH(_T("GetCandidates({})"), to_wstr(utils::last_substr(firstCandYomi, len)));
+                LOG_INFO(_T("GetCandidates({})"), to_wstr(utils::last_substr(firstCandYomi, len)));
                 MAZEGAKI_DIC->GetCandidates(utils::last_substr(firstCandYomi, len));
                 MAZEGAKI_DIC->SelectCandidate(resultStr, bJustOneOrManualSelected);
             }
@@ -149,7 +149,7 @@ namespace {
     public:
         // コンストラクタ
         MazegakiState(MazegakiNode* pN) {
-            LOG_INFOH(_T("CALLED: ctor"));
+            LOG_INFO(_T("CALLED: ctor"));
             Initialize(logger.ClassNameT(), pN);
             MAZEGAKI_INFO->Initialize(true);
         }
@@ -506,7 +506,7 @@ namespace {
                 STATE_COMMON->SetOutStringProcDone();   // この後は、もはや履歴検索などは不要
                 _LOG_DEBUGH(_T("{}: OutStringProcDone={}"), Name, STATE_COMMON->IsOutStringProcDone());
             } else {
-                LOG_INFO(_T("No MazeCands"));
+                LOG_DEBUGH(_T("No MazeCands"));
             }
             MAZEGAKI_INFO->SetJustAfterPrevXfer();
         }
@@ -522,7 +522,7 @@ DEFINE_CLASS_LOGGER(MazegakiNode);
 
 // コンストラクタ
 MazegakiNode::MazegakiNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
@@ -531,7 +531,7 @@ MazegakiNode::~MazegakiNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* MazegakiNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new MazegakiState(this);
 }
 
@@ -543,14 +543,14 @@ std::unique_ptr<MazegakiCommonInfo> MazegakiCommonInfo::CommonInfo;
 
 // MazegakiCommonInfo - 交ぜ書き共有情報の作成(辞書もロード)
 void MazegakiCommonInfo::CreateCommonInfo() {
-    LOG_INFOH(_T("ENTER"));
+    LOG_INFO(_T("ENTER"));
     if (CommonInfo == 0) {
         // 交ぜ書き辞書ファイル名
         auto mazeFile = SETTINGS->mazegakiFile;
-        LOG_INFOH(_T("mazeFile={}"), mazeFile);
+        LOG_INFO(_T("mazeFile={}"), mazeFile);
         if (!mazeFile.empty()) {
             // 交ぜ書き辞書の読み込み
-            LOG_INFOH(_T("CALLED: mazegakiFile={}"), mazeFile);
+            LOG_INFO(_T("CALLED: mazegakiFile={}"), mazeFile);
             if (!mazeFile.empty()) {
                 MazegakiDic::CreateMazegakiDic(mazeFile);
             }
@@ -563,19 +563,19 @@ void MazegakiCommonInfo::CreateCommonInfo() {
         // 共有ノードを生成する(このノードは、終了時に delete される)
         CommonInfo->CommonNode.reset(new MazegakiNode());
     }
-    LOG_INFOH(_T("LEAVE"));
+    LOG_INFO(_T("LEAVE"));
 }
 
 // 初期化
 void MazegakiCommonInfo::Initialize(bool bMazegakiMode) {
-    LOG_INFOH(_T("ENTER: bMazegakiMode={}"), bMazegakiMode);
+    LOG_INFO(_T("ENTER: bMazegakiMode={}"), bMazegakiMode);
     inMazegakiMode = bMazegakiMode;
     //blockerShiftedDeckeyCount = 0;
     //shiftedTailYomiLen = 1000;
     //prevShiftedTailYomiLen = 1000;
     //prevDeckeyCount = 0;
     if (!bMazegakiMode) reXferMode = false;
-    LOG_INFOH(_T("LEAVE"));
+    LOG_INFO(_T("LEAVE"));
 }
 
 // 交ぜ書き変換中か

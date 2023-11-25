@@ -13,8 +13,8 @@
 #if 0 || defined(_DEBUG)
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 namespace {
@@ -50,7 +50,7 @@ private:
 
 public:
     StringState(StringNode* pN) {
-        LOG_INFOH(_T("CALLED: ctor"));
+        LOG_INFO(_T("CALLED: ctor"));
         Initialize(logger.ClassNameT(), pN);
     }
 
@@ -94,7 +94,7 @@ StringNode::StringNode(wchar_t ch) : rewritableLen(0){
 // 開始ノード
 // 当ノードを処理する State インスタンスを作成する
 State* StringNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new StringState(this);
 }
 

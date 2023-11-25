@@ -6,7 +6,7 @@
 #include "HistoryResidentState.h"
 
 #if 0
-#define HIST_LOG_DEBUGH LOG_INFOH
+#define HIST_LOG_DEBUGH LOG_INFO
 #else
 #define HIST_LOG_DEBUGH(...) {}
 #endif

@@ -394,6 +394,14 @@ convert(SP<0>E<166>{.}<49>{,}<142>[.]<10>[,]<133>e<0>sp) = じゅう
 loadTable(tables/_test/noniiruto.15b.tbl)
 convert(J<30>SP<51>X<143>x<17>sp<2>j) = やほ
 
+comboMaxTime(70)
+comboMinTime(70)
+comboMinTime3(70)
+convert(K<46>X<71>k<73>x) = ぼ
+
+comboMinTimeForSecond(100)
+convert(SP<3>J<96>X<77>sp<18>j<17>x) = やり
+
 ### post.7 ###
 loadTable(tables/_test/noniiruto.post.7.tbl)
 comboMaxTime(100)

@@ -54,7 +54,7 @@ namespace KanchokuWS.Gui
 
         private void button_developEnter_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             frmMain?.DeactivateDecoderWithModifiersOff();
 
             // 開発者用
@@ -88,7 +88,7 @@ namespace KanchokuWS.Gui
 
             label_okResultDevelop.Show();
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
 
         }
 
@@ -110,13 +110,13 @@ namespace KanchokuWS.Gui
 
         private void button_developClose_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             if (button_developClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabDevelop();
                 checkerDevelop.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
-                logger.InfoH("LEAVE");
+                logger.Info("LEAVE");
             }
         }
 

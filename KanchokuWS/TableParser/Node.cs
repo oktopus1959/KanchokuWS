@@ -421,7 +421,7 @@ namespace KanchokuWS.TableParser
 
         public void UpsertRewritePair(string tgtStr, Node rewriteNode)
         {
-            if (Settings.LoggingTableFileInfo) logger.InfoH(() => $"CALLED: tgtStr={tgtStr}, rewriteNode={rewriteNode.DebugString()}");
+            if (Settings.LoggingTableFileInfo) logger.Info(() => $"CALLED: tgtStr={tgtStr}, rewriteNode={rewriteNode.DebugString()}");
             if (tgtStr._notEmpty() && rewriteNode != null) {
                 upsertRewrteMap(tgtStr, rewriteNode);
             }

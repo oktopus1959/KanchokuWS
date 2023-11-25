@@ -19,8 +19,8 @@
 #if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 #define EX_NODE BUSHU_ASSOC_EX_NODE
@@ -137,7 +137,7 @@ namespace {
     public:
         // コンストラクタ
         BushuAssocState(BushuAssocNode* pN) {
-            LOG_INFOH(_T("CALLED"));
+            LOG_INFO(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -332,7 +332,7 @@ namespace {
     public:
         // コンストラクタ
         BushuAssocExState(BushuAssocExNode* pN) : BushuAssocState(pN) {
-            LOG_INFOH(_T("CALLED"));
+            LOG_INFO(_T("CALLED"));
             Name = logger.ClassNameT();
         }
 
@@ -454,17 +454,17 @@ DEFINE_CLASS_LOGGER(BushuAssocExNode);
 
 // コンストラクタ
 BushuAssocExNode::BushuAssocExNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
 BushuAssocExNode::~BushuAssocExNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
 State* BushuAssocExNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new BushuAssocExState(this);
 }
 
@@ -482,7 +482,7 @@ std::unique_ptr<BushuAssocExNode> BushuAssocExNode::Singleton;
 DEFINE_CLASS_LOGGER(BushuAssocExNodeBuilder);
 
 Node* BushuAssocExNodeBuilder::CreateNode() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     return new BushuAssocExNode();
 }
 
@@ -492,17 +492,17 @@ DEFINE_CLASS_LOGGER(BushuAssocNode);
 
 // コンストラクタ
 BushuAssocNode::BushuAssocNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
 BushuAssocNode::~BushuAssocNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
 State* BushuAssocNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new BushuAssocState(this);
 }
 
@@ -512,11 +512,11 @@ State* BushuAssocNode::CreateState() {
 DEFINE_CLASS_LOGGER(BushuAssocNodeBuilder);
 
 Node* BushuAssocNodeBuilder::CreateNode() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     // 部首連想辞書の読み込み(ファイルが指定されていなくても、辞書は構築する)
     // 部首連想入力辞書ファイル名
     auto bushuAssocFile = SETTINGS->bushuAssocFile;
-    LOG_INFO(_T("bushuAssoc={}"), bushuAssocFile);
+    LOG_DEBUGH(_T("bushuAssoc={}"), bushuAssocFile);
     //if (bushuAssocFile.empty()) {
     //    ERROR_HANDLER->Warn(_T("「bushuAssoc=(ファイル名)」の設定がまちがっているようです"));
     //}

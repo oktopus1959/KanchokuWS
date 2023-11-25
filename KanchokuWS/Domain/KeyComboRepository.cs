@@ -53,11 +53,11 @@ namespace KanchokuWS.Domain
 
         public static void Initialize()
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             KeyComboFromDecKey = new KeyCombo?[DecoderKeys.GLOBAL_DECKEY_ID_END];
             DecKeyFromKeyCombo = new Dictionary<uint, int>();
             ModConvertedDecKeyFromKeyCombo = new Dictionary<uint, int>();
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace KanchokuWS.Domain
         /// <param name="deckey"></param>
         public static void AddSpecialDeckey(string name, int deckey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"name={name}, deckey={deckey:x}H({deckey})");
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"name={name}, deckey={deckey:x}H({deckey})");
             if (deckey > 0) {
                 uint vk = DecoderKeyVsVKey.GetFuncVkeyByName(name);
                 if (vk > 0) {
@@ -78,7 +78,7 @@ namespace KanchokuWS.Domain
         /// <summary>修飾されたDecKeyから、修飾子とNormalDecKeyへの変換を登録する</summary>
         public static void AddModifiedDeckey(int modDeckey, uint mod, int arrgDeckey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modDeckey={modDeckey:x}H({modDeckey}), mod={mod:x}H, arrgDeckey={arrgDeckey:x}H({arrgDeckey})");
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"modDeckey={modDeckey:x}H({modDeckey}), mod={mod:x}H, arrgDeckey={arrgDeckey:x}H({arrgDeckey})");
             var combo = new KeyCombo(mod, arrgDeckey);
             KeyComboFromDecKey[modDeckey] = combo;
         }
@@ -86,7 +86,7 @@ namespace KanchokuWS.Domain
         /// <summary>修飾子と仮想キーコードの組みとDecKeyの間の相互変換を登録する</summary>
         public static void AddDecKeyAndCombo(int modDeckey, uint mod, int arrgDeckey, bool bFromComboOnly = false)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modDeckey={modDeckey:x}H({modDeckey}), mod={mod:x}H, arrgDeckey={arrgDeckey:x}H({arrgDeckey})");
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"modDeckey={modDeckey:x}H({modDeckey}), mod={mod:x}H, arrgDeckey={arrgDeckey:x}H({arrgDeckey})");
             var combo = new KeyCombo(mod, arrgDeckey);
             if (!bFromComboOnly) KeyComboFromDecKey[modDeckey] = combo;
             DecKeyFromKeyCombo[combo.SerialValue] = modDeckey;
@@ -100,13 +100,13 @@ namespace KanchokuWS.Domain
         /// <param name="arrgDeckey"></param>
         public static void AddModConvertedDecKeyFromCombo(int modDeckey, uint mod, int arrgDeckey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"modDeckey={modDeckey:x}H({modDeckey}), mod={mod:x}H, arrgDeckey={arrgDeckey:x}H({arrgDeckey})");
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"modDeckey={modDeckey:x}H({modDeckey}), mod={mod:x}H, arrgDeckey={arrgDeckey:x}H({arrgDeckey})");
             ModConvertedDecKeyFromKeyCombo[KeyCombo.CalcSerialValue(mod, arrgDeckey)] = modDeckey;
         }
 
         private static void RemoveModConvertedDecKeyFromCombo(uint mod, int arrgDeckey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"mod={mod:x}H, arrgDeckey={arrgDeckey:x}H({arrgDeckey})");
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"mod={mod:x}H, arrgDeckey={arrgDeckey:x}H({arrgDeckey})");
             try {
                 ModConvertedDecKeyFromKeyCombo.Remove(KeyCombo.CalcSerialValue(mod, arrgDeckey));
             } catch { }
@@ -117,7 +117,7 @@ namespace KanchokuWS.Domain
         /// </summary>
         public static void AddCtrlDeckeyFromCombo(string keyFace, int ctrlDeckey, int ctrlShiftDeckey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"keyFace={keyFace}, ctrlDeckey={ctrlDeckey}, ctrlShiftDeckey={ctrlShiftDeckey}");
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"keyFace={keyFace}, ctrlDeckey={ctrlDeckey}, ctrlShiftDeckey={ctrlShiftDeckey}");
             bool bRemove = false;
             if (keyFace._startsWith("#")) {
                 bRemove = true;
@@ -143,7 +143,7 @@ namespace KanchokuWS.Domain
         /// <param name="ctrlShiftDeckey"></param>
         public static void AddCtrlDeckeyAndCombo(string keyFace, int ctrlDeckey, int ctrlShiftDeckey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"keyFace={keyFace}, ctrlDeckey={ctrlDeckey:x}H({ctrlDeckey}), , ctrlShiftDeckey={ctrlShiftDeckey:x}H({ctrlShiftDeckey})");
+            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"keyFace={keyFace}, ctrlDeckey={ctrlDeckey:x}H({ctrlDeckey}), , ctrlShiftDeckey={ctrlShiftDeckey:x}H({ctrlShiftDeckey})");
             int deckey = DecoderKeyVsChar.GetArrangedDecKeyFromFaceStr(keyFace);
             if (deckey >= 0) {
                 if (ctrlDeckey > 0) AddDecKeyAndCombo(ctrlDeckey, KeyModifiers.MOD_CONTROL, deckey);
@@ -157,26 +157,26 @@ namespace KanchokuWS.Domain
         public static KeyCombo? GetKeyComboFromDecKey(int deckey)
         {
             var combo = KeyComboFromDecKey._getNth(deckey);
-            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"deckey={deckey:x}H({deckey}), combo.mod={(combo.HasValue ? combo.Value.modifier : 0):x}, combo.normalDecKey={(combo.HasValue ? combo.Value.normalDecKey : 0)}");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"deckey={deckey:x}H({deckey}), combo.mod={(combo.HasValue ? combo.Value.modifier : 0):x}, combo.normalDecKey={(combo.HasValue ? combo.Value.normalDecKey : 0)}");
             return combo;
         }
 
         /// <summary>修飾子と仮想キーコードの組みから、DecKey を得る</summary>
         public static int GetDecKeyFromCombo(uint mod, int noramlDeckey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"ENTER: mod={mod:x}H({mod}), noramlDeckey={noramlDeckey:x}H({noramlDeckey})");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: mod={mod:x}H({mod}), noramlDeckey={noramlDeckey:x}H({noramlDeckey})");
             int deckey = DecKeyFromKeyCombo._safeGet(KeyCombo.CalcSerialValue(mod, noramlDeckey), -1);
-            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"LEAVE: deckey={deckey:x}H({deckey})");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: deckey={deckey:x}H({deckey})");
             return deckey;
         }
 
         /// <summary>修飾子と仮想キーコードの組みから、Modキーによるシフト変換されたDECKEY を得る</summary>
         public static int GetModConvertedDecKeyFromCombo(uint mod, int noramlDeckey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"ENTER: mod={mod:x}H({mod}), noramlDeckey={noramlDeckey:x}H({noramlDeckey})");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"ENTER: mod={mod:x}H({mod}), noramlDeckey={noramlDeckey:x}H({noramlDeckey})");
             int deckey = ModConvertedDecKeyFromKeyCombo._safeGet(KeyCombo.CalcSerialValue(mod, noramlDeckey), -1);
             if (deckey <= 0) { deckey = GetDecKeyFromCombo(mod, noramlDeckey); }
-            if (Settings.LoggingDecKeyInfo) logger.Info(() => $"LEAVE: deckey={deckey:x}H({deckey})");
+            if (Settings.LoggingDecKeyInfo) logger.DebugH(() => $"LEAVE: deckey={deckey:x}H({deckey})");
             return deckey;
         }
 

@@ -7,9 +7,8 @@
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
 #if 0 || defined(_DEBUG)
-#define LOG_INFO LOG_INFOH
-#define LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH LOG_INFO
 #endif
 
 // Esc の処理

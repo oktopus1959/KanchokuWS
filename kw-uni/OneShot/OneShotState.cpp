@@ -22,7 +22,7 @@ namespace {
     public:
         // コンストラクタ
         BlockerSetterState(Node* pN) {
-            LOG_INFOH(_T("CALLED"));
+            LOG_INFO(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -55,17 +55,17 @@ DEFINE_CLASS_LOGGER(BlockerSetterNode);
 
 // コンストラクタ
 BlockerSetterNode::BlockerSetterNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
 BlockerSetterNode::~BlockerSetterNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
 State* BlockerSetterNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new BlockerSetterState(this);
 }
 

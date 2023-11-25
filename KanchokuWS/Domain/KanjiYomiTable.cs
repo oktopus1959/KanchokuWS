@@ -452,7 +452,7 @@ namespace KanchokuWS
         public static void ReadKanjiYomiFile(string filename)
         {
             var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
-            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"ENTER: filePath={filePath}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.DebugH(() => $"ENTER: filePath={filePath}");
             if (Helper.FileExists(filePath)) {
                 try {
                     foreach (var line in System.IO.File.ReadAllLines(filePath)) {

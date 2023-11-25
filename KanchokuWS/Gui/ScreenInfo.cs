@@ -41,11 +41,11 @@ namespace KanchokuWS.Gui
                 s.GetDpi(DpiType.Effective, out x, out y);
                 return (int)x;
             }).ToList();
-            if (Logger.IsInfoHEnabled) {
+            if (Logger.IsInfoEnabled) {
                 int i = 0;
                 foreach (var r in ScreenRects) {
-                    //logger.InfoH($"Screen {i}: X={r.X}, Y={r.Y}, W={r.Width}, H={r.Height}");
-                    logger.InfoH($"Screen {i}: X={r.X}, Y={r.Y}, W={r.Width}, H={r.Height}, dpi={ScreenDpi[i]}");
+                    //logger.Info($"Screen {i}: X={r.X}, Y={r.Y}, W={r.Width}, H={r.Height}");
+                    logger.Info($"Screen {i}: X={r.X}, Y={r.Y}, W={r.Width}, H={r.Height}, dpi={ScreenDpi[i]}");
                     ++i;
                 }
             }

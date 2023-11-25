@@ -28,7 +28,7 @@ namespace {
     public:
         // コンストラクタ
         KatakanaOneShotState(KatakanaOneShotNode* pN) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -79,12 +79,12 @@ DEFINE_CLASS_LOGGER(KatakanaOneShotNode);
 
 // コンストラクタ
 KatakanaOneShotNode::KatakanaOneShotNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
 KatakanaOneShotNode::~KatakanaOneShotNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する

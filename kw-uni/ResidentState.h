@@ -11,7 +11,7 @@ class ResidentState : public ModalState {
 public:
     // コンストラクタ
     ResidentState() {
-        LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
+        LOG_INFO(_T("CALLED: CONSTRUCTOR"));
     }
 
     // 常駐状態か

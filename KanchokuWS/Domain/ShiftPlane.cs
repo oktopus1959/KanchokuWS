@@ -118,7 +118,7 @@ namespace KanchokuWS.Domain
             ShiftPlaneForShiftModKeyWhenDecoderOff.Clear();
 
             // SHIFTなら標準シフト面をデフォルトとしておく
-            logger.InfoH(() => $"ShiftPlaneForShiftModKey.Add(Shift)");
+            logger.Info(() => $"ShiftPlaneForShiftModKey.Add(Shift)");
             ShiftPlaneForShiftModKey.Add(KeyModifiers.MOD_SHIFT, ShiftPlane_SHIFT);
             ShiftPlaneForShiftModKeyWhenDecoderOff.Add(KeyModifiers.MOD_SHIFT, ShiftPlane_SHIFT);
         }
@@ -171,10 +171,10 @@ namespace KanchokuWS.Domain
                 }
             }
 
-            logger.Info(() => $"mod={modKey:x}H({modKey}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
+            logger.DebugH(() => $"mod={modKey:x}H({modKey}), shiftPlane={shiftPlane}, shiftPlaneWhenOff={shiftPlaneWhenOff}");
             if (modKey != 0 && shiftPlane > 0) {
-                logger.Info(() => $"shiftPlaneForShiftFuncKey[{modKey}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{modKey}] = {shiftPlaneWhenOff}");
-                logger.InfoH(() => $"ShiftPlaneForShiftModKey.Add({items[0]})");
+                logger.DebugH(() => $"shiftPlaneForShiftFuncKey[{modKey}] = {shiftPlane}, shiftPlaneForShiftFuncKeyWhenDecoderOff[{modKey}] = {shiftPlaneWhenOff}");
+                logger.Info(() => $"ShiftPlaneForShiftModKey.Add({items[0]})");
                 ShiftPlaneForShiftModKey.Add(modKey, shiftPlane);
                 ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, shiftPlaneWhenOff);
             }
@@ -184,11 +184,11 @@ namespace KanchokuWS.Domain
         /// <summary>テーブルファイルor設定ダイアログで割り当てたSandSシフト面を優先する</summary>
         public static void AssignSandSPlane(int shiftPlane = 0)
         {
-            logger.InfoH(() => $"CALLED: SandSEnabled={Settings.SandSEnabledCurrently}, SandSAssignedPlane={Settings.SandSAssignedPlane}");
+            logger.Info(() => $"CALLED: SandSEnabled={Settings.SandSEnabledCurrently}, SandSAssignedPlane={Settings.SandSAssignedPlane}");
             if (Settings.SandSEnabledCurrently) {
                 if (shiftPlane <= 0) shiftPlane = Settings.SandSAssignedPlane;
                 if (shiftPlane > 0 && shiftPlane < ShiftPlane_NUM) {
-                    logger.InfoH(() => $"ShiftPlaneForShiftModKey.Add(SandS)");
+                    logger.Info(() => $"ShiftPlaneForShiftModKey.Add(SandS)");
                     ShiftPlaneForShiftModKey.Add(KeyModifiers.MOD_SPACE, shiftPlane);
                 }
             }

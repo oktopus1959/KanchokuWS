@@ -55,7 +55,7 @@ DEFINE_CLASS_LOGGER(DeckeyToChars);
 std::unique_ptr<DeckeyToChars> DeckeyToChars::Singleton;
 
 int DeckeyToChars::CreateSingleton(StringRef filePath) {
-    LOG_INFOH(_T("ENTER: filePath=<{}>, kbMode={}"), filePath, SETTINGS->isJPmode ? L"JP" : L"US");
+    LOG_INFO(_T("ENTER: filePath=<{}>, kbMode={}"), filePath, SETTINGS->isJPmode ? L"JP" : L"US");
 
     Singleton.reset(new DeckeyToChars());
 
@@ -64,19 +64,19 @@ int DeckeyToChars::CreateSingleton(StringRef filePath) {
     Singleton->yenPos = QwertyYenPos;
 
     if (!filePath.empty()) {
-        LOG_INFOH(_T("open chars def file: {}"), filePath);
+        LOG_INFO(_T("open chars def file: {}"), filePath);
 
         utils::IfstreamReader reader(filePath);
         if (reader.success()) {
             Singleton->ReadDefFile(reader.getAllLines());
-            LOG_INFOH(_T("close chars def file: {}"), filePath);
+            LOG_INFO(_T("close chars def file: {}"), filePath);
         } else {
             // エラーメッセージを表示
             LOG_ERROR(L"Can't read chars def file: {}", filePath);
             ERROR_HANDLER->Warn(std::format(_T("漢直キー⇒文字定義ファイル({})が開けません"), filePath));
         }
     }
-    LOG_INFOH(_T("LEAVE"));
+    LOG_INFO(_T("LEAVE"));
     return 0;
 }
 
@@ -96,7 +96,7 @@ namespace {
 }
 
 void DeckeyToChars::ReadDefFile(const std::vector<String>& lines) {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
 
     bool shifted = false;
     auto iter = lines.begin();

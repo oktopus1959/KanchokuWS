@@ -92,14 +92,14 @@ namespace KanchokuWS
         public void WriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bFirst, bool bTimer = false)
         {
             if (IsDecoderActive /*&& dlgStrokeLog != null*/) {
-                logger.InfoH("ENTER");
-                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"decKey={decKey}");
+                logger.Info("ENTER");
+                if (Settings.LoggingDecKeyInfo) logger.Info(() => $"decKey={decKey}");
                 char faceCh = bTimer && decKey < 0 ? '\0' : DecoderKeyVsChar.GetArrangedFaceCharFromDecKey(decKey)._gtZeroOr('?');
                 if (bDown && faceCh >= 'a' && faceCh <= 'z') faceCh = (char)(faceCh - 0x20);
                 string msg = $"{(bTimer ? "*Up " : bDown ? "Down" : "Up  ")} | " + (faceCh != '\0' ? $"'{faceCh}'" : "N/A");
-                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"WriteStrokeLog: {msg}");
+                if (Settings.LoggingDecKeyInfo) logger.Info(() => $"WriteStrokeLog: {msg}");
                 appenStrokeLog(msg, dt, bFirst);
-                logger.InfoH("LEAVE");
+                logger.Info("LEAVE");
             }
         }
 
@@ -108,7 +108,7 @@ namespace KanchokuWS
         {
             if (IsDecoderActive /*&& dlgStrokeLog != null*/) {
                 string msg = $"Out  | '{str}'";
-                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"WriteStrokeLog: {msg}");
+                if (Settings.LoggingDecKeyInfo) logger.Info(() => $"WriteStrokeLog: {msg}");
                 appenStrokeLog(msg, HRDateTime.Now, false);
                 //if (CombinationKeyStroke.Determiner.Singleton.IsStrokeListEmpty()) FlushStrokeLog();
             }
@@ -191,12 +191,12 @@ namespace KanchokuWS
 
         private void dpiChangedHandler(object sender, DpiChangedEventArgs e)
         {
-            logger.InfoH(() => $"CALLED: new dpi={e.DeviceDpiNew}");
+            logger.Info(() => $"CALLED: new dpi={e.DeviceDpiNew}");
         }
 
         private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             ScreenInfo.Singleton?.GetScreenInfo();
         }
 
@@ -335,7 +335,7 @@ namespace KanchokuWS
         /// <summary> 各種定義ファイルの読み込み </summary>
         public void ReadDefFiles()
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
 
             logConstant();
 
@@ -369,25 +369,25 @@ namespace KanchokuWS
             // 設定ファイルの再読み込み
             Settings.ReadIniFile(false);
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         private void logConstant()
         {
-            logger.InfoH(() => $"TOTAL_SHIFT_DECKEY_NUM={DecoderKeys.TOTAL_SHIFT_DECKEY_NUM}");
-            logger.InfoH(() => $"FUNC_DECKEY_START={DecoderKeys.FUNC_DECKEY_START}");
-            logger.InfoH(() => $"STROKE_DECKEY_END={DecoderKeys.STROKE_DECKEY_END}");
-            logger.InfoH(() => $"COMBO_DECKEY_START={DecoderKeys.COMBO_DECKEY_START}");
-            //logger.InfoH(() => $"COMBO_EX_DECKEY_START={DecoderKeys.COMBO_EX_DECKEY_START}");
-            logger.InfoH(() => $"EISU_COMBO_DECKEY_START={DecoderKeys.EISU_COMBO_DECKEY_START}");
-            //logger.InfoH(() => $"EISU_COMBO_EX_DECKEY_START={DecoderKeys.EISU_COMBO_EX_DECKEY_START}");
-            logger.InfoH(() => $"CTRL_DECKEY_START={DecoderKeys.CTRL_DECKEY_START}");
-            logger.InfoH(() => $"CTRL_FUNC_DECKEY_START={DecoderKeys.CTRL_FUNC_DECKEY_START}");
-            logger.InfoH(() => $"TOTAL_DECKEY_NUM={DecoderKeys.TOTAL_DECKEY_NUM}");
-            logger.InfoH(() => $"UNCONDITIONAL_DECKEY_OFFSET={DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET}");
-            logger.InfoH(() => $"UNCONDITIONAL_DECKEY_END={DecoderKeys.UNCONDITIONAL_DECKEY_END}");
-            logger.InfoH(() => $"CTRL_SCR_LOCK_DECKEY={DecoderKeys.CTRL_SCR_LOCK_DECKEY}");
-            logger.InfoH(() => $"SPECIAL_DECKEY_ID_BASE={DecoderKeys.SPECIAL_DECKEY_ID_BASE}");
+            logger.Info(() => $"TOTAL_SHIFT_DECKEY_NUM={DecoderKeys.TOTAL_SHIFT_DECKEY_NUM}");
+            logger.Info(() => $"FUNC_DECKEY_START={DecoderKeys.FUNC_DECKEY_START}");
+            logger.Info(() => $"STROKE_DECKEY_END={DecoderKeys.STROKE_DECKEY_END}");
+            logger.Info(() => $"COMBO_DECKEY_START={DecoderKeys.COMBO_DECKEY_START}");
+            //logger.Info(() => $"COMBO_EX_DECKEY_START={DecoderKeys.COMBO_EX_DECKEY_START}");
+            logger.Info(() => $"EISU_COMBO_DECKEY_START={DecoderKeys.EISU_COMBO_DECKEY_START}");
+            //logger.Info(() => $"EISU_COMBO_EX_DECKEY_START={DecoderKeys.EISU_COMBO_EX_DECKEY_START}");
+            logger.Info(() => $"CTRL_DECKEY_START={DecoderKeys.CTRL_DECKEY_START}");
+            logger.Info(() => $"CTRL_FUNC_DECKEY_START={DecoderKeys.CTRL_FUNC_DECKEY_START}");
+            logger.Info(() => $"TOTAL_DECKEY_NUM={DecoderKeys.TOTAL_DECKEY_NUM}");
+            logger.Info(() => $"UNCONDITIONAL_DECKEY_OFFSET={DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET}");
+            logger.Info(() => $"UNCONDITIONAL_DECKEY_END={DecoderKeys.UNCONDITIONAL_DECKEY_END}");
+            logger.Info(() => $"CTRL_SCR_LOCK_DECKEY={DecoderKeys.CTRL_SCR_LOCK_DECKEY}");
+            logger.Info(() => $"SPECIAL_DECKEY_ID_BASE={DecoderKeys.SPECIAL_DECKEY_ID_BASE}");
         }
 
         /// <summary> デコーダ用の設定を事前にロードしておく </summary>
@@ -417,7 +417,7 @@ namespace KanchokuWS
         /// <summary> 各種定義ファイルの読み込み </summary>
         public void ReloadDefFiles()
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
 
             // 各種定義ファイルの読み込み
             ReadDefFiles();
@@ -436,7 +436,7 @@ namespace KanchokuWS
                 frmVkb?.MakeStrokeTables(Settings.StrokeHelpFile);
             }
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         //------------------------------------------------------------------
@@ -447,7 +447,7 @@ namespace KanchokuWS
         /// <param name="e"></param>
         private void FrmKanchoku_FormClosing(object sender, FormClosingEventArgs e)
         {
-            logger.InfoH("\nCALLED");
+            logger.Info("\nCALLED");
             if (frmSplash != null) {
                 closeSplash();
                 logger.Debug("Splash Closed");
@@ -470,10 +470,10 @@ namespace KanchokuWS
 
             // 再起動
             if (bRestart) {
-                logger.InfoH("RESTART");
+                logger.Info("RESTART");
                 MultiAppChecker.Release();
                 //Helper.WaitMilliSeconds(1000);
-                logger.InfoH("Start another process...\n");
+                logger.Info("Start another process...\n");
                 Logger.Close();
                 Helper.StartProcess(SystemHelper.GetExePath(), null);
             }
@@ -491,7 +491,7 @@ namespace KanchokuWS
         // 終了
         public void Terminate()
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             if (frmSplash != null) {
                 closeSplash();
                 logger.Info("Splash Closed");
@@ -499,9 +499,9 @@ namespace KanchokuWS
 
             DeactivateDecoderWithModifiersOff();
 
-            logger.InfoH($"ConfirmOnClose={Settings.ConfirmOnClose}");
+            logger.Info($"ConfirmOnClose={Settings.ConfirmOnClose}");
             if (!Settings.ConfirmOnClose || SystemHelper.OKCancelDialog("漢直窓Sを終了します。\r\nよろしいですか。")) {
-                logger.InfoH("CLOSING...");
+                logger.Info("CLOSING...");
                 Close();
             }
         }
@@ -510,7 +510,7 @@ namespace KanchokuWS
         // 再起動
         public void Restart(bool bNoSave)
         {
-            logger.InfoH($"CALLED: bNoSave={bNoSave}");
+            logger.Info($"CALLED: bNoSave={bNoSave}");
             if (frmSplash != null) {
                 closeSplash();
                 logger.Info("Splash Closed");
@@ -518,12 +518,12 @@ namespace KanchokuWS
 
             DeactivateDecoderWithModifiersOff();
 
-            logger.InfoH($"bNoSave={bNoSave}, ConfirmOnRestart={Settings.ConfirmOnRestart}");
+            logger.Info($"bNoSave={bNoSave}, ConfirmOnRestart={Settings.ConfirmOnRestart}");
             var msg = bNoSave ?
                 "漢直窓Sを再起動します。\r\nデコーダが保持している辞書内容はファイルに保存されません。\r\nよろしいですか。" :
                 "漢直窓Sを再起動します。\r\nデコーダが保持している辞書内容をファイルに書き出すので、\r\nユーザーが直接辞書ファイルに加えた変更は失われます。\r\nよろしいですか。";
             if (!Settings.ConfirmOnRestart || SystemHelper.OKCancelDialog(msg)) {
-                logger.InfoH("RESTARTING...");
+                logger.Info("RESTARTING...");
                 bRestart = true;
                 bNoSaveDicts = bNoSave;
                 Close();
@@ -553,7 +553,7 @@ namespace KanchokuWS
 
         private void closeSplash()
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             if (frmSplash != null) {
                 frmSplash.TopMost = false;
                 frmSplash.Hide();
@@ -561,7 +561,7 @@ namespace KanchokuWS
                 using (syncSplash) {
                     if (frmSplash != null) {
                         frmSplash.IsKanchokuTerminated = true;
-                        logger.InfoH("CLOSED");
+                        logger.Info("CLOSED");
                     }
                     frmSplash = null;
                 }
@@ -570,7 +570,7 @@ namespace KanchokuWS
 
         private void splashClosedListener()
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             if (Settings.ShowEisuVkb) frmVkb.Show();
         }
 
@@ -647,7 +647,7 @@ namespace KanchokuWS
                 tail = "…";
             }
             CommonState.CenterString = new string(decoderOutput.centerString, 0, len) + tail;
-            logger.Info(() => $"center={CommonState.CenterString}, mode.Face={frmMode.FaceString}");
+            logger.DebugH(() => $"center={CommonState.CenterString}, mode.Face={frmMode.FaceString}");
 
             // TODO: 外出しする
             if (decoderOutput.IsZenkakuModeMarkerShow()) {
@@ -675,7 +675,7 @@ namespace KanchokuWS
         /// <summary> デコーダにコマンドを送信する(エラーなら false を返す)</summary> 
         public bool ExecCmdDecoder(string cmd, string data, bool bInit = false)
         {
-            logger.InfoH(() => $"ENTER: cmd={cmd}, bInit={bInit}, dataLen={data._safeLength()}, inOutData.size={IN_OUT_DATA_SIZE}, data={(data._safeLength() > 100 ? "\n" : "")}{data}");
+            logger.Info(() => $"ENTER: cmd={cmd}, bInit={bInit}, dataLen={data._safeLength()}, inOutData.size={IN_OUT_DATA_SIZE}, data={(data._safeLength() > 100 ? "\n" : "")}{data}");
             if (data._safeLength() >= IN_OUT_DATA_SIZE) logger.WarnH($"dataLen({data._safeLength()}) exceeds inOutData.size({IN_OUT_DATA_SIZE})");
 
             bool resultFlag = true;
@@ -793,7 +793,7 @@ namespace KanchokuWS
         /// <summary>無条件にデコーダを呼び出す</summary>
         public bool InvokeDecoderUnconditionally(int deckey, uint mod)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}H({deckey}), mod={mod}H({mod})");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), mod={mod}H({mod})");
             if (IsDecoderActive)
                 handleKeyDecoder(deckey, mod);
             else
@@ -805,7 +805,7 @@ namespace KanchokuWS
         /// <param name="shiftPlane"></param>
         public void SetStrokeHelpShiftPlane(int shiftPlane)
         {
-            logger.InfoH(() => $"CALLED: shiftPlane={shiftPlane}, IsDecoderActive={IsDecoderActive}");
+            logger.Info(() => $"CALLED: shiftPlane={shiftPlane}, IsDecoderActive={IsDecoderActive}");
             if (IsDecoderActive) {
                 if (shiftPlane >= 0 && shiftPlane < ShiftPlane.ShiftPlane_NUM) {
                     frmVkb.StrokeHelpShiftPlane = shiftPlane;
@@ -820,7 +820,7 @@ namespace KanchokuWS
         /// <param name="decKey"></param>
         public void SetNextStrokeHelpDecKey(List<int> decKeys)
         {
-            logger.InfoH(() => $"CALLED: decKeys={decKeys._keyString("empty")}");
+            logger.Info(() => $"CALLED: decKeys={decKeys._keyString("empty")}");
             frmVkb.DecKeysForNextTableStrokeHelp.Clear();
             if (decKeys._notEmpty()) {
                 foreach (var dc in decKeys) {
@@ -842,7 +842,7 @@ namespace KanchokuWS
         /// <returns></returns>
         public bool FuncDispatcher(int deckey, int normalDeckey, uint mod)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: deckey={deckey:x}H({deckey}), normalDeckey={normalDeckey:x}H({normalDeckey}), mod={mod:x}({mod})");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), normalDeckey={normalDeckey:x}H({normalDeckey}), mod={mod:x}({mod})");
             bool bPrevDtUpdate = false;
             int prevDeckey = prevFuncDeckey;
             prevFuncDeckey = deckey;
@@ -912,39 +912,39 @@ namespace KanchokuWS
                             }
                             return true;
                         case DecoderKeys.EXCHANGE_CODE_TABLE_DECKEY:
-                            logger.InfoH("EXCHANGE_CODE_TABLE");
+                            logger.Info("EXCHANGE_CODE_TABLE");
                             ExchangeCodeTable();
                             return true;
                         case DecoderKeys.EXCHANGE_CODE_TABLE2_DECKEY:
-                            logger.InfoH("EXCHANGE_CODE_TABLE2");
+                            logger.Info("EXCHANGE_CODE_TABLE2");
                             ExchangeCodeTable(true);
                             return true;
                         case DecoderKeys.SELECT_CODE_TABLE1_DECKEY:
-                            logger.InfoH("SELECT_CODE_TABLE1_DECKEY");
+                            logger.Info("SELECT_CODE_TABLE1_DECKEY");
                             SelectCodeTable(1, false);
                             return true;
                         case DecoderKeys.SELECT_CODE_TABLE2_DECKEY:
-                            logger.InfoH("SELECT_CODE_TABLE2_DECKEY");
+                            logger.Info("SELECT_CODE_TABLE2_DECKEY");
                             SelectCodeTable(2, false);
                             return true;
                         case DecoderKeys.SELECT_CODE_TABLE3_DECKEY:
-                            logger.InfoH("SELECT_CODE_TABLE3_DECKEY");
+                            logger.Info("SELECT_CODE_TABLE3_DECKEY");
                             SelectCodeTable(3, false);
                             return true;
                         case DecoderKeys.TOGGLE_KATAKANA_CONVERSION1_DECKEY:
-                            logger.InfoH("TOGGLE_KATAKANA_CONVERSION1_DECKEY");
+                            logger.Info("TOGGLE_KATAKANA_CONVERSION1_DECKEY");
                             SelectCodeTable(1, true);
                             return true;
                         case DecoderKeys.TOGGLE_KATAKANA_CONVERSION2_DECKEY:
-                            logger.InfoH("TOGGLE_KATAKANA_CONVERSION2_DECKEY");
+                            logger.Info("TOGGLE_KATAKANA_CONVERSION2_DECKEY");
                             SelectCodeTable(2, true);
                             return true;
                         case DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY:
-                            logger.InfoH("KANA_TRAINING_TOGGLE");
+                            logger.Info("KANA_TRAINING_TOGGLE");
                             KanaTrainingModeToggle();
                             return true;
                         case DecoderKeys.PSEUDO_SPACE_DECKEY:
-                            logger.InfoH(() => $"PSEUDO_SPACE_DECKEY: strokeCount={decoderOutput.GetStrokeCount()}");
+                            logger.Info(() => $"PSEUDO_SPACE_DECKEY: strokeCount={decoderOutput.GetStrokeCount()}");
                             deckey = DecoderKeys.STROKE_SPACE_DECKEY;
                             if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
                                 // 第2打鍵待ちなら、スペースを出力
@@ -958,7 +958,7 @@ namespace KanchokuWS
                         case DecoderKeys.POST_PLANE_D_SHIFT_DECKEY:
                         case DecoderKeys.POST_PLANE_E_SHIFT_DECKEY:
                         case DecoderKeys.POST_PLANE_F_SHIFT_DECKEY:
-                            logger.InfoH(() => $"POST_PLANE_X_SHIFT_DECKEY=POST_NORMAL_SHIFT_DECKEY+{deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY}, strokeCount={decoderOutput.GetStrokeCount()}");
+                            logger.Info(() => $"POST_PLANE_X_SHIFT_DECKEY=POST_NORMAL_SHIFT_DECKEY+{deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY}, strokeCount={decoderOutput.GetStrokeCount()}");
                             if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
                                 // 第2打鍵待ちなら、いったんBSを出力してからシフトされたコードを出力
                                 InvokeDecoder(DecoderKeys.BS_DECKEY, 0);
@@ -967,25 +967,25 @@ namespace KanchokuWS
                             }
                             return true;
                         case DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY:
-                            logger.InfoH(() => $"COPY_SELECTION_AND_SEND_TO_DICTIONARY:{deckey}");
+                            logger.Info(() => $"COPY_SELECTION_AND_SEND_TO_DICTIONARY:{deckey}");
                             copySelectionAndSendToDictionary();
                             return true;
                         case DecoderKeys.CLEAR_STROKE_DECKEY:
-                            logger.InfoH(() => $"CLEAR_STROKE_DECKEY:{deckey}");
+                            logger.Info(() => $"CLEAR_STROKE_DECKEY:{deckey}");
                             sendClearStrokeToDecoder();
                             return true;
                         case DecoderKeys.TOGGLE_BLOCKER_DECKEY:
-                            logger.InfoH(() => $"TOGGLE_BLOCKER_DECKEY:{deckey}");
+                            logger.Info(() => $"TOGGLE_BLOCKER_DECKEY:{deckey}");
                             sendDeckeyToDecoder(deckey);
                             return true;
 
                         case DecoderKeys.DIRECT_SPACE_DECKEY:
-                            logger.InfoH(() => $"DIRECT_SPACE_DECKEY:{deckey}, mode={mod:x}H");
+                            logger.Info(() => $"DIRECT_SPACE_DECKEY:{deckey}, mode={mod:x}H");
                             return sendVkeyFromDeckey(DecoderKeys.STROKE_SPACE_DECKEY, -1, mod);
 
                         case DecoderKeys.UNDEFINED_DECKEY:
                             // 主に英数モードから抜けるために使う
-                            logger.InfoH(() => $"UNDEFINED_DECKEY:{deckey}");
+                            logger.Info(() => $"UNDEFINED_DECKEY:{deckey}");
                             sendDeckeyToDecoder(deckey);
                             if (normalDeckey >= 0 && normalDeckey < DecoderKeys.NORMAL_DECKEY_NUM) {
                                 return sendVkeyFromDeckey(normalDeckey, -1, mod);
@@ -1003,7 +1003,7 @@ namespace KanchokuWS
                     }
                 } else {
                     // Decoder Inactive
-                    if (Settings.LoggingDecKeyInfo) logger.InfoH("Decoder Inactive");
+                    if (Settings.LoggingDecKeyInfo) logger.Info("Decoder Inactive");
                     bPrevDtUpdate = true;
                     if (deckey >= 0 && deckey != DecoderKeys.UNDEFINED_DECKEY) {
                         return sendVkeyFromDeckey(deckey, normalDeckey, mod);
@@ -1021,11 +1021,11 @@ namespace KanchokuWS
         /// <summary>漢直コードテーブルの入れ替え</summary>
         public void ExchangeCodeTable(bool bSecond = false)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             if (IsDecoderActive && Settings.TableFile2._notEmpty() /*&& DecoderOutput.IsWaitingFirstStroke()*/) {
                 ExecCmdDecoder("isKatakanaMode", null);  // カタカナモードか
                 bool isKatakana = (decoderOutput.resultFlags & ResultFlags.CurrentModeIsKatakana) != 0;
-                logger.InfoH(() => $"isKatakana={isKatakana}, resultFlags={decoderOutput.resultFlags:x}");
+                logger.Info(() => $"isKatakana={isKatakana}, resultFlags={decoderOutput.resultFlags:x}");
                 ExecCmdDecoder("commitHistory", null);                  // 履歴のコミットと初期化
                 //InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);
                 //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);
@@ -1047,7 +1047,7 @@ namespace KanchokuWS
         /// <summary>漢直コードテーブルの選択</summary>
         public void SelectCodeTable(int n, bool toggleKatakana)
         {
-            logger.InfoH($"CALLED: n={n}");
+            logger.Info($"CALLED: n={n}");
             if (IsDecoderActive && (Settings.TableFile2._notEmpty() || Settings.TableFile3._notEmpty()) /*&& DecoderOutput.IsWaitingFirstStroke()*/) {
                 //ExecCmdDecoder("isKatakanaMode", null);  // カタカナモードか
                 //bool isKatakana = (decoderOutput.resultFlags & ResultFlags.CurrentModeIsKatakana) != 0;
@@ -1081,7 +1081,7 @@ namespace KanchokuWS
         /// <summary>SandS状態を一時的なシフト状態にする</summary>
         public void SetSandSShiftedOneshot()
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             if (IsDecoderActive) {
                 // 中央鍵盤色を、第2テーブル選択状態の色にする
                 IsSandSShiftedOneshot = true;
@@ -1114,7 +1114,7 @@ namespace KanchokuWS
         /// </summary>
         private bool rotateStrokeHelp(int direction)
         {
-            logger.InfoH(() => $"CALLED: IsDecoderActive={IsDecoderActive}");
+            logger.Info(() => $"CALLED: IsDecoderActive={IsDecoderActive}");
             if (IsDecoderActive) {
                 // 入力標識の消去
                 frmMode.Vanish();
@@ -1135,7 +1135,7 @@ namespace KanchokuWS
                 && Settings.CtrlKeyTargetClassNamesHash.Any(name => name._notEmpty() && activeWinClassName.StartsWith(name));
             bool ctrlTarget = !(Settings.UseClassNameListAsInclusion ^ contained);
             if (Settings.LoggingDecKeyInfo && Logger.IsInfoEnabled) {
-                logger.InfoH($"ctrlTarget={ctrlTarget} (=!({Settings.UseClassNameListAsInclusion} (Inclusion) XOR {contained} (ContainedInList)");
+                logger.Info($"ctrlTarget={ctrlTarget} (=!({Settings.UseClassNameListAsInclusion} (Inclusion) XOR {contained} (ContainedInList)");
             }
             return ctrlTarget;
         }
@@ -1151,16 +1151,16 @@ namespace KanchokuWS
         /// </summary>
         private bool rotateDateString(int direction)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: direction={direction}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: direction={direction}");
             bool bFirst = (prevDeckey != DecoderKeys.DATE_STRING_ROTATION_DECKEY && prevDeckey != DecoderKeys.DATE_STRING_UNROTATION_DECKEY);
             if (bFirst) {
-                if (Settings.LoggingDecKeyInfo) logger.InfoH($"bFirst={bFirst}");
+                if (Settings.LoggingDecKeyInfo) logger.Info($"bFirst={bFirst}");
                 dateStrDeckeyCount = 0;     // 0 は初期状態
                 prevDateStrLength = 0;
                 dayOffset = 0;
             }
             dateStrDeckeyCount += direction;
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: new deckey={DecoderKeys.DATE_STRING_ROTATION_DECKEY:x}, dateStrDeckeyCount={dateStrDeckeyCount}, prevDateStrLength={prevDateStrLength}, dayOffset={dayOffset}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: new deckey={DecoderKeys.DATE_STRING_ROTATION_DECKEY:x}, dateStrDeckeyCount={dateStrDeckeyCount}, prevDateStrLength={prevDateStrLength}, dayOffset={dayOffset}");
             outputTodayDate();
             return true;
         }
@@ -1211,7 +1211,7 @@ namespace KanchokuWS
             int len2 = items._getSecond()._safeLength();
             const int keyMaxLen = 32;
             const int xferMaxLen = 64;
-            logger.InfoH(() => $"len1={len1}, len2={len2}, items[0]={items._getFirst()._safeSubstring(0, keyMaxLen)}, items[1]={items._getSecond()._safeSubstring(0, 64)}");
+            logger.Info(() => $"len1={len1}, len2={len2}, items[0]={items._getFirst()._safeSubstring(0, keyMaxLen)}, items[1]={items._getSecond()._safeSubstring(0, 64)}");
             if (len1 > 0 && len1 <= keyMaxLen && len2 <= 64 && items._getFirst()._safeIndexOf(' ') < 0) {
                 ExecCmdDecoder("addHistEntry", str);
             } else {
@@ -1230,7 +1230,7 @@ namespace KanchokuWS
         // アクティブと非アクティブを切り替える
         public void ToggleActiveState(bool bRevertCtrl = false, int activatorCode = 0)
         {
-            logger.InfoH(() => $"ENTER");
+            logger.Info(() => $"ENTER");
             if (!IsDecoderActive) {
                 ActivateDecoder(activatorCode);
             } else {
@@ -1238,24 +1238,24 @@ namespace KanchokuWS
                 DeactivateDecoder(!bRevertCtrl);
                 if (bRevertCtrl) SendInputHandler.Singleton.RevertCtrlKey(keyState);
             }
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         public void ActivateDecoder(int activatorCode = 0)
         {
-            logger.InfoH(() => $"\nENTER");
+            logger.Info(() => $"\nENTER");
 
             HRDateTime.AdjustHiResNow();
 
             if (IsDecoderActive) {
-                logger.InfoH("Decoder already activated");
+                logger.Info("Decoder already activated");
                 ExecCmdDecoder("commitHistory", null);                  // 履歴のコミットと初期化
                 //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // これで各種モードがクリアされる
                 //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // 念のため2回呼ぶ
                 InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0);      // これで各種モードがクリアされる
                 InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0);      // 念のため2回呼ぶ
                 frmVkb.DrawVirtualKeyboardChars();
-                logger.InfoH("LEAVE");
+                logger.Info("LEAVE");
                 return;
             }
             IsDecoderActive = true;
@@ -1329,13 +1329,13 @@ namespace KanchokuWS
                 }
             } finally {
             }
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         // デコーダをOFFにする
         public void DeactivateDecoder(bool bModifiersOff = true)
         {
-            logger.InfoH(() => $"\nENTER");
+            logger.Info(() => $"\nENTER");
             IsDecoderActive = false;
             CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolByDecoderMode(IsDecoderActive);
             if (decoderPtr != IntPtr.Zero) {
@@ -1353,7 +1353,7 @@ namespace KanchokuWS
                     frmMode.SetAlphaMode();
                 }
             }
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         // デコーダをOFFにする
@@ -1365,7 +1365,7 @@ namespace KanchokuWS
         /// <summary>仮想鍵盤の表示位置を移動する</summary>
         public void MoveFormVirtualKeyboard()
         {
-            logger.Info("CALLED");
+            logger.DebugH("CALLED");
             moveVkbWindow(false, true, true);
         }
 
@@ -1393,7 +1393,7 @@ namespace KanchokuWS
             var activeWinClassName = ActiveWindowHandler.Singleton.ActiveWinClassName;
             var activeWinSettings = Settings.GetWinClassSettings(activeWinClassName);
             if (bLog || bFirstMove) {
-                logger.Info($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}, firstMove={bFirstMove}");
+                logger.DebugH($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}, firstMove={bFirstMove}");
                 ActiveWindowHandler.Singleton.LoggingCaretInfo(activeWinSettings);
             }
 
@@ -1401,7 +1401,7 @@ namespace KanchokuWS
 
             if (dlgVkbClassNameHash._isEmpty()) {
                 dlgVkbClassNameHash = ActiveWindowHandler.GetWindowClassName(frmVkb.Handle)._safeSubstring(-16);
-                logger.Info(() => $"Vkb ClassName Hash={dlgVkbClassNameHash}");
+                logger.DebugH(() => $"Vkb ClassName Hash={dlgVkbClassNameHash}");
             }
 
             var activeWinCaretPos = ActiveWindowHandler.Singleton.ActiveWinCaretPos;
@@ -1410,7 +1410,7 @@ namespace KanchokuWS
             bool isValidCaretShape()
             {
                 bool result = activeWinCaretPos.Width > 0 || activeWinCaretPos.Height > 0;
-                if (bLog && !result) logger.Info("INVALID caret shape");
+                if (bLog && !result) logger.DebugH("INVALID caret shape");
                 return result;
             }
 
@@ -1430,14 +1430,14 @@ namespace KanchokuWS
                     if (xFixed < 0 && bFixedPosWinClass) xFixed = Math.Abs(Settings.VirtualKeyboardFixedPosX);
                     if (yFixed < 0 && bFixedPosWinClass) yFixed = Math.Abs(Settings.VirtualKeyboardFixedPosY);
                     //double dpiRatio = 1.0; //FrmVkb.GetDeviceDpiRatio();
-                    if (bLog || bFirstMove) logger.InfoH($"CaretPos.X={activeWinCaretPos.X}, CaretPos.Y={activeWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}, xFixed={xFixed}, yFixed={yFixed}");
+                    if (bLog || bFirstMove) logger.Info($"CaretPos.X={activeWinCaretPos.X}, CaretPos.Y={activeWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}, xFixed={xFixed}, yFixed={yFixed}");
                     if (activeWinCaretPos.X >= 0) {
                         int cX = activeWinCaretPos.X;
                         int cY = activeWinCaretPos.Y;
                         int cW = activeWinCaretPos.Width;
                         int cH = activeWinCaretPos.Height;
                         if (bLog) {
-                            logger.InfoH($"MOVE: X={cX}, Y={cY}, W={cW}, H={cH}, OX={xOffset}, OY={yOffset}");
+                            logger.Info($"MOVE: X={cX}, Y={cY}, W={cW}, H={cH}, OX={xOffset}, OY={yOffset}");
                             if (Settings.LoggingActiveWindowInfo) {
                                 var dpis = ScreenInfo.Singleton.ScreenDpi.Select(x => $"{x}")._join(", ");
                                 frmVkb.SetTopText($"DR={dpis}, CX={cX},CY={cY},CW={cW},CH={cH},OX={xOffset},OY={yOffset}");
@@ -1485,7 +1485,7 @@ namespace KanchokuWS
         /// <summary>ストロークヘルプ</summary>
         public void ShowStrokeHelp(string w)
         {
-            logger.InfoH($"CALLED: w={w}");
+            logger.Info($"CALLED: w={w}");
             if (IsDecoderActive) {
                 // 指定文字(空なら最後に入力された文字)のストロークヘルプを取得
                 ExecCmdDecoder("showStrokeHelp", w);
@@ -1498,7 +1498,7 @@ namespace KanchokuWS
         /// <summary>部首合成ヘルプ</summary>
         public void ShowBushuCompHelp()
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             if (IsDecoderActive) {
                 // 中央鍵盤文字(空なら最後に入力された文字)のストロークヘルプを取得
                 ExecCmdDecoder("showBushuCompHelp", CommonState.CenterString);
@@ -1512,7 +1512,7 @@ namespace KanchokuWS
         /// <param name="delta"></param>
         public void RotateStrokeTable(int delta)
         {
-            logger.InfoH(() => $"CALLED: delta={delta}");
+            logger.Info(() => $"CALLED: delta={delta}");
             if (IsDecoderActive) {
                 if (delta == 0) delta = 1;
                 frmVkb.RotateStrokeTable(delta);
@@ -1572,7 +1572,7 @@ namespace KanchokuWS
         private async Task<bool> initializeDecoder()
         {
             return await Task.Run(() => {
-                logger.InfoH("ENTER");
+                logger.Info("ENTER");
                 decoderPtr = CreateDecoder(Logger.LogLevel);         // UI側のLogLevelに合わせる
 
                 if (!ExecCmdDecoder(null, "", true)) {
@@ -1590,7 +1590,7 @@ namespace KanchokuWS
 
                 updateStrokeNodesByComplexCommands();
 
-                logger.InfoH("LEAVE");
+                logger.Info("LEAVE");
                 return true;
             });
         }
@@ -1598,7 +1598,7 @@ namespace KanchokuWS
         // デコーダの終了
         private void finalizeDecoder()
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             if (decoderPtr != IntPtr.Zero) {
                 if (!bNoSaveDicts) {
                     logger.Info("CALL SaveDictsDecoder");
@@ -1609,7 +1609,7 @@ namespace KanchokuWS
                 decoderPtr = IntPtr.Zero;
             }
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         /// <summary>初期打鍵表(下端機能キー以外は空白)の作成</summary>
@@ -1655,7 +1655,7 @@ namespace KanchokuWS
                 if (Settings.DeckeyInfiniteLoopDetectCount > 0) {
                     if (deckey == prevRawDeckey) {
                         ++rawDeckeyRepeatCount;
-                        if ((rawDeckeyRepeatCount % 100) == 0) logger.InfoH(() => $"rawDeckeyRepeatCount={rawDeckeyRepeatCount}");
+                        if ((rawDeckeyRepeatCount % 100) == 0) logger.Info(() => $"rawDeckeyRepeatCount={rawDeckeyRepeatCount}");
                         if (rawDeckeyRepeatCount > Settings.DeckeyInfiniteLoopDetectCount) {
                             logger.Error($"rawDeckeyRepeatCount exceeded threshold: deckey={deckey:x}H({deckey}), count={rawDeckeyRepeatCount}, threshold={Settings.DeckeyInfiniteLoopDetectCount}");
                             logger.WarnH("Force close");
@@ -1711,7 +1711,7 @@ namespace KanchokuWS
         {
             if (targetChar == 0 && candidateCharStrs != null) {
                 var s = candidateCharStrs._getNth(deckey);
-                logger.Info(() => $"targetChar={s}");
+                logger.DebugH(() => $"targetChar={s}");
                 if (s._notEmpty()) {
                     targetChar = s[0];
                     if (s.Length > 1) targetChar = targetChar << 16 + s[1];
@@ -1788,7 +1788,7 @@ namespace KanchokuWS
                 }
                 return new string(decoderOutput.topString.Skip(pos).Take(tailPos - pos).ToArray());
             }
-            logger.Info(() =>
+            logger.DebugH(() =>
                     $"RomanStrokeGuide={bRomanStrokeGuideMode}, UpperRomanStrokeGuide={bUpperRomanStrokeGuideMode}, romanMode={bRomanMode}, "
                     + $"HiraganaStrokeGuide={bHiraganaStrokeGuideMode}, "
                     + $"Settings.UpperRomanStrokeGuide={Settings.UpperRomanStrokeGuide}, numBS={decoderOutput.numBackSpaces}, "
@@ -1801,7 +1801,7 @@ namespace KanchokuWS
                  isUpperAlphabet(decoderOutput.outString[0]) && decoderOutput.outString[1] == 0)) {
                 // ローマ字読み入力モード
                 var romanStr = getTailRomanStr();
-                logger.Info(() => $"romanStr={romanStr}");
+                logger.DebugH(() => $"romanStr={romanStr}");
                 CommonState.CenterString = "ローマ字";
                 candidateChars = KanjiYomiTable.GetCandidatesFromRoman(romanStr);
                 candidateCharStrs = frmVkb.DrawStrokeHelp(candidateChars);
@@ -1900,31 +1900,31 @@ namespace KanchokuWS
                 --topLen;
                 topString = topString.Substring(0, topLen);
             }
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: topString={topString}, topLen={topLen}, outString={outString._toString()}, outLen={outLen}, numBS={numBS}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"ENTER: topString={topString}, topLen={topLen}, outString={outString._toString()}, outLen={outLen}, numBS={numBS}");
 
             if (topLen <= 0) return 0;
 
             int topPos = topLen - numBS;
             if (topPos < 0) return 0;
 
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"topLen={topLen}, topPos={topPos}, outLen={outLen}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"topLen={topLen}, topPos={topPos}, outLen={outLen}");
             int i = 0;
             while (topPos + i < topLen && i < outLen && topString[topPos + i] == outString[i]) {
                 ++i;
             }
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: LeadingLen={i}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: LeadingLen={i}");
             return i;
         }
 
         public string CallDecoderWithKey(int deckey, uint mod, out int numBS)
         {
-            logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}, " +
+            logger.Info(() => $"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}, " +
                 $"targetChar={targetChar}, bRomanStrokeGuideMode={bRomanStrokeGuideMode}, bUpperRomanStrokeGuideMode={bUpperRomanStrokeGuideMode}");
 
             // デコーダの呼び出し
             HandleDeckeyDecoder(decoderPtr, deckey, targetChar, makeInputFlags(bRomanStrokeGuideMode, bUpperRomanStrokeGuideMode), ref decoderOutput);
 
-            logger.InfoH(() =>
+            logger.Info(() =>
                 $"HandleDeckeyDecoder: RESULT: table#={decoderOutput.strokeTableNum}, strokeDepth={decoderOutput.GetStrokeCount()}, layout={decoderOutput.layout}, " +
                 $"numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}, topString={decoderOutput.topString._toString()}, " +
                 $"IsDeckeyToVkey={decoderOutput.IsDeckeyToVkey()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
@@ -1936,7 +1936,7 @@ namespace KanchokuWS
             var result = decoderOutput.outString._toString();
             numBS = decoderOutput.numBackSpaces;
             WriteStrokeLog(result);
-            logger.InfoH(() => $"LEAVE: result={result}, numBS={decoderOutput.numBackSpaces}, usedTable={decoderOutput.strokeTableNum}, strokeCount={decoderOutput.GetStrokeCount()}");
+            logger.Info(() => $"LEAVE: result={result}, numBS={decoderOutput.numBackSpaces}, usedTable={decoderOutput.strokeTableNum}, strokeCount={decoderOutput.GetStrokeCount()}");
             return result;
         }
 
@@ -1945,7 +1945,7 @@ namespace KanchokuWS
         /// </summary>
         private void handleKeyDecoderDirectly(int deckey, uint mod)
         {
-            logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}, " +
+            logger.Info(() => $"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}, " +
                 $"targetChar={targetChar}, bRomanStrokeGuideMode={bRomanStrokeGuideMode}, bUpperRomanStrokeGuideMode={bUpperRomanStrokeGuideMode}");
 
             // デコーダの呼び出し
@@ -1969,7 +1969,7 @@ namespace KanchokuWS
         /// </summary>
         private void sendClearStrokeToDecoder()
         {
-            logger.InfoH(() => $"CALLED");
+            logger.Info(() => $"CALLED");
             sendDeckeyToDecoder(DecoderKeys.CLEAR_STROKE_DECKEY);
         }
 
@@ -1978,7 +1978,7 @@ namespace KanchokuWS
         /// </summary>
         private void sendDeckeyToDecoder(int deckey)
         {
-            logger.InfoH(() => $"CLLED: deckey={deckey:x}H({deckey})");
+            logger.Info(() => $"CLLED: deckey={deckey:x}H({deckey})");
             HandleDeckeyDecoder(decoderPtr, deckey, 0, 0, ref decoderOutput);
             if (IsDecoderActive) {
                 // 中央鍵盤文字列の取得
@@ -2030,7 +2030,7 @@ namespace KanchokuWS
                  (mod & (KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_LCTRL | KeyModifiers.MOD_RCTRL | KeyModifiers.MOD_ALT)) == 0);
 
             if (Settings.LoggingDecKeyInfo) {
-                logger.InfoH($"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={ctrlKeyState.LeftKeyDown}, rightCtrl={ctrlKeyState.RightKeyDown}, shortcutConv={bShortcutConversion}");
+                logger.Info($"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={ctrlKeyState.LeftKeyDown}, rightCtrl={ctrlKeyState.RightKeyDown}, shortcutConv={bShortcutConversion}");
             }
 
             if ((!ctrlKeyState.LeftKeyDown && !ctrlKeyState.RightKeyDown)                                       // Ctrlキーが押されていないか、
@@ -2041,7 +2041,7 @@ namespace KanchokuWS
                 || deckey >= DecoderKeys.CTRL_SHIFT_DECKEY_START && deckey < DecoderKeys.CTRL_SHIFT_DECKEY_END  // Ctrl-Shift-A～Ctrl-Shift-Z は通す
                 ) {
 
-                if (Settings.LoggingDecKeyInfo) logger.InfoH($"TARGET WINDOW");
+                if (Settings.LoggingDecKeyInfo) logger.Info($"TARGET WINDOW");
 
                 if (bShortcutConversion) {
                     // ショートカットキーの変換をやる
@@ -2049,14 +2049,14 @@ namespace KanchokuWS
                     if (dkChar != '\0') {
                         var vk = CharVsVKey.GetVKeyFromFaceChar(dkChar, deckey);
                         if (vk != 0) {
-                            if (Settings.LoggingDecKeyInfo) { logger.InfoH($"SEND1: mod={mod:x}H({mod}), vkey={vk:x}H({vk})"); }
+                            if (Settings.LoggingDecKeyInfo) { logger.Info($"SEND1: mod={mod:x}H({mod}), vkey={vk:x}H({vk})"); }
                             if (vk >= 0x100) {
                                 vk -= 0x100;
                                 mod |= KeyModifiers.MOD_SHIFT;
                             }
-                            if (Settings.LoggingDecKeyInfo) logger.InfoH($"SendVKeyCombo: mod={mod:x}H({mod}), vkey={vk:x}H({vk})");
+                            if (Settings.LoggingDecKeyInfo) logger.Info($"SendVKeyCombo: mod={mod:x}H({mod}), vkey={vk:x}H({vk})");
                             SendInputHandler.Singleton.SendVKeyCombo(mod, vk, 1);
-                            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: TRUE");
+                            if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: TRUE");
                             return true;
                         }
                     }
@@ -2064,7 +2064,7 @@ namespace KanchokuWS
                 var combo = KeyComboRepository.GetKeyComboFromDecKey(deckey);
                 if (combo != null) {
                     if (Settings.LoggingDecKeyInfo) {
-                        logger.InfoH($"SEND2: combo.modifier={combo.Value.modifier:x}H({combo.Value.modifier}), "
+                        logger.Info($"SEND2: combo.modifier={combo.Value.modifier:x}H({combo.Value.modifier}), "
                             + $"combo.normalDecKey={combo.Value.normalDecKey:x}H({combo.Value.normalDecKey}), "
                             + $"ctrl={(combo.Value.modifier & KeyModifiers.MOD_CONTROL) != 0}, "
                             + $"mod={mod:x}H({mod})");
@@ -2077,34 +2077,34 @@ namespace KanchokuWS
                         vk = CharVsVKey.GetVKeyFromFaceChar(DecoderKeyVsChar.GetArrangedCharFromDecKey(normDeckey), deckey);
                     }
                     if (vk == 0) vk = DecoderKeyVsVKey.GetVKeyFromDecKey(normDeckey);
-                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"SendVKeyCombo: mod={_mod:x}H({_mod}), vkey={vk:x}H({vk})");
+                    if (Settings.LoggingDecKeyInfo) logger.Info($"SendVKeyCombo: mod={_mod:x}H({_mod}), vkey={vk:x}H({vk})");
                     SendInputHandler.Singleton.SendVKeyCombo(_mod, vk, 1);
-                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: TRUE");
+                    if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: TRUE");
                     return true;
                 } else {
-                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"NO VKEY COMBO for deckey={deckey:x}H({deckey})");
+                    if (Settings.LoggingDecKeyInfo) logger.Info($"NO VKEY COMBO for deckey={deckey:x}H({deckey})");
                 }
             } else if (Settings.ShortcutKeyConversionEnabled && (mod & KeyModifiers.MOD_CONTROL) == 0 && normalDeckey >= 0 && normalDeckey < DecoderKeys.NORMAL_DECKEY_NUM) {
                 // Ctrl修飾を受け付けないウィンドウへのCtrl修飾キーの送信であり、ショートカットキーの変換をやる (PuTTYとか)
-                if (Settings.LoggingDecKeyInfo) { logger.InfoH($"SEND3: mod={mod:x}H({mod}), normalDeckey={normalDeckey:x}H({normalDeckey})"); }
+                if (Settings.LoggingDecKeyInfo) { logger.Info($"SEND3: mod={mod:x}H({mod}), normalDeckey={normalDeckey:x}H({normalDeckey})"); }
                 // ショートカットキーの変換をやる
                 uint vk = CharVsVKey.GetVKeyFromFaceChar(DecoderKeyVsChar.GetArrangedCharFromDecKey(normalDeckey), deckey);
                 if (vk > 0) {
-                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"SendVKeyCombo: mod=CTRL, vkey={vk:x}H({vk})");
+                    if (Settings.LoggingDecKeyInfo) logger.Info($"SendVKeyCombo: mod=CTRL, vkey={vk:x}H({vk})");
                     SendInputHandler.Singleton.SendVKeyCombo(KeyModifiers.MOD_CONTROL, vk, 1);
-                    if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: TRUE");
+                    if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: TRUE");
                     return true;
                 }
             }
 
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: FALSE");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: FALSE");
             return false;
         }
 
         /// <summary>修飾キー付きvkeyをSendInputする</summary>
         public bool SendInputVkeyWithMod(uint mod, uint vkey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED: mod={mod}H({mod}), vkey={vkey}H({vkey})");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: mod={mod}H({mod}), vkey={vkey}H({vkey})");
             SendInputHandler.Singleton.SendVKeyCombo(mod, vkey, 1);
             return true;
         }
@@ -2112,7 +2112,7 @@ namespace KanchokuWS
         /// <summary> 今日の日付文字列を出力する </summary>
         private void outputTodayDate()
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"CALLED");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED");
             var items = Settings.DateStringFormat._split('|');
             if (items._isEmpty()) return;
             if (dateStrDeckeyCount < 0)
@@ -2123,7 +2123,7 @@ namespace KanchokuWS
             if (dateStrDeckeyCount > 0) {
                 var dtNow = HRDateTime.Now.AddDays(dayOffset);
                 var fmt = items._getNth(dateStrDeckeyCount - 1)._strip();
-                if (Settings.LoggingDecKeyInfo) logger.InfoH($"count={dateStrDeckeyCount}, fmt={fmt}");
+                if (Settings.LoggingDecKeyInfo) logger.Info($"count={dateStrDeckeyCount}, fmt={fmt}");
                 if (fmt._isEmpty()) return;
 
                 int diffYear = 0;
@@ -2143,7 +2143,7 @@ namespace KanchokuWS
         //------------------------------------------------------------------
         private void notifyIcon1_Click(object sender, EventArgs e)
         {
-            logger.Info("CALLED");
+            logger.DebugH("CALLED");
             if (((MouseEventArgs)e).Button == MouseButtons.Left) {
                 if (isShiftKeyPressed()) {
                     DecoderSuspendToggle();
@@ -2182,7 +2182,7 @@ namespace KanchokuWS
                 bool bRestart = dlg.RestartRequired;
                 bool bNoSave = dlg.NoSave;
                 dlg.Dispose();
-                logger.InfoH(() => $"bRestart={bRestart}, bNoSave={bNoSave}");
+                logger.Info(() => $"bRestart={bRestart}, bNoSave={bNoSave}");
                 if (bRestart) Restart(bNoSave);
             }
         }
@@ -2273,7 +2273,7 @@ namespace KanchokuWS
             if (HRDateTime.Now >= saveDictsPlannedDt || (IsDecoderActive && HRDateTime.Now >= saveDictsChallengeDt)) {
                 reinitializeSaveDictsChallengeDt();
                 if (decoderPtr != IntPtr.Zero) {
-                    logger.InfoH("CALL SaveDictsDecoder");
+                    logger.Info("CALL SaveDictsDecoder");
                     SaveDictsDecoder(decoderPtr);
                 }
             }
@@ -2317,7 +2317,7 @@ namespace KanchokuWS
         // 設定ファイルと各種定義ファイルをリロードする
         public void ReloadSettingsAndDefFiles()
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
 
             // 初期化
             KeyComboRepository.Initialize();
@@ -2348,7 +2348,7 @@ namespace KanchokuWS
             // 辞書保存チャレンジ開始時刻の再初期化
             reinitializeSaveDictsChallengeDt();
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         public void KanaTrainingModeToggle()

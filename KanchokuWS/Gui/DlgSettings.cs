@@ -147,14 +147,14 @@ namespace KanchokuWS.Gui
                 // CancelButton が null のときは閉じない
                 e.Cancel = true;
             } else {
-                logger.InfoH("ENTER");
+                logger.Info("ENTER");
                 frmMain?.CloseDlgStrokeLog();
                 timer1.Stop();
                 logger.Info("Timer Stopped");
                 ShownDlg = null;
                 checkerAll.Dispose();
                 Helper.WaitMilliSeconds(100);       // 微妙なタイミングで invoke されるのを防ぐ
-                logger.InfoH("LEAVE");
+                logger.Info("LEAVE");
             }
         }
 
@@ -410,7 +410,7 @@ namespace KanchokuWS.Gui
 
         private void button_basicEnter_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
 
             frmMain?.DeactivateDecoderWithModifiersOff();
 
@@ -483,7 +483,7 @@ namespace KanchokuWS.Gui
             //SystemHelper.ShowInfoMessageBox("設定しました");
             label_okResultBasic.Show();
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         /// <summary> INIファイルのリロード </summary>
@@ -491,14 +491,14 @@ namespace KanchokuWS.Gui
         /// <param name="e"></param>
         private void button_Reload_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
 
             label_initialMsg.Hide();
 
             reloadIniFileAndDefFiles();
             label_reloadBasic.Show();
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         private void reloadIniFileAndDefFiles()
@@ -527,13 +527,13 @@ namespace KanchokuWS.Gui
 
         private void button_basicClose_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             if (button_basicClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabBasic();
                 checkerBasic.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
-                logger.InfoH("LEAVE");
+                logger.Info("LEAVE");
             }
         }
 
@@ -607,13 +607,13 @@ namespace KanchokuWS.Gui
         private void comboBox_tableFile_DropDown(object sender, EventArgs e)
         {
             tableDirectory1 = comboBox_table_DropDown(comboBox_tableFile, tableDirectory1);
-            logger.InfoH(() => $"tableDirectory1={tableDirectory1}");
+            logger.Info(() => $"tableDirectory1={tableDirectory1}");
         }
 
         private void comboBox_tableFile2_DropDown(object sender, EventArgs e)
         {
             tableDirectory2 = comboBox_table_DropDown(comboBox_tableFile2, tableDirectory2);
-            logger.InfoH(() => $"tableDirectory2={tableDirectory2}");
+            logger.Info(() => $"tableDirectory2={tableDirectory2}");
         }
 
         private string comboBox_table_DropDown(ComboBox comboBox, string tableDir)
@@ -656,7 +656,7 @@ namespace KanchokuWS.Gui
 
         private (string, string) getTableFileDir(ComboBox comboBox, string tableDir)
         {
-            logger.InfoH(() => $"ENTER: tableDir={tableDir}");
+            logger.Info(() => $"ENTER: tableDir={tableDir}");
             var rootDir = KanchokuIni.Singleton.KanchokuDir;
             var tableFile = getTableFileName(comboBox.Text);
             if (tableFile._startsWith(".")) {
@@ -667,13 +667,13 @@ namespace KanchokuWS.Gui
             }
             var tableFileDir = rootDir._joinPath(tableDir);
             if (Helper.DirectoryExists(tableFileDir)) {
-                logger.InfoH(() => $"LEAVE: tableFileDir={tableFileDir}, tableDir={tableDir}");
+                logger.Info(() => $"LEAVE: tableFileDir={tableFileDir}, tableDir={tableDir}");
                 return (tableFileDir, tableDir);
             }
 
             tableDir = Settings.TableFileDir;
             tableFileDir = rootDir._joinPath(tableDir);
-            logger.InfoH(() => $"LEAVE: tableFileDir={(Helper.DirectoryExists(tableFileDir) ? tableFileDir : rootDir)}, tableDir={tableDir}");
+            logger.Info(() => $"LEAVE: tableFileDir={(Helper.DirectoryExists(tableFileDir) ? tableFileDir : rootDir)}, tableDir={tableDir}");
             return (Helper.DirectoryExists(tableFileDir) ? tableFileDir : rootDir, tableDir);
         }
 
@@ -825,7 +825,7 @@ namespace KanchokuWS.Gui
 
         private void button_advancedEnter_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             frmMain?.DeactivateDecoderWithModifiersOff();
 
             // モード標識表示時間
@@ -892,7 +892,7 @@ namespace KanchokuWS.Gui
 
             label_okResultAdvanced.Show();
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         // 仮想鍵盤の現在位置を取得
@@ -906,7 +906,7 @@ namespace KanchokuWS.Gui
 
         private void button_openKanjiYomiFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             //try {
             //    if (Settings.KanjiYomiFile._notEmpty()) {
             //        System.Diagnostics.Process.Start(TableFileDir._joinPath(Settings.KanjiYomiFile));
@@ -917,13 +917,13 @@ namespace KanchokuWS.Gui
 
         private void button_advancedClose_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             if (button_advancedClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabAdvanced();
                 checkerAdvanced.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
-                logger.InfoH("LEAVE");
+                logger.Info("LEAVE");
             }
         }
 
@@ -1047,7 +1047,7 @@ namespace KanchokuWS.Gui
 
         private void button_imeComboEnter_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             frmMain?.DeactivateDecoderWithModifiersOff();
 
             // SandS
@@ -1088,27 +1088,27 @@ namespace KanchokuWS.Gui
 
             label_okResultImeCombo.Show();
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         private void button_imeComboClose_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             if (button_imeComboClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabImeCombo();
                 checkerImeCombo.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
-                logger.InfoH("LEAVE");
+                logger.Info("LEAVE");
             }
         }
 
         private void button_imeComboReload_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             reloadIniFileAndDefFiles();
             label_imeComboReload.Show();
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         //-----------------------------------------------------------------------------------
@@ -1196,7 +1196,7 @@ namespace KanchokuWS.Gui
 
         private void button_fontColrEnter_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             frmMain?.DeactivateDecoderWithModifiersOff();
 
             // フォント
@@ -1247,7 +1247,7 @@ namespace KanchokuWS.Gui
 
             label_okResultFontColor.Show();
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         private void tabFontColorStatusChanged(bool flag)
@@ -1258,13 +1258,13 @@ namespace KanchokuWS.Gui
 
         private void button_fontColorClose_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             if (button_fontColorClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabFontColor();
                 checkerFontColor.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
-                logger.InfoH("LEAVE");
+                logger.Info("LEAVE");
             }
         }
 
@@ -1345,15 +1345,15 @@ namespace KanchokuWS.Gui
 
         private void button_keyAssignReload_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             reloadIniFileAndDefFiles();
             label_keyAssignReload.Show();
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         private void button_keyAssignEnter_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             frmMain?.DeactivateDecoderWithModifiersOff();
 
             Settings.SetUserIni("zenkakuModeKeySeq", revertPresetString(textBox_zenkakuModeKeySeq.Text));
@@ -1389,24 +1389,24 @@ namespace KanchokuWS.Gui
 
             label_okResultKeyAssign.Show();
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         private void button_keyAssignClose_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             if (button_keyAssignClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabKeyAssign();
                 checkerKeyAssign.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
-                logger.InfoH("LEAVE");
+                logger.Info("LEAVE");
             }
         }
 
         private void button_keyAssignTable_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             openDocumentUrl(Settings.KeyboardUrl);
         }
 
@@ -1535,7 +1535,7 @@ namespace KanchokuWS.Gui
 
         private void button_ctrlEnter_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             frmMain?.DeactivateDecoderWithModifiersOff();
 
             Settings.SetUserIni("globalCtrlKeysEnabled", checkBox_globalCtrlKeysEnabled.Checked);
@@ -1578,18 +1578,18 @@ namespace KanchokuWS.Gui
 
             label_okResultCtrlKeys.Show();
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         private void button_ctrlClose_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             if (button_ctrlClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabCtrlKeys();
                 checkerCtrlKeys.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
-                logger.InfoH("LEAVE");
+                logger.Info("LEAVE");
             }
         }
 
@@ -1600,7 +1600,7 @@ namespace KanchokuWS.Gui
 
         private void button_openModConversionFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             //try {
             //    if (Settings.ModConversionFile._notEmpty()) {
             //        System.Diagnostics.Process.Start(TableFileDir._joinPath(Settings.ModConversionFile));
@@ -1611,7 +1611,7 @@ namespace KanchokuWS.Gui
 
         private void button_ctrlReload_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             reloadIniFileAndDefFiles();
             label_ctrlReload.Show();
         }
@@ -1715,7 +1715,7 @@ namespace KanchokuWS.Gui
 
         private void button_histEnter_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             frmMain?.DeactivateDecoderWithModifiersOff();
 
             Settings.SetUserIni("histKanjiWordMinLength", textBox_histKanjiWordMinLength.Text.Trim());
@@ -1766,18 +1766,18 @@ namespace KanchokuWS.Gui
 
             label_okResultHist.Show();
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         private void button_histClose_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             if (button_histClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
                 readSettings_tabHistory();
                 checkerHistory.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
-                logger.InfoH("LEAVE");
+                logger.Info("LEAVE");
             }
         }
 
@@ -1863,7 +1863,7 @@ namespace KanchokuWS.Gui
 
         private void button_miscEnter_Click(object sender, EventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             Settings.SetUserIni("yamanobeEnabled", checkBox_yamanobeEnabled.Checked);
             //Settings.SetUserIni("autoBushuComp", checkBox_autoBushuComp.Checked);
             Settings.SetUserIni("autoBushuCompMinCount", textBox_autoBushuCompMinCount.Text);
@@ -1898,7 +1898,7 @@ namespace KanchokuWS.Gui
 
             label_okResultMisc.Show();
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         private void checkBox_convertShiftedHiraganaToKatakana_CheckedChanged(object sender, EventArgs e)
@@ -1915,21 +1915,21 @@ namespace KanchokuWS.Gui
 
         private void button_miscReload_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             reloadIniFileAndDefFiles();
             label_miscReload.Show();
         }
 
         private void button_saveRomanTableFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             frmMain?.ExecCmdDecoder("SaveRomanStrokeTable", $"{textBox_romanBushuCompPrefix.Text}\t{textBox_romanSecPlanePrefix.Text}");
             label_miscRomanOut.Show();
         }
 
         private void button_saveEelllJsTableFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             frmMain?.ExecCmdDecoder("SaveEelllJsTable", null);
             label_miscEelllJsOut.Show();
         }
@@ -1937,7 +1937,7 @@ namespace KanchokuWS.Gui
         /// <summary> 閉じる </summary>
         private void button_miscClose_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             if (button_miscClose.Text.StartsWith("閉")) {
                 this.Close();
             } else {
@@ -1952,7 +1952,7 @@ namespace KanchokuWS.Gui
         /// <summary> 履歴辞書登録 </summary>
         private void button_enterHistory_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             var line = textBox_history.Text.Trim().Replace(" ", "");
             if (line._notEmpty()) {
                 //frmMain?.ExecCmdDecoder("addHistEntry", line);
@@ -1965,7 +1965,7 @@ namespace KanchokuWS.Gui
 
         private void button_saveHistoryFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             frmMain?.ExecCmdDecoder("saveHistoryDic", null);
             label_history.Hide();
             label_saveHist.Show();
@@ -1981,7 +1981,7 @@ namespace KanchokuWS.Gui
         /// <summary> 交ぜ書き辞書登録 </summary>
         private void button_enterMazegaki_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             var line = textBox_mazegaki.Text.Trim()._reReplace(@" +", " ");
             if (line._reMatch(@"^[^ ]+ ")) {
                 frmMain?.ExecCmdDecoder("addMazegakiEntry", line);
@@ -1995,7 +1995,7 @@ namespace KanchokuWS.Gui
 
         private void button_saveMazegakiFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             frmMain?.ExecCmdDecoder("saveMazegakiDic", null);
             label_mazegaki.Hide();
             label_saveMaze.Show();
@@ -2012,7 +2012,7 @@ namespace KanchokuWS.Gui
         /// <summary> 部首連想辞書登録 </summary>
         private void button_enterBushuAssoc_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             var line = textBox_bushuAssoc.Text.Trim().Replace(" ", "");
             if (line._reMatch(@"^[^=]=.")) {
                 frmMain?.ExecCmdDecoder("mergeBushuAssocEntry", line);
@@ -2027,7 +2027,7 @@ namespace KanchokuWS.Gui
 
         private void button_saveBushuAssocFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             frmMain?.ExecCmdDecoder("saveBushuAssocDic", null);
             button_readBushuAssoc.Hide();
             label_bushuAssoc.Hide();
@@ -2040,7 +2040,7 @@ namespace KanchokuWS.Gui
         /// <param name="e"></param>
         private void button_readBushuAssoc_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             if (textBox_bushuAssoc.Text._notEmpty()) {
                 var s = textBox_bushuAssoc.Text.Substring(0, 1);
                 char[] result = frmMain?.CallDecoderFunc("readBushuAssoc", s);
@@ -2066,7 +2066,7 @@ namespace KanchokuWS.Gui
         /// <summary> 部首合成辞書登録 </summary>
         private void button_enterBushu_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             var line = textBox_bushuComp.Text.Trim().Replace(" ", "");
             int n = 0;
             foreach (var ch in line) {
@@ -2085,7 +2085,7 @@ namespace KanchokuWS.Gui
 
         private void button_saveBushuCompFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             frmMain?.ExecCmdDecoder("saveBushuDic", null);
             label_bushuComp.Hide();
             label_saveBushu.Show();
@@ -2101,7 +2101,7 @@ namespace KanchokuWS.Gui
         /// <summary> 自動部首合成辞書登録 </summary>
         private void button_enterAutoBushu_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             var line = textBox_autoBushuComp.Text.Trim().Replace(" ", "");
             int n = 0;
             foreach (var ch in line) {
@@ -2120,7 +2120,7 @@ namespace KanchokuWS.Gui
 
         private void button_saveAutoBushuCompFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             frmMain?.ExecCmdDecoder("saveAutoBushuDic", null);
             label_autoBushuComp.Hide();
             label_saveAutoBushu.Show();
@@ -2135,7 +2135,7 @@ namespace KanchokuWS.Gui
 
         private void button_registerClose_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             this.Close();
         }
 
@@ -2349,7 +2349,7 @@ namespace KanchokuWS.Gui
 
         private void button_saveAll_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             frmMain?.SaveAllFiles();
             label_execResultFile.Show();
         }
@@ -2426,14 +2426,14 @@ namespace KanchokuWS.Gui
 
         private void button_restart_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             RestartRequired = true;
             Close();
         }
 
         private void button_restartWithNoSave_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             RestartRequired = true;
             NoSave = true;
             Close();
@@ -2463,13 +2463,13 @@ namespace KanchokuWS.Gui
 
         private void button_document_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             openDocumentUrl(Settings.FaqUrl);
         }
 
         private void button_imeFAQ_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             openDocumentUrl(Settings.FaqBasicUrl);
         }
 
@@ -2545,7 +2545,7 @@ namespace KanchokuWS.Gui
 
         private void button_showPaddingsDesc_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             if (frmVkb != null) {
                 var dlg = new DlgPaddingsDesc(frmVkb.GetPaddingsDesc());
                 dlg.ShowDialog();
@@ -2711,7 +2711,7 @@ namespace KanchokuWS.Gui
 
         private void button_openKeyboardFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             var filename = getKeyboardFileName(comboBox_keyboardFile.Text);
             if (filename._notEmpty() && filename._toLower() != "jp" && filename._toLower() != "us") {
                 openFileByTxtAssociatedProgram(Settings.KeyboardFileDir._joinPath(filename));
@@ -2720,19 +2720,19 @@ namespace KanchokuWS.Gui
 
         private void button_openTableFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             openFileByTxtAssociatedProgram(getTableFileName(comboBox_tableFile.Text));
         }
 
         private void button_openTableFile2_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             openFileByTxtAssociatedProgram(getTableFileName(comboBox_tableFile2.Text));
         }
 
         private void button_openKeyCharMapFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             var filename = getKeyboardFileName(comboBox_deckeyCharsFile.Text);
             if (filename._notEmpty()) {
                 openFileByTxtAssociatedProgram(Settings.KeyboardFileDir._joinPath(filename));
@@ -2741,38 +2741,38 @@ namespace KanchokuWS.Gui
 
         private void button_openEasyCharsFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             openFileByTxtAssociatedProgram(Settings.EasyCharsFile);
         }
 
         private void button_openStrokeHelpFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             openFileByTxtAssociatedProgram(Settings.StrokeHelpFile);
         }
 
         private void button_openBushuCompFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             openFileByTxtAssociatedProgram(Settings.BushuFile);
             openFileByTxtAssociatedProgram(Settings.AutoBushuFile);
         }
 
         private void button_bushuAssocFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             openFileByTxtAssociatedProgram(Settings.BushuAssocFile);
         }
 
         private void button_openMazeFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             openFileByTxtAssociatedProgram(Settings.MazegakiFile._safeReplace("*", "user"));
         }
 
         private void button_openHistoryFile_Click(object sender, EventArgs e)
         {
-            logger.InfoH("CALLED");
+            logger.Info("CALLED");
             openFileByTxtAssociatedProgram(Settings.HistoryFile._safeReplace("*", "entry"));
         }
 
@@ -2788,22 +2788,22 @@ namespace KanchokuWS.Gui
                     comboBox_SandSAssignedPlane.SelectedIndex = Settings.SandSAssignedPlane._lowLimit(0)._highLimit(7);
                 }
                 int width = dlg.Width;
-                logger.InfoH(() => $"DlgModConversionWidth={width}");
+                logger.Info(() => $"DlgModConversionWidth={width}");
                 if (Settings.DlgModConversionWidth != width) {
                     Settings.SetUserIni("dlgModConversionWidth", width);
                     Settings.DlgModConversionWidth = width;
                 }
                 int height = dlg.Height;
-                logger.InfoH(() => $"DlgModConversionHeight={height}");
+                logger.Info(() => $"DlgModConversionHeight={height}");
                 if (Settings.DlgModConversionHeight != height) {
                     Settings.SetUserIni("dlgModConversionHeight", height);
                     Settings.DlgModConversionHeight = height;
                 }
-                logger.InfoH(() => $"AssignedKeyOrFuncColNameWidth={nameColWidth}");
+                logger.Info(() => $"AssignedKeyOrFuncColNameWidth={nameColWidth}");
                 if (Settings.AssignedKeyOrFuncNameColWidth != nameColWidth) {
                     Settings.SetUserIni("assignedKeyOrFuncNameColWidth", Settings.AssignedKeyOrFuncNameColWidth);
                 }
-                logger.InfoH(() => $"AssignedKeyOrFuncColDescWidth={descColWidth}");
+                logger.Info(() => $"AssignedKeyOrFuncColDescWidth={descColWidth}");
                 if (Settings.AssignedKeyOrFuncDescColWidth != descColWidth) {
                     Settings.SetUserIni("assignedKeyOrFuncDescColWidth", Settings.AssignedKeyOrFuncDescColWidth);
                 }
@@ -2814,7 +2814,7 @@ namespace KanchokuWS.Gui
         private void writeModConversionSettings()
         {
             var path = KanchokuIni.Singleton.KanchokuDir._joinPath(textBox_modConversionFile.Text);
-            logger.InfoH($"ENTER: path={path}");
+            logger.Info($"ENTER: path={path}");
             try {
                 using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite)) {
                     using (var sw = new System.IO.StreamWriter(fs, Encoding.UTF8)) {
@@ -2824,7 +2824,7 @@ namespace KanchokuWS.Gui
             } catch (Exception e) {
                 logger.Error(e._getErrorMsg());
             }
-            logger.InfoH($"LEAVE");
+            logger.Info($"LEAVE");
         }
 
         // 打鍵ログ表示

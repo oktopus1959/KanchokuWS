@@ -20,10 +20,9 @@
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_INFO LOG_INFOH
-#define LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 namespace {
@@ -44,12 +43,12 @@ namespace {
     public:
         // コンストラクタ
         EisuState(EisuNode* pN) {
-            LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
+            LOG_INFO(_T("CALLED: CONSTRUCTOR"));
             Initialize(logger.ClassNameT(), pN);
         }
 
         ~EisuState() {
-            LOG_INFO(_T("CALLED: DESTRUCTOR"));
+            LOG_DEBUGH(_T("CALLED: DESTRUCTOR"));
         };
 
 #define MY_NODE ((EisuNode*)pNode)
@@ -60,7 +59,7 @@ namespace {
             auto prevCapitalCnt = MY_NODE->prevCapitalDeckeyCount;  // 前回の状態のときの大文字入力時のDeckeyカウント
             MY_NODE->prevCapitalDeckeyCount = firstTotalCnt;
 
-            LOG_INFO(_T("ENTER: totalDeckeyCount={}, prevCapitalCount={}"), firstTotalCnt, prevCapitalCnt);
+            LOG_DEBUGH(_T("ENTER: totalDeckeyCount={}, prevCapitalCount={}"), firstTotalCnt, prevCapitalCnt);
 
             // ブロッカーフラグを先に取得しておく
             bool blockerNeeded = MY_NODE->blockerNeeded;
@@ -69,12 +68,12 @@ namespace {
             if (firstTotalCnt == prevCapitalCnt + 1) {
                 // 英大文字を連続して入力している状態なので、即抜ける
                 // この処理は、次の STATE_COMMON->AddOrEraseRunningState() よりも先にやっておく必要がある
-                LOG_INFO(_T("Continuously input capital chars. prevCapitalDeckeyCount={}"), MY_NODE->prevCapitalDeckeyCount);
+                LOG_DEBUGH(_T("Continuously input capital chars. prevCapitalDeckeyCount={}"), MY_NODE->prevCapitalDeckeyCount);
                 return false;
             }
 
             if (!STATE_COMMON->AddOrEraseRunningState(Name, this)) {
-                LOG_INFO(_T("Already same function had been running. Mark it unnecessary."));
+                LOG_DEBUGH(_T("Already same function had been running. Mark it unnecessary."));
                 // すでに同じ機能が走っていたのでそれ以降に不要マークを付けた
                 return false;
             }
@@ -87,7 +86,7 @@ namespace {
             if (!IsUnnecessary()) STATE_COMMON->SetCurrentModeIsEisu();
 
             // 前状態にチェインする
-            LOG_INFO(_T("LEAVE: CHAIN ME"));
+            LOG_DEBUGH(_T("LEAVE: CHAIN ME"));
 
             return true;
         }
@@ -269,17 +268,17 @@ DEFINE_CLASS_LOGGER(EisuNode);
 
 // コンストラクタ
 EisuNode::EisuNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
 EisuNode::~EisuNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
 State* EisuNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new EisuState(this);
 }
 
@@ -287,7 +286,7 @@ std::unique_ptr<EisuNode> EisuNode::Singleton;
 
 // Decoder から初期化時に呼ぶ必要あり
 void EisuNode::CreateSingleton() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     if (EisuNode::Singleton == 0) {
         EisuNode::Singleton.reset(new EisuNode());
     }
@@ -299,7 +298,7 @@ void EisuNode::CreateSingleton() {
 DEFINE_CLASS_LOGGER(EisuNodeBuilder);
 
 Node* EisuNodeBuilder::CreateNode() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     return new EisuNode();
 }
 

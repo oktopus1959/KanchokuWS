@@ -21,8 +21,8 @@
 #if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 namespace {
@@ -33,7 +33,7 @@ namespace {
     public:
         // コンストラクタ
         BushuCompState(BushuCompNode* pN) {
-            LOG_INFOH(_T("CALLED"));
+            LOG_INFO(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -77,7 +77,7 @@ DEFINE_CLASS_LOGGER(BushuCompNode);
 
 // コンストラクタ
 BushuCompNode::BushuCompNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
@@ -86,7 +86,7 @@ BushuCompNode::~BushuCompNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* BushuCompNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new BushuCompState(this);
 }
 
@@ -165,12 +165,12 @@ void BushuCompNode::CreateSingleton() {
 DEFINE_CLASS_LOGGER(BushuCompNodeBuilder);
 
 Node* BushuCompNodeBuilder::CreateNode() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     // 部首合成辞書の読み込み(ファイルが指定されていなくても、辞書は構築する)
     // 部首合成辞書ファイル名
     auto bushuFile = SETTINGS->bushuFile;
     auto auotBushuFile = SETTINGS->autoBushuFile;
-    LOG_INFO(_T("bushuFile={}, autoBushuFile={}"), bushuFile, auotBushuFile);
+    LOG_DEBUGH(_T("bushuFile={}, autoBushuFile={}"), bushuFile, auotBushuFile);
 
     //if (bushuFile.empty()) {
     //    ERROR_HANDLER->Warn(_T("「bushu=(ファイル名)」の設定がまちがっているようです"));

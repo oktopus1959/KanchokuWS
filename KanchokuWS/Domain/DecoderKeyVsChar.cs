@@ -75,7 +75,7 @@ namespace KanchokuWS.Domain
         /// </summary>
         public static string ReadCharsDefFile()
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
 
             //Settings.ShortcutKeyConversionEnabled = true;
             normalChars = new List<char>();
@@ -83,21 +83,21 @@ namespace KanchokuWS.Domain
             _yenDecKey = DecoderKeyVsVKey.IsJPmode ? -1 : -2;
 
             var charsDefFile = Settings.GetString("charsDefFile");
-            logger.InfoH(() => $"orig charsDefFile={charsDefFile}");
+            logger.Info(() => $"orig charsDefFile={charsDefFile}");
             if (charsDefFile._isEmpty()) {
                 var kbName = Settings.KeyboardFile._split('.')._getNth(0);
                 //if (kbName._notEmpty() && (kbName._toLower() == "jp" || kbName._toLower() == "us")) kbName = null;
                 if (kbName._notEmpty()) charsDefFile = $"chars.{kbName}.txt";
             }
-            logger.InfoH(() => $"charsDefFile={charsDefFile}");
+            logger.Info(() => $"charsDefFile={charsDefFile}");
             if (charsDefFile._notEmpty()) {
                 var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.KeyboardFileDir, charsDefFile);
 
                 string allLines = null;
                 if (!Helper.FileExists(filePath)) {
-                    logger.InfoH(() => $"charsDefFile not found: {filePath}");
+                    logger.Info(() => $"charsDefFile not found: {filePath}");
                 } else {
-                    logger.InfoH(() => $"read charsDefFile path={filePath}");
+                    logger.Info(() => $"read charsDefFile path={filePath}");
                     allLines = Helper.GetFileContent(filePath, Encoding.UTF8);
                     if (allLines == null) {
                         logger.Error($"Can't read charsDefFile: {filePath}");
@@ -118,11 +118,11 @@ namespace KanchokuWS.Domain
                                 _yenDecKey = line._safeSubstring(7)._parseInt(-1);
                                 //} else if (line.StartsWith("## SHORTCUT=disabl")) {
                                 //    Settings.ShortcutKeyConversionEnabled = false;
-                                //    logger.InfoH("ShortcutKeyConversion: Disabled");
+                                //    logger.Info("ShortcutKeyConversion: Disabled");
                             }
                         } else {
                             if (charList != null) {
-                                logger.InfoH($"line=|{line}|, len={line.Length}");
+                                logger.Info($"line=|{line}|, len={line.Length}");
                                 foreach (var ch in line) {
                                     if (ch == '\\') {
                                         if (_yenDecKey < 0) {
@@ -131,14 +131,14 @@ namespace KanchokuWS.Domain
                                     }
                                     if (ch >= 0x20 && ch < 0x7f) charList.Add(ch);
                                 }
-                                logger.InfoH($"charList=|{charList.ToArray()._toString()}|, len={charList.Count}");
+                                logger.Info($"charList=|{charList.ToArray()._toString()}|, len={charList.Count}");
                             }
                         }
                     }
                 }
             }
             if (normalChars.Count < DecoderKeys.NORMAL_DECKEY_NUM) {
-                logger.InfoH("fill rest of normalChars by default qwerty chars");
+                logger.Info("fill rest of normalChars by default qwerty chars");
                 var normalQwerty = QwertyChars();
                 for (int i = normalChars.Count; i < DecoderKeys.NORMAL_DECKEY_NUM; ++i) {
                     char ch = normalQwerty._getNth(DecoderKeyVsVKey.GetDecKeyFromQwertyIndex(i));
@@ -147,7 +147,7 @@ namespace KanchokuWS.Domain
                 }
             }
             if (shiftedChars.Count < normalChars.Count) {
-                logger.InfoH("fill rest of shiftedChars by shifted normalChars");
+                logger.Info("fill rest of shiftedChars by shifted normalChars");
                 var normalQwerty = QwertyChars();
                 var shiftedQwerty = QwertyShiftedChars();
                 for (int i = shiftedChars.Count; i < normalChars.Count; ++i) {
@@ -186,14 +186,14 @@ namespace KanchokuWS.Domain
             var tmpCharsDefFile = "tmp/chars.current.txt";
             writeCharDefFileForDecoder(tmpCharsDefFile);
 
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
             return tmpCharsDefFile;
 
         }
 
         private static void writeCharDefFileForDecoder(string filename)
         {
-            logger.InfoH(() => $"filename={filename}, yenPos={_yenDecKey}");
+            logger.Info(() => $"filename={filename}, yenPos={_yenDecKey}");
 
             List<string> lines = new List<string>();
             lines.Add("## NORMAL");
@@ -206,7 +206,7 @@ namespace KanchokuWS.Domain
                 lines.Add("## END");
             }
 
-            logger.InfoH(() => $"lines=\n{lines._join("\n")}");
+            logger.Info(() => $"lines=\n{lines._join("\n")}");
             KanchokuHelper.WriteAllLinesToFile(filename, lines);
         }
 
@@ -219,7 +219,7 @@ namespace KanchokuWS.Domain
         /// <returns></returns>
         public static char GetArrangedCharFromDecKey(int deckey)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: deckey={deckey}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"ENTER: deckey={deckey}");
 
             char result = '\0';
             if (deckey >= 0 && deckey < DecoderKeys.NORMAL_DECKEY_NUM) {
@@ -230,7 +230,7 @@ namespace KanchokuWS.Domain
                 result = shiftedChars._getNth(deckey - DecoderKeys.SHIFT_DECKEY_START, '\0');
             }
 
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: result={result}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: result={result}");
             return result;
         }
 
@@ -272,18 +272,18 @@ namespace KanchokuWS.Domain
         /// <returns></returns>
         public static int GetArrangedDecKeyFromFaceChar(char face)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: face={face}, ShortcutKeyConversionEnabled={Settings.ShortcutKeyConversionEnabled}, normalChars={normalChars._notEmpty()}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"ENTER: face={face}, ShortcutKeyConversionEnabled={Settings.ShortcutKeyConversionEnabled}, normalChars={normalChars._notEmpty()}");
 
             if (face == '\0') {
-                if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: error result=-1");
+                if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: error result=-1");
                 return -1;
             }
 
             if (Settings.ShortcutKeyConversionEnabled && normalChars._notEmpty()) {
-                if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: conv result={normalChars.FindIndex(ch => ch == face)}");
+                if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: conv result={normalChars.FindIndex(ch => ch == face)}");
                 return normalChars.FindIndex(ch => ch == face);
             } else {
-                if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: raw result={QwertyChars()._findIndex(face)}");
+                if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: raw result={QwertyChars()._findIndex(face)}");
                 return QwertyChars()._findIndex(face);
             }
         }
@@ -295,11 +295,11 @@ namespace KanchokuWS.Domain
         /// <returns></returns>
         public static int GetArrangedDecKeyFromFaceStr(string keyFace)
         {
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"ENTER: keyFace={keyFace}, ShortcutKeyConversionEnabled={Settings.ShortcutKeyConversionEnabled}, normalChars={normalChars._notEmpty()}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"ENTER: keyFace={keyFace}, ShortcutKeyConversionEnabled={Settings.ShortcutKeyConversionEnabled}, normalChars={normalChars._notEmpty()}");
 
             int deckey = GetArrangedDecKeyFromFaceChar(CharVsVKey.GetCharFromFaceStr(keyFace));
 
-            if (Settings.LoggingDecKeyInfo) logger.InfoH($"LEAVE: deckey={deckey}");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: deckey={deckey}");
             return deckey;
         }
 

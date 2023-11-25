@@ -17,7 +17,7 @@ namespace {
 
     public:
         EscapeState(EscapeNode* pN) {
-            LOG_INFOH(_T("CALLED"));
+            LOG_INFO(_T("CALLED"));
             Initialize(logger.ClassNameT(), pN);
         }
 
@@ -50,17 +50,17 @@ DEFINE_CLASS_LOGGER(EscapeNode);
 
 // コンストラクタ
 EscapeNode::EscapeNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
 EscapeNode::~EscapeNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
 State* EscapeNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new EscapeState(this);
 }
 

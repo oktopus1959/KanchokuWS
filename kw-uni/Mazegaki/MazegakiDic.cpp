@@ -20,9 +20,9 @@
 #if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH LOG_INFO
 #define _LOG_DEBUG LOG_INFO
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #define _LOG_DEBUG_COND LOG_INFO_COND
 #endif
 
@@ -452,7 +452,7 @@ namespace {
 
         // UTF8で書かれた辞書ソースを読み込む
         void ReadFile(const std::vector<String>& lines, bool bUser, bool bPrim) {
-            LOG_INFO(_T("ENTER: lines.size()={}, mazeDic.size()={}, MazeEntries.size()={}"), lines.size(), mazeDic.size(), MazeEntries.GetList().size());
+            LOG_DEBUGH(_T("ENTER: lines.size()={}, mazeDic.size()={}, MazeEntries.size()={}"), lines.size(), mazeDic.size(), MazeEntries.GetList().size());
             Reporting::Logger::SaveAndSetLevel(Reporting::Logger::LogLevelWarn);
             //Reporting::Logger::SaveAndSetLevel(Reporting::Logger::LogLevelInfoH);
             for (const auto& line : lines) {
@@ -465,7 +465,7 @@ namespace {
             if (bPrim) {
                 PrimaryEntries.ClearDirtyFlag();   // ファイルから読み込んだ場合はダーティフラグをクリアしておく
             }
-            LOG_INFO(_T("LEAVE: mazeDic.size()={}, MazeEntries.size()={}"), mazeDic.size(), MazeEntries.GetList().size());
+            LOG_DEBUGH(_T("LEAVE: mazeDic.size()={}, MazeEntries.size()={}"), mazeDic.size(), MazeEntries.GetList().size());
         }
 
         // 一行の辞書ソース文字列を解析して辞書に登録する
@@ -790,7 +790,7 @@ namespace {
         // 指定の見出し語に対する変換候補のセットを取得する
         // 「か山」⇒「火山」より先に「海山」や「影山」が出てきてしまうのを防ぐ ⇒ 読みの短いほうを優先することで「火山」を先に出せる
         const std::vector<MazeResult>& GetCandidates(const MString& key, bool bPrim) {
-            LOG_INFOH(_T("\nENTER: key={}, bPrim={}"), to_wstr(key), bPrim);
+            LOG_INFO(_T("\nENTER: key={}, bPrim={}"), to_wstr(key), bPrim);
             mazeCandidates.clear();
             mazeResult.clear();
             // 読み語幹＋語尾の長さごとに候補を保持しておくためのベクトル
@@ -943,7 +943,7 @@ namespace {
                 _LOG_DEBUGH(_T("maze results: {}"), utils::join(xfers, _T(","), 20));
             }
 #endif
-            LOG_INFOH(_T("LEAVE: maze entries={}"), mazeResult.size());
+            LOG_INFO(_T("LEAVE: maze entries={}"), mazeResult.size());
             return mazeResult;
         }
 
@@ -961,7 +961,7 @@ namespace {
                         const MString& yomiStem = mazeCandidates[n].yomiStem;
                         MString origYomi = mazeCandidates[n].EntryPtr->GetTrimmedYomi();
                         const MString& xfer = mazeCandidates[n].EntryPtr->xfer;
-                        LOG_INFOH(_T("firstYomi={}, myYomi={}, yomiStem={}, origYomi={}, xfer={}, mazeHistRegisterMinLen={}"), \
+                        LOG_INFO(_T("firstYomi={}, myYomi={}, yomiStem={}, origYomi={}, xfer={}, mazeHistRegisterMinLen={}"), \
                             to_wstr(firstYomi), to_wstr(myYomi), to_wstr(yomiStem), to_wstr(origYomi), to_wstr(xfer), SETTINGS->mazeHistRegisterMinLen);
                         if (bRegMazeHist && SETTINGS->mazeHistRegisterMinLen > 0 && yomiStem.size() >= SETTINGS->mazeHistRegisterMinLen && yomiStem != xfer) {
                             // 無条件先頭候補出力モードではなく、語幹長が設定長以上の場合のみ変換履歴登録する
@@ -972,7 +972,7 @@ namespace {
                                     HISTORY_DIC->AddNewEntry(s);
                                 }
                             };
-                            LOG_INFOH(_T("mazeHistRegister({})"), to_wstr(yomiStem + MSTR_VERT_BAR + xfer));
+                            LOG_INFO(_T("mazeHistRegister({})"), to_wstr(yomiStem + MSTR_VERT_BAR + xfer));
                             mazeHistRegister(yomiStem + MSTR_VERT_BAR + xfer);
                         }
                         // それを優先辞書に登録する
@@ -1064,10 +1064,10 @@ std::unique_ptr<MazegakiDic> MazegakiDic::Singleton;
 // xxx.user.yyy が存在しない場合は、xxx.*.yyy というファイル名を含んでいること
 // エラーがあったら例外を投げる
 int MazegakiDic::CreateMazegakiDic(StringRef mazeFile) {
-    LOG_INFO(_T("ENTER: {}"), mazeFile);
+    LOG_DEBUGH(_T("ENTER: {}"), mazeFile);
 
     if (Singleton != 0) {
-        LOG_INFO(_T("already created: maze file: {}"), mazeFile);
+        LOG_DEBUGH(_T("already created: maze file: {}"), mazeFile);
         return 0;
     }
 
@@ -1087,13 +1087,13 @@ int MazegakiDic::CreateMazegakiDic(StringRef mazeFile) {
         bool bPrim = utils::toLower(name).find(_T(".prim.")) != String::npos;  // 優先辞書か
 
         auto path = utils::joinPath(SETTINGS->rootDir, name);
-        LOG_INFO(_T("open maze file: {}"), path);
+        LOG_DEBUGH(_T("open maze file: {}"), path);
 
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             //pImpl->ReadFile(utils::IfstreamReader(path).getAllLines());
             pImpl->ReadFile(reader.getAllLines(), bUser, bPrim);
-            LOG_INFO(_T("close maze file: {}"), path);
+            LOG_DEBUGH(_T("close maze file: {}"), path);
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
             LOG_ERROR(_T("Can't read maze file: {}"), path);
@@ -1103,19 +1103,19 @@ int MazegakiDic::CreateMazegakiDic(StringRef mazeFile) {
     }
 #endif
 
-    LOG_INFO(_T("LEAVE: result={}"), result);
+    LOG_DEBUGH(_T("LEAVE: result={}"), result);
     return result;
 }
 
 // 交ぜ書き辞書ファイルを追加で読み込む(kwmaze.wiki.txtとか)
 void MazegakiDic::ReadMazegakiDic(StringRef filename) {
         auto path = utils::joinPath(SETTINGS->rootDir, filename);
-        LOG_INFO(_T("open maze file: {}"), path);
+        LOG_DEBUGH(_T("open maze file: {}"), path);
 
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             Singleton->ReadFile(reader.getAllLines(), false, false);
-            LOG_INFO(_T("close maze file: {}"), path);
+            LOG_DEBUGH(_T("close maze file: {}"), path);
         } else if (!SETTINGS->firstUse) {
             // エラーメッセージを表示
             LOG_ERROR(_T("Can't read maze file: {}"), path);
@@ -1125,7 +1125,7 @@ void MazegakiDic::ReadMazegakiDic(StringRef filename) {
 
 // 交ぜ書き辞書ファイルに書き込む
 void MazegakiDic::WriteMazegakiDic(StringRef path, bool bUser, bool bPrim) {
-    LOG_INFO(_T("CALLED: path={}, bUser={}, bPrim={}"), path, bUser, bPrim);
+    LOG_DEBUGH(_T("CALLED: path={}, bUser={}, bPrim={}"), path, bUser, bPrim);
     if (!path.empty() && Singleton && !Singleton->IsEmpty()) {
         if (bPrim) {
             if (Singleton->IsPrimaryDicDirty()) {
@@ -1159,12 +1159,12 @@ void MazegakiDic::WriteMazegakiDic() {
             if (lname.find(_T(".prim.")) != String::npos) {
                 // 指定の優先辞書名があった
                 primDic = nm;
-                LOG_INFO(_T("primary maze filename found: {}"), primDic);
+                LOG_DEBUGH(_T("primary maze filename found: {}"), primDic);
                 break;
             } else if (lname.find(_T(".user.")) != String::npos) {
                 // 指定のユーザ辞書名があった
                 userDic = nm;
-                LOG_INFO(_T("user maze filename found: {}"), userDic);
+                LOG_DEBUGH(_T("user maze filename found: {}"), userDic);
                 break;
             } else {
                 // パターンファイル(xxx.*.yyy) があれば xxx.user.yyy に変える
@@ -1172,8 +1172,8 @@ void MazegakiDic::WriteMazegakiDic() {
                 if (pos != String::npos) {
                     if (primDic.empty()) primDic = nm.substr(0, pos + 1) + _T("prim") + nm.substr(pos + 2);
                     if (userDic.empty()) userDic = nm.substr(0, pos + 1) + _T("user") + nm.substr(pos + 2);
-                    LOG_INFO(_T("replaced primary maze filename: {}"), primDic);
-                    LOG_INFO(_T("replaced user maze filename: {}"), userDic);
+                    LOG_DEBUGH(_T("replaced primary maze filename: {}"), primDic);
+                    LOG_DEBUGH(_T("replaced user maze filename: {}"), userDic);
                 }
             }
         }
@@ -1182,11 +1182,11 @@ void MazegakiDic::WriteMazegakiDic() {
         if (userDic.empty()) userDic = _T("kwmaze.user.dic");       // デフォルトのユーザー辞書名
 
         auto path = utils::joinPath(SETTINGS->rootDir, userDic);
-        LOG_INFO(_T("save user maze file: {}"), path);
+        LOG_DEBUGH(_T("save user maze file: {}"), path);
         WriteMazegakiDic(path, true, false);
 
         path = utils::joinPath(SETTINGS->rootDir, primDic);
-        LOG_INFO(_T("save primary maze file: {}"), path);
+        LOG_DEBUGH(_T("save primary maze file: {}"), path);
         WriteMazegakiDic(path, false, true);
     }
 }

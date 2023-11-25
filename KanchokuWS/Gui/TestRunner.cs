@@ -366,7 +366,7 @@ namespace KanchokuWS.Gui
             }
 
             var result = sb.ToString();
-            logger.InfoH($"result={result}");
+            logger.Info($"result={result}");
 
             Logger.LogLevel = prevLogLevel;
             return result;

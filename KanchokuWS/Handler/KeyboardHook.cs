@@ -109,7 +109,7 @@ namespace KanchokuWS.Handler
         {
             if (nCode >= 0 && (wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN)) {
                 var kb = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
-                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"\nKeyDown: vkCode={kb.vkCode:x}H({kb.vkCode}), Scan={kb.scanCode:x}({kb.scanCode}), flag={kb.flags:x}, time={kb.time}, extraInfo={kb.dwExtraInfo}");
+                if (Settings.LoggingDecKeyInfo) logger.Info(() => $"\nKeyDown: vkCode={kb.vkCode:x}H({kb.vkCode}), Scan={kb.scanCode:x}({kb.scanCode}), flag={kb.flags:x}, time={kb.time}, extraInfo={kb.dwExtraInfo}");
                 //var vkCode = kb.vkCode;
                 if (OnKeyDownEvent?.Invoke(kb.vkCode, (int)kb.scanCode, (uint)kb.flags, (int)kb.dwExtraInfo) ?? false) {
                     // 呼び出し先で処理が行われたので、システム側ではキー入力を破棄
@@ -117,7 +117,7 @@ namespace KanchokuWS.Handler
                 }
             } else if (nCode >= 0 && (wParam == (IntPtr)WM_KEYUP || wParam == (IntPtr)WM_SYSKEYUP)) {
                 var kb = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
-                if (Settings.LoggingDecKeyInfo) logger.InfoH(() => $"\nKeyUp: vkCode={kb.vkCode:x}H({kb.vkCode}), Scan={kb.scanCode:x}({kb.scanCode}), flag={kb.flags:x}, time={kb.time}, extraInfo={kb.dwExtraInfo}");
+                if (Settings.LoggingDecKeyInfo) logger.Info(() => $"\nKeyUp: vkCode={kb.vkCode:x}H({kb.vkCode}), Scan={kb.scanCode:x}({kb.scanCode}), flag={kb.flags:x}, time={kb.time}, extraInfo={kb.dwExtraInfo}");
                 //var vkCode = kb.vkCode;
                 if (OnKeyUpEvent?.Invoke(kb.vkCode, (int)kb.scanCode, (uint)kb.flags, (int)kb.dwExtraInfo) ?? false) {
                     // 呼び出し先で処理が行われたので、システム側ではキー入力を破棄

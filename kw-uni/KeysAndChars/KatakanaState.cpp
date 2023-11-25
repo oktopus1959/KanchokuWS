@@ -22,9 +22,9 @@
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_INFO LOG_INFOH
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 namespace {
@@ -39,12 +39,12 @@ namespace {
     public:
         // コンストラクタ
         KatakanaState(KatakanaNode* pN) {
-            LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
+            LOG_INFO(_T("CALLED: CONSTRUCTOR"));
             Initialize(logger.ClassNameT(), pN);
         }
 
         ~KatakanaState() {
-            LOG_INFO(_T("CALLED: DESTRUCTOR"));
+            LOG_DEBUGH(_T("CALLED: DESTRUCTOR"));
         };
 
 #define MY_NODE ((KatakanaNode*)pNode)
@@ -54,7 +54,7 @@ namespace {
             _LOG_DEBUGH(_T("ENTER"));
 
             if (!STATE_COMMON->AddOrEraseRunningState(Name, this)) {
-                LOG_INFO(_T("Already same function had been running. Mark it unnecessary."));
+                LOG_DEBUGH(_T("Already same function had been running. Mark it unnecessary."));
                 // すでに同じ機能が走っていたのでそれ以降に不要マークを付けた
                 return false;
             }
@@ -161,24 +161,24 @@ DEFINE_CLASS_LOGGER(KatakanaNode);
 
 // コンストラクタ
 KatakanaNode::KatakanaNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
 KatakanaNode::~KatakanaNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
 State* KatakanaNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new KatakanaState(this);
 }
 
 std::unique_ptr<KatakanaNode> KatakanaNode::Singleton;
 
 void KatakanaNode::CreateSingleton() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     if (KatakanaNode::Singleton == 0) {
         KatakanaNode::Singleton.reset(new KatakanaNode());
     }
@@ -190,7 +190,7 @@ void KatakanaNode::CreateSingleton() {
 DEFINE_CLASS_LOGGER(KatakanaNodeBuilder);
 
 Node* KatakanaNodeBuilder::CreateNode() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     return new KatakanaNode();
 }
 

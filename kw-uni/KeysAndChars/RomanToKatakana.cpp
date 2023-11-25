@@ -8,10 +8,10 @@
 #if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_DEBUGH LOG_INFOH
-#define LOG_DEBUG LOG_INFOH
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define LOG_DEBUGH LOG_INFO
+#define LOG_DEBUG LOG_INFO
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 namespace RomanToKatakana {
@@ -452,12 +452,12 @@ namespace RomanToKatakana {
 
     // ローマ字定義ファイルを読み込む
     void ReadRomanDefFile(StringRef defFile) {
-        LOG_INFOH(_T("open roman def file: {}"), defFile);
+        LOG_INFO(_T("open roman def file: {}"), defFile);
         auto path = utils::joinPath(SETTINGS->rootDir, defFile);
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             loadRomanDefLines(reader.getAllLines());
-            LOG_INFOH(_T("close roman def: {}"), path);
+            LOG_INFO(_T("close roman def: {}"), path);
         } else {
             //// ファイルがなかったらデフォルトを使う
             //LOG_WARN(_T("Can't read roman def file: {}"), path);

@@ -279,7 +279,7 @@ public:
         return size() - pos;
     }
 
-//#define __LOG_DEBUGH LOG_INFOH
+//#define __LOG_DEBUGH LOG_INFO
 #define __LOG_DEBUGH LOG_DEBUGH
 
     // 改行を含まない末尾部分で、flag のみが続き、flagUpto が来るまでの最大長

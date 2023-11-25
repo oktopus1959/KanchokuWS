@@ -401,11 +401,11 @@ namespace KanchokuWS.Gui
                     uint modKey = modKeyDef.ModKey;
                     if (!ExtraModifiers.IsDisabledExtKey(modKeyDef.Name)) {
                         if (bOn) {
-                            logger.InfoH(() => $"ShiftPlaneForShiftModKey.Add({modKeyDef.Name})");
+                            logger.Info(() => $"ShiftPlaneForShiftModKey.Add({modKeyDef.Name})");
                             ShiftPlane.ShiftPlaneForShiftModKey.Add(modKey, idx);
                             if (modKey == KeyModifiers.MOD_SPACE) Settings.SandSAssignedPlane = idx;
                         } else {
-                            logger.InfoH(() => $"ShiftPlaneForShiftModKeyWhenDecoderOff.Add({modKeyDef.Name})");
+                            logger.Info(() => $"ShiftPlaneForShiftModKeyWhenDecoderOff.Add({modKeyDef.Name})");
                             ShiftPlane.ShiftPlaneForShiftModKeyWhenDecoderOff.Add(modKey, idx);
                         }
                     }

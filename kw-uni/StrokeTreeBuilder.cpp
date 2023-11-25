@@ -23,11 +23,11 @@
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_INFO LOG_INFOH
-#define LOG_DEBUG LOG_INFOH
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
-//#define LOG_TRACE LOG_INFO
+#define LOG_DEBUGH LOG_INFO
+#define LOG_DEBUG LOG_INFO
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
+//#define LOG_TRACE LOG_DEBUGH
 #endif
 
 namespace {
@@ -563,7 +563,7 @@ namespace {
                     if (pp && cp) {
                         // 後置書き換えが重複した場合は、書き換え規則のマージ
                         pp->merge(*cp);
-                        LOG_INFOH(_T("PostRewriteOneShotNode merged: pp({:p})={}, tblNum={}, cn({:p})={}"),
+                        LOG_INFO(_T("PostRewriteOneShotNode merged: pp({:p})={}, tblNum={}, cn({:p})={}"),
                             (void*)pp, pp->getDebugString(), pp->getSubTableNum(), (void*)cp, cp->getDebugString());
                         delete childNode;
                     } else {
@@ -573,7 +573,7 @@ namespace {
                                 // 書き換えノードに対してテーブルノードをマージする
                                 tp->mergeRewriteNode(pp);   // この中で pp は delete される
                                 parentNode->swapNthChild(n, childNode);
-                                LOG_INFOH(_T("MERGE: StrokeTableNode merged into PostRewriteOneShotNode: tp({:p}), prwp({:p})={}"),
+                                LOG_INFO(_T("MERGE: StrokeTableNode merged into PostRewriteOneShotNode: tp({:p}), prwp({:p})={}"),
                                     (void*)tp, (void*)tp->getRewriteNode(), tp->getRewriteNode()->getDebugString());
                                 return;
                             }
@@ -582,7 +582,7 @@ namespace {
                             if (tp) {
                                 // テーブルノードに対して書き換えノードをマージする(
                                 tp->mergeRewriteNode(cp);   // この中で cp は delete される
-                                LOG_INFOH(_T("MERGE: PostRewriteOneShotNode merged into StrokeTableNode: tp({:p}), prwp({:p})={}"),
+                                LOG_INFO(_T("MERGE: PostRewriteOneShotNode merged into StrokeTableNode: tp({:p}), prwp({:p})={}"),
                                     (void*)tp, (void*)tp->getRewriteNode(), tp->getRewriteNode()->getDebugString());
                                 return;
                             }
@@ -1293,7 +1293,7 @@ void StrokeTableNode::UpdateStrokeNodes(StringRef strokeSource) {
 
 // ストローク木を作成してそのルートを返す
 StrokeTableNode* StrokeTableNode::CreateStrokeTree(StringRef tableFile, std::vector<String>& lines) {
-    LOG_INFOH(_T("CALLED: tableFile={}, lines={}"), tableFile, lines.size());
+    LOG_INFO(_T("CALLED: tableFile={}, lines={}"), tableFile, lines.size());
     ROOT_STROKE_NODE = 0;
     ROOT_STROKE_NODE = StrokeTreeBuilder(tableFile, lines, true).CreateStrokeTree();
     RootStrokeNode1.reset(ROOT_STROKE_NODE);
@@ -1304,21 +1304,21 @@ StrokeTableNode* StrokeTableNode::CreateStrokeTree(StringRef tableFile, std::vec
 
 // ストローク木2を作成してそのルートを返す
 StrokeTableNode* StrokeTableNode::CreateStrokeTree2(StringRef tableFile, std::vector<String>& lines) {
-    LOG_INFOH(_T("CALLED: tableFile={}, lines={}"), tableFile, lines.size());
+    LOG_INFO(_T("CALLED: tableFile={}, lines={}"), tableFile, lines.size());
     RootStrokeNode2.reset(StrokeTreeBuilder(tableFile, lines, false).CreateStrokeTree());
     return RootStrokeNode2.get();
 }
 
 // ストローク木3を作成してそのルートを返す
 StrokeTableNode* StrokeTableNode::CreateStrokeTree3(StringRef tableFile, std::vector<String>& lines) {
-    LOG_INFOH(_T("CALLED: tableFile={}, lines={}"), tableFile, lines.size());
+    LOG_INFO(_T("CALLED: tableFile={}, lines={}"), tableFile, lines.size());
     RootStrokeNode3.reset(StrokeTreeBuilder(tableFile, lines, false).CreateStrokeTree());
     return RootStrokeNode3.get();
 }
 
 // ストローク可能文字を収集
 std::set<mchar_t> StrokeTableNode::GatherStrokeChars() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     std::set<mchar_t> charSet;
     if (ROOT_STROKE_NODE) gatherStrokeChars(charSet, ROOT_STROKE_NODE);
     return charSet;

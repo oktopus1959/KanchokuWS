@@ -21,10 +21,10 @@
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_INFO LOG_INFOH
-#define LOG_DEBUG LOG_INFOH
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define LOG_DEBUGH LOG_INFO
+#define LOG_DEBUG LOG_INFO
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 namespace {
@@ -70,12 +70,12 @@ namespace {
     public:
         // コンストラクタ
         PostRewriteOneShotState(PostRewriteOneShotNode* pN) {
-            LOG_INFOH(_T("CALLED: constructor: this={:p}, NodePtr={:p}"), (void*)this, (void*)pN);
+            LOG_INFO(_T("CALLED: constructor: this={:p}, NodePtr={:p}"), (void*)this, (void*)pN);
             Initialize(logger.ClassNameT(), pN);
         }
 
         ~PostRewriteOneShotState() {
-            LOG_INFOH(_T("CALLED: destructor: ptr={:p}"), (void*)this);
+            LOG_INFO(_T("CALLED: destructor: ptr={:p}"), (void*)this);
         };
 
 #define MY_NODE ((PostRewriteOneShotNode*)pNode)
@@ -115,7 +115,7 @@ DEFINE_CLASS_LOGGER(PostRewriteOneShotNode);
 // コンストラクタ
 PostRewriteOneShotNode::PostRewriteOneShotNode(StringRef s, bool bBare)
 {
-    LOG_INFO(_T("ENTER: constructor: ptr={:p}, s={}, bBare={}"), (void*)this, s, bBare);
+    LOG_DEBUGH(_T("ENTER: constructor: ptr={:p}, s={}, bBare={}"), (void*)this, s, bBare);
     String rewStr = s;
     size_t rewLen = 0;
     if (bBare) {
@@ -124,12 +124,12 @@ PostRewriteOneShotNode::PostRewriteOneShotNode(StringRef s, bool bBare)
     }
     myRewriteInfo.rewriteStr = to_mstr(rewStr);
     myRewriteInfo.rewritableLen = rewLen;
-    LOG_INFO(_T("LEAVE: myStr={}, myRewriteLen={}"), rewStr, rewLen);
+    LOG_DEBUGH(_T("LEAVE: myStr={}, myRewriteLen={}"), rewStr, rewLen);
 }
 
 // デストラクタ
 PostRewriteOneShotNode::~PostRewriteOneShotNode() {
-    LOG_INFO(_T("CALLED: destructor: ptr={:p}"), (void*)this);
+    LOG_DEBUGH(_T("CALLED: destructor: ptr={:p}"), (void*)this);
     for (auto p : subTables) {
         delete p;
     }
@@ -137,12 +137,12 @@ PostRewriteOneShotNode::~PostRewriteOneShotNode() {
 
 // 当ノードを処理する State インスタンスを作成する
 State* PostRewriteOneShotNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new PostRewriteOneShotState(this);
 }
 
 void PostRewriteOneShotNode::addRewritePair(StringRef key, StringRef value, bool bBare, StrokeTableNode* pNode) {
-    LOG_INFO(_T("ENTER: key={}, value={}, bBare={}, pNode={:p}"), key, value, bBare, (void*)pNode);
+    LOG_DEBUGH(_T("ENTER: key={}, value={}, bBare={}, pNode={:p}"), key, value, bBare, (void*)pNode);
     String rewStr = value;
     size_t rewLen = 0;
     if (bBare) {
@@ -155,7 +155,7 @@ void PostRewriteOneShotNode::addRewritePair(StringRef key, StringRef value, bool
 
     rewriteMap[to_mstr(key)] = RewriteInfo(to_mstr(rewStr), rewLen, pNode);
 
-    LOG_INFO(_T("LEAVE: rewStr={}, rewLen={}"), rewStr, rewLen);
+    LOG_DEBUGH(_T("LEAVE: rewStr={}, rewLen={}"), rewStr, rewLen);
 }
 
 // 末尾文字列にマッチする RewriteInfo を取得する
@@ -198,7 +198,7 @@ DEFINE_CLASS_LOGGER(DakutenOneShotNode);
 DakutenOneShotNode::DakutenOneShotNode(String mkstr)
     : PostRewriteOneShotNode(mkstr, false), markStr(to_mstr(mkstr)), postfix(mkstr)
 {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
     const auto& dic = mkstr == _T("゛") ? dakuonDic : handakuonDic;
     for (auto pair : dic) {
         addRewritePair(pair.first, pair.second, true, 0);
@@ -207,12 +207,12 @@ DakutenOneShotNode::DakutenOneShotNode(String mkstr)
 
 // デストラクタ
 DakutenOneShotNode::~DakutenOneShotNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
 State* DakutenOneShotNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new PostRewriteOneShotState(this);
 }
 

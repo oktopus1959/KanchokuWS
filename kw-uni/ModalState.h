@@ -10,7 +10,7 @@ class ModalState : public State {
 public:
     // コンストラクタ
     ModalState() {
-        LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
+        LOG_INFO(_T("CALLED: CONSTRUCTOR"));
     }
 
 protected:

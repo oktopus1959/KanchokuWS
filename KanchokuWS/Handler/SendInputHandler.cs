@@ -31,7 +31,7 @@ namespace KanchokuWS.Handler
 
         public static void DisposeSingleton()
         {
-            logger.InfoH("Disposed");
+            logger.Info("Disposed");
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace KanchokuWS.Handler
 
         public void AddFunctionalKeyAlias(string alias, string name)
         {
-            logger.InfoH(() => $"CALLED: alias={alias}, keyname={name}");
+            logger.Info(() => $"CALLED: alias={alias}, keyname={name}");
             functionalKeyAliases._safeAdd(alias, name);
         }
 
@@ -592,7 +592,7 @@ namespace KanchokuWS.Handler
             if (sb.Length > 0) {
                 string name = sb.ToString();
                 name = functionalKeyAliases._safeGet(name, name);
-                logger.InfoH(() => $"alias={sb}, key={name}");
+                logger.Info(() => $"alias={sb}, key={name}");
                 uint vkey = DecoderKeyVsVKey.GetFuncVkeyByName(name);
                 //logger.DebugH(() => $"vkey={vkey:x} by FuncKey");
                 if (vkey == 0) vkey = AlphabetVKeys.GetAlphabetVkeyByName(name);
@@ -792,12 +792,12 @@ namespace KanchokuWS.Handler
 
         public void InitializePreRewriteTimer(FrmKanchoku frm)
         {
-            logger.InfoH(() => $"CALLED: waitTime={Settings.PreRewriteWaitTimeMsWhenTrainingMode}, preRewriteTargetChars={Settings.PreRewriteTargetChars}");
+            logger.Info(() => $"CALLED: waitTime={Settings.PreRewriteWaitTimeMsWhenTrainingMode}, preRewriteTargetChars={Settings.PreRewriteTargetChars}");
             if (timerForWaitingChar == null) {
                 timerForWaitingChar = new System.Timers.Timer();
                 timerForWaitingChar.SynchronizingObject = frm;
                 timerForWaitingChar.Elapsed += timerForWaitingChar_elapsed;
-                logger.InfoH(() => $"TIMER Initialized");
+                logger.Info(() => $"TIMER Initialized");
             }
         }
 
@@ -943,9 +943,9 @@ namespace KanchokuWS.Handler
         /// <param name="n">キーダウンの数</param>
         public void SendVKeyCombo(uint modifier, uint vkey, int n)
         {
-            if (Settings.LoggingDecKeyInfo)logger.InfoH(() => $"ENTER: modifier={modifier:x}H, vkey={vkey:x}H, numKeys={n}");
+            if (Settings.LoggingDecKeyInfo)logger.Info(() => $"ENTER: modifier={modifier:x}H, vkey={vkey:x}H, numKeys={n}");
             if (syncPostVkey.BusyCheck()) {
-                if (Settings.LoggingDecKeyInfo)logger.InfoH(() => $"LEAVE: IGNORED: numKeys={n}");
+                if (Settings.LoggingDecKeyInfo)logger.Info(() => $"LEAVE: IGNORED: numKeys={n}");
                 return;
             }
             using (syncPostVkey) {
@@ -966,7 +966,7 @@ namespace KanchokuWS.Handler
                     RevertCtrlKey(ctrlState);
                 }
             }
-            if (Settings.LoggingDecKeyInfo)logger.InfoH("LEAVE");
+            if (Settings.LoggingDecKeyInfo)logger.Info("LEAVE");
         }
 
         /// <summary>

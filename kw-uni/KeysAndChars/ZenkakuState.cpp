@@ -29,12 +29,12 @@ namespace {
     public:
         // コンストラクタ
         ZenkakuState(ZenkakuNode* pN) {
-            LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
+            LOG_INFO(_T("CALLED: CONSTRUCTOR"));
             Initialize(logger.ClassNameT(), pN);
         }
 
         ~ZenkakuState() {
-            LOG_INFO(_T("CALLED: DESTRUCTOR"));
+            LOG_DEBUGH(_T("CALLED: DESTRUCTOR"));
         };
 
 #define MY_NODE ((ZenkakuNode*)pNode)
@@ -141,7 +141,7 @@ namespace {
 
     public:
         ZenkakuOneState(ZenkakuOneNode* pN) : ZenkakuState(pN) {
-            LOG_INFOH(_T("CALLED: CONSTRUCTOR"));
+            LOG_INFO(_T("CALLED: CONSTRUCTOR"));
             Name = logger.ClassNameT();
         }
 
@@ -169,24 +169,24 @@ DEFINE_CLASS_LOGGER(ZenkakuNode);
 
 // コンストラクタ
 ZenkakuNode::ZenkakuNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
 ZenkakuNode::~ZenkakuNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
 State* ZenkakuNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new ZenkakuState(ZenkakuNode::Singleton.get());
 }
 
 std::unique_ptr<ZenkakuNode> ZenkakuNode::Singleton;
 
 void ZenkakuNode::CreateSingleton() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     if (ZenkakuNode::Singleton == 0) {
         ZenkakuNode::Singleton.reset(new ZenkakuNode());
     }
@@ -198,17 +198,17 @@ DEFINE_CLASS_LOGGER(ZenkakuOneNode);
 
 // コンストラクタ
 ZenkakuOneNode::ZenkakuOneNode() {
-    LOG_INFO(_T("CALLED: constructor"));
+    LOG_DEBUGH(_T("CALLED: constructor"));
 }
 
 // デストラクタ
 ZenkakuOneNode::~ZenkakuOneNode() {
-    LOG_INFO(_T("CALLED: destructor"));
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
 State* ZenkakuOneNode::CreateState() {
-    LOG_INFOH(_T("CALLED"));
+    LOG_INFO(_T("CALLED"));
     return new ZenkakuOneState(this);
 }
 
@@ -218,7 +218,7 @@ State* ZenkakuOneNode::CreateState() {
 DEFINE_CLASS_LOGGER(ZenkakuNodeBuilder);
 
 Node* ZenkakuNodeBuilder::CreateNode() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     return new ZenkakuNode();
 }
 
@@ -228,7 +228,7 @@ Node* ZenkakuNodeBuilder::CreateNode() {
 DEFINE_CLASS_LOGGER(ZenkakuOneNodeBuilder);
 
 Node* ZenkakuOneNodeBuilder::CreateNode() {
-    LOG_INFO(_T("CALLED"));
+    LOG_DEBUGH(_T("CALLED"));
     return new ZenkakuOneNode();
 }
 

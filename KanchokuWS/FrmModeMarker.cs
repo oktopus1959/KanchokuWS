@@ -73,12 +73,12 @@ namespace KanchokuWS
 
         private void FrmModeMarker_FormClosing(object sender, FormClosingEventArgs e)
         {
-            logger.InfoH("ENTER");
+            logger.Info("ENTER");
             bTerminated = true;
             timer1.Stop();
             logger.Info("Timer Stopped");
             Helper.WaitMilliSeconds(300);           // 微妙なタイミングで invoke されるのを防ぐ
-            logger.InfoH("LEAVE");
+            logger.Info("LEAVE");
         }
 
         private int remainingCount = 0;
@@ -220,7 +220,7 @@ namespace KanchokuWS
                     // デコーダが非アクティブか、仮想鍵盤が表示されているか、自身が表示されていれば、常にカウントをリセットする
                     resetCount();
                     if (!isThisShowable() && this.Visible) {
-                        if (Settings.LoggingActiveWindowInfo) logger.InfoH("Hide ModeMarker");
+                        if (Settings.LoggingActiveWindowInfo) logger.Info("Hide ModeMarker");
                         this.Hide();
                     }
                 } else {

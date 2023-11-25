@@ -284,7 +284,7 @@ namespace KanchokuWS.Handler
                         busyCount = 0;
                     }
                     if (Logger.IsInfoEnabled && frmVkb != null && !frmVkb.IsMyWinClassName(ActiveWinClassName)) {
-                        logger.InfoH("LEAVE: In Progress");
+                        logger.Info("LEAVE: In Progress");
                     }
                     return;
                 }
@@ -305,7 +305,7 @@ namespace KanchokuWS.Handler
                     }
                 } catch (Exception e) {
                     logger.Warn(e.Message);
-                    if (bLog) logger.InfoH(e.StackTrace);
+                    if (bLog) logger.Info(e.StackTrace);
                 }
             }
             if (bOK && moveWin != MoveWinType.Freeze) {

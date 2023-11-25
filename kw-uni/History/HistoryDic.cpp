@@ -18,11 +18,11 @@
 #if 0
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_DEBUGH LOG_INFOH
-#define LOG_DEBUG LOG_INFOH
-#define LOG_INFO LOG_INFOH
-#define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#define LOG_DEBUGH LOG_INFO
+#define LOG_DEBUG LOG_INFO
+#define LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 namespace {
@@ -298,7 +298,7 @@ namespace {
     public:
         // UTF8で書かれた辞書ソースを読み込む
         void ReadFile(const std::vector<String>& lines) {
-            LOG_INFO(_T("ENTER: {} lines"), lines.size());
+            LOG_DEBUGH(_T("ENTER: {} lines"), lines.size());
             std::set<String> used;
             for (const auto& w : lines) {
                 if (!utils::contains(used, w)) {
@@ -308,7 +308,7 @@ namespace {
                 }
             }
             bDirty = false;
-            LOG_INFO(_T("LEAVE"));
+            LOG_DEBUGH(_T("LEAVE"));
         }
 
         void PushEntry(const MString& word, size_t minlen = 2) {
@@ -426,7 +426,7 @@ namespace {
 
         // 辞書内容の書き込み
         void WriteFile(utils::OfstreamWriter& writer) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
             std::set<MString> used;
             for (const auto& word : usedList) {
                 if (!utils::contains(used, word)) {
@@ -461,12 +461,12 @@ namespace {
     public:
         // UTF8で書かれた辞書ソースを読み込む
         void ReadFile(const std::vector<String>& lines) {
-            LOG_INFO(_T("ENTER: {} lines"), lines.size());
+            LOG_DEBUGH(_T("ENTER: {} lines"), lines.size());
             for (const auto& w : lines) {
                 AddEntry(to_mstr(w));
             }
             bDirty = false;
-            LOG_INFO(_T("LEAVE"));
+            LOG_DEBUGH(_T("LEAVE"));
         }
 
         void AddEntry(const MString& word) {
@@ -488,7 +488,7 @@ namespace {
 
         // 辞書内容の書き込み
         void WriteFile(utils::OfstreamWriter& writer) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
             for (const auto& word : exclSet) {
                 writer.writeLine(utils::utf8_encode(to_wstr(word)));
             }
@@ -520,7 +520,7 @@ namespace {
     public:
         // UTF8で書かれた辞書ソースを読み込む
         void ReadFile(const std::vector<String>& lines) {
-            LOG_INFO(_T("ENTER: {} lines"), lines.size());
+            LOG_DEBUGH(_T("ENTER: {} lines"), lines.size());
             for (const auto& line : lines) {
                 auto items = utils::split(to_mstr(line), ',');
                 if (items.size() >= 2) {
@@ -532,7 +532,7 @@ namespace {
                 }
             }
             bDirty = false;
-            LOG_INFO(_T("LEAVE"));
+            LOG_DEBUGH(_T("LEAVE"));
         }
 
 
@@ -655,7 +655,7 @@ namespace {
 
         // UTF8で書かれた辞書ソースを読み込む
         void readFile(const std::vector<String>& lines, bool bReadOnly) {
-            LOG_INFO(_T("ENTER: {} lines, bReadOnly={}"), lines.size(), bReadOnly);
+            LOG_DEBUGH(_T("ENTER: {} lines, bReadOnly={}"), lines.size(), bReadOnly);
             int logLevel = Reporting::Logger::LogLevel();
             if (lines.size() > 10) Reporting::Logger::SetLogLevel(0);
             for (const auto& line : lines) {
@@ -667,7 +667,7 @@ namespace {
             }
             bDirty = false;
             Reporting::Logger::SetLogLevel(logLevel);
-            LOG_INFO(_T("LEAVE"));
+            LOG_DEBUGH(_T("LEAVE"));
         }
 
     public:
@@ -702,7 +702,7 @@ namespace {
 
         void addNgramEntry(const MString& ngram) {
             if (ngramDic.AddNgramEntry(ngram)) {
-                LOG_INFO(_T("addNewGgramEntry={}"), to_wstr(ngram));
+                LOG_DEBUGH(_T("addNewGgramEntry={}"), to_wstr(ngram));
                 addNewEntry(ngram);
             }
         }
@@ -757,7 +757,7 @@ namespace {
 
         // 指定の見出し語のエントリを削除する
         void DeleteEntry(const MString& word) {
-            LOG_INFO(_T("CALLED: {}"), to_wstr(word));
+            LOG_DEBUGH(_T("CALLED: {}"), to_wstr(word));
             usedList.RemoveEntry(word);
             hashToStrMap.Remove(word);
             exclList.AddEntry(word);
@@ -1106,7 +1106,7 @@ namespace {
 
         // 辞書内容の保存
         void WriteFile(utils::OfstreamWriter& writer) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
             for (const auto& word : hashToStrMap.GetAllWords()) {
                 if (word.find(MSTR_VERT_BAR_2) == MString::npos) {
                     // '||' を含むものは除く
@@ -1123,13 +1123,13 @@ namespace {
 
         // 使用辞書の読み込み
         void ReadUsedFile(const std::vector<String>& lines) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
             usedList.ReadFile(lines);
         }
 
         // 使用辞書内容の保存
         void WriteUsedFile(utils::OfstreamWriter& writer) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
             usedList.WriteFile(writer);
         }
 
@@ -1139,13 +1139,13 @@ namespace {
 
         // 除外辞書の読み込み
         void ReadExcludeFile(const std::vector<String>& lines) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
             exclList.ReadFile(lines);
         }
 
         // 除外辞書内容の保存
         void WriteExcludeFile(utils::OfstreamWriter& writer) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
             exclList.WriteFile(writer);
         }
 
@@ -1155,13 +1155,13 @@ namespace {
 
         // Nグラム辞書の読み込み
         void ReadNgramFile(const std::vector<String>& lines) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
             ngramDic.ReadFile(lines);
         }
 
         // Nグラム辞書内容の保存
         void WriteNgramFile(utils::OfstreamWriter& writer) {
-            LOG_INFO(_T("CALLED"));
+            LOG_DEBUGH(_T("CALLED"));
             ngramDic.WriteFile(writer);
         }
 
@@ -1191,12 +1191,12 @@ namespace {
 
     // 履歴ファイルの読み込み
     void readFile(StringRef path, READ_FUNC func, bool bWarn = true) {
-        LOG_INFO(_T("open hist file: {}"), path);
+        LOG_DEBUGH(_T("open hist file: {}"), path);
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             // ファイル読み込み
             (HISTORY_DIC.get()->*func)(reader.getAllLines());
-            LOG_INFO(_T("close hist file: {}"), path);
+            LOG_DEBUGH(_T("close hist file: {}"), path);
         } else {
             if (bWarn) LOG_WARN(_T("Can't read hist file: {}"), path);
         }
@@ -1206,7 +1206,7 @@ namespace {
 
     // 辞書ファイルの内容の書き出し
     void writeFile(StringRef path, WRITE_FUNC func) {
-        LOG_INFO(_T("CALLED: path={}"), path);
+        LOG_DEBUGH(_T("CALLED: path={}"), path);
         if (!path.empty() && HISTORY_DIC) {
             utils::OfstreamWriter writer(path);
             if (writer.success()) {
@@ -1222,10 +1222,10 @@ namespace {
 // * の部分を {entry,recent,exclude,ngram} に置換したファイルが読み込まれる
 // エラーがあったら例外を投げる
 int HistoryDic::CreateHistoryDic(StringRef histFile) {
-    LOG_INFO(_T("ENTER: histFile={}"), histFile);
+    LOG_DEBUGH(_T("ENTER: histFile={}"), histFile);
 
     if (Singleton != 0) {
-        LOG_INFO(_T("already created: hist file: {}"), histFile);
+        LOG_DEBUGH(_T("already created: hist file: {}"), histFile);
         return 0;
     }
 
@@ -1241,7 +1241,7 @@ int HistoryDic::CreateHistoryDic(StringRef histFile) {
             filename = _T("kwhist.*.txt");
         }
         auto path = utils::joinPath(SETTINGS->rootDir, filename);
-        LOG_INFO(_T("open history file: {}"), path);
+        LOG_DEBUGH(_T("open history file: {}"), path);
 
         size_t pos = path.find(_T("*"));
         readFile(replaceStar(path, pos, _T("entry")), &HistoryDic::ReadFile);
@@ -1250,13 +1250,13 @@ int HistoryDic::CreateHistoryDic(StringRef histFile) {
         readFile(replaceStar(path, pos, _T("exclude")), &HistoryDic::ReadExcludeFile);
         //readFile(replaceStar(path, pos, _T("ngram")), &HistoryDic::ReadNgramFile);
     }
-    LOG_INFO(_T("LEAVE"));
+    LOG_DEBUGH(_T("LEAVE"));
     return 0;
 }
 
 // 辞書ファイルの内容の書き出し
 void HistoryDic::WriteHistoryDic(StringRef histFile) {
-    LOG_INFO(_T("CALLED: path={}"), histFile);
+    LOG_DEBUGH(_T("CALLED: path={}"), histFile);
     if (Singleton) {
         auto path = utils::joinPath(SETTINGS->rootDir, utils::contains(histFile, _T("*")) ? histFile : _T("kwhist.*.txt"));
         size_t pos = path.find(_T("*"));
