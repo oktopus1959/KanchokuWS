@@ -15,7 +15,7 @@ public:
 
 protected:
     // ModalStateの前処理
-    void DoModalStatePreProc(int deckey) override;
+    int DoModalStatePreProc(int deckey) override;
 
 };
 

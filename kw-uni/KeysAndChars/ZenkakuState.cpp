@@ -15,6 +15,22 @@
 
 #include "Zenkaku.h"
 
+#if 0 || defined(_DEBUG)
+#undef _DEBUG_SENT
+#undef _DEBUG_FLAG
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#undef _LOG_DEBUGH
+#undef _LOG_DEBUGH_COND
+#define _DEBUG_SENT(x) x
+#define _DEBUG_FLAG(x) (x)
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
+#endif
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughZenkaku)
 
 namespace {
@@ -25,6 +41,8 @@ namespace {
     // 全角変換機能クラス
     class ZenkakuState : public State {
         DECLARE_CLASS_LOGGER;
+
+        bool bInitialized = true;
 
     public:
         // コンストラクタ
@@ -41,17 +59,23 @@ namespace {
 
         // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
         bool DoProcOnCreated() {
-            LOG_DEBUG(_T("ENTER"));
+            LOG_INFO(_T("ENTER"));
 
             STATE_COMMON->SetZenkakuModeMarkerShowFlag();
 
             // 前状態にチェインする
-            LOG_DEBUG(_T("LEAVE: CHAIN ME"));
+            LOG_INFO(_T("LEAVE: CHAIN ME"));
 
             return true;
         }
 
-         // Strokeキー を処理する
+        // 中間チェック
+        void DoIntermediateCheck() override {
+            LOG_INFO(_T("CALLED: {}: Clear bInitialized"), Name);
+            bInitialized = false;
+        }
+
+        // Strokeキー を処理する
         void handleStrokeKeys(int deckey) {
             LOG_DEBUG(_T("CALLED: {}: deckey={:x}H({})"), Name, deckey, deckey);
             if (deckey >= FUNC_DECKEY_START) {
@@ -90,20 +114,22 @@ namespace {
 
         // FullEscape の処理 -- 処理のキャンセル
         void handleFullEscape() {
-            LOG_DEBUG(_T("CALLED: {}"), Name);
+            LOG_DEBUGH(_T("CALLED: {}"), Name);
             cancelMe();
         }
 
         // Esc の処理 -- 処理のキャンセル
         void handleEsc() {
-            LOG_DEBUG(_T("CALLED: {}"), Name);
+            LOG_DEBUGH(_T("CALLED: {}"), Name);
             cancelMe();
         }
 
         // ZenkakuConversionの処理 - 処理のキャンセル
         void handleZenkakuConversion() {
-            LOG_DEBUGH(_T("CALLED: {}"), Name);
-            cancelMe();
+            LOG_DEBUGH(_T("CALLED: {}: Initialized={}"), Name, bInitialized);
+            if (!bInitialized) {
+                cancelMe();
+            }
         }
 
         // モード標識文字を返す
@@ -128,6 +154,7 @@ namespace {
         }
 
         void cancelMe() {
+            LOG_DEBUGH(_T("CALLED: {}"), Name);
             MarkUnnecessary();
             STATE_COMMON->SetZenkakuModeMarkerClearFlag();
         }
@@ -146,7 +173,7 @@ namespace {
         }
 
         // 不要な状態になったか
-        void DoIntermediateCheck() {
+        void DoIntermediateCheck() override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             // 1文字処理したら自状態は不要になる
             cancelMe();

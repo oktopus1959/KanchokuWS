@@ -18,12 +18,20 @@
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
 #if 0 || defined(_DEBUG)
+#undef _DEBUG_SENT
+#undef _DEBUG_FLAG
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#undef _LOG_DEBUGH
+#undef _LOG_DEBUGH_COND
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_DEBUGH LOG_INFO
-#define LOG_DEBUG LOG_INFO
-#define _LOG_DEBUGH LOG_INFO
-#define _LOG_DEBUGH_COND LOG_INFO_COND
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
 
 DEFINE_CLASS_LOGGER(State);
@@ -71,7 +79,8 @@ void State::HandleDeckeyChain(int deckey) {
     DoHistoryResidentPreCheck();
 
     // ModalStateの前処理(デフォルトでは何もしない)
-    DoModalStatePreProc(deckey);
+    // deckey < 0 で返ってきたら、後続処理をやらない
+    deckey = DoModalStatePreProc(deckey);
 
     ClearNextNodeMaybe();
 
@@ -82,11 +91,25 @@ void State::HandleDeckeyChain(int deckey) {
         pNext->HandleDeckeyChain(deckey);
     } else {
         _LOG_DEBUGH(_T("NextState: NOT FOUND"));
+        _LOG_DEBUGH(_T("deckey={}"), deckey);
         // 後続状態がなければ、ここでDECKEYをディスパッチする
-        dispatchDeckey(deckey);
+        if (deckey >= 0) dispatchDeckey(deckey);
     }
 
     LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
+}
+
+// 履歴常駐状態の事前チェック
+void State::DoHistoryResidentPreCheck() {
+    /* デフォルトでは何もしない */
+    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT"), Name);
+}
+
+// ModalStateの前処理
+int State::DoModalStatePreProc(int deckey) {
+    /* デフォルトでは何もしない */
+    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT: deckey={}"), Name, deckey);
+    return deckey;
 }
 
 // DECKEY処理の後半部の処理(非仮想関数)。
@@ -135,6 +158,19 @@ void State::DoDeckeyPostProc() {
         _LOG_DEBUGH(_T("PATH-E"));
     }
     _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+}
+
+// 中間チェック
+void State::DoIntermediateCheckChain() {
+    _LOG_DEBUGH(_T("ENTER: {}"), Name);
+    if (pNext) pNext->DoIntermediateCheckChain();
+    DoIntermediateCheck();
+    _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+}
+
+void State::DoIntermediateCheck() {
+    // Do nothing in Default
+    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT"), Name);
 }
 
 // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
@@ -203,6 +239,12 @@ bool State::IsResident() const {
 bool State::IsHistoryReset() {
     _LOG_DEBUGH(_T("CALLED: {}: True (default)"), Name);
     return true;
+}
+
+// 不要フラグをセット
+void State::MarkUnnecessary() {
+    LOG_DEBUG(_T("CALLED: {}"), Name);
+    bUnnecessary = true;
 }
 
 // 不要になった状態か

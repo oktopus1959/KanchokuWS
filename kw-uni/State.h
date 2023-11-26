@@ -38,9 +38,7 @@ private:
 
 protected:
     // 不要フラグをセット
-    inline void MarkUnnecessary() {
-        bUnnecessary = true;
-    }
+    void MarkUnnecessary();
 
 public:
     // 不要になった状態か
@@ -108,12 +106,16 @@ public:
 
 protected:
     // 履歴常駐状態の事前チェック
-    virtual void DoHistoryResidentPreCheck() { /* デフォルトでは何もしない */ }
+    virtual void DoHistoryResidentPreCheck();
 
     // ModalStateの前処理
-    virtual void DoModalStatePreProc(int /*deckey*/) { /* デフォルトでは何もしない */ }
+    virtual int DoModalStatePreProc(int /*deckey*/);
 
 protected:
+    // 中間チェック
+    void DoIntermediateCheckChain();
+    virtual void DoIntermediateCheck();
+
     // DECKEY処理の後半部
     void DoDeckeyPostProcChain();
     void DoDeckeyPostProc();
@@ -126,9 +128,6 @@ public:
 
     // 入力された DECKEY を処理する
     virtual void HandleDeckeyChain(int deckey);
-
-    // 中間チェック
-    virtual void DoIntermediateCheck() { /* デフォルトでは何もしない */ }
 
     // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
     virtual bool DoProcOnCreated();

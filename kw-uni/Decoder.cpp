@@ -38,13 +38,22 @@
 
 #define _LOG_DEBUGH_FLAG true
 #if 0 || defined(_DEBUG)
+#undef IS_LOG_DEBUGH_ENABLED
+#undef _DEBUG_SENT
+#undef _DEBUG_FLAG
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#undef _LOG_DEBUGH
+#undef _LOG_DEBUGH_COND
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_DEBUGH LOG_INFO
-#define LOG_DEBUG LOG_INFO
-#define _LOG_DEBUGH LOG_INFO
-#define _LOG_DEBUGH_COND LOG_INFO_COND
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
 
 // -------------------------------------------------------------------

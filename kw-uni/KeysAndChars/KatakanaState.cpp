@@ -19,12 +19,14 @@
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughKatakana)
 
 #if 0 || defined(_DEBUG)
-#define IS_LOG_DEBUGH_ENABLED true
-#define _DEBUG_SENT(x) x
-#define _DEBUG_FLAG(x) (x)
-#define LOG_DEBUGH LOG_INFO
-#define _LOG_DEBUGH LOG_INFO
-#define _LOG_DEBUGH_COND LOG_INFO_COND
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#undef _LOG_DEBUGH
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
 #endif
 
 namespace {
@@ -35,6 +37,8 @@ namespace {
     // カタカナ変換機能クラス
     class KatakanaState : public ModalState {
         DECLARE_CLASS_LOGGER;
+
+        bool bInitialized = true;
 
     public:
         // コンストラクタ
@@ -65,6 +69,12 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: CHAIN ME"));
 
             return true;
+        }
+
+        // 中間チェック
+        void DoIntermediateCheck() override {
+            LOG_INFO(_T("CALLED: {}: Clear bInitialized"), Name);
+            bInitialized = false;
         }
 
         // 履歴検索を初期化する状態か
@@ -125,8 +135,10 @@ namespace {
 
         // KatakanaConversionの処理 - 処理のキャンセル
         void handleKatakanaConversion() override {
-            _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            cancelMe();
+            LOG_DEBUGH(_T("CALLED: {}: Initialized={}"), Name, bInitialized);
+            if (!bInitialized) {
+                cancelMe();
+            }
         }
 
         // CommitState の処理 -- 処理のコミット

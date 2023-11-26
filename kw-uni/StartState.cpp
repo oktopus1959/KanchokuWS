@@ -4,6 +4,15 @@
 #include "ResidentState.h"
 #include "History/HistoryResidentState.h"
 
+#if 0 || defined(_DEBUG)
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#endif
+
 // 始状態 -- 仮想鍵盤のモード管理も行う
 class StartState : public ResidentState {
     DECLARE_CLASS_LOGGER;
@@ -19,10 +28,13 @@ public:
         LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
             Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
         // 前処理
+        LOG_DEBUGH(_T("CALL HandleDeckeyChain()"));
         State::HandleDeckeyChain(deckey);
         // 中間チェック
-        DoIntermediateCheck();
+        LOG_DEBUGH(_T("CALL DoIntermediateCheckChain()"));
+        DoIntermediateCheckChain();
         // 後処理
+        LOG_DEBUGH(_T("CALL DoDeckeyPostProcChain()"));
         DoDeckeyPostProcChain();
         LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
         //return pNextNodeMaybe;
