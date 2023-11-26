@@ -818,11 +818,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                     $"CombinationKeyMinOverlappingTimeMs3={Settings.CombinationKeyMinOverlappingTimeMs3}, " +
                                     $"CombinationKeyMinOverlappingTimeForSecond={Settings.CombinationKeyMinOverlappingTimeForSecond}");
                 int minTime =
+                    list._safeCount() >= 3 && list._startsWithAny(Settings.HeadComboKeysListForZeroOverlappingTime) ? 0 :
                     Settings.CombinationKeyMinOverlappingTimeMs3 > Settings.CombinationKeyMinOverlappingTimeMs && list._safeCount() >= 3 ? Settings.CombinationKeyMinOverlappingTimeMs3 :
                     //Settings.CombinationKeyMinOverlappingTimeMs2 > 0 && !isSpaceOrFunc ? Settings.CombinationKeyMinOverlappingTimeMs2 :
                     minTimeCharKeys > 0 ? minTimeCharKeys :
                     bSecondComboCheck && Settings.CombinationKeyMinOverlappingTimeForSecond > Settings.CombinationKeyMinOverlappingTimeMs ? Settings.CombinationKeyMinOverlappingTimeForSecond :
                     Settings.CombinationKeyMinOverlappingTimeMs;
+
                 result = ms2 >= minTime ? 0 : bSecondComboCheck ? 2 : 1;
                 logger.InfoH(() => $"RESULT2={result == 0}: ms2={ms2:f2}ms >= minOverlappingTime={minTime}ms (Timing={result})");
             }
@@ -845,6 +847,14 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public static bool _notEmpty(this StrokeList list)
         {
             return !list._isEmpty();
+        }
+
+        public static bool _startsWithAny(this IEnumerable<Stroke> list, IEnumerable<List<int>> keyList)
+        {
+            foreach (var keys in keyList) {
+                if (keys.All(x => list.Take(keys.Count).Any(s => s.ModuloDecKey == x))) return true;
+            }
+            return false;
         }
 
         public static string _toString(this IEnumerable<Stroke> list)

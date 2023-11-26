@@ -776,7 +776,11 @@ namespace KanchokuWS
         public static bool CombinationKeyMinTimeOnlyAfterSecond { get; set; }
         public static string CombinationKeyMinTimeOnlyAfterSecond_PropName = "combinationKeyTimeOnlyAfterSecond";
 
-        /// <summary>２文字目以降の同時打鍵の重複時間</summary>
+        /// <summary>
+        /// ２文字目以降の同時打鍵の重複時間。
+        /// この時間を通常の重複時間より長めに設定すれば、連続シフト時の2文字めのシフトをある程度抑制できる
+        /// (TODO: 設定ダイアログ)
+        /// </summary>
         public static int CombinationKeyMinOverlappingTimeForSecond { get; set; }
         public static string CombinationKeyMinOverlappingTimeForSecond_PropName = "combinationKeyMinOverlappingTimeForSecond";
 
@@ -828,6 +832,10 @@ namespace KanchokuWS
 
         /// <summary>Spaceまたは機能キーのシフトキーがきたら、使い終わったキー(comboListにたまっているキー)を破棄する</summary>
         public static bool AbandonUsedKeysWhenSpecialComboShiftDown { get; set; } = true;
+
+        /// <summary>3キー以上の同時打鍵で、先頭のComboが指定のものなら、直ちに同時打鍵とみなす (TODO: 設定ダイアログ)</summary>
+        public static List<List<int>> HeadComboKeysListForZeroOverlappingTime { get; set; } = new List<List<int>>();
+        public static string HeadComboKeysListForZeroOverlappingTime_PropName = "headComboKeysListForZeroOverlappingTime";
 
         /// <summary>3番目以降の同時打鍵キーは最初に解放される必要があるか<br/>
         /// true の場合は、3打鍵同時の場合に、3番目に押されたキーが最初に解放された場合に限り、同時打鍵と判定する。
@@ -1449,6 +1457,11 @@ namespace KanchokuWS
             SequentialPriorityWordSet.UnionWith(SequentialPriorityWords._reSplit(@"[ ,\|]+"));                      // 同時打鍵よりも順次打鍵のほうを優先させる文字列の集合
             OnlyCharKeysComboShouldBeCoveringCombo = GetString(OnlyCharKeysComboShouldBeCoveringCombo_PropName)._parseBool(false);     // 文字キーのみの同時打鍵組合せの場合は、被覆Comboとするか
             CharKeyComboMinOverlappingTime = GetString(CharKeyComboMinOverlappingTime_PropName)._parseInt(0);       // 2つの文字キーの同時打鍵の場合の最小重複時間
+
+            // 3キー以上の同時打鍵で、先頭のComboが指定のものなら、直ちに同時打鍵とみなす
+            HeadComboKeysListForZeroOverlappingTime =
+                GetString(HeadComboKeysListForZeroOverlappingTime_PropName)._strip()._split(',').
+                Select(x => x._split(':').Select(y => y._parseInt(-1)).ToList()).ToList();
 
             //-------------------------------------------------------------------------------------
             // IME連携
