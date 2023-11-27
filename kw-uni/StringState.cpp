@@ -11,20 +11,14 @@
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughString)
 
 #if 0 || defined(_DEBUG)
-#undef _DEBUG_SENT
-#undef _DEBUG_FLAG
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
 #undef _LOG_DEBUGH
-#undef _LOG_DEBUGH_COND
-#define _DEBUG_SENT(x) x
-#define _DEBUG_FLAG(x) (x)
 #define LOG_INFO LOG_INFOH
 #define LOG_DEBUGH LOG_INFOH
 #define LOG_DEBUG LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
 
 namespace {
@@ -67,7 +61,7 @@ public:
     // 文字列状態に対して生成時処理を実行する
     bool DoProcOnCreated() {
         _LOG_DEBUGH(_T("ENTER: StringState: str={}, rewLen={}"), to_wstr(myNode()->getString()), myNode()->getRewritableLen());
-        HISTORY_RESIDENT_STATE->SetTranslatedOutString(xlat(myNode()->getString()), myNode()->getRewritableLen());
+        HISTORY_RESIDENT_STATE->SetTranslatedOutString(xlat(myNode()->getString()), myNode()->getRewritableLen(), true);
         _LOG_DEBUGH(_T("LEAVE: StringState"));
         // チェイン不要
         return false;

@@ -23,12 +23,14 @@
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
 #if 0 || defined(_DEBUG)
-#define IS_LOG_DEBUGH_ENABLED true
-#define _DEBUG_SENT(x) x
-#define _DEBUG_FLAG(x) (x)
-#define LOG_DEBUGH LOG_INFO
-#define _LOG_DEBUGH LOG_INFO
-#define _LOG_DEBUGH_COND LOG_INFO_COND
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#undef _LOG_DEBUGH
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
 #endif
 
 // 縦列鍵盤または横列鍵盤の数
@@ -918,14 +920,14 @@ namespace {
         }
 
         // 文字列を変換して出力、その後、履歴の追加
-        void SetTranslatedOutString(const MString& outStr, size_t rewritableLen, int numBS = -1) {
+        void SetTranslatedOutString(const MString& outStr, size_t rewritableLen, bool bBushuComp = true, int numBS = -1) {
             _LOG_DEBUGH(_T("ENTER: {}: outStr={}, rewritableLen={}, numBS={}"), Name, to_wstr(outStr), rewritableLen, numBS);
             if (NextState()) {
                 MString xlatStr = NextState()->TranslateString(outStr);
                 _LOG_DEBUGH(_T("{}: SetOutStringWithRewritableLen({}, {}, {})"), Name, to_wstr(xlatStr), xlatStr == outStr ? rewritableLen : 0, numBS);
                 STATE_COMMON->SetOutStringWithRewritableLen(xlatStr, xlatStr == outStr ? rewritableLen : 0, numBS);
             } else {
-                if (SETTINGS->autoBushuCompMinCount < 1 || !BUSHU_COMP_NODE->ReduceByAutoBushu(outStr)) {
+                if (!bBushuComp || SETTINGS->autoBushuCompMinCount < 1 || !BUSHU_COMP_NODE->ReduceByAutoBushu(outStr)) {
                     _LOG_DEBUGH(_T("{}: SetOutStringWithRewritableLen({}, {}, {})"), Name, to_wstr(outStr), rewritableLen, numBS);
                     STATE_COMMON->SetOutStringWithRewritableLen(outStr, rewritableLen, numBS);
                 }

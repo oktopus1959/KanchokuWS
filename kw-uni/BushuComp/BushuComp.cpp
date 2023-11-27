@@ -19,10 +19,14 @@
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughBushu)
 
 #if 0
-#define _DEBUG_SENT(x) x
-#define _DEBUG_FLAG(x) (x)
-#define _LOG_DEBUGH LOG_INFO
-#define _LOG_DEBUGH_COND LOG_INFO_COND
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#undef _LOG_DEBUGH
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
 #endif
 
 namespace {
@@ -45,6 +49,7 @@ namespace {
         bool DoProcOnCreated() {
             wchar_t m1 = (wchar_t)OUTPUT_STACK->LastOutStackChar(1);
             wchar_t m2 = (wchar_t)OUTPUT_STACK->LastOutStackChar(0);
+            LOG_DEBUG(_T("m1={}, m2={}"), m1, m2);
             if (m1 == '-' || m1 == ' ') {
                 // 先頭文字が '-' なら、その前の文字と直前の文字との組合せに対して自動部首合成を無効化する
                 if (BUSHU_DIC) {
@@ -122,7 +127,7 @@ bool BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
         size_t prevTotalCnt = PrevTotalCount;
         PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
         size_t firstStrokeCnt = STATE_COMMON->GetFirstStrokeKeyCount();
-        _LOG_DEBUGH(_T("CALLED: mstr={}, prevTotalCount={}, firstStrokeKeyCount={}"), to_wstr(mstr), prevTotalCnt, firstStrokeCnt);
+        _LOG_DEBUGH(_T("ENTER: mstr={}, prevTotalCount={}, firstStrokeKeyCount={}"), to_wstr(mstr), prevTotalCnt, firstStrokeCnt);
         if (prevTotalCnt + 1 == firstStrokeCnt) {
             mchar_t m1 = OUTPUT_STACK->LastOutStackChar(0);
             mchar_t m2 = mstr[0];
@@ -135,17 +140,20 @@ bool BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
             //PrevCompSec = utils::getSecondsFromEpochTime();
             _LOG_DEBUGH(_T("m1={}, m2={}, m={}"), (wchar_t)m1, (wchar_t)m2, (wchar_t)m);
             if (m != 0) {
+                _LOG_DEBUGH(_T("STATE_COMMON->SetOutString(m={}, numBS=1)"), (wchar_t)m);
                 MString ms = to_mstr(m);
-                STATE_COMMON->SetOutString(ms);
-                STATE_COMMON->SetBackspaceNum(1);
+                STATE_COMMON->SetOutString(ms, 1);
+                //STATE_COMMON->SetBackspaceNum(1);
                 STATE_COMMON->CopyStrokeHelpToVkbFaces();
                 IsPrevAuto = true;
                 //合成した文字を履歴に登録
                 if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(ms);
+                _LOG_DEBUGH(_T("LEAVE: true"));
                 return true;
             }
         }
     }
+    _LOG_DEBUGH(_T("LEAVE: false"));
     return false;
 }
 

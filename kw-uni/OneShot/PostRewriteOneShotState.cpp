@@ -17,14 +17,14 @@
 #include "PostRewriteOneShot.h"
 
 #if 0
-#define _LOG_DEBUGH_FLAG (false)
-#define IS_LOG_DEBUGH_ENABLED true
-#define _DEBUG_SENT(x) x
-#define _DEBUG_FLAG(x) (x)
-#define LOG_DEBUGH LOG_INFO
-#define LOG_DEBUG LOG_INFO
-#define _LOG_DEBUGH LOG_INFO
-#define _LOG_DEBUGH_COND LOG_INFO_COND
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#undef _LOG_DEBUGH
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
 #endif
 
 namespace {
@@ -88,7 +88,7 @@ namespace {
             size_t numBS;
             std::tie(rewInfo, numBS) = MY_NODE->matchWithTailString();
             if (rewInfo) {
-                HISTORY_RESIDENT_STATE->SetTranslatedOutString(rewInfo->rewriteStr, rewInfo->rewritableLen, numBS);
+                HISTORY_RESIDENT_STATE->SetTranslatedOutString(rewInfo->rewriteStr, rewInfo->rewritableLen, false, numBS);
                 if (rewInfo->subTable) {
                     SetNextNodeMaybe(rewInfo->subTable);
                 }
