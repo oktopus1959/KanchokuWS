@@ -335,7 +335,7 @@ namespace utils {
         // write String
         inline void write(StringRef str) {
             write(str.size());
-            ofs.write(reinterpret_cast<const char*>(str.data()), str.size() * sizeof(wchar_t));
+            ofs.write(reinterpret_cast<const char*>(str.data()), static_cast<std::streamsize>(str.size()) * sizeof(wchar_t));
         }
 
         // write String vector

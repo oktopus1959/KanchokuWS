@@ -10,7 +10,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughString)
 
-#if 0 || defined(_DEBUG)
+#if 1 || defined(_DEBUG)
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
@@ -59,13 +59,27 @@ public:
     }
 
     // 文字列状態に対して生成時処理を実行する
-    bool DoProcOnCreated() {
+    bool DoProcOnCreated() override {
         _LOG_DEBUGH(_T("ENTER: StringState: str={}, rewLen={}"), to_wstr(myNode()->getString()), myNode()->getRewritableLen());
         HISTORY_RESIDENT_STATE->SetTranslatedOutString(xlat(myNode()->getString()), myNode()->getRewritableLen(), true);
         _LOG_DEBUGH(_T("LEAVE: StringState"));
         // チェイン不要
         return false;
     }
+
+    // 文字列を変換
+    MString TranslateString(const MString& outStr) override {
+        _LOG_DEBUGH(_T("CALLED"));
+        return xlat(outStr);
+    }
+
+    // ノードが保持する文字列をこれまでの出力文字列に適用
+    MStringApplyResult ApplyResultString() override {
+        auto xlatStr = xlat(myNode()->getString());
+        _LOG_DEBUGH(_T("CALLED: StringState: myStr={}, xlatStr={}, rewLen={}"), to_wstr(myNode()->getString()), to_wstr(xlatStr), myNode()->getRewritableLen());
+        return MStringApplyResult(xlatStr, myNode()->getRewritableLen());
+    }
+
 };
 DEFINE_CLASS_LOGGER(StringState);
 

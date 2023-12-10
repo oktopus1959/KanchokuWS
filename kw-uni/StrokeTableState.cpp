@@ -17,12 +17,11 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
 
-#if 0 || defined(_DEBUG)
-#define _DEBUG_SENT(x) x
-#define _DEBUG_FLAG(x) (x)
+#if 1 || defined(_DEBUG)
+#undef LOG_DEBUGH
+#undef _LOG_DEBUGH
 #define LOG_DEBUGH LOG_INFO
 #define _LOG_DEBUGH LOG_INFO
-#define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
 namespace {
@@ -270,7 +269,7 @@ namespace {
         }
 
         // ストロークテーブルチェインの長さ(テーブルのレベル)
-        size_t StrokeTableChainLength() {
+        size_t StrokeTableChainLength() const {
             size_t len = myNode()->depth() + 1;
             if (NextState()) {
                 len = NextState()->StrokeTableChainLength();

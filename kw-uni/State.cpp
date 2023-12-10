@@ -14,24 +14,21 @@
 #include "KeysAndChars/Eisu.h"
 #include "KeysAndChars/Katakana.h"
 #include "KeysAndChars/Zenkaku.h"
+#include "StrokeMerger/Lattice.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
-#if 0 || defined(_DEBUG)
+#if 1 || defined(_DEBUG)
 #undef _DEBUG_SENT
-#undef _DEBUG_FLAG
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
 #undef _LOG_DEBUGH
-#undef _LOG_DEBUGH_COND
 #define _DEBUG_SENT(x) x
-#define _DEBUG_FLAG(x) (x)
 #define LOG_INFO LOG_INFOH
 #define LOG_DEBUGH LOG_INFOH
 #define LOG_DEBUG LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
 
 DEFINE_CLASS_LOGGER(State);
@@ -41,6 +38,14 @@ State::~State() {
     LOG_DEBUG(_T("ENTER: Destructor: {}"), Name);
     DeleteNextState();
     LOG_DEBUG(_T("LEAVE: Destructor: {}"), Name);
+}
+
+String State::JoinedName() const {
+    if (pNext) {
+        return Name + _T("-") + pNext->JoinedName();
+    } else {
+        return Name;
+    }
 }
 
 // 次の状態をセット
@@ -124,6 +129,17 @@ void State::DoDeckeyPostProcChain() {
     _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
 }
 
+// チェーンをたどって不要とマークされた後続状態を削除する
+void State::DeleteUnnecessarySuccessorStateChain() {
+    _LOG_DEBUGH(_T("ENTER: {}, IsUnnecessary={}"), Name, IsUnnecessary());
+    if (pNext) {
+        // 先に状態チェーンの末尾の方の処理をやる
+        pNext->DeleteUnnecessarySuccessorStateChain();
+    }
+    DeleteUnnecessarySuccessorState();
+    _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+}
+
 // 不要になった後続状態の削除と、新しい後続状態の生成
 void State::DoDeckeyPostProc() {
     _LOG_DEBUGH(_T("ENTER: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
@@ -183,6 +199,11 @@ bool State::DoProcOnCreated() {
 // 文字列を変換
 MString State::TranslateString(const MString& outStr) {
     return outStr;
+}
+
+// ノードが保持する文字列をこれまでの出力文字列に適用 (デフォルト実装)
+MStringApplyResult State::ApplyResultString() {
+    return MStringApplyResult();
 }
 
 // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
@@ -342,7 +363,7 @@ bool State::isStrokableKey(int deckey) {
 }
 
 // ストロークテーブルチェインの長さ(テーブルのレベル)
-size_t State::StrokeTableChainLength() {
+size_t State::StrokeTableChainLength() const {
     size_t len = 0;
     if (pNext) {
         len = pNext->StrokeTableChainLength();
@@ -684,16 +705,22 @@ void State::handleEnter() {
     _LOG_DEBUGH(_T("{}: Enter"), Name);
     STATE_COMMON->SetAppendBackspaceStopperFlag();
     handleSpecialKeys(ENTER_DECKEY);
+    if (WORD_LATTICE) WORD_LATTICE->clear();
 }
 
 // ESC ハンドラ
 void State::handleEsc() {
     _LOG_DEBUGH(_T("{}: Esc: currentDeckey={}"), Name, STATE_COMMON->CurrentDecKey());
+    if (WORD_LATTICE) WORD_LATTICE->clear();
     if (STATE_COMMON->CurrentDecKey() == ESC_DECKEY) handleSpecialKeys(ESC_DECKEY);
 }
     
 // BS ハンドラ
-void State::handleBS() { _LOG_DEBUGH(_T("BackSpace")); setCharDeleteInfo(1); }
+void State::handleBS() {
+    _LOG_DEBUGH(_T("BackSpace"));
+    if (WORD_LATTICE) WORD_LATTICE->clear();
+    setCharDeleteInfo(1);
+}
 
 // TAB ハンドラ
 void State::handleTab() { _LOG_DEBUGH(_T("Tab")); OUTPUT_STACK->setLastBlocker(); handleSpecialKeys(TAB_DECKEY); }

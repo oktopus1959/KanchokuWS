@@ -84,21 +84,43 @@ namespace {
         bool DoProcOnCreated() {
             _LOG_DEBUGH(_T("ENTER: {}"), MY_NODE->getDebugString());
 
-            const RewriteInfo* rewInfo;
-            size_t numBS;
-            std::tie(rewInfo, numBS) = MY_NODE->matchWithTailString();
-            if (rewInfo) {
-                HISTORY_RESIDENT_STATE->SetTranslatedOutString(rewInfo->rewriteStr, rewInfo->rewritableLen, false, numBS);
-                if (rewInfo->subTable) {
-                    SetNextNodeMaybe(rewInfo->subTable);
-                }
-            } else {
-                HISTORY_RESIDENT_STATE->SetTranslatedOutString(MY_NODE->getString(), MY_NODE->getRewritableLen());
+            MStringApplyResult result = ApplyResultString();
+
+            if (!result.isDefault()) {
+                HISTORY_RESIDENT_STATE->SetTranslatedOutString(result.resultStr, result.rewritableLen, false, result.numBS);
             }
+
             // チェイン不要
             _LOG_DEBUGH(_T("LEAVE: NO CHAIN"));
 
             return false;
+        }
+
+        // ノードが保持する文字列をこれまでの出力文字列に適用
+        MStringApplyResult ApplyResultString() override {
+            _LOG_DEBUGH(_T("ENTER: %s"), MY_NODE->getDebugString().c_str());
+
+            MStringApplyResult result;
+
+            const RewriteInfo* rewInfo;
+            size_t numBS;
+            std::tie(rewInfo, numBS) = MY_NODE->matchWithTailString();
+
+            if (rewInfo) {
+                result.numBS = numBS;
+                result.resultStr = rewInfo->rewriteStr;
+                result.rewritableLen = rewInfo->rewritableLen;
+                _LOG_DEBUGH(_T("REWRITE: outStr=%s, rewritableLen=%d, subTable=%p, numBS=%d"), MAKE_WPTR(result.resultStr), result.rewritableLen, rewInfo->subTable, result.numBS);
+                if (rewInfo->subTable) {
+                    SetNextNodeMaybe(rewInfo->subTable);
+                }
+            } else {
+                result.resultStr = MY_NODE->getString();
+                result.rewritableLen = MY_NODE->getRewritableLen();
+                _LOG_DEBUGH(_T("NO REWRITE: outStr=%s, rewritableLen=%d, numBS=%d"), MAKE_WPTR(result.resultStr), result.rewritableLen, result.numBS);
+            }
+
+            return result;
         }
 
     };

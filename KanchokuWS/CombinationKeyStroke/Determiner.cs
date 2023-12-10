@@ -563,6 +563,8 @@ namespace KanchokuWS.CombinationKeyStroke
 
         private void checkResultAgainstDecoderState(List<int> result)
         {
+            if (Settings.MultiStreamMode) return;
+
             if (result._safeCount() > 1 && frmMain != null && !frmMain.IsDecoderWaitingFirstStroke()) {
                 // After 2 stroke or later
                 logger.InfoH("Decoder waiting 2nd or later stroke");

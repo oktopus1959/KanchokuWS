@@ -58,18 +58,18 @@ public:
     }
 
     // デストラクタ
-    ~StrokeTableNode();
+    ~StrokeTableNode() override;
 
     // 当ノードを処理する State インスタンスを作成する
-    State* CreateState();
+    State* CreateState() override;
 
     // 子ノードの文字をコピーする
     void CopyChildrenFace(mchar_t* faces, size_t facesSize);
 
     // 表示用文字列を返す
-    MString getString() const { return to_mstr(nodeMarker); }
+    MString getString() const override { return to_mstr(nodeMarker); }
 
-    NodeType getNodeType() const { return _depth == 0 ? NodeType::RootStroke : NodeType::Stroke; }
+    NodeType getNodeType() const override { return _depth == 0 ? NodeType::RootStroke : NodeType::Stroke; }
 
     // 後置書き換え子ノードありか
     bool hasPostRewriteNode();

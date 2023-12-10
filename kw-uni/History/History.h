@@ -18,12 +18,12 @@ class HistoryNode : public FunctionNode {
  public:
      HistoryNode();
 
-     ~HistoryNode();
+     ~HistoryNode() override;
 
     // 当ノードを処理する State インスタンスを作成する
      State* CreateState();
 
-    MString getString() const { return to_mstr(_T("◆")); }
+    MString getString() const override { return to_mstr(_T("◆")); }
 
 public:
     static HistoryNode* Singleton;
@@ -37,7 +37,7 @@ public:
 class HistoryNodeBuilder : public FunctionNodeBuilder {
     DECLARE_CLASS_LOGGER;
 public:
-    Node* CreateNode();
+    Node* CreateNode() override;
 };
 
 // -------------------------------------------------------------------
@@ -47,12 +47,12 @@ class HistoryFewCharsNode : public HistoryNode {
  public:
      HistoryFewCharsNode();
 
-     ~HistoryFewCharsNode();
+     ~HistoryFewCharsNode() override;
 
     // 当ノードを処理する State インスタンスを作成する
-     State* CreateState();
+     State* CreateState() override;
 
-    MString getString() const { return to_mstr(_T("◇")); }
+    MString getString() const override { return to_mstr(_T("◇")); }
 };
 
 // -------------------------------------------------------------------
@@ -62,7 +62,7 @@ class HistoryFewCharsNode : public HistoryNode {
 class HistoryFewCharsNodeBuilder : public FunctionNodeBuilder {
     DECLARE_CLASS_LOGGER;
 public:
-    Node* CreateNode();
+    Node* CreateNode() override;
 };
 
 // -------------------------------------------------------------------
@@ -72,12 +72,12 @@ class HistoryOneCharNode : public HistoryNode {
  public:
      HistoryOneCharNode();
 
-     ~HistoryOneCharNode();
+     ~HistoryOneCharNode() override;
 
     // 当ノードを処理する State インスタンスを作成する
-     State* CreateState();
+     State* CreateState() override;
 
-    MString getString() const { return to_mstr(_T("◇")); }
+    MString getString() const override { return to_mstr(_T("◇")); }
 };
 
 // -------------------------------------------------------------------
@@ -87,7 +87,7 @@ class HistoryOneCharNode : public HistoryNode {
 class HistoryOneCharNodeBuilder : public FunctionNodeBuilder {
     DECLARE_CLASS_LOGGER;
 public:
-    Node* CreateNode();
+    Node* CreateNode() override;
 };
 
 // -------------------------------------------------------------------
@@ -104,12 +104,12 @@ private:
 public:
      HistoryResidentNode();
 
-     ~HistoryResidentNode();
+     ~HistoryResidentNode() override;
 
     // 当ノードを処理する State インスタンスを作成する
-     State* CreateState();
+     State* CreateState() override;
 
-    inline MString getString() const { return to_mstr(_T("◇")); }
+    inline MString getString() const override { return to_mstr(_T("◇")); }
 
     // 履歴選択により出力された文字列
     inline const MString& GetPrevOutString() const {

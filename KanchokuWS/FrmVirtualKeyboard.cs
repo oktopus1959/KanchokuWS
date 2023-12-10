@@ -1609,6 +1609,9 @@ namespace KanchokuWS
                 if (name._isEmpty() && Settings.KanaTrainingMode) {
                     name = Settings.BgColorForKanaTrainingMode;     // かな入力練習モードのとき
                 }
+                if (name._isEmpty() && Settings.MultiStreamMode) {
+                    name = Settings.BgColorForKanaTrainingMode;     // 配列融合モードのとき
+                }
                 if (name._notEmpty()) {
                     var color = Color.FromName(name);
                     if (!color.IsEmpty) return color;

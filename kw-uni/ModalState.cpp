@@ -5,8 +5,10 @@
 #include "Zenkaku.h"
 #include "Katakana.h"
 #include "StrokeTable.h"
+#include "Settings.h"
+#include "StrokeMerger/Merger.h"
 
-#if 0 || defined(_DEBUG)
+#if 1 || defined(_DEBUG)
 #undef _DEBUG_SENT
 #undef _DEBUG_FLAG
 #undef LOG_INFO
@@ -65,9 +67,14 @@ int ModalState::DoModalStatePreProc(int deckey) {
                 deckey = -1;    // この後は deckey の処理をやらない
             }
             else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokableKey(deckey)) {
-                // ルートストロークノードの生成
-                _LOG_DEBUGH(_T("CREATE: RootStrokeTableState"));
-                if (ROOT_STROKE_NODE) {
+                if (SETTINGS->multiStreamMode && STROKE_MERGER_NODE) {
+                    // 配列融合状態の生成
+                    LOG_INFO(_T("CREATE: StrokeMergerState"));
+                    SetNextState(STROKE_MERGER_NODE->CreateState());
+                }
+                else if (ROOT_STROKE_NODE) {
+                    // ルートストローク状態の生成
+                    LOG_INFO(_T("CREATE: RootStrokeTableState"));
                     SetNextState(ROOT_STROKE_NODE->CreateState());
                 }
             }

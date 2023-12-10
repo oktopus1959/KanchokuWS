@@ -13,10 +13,10 @@ public:
 
     StringNode(wchar_t ch);
 
-    ~StringNode() { }
+    ~StringNode() override { }
 
     // 当ノードを処理する State インスタンスを作成する
-    State* CreateState();
+    State* CreateState() override;
 
     // 出力用文字列を返す
      MString getString() const override { return str; }

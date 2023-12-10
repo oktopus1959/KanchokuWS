@@ -70,6 +70,18 @@
     <Filter Include="ヘッダー ファイル\utils\langedge">
       <UniqueIdentifier>{ee9dd71e-4a94-4483-965d-f44d50939d8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\StrokeMerger">
+      <UniqueIdentifier>{bf7030cc-af22-484b-9fbc-3c16e3f606b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\StrokeMerger">
+      <UniqueIdentifier>{6d719cbc-2946-420d-bb90-1e57f415b0e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Mecab">
+      <UniqueIdentifier>{5ca657fd-b309-49a4-a652-2ff9c7aceecd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Mecab">
+      <UniqueIdentifier>{9d5bf7a6-6de8-4e79-9ee8-7fa50d3cd69f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -216,45 +228,6 @@
     <ClInclude Include="OneShot\RewriteString.h">
       <Filter>ヘッダー ファイル\OneShot</Filter>
     </ClInclude>
-    <ClInclude Include="util\exception.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="util\file_utils.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="util\Lazy.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="util\misc_utils.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="util\my_utils.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="util\path_utils.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="util\ptr_utils.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="util\regex_utils.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="util\std_utils.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="util\string_type.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="util\transform_utils.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="util\xsv_parser.h">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="util\xsvparser.hpp">
-      <Filter>ヘッダー ファイル\utils</Filter>
-    </ClInclude>
     <ClInclude Include="utils\exception.h">
       <Filter>ヘッダー ファイル\utils</Filter>
     </ClInclude>
@@ -296,6 +269,21 @@
     </ClInclude>
     <ClInclude Include="ModalState.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="StrokeMerger\Merger.h">
+      <Filter>ヘッダー ファイル\StrokeMerger</Filter>
+    </ClInclude>
+    <ClInclude Include="StrokeMerger\Lattice.h">
+      <Filter>ヘッダー ファイル\StrokeMerger</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\my_utils.h">
+      <Filter>ヘッダー ファイル\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Mecab\MecabBridge.h">
+      <Filter>ヘッダー ファイル\Mecab</Filter>
+    </ClInclude>
+    <ClInclude Include="Mecab\mecab.h">
+      <Filter>ヘッダー ファイル\Mecab</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -427,6 +415,15 @@
     </ClCompile>
     <ClCompile Include="OneShot\RewriteString.cpp">
       <Filter>ソース ファイル\OneShot</Filter>
+    </ClCompile>
+    <ClCompile Include="StrokeMerger\MergerState.cpp">
+      <Filter>ソース ファイル\StrokeMerger</Filter>
+    </ClCompile>
+    <ClCompile Include="StrokeMerger\Lattice.cpp">
+      <Filter>ソース ファイル\StrokeMerger</Filter>
+    </ClCompile>
+    <ClCompile Include="Mecab\MecabBridge.cpp">
+      <Filter>ソース ファイル\Mecab</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

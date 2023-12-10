@@ -144,6 +144,9 @@ namespace KanchokuWS
         /// <summary>アイコンクリック時に設定ダイアログを出す</summary>
         public static bool OpenSettingsDlgWhenIconClicked { get; private set; } = false;
 
+        /// <summary> 複数配列の融合モードか </summary>        
+        public static bool MultiStreamMode { get; set; } = false;
+
         //-------------------------------------------------------------------------------------
         // 各種ファイル
         //-------------------------------------------------------------------------------------
@@ -1511,6 +1514,7 @@ namespace KanchokuWS
             DecoderSettings["rootDir"] = KanchokuIni.Singleton.KanchokuDir;
             DecoderSettings["firstUse"] = $"{!UserKanchokuIni.Singleton.IsIniFileExist}";
             DecoderSettings["isJPmode"] = $"{Domain.DecoderKeyVsVKey.IsJPmode}";
+            MultiStreamMode = addDecoderSetting("multiStreamMode", false);
             BushuAssocFile = addDecoderSetting("bushuAssocFile", "kwassoc.txt");
             BushuFile = addDecoderSetting("bushuFile", "bushu", "kwbushu.rev");
             AutoBushuFile = addDecoderSetting("autoBushuFile", "bushuAuto", "kwbushu.aut");

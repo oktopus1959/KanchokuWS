@@ -84,6 +84,18 @@ namespace utils {
     }
 
     /**
+    * select
+    */
+    template <typename T, typename S, typename F>
+    std::vector<T> select(const std::vector<S>& src, F func) {
+        std::vector<T> result;
+        for (const auto& x : src) {
+            result.push_back(func(x));
+        }
+        return result;
+    }
+
+    /**
     * slice vector
     */
     template <typename T>

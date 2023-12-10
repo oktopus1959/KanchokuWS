@@ -1816,7 +1816,7 @@ namespace KanchokuWS
                 frmVkb.SetTopText(decoderOutput.topString);
                 targetChar = 0;
             } else {
-                if (decoderOutput.GetStrokeCount() > 0) {
+                if (!Settings.MultiStreamMode && decoderOutput.GetStrokeCount() > 0) {
                     logger.DebugH("PATH-1");
                     // 第2打鍵以降の待ちで、何かVkey出力がある場合は、打鍵クリア
                     if (decoderOutput.IsDeckeyToVkey()) {
@@ -1828,7 +1828,7 @@ namespace KanchokuWS
                         SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(null, decoderOutput.numBackSpaces, true);
                     }
                 }
-                if (decoderOutput.GetStrokeCount() < 1) {
+                if (Settings.MultiStreamMode || decoderOutput.GetStrokeCount() < 1) {
                     logger.DebugH("PATH-2");
                     // 第1打鍵待ちになった時のみ
                     // 一時的な仮想鍵盤表示カウントをリセットする

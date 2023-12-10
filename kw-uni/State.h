@@ -16,6 +16,26 @@
 #define STATE_NAME(p) (p == 0 ? _T("None") : p->GetName())
 
 //-----------------------------------------------------------------------
+// TranslateString からの戻り値
+class MStringApplyResult {
+public:
+    MString resultStr;
+    size_t rewritableLen;
+    int numBS;
+
+    MStringApplyResult() : rewritableLen(0), numBS(-1) {
+    }
+
+    MStringApplyResult(const MString& str, size_t rewLen, int nBS = -1)
+        : resultStr(str), rewritableLen(rewLen), numBS(nBS) {
+    }
+
+    bool isDefault() const {
+        return resultStr.empty() && rewritableLen == 0 && numBS == -1;
+    }
+};
+
+//-----------------------------------------------------------------------
 // デコーダ状態の基底クラス
 class State {
     DECLARE_CLASS_LOGGER;
@@ -50,7 +70,7 @@ protected:
     Node* pNode = 0;
 
 public:
-    inline State* NextState() { return pNext; }
+    inline State* NextState() const { return pNext; }
 
     // 状態チェーンの次の状態をセット
     State* SetNextState(State* p);
@@ -90,13 +110,7 @@ public:
 
     inline String GetName() const { return Name; }
 
-    inline String JoinedName() const {
-        if (pNext) {
-            return Name + _T("-") + pNext->JoinedName();
-        } else {
-            return Name;
-        }
-    }
+    virtual String JoinedName() const;
 
 public:
     // カスタマイズ不可なメソッド
@@ -116,12 +130,16 @@ protected:
     void DoIntermediateCheckChain();
     virtual void DoIntermediateCheck();
 
+    // 不要とマークされた後続状態を削除する (HandleDeckeyから呼ばれる)
+    void DeleteUnnecessarySuccessorState();
+
+public:
     // DECKEY処理の後半部
     void DoDeckeyPostProcChain();
     void DoDeckeyPostProc();
 
-    // 不要とマークされた後続状態を削除する (HandleDeckeyから呼ばれる)
-    void DeleteUnnecessarySuccessorState();
+    // チェーンをたどって不要とマークされた後続状態を削除する
+    void DeleteUnnecessarySuccessorStateChain();
 
 public:
     // カスタマイズ可能なメソッド
@@ -148,13 +166,16 @@ public:
     //virtual bool IsToRemoveAllStroke() const;
 
     // ストロークテーブルチェインの長さ(テーブルのレベル)
-    virtual size_t StrokeTableChainLength();
+    virtual size_t StrokeTableChainLength() const;
 
     // 状態チェインの長さ
     inline size_t ChainLength() { return pNext == 0 ? 1 : pNext->ChainLength() + 1; }
 
     // 文字列を変換
     virtual MString TranslateString(const MString&);
+
+    // ノードが保持する文字列をこれまでの出力文字列に適用
+    virtual MStringApplyResult ApplyResultString();
 
     // この状態以降を不要としてマークする
     virtual void MarkUnnecessaryFromThis();

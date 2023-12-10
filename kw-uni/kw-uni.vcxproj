@@ -204,6 +204,8 @@
     <ClInclude Include="KeysAndChars\Zenkaku.h" />
     <ClInclude Include="Mazegaki\Mazegaki.h" />
     <ClInclude Include="Mazegaki\MazegakiDic.h" />
+    <ClInclude Include="Mecab\mecab.h" />
+    <ClInclude Include="Mecab\MecabBridge.h" />
     <ClInclude Include="ModalState.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="OneShot\HankakuKatakanaOneShot.h" />
@@ -221,6 +223,8 @@
     <ClInclude Include="StateCommonInfo.h" />
     <ClInclude Include="ResidentState.h" />
     <ClInclude Include="StringNode.h" />
+    <ClInclude Include="StrokeMerger\Lattice.h" />
+    <ClInclude Include="StrokeMerger\Merger.h" />
     <ClInclude Include="StrokeTable.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="framework.h" />
@@ -233,6 +237,7 @@
     <ClInclude Include="utils\langedge\ctypeutil.hpp" />
     <ClInclude Include="utils\Lazy.h" />
     <ClInclude Include="utils\misc_utils.h" />
+    <ClInclude Include="utils\my_utils.h" />
     <ClInclude Include="utils\path_utils.h" />
     <ClInclude Include="utils\ptr_utils.h" />
     <ClInclude Include="utils\regex_utils.h" />
@@ -242,19 +247,6 @@
     <ClInclude Include="utils\transform_utils.h" />
     <ClInclude Include="utils\xsvparser.hpp" />
     <ClInclude Include="utils\xsv_parser.h" />
-    <ClInclude Include="util\exception.h" />
-    <ClInclude Include="util\file_utils.h" />
-    <ClInclude Include="util\Lazy.h" />
-    <ClInclude Include="util\misc_utils.h" />
-    <ClInclude Include="util\my_utils.h" />
-    <ClInclude Include="util\path_utils.h" />
-    <ClInclude Include="util\ptr_utils.h" />
-    <ClInclude Include="util\regex_utils.h" />
-    <ClInclude Include="util\std_utils.h" />
-    <ClInclude Include="util\string_type.h" />
-    <ClInclude Include="util\transform_utils.h" />
-    <ClInclude Include="util\xsvparser.hpp" />
-    <ClInclude Include="util\xsv_parser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BushuComp\BushuComp.cpp" />
@@ -277,6 +269,7 @@
     <ClCompile Include="KeysAndChars\ZenkakuState.cpp" />
     <ClCompile Include="Mazegaki\Mazegaki.cpp" />
     <ClCompile Include="Mazegaki\MazegakiDic.cpp" />
+    <ClCompile Include="Mecab\MecabBridge.cpp" />
     <ClCompile Include="ModalState.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="OneShot\HankakuKatakanaOneShotState.cpp" />
@@ -292,6 +285,8 @@
     <ClCompile Include="StateCommonInfo.cpp" />
     <ClCompile Include="ResidentState.cpp" />
     <ClCompile Include="StringState.cpp" />
+    <ClCompile Include="StrokeMerger\Lattice.cpp" />
+    <ClCompile Include="StrokeMerger\MergerState.cpp" />
     <ClCompile Include="StrokeTreeBuilder.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">
@@ -305,6 +300,11 @@
     <ClCompile Include="StrokeTableState.cpp" />
     <ClCompile Include="Template\TemplateState.cpp" />
     <ClCompile Include="utils\utf_utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src-stroke-lattice\mecab\mecab.vcxproj">
+      <Project>{0f5f5e45-baac-452b-a6f9-f111f3ecba60}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

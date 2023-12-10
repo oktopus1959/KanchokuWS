@@ -36,24 +36,20 @@
 #include "Mazegaki/Mazegaki.h"
 #include "Mazegaki/MazegakiDic.h"
 
+#include "StrokeMerger/Lattice.h"
+#include "StrokeMerger/Merger.h"
+#include "Mecab/MecabBridge.h"
+
+#if 1 || defined(_DEBUG)
 #define _LOG_DEBUGH_FLAG true
-#if 0 || defined(_DEBUG)
-#undef IS_LOG_DEBUGH_ENABLED
-#undef _DEBUG_SENT
-#undef _DEBUG_FLAG
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
 #undef _LOG_DEBUGH
-#undef _LOG_DEBUGH_COND
-#define IS_LOG_DEBUGH_ENABLED true
-#define _DEBUG_SENT(x) x
-#define _DEBUG_FLAG(x) (x)
 #define LOG_INFO LOG_INFOH
 #define LOG_DEBUGH LOG_INFOH
 #define LOG_DEBUG LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
-#define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
 
 // -------------------------------------------------------------------
@@ -96,16 +92,18 @@ public:
     // コンストラクタ
     DecoderImpl() : OutParams(0)
     {
-        LOG_DEBUGH(_T("CALLED"));
+        LOG_INFOH(_T("CALLED"));
     }
 
     // デストラクタ
     ~DecoderImpl() {
+        LOG_INFOH(_T("CALLED"));
+        STROKE_MERGER_NODE.reset(0);
     }
 
     // 初期化
     void initializeDecoder() {
-        LOG_DEBUGH(_T("ENTER"));
+        LOG_INFOH(_T("ENTER"));
 
         // 状態の共有情報生成
         StateCommonInfo::CreateSingleton();
@@ -122,6 +120,9 @@ public:
         // settings の再ロードとストローク木の再構築
         reloadSettings(false);
 
+        // MeCab
+        initializeMecab();
+
         // 始状態
         startNode.reset(new StartNode());
         startState.reset(startNode->CreateState());
@@ -130,7 +131,13 @@ public:
         HistoryResidentNode::CreateSingleton();
         startState->CreateStateAndStayResidentAtEndOfChain(HISTORY_RESIDENT_NODE.get());
         // 必要があれば、ここにその他の常駐機能を追加する
-       
+
+        // Lattice を生成
+        Lattice::createLattice();
+
+        // マージ機能ノードを生成
+        StrokeMergerNode::CreateSingleton();
+
         // PrevCharNode - 直前キー文字を返すノードのSingleton生成
         PrevCharNode::CreateSingleton();
 
@@ -154,12 +161,14 @@ public:
         // 部首合成の部品について、ストローク可能文字か否かを設定しておく
         if (BUSHU_DIC) BUSHU_DIC->MakeStrokableMap();
 
-        LOG_DEBUGH(_T("LEAVE"));
+        LOG_INFOH(_T("LEAVE"));
     }
 
     // 終了
     void Destroy() override {
-        LOG_DEBUGH(_T("CALLED"));
+        LOG_INFOH(_T("CALLED"));
+        // MeCab
+        finalizeMecab();
     }
 
     // settings の事前受け取り
@@ -231,6 +240,20 @@ public:
         LOG_DEBUGH(_T("LEAVE"));
     }
 
+    // MeCab の初期化
+    void initializeMecab() {
+        auto rcfile = utils::joinPath(SETTINGS->rootDir, _T("mecab/etc/mecabrc"));
+        auto dicdir = utils::joinPath(SETTINGS->rootDir, _T("mecab/dic/ipadic"));
+        if (MecabBridge::mecabInitialize(rcfile, dicdir) != 0) {
+            LOG_WARN(_T("MeCab Initialize FAILED: rcfile=%s, dicdir=%s"), rcfile.c_str(), dicdir.c_str());
+        }
+    }
+
+    // MeCab の終了
+    void finalizeMecab() {
+        MecabBridge::mecabFinalize();
+    }
+
     // Deckey から文字への変換インスタンスの構築
     void createDeckeyToCharsInstance() {
 
@@ -244,44 +267,7 @@ public:
 
     // テーブルファイルを読み込んでストローク木を作成する
     void createStrokeTrees(bool bForceSecondary = false) {
-        // テーブルファイル名
-        if (SETTINGS->tableFile.empty()) {
-            // エラー
-            ERROR_HANDLER->Error(_T("「tableFile=(ファイル名)」の設定がまちがっているようです"));
-        } else {
-            // 主テーブルファイルの構築
-            createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile1.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree(file, lines);});
-
-            if (bForceSecondary || !SETTINGS->tableFile2.empty()) {
-                // 副テーブルファイルの構築
-                createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile2.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
-            }
-
-            if (!SETTINGS->tableFile3.empty()) {
-                // 第3テーブルファイルの構築
-                createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile3.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree3(file, lines);});
-            }
-        }
-    }
-
-    // テーブルファイルを読み込んでストローク木を作成する
-    void createStrokeTree(const String& tableFile, void(*treeCreator)(const String&, std::vector<String>&)) {
-        LOG_DEBUGH(_T("ENTER: tableFile={}"), tableFile);
-
-        utils::IfstreamReader reader(tableFile);
-        if (reader.success()) {
-            //auto lines = utils::IfstreamReader(tableFile).getAllLines();
-            auto lines = reader.getAllLines();
-            // ストロークノード木の構築
-            treeCreator(tableFile, lines);
-            LOG_DEBUGH(_T("close table file: {}"), tableFile);
-        } else {
-            // エラー
-            LOG_ERROR(_T("Can't read table file: {}"), tableFile);
-            ERROR_HANDLER->Error(std::format(_T("テーブルファイル({})が開けません"), tableFile));
-        }
-
-        LOG_DEBUGH(_T("LEAVE"));
+        STROKE_MERGER_NODE->createStrokeTrees(bForceSecondary);
     }
 
     // 初期打鍵表(下端機能キー以外は空白)の作成
@@ -297,6 +283,7 @@ public:
         OUTPUT_STACK->pushNewLine();    // 履歴ブロッカーとして改行を追加
         if (startState) startState->Reactivate();
         if (MAZEGAKI_INFO) MAZEGAKI_INFO->Initialize(false);
+        if (WORD_LATTICE) WORD_LATTICE->clear();
         if (startState) {
             LOG_INFO(_T("LEAVE: states={} (len={}), flags={:x}, numBS={}, outLength={}, stack={}\n"),
                 startState->JoinedName(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
@@ -402,7 +389,7 @@ public:
                 // 部首連想辞書の保存
                 BUSHU_ASSOC_DIC->WriteBushuAssocDic();
             } else if (cmd == _T("addMazegakiEntry")) {
-                LOG_DEBUGH(_T("addMazegakiEntry: {}"), items.size() >= 2 && !items[1].empty() ? items[1] : _T("none"));
+                LOG_INFOH(_T("addMazegakiEntry: {}"), items.size() >= 2 && !items[1].empty() ? items[1] : _T("none"));
                 if (MAZEGAKI_DIC && items.size() >= 2 && !items[1].empty()) {
                     // 交ぜ書きエントリの追加
                     MAZEGAKI_DIC->AddMazeDicEntry(items[1], true, false);
@@ -581,7 +568,7 @@ public:
         STATE_COMMON->CountSameDecKey(keyId);
         if (decodeKeyboardChar) STATE_COMMON->SetDecodeKeyboardCharMode();  // キーボードフェイス文字を返すモード
         if (upperRomanGuideMode) STATE_COMMON->SetUpperRomanGuideMode();    // 英大文字による入力ガイドモード
-        LOG_DEBUGH(_T("outStack={}"), OUTPUT_STACK->OutputStackBackStrForDebug(10));
+        LOG_INFO(_T("outStack={}"), OUTPUT_STACK->OutputStackBackStrForDebug(10));
 
         // 同時打鍵コードなら、RootStrokeStateを削除しておく⇒と思ったが、実際にはそのようなケースがあったのでコメントアウト(「のにいると」で  KkDF のケース)
         //if (keyId >= COMBO_DECKEY_START && keyId < EISU_COMBO_DECKEY_END) {
@@ -593,7 +580,7 @@ public:
         // DecKey処理を呼ぶ
         startState->HandleDeckeyChain(keyId);
 
-        LOG_DEBUGH(_T("OUTPUT: outString=\"{}\", origString=\"{}\", flags={:x}, numBS={}"), \
+        LOG_INFO(_T("OUTPUT: outString=\"{}\", origString=\"{}\", flags={:x}, numBS={}"), \
             to_wstr(STATE_COMMON->OutString()), to_wstr(STATE_COMMON->OrigString()), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetBackspaceNum());
 
         // アクティブウィンドウへの送出文字列
@@ -608,13 +595,13 @@ public:
         OutParams->strokeTableNum = StrokeTableNode::GetCurrentStrokeTableNum();
 
         // 出力履歴に BackSpaces を反映
-        LOG_DEBUGH(_T("pop numBS={}, outStack={}"), OutParams->numBackSpaces, OUTPUT_STACK->OutputStackBackStrForDebug(10));
+        LOG_INFO(_T("pop numBS={}, outStack={}"), OutParams->numBackSpaces, OUTPUT_STACK->OutputStackBackStrForDebug(10));
         OUTPUT_STACK->pop(OutParams->numBackSpaces);
         // 出力文字列を履歴に反映 (全角の＊と？は半角に変換しておく⇒ワイルドカードを含む交ぜ書き変換で使う)
-        LOG_DEBUGH(_T("outStr={}, outStack={}"), OutParams->outString, OUTPUT_STACK->OutputStackBackStrForDebug(10));
+        LOG_INFO(_T("outStr={}, outStack={}"), OutParams->outString, OUTPUT_STACK->OutputStackBackStrForDebug(10));
         OUTPUT_STACK->push(utils::convert_star_and_question_to_hankaku(OutParams->outString));
         //String stack = std::regex_replace(to_wstr(OUTPUT_STACK->backStringFull(10)), std::wregex(_T("\n")), _T("|"));
-        LOG_DEBUGH(_T("outStack={}"), OUTPUT_STACK->OutputStackBackStrForDebug(10));
+        LOG_INFO(_T("outStack={}"), OUTPUT_STACK->OutputStackBackStrForDebug(10));
         // 出力履歴に BackSpaceStopper を反映
         if (STATE_COMMON->IsAppendBackspaceStopper()) { OUTPUT_STACK->pushNewLine(); }
         // 出力履歴に HistoryBlock を反映
@@ -648,7 +635,7 @@ public:
 
         if (Reporting::Logger::IsInfoHEnabled()) {
             //String stack = std::regex_replace(to_wstr(OUTPUT_STACK->OutputStackBackStr(10)), std::wregex(_T("\n")), _T("|"));
-            LOG_INFO(_T("LEAVE: states={} (len={}), flags={:x}, expKey={}, layout={}, centerStr={}, numBS={}, outLength={}, stack={}"),
+            LOG_INFOH(_T("LEAVE: states={} (len={}), flags={:x}, expKey={}, layout={}, centerStr={}, numBS={}, outLength={}, stack={}\n\n"),
                 startState->JoinedName(), startState->ChainLength(), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetNextExpectedKeyType(),
                 STATE_COMMON->GetLayoutInt(), outParams->centerString, STATE_COMMON->GetBackspaceNum(), cpyLen, OUTPUT_STACK->OutputStackBackStrForDebug(10));
         }

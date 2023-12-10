@@ -22,7 +22,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 0 || defined(_DEBUG)
+#if 1 || defined(_DEBUG)
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
@@ -452,7 +452,7 @@ namespace {
         // ①まだ履歴検索がなされていない状態
         // ②検索が実行されたが、出力文字列にはキーだけが表示されている状態
         // ③横列のどれかの候補が選択されて出力文字列に反映されている状態
-        bool DoProcOnCreated() {
+        bool DoProcOnCreated() override {
             _LOG_DEBUGH(_T("ENTER"));
 
             if (!HISTORY_DIC) return false;
@@ -518,14 +518,14 @@ namespace {
         }
 
         // 履歴検索を初期化する状態か
-        bool IsHistoryReset() {
+        bool IsHistoryReset() override {
             bool result = (NextState() && NextState()->IsHistoryReset());
             _LOG_DEBUGH(_T("CALLED: {}: result={}"), Name, result);
             return result;
         }
 
          // Strokeキー を処理する
-        void handleStrokeKeys(int deckey) {
+        void handleStrokeKeys(int deckey) override {
             _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({})"), Name, deckey, deckey);
             if (deckey == SETTINGS->histDelDeckeyId) {
                 // 削除モードに入る
@@ -608,7 +608,7 @@ namespace {
         //}
 
         // 機能キーだったときの一括処理(false を返すと、この後、個々の機能キーのハンドラが呼ばれる)
-        bool handleFunctionKeys(int deckey) {
+        bool handleFunctionKeys(int deckey) override {
             _LOG_DEBUGH(_T("CALLED"));
             switch (deckey) {
             case LEFT_ARROW_DECKEY:
@@ -628,7 +628,7 @@ namespace {
             }
         }
 
-        void handleDownArrow() {
+        void handleDownArrow() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             //candDispVerticalPos += CAND_DISP_LONG_VKEY_LEN;
             candDispHorizontalPos = 0;
@@ -640,7 +640,7 @@ namespace {
             return;
         }
 
-        void handleUpArrow() {
+        void handleUpArrow() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             //if (candDispVerticalPos >= CAND_DISP_LONG_VKEY_LEN)
             //    candDispVerticalPos -= CAND_DISP_LONG_VKEY_LEN;
@@ -655,7 +655,7 @@ namespace {
             return;
         }
 
-        void handleLeftArrow() {
+        void handleLeftArrow() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             if (candDispHorizontalPos >= LONG_KEY_NUM)
                 candDispHorizontalPos -= LONG_KEY_NUM;
@@ -664,14 +664,14 @@ namespace {
             candDispVerticalPos = 0;
         }
 
-        void handleRightArrow() {
+        void handleRightArrow() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             candDispHorizontalPos += LONG_KEY_NUM;
             candDispVerticalPos = 0;
         }
 
         // RET/Enter の処理 -- 第1候補を返す
-        void handleEnter() {
+        void handleEnter() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             handleStrokeKeys(20);   // 'a' -- 縦列候補の左端を示す
             handleKeyPostProc();
@@ -690,39 +690,39 @@ namespace {
         //}
 
         // NextCandTrigger の処理 -- 第1候補を返す
-        void handleNextCandTrigger() {
+        void handleNextCandTrigger() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             handleEnter();
         }
 
         // PrevCandTrigger の処理 -- 第1候補を返す
-        void handlePrevCandTrigger() {
+        void handlePrevCandTrigger() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             handleEnter();
         }
 
 
         // FullEscapeの処理 -- 処理のキャンセル
-        void handleFullEscape() {
+        void handleFullEscape() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             HistoryStateBase::setBlocker();
             handleKeyPostProc();
         }
 
         // Ctrl-H/BS の処理 -- 処理のキャンセル
-        void handleBS() {
+        void handleBS() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             handleKeyPostProc();
         }
 
         // Esc の処理 -- 処理のキャンセル
-        void handleEsc() {
+        void handleEsc() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             handleKeyPostProc();
         }
 
         // ストロークのクリア -- 処理のキャンセル
-        void handleClearStroke() {
+        void handleClearStroke() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             handleKeyPostProc();
         }
@@ -754,7 +754,7 @@ namespace {
         ~HistoryFewCharsState() { };
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
+        bool DoProcOnCreated() override {
             _LOG_DEBUGH(_T("CALLED"));
 
             if (!HISTORY_DIC) return false;
@@ -789,7 +789,7 @@ namespace {
         ~HistoryOneCharState() { };
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
+        bool DoProcOnCreated() override {
             _LOG_DEBUGH(_T("CALLED"));
 
             if (!HISTORY_DIC) return false;
@@ -859,7 +859,7 @@ namespace {
         //}
 
         // 状態の再アクティブ化
-        void Reactivate() {
+        void Reactivate() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             if (NextState()) NextState()->Reactivate();
             // ちょっと下以の意図が不明
@@ -874,7 +874,7 @@ namespace {
         }
 
         // 履歴検索を初期化する状態か
-        bool IsHistoryReset() {
+        bool IsHistoryReset() override {
             bool result = (NextState() && NextState()->IsHistoryReset());
             _LOG_DEBUGH(_T("CALLED: {}: result={}"), Name, result);
             return result;
@@ -882,7 +882,7 @@ namespace {
 
     public:
         // Enter時の新しい履歴の追加
-        void AddNewHistEntryOnEnter() {
+        void AddNewHistEntryOnEnter() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             if (HISTORY_DIC) {
                 HIST_CAND->DelayedPushFrontSelectedWord();
@@ -900,7 +900,7 @@ namespace {
         }
 
         // 何か文字が入力されたときの新しい履歴の追加
-        void AddNewHistEntryOnSomeChar() {
+        void AddNewHistEntryOnSomeChar() override {
             auto ch1 = STATE_COMMON->GetFirstOutChar();
             auto ch2 = OUTPUT_STACK->GetLastOutputStackChar();
             if (ch1 != 0 && HISTORY_DIC) {
@@ -920,7 +920,7 @@ namespace {
         }
 
         // 文字列を変換して出力、その後、履歴の追加
-        void SetTranslatedOutString(const MString& outStr, size_t rewritableLen, bool bBushuComp = true, int numBS = -1) {
+        void SetTranslatedOutString(const MString& outStr, size_t rewritableLen, bool bBushuComp = true, int numBS = -1) override {
             _LOG_DEBUGH(_T("ENTER: {}: outStr={}, rewritableLen={}, numBS={}"), Name, to_wstr(outStr), rewritableLen, numBS);
             if (NextState()) {
                 MString xlatStr = NextState()->TranslateString(outStr);
@@ -936,7 +936,7 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
 
-        void handleFullEscapeResidentState() {
+        void handleFullEscapeResidentState() override {
             handleFullEscape();
         }
 
@@ -1150,7 +1150,7 @@ namespace {
 
     public:
         // 最終的な出力履歴が整ったところで呼び出される処理
-        void DoOutStringProc() {
+        void DoOutStringProc() override {
             LOG_DEBUGH(_T("\nENTER: {}: {}"), Name, OUTPUT_STACK->OutputStackBackStrForDebug(10));
             LOG_DEBUGH(_T("PATH 2: bCandSelectable={}"), bCandSelectable);
 
@@ -1252,19 +1252,19 @@ namespace {
         //}
 
         // NextCandTrigger の処理 -- 履歴検索の開始、次の候補を返す
-        void handleNextCandTrigger() {
+        void handleNextCandTrigger() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             handleNextOrPrevCandTrigger(true);
         }
 
         // PrevCandTrigger の処理 -- 履歴検索の開始、前の候補を返す
-        void handlePrevCandTrigger() {
+        void handlePrevCandTrigger() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             handleNextOrPrevCandTrigger(false);
         }
 
         // ↓の処理 -- 次候補を返す
-        void handleDownArrow() {
+        void handleDownArrow() override {
             _LOG_DEBUGH(_T("ENTER: {}: bCandSelectable={}"), Name, bCandSelectable);
             if (SETTINGS->useArrowToSelCand && bCandSelectable) {
                 setCandSelectIsCalled();
@@ -1277,7 +1277,7 @@ namespace {
         }
 
         // ↑の処理 -- 前候補を返す
-        void handleUpArrow() {
+        void handleUpArrow() override {
             _LOG_DEBUGH(_T("ENTER: {}: bCandSelectable={}"), Name, bCandSelectable);
             if (SETTINGS->useArrowToSelCand && bCandSelectable) {
                 setCandSelectIsCalled();
@@ -1290,7 +1290,7 @@ namespace {
         }
 
         // FullEscapeの処理 -- 履歴選択状態から抜けて、履歴検索文字列の遡及ブロッカーをセット
-        void handleFullEscape() {
+        void handleFullEscape() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             HIST_CAND->DelayedPushFrontSelectedWord();
             HistoryStateBase::setBlocker();
@@ -1298,7 +1298,7 @@ namespace {
         }
 
         // Unblock の処理 -- 改行やブロッカーの除去
-        void handleUnblock() {
+        void handleUnblock() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             // ブロッカー設定済みならそれを解除する
             OUTPUT_STACK->clearFlagAndPopNewLine();
@@ -1306,7 +1306,7 @@ namespace {
         }
 
         // Tab の処理 -- 次の候補を返す
-        void handleTab() {
+        void handleTab() override {
             _LOG_DEBUGH(_T("CALLED: {}: bCandSelectable={}"), Name, bCandSelectable);
             if (SETTINGS->selectHistCandByTab && bCandSelectable) {
                 setCandSelectIsCalled();
@@ -1317,7 +1317,7 @@ namespace {
         }
 
         // ShiftTab の処理 -- 前の候補を返す
-        void handleShiftTab() {
+        void handleShiftTab() override {
             _LOG_DEBUGH(_T("CALLED: {}: bCandSelectable={}"), Name, bCandSelectable);
             if (SETTINGS->selectHistCandByTab && bCandSelectable) {
                 setCandSelectIsCalled();
@@ -1328,7 +1328,7 @@ namespace {
         }
 
         // Ctrl-H/BS の処理 -- 履歴検索の初期化
-        void handleBS() {
+        void handleBS() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             HISTORY_RESIDENT_NODE->ClearPrevHistState();
             HIST_CAND->ClearKeyInfo();
@@ -1336,7 +1336,7 @@ namespace {
         }
 
         // DecoderOff の処理
-        void handleDecoderOff() {
+        void handleDecoderOff() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             // Enter と同じ扱いにする
             AddNewHistEntryOnEnter();
@@ -1344,7 +1344,7 @@ namespace {
         }
         
         // RET/Enter の処理
-        void handleEnter() {
+        void handleEnter() override {
             _LOG_DEBUGH(_T("ENTER: {}: bCandSelectable={}, selectPos={}"), Name, bCandSelectable, HIST_CAND->GetSelectPos());
             if (SETTINGS->selectFirstCandByEnter && bCandSelectable && HIST_CAND->GetSelectPos() < 0) {
                 // 選択可能状態かつ候補未選択なら第1候補を返す。
@@ -1392,7 +1392,7 @@ namespace {
         //}
 
         // Esc の処理 -- 処理のキャンセル
-        void handleEsc() {
+        void handleEsc() override {
             _LOG_DEBUGH(_T("CALLED: {}, bCandSelectable={}, SelectPos={}, EisuPrevCount={}, TotalCount={}"),
                 Name, bCandSelectable, HIST_CAND->GetSelectPos(), EISU_NODE ? EISU_NODE->prevHistSearchDeckeyCount : 0, STATE_COMMON->GetTotalDecKeyCount());
             if (bCandSelectable && HIST_CAND->GetSelectPos() >= 0) {

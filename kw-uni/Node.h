@@ -4,6 +4,7 @@
 #include "Logger.h"
 
 class State;
+class AbstractStrokeState;
 class StateCommonInfo;
 
 // -------------------------------------------------------------------
@@ -50,6 +51,9 @@ public:
 
     // 当ノードを処理する State インスタンスを作成する
     virtual State* CreateState() = 0;
+
+    // StrokeStateインスタンスの作成
+    virtual AbstractStrokeState* CreateStrokeState() { return nullptr; }
 
     // 表示用または出力用文字列を返す
     virtual MString getString() const = 0;
