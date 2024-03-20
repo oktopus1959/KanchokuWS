@@ -725,7 +725,7 @@ void State::handleCtrlKeys(int /*deckey*/) { LOG_INFO(_T("CALLED")); setThroughD
 
 //-----------------------------------------------------------------------
 // Shiftキー デフォルトハンドラ
-void State::handleShiftKeys(int /*deckey*/) { LOG_INFO(_T("DEFAULT")); STATE_COMMON->OutputDeckeyChar(); }
+void State::handleShiftKeys(int /*deckey*/) { LOG_INFO(_T("DEFAULT")); /*STATE_COMMON->OutputDeckeyChar();*/ }
 
 // < ハンドラ
 void State::handleLeftTriangle() { handleShiftKeys(LEFT_TRIANGLE_DECKEY); }

@@ -348,15 +348,16 @@ public:
     inline mchar_t GetFirstOutChar() const { return outString.empty() ? 0 : outString[0]; }
     inline mchar_t GetLastOutChar() const { return outString.empty() ? 0 : outString.back(); }
 
-    inline void OutputDeckeyChar(/*int numBS = -1*/) { SetOutString(GetDeckeyChar()); }
-    //inline void OutputOrigChar(int numBS = -1) { SetOutString(origString, numBS); }
-    inline void OutputOrigString(int numBS = -1) { SetOutString(origString, numBS); }
+//    inline void OutputDeckeyChar(/*int numBS = -1*/) { SetOutString(GetDeckeyChar()); }
+//    inline void OutputOrigChar(int numBS = -1) { SetOutString(origString, numBS); }
+//    inline void OutputOrigString(int numBS = -1) { SetOutString(origString, numBS); }
 
     inline void ClearOrigString() { origString.clear(); }
     inline void SetOrigString(mchar_t ch) { origString = ch; }
     inline void AppendOrigString(mchar_t ch) { origString.push_back(ch); }
     inline void PopOrigString() { if (!origString.empty()) origString.pop_back(); }
     inline const MString& OrigString() { return origString; }
+    inline const mchar_t OrigChar() { return origString.empty() ? '\0' : origString[0]; }
 
     inline void SetBackspaceNum(size_t numBS) { numBackSpaces = numBS; }
     inline size_t GetBackspaceNum() const { return numBackSpaces; }

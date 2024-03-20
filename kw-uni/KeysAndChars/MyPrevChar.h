@@ -6,6 +6,7 @@
 // MyCharNode - 自キー文字を返す
 class MyCharNode : public FunctionNode {
     DECLARE_CLASS_LOGGER;
+
 public:
     MyCharNode();
 
@@ -28,6 +29,7 @@ public:
 // PrevCharNode - 直前キー文字を返す
 class PrevCharNode : public FunctionNode {
     DECLARE_CLASS_LOGGER;
+
 public:
     PrevCharNode();
 

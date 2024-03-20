@@ -138,6 +138,8 @@ namespace {
     protected:
         CurrentAssocList currentList;
 
+        MStringResult _result;
+
     public:
         // コンストラクタ
         BushuAssocState(BushuAssocNode* pN) {
@@ -160,7 +162,9 @@ namespace {
             _LOG_DEBUGH(_T("DeckeyCount={}, PrevTotalCount={}, AssocCount={}, outChar={}, PrevAssoc={}, PrevKey={}"), totalCnt, EX_NODE->PrevTotalCount, EX_NODE->Count, SAFE_CHAR(outChar), SAFE_CHAR(EX_NODE->PrevAssoc), SAFE_CHAR(EX_NODE->PrevKey));
             if (EX_NODE->PrevKey != 0 && totalCnt <= EX_NODE->PrevTotalCount + 2 && EX_NODE->PrevAssoc == outChar) {
                 outChar = EX_NODE->PrevKey;
-                STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す
+                //STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す
+                _result.resultStr = MString(1, outChar);
+                _result.numBS = 1;
             } else {
                 EX_NODE->Count = 0;
             }
@@ -178,6 +182,12 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
 
+        // 出力文字を取得する
+        void GetResultStringChain(MStringResult& result) override {
+            result.resultStr = _result.resultStr;
+            result.numBS = _result.numBS;
+        }
+
         // Strokeキー を処理する
         void handleStrokeKeys(int deckey) {
             _LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({})"), Name, deckey, deckey);
@@ -191,9 +201,11 @@ namespace {
                 return;
             }
             MString word = currentList.SelectNthTarget(deckey);
-            STATE_COMMON->SetOutString(word);
+            //STATE_COMMON->SetOutString(word);
+            _result.resultStr = word;
             if (!word.empty()) {
-                STATE_COMMON->SetBackspaceNum(1);
+                //STATE_COMMON->SetBackspaceNum(1);
+                _result.numBS = 1;
                 //選択した文字を履歴に登録
                 if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(word, 1));
             }

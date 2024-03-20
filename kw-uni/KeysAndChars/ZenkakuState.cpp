@@ -163,6 +163,10 @@ namespace {
             }
         }
 
+        void outputOrigChar(mchar_t origChar) {
+            zenkakuChar = (wchar_t)origChar;
+        }
+
         void cancelMe() {
             LOG_DEBUGH(_T("CALLED: {}"), Name);
             MarkUnnecessary();
@@ -191,7 +195,8 @@ namespace {
 
         // Space キーの処理 -- origChar を出力してキャンセル
         void handleSpaceKey() {
-            STATE_COMMON->OutputOrigString();
+            //STATE_COMMON->OutputOrigString();
+            outputOrigChar(STATE_COMMON->OrigChar());
             cancelMe();
         }
 

@@ -297,7 +297,7 @@ namespace {
         void GetResultStringChain(MStringResult& result) override {
             _LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
             if (NextState()) {
-                if (myChar != '\0') result.resultStr.append(1, myChar);
+                //if (myChar != '\0') result.resultStr.append(1, myChar);
                 State::GetResultStringChain(result);
             }
             _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);

@@ -46,6 +46,10 @@ public:
     MStringResult() : rewritableLen(0), numBS(-1), bBushuComp(true) {
     }
 
+    MStringResult(const MString& str, int nBS = -1)
+        : resultStr(str), rewritableLen(0), numBS(nBS), bBushuComp(true) {
+    }
+
     MStringResult(const MString& str, size_t rewLen, bool bushuComp, int nBS = -1)
         : resultStr(str), rewritableLen(rewLen), numBS(nBS), bBushuComp(bushuComp) {
     }

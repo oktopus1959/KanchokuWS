@@ -18,7 +18,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughBushu)
 
-#if 0
+#if 1
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
@@ -34,6 +34,9 @@ namespace {
     // 後置部首合成機能状態クラス
     class BushuCompState : public State {
         DECLARE_CLASS_LOGGER;
+
+        MString compResult;
+
     public:
         // コンストラクタ
         BushuCompState(BushuCompNode* pN) {
@@ -57,16 +60,21 @@ namespace {
                     if (m0 != 0) BUSHU_DIC->AddAutoBushuEntry(m0, m2, '-');
                 }
             } else {
-                MString comp = BUSHU_COMP_NODE->ReduceByBushu(m1, m2);
-                LOG_DEBUG(_T("COMP: {}"), to_wstr(comp));
-                STATE_COMMON->SetOutString(comp);
-                if (!comp.empty()) {
+                compResult = BUSHU_COMP_NODE->ReduceByBushu(m1, m2);
+                LOG_DEBUG(_T("COMP: {}"), to_wstr(compResult));
+                //STATE_COMMON->SetOutString(comp);
+                if (!compResult.empty()) {
                     setCharDeleteInfo(2);
                     copyStrokeHelpToVkbFaces();
                     //合成した文字を履歴に登録
-                    if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(comp, 1));
+                    if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(compResult, 1));
                 }
             }
+        }
+
+        // 出力文字を取得する
+        void GetResultStringChain(MStringResult& result) override {
+            result.resultStr = compResult;
         }
 
     };

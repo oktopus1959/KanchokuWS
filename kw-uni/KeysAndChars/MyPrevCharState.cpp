@@ -35,13 +35,13 @@ namespace {
 
         ~MyCharState() { };
 
-#define MY_NODE ((MyCharNode*)pNode)
+//#define MY_NODE ((MyCharNode*)pNode)
 
         // 出力文字を取得する
-        //void GetResultStringChain(MStringResult& result) override {
-        //    // そのまま返す
-        //    _LOG_DEBUGH(_T("CALLED: {}: resultStr={}"), Name, to_wstr(result.resultStr));
-        //}
+        void GetResultStringChain(MStringResult& result) override {
+            result.resultStr = STATE_COMMON->OrigString();
+            _LOG_DEBUGH(_T("CALLED: {}: resultStr={}"), Name, to_wstr(result.resultStr));
+        }
 
     };
     DEFINE_CLASS_LOGGER(MyCharState);
@@ -59,13 +59,16 @@ namespace {
 
         ~PrevCharState() { };
 
-#define MY_NODE ((MyCharNode*)pNode)
+//#define MY_NODE ((PrevCharNode*)pNode)
 
         // 出力文字を取得する
-        //void GetResultStringChain(MStringResult& result) override {
-        //    // そのまま返す
-        //    _LOG_DEBUGH(_T("CALLED: {}: resultStr={}"), Name, to_wstr(result.resultStr));
-        //}
+        void GetResultStringChain(MStringResult& result) override {
+            if (STATE_COMMON->OrigString().size() >= 2) {
+                STATE_COMMON->PopOrigString();
+            }
+            result.resultStr = STATE_COMMON->OrigString();
+            _LOG_DEBUGH(_T("CALLED: {}: resultStr={}"), Name, to_wstr(result.resultStr));
+        }
 
     };
     DEFINE_CLASS_LOGGER(PrevCharState);
