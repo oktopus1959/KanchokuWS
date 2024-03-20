@@ -34,11 +34,11 @@ public:
         Initialize(logger.ClassNameT(), pN);
     }
 
-    // 文字列を変換
-    MString TranslateString(const MString& outStr) override {
-        _LOG_DEBUGH(_T("CALLED"));
-        return RewriteString::TranslateMiscChars(outStr);
-    }
+    //// 文字列を変換
+    //MString TranslateString(const MString& outStr) override {
+    //    _LOG_DEBUGH(_T("CALLED"));
+    //    return RewriteString::TranslateMiscChars(outStr);
+    //}
 
     // 出力文字を取得する
     void GetResultStringChain(MStringResult& result) override {

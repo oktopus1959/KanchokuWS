@@ -927,17 +927,20 @@ namespace {
 
         // 文字列を変換して出力、その後、履歴の追加
         void SetTranslatedOutString(const MString& outStr, size_t rewritableLen, bool bBushuComp = true, int numBS = -1) override {
-            _LOG_DEBUGH(_T("ENTER: {}: outStr={}, rewritableLen={}, numBS={}"), Name, to_wstr(outStr), rewritableLen, numBS);
-            if (NextState()) {
-                MString xlatStr = NextState()->TranslateString(outStr);
-                _LOG_DEBUGH(_T("{}: SetOutStringWithRewritableLen({}, {}, {})"), Name, to_wstr(xlatStr), xlatStr == outStr ? rewritableLen : 0, numBS);
-                STATE_COMMON->SetOutStringWithRewritableLen(xlatStr, xlatStr == outStr ? rewritableLen : 0, numBS);
-            } else {
+            _LOG_DEBUGH(_T("ENTER: {}: outStr={}, rewritableLen={}, bushuComp={}, numBS={}"), Name, to_wstr(outStr), rewritableLen, bBushuComp, numBS);
+            // TODO (Katakana など)
+            //if (NextState()) {
+            //    _LOG_DEBUGH(_T("NextStates={}"), JoinedName());
+            //    MString xlatStr = NextState()->TranslateString(outStr);
+            //    _LOG_DEBUGH(_T("{}: SetOutStringWithRewritableLen({}, {}, {})"), Name, to_wstr(xlatStr), xlatStr == outStr ? rewritableLen : 0, numBS);
+            //    STATE_COMMON->SetOutStringWithRewritableLen(xlatStr, xlatStr == outStr ? rewritableLen : 0, numBS);
+            //} else {
+                // 自動部首合成
                 if (!bBushuComp || SETTINGS->autoBushuCompMinCount < 1 || !BUSHU_COMP_NODE->ReduceByAutoBushu(outStr)) {
                     _LOG_DEBUGH(_T("{}: SetOutStringWithRewritableLen({}, {}, {})"), Name, to_wstr(outStr), rewritableLen, numBS);
                     STATE_COMMON->SetOutStringWithRewritableLen(outStr, rewritableLen, numBS);
                 }
-            }
+            //}
             AddNewHistEntryOnSomeChar();
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
