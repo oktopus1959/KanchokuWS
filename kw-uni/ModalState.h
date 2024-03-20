@@ -14,8 +14,10 @@ public:
     }
 
 protected:
-    // ModalStateの前処理
-    int DoModalStatePreProc(int deckey) override;
+    //// ModalStateの前処理
+    //int DoModalStatePreProc(int deckey) override;
+    // 入力された DECKEY を処理する(前処理)
+    int ModalStatePreProc(int deckey);
 
 };
 

@@ -285,6 +285,9 @@
     <ClInclude Include="Mecab\mecab.h">
       <Filter>ヘッダー ファイル\Mecab</Filter>
     </ClInclude>
+    <ClInclude Include="StartState.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

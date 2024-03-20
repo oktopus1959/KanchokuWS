@@ -14,6 +14,11 @@ public:
         LOG_INFO(_T("CALLED: CONSTRUCTOR"));
     }
 
+    // 不要になった状態か
+    bool IsUnnecessary() override {
+        return false;
+    }
+
     // 常駐状態か
     bool IsResident() const {
         return true;;

@@ -37,7 +37,7 @@ namespace {
 #define MY_NODE ((KatakanaOneShotNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
+        void DoProcOnCreated() override {
             _LOG_DEBUGH(_T("ENTER"));
 
             auto outStr = OUTPUT_STACK->GetLastHiraganaStr<MString>(true);
@@ -64,8 +64,6 @@ namespace {
 
             // チェイン不要
             _LOG_DEBUGH(_T("LEAVE: NO CHAIN"));
-
-            return false;
         }
 
     };

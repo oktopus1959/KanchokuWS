@@ -12,6 +12,8 @@ namespace {
 
         bool bUnncessary = false;
 
+        wchar_t outputChar = '\0';
+
     private:
         inline const EscapeNode* myNode() const { return (const EscapeNode*)pNode; }
 
@@ -21,17 +23,20 @@ namespace {
             Initialize(logger.ClassNameT(), pN);
         }
 
-        // 状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
-            LOG_DEBUG(_T("CALLED: EscapeState"));
-            // チェイン
-            return true;
+        // 出力文字を取得する
+        void GetResultStringChain(MStringResult& result) override {
+            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+            if (outputChar != '\0') {
+                result.resultStr = MString(1, outputChar);
+                outputChar = '\0';
+            }
+            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
         }
 
         void handleStrokeKeys(int deckey) {
             wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
             LOG_DEBUG(_T("CALLED: {}: deckey={:x}H({}), face={}"), Name, deckey, deckey, myChar);
-            STATE_COMMON->SetOutString(myChar);
+            outputChar = myChar;
             bUnncessary = true;
         }
 

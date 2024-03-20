@@ -22,6 +22,7 @@
 #include "Settings.h"
 #include "State.h"
 #include "StartNode.h"
+#include "StartState.h"
 #include "FunctionNodeManager.h"
 #include "EasyChars.h"
 #include "StrokeTable.h"
@@ -80,7 +81,7 @@ private:
 
     // デコーダ状態の始点
     std::unique_ptr<Node> startNode;
-    std::unique_ptr<State> startState;
+    std::unique_ptr<StartState> startState;
 
     void setErrorMsg(DecoderCommandParams* params) {
         if (params) {
@@ -125,7 +126,7 @@ public:
 
         // 始状態
         startNode.reset(new StartNode());
-        startState.reset(startNode->CreateState());
+        startState.reset(dynamic_cast<StartState*>(startNode->CreateState()));
 
         // 履歴入力機能を生成して常駐させる
         HistoryResidentNode::CreateSingleton();
@@ -137,6 +138,9 @@ public:
 
         // マージ機能ノードを生成
         StrokeMergerNode::CreateSingleton();
+
+        // MyCharNode - 自キー文字を返すノードのSingleton生成
+        MyCharNode::CreateSingleton();
 
         // PrevCharNode - 直前キー文字を返すノードのSingleton生成
         PrevCharNode::CreateSingleton();
@@ -578,7 +582,7 @@ public:
         //}
 
         // DecKey処理を呼ぶ
-        startState->HandleDeckeyChain(keyId);
+        startState->HandleDeckey(keyId);
 
         LOG_INFO(_T("OUTPUT: outString=\"{}\", origString=\"{}\", flags={:x}, numBS={}"), \
             to_wstr(STATE_COMMON->OutString()), to_wstr(STATE_COMMON->OrigString()), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetBackspaceNum());
@@ -628,7 +632,7 @@ public:
         _LOG_DEBUGH(_T("STATE_COMMON->StrokeCount={}"), STATE_COMMON->GetStrokeCount());
 
         // 最終的な出力履歴が整ったところで呼び出される処理
-        if (!STATE_COMMON->IsOutStringProcDone() && !STATE_COMMON->IsWaiting2ndStroke()) startState->DoOutStringProcChain();
+        if (!STATE_COMMON->IsOutStringProcDone() && !STATE_COMMON->IsWaiting2ndStroke()) startState->DoLastHistoryProcChain();
 
         // ヘルプや候補文字列
         setHelpOrCandidates(targetChar);

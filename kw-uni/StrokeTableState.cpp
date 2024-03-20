@@ -31,7 +31,10 @@ namespace {
     private:
         DECLARE_CLASS_LOGGER;
 
-        // 全打鍵状態を削除するか (checkNextState()により前状態に伝播)
+        // myChar を返す
+        wchar_t myChar = '\0';
+
+        // 全打鍵状態を削除するか (CheckNextState()により前状態に伝播)
         bool bRemoveAllStroke = false;
 
     protected:
@@ -76,20 +79,42 @@ namespace {
             Initialize(logger.ClassNameT(), pN);
         }
 
-        // DECKEY 処理の流れ
-        void HandleDeckeyChain(int deckey) override {
-            LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
-                Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
-            // 前処理
-            State::HandleDeckeyChain(deckey);   // ここで dispatchDeckey() → handleStrokeKeys() が呼ばれる
+        //// DECKEY 処理の流れ
+        //void HandleDeckeyChain(int deckey) override {
+        //    LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}"),
+        //        Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()));
+        //    // 前処理
+        //    State::HandleDeckeyChain(deckey);   // ここで dispatchDeckey() → handleStrokeKeys() が呼ばれる
+
+        //    // 次状態の処理
+        //    CheckNextState();
+
+        //    // 不要になった後続状態を削除
+        //    DeleteUnnecessarySuccessorState();
+
+        //    LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+        //}
+
+        // 入力された DECKEY を処理する(前処理)
+        // 何もしないが、デバッグモードで、ログを出力する
+        int HandleDeckeyPreProc(int deckey) override {
+            LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({}), totalCount={}, NextNode={}"),
+                Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()));
+            return deckey;
+        }
+
+        // 入力された DECKEY を処理する(後処理)
+        // HandleDeckeyChain()の中で、dispatchDeckey() → handleStrokeKeys() と呼ばれた後に、この処理が呼ばれる
+        void HandleDeckeyPostProc() override {
+            LOG_DEBUGH(_T("ENTER: {}: NextState={}"), Name, NextState() ? NextState()->GetName() : _T("None"));
 
             // 次状態の処理
-            checkNextState();
+            CheckNextState();
 
             // 不要になった後続状態を削除
             DeleteUnnecessarySuccessorState();
 
-            LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
+            LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
         }
 
 #define DEPTH           (myNode() ? myNode()->depth(): -1)
@@ -99,7 +124,7 @@ namespace {
         // StrokeTableNode を処理する
         void handleStrokeKeys(int deckey) {
             bool isRootCombo = IsRootKeyCombination();
-            wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(origDeckey >= 0 ? origDeckey : deckey);
+            myChar = DECKEY_TO_CHARS->GetCharFromDeckey(origDeckey >= 0 ? origDeckey : deckey);
             LOG_DEBUGH(_T("ENTER: {}: origDeckey={:x}H({}), deckey={:x}H({}), face={}, isRootCombo={}, nodeDepth={}"), Name, origDeckey, origDeckey, deckey, deckey, myChar, isRootCombo, DEPTH);
             if (!isRootCombo) {
                 // RootStrokeTableState が作成されたときに OrigString はクリアされている。この処理は @^ などへの対応のために必要
@@ -115,12 +140,11 @@ namespace {
             }
             if (STATE_COMMON->IsDecodeKeyboardCharMode()) {
                 // キーボードフェイス文字を返すモード
-                LOG_DEBUGH(_T("SetOutString"));
-                STATE_COMMON->SetOutString(myChar, 0);
+                LOG_DEBUGH(_T("SetNextNodeMaybe: MY_CHAR_NODE"));
+                SetNextNodeMaybe(MY_CHAR_NODE);
             } else if (SETTINGS->eisuModeEnabled && !STATE_COMMON->IsUpperRomanGuideMode() && myNode()->isRootStrokeTableNode() && myChar >= 'A' && myChar <= 'Z') {
                 // 英数モード
                 LOG_DEBUGH(_T("SetNextNodeMaybe: Eisu"));
-                STATE_COMMON->SetOutString(myChar, 0);
                 if (EISU_NODE) EISU_NODE->blockerNeeded = true; // 入力済み末尾にブロッカーを設定する
                 SetNextNodeMaybe(EISU_NODE.get());
             } else {
@@ -216,7 +240,8 @@ namespace {
 
         void handleEnter() {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            // 前打鍵を出力する
+            // 自打鍵をクリアし、前打鍵までを出力する
+            myChar = '\0';
             SetNextNodeMaybe(PREV_CHAR_NODE);
             setToRemoveAllStroke();
         }
@@ -241,7 +266,7 @@ namespace {
         // 次状態の処理
         // ストロークの末尾まで到達して、ストロークチェイン全体が不要になった
         // 次ストロークが取り消されたので、自ストロークも初期状態に戻す
-        virtual void checkNextState() {
+        virtual void CheckNextState() {
             LOG_DEBUG(_T("CALLED: {}"), Name);
             if (NextState()) {
                 auto ps = dynamic_cast<StrokeTableState*>(NextState());
@@ -259,13 +284,23 @@ namespace {
         }
 
         // ストローク状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
+        void DoProcOnCreated() override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             // 打鍵ヘルプをセットする
             setNormalStrokeHelpVkb();
+            // 前状態にチェーン
+            MarkNecessary();
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
-            // 前状態にチェインする
-            return true;
+        }
+
+        // 出力文字を取得する
+        void GetResultStringChain(MStringResult& result) override {
+            _LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+            if (NextState()) {
+                if (myChar != '\0') result.resultStr.append(1, myChar);
+                State::GetResultStringChain(result);
+            }
+            _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
         }
 
         // ストロークテーブルチェインの長さ(テーブルのレベル)
@@ -403,9 +438,9 @@ namespace {
         // 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
         // 例：ストロークの末尾まで到達して、ストロークチェイン全体が不要になった
         // 例：次ストロークが取り消されたので、自ストロークも初期状態に戻す
-        void checkNextState() override {
+        void CheckNextState() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            StrokeTableState::checkNextState();
+            StrokeTableState::CheckNextState();
             if (bHiraganaized) {
                 _LOG_DEBUGH(_T("SET SHIFTED HIRAGANA: {}"), Name);
                 STATE_COMMON->SetHiraganaToKatakana();   // Shift入力された平仮名だった

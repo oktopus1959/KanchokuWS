@@ -1,7 +1,8 @@
 #include "Logger.h"
 
 #include "StartNode.h"
-#include "ResidentState.h"
+#include "StartState.h"
+//#include "ResidentState.h"
 #include "History/HistoryResidentState.h"
 
 #if 0 || defined(_DEBUG)
@@ -14,42 +15,53 @@
 #endif
 
 // 始状態 -- 仮想鍵盤のモード管理も行う
-class StartState : public ResidentState {
+class StartStateImpl : public StartState {
     DECLARE_CLASS_LOGGER;
 public:
-    StartState(StartNode* pN) {
+    StartStateImpl(StartNode* pN) {
         LOG_INFO(_T("CALLED: ctor"));
         Initialize(logger.ClassNameT(), pN);
     }
 
     // DECKEY 処理の流れ
-    // 新ノードが未処理の場合は、ここで NULL 以外が返されるので、親状態で処理する
-    void HandleDeckeyChain(int deckey) override {
+    void HandleDeckey(int deckey) override {
         LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
             Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
+
         // 前処理
-        LOG_DEBUGH(_T("CALL HandleDeckeyChain()"));
-        State::HandleDeckeyChain(deckey);
+        if (NextState()) {
+            LOG_DEBUGH(_T("CALL NextState()->HandleDeckeyChain()"));
+            // 後続状態があれば、そちらを呼び出す
+            NextState()->HandleDeckeyChain(deckey);
+        }
         // 中間チェック
         LOG_DEBUGH(_T("CALL DoIntermediateCheckChain()"));
         DoIntermediateCheckChain();
-        // 後処理
-        LOG_DEBUGH(_T("CALL DoDeckeyPostProcChain()"));
-        DoDeckeyPostProcChain();
+        // 後処理(新状態生成処理)
+        //LOG_DEBUGH(_T("CALL DoDeckeyPostProcChain()"));
+        //DoDeckeyPostProcChain();
+        // 後処理(新状態生成処理)
+        CreateNewStateChain();
+        // 出力文字を取得する
+        MStringResult result;
+        GetResultStringChain(result);
+        // チェーンをたどって不要とマークされた後続状態を削除する
+        DeleteUnnecessarySuccessorStateChain();
+
         LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
         //return pNextNodeMaybe;
     }
 
     //void handleBS() { LOG_DEBUG(_T("BackSpace")); setCharDeleteInfo(1); /*STATE_COMMON->SetSpecialDeckeyOnStartStateFlag();*/ }
 
-    void handleEnter() {
-        LOG_DEBUG(_T("Enter: {}"), Name);
-        HISTORY_RESIDENT_STATE->AddNewHistEntryOnEnter();
-        State::handleEnter();
-    }
+    //void handleEnter() {
+    //    LOG_DEBUG(_T("Enter: {}"), Name);
+    //    HISTORY_RESIDENT_STATE->AddNewHistEntryOnEnter();
+    //    State::handleEnter();
+    //}
 };
 
-DEFINE_CLASS_LOGGER(StartState);
+DEFINE_CLASS_LOGGER(StartStateImpl);
 
 DEFINE_CLASS_LOGGER(StartNode);
 
@@ -57,6 +69,6 @@ DEFINE_CLASS_LOGGER(StartNode);
 // 当ノードを処理する State インスタンスを作成する
 State* StartNode::CreateState() {
     LOG_INFO(_T("CALLED"));
-    return new StartState(this);
+    return new StartStateImpl(this);
 }
 

@@ -31,7 +31,7 @@ namespace {
 #define MY_NODE ((TemplateNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
+        void DoProcOnCreated() override {
             LOG_DEBUG(_T("ENTER"));
 
             // ブロッカーをセット/リセットする
@@ -40,8 +40,6 @@ namespace {
 
             // チェイン不要
             LOG_DEBUG(_T("LEAVE: NO CHAIN"));
-
-            return false;
         }
 
     };

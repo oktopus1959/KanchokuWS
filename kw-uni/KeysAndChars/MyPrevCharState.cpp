@@ -37,13 +37,12 @@ namespace {
 
 #define MY_NODE ((MyCharNode*)pNode)
 
-        // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
-        bool DoProcOnCreated() {
-            LOG_DEBUG(_T("CALLED"));
-            STATE_COMMON->OutputOrigString();
-            // チェイン不要
-            return false;
-        }
+        // 出力文字を取得する
+        //void GetResultStringChain(MStringResult& result) override {
+        //    // そのまま返す
+        //    _LOG_DEBUGH(_T("CALLED: {}: resultStr={}"), Name, to_wstr(result.resultStr));
+        //}
+
     };
     DEFINE_CLASS_LOGGER(MyCharState);
 
@@ -62,16 +61,12 @@ namespace {
 
 #define MY_NODE ((MyCharNode*)pNode)
 
-        // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
-        bool DoProcOnCreated() {
-            LOG_DEBUG(_T("CALLED"));
-            if (STATE_COMMON->OrigString().size() >= 2) {
-                STATE_COMMON->PopOrigString();
-            }
-            STATE_COMMON->OutputOrigString();
-            // チェイン不要
-            return false;
-        }
+        // 出力文字を取得する
+        //void GetResultStringChain(MStringResult& result) override {
+        //    // そのまま返す
+        //    _LOG_DEBUGH(_T("CALLED: {}: resultStr={}"), Name, to_wstr(result.resultStr));
+        //}
+
     };
     DEFINE_CLASS_LOGGER(PrevCharState);
 
@@ -96,6 +91,14 @@ State* MyCharNode::CreateState() {
     LOG_INFO(_T("CALLED"));
     return new MyCharState(this);
 }
+
+void MyCharNode::CreateSingleton() {
+    if (!_singleton) {
+        _singleton.reset(new MyCharNode());
+    }
+}
+
+std::unique_ptr<MyCharNode> MyCharNode::_singleton;
 
 // -------------------------------------------------------------------
 // PrevCharNode - 前キー文字出力ノード

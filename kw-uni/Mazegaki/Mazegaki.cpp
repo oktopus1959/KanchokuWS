@@ -162,10 +162,10 @@ namespace {
 #define MY_NODE ((MazegakiNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
+        void DoProcOnCreated() override {
             _LOG_DEBUGH(_T("ENTER"));
 
-            if (!MAZEGAKI_DIC) return false;
+            if (!MAZEGAKI_DIC) return;
 
             _LOG_DEBUGH(_T("A:ReXferMode: {}, mazegakiSelectFirstCand: {}"), MAZEGAKI_INFO->IsReXferMode(), SETTINGS->mazegakiSelectFirstCand);
 
@@ -175,11 +175,12 @@ namespace {
                 if (!SETTINGS->mazegakiSelectFirstCand || MAZEGAKI_INFO->IsReXferMode()) {
                     // 先頭候補の直接出力モードでなければ、仮想鍵盤に候補を表示する
                     setCandidatesVKB();
+                    MarkNecessary();
                     _LOG_DEBUGH(_T("LEAVE: CHAINED"));
-                    return true;
+                    return;
                 }
                 _LOG_DEBUGH(_T("LEAVE: RELEASED"));
-                return false;
+                return;
             }
 
             _LOG_DEBUGH(_T("B:IsReXferMode: {}, mazegakiSelectFirstCand: {}"), MAZEGAKI_INFO->IsReXferMode(), SETTINGS->mazegakiSelectFirstCand);
@@ -232,7 +233,7 @@ namespace {
                 // 候補が得られなかった
                 // チェイン不要
                 _LOG_DEBUGH(_T("LEAVE: no candidate"));
-                return false;
+                return;
             }
 
             // 変換候補の読みの長さ
@@ -288,7 +289,7 @@ namespace {
                 // チェイン不要
                 //MAZEGAKI_INFO->SetJustAfterPrevXfer();
                 _LOG_DEBUGH(_T("LEAVE: one candidate"));
-                return false;
+                return;
             }
 
             // 直前の変換があればそれを取り消す
@@ -305,8 +306,8 @@ namespace {
             // 候補があったので仮想鍵盤に表示
             setCandidatesVKB();
             // 前状態にチェインする
+            MarkNecessary();
             _LOG_DEBUGH(_T("LEAVE: {} candidates"), pCands->size());
-            return true;
         }
 
          // Strokeキー を処理する

@@ -3,9 +3,9 @@
 #include "string_type.h"
 
 struct Settings {
-    bool firstUse;              // 最初の起動か
+    bool firstUse = true;      // 最初の起動か
 
-    bool isJPmode = true;       // キーボードがJPモードか
+    bool isJPmode = true;      // キーボードがJPモードか
 
     String rootDir;            // ルートフォルダ
     String tableFile;          // ストロークテーブル
@@ -23,7 +23,7 @@ struct Settings {
     String historyExcludeFile; // 履歴排除
     String historyNgramFile;   // Nグラム履歴
 
-    int backFileRotationGeneration;         // 辞書ファイル保存世代数
+    int backFileRotationGeneration = 3;     // 辞書ファイル保存世代数
 
     size_t histMaxLength = 10;              // 自動履歴登録可能な履歴文字列の最大長
 

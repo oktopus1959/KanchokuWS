@@ -35,6 +35,26 @@ public:
     }
 };
 
+// GetResultString() の戻り値
+class MStringResult {
+public:
+    MString resultStr;
+    size_t rewritableLen;
+    int numBS;
+    bool bBushuComp;
+
+    MStringResult() : rewritableLen(0), numBS(-1), bBushuComp(true) {
+    }
+
+    MStringResult(const MString& str, size_t rewLen, bool bushuComp, int nBS = -1)
+        : resultStr(str), rewritableLen(rewLen), numBS(nBS), bBushuComp(bushuComp) {
+    }
+
+    bool isDefault() const {
+        return resultStr.empty() && rewritableLen == 0 && numBS == -1;
+    }
+};
+
 //-----------------------------------------------------------------------
 // デコーダ状態の基底クラス
 class State {
@@ -53,12 +73,15 @@ class State {
     Node* pNextNodeMaybe= 0;
 
 private:
-    // 不要フラグ
-    bool bUnnecessary = false;
+    // チェーン不要フラグ(デフォルトでチェーンしない)
+    bool bUnnecessary = true;
 
 protected:
     // 不要フラグをセット
     void MarkUnnecessary();
+
+    // 不要フラグをリセット
+    void MarkNecessary();
 
 public:
     // 不要になった状態か
@@ -113,48 +136,85 @@ public:
     virtual String JoinedName() const;
 
 public:
-    // カスタマイズ不可なメソッド
-
-    // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
-    void DoOutStringProcChain();
+    // 入力された DECKEY を処理するチェイン
+    virtual void HandleDeckeyChain(int deckey);
+protected:
+    // 入力された DECKEY を処理する(前処理)
+    virtual int HandleDeckeyPreProc(int deckey);
+    // 入力された DECKEY を処理する(後処理)
+    virtual void HandleDeckeyPostProc();
 
 protected:
-    // 履歴常駐状態の事前チェック
-    virtual void DoHistoryResidentPreCheck();
+    //// 履歴常駐状態の事前チェック
+    //virtual void DoHistoryResidentPreCheck();
 
-    // ModalStateの前処理
-    virtual int DoModalStatePreProc(int /*deckey*/);
+    //// ModalStateの前処理
+    //virtual int DoModalStatePreProc(int /*deckey*/);
 
 protected:
     // 中間チェック
     void DoIntermediateCheckChain();
     virtual void DoIntermediateCheck();
 
-    // 不要とマークされた後続状態を削除する (HandleDeckeyから呼ばれる)
-    void DeleteUnnecessarySuccessorState();
+//public:
+//    // DECKEY処理の後半部
+//    void DoDeckeyPostProcChain();
+//protected:
+//    void DoDeckeyPostProc();
 
-public:
-    // DECKEY処理の後半部
-    void DoDeckeyPostProcChain();
-    void DoDeckeyPostProc();
-
-    // チェーンをたどって不要とマークされた後続状態を削除する
-    void DeleteUnnecessarySuccessorStateChain();
-
-public:
-    // カスタマイズ可能なメソッド
-
-    // 入力された DECKEY を処理する
-    virtual void HandleDeckeyChain(int deckey);
+protected:
+    // 新しい状態作成のチェイン
+    virtual void CreateNewStateChain();
+    void CreateNewState();
 
     // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
-    virtual bool DoProcOnCreated();
+    virtual void DoProcOnCreated();
 
+protected:
+    // 出力文字を取得する
+    virtual void GetResultStringChain(MStringResult&);
+
+protected:
+    // チェーンをたどって不要とマークされた後続状態を削除する
+    virtual void DeleteUnnecessarySuccessorStateChain();
+    // 不要とマークされた後続状態を削除する
+    void DeleteUnnecessarySuccessorState();
+
+protected:
+    // チェーンをたどって後続状態を削除する
+    void DeleteNextStateChain();
+
+    // TODO: protected にする
+public:
+    // 文字列を変換
+    virtual MString TranslateString(const MString&);
+
+    // ノードが保持する文字列をこれまでの出力文字列に適用
+    virtual MStringApplyResult ApplyResultString();
+
+    // この状態以降を不要としてマークする
+    virtual void MarkUnnecessaryFromThis();
+
+    // 履歴検索を初期化する状態か
+    virtual bool IsHistoryReset();
+
+protected:
+    // モード標識文字を返す
+    virtual mchar_t GetModeMarker();
+
+
+    //----------------------------------------------------------------------------------
+    // Decoder からも呼ばれるメソッド
+public:
+    // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
+    void DoLastHistoryProcChain();
+protected:
+    // 最終的な出力履歴が整ったところで呼び出される処理
+    virtual void DoLastHistoryProc();
+
+public:
     // 状態の再アクティブ化
     virtual void Reactivate();
-
-    // 最終的な出力履歴が整ったところで呼び出される処理
-    virtual void DoOutStringProc();
 
     // ノードから生成した状態を後接させ、その状態を常駐させる
     virtual void CreateStateAndStayResidentAtEndOfChain(Node*);
@@ -171,26 +231,12 @@ public:
     // 状態チェインの長さ
     inline size_t ChainLength() { return pNext == 0 ? 1 : pNext->ChainLength() + 1; }
 
-    // 文字列を変換
-    virtual MString TranslateString(const MString&);
-
-    // ノードが保持する文字列をこれまでの出力文字列に適用
-    virtual MStringApplyResult ApplyResultString();
-
-    // この状態以降を不要としてマークする
-    virtual void MarkUnnecessaryFromThis();
-
-    // 履歴検索を初期化する状態か
-    virtual bool IsHistoryReset();
-
     // 入力・変換モード標識を連結して返す
     MString JoinModeMarker();
 
     void JoinModeMarker(MString& modeMarker);
 
-    // モード標識文字を返す
-    virtual mchar_t GetModeMarker();
-
+    //----------------------------------------------------------------------------------
 protected:
     // 次の処理のためのノードをセットする
     void SetNextNodeMaybe(Node* pN) { pNextNodeMaybe = pN; }

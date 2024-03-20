@@ -17,7 +17,12 @@ public:
     // 当機能を表す文字を設定
     MString getString() const { return to_mstr(_T("・")); }
 
+public:
+    static std::unique_ptr<MyCharNode> _singleton;
+
+    static void CreateSingleton();
 };
+#define MY_CHAR_NODE (MyCharNode::_singleton.get())
 
 // -------------------------------------------------------------------
 // PrevCharNode - 直前キー文字を返す

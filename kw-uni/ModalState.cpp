@@ -28,7 +28,8 @@
 DEFINE_CLASS_LOGGER(ModalState);
 
 // モード状態(HistoryResidentState や KatakanaState, EisuState など)のための前処理
-int ModalState::DoModalStatePreProc(int deckey) {
+// 後続処理が不要な場合は -1 を返す
+int ModalState::ModalStatePreProc(int deckey) {
     _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), Name, deckey, deckey, STATE_NAME(NextState()), NODE_NAME(NextNodeMaybe()));
 
     // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
@@ -53,31 +54,38 @@ int ModalState::DoModalStatePreProc(int deckey) {
             // 英数ノードでない場合
             if (pNode && dynamic_cast<ZenkakuNode*>(pNode) == 0 && deckey == TOGGLE_ZENKAKU_CONVERSION_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: ZenkakuState"));
-                SetNextState(ZENKAKU_NODE->CreateState())->DoProcOnCreated();
+                //SetNextState(ZENKAKU_NODE->CreateState())->DoProcOnCreated();
+                SetNextNodeMaybe(ZENKAKU_NODE.get());
                 deckey = -1;    // この後は deckey の処理をやらない
             }
             else if (pNode && dynamic_cast<KatakanaNode*>(pNode) == 0 && deckey == TOGGLE_KATAKANA_CONVERSION_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: KatakanaState"));
-                SetNextState(KATAKANA_NODE->CreateState())->DoProcOnCreated();
+                //SetNextState(KATAKANA_NODE->CreateState())->DoProcOnCreated();
+                SetNextNodeMaybe(KATAKANA_NODE.get());
                 deckey = -1;    // この後は deckey の処理をやらない
             }
             else if (pNode && dynamic_cast<EisuNode*>(pNode) == 0 && deckey == EISU_MODE_TOGGLE_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: EisuState"));
-                SetNextState(EISU_NODE->CreateState())->DoProcOnCreated();
+                //SetNextState(EISU_NODE->CreateState())->DoProcOnCreated();
+                SetNextNodeMaybe(EISU_NODE.get());
                 deckey = -1;    // この後は deckey の処理をやらない
             }
             else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokableKey(deckey)) {
                 if (SETTINGS->multiStreamMode && STROKE_MERGER_NODE) {
                     // 配列融合状態の生成
                     LOG_INFO(_T("CREATE: StrokeMergerState"));
-                    SetNextState(STROKE_MERGER_NODE->CreateState());
+                    //SetNextState(STROKE_MERGER_NODE->CreateState());
+                    SetNextNodeMaybe(STROKE_MERGER_NODE.get());
                 }
                 else if (ROOT_STROKE_NODE) {
                     // ルートストローク状態の生成
                     LOG_INFO(_T("CREATE: RootStrokeTableState"));
-                    SetNextState(ROOT_STROKE_NODE->CreateState());
+                    //SetNextState(ROOT_STROKE_NODE->CreateState());
+                    SetNextNodeMaybe(ROOT_STROKE_NODE);
                 }
             }
+            // 必要なら新状態を生成する
+            CreateNewState();
         }
     }
 

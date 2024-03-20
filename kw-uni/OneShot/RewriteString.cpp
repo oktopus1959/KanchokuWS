@@ -1,6 +1,8 @@
 #include "string_utils.h"
 
 #include "RewriteString.h"
+#include "StateCommonInfo.h"
+#include "Settings.h"
 
 namespace {
     inline bool isKogaki(wchar_t ch) {
@@ -19,6 +21,21 @@ namespace {
             return false;
         }
     }
+
+    void convertZenkakuPeriod(MString& ms) {
+        for (size_t i = 0; i < ms.size(); ++i) {
+            if (ms[i] == 0x3002) ms[i] = 0xff0e;    // 。→．
+            else if (ms[i] == 0xff0e) ms[i] = 0x3002;    // ．→。
+        }
+    }
+
+    void convertZenkakuComma(MString& ms) {
+        for (size_t i = 0; i < ms.size(); ++i) {
+            if (ms[i] == 0x3001) ms[i] = 0xff0c;    // 、→，
+            else if (ms[i] == 0xff0c) ms[i] = 0x3001;    // ，→、
+        }
+    }
+
 }
 
 namespace RewriteString {
@@ -29,6 +46,14 @@ namespace RewriteString {
         size_t _pos = s.find('/', 0);\
         rewritableLen = _pos <= ws.size() ? ws.size() - _pos : ws.empty() ? 0 : ws.size() == 1 || !isKogaki(ws.back()) ? 1 : 2;
         return ws;
+    }
+
+    // ひらがな→カタカナ、句読点の変換
+    MString TranslateMiscChars(const MString& ms) {
+        MString result = STATE_COMMON->IsHiraganaToKatakana() ? utils::convert_hiragana_to_katakana(ms) : ms;
+        if (SETTINGS->convertJaPeriod) convertZenkakuPeriod(result);
+        if (SETTINGS->convertJaComma) convertZenkakuComma(result);
+        return result;
     }
 }
 

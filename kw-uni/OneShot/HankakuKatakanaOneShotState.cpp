@@ -245,7 +245,7 @@ namespace {
 #define MY_NODE ((HankakuKatakanaOneShotNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
+        void DoProcOnCreated() override {
             LOG_DEBUG(_T("ENTER"));
 
             auto outStr = OUTPUT_STACK->GetLastKatakanaStr<MString>();
@@ -263,8 +263,6 @@ namespace {
 
             // チェイン不要
             LOG_DEBUG(_T("LEAVE: NO CHAIN"));
-
-            return false;
         }
 
     };

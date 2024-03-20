@@ -3,6 +3,7 @@
 #include "Logger.h"
 
 #include "Constants.h"
+#include "string_utils.h"
 #include "State.h"
 #include "deckey_id_defs.h"
 #include "Node.h"
@@ -36,7 +37,7 @@ DEFINE_CLASS_LOGGER(State);
 // デストラクタのデフォルト
 State::~State() {
     LOG_DEBUG(_T("ENTER: Destructor: {}"), Name);
-    DeleteNextState();
+    //DeleteNextState();
     LOG_DEBUG(_T("LEAVE: Destructor: {}"), Name);
 }
 
@@ -63,10 +64,12 @@ State* State::SetNextState(State* p) {
 }
 
 // 後続状態を削除する
+// さらに後続が生きていれば、それを自身の後続にする
 void State::DeleteNextState() {
-    LOG_DEBUG(_T("ENTER: {}, NextState={}"), Name, pNext ? pNext->GetName() : L"none");
+    LOG_DEBUG(_T("ENTER: {}, NextState={}, NextNextState={}"), Name, pNext ? pNext->GetName() : L"none", pNext && pNext->pNext ? pNext->pNext->GetName() : L"none");
+    auto* pNN = pNext ? pNext->pNext : nullptr;
     delete pNext;
-    pNext = nullptr;
+    pNext = pNN;
     LOG_DEBUG(_T("LEAVE: {}"), Name);
 }
 
@@ -76,18 +79,19 @@ void State::Reactivate() {
     if (pNext) pNext->Reactivate();
 }
 
-// DECKEY 処理の前半部
+// DECKEY 処理の前半部(ディスパッチまで)
 void State::HandleDeckeyChain(int deckey) {
     LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
         Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
-    // 履歴常駐状態の事前チェック(デフォルトでは何もしない)
-    DoHistoryResidentPreCheck();
-
-    // ModalStateの前処理(デフォルトでは何もしない)
-    // deckey < 0 で返ってきたら、後続処理をやらない
-    deckey = DoModalStatePreProc(deckey);
 
     ClearNextNodeMaybe();
+
+    // DECKEY 処理の前処理
+    // deckey < 0 で返ってきたら、後続状態でのディスパッチ処理は行われない
+    deckey = HandleDeckeyPreProc(deckey);
+
+    //// 履歴常駐状態の事前チェック(デフォルトでは何もしない)
+    //DoHistoryResidentPreCheck();
 
     _LOG_DEBUGH(_T("NextState={}"), STATE_NAME(pNext));
     if (pNext) {
@@ -101,32 +105,114 @@ void State::HandleDeckeyChain(int deckey) {
         if (deckey >= 0) dispatchDeckey(deckey);
     }
 
+    // DECKEY 処理の後処理
+    HandleDeckeyPostProc();
+
     LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
 }
 
-// 履歴常駐状態の事前チェック
-void State::DoHistoryResidentPreCheck() {
-    /* デフォルトでは何もしない */
-    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT"), Name);
-}
-
-// ModalStateの前処理
-int State::DoModalStatePreProc(int deckey) {
+// 入力された DECKEY を処理する(前処理)
+int State::HandleDeckeyPreProc(int deckey) {
     /* デフォルトでは何もしない */
     _LOG_DEBUGH(_T("CALLED: {}: DEFAULT: deckey={}"), Name, deckey);
     return deckey;
 }
 
-// DECKEY処理の後半部の処理(非仮想関数)。
-// 後続状態の処理チェイン。
-void State::DoDeckeyPostProcChain() {
+// 入力された DECKEY を処理する(後処理)
+void State::HandleDeckeyPostProc() {
+    /* デフォルトでは何もしない */
+    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT"), Name);
+}
+
+//// 履歴常駐状態の事前チェック
+//void State::DoHistoryResidentPreCheck() {
+//    /* デフォルトでは何もしない */
+//    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT"), Name);
+//}
+
+//// ModalStateの前処理
+//int State::DoModalStatePreProc(int deckey) {
+//    /* デフォルトでは何もしない */
+//    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT: deckey={}"), Name, deckey);
+//    return deckey;
+//}
+
+// 中間チェック
+void State::DoIntermediateCheckChain() {
+    _LOG_DEBUGH(_T("ENTER: {}"), Name);
+    if (pNext) pNext->DoIntermediateCheckChain();
+    DoIntermediateCheck();
+    _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+}
+
+void State::DoIntermediateCheck() {
+    // Do nothing by Default
+    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT"), Name);
+}
+
+// 新しい状態作成のチェイン(状態チェーンの末尾でのみ新状態の作成を行う)
+void State::CreateNewStateChain() {
     _LOG_DEBUGH(_T("ENTER: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
     if (pNext) {
-        // 先に状態チェーンの末尾の方の処理をやる
-        pNext->DoDeckeyPostProcChain();
+        // 状態チェーンの末尾に向かう
+        pNext->CreateNewStateChain();
+    } else {
+        // 状態チェーンの末尾でのみ新状態の作成を行う
+        CreateNewState();
     }
-    DoDeckeyPostProc();
     _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+}
+
+// 新しい後続状態の生成(ここに来たときは、不要な後続状態は存在しないはず)
+// 新しく生成した状態がさらに次のノードを持っているかもしれないので、再帰的に処理を実行する
+void State::CreateNewState() {
+    _LOG_DEBUGH(_T("ENTER: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+
+    // 新しい後続状態の生成
+    if (NextNodeMaybe()) {
+        _LOG_DEBUGH(_T("PATH-0: NextNodeMaybe={}"), NODE_NAME(NextNodeMaybe()));
+        // 新しい後続ノードが生成されていれば、ここで後続ノードの処理を行う
+        State* ps = NextNodeMaybe()->CreateState();
+        ClearNextNodeMaybe();       // 新状態を生成したので、親には渡さない。参照をクリアしておく
+        // 新状態を後接させる
+        _LOG_DEBUGH(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
+        if (pNext) {
+            LOG_WARNH(_T("UNDELETED state found"));
+            DeleteNextStateChain();
+        }
+        SetNextState(ps);
+        ps->pPrev = this;
+        // 状態が生成されたときに処理を実行(ストロークノード以外は、ここで何らかの出力処理の準備をするはず)
+        _LOG_DEBUGH(_T("Call DoProcOnCreated() for new state"));
+        ps->DoProcOnCreated();
+        // 新しく生成した状態がさらに次のノードを持っているかもしれないので、再帰的に処理を実行する
+        _LOG_DEBUGH(_T("handle new state"));
+        ps->CreateNewState();
+    }
+    _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+}
+
+//// DECKEY処理の後半部の処理(非仮想関数)。
+//// 後続状態の処理チェイン。
+//void State::DoDeckeyPostProcChain() {
+//    _LOG_DEBUGH(_T("ENTER: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+//    if (pNext) {
+//        // 先に状態チェーンの末尾の方の処理をやる
+//        pNext->DoDeckeyPostProcChain();
+//    }
+//    DoDeckeyPostProc();
+//    _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+//}
+
+// チェーンをたどって後続状態を削除する
+void State::DeleteNextStateChain() {
+    _LOG_DEBUGH(_T("ENTER: {}"), Name);
+    if (pNext) {
+        // 先に状態チェーンの末尾の方の処理をやる
+        pNext->DeleteNextStateChain();
+    }
+    DeleteNextState();
+    _LOG_DEBUGH(_T("LEAVE: {}"), Name);
 }
 
 // チェーンをたどって不要とマークされた後続状態を削除する
@@ -140,8 +226,9 @@ void State::DeleteUnnecessarySuccessorStateChain() {
     _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
 }
 
+#if 0
 // 不要になった後続状態の削除と、新しい後続状態の生成
-void State::DoDeckeyPostProc() {
+//void State::DoDeckeyPostProc() {
     _LOG_DEBUGH(_T("ENTER: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
     // 不要な後続状態を削除
     DeleteUnnecessarySuccessorState();
@@ -175,25 +262,20 @@ void State::DoDeckeyPostProc() {
     }
     _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
 }
+#endif
 
-// 中間チェック
-void State::DoIntermediateCheckChain() {
-    _LOG_DEBUGH(_T("ENTER: {}"), Name);
-    if (pNext) pNext->DoIntermediateCheckChain();
-    DoIntermediateCheck();
-    _LOG_DEBUGH(_T("LEAVE: {}"), Name);
-}
-
-void State::DoIntermediateCheck() {
-    // Do nothing in Default
-    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT"), Name);
-}
-
-// 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
-bool State::DoProcOnCreated() {
+// 状態が生成されたときに実行する処理
+// 新しく生成した状態がさらに次のノードを持っている場合は、ここで SetNextNodeMaybe() を実行すること
+void State::DoProcOnCreated() {
     // Do nothing
     _LOG_DEBUGH(_T("CALLED: {}: DEFAULT"), Name);
-    return false;
+}
+
+// 出力文字を取得する
+void State::GetResultStringChain(MStringResult& result) {
+    LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+    if (pNext) pNext->GetResultStringChain(result);
+    LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
 }
 
 // 文字列を変換
@@ -207,15 +289,15 @@ MStringApplyResult State::ApplyResultString() {
 }
 
 // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
-void State::DoOutStringProcChain() {
+void State::DoLastHistoryProcChain() {
     LOG_DEBUGH(_T("ENTER: {}: outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
-    if (pNext) pNext->DoOutStringProcChain();
-    if (!STATE_COMMON->IsOutStringProcDone()) DoOutStringProc();
+    if (pNext) pNext->DoLastHistoryProcChain();
+    if (!STATE_COMMON->IsOutStringProcDone()) DoLastHistoryProc();
     LOG_DEBUGH(_T("LEAVE: {}: outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
 }
 
 // 最終的な出力履歴が整ったところで呼び出される処理
-void State::DoOutStringProc() {
+void State::DoLastHistoryProc() {
     LOG_DEBUGH(_T("ENTER: {}"), Name);
     // 何もしない
     LOG_DEBUGH(_T("LEAVE: {}"), Name);
@@ -268,6 +350,12 @@ void State::MarkUnnecessary() {
     bUnnecessary = true;
 }
 
+// 不要フラグをリセット
+void State::MarkNecessary() {
+    LOG_DEBUG(_T("CALLED: {}"), Name);
+    bUnnecessary = false;
+}
+
 // 不要になった状態か
 // 必要に応じてオーバーライドすること。
 bool State::IsUnnecessary() {
@@ -282,13 +370,13 @@ void State::MarkUnnecessaryFromThis() {
     if (pNext) pNext->MarkUnnecessaryFromThis();
 }
 
-// 不要とマークされた後続状態を削除する
+// 不要とマークされた後続状態を削除する(次ノードがあれば、それを自状態に移動しておく)
 void State::DeleteUnnecessarySuccessorState() {
     _LOG_DEBUGH(_T("ENTER: {}"), Name);
     if (pNext) {
         if (pNext->IsUnnecessary()) {
             _LOG_DEBUGH(_T("DELETE NEXT: {}"), pNext->Name);
-            // 次ノードがあれば、それを移動しておく
+            // 次ノードがあれば、それを自状態に移動しておく
             if (pNext->NextNodeMaybe() && !NextNodeMaybe()) SetNextNodeMaybe(pNext->NextNodeMaybe());
             DeleteNextState();       // 不要とマークされた後続状態を削除する
         }

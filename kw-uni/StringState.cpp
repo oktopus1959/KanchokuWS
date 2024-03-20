@@ -21,30 +21,6 @@
 #define _LOG_DEBUGH LOG_INFOH
 #endif
 
-namespace {
-    void convertZenkakuPeriod(MString& ms) {
-        for (size_t i = 0; i < ms.size(); ++i) {
-            if (ms[i] == 0x3002) ms[i] = 0xff0e;    // 。→．
-            else if (ms[i] == 0xff0e) ms[i] = 0x3002;    // ．→。
-        }
-    }
-
-    void convertZenkakuComma(MString& ms) {
-        for (size_t i = 0; i < ms.size(); ++i) {
-            if (ms[i] == 0x3001) ms[i] = 0xff0c;    // 。→．
-            else if (ms[i] == 0xff0c) ms[i] = 0x3001;    // ．→。
-        }
-    }
-
-    MString xlat(const MString& ms) {
-        MString result = STATE_COMMON->IsHiraganaToKatakana() ? utils::convert_hiragana_to_katakana(ms) : ms;
-        if (SETTINGS->convertJaPeriod) convertZenkakuPeriod(result);
-        if (SETTINGS->convertJaComma) convertZenkakuComma(result);
-        return result;
-    };
-
-}
-
 // 文字列状態
 class StringState : public State {
     DECLARE_CLASS_LOGGER;
@@ -58,26 +34,20 @@ public:
         Initialize(logger.ClassNameT(), pN);
     }
 
-    // 文字列状態に対して生成時処理を実行する
-    bool DoProcOnCreated() override {
-        _LOG_DEBUGH(_T("ENTER: StringState: str={}, rewLen={}"), to_wstr(myNode()->getString()), myNode()->getRewritableLen());
-        HISTORY_RESIDENT_STATE->SetTranslatedOutString(xlat(myNode()->getString()), myNode()->getRewritableLen(), true);
-        _LOG_DEBUGH(_T("LEAVE: StringState"));
-        // チェイン不要
-        return false;
-    }
-
     // 文字列を変換
     MString TranslateString(const MString& outStr) override {
         _LOG_DEBUGH(_T("CALLED"));
-        return xlat(outStr);
+        return RewriteString::TranslateMiscChars(outStr);
     }
 
-    // ノードが保持する文字列をこれまでの出力文字列に適用
-    MStringApplyResult ApplyResultString() override {
-        auto xlatStr = xlat(myNode()->getString());
-        _LOG_DEBUGH(_T("CALLED: StringState: myStr={}, xlatStr={}, rewLen={}"), to_wstr(myNode()->getString()), to_wstr(xlatStr), myNode()->getRewritableLen());
-        return MStringApplyResult(xlatStr, myNode()->getRewritableLen());
+    // 出力文字を取得する
+    void GetResultStringChain(MStringResult& result) override {
+        LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+        auto xlatStr = RewriteString::TranslateMiscChars(myNode()->getString());
+        _LOG_DEBUGH(_T("CALLED: {}: myStr={}, xlatStr={}, rewLen={}"), Name, to_wstr(myNode()->getString()), to_wstr(xlatStr), myNode()->getRewritableLen());
+        result.resultStr = xlatStr;
+        result.rewritableLen = myNode()->getRewritableLen();
+        LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
     }
 
 };

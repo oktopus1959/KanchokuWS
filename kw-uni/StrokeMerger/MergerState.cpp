@@ -31,33 +31,43 @@
 namespace {
     // -------------------------------------------------------------------
     // 
-    class StrokeStream {
+    class StrokeStream : public State {
         DECLARE_CLASS_LOGGER;
 
-        std::shared_ptr<State> pState;
-        Node* pNextNode = 0;    // Node のライフタイムは別に管理されている
-        size_t nStroke = 0;
+        //std::shared_ptr<State> pState;
+        //Node* pNextNode = 0;    // Node のライフタイムは別に管理されている
+        size_t cntStroke = 0;
 
-        MStringApplyResult getXlatString() {
-            std::unique_ptr<State> p;
-            p.reset(pNextNode->CreateState());  // 文字列状態の生成
-            return p->ApplyResultString();
-        }
+        //MStringApplyResult getXlatString() {
+        //    if (NextNodeMaybe()) {
+        //        std::unique_ptr<State> p;
+        //        p.reset(NextNodeMaybe()->CreateState());  // 文字列状態の生成
+        //        return p->ApplyResultString();
+        //    } else {
+        //        return MStringApplyResult();
+        //    }
+        //}
 
         String nextNodeType() const {
-            return NODE_NAME(pNextNode);
+            return NODE_NAME(NextNodeMaybe());
         }
+
+        //String nextNodeString() const {
+        //    return NextNodeMaybe() ? to_wstr(NextNodeMaybe()->getString()) : _T("");
+        //}
 
     public:
         // コンストラクタ
-        StrokeStream() : pNextNode(0), nStroke(0) {
+        StrokeStream() : cntStroke(STATE_COMMON->GetTotalDecKeyCount()) {
             _LOG_DEBUGH(_T("CALLED: Default Constructor"));
+            Initialize(_T("StrokeStream"), 0);
         }
 
         // コンストラクタ
-        StrokeStream(StrokeTableNode* pRootNode) {
+        StrokeStream(StrokeTableNode* pRootNode) : StrokeStream() {
             _LOG_DEBUGH(_T("CALLED: Constructor: Newly created RootNode passed"));
-            pState.reset(pRootNode->CreateState());
+            //pState.reset(pRootNode->CreateState());
+            SetNextState(pRootNode->CreateState());
         }
 
         // デストラクタ
@@ -70,63 +80,86 @@ namespace {
             //}
         }
 
-        size_t StrokeTableChainLength() const {
-            return pState ? pState->StrokeTableChainLength() : 0;
-        }
+        //size_t StrokeTableChainLength() const {
+        //    return pState ? pState->StrokeTableChainLength() : 0;
+        //}
 
-        String GetJoinedName() const {
-            return pState->JoinedName();
-        }
+        //String GetJoinedName() const {
+        //    return pState->JoinedName();
+        //}
 
-        Node* NextNode() {
-            return pNextNode;
-        }
+        //Node* NextNode() {
+        //    return pNextNode;
+        //}
 
-        void HandleDeckeyChain(int decKey) {
-            _LOG_DEBUGH(_T("ENTER: nStroke={}"), nStroke);
-            if (pState) {
-                pState->HandleDeckeyChain(decKey);
-                ++nStroke;
-            }
-            _LOG_DEBUGH(_T("LEAVE: nStroke={}, NextNode.type={}"), nStroke, nextNodeType());
-        }
+        //// DECKEY 処理
+        //void HandleDeckeyChain(int decKey) override {
+        //    _LOG_DEBUGH(_T("ENTER: cntStroke={}"), cntStroke);
+        //    if (pState) {
+        //        pState->HandleDeckeyChain(decKey);
+        //        ++cntStroke;
+        //    }
+        //    _LOG_DEBUGH(_T("LEAVE: cntStroke={}, NextNode.type={}"), cntStroke, nextNodeType());
+        //}
 
-        void DoDeckeyPostProcChain() {
-            _LOG_DEBUGH(_T("ENTER"));
-            if (pState) {
-                pState->DoDeckeyPostProcChain();
-                pNextNode = pState->NextNodeMaybe();
-            }
-            _LOG_DEBUGH(_T("LEAVE: NextNode.type={}, string={}"), nextNodeType(), pNextNode ? to_wstr(pNextNode->getString()) : _T(""));
-        }
+        //void DoDeckeyPostProcChain() {
+        //    _LOG_DEBUGH(_T("ENTER"));
+        //    if (pState) {
+        //        pState->DoDeckeyPostProcChain();
+        //        pNextNode = pState->NextNodeMaybe();
+        //    }
+        //    _LOG_DEBUGH(_T("LEAVE: NextNode.type={}, string={}"), nextNodeType(), pNextNode ? to_wstr(pNextNode->getString()) : _T(""));
+        //}
 
-        bool IsUnnecessary() const {
-            return !pState || pState->IsUnnecessary();
-        }
+        //bool IsUnnecessary() const {
+        //    return !pState || pState->IsUnnecessary();
+        //}
 
-        bool DeleteUnnecessaryState() {
-            //bool result = !pState || AbstractBaseState::DeleteUnnecessaryState(pState);
-            bool result = false;
-            if (pState) {
-                pState->DeleteUnnecessarySuccessorStateChain();
-                if (pState->IsUnnecessary()) {
-                    pState.reset();
-                    result = true;
+        //bool DeleteUnnecessaryState() {
+        //    //bool result = !pState || AbstractBaseState::DeleteUnnecessaryState(pState);
+        //    bool result = false;
+        //    if (pState) {
+        //        pState->DeleteUnnecessarySuccessorStateChain();
+        //        if (pState->IsUnnecessary()) {
+        //            pState.reset();
+        //            result = true;
+        //        }
+        //    }
+        //    _LOG_DEBUGH(_T("CALLED: result={}, NextNode.type={}"), result, nextNodeType());
+        //    return result;
+        //}
+
+        void AppendWordPiece(std::vector<WordPiece>& pieces, bool /*bExcludeHiragana*/) {
+            if (NextState()) {
+                _LOG_DEBUGH(_T("ENTER"));
+                MStringResult result;
+                State::GetResultStringChain(result);
+                if (!result.isDefault()) {
+                    _LOG_DEBUGH(_T("ADD WORD: string={}, numBS={}"), to_wstr(result.resultStr), result.numBS);
+                    pieces.push_back(WordPiece(result.resultStr, STATE_COMMON->GetTotalDecKeyCount() - cntStroke, result.rewritableLen, result.numBS));
+                } else {
+                    _LOG_DEBUGH(_T("NOT TERMINAL"));
                 }
+                _LOG_DEBUGH(_T("LEAVE"));
             }
-            _LOG_DEBUGH(_T("CALLED: result={}, NextNode.type={}"), result, nextNodeType());
-            return result;
+            //auto nextStr = nextNodeString();
+            //_LOG_DEBUGH(_T("CALLED: NextNode.type={}, String={}, bExcludeHiragana={}"), nextNodeType(), nextStr, bExcludeHiragana);
+            //if (NextNodeMaybe() && NextNodeMaybe()->isStringLikeNode() && !nextStr.empty() && (!bExcludeHiragana || !utils::is_hiragana(nextStr[0]))) {
+            //    _LOG_DEBUGH(_T("ENTER: string={}"), nextStr);
+            //    auto applyResult = getXlatString();
+            //    pieces.push_back(WordPiece(applyResult.resultStr, cntStroke, applyResult.rewritableLen, applyResult.numBS));
+            //    _LOG_DEBUGH(_T("LEAVE: piece=({}, {})"), to_wstr(pieces.back().pieceStr), pieces.back().strokeLen);
+            //}
         }
 
-        void AppendWordPiece(std::vector<WordPiece>& pieces, bool bExcludeHiragana) {
-            _LOG_DEBUGH(_T("CALLED: NextNode.type={}, String={}, bExcludeHiragana={}"),
-                nextNodeType(), pNextNode ? to_wstr(pNextNode->getString()) : _T("empty"), bExcludeHiragana);
-            if (pNextNode && pNextNode->isStringLikeNode() && !pNextNode->getString().empty() && (!bExcludeHiragana || !utils::is_hiragana(pNextNode->getString()[0]))) {
-                _LOG_DEBUGH(_T("ENTER: string={}"), to_wstr(pNextNode->getString()));
-                auto applyResult = getXlatString();
-                pieces.push_back(WordPiece(applyResult.resultStr, nStroke, applyResult.rewritableLen, applyResult.numBS));
-                _LOG_DEBUGH(_T("LEAVE: piece=({}, {})"), to_wstr(pieces.back().pieceStr), pieces.back().strokeLen);
-            }
+        // 新しい状態作成のチェイン(状態チェーンの末尾でのみ新状態の作成を行う)
+        void DoCreateNewStateChain() {
+            CreateNewStateChain();
+        }
+
+        // チェーンをたどって不要とマークされた後続状態を削除する
+        void DoDeleteUnnecessarySuccessorStateChain() {
+            DeleteUnnecessarySuccessorStateChain();
         }
     };
     DEFINE_CLASS_LOGGER(StrokeStream);
@@ -147,8 +180,8 @@ namespace {
         }
 
         void forEach(std::function<void(const StrokeStreamUptr&)> func) const {
-            for (const auto& pCh : strokeStreamList) {
-                func(pCh);
+            for (const auto& pStream : strokeStreamList) {
+                func(pStream);
             }
         }
 
@@ -176,8 +209,8 @@ namespace {
             //    size_t ln = pState->StrokeTableChainLength();
             //    if (ln > len) len = ln;
             //}
-            forEach([&len](const StrokeStreamUptr& pCh) {
-                size_t ln = pCh->StrokeTableChainLength();
+            forEach([&len](const StrokeStreamUptr& pStream) {
+                size_t ln = pStream->StrokeTableChainLength();
                 if (ln > len) len = ln;
             });
             return len;
@@ -192,7 +225,7 @@ namespace {
 
         Node* GetNonStringNode() {
             for (const auto& pState : strokeStreamList) {
-                Node* p = pState->NextNode();
+                Node* p = pState->NextNodeMaybe();
                 if (p && !p->isStringLikeNode()) {
                     return p;
                 }
@@ -200,38 +233,58 @@ namespace {
             return 0;
         }
 
-        void DoDeckeyPreProc(StrokeTableNode* pRootNode, int decKey, bool bMerge) {
+        void HandleDeckeyProc(StrokeTableNode* pRootNode, int decKey, bool bMerge) {
             _LOG_DEBUGH(_T("ENTER"));
             if (Count() < 1 || bMerge) addStrokeStream(pRootNode);
             _LOG_DEBUGH(_T("strokeStateList.Count={}"), Count());
-            forEach([decKey](const StrokeStreamUptr& pCh) {
-                _LOG_DEBUGH(_T("IsUnnecessary: BEFORE: {}"), pCh->IsUnnecessary());
-                pCh->HandleDeckeyChain(decKey);
-                _LOG_DEBUGH(_T("IsUnnecessary: AFTER: {}"), pCh->IsUnnecessary());
+            forEach([decKey](const StrokeStreamUptr& pStream) {
+                _LOG_DEBUGH(_T("IsUnnecessary: BEFORE: {}"), pStream->IsUnnecessary());
+                pStream->HandleDeckeyChain(decKey);
+                _LOG_DEBUGH(_T("IsUnnecessary: AFTER: {}"), pStream->IsUnnecessary());
             });
             _LOG_DEBUGH(_T("LEAVE: strokeStateList.Count={}"), Count());
         }
 
-        void DoPostCheckChain() {
-            _LOG_DEBUGH(_T("ENTER"));
-            //for (const auto& pState : strokeChannelList) {
-            //    //_LOG_DEBUGH(_T("IsUnnecessary: BEFORE: {}"), pState->IsUnnecessary());
-            //    pState->DoPostCheckChain();
-            //    //_LOG_DEBUGH(_T("IsUnnecessary: AFTER: {}"), pState->IsUnnecessary());
-            //}
-            forEach([](const StrokeStreamUptr& pCh) {
-                //_LOG_DEBUGH(_T("IsUnnecessary: BEFORE: {}"), pState->IsUnnecessary());
-                pCh->DoDeckeyPostProcChain();
-                //_LOG_DEBUGH(_T("IsUnnecessary: AFTER: {}"), pState->IsUnnecessary());
+        //void DoDeckeyPostProc() {
+        //    _LOG_DEBUGH(_T("ENTER"));
+        //    //for (const auto& pState : strokeChannelList) {
+        //    //    //_LOG_DEBUGH(_T("IsUnnecessary: BEFORE: {}"), pState->IsUnnecessary());
+        //    //    pState->DoDeckeyPostProc();
+        //    //    //_LOG_DEBUGH(_T("IsUnnecessary: AFTER: {}"), pState->IsUnnecessary());
+        //    //}
+        //    forEach([](const StrokeStreamUptr& pStream) {
+        //        //_LOG_DEBUGH(_T("IsUnnecessary: BEFORE: {}"), pState->IsUnnecessary());
+        //        pStream->DoDeckeyPostProcChain();
+        //        //_LOG_DEBUGH(_T("IsUnnecessary: AFTER: {}"), pState->IsUnnecessary());
+        //    });
+        //    _LOG_DEBUGH(_T("LEAVE"));
+        //}
+
+        // 新しい状態作成
+        void CreateNewStates() {
+            _LOG_DEBUGH(_T("ENTER: size={}"), Count());
+            forEach([](const StrokeStreamUptr& pStream) {
+                pStream->DoCreateNewStateChain();
             });
             _LOG_DEBUGH(_T("LEAVE"));
         }
 
-        void DeleteUnnecessaryNextState() {
+        //// 出力文字を取得する
+        //void GetPreOutputs() {
+        //    _LOG_DEBUGH(_T("ENTER: size={}"), Count());
+        //    forEach([&pieces, bExcludeHiragana](const StrokeStreamUptr& pStream) {
+        //        pStream->AppendWordPiece(pieces, bExcludeHiragana);
+        //    });
+        //    return GetPreOutput(pNext ? pNext->GetResultStringChain() : EMPTY_MSTR);
+        //    _LOG_DEBUGH(_T("LEAVE"));
+        //}
+
+        void DeleteUnnecessaryNextStates() {
             _LOG_DEBUGH(_T("ENTER: strokeStateList.Count={}"), Count());
             auto iter = strokeStreamList.begin();
             while (iter != strokeStreamList.end()) {
-                if ((*iter)->DeleteUnnecessaryState()) {
+                (*iter)->DoDeleteUnnecessarySuccessorStateChain();
+                if ((*iter)->IsUnnecessary()) {
                     iter = strokeStreamList.erase(iter);
                 } else {
                     ++iter;
@@ -240,21 +293,22 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: strokeStateList.Count={}"), Count());
         }
 
+        // 出力文字を取得する
         void AddWordPieces(std::vector<WordPiece>& pieces, bool bExcludeHiragana) {
             _LOG_DEBUGH(_T("ENTER: size={}"), Count());
             //for (const auto& pState : strokeChannelList) {
             //    pState->AppendWordPiece(pieces, bExcludeHiragana);
             //}
-            forEach([&pieces, bExcludeHiragana](const StrokeStreamUptr& pCh) {
-                pCh->AppendWordPiece(pieces, bExcludeHiragana);
+            forEach([&pieces, bExcludeHiragana](const StrokeStreamUptr& pStream) {
+                pStream->AppendWordPiece(pieces, bExcludeHiragana);
             });
             _LOG_DEBUGH(_T("LEAVE"));
         }
         
         void DebugPrintStatesChain(StringRef label) {
             if (Reporting::Logger::IsInfoHEnabled()) {
-                forEach([label](const StrokeStreamUptr& pCh) {
-                    _LOG_DEBUGH(_T("{}={}"), label, pCh->GetJoinedName());
+                forEach([label](const StrokeStreamUptr& pStream) {
+                    _LOG_DEBUGH(_T("{}={}"), label, pStream->JoinedName());
                 });
             }
         }
@@ -285,9 +339,9 @@ namespace {
         }
 
         // 状態が生成されたときに実行する処理 (特に何もせず、前状態にチェインする)
-        bool DoProcOnCreated() override {
+        void DoProcOnCreated() override {
             _LOG_DEBUGH(_T("CALLED: Chained"));
-            return true;
+            MarkNecessary();
         }
 
         // DECKEY 処理の流れ
@@ -301,6 +355,36 @@ namespace {
             LOG_INFO(_T("LEAVE"));
         }
 
+        // 新しい状態作成のチェイン
+        void CreateNewStateChain() override {
+            _LOG_DEBUGH(_T("ENTER: {}"), Name);
+            _LOG_DEBUGH(_T("stateList1: CreateNewStates"));
+            stateList1.CreateNewStates();
+            _LOG_DEBUGH(_T("stateList2: CreateNewStates"));
+            stateList2.CreateNewStates();
+            _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+        }
+
+        // 出力文字を取得する
+        void GetResultStringChain(MStringResult& result) override {
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
+            if (SETTINGS->multiStreamMode) {
+                getPreOutput_lattice(result);
+            } else {
+
+            }
+        }
+
+        // チェーンをたどって不要とマークされた後続状態を削除する
+        void DeleteUnnecessarySuccessorStateChain() override {
+            _LOG_DEBUGH(_T("ENTER: {}, IsUnnecessary={}"), Name, IsUnnecessary());
+            _LOG_DEBUGH(_T("stateList1: deleteUnnecessaryNextState"));
+            stateList1.DeleteUnnecessaryNextStates();
+            _LOG_DEBUGH(_T("stateList2: deleteUnnecessaryNextState"));
+            stateList2.DeleteUnnecessaryNextStates();
+            _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+        }
+
     private:
         // DECKEY 処理の流れ
         void handleDeckey_lattice(int deckey) {
@@ -311,29 +395,39 @@ namespace {
 
             // 前処理(ストローク木状態の作成と呼び出し)
             _LOG_DEBUGH(_T("stateList1: doDeckeyPreProc"));
-            stateList1.DoDeckeyPreProc(StrokeTableNode::RootStrokeNode1.get(), deckey, true);
+            stateList1.HandleDeckeyProc(StrokeTableNode::RootStrokeNode1.get(), deckey, true);
             _LOG_DEBUGH(_T("stateList2: doDeckeyPreProc"));
-            stateList2.DoDeckeyPreProc(StrokeTableNode::RootStrokeNode2.get(), deckey, true);
+            stateList2.HandleDeckeyProc(StrokeTableNode::RootStrokeNode2.get(), deckey, true);
 
-            // 後続状態に対して事後チェック
-            //DoPostCheckChain();
-            _LOG_DEBUGH(_T("stateList1: doPostCheck"));
-            stateList1.DoPostCheckChain();
-            _LOG_DEBUGH(_T("stateList2: doPostCheck"));
-            stateList2.DoPostCheckChain();
+            //// 後処理
+            ////DoDeckeyPostProc();
+            //_LOG_DEBUGH(_T("stateList1: doPostCheck"));
+            //stateList1.DoDeckeyPostProc();
+            //_LOG_DEBUGH(_T("stateList2: doPostCheck"));
+            //stateList2.DoDeckeyPostProc();
 
+            //// 単語素片の収集
+            //std::vector<WordPiece> pieces;
+            //_LOG_DEBUGH(_T("stateList1: AddWordPieces"));
+            //stateList1.AddWordPieces(pieces, false);
+            //_LOG_DEBUGH(_T("stateList2: AddWordPieces"));
+            //stateList2.AddWordPieces(pieces, false);
+
+            //// 不要になったストローク状態の削除
+            //_LOG_DEBUGH(_T("stateList1: deleteUnnecessaryNextState"));
+            //stateList1.DeleteUnnecessaryNextStates();
+            //_LOG_DEBUGH(_T("stateList2: deleteUnnecessaryNextState"));
+            //stateList2.DeleteUnnecessaryNextStates();
+        }
+
+        void getPreOutput_lattice(MStringResult& resultStr) {
+            _LOG_DEBUGH(_T("ENTER: {}"), Name);
             // 単語素片の収集
             std::vector<WordPiece> pieces;
             _LOG_DEBUGH(_T("stateList1: AddWordPieces"));
             stateList1.AddWordPieces(pieces, false);
             _LOG_DEBUGH(_T("stateList2: AddWordPieces"));
             stateList2.AddWordPieces(pieces, false);
-
-            // 不要になったストローク状態の削除
-            _LOG_DEBUGH(_T("stateList1: deleteUnnecessaryNextState"));
-            stateList1.DeleteUnnecessaryNextState();
-            _LOG_DEBUGH(_T("stateList2: deleteUnnecessaryNextState"));
-            stateList2.DeleteUnnecessaryNextState();
 
             Node* pNextNode1 = stateList1.GetNonStringNode();
             Node* pNextNode2 = stateList2.GetNonStringNode();
@@ -349,7 +443,7 @@ namespace {
                 SetNextNodeMaybe(pNextNode1 ? pNextNode1 : pNextNode2);
                 MarkUnnecessary();
             }
-            
+
             if (!IsUnnecessary() || !pieces.empty()) {
                 // Lattice処理
                 auto result = WORD_LATTICE->addPieces(pieces);
@@ -357,7 +451,9 @@ namespace {
                 // 新しい文字列が得られたら履歴状態に送る
                 if (!result.outStr.empty()) {
                     _LOG_DEBUGH(_T("HISTORY_RESIDENT_STATE->SetTranslatedOutString({}, 0, false, {})"), to_wstr(result.outStr), result.numBS);
-                    HISTORY_RESIDENT_STATE->SetTranslatedOutString(result.outStr, 0, false, result.numBS);
+                    //TODO:: HISTORY_RESIDENT_STATE->SetTranslatedOutString(result.outStr, 0, false, result.numBS);
+                    resultStr.resultStr = result.outStr;
+                    resultStr.numBS = result.numBS;
                 }
             }
 
@@ -373,21 +469,21 @@ namespace {
 
             // 前処理(ストローク木状態の作成と呼び出し)
             _LOG_DEBUGH(_T("ROOT_STROKE_NODE: doDeckeyPreProc: CurrentStrokeTable={}"), StrokeTableNode::GetCurrentStrokeTableNum());
-            stateList1.DoDeckeyPreProc(ROOT_STROKE_NODE, deckey, false);
+            stateList1.HandleDeckeyProc(ROOT_STROKE_NODE, deckey, false);
 
-            // 後続状態に対して事後チェック
-            //DoPostCheckChain();
-            _LOG_DEBUGH(_T("ROOT_STROKE_NODE: doPostCheck"));
-            stateList1.DoPostCheckChain();
+            //// 後処理(新状態の生成と出力文字列の収集)
+            ////DoDeckeyPostProc();
+            //_LOG_DEBUGH(_T("ROOT_STROKE_NODE: doPostCheck"));
+            //stateList1.DoDeckeyPostProc();
 
             // 単語素片の収集
             std::vector<WordPiece> pieces;
             _LOG_DEBUGH(_T("ROOT_STROKE_NODE: AddWordPieces"));
             stateList1.AddWordPieces(pieces, false);
 
-            // 不要になったストローク状態の削除
-            _LOG_DEBUGH(_T("ROOT_STROKE_NODE: deleteUnnecessaryNextState"));
-            stateList1.DeleteUnnecessaryNextState();
+            //// 不要になったストローク状態の削除
+            //_LOG_DEBUGH(_T("ROOT_STROKE_NODE: deleteUnnecessaryNextState"));
+            //stateList1.DeleteUnnecessaryNextStates();
 
             Node* pNextNode1 = stateList1.GetNonStringNode();
             _LOG_DEBUGH(_T("pNextNode1={}"), NODE_NAME(pNextNode1));

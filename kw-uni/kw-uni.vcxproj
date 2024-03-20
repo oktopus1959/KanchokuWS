@@ -220,6 +220,7 @@
     <ClInclude Include="Settings\KanchokuIni.h" />
     <ClInclude Include="Settings\Settings.h" />
     <ClInclude Include="StartNode.h" />
+    <ClInclude Include="StartState.h" />
     <ClInclude Include="StateCommonInfo.h" />
     <ClInclude Include="ResidentState.h" />
     <ClInclude Include="StringNode.h" />

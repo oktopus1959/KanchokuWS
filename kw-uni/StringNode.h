@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Node.h"
-#include "OneShot/RewriteString.h"
 
 // -------------------------------------------------------------------
 // StringNode - 文字列を格納するノード

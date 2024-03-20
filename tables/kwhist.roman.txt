@@ -38596,8 +38596,10 @@ Check|✓
 Clouds|クラウズ
 Cloud|クラウド
 Divergence|ダイバージェンス
+Lay|レイ
 Login|ログイン
 Logout|ログアウト
+Overlay|オーバーレイ
 Plane|プレーン
 Play|プレイ
 Portal|ポータル
@@ -38605,6 +38607,7 @@ Proprietary|プロプライエタリ
 Quota|クォータ
 Realtime|リアルタイム
 Refinement|リファインメント
+Scheduler|スケジューラ
 Sequential|シーケンシャル
 Sharding|シャーディング
 Simulate|シミュレート

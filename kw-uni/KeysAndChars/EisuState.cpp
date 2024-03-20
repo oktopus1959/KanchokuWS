@@ -42,6 +42,8 @@ namespace {
         size_t prevLowerHeadCnt = 0;
         size_t capitalCharCnt = 1;      // 状態が生成されたときはすでに先頭文字が入力されている
 
+        wchar_t outputChar = '\0';
+
     public:
         // コンストラクタ
         EisuState(EisuNode* pN) {
@@ -51,12 +53,13 @@ namespace {
 
         ~EisuState() {
             LOG_DEBUGH(_T("CALLED: DESTRUCTOR"));
+            STATE_COMMON->AddOrEraseRunningState(Name, 0);  // 削除
         };
 
 #define MY_NODE ((EisuNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() override {
+        void DoProcOnCreated() override {
             firstTotalCnt = STATE_COMMON->GetTotalDecKeyCount();
             auto prevCapitalCnt = MY_NODE->prevCapitalDeckeyCount;  // 前回の状態のときの大文字入力時のDeckeyカウント
             MY_NODE->prevCapitalDeckeyCount = firstTotalCnt;
@@ -71,13 +74,13 @@ namespace {
                 // 英大文字を連続して入力している状態なので、即抜ける
                 // この処理は、次の STATE_COMMON->AddOrEraseRunningState() よりも先にやっておく必要がある
                 LOG_DEBUGH(_T("Continuously input capital chars. prevCapitalDeckeyCount={}"), MY_NODE->prevCapitalDeckeyCount);
-                return false;
+                return;
             }
 
             if (!STATE_COMMON->AddOrEraseRunningState(Name, this)) {
                 LOG_DEBUGH(_T("Already same function had been running. Mark it unnecessary."));
                 // すでに同じ機能が走っていたのでそれ以降に不要マークを付けた
-                return false;
+                return;
             }
 
             // 必要ならブロッカーを設定する
@@ -87,10 +90,18 @@ namespace {
             // 英数モードフラグの設定
             if (!IsUnnecessary()) STATE_COMMON->SetCurrentModeIsEisu();
 
-            // 前状態にチェインする
+            MarkNecessary();
             LOG_DEBUGH(_T("LEAVE: CHAIN ME"));
+        }
 
-            return true;
+        // 出力文字を取得する
+        void GetResultStringChain(MStringResult& result) override {
+            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+            if (outputChar != '\0') {
+                result.resultStr = MString(1, outputChar);
+                outputChar = '\0';
+            }
+            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
         }
 
         // 履歴検索を初期化する状態か
@@ -115,7 +126,7 @@ namespace {
 
                 // キーボードフェイス文字を返す
                 _LOG_DEBUGH(_T("SetOutString"));
-                STATE_COMMON->SetOutString(myChar, 0);
+                outputChar = myChar;
 
                 //if (myChar >= 'A' && myChar <= 'Z' && STATE_COMMON->GetTotalDecKeyCount() == firstTotalCnt + 1) {
                 //    // 2文字目も英大文字だったら、英数モードを終了する

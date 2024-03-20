@@ -44,6 +44,8 @@ namespace {
 
         bool bInitialized = true;
 
+        wchar_t zenkakuChar = '\0';
+
     public:
         // コンストラクタ
         ZenkakuState(ZenkakuNode* pN) {
@@ -58,21 +60,30 @@ namespace {
 #define MY_NODE ((ZenkakuNode*)pNode)
 
         // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
-        bool DoProcOnCreated() {
+        void DoProcOnCreated() override {
             LOG_INFO(_T("ENTER"));
 
             STATE_COMMON->SetZenkakuModeMarkerShowFlag();
 
             // 前状態にチェインする
+            MarkNecessary();
             LOG_INFO(_T("LEAVE: CHAIN ME"));
-
-            return true;
         }
 
         // 中間チェック
         void DoIntermediateCheck() override {
             LOG_INFO(_T("CALLED: {}: Clear bInitialized"), Name);
             bInitialized = false;
+        }
+
+        // 出力文字を取得する
+        void GetResultStringChain(MStringResult& result) override {
+            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+            if (zenkakuChar != '\0') {
+                result.resultStr = MString(1, zenkakuChar);
+                zenkakuChar = '\0';
+            }
+            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
         }
 
         // Strokeキー を処理する
@@ -148,8 +159,7 @@ namespace {
             }
             STATE_COMMON->SetZenkakuModeMarkerShowFlag();
             if (wch > 0) {
-                //STATE_COMMON->SetOutString(wch, 0);
-                HISTORY_RESIDENT_STATE->SetTranslatedOutString(MString(1, wch), 0);
+                zenkakuChar = wch;
             }
         }
 

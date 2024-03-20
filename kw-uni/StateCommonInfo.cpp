@@ -77,7 +77,7 @@ void StateCommonInfo::setVirtualKeyboardStrings(VkbLayout lo, const std::vector<
 // 指定の名前の状態が実行されているか
 // 既に実行されていれば、それを削除して false を返す
 // 実行されていなければ、map に追加する (true を返す)
-// pState == null なら削除のみ行う
+// pState == null ならmapからの削除のみ行う
 bool StateCommonInfo::AddOrEraseRunningState(StringRef stateName, State* pState) {
     auto iter = runningStates.find(stateName);
     if (iter != runningStates.end()) {

@@ -1087,6 +1087,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni(Settings.ImeKatakanaToHiragana_PropName, checkBox_imeKatakanaToHiragana.Checked);
             Settings.SetUserIni(Settings.ImeSendInputInRoman_PropName, radioButton_imeSendInputInRoman.Checked);
             Settings.SetUserIni(Settings.ImeSendInputInKana_PropName, radioButton_imeSendInputInKana.Checked);
+            Settings.SetUserIni(Settings.ImeSendInputInUnicode_PropName, radioButton_imeSendInputInUnicode.Checked);
             //Settings.SetUserIni("imeUnicodeClassNames", textBox_imeUnicodeClassNames.Text.Trim()._reReplace(@"[ \r\n]+", "|"));
 
             // 各種定義ファイルの再読み込み

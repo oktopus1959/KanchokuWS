@@ -35,19 +35,15 @@ namespace {
 #define MY_NODE ((TemplateNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
+        void DoProcOnCreated() override {
             LOG_DEBUG(_T("ENTER"));
-
-            // 前状態にチェインする
+            MarkNecessary();
             LOG_DEBUG(_T("LEAVE: CHAIN ME"));
-
-            return true;
         }
 
          // Strokeキー を処理する
         void handleStrokeKeys(int deckey) {
-            LOG_DEBUG(_T("CALLED: {}: deckey={:x}H({})"), Name, deckey, deckey);
-            STATE_COMMON->SetOutString(make_fullwide_char(DECKEY_TO_CHARS->GetCharFromDeckey(deckey)), 0);
+            LOG_INFO(_T("CALLED: {}: deckey={:x}H({})"), Name, deckey, deckey);
         }
 
         // Esc の処理 -- 処理のキャンセル

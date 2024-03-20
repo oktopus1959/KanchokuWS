@@ -150,7 +150,7 @@ namespace {
 #define MY_NODE ((BushuAssocNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
+        void DoProcOnCreated() override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
 
             size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
@@ -171,12 +171,11 @@ namespace {
                 // 前状態にチェインする
                 // STATE_COMMON->SetOutStringProcDone();        // ここでやってもよいが、「最終的な出力履歴が整ったところで呼び出される処理」のところでも必要になる
                 _LOG_DEBUGH(_T("LEAVE: {}: CHAIN"), Name);
-                return true;
+                MarkNecessary();
+                return;
             }
 
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
-            // チェイン不要
-            return false;
         }
 
         // Strokeキー を処理する
@@ -300,7 +299,7 @@ namespace {
         }
 
         // 最終的な出力履歴が整ったところで呼び出される処理
-        void DoOutStringProc() override {
+        void DoLastHistoryProc() override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             STATE_COMMON->SetOutStringProcDone();   // 何かキー入力により再表示の可能性があるので、ここでも必要(この後は、もはや履歴検索などは不要)
             _LOG_DEBUGH(_T("LEAVE: {}, IsOutStringProcDone={}"), Name, STATE_COMMON->IsOutStringProcDone());
@@ -347,17 +346,25 @@ namespace {
 #else
 #define ALLOWANCE_SEC 3600
 #endif
-        // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
-            _LOG_DEBUGH(_T("ENTER: {}"), Name);
+        //// 機能状態に対して生成時処理を実行する
+        //void DoProcOnCreated() override {
+        //    _LOG_DEBUGH(_T("CALLED: {}"), Name);
+        //    MarkUnnecessary();
+        //}
+
+        // 出力文字を取得する
+        void GetResultStringChain(MStringResult& result) override {
+            _LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+            // TODO: DoProcOnCreated の STATE_COMMON 処理をやめて、こちらで出力文字列を返すようにする
             size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
             //_LOG_DEBUGH(_T("ENTER: {}, count={}"), Name, cnt);
 
             mchar_t outChar = OUTPUT_STACK->isLastOutputStackCharBlocker() ? 0 : OUTPUT_STACK->LastOutStackChar();
 
-            if (outChar < 0x100) {
-                STATE_COMMON->OutputDeckeyChar();                 // 自分自身を出力
-                //if (outChar == ' ') STATE_COMMON->SetBackspaceNum(1);   // 直前文字がスペースの場合は、それを削除する ⇒やめた。Ctrl-Gまたは'\'の後に':'を打てばよい(2021/6/3)
+            if (outChar < 0x100 || utils::is_hiragana(outChar)) {
+                //STATE_COMMON->OutputDeckeyChar();                 // 自分自身を出力
+                // ASCII または ひらがな なら、何もしない
+                return;
             } else {
                 // 直前の部首合成文字と比較して、やり直しをする
                 //time_t now = utils::getSecondsFromEpochTime();
@@ -376,12 +383,14 @@ namespace {
                             if (!cs.empty()) {
                                 _LOG_DEBUGH(_T("PATH-B"));
                                 // 出力文字列と削除文字のセット
-                                STATE_COMMON->SetOutString(cs, 1);
-                                copyStrokeHelpToVkbFaces();
+                                //STATE_COMMON->SetOutString(cs, 1);
+                                //copyStrokeHelpToVkbFaces();
+                                result.resultStr = cs;
+                                result.numBS = 1;
                                 //やり直し合成した文字を履歴に登録
                                 if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(cs, 1));
                                 _LOG_DEBUGH(_T("LEAVE: {}: Reduce by using swapped bushu"), Name);
-                                return false;
+                                return;
                             }
                         }
                     }
@@ -416,19 +425,18 @@ namespace {
                         _LOG_DEBUGH(_T("REVERT: {}"), (wchar_t)outChar);
                         currentList.FindEntry(outChar);
                         //STATE_COMMON->outString.resize(1);
-                        STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す
+                        //STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す
+                        result.resultStr = to_mstr(outChar);
+                        result.numBS = 1;
 
                         setVkbCandidatesList();
 
-                        // 前状態にチェインする
-                        _LOG_DEBUGH(_T("CHAIN"));
-                        return true;
+                        // チェインを残す
+                        MarkNecessary();
                     }
                 }
             }
-            _LOG_DEBUGH(_T("LEAVE: {}"), Name);
-            // チェイン不要
-            return false;
+            _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
         }
 
         //// Strokeキー を処理する

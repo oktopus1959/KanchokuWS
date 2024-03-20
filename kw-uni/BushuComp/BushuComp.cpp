@@ -46,7 +46,7 @@ namespace {
 #define MY_NODE ((BushuCompNode*)pNode)
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
+        void DoProcOnCreated() override {
             wchar_t m1 = (wchar_t)OUTPUT_STACK->LastOutStackChar(1);
             wchar_t m2 = (wchar_t)OUTPUT_STACK->LastOutStackChar(0);
             LOG_DEBUG(_T("m1={}, m2={}"), m1, m2);
@@ -67,8 +67,6 @@ namespace {
                     if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(comp, 1));
                 }
             }
-            // チェイン不要
-            return false;
         }
 
     };

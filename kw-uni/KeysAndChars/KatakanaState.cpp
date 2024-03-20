@@ -49,26 +49,35 @@ namespace {
 
         ~KatakanaState() {
             LOG_DEBUGH(_T("CALLED: DESTRUCTOR"));
+            STATE_COMMON->AddOrEraseRunningState(Name, 0);  // 削除
         };
 
 #define MY_NODE ((KatakanaNode*)pNode)
 
+        // DECKEY 処理の前半部(ディスパッチまで)
+        void HandleDeckeyChain(int deckey) {
+            LOG_DEBUGH(_T("ENTER: {}"), Name);
+
+            ModalStatePreProc(deckey);
+            State::HandleDeckeyChain(deckey);
+
+            LOG_DEBUGH(_T("LEAVE: {}"), Name);
+        }
+
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() {
+        void DoProcOnCreated() override {
             _LOG_DEBUGH(_T("ENTER"));
 
             if (!STATE_COMMON->AddOrEraseRunningState(Name, this)) {
                 LOG_DEBUGH(_T("Already same function had been running. Mark it unnecessary."));
                 // すでに同じ機能が走っていたのでそれ以降に不要マークを付けた
-                return false;
+                return;
             }
 
             setKatakanaModeMarker();
 
-            // 前状態にチェインする
+            MarkNecessary();
             _LOG_DEBUGH(_T("LEAVE: CHAIN ME"));
-
-            return true;
         }
 
         // 中間チェック

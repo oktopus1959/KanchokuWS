@@ -452,10 +452,10 @@ namespace {
         // ①まだ履歴検索がなされていない状態
         // ②検索が実行されたが、出力文字列にはキーだけが表示されている状態
         // ③横列のどれかの候補が選択されて出力文字列に反映されている状態
-        bool DoProcOnCreated() override {
+        void DoProcOnCreated() override {
             _LOG_DEBUGH(_T("ENTER"));
 
-            if (!HISTORY_DIC) return false;
+            if (!HISTORY_DIC) return;
 
             // 過去の履歴候補選択の結果を反映しておく
             HIST_CAND->DelayedPushFrontSelectedWord();
@@ -492,16 +492,15 @@ namespace {
             _LOG_DEBUGH(_T("Set Unselected"));
             STATE_COMMON->SetWaitingCandSelect(-1);
 
-            // 前状態にチェインする
+            MarkNecessary();
             _LOG_DEBUGH(_T("LEAVE: Chain"));
-            return true;
         }
 
         // 最終的な出力履歴が整ったところで呼び出される処理
-        void DoOutStringProc() override {
+        void DoLastHistoryProc() override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
 
-            //if (pNext) pNext->DoOutStringProc();
+            //if (pNext) pNext->DoLastHistoryProc();
             setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandWords(), HIST_CAND->GetCurrentKey());
             if (bDeleteMode) {
                 // 中央鍵盤の文字出力と色付け、矢印キー有効、縦列鍵盤の色付けなし
@@ -754,10 +753,10 @@ namespace {
         ~HistoryFewCharsState() { };
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() override {
+        void DoProcOnCreated() override {
             _LOG_DEBUGH(_T("CALLED"));
 
-            if (!HISTORY_DIC) return false;
+            if (!HISTORY_DIC) return;
 
             // 前回履歴キーのクリア
             HISTORY_RESIDENT_NODE->ClearPrevHistState();
@@ -768,8 +767,7 @@ namespace {
             candLen = -3;
             setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandWords(key, false, candLen), key);
 
-            // 前状態にチェインする
-            return true;
+            MarkNecessary();
         }
 
     };
@@ -789,10 +787,10 @@ namespace {
         ~HistoryOneCharState() { };
 
         // 機能状態に対して生成時処理を実行する
-        bool DoProcOnCreated() override {
+        void DoProcOnCreated() override {
             _LOG_DEBUGH(_T("CALLED"));
 
-            if (!HISTORY_DIC) return false;
+            if (!HISTORY_DIC) return;
 
             // 前回履歴キーのクリア
             HISTORY_RESIDENT_NODE->ClearPrevHistState();
@@ -803,8 +801,7 @@ namespace {
             candLen = 1;
             setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandWords(key, false, candLen), key);
 
-            // 前状態にチェインする
-            return true;
+            MarkNecessary();
         }
 
     };
@@ -821,7 +818,7 @@ namespace {
 
 
         /// 今回の履歴候補選択ホットキーを保存
-        /// これにより、DoOutStringProc() で継続的な候補選択のほうに処理が倒れる
+        /// これにより、DoLastHistoryProc() で継続的な候補選択のほうに処理が倒れる
         void setCandSelectIsCalled() { candSelectDeckey = STATE_COMMON->GetDeckey(); }
 
         // 状態管理のほうで記録している最新ホットキーと比較し、今回が履歴候補選択キーだったか
@@ -864,7 +861,7 @@ namespace {
             if (NextState()) NextState()->Reactivate();
             // ちょっと下以の意図が不明
             //maybeEditedBySubState = true;
-            //DoOutStringProc();
+            //DoLastHistoryProc();
             // 初期化という意味で、下記のように変更しておく(2021/5/31)
             maybeEditedBySubState = false;
             bCandSelectable = false;
@@ -878,6 +875,15 @@ namespace {
             bool result = (NextState() && NextState()->IsHistoryReset());
             _LOG_DEBUGH(_T("CALLED: {}: result={}"), Name, result);
             return result;
+        }
+
+        // 出力文字を取得する
+        void GetResultStringChain(MStringResult& result) override {
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
+            if (NextState()) {
+                State::GetResultStringChain(result);
+                SetTranslatedOutString(result.resultStr, result.rewritableLen, result.bBushuComp, result.numBS);
+            }
         }
 
     public:
@@ -970,8 +976,9 @@ namespace {
 
     protected:
         // 履歴常駐状態の事前チェック
-        void DoHistoryResidentPreCheck() override {
+        int HandleDeckeyPreProc(int deckey) override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
+            deckey = ModalStatePreProc(deckey);
             maybeEditedBySubState = false;
             // 常駐モード
             //if (pNext && pNext->GetName().find(_T("History")) == String::npos)
@@ -984,6 +991,8 @@ namespace {
                 HIST_CAND->ClearKeyInfo();      // まだ履歴検索が行われていないということを表す
             }
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+
+            return deckey;
         }
 
         //// ノードから生成した状態を後接させ、その状態を常駐させる(ここでは 0 が渡ってくるはず)
@@ -1150,7 +1159,7 @@ namespace {
 
     public:
         // 最終的な出力履歴が整ったところで呼び出される処理
-        void DoOutStringProc() override {
+        void DoLastHistoryProc() override {
             LOG_DEBUGH(_T("\nENTER: {}: {}"), Name, OUTPUT_STACK->OutputStackBackStrForDebug(10));
             LOG_DEBUGH(_T("PATH 2: bCandSelectable={}"), bCandSelectable);
 
@@ -1356,7 +1365,7 @@ namespace {
                 // どれかの候補が選択されている状態なら、それを確定し、履歴キーをクリアしておく
                 HISTORY_RESIDENT_NODE->ClearPrevHistState();
                 HIST_CAND->ClearKeyInfo();
-                // 一時的にマニュアル操作フラグを立てることで、DoOutStringProc() から historySearch() を呼ぶときに履歴再検索が実行されるようにする
+                // 一時的にマニュアル操作フラグを立てることで、DoLastHistoryProc() から historySearch() を呼ぶときに履歴再検索が実行されるようにする
                 bManualTemporary = true;
                 if (SETTINGS->newLineWhenHistEnter) {
                     // 履歴候補選択時のEnterではつねに改行するなら、確定後、Enter処理を行う
@@ -1409,7 +1418,7 @@ namespace {
                     //STATE_COMMON->SetNormalVkbLayout();
                 } else {
                     resetCandSelect(true);
-                    // 一時的にマニュアル操作フラグを立てることで、DoOutStringProc() から historySearch() を呼ぶときに履歴再検索が実行されるようにする
+                    // 一時的にマニュアル操作フラグを立てることで、DoLastHistoryProc() から historySearch() を呼ぶときに履歴再検索が実行されるようにする
                     bManualTemporary = true;
                 }
             } else {
