@@ -66,6 +66,8 @@ namespace {
 
             LOG_DEBUGH(_T("ENTER: totalDeckeyCount={}, prevCapitalCount={}"), firstTotalCnt, prevCapitalCnt);
 
+            outputChar = (wchar_t)STATE_COMMON->OrigChar();
+
             // ブロッカーフラグを先に取得しておく
             bool blockerNeeded = MY_NODE->blockerNeeded;
             MY_NODE->blockerNeeded = false;

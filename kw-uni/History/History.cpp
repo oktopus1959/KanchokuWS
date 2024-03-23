@@ -880,7 +880,7 @@ namespace {
         // 出力文字を取得する
         void GetResultStringChain(MStringResult& result) override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            if (NextState()) {
+            if (STATE_COMMON->OutString().empty() && NextState()) {
                 State::GetResultStringChain(result);
                 SetTranslatedOutString(result.resultStr, result.rewritableLen, result.bBushuComp, result.numBS);
             }
