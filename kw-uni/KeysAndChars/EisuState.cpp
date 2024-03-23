@@ -97,13 +97,15 @@ namespace {
         }
 
         // 出力文字を取得する
-        void GetResultStringChain(MStringResult& result) override {
-            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
-            if (outputChar != '\0') {
-                result.resultStr = MString(1, outputChar);
+        void GetResultStringChain(MStringResult& resultOut) override {
+            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
+            if (!resultStr.isDefault()) {
+                resultOut.setResult(resultStr);
+            } else if (outputChar != '\0') {
+                resultOut.setResult(outputChar);
                 outputChar = '\0';
             }
-            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
         }
 
         // 履歴検索を初期化する状態か

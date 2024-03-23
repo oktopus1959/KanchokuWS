@@ -289,18 +289,18 @@ public:
         if (MAZEGAKI_INFO) MAZEGAKI_INFO->Initialize(false);
         if (WORD_LATTICE) WORD_LATTICE->clear();
         if (startState) {
-            LOG_INFO(_T("LEAVE: states={} (len={}), flags={:x}, numBS={}, outLength={}, stack={}\n"),
+            LOG_INFO(_T("LEAVE: states={} (len={}), flags={:x}, stack={}\n"),
                 startState->JoinedName(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
-                STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5));
+                OUTPUT_STACK->OutputStackBackStrForDebug(5));
         }
     }
 
     // 居残っている一時状態の削除
     void deleteRemainingState() {
         if (startState) {
-            LOG_INFO(_T("\nENTER: states={} (len={}), flags={:x}, numBS={}, outLength={}, stack={}"),
+            LOG_INFO(_T("\nENTER: states={} (len={}), flags={:x}, stack={}"),
                 startState->JoinedName(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
-                STATE_COMMON->GetBackspaceNum(), STATE_COMMON->OutString().size(), OUTPUT_STACK->OutputStackBackStrForDebug(5));
+                OUTPUT_STACK->OutputStackBackStrForDebug(5));
             startState->DeleteRemainingState();
         }
         STATE_COMMON->ClearStateInfo();
@@ -584,18 +584,20 @@ public:
         // DecKey処理を呼ぶ
         startState->HandleDeckey(keyId);
 
+        const auto& resultStr = startState->GetResultString();
+
         LOG_INFO(_T("OUTPUT: outString=\"{}\", origString=\"{}\", flags={:x}, numBS={}"), \
-            to_wstr(STATE_COMMON->OutString()), to_wstr(STATE_COMMON->OrigString()), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetBackspaceNum());
+            to_wstr(resultStr.resultStr()), to_wstr(STATE_COMMON->OrigString()), STATE_COMMON->GetResultFlags(), resultStr.numBS());
 
         // アクティブウィンドウへの送出文字列
         size_t maxLen = utils::array_length(OutParams->outString);
-        size_t cpyLen = copy_mstr(STATE_COMMON->OutString(), OutParams->outString, maxLen - 1);
+        size_t cpyLen = copy_mstr(resultStr.resultStr(), OutParams->outString, maxLen - 1);
         OutParams->resultFlags = STATE_COMMON->GetResultFlags();
         if (startState->ChainLength() > 1) {
             // 始状態に何か他の状態が後続していれば、Ctrl-Hなどの特殊キーをDECKEY化する
             OutParams->resultFlags |= (UINT32)ResultFlags::SpecialDeckeyRequired;
         }
-        OutParams->numBackSpaces = STATE_COMMON->GetBackspaceNum();
+        OutParams->numBackSpaces = resultStr.numBS();
         OutParams->strokeTableNum = StrokeTableNode::GetCurrentStrokeTableNum();
 
         // 出力履歴に BackSpaces を反映
@@ -619,8 +621,10 @@ public:
             _LOG_DEBUGH(_T("OUTPUT_STACK->setMazeBlocker(): {}"), to_wstr(OUTPUT_STACK->backStringWithFlagUpto(20)));
         }
         // 出力履歴に Rewritable を反映
-        _LOG_DEBUGH(_T("OUTPUT_STACK->setRewritable({})"), STATE_COMMON->RewritableLen());
-        OUTPUT_STACK->setRewritable(STATE_COMMON->RewritableLen());
+        //_LOG_DEBUGH(_T("OUTPUT_STACK->setRewritable({})"), STATE_COMMON->RewritableLen());
+        //OUTPUT_STACK->setRewritable(STATE_COMMON->RewritableLen());
+        _LOG_DEBUGH(_T("OUTPUT_STACK->setRewritable({})"), resultStr.rewritableLen());
+        OUTPUT_STACK->setRewritable(resultStr.rewritableLen());
 
         int strokeTableChainLen = startState->StrokeTableChainLength();
         _LOG_DEBUGH(_T("strokeTableChainLen={}"), strokeTableChainLen);
@@ -635,13 +639,13 @@ public:
         if (!STATE_COMMON->IsOutStringProcDone() && !STATE_COMMON->IsWaiting2ndStroke()) startState->DoLastHistoryProcChain();
 
         // ヘルプや候補文字列
-        setHelpOrCandidates(targetChar);
+        setHelpOrCandidates(targetChar, resultStr);
 
         if (Reporting::Logger::IsInfoHEnabled()) {
             //String stack = std::regex_replace(to_wstr(OUTPUT_STACK->OutputStackBackStr(10)), std::wregex(_T("\n")), _T("|"));
             LOG_INFOH(_T("LEAVE: states={} (len={}), flags={:x}, expKey={}, layout={}, centerStr={}, numBS={}, outLength={}, stack={}\n\n"),
                 startState->JoinedName(), startState->ChainLength(), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetNextExpectedKeyType(),
-                STATE_COMMON->GetLayoutInt(), outParams->centerString, STATE_COMMON->GetBackspaceNum(), cpyLen, OUTPUT_STACK->OutputStackBackStrForDebug(10));
+                STATE_COMMON->GetLayoutInt(), outParams->centerString, resultStr.numBS(), cpyLen, OUTPUT_STACK->OutputStackBackStrForDebug(10));
         }
     }
 
@@ -670,7 +674,7 @@ public:
     }
 
     // ヘルプや候補文字列
-    void setHelpOrCandidates(mchar_t targetChar) {
+    void setHelpOrCandidates(mchar_t targetChar, const MStringResult& resultStr) {
         //if (startState->StrokeTableChainLength() >= 2) STATE_COMMON->SetWaiting2ndStroke();
         LOG_DEBUG(_T("layout={}, nextExp={}"), STATE_COMMON->GetLayoutInt(), (int)STATE_COMMON->GetNextExpectedKeyType());
         OutParams->nextExpectedKeyType = (int)STATE_COMMON->GetNextExpectedKeyType();
@@ -738,7 +742,7 @@ public:
             // 部首合成ヘルプが要求されている場合
             LOG_DEBUG(_T("BushuCompHelp"));
             //copyToTopString();
-            if ((STATE_COMMON->GetBackspaceNum() > 0 && STATE_COMMON->OutString().size() == 1)) {
+            if ((resultStr.numBS() > 0 && resultStr.resultStr().size() == 1)) {
                 if (BUSHU_DIC && BUSHU_DIC->CopyBushuCompHelpToVkbFaces(lastChar, OutParams->faceStrings, LONG_VKEY_CHAR_SIZE, LONG_VKEY_NUM, false)) {
                     OutParams->layout = (int)VkbLayout::BushuCompHelp;
                     OutParams->nextExpectedKeyType = (int)ExpectedKeyType::BushuCompHelp;

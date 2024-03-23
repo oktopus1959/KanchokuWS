@@ -163,8 +163,7 @@ namespace {
             if (EX_NODE->PrevKey != 0 && totalCnt <= EX_NODE->PrevTotalCount + 2 && EX_NODE->PrevAssoc == outChar) {
                 outChar = EX_NODE->PrevKey;
                 //STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す
-                _result.resultStr = MString(1, outChar);
-                _result.numBS = 1;
+                _result.setResult(MString(1, outChar), 1);
             } else {
                 EX_NODE->Count = 0;
             }
@@ -183,9 +182,8 @@ namespace {
         }
 
         // 出力文字を取得する
-        void GetResultStringChain(MStringResult& result) override {
-            result.resultStr = _result.resultStr;
-            result.numBS = _result.numBS;
+        void GetResultStringChain(MStringResult& resultOut) override {
+            resultOut.setResult(_result);
         }
 
         // Strokeキー を処理する
@@ -202,10 +200,10 @@ namespace {
             }
             MString word = currentList.SelectNthTarget(deckey);
             //STATE_COMMON->SetOutString(word);
-            _result.resultStr = word;
+            _result.setResult(word);
             if (!word.empty()) {
                 //STATE_COMMON->SetBackspaceNum(1);
-                _result.numBS = 1;
+                _result.setNumBS(1);
                 //選択した文字を履歴に登録
                 if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(word, 1));
             }
@@ -365,8 +363,8 @@ namespace {
         //}
 
         // 出力文字を取得する
-        void GetResultStringChain(MStringResult& result) override {
-            _LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+        void GetResultStringChain(MStringResult& resultOut) override {
+            _LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr), resultOut.numBS);
             // TODO: DoProcOnCreated の STATE_COMMON 処理をやめて、こちらで出力文字列を返すようにする
             size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
             //_LOG_DEBUGH(_T("ENTER: {}, count={}"), Name, cnt);
@@ -397,8 +395,7 @@ namespace {
                                 // 出力文字列と削除文字のセット
                                 //STATE_COMMON->SetOutString(cs, 1);
                                 //copyStrokeHelpToVkbFaces();
-                                result.resultStr = cs;
-                                result.numBS = 1;
+                                resultOut.setResult(cs, 1);
                                 //やり直し合成した文字を履歴に登録
                                 if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(cs, 1));
                                 _LOG_DEBUGH(_T("LEAVE: {}: Reduce by using swapped bushu"), Name);
@@ -438,8 +435,7 @@ namespace {
                         currentList.FindEntry(outChar);
                         //STATE_COMMON->outString.resize(1);
                         //STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す
-                        result.resultStr = to_mstr(outChar);
-                        result.numBS = 1;
+                        resultOut.setResult(to_mstr(outChar), 1);
 
                         setVkbCandidatesList();
 
@@ -448,7 +444,7 @@ namespace {
                     }
                 }
             }
-            _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+            _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr), resultOut.numBS);
         }
 
         //// Strokeキー を処理する

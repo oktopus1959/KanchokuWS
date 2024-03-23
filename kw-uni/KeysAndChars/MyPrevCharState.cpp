@@ -38,9 +38,9 @@ namespace {
 //#define MY_NODE ((MyCharNode*)pNode)
 
         // 出力文字を取得する
-        void GetResultStringChain(MStringResult& result) override {
-            result.resultStr = STATE_COMMON->OrigString();
-            _LOG_DEBUGH(_T("CALLED: {}: resultStr={}"), Name, to_wstr(result.resultStr));
+        void GetResultStringChain(MStringResult& resultOut) override {
+            resultOut.setResult(STATE_COMMON->OrigString());
+            _LOG_DEBUGH(_T("CALLED: {}: resultStr={}"), Name, to_wstr(resultOut.resultStr()));
         }
 
     };
@@ -62,12 +62,12 @@ namespace {
 //#define MY_NODE ((PrevCharNode*)pNode)
 
         // 出力文字を取得する
-        void GetResultStringChain(MStringResult& result) override {
+        void GetResultStringChain(MStringResult& resultOut) override {
             if (STATE_COMMON->OrigString().size() >= 2) {
                 STATE_COMMON->PopOrigString();
             }
-            result.resultStr = STATE_COMMON->OrigString();
-            _LOG_DEBUGH(_T("CALLED: {}: resultStr={}"), Name, to_wstr(result.resultStr));
+            resultOut.setResult(STATE_COMMON->OrigString());
+            _LOG_DEBUGH(_T("CALLED: {}: resultStr={}"), Name, to_wstr(resultOut.resultStr()));
         }
 
     };

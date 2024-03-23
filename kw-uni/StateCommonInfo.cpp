@@ -112,9 +112,9 @@ void StateCommonInfo::CopyStrokeHelpToVkbFaces(wchar_t ch) {
 }
 
 //仮想鍵盤にストロークヘルプの情報を設定する(outStringの先頭文字)
-void StateCommonInfo::CopyStrokeHelpToVkbFaces() {
-    if (!OutString().empty()) {
-        CopyStrokeHelpToVkbFaces((wchar_t)GetFirstOutChar());
-    }
-}
+//void StateCommonInfo::CopyStrokeHelpToVkbFaces() {
+//    if (!OutString().empty()) {
+//        CopyStrokeHelpToVkbFaces((wchar_t)GetFirstOutChar());
+//    }
+//}
 

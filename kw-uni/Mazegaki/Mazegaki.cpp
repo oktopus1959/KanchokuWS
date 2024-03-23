@@ -19,11 +19,15 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughMazegaki)
 
-#if 0
-#define _DEBUG_SENT(x) x
-#define _DEBUG_FLAG(x) (x)
-#define _LOG_DEBUGH LOG_INFO
-#define _LOG_DEBUGH_COND LOG_INFO_COND
+#if 1 || defined(_DEBUG)
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#undef _LOG_DEBUGH
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
 #endif
 
 namespace {
@@ -294,7 +298,8 @@ namespace {
 
             // 直前の変換があればそれを取り消す
             if (prevXfered) {
-                STATE_COMMON->SetOutString(prevYomi, prevOutLen);
+                //STATE_COMMON->SetOutString(prevYomi, prevOutLen);
+                resultStr.setResult(prevYomi, prevOutLen);
             }
             {
                 // 今回の結果を元に戻すための情報を保存(ブロッカーや読み開始位置のシフトで必要になる)
@@ -309,6 +314,16 @@ namespace {
             MarkNecessary();
             _LOG_DEBUGH(_T("LEAVE: {} candidates"), pCands->size());
         }
+
+        // 出力文字を取得する
+        //void GetResultStringChain(MStringResult& resultOut) override {
+        //    LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultStr.resultStr()), resultStr.numBS());
+        //    //if (NextState()) NextState()->GetResultStringChain(resultOut);
+        //    if (!resultStr.isDefault()) {
+        //        resultOut.setResult(resultStr);
+        //    }
+        //    LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
+        //}
 
          // Strokeキー を処理する
         void handleStrokeKeys(int deckey) {
@@ -479,7 +494,8 @@ namespace {
 
             // 変換形の出力
             _LOG_DEBUGH(_T("SET_OUT_STRING: {}, numBS={}"), to_wstr(outStr), numBS);
-            STATE_COMMON->SetOutString(outStr, numBS);
+            //STATE_COMMON->SetOutString(outStr, numBS);
+            resultStr.setResult(outStr, numBS);
             // ブロッカー設定
             //_LOG_DEBUGH(_T("SET_MAZE_BLOCKER: pos={}"), SETTINGS->mazeBlockerTail ? 0 : outStr.size() - (leadStr.size() + mazeResult.xferLen));
             //STATE_COMMON->SetMazegakiBlockerPosition(SETTINGS->mazeBlockerTail ? 0 : outStr.size() - (leadStr.size() + mazeResult.xferLen));
@@ -697,12 +713,13 @@ size_t MazegakiCommonInfo::GetPrevYomiInfo(MString& yomi) {
 }
 
 // 交ぜ書き変換結果を元に戻す
-bool MazegakiCommonInfo::RevertPrevXfer() {
+bool MazegakiCommonInfo::RevertPrevXfer(MStringResult& resultOut) {
     _LOG_DEBUGH(_T("prevYomi={}, prevOutputLen={}"), to_wstr(prevYomi), prevOutputLen);
     if (IsJustAfterPrevXfer() && prevOutputLen > 0) {
         MAZEGAKI_INFO->SetReXferMode();         // 再変換モードにセット
         MAZEGAKI_INFO->SetJustAfterPrevXfer();  // 続けて交ぜ書き関連の操作を受け付けるようにする
-        STATE_COMMON->SetOutString(prevYomi, prevOutputLen);
+        //STATE_COMMON->SetOutString(prevYomi, prevOutputLen);
+        resultOut.setResult(prevYomi, prevOutputLen);
         prevLeadLen = 0;
         prevOutputLen = 0;
         _LOG_DEBUGH(_T("MAZEGAKI REVERTED"));

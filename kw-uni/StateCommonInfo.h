@@ -126,7 +126,7 @@ class StateCommonInfo {
     size_t sameDecKeyCount = 0;
 
     // 送信するBSの数(1 for surrogate pair)
-    size_t numBackSpaces = 0;
+    //size_t numBackSpaces = 0;
 
     // 様々な結果フラグ (1 なら入力された DECKEY をVKEYに変換してアクティブWinに送る)
     UINT32 resultFlags = 0;
@@ -144,10 +144,10 @@ class StateCommonInfo {
     MString origString;
 
     // 出力文字列 (UI側に送られる)
-    MString outString;
+    //MString outString;
 
     // 書き換え可能な末尾文字列の長さ
-    size_t rewritableLen;
+    //size_t rewritableLen;
 
     // 処理後に表示する仮想鍵盤のレイアウト
     VkbLayout layout;
@@ -226,13 +226,13 @@ public:
     // DECKEY 処理ごとに呼び出される初期化
     void ClearStateInfo() {
         currentDecKey = -1;
-        numBackSpaces = 0;
+        //numBackSpaces = 0;
         resultFlags = 0;
         nextExpectedKeyType = ExpectedKeyType::None;
         strokeCount = 0;
         nextSelectPos = 0;
-        outString.clear();
-        rewritableLen = 0;
+        //outString.clear();
+        //rewritableLen = 0;
         layout = VkbLayout::None;
         centerString.clear();
         outStringProcDone = false;
@@ -326,27 +326,27 @@ public:
     inline bool IsAssocCandSelecting() const { return nextExpectedKeyType == ExpectedKeyType::AssocCandSelecting; }
     inline bool IsOtherStatus() const { return nextExpectedKeyType == ExpectedKeyType::OtherStatus; }
 
-    inline void SetOutString(const mchar_t ch, int numBS = -1) {
-        outString = ch;
-        if (numBS >= 0) numBackSpaces = numBS;
-    }
+    //inline void SetOutString(const mchar_t ch, int numBS = -1) {
+    //    outString = ch;
+    //    if (numBS >= 0) numBackSpaces = numBS;
+    //}
 
-    inline void SetOutString(const MString& s, int numBS = -1) {
-        outString = s;
-        if (numBS >= 0) numBackSpaces = numBS;
-    }
+    //inline void SetOutString(const MString& s, int numBS = -1) {
+    //    outString = s;
+    //    if (numBS >= 0) numBackSpaces = numBS;
+    //}
 
-    inline void SetOutStringWithRewritableLen(const MString& s, size_t rewLen, int numBS = -1) {
-        outString = s;
-        rewritableLen = rewLen;
-        if (numBS >= 0) numBackSpaces = numBS;
-    }
+    //inline void SetOutStringWithRewritableLen(const MString& s, size_t rewLen, int numBS = -1) {
+    //    outString = s;
+    //    rewritableLen = rewLen;
+    //    if (numBS >= 0) numBackSpaces = numBS;
+    //}
 
-    inline size_t RewritableLen() const { return rewritableLen; }
+    //inline size_t RewritableLen() const { return rewritableLen; }
 
-    inline const MString& OutString() const { return outString; }
-    inline mchar_t GetFirstOutChar() const { return outString.empty() ? 0 : outString[0]; }
-    inline mchar_t GetLastOutChar() const { return outString.empty() ? 0 : outString.back(); }
+    //inline const MString& OutString() const { return outString; }
+    //inline mchar_t GetFirstOutChar() const { return outString.empty() ? 0 : outString[0]; }
+    //inline mchar_t GetLastOutChar() const { return outString.empty() ? 0 : outString.back(); }
 
 //    inline void OutputDeckeyChar(/*int numBS = -1*/) { SetOutString(GetDeckeyChar()); }
 //    inline void OutputOrigChar(int numBS = -1) { SetOutString(origString, numBS); }
@@ -359,8 +359,8 @@ public:
     inline const MString& OrigString() { return origString; }
     inline const mchar_t OrigChar() { return origString.empty() ? '\0' : origString[0]; }
 
-    inline void SetBackspaceNum(size_t numBS) { numBackSpaces = numBS; }
-    inline size_t GetBackspaceNum() const { return numBackSpaces; }
+    //inline void SetBackspaceNum(size_t numBS) { numBackSpaces = numBS; }
+    //inline size_t GetBackspaceNum() const { return numBackSpaces; }
 
     inline StringRef CenterString() { return centerString; }
     inline void SetCenterString(mchar_t ch) { centerString = wchar_t(ch); }
@@ -450,7 +450,7 @@ public:
     void CopyStrokeHelpToVkbFaces(wchar_t ch);
 
     //仮想鍵盤にストロークヘルプの情報を設定する(outStringの先頭文字)
-    void CopyStrokeHelpToVkbFaces();
+    //void CopyStrokeHelpToVkbFaces();
 
 public:
     static String GetVkbLayoutStr(VkbLayout);

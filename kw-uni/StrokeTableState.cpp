@@ -95,13 +95,14 @@ namespace {
         //    LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
         //}
 
-        // 入力された DECKEY を処理する(前処理)
-        // 何もしないが、デバッグモードで、ログを出力する
-        int HandleDeckeyPreProc(int deckey) override {
-            LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({}), totalCount={}, NextNode={}"),
-                Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()));
-            return deckey;
-        }
+        //// 入力された DECKEY を処理する(前処理)
+        //// 何もしないが、デバッグモードで、ログを出力する
+        //int HandleDeckeyPreProc(int deckey) override {
+        //    LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({}), totalCount={}, NextNode={}"),
+        //        Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()));
+        //    resultStr.clear();
+        //    return deckey;
+        //}
 
         // 入力された DECKEY を処理する(後処理)
         // HandleDeckeyChain()の中で、dispatchDeckey() → handleStrokeKeys() と呼ばれた後に、この処理が呼ばれる
@@ -294,14 +295,14 @@ namespace {
         }
 
         // 出力文字を取得する
-        void GetResultStringChain(MStringResult& result) override {
-            _LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
-            if (NextState()) {
-                //if (myChar != '\0') result.resultStr.append(1, myChar);
-                State::GetResultStringChain(result);
-            }
-            _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
-        }
+        //void GetResultStringChain(MStringResult& resultOut) override {
+        //    _LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
+        //    if (NextState()) {
+        //        //if (myChar != '\0') resultOut.resultStr.append(1, myChar);
+        //        State::GetResultStringChain(resultOut);
+        //    }
+        //    _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
+        //}
 
         // ストロークテーブルチェインの長さ(テーブルのレベル)
         size_t StrokeTableChainLength() const {

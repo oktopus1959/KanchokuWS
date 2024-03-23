@@ -33,7 +33,7 @@ private:
     size_t prevLeadLen = 0;
 
     // 変換結果を元に戻すための出力文字列の長さ
-    size_t prevOutputLen;
+    size_t prevOutputLen = 0;
 
     // 前回変換時のデコーダキーカウント
     size_t prevDeckeyCount = 0;
@@ -112,7 +112,7 @@ public:
     bool LeftRightShiftBlockerOrStartPos(int deckey, std::function<void ()> callback);
 
     // 交ぜ書き変換結果を元に戻す
-    bool RevertPrevXfer();
+    bool RevertPrevXfer(MStringResult& resultStr);
 
 public:
     // 共有ノード
@@ -128,9 +128,9 @@ public:
 #define MAZEGAKI_NODE_PTR (MAZEGAKI_INFO->CommonNode.get())
 
 // 交ぜ書き変換結果を元に戻す
-#define HANDLE_ESC_FOR_MAZEGAKI() \
+#define HANDLE_ESC_FOR_MAZEGAKI(resultStr) \
     LOG_DEBUGH(_T("HANDLE_ESC_FOR_MAZEGAKI: {}"), Name); \
-    if (MAZEGAKI_INFO && MAZEGAKI_INFO->RevertPrevXfer()) return;
+    if (MAZEGAKI_INFO && MAZEGAKI_INFO->RevertPrevXfer(resultStr)) return;
 
 // -------------------------------------------------------------------
 // MazegakiNodeBuilder - 交ぜ書き機能ノードビルダ

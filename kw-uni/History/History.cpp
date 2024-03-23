@@ -255,6 +255,8 @@ namespace {
 
         bool bDeleteMode = false;
 
+        virtual MStringResult& resultString() = 0;
+
     public:
         // コンストラクタ
         HistoryStateBase(const Node* pN)
@@ -277,7 +279,7 @@ namespace {
         void setOutString(const HistResult& result) {
             _LOG_DEBUGH(_T("ENTER: result.OrigKey={}, result.Key={}, result.Word={}, keyLen={}, wildKey={}, prevOutStr={}, prevKey={}, plannedNumBS={}"), \
                 to_wstr(result.OrigKey), to_wstr(result.Key), to_wstr(result.Word), result.KeyLen(), result.WildKey, \
-                to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()), to_wstr(HISTORY_RESIDENT_NODE->GetPrevKey()), STATE_COMMON->GetBackspaceNum());
+                to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()), to_wstr(HISTORY_RESIDENT_NODE->GetPrevKey()), resultString().numBS());
 
             MString outStr = result.Word;
             MString outKey = result.Key;
@@ -311,7 +313,8 @@ namespace {
             }
             _LOG_DEBUGH(_T("outStr={}, outKey={}"), to_wstr(outStr), to_wstr(outKey));
 
-            STATE_COMMON->SetOutString(outStr);
+            //STATE_COMMON->SetOutString(outStr);
+            resultString().setResult(outStr);
             HISTORY_RESIDENT_NODE->SetPrevHistState(outStr, outKey);
 
             //_LOG_DEBUGH(_T("prevOutString={}, isPrevHistKeyUsed={}"), to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()), HISTORY_RESIDENT_NODE->IsPrevHistKeyUsed());
@@ -340,13 +343,15 @@ namespace {
             } else if (prevOut.empty()) {
                 // ②検索が実行されたが、出力文字列にはキーだけが表示されている状態
                 _LOG_DEBUGH(_T("CURRENT: SetOutString(str={}, numBS={})"), to_wstr(prevKey), prevKey.size());
-                STATE_COMMON->SetOutString(prevKey, prevKey.size());
+                //STATE_COMMON->SetOutString(prevKey, prevKey.size());
+                resultString().setResult(prevKey, prevKey.size());
                 HISTORY_RESIDENT_NODE->SetPrevHistState(prevKey, prevKey);
                 _LOG_DEBUGH(_T("CURRENT: prevKey={}"), to_wstr(prevKey));
             } else {
                 // ③横列のどれかの候補が選択されて出力文字列に反映されている状態
                 _LOG_DEBUGH(_T("REVERT and NEW HIST: SetOutString(str={}, numBS={})"), to_wstr(prevKey), prevOut.size());
-                STATE_COMMON->SetOutString(prevKey, prevOut.size());
+                //STATE_COMMON->SetOutString(prevKey, prevOut.size());
+                resultString().setResult(prevKey, prevOut.size());
                 HISTORY_RESIDENT_NODE->SetPrevHistState(prevKey, prevKey);
                 _LOG_DEBUGH(_T("REVERT and NEW HIST: prevKey={}"), to_wstr(prevKey));
             }
@@ -437,6 +442,9 @@ namespace {
         DECLARE_CLASS_LOGGER;
 
         bool bWaitingForNum = false;
+
+    protected:
+        MStringResult& resultString() override { return resultStr; }
 
     public:
         // コンストラクタ
@@ -841,6 +849,9 @@ namespace {
         // Shift+Space等による候補選択が可能か
         bool bCandSelectable = false;
 
+    protected:
+        MStringResult& resultString() override { return resultStr; }
+
     public:
         // コンストラクタ
         HistoryResidentStateImpl(HistoryResidentNode* pN) : HistoryStateBase(pN) {
@@ -859,13 +870,14 @@ namespace {
         void Reactivate() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             if (NextState()) NextState()->Reactivate();
-            // ちょっと下以の意図が不明
+            // ちょっと以下の意図が不明
             //maybeEditedBySubState = true;
             //DoLastHistoryProc();
             // 初期化という意味で、下記のように変更しておく(2021/5/31)
             maybeEditedBySubState = false;
             bCandSelectable = false;
             _LOG_DEBUGH(_T("bCandSelectable=False"));
+            resultStr.clear();
             HISTORY_RESIDENT_NODE->ClearPrevHistState();     // まだ履歴検索が行われていないということを表す
             HIST_CAND->ClearKeyInfo();      // まだ履歴検索が行われていないということを表す
         }
@@ -878,11 +890,14 @@ namespace {
         }
 
         // 出力文字を取得する
-        void GetResultStringChain(MStringResult& result) override {
+        void GetResultStringChain(MStringResult& resultOut) override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            if (STATE_COMMON->OutString().empty() && NextState()) {
-                State::GetResultStringChain(result);
-                SetTranslatedOutString(result.resultStr, result.rewritableLen, result.bBushuComp, result.numBS);
+            if (!resultStr.isDefault()) {
+                resultOut.setResult(resultStr);
+            }
+            else if (NextState()) {
+                State::GetResultStringChain(resultOut);
+                SetTranslatedOutString(resultOut);
             }
         }
 
@@ -907,7 +922,8 @@ namespace {
 
         // 何か文字が入力されたときの新しい履歴の追加
         void AddNewHistEntryOnSomeChar() override {
-            auto ch1 = STATE_COMMON->GetFirstOutChar();
+            //auto ch1 = STATE_COMMON->GetFirstOutChar();
+            auto ch1 = utils::safe_front(resultStr.resultStr());
             auto ch2 = OUTPUT_STACK->GetLastOutputStackChar();
             if (ch1 != 0 && HISTORY_DIC) {
                 // 今回の出力の先頭が漢字以外であり、これまでの出力末尾が漢字であるか、
@@ -926,6 +942,11 @@ namespace {
         }
 
         // 文字列を変換して出力、その後、履歴の追加
+        void SetTranslatedOutString(const MStringResult& result) {
+            SetTranslatedOutString(result.resultStr(), result.rewritableLen(), result.isBushuComp(), result.numBS());
+        }
+
+        // 文字列を変換して出力、その後、履歴の追加
         void SetTranslatedOutString(const MString& outStr, size_t rewritableLen, bool bBushuComp = true, int numBS = -1) override {
             _LOG_DEBUGH(_T("ENTER: {}: outStr={}, rewritableLen={}, bushuComp={}, numBS={}"), Name, to_wstr(outStr), rewritableLen, bBushuComp, numBS);
             // TODO (Katakana など)
@@ -936,9 +957,10 @@ namespace {
             //    STATE_COMMON->SetOutStringWithRewritableLen(xlatStr, xlatStr == outStr ? rewritableLen : 0, numBS);
             //} else {
                 // 自動部首合成
-                if (!bBushuComp || SETTINGS->autoBushuCompMinCount < 1 || !BUSHU_COMP_NODE->ReduceByAutoBushu(outStr)) {
+                if (!bBushuComp || SETTINGS->autoBushuCompMinCount < 1 || !BUSHU_COMP_NODE->ReduceByAutoBushu(outStr, resultStr)) {
                     _LOG_DEBUGH(_T("{}: SetOutStringWithRewritableLen({}, {}, {})"), Name, to_wstr(outStr), rewritableLen, numBS);
-                    STATE_COMMON->SetOutStringWithRewritableLen(outStr, rewritableLen, numBS);
+                    //STATE_COMMON->SetOutStringWithRewritableLen(outStr, rewritableLen, numBS);
+                    resultStr.setResultWithRewriteLen(outStr, rewritableLen, numBS);
                 }
             //}
             AddNewHistEntryOnSomeChar();
@@ -956,7 +978,8 @@ namespace {
             if (!romanStr.empty() && romanStr.size() <= SETTINGS->histMapKeyMaxLength) {
                 if (is_upper_alphabet(romanStr[0])) {
                     romanStr[0] = to_lower(romanStr[0]);
-                    STATE_COMMON->SetOutString(romanStr, romanStr.size());
+                    //STATE_COMMON->SetOutString(romanStr, romanStr.size());
+                    resultStr.setResult(romanStr, romanStr.size());
                 }
             }
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
@@ -981,6 +1004,7 @@ namespace {
         // 履歴常駐状態の事前チェック
         int HandleDeckeyPreProc(int deckey) override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
+            resultStr.clear();
             deckey = ModalStatePreProc(deckey);
             maybeEditedBySubState = false;
             // 常駐モード
@@ -1120,7 +1144,7 @@ namespace {
                                 // 候補が1つだけで、keyに一致するときは履歴選択状態にはしない
                             } else {
                                 _LOG_DEBUGH(_T("HistSearch: CANDS CHECKER-B"));
-                                if (SETTINGS->showHistCandsFromFirst) {
+                                if (SETTINGS->autoHistSearchEnabled || SETTINGS->showHistCandsFromFirst) {
                                     // 初回の履歴選択でも横列候補表示を行う
                                     setCandidatesVKB(VkbLayout::Horizontal, words, ky);
                                 }
@@ -1227,8 +1251,8 @@ namespace {
             // 今回、履歴選択用ホットキーだったことを保存
             setCandSelectIsCalled();
 
-            // 初回から履歴候補の横列表示をするか、または2回目以降の履歴検索の場合は、履歴候補の横列表示あり
-            bool bShowHistCands = SETTINGS->showHistCandsFromFirst || bCandSelectable;
+            // 自動履歴検索が有効になっているか、初回から履歴候補の横列表示をするか、または2回目以降の履歴検索の場合は、履歴候補の横列表示あり
+            bool bShowHistCands = SETTINGS->autoHistSearchEnabled || SETTINGS->showHistCandsFromFirst || bCandSelectable;
 
             if (!bCandSelectable) {
                 // 履歴候補選択可能状態でなければ、前回の履歴検索との比較、新しい履歴検索の開始
@@ -1482,7 +1506,7 @@ namespace {
             // 英数モードはキャンセルする
             if (NextState()) NextState()->handleEisuCancel();
 
-            _LOG_DEBUGH(_T("LEAVE: prevOut={}, numBS={}"), to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()), STATE_COMMON->GetBackspaceNum());
+            _LOG_DEBUGH(_T("LEAVE: prevOut={}, numBS={}"), to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()), resultStr.numBS());
         }
 
     };

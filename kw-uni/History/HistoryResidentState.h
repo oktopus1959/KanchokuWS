@@ -20,9 +20,6 @@ public:
     // 文字列を変換して出力、その後、履歴の追加
     virtual void SetTranslatedOutString(const MString& outStr, size_t rewritableLen, bool bBushuComp = true, int numBS = -1) = 0;
 
-    // Ctrl-H ハンドラ
-    //void handleCtrlH() { setCharDeleteInfo(1); }
-
     virtual void handleFullEscapeResidentState() = 0;
 
     virtual void handleEisuDecapitalize() = 0;

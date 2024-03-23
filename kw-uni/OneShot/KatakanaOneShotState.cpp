@@ -50,7 +50,8 @@ namespace {
             }
             if (!outStr.empty()) {
                 // カタカナに変換して置換する
-                STATE_COMMON->SetOutString(utils::convert_hiragana_to_katakana(outStr), numBS);
+                //STATE_COMMON->SetOutString(utils::convert_hiragana_to_katakana(outStr), numBS);
+                resultStr.setResult(utils::convert_hiragana_to_katakana(outStr), numBS);
                 OUTPUT_STACK->setHistBlockerAt(outStr.size());
             } else {
                 outStr = OUTPUT_STACK->GetLastKatakanaStr<MString>();
@@ -58,12 +59,22 @@ namespace {
                 _LOG_DEBUGH(_T("K->H: outStr={}, numBS={}"), to_wstr(outStr), numBS);
                 if (!outStr.empty()) {
                     // ひらがなに変換して置換する
-                    STATE_COMMON->SetOutString(utils::convert_katakana_to_hiragana(outStr), numBS);
+                    //STATE_COMMON->SetOutString(utils::convert_katakana_to_hiragana(outStr), numBS);
+                    resultStr.setResult(utils::convert_katakana_to_hiragana(outStr), numBS);
                 }
             }
 
             // チェイン不要
             _LOG_DEBUGH(_T("LEAVE: NO CHAIN"));
+        }
+
+        // 出力文字を取得する
+        void GetResultStringChain(MStringResult& resultOut) override {
+            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultStr.resultStr), resultStr.numBS);
+            if (!resultStr.isDefault()) {
+                resultOut.setResult(resultStr);
+            }
+            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr), resultOut.numBS);
         }
 
     };

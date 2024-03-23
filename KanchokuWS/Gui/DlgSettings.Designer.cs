@@ -32,6 +32,7 @@ namespace KanchokuWS.Gui
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DlgSettings));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_basic = new System.Windows.Forms.TabPage();
+            this.checkBox_multiStreamMode = new System.Windows.Forms.CheckBox();
             this.label_initialMsg = new System.Windows.Forms.Label();
             this.label_reloadBasic = new System.Windows.Forms.Label();
             this.button_document = new System.Windows.Forms.Button();
@@ -562,7 +563,6 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.checkBox_multiStreamMode = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -674,6 +674,18 @@ namespace KanchokuWS.Gui
             this.tabPage_basic.Text = "基本設定";
             this.tabPage_basic.ToolTipText = "基本的な情報・振る舞いの設定";
             this.tabPage_basic.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_multiStreamMode
+            // 
+            this.checkBox_multiStreamMode.AutoSize = true;
+            this.checkBox_multiStreamMode.Location = new System.Drawing.Point(32, 316);
+            this.checkBox_multiStreamMode.Name = "checkBox_multiStreamMode";
+            this.checkBox_multiStreamMode.Size = new System.Drawing.Size(125, 19);
+            this.checkBox_multiStreamMode.TabIndex = 13;
+            this.checkBox_multiStreamMode.Text = "漢直・かな融合モード";
+            this.toolTip1.SetToolTip(this.checkBox_multiStreamMode, "当アプリ終了時の確認ダイアログの有無\r\n\r\n当アプリは、以下のいずれかを右クリックして表示される\r\nコンテキストメニューから「終了」を選択すると終了できます。\r\n" +
+        "その際に確認ダイアログを表示するかどうかを設定します。\r\n\r\n・ タスクトレイのアイコン\r\n・仮想鍵盤\r\n・モード標識\r\n");
+            this.checkBox_multiStreamMode.UseVisualStyleBackColor = true;
             // 
             // label_initialMsg
             // 
@@ -5371,8 +5383,8 @@ namespace KanchokuWS.Gui
             this.checkBox_showHistCandsFromFirst.Size = new System.Drawing.Size(205, 19);
             this.checkBox_showHistCandsFromFirst.TabIndex = 7;
             this.checkBox_showHistCandsFromFirst.Text = "初回選択時は横列候補表示をしない";
-            this.toolTip1.SetToolTip(this.checkBox_showHistCandsFromFirst, "初回の履歴候補選択時に横列の履歴候補表示を\r\nさせたくない場合はここをチェックしてください。\r\n\r\nここにチェックを入れていても、次の履歴選択時には\r\n横列候補が" +
-        "表示されます。");
+            this.toolTip1.SetToolTip(this.checkBox_showHistCandsFromFirst, "ここをチェックすると、自動履歴検索が有効になっていない場合に、\r\n履歴検索・候補選択キーによる初回の履歴候補検索時には\r\n検索された候補の出力だけを行い、横列の履" +
+        "歴候補表示を\r\n行いません。\r\n\r\n続けて履歴検索・候補選択キーによる履歴候補検索を行うと、\r\n横列候補が表示されます。");
             this.checkBox_showHistCandsFromFirst.UseVisualStyleBackColor = true;
             // 
             // textBox_histHorizontalCandMax
@@ -6962,18 +6974,6 @@ namespace KanchokuWS.Gui
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // checkBox_multiStreamMode
-            // 
-            this.checkBox_multiStreamMode.AutoSize = true;
-            this.checkBox_multiStreamMode.Location = new System.Drawing.Point(32, 316);
-            this.checkBox_multiStreamMode.Name = "checkBox_multiStreamMode";
-            this.checkBox_multiStreamMode.Size = new System.Drawing.Size(125, 19);
-            this.checkBox_multiStreamMode.TabIndex = 13;
-            this.checkBox_multiStreamMode.Text = "漢直・かな融合モード";
-            this.toolTip1.SetToolTip(this.checkBox_multiStreamMode, "当アプリ終了時の確認ダイアログの有無\r\n\r\n当アプリは、以下のいずれかを右クリックして表示される\r\nコンテキストメニューから「終了」を選択すると終了できます。\r\n" +
-        "その際に確認ダイアログを表示するかどうかを設定します。\r\n\r\n・ タスクトレイのアイコン\r\n・仮想鍵盤\r\n・モード標識\r\n");
-            this.checkBox_multiStreamMode.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 

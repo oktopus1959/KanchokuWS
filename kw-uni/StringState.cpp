@@ -41,13 +41,12 @@ public:
     //}
 
     // 出力文字を取得する
-    void GetResultStringChain(MStringResult& result) override {
-        LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+    void GetResultStringChain(MStringResult& resultOut) override {
+        LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
         auto xlatStr = RewriteString::TranslateMiscChars(myNode()->getString());
         _LOG_DEBUGH(_T("CALLED: {}: myStr={}, xlatStr={}, rewLen={}"), Name, to_wstr(myNode()->getString()), to_wstr(xlatStr), myNode()->getRewritableLen());
-        result.resultStr = xlatStr;
-        result.rewritableLen = myNode()->getRewritableLen();
-        LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+        resultOut.setResultWithRewriteLen(xlatStr, myNode()->getRewritableLen());
+        LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
     }
 
 };

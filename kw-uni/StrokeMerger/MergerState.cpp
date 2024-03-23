@@ -135,8 +135,8 @@ namespace {
                 MStringResult result;
                 State::GetResultStringChain(result);
                 if (!result.isDefault()) {
-                    _LOG_DEBUGH(_T("ADD WORD: string={}, numBS={}"), to_wstr(result.resultStr), result.numBS);
-                    pieces.push_back(WordPiece(result.resultStr, STATE_COMMON->GetTotalDecKeyCount() - cntStroke, result.rewritableLen, result.numBS));
+                    _LOG_DEBUGH(_T("ADD WORD: string={}, numBS={}"), to_wstr(result.resultStr()), result.numBS());
+                    pieces.push_back(WordPiece(result.resultStr(), STATE_COMMON->GetTotalDecKeyCount() - cntStroke, result.rewritableLen(), result.numBS()));
                 } else {
                     _LOG_DEBUGH(_T("NOT TERMINAL"));
                 }
@@ -420,7 +420,7 @@ namespace {
             //stateList2.DeleteUnnecessaryNextStates();
         }
 
-        void getPreOutput_lattice(MStringResult& resultStr) {
+        void getPreOutput_lattice(MStringResult& resultOut) {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             // 単語素片の収集
             std::vector<WordPiece> pieces;
@@ -452,8 +452,7 @@ namespace {
                 if (!result.outStr.empty()) {
                     _LOG_DEBUGH(_T("HISTORY_RESIDENT_STATE->SetTranslatedOutString({}, 0, false, {})"), to_wstr(result.outStr), result.numBS);
                     //TODO:: HISTORY_RESIDENT_STATE->SetTranslatedOutString(result.outStr, 0, false, result.numBS);
-                    resultStr.resultStr = result.outStr;
-                    resultStr.numBS = result.numBS;
+                    resultOut.setResult(result.outStr, result.numBS);
                 }
             }
 

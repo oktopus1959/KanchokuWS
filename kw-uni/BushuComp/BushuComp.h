@@ -2,6 +2,7 @@
 #include "Logger.h"
 
 #include "FunctionNode.h"
+#include "MStringResult.h"
 
 // -------------------------------------------------------------------
 // BushuCompNode - 後置部首合成機能ノード
@@ -30,7 +31,7 @@ public:
     MString ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev = 0);
 
     // 自動部首合成の実行
-    bool ReduceByAutoBushu(const MString& ms);
+    bool ReduceByAutoBushu(const MString& ms, MStringResult& result);
 
 public:
     // 後置部首合成機能ノードのSingleton
@@ -41,7 +42,7 @@ public:
 #define BUSHU_COMP_NODE (BushuCompNode::Singleton)
 
 // 直前の自動部首合成文字と比較して、やり直しをする
-#define HANDLE_ESC_FOR_AUTO_COMP() \
+#define HANDLE_ESC_FOR_AUTO_COMP(resultStr) \
     if (BUSHU_DIC && BUSHU_COMP_NODE && (BUSHU_COMP_NODE->IsPrevAuto || BUSHU_COMP_NODE->IsPrevAutoCancel)) { \
         LOG_DEBUGH(_T("HANDLE_ESC_FOR_AUTO_COMP: {}"), Name); \
         size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount(); \
@@ -58,7 +59,7 @@ public:
                 if (BUSHU_COMP_NODE->IsPrevAuto) { \
                     /* 直前の処理は自動部首合成だったので、合成元の2文字に戻す \
                        出力文字列と削除文字のセット */ \
-                    STATE_COMMON->SetOutString(make_mstring(m1, m2), 1); \
+                    resultStr.setResult(make_mstring(m1, m2), 1); \
                     BUSHU_COMP_NODE->PrevTotalCount = totalCnt; \
                     BUSHU_COMP_NODE->IsPrevAuto = false; \
                     BUSHU_COMP_NODE->IsPrevAutoCancel = true; \

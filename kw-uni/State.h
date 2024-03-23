@@ -8,6 +8,7 @@
 #include "DeckeyToChars.h"
 #include "StateCommonInfo.h"
 #include "Node.h"
+#include "MStringResult.h"
 //#include "ModalState.h"
 
 #define UNSHIFT_DECKEY(x) (x % PLANE_DECKEY_NUM)
@@ -35,30 +36,6 @@ public:
     }
 };
 
-// GetResultString() の戻り値
-class MStringResult {
-public:
-    MString resultStr;
-    size_t rewritableLen;
-    int numBS;
-    bool bBushuComp;
-
-    MStringResult() : rewritableLen(0), numBS(-1), bBushuComp(true) {
-    }
-
-    MStringResult(const MString& str, int nBS = -1)
-        : resultStr(str), rewritableLen(0), numBS(nBS), bBushuComp(true) {
-    }
-
-    MStringResult(const MString& str, size_t rewLen, bool bushuComp, int nBS = -1)
-        : resultStr(str), rewritableLen(rewLen), numBS(nBS), bBushuComp(bushuComp) {
-    }
-
-    bool isDefault() const {
-        return resultStr.empty() && rewritableLen == 0 && numBS == -1;
-    }
-};
-
 //-----------------------------------------------------------------------
 // デコーダ状態の基底クラス
 class State {
@@ -75,6 +52,10 @@ class State {
     // 次の状態を生成する元となるノード
     // これは状態生成の時に一時的に使用されるだけ
     Node* pNextNodeMaybe= 0;
+
+protected:
+    // 処理結果、生成された文字列
+    MStringResult resultStr;
 
 private:
     // チェーン不要フラグ(デフォルトでチェーンしない)
@@ -266,8 +247,9 @@ protected:
 
     // 文字削除をリザルト情報にセットする
     // 引数は、削除する文字数
-    static void setCharDeleteInfo(int numDelete) {
-        STATE_COMMON->SetBackspaceNum(numDelete);
+    void setCharDeleteInfo(int numDelete) {
+        //STATE_COMMON->SetBackspaceNum(numDelete);
+        resultStr.setNumBS(numDelete);
     }
 
     // 入力されたDECKEYをそのままGUI返す

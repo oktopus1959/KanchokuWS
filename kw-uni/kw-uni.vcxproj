@@ -207,6 +207,7 @@
     <ClInclude Include="Mecab\mecab.h" />
     <ClInclude Include="Mecab\MecabBridge.h" />
     <ClInclude Include="ModalState.h" />
+    <ClInclude Include="MStringResult.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="OneShot\HankakuKatakanaOneShot.h" />
     <ClInclude Include="OneShot\KatakanaOneShot.h" />

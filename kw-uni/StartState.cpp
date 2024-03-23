@@ -17,6 +17,9 @@
 // 始状態 -- 仮想鍵盤のモード管理も行う
 class StartStateImpl : public StartState {
     DECLARE_CLASS_LOGGER;
+
+    //MStringResult result;
+
 public:
     StartStateImpl(StartNode* pN) {
         LOG_INFO(_T("CALLED: ctor"));
@@ -25,8 +28,8 @@ public:
 
     // DECKEY 処理の流れ
     void HandleDeckey(int deckey) override {
-        LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
-            Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
+        LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}"),
+            Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()));
 
         // 前処理
         if (NextState()) {
@@ -43,13 +46,17 @@ public:
         // 後処理(新状態生成処理)
         CreateNewStateChain();
         // 出力文字を取得する
-        MStringResult result;
-        GetResultStringChain(result);
+        resultStr.clear();
+        GetResultStringChain(resultStr);
         // チェーンをたどって不要とマークされた後続状態を削除する
         DeleteUnnecessarySuccessorStateChain();
 
-        LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
+        LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(resultStr.resultStr));
         //return pNextNodeMaybe;
+    }
+
+    const MStringResult& GetResultString() override {
+        return resultStr;
     }
 
     //void handleBS() { LOG_DEBUG(_T("BackSpace")); setCharDeleteInfo(1); /*STATE_COMMON->SetSpecialDeckeyOnStartStateFlag();*/ }

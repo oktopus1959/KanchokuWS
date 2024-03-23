@@ -251,18 +251,28 @@ namespace {
             auto outStr = OUTPUT_STACK->GetLastKatakanaStr<MString>();
             if (!outStr.empty()) {
                 // 全角を半角カタカナに置換
-                STATE_COMMON->SetOutString(convert_zenkaku_to_hankaku(outStr), outStr.size());
+                //STATE_COMMON->SetOutString(convert_zenkaku_to_hankaku(outStr), outStr.size());
+                resultStr.setResult(convert_zenkaku_to_hankaku(outStr), outStr.size());
                 OUTPUT_STACK->setHistBlockerAt(outStr.size());
             } else {
                 outStr = OUTPUT_STACK->GetLastHankakuKatakanaStr<MString>();
                 if (!outStr.empty()) {
                     // 半角を全角カタカナに置換
-                    STATE_COMMON->SetOutString(convert_hankaku_to_zenkaku(outStr), outStr.size());
+                    resultStr.setResult(convert_hankaku_to_zenkaku(outStr), outStr.size());
                 }
             }
 
             // チェイン不要
             LOG_DEBUG(_T("LEAVE: NO CHAIN"));
+        }
+
+        // 出力文字を取得する
+        void GetResultStringChain(MStringResult& resultOut) override {
+            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultStr.resultStr), resultStr.numBS);
+            if (!resultStr.isDefault()) {
+                resultOut.setResult(resultStr);
+            }
+            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr), resultOut.numBS);
         }
 
     };

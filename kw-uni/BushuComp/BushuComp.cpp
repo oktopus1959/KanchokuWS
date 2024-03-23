@@ -35,8 +35,6 @@ namespace {
     class BushuCompState : public State {
         DECLARE_CLASS_LOGGER;
 
-        MString compResult;
-
     public:
         // コンストラクタ
         BushuCompState(BushuCompNode* pN) {
@@ -60,22 +58,21 @@ namespace {
                     if (m0 != 0) BUSHU_DIC->AddAutoBushuEntry(m0, m2, '-');
                 }
             } else {
-                compResult = BUSHU_COMP_NODE->ReduceByBushu(m1, m2);
-                LOG_DEBUG(_T("COMP: {}"), to_wstr(compResult));
-                //STATE_COMMON->SetOutString(comp);
-                if (!compResult.empty()) {
-                    setCharDeleteInfo(2);
+                auto result = BUSHU_COMP_NODE->ReduceByBushu(m1, m2);
+                LOG_DEBUG(_T("COMP: {}"), to_wstr(result));
+                if (!result.empty()) {
+                    resultStr.setResult(result, 2);
                     copyStrokeHelpToVkbFaces();
                     //合成した文字を履歴に登録
-                    if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(compResult, 1));
+                    if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(result, 1));
                 }
             }
         }
 
-        // 出力文字を取得する
-        void GetResultStringChain(MStringResult& result) override {
-            result.resultStr = compResult;
-        }
+        //// 出力文字を取得する
+        //void GetResultStringChain(MStringResult& result) override {
+        //    result.setResult(resultStr);
+        //}
 
     };
     DEFINE_CLASS_LOGGER(BushuCompState);
@@ -128,7 +125,7 @@ MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
 }
 
 // 自動部首合成の実行
-bool BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
+bool BushuCompNode::ReduceByAutoBushu(const MString& mstr, MStringResult& resultOut) {
     if (BUSHU_DIC && !mstr.empty()) {
         size_t prevTotalCnt = PrevTotalCount;
         PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
@@ -146,11 +143,12 @@ bool BushuCompNode::ReduceByAutoBushu(const MString& mstr) {
             //PrevCompSec = utils::getSecondsFromEpochTime();
             _LOG_DEBUGH(_T("m1={}, m2={}, m={}"), (wchar_t)m1, (wchar_t)m2, (wchar_t)m);
             if (m != 0) {
-                _LOG_DEBUGH(_T("STATE_COMMON->SetOutString(m={}, numBS=1)"), (wchar_t)m);
+                _LOG_DEBUGH(_T("resultOut(m={}, numBS=1)"), (wchar_t)m);
                 MString ms = to_mstr(m);
-                STATE_COMMON->SetOutString(ms, 1);
+                //STATE_COMMON->SetOutString(ms, 1);
+                resultOut.setResult(ms, 1);
                 //STATE_COMMON->SetBackspaceNum(1);
-                STATE_COMMON->CopyStrokeHelpToVkbFaces();
+                STATE_COMMON->CopyStrokeHelpToVkbFaces((wchar_t)m);
                 IsPrevAuto = true;
                 //合成した文字を履歴に登録
                 if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(ms);

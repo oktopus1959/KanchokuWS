@@ -82,7 +82,7 @@ void State::Reactivate() {
 // DECKEY 処理の前半部(ディスパッチまで)
 void State::HandleDeckeyChain(int deckey) {
     LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
-        Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
+        Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(resultStr.resultStr()));
 
     ClearNextNodeMaybe();
 
@@ -108,13 +108,14 @@ void State::HandleDeckeyChain(int deckey) {
     // DECKEY 処理の後処理
     HandleDeckeyPostProc();
 
-    LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(STATE_COMMON->OutString()));
+    LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(resultStr.resultStr()));
 }
 
 // 入力された DECKEY を処理する(前処理)
 int State::HandleDeckeyPreProc(int deckey) {
-    /* デフォルトでは何もしない */
-    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT: deckey={}"), Name, deckey);
+    _LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({}), totalCount={}, NextNode={}"),
+        Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()));
+    resultStr.clear();
     return deckey;
 }
 
@@ -273,9 +274,13 @@ void State::DoProcOnCreated() {
 
 // 出力文字を取得する
 void State::GetResultStringChain(MStringResult& result) {
-    LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
-    if (pNext) pNext->GetResultStringChain(result);
-    LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(result.resultStr), result.numBS);
+    LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultStr.resultStr()), resultStr.numBS());
+    if (!resultStr.isDefault()) {
+        result.setResult(resultStr);
+    } else if (pNext) {
+        pNext->GetResultStringChain(result);
+    }
+    LOG_DEBUGH(_T("LEAVE: {}: result={}, numBS={}"), Name, to_wstr(result.resultStr()), result.numBS());
 }
 
 // 文字列を変換
@@ -290,10 +295,10 @@ MStringApplyResult State::ApplyResultString() {
 
 // 「最終的な出力履歴が整ったところで呼び出される処理」を先に次状態に対して実行する
 void State::DoLastHistoryProcChain() {
-    LOG_DEBUGH(_T("ENTER: {}: outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
+    LOG_DEBUGH(_T("ENTER: {}: outStr={}"), Name, to_wstr(resultStr.resultStr()));
     if (pNext) pNext->DoLastHistoryProcChain();
     if (!STATE_COMMON->IsOutStringProcDone()) DoLastHistoryProc();
-    LOG_DEBUGH(_T("LEAVE: {}: outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
+    LOG_DEBUGH(_T("LEAVE: {}: outStr={}"), Name, to_wstr(resultStr.resultStr()));
 }
 
 // 最終的な出力履歴が整ったところで呼び出される処理
@@ -473,8 +478,8 @@ void State::copyStrokeHelpToVkbFaces(wchar_t ch) {
 
 //仮想鍵盤にストロークヘルプの情報を設定する(outStringの先頭文字)
 void State::copyStrokeHelpToVkbFaces() {
-    if (!STATE_COMMON->OutString().empty()) {
-        copyStrokeHelpToVkbFaces((wchar_t)STATE_COMMON->GetFirstOutChar());
+    if (!resultStr.resultStr().empty()) {
+        copyStrokeHelpToVkbFaces((wchar_t)utils::safe_front(resultStr.resultStr()));
     }
 }
 
@@ -482,14 +487,14 @@ void State::copyStrokeHelpToVkbFaces() {
 void State::dispatchDeckey(int deckey) {
     _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({})"), Name, deckey, deckey);
     if (deckey < 0) {
-        _LOG_DEBUGH(_T("LEAVE: DO NOTHING: {}: deckey={:x}H({}), outStr={}"), Name, deckey, deckey, to_wstr(STATE_COMMON->OutString()));
+        _LOG_DEBUGH(_T("LEAVE: DO NOTHING: {}: deckey={:x}H({}), outStr={}"), Name, deckey, deckey, to_wstr(resultStr.resultStr()));
         return;
     }
     //pStateResult->Iniitalize();
     if (isNormalStrokeKey(deckey)) {
         if (deckey == STROKE_SPACE_DECKEY) {
             handleSpaceKey();
-            _LOG_DEBUGH(_T("LEAVE: {}: SpaceKey handled, outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
+            _LOG_DEBUGH(_T("LEAVE: {}: SpaceKey handled, outStr={}"), Name, to_wstr(resultStr.resultStr()));
             return;
         }
         handleStrokeKeys(deckey);
@@ -527,7 +532,7 @@ void State::dispatchDeckey(int deckey) {
         handleUndefinedDeckey(deckey);
     } else {
         if (handleFunctionKeys(deckey)) {
-            _LOG_DEBUGH(_T("LEAVE: {}: FunctionKey handled, outStr={}"), Name, to_wstr(STATE_COMMON->OutString()));
+            _LOG_DEBUGH(_T("LEAVE: {}: FunctionKey handled, outStr={}"), Name, to_wstr(resultStr.resultStr()));
             return;
         }
 
@@ -634,7 +639,7 @@ void State::dispatchDeckey(int deckey) {
 
     if (isThroughDeckey()) handleUndefinedDeckey(deckey);
 
-    _LOG_DEBUGH(_T("LEAVE: {}: deckey={:x}H({}), outStr={}"), Name, deckey, deckey, to_wstr(STATE_COMMON->OutString()));
+    _LOG_DEBUGH(_T("LEAVE: {}: deckey={:x}H({}), outStr={}"), Name, deckey, deckey, to_wstr(resultStr.resultStr()));
 }
 
 //-----------------------------------------------------------------------

@@ -5,5 +5,7 @@ class StartState : public ResidentState {
 public:
     // DECKEY 処理の流れ
     virtual void HandleDeckey(int deckey) = 0;
+
+    virtual const MStringResult& GetResultString() = 0;
 };
 
