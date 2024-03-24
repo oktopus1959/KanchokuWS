@@ -5,7 +5,7 @@
 #include "ModalState.h"
 
 // 常駐状態のベースクラス
-class ResidentState : public ModalState {
+class ResidentState : public State {
     DECLARE_CLASS_LOGGER;
 
 public:

@@ -1005,7 +1005,7 @@ namespace {
         int HandleDeckeyPreProc(int deckey) override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             resultStr.clear();
-            deckey = ModalStatePreProc(deckey);
+            deckey = ModalState::ModalStatePreProc(this, deckey);
             maybeEditedBySubState = false;
             // 常駐モード
             //if (pNext && pNext->GetName().find(_T("History")) == String::npos)

@@ -35,7 +35,7 @@ namespace {
 
     // -------------------------------------------------------------------
     // カタカナ変換機能クラス
-    class KatakanaState : public ModalState {
+    class KatakanaState : public State {
         DECLARE_CLASS_LOGGER;
 
         bool bInitialized = true;
@@ -58,7 +58,7 @@ namespace {
         void HandleDeckeyChain(int deckey) {
             LOG_DEBUGH(_T("ENTER: {}"), Name);
 
-            ModalStatePreProc(deckey);
+            ModalState::ModalStatePreProc(this, deckey);
             State::HandleDeckeyChain(deckey);
 
             LOG_DEBUGH(_T("LEAVE: {}"), Name);

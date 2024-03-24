@@ -29,20 +29,20 @@ DEFINE_CLASS_LOGGER(ModalState);
 
 // モード状態(HistoryResidentState や KatakanaState, EisuState など)のための前処理
 // 後続処理が不要な場合は -1 を返す
-int ModalState::ModalStatePreProc(int deckey) {
-    _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), Name, deckey, deckey, STATE_NAME(NextState()), NODE_NAME(NextNodeMaybe()));
+int ModalState::ModalStatePreProc(State* pState, int deckey) {
+    _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), pState->GetName(), deckey, deckey, STATE_NAME(pState->NextState()), NODE_NAME(pState->NextNodeMaybe()));
 
     // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
     // つまり、状態チェーンの末端であって、打鍵中でない場合
-    if (!NextState()) {
+    if (!pState->NextState()) {
         _LOG_DEBUGH(_T("NextNode FOUND"));
         // 交ぜ書き状態から抜けた直後にブロッカーや変換開始位置のシフトをやる場合のための処理
         if (MAZEGAKI_INFO && !MAZEGAKI_INFO->IsInMazegakiMode()) {
             _LOG_DEBUGH(_T("PATH-C"));
             // ブロッカーや読み開始位置を左右にシフト -- 読み位置がシフトされて再変換モードになったら、交ぜ書き状態を生成する
-            if (MAZEGAKI_INFO->LeftRightShiftBlockerOrStartPos(deckey, [this]() {if (MAZEGAKI_INFO->IsReXferMode()) SetNextNodeMaybe(MAZEGAKI_NODE_PTR);})) {
+            if (MAZEGAKI_INFO->LeftRightShiftBlockerOrStartPos(deckey, [pState]() {if (MAZEGAKI_INFO->IsReXferMode()) pState->SetNextNodeMaybe(MAZEGAKI_NODE_PTR);})) {
                 //シフトできた場合
-                _LOG_DEBUGH(_T("LEAVE: true: LeftRightShiftBlockerOrStartPos: SUCCEEDED\nLEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+                _LOG_DEBUGH(_T("LEAVE: true: LeftRightShiftBlockerOrStartPos: SUCCEEDED\nLEAVE: {}, NextNode={}"), pState->GetName(), NODE_NAME(pState->NextNodeMaybe()));
                 return deckey;
             }
             _LOG_DEBUGH(_T("PATH-D"));
@@ -50,45 +50,46 @@ int ModalState::ModalStatePreProc(int deckey) {
         }
         _LOG_DEBUGH(_T("PATH-E"));
 
+        Node* pNode = pState->MyNode();
         if (deckey >= 0 && (pNode == 0 || dynamic_cast<EisuNode*>(pNode) == 0)) {
             // 英数ノードでない場合
             if (pNode && dynamic_cast<ZenkakuNode*>(pNode) == 0 && deckey == TOGGLE_ZENKAKU_CONVERSION_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: ZenkakuState"));
                 //SetNextState(ZENKAKU_NODE->CreateState())->DoProcOnCreated();
-                SetNextNodeMaybe(ZENKAKU_NODE.get());
+                pState->SetNextNodeMaybe(ZENKAKU_NODE.get());
                 deckey = -1;    // この後は deckey の処理をやらない
             }
             else if (pNode && dynamic_cast<KatakanaNode*>(pNode) == 0 && deckey == TOGGLE_KATAKANA_CONVERSION_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: KatakanaState"));
                 //SetNextState(KATAKANA_NODE->CreateState())->DoProcOnCreated();
-                SetNextNodeMaybe(KATAKANA_NODE.get());
+                pState->SetNextNodeMaybe(KATAKANA_NODE.get());
                 deckey = -1;    // この後は deckey の処理をやらない
             }
             else if (pNode && dynamic_cast<EisuNode*>(pNode) == 0 && deckey == EISU_MODE_TOGGLE_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: EisuState"));
                 //SetNextState(EISU_NODE->CreateState())->DoProcOnCreated();
-                SetNextNodeMaybe(EISU_NODE.get());
+                pState->SetNextNodeMaybe(EISU_NODE.get());
                 deckey = -1;    // この後は deckey の処理をやらない
             }
-            else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokableKey(deckey)) {
+            else if ((!pNode || !pNode->isStrokeTableNode()) && State::isStrokableKey(deckey)) {
                 if (SETTINGS->multiStreamMode && STROKE_MERGER_NODE) {
                     // 配列融合状態の生成
                     LOG_INFO(_T("CREATE: StrokeMergerState"));
                     //SetNextState(STROKE_MERGER_NODE->CreateState());
-                    SetNextNodeMaybe(STROKE_MERGER_NODE.get());
+                    pState->SetNextNodeMaybe(STROKE_MERGER_NODE.get());
                 }
                 else if (ROOT_STROKE_NODE) {
                     // ルートストローク状態の生成
                     LOG_INFO(_T("CREATE: RootStrokeTableState"));
                     //SetNextState(ROOT_STROKE_NODE->CreateState());
-                    SetNextNodeMaybe(ROOT_STROKE_NODE);
+                    pState->SetNextNodeMaybe(ROOT_STROKE_NODE);
                 }
             }
             // 必要なら新状態を生成する
-            CreateNewState();
+            pState->CreateNewState();
         }
     }
 
-    _LOG_DEBUGH(_T("LEAVE: {}: deckey={}, NextNode={}"), Name, deckey, NODE_NAME(NextNodeMaybe()));
+    _LOG_DEBUGH(_T("LEAVE: {}: deckey={}, NextNode={}"), pState->GetName(), deckey, NODE_NAME(pState->NextNodeMaybe()));
     return deckey;
 }

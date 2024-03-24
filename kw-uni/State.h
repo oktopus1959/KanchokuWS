@@ -150,8 +150,11 @@ protected:
 protected:
     // 新しい状態作成のチェイン
     virtual void CreateNewStateChain();
+
+public:
     void CreateNewState();
 
+protected:
     // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
     virtual void DoProcOnCreated();
 
@@ -222,10 +225,11 @@ public:
     void JoinModeMarker(MString& modeMarker);
 
     //----------------------------------------------------------------------------------
-protected:
+public:
     // 次の処理のためのノードをセットする
     void SetNextNodeMaybe(Node* pN) { pNextNodeMaybe = pN; }
 
+protected:
     void ClearNextNodeMaybe() { pNextNodeMaybe = nullptr; }
 
     //// 次状態をチェックして、自身の状態を変更させるのに使う。DECKEY処理の後半部で呼ばれる。必要に応じてオーバーライドすること。
