@@ -1653,6 +1653,7 @@ namespace KanchokuWS.Gui
             //checkBox_autoHistEnabled_CheckedChanged(null, null);
             checkBox_useArrowKeyToSelectCand.Checked = Settings.UseArrowKeyToSelectCandidate;
             checkBox_selectHistCandByTab.Checked = Settings.SelectHistCandByTab;
+            checkBox_selectHistCandByNumberKey.Checked = Settings.SelectHistCandByNumberKey;
             comboBox_histDelDeckeyId.SelectedIndex = Settings.HistDelDeckeyId._lowLimit(41)._highLimit(48) - 41;
             comboBox_histNumDeckeyId.SelectedIndex = Settings.HistNumDeckeyId._lowLimit(41)._highLimit(48) - 41;
 
@@ -1697,6 +1698,7 @@ namespace KanchokuWS.Gui
             //checkerHistory.Add(checkBox_autoHistEnabled_CheckedChanged);
             checkerHistory.Add(checkBox_useArrowKeyToSelectCand);
             checkerHistory.Add(checkBox_selectHistCandByTab);
+            checkerHistory.Add(checkBox_selectHistCandByNumberKey);
             checkerHistory.Add(comboBox_histDelDeckeyId);
             checkerHistory.Add(comboBox_histNumDeckeyId);
 
@@ -1746,6 +1748,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("newLineWhenHistEnter", checkBox_newLineWhenHistEnter.Checked);
             Settings.SetUserIni("useArrowToSelCand", checkBox_useArrowKeyToSelectCand.Checked);
             Settings.SetUserIni("selectHistCandByTab", checkBox_selectHistCandByTab.Checked);
+            Settings.SetUserIni("selectHistCandByNumberKey", checkBox_selectHistCandByNumberKey.Checked);
             Settings.SetUserIni("histDelDeckeyId", comboBox_histDelDeckeyId.Text.Trim()._substring(0, 2));
             Settings.SetUserIni("histNumDeckeyId", comboBox_histNumDeckeyId.Text.Trim()._substring(0, 2));
 

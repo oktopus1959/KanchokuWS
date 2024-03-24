@@ -58,7 +58,7 @@ namespace {
         void HandleDeckeyChain(int deckey) {
             LOG_DEBUGH(_T("ENTER: {}"), Name);
 
-            ModalState::ModalStatePreProc(this, deckey);
+            ModalState::ModalStatePreProc(this, deckey, State::isStrokableKey(deckey));
             State::HandleDeckeyChain(deckey);
 
             LOG_DEBUGH(_T("LEAVE: {}"), Name);

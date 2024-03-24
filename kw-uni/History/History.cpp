@@ -169,6 +169,13 @@ namespace {
         }
 
         // 選択された単語を取得する
+        const HistResult GetPositionedHist(size_t pos) const {
+            _LOG_DEBUGH(_T("CALLED: selectPos={}"), pos);
+            setSelectPos(pos);
+            return getSelectedHist();
+        }
+
+        // 選択された単語を取得する
         const MString& GetSelectedWord() const {
             _LOG_DEBUGH(_T("CALLED: selectPos={}"), selectPos);
             return getSelectedWord();
@@ -1005,7 +1012,8 @@ namespace {
         int HandleDeckeyPreProc(int deckey) override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             resultStr.clear();
-            deckey = ModalState::ModalStatePreProc(this, deckey);
+            deckey = ModalState::ModalStatePreProc(this, deckey,
+                State::isStrokableKey(deckey) && (!bCandSelectable || deckey >= 10 || !SETTINGS->selectHistCandByNumberKey));
             maybeEditedBySubState = false;
             // 常駐モード
             //if (pNext && pNext->GetName().find(_T("History")) == String::npos)
@@ -1269,6 +1277,16 @@ namespace {
             }
         }
 
+        // 0～9 を処理する
+        void handleStrokeKeys(int deckey) {
+            _LOG_DEBUGH(_T("ENTER: {}: deckey={}, bCandSelectable={}"), Name, deckey, bCandSelectable);
+            if (bCandSelectable) {
+                setCandSelectIsCalled();
+                getPosCandidate((size_t)deckey);
+            }
+            _LOG_DEBUGH(_T("LEAVE"));
+        }
+
         //// Shift+Space の処理 -- 履歴検索の開始、次の候補を返す
         //void handleShiftSpace() {
         //    _LOG_DEBUGH(_T("CALLED: {}"), Name);
@@ -1481,6 +1499,12 @@ namespace {
         void getPrevCandidate(bool bSetVkb = true) {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             outputHistResult(HIST_CAND->GetPrev(), bSetVkb);
+        }
+
+        // 次の候補を返す処理
+        void getPosCandidate(size_t pos, bool bSetVkb = true) {
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
+            outputHistResult(HIST_CAND->GetPositionedHist(pos), bSetVkb);
         }
 
         // 選択のリセット

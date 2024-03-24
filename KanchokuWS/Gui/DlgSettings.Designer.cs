@@ -406,6 +406,7 @@ namespace KanchokuWS.Gui
             this.checkBox_mazeBlockerTail = new System.Windows.Forms.CheckBox();
             this.checkBox_mazegakiSelectFirstCand = new System.Windows.Forms.CheckBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.checkBox_selectHistCandByNumberKey = new System.Windows.Forms.CheckBox();
             this.checkBox_newLineWhenHistEnter = new System.Windows.Forms.CheckBox();
             this.checkBox_selectHistCandByTab = new System.Windows.Forms.CheckBox();
             this.label111 = new System.Windows.Forms.Label();
@@ -4895,7 +4896,7 @@ namespace KanchokuWS.Gui
             this.groupBox44.Controls.Add(this.textBox_mazeHistRegisterMinLen);
             this.groupBox44.Controls.Add(this.label112);
             this.groupBox44.Controls.Add(this.textBox_histMapGobiMaxLength);
-            this.groupBox44.Location = new System.Drawing.Point(11, 308);
+            this.groupBox44.Location = new System.Drawing.Point(11, 326);
             this.groupBox44.Name = "groupBox44";
             this.groupBox44.Size = new System.Drawing.Size(307, 60);
             this.groupBox44.TabIndex = 2;
@@ -5080,6 +5081,7 @@ namespace KanchokuWS.Gui
             // 
             // groupBox17
             // 
+            this.groupBox17.Controls.Add(this.checkBox_selectHistCandByNumberKey);
             this.groupBox17.Controls.Add(this.checkBox_newLineWhenHistEnter);
             this.groupBox17.Controls.Add(this.checkBox_selectHistCandByTab);
             this.groupBox17.Controls.Add(this.label111);
@@ -5091,10 +5093,22 @@ namespace KanchokuWS.Gui
             this.groupBox17.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox17.Location = new System.Drawing.Point(11, 193);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(307, 110);
+            this.groupBox17.Size = new System.Drawing.Size(307, 127);
             this.groupBox17.TabIndex = 1;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "履歴選択・削除";
+            // 
+            // checkBox_selectHistCandByNumberKey
+            // 
+            this.checkBox_selectHistCandByNumberKey.AutoSize = true;
+            this.checkBox_selectHistCandByNumberKey.Location = new System.Drawing.Point(20, 59);
+            this.checkBox_selectHistCandByNumberKey.Name = "checkBox_selectHistCandByNumberKey";
+            this.checkBox_selectHistCandByNumberKey.Size = new System.Drawing.Size(177, 19);
+            this.checkBox_selectHistCandByNumberKey.TabIndex = 3;
+            this.checkBox_selectHistCandByNumberKey.Text = "数字キーで履歴候補を選択する";
+            this.toolTip1.SetToolTip(this.checkBox_selectHistCandByNumberKey, "履歴候補が横列表示されている時、数字キーで候補選択を行うか\r\n否かを設定します。\r\n\r\nT-Code のように、数字段も用いているような配列を使用する場合は、\r\n" +
+        "無効化したほうが無難です。");
+            this.checkBox_selectHistCandByNumberKey.UseVisualStyleBackColor = true;
             // 
             // checkBox_newLineWhenHistEnter
             // 
@@ -5153,16 +5167,16 @@ namespace KanchokuWS.Gui
             "46 ( : )",
             "47 ( ] )",
             "48 (＼)"});
-            this.comboBox_histNumDeckeyId.Location = new System.Drawing.Point(194, 85);
+            this.comboBox_histNumDeckeyId.Location = new System.Drawing.Point(194, 103);
             this.comboBox_histNumDeckeyId.Name = "comboBox_histNumDeckeyId";
             this.comboBox_histNumDeckeyId.Size = new System.Drawing.Size(75, 20);
-            this.comboBox_histNumDeckeyId.TabIndex = 4;
+            this.comboBox_histNumDeckeyId.TabIndex = 5;
             this.toolTip1.SetToolTip(this.comboBox_histNumDeckeyId, resources.GetString("comboBox_histNumDeckeyId.ToolTip"));
             // 
             // label43
             // 
             this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(17, 89);
+            this.label43.Location = new System.Drawing.Point(17, 107);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(166, 15);
             this.label43.TabIndex = 20;
@@ -5182,17 +5196,17 @@ namespace KanchokuWS.Gui
             "46 ( : )",
             "47 ( ] )",
             "48 (＼)"});
-            this.comboBox_histDelDeckeyId.Location = new System.Drawing.Point(194, 62);
+            this.comboBox_histDelDeckeyId.Location = new System.Drawing.Point(194, 80);
             this.comboBox_histDelDeckeyId.Name = "comboBox_histDelDeckeyId";
             this.comboBox_histDelDeckeyId.Size = new System.Drawing.Size(75, 20);
-            this.comboBox_histDelDeckeyId.TabIndex = 3;
+            this.comboBox_histDelDeckeyId.TabIndex = 4;
             this.toolTip1.SetToolTip(this.comboBox_histDelDeckeyId, "縦列表示された履歴選択状態のとき、削除モードに移行するキーの\r\n漢直コードを設定します。\r\n\r\n削除モードに入り、縦列鍵盤に対応するキーを押すと、\r\n候補が削除さ" +
         "れて exclude リストに登録されます。\r\nexclude リストに登録された文字列は、候補に表示されません。");
             // 
             // label42
             // 
             this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(17, 66);
+            this.label42.Location = new System.Drawing.Point(17, 84);
             this.label42.Name = "label42";
             this.label42.Size = new System.Drawing.Size(130, 15);
             this.label42.TabIndex = 18;
@@ -5472,12 +5486,10 @@ namespace KanchokuWS.Gui
             this.checkBox_selectFirstCandByEnter.AutoSize = true;
             this.checkBox_selectFirstCandByEnter.Location = new System.Drawing.Point(40, 98);
             this.checkBox_selectFirstCandByEnter.Name = "checkBox_selectFirstCandByEnter";
-            this.checkBox_selectFirstCandByEnter.Size = new System.Drawing.Size(180, 19);
+            this.checkBox_selectFirstCandByEnter.Size = new System.Drawing.Size(210, 19);
             this.checkBox_selectFirstCandByEnter.TabIndex = 4;
-            this.checkBox_selectFirstCandByEnter.Text = "Enterキーで先頭候補を選択する";
-            this.toolTip1.SetToolTip(this.checkBox_selectFirstCandByEnter, "自動履歴検索で横列表示された候補の先頭候補を\nEnterキーで選択するかを設定します。\n\n当設定をOFFに設定してあるのに、つい選択するつもりで\nEnterを押し" +
-        "てしまった場合は、出力先ウィンドウでEnter前の\n位置にカレットを移動させてからブロッカーを解除して手動で\n履歴検索を実行してください。\n\nなお、履歴候補が縦" +
-        "列表示されている状態では、先頭候補が\nEnterキーで選択されます。");
+            this.checkBox_selectFirstCandByEnter.Text = "Enterキーで先頭候補を選択・確定する";
+            this.toolTip1.SetToolTip(this.checkBox_selectFirstCandByEnter, resources.GetString("checkBox_selectFirstCandByEnter.ToolTip"));
             this.checkBox_selectFirstCandByEnter.UseVisualStyleBackColor = true;
             // 
             // checkBox_autoHistEnabled
@@ -7651,5 +7663,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.TextBox textBox_charKeyComboMinOverlappingTime;
         private System.Windows.Forms.Label label156;
         private System.Windows.Forms.CheckBox checkBox_multiStreamMode;
+        private System.Windows.Forms.CheckBox checkBox_selectHistCandByNumberKey;
     }
 }

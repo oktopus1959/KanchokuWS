@@ -53,6 +53,7 @@ struct Settings {
 
     bool histMoveShortestAt2nd = false;     // 最短長履歴文字列を2番目に表示する
     bool showHistCandsFromFirst = true;     // 最初の履歴選択から横列候補表示を行うか
+    bool selectHistCandByNumberKey = false; // 横列候補表示時に、数字キーで候補の選択を行うか
 
     bool useArrowToSelCand = true;          // 矢印キーで履歴候補選択を行う
     bool selectHistCandByTab = true;        // Tabキーで履歴候補選択を行う

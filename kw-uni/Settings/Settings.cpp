@@ -75,6 +75,7 @@ void Settings::SetValues(const std::map<String, String>& dict) {
     SET_UINT_VALUE(histHorizontalCandMax);
     SET_BOOL_VALUE(histMoveShortestAt2nd);
     SET_BOOL_VALUE(showHistCandsFromFirst);
+    SET_BOOL_VALUE(selectHistCandByNumberKey);
 
     SET_BOOL_VALUE(useArrowToSelCand);
     SET_BOOL_VALUE(selectHistCandByTab);

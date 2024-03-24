@@ -29,7 +29,7 @@ DEFINE_CLASS_LOGGER(ModalState);
 
 // モード状態(HistoryResidentState や KatakanaState, EisuState など)のための前処理
 // 後続処理が不要な場合は -1 を返す
-int ModalState::ModalStatePreProc(State* pState, int deckey) {
+int ModalState::ModalStatePreProc(State* pState, int deckey, bool isStrokable) {
     _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), pState->GetName(), deckey, deckey, STATE_NAME(pState->NextState()), NODE_NAME(pState->NextNodeMaybe()));
 
     // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
@@ -71,7 +71,7 @@ int ModalState::ModalStatePreProc(State* pState, int deckey) {
                 pState->SetNextNodeMaybe(EISU_NODE.get());
                 deckey = -1;    // この後は deckey の処理をやらない
             }
-            else if ((!pNode || !pNode->isStrokeTableNode()) && State::isStrokableKey(deckey)) {
+            else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokable) {
                 if (SETTINGS->multiStreamMode && STROKE_MERGER_NODE) {
                     // 配列融合状態の生成
                     LOG_INFO(_T("CREATE: StrokeMergerState"));
