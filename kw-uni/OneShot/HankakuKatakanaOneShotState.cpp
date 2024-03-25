@@ -14,6 +14,17 @@
 
 #include "HankakuKatakanaOneShot.h"
 
+#if 1 || defined(_DEBUG)
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#undef _LOG_DEBUGH
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
+#endif
+
 namespace {
 
     size_t katakana_to_hankaku(MString& result, mchar_t ch) {
@@ -246,9 +257,10 @@ namespace {
 
         // 機能状態に対して生成時処理を実行する
         void DoProcOnCreated() override {
-            LOG_DEBUG(_T("ENTER"));
+            LOG_DEBUG(_T("ENTER: outStack={}"), OUTPUT_STACK->OutputStackBackStrForDebug(10, true));
 
             auto outStr = OUTPUT_STACK->GetLastKatakanaStr<MString>();
+            LOG_DEBUG(_T("zenkakuKatakanaStr={}"), to_wstr(outStr));
             if (!outStr.empty()) {
                 // 全角を半角カタカナに置換
                 //STATE_COMMON->SetOutString(convert_zenkaku_to_hankaku(outStr), outStr.size());
@@ -256,6 +268,7 @@ namespace {
                 OUTPUT_STACK->setHistBlockerAt(outStr.size());
             } else {
                 outStr = OUTPUT_STACK->GetLastHankakuKatakanaStr<MString>();
+                LOG_DEBUG(_T("hankakuKatakanaStr={}"), to_wstr(outStr));
                 if (!outStr.empty()) {
                     // 半角を全角カタカナに置換
                     resultStr.setResult(convert_hankaku_to_zenkaku(outStr), outStr.size());
@@ -263,16 +276,16 @@ namespace {
             }
 
             // チェイン不要
-            LOG_DEBUG(_T("LEAVE: NO CHAIN"));
+            LOG_DEBUG(_T("LEAVE: NO CHAIN: resultStr={}"), to_wstr(resultStr.resultStr()));
         }
 
         // 出力文字を取得する
         void GetResultStringChain(MStringResult& resultOut) override {
-            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultStr.resultStr), resultStr.numBS);
+            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultStr.resultStr()), resultStr.numBS());
             if (!resultStr.isDefault()) {
                 resultOut.setResult(resultStr);
             }
-            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr), resultOut.numBS);
+            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
         }
 
     };

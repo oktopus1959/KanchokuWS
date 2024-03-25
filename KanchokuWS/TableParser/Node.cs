@@ -76,7 +76,7 @@ namespace KanchokuWS.TableParser
         public string GetQuotedString()
         {
             //return str._safeReplace(@"\", @"\\")._safeReplace(@"""", @"\""")._quoteString(isBare);
-            return makeQuotedString(str, isBare);
+            return isBare && str._getFirst() == '@' ? str : makeQuotedString(str, isBare);
         }
 
         private static string makeQuotedString(string s, bool isBare)

@@ -13,8 +13,8 @@ void OutputStack::CreateSingleton() {
     Singleton.reset(new OutputStack());
 }
 
-String OutputStack::OutputStackBackStrForDebug(size_t len) const {
-    return std::regex_replace(to_wstr(OUTPUT_STACK->OutputStackBackStr(len)), std::wregex(_T("\n")), _T("|"));
+String OutputStack::OutputStackBackStrForDebug(size_t len, bool bWithFlag) const {
+    return std::regex_replace(to_wstr(OUTPUT_STACK->OutputStackBackStr(len, bWithFlag)), std::wregex(_T("\n")), _T("|"));
 }
 
 void OutputStack::_resize() {

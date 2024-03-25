@@ -38,7 +38,7 @@ namespace {
 
         // 機能状態に対して生成時処理を実行する
         void DoProcOnCreated() override {
-            _LOG_DEBUGH(_T("ENTER"));
+            _LOG_DEBUGH(_T("ENTER: outStack={}"), OUTPUT_STACK->OutputStackBackStrForDebug(10, true));
 
             auto outStr = OUTPUT_STACK->GetLastHiraganaStr<MString>(true);
             size_t numBS = outStr.size();
@@ -65,16 +65,16 @@ namespace {
             }
 
             // チェイン不要
-            _LOG_DEBUGH(_T("LEAVE: NO CHAIN"));
+            _LOG_DEBUGH(_T("LEAVE: NO CHAIN: resultStr={}"), to_wstr(resultStr.resultStr()));
         }
 
         // 出力文字を取得する
         void GetResultStringChain(MStringResult& resultOut) override {
-            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultStr.resultStr), resultStr.numBS);
+            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultStr.resultStr()), resultStr.numBS());
             if (!resultStr.isDefault()) {
                 resultOut.setResult(resultStr);
             }
-            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr), resultOut.numBS);
+            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
         }
 
     };

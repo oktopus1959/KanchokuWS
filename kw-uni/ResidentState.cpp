@@ -7,6 +7,8 @@
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
 #if 0 || defined(_DEBUG)
+#undef LOG_DEBUGH
+#undef _LOG_DEBUGH
 #define LOG_DEBUGH LOG_INFO
 #define _LOG_DEBUGH LOG_INFO
 #endif

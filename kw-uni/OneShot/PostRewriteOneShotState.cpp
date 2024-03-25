@@ -99,15 +99,16 @@ namespace {
                 //resultOut.numBS = numBS;
                 //resultOut.resultStr = rewInfo->rewriteStr;
                 //resultOut.rewritableLen = rewInfo->rewritableLen;
-                _LOG_DEBUGH(_T("REWRITE: outStr={}, rewritableLen={}, subTable={:p}, numBS={}"), to_wstr(resultOut.resultStr()), resultOut.rewritableLen, (void*)rewInfo->subTable, resultOut.numBS);
+                _LOG_DEBUGH(_T("REWRITE: outStr={}, rewritableLen={}, subTable={:p}, numBS={}"),
+                    to_wstr(resultOut.resultStr()), resultOut.rewritableLen(), (void*)rewInfo->subTable, resultOut.numBS());
                 if (rewInfo->subTable) {
                     SetNextNodeMaybe(rewInfo->subTable);
                 }
             } else {
                 resultOut.setResultWithRewriteLen(MY_NODE->getString(), MY_NODE->getRewritableLen());
-                _LOG_DEBUGH(_T("NO REWRITE: outStr={}, rewritableLen={}, numBS={}"), to_wstr(resultOut.resultStr), resultOut.rewritableLen, resultOut.numBS);
+                _LOG_DEBUGH(_T("NO REWRITE: outStr={}, rewritableLen={}, numBS={}"), to_wstr(resultOut.resultStr()), resultOut.rewritableLen(), resultOut.numBS());
             }
-            _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr), resultOut.numBS);
+            _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
         }
 
     };

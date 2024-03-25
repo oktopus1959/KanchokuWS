@@ -51,7 +51,7 @@ public:
         // チェーンをたどって不要とマークされた後続状態を削除する
         DeleteUnnecessarySuccessorStateChain();
 
-        LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(resultStr.resultStr));
+        LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(resultStr.resultStr()));
         //return pNextNodeMaybe;
     }
 

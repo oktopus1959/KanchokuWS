@@ -5,12 +5,21 @@
 
 #include "DeckeyToChars.h"
 
+#if 1 || defined(_DEBUG)
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#undef _LOG_DEBUGH
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
+#endif
+
 namespace {
     // エスケープ状態
     class EscapeState : public State {
         DECLARE_CLASS_LOGGER;
-
-        bool bUnncessary = false;
 
         wchar_t outputChar = '\0';
 
@@ -23,28 +32,30 @@ namespace {
             Initialize(logger.ClassNameT(), pN);
         }
 
+        // 機能状態に対して生成時処理を実行する
+        void DoProcOnCreated() override {
+            LOG_DEBUG(_T("ENTER"));
+            MarkNecessary();
+            LOG_DEBUG(_T("LEAVE: CHAIN ME"));
+        }
+
         // 出力文字を取得する
         void GetResultStringChain(MStringResult& resultOut) override {
-            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr), resultOut.numBS);
+            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
             if (!resultStr.isDefault()) {
                 resultOut.setResult(resultStr);
             } else if (outputChar != '\0') {
                 resultOut.setResult(outputChar);
                 outputChar = '\0';
             }
-            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr), resultOut.numBS);
+            LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
         }
 
         void handleStrokeKeys(int deckey) {
             wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
             LOG_DEBUG(_T("CALLED: {}: deckey={:x}H({}), face={}"), Name, deckey, deckey, myChar);
             outputChar = myChar;
-            bUnncessary = true;
-        }
-
-        bool IsUnnecessary() {
-            LOG_DEBUG(_T("CALLED"));
-            return bUnncessary;
+            MarkUnnecessary();
         }
 
     };

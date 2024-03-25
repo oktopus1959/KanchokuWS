@@ -378,8 +378,8 @@ public:
         return tail_string(maxlen, tail_size(), true, extraBarPos);
     }
 
-    inline MString backStringFull(size_t maxlen) const {
-        return tail_string(maxlen, size());
+    inline MString backStringFull(size_t maxlen, bool bWithFlag = false) const {
+        return tail_string(maxlen, size(), bWithFlag);
     }
 
     inline size_t size() const { return stack.size(); }
@@ -388,8 +388,8 @@ public:
 
     //inline const OutputStack& OutStack() { return outputStack; }
 
-    inline MString OutputStackBackStr(size_t len) const { return backStringFull(len); }
-    String OutputStackBackStrForDebug(size_t len) const;
+    inline MString OutputStackBackStr(size_t len, bool bWithFlag = false) const { return backStringFull(len, bWithFlag); }
+    String OutputStackBackStrForDebug(size_t len, bool bWithFlag = false) const;
 
     inline mchar_t OutputStackLastChar() const { return back(); }
     inline mchar_t LastOutStackChar() const { return OutputStackLastChar(); }

@@ -18,7 +18,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughKatakana)
 
-#if 0 || defined(_DEBUG)
+#if 1 || defined(_DEBUG)
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
