@@ -30,6 +30,10 @@ public:
         return _resultStr.empty() && _rewritableLen == 0 && _numBS == 0;
     }
 
+    bool isModified() const {
+        return !isDefault();
+    }
+
     void clear() {
         _resultStr.clear();
         _rewritableLen = 0;

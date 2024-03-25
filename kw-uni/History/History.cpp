@@ -899,12 +899,16 @@ namespace {
         // 出力文字を取得する
         void GetResultStringChain(MStringResult& resultOut) override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            if (!resultStr.isDefault()) {
-                resultOut.setResult(resultStr);
+            if (resultStr.isDefault()) {
+                if (NextState()) {
+                    State::GetResultStringChain(resultOut);
+                }
+                if (resultOut.isModified()) {
+                    SetTranslatedOutString(resultOut);
+                }
             }
-            else if (NextState()) {
-                State::GetResultStringChain(resultOut);
-                SetTranslatedOutString(resultOut);
+            if (resultStr.isModified()) {
+                resultOut.setResult(resultStr);
             }
         }
 
@@ -971,7 +975,7 @@ namespace {
                 }
             //}
             AddNewHistEntryOnSomeChar();
-            _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+            _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultStr.resultStr()), resultStr.numBS());
         }
 
         void handleFullEscapeResidentState() override {

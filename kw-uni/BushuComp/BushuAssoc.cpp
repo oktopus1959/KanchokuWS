@@ -16,7 +16,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughBushu)
 
-#if 0
+#if 1
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
@@ -138,7 +138,7 @@ namespace {
     protected:
         CurrentAssocList currentList;
 
-        MStringResult _result;
+        //MStringResult _result;
 
     public:
         // コンストラクタ
@@ -163,7 +163,7 @@ namespace {
             if (EX_NODE->PrevKey != 0 && totalCnt <= EX_NODE->PrevTotalCount + 2 && EX_NODE->PrevAssoc == outChar) {
                 outChar = EX_NODE->PrevKey;
                 //STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す
-                _result.setResult(MString(1, outChar), 1);
+                resultStr.setResult(MString(1, outChar), 1);
             } else {
                 EX_NODE->Count = 0;
             }
@@ -183,12 +183,12 @@ namespace {
 
         // 出力文字を取得する
         void GetResultStringChain(MStringResult& resultOut) override {
-            resultOut.setResult(_result);
+            resultOut.setResult(resultStr);
         }
 
         // Strokeキー を処理する
         void handleStrokeKeys(int deckey) {
-            _LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({})"), Name, deckey, deckey);
+            _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({})"), Name, deckey, deckey);
             //EX_NODE->PrevAssocSec = utils::getSecondsFromEpochTime();
             EX_NODE->PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
             EX_NODE->Count = 10;    // 10 は最大値の意味で使っている
@@ -196,14 +196,15 @@ namespace {
             if (deckey >= STROKE_SPACE_DECKEY) {
                 // スペース以上ならそのまま
                 setVkbCandidatesList();
+                _LOG_DEBUGH(_T("LEAVE: {}: no resultStr"), Name);
                 return;
             }
             MString word = currentList.SelectNthTarget(deckey);
             //STATE_COMMON->SetOutString(word);
-            _result.setResult(word);
+            resultStr.setResult(word);
             if (!word.empty()) {
                 //STATE_COMMON->SetBackspaceNum(1);
-                _result.setNumBS(1);
+                resultStr.setNumBS(1);
                 //選択した文字を履歴に登録
                 if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(word, 1));
             }
@@ -211,6 +212,7 @@ namespace {
             handleKeyPostProc(true);
             EX_NODE->PrevKey = currentList.GetKey();
             EX_NODE->PrevAssoc = utils::safe_front(word);
+            _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultStr.resultStr()), resultStr.numBS());
         }
 
         //void handleSpaceKey() {
@@ -364,7 +366,7 @@ namespace {
 
         // 出力文字を取得する
         void GetResultStringChain(MStringResult& resultOut) override {
-            _LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr), resultOut.numBS);
+            _LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
             // TODO: DoProcOnCreated の STATE_COMMON 処理をやめて、こちらで出力文字列を返すようにする
             size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
             //_LOG_DEBUGH(_T("ENTER: {}, count={}"), Name, cnt);
@@ -395,7 +397,8 @@ namespace {
                                 // 出力文字列と削除文字のセット
                                 //STATE_COMMON->SetOutString(cs, 1);
                                 //copyStrokeHelpToVkbFaces();
-                                resultOut.setResult(cs, 1);
+                                resultStr.setResult(cs, 1);
+                                resultOut.setResult(resultStr);
                                 //やり直し合成した文字を履歴に登録
                                 if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(cs, 1));
                                 _LOG_DEBUGH(_T("LEAVE: {}: Reduce by using swapped bushu"), Name);
@@ -428,6 +431,7 @@ namespace {
                         _LOG_DEBUGH(_T("SELECT HEAD: count={}"), cnt);
                         // N回目までなら先頭またはN文字目を返す
                         handleStrokeKeys(cnt);
+                        resultOut.setResult(resultStr);
                         // カウントを更新
                         EX_NODE->Count = cnt + 1;
                     } else {
@@ -444,7 +448,7 @@ namespace {
                     }
                 }
             }
-            _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr), resultOut.numBS);
+            _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
         }
 
         //// Strokeキー を処理する
