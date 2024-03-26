@@ -320,7 +320,6 @@ namespace {
             }
             _LOG_DEBUGH(_T("outStr={}, outKey={}"), to_wstr(outStr), to_wstr(outKey));
 
-            //STATE_COMMON->SetOutString(outStr);
             resultString().setResult(outStr);
             HISTORY_RESIDENT_NODE->SetPrevHistState(outStr, outKey);
 
@@ -350,14 +349,12 @@ namespace {
             } else if (prevOut.empty()) {
                 // ②検索が実行されたが、出力文字列にはキーだけが表示されている状態
                 _LOG_DEBUGH(_T("CURRENT: SetOutString(str={}, numBS={})"), to_wstr(prevKey), prevKey.size());
-                //STATE_COMMON->SetOutString(prevKey, prevKey.size());
                 resultString().setResult(prevKey, prevKey.size());
                 HISTORY_RESIDENT_NODE->SetPrevHistState(prevKey, prevKey);
                 _LOG_DEBUGH(_T("CURRENT: prevKey={}"), to_wstr(prevKey));
             } else {
                 // ③横列のどれかの候補が選択されて出力文字列に反映されている状態
                 _LOG_DEBUGH(_T("REVERT and NEW HIST: SetOutString(str={}, numBS={})"), to_wstr(prevKey), prevOut.size());
-                //STATE_COMMON->SetOutString(prevKey, prevOut.size());
                 resultString().setResult(prevKey, prevOut.size());
                 HISTORY_RESIDENT_NODE->SetPrevHistState(prevKey, prevKey);
                 _LOG_DEBUGH(_T("REVERT and NEW HIST: prevKey={}"), to_wstr(prevKey));
@@ -960,18 +957,23 @@ namespace {
         // 文字列を変換して出力、その後、履歴の追加
         void SetTranslatedOutString(const MString& outStr, size_t rewritableLen, bool bBushuComp = true, int numBS = -1) override {
             _LOG_DEBUGH(_T("ENTER: {}: outStr={}, rewritableLen={}, bushuComp={}, numBS={}"), Name, to_wstr(outStr), rewritableLen, bBushuComp, numBS);
+            MString xlatStr;
             if (NextState()) {
                 // Katakana など
-                _LOG_DEBUGH(_T("NextStates={}"), JoinedName());
-                MString xlatStr = NextState()->TranslateString(outStr);
-                _LOG_DEBUGH(_T("{}: SetOutStringWithRewritableLen-A({}, {}, {})"), Name, to_wstr(xlatStr), xlatStr == outStr ? rewritableLen : 0, numBS);
-                //STATE_COMMON->SetOutStringWithRewritableLen(xlatStr, xlatStr == outStr ? rewritableLen : 0, numBS);
+                _LOG_DEBUGH(_T("Call TranslateString of NextStates={}"), JoinedName());
+                xlatStr = NextState()->TranslateString(outStr);
+            }
+            if (!xlatStr.empty() && xlatStr != outStr) {
                 resultStr.setResultWithRewriteLen(xlatStr, xlatStr == outStr ? rewritableLen : 0, numBS);
             } else {
-                // 自動部首合成
-                if (!bBushuComp || SETTINGS->autoBushuCompMinCount < 1 || !BUSHU_COMP_NODE->ReduceByAutoBushu(outStr, resultStr)) {
-                    _LOG_DEBUGH(_T("{}: SetOutStringWithRewritableLen-B({}, {}, {})"), Name, to_wstr(outStr), rewritableLen, numBS);
-                    //STATE_COMMON->SetOutStringWithRewritableLen(outStr, rewritableLen, numBS);
+                resultStr.clear();
+                if (bBushuComp && SETTINGS->autoBushuCompMinCount > 0) {
+                    // 自動部首合成
+                    _LOG_DEBUGH(_T("Call AutoBushu"));
+                    BUSHU_COMP_NODE->ReduceByAutoBushu(outStr, resultStr);
+                }
+                if (!resultStr.isModified()) {
+                    _LOG_DEBUGH(_T("Set outStr"));
                     resultStr.setResultWithRewriteLen(outStr, rewritableLen, numBS);
                 }
             }
@@ -990,7 +992,6 @@ namespace {
             if (!romanStr.empty() && romanStr.size() <= SETTINGS->histMapKeyMaxLength) {
                 if (is_upper_alphabet(romanStr[0])) {
                     romanStr[0] = to_lower(romanStr[0]);
-                    //STATE_COMMON->SetOutString(romanStr, romanStr.size());
                     resultStr.setResult(romanStr, romanStr.size());
                 }
             }
