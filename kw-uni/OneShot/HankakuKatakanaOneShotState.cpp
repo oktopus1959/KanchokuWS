@@ -263,7 +263,6 @@ namespace {
             LOG_DEBUG(_T("zenkakuKatakanaStr={}"), to_wstr(outStr));
             if (!outStr.empty()) {
                 // 全角を半角カタカナに置換
-                //STATE_COMMON->SetOutString(convert_zenkaku_to_hankaku(outStr), outStr.size());
                 resultStr.setResult(convert_zenkaku_to_hankaku(outStr), outStr.size());
                 OUTPUT_STACK->setHistBlockerAt(outStr.size());
             } else {

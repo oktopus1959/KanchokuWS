@@ -298,7 +298,6 @@ namespace {
 
             // 直前の変換があればそれを取り消す
             if (prevXfered) {
-                //STATE_COMMON->SetOutString(prevYomi, prevOutLen);
                 resultStr.setResult(prevYomi, prevOutLen);
             }
             {
@@ -494,7 +493,6 @@ namespace {
 
             // 変換形の出力
             _LOG_DEBUGH(_T("SET_OUT_STRING: {}, numBS={}"), to_wstr(outStr), numBS);
-            //STATE_COMMON->SetOutString(outStr, numBS);
             resultStr.setResult(outStr, numBS);
             // ブロッカー設定
             //_LOG_DEBUGH(_T("SET_MAZE_BLOCKER: pos={}"), SETTINGS->mazeBlockerTail ? 0 : outStr.size() - (leadStr.size() + mazeResult.xferLen));
@@ -718,7 +716,6 @@ bool MazegakiCommonInfo::RevertPrevXfer(MStringResult& resultOut) {
     if (IsJustAfterPrevXfer() && prevOutputLen > 0) {
         MAZEGAKI_INFO->SetReXferMode();         // 再変換モードにセット
         MAZEGAKI_INFO->SetJustAfterPrevXfer();  // 続けて交ぜ書き関連の操作を受け付けるようにする
-        //STATE_COMMON->SetOutString(prevYomi, prevOutputLen);
         resultOut.setResult(prevYomi, prevOutputLen);
         prevLeadLen = 0;
         prevOutputLen = 0;

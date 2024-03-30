@@ -162,8 +162,7 @@ namespace {
             _LOG_DEBUGH(_T("DeckeyCount={}, PrevTotalCount={}, AssocCount={}, outChar={}, PrevAssoc={}, PrevKey={}"), totalCnt, EX_NODE->PrevTotalCount, EX_NODE->Count, SAFE_CHAR(outChar), SAFE_CHAR(EX_NODE->PrevAssoc), SAFE_CHAR(EX_NODE->PrevKey));
             if (EX_NODE->PrevKey != 0 && totalCnt <= EX_NODE->PrevTotalCount + 2 && EX_NODE->PrevAssoc == outChar) {
                 outChar = EX_NODE->PrevKey;
-                //STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す
-                resultStr.setResult(MString(1, outChar), 1);
+                resultStr.setResult(MString(1, outChar), 1);    // 出力文字も元に戻す
             } else {
                 EX_NODE->Count = 0;
             }
@@ -200,7 +199,6 @@ namespace {
                 return;
             }
             MString word = currentList.SelectNthTarget(deckey);
-            //STATE_COMMON->SetOutString(word);
             resultStr.setResult(word);
             if (!word.empty()) {
                 //STATE_COMMON->SetBackspaceNum(1);
@@ -395,7 +393,6 @@ namespace {
                             if (!cs.empty()) {
                                 _LOG_DEBUGH(_T("PATH-B"));
                                 // 出力文字列と削除文字のセット
-                                //STATE_COMMON->SetOutString(cs, 1);
                                 //copyStrokeHelpToVkbFaces();
                                 resultStr.setResult(cs, 1);
                                 resultOut.setResult(resultStr);
@@ -437,9 +434,7 @@ namespace {
                     } else {
                         _LOG_DEBUGH(_T("REVERT: {}"), (wchar_t)outChar);
                         currentList.FindEntry(outChar);
-                        //STATE_COMMON->outString.resize(1);
-                        //STATE_COMMON->SetOutString(outChar, 1);  // 出力文字も元に戻す
-                        resultOut.setResult(to_mstr(outChar), 1);
+                        resultOut.setResult(to_mstr(outChar), 1);  // 出力文字も元に戻す
 
                         setVkbCandidatesList();
 
@@ -450,22 +445,6 @@ namespace {
             }
             _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
         }
-
-        //// Strokeキー を処理する
-        //void handleStrokeKeys(int deckey) {
-        //    _LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({})"), Name, deckey, deckey);
-        //    //bool bRetry = EX_NODE->PrevKey == currentList.GetKey();
-        //    //const MString& word = currentList.SelectNthTarget(deckey >= STROKE_SPACE_DECKEY ? (bRetry ? 1 : 0) : deckey);    // スペース以上なら先頭を選択
-        //    //STATE_COMMON->SetOutString(word);
-        //    //if (!word.empty()) {
-        //    //    STATE_COMMON->SetBackspaceNum(1);
-        //    //    //選択した文字を履歴に登録
-        //    //    if (HISTORY_DIC) HISTORY_DIC->AddNewEntry(utils::last_substr(word, 1));
-        //    //}
-        //    //EX_NODE->PrevKey = currentList.GetKey();
-        //    //EX_NODE->PrevAssoc = utils::safe_front(word);
-        //    //handleKeyPostProc(true);
-        //}
 
     };
     DEFINE_CLASS_LOGGER(BushuAssocExState);

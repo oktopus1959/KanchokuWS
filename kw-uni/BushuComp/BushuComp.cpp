@@ -145,9 +145,7 @@ bool BushuCompNode::ReduceByAutoBushu(const MString& mstr, MStringResult& result
             if (m != 0) {
                 _LOG_DEBUGH(_T("resultOut(m={}, numBS=1)"), (wchar_t)m);
                 MString ms = to_mstr(m);
-                //STATE_COMMON->SetOutString(ms, 1);
                 resultOut.setResult(ms, 1);
-                //STATE_COMMON->SetBackspaceNum(1);
                 STATE_COMMON->CopyStrokeHelpToVkbFaces((wchar_t)m);
                 IsPrevAuto = true;
                 //合成した文字を履歴に登録

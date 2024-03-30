@@ -660,17 +660,20 @@ namespace KanchokuWS.Handler
                             if (bShiftOnSamePlane) {
                                 // SandSと同じシフト面を使う拡張修飾キーがシフト状態なら、シフト状態に遷移する
                                 setShifted();
+                                logger.Warn("Space Ignored A");
                                 return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                             }
                             if (Settings.LoggingDecKeyInfo) logger.Info(() => $"SandS: IgnoreSpaceUpOnSandS={Settings.OneshotSandSEnabledCurrently}, ctrl={bCtrl}");
                             if (Settings.OneshotSandSEnabledCurrently && bCtrl) {
                                 // SandS時に1回目のSpace単打を無視する設定の場合は、Ctrl+Space が打鍵されたらそれをシフト状態に遷移させる
                                 setShifted();
+                                logger.Warn("Space Ignored B");
                                 return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                             }
                             if (Settings.LoggingDecKeyInfo) logger.Info(() => $"SandS: keyInfo.Shifted={keyInfo.Shifted}");
                             if (keyInfo.Shifted) {
                                 // SHIFT状態なら何もしない
+                                logger.Warn("Space Ignored C");
                                 return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                             }
                             if (Settings.LoggingDecKeyInfo) logger.Info(() => $"SandS: keyInfo.PressedOneshot={keyInfo.PressedOneshot}");
@@ -683,6 +686,7 @@ namespace KanchokuWS.Handler
                                 if (keyInfo.ShiftedOneshot) {
                                     // SHIFTED_ONESHOT⇒PRESSED_ONESHOT
                                     keyInfo.SetPressedOneshot();
+                                    logger.Warn("Space Ignored D");
                                     return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                                 }
                                 if (Settings.LoggingDecKeyInfo) logger.Info(() => $"SandS: keyInfo.Pressed={keyInfo.Pressed}");
@@ -698,6 +702,7 @@ namespace KanchokuWS.Handler
                                             logger.DebugH(() => $"CALL-1: invokeHandlerForPostSandSKey");
                                             invokeHandlerForPostSandSKey();
                                         }
+                                        logger.Warn("Space Ignored E");
                                         return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                                     }
                                     // リピート状態に移行
@@ -710,6 +715,7 @@ namespace KanchokuWS.Handler
                                     if ((!bCtrl && !bShift && modPressedOrShifted == 0) || (Settings.HandleShiftSpaceAsSandS && (bShift || modPressedOrShifted == KeyModifiers.MOD_RSHIFT))) {
                                         // 1回目の押下で Ctrl も Shift も他のmodiferも押されてない場合、またはShiftが押されていてもSandSがShiftより劣位の場合は、PRESSED に移行
                                         keyInfo.SetPressed();
+                                        logger.Warn("Space Ignored F");
                                         return true; // keyboardDownHandler() をスキップ、システム側の本来のDOWN処理もスキップ
                                     }
                                 }
@@ -919,6 +925,7 @@ namespace KanchokuWS.Handler
                     result = true;
                 } else {
                     // 直接ハンドラを呼び出す
+                    if (bDecoderOn && vkey == FuncVKeys.SPACE) logger.Warn($"invokeHandler Space: currentPool.Enabled={currentPool.Enabled}, mod={mod:x}H, kanchokuCode={kanchokuCode}");
                     result = invokeHandler(kanchokuCode, normalDecKey, mod);
                 }
                 bHandlerBusy = false;
