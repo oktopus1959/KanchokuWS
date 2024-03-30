@@ -90,7 +90,7 @@ namespace {
             //setEisuModeMarker();
 
             // 英数モードフラグの設定
-            if (!IsUnnecessary()) STATE_COMMON->SetCurrentModeIsEisu();
+            STATE_COMMON->SetCurrentModeIsEisu();
 
             MarkNecessary();
             LOG_DEBUGH(_T("LEAVE: CHAIN ME"));
@@ -170,13 +170,6 @@ namespace {
                 // 2回続けて呼ばれたらキャンセル
                 cancelMe();
             } else {
-                //auto romanStr = OUTPUT_STACK->GetLastAsciiKey<MString>(17);
-                //if (!romanStr.empty() && romanStr.size() <= 16) {
-                //    if (is_upper_alphabet(romanStr[0])) {
-                //        romanStr[0] = to_lower(romanStr[0]);
-                //        STATE_COMMON->SetOutString(romanStr, romanStr.size());
-                //    }
-                //}
                 HISTORY_RESIDENT_STATE->handleEisuDecapitalize();
             }
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
