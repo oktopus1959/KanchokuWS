@@ -116,7 +116,7 @@ namespace {
             size_t OrigLineNumber;  // ブロックの開始行番号(0起点)
             size_t CurrentOffset;   // 当ブロック内での行番号を算出するための、真の起点から現在行におけるオフセット行数
 
-            BlockInfo() { }
+            BlockInfo() : OrigLineNumber(0), CurrentOffset(0) { }
 
             BlockInfo(StringRef dirPath, StringRef name, size_t lineNum, size_t off)
                 : DirPath(dirPath), BlockName(name), OrigLineNumber(lineNum), CurrentOffset(off) { }
@@ -967,7 +967,7 @@ namespace {
                 shiftOffset = 0;
                 funckeyOffset = FUNC_DECKEY_START;
                 c = getNextChar();
-            } else if (c == 'P' || c == 'P') {
+            } else if (c == 'P' || c == 'p') {
                 bShiftPlane = true;
                 c = getNextChar();
             }

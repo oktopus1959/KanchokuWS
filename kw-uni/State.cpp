@@ -616,6 +616,8 @@ void State::dispatchDeckey(int deckey) {
             } else if (isCtrledKey(deckey)) {
                 _LOG_DEBUGH(_T("CTRLKEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
                 handleCtrlKeys(deckey);
+            } else if (deckey >= F1_DECKEY && deckey < FUNC_DECKEY_END) {
+                handleSpecialKeys(deckey);
             } else if (deckey >= 0) {
                 _LOG_DEBUGH(_T("DEFAULT: {}: deckey={:x}H({})"), Name, deckey, deckey);
                 // 半全, 英数/Caps, 無変換, 変換, ひらがな
