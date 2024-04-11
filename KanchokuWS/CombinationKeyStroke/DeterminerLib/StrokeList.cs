@@ -416,12 +416,18 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             logger.InfoH(() => $"ENTER: decKey={decKey}, IsTemporaryComboDisabled={IsTemporaryComboDisabled}, dt={dtNow.ToString("HH:mm:ss.fff")}");
 
-            List<int> result = null;
+            List<int> result = new List<int>();
             bUnconditional = false;
 
             try {
                 bool bTempComboDisabled = IsTemporaryComboDisabled;
 
+                if (comboList._isEmpty() && unprocList.Count > 2 && unprocList[0].IsUpKey && unprocList[1].IsSpaceOrFuncComboShift) {
+                    // "S SPC s X spc" または "S SPC s X x" のような状況。S を単打として出力する。
+                    logger.InfoH(() => $"Output first Character stroke: {unprocList[0].OrigDecoderKey}");
+                    result.Add(unprocList[0].OrigDecoderKey);
+                    unprocList = unprocList.Skip(1).ToList();
+                }
                 int upComboIdx = findAndMarkUpKey(comboList, decKey);
 
                 if (unprocList._notEmpty()) {
@@ -430,8 +436,6 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     logger.InfoH(() => $"upComboIdx={upComboIdx}, upKeyIdx={upKeyIdx}, upKeyIdxFromTail={upKeyIdxFromTail}");
 
                     if (upComboIdx >= 0 || upKeyIdx >= 0) {
-                        result = new List<int>();
-
                         bool bSecondComboCheck = comboList._notEmpty();
                         logger.InfoH(() => $"START while: {ToDebugString()}, bSecondComboCheck={bSecondComboCheck}");
 
@@ -488,6 +492,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 } else {
                                     // 見つからなかった
                                     //logger.InfoH($"COMBO NOT FOUND");
+                                    if (comboList._isEmpty() && unprocList.Count == 2 && upKeyIdx == 0 && unprocList[1].IsSpaceOrFuncComboShift) {
+                                        // 未処理状態で、1打鍵めがUpされ、2打鍵めがSpaceなどのシフトキーだったら、ペンディングとする
+                                        // "S SPC s" のような状況。 SPCが S を修飾するか否かは次の打鍵のタイミング次第。
+                                        // "S SPC s spc" なら SPC は S を後置修飾する。 
+                                        logger.InfoH(() => $"Pending post shift: first={unprocList[0].OrigDecoderKey}, second={unprocList[1].OrigDecoderKey}");
+                                        break;
+                                    }
                                     if (upKeyIdxFromTail >= 0 && unprocList.Count > upKeyIdxFromTail) {
                                         outputLen = discardLen = unprocList.Count - upKeyIdxFromTail;
                                         copyShiftLen = outputLen - 1;
