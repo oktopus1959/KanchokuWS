@@ -140,6 +140,8 @@ namespace KanchokuWS.Handler
         private const int VK_CONTROL = 0x11;                // Ctrlキー
         private const int VK_LSHIFT = 0xa0;                 // LSHIFTキー
         private const int VK_RSHIFT = 0xa1;                 // RSHIFTキー
+        private const int VK_LALT = 0xa4;                   // LALTキー
+        private const int VK_RALT = 0xa5;                   // RALTキー
         private const int VK_PACKET = 0xe7;                 // Unicode 
 
         private const int WM_CLOSE = 0x0010;
@@ -370,6 +372,20 @@ namespace KanchokuWS.Handler
             input.ki.dwFlags = keyEventFlag;
         }
 
+        private static void setLeftAltInput(ref INPUT input, int keyEventFlag)
+        {
+            initializeKeyboardInput(ref input);
+            input.ki.wVk = VK_LALT;           // 右シフトは EXTENTED ではなく、0xa1 を設定する必要あり
+            input.ki.dwFlags = keyEventFlag;
+        }
+
+        private static void setRightAltInput(ref INPUT input, int keyEventFlag)
+        {
+            initializeKeyboardInput(ref input);
+            input.ki.wVk = VK_RALT;
+            input.ki.dwFlags = keyEventFlag;
+        }
+
 
         /// <summary>
         /// Shiftキーの事前上げ下げ
@@ -543,6 +559,8 @@ namespace KanchokuWS.Handler
             bool bRCtrl = false;
             bool bLShift = false;
             bool bRShift = false;
+            bool bLAlt = false;
+            bool bRAlt = false;
             bool bRight = false;
             bool bRepeatCnt = false;
             int repeatCount = 0;
@@ -573,6 +591,14 @@ namespace KanchokuWS.Handler
                             bRShift = true;
                         } else {
                             bLShift = true;
+                        }
+                        bRight = false;
+                    } else if (ch == '!') {
+                        // Alt
+                        if (bRight) {
+                            bRAlt = true;
+                        } else {
+                            bLAlt = true;
                         }
                         bRight = false;
                     } else if (ch == ' ' || ch == ',' || ch == ':') {
@@ -614,9 +640,25 @@ namespace KanchokuWS.Handler
                         // 右Shift下げ
                         setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
                     }
+                    if (bLAlt) {
+                        // 左Alt下げ
+                        setLeftAltInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                    }
+                    if (bRAlt) {
+                        // 右Alt下げ
+                        setRightAltInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+                    }
                     // キー送出
                     for (int i = 0; i < repeatCount; ++i) {
                         idx = setVkeyInputs((ushort)vkey, inputs, idx);
+                    }
+                    if (bLAlt) {
+                        // 左Alt戻し
+                        setLeftAltInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+                    }
+                    if (bRAlt) {
+                        // 右Alt戻し
+                        setRightAltInput(ref inputs[idx++], KEYEVENTF_KEYUP);
                     }
                     if (bLShift) {
                         // 左Shift戻し
