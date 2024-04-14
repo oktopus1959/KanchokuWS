@@ -16,7 +16,7 @@
 #include "RewriteString.h"
 #include "PostRewriteOneShot.h"
 
-#if 0
+#if 1
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
@@ -173,7 +173,7 @@ std::tuple<const RewriteInfo*, size_t> PostRewriteOneShotNode::matchWithTailStri
     size_t maxlen = SETTINGS->kanaTrainingMode && ROOT_STROKE_NODE->hasOnlyUsualRewriteNdoe() ? 0 : 8;     // かな入力練習モードで濁点のみなら書き換えをやらない
     while (maxlen > 0) {
         _LOG_DEBUGH(_T("maxlen={}"), maxlen);
-        const MString targetStr = OUTPUT_STACK->backStringWhileOnlyRewritable(maxlen);
+        const MString targetStr = SETTINGS->googleCompatible ? OUTPUT_STACK->backStringWhileOnlyRewritable(maxlen) : OUTPUT_STACK->BackStringUptoNewLine(maxlen);
         _LOG_DEBUGH(_T("targetStr={}"), to_wstr(targetStr));
         if (targetStr.empty()) break;
 

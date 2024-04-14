@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kw-uni", "kw-uni\kw-uni.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mecab", "..\src-stroke-lattice\mecab\mecab.vcxproj", "{0F5F5E45-BAAC-452B-A6F9-F111F3ECBA60}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DyMazinLib", "DyMazin\DyMazinLib\DyMazinLib.vcxproj", "{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,18 @@ Global
 		{0F5F5E45-BAAC-452B-A6F9-F111F3ECBA60}.Release|x64.Build.0 = Release|x64
 		{0F5F5E45-BAAC-452B-A6F9-F111F3ECBA60}.Release|x86.ActiveCfg = Release|Win32
 		{0F5F5E45-BAAC-452B-A6F9-F111F3ECBA60}.Release|x86.Build.0 = Release|Win32
+		{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}.Debug|Any CPU.Build.0 = Debug|Win32
+		{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}.Debug|x64.ActiveCfg = Debug|x64
+		{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}.Debug|x64.Build.0 = Debug|x64
+		{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}.Debug|x86.ActiveCfg = Debug|Win32
+		{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}.Debug|x86.Build.0 = Debug|Win32
+		{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}.Release|Any CPU.ActiveCfg = Release|Win32
+		{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}.Release|Any CPU.Build.0 = Release|Win32
+		{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}.Release|x64.ActiveCfg = Release|x64
+		{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}.Release|x64.Build.0 = Release|x64
+		{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}.Release|x86.ActiveCfg = Release|Win32
+		{AEF1F796-7F90-4D1F-95E4-E9D428B42A9F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

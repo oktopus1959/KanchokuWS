@@ -115,6 +115,8 @@ void Settings::SetValues(const std::map<String, String>& dict) {
     SET_KEY_VALUE(romanBushuCompPrefix);
     SET_KEY_VALUE(romanSecPlanePrefix);
 
+    SET_BOOL_VALUE(googleCompatible);
+
     SET_BOOL_VALUE(multiStreamMode);
 
     // 機能へのキー割り当ての変更

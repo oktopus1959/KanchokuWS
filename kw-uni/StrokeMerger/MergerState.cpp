@@ -366,10 +366,10 @@ namespace {
         }
 
         // 出力文字を取得する
-        void GetResultStringChain(MStringResult& result) override {
+        void GetResultStringChain(MStringResult& resultOut) override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             if (SETTINGS->multiStreamMode) {
-                getPreOutput_lattice(result);
+                getPreOutput_lattice(resultOut);
             } else {
 
             }

@@ -118,6 +118,8 @@ namespace {
     public:
         // StrokeKey を処理する
         void handleStrokeKeys(int deckey) override {
+            STATE_COMMON->SetCurrentModeIsEisu();
+
             size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
             wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
             _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), face={}"), Name, deckey, deckey, myChar);
@@ -266,6 +268,7 @@ namespace {
             STATE_COMMON->AddOrEraseRunningState(Name, 0);  // 削除
             MarkUnnecessary();
             //STATE_COMMON->SetEisuModeMarkerClearFlag();
+            STATE_COMMON->ClearCurrentModeIsEisu();
         }
     };
     DEFINE_CLASS_LOGGER(EisuState);

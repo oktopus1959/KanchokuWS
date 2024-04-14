@@ -949,6 +949,17 @@ IMEなどと併用しているような場合には 0 か 1 を設定すると�
 カタカナ変換直後に ESC を打鍵すると、カタカナ変換をキャンセルして、再度
 英数モードに入ります。</value>
   </data>
+  <data name="checkBox_postRewriteCompatibleWithGoogle.ToolTip" xml:space="preserve">
+    <value>置換後文字列の "/" の扱いについて Google 日本語入力の「次の入力」と
+互換な動作にする設定です。
+
+ON にすると、置換後文字列に "/" が含まれる場合、"/" を削除した上で、
+それ以降の部分が「次の入力」として扱われるようになります。
+「Google日本語入力」と互換運用を行いたい場合は、ON にしてください。
+
+OFF の場合は、"/" はたんに無視され、1文字単位であらゆる書き換えパターン
+とのマッチングが行われます。通常は OFF のまま使用することをお勧めします。</value>
+  </data>
   <data name="textBox_preRewriteAllowedDelayTimeMs2.ToolTip" xml:space="preserve">
     <value>前項の文字集合に対して書き換えを許容する遅延時間を設定します。
 

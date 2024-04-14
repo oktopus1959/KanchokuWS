@@ -901,6 +901,9 @@ namespace KanchokuWS
         public static int PreRewriteWaitTimeMsWhenTrainingMode { get; set; }
         public static string PreRewriteWaitTimeMsWhenTrainingMode_PropName = "preRewriteWaitTimeMsWhenTrainingMode";
 
+        /// <summary>Google日本語入力と互換な書き換システム</summary>
+        public static bool PostRewriteCompatibleWithGooble { get; set; }
+
         //------------------------------------------------------------------------------
         // ウィンドウClassName
         //------------------------------------------------------------------------------
@@ -1609,6 +1612,8 @@ namespace KanchokuWS
 
             RomanBushuCompPrefix = addDecoderSetting("romanBushuCompPrefix", "");               // ローマ字テーブル出力時の部首合成用プレフィックス
             RomanSecPlanePrefix = addDecoderSetting("romanSecPlanePrefix", ":");                // 裏面定義文字に対するローマ字出力時のプレフィックス
+
+            PostRewriteCompatibleWithGooble = addDecoderSetting("googleCompatible", false);     // Google日本語入力と互換な書き換システム
 
             // キー割当
             HistorySearchCtrlKey = GetString("histSearchCtrlKey");                              // 履歴検索&選択を行うCtrlキー
