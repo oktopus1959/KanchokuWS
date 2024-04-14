@@ -521,3 +521,7 @@ convert(EVev) = れん
 convert(YWyw) = ぽ
 convert(ZHzh) = ぐん
 
+### roman ###
+loadTable(tables/_test/roman.tbl)
+convert(K<100>k<100>A<100>a<100>K<100>k<100>A<100>a) = かか
+

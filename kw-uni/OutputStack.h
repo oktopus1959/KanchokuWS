@@ -279,8 +279,8 @@ public:
         return size() - pos;
     }
 
-//#define __LOG_DEBUGH LOG_INFO
-#define __LOG_DEBUGH LOG_DEBUGH
+#define __LOG_DEBUGH LOG_INFOH
+//#define __LOG_DEBUGH LOG_DEBUGH
 
     // 改行を含まない末尾部分で、flag のみが続き、flagUpto が来るまでの最大長
     inline size_t tail_size_while_only_and_upto(size_t maxlen, unsigned short flag, unsigned short flagUpto) const {
@@ -288,7 +288,7 @@ public:
         size_t pos = size();
         size_t minpos = maxlen >= size() ? 0 : size() - maxlen;
         size_t maxpos = pos;
-        __LOG_DEBUGH(_T("ENTER: size={}, maxlen={}, pos={}, minpos={}, maxpos={}"), size(), maxlen, pos, minpos, maxpos);
+        __LOG_DEBUGH(_T("ENTER: size={}, maxlen={}, flag={:x}, flagUpto={:x}, pos={}, minpos={}, maxpos={}"), size(), maxlen, flag, flagUpto, pos, minpos, maxpos);
         while (pos > minpos) {
             size_t npos = pos - 1;
             __LOG_DEBUGH(_T("npos={}, chr={}, flag={:x}"), npos, (wchar_t)stack[npos].chr, stack[npos].flag);
