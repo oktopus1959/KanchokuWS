@@ -209,28 +209,36 @@ namespace KanchokuWS.TableParser
                     } else if (lcStr == "extracharsposition") {
                         handleExtraCharsPosition();
                     } else if (lcStr == "noshift" || lcStr == "normal") {
+                        logger.InfoH($"set shiftPlane=0 ({CurrentStr})");
                         shiftPlane = 0;
                     } else if (lcStr == "shift") {
                         // #shift: シフト面割り当て
+                        logger.InfoH($"set shiftPlane=1 ({CurrentStr})");
                         shiftPlane = 1;
                     } else if (lcStr == "shifta") {
                         // #shift: 拡張シフトA面割り当て
+                        logger.InfoH($"set shiftPlane=2 ({CurrentStr})");
                         shiftPlane = 2;
                         // #shift: 拡張シフトA面割り当て
                     } else if (lcStr == "shiftb") {
                         // #shift: 拡張シフトB面割り当て
+                        logger.InfoH($"set shiftPlane=3 ({CurrentStr})");
                         shiftPlane = 3;
                     } else if (lcStr == "shiftc") {
                         // #shift: 拡張シフトC面割り当て
+                        logger.InfoH($"set shiftPlane=4 ({CurrentStr})");
                         shiftPlane = 4;
                     } else if (lcStr == "shiftd") {
                         // #shift: 拡張シフトD面割り当て
+                        logger.InfoH($"set shiftPlane=5 ({CurrentStr})");
                         shiftPlane = 5;
                     } else if (lcStr == "shifte") {
                         // #shift: 拡張シフトE面割り当て
+                        logger.InfoH($"set shiftPlane=6 ({CurrentStr})");
                         shiftPlane = 6;
                     } else if (lcStr == "shiftf") {
                         // #shift: 拡張シフトF面割り当て
+                        logger.InfoH($"set shiftPlane=7 ({CurrentStr})");
                         shiftPlane = 7;
                     } else if (lcStr == "combination" || lcStr == "overlapping") {
                         // #combination: 同時打鍵設定
@@ -678,6 +686,7 @@ namespace KanchokuWS.TableParser
             if (bShiftPlane) {
                 // プレーン指定の場合
                 shiftPlane = ArrowIndex;
+                logger.InfoH($"set shiftPlane={shiftPlane}");
                 if (shiftPlane >= DecoderKeys.ALL_PLANE_NUM) ParseError($"parseArrow: shiftPlane out of range: {shiftPlane}");
                 return false;
             } else {

@@ -131,9 +131,10 @@ namespace KanchokuWS.TableParser
         protected int Depth => StrokeList.Count;
 
         // 当ノードの ShiftPlane
-        int _shiftPlane = -1;
+        //int _shiftPlane = -1;
+        //protected int ShiftPlane => _shiftPlane >= 0 ? _shiftPlane : Context.shiftPlane;
 
-        protected int ShiftPlane => _shiftPlane >= 0 ? _shiftPlane : Context.shiftPlane;
+        protected int ShiftPlane => Context.shiftPlane;
 
         public int ShiftDecKey(int deckey)
         {
@@ -263,13 +264,12 @@ namespace KanchokuWS.TableParser
         /// 部分木のトップノードになる場合は、treeNode.parentNode = null にしておくこと
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public TableParser(Node treeNode, CStrokeList strkList, int comboBlockDepth, int shiftPlane = -1)
+        public TableParser(Node treeNode, CStrokeList strkList, int comboBlockDepth)
             : base()
         {
             _treeNode = treeNode;
             _strokeList = new CStrokeList(this, strkList);
             _comboBlockerDepth = comboBlockDepth;
-            _shiftPlane = shiftPlane;
         }
 
         /// <summary>
@@ -344,6 +344,7 @@ namespace KanchokuWS.TableParser
                 if (HasRootTable) idx = ShiftDecKey(idx);   // ルートパーザの場合は、 idx を Shiftしておく
                 switch (currentToken) {
                     case TOKEN.LBRACE:
+                        if (HasRootTable) logger.InfoH($"LBRACE: shiftPlane={ShiftPlane}");
                         AddTreeNode(idx)?.ParseNodeBlock();
                         break;
 
@@ -421,7 +422,11 @@ namespace KanchokuWS.TableParser
                 readNextToken();
             }
 
-            if (HasRootTable) placeHolders.Initialize();
+            if (HasRootTable) {
+                logger.InfoH($"RBRACE: shiftPlane and placeHolders initialized");
+                Context.shiftPlane = 0;
+                placeHolders.Initialize();
+            }
             if (Settings.LoggingTableFileInfo) logger.Info(() => $"LEAVE: lineNum={LineNumber}, depth={Depth}, bError={bError}");
 
         }
@@ -454,7 +459,7 @@ namespace KanchokuWS.TableParser
 
         protected ArrowBundleParser MakeArrowBundleParser(int nextArrowIdx)
         {
-            return new ArrowBundleParser(StrokeList, -1, nextArrowIdx, ComboBlockerDepth);
+            return new ArrowBundleParser(StrokeList, nextArrowIdx, ComboBlockerDepth);
         }
 
         // 前置書き換えパーザ
@@ -623,6 +628,9 @@ namespace KanchokuWS.TableParser
                 int strk = 0;
                 int shiftOffset = calcShiftOffset(strkList.At(0));
 
+                if (Settings.LoggingTableFileInfo)
+                    logger.Info($"CALLED: strkList={strkList?.StrokePathString(":")}, hasStr={hasStr}, hasFunc={hasFunc}, shiftOffset={shiftOffset}, ShiftPlane={ShiftPlane}");
+
                 void addSeqShiftKey()
                 {
                     if (!sequentialShiftKeys.Contains(strk)) {
@@ -765,6 +773,7 @@ namespace KanchokuWS.TableParser
                 case TOKEN.LBRACE:
                     // ブロック開始
                     // ルートパーザの場合は、 UnhandledArrowIndex はすでに Shiftされている
+                    if (HasRootTable) logger.InfoH($"LBRACE: shiftPlane={ShiftPlane}");
                     AddTreeNode(UnhandledArrowIndex, comboBlockerDepth)?.ParseNodeBlock();
                     break;
 
@@ -817,8 +826,8 @@ namespace KanchokuWS.TableParser
         /// コンストラクタ<br/>
         /// パーザ構築時点では、まだRewriteNodeは生成されない
         /// </summary>
-        public ArrowBundleParser(CStrokeList strkList, int lastStk, int nextArrowIdx, int comboBlockerDepth)
-            : base(RootTableNode, strkList, comboBlockerDepth, lastStk)
+        public ArrowBundleParser(CStrokeList strkList, int nextArrowIdx, int comboBlockerDepth)
+            : base(RootTableNode, strkList, comboBlockerDepth)
         {
             nextArrowIndex = nextArrowIdx;
         }
@@ -838,6 +847,8 @@ namespace KanchokuWS.TableParser
                 ParseError($"parseArrowBundleNode: TOKEN.LBRACE is excpected, but {currentToken}");
                 return myNode;
             }
+            if (HasRootTable) logger.InfoH($"LBRACE: shiftPlane={ShiftPlane}");
+
             TOKEN prevToken = 0;
             TOKEN prevPrevToken = 0;
             readNextToken();
@@ -882,7 +893,11 @@ namespace KanchokuWS.TableParser
                 readNextToken();
             }
 
-            if (HasRootTable) placeHolders.Initialize();
+            if (HasRootTable) {
+                logger.InfoH($"RBRACE: shiftPlane and placeHolders initialized");
+                Context.shiftPlane = 0;
+                placeHolders.Initialize();
+            }
             if (Settings.LoggingTableFileInfo) logger.Info(() => $"LEAVE: depth={Depth}");
 
             return myNode;
@@ -1267,6 +1282,7 @@ namespace KanchokuWS.TableParser
             while (Context.currentToken != TOKEN.END) {
                 switch (Context.currentToken) {
                     case TOKEN.LBRACE:
+                        if (HasRootTable) logger.InfoH($"LBRACE: shiftPlane={ShiftPlane}");
                         ParseNodeBlock();
                         break;
 
