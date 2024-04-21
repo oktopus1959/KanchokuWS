@@ -70,5 +70,9 @@ public:
         _numBS = nBS;
         _bBushuComp = bushuComp;
     }
+
+    String debugString() {
+        return _T("str=") + to_wstr(_resultStr) + _T(", rewLen=") + std::to_wstring(_rewritableLen) + _T(", numBS=") + std::to_wstring(_numBS) + _T(", bushuComp=") + std::to_wstring(_bBushuComp);
+    }
 };
 

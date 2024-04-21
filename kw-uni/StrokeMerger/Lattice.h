@@ -41,7 +41,7 @@ struct WordPiece {
     }
 
     String toString() const {
-        return _T("(") + to_wstr(pieceStr) + _T(", stroke=") + std::to_wstring(strokeLen) + _T(", rewLen=") + std::to_wstring(rewritableLen) + _T(", numBS=") + std::to_wstring(numBS) + _T(")");
+        return _T("(") + to_wstr(pieceStr) + _T(", strokeLen=") + std::to_wstring(strokeLen) + _T(", rewLen=") + std::to_wstring(rewritableLen) + _T(", numBS=") + std::to_wstring(numBS) + _T(")");
     }
 };
 

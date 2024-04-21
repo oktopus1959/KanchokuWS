@@ -19,7 +19,7 @@ namespace KanchokuWS
 {
     public partial class FrmKanchoku : Form
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         //------------------------------------------------------------------
         [DllImport("user32.dll")]
@@ -1817,7 +1817,7 @@ namespace KanchokuWS
                 targetChar = 0;
             } else {
                 if (!Settings.MultiStreamMode && decoderOutput.GetStrokeCount() > 0) {
-                    logger.DebugH("PATH-1");
+                    logger.DebugH("MultiStreamMode and At second stroke or later");
                     // 第2打鍵以降の待ちで、何かVkey出力がある場合は、打鍵クリア
                     if (decoderOutput.IsDeckeyToVkey()) {
                         logger.DebugH(() => $"send CLEAR_STROKE_DECKEY");
@@ -1829,14 +1829,14 @@ namespace KanchokuWS
                     }
                 }
                 if (Settings.MultiStreamMode || decoderOutput.GetStrokeCount() < 1) {
-                    logger.DebugH("PATH-2");
+                    logger.DebugH("MultiStreamMode or At first stroke");
                     // 第1打鍵待ちになった時のみ
                     // 一時的な仮想鍵盤表示カウントをリセットする
                     Settings.VirtualKeyboardShowStrokeCountTemp = 0;
 
                     // 他のVKey送出(もしあれば)
                     if (decoderOutput.IsDeckeyToVkey()) {
-                        logger.DebugH("PATH-3");
+                        logger.DebugH("sendVkeyFromDeckey");
                         sendKeyFlag = sendVkeyFromDeckey(deckey, -1, mod);
                         //nPreKeys += 1;
                     }

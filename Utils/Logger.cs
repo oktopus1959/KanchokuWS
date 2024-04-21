@@ -144,7 +144,7 @@ namespace Utils
             [CallerMemberName] string method = "",
             [CallerLineNumber] int lineNumber = -1)
         {
-            if (LogLevel >= LogLevelDebug) {
+            if (LogLevel >= LogLevelDebug || (IsInfoPromoted && LogLevel >= LogLevelInfoH)) {
                 writeLog("DEBUG", $"{ClassName}.{method}", lineNumber, msg);
             }
         }
@@ -153,7 +153,7 @@ namespace Utils
             [CallerMemberName] string method = "",
             [CallerLineNumber] int lineNumber = -1)
         {
-            if (LogLevel >= LogLevelDebug && func != null) {
+            if ((LogLevel >= LogLevelDebug || (IsInfoPromoted && LogLevel >= LogLevelInfoH)) && func != null) {
                 writeLog("DEBUG", $"{ClassName}.{method}", lineNumber, func());
             }
         }
@@ -162,7 +162,7 @@ namespace Utils
             [CallerMemberName] string method = "",
             [CallerLineNumber] int lineNumber = -1)
         {
-            if (LogLevel >= LogLevelDebugH || (IsInfoPromoted && LogLevel >= LogLevelInfo)) {
+            if (LogLevel >= LogLevelDebugH || (IsInfoPromoted && LogLevel >= LogLevelInfoH)) {
                 writeLog("DEBUH", $"{ClassName}.{method}", lineNumber, msg);
             }
         }
@@ -171,7 +171,7 @@ namespace Utils
             [CallerMemberName] string method = "",
             [CallerLineNumber] int lineNumber = -1)
         {
-            if ((LogLevel >= LogLevelDebugH || (IsInfoPromoted && LogLevel >= LogLevelInfo)) && func != null) {
+            if ((LogLevel >= LogLevelDebugH || (IsInfoPromoted && LogLevel >= LogLevelInfoH)) && func != null) {
                 writeLog("DEBUH", $"{ClassName}.{method}", lineNumber, func());
             }
         }
@@ -180,7 +180,7 @@ namespace Utils
             [CallerMemberName] string method = "",
             [CallerLineNumber] int lineNumber = -1)
         {
-            if (LogLevel >= LogLevelInfo) {
+            if (LogLevel >= LogLevelInfo || (IsInfoPromoted && LogLevel >= LogLevelInfoH)) {
                 writeLog("INFO", $"{ClassName}.{method}", lineNumber, msg);
             }
         }
@@ -189,7 +189,7 @@ namespace Utils
             [CallerMemberName] string method = "",
             [CallerLineNumber] int lineNumber = -1)
         {
-            if (LogLevel >= LogLevelInfo && func != null) {
+            if ((LogLevel >= LogLevelInfo || (IsInfoPromoted && LogLevel >= LogLevelInfoH)) && func != null) {
                 writeLog("INFO", $"{ClassName}.{method}", lineNumber, func());
             }
         }
