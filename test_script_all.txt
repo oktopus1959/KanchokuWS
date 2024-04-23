@@ -90,7 +90,8 @@ convert(J<30>W<53>jEwe) = ぎて
 
 comboMinTime(50)
 comboMinTime3(50)
-convert(JWR<80>jwr) = ぎじ
+comboMinTimeForSecond(50)
+convert(JWR<100>jwr) = ぎじ
 convert(FIOPiopf) = かるすへ
 convert(FKOPkopf) = かいずべ
 
@@ -402,6 +403,11 @@ convert(K<46>X<71>k<73>x) = ぼ
 comboMinTimeForSecond(100)
 convert(SP<3>J<96>X<77>sp<18>j<17>x) = やり
 
+### 15a1 ###
+loadTable(tables/_test/noniiruto.15a1.tbl)
+convert(J<111>C<16>j<19>SP<91>sp<6>c) = いろ
+
+
 ### post.7 ###
 loadTable(tables/_test/noniiruto.post.7.tbl)
 comboMaxTime(100)
@@ -466,8 +472,8 @@ convert(J<50>{nfer}<80>j[nfer]) = ど       # 第2キーがシフトのケース
 #convert(J<80>{nfer}Kj<80>[nfer]k) = とぎ
 
 comboMaxTime(100)
-convert(J<200>{nfer}<80>j[nfer]) = と
-convert(J<200>{nfer}[nfer]j) = ど      # 「と」にすべきか?
+convert(J<200>{nfer}<80>j[nfer]) = ど      # 「と」にすべきか?
+convert(J<200>{nfer}[nfer]j) = ど          # 「と」にすべきか?
 convert({nfer}<200>Jj[nfer]) = ど
 
 # 無変換を単打可能にする
@@ -520,4 +526,8 @@ convert(EYey) = らん
 convert(EVev) = れん
 convert(YWyw) = ぽ
 convert(ZHzh) = ぐん
+
+### roman ###
+loadTable(tables/_test/roman.tbl)
+convert(K<100>k<100>A<100>a<100>K<100>k<100>A<100>a) = かか
 
