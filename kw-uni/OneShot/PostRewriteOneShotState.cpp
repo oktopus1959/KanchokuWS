@@ -103,6 +103,8 @@ namespace {
                     to_wstr(resultOut.resultStr()), resultOut.rewritableLen(), (void*)rewInfo->subTable, resultOut.numBS());
                 if (rewInfo->subTable) {
                     SetNextNodeMaybe(rewInfo->subTable);
+                    CreateNewState();
+                    //MarkNecessary();
                 }
             } else {
                 resultOut.setResultWithRewriteLen(MY_NODE->getString(), MY_NODE->getRewritableLen());
