@@ -455,7 +455,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 logger.InfoH($"NO COMBO SHIFT and JUST 1 UNPROC KEY");
                                 var s = unprocList[0];
                                 logger.InfoH(() => $"unprocList.First={s.DebugString()}");
-                                if (s.IsUpKey || !s.IsComboShift) {
+                                if (s.IsUpKey /*|| !s.IsComboShift*/) {
                                     logger.InfoH($"JUST 1 UNPROC KEY is UP KEY");
                                     if (s.IsSingleHittable || s.IsSequentialShift) {
                                         // 単打可能または順次シフトだった
@@ -464,6 +464,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                     } else {
                                         logger.InfoH(() => $"ABANDONED-1: IsSingleHittable={s.IsSingleHittable} and SequentialShift={s.IsSequentialShift}");
                                     }
+                                } else if (!s.IsComboShift) {
+                                    logger.InfoH($"JUST 1 UNPROC KEY is NOT UP KEY and NOT SHIFT KEY. BREAK.");
+                                    break;
                                 } else {
                                     // UPされていないシフトキーがある。多分、最初のループで処理されずに残ったものがRETRYで対象となった。
                                     // 次のUPのときに処理するのでこのまま残す。以前はこれをここで出力していたので、余分な出力となっていた。
