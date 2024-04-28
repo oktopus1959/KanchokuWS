@@ -625,6 +625,7 @@ public:
         //OUTPUT_STACK->setRewritable(STATE_COMMON->RewritableLen());
         _LOG_DEBUGH(_T("OUTPUT_STACK->setRewritable({})"), resultStr.rewritableLen());
         OUTPUT_STACK->setRewritable(resultStr.rewritableLen());
+        _LOG_DEBUGH(_T("OutputStackBackStrWithFlagUpto(16)={}"), to_wstr(OUTPUT_STACK->OutputStackBackStrWithFlagUpto(16)));
 
         int strokeTableChainLen = startState->StrokeTableChainLength();
         _LOG_DEBUGH(_T("strokeTableChainLen={}"), strokeTableChainLen);

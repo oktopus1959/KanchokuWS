@@ -175,7 +175,10 @@ std::tuple<const RewriteInfo*, size_t> PostRewriteOneShotNode::matchWithTailStri
     size_t maxlen = SETTINGS->kanaTrainingMode && ROOT_STROKE_NODE->hasOnlyUsualRewriteNdoe() ? 0 : 8;     // かな入力練習モードで濁点のみなら書き換えをやらない
     while (maxlen > 0) {
         _LOG_DEBUGH(_T("maxlen={}"), maxlen);
-        const MString targetStr = SETTINGS->googleCompatible ? OUTPUT_STACK->backStringWhileOnlyRewritable(maxlen) : OUTPUT_STACK->backStringUptoRewritableBlock(maxlen);
+        const MString targetStr =
+            SETTINGS->googleCompatible ? OUTPUT_STACK->backStringWhileOnlyRewritable(maxlen) :
+            getString().size() == 1 ? OUTPUT_STACK->backStringUptoRewritableBlock(maxlen) :
+            OUTPUT_STACK->BackStringUptoNewLine(maxlen);        // 入力文字列が2文字以上の場合は、無条件で書き換えを適用 (「そ」の後に「れば」が後置するようなケース)
         _LOG_DEBUGH(_T("targetStr={}"), to_wstr(targetStr));
         if (targetStr.empty()) break;
 
