@@ -167,6 +167,12 @@ namespace KanchokuWS.CombinationKeyStroke
             logger.InfoH(() => $"LEAVE: isPreRewriteTarget={isPreRewriteTarget}, rewriteDt={rewriteDt}");
         }
 
+        private void setAllKeyUpFlag()
+        {
+            logger.InfoH("CALLED");
+            frmMain?.ExecCmdDecoder("allKeyUp", null);
+        }
+
         public void Dispose()
         {
             timerA?.Dispose();
@@ -295,6 +301,8 @@ namespace KanchokuWS.CombinationKeyStroke
             }
 
             checkRewriteTime(decKey);
+
+            if (strokeList.IsEmpty()) setAllKeyUpFlag();
 
             strokeList.CheckComboShiftKeyUpDt(decKey);
 

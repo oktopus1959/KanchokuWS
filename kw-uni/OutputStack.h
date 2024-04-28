@@ -7,6 +7,12 @@
 
 #include "Logger.h"
 
+#if 1
+#define __LOG_DEBUGH LOG_INFOH
+#else
+#define __LOG_DEBUGH LOG_DEBUGH
+#endif
+
 // 出力文字のスタック
 class OutputStack {
     DECLARE_CLASS_LOGGER;
@@ -19,6 +25,7 @@ public:
     static const unsigned short FLAG_REWRITABLE = 16;
     static const unsigned short FLAG_REWRITABLE_BEGIN = 32;     // Rewritable な文字列ブロックの先頭を表す
     static const unsigned short FLAG_REWRITABLE_BLOCK = 64;     // Rewritable な範囲の終わり(含まない)を表す
+    static const unsigned short FLAG_ALL_KEY_UP = 128;          // すべてのキーがUP状態にあることを示す
 
     static const size_t HIST_KEY_MAX_LEN = 8;   // 履歴用のキーの最大長
     static const size_t HIST_ROMAN_KEY_MAX_LEN = 16;   // 英字履歴用のキーの最大長
@@ -177,6 +184,18 @@ public:
         }
     }
 
+    // 末尾に全キーUPフラグをセットする
+    inline void setAllKeyUp() {
+        __LOG_DEBUGH(_T("CALLED"));
+        setFlag(FLAG_ALL_KEY_UP);
+    }
+
+    // 末尾に全キーUPフラグがセットされているか
+    inline bool isAllKeyUp() {
+        __LOG_DEBUGH(_T("CALLED: {}"), (getFlag() & FLAG_ALL_KEY_UP) != 0);
+        return (getFlag() & FLAG_ALL_KEY_UP) != 0;
+    }
+
     // 末尾に交ぜ書きブロッカーをセットする
     inline void setMazeBlocker() {
         setFlag(FLAG_BLOCK_MAZE);
@@ -286,9 +305,6 @@ public:
         return size() - pos;
     }
 
-#define __LOG_DEBUGH LOG_INFOH
-//#define __LOG_DEBUGH LOG_DEBUGH
-
     // 改行を含まない末尾部分で、flag のみが続き、flagUpto が来るまでの最大長
     inline size_t tail_size_while_only_and_upto(size_t maxlen, unsigned short flag, unsigned short flagUpto) const {
         if (size() == 0) return 0;
@@ -312,7 +328,6 @@ public:
         __LOG_DEBUGH(_T("LEAVE: result len={}"), size() - maxpos);
         return size() - maxpos;
     }
-#undef __LOG_DEBUGH
 
     // 改行を含まない末尾部分で、句読点の直後までの長さ(ただし末尾句読点は含める)
     inline size_t tail_size_upto_flag_or_punct(unsigned short flag) const {
@@ -547,3 +562,4 @@ public:
 
 #undef OUTPUT_STACK_MAXSIZE
 
+#undef __LOG_DEBUGH

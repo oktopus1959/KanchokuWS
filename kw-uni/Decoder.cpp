@@ -534,6 +534,9 @@ public:
             } else if (cmd == _T("cancelRewrite")) {
                 // 書き換えをキャンセルする
                 OUTPUT_STACK->cancelRewritable();
+            } else if (cmd == _T("allKeyUp")) {
+                // 全キーUPフラグをセット
+                OUTPUT_STACK->setAllKeyUp();
             } else if (cmd == _T("setAutoHistSearchEnabled")) {
                 // 自動履歴検索のON/OFF
                 SETTINGS->autoHistSearchEnabled = (items.size() >= 2 && items[1] == _T("true"));
