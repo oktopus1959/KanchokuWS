@@ -894,6 +894,10 @@ namespace KanchokuWS
         public static int PreRewriteAllowedDelayTimeMs2 { get; set; }
         public static string PreRewriteAllowedDelayTimeMs2_PropName = "preRewriteAllowedDelayTimeMs2";
 
+        /// <summary>漢字に対する前置書き換え時の遅延許容時間</summary>
+        public static int PreRewriteAllowedDelayTimeMs3 { get; set; }
+        public static string PreRewriteAllowedDelayTimeMs3_PropName = "preRewriteAllowedDelayTimeMs3";
+
         /// <summary>かな入力練習モードのときに無視する前置書き換え対象文字</summary>
         //public static string PreRewriteCharsIgnoredWhenTrainingMode { get; set; } = "";
 
@@ -1489,6 +1493,8 @@ namespace KanchokuWS
             PreRewriteTargetChars  = GetString(PreRewriteTargetChars_PropName)._orElse("。、");                       // 遅延許容時間の適用対象となる前置書き換え対象文字集合
             PreRewriteAllowedDelayTimeMs = GetString(PreRewriteAllowedDelayTimeMs_PropName)._parseInt(0);             // 指定の文字集合に対する前置書き換え時の遅延許容時間
             PreRewriteAllowedDelayTimeMs2 = GetString(PreRewriteAllowedDelayTimeMs2_PropName)._parseInt(0);           // 上記以外の文字に対する前置書き換え時の遅延許容時間
+            PreRewriteAllowedDelayTimeMs3 =
+                GetString(PreRewriteAllowedDelayTimeMs3_PropName)._parseInt(3000)._max(PreRewriteAllowedDelayTimeMs2);// 漢字に対する前置書き換え時の遅延許容時間
             //PreRewriteCharsIgnoredWhenTrainingMode  = GetString("preRewriteCharsIgnoredWhenTrainingMode");          // かな入力練習モードのときに無視する前置書き換え対象文字
             PreRewriteWaitTimeMsWhenTrainingMode  = GetString(PreRewriteWaitTimeMsWhenTrainingMode_PropName)._parseInt(100);  // かな入力練習モードのときの書き換え対象文字の出力待ち時間
 

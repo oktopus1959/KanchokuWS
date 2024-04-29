@@ -162,6 +162,11 @@ namespace Utils
             return ch < 0x100;
         }
 
+        public static bool _isKanji(this char ch)
+        {
+            return ch >= 0x4e00 && ch <= 0x9fff || ch == '々';
+        }
+
         /// <summary>
         /// 0 より大きければ自身を返し、0 以下なら defval を返す
         /// </summary>

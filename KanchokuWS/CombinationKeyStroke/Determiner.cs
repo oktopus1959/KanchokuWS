@@ -123,6 +123,8 @@ namespace KanchokuWS.CombinationKeyStroke
 
         private bool isPreRewriteTarget = false;
 
+        private bool isPreRewriteKanjiTarget = false;
+
         // 前キー
         //private int prevDownDecKey = -1;
 
@@ -135,9 +137,12 @@ namespace KanchokuWS.CombinationKeyStroke
 
         private void checkRewriteTime(int dk)
         {
-            logger.InfoH(() => $"CALLED: rewriteDt={rewriteDt}, isPreRewriteTarget={isPreRewriteTarget}");
+            logger.InfoH(() => $"CALLED: rewriteDt={rewriteDt}, isPreRewriteTarget={isPreRewriteTarget}, targetIsKanji={isPreRewriteKanjiTarget}");
             if (rewriteDt._isValid()) {
-                int delayTime = isPreRewriteTarget ? Settings.PreRewriteAllowedDelayTimeMs : Settings.PreRewriteAllowedDelayTimeMs2;
+                int delayTime =
+                    isPreRewriteTarget ? Settings.PreRewriteAllowedDelayTimeMs
+                    : !isPreRewriteKanjiTarget ? Settings.PreRewriteAllowedDelayTimeMs2
+                    : Settings.PreRewriteAllowedDelayTimeMs3;
                 double elapsedTime = (HRDateTime.Now - rewriteDt).TotalMilliseconds;
                 logger.InfoH(() => $"delayTime={delayTime}, elapsedTime={elapsedTime:f3}");
                 if (delayTime > 0 && elapsedTime > delayTime) {
@@ -162,6 +167,7 @@ namespace KanchokuWS.CombinationKeyStroke
                 }
             } else {
                 isPreRewriteTarget = IsTailPreRewriteChar(outStr);
+                isPreRewriteKanjiTarget = outStr.Last()._isKanji();
                 rewriteDt = HRDateTime.Now;
             }
             logger.InfoH(() => $"LEAVE: isPreRewriteTarget={isPreRewriteTarget}, rewriteDt={rewriteDt}");
