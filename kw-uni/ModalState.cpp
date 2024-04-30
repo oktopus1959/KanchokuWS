@@ -30,7 +30,8 @@ DEFINE_CLASS_LOGGER(ModalState);
 // モード状態(HistoryResidentState や KatakanaState, EisuState など)のための前処理
 // 後続処理が不要な場合は -1 を返す
 int ModalState::ModalStatePreProc(State* pState, int deckey, bool isStrokable) {
-    _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), NextState={}, NextNode={}"), pState->GetName(), deckey, deckey, STATE_NAME(pState->NextState()), NODE_NAME(pState->NextNodeMaybe()));
+    _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), strokable={}, NextState={}, NextNode={}"),
+        pState->GetName(), deckey, deckey, isStrokable, STATE_NAME(pState->NextState()), NODE_NAME(pState->NextNodeMaybe()));
 
     // まだ後続状態が無く、自身が StrokeState ではなく、deckey はストロークキーである場合は、ルートストローク状態を生成して後続させる
     // つまり、状態チェーンの末端であって、打鍵中でない場合

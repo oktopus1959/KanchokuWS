@@ -21,14 +21,14 @@
 
 #if 1 || defined(_DEBUG)
 #undef _DEBUG_SENT
-#undef LOG_INFO
+//#undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
 #undef _LOG_DEBUGH
 #define _DEBUG_SENT(x) x
-#define LOG_INFO LOG_INFOH
+//#define LOG_INFO LOG_INFOH
 #define LOG_DEBUGH LOG_INFOH
-#define LOG_DEBUG LOG_INFOH
+#define LOG_DEBUG LOG_INFO
 #define _LOG_DEBUGH LOG_INFOH
 #endif
 
@@ -140,20 +140,20 @@ void State::HandleDeckeyPostProc() {
 
 // 中間チェック
 void State::DoIntermediateCheckChain() {
-    _LOG_DEBUGH(_T("ENTER: {}"), Name);
+    LOG_DEBUG(_T("ENTER: {}"), Name);
     if (pNext) pNext->DoIntermediateCheckChain();
     DoIntermediateCheck();
-    _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+    LOG_DEBUG(_T("LEAVE: {}"), Name);
 }
 
 void State::DoIntermediateCheck() {
     // Do nothing by Default
-    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT"), Name);
+    LOG_DEBUG(_T("CALLED: {}: DEFAULT"), Name);
 }
 
 // 新しい状態作成のチェイン(状態チェーンの末尾でのみ新状態の作成を行う)
 void State::CreateNewStateChain() {
-    _LOG_DEBUGH(_T("ENTER: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+    LOG_DEBUG(_T("ENTER: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
     if (pNext) {
         // 状態チェーンの末尾に向かう
         pNext->CreateNewStateChain();
@@ -161,7 +161,7 @@ void State::CreateNewStateChain() {
         // 状態チェーンの末尾でのみ新状態の作成を行う
         CreateNewState();
     }
-    _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+    LOG_DEBUG(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
 }
 
 // 新しい後続状態の生成(ここに来たときは、不要な後続状態は存在しないはず)
@@ -171,12 +171,12 @@ void State::CreateNewState() {
 
     // 新しい後続状態の生成
     if (NextNodeMaybe()) {
-        _LOG_DEBUGH(_T("PATH-0: NextNodeMaybe={}"), NODE_NAME(NextNodeMaybe()));
+        LOG_DEBUG(_T("PATH-0: NextNodeMaybe={}"), NODE_NAME(NextNodeMaybe()));
         // 新しい後続ノードが生成されていれば、ここで後続ノードの処理を行う
         State* ps = NextNodeMaybe()->CreateState();
         ClearNextNodeMaybe();       // 新状態を生成したので、親には渡さない。参照をクリアしておく
         // 新状態を後接させる
-        _LOG_DEBUGH(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
+        LOG_DEBUG(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
         if (pNext) {
             LOG_WARNH(_T("UNDELETED state found"));
             DeleteNextStateChain();
@@ -184,10 +184,10 @@ void State::CreateNewState() {
         SetNextState(ps);
         ps->pPrev = this;
         // 状態が生成されたときに処理を実行(ストロークノード以外は、ここで何らかの出力処理の準備をするはず)
-        _LOG_DEBUGH(_T("Call DoProcOnCreated() for new state"));
+        LOG_DEBUG(_T("Call DoProcOnCreated() for new state"));
         ps->DoProcOnCreated();
         // 新しく生成した状態がさらに次のノードを持っているかもしれないので、再帰的に処理を実行する
-        _LOG_DEBUGH(_T("handle new state"));
+        LOG_DEBUG(_T("handle new state"));
         ps->CreateNewState();
     }
     _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
@@ -207,63 +207,25 @@ void State::CreateNewState() {
 
 // チェーンをたどって後続状態を削除する
 void State::DeleteNextStateChain() {
-    _LOG_DEBUGH(_T("ENTER: {}"), Name);
+    LOG_DEBUG(_T("ENTER: {}"), Name);
     if (pNext) {
         // 先に状態チェーンの末尾の方の処理をやる
         pNext->DeleteNextStateChain();
     }
     DeleteNextState();
-    _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+    LOG_DEBUG(_T("LEAVE: {}"), Name);
 }
 
 // チェーンをたどって不要とマークされた後続状態を削除する
 void State::DeleteUnnecessarySuccessorStateChain() {
-    _LOG_DEBUGH(_T("ENTER: {}, IsUnnecessary={}"), Name, IsUnnecessary());
+    LOG_DEBUG(_T("ENTER: {}, IsUnnecessary={}"), Name, IsUnnecessary());
     if (pNext) {
         // 先に状態チェーンの末尾の方の処理をやる
         pNext->DeleteUnnecessarySuccessorStateChain();
     }
     DeleteUnnecessarySuccessorState();
-    _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+    LOG_DEBUG(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
 }
-
-#if 0
-// 不要になった後続状態の削除と、新しい後続状態の生成
-//void State::DoDeckeyPostProc() {
-    _LOG_DEBUGH(_T("ENTER: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
-    // 不要な後続状態を削除
-    DeleteUnnecessarySuccessorState();
-
-    // 新しい後続状態の生成
-    while (NextNodeMaybe() && !IsUnnecessary()) {
-        _LOG_DEBUGH(_T("PATH-0: NextNodeMaybe={}"), NODE_NAME(NextNodeMaybe()));
-        // 新しい後続ノードが生成されており、自身が不要状態でないならば、ここで後続ノードの処理を行う
-        // (自身が不要状態ならば、この後、前接状態に戻り、そこで後続ノードが処理される)
-        // 後続状態を作成
-        State* ps = NextNodeMaybe()->CreateState();
-        _LOG_DEBUGH(_T("PATH-A"));
-        ClearNextNodeMaybe();       // 新状態を生成したので、親には渡さない。参照をクリアしておく
-        _LOG_DEBUGH(_T("PATH-B"));
-        // 状態が生成されたときに処理を実行
-        // ストロークノード以外は、ここで何らかの出力処理をするはず
-        if (ps->DoProcOnCreated()) {
-            // 必要があれば後続ノードから生成した新状態をチェインする
-            _LOG_DEBUGH(_T("PATH-C"));
-            _LOG_DEBUGH(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
-            SetNextState(ps);
-            ps->pPrev = this;
-        } else {
-            // 後続状態の生成時処理の結果、後続状態は不要になった
-            _LOG_DEBUGH(_T("PATH-D"));
-            SetNextNodeMaybe(ps->NextNodeMaybe());   // 新しい後続ノードがあるかもしれないのでここでセットしておく
-            _LOG_DEBUGH(_T("NextNodeMaybe={:p}"), (void*)NextNodeMaybe());
-            delete ps;  // 不要になった後続状態を削除する
-        }
-        _LOG_DEBUGH(_T("PATH-E"));
-    }
-    _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
-}
-#endif
 
 // 状態が生成されたときに実行する処理
 // 新しく生成した状態がさらに次のノードを持っている場合は、ここで SetNextNodeMaybe() を実行すること
@@ -370,23 +332,23 @@ bool State::IsUnnecessary() {
 
 // この状態以降を不要としてマークする
 void State::MarkUnnecessaryFromThis() {
-    LOG_DEBUGH(_T("CALLED: {}"), Name);
+    LOG_DEBUG(_T("CALLED: {}"), Name);
     bUnnecessary = true;
     if (pNext) pNext->MarkUnnecessaryFromThis();
 }
 
 // 不要とマークされた後続状態を削除する(次ノードがあれば、それを自状態に移動しておく)
 void State::DeleteUnnecessarySuccessorState() {
-    _LOG_DEBUGH(_T("ENTER: {}"), Name);
+    LOG_DEBUG(_T("ENTER: {}"), Name);
     if (pNext) {
         if (pNext->IsUnnecessary()) {
-            _LOG_DEBUGH(_T("DELETE NEXT: {}"), pNext->Name);
+            LOG_DEBUG(_T("DELETE NEXT: {}"), pNext->Name);
             // 次ノードがあれば、それを自状態に移動しておく
             if (pNext->NextNodeMaybe() && !NextNodeMaybe()) SetNextNodeMaybe(pNext->NextNodeMaybe());
             DeleteNextState();       // 不要とマークされた後続状態を削除する
         }
     }
-    _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+    LOG_DEBUG(_T("LEAVE: {}"), Name);
 }
 
 // 入力・変換モード標識を連結して返す
