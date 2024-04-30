@@ -2,7 +2,6 @@
 
 #include "Logger.h"
 #include "State.h"
-#include "ModalState.h"
 
 // 常駐状態のベースクラス
 class ResidentState : public State {

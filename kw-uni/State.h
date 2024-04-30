@@ -9,7 +9,6 @@
 #include "StateCommonInfo.h"
 #include "Node.h"
 #include "MStringResult.h"
-//#include "ModalState.h"
 
 #define UNSHIFT_DECKEY(x) (x % PLANE_DECKEY_NUM)
 #define DECKEY_TO_SHIFT_PLANE(x) (x / PLANE_DECKEY_NUM)
@@ -40,8 +39,6 @@ public:
 // デコーダ状態の基底クラス
 class State {
     DECLARE_CLASS_LOGGER;
-
-    //friend ModalState;
 
     // 状態チェーンの前の状態
     State* pPrev = 0;

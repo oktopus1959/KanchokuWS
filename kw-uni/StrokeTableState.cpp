@@ -83,31 +83,6 @@ namespace {
             Initialize(logger.ClassNameT(), pN);
         }
 
-        //// DECKEY 処理の流れ
-        //void HandleDeckeyChain(int deckey) override {
-        //    LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}"),
-        //        Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()));
-        //    // 前処理
-        //    State::HandleDeckeyChain(deckey);   // ここで dispatchDeckey() → handleStrokeKeys() が呼ばれる
-
-        //    // 次状態の処理
-        //    CheckNextState();
-
-        //    // 不要になった後続状態を削除
-        //    DeleteUnnecessarySuccessorState();
-
-        //    LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
-        //}
-
-        //// 入力された DECKEY を処理する(前処理)
-        //// 何もしないが、デバッグモードで、ログを出力する
-        //int HandleDeckeyPreProc(int deckey) override {
-        //    LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({}), totalCount={}, NextNode={}"),
-        //        Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()));
-        //    resultStr.clear();
-        //    return deckey;
-        //}
-
         // 入力された DECKEY を処理する(後処理)
         // HandleDeckeyChain()の中で、dispatchDeckey() → handleStrokeKeys() と呼ばれた後に、この処理が呼ばれる
         void HandleDeckeyPostProc() override {

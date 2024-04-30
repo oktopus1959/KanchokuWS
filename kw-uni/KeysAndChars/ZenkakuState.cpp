@@ -12,6 +12,7 @@
 #include "State.h"
 #include "OutputStack.h"
 #include "History//HistoryResidentState.h"
+#include "ModalStateUtil.h"
 
 #include "Zenkaku.h"
 
@@ -110,13 +111,7 @@ namespace {
 
         // その他の特殊キー (常駐の履歴機能があればそれを呼び出す)
         void handleSpecialKeys(int deckey) {
-            LOG_DEBUG(_T("CALLED: {}, deckey={}"), Name, deckey);
-            if (HISTORY_RESIDENT_STATE) {
-                // 常駐の履歴機能があればそれを呼び出す
-                HISTORY_RESIDENT_STATE->dispatchDeckey(deckey);
-            } else {
-                State::handleSpecialKeys(deckey);
-            }
+            ModalStateUtil::handleSpecialKeys(this, deckey);
         }
 
         // Space キーの処理 -- origChar を出力してキャンセル

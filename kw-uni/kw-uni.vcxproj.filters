@@ -267,7 +267,7 @@
     <ClInclude Include="utils\langedge\ctypeutil.hpp">
       <Filter>ヘッダー ファイル\utils\langedge</Filter>
     </ClInclude>
-    <ClInclude Include="ModalState.h">
+    <ClInclude Include="ModalStateUtil.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="StrokeMerger\Merger.h">
@@ -416,7 +416,7 @@
     <ClCompile Include="utils\utf_utils.cpp">
       <Filter>ソース ファイル\utils</Filter>
     </ClCompile>
-    <ClCompile Include="ModalState.cpp">
+    <ClCompile Include="ModalStateUtil.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="OneShot\RewriteString.cpp">

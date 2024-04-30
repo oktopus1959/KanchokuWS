@@ -13,6 +13,7 @@
 #include "StrokeTable.h"
 #include "OutputStack.h"
 #include "History//HistoryResidentState.h"
+#include "ModalStateUtil.h"
 
 #include "Katakana.h"
 
@@ -54,14 +55,10 @@ namespace {
 
 #define MY_NODE ((KatakanaNode*)pNode)
 
-        // DECKEY 処理の前半部(ディスパッチまで)
-        void HandleDeckeyChain(int deckey) {
-            LOG_DEBUGH(_T("ENTER: {}"), Name);
-
-            ModalState::ModalStatePreProc(this, deckey, State::isStrokableKey(deckey));
-            State::HandleDeckeyChain(deckey);
-
-            LOG_DEBUGH(_T("LEAVE: {}"), Name);
+        // 状態の事前チェック
+        int HandleDeckeyPreProc(int deckey) override {
+            _LOG_DEBUGH(_T("ENTER: {}"), Name);
+            return ModalStateUtil::ModalStatePreProc(this, deckey, State::isStrokableKey(deckey));
         }
 
         // 機能状態に対して生成時処理を実行する
@@ -133,13 +130,7 @@ namespace {
 
         // その他の特殊キー (常駐の履歴機能があればそれを呼び出す)
         void handleSpecialKeys(int deckey) {
-            LOG_DEBUG(_T("CALLED: {}, deckey={}"), Name, deckey);
-            if (HISTORY_RESIDENT_STATE) {
-                // 常駐の履歴機能があればそれを呼び出す
-                HISTORY_RESIDENT_STATE->dispatchDeckey(deckey);
-            } else {
-                State::handleSpecialKeys(deckey);
-            }
+            ModalStateUtil::handleSpecialKeys(this, deckey);
         }
 
         // KatakanaConversionの処理 - 処理のキャンセル

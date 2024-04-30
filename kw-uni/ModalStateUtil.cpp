@@ -1,4 +1,4 @@
-#include "ModalState.h"
+#include "ModalStateUtil.h"
 #include "State.h"
 #include "Mazegaki/Mazegaki.h"
 #include "Eisu.h"
@@ -7,6 +7,7 @@
 #include "StrokeTable.h"
 #include "Settings.h"
 #include "StrokeMerger/Merger.h"
+#include "History/HistoryResidentState.h"
 
 #if 1 || defined(_DEBUG)
 #undef _DEBUG_SENT
@@ -25,11 +26,11 @@
 #define _LOG_DEBUGH_COND LOG_INFOH_COND
 #endif
 
-DEFINE_CLASS_LOGGER(ModalState);
+DEFINE_CLASS_LOGGER(ModalStateUtil);
 
 // モード状態(HistoryResidentState や KatakanaState, EisuState など)のための前処理
 // 後続処理が不要な場合は -1 を返す
-int ModalState::ModalStatePreProc(State* pState, int deckey, bool isStrokable) {
+int ModalStateUtil::ModalStatePreProc(State* pState, int deckey, bool isStrokable) {
     _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), strokable={}, NextState={}, NextNode={}"),
         pState->GetName(), deckey, deckey, isStrokable, STATE_NAME(pState->NextState()), NODE_NAME(pState->NextNodeMaybe()));
 
@@ -93,4 +94,15 @@ int ModalState::ModalStatePreProc(State* pState, int deckey, bool isStrokable) {
 
     _LOG_DEBUGH(_T("LEAVE: {}: deckey={}, NextNode={}"), pState->GetName(), deckey, NODE_NAME(pState->NextNodeMaybe()));
     return deckey;
+}
+
+// その他の特殊キー (常駐の履歴機能があればそれを呼び出す)
+void ModalStateUtil::handleSpecialKeys(State* pState, int deckey) {
+    _LOG_DEBUGH(_T("CALLED: {}, deckey={}"), pState->GetName(), deckey);
+    if (HISTORY_RESIDENT_STATE) {
+        // 常駐の履歴機能があればそれを呼び出す
+        HISTORY_RESIDENT_STATE->dispatchDeckey(deckey);
+    } else {
+        pState->State::handleSpecialKeys(deckey);
+    }
 }

@@ -206,7 +206,7 @@
     <ClInclude Include="Mazegaki\MazegakiDic.h" />
     <ClInclude Include="Mecab\mecab.h" />
     <ClInclude Include="Mecab\MecabBridge.h" />
-    <ClInclude Include="ModalState.h" />
+    <ClInclude Include="ModalStateUtil.h" />
     <ClInclude Include="MStringResult.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="OneShot\HankakuKatakanaOneShot.h" />
@@ -272,7 +272,7 @@
     <ClCompile Include="Mazegaki\Mazegaki.cpp" />
     <ClCompile Include="Mazegaki\MazegakiDic.cpp" />
     <ClCompile Include="Mecab\MecabBridge.cpp" />
-    <ClCompile Include="ModalState.cpp" />
+    <ClCompile Include="ModalStateUtil.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="OneShot\HankakuKatakanaOneShotState.cpp" />
     <ClCompile Include="OneShot\KatakanaOneShotState.cpp" />

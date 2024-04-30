@@ -84,6 +84,8 @@ void State::HandleDeckeyChain(int deckey) {
     LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}, outStr={}"),
         Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()), to_wstr(resultStr.resultStr()));
 
+    resultStr.clear();
+
     ClearNextNodeMaybe();
 
     // DECKEY 処理の前処理
@@ -113,9 +115,9 @@ void State::HandleDeckeyChain(int deckey) {
 
 // 入力された DECKEY を処理する(前処理)
 int State::HandleDeckeyPreProc(int deckey) {
-    _LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({}), totalCount={}, NextNode={}"),
+    /* デフォルトでは何もしない */
+    _LOG_DEBUGH(_T("CALLED: {}: DEFAULT: deckey={:x}H({}), totalCount={}, NextNode={}"),
         Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()));
-    resultStr.clear();
     return deckey;
 }
 

@@ -16,6 +16,7 @@
 #include "StrokeHelp.h"
 #include "BushuComp/BushuComp.h"
 #include "Eisu.h"
+#include "ModalStateUtil.h"
 
 #include "History.h"
 #include "HistoryDic.h"
@@ -1018,7 +1019,7 @@ namespace {
         int HandleDeckeyPreProc(int deckey) override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             resultStr.clear();
-            deckey = ModalState::ModalStatePreProc(this, deckey,
+            deckey = ModalStateUtil::ModalStatePreProc(this, deckey,
                 State::isStrokableKey(deckey) && (!bCandSelectable || deckey >= 10 || !SETTINGS->selectHistCandByNumberKey));
             maybeEditedBySubState = false;
             // 常駐モード
