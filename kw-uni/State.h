@@ -67,7 +67,7 @@ protected:
 
 public:
     // 不要になった状態か
-    virtual bool IsUnnecessary();
+    virtual bool IsUnnecessary() const;
 
 protected:
     // この状態が処理の対象とするノード

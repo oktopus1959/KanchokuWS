@@ -17,7 +17,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
 
-#if 1 || defined(_DEBUG)
+#if 0 || defined(_DEBUG)
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
@@ -51,7 +51,7 @@ namespace {
         }
 
         // 全打鍵状態を削除するか
-        bool isToRemoveAllStroke() {
+        bool isToRemoveAllStroke() const {
             return bRemoveAllStroke;
         }
 
@@ -238,7 +238,7 @@ namespace {
         //}
 
         // 不要になったら自身を削除する
-        bool IsUnnecessary() override {
+        bool IsUnnecessary() const override {
             LOG_DEBUG(_T("CALLED: {}: {}"), Name, State::IsUnnecessary());
             return State::IsUnnecessary() || isToRemoveAllStroke();
         }

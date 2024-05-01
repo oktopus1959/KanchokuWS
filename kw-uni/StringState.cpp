@@ -10,7 +10,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughString)
 
-#if 1 || defined(_DEBUG)
+#if 0 || defined(_DEBUG)
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG

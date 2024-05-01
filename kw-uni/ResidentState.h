@@ -14,7 +14,7 @@ public:
     }
 
     // 不要になった状態か
-    bool IsUnnecessary() override {
+    bool IsUnnecessary() const override {
         return false;
     }
 

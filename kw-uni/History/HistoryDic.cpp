@@ -15,7 +15,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
 
-#if 1
+#if 0
 #undef _DEBUG_SENT
 #undef LOG_DEBUG
 #undef LOG_DEBUGH

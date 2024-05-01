@@ -19,7 +19,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
-#if 1 || defined(_DEBUG)
+#if 0 || defined(_DEBUG)
 #undef _DEBUG_SENT
 //#undef LOG_INFO
 #undef LOG_DEBUGH
@@ -42,11 +42,10 @@ State::~State() {
 }
 
 String State::JoinedName() const {
-    if (pNext) {
-        return Name + _T("-") + pNext->JoinedName();
-    } else {
-        return Name;
-    }
+    String myName = Name;
+    if (IsUnnecessary()) myName += _T("(*)");
+    if (pNext) myName += _T("-") + pNext->JoinedName();
+    return myName;
 }
 
 // 次の状態をセット
@@ -327,7 +326,7 @@ void State::MarkNecessary() {
 
 // 不要になった状態か
 // 必要に応じてオーバーライドすること。
-bool State::IsUnnecessary() {
+bool State::IsUnnecessary() const {
     LOG_DEBUG(_T("CALLED: {}: {}"), Name, bUnnecessary);
     return bUnnecessary;
 }

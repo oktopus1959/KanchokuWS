@@ -19,7 +19,7 @@ namespace KanchokuWS
 {
     public partial class FrmKanchoku : Form
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         //------------------------------------------------------------------
         [DllImport("user32.dll")]

@@ -7,7 +7,7 @@
 
 #include "Logger.h"
 
-#if 1
+#if 0
 #define __LOG_DEBUGH LOG_INFOH
 #else
 #define __LOG_DEBUGH LOG_DEBUGH
