@@ -40,6 +40,10 @@ struct WordPiece {
         : pieceStr(ms), strokeLen(len), rewritableLen(rewLen), numBS(nBS) {
     }
 
+    static WordPiece emptyPiece() {
+        return WordPiece(EMPTY_MSTR, 1, 0);
+    }
+
     String toString() const {
         return _T("(") + to_wstr(pieceStr) + _T(", strokeLen=") + std::to_wstring(strokeLen) + _T(", rewLen=") + std::to_wstring(rewritableLen) + _T(", numBS=") + std::to_wstring(numBS) + _T(")");
     }

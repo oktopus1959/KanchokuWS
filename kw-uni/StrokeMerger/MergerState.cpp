@@ -252,7 +252,7 @@ namespace {
         void HandleDeckeyProc(StrokeTableNode* pRootNode, int decKey, bool bMerge) {
             _LOG_DEBUGH(_T("ENTER: {}: pRootNode={:p}, decKey={}, bMerge={}"), name, (void*)pRootNode, decKey, bMerge);
             if (pRootNode) {
-                if (Count() < 1 || bMerge) addStrokeStream(pRootNode);
+                if ((Count() < 1 || bMerge) && State::isStrokableKey(decKey)) addStrokeStream(pRootNode);
                 _LOG_DEBUGH(_T("{}: strokeStateList.Count={}"), name, Count());
                 int count = 1;
                 forEach([decKey, &count, this](const StrokeStreamUptr& pStream) {
@@ -345,6 +345,9 @@ namespace {
     private:
         DECLARE_CLASS_LOGGER;
 
+        // 同時打鍵中か
+        bool inComboList = false;
+
         // RootStrokeState1用の状態集合
         StrokeStreamList streamList1;
 
@@ -381,11 +384,22 @@ namespace {
                 streamList1.Clear();
                 streamList2.Clear();
             } else {
+                if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END) {
+                    // 同時打鍵の始まりなので、いったん streamList はクリア
+                    // 同時打鍵中は、処理を分岐させない
+                    streamList1.Clear();
+                    streamList2.Clear();
+                    inComboList = true;
+                }
                 // 前処理(ストローク木状態の作成と呼び出し)
                 _LOG_DEBUGH(_T("streamList1: doDeckeyPreProc"));
-                streamList1.HandleDeckeyProc(StrokeTableNode::RootStrokeNode1.get(), deckey, true);
+                streamList1.HandleDeckeyProc(StrokeTableNode::RootStrokeNode1.get(), deckey, !inComboList);
                 _LOG_DEBUGH(_T("streamList2: doDeckeyPreProc"));
-                streamList2.HandleDeckeyProc(StrokeTableNode::RootStrokeNode2.get(), deckey, true);
+                streamList2.HandleDeckeyProc(StrokeTableNode::RootStrokeNode2.get(), deckey, !inComboList);
+                if (deckey < SHIFT_DECKEY_START) {
+                    // 同時打鍵列の終わり
+                    inComboList = false;
+                }
             }
 
             //// 後処理
@@ -467,6 +481,10 @@ namespace {
 
             if (!IsUnnecessary() || !pieces.empty()) {
                 // Lattice処理
+                if (pieces.empty()) {
+                    _LOG_DEBUGH(_T("pieces is empty. add EmptyWordPiece."));
+                    pieces.push_back(WordPiece::emptyPiece());
+                }
                 auto result = WORD_LATTICE->addPieces(pieces);
 
                 // 新しい文字列が得られたら履歴状態に送る

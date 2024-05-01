@@ -24,7 +24,7 @@
 namespace lattice {
     DEFINE_LOCAL_LOGGER(lattice);
 
-    size_t BestKSize = 10;
+    size_t BestKSize = 20;
 
     int MAX_COST = 1000;
 
@@ -55,9 +55,13 @@ namespace lattice {
         return getWordCost(utils::last_substr(s1, 1) + utils::safe_substr(s2, 0, 1)) / 2;
     }
 
-    // Lattice Node
+    // Lattice Node (特定打鍵位置における文字ノード)
+    // 打鍵数を保持しており、その打鍵数だけ前の位置のノードに接続する。
     class _LatticeNode {
         MString _str;
+
+        // 打鍵数
+        size_t _strokeLen = 0;
 
         // 自ノードのコスト
         int _cost = MAX_COST;
@@ -66,12 +70,13 @@ namespace lattice {
         //int minCost;
 
     public:
-        size_t strokeLen = 0;
+        // 打鍵数
+        inline size_t strokeLen() const { return _strokeLen; }
 
         _LatticeNode() { }
 
         _LatticeNode(const MString& s, size_t len, int cost, int strokeCost = 0)
-            : _str(s), strokeLen(len)
+            : _str(s), _strokeLen(len)
         {
             _cost = (cost >= 0 ? cost : getWordCost(s)) + strokeCost;
             //minCost = INT_MAX;
@@ -91,7 +96,7 @@ namespace lattice {
         }
 
         String toString() const {
-            return std::format(_T("({},{})"), to_wstr(_str), strokeLen);
+            return std::format(_T("({},{})"), to_wstr(_str), _strokeLen);
         }
     };
 
@@ -118,7 +123,8 @@ namespace lattice {
         }
     };
 
-    // 逆順パスノード
+    // 逆順パスノード(逆順パスと同一視される)
+    // 前ノードへのポインタを持ち、それのつながりで逆順パスを表現する
     class ReversePathNode {
     private:
         _LatticeNode* pNode;
@@ -142,12 +148,8 @@ namespace lattice {
         }
 
         MString reverseListString() {
-            MString result;
-            auto* p = this;
-            while (p) {
-                result.insert(0, p->toString());
-                p = p->_prevNode;
-            }
+            MString result(toString());
+            if (_prevNode) result.insert(0, _prevNode->pathString());
             return result;
         }
 
@@ -167,6 +169,10 @@ namespace lattice {
 
         const MString& pathString() const {
             return _pathString;
+        }
+
+        ReversePathNode* prevNode() const {
+            return _prevNode;
         }
 
         MString toString() const {
@@ -237,13 +243,40 @@ namespace lattice {
         }
 
         // 新しいPathを追加
-        bool addPathNode(ReversePathNode* pathNode) {
+        bool addPathNode(ReversePathNode* pathNode, std::map<MString, int>& mecabCache) {
             bool bAdded = false;
+            bool bIgnored = false;
             if (!reverseNodeList.empty()) {
+                // top-Kと比較して、コストが小さければ、これを追加
+                auto mecab = [&mecabCache](const MString& s) {
+                    int cost = 0;
+                    auto iter = mecabCache.find(s);
+                    if (iter == mecabCache.end()) {
+                        cost = MecabBridge::mecabCalcCost(s);
+                        mecabCache[s] = cost;
+                    } else {
+                        cost = iter->second;
+                    }
+                    return cost;
+                };
+                const MString& myStr = pathNode->pathString();
+                int myCost = mecab(myStr);
                 for (auto iter = reverseNodeList.begin(); iter != reverseNodeList.end(); ++iter) {
-                    if (pathNode->totalCost() < (*iter)->totalCost()) {
+                    //const auto* myPrev = pathNode->prevNode();
+                    //const auto* otherPrev = (*iter)->prevNode();
+                    //bool bSame = myPrev && otherPrev && myPrev->pathString() == otherPrev->pathString();
+                    const MString& otherStr = (*iter)->pathString();
+                    int otherCost = mecab(otherStr);
+                    //if (pathNode->totalCost() < (*iter)->totalCost()) 
+                    if (myCost < otherCost) {
                         iter = reverseNodeList.insert(iter, pathNode);
                         bAdded = true;
+                        if (myStr == otherStr) {
+                            // 同じ文字列なので、古い pahtNode は削除
+                            const auto* pRemoved = *iter;
+                            reverseNodeList.erase(iter);
+                            _LOG_DEBUGH(_T("REMOVE second best or lesser reversePath: {}"), formatStringOfReverseNodeList(pRemoved));
+                        }
                         //// 同じLatticeNodeを持つやつがあれば、それを削除(最小コストのだけを残しておけばよいので) ⇒ いや、それはダメ(後で2位以下が復活する可能性がある)
                         //++iter;
                         //for (; iter != reverseNodeList.end(); ++iter) {
@@ -255,10 +288,14 @@ namespace lattice {
                         //    }
                         //}
                         break;
+                    } else if (myStr == otherStr) {
+                        // 同じ文字列なので、当 pahtNode は無視
+                        bIgnored = true;
+                        break;
                     }
                 }
             }
-            if (!bAdded && reverseNodeList.size() < BestKSize) {
+            if (!bAdded && !bIgnored && reverseNodeList.size() < BestKSize) {
                 // 余裕があれば末尾に追加
                 reverseNodeList.push_back(pathNode);
                 bAdded = true;
@@ -266,7 +303,7 @@ namespace lattice {
             if (reverseNodeList.size() > BestKSize) {
                 // kBestサイズを超えたら末尾を削除
                 reverseNodeList.resize(BestKSize);
-                _LOG_DEBUGH(_T("RESIZED"));
+                _LOG_DEBUGH(_T("REMOVE OVERFLOW ENTRY"));
             }
             if (bAdded) {
                 _LOG_DEBUGH(_T("ADD reversePath: {}"), formatStringOfReverseNodeList(pathNode));
@@ -367,7 +404,7 @@ namespace lattice {
                 _LOG_DEBUGH(_T("CONN-POS={}, nodes.size()={}"), connPos, nodes.size());
                 for (auto pp : nodes) {
                     MString str = pp->str() + piece.pieceStr;
-                    size_t strkLen = pp->strokeLen + piece.strokeLen;
+                    size_t strkLen = pp->strokeLen() + piece.strokeLen;
                     _LOG_DEBUGH(_T("prevNode: {}, strlen={}"), to_wstr(pp->str()), str.size());
                     if (str.size() <= 3) {
                         auto iter = wordCosts.find(str);
@@ -467,10 +504,10 @@ namespace lattice {
             return n;
         }
 
-        void tryNewReversePathList(KBestPathList* pathList, _LatticeNode* lNode, ReversePathNode* pPrev) {
+        void tryNewReversePathList(KBestPathList* pathList, _LatticeNode* lNode, ReversePathNode* pPrev, std::map<MString, int>& mecabCache) {
             auto* pRPNode = reversePathNodeStore.createReversePathNode(lNode, pPrev);
             //pRPNode->calcCost();
-            pathList->addPathNode(pRPNode);
+            pathList->addPathNode(pRPNode, mecabCache);
             //if (pRPNode->totalCost < lNode->minCost) {
             //    lNode->minCost = pRPNode->totalCost;
             //    _LOG_DEBUGH(_T("TRY reversePath: {}"), formatStringOfReverseNodeList(pRPNode));
@@ -482,19 +519,19 @@ namespace lattice {
 
         // 新規ノードの追加による k-Best の作り直し
         // pathList:新規ノード位置における初期PathList(空)
-        void remakeKBestList(KBestPathList* pathList, size_t endPos, _LatticeNode* lNode) {
+        void remakeKBestList(KBestPathList* pathList, size_t endPos, _LatticeNode* lNode, std::map<MString, int>& mecabCache) {
             _LOG_DEBUGH(_T("ENTER: pathList.size()={}, minCost={}, maxCost={}, endPos={}, lNode={}"),
                 pathList->getKBestList().size(), pathList->getMinTotalCost(), pathList->getMaxTotalCost(), endPos, lNode->toString());
-            if (lNode->strokeLen > endPos) {
-                tryNewReversePathList(pathList, lNode, 0);
+            if (lNode->strokeLen() > endPos) {
+                tryNewReversePathList(pathList, lNode, 0, mecabCache);
             } else {
-                size_t pos = endPos - lNode->strokeLen;
+                size_t pos = endPos - lNode->strokeLen();
                 //auto* pListByPos = getKBestPathListByPos(pos);
                 auto* pListByPos = kBestPathListStore.getKBestPathListByPos(pos);
                 _LOG_DEBUGH(_T("KBestPathList: pos={}, PathNum={}"), pos, pListByPos ? pListByPos->getKBestList().size() : -1);
                 if (pListByPos) {
                     for (auto* pPrev : pListByPos->getKBestList()) {
-                        tryNewReversePathList(pathList, lNode, pPrev);
+                        tryNewReversePathList(pathList, lNode, pPrev, mecabCache);
                     }
                 }
             }
@@ -527,17 +564,18 @@ namespace lattice {
             size_t endPos = lnodeListStore.addEmptyLatticeNodeList()->getPos();
             _LOG_DEBUGH(_T("endPos={}"), endPos);
             // endPos における空の k-best path リストを取得
+            std::map<MString, int> mecabCache;
             auto* pathList = kBestPathListStore.getKBestPathListByPos(endPos);
             for (auto& piece : pieces) {
                 for (auto* pLnode : lnodeListStore.createNgramLatticeNode(piece, endPos)) {
                     // 新規ノードの追加による k-Best の作り直し
-                    remakeKBestList(pathList, endPos, pLnode);
+                    remakeKBestList(pathList, endPos, pLnode, mecabCache);
                 }
             }
             _LOG_DEBUGH(_T("pathList:\n{}"), pathList->toString());
             size_t numBS = 0;
-            MString outStr = pathList->getTopPathStringByMecab();
-            //MString outStr = pathList->getTopPathString();
+            //MString outStr = pathList->getTopPathStringByMecab();
+            MString outStr = pathList->getTopPathString();
             if (!outStr.empty()) {
                 size_t len = calcCommonLenWithPrevStr(outStr);
                 numBS = prevOutputStr.size() - len;
