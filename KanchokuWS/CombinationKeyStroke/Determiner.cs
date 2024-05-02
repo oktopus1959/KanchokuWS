@@ -202,14 +202,14 @@ namespace KanchokuWS.CombinationKeyStroke
             KeyCombinationPool.Initialize();
             Clear();
 
-            new TableFileParser().ParseTableFile(tableFile, "tmp/tableFile1.tbl", KeyCombinationPool.SingletonK1, KeyCombinationPool.SingletonA1, 1, bTest);
+            new TableFileParser().ParseTableFile(tableFile, "tmp/tableFile1.tbl", KeyCombinationPool.SingletonK1, KeyCombinationPool.SingletonA1, 1, false, bTest);
 
             if (tableFile2._notEmpty()) {
-                new TableFileParser().ParseTableFile(tableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.SingletonK2, KeyCombinationPool.SingletonA2, 2, bTest);
+                new TableFileParser().ParseTableFile(tableFile2, "tmp/tableFile2.tbl", KeyCombinationPool.SingletonK2, KeyCombinationPool.SingletonA2, 2, Settings.MultiStreamMode, bTest);
             }
 
             if (tableFile3._notEmpty()) {
-                new TableFileParser().ParseTableFile(tableFile3, "tmp/tableFile3.tbl", KeyCombinationPool.SingletonK3, KeyCombinationPool.SingletonA3, 3, bTest);
+                new TableFileParser().ParseTableFile(tableFile3, "tmp/tableFile3.tbl", KeyCombinationPool.SingletonK3, KeyCombinationPool.SingletonA3, 3, false, bTest);
             }
             logger.Info("LEAVE");
         }

@@ -906,8 +906,10 @@ namespace KanchokuWS.TableParser
     /// <summary>
     /// グローバルなコンテキスト情報を格納するクラス
     /// </summary>
-    class ParserContext
-    {
+    class ParserContext {
+        // テーブルの融合モードでの従テーブルか
+        public bool isSecondaryTableOnMultiStream = false;
+
         public TableLines tableLines;
 
         public TOKEN currentToken = TOKEN.IGNORE;    // 最後に読んだトークン
@@ -982,16 +984,17 @@ namespace KanchokuWS.TableParser
         /// </summary>
         /// <param name="pool">対象となる KeyComboPool</param>
         /// <param name="comboDkStart"></param>
-        private ParserContext(TableLines tableLines, KeyCombinationPool pool, int comboDkStart)
+        private ParserContext(TableLines tableLines, KeyCombinationPool pool, int comboDkStart, bool secondaryOnMulti)
         {
             this.tableLines = tableLines;
             keyComboPool = pool;
             _comboDeckeyStart = comboDkStart;
+            isSecondaryTableOnMultiStream = secondaryOnMulti;
         }
 
-        public static void CreateSingleton(TableLines tableLines, KeyCombinationPool pool, int comboDkStart)
+        public static void CreateSingleton(TableLines tableLines, KeyCombinationPool pool, int comboDkStart, bool secondaryOnMulti)
         {
-            Singleton = new ParserContext(tableLines, pool, comboDkStart);
+            Singleton = new ParserContext(tableLines, pool, comboDkStart, secondaryOnMulti);
         }
 
         public static void FinalizeSingleton()

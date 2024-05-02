@@ -237,7 +237,7 @@ public:
         }
 
         int logLevel = utils::strToInt(utils::safe_get(key_vals, String(_T("logLevel"))));
-        if (logLevel > 0) Reporting::Logger::SetLogLevel(logLevel);
+        Reporting::Logger::SetLogLevel(logLevel);
 
         SETTINGS->SetValues(key_vals);
 

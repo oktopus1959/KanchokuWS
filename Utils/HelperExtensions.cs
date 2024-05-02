@@ -1756,6 +1756,16 @@ namespace Utils
             return false;
         }
 
+        public static bool _isHiragana(this string str)
+        {
+            return str._notEmpty() && str.All(ch => Helper.IsHiragana(ch));
+        }
+
+        public static bool _isZenkakuSymbol(this string str)
+        {
+            return str._notEmpty() && str.All(ch => Helper.IsZenkakuSymbol(ch));
+        }
+
         public static string _quoteString(this string str, bool bBare = true)
         {
             if (str._isEmpty()) return "";

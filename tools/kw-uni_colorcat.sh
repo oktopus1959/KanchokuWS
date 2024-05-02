@@ -8,7 +8,7 @@ cat $* | \
 |RootStrokeNode[12]|StrokeMergerState|[Dd]estructor|LatticeImpl|DecoderImpl.HandleDeckey|MecabBridge.mecabCalcCost|ABANDON|handleStrokeKeys|StrokeMergerState.HandleDeckey\
 |deckey=.* statesNum=.*|handleDeckey_single|BushuAssocExState|PostRewriteOneShotState|DoProcOnCreated|StrokeTableState.HandleDeckey|State.dispatchDeckey|CurrentStrokeTable=[12]\
 |[Cc]reateStrokeTree[123]?|Eisu(State)?|: (ja|LastJapanese)Key=.*|NAMESPACE.RomanToKatakana|RootStrokeTableState|GetResultString(Chain)?|StrokeStreamList.HandleDeckeyProc' | \
-    $BINDIR/colorcat.sh -r 'WARN.*' | \
+    $BINDIR/colorcat.sh -r 'WARN[H:].*' | \
     $BINDIR/colorcat.sh -y ' WARN ' | \
     $BINDIR/colorcat.sh -r ' ERROR ' | \
     $BINDIR/colorcat.sh -c ' INFOH? |ENTER(: deckey=[^,]*, mod)|ENTER|LEAVE|CALLED|==== TEST\([0-9]+\):.* ====' | \

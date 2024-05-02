@@ -510,17 +510,21 @@ namespace KanchokuWS.TableParser
             if (Settings.LoggingTableFileInfo) logger.Info(() => $"ENTER: depth={Depth}, bBare={bBare}, str={CurrentStr}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
             string str = ConvertKanji(CurrentStr);
-            addTerminalNode(idx, Node.MakeStringNode($"{str}", bBare), true);
-            if (!StrokePathDict.ContainsKey(str)) {
-                // 初めての文字ならストロークパスを登録
-                StrokePathDict[str] = StrokeList.WithLastStrokeAdded(idx);
+            if (!IsSecondaryTableOnMultiStream || (!str._isHiragana() && !str._isZenkakuSymbol())) {
+                addTerminalNode(idx, Node.MakeStringNode($"{str}", bBare), true);
+                if (!StrokePathDict.ContainsKey(str)) {
+                    // 初めての文字ならストロークパスを登録
+                    StrokePathDict[str] = StrokeList.WithLastStrokeAdded(idx);
+                }
+                if (HasRootTable && CurrentStr._startsWith("!{")) {
+                    // Repeatable Key
+                    if (Settings.LoggingTableFileInfo) logger.Info(() => $"REPEATABLE");
+                    keyComboPool?.AddRepeatableKey(idx);
+                }
+                if (Settings.LoggingTableFileInfo) logger.Info(() => $"LEAVE: depth={Depth}");
+            } else {
+                if (Settings.LoggingTableFileInfo) logger.Info(() => $"LEAVE: Secondary table: IGNORE: {str}");
             }
-            if (HasRootTable && CurrentStr._startsWith("!{")) {
-                // Repeatable Key
-                if (Settings.LoggingTableFileInfo) logger.Info(() => $"REPEATABLE");
-                keyComboPool?.AddRepeatableKey(idx);
-            }
-            if (Settings.LoggingTableFileInfo) logger.Info(() => $"LEAVE: depth={Depth}");
         }
 
         public virtual void AddStringPairNode(OutputString[] stringPair = null)
@@ -1474,7 +1478,7 @@ namespace KanchokuWS.TableParser
         /// <param name="filename"></param>
         /// <param name="outFilename"></param>
         /// <param name="pool">対象となる KeyComboPool</param>
-        public void ParseTableFile(string filename, string outFilename, KeyCombinationPool poolK, KeyCombinationPool poolA, int tableNo, bool bTest = false)
+        public void ParseTableFile(string filename, string outFilename, KeyCombinationPool poolK, KeyCombinationPool poolA, int tableNo, bool secondaryOnMulti, bool bTest)
         {
             if (Settings.LoggingTableFileInfo) logger.Info(() => $"ENTER: filename={filename}");
 
@@ -1482,7 +1486,7 @@ namespace KanchokuWS.TableParser
 
             void parseRootTable(TableLines tblLines, KeyCombinationPool pool, bool bKanchoku)
             {
-                ParserContext.CreateSingleton(tblLines, pool, DecoderKeys.GetComboDeckeyStart(bKanchoku));
+                ParserContext.CreateSingleton(tblLines, pool, DecoderKeys.GetComboDeckeyStart(bKanchoku), secondaryOnMulti);
                 var parser = new RootTableParser(bKanchoku);
                 parser.ParseRootTable();
                 //writeAllLines(outFilename, ParserContext.Singleton.OutputLines);
@@ -1533,7 +1537,7 @@ namespace KanchokuWS.TableParser
             tableLines.ReadAllLines(filename, primary, true);
 
             if (tableLines.NotEmpty) {
-                ParserContext.CreateSingleton(tableLines, null, DecoderKeys.GetComboDeckeyStart(true));
+                ParserContext.CreateSingleton(tableLines, null, DecoderKeys.GetComboDeckeyStart(true), !primary);
                 var parser = new RootTableParser(true);
                 parser.ParseDirectives();
                 ParserContext.FinalizeSingleton();

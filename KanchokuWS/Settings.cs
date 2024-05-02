@@ -147,6 +147,9 @@ namespace KanchokuWS
         /// <summary> 複数配列の融合モードか </summary>        
         public static bool MultiStreamMode { get; set; } = false;
 
+        /// <summary>複数配列の融合モード時の従配列番号(1始まり; 通常は漢直側)</summary>
+        public static int SecondaryTableWhenMultiStream { get; set; } = 1;
+
         //-------------------------------------------------------------------------------------
         // 各種ファイル
         //-------------------------------------------------------------------------------------
@@ -996,7 +999,8 @@ namespace KanchokuWS
 
         public static int GetLogLevel()
         {
-            return GetString("logLevel")._parseInt(Logger.LogLevelWarnH)._lowLimit(0)._highLimit(Logger.LogLevelTrace);   // デフォルトは WarnH
+            //return GetString("logLevel")._parseInt(Logger.LogLevelWarnH)._lowLimit(0)._highLimit(Logger.LogLevelTrace);   // デフォルトは WarnH
+            return GetString("logLevel")._parseInt(0)._lowLimit(0)._highLimit(Logger.LogLevelTrace);   // デフォルトは None
         }
 
         public static bool IsMultiAppEnabled()

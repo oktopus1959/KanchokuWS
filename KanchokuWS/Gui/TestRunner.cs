@@ -42,6 +42,7 @@ namespace KanchokuWS.Gui
             Settings.ThreeKeysComboUnconditional = false;
             Settings.UseComboExtModKeyAsSingleHit = false;
             Settings.OnlyCharKeysComboShouldBeCoveringCombo = false;
+            Settings.MultiStreamMode = false;
 
             var regex = new Regex(@"^\s*(\w+)(?:\(([^)]*)\)(?:\s*=\s*([^\s]+))?)?");
             var sb = new StringBuilder();

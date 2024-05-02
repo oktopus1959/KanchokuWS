@@ -343,11 +343,12 @@ namespace KanchokuWS
             ShiftPlane.InitializeShiftPlaneForShiftModKey();
 
             // テーブルファイルの先読み（各種制約の設定）
+            bool isFirstPrimary = !Settings.MultiStreamMode || Settings.SecondaryTableWhenMultiStream >= 2;
             if (Settings.TableFile._notEmpty()) {
-                new TableFileParser().ReadDirectives(Settings.TableFile, true);
+                new TableFileParser().ReadDirectives(Settings.TableFile, isFirstPrimary);
             }
             if (Settings.TableFile2._notEmpty()) {
-                new TableFileParser().ReadDirectives(Settings.TableFile2, false);
+                new TableFileParser().ReadDirectives(Settings.TableFile2, !isFirstPrimary);
             }
 
             //// 文字定義ファイルの読み込み
@@ -364,7 +365,15 @@ namespace KanchokuWS
             }
 
             // 初期化とテーブルファイルの読み込み、同時打鍵組合せ辞書の作成
-            CombinationKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, Settings.TableFile2, Settings.TableFile3);
+            var tableFile1 = Settings.TableFile;
+            var tableFile2 = Settings.TableFile2;
+            if (Settings.MultiStreamMode) {
+                if (Settings.SecondaryTableWhenMultiStream < 2) {
+                    tableFile1 = Settings.TableFile2;
+                    tableFile2 = Settings.TableFile;
+                }
+            }
+            CombinationKeyStroke.Determiner.Singleton.Initialize(tableFile1, tableFile2, Settings.TableFile3);
 
             // 設定ファイルの再読み込み
             Settings.ReadIniFile(false);
@@ -1018,11 +1027,11 @@ namespace KanchokuWS
             }
         }
 
-        /// <summary>漢直コードテーブルの入れ替え</summary>
+        /// <summary>漢直コードテーブルの入れ替え(トグル)</summary>
         public void ExchangeCodeTable(bool bSecond = false)
         {
             logger.Info("CALLED");
-            if (IsDecoderActive && Settings.TableFile2._notEmpty() /*&& DecoderOutput.IsWaitingFirstStroke()*/) {
+            if (IsDecoderActive && !Settings.MultiStreamMode && Settings.TableFile2._notEmpty() /*&& DecoderOutput.IsWaitingFirstStroke()*/) {
                 ExecCmdDecoder("isKatakanaMode", null);  // カタカナモードか
                 bool isKatakana = (decoderOutput.resultFlags & ResultFlags.CurrentModeIsKatakana) != 0;
                 logger.Info(() => $"isKatakana={isKatakana}, resultFlags={decoderOutput.resultFlags:x}");
@@ -1048,7 +1057,7 @@ namespace KanchokuWS
         public void SelectCodeTable(int n, bool toggleKatakana)
         {
             logger.Info($"CALLED: n={n}");
-            if (IsDecoderActive && (Settings.TableFile2._notEmpty() || Settings.TableFile3._notEmpty()) /*&& DecoderOutput.IsWaitingFirstStroke()*/) {
+            if (IsDecoderActive && !Settings.MultiStreamMode && (Settings.TableFile2._notEmpty() || Settings.TableFile3._notEmpty()) /*&& DecoderOutput.IsWaitingFirstStroke()*/) {
                 //ExecCmdDecoder("isKatakanaMode", null);  // カタカナモードか
                 //bool isKatakana = (decoderOutput.resultFlags & ResultFlags.CurrentModeIsKatakana) != 0;
                 ExecCmdDecoder("commitHistory", null);                  // 履歴のコミットと初期化

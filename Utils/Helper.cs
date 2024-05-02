@@ -357,6 +357,16 @@ namespace Utils
             return (s1._toSafe()._stripDq() + s2._toSafe()._stripDq())._quoteString(!dq);
         }
 
+        public static bool IsZenkakuSymbol(char ch)
+        {
+            return (ch >= 0x3001 && ch <= 0x303f) || ch == '・' || ch == '…';
+        }
+
+        public static bool IsHiragana(char ch)
+        {
+            return ch >= 'ぁ' && ch <= 'ゖ';
+        }
+
         public static bool IsPureKatakana(char ch)
         {
             return ch >= 'ァ' && ch <= 'ヶ';

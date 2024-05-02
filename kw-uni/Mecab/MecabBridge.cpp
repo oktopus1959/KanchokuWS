@@ -2,6 +2,18 @@
 #include "mecab.h"
 #include "MecabBridge.h"
 
+#if 1
+#undef LOG_INFOH
+#undef LOG_DEBUGH
+#if 0
+#define LOG_INFOH LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#else
+#define LOG_INFOH LOG_WARN
+#define LOG_DEBUGH LOG_WARN
+#endif
+#endif
+
 namespace MecabBridge {
     DEFINE_LOCAL_LOGGER(MecabBridge);
 
@@ -18,9 +30,9 @@ namespace MecabBridge {
     }
 
     int mecabCalcCost(const MString& str) {
-        LOG_INFOH(_T("ENTER: str={}"), to_wstr(str));
+        LOG_DEBUGH(_T("ENTER: str={}"), to_wstr(str));
         int cost = mecab_do_cost(utils::utf8_encode(to_wstr(str)).c_str());
-        LOG_INFOH(_T("LEAVE: cost={}"), cost);
+        LOG_DEBUGH(_T("LEAVE: cost={}"), cost);
         return cost;
     }
 }

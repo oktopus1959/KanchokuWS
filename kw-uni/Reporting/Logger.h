@@ -74,6 +74,8 @@ namespace Reporting {
 
         //static void UseDefaultEncoding() { useDefaultEncoding = true; }
 
+        static inline bool IsAnyLogDisabled() { return LogLevel() < LogLevelError; }
+
         static inline bool IsErrorEnabled() { return LogLevel() >= LogLevelError; }
 
         static inline bool IsWarnEnabledH() { return LogLevel() >= LogLevelWarnH; }
@@ -215,8 +217,8 @@ namespace Reporting {
 #define LOG_INFOH(fmt, ...) LOG_REPORT_COND(InfoH, fmt, __VA_ARGS__)
 #define LOG_INFOH_COND(flag, fmt, ...) if (flag) LOG_REPORT_COND(InfoH, fmt, __VA_ARGS__)
 #define LOG_INFO_COND(flag, fmt, ...)  if (flag) LOG_REPORT_COND(InfoH, fmt, __VA_ARGS__)
-#define LOG_INFO_UC(fmt, ...) LOG_REPORT(Info, fmt, __VA_ARGS__)
-#define LOG_WARN(fmt, ...)  LOG_REPORT(Warn, fmt, __VA_ARGS__)
+#define LOG_INFO_UC(fmt, ...) if (!Reporting::Logger::IsAnyLogDisabled()) LOG_REPORT(Info, fmt, __VA_ARGS__)
+#define LOG_WARN(fmt, ...)  LOG_REPORT_COND(Warn, fmt, __VA_ARGS__)
 #define LOG_WARNH(fmt, ...)  LOG_REPORT(WarnH, fmt, __VA_ARGS__)
 #define LOG_ERROR(fmt, ...) LOG_REPORT(Error, fmt, __VA_ARGS__)
 

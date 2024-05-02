@@ -29,6 +29,8 @@ namespace KanchokuWS.TableParser
             //context = ctx;
         }
 
+        protected bool IsSecondaryTableOnMultiStream => Context.isSecondaryTableOnMultiStream;
+
         protected TableLines tableLines => Context.tableLines;
 
         protected TOKEN currentToken {
