@@ -409,25 +409,6 @@ namespace {
                 }
             }
 
-            //// 後処理
-            ////DoDeckeyPostProc();
-            //_LOG_DEBUGH(_T("streamList1: doPostCheck"));
-            //streamList1.DoDeckeyPostProc();
-            //_LOG_DEBUGH(_T("streamList2: doPostCheck"));
-            //streamList2.DoDeckeyPostProc();
-
-            //// 単語素片の収集
-            //std::vector<WordPiece> pieces;
-            //_LOG_DEBUGH(_T("streamList1: AddWordPieces"));
-            //streamList1.AddWordPieces(pieces, false);
-            //_LOG_DEBUGH(_T("streamList2: AddWordPieces"));
-            //streamList2.AddWordPieces(pieces, false);
-
-            //// 不要になったストローク状態の削除
-            //_LOG_DEBUGH(_T("streamList1: deleteUnnecessaryNextState"));
-            //streamList1.DeleteUnnecessaryNextStates();
-            //_LOG_DEBUGH(_T("streamList2: deleteUnnecessaryNextState"));
-            //streamList2.DeleteUnnecessaryNextStates();
             LOG_INFO(_T("LEAVE"));
         }
 
@@ -444,7 +425,51 @@ namespace {
         // 出力文字を取得する
         void GetResultStringChain(MStringResult& resultOut) override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
-            getPreOutput_lattice(resultOut);
+
+            // 単語素片の収集
+            std::vector<WordPiece> pieces;
+            _LOG_DEBUGH(_T("streamList1: AddWordPieces"));
+            streamList1.AddWordPieces(pieces, false);
+            _LOG_DEBUGH(_T("streamList2: AddWordPieces"));
+            streamList2.AddWordPieces(pieces, false);
+
+            Node* pNextNode1 = streamList1.GetNonStringNode();
+            Node* pNextNode2 = streamList2.GetNonStringNode();
+            if (pNextNode1 || pNextNode2) {
+                // 文字列ノード以外が返ったら、状態をクリアする
+                _LOG_DEBUGH(_T("NonStringNode FOUND: pNextNode1={:p}, pNextNode2={:p}"), (void*)pNextNode1, (void*)pNextNode2);
+                streamList1.Clear();
+                streamList2.Clear();
+                SetNextNodeMaybe(pNextNode1 ? pNextNode1 : pNextNode2);
+            }
+            // TODO: 以下は不要のはず
+            if (streamList1.Empty() && streamList2.Empty()) {
+                // 全てのストローク状態が削除されたので、後処理してマージノードも削除
+                _LOG_DEBUGH(_T("REMOVE ALL"));
+                SetNextNodeMaybe(pNextNode1 ? pNextNode1 : pNextNode2);
+                MarkUnnecessary();
+            }
+
+            // 以下の if 文は不要のはず
+            if (!IsUnnecessary() || !pieces.empty()) {
+            // Lattice処理
+            if (pieces.empty()) {
+                _LOG_DEBUGH(_T("pieces is empty. add EmptyWordPiece."));
+                pieces.push_back(WordPiece::emptyPiece());
+            }
+            auto result = WORD_LATTICE->addPieces(pieces);
+
+            // 新しい文字列が得られたら履歴状態に送る
+            if (!result.outStr.empty()) {
+                resultOut.setResult(result.outStr, result.numBS);
+            } else {
+                _LOG_DEBUGH(_T("NO resultOut"));
+            }
+            }
+
+            streamList1.DebugPrintStatesChain(_T("LEAVE: streamList1"));
+            streamList2.DebugPrintStatesChain(_T("LEAVE: streamList2"));
+
             _LOG_DEBUGH(_T("LEAVE: {}: resultStr=[{}]"), Name, resultOut.debugString());
         }
 
@@ -461,54 +486,6 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
         }
 
-    private:
-        void getPreOutput_lattice(MStringResult& resultOut) {
-            _LOG_DEBUGH(_T("ENTER: {}"), Name);
-            // 単語素片の収集
-            std::vector<WordPiece> pieces;
-            _LOG_DEBUGH(_T("streamList1: AddWordPieces"));
-            streamList1.AddWordPieces(pieces, false);
-            _LOG_DEBUGH(_T("streamList2: AddWordPieces"));
-            streamList2.AddWordPieces(pieces, false);
-
-            Node* pNextNode1 = streamList1.GetNonStringNode();
-            Node* pNextNode2 = streamList2.GetNonStringNode();
-            if (pNextNode1 || pNextNode2) {
-                // 文字列ノード以外が返ったら、状態をクリアする
-                _LOG_DEBUGH(_T("NonStringNode FOUND: pNextNode1={:p}, pNextNode2={:p}"), (void*)pNextNode1, (void*)pNextNode2);
-                streamList1.Clear();
-                streamList2.Clear();
-            }
-            if (streamList1.Empty() && streamList2.Empty()) {
-                // 全てのストローク状態が削除されたので、後処理してマージノードも削除
-                _LOG_DEBUGH(_T("REMOVE ALL"));
-                SetNextNodeMaybe(pNextNode1 ? pNextNode1 : pNextNode2);
-                MarkUnnecessary();
-            }
-
-            if (!IsUnnecessary() || !pieces.empty()) {
-                // Lattice処理
-                if (pieces.empty()) {
-                    _LOG_DEBUGH(_T("pieces is empty. add EmptyWordPiece."));
-                    pieces.push_back(WordPiece::emptyPiece());
-                }
-                auto result = WORD_LATTICE->addPieces(pieces);
-
-                // 新しい文字列が得られたら履歴状態に送る
-                if (!result.outStr.empty()) {
-                    resultOut.setResult(result.outStr, result.numBS);
-                } else {
-                    _LOG_DEBUGH(_T("NO resultOut"));
-                }
-            }
-
-            streamList1.DebugPrintStatesChain(_T("LEAVE: streamList1"));
-            streamList2.DebugPrintStatesChain(_T("LEAVE: streamList2"));
-
-            LOG_INFO(_T("LEAVE: states=({},{})\n"), streamList1.Count(), streamList2.Count());
-        }
-
-    public:
         // ストロークテーブルチェインの長さ(テーブルのレベル)
         size_t StrokeTableChainLength() const override {
             size_t len1 = streamList1.StrokeTableChainLength();

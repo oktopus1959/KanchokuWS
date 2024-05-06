@@ -848,7 +848,7 @@ namespace KanchokuWS
         ///デコーダ機能のディスパッチ
         /// </summary>
         /// <param name="deckey"></param>
-        /// <returns></returns>
+        /// <returns>OSに処理を渡さない場合は true を返す</returns>
         public bool FuncDispatcher(int deckey, int normalDeckey, uint mod)
         {
             if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), normalDeckey={normalDeckey:x}H({normalDeckey}), mod={mod:x}({mod})");
@@ -986,6 +986,11 @@ namespace KanchokuWS
                         case DecoderKeys.TOGGLE_BLOCKER_DECKEY:
                             logger.Info(() => $"TOGGLE_BLOCKER_DECKEY:{deckey}");
                             sendDeckeyToDecoder(deckey);
+                            return true;
+
+                        case DecoderKeys.MULTI_STREAM_MODE_TOGGLE_DECKEY:
+                            logger.Info(() => $"MULTI_STREAM_MODE_TOGGLE_DECKEY:{deckey}");
+                            MultiStreamModeToggle();
                             return true;
 
                         case DecoderKeys.DIRECT_SPACE_DECKEY:
@@ -2392,6 +2397,15 @@ namespace KanchokuWS
                     frmVkb.Show();
                 }
             }
+        }
+
+        public void MultiStreamModeToggle()
+        {
+            Settings.MultiStreamMode = !Settings.MultiStreamMode;
+            Settings.SetUserIni("multiStreamMode", Settings.MultiStreamMode);
+            DeactivateDecoderWithModifiersOff();
+            ReloadSettingsAndDefFiles();
+            ActivateDecoder();
         }
 
         private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)

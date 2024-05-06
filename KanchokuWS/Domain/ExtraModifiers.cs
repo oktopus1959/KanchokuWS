@@ -222,6 +222,7 @@ namespace KanchokuWS.Domain
             {"selectcodetable1", DecoderKeys.SELECT_CODE_TABLE1_DECKEY},
             {"selectcodetable2", DecoderKeys.SELECT_CODE_TABLE2_DECKEY},
             {"selectcodetable3", DecoderKeys.SELECT_CODE_TABLE3_DECKEY},
+            {"multistreamtoggle", DecoderKeys.MULTI_STREAM_MODE_TOGGLE_DECKEY},
             {"kanatrainingtoggle", DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY},
             {"leftshiftblocker", DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY},
             {"rightshiftblocker", DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY},

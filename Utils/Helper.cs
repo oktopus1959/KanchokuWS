@@ -359,7 +359,7 @@ namespace Utils
 
         public static bool IsZenkakuSymbol(char ch)
         {
-            return (ch >= 0x3001 && ch <= 0x303f) || ch == '・' || ch == '…';
+            return (ch >= 0x3001 && ch <= 0x303f) || ch == '・' || ch == '…' || ch == '～';
         }
 
         public static bool IsHiragana(char ch)

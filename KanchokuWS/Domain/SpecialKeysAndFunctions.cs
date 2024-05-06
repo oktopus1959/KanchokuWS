@@ -144,6 +144,7 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.SELECT_CODE_TABLE1_DECKEY, 0, "SelectCodeTable1", "", "主テーブルファイルに切り替える"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.SELECT_CODE_TABLE2_DECKEY, 0, "SelectCodeTable2", "", "副テーブルファイルに切り替える"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.SELECT_CODE_TABLE3_DECKEY, 0, "SelectCodeTable3", "", "第3テーブルファイルに切り替える; 第3テーブルは kanchoku.user.ini の tableFile3 で設定する"),
+            new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.MULTI_STREAM_MODE_TOGGLE_DECKEY, 0, "MultiStreamToggle", "", "漢直・かな融合モードと通常モードを切り替える"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY, 0, "KanaTrainingToggle", "", "かな入力練習モードと通常モードを切り替える"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.CLEAR_STROKE_DECKEY, 0, "ClearStroke", "", "打鍵中のストロークを取り消して、第1打鍵待ちに戻る"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.FULL_ESCAPE_DECKEY, 0, "FullEscape", "", "入力途中状態をクリアし、ミニバッファ末尾にブロッカーを置く"),
