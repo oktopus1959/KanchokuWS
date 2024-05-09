@@ -30,7 +30,8 @@
 namespace lattice {
     DEFINE_LOCAL_LOGGER(lattice);
 
-    size_t BestKSize = 20;
+    // ビームサイズ
+    size_t BestKSize = 5;
 
     int MAX_COST = 1000;
 
@@ -53,6 +54,7 @@ namespace lattice {
     }
 
     int getWordCost(const MString& str) {
+        if (str.empty()) return 0;
         auto iter = wordCosts.find(str);
         return iter != wordCosts.end() ? iter->second : MAX_COST;
     }
@@ -145,7 +147,7 @@ namespace lattice {
 
         void calcCost() {
             if (_prevNode) {
-                connCost = getWordConnCost(_prevNode->pNode->str(), pNode->str());
+                connCost = pNode->str().empty() ? 0 : getWordConnCost(_prevNode->pNode->str(), pNode->str());
                 _totalCost = _prevNode->totalCost() + connCost + pNode->cost();
             } else {
                 connCost = 0;
@@ -154,9 +156,32 @@ namespace lattice {
         }
 
         MString reverseListString() {
-            MString result(toString());
-            if (_prevNode) result.insert(0, _prevNode->pathString());
-            return result;
+            if (pNode->str().empty()) return _prevNode ? _prevNode->pathString() : EMPTY_MSTR;
+
+            //return (_prevNode) ? _prevNode->pathString() + MSTR_SPACE + pNode->str() : pNode->str();
+            return (_prevNode) ? _prevNode->pathString() + pNode->str() : pNode->str();
+        }
+
+        static int calcMecabCost(std::map<MString, int>& mecabCache, const MString& s, std::vector<MString> words) {
+            int cost = 0;
+            if (!s.empty()) {
+                auto iter = mecabCache.find(s);
+                if (iter == mecabCache.end()) {
+                    cost = MecabBridge::mecabCalcCost(s, words);
+                    mecabCache[s] = cost;
+                } else {
+                    cost = iter->second;
+                }
+            }
+            return cost;
+        }
+
+        static int calcMecabCost(const MString& s, std::vector<MString> words) {
+            int cost = 0;
+            if (!s.empty()) {
+                cost = MecabBridge::mecabCalcCost(s, words);
+            }
+            return cost;
         }
 
     public:
@@ -173,7 +198,26 @@ namespace lattice {
             return _totalCost;
         }
 
+        int totalCostWithMecab(std::map<MString, int>& mecabCache) const {
+            //return (int)(_totalCost * (pathString().length() <= 10 ? 4.0 : 40.0 / pathString().length()) + calcMecabCost(mecabCache, pathString()));
+            std::vector<MString> words;
+            int mecabCost = calcMecabCost(mecabCache, pathString(), words);
+            //return _totalCost * 4 + mecabCost;
+            return mecabCost;
+        }
+
+        int calcCostWithMecab() const {
+            std::vector<MString> words;
+            int mecabCost = calcMecabCost(pathString(), words);
+            return _totalCost * 4 + mecabCost;
+        }
+
         const MString& pathString() const {
+            return _pathString;
+        }
+
+        const MString normalString() const {
+            //return utils::replace_all(_pathString, MSTR_SPACE, EMPTY_MSTR);
             return _pathString;
         }
 
@@ -186,7 +230,7 @@ namespace lattice {
         }
 
         String formatString() const {
-            return std::format(_T("{},tc={}"), to_wstr(pNode->str()), totalCost());
+            return std::format(_T("{}(len={},tc={})"), to_wstr(pNode->str()), pNode->strokeLen(), totalCost());
         }
 
         String formatStringOfReverseList() const {
@@ -230,15 +274,17 @@ namespace lattice {
             return reverseNodeList.empty() ? MString() : reverseNodeList[0]->pathString();
         }
 
+#if 0
         // MeCab による最良パスの文字列を取得
-        MString getTopPathStringByMecab() {
+        MString getTopPathStringByMecab(std::map<MString, int>& mecabCache) {
             MString result;
             int topCost = INT_MAX;
             for (auto* p : reverseNodeList) {
                 MString str = p->pathString();
                 _LOG_DEBUGH(_T("str={}"), to_wstr(str));
                 if (str != result) {
-                    int cost = MecabBridge::mecabCalcCost(str);
+                    //int cost = MecabBridge::mecabCalcCost(str) + p->totalCost() * 5;
+                    int cost = p->totalCostWithMecab(mecabCache);
                     if (cost < topCost) {
                         result = str;
                         topCost = cost;
@@ -247,41 +293,51 @@ namespace lattice {
             }
             return result;
         }
+#endif
 
         // 新しいPathを追加
         bool addPathNode(ReversePathNode* pathNode, std::map<MString, int>& mecabCache) {
             bool bAdded = false;
             bool bIgnored = false;
+            const MString& myStr = pathNode->pathString();
+            const MString& myNormalStr = pathNode->normalString();
+            //int myCost = mecab(myStr) + pathNode->totalCost();
+            int myCost = pathNode->totalCostWithMecab(mecabCache);
+            _LOG_DEBUGH(_T("myStr={}, normalStr={}, myCost={}"), to_wstr(myStr), to_wstr(myNormalStr), myCost);
             if (!reverseNodeList.empty()) {
                 // top-Kと比較して、コストが小さければ、これを追加
-                auto mecab = [&mecabCache](const MString& s) {
-                    int cost = 0;
-                    auto iter = mecabCache.find(s);
-                    if (iter == mecabCache.end()) {
-                        cost = MecabBridge::mecabCalcCost(s);
-                        mecabCache[s] = cost;
-                    } else {
-                        cost = iter->second;
-                    }
-                    return cost;
-                };
-                const MString& myStr = pathNode->pathString();
-                int myCost = mecab(myStr);
+                //auto mecab = [&mecabCache](const MString& s) {
+                //    int cost = 0;
+                //    auto iter = mecabCache.find(s);
+                //    if (iter == mecabCache.end()) {
+                //        cost = MecabBridge::mecabCalcCost(s);
+                //        mecabCache[s] = cost;
+                //    } else {
+                //        cost = iter->second;
+                //    }
+                //    return cost;
+                //};
                 for (auto iter = reverseNodeList.begin(); iter != reverseNodeList.end(); ++iter) {
                     //const auto* myPrev = pathNode->prevNode();
                     //const auto* otherPrev = (*iter)->prevNode();
                     //bool bSame = myPrev && otherPrev && myPrev->pathString() == otherPrev->pathString();
-                    const MString& otherStr = (*iter)->pathString();
-                    int otherCost = mecab(otherStr);
+                    //const MString& otherStr = (*iter)->pathString();
+                    //int otherCost = mecab(otherStr) + (*iter)->totalCost();
+                    int otherCost = (*iter)->totalCostWithMecab(mecabCache);
+                    _LOG_DEBUGH(_T("    otherStr={}, otherNormalStr={}, otherCost={}"), to_wstr((*iter)->pathString()), to_wstr((*iter)->normalString()), otherCost);
                     //if (pathNode->totalCost() < (*iter)->totalCost()) 
                     if (myCost < otherCost) {
-                        iter = reverseNodeList.insert(iter, pathNode);
+                        iter = reverseNodeList.insert(iter, pathNode);    // iter は挿入したノードを指す
                         bAdded = true;
-                        if (myStr == otherStr) {
-                            // 同じ文字列なので、古い pahtNode は削除
-                            const auto* pRemoved = *iter;
-                            reverseNodeList.erase(iter);
-                            _LOG_DEBUGH(_T("REMOVE second best or lesser reversePath: {}"), formatStringOfReverseNodeList(pRemoved));
+                        // 下位のノードで同じ文字列のものを探し、あればそれを削除
+                        for (++iter; iter != reverseNodeList.end(); ++iter) {
+                            if (myNormalStr == (*iter)->normalString()) {
+                                // 同じ文字列なので、古い pahtNode は削除
+                                const auto* pRemoved = *iter;
+                                reverseNodeList.erase(iter);
+                                _LOG_DEBUGH(_T("    REMOVE second best or lesser reversePath: {}"), formatStringOfReverseNodeList(pRemoved));
+                                break;
+                            }
                         }
                         //// 同じLatticeNodeを持つやつがあれば、それを削除(最小コストのだけを残しておけばよいので) ⇒ いや、それはダメ(後で2位以下が復活する可能性がある)
                         //++iter;
@@ -294,7 +350,7 @@ namespace lattice {
                         //    }
                         //}
                         break;
-                    } else if (myStr == otherStr) {
+                    } else if (myNormalStr == (*iter)->normalString()) {
                         // 同じ文字列なので、当 pahtNode は無視
                         bIgnored = true;
                         break;
@@ -309,12 +365,12 @@ namespace lattice {
             if (reverseNodeList.size() > BestKSize) {
                 // kBestサイズを超えたら末尾を削除
                 reverseNodeList.resize(BestKSize);
-                _LOG_DEBUGH(_T("REMOVE OVERFLOW ENTRY"));
+                _LOG_DEBUGH(_T("    REMOVE OVERFLOW ENTRY"));
             }
             if (bAdded) {
-                _LOG_DEBUGH(_T("ADD reversePath: {}"), formatStringOfReverseNodeList(pathNode));
+                _LOG_DEBUGH(_T("    ADD reversePath: {}"), formatStringOfReverseNodeList(pathNode));
             } else {
-                _LOG_DEBUGH(_T("ABANDON reversePath: {}, totalCost={}"), formatStringOfReverseNodeList(pathNode), pathNode->totalCost());
+                _LOG_DEBUGH(_T("    ABANDON reversePath: {}, totalCost={}"), formatStringOfReverseNodeList(pathNode), pathNode->totalCost());
             }
             return bAdded;
         }
@@ -566,7 +622,7 @@ namespace lattice {
         // 単語素片(WordPiece): 打鍵後に得られた出力文字列と、それにかかった打鍵数
         LatticeResult addPieces(const std::vector<WordPiece>& pieces) override {
             _LOG_DEBUGH(_T("ENTER: kBest=[{}], pieces: {}"), kBestPathListStore.debugString(), formatStringOfWordPieces(pieces));
-            // endPos における空の ノード リストを取得
+            // endPos における空のノード リストを追加
             size_t endPos = lnodeListStore.addEmptyLatticeNodeList()->getPos();
             _LOG_DEBUGH(_T("endPos={}"), endPos);
             // endPos における空の k-best path リストを取得
@@ -578,7 +634,7 @@ namespace lattice {
                     remakeKBestList(pathList, endPos, pLnode, mecabCache);
                 }
             }
-            _LOG_DEBUGH(_T("pathList:\n{}"), pathList->toString());
+            _LOG_DEBUGH(_T(".\npathList:\n{}"), pathList->toString());
             size_t numBS = 0;
             //MString outStr = pathList->getTopPathStringByMecab();
             MString outStr = pathList->getTopPathString();

@@ -588,6 +588,18 @@ namespace utils
         return std::regex_replace(s, std::wregex(t), r);
     }
 
+    inline MString replace_all(const MString& s, const MString& t, const MString& r) {
+        MString head;
+        MString tail = s;
+        while (true) {
+            size_t pos = tail.find(t);
+            if (pos == String::npos) break;
+            head += tail.substr(0, pos) + r;
+            tail = tail.substr(pos + t.size());
+        }
+        return head + tail;
+    }
+
     inline void remove(MString& s, mchar_t t) {
         size_t pos = s.find(t);
         if (pos < s.size()) s.erase(pos);

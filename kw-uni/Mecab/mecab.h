@@ -758,7 +758,7 @@ extern "C" {
   MECAB_DLL_EXTERN int           mecab_init(const char* rcfile, const char* dicdir);
   MECAB_DLL_EXTERN const char*   mecab_init_strerror();
 
-  MECAB_DLL_EXTERN int           mecab_do_cost(const char *line);
+  MECAB_DLL_EXTERN int           mecab_do_cost(const char *line, char* buffer, int size);
   MECAB_DLL_EXTERN void          mecab_end();
   MECAB_DLL_EXTERN int           mecab_dict_index(int argc, char **argv);
   MECAB_DLL_EXTERN int           mecab_dict_gen(int argc, char **argv);

@@ -5,5 +5,5 @@ namespace MecabBridge {
 
     void mecabFinalize();
 
-    int mecabCalcCost(const MString& str);
+    int mecabCalcCost(const MString& str, std::vector<MString>& words);
 }

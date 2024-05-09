@@ -29,10 +29,14 @@ namespace MecabBridge {
         mecab_end();
     }
 
-    int mecabCalcCost(const MString& str) {
+    int mecabCalcCost(const MString& str, std::vector<MString>& words) {
         LOG_DEBUGH(_T("ENTER: str={}"), to_wstr(str));
-        int cost = mecab_do_cost(utils::utf8_encode(to_wstr(str)).c_str());
-        LOG_DEBUGH(_T("LEAVE: cost={}"), cost);
+        char utf8buf[1000] = { '\0' };
+        int cost = mecab_do_cost(utils::utf8_encode(to_wstr(str)).c_str(), utf8buf, sizeof(utf8buf)); // ここでは逆順に単語が返る
+        for (const auto& s : utils::split(utf8buf, '\t')) {
+            words.insert(words.begin(), to_mstr(utils::utf8_decode(s)));
+        }
+        LOG_DEBUGH(_T("LEAVE: mecabCost={}, words={}"), cost, to_wstr(utils::join(words, ' ')));
         return cost;
     }
 }
