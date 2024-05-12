@@ -10,6 +10,7 @@
 #include "StateCommonInfo.h"
 #include "Lattice.h"
 #include "Mecab/MecabBridge.h"
+#include "BushuComp/BushuDic.h"
 
 #if 1
 #undef IS_LOG_DEBUGH_ENABLED
@@ -100,29 +101,46 @@ namespace lattice2 {
         CandidateString(const MString& s, int len, int cost) : _str(s), _strokeLen(len), _cost(cost) {
         }
 
-        std::tuple<MString, int>  apply(const WordPiece& piece, int strokeCount) const {
+        std::tuple<MString, int> apply(const WordPiece& piece, int strokeCount, bool bAutoBushu) const {
             if (_strokeLen + piece.strokeLen()  == strokeCount) {
-                int numBS;
-                if (piece.rewriteNode()) {
-                    const RewriteInfo* rewInfo;
-                    std::tie(rewInfo, numBS) = matchWithTailString(piece.rewriteNode());
-
-                    if (rewInfo) {
-                        return { utils::safe_substr(_str, 0, -numBS) + rewInfo->rewriteStr, numBS };
-                    } else {
-                        return { _str + piece.rewriteNode()->getString(), 0 };
-                    }
-
-                } else {
-                    numBS = piece.numBS();
-                    if (numBS > 0) {
-                        if ((size_t)numBS < _str.size()) {
-                            return { utils::safe_substr(_str, 0, _str.size() - numBS), numBS };
-                        } else {
-                            return { EMPTY_MSTR, numBS };
+                if (bAutoBushu) {
+                    if (SETTINGS->autoBushuCompMinCount > 0 && BUSHU_DIC) {
+                        if (_str.size() > 0 && piece.getString().size() == 1) {
+                            // 自動部首合成の実行
+                            mchar_t m = BUSHU_DIC->FindAutoComposite(_str.back(), piece.getString().front());
+                            //if (m == 0) m = BUSHU_DIC->FindComposite(_str.back(), piece.getString().front(), 0);
+                            _LOG_DEBUGH(_T("BUSHU_DIC->FindComposite({}, {}) -> {}"),
+                                to_wstr(utils::safe_tailstr(_str, 1)), to_wstr(utils::safe_substr(piece.getString(), 0, 1)), String(1, (wchar_t)m));
+                            if (m != 0) {
+                                MString s(_str);
+                                s.back() = m;
+                                return { s, 1 };
+                            }
                         }
+                    }
+                } else {
+                    int numBS;
+                    if (piece.rewriteNode()) {
+                        const RewriteInfo* rewInfo;
+                        std::tie(rewInfo, numBS) = matchWithTailString(piece.rewriteNode());
+
+                        if (rewInfo) {
+                            return { utils::safe_substr(_str, 0, -numBS) + rewInfo->rewriteStr, numBS };
+                        } else {
+                            return { _str + piece.rewriteNode()->getString(), 0 };
+                        }
+
                     } else {
-                        return { _str + piece.getString(), 0 };
+                        numBS = piece.numBS();
+                        if (numBS > 0) {
+                            if ((size_t)numBS < _str.size()) {
+                                return { utils::safe_substr(_str, 0, _str.size() - numBS), numBS };
+                            } else {
+                                return { EMPTY_MSTR, numBS };
+                            }
+                        } else {
+                            return { _str + piece.getString(), 0 };
+                        }
                     }
                 }
             }
@@ -272,7 +290,11 @@ namespace lattice2 {
             for (const auto& cand : _candidates) {
                 MString s;
                 int numBS;
-                std::tie(s, numBS) = cand.apply(piece, strokeCount);
+                std::tie(s, numBS) = cand.apply(piece, strokeCount, true);  // 自動部首合成
+                if (!s.empty()) {
+                    addCandidate(newCandidates, s, strokeCount);
+                }
+                std::tie(s, numBS) = cand.apply(piece, strokeCount, false);
                 if (!s.empty() || numBS > 0) {
                     addCandidate(newCandidates, s, strokeCount);
                 }
