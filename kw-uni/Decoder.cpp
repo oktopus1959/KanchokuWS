@@ -135,6 +135,7 @@ public:
 
         // Lattice を生成
         Lattice::createLattice();
+        Lattice2::createLattice();
 
         // マージ機能ノードを生成
         StrokeMergerNode::CreateSingleton();
@@ -288,6 +289,7 @@ public:
         if (startState) startState->Reactivate();
         if (MAZEGAKI_INFO) MAZEGAKI_INFO->Initialize(false);
         if (WORD_LATTICE) WORD_LATTICE->clear();
+        if (WORD_LATTICE2) WORD_LATTICE2->clear();
         if (startState) {
             LOG_INFO(_T("LEAVE: states={} (len={}), flags={:x}, stack={}\n"),
                 startState->JoinedName(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),

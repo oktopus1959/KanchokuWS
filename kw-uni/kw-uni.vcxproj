@@ -288,6 +288,7 @@
     <ClCompile Include="ResidentState.cpp" />
     <ClCompile Include="StringState.cpp" />
     <ClCompile Include="StrokeMerger\Lattice.cpp" />
+    <ClCompile Include="StrokeMerger\Lattice2.cpp" />
     <ClCompile Include="StrokeMerger\MergerState.cpp" />
     <ClCompile Include="StrokeTreeBuilder.cpp" />
     <ClCompile Include="dllmain.cpp" />

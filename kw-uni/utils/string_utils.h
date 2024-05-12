@@ -544,13 +544,27 @@ namespace utils
         return std::hash<MString>()(s);
     }
 
-    inline String safe_substr(StringRef s, size_t start, size_t len = std::string::npos) {
+    inline String safe_substr(StringRef s, size_t start, int len = 0) {
         if (start >= s.size()) start = s.size();
+        if (len <= 0) len = s.size() - start + len;
         return s.substr(start, len);
     }
 
-    inline MString safe_substr(const MString& s, size_t start, size_t len = std::string::npos) {
+    inline MString safe_substr(const MString& s, size_t start, int len = 0) {
         if (start >= s.size()) start = s.size();
+        if (len <= 0) len = s.size() - start + len;
+        return s.substr(start, len);
+    }
+
+    inline String safe_tailstr(StringRef s, size_t len) {
+        if (len >= s.size()) len = s.size();
+        size_t start = s.size() - len;
+        return s.substr(start, len);
+    }
+
+    inline MString safe_tailstr(const MString& s, size_t len) {
+        if (len >= s.size()) len = s.size();
+        size_t start = s.size() - len;
         return s.substr(start, len);
     }
 

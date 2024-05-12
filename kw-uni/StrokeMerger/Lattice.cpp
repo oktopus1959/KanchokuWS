@@ -91,7 +91,7 @@ namespace lattice {
         }
 
         _LatticeNode(const WordPiece& piece)
-            : _LatticeNode(piece.pieceStr, piece.strokeLen, -1, piece.strokeLen > 1 ? STROKE_COST * (piece.strokeLen - 1) : 0)
+            : _LatticeNode(piece.getString(), piece.strokeLen(), -1, piece.strokeLen() > 1 ? STROKE_COST * (piece.strokeLen() - 1) : 0)
         {
         }
 
@@ -450,7 +450,7 @@ namespace lattice {
 
         // 自ノードによる1gramノードおよび1つ前の1-2gramノードと合体させて2-3gramノードを作成する
         std::vector<_LatticeNode*> createNgramLatticeNode(const WordPiece& piece, size_t endPos) {
-            _LOG_DEBUGH(_T("ENTER: piece={}, endPos={}"), piece.toString(), endPos);
+            _LOG_DEBUGH(_T("ENTER: piece={}, endPos={}"), piece.debugString(), endPos);
             std::vector<_LatticeNode*> result;
             auto* pEndList = getLatticeNodeListByPos(endPos);
             {
@@ -460,13 +460,13 @@ namespace lattice {
                 _LOG_DEBUGH(_T("SELF: {}"), to_wstr(p->str()));
             }
 
-            if (piece.strokeLen <= 2 && piece.strokeLen <= endPos) {
-                size_t connPos = endPos - piece.strokeLen;
+            if (piece.strokeLen() <= 2 && (size_t)piece.strokeLen() <= endPos) {
+                size_t connPos = endPos - piece.strokeLen();
                 const auto& nodes = getLatticeNodeListByPos(connPos)->latticeNodes;
                 _LOG_DEBUGH(_T("CONN-POS={}, nodes.size()={}"), connPos, nodes.size());
                 for (auto pp : nodes) {
-                    MString str = pp->str() + piece.pieceStr;
-                    size_t strkLen = pp->strokeLen() + piece.strokeLen;
+                    MString str = pp->str() + piece.getString();
+                    size_t strkLen = pp->strokeLen() + piece.strokeLen();
                     _LOG_DEBUGH(_T("prevNode: {}, strlen={}"), to_wstr(pp->str()), str.size());
                     if (str.size() <= 3) {
                         auto iter = wordCosts.find(str);
@@ -602,7 +602,7 @@ namespace lattice {
 
 #if IS_LOG_DEBUGH_ENABLED
         String formatStringOfWordPieces(const std::vector<WordPiece>& pieces) {
-            return utils::join(utils::select<String>(pieces, [](WordPiece p){return p.toString();}), _T("|"));
+            return utils::join(utils::select<String>(pieces, [](WordPiece p){return p.debugString();}), _T("|"));
         }
 #endif
 

@@ -431,5 +431,8 @@
     <ClCompile Include="Mecab\MecabBridge.cpp">
       <Filter>ソース ファイル\Mecab</Filter>
     </ClCompile>
+    <ClCompile Include="StrokeMerger\Lattice2.cpp">
+      <Filter>ソース ファイル\StrokeMerger</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

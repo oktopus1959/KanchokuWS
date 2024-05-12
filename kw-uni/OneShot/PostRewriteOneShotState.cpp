@@ -16,7 +16,7 @@
 #include "RewriteString.h"
 #include "PostRewriteOneShot.h"
 
-#if 0
+#if 1
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
@@ -89,28 +89,33 @@ namespace {
         void GetResultString(MStringResult& resultOut) {
             _LOG_DEBUGH(_T("ENTER: {}"), MY_NODE->getDebugString());
 
-            const RewriteInfo* rewInfo;
-            size_t numBS;
-            std::tie(rewInfo, numBS) = MY_NODE->matchWithTailString();
-
-            if (rewInfo) {
-                resultOut.setResult(rewInfo->rewriteStr, rewInfo->rewritableLen, false, numBS);
-                //resultOut.bBushuComp = false;
-                //resultOut.numBS = numBS;
-                //resultOut.resultStr = rewInfo->rewriteStr;
-                //resultOut.rewritableLen = rewInfo->rewritableLen;
-                _LOG_DEBUGH(_T("REWRITE: outStr={}, rewritableLen={}, subTable={:p}, numBS={}"),
-                    to_wstr(resultOut.resultStr()), resultOut.rewritableLen(), (void*)rewInfo->subTable, resultOut.numBS());
-                if (rewInfo->subTable) {
-                    SetNextNodeMaybe(rewInfo->subTable);
-                    CreateNewState();
-                    //MarkNecessary();
-                }
+            if (SETTINGS->multiStreamMode) {
+                resultOut.setRewriteNode(MY_NODE);
+                _LOG_DEBUGH(_T("LEAVE: {}: rewriteNode: myStr={}"), Name, to_wstr(MY_NODE->getString()));
             } else {
-                resultOut.setResultWithRewriteLen(MY_NODE->getString(), MY_NODE->getRewritableLen());
-                _LOG_DEBUGH(_T("NO REWRITE: outStr={}, rewritableLen={}, numBS={}"), to_wstr(resultOut.resultStr()), resultOut.rewritableLen(), resultOut.numBS());
+                const RewriteInfo* rewInfo;
+                size_t numBS;
+                std::tie(rewInfo, numBS) = MY_NODE->matchWithTailString();
+
+                if (rewInfo) {
+                    resultOut.setResult(rewInfo->rewriteStr, rewInfo->rewritableLen, false, numBS);
+                    //resultOut.bBushuComp = false;
+                    //resultOut.numBS = numBS;
+                    //resultOut.resultStr = rewInfo->rewriteStr;
+                    //resultOut.rewritableLen = rewInfo->rewritableLen;
+                    _LOG_DEBUGH(_T("REWRITE: outStr={}, rewritableLen={}, subTable={:p}, numBS={}"),
+                        to_wstr(resultOut.resultStr()), resultOut.rewritableLen(), (void*)rewInfo->subTable, resultOut.numBS());
+                    if (rewInfo->subTable) {
+                        SetNextNodeMaybe(rewInfo->subTable);
+                        CreateNewState();
+                        //MarkNecessary();
+                    }
+                } else {
+                    resultOut.setResultWithRewriteLen(MY_NODE->getString(), MY_NODE->getRewritableLen());
+                    _LOG_DEBUGH(_T("NO REWRITE: outStr={}, rewritableLen={}, numBS={}"), to_wstr(resultOut.resultStr()), resultOut.rewritableLen(), resultOut.numBS());
+                }
+                _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
             }
-            _LOG_DEBUGH(_T("LEAVE: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
         }
 
     };

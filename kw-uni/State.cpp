@@ -176,20 +176,22 @@ void State::CreateNewState() {
         // 新しい後続ノードが生成されていれば、ここで後続ノードの処理を行う
         State* ps = NextNodeMaybe()->CreateState();
         ClearNextNodeMaybe();       // 新状態を生成したので、親には渡さない。参照をクリアしておく
-        // 新状態を後接させる
-        LOG_DEBUG(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
-        if (pNext) {
-            LOG_WARNH(_T("UNDELETED state found"));
-            DeleteNextStateChain();
+        if (ps) {
+            // 新状態を後接させる
+            LOG_DEBUG(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
+            if (pNext) {
+                LOG_WARNH(_T("UNDELETED state found"));
+                DeleteNextStateChain();
+            }
+            SetNextState(ps);
+            ps->pPrev = this;
+            // 状態が生成されたときに処理を実行(ストロークノード以外は、ここで何らかの出力処理の準備をするはず)
+            LOG_DEBUG(_T("Call DoProcOnCreated() for new state"));
+            ps->DoProcOnCreated();
+            // 新しく生成した状態がさらに次のノードを持っているかもしれないので、再帰的に処理を実行する
+            LOG_DEBUG(_T("handle new state"));
+            ps->CreateNewState();
         }
-        SetNextState(ps);
-        ps->pPrev = this;
-        // 状態が生成されたときに処理を実行(ストロークノード以外は、ここで何らかの出力処理の準備をするはず)
-        LOG_DEBUG(_T("Call DoProcOnCreated() for new state"));
-        ps->DoProcOnCreated();
-        // 新しく生成した状態がさらに次のノードを持っているかもしれないので、再帰的に処理を実行する
-        LOG_DEBUG(_T("handle new state"));
-        ps->CreateNewState();
     }
     _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
 }
@@ -279,10 +281,12 @@ void State::CreateStateAndStayResidentAtEndOfChain(Node* np) {
             pNext->CreateStateAndStayResidentAtEndOfChain(np);
         } else {
             auto ps = np->CreateState();
-            ps->DoProcOnCreated();
-            LOG_DEBUG(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
-            SetNextState(ps);
-            ps->pPrev = this;
+            if (ps) {
+                ps->DoProcOnCreated();
+                LOG_DEBUG(_T("{}: appendSuccessorState: {}"), Name, ps->Name);
+                SetNextState(ps);
+                ps->pPrev = this;
+            }
         }
     }
     _LOG_DEBUGH(_T("LEAVE: {}"), Name);

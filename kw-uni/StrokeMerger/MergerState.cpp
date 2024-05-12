@@ -151,8 +151,14 @@ namespace {
                 MStringResult result;
                 State::GetResultStringChain(result);
                 if (!result.isDefault()) {
-                    _LOG_DEBUGH(_T("ADD WORD: string={}, numBS={}"), to_wstr(result.resultStr()), result.numBS());
-                    pieces.push_back(WordPiece(result.resultStr(), STATE_COMMON->GetTotalDecKeyCount() - cntStroke, result.rewritableLen(), result.numBS()));
+                    _LOG_DEBUGH(_T("ADD WORD: rewriteStr={}, string={}, numBS={}"),
+                        to_wstr(result.getRewriteNode() ? result.getRewriteNode()->getString() : EMPTY_MSTR), to_wstr(result.resultStr()), result.numBS());
+                    int strokeLen = STATE_COMMON->GetTotalDecKeyCount() - cntStroke;
+                    if (result.getRewriteNode()) {
+                        pieces.push_back(WordPiece(result.getRewriteNode(), strokeLen));
+                    } else {
+                        pieces.push_back(WordPiece(result.resultStr(), strokeLen, result.rewritableLen(), result.numBS()));
+                    }
                 } else {
                     _LOG_DEBUGH(_T("NOT TERMINAL"));
                 }
@@ -353,18 +359,20 @@ namespace {
         DECLARE_CLASS_LOGGER;
 
         // 同時打鍵中か
-        bool inComboList = false;
+        bool _inComboList = false;
+
+        int _strokeCountBS = -1;
 
         // RootStrokeState1用の状態集合
-        StrokeStreamList streamList1;
+        StrokeStreamList _streamList1;
 
         // RootStrokeState2用の状態集合
-        StrokeStreamList streamList2;
+        StrokeStreamList _streamList2;
 
     public:
         // コンストラクタ
         StrokeMergerState(StrokeMergerNode* pN)
-            : streamList1(_T("streamList1")), streamList2(_T("streamList2")) {
+            : _streamList1(_T("streamList1")), _streamList2(_T("streamList2")) {
             _LOG_DEBUGH(_T("CALLED: Constructor"));
             Initialize(logger.ClassNameT(), pN);
         }
@@ -381,31 +389,39 @@ namespace {
 
         // DECKEY 処理の流れ
         void HandleDeckeyChain(int deckey) override {
-            LOG_INFO(_T("ENTER: deckey={:x}H({}), totalCount={}, statesNum=({},{})"), deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), streamList1.Count(), streamList2.Count());
+            LOG_INFO(_T("ENTER: deckey={:x}H({}), totalCount={}, statesNum=({},{})"), deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), _streamList1.Count(), _streamList2.Count());
 
-            streamList1.DebugPrintStatesChain(_T("ENTER: streamList1"));
-            streamList2.DebugPrintStatesChain(_T("ENTER: streamList2"));
+            _streamList1.DebugPrintStatesChain(_T("ENTER: streamList1"));
+            _streamList2.DebugPrintStatesChain(_T("ENTER: streamList2"));
 
             if (deckey == ENTER_DECKEY) {
                 _LOG_DEBUGH(_T("EnterKey: clear streamList"));
-                streamList1.Clear();
-                streamList2.Clear();
+                _streamList1.Clear();
+                _streamList2.Clear();
+                WORD_LATTICE2->clear();
+                MarkUnnecessary();
+            } else if (deckey == BS_DECKEY) {
+                _LOG_DEBUGH(_T("BSKey: clear streamList"));
+                _strokeCountBS = (int)STATE_COMMON->GetTotalDecKeyCount();
+                _streamList1.Clear();
+                _streamList2.Clear();
+                WORD_LATTICE2->removeSecondOrLesser();
             } else {
                 if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END) {
                     // 同時打鍵の始まりなので、いったん streamList はクリア
                     // 同時打鍵中は、処理を分岐させない
-                    streamList1.Clear();
-                    streamList2.Clear();
-                    inComboList = true;
+                    _streamList1.Clear();
+                    _streamList2.Clear();
+                    _inComboList = true;
                 }
                 // 前処理(ストローク木状態の作成と呼び出し)
                 _LOG_DEBUGH(_T("streamList1: doDeckeyPreProc"));
-                streamList1.HandleDeckeyProc(StrokeTableNode::RootStrokeNode1.get(), deckey, !inComboList);
+                _streamList1.HandleDeckeyProc(StrokeTableNode::RootStrokeNode1.get(), deckey, !_inComboList);
                 _LOG_DEBUGH(_T("streamList2: doDeckeyPreProc"));
-                streamList2.HandleDeckeyProc(StrokeTableNode::RootStrokeNode2.get(), deckey, !inComboList);
+                _streamList2.HandleDeckeyProc(StrokeTableNode::RootStrokeNode2.get(), deckey, !_inComboList);
                 if (deckey < SHIFT_DECKEY_START) {
                     // 同時打鍵列の終わり
-                    inComboList = false;
+                    _inComboList = false;
                 }
             }
 
@@ -416,59 +432,73 @@ namespace {
         void CreateNewStateChain() override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             _LOG_DEBUGH(_T("streamList1: CreateNewStates"));
-            streamList1.CreateNewStates();
+            _streamList1.CreateNewStates();
             _LOG_DEBUGH(_T("streamList2: CreateNewStates"));
-            streamList2.CreateNewStates();
+            _streamList2.CreateNewStates();
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
 
         // 出力文字を取得する
         void GetResultStringChain(MStringResult& resultOut) override {
-            _LOG_DEBUGH(_T("ENTER: {}"), Name);
+            _LOG_DEBUGH(_T("ENTER: {}, isUnnecessary={}"), Name, IsUnnecessary());
+
+            if (IsUnnecessary()) {
+                _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+                return;
+            }
 
             // 単語素片の収集
             std::vector<WordPiece> pieces;
-            _LOG_DEBUGH(_T("streamList1: AddWordPieces"));
-            streamList1.AddWordPieces(pieces, false);
-            _LOG_DEBUGH(_T("streamList2: AddWordPieces"));
-            streamList2.AddWordPieces(pieces, false);
+            if ((int)STATE_COMMON->GetTotalDecKeyCount() == _strokeCountBS) {
+                _LOG_DEBUGH(_T("add WordPiece for BS."));
+                pieces.push_back(WordPiece::BSPiece());
+            } else {
+                _LOG_DEBUGH(_T("streamList1: AddWordPieces"));
+                _streamList1.AddWordPieces(pieces, false);
+                _LOG_DEBUGH(_T("streamList2: AddWordPieces"));
+                _streamList2.AddWordPieces(pieces, false);
 
-            Node* pNextNode1 = streamList1.GetNonStringNode();
-            Node* pNextNode2 = streamList2.GetNonStringNode();
-            if (pNextNode1 || pNextNode2) {
-                // 文字列ノード以外が返ったら、状態をクリアする
-                _LOG_DEBUGH(_T("NonStringNode FOUND: pNextNode1={:p}, pNextNode2={:p}"), (void*)pNextNode1, (void*)pNextNode2);
-                streamList1.Clear();
-                streamList2.Clear();
-                SetNextNodeMaybe(pNextNode1 ? pNextNode1 : pNextNode2);
-            }
-            // TODO: 以下は不要のはず
-            if (streamList1.Empty() && streamList2.Empty()) {
-                // 全てのストローク状態が削除されたので、後処理してマージノードも削除
-                _LOG_DEBUGH(_T("REMOVE ALL"));
-                SetNextNodeMaybe(pNextNode1 ? pNextNode1 : pNextNode2);
-                MarkUnnecessary();
+                Node* pNextNode1 = _streamList1.GetNonStringNode();
+                Node* pNextNode2 = _streamList2.GetNonStringNode();
+                if (pNextNode1 || pNextNode2) {
+                    // 文字列ノード以外が返ったら、状態をクリアする
+                    _LOG_DEBUGH(_T("NonStringNode FOUND: pNextNode1={:p}, pNextNode2={:p}"), (void*)pNextNode1, (void*)pNextNode2);
+                    _streamList1.Clear();
+                    _streamList2.Clear();
+                    SetNextNodeMaybe(pNextNode1 ? pNextNode1 : pNextNode2);
+                }
+#if 0
+                // TODO: 以下は不要のはず
+                if (_streamList1.Empty() && _streamList2.Empty()) {
+                    // 全てのストローク状態が削除されたので、後処理してマージノードも削除
+                    _LOG_DEBUGH(_T("REMOVE ALL"));
+                    SetNextNodeMaybe(pNextNode1 ? pNextNode1 : pNextNode2);
+                    MarkUnnecessary();
+                }
+#endif
+                if (!IsUnnecessary() && pieces.empty()) {
+                    _LOG_DEBUGH(_T("pieces is empty. add EmptyWordPiece."));
+                    pieces.push_back(WordPiece::emptyPiece());
+                }
             }
 
-            // 以下の if 文は不要のはず
-            if (!IsUnnecessary() || !pieces.empty()) {
             // Lattice処理
-            if (pieces.empty()) {
-                _LOG_DEBUGH(_T("pieces is empty. add EmptyWordPiece."));
-                pieces.push_back(WordPiece::emptyPiece());
-            }
-            auto result = WORD_LATTICE->addPieces(pieces);
+            auto result = WORD_LATTICE2->addPieces(pieces);
 
-            // 新しい文字列が得られたら履歴状態に送る
-            if (!result.outStr.empty()) {
+            // 新しい文字列が得られたらそれを返す
+            if (!result.outStr.empty() || result.numBS > 0) {
                 resultOut.setResult(result.outStr, result.numBS);
             } else {
                 _LOG_DEBUGH(_T("NO resultOut"));
             }
+
+            if (_streamList1.Empty() && _streamList2.Empty() && WORD_LATTICE2->isEmpty()) {
+                WORD_LATTICE2->clear();
+                MarkUnnecessary();
             }
 
-            streamList1.DebugPrintStatesChain(_T("LEAVE: streamList1"));
-            streamList2.DebugPrintStatesChain(_T("LEAVE: streamList2"));
+            _streamList1.DebugPrintStatesChain(_T("LEAVE: streamList1"));
+            _streamList2.DebugPrintStatesChain(_T("LEAVE: streamList2"));
 
             _LOG_DEBUGH(_T("LEAVE: {}: resultStr=[{}]"), Name, resultOut.debugString());
         }
@@ -477,24 +507,24 @@ namespace {
         void DeleteUnnecessarySuccessorStateChain() override {
             _LOG_DEBUGH(_T("ENTER: {}, IsUnnecessary={}"), Name, IsUnnecessary());
             _LOG_DEBUGH(_T("streamList1: deleteUnnecessaryNextState"));
-            streamList1.DeleteUnnecessaryNextStates();
+            _streamList1.DeleteUnnecessaryNextStates();
             _LOG_DEBUGH(_T("streamList2: deleteUnnecessaryNextState"));
-            streamList2.DeleteUnnecessaryNextStates();
+            _streamList2.DeleteUnnecessaryNextStates();
 
-            streamList1.DebugPrintStatesChain(_T("LEAVE: streamList1"));
-            streamList2.DebugPrintStatesChain(_T("LEAVE: streamList2"));
+            _streamList1.DebugPrintStatesChain(_T("LEAVE: streamList1"));
+            _streamList2.DebugPrintStatesChain(_T("LEAVE: streamList2"));
             _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
         }
 
         // ストロークテーブルチェインの長さ(テーブルのレベル)
         size_t StrokeTableChainLength() const override {
-            size_t len1 = streamList1.StrokeTableChainLength();
-            size_t len2 = streamList2.StrokeTableChainLength();
+            size_t len1 = _streamList1.StrokeTableChainLength();
+            size_t len2 = _streamList2.StrokeTableChainLength();
             return len1 < len2 ? len2 : len1;
         }
 
         String JoinedName() const override {
-            return Name + _T("(") + streamList1.ChainLengthString() + _T("/") + streamList2.ChainLengthString()  + _T(")");
+            return Name + _T("(") + _streamList1.ChainLengthString() + _T("/") + _streamList2.ChainLengthString()  + _T(")");
         }
 
     };
