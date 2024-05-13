@@ -1,7 +1,7 @@
 #include "string_utils.h"
 
 namespace MecabBridge {
-    int mecabInitialize(StringRef rcfile, StringRef dicdir);
+    int mecabInitialize(StringRef rcfile, StringRef dicdir, int unkMax);
 
     void mecabFinalize();
 

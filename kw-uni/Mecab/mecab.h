@@ -755,7 +755,7 @@ extern "C" {
 
   /* static functions */
   MECAB_DLL_EXTERN int           mecab_do(int argc, char **argv);
-  MECAB_DLL_EXTERN int           mecab_init(const char* rcfile, const char* dicdir);
+  MECAB_DLL_EXTERN int           mecab_init(const char* rcfile, const char* dicdir, const char* unkmax);
   MECAB_DLL_EXTERN const char*   mecab_init_strerror();
 
   MECAB_DLL_EXTERN int           mecab_do_cost(const char *line, char* buffer, int size);

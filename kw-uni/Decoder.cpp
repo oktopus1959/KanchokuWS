@@ -249,7 +249,7 @@ public:
     void initializeMecab() {
         auto rcfile = utils::joinPath(SETTINGS->rootDir, _T("mecab/etc/mecabrc"));
         auto dicdir = utils::joinPath(SETTINGS->rootDir, _T("mecab/dic/ipadic"));
-        if (MecabBridge::mecabInitialize(rcfile, dicdir) != 0) {
+        if (MecabBridge::mecabInitialize(rcfile, dicdir, 3) != 0) {
             LOG_WARN(_T("MeCab Initialize FAILED: rcfile=%s, dicdir=%s"), rcfile.c_str(), dicdir.c_str());
         }
     }

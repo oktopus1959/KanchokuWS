@@ -17,9 +17,9 @@
 namespace MecabBridge {
     DEFINE_LOCAL_LOGGER(MecabBridge);
 
-    int mecabInitialize(StringRef rcfile, StringRef dicdir) {
+    int mecabInitialize(StringRef rcfile, StringRef dicdir, int unkMax) {
         LOG_INFOH(_T("ENTER: rcfile={}, dicdir={}"), rcfile, dicdir);
-        int result = mecab_init(utils::utf8_encode(rcfile).c_str(), utils::utf8_encode(dicdir).c_str());
+        int result = mecab_init(utils::utf8_encode(rcfile).c_str(), utils::utf8_encode(dicdir).c_str(), std::to_string(unkMax).c_str());
         LOG_INFOH(_T("LEAVE: result={}, errorStr={}"), result, result == 0 ? _T("none") : utils::utf8_decode(mecab_init_strerror()));
         return result;
     }
