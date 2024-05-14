@@ -12,18 +12,21 @@
 
 #if 1
 #undef IS_LOG_DEBUGH_ENABLED
+#define IS_LOG_DEBUGH_ENABLED true
+#undef _LOG_INFOH
 #undef LOG_INFO
 #undef LOG_DEBUG
 #undef _LOG_DEBUGH
-#define IS_LOG_DEBUGH_ENABLED true
 #if 0
+#define _LOG_INFOH LOG_INFOH
 #define LOG_INFO LOG_INFOH
 #define LOG_DEBUG LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
 #else
-#define LOG_INFO LOG_WARN
-#define LOG_DEBUG LOG_WARN
-#define _LOG_DEBUGH LOG_WARN
+#define _LOG_INFOH LOG_WARN
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
 #endif
 #endif
 

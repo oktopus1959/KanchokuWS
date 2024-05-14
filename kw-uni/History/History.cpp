@@ -1564,6 +1564,7 @@ HistoryNode::~HistoryNode() {
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryNode::CreateState() {
     LOG_INFO(_T("CALLED"));
+    if (SETTINGS->multiStreamMode) return 0;
     return new HistoryState(this);
 }
 
@@ -1604,6 +1605,7 @@ HistoryFewCharsNode::~HistoryFewCharsNode() {
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryFewCharsNode::CreateState() {
     LOG_INFO(_T("CALLED"));
+    if (SETTINGS->multiStreamMode) return 0;
     return new HistoryFewCharsState(this);
 }
 
@@ -1631,6 +1633,7 @@ HistoryOneCharNode::~HistoryOneCharNode() {
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryOneCharNode::CreateState() {
     LOG_INFO(_T("CALLED"));
+    if (SETTINGS->multiStreamMode) return 0;
     return new HistoryOneCharState(this);
 }
 

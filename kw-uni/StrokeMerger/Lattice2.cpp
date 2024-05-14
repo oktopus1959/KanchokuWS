@@ -14,18 +14,21 @@
 
 #if 1
 #undef IS_LOG_DEBUGH_ENABLED
+#define IS_LOG_DEBUGH_ENABLED true
+#undef _LOG_INFOH
 #undef LOG_INFO
 #undef LOG_DEBUG
 #undef _LOG_DEBUGH
-#define IS_LOG_DEBUGH_ENABLED true
 #if 0
+#define _LOG_INFOH LOG_INFOH
 #define LOG_INFO LOG_INFOH
 #define LOG_DEBUG LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
 #else
-#define LOG_INFO LOG_WARN
-#define LOG_DEBUG LOG_WARN
-#define _LOG_DEBUGH LOG_WARN
+#define _LOG_INFOH LOG_WARN
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
 #endif
 #endif
 
@@ -57,6 +60,7 @@ namespace lattice2 {
 
     int getWordCost(const MString& str) {
         if (str.empty()) return 0;
+        if (str == MSTR_SPACE) return MAX_COST * 3;
         auto iter = wordCosts.find(str);
         return iter != wordCosts.end() ? iter->second : MAX_COST;
     }
@@ -64,6 +68,31 @@ namespace lattice2 {
     int getWordConnCost(const MString& s1, const MString& s2) {
         return getWordCost(utils::last_substr(s1, 1) + utils::safe_substr(s2, 0, 1)) / 2;
     }
+
+#if 1
+    int getNgramCost(const MString& str) {
+        int cost = 0;
+        for (size_t i = 0; i < str.size(); ++i) {
+            cost += getWordCost(utils::safe_substr(str, i, 1));
+        }
+        for (size_t i = 0; i < str.size() - 1; ++i) {
+            cost += getWordCost(utils::safe_substr(str, i, 2));
+        }
+        return cost;
+    }
+#else
+    int getNgramCost(const MString& str) {
+        int cost = 0;
+        for (size_t i = 0; i < str.size() - 1; ++i) {
+            int bigramCost = getWordCost(utils::safe_substr(str, i, 2));
+            if (bigramCost >= MAX_COST) {
+                bigramCost = getWordCost(utils::safe_substr(str, i, 1)) + getWordCost(utils::safe_substr(str, i + 1, 1));
+            }
+            cost += bigramCost;
+        }
+        return cost;
+    }
+#endif
 
     // 候補文字列
     class CandidateString {
@@ -237,8 +266,12 @@ namespace lattice2 {
         bool addCandidate(std::vector<CandidateString>& newCandidates, const MString& candStr, int strokeLen) {
             bool bAdded = false;
             bool bIgnored = false;
-            int candCost = candStr.empty() ? 0 : totalCostWithMecab(candStr);
-            _LOG_DEBUGH(_T("CALLED: candStr={}, candCost={}"), to_wstr(candStr), candCost);
+            int mecabCost = candStr.empty() ? 0 : totalCostWithMecab(candStr);
+            int ngramCost = candStr.empty() ? 0 : getNgramCost(candStr) * 5;
+            //int mecabCost = 0;
+            //int ngramCost = candStr.empty() ? 0 : getNgramCost(candStr);
+            int candCost = mecabCost + ngramCost;
+            _LOG_INFOH(_T("CALLED: candStr={}, candCost={} (mecab={}, ngram={})"), to_wstr(candStr), candCost, mecabCost, ngramCost);
 
             CandidateString newCandStr(candStr, strokeLen, candCost);
 
@@ -400,7 +433,8 @@ namespace lattice2 {
             int strokeCount = STATE_COMMON->GetTotalDecKeyCount();
             if (_startStrokeCount == 0) _startStrokeCount = strokeCount;
 
-            _LOG_DEBUGH(_T("ENTER: strokeCount={}, pieces: {}\nkBest:\n{}"), strokeCount, formatStringOfWordPieces(pieces), _kBestList.debugString());
+            //_LOG_DEBUGH(_T("ENTER: strokeCount={}, pieces: {}\nkBest:\n{}"), strokeCount, formatStringOfWordPieces(pieces), _kBestList.debugString());
+            _LOG_INFOH(_T("ENTER: strokeCount={}, pieces: {}"), strokeCount, formatStringOfWordPieces(pieces));
             // endPos における空の k-best path リストを取得
 
             _kBestList.updateKBestList(pieces, strokeCount - _startStrokeCount + 1);
@@ -412,7 +446,7 @@ namespace lattice2 {
             numBS = _prevOutputStr.size() - commonLen;
             _prevOutputStr = outStr;
             outStr = utils::safe_substr(outStr, commonLen);
-            _LOG_DEBUGH(_T("LEAVE: OUTPUT: {}, numBS={}\nkBest:\n{}"), to_wstr(outStr), numBS, _kBestList.debugString());
+            _LOG_INFOH(_T("LEAVE: OUTPUT: {}, numBS={}\nkBest:\n{}"), to_wstr(outStr), numBS, _kBestList.debugString());
             return LatticeResult(outStr, numBS);
         }
     };
