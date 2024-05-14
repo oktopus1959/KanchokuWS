@@ -43,6 +43,7 @@ namespace utils {
      */
     inline bool makeDirectory(StringRef path) {
         try {
+            if (std::filesystem::is_directory(path)) return true;
             return std::filesystem::create_directories(path);
         } catch (...) {
             return false;
