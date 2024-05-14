@@ -133,6 +133,10 @@ public:
 
     virtual bool isEmpty() = 0;
 
+    virtual void selectNext() = 0;
+
+    virtual void selectPrev() = 0;
+
     static void createLattice();
 
     static std::unique_ptr<Lattice2> Singleton;

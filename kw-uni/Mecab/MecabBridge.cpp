@@ -5,12 +5,12 @@
 #if 1
 #undef _LOG_INFOH
 #undef LOG_DEBUGH
-#if 1
+#if 0
 #define _LOG_INFOH LOG_INFOH
 #define LOG_DEBUGH LOG_INFOH
 #else
 #define _LOG_INFOH LOG_WARN
-#define LOG_DEBUGH LOG_WARN
+#define LOG_DEBUGH LOG_INFOH
 #endif
 #endif
 
@@ -18,14 +18,14 @@ namespace MecabBridge {
     DEFINE_LOCAL_LOGGER(MecabBridge);
 
     int mecabInitialize(StringRef rcfile, StringRef dicdir, int unkMax) {
-        _LOG_INFOH(_T("ENTER: rcfile={}, dicdir={}"), rcfile, dicdir);
+        LOG_INFOH(_T("ENTER: rcfile={}, dicdir={}"), rcfile, dicdir);
         int result = mecab_init(utils::utf8_encode(rcfile).c_str(), utils::utf8_encode(dicdir).c_str(), std::to_string(unkMax).c_str());
-        _LOG_INFOH(_T("LEAVE: result={}, errorStr={}"), result, result == 0 ? _T("none") : utils::utf8_decode(mecab_init_strerror()));
+        LOG_INFOH(_T("LEAVE: result={}, errorStr={}"), result, result == 0 ? _T("none") : utils::utf8_decode(mecab_init_strerror()));
         return result;
     }
 
     void mecabFinalize() {
-        _LOG_INFOH(_T("CALLED"));
+        LOG_INFOH(_T("CALLED"));
         mecab_end();
     }
 

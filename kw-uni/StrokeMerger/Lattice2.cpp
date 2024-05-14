@@ -38,6 +38,9 @@ namespace lattice2 {
     // ビームサイズ
     size_t BestKSize = 5;
 
+    // 多ストロークの範囲
+    int StrokeRange = 4;
+
     int MAX_COST = 1000;
 
     int STROKE_COST = 150;
@@ -99,6 +102,7 @@ namespace lattice2 {
         MString _str;
         int _strokeLen;
         int _cost;
+        int _penalty;
 
         // 末尾文字列にマッチする RewriteInfo を取得する
         std::tuple<const RewriteInfo*, int> matchWithTailString(const PostRewriteOneShotNode* rewriteNode) const {
@@ -124,10 +128,10 @@ namespace lattice2 {
         }
 
     public:
-        CandidateString() : _strokeLen(0), _cost(0) {
+        CandidateString() : _strokeLen(0), _cost(0), _penalty(0) {
         }
 
-        CandidateString(const MString& s, int len, int cost) : _str(s), _strokeLen(len), _cost(cost) {
+        CandidateString(const MString& s, int len, int cost, int penalty = 0) : _str(s), _strokeLen(len), _cost(cost), _penalty(penalty) {
         }
 
         std::tuple<MString, int> apply(const WordPiece& piece, int strokeCount, bool bAutoBushu) const {
@@ -185,11 +189,31 @@ namespace lattice2 {
         }
 
         int cost() const {
-            return _cost;
+            return _cost + _penalty;
+        }
+
+        void cost(int cost) {
+            _cost = cost;
+        }
+
+        void zeroCost() {
+            _penalty = -_cost;
+        }
+
+        int penalty() const {
+            return _penalty;
+        }
+
+        void penalty(int penalty) {
+            _penalty = penalty;
         }
 
         String debugString() const {
-            return to_wstr(_str) + _T(" (cost=") + std::to_wstring(_cost) + _T(", strokeLen = ") + std::to_wstring(_strokeLen) + _T(")");
+            return to_wstr(_str)
+                + _T(" (totalCost=") + std::to_wstring(cost())
+                + _T("(_cost=") + std::to_wstring(_cost)
+                + _T(",_penalty=") + std::to_wstring(_penalty)
+                + _T("), strokeLen = ") + std::to_wstring(_strokeLen) + _T(")");
         }
     };
 
@@ -219,6 +243,7 @@ namespace lattice2 {
         void removeSecondOrLesser() {
             if (_candidates.size() > 0) {
                 _candidates.erase(_candidates.begin() + 1, _candidates.end());
+                _candidates.front().penalty(0);
             }
         }
 
@@ -242,7 +267,7 @@ namespace lattice2 {
         }
 
     private:
-        int calcMecabCost(const MString& s, std::vector<MString> words) {
+        int calcMecabCost(const MString& s, std::vector<MString>& words) {
             int cost = 0;
             if (!s.empty()) {
                 auto iter = _mecabCache.find(s);
@@ -255,31 +280,34 @@ namespace lattice2 {
             }
             return cost;
         }
-
+#if 0
         int totalCostWithMecab(const MString& candStr) {
             std::vector<MString> words;
             int mecabCost = calcMecabCost(candStr, words);
             return mecabCost;
         }
-
+#endif
         // 新しい候補を追加
-        bool addCandidate(std::vector<CandidateString>& newCandidates, const MString& candStr, int strokeLen) {
+        bool addCandidate(std::vector<CandidateString>& newCandidates, CandidateString& newCandStr) {
             bool bAdded = false;
             bool bIgnored = false;
-            int mecabCost = candStr.empty() ? 0 : totalCostWithMecab(candStr);
+            std::vector<MString> words;
+            const MString& candStr = newCandStr.string();
+            int mecabCost = candStr.empty() ? 0 : calcMecabCost(candStr, words);
             int ngramCost = candStr.empty() ? 0 : getNgramCost(candStr) * 5;
             //int mecabCost = 0;
             //int ngramCost = candStr.empty() ? 0 : getNgramCost(candStr);
             int candCost = mecabCost + ngramCost;
-            _LOG_INFOH(_T("CALLED: candStr={}, candCost={} (mecab={}, ngram={})"), to_wstr(candStr), candCost, mecabCost, ngramCost);
+            _LOG_INFOH(_T("CALLED: candStr={}, candCost={} (mecab={}[{}], ngram={})"), to_wstr(candStr), candCost, mecabCost, to_wstr(utils::join(words, ' ')), ngramCost);
 
-            CandidateString newCandStr(candStr, strokeLen, candCost);
+            newCandStr.cost(candCost);
+            int totalCost = newCandStr.cost();
 
             if (!newCandidates.empty()) {
                 for (auto iter = newCandidates.begin(); iter != newCandidates.end(); ++iter) {
                     int otherCost = iter->cost();
                     _LOG_DEBUGH(_T("    otherStr={}, otherCost={}"), to_wstr(iter->string()), otherCost);
-                    if (candCost < otherCost) {
+                    if (totalCost < otherCost) {
                         iter = newCandidates.insert(iter, newCandStr);    // iter は挿入したノードを指す
                         bAdded = true;
                         // 下位のノードで同じ文字列のものを探し、あればそれを削除
@@ -312,7 +340,7 @@ namespace lattice2 {
             if (bAdded) {
                 _LOG_DEBUGH(_T("    ADD candidate: {}"), to_wstr(candStr));
             } else {
-                _LOG_DEBUGH(_T("    ABANDON candidate: {}, totalCost={}"), to_wstr(candStr), candCost);
+                _LOG_DEBUGH(_T("    ABANDON candidate: {}, totalCost={}"), to_wstr(candStr), totalCost);
             }
             return bAdded;
         }
@@ -325,11 +353,13 @@ namespace lattice2 {
                 int numBS;
                 std::tie(s, numBS) = cand.apply(piece, strokeCount, true);  // 自動部首合成
                 if (!s.empty()) {
-                    addCandidate(newCandidates, s, strokeCount);
+                    CandidateString newCandStr(s, strokeCount, 0, cand.penalty());
+                    addCandidate(newCandidates, newCandStr);
                 }
                 std::tie(s, numBS) = cand.apply(piece, strokeCount, false);
                 if (!s.empty() || numBS > 0) {
-                    addCandidate(newCandidates, s, strokeCount);
+                    CandidateString newCandStr(s, strokeCount, 0, cand.penalty());
+                    addCandidate(newCandidates, newCandStr);
                 }
             }
         }
@@ -351,7 +381,7 @@ namespace lattice2 {
             // 組み合せ不可だったものは、strokeCount が範囲内なら残しておく
             if (!_isEmpty(newCandidates)) {
                 for (const auto& cand : _candidates) {
-                    if (cand.strokeLen() + 8 > strokeCount) {
+                    if (cand.strokeLen() + StrokeRange > strokeCount) {
                         newCandidates.push_back(cand);
                     }
                 }
@@ -361,6 +391,44 @@ namespace lattice2 {
             _LOG_DEBUGH(_T("LEAVE"));
         }
 
+    private:
+        size_t getNumOfSameStrokeLen() const {
+            size_t nSameLen = 0;
+            if (_candidates.size() > 1) {
+                int strokeLen = _candidates.front().strokeLen();
+                ++nSameLen;
+                for (auto iter = _candidates.begin() + 1; iter != _candidates.end() && iter->strokeLen() == strokeLen; ++iter) {
+                    ++nSameLen;
+                }
+            }
+            return nSameLen;
+        }
+
+        void arrangePenalties(size_t nSameLen) {
+            _candidates.front().zeroCost();
+            for (size_t i = 1; i < nSameLen; ++i) {
+                _candidates[i].penalty(1000000 * (int)i);
+            }
+        }
+
+    public:
+        void selectNext() {
+            size_t nSameLen = getNumOfSameStrokeLen();
+            if (nSameLen > 1) {
+                auto begin = _candidates.begin();
+                std::rotate(begin, begin + 1, begin + nSameLen);
+                arrangePenalties(nSameLen);
+            }
+        }
+
+        void selectPrev() {
+            size_t nSameLen = getNumOfSameStrokeLen();
+            if (nSameLen > 1) {
+                auto begin = _candidates.begin();
+                std::rotate(begin, begin + nSameLen - 1, begin + nSameLen);
+                arrangePenalties(nSameLen);
+            }
+        }
     };
 
     // Lattice
@@ -425,6 +493,14 @@ namespace lattice2 {
         bool isEmpty() override {
             _LOG_DEBUGH(_T("CALLED: isEmpty={}"), _kBestList.isEmpty());
             return _kBestList.isEmpty();
+        }
+
+        void selectNext() override {
+            _kBestList.selectNext();
+        }
+
+        void selectPrev() override {
+            _kBestList.selectPrev();
         }
 
         // 単語素片リストの追加(単語素片が得られなかった場合も含め、各打鍵ごとに呼び出すこと)

@@ -406,6 +406,16 @@ namespace {
                 _streamList1.Clear();
                 _streamList2.Clear();
                 WORD_LATTICE2->removeSecondOrLesser();
+            } else if (deckey == DOWN_ARROW_DECKEY) {
+                _LOG_DEBUGH(_T("DownArrow: select next candidate"));
+                _streamList1.Clear();
+                _streamList2.Clear();
+                WORD_LATTICE2->selectNext();
+            } else if (deckey == UP_ARROW_DECKEY) {
+                _LOG_DEBUGH(_T("UpArrow: select prev candidate"));
+                _streamList1.Clear();
+                _streamList2.Clear();
+                WORD_LATTICE2->selectPrev();
             } else {
                 if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END) {
                     // 同時打鍵の始まりなので、いったん streamList はクリア
