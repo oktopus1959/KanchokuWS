@@ -18,6 +18,8 @@ class BushuCompNode : public FunctionNode {
 
     MString getString() const { return to_mstr(_T("●")); }
 
+    String getNodeName() const { return _T("BushuCompNode"); }
+
 public:
     mchar_t PrevBushu1 = 0;     // 直前の部首合成で使われた第1部首
     mchar_t PrevBushu2 = 0;     // 直前の部首合成で使われた第2部首

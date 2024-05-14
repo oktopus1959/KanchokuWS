@@ -18,6 +18,8 @@ public:
      State* CreateState();
 
     MString getString() const { return to_mstr(_T("○")); }
+
+    String getNodeName() const { return _T("MazegakiNode"); }
 };
 
 // -------------------------------------------------------------------

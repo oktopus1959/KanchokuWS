@@ -20,6 +20,8 @@ public:
     // 当機能を表す文字を設定
     MString getString() const { return to_mstr(_T("壁")); }
 
+    String getNodeName() const { return _T("BlockerSetterNode"); }
+
 };
 
 // -------------------------------------------------------------------

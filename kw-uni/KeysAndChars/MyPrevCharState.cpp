@@ -15,6 +15,17 @@
 
 #include "MyPrevChar.h"
 
+#if 1 || defined(_DEBUG)
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#undef _LOG_DEBUGH
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
+#endif
+
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughMyPrevChar)
 
 namespace {

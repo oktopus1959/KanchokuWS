@@ -25,6 +25,8 @@ class HistoryNode : public FunctionNode {
 
     MString getString() const override { return to_mstr(_T("◆")); }
 
+    String getNodeName() const { return _T("HistoryNode"); }
+
 public:
     static HistoryNode* Singleton;
 };
@@ -53,6 +55,8 @@ class HistoryFewCharsNode : public HistoryNode {
      State* CreateState() override;
 
     MString getString() const override { return to_mstr(_T("◇")); }
+
+    String getNodeName() const { return _T("HistoryFewCharsNode"); }
 };
 
 // -------------------------------------------------------------------
@@ -78,6 +82,8 @@ class HistoryOneCharNode : public HistoryNode {
      State* CreateState() override;
 
     MString getString() const override { return to_mstr(_T("◇")); }
+
+    String getNodeName() const { return _T("HistoryOneCharNode"); }
 };
 
 // -------------------------------------------------------------------
@@ -110,6 +116,8 @@ public:
      State* CreateState() override;
 
     inline MString getString() const override { return to_mstr(_T("◇")); }
+
+    String getNodeName() const { return _T("HistoryResidentNode"); }
 
     // 履歴選択により出力された文字列
     inline const MString& GetPrevOutString() const {

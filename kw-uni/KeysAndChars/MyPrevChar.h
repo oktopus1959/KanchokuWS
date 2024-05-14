@@ -18,6 +18,8 @@ public:
     // 当機能を表す文字を設定
     MString getString() const { return to_mstr(_T("・")); }
 
+    String getNodeName() const { return _T("MyCharNode"); }
+
 public:
     static std::unique_ptr<MyCharNode> _singleton;
 
@@ -40,6 +42,8 @@ public:
 
     // 当機能を表す文字を設定
     MString getString() const { return to_mstr(_T("・")); }
+
+    String getNodeName() const { return _T("PrevCharNode"); }
 
 public:
     static std::unique_ptr<PrevCharNode> _singleton;

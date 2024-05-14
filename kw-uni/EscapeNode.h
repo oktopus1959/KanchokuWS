@@ -1,10 +1,10 @@
 //#include "pch.h"
 
-#include "Node.h"
+#include "FunctionNode.h"
 
 // -------------------------------------------------------------------
 // EscapeNode - 次打鍵を直接に出力する
-class EscapeNode : public Node {
+class EscapeNode : public FunctionNode {
     DECLARE_CLASS_LOGGER;
 public:
     EscapeNode();
@@ -16,7 +16,9 @@ public:
 
     MString getString() const { return to_mstr(_T("＼")); }
 
-    NodeType getNodeType() const { return NodeType::FunctionT; }
+    //NodeType getNodeType() const { return NodeType::FunctionT; }
+
+    String getNodeName() const { return _T("EscapeNode"); }
 };
 
 #include "FunctionNodeBuilder.h"

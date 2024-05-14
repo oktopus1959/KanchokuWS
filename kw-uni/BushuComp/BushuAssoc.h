@@ -19,6 +19,7 @@ class BushuAssocNode : public FunctionNode {
 
     MString getString() const { return to_mstr(_T("▼")); }
 
+    String getNodeName() const { return _T("BushuAssocNode"); }
 };
 
 // -------------------------------------------------------------------
@@ -44,6 +45,8 @@ class BushuAssocExNode : public BushuAssocNode {
      State* CreateState();
 
     MString getString() const { return to_mstr(_T("▽")); }
+
+    String getNodeName() const { return _T("BushuAssocExNode"); }
 
     mchar_t PrevKey = '\0';
     mchar_t PrevAssoc = '\0';

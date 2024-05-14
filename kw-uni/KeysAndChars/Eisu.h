@@ -17,6 +17,8 @@ public:
     // 当機能を表す文字を設定
     MString getString() const { return to_mstr(_T("Ａ")); }
 
+    String getNodeName() const { return _T("EisuNode"); }
+
     // 前回の状態のときの大文字入力時のDeckeyカウント
     size_t prevCapitalDeckeyCount = 0;
 

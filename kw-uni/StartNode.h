@@ -16,5 +16,6 @@ public:
     // ノード型を返す
     NodeType getNodeType() const { return NodeType::Start; }
 
+    String getNodeName() const { return _T("StartNode"); }
 };
 

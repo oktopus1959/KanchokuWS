@@ -17,6 +17,8 @@ public:
     // 当機能を表す文字を設定
     MString getString() const { return to_mstr(_T("全")); }
 
+    String getNodeName() const { return _T("ZenkakuNode"); }
+
     static void CreateSingleton();
 
     static std::unique_ptr<ZenkakuNode> Singleton;

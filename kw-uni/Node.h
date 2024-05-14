@@ -39,7 +39,8 @@ namespace {
     }
 }
 
-#define NODE_NAME(n) (n == 0 ? _T("None") : nodeTypeName(n->getNodeType()))
+//#define NODE_NAME(n) (n == 0 ? _T("None") : nodeTypeName(n->getNodeType()))
+#define NODE_NAME(n) (n == 0 ? _T("None") : n->getNodeName())
 
 // -------------------------------------------------------------------
 // ノードの基底クラス (抽象クラス)
@@ -63,6 +64,9 @@ public:
 
     // ノード型を返す
     virtual NodeType getNodeType() const = 0;
+
+    // ノード名を返す
+    virtual String getNodeName() const = 0;
 
 public:
     // ノード型を判定する

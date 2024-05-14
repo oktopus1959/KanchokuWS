@@ -17,6 +17,7 @@ public:
     // 当機能を表す文字を設定
     MString getString() const { return to_mstr(_T("ナ")); }
 
+    String getNodeName() const { return _T("KatakanaOneShotNode"); }
 };
 
 // -------------------------------------------------------------------

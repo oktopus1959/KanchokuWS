@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Node.h"
+#include "utils/string_utils.h"
 
 // -------------------------------------------------------------------
 // StringNode - 文字列を格納するノード
@@ -19,6 +20,8 @@ public:
 
     // 出力用文字列を返す
      MString getString() const override { return str; }
+
+    String getNodeName() const { return _T("StringNode:") + to_wstr(str); }
 
     size_t getRewritableLen() const override { return rewritableLen; }
 

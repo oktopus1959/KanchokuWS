@@ -26,6 +26,8 @@ public:
 
     MString getString() const override { return to_mstr(_T("∈")); }
 
+    String getNodeName() const { return _T("StrokeMergerNode"); }
+
 public:
     void createStrokeTrees(bool bForceSecondary = false);
 

@@ -69,6 +69,8 @@ public:
     // 表示用文字列を返す
     MString getString() const override { return to_mstr(nodeMarker); }
 
+    String getNodeName() const override { return _depth == 0 ? _T("RootStrokeNode") : _T("StrokeNode"); }
+
     NodeType getNodeType() const override { return _depth == 0 ? NodeType::RootStroke : NodeType::Stroke; }
 
     // 後置書き換え子ノードありか

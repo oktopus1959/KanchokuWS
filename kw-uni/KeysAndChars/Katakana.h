@@ -17,6 +17,8 @@ public:
     // 当機能を表す文字を設定
     MString getString() const { return to_mstr(_T("カ")); }
 
+    String getNodeName() const { return _T("KatakanaNode"); }
+
     static void CreateSingleton();
 
     static std::unique_ptr<KatakanaNode> Singleton;

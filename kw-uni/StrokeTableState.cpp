@@ -141,7 +141,7 @@ namespace {
                         LOG_DEBUGH(_T("REWRITE node matched"));
                     }
                 }
-                LOG_DEBUGH(_T("SetNextNodeMaybe: np={}"), np ? to_wstr(np->getString()) : _T("null"));
+                LOG_DEBUGH(_T("SetNextNodeMaybe: np={}"), np ? np->getNodeName() : _T("null"));
                 SetNextNodeMaybe(np);
             }
             if (!NextNodeMaybe() || !NextNodeMaybe()->isStrokeTableNode()) {

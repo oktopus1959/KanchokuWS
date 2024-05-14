@@ -262,7 +262,7 @@ namespace {
             return rootNode;
         }
 
-        // デフォルトのシフト面の機能(自身の文字を返す)ノードの設定
+        // デフォルトのシフト面の機能(自身の文字を返す)ノード(MyCharNode)の設定
         void setupShiftedKeyFunction(StrokeTableNode* tblNode) {
             _LOG_DEBUGH(_T("CALLED"));
             for (size_t i = 0; i < NORMAL_DECKEY_NUM; ++i) {

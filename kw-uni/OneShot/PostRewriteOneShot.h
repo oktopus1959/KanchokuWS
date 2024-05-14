@@ -66,6 +66,8 @@ public:
 
     MString getString() const override { return myRewriteInfo.rewriteStr; }
 
+    String getNodeName() const { return _T("PostRewriteOneShotNode"); }
+
     size_t getRewritableLen() const override { return myRewriteInfo.rewritableLen; }
 
     const RewriteInfo& getRewriteInfo() const { return myRewriteInfo; }
@@ -117,6 +119,8 @@ public:
     MString getString() const { return markStr; }
 
     String getPostfix() const { return postfix; }
+
+    String getNodeName() const { return _T("DakutenOneShotNode"); }
 };
 
 // -------------------------------------------------------------------
