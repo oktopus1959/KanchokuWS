@@ -111,13 +111,14 @@ namespace {
                 // ただしRootStrokeTableStateが同時打鍵の開始だった場合は、OrigStringを返さない
                 STATE_COMMON->AppendOrigString(myChar);
             }
-
+#if 0
             if (!myNode()->isRootStrokeTableNode() && !IsRootKeyCombination()) {
                 // 自身がRootStrokeNodeでなく、かつRootStrokeKeyが同時打鍵キーでなければ通常面に落としこむ
                 // 同時打鍵の場合は、重複回避のため、第２キーはシフト化されてくる場合がある。その場合は、UNSHIFTしない
                 deckey = UNSHIFT_DECKEY(deckey);
                 LOG_DEBUGH(_T("UNSHIFT_DECKEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
             }
+#endif
             if (STATE_COMMON->IsDecodeKeyboardCharMode()) {
                 // キーボードフェイス文字を返すモード
                 LOG_DEBUGH(_T("SetNextNodeMaybe: MY_CHAR_NODE"));
