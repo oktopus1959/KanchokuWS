@@ -133,6 +133,8 @@ public:
 
     virtual bool isEmpty() = 0;
 
+    virtual void selectFirst() = 0;
+
     virtual void selectNext() = 0;
 
     virtual void selectPrev() = 0;

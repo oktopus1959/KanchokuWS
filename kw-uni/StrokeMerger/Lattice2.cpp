@@ -412,6 +412,13 @@ namespace lattice2 {
         }
 
     public:
+        void selectFirst() {
+            size_t nSameLen = getNumOfSameStrokeLen();
+            if (nSameLen > 1) {
+                arrangePenalties(nSameLen);
+            }
+        }
+
         void selectNext() {
             size_t nSameLen = getNumOfSameStrokeLen();
             if (nSameLen > 1) {
@@ -493,6 +500,10 @@ namespace lattice2 {
         bool isEmpty() override {
             _LOG_DEBUGH(_T("CALLED: isEmpty={}"), _kBestList.isEmpty());
             return _kBestList.isEmpty();
+        }
+
+        void selectFirst() override {
+            _kBestList.selectFirst();
         }
 
         void selectNext() override {

@@ -405,7 +405,8 @@ namespace {
                 _strokeCountBS = (int)STATE_COMMON->GetTotalDecKeyCount();
                 _streamList1.Clear();
                 _streamList2.Clear();
-                WORD_LATTICE2->removeSecondOrLesser();
+                //WORD_LATTICE2->removeSecondOrLesser();
+                WORD_LATTICE2->selectFirst();
             } else if (deckey == DOWN_ARROW_DECKEY) {
                 _LOG_DEBUGH(_T("DownArrow: select next candidate"));
                 _streamList1.Clear();
