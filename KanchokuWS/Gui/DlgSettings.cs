@@ -1156,6 +1156,7 @@ namespace KanchokuWS.Gui
             textBox_onBushuCompHelp.Text= Settings.BgColorForBushuCompHelp;
             textBox_onSecondaryTable.Text= Settings.BgColorForSecondaryTable;
             textBox_onKanaTrainingMode.Text= Settings.BgColorForKanaTrainingMode;
+            textBox_onMultiStreamMode.Text= Settings.BgColorForMultiStreamMode;
 
             // 縦列・横列鍵盤背景色
             textBox_firstCandidateBackColor.Text = Settings.BgColorForFirstCandidate;
@@ -1196,6 +1197,7 @@ namespace KanchokuWS.Gui
             checkerFontColor.Add(textBox_onBushuCompHelp);
             checkerFontColor.Add(textBox_onSecondaryTable);
             checkerFontColor.Add(textBox_onKanaTrainingMode);
+            checkerFontColor.Add(textBox_onMultiStreamMode);
 
             // 縦列・横列鍵盤背景色
             checkerFontColor.Add(textBox_firstCandidateBackColor);
@@ -1238,6 +1240,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("bgColorForBushuCompHelp", textBox_onBushuCompHelp.Text.Trim());
             Settings.SetUserIni("bgColorForSecondaryTable", textBox_onSecondaryTable.Text.Trim());
             Settings.SetUserIni("bgColorForKanaTrainingMode", textBox_onKanaTrainingMode.Text.Trim());
+            Settings.SetUserIni("bgColorForMultiStreamMode", textBox_onMultiStreamMode.Text.Trim());
 
             // 縦列・横列鍵盤背景色
             Settings.SetUserIni("bgColorForFirstCandidate", textBox_firstCandidateBackColor.Text.Trim());
