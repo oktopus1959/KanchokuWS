@@ -398,25 +398,25 @@ namespace {
                 _LOG_DEBUGH(_T("EnterKey: clear streamList"));
                 _streamList1.Clear();
                 _streamList2.Clear();
-                WORD_LATTICE2->clear();
+                WORD_LATTICE->clear();
                 MarkUnnecessary();
             } else if (deckey == BS_DECKEY) {
                 _LOG_DEBUGH(_T("BSKey: clear streamList"));
                 _strokeCountBS = (int)STATE_COMMON->GetTotalDecKeyCount();
                 _streamList1.Clear();
                 _streamList2.Clear();
-                //WORD_LATTICE2->removeSecondOrLesser();
-                WORD_LATTICE2->selectFirst();
+                //WORD_LATTICE->removeSecondOrLesser();
+                WORD_LATTICE->selectFirst();
             } else if (deckey == DOWN_ARROW_DECKEY) {
                 _LOG_DEBUGH(_T("DownArrow: select next candidate"));
                 _streamList1.Clear();
                 _streamList2.Clear();
-                WORD_LATTICE2->selectNext();
+                WORD_LATTICE->selectNext();
             } else if (deckey == UP_ARROW_DECKEY) {
                 _LOG_DEBUGH(_T("UpArrow: select prev candidate"));
                 _streamList1.Clear();
                 _streamList2.Clear();
-                WORD_LATTICE2->selectPrev();
+                WORD_LATTICE->selectPrev();
             } else {
                 if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END) {
                     // 同時打鍵の始まりなので、いったん streamList はクリア
@@ -494,7 +494,7 @@ namespace {
             }
 
             // Lattice処理
-            auto result = WORD_LATTICE2->addPieces(pieces);
+            auto result = WORD_LATTICE->addPieces(pieces);
 
             // 新しい文字列が得られたらそれを返す
             if (!result.outStr.empty() || result.numBS > 0) {
@@ -503,8 +503,8 @@ namespace {
                 _LOG_DEBUGH(_T("NO resultOut"));
             }
 
-            if (_streamList1.Empty() && _streamList2.Empty() && WORD_LATTICE2->isEmpty()) {
-                WORD_LATTICE2->clear();
+            if (_streamList1.Empty() && _streamList2.Empty() && WORD_LATTICE->isEmpty()) {
+                WORD_LATTICE->clear();
                 MarkUnnecessary();
             }
 

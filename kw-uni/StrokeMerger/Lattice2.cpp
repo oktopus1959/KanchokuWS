@@ -47,8 +47,8 @@ namespace lattice2 {
 
     std::map<MString, int> wordCosts;
 
-    void loadCostFile() {
-        auto path = utils::joinPath(SETTINGS->rootDir, _T("wikipedia.cost.txt"));
+    void _loadCostFile(StringRef costFile) {
+        auto path = utils::joinPath(SETTINGS->rootDir, costFile);
         _LOG_DEBUGH(_T("LOAD: {}"), path.c_str());
         utils::IfstreamReader reader(path);
         if (reader.success()) {
@@ -59,6 +59,12 @@ namespace lattice2 {
                 }
             }
         }
+    }
+
+    void loadCostFile() {
+        wordCosts.clear();
+        _loadCostFile(_T("wikipedia.cost.txt"));
+        _loadCostFile(_T("userword.cost.txt"));
     }
 
     int getWordCost(const MString& str) {
@@ -547,5 +553,9 @@ std::unique_ptr<Lattice2> Lattice2::Singleton;
 void Lattice2::createLattice() {
     lattice2::loadCostFile();
     Singleton.reset(new lattice2::LatticeImpl());
+}
+
+void Lattice2::reloadCostFile() {
+    lattice2::loadCostFile();
 }
 

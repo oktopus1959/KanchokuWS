@@ -112,7 +112,7 @@ public:
     static void runTest();
 };
 
-#define WORD_LATTICE Lattice::Singleton
+//#define WORD_LATTICE Lattice::Singleton
 
 // Lattice2
 class Lattice2 {
@@ -141,6 +141,8 @@ public:
 
     static void createLattice();
 
+    static void reloadCostFile();
+
     static std::unique_ptr<Lattice2> Singleton;
 
     //static void loadCostFile();
@@ -148,5 +150,5 @@ public:
     static void runTest();
 };
 
-#define WORD_LATTICE2 Lattice2::Singleton
+#define WORD_LATTICE Lattice2::Singleton
 

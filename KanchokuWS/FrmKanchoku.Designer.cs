@@ -42,11 +42,12 @@
             this.Restart_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RestartWithSave_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RestartWithDiscard_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Stop_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.終了ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.Stop_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ReloadCostFile_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -94,6 +95,7 @@
             this.ExchangeTable_ToolStripMenuItem,
             this.KanaTrainingMode_ToolStripMenuItem,
             this.ReadBushuDic_ToolStripMenuItem,
+            this.ReloadCostFile_ToolStripMenuItem,
             this.ReadMazeWikipediaDic_ToolStripMenuItem});
             this.ReadDic_ToolStripMenuItem.Name = "ReadDic_ToolStripMenuItem";
             this.ReadDic_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
@@ -155,6 +157,14 @@
             this.RestartWithDiscard_ToolStripMenuItem.Text = "辞書内容を破棄して再起動";
             this.RestartWithDiscard_ToolStripMenuItem.Click += new System.EventHandler(this.RestartWithDiscard_ToolStripMenuItem_Click);
             // 
+            // Stop_ToolStripMenuItem
+            // 
+            this.Stop_ToolStripMenuItem.Name = "Stop_ToolStripMenuItem";
+            this.Stop_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.Stop_ToolStripMenuItem.Text = "一時停止";
+            this.Stop_ToolStripMenuItem.ToolTipText = "一時停止すると、入力されたキーコードをそのままシステムに返すようになります";
+            this.Stop_ToolStripMenuItem.Click += new System.EventHandler(this.Stop_ToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
@@ -182,13 +192,12 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // Stop_ToolStripMenuItem
+            // ReloadCostFile_ToolStripMenuItem
             // 
-            this.Stop_ToolStripMenuItem.Name = "Stop_ToolStripMenuItem";
-            this.Stop_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.Stop_ToolStripMenuItem.Text = "一時停止";
-            this.Stop_ToolStripMenuItem.ToolTipText = "一時停止すると、入力されたキーコードをそのままシステムに返すようになります";
-            this.Stop_ToolStripMenuItem.Click += new System.EventHandler(this.Stop_ToolStripMenuItem_Click);
+            this.ReloadCostFile_ToolStripMenuItem.Name = "ReloadCostFile_ToolStripMenuItem";
+            this.ReloadCostFile_ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.ReloadCostFile_ToolStripMenuItem.Text = "単語コストファイルの再読込";
+            this.ReloadCostFile_ToolStripMenuItem.Click += new System.EventHandler(this.ReloadCostFile_ToolStripMenuItem_Click);
             // 
             // FrmKanchoku
             // 
@@ -231,6 +240,7 @@
         private System.Windows.Forms.ToolStripMenuItem Reload_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem KanaTrainingMode_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem Stop_ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ReloadCostFile_ToolStripMenuItem;
     }
 }
 

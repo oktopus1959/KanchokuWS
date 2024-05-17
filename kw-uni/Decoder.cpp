@@ -134,7 +134,7 @@ public:
         // 必要があれば、ここにその他の常駐機能を追加する
 
         // Lattice を生成
-        Lattice::createLattice();
+        //Lattice::createLattice();
         Lattice2::createLattice();
 
         // マージ機能ノードを生成
@@ -290,7 +290,6 @@ public:
         if (startState) startState->Reactivate();
         if (MAZEGAKI_INFO) MAZEGAKI_INFO->Initialize(false);
         if (WORD_LATTICE) WORD_LATTICE->clear();
-        if (WORD_LATTICE2) WORD_LATTICE2->clear();
         if (startState) {
             LOG_INFO(_T("LEAVE: states={} (len={}), flags={:x}, stack={}\n"),
                 startState->JoinedName(), startState->ChainLength(), STATE_COMMON->GetResultFlags(),
@@ -407,6 +406,9 @@ public:
             } else if (cmd == _T("saveMazegakiDic") && BUSHU_ASSOC_DIC) {
                 // 交ぜ書き辞書の保存
                 if (MAZEGAKI_DIC) MAZEGAKI_DIC->WriteMazegakiDic();
+            } else if (cmd == _T("reloadCostFile")) {
+                // 単語コストファイルの読み込み
+                Lattice2::reloadCostFile();
             } else if (cmd == _T("showStrokeHelp") && STROKE_HELP) {
                 // ストロークヘルプの表示
                 //OutParams = outParams;
