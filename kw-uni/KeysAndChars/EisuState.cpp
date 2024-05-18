@@ -122,7 +122,7 @@ namespace {
             STATE_COMMON->SetCurrentModeIsEisu();
 
             size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
-            wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+            myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
             _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), face={}"), Name, deckey, deckey, myChar);
             if (myChar == SETTINGS->eisuHistSearchChar && is_lower_alphabet(OUTPUT_STACK->back())) {
                 // 履歴検索の実行(末尾文字が英小文字でないと発動させない; "CO" の後の場合は、'O' がキーになるが、この場合は発動させない)

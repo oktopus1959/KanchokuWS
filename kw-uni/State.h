@@ -54,6 +54,9 @@ protected:
     // 処理結果、生成された文字列
     MStringResult resultStr;
 
+    // 自身のストローク文字
+    wchar_t myChar = '\0';
+
 private:
     // チェーン不要フラグ(デフォルトでチェーンしない)
     bool bUnnecessary = true;
@@ -69,6 +72,11 @@ public:
     // 不要になった状態か
     virtual bool IsUnnecessary() const;
 
+    // 自身のストローク文字を返す
+    virtual wchar_t getMyChar() const {
+        return myChar;
+    }
+
 protected:
     // この状態が処理の対象とするノード
     // 他で管理されているので、ここで delete してはならない
@@ -80,12 +88,12 @@ public:
     // 状態チェーンの次の状態をセット
     State* SetNextState(State* p);
 
-    inline State* PrevState() { return pPrev; }
+    inline State* PrevState() const { return pPrev; }
 
     // 後続状態を削除する
     void DeleteNextState();
 
-    inline Node* MyNode() { return pNode; }
+    inline Node* MyNode() const { return pNode; }
 
     // 次の処理のためのノードを取得する
     Node* NextNodeMaybe() const { return pNextNodeMaybe; }

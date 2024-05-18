@@ -52,9 +52,9 @@ namespace {
         }
 
         void handleStrokeKeys(int deckey) {
-            wchar_t myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
-            LOG_DEBUG(_T("CALLED: {}: deckey={:x}H({}), face={}"), Name, deckey, deckey, myChar);
-            outputChar = myChar;
+            wchar_t myCh = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+            LOG_DEBUG(_T("CALLED: {}: deckey={:x}H({}), face={}"), Name, deckey, deckey, myCh);
+            outputChar = myCh;
             MarkUnnecessary();
         }
 

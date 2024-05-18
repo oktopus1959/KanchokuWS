@@ -190,12 +190,12 @@ namespace {
             cancelMe();
         }
 
-        // Space キーの処理 -- origChar を出力してキャンセル
-        void handleSpaceKey() {
-            //STATE_COMMON->OutputOrigString();
-            outputOrigChar(STATE_COMMON->OrigChar());
-            cancelMe();
-        }
+        //// Space キーの処理 -- origChar を出力してキャンセル
+        //void handleSpaceKey() {
+        //    //STATE_COMMON->OutputOrigString();
+        //    outputOrigChar(STATE_COMMON->OrigChar());
+        //    cancelMe();
+        //}
 
     };
     DEFINE_CLASS_LOGGER(ZenkakuOneState);

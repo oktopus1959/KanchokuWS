@@ -35,9 +35,6 @@ namespace {
     private:
         DECLARE_CLASS_LOGGER;
 
-        // myChar を返す
-        wchar_t myChar = '\0';
-
         // 全打鍵状態を削除するか (CheckNextState()により前状態に伝播)
         bool bRemoveAllStroke = false;
 
@@ -107,17 +104,17 @@ namespace {
             myChar = DECKEY_TO_CHARS->GetCharFromDeckey(origDeckey >= 0 ? origDeckey : deckey);
             LOG_DEBUGH(_T("ENTER: {}: origDeckey={:x}H({}), deckey={:x}H({}), face={}, isRootCombo={}, nodeDepth={}"), Name, origDeckey, origDeckey, deckey, deckey, myChar, isRootCombo, DEPTH);
             if (!isRootCombo) {
-                // RootStrokeTableState が作成されたときに OrigString はクリアされている。この処理は @^ などへの対応のために必要
+                // RootStrokeTableState が作成されたときに OrigString はクリアされている。この処理はEisuModeなどへの対応のために必要
                 // ただしRootStrokeTableStateが同時打鍵の開始だった場合は、OrigStringを返さない
                 STATE_COMMON->AppendOrigString(myChar);
             }
 #if 0
-            if (!myNode()->isRootStrokeTableNode() && !IsRootKeyCombination()) {
-                // 自身がRootStrokeNodeでなく、かつRootStrokeKeyが同時打鍵キーでなければ通常面に落としこむ
-                // 同時打鍵の場合は、重複回避のため、第２キーはシフト化されてくる場合がある。その場合は、UNSHIFTしない
-                deckey = UNSHIFT_DECKEY(deckey);
-                LOG_DEBUGH(_T("UNSHIFT_DECKEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
-            }
+            //if (!myNode()->isRootStrokeTableNode() && !IsRootKeyCombination()) {
+            //    // 自身がRootStrokeNodeでなく、かつRootStrokeKeyが同時打鍵キーでなければ通常面に落としこむ
+            //    // 同時打鍵の場合は、重複回避のため、第２キーはシフト化されてくる場合がある。その場合は、UNSHIFTしない
+            //    deckey = UNSHIFT_DECKEY(deckey);
+            //    LOG_DEBUGH(_T("UNSHIFT_DECKEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
+            //}
 #endif
             if (STATE_COMMON->IsDecodeKeyboardCharMode()) {
                 // キーボードフェイス文字を返すモード

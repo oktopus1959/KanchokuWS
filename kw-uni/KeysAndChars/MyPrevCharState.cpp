@@ -50,7 +50,13 @@ namespace {
 
         // 出力文字を取得する
         void GetResultStringChain(MStringResult& resultOut) override {
-            resultOut.setResult(STATE_COMMON->OrigString());
+            const State* prev = PrevState();
+            if (prev) {
+                mchar_t myCh = prev->getMyChar();
+                if (myCh != '\0') {
+                    resultOut.setResult(to_mstr(myCh));
+                }
+            }
             _LOG_DEBUGH(_T("CALLED: {}: resultStr={}"), Name, to_wstr(resultOut.resultStr()));
         }
 
@@ -74,10 +80,20 @@ namespace {
 
         // 出力文字を取得する
         void GetResultStringChain(MStringResult& resultOut) override {
-            if (STATE_COMMON->OrigString().size() >= 2) {
-                STATE_COMMON->PopOrigString();
+            const State* prev = PrevState();
+            if (prev) {
+                prev = prev->PrevState();
+                if (prev) {
+                    mchar_t myCh = prev->getMyChar();
+                    if (myCh != '\0') {
+                        resultOut.setResult(to_mstr(myCh));
+                    }
+                }
             }
-            resultOut.setResult(STATE_COMMON->OrigString());
+            //if (STATE_COMMON->OrigString().size() >= 2) {
+            //    STATE_COMMON->PopOrigString();
+            //}
+            //resultOut.setResult(STATE_COMMON->OrigString());
             _LOG_DEBUGH(_T("CALLED: {}: resultStr={}"), Name, to_wstr(resultOut.resultStr()));
         }
 
