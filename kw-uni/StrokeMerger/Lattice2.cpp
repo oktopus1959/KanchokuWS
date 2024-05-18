@@ -36,7 +36,7 @@ namespace lattice2 {
     DEFINE_LOCAL_LOGGER(lattice);
 
     // ビームサイズ
-    size_t BestKSize = 5;
+    size_t BestKSize = 8;
 
     // 多ストロークの範囲
     int StrokeRange = 4;
@@ -53,9 +53,11 @@ namespace lattice2 {
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             for (const auto& line : reader.getAllLines()) {
-                auto items = utils::split(line, '\t');
+                auto items = utils::split(utils::replace_all(utils::strip(line), L" +", L"\t"), '\t');
                 if (items.size() == 2) {
                     wordCosts[to_mstr(items[0])] = std::stoi(items[1]);
+                } else if (items.size() == 1) {
+                    wordCosts[to_mstr(items[0])] = -1000;       // userword.cost のデフォルトは -1000
                 }
             }
         }
@@ -69,7 +71,7 @@ namespace lattice2 {
 
     int getWordCost(const MString& str) {
         if (str.empty()) return 0;
-        if (str == MSTR_SPACE) return MAX_COST * 3;
+        if (str.size() == 1 && str == MSTR_SPACE) return MAX_COST * 3;
         auto iter = wordCosts.find(str);
         return iter != wordCosts.end() ? iter->second : MAX_COST;
     }
@@ -81,11 +83,44 @@ namespace lattice2 {
 #if 1
     int getNgramCost(const MString& str) {
         int cost = 0;
+        // unigram
         for (size_t i = 0; i < str.size(); ++i) {
+            if (utils::is_katakana(str[i])) {
+                if ((i == 0 || !utils::is_katakana(str[i-1])) && (i + 1 == str.size() || !utils::is_katakana(str[i+1]))) {
+                    // 孤立したカタカナは高いコストを設定
+                    cost += 3000;
+                    continue;
+                }
+            }
             cost += getWordCost(utils::safe_substr(str, i, 1));
         }
-        for (size_t i = 0; i < str.size() - 1; ++i) {
-            cost += getWordCost(utils::safe_substr(str, i, 2));
+        if (str.size() > 1) {
+            // bigram
+            for (size_t i = 0; i < str.size() - 1; ++i) {
+                cost += getWordCost(utils::safe_substr(str, i, 2));
+            }
+            if (str.size() > 2) {
+                // trigram
+                for (size_t i = 0; i < str.size() - 2; ++i) {
+                    auto iter = wordCosts.find(utils::safe_substr(str, i, 3));
+                    if (iter != wordCosts.end()) {
+                        int triCost = iter->second;
+                        if (triCost > 0) triCost -= 1000;       // 正のコストが設定されている場合(wikipedia.costなど)は、 1000 を引いたコストにする; つまり負のコストになる
+                        cost += triCost;
+                    }
+                }
+                if (str.size() > 3) {
+                    // quadgram
+                    for (size_t i = 0; i < str.size() - 3; ++i) {
+                        auto iter = wordCosts.find(utils::safe_substr(str, i, 4));
+                        if (iter != wordCosts.end()) {
+                            int triCost = iter->second;
+                            if (triCost > 0) triCost -= 1000;       // 正のコストが設定されている場合(wikipedia.costなど)は、 1000 を引いたコストにする; つまり負のコストになる
+                            cost += triCost;
+                        }
+                    }
+                }
+            }
         }
         return cost;
     }
@@ -385,7 +420,7 @@ namespace lattice2 {
             }
 
             // 組み合せ不可だったものは、strokeCount が範囲内なら残しておく
-            if (!_isEmpty(newCandidates)) {
+            if (!_isEmpty(newCandidates)) {     // isEmpty()だったら、BSなどで先頭のものだけが残されたということ
                 for (const auto& cand : _candidates) {
                     if (cand.strokeLen() + StrokeRange > strokeCount) {
                         newCandidates.push_back(cand);
