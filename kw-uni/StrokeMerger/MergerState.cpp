@@ -417,6 +417,11 @@ namespace {
                 _streamList1.Clear();
                 _streamList2.Clear();
                 WORD_LATTICE->selectPrev();
+            } else if (deckey == BUSHU_COMP_DECKEY) {
+                _LOG_DEBUGH(_T("BUSHU_COMP"));
+                _streamList1.Clear();
+                _streamList2.Clear();
+                WORD_LATTICE->updateByBushuComp();
             } else {
                 if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END) {
                     // 同時打鍵の始まりなので、いったん streamList はクリア

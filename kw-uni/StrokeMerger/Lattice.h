@@ -139,6 +139,8 @@ public:
 
     virtual void selectPrev() = 0;
 
+    virtual void updateByBushuComp() = 0;
+
     static void createLattice();
 
     static void reloadCostFile();

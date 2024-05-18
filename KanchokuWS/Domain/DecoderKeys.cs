@@ -266,8 +266,10 @@ namespace KanchokuWS
         public const int STROKE_HELP_DECKEY = HISTORY_PREV_SEARCH_DECKEY + 1;              // ストロークヘルプ
         public const int BUSHU_COMP_HELP_DECKEY = STROKE_HELP_DECKEY + 1;                  // 部首合成ヘルプ (20)
 
-        public const int TOGGLE_ZENKAKU_CONVERSION_DECKEY = BUSHU_COMP_HELP_DECKEY + 1;             // 全角変換のトグル
-        public const int TOGGLE_KATAKANA_CONVERSION_DECKEY = TOGGLE_ZENKAKU_CONVERSION_DECKEY + 1;  // カタカナ変換のトグル
+        public const int BUSHU_COMP_DECKEY = BUSHU_COMP_HELP_DECKEY + 1;                  // 部首合成
+
+        public const int TOGGLE_ZENKAKU_CONVERSION_DECKEY = BUSHU_COMP_DECKEY + 1;                      // 全角変換のトグル
+        public const int TOGGLE_KATAKANA_CONVERSION_DECKEY = TOGGLE_ZENKAKU_CONVERSION_DECKEY + 1;      // カタカナ変換のトグル
         public const int TOGGLE_KATAKANA_CONVERSION1_DECKEY = TOGGLE_KATAKANA_CONVERSION_DECKEY + 1;    // 主テーブルを選択してカタカナ変換のトグル
         public const int TOGGLE_KATAKANA_CONVERSION2_DECKEY = TOGGLE_KATAKANA_CONVERSION1_DECKEY + 1;   // 副テーブルを選択してカタカナ変換のトグル
 

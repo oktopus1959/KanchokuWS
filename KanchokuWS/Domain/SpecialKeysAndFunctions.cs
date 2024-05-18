@@ -148,6 +148,7 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY, 0, "KanaTrainingToggle", "", "かな入力練習モードと通常モードを切り替える"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.CLEAR_STROKE_DECKEY, 0, "ClearStroke", "", "打鍵中のストロークを取り消して、第1打鍵待ちに戻る"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.FULL_ESCAPE_DECKEY, 0, "FullEscape", "", "入力途中状態をクリアし、ミニバッファ末尾にブロッカーを置く"),
+            new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.BUSHU_COMP_DECKEY, 0, "BushuComp", "", "部首合成を実行する"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.UNBLOCK_DECKEY, 0, "Unblock", "", "ミニバッファ末尾のブロッカーを解除する"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_BLOCKER_DECKEY, 0, "BlockerToggle", "", "ミニバッファ末尾のブロッカーを設定・解除する", "toggleblocker"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.HISTORY_NEXT_SEARCH_DECKEY, 0, "HistNext", "", "履歴を先頭から選択"),

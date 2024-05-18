@@ -193,6 +193,7 @@ namespace KanchokuWS.Domain
             {"activate", DecoderKeys.ACTIVE_DECKEY},
             {"deactivate", DecoderKeys.DEACTIVE_DECKEY},
             {"fullescape", DecoderKeys.FULL_ESCAPE_DECKEY},
+            {"bushucomp", DecoderKeys.BUSHU_COMP_DECKEY},
             {"unblock", DecoderKeys.UNBLOCK_DECKEY},
             {"toggleblocker", DecoderKeys.TOGGLE_BLOCKER_DECKEY},
             {"blockertoggle", DecoderKeys.TOGGLE_BLOCKER_DECKEY},

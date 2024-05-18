@@ -175,46 +175,66 @@ namespace lattice2 {
         CandidateString(const MString& s, int len, int cost, int penalty = 0) : _str(s), _strokeLen(len), _cost(cost), _penalty(penalty) {
         }
 
-        std::tuple<MString, int> apply(const WordPiece& piece, int strokeCount, bool bAutoBushu) const {
-            if (_strokeLen + piece.strokeLen()  == strokeCount) {
-                if (bAutoBushu) {
-                    if (SETTINGS->autoBushuCompMinCount > 0 && BUSHU_DIC) {
-                        if (_str.size() > 0 && piece.getString().size() == 1) {
-                            // 自動部首合成の実行
-                            mchar_t m = BUSHU_DIC->FindAutoComposite(_str.back(), piece.getString().front());
-                            //if (m == 0) m = BUSHU_DIC->FindComposite(_str.back(), piece.getString().front(), 0);
-                            _LOG_DEBUGH(_T("BUSHU_DIC->FindComposite({}, {}) -> {}"),
-                                to_wstr(utils::safe_tailstr(_str, 1)), to_wstr(utils::safe_substr(piece.getString(), 0, 1)), String(1, (wchar_t)m));
-                            if (m != 0) {
-                                MString s(_str);
-                                s.back() = m;
-                                return { s, 1 };
-                            }
+        std::tuple<MString, int> applyAutoBushu(const WordPiece& piece, int strokeCount) const {
+            if (_strokeLen + piece.strokeLen() == strokeCount) {
+                if (SETTINGS->autoBushuCompMinCount > 0 && BUSHU_DIC) {
+                    if (_str.size() > 0 && piece.getString().size() == 1) {
+                        // 自動部首合成の実行
+                        mchar_t m = BUSHU_DIC->FindAutoComposite(_str.back(), piece.getString().front());
+                        //if (m == 0) m = BUSHU_DIC->FindComposite(_str.back(), piece.getString().front(), 0);
+                        _LOG_DEBUGH(_T("BUSHU_DIC->FindAutoComposite({}, {}) -> {}"),
+                            to_wstr(utils::safe_tailstr(_str, 1)), to_wstr(utils::safe_substr(piece.getString(), 0, 1)), to_wstr(m));
+                        if (m != 0) {
+                            MString s(_str);
+                            s.back() = m;
+                            return { s, 1 };
                         }
                     }
-                } else {
-                    int numBS;
-                    if (piece.rewriteNode()) {
-                        const RewriteInfo* rewInfo;
-                        std::tie(rewInfo, numBS) = matchWithTailString(piece.rewriteNode());
+                }
+            }
+            return { EMPTY_MSTR, 0 };
+        }
 
-                        if (rewInfo) {
-                            return { utils::safe_substr(_str, 0, -numBS) + rewInfo->rewriteStr, numBS };
-                        } else {
-                            return { _str + piece.rewriteNode()->getString(), 0 };
-                        }
+        MString applyBushuComp() const {
+            if (BUSHU_DIC) {
+                if (_str.size() >= 2) {
+                    // 部首合成の実行
+                    mchar_t m = BUSHU_DIC->FindComposite(_str[_str.size() - 2], _str[_str.size() - 1], '\0');
+                    _LOG_DEBUGH(_T("BUSHU_DIC->FindComposite({}, {}) -> {}"),
+                        to_wstr(_str[_str.size() - 2]), to_wstr(_str[_str.size() - 1]), to_wstr(m));
+                    if (m != 0) {
+                        MString s(_str.substr(0, _str.size() - 2));
+                        s.append(1, m);
+                        return s;
+                    }
+                }
+            }
+            return EMPTY_MSTR;
+        }
 
+        std::tuple<MString, int> applyPiece(const WordPiece& piece, int strokeCount) const {
+            if (_strokeLen + piece.strokeLen() == strokeCount) {
+                int numBS;
+                if (piece.rewriteNode()) {
+                    const RewriteInfo* rewInfo;
+                    std::tie(rewInfo, numBS) = matchWithTailString(piece.rewriteNode());
+
+                    if (rewInfo) {
+                        return { utils::safe_substr(_str, 0, -numBS) + rewInfo->rewriteStr, numBS };
                     } else {
-                        numBS = piece.numBS();
-                        if (numBS > 0) {
-                            if ((size_t)numBS < _str.size()) {
-                                return { utils::safe_substr(_str, 0, _str.size() - numBS), numBS };
-                            } else {
-                                return { EMPTY_MSTR, numBS };
-                            }
+                        return { _str + piece.rewriteNode()->getString(), 0 };
+                    }
+
+                } else {
+                    numBS = piece.numBS();
+                    if (numBS > 0) {
+                        if ((size_t)numBS < _str.size()) {
+                            return { utils::safe_substr(_str, 0, _str.size() - numBS), numBS };
                         } else {
-                            return { _str + piece.getString(), 0 };
+                            return { EMPTY_MSTR, numBS };
                         }
+                    } else {
+                        return { _str + piece.getString(), 0 };
                     }
                 }
             }
@@ -392,12 +412,12 @@ namespace lattice2 {
             for (const auto& cand : _candidates) {
                 MString s;
                 int numBS;
-                std::tie(s, numBS) = cand.apply(piece, strokeCount, true);  // 自動部首合成
+                std::tie(s, numBS) = cand.applyAutoBushu(piece, strokeCount);  // 自動部首合成
                 if (!s.empty()) {
                     CandidateString newCandStr(s, strokeCount, 0, cand.penalty());
                     addCandidate(newCandidates, newCandStr);
                 }
-                std::tie(s, numBS) = cand.apply(piece, strokeCount, false);
+                std::tie(s, numBS) = cand.applyPiece(piece, strokeCount);
                 if (!s.empty() || numBS > 0) {
                     CandidateString newCandStr(s, strokeCount, 0, cand.penalty());
                     addCandidate(newCandidates, newCandStr);
@@ -477,6 +497,19 @@ namespace lattice2 {
                 arrangePenalties(nSameLen);
             }
         }
+
+        // 部首合成
+        void updateByBushuComp() {
+            if (!_candidates.empty()) {
+                MString s = _candidates.front().applyBushuComp();
+                if (!s.empty()) {
+                    CandidateString newCandStr(s, _candidates.front().strokeLen(), 0, 0);
+                    _candidates.insert(_candidates.begin(), newCandStr);
+                    size_t nSameLen = getNumOfSameStrokeLen();
+                    arrangePenalties(nSameLen);
+                }
+            }
+        }
     };
 
     // Lattice
@@ -553,6 +586,10 @@ namespace lattice2 {
 
         void selectPrev() override {
             _kBestList.selectPrev();
+        }
+
+        void updateByBushuComp() override {
+            _kBestList.updateByBushuComp();
         }
 
         // 単語素片リストの追加(単語素片が得られなかった場合も含め、各打鍵ごとに呼び出すこと)
