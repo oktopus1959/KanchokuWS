@@ -19,7 +19,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughState)
 
-#if 0 || defined(_DEBUG)
+#if 1 || defined(_DEBUG)
 #undef _DEBUG_SENT
 //#undef LOG_INFO
 #undef LOG_DEBUGH
@@ -43,7 +43,7 @@ State::~State() {
 
 String State::JoinedName() const {
     String myName = Name;
-    if (IsUnnecessary()) myName += _T("(*)");
+    if (IsUnnecessary()) myName += _T("(-)");
     if (pNext) myName += _T("-") + pNext->JoinedName();
     return myName;
 }
@@ -239,7 +239,7 @@ void State::DoProcOnCreated() {
 
 // 出力文字を取得する
 void State::GetResultStringChain(MStringResult& result) {
-    LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultStr.resultStr()), resultStr.numBS());
+    LOG_DEBUGH(_T("ENTER: {}: Unnecessary={}, resultStr={}, numBS={}"), Name, IsUnnecessary(), to_wstr(resultStr.resultStr()), resultStr.numBS());
     if (!resultStr.isDefault()) {
         result.setResult(resultStr);
     } else if (pNext) {
@@ -318,13 +318,13 @@ bool State::IsHistoryReset() {
 
 // 不要フラグをセット
 void State::MarkUnnecessary() {
-    LOG_DEBUG(_T("CALLED: {}"), Name);
+    LOG_DEBUGH(_T("CALLED: {}"), Name);
     bUnnecessary = true;
 }
 
 // 不要フラグをリセット
 void State::MarkNecessary() {
-    LOG_DEBUG(_T("CALLED: {}"), Name);
+    LOG_DEBUGH(_T("CALLED: {}"), Name);
     bUnnecessary = false;
 }
 

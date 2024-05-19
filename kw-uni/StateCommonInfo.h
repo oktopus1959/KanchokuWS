@@ -71,6 +71,9 @@ enum class ResultFlags
 
     // 現在英数モード
     CurrentModeIsEisu = 0x1000,
+
+    // 現在配列融合モードの入力中
+    CurrentModeIsMultiStreamInput = 0x2000,
 };
 
 /// <summary>
@@ -267,6 +270,8 @@ public:
     inline void SetCurrentModeIsKatakana() { SetResultFlag(ResultFlags::CurrentModeIsKatakana); }
     inline void SetCurrentModeIsEisu() { SetResultFlag(ResultFlags::CurrentModeIsEisu); }
     inline void ClearCurrentModeIsEisu() { ResetResultFlag(ResultFlags::CurrentModeIsEisu); }
+    inline void SetCurrentModeIsMultiStreamInput() { SetResultFlag(ResultFlags::CurrentModeIsMultiStreamInput); }
+    inline void ClearCurrentModeIsMultiStreamInput() { ResetResultFlag(ResultFlags::CurrentModeIsMultiStreamInput); }
 
     inline void SetWaiting2ndStroke() { nextExpectedKeyType = ExpectedKeyType::SecondStroke; }
     inline void SetMazeCandSelecting() { nextExpectedKeyType = ExpectedKeyType::MazeCandSelecting; }

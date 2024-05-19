@@ -17,7 +17,7 @@
 
 #include "Eisu.h"
 
-#if 0 || defined(_DEBUG)
+#if 1 || defined(_DEBUG)
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
@@ -99,7 +99,7 @@ namespace {
 
         // 出力文字を取得する
         void GetResultStringChain(MStringResult& resultOut) override {
-            LOG_DEBUGH(_T("ENTER: {}: resultStr={}, numBS={}"), Name, to_wstr(resultOut.resultStr()), resultOut.numBS());
+            LOG_DEBUGH(_T("ENTER: {}: Unnecessary={}, resultStr={}, numBS={}"), Name, IsUnnecessary(), to_wstr(resultOut.resultStr()), resultOut.numBS());
             if (!resultStr.isDefault()) {
                 resultOut.setResult(resultStr);
             } else if (outputChar != '\0') {

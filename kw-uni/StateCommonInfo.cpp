@@ -3,13 +3,20 @@
 
 DEFINE_CLASS_LOGGER(StateCommonInfo);
 
-#if 0
+#if 1
+#undef IS_LOG_DEBUGH_ENABLED
+#undef _DEBUG_SENT
+#undef _DEBUG_FLAG
+#undef LOG_DEBUGH
+#undef LOG_DEBUG
+#undef _LOG_DEBUGH
+#undef _LOG_DEBUGH_COND
 #define IS_LOG_DEBUGH_ENABLED true
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define LOG_DEBUGH LOG_INFO
+#define LOG_DEBUGH LOG_INFOH
 #define LOG_DEBUG LOG_INFO
-#define _LOG_DEBUGH LOG_INFO
+#define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUGH_COND LOG_INFO_COND
 #endif
 
@@ -79,8 +86,10 @@ void StateCommonInfo::setVirtualKeyboardStrings(VkbLayout lo, const std::vector<
 // 実行されていなければ、map に追加する (true を返す)
 // pState == null ならmapからの削除のみ行う
 bool StateCommonInfo::AddOrEraseRunningState(StringRef stateName, State* pState) {
+    LOG_DEBUGH(_T("ENTER: stateName={}"), stateName);
     auto iter = runningStates.find(stateName);
     if (iter != runningStates.end()) {
+        LOG_DEBUGH(_T("same name state exists. delete it."));
         if (iter->second) iter->second->MarkUnnecessaryFromThis();
         runningStates.erase(iter);
         return false;

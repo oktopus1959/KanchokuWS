@@ -1610,7 +1610,10 @@ namespace KanchokuWS
                     name = Settings.BgColorForKanaTrainingMode;     // かな入力練習モードのとき
                 }
                 if (name._isEmpty() && Settings.MultiStreamMode) {
-                    name = Settings.BgColorForMultiStreamMode;     // 配列融合モードのとき
+                    if (decoderOutput.IsDecoderMultiStreamInput())
+                        name = Settings.BgColorForMultiStreamInput;    // 配列融合モードの入力中のとき
+                    else
+                        name = Settings.BgColorForMultiStreamMode;     // 配列融合モードの入力待ちとき
                 }
                 if (name._notEmpty()) {
                     var color = Color.FromName(name);

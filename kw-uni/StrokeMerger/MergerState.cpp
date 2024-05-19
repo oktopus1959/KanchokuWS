@@ -458,8 +458,13 @@ namespace {
         void GetResultStringChain(MStringResult& resultOut) override {
             _LOG_DEBUGH(_T("ENTER: {}, isUnnecessary={}"), Name, IsUnnecessary());
 
+            _streamList1.DebugPrintStatesChain(_T("ENTER: streamList1"));
+            _streamList2.DebugPrintStatesChain(_T("ENTER: streamList2"));
+
             if (IsUnnecessary()) {
                 _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+                _LOG_DEBUGH(_T("ClearCurrentModeIsMultiStreamInput"));
+                STATE_COMMON->ClearCurrentModeIsMultiStreamInput();
                 return;
             }
 
@@ -511,11 +516,20 @@ namespace {
             if (_streamList1.Empty() && _streamList2.Empty() && WORD_LATTICE->isEmpty()) {
                 WORD_LATTICE->clear();
                 MarkUnnecessary();
+                _LOG_DEBUGH(_T("ClearCurrentModeIsMultiStreamInput"));
+                STATE_COMMON->ClearCurrentModeIsMultiStreamInput();
             }
 
             _streamList1.DebugPrintStatesChain(_T("LEAVE: streamList1"));
             _streamList2.DebugPrintStatesChain(_T("LEAVE: streamList2"));
 
+            if (_streamList1.Empty() && _streamList2.Empty()) {
+                _LOG_DEBUGH(_T("ClearCurrentModeIsMultiStreamInput"));
+                STATE_COMMON->ClearCurrentModeIsMultiStreamInput();
+            } else {
+                _LOG_DEBUGH(_T("SetCurrentModeIsMultiStreamInput"));
+                STATE_COMMON->SetCurrentModeIsMultiStreamInput();
+            }
             _LOG_DEBUGH(_T("LEAVE: {}: resultStr=[{}]"), Name, resultOut.debugString());
         }
 
