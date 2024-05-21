@@ -407,16 +407,23 @@ namespace {
                 _streamList2.Clear();
                 //WORD_LATTICE->removeSecondOrLesser();
                 WORD_LATTICE->selectFirst();
-            } else if (deckey == DOWN_ARROW_DECKEY) {
-                _LOG_DEBUGH(_T("DownArrow: select next candidate"));
+            } else if (deckey == MULTI_STREAM_NEXT_CAND_DECKEY) {
+                _LOG_DEBUGH(_T("MULTI_STREAM_NEXT_CAND: select next candidate"));
                 _streamList1.Clear();
                 _streamList2.Clear();
                 WORD_LATTICE->selectNext();
-            } else if (deckey == UP_ARROW_DECKEY) {
-                _LOG_DEBUGH(_T("UpArrow: select prev candidate"));
+            } else if (deckey == MULTI_STREAM_PREV_CAND_DECKEY) {
+                _LOG_DEBUGH(_T("MULTI_STREAM_PREV_CAND: select prev candidate"));
                 _streamList1.Clear();
                 _streamList2.Clear();
                 WORD_LATTICE->selectPrev();
+            } else if (deckey == MULTI_STREAM_COMMIT_DECKEY) {
+                _LOG_DEBUGH(_T("MULTI_STREAM_COMMIT: commit first candidate"));
+                _streamList1.Clear();
+                _streamList2.Clear();
+                //WORD_LATTICE->selectFirst();
+                WORD_LATTICE->clear();
+                MarkUnnecessary();
             } else if (deckey == BUSHU_COMP_DECKEY) {
                 _LOG_DEBUGH(_T("BUSHU_COMP"));
                 _streamList1.Clear();

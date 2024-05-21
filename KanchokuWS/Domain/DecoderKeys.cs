@@ -310,9 +310,12 @@ namespace KanchokuWS
         public const int EISU_MODE_CANCEL_DECKEY = EISU_MODE_TOGGLE_DECKEY + 1;             // 英数モードをキャンセルする
         public const int EISU_DECAPITALIZE_DECKEY = EISU_MODE_CANCEL_DECKEY + 1;            // 英数モードで先頭文字を小文字化する
 
-        public const int MULTI_STREAM_MODE_TOGGLE_DECKEY = EISU_DECAPITALIZE_DECKEY + 1;    // 漢直・かな配列の融合モードのトグル
+        public const int MULTI_STREAM_MODE_TOGGLE_DECKEY = EISU_DECAPITALIZE_DECKEY + 1;        // 漢直・かな配列の融合モードのトグル
+        public const int MULTI_STREAM_NEXT_CAND_DECKEY = MULTI_STREAM_MODE_TOGGLE_DECKEY + 1;   // 漢直・かな配列の融合時の次候補選択
+        public const int MULTI_STREAM_PREV_CAND_DECKEY = MULTI_STREAM_NEXT_CAND_DECKEY + 1;     // 漢直・かな配列の融合時の前候補選択
+        public const int MULTI_STREAM_COMMIT_DECKEY = MULTI_STREAM_PREV_CAND_DECKEY + 1;        // 漢直・かな配列の融合時に先頭候補を固定する(ENTERと同じ動作)
 
-        public const int UNDEFINED_DECKEY = MULTI_STREAM_MODE_TOGGLE_DECKEY + 1;            // 未定義のキー
+        public const int UNDEFINED_DECKEY = MULTI_STREAM_COMMIT_DECKEY + 1;              // 未定義のキー
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
 
         // END_OF_AUTO_MAKE

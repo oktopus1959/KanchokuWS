@@ -993,6 +993,12 @@ namespace KanchokuWS
                             MultiStreamModeToggle();
                             return true;
 
+                        case DecoderKeys.MULTI_STREAM_NEXT_CAND_DECKEY:
+                        case DecoderKeys.MULTI_STREAM_PREV_CAND_DECKEY:
+                        case DecoderKeys.MULTI_STREAM_COMMIT_DECKEY:
+                            logger.Info(() => $"MULTI_STREAM_{ (deckey == DecoderKeys.MULTI_STREAM_NEXT_CAND_DECKEY ? "NEXT" : deckey == DecoderKeys.MULTI_STREAM_PREV_CAND_DECKEY ? "PREV" : "COMMIT") }_DECKEY:{deckey}");
+                            return InvokeDecoder(deckey, mod);
+
                         case DecoderKeys.DIRECT_SPACE_DECKEY:
                             logger.Info(() => $"DIRECT_SPACE_DECKEY:{deckey}, mode={mod:x}H");
                             return sendVkeyFromDeckey(DecoderKeys.STROKE_SPACE_DECKEY, -1, mod);
