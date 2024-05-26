@@ -394,8 +394,8 @@ namespace {
             _streamList1.DebugPrintStatesChain(_T("ENTER: streamList1"));
             _streamList2.DebugPrintStatesChain(_T("ENTER: streamList2"));
 
-            if (deckey == ENTER_DECKEY) {
-                _LOG_DEBUGH(_T("EnterKey: clear streamList"));
+            if (deckey == ENTER_DECKEY || deckey == MULTI_STREAM_COMMIT_DECKEY) {
+                _LOG_DEBUGH(_T("EnterKey or Commit: clear streamList"));
                 _streamList1.Clear();
                 _streamList2.Clear();
                 WORD_LATTICE->clear();
@@ -417,13 +417,11 @@ namespace {
                 _streamList1.Clear();
                 _streamList2.Clear();
                 WORD_LATTICE->selectPrev();
-            } else if (deckey == MULTI_STREAM_COMMIT_DECKEY) {
-                _LOG_DEBUGH(_T("MULTI_STREAM_COMMIT: commit first candidate"));
+            } else if (deckey == MULTI_STREAM_SELECT_FIRST_DECKEY) {
+                _LOG_DEBUGH(_T("MULTI_STREAM_SELECT_FIRST: commit first candidate"));
                 _streamList1.Clear();
                 _streamList2.Clear();
-                //WORD_LATTICE->selectFirst();
-                WORD_LATTICE->clear();
-                MarkUnnecessary();
+                WORD_LATTICE->selectFirst();
             } else if (deckey == BUSHU_COMP_DECKEY) {
                 _LOG_DEBUGH(_T("BUSHU_COMP"));
                 _streamList1.Clear();
@@ -467,6 +465,8 @@ namespace {
 
             _streamList1.DebugPrintStatesChain(_T("ENTER: streamList1"));
             _streamList2.DebugPrintStatesChain(_T("ENTER: streamList2"));
+
+            STATE_COMMON->SetCurrentModeIsMultiStreamInput();
 
             if (IsUnnecessary()) {
                 _LOG_DEBUGH(_T("LEAVE: {}"), Name);
@@ -530,13 +530,13 @@ namespace {
             _streamList1.DebugPrintStatesChain(_T("LEAVE: streamList1"));
             _streamList2.DebugPrintStatesChain(_T("LEAVE: streamList2"));
 
-            if (_streamList1.Empty() && _streamList2.Empty()) {
-                _LOG_DEBUGH(_T("ClearCurrentModeIsMultiStreamInput"));
-                STATE_COMMON->ClearCurrentModeIsMultiStreamInput();
-            } else {
-                _LOG_DEBUGH(_T("SetCurrentModeIsMultiStreamInput"));
-                STATE_COMMON->SetCurrentModeIsMultiStreamInput();
-            }
+            //if (_streamList1.Empty() && _streamList2.Empty()) {
+            //    _LOG_DEBUGH(_T("ClearCurrentModeIsMultiStreamInput"));
+            //    STATE_COMMON->ClearCurrentModeIsMultiStreamInput();
+            //} else {
+            //    _LOG_DEBUGH(_T("SetCurrentModeIsMultiStreamInput"));
+            //    STATE_COMMON->SetCurrentModeIsMultiStreamInput();
+            //}
             _LOG_DEBUGH(_T("LEAVE: {}: resultStr=[{}]"), Name, resultOut.debugString());
         }
 

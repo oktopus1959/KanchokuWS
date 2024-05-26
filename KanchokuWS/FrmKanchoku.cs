@@ -995,8 +995,9 @@ namespace KanchokuWS
 
                         case DecoderKeys.MULTI_STREAM_NEXT_CAND_DECKEY:
                         case DecoderKeys.MULTI_STREAM_PREV_CAND_DECKEY:
+                        case DecoderKeys.MULTI_STREAM_SELECT_FIRST_DECKEY:
                         case DecoderKeys.MULTI_STREAM_COMMIT_DECKEY:
-                            logger.Info(() => $"MULTI_STREAM_{ (deckey == DecoderKeys.MULTI_STREAM_NEXT_CAND_DECKEY ? "NEXT" : deckey == DecoderKeys.MULTI_STREAM_PREV_CAND_DECKEY ? "PREV" : "COMMIT") }_DECKEY:{deckey}");
+                            logger.Info(() => $"MULTI_STREAM_{ (deckey == DecoderKeys.MULTI_STREAM_NEXT_CAND_DECKEY ? "NEXT" : deckey == DecoderKeys.MULTI_STREAM_PREV_CAND_DECKEY ? "PREV" : deckey == DecoderKeys.MULTI_STREAM_SELECT_FIRST_DECKEY ? "FIRST" : "COMMIT") }_DECKEY:{deckey}");
                             return InvokeDecoder(deckey, mod);
 
                         case DecoderKeys.DIRECT_SPACE_DECKEY:

@@ -226,6 +226,7 @@ namespace KanchokuWS.Domain
             {"multistreamtoggle", DecoderKeys.MULTI_STREAM_MODE_TOGGLE_DECKEY},
             {"multistreamnext", DecoderKeys.MULTI_STREAM_NEXT_CAND_DECKEY},
             {"multistreamprev", DecoderKeys.MULTI_STREAM_PREV_CAND_DECKEY},
+            {"multistreamselectfirst", DecoderKeys.MULTI_STREAM_SELECT_FIRST_DECKEY},
             {"multistreamcommit", DecoderKeys.MULTI_STREAM_COMMIT_DECKEY},
             {"kanatrainingtoggle", DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY},
             {"leftshiftblocker", DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY},
