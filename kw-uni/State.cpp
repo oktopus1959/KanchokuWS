@@ -414,6 +414,11 @@ bool State::isCtrledKey(int deckey) {
     return deckey >= CTRL_DECKEY_START && deckey < TOTAL_DECKEY_NUM;
 }
 
+// DECKEY は文字用のストロークキーとして扱われるキーか
+bool State::isStrokableCharKey(int deckey) {
+    return isNormalStrokeKey(deckey) || isShiftedKey(deckey);
+}
+
 // DECKEY はストロークキーとして扱われるキーか
 bool State::isStrokableKey(int deckey) {
     return isNormalStrokeKey(deckey) || isShiftedKey(deckey) || isStrokableFuncKey(deckey) || isComboShiftedKey(deckey);

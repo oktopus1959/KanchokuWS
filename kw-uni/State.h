@@ -292,6 +292,9 @@ public:
     // DECKEY は同時打鍵シフトキーか
     static bool isComboShiftedKey(int deckey);
 
+    // DECKEY は文字用のストロークキーとして扱われるキーか
+    static bool isStrokableCharKey(int deckey);
+
     // DECKEY はストロークキーとして扱われるキーか
     static bool isStrokableKey(int deckey);
 

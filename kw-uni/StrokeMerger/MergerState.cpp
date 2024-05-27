@@ -241,13 +241,13 @@ namespace {
             forEach([&len](const StrokeStreamUptr& pStream) {
                 size_t ln = pStream->StrokeTableChainLength();
                 if (ln > len) len = ln;
-            });
+                });
             return len;
         }
 
         String ChainLengthString() const {
             std::vector<int> buf;
-//            std::transform(strokeChannelList.begin(), strokeChannelList.end(), std::back_inserter(buf), [](const StrokeStream* pState) { return (int)pState->StrokeTableChainLength(); });
+            //            std::transform(strokeChannelList.begin(), strokeChannelList.end(), std::back_inserter(buf), [](const StrokeStream* pState) { return (int)pState->StrokeTableChainLength(); });
             std::transform(strokeStreamList.begin(), strokeStreamList.end(), std::back_inserter(buf), [](const StrokeStreamUptr& pState) { return (int)pState->StrokeTableChainLength(); });
             return _T("[") + utils::join(buf, _T(",")) + _T("]");
         }
@@ -262,10 +262,11 @@ namespace {
             return 0;
         }
 
-        void HandleDeckeyProc(StrokeTableNode* pRootNode, int decKey, bool bMerge) {
-            _LOG_DEBUGH(_T("ENTER: {}: pRootNode={:p}, decKey={}, bMerge={}"), name, (void*)pRootNode, decKey, bMerge);
+        void HandleDeckeyProc(StrokeTableNode* pRootNode, int decKey, int comboStrokeCnt) {
+            _LOG_DEBUGH(_T("ENTER: {}: pRootNode={:p}, decKey={}, comboStrokeCnt={}"), name, (void*)pRootNode, decKey, comboStrokeCnt);
             if (pRootNode) {
-                if ((Count() < 1 || bMerge) && State::isStrokableKey(decKey)) addStrokeStream(pRootNode);
+                // 同時打鍵列に入ったら、先頭打鍵の時(comboStrokeCnt==0)だけ stream を追加できる
+                if ((comboStrokeCnt < 1 || (comboStrokeCnt == 1 && Count() < 1)) && State::isStrokableKey(decKey)) addStrokeStream(pRootNode);
                 _LOG_DEBUGH(_T("{}: strokeStateList.Count={}"), name, Count());
                 int count = 1;
                 forEach([decKey, &count, this](const StrokeStreamUptr& pStream) {
@@ -358,8 +359,8 @@ namespace {
     private:
         DECLARE_CLASS_LOGGER;
 
-        // 同時打鍵中か
-        bool _inComboList = false;
+        // 同時打鍵中なら1以上で、同時打鍵列の位置を示す
+        int _comboStrokeCount = 0;
 
         int _strokeCountBS = -1;
 
@@ -433,16 +434,17 @@ namespace {
                     // 同時打鍵中は、処理を分岐させない
                     _streamList1.Clear();
                     _streamList2.Clear();
-                    _inComboList = true;
+                    _comboStrokeCount = 1;
                 }
                 // 前処理(ストローク木状態の作成と呼び出し)
                 _LOG_DEBUGH(_T("streamList1: doDeckeyPreProc"));
-                _streamList1.HandleDeckeyProc(StrokeTableNode::RootStrokeNode1.get(), deckey, !_inComboList);
+                _streamList1.HandleDeckeyProc(StrokeTableNode::RootStrokeNode1.get(), deckey, _comboStrokeCount);
                 _LOG_DEBUGH(_T("streamList2: doDeckeyPreProc"));
-                _streamList2.HandleDeckeyProc(StrokeTableNode::RootStrokeNode2.get(), deckey, !_inComboList);
+                _streamList2.HandleDeckeyProc(StrokeTableNode::RootStrokeNode2.get(), deckey, _comboStrokeCount);
+                ++_comboStrokeCount;
                 if (deckey < SHIFT_DECKEY_START) {
                     // 同時打鍵列の終わり
-                    _inComboList = false;
+                    _comboStrokeCount = 0;
                 }
             }
 
