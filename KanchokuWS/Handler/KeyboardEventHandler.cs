@@ -79,6 +79,7 @@ namespace KanchokuWS.Handler
             logger.Info($"ENTER");
             KeyboardHook.OnKeyDownEvent = onKeyboardDownHandler;
             KeyboardHook.OnKeyUpEvent = onKeyboardUpHandler;
+            KeyboardHook.OnMouseEvent = mouseButtonHandler;
             KeyboardHook.Hook();
             bHooked = true;
             logger.Info($"LEAVE");
@@ -101,6 +102,13 @@ namespace KanchokuWS.Handler
         public void Dispose()
         {
             releaseKeyboardHook();
+        }
+
+        /// <summary>マウスボタン押下時のハンドラ</summary>
+        private bool mouseButtonHandler(bool leftButton, bool rightButton)
+        {
+            if (isDecoderActivated()) frmKanchoku?.CommitMultStream();
+            return false;
         }
 
         //----------------------------------------------------------------------------------------------------------

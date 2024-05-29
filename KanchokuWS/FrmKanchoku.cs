@@ -1090,6 +1090,14 @@ namespace KanchokuWS
             }
         }
 
+        /// <summary>
+        /// MultStream のコミット
+        /// </summary>
+        public void CommitMultStream()
+        {
+            InvokeDecoder(DecoderKeys.MULTI_STREAM_COMMIT_DECKEY, 0);
+        }
+
         private void changeCodeTableAndCombinationPool(string cmd)
         {
             ExecCmdDecoder(cmd, null);  // コードテーブルの切り替え

@@ -13,11 +13,22 @@ namespace KanchokuWS.Handler
     {
         private static Logger logger = Logger.GetLogger();
 
+        // フックの種類
         private const int WH_KEYBOARD_LL = 0x000D;
+        private const int WH_MOUSE_LL = 0x000E;
+
+        // キーボードイベント
         private const int WM_KEYDOWN = 0x0100;
         private const int WM_KEYUP = 0x0101;
         private const int WM_SYSKEYDOWN = 0x0104;
         private const int WM_SYSKEYUP = 0x0105;
+
+        // マウスのイベント
+        private const int WM_LBUTTONDOWN = 0x0201;
+        private const int WM_LBUTTONUP = 0x0202;
+        private const int WM_RBUTTONDOWN = 0x0204;
+        private const int WM_RBUTTONUP = 0x0205;
+        private const int WM_MOUSEMOVE = 0x0200;
 
         #region Win32API Structures
         [StructLayout(LayoutKind.Sequential)]
@@ -45,6 +56,9 @@ namespace KanchokuWS.Handler
         private static extern IntPtr SetWindowsHookEx(int idHook, KeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, MouseProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool UnhookWindowsHookEx(IntPtr hhk);
 
@@ -57,28 +71,37 @@ namespace KanchokuWS.Handler
 
         #region Delegate
         private delegate IntPtr KeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+        private delegate IntPtr MouseProc(int nCode, IntPtr wParam, IntPtr lParam);
         #endregion
 
         #region Fields
         private static KeyboardProc keyboardProc;
-        private static IntPtr hookId = IntPtr.Zero;
+        private static MouseProc mouseProc;
+        private static IntPtr keyboardHookId = IntPtr.Zero;
+        private static IntPtr mouseHookId = IntPtr.Zero;
         #endregion
 
         public delegate bool DelegateOnKeyDownEvent(uint vkey, int scanCode, uint flags, int extraInfo);
 
         public delegate bool DelegateOnKeyUpEvent(uint vkey, int scanCode, uint flags, int extraInfo);
 
+        public delegate bool DelegateOnMouseEvent(bool bLeftButton, bool bRightButton);
+
         public static DelegateOnKeyDownEvent OnKeyDownEvent { get; set; }
 
         public static DelegateOnKeyUpEvent OnKeyUpEvent { get; set; }
 
+        public static DelegateOnMouseEvent OnMouseEvent { get; set; }
+
         public static void Hook()
         {
-            if (hookId == IntPtr.Zero) {
+            if (keyboardHookId == IntPtr.Zero) {
                 keyboardProc = HookProcedure;
+                mouseProc = MouseHookCallback;
                 using (var curProcess = Process.GetCurrentProcess()) {
                     using (ProcessModule curModule = curProcess.MainModule) {
-                        hookId = SetWindowsHookEx(WH_KEYBOARD_LL, keyboardProc, GetModuleHandle(curModule.ModuleName), 0);
+                        keyboardHookId = SetWindowsHookEx(WH_KEYBOARD_LL, keyboardProc, GetModuleHandle(curModule.ModuleName), 0);
+                        mouseHookId = SetWindowsHookEx(WH_MOUSE_LL, mouseProc, GetModuleHandle(curModule.ModuleName), 0);
                     }
                 }
             }
@@ -86,8 +109,10 @@ namespace KanchokuWS.Handler
 
         public static void UnHook()
         {
-            UnhookWindowsHookEx(hookId);
-            hookId = IntPtr.Zero;
+            UnhookWindowsHookEx(keyboardHookId);
+            keyboardHookId = IntPtr.Zero;
+            UnhookWindowsHookEx(mouseHookId);
+            mouseHookId = IntPtr.Zero;
         }
 
         public class OriginalKeyEventArg : EventArgs
@@ -125,7 +150,19 @@ namespace KanchokuWS.Handler
                 }
             }
 
-            return CallNextHookEx(hookId, nCode, wParam, lParam);
+            return CallNextHookEx(keyboardHookId, nCode, wParam, lParam);
+        }
+
+        private static IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0) {
+                if (wParam == (IntPtr)WM_LBUTTONDOWN) {
+                    OnMouseEvent?.Invoke(true, false);
+                } else if (wParam == (IntPtr)WM_RBUTTONUP) {
+                    OnMouseEvent?.Invoke(false, true);
+                }
+            }
+            return CallNextHookEx(mouseHookId, nCode, wParam, lParam);
         }
     }
 }
