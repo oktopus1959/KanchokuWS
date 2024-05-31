@@ -1778,6 +1778,11 @@ namespace KanchokuWS
                 $"numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}, topString={decoderOutput.topString._toString()}, " +
                 $"IsDeckeyToVkey={decoderOutput.IsDeckeyToVkey()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
 
+            var dtNow = HRDateTime.Now;
+
+            // 前回デコーダを呼び出した時刻
+            dtLastDecoderInvoked = dtNow;
+
             // 第1打鍵待ち状態になったら、一時的な仮想鍵盤表示カウントをリセットする
             //if (decoderOutput.GetStrokeCount() < 1) Settings.VirtualKeyboardShowStrokeCountTemp = 0;
 
@@ -2253,6 +2258,9 @@ namespace KanchokuWS
             }
         }
 
+        // 前回デコーダを呼び出した時刻
+        private DateTime dtLastDecoderInvoked = DateTime.MaxValue;
+
         // 第2打鍵待ちになった時刻
         private DateTime dtWaitSecondStroke = DateTime.MaxValue;
 
@@ -2289,9 +2297,11 @@ namespace KanchokuWS
 
             CombinationKeyStroke.Determiner.Singleton.HandleQueue();
 
+            var dtNow = HRDateTime.Now;
+
             // 第2打鍵待ちの場合は、それをキャンセルする
             if (IsDecoderActive && decoderOutput.GetStrokeCount() > 0 && Settings.CancelSecondStrokeMillisec > 0) {
-                if (dtWaitSecondStroke._isValid() && dtWaitSecondStroke <= HRDateTime.Now.AddMilliseconds(-Settings.CancelSecondStrokeMillisec)) {
+                if (dtWaitSecondStroke._isValid() && dtWaitSecondStroke <= dtNow.AddMilliseconds(-Settings.CancelSecondStrokeMillisec)) {
                     if (!IsWaitingSecondStrokeLocked) {
                         dtWaitSecondStroke = DateTime.MaxValue;
                         sendClearStrokeToDecoder();
@@ -2299,7 +2309,14 @@ namespace KanchokuWS
                 }
             }
 
-            if (HRDateTime.Now >= saveDictsPlannedDt || (IsDecoderActive && HRDateTime.Now >= saveDictsChallengeDt)) {
+            // 前回のデコーダ呼び出しから一定時間が経過したら、MulstStreamCommit を発行
+            if (Settings.MultiStreamMode && dtLastDecoderInvoked <= dtNow.AddMilliseconds(-1500)) {
+                InvokeDecoder(DecoderKeys.MULTI_STREAM_COMMIT_DECKEY, 0);
+                dtLastDecoderInvoked = DateTime.MaxValue;
+            }
+
+            // 辞書の自動保存
+            if (dtNow >= saveDictsPlannedDt || (IsDecoderActive && dtNow >= saveDictsChallengeDt)) {
                 reinitializeSaveDictsChallengeDt();
                 if (decoderPtr != IntPtr.Zero) {
                     logger.Info("CALL SaveDictsDecoder");
