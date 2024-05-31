@@ -722,20 +722,20 @@ void State::handleEnter() {
     _LOG_DEBUGH(_T("{}: Enter"), Name);
     STATE_COMMON->SetAppendBackspaceStopperFlag();
     handleSpecialKeys(ENTER_DECKEY);
-    if (WORD_LATTICE) WORD_LATTICE->clear();
+    //if (WORD_LATTICE) WORD_LATTICE->clear();
 }
 
 // ESC ハンドラ
 void State::handleEsc() {
     _LOG_DEBUGH(_T("{}: Esc: currentDeckey={}"), Name, STATE_COMMON->CurrentDecKey());
-    if (WORD_LATTICE) WORD_LATTICE->clear();
+    //if (WORD_LATTICE) WORD_LATTICE->clear();
     if (STATE_COMMON->CurrentDecKey() == ESC_DECKEY) handleSpecialKeys(ESC_DECKEY);
 }
     
 // BS ハンドラ
 void State::handleBS() {
     _LOG_DEBUGH(_T("BackSpace"));
-    if (WORD_LATTICE) WORD_LATTICE->clear();
+    //if (WORD_LATTICE) WORD_LATTICE->clear();
     setCharDeleteInfo(1);
 }
 

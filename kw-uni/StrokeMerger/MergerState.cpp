@@ -395,39 +395,49 @@ namespace {
             _streamList1.DebugPrintStatesChain(_T("ENTER: streamList1"));
             _streamList2.DebugPrintStatesChain(_T("ENTER: streamList2"));
 
-            if (deckey == ENTER_DECKEY || deckey == MULTI_STREAM_COMMIT_DECKEY) {
-                _LOG_DEBUGH(_T("EnterKey or Commit: clear streamList"));
+            if (deckey != CLEAR_STROKE_DECKEY && ((deckey >= FUNC_DECKEY_START && deckey < FUNC_DECKEY_END) || deckey >= CTRL_DECKEY_START)) {
                 _streamList1.Clear();
                 _streamList2.Clear();
-                WORD_LATTICE->clear();
-                MarkUnnecessary();
-            } else if (deckey == BS_DECKEY) {
-                _LOG_DEBUGH(_T("BSKey: clear streamList"));
-                _strokeCountBS = (int)STATE_COMMON->GetTotalDecKeyCount();
-                _streamList1.Clear();
-                _streamList2.Clear();
-                //WORD_LATTICE->removeSecondOrLesser();
-                WORD_LATTICE->selectFirst();
-            } else if (deckey == MULTI_STREAM_NEXT_CAND_DECKEY) {
-                _LOG_DEBUGH(_T("MULTI_STREAM_NEXT_CAND: select next candidate"));
-                _streamList1.Clear();
-                _streamList2.Clear();
-                WORD_LATTICE->selectNext();
-            } else if (deckey == MULTI_STREAM_PREV_CAND_DECKEY) {
-                _LOG_DEBUGH(_T("MULTI_STREAM_PREV_CAND: select prev candidate"));
-                _streamList1.Clear();
-                _streamList2.Clear();
-                WORD_LATTICE->selectPrev();
-            } else if (deckey == MULTI_STREAM_SELECT_FIRST_DECKEY) {
-                _LOG_DEBUGH(_T("MULTI_STREAM_SELECT_FIRST: commit first candidate"));
-                _streamList1.Clear();
-                _streamList2.Clear();
-                WORD_LATTICE->selectFirst();
-            } else if (deckey == BUSHU_COMP_DECKEY) {
-                _LOG_DEBUGH(_T("BUSHU_COMP"));
-                _streamList1.Clear();
-                _streamList2.Clear();
-                WORD_LATTICE->updateByBushuComp();
+                switch (deckey) {
+                case ENTER_DECKEY:
+                    _LOG_DEBUGH(_T("EnterKey: clear streamList"));
+                    WORD_LATTICE->clear();
+                    MarkUnnecessary();
+                    State::handleEnter();
+                    break;
+                case MULTI_STREAM_COMMIT_DECKEY:
+                    _LOG_DEBUGH(_T("EnterKey: clear streamList"));
+                    WORD_LATTICE->clear();
+                    MarkUnnecessary();
+                    break;
+                case BS_DECKEY:
+                    _LOG_DEBUGH(_T("BS"));
+                    _strokeCountBS = (int)STATE_COMMON->GetTotalDecKeyCount();
+                    WORD_LATTICE->selectFirst();
+                    break;
+                case MULTI_STREAM_NEXT_CAND_DECKEY:
+                    _LOG_DEBUGH(_T("MULTI_STREAM_NEXT_CAND: select next candidate"));
+                    WORD_LATTICE->selectNext();
+                    break;
+                case MULTI_STREAM_PREV_CAND_DECKEY:
+                    _LOG_DEBUGH(_T("MULTI_STREAM_PREV_CAND: select prev candidate"));
+                    WORD_LATTICE->selectPrev();
+                    break;
+                case MULTI_STREAM_SELECT_FIRST_DECKEY:
+                    _LOG_DEBUGH(_T("MULTI_STREAM_SELECT_FIRST: commit first candidate"));
+                    WORD_LATTICE->selectFirst();
+                    break;
+                case BUSHU_COMP_DECKEY:
+                    _LOG_DEBUGH(_T("BUSHU_COMP"));
+                    WORD_LATTICE->updateByBushuComp();
+                    break;
+                default:
+                    _LOG_DEBUGH(_T("OTHER"));
+                    WORD_LATTICE->clear();
+                    MarkUnnecessary();
+                    State::handleSpecialKeys(deckey);
+                    break;
+                }
             } else {
                 if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END) {
                     // 同時打鍵の始まりなので、いったん streamList はクリア
@@ -441,7 +451,7 @@ namespace {
                 _streamList1.HandleDeckeyProc(StrokeTableNode::RootStrokeNode1.get(), deckey, _comboStrokeCount);
                 _LOG_DEBUGH(_T("streamList2: doDeckeyPreProc"));
                 _streamList2.HandleDeckeyProc(StrokeTableNode::RootStrokeNode2.get(), deckey, _comboStrokeCount);
-                ++_comboStrokeCount;
+                if (_comboStrokeCount > 0) ++_comboStrokeCount;     // 同時打鍵で始まった時だけ
                 if (deckey < SHIFT_DECKEY_START) {
                     // 同時打鍵列の終わり
                     _comboStrokeCount = 0;
