@@ -76,10 +76,12 @@ namespace KanchokuWS.Handler
 
         #region Fields
         private static KeyboardProc keyboardProc;
-        private static MouseProc mouseProc;
         private static IntPtr keyboardHookId = IntPtr.Zero;
+#if false
+        private static MouseProc mouseProc;
         private static IntPtr mouseHookId = IntPtr.Zero;
-        #endregion
+#endif
+#endregion
 
         public delegate bool DelegateOnKeyDownEvent(uint vkey, int scanCode, uint flags, int extraInfo);
 
@@ -97,11 +99,11 @@ namespace KanchokuWS.Handler
         {
             if (keyboardHookId == IntPtr.Zero) {
                 keyboardProc = HookProcedure;
-                mouseProc = MouseHookCallback;
+                //mouseProc = MouseHookCallback;
                 using (var curProcess = Process.GetCurrentProcess()) {
                     using (ProcessModule curModule = curProcess.MainModule) {
                         keyboardHookId = SetWindowsHookEx(WH_KEYBOARD_LL, keyboardProc, GetModuleHandle(curModule.ModuleName), 0);
-                        mouseHookId = SetWindowsHookEx(WH_MOUSE_LL, mouseProc, GetModuleHandle(curModule.ModuleName), 0);
+                        //mouseHookId = SetWindowsHookEx(WH_MOUSE_LL, mouseProc, GetModuleHandle(curModule.ModuleName), 0);
                     }
                 }
             }
@@ -111,8 +113,10 @@ namespace KanchokuWS.Handler
         {
             UnhookWindowsHookEx(keyboardHookId);
             keyboardHookId = IntPtr.Zero;
+#if false
             UnhookWindowsHookEx(mouseHookId);
             mouseHookId = IntPtr.Zero;
+#endif
         }
 
         public class OriginalKeyEventArg : EventArgs
@@ -153,6 +157,7 @@ namespace KanchokuWS.Handler
             return CallNextHookEx(keyboardHookId, nCode, wParam, lParam);
         }
 
+#if false
         private static IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0) {
@@ -164,5 +169,6 @@ namespace KanchokuWS.Handler
             }
             return CallNextHookEx(mouseHookId, nCode, wParam, lParam);
         }
+#endif
     }
 }
