@@ -38,8 +38,11 @@ namespace lattice2 {
     // ビームサイズ
     size_t BestKSize = 8;
 
-    // 多ストロークの範囲
+    // 多ストロークの範囲 (stroke位置的に組み合せ不可だったものは、strokeCount が範囲内なら残しておく)
     int StrokeRange = 4;
+
+    // 末尾がここで設定して長さ以上に同じ候補は、先頭だけを残して削除
+    int LastSameLen = 5;
 
     int MAX_COST = 1000;
 
@@ -249,7 +252,7 @@ namespace lattice2 {
             return _strokeLen;
         }
 
-        int cost() const {
+        int totalCost() const {
             return _cost + _penalty;
         }
 
@@ -271,7 +274,7 @@ namespace lattice2 {
 
         String debugString() const {
             return to_wstr(_str)
-                + _T(" (totalCost=") + std::to_wstring(cost())
+                + _T(" (totalCost=") + std::to_wstring(totalCost())
                 + _T("(_cost=") + std::to_wstring(_cost)
                 + _T(",_penalty=") + std::to_wstring(_penalty)
                 + _T("), strokeLen = ") + std::to_wstring(_strokeLen) + _T(")");
@@ -348,6 +351,22 @@ namespace lattice2 {
             return mecabCost;
         }
 #endif
+
+        // 2つの文字列の末尾文字列の共通部分が指定の長さより長いか、または全く同じ文字列か
+        bool hasLongerCommonSuffixThanOrSameStr(const MString& str1, const MString& str2, int len) {
+            _LOG_DEBUGH(_T("ENTER: str1={}, str2={}, len={}"), to_wstr(str1), to_wstr(str2), len);
+            int n1 = (int)str1.size() - 1;
+            int n2 = (int)str2.size() - 1;
+            while (n1 >= 0 && n2 >= 0 && len > 0) {
+                if (str1[n1] != str2[n2]) break;
+                --n1;
+                --n2;
+                --len;
+            }
+            _LOG_DEBUGH(_T("LEAVE: remainingLen: str1={}, str2={}, common={}"), n1, n2, len);
+            return len == 0 || (n1 == 0 && n2 == 0);
+        }
+
         // 新しい候補を追加
         bool addCandidate(std::vector<CandidateString>& newCandidates, CandidateString& newCandStr) {
             bool bAdded = false;
@@ -362,27 +381,27 @@ namespace lattice2 {
             _LOG_INFOH(_T("CALLED: candStr={}, candCost={} (mecab={}[{}], ngram={})"), to_wstr(candStr), candCost, mecabCost, to_wstr(utils::join(words, ' ')), ngramCost);
 
             newCandStr.cost(candCost);
-            int totalCost = newCandStr.cost();
+            int totalCost = newCandStr.totalCost();
 
             if (!newCandidates.empty()) {
                 for (auto iter = newCandidates.begin(); iter != newCandidates.end(); ++iter) {
-                    int otherCost = iter->cost();
+                    int otherCost = iter->totalCost();
                     _LOG_DEBUGH(_T("    otherStr={}, otherCost={}"), to_wstr(iter->string()), otherCost);
                     if (totalCost < otherCost) {
                         iter = newCandidates.insert(iter, newCandStr);    // iter は挿入したノードを指す
                         bAdded = true;
-                        // 下位のノードで同じ文字列のものを探し、あればそれを削除
+                        // 下位のノードで末尾文字列の共通部分が指定の長さより長いものを探し、あればそれを削除
                         for (++iter; iter != newCandidates.end(); ++iter) {
-                            if (candStr == iter->string()) {
-                                // 同じ文字列なので、古い候補は削除
+                            if (hasLongerCommonSuffixThanOrSameStr(candStr, iter->string(), LastSameLen)) {
+                                // 末尾文字列の共通部分が指定の長さより長いか、同じ文字列
                                 newCandidates.erase(iter);
                                 _LOG_DEBUGH(_T("    REMOVE second best or lesser candidate"));
                                 break;
                             }
                         }
                         break;
-                    } else if (candStr == iter->string()) {
-                        // 同じ文字列なので、当候補は無視
+                    } else if (hasLongerCommonSuffixThanOrSameStr(candStr, iter->string(), LastSameLen)) {
+                        // 末尾文字列の共通部分が指定の長さより長いか、同じ文字列
                         bIgnored = true;
                         break;
                     }
@@ -439,7 +458,7 @@ namespace lattice2 {
                 addOnePiece(newCandidates, piece, strokeCount);
             }
 
-            // 組み合せ不可だったものは、strokeCount が範囲内なら残しておく
+            // stroke位置的に組み合せ不可だったものは、strokeCount が範囲内なら残しておく
             if (!_isEmpty(newCandidates)) {     // isEmpty()だったら、BSなどで先頭のものだけが残されたということ
                 for (const auto& cand : _candidates) {
                     if (cand.strokeLen() + StrokeRange > strokeCount) {
@@ -525,7 +544,8 @@ namespace lattice2 {
         // 前回生成された文字列
         MString _prevOutputStr;
 
-        size_t calcCommonLenWithPrevStr(const MString& outStr) {
+        // 前回生成された文字列との共通する先頭部分の長さ
+        size_t calcCommonPrefixLenWithPrevStr(const MString& outStr) {
             _LOG_DEBUGH(_T("ENTER: outStr={}, prevStr={}"), to_wstr(outStr), to_wstr(_prevOutputStr));
             size_t n = 0;
             while (n < outStr.size() && n < _prevOutputStr.size()) {
@@ -607,7 +627,7 @@ namespace lattice2 {
             //_LOG_DEBUGH(_T(".\nresult kBest:\n{}"), pKBestList->debugString());
             size_t numBS = 0;
             MString outStr = _kBestList.getTopString();
-            size_t commonLen = calcCommonLenWithPrevStr(outStr);
+            size_t commonLen = calcCommonPrefixLenWithPrevStr(outStr);
             numBS = _prevOutputStr.size() - commonLen;
             _prevOutputStr = outStr;
             outStr = utils::safe_substr(outStr, commonLen);

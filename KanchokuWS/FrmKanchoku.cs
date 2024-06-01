@@ -2310,7 +2310,8 @@ namespace KanchokuWS
             }
 
             // 前回のデコーダ呼び出しから一定時間が経過したら、MulstStreamCommit を発行
-            if (Settings.MultiStreamMode && dtLastDecoderInvoked <= dtNow.AddMilliseconds(-1500)) {
+            if (Settings.MultiStreamMode && Settings.CommitMultiStreamElapsedTime > 0
+                && dtLastDecoderInvoked <= dtNow.AddMilliseconds(-Settings.CommitMultiStreamElapsedTime)) {
                 InvokeDecoder(DecoderKeys.MULTI_STREAM_COMMIT_DECKEY, 0);
                 dtLastDecoderInvoked = DateTime.MaxValue;
             }

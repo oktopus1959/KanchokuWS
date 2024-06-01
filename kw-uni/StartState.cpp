@@ -27,7 +27,7 @@ public:
     }
 
     // DECKEY 処理の流れ
-    void HandleDeckey(int deckey) override {
+    void StartHandleDeckey(int deckey) override {
         LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}"),
             Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()));
 

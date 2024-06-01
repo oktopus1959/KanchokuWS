@@ -590,7 +590,7 @@ public:
         //}
 
         // DecKey処理を呼ぶ
-        startState->HandleDeckey(keyId);
+        startState->StartHandleDeckey(keyId);
 
         const auto& resultStr = startState->GetResultString();
 
