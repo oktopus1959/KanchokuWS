@@ -13,6 +13,7 @@
 #include "StrokeTable.h"
 #include "OutputStack.h"
 #include "History//HistoryResidentState.h"
+#include "StrokeMerger/StrokeMergerHistoryResidentState.h"
 #include "ModalStateUtil.h"
 
 #include "Eisu.h"
@@ -126,7 +127,10 @@ namespace {
             _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), face={}"), Name, deckey, deckey, myChar);
             if (myChar == SETTINGS->eisuHistSearchChar && is_lower_alphabet(OUTPUT_STACK->back())) {
                 // 履歴検索の実行(末尾文字が英小文字でないと発動させない; "CO" の後の場合は、'O' がキーになるが、この場合は発動させない)
-                HISTORY_RESIDENT_STATE->handleNextCandTrigger();
+                if (SETTINGS->multiStreamMode)
+                    MERGER_HISTORY_RESIDENT_STATE->handleNextCandTrigger();
+                else
+                    SINGLE_HISTORY_RESIDENT_STATE->handleNextCandTrigger();
                 MY_NODE->prevHistSearchDeckeyCount = totalCnt;
             } else if (deckey < NORMAL_DECKEY_NUM || (deckey >= SHIFT_DECKEY_START && deckey < (SHIFT_DECKEY_START + NORMAL_DECKEY_NUM))) {
                 STATE_COMMON->AppendOrigString(myChar);
@@ -173,7 +177,10 @@ namespace {
                 // 2回続けて呼ばれたらキャンセル
                 cancelMe();
             } else {
-                HISTORY_RESIDENT_STATE->handleEisuDecapitalize();
+                if (SETTINGS->multiStreamMode)
+                    MERGER_HISTORY_RESIDENT_STATE->handleEisuDecapitalize();
+                else
+                    SINGLE_HISTORY_RESIDENT_STATE->handleEisuDecapitalize();
             }
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
@@ -199,7 +206,10 @@ namespace {
         void handleFullEscape() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             //cancelMe();
-            HISTORY_RESIDENT_STATE->handleFullEscapeResidentState();
+            if (SETTINGS->multiStreamMode)
+                MERGER_HISTORY_RESIDENT_STATE->handleFullEscapeResidentState();
+            else
+                SINGLE_HISTORY_RESIDENT_STATE->handleFullEscapeResidentState();
         }
 
         // Esc の処理 -- 処理のキャンセル

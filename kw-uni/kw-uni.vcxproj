@@ -225,8 +225,10 @@
     <ClInclude Include="StateCommonInfo.h" />
     <ClInclude Include="ResidentState.h" />
     <ClInclude Include="StringNode.h" />
+    <ClInclude Include="StrokeMerger\HistCandidates.h" />
     <ClInclude Include="StrokeMerger\Lattice.h" />
     <ClInclude Include="StrokeMerger\Merger.h" />
+    <ClInclude Include="StrokeMerger\StrokeMergerHistoryResidentState.h" />
     <ClInclude Include="StrokeTable.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="framework.h" />
@@ -287,9 +289,10 @@
     <ClCompile Include="StateCommonInfo.cpp" />
     <ClCompile Include="ResidentState.cpp" />
     <ClCompile Include="StringState.cpp" />
+    <ClCompile Include="StrokeMerger\HistCandidates.cpp" />
     <ClCompile Include="StrokeMerger\Lattice.cpp" />
     <ClCompile Include="StrokeMerger\Lattice2.cpp" />
-    <ClCompile Include="StrokeMerger\MergerState.cpp" />
+    <ClCompile Include="StrokeMerger\MergerHistoryState.cpp" />
     <ClCompile Include="StrokeTreeBuilder.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">

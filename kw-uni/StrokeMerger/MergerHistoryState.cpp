@@ -1,37 +1,45 @@
-//#include "pch.h"
 #include "Logger.h"
-#include "string_type.h"
+#include "string_utils.h"
 #include "file_utils.h"
 #include "path_utils.h"
-#include "misc_utils.h"
 
 #include "KanchokuIni.h"
 #include "Constants.h"
-#include "deckey_id_defs.h"
+#include "DeckeyToChars.h"
 #include "Settings.h"
 #include "ErrorHandler.h"
 #include "Node.h"
-#include "ResidentState.h"
+#include "State.h"
 #include "OutputStack.h"
 #include "StrokeHelp.h"
+
 #include "BushuComp/BushuComp.h"
 #include "Eisu.h"
 #include "ModalStateUtil.h"
 
-#include "History.h"
-#include "HistoryDic.h"
+#include "HistCandidates.h"
+#include "History/History.h"
+#include "History/HistoryDic.h"
+#include "StrokeTable.h"
+#include "Merger.h"
+#include "Lattice.h"
 
-#define _LOG_DEBUGH_FLAG (SETTINGS->debughHistory)
-
-#if 0 || defined(_DEBUG)
+#if 1
+#undef _LOG_INFOH
 #undef LOG_INFO
-#undef LOG_DEBUGH
 #undef LOG_DEBUG
 #undef _LOG_DEBUGH
+#if 0
+#define _LOG_INFOH LOG_INFOH
 #define LOG_INFO LOG_INFOH
-#define LOG_DEBUGH LOG_INFOH
 #define LOG_DEBUG LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
+#else
+#define _LOG_INFOH LOG_WARN
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUG LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
+#endif
 #endif
 
 // 縦列鍵盤または横列鍵盤の数
@@ -40,207 +48,6 @@
 #define CAND_LEN_THRESHOLD 10
 
 namespace {
-    // -------------------------------------------------------------------
-    // 履歴入力リストのクラス
-    class HistCandidates {
-        DECLARE_CLASS_LOGGER;
-
-        // 履歴入力候補のリスト
-        HistResultList histCands;
-
-        // 候補単語列
-        //std::vector<MString> histWords;
-        std::vector<HistResult> histResults;
-
-        HistResult emptyResult;
-
-        // 履歴検索中か
-        bool isHistInSearch = false;
-
-        // 現在、履歴選択に使われているキー
-        MString currentKey;
-
-        int currentLen = 0;
-
-        // 選択位置 -- -1 は未選択状態を表す
-        mutable int selectPos = -1;
-
-        // 未選択状態に戻す
-        inline void resetSelectPos() {
-            selectPos = -1;
-        }
-
-        inline void setSelectPos(size_t n) const {
-            size_t x = std::min(histCands.Size(), SETTINGS->histHorizontalCandMax);
-            selectPos = n >= 0 && n < x ? n : -1;
-        }
-
-        // 選択位置をインクリメント //(一周したら未選択状態に戻る)
-        inline void incSelectPos() const {
-            size_t x = std::min(histCands.Size(), SETTINGS->histHorizontalCandMax);
-            selectPos = selectPos < 0 ? 0 : x <= 0 ? -1 : (selectPos + 1) % x;
-        }
-
-        // 選択位置をデクリメント //(一周したら未選択状態に戻る)
-        inline void decSelectPos() const {
-            int x = std::min(histCands.Size(), SETTINGS->histHorizontalCandMax);
-            selectPos = selectPos <= 0 ? x - 1 : x <=0 ? -1 : (selectPos - 1) % x;
-        }
-
-        inline int getSelectPos() const {
-            return selectPos;
-        }
-
-        inline bool isSelecting() const {
-            return selectPos > 0 && selectPos < (int)histResults.size();
-        }
-
-        inline const HistResult getSelectedHist() const {
-            int n = getSelectPos();
-            int x = std::min(histCands.Size(), SETTINGS->histHorizontalCandMax);
-            return n >= 0 && n < x ? histCands.GetNthHist(n) : emptyResult;
-        }
-
-        inline const MString& getSelectedWord() const {
-            int n = getSelectPos();
-            return n >= 0 && n < (int)histResults.size() ? histResults[n].Word : EMPTY_MSTR;
-        }
-
-    public:
-        // 履歴検索キー設定をクリアする
-        void ClearKeyInfo() {
-            histCands.ClearKeyInfo();
-            currentKey.clear();
-            isHistInSearch = false;
-        }
-
-        bool IsHistInSearch() {
-            //_LOG_DEBUGH(_T("CALLED: HistInSearch={}"), isHistInSearch);
-            return isHistInSearch;
-        }
-
-        const MString& GetOrigKey() {
-            return histCands.GetOrigKey();
-        }
-
-        // 指定のキーで始まる候補を取得する (len > 0 なら指定の長さの候補だけを取得, len < 0 なら Abs(len)以下の長さの候補を取得)
-        const std::vector<HistResult>& GetCandidates(const MString& key, bool bCheckMinKeyLen, int len) {
-            isHistInSearch = true;
-            DelayedPushFrontSelectedWord();
-            currentLen = len;
-            histCands = HISTORY_DIC->GetCandidates(key, currentKey, bCheckMinKeyLen, len);  // ここで currentKey は変更される (currentKey = resultKey)
-            histResults.clear();
-            utils::append(histResults, histCands.GetHistories());
-            _LOG_DEBUGH(_T("cands num={}, new currentKey={}"), histResults.size(), to_wstr(currentKey));
-            return histResults;
-        }
-
-        const std::vector<MString> GetCandWords(const MString& key, bool bCheckMinKeyLen, int len) {
-            _LOG_DEBUGH(_T("CALLED: key={}, bCheckMinKeyLen={}, len={}"), to_wstr(key), bCheckMinKeyLen, len);
-            GetCandidates(key, bCheckMinKeyLen, len);
-            return GetCandWords();
-        }
-
-        // 取得済みの候補列を返す
-        //const std::vector<HistResult>& GetCandidates() const {
-        //    return histResults;
-        //}
-
-        const std::vector<MString> GetCandWords() const {
-            _LOG_DEBUGH(_T("CALLED"));
-            std::vector<MString> words;
-            utils::transform_append(histResults, words, [](const HistResult& res) { return res.Word; });
-            return words;
-        }
-
-        const MString& GetCurrentKey() const {
-            return currentKey;
-        }
-
-        // 次の履歴を選択する
-        const HistResult GetNext() const {
-            incSelectPos();
-            return getSelectedHist();
-        }
-
-        // 前の履歴を選択する
-        const HistResult GetPrev() const {
-            decSelectPos();
-            return getSelectedHist();
-        }
-
-        // 選択された単語を取得する
-        const HistResult GetPositionedHist(size_t pos) const {
-            _LOG_DEBUGH(_T("CALLED: selectPos={}"), pos);
-            setSelectPos(pos);
-            return getSelectedHist();
-        }
-
-        // 選択された単語を取得する
-        const MString& GetSelectedWord() const {
-            _LOG_DEBUGH(_T("CALLED: selectPos={}"), selectPos);
-            return getSelectedWord();
-        }
-
-        // 選択されている位置を返す -- 未選択状態なら -1を返す
-        int GetSelectPos() const {
-            _LOG_DEBUGH(_T("CALLED: nextSelect={}"), selectPos);
-            return getSelectPos();
-        }
-
-        // 選択位置を初期化(未選択状態)する
-        const HistResult ClearSelectPos() {
-            _LOG_DEBUGH(_T("CALLED: nextSelect={}"), selectPos);
-            resetSelectPos();
-            return emptyResult;
-        }
-
-        // 候補が選択されていれば、それを使用履歴の先頭にpushする -- selectPos は未選択状態に戻る
-        void DelayedPushFrontSelectedWord() {
-            _LOG_DEBUGH(_T("ENTER"));
-            if (isSelecting()) {
-                HISTORY_DIC->UseWord(GetSelectedWord());
-            }
-            ClearSelectPos();
-            _LOG_DEBUGH(_T("LEAVE"));
-        }
-
-        // 取得済みの履歴入力候補リストから指定位置の候補を返す
-        // 選択された候補は使用履歴の先頭に移動する
-        const HistResult SelectNth(size_t n) {
-            _LOG_DEBUGH(_T("ENTER: n={}, histResults={}"), n, histResults.size());
-            ClearSelectPos();
-            if (n >= histResults.size()) {
-                _LOG_DEBUGH(_T("LEAVE: empty"));
-                return emptyResult;
-            }
-
-            HistResult result = histResults[n];
-            HISTORY_DIC->UseWord(result.Word);
-            GetCandidates(currentKey, false, currentLen);
-            _LOG_DEBUGH(_T("LEAVE: OrigKey={}, Key={}, Word={}"), to_wstr(result.OrigKey), to_wstr(result.Key), to_wstr(result.Word));
-            return result;
-        }
-
-        inline void DeleteNth(size_t n) {
-            _LOG_DEBUGH(_T("ENTER"));
-            DelayedPushFrontSelectedWord();
-            if (n < histCands.Size()) {
-                HISTORY_DIC->DeleteEntry(histCands.GetNthWord(n));
-                GetCandidates(currentKey, false, currentLen);
-            }
-            _LOG_DEBUGH(_T("LEAVE"));
-        }
-
-    public:
-        static std::unique_ptr<HistCandidates> Singleton;
-    };
-    DEFINE_CLASS_LOGGER(HistCandidates);
-
-    std::unique_ptr<HistCandidates> HistCandidates::Singleton;
-
-#define HIST_CAND (HistCandidates::Singleton)
-
 
 #define CAND_DISP_LONG_VKEY_LEN  20
 
@@ -257,7 +64,7 @@ namespace {
         // 履歴入力候補のリスト
         //HistCandidates histCands;
 
-        int candLen = 0;
+        //int candLen = 0;
         size_t candDispVerticalPos = 0;
         size_t candDispHorizontalPos = 0;
 
@@ -287,14 +94,14 @@ namespace {
         void setOutString(const HistResult& result) {
             _LOG_DEBUGH(_T("ENTER: result.OrigKey={}, result.Key={}, result.Word={}, keyLen={}, wildKey={}, prevOutStr={}, prevKey={}, plannedNumBS={}"), \
                 to_wstr(result.OrigKey), to_wstr(result.Key), to_wstr(result.Word), result.KeyLen(), result.WildKey, \
-                to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()), to_wstr(HISTORY_RESIDENT_NODE->GetPrevKey()), resultString().numBS());
+                to_wstr(STROKE_MERGER_NODE->GetPrevOutString()), to_wstr(STROKE_MERGER_NODE->GetPrevKey()), resultString().numBS());
 
             MString outStr = result.Word;
             MString outKey = result.Key;
             if (outStr.empty()) {
                 // 未選択状態だったら、出力文字列を元に戻す
-                outKey = HISTORY_RESIDENT_NODE->GetPrevKey();
-                outStr = HISTORY_RESIDENT_NODE->GetPrevOutString();
+                outKey = STROKE_MERGER_NODE->GetPrevKey();
+                outStr = STROKE_MERGER_NODE->GetPrevOutString();
                 if (outStr.empty()) outStr = outKey;
             } else {
                 size_t pos = outStr.find(VERT_BAR);     // '|' を含むか
@@ -322,24 +129,24 @@ namespace {
             _LOG_DEBUGH(_T("outStr={}, outKey={}"), to_wstr(outStr), to_wstr(outKey));
 
             resultString().setResult(outStr);
-            HISTORY_RESIDENT_NODE->SetPrevHistState(outStr, outKey);
+            STROKE_MERGER_NODE->SetPrevHistState(outStr, outKey);
 
-            //_LOG_DEBUGH(_T("prevOutString={}, isPrevHistKeyUsed={}"), to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()), HISTORY_RESIDENT_NODE->IsPrevHistKeyUsed());
-            _LOG_DEBUGH(_T("LEAVE: prevOutString={}"), to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()));
+            //_LOG_DEBUGH(_T("prevOutString={}, isPrevHistKeyUsed={}"), to_wstr(STROKE_MERGER_NODE->GetPrevOutString()), STROKE_MERGER_NODE->IsPrevHistKeyUsed());
+            _LOG_DEBUGH(_T("LEAVE: prevOutString={}"), to_wstr(STROKE_MERGER_NODE->GetPrevOutString()));
         }
 
         // 前回の履歴検索の出力と現在の出力文字列(改行以降)の末尾を比較し、同じであれば前回の履歴検索のキーを取得する
         // この時、出力スタックは、キーだけを残し、追加出力部分は巻き戻し予約される(numBackSpacesに値をセット)
-        // 前回が空キーだった場合は、返値も空キーになるので、HISTORY_RESIDENT_NODE->PrevKeyLen == 0 かどうかで前回と同じキーであるか否かを判断すること
+        // 前回が空キーだった場合は、返値も空キーになるので、STROKE_MERGER_NODE->PrevKeyLen == 0 かどうかで前回と同じキーであるか否かを判断すること
         // ここに来る場合には、以下の3つの状態がありえる:
         // ①まだ履歴検索がなされていない状態
         // ②検索が実行されたが、出力文字列にはキーだけが表示されている状態
         // ③横列のどれかの候補が選択されて出力文字列に反映されている状態
         MString getLastHistKeyAndRewindOutput() {
             // 前回の履歴検索の出力
-            //bool bPrevHistUsed = HISTORY_RESIDENT_NODE->IsPrevHistKeyUsed();
-            const auto& prevKey = HISTORY_RESIDENT_NODE->GetPrevKey();
-            const auto& prevOut = HISTORY_RESIDENT_NODE->GetPrevOutString();
+            //bool bPrevHistUsed = STROKE_MERGER_NODE->IsPrevHistKeyUsed();
+            const auto& prevKey = STROKE_MERGER_NODE->GetPrevKey();
+            const auto& prevOut = STROKE_MERGER_NODE->GetPrevOutString();
             //_LOG_DEBUGH(_T("isPrevHistUsed={}, prevOut={}, prevKey={}"), bPrevHistUsed, to_wstr(prevOut), to_wstr(prevKey));
             _LOG_DEBUGH(_T("prevOut={}, prevKey={}"), to_wstr(prevOut), to_wstr(prevKey));
 
@@ -351,13 +158,13 @@ namespace {
                 // ②検索が実行されたが、出力文字列にはキーだけが表示されている状態
                 _LOG_DEBUGH(_T("CURRENT: SetOutString(str={}, numBS={})"), to_wstr(prevKey), prevKey.size());
                 resultString().setResult(prevKey, prevKey.size());
-                HISTORY_RESIDENT_NODE->SetPrevHistState(prevKey, prevKey);
+                STROKE_MERGER_NODE->SetPrevHistState(prevKey, prevKey);
                 _LOG_DEBUGH(_T("CURRENT: prevKey={}"), to_wstr(prevKey));
             } else {
                 // ③横列のどれかの候補が選択されて出力文字列に反映されている状態
                 _LOG_DEBUGH(_T("REVERT and NEW HIST: SetOutString(str={}, numBS={})"), to_wstr(prevKey), prevOut.size());
                 resultString().setResult(prevKey, prevOut.size());
-                HISTORY_RESIDENT_NODE->SetPrevHistState(prevKey, prevKey);
+                STROKE_MERGER_NODE->SetPrevHistState(prevKey, prevKey);
                 _LOG_DEBUGH(_T("REVERT and NEW HIST: prevKey={}"), to_wstr(prevKey));
             }
 
@@ -368,7 +175,7 @@ namespace {
         // 前回の履歴選択の出力と現在の出力文字列(改行以降)の末尾が同一であるか
         bool isLastHistOutSameAsCurrentOut() {
             // 前回の履歴選択の出力
-            MString prevOut = HISTORY_RESIDENT_NODE->GetPrevOutString();
+            MString prevOut = STROKE_MERGER_NODE->GetPrevOutString();
             // 出力スタックから、上記と同じ長さの末尾文字列を取得
             auto lastJstr = OUTPUT_STACK->GetLastJapaneseStr<MString>(prevOut.size());
             bool result = !prevOut.empty() && lastJstr == prevOut;
@@ -449,6 +256,9 @@ namespace {
         bool bWaitingForNum = false;
 
     protected:
+        int candLen = 0;
+
+    protected:
         MStringResult& resultString() override { return resultStr; }
 
     public:
@@ -499,7 +309,7 @@ namespace {
             setCandidatesVKB(VkbLayout::Vertical, HIST_CAND->GetCandWords(key, false, candLen), key);
 
             // 検索キーの設定
-            HISTORY_RESIDENT_NODE->SetPrevHistKeyState(HIST_CAND->GetOrigKey());
+            STROKE_MERGER_NODE->SetPrevHistKeyState(HIST_CAND->GetOrigKey());
 
             // 未選択状態にセットする
             _LOG_DEBUGH(_T("Set Unselected"));
@@ -742,7 +552,7 @@ namespace {
     protected:
         void handleKeyPostProc() {
             _LOG_DEBUGH(_T("CALLED: handleKeyPostProc"));
-            HISTORY_RESIDENT_NODE->ClearPrevHistState();
+            STROKE_MERGER_NODE->ClearPrevHistState();
             HIST_CAND->ClearKeyInfo();
             STATE_COMMON->ClearVkbLayout();
             //STATE_COMMON->RemoveFunctionState();
@@ -772,7 +582,7 @@ namespace {
             if (!HISTORY_DIC) return;
 
             // 前回履歴キーのクリア
-            HISTORY_RESIDENT_NODE->ClearPrevHistState();
+            STROKE_MERGER_NODE->ClearPrevHistState();
             HIST_CAND->ClearKeyInfo();
 
             // 2～3文字履歴の取得
@@ -806,7 +616,7 @@ namespace {
             if (!HISTORY_DIC) return;
 
             // 前回履歴キーのクリア
-            HISTORY_RESIDENT_NODE->ClearPrevHistState();
+            STROKE_MERGER_NODE->ClearPrevHistState();
             HIST_CAND->ClearKeyInfo();
 
             // 1文字履歴の取得
@@ -821,12 +631,550 @@ namespace {
     DEFINE_CLASS_LOGGER(HistoryOneCharState);
 
     // -------------------------------------------------------------------
-    // 履歴入力(常駐)機能状態クラス
-    class HistoryResidentStateImpl : public HistoryResidentState, public HistoryStateBase {
+    // 
+    class StrokeStream : public State {
         DECLARE_CLASS_LOGGER;
 
-        //MString prevKey;
+        //std::shared_ptr<State> pState;
+        //Node* pNextNode = 0;    // Node のライフタイムは別に管理されている
+        size_t cntStroke = 0;
 
+        //MStringApplyResult getXlatString() {
+        //    if (NextNodeMaybe()) {
+        //        std::unique_ptr<State> p;
+        //        p.reset(NextNodeMaybe()->CreateState());  // 文字列状態の生成
+        //        return p->ApplyResultString();
+        //    } else {
+        //        return MStringApplyResult();
+        //    }
+        //}
+
+        String nextNodeType() const {
+            return NODE_NAME(NextNodeMaybe());
+        }
+
+        //String nextNodeString() const {
+        //    return NextNodeMaybe() ? to_wstr(NextNodeMaybe()->getString()) : _T("");
+        //}
+
+    public:
+        // コンストラクタ
+        StrokeStream() : cntStroke(STATE_COMMON->GetTotalDecKeyCount()-1) {
+            _LOG_DEBUGH(_T("CALLED: Default Constructor"));
+            Initialize(_T("StrokeStream"), 0);
+            MarkNecessary();
+        }
+
+        // コンストラクタ
+        StrokeStream(StrokeTableNode* pRootNode) : StrokeStream() {
+            _LOG_DEBUGH(_T("CALLED: Constructor: Newly created RootNode passed"));
+            //pState.reset(pRootNode->CreateState());
+            //SetNextState(pRootNode->CreateState());
+            SetNextNodeMaybe(pRootNode);
+            CreateNewState();
+        }
+
+        // デストラクタ
+        ~StrokeStream() {
+            _LOG_DEBUGH(_T("CALLED: Destructor"));
+            //if (pState) {
+            //    pState->DeleteAllStates();
+            //    delete pState;
+            //    pState = nullptr;
+            //}
+        }
+
+        //// 状態が生成されたときに実行する処理 (特に何もせず、前状態にチェインする)
+        //void DoProcOnCreated() override {
+        //    _LOG_DEBUGH(_T("CALLED: Chained"));
+        //    MarkNecessary();
+        //}
+
+        //size_t StrokeTableChainLength() const {
+        //    return pState ? pState->StrokeTableChainLength() : 0;
+        //}
+
+        //String GetJoinedName() const {
+        //    return pState->JoinedName();
+        //}
+
+        //Node* NextNode() {
+        //    return pNextNode;
+        //}
+
+        //// DECKEY 処理
+        //void HandleDeckeyChain(int decKey) override {
+        //    _LOG_DEBUGH(_T("ENTER: cntStroke={}"), cntStroke);
+        //    if (pState) {
+        //        pState->HandleDeckeyChain(decKey);
+        //        ++cntStroke;
+        //    }
+        //    _LOG_DEBUGH(_T("LEAVE: cntStroke={}, NextNode.type={}"), cntStroke, nextNodeType());
+        //}
+
+        //void DoDeckeyPostProcChain() {
+        //    _LOG_DEBUGH(_T("ENTER"));
+        //    if (pState) {
+        //        pState->DoDeckeyPostProcChain();
+        //        pNextNode = pState->NextNodeMaybe();
+        //    }
+        //    _LOG_DEBUGH(_T("LEAVE: NextNode.type={}, string={}"), nextNodeType(), pNextNode ? to_wstr(pNextNode->getString()) : _T(""));
+        //}
+
+        //bool IsUnnecessary() const {
+        //    return !pState || pState->IsUnnecessary();
+        //}
+
+        //bool DeleteUnnecessaryState() {
+        //    //bool result = !pState || AbstractBaseState::DeleteUnnecessaryState(pState);
+        //    bool result = false;
+        //    if (pState) {
+        //        pState->DeleteUnnecessarySuccessorStateChain();
+        //        if (pState->IsUnnecessary()) {
+        //            pState.reset();
+        //            result = true;
+        //        }
+        //    }
+        //    _LOG_DEBUGH(_T("CALLED: result={}, NextNode.type={}"), result, nextNodeType());
+        //    return result;
+        //}
+
+        void AppendWordPiece(std::vector<WordPiece>& pieces, bool /*bExcludeHiragana*/) {
+            if (NextState()) {
+                _LOG_DEBUGH(_T("ENTER"));
+                MStringResult result;
+                State::GetResultStringChain(result);
+                if (!result.isDefault()) {
+                    _LOG_DEBUGH(_T("ADD WORD: rewriteStr={}, string={}, numBS={}"),
+                        to_wstr(result.getRewriteNode() ? result.getRewriteNode()->getString() : EMPTY_MSTR), to_wstr(result.resultStr()), result.numBS());
+                    int strokeLen = STATE_COMMON->GetTotalDecKeyCount() - cntStroke;
+                    if (result.getRewriteNode()) {
+                        pieces.push_back(WordPiece(result.getRewriteNode(), strokeLen));
+                    } else {
+                        pieces.push_back(WordPiece(result.resultStr(), strokeLen, result.rewritableLen(), result.numBS()));
+                    }
+                } else {
+                    _LOG_DEBUGH(_T("NOT TERMINAL"));
+                }
+                _LOG_DEBUGH(_T("LEAVE"));
+            }
+            //auto nextStr = nextNodeString();
+            //_LOG_DEBUGH(_T("CALLED: NextNode.type={}, String={}, bExcludeHiragana={}"), nextNodeType(), nextStr, bExcludeHiragana);
+            //if (NextNodeMaybe() && NextNodeMaybe()->isStringLikeNode() && !nextStr.empty() && (!bExcludeHiragana || !utils::is_hiragana(nextStr[0]))) {
+            //    _LOG_DEBUGH(_T("ENTER: string={}"), nextStr);
+            //    auto applyResult = getXlatString();
+            //    pieces.push_back(WordPiece(applyResult.resultStr, cntStroke, applyResult.rewritableLen, applyResult.numBS));
+            //    _LOG_DEBUGH(_T("LEAVE: piece=({}, {})"), to_wstr(pieces.back().pieceStr), pieces.back().strokeLen);
+            //}
+        }
+
+        // 新しい状態作成のチェイン(状態チェーンの末尾でのみ新状態の作成を行う)
+        void DoCreateNewStateChain() {
+            CreateNewStateChain();
+        }
+
+        // チェーンをたどって不要とマークされた後続状態を削除する
+        void DoDeleteUnnecessarySuccessorStateChain() {
+            DeleteUnnecessarySuccessorStateChain();
+            // 後続状態が無くなったら自身も削除する
+            if (!NextState()) MarkUnnecessary();
+        }
+    };
+    DEFINE_CLASS_LOGGER(StrokeStream);
+
+    typedef std::unique_ptr<StrokeStream> StrokeStreamUptr;
+
+    // 複数のStrokeStreamを管理するクラス
+    // たとえばT-Codeであっても、1ストロークずれた2つの入力ストリームが並存する可能性がある
+    class StrokeStreamList {
+    private:
+        DECLARE_CLASS_LOGGER;
+
+        String name;
+
+        // RootStrokeState用の状態集合
+        std::vector<StrokeStreamUptr> strokeStreamList;
+
+        void addStrokeStream(StrokeTableNode* pRootNode) {
+            strokeStreamList.push_back(std::make_unique<StrokeStream>(pRootNode));
+        }
+
+        void forEach(std::function<void(const StrokeStreamUptr&)> func) const {
+            for (const auto& pStream : strokeStreamList) {
+                func(pStream);
+            }
+        }
+
+    public:
+        StrokeStreamList(StringRef name) : name(name) {
+        }
+
+        ~StrokeStreamList() {
+            _LOG_DEBUGH(_T("CALLED: Destructor: {}"), name);
+            //for (auto* p : strokeChannelList) delete p;
+        }
+
+        size_t Count() const {
+            return strokeStreamList.size();
+        }
+
+        size_t Empty() const {
+            return Count() == 0;
+        }
+
+        void Clear() {
+            strokeStreamList.clear();
+        }
+
+        size_t StrokeTableChainLength() const {
+            size_t len = 0;
+            //for (const auto& pState : strokeChannelList) {
+            //    size_t ln = pState->StrokeTableChainLength();
+            //    if (ln > len) len = ln;
+            //}
+            forEach([&len](const StrokeStreamUptr& pStream) {
+                size_t ln = pStream->StrokeTableChainLength();
+                if (ln > len) len = ln;
+                });
+            return len;
+        }
+
+        String ChainLengthString() const {
+            std::vector<int> buf;
+            //            std::transform(strokeChannelList.begin(), strokeChannelList.end(), std::back_inserter(buf), [](const StrokeStream* pState) { return (int)pState->StrokeTableChainLength(); });
+            std::transform(strokeStreamList.begin(), strokeStreamList.end(), std::back_inserter(buf), [](const StrokeStreamUptr& pState) { return (int)pState->StrokeTableChainLength(); });
+            return _T("[") + utils::join(buf, _T(",")) + _T("]");
+        }
+
+        Node* GetNonStringNode() {
+            for (const auto& pState : strokeStreamList) {
+                Node* p = pState->NextNodeMaybe();
+                if (p && !p->isStringLikeNode()) {
+                    return p;
+                }
+            }
+            return 0;
+        }
+
+        void HandleDeckeyProc(StrokeTableNode* pRootNode, int decKey, int comboStrokeCnt) {
+            _LOG_DEBUGH(_T("ENTER: {}: pRootNode={:p}, decKey={}, comboStrokeCnt={}"), name, (void*)pRootNode, decKey, comboStrokeCnt);
+            if (pRootNode) {
+                // 同時打鍵列に入ったら、先頭打鍵の時(comboStrokeCnt==0)だけ stream を追加できる
+                if ((comboStrokeCnt < 1 || (comboStrokeCnt == 1 && Count() < 1)) && State::isStrokableKey(decKey)) addStrokeStream(pRootNode);
+                _LOG_DEBUGH(_T("{}: strokeStateList.Count={}"), name, Count());
+                int count = 1;
+                forEach([decKey, &count, this](const StrokeStreamUptr& pStream) {
+                    _LOG_DEBUGH(_T("{}: {}: IsUnnecessary: BEFORE: {}"), name, count, pStream->IsUnnecessary());
+                    pStream->HandleDeckeyChain(decKey);
+                    _LOG_DEBUGH(_T("{}: {}: IsUnnecessary: AFTER: {}"), name, count, pStream->IsUnnecessary());
+                    ++count;
+                    });
+            }
+            _LOG_DEBUGH(_T("LEAVE: {}: strokeStateList.Count={}"), name, Count());
+        }
+
+        //void DoDeckeyPostProc() {
+        //    _LOG_DEBUGH(_T("ENTER"));
+        //    //for (const auto& pState : strokeChannelList) {
+        //    //    //_LOG_DEBUGH(_T("IsUnnecessary: BEFORE: {}"), pState->IsUnnecessary());
+        //    //    pState->DoDeckeyPostProc();
+        //    //    //_LOG_DEBUGH(_T("IsUnnecessary: AFTER: {}"), pState->IsUnnecessary());
+        //    //}
+        //    forEach([](const StrokeStreamUptr& pStream) {
+        //        //_LOG_DEBUGH(_T("IsUnnecessary: BEFORE: {}"), pState->IsUnnecessary());
+        //        pStream->DoDeckeyPostProcChain();
+        //        //_LOG_DEBUGH(_T("IsUnnecessary: AFTER: {}"), pState->IsUnnecessary());
+        //    });
+        //    _LOG_DEBUGH(_T("LEAVE"));
+        //}
+
+        // 新しい状態作成
+        void CreateNewStates() {
+            _LOG_DEBUGH(_T("ENTER: {}: size={}"), name, Count());
+            forEach([](const StrokeStreamUptr& pStream) {
+                pStream->DoCreateNewStateChain();
+            });
+            _LOG_DEBUGH(_T("LEAVE: {}"), name);
+        }
+
+        //// 出力文字を取得する
+        //void GetPreOutputs() {
+        //    _LOG_DEBUGH(_T("ENTER: size={}"), Count());
+        //    forEach([&pieces, bExcludeHiragana](const StrokeStreamUptr& pStream) {
+        //        pStream->AppendWordPiece(pieces, bExcludeHiragana);
+        //    });
+        //    return GetPreOutput(pNext ? pNext->GetResultStringChain() : EMPTY_MSTR);
+        //    _LOG_DEBUGH(_T("LEAVE"));
+        //}
+
+        void DeleteUnnecessaryNextStates() {
+            _LOG_DEBUGH(_T("ENTER: {}: strokeStateList.Count={}"), name, Count());
+            auto iter = strokeStreamList.begin();
+            while (iter != strokeStreamList.end()) {
+                (*iter)->DoDeleteUnnecessarySuccessorStateChain();
+                if ((*iter)->IsUnnecessary()) {
+                    iter = strokeStreamList.erase(iter);
+                } else {
+                    ++iter;
+                }
+            }
+            _LOG_DEBUGH(_T("LEAVE: {}: strokeStateList.Count={}"), name, Count());
+        }
+
+        // 出力文字を取得する
+        void AddWordPieces(std::vector<WordPiece>& pieces, bool bExcludeHiragana) {
+            _LOG_DEBUGH(_T("ENTER: {}: streamNum={}"), name, Count());
+            //for (const auto& pState : strokeChannelList) {
+            //    pState->AppendWordPiece(pieces, bExcludeHiragana);
+            //}
+            forEach([&pieces, bExcludeHiragana](const StrokeStreamUptr& pStream) {
+                pStream->AppendWordPiece(pieces, bExcludeHiragana);
+            });
+            _LOG_DEBUGH(_T("LEAVE: {}"), name);
+        }
+        
+        void DebugPrintStatesChain(StringRef label) {
+            if (Reporting::Logger::IsInfoHEnabled()) {
+                if (strokeStreamList.empty()) {
+                    _LOG_DEBUGH(_T("{}: {}=empty"), name, label);
+                } else {
+                    forEach([label, this](const StrokeStreamUptr& pStream) {
+                        _LOG_DEBUGH(_T("{}: {}={}"), name, label, pStream->JoinedName());
+                    });
+                }
+            }
+        }
+    };
+    DEFINE_CLASS_LOGGER(StrokeStreamList);
+
+    // -------------------------------------------------------------------
+    // ストロークテーブルからの出力のマージ機能
+    class StrokeMergerHistoryResidentStateImpl : public StrokeMergerHistoryResidentState, public HistoryStateBase {
+    private:
+        DECLARE_CLASS_LOGGER;
+
+        // 同時打鍵中なら1以上で、同時打鍵列の位置を示す
+        int _comboStrokeCount = 0;
+
+        int _strokeCountBS = -1;
+
+        // RootStrokeState1用の状態集合
+        StrokeStreamList _streamList1;
+
+        // RootStrokeState2用の状態集合
+        StrokeStreamList _streamList2;
+
+    public:
+        // コンストラクタ
+        StrokeMergerHistoryResidentStateImpl(StrokeMergerHistoryNode* pN)
+            : HistoryStateBase(pN), _streamList1(_T("streamList1")), _streamList2(_T("streamList2")) {
+            _LOG_DEBUGH(_T("CALLED: Constructor"));
+            Initialize(logger.ClassNameT(), pN);
+        }
+
+        ~StrokeMergerHistoryResidentStateImpl() override {
+            _LOG_DEBUGH(_T("CALLED: Destructor"));
+        }
+
+        // 状態が生成されたときに実行する処理 (特に何もせず、前状態にチェインする)
+        void DoProcOnCreated() override {
+            _LOG_DEBUGH(_T("CALLED: Chained"));
+            MarkNecessary();
+        }
+
+        // DECKEY 処理の流れ
+        void HandleDeckeyChain(int deckey) override {
+            LOG_INFO(_T("ENTER: deckey={:x}H({}), totalCount={}, statesNum=({},{})"), deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), _streamList1.Count(), _streamList2.Count());
+
+            _streamList1.DebugPrintStatesChain(_T("ENTER: streamList1"));
+            _streamList2.DebugPrintStatesChain(_T("ENTER: streamList2"));
+
+            if (deckey != CLEAR_STROKE_DECKEY && ((deckey >= FUNC_DECKEY_START && deckey < FUNC_DECKEY_END) || deckey >= CTRL_DECKEY_START)) {
+                _streamList1.Clear();
+                _streamList2.Clear();
+                switch (deckey) {
+                case ENTER_DECKEY:
+                    _LOG_DEBUGH(_T("EnterKey: clear streamList"));
+                    WORD_LATTICE->clear();
+                    //MarkUnnecessary();
+                    State::handleEnter();
+                    break;
+                case MULTI_STREAM_COMMIT_DECKEY:
+                    _LOG_DEBUGH(_T("EnterKey: clear streamList"));
+                    WORD_LATTICE->clear();
+                    //MarkUnnecessary();
+                    break;
+                case BS_DECKEY:
+                    _LOG_DEBUGH(_T("BS"));
+                    _strokeCountBS = (int)STATE_COMMON->GetTotalDecKeyCount();
+                    WORD_LATTICE->selectFirst();
+                    break;
+                case MULTI_STREAM_NEXT_CAND_DECKEY:
+                    _LOG_DEBUGH(_T("MULTI_STREAM_NEXT_CAND: select next candidate"));
+                    WORD_LATTICE->selectNext();
+                    break;
+                case MULTI_STREAM_PREV_CAND_DECKEY:
+                    _LOG_DEBUGH(_T("MULTI_STREAM_PREV_CAND: select prev candidate"));
+                    WORD_LATTICE->selectPrev();
+                    break;
+                case MULTI_STREAM_SELECT_FIRST_DECKEY:
+                    _LOG_DEBUGH(_T("MULTI_STREAM_SELECT_FIRST: commit first candidate"));
+                    WORD_LATTICE->selectFirst();
+                    break;
+                case BUSHU_COMP_DECKEY:
+                    _LOG_DEBUGH(_T("BUSHU_COMP"));
+                    WORD_LATTICE->updateByBushuComp();
+                    break;
+                default:
+                    _LOG_DEBUGH(_T("OTHER"));
+                    WORD_LATTICE->clear();
+                    //MarkUnnecessary();
+                    State::handleSpecialKeys(deckey);
+                    break;
+                }
+            } else {
+                if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END) {
+                    // 同時打鍵の始まりなので、いったん streamList はクリア
+                    // 同時打鍵中は、処理を分岐させない
+                    _streamList1.Clear();
+                    _streamList2.Clear();
+                    _comboStrokeCount = 1;
+                }
+                // 前処理(ストローク木状態の作成と呼び出し)
+                _LOG_DEBUGH(_T("streamList1: doDeckeyPreProc"));
+                _streamList1.HandleDeckeyProc(StrokeTableNode::RootStrokeNode1.get(), deckey, _comboStrokeCount);
+                _LOG_DEBUGH(_T("streamList2: doDeckeyPreProc"));
+                _streamList2.HandleDeckeyProc(StrokeTableNode::RootStrokeNode2.get(), deckey, _comboStrokeCount);
+                if (_comboStrokeCount > 0) ++_comboStrokeCount;     // 同時打鍵で始まった時だけ
+                if (deckey < SHIFT_DECKEY_START) {
+                    // 同時打鍵列の終わり
+                    _comboStrokeCount = 0;
+                }
+            }
+
+            LOG_INFO(_T("LEAVE"));
+        }
+
+        // 新しい状態作成のチェイン
+        void CreateNewStateChain() override {
+            _LOG_DEBUGH(_T("ENTER: {}"), Name);
+            _LOG_DEBUGH(_T("streamList1: CreateNewStates"));
+            _streamList1.CreateNewStates();
+            _LOG_DEBUGH(_T("streamList2: CreateNewStates"));
+            _streamList2.CreateNewStates();
+            _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+        }
+
+        // 出力文字を取得する
+        void GetResultStringChain(MStringResult& resultOut) override {
+            _LOG_DEBUGH(_T("ENTER: {}, isUnnecessary={}"), Name, IsUnnecessary());
+
+            _streamList1.DebugPrintStatesChain(_T("ENTER: streamList1"));
+            _streamList2.DebugPrintStatesChain(_T("ENTER: streamList2"));
+
+            STATE_COMMON->SetCurrentModeIsMultiStreamInput();
+
+            if (IsUnnecessary()) {
+                _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+                _LOG_DEBUGH(_T("ClearCurrentModeIsMultiStreamInput"));
+                STATE_COMMON->ClearCurrentModeIsMultiStreamInput();
+                return;
+            }
+
+            // 単語素片の収集
+            std::vector<WordPiece> pieces;
+            if ((int)STATE_COMMON->GetTotalDecKeyCount() == _strokeCountBS) {
+                _LOG_DEBUGH(_T("add WordPiece for BS."));
+                pieces.push_back(WordPiece::BSPiece());
+            } else {
+                _LOG_DEBUGH(_T("streamList1: AddWordPieces"));
+                _streamList1.AddWordPieces(pieces, false);
+                _LOG_DEBUGH(_T("streamList2: AddWordPieces"));
+                _streamList2.AddWordPieces(pieces, false);
+
+                Node* pNextNode1 = _streamList1.GetNonStringNode();
+                Node* pNextNode2 = _streamList2.GetNonStringNode();
+                if (pNextNode1 || pNextNode2) {
+                    // 文字列ノード以外が返ったら、状態をクリアする
+                    _LOG_DEBUGH(_T("NonStringNode FOUND: pNextNode1={:p}, pNextNode2={:p}"), (void*)pNextNode1, (void*)pNextNode2);
+                    _streamList1.Clear();
+                    _streamList2.Clear();
+                    SetNextNodeMaybe(pNextNode1 ? pNextNode1 : pNextNode2);
+                }
+#if 0
+                // TODO: 以下は不要のはず
+                if (_streamList1.Empty() && _streamList2.Empty()) {
+                    // 全てのストローク状態が削除されたので、後処理してマージノードも削除
+                    _LOG_DEBUGH(_T("REMOVE ALL"));
+                    SetNextNodeMaybe(pNextNode1 ? pNextNode1 : pNextNode2);
+                    //MarkUnnecessary();
+                }
+#endif
+                if (!IsUnnecessary() && pieces.empty()) {
+                    _LOG_DEBUGH(_T("pieces is empty. add EmptyWordPiece."));
+                    pieces.push_back(WordPiece::emptyPiece());
+                }
+            }
+
+            // Lattice処理
+            auto result = WORD_LATTICE->addPieces(pieces);
+
+            // 新しい文字列が得られたらそれを返す
+            if (!result.outStr.empty() || result.numBS > 0) {
+                resultOut.setResult(result.outStr, result.numBS);
+                SetTranslatedOutString(resultOut);
+                if (resultStr.isModified()) {
+                    resultOut.setResult(resultStr);
+                }
+            } else {
+                _LOG_DEBUGH(_T("NO resultOut"));
+            }
+
+            if (_streamList1.Empty() && _streamList2.Empty() && WORD_LATTICE->isEmpty()) {
+                WORD_LATTICE->clear();
+                //MarkUnnecessary();
+                _LOG_DEBUGH(_T("ClearCurrentModeIsMultiStreamInput"));
+                STATE_COMMON->ClearCurrentModeIsMultiStreamInput();
+            }
+
+            _streamList1.DebugPrintStatesChain(_T("LEAVE: streamList1"));
+            _streamList2.DebugPrintStatesChain(_T("LEAVE: streamList2"));
+
+            //if (_streamList1.Empty() && _streamList2.Empty()) {
+            //    _LOG_DEBUGH(_T("ClearCurrentModeIsMultiStreamInput"));
+            //    STATE_COMMON->ClearCurrentModeIsMultiStreamInput();
+            //} else {
+            //    _LOG_DEBUGH(_T("SetCurrentModeIsMultiStreamInput"));
+            //    STATE_COMMON->SetCurrentModeIsMultiStreamInput();
+            //}
+            _LOG_DEBUGH(_T("LEAVE: {}: resultStr=[{}]"), Name, resultOut.debugString());
+        }
+
+        // チェーンをたどって不要とマークされた後続状態を削除する
+        void DeleteUnnecessarySuccessorStateChain() override {
+            _LOG_DEBUGH(_T("ENTER: {}, IsUnnecessary={}"), Name, IsUnnecessary());
+            _LOG_DEBUGH(_T("streamList1: deleteUnnecessaryNextState"));
+            _streamList1.DeleteUnnecessaryNextStates();
+            _LOG_DEBUGH(_T("streamList2: deleteUnnecessaryNextState"));
+            _streamList2.DeleteUnnecessaryNextStates();
+
+            _streamList1.DebugPrintStatesChain(_T("LEAVE: streamList1"));
+            _streamList2.DebugPrintStatesChain(_T("LEAVE: streamList2"));
+            _LOG_DEBUGH(_T("LEAVE: {}, NextNode={}"), Name, NODE_NAME(NextNodeMaybe()));
+        }
+
+        // ストロークテーブルチェインの長さ(テーブルのレベル)
+        size_t StrokeTableChainLength() const override {
+            size_t len1 = _streamList1.StrokeTableChainLength();
+            size_t len2 = _streamList2.StrokeTableChainLength();
+            return len1 < len2 ? len2 : len1;
+        }
+
+        String JoinedName() const override {
+            return Name + _T("(") + _streamList1.ChainLengthString() + _T("/") + _streamList2.ChainLengthString()  + _T(")");
+        }
+
+    private:
         int candSelectDeckey = -1;
 
 
@@ -858,19 +1206,6 @@ namespace {
         MStringResult& resultString() override { return resultStr; }
 
     public:
-        // コンストラクタ
-        HistoryResidentStateImpl(HistoryResidentNode* pN) : HistoryStateBase(pN) {
-            LOG_INFO(_T("CALLED"));
-            Initialize(logger.ClassNameT(), pN);
-        }
-
-        ~HistoryResidentStateImpl() { };
-
-        //// 常駐状態か
-        //bool IsResident() const {
-        //    return true;
-        //}
-
         // 状態の再アクティブ化
         void Reactivate() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
@@ -883,7 +1218,7 @@ namespace {
             bCandSelectable = false;
             _LOG_DEBUGH(_T("bCandSelectable=False"));
             resultStr.clear();
-            HISTORY_RESIDENT_NODE->ClearPrevHistState();     // まだ履歴検索が行われていないということを表す
+            STROKE_MERGER_NODE->ClearPrevHistState();     // まだ履歴検索が行われていないということを表す
             HIST_CAND->ClearKeyInfo();      // まだ履歴検索が行われていないということを表す
         }
 
@@ -892,22 +1227,6 @@ namespace {
             bool result = (NextState() && NextState()->IsHistoryReset());
             _LOG_DEBUGH(_T("CALLED: {}: result={}"), Name, result);
             return result;
-        }
-
-        // 出力文字を取得する
-        void GetResultStringChain(MStringResult& resultOut) override {
-            _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            if (resultStr.isDefault()) {
-                if (NextState()) {
-                    State::GetResultStringChain(resultOut);
-                }
-                if (resultOut.isModified()) {
-                    SetTranslatedOutString(resultOut);
-                }
-            }
-            if (resultStr.isModified()) {
-                resultOut.setResult(resultStr);
-            }
         }
 
     public:
@@ -1010,7 +1329,7 @@ namespace {
             // 候補が選択されていれば、それを使用履歴の先頭にpushする
             HIST_CAND->DelayedPushFrontSelectedWord();
             // どれかの候補が選択されている状態なら、それを確定し、履歴キーをクリアしておく
-            HISTORY_RESIDENT_NODE->ClearPrevHistState();
+            STROKE_MERGER_NODE->ClearPrevHistState();
             HIST_CAND->ClearKeyInfo();
         }
 
@@ -1029,7 +1348,7 @@ namespace {
                 //prevKey.clear();
                 _LOG_DEBUGH(_T("Set Reinitialized=true"));
                 maybeEditedBySubState = true;
-                HISTORY_RESIDENT_NODE->ClearPrevHistState();    // まだ履歴検索が行われていない状態にしておく
+                STROKE_MERGER_NODE->ClearPrevHistState();    // まだ履歴検索が行われていない状態にしておく
                 HIST_CAND->ClearKeyInfo();      // まだ履歴検索が行われていないということを表す
             }
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
@@ -1095,7 +1414,7 @@ namespace {
                 // こうしておかないと、自動履歴検索OFFのとき、たとえば、
                 // 「エッ」⇒Ctrl+Space⇒「エッセンス」⇒Esc⇒「エッ」⇒「セ」追加⇒出力「エッセ」、キー=「エッ」のまま⇒再検索⇒「エッセセンス」となる
                 _LOG_DEBUGH(_T("Not Hist Search mode: Clear PrevKey"));
-                HISTORY_RESIDENT_NODE->ClearPrevHistState();
+                STROKE_MERGER_NODE->ClearPrevHistState();
                 HIST_CAND->ClearKeyInfo();
             } else {
                 // 履歴検索可能状態である
@@ -1151,7 +1470,7 @@ namespace {
                         // キーが取得できた
                         //bool isAscii = is_ascii_char((wchar_t)utils::safe_back(key));
                         _LOG_DEBUGH(_T("HistSearch: PATH 8: key={}, prevKey={}, maybeEditedBySubState={}"),
-                            to_wstr(key), to_wstr(HISTORY_RESIDENT_NODE->GetPrevKey()), maybeEditedBySubState);
+                            to_wstr(key), to_wstr(STROKE_MERGER_NODE->GetPrevKey()), maybeEditedBySubState);
                         auto histCandsChecker = [this](const std::vector<MString>& words, const MString& ky) {
                             _LOG_DEBUGH(_T("HistSearch: CANDS CHECKER: words.size()={}, key={}"), words.size(), to_wstr(ky));
                             if (words.empty() || (words.size() == 1 && (words[0].empty() || words[0] == ky))) {
@@ -1165,7 +1484,7 @@ namespace {
                                 }
                             }
                         };
-                        if (key != HISTORY_RESIDENT_NODE->GetPrevKey() || maybeEditedBySubState || bManual) {
+                        if (key != STROKE_MERGER_NODE->GetPrevKey() || maybeEditedBySubState || bManual) {
                             _LOG_DEBUGH(_T("HistSearch: PATH 9: different key"));
                             //bool bCheckMinKeyLen = !bManual && utils::is_hiragana(key[0]);       // 自動検索かつ、キー先頭がひらがなならキー長チェックをやる
                             bool bCheckMinKeyLen = !bManual;                                     // 自動検索ならキー長チェックをやる
@@ -1180,13 +1499,13 @@ namespace {
                         }
                     }
                     _LOG_DEBUGH(_T("HistSearch: SetPrevHistKeyState(key={})"), to_wstr(key));
-                    HISTORY_RESIDENT_NODE->SetPrevHistKeyState(key);
+                    STROKE_MERGER_NODE->SetPrevHistKeyState(key);
                     _LOG_DEBUGH(_T("DONE HistSearch"));
                 }
             }
 
             // この処理は、GUI側で候補の背景色を変更するために必要
-            if (isHotCandidateReady(HISTORY_RESIDENT_NODE->GetPrevKey(), HIST_CAND->GetCandWords())) {
+            if (isHotCandidateReady(STROKE_MERGER_NODE->GetPrevKey(), HIST_CAND->GetCandWords())) {
                 _LOG_DEBUGH(_T("PATH 14"));
                 // 何がしかの文字出力があり、それをキーとする履歴候補があった場合 -- 未選択状態にセットする
                 _LOG_DEBUGH(_T("Set Unselected"));
@@ -1233,7 +1552,7 @@ namespace {
                 // 前回の履歴検索との比較、新しい履歴検索の開始
                 if (bNoHistTemporary) {
                     // 一時的に履歴検索が不可になっている場合は、キーと出力文字列を比較して、異った状態になっていたら可に戻す
-                    MString prevKey = HISTORY_RESIDENT_NODE->GetPrevKey();
+                    MString prevKey = STROKE_MERGER_NODE->GetPrevKey();
                     MString outStr = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(prevKey.size());
                     bNoHistTemporary = OUTPUT_STACK->GetLastOutputStackStrUptoBlocker(prevKey.size()) == prevKey;
                     LOG_DEBUGH(_T("PATH 8: bNoHistTemporary={}: prevKey={}, outStr={}"), bNoHistTemporary, to_wstr(prevKey), to_wstr(outStr));
@@ -1332,7 +1651,7 @@ namespace {
                 getNextCandidate();
             } else {
                 _LOG_DEBUGH(_T("candSelectDeckey={:x}"), candSelectDeckey);
-                HistoryResidentState::handleDownArrow();
+                State::handleDownArrow();
             }
             _LOG_DEBUGH(_T("LEAVE"));
         }
@@ -1345,7 +1664,7 @@ namespace {
                 getPrevCandidate();
             } else {
                 _LOG_DEBUGH(_T("candSelectDeckey={:x}"), candSelectDeckey);
-                HistoryResidentState::handleUpArrow();
+                State::handleUpArrow();
             }
             _LOG_DEBUGH(_T("LEAVE"));
         }
@@ -1373,7 +1692,7 @@ namespace {
                 setCandSelectIsCalled();
                 getNextCandidate();
             } else {
-                HistoryResidentState::handleTab();
+                State::handleTab();
             }
         }
 
@@ -1384,16 +1703,16 @@ namespace {
                 setCandSelectIsCalled();
                 getPrevCandidate();
             } else {
-                HistoryResidentState::handleShiftTab();
+                State::handleShiftTab();
             }
         }
 
         // Ctrl-H/BS の処理 -- 履歴検索の初期化
         void handleBS() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            HISTORY_RESIDENT_NODE->ClearPrevHistState();
+            STROKE_MERGER_NODE->ClearPrevHistState();
             HIST_CAND->ClearKeyInfo();
-            HistoryResidentState::handleBS();
+            State::handleBS();
         }
 
         // DecoderOff の処理
@@ -1401,7 +1720,7 @@ namespace {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             // Enter と同じ扱いにする
             AddNewHistEntryOnEnter();
-            HistoryResidentState::handleDecoderOff();
+            State::handleDecoderOff();
         }
         
         // RET/Enter の処理
@@ -1413,21 +1732,21 @@ namespace {
                 setCandSelectIsCalled();
                 getNextCandidate(false);
             } else if (bCandSelectable && HIST_CAND->GetSelectPos() >= 0) {
-                _LOG_DEBUGH(_T("CALL: HISTORY_RESIDENT_NODE->ClearPrevHistState(); HIST_CAND->ClearKeyInfo(); bManualTemporary = true"));
+                _LOG_DEBUGH(_T("CALL: STROKE_MERGER_NODE->ClearPrevHistState(); HIST_CAND->ClearKeyInfo(); bManualTemporary = true"));
                 // どれかの候補が選択されている状態なら、それを確定し、履歴キーをクリアしておく
-                HISTORY_RESIDENT_NODE->ClearPrevHistState();
+                STROKE_MERGER_NODE->ClearPrevHistState();
                 HIST_CAND->ClearKeyInfo();
                 // 一時的にマニュアル操作フラグを立てることで、DoLastHistoryProc() から historySearch() を呼ぶときに履歴再検索が実行されるようにする
                 bManualTemporary = true;
                 if (SETTINGS->newLineWhenHistEnter) {
                     // 履歴候補選択時のEnterではつねに改行するなら、確定後、Enter処理を行う
-                    HistoryResidentState::handleEnter();
+                    State::handleEnter();
                 }
             } else {
                 // それ以外は通常のEnter処理
                 _LOG_DEBUGH(_T("CALL: AddNewHistEntryOnEnter()"));
                 AddNewHistEntryOnEnter();
-                HistoryResidentState::handleEnter();
+                State::handleEnter();
             }
             _LOG_DEBUGH(_T("LEAVE"));
         }
@@ -1448,7 +1767,7 @@ namespace {
         //    } else {
         //        // Enterと同じ扱い
         //        AddNewHistEntryOnEnter();
-        //        HistoryResidentState::handleCtrlJ();
+        //        State::handleCtrlJ();
         //    }
         //}
 
@@ -1481,7 +1800,7 @@ namespace {
                 ResidentState::handleEsc();
                 //// 何も候補が選択されていない状態なら履歴選択状態から抜ける
                 //STATE_COMMON->SetHistoryBlockFlag();
-                //HistoryResidentState::handleEsc();
+                //State::handleEsc();
                 //// 完全に抜ける
                 //handleFullEscape();
             }
@@ -1537,136 +1856,92 @@ namespace {
             // 英数モードはキャンセルする
             if (NextState()) NextState()->handleEisuCancel();
 
-            _LOG_DEBUGH(_T("LEAVE: prevOut={}, numBS={}"), to_wstr(HISTORY_RESIDENT_NODE->GetPrevOutString()), resultStr.numBS());
+            _LOG_DEBUGH(_T("LEAVE: prevOut={}, numBS={}"), to_wstr(STROKE_MERGER_NODE->GetPrevOutString()), resultStr.numBS());
         }
 
     };
-    DEFINE_CLASS_LOGGER(HistoryResidentStateImpl);
+    DEFINE_CLASS_LOGGER(StrokeMergerHistoryResidentStateImpl);
+
+    DEFINE_LOCAL_LOGGER(StrokeMerger);
+
+    // テーブルファイルを読み込んでストローク木を作成する
+    void createStrokeTree(StringRef tableFile, void(*treeCreator)(StringRef, std::vector<String>&)) {
+        LOG_INFO(_T("ENTER: tableFile={}"), tableFile);
+
+        utils::IfstreamReader reader(tableFile);
+        if (reader.success()) {
+            //auto lines = utils::IfstreamReader(tableFile).getAllLines();
+            auto lines = reader.getAllLines();
+            // ストロークノード木の構築
+            treeCreator(tableFile, lines);
+            LOG_INFO(_T("close table file: {}"), tableFile);
+        } else {
+            // エラー
+            LOG_ERROR(_T("Can't read table file: {}"), tableFile);
+            ERROR_HANDLER->Error(std::format(_T("テーブルファイル({})が開けません"), tableFile));
+        }
+
+        LOG_INFO(_T("LEAVE"));
+    }
 
 } // namespace
 
 // 履歴入力(常駐)機能状態インスタンスの Singleton
-HistoryResidentState* HistoryResidentState::Singleton;
+StrokeMergerHistoryResidentState* StrokeMergerHistoryResidentState::Singleton;
 
 // -------------------------------------------------------------------
-// HistoryNode - 履歴入力機能ノード
-DEFINE_CLASS_LOGGER(HistoryNode);
+// StrokeMergerNode - マージ入力機能 常駐ノード
+DEFINE_CLASS_LOGGER(StrokeMergerHistoryNode);
 
 // コンストラクタ
-HistoryNode::HistoryNode() {
-    LOG_DEBUGH(_T("CALLED: constructor"));
+StrokeMergerHistoryNode::StrokeMergerHistoryNode() {
+    LOG_INFO(_T("CALLED: constructor"));
 }
 
 // デストラクタ
-HistoryNode::~HistoryNode() {
+StrokeMergerHistoryNode::~StrokeMergerHistoryNode() {
+    LOG_INFO(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する
-State* HistoryNode::CreateState() {
-    LOG_INFO(_T("CALLED"));
-    if (SETTINGS->multiStreamMode) return 0;
-    return new HistoryState(this);
+State* StrokeMergerHistoryNode::CreateState() {
+    return new StrokeMergerHistoryResidentStateImpl(this);
 }
 
-HistoryNode* HistoryNode::Singleton;
+// テーブルファイルを読み込んでストローク木を作成する
+void StrokeMergerHistoryNode::createStrokeTrees(bool bForceSecondary) {
+    // テーブルファイル名
+    if (SETTINGS->tableFile.empty()) {
+        // エラー
+        ERROR_HANDLER->Error(_T("「tableFile=(ファイル名)」の設定がまちがっているようです"));
+    } else {
 
-// -------------------------------------------------------------------
-// HistoryNodeBuilder - 履歴入力機能ノードビルダー
-DEFINE_CLASS_LOGGER(HistoryNodeBuilder);
+#define STROKE_TREE_CREATOR(F) [](StringRef file, std::vector<String>& lines) {F(file, lines);}
 
-Node* HistoryNodeBuilder::CreateNode() {
-    //// 履歴入力辞書ファイル名
-    //auto histFile = SETTINGS->historyFile;
-    //LOG_DEBUGH(_T("histFile={}"), histFile);
-    ////if (histFile.empty()) {
-    ////    ERROR_HANDLER->Warn(_T("「history=(ファイル名)」の設定がまちがっているようです"));
-    ////}
-    //// 履歴入力辞書の読み込み(ファイル名の指定がなくても辞書自体は構築する)
-    //LOG_DEBUGH(_T("CALLED: histFile={}"), histFile);
-    //HistoryDic::CreateHistoryDic(histFile);
+        // 主テーブルファイルの構築
+        createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile1.tbl")), STROKE_TREE_CREATOR(StrokeTableNode::CreateStrokeTree));
 
-    HISTORY_NODE = new HistoryNode();
-    return HISTORY_NODE;
+        if (bForceSecondary || !SETTINGS->tableFile2.empty()) {
+            // 副テーブルファイルの構築
+            createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile2.tbl")), STROKE_TREE_CREATOR(StrokeTableNode::CreateStrokeTree2));
+        }
+
+        if (!SETTINGS->tableFile3.empty()) {
+            // 第3テーブルファイルの構築
+            createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile3.tbl")), STROKE_TREE_CREATOR(StrokeTableNode::CreateStrokeTree3));
+        }
+    }
 }
 
-// -------------------------------------------------------------------
-// HistoryFewCharsNode - 2～3文字履歴機能ノード
-DEFINE_CLASS_LOGGER(HistoryFewCharsNode);
+// StrokeMergerNode::Singleton
+std::unique_ptr<StrokeMergerHistoryNode> StrokeMergerHistoryNode::Singleton;
 
-// コンストラクタ
-HistoryFewCharsNode::HistoryFewCharsNode() {
-    LOG_DEBUGH(_T("CALLED: constructor"));
+void StrokeMergerHistoryNode::CreateSingleton() {
+    Singleton.reset(new StrokeMergerHistoryNode());
 }
 
-// デストラクタ
-HistoryFewCharsNode::~HistoryFewCharsNode() {
-}
-
-// 当ノードを処理する State インスタンスを作成する
-State* HistoryFewCharsNode::CreateState() {
-    LOG_INFO(_T("CALLED"));
-    if (SETTINGS->multiStreamMode) return 0;
-    return new HistoryFewCharsState(this);
-}
-
-// -------------------------------------------------------------------
-// HistoryFewCharsNodeBuilder - 2～3文字履歴機能ノードビルダー
-DEFINE_CLASS_LOGGER(HistoryFewCharsNodeBuilder);
-
-Node* HistoryFewCharsNodeBuilder::CreateNode() {
-    return new HistoryFewCharsNode();
-}
-
-// -------------------------------------------------------------------
-// HistoryOneCharNode - 1文字履歴機能ノード
-DEFINE_CLASS_LOGGER(HistoryOneCharNode);
-
-// コンストラクタ
-HistoryOneCharNode::HistoryOneCharNode() {
-    LOG_DEBUGH(_T("CALLED: constructor"));
-}
-
-// デストラクタ
-HistoryOneCharNode::~HistoryOneCharNode() {
-}
-
-// 当ノードを処理する State インスタンスを作成する
-State* HistoryOneCharNode::CreateState() {
-    LOG_INFO(_T("CALLED"));
-    if (SETTINGS->multiStreamMode) return 0;
-    return new HistoryOneCharState(this);
-}
-
-// -------------------------------------------------------------------
-// HistoryOneCharNodeBuilder - 1文字履歴機能ノードビルダー
-DEFINE_CLASS_LOGGER(HistoryOneCharNodeBuilder);
-
-Node* HistoryOneCharNodeBuilder::CreateNode() {
-    return new HistoryOneCharNode();
-}
-
-// -------------------------------------------------------------------
-// HistoryResidentNode - 履歴入力機能 常駐ノード
-DEFINE_CLASS_LOGGER(HistoryResidentNode);
-
-// コンストラクタ
-HistoryResidentNode::HistoryResidentNode() {
-    LOG_DEBUGH(_T("CALLED: constructor"));
-}
-
-// デストラクタ
-HistoryResidentNode::~HistoryResidentNode() {
-}
-
-// 当ノードを処理する State インスタンスを作成する
-State* HistoryResidentNode::CreateState() {
-    LOG_INFO(_T("CALLED"));
-    SINGLE_HISTORY_RESIDENT_STATE = new HistoryResidentStateImpl(this);
-    return SINGLE_HISTORY_RESIDENT_STATE;
-}
-
-// 履歴機能常駐ノードの生成
-void HistoryResidentNode::CreateSingleton() {
+// マージ履歴機能常駐ノードの初期化
+void StrokeMergerHistoryNode::Initialize() {
     // 履歴入力辞書ファイル名
     auto histFile = SETTINGS->historyFile;
     LOG_DEBUGH(_T("histFile={}"), histFile);
@@ -1674,10 +1949,8 @@ void HistoryResidentNode::CreateSingleton() {
     LOG_DEBUGH(_T("CALLED: histFile={}"), histFile);
     HistoryDic::CreateHistoryDic(histFile);
 
-    HIST_CAND.reset(new HistCandidates());
-    HISTORY_RESIDENT_NODE.reset(new HistoryResidentNode());
-}
+    HistCandidates::CreateSingleton();
 
-// Singleton
-std::unique_ptr<HistoryResidentNode> HistoryResidentNode::Singleton;
+    StrokeMergerHistoryNode::CreateSingleton();
+}
 

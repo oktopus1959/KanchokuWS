@@ -128,17 +128,21 @@ public:
         startNode.reset(new StartNode());
         startState.reset(dynamic_cast<StartState*>(startNode->CreateState()));
 
-        // 履歴入力機能を生成して常駐させる
-        HistoryResidentNode::CreateSingleton();
-        startState->CreateStateAndStayResidentAtEndOfChain(HISTORY_RESIDENT_NODE.get());
-        // 必要があれば、ここにその他の常駐機能を追加する
-
         // Lattice を生成
         //Lattice::createLattice();
         Lattice2::createLattice();
 
-        // マージ機能ノードを生成
-        StrokeMergerNode::CreateSingleton();
+        // マージ履歴機能ノードを初期化
+        StrokeMergerHistoryNode::Initialize();
+
+        // 履歴入力機能を生成して常駐させる
+        if (SETTINGS->multiStreamMode) {
+            startState->CreateStateAndStayResidentAtEndOfChain(STROKE_MERGER_NODE.get());
+        } else {
+            HistoryResidentNode::CreateSingleton();
+            startState->CreateStateAndStayResidentAtEndOfChain(HISTORY_RESIDENT_NODE.get());
+        }
+        // 必要があれば、ここにその他の常駐機能を追加する
 
         // MyCharNode - 自キー文字を返すノードのSingleton生成
         MyCharNode::CreateSingleton();
@@ -310,7 +314,10 @@ public:
 
     // 履歴のコミットと初期化
     void commitHistory() {
-        HISTORY_RESIDENT_STATE->commitHistory();
+        if (SETTINGS->multiStreamMode)
+            MERGER_HISTORY_RESIDENT_STATE->commitHistory();
+        else
+            SINGLE_HISTORY_RESIDENT_STATE->commitHistory();
     }
 
     // デコーダが扱う辞書を保存する

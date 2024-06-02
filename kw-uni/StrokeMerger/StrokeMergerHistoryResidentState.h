@@ -4,7 +4,7 @@
 
 // -------------------------------------------------------------------
 // 履歴入力(常駐)機能状態(抽象)クラス
-class HistoryResidentState : public ResidentState {
+class StrokeMergerHistoryResidentState : public ResidentState {
 protected:
     // 履歴常駐状態の事前チェック
     //void DoHistoryResidentPreCheck() override = 0;
@@ -28,7 +28,7 @@ public:
 
 public:
     // 唯一のインスタンスを指すポインタ (寿命管理は CreateState() を呼び出したところがやる)
-    static HistoryResidentState* Singleton;
+    static StrokeMergerHistoryResidentState* Singleton;
 };
 
-#define SINGLE_HISTORY_RESIDENT_STATE (HistoryResidentState::Singleton)
+#define MERGER_HISTORY_RESIDENT_STATE (StrokeMergerHistoryResidentState::Singleton)
