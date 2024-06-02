@@ -736,7 +736,8 @@ void State::handleEsc() {
 void State::handleBS() {
     _LOG_DEBUGH(_T("BackSpace"));
     //if (WORD_LATTICE) WORD_LATTICE->clear();
-    setCharDeleteInfo(1);
+    //setCharDeleteInfo(1);
+    handleSpecialKeys(BS_DECKEY);
 }
 
 // TAB ハンドラ

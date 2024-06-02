@@ -3,7 +3,7 @@
 #include "StartNode.h"
 #include "StartState.h"
 //#include "ResidentState.h"
-#include "History/HistoryResidentState.h"
+//#include "History/HistoryResidentState.h"
 
 #if 0 || defined(_DEBUG)
 #undef LOG_INFO

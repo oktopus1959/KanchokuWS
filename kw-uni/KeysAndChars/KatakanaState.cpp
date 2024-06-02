@@ -12,7 +12,7 @@
 #include "State.h"
 #include "StrokeTable.h"
 #include "OutputStack.h"
-#include "History//HistoryResidentState.h"
+//#include "StrokeMerger/HistoryResidentState.h"
 #include "StrokeMerger/StrokeMergerHistoryResidentState.h"
 #include "ModalStateUtil.h"
 
@@ -120,10 +120,7 @@ namespace {
         void handleFullEscape() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             //cancelMe();
-            if (SETTINGS->multiStreamMode)
-                MERGER_HISTORY_RESIDENT_STATE->handleFullEscapeResidentState();
-            else
-                SINGLE_HISTORY_RESIDENT_STATE->handleFullEscapeResidentState();
+            MERGER_HISTORY_RESIDENT_STATE->handleFullEscapeResidentState();
         }
 
         // Esc の処理 -- 処理のキャンセル

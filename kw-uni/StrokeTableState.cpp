@@ -13,7 +13,7 @@
 #include "KeysAndChars/Eisu.h"
 
 #include "DeckeyToChars.h"
-#include "History/HistoryResidentState.h"
+//#include "History/HistoryResidentState.h"
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughStrokeTable)
 

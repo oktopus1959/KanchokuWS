@@ -189,9 +189,10 @@
     <ClInclude Include="FunctionNodeBuilder.h" />
     <ClInclude Include="FunctionNodeBuilderList.h" />
     <ClInclude Include="FunctionNodeManager.h" />
+    <ClInclude Include="History\HistCandidates.h" />
     <ClInclude Include="History\History.h" />
     <ClInclude Include="History\HistoryDic.h" />
-    <ClInclude Include="History\HistoryResidentState.h" />
+    <ClInclude Include="History\HistoryStateBase.h" />
     <ClInclude Include="KeysAndChars\DeckeyToChars.h" />
     <ClInclude Include="KeysAndChars\deckey_id_defs.h" />
     <ClInclude Include="KeysAndChars\EasyChars.h" />
@@ -226,6 +227,8 @@
     <ClInclude Include="ResidentState.h" />
     <ClInclude Include="StringNode.h" />
     <ClInclude Include="StrokeMerger\HistCandidates.h" />
+    <ClInclude Include="StrokeMerger\History.h" />
+    <ClInclude Include="StrokeMerger\HistoryStateBase.h" />
     <ClInclude Include="StrokeMerger\Lattice.h" />
     <ClInclude Include="StrokeMerger\Merger.h" />
     <ClInclude Include="StrokeMerger\StrokeMergerHistoryResidentState.h" />
@@ -259,8 +262,10 @@
     <ClCompile Include="BushuComp\BushuAssocDic.cpp" />
     <ClCompile Include="EscapeState.cpp" />
     <ClCompile Include="FunctionNodeManager.cpp" />
-    <ClCompile Include="History\History.cpp" />
+    <ClCompile Include="History\HistCandidates.cpp" />
     <ClCompile Include="History\HistoryDic.cpp" />
+    <ClCompile Include="History\HistoryState.cpp" />
+    <ClCompile Include="History\HistoryStateBase.cpp" />
     <ClCompile Include="KeysAndChars\DeckeyToChars.cpp" />
     <ClCompile Include="KeysAndChars\deckey_id_defs.cpp" />
     <ClCompile Include="KeysAndChars\EasyChars.cpp" />
@@ -289,7 +294,6 @@
     <ClCompile Include="StateCommonInfo.cpp" />
     <ClCompile Include="ResidentState.cpp" />
     <ClCompile Include="StringState.cpp" />
-    <ClCompile Include="StrokeMerger\HistCandidates.cpp" />
     <ClCompile Include="StrokeMerger\Lattice.cpp" />
     <ClCompile Include="StrokeMerger\Lattice2.cpp" />
     <ClCompile Include="StrokeMerger\MergerHistoryState.cpp" />

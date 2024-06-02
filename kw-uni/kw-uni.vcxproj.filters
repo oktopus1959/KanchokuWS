@@ -153,9 +153,6 @@
     <ClInclude Include="History\HistoryDic.h">
       <Filter>ヘッダー ファイル\History</Filter>
     </ClInclude>
-    <ClInclude Include="History\HistoryResidentState.h">
-      <Filter>ヘッダー ファイル\History</Filter>
-    </ClInclude>
     <ClInclude Include="KeysAndChars\deckey_id_defs.h">
       <Filter>ヘッダー ファイル\KeysAndChars</Filter>
     </ClInclude>
@@ -221,9 +218,6 @@
     </ClInclude>
     <ClInclude Include="KeysAndChars\RomanToKatakana.h">
       <Filter>ヘッダー ファイル\KeysAndChars</Filter>
-    </ClInclude>
-    <ClInclude Include="History\History.h">
-      <Filter>ヘッダー ファイル\History</Filter>
     </ClInclude>
     <ClInclude Include="OneShot\RewriteString.h">
       <Filter>ヘッダー ファイル\OneShot</Filter>
@@ -297,6 +291,21 @@
     <ClInclude Include="StrokeMerger\HistCandidates.h">
       <Filter>ヘッダー ファイル\StrokeMerger</Filter>
     </ClInclude>
+    <ClInclude Include="StrokeMerger\HistoryStateBase.h">
+      <Filter>ヘッダー ファイル\StrokeMerger</Filter>
+    </ClInclude>
+    <ClInclude Include="StrokeMerger\History.h">
+      <Filter>ヘッダー ファイル\StrokeMerger</Filter>
+    </ClInclude>
+    <ClInclude Include="History\HistCandidates.h">
+      <Filter>ヘッダー ファイル\History</Filter>
+    </ClInclude>
+    <ClInclude Include="History\History.h">
+      <Filter>ヘッダー ファイル\History</Filter>
+    </ClInclude>
+    <ClInclude Include="History\HistoryStateBase.h">
+      <Filter>ヘッダー ファイル\History</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -352,9 +361,6 @@
     </ClCompile>
     <ClCompile Include="BushuComp\BushuDic.cpp">
       <Filter>ソース ファイル\BushuComp</Filter>
-    </ClCompile>
-    <ClCompile Include="History\History.cpp">
-      <Filter>ソース ファイル\History</Filter>
     </ClCompile>
     <ClCompile Include="History\HistoryDic.cpp">
       <Filter>ソース ファイル\History</Filter>
@@ -440,8 +446,14 @@
     <ClCompile Include="StrokeMerger\Lattice2.cpp">
       <Filter>ソース ファイル\StrokeMerger</Filter>
     </ClCompile>
-    <ClCompile Include="StrokeMerger\HistCandidates.cpp">
-      <Filter>ソース ファイル\StrokeMerger</Filter>
+    <ClCompile Include="History\HistCandidates.cpp">
+      <Filter>ソース ファイル\History</Filter>
+    </ClCompile>
+    <ClCompile Include="History\HistoryState.cpp">
+      <Filter>ソース ファイル\History</Filter>
+    </ClCompile>
+    <ClCompile Include="History\HistoryStateBase.cpp">
+      <Filter>ソース ファイル\History</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

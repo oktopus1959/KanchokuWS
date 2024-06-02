@@ -289,7 +289,8 @@ namespace lattice2 {
         std::vector<CandidateString> _candidates;
 
         static bool _isEmpty(const std::vector<CandidateString> cands) {
-            return cands.empty() || cands.size() == 1 && cands.front().string().empty();
+            //return cands.empty() || cands.size() == 1 && cands.front().string().empty();
+            return cands.empty() || cands.size() > 0 && cands.front().string().empty();
         }
 
     public:

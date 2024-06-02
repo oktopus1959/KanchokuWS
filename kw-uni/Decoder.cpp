@@ -32,13 +32,15 @@
 #include "BushuComp/BushuDic.h"
 #include "BushuComp/BushuAssoc.h"
 #include "BushuComp/BushuAssocDic.h"
-#include "History/History.h"
+//#include "StrokeMerger/History.h"
 #include "History/HistoryDic.h"
 #include "Mazegaki/Mazegaki.h"
 #include "Mazegaki/MazegakiDic.h"
 
 #include "StrokeMerger/Lattice.h"
 #include "StrokeMerger/Merger.h"
+#include "StrokeMerger/StrokeMergerHistoryResidentState.h"
+
 #include "Mecab/MecabBridge.h"
 
 #if 1 || defined(_DEBUG)
@@ -136,12 +138,8 @@ public:
         StrokeMergerHistoryNode::Initialize();
 
         // 履歴入力機能を生成して常駐させる
-        if (SETTINGS->multiStreamMode) {
-            startState->CreateStateAndStayResidentAtEndOfChain(STROKE_MERGER_NODE.get());
-        } else {
-            HistoryResidentNode::CreateSingleton();
-            startState->CreateStateAndStayResidentAtEndOfChain(HISTORY_RESIDENT_NODE.get());
-        }
+        startState->CreateStateAndStayResidentAtEndOfChain(STROKE_MERGER_NODE.get());
+
         // 必要があれば、ここにその他の常駐機能を追加する
 
         // MyCharNode - 自キー文字を返すノードのSingleton生成
@@ -314,10 +312,7 @@ public:
 
     // 履歴のコミットと初期化
     void commitHistory() {
-        if (SETTINGS->multiStreamMode)
-            MERGER_HISTORY_RESIDENT_STATE->commitHistory();
-        else
-            SINGLE_HISTORY_RESIDENT_STATE->commitHistory();
+        MERGER_HISTORY_RESIDENT_STATE->commitHistory();
     }
 
     // デコーダが扱う辞書を保存する

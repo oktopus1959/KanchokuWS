@@ -3,7 +3,7 @@
 #include "Logger.h"
 
 #include "FunctionNode.h"
-#include "StrokeMerger/StrokeMergerHistoryResidentState.h"
+//#include "StrokeMerger/StrokeMergerHistoryResidentState.h"
 
 #if 0
 #define HIST_LOG_DEBUGH LOG_INFO
