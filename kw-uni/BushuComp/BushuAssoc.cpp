@@ -468,7 +468,6 @@ BushuAssocExNode::~BushuAssocExNode() {
 // 当ノードを処理する State インスタンスを作成する
 State* BushuAssocExNode::CreateState() {
     LOG_INFO(_T("CALLED"));
-    if (SETTINGS->multiStreamMode) return 0;
     return new BushuAssocExState(this);
 }
 
@@ -507,7 +506,6 @@ BushuAssocNode::~BushuAssocNode() {
 // 当ノードを処理する State インスタンスを作成する
 State* BushuAssocNode::CreateState() {
     LOG_INFO(_T("CALLED"));
-    if (SETTINGS->multiStreamMode) return 0;
     return new BushuAssocState(this);
 }
 

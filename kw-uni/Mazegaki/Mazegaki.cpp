@@ -547,7 +547,6 @@ MazegakiNode::~MazegakiNode() {
 // 当ノードを処理する State インスタンスを作成する
 State* MazegakiNode::CreateState() {
     LOG_INFO(_T("CALLED"));
-    if (SETTINGS->multiStreamMode) return 0;
     return new MazegakiState(this);
 }
 

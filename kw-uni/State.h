@@ -163,7 +163,7 @@ protected:
     // 状態が生成されたときに実行する処理 (その状態をチェインする場合は true を返す)
     virtual void DoProcOnCreated();
 
-protected:
+public:
     // 出力文字を取得する
     virtual void GetResultStringChain(MStringResult&);
 

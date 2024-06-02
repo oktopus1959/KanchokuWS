@@ -285,18 +285,6 @@
     <ClInclude Include="MStringResult.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="StrokeMerger\StrokeMergerHistoryResidentState.h">
-      <Filter>ソース ファイル\StrokeMerger</Filter>
-    </ClInclude>
-    <ClInclude Include="StrokeMerger\HistCandidates.h">
-      <Filter>ヘッダー ファイル\StrokeMerger</Filter>
-    </ClInclude>
-    <ClInclude Include="StrokeMerger\HistoryStateBase.h">
-      <Filter>ヘッダー ファイル\StrokeMerger</Filter>
-    </ClInclude>
-    <ClInclude Include="StrokeMerger\History.h">
-      <Filter>ヘッダー ファイル\StrokeMerger</Filter>
-    </ClInclude>
     <ClInclude Include="History\HistCandidates.h">
       <Filter>ヘッダー ファイル\History</Filter>
     </ClInclude>
@@ -305,6 +293,9 @@
     </ClInclude>
     <ClInclude Include="History\HistoryStateBase.h">
       <Filter>ヘッダー ファイル\History</Filter>
+    </ClInclude>
+    <ClInclude Include="StrokeMerger\StrokeMergerHistoryResidentState.h">
+      <Filter>ヘッダー ファイル\StrokeMerger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -434,9 +425,6 @@
     <ClCompile Include="OneShot\RewriteString.cpp">
       <Filter>ソース ファイル\OneShot</Filter>
     </ClCompile>
-    <ClCompile Include="StrokeMerger\MergerHistoryState.cpp">
-      <Filter>ソース ファイル\StrokeMerger</Filter>
-    </ClCompile>
     <ClCompile Include="StrokeMerger\Lattice.cpp">
       <Filter>ソース ファイル\StrokeMerger</Filter>
     </ClCompile>
@@ -454,6 +442,9 @@
     </ClCompile>
     <ClCompile Include="History\HistoryStateBase.cpp">
       <Filter>ソース ファイル\History</Filter>
+    </ClCompile>
+    <ClCompile Include="StrokeMerger\MergerHistoryState.cpp">
+      <Filter>ソース ファイル\StrokeMerger</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

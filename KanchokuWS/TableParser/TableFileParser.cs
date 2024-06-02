@@ -511,7 +511,7 @@ namespace KanchokuWS.TableParser
             // 終端ノードの追加と同時打鍵列の組合せの登録
             string str = ConvertKanji(CurrentStr);
             // TODO ひらがなや記号の削除については、ユーザーに指定させるようにする
-            if (!IsSecondaryTableOnMultiStream || (!str._isHiragana() && !str._isZenkakuSymbol())) {
+            if (!IsSecondaryTableOnMultiStream || str._reMatch("^@[v^]") || (!str._isHiragana() && !str._isZenkakuSymbol() && !str._startsWith("@"))) {
                 addTerminalNode(idx, Node.MakeStringNode($"{str}", bBare), true);
                 if (!StrokePathDict.ContainsKey(str)) {
                     // 初めての文字ならストロークパスを登録
@@ -542,8 +542,12 @@ namespace KanchokuWS.TableParser
         {
             if (Settings.LoggingTableFileInfo) logger.Info(() => $"ENTER: depth={Depth}, str={funcMarker}");
             // 終端ノードの追加と同時打鍵列の組合せの登録
-            addTerminalNode(idx, Node.MakeFunctionNode(funcMarker), false);
-            if (IsPrimary) savePresetFunction(idx, funcMarker);
+            if (!IsSecondaryTableOnMultiStream || funcMarker == "v" || funcMarker == "^") {
+                addTerminalNode(idx, Node.MakeFunctionNode(funcMarker), false);
+                if (IsPrimary) savePresetFunction(idx, funcMarker);
+            } else {
+                if (Settings.LoggingTableFileInfo) logger.Info(() => $"LEAVE: Secondary table: IGNORE: {funcMarker}");
+            }
             if (Settings.LoggingTableFileInfo) logger.Info(() => $"LEAVE: depth={Depth}");
         }
 

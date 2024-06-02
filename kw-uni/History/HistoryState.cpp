@@ -7,7 +7,7 @@
 #include "State.h"
 #include "HistoryStateBase.h"
 #include "History.h"
-#include "Merger.h"
+#include "StrokeMerger/Merger.h"
 
 #if 1
 #undef LOG_INFO
@@ -307,7 +307,6 @@ HistoryNode::~HistoryNode() {
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryNode::CreateState() {
     LOG_INFO(_T("CALLED"));
-    if (SETTINGS->multiStreamMode) return 0;
     return new HistoryState(this);
 }
 
@@ -328,7 +327,7 @@ Node* HistoryNodeBuilder::CreateNode() {
     //LOG_DEBUGH(_T("CALLED: histFile={}"), histFile);
     //HistoryDic::CreateHistoryDic(histFile);
 
-    HISTORY_NODE = new HistoryNode();
+    if (!HISTORY_NODE) HISTORY_NODE = new HistoryNode();
     return HISTORY_NODE;
 }
 
@@ -348,7 +347,6 @@ HistoryFewCharsNode::~HistoryFewCharsNode() {
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryFewCharsNode::CreateState() {
     LOG_INFO(_T("CALLED"));
-    if (SETTINGS->multiStreamMode) return 0;
     return new HistoryFewCharsState(this);
 }
 
@@ -376,7 +374,6 @@ HistoryOneCharNode::~HistoryOneCharNode() {
 // 当ノードを処理する State インスタンスを作成する
 State* HistoryOneCharNode::CreateState() {
     LOG_INFO(_T("CALLED"));
-    if (SETTINGS->multiStreamMode) return 0;
     return new HistoryOneCharState(this);
 }
 

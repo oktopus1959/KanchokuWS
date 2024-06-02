@@ -7,7 +7,8 @@ cat $* | \
 'createRewriteNode|PostRewriteOneShotNode merged|makeSubTree|createNode.*(ENTER|LEAVE)|OUTPUT_STACK->setRewritable| targetStr=|tail_size_while_only_and_upto|ADD reversePath\
 |RootStrokeNode[12]|StrokeMergerState|[Dd]estructor|LatticeImpl|DecoderImpl.HandleDeckey|MecabBridge.mecabCalcCost|ABANDON|handleStrokeKeys|StrokeMergerState.HandleDeckey\
 |deckey=.* statesNum=.*|handleDeckey_single|BushuAssocExState|PostRewriteOneShotState|DoProcOnCreated|StrokeTableState.HandleDeckey|State.dispatchDeckey|CurrentStrokeTable=[12]\
-|[Cc]reateStrokeTree[123]?|Eisu(State)?|: (ja|LastJapanese)Key=.*|NAMESPACE.RomanToKatakana|RootStrokeTableState|GetResultString(Chain)?|StrokeStreamList.HandleDeckeyProc' | \
+|[Cc]reateStrokeTree[123]?|Eisu(State)?|: (ja|LastJapanese)Key=.*|NAMESPACE.RomanToKatakana|RootStrokeTableState|GetResultString(Chain)?|StrokeStreamList.HandleDeckeyProc\
+|handleNextOrPrevCandTrigger|outputHistResult' | \
     $BINDIR/colorcat.sh -r 'WARN[H:].*' | \
     $BINDIR/colorcat.sh -y ' WARN ' | \
     $BINDIR/colorcat.sh -r ' ERROR ' | \

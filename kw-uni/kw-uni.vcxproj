@@ -226,9 +226,6 @@
     <ClInclude Include="StateCommonInfo.h" />
     <ClInclude Include="ResidentState.h" />
     <ClInclude Include="StringNode.h" />
-    <ClInclude Include="StrokeMerger\HistCandidates.h" />
-    <ClInclude Include="StrokeMerger\History.h" />
-    <ClInclude Include="StrokeMerger\HistoryStateBase.h" />
     <ClInclude Include="StrokeMerger\Lattice.h" />
     <ClInclude Include="StrokeMerger\Merger.h" />
     <ClInclude Include="StrokeMerger\StrokeMergerHistoryResidentState.h" />
