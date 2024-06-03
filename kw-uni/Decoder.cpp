@@ -158,7 +158,7 @@ public:
         BushuAssocExNode::CreateSingleton();
 
         // 全角変換ノードのSingleton生成
-        ZenkakuNode::CreateSingleton();
+        //ZenkakuNode::CreateSingleton();
 
         // カタカナ変換ノードのSingleton生成
         KatakanaNode::CreateSingleton();

@@ -29,6 +29,9 @@ public:
     // 「Space」「Key」と分けて入力した時に、「K」の入力時に「Space」の末尾にブロッカーを設定したい
     bool blockerNeeded = false;
 
+    // 英数モードを自動的に抜けるまでの大文字数
+    size_t eisuExitCapitalCharNum = 0;
+
     //static void CreateSingleton();
 
     static EisuNode* Singleton();

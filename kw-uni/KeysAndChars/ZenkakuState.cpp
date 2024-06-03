@@ -219,17 +219,22 @@ ZenkakuNode::~ZenkakuNode() {
 // 当ノードを処理する State インスタンスを作成する
 State* ZenkakuNode::CreateState() {
     LOG_INFO(_T("CALLED"));
-    return new ZenkakuState(ZenkakuNode::Singleton.get());
+    return new ZenkakuState(ZENKAKU_NODE);
 }
 
-std::unique_ptr<ZenkakuNode> ZenkakuNode::Singleton;
+std::unique_ptr<ZenkakuNode> ZenkakuNode::_singleton;
 
-void ZenkakuNode::CreateSingleton() {
-    LOG_DEBUGH(_T("CALLED"));
-    if (ZenkakuNode::Singleton == 0) {
-        ZenkakuNode::Singleton.reset(new ZenkakuNode());
-    }
+ZenkakuNode* ZenkakuNode::Singleton() {
+    if (!_singleton) _singleton.reset(new ZenkakuNode());
+    return _singleton.get();
 }
+
+//void ZenkakuNode::CreateSingleton() {
+//    LOG_DEBUGH(_T("CALLED"));
+//    if (_singleton == 0) {
+//        ZenkakuNode::Singleton.reset(new ZenkakuNode());
+//    }
+//}
 
 // -------------------------------------------------------------------
 // ZenkakuOneNode - 1文字全角変換ノード

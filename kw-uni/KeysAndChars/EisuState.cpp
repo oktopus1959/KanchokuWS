@@ -144,7 +144,7 @@ namespace {
                 //}
                 if (myChar >= 'A' && myChar <= 'Z') {
                     MY_NODE->prevCapitalDeckeyCount = totalCnt;
-                    if (++capitalCharCnt >= SETTINGS->eisuExitCapitalCharNum) {
+                    if (MY_NODE->eisuExitCapitalCharNum > 0 && ++capitalCharCnt >= MY_NODE->eisuExitCapitalCharNum) {
                         // N文字続けて英大文字だったら、英数モードを終了する
                         cancelMe();
                     }

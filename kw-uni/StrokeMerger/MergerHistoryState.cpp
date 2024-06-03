@@ -15,6 +15,7 @@
 
 #include "BushuComp/BushuComp.h"
 #include "Eisu.h"
+#include "Zenkaku.h"
 #include "ModalStateUtil.h"
 
 #include "FunctionNodeManager.h"
@@ -400,6 +401,8 @@ namespace {
             LOG_INFO(_T("ENTER: deckey={:x}H({}), totalCount={}, statesNum=({},{})"), deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), _streamList1.Count(), _streamList2.Count());
 
             resultStr.clear();
+            myChar = '\0';
+
             _LOG_DEBUGH(_T("NextState={}"), STATE_NAME(NextState()));
             if (NextState()) {
                 _LOG_DEBUGH(_T("NextState: FOUND"));
@@ -448,6 +451,22 @@ namespace {
                             SetNextNodeMaybe(HISTORY_NODE);
                         }
                         break;
+                    case TOGGLE_ZENKAKU_CONVERSION_DECKEY:
+                        _LOG_DEBUGH(_T("TOGGLE_ZENKAKU_CONVERSION"));
+                        if (!NextNodeMaybe()) {
+                            WORD_LATTICE->clear();
+                            SetNextNodeMaybe(ZENKAKU_NODE);
+                        }
+                        break;
+                    case EISU_MODE_TOGGLE_DECKEY:
+                        _LOG_DEBUGH(_T("EISU_MODE_TOGGLE"));
+                        if (!NextNodeMaybe()) {
+                            WORD_LATTICE->clear();
+                            EISU_NODE->blockerNeeded = true; // 入力済み末尾にブロッカーを設定する
+                            EISU_NODE->eisuExitCapitalCharNum = 0;
+                            SetNextNodeMaybe(EISU_NODE);
+                        }
+                        break;
                     case BUSHU_COMP_DECKEY:
                         _LOG_DEBUGH(_T("BUSHU_COMP"));
                         WORD_LATTICE->updateByBushuComp();
@@ -477,6 +496,7 @@ namespace {
                             _streamList2.Clear();
                             WORD_LATTICE->clear();
                             EISU_NODE->blockerNeeded = true; // 入力済み末尾にブロッカーを設定する
+                            EISU_NODE->eisuExitCapitalCharNum = SETTINGS->eisuExitCapitalCharNum;
                             SetNextNodeMaybe(EISU_NODE);
                             return;
                         }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Logger.h"
 
 #include "FunctionNode.h"
@@ -19,11 +21,15 @@ public:
 
     String getNodeName() const { return _T("ZenkakuNode"); }
 
-    static void CreateSingleton();
+    //static void CreateSingleton();
 
-    static std::unique_ptr<ZenkakuNode> Singleton;
+    static ZenkakuNode* Singleton();
+
+private:
+    static std::unique_ptr<ZenkakuNode> _singleton;
+
 };
-#define ZENKAKU_NODE (ZenkakuNode::Singleton)
+#define ZENKAKU_NODE (ZenkakuNode::Singleton())
 
 // -------------------------------------------------------------------
 // ZenkakuOneNode - ノードのテンプレート
