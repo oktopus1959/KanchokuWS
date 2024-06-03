@@ -176,17 +176,6 @@ DEFINE_CLASS_LOGGER(BushuCompNodeBuilder);
 
 Node* BushuCompNodeBuilder::CreateNode() {
     LOG_DEBUGH(_T("CALLED"));
-    // 部首合成辞書の読み込み(ファイルが指定されていなくても、辞書は構築する)
-    // 部首合成辞書ファイル名
-    auto bushuFile = SETTINGS->bushuFile;
-    auto auotBushuFile = SETTINGS->autoBushuFile;
-    LOG_DEBUGH(_T("bushuFile={}, autoBushuFile={}"), bushuFile, auotBushuFile);
-
-    //if (bushuFile.empty()) {
-    //    ERROR_HANDLER->Warn(_T("「bushu=(ファイル名)」の設定がまちがっているようです"));
-    //}
-    // この中では、Singleton によって一回だけ生成されるようになっている
-    BushuDic::CreateBushuDic(bushuFile, auotBushuFile);
 
     return new BushuCompNode();
 }

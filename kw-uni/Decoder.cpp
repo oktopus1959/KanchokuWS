@@ -148,6 +148,9 @@ public:
         // PrevCharNode - 直前キー文字を返すノードのSingleton生成
         PrevCharNode::CreateSingleton();
 
+        // 部首合成辞書の生成
+        BushuDic::CreateBushuDic();
+
         // 部首合成ノードのSingleton生成
         BushuCompNode::CreateSingleton();
 

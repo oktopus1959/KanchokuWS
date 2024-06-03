@@ -1188,7 +1188,11 @@ namespace {
 // -------------------------------------------------------------------
 DEFINE_CLASS_LOGGER(BushuDic);
 
-std::unique_ptr<BushuDic> BushuDic::Singleton;
+std::unique_ptr<BushuDic> BushuDic::_singleton;
+
+BushuDic* BushuDic::Singleton() {
+    return _singleton.get();
+}
 
 namespace {
     DEFINE_LOCAL_LOGGER(BushuDic);
@@ -1253,19 +1257,29 @@ namespace {
 
 // 部首合成辞書を作成する(ファイルが指定されていなくても作成する)
 // エラーがあったら例外を投げる
-int BushuDic::CreateBushuDic(StringRef bushuFile, StringRef autoBushuFile) {
+int BushuDic::CreateBushuDic() {
     LOG_INFO(_T("ENTER"));
 
-    if (Singleton != 0) {
+    // 部首合成辞書の読み込み(ファイルが指定されていなくても、辞書は構築する)
+    // 部首合成辞書ファイル名
+    auto bushuFile = SETTINGS->bushuFile;
+    auto autoBushuFile = SETTINGS->autoBushuFile;
+    LOG_DEBUGH(_T("bushuFile={}, autoBushuFile={}"), bushuFile, autoBushuFile);
+
+    if (_singleton != 0) {
         LOG_INFO(_T("already created: bushu file: {}"), bushuFile);
         return 0;
     }
+
+    //if (bushuFile.empty()) {
+    //    ERROR_HANDLER->Warn(_T("「bushu=(ファイル名)」の設定がまちがっているようです"));
+    //}
 
     int result = 0;
 
     auto pImpl = new BushuDicImpl();
     if ((bushuFile.empty() || readBushuFile(bushuFile, pImpl)) && (autoBushuFile.empty() || readAutoBushuFile(autoBushuFile, pImpl))) {
-        Singleton.reset(pImpl);
+        _singleton.reset(pImpl);
     } else {
         result = -1;
     }
@@ -1277,29 +1291,29 @@ int BushuDic::CreateBushuDic(StringRef bushuFile, StringRef autoBushuFile) {
 // 部首合成辞書を読み込む
 void BushuDic::ReadBushuDic(StringRef path) {
     LOG_INFO(_T("CALLED: path={}"), path);
-    if (!path.empty() && Singleton) {
-        readBushuFile(path, (BushuDicImpl*)Singleton.get());
+    if (!path.empty() && BUSHU_DIC) {
+        readBushuFile(path, (BushuDicImpl*)BUSHU_DIC);
     }
 }
 
 // 部首合成辞書ファイルに書き込む
 void BushuDic::WriteBushuDic(StringRef path) {
     LOG_INFO(_T("CALLED: path={}"), path);
-    writeBushuFile(path, (BushuDicImpl*)Singleton.get());
+    writeBushuFile(path, (BushuDicImpl*)BUSHU_DIC);
 }
 
 // 自動部首合成辞書を読み込む
 void BushuDic::ReadAutoBushuDic(StringRef path) {
     LOG_INFO(_T("CALLED: path={}"), path);
-    if (!path.empty() && Singleton) {
-        readAutoBushuFile(path, (BushuDicImpl*)Singleton.get());
+    if (!path.empty() && BUSHU_DIC) {
+        readAutoBushuFile(path, (BushuDicImpl*)BUSHU_DIC);
     }
 }
 
 // 自動部首合成辞書ファイルに書き込む
 void BushuDic::WriteAutoBushuDic(StringRef path) {
     LOG_INFO(_T("CALLED: path={}"), path);
-    writeAutoBushuFile(path, (BushuDicImpl*)Singleton.get());
+    writeAutoBushuFile(path, (BushuDicImpl*)BUSHU_DIC);
 }
 
 // 部首合成辞書ファイルに書き込む

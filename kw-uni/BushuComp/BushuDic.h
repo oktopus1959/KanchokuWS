@@ -16,15 +16,19 @@ public:
     const int TC_BUSHU_ALGO_OKA = 1;
     const int TC_BUSHU_ALGO_YAMANOBE = 2;
 
+private:
+    // 作成された部首合成辞書インスタンスにアクセスするための Singleton
+    static std::unique_ptr<BushuDic> _singleton;
+
 public:
     // 仮想デストラクタ
     virtual ~BushuDic() { }
 
     // 作成された部首合成辞書インスタンスにアクセスするための Singleton
-    static std::unique_ptr<BushuDic> Singleton;
+    static BushuDic* Singleton();
 
     // 部首合成辞書インスタンスを生成する
-    static int CreateBushuDic(StringRef, StringRef);
+    static int CreateBushuDic();
 
     // 部首合成辞書を読み込む
     static void ReadBushuDic(StringRef);
@@ -63,4 +67,4 @@ public:
     virtual void ExportPostfixBushuCompDefs(utils::OfstreamWriter& writer, StringRef postfix) = 0;
 };
 
-#define BUSHU_DIC (BushuDic::Singleton)
+#define BUSHU_DIC (BushuDic::Singleton())
