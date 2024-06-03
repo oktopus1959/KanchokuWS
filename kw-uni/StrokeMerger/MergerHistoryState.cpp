@@ -459,6 +459,7 @@ namespace {
                         }
                         break;
                     case EISU_MODE_TOGGLE_DECKEY:
+                    case EISU_CONVERSION_DECKEY:
                         _LOG_DEBUGH(_T("EISU_MODE_TOGGLE"));
                         if (!NextNodeMaybe()) {
                             WORD_LATTICE->clear();

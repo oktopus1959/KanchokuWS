@@ -124,13 +124,14 @@ namespace {
         void handleStrokeKeys(int deckey) override {
             STATE_COMMON->SetCurrentModeIsEisu();
 
-            size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
+            //size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
             myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
             _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), face={}"), Name, deckey, deckey, myChar);
             if (myChar == SETTINGS->eisuHistSearchChar && is_lower_alphabet(OUTPUT_STACK->back())) {
-                // 履歴検索の実行(末尾文字が英小文字でないと発動させない; "CO" の後の場合は、'O' がキーになるが、この場合は発動させない)
-                MERGER_HISTORY_RESIDENT_STATE->handleNextCandTrigger();
-                MY_NODE->prevHistSearchDeckeyCount = totalCnt;
+                //// 履歴検索の実行(末尾文字が英小文字でないと発動させない; "CO" の後の場合は、'O' がキーになるが、この場合は発動させない)
+                //MERGER_HISTORY_RESIDENT_STATE->handleNextCandTrigger();
+                //MY_NODE->prevHistSearchDeckeyCount = totalCnt;
+                handleEisuConversion();
             } else if (deckey < NORMAL_DECKEY_NUM || (deckey >= SHIFT_DECKEY_START && deckey < (SHIFT_DECKEY_START + NORMAL_DECKEY_NUM))) {
                 STATE_COMMON->AppendOrigString(myChar);
 
@@ -143,7 +144,7 @@ namespace {
                 //    cancelMe();
                 //}
                 if (myChar >= 'A' && myChar <= 'Z') {
-                    MY_NODE->prevCapitalDeckeyCount = totalCnt;
+                    MY_NODE->prevCapitalDeckeyCount = STATE_COMMON->GetTotalDecKeyCount();
                     if (MY_NODE->eisuExitCapitalCharNum > 0 && ++capitalCharCnt >= MY_NODE->eisuExitCapitalCharNum) {
                         // N文字続けて英大文字だったら、英数モードを終了する
                         cancelMe();
@@ -164,6 +165,17 @@ namespace {
         void handleShiftKeys(int deckey) override {
             _LOG_DEBUGH(_T("ENTER: {}, deckey={:x}({})"), Name, deckey, deckey);
             handleStrokeKeys(deckey);
+            _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+        }
+
+        // カタカナへの変換
+        void handleEisuConversion() override {
+            _LOG_DEBUGH(_T("ENTER: {}"), Name);
+            if (is_lower_alphabet(OUTPUT_STACK->back())) {
+                // 履歴検索の実行(末尾文字が英小文字でないと発動させない; "CO" の後の場合は、'O' がキーになるが、この場合は発動させない)
+                MERGER_HISTORY_RESIDENT_STATE->handleNextCandTrigger();
+                MY_NODE->prevHistSearchDeckeyCount = STATE_COMMON->GetTotalDecKeyCount();
+            }
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
 

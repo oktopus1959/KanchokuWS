@@ -305,7 +305,10 @@ public:
     // EisuCancel ハンドラ
     virtual void handleEisuCancel();
 
-    // EisuCancel ハンドラ
+    // EisuConversion ハンドラ
+    virtual void handleEisuConversion();
+
+    // EisuDecapitalize ハンドラ
     virtual void handleEisuDecapitalize();
 
     // commit ハンドラ

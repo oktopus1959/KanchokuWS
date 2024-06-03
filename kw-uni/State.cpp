@@ -498,6 +498,8 @@ void State::dispatchDeckey(int deckey) {
         handleEisuMode();
     } else if (deckey == EISU_MODE_CANCEL_DECKEY) {
         handleEisuCancel();
+    } else if (deckey == EISU_CONVERSION_DECKEY) {
+        handleEisuConversion();
     } else if (deckey == EISU_DECAPITALIZE_DECKEY) {
         handleEisuDecapitalize();
     } else if (deckey == UNDEFINED_DECKEY) {
@@ -651,6 +653,9 @@ void State::handleEisuCancel() {
         pNext->handleEisuCancel();
     }
 }
+
+// handleEisuConversion デフォルトハンドラ
+void State::handleEisuConversion() { LOG_INFO(_T("DO NOTHING")); }
 
 // handleEisuDecapitalize デフォルトハンドラ
 void State::handleEisuDecapitalize() { LOG_INFO(_T("DO NOTHING")); }
