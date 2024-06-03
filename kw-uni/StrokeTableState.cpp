@@ -123,8 +123,8 @@ namespace {
             } else if (SETTINGS->eisuModeEnabled && !STATE_COMMON->IsUpperRomanGuideMode() && myNode()->isRootStrokeTableNode() && myChar >= 'A' && myChar <= 'Z') {
                 // 英数モード
                 LOG_DEBUGH(_T("SetNextNodeMaybe: Eisu"));
-                if (EISU_NODE) EISU_NODE->blockerNeeded = true; // 入力済み末尾にブロッカーを設定する
-                SetNextNodeMaybe(EISU_NODE.get());
+                EISU_NODE->blockerNeeded = true; // 入力済み末尾にブロッカーを設定する
+                SetNextNodeMaybe(EISU_NODE);
             } else {
                 Node* np = NEXT_NODE(deckey);
                 StrokeTableNode* tp = np ? dynamic_cast<StrokeTableNode*>(np) : 0;

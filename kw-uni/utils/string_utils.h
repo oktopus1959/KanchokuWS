@@ -1494,3 +1494,10 @@ namespace utils
 
 } // namespace utils
 
+namespace {
+
+    String to_wstr(const std::string& str) {
+        return utils::utf8_decode(str);
+    }
+
+}

@@ -68,7 +68,9 @@ namespace {
 
             LOG_DEBUGH(_T("ENTER: totalDeckeyCount={}, prevCapitalCount={}"), firstTotalCnt, prevCapitalCnt);
 
-            outputChar = (wchar_t)STATE_COMMON->OrigChar();
+            if (PrevState()) {
+                outputChar = PrevState()->getMyChar();
+            }
 
             // ブロッカーフラグを先に取得しておく
             bool blockerNeeded = MY_NODE->blockerNeeded;
@@ -179,9 +181,17 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
 
+        // BS
+        void handleBS() {
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
+            //MERGER_HISTORY_RESIDENT_STATE->handleBS();
+            resultStr.setNumBS(1);
+        }
+
         // その他の特殊キー (常駐の履歴機能があればそれを呼び出す)
         void handleSpecialKeys(int deckey) {
-            ModalStateUtil::handleSpecialKeys(this, deckey);
+            //ModalStateUtil::handleSpecialKeys(this, deckey);
+            MERGER_HISTORY_RESIDENT_STATE->dispatchDeckey(deckey);
         }
 
         // EisuModeのトグル - 処理のキャンセル
@@ -191,9 +201,9 @@ namespace {
         }
 
         // handleUndefinedKey ハンドラ - 処理のキャンセル
-        void handleUndefinedDeckey(int ) override {
+        void handleUndefinedDeckey(int deckey) override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            cancelMe();
+            if (deckey != BS_DECKEY) cancelMe();
         }
 
         // FullEscape の処理 -- HISTORYを呼ぶ
@@ -291,15 +301,21 @@ State* EisuNode::CreateState() {
     return new EisuState(this);
 }
 
-std::unique_ptr<EisuNode> EisuNode::Singleton;
+std::unique_ptr<EisuNode> EisuNode::_singleton;
+
+EisuNode* EisuNode::Singleton() {
+    if (!_singleton) {
+        _singleton.reset(new EisuNode());
+    }
+    return _singleton.get();
+}
 
 // Decoder から初期化時に呼ぶ必要あり
-void EisuNode::CreateSingleton() {
-    LOG_DEBUGH(_T("CALLED"));
-    if (EisuNode::Singleton == 0) {
-        EisuNode::Singleton.reset(new EisuNode());
-    }
-}
+//void EisuNode::CreateSingleton() {
+//    if (EisuNode::Singleton == 0) {
+//        EisuNode::Singleton.reset(new EisuNode());
+//    }
+//}
 
 // -------------------------------------------------------------------
 // EisuNodeBuilder - ノードビルダー

@@ -71,7 +71,7 @@ int ModalStateUtil::ModalStatePreProc(State* pState, int deckey, bool isStrokabl
             else if (pNode && dynamic_cast<EisuNode*>(pNode) == 0 && deckey == EISU_MODE_TOGGLE_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: EisuState"));
                 //SetNextState(EISU_NODE->CreateState())->DoProcOnCreated();
-                pState->SetNextNodeMaybe(EISU_NODE.get());
+                pState->SetNextNodeMaybe(EISU_NODE);
                 deckey = -1;    // この後は deckey の処理をやらない
             }
             else if ((!pNode || !pNode->isStrokeTableNode()) && isStrokable) {

@@ -28,9 +28,11 @@ class HistoryNode : public FunctionNode {
     String getNodeName() const { return _T("HistoryNode"); }
 
 public:
-    static HistoryNode* Singleton;
+    static HistoryNode* Singleton();
+private:
+    static HistoryNode* _singleton;
 };
-#define HISTORY_NODE (HistoryNode::Singleton)
+#define HISTORY_NODE (HistoryNode::Singleton())
 
 // -------------------------------------------------------------------
 // HistoryNodeBuilder - 履歴入力機能ノードビルダ

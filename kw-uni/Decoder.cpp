@@ -160,8 +160,8 @@ public:
         // カタカナ変換ノードのSingleton生成
         KatakanaNode::CreateSingleton();
 
-        // 英数入力ノードのSingleton生成
-        EisuNode::CreateSingleton();
+        //// 英数入力ノードのSingleton生成
+        //EisuNode::CreateSingleton();
 
         // ストロークヘルプを求めておく
         StrokeHelp::GatherStrokeHelp();

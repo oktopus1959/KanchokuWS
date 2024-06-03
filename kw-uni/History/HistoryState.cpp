@@ -205,7 +205,7 @@ namespace {
         // ストロークのクリア -- 処理のキャンセル
         void handleClearStroke() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            handleKeyPostProc();
+            //handleKeyPostProc();
         }
 
     protected:
@@ -310,7 +310,14 @@ State* HistoryNode::CreateState() {
     return new HistoryState(this);
 }
 
-HistoryNode* HistoryNode::Singleton;
+HistoryNode* HistoryNode::_singleton;
+
+HistoryNode* HistoryNode::Singleton() {
+    if (!_singleton) {
+        _singleton = new HistoryNode();
+    }
+    return _singleton;
+}
 
 // -------------------------------------------------------------------
 // HistoryNodeBuilder - 履歴入力機能ノードビルダー
@@ -327,7 +334,6 @@ Node* HistoryNodeBuilder::CreateNode() {
     //LOG_DEBUGH(_T("CALLED: histFile={}"), histFile);
     //HistoryDic::CreateHistoryDic(histFile);
 
-    if (!HISTORY_NODE) HISTORY_NODE = new HistoryNode();
     return HISTORY_NODE;
 }
 

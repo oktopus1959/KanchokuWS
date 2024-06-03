@@ -467,6 +467,20 @@ namespace {
                         _streamList2.Clear();
                         _comboStrokeCount = 1;
                     }
+                    if (SETTINGS->eisuModeEnabled && _comboStrokeCount == 0
+                        && deckey >= SHIFT_DECKEY_START && deckey < SHIFT_DECKEY_END && !STATE_COMMON->IsUpperRomanGuideMode()) {
+                        myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
+                        if (myChar >= 'A' && myChar <= 'Z') {
+                            // 英数モード
+                            LOG_DEBUGH(_T("SetNextNodeMaybe: Eisu"));
+                            _streamList1.Clear();
+                            _streamList2.Clear();
+                            WORD_LATTICE->clear();
+                            EISU_NODE->blockerNeeded = true; // 入力済み末尾にブロッカーを設定する
+                            SetNextNodeMaybe(EISU_NODE);
+                            return;
+                        }
+                    }
                     // 前処理(ストローク木状態の作成と呼び出し)
                     _LOG_DEBUGH(_T("streamList1: doDeckeyPreProc"));
                     _streamList1.HandleDeckeyProc(StrokeTableNode::RootStrokeNode1.get(), deckey, _comboStrokeCount);
@@ -503,7 +517,10 @@ namespace {
 
             STATE_COMMON->SetCurrentModeIsMultiStreamInput();
 
-            if (NextState()) {
+            if (resultStr.isModified()) {
+                _LOG_DEBUGH(_T("resultStr={}"), resultStr.debugString());
+                resultOut.setResult(resultStr);
+            } else if (NextState()) {
                 NextState()->GetResultStringChain(resultOut);
             } else {
                 //if (IsUnnecessary()) {
@@ -557,11 +574,6 @@ namespace {
                     SetTranslatedOutString(resultOut);
                 } else {
                     _LOG_DEBUGH(_T("NO resultOut"));
-                }
-
-                if (resultStr.isModified()) {
-                    _LOG_DEBUGH(_T("resultStr={}"), resultStr.debugString());
-                    resultOut.setResult(resultStr);
                 }
             }
 
@@ -1215,18 +1227,18 @@ namespace {
         // Esc の処理 -- 処理のキャンセル
         void handleEsc() override {
             _LOG_DEBUGH(_T("CALLED: {}, bCandSelectable={}, SelectPos={}, EisuPrevCount={}, TotalCount={}"),
-                Name, bCandSelectable, HIST_CAND->GetSelectPos(), EISU_NODE ? EISU_NODE->prevHistSearchDeckeyCount : 0, STATE_COMMON->GetTotalDecKeyCount());
+                Name, bCandSelectable, HIST_CAND->GetSelectPos(), EISU_NODE->prevHistSearchDeckeyCount, STATE_COMMON->GetTotalDecKeyCount());
             if (bCandSelectable && HIST_CAND->GetSelectPos() >= 0) {
                 _LOG_DEBUGH(_T("Some Cand Selected"));
                 // どれかの候補が選択されている状態なら、選択のリセット
-                if (EISU_NODE && STATE_COMMON->GetTotalDecKeyCount() == EISU_NODE->prevHistSearchDeckeyCount + 1) {
+                if (STATE_COMMON->GetTotalDecKeyCount() == EISU_NODE->prevHistSearchDeckeyCount + 1) {
                     // 直前に英数モードから履歴検索された場合
                     _LOG_DEBUGH(_T("SetNextNode: EISU_NODE"));
                     resetCandSelect(false);     // false: 仮想鍵盤表示を履歴選択モードにしない
                     // 一時的にこのフラグを立てることにより、履歴検索を行わないようにする
                     bNoHistTemporary = true;
                     // 再度、英数モード状態に入る
-                    SetNextNodeMaybe(EISU_NODE.get());
+                    SetNextNodeMaybe(EISU_NODE);
                     //STATE_COMMON->SetNormalVkbLayout();
                 } else {
                     resetCandSelect(true);
@@ -1328,7 +1340,15 @@ namespace {
 } // namespace
 
 // 履歴入力(常駐)機能状態インスタンスの Singleton
-StrokeMergerHistoryResidentState* StrokeMergerHistoryResidentState::Singleton;
+std::unique_ptr<StrokeMergerHistoryResidentState> StrokeMergerHistoryResidentState::_singleton;
+
+void StrokeMergerHistoryResidentState::SetSingleton(StrokeMergerHistoryResidentState* pState) {
+    _singleton.reset(pState);
+}
+
+StrokeMergerHistoryResidentState* StrokeMergerHistoryResidentState::Singleton() {
+    return _singleton.get();
+}
 
 // -------------------------------------------------------------------
 // StrokeMergerHistoryNode - マージ履歴機能 常駐ノード
@@ -1370,7 +1390,8 @@ void StrokeMergerHistoryNode::Initialize() {
 // -------------------------------------------------------------------
 // 当ノードを処理する State インスタンスを作成する
 State* StrokeMergerHistoryNode::CreateState() {
-    return new StrokeMergerHistoryResidentStateImpl(this);
+    StrokeMergerHistoryResidentState::SetSingleton(new StrokeMergerHistoryResidentStateImpl(this));
+    return MERGER_HISTORY_RESIDENT_STATE;
 }
 
 // テーブルファイルを読み込んでストローク木を作成する

@@ -29,11 +29,14 @@ public:
     // 「Space」「Key」と分けて入力した時に、「K」の入力時に「Space」の末尾にブロッカーを設定したい
     bool blockerNeeded = false;
 
-    static void CreateSingleton();
+    //static void CreateSingleton();
 
-    static std::unique_ptr<EisuNode> Singleton;
+    static EisuNode* Singleton();
+
+private:
+    static std::unique_ptr<EisuNode> _singleton;
 };
-#define EISU_NODE (EisuNode::Singleton)
+#define EISU_NODE (EisuNode::Singleton())
 
 // -------------------------------------------------------------------
 // EisuNodeBuilder - ノードビルダ

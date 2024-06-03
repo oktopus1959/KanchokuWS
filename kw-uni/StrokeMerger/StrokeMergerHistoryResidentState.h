@@ -28,7 +28,10 @@ public:
 
 public:
     // 唯一のインスタンスを指すポインタ (寿命管理は CreateState() を呼び出したところがやる)
-    static StrokeMergerHistoryResidentState* Singleton;
+    static StrokeMergerHistoryResidentState* Singleton();
+    static void SetSingleton(StrokeMergerHistoryResidentState* pState);
+private:
+    static std::unique_ptr<StrokeMergerHistoryResidentState> _singleton;
 };
 
-#define MERGER_HISTORY_RESIDENT_STATE (StrokeMergerHistoryResidentState::Singleton)
+#define MERGER_HISTORY_RESIDENT_STATE (StrokeMergerHistoryResidentState::Singleton())
