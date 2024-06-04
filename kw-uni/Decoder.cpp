@@ -225,6 +225,9 @@ public:
         // 簡易打鍵文字を集める
         EasyChars::GatherEasyChars();
 
+        // ユーザー単語コストファイルの読み込み
+        Lattice2::reloadUserCostFile();
+
         LOG_DEBUGH(_T("LEAVE"));
     }
 

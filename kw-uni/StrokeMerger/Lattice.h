@@ -145,6 +145,8 @@ public:
 
     static void reloadCostFile();
 
+    static void reloadUserCostFile();
+
     static std::unique_ptr<Lattice2> Singleton;
 
     //static void loadCostFile();

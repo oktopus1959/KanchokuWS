@@ -19,17 +19,10 @@
 #undef LOG_INFO
 #undef LOG_DEBUG
 #undef _LOG_DEBUGH
-#if 0
-#define _LOG_INFOH LOG_INFOH
-#define LOG_INFO LOG_INFOH
-#define LOG_DEBUG LOG_INFOH
-#define _LOG_DEBUGH LOG_INFOH
-#else
 #define _LOG_INFOH LOG_WARN
 #define LOG_INFO LOG_INFOH
 #define LOG_DEBUG LOG_INFOH
 #define _LOG_DEBUGH LOG_INFOH
-#endif
 #endif
 
 namespace lattice2 {
@@ -66,9 +59,11 @@ namespace lattice2 {
         }
     }
 
-    void loadCostFile() {
-        wordCosts.clear();
-        _loadCostFile(_T("wikipedia.cost.txt"));
+    void loadCostFile(bool onlyUserFile = false) {
+        if (!onlyUserFile) {
+            wordCosts.clear();
+            _loadCostFile(_T("wikipedia.cost.txt"));
+        }
         _loadCostFile(_T("userword.cost.txt"));
     }
 
@@ -652,5 +647,9 @@ void Lattice2::createLattice() {
 
 void Lattice2::reloadCostFile() {
     lattice2::loadCostFile();
+}
+
+void Lattice2::reloadUserCostFile() {
+    lattice2::loadCostFile(true);
 }
 
