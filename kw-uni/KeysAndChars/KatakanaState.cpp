@@ -14,7 +14,6 @@
 #include "OutputStack.h"
 //#include "StrokeMerger/HistoryResidentState.h"
 #include "StrokeMerger/StrokeMergerHistoryResidentState.h"
-#include "ModalStateUtil.h"
 
 #include "Katakana.h"
 
@@ -59,7 +58,11 @@ namespace {
         // 状態の事前チェック
         int HandleDeckeyPreProc(int deckey) override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
-            return ModalStateUtil::ModalStatePreProc(this, deckey, State::isStrokableKey(deckey));
+            if (State::isStrokableKey(deckey)) {
+                SetNextNodeMaybe(StrokeTableNode::RootStrokeNode2.get());   // TODO MY_NODE に渡されたものを使うようにする
+                CreateNewState();
+            }
+            return deckey;
         }
 
         // 機能状態に対して生成時処理を実行する
@@ -131,7 +134,7 @@ namespace {
 
         // その他の特殊キー (常駐の履歴機能があればそれを呼び出す)
         void handleSpecialKeys(int deckey) {
-            ModalStateUtil::handleSpecialKeys(this, deckey);
+            MERGER_HISTORY_RESIDENT_STATE->dispatchDeckey(deckey);
         }
 
         // KatakanaConversionの処理 - 処理のキャンセル
@@ -188,14 +191,19 @@ State* KatakanaNode::CreateState() {
     return new KatakanaState(this);
 }
 
-std::unique_ptr<KatakanaNode> KatakanaNode::Singleton;
+std::unique_ptr<KatakanaNode> KatakanaNode::_singleton;
 
-void KatakanaNode::CreateSingleton() {
-    LOG_DEBUGH(_T("CALLED"));
-    if (KatakanaNode::Singleton == 0) {
-        KatakanaNode::Singleton.reset(new KatakanaNode());
-    }
+KatakanaNode* KatakanaNode::Singleton() {
+    if (!_singleton) _singleton.reset(new KatakanaNode());
+    return _singleton.get();
 }
+
+//void KatakanaNode::CreateSingleton() {
+//    LOG_DEBUGH(_T("CALLED"));
+//    if (KatakanaNode::Singleton == 0) {
+//        KatakanaNode::Singleton.reset(new KatakanaNode());
+//    }
+//}
 
 // -------------------------------------------------------------------
 // KatakanaNodeBuilder - ノードビルダー

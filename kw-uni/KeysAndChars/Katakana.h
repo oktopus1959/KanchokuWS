@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Logger.h"
 
 #include "FunctionNode.h"
@@ -19,11 +21,14 @@ public:
 
     String getNodeName() const { return _T("KatakanaNode"); }
 
-    static void CreateSingleton();
+    //static void CreateSingleton();
 
-    static std::unique_ptr<KatakanaNode> Singleton;
+    static KatakanaNode* Singleton();
+
+private:
+    static std::unique_ptr<KatakanaNode> _singleton;
 };
-#define KATAKANA_NODE (KatakanaNode::Singleton)
+#define KATAKANA_NODE (KatakanaNode::Singleton())
 
 // -------------------------------------------------------------------
 // KatakanaNodeBuilder - ノードビルダ

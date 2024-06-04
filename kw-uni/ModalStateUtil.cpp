@@ -65,7 +65,7 @@ int ModalStateUtil::ModalStatePreProc(State* pState, int deckey, bool isStrokabl
             else if (pNode && dynamic_cast<KatakanaNode*>(pNode) == 0 && deckey == TOGGLE_KATAKANA_CONVERSION_DECKEY) {
                 _LOG_DEBUGH(_T("CREATE: KatakanaState"));
                 //SetNextState(KATAKANA_NODE->CreateState())->DoProcOnCreated();
-                pState->SetNextNodeMaybe(KATAKANA_NODE.get());
+                pState->SetNextNodeMaybe(KATAKANA_NODE);
                 deckey = -1;    // この後は deckey の処理をやらない
             }
             else if (pNode && dynamic_cast<EisuNode*>(pNode) == 0 && deckey == EISU_MODE_TOGGLE_DECKEY) {

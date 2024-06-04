@@ -8,7 +8,7 @@ class StrokeMergerHistoryResidentState : public ResidentState {
 protected:
     // 履歴常駐状態の事前チェック
     //void DoHistoryResidentPreCheck() override = 0;
-    int HandleDeckeyPreProc(int deckey) override = 0;
+    //int HandleDeckeyPreProc(int deckey) override = 0;
 
 public:
     // Enter時の新しい履歴の追加

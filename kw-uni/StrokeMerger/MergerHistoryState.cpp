@@ -16,6 +16,7 @@
 #include "BushuComp/BushuComp.h"
 #include "Eisu.h"
 #include "Zenkaku.h"
+#include "Katakana.h"
 #include "ModalStateUtil.h"
 
 #include "FunctionNodeManager.h"
@@ -66,6 +67,15 @@ namespace {
         //String nextNodeString() const {
         //    return NextNodeMaybe() ? to_wstr(NextNodeMaybe()->getString()) : _T("");
         //}
+
+        MString convertHiraganaToKatakana(const MString& str) {
+            MString result = str;
+            for (size_t i = 0; i < result.size(); ++i) {
+                mchar_t ch = (wchar_t)result[i];
+                if (utils::is_hiragana(ch)) { result[i] = utils::hiragana_to_katakana(ch); }
+            }
+            return result;
+        }
 
     public:
         // コンストラクタ
@@ -149,7 +159,7 @@ namespace {
         //    return result;
         //}
 
-        void AppendWordPiece(std::vector<WordPiece>& pieces, bool /*bExcludeHiragana*/) {
+        void AppendWordPiece(std::vector<WordPiece>& pieces, bool /*bExcludeHiragana*/, bool bKatakanaConversion) {
             if (NextState()) {
                 _LOG_DEBUGH(_T("ENTER"));
                 MStringResult result;
@@ -157,12 +167,21 @@ namespace {
                 if (!result.isDefault()) {
                     _LOG_DEBUGH(_T("ADD WORD: rewriteStr={}, string={}, numBS={}"),
                         to_wstr(result.getRewriteNode() ? result.getRewriteNode()->getString() : EMPTY_MSTR), to_wstr(result.resultStr()), result.numBS());
+                    // TODO bKatakanaConversionのサポート
                     int strokeLen = STATE_COMMON->GetTotalDecKeyCount() - cntStroke;
-                    if (result.getRewriteNode()) {
-                        pieces.push_back(WordPiece(result.getRewriteNode(), strokeLen));
-                    } else {
-                        pieces.push_back(WordPiece(result.resultStr(), strokeLen, result.rewritableLen(), result.numBS()));
-                    }
+                    //if (bKatakanaConversion) {
+                    //    MString hs = result.resultStr();
+                    //    if (std::all_of(hs.begin(), hs.end(), [](auto ch) {return utils::is_hiragana(ch) || utils::is_katakana(ch);})) {
+                    //        MString ks = convertHiraganaToKatakana(hs);
+                    //        pieces.push_back(WordPiece(ks, strokeLen, result.rewritableLen(), result.numBS()));
+                    //    }
+                    //} else {
+                        if (result.getRewriteNode()) {
+                            pieces.push_back(WordPiece(result.getRewriteNode(), strokeLen));
+                        } else {
+                            pieces.push_back(WordPiece(result.resultStr(), strokeLen, result.rewritableLen(), result.numBS()));
+                        }
+                    //}
                 } else {
                     _LOG_DEBUGH(_T("NOT TERMINAL"));
                 }
@@ -332,13 +351,13 @@ namespace {
         }
 
         // 出力文字を取得する
-        void AddWordPieces(std::vector<WordPiece>& pieces, bool bExcludeHiragana) {
+        void AddWordPieces(std::vector<WordPiece>& pieces, bool bExcludeHiragana, bool bKatakanaConversion) {
             _LOG_DEBUGH(_T("ENTER: {}: streamNum={}"), name, Count());
             //for (const auto& pState : strokeChannelList) {
             //    pState->AppendWordPiece(pieces, bExcludeHiragana);
             //}
-            forEach([&pieces, bExcludeHiragana](const StrokeStreamUptr& pStream) {
-                pStream->AppendWordPiece(pieces, bExcludeHiragana);
+            forEach([&pieces, bExcludeHiragana, bKatakanaConversion](const StrokeStreamUptr& pStream) {
+                pStream->AppendWordPiece(pieces, bExcludeHiragana, bKatakanaConversion);
             });
             _LOG_DEBUGH(_T("LEAVE: {}"), name);
         }
@@ -376,6 +395,9 @@ namespace {
         // RootStrokeState2用の状態集合
         StrokeStreamList _streamList2;
 
+        // カタカナ変換モードか
+        bool _isKatakanaConversionMode = false;
+
     public:
         // コンストラクタ
         StrokeMergerHistoryResidentStateImpl(StrokeMergerHistoryNode* pN)
@@ -398,7 +420,7 @@ namespace {
 
         // DECKEY 処理の流れ
         void HandleDeckeyChain(int deckey) override {
-            LOG_INFO(_T("ENTER: deckey={:x}H({}), totalCount={}, statesNum=({},{})"), deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), _streamList1.Count(), _streamList2.Count());
+            LOG_INFO(_T("\nENTER: deckey={:x}H({}), totalCount={}, statesNum=({},{})"), deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), _streamList1.Count(), _streamList2.Count());
 
             resultStr.clear();
             myChar = '\0';
@@ -458,8 +480,12 @@ namespace {
                             SetNextNodeMaybe(ZENKAKU_NODE);
                         }
                         break;
+                    case TOGGLE_KATAKANA_CONVERSION_DECKEY:
+                        _LOG_DEBUGH(_T("TOGGLE_KATAKANA_CONVERSION"));
+                        //_isKatakanaConversionMode = !_isKatakanaConversionMode;
+                        break;
                     case EISU_MODE_TOGGLE_DECKEY:
-                    case EISU_CONVERSION_DECKEY:
+                    //case EISU_CONVERSION_DECKEY:
                         _LOG_DEBUGH(_T("EISU_MODE_TOGGLE"));
                         if (!NextNodeMaybe()) {
                             WORD_LATTICE->clear();
@@ -515,7 +541,7 @@ namespace {
                 }
             }
 
-            LOG_INFO(_T("LEAVE"));
+            LOG_INFO(_T("LEAVE\n"));
         }
 
         // 新しい状態作成のチェイン
@@ -558,9 +584,9 @@ namespace {
                     pieces.push_back(WordPiece::BSPiece());
                 } else {
                     _LOG_DEBUGH(_T("streamList1: AddWordPieces"));
-                    _streamList1.AddWordPieces(pieces, false);
+                    _streamList1.AddWordPieces(pieces, false, _isKatakanaConversionMode);
                     _LOG_DEBUGH(_T("streamList2: AddWordPieces"));
-                    _streamList2.AddWordPieces(pieces, false);
+                    _streamList2.AddWordPieces(pieces, false, _isKatakanaConversionMode);
 
                     Node* pNextNode1 = _streamList1.GetNonStringNode();
                     Node* pNextNode2 = _streamList2.GetNonStringNode();
@@ -805,27 +831,27 @@ namespace {
         }
 
     protected:
-        // 履歴常駐状態の事前チェック
-        int HandleDeckeyPreProc(int deckey) override {
-            _LOG_DEBUGH(_T("ENTER: {}"), Name);
-            resultStr.clear();
-            deckey = ModalStateUtil::ModalStatePreProc(this, deckey,
-                State::isStrokableKey(deckey) && (!bCandSelectable || deckey >= 10 || !SETTINGS->selectHistCandByNumberKey));
-            maybeEditedBySubState = false;
-            // 常駐モード
-            //if (pNext && pNext->GetName().find(_T("History")) == String::npos)
-            if (IsHistoryReset()) {
-                // 履歴機能ではない次状態(StrokeStateなど)があれば、それが何かをしているはずなので、戻ってきたら新たに候補の再取得を行うために、ここで maybeEditedBySubState を true にセットしておく
-                //prevKey.clear();
-                _LOG_DEBUGH(_T("Set Reinitialized=true"));
-                maybeEditedBySubState = true;
-                STROKE_MERGER_NODE->ClearPrevHistState();    // まだ履歴検索が行われていない状態にしておく
-                HIST_CAND->ClearKeyInfo();      // まだ履歴検索が行われていないということを表す
-            }
-            _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+        //// 履歴常駐状態の事前チェック
+        //int HandleDeckeyPreProc(int deckey) override {
+        //    _LOG_DEBUGH(_T("ENTER: XXXX: {}"), Name);
+        //    resultStr.clear();
+        //    //deckey = ModalStateUtil::ModalStatePreProc(this, deckey,
+        //    //    State::isStrokableKey(deckey) && (!bCandSelectable || deckey >= 10 || !SETTINGS->selectHistCandByNumberKey));
+        //    maybeEditedBySubState = false;
+        //    // 常駐モード
+        //    //if (pNext && pNext->GetName().find(_T("History")) == String::npos)
+        //    if (IsHistoryReset()) {
+        //        // 履歴機能ではない次状態(StrokeStateなど)があれば、それが何かをしているはずなので、戻ってきたら新たに候補の再取得を行うために、ここで maybeEditedBySubState を true にセットしておく
+        //        //prevKey.clear();
+        //        _LOG_DEBUGH(_T("Set Reinitialized=true"));
+        //        maybeEditedBySubState = true;
+        //        STROKE_MERGER_NODE->ClearPrevHistState();    // まだ履歴検索が行われていない状態にしておく
+        //        HIST_CAND->ClearKeyInfo();      // まだ履歴検索が行われていないということを表す
+        //    }
+        //    _LOG_DEBUGH(_T("LEAVE: {}"), Name);
 
-            return deckey;
-        }
+        //    return deckey;
+        //}
 
         //// ノードから生成した状態を後接させ、その状態を常駐させる(ここでは 0 が渡ってくるはず)
         //void ChainAndStayResident(Node* ) {

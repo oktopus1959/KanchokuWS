@@ -161,7 +161,7 @@ public:
         //ZenkakuNode::CreateSingleton();
 
         // カタカナ変換ノードのSingleton生成
-        KatakanaNode::CreateSingleton();
+        //KatakanaNode::CreateSingleton();
 
         //// 英数入力ノードのSingleton生成
         //EisuNode::CreateSingleton();
@@ -657,7 +657,7 @@ public:
 
         if (Reporting::Logger::IsInfoHEnabled()) {
             //String stack = std::regex_replace(to_wstr(OUTPUT_STACK->OutputStackBackStr(10)), std::wregex(_T("\n")), _T("|"));
-            LOG_INFOH(_T("LEAVE: states={} (len={}), flags={:x}, expKey={}, layout={}, centerStr={}, numBS={}, outLength={}, stack={}\n\n"),
+            LOG_INFOH(_T("LEAVE: states={} (len={}), flags={:x}, expKey={}, layout={}, centerStr={}, numBS={}, outLength={}, stack={}\n\n================================================\n"),
                 startState->JoinedName(), startState->ChainLength(), STATE_COMMON->GetResultFlags(), STATE_COMMON->GetNextExpectedKeyType(),
                 STATE_COMMON->GetLayoutInt(), outParams->centerString, resultStr.numBS(), cpyLen, OUTPUT_STACK->OutputStackBackStrForDebug(10));
         }

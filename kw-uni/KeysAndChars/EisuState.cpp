@@ -12,9 +12,7 @@
 #include "State.h"
 #include "StrokeTable.h"
 #include "OutputStack.h"
-//#include "StrokeMerger/HistoryResidentState.h"
 #include "StrokeMerger/StrokeMergerHistoryResidentState.h"
-#include "ModalStateUtil.h"
 
 #include "Eisu.h"
 
@@ -202,7 +200,6 @@ namespace {
 
         // その他の特殊キー (常駐の履歴機能があればそれを呼び出す)
         void handleSpecialKeys(int deckey) {
-            //ModalStateUtil::handleSpecialKeys(this, deckey);
             MERGER_HISTORY_RESIDENT_STATE->dispatchDeckey(deckey);
         }
 

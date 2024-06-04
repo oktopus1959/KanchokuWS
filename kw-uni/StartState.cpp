@@ -5,7 +5,7 @@
 //#include "ResidentState.h"
 //#include "History/HistoryResidentState.h"
 
-#if 0 || defined(_DEBUG)
+#if 1
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
@@ -28,30 +28,44 @@ public:
 
     // DECKEY 処理の流れ
     void StartHandleDeckey(int deckey) override {
+        LOG_DEBUGH(_T(".\n\n================================"));
         LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), totalCount={}, NextNode={}"),
             Name, deckey, deckey, STATE_COMMON->GetTotalDecKeyCount(), NODE_NAME(NextNodeMaybe()));
 
         // 前処理
         if (NextState()) {
-            LOG_DEBUGH(_T("CALL NextState()->HandleDeckeyChain()"));
+            //LOG_DEBUGH(_T("CALL NextState()->HandleDeckeyChain()"));
             // 後続状態があれば、そちらを呼び出す
+            LOG_DEBUGH(_T("\nBEGIN: HandleDeckeyChain: ========================"));
             NextState()->HandleDeckeyChain(deckey);
+            LOG_DEBUGH(_T("END: HandleDeckeyChain: ========================"));
         }
         // 中間チェック
-        LOG_DEBUGH(_T("CALL DoIntermediateCheckChain()"));
+        LOG_DEBUGH(_T("\nBEGIN: DoIntermediateCheckChain: ========================"));
         DoIntermediateCheckChain();
+        LOG_DEBUGH(_T("END: DoIntermediateCheckChain: ========================"));
+
         // 後処理(新状態生成処理)
         //LOG_DEBUGH(_T("CALL DoDeckeyPostProcChain()"));
         //DoDeckeyPostProcChain();
+
         // 後処理(新状態生成処理)
+        LOG_DEBUGH(_T("\nBEGIN: CreateNewStateChain: ========================"));
         CreateNewStateChain();
+        LOG_DEBUGH(_T("END: CreateNewStateChain: ========================"));
+
         // 出力文字を取得する
+        LOG_DEBUGH(_T("\nBEGIN: GetResultStringChain: ========================"));
         resultStr.clear();
         GetResultStringChain(resultStr);
-        // チェーンをたどって不要とマークされた後続状態を削除する
-        DeleteUnnecessarySuccessorStateChain();
+        LOG_DEBUGH(_T("END: GetResultStringChain: ========================"));
 
-        LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(resultStr.resultStr()));
+        // チェーンをたどって不要とマークされた後続状態を削除する
+        LOG_DEBUGH(_T("\nBEGIN: DeleteUnnecessarySuccessorStateChain: ========================"));
+        DeleteUnnecessarySuccessorStateChain();
+        LOG_DEBUGH(_T("END: DeleteUnnecessarySuccessorStateChain: ========================"));
+
+        LOG_DEBUGH(_T("LEAVE: {}, NextNode={}, outStr={}\n================================\n"), Name, NODE_NAME(NextNodeMaybe()), to_wstr(resultStr.resultStr()));
         //return pNextNodeMaybe;
     }
 
