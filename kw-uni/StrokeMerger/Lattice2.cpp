@@ -74,7 +74,7 @@ namespace lattice2 {
 
     int getWordCost(const MString& str) {
         if (str.empty()) return 0;
-        if (str.size() == 1 && str == MSTR_SPACE) return MAX_COST * 3;
+        if (str.size() == 1 && str == MSTR_SPACE) return MAX_COST * 3;          // 1 space の場合のコスト
         auto iter = wordCosts.find(str);
         return iter != wordCosts.end() ? iter->second : MAX_COST;
     }
@@ -97,7 +97,9 @@ namespace lattice2 {
             }
             cost += getWordCost(utils::safe_substr(str, i, 1));
         }
-        if (str.size() > 1) {
+        if (str.size() == 1) {
+            if (utils::is_kanji(str[0])) cost += MAX_COST;    // 漢字１文字の場合のコスト
+        } else if (str.size() > 1) {
             // bigram
             for (size_t i = 0; i < str.size() - 1; ++i) {
                 cost += getWordCost(utils::safe_substr(str, i, 2));
