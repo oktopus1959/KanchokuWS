@@ -490,6 +490,8 @@ void State::dispatchDeckey(int deckey) {
         handleClearStroke();
     } else if (deckey == COMMIT_STATE_DECKEY) {
         handleCommitState();
+    } else if (deckey == MULTI_STREAM_COMMIT_DECKEY) {
+        handleMultiStreamCommit();
     } else if (deckey == TOGGLE_BLOCKER_DECKEY) {
         handleToggleBlocker();
     } else if (deckey == CANCEL_POST_REWRITE_DECKEY) {
@@ -665,6 +667,9 @@ void State::handleClearStroke() { LOG_INFO(_T("DO NOTHING")); }
 
 // handleCommitState デフォルトハンドラ
 void State::handleCommitState() { LOG_INFO(_T("DO NOTHING")); }
+
+// handleMultiStreamCommit デフォルトハンドラ
+void State::handleMultiStreamCommit() { LOG_INFO(_T("DO NOTHING")); }
 
 // handleToggleBlocker デフォルトハンドラ
 void State::handleToggleBlocker() {

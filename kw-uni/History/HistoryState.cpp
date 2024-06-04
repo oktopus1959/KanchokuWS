@@ -202,10 +202,15 @@ namespace {
             handleKeyPostProc();
         }
 
-        // ストロークのクリア -- 処理のキャンセル
+        // ストロークのクリア -- 無視
         void handleClearStroke() override {
-            _LOG_DEBUGH(_T("CALLED: {}"), Name);
+            _LOG_DEBUGH(_T("IGNORED: {}"), Name);
             //handleKeyPostProc();
+        }
+
+        // MultiStreamCommit -- 無視
+        void handleMultiStreamCommit() override {
+            _LOG_DEBUGH(_T("IGNORED: {}"), Name);
         }
 
     protected:

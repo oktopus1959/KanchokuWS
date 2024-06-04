@@ -314,6 +314,9 @@ public:
     // commit ハンドラ
     virtual void handleCommitState();
 
+    // MultiStreamCommit ハンドラ
+    virtual void handleMultiStreamCommit();
+
     //--------------------------------------------------------------------
     // 以下、DECKEYハンドラのデフォルト実装
  
