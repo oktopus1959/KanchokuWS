@@ -6,7 +6,7 @@
 #include "StateCommonInfo.h"
 
 // -------------------------------------------------------------------
-// MazegakiNode - 交ぜ書き機能ノード
+// MazegakiNode - 交ぜ書き機能ノード(こちらはダミーノード)
 class MazegakiNode : public FunctionNode {
     DECLARE_CLASS_LOGGER;
 public:
@@ -20,6 +20,7 @@ public:
     MString getString() const { return to_mstr(_T("○")); }
 
     String getNodeName() const { return _T("MazegakiNode"); }
+
 };
 
 // -------------------------------------------------------------------
@@ -117,17 +118,25 @@ public:
     bool RevertPrevXfer(MStringResult& resultStr);
 
 public:
-    // 共有ノード
-    std::unique_ptr<MazegakiNode> CommonNode;
-
     // 共有情報のSingletonインスタンス
-    static std::unique_ptr<MazegakiCommonInfo> CommonInfo;
+    static MazegakiCommonInfo* CommonInfo();
 
-    // MazegakiCommonInfo - 交ぜ書き共有情報の作成
+    // 交ぜ書きノードのSingletonを取得
+    inline MazegakiNode* Singleton() { return _singleton.get(); }
+
+    // 交ぜ書き共有情報の作成
     static void CreateCommonInfo();
+
+private:
+    // 共有情報のSingletonインスタンス
+    static std::unique_ptr<MazegakiCommonInfo> _commonInfo;
+
+    // 交ぜ書きノードのSingleton
+    std::unique_ptr<MazegakiNode> _singleton;
+
 };
-#define MAZEGAKI_INFO (MazegakiCommonInfo::CommonInfo)
-#define MAZEGAKI_NODE_PTR (MAZEGAKI_INFO->CommonNode.get())
+#define MAZEGAKI_INFO (MazegakiCommonInfo::CommonInfo())
+#define MAZEGAKI_NODE (MAZEGAKI_INFO->Singleton())
 
 // 交ぜ書き変換結果を元に戻す
 #define HANDLE_ESC_FOR_MAZEGAKI(resultStr) \

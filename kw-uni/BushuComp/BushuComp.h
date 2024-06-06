@@ -36,12 +36,15 @@ public:
     bool ReduceByAutoBushu(const MString& ms, MStringResult& result);
 
 public:
-    // 後置部首合成機能ノードのSingleton
-    static std::unique_ptr<BushuCompNode> Singleton;
+    // 後置部首合成機能ノードのSingletonを取得
+    static BushuCompNode* Singleton();
 
-    static void CreateSingleton();
+private:
+    // 後置部首合成機能ノードのSingleton
+    static std::unique_ptr<BushuCompNode> _singleton;
+
 };
-#define BUSHU_COMP_NODE (BushuCompNode::Singleton)
+#define BUSHU_COMP_NODE (BushuCompNode::Singleton())
 
 // 直前の自動部首合成文字と比較して、やり直しをする
 #define HANDLE_ESC_FOR_AUTO_COMP(resultStr) \

@@ -554,12 +554,16 @@ State* MazegakiNode::CreateState() {
 // MazegakiCommonInfo - 交ぜ書き共有情報
 DEFINE_CLASS_LOGGER(MazegakiCommonInfo);
 
-std::unique_ptr<MazegakiCommonInfo> MazegakiCommonInfo::CommonInfo;
+std::unique_ptr<MazegakiCommonInfo> MazegakiCommonInfo::_commonInfo;
+
+MazegakiCommonInfo* MazegakiCommonInfo::CommonInfo() {
+    return _commonInfo.get();
+}
 
 // MazegakiCommonInfo - 交ぜ書き共有情報の作成(辞書もロード)
 void MazegakiCommonInfo::CreateCommonInfo() {
     LOG_INFO(_T("ENTER"));
-    if (CommonInfo == 0) {
+    if (!_commonInfo) {
         // 交ぜ書き辞書ファイル名
         auto mazeFile = SETTINGS->mazegakiFile;
         LOG_INFO(_T("mazeFile={}"), mazeFile);
@@ -574,9 +578,9 @@ void MazegakiCommonInfo::CreateCommonInfo() {
         //    ERROR_HANDLER->Warn(_T("「mazegaki=(ファイル名)」の設定がまちがっているようです"));
         //}
         // 共有情報インスタンスを生成する(このノードは、終了時に delete される)
-        CommonInfo.reset(new MazegakiCommonInfo());
+        _commonInfo.reset(new MazegakiCommonInfo());
         // 共有ノードを生成する(このノードは、終了時に delete される)
-        CommonInfo->CommonNode.reset(new MazegakiNode());
+        _commonInfo->_singleton.reset(new MazegakiNode());
     }
     LOG_INFO(_T("LEAVE"));
 }
@@ -811,8 +815,6 @@ bool MazegakiCommonInfo::LeftRightShiftBlockerOrStartPos(int deckey, std::functi
 DEFINE_CLASS_LOGGER(MazegakiNodeBuilder);
 
 Node* MazegakiNodeBuilder::CreateNode() {
-    // MazegakiCommonInfo - 交ぜ書き共有情報の作成(辞書もロード)
-    MazegakiCommonInfo::CreateCommonInfo();
     // StrokeTable では unique_ptr で保持しているため、別のダミーノードを生成して返す
     return new MazegakiNode();
 }

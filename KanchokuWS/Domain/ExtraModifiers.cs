@@ -233,6 +233,7 @@ namespace KanchokuWS.Domain
             {"multistreamselectfirst", DecoderKeys.MULTI_STREAM_SELECT_FIRST_DECKEY},
             {"multistreamcommit", DecoderKeys.MULTI_STREAM_COMMIT_DECKEY},
             {"kanatrainingtoggle", DecoderKeys.KANA_TRAINING_TOGGLE_DECKEY},
+            {"mazeconversion", DecoderKeys.MAZE_CONVERSION_DECKEY},
             {"leftshiftblocker", DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY},
             {"rightshiftblocker", DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY},
             {"leftshiftmazestartpos", DecoderKeys.LEFT_SHIFT_MAZE_START_POS_DECKEY},

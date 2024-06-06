@@ -161,13 +161,11 @@ bool BushuCompNode::ReduceByAutoBushu(const MString& mstr, MStringResult& result
 
 // 後置部首合成機能ノードのSingleton
 // unique_ptr による管理は下記 BushuCompNodeBuilder の呼び出し側で行う
-std::unique_ptr<BushuCompNode> BushuCompNode::Singleton;
+std::unique_ptr<BushuCompNode> BushuCompNode::_singleton;
 
-// Singletonノードの生成
-void BushuCompNode::CreateSingleton() {
-    if (!Singleton) {
-        Singleton.reset(new BushuCompNode());
-    }
+BushuCompNode* BushuCompNode::Singleton() {
+    if (!_singleton) _singleton.reset(new BushuCompNode());
+    return _singleton.get();
 }
 
 // -------------------------------------------------------------------

@@ -148,11 +148,14 @@ public:
         // PrevCharNode - 直前キー文字を返すノードのSingleton生成
         PrevCharNode::CreateSingleton();
 
+        // 交ぜ書き共有情報の初期化
+        MazegakiCommonInfo::CreateCommonInfo();
+
         // 部首合成辞書の生成
         BushuDic::CreateBushuDic();
 
-        // 部首合成ノードのSingleton生成
-        BushuCompNode::CreateSingleton();
+        //// 部首合成ノードのSingleton生成
+        //BushuCompNode::CreateSingleton();
 
         // 直接連想変換ノードのSingleton生成
         BushuAssocExNode::CreateSingleton();

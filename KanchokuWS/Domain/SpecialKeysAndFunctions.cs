@@ -178,6 +178,7 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.EISU_MODE_CANCEL_DECKEY, 0, "EisuModeCancel", "", "英数モードをキャンセルする"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.EISU_CONVERSION_DECKEY, 0, "EisuConversion", "", "英数モードで英字列をカタカナに変換する"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.EISU_DECAPITALIZE_DECKEY, 0, "EisuDecapitalize", "", "英数モードで先頭文字を小文字化する"),
+            new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.MAZE_CONVERSION_DECKEY, 0, "MazeConversion", "", "交ぜ書き変換の実行"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.LEFT_SHIFT_BLOCKER_DECKEY, 0, "LeftShiftBlocker", "", "交ぜ書きブロッカーの左移動 (交ぜ書き候補が縦列表示されている時に有効)"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.RIGHT_SHIFT_BLOCKER_DECKEY, 0, "RightShiftBlocker", "", "交ぜ書きブロッカーの右移動 (交ぜ書き候補が縦列表示されている時に有効)"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.LEFT_SHIFT_MAZE_START_POS_DECKEY, 0, "LeftShiftMazeStartPos", "", "交ぜ書き開始位置の左移動 (交ぜ書き変換の確定直後、あるいは「先頭候補を無条件に出力する」を有効にしている時に有効)"),

@@ -289,7 +289,8 @@ namespace KanchokuWS
         public const int LEFT_SHIFT_BLOCKER_DECKEY = SELECT_CODE_TABLE3_DECKEY + 1;         // ブロッカーを左シフトする
         public const int RIGHT_SHIFT_BLOCKER_DECKEY = LEFT_SHIFT_BLOCKER_DECKEY + 1;        // ブロッカーを右シフトする
 
-        public const int LEFT_SHIFT_MAZE_START_POS_DECKEY = RIGHT_SHIFT_BLOCKER_DECKEY + 1;         // 交ぜ書き開始位置を左シフトする
+        public const int MAZE_CONVERSION_DECKEY = RIGHT_SHIFT_BLOCKER_DECKEY + 1;                   // 交ぜ書き変換を実行
+        public const int LEFT_SHIFT_MAZE_START_POS_DECKEY = MAZE_CONVERSION_DECKEY + 1;             // 交ぜ書き開始位置を左シフトする
         public const int RIGHT_SHIFT_MAZE_START_POS_DECKEY = LEFT_SHIFT_MAZE_START_POS_DECKEY + 1;  // 交ぜ書き開始位置を右シフトする
 
         public const int MODE_TOGGLE_FOLLOW_CARET_DECKEY = RIGHT_SHIFT_MAZE_START_POS_DECKEY + 1;   // 仮想鍵盤をカレットに再追従させて、漢直モードのトグル

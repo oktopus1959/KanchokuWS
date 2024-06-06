@@ -13,6 +13,7 @@
 //#include "OutputStack.h"
 //#include "StrokeHelp.h"
 
+#include "Mazegaki/Mazegaki.h"
 #include "BushuComp/BushuComp.h"
 #include "Eisu.h"
 #include "Zenkaku.h"
@@ -497,6 +498,13 @@ namespace {
                     case BUSHU_COMP_DECKEY:
                         _LOG_DEBUGH(_T("BUSHU_COMP"));
                         WORD_LATTICE->updateByBushuComp();
+                        break;
+                    case MAZE_CONVERSION_DECKEY:
+                        _LOG_DEBUGH(_T("MAZE_CONVERSION"));
+                        if (!NextNodeMaybe()) {
+                            WORD_LATTICE->clear();
+                            SetNextNodeMaybe(MAZEGAKI_NODE);
+                        }
                         break;
                     default:
                         _LOG_DEBUGH(_T("OTHER"));
