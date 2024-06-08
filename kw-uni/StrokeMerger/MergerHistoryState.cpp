@@ -448,6 +448,7 @@ namespace {
                     case MULTI_STREAM_COMMIT_DECKEY:
                         _LOG_DEBUGH(_T("EnterKey: clear streamList"));
                         WORD_LATTICE->clear();
+                        OUTPUT_STACK->setMazeBlocker();
                         //MarkUnnecessary();
                         break;
                     case BS_DECKEY:

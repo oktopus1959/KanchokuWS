@@ -17,12 +17,22 @@
 
 #define DONT_READ_MAZEDIC_ON_DEBUG 1
 
-#if 0
+#if 1
+#undef _DEBUG_SENT
+#undef _DEBUG_FLAG
+#undef LOG_INFO
+#undef LOG_DEBUGH
+#undef _LOG_DEBUGH
+#undef _LOG_DEBUG
+#undef _LOG_DEBUGH_COND
+#undef _LOG_DEBUG_COND
 #define _DEBUG_SENT(x) x
 #define _DEBUG_FLAG(x) (x)
-#define _LOG_DEBUGH LOG_INFO
+#define LOG_INFO LOG_INFOH
+#define LOG_DEBUGH LOG_INFOH
+#define _LOG_DEBUGH LOG_INFOH
 #define _LOG_DEBUG LOG_INFO
-#define _LOG_DEBUGH_COND LOG_INFO_COND
+#define _LOG_DEBUGH_COND LOG_INFOH_COND
 #define _LOG_DEBUG_COND LOG_INFO_COND
 #endif
 
