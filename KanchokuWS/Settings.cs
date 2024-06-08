@@ -71,8 +71,11 @@ namespace KanchokuWS
         //-------------------------------------------------------------------------------------
         // ログ出力設定
         //-------------------------------------------------------------------------------------
-        /// <summary>ログレベル</summary> 
-        public static int LogLevel { get; private set; } = 0;
+        /// <summary>漢直ログレベル</summary> 
+        public static int KanchokuLogLevel { get; private set; } = 0;
+
+        /// <summary>デコーダログレベル</summary> 
+        public static int DecoderLogLevel { get; private set; } = 0;
 
         /// <summary>true の場合、入力されたDecoderキーに関する情報をログ出力する</summary>
         public static bool LoggingDecKeyInfo { get; private set; }
@@ -104,7 +107,7 @@ namespace KanchokuWS
         /// <summary>隠しテーブルファイルフォルダを表示する</summary>        
         public static bool ShowHiddleFolder { get; private set; }
 
-        public static bool IsAnyDevFlagEnabled => LogLevel > Logger.LogLevelWarn || LoggingDecKeyInfo || LoggingActiveWindowInfo || LoggingVirtualKeyboardInfo || LoggingTableFileInfo || BushuDicLogEnabled;
+        public static bool IsAnyDevFlagEnabled => KanchokuLogLevel > Logger.LogLevelWarn || LoggingDecKeyInfo || LoggingActiveWindowInfo || LoggingVirtualKeyboardInfo || LoggingTableFileInfo || BushuDicLogEnabled;
 
         //-------------------------------------------------------------------------------------
         // 基本設定
@@ -1009,7 +1012,12 @@ namespace KanchokuWS
         public static int GetLogLevel()
         {
             //return GetString("logLevel")._parseInt(Logger.LogLevelWarnH)._lowLimit(0)._highLimit(Logger.LogLevelTrace);   // デフォルトは WarnH
-            return GetString("logLevel")._parseInt(0)._lowLimit(0)._highLimit(Logger.LogLevelTrace);   // デフォルトは None
+            int logLevel = GetString("logLevel")._parseInt(0)._lowLimit(0)._highLimit(Logger.LogLevelTrace);   // デフォルトは None
+            int kwLogLevel = GetString("kanchokuLogLevel")._parseInt(-1);
+            int decLogLevel = GetString("decoderLogLevel")._parseInt(-1);
+            KanchokuLogLevel = kwLogLevel >= 0 ? kwLogLevel : logLevel;
+            DecoderLogLevel = decLogLevel >= 0 ? decLogLevel : logLevel;
+            return KanchokuLogLevel;
         }
 
         public static bool IsMultiAppEnabled()
@@ -1135,7 +1143,7 @@ namespace KanchokuWS
         {
             logger.Info(() => $"CALLED");
 
-            LogLevel = GetLogLevel();
+            KanchokuLogLevel = GetLogLevel();
             LoggingDecKeyInfo = GetString("loggingDecKeyInfo")._parseBool();
             LoggingActiveWindowInfo = GetString("loggingActiveWindowInfo")._parseBool();
             LoggingVirtualKeyboardInfo = GetString("loggingVirtualKeyboardInfo")._parseBool();
@@ -1540,7 +1548,7 @@ namespace KanchokuWS
             //-------------------------------------------------------------------------------------
             // デコーダ設定
             DecoderSettings.Clear();
-            DecoderSettings["logLevel"] = LogLevel.ToString();
+            DecoderSettings["logLevel"] = DecoderLogLevel.ToString();
             DecoderSettings["rootDir"] = KanchokuIni.Singleton.KanchokuDir;
             DecoderSettings["firstUse"] = $"{!UserKanchokuIni.Singleton.IsIniFileExist}";
             DecoderSettings["isJPmode"] = $"{Domain.DecoderKeyVsVKey.IsJPmode}";
@@ -1612,7 +1620,7 @@ namespace KanchokuWS
             MazeNoIfxConnectAny = addDecoderSetting("mazeNoIfxConnectAny", false);              // 無活用語の語尾に任意文字を許可する
             MazeHistRegisterAnyway = addDecoderSetting("mazeHistRegisterAnyway", false);        // 交ぜ書き変換での選択を強制的に履歴登録する(除外登録されていたら復活する)
             MazeHistRegisterMinLen = addDecoderSetting("mazeHistRegisterMinLen", 1, 0);         // 交ぜ書き変換を履歴登録する際の最小語幹長
-            MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
+            MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 4);                        // 交ぜ書きの読み入力の最大長
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
             MazeGobiLikeTailLen = addDecoderSetting("mazeGobiLikeTailLen", 2, 0);               // 交ぜ書き変換で、語尾に含めてしまう末尾の長さ
 
