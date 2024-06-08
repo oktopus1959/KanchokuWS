@@ -18,7 +18,7 @@
 
 #define _LOG_DEBUGH_FLAG (SETTINGS->debughBushu)
 
-#if 0
+#if 1
 #undef LOG_INFO
 #undef LOG_DEBUGH
 #undef LOG_DEBUG
@@ -124,24 +124,25 @@ MString BushuCompNode::ReduceByBushu(mchar_t m1, mchar_t m2, mchar_t prev) {
     return EMPTY_MSTR;
 }
 
-// 自動部首合成の実行
-bool BushuCompNode::ReduceByAutoBushu(const MString& mstr, MStringResult& resultOut) {
-    if (BUSHU_DIC && !mstr.empty()) {
-        size_t prevTotalCnt = PrevTotalCount;
+// 自動部首合成の実行 (文字位置の整合性は呼び出し側でチェック)
+bool BushuCompNode::ReduceByAutoBushu(mchar_t tailChar, mchar_t thisChar, MStringResult& resultOut) {
+    if (BUSHU_DIC && tailChar != '\0' && thisChar != '\0') {
+        //size_t prevTotalCnt = PrevTotalCount;
         PrevTotalCount = STATE_COMMON->GetTotalDecKeyCount();
-        size_t firstStrokeCnt = STATE_COMMON->GetFirstStrokeKeyCount();
-        _LOG_DEBUGH(_T("ENTER: mstr={}, prevTotalCount={}, firstStrokeKeyCount={}"), to_wstr(mstr), prevTotalCnt, firstStrokeCnt);
-        if (prevTotalCnt + 1 == firstStrokeCnt) {
-            mchar_t m1 = OUTPUT_STACK->LastOutStackChar(0);
-            mchar_t m2 = mstr[0];
-            mchar_t m = BUSHU_DIC->FindAutoComposite(m1, m2);
-            PrevBushu1 = m1;
-            PrevBushu2 = m2;
+        //size_t firstStrokeCnt = STATE_COMMON->GetFirstStrokeKeyCount();
+        //_LOG_DEBUGH(_T("ENTER: tailchar={}, thisChar={}, prevTotalCount={}, firstStrokeKeyCount={}"), to_wstr(tailChar), to_wstr(thisChar), prevTotalCnt, firstStrokeCnt);
+        _LOG_DEBUGH(_T("ENTER: tailchar={}, thisChar={}"), to_wstr(tailChar), to_wstr(thisChar));
+        //if (prevTotalCnt + 1 == firstStrokeCnt) {
+            //mchar_t m1 = OUTPUT_STACK->LastOutStackChar(0);
+            //mchar_t m2 = mstr[0];
+            mchar_t m = BUSHU_DIC->FindAutoComposite(tailChar, thisChar);
+            PrevBushu1 = tailChar;
+            PrevBushu2 = thisChar;
             PrevComp = m;
             IsPrevAuto = false;
             IsPrevAutoCancel = false;
             //PrevCompSec = utils::getSecondsFromEpochTime();
-            _LOG_DEBUGH(_T("m1={}, m2={}, m={}"), (wchar_t)m1, (wchar_t)m2, (wchar_t)m);
+            _LOG_DEBUGH(_T("tailChar={}, thisChar={}, m={}"), (wchar_t)tailChar, (wchar_t)thisChar, (wchar_t)m);
             if (m != 0) {
                 _LOG_DEBUGH(_T("resultOut(m={}, numBS=1)"), (wchar_t)m);
                 MString ms = to_mstr(m);
@@ -153,7 +154,7 @@ bool BushuCompNode::ReduceByAutoBushu(const MString& mstr, MStringResult& result
                 _LOG_DEBUGH(_T("LEAVE: true"));
                 return true;
             }
-        }
+        //}
     }
     _LOG_DEBUGH(_T("LEAVE: false"));
     return false;

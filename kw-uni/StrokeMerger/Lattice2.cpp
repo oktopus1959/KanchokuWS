@@ -9,7 +9,9 @@
 #include "settings.h"
 #include "StateCommonInfo.h"
 #include "Lattice.h"
+#include "MStringResult.h"
 #include "Mecab/MecabBridge.h"
+#include "BushuComp/BushuComp.h"
 #include "BushuComp/BushuDic.h"
 
 #if 1
@@ -176,37 +178,53 @@ namespace lattice2 {
         }
 
         std::tuple<MString, int> applyAutoBushu(const WordPiece& piece, int strokeCount) const {
+            MStringResult resultOut;
             if (_strokeLen + piece.strokeLen() == strokeCount) {
                 if (SETTINGS->autoBushuCompMinCount > 0 && BUSHU_DIC) {
                     if (_str.size() > 0 && piece.getString().size() == 1) {
                         // 自動部首合成の実行
-                        mchar_t m = BUSHU_DIC->FindAutoComposite(_str.back(), piece.getString().front());
-                        //if (m == 0) m = BUSHU_DIC->FindComposite(_str.back(), piece.getString().front(), 0);
-                        _LOG_DEBUGH(_T("BUSHU_DIC->FindAutoComposite({}, {}) -> {}"),
-                            to_wstr(utils::safe_tailstr(_str, 1)), to_wstr(utils::safe_substr(piece.getString(), 0, 1)), to_wstr(m));
-                        if (m != 0) {
+                        BUSHU_COMP_NODE->ReduceByAutoBushu(_str.back(), piece.getString().front(), resultOut);
+                        if (!resultOut.resultStr().empty()) {
                             MString s(_str);
-                            s.back() = m;
+                            s.back() = resultOut.resultStr().front();
                             return { s, 1 };
                         }
+                        //mchar_t m = BUSHU_DIC->FindAutoComposite(_str.back(), piece.getString().front());
+                        ////if (m == 0) m = BUSHU_DIC->FindComposite(_str.back(), piece.getString().front(), 0);
+                        //_LOG_DEBUGH(_T("BUSHU_DIC->FindAutoComposite({}, {}) -> {}"),
+                        //    to_wstr(utils::safe_tailstr(_str, 1)), to_wstr(utils::safe_substr(piece.getString(), 0, 1)), to_wstr(m));
+                        //if (m != 0) {
+                        //    MString s(_str);
+                        //    s.back() = m;
+                        //    return { s, 1 };
+                        //}
                     }
                 }
             }
-            return { EMPTY_MSTR, 0 };
+            // 空を返す
+            return { resultOut.resultStr(), resultOut.numBS()};
         }
 
         MString applyBushuComp() const {
             if (BUSHU_DIC) {
                 if (_str.size() >= 2) {
                     // 部首合成の実行
-                    mchar_t m = BUSHU_DIC->FindComposite(_str[_str.size() - 2], _str[_str.size() - 1], '\0');
-                    _LOG_DEBUGH(_T("BUSHU_DIC->FindComposite({}, {}) -> {}"),
-                        to_wstr(_str[_str.size() - 2]), to_wstr(_str[_str.size() - 1]), to_wstr(m));
-                    if (m != 0) {
+                    MString ms = BUSHU_COMP_NODE->ReduceByBushu(_str[_str.size() - 2], _str[_str.size() - 1]);
+                    _LOG_DEBUGH(_T("BUSHU_COMP_NODE->ReduceByBushu({}, {}) -> {}"),
+                        to_wstr(_str[_str.size() - 2]), to_wstr(_str[_str.size() - 1]), to_wstr(ms));
+                    if (!ms.empty()) {
                         MString s(_str.substr(0, _str.size() - 2));
-                        s.append(1, m);
+                        s.append(1, ms[0]);
                         return s;
                     }
+                    //mchar_t m = BUSHU_DIC->FindComposite(_str[_str.size() - 2], _str[_str.size() - 1], '\0');
+                    //_LOG_DEBUGH(_T("BUSHU_DIC->FindComposite({}, {}) -> {}"),
+                    //    to_wstr(_str[_str.size() - 2]), to_wstr(_str[_str.size() - 1]), to_wstr(m));
+                    //if (m != 0) {
+                    //    MString s(_str.substr(0, _str.size() - 2));
+                    //    s.append(1, m);
+                    //    return s;
+                    //}
                 }
             }
             return EMPTY_MSTR;
@@ -426,13 +444,17 @@ namespace lattice2 {
     private:
         void addOnePiece(std::vector<CandidateString>& newCandidates, const WordPiece& piece, int strokeCount) {
             _LOG_DEBUGH(_T("CALLED: piece={}"), piece.debugString());
+            bool bAutoBushuFound = false;           // 自動部首合成は一回だけ実行する
             for (const auto& cand : _candidates) {
                 MString s;
                 int numBS;
-                std::tie(s, numBS) = cand.applyAutoBushu(piece, strokeCount);  // 自動部首合成
-                if (!s.empty()) {
-                    CandidateString newCandStr(s, strokeCount, 0, cand.penalty());
-                    addCandidate(newCandidates, newCandStr);
+                if (!bAutoBushuFound) {
+                    std::tie(s, numBS) = cand.applyAutoBushu(piece, strokeCount);  // 自動部首合成
+                    if (!s.empty()) {
+                        CandidateString newCandStr(s, strokeCount, 0, cand.penalty());
+                        addCandidate(newCandidates, newCandStr);
+                        bAutoBushuFound = true;
+                    }
                 }
                 std::tie(s, numBS) = cand.applyPiece(piece, strokeCount);
                 if (!s.empty() || numBS > 0) {

@@ -503,7 +503,9 @@ namespace {
                         _LOG_DEBUGH(_T("MAZE_CONVERSION"));
                         if (!NextNodeMaybe()) {
                             WORD_LATTICE->clear();
-                            SetNextNodeMaybe(MAZEGAKI_NODE);
+                            if (!MAZEGAKI_INFO || !MAZEGAKI_INFO->RevertPrevXfer(resultStr)) {
+                                SetNextNodeMaybe(MAZEGAKI_NODE);
+                            }
                         }
                         break;
                     default:
@@ -792,11 +794,11 @@ namespace {
                 resultStr.setResultWithRewriteLen(xlatStr, xlatStr == outStr ? rewritableLen : 0, numBS);
             } else {
                 resultStr.clear();
-                if (bBushuComp && SETTINGS->autoBushuCompMinCount > 0) {
-                    // 自動部首合成
-                    _LOG_DEBUGH(_T("Call AutoBushu"));
-                    BUSHU_COMP_NODE->ReduceByAutoBushu(outStr, resultStr);
-                }
+                //if (bBushuComp && SETTINGS->autoBushuCompMinCount > 0) {
+                //    // 自動部首合成
+                //    _LOG_DEBUGH(_T("Call AutoBushu"));
+                //    BUSHU_COMP_NODE->ReduceByAutoBushu(outStr, resultStr);
+                //}
                 if (!resultStr.isModified()) {
                     _LOG_DEBUGH(_T("Set outStr"));
                     resultStr.setResultWithRewriteLen(outStr, rewritableLen, numBS);
