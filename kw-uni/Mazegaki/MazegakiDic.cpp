@@ -419,7 +419,7 @@ namespace {
         std::vector<CandidateEntry> mazeCandidates;
 
         // 上記から生成された変換後文字列のリスト
-        std::vector<MazeResult> mazeResult;
+        std::vector<MazeResult> mazeResults;
 
         std::vector<MString> emptyResult;
 
@@ -802,7 +802,7 @@ namespace {
         const std::vector<MazeResult>& GetCandidates(const MString& key, bool bPrim) {
             LOG_INFO(_T("\nENTER: key={}, bPrim={}"), to_wstr(key), bPrim);
             mazeCandidates.clear();
-            mazeResult.clear();
+            mazeResults.clear();
             // 読み語幹＋語尾の長さごとに候補を保持しておくためのベクトル
             //std::vector<std::vector<CandidateEntry>> mazeCands;
             // 「読み語幹＋語尾」ごとに候補を保持しておくためのマップ
@@ -944,17 +944,17 @@ namespace {
 
             // 結果を返す
             for (const auto& c : mazeCandidates) {
-                mazeResult.push_back(MazeResult(c.output, c.EntryPtr ? c.EntryPtr->GetXferPlusGobiLen(c.output) : c.output.size()));
+                mazeResults.push_back(MazeResult(c.output, c.EntryPtr ? c.EntryPtr->GetXferPlusGobiLen(c.output) : c.output.size(), key.size()));
             }
 #ifdef _DEBUG
             if (IS_LOG_DEBUGH_ENABLED) {
                 std::vector<String> xfers;
-                std::transform(mazeResult.begin(), mazeResult.end(), std::back_inserter(xfers), [](const MazeResult& r) { return to_wstr(r.resultStr);});
+                std::transform(mazeResults.begin(), mazeResults.end(), std::back_inserter(xfers), [](const MazeResult& r) { return to_wstr(r.resultStr);});
                 _LOG_DEBUGH(_T("maze results: {}"), utils::join(xfers, _T(","), 20));
             }
 #endif
-            LOG_INFO(_T("LEAVE: maze entries={}"), mazeResult.size());
-            return mazeResult;
+            LOG_INFO(_T("LEAVE: maze entries={}"), mazeResults.size());
+            return mazeResults;
         }
 
         // GetCandidates() が返した候補のうち output を持つものを選択して変換履歴登録と優先辞書にコピー

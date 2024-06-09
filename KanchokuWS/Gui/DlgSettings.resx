@@ -120,9 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="comboBox_deckeyCharsFile.ToolTip" xml:space="preserve">
     <value>漢直キーコードから英数字・記号への変換を定義するファイルを選択します。
 
@@ -789,6 +786,16 @@ OFFにすると、変換文字列全体の末尾にブロッカーを置きま�
 なお、拡張修飾キーコマンドの leftShfitBlocker および
  rightShiftBlocker で交ぜ書きブロッカーを移動することができます。</value>
   </data>
+  <data name="checkBox_mazegakiSelectFirstCand.ToolTip" xml:space="preserve">
+    <value>交ぜ書き変換の結果が複数あった場合、変換結果が文末まで及んでおり、
+かつ対象となる読みの部分が最長であるものを自動的に出力します。
+
+他の候補を出力したい場合は、いったん Esc で変換前の文字列に戻してから
+再度、交ぜ書き変換を実行すると、縦列鍵盤表示になります。
+
+なお、この設定をONにしておくと、交ぜ書き変換履歴の登録がうまく行かない
+場合があります。その場合は、この設定をOFFにしてください。</value>
+  </data>
   <data name="comboBox_histNumDeckeyId.ToolTip" xml:space="preserve">
     <value>履歴検索の縦列鍵盤表示時に、候補を文字数で絞るモードに
 移行するキーの漢直コードを設定します。
@@ -816,18 +823,6 @@ OFFにすると、変換文字列全体の末尾にブロッカーを置きま�
 場合は、「優=憂」という部首連想定義をしておくとよいかと思います。
 いったん「優－人⇒憂」という部首合成を実行すると、自動的に「優=憂」
 という連想が登録されます。</value>
-  </data>
-  <data name="checkBox_selectFirstCandByEnter.ToolTip" xml:space="preserve">
-    <value>自動履歴検索で横列表示された候補の先頭候補を
-Enterキーで選択・確定するかを設定します。
-
-当設定をOFFに設定してあるのに、つい選択するつもりで
-Enterを押してしまった場合は、出力先ウィンドウでEnter前の
-位置にカレットを移動させてからブロッカーを解除して手動で
-履歴検索を実行してください。
-
-なお、履歴候補が縦列表示されている状態では、先頭候補が
-Enterキーで選択されます。</value>
   </data>
   <data name="checkBox_autoHistEnabled.ToolTip" xml:space="preserve">
     <value>入力時に自動的に履歴検索を実行する設定

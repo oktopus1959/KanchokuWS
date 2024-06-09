@@ -1612,7 +1612,7 @@ namespace KanchokuWS
             SelectHistCandByNumberKey = addDecoderSetting("selectHistCandByNumberKey", false);  // 横列候補表示時、数字キーで候補選択する
 
             //MazegakiByShiftSpace = GetString("mazegakiByShiftSpace")._parseBool(true);          // Shift-Space で交ぜ書き変換
-            MazegakiSelectFirstCand = addDecoderSetting("mazegakiSelectFirstCand", false);      // 交ぜ書き変換で先頭の候補を自動選択
+            MazegakiSelectFirstCand = addDecoderSetting("mazegakiSelectFirstCand", true);       // 交ぜ書き変換で文末最長一致候補を自動選択
             MazeBlockerTail = addDecoderSetting("mazeBlockerTail", true);                       // 交ぜ書き変換で、変換後のブロッカーの位置
             MazeRemoveHeadSpace = addDecoderSetting("mazeRemoveHeadSpace", true);               // 交ぜ書き変換で、空白文字を変換開始位置とする
             MazeRightShiftYomiPos = addDecoderSetting("mazeRightShiftYomiPos", false);          // 交ぜ書き変換で、読みの開始位置を右移動する
