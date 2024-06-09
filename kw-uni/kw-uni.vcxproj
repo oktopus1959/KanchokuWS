@@ -291,7 +291,6 @@
     <ClCompile Include="StateCommonInfo.cpp" />
     <ClCompile Include="ResidentState.cpp" />
     <ClCompile Include="StringState.cpp" />
-    <ClCompile Include="StrokeMerger\Lattice.cpp" />
     <ClCompile Include="StrokeMerger\Lattice2.cpp" />
     <ClCompile Include="StrokeMerger\MergerHistoryState.cpp" />
     <ClCompile Include="StrokeTreeBuilder.cpp" />

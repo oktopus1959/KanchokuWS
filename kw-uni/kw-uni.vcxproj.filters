@@ -425,9 +425,6 @@
     <ClCompile Include="OneShot\RewriteString.cpp">
       <Filter>ソース ファイル\OneShot</Filter>
     </ClCompile>
-    <ClCompile Include="StrokeMerger\Lattice.cpp">
-      <Filter>ソース ファイル\StrokeMerger</Filter>
-    </ClCompile>
     <ClCompile Include="Mecab\MecabBridge.cpp">
       <Filter>ソース ファイル\Mecab</Filter>
     </ClCompile>

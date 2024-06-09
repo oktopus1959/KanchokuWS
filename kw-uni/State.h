@@ -317,6 +317,9 @@ public:
     // MultiStreamCommit ハンドラ
     virtual void handleMultiStreamCommit();
 
+    // Maze conversion
+    virtual void handleMazegakiConversion();
+
     //--------------------------------------------------------------------
     // 以下、DECKEYハンドラのデフォルト実装
  

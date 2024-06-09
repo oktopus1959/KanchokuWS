@@ -166,7 +166,7 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
 
-        // カタカナへの変換
+        // 英字列の変換
         void handleEisuConversion() override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             if (is_lower_alphabet(OUTPUT_STACK->back())) {
@@ -175,6 +175,12 @@ namespace {
                 MY_NODE->prevHistSearchDeckeyCount = STATE_COMMON->GetTotalDecKeyCount();
             }
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
+        }
+
+        // 交ぜ書き変換キーでも英字列変換を行う
+        void handleMazegakiConversion() override {
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
+            handleEisuConversion();
         }
 
         // 先頭文字の小文字化

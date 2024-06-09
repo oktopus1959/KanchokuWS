@@ -526,6 +526,9 @@ void State::dispatchDeckey(int deckey) {
         case RIGHT_SHIFT_MAZE_START_POS_DECKEY:
             handleLeftRightMazeShift(deckey);
             break;
+        case MAZE_CONVERSION_DECKEY:
+            handleMazegakiConversion();
+            break;
         case QUESTION_DECKEY:
             handleQuestion();
             break;
@@ -714,6 +717,12 @@ void State::handleRightTriangle() { handleShiftKeys(RIGHT_TRIANGLE_DECKEY); }
 
 // ? ハンドラ
 void State::handleQuestion() { handleShiftKeys(QUESTION_DECKEY); }
+
+// maze conversion
+void State::handleMazegakiConversion() {
+    _LOG_DEBUGH(_T("{}: MazeConversion"), Name);
+    handleSpecialKeys(ENTER_DECKEY);
+}
 
 // left/right maze shift keys
 void State::handleLeftRightMazeShift(int
