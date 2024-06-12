@@ -274,6 +274,12 @@ namespace {
             handleEisuCancel();
         }
 
+        // MultStreamCommit の処理 -- 処理のキャンセル
+        void handleMultiStreamCommit() override {
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
+            cancelMe();
+        }
+
         // モード標識文字を返す
         mchar_t GetModeMarker() override {
             return utils::safe_front(MY_NODE->getString());
