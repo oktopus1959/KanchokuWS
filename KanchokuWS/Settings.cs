@@ -1509,7 +1509,15 @@ namespace KanchokuWS
             ImeSendInputInRoman = GetString(ImeSendInputInRoman_PropName)._parseBool(false);
             ImeSendInputInKana = GetString(ImeSendInputInKana_PropName)._parseBool(false);
             ImeSendInputInUnicode = GetString(ImeSendInputInUnicode_PropName)._parseBool(false);
-            if (!ImeSendInputInRoman && !ImeSendInputInKana && !ImeSendInputInUnicode) ImeSendInputInRoman = true;
+            if (ImeSendInputInRoman) {
+                ImeSendInputInKana = false;
+                ImeSendInputInUnicode = false;
+            } else if (ImeSendInputInKana) {
+                ImeSendInputInUnicode = false;
+            } else if (!ImeSendInputInUnicode) {
+                ImeSendInputInRoman = true;
+            }
+            //if (!ImeSendInputInRoman && !ImeSendInputInKana && !ImeSendInputInUnicode) ImeSendInputInRoman = true;
             //ImeUnicodeClassNames = GetString("imeUnicodeClassNames")._orElse("Edit|_WwG|SakuraView*").Trim();
             //ImeUnicodeClassNames = GetString("imeUnicodeClassNames").Trim();
             //ImeUnicodeClassNamesHash = new HashSet<string>(ImeUnicodeClassNames.Trim()._toLower()._split('|'));
