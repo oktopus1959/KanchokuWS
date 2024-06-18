@@ -156,7 +156,7 @@ namespace KanchokuWS.CombinationKeyStroke
         public void SetPreRewriteTime(string outStr)
         {
             logger.InfoH(() => $"ENTER: outStr={outStr}");
-            if (outStr._isEmpty() || outStr.Last()._isAscii()) {
+            if (outStr._isEmpty() /*|| outStr.Last()._isAscii()*/) {        // _isAscii()の場合も書き換えをキャンセルしてしまうと、ローマ字配列に影響が出る
                 if (preRewriteDt._isValid()) {
                     cancelPreRewriteTime();
                 }

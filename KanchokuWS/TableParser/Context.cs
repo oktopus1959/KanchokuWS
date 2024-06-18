@@ -320,7 +320,7 @@ namespace KanchokuWS.TableParser
                             continue;
                         } else if (items[0] == "#end") {
                             if (items.Length >= 2 &&
-                                items[1] == "enablecomboonboth" || items[1] == "enablealways" || items[1] == "enabledalways" || items[1] == "enablecombooneisu") {
+                                (items[1] == "enablecomboonboth" || items[1] == "enablealways" || items[1] == "enabledalways" || items[1] == "enablecombooneisu")) {
                                 bInKanchokuMode = true;
                                 bInEisuMode = false;
                                 lines[idx] = ";;;; " + line;

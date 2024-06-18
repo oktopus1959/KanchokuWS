@@ -8,10 +8,13 @@ struct MazeResult {
     // 結果文字列の先頭の変換形文字列＋活用語尾の長さ
     size_t xferLen = 0;
 
+    // 対応する読みの長さ
+    size_t yomiLen = 0;
+
 public:
     MazeResult() { }
 
-    MazeResult(const MString& str, size_t len) : resultStr(str), xferLen(len) { }
+    MazeResult(const MString& str, size_t len, size_t ylen) : resultStr(str), xferLen(len), yomiLen(ylen) { }
 
 
     static std::vector<MString> ToMStringVector(const std::vector<MazeResult>& results) {

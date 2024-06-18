@@ -4867,12 +4867,10 @@ namespace KanchokuWS.Gui
             this.checkBox_mazegakiSelectFirstCand.AutoSize = true;
             this.checkBox_mazegakiSelectFirstCand.Location = new System.Drawing.Point(20, 21);
             this.checkBox_mazegakiSelectFirstCand.Name = "checkBox_mazegakiSelectFirstCand";
-            this.checkBox_mazegakiSelectFirstCand.Size = new System.Drawing.Size(171, 19);
+            this.checkBox_mazegakiSelectFirstCand.Size = new System.Drawing.Size(179, 19);
             this.checkBox_mazegakiSelectFirstCand.TabIndex = 0;
-            this.checkBox_mazegakiSelectFirstCand.Text = "先頭候補を無条件に出力する";
-            this.toolTip1.SetToolTip(this.checkBox_mazegakiSelectFirstCand, "交ぜ書き変換の結果が複数あっても、先頭候補を無条件に出力します。\r\n\r\n他の候補を出力したい場合は、いったん Esc で変換前の文字列に戻してから\r\n再度、交ぜ書" +
-        "き変換を実行すると、縦列鍵盤表示になります。\r\n\r\nなお、この設定をONにしておくと、交ぜ書き変換履歴の登録がうまく行かない\r\n場合があります。その場合は、この" +
-        "設定をOFFにしてください。");
+            this.checkBox_mazegakiSelectFirstCand.Text = "文末最長一致候補を自動選択";
+            this.toolTip1.SetToolTip(this.checkBox_mazegakiSelectFirstCand, resources.GetString("checkBox_mazegakiSelectFirstCand.ToolTip"));
             this.checkBox_mazegakiSelectFirstCand.UseVisualStyleBackColor = true;
             // 
             // groupBox17
