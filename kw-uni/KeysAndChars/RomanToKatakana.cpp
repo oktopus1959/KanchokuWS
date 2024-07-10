@@ -314,11 +314,23 @@ namespace RomanToKatakana {
             LOG_DEBUGH(_T("CALLED: ch={}, cc={}"), ch, cc);
             if (cc.empty()) return true;
             wchar_t co = ch == '$' ? '$' : isVowel(ch) ? '@' : '%';
-            if (cc[0] == '^') {
-                return cc.find(ch, 1) == String::npos && cc.find(co, 1) == String::npos;
+            size_t hatPos = cc.find('^');
+            String cchead;
+            String cctail;
+            if (cc.size() > 1 && hatPos < cc.size() - 1) {
+                // 途中に ^ がある
+                if (hatPos > 0) cchead = cc.substr(0, hatPos);
+                cctail = cc.substr(hatPos + 1, cc.size() - (hatPos + 1));
             } else {
-                return cc.find(ch) != String::npos || cc.find(co) != String::npos;
+                cchead = cc;
             }
+            if (!cchead.empty()) {
+                if (cchead.find(ch) == String::npos && cchead.find(co) == String::npos) return false;
+            }
+            if (!cctail.empty()) {
+                if (cctail.find(ch) != String::npos || cctail.find(co) != String::npos) return false;
+            }
+            return true;
         }
 
     public:
@@ -406,7 +418,9 @@ namespace RomanToKatakana {
                 auto items = _split(utils::toUpper(line));
                 if (items.size() == 2 && !items[0].empty() && !items[1].empty() && items[0][0] != '#' ) {
                     RomanRewriteInfo info;
-                    info.katakanaStr = items[1];
+                    if (items[1] != _T("\"\"")) {
+                        info.katakanaStr = items[1];
+                    }
                     String def = items[0];
                     String key;
                     size_t i = 0;
