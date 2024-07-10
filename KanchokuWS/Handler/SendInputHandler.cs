@@ -961,6 +961,10 @@ namespace KanchokuWS.Handler
             var ctrlState = upCtrlKeyInputs();
             logger.DebugH($"upCtrl");
 
+            // Shift
+            var shiftState = upShiftKeyInputs();
+            logger.DebugH($"upShift");
+
             // Backspace
             //sendInputsVkey(VK_BACK, numBS);
             numBS = clearOrSendWaitingCharWhenKanaTraining(numBS);
@@ -971,6 +975,10 @@ namespace KanchokuWS.Handler
                 if (numBS > 0) waitAfterBS();
                 sendStringInputs(extractSubString(str._toString()));
             }
+
+            // Shift戻し
+            RevertShiftKey(shiftState);
+            logger.DebugH($"revertShift");
 
             // Ctrl戻し
             RevertCtrlKey(ctrlState);
@@ -1021,9 +1029,9 @@ namespace KanchokuWS.Handler
             var activeWinHandle = ActiveWindowHandler.Singleton?.ActiveWinHandle ?? IntPtr.Zero;
             logger.DebugH(() => $"ActiveWinHandle={(int)activeWinHandle:x}H, str=\"{str._toString()}\", numBS={numBS}, bForceString={bForceString}");
 
-            if (activeWinHandle != IntPtr.Zero && ((str._notEmpty() && str[0] != 0) || numBS > 0)) {
+            if ((str._notEmpty() && str[0] != 0) || numBS > 0) {
                 int len = str._isEmpty() ? 0 : str._strlen();     // 終端までの長さを取得
-                if (bForceString || Settings.MinLeghthViaClipboard <= 0 || len < Settings.MinLeghthViaClipboard || isShiftLeftArrowDeleteComboUsed(numBS)) {
+                if (bForceString || activeWinHandle == IntPtr.Zero || Settings.MinLeghthViaClipboard <= 0 || len < Settings.MinLeghthViaClipboard || isShiftLeftArrowDeleteComboUsed(numBS)) {
                     // 自前で送出
                     SendString(str, len, numBS);
                 } else {
