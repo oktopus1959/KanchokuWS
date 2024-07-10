@@ -64,7 +64,9 @@ namespace lattice2 {
     void loadCostFile(bool onlyUserFile = false) {
         if (!onlyUserFile) {
             wordCosts.clear();
+#ifdef NDEBUG
             _loadCostFile(_T("wikipedia.cost.txt"));
+#endif
         }
         _loadCostFile(_T("userword.cost.txt"));
     }
@@ -150,7 +152,8 @@ namespace lattice2 {
         // 末尾文字列にマッチする RewriteInfo を取得する
         std::tuple<const RewriteInfo*, int> matchWithTailString(const PostRewriteOneShotNode* rewriteNode) const {
             size_t maxlen = SETTINGS->kanaTrainingMode && ROOT_STROKE_NODE->hasOnlyUsualRewriteNdoe() ? 0 : 8;     // かな入力練習モードで濁点のみなら書き換えをやらない
-            bool bAllKeyUp = false; //OUTPUT_STACK->isAllKeyUp();
+            //bool bAllKeyUp = false; //OUTPUT_STACK->isAllKeyUp();
+            bool bAllKeyUp = OUTPUT_STACK->isAllKeyUp();
             while (maxlen > 0) {
                 _LOG_DEBUGH(_T("maxlen={}"), maxlen);
                 const MString targetStr = utils::safe_tailstr(_str, maxlen);
