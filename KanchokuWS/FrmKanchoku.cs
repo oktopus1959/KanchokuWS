@@ -784,6 +784,11 @@ namespace KanchokuWS
         private int dayOffset = 0;
         private int prevDateStrLength = 0;
 
+        public void ResetPrevDeckey()
+        {
+            prevDeckey = -1;
+        }
+
         /// <summary> Decoder の ON/OFF 状態 </summary>
         public bool IsDecoderActive { get; private set; } = false;
 
@@ -841,7 +846,7 @@ namespace KanchokuWS
             frmVkb.DrawInitialVkb();
         }
 
-        private int prevFuncDeckey = 0;
+        //private int prevFuncDeckey = 0;
         private int prevFuncTotalCount = 0;
 
         /// <summary>
@@ -853,10 +858,9 @@ namespace KanchokuWS
         {
             if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), normalDeckey={normalDeckey:x}H({normalDeckey}), mod={mod:x}({mod})");
             bool bPrevDtUpdate = false;
-            int prevDeckey = prevFuncDeckey;
-            prevFuncDeckey = deckey;
-            int prevCount = prevFuncTotalCount;
-            prevFuncTotalCount = DeckeyTotalCount;
+            //prevDeckey = prevFuncDeckey;
+            //prevFuncDeckey = deckey;
+            //int prevCount = prevFuncTotalCount;
             try {
                 if (deckey == DecoderKeys.DATE_STRING_ROTATION_DECKEY) {
                     return !isActiveWinExcel() && rotateDateString(1);
@@ -883,7 +887,7 @@ namespace KanchokuWS
                         case DecoderKeys.DATE_STRING_UNROTATION_DECKEY:
                             return !isActiveWinExcel() && rotateDateString(-1);
                         case DecoderKeys.STROKE_HELP_DECKEY:
-                            if (prevDeckey != deckey || prevCount + 1 < DeckeyTotalCount) {
+                            if (prevDeckey != deckey || prevFuncTotalCount + 1 < DeckeyTotalCount) {
                                 ShowStrokeHelp(null);
                             } else {
                                 ShowBushuCompHelp();
@@ -1034,6 +1038,7 @@ namespace KanchokuWS
                     return false;
                 }
             } finally {
+                prevFuncTotalCount = DeckeyTotalCount;
                 prevDeckey = deckey;
                 if (bPrevDtUpdate) prevDecDt = HRDateTime.Now;
             }
@@ -1189,8 +1194,8 @@ namespace KanchokuWS
                 dayOffset = 0;
             }
             dateStrDeckeyCount += direction;
-            if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: new deckey={DecoderKeys.DATE_STRING_ROTATION_DECKEY:x}, dateStrDeckeyCount={dateStrDeckeyCount}, prevDateStrLength={prevDateStrLength}, dayOffset={dayOffset}");
             outputTodayDate();
+            if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: new deckey={DecoderKeys.DATE_STRING_ROTATION_DECKEY:x}, dateStrDeckeyCount={dateStrDeckeyCount}, prevDateStrLength={prevDateStrLength}, dayOffset={dayOffset}");
             return true;
         }
 
@@ -2167,6 +2172,7 @@ namespace KanchokuWS
                     fmt = fmt._reReplace("r+", "y");
                 }
                 dtStr = dtNow.AddYears(-diffYear).ToString(fmt);
+                if (Settings.LoggingDecKeyInfo) logger.Info($"fmt={fmt}, dtStr={dtStr}");
             }
             SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(dtStr.ToCharArray(), prevDateStrLength);
             prevDateStrLength = dtStr.Length;

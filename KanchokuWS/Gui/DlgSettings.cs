@@ -2500,7 +2500,7 @@ namespace KanchokuWS.Gui
         /// <summary>
         /// Ctrlキー割り当てで、ドロップダウンに使われる項目
         /// </summary>
-        private string[] ctrlKeyItems = new string[] {
+        private string[] _ctrlKeyItems = new string[] {
             "なし",
             "SPACE",
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
@@ -2515,40 +2515,34 @@ namespace KanchokuWS.Gui
             "BQUOTE (`)",   // c0/106
             "OEM4 ([)",     // db
             "OEM5 (|)",     // dc
-            "OEM6 (]})",    // dd
-            "OEM7 (^ ')",   // de
+            "OEM6 (])",    // dd
+            "OEM7 (^)",   // de
             "OEM102 (\\)",  // e2/106
         };
 
         private string[] getCtrlKeyItems()
         {
-            //if (ctrlKeyItems._isEmpty()) {
-            //    var items = new List<string>(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" });
-            //    char[] data = frmMain?.CallDecoderFunc("getCharsOrderedByDeckey", null);
-            //    if (data._notEmpty()) {
-            //        for (int i = 0; i < DecoderKeys.NUM_STROKE_DECKEY; ++i) {
-            //            if ((data[i] > ' ' && data[i] < '0') || (data[i] > '9' && data[i] < 'A') || (data[i] > 'Z' && data[i] < 'a') || data[i] > 'z') {
-            //                items.Add($"{data[i]}{data[i+DecoderKeys.NUM_STROKE_DECKEY]}");
-            //            }
-            //        }
-            //    }
-            //    ctrlKeyItems = items.Select(x => " " + x).ToArray();
-            //}
-            return ctrlKeyItems;
+            return _ctrlKeyItems;
         }
 
+        /// <summary>
+        /// 最初にDropDownしてリストを開いた時にListItemsをセットする(Lazy Load)
+        /// </summary>
+        /// <param name="comboBox"></param>
         private void comboBox_ctrlKey_setItems(ComboBox comboBox)
         {
+            string[] ctrlKeyItems = getCtrlKeyItems();
             var text = comboBox.Text;
-            if (comboBox.Items.Count < 2) {
+            if (comboBox.Items.Count < ctrlKeyItems.Length) {
                 comboBox.Items.Clear();
-                comboBox.Items.AddRange(getCtrlKeyItems());
+                comboBox.Items.AddRange(ctrlKeyItems);
                 if (text._notEmpty()) comboBox_selectCtrlKeyItem(comboBox, text);
             }
         }
 
         private void comboBox_selectCtrlKeyItem(ComboBox combo, string key)
         {
+            string[] ctrlKeyItems = getCtrlKeyItems();
             for (int idx = 0; idx < ctrlKeyItems.Length; ++idx) {
                 var item = ctrlKeyItems[idx];
                 if (item.StartsWith(key) && (item.Length == key.Length || item[key.Length] == ' ')) {
@@ -2586,6 +2580,9 @@ namespace KanchokuWS.Gui
             comboBox_homeKey.Enabled = checkBox_homeKey.Checked;
             comboBox_endKey.Enabled = checkBox_endKey.Checked;
             comboBox_dateStringKey.Enabled = checkBox_dateStringKey.Checked;
+            if (checkBox_dateStringKey.Checked) {
+                checkBox_globalCtrlKeysEnabled.Checked = true;
+            }
         }
 
         private void checkBox_backSpaceKey_CheckedChanged(object sender, EventArgs e)

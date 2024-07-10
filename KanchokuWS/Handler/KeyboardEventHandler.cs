@@ -909,6 +909,7 @@ namespace KanchokuWS.Handler
                 // デコーダーがOFFで、どの DecoderKey にもヒモ付けられていないか、または通常キーでもないキーが押されたら、そのままシステムに処理させる
                 // ⇒ Astah など、なぜか自身で キーボード入力を監視していると思われるソフトがあるため
                 if (Settings.LoggingDecKeyInfo) logger.Info(() => $"LEAVE: false: Decoder=OFF, no assigned deckey and not normal key");
+                frmKanchoku?.ResetPrevDeckey();
                 return false;
             }
 
