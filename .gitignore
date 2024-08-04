@@ -9,7 +9,9 @@ obj/
 tmp/
 Work/
 junk/
+*.junk/
 .vs/
+_tables/
 *__.cs
 *.back*
 *.VC.db

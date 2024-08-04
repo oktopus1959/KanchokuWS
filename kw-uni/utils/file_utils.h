@@ -57,23 +57,29 @@ namespace utils {
     // ifstream の reader
     class IfstreamReader {
     public:
+        // 標準入力からテキストを読み込むコンストラクタ。
         IfstreamReader() { }
 
+        // 標準入力を使うコンストラクタ。バイナリー指定あり。
         IfstreamReader(bool binary) : _binary(binary) { }
 
+        // 指定のファイルから読み込むコンストラクタ。バイナリー指定あり。
+        // ただし、filePath == "" or filePath == "-" の場合は、標準入力からの読み込みとなる。
         IfstreamReader(StringRef filepath, bool binary = false) : _binary(binary) {
-            open(filepath);
+            if (!filepath.empty() && filepath != L"-") {
+                open(filepath);
+            }
         }
 
         ~IfstreamReader() {
-            if (success() && !_cin) ifs.close();
+            if (success() && !_cin) _ifs.close();
         }
 
         inline bool open(StringRef filepath) {
             std::ios_base::openmode openMode = std::ios_base::in;
             if (_binary) openMode = openMode | std::ios_base::binary;
-            ifs.open(filepath, openMode);
-            _fail = ifs.fail();
+            _ifs.open(filepath, openMode);
+            _fail = _ifs.fail();
             _cin = false;
             return success();
         }
@@ -126,7 +132,7 @@ namespace utils {
         // read unsigned long
         inline unsigned long read_ulong() {
             ULONG _value;
-            ifs.read(reinterpret_cast<char*>(&_value), sizeof(ULONG));
+            _ifs.read(reinterpret_cast<char*>(&_value), sizeof(ULONG));
             return _value;
         }
 
@@ -159,14 +165,14 @@ namespace utils {
         inline void read(String& str) {
             size_t size = (size_t)read_ulong();
             str.resize(size);
-            ifs.read(reinterpret_cast<char*>(str.data()), (std::streamsize)size * sizeof(wchar_t));
+            _ifs.read(reinterpret_cast<char*>(str.data()), (std::streamsize)size * sizeof(wchar_t));
         }
 
         // read String vector
         inline void read(std::vector<String>& vec) {
             size_t size = (size_t)read_ulong();
             std::vector<wchar_t> buf(size);
-            ifs.read(reinterpret_cast<char*>(buf.data()), (std::streamsize)buf.size() * sizeof(wchar_t));
+            _ifs.read(reinterpret_cast<char*>(buf.data()), (std::streamsize)buf.size() * sizeof(wchar_t));
             wchar_t* p = buf.data();
             vec.clear();
             while (p < buf.data() + size) {
@@ -212,7 +218,7 @@ namespace utils {
         inline void read(std::vector<T>& vec) {
             size_t size = (size_t)read_ulong();
             vec.resize(size);
-            ifs.read(reinterpret_cast<char*>(vec.data()), sizeof(T) * size);
+            _ifs.read(reinterpret_cast<char*>(vec.data()), sizeof(T) * size);
         }
 
         // read map
@@ -231,18 +237,18 @@ namespace utils {
         inline size_t read(char* data, size_t bufsiz) {
             size_t size = (size_t)read_ulong();
             if (bufsiz >= size) {
-                ifs.read(data, size);
+                _ifs.read(data, size);
                 return size;
             } else {
-                ifs.read(data, bufsiz);
+                _ifs.read(data, bufsiz);
                 std::vector<char> dummy(size - bufsiz);
-                ifs.read(dummy.data(), size - bufsiz);
+                _ifs.read(dummy.data(), size - bufsiz);
                 return bufsiz;
             }
         }
 
     private:
-        std::ifstream ifs;
+        std::ifstream _ifs;
         bool _fail = false;
         bool _binary = false;
         bool _cin = true;
@@ -250,7 +256,7 @@ namespace utils {
         std::vector<String> _dummyLines;
         size_t _dummyCount = 0;
 
-        inline std::istream& _is() { return _cin ? std::cin : ifs; }
+        inline std::istream& _is() { return _cin ? std::cin : _ifs; }
     };
    
     // ファイルのすべての行を返す
@@ -352,7 +358,7 @@ namespace utils {
                 p += slen;
             }
             write(size);
-            ofs.write(reinterpret_cast<const char*>(buf.data()), buf.size() * sizeof(wchar_t));
+            ofs.write(reinterpret_cast<const char*>(buf.data()), std::streamsize(buf.size()) * sizeof(wchar_t));
         }
 
         // write Serializable object

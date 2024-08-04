@@ -1017,6 +1017,16 @@ namespace utils
     }
 #undef SPLIT
 
+    // 正規表現 p に部分マッチするか
+    inline bool reSearch(StringRef s, const std::wregex& p) {
+        return std::regex_search(s, p);
+    }
+
+    // 正規表現 p に部分マッチするか
+    inline bool reSearch(StringRef s, StringRef p) {
+        return reSearch(s, std::wregex(p));
+    }
+
     // 正規表現 delim で n 個に分割する。先頭が delim の場合、戻値の先頭要素は空文字列になる
     inline std::vector<String> reSplit(StringRef s, size_t n, const std::wregex& reDelim) {
         std::vector<String> result;

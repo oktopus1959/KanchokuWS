@@ -97,7 +97,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils;..\DyMazin\DyMazinLib\src</AdditionalIncludeDirectories>
       <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
@@ -124,7 +124,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils;..\DyMazin\DyMazinLib\src</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
@@ -180,10 +180,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\DyMazin\DyMazinLib\src\DyMazinLib.h" />
     <ClInclude Include="BushuComp\BushuComp.h" />
     <ClInclude Include="BushuComp\BushuDic.h" />
     <ClInclude Include="BushuComp\BushuAssoc.h" />
     <ClInclude Include="BushuComp\BushuAssocDic.h" />
+    <ClInclude Include="DyMazin\DymazinBridge.h" />
     <ClInclude Include="EscapeNode.h" />
     <ClInclude Include="FunctionNode.h" />
     <ClInclude Include="FunctionNodeBuilder.h" />
@@ -208,6 +210,7 @@
     <ClInclude Include="Mecab\mecab.h" />
     <ClInclude Include="Mecab\MecabBridge.h" />
     <ClInclude Include="ModalStateUtil.h" />
+    <ClInclude Include="MorphBridge.h" />
     <ClInclude Include="MStringResult.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="OneShot\HankakuKatakanaOneShot.h" />
@@ -257,6 +260,7 @@
     <ClCompile Include="BushuComp\BushuDic.cpp" />
     <ClCompile Include="BushuComp\BushuAssoc.cpp" />
     <ClCompile Include="BushuComp\BushuAssocDic.cpp" />
+    <ClCompile Include="DyMazin\DymazinBridge.cpp" />
     <ClCompile Include="EscapeState.cpp" />
     <ClCompile Include="FunctionNodeManager.cpp" />
     <ClCompile Include="History\HistCandidates.cpp" />
@@ -310,6 +314,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src-stroke-lattice\mecab\mecab.vcxproj">
       <Project>{0f5f5e45-baac-452b-a6f9-f111f3ecba60}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\DyMazin\DyMazinLib\DyMazinLib.vcxproj">
+      <Project>{aef1f796-7f90-4d1f-95e4-e9d428b42a9f}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

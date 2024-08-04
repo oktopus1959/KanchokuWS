@@ -131,7 +131,7 @@ public:
     virtual void ReadFile(const std::vector<String>& lines) = 0;
 
     // 履歴入力辞書ファイルの読み込み(読み込み専用辞書)
-    virtual void ReadFileAsReadOnly(const std::vector<String>& lines) = 0;
+    virtual void ReadRomanFileAsReadOnly(const std::vector<String>& lines) = 0;
 
     // 登録
     virtual void AddNewEntry(const MString& line) = 0;

@@ -10,9 +10,10 @@
 #include "StateCommonInfo.h"
 #include "Lattice.h"
 #include "MStringResult.h"
-#include "Mecab/MecabBridge.h"
 #include "BushuComp/BushuComp.h"
 #include "BushuComp/BushuDic.h"
+
+#include "MorphBridge.h"
 
 #if 1
 #undef IS_LOG_DEBUGH_ENABLED
@@ -302,7 +303,7 @@ namespace lattice2 {
     // K-best な文字列を格納する
     class KBestList {
 
-        std::map<MString, int> _mecabCache;
+        std::map<MString, int> _morphCache;
 
         std::vector<CandidateString> _candidates;
 
@@ -313,7 +314,7 @@ namespace lattice2 {
 
     public:
         void clear() {
-            _mecabCache.clear();
+            _morphCache.clear();
             _candidates.clear();
         }
 
@@ -350,13 +351,13 @@ namespace lattice2 {
         }
 
     private:
-        int calcMecabCost(const MString& s, std::vector<MString>& words) {
+        int calcMorphCost(const MString& s, std::vector<MString>& words) {
             int cost = 0;
             if (!s.empty()) {
-                auto iter = _mecabCache.find(s);
-                if (iter == _mecabCache.end()) {
-                    cost = MecabBridge::mecabCalcCost(s, words);
-                    _mecabCache[s] = cost;
+                auto iter = _morphCache.find(s);
+                if (iter == _morphCache.end()) {
+                    cost = MorphBridge::morphCalcCost(s, words);
+                    _morphCache[s] = cost;
                 } else {
                     cost = iter->second;
                 }
@@ -364,10 +365,10 @@ namespace lattice2 {
             return cost;
         }
 #if 0
-        int totalCostWithMecab(const MString& candStr) {
+        int totalCostWithMorph(const MString& candStr) {
             std::vector<MString> words;
-            int mecabCost = calcMecabCost(candStr, words);
-            return mecabCost;
+            int morphCost = calcMorphCost(candStr, words);
+            return morphCost;
         }
 #endif
 
@@ -392,12 +393,12 @@ namespace lattice2 {
             bool bIgnored = false;
             std::vector<MString> words;
             const MString& candStr = newCandStr.string();
-            int mecabCost = candStr.empty() ? 0 : calcMecabCost(candStr, words);
+            int morphCost = candStr.empty() ? 0 : calcMorphCost(candStr, words);
             int ngramCost = candStr.empty() ? 0 : getNgramCost(candStr) * 5;
-            //int mecabCost = 0;
+            //int morphCost = 0;
             //int ngramCost = candStr.empty() ? 0 : getNgramCost(candStr);
-            int candCost = mecabCost + ngramCost;
-            _LOG_INFOH(_T("CALLED: candStr={}, candCost={} (mecab={}[{}], ngram={})"), to_wstr(candStr), candCost, mecabCost, to_wstr(utils::join(words, ' ')), ngramCost);
+            int candCost = morphCost + ngramCost;
+            _LOG_INFOH(_T("CALLED: candStr={}, candCost={} (morph={}[{}], ngram={})"), to_wstr(candStr), candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost);
 
             newCandStr.cost(candCost);
             int totalCost = newCandStr.totalCost();

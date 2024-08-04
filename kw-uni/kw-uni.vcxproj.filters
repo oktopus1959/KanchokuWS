@@ -82,6 +82,12 @@
     <Filter Include="ヘッダー ファイル\Mecab">
       <UniqueIdentifier>{9d5bf7a6-6de8-4e79-9ee8-7fa50d3cd69f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\DyMazin">
+      <UniqueIdentifier>{34239276-b758-43d1-a58e-a0a1e16e4192}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\DyMazin">
+      <UniqueIdentifier>{bd873fbf-b512-428c-8fb2-8a00db06e901}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -297,6 +303,15 @@
     <ClInclude Include="StrokeMerger\StrokeMergerHistoryResidentState.h">
       <Filter>ヘッダー ファイル\StrokeMerger</Filter>
     </ClInclude>
+    <ClInclude Include="DyMazin\DymazinBridge.h">
+      <Filter>ヘッダー ファイル\DyMazin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DyMazin\DyMazinLib\src\DyMazinLib.h">
+      <Filter>ヘッダー ファイル\DyMazin</Filter>
+    </ClInclude>
+    <ClInclude Include="MorphBridge.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -442,6 +457,9 @@
     </ClCompile>
     <ClCompile Include="StrokeMerger\MergerHistoryState.cpp">
       <Filter>ソース ファイル\StrokeMerger</Filter>
+    </ClCompile>
+    <ClCompile Include="DyMazin\DymazinBridge.cpp">
+      <Filter>ソース ファイル\DyMazin</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

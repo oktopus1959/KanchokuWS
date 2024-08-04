@@ -454,6 +454,44 @@ namespace {
     DEFINE_CLASS_LOGGER(HistUsedList);
 
     // -------------------------------------------------------------------
+    // 複数候補があるケースで先頭候補を並べたリスト
+    class HistHeadCandList {
+        DECLARE_CLASS_LOGGER;
+
+        const size_t MAX_SIZE = 10000;
+        const size_t EXTRA_SIZE = 1000;
+
+        std::vector<MString> headCandList;
+
+    public:
+        void PushEntry(const MString& word) {
+            //_LOG_DEBUGH(_T("CALLED: word={}"), to_wstr(word));
+            headCandList.push_back(word);
+        }
+
+        void ExtractHeadWord(const MString& key, HistResultList& outvec, std::set<MString>& set_) {
+            LOG_DEBUG(_T("CALLED: key={}"), to_wstr(key));
+            _DEBUG_SENT(size_t n = 0);
+            for (const auto& w : headCandList) {
+                if (w.size() > key.size() && w[key.size()] == '|' && utils::contains(set_, w)) {
+                    // キーが1文字なら、候補列から1文字単語は除く
+                    _DEBUG_SENT(\
+                        if (n < 10) { \
+                            _LOG_DEBUGH(_T("outvec.PushHistory(key={}, w={})"), to_wstr(key), to_wstr(w)); \
+                        } else if (n == 10) { \
+                            _LOG_DEBUGH(_T("and {} entries..."), headCandList.size() - 10); \
+                        }\
+                        ++n);
+                    outvec.PushHistory(key, w);
+                    set_.erase(w);
+                }
+            }
+        }
+
+    };
+    DEFINE_CLASS_LOGGER(HistHeadCandList);
+
+    // -------------------------------------------------------------------
     // 除外する履歴を並べたリスト
     class HistExcludeList {
         DECLARE_CLASS_LOGGER;
@@ -621,6 +659,8 @@ namespace {
 
         HistUsedList usedList;
 
+        HistHeadCandList romanPriorityList;
+
         HistExcludeList exclList;
 
         // 結果を保持しておくリスト
@@ -678,13 +718,38 @@ namespace {
         }
 
         // UTF8で書かれた辞書ソースを読み込む
-        void ReadFile(const std::vector<String>& lines) {
+        void ReadFile(const std::vector<String>& lines) override {
             readFile(lines, false);
         }
 
-        // UTF8で書かれた辞書ソースを読み込む
-        void ReadFileAsReadOnly(const std::vector<String>& lines) {
+        // roman辞書ソースを読み込む
+        void ReadRomanFileAsReadOnly(const std::vector<String>& lines) override {
+            LOG_DEBUGH(_T("ENTER: {} lines"), lines.size());
             readFile(lines, true);
+
+            // 重複しているエントリを romanPriorityList に追加
+            String prevWord;
+            MString prevLine;
+            bool bDup = false;
+            size_t count = 0;
+            for (const auto& line : lines) {
+                size_t pos = line.find(_T("|"));
+                if (pos < line.size()) {
+                    String word = line.substr(0, pos);
+                    if (word == prevWord) {
+                        if (!bDup) {
+                            romanPriorityList.PushEntry(prevLine);
+                            ++count;
+                        }
+                        bDup = true;
+                    } else {
+                        prevWord = word;
+                        prevLine = to_mstr(line);
+                        bDup = false;
+                    }
+                }
+            }
+            LOG_DEBUGH(_T("LEAVE: dup count={}"), count);
         }
 
     private:
@@ -712,7 +777,7 @@ namespace {
 
     public:
         // 新規登録
-        void AddNewEntry(const MString& word) {
+        void AddNewEntry(const MString& word) override {
             _LOG_DEBUGH(_T("CALLED: word={}"), to_wstr(word));
             if (word.empty()) return;
             if (!STROKE_HELP->Find(utils::safe_back(word))) {
@@ -741,25 +806,25 @@ namespace {
         }
 
         // 新規登録(条件なし)
-        void AddNewEntryAnyway(const MString& word) {
+        void AddNewEntryAnyway(const MString& word) override {
             addNewEntry(word, true);
             exclList.RemoveEntry(word);
         }
 
         // Nグラム登録
-        void AddNgramEntries(const MString& word) {
+        void AddNgramEntries(const MString& word) override {
             for (const auto& w : ngramDic.AddNgramEntries(word)) {
                 addNewEntry(w);
             }
         }
 
         // 登録済みNグラム集合をクリアする
-        void ClearNgramSet() {
+        void ClearNgramSet() override {
             ngramDic.ClearNgramSet();
         }
 
         // 指定の見出し語のエントリを削除する
-        void DeleteEntry(const MString& word) {
+        void DeleteEntry(const MString& word) override {
             LOG_DEBUGH(_T("CALLED: {}"), to_wstr(word));
             usedList.RemoveEntry(word);
             hashToStrMap.Remove(word);
@@ -806,20 +871,18 @@ namespace {
             resultList.SetKeyInfoIfFirst(key, bWild);
             size_t keylen = key.size();
             usedList.ExtractUsedWords(key, resultList, set_, wlen);
+            romanPriorityList.ExtractHeadWord(key, resultList, set_);
 
             size_t n = 0;
             // set_ を vec に詰め替えてソートしてから回す。なお、'|' のままだと期待した順にならないので、'\t' に置換してからソートする(後で'|'に戻す)
             std::vector<MString> vec;
             std::transform(set_.begin(), set_.end(), std::back_inserter(vec), [](const auto& w) { return utils::replace_all(w, '|', '\t');});
             if (vec.size() < 1000) std::sort(vec.begin(), vec.end());
-            MString prevWord;
-            mchar_t tsu = _T("ツ")[0];
-            mchar_t to = _T("ト")[0];
-            bool bRomanNeeded = utils::isAsciiString(key);
+            bool bRomanNeeded = utils::isRomanString(key);
 
             for (const auto& s : vec) {
-                // 候補長がキーサイズを超えたら、ローマ字候補を追加
                 if (bRomanNeeded) {
+                    // ローマ字候補を追加
                     _LOG_DEBUGH(_T("check ROMAN key: s={}"), to_wstr(s));
                     size_t vbarPos = s.find_first_of('\t');
                     if (vbarPos < s.size() && vbarPos > key.size()) {
@@ -827,31 +890,10 @@ namespace {
                         bRomanNeeded = false;
                     }
                 }
-
                 // keylen == 1 なら1文字単語は対象外
                 if ((wlen > 0 && s.size() == wlen) || (wlen == 0 && (keylen != 1 || s.size() >= 2)) && s != key) {
-                    if (!prevWord.empty()) {
-                        if (s.back() == to && utils::safe_substr(prevWord, 0, prevWord.size() - 1) == utils::safe_substr(s, 0, s.size() - 1)) {
-                            // 末尾の 'ト' と 'ツ' 以外が一致したので、'ト'の方を優先する
-                            _LOG_DEBUGH(_T("FOUND SAME 'ト': {}"), to_wstr(s));
-                            pushCandidate(key, s, n);
-                            pushCandidate(key, prevWord, n);
-                        } else {
-                            pushCandidate(key, prevWord, n);
-                            pushCandidate(key, s, n);
-                        }
-                        prevWord.clear();
-                    }
-                    if (s.back() == tsu) {
-                        _LOG_DEBUGH(_T("FOUND 'ツ': {}"), to_wstr(s));
-                        prevWord = s;
-                    } else {
-                        pushCandidate(key, s, n);
-                    }
+                    pushCandidate(key, s, n);
                 }
-            }
-            if (!prevWord.empty()) {
-                pushCandidate(key, prevWord, n);
             }
             // 必要ならローマ字候補を追加
             if (bRomanNeeded) pushRomanEntry(key);
@@ -915,8 +957,7 @@ namespace {
         // key.size() == 1 なら 2文字以上の候補列を返す
         // key.size() >= 2 なら key.size() 文字以上の候補を返す
         // bCheckMinKeyLen = false なら、キー長チェックをやらない
-        const HistResultList& GetCandidates(const MString& key, MString& resultKey, bool bCheckMinKeyLen, int len)
-        {
+        const HistResultList& GetCandidates(const MString& key, MString& resultKey, bool bCheckMinKeyLen, int len) override {
             _LOG_DEBUGH(_T("ENTER: key={}, bCheckMinKeyLen={}, len={}"), to_wstr(key), bCheckMinKeyLen, len);
             // 結果を返すためのリストをクリアしておく
             resultList.ClearKeyInfo();
@@ -1093,7 +1134,7 @@ namespace {
         }
 
         // 使用した単語をリストの先頭に追加or移動
-        void UseWord(const MString& word) {
+        void UseWord(const MString& word) override {
             usedList.PushEntry(word, 0);    // 1文字の単語についても優先順の移動をするため、ここの minlen は1以下にしておく
         }
 
@@ -1108,7 +1149,7 @@ namespace {
         //}
 
         // 辞書内容の保存
-        void WriteFile(utils::OfstreamWriter& writer) {
+        void WriteFile(utils::OfstreamWriter& writer) override {
             LOG_DEBUGH(_T("CALLED"));
             for (const auto& word : hashToStrMap.GetAllWords()) {
                 if (word.find(MSTR_VERT_BAR_2) == MString::npos) {
@@ -1120,55 +1161,55 @@ namespace {
         }
 
         // 辞書が空か
-        bool IsHistDicDirty() const {
+        bool IsHistDicDirty() const override {
             return bDirty;
         }
 
         // 使用辞書の読み込み
-        void ReadUsedFile(const std::vector<String>& lines) {
+        void ReadUsedFile(const std::vector<String>& lines) override {
             LOG_DEBUGH(_T("CALLED"));
             usedList.ReadFile(lines);
         }
 
         // 使用辞書内容の保存
-        void WriteUsedFile(utils::OfstreamWriter& writer) {
+        void WriteUsedFile(utils::OfstreamWriter& writer) override {
             LOG_DEBUGH(_T("CALLED"));
             usedList.WriteFile(writer);
         }
 
-        bool IsUsedDicDirty() const {
+        bool IsUsedDicDirty() const override {
             return usedList.IsDirty();
         }
 
         // 除外辞書の読み込み
-        void ReadExcludeFile(const std::vector<String>& lines) {
+        void ReadExcludeFile(const std::vector<String>& lines) override {
             LOG_DEBUGH(_T("CALLED"));
             exclList.ReadFile(lines);
         }
 
         // 除外辞書内容の保存
-        void WriteExcludeFile(utils::OfstreamWriter& writer) {
+        void WriteExcludeFile(utils::OfstreamWriter& writer) override {
             LOG_DEBUGH(_T("CALLED"));
             exclList.WriteFile(writer);
         }
 
-        bool IsExcludeDicDirty() const {
+        bool IsExcludeDicDirty() const override {
             return exclList.IsDirty();
         }
 
         // Nグラム辞書の読み込み
-        void ReadNgramFile(const std::vector<String>& lines) {
+        void ReadNgramFile(const std::vector<String>& lines) override {
             LOG_DEBUGH(_T("CALLED"));
             ngramDic.ReadFile(lines);
         }
 
         // Nグラム辞書内容の保存
-        void WriteNgramFile(utils::OfstreamWriter& writer) {
+        void WriteNgramFile(utils::OfstreamWriter& writer) override {
             LOG_DEBUGH(_T("CALLED"));
             ngramDic.WriteFile(writer);
         }
 
-        bool IsNgramDicDirty() const {
+        bool IsNgramDicDirty() const override {
             return ngramDic.IsDirty();
         }
 
@@ -1248,7 +1289,7 @@ int HistoryDic::CreateHistoryDic(StringRef histFile) {
 
         size_t pos = path.find(_T("*"));
         readFile(replaceStar(path, pos, _T("entry")), &HistoryDic::ReadFile);
-        readFile(replaceStar(path, pos, _T("roman")), &HistoryDic::ReadFileAsReadOnly, false);
+        readFile(replaceStar(path, pos, _T("roman")), &HistoryDic::ReadRomanFileAsReadOnly, false);
         readFile(replaceStar(path, pos, _T("recent")), &HistoryDic::ReadUsedFile);
         readFile(replaceStar(path, pos, _T("exclude")), &HistoryDic::ReadExcludeFile);
         //readFile(replaceStar(path, pos, _T("ngram")), &HistoryDic::ReadNgramFile);

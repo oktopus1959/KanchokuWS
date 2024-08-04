@@ -41,7 +41,7 @@
 #include "StrokeMerger/Merger.h"
 #include "StrokeMerger/StrokeMergerHistoryResidentState.h"
 
-#include "Mecab/MecabBridge.h"
+#include "MorphBridge.h"
 
 #if 1 || defined(_DEBUG)
 #define _LOG_DEBUGH_FLAG true
@@ -123,8 +123,8 @@ public:
         // settings の再ロードとストローク木の再構築
         reloadSettings(false);
 
-        // MeCab
-        initializeMecab();
+        // 形態素解析器の初期化
+        MorphBridge::morphInitialize(logger);
 
         // 始状態
         startNode.reset(new StartNode());
@@ -180,8 +180,8 @@ public:
     // 終了
     void Destroy() override {
         LOG_INFOH(_T("CALLED"));
-        // MeCab
-        finalizeMecab();
+        // 形態素解析器の終了
+        MorphBridge::morphFinalize();
     }
 
     // settings の事前受け取り
@@ -254,21 +254,6 @@ public:
         SETTINGS->SetValues(key_vals);
 
         LOG_DEBUGH(_T("LEAVE"));
-    }
-
-    // MeCab の初期化
-    void initializeMecab() {
-        auto rcfile = utils::joinPath(SETTINGS->rootDir, _T("mecab/etc/mecabrc"));
-        auto dicdir = utils::joinPath(SETTINGS->rootDir, _T("mecab/dic/ipadic"));
-        int unkLen = 3;
-        if (MecabBridge::mecabInitialize(rcfile, dicdir, unkLen) != 0) {
-            LOG_INFOH(_T("MeCab Initialize FAILED: rcfile={}, dicdir={}, unkLen={}"), rcfile, dicdir, unkLen);
-        }
-    }
-
-    // MeCab の終了
-    void finalizeMecab() {
-        MecabBridge::mecabFinalize();
     }
 
     // Deckey から文字への変換インスタンスの構築
