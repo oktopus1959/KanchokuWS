@@ -7647,8 +7647,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label155;
         private System.Windows.Forms.TextBox textBox_charKeyComboMinOverlappingTime;
         private System.Windows.Forms.Label label156;
-        private System.Windows.Forms.CheckBox checkBox_multiStreamMode;
-        private System.Windows.Forms.CheckBox checkBox_selectHistCandByNumberKey;
         private System.Windows.Forms.CheckBox checkBox_postRewriteCompatibleWithGoogle;
     }
 }
