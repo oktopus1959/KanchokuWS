@@ -116,7 +116,7 @@ namespace KanchokuWS.TableParser
         //    new System.Text.RegularExpressions.Regex(@"&([ぁ-んァ-ヶー－一-龠々]+)([ぁ-んァ-ヶー－一-龠々])\s*>\s*([ぁ-んァ-ヶー－一-龠々]+)\s*(?:;.*)?$");
 
         private static System.Text.RegularExpressions.Regex reOneshotPostRewrite =
-            new System.Text.RegularExpressions.Regex(@"&([A-Za-z0-9ぁ-んァ-ヶー－一-龠々]+)([A-Za-z0-9ぁ-んァ-ヶー－一-龠々])\s*>\s*([A-Za-z0-9ぁ-んァ-ヶー－一-龠々]+)\s*(?:;.*)?$");
+            new System.Text.RegularExpressions.Regex(@"&([A-Za-z0-9ぁ-んァ-ヶー－一-龠々]+)([A-Za-z0-9ぁ-んァ-ヶー－一-龠々])\s*>\s*([/A-Za-z0-9ぁ-んァ-ヶー－一-龠々]+)\s*(?:;.*)?$");
 
         /// <summary>トークンを読む</summary>
         TOKEN getToken(bool bSkipNL, bool bOnlyDirectives = false)

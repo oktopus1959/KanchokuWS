@@ -483,6 +483,7 @@ namespace KanchokuWS.TableParser
             if (idx < 0 && RewritePostChar._notEmpty()) {
                 if (Settings.LoggingTableFileInfo) logger.Info(() => $"RewritePostChar={RewritePostChar}");
                 var strokeList = StrokePathDict._safeGet(RewritePostChar);
+                if (Settings.LoggingTableFileInfo) logger.Info(() => $"strokeList={strokeList?.StrokePathString(":")}");
                 if (strokeList != null && !strokeList.IsEmpty) {
                     idx = strokeList.At(0);
                     if (strokeList.Count > 1) {

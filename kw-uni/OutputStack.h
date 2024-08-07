@@ -378,8 +378,9 @@ public:
         return tail_string(maxlen, tail_size(), true, extraBarPos);
     }
 
-    inline MString backStringFull(size_t maxlen) const {
-        return tail_string(maxlen, size());
+    // 改行も含む末尾部分(最大長maxlen)の部分文字列を返す
+    inline MString backStringFull(size_t maxlen, bool bWithFlag = false) const {
+        return tail_string(maxlen, size(), bWithFlag);
     }
 
     inline size_t size() const { return stack.size(); }
