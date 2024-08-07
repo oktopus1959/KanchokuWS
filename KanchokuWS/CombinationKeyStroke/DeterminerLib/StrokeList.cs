@@ -12,6 +12,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         private static Logger logger = Logger.GetLogger(true);
 
         /// <summary>
+        /// 押下中のキーのストロークリスト
+        /// </summary>
+        private List<Stroke> downKeyList = new List<Stroke>();
+
+        /// <summary>
         /// キー押下によって追加された未処理のストロークリスト
         /// </summary>
         private List<Stroke> unprocList = new List<Stroke>();
@@ -166,6 +171,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public void Clear()
         {
             logger.InfoH(() => $"CALLED");
+            downKeyList.Clear();
             comboList.Clear();
             unprocList.Clear();
         }
@@ -178,6 +184,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         public bool IsComboListEmpty => comboList.Count == 0;
 
         public bool IsUnprocListEmpty => unprocList.Count == 0;
+
+        public bool IsDownKeyListEmpty => downKeyList.Count == 0;
 
         public Stroke First => unprocList._getFirst();
 
@@ -242,7 +250,18 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void Add(Stroke s)
         {
+            downKeyList.Add(s);
             unprocList.Add(s);
+        }
+
+        public void RemoveUpKey(int decKey)
+        {
+            for (int i = 0; i < downKeyList.Count; i++) {
+                if (downKeyList[i].OrigDecoderKey == decKey) {
+                    downKeyList.RemoveAt(i);
+                    break;
+                }
+            }
         }
 
         public bool IsSuccessiveShift2ndOr3rdKey()

@@ -308,7 +308,7 @@ namespace KanchokuWS.CombinationKeyStroke
 
             checkRewriteTime(decKey);
 
-            if (strokeList.IsEmpty()) setAllKeyUpFlag();
+            if (strokeList.IsDownKeyListEmpty) setAllKeyUpFlag();
 
             strokeList.CheckComboShiftKeyUpDt(decKey);
 
@@ -493,6 +493,7 @@ namespace KanchokuWS.CombinationKeyStroke
 
             logger.InfoH(() =>
                 $"decKey={decKey}, lastRepeatedDecKey={lastRepeatedDecKey}, ComboShiftKeyRepeated={bComboShiftKeyRepeated}");
+            strokeList.RemoveUpKey(decKey);
             if (bComboShiftKeyRepeated) {
                 // ComboShiftキーがリピートされている状態だったら、それを無視
                 logger.InfoH("REPEATED COMBO SHIFT KEY IGNORED");
