@@ -540,8 +540,8 @@ public:
             } else if (cmd == _T("updateStrokeNodes")) {
                 // 後から部分的にストローク定義を解析してストローク木に差し込む
                 updateStrokeNodes(items[1]);
-            } else if (cmd == _T("cancelPreRewrite")) {
-                // 前置書き換えをキャンセルする
+            } else if (cmd == _T("cancelRewrite")) {
+                // 書き換えをキャンセルする
                 OUTPUT_STACK->cancelRewritable();
             } else if (cmd == _T("allKeyUp")) {
                 // 全キーUPフラグをセット
