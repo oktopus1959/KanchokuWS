@@ -17,7 +17,8 @@ public:
     static const unsigned short FLAG_BLOCK_MAZE = 4;
     static const unsigned short FLAG_BLOCK_KATA = 8;
     static const unsigned short FLAG_REWRITABLE = 16;
-    static const unsigned short FLAG_REWRITABLE_BEGIN = 32;
+    static const unsigned short FLAG_REWRITABLE_BEGIN = 32;     // Rewritable な文字列ブロックの先頭を表す
+    static const unsigned short FLAG_REWRITABLE_BLOCK = 64;     // Rewritable な範囲の終わり(含まない)を表す
 
     static const size_t HIST_KEY_MAX_LEN = 8;   // 履歴用のキーの最大長
     static const size_t HIST_ROMAN_KEY_MAX_LEN = 16;   // 英字履歴用のキーの最大長
@@ -172,6 +173,7 @@ public:
     inline void cancelRewritable() {
         if (!stack.empty()) {
             stack.back().flag &= ~FLAG_REWRITABLE;
+            stack.back().flag |= FLAG_REWRITABLE_BLOCK;
         }
     }
 
@@ -371,6 +373,11 @@ public:
     // 改行を含まない末尾部分(最大長maxlen)で、REWRITABLE のみが続いている部分文字列を返す
     inline MString backStringWhileOnlyRewritable(size_t maxlen) const {
         return tail_string(maxlen, tail_size_while_only_and_upto(maxlen, FLAG_REWRITABLE, FLAG_REWRITABLE_BEGIN));
+    }
+
+    // 改行を含まない末尾部分(最大長maxlen)で、REWRITABLEブロッカーまでの部分文字列を返す
+    inline MString backStringUptoRewritableBlock(size_t maxlen) const {
+        return backStringUpto(maxlen, FLAG_REWRITABLE_BLOCK);
     }
 
     // 改行を含まない末尾部分(最大長maxlen)で、何かflagがあれば | を付加した部分文字列を返す
