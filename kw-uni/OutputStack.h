@@ -270,6 +270,11 @@ public:
         }
     }
 
+    // 末尾のフラグをチェックする
+    inline bool checkFlag(unsigned short flag) const {
+        return !stack.empty() && (stack.back().flag & flag) != 0;
+    }
+
     // 末尾文字のブロックフラグをクリアし、さらに改行だったらそれを除去する
     inline void clearFlagAndPopNewLine() {
         while (_isLastBlocker()) {
@@ -392,7 +397,9 @@ public:
 
     // 改行を含まない末尾部分(最大長maxlen)で、REWRITABLEブロッカーまでの部分文字列を返す
     inline MString backStringUptoRewritableBlock(size_t maxlen) const {
-        return backStringUpto(maxlen, FLAG_REWRITABLE_BLOCK);
+        // FLAG_REWRITABLE_BLOCK は末尾だけをチェックする
+        if (checkFlag(FLAG_REWRITABLE_BLOCK)) return EMPTY_MSTR;
+        return BackStringUptoNewLine(maxlen);
     }
 
     // 改行を含まない末尾部分(最大長maxlen)で、何かflagがあれば | を付加した部分文字列を返す
