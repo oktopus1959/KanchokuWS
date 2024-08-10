@@ -415,6 +415,7 @@ namespace VkbTableMaker {
 
             auto pfx2 = !prefix2.empty() ? prefix2 : !SETTINGS->romanSecPlanePrefix.empty() ? SETTINGS->romanSecPlanePrefix : _T(":");
             MString cmdMarker = to_mstr(_T("!{"));
+            MString literalMarker = to_mstr(_T("^{"));
 
             // 文字から、その文字の打鍵列へのマップに追加 (通常面)
             StrokeTreeTraverser traverser(StrokeTableNode::RootStrokeNode1.get(), true);
@@ -428,7 +429,7 @@ namespace VkbTableMaker {
                 Node* sp = dynamic_cast<StringNode*>(np);
                 if (sp) {
                     auto ms = sp->getString();
-                    if (ms.empty() || ms.find(cmdMarker) != MString::npos) continue;
+                    if (ms.empty() || ms.find(cmdMarker) != MString::npos || ms.find(literalMarker) != MString::npos) continue;
 
                     wchar_t tab[] = { '\t', 0 };
 
