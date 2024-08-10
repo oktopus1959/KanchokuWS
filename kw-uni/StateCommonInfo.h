@@ -278,6 +278,7 @@ public:
     inline void SetDontMoveVirtualKeyboard() { SetResultFlag(ResultFlags::DontMoveVirtualKeyboard); }
     inline void SetCurrentModeIsKatakana() { SetResultFlag(ResultFlags::CurrentModeIsKatakana); }
     inline void SetCurrentModeIsEisu() { SetResultFlag(ResultFlags::CurrentModeIsEisu); }
+    inline void ClearCurrentModeIsEisu() { ResetResultFlag(ResultFlags::CurrentModeIsEisu); }
 
     inline void SetWaiting2ndStroke() { nextExpectedKeyType = ExpectedKeyType::SecondStroke; }
     inline void SetMazeCandSelecting() { nextExpectedKeyType = ExpectedKeyType::MazeCandSelecting; }

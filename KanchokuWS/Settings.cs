@@ -16,7 +16,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.8.4";
+        public static string Version => "1.2.8.5";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -895,6 +895,9 @@ namespace KanchokuWS
         public static int PreRewriteWaitTimeMsWhenTrainingMode { get; set; }
         public static string PreRewriteWaitTimeMsWhenTrainingMode_PropName = "preRewriteWaitTimeMsWhenTrainingMode";
 
+        /// <summary>Google日本語入力と互換な書き換システム</summary>
+        public static bool PostRewriteCompatibleWithGooble { get; set; }
+
         //------------------------------------------------------------------------------
         // ウィンドウClassName
         //------------------------------------------------------------------------------
@@ -1470,7 +1473,15 @@ namespace KanchokuWS
             ImeSendInputInRoman = GetString(ImeSendInputInRoman_PropName)._parseBool(false);
             ImeSendInputInKana = GetString(ImeSendInputInKana_PropName)._parseBool(false);
             ImeSendInputInUnicode = GetString(ImeSendInputInUnicode_PropName)._parseBool(false);
-            if (!ImeSendInputInRoman && !ImeSendInputInKana && !ImeSendInputInUnicode) ImeSendInputInRoman = true;
+            if (ImeSendInputInRoman) {
+                ImeSendInputInKana = false;
+                ImeSendInputInUnicode = false;
+            } else if (ImeSendInputInKana) {
+                ImeSendInputInUnicode = false;
+            } else if (!ImeSendInputInUnicode) {
+                ImeSendInputInRoman = true;
+            }
+            //if (!ImeSendInputInRoman && !ImeSendInputInKana && !ImeSendInputInUnicode) ImeSendInputInRoman = true;
             //ImeUnicodeClassNames = GetString("imeUnicodeClassNames")._orElse("Edit|_WwG|SakuraView*").Trim();
             //ImeUnicodeClassNames = GetString("imeUnicodeClassNames").Trim();
             //ImeUnicodeClassNamesHash = new HashSet<string>(ImeUnicodeClassNames.Trim()._toLower()._split('|'));
@@ -1569,7 +1580,7 @@ namespace KanchokuWS
             //HandleShiftSpaceAsNormalSpace = addDecoderSetting("handleShiftSpaceAsNormalSpace", true);  // Shift+Space を通常 Space しとて扱う(HistSearchByShiftSpaceがfalseの場合)
 
             //MazegakiByShiftSpace = GetString("mazegakiByShiftSpace")._parseBool(true);          // Shift-Space で交ぜ書き変換
-            MazegakiSelectFirstCand = addDecoderSetting("mazegakiSelectFirstCand", false);      // 交ぜ書き変換で先頭の候補を自動選択
+            MazegakiSelectFirstCand = addDecoderSetting("mazegakiSelectFirstCand", false);      // 交ぜ書き変換で文末最長一致候補を自動選択
             MazeBlockerTail = addDecoderSetting("mazeBlockerTail", true);                       // 交ぜ書き変換で、変換後のブロッカーの位置
             MazeRemoveHeadSpace = addDecoderSetting("mazeRemoveHeadSpace", true);               // 交ぜ書き変換で、空白文字を変換開始位置とする
             MazeRightShiftYomiPos = addDecoderSetting("mazeRightShiftYomiPos", false);          // 交ぜ書き変換で、読みの開始位置を右移動する
@@ -1577,7 +1588,7 @@ namespace KanchokuWS
             MazeNoIfxConnectAny = addDecoderSetting("mazeNoIfxConnectAny", false);              // 無活用語の語尾に任意文字を許可する
             MazeHistRegisterAnyway = addDecoderSetting("mazeHistRegisterAnyway", false);        // 交ぜ書き変換での選択を強制的に履歴登録する(除外登録されていたら復活する)
             MazeHistRegisterMinLen = addDecoderSetting("mazeHistRegisterMinLen", 1, 0);         // 交ぜ書き変換を履歴登録する際の最小語幹長
-            MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 8);                        // 交ぜ書きの読み入力の最大長
+            MazeYomiMaxLen = addDecoderSetting("mazeYomiMaxLen", 10, 5);                        // 交ぜ書きの読み入力の最大長
             MazeGobiMaxLen = addDecoderSetting("mazeGobiMaxLen", 5, 0);                         // 交ぜ書きの語尾の最大長
             MazeGobiLikeTailLen = addDecoderSetting("mazeGobiLikeTailLen", 2, 0);               // 交ぜ書き変換で、語尾に含めてしまう末尾の長さ
 
@@ -1601,6 +1612,8 @@ namespace KanchokuWS
 
             RomanBushuCompPrefix = addDecoderSetting("romanBushuCompPrefix", "");               // ローマ字テーブル出力時の部首合成用プレフィックス
             RomanSecPlanePrefix = addDecoderSetting("romanSecPlanePrefix", ":");                // 裏面定義文字に対するローマ字出力時のプレフィックス
+
+            PostRewriteCompatibleWithGooble = addDecoderSetting("googleCompatible", false);     // Google日本語入力と互換な書き換システム
 
             // キー割当
             HistorySearchCtrlKey = GetString("histSearchCtrlKey");                              // 履歴検索&選択を行うCtrlキー

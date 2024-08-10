@@ -1808,6 +1808,7 @@ namespace KanchokuWS.Gui
             checkBox_convertJaPeriod.Checked = Settings.ConvertJaPeriod;
             checkBox_convertJaComma.Checked = Settings.ConvertJaComma;
             checkBox_eisuModeEnabled.Checked = Settings.EisuModeEnabled;
+            checkBox_postRewriteCompatibleWithGoogle.Checked = Settings.PostRewriteCompatibleWithGooble;
             textBox_eisuHistSearchChar.Text = Settings.EisuHistSearchChar;
             textBox_eisuExitCapitalCharNum.Text = $"{Settings.EisuExitCapitalCharNum}";
             textBox_eisuExitSpaceNum.Text = $"{Settings.EisuExitSpaceNum}";
@@ -1841,6 +1842,7 @@ namespace KanchokuWS.Gui
             checkerMiscSettings.Add(checkBox_convertJaPeriod);
             checkerMiscSettings.Add(checkBox_convertJaComma);
             checkerMiscSettings.Add(checkBox_eisuModeEnabled);
+            checkerMiscSettings.Add(checkBox_postRewriteCompatibleWithGoogle);
             checkerMiscSettings.Add(textBox_eisuHistSearchChar);
             checkerMiscSettings.Add(textBox_eisuExitCapitalCharNum);
             checkerMiscSettings.Add(textBox_eisuExitSpaceNum);
@@ -1874,6 +1876,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("convertJaPeriod", checkBox_convertJaPeriod.Checked);
             Settings.SetUserIni("convertJaComma", checkBox_convertJaComma.Checked);
             Settings.SetUserIni("eisuModeEnabled", checkBox_eisuModeEnabled.Checked);
+            Settings.SetUserIni("googleCompatible", checkBox_postRewriteCompatibleWithGoogle.Checked);
             Settings.SetUserIni("eisuHistSearchChar", textBox_eisuHistSearchChar.Text);
             Settings.SetUserIni("eisuExitCapitalCharNum", textBox_eisuExitCapitalCharNum.Text);
             Settings.SetUserIni("eisuExitSpaceNum", textBox_eisuExitSpaceNum.Text);

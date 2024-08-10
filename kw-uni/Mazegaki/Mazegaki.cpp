@@ -241,9 +241,17 @@ namespace {
             _LOG_DEBUGH(_T("candYlen={}, tailYomiLen={}, prevYomi.size={}"), candYlen, tailYomiLen, prevYomi.size());
             if (pCands->size() == 1 || (!MAZEGAKI_INFO->IsReXferMode() && !MAZEGAKI_INFO->IsJustAfterPrevXfer() && SETTINGS->mazegakiSelectFirstCand)) {
                 // 読みの長さ候補が１つしかなかった、または先頭候補の自動出力モードなのでそれを選択して出力
-                const auto& cand = pCands->front();
+                //const auto& cand = pCands->front();
+                auto iter = pCands->begin();
+                for (; iter != pCands->end(); ++iter) {
+                    // _LOG_DEBUGH(_T("resultStr={}, candLen={}, xferLen={}"), to_wstr(iter->resultStr), iter->resultStr.size(), iter->xferLen);
+                    if (iter->resultStr.size() == iter->xferLen) break;
+                }
+                const auto& cand = iter != pCands->end() ? *iter : pCands->back();
                 size_t candLen = cand.resultStr.size();
-                _LOG_DEBUGH(_T("candLen={}"), candLen);
+                candYlen = cand.yomiLen;
+                if (candYlen > tailYomiLen) candYlen = tailYomiLen;
+                _LOG_DEBUGH(_T("candLen={}, xferLen={}"), candLen, cand.xferLen);
                 if (prevXfered) {
                     MString lead;
                     MString yomi;
@@ -271,14 +279,14 @@ namespace {
                     _LOG_DEBUGH(_T("PREV_XFERED: numBS={}, prevOutLen={}"), numBS, prevOutLen);
                     outputStringAndPostProc(lead, cand, numBS, &yomi, candLen);
                 } else {
-                    if (SETTINGS->mazeRemoveHeadSpace && fullYomi[0] == ' ') {
+                    if (SETTINGS->mazeRemoveHeadSpace && candYlen == fullYomi.size() && fullYomi[0] == ' ') {
                         // 全読みの先頭の空白を削除
                         _LOG_DEBUGH(_T("REMOVE_HEAD_SPACE: one cand or select first"));
                         MString leadStr;
                         if ((1 + candYlen) < fullYomi.size()) leadStr = fullYomi.substr(1, fullYomi.size() - (1 + candYlen));
                         outputStringAndPostProc(leadStr, cand, fullYomi.size(), nullptr, 0);
                     } else {
-                        _LOG_DEBUGH(_T("CANDS_SIZE={}, SELECT_FIRST={}"), pCands->size(), SETTINGS->mazegakiSelectFirstCand);
+                        _LOG_DEBUGH(_T("CANDS_SIZE={}, SELECT_FIRST={}, xferStr={}, xferLen={}"), pCands->size(), SETTINGS->mazegakiSelectFirstCand, to_wstr(cand.resultStr), cand.xferLen);
                         outputStringAndPostProc(EMPTY_MSTR, cand, candYlen, nullptr, 0);
                     }
                 }

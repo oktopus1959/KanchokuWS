@@ -44,7 +44,7 @@ MString OutputStack::tail_string(size_t tailLen, size_t tailMaxlen, bool bWithFl
     while (i < OUTPUT_STACK_MAXSIZE && pos < stackSize) {
         if (bWithFlag && pos == extraPos && i > 0 && buf[i - 1] != '|') buf[i++] = '|';
         buf[i++] = stack[pos].chr;
-        if (bWithFlag && ((stack[pos].flag & ~(FLAG_BLOCK_KATA | FLAG_REWRITABLE | FLAG_REWRITABLE_BEGIN)) != 0)) buf[i++] = '|';
+        if (bWithFlag && ((stack[pos].flag & ~(FLAG_BLOCK_KATA | FLAG_REWRITABLE | FLAG_REWRITABLE_BEGIN | FLAG_REWRITABLE_BLOCK)) != 0)) buf[i++] = '|';
         ++pos;
     }
     LOG_DEBUGH(_T("i={}"), i);

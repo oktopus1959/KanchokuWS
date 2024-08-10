@@ -119,29 +119,29 @@ namespace KanchokuWS.CombinationKeyStroke
         private StrokeList strokeList = new StrokeList();
 
         // 前置書き換えキーの打鍵時刻
-        private DateTime preRewriteDt = DateTime.MinValue;
+        private DateTime rewriteDt = DateTime.MinValue;
 
         private bool isPreRewriteTarget = false;
 
         // 前キー
         //private int prevDownDecKey = -1;
 
-        private void cancelPreRewriteTime()
+        private void cancelRewriteTime()
         {
             logger.InfoH($"CALLED");
-            preRewriteDt = DateTime.MinValue;
-            frmMain?.ExecCmdDecoder("cancelPreRewrite", null);
+            rewriteDt = DateTime.MinValue;
+            frmMain?.ExecCmdDecoder("cancelRewrite", null);
         }
 
-        private void checkPreRewriteTime(int dk)
+        private void checkRewriteTime(int dk)
         {
-            logger.InfoH(() => $"CALLED: preRewriteDt={preRewriteDt}, isPreRewriteTarget={isPreRewriteTarget}");
-            if (preRewriteDt._isValid()) {
+            logger.InfoH(() => $"CALLED: rewriteDt={rewriteDt}, isPreRewriteTarget={isPreRewriteTarget}");
+            if (rewriteDt._isValid()) {
                 int delayTime = isPreRewriteTarget ? Settings.PreRewriteAllowedDelayTimeMs : Settings.PreRewriteAllowedDelayTimeMs2;
-                double elapsedTime = (HRDateTime.Now - preRewriteDt).TotalMilliseconds;
+                double elapsedTime = (HRDateTime.Now - rewriteDt).TotalMilliseconds;
                 logger.InfoH(() => $"delayTime={delayTime}, elapsedTime={elapsedTime:f3}");
                 if (delayTime > 0 && elapsedTime > delayTime) {
-                    cancelPreRewriteTime();
+                    cancelRewriteTime();
                 } else {
                     logger.InfoH($"DO NOTHING");
                 }
@@ -157,14 +157,20 @@ namespace KanchokuWS.CombinationKeyStroke
         {
             logger.InfoH(() => $"ENTER: outStr={outStr}");
             if (outStr._isEmpty() /*|| outStr.Last()._isAscii()*/) {        // _isAscii()の場合も書き換えをキャンセルしてしまうと、ローマ字配列に影響が出る
-                if (preRewriteDt._isValid()) {
-                    cancelPreRewriteTime();
+                if (rewriteDt._isValid()) {
+                    cancelRewriteTime();
                 }
             } else {
                 isPreRewriteTarget = IsTailPreRewriteChar(outStr);
-                preRewriteDt = HRDateTime.Now;
+                rewriteDt = HRDateTime.Now;
             }
-            logger.InfoH(() => $"LEAVE: isPreRewriteTarget={isPreRewriteTarget}, preRewriteDt={preRewriteDt}");
+            logger.InfoH(() => $"LEAVE: isPreRewriteTarget={isPreRewriteTarget}, rewriteDt={rewriteDt}");
+        }
+
+        private void setAllKeyUpFlag()
+        {
+            logger.InfoH("CALLED");
+            frmMain?.ExecCmdDecoder("allKeyUp", null);
         }
 
         public void Dispose()
@@ -294,7 +300,9 @@ namespace KanchokuWS.CombinationKeyStroke
                 logger.InfoH(() => $"IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}");
             }
 
-            checkPreRewriteTime(decKey);
+            checkRewriteTime(decKey);
+
+            if (strokeList.IsDownKeyListEmpty) setAllKeyUpFlag();
 
             strokeList.CheckComboShiftKeyUpDt(decKey);
 
@@ -479,6 +487,7 @@ namespace KanchokuWS.CombinationKeyStroke
 
             logger.InfoH(() =>
                 $"decKey={decKey}, lastRepeatedDecKey={lastRepeatedDecKey}, ComboShiftKeyRepeated={bComboShiftKeyRepeated}");
+            strokeList.RemoveUpKey(decKey);
             if (bComboShiftKeyRepeated) {
                 // ComboShiftキーがリピートされている状態だったら、それを無視
                 logger.InfoH("REPEATED COMBO SHIFT KEY IGNORED");
@@ -497,7 +506,7 @@ namespace KanchokuWS.CombinationKeyStroke
         {
             logger.InfoH(() => $"\nENTER: decKey={decKey}, IsComboShift={KeyCombinationPool.IsComboShift(decKey)}");
 
-            checkPreRewriteTime(decKey);
+            //checkRewriteTime(decKey);
 
             // 第1打鍵待ちに戻ったら、一時的な同時打鍵無効化をキャンセルする
             //checkStrokeCountReset();

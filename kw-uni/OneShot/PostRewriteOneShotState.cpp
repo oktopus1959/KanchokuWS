@@ -161,13 +161,19 @@ void PostRewriteOneShotNode::addRewritePair(StringRef key, StringRef value, bool
 // 末尾文字列にマッチする RewriteInfo を取得する
 std::tuple<const RewriteInfo*, size_t> PostRewriteOneShotNode::matchWithTailString() const {
     size_t maxlen = SETTINGS->kanaTrainingMode && ROOT_STROKE_NODE->hasOnlyUsualRewriteNdoe() ? 0 : 8;     // かな入力練習モードで濁点のみなら書き換えをやらない
+    bool bAllKeyUp = OUTPUT_STACK->isAllKeyUp();
     while (maxlen > 0) {
         _LOG_DEBUGH(_T("maxlen={}"), maxlen);
-        const MString targetStr = OUTPUT_STACK->backStringWhileOnlyRewritable(maxlen);
+        const MString targetStr =
+            SETTINGS->googleCompatible ? OUTPUT_STACK->backStringWhileOnlyRewritable(maxlen) :
+            getString().size() == 1 ? OUTPUT_STACK->backStringUptoRewritableBlock(maxlen) :
+            OUTPUT_STACK->BackStringUptoNewLine(maxlen);        // 入力文字列が2文字以上の場合は、無条件で書き換えを適用 (「そ」の後に「れば」が後置するようなケース)
         _LOG_DEBUGH(_T("targetStr={}"), to_wstr(targetStr));
         if (targetStr.empty()) break;
 
-        const RewriteInfo* rewInfo = getRewriteInfo(targetStr);
+        const RewriteInfo* rewInfo = 0;
+        if (!bAllKeyUp) rewInfo = getRewriteInfo(targetStr + MSTR_PLUS);        // ロールオーバー打ちのときは"+"を付加したエントリを検索
+        if (!rewInfo) rewInfo = getRewriteInfo(targetStr);
         if (rewInfo) {
             _LOG_DEBUGH(_T("REWRITE_INFO found: outStr={}, rewritableLen={}, subTable={:p}"), to_wstr(rewInfo->rewriteStr), rewInfo->rewritableLen, (void*)rewInfo->subTable);
             return { rewInfo, targetStr.size() };

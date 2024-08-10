@@ -7,6 +7,12 @@
 
 #include "Logger.h"
 
+#if 0
+#define __LOG_DEBUGH LOG_INFOH
+#else
+#define __LOG_DEBUGH LOG_DEBUGH
+#endif
+
 // 出力文字のスタック
 class OutputStack {
     DECLARE_CLASS_LOGGER;
@@ -17,7 +23,9 @@ public:
     static const unsigned short FLAG_BLOCK_MAZE = 4;
     static const unsigned short FLAG_BLOCK_KATA = 8;
     static const unsigned short FLAG_REWRITABLE = 16;
-    static const unsigned short FLAG_REWRITABLE_BEGIN = 32;
+    static const unsigned short FLAG_REWRITABLE_BEGIN = 32;     // Rewritable な文字列ブロックの先頭を表す
+    static const unsigned short FLAG_REWRITABLE_BLOCK = 64;     // Rewritable な範囲の終わり(含まない)を表す
+    static const unsigned short FLAG_ALL_KEY_UP = 128;          // すべてのキーがUP状態にあることを示す
 
     static const size_t HIST_KEY_MAX_LEN = 8;   // 履歴用のキーの最大長
     static const size_t HIST_ROMAN_KEY_MAX_LEN = 16;   // 英字履歴用のキーの最大長
@@ -172,7 +180,20 @@ public:
     inline void cancelRewritable() {
         if (!stack.empty()) {
             stack.back().flag &= ~FLAG_REWRITABLE;
+            stack.back().flag |= FLAG_REWRITABLE_BLOCK;
         }
+    }
+
+    // 末尾に全キーUPフラグをセットする
+    inline void setAllKeyUp() {
+        __LOG_DEBUGH(_T("CALLED"));
+        setFlag(FLAG_ALL_KEY_UP);
+    }
+
+    // 末尾に全キーUPフラグがセットされているか
+    inline bool isAllKeyUp() {
+        __LOG_DEBUGH(_T("CALLED: {}"), (getFlag() & FLAG_ALL_KEY_UP) != 0);
+        return (getFlag() & FLAG_ALL_KEY_UP) != 0;
     }
 
     // 末尾に交ぜ書きブロッカーをセットする
@@ -249,6 +270,11 @@ public:
         }
     }
 
+    // 末尾のフラグをチェックする
+    inline bool checkFlag(unsigned short flag) const {
+        return !stack.empty() && (stack.back().flag & flag) != 0;
+    }
+
     // 末尾文字のブロックフラグをクリアし、さらに改行だったらそれを除去する
     inline void clearFlagAndPopNewLine() {
         while (_isLastBlocker()) {
@@ -279,9 +305,6 @@ public:
         return size() - pos;
     }
 
-//#define __LOG_DEBUGH LOG_INFO
-#define __LOG_DEBUGH LOG_DEBUGH
-
     // 改行を含まない末尾部分で、flag のみが続き、flagUpto が来るまでの最大長
     inline size_t tail_size_while_only_and_upto(size_t maxlen, unsigned short flag, unsigned short flagUpto) const {
         if (size() == 0) return 0;
@@ -305,7 +328,6 @@ public:
         __LOG_DEBUGH(_T("LEAVE: result len={}"), size() - maxpos);
         return size() - maxpos;
     }
-#undef __LOG_DEBUGH
 
     // 改行を含まない末尾部分で、句読点の直後までの長さ(ただし末尾句読点は含める)
     inline size_t tail_size_upto_flag_or_punct(unsigned short flag) const {
@@ -373,13 +395,21 @@ public:
         return tail_string(maxlen, tail_size_while_only_and_upto(maxlen, FLAG_REWRITABLE, FLAG_REWRITABLE_BEGIN));
     }
 
+    // 改行を含まない末尾部分(最大長maxlen)で、REWRITABLEブロッカーまでの部分文字列を返す
+    inline MString backStringUptoRewritableBlock(size_t maxlen) const {
+        // FLAG_REWRITABLE_BLOCK は末尾だけをチェックする
+        if (checkFlag(FLAG_REWRITABLE_BLOCK)) return EMPTY_MSTR;
+        return BackStringUptoNewLine(maxlen);
+    }
+
     // 改行を含まない末尾部分(最大長maxlen)で、何かflagがあれば | を付加した部分文字列を返す
     inline MString backStringWithFlagUpto(size_t maxlen, size_t extraBarPos = 0) const {
         return tail_string(maxlen, tail_size(), true, extraBarPos);
     }
 
-    inline MString backStringFull(size_t maxlen) const {
-        return tail_string(maxlen, size());
+    // 改行も含む末尾部分(最大長maxlen)の部分文字列を返す
+    inline MString backStringFull(size_t maxlen, bool bWithFlag = false) const {
+        return tail_string(maxlen, size(), bWithFlag);
     }
 
     inline size_t size() const { return stack.size(); }
@@ -532,3 +562,4 @@ public:
 
 #undef OUTPUT_STACK_MAXSIZE
 
+#undef __LOG_DEBUGH

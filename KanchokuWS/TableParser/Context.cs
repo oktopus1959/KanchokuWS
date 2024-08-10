@@ -554,7 +554,7 @@ namespace KanchokuWS.TableParser
             }
             while (true) {
                 c = PeekNextChar();
-                if (!isOutputChar()) break;
+                if (!(c == '+' && PeekNextChar(1) == ':') && !isOutputChar()) break;    // "+:" でなく、出力可能文字でもない
                 if (c == '\\') AdvanceCharPos(1);       // バックスラッシュの場合は、単純にそれを読み飛ばして次の1文字を採用する
                 sb.Append(GetNextChar());
             }

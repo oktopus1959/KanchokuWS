@@ -96,6 +96,8 @@ struct Settings {
     String romanSecPlanePrefix;            // 裏面定義文字に対するローマ字出力時のプレフィックス
 
     bool kanaTrainingMode = false;          // かな入力練習モードか
+    bool googleCompatible = false;          // Google日本語入力と互換な後置書き換えか(falseなら書き換えられた文字列も1文字ずつが対象になる)
+    bool multiStreamMode = false;           // 漢直・かな融合モードか
 
     // for Debug
     bool debughState = false;               // State モジュールで DebugH を有効にする
