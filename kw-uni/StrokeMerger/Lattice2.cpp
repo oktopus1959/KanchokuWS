@@ -312,6 +312,8 @@ namespace lattice2 {
             return cands.empty() || cands.size() > 0 && cands.front().string().empty();
         }
 
+        String _debugLog;
+
     public:
         void clear() {
             _morphCache.clear();
@@ -339,13 +341,14 @@ namespace lattice2 {
             return _candidates.empty() ? MString() : _candidates[0].string();
         }
 
-        String debugString() const {
-            String result;
-            for (size_t i = 0; i < _candidates.size(); ++i) {
-                if (i > 0) result.append(_T("\n"));
+        String debugKBestString(size_t maxLn = 100000) const {
+            String result = _debugLog;
+            result.append(L"\n\nKBest:\n");
+            for (size_t i = 0; i < _candidates.size() && i < maxLn; ++i) {
                 result.append(std::to_wstring(i));
                 result.append(_T(": "));
                 result.append(_candidates[i].debugString());
+                result.append(_T("\n"));
             }
             return result;
         }
@@ -399,7 +402,9 @@ namespace lattice2 {
             //int ngramCost = candStr.empty() ? 0 : getNgramCost(candStr);
             int candCost = morphCost + ngramCost;
             _LOG_INFOH(_T("CALLED: candStr={}, candCost={} (morph={}[{}], ngram={})"), to_wstr(candStr), candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost);
-
+#if IS_LOG_DEBUGH_ENABLED
+            _debugLog.append(std::format(L"candStr = {}, candCost = {} (morph = {} [{}] , ngram = {})\n", to_wstr(candStr), candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost));
+#endif
             newCandStr.cost(candCost);
             int totalCost = newCandStr.totalCost();
 
@@ -472,6 +477,8 @@ namespace lattice2 {
         // strokeCount: lattice に最初に addPieces() した時からの相対的なストローク数
         void updateKBestList(const std::vector<WordPiece>& pieces, int strokeCount) {
             _LOG_DEBUGH(_T("ENTER: strokeCount={}"), strokeCount);
+            _debugLog.clear();
+
             // 追加される piece と組み合わせるための、先頭を表すダミーを用意しておく
             if (_candidates.empty()) {
                 _candidates.push_back(CandidateString());
@@ -580,6 +587,8 @@ namespace lattice2 {
             return n;
         }
 
+        Deque<String> _debugLog;
+
 #if IS_LOG_DEBUGH_ENABLED
         String formatStringOfWordPieces(const std::vector<WordPiece>& pieces) {
             return utils::join(utils::select<String>(pieces, [](WordPiece p){return p.debugString();}), _T("|"));
@@ -655,8 +664,28 @@ namespace lattice2 {
             numBS = _prevOutputStr.size() - commonLen;
             _prevOutputStr = outStr;
             outStr = utils::safe_substr(outStr, commonLen);
-            _LOG_INFOH(_T("LEAVE: OUTPUT: {}, numBS={}\nkBest:\n{}"), to_wstr(outStr), numBS, _kBestList.debugString());
+            _LOG_INFOH(_T("LEAVE: OUTPUT: {}, numBS={}\n{}"), to_wstr(outStr), numBS, _kBestList.debugKBestString());
+#if IS_LOG_DEBUGH_ENABLED
+            if (_debugLog.size() >= 20) _debugLog.pop_front();
+            _debugLog.push_back(std::format(L"========================================\nOUTPUT: {}, numBS={}\n\n{}\n\n", to_wstr(outStr), numBS, _kBestList.debugKBestString(10)));
+#endif
             return LatticeResult(outStr, numBS);
+        }
+
+        void saveCandidateLog() override {
+            _LOG_INFOH(_T("ENTER"));
+            String result;
+            while (!_debugLog.empty()) {
+                result.append(_debugLog.front());
+                _debugLog.pop_front();
+            }
+            _LOG_INFOH(L"result: {}", result);
+            utils::OfstreamWriter writer(utils::joinPath(SETTINGS->rootDir, SETTINGS->mergerCandidateFile));
+            if (writer.success()) {
+                writer.writeLine(utils::utf8_encode(result));
+                _LOG_INFOH(_T("result written"));
+            }
+            _LOG_INFOH(_T("LEAVE"));
         }
     };
     DEFINE_CLASS_LOGGER(LatticeImpl);

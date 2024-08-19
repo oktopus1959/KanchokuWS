@@ -221,5 +221,9 @@ namespace KanchokuWS.Gui
             }
         }
 
+        private void button_displayCandidates_Click(object sender, EventArgs e)
+        {
+            frmMain?.ShowDlgCandidateLog(this, Right - 10, Top);
+        }
     }
 }

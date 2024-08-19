@@ -118,6 +118,7 @@ void Settings::SetValues(const std::map<String, String>& dict) {
     SET_BOOL_VALUE(googleCompatible);
 
     SET_BOOL_VALUE(multiStreamMode);
+    SET_KEY_VALUE(mergerCandidateFile);
 
     // 機能へのキー割り当ての変更
     RESET_STROKE_FUNC("zenkakuMode");

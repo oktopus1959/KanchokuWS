@@ -141,6 +141,8 @@ public:
 
     virtual void updateByBushuComp() = 0;
 
+    virtual void saveCandidateLog() = 0;
+
     static void createLattice();
 
     static void reloadCostFile();

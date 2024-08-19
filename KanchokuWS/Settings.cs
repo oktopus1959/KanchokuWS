@@ -923,6 +923,9 @@ namespace KanchokuWS
         /// <summary>Google日本語入力と互換な書き換システム</summary>
         public static bool PostRewriteCompatibleWithGooble { get; set; }
 
+        /// <summary>解候補ログファイル</summary>
+        public static string MergerCandidateFile = "tmp/merger_candidates.log";
+
         //------------------------------------------------------------------------------
         // ウィンドウClassName
         //------------------------------------------------------------------------------
@@ -1654,6 +1657,8 @@ namespace KanchokuWS
             RomanSecPlanePrefix = addDecoderSetting("romanSecPlanePrefix", ":");                // 裏面定義文字に対するローマ字出力時のプレフィックス
 
             PostRewriteCompatibleWithGooble = addDecoderSetting("googleCompatible", false);     // Google日本語入力と互換な書き換システム
+
+            setDecoderSetting("mergerCandidateFile", MergerCandidateFile );                     // 解候補ログファイル
 
             // キー割当
             HistorySearchCtrlKey = GetString("histSearchCtrlKey");                              // 履歴検索&選択を行うCtrlキー

@@ -511,6 +511,9 @@ public:
             } else if (cmd == _T("SaveDumpTable")) {
                 // デバッグ用テーブルを作成してファイルに書き出す
                 VkbTableMaker::SaveDumpTable();
+            } else if (cmd == _T("saveCandidateLog")) {
+                // 解候補ログをファイルに書き出す
+                WORD_LATTICE->saveCandidateLog();
             } else if (cmd == _T("exchangeCodeTable")) {
                 // 主・副テーブルを切り替える
                 outParams->strokeTableNum = StrokeTableNode::ExchangeStrokeTable();

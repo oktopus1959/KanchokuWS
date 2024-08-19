@@ -100,6 +100,8 @@ struct Settings {
     bool googleCompatible = false;          // Google日本語入力と互換な後置書き換えか(falseなら書き換えられた文字列も1文字ずつが対象になる)
     bool multiStreamMode = false;           // 漢直・かな融合モードか
 
+    String mergerCandidateFile;             // 解候補ログファイル
+
     // for Debug
     bool debughState = false;               // State モジュールで DebugH を有効にする
     bool debughMazegaki = false;            // mazegaki モジュールで DebugH を有効にする

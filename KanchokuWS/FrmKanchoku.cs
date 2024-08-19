@@ -152,6 +152,50 @@ namespace KanchokuWS
         }
 
         //------------------------------------------------------------------
+        private DlgCandidateLog dlgCandidateLog = null;
+
+        public void ShowDlgCandidateLog(Form frmFocus, int left, int top)
+        {
+            logger.DebugH("ENTER");
+            // 解候補ログ表示ダイアログの作成
+            if (dlgCandidateLog == null) {
+                dlgCandidateLog = new DlgCandidateLog(NotifyToCloseDlgCandidateLog, refreshCandidateLog, frmFocus);
+                //MoveWindow(dlgCandidateLog.Handle, 0, 0, dlgCandidateLog.Width, dlgCandidateLog.Height, true);
+            }
+            refreshCandidateLog();
+            dlgCandidateLog._showTopMost();
+            logger.DebugH("LEAVE");
+        }
+
+        private void refreshCandidateLog()
+        {
+            ExecCmdDecoder("saveCandidateLog", null);
+            var absPath = KanchokuIni.Singleton.KanchokuDir._joinPath(Settings.MergerCandidateFile);
+            var contents = Helper.ReadAllLines(absPath);
+            if (contents._notEmpty()) {
+                //dlgCandidateLog.WriteLog("\r\n========================================\r\n");
+                foreach (var line in contents) {
+                    dlgCandidateLog.WriteLog(line + "\r\n");
+                }
+            } else {
+                logger.Error($"log file: {absPath} couldn't read");
+            }
+        }
+
+        public void CloseDlgCandidateLog()
+        {
+            logger.DebugH("CALLED");
+            dlgCandidateLog?.Close();
+            dlgCandidateLog = null;
+        }
+
+        public void NotifyToCloseDlgCandidateLog()
+        {
+            logger.DebugH("CALLED");
+            dlgCandidateLog = null;
+        }
+
+        //------------------------------------------------------------------
         //private string CharCountFile;
 
         private const int timerInterval = 100;

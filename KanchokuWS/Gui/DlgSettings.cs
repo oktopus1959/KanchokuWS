@@ -149,6 +149,7 @@ namespace KanchokuWS.Gui
             } else {
                 logger.Info("ENTER");
                 frmMain?.CloseDlgStrokeLog();
+                frmMain?.CloseDlgCandidateLog();
                 timer1.Stop();
                 logger.Info("Timer Stopped");
                 ShownDlg = null;
