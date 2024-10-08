@@ -30,11 +30,11 @@ public:
         return rewritableLen >= rewriteStr.size() ? 0 : rewriteStr.size() - rewritableLen;
     }
     MString getOutStr() const {
-        return utils::safe_substr(rewriteStr, 0, getOutStrLen());
+        return utils::safe_substr(rewriteStr, 0, (int)getOutStrLen());
     }
 
     MString getNextStr() const {
-        return utils::safe_substr(rewriteStr, getOutStrLen());
+        return utils::safe_substr(rewriteStr, (int)getOutStrLen());
     }
 
     String getDebugStr() const {

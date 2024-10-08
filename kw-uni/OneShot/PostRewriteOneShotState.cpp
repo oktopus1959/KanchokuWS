@@ -98,7 +98,7 @@ namespace {
                 std::tie(rewInfo, numBS) = MY_NODE->matchWithTailString();
 
                 if (rewInfo) {
-                    resultOut.setResult(rewInfo->rewriteStr, rewInfo->rewritableLen, false, numBS);
+                    resultOut.setResult(rewInfo->rewriteStr, rewInfo->rewritableLen, false, (int)(numBS));
                     //resultOut.bBushuComp = false;
                     //resultOut.numBS = numBS;
                     //resultOut.resultStr = rewInfo->rewriteStr;

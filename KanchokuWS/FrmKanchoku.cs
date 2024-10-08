@@ -254,7 +254,7 @@ namespace KanchokuWS
         {
             HRDateTime.AdjustHiResNow();
 
-            logger.WriteInfo($"\n\n==== KANCHOKU WS START (LogLevel={Logger.LogLevel}) ====");
+            logger.WriteInfo($"\n\n==== KANCHOKU WS ({IntPtr.Size * 8}bit) START (LogLevel={Logger.LogLevel}) ====");
 
             IMEHandler.MainWnd = this.Handle;
 

@@ -88,6 +88,12 @@
     <Filter Include="ヘッダー ファイル\DyMazin">
       <UniqueIdentifier>{bd873fbf-b512-428c-8fb2-8a00db06e901}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Llama">
+      <UniqueIdentifier>{808acfe8-e5ff-4436-a935-51124d880f12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Llama">
+      <UniqueIdentifier>{f6f13aa8-abd7-4258-bb09-927722a7e66b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -279,12 +285,6 @@
     <ClInclude Include="utils\my_utils.h">
       <Filter>ヘッダー ファイル\utils</Filter>
     </ClInclude>
-    <ClInclude Include="Mecab\MecabBridge.h">
-      <Filter>ヘッダー ファイル\Mecab</Filter>
-    </ClInclude>
-    <ClInclude Include="Mecab\mecab.h">
-      <Filter>ヘッダー ファイル\Mecab</Filter>
-    </ClInclude>
     <ClInclude Include="StartState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -311,6 +311,12 @@
     </ClInclude>
     <ClInclude Include="MorphBridge.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Llama\LlamaBridge.h">
+      <Filter>ヘッダー ファイル\Llama</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Dev\Cpp\llama.cpp\examples\LlamaLoss\LlamaLoss.h">
+      <Filter>ヘッダー ファイル\Llama</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -440,9 +446,6 @@
     <ClCompile Include="OneShot\RewriteString.cpp">
       <Filter>ソース ファイル\OneShot</Filter>
     </ClCompile>
-    <ClCompile Include="Mecab\MecabBridge.cpp">
-      <Filter>ソース ファイル\Mecab</Filter>
-    </ClCompile>
     <ClCompile Include="StrokeMerger\Lattice2.cpp">
       <Filter>ソース ファイル\StrokeMerger</Filter>
     </ClCompile>
@@ -460,6 +463,9 @@
     </ClCompile>
     <ClCompile Include="DyMazin\DymazinBridge.cpp">
       <Filter>ソース ファイル\DyMazin</Filter>
+    </ClCompile>
+    <ClCompile Include="Llama\LlamaBridge.cpp">
+      <Filter>ソース ファイル\Llama</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

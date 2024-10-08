@@ -103,7 +103,7 @@ namespace {
         _T("から"), _T("こそ"), _T("ごと"), _T("さえ"), _T("じゃ"), _T("すら"),_T("まで"),_T("たち"),_T("や"),_T("よ"),_T("ゆえ"),
         _T("、"), _T("。"), COND_ANY_OK, 0 };
 
-    inline int find_gobi(const wchar_t** ifxes, int id) {
+    inline int find_gobi(const wchar_t** ifxes, int64_t id) {
         auto ppIfx = ifxes;
         while (*ppIfx != 0) {
             if (*ppIfx == (wchar_t*)id) return 0;
@@ -899,7 +899,7 @@ namespace {
                                 if (key.size() == stemLen) {
                                     _LOG_DEBUG_COND(debugFlag, _T("CP-D"));
                                     // 語尾がない⇒無活用または語幹OKの活用型か
-                                    if (find_gobi(p->inflexList, (int)STEM_OK) == 0) {
+                                    if (find_gobi(p->inflexList, (int64_t)STEM_OK) == 0) {
                                         _LOG_DEBUG_COND(debugFlag, _T("No gobi found: {}: STEM_OK, userDic={}"), to_wstr(p->xfer), p->userDic);
                                         mazeCands.StockOutput(key, keyStem, mazeSearch, p, p->xfer, p->xfer, debugFlag);
                                     }

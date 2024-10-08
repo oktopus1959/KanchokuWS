@@ -64,7 +64,7 @@ namespace KanchokuWS.Handler
             public int mouseData;
             public int dwFlags;
             public int time;
-            public int dwExtraInfo;
+            public IntPtr dwExtraInfo;
         };
 
         // キーボードイベント(keybd_eventの引数と同様のデータ)
@@ -75,7 +75,7 @@ namespace KanchokuWS.Handler
             public ushort wScan;
             public int dwFlags;
             public int time;
-            public int dwExtraInfo;
+            public IntPtr dwExtraInfo;
         };
 
         // ハードウェアイベント
@@ -88,14 +88,20 @@ namespace KanchokuWS.Handler
         };
 
         // 各種イベント(SendInputの引数データ)
-        [StructLayout(LayoutKind.Explicit)]
+        //[StructLayout(LayoutKind.Explicit)]
         private struct INPUT
         {
-            [FieldOffset(0)] public int type;
-            [FieldOffset(4)] public MOUSEINPUT mi;
-            [FieldOffset(4)] public KEYBDINPUT ki;
-            [FieldOffset(4)] public HARDWAREINPUT hi;
+            public int type;
+            public INPUTUNION inputUnion;   // 64bit境界も考慮
         };
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct INPUTUNION
+        {
+            [FieldOffset(0)] public MOUSEINPUT mi;
+            [FieldOffset(0)] public KEYBDINPUT ki;
+            [FieldOffset(0)] public HARDWAREINPUT hi;
+        }
 
         //// キー操作、マウス操作をシミュレート(擬似的に操作する)
         //[DllImport("user32.dll")]
@@ -107,7 +113,8 @@ namespace KanchokuWS.Handler
         /// </summary>
         [DllImport("user32.dll")]
         private static extern uint SendInput(uint nInputs,
-           [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs,
+           //[MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs,
+           INPUT[] pInputs,
            int cbSize);
 
         // 仮想キーコードをスキャンコードに変換
@@ -181,24 +188,24 @@ namespace KanchokuWS.Handler
         private static void initializeKeyboardInput(ref INPUT input)
         {
             input.type = INPUT_KEYBOARD;
-            input.ki.wVk = 0;
-            input.ki.wScan = 0;
-            input.ki.dwFlags = 0;
-            input.ki.time = 0;
-            input.ki.dwExtraInfo = MyMagicNumber;
+            input.inputUnion.ki.wVk = 0;
+            input.inputUnion.ki.wScan = 0;
+            input.inputUnion.ki.dwFlags = 0;
+            input.inputUnion.ki.time = 0;
+            input.inputUnion.ki.dwExtraInfo = (IntPtr)MyMagicNumber;
         }
 
         private static void setLeftCtrlInput(ref INPUT input, int keyEventFlag)
         {
             initializeKeyboardInput(ref input);
-            input.ki.wVk = VK_CONTROL;
-            input.ki.dwFlags = keyEventFlag;
+            input.inputUnion.ki.wVk = VK_CONTROL;
+            input.inputUnion.ki.dwFlags = keyEventFlag;
         }
 
         private static void setRightCtrlInput(ref INPUT input, int keyEventFlag)
         {
             setLeftCtrlInput(ref input, keyEventFlag);
-            input.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;  // 右Ctrlは、0xa3 ではなく、EXTENTED を設定する必要あり
+            input.inputUnion.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;  // 右Ctrlは、0xa3 ではなく、EXTENTED を設定する必要あり
         }
 
         public static ModifierKeyState GetCtrlKeyState(bool bUp = false)
@@ -361,29 +368,29 @@ namespace KanchokuWS.Handler
         private static void setLeftShiftInput(ref INPUT input, int keyEventFlag)
         {
             initializeKeyboardInput(ref input);
-            input.ki.wVk = VK_LSHIFT;           // 右シフトは EXTENTED ではなく、0xa1 を設定する必要あり
-            input.ki.dwFlags = keyEventFlag;
+            input.inputUnion.ki.wVk = VK_LSHIFT;           // 右シフトは EXTENTED ではなく、0xa1 を設定する必要あり
+            input.inputUnion.ki.dwFlags = keyEventFlag;
         }
 
         private static void setRightShiftInput(ref INPUT input, int keyEventFlag)
         {
             initializeKeyboardInput(ref input);
-            input.ki.wVk = VK_RSHIFT;
-            input.ki.dwFlags = keyEventFlag;
+            input.inputUnion.ki.wVk = VK_RSHIFT;
+            input.inputUnion.ki.dwFlags = keyEventFlag;
         }
 
         private static void setLeftAltInput(ref INPUT input, int keyEventFlag)
         {
             initializeKeyboardInput(ref input);
-            input.ki.wVk = VK_LALT;           // 右シフトは EXTENTED ではなく、0xa1 を設定する必要あり
-            input.ki.dwFlags = keyEventFlag;
+            input.inputUnion.ki.wVk = VK_LALT;           // 右シフトは EXTENTED ではなく、0xa1 を設定する必要あり
+            input.inputUnion.ki.dwFlags = keyEventFlag;
         }
 
         private static void setRightAltInput(ref INPUT input, int keyEventFlag)
         {
             initializeKeyboardInput(ref input);
-            input.ki.wVk = VK_RALT;
-            input.ki.dwFlags = keyEventFlag;
+            input.inputUnion.ki.wVk = VK_RALT;
+            input.inputUnion.ki.dwFlags = keyEventFlag;
         }
 
 
@@ -514,14 +521,14 @@ namespace KanchokuWS.Handler
             initializeKeyboardInput(ref inputs[idx]);
             ushort wScan = (ushort)MapVirtualKey(vkey, 0);
             int extendedFlag = vkey >= (ushort)Keys.PageUp && vkey <= (ushort)Keys.Down || vkey == (ushort)Keys.Insert || vkey == (ushort)Keys.Delete ? KEYEVENTF_EXTENDEDKEY : 0;
-            inputs[idx].ki.wVk = vkey;
-            inputs[idx].ki.wScan = wScan;
-            inputs[idx].ki.dwFlags = KEYEVENTF_KEYDOWN | extendedFlag;
+            inputs[idx].inputUnion.ki.wVk = vkey;
+            inputs[idx].inputUnion.ki.wScan = wScan;
+            inputs[idx].inputUnion.ki.dwFlags = KEYEVENTF_KEYDOWN | extendedFlag;
             ++idx;
             initializeKeyboardInput(ref inputs[idx]);
-            inputs[idx].ki.wVk = vkey;
-            inputs[idx].ki.wScan = wScan;
-            inputs[idx].ki.dwFlags = KEYEVENTF_KEYUP | extendedFlag;
+            inputs[idx].inputUnion.ki.wVk = vkey;
+            inputs[idx].inputUnion.ki.wScan = wScan;
+            inputs[idx].inputUnion.ki.dwFlags = KEYEVENTF_KEYUP | extendedFlag;
             ++idx;
             return idx;
         }
@@ -534,11 +541,11 @@ namespace KanchokuWS.Handler
         private static int setUnicodeInputs(char uc, INPUT[] inputs, int idx)
         {
             initializeKeyboardInput(ref inputs[idx]);
-            inputs[idx].ki.wScan = (ushort)uc;
-            inputs[idx].ki.dwFlags = KEYEVENTF_UNICODE;
+            inputs[idx].inputUnion.ki.wScan = (ushort)uc;
+            inputs[idx].inputUnion.ki.dwFlags = KEYEVENTF_UNICODE;
             ++idx;
-            inputs[idx].ki.wScan = (ushort)uc;
-            inputs[idx].ki.dwFlags = KEYEVENTF_KEYUP;
+            inputs[idx].inputUnion.ki.wScan = (ushort)uc;
+            inputs[idx].inputUnion.ki.dwFlags = KEYEVENTF_KEYUP;
             ++idx;
             return idx;
         }

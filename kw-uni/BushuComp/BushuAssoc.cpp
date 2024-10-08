@@ -427,7 +427,7 @@ namespace {
                     if (cnt < SETTINGS->bushuAssocSelectCount) {
                         _LOG_DEBUGH(_T("SELECT HEAD: count={}"), cnt);
                         // N回目までなら先頭またはN文字目を返す
-                        handleStrokeKeys(cnt);
+                        handleStrokeKeys((int)cnt);
                         resultOut.setResult(resultStr);
                         // カウントを更新
                         EX_NODE->Count = cnt + 1;

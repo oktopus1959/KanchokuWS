@@ -147,8 +147,9 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
-      <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils</AdditionalIncludeDirectories>
-      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils;..\DyMazin\DyMazinLib\src</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8</AdditionalOptions>
+      <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -168,8 +169,9 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
-      <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils</AdditionalIncludeDirectories>
-      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>.;KeysAndChars;Reporting;Settings;utils;..\DyMazin\DyMazinLib\src</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8</AdditionalOptions>
+      <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -186,6 +188,7 @@
     <ClInclude Include="BushuComp\BushuAssoc.h" />
     <ClInclude Include="BushuComp\BushuAssocDic.h" />
     <ClInclude Include="DyMazin\DymazinBridge.h" />
+    <ClInclude Include="E:\Dev\Cpp\llama.cpp\examples\LlamaLoss\LlamaLoss.h" />
     <ClInclude Include="EscapeNode.h" />
     <ClInclude Include="FunctionNode.h" />
     <ClInclude Include="FunctionNodeBuilder.h" />
@@ -205,10 +208,9 @@
     <ClInclude Include="KeysAndChars\StrokeHelp.h" />
     <ClInclude Include="KeysAndChars\VkbTableMaker.h" />
     <ClInclude Include="KeysAndChars\Zenkaku.h" />
+    <ClInclude Include="Llama\LlamaBridge.h" />
     <ClInclude Include="Mazegaki\Mazegaki.h" />
     <ClInclude Include="Mazegaki\MazegakiDic.h" />
-    <ClInclude Include="Mecab\mecab.h" />
-    <ClInclude Include="Mecab\MecabBridge.h" />
     <ClInclude Include="ModalStateUtil.h" />
     <ClInclude Include="MorphBridge.h" />
     <ClInclude Include="MStringResult.h" />
@@ -277,9 +279,9 @@
     <ClCompile Include="KeysAndChars\StrokeHelp.cpp" />
     <ClCompile Include="KeysAndChars\VkbTableMaker.cpp" />
     <ClCompile Include="KeysAndChars\ZenkakuState.cpp" />
+    <ClCompile Include="Llama\LlamaBridge.cpp" />
     <ClCompile Include="Mazegaki\Mazegaki.cpp" />
     <ClCompile Include="Mazegaki\MazegakiDic.cpp" />
-    <ClCompile Include="Mecab\MecabBridge.cpp" />
     <ClCompile Include="ModalStateUtil.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="OneShot\HankakuKatakanaOneShotState.cpp" />
@@ -312,11 +314,11 @@
     <ClCompile Include="utils\utf_utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src-stroke-lattice\mecab\mecab.vcxproj">
-      <Project>{0f5f5e45-baac-452b-a6f9-f111f3ecba60}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\DyMazin\DyMazinLib\DyMazinLib.vcxproj">
       <Project>{aef1f796-7f90-4d1f-95e4-e9d428b42a9f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="E:\Dev\Cpp\llama.cpp\examples\LlamaLoss\LlamaLoss.vcxproj">
+      <Project>{e4f3652e-27ce-46da-8e81-a316216469f6}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

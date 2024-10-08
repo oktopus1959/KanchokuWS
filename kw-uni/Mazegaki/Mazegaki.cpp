@@ -306,7 +306,7 @@ namespace {
 
             // 直前の変換があればそれを取り消す
             if (prevXfered) {
-                resultStr.setResult(prevYomi, prevOutLen);
+                resultStr.setResult(prevYomi, (int)(prevOutLen));
             }
             {
                 // 今回の結果を元に戻すための情報を保存(ブロッカーや読み開始位置のシフトで必要になる)
@@ -363,7 +363,7 @@ namespace {
 
          // Shiftキーで修飾されたキー
         void handleShiftKeys(int deckey) {
-            _LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({}), char={}"), Name, deckey, deckey);
+            _LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({})"), Name, deckey, deckey);
             //handleKeyPostProc();
             //State::handleShiftKeys(deckey);
             handleStrokeKeys(UNSHIFT_DECKEY(deckey));
@@ -501,7 +501,7 @@ namespace {
 
             // 変換形の出力
             _LOG_DEBUGH(_T("SET_OUT_STRING: {}, numBS={}"), to_wstr(outStr), numBS);
-            resultStr.setResult(outStr, numBS);
+            resultStr.setResult(outStr, (int)(numBS));
             // ブロッカー設定
             //_LOG_DEBUGH(_T("SET_MAZE_BLOCKER: pos={}"), SETTINGS->mazeBlockerTail ? 0 : outStr.size() - (leadStr.size() + mazeResult.xferLen));
             //STATE_COMMON->SetMazegakiBlockerPosition(SETTINGS->mazeBlockerTail ? 0 : outStr.size() - (leadStr.size() + mazeResult.xferLen));
@@ -728,7 +728,7 @@ bool MazegakiCommonInfo::RevertPrevXfer(MStringResult& resultOut) {
     if (IsJustAfterPrevXfer() && prevOutputLen > 0) {
         MAZEGAKI_INFO->SetReXferMode();         // 再変換モードにセット
         MAZEGAKI_INFO->SetJustAfterPrevXfer();  // 続けて交ぜ書き関連の操作を受け付けるようにする
-        resultOut.setResult(prevYomi, prevOutputLen);
+        resultOut.setResult(prevYomi, (int)(prevOutputLen));
         prevLeadLen = 0;
         prevOutputLen = 0;
         _LOG_DEBUGH(_T("MAZEGAKI REVERTED"));
@@ -783,6 +783,7 @@ bool MazegakiCommonInfo::LeftRightShiftBlockerOrStartPos(int deckey, std::functi
             return false;
         }
         // Through Down: 第1候補出力モードで、交ぜ書き直後で、最初のシフト操作のときは、読み開始位置の右シフトとして扱う
+        [[fallthrough]];
     case RIGHT_SHIFT_MAZE_START_POS_DECKEY:
         _LOG_DEBUGH(_T("RIGHT_SHIFT_MAZE_START_POS_DECKEY"));
         if (MAZEGAKI_INFO->RightShiftYomiStartPos()) {

@@ -846,7 +846,7 @@ namespace {
                 size_t pos = 1;
                 while (pos < key.size()) {
                     if (is_upper_alphabet(key[pos])) {
-                        list.push_back(utils::safe_substr(key, startPos, pos - startPos));
+                        list.push_back(utils::safe_substr(key, startPos, (int)(pos - startPos)));
                         startPos = pos;
                     }
                     ++pos;

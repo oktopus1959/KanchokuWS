@@ -251,7 +251,7 @@ namespace lattice2 {
                     numBS = piece.numBS();
                     if (numBS > 0) {
                         if ((size_t)numBS < _str.size()) {
-                            return { utils::safe_substr(_str, 0, _str.size() - numBS), numBS };
+                            return { utils::safe_substr(_str, 0, (int)(_str.size() - numBS)), numBS };
                         } else {
                             return { EMPTY_MSTR, numBS };
                         }
@@ -647,7 +647,7 @@ namespace lattice2 {
         // 単語素片リストの追加(単語素片が得られなかった場合も含め、各打鍵ごとに呼び出すこと)
         // 単語素片(WordPiece): 打鍵後に得られた出力文字列と、それにかかった打鍵数
         LatticeResult addPieces(const std::vector<WordPiece>& pieces) override {
-            int strokeCount = STATE_COMMON->GetTotalDecKeyCount();
+            int strokeCount = (int)(STATE_COMMON->GetTotalDecKeyCount());
             if (_startStrokeCount == 0) _startStrokeCount = strokeCount;
 
             //_LOG_DEBUGH(_T("ENTER: strokeCount={}, pieces: {}\nkBest:\n{}"), strokeCount, formatStringOfWordPieces(pieces), _kBestList.debugString());

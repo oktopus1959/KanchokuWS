@@ -64,7 +64,7 @@ public:
     }
 
     int strokeLen() const {
-        return _strokeLen;
+        return (int)_strokeLen;
     }
 
     int numBS() const {

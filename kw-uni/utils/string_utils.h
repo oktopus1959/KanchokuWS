@@ -546,13 +546,13 @@ namespace utils
 
     inline String safe_substr(StringRef s, size_t start, int len = 0) {
         if (start >= s.size()) start = s.size();
-        if (len <= 0) len = s.size() - start + len;
+        if (len <= 0) len = (int)(s.size() - start + len);
         return s.substr(start, len);
     }
 
     inline MString safe_substr(const MString& s, size_t start, int len = 0) {
         if (start >= s.size()) start = s.size();
-        if (len <= 0) len = s.size() - start + len;
+        if (len <= 0) len = (int)(s.size() - start + len);
         return s.substr(start, len);
     }
 
@@ -882,7 +882,7 @@ namespace utils
     template<typename T>
     inline T find_tail_kanji_str(const T& s) {
         if (!s.empty()) {
-            int i = s.size() - 1;
+            int i = (int)(s.size() - 1);
             for (; i >= 0; --i) {
                 if (!is_kanji(s[i])) break;
             }

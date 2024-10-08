@@ -331,9 +331,13 @@ namespace {
 
                 case TOKEN::LBRACE:
                     if (shiftPlane == COMBO_SHIFT_PLANE) { _LOG_DEBUGH(_T("LBRACE: line={}, depth={}, shiftPlane={}, prevNth={}, nth={}"), lineNumber + 1, depth, shiftPlane, prevNth, n + shiftPlaneOffset); }
+                    [[fallthrough]];
                 case TOKEN::STRING:             // "str" : 文字列ノード
+                    [[fallthrough]];
                 case TOKEN::BARE_STRING:        // str : 文字列ノード
+                    [[fallthrough]];
                 case TOKEN::FUNCTION:           // @c : 機能ノード
+                    [[fallthrough]];
                 case TOKEN::REWRITE:            // @{ : 書き換えノード }
                     //tblNode->setNthChild(n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
                     setNthChildNode(tblNode, n + shiftPlaneOffset, createNode(currentToken, depth + 1, prevNth, n));
@@ -342,6 +346,7 @@ namespace {
                     break;
 
                 case TOKEN::COMMA:              // 次のトークン待ち
+                    [[fallthrough]];
                 case TOKEN::SLASH:              // 次のトークン待ち
                     if (isPrevDelim) ++n;
                     isPrevDelim = true;
@@ -366,7 +371,7 @@ namespace {
         }
 
         void createNodePositionedByArrow(StrokeTableNode* tblNode, int prevNth, int idx) {
-            int nextDepth = tblNode->depth() + 1;
+            int nextDepth = (int)(tblNode->depth() + 1);
             LOG_DEBUG(_T("ENTER: currentLine={}, nextDepth={}, idx={}, prevN={}"), currentLine, nextDepth, idx, prevNth);
             Node* node = tblNode->getNth(idx);
             if (node && node->isStrokeTableNode()) {
@@ -455,7 +460,7 @@ namespace {
             Node* node = tblNode->getNth(idx);
             if (node && node->isStrokeTableNode()) return dynamic_cast<StrokeTableNode*>(node);
 
-            StrokeTableNode* stNode = new StrokeTableNode(tblNode->depth() + 1);
+            StrokeTableNode* stNode = new StrokeTableNode((int)(tblNode->depth() + 1));
             //tblNode->setNthChild(idx, stNode);
             setNthChildNode(tblNode, idx, stNode);
             return stNode;
@@ -1162,14 +1167,14 @@ namespace {
         // カラム0で予期しないLBRACEが発生
         void unexpectedLeftBraceAtColumn0Warning() {
             _LOG_DEBUGH(_T("lineNumber={}, nextPos={}"), lineNumber, nextPos);
-            handleWarning(std::format(_T("{} {} の {}行目の行頭にネストされた '{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {} ..."), \
+            handleWarning(std::format(_T("{} {} の {}行目の行頭にネストされた '{{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {} ..."), \
                 blockOrFile(), blockInfoStack.CurrentBlockName(), calcErrorLineNumber(), currentLine.substr(0, 50)));
         }
 
         // カラム0で予期しないRBRACEが発生
         void unexpectedRightBraceAtColumn0Warning() {
             _LOG_DEBUGH(_T("lineNumber={}, nextPos={}"), lineNumber, nextPos);
-            handleWarning(std::format(_T("{} {} の {}行目の行頭にまだネスト中の '}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {} ..."), \
+            handleWarning(std::format(_T("{} {} の {}行目の行頭にまだネスト中の '}}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {} ..."), \
                 blockOrFile(), blockInfoStack.CurrentBlockName(), calcErrorLineNumber(), currentLine.substr(0, 50)));
         }
 

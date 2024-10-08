@@ -43,7 +43,7 @@ namespace {
 
         inline void setSelectPos(size_t n) const {
             size_t x = std::min(histCands.Size(), SETTINGS->histHorizontalCandMax);
-            selectPos = n >= 0 && n < x ? n : -1;
+            selectPos = (int)(n >= 0 && n < x ? n : -1);
         }
 
         // 選択位置をインクリメント //(一周したら未選択状態に戻る)
@@ -54,7 +54,7 @@ namespace {
 
         // 選択位置をデクリメント //(一周したら未選択状態に戻る)
         inline void decSelectPos() const {
-            int x = std::min(histCands.Size(), SETTINGS->histHorizontalCandMax);
+            int x = (int)(std::min(histCands.Size(), SETTINGS->histHorizontalCandMax));
             selectPos = selectPos <= 0 ? x - 1 : x <= 0 ? -1 : (selectPos - 1) % x;
         }
 
@@ -68,7 +68,7 @@ namespace {
 
         inline const HistResult getSelectedHist() const {
             int n = getSelectPos();
-            int x = std::min(histCands.Size(), SETTINGS->histHorizontalCandMax);
+            int x = (int)(std::min(histCands.Size(), SETTINGS->histHorizontalCandMax));
             return n >= 0 && n < x ? histCands.GetNthHist(n) : emptyResult;
         }
 

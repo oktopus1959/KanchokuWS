@@ -50,7 +50,7 @@ namespace {
             }
             if (!outStr.empty()) {
                 // カタカナに変換して置換する
-                resultStr.setResult(utils::convert_hiragana_to_katakana(outStr), numBS);
+                resultStr.setResult(utils::convert_hiragana_to_katakana(outStr), (int)(numBS));
                 OUTPUT_STACK->setHistBlockerAt(outStr.size());
             } else {
                 outStr = OUTPUT_STACK->GetLastKatakanaStr<MString>();
@@ -58,7 +58,7 @@ namespace {
                 _LOG_DEBUGH(_T("K->H: outStr={}, numBS={}"), to_wstr(outStr), numBS);
                 if (!outStr.empty()) {
                     // ひらがなに変換して置換する
-                    resultStr.setResult(utils::convert_katakana_to_hiragana(outStr), numBS);
+                    resultStr.setResult(utils::convert_katakana_to_hiragana(outStr), (int)(numBS));
                 }
             }
 

@@ -634,7 +634,7 @@ public:
         OUTPUT_STACK->setRewritable(resultStr.rewritableLen());
         _LOG_DEBUGH(_T("OutputStackBackStrWithFlagUpto(16)={}"), to_wstr(OUTPUT_STACK->OutputStackBackStrWithFlagUpto(16)));
 
-        int strokeTableChainLen = startState->StrokeTableChainLength();
+        int strokeTableChainLen = (int)(startState->StrokeTableChainLength());
         _LOG_DEBUGH(_T("strokeTableChainLen={}"), strokeTableChainLen);
         STATE_COMMON->SetStrokeCount(std::max(strokeTableChainLen - 1, 0));
         if (strokeTableChainLen >= 2) {
@@ -731,7 +731,7 @@ public:
                 for (; i < s.size(); ++i) {
                     if (pos + i >= maxlen) break;
                     if (i >= LONG_VKEY_CHAR_SIZE) {
-                        OutParams->faceStrings[pos + i - 1] = '…';
+                        OutParams->faceStrings[pos + i - 1] = (wchar_t)'…';
                         break;
                     }
                     OutParams->faceStrings[pos + i] = s[i];

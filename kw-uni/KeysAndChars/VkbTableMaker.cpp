@@ -66,8 +66,8 @@ namespace VkbTableMaker {
                     if (iter != idxMap.end()) {
                         if (table) {
                             // DecKeyId をキー名に変換してテーブルに格納
-                            table[iter->second * 2] = DECKEY_TO_CHARS->GetCharFromDeckey(firstIdx);
-                            table[iter->second * 2 + 1] = DECKEY_TO_CHARS->GetCharFromDeckey(secondIdx);
+                            table[iter->second * 2] = DECKEY_TO_CHARS->GetCharFromDeckey((int)(firstIdx));
+                            table[iter->second * 2 + 1] = DECKEY_TO_CHARS->GetCharFromDeckey((int)(secondIdx));
                         }
                         if (pSet) {
                             pSet->insert(pSet->end(), (int)firstIdx);
@@ -142,7 +142,7 @@ namespace VkbTableMaker {
 
     //----------------------------------------------------------------------------
     void reorderByFirstStrokePosition(wchar_t* table, StrokeTableNode* pNode, StringRef orderedChars, const std::set<wchar_t>& charSet, size_t firstLevelIdx, size_t depth) {
-        for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
+        for (int i = 0; i < STROKE_SPACE_DECKEY; ++i) {
             if (depth == 0) firstLevelIdx = i;
             Node* blk = pNode->getNth(i);
             if (blk) {

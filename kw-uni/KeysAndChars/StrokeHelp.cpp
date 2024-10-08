@@ -32,7 +32,7 @@ void StrokeHelp::GatherStrokeHelp() {
 }
 
 size_t StrokeHelp::gatherStrokeHelp(StrokeTableNode* pNode, size_t pos, size_t depth) {
-    for (size_t i = 0; i < STROKE_SPACE_DECKEY; ++i) {
+    for (int i = 0; i < STROKE_SPACE_DECKEY; ++i) {
         Node* blk = pNode->getNth(i);
         if (blk) {
             if (blk->isStrokeTableNode()) {

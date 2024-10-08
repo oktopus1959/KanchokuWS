@@ -27,17 +27,17 @@ namespace {
     private:
         // リストから tgt を検索し、その位置を返す。リストに存在しなければ末尾に追加する
         size_t findTarget(mchar_t tgt) {
-            int x = posFixed;
+            int x = (int)posFixed;
             if (x < 0) x = 0;
             int n = -1;
-            for (size_t i = 0; i < list.size(); ++i) {
+            for (int i = 0; i < list.size(); ++i) {
                 if (list[i] == tgt) {
                     n = i;
                     break;
                 }
             }
             if (n < 0) {
-                n = list.size();
+                n = (int)list.size();
                 list.push_back(tgt);
             }
             return n;

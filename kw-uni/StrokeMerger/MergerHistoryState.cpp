@@ -169,7 +169,7 @@ namespace {
                     _LOG_DEBUGH(_T("ADD WORD: rewriteStr={}, string={}, numBS={}"),
                         to_wstr(result.getRewriteNode() ? result.getRewriteNode()->getString() : EMPTY_MSTR), to_wstr(result.resultStr()), result.numBS());
                     // TODO bKatakanaConversionのサポート
-                    int strokeLen = STATE_COMMON->GetTotalDecKeyCount() - cntStroke;
+                    int strokeLen = (int)(STATE_COMMON->GetTotalDecKeyCount() - cntStroke);
                     //if (bKatakanaConversion) {
                     //    MString hs = result.resultStr();
                     //    if (std::all_of(hs.begin(), hs.end(), [](auto ch) {return utils::is_hiragana(ch) || utils::is_katakana(ch);})) {
@@ -628,7 +628,7 @@ namespace {
 
                 // 新しい文字列が得られたらそれを返す
                 if (!result.outStr.empty() || result.numBS > 0) {
-                    resultOut.setResult(result.outStr, result.numBS);
+                    resultOut.setResult(result.outStr, (int)(result.numBS));
                     SetTranslatedOutString(resultOut);
                 } else {
                     _LOG_DEBUGH(_T("NO resultOut"));
@@ -820,7 +820,7 @@ namespace {
             if (!romanStr.empty() && romanStr.size() <= SETTINGS->histMapKeyMaxLength) {
                 if (is_upper_alphabet(romanStr[0])) {
                     romanStr[0] = to_lower(romanStr[0]);
-                    resultStr.setResult(romanStr, romanStr.size());
+                    resultStr.setResult(romanStr, (int)(romanStr.size()));
                 }
             }
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);

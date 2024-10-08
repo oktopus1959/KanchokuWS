@@ -263,14 +263,14 @@ namespace {
             LOG_DEBUG(_T("zenkakuKatakanaStr={}"), to_wstr(outStr));
             if (!outStr.empty()) {
                 // 全角を半角カタカナに置換
-                resultStr.setResult(convert_zenkaku_to_hankaku(outStr), outStr.size());
+                resultStr.setResult(convert_zenkaku_to_hankaku(outStr), (int)(outStr.size()));
                 OUTPUT_STACK->setHistBlockerAt(outStr.size());
             } else {
                 outStr = OUTPUT_STACK->GetLastHankakuKatakanaStr<MString>();
                 LOG_DEBUG(_T("hankakuKatakanaStr={}"), to_wstr(outStr));
                 if (!outStr.empty()) {
                     // 半角を全角カタカナに置換
-                    resultStr.setResult(convert_hankaku_to_zenkaku(outStr), outStr.size());
+                    resultStr.setResult(convert_hankaku_to_zenkaku(outStr), (int)(outStr.size()));
                 }
             }
 
