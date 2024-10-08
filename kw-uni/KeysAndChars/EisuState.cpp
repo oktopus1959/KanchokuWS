@@ -224,7 +224,7 @@ namespace {
         // FullEscape の処理 -- HISTORYを呼ぶ
         void handleFullEscape() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
-            //cancelMe();
+            cancelMe();
             MERGER_HISTORY_RESIDENT_STATE->handleFullEscapeResidentState();
         }
 

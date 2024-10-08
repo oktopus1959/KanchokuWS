@@ -472,6 +472,8 @@ void State::dispatchDeckey(int deckey) {
         handleStrokeKeys(deckey);
     } else if (deckey >= ACTIVE_DECKEY && deckey <= DEACTIVE2_DECKEY) {
         handleDecoderOff();
+    } else if (deckey == FLUSH_OUTPUT_STRING_DECKEY) {
+        handleFlushOutputString();
     } else if (deckey == FULL_ESCAPE_DECKEY) {
         handleFullEscape();
     } else if (deckey == UNBLOCK_DECKEY) {
@@ -629,6 +631,9 @@ void State::handleSpecialKeys(int /*deckey*/) {
     LOG_INFO(_T("THROUGH"));
     setThroughDeckeyFlag();
 }
+
+// FlushOutputString デフォルトハンドラ
+void State::handleFlushOutputString() { LOG_INFO(_T("CALLED")); handleSpecialKeys(FLUSH_OUTPUT_STRING_DECKEY); }
 
 // FullEscape デフォルトハンドラ
 void State::handleFullEscape() { LOG_INFO(_T("CALLED")); handleSpecialKeys(FULL_ESCAPE_DECKEY); }

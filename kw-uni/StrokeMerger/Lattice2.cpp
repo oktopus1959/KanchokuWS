@@ -391,7 +391,7 @@ namespace lattice2 {
         }
 
         // 新しい候補を追加
-        bool addCandidate(std::vector<CandidateString>& newCandidates, CandidateString& newCandStr) {
+        bool addCandidate(std::vector<CandidateString>& newCandidates, CandidateString& newCandStr, bool isStrokeBS) {
             bool bAdded = false;
             bool bIgnored = false;
             std::vector<MString> words;
@@ -403,7 +403,7 @@ namespace lattice2 {
             int candCost = morphCost + ngramCost;
             _LOG_INFOH(_T("CALLED: candStr={}, candCost={} (morph={}[{}], ngram={})"), to_wstr(candStr), candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost);
 #if IS_LOG_DEBUGH_ENABLED
-            _debugLog.append(std::format(L"candStr = {}, candCost = {} (morph = {} [{}] , ngram = {})\n", to_wstr(candStr), candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost));
+            if (!isStrokeBS) _debugLog.append(std::format(L"candStr = {}, candCost = {} (morph = {} [{}] , ngram = {})\n", to_wstr(candStr), candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost));
 #endif
             newCandStr.cost(candCost);
             int totalCost = newCandStr.totalCost();
@@ -454,6 +454,7 @@ namespace lattice2 {
         void addOnePiece(std::vector<CandidateString>& newCandidates, const WordPiece& piece, int strokeCount) {
             _LOG_DEBUGH(_T("CALLED: piece={}"), piece.debugString());
             bool bAutoBushuFound = false;           // 自動部首合成は一回だけ実行する
+            bool isStrokeBS = piece.numBS() > 0;
             for (const auto& cand : _candidates) {
                 MString s;
                 int numBS;
@@ -461,14 +462,14 @@ namespace lattice2 {
                     std::tie(s, numBS) = cand.applyAutoBushu(piece, strokeCount);  // 自動部首合成
                     if (!s.empty()) {
                         CandidateString newCandStr(s, strokeCount, 0, cand.penalty());
-                        addCandidate(newCandidates, newCandStr);
+                        addCandidate(newCandidates, newCandStr, isStrokeBS);
                         bAutoBushuFound = true;
                     }
                 }
                 std::tie(s, numBS) = cand.applyPiece(piece, strokeCount);
                 if (!s.empty() || numBS > 0) {
                     CandidateString newCandStr(s, strokeCount, 0, cand.penalty());
-                    addCandidate(newCandidates, newCandStr);
+                    addCandidate(newCandidates, newCandStr, isStrokeBS);
                 }
             }
         }
@@ -589,11 +590,9 @@ namespace lattice2 {
 
         Deque<String> _debugLog;
 
-#if IS_LOG_DEBUGH_ENABLED
         String formatStringOfWordPieces(const std::vector<WordPiece>& pieces) {
             return utils::join(utils::select<String>(pieces, [](WordPiece p){return p.debugString();}), _T("|"));
         }
-#endif
 
     public:
         // コンストラクタ
@@ -666,8 +665,10 @@ namespace lattice2 {
             outStr = utils::safe_substr(outStr, commonLen);
             _LOG_INFOH(_T("LEAVE: OUTPUT: {}, numBS={}\n{}"), to_wstr(outStr), numBS, _kBestList.debugKBestString());
 #if IS_LOG_DEBUGH_ENABLED
-            if (_debugLog.size() >= 20) _debugLog.pop_front();
-            _debugLog.push_back(std::format(L"========================================\nOUTPUT: {}, numBS={}\n\n{}\n\n", to_wstr(outStr), numBS, _kBestList.debugKBestString(10)));
+            if (pieces.back().numBS() <= 0) {
+                if (_debugLog.size() >= 20) _debugLog.pop_front();
+                _debugLog.push_back(std::format(L"========================================\nOUTPUT: {}, numBS={}\n\n{}\n\n", to_wstr(outStr), numBS, _kBestList.debugKBestString(10)));
+            }
 #endif
             return LatticeResult(outStr, numBS);
         }

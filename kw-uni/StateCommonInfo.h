@@ -74,6 +74,10 @@ enum class ResultFlags
 
     // 現在配列融合モードの入力中
     CurrentModeIsMultiStreamInput = 0x2000,
+
+    // 溜っている出力文字列をフラッシュする
+    FlushOutputString = 0x40000,
+
 };
 
 /// <summary>
@@ -272,6 +276,7 @@ public:
     inline void ClearCurrentModeIsEisu() { ResetResultFlag(ResultFlags::CurrentModeIsEisu); }
     inline void SetCurrentModeIsMultiStreamInput() { SetResultFlag(ResultFlags::CurrentModeIsMultiStreamInput); }
     inline void ClearCurrentModeIsMultiStreamInput() { ResetResultFlag(ResultFlags::CurrentModeIsMultiStreamInput); }
+    inline void SetFlushOutputString() { SetResultFlag(ResultFlags::FlushOutputString); }
 
     inline void SetWaiting2ndStroke() { nextExpectedKeyType = ExpectedKeyType::SecondStroke; }
     inline void SetMazeCandSelecting() { nextExpectedKeyType = ExpectedKeyType::MazeCandSelecting; }

@@ -1178,6 +1178,14 @@ namespace {
             _LOG_DEBUGH(_T("LEAVE"));
         }
 
+        // FlushOutputString の処理
+        void handleFlushOutputString() override {
+            _LOG_DEBUGH(_T("CALLED: {}"), Name);
+            handleFullEscape();
+            STATE_COMMON->SetFlushOutputString();
+            _LOG_DEBUGH(_T("LEAVE"));
+        }
+
         // FullEscapeの処理 -- 履歴選択状態から抜けて、履歴検索文字列の遡及ブロッカーをセット
         void handleFullEscape() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
