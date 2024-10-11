@@ -188,12 +188,15 @@ namespace {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
             size_t checkCnt = prevLowerHeadCnt + 1;
             prevLowerHeadCnt = STATE_COMMON->GetTotalDecKeyCount();
-            if (checkCnt == prevLowerHeadCnt) {
-                // 2回続けて呼ばれたらキャンセル
-                cancelMe();
-            } else {
-                MERGER_HISTORY_RESIDENT_STATE->handleEisuDecapitalize();
-            }
+            //if (checkCnt == prevLowerHeadCnt) {
+            //    // 2回続けて呼ばれたらキャンセル
+            //    cancelMe();
+            //} else {
+            //    MERGER_HISTORY_RESIDENT_STATE->handleEisuDecapitalize();
+            //}
+            MERGER_HISTORY_RESIDENT_STATE->handleEisuDecapitalize();
+            // 即時キャンセルする
+            cancelMe();
             _LOG_DEBUGH(_T("LEAVE: {}"), Name);
         }
 
