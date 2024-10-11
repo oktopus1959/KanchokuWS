@@ -99,17 +99,17 @@ public:
     // 単語素片リストの追加(単語素片が得られなかった場合も含め、各打鍵ごとに呼び出すこと)
     // 単語素片(WordPiece): 打鍵後に得られた出力文字列と、それにかかった打鍵数
     // return: 出力文字列と、修正用のBS数
-    virtual LatticeResult addPieces(const std::vector<WordPiece>& pieces) = 0;
+    virtual LatticeResult addPieces(const std::vector<WordPiece>& pieces, bool skipNextStroke) = 0;
 
     virtual void clear() = 0;
 
-    static void createLattice();
+//    static void createLattice();
 
     static std::unique_ptr<Lattice> Singleton;
 
     //static void loadCostFile();
 
-    static void runTest();
+//    static void runTest();
 };
 
 //#define WORD_LATTICE Lattice::Singleton
@@ -123,7 +123,7 @@ public:
     // 単語素片リストの追加(単語素片が得られなかった場合も含め、各打鍵ごとに呼び出すこと)
     // 単語素片(WordPiece): 打鍵後に得られた出力文字列と、それにかかった打鍵数
     // return: 出力文字列と、修正用のBS数
-    virtual LatticeResult addPieces(const std::vector<WordPiece>& pieces) = 0;
+    virtual LatticeResult addPieces(const std::vector<WordPiece>& pieces, bool skipNextStroke) = 0;
 
     virtual void clear() = 0;
 
@@ -153,7 +153,7 @@ public:
 
     //static void loadCostFile();
 
-    static void runTest();
+//    static void runTest();
 };
 
 #define WORD_LATTICE Lattice2::Singleton

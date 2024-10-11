@@ -333,6 +333,9 @@ public:
     // スペースキーハンドラ
     virtual void handleSpaceKey();
 
+    // SkipNextStroke ハンドラ
+    virtual void handleSkipNextStroke();
+
     // FlushOutputString ハンドラ
     virtual void handleFlushOutputString();
 

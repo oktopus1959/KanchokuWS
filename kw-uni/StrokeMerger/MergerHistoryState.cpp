@@ -390,6 +390,9 @@ namespace {
 
         int _strokeCountBS = -1;
 
+        // 次打鍵をスキップする。次の打鍵を単打ではなく、複数ストロークの第1打鍵として扱いたいというケース
+        bool _skipNextStroke = false;
+
         // RootStrokeState1用の状態集合
         StrokeStreamList _streamList1;
 
@@ -438,6 +441,7 @@ namespace {
                 if (deckey != CLEAR_STROKE_DECKEY && ((deckey >= FUNC_DECKEY_START && deckey < FUNC_DECKEY_END) || deckey >= CTRL_DECKEY_START)) {
                     _streamList1.Clear();
                     _streamList2.Clear();
+                    _skipNextStroke = false;
                     switch (deckey) {
                         //case ENTER_DECKEY:
                         //    _LOG_DEBUGH(_T("EnterKey: clear streamList"));
@@ -508,6 +512,10 @@ namespace {
                                 SetNextNodeMaybe(MAZEGAKI_NODE);
                             }
                         }
+                        break;
+                    case SKIP_NEXT_STROKE_DECKEY:
+                        _LOG_DEBUGH(_T("SKIP_NEXT_STROKE_DECKEY"));
+                        _skipNextStroke = true;
                         break;
                     default:
                         _LOG_DEBUGH(_T("OTHER"));
@@ -624,7 +632,8 @@ namespace {
                 }
 
                 // Lattice処理
-                auto result = WORD_LATTICE->addPieces(pieces);
+                auto result = WORD_LATTICE->addPieces(pieces, _skipNextStroke);
+                _skipNextStroke = false;
 
                 // 新しい文字列が得られたらそれを返す
                 if (!result.outStr.empty() || result.numBS > 0) {
