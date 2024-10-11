@@ -8,5 +8,5 @@ namespace LlamaBridge {
     void llamaFinalize();
 
     // Cost(Loss)の計算
-    int llamaCalcCost(const MString& str);
+    float llamaCalcCost(const MString& str, std::vector<float>& logits);
 }

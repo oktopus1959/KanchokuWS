@@ -42,6 +42,7 @@
 #include "StrokeMerger/StrokeMergerHistoryResidentState.h"
 
 #include "MorphBridge.h"
+#include "Llama/LlamaBridge.h"
 
 #if 1 || defined(_DEBUG)
 #define _LOG_DEBUGH_FLAG true
@@ -126,6 +127,9 @@ public:
         // 形態素解析器の初期化
         MorphBridge::morphInitialize(logger);
 
+        //// llama.cpp の初期化
+        //LlamaBridge::llamaInitialize();
+
         // 始状態
         startNode.reset(new StartNode());
         startState.reset(dynamic_cast<StartState*>(startNode->CreateState()));
@@ -182,6 +186,8 @@ public:
         LOG_INFOH(_T("CALLED"));
         // 形態素解析器の終了
         MorphBridge::morphFinalize();
+        //// llama.cpp の終了
+        //LlamaBridge::llamaFinalize();
     }
 
     // settings の事前受け取り
