@@ -41,9 +41,6 @@ namespace lattice2 {
     // 末尾がここで設定した長さ以上に同じ候補は、先頭だけを残して削除
     int LastSameLen = 5;
 
-    // 漢字が2文字以上連続したら、それを優先する
-    bool preferKanjiConsecutive = true;
-
     // 非優先候補に与えるペナルティ
     int NON_PREFERRED_PENALTY = 1000000;
 
@@ -566,15 +563,13 @@ namespace lattice2 {
                     }
                 }
             }
-
             _candidates = std::move(newCandidates);
 
-            // 漢字が2文字以上連続したら、それを優先する
-            if (preferKanjiConsecutive) {
-                if (!_candidates.empty()) {
-                    if (isKanjiConsecutive(_candidates.front())) selectFirst();
-                }
+            // 漢字が2文字以上連続したら、その候補を優先する
+            if (!_candidates.empty()) {
+                if (isKanjiConsecutive(_candidates.front())) selectFirst();
             }
+
             _LOG_DEBUGH(_T("LEAVE"));
         }
 
@@ -606,6 +601,7 @@ namespace lattice2 {
             size_t nSameLen = getNumOfSameStrokeLen();
             if (nSameLen > 1) {
                 arrangePenalties(nSameLen);
+                _LOG_INFOH(_T("CALLED: First candidate preferred."));
             }
         }
 
@@ -677,6 +673,19 @@ namespace lattice2 {
             return utils::join(utils::select<String>(pieces, [](WordPiece p){return p.debugString();}), _T("|"));
         }
 
+        // すべての単語素片が1文字で、それが漢字・ひらがな・カタカナ以外か
+        bool areAllPiecesNonJaChar(const std::vector<WordPiece>& pieces) {
+            for (const auto iter : pieces) {
+                MString s = pieces.front().getString();
+                //_LOG_INFOH(_T("s: len={}, str={}"), s.size(), to_wstr(s));
+                if (s.size() != 1 || utils::is_japanese_char_except_nakaguro(s.front())) {
+                    //_LOG_INFOH(_T("FALSE"));
+                    return false;
+                }
+            }
+            return true;
+        }
+
     public:
         // コンストラクタ
         LatticeImpl() {
@@ -740,6 +749,12 @@ namespace lattice2 {
             _LOG_INFOH(_T("ENTER: strokeCount={}, skip={}, pieces: {}"), strokeCount, skipNextStroke, formatStringOfWordPieces(pieces));
             // endPos における空の k-best path リストを取得
 
+            // すべての単語素片が1文字で、それが漢字・ひらがな・カタカナ以外だったら、現在の先頭候補を優先させる
+            if (!pieces.empty() && areAllPiecesNonJaChar(pieces)) {
+                selectFirst();
+            }
+
+            // 候補リストの更新
             _kBestList.updateKBestList(pieces, strokeCount - _startStrokeCount + 1, _skipNextStroke);
 
             _skipNextStroke = skipNextStroke;

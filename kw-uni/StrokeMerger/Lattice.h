@@ -72,9 +72,9 @@ public:
     }
 
     String debugString() const {
-        return _T("(")
+        return _T("('")
             + to_wstr(_rewriteNode ? _rewriteNode->getString() : _pieceStr)
-            + _T(", _strokeLen=") + std::to_wstring(_strokeLen)
+            + _T("', _strokeLen=") + std::to_wstring(_strokeLen)
             + _T(", rewLen=") + std::to_wstring(_rewriteNode ? _rewriteNode->getRewritableLen() : _rewritableLen)
             + _T(", numBS=") + std::to_wstring(_rewriteNode ? 0 : _numBS) + _T(")");
     }
