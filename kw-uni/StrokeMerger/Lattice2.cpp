@@ -133,6 +133,10 @@ namespace lattice2 {
                         if (triCost > 0) triCost -= DEFAULT_WORD_BONUS;       // 正のコストが設定されている場合(wikipedia.costなど)は、 DEFAULT BONUS を引いたコストにする; つまり負のコストになる
                         cost += triCost;
                     }
+                    // 「漢字+の+漢字」のような場合はボーナス
+                    if ((str[i+1] == L'が' || str[i+1] == L'の' || str[i+1] == L'を') && !utils::is_hiragana(str[i]) && !utils::is_hiragana(str[i+2])) {
+                        cost -= KANJI_NO_KANJI_BONUS;
+                    }
                 }
                 if (str.size() > 3) {
                     // quadgram
@@ -476,11 +480,11 @@ namespace lattice2 {
 #endif
             newCandStr.cost(candCost);
 
-            // 「漢字+の+漢字」のような場合はペナルティを解除
-            size_t len = candStr.size();
-            if (len >= 3 && candStr[len - 2] == L'の' && !utils::is_hiragana(candStr[len - 3]) && !utils::is_hiragana(candStr[len - 1])) {
-                newCandStr.zeroPenalty();
-            }
+            //// 「漢字+の+漢字」のような場合はペナルティを解除
+            //size_t len = candStr.size();
+            //if (len >= 3 && candStr[len - 2] == L'の' && !utils::is_hiragana(candStr[len - 3]) && !utils::is_hiragana(candStr[len - 1])) {
+            //    newCandStr.zeroPenalty();
+            //}
 
             int totalCost = newCandStr.totalCost();
 
