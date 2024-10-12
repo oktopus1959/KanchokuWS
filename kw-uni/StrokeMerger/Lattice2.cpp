@@ -41,6 +41,12 @@ namespace lattice2 {
     // 末尾がここで設定した長さ以上に同じ候補は、先頭だけを残して削除
     int LastSameLen = 5;
 
+    // 漢字が2文字以上連続したら、それを優先する
+    bool preferKanjiConsecutive = true;
+
+    // 非優先候補に与えるペナルティ
+    int NON_PREFERRED_PENALTY = 1000000;
+
     int MAX_COST = 1000;
 
     int STROKE_COST = 150;
@@ -527,6 +533,12 @@ namespace lattice2 {
             });
         }
 
+        bool isKanjiConsecutive(const CandidateString& cand) {
+            MString str = cand.string();
+            size_t len = str.size();
+            return len >= 2 && utils::is_kanji(str[len - 1]) && utils::is_kanji(str[len - 2]);
+        }
+
     public:
         // strokeCount: lattice に最初に addPieces() した時からの相対的なストローク数
         void updateKBestList(const std::vector<WordPiece>& pieces, int strokeCount, bool skipThis) {
@@ -556,10 +568,18 @@ namespace lattice2 {
             }
 
             _candidates = std::move(newCandidates);
+
+            // 漢字が2文字以上連続したら、それを優先する
+            if (preferKanjiConsecutive) {
+                if (!_candidates.empty()) {
+                    if (isKanjiConsecutive(_candidates.front())) selectFirst();
+                }
+            }
             _LOG_DEBUGH(_T("LEAVE"));
         }
 
     private:
+        // ストローク長の同じ候補の数を返す
         size_t getNumOfSameStrokeLen() const {
             size_t nSameLen = 0;
             if (_candidates.size() > 1) {
@@ -572,14 +592,16 @@ namespace lattice2 {
             return nSameLen;
         }
 
+        // 先頭候補以外に、非優先候補ペナルティを与える (先頭候補のペナルティは 0 にする)
         void arrangePenalties(size_t nSameLen) {
             _candidates.front().zeroCost();
             for (size_t i = 1; i < nSameLen; ++i) {
-                _candidates[i].penalty(1000000 * (int)i);
+                _candidates[i].penalty(NON_PREFERRED_PENALTY * (int)i);
             }
         }
 
     public:
+        // 先頭候補を最優先候補にする
         void selectFirst() {
             size_t nSameLen = getNumOfSameStrokeLen();
             if (nSameLen > 1) {
@@ -587,6 +609,7 @@ namespace lattice2 {
             }
         }
 
+        // 次候補を最優先候補にする
         void selectNext() {
             size_t nSameLen = getNumOfSameStrokeLen();
             if (nSameLen > 1) {
@@ -596,6 +619,7 @@ namespace lattice2 {
             }
         }
 
+        // 前候補を最優先候補にする
         void selectPrev() {
             size_t nSameLen = getNumOfSameStrokeLen();
             if (nSameLen > 1) {
@@ -687,14 +711,17 @@ namespace lattice2 {
             return _kBestList.isEmpty();
         }
 
+        // 先頭候補を最優先候補にする
         void selectFirst() override {
             _kBestList.selectFirst();
         }
 
+        // 次候補を最優先候補にする
         void selectNext() override {
             _kBestList.selectNext();
         }
 
+        // 前候補を最優先候補にする
         void selectPrev() override {
             _kBestList.selectPrev();
         }

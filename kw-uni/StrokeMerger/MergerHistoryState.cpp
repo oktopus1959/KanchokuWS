@@ -459,6 +459,7 @@ namespace {
                         _LOG_DEBUGH(_T("BS"));
                         _strokeCountBS = (int)STATE_COMMON->GetTotalDecKeyCount();
                         WORD_LATTICE->selectFirst();
+                        // 現在の先頭候補を優先する
                         if (WORD_LATTICE->isEmpty()) State::handleBS();
                         break;
                     case MULTI_STREAM_NEXT_CAND_DECKEY:
@@ -470,6 +471,7 @@ namespace {
                         WORD_LATTICE->selectPrev();
                         break;
                     case MULTI_STREAM_SELECT_FIRST_DECKEY:
+                        // 現在の先頭候補を優先する
                         _LOG_DEBUGH(_T("MULTI_STREAM_SELECT_FIRST: commit first candidate"));
                         WORD_LATTICE->selectFirst();
                         break;
