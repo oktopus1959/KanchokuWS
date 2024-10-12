@@ -2,7 +2,7 @@
 #include "LlamaBridge.h"
 #include "e:/Dev/Cpp/llama.cpp/examples/LlamaLoss/LlamaLoss.h"
 
-#if 1
+#if 0
 #undef _LOG_INFOH
 #undef LOG_DEBUGH
 #if 0
@@ -14,12 +14,15 @@
 #endif
 #endif
 
+#define USE_LLAMA 0
+
 namespace LlamaBridge {
     DEFINE_LOCAL_LOGGER(LlamaBridge);
 
     bool bInitialized = false;
 
     int llamaInitialize() {
+#if USE_LLAMA
         LOG_INFOH(_T("ENTER"));
 
         Vector<char*> argv;
@@ -33,18 +36,24 @@ namespace LlamaBridge {
 
         LOG_INFOH(_T("LEAVE: result={}"), result);
         return result;
+#else
+        return 0;
+#endif
     }
 
     void llamaFinalize() {
+#if USE_LLAMA
         LOG_INFOH(_T("CALLED"));
         if (bInitialized) {
             // リソースの解放
             LlamaLossFinalize();
             bInitialized = false;
         }
+#endif
     }
 
     float llamaCalcCost(const MString& str, std::vector<float>& logits) {
+#if USE_LLAMA
         LOG_DEBUGH(_T("ENTER: str={}"), to_wstr(str));
         float cost = 0.0;
         if (bInitialized) {
@@ -58,5 +67,8 @@ namespace LlamaBridge {
         }
         LOG_DEBUGH(_T("LEAVE: llamaCost={}"), cost);
         return cost;
+#else
+        return 0.0f;
+#endif
     }
 }

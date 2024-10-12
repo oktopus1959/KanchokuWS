@@ -317,9 +317,6 @@
     <ProjectReference Include="..\DyMazin\DyMazinLib\DyMazinLib.vcxproj">
       <Project>{aef1f796-7f90-4d1f-95e4-e9d428b42a9f}</Project>
     </ProjectReference>
-    <ProjectReference Include="E:\Dev\Cpp\llama.cpp\examples\LlamaLoss\LlamaLoss.vcxproj">
-      <Project>{e4f3652e-27ce-46da-8e81-a316216469f6}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
