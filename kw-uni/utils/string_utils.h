@@ -651,6 +651,14 @@ namespace utils
         return is_hirakana(ch);
     }
 
+    template<typename T>
+    inline bool is_hiragana_str(const T& s) {
+        for (auto ch : s) {
+            if (!is_hiragana(ch)) return false;
+        }
+        return true;
+    }
+
     inline bool is_punct(mchar_t ch) {
         return ch == TOTEN || ch == KUTEN;
     }

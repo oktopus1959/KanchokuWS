@@ -44,6 +44,18 @@ namespace lattice2 {
     // 非優先候補に与えるペナルティ
     int NON_PREFERRED_PENALTY = 1000000;
 
+    // 漢字orカタカナが連続する場合のボーナス
+    int KANJI_CONSECUTIVE_BONUS = 1000;
+
+    // 末尾がひらがなの連続場合のボーナス
+    int TAIL_HIRAGANA_BONUS = 1000;
+
+    // 「漢字+の+漢字」の場合のボーナス
+    int KANJI_NO_KANJI_BONUS = 1000;
+
+    // cost ファイルに登録がある場合のデフォルトのボーナス
+    int DEFAULT_WORD_BONUS = 1000;
+
     int MAX_COST = 1000;
 
     int STROKE_COST = 150;
@@ -60,7 +72,7 @@ namespace lattice2 {
                 if (items.size() == 2) {
                     wordCosts[to_mstr(items[0])] = std::stoi(items[1]);
                 } else if (items.size() == 1) {
-                    wordCosts[to_mstr(items[0])] = -1000;       // userword.cost のデフォルトは -1000
+                    wordCosts[to_mstr(items[0])] = -DEFAULT_WORD_BONUS;       // userword.cost のデフォルトは -DEFAULT_WORD_BONUS
                 }
             }
         }
@@ -107,6 +119,10 @@ namespace lattice2 {
             // bigram
             for (size_t i = 0; i < str.size() - 1; ++i) {
                 cost += getWordCost(utils::safe_substr(str, i, 2));
+                if (utils::is_kanji(str[i]) && utils::is_kanji(str[i + 1]) || utils::is_katakana(str[i]) && utils::is_katakana(str[i + 1])) {
+                    // 漢字orカタカナが2文字連続する場合のボーナス
+                    cost -= KANJI_CONSECUTIVE_BONUS;
+                }
             }
             if (str.size() > 2) {
                 // trigram
@@ -114,7 +130,7 @@ namespace lattice2 {
                     auto iter = wordCosts.find(utils::safe_substr(str, i, 3));
                     if (iter != wordCosts.end()) {
                         int triCost = iter->second;
-                        if (triCost > 0) triCost -= 1000;       // 正のコストが設定されている場合(wikipedia.costなど)は、 1000 を引いたコストにする; つまり負のコストになる
+                        if (triCost > 0) triCost -= DEFAULT_WORD_BONUS;       // 正のコストが設定されている場合(wikipedia.costなど)は、 DEFAULT BONUS を引いたコストにする; つまり負のコストになる
                         cost += triCost;
                     }
                 }
@@ -123,9 +139,13 @@ namespace lattice2 {
                     for (size_t i = 0; i < str.size() - 3; ++i) {
                         auto iter = wordCosts.find(utils::safe_substr(str, i, 4));
                         if (iter != wordCosts.end()) {
-                            int triCost = iter->second;
-                            if (triCost > 0) triCost -= 1000;       // 正のコストが設定されている場合(wikipedia.costなど)は、 1000 を引いたコストにする; つまり負のコストになる
-                            cost += triCost;
+                            int quadCost = iter->second;
+                            if (quadCost > 0) quadCost -= DEFAULT_WORD_BONUS;       // 正のコストが設定されている場合(wikipedia.costなど)は、 DEFAULT BONUS を引いたコストにする; つまり負のコストになる
+                            cost += quadCost;
+                        }
+                        if ((i == str.size() - 4) && utils::is_hiragana_str(utils::safe_substr(str, i, 4))) {
+                            // 末尾がひらがな4文字連続の場合のボーナス
+                            cost -= TAIL_HIRAGANA_BONUS;
                         }
                     }
                 }
@@ -287,9 +307,9 @@ namespace lattice2 {
             _cost = cost;
         }
 
-        void zeroCost() {
-            _penalty = -_cost;
-        }
+        //void zeroCost() {
+        //    _penalty = -_cost;
+        //}
 
         int penalty() const {
             return _penalty;
@@ -297,6 +317,10 @@ namespace lattice2 {
 
         void penalty(int penalty) {
             _penalty = penalty;
+        }
+
+        void zeroPenalty() {
+            _penalty = 0;
         }
 
         bool isSkipped() const {
@@ -355,7 +379,7 @@ namespace lattice2 {
         void removeSecondOrLesser() {
             if (_candidates.size() > 0) {
                 _candidates.erase(_candidates.begin() + 1, _candidates.end());
-                _candidates.front().penalty(0);
+                _candidates.front().zeroPenalty();
             }
         }
 
@@ -451,6 +475,13 @@ namespace lattice2 {
                 to_wstr(candStr), candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost, llamaCost, newCandStr.isSkipped()));
 #endif
             newCandStr.cost(candCost);
+
+            // 「漢字+の+漢字」のような場合はペナルティを解除
+            size_t len = candStr.size();
+            if (len >= 3 && candStr[len - 2] == L'の' && !utils::is_hiragana(candStr[len - 3]) && !utils::is_hiragana(candStr[len - 1])) {
+                newCandStr.zeroPenalty();
+            }
+
             int totalCost = newCandStr.totalCost();
 
             if (!newCandidates.empty()) {
@@ -550,10 +581,10 @@ namespace lattice2 {
             });
         }
 
-        bool isKanjiConsecutive(const CandidateString& cand) {
+        bool isKanjiKatakanaConsecutive(const CandidateString& cand) {
             MString str = cand.string();
             size_t len = str.size();
-            return len >= 2 && utils::is_kanji(str[len - 1]) && utils::is_kanji(str[len - 2]);
+            return len >= 2 && (utils::is_kanji(str[len - 1]) && utils::is_kanji(str[len - 2]) || utils::is_katakana(str[len - 1]) && utils::is_katakana(str[len - 2]));
         }
 
     public:
@@ -585,10 +616,10 @@ namespace lattice2 {
             }
             _candidates = std::move(newCandidates);
 
-            // 漢字が2文字以上連続したら、その候補を優先する
-            if (!_candidates.empty()) {
-                if (isKanjiConsecutive(_candidates.front())) selectFirst();
-            }
+            //// 漢字またはカタカナが2文字以上連続したら、その候補を優先する
+            //if (!_candidates.empty()) {
+            //    if (isKanjiKatakanaConsecutive(_candidates.front())) selectFirst();
+            //}
 
             // 末尾から、指定の長さより以前の部分を確定させる
             commitLeaderBeforeTailLen();
@@ -612,7 +643,7 @@ namespace lattice2 {
 
         // 先頭候補以外に、非優先候補ペナルティを与える (先頭候補のペナルティは 0 にする)
         void arrangePenalties(size_t nSameLen) {
-            _candidates.front().zeroCost();
+            _candidates.front().zeroPenalty();
             for (size_t i = 1; i < nSameLen; ++i) {
                 _candidates[i].penalty(NON_PREFERRED_PENALTY * (int)i);
             }
