@@ -923,6 +923,9 @@ namespace KanchokuWS
         /// <summary>Google日本語入力と互換な書き換システム</summary>
         public static bool PostRewriteCompatibleWithGooble { get; set; }
 
+        /// <summary>末尾から、ここで設定した長さより前の部分を確定させる</summary>
+        public static int CommitBeforeTailLen = 4;
+
         /// <summary>解候補ログファイル</summary>
         public static string MergerCandidateFile = "tmp/merger_candidates.log";
 
@@ -1044,6 +1047,11 @@ namespace KanchokuWS
         private static string setDecoderSetting(string attr, string val)
         {
             return DecoderSettings[attr] = val;
+        }
+
+        private static string setDecoderSetting(string attr, int val)
+        {
+            return DecoderSettings[attr] = $"{val}";
         }
 
         // KeySeq 設定
@@ -1658,6 +1666,7 @@ namespace KanchokuWS
 
             PostRewriteCompatibleWithGooble = addDecoderSetting("googleCompatible", false);     // Google日本語入力と互換な書き換システム
 
+            CommitBeforeTailLen = addDecoderSetting("commitBeforeTailLen", 4);                  // 末尾から、ここで設定した長さより前の部分を確定させる
             setDecoderSetting("mergerCandidateFile", MergerCandidateFile );                     // 解候補ログファイル
 
             // キー割当

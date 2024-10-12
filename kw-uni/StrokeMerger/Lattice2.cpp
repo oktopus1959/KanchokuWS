@@ -520,6 +520,26 @@ namespace lattice2 {
             }
         }
 
+        // 末尾から、指定の長さより以前の部分を確定させる
+        void commitLeaderBeforeTailLen() {
+            if (!_candidates.empty()) {
+                MString firstStr = _candidates.front().string();
+                if (firstStr.size() > SETTINGS->commitBeforeTailLen) {
+                    MString leaderStr = firstStr.substr(0, firstStr.size() - SETTINGS->commitBeforeTailLen);
+                    std::vector<CandidateString> tempCands;
+                    auto iter = _candidates.begin();
+                    tempCands.push_back(*iter++);
+                    for (; iter != _candidates.end(); ++iter) {
+                        if (utils::startsWith(iter->string(), leaderStr)) {
+                            // 先頭部分が一致する候補だけを残す
+                            tempCands.push_back(*iter);
+                        }
+                    }
+                    _candidates = std::move(tempCands);
+                }
+            }
+        }
+
         // llama-loss の小さい順に候補を並べ直す
         void sortByLlamaLoss(std::vector<CandidateString>& newCandidates) {
             std::for_each(newCandidates.begin(), newCandidates.end(), [this](CandidateString& c) {
@@ -569,6 +589,9 @@ namespace lattice2 {
             if (!_candidates.empty()) {
                 if (isKanjiConsecutive(_candidates.front())) selectFirst();
             }
+
+            // 末尾から、指定の長さより以前の部分を確定させる
+            commitLeaderBeforeTailLen();
 
             _LOG_DEBUGH(_T("LEAVE"));
         }
