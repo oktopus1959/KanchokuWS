@@ -458,7 +458,8 @@ namespace {
                     case BS_DECKEY:
                         _LOG_DEBUGH(_T("BS"));
                         _strokeCountBS = (int)STATE_COMMON->GetTotalDecKeyCount();
-                        WORD_LATTICE->selectFirst();
+                        //WORD_LATTICE->selectFirst();
+                        WORD_LATTICE->removeSecondOrLesser();
                         // 現在の先頭候補を優先する
                         if (WORD_LATTICE->isEmpty()) State::handleBS();
                         break;

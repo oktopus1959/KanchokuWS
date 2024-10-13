@@ -48,13 +48,22 @@ namespace lattice2 {
     int KANJI_CONSECUTIVE_BONUS = 1000;
 
     // 末尾がひらがなの連続場合のボーナス
-    int TAIL_HIRAGANA_BONUS = 1000;
+    int TAIL_HIRAGANA_BONUS = 0; //1000;
 
     // 「漢字+の+漢字」の場合のボーナス
     int KANJI_NO_KANJI_BONUS = 1000;
 
     // cost ファイルに登録がある場合のデフォルトのボーナス
     int DEFAULT_WORD_BONUS = 1000;
+
+    // 2文字以上の形態素で漢字を含む場合のボーナス
+    int MORPH_ANY_KANJI_BONUS = 5000;
+
+    // 3文字以上の形態素ですべてひらがなの場合のボーナス
+    int MORPH_ALL_HIRAGANA_BONUS = 1000;
+
+    // 2文字以上の形態素ですべてカタカナの場合のボーナス
+    int MORPH_ALL_KATAKANA_BONUS = 3000;
 
     int MAX_COST = 1000;
 
@@ -117,11 +126,13 @@ namespace lattice2 {
             if (utils::is_kanji(str[0])) cost += MAX_COST;    // 漢字１文字の場合のコスト
         } else if (str.size() > 1) {
             // bigram
-            for (size_t i = 0; i < str.size() - 1; ++i) {
+            int lastKanjiPos = -1;
+            for (int i = 0; i < (int)str.size() - 1; ++i) {
                 cost += getWordCost(utils::safe_substr(str, i, 2));
-                if (utils::is_kanji(str[i]) && utils::is_kanji(str[i + 1]) || utils::is_katakana(str[i]) && utils::is_katakana(str[i + 1])) {
+                if (i > lastKanjiPos && utils::is_kanji(str[i]) && utils::is_kanji(str[i + 1]) || utils::is_katakana(str[i]) && utils::is_katakana(str[i + 1])) {
                     // 漢字orカタカナが2文字連続する場合のボーナス
                     cost -= KANJI_CONSECUTIVE_BONUS;
+                    lastKanjiPos = i + 1;   // 3文字以上続くときに、重複は計上しない
                 }
             }
             if (str.size() > 2) {
@@ -357,8 +368,6 @@ namespace lattice2 {
     // K-best な文字列を格納する
     class KBestList {
 
-        std::map<MString, int> _morphCache;
-
         std::vector<CandidateString> _candidates;
 
         static bool _isEmpty(const std::vector<CandidateString> cands) {
@@ -370,7 +379,6 @@ namespace lattice2 {
 
     public:
         void clear() {
-            _morphCache.clear();
             _candidates.clear();
         }
 
@@ -397,7 +405,7 @@ namespace lattice2 {
 
         String debugKBestString(size_t maxLn = 100000) const {
             String result = _debugLog;
-            result.append(L"\n\nKBest:\n");
+            result.append(L"\nKBest:\n");
             for (size_t i = 0; i < _candidates.size() && i < maxLn; ++i) {
                 result.append(std::to_wstring(i));
                 result.append(_T(": "));
@@ -411,12 +419,17 @@ namespace lattice2 {
         int calcMorphCost(const MString& s, std::vector<MString>& words) {
             int cost = 0;
             if (!s.empty()) {
-                auto iter = _morphCache.find(s);
-                if (iter == _morphCache.end()) {
-                    cost = MorphBridge::morphCalcCost(s, words);
-                    _morphCache[s] = cost;
-                } else {
-                    cost = iter->second;
+                cost = MorphBridge::morphCalcCost(s, words);
+                for (const auto& w : words) {
+                    if (w.size() >= 2 && std::any_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_kanji(c); })) {
+                        cost -= MORPH_ANY_KANJI_BONUS * (int)(w.size() - 1);
+                    }
+                    if (w.size() >= 3 && std::all_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_hiragana(c); })) {
+                        cost -= MORPH_ALL_HIRAGANA_BONUS;
+                    }
+                    if (w.size() >= 2 && std::all_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_katakana(c); })) {
+                        cost -= MORPH_ALL_KATAKANA_BONUS;
+                    }
                 }
             }
             return cost;
@@ -725,7 +738,7 @@ namespace lattice2 {
             return n;
         }
 
-        Deque<String> _debugLog;
+        Deque<String> _debugLogQueue;
 
         String formatStringOfWordPieces(const std::vector<WordPiece>& pieces) {
             return utils::join(utils::select<String>(pieces, [](WordPiece p){return p.debugString();}), _T("|"));
@@ -826,9 +839,11 @@ namespace lattice2 {
             outStr = utils::safe_substr(outStr, commonLen);
             _LOG_INFOH(_T("LEAVE: OUTPUT: {}, numBS={}\n{}"), to_wstr(outStr), numBS, _kBestList.debugKBestString());
 #if IS_LOG_DEBUGH_ENABLED
+            _debugLogQueue.push_back(std::format(L"========================================\nENTER: strokeCount={}, skip={}, pieces: {}\n",
+                strokeCount, skipNextStroke, formatStringOfWordPieces(pieces)));
             if (pieces.back().numBS() <= 0) {
-                if (_debugLog.size() >= 20) _debugLog.pop_front();
-                _debugLog.push_back(std::format(L"========================================\nOUTPUT: {}, numBS={}\n\n{}\n\n", to_wstr(outStr), numBS, _kBestList.debugKBestString(10)));
+                if (_debugLogQueue.size() >= 10) _debugLogQueue.pop_front();
+                _debugLogQueue.push_back(std::format(L"\n{}\nOUTPUT: {}, numBS={}\n\n", _kBestList.debugKBestString(10), to_wstr(outStr), numBS));
             }
 #endif
             return LatticeResult(outStr, numBS);
@@ -837,9 +852,9 @@ namespace lattice2 {
         void saveCandidateLog() override {
             _LOG_INFOH(_T("ENTER"));
             String result;
-            while (!_debugLog.empty()) {
-                result.append(_debugLog.front());
-                _debugLog.pop_front();
+            while (!_debugLogQueue.empty()) {
+                result.append(_debugLogQueue.front());
+                _debugLogQueue.pop_front();
             }
             _LOG_INFOH(L"result: {}", result);
             utils::OfstreamWriter writer(utils::joinPath(SETTINGS->rootDir, SETTINGS->mergerCandidateFile));
