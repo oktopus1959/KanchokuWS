@@ -189,7 +189,6 @@ namespace lattice2 {
         int _cost;
         int _penalty;
         float _llama_loss = 0.0f;
-        bool _skipThis = false;
 
         // 末尾文字列にマッチする RewriteInfo を取得する
         std::tuple<const RewriteInfo*, int> matchWithTailString(const PostRewriteOneShotNode* rewriteNode) const {
@@ -216,10 +215,10 @@ namespace lattice2 {
         }
 
     public:
-        CandidateString() : _strokeLen(0), _cost(0), _penalty(0), _skipThis(false) {
+        CandidateString() : _strokeLen(0), _cost(0), _penalty(0) {
         }
 
-        CandidateString(const MString& s, int len, int cost, int penalty, bool skip) : _str(s), _strokeLen(len), _cost(cost), _penalty(penalty), _skipThis(skip) {
+        CandidateString(const MString& s, int len, int cost, int penalty) : _str(s), _strokeLen(len), _cost(cost), _penalty(penalty) {
         }
 
         std::tuple<MString, int> applyAutoBushu(const WordPiece& piece, int strokeCount) const {
@@ -315,7 +314,7 @@ namespace lattice2 {
         }
 
         int totalCost() const {
-            return _skipThis ? 100000000 : _cost + _penalty;
+            return _cost + _penalty;
         }
 
         void cost(int cost) {
@@ -338,14 +337,6 @@ namespace lattice2 {
             _penalty = 0;
         }
 
-        bool isSkipped() const {
-            return _skipThis;
-        }
-
-        void skipThis() {
-            _skipThis = true;
-        }
-
         float llama_loss() const {
             return _llama_loss;
         }
@@ -360,7 +351,6 @@ namespace lattice2 {
                 + _T("(_cost=") + std::to_wstring(_cost)
                 + _T(",_penalty=") + std::to_wstring(_penalty)
                 + _T(",_llama_loss=") + std::to_wstring(_llama_loss)
-                + _T(",_skipThis=") + std::to_wstring(_skipThis)
                 + _T("), strokeLen = ") + std::to_wstring(_strokeLen) + _T(")");
         }
     };
@@ -369,6 +359,9 @@ namespace lattice2 {
     class KBestList {
 
         std::vector<CandidateString> _candidates;
+
+        // 次のストロークをスキップする候補文字列
+        std::set<MString> _skipStrokeCands;
 
         static bool _isEmpty(const std::vector<CandidateString> cands) {
             //return cands.empty() || cands.size() == 1 && cands.front().string().empty();
@@ -380,6 +373,7 @@ namespace lattice2 {
     public:
         void clear() {
             _candidates.clear();
+            _skipStrokeCands.clear();
         }
 
         void removeOtherThanKBest() {
@@ -404,7 +398,8 @@ namespace lattice2 {
         }
 
         String debugKBestString(size_t maxLn = 100000) const {
-            String result = _debugLog;
+            String result = L"skipNextStrokeCands=[" + to_wstr(skipNextStrokeCands()) + L"]\n\n";
+            result.append(_debugLog);
             result.append(L"\nKBest:\n");
             for (size_t i = 0; i < _candidates.size() && i < maxLn; ++i) {
                 result.append(std::to_wstring(i));
@@ -488,8 +483,8 @@ namespace lattice2 {
             _LOG_INFOH(_T("CALLED: candStr={}, candCost={} (morph={}[{}], ngram={}, llama={})"),
                 to_wstr(candStr), candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost, llamaCost);
 #if IS_LOG_DEBUGH_ENABLED
-            if (!isStrokeBS) _debugLog.append(std::format(L"candStr = {}, candCost = {} (morph = {} [{}] , ngram = {}, llama={}, skip{})\n",
-                to_wstr(candStr), candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost, llamaCost, newCandStr.isSkipped()));
+            if (!isStrokeBS) _debugLog.append(std::format(L"candStr = {}, candCost = {} (morph = {} [{}] , ngram = {}, llama={})\n",
+                to_wstr(candStr), candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost, llamaCost));
 #endif
             newCandStr.cost(candCost);
 
@@ -545,25 +540,35 @@ namespace lattice2 {
 
     private:
         // 素片のストロークと適合する候補だけを追加
-        void addOnePiece(std::vector<CandidateString>& newCandidates, const WordPiece& piece, int strokeCount, bool skipThis) {
+        void addOnePiece(std::vector<CandidateString>& newCandidates, const WordPiece& piece, int strokeCount) {
             _LOG_DEBUGH(_T("CALLED: piece={}"), piece.debugString());
             bool bAutoBushuFound = false;           // 自動部首合成は一回だけ実行する
             bool isStrokeBS = piece.numBS() > 0;
+            int topStrokeLen = -1;
             for (const auto& cand : _candidates) {
-                MString s;
-                int numBS;
-                if (!bAutoBushuFound) {
-                    std::tie(s, numBS) = cand.applyAutoBushu(piece, strokeCount);  // 自動部首合成
-                    if (!s.empty()) {
-                        CandidateString newCandStr(s, strokeCount, 0, cand.penalty(), skipThis || cand.isSkipped());
-                        addCandidate(newCandidates, newCandStr, isStrokeBS);
-                        bAutoBushuFound = true;
+                if (topStrokeLen < 0) topStrokeLen = cand.strokeLen();
+                if (cand.strokeLen() + piece.strokeLen() == strokeCount) {
+                    // 素片のストロークと適合する候補
+                    int penalty = cand.penalty();
+                    if (!isStrokeBS && cand.strokeLen() == topStrokeLen && !piece.getString().empty() && piece.strokeLen() == 1 && _skipStrokeCands.contains(cand.string())) {
+                        penalty += NON_PREFERRED_PENALTY;
                     }
-                }
-                std::tie(s, numBS) = cand.applyPiece(piece, strokeCount);
-                if (!s.empty() || numBS > 0) {
-                    CandidateString newCandStr(s, strokeCount, 0, cand.penalty(), skipThis || cand.isSkipped());
-                    addCandidate(newCandidates, newCandStr, isStrokeBS);
+                    // 次の素片長が1でないか、ストロークのスキップ対象でもない
+                    MString s;
+                    int numBS;
+                    if (!bAutoBushuFound) {
+                        std::tie(s, numBS) = cand.applyAutoBushu(piece, strokeCount);  // 自動部首合成
+                        if (!s.empty()) {
+                            CandidateString newCandStr(s, strokeCount, 0, penalty);
+                            addCandidate(newCandidates, newCandStr, isStrokeBS);
+                            bAutoBushuFound = true;
+                        }
+                    }
+                    std::tie(s, numBS) = cand.applyPiece(piece, strokeCount);
+                    if (!s.empty() || numBS > 0) {
+                        CandidateString newCandStr(s, strokeCount, 0, penalty);
+                        addCandidate(newCandidates, newCandStr, isStrokeBS);
+                    }
                 }
             }
         }
@@ -606,7 +611,7 @@ namespace lattice2 {
 
     public:
         // strokeCount: lattice に最初に addPieces() した時からの相対的なストローク数
-        void updateKBestList(const std::vector<WordPiece>& pieces, int strokeCount, bool skipThis) {
+        void updateKBestList(const std::vector<WordPiece>& pieces, int strokeCount) {
             _LOG_DEBUGH(_T("ENTER: strokeCount={}"), strokeCount);
             _debugLog.clear();
 
@@ -618,7 +623,7 @@ namespace lattice2 {
             std::vector<CandidateString> newCandidates;
             for (const auto& piece : pieces) {
                 // 素片のストロークと適合する候補だけを追加
-                addOnePiece(newCandidates, piece, strokeCount, skipThis);
+                addOnePiece(newCandidates, piece, strokeCount);
             }
 
             //sortByLlamaLoss(newCandidates);
@@ -667,6 +672,21 @@ namespace lattice2 {
         }
 
     public:
+        void setSkipNextStrokeCands() {
+            _skipStrokeCands.clear();
+            if (!_candidates.empty()) {
+                int topStrokeCnt = _candidates.front().strokeLen();
+                for (const auto& c : _candidates) {
+                    if (c.strokeLen() != topStrokeCnt) break;
+                    _skipStrokeCands.insert(c.string());
+                }
+            }
+        }
+
+        MString skipNextStrokeCands() const {
+            return utils::join(_skipStrokeCands, L',');
+        }
+
         // 先頭候補を最優先候補にする
         void selectFirst() {
             size_t nSameLen = getNumOfSameStrokeLen();
@@ -701,7 +721,7 @@ namespace lattice2 {
             if (!_candidates.empty()) {
                 MString s = _candidates.front().applyBushuComp();
                 if (!s.empty()) {
-                    CandidateString newCandStr(s, _candidates.front().strokeLen(), 0, 0, false);
+                    CandidateString newCandStr(s, _candidates.front().strokeLen(), 0, 0);
                     _candidates.insert(_candidates.begin(), newCandStr);
                     size_t nSameLen = getNumOfSameStrokeLen();
                     arrangePenalties(nSameLen);
@@ -722,9 +742,6 @@ namespace lattice2 {
 
         // 前回生成された文字列
         MString _prevOutputStr;
-
-        // 次の打鍵をスキップする
-        bool _skipNextStroke = false;
 
         // 前回生成された文字列との共通する先頭部分の長さ
         size_t calcCommonPrefixLenWithPrevStr(const MString& outStr) {
@@ -810,15 +827,22 @@ namespace lattice2 {
             _kBestList.updateByBushuComp();
         }
 
+    public:
         // 単語素片リストの追加(単語素片が得られなかった場合も含め、各打鍵ごとに呼び出すこと)
         // 単語素片(WordPiece): 打鍵後に得られた出力文字列と、それにかかった打鍵数
         LatticeResult addPieces(const std::vector<WordPiece>& pieces, bool skipNextStroke) override {
-            int strokeCount = (int)(STATE_COMMON->GetTotalDecKeyCount());
-            if (_startStrokeCount == 0) _startStrokeCount = strokeCount;
+            int totalStrokeCount = (int)(STATE_COMMON->GetTotalDecKeyCount());
+            if (_startStrokeCount == 0) _startStrokeCount = totalStrokeCount;
+            int currentStrokeCount = totalStrokeCount - _startStrokeCount + 1;
 
-            //_LOG_DEBUGH(_T("ENTER: strokeCount={}, pieces: {}\nkBest:\n{}"), strokeCount, formatStringOfWordPieces(pieces), _kBestList.debugString());
-            _LOG_INFOH(_T("ENTER: strokeCount={}, skip={}, pieces: {}"), strokeCount, skipNextStroke, formatStringOfWordPieces(pieces));
+            //_LOG_DEBUGH(_T("ENTER: currentStrokeCount={}, pieces: {}\nkBest:\n{}"), currentStrokeCount, formatStringOfWordPieces(pieces), _kBestList.debugString());
+            _LOG_INFOH(_T("ENTER: currentStrokeCount={}, skip={}, pieces: {}"), currentStrokeCount, skipNextStroke, formatStringOfWordPieces(pieces));
             // endPos における空の k-best path リストを取得
+
+            if (skipNextStroke) {
+                // 次のストロークをスキップする
+                _kBestList.setSkipNextStrokeCands();
+            }
 
             // すべての単語素片が1文字で、それが漢字・ひらがな・カタカナ以外だったら、現在の先頭候補を優先させる
             if (!pieces.empty() && areAllPiecesNonJaChar(pieces)) {
@@ -826,9 +850,7 @@ namespace lattice2 {
             }
 
             // 候補リストの更新
-            _kBestList.updateKBestList(pieces, strokeCount - _startStrokeCount + 1, _skipNextStroke);
-
-            _skipNextStroke = skipNextStroke;
+            _kBestList.updateKBestList(pieces, currentStrokeCount);
 
             //_LOG_DEBUGH(_T(".\nresult kBest:\n{}"), pKBestList->debugString());
             size_t numBS = 0;
@@ -837,10 +859,10 @@ namespace lattice2 {
             numBS = _prevOutputStr.size() - commonLen;
             _prevOutputStr = outStr;
             outStr = utils::safe_substr(outStr, commonLen);
-            _LOG_INFOH(_T("LEAVE: OUTPUT: {}, numBS={}\n{}"), to_wstr(outStr), numBS, _kBestList.debugKBestString());
+            _LOG_INFOH(_T("LEAVE: OUTPUT: {}, numBS={}\n\n{}"), to_wstr(outStr), numBS, _kBestList.debugKBestString());
 #if IS_LOG_DEBUGH_ENABLED
-            _debugLogQueue.push_back(std::format(L"========================================\nENTER: strokeCount={}, skip={}, pieces: {}\n",
-                strokeCount, skipNextStroke, formatStringOfWordPieces(pieces)));
+            _debugLogQueue.push_back(std::format(L"========================================\nENTER: currentStrokeCount={}, pieces: {}\n",
+                currentStrokeCount, formatStringOfWordPieces(pieces)));
             if (pieces.back().numBS() <= 0) {
                 if (_debugLogQueue.size() >= 10) _debugLogQueue.pop_front();
                 _debugLogQueue.push_back(std::format(L"\n{}\nOUTPUT: {}, numBS={}\n\n", _kBestList.debugKBestString(10), to_wstr(outStr), numBS));
