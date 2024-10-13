@@ -390,8 +390,8 @@ namespace {
 
         int _strokeCountBS = -1;
 
-        // 次打鍵をスキップする。次の打鍵を単打ではなく、複数ストロークの第1打鍵として扱いたいというケース
-        bool _skipNextStroke = false;
+        // 次の打鍵を単打ではなく、漢字など複数ストロークの第1打鍵を優先する
+        bool _kanjiPreferredNext = false;
 
         // RootStrokeState1用の状態集合
         StrokeStreamList _streamList1;
@@ -441,17 +441,17 @@ namespace {
                 if (deckey != CLEAR_STROKE_DECKEY && ((deckey >= FUNC_DECKEY_START && deckey < FUNC_DECKEY_END) || deckey >= CTRL_DECKEY_START)) {
                     _streamList1.Clear();
                     _streamList2.Clear();
-                    _skipNextStroke = false;
+                    _kanjiPreferredNext = false;
                     switch (deckey) {
                         //case ENTER_DECKEY:
                         //    _LOG_DEBUGH(_T("EnterKey: clear streamList"));
-                        //    WORD_LATTICE->clear();
+                        //    WORD_LATTICE->clearAll();
                         //    //MarkUnnecessary();
                         //    State::handleEnter();
                         //    break;
                     case MULTI_STREAM_COMMIT_DECKEY:
                         _LOG_DEBUGH(_T("EnterKey: clear streamList"));
-                        WORD_LATTICE->clear();
+                        WORD_LATTICE->clearAll();
                         OUTPUT_STACK->setMazeBlocker();
                         //MarkUnnecessary();
                         break;
@@ -485,7 +485,7 @@ namespace {
                     case TOGGLE_ZENKAKU_CONVERSION_DECKEY:
                         _LOG_DEBUGH(_T("TOGGLE_ZENKAKU_CONVERSION"));
                         if (!NextNodeMaybe()) {
-                            WORD_LATTICE->clear();
+                            WORD_LATTICE->clearAll();
                             SetNextNodeMaybe(ZENKAKU_NODE);
                         }
                         break;
@@ -497,7 +497,7 @@ namespace {
                     //case EISU_CONVERSION_DECKEY:
                         _LOG_DEBUGH(_T("EISU_MODE_TOGGLE"));
                         if (!NextNodeMaybe()) {
-                            WORD_LATTICE->clear();
+                            WORD_LATTICE->clearAll();
                             EISU_NODE->blockerNeeded = true; // 入力済み末尾にブロッカーを設定する
                             EISU_NODE->eisuExitCapitalCharNum = 0;
                             SetNextNodeMaybe(EISU_NODE);
@@ -510,19 +510,19 @@ namespace {
                     case MAZE_CONVERSION_DECKEY:
                         _LOG_DEBUGH(_T("MAZE_CONVERSION"));
                         if (!NextNodeMaybe()) {
-                            WORD_LATTICE->clear();
+                            WORD_LATTICE->clearAll();
                             if (!MAZEGAKI_INFO || !MAZEGAKI_INFO->RevertPrevXfer(resultStr)) {
                                 SetNextNodeMaybe(MAZEGAKI_NODE);
                             }
                         }
                         break;
-                    case SKIP_NEXT_STROKE_DECKEY:
-                        _LOG_DEBUGH(_T("SKIP_NEXT_STROKE_DECKEY"));
-                        _skipNextStroke = true;
+                    case KANJI_PREFERRED_NEXT_DECKEY:
+                        _LOG_DEBUGH(_T("KANJI_PREFERRED_NEXT_DECKEY"));
+                        _kanjiPreferredNext = true;
                         break;
                     default:
                         _LOG_DEBUGH(_T("OTHER"));
-                        WORD_LATTICE->clear();
+                        WORD_LATTICE->clearAll();
                         //MarkUnnecessary();
                         State::dispatchDeckey(deckey);
                         break;
@@ -543,7 +543,7 @@ namespace {
                             LOG_DEBUGH(_T("SetNextNodeMaybe: Eisu"));
                             _streamList1.Clear();
                             _streamList2.Clear();
-                            WORD_LATTICE->clear();
+                            WORD_LATTICE->clearAll();
                             EISU_NODE->blockerNeeded = true; // 入力済み末尾にブロッカーを設定する
                             EISU_NODE->eisuExitCapitalCharNum = SETTINGS->eisuExitCapitalCharNum;
                             SetNextNodeMaybe(EISU_NODE);
@@ -635,8 +635,8 @@ namespace {
                 }
 
                 // Lattice処理
-                auto result = WORD_LATTICE->addPieces(pieces, _skipNextStroke);
-                _skipNextStroke = false;
+                auto result = WORD_LATTICE->addPieces(pieces, _kanjiPreferredNext);
+                _kanjiPreferredNext = false;
 
                 // 新しい文字列が得られたらそれを返す
                 if (!result.outStr.empty() || result.numBS > 0) {
@@ -648,6 +648,7 @@ namespace {
             }
 
             if (_streamList1.Empty() && _streamList2.Empty() && WORD_LATTICE->isEmpty()) {
+                //LOG_WARN(L"CALL WORD_LATTICE->clear()");
                 WORD_LATTICE->clear();
                 //MarkUnnecessary();
                 _LOG_DEBUGH(_T("ClearCurrentModeIsMultiStreamInput"));

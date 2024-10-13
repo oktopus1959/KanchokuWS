@@ -474,8 +474,8 @@ void State::dispatchDeckey(int deckey) {
         handleDecoderOff();
     } else if (deckey == FLUSH_OUTPUT_STRING_DECKEY) {
         handleFlushOutputString();
-    } else if (deckey == SKIP_NEXT_STROKE_DECKEY) {
-        handleSkipNextStroke();
+    } else if (deckey == KANJI_PREFERRED_NEXT_DECKEY) {
+        handleKanjiPreferredNext();
     } else if (deckey == FULL_ESCAPE_DECKEY) {
         handleFullEscape();
     } else if (deckey == UNBLOCK_DECKEY) {
@@ -634,8 +634,8 @@ void State::handleSpecialKeys(int /*deckey*/) {
     setThroughDeckeyFlag();
 }
 
-// SkipNextStroke デフォルトハンドラ
-void State::handleSkipNextStroke() { LOG_INFO(_T("CALLED")); handleSpecialKeys(SKIP_NEXT_STROKE_DECKEY); }
+// KanjiPreferredNext デフォルトハンドラ
+void State::handleKanjiPreferredNext() { LOG_INFO(_T("CALLED")); handleSpecialKeys(KANJI_PREFERRED_NEXT_DECKEY); }
 
 // FlushOutputString デフォルトハンドラ
 void State::handleFlushOutputString() { LOG_INFO(_T("CALLED")); handleSpecialKeys(FLUSH_OUTPUT_STRING_DECKEY); }

@@ -201,6 +201,14 @@ namespace utils {
         return time(nullptr);
     }
 
+    inline double diffTime(time_t past) {
+        return difftime(getSecondsFromEpochTime(), past);
+    }
+
+    inline double diffTime(time_t future, time_t past) {
+        return difftime(future, past);
+    }
+
     template<class T>
     struct VectorUtil {
         /**
