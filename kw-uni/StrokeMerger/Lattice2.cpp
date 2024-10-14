@@ -16,9 +16,12 @@
 #include "MorphBridge.h"
 #include "Llama/LlamaBridge.h"
 
+#define _LOG_WARN LOG_DEBUG
 #if 1
 #undef IS_LOG_DEBUGH_ENABLED
 #define IS_LOG_DEBUGH_ENABLED true
+//#undef _LOG_WARN
+//#define _LOG_WARN LOG_WARN
 #undef _LOG_INFOH
 #undef LOG_INFO
 #undef LOG_DEBUG
@@ -84,16 +87,19 @@ namespace lattice2 {
         if (reader.success()) {
             for (const auto& line : reader.getAllLines()) {
                 auto items = utils::split(utils::replace_all(utils::strip(line), L" +", L"\t"), '\t');
-                if (items.size() == 2) {
-                    wordCosts[to_mstr(items[0])] = std::stoi(items[1]);
-                } else if (items.size() == 1) {
-                    wordCosts[to_mstr(items[0])] = -DEFAULT_WORD_BONUS;       // userword.cost のデフォルトは -DEFAULT_WORD_BONUS
+                if (!items.empty() && !items[0].empty() && items[0][0] != L'#') {
+                    if (items.size() == 2) {
+                        wordCosts[to_mstr(items[0])] = std::stoi(items[1]);
+                    } else if (items.size() == 1) {
+                        wordCosts[to_mstr(items[0])] = -DEFAULT_WORD_BONUS;       // userword.cost のデフォルトは -DEFAULT_WORD_BONUS
+                    }
                 }
             }
         }
     }
 
     void loadCostFile(bool onlyUserFile = false) {
+        _LOG_INFOH(L"CALLED: onlyUserFile={}", onlyUserFile);
         if (!onlyUserFile) {
             wordCosts.clear();
 #ifdef NDEBUG
@@ -103,19 +109,40 @@ namespace lattice2 {
         _loadCostFile(_T("userword.cost.txt"));
     }
 
-    int getWordCost(const MString& str) {
-        if (str.empty()) return 0;
-        if (str.size() == 1 && str == MSTR_SPACE) return MAX_COST * 3;          // 1 space の場合のコスト
-        auto iter = wordCosts.find(str);
+    int getWordCost(const MString& word) {
+        if (word.empty()) return 0;
+        if (word.size() == 1 && word == MSTR_SPACE) return MAX_COST * 3;          // 1 space の場合のコスト
+        auto iter = wordCosts.find(word);
         return iter != wordCosts.end() ? iter->second : MAX_COST;
+    }
+
+    int getExtraWordCost(const MString& word) {
+        auto iter = wordCosts.find(word);
+        if (iter != wordCosts.end()) {
+            int xCost = iter->second;
+            // 正のコストが設定されている場合(wikipedia.costなど)は、 DEFAULT BONUS を引いたコストにする; つまり負のコストになる
+            if (xCost > 0 && xCost < DEFAULT_WORD_BONUS) xCost -= DEFAULT_WORD_BONUS;
+            _LOG_WARN(L"{}: xCost={}", to_wstr(word), xCost);
+            return xCost;
+        }
+        return 0;
     }
 
     int getWordConnCost(const MString& s1, const MString& s2) {
         return getWordCost(utils::last_substr(s1, 1) + utils::safe_substr(s2, 0, 1)) / 2;
     }
 
+    int findKatakanaLen(const MString& s, int pos) {
+        int len = 0;
+        for (; (size_t)(pos + len) < s.size(); ++len) {
+            if (!utils::is_katakana(s[pos + len])) break;
+        }
+        return len;
+    }
+
 #if 1
     int getNgramCost(const MString& str) {
+        _LOG_WARN(L"ENTER: str={}", to_wstr(str));
         int cost = 0;
         // unigram
         for (size_t i = 0; i < str.size(); ++i) {
@@ -128,6 +155,8 @@ namespace lattice2 {
             }
             cost += getWordCost(utils::safe_substr(str, i, 1));
         }
+        _LOG_WARN(L"Unigram cost={}", cost);
+
         if (str.size() == 1) {
             if (utils::is_kanji(str[0])) cost += MAX_COST;    // 漢字１文字の場合のコスト
         } else if (str.size() > 1) {
@@ -138,44 +167,78 @@ namespace lattice2 {
                 if (i > lastKanjiPos && utils::is_kanji(str[i]) && utils::is_kanji(str[i + 1]) || utils::is_katakana(str[i]) && utils::is_katakana(str[i + 1])) {
                     // 漢字orカタカナが2文字連続する場合のボーナス
                     cost -= KANJI_CONSECUTIVE_BONUS;
-                    lastKanjiPos = i + 1;   // 3文字以上続くときに、重複は計上しない
+                    int katakanaLen = findKatakanaLen(str, i);
+                    if (katakanaLen > 0) {
+                        // カタカナ連なら、次の文字種までスキップ
+                        i += katakanaLen - 1;
+                        continue;
+                    }
+                    lastKanjiPos = i + 1;   // 漢字列が3文字以上続くときは、重複計上しない
                 }
                 //if ((utils::is_kanji(str[i]) && str[i + 1] == CHOON) || (str[i] == CHOON && utils::is_kanji(str[i + 1]))) {
                 //    // 漢字と「ー」の隣接にはペナルティ
                 //    cost += KANJI_CONSECUTIVE_PENALTY;
                 //}
             }
+            _LOG_WARN(L"Bigram cost={}", cost);
+
             if (str.size() > 2) {
                 // trigram
-                for (size_t i = 0; i < str.size() - 2; ++i) {
-                    auto iter = wordCosts.find(utils::safe_substr(str, i, 3));
-                    if (iter != wordCosts.end()) {
-                        int triCost = iter->second;
-                        if (triCost > 0) triCost -= DEFAULT_WORD_BONUS;       // 正のコストが設定されている場合(wikipedia.costなど)は、 DEFAULT BONUS を引いたコストにする; つまり負のコストになる
-                        cost += triCost;
+                int i = 0;
+                int strLen = (int)str.size();
+                while (i < strLen - 2) {
+                    int katakanaLen = findKatakanaLen(str, i);
+                    if (katakanaLen >= 3) {
+                        // カタカナの3文字以上の連続
+                        int xCost = getExtraWordCost(utils::safe_substr(str, i, katakanaLen));
+                        _LOG_WARN(L"KATAKANA: extraWord={}, xCost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), xCost);
+                        cost += xCost;
+                        _LOG_WARN(L"FOUND: katakana={}, cost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), cost);
+                        // 次の位置に飛ばす
+                        i += katakanaLen;
+                        continue;
                     }
-                    // 「漢字+の+漢字」のような場合はボーナス
-                    if ((str[i+1] == L'が' || str[i+1] == L'の' || str[i+1] == L'を') && !utils::is_hiragana(str[i]) && !utils::is_hiragana(str[i+2])) {
-                        cost -= KANJI_NO_KANJI_BONUS;
-                    }
-                }
-                if (str.size() > 3) {
-                    // quadgram
-                    for (size_t i = 0; i < str.size() - 3; ++i) {
-                        auto iter = wordCosts.find(utils::safe_substr(str, i, 4));
-                        if (iter != wordCosts.end()) {
-                            int quadCost = iter->second;
-                            if (quadCost > 0) quadCost -= DEFAULT_WORD_BONUS;       // 正のコストが設定されている場合(wikipedia.costなど)は、 DEFAULT BONUS を引いたコストにする; つまり負のコストになる
-                            cost += quadCost;
-                        }
-                        if ((i == str.size() - TAIL_HIRAGANA_LEN) && utils::is_hiragana_str(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN))) {
+                    if (i < strLen - 3) {
+                        if (TAIL_HIRAGANA_LEN >= 4 && (i == strLen - TAIL_HIRAGANA_LEN) && utils::is_hiragana_str(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN))) {
                             // 末尾がひらがな4文字連続の場合のボーナス
                             cost -= TAIL_HIRAGANA_BONUS;
+                            _LOG_WARN(L"TAIL HIRAGANA:{}, cost={}", to_wstr(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN)), cost);
+                            break;
+                        }
+                        int len = 4;
+                        auto word = utils::safe_substr(str, i, len);
+                        int xCost = getExtraWordCost(word);
+                        _LOG_WARN(L"len={}, extraWord={}, xCost={}", len, to_wstr(word), xCost);
+                        if (xCost != 0) {
+                            // コスト定義があれば、次に飛ばす
+                            cost += xCost;
+                            _LOG_WARN(L"FOUND: extraWord={}, xCost={}, cost={}", to_wstr(word), xCost, cost);
+                            i += len;
+                            continue;
+                        }
+                    } else {
+                        // 「漢字+の+漢字」のような場合はボーナス
+                        if ((str[i + 1] == L'が' || str[i + 1] == L'の' || str[i + 1] == L'を') && !utils::is_hiragana(str[i]) && !utils::is_hiragana(str[i + 2])) {
+                            cost -= KANJI_NO_KANJI_BONUS;
+                            _LOG_WARN(L"KANJI-NO-KANJI:{}, cost={}", to_wstr(utils::safe_substr(str, i, 3)), cost);
+                        }
+                        int len = 3;
+                        auto word = utils::safe_substr(str, i, len);
+                        int xCost = getExtraWordCost(word);
+                        _LOG_WARN(L"len={}, extraWord={}, xCost={}", len, to_wstr(word), xCost);
+                        if (xCost != 0) {
+                            // コスト定義があれば、次に飛ばす
+                            cost += xCost;
+                            _LOG_WARN(L"FOUND: extraWord={}, xCost={}, cost={}", to_wstr(word), xCost, cost);
+                            i += len;
+                            continue;
                         }
                     }
+                    ++i;
                 }
             }
         }
+        _LOG_WARN(L"LEAVE: cost={}", cost);
         return cost;
     }
 #else
@@ -426,7 +489,8 @@ namespace lattice2 {
             int cost = 0;
             if (!s.empty()) {
                 cost = MorphBridge::morphCalcCost(s, words);
-                for (const auto& w : words) {
+                for (auto iter = words.begin(); iter != words.end(); ++iter) {
+                    const MString& w = *iter;
                     if (w.size() >= 2 && std::any_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_kanji(c); })) {
                         cost -= MORPH_ANY_KANJI_BONUS * (int)(w.size() - 1);
                     }
@@ -434,7 +498,11 @@ namespace lattice2 {
                         cost -= MORPH_ALL_HIRAGANA_BONUS;
                     }
                     if (w.size() >= 2 && std::all_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_katakana(c); })) {
-                        cost -= MORPH_ALL_KATAKANA_BONUS;
+                        const MString& w2 = *(iter + 1);
+                        if (!((iter + 1) != words.end() && std::all_of(w2.begin(), w2.end(), [](mchar_t c) { return utils::is_katakana(c); }) && w.size() + w2.size() <= 5)) {
+                            // 次がカタカナ連でないか、合計で6文以上なら
+                            cost -= MORPH_ALL_KATAKANA_BONUS;
+                        }
                     }
                 }
             }
@@ -562,7 +630,7 @@ namespace lattice2 {
                 if (cand.strokeLen() + piece.strokeLen() == strokeCount) {
                     // 素片のストロークと適合する候補
                     int penalty = cand.penalty();
-                    _LOG_INFOH(L"cand.string()=\"{}\", contained in skip={}", to_wstr(cand.string()), _kanjiPreferredNextCands.contains(cand.string()));
+                    _LOG_WARN(L"cand.string()=\"{}\", contained in kanjiPreferred={}", to_wstr(cand.string()), _kanjiPreferredNextCands.contains(cand.string()));
                     if (!isStrokeBS && /*cand.strokeLen() == topStrokeLen && */ !pieceStr.empty()
                         && (piece.strokeLen() == 1 || std::all_of(pieceStr.begin(), pieceStr.end(), [](mchar_t c) { return utils::is_hiragana(c);}))
                         && _kanjiPreferredNextCands.contains(cand.string())) {
