@@ -238,8 +238,8 @@ namespace lattice2 {
                         auto word = utils::safe_substr(str, i, len);
                         int xCost = getExtraWordCost(word);
                         _LOG_WARN(L"len={}, extraWord={}, xCost={}", len, to_wstr(word), xCost);
-                        if (xCost != 0) {
-                            // コスト定義があれば、次に飛ばす
+                        if (xCost > 0 || xCost <= -DEFAULT_WORD_BONUS) {
+                            // ユーザーによるコスト定義があれば、次に飛ばす
                             cost += xCost;
                             _LOG_WARN(L"FOUND: extraWord={}, xCost={}, cost={}", to_wstr(word), xCost, cost);
                             i += len;
