@@ -204,6 +204,7 @@ namespace {
         void handleBS() {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
             //MERGER_HISTORY_RESIDENT_STATE->handleBS();
+            if (is_upper_alphabet(OUTPUT_STACK->back()) && capitalCharCnt > 0) --capitalCharCnt;
             resultStr.setNumBS(1);
         }
 
