@@ -20,8 +20,10 @@
 #if 1
 #undef IS_LOG_DEBUGH_ENABLED
 #define IS_LOG_DEBUGH_ENABLED true
-//#undef _LOG_WARN
-//#define _LOG_WARN LOG_WARN
+#if 1
+#undef _LOG_WARN
+#define _LOG_WARN LOG_WARN
+#endif
 #undef _LOG_INFOH
 #undef LOG_INFO
 #undef LOG_DEBUG
@@ -50,8 +52,11 @@ namespace lattice2 {
     // 漢字と長音が連続する場合のペナルティ
     int KANJI_CONSECUTIVE_PENALTY = 1000;
 
-    // 漢字orカタカナが連続する場合のボーナス
-    int KANJI_CONSECUTIVE_BONUS = 1000;
+    // 漢字が連続する場合のボーナス
+    int KANJI_CONSECUTIVE_BONUS = 0;
+
+    // カタカナが連続する場合のボーナス
+    int KATAKANA_CONSECUTIVE_BONUS = 1000;
 
     // 末尾がひらがなの連続にボーナスを与える場合のひらがな長
     int TAIL_HIRAGANA_LEN = 0;  // 4
@@ -60,7 +65,7 @@ namespace lattice2 {
     int TAIL_HIRAGANA_BONUS = 0; //1000;
 
     // 「漢字+の+漢字」の場合のボーナス
-    int KANJI_NO_KANJI_BONUS = 1000;
+    int KANJI_NO_KANJI_BONUS = 1500;
 
     // cost ファイルに登録がある場合のデフォルトのボーナス
     int DEFAULT_WORD_BONUS = 1000;
@@ -106,6 +111,7 @@ namespace lattice2 {
             _loadCostFile(_T("wikipedia.cost.txt"));
 #endif
         }
+        // 再読込の場合は、追加登録になるので、登録済みのものは削除されない
         _loadCostFile(_T("userword.cost.txt"));
     }
 
@@ -164,16 +170,19 @@ namespace lattice2 {
             int lastKanjiPos = -1;
             for (int i = 0; i < (int)str.size() - 1; ++i) {
                 cost += getWordCost(utils::safe_substr(str, i, 2));
-                if (i > lastKanjiPos && utils::is_kanji(str[i]) && utils::is_kanji(str[i + 1]) || utils::is_katakana(str[i]) && utils::is_katakana(str[i + 1])) {
-                    // 漢字orカタカナが2文字連続する場合のボーナス
+                if (i > lastKanjiPos && utils::is_kanji(str[i]) && utils::is_kanji(str[i + 1])) {
                     cost -= KANJI_CONSECUTIVE_BONUS;
+                    lastKanjiPos = i + 1;   // 漢字列が3文字以上続くときは、重複計上しない
+                }
+                if (utils::is_katakana(str[i]) && utils::is_katakana(str[i + 1])) {
+                    // 漢字orカタカナが2文字連続する場合のボーナス
+                    cost -= KATAKANA_CONSECUTIVE_BONUS;
                     int katakanaLen = findKatakanaLen(str, i);
                     if (katakanaLen > 0) {
                         // カタカナ連なら、次の文字種までスキップ
                         i += katakanaLen - 1;
                         continue;
                     }
-                    lastKanjiPos = i + 1;   // 漢字列が3文字以上続くときは、重複計上しない
                 }
                 //if ((utils::is_kanji(str[i]) && str[i + 1] == CHOON) || (str[i] == CHOON && utils::is_kanji(str[i + 1]))) {
                 //    // 漢字と「ー」の隣接にはペナルティ
@@ -199,6 +208,7 @@ namespace lattice2 {
                         continue;
                     }
                     if (i < strLen - 3) {
+                        // 4文字連
                         if (TAIL_HIRAGANA_LEN >= 4 && (i == strLen - TAIL_HIRAGANA_LEN) && utils::is_hiragana_str(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN))) {
                             // 末尾がひらがな4文字連続の場合のボーナス
                             cost -= TAIL_HIRAGANA_BONUS;
@@ -216,7 +226,9 @@ namespace lattice2 {
                             i += len;
                             continue;
                         }
-                    } else {
+                    }
+                    {
+                        // 3文字連
                         // 「漢字+の+漢字」のような場合はボーナス
                         if ((str[i + 1] == L'が' || str[i + 1] == L'の' || str[i + 1] == L'を') && !utils::is_hiragana(str[i]) && !utils::is_hiragana(str[i + 2])) {
                             cost -= KANJI_NO_KANJI_BONUS;
@@ -964,10 +976,10 @@ namespace lattice2 {
             outStr = utils::safe_substr(outStr, commonLen);
             _LOG_INFOH(_T("LEAVE: OUTPUT: {}, numBS={}\n\n{}"), to_wstr(outStr), numBS, _kBestList.debugKBestString());
 #if IS_LOG_DEBUGH_ENABLED
+            while (_debugLogQueue.size() >= 10) _debugLogQueue.pop_front();
             _debugLogQueue.push_back(std::format(L"========================================\nENTER: currentStrokeCount={}, pieces: {}\n",
                 currentStrokeCount, formatStringOfWordPieces(pieces)));
             if (pieces.back().numBS() <= 0) {
-                if (_debugLogQueue.size() >= 10) _debugLogQueue.pop_front();
                 _debugLogQueue.push_back(std::format(L"\n{}\nOUTPUT: {}, numBS={}\n\n", _kBestList.debugKBestString(10), to_wstr(outStr), numBS));
             }
 #endif
