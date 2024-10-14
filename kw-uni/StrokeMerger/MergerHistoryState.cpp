@@ -635,7 +635,7 @@ namespace {
                 }
 
                 // Lattice処理
-                auto result = WORD_LATTICE->addPieces(pieces, _kanjiPreferredNext);
+                auto result = getLatticeResult(pieces);
                 _kanjiPreferredNext = false;
 
                 // 新しい文字列が得られたらそれを返す
@@ -666,6 +666,21 @@ namespace {
             //    STATE_COMMON->SetCurrentModeIsMultiStreamInput();
             //}
             _LOG_DEBUGH(_T("LEAVE: {}: resultStr=[{}]\n"), Name, resultOut.debugString());
+        }
+
+        LatticeResult getLatticeResult(const std::vector<WordPiece>& pieces) {
+            if (!pieces.empty()) {
+                MString s = pieces.front().getString();
+                if (s.size() >= 4) {
+                    size_t pos = s.find(L'!');
+                    if (pos <= s.size() - 3 && s[pos + 1] == L'{' && s.find(L'}', pos + 2) < s.size()) {
+                        // !{..} が含まれていたら、
+                        WORD_LATTICE->clearAll();
+                        return LatticeResult(s, 0);
+                    }
+                }
+            }
+            return WORD_LATTICE->addPieces(pieces, _kanjiPreferredNext);
         }
 
         // チェーンをたどって不要とマークされた後続状態を削除する
