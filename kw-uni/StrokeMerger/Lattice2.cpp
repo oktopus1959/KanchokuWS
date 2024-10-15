@@ -196,6 +196,7 @@ namespace lattice2 {
                 int i = 0;
                 int strLen = (int)str.size();
                 while (i < strLen - 2) {
+                    bool found = false;
                     int katakanaLen = findKatakanaLen(str, i);
                     if (katakanaLen >= 3) {
                         // カタカナの3文字以上の連続
@@ -203,11 +204,12 @@ namespace lattice2 {
                         _LOG_WARN(L"KATAKANA: extraWord={}, xCost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), xCost);
                         cost += xCost;
                         _LOG_WARN(L"FOUND: katakana={}, cost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), cost);
-                        // 次の位置に飛ばす
-                        i += katakanaLen;
-                        continue;
+                        // カタカナ連の末尾に飛ばす
+                        i += katakanaLen - 1;
+                        //continue;
+                        found = true;
                     }
-                    if (i < strLen - 3) {
+                    if (!found && i < strLen - 3) {
                         // 4文字連
                         if (TAIL_HIRAGANA_LEN >= 4 && (i == strLen - TAIL_HIRAGANA_LEN) && utils::is_hiragana_str(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN))) {
                             // 末尾がひらがな4文字連続の場合のボーナス
@@ -220,20 +222,16 @@ namespace lattice2 {
                         int xCost = getExtraWordCost(word);
                         _LOG_WARN(L"len={}, extraWord={}, xCost={}", len, to_wstr(word), xCost);
                         if (xCost != 0) {
-                            // コスト定義があれば、次に飛ばす
+                            // コスト定義があれば、末尾に飛ばす
                             cost += xCost;
                             _LOG_WARN(L"FOUND: extraWord={}, xCost={}, cost={}", to_wstr(word), xCost, cost);
-                            i += len;
-                            continue;
+                            i += len - 1;
+                            //continue;
+                            found = true;
                         }
                     }
-                    {
+                    if (!found) {
                         // 3文字連
-                        // 「漢字+の+漢字」のような場合はボーナス
-                        if ((str[i + 1] == L'が' || str[i + 1] == L'の' || str[i + 1] == L'を') && !utils::is_hiragana(str[i]) && !utils::is_hiragana(str[i + 2])) {
-                            cost -= KANJI_NO_KANJI_BONUS;
-                            _LOG_WARN(L"KANJI-NO-KANJI:{}, cost={}", to_wstr(utils::safe_substr(str, i, 3)), cost);
-                        }
                         int len = 3;
                         auto word = utils::safe_substr(str, i, len);
                         int xCost = getExtraWordCost(word);
@@ -243,7 +241,16 @@ namespace lattice2 {
                             cost += xCost;
                             _LOG_WARN(L"FOUND: extraWord={}, xCost={}, cost={}", to_wstr(word), xCost, cost);
                             i += len;
-                            continue;
+                            //continue;
+                            found = true;
+                        }
+                    }
+                    {
+                        // 3文字連
+                        // 「漢字+の+漢字」のような場合はボーナス
+                        if ((str[i + 1] == L'が' || str[i + 1] == L'の' || str[i + 1] == L'を') && !utils::is_hiragana(str[i]) && !utils::is_hiragana(str[i + 2])) {
+                            cost -= KANJI_NO_KANJI_BONUS;
+                            _LOG_WARN(L"KANJI-NO-KANJI:{}, cost={}", to_wstr(utils::safe_substr(str, i, 3)), cost);
                         }
                     }
                     ++i;
@@ -501,6 +508,7 @@ namespace lattice2 {
             int cost = 0;
             if (!s.empty()) {
                 cost = MorphBridge::morphCalcCost(s, words);
+                _LOG_WARN(L"{}: orig morphCost={}", to_wstr(s), cost);
                 for (auto iter = words.begin(); iter != words.end(); ++iter) {
                     const MString& w = *iter;
                     if (w.size() >= 2 && std::any_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_kanji(c); })) {
