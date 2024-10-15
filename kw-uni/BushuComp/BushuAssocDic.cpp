@@ -30,7 +30,7 @@ namespace {
             int x = (int)posFixed;
             if (x < 0) x = 0;
             int n = -1;
-            for (int i = 0; i < list.size(); ++i) {
+            for (size_t i = 0; i < list.size(); ++i) {
                 if (list[i] == tgt) {
                     n = i;
                     break;

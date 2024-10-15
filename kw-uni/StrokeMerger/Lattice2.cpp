@@ -672,7 +672,7 @@ namespace lattice2 {
         void commitLeaderBeforeTailLen() {
             if (!_candidates.empty()) {
                 MString firstStr = _candidates.front().string();
-                if (firstStr.size() > SETTINGS->commitBeforeTailLen) {
+                if ((int)firstStr.size() > SETTINGS->commitBeforeTailLen) {
                     MString leaderStr = firstStr.substr(0, firstStr.size() - SETTINGS->commitBeforeTailLen);
                     std::vector<CandidateString> tempCands;
                     auto iter = _candidates.begin();

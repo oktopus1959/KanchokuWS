@@ -186,8 +186,8 @@ namespace {
         // 先頭文字の小文字化
         void handleEisuDecapitalize() override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
-            size_t checkCnt = prevLowerHeadCnt + 1;
             prevLowerHeadCnt = STATE_COMMON->GetTotalDecKeyCount();
+            //size_t checkCnt = prevLowerHeadCnt + 1;
             //if (checkCnt == prevLowerHeadCnt) {
             //    // 2回続けて呼ばれたらキャンセル
             //    cancelMe();

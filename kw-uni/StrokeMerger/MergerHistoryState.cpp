@@ -160,7 +160,7 @@ namespace {
         //    return result;
         //}
 
-        void AppendWordPiece(std::vector<WordPiece>& pieces, bool /*bExcludeHiragana*/, bool bKatakanaConversion) {
+        void AppendWordPiece(std::vector<WordPiece>& pieces, bool /*bExcludeHiragana*/, bool /*bKatakanaConversion*/) {
             if (NextState()) {
                 _LOG_DEBUGH(_T("ENTER"));
                 MStringResult result;
