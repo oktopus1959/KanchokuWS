@@ -39,7 +39,7 @@ namespace {
         size_t firstTotalCnt = 0;
         size_t firstSpaceKeyCnt = 0;
         size_t prevSpaceKeyCnt = 0;
-        size_t prevLowerHeadCnt = 0;
+        //size_t prevLowerHeadCnt = 0;
         size_t capitalCharCnt = 1;      // 状態が生成されたときはすでに先頭文字が入力されている
 
         wchar_t outputChar = '\0';
@@ -125,11 +125,21 @@ namespace {
             //size_t totalCnt = STATE_COMMON->GetTotalDecKeyCount();
             myChar = DECKEY_TO_CHARS->GetCharFromDeckey(deckey);
             _LOG_DEBUGH(_T("ENTER: {}: deckey={:x}H({}), face={}"), Name, deckey, deckey, myChar);
-            if (myChar == SETTINGS->eisuHistSearchChar && is_lower_alphabet(OUTPUT_STACK->back())) {
-                //// 履歴検索の実行(末尾文字が英小文字でないと発動させない; "CO" の後の場合は、'O' がキーになるが、この場合は発動させない)
-                //MERGER_HISTORY_RESIDENT_STATE->handleNextCandTrigger();
-                //MY_NODE->prevHistSearchDeckeyCount = totalCnt;
-                handleEisuConversion();
+            if (myChar == SETTINGS->eisuHistSearchChar) {
+                if (is_lower_alphabet(OUTPUT_STACK->back())) {
+                    //// 履歴検索の実行(末尾文字が英小文字でないと発動させない; "CO" の後の場合は、'O' がキーになるが、この場合は発動させない)
+                    //MERGER_HISTORY_RESIDENT_STATE->handleNextCandTrigger();
+                    //MY_NODE->prevHistSearchDeckeyCount = totalCnt;
+                    handleEisuConversion();
+                } else {
+                    // 末尾が小文字以外なら、英数モードを終了
+                    cancelMe();
+                }
+            } else if (myChar == ':') {
+                // ':' なら小文字化して終了
+                MERGER_HISTORY_RESIDENT_STATE->handleEisuDecapitalize();
+                // 即時キャンセルする
+                cancelMe();
             } else if (deckey < NORMAL_DECKEY_NUM || (deckey >= SHIFT_DECKEY_START && deckey < (SHIFT_DECKEY_START + NORMAL_DECKEY_NUM))) {
                 STATE_COMMON->AppendOrigString(myChar);
 
@@ -186,7 +196,7 @@ namespace {
         // 先頭文字の小文字化
         void handleEisuDecapitalize() override {
             _LOG_DEBUGH(_T("ENTER: {}"), Name);
-            prevLowerHeadCnt = STATE_COMMON->GetTotalDecKeyCount();
+            //prevLowerHeadCnt = STATE_COMMON->GetTotalDecKeyCount();
             //size_t checkCnt = prevLowerHeadCnt + 1;
             //if (checkCnt == prevLowerHeadCnt) {
             //    // 2回続けて呼ばれたらキャンセル
