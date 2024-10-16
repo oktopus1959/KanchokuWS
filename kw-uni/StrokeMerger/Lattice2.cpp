@@ -150,10 +150,23 @@ namespace lattice2 {
     int getNgramCost(const MString& str) {
         _LOG_WARN(L"ENTER: str={}", to_wstr(str));
         int cost = 0;
+        int endPos = (int)(str.size());
+        // まず読点を探す
+        for (; endPos > 0; --endPos) {
+            if (str[endPos - 1] != L'。') break;
+        }
+        int startPos = endPos - 1;
+        for (; startPos > 0; --startPos) {
+            if (str[startPos - 1] == L'。') break;
+        }
+        int strLen = endPos - startPos;
+        _LOG_WARN(L"startPos={}, endPos={}, target={}", startPos, endPos, to_wstr(utils::safe_substr(str, startPos, strLen)));
+
+        // 読点の間だけで計算する
         // unigram
-        for (size_t i = 0; i < str.size(); ++i) {
+        for (int i = startPos; i < endPos; ++i) {
             if (utils::is_katakana(str[i])) {
-                if ((i == 0 || !utils::is_katakana(str[i-1])) && (i + 1 == str.size() || !utils::is_katakana(str[i+1]))) {
+                if ((i == 0 || !utils::is_katakana(str[i-1])) && (i + 1 == endPos || !utils::is_katakana(str[i+1]))) {
                     // 孤立したカタカナは高いコストを設定
                     cost += 3000;
                     continue;
@@ -163,12 +176,12 @@ namespace lattice2 {
         }
         _LOG_WARN(L"Unigram cost={}", cost);
 
-        if (str.size() == 1) {
+        if (strLen == 1) {
             if (utils::is_kanji(str[0])) cost += MAX_COST;    // 漢字１文字の場合のコスト
-        } else if (str.size() > 1) {
+        } else if (strLen > 1) {
             // bigram
             int lastKanjiPos = -1;
-            for (int i = 0; i < (int)str.size() - 1; ++i) {
+            for (int i = startPos; i < endPos - 1; ++i) {
                 cost += getWordCost(utils::safe_substr(str, i, 2));
                 if (i > lastKanjiPos && utils::is_kanji(str[i]) && utils::is_kanji(str[i + 1])) {
                     cost -= KANJI_CONSECUTIVE_BONUS;
@@ -191,11 +204,10 @@ namespace lattice2 {
             }
             _LOG_WARN(L"Bigram cost={}", cost);
 
-            if (str.size() > 2) {
+            if (strLen > 2) {
                 // trigram
-                int i = 0;
-                int strLen = (int)str.size();
-                while (i < strLen - 2) {
+                int i = startPos;
+                while (i < endPos - 2) {
                     bool found = false;
                     int katakanaLen = findKatakanaLen(str, i);
                     if (katakanaLen >= 3) {
@@ -209,9 +221,9 @@ namespace lattice2 {
                         //continue;
                         found = true;
                     }
-                    if (!found && i < strLen - 3) {
+                    if (!found && i < endPos - 3) {
                         // 4文字連
-                        if (TAIL_HIRAGANA_LEN >= 4 && (i == strLen - TAIL_HIRAGANA_LEN) && utils::is_hiragana_str(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN))) {
+                        if (TAIL_HIRAGANA_LEN >= 4 && (i == endPos - TAIL_HIRAGANA_LEN) && utils::is_hiragana_str(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN))) {
                             // 末尾がひらがな4文字連続の場合のボーナス
                             cost -= TAIL_HIRAGANA_BONUS;
                             _LOG_WARN(L"TAIL HIRAGANA:{}, cost={}", to_wstr(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN)), cost);
