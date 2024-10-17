@@ -195,6 +195,7 @@ namespace KanchokuWS.Domain
             {"fullescape", DecoderKeys.FULL_ESCAPE_DECKEY},
             {"flushoutputstring", DecoderKeys.FLUSH_OUTPUT_STRING_DECKEY},
             {"kanjipreferrednext", DecoderKeys.KANJI_PREFERRED_NEXT_DECKEY},
+            {"strokeback", DecoderKeys.STROKE_BACK_DECKEY},
             {"bushucomp", DecoderKeys.BUSHU_COMP_DECKEY},
             {"unblock", DecoderKeys.UNBLOCK_DECKEY},
             {"toggleblocker", DecoderKeys.TOGGLE_BLOCKER_DECKEY},

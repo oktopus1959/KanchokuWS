@@ -154,6 +154,7 @@ namespace KanchokuWS
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.FULL_ESCAPE_DECKEY, 0, "FullEscape", "", "入力途中状態をクリアし、ミニバッファ末尾にブロッカーを置く"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.FLUSH_OUTPUT_STRING_DECKEY, 0, "FlushOutputString", "", "出力バッファに溜まっている文字列をフラッシュする"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.KANJI_PREFERRED_NEXT_DECKEY, 0, "KanjiPreferredNext", "", "次の打鍵を単打ではなく、漢字など複数ストロークの第1打鍵を優先する"),
+            new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.STROKE_BACK_DECKEY, 0, "StrokeBack", "", "ストロークを1つ前に戻す"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.BUSHU_COMP_DECKEY, 0, "BushuComp", "", "部首合成を実行する"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.UNBLOCK_DECKEY, 0, "Unblock", "", "ミニバッファ末尾のブロッカーを解除する"),
             new KeyOrFunction(KeyOrFunction.ATTR_FUNCTION, DecoderKeys.TOGGLE_BLOCKER_DECKEY, 0, "BlockerToggle", "", "ミニバッファ末尾のブロッカーを設定・解除する", "toggleblocker"),

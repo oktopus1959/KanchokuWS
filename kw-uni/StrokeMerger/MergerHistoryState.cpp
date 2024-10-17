@@ -390,6 +390,9 @@ namespace {
 
         int _strokeCountBS = -1;
 
+        // ストロークを1つ前に戻す
+        bool _strokeBack = false;
+
         // 次の打鍵を単打ではなく、漢字など複数ストロークの第1打鍵を優先する
         bool _kanjiPreferredNext = false;
 
@@ -441,6 +444,7 @@ namespace {
                 if (deckey != CLEAR_STROKE_DECKEY && ((deckey >= FUNC_DECKEY_START && deckey < FUNC_DECKEY_END) || deckey >= CTRL_DECKEY_START)) {
                     _streamList1.Clear();
                     _streamList2.Clear();
+                    _strokeBack = false;
                     _kanjiPreferredNext = false;
                     switch (deckey) {
                         //case ENTER_DECKEY:
@@ -459,7 +463,8 @@ namespace {
                         _LOG_DEBUGH(_T("BS"));
                         _strokeCountBS = (int)STATE_COMMON->GetTotalDecKeyCount();
                         //WORD_LATTICE->selectFirst();
-                        //WORD_LATTICE->removeSecondOrLesser();
+                        // 現在の先頭候補を優先する
+                        WORD_LATTICE->removeSecondOrLesser();
                         if (WORD_LATTICE->isEmpty()) State::handleBS();
                         break;
                     case MULTI_STREAM_NEXT_CAND_DECKEY:
@@ -518,6 +523,10 @@ namespace {
                     case KANJI_PREFERRED_NEXT_DECKEY:
                         _LOG_DEBUGH(_T("KANJI_PREFERRED_NEXT_DECKEY"));
                         _kanjiPreferredNext = true;
+                        break;
+                    case STROKE_BACK_DECKEY:
+                        _LOG_DEBUGH(_T("STROKE_BACK_DECKEY"));
+                        _strokeBack = true;
                         break;
                     default:
                         _LOG_DEBUGH(_T("OTHER"));
@@ -636,6 +645,7 @@ namespace {
                 // Lattice処理
                 auto result = getLatticeResult(pieces);
                 _kanjiPreferredNext = false;
+                _strokeBack = false;
 
                 // 新しい文字列が得られたらそれを返す
                 if (!result.outStr.empty() || result.numBS > 0) {
@@ -679,7 +689,7 @@ namespace {
                     }
                 }
             }
-            return WORD_LATTICE->addPieces(pieces, _kanjiPreferredNext);
+            return WORD_LATTICE->addPieces(pieces, _kanjiPreferredNext, _strokeBack);
         }
 
         // チェーンをたどって不要とマークされた後続状態を削除する

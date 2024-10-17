@@ -41,7 +41,7 @@ namespace lattice2 {
     size_t BestKSize = 5;
 
     // 多ストロークの範囲 (stroke位置的に組み合せ不可だったものは、strokeCount が範囲内なら残しておく)
-    int AllowedStrokeRange = 3;
+    int AllowedStrokeRange = 5;
 
     // 末尾がここで設定した長さ以上に同じ候補は、先頭だけを残して削除
     int LastSameLen = 5;
@@ -462,6 +462,36 @@ namespace lattice2 {
         }
     };
 
+    // 先頭候補以外に、非優先候補ペナルティを与える (先頭候補のペナルティは 0 にする)
+    void arrangePenalties(std::vector<CandidateString>& candidates, size_t nSameLen) {
+        candidates.front().zeroPenalty();
+        for (size_t i = 1; i < nSameLen; ++i) {
+            candidates[i].penalty(NON_PREFERRED_PENALTY * (int)i);
+        }
+    }
+
+    // ストローク長の同じ候補の数を返す
+    size_t getNumOfSameStrokeLen(const std::vector<CandidateString>& candidates) {
+        size_t nSameLen = 0;
+        if (candidates.size() > 1) {
+            int strokeLen = candidates.front().strokeLen();
+            ++nSameLen;
+            for (auto iter = candidates.begin() + 1; iter != candidates.end() && iter->strokeLen() == strokeLen; ++iter) {
+                ++nSameLen;
+            }
+        }
+        return nSameLen;
+    }
+
+    // 先頭候補を最優先候補にする
+    void selectFirst(std::vector<CandidateString>& candidates) {
+        size_t nSameLen = getNumOfSameStrokeLen(candidates);
+        if (nSameLen > 1) {
+            arrangePenalties(candidates, nSameLen);
+            _LOG_INFOH(_T("CALLED: First candidate preferred."));
+        }
+    }
+
     // K-best な文字列を格納する
     class KBestList {
 
@@ -781,51 +811,52 @@ namespace lattice2 {
             return len >= 2 && (utils::is_kanji(str[len - 1]) && utils::is_kanji(str[len - 2]) || utils::is_katakana(str[len - 1]) && utils::is_katakana(str[len - 2]));
         }
 
+        // return: strokeBack による戻しがあったら、先頭を優先する
+        std::vector<CandidateString> _updateKBestList_sub(const std::vector<WordPiece>& pieces, int strokeCount, bool strokeBack) {
+            std::vector<CandidateString> newCandidates;
+            if (strokeBack) {
+                // strokeBackの場合
+                //_LOG_DETAIL(L"strokeBack");
+                removeCurrentStrokeCandidates(newCandidates, strokeCount);
+                if (!newCandidates.empty()) {
+                    // 戻した先頭を優先しておく
+                    lattice2::selectFirst(newCandidates);
+                    return newCandidates;
+                }
+                // 以前のストロークの候補が無ければ、通常のBSの動作とする
+                removeSecondOrLesser();
+            }
+            bool isBSpiece = pieces.size() == 1 && pieces.front().isBS();
+            _prevBS = isBSpiece;
+            // BS でないか、以前の候補が無くなっていた
+            for (const auto& piece : pieces) {
+                // 素片のストロークと適合する候補だけを追加
+                addOnePiece(newCandidates, piece, strokeCount);
+            }
+
+            //sortByLlamaLoss(newCandidates);
+
+            // stroke位置的に組み合せ不可だったものは、strokeCount が範囲内なら残しておく
+            if (!isBSpiece && !_isEmpty(newCandidates)) {     // isEmpty()だったら、BSなどで先頭のものだけが残されたということ
+                for (const auto& cand : _candidates) {
+                    if (cand.strokeLen() + AllowedStrokeRange > strokeCount) {
+                        newCandidates.push_back(cand);
+                    }
+                }
+            }
+            return newCandidates;
+        }
+
     public:
         // strokeCount: lattice に最初に addPieces() した時からの相対的なストローク数
-        void updateKBestList(const std::vector<WordPiece>& pieces, int strokeCount) {
-            _LOG_DETAIL(_T("ENTER: strokeCount={}"), strokeCount);
+        void updateKBestList(const std::vector<WordPiece>& pieces, int strokeCount, bool strokeBack) {
+            _LOG_DETAIL(_T("ENTER: strokeCount={}, strokeBack={}"), strokeCount, strokeBack);
             _debugLog.clear();
 
             // 候補リストが空の場合は、追加される piece と組み合わせるための、先頭を表すダミーを用意しておく
             addDummyCandidate();
 
-            bool bSelectFirstByBS = false;
-            std::vector<CandidateString> newCandidates;
-            bool isBSpiece = pieces.size() == 1 && pieces.front().isBS();
-            if (isBSpiece) {
-                // BS pieceの場合
-                //_LOG_DETAIL(L"BS piece");
-                removeCurrentStrokeCandidates(newCandidates, strokeCount);
-                if (newCandidates.empty()) {
-                    // 以前のストロークの候補が無ければ、通常のBSの動作とする
-                    removeSecondOrLesser();
-                } else {
-                    bSelectFirstByBS = true;
-                }
-            }
-            _prevBS = isBSpiece;
-            if (newCandidates.empty()) {
-                // BS でないか、以前の候補が無くなっていた
-                for (const auto& piece : pieces) {
-                    // 素片のストロークと適合する候補だけを追加
-                    addOnePiece(newCandidates, piece, strokeCount);
-                }
-
-                //sortByLlamaLoss(newCandidates);
-
-                // stroke位置的に組み合せ不可だったものは、strokeCount が範囲内なら残しておく
-                if (!isBSpiece && !_isEmpty(newCandidates)) {     // isEmpty()だったら、BSなどで先頭のものだけが残されたということ
-                    for (const auto& cand : _candidates) {
-                        if (cand.strokeLen() + AllowedStrokeRange > strokeCount) {
-                            newCandidates.push_back(cand);
-                        }
-                    }
-                }
-            }
-            _candidates = std::move(newCandidates);
-
-            if (bSelectFirstByBS) selectFirst();
+            _candidates = std::move(_updateKBestList_sub(pieces, strokeCount, strokeBack));
 
             //// 漢字またはカタカナが2文字以上連続したら、その候補を優先する
             //if (!_candidates.empty()) {
@@ -841,23 +872,25 @@ namespace lattice2 {
     private:
         // ストローク長の同じ候補の数を返す
         size_t getNumOfSameStrokeLen() const {
-            size_t nSameLen = 0;
-            if (_candidates.size() > 1) {
-                int strokeLen = _candidates.front().strokeLen();
-                ++nSameLen;
-                for (auto iter = _candidates.begin() + 1; iter != _candidates.end() && iter->strokeLen() == strokeLen; ++iter) {
-                    ++nSameLen;
-                }
-            }
-            return nSameLen;
+            //size_t nSameLen = 0;
+            //if (_candidates.size() > 1) {
+            //    int strokeLen = _candidates.front().strokeLen();
+            //    ++nSameLen;
+            //    for (auto iter = _candidates.begin() + 1; iter != _candidates.end() && iter->strokeLen() == strokeLen; ++iter) {
+            //        ++nSameLen;
+            //    }
+            //}
+            //return nSameLen;
+            return lattice2::getNumOfSameStrokeLen(_candidates);
         }
 
         // 先頭候補以外に、非優先候補ペナルティを与える (先頭候補のペナルティは 0 にする)
         void arrangePenalties(size_t nSameLen) {
-            _candidates.front().zeroPenalty();
-            for (size_t i = 1; i < nSameLen; ++i) {
-                _candidates[i].penalty(NON_PREFERRED_PENALTY * (int)i);
-            }
+            //_candidates.front().zeroPenalty();
+            //for (size_t i = 1; i < nSameLen; ++i) {
+            //    _candidates[i].penalty(NON_PREFERRED_PENALTY * (int)i);
+            //}
+            return lattice2::arrangePenalties(_candidates, nSameLen);
         }
 
     public:
@@ -888,11 +921,12 @@ namespace lattice2 {
 
         // 先頭候補を最優先候補にする
         void selectFirst() {
-            size_t nSameLen = getNumOfSameStrokeLen();
-            if (nSameLen > 1) {
-                arrangePenalties(nSameLen);
-                _LOG_INFOH(_T("CALLED: First candidate preferred."));
-            }
+            //size_t nSameLen = getNumOfSameStrokeLen();
+            //if (nSameLen > 1) {
+            //    arrangePenalties(nSameLen);
+            //    _LOG_INFOH(_T("CALLED: First candidate preferred."));
+            //}
+            lattice2::selectFirst(_candidates);
         }
 
         // 次候補を最優先候補にする
@@ -1043,14 +1077,14 @@ namespace lattice2 {
     public:
         // 単語素片リストの追加(単語素片が得られなかった場合も含め、各打鍵ごとに呼び出すこと)
         // 単語素片(WordPiece): 打鍵後に得られた出力文字列と、それにかかった打鍵数
-        LatticeResult addPieces(const std::vector<WordPiece>& pieces, bool kanjiPreferredNext) override {
+        LatticeResult addPieces(const std::vector<WordPiece>& pieces, bool kanjiPreferredNext, bool strokeBack) override {
             int totalStrokeCount = (int)(STATE_COMMON->GetTotalDecKeyCount());
             if (_startStrokeCount == 0) _startStrokeCount = totalStrokeCount;
             int currentStrokeCount = totalStrokeCount - _startStrokeCount + 1;
 
             //_LOG_DEBUGH(_T("ENTER: currentStrokeCount={}, pieces: {}\nkBest:\n{}"), currentStrokeCount, formatStringOfWordPieces(pieces), _kBestList.debugString());
-            _LOG_INFOH(_T("ENTER: _kBestList.size={}, totalStroke={}, currentStroke={}, kanjiPref={}, pieces: {}"),
-                _kBestList.size(), totalStrokeCount, currentStrokeCount, kanjiPreferredNext, formatStringOfWordPieces(pieces));
+            _LOG_INFOH(_T("ENTER: _kBestList.size={}, totalStroke={}, currentStroke={}, kanjiPref={}, strokeBack={}, pieces: {}"),
+                _kBestList.size(), totalStrokeCount, currentStrokeCount, kanjiPreferredNext, strokeBack, formatStringOfWordPieces(pieces));
             // endPos における空の k-best path リストを取得
 
             if (kanjiPreferredNext) {
@@ -1072,7 +1106,7 @@ namespace lattice2 {
             _LOG_DETAIL(L"_kBestList.size={}", _kBestList.size());
 
             // 候補リストの更新
-            _kBestList.updateKBestList(pieces, currentStrokeCount);
+            _kBestList.updateKBestList(pieces, currentStrokeCount, strokeBack);
 
             //_LOG_DEBUGH(_T(".\nresult kBest:\n{}"), pKBestList->debugString());
             size_t numBS = 0;

@@ -322,7 +322,8 @@ namespace KanchokuWS
         public const int MULTI_STREAM_COMMIT_DECKEY = MULTI_STREAM_SELECT_FIRST_DECKEY + 1;     // 漢直・かな配列の融合時に先頭候補だけを残して初期化する(ENTERと同じ動作)
 
         public const int KANJI_PREFERRED_NEXT_DECKEY = MULTI_STREAM_COMMIT_DECKEY + 1;      // 次の打鍵では漢字を優先する
-        public const int FLUSH_OUTPUT_STRING_DECKEY = KANJI_PREFERRED_NEXT_DECKEY + 1;      // 出力バッファに溜まっている文字列をフラッシュする
+        public const int STROKE_BACK_DECKEY = KANJI_PREFERRED_NEXT_DECKEY + 1;              // ストロークを1つ前に戻す
+        public const int FLUSH_OUTPUT_STRING_DECKEY = STROKE_BACK_DECKEY + 1;               // 出力バッファに溜まっている文字列をフラッシュする
 
         public const int UNDEFINED_DECKEY = FLUSH_OUTPUT_STRING_DECKEY + 1;                 // 未定義のキー
         public const int GLOBAL_DECKEY_ID_END = SPECIAL_DECKEY_ID_BASE + 100;
