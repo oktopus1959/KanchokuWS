@@ -103,6 +103,10 @@ void Settings::SetValues(const std::map<String, String>& dict) {
     SET_BOOL_VALUE(eisuModeEnabled);
     SET_CHAR_VALUE(eisuHistSearchChar);
     if (eisuHistSearchChar == '_') eisuHistSearchChar = ' ';
+    SET_CHAR_VALUE(eisuExitAsIsChar);
+    if (eisuExitAsIsChar == '_') eisuExitAsIsChar = ' ';
+    SET_CHAR_VALUE(eisuExitDecapitalChar);
+    if (eisuExitDecapitalChar == '_') eisuExitDecapitalChar = ' ';
     SET_INT_VALUE(eisuExitCapitalCharNum);
     SET_INT_VALUE(eisuExitSpaceNum);
 

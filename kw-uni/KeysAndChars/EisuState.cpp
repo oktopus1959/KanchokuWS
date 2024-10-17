@@ -135,9 +135,11 @@ namespace {
                     // 末尾が小文字以外なら、英数モードを終了
                     cancelMe();
                 }
-            } else if (myChar == ':') {
-                // ':' なら小文字化して終了
+            } else if (myChar == SETTINGS->eisuExitDecapitalChar) {
                 MERGER_HISTORY_RESIDENT_STATE->handleEisuDecapitalize();
+                // 即時キャンセルする
+                cancelMe();
+            } else if (myChar == SETTINGS->eisuExitAsIsChar) {
                 // 即時キャンセルする
                 cancelMe();
             } else if (deckey < NORMAL_DECKEY_NUM || (deckey >= SHIFT_DECKEY_START && deckey < (SHIFT_DECKEY_START + NORMAL_DECKEY_NUM))) {
