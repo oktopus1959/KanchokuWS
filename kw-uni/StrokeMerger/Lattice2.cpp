@@ -1054,6 +1054,8 @@ namespace lattice2 {
             // endPos における空の k-best path リストを取得
 
             if (kanjiPreferredNext) {
+                // 現在の先頭候補を最優先に設定し、
+                selectFirst();
                 // 次のストロークを漢字優先とする
                 _kBestList.setKanjiPreferredNextCands();
                 if (_startStrokeCount == 1) _startStrokeCount = 0;  // 先頭での漢字優先なら、0 クリアしておく(この後、clear()が呼ばれるので、それと状態を合わせるため)
