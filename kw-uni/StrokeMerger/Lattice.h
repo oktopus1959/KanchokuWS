@@ -71,6 +71,14 @@ public:
         return _numBS;
     }
 
+    bool isEmpty() const {
+        return getString().empty() && strokeLen() == 1 && numBS() <= 0;
+    }
+
+    bool isBS() const {
+        return getString().empty() && strokeLen() == 1 && numBS() == 1;
+    }
+
     String debugString() const {
         return _T("('")
             + to_wstr(_rewriteNode ? _rewriteNode->getString() : _pieceStr)

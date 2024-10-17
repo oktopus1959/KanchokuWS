@@ -16,13 +16,13 @@
 #include "MorphBridge.h"
 #include "Llama/LlamaBridge.h"
 
-#define _LOG_WARN LOG_DEBUG
+#define _LOG_DETAIL LOG_DEBUG
 #if 1
 #undef IS_LOG_DEBUGH_ENABLED
 #define IS_LOG_DEBUGH_ENABLED true
 #if 1
-#undef _LOG_WARN
-#define _LOG_WARN LOG_WARN
+#undef _LOG_DETAIL
+#define _LOG_DETAIL LOG_WARN
 #endif
 #undef _LOG_INFOH
 #undef LOG_INFO
@@ -128,7 +128,7 @@ namespace lattice2 {
             int xCost = iter->second;
             // 正のコストが設定されている場合(wikipedia.costなど)は、 DEFAULT BONUS を引いたコストにする; つまり負のコストになる
             if (xCost > 0 && xCost < DEFAULT_WORD_BONUS) xCost -= DEFAULT_WORD_BONUS;
-            _LOG_WARN(L"{}: xCost={}", to_wstr(word), xCost);
+            _LOG_DETAIL(L"{}: xCost={}", to_wstr(word), xCost);
             return xCost;
         }
         return 0;
@@ -148,7 +148,7 @@ namespace lattice2 {
 
 #if 1
     int getNgramCost(const MString& str) {
-        _LOG_WARN(L"ENTER: str={}", to_wstr(str));
+        _LOG_DETAIL(L"ENTER: str={}", to_wstr(str));
         int cost = 0;
         int endPos = (int)(str.size());
         // まず読点を探す
@@ -160,7 +160,7 @@ namespace lattice2 {
             if (str[startPos - 1] == L'。') break;
         }
         int strLen = endPos - startPos;
-        _LOG_WARN(L"startPos={}, endPos={}, target={}", startPos, endPos, to_wstr(utils::safe_substr(str, startPos, strLen)));
+        _LOG_DETAIL(L"startPos={}, endPos={}, target={}", startPos, endPos, to_wstr(utils::safe_substr(str, startPos, strLen)));
 
         // 読点の間だけで計算する
         // unigram
@@ -174,7 +174,7 @@ namespace lattice2 {
             }
             cost += getWordCost(utils::safe_substr(str, i, 1));
         }
-        _LOG_WARN(L"Unigram cost={}", cost);
+        _LOG_DETAIL(L"Unigram cost={}", cost);
 
         if (strLen == 1) {
             if (utils::is_kanji(str[0])) cost += MAX_COST;    // 漢字１文字の場合のコスト
@@ -202,7 +202,7 @@ namespace lattice2 {
                 //    cost += KANJI_CONSECUTIVE_PENALTY;
                 //}
             }
-            _LOG_WARN(L"Bigram cost={}", cost);
+            _LOG_DETAIL(L"Bigram cost={}", cost);
 
             if (strLen > 2) {
                 // trigram
@@ -213,9 +213,9 @@ namespace lattice2 {
                     if (katakanaLen >= 3) {
                         // カタカナの3文字以上の連続
                         int xCost = getExtraWordCost(utils::safe_substr(str, i, katakanaLen));
-                        _LOG_WARN(L"KATAKANA: extraWord={}, xCost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), xCost);
+                        _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), xCost);
                         cost += xCost;
-                        _LOG_WARN(L"FOUND: katakana={}, cost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), cost);
+                        _LOG_DETAIL(L"FOUND: katakana={}, cost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), cost);
                         // カタカナ連の末尾に飛ばす
                         i += katakanaLen - 1;
                         //continue;
@@ -226,17 +226,17 @@ namespace lattice2 {
                         if (TAIL_HIRAGANA_LEN >= 4 && (i == endPos - TAIL_HIRAGANA_LEN) && utils::is_hiragana_str(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN))) {
                             // 末尾がひらがな4文字連続の場合のボーナス
                             cost -= TAIL_HIRAGANA_BONUS;
-                            _LOG_WARN(L"TAIL HIRAGANA:{}, cost={}", to_wstr(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN)), cost);
+                            _LOG_DETAIL(L"TAIL HIRAGANA:{}, cost={}", to_wstr(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN)), cost);
                             break;
                         }
                         int len = 4;
                         auto word = utils::safe_substr(str, i, len);
                         int xCost = getExtraWordCost(word);
-                        _LOG_WARN(L"len={}, extraWord={}, xCost={}", len, to_wstr(word), xCost);
+                        _LOG_DETAIL(L"len={}, extraWord={}, xCost={}", len, to_wstr(word), xCost);
                         if (xCost != 0) {
                             // コスト定義があれば、末尾に飛ばす
                             cost += xCost;
-                            _LOG_WARN(L"FOUND: extraWord={}, xCost={}, cost={}", to_wstr(word), xCost, cost);
+                            _LOG_DETAIL(L"FOUND: extraWord={}, xCost={}, cost={}", to_wstr(word), xCost, cost);
                             i += len - 1;
                             //continue;
                             found = true;
@@ -247,11 +247,11 @@ namespace lattice2 {
                         int len = 3;
                         auto word = utils::safe_substr(str, i, len);
                         int xCost = getExtraWordCost(word);
-                        _LOG_WARN(L"len={}, extraWord={}, xCost={}", len, to_wstr(word), xCost);
+                        _LOG_DETAIL(L"len={}, extraWord={}, xCost={}", len, to_wstr(word), xCost);
                         if (xCost > 0 || xCost <= -DEFAULT_WORD_BONUS) {
                             // ユーザーによるコスト定義があれば、次に飛ばす
                             cost += xCost;
-                            _LOG_WARN(L"FOUND: extraWord={}, xCost={}, cost={}", to_wstr(word), xCost, cost);
+                            _LOG_DETAIL(L"FOUND: extraWord={}, xCost={}, cost={}", to_wstr(word), xCost, cost);
                             i += len;
                             //continue;
                             found = true;
@@ -260,16 +260,16 @@ namespace lattice2 {
                     {
                         // 3文字連
                         // 「漢字+の+漢字」のような場合はボーナス
-                        if ((str[i + 1] == L'が' || str[i + 1] == L'の' /*|| str[i + 1] == L'は'*/ || str[i + 1] == L'を') && !utils::is_hiragana(str[i]) && !utils::is_hiragana(str[i + 2])) {
+                        if ((str[i + 1] == L'が' || str[i + 1] == L'の' /* || str[i + 1] == L'で' */ || str[i + 1] == L'を') && !utils::is_hiragana(str[i]) && !utils::is_hiragana(str[i + 2])) {
                             cost -= KANJI_NO_KANJI_BONUS;
-                            _LOG_WARN(L"KANJI-NO-KANJI:{}, cost={}", to_wstr(utils::safe_substr(str, i, 3)), cost);
+                            _LOG_DETAIL(L"KANJI-NO-KANJI:{}, cost={}", to_wstr(utils::safe_substr(str, i, 3)), cost);
                         }
                     }
                     ++i;
                 }
             }
         }
-        _LOG_WARN(L"LEAVE: cost={}", cost);
+        _LOG_DETAIL(L"LEAVE: cost={}", cost);
         return cost;
     }
 #else
@@ -323,6 +323,9 @@ namespace lattice2 {
         }
 
         CandidateString(const MString& s, int len, int cost, int penalty) : _str(s), _strokeLen(len), _cost(cost), _penalty(penalty) {
+        }
+
+        CandidateString(const CandidateString& cand, int strokeDelta) : _str(cand._str), _strokeLen(cand._strokeLen+strokeDelta), _cost(cand._cost), _penalty(cand._penalty) {
         }
 
         std::tuple<MString, int> applyAutoBushu(const WordPiece& piece, int strokeCount) const {
@@ -455,7 +458,7 @@ namespace lattice2 {
                 + _T("(_cost=") + std::to_wstring(_cost)
                 + _T(",_penalty=") + std::to_wstring(_penalty)
                 //+ _T(",_llama_loss=") + std::to_wstring(_llama_loss)
-                + _T("), strokeLen = ") + std::to_wstring(_strokeLen) + _T(")");
+                + _T("), strokeLen=") + std::to_wstring(_strokeLen) + _T(")");
         }
     };
 
@@ -463,6 +466,8 @@ namespace lattice2 {
     class KBestList {
 
         std::vector<CandidateString> _candidates;
+
+        bool _prevBS = false;
 
         // 次のストロークをスキップする候補文字列
         std::set<MString> _kanjiPreferredNextCands;
@@ -475,6 +480,14 @@ namespace lattice2 {
         String _debugLog;
 
     public:
+        void setPrevBS(bool flag) {
+            _prevBS = flag;
+        }
+
+        bool isPrevBS() const {
+            return _prevBS;
+        }
+
         void clear(bool clearAll) {
             //_LOG_INFOH(L"CALLED: clearAll={}", clearAll);
             _candidates.clear();
@@ -496,6 +509,10 @@ namespace lattice2 {
 
         bool isEmpty() const {
             return _isEmpty(_candidates);
+        }
+
+        int size() const {
+            return _candidates.size();
         }
 
         MString getTopString() {
@@ -520,7 +537,7 @@ namespace lattice2 {
             int cost = 0;
             if (!s.empty()) {
                 cost = MorphBridge::morphCalcCost(s, words);
-                _LOG_WARN(L"{}: orig morphCost={}", to_wstr(s), cost);
+                _LOG_DETAIL(L"{}: orig morphCost={}", to_wstr(s), cost);
                 for (auto iter = words.begin(); iter != words.end(); ++iter) {
                     const MString& w = *iter;
                     if (w.size() >= 2 && std::any_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_kanji(c); })) {
@@ -591,12 +608,6 @@ namespace lattice2 {
             //int llamaCost = candStr.empty() ? 0 : calcLlamaCost(candStr) * 5;
             int llamaCost = 0;
             int candCost = morphCost + ngramCost + llamaCost;
-            _LOG_INFOH(_T("CALLED: candStr={}, candCost={} (morph={}[{}], ngram={}, llama={})"),
-                to_wstr(candStr), candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost, llamaCost);
-#if IS_LOG_DEBUGH_ENABLED
-            if (!isStrokeBS) _debugLog.append(std::format(L"candStr = {}, candCost = {} (morph = {} [{}] , ngram = {}, llama={})\n",
-                to_wstr(candStr), candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost, llamaCost));
-#endif
             newCandStr.cost(candCost);
 
             //// 「漢字+の+漢字」のような場合はペナルティを解除
@@ -606,6 +617,14 @@ namespace lattice2 {
             //}
 
             int totalCost = newCandStr.totalCost();
+
+            _LOG_INFOH(_T("CALLED: candStr={}, totalCost={}, candCost={} (morph={}[{}], ngram={})"),
+                to_wstr(candStr), totalCost, candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost);
+
+#if IS_LOG_DEBUGH_ENABLED
+            if (!isStrokeBS) _debugLog.append(std::format(L"candStr={}, totalCost={}, candCost={} (morph={} [{}] , ngram = {})\n",
+                to_wstr(candStr), totalCost, candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost));
+#endif
 
             if (!newCandidates.empty()) {
                 for (auto iter = newCandidates.begin(); iter != newCandidates.end(); ++iter) {
@@ -639,30 +658,32 @@ namespace lattice2 {
             if (newCandidates.size() > BestKSize) {
                 // kBestサイズを超えたら末尾を削除
                 newCandidates.resize(BestKSize);
-                _LOG_DEBUGH(_T("    REMOVE OVERFLOW ENTRY"));
+                _LOG_DETAIL(_T("    REMOVE OVERFLOW ENTRY"));
             }
             if (bAdded) {
-                _LOG_DEBUGH(_T("    ADD candidate: {}"), to_wstr(candStr));
+                _LOG_DETAIL(_T("    ADD candidate: {}"), to_wstr(candStr));
             } else {
-                _LOG_DEBUGH(_T("    ABANDON candidate: {}, totalCost={}"), to_wstr(candStr), totalCost);
+                _LOG_DETAIL(_T("    ABANDON candidate: {}, totalCost={}"), to_wstr(candStr), totalCost);
             }
+            _LOG_INFOH(_T("LEAVE: {}, newCandidates.size={}"), bAdded ? L"ADD" : L"ABANDON", newCandidates.size());
             return bAdded;
         }
 
     private:
         // 素片のストロークと適合する候補だけを追加
         void addOnePiece(std::vector<CandidateString>& newCandidates, const WordPiece& piece, int strokeCount) {
-            _LOG_DEBUGH(_T("CALLED: piece={}"), piece.debugString());
+            _LOG_DETAIL(_T("CALLED: _candidates.size={}, piece={}"), _candidates.size(), piece.debugString());
             bool bAutoBushuFound = false;           // 自動部首合成は一回だけ実行する
             bool isStrokeBS = piece.numBS() > 0;
             const MString& pieceStr = piece.getString();
             //int topStrokeLen = -1;
             for (const auto& cand : _candidates) {
                 //if (topStrokeLen < 0) topStrokeLen = cand.strokeLen();
+                _LOG_DETAIL(_T("cand.strokeLen={}, piece.strokeLen()={}, strokeCount={}"), cand.strokeLen(),piece.strokeLen(), strokeCount);
                 if (cand.strokeLen() + piece.strokeLen() == strokeCount) {
                     // 素片のストロークと適合する候補
                     int penalty = cand.penalty();
-                    _LOG_WARN(L"cand.string()=\"{}\", contained in kanjiPreferred={}", to_wstr(cand.string()), _kanjiPreferredNextCands.contains(cand.string()));
+                    _LOG_DETAIL(L"cand.string()=\"{}\", contained in kanjiPreferred={}", to_wstr(cand.string()), _kanjiPreferredNextCands.contains(cand.string()));
                     if (!isStrokeBS && /*cand.strokeLen() == topStrokeLen && */ !pieceStr.empty()
                         && (piece.strokeLen() == 1 || std::all_of(pieceStr.begin(), pieceStr.end(), [](mchar_t c) { return utils::is_hiragana(c);}))
                         && _kanjiPreferredNextCands.contains(cand.string())) {
@@ -708,6 +729,42 @@ namespace lattice2 {
             }
         }
 
+        // CurrentStroke の候補を削除する
+        void removeCurrentStrokeCandidates(std::vector<CandidateString>& newCandidates, int strokeCount) {
+            _LOG_INFOH(L"ENTER: _candidates.size={}, prevBS={}, strokeCount={}", _candidates.size(), _prevBS, strokeCount);
+            if (!_prevBS) {
+                if (!_candidates.empty()) {
+                    const auto& firstCand = _candidates.front();
+                    int delta = 2;
+                    for (const auto& cand : _candidates) {
+                        if (cand.strokeLen() + delta <= strokeCount) {
+                            if (cand.string() == firstCand.string()) {
+                                // 先頭と同じ文字列の候補だったら、そのストローク数の他の候補も残さない
+                                ++delta;
+                                continue;
+                            }
+                            // 1ストローク以上前の候補を残す
+                            CandidateString newCand(cand, delta);
+                            _LOG_DETAIL(L"add cand={}", newCand.debugString());
+                            newCandidates.push_back(newCand);
+                        }
+                    }
+                }
+            }
+            _LOG_INFOH(L"LEAVE: {} candidates", newCandidates.size());
+        }
+
+        //// Strokeを一つ進める
+        //void advanceStroke(std::vector<CandidateString>& newCandidates) {
+        //    _LOG_INFOH(L"ENTER: _candidates.size={}", _candidates.size());
+        //    for (const auto& cand : _candidates) {
+        //        CandidateString newCand(cand, 1);
+        //        _LOG_DETAIL(L"add cand={}", newCand.debugString());
+        //        newCandidates.push_back(newCand);
+        //    }
+        //    _LOG_INFOH(L"LEAVE: {} candidates", newCandidates.size());
+        //}
+
         // llama-loss の小さい順に候補を並べ直す
         //void sortByLlamaLoss(std::vector<CandidateString>& newCandidates) {
         //    std::for_each(newCandidates.begin(), newCandidates.end(), [this](CandidateString& c) {
@@ -727,29 +784,48 @@ namespace lattice2 {
     public:
         // strokeCount: lattice に最初に addPieces() した時からの相対的なストローク数
         void updateKBestList(const std::vector<WordPiece>& pieces, int strokeCount) {
-            _LOG_DEBUGH(_T("ENTER: strokeCount={}"), strokeCount);
+            _LOG_DETAIL(_T("ENTER: strokeCount={}"), strokeCount);
             _debugLog.clear();
 
-            // 追加される piece と組み合わせるための、先頭を表すダミーを用意しておく
+            // 候補リストが空の場合は、追加される piece と組み合わせるための、先頭を表すダミーを用意しておく
             addDummyCandidate();
 
+            bool bSelectFirstByBS = false;
             std::vector<CandidateString> newCandidates;
-            for (const auto& piece : pieces) {
-                // 素片のストロークと適合する候補だけを追加
-                addOnePiece(newCandidates, piece, strokeCount);
+            bool isBSpiece = pieces.size() == 1 && pieces.front().isBS();
+            if (isBSpiece) {
+                // BS pieceの場合
+                //_LOG_DETAIL(L"BS piece");
+                removeCurrentStrokeCandidates(newCandidates, strokeCount);
+                if (newCandidates.empty()) {
+                    // 以前のストロークの候補が無ければ、通常のBSの動作とする
+                    removeSecondOrLesser();
+                } else {
+                    bSelectFirstByBS = true;
+                }
             }
+            _prevBS = isBSpiece;
+            if (newCandidates.empty()) {
+                // BS でないか、以前の候補が無くなっていた
+                for (const auto& piece : pieces) {
+                    // 素片のストロークと適合する候補だけを追加
+                    addOnePiece(newCandidates, piece, strokeCount);
+                }
 
-            //sortByLlamaLoss(newCandidates);
+                //sortByLlamaLoss(newCandidates);
 
-            // stroke位置的に組み合せ不可だったものは、strokeCount が範囲内なら残しておく
-            if (!_isEmpty(newCandidates)) {     // isEmpty()だったら、BSなどで先頭のものだけが残されたということ
-                for (const auto& cand : _candidates) {
-                    if (cand.strokeLen() + AllowedStrokeRange > strokeCount) {
-                        newCandidates.push_back(cand);
+                // stroke位置的に組み合せ不可だったものは、strokeCount が範囲内なら残しておく
+                if (!isBSpiece && !_isEmpty(newCandidates)) {     // isEmpty()だったら、BSなどで先頭のものだけが残されたということ
+                    for (const auto& cand : _candidates) {
+                        if (cand.strokeLen() + AllowedStrokeRange > strokeCount) {
+                            newCandidates.push_back(cand);
+                        }
                     }
                 }
             }
             _candidates = std::move(newCandidates);
+
+            if (bSelectFirstByBS) selectFirst();
 
             //// 漢字またはカタカナが2文字以上連続したら、その候補を優先する
             //if (!_candidates.empty()) {
@@ -759,7 +835,7 @@ namespace lattice2 {
             // 末尾から、指定の長さより以前の部分を確定させる
             commitLeaderBeforeTailLen();
 
-            _LOG_DEBUGH(_T("LEAVE"));
+            _LOG_DETAIL(_T("LEAVE"));
         }
 
     private:
@@ -903,60 +979,64 @@ namespace lattice2 {
     public:
         // コンストラクタ
         LatticeImpl() : _kanjiPreferredSettingDt(0) {
-            _LOG_DEBUGH(_T("CALLED: Constructor"));
+            _LOG_DETAIL(_T("CALLED: Constructor"));
         }
 
         // デストラクタ
         ~LatticeImpl() override {
-            _LOG_DEBUGH(_T("CALLED: Destructor"));
+            _LOG_DETAIL(_T("CALLED: Destructor"));
             clear();
         }
 
         void clearAll() override {
-            _LOG_DEBUGH(_T("CALLED"));
+            _LOG_DETAIL(_T("CALLED"));
             _startStrokeCount = 0;
             _prevOutputStr.clear();
             _kBestList.clear(true);
         }
 
         void clear() override {
-            _LOG_DEBUGH(_T("CALLED"));
+            _LOG_DETAIL(_T("CALLED"));
             _startStrokeCount = 0;
             _prevOutputStr.clear();
             _kBestList.clear(utils::diffTime(_kanjiPreferredSettingDt) >= 3.0);     // 前回の設定時刻から３秒以上経過していたらクリアできる
         }
 
         void removeOtherThanKBest() override {
-            _LOG_DEBUGH(_T("CALLED"));
+            _LOG_DETAIL(_T("CALLED"));
             _kBestList.removeOtherThanKBest();
         }
 
         void removeSecondOrLesser() override {
-            _LOG_DEBUGH(_T("CALLED"));
+            _LOG_DETAIL(_T("CALLED"));
             _kBestList.removeSecondOrLesser();
         }
 
         bool isEmpty() override {
-            _LOG_DEBUGH(_T("CALLED: isEmpty={}"), _kBestList.isEmpty());
+            //_LOG_DETAIL(_T("CALLED: isEmpty={}"), _kBestList.isEmpty());
             return _kBestList.isEmpty();
         }
 
         // 先頭候補を最優先候補にする
         void selectFirst() override {
+            _LOG_DETAIL(_T("CALLED"));
             _kBestList.selectFirst();
         }
 
         // 次候補を最優先候補にする
         void selectNext() override {
+            _LOG_DETAIL(_T("CALLED"));
             _kBestList.selectNext();
         }
 
         // 前候補を最優先候補にする
         void selectPrev() override {
+            _LOG_DETAIL(_T("CALLED"));
             _kBestList.selectPrev();
         }
 
         void updateByBushuComp() override {
+            _LOG_DETAIL(_T("CALLED"));
             _kBestList.updateByBushuComp();
         }
 
@@ -969,20 +1049,25 @@ namespace lattice2 {
             int currentStrokeCount = totalStrokeCount - _startStrokeCount + 1;
 
             //_LOG_DEBUGH(_T("ENTER: currentStrokeCount={}, pieces: {}\nkBest:\n{}"), currentStrokeCount, formatStringOfWordPieces(pieces), _kBestList.debugString());
-            _LOG_INFOH(_T("ENTER: currentStrokeCount={}, skip={}, pieces: {}"), currentStrokeCount, kanjiPreferredNext, formatStringOfWordPieces(pieces));
+            _LOG_INFOH(_T("ENTER: _kBestList.size={}, totalStroke={}, currentStroke={}, kanjiPref={}, pieces: {}"),
+                _kBestList.size(), totalStrokeCount, currentStrokeCount, kanjiPreferredNext, formatStringOfWordPieces(pieces));
             // endPos における空の k-best path リストを取得
 
             if (kanjiPreferredNext) {
-                // 次のストロークを漢字先優とする
+                // 次のストロークを漢字優先とする
                 _kBestList.setKanjiPreferredNextCands();
                 if (_startStrokeCount == 1) _startStrokeCount = 0;  // 先頭での漢字優先なら、0 クリアしておく(この後、clear()が呼ばれるので、それと状態を合わせるため)
                 _kanjiPreferredSettingDt = utils::getSecondsFromEpochTime();
             }
 
+            _LOG_DETAIL(L"_kBestList.size={}", _kBestList.size());
+
             // すべての単語素片が1文字で、それが漢字・ひらがな・カタカナ以外だったら、現在の先頭候補を優先させる
             if (!pieces.empty() && areAllPiecesNonJaChar(pieces)) {
                 selectFirst();
             }
+
+            _LOG_DETAIL(L"_kBestList.size={}", _kBestList.size());
 
             // 候補リストの更新
             _kBestList.updateKBestList(pieces, currentStrokeCount);
