@@ -464,6 +464,7 @@ namespace lattice2 {
 
     // 先頭候補以外に、非優先候補ペナルティを与える (先頭候補のペナルティは 0 にする)
     void arrangePenalties(std::vector<CandidateString>& candidates, size_t nSameLen) {
+        _LOG_DETAIL(_T("CALLED"));
         candidates.front().zeroPenalty();
         for (size_t i = 1; i < nSameLen; ++i) {
             candidates[i].penalty(NON_PREFERRED_PENALTY * (int)i);
@@ -627,6 +628,7 @@ namespace lattice2 {
 
         // 新しい候補を追加
         bool addCandidate(std::vector<CandidateString>& newCandidates, CandidateString& newCandStr, bool isStrokeBS) {
+            _LOG_INFOH(_T("ENTER: newCandStr={}, isStrokeBS={}"), newCandStr.debugString(), isStrokeBS);
             bool bAdded = false;
             bool bIgnored = false;
             std::vector<MString> words;
@@ -718,6 +720,7 @@ namespace lattice2 {
                         && (piece.strokeLen() == 1 || std::all_of(pieceStr.begin(), pieceStr.end(), [](mchar_t c) { return utils::is_hiragana(c);}))
                         && _kanjiPreferredNextCands.contains(cand.string())) {
                         // 漢字優先
+                        _LOG_DETAIL(_T("add NON_PREFERRED_PENALTY"));
                         penalty += NON_PREFERRED_PENALTY;
                     }
                     MString s;
@@ -921,6 +924,7 @@ namespace lattice2 {
 
         // 先頭候補を最優先候補にする
         void selectFirst() {
+            _LOG_DETAIL(_T("CALLED"));
             //size_t nSameLen = getNumOfSameStrokeLen();
             //if (nSameLen > 1) {
             //    arrangePenalties(nSameLen);
@@ -931,6 +935,7 @@ namespace lattice2 {
 
         // 次候補を最優先候補にする
         void selectNext() {
+            _LOG_DETAIL(_T("CALLED"));
             size_t nSameLen = getNumOfSameStrokeLen();
             if (nSameLen > 1) {
                 auto begin = _candidates.begin();
@@ -941,6 +946,7 @@ namespace lattice2 {
 
         // 前候補を最優先候補にする
         void selectPrev() {
+            _LOG_DETAIL(_T("CALLED"));
             size_t nSameLen = getNumOfSameStrokeLen();
             if (nSameLen > 1) {
                 auto begin = _candidates.begin();
@@ -951,6 +957,7 @@ namespace lattice2 {
 
         // 部首合成
         void updateByBushuComp() {
+            _LOG_DETAIL(_T("CALLED"));
             if (!_candidates.empty()) {
                 MString s = _candidates.front().applyBushuComp();
                 if (!s.empty()) {
@@ -1088,6 +1095,7 @@ namespace lattice2 {
             // endPos における空の k-best path リストを取得
 
             if (kanjiPreferredNext) {
+                _LOG_DETAIL(L"KANJI PREFERRED NEXT");
                 // 現在の先頭候補を最優先に設定し、
                 selectFirst();
                 // 次のストロークを漢字優先とする
@@ -1098,10 +1106,11 @@ namespace lattice2 {
 
             _LOG_DETAIL(L"_kBestList.size={}", _kBestList.size());
 
-            // すべての単語素片が1文字で、それが漢字・ひらがな・カタカナ以外だったら、現在の先頭候補を優先させる
-            if (!pieces.empty() && areAllPiecesNonJaChar(pieces)) {
-                selectFirst();
-            }
+            //// すべての単語素片が1文字で、それが漢字・ひらがな・カタカナ以外だったら、現在の先頭候補を優先させる
+            //if (!pieces.empty() && areAllPiecesNonJaChar(pieces)) {
+            //    _LOG_DETAIL(L"ALL PIECES NON JA CHAR");
+            //    selectFirst();
+            //}
 
             _LOG_DETAIL(L"_kBestList.size={}", _kBestList.size());
 
