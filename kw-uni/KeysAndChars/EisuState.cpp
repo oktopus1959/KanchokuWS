@@ -155,7 +155,8 @@ namespace {
                 //}
                 if (myChar >= 'A' && myChar <= 'Z') {
                     MY_NODE->prevCapitalDeckeyCount = STATE_COMMON->GetTotalDecKeyCount();
-                    if (MY_NODE->eisuExitCapitalCharNum > 0 && ++capitalCharCnt >= MY_NODE->eisuExitCapitalCharNum) {
+                    if (capitalCharCnt > 0) ++capitalCharCnt;   // いったん小文字が入力されたら、大文字連続のカウントはしない
+                    if (MY_NODE->eisuExitCapitalCharNum > 0 && capitalCharCnt >= MY_NODE->eisuExitCapitalCharNum) {
                         // N文字続けて英大文字だったら、英数モードを終了する
                         cancelMe();
                     }
