@@ -146,27 +146,31 @@ namespace lattice2 {
         return len;
     }
 
-#if 1
-    int getNgramCost(const MString& str) {
-        _LOG_DETAIL(L"ENTER: str={}", to_wstr(str));
-        int cost = 0;
+
+    MString substringBetweenPunctuations(const MString& str) {
         int endPos = (int)(str.size());
-        // まず読点を探す
+        // まず末尾の句点をスキップ
         for (; endPos > 0; --endPos) {
             if (str[endPos - 1] != L'。') break;
         }
+        // 前方に向かって句点を検索
         int startPos = endPos - 1;
         for (; startPos > 0; --startPos) {
             if (str[startPos - 1] == L'。') break;
         }
-        int strLen = endPos - startPos;
-        _LOG_DETAIL(L"startPos={}, endPos={}, target={}", startPos, endPos, to_wstr(utils::safe_substr(str, startPos, strLen)));
+        return utils::safe_substr(str, startPos, endPos - startPos);
+    }
 
-        // 読点の間だけで計算する
+#if 1
+    int getNgramCost(const MString& str) {
+        _LOG_DETAIL(L"ENTER: str={}", to_wstr(str));
+        int cost = 0;
+        int strLen = (int)(str.size());
+
         // unigram
-        for (int i = startPos; i < endPos; ++i) {
+        for (int i = 0; i < strLen; ++i) {
             if (utils::is_katakana(str[i])) {
-                if ((i == 0 || !utils::is_katakana(str[i-1])) && (i + 1 == endPos || !utils::is_katakana(str[i+1]))) {
+                if ((i == 0 || !utils::is_katakana(str[i-1])) && (i + 1 == strLen || !utils::is_katakana(str[i+1]))) {
                     // 孤立したカタカナは高いコストを設定
                     cost += 3000;
                     continue;
@@ -177,11 +181,14 @@ namespace lattice2 {
         _LOG_DETAIL(L"Unigram cost={}", cost);
 
         if (strLen == 1) {
-            if (utils::is_kanji(str[0])) cost += MAX_COST;    // 漢字１文字の場合のコスト
+            if (utils::is_kanji(str[0])) {
+                cost += MAX_COST;    // 漢字１文字の場合のコスト
+                _LOG_DETAIL(L"Just one Kanji (+{}): cost={}", MAX_COST, cost);
+            }
         } else if (strLen > 1) {
             // bigram
             int lastKanjiPos = -1;
-            for (int i = startPos; i < endPos - 1; ++i) {
+            for (int i = 0; i < strLen - 1; ++i) {
                 cost += getWordCost(utils::safe_substr(str, i, 2));
                 if (i > lastKanjiPos && utils::is_kanji(str[i]) && utils::is_kanji(str[i + 1])) {
                     cost -= KANJI_CONSECUTIVE_BONUS;
@@ -206,8 +213,8 @@ namespace lattice2 {
 
             if (strLen > 2) {
                 // trigram
-                int i = startPos;
-                while (i < endPos - 2) {
+                int i = 0;
+                while (i < strLen - 2) {
                     bool found = false;
                     int katakanaLen = findKatakanaLen(str, i);
                     if (katakanaLen >= 3) {
@@ -221,9 +228,9 @@ namespace lattice2 {
                         //continue;
                         found = true;
                     }
-                    if (!found && i < endPos - 3) {
+                    if (!found && i < strLen - 3) {
                         // 4文字連
-                        if (TAIL_HIRAGANA_LEN >= 4 && (i == endPos - TAIL_HIRAGANA_LEN) && utils::is_hiragana_str(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN))) {
+                        if (TAIL_HIRAGANA_LEN >= 4 && (i == strLen - TAIL_HIRAGANA_LEN) && utils::is_hiragana_str(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN))) {
                             // 末尾がひらがな4文字連続の場合のボーナス
                             cost -= TAIL_HIRAGANA_BONUS;
                             _LOG_DETAIL(L"TAIL HIRAGANA:{}, cost={}", to_wstr(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN)), cost);
@@ -633,8 +640,9 @@ namespace lattice2 {
             bool bIgnored = false;
             std::vector<MString> words;
             const MString& candStr = newCandStr.string();
-            int morphCost = candStr.empty() ? 0 : calcMorphCost(candStr, words);
-            int ngramCost = candStr.empty() ? 0 : getNgramCost(candStr) * 5;
+            MString subStr = substringBetweenPunctuations(candStr);
+            int morphCost = subStr.empty() ? 0 : calcMorphCost(subStr, words);
+            int ngramCost = subStr.empty() ? 0 : getNgramCost(subStr) * 5;
             //int morphCost = 0;
             //int ngramCost = candStr.empty() ? 0 : getNgramCost(candStr);
             //int llamaCost = candStr.empty() ? 0 : calcLlamaCost(candStr) * 5;
