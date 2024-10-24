@@ -265,12 +265,14 @@ namespace lattice2 {
                         }
                     }
                     {
+#if 0
                         // 3文字連
                         // 「漢字+の+漢字」のような場合はボーナス
                         if ((str[i + 1] == L'が' || str[i + 1] == L'の' /* || str[i + 1] == L'で' */ || str[i + 1] == L'を') && !utils::is_hiragana(str[i]) && !utils::is_hiragana(str[i + 2])) {
                             cost -= KANJI_NO_KANJI_BONUS;
                             _LOG_DETAIL(L"KANJI-NO-KANJI:{}, cost={}", to_wstr(utils::safe_substr(str, i, 3)), cost);
                         }
+#endif
                     }
                     ++i;
                 }
