@@ -103,6 +103,7 @@ struct Settings {
     bool multiStreamMode = false;           // 漢直・かな融合モードか
 
     int commitBeforeTailLen = 4;            // 末尾から、ここで設定した長さより前の部分を確定させる
+    int kanjiNoKanjiBonus = 1500;           // 「漢字+の+漢字」のような場合に与えるボーナス
     String mergerCandidateFile;             // 解候補ログファイル
 
     // for Debug

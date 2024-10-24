@@ -930,7 +930,10 @@ namespace KanchokuWS
         public static bool PostRewriteCompatibleWithGooble { get; set; }
 
         /// <summary>末尾から、ここで設定した長さより前の部分を確定させる</summary>
-        public static int CommitBeforeTailLen = 4;
+        public static int CommitBeforeTailLen { get; set; }
+
+        /// <summary>「漢字+の+漢字」のような場合に与えるボーナス</summary>
+        public static int KanjiNoKanjiBonus { get; set; }
 
         /// <summary>解候補ログファイル</summary>
         public static string MergerCandidateFile = "tmp/merger_candidates.log";
@@ -1675,6 +1678,7 @@ namespace KanchokuWS
             PostRewriteCompatibleWithGooble = addDecoderSetting("googleCompatible", false);     // Google日本語入力と互換な書き換システム
 
             CommitBeforeTailLen = addDecoderSetting("commitBeforeTailLen", 4);                  // 末尾から、ここで設定した長さより前の部分を確定させる
+            KanjiNoKanjiBonus = addDecoderSetting("kanjiNoKanjiBonus", 1500);                   // 「漢字+の+漢字」のような場合に与えるボーナス
             setDecoderSetting("mergerCandidateFile", MergerCandidateFile );                     // 解候補ログファイル
 
             // キー割当

@@ -17,6 +17,7 @@
 #include "Llama/LlamaBridge.h"
 
 #define _LOG_DETAIL LOG_DEBUG
+#define _LOG_INFOH LOG_INFOH
 #if 1
 #undef IS_LOG_DEBUGH_ENABLED
 #define IS_LOG_DEBUGH_ENABLED true
@@ -265,14 +266,14 @@ namespace lattice2 {
                         }
                     }
                     {
-#if 0
                         // 3文字連
                         // 「漢字+の+漢字」のような場合はボーナス
-                        if ((str[i + 1] == L'が' || str[i + 1] == L'の' /* || str[i + 1] == L'で' */ || str[i + 1] == L'を') && !utils::is_hiragana(str[i]) && !utils::is_hiragana(str[i + 2])) {
-                            cost -= KANJI_NO_KANJI_BONUS;
-                            _LOG_DETAIL(L"KANJI-NO-KANJI:{}, cost={}", to_wstr(utils::safe_substr(str, i, 3)), cost);
+                        if (SETTINGS->kanjiNoKanjiBonus > 0) {
+                            if ((str[i + 1] == L'が' || str[i + 1] == L'の' /* || str[i + 1] == L'で' */ || str[i + 1] == L'を') && !utils::is_hiragana(str[i]) && !utils::is_hiragana(str[i + 2])) {
+                                cost -= KANJI_NO_KANJI_BONUS;
+                                _LOG_DETAIL(L"KANJI-NO-KANJI:{}, cost={}", to_wstr(utils::safe_substr(str, i, 3)), cost);
+                            }
                         }
-#endif
                     }
                     ++i;
                 }
@@ -663,10 +664,10 @@ namespace lattice2 {
             _LOG_INFOH(_T("CALLED: candStr={}, totalCost={}, candCost={} (morph={}[{}], ngram={})"),
                 to_wstr(candStr), totalCost, candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost);
 
-#if IS_LOG_DEBUGH_ENABLED
-            if (!isStrokeBS) _debugLog.append(std::format(L"candStr={}, totalCost={}, candCost={} (morph={} [{}] , ngram = {})\n",
-                to_wstr(candStr), totalCost, candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost));
-#endif
+            if (IS_LOG_DEBUGH_ENABLED) {
+                if (!isStrokeBS) _debugLog.append(std::format(L"candStr={}, totalCost={}, candCost={} (morph={} [{}] , ngram = {})\n",
+                    to_wstr(candStr), totalCost, candCost, morphCost, to_wstr(utils::join(words, ' ')), ngramCost));
+            }
 
             if (!newCandidates.empty()) {
                 for (auto iter = newCandidates.begin(); iter != newCandidates.end(); ++iter) {
@@ -1135,14 +1136,14 @@ namespace lattice2 {
             _prevOutputStr = outStr;
             outStr = utils::safe_substr(outStr, commonLen);
             _LOG_INFOH(_T("LEAVE: OUTPUT: {}, numBS={}\n\n{}"), to_wstr(outStr), numBS, _kBestList.debugKBestString());
-#if IS_LOG_DEBUGH_ENABLED
-            while (_debugLogQueue.size() >= 10) _debugLogQueue.pop_front();
-            _debugLogQueue.push_back(std::format(L"========================================\nENTER: currentStrokeCount={}, pieces: {}\n",
-                currentStrokeCount, formatStringOfWordPieces(pieces)));
-            if (pieces.back().numBS() <= 0) {
-                _debugLogQueue.push_back(std::format(L"\n{}\nOUTPUT: {}, numBS={}\n\n", _kBestList.debugKBestString(10), to_wstr(outStr), numBS));
+            if (IS_LOG_DEBUGH_ENABLED) {
+                while (_debugLogQueue.size() >= 10) _debugLogQueue.pop_front();
+                _debugLogQueue.push_back(std::format(L"========================================\nENTER: currentStrokeCount={}, pieces: {}\n",
+                    currentStrokeCount, formatStringOfWordPieces(pieces)));
+                if (pieces.back().numBS() <= 0) {
+                    _debugLogQueue.push_back(std::format(L"\n{}\nOUTPUT: {}, numBS={}\n\n", _kBestList.debugKBestString(10), to_wstr(outStr), numBS));
+                }
             }
-#endif
             return LatticeResult(outStr, numBS);
         }
 
