@@ -86,6 +86,8 @@ namespace lattice2 {
 
     std::map<MString, int> wordCosts;
 
+    std::map<MString, int> onlineNgram;
+
     void _loadCostFile(StringRef costFile) {
         auto path = utils::joinPath(SETTINGS->rootDir, costFile);
         _LOG_DEBUGH(_T("LOAD: {}"), path.c_str());
@@ -104,6 +106,40 @@ namespace lattice2 {
         }
     }
 
+#define ONLINE_COST_FILE L"online.cost.txt"
+
+    void _updateOnlineNgramByWordAndCount(const MString& word, int count) {
+        onlineNgram[word] = count;
+        int cost = count * (-100);
+        if (wordCosts[word] <= 1000 && wordCosts[word] > cost) {
+            // 手作業による cost ファイルの場合は、高い方のコストは 1000 以上である。
+            wordCosts[word] = cost;
+        }
+    }
+
+    void _updateOnlineNgramByWord(const MString& word) {
+        int count = onlineNgram[word] + 1;
+        _updateOnlineNgramByWordAndCount(word, count);
+    }
+
+    void _loadOnlineCostFile() {
+        auto path = utils::joinPath(SETTINGS->rootDir, ONLINE_COST_FILE);
+        _LOG_INFOH(_T("LOAD: {}"), path.c_str());
+        utils::IfstreamReader reader(path);
+        if (reader.success()) {
+            for (const auto& line : reader.getAllLines()) {
+                auto items = utils::split(utils::replace_all(utils::strip(line), L" +", L"\t"), '\t');
+                if (!items.empty() && !items[0].empty() && items[0][0] != L'#') {
+                    if (items.size() == 2) {
+                        int count = std::stoi(items[1]);
+                        MString word = to_mstr(items[0]);
+                        _updateOnlineNgramByWordAndCount(word, count);
+                    }
+                }
+            }
+        }
+    }
+
     void loadCostFile(bool onlyUserFile = false) {
         _LOG_INFOH(L"CALLED: onlyUserFile={}", onlyUserFile);
         if (!onlyUserFile) {
@@ -114,6 +150,54 @@ namespace lattice2 {
         }
         // 再読込の場合は、追加登録になるので、登録済みのものは削除されない
         _loadCostFile(_T("userword.cost.txt"));
+        _loadOnlineCostFile();
+    }
+
+    void saveOnlineCostFile() {
+        auto path = utils::joinPath(SETTINGS->rootDir, ONLINE_COST_FILE);
+        if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
+            _LOG_INFOH(_T("SAVE: {}"), path.c_str());
+            utils::OfstreamWriter writer(path);
+            if (writer.success()) {
+                for (const auto& pair : onlineNgram) {
+                    String line;
+                    line.append(to_wstr(pair.first));           // 単語
+                    line.append(_T("\t"));
+                    line.append(std::to_wstring(pair.second));  // カウント
+                    writer.writeLine(utils::utf8_encode(line));
+                }
+            }
+        }
+    }
+
+    inline bool is_space_or_vbar(mchar_t ch) {
+        return ch == ' ' || ch == '|';
+    }
+
+    void updateOnlineNgram(const MString& str) {
+        _LOG_DETAIL(L"CALLED: str={}", to_wstr(str));
+        int strlen = (int)str.size();
+        for (int pos = 0; pos < strlen; ++pos) {
+            if (!utils::is_japanese_char_except_nakaguro(str[pos])) continue;
+
+            // 1gramなら漢字以外は無視
+            if (utils::is_kanji(str[pos])) {
+                _updateOnlineNgramByWord(str.substr(pos, 1));
+            }
+
+            if (pos + 1 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 1])) continue;
+            _updateOnlineNgramByWord(str.substr(pos, 2));
+
+            if (pos + 2 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 2])) continue;
+            _updateOnlineNgramByWord(str.substr(pos, 3));
+
+            if (pos + 3 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 3])) continue;
+            _updateOnlineNgramByWord(str.substr(pos, 4));
+        }
+    }
+
+    void updateOnlineNgram() {
+        updateOnlineNgram(OUTPUT_STACK->backStringUptoPunctWithFlag());
     }
 
     int getWordCost(const MString& word) {
@@ -220,10 +304,33 @@ namespace lattice2 {
                     int katakanaLen = findKatakanaLen(str, i);
                     if (katakanaLen >= 3) {
                         // カタカナの3文字以上の連続
-                        int xCost = getExtraWordCost(utils::safe_substr(str, i, katakanaLen));
-                        _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), xCost);
-                        cost += xCost;
-                        _LOG_DETAIL(L"FOUND: katakana={}, cost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), cost);
+                        int pos = 0;
+                        int restlen = katakanaLen;
+                        int xCost = 0;
+                        while (restlen > 5) {
+                            // 6->4:3, 7->4:4, 8->4:3:3, 9->4:4:3, 10->4:4:4, ...
+                            xCost = getExtraWordCost(utils::safe_substr(str, pos, 4));
+                            _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), xCost);
+                            cost += xCost;
+                            _LOG_DETAIL(L"FOUND: katakana={}, cost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), cost);
+                            pos += 3;
+                            restlen -= 3;
+                        }
+                        if (restlen == 5) {
+                            // 5->3:3
+                            xCost = getExtraWordCost(utils::safe_substr(str, pos, 4));
+                            _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), xCost);
+                            cost += xCost;
+                            _LOG_DETAIL(L"FOUND: katakana={}, cost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), cost);
+                            pos += 2;
+                            restlen -= 2;
+                        }
+                        if (restlen == 3 || restlen == 4) {
+                            xCost = getExtraWordCost(utils::safe_substr(str, pos, 4));
+                            _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), xCost);
+                            cost += xCost;
+                            _LOG_DETAIL(L"FOUND: katakana={}, cost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), cost);
+                        }
                         // カタカナ連の末尾に飛ばす
                         i += katakanaLen - 1;
                         //continue;
@@ -1105,6 +1212,14 @@ namespace lattice2 {
                 _kBestList.size(), totalStrokeCount, currentStrokeCount, kanjiPreferredNext, strokeBack, formatStringOfWordPieces(pieces));
             // endPos における空の k-best path リストを取得
 
+            if (pieces.size() == 1) {
+                auto s = pieces.front().getString();
+                if (s.size() == 1 && utils::is_punct(s[0])) {
+                    // 前回の句読点から末尾までの出力文字列に対して Ngram解析を行う
+                    lattice2::updateOnlineNgram();
+                }
+            }
+
             if (kanjiPreferredNext) {
                 _LOG_DETAIL(L"KANJI PREFERRED NEXT");
                 // 現在の先頭候補を最優先に設定し、
@@ -1183,3 +1298,14 @@ void Lattice2::reloadUserCostFile() {
     lattice2::loadCostFile(true);
 }
 
+void Lattice2::updateOnlineNgram() {
+    lattice2::updateOnlineNgram();
+}
+
+//void Lattice2::updateOnlineNgram(const MString& str) {
+//    lattice2::updateOnlineNgram(str);
+//}
+
+void Lattice2::saveOnlineCostFile() {
+    lattice2::saveOnlineCostFile();
+}

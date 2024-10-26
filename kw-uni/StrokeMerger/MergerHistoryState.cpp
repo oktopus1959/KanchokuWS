@@ -1304,6 +1304,8 @@ namespace {
                 AddNewHistEntryOnEnter();
                 State::handleEnter();
             }
+            // 前回の句読点から末尾までの出力文字列に対して Ngram解析を行う
+            WORD_LATTICE->updateOnlineNgram();
             _LOG_DEBUGH(_T("LEAVE"));
         }
 

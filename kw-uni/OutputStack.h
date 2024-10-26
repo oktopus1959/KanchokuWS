@@ -355,6 +355,18 @@ public:
         return size() - pos;
     }
 
+    // 改行を含まない末尾部分で、句読点の直後までの長さ(末尾句読点も含めない)
+    inline size_t tail_size_upto_punct() const {
+        if (size() == 0) return 0;
+        size_t pos = size();
+        while (pos > 0) {
+            auto m = stack[pos - 1];
+            if (m.chr == '\n' || utils::is_punct(m.chr)) break;
+            --pos;
+        }
+        return size() - pos;
+    }
+
     // 改行を含まない末尾部分の長さ
     inline size_t tail_size() const {
         return tail_size_upto(0);
@@ -405,6 +417,11 @@ public:
     // 改行を含まない末尾部分(最大長maxlen)で、何かflagがあれば | を付加した部分文字列を返す
     inline MString backStringWithFlagUpto(size_t maxlen, size_t extraBarPos = 0) const {
         return tail_string(maxlen, tail_size(), true, extraBarPos);
+    }
+
+    // 改行を含まない末尾部分で、句読点までの部分文字列(ブロッカーを反映した)を返す(句読点は含まない)
+    inline MString backStringUptoPunctWithFlag() const {
+        return tail_string(1024, tail_size_upto_punct(), true);
     }
 
     // 改行も含む末尾部分(最大長maxlen)の部分文字列を返す

@@ -286,6 +286,7 @@ public:
 
     // デコーダ状態のリセット (Decoder が ON になったときに呼ばれる)
     void Reset() override {
+        Lattice2::updateOnlineNgram();
         deleteRemainingState();
         STATE_COMMON->ClearAllStateInfo();
         OUTPUT_STACK->pushNewLine();    // 履歴ブロッカーとして改行を追加
@@ -330,6 +331,7 @@ public:
             //HISTORY_DIC->WriteHistExcludeDic();
             //HISTORY_DIC->WriteNgramDic();
         }
+        Lattice2::saveOnlineCostFile();
     }
 
     // コマンド実行

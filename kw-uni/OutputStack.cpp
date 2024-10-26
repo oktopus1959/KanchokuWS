@@ -1,6 +1,6 @@
 #include "OutputStack.h"
 
-#define OUTPUT_STACK_MAXSIZE 32
+#define OUTPUT_STACK_MAXSIZE 64
 
 namespace {
 }
