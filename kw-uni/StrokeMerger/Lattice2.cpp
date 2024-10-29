@@ -80,73 +80,146 @@ namespace lattice2 {
     // 2文字以上の形態素ですべてカタカナの場合のボーナス
     int MORPH_ALL_KATAKANA_BONUS = 3000;
 
-    int MAX_COST = 1000;
+    // 孤立したカタカナのコスト
+    int ISOLATED_KATAKANA_COST = 3000;
 
-    int STROKE_COST = 150;
+    // 孤立した漢字のコスト
+    int ONE_KANJI_COST = 1000;
+
+    // 1スペースのコスト
+    int ONE_SPACE_COST = 3000;
+
+    // デフォルトの最大コスト
+    int DEFAULT_MAX_COST = 1000;
+
+    // Ngramコストに対する係数
+    int NGRAM_COST_FACTOR = 5;
+
+    // Online Ngram のカウントを水増しする係数
+    int ONLINE_FREQ_BOOST_FACTOR = 10;
+
+    // Online 3gram のカウントからボーナス値を算出する際の係数
+    int ONLINE_TRIGRAM_BONUS_FACTOR = 100;
+
+    // int STROKE_COST = 150;
 
     // Ngram統計によるコスト
-    // 1-2gramはポジティブコスト(そのまま計上)、3gram以上はネガティブコスト(MAX_COST を引いて計上)として計算される
+    // 1-2gramはポジティブコスト(そのまま計上)、3gram以上はネガティブコスト(DEFAULT_MAX_COST を引いて計上)として計算される
     std::map<MString, int> ngramCosts;
 
     // 利用者が手作業で作成した単語コスト(3gram以上、そのまま計上)
     std::map<MString, int> userWordCosts;
 
+    // システムで用意したNgram統計
+    std::map<MString, int> systemNgram;
+    int systemMaxFreq = 0;
+
     // 利用者が入力した文字列から抽出したNgram統計
     std::map<MString, int> onlineNgram;
+    int onlineMaxFreq = 0;
 
+    // 常用対数でNgram頻度を補正した値に掛けられる係数
+    int ngramLogFactor = 50;
+
+    // Ngram頻度がオンラインで更新されたか
     bool onlineNgram_updated = false;
 
-    void _loadCostFile(StringRef costFile, std::map<MString, int>& costsMap) {
-        auto path = utils::joinPath(SETTINGS->rootDir, costFile);
-        _LOG_DEBUGH(_T("LOAD: {}"), path.c_str());
-        utils::IfstreamReader reader(path);
-        if (reader.success()) {
-            costsMap.clear();
-            for (const auto& line : reader.getAllLines()) {
-                auto items = utils::split(utils::replace_all(utils::strip(line), L" +", L"\t"), '\t');
-                if (!items.empty() && !items[0].empty() && items[0][0] != L'#') {
-                    if (items.size() == 2) {
-                        costsMap[to_mstr(items[0])] = std::stoi(items[1]);
-                    } else if (items.size() == 1) {
-                        costsMap[to_mstr(items[0])] = -DEFAULT_WORD_BONUS;       // userword.cost のデフォルトは -DEFAULT_WORD_BONUS
-                    }
-                }
-            }
+    inline bool isDecimalString(StringRef item) {
+        return utils::reMatch(item, L"[+\\-]?[0-9]+");
+    }
+
+    inline void _updateNgramCost(const MString& word, int sysCount, int onlCount) {
+        if (word.size() <= 2) {
+            // 1-2 gram は正のコスト
+            ngramCosts[word] = DEFAULT_MAX_COST - (int)(std::log(sysCount + onlCount * ONLINE_FREQ_BOOST_FACTOR) * ngramLogFactor);
+        } else if (word.size() == 3) {
+            // 3gramは負のコスト
+            //int tier1 = 0;
+            //int tier2 = 0;
+            //int tier3 = 0;
+            //if (onlCount >= 21) {
+            //    tier3 = onlCount - 21;
+            //    tier2 = 20;
+            //    tier1 = 1;
+            //} else if (onlCount >= 1) {
+            //    tier2 = onlCount - 1;
+            //    tier1 = 1;
+            //}
+            //ngramCosts[word] = -(tier1 * (ONLINE_TRIGRAM_BONUS_FACTOR*10) + tier2 * ONLINE_TRIGRAM_BONUS_FACTOR + (tier3 + sysCount) * (ONLINE_TRIGRAM_BONUS_FACTOR/10));
+            // 上のやり方は、間違いの方の影響も拡大してしまうので、結局、あまり意味が無いと思われる
+            ngramCosts[word] = -(onlCount * ONLINE_TRIGRAM_BONUS_FACTOR + sysCount * (ONLINE_TRIGRAM_BONUS_FACTOR/10));
         }
     }
 
-#define ONLINE_COST_FILE L"online.cost.txt"
-
-    void _updateOnlineNgramByWordAndCount(const MString& word, int count, bool bOnInitialLoad) {
-        onlineNgram[word] = count;
-        if (word.size() == 2) {
-            // ユーザーの入力の2gramについてはcountを差し引く
-            ngramCosts[word] -= (bOnInitialLoad ? count : 1) * 10;
-        } else {
-            // ユーザーの入力の3gram以上については負のコストを設定
-            ngramCosts[word] = count * (-100);
-        }
-    }
-
+    // オンラインでのNgram更新
     void _updateOnlineNgramByWord(const MString& word) {
-        int count = onlineNgram[word] + 1;
-        _updateOnlineNgramByWordAndCount(word, count, false);
+        int count = onlineNgram[word] += 1;
+        _updateNgramCost(word, 0, count);
         onlineNgram_updated = true;
     }
 
-    void _loadOnlineCostFile() {
-        auto path = utils::joinPath(SETTINGS->rootDir, ONLINE_COST_FILE);
+    // ngramCosts の初期作成
+    void makeInitialNgramCostMap() {
+        ngramLogFactor = (int)((DEFAULT_MAX_COST - 50) / std::log(systemMaxFreq + onlineMaxFreq * ONLINE_FREQ_BOOST_FACTOR));
+        _LOG_DETAIL(L"ENTER: systemMaxFreq={}, onlineMaxFreq={}, ngramLogFactor={}", systemMaxFreq, onlineMaxFreq, ngramLogFactor);
+        ngramCosts.clear();
+        for (auto iter = systemNgram.begin(); iter != systemNgram.end(); ++iter) {
+            const MString& word = iter->first;
+            int sysCount = iter->second;
+            auto it = onlineNgram.find(iter->first);
+            int onlCount = it != onlineNgram.end() ? it->second : 0;
+            _updateNgramCost(word, sysCount, onlCount);
+        }
+        for (auto iter = onlineNgram.begin(); iter != onlineNgram.end(); ++iter) {
+            const MString& word = iter->first;
+            int onlCount = iter->second;
+            if (ngramCosts.find(word) == ngramCosts.end()) {
+                // 未登録
+                _updateNgramCost(word, 0, onlCount);
+            }
+        }
+        _LOG_DETAIL(L"LEAVE: ngramCosts.size={}", ngramCosts.size());
+    }
+
+#define SYSTEM_NGRAM_FILE L"mixed_all.ngram.txt"
+#define ONLINE_NGRAM_FILE L"online.ngram.txt"
+#define USER_COST_FILE    L"userword.cost.txt"
+
+    int _loadNgramFile(StringRef ngramFile, std::map<MString, int>& ngramMap) {
+        auto path = utils::joinPath(SETTINGS->rootDir, ngramFile);
         _LOG_INFOH(_T("LOAD: {}"), path.c_str());
+        int maxFreq = 0;
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             for (const auto& line : reader.getAllLines()) {
                 auto items = utils::split(utils::replace_all(utils::strip(line), L" +", L"\t"), '\t');
-                if (!items.empty() && items[0].size() > 1 && items[0].size() < 4 && items[0][0] != L'#') {
-                    // 2-3gramに限定
-                    if (items.size() == 2) {
-                        int count = std::stoi(items[1]);
-                        MString word = to_mstr(items[0]);
-                        _updateOnlineNgramByWordAndCount(word, count, true);
+                if (items.size() == 2 &&
+                    items[0].size() >= 1 && items[0].size() <= 3 &&         // 1-3gramに限定
+                    items[0][0] != L'#' && isDecimalString(items[1])) {
+
+                    int count = std::stoi(items[1]);
+                    MString word = to_mstr(items[0]);
+                    ngramMap[word] = count;
+                    if (maxFreq < count) maxFreq = count;
+                }
+            }
+        }
+        return maxFreq;
+    }
+
+    void _loadUserCostFile() {
+        auto path = utils::joinPath(SETTINGS->rootDir, USER_COST_FILE);
+        _LOG_DEBUGH(_T("LOAD: {}"), path.c_str());
+        utils::IfstreamReader reader(path);
+        if (reader.success()) {
+            userWordCosts.clear();
+            for (const auto& line : reader.getAllLines()) {
+                auto items = utils::split(utils::replace_all(utils::strip(utils::reReplace(line, L"#.*$", L"")), L"[ \t]+", L"\t"), '\t');
+                if (!items.empty() && !items[0].empty() && items[0][0] != L'#') {
+                    if (items.size() >= 2 && isDecimalString(items[1])) {
+                        userWordCosts[to_mstr(items[0])] = std::stoi(items[1]);
+                    } else if (items.size() == 1) {
+                        userWordCosts[to_mstr(items[0])] = -DEFAULT_WORD_BONUS;       // userword.cost のデフォルトは -DEFAULT_WORD_BONUS
                     }
                 }
             }
@@ -157,15 +230,18 @@ namespace lattice2 {
         _LOG_INFOH(L"CALLED: onlyUserFile={}", onlyUserFile);
         if (!onlyUserFile) {
 #ifdef NDEBUG
-            _loadCostFile(_T("wikipedia.cost.txt"), ngramCosts);
+            systemMaxFreq = _loadNgramFile(SYSTEM_NGRAM_FILE, systemNgram);
 #endif
-            _loadOnlineCostFile();
+            onlineMaxFreq = _loadNgramFile(ONLINE_NGRAM_FILE, onlineNgram);
+
+            makeInitialNgramCostMap();
         }
-        _loadCostFile(_T("userword.cost.txt"), userWordCosts);
+        _loadUserCostFile();
     }
 
     void saveOnlineCostFile() {
-        auto path = utils::joinPath(SETTINGS->rootDir, ONLINE_COST_FILE);
+        _LOG_INFOH(L"CALLED: onlineNgram_updated={}", onlineNgram_updated);
+        auto path = utils::joinPath(SETTINGS->rootDir, ONLINE_NGRAM_FILE);
         if (onlineNgram_updated) {
             if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
                 _LOG_INFOH(_T("SAVE: {}"), path.c_str());
@@ -189,18 +265,19 @@ namespace lattice2 {
     }
 
     void updateOnlineNgram(const MString& str) {
+        _LOG_DETAIL(L"CALLED: str={}, collectOnlineNgram={}", to_wstr(str), SETTINGS->collectOnlineNgram);
         if (!SETTINGS->collectOnlineNgram) return;
 
-        _LOG_DETAIL(L"CALLED: str={}", to_wstr(str));
         int strlen = (int)str.size();
         for (int pos = 0; pos < strlen; ++pos) {
-            //if (!utils::is_japanese_char_except_nakaguro(str[pos])) continue;
-
             //// 1gramなら漢字以外は無視
             //if (utils::is_kanji(str[pos])) {
             //    _updateOnlineNgramByWord(str.substr(pos, 1));
             //}
-            // 1gramは無視
+
+            if (!utils::is_japanese_char_except_nakaguro(str[pos])) continue;
+            // 1-gram
+            _updateOnlineNgramByWord(str.substr(pos, 1));
 
             if (pos + 1 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 1])) continue;
             // 2-gram
@@ -219,16 +296,8 @@ namespace lattice2 {
         updateOnlineNgram(OUTPUT_STACK->backStringUptoPunctWithFlag());
     }
 
-    // 1～2gramに対するポジティブコストを計算
-    int get_positive_ngram_cost(const MString& word) {
-        if (word.empty()) return 0;
-        if (word.size() == 1 && word == MSTR_SPACE) return MAX_COST * 3;          // 1 space の場合のコスト
-        auto iter = ngramCosts.find(word);
-        return iter != ngramCosts.end() ? iter->second : MAX_COST;
-    }
-
-    // 3～4gramに対する追加(ネガティブ)コストを計算
-    int getExtraWordCost(const MString& word) {
+    // 2～4gramに対する利用者定義コストを計算
+    int getUserWordCost(const MString& word) {
         auto iter = userWordCosts.find(word);
         if (iter != userWordCosts.end()) {
             int xCost = iter->second;
@@ -236,20 +305,37 @@ namespace lattice2 {
             _LOG_DETAIL(L"{}: userWordCost={}", to_wstr(word), xCost);
             return xCost;
         }
-        iter = ngramCosts.find(word);
-        if (iter != ngramCosts.end()) {
-            // システムによるNgramのコストはネガティブコスト
-            int xCost = iter->second;
-            // 正のコストが設定されている場合(wikipedia.costなど)は、 DEFAULT BONUS を引いたコストにする; つまり負のコストになる
-            if (xCost > 0 && xCost < DEFAULT_WORD_BONUS) xCost -= DEFAULT_WORD_BONUS;
-            _LOG_DETAIL(L"{}: ngramCosts={}", to_wstr(word), xCost);
-            return xCost;
-        }
         return 0;
     }
 
+    // 1～2gramに対する(ポジティブ)コストを計算
+    int get_base_ngram_cost(const MString& word) {
+        if (word.empty()) return 0;
+        if (word.size() == 1 && word == MSTR_SPACE) return ONE_SPACE_COST;          // 1 space の場合のコスト
+        int cost = word.size() == 2 ? getUserWordCost(word) : 0;
+        if (cost != 0) return cost;
+        auto iter = ngramCosts.find(word);
+        return iter != ngramCosts.end() ? iter->second : DEFAULT_MAX_COST;
+    }
+
+    // 2～4gramに対する追加(ネガティブ)コストを計算
+    int getExtraNgramCost(const MString& word) {
+        int xCost = getUserWordCost(word);
+        if (xCost == 0 && word.size() > 2) {
+            auto iter = ngramCosts.find(word);
+            if (iter != ngramCosts.end()) {
+                // システムによるNgramのコストはネガティブコスト
+                xCost = iter->second;
+                // 正のコストが設定されている場合(wikipedia.costなど)は、 DEFAULT BONUS を引いたコストにする; つまり負のコストになる
+                if (xCost > 0 && xCost < DEFAULT_WORD_BONUS) xCost -= DEFAULT_WORD_BONUS;
+                _LOG_DETAIL(L"{}: ngramCosts={}", to_wstr(word), xCost);
+            }
+        }
+        return xCost;
+    }
+
     //int getWordConnCost(const MString& s1, const MString& s2) {
-    //    return get_positive_ngram_cost(utils::last_substr(s1, 1) + utils::safe_substr(s2, 0, 1)) / 2;
+    //    return get_base_ngram_cost(utils::last_substr(s1, 1) + utils::safe_substr(s2, 0, 1)) / 2;
     //}
 
     int findKatakanaLen(const MString& s, int pos) {
@@ -258,6 +344,41 @@ namespace lattice2 {
             if (!utils::is_katakana(s[pos + len])) break;
         }
         return len;
+    }
+
+    int getKatakanaStringCost(const MString& str, int pos, int katakanaLen) {
+        int restlen = katakanaLen;
+        auto katakanaWord = to_wstr(utils::safe_substr(str, pos, katakanaLen));
+        int xCost = 0;
+        int totalCost = 0;
+        while (restlen > 5) {
+            // 6->4:3, 7->4:4, 8->4:3:3, 9->4:4:3, 10->4:4:4, ...
+            auto word = utils::safe_substr(str, pos, 4);
+            xCost = getExtraNgramCost(word);
+            _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(word), xCost);
+            totalCost += xCost;
+            _LOG_DETAIL(L"FOUND: katakana={}, totalCost={}", katakanaWord, totalCost);
+            pos += 3;
+            restlen -= 3;
+        }
+        if (restlen == 5) {
+            // 5->3:3
+            auto word = utils::safe_substr(str, pos, 3);
+            xCost = getExtraNgramCost(word);
+            _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(word), xCost);
+            totalCost += xCost;
+            _LOG_DETAIL(L"FOUND: katakana={}, totalCost={}", katakanaWord, totalCost);
+            pos += 2;
+            restlen -= 2;
+        }
+        if (restlen == 3 || restlen == 4) {
+            auto word = utils::safe_substr(str, pos, restlen);
+            xCost = getExtraNgramCost(word);
+            _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(word), xCost);
+            totalCost += xCost;
+            _LOG_DETAIL(L"FOUND: katakana={}, totalCost={}", katakanaWord, totalCost);
+        }
+        return totalCost;
     }
 
 
@@ -276,6 +397,7 @@ namespace lattice2 {
     }
 
 #if 1
+    // Ngramコストの取得
     int getNgramCost(const MString& str) {
         _LOG_DETAIL(L"ENTER: str={}", to_wstr(str));
         int cost = 0;
@@ -286,38 +408,44 @@ namespace lattice2 {
             if (utils::is_katakana(str[i])) {
                 if ((i == 0 || !utils::is_katakana(str[i-1])) && (i + 1 == strLen || !utils::is_katakana(str[i+1]))) {
                     // 孤立したカタカナは高いコストを設定
-                    cost += 3000;
+                    cost += ISOLATED_KATAKANA_COST;
                     continue;
                 }
             }
-            cost += get_positive_ngram_cost(utils::safe_substr(str, i, 1));
+            // 通常の unigram コストの計上
+            cost += get_base_ngram_cost(utils::safe_substr(str, i, 1));
         }
         _LOG_DETAIL(L"Unigram cost={}", cost);
 
         if (strLen == 1) {
             if (utils::is_kanji(str[0])) {
-                cost += MAX_COST;    // 漢字１文字の場合のコスト
-                _LOG_DETAIL(L"Just one Kanji (+{}): cost={}", MAX_COST, cost);
+                cost += ONE_KANJI_COST;    // 文字列が漢字１文字の場合のコスト
+                _LOG_DETAIL(L"Just one Kanji (+{}): cost={}", ONE_KANJI_COST, cost);
             }
         } else if (strLen > 1) {
             // bigram
-            int lastKanjiPos = -1;
+            //int lastKanjiPos = -1;
             for (int i = 0; i < strLen - 1; ++i) {
-                cost += get_positive_ngram_cost(utils::safe_substr(str, i, 2));
-                if (i > lastKanjiPos && utils::is_kanji(str[i]) && utils::is_kanji(str[i + 1])) {
-                    cost -= KANJI_CONSECUTIVE_BONUS;
-                    lastKanjiPos = i + 1;   // 漢字列が3文字以上続くときは、重複計上しない
-                }
-                if (utils::is_katakana(str[i]) && utils::is_katakana(str[i + 1])) {
-                    // 漢字orカタカナが2文字連続する場合のボーナス
-                    cost -= KATAKANA_CONSECUTIVE_BONUS;
-                    int katakanaLen = findKatakanaLen(str, i);
-                    if (katakanaLen > 0) {
-                        // カタカナ連なら、次の文字種までスキップ
-                        i += katakanaLen - 1;
-                        continue;
-                    }
-                }
+                // 通常の bigram コストの計上
+                cost += get_base_ngram_cost(utils::safe_substr(str, i, 2));
+
+                //// 漢字が2文字連続する場合のボーナス
+                //if (i > lastKanjiPos && utils::is_kanji(str[i]) && utils::is_kanji(str[i + 1])) {
+                //    cost -= KANJI_CONSECUTIVE_BONUS;
+                //    lastKanjiPos = i + 1;   // 漢字列が3文字以上続くときは、重複計上しない
+                //}
+
+                //if (utils::is_katakana(str[i]) && utils::is_katakana(str[i + 1])) {
+                //    // カタカナが2文字連続する場合のボーナス
+                //    cost -= KATAKANA_CONSECUTIVE_BONUS;
+                //    int katakanaLen = findKatakanaLen(str, i);
+                //    if (katakanaLen > 0) {
+                //        // カタカナ連なら、次の文字種までスキップ
+                //        i += katakanaLen - 1;
+                //        continue;
+                //    }
+                //}
+
                 //if ((utils::is_kanji(str[i]) && str[i + 1] == CHOON) || (str[i] == CHOON && utils::is_kanji(str[i + 1]))) {
                 //    // 漢字と「ー」の隣接にはペナルティ
                 //    cost += KANJI_CONSECUTIVE_PENALTY;
@@ -329,73 +457,49 @@ namespace lattice2 {
                 // trigram
                 int i = 0;
                 while (i < strLen - 2) {
-                    bool found = false;
+                    // 末尾に3文字以上残っている
+                    //bool found = false;
                     int katakanaLen = findKatakanaLen(str, i);
                     if (katakanaLen >= 3) {
                         // カタカナの3文字以上の連続
-                        int pos = 0;
-                        int restlen = katakanaLen;
-                        int xCost = 0;
-                        while (restlen > 5) {
-                            // 6->4:3, 7->4:4, 8->4:3:3, 9->4:4:3, 10->4:4:4, ...
-                            xCost = getExtraWordCost(utils::safe_substr(str, pos, 4));
-                            _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), xCost);
-                            cost += xCost;
-                            _LOG_DETAIL(L"FOUND: katakana={}, cost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), cost);
-                            pos += 3;
-                            restlen -= 3;
-                        }
-                        if (restlen == 5) {
-                            // 5->3:3
-                            xCost = getExtraWordCost(utils::safe_substr(str, pos, 4));
-                            _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), xCost);
-                            cost += xCost;
-                            _LOG_DETAIL(L"FOUND: katakana={}, cost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), cost);
-                            pos += 2;
-                            restlen -= 2;
-                        }
-                        if (restlen == 3 || restlen == 4) {
-                            xCost = getExtraWordCost(utils::safe_substr(str, pos, 4));
-                            _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), xCost);
-                            cost += xCost;
-                            _LOG_DETAIL(L"FOUND: katakana={}, cost={}", to_wstr(utils::safe_substr(str, i, katakanaLen)), cost);
-                        }
+                        cost += getKatakanaStringCost(str, i, katakanaLen);
                         // カタカナ連の末尾に飛ばす
                         i += katakanaLen - 1;
-                        //continue;
-                        found = true;
+                        continue;
+                        //found = true;
                     }
-                    if (!found && i < strLen - 3) {
+                    if (i < strLen - 3) {
                         // 4文字連
-                        if (TAIL_HIRAGANA_LEN >= 4 && (i == strLen - TAIL_HIRAGANA_LEN) && utils::is_hiragana_str(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN))) {
-                            // 末尾がひらがな4文字連続の場合のボーナス
-                            cost -= TAIL_HIRAGANA_BONUS;
-                            _LOG_DETAIL(L"TAIL HIRAGANA:{}, cost={}", to_wstr(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN)), cost);
-                            break;
-                        }
+                        //if (TAIL_HIRAGANA_LEN >= 4 && (i == strLen - TAIL_HIRAGANA_LEN) && utils::is_hiragana_str(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN))) {
+                        //    // 末尾がひらがな4文字連続の場合のボーナス
+                        //    cost -= TAIL_HIRAGANA_BONUS;
+                        //    _LOG_DETAIL(L"TAIL HIRAGANA:{}, cost={}", to_wstr(utils::safe_substr(str, i, TAIL_HIRAGANA_LEN)), cost);
+                        //    break;
+                        //}
                         int len = 4;
                         auto word = utils::safe_substr(str, i, len);
-                        int xCost = getExtraWordCost(word);
+                        int xCost = getExtraNgramCost(word);
                         _LOG_DETAIL(L"len={}, extraWord={}, xCost={}", len, to_wstr(word), xCost);
                         if (xCost != 0) {
-                            // コスト定義があれば、末尾に飛ばす
+                            // コスト定義があれば、利用者定義によるもの
                             cost += xCost;
                             _LOG_DETAIL(L"FOUND: extraWord={}, xCost={}, cost={}", to_wstr(word), xCost, cost);
-                            i += len - 1;
+                            //i += len - 1;
                             //continue;
-                            found = true;
+                            //found = true;
                         }
                     }
-                    if (!found) {
+                    {
                         // 3文字連
                         int len = 3;
                         auto word = utils::safe_substr(str, i, len);
-                        int xCost = getExtraWordCost(word);
+                        int xCost = getExtraNgramCost(word);
                         _LOG_DETAIL(L"len={}, extraWord={}, xCost={}", len, to_wstr(word), xCost);
                         if (xCost != 0) {
-                            // コスト定義があれば、次に飛ばす
+                            // コスト定義がある
                             cost += xCost;
                             _LOG_DETAIL(L"FOUND: extraWord={}, xCost={}, cost={}", to_wstr(word), xCost, cost);
+                            // 次の位置へ
                             //i += len;
                             //found = true;
                         }
@@ -423,9 +527,9 @@ namespace lattice2 {
     int getNgramCost(const MString& str) {
         int cost = 0;
         for (size_t i = 0; i < str.size() - 1; ++i) {
-            int bigramCost = get_positive_ngram_cost(utils::safe_substr(str, i, 2));
-            if (bigramCost >= MAX_COST) {
-                bigramCost = get_positive_ngram_cost(utils::safe_substr(str, i, 1)) + get_positive_ngram_cost(utils::safe_substr(str, i + 1, 1));
+            int bigramCost = get_base_ngram_cost(utils::safe_substr(str, i, 2));
+            if (bigramCost >= DEFAULT_MAX_COST) {
+                bigramCost = get_base_ngram_cost(utils::safe_substr(str, i, 1)) + get_base_ngram_cost(utils::safe_substr(str, i + 1, 1));
             }
             cost += bigramCost;
         }
@@ -782,10 +886,10 @@ namespace lattice2 {
             const MString& candStr = newCandStr.string();
             MString subStr = substringBetweenPunctuations(candStr);
             int morphCost = subStr.empty() ? 0 : calcMorphCost(subStr, words);
-            int ngramCost = subStr.empty() ? 0 : getNgramCost(subStr) * 5;
+            int ngramCost = subStr.empty() ? 0 : getNgramCost(subStr) * NGRAM_COST_FACTOR;
             //int morphCost = 0;
             //int ngramCost = candStr.empty() ? 0 : getNgramCost(candStr);
-            //int llamaCost = candStr.empty() ? 0 : calcLlamaCost(candStr) * 5;
+            //int llamaCost = candStr.empty() ? 0 : calcLlamaCost(candStr) * NGRAM_COST_FACTOR;
             int llamaCost = 0;
             int candCost = morphCost + ngramCost + llamaCost;
             newCandStr.cost(candCost);
@@ -1246,6 +1350,7 @@ namespace lattice2 {
                 auto s = pieces.front().getString();
                 if (s.size() == 1 && utils::is_punct(s[0])) {
                     // 前回の句読点から末尾までの出力文字列に対して Ngram解析を行う
+                    _LOG_DETAIL(L"CALL lattice2::updateOnlineNgram()");
                     lattice2::updateOnlineNgram();
                 }
             }

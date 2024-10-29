@@ -1025,6 +1025,16 @@ namespace utils
     }
 #undef SPLIT
 
+    // 正規表現 p に全体マッチするか
+    inline bool reMatch(StringRef s, const std::wregex& p) {
+        return std::regex_match(s, p);
+    }
+
+    // 正規表現 p に全体マッチするか
+    inline bool reMatch(StringRef s, StringRef p) {
+        return reMatch(s, std::wregex(p));
+    }
+
     // 正規表現 p に部分マッチするか
     inline bool reSearch(StringRef s, const std::wregex& p) {
         return std::regex_search(s, p);
