@@ -71,6 +71,9 @@ namespace lattice2 {
     // cost ファイルに登録がある場合のデフォルトのボーナス
     int DEFAULT_WORD_BONUS = 1000;
 
+    // cost ファイルに登録がある unigram のデフォルトのボーナスカウント
+    int DEFAULT_UNIGRAM_BONUS = 1000;
+
     // 2文字以上の形態素で漢字を含む場合のボーナス
     int MORPH_ANY_KANJI_BONUS = 5000;
 
@@ -113,6 +116,10 @@ namespace lattice2 {
     // 利用者が手作業で作成した単語コスト(3gram以上、そのまま計上)
     std::map<MString, int> userWordCosts;
 
+    // 利用者が手作業で作成したNgram統計
+    std::map<MString, int> userNgram;
+    int userMaxFreq = 0;
+
     // システムで用意したNgram統計
     std::map<MString, int> systemNgram;
     int systemMaxFreq = 0;
@@ -131,10 +138,10 @@ namespace lattice2 {
         return utils::reMatch(item, L"[+\\-]?[0-9]+");
     }
 
-    inline void _updateNgramCost(const MString& word, int sysCount, int onlCount) {
+    inline void _updateNgramCost(const MString& word, int sysCount, int usrCount, int onlCount) {
         if (word.size() <= 2) {
             // 1-2 gram は正のコスト
-            ngramCosts[word] = DEFAULT_MAX_COST - (int)(std::log(sysCount + onlCount * ONLINE_FREQ_BOOST_FACTOR) * ngramLogFactor);
+            ngramCosts[word] = DEFAULT_MAX_COST - (int)(std::log(sysCount + usrCount + onlCount * ONLINE_FREQ_BOOST_FACTOR) * ngramLogFactor);
         } else if (word.size() == 3) {
             // 3gramは負のコスト
             //int tier1 = 0;
@@ -151,35 +158,47 @@ namespace lattice2 {
             //ngramCosts[word] = -(tier1 * (ONLINE_TRIGRAM_BONUS_FACTOR*10) + tier2 * ONLINE_TRIGRAM_BONUS_FACTOR + (tier3 + sysCount) * (ONLINE_TRIGRAM_BONUS_FACTOR/10));
 
             // 上のやり方は、間違いの方の影響も拡大してしまうので、結局、あまり意味が無いと思われる
-            ngramCosts[word] = -(onlCount * ONLINE_TRIGRAM_BONUS_FACTOR + sysCount * (ONLINE_TRIGRAM_BONUS_FACTOR/10));
+            ngramCosts[word] = -(onlCount * ONLINE_TRIGRAM_BONUS_FACTOR + (sysCount + usrCount) * (ONLINE_TRIGRAM_BONUS_FACTOR/10));
         }
     }
 
     // オンラインでのNgram更新
     void _updateOnlineNgramByWord(const MString& word) {
         int count = onlineNgram[word] += 1;
-        _updateNgramCost(word, 0, count);
+        _updateNgramCost(word, 0, 0, count);
         onlineNgram_updated = true;
     }
 
     // ngramCosts の初期作成
     void makeInitialNgramCostMap() {
-        ngramLogFactor = (int)((DEFAULT_MAX_COST - 50) / std::log(systemMaxFreq + onlineMaxFreq * ONLINE_FREQ_BOOST_FACTOR));
-        _LOG_DETAIL(L"ENTER: systemMaxFreq={}, onlineMaxFreq={}, ngramLogFactor={}", systemMaxFreq, onlineMaxFreq, ngramLogFactor);
+        ngramLogFactor = (int)((DEFAULT_MAX_COST - 50) / std::log(systemMaxFreq + userMaxFreq + onlineMaxFreq * ONLINE_FREQ_BOOST_FACTOR));
+        _LOG_DETAIL(L"ENTER: systemMaxFreq={}, onlineMaxFreq={}, userMaxFreq={}, ngramLogFactor={}", systemMaxFreq, onlineMaxFreq, userMaxFreq, ngramLogFactor);
         ngramCosts.clear();
         for (auto iter = systemNgram.begin(); iter != systemNgram.end(); ++iter) {
             const MString& word = iter->first;
             int sysCount = iter->second;
             auto it = onlineNgram.find(iter->first);
             int onlCount = it != onlineNgram.end() ? it->second : 0;
-            _updateNgramCost(word, sysCount, onlCount);
+            auto it2 = userNgram.find(iter->first);
+            int usrCount = it != userNgram.end() ? it->second : 0;
+            _updateNgramCost(word, sysCount, usrCount, onlCount);
+        }
+        for (auto iter = userNgram.begin(); iter != userNgram.end(); ++iter) {
+            const MString& word = iter->first;
+            int usrCount = iter->second;
+            if (ngramCosts.find(word) == ngramCosts.end()) {
+                // 未登録
+                auto it = onlineNgram.find(iter->first);
+                int onlCount = it != onlineNgram.end() ? it->second : 0;
+                _updateNgramCost(word, 0, usrCount, onlCount);
+            }
         }
         for (auto iter = onlineNgram.begin(); iter != onlineNgram.end(); ++iter) {
             const MString& word = iter->first;
             int onlCount = iter->second;
             if (ngramCosts.find(word) == ngramCosts.end()) {
                 // 未登録
-                _updateNgramCost(word, 0, onlCount);
+                _updateNgramCost(word, 0, 0, onlCount);
             }
         }
         _LOG_DETAIL(L"LEAVE: ngramCosts.size={}", ngramCosts.size());
@@ -217,13 +236,25 @@ namespace lattice2 {
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             userWordCosts.clear();
+            userMaxFreq = 0;
             for (const auto& line : reader.getAllLines()) {
                 auto items = utils::split(utils::replace_all(utils::strip(utils::reReplace(line, L"#.*$", L"")), L"[ \t]+", L"\t"), '\t');
                 if (!items.empty() && !items[0].empty() && items[0][0] != L'#') {
-                    if (items.size() >= 2 && isDecimalString(items[1])) {
-                        userWordCosts[to_mstr(items[0])] = std::stoi(items[1]);
-                    } else if (items.size() == 1) {
-                        userWordCosts[to_mstr(items[0])] = -DEFAULT_WORD_BONUS;       // userword.cost のデフォルトは -DEFAULT_WORD_BONUS
+                    MString word = to_mstr(items[0]);
+                    if (word.size() == 1) {
+                        // unigram
+                        int count = DEFAULT_UNIGRAM_BONUS;
+                        if (items.size() >= 2 && isDecimalString(items[1])) {
+                            count = std::stoi(items[1]);
+                        }
+                        userNgram[word] = count;
+                        if (userMaxFreq < count) userMaxFreq = count;
+                    } else {
+                        if (items.size() >= 2 && isDecimalString(items[1])) {
+                            userWordCosts[word] = std::stoi(items[1]);
+                        } else if (items.size() == 1) {
+                            userWordCosts[word] = -DEFAULT_WORD_BONUS;       // userword.cost のデフォルトは -DEFAULT_WORD_BONUS
+                        }
                     }
                 }
             }
@@ -238,9 +269,9 @@ namespace lattice2 {
 #endif
             onlineMaxFreq = _loadNgramFile(ONLINE_NGRAM_FILE, onlineNgram);
 
-            makeInitialNgramCostMap();
         }
         _loadUserCostFile();
+        makeInitialNgramCostMap();
     }
 
     void saveOnlineCostFile() {
