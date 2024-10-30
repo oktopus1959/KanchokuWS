@@ -50,23 +50,23 @@ namespace lattice2 {
     // 非優先候補に与えるペナルティ
     int NON_PREFERRED_PENALTY = 1000000;
 
-    // 漢字と長音が連続する場合のペナルティ
-    int KANJI_CONSECUTIVE_PENALTY = 1000;
+    //// 漢字と長音が連続する場合のペナルティ
+    //int KANJI_CONSECUTIVE_PENALTY = 1000;
 
-    // 漢字が連続する場合のボーナス
-    int KANJI_CONSECUTIVE_BONUS = 0;
+    //// 漢字が連続する場合のボーナス
+    //int KANJI_CONSECUTIVE_BONUS = 0;
 
-    // カタカナが連続する場合のボーナス
-    int KATAKANA_CONSECUTIVE_BONUS = 1000;
+    //// カタカナが連続する場合のボーナス
+    //int KATAKANA_CONSECUTIVE_BONUS = 1000;
 
-    // 末尾がひらがなの連続にボーナスを与える場合のひらがな長
-    int TAIL_HIRAGANA_LEN = 0;  // 4
+    //// 末尾がひらがなの連続にボーナスを与える場合のひらがな長
+    //int TAIL_HIRAGANA_LEN = 0;  // 4
 
-    // 末尾がひらがなの連続場合のボーナス
-    int TAIL_HIRAGANA_BONUS = 0; //1000;
+    //// 末尾がひらがなの連続場合のボーナス
+    //int TAIL_HIRAGANA_BONUS = 0; //1000;
 
-    // 「漢字+の+漢字」の場合のボーナス
-    int KANJI_NO_KANJI_BONUS = 1500;
+    //// 「漢字+の+漢字」の場合のボーナス
+    //int KANJI_NO_KANJI_BONUS = 1500;
 
     // cost ファイルに登録がある場合のデフォルトのボーナス
     int DEFAULT_WORD_BONUS = 1000;
@@ -79,6 +79,9 @@ namespace lattice2 {
 
     // 2文字以上の形態素ですべてカタカナの場合のボーナス
     int MORPH_ALL_KATAKANA_BONUS = 3000;
+
+    // 2文字の形態素で先頭が高頻度助詞の場合のボーナス
+    int HEAD_HIGH_FREQ_JOSHI_BONUS = 3000;
 
     // 孤立したカタカナのコスト
     int ISOLATED_KATAKANA_COST = 3000;
@@ -146,6 +149,7 @@ namespace lattice2 {
             //    tier1 = 1;
             //}
             //ngramCosts[word] = -(tier1 * (ONLINE_TRIGRAM_BONUS_FACTOR*10) + tier2 * ONLINE_TRIGRAM_BONUS_FACTOR + (tier3 + sysCount) * (ONLINE_TRIGRAM_BONUS_FACTOR/10));
+
             // 上のやり方は、間違いの方の影響も拡大してしまうので、結局、あまり意味が無いと思われる
             ngramCosts[word] = -(onlCount * ONLINE_TRIGRAM_BONUS_FACTOR + sysCount * (ONLINE_TRIGRAM_BONUS_FACTOR/10));
         }
@@ -396,12 +400,18 @@ namespace lattice2 {
         return utils::safe_substr(str, startPos, endPos - startPos);
     }
 
+    inline bool isHighFreqJoshi(mchar_t mc) {
+        return mc == L'が' || mc == L'を' || mc == L'に' || mc == L'の' || mc == L'で' || mc == L'は';
+    }
+
 #if 1
     // Ngramコストの取得
     int getNgramCost(const MString& str) {
         _LOG_DETAIL(L"ENTER: str={}", to_wstr(str));
         int cost = 0;
         int strLen = (int)(str.size());
+
+        if (strLen <= 0) return 0;
 
         // unigram
         for (int i = 0; i < strLen; ++i) {
@@ -411,6 +421,9 @@ namespace lattice2 {
                     cost += ISOLATED_KATAKANA_COST;
                     continue;
                 }
+            } else if (i == 0 && strLen == 2 && isHighFreqJoshi(str[0]) && utils::is_hiragana(str[1])) {
+                // 2文字のひらがなで、先頭が高頻度の助詞(が、を、に、の、で、は)なら、ボーナスを与付して、ひらがな2文字になるようにする
+                cost -= HEAD_HIGH_FREQ_JOSHI_BONUS;
             }
             // 通常の unigram コストの計上
             cost += get_base_ngram_cost(utils::safe_substr(str, i, 1));
