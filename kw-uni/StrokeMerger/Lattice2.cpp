@@ -72,7 +72,7 @@ namespace lattice2 {
     int DEFAULT_WORD_BONUS = 1000;
 
     // cost ファイルに登録がある unigram のデフォルトのボーナスカウント
-    int DEFAULT_UNIGRAM_BONUS = 1000;
+    int DEFAULT_UNIGRAM_BONUS_COUNT = 10000;
 
     // 2文字以上の形態素で漢字を含む場合のボーナス
     int MORPH_ANY_KANJI_BONUS = 5000;
@@ -105,7 +105,8 @@ namespace lattice2 {
     int ONLINE_FREQ_BOOST_FACTOR = 10;
 
     // Online 3gram のカウントからボーナス値を算出する際の係数
-    int ONLINE_TRIGRAM_BONUS_FACTOR = 100;
+    //int ONLINE_TRIGRAM_BONUS_FACTOR = 100;
+    int ONLINE_TRIGRAM_BONUS_FACTOR = 10;
 
     // int STROKE_COST = 150;
 
@@ -141,7 +142,8 @@ namespace lattice2 {
     inline void _updateNgramCost(const MString& word, int sysCount, int usrCount, int onlCount) {
         if (word.size() <= 2) {
             // 1-2 gram は正のコスト
-            ngramCosts[word] = DEFAULT_MAX_COST - (int)(std::log(sysCount + usrCount + onlCount * ONLINE_FREQ_BOOST_FACTOR) * ngramLogFactor);
+            int total = sysCount + usrCount + onlCount * ONLINE_FREQ_BOOST_FACTOR;
+            if (total > 0) ngramCosts[word] = DEFAULT_MAX_COST - (int)(std::log(total) * ngramLogFactor);
         } else if (word.size() == 3) {
             // 3gramは負のコスト
             //int tier1 = 0;
@@ -160,6 +162,9 @@ namespace lattice2 {
             // 上のやり方は、間違いの方の影響も拡大してしまうので、結局、あまり意味が無いと思われる
             ngramCosts[word] = -(onlCount * ONLINE_TRIGRAM_BONUS_FACTOR + (sysCount + usrCount) * (ONLINE_TRIGRAM_BONUS_FACTOR/10));
         }
+        if (ngramCosts[word] < -100000) {
+            LOG_WARNH(L"ABNORMAL COST: word={}, cost={}, sysCount={}, usrCount={}, onlCount={}", to_wstr(word), ngramCosts[word], sysCount, usrCount, onlCount);
+        }
     }
 
     // オンラインでのNgram更新
@@ -177,19 +182,23 @@ namespace lattice2 {
         for (auto iter = systemNgram.begin(); iter != systemNgram.end(); ++iter) {
             const MString& word = iter->first;
             int sysCount = iter->second;
-            auto it = onlineNgram.find(iter->first);
-            int onlCount = it != onlineNgram.end() ? it->second : 0;
-            auto it2 = userNgram.find(iter->first);
-            int usrCount = it != userNgram.end() ? it->second : 0;
+            auto iterOnl = onlineNgram.find(iter->first);
+            int onlCount = iterOnl != onlineNgram.end() ? iterOnl->second : 0;
+            auto iterUsr = userNgram.find(iter->first);
+            int usrCount = iterUsr != userNgram.end() ? iterUsr->second : 0;
             _updateNgramCost(word, sysCount, usrCount, onlCount);
         }
         for (auto iter = userNgram.begin(); iter != userNgram.end(); ++iter) {
             const MString& word = iter->first;
             int usrCount = iter->second;
+            if (usrCount == 0 || (usrCount < 0 && word.size() == 1)) {
+                // カウント(orコスト)が 0 のもの、1文字で負のカウント(orコスト)のものは無視
+                continue;
+            }
             if (ngramCosts.find(word) == ngramCosts.end()) {
                 // 未登録
-                auto it = onlineNgram.find(iter->first);
-                int onlCount = it != onlineNgram.end() ? it->second : 0;
+                auto iterOnl = onlineNgram.find(iter->first);
+                int onlCount = iterOnl != onlineNgram.end() ? iterOnl->second : 0;
                 _updateNgramCost(word, 0, usrCount, onlCount);
             }
         }
@@ -243,7 +252,7 @@ namespace lattice2 {
                     MString word = to_mstr(items[0]);
                     if (word.size() == 1) {
                         // unigram
-                        int count = DEFAULT_UNIGRAM_BONUS;
+                        int count = DEFAULT_UNIGRAM_BONUS_COUNT;
                         if (items.size() >= 2 && isDecimalString(items[1])) {
                             count = std::stoi(items[1]);
                         }
@@ -350,7 +359,11 @@ namespace lattice2 {
         int cost = word.size() == 2 ? getUserWordCost(word) : 0;
         if (cost != 0) return cost;
         auto iter = ngramCosts.find(word);
-        return iter != ngramCosts.end() ? iter->second : DEFAULT_MAX_COST;
+        cost = iter != ngramCosts.end() ? iter->second : DEFAULT_MAX_COST;
+        if (cost < -100000) {
+            _LOG_DETAIL(L"ABNORMAL COST: word={}, cost={}", to_wstr(word), cost);
+        }
+        return cost;
     }
 
     // 2～4gramに対する追加(ネガティブ)コストを計算
@@ -1161,10 +1174,10 @@ namespace lattice2 {
             //if (!_candidates.empty()) {
             //    if (isKanjiKatakanaConsecutive(_candidates.front())) selectFirst();
             //}
-
+#if 0
             // 末尾から、指定の長さより以前の部分を確定させる
             commitLeaderBeforeTailLen();
-
+#endif
             _LOG_DETAIL(_T("LEAVE"));
         }
 
