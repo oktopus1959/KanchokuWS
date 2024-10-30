@@ -47,6 +47,7 @@ namespace KanchokuWS.Gui
         private GuiStatusChecker checkerKeyAssign;
         private GuiStatusChecker checkerCtrlKeys;
         private GuiStatusChecker checkerHistory;
+        private GuiStatusChecker checkerFusion;
         private GuiStatusChecker checkerMiscSettings;
         private GuiStatusChecker checkerDevelop;
 
@@ -100,6 +101,7 @@ namespace KanchokuWS.Gui
             checkerKeyAssign = new GuiStatusChecker("KeyAssign");
             checkerCtrlKeys = new GuiStatusChecker("CtrlKeys");
             checkerHistory = new GuiStatusChecker("History");
+            checkerFusion = new GuiStatusChecker("Fusion");
             checkerMiscSettings = new GuiStatusChecker("MiscSettings");
             checkerDevelop = new GuiStatusChecker("Develop");
 
@@ -123,6 +125,9 @@ namespace KanchokuWS.Gui
 
             readSettings_tabHistory();
             setHistoryStatusChecker();
+
+            readSettings_tabFusion();
+            setFusionStatusChecker();
 
             readSettings_tabMiscSettings();
             setMiscSettingsStatusChecker();
@@ -524,6 +529,7 @@ namespace KanchokuWS.Gui
             readSettings_tabKeyAssign();
             readSettings_tabCtrlKeys();
             readSettings_tabHistory();
+            readSettings_tabFusion();
             readSettings_tabMiscSettings();
             readSettings_tabDevelop();
 
@@ -1805,6 +1811,72 @@ namespace KanchokuWS.Gui
         }
 
         //-----------------------------------------------------------------------------------
+        //  配列融合設定
+        //-----------------------------------------------------------------------------------
+        void readSettings_tabFusion()
+        {
+            checkBox_collectOnlineNgram.Checked = Settings.CollectOnlineNgram;
+            textBox_commitBeforeTailLen.Text = $"{Settings.CommitBeforeTailLen}";
+        }
+
+        private void setFusionStatusChecker()
+        {
+            button_fusionEnter.Enabled = false;
+            checkerFusion.CtlToBeEnabled = button_fusionEnter;
+            checkerFusion.ControlEnabler = tabFusionStatusChanged;
+
+            checkerFusion.Add(checkBox_collectOnlineNgram);
+            checkerFusion.Add(textBox_commitBeforeTailLen);
+
+            checkerAll.Add(checkerFusion);
+        }
+
+        private void tabFusionStatusChanged(bool flag)
+        {
+            button_fusionClose.Text = flag ? "キャンセル(&C)" : "閉じる(&C)";
+            changeCancelButton(flag, button_fusionClose);
+        }
+
+        private void button_fusionEnter_Click(object sender, EventArgs e)
+        {
+            logger.Info("ENTER");
+            frmMain?.DeactivateDecoderWithModifiersOff();
+
+            Settings.SetUserIni("collectOnlineNgram", checkBox_collectOnlineNgram.Checked);
+            Settings.SetUserIni("commitBeforeTailLen", textBox_commitBeforeTailLen.Text);
+
+            Settings.ReadIniFile(false);
+            // 各種定義ファイルの再読み込み
+            frmMain?.ReloadSettingsAndDefFiles();
+
+            readSettings_tabFusion();
+            checkerFusion.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+
+            label_okResultFusion.Show();
+
+            logger.Info("LEAVE");
+        }
+
+        private void button_fusionReload_Click(object sender, EventArgs e)
+        {
+            logger.Info("CALLED");
+            reloadIniFileAndDefFiles();
+            label_fusionReload.Show();
+        }
+
+        private void button_fusionClose_Click(object sender, EventArgs e)
+        {
+            logger.Info("ENTER");
+            if (button_fusionClose.Text.StartsWith("閉")) {
+                this.Close();
+            } else {
+                readSettings_tabFusion();
+                checkerFusion.Reinitialize();    // ここの Reinitialize() はタブごとにやる必要がある(まとめてやるとDirty状態の他のタブまでクリーンアップしてしまうため)
+                logger.Info("LEAVE");
+            }
+        }
+
+        //-----------------------------------------------------------------------------------
         //  その他設定
         //-----------------------------------------------------------------------------------
         void readSettings_tabMiscSettings()
@@ -2181,12 +2253,14 @@ namespace KanchokuWS.Gui
                     label_okResultKeyAssign.Hide();
                     label_okResultCtrlKeys.Hide();
                     label_okResultMisc.Hide();
+                    label_okResultFusion.Hide();
                     label_imeComboReload.Hide();
                     label_keyAssignReload.Hide();
                     label_ctrlReload.Hide();
                     label_miscRomanOut.Hide();
                     label_miscEelllJsOut.Hide();
                     label_miscReload.Hide();
+                    label_fusionReload.Hide();
                     label_execResultFile.Hide();
                     label_okResultDevelop.Hide();
                 }
@@ -2347,6 +2421,10 @@ namespace KanchokuWS.Gui
                     AcceptButton = button_miscEnter;
                     CancelButton = button_miscClose;
                     readSettings_tabMiscSettings();
+                    break;
+                case "tabPage_fusion":
+                    AcceptButton = button_fusionEnter;
+                    CancelButton = button_fusionClose;
                     break;
                 case "tabPage_register":
                     AcceptButton = button_registerClose;

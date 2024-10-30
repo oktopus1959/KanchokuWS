@@ -929,6 +929,9 @@ namespace KanchokuWS
         /// <summary>Google日本語入力と互換な書き換システム</summary>
         public static bool PostRewriteCompatibleWithGooble { get; set; }
 
+        //------------------------------------------------------------------------------
+        // 配列融合
+        //------------------------------------------------------------------------------
         /// <summary>Online Ngram 情報を収集する</summary>
         public static bool CollectOnlineNgram { get; set; }
 
@@ -1252,7 +1255,6 @@ namespace KanchokuWS
             OpenSettingsDlgWhenIconClicked = GetString("openSettingsDlgWhenIconClicked")._parseBool(false);
 
             SecondaryTableWhenMultiStream = GetString("secondaryTableWhenMultiStream")._parseInt(1);
-            CommitMultiStreamElapsedTime = GetString("commitMultiStreamElapsedTime")._parseInt(0);
 
             //-------------------------------------------------------------------------------------
             // デバッグ用設定
@@ -1683,6 +1685,7 @@ namespace KanchokuWS
             CollectOnlineNgram = addDecoderSetting("collectOnlineNgram", true);                 // Online Ngram 情報を収集する
             CommitBeforeTailLen = addDecoderSetting("commitBeforeTailLen", 4);                  // 末尾から、ここで設定した長さより前の部分を確定させる
             KanjiNoKanjiBonus = addDecoderSetting("kanjiNoKanjiBonus", 1500);                   // 「漢字+の+漢字」のような場合に与えるボーナス
+            CommitMultiStreamElapsedTime = GetString("commitMultiStreamElapsedTime")._parseInt(0);
             setDecoderSetting("mergerCandidateFile", MergerCandidateFile );                     // 解候補ログファイル
 
             // キー割当
