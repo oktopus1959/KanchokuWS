@@ -502,6 +502,9 @@ namespace KanchokuWS.Gui
             this.checkBox_convertJaComma = new System.Windows.Forms.CheckBox();
             this.checkBox_convertJaPeriod = new System.Windows.Forms.CheckBox();
             this.tabPage_fusion = new System.Windows.Forms.TabPage();
+            this.label158 = new System.Windows.Forms.Label();
+            this.textBox_commitBeforeTailLen = new System.Windows.Forms.TextBox();
+            this.label157 = new System.Windows.Forms.Label();
             this.label_fusionReload = new System.Windows.Forms.Label();
             this.button_fusionReload = new System.Windows.Forms.Button();
             this.label_okResultFusion = new System.Windows.Forms.Label();
@@ -574,9 +577,7 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.textBox_commitBeforeTailLen = new System.Windows.Forms.TextBox();
-            this.label157 = new System.Windows.Forms.Label();
-            this.label158 = new System.Windows.Forms.Label();
+            this.checkBox_useMorphAnalyzer = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -6235,6 +6236,7 @@ namespace KanchokuWS.Gui
             // 
             // tabPage_fusion
             // 
+            this.tabPage_fusion.Controls.Add(this.checkBox_useMorphAnalyzer);
             this.tabPage_fusion.Controls.Add(this.label158);
             this.tabPage_fusion.Controls.Add(this.textBox_commitBeforeTailLen);
             this.tabPage_fusion.Controls.Add(this.label157);
@@ -6250,6 +6252,33 @@ namespace KanchokuWS.Gui
             this.tabPage_fusion.TabIndex = 11;
             this.tabPage_fusion.Text = "配列融合";
             this.tabPage_fusion.UseVisualStyleBackColor = true;
+            // 
+            // label158
+            // 
+            this.label158.AutoSize = true;
+            this.label158.Location = new System.Drawing.Point(24, 96);
+            this.label158.Name = "label158";
+            this.label158.Size = new System.Drawing.Size(50, 15);
+            this.label158.TabIndex = 42;
+            this.label158.Text = "文末から";
+            // 
+            // textBox_commitBeforeTailLen
+            // 
+            this.textBox_commitBeforeTailLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.textBox_commitBeforeTailLen.Location = new System.Drawing.Point(76, 94);
+            this.textBox_commitBeforeTailLen.Name = "textBox_commitBeforeTailLen";
+            this.textBox_commitBeforeTailLen.Size = new System.Drawing.Size(34, 19);
+            this.textBox_commitBeforeTailLen.TabIndex = 40;
+            this.textBox_commitBeforeTailLen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label157
+            // 
+            this.label157.AutoSize = true;
+            this.label157.Location = new System.Drawing.Point(112, 96);
+            this.label157.Name = "label157";
+            this.label157.Size = new System.Drawing.Size(191, 15);
+            this.label157.TabIndex = 41;
+            this.label157.Text = "文字より前の部分を自動的に確定する";
             // 
             // label_fusionReload
             // 
@@ -7133,32 +7162,15 @@ namespace KanchokuWS.Gui
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // textBox_commitBeforeTailLen
+            // checkBox_useMorphAnalyzer
             // 
-            this.textBox_commitBeforeTailLen.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
-            this.textBox_commitBeforeTailLen.Location = new System.Drawing.Point(69, 56);
-            this.textBox_commitBeforeTailLen.Name = "textBox_commitBeforeTailLen";
-            this.textBox_commitBeforeTailLen.Size = new System.Drawing.Size(34, 19);
-            this.textBox_commitBeforeTailLen.TabIndex = 40;
-            this.textBox_commitBeforeTailLen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label157
-            // 
-            this.label157.AutoSize = true;
-            this.label157.Location = new System.Drawing.Point(105, 58);
-            this.label157.Name = "label157";
-            this.label157.Size = new System.Drawing.Size(191, 15);
-            this.label157.TabIndex = 41;
-            this.label157.Text = "文字より前の部分を自動的に確定する";
-            // 
-            // label158
-            // 
-            this.label158.AutoSize = true;
-            this.label158.Location = new System.Drawing.Point(17, 58);
-            this.label158.Name = "label158";
-            this.label158.Size = new System.Drawing.Size(50, 15);
-            this.label158.TabIndex = 42;
-            this.label158.Text = "文末から";
+            this.checkBox_useMorphAnalyzer.AutoSize = true;
+            this.checkBox_useMorphAnalyzer.Location = new System.Drawing.Point(27, 45);
+            this.checkBox_useMorphAnalyzer.Name = "checkBox_useMorphAnalyzer";
+            this.checkBox_useMorphAnalyzer.Size = new System.Drawing.Size(150, 19);
+            this.checkBox_useMorphAnalyzer.TabIndex = 43;
+            this.checkBox_useMorphAnalyzer.Text = "形態素解析器を使用する";
+            this.checkBox_useMorphAnalyzer.UseVisualStyleBackColor = true;
             // 
             // DlgSettings
             // 
@@ -7852,5 +7864,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label158;
         private System.Windows.Forms.TextBox textBox_commitBeforeTailLen;
         private System.Windows.Forms.Label label157;
+        private System.Windows.Forms.CheckBox checkBox_useMorphAnalyzer;
     }
 }

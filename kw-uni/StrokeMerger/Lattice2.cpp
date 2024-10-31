@@ -939,10 +939,12 @@ namespace lattice2 {
             _LOG_INFOH(_T("ENTER: newCandStr={}, isStrokeBS={}"), newCandStr.debugString(), isStrokeBS);
             bool bAdded = false;
             bool bIgnored = false;
-            std::vector<MString> words;
             const MString& candStr = newCandStr.string();
             MString subStr = substringBetweenPunctuations(candStr);
-            int morphCost = subStr.empty() ? 0 : calcMorphCost(subStr, words);
+
+            std::vector<MString> words;
+            int morphCost = !SETTINGS->useMorphAnalyzer || subStr.empty() ? 0 : calcMorphCost(subStr, words);
+
             int ngramCost = subStr.empty() ? 0 : getNgramCost(subStr) * NGRAM_COST_FACTOR;
             //int morphCost = 0;
             //int ngramCost = candStr.empty() ? 0 : getNgramCost(candStr);

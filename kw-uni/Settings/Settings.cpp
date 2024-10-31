@@ -123,6 +123,7 @@ void Settings::SetValues(const std::map<String, String>& dict) {
 
     SET_BOOL_VALUE(multiStreamMode);
     SET_BOOL_VALUE(collectOnlineNgram);
+    SET_BOOL_VALUE(useMorphAnalyzer);
     SET_INT_VALUE(commitBeforeTailLen);
     SET_INT_VALUE(kanjiNoKanjiBonus);
     SET_KEY_VALUE(mergerCandidateFile);

@@ -1816,6 +1816,7 @@ namespace KanchokuWS.Gui
         void readSettings_tabFusion()
         {
             checkBox_collectOnlineNgram.Checked = Settings.CollectOnlineNgram;
+            checkBox_useMorphAnalyzer.Checked = Settings.UseMorphAnalyzer;
             textBox_commitBeforeTailLen.Text = $"{Settings.CommitBeforeTailLen}";
         }
 
@@ -1826,6 +1827,7 @@ namespace KanchokuWS.Gui
             checkerFusion.ControlEnabler = tabFusionStatusChanged;
 
             checkerFusion.Add(checkBox_collectOnlineNgram);
+            checkerFusion.Add(checkBox_useMorphAnalyzer);
             checkerFusion.Add(textBox_commitBeforeTailLen);
 
             checkerAll.Add(checkerFusion);
@@ -1843,6 +1845,7 @@ namespace KanchokuWS.Gui
             frmMain?.DeactivateDecoderWithModifiersOff();
 
             Settings.SetUserIni("collectOnlineNgram", checkBox_collectOnlineNgram.Checked);
+            Settings.SetUserIni("useMorphAnalyzer", checkBox_useMorphAnalyzer.Checked);
             Settings.SetUserIni("commitBeforeTailLen", textBox_commitBeforeTailLen.Text);
 
             Settings.ReadIniFile(false);
