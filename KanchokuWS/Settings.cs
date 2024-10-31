@@ -147,6 +147,9 @@ namespace KanchokuWS
         /// <summary>アイコンクリック時に設定ダイアログを出す</summary>
         public static bool OpenSettingsDlgWhenIconClicked { get; private set; } = false;
 
+        //-------------------------------------------------------------------------------------
+        // 配列融合
+        //-------------------------------------------------------------------------------------
         /// <summary> 複数配列の融合モードか </summary>        
         public static bool MultiStreamMode { get; set; } = false;
 
@@ -155,6 +158,18 @@ namespace KanchokuWS
 
         /// <summary>前回のデコーダ呼び出しから一定時間が経過したら、MulstStreamCommit を発行</summary>
         public static int CommitMultiStreamElapsedTime { get; set; } = 0;
+
+        /// <summary>Online Ngram 情報を収集する</summary>
+        public static bool CollectOnlineNgram { get; set; }
+
+        /// <summary>末尾から、ここで設定した長さより前の部分を確定させる</summary>
+        public static int CommitBeforeTailLen { get; set; }
+
+        /// <summary>「漢字+の+漢字」のような場合に与えるボーナス</summary>
+        public static int KanjiNoKanjiBonus { get; set; }
+
+        /// <summary>解候補ログファイル</summary>
+        public static string MergerCandidateFile = "tmp/merger_candidates.log";
 
         //-------------------------------------------------------------------------------------
         // 各種ファイル
@@ -930,21 +945,6 @@ namespace KanchokuWS
         public static bool PostRewriteCompatibleWithGooble { get; set; }
 
         //------------------------------------------------------------------------------
-        // 配列融合
-        //------------------------------------------------------------------------------
-        /// <summary>Online Ngram 情報を収集する</summary>
-        public static bool CollectOnlineNgram { get; set; }
-
-        /// <summary>末尾から、ここで設定した長さより前の部分を確定させる</summary>
-        public static int CommitBeforeTailLen { get; set; }
-
-        /// <summary>「漢字+の+漢字」のような場合に与えるボーナス</summary>
-        public static int KanjiNoKanjiBonus { get; set; }
-
-        /// <summary>解候補ログファイル</summary>
-        public static string MergerCandidateFile = "tmp/merger_candidates.log";
-
-        //------------------------------------------------------------------------------
         // ウィンドウClassName
         //------------------------------------------------------------------------------
         /// <summary>ウィンドウClassNameごとの設定</summary>
@@ -1557,6 +1557,10 @@ namespace KanchokuWS
             //PreRewriteCharsIgnoredWhenTrainingMode  = GetString("preRewriteCharsIgnoredWhenTrainingMode");          // かな入力練習モードのときに無視する前置書き換え対象文字
             PreRewriteWaitTimeMsWhenTrainingMode  = GetString(PreRewriteWaitTimeMsWhenTrainingMode_PropName)._parseInt(100);  // かな入力練習モードのときの書き換え対象文字の出力待ち時間
 
+            //------------------------------------------------------------------------------
+            // 配列融合
+            CommitMultiStreamElapsedTime = GetString("commitMultiStreamElapsedTime")._parseInt(0);          // 前回のデコーダ呼び出しから一定時間が経過したら、MulstStreamCommit を発行
+
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定
             winClassSettings.Clear();
@@ -1685,7 +1689,6 @@ namespace KanchokuWS
             CollectOnlineNgram = addDecoderSetting("collectOnlineNgram", true);                 // Online Ngram 情報を収集する
             CommitBeforeTailLen = addDecoderSetting("commitBeforeTailLen", 4);                  // 末尾から、ここで設定した長さより前の部分を確定させる
             KanjiNoKanjiBonus = addDecoderSetting("kanjiNoKanjiBonus", 1500);                   // 「漢字+の+漢字」のような場合に与えるボーナス
-            CommitMultiStreamElapsedTime = GetString("commitMultiStreamElapsedTime")._parseInt(0);
             setDecoderSetting("mergerCandidateFile", MergerCandidateFile );                     // 解候補ログファイル
 
             // キー割当
