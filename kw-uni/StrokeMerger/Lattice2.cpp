@@ -465,8 +465,11 @@ namespace lattice2 {
                     cost += ISOLATED_KATAKANA_COST;
                     continue;
                 }
-            } else if (i == 0 && strLen == 2 && isHighFreqJoshi(str[0]) && utils::is_hiragana(str[1])) {
-                // 2文字のひらがなで、先頭が高頻度の助詞(が、を、に、の、で、は)なら、ボーナスを与付して、ひらがな2文字になるようにする
+            //} else if ((i == 0 || !utils::is_hiragana(str[i - 1])) && strLen == i + 2 && isHighFreqJoshi(str[i]) && utils::is_hiragana(str[i + 1])) {
+                //// 先頭または漢字・カタカナの直後の2文字のひらがなで、1文字目が高頻度の助詞(が、を、に、の、で、は)なら、ボーナスを与付して、ひらがな2文字になるようにする
+                // こちらはいろいろと害が多い(からです⇒朝です、食べさせると青⇒食べ森書がの、など)
+            } else if ((i == 0) && strLen == i + 2 && isHighFreqJoshi(str[i]) && utils::is_hiragana(str[i + 1])) {
+                // 先頭の2文字のひらがなで、1文字目が高頻度の助詞(が、を、に、の、で、は)なら、ボーナスを与付して、ひらがな2文字になるようにする
                 cost -= HEAD_HIGH_FREQ_JOSHI_BONUS;
             }
             // 通常の unigram コストの計上
@@ -818,6 +821,22 @@ namespace lattice2 {
 
         String _debugLog;
 
+    private:
+        std::vector<bool> _rollOverStroke;
+
+        void setRollOverStroke(int count, bool flag) {
+            if (count >= 0 && count < 1024) {
+                if (count >= (int)_rollOverStroke.size()) {
+                    _rollOverStroke.resize(count + 1);
+                }
+                _rollOverStroke[count] = flag;
+            }
+        }
+
+        bool isRollOverStroke(int count) const {
+            return (size_t)count < _rollOverStroke.size() ? _rollOverStroke[count] : false;
+        }
+
     public:
         void setPrevBS(bool flag) {
             _prevBS = flag;
@@ -1027,6 +1046,11 @@ namespace lattice2 {
                     // 素片のストロークと適合する候補
                     int penalty = cand.penalty();
                     _LOG_DETAIL(L"cand.string()=\"{}\", contained in kanjiPreferred={}", to_wstr(cand.string()), _kanjiPreferredNextCands.contains(cand.string()));
+                    if (piece.strokeLen() > 1 && !isRollOverStroke(strokeCount - (piece.strokeLen() - 2))) {
+                        // 複数ストロークによる入力で、2打鍵目がロールオーバーでなかったらペナルティ
+                        penalty += 3000;
+                        _LOG_DETAIL(L"Non rollover multi stroke penalty, total penalty={}", penalty);
+                    }
                     if (!isStrokeBS && /*cand.strokeLen() == topStrokeLen && */ !pieceStr.empty()
                         && (piece.strokeLen() == 1 || std::all_of(pieceStr.begin(), pieceStr.end(), [](mchar_t c) { return utils::is_hiragana(c);}))
                         && _kanjiPreferredNextCands.contains(cand.string())) {
@@ -1166,6 +1190,8 @@ namespace lattice2 {
         void updateKBestList(const std::vector<WordPiece>& pieces, int strokeCount, bool strokeBack) {
             _LOG_DETAIL(_T("ENTER: strokeCount={}, strokeBack={}"), strokeCount, strokeBack);
             _debugLog.clear();
+
+            setRollOverStroke(strokeCount, STATE_COMMON->IsRollOverStroke());
 
             // 候補リストが空の場合は、追加される piece と組み合わせるための、先頭を表すダミーを用意しておく
             addDummyCandidate();
@@ -1401,8 +1427,8 @@ namespace lattice2 {
             int currentStrokeCount = totalStrokeCount - _startStrokeCount + 1;
 
             //_LOG_DEBUGH(_T("ENTER: currentStrokeCount={}, pieces: {}\nkBest:\n{}"), currentStrokeCount, formatStringOfWordPieces(pieces), _kBestList.debugString());
-            _LOG_INFOH(_T("ENTER: _kBestList.size={}, totalStroke={}, currentStroke={}, kanjiPref={}, strokeBack={}, pieces: {}"),
-                _kBestList.size(), totalStrokeCount, currentStrokeCount, kanjiPreferredNext, strokeBack, formatStringOfWordPieces(pieces));
+            _LOG_INFOH(_T("ENTER: _kBestList.size={}, totalStroke={}, currentStroke={}, kanjiPref={}, strokeBack={}, rollOver={}, pieces: {}"),
+                _kBestList.size(), totalStrokeCount, currentStrokeCount, kanjiPreferredNext, strokeBack, STATE_COMMON->IsRollOverStroke(), formatStringOfWordPieces(pieces));
             // endPos における空の k-best path リストを取得
 
             if (pieces.size() == 1) {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KanchokuWS.CombinationKeyStroke;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -281,11 +282,11 @@ namespace KanchokuWS.Gui
             }
 
             var sb = new StringBuilder();
-            void callDecoder(List<int> list, bool bUnconditional)
+            void callDecoder(List<ResultKeyStroke> list, bool bUnconditional)
             {
                 if (list._notEmpty()) {
                     foreach (var dk in list) {
-                        callDecoderWithKey(dk, sb);
+                        callDecoderWithKey(dk.decKey, sb);
                     }
                 }
             }

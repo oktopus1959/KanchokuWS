@@ -571,6 +571,7 @@ public:
     void HandleDeckey(int keyId, mchar_t targetChar, int intputFlags, DecoderOutParams* outParams) override {
         bool decodeKeyboardChar = (intputFlags & (int)InputFlags::DecodeKeyboardChar) != 0;
         bool upperRomanGuideMode = (intputFlags & (int)InputFlags::UpperRomanGuideMode) != 0;
+        bool rollOverStroke = (intputFlags & (int)InputFlags::RollOverStroke) != 0;
 
         LOG_INFO(_T("\nENTER: keyId={:x}H({}={}), targetChar={}, decodeKeyboardChar={}, upperRomanGuideMode={}"),
             keyId, keyId, DECKEY_TO_CHARS->GetDeckeyNameFromId(keyId), to_wstr(targetChar), decodeKeyboardChar, upperRomanGuideMode);
@@ -587,6 +588,7 @@ public:
         STATE_COMMON->CountSameDecKey(keyId);
         if (decodeKeyboardChar) STATE_COMMON->SetDecodeKeyboardCharMode();  // キーボードフェイス文字を返すモード
         if (upperRomanGuideMode) STATE_COMMON->SetUpperRomanGuideMode();    // 英大文字による入力ガイドモード
+        if (rollOverStroke) STATE_COMMON->SetRollOverStroke();              // ロールオーバーされている打鍵
         LOG_INFO(_T("outStack={}"), OUTPUT_STACK->OutputStackBackStrForDebug(10));
 
         // 同時打鍵コードなら、RootStrokeStateを削除しておく⇒と思ったが、実際にはそのようなケースがあったのでコメントアウト(「のにいると」で  KkDF のケース)

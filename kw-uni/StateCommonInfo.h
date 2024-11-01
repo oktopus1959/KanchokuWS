@@ -28,6 +28,9 @@ enum class InputFlags
 
     // 英大文字ロ－マ字による打鍵ガイドモード
     UpperRomanGuideMode = 2,
+
+    // ロールオーバーされている打鍵
+    RollOverStroke = 4,
 };
 
 // resultFlags の詳細
@@ -164,6 +167,9 @@ class StateCommonInfo {
     // 英大文字による入力ガイドモードか
     bool upperRomanGuideMode = false;
 
+    // ロールオーバーされている打鍵か
+    bool rollOverStroke = false;
+
 public:
     StateCommonInfo()
         : layout(VkbLayout::None)
@@ -234,6 +240,7 @@ public:
         convertHiraganaToKatakana = false;
         decodeKeyboardChar = false;
         upperRomanGuideMode = false;
+        rollOverStroke = false;
     }
 
     // デコーダのON時に呼び出される初期化
@@ -300,6 +307,9 @@ public:
 
     inline void SetUpperRomanGuideMode() { upperRomanGuideMode = true; }
     inline bool IsUpperRomanGuideMode() { return upperRomanGuideMode; }
+
+    inline void SetRollOverStroke() { rollOverStroke = true; }
+    inline bool IsRollOverStroke() { return rollOverStroke; }
 
     // 次の選択位置として pos を設定する。
     // pos < 0 なら未選択状態。ただし Horizontal なら先頭候補を優先候補として色付け

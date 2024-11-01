@@ -80,6 +80,9 @@ namespace KanchokuWS
 
         /// <summary>英大文字ロ－マ字による打鍵ガイドモード</summary>
         public const int UpperRomanGuideMode = 2;
+
+        /// <summary>ロールオーバーされている打鍵</summary>
+        public const int RollOverStroke = 4;
     }
 
     /// <summary>

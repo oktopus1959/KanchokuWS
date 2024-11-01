@@ -12,8 +12,64 @@ namespace KanchokuWS.CombinationKeyStroke
 {
     public class KeyHandlerResult
     {
-        public List<int> list;
+        public List<ResultKeyStroke> list;
         public bool bUncoditional;
+    }
+
+    public struct ResultKeyStroke
+    {
+        public int decKey;
+        public bool bRollOverStroke;
+
+        private ResultKeyStroke(int decKey, bool bRollOverStroke)
+        {
+            this.decKey = decKey;
+            this.bRollOverStroke = bRollOverStroke;
+        }
+
+        public static ResultKeyStroke valueOf(int decKey, bool bRollOverStroke)
+        {
+            return new ResultKeyStroke(decKey, bRollOverStroke);
+        }
+    }
+
+    public static class ResultKeyStrokeExtension
+    {
+        public static string _keyString(this IEnumerable<ResultKeyStroke> list)
+        {
+            return list._notEmpty() ? list.Select(x => x._keyString())._join(":") : "";
+        }
+
+        public static string _keyString(this ResultKeyStroke rks)
+        {
+            return $"{rks.decKey._keyString()}/{(rks.bRollOverStroke ? "R" : "S")}";
+        }
+
+        public static List<ResultKeyStroke> _toSingleHitResultKeyStrokeList(this IEnumerable<int> list)
+        {
+            return !list._isEmpty() ? list.Select(x => ResultKeyStroke.valueOf(x, false)).ToList() : new List<ResultKeyStroke>();
+        }
+
+        public static List<ResultKeyStroke> _toResultKeyStrokeList(this IEnumerable<int> list, bool firstRollOverStroke)
+        {
+            var result = new List<ResultKeyStroke>();
+            if (list._notEmpty()) {
+                foreach (var x in list) {
+                    result.Add(ResultKeyStroke.valueOf(x, result._isEmpty() ? firstRollOverStroke : true));
+                }
+            }
+            return result;
+        }
+
+        public static List<ResultKeyStroke> _toSingleHitResultKeyStrokeList(this int deckey)
+        {
+            return Helper.MakeList(ResultKeyStroke.valueOf(deckey, false));
+        }
+
+        public static List<ResultKeyStroke> _toResultKeyStrokeList(this int deckey, bool rollOverStroke)
+        {
+            return Helper.MakeList(ResultKeyStroke.valueOf(deckey, rollOverStroke));
+        }
     }
 
     /// <summary>
@@ -72,7 +128,7 @@ namespace KanchokuWS.CombinationKeyStroke
             }
         }
 
-        public Action<List<int>, bool> KeyProcHandler { get; set; }
+        public Action<List<ResultKeyStroke>, bool> KeyProcHandler { get; set; }
 
         public void InitializeTimer(FrmKanchoku frm)
         {
@@ -312,8 +368,11 @@ namespace KanchokuWS.CombinationKeyStroke
 
             strokeList.CheckComboShiftKeyUpDt(decKey);
 
-            List<int> result = null;
+            List<ResultKeyStroke> result = null;
             bool bUnconditional = false;
+            bool bRollOverStroke = !strokeList.IsComboListEmpty;
+
+            Func<List<ResultKeyStroke>> makeSinleHitResult = () => decKey._toSingleHitResultKeyStrokeList();
 
             try {
                 bool bWaitSecondStroke = frmMain != null && !frmMain.IsDecoderWaitingFirstStroke();
@@ -335,11 +394,11 @@ namespace KanchokuWS.CombinationKeyStroke
                     if (frmMain.DecoderOutput.IsDecoderEisuMode()) {
                         // デコーダが英数モードだったので、そのまま返す
                         logger.InfoH("decoder is EISU mode");
-                        result = Helper.MakeList(decKey);
+                        result = makeSinleHitResult();
                     } else if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
                         // 終端、かつキーリピートが可能なキーだった(BackSpaceとか)ので、それを返す
                         logger.InfoH("terminal and repeatable key");
-                        result = Helper.MakeList(decKey);
+                        result = makeSinleHitResult();
                     } else {
                         logger.InfoH(() => stroke.DebugString());
 
@@ -352,11 +411,11 @@ namespace KanchokuWS.CombinationKeyStroke
                             if (!bDecoderOn) {
                                 // DecoderがOFFのときはキーリピート扱いとする
                                 logger.InfoH("Decoder OFF, so repeat key");
-                                result = Helper.MakeList(decKey);
+                                result = makeSinleHitResult();
                             } else if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
                                 // キーリピートが可能なキー
                                 logger.InfoH("non terminal and repeatable key");
-                                result = Helper.MakeList(decKey);
+                                result = makeSinleHitResult();
                             } else if ((stroke.IsComboShift || strokeList.Count == 2 && strokeList.First.IsComboShift) && handleComboKeyRepeat != null) {
                                 // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出すだけで、キーリピートは行わない(つまりシフト扱い)
                                 List<int> list = new List<int>();
@@ -410,7 +469,7 @@ namespace KanchokuWS.CombinationKeyStroke
                                     // 第2打鍵以降の場合は、同時打鍵チェック
                                     logger.InfoH(() => $"Check key combo: strokeList={strokeList.ToDebugString()}");
                                     bool bTimer = false;
-                                    result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer, out bUnconditional);
+                                    result = strokeList.GetKeyCombinationWhenKeyDown(out bTimer, out bUnconditional)._toResultKeyStrokeList(bRollOverStroke);
                                     if (result._isEmpty()) {
                                         logger.InfoH($"result is EMPTY: bTimer={bTimer}");
                                         if (bTimer || strokeList.Count == 2 /* strokeList.IsSuccessiveShift3rdOrLaterKey() /*strokeList.IsSuccessiveShift2ndOr3rdKey()*/) {
@@ -436,7 +495,7 @@ namespace KanchokuWS.CombinationKeyStroke
                             } else {
                                 // 同時打鍵には使われないキーなので、そのまま返す
                                 logger.InfoH("Return ASIS");
-                                result = Helper.MakeList(decKey);
+                                result = makeSinleHitResult();
                             }
                         }
                     }
@@ -517,8 +576,9 @@ namespace KanchokuWS.CombinationKeyStroke
             // 第1打鍵待ちに戻ったら、一時的な同時打鍵無効化をキャンセルする
             //checkStrokeCountReset();
 
+            bool bRollOverStroke = !strokeList.IsComboListEmpty;
             bool bUnconditional = false;
-            var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, dt, bDecoderOn, out bUnconditional);
+            var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, dt, bDecoderOn, out bUnconditional)._toResultKeyStrokeList(bRollOverStroke);
 
             // 一時的な同時打鍵無効化になったら、チェックポイントの保存
             //saveCheckPointDeckeyCount();
@@ -576,17 +636,17 @@ namespace KanchokuWS.CombinationKeyStroke
         //    logger.InfoH(() => $"LEAVE: IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, checkPointKeyDownCount={checkPointKeyDownCount}");
         //}
 
-        private void checkResultAgainstDecoderState(List<int> result)
+        private void checkResultAgainstDecoderState(List<ResultKeyStroke> result)
         {
             if (Settings.MultiStreamMode) return;
 
             if (result._safeCount() > 1 && frmMain != null && !frmMain.IsDecoderWaitingFirstStroke()) {
                 // After 2 stroke or later
                 logger.InfoH("Decoder waiting 2nd or later stroke");
-                if (result._getFirst() > DecoderKeys.COMBO_DECKEY_START) {
+                if (result._getFirst().decKey > DecoderKeys.COMBO_DECKEY_START) {
                     result.RemoveAt(0);
                     for (int i = 0; i < result.Count; ++i) {
-                        result[i] %= DecoderKeys.PLANE_DECKEY_NUM;
+                        result[i] = ResultKeyStroke.valueOf(result[i].decKey % DecoderKeys.PLANE_DECKEY_NUM, result[i].bRollOverStroke);
                     }
                 }
             }
