@@ -370,7 +370,6 @@ namespace KanchokuWS.CombinationKeyStroke
 
             List<ResultKeyStroke> result = null;
             bool bUnconditional = false;
-            bool bRollOverStroke = !strokeList.IsComboListEmpty;
 
             Func<List<ResultKeyStroke>> makeSinleHitResult = () => decKey._toSingleHitResultKeyStrokeList();
 
@@ -447,11 +446,14 @@ namespace KanchokuWS.CombinationKeyStroke
                             }
                             logger.InfoH(() => $"combo: {(combo == null ? "null" : "FOUND")}, IsTerminal={combo?.IsTerminal ?? true}, " +
                                 $"StrokeList.Count={strokeList.Count}, bWaitSecondStroke={bWaitSecondStroke}, IsTemporaryComboDisabled={strokeList.IsTemporaryComboDisabled}, ");
+
+                            strokeList.Add(stroke);
+                            bool bRollOverStroke = strokeList.FirstDownKey?.IsRollOver ?? false;
+
                             if ((!bWaitSecondStroke || !strokeList.IsTemporaryComboDisabled) && ((combo != null && !combo.IsTerminal) || !strokeList.IsEmpty())) {
                                 // 第1打鍵待ちか、同時打鍵が有効であって、
                                 // 押下されたのは同時打鍵に使われる可能性のあるキーだった、あるいは同時打鍵シフト後の第2打鍵だった
                                 // 打鍵リストに追加して同時打鍵判定を行う
-                                strokeList.Add(stroke);
                                 if (strokeList.Count == 1) {
                                     // 第1打鍵の場合
                                     if (!stroke.IsComboShift) {
@@ -495,6 +497,7 @@ namespace KanchokuWS.CombinationKeyStroke
                             } else {
                                 // 同時打鍵には使われないキーなので、そのまま返す
                                 logger.InfoH("Return ASIS");
+                                strokeList.RemoveUsedKey(decKey);
                                 result = makeSinleHitResult();
                             }
                         }
@@ -576,7 +579,7 @@ namespace KanchokuWS.CombinationKeyStroke
             // 第1打鍵待ちに戻ったら、一時的な同時打鍵無効化をキャンセルする
             //checkStrokeCountReset();
 
-            bool bRollOverStroke = !strokeList.IsComboListEmpty;
+            bool bRollOverStroke = strokeList.FirstUnprocKey?.IsRollOver ?? false;
             bool bUnconditional = false;
             var result = strokeList.GetKeyCombinationWhenKeyUp(decKey, dt, bDecoderOn, out bUnconditional)._toResultKeyStrokeList(bRollOverStroke);
 

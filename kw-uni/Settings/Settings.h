@@ -107,6 +107,9 @@ struct Settings {
     int commitBeforeTailLen = 4;            // 末尾から、ここで設定した長さより前の部分を確定させる
     int kanjiNoKanjiBonus = 1500;           // 「漢字+の+漢字」のような場合に与えるボーナス
     String mergerCandidateFile;             // 解候補ログファイル
+    int onlineTrigramBonusFactor = 100;     // Online 3gram のカウントからボーナス値を算出する際の係数
+    int onlineTrigramTier1Num = 5;          // Online 3gram の Tier1 の数
+    int onlineTrigramTier2Num = 10;         // Online 3gram の Tier2 の数
 
     // for Debug
     bool debughState = false;               // State モジュールで DebugH を有効にする

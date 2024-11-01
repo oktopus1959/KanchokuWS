@@ -86,6 +86,9 @@ namespace lattice2 {
     // 2文字の形態素で先頭が高頻度助詞の場合のボーナス
     int HEAD_HIGH_FREQ_JOSHI_BONUS = 3000;
 
+    // SingleHitの高頻度助詞が、マルチストロークに使われているケースのコスト
+    int SINGLE_HIT_HIGH_FREQ_JOSHI_KANJI_COST = 5000;
+
     // 孤立したカタカナのコスト
     int ISOLATED_KATAKANA_COST = 3000;
 
@@ -104,9 +107,11 @@ namespace lattice2 {
     // Online Ngram のカウントを水増しする係数
     int ONLINE_FREQ_BOOST_FACTOR = 10;
 
-    // Online 3gram のカウントからボーナス値を算出する際の係数
+    //// Online 3gram のカウントからボーナス値を算出する際の係数
     //int ONLINE_TRIGRAM_BONUS_FACTOR = 100;
-    int ONLINE_TRIGRAM_BONUS_FACTOR = 10;
+
+    //int TIER1_NUM = 5;
+    //int TIER2_NUM = 10;
 
     // int STROKE_COST = 150;
 
@@ -146,21 +151,24 @@ namespace lattice2 {
             if (total > 0) ngramCosts[word] = DEFAULT_MAX_COST - (int)(std::log(total) * ngramLogFactor);
         } else if (word.size() == 3) {
             // 3gramは負のコスト
-            //int tier1 = 0;
-            //int tier2 = 0;
-            //int tier3 = 0;
-            //if (onlCount >= 21) {
-            //    tier3 = onlCount - 21;
-            //    tier2 = 20;
-            //    tier1 = 1;
-            //} else if (onlCount >= 1) {
-            //    tier2 = onlCount - 1;
-            //    tier1 = 1;
-            //}
-            //ngramCosts[word] = -(tier1 * (ONLINE_TRIGRAM_BONUS_FACTOR*10) + tier2 * ONLINE_TRIGRAM_BONUS_FACTOR + (tier3 + sysCount) * (ONLINE_TRIGRAM_BONUS_FACTOR/10));
+            int tier1 = 0;
+            int tier2 = 0;
+            int tier3 = 0;
+            int bonumFactor = SETTINGS->onlineTrigramBonusFactor;
+            int nTier1 = SETTINGS->onlineTrigramTier1Num;
+            int nTier2 = SETTINGS->onlineTrigramTier2Num;
+            if (onlCount >= nTier1 + nTier2) {
+                tier3 = onlCount - nTier1 + nTier2;
+                tier2 = nTier2;
+                tier1 = nTier1;
+            } else if (onlCount >= nTier1) {
+                tier2 = onlCount - nTier1;
+                tier1 = nTier1;
+            }
+            ngramCosts[word] = -(tier1 * (bonumFactor*10) + tier2 * bonumFactor + (tier3 + sysCount) * (bonumFactor/10));
 
-            // 上のやり方は、間違いの方の影響も拡大してしまうので、結局、あまり意味が無いと思われる
-            ngramCosts[word] = -(onlCount * ONLINE_TRIGRAM_BONUS_FACTOR + (sysCount + usrCount) * (ONLINE_TRIGRAM_BONUS_FACTOR/10));
+            //// 上のやり方は、間違いの方の影響も拡大してしまうので、結局、あまり意味が無いと思われる
+            //ngramCosts[word] = -(onlCount * bonumFactor + (sysCount + usrCount) * (bonumFactor/10));
         }
         if (ngramCosts[word] < -100000) {
             LOG_WARNH(L"ABNORMAL COST: word={}, cost={}, sysCount={}, usrCount={}, onlCount={}", to_wstr(word), ngramCosts[word], sysCount, usrCount, onlCount);
@@ -404,10 +412,17 @@ namespace lattice2 {
             auto word = utils::safe_substr(str, pos, 4);
             xCost = getExtraNgramCost(word);
             _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(word), xCost);
-            totalCost += xCost;
-            _LOG_DETAIL(L"FOUND: katakana={}, totalCost={}", katakanaWord, totalCost);
-            pos += 3;
-            restlen -= 3;
+            if (xCost == 0) {
+                word = utils::safe_substr(str, pos, 3);
+                xCost = getExtraNgramCost(word);
+                _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(word), xCost);
+            }
+            if (xCost == 0) {
+                totalCost += xCost;
+                _LOG_DETAIL(L"FOUND: katakana={}, totalCost={}", katakanaWord, totalCost);
+            }
+            pos += word.size() - 1;
+            restlen -= word.size() - 1;
         }
         if (restlen == 5) {
             // 5->3:3
@@ -419,12 +434,35 @@ namespace lattice2 {
             pos += 2;
             restlen -= 2;
         }
-        if (restlen == 3 || restlen == 4) {
+        if (restlen == 4) {
             auto word = utils::safe_substr(str, pos, restlen);
             xCost = getExtraNgramCost(word);
             _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(word), xCost);
-            totalCost += xCost;
-            _LOG_DETAIL(L"FOUND: katakana={}, totalCost={}", katakanaWord, totalCost);
+            if (xCost != 0) {
+                totalCost += xCost;
+                _LOG_DETAIL(L"FOUND: katakana={}, totalCost={}", katakanaWord, totalCost);
+                pos += 3;
+                restlen -= 3;
+            } else {
+                word = utils::safe_substr(str, pos, 3);
+                xCost = getExtraNgramCost(word);
+                _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(word), xCost);
+                if (xCost != 0) {
+                    totalCost += xCost;
+                    _LOG_DETAIL(L"FOUND: katakana={}, totalCost={}", katakanaWord, totalCost);
+                    pos += 1;
+                    restlen -= 1;
+                }
+            }
+        }
+        if (restlen == 3) {
+            auto word = utils::safe_substr(str, pos, restlen);
+            xCost = getExtraNgramCost(word);
+            _LOG_DETAIL(L"KATAKANA: extraWord={}, xCost={}", to_wstr(word), xCost);
+            if (xCost != 0) {
+                totalCost += xCost;
+                _LOG_DETAIL(L"FOUND: katakana={}, totalCost={}", katakanaWord, totalCost);
+            }
         }
         return totalCost;
     }
@@ -822,8 +860,17 @@ namespace lattice2 {
         String _debugLog;
 
     private:
+        std::vector<bool> _highFreqJoshiStroke;
         std::vector<bool> _rollOverStroke;
 
+        void setHighFreqJoshiStroke(int count, mchar_t ch) {
+            if (count >= 0 && count < 1024) {
+                if (count >= (int)_highFreqJoshiStroke.size()) {
+                    _highFreqJoshiStroke.resize(count + 1);
+                }
+                if (isHighFreqJoshi(ch)) _highFreqJoshiStroke[count] = true;
+            }
+        }
         void setRollOverStroke(int count, bool flag) {
             if (count >= 0 && count < 1024) {
                 if (count >= (int)_rollOverStroke.size()) {
@@ -833,8 +880,8 @@ namespace lattice2 {
             }
         }
 
-        bool isRollOverStroke(int count) const {
-            return (size_t)count < _rollOverStroke.size() ? _rollOverStroke[count] : false;
+        bool isSingleHitHighFreqJoshi(int count) const {
+            return (size_t)count < _highFreqJoshiStroke.size() && (size_t)count < _rollOverStroke.size() ? _highFreqJoshiStroke[count] &&  !_rollOverStroke[count] : false;
         }
 
     public:
@@ -1034,11 +1081,16 @@ namespace lattice2 {
     private:
         // 素片のストロークと適合する候補だけを追加
         void addOnePiece(std::vector<CandidateString>& newCandidates, const WordPiece& piece, int strokeCount) {
-            _LOG_DETAIL(_T("CALLED: _candidates.size={}, piece={}"), _candidates.size(), piece.debugString());
+            _LOG_DETAIL(_T("ENTER: _candidates.size={}, piece={}"), _candidates.size(), piece.debugString());
             bool bAutoBushuFound = false;           // 自動部首合成は一回だけ実行する
             bool isStrokeBS = piece.numBS() > 0;
             const MString& pieceStr = piece.getString();
             //int topStrokeLen = -1;
+
+            if (piece.getString().size() == 1) setHighFreqJoshiStroke(strokeCount, piece.getString()[0]);
+
+            int singleHitHighFreqJoshiCost = piece.strokeLen() > 1 && isSingleHitHighFreqJoshi(strokeCount - (piece.strokeLen() - 1)) ? SINGLE_HIT_HIGH_FREQ_JOSHI_KANJI_COST : 0;
+
             for (const auto& cand : _candidates) {
                 //if (topStrokeLen < 0) topStrokeLen = cand.strokeLen();
                 _LOG_DETAIL(_T("cand.strokeLen={}, piece.strokeLen()={}, strokeCount={}"), cand.strokeLen(),piece.strokeLen(), strokeCount);
@@ -1046,9 +1098,9 @@ namespace lattice2 {
                     // 素片のストロークと適合する候補
                     int penalty = cand.penalty();
                     _LOG_DETAIL(L"cand.string()=\"{}\", contained in kanjiPreferred={}", to_wstr(cand.string()), _kanjiPreferredNextCands.contains(cand.string()));
-                    if (piece.strokeLen() > 1 && !isRollOverStroke(strokeCount - (piece.strokeLen() - 2))) {
+                    if (singleHitHighFreqJoshiCost > 0) {
                         // 複数ストロークによる入力で、2打鍵目がロールオーバーでなかったらペナルティ
-                        penalty += 3000;
+                        penalty += singleHitHighFreqJoshiCost;
                         _LOG_DETAIL(L"Non rollover multi stroke penalty, total penalty={}", penalty);
                     }
                     if (!isStrokeBS && /*cand.strokeLen() == topStrokeLen && */ !pieceStr.empty()
@@ -1075,6 +1127,7 @@ namespace lattice2 {
                     }
                 }
             }
+            _LOG_DETAIL(_T("LEAVE"));
         }
 
         // 末尾から、指定の長さより以前の部分を確定させる
@@ -1191,7 +1244,7 @@ namespace lattice2 {
             _LOG_DETAIL(_T("ENTER: strokeCount={}, strokeBack={}"), strokeCount, strokeBack);
             _debugLog.clear();
 
-            setRollOverStroke(strokeCount, STATE_COMMON->IsRollOverStroke());
+            setRollOverStroke(strokeCount - 1, STATE_COMMON->IsRollOverStroke());
 
             // 候補リストが空の場合は、追加される piece と組み合わせるための、先頭を表すダミーを用意しておく
             addDummyCandidate();

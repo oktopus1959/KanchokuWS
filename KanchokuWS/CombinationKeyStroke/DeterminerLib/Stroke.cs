@@ -105,6 +105,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void SetUpKey() { IsUpKey = true; }
 
+        /// <summary>ロールオーバー打鍵されたキーか</summary>
+        public bool IsRollOver { get; private set; }
+
+        public void SetRollOver() { IsRollOver = true; }
+
         /// <summary>削除されるべきキーか</summary>
         public bool ToBeRemoved => _toBeRemoved;
         //public bool ToBeRemoved => _toBeRemoved || IsUsedForOneshot;

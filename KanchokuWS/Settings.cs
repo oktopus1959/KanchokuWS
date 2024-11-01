@@ -171,6 +171,15 @@ namespace KanchokuWS
         /// <summary>「漢字+の+漢字」のような場合に与えるボーナス</summary>
         public static int KanjiNoKanjiBonus { get; set; }
 
+        /// <summary>Online 3gram のカウントからボーナス値を算出する際の係数</summary>
+        public static int OnlineTrigramBonusFactor { get; set; }
+
+        /// <summary>Online 3gram の Tier1 の数</summary>
+        public static int OnlineTrigramTier1Num {  get; set; }
+
+        /// <summary>Online 3gram の Tier2 の数</summary>
+        public static int OnlineTrigramTier2Num {  get; set; }
+
         /// <summary>解候補ログファイル</summary>
         public static string MergerCandidateFile = "tmp/merger_candidates.log";
 
@@ -1693,6 +1702,9 @@ namespace KanchokuWS
             UseMorphAnalyzer = addDecoderSetting("useMorphAnalyzer", true);                     // 形態素解析器を使用する
             CommitBeforeTailLen = addDecoderSetting("commitBeforeTailLen", 4);                  // 末尾から、ここで設定した長さより前の部分を確定させる
             KanjiNoKanjiBonus = addDecoderSetting("kanjiNoKanjiBonus", 1500);                   // 「漢字+の+漢字」のような場合に与えるボーナス
+            OnlineTrigramBonusFactor = addDecoderSetting("onlineTrigramBonusFactor", 100);      // Online 3gram のカウントからボーナス値を算出する際の係数
+            OnlineTrigramTier1Num = addDecoderSetting("onlineTrigramTier1Num", 5);              // Online 3gram の Tier1 の数
+            OnlineTrigramTier2Num = addDecoderSetting("onlineTrigramTier2Num", 10);             // Online 3gram の Tier2 の数
             setDecoderSetting("mergerCandidateFile", MergerCandidateFile );                     // 解候補ログファイル
 
             // キー割当

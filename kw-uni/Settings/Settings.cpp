@@ -126,6 +126,9 @@ void Settings::SetValues(const std::map<String, String>& dict) {
     SET_BOOL_VALUE(useMorphAnalyzer);
     SET_INT_VALUE(commitBeforeTailLen);
     SET_INT_VALUE(kanjiNoKanjiBonus);
+    SET_INT_VALUE(onlineTrigramBonusFactor);
+    SET_INT_VALUE(onlineTrigramTier1Num);
+    SET_INT_VALUE(onlineTrigramTier2Num);
     SET_KEY_VALUE(mergerCandidateFile);
 
     // 機能へのキー割り当ての変更

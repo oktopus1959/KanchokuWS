@@ -502,6 +502,13 @@ namespace KanchokuWS.Gui
             this.checkBox_convertJaComma = new System.Windows.Forms.CheckBox();
             this.checkBox_convertJaPeriod = new System.Windows.Forms.CheckBox();
             this.tabPage_fusion = new System.Windows.Forms.TabPage();
+            this.textBox_onlineTrigramTier2Num = new System.Windows.Forms.TextBox();
+            this.label161 = new System.Windows.Forms.Label();
+            this.textBox_onlineTrigramTier1Num = new System.Windows.Forms.TextBox();
+            this.label160 = new System.Windows.Forms.Label();
+            this.textBox_onlineTrigramBonusFactor = new System.Windows.Forms.TextBox();
+            this.label159 = new System.Windows.Forms.Label();
+            this.checkBox_useMorphAnalyzer = new System.Windows.Forms.CheckBox();
             this.label158 = new System.Windows.Forms.Label();
             this.textBox_commitBeforeTailLen = new System.Windows.Forms.TextBox();
             this.label157 = new System.Windows.Forms.Label();
@@ -577,7 +584,6 @@ namespace KanchokuWS.Gui
             this.button_developClose = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.checkBox_useMorphAnalyzer = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basic.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -6236,6 +6242,12 @@ namespace KanchokuWS.Gui
             // 
             // tabPage_fusion
             // 
+            this.tabPage_fusion.Controls.Add(this.textBox_onlineTrigramTier2Num);
+            this.tabPage_fusion.Controls.Add(this.label161);
+            this.tabPage_fusion.Controls.Add(this.textBox_onlineTrigramTier1Num);
+            this.tabPage_fusion.Controls.Add(this.label160);
+            this.tabPage_fusion.Controls.Add(this.textBox_onlineTrigramBonusFactor);
+            this.tabPage_fusion.Controls.Add(this.label159);
             this.tabPage_fusion.Controls.Add(this.checkBox_useMorphAnalyzer);
             this.tabPage_fusion.Controls.Add(this.label158);
             this.tabPage_fusion.Controls.Add(this.textBox_commitBeforeTailLen);
@@ -6252,6 +6264,70 @@ namespace KanchokuWS.Gui
             this.tabPage_fusion.TabIndex = 11;
             this.tabPage_fusion.Text = "配列融合";
             this.tabPage_fusion.UseVisualStyleBackColor = true;
+            // 
+            // textBox_onlineTrigramTier2Num
+            // 
+            this.textBox_onlineTrigramTier2Num.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.textBox_onlineTrigramTier2Num.Location = new System.Drawing.Point(317, 179);
+            this.textBox_onlineTrigramTier2Num.Name = "textBox_onlineTrigramTier2Num";
+            this.textBox_onlineTrigramTier2Num.Size = new System.Drawing.Size(34, 19);
+            this.textBox_onlineTrigramTier2Num.TabIndex = 49;
+            this.textBox_onlineTrigramTier2Num.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label161
+            // 
+            this.label161.AutoSize = true;
+            this.label161.Location = new System.Drawing.Point(24, 181);
+            this.label161.Name = "label161";
+            this.label161.Size = new System.Drawing.Size(144, 15);
+            this.label161.TabIndex = 48;
+            this.label161.Text = "Online 3gram の Tier2 の数";
+            // 
+            // textBox_onlineTrigramTier1Num
+            // 
+            this.textBox_onlineTrigramTier1Num.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.textBox_onlineTrigramTier1Num.Location = new System.Drawing.Point(317, 157);
+            this.textBox_onlineTrigramTier1Num.Name = "textBox_onlineTrigramTier1Num";
+            this.textBox_onlineTrigramTier1Num.Size = new System.Drawing.Size(34, 19);
+            this.textBox_onlineTrigramTier1Num.TabIndex = 47;
+            this.textBox_onlineTrigramTier1Num.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label160
+            // 
+            this.label160.AutoSize = true;
+            this.label160.Location = new System.Drawing.Point(24, 159);
+            this.label160.Name = "label160";
+            this.label160.Size = new System.Drawing.Size(144, 15);
+            this.label160.TabIndex = 46;
+            this.label160.Text = "Online 3gram の Tier1 の数";
+            // 
+            // textBox_onlineTrigramBonusFactor
+            // 
+            this.textBox_onlineTrigramBonusFactor.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.textBox_onlineTrigramBonusFactor.Location = new System.Drawing.Point(317, 135);
+            this.textBox_onlineTrigramBonusFactor.Name = "textBox_onlineTrigramBonusFactor";
+            this.textBox_onlineTrigramBonusFactor.Size = new System.Drawing.Size(34, 19);
+            this.textBox_onlineTrigramBonusFactor.TabIndex = 45;
+            this.textBox_onlineTrigramBonusFactor.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label159
+            // 
+            this.label159.AutoSize = true;
+            this.label159.Location = new System.Drawing.Point(24, 137);
+            this.label159.Name = "label159";
+            this.label159.Size = new System.Drawing.Size(291, 15);
+            this.label159.TabIndex = 44;
+            this.label159.Text = "Online 3gram のカウントからボーナス値を算出する際の係数";
+            // 
+            // checkBox_useMorphAnalyzer
+            // 
+            this.checkBox_useMorphAnalyzer.AutoSize = true;
+            this.checkBox_useMorphAnalyzer.Location = new System.Drawing.Point(27, 45);
+            this.checkBox_useMorphAnalyzer.Name = "checkBox_useMorphAnalyzer";
+            this.checkBox_useMorphAnalyzer.Size = new System.Drawing.Size(150, 19);
+            this.checkBox_useMorphAnalyzer.TabIndex = 43;
+            this.checkBox_useMorphAnalyzer.Text = "形態素解析器を使用する";
+            this.checkBox_useMorphAnalyzer.UseVisualStyleBackColor = true;
             // 
             // label158
             // 
@@ -6291,6 +6367,7 @@ namespace KanchokuWS.Gui
             this.label_fusionReload.TabIndex = 39;
             this.label_fusionReload.Text = "再読込しました";
             this.label_fusionReload.Visible = false;
+            this.label_fusionReload.VisibleChanged += new System.EventHandler(this.label_fusionReload_VisibleChanged);
             // 
             // button_fusionReload
             // 
@@ -6316,6 +6393,7 @@ namespace KanchokuWS.Gui
             this.label_okResultFusion.TabIndex = 38;
             this.label_okResultFusion.Text = "適用しました";
             this.label_okResultFusion.Visible = false;
+            this.label_okResultFusion.VisibleChanged += new System.EventHandler(this.label_okResultFusion_VisibleChanged);
             // 
             // button_fusionEnter
             // 
@@ -7162,16 +7240,6 @@ namespace KanchokuWS.Gui
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // checkBox_useMorphAnalyzer
-            // 
-            this.checkBox_useMorphAnalyzer.AutoSize = true;
-            this.checkBox_useMorphAnalyzer.Location = new System.Drawing.Point(27, 45);
-            this.checkBox_useMorphAnalyzer.Name = "checkBox_useMorphAnalyzer";
-            this.checkBox_useMorphAnalyzer.Size = new System.Drawing.Size(150, 19);
-            this.checkBox_useMorphAnalyzer.TabIndex = 43;
-            this.checkBox_useMorphAnalyzer.Text = "形態素解析器を使用する";
-            this.checkBox_useMorphAnalyzer.UseVisualStyleBackColor = true;
-            // 
             // DlgSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -7865,5 +7933,11 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.TextBox textBox_commitBeforeTailLen;
         private System.Windows.Forms.Label label157;
         private System.Windows.Forms.CheckBox checkBox_useMorphAnalyzer;
+        private System.Windows.Forms.TextBox textBox_onlineTrigramBonusFactor;
+        private System.Windows.Forms.Label label159;
+        private System.Windows.Forms.TextBox textBox_onlineTrigramTier2Num;
+        private System.Windows.Forms.Label label161;
+        private System.Windows.Forms.TextBox textBox_onlineTrigramTier1Num;
+        private System.Windows.Forms.Label label160;
     }
 }

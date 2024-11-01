@@ -185,7 +185,11 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool IsUnprocListEmpty => unprocList.Count == 0;
 
+        public Stroke FirstUnprocKey => unprocList._getFirst();
+
         public bool IsDownKeyListEmpty => downKeyList.Count == 0;
+
+        public Stroke FirstDownKey => downKeyList._getFirst();
 
         public Stroke First => unprocList._getFirst();
 
@@ -250,6 +254,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void Add(Stroke s)
         {
+            if (!IsComboListEmpty || !IsDownKeyListEmpty) s.SetRollOver();
             downKeyList.Add(s);
             unprocList.Add(s);
         }
@@ -259,6 +264,16 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             for (int i = 0; i < downKeyList.Count; i++) {
                 if (downKeyList[i].OrigDecoderKey == decKey) {
                     downKeyList.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        public void RemoveUsedKey(int decKey)
+        {
+            for (int i = 0; i < unprocList.Count; i++) {
+                if (unprocList[i].OrigDecoderKey == decKey) {
+                    unprocList.RemoveAt(i);
                     break;
                 }
             }
