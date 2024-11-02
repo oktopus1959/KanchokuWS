@@ -651,6 +651,11 @@ namespace {
                 if (!result.outStr.empty() || result.numBS > 0) {
                     resultOut.setResult(result.outStr, (int)(result.numBS));
                     SetTranslatedOutString(resultOut);
+                    _LOG_DEBUGH(_T("commitByPunctuation={}, outStr={}"), SETTINGS->commitByPunctuation, to_wstr(result.outStr));
+                    if (SETTINGS->commitByPunctuation && utils::is_punct(result.outStr.back())) {
+                        _LOG_DEBUGH(_T("commit by punctuation"));
+                        WORD_LATTICE->clearAll();
+                    }
                 } else {
                     _LOG_DEBUGH(_T("NO resultOut"));
                 }
