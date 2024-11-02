@@ -130,6 +130,9 @@ namespace lattice2 {
     std::map<MString, int> systemNgram;
     int systemMaxFreq = 0;
 
+    // システムで用意した単語コスト(3gram以上、sysCost < uesrCost のものだけ計上)
+    std::map<MString, int> systemWordCosts;
+
     // 利用者が入力した文字列から抽出したNgram統計
     std::map<MString, int> onlineNgram;
     int onlineMaxFreq = 0;
@@ -218,10 +221,19 @@ namespace lattice2 {
                 _updateNgramCost(word, 0, 0, onlCount);
             }
         }
+        for (auto iter = systemWordCosts.begin(); iter != systemWordCosts.end(); ++iter) {
+            const MString& word = iter->first;
+            int sysCost = iter->second;
+            if (sysCost < ngramCosts[word]) {
+                // update
+                ngramCosts[word] = sysCost;
+            }
+        }
         _LOG_DETAIL(L"LEAVE: ngramCosts.size={}", ngramCosts.size());
     }
 
 #define SYSTEM_NGRAM_FILE L"mixed_all.ngram.txt"
+#define SYSTEM_COST_FILE  L"katakana.cost.txt"
 #define ONLINE_NGRAM_FILE L"online.ngram.txt"
 #define USER_COST_FILE    L"userword.cost.txt"
 
@@ -247,9 +259,30 @@ namespace lattice2 {
         return maxFreq;
     }
 
+    void _loadSystemCostFile() {
+        auto path = utils::joinPath(SETTINGS->rootDir, SYSTEM_COST_FILE);
+        _LOG_INFOH(_T("LOAD: {}"), path.c_str());
+        utils::IfstreamReader reader(path);
+        if (reader.success()) {
+            systemWordCosts.clear();
+            for (const auto& line : reader.getAllLines()) {
+                auto items = utils::split(utils::replace_all(utils::strip(utils::reReplace(line, L"#.*$", L"")), L"[ \t]+", L"\t"), '\t');
+                if (!items.empty() && !items[0].empty() && items[0][0] != L'#') {
+                    MString word = to_mstr(items[0]);
+                    if (word.size() >= 2) {
+                        // bigram以上のみ
+                        if (items.size() >= 2 && isDecimalString(items[1])) {
+                            systemWordCosts[word] = std::stoi(items[1]) - DEFAULT_WORD_BONUS;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     void _loadUserCostFile() {
         auto path = utils::joinPath(SETTINGS->rootDir, USER_COST_FILE);
-        _LOG_DEBUGH(_T("LOAD: {}"), path.c_str());
+        _LOG_INFOH(_T("LOAD: {}"), path.c_str());
         utils::IfstreamReader reader(path);
         if (reader.success()) {
             userWordCosts.clear();
@@ -279,16 +312,15 @@ namespace lattice2 {
     }
 
     void loadCostFile(bool onlyUserFile = false) {
-        _LOG_INFOH(L"CALLED: onlyUserFile={}", onlyUserFile);
+        _LOG_INFOH(L"ENTER: onlyUserFile={}", onlyUserFile);
         if (!onlyUserFile) {
-#ifdef NDEBUG
             systemMaxFreq = _loadNgramFile(SYSTEM_NGRAM_FILE, systemNgram);
-#endif
             onlineMaxFreq = _loadNgramFile(ONLINE_NGRAM_FILE, onlineNgram);
-
+            _loadSystemCostFile();
         }
         _loadUserCostFile();
         makeInitialNgramCostMap();
+        _LOG_INFOH(L"LEAVE");
     }
 
     void saveOnlineCostFile() {
@@ -498,11 +530,12 @@ namespace lattice2 {
         // unigram
         for (int i = 0; i < strLen; ++i) {
             if (utils::is_katakana(str[i])) {
-                if ((i == 0 || !utils::is_katakana(str[i-1])) && (i + 1 == strLen || !utils::is_katakana(str[i+1]))) {
-                    // 孤立したカタカナは高いコストを設定
-                    cost += ISOLATED_KATAKANA_COST;
-                    continue;
-                }
+                //if ((i > 0 && !utils::is_katakana(str[i-1])) && (i + 2 < strLen && !utils::is_katakana(str[i+1]))) {
+                //    // 末尾以外の孤立したカタカナは高いコストを設定(i+2<strLenとしているのは、末尾がカタカナの第1打鍵である可能性があるため)
+                //    // 先頭も除くようにすると、「ある」が「セ」になってしまう
+                //    cost += ISOLATED_KATAKANA_COST;
+                //    continue;
+                //}
             //} else if ((i == 0 || !utils::is_hiragana(str[i - 1])) && strLen == i + 2 && isHighFreqJoshi(str[i]) && utils::is_hiragana(str[i + 1])) {
                 //// 先頭または漢字・カタカナの直後の2文字のひらがなで、1文字目が高頻度の助詞(が、を、に、の、で、は)なら、ボーナスを与付して、ひらがな2文字になるようにする
                 // こちらはいろいろと害が多い(からです⇒朝です、食べさせると青⇒食べ森書がの、など)
