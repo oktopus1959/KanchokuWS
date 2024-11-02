@@ -1888,6 +1888,17 @@ namespace KanchokuWS.Gui
             }
         }
 
+        /// <summary> 単語コストファイルの再読込</summary>
+        private void button_reloadDict_Click(object sender, EventArgs e)
+        {
+            frmMain?.ExecCmdDecoder("reloadCostFile", "");
+        }
+
+        private void button_showCandidates_Click(object sender, EventArgs e)
+        {
+            frmMain?.ShowDlgCandidateLog(this, Right - 10, Top);
+        }
+
         //-----------------------------------------------------------------------------------
         //  その他設定
         //-----------------------------------------------------------------------------------
