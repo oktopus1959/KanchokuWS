@@ -89,8 +89,8 @@ namespace lattice2 {
     // SingleHitの高頻度助詞が、マルチストロークに使われているケースのコスト
     int SINGLE_HIT_HIGH_FREQ_JOSHI_KANJI_COST = 5000;
 
-    // 孤立したカタカナのコスト
-    int ISOLATED_KATAKANA_COST = 3000;
+    // 孤立した小書きカタカナのコスト
+    int ISOLATED_SMALL_KATAKANA_COST = 3000;
 
     // 孤立した漢字のコスト
     int ONE_KANJI_COST = 1000;
@@ -518,6 +518,10 @@ namespace lattice2 {
         return mc == L'が' || mc == L'を' || mc == L'に' || mc == L'の' || mc == L'で' || mc == L'は';
     }
 
+    inline bool isSmallKatakana(mchar_t mc) {
+        return mc == L'ァ' || mc == L'ィ' || mc == L'ゥ' || mc == L'ェ' || mc == L'ォ' || mc == L'ャ' || mc == L'ュ' || mc == L'ョ';
+    }
+
 #if 1
     // Ngramコストの取得
     int getNgramCost(const MString& str) {
@@ -529,13 +533,12 @@ namespace lattice2 {
 
         // unigram
         for (int i = 0; i < strLen; ++i) {
-            if (utils::is_katakana(str[i])) {
-                //if ((i > 0 && !utils::is_katakana(str[i-1])) && (i + 2 < strLen && !utils::is_katakana(str[i+1]))) {
-                //    // 末尾以外の孤立したカタカナは高いコストを設定(i+2<strLenとしているのは、末尾がカタカナの第1打鍵である可能性があるため)
-                //    // 先頭も除くようにすると、「ある」が「セ」になってしまう
-                //    cost += ISOLATED_KATAKANA_COST;
-                //    continue;
-                //}
+            if (isSmallKatakana(str[i])) {
+                if ((i == 0 || !utils::is_katakana(str[i - 1]))) {
+                    // 小書きカタカナの直前にカタカナが無ければ、ペナルティを与える
+                    cost += ISOLATED_SMALL_KATAKANA_COST;
+                    continue;
+                }
             //} else if ((i == 0 || !utils::is_hiragana(str[i - 1])) && strLen == i + 2 && isHighFreqJoshi(str[i]) && utils::is_hiragana(str[i + 1])) {
                 //// 先頭または漢字・カタカナの直後の2文字のひらがなで、1文字目が高頻度の助詞(が、を、に、の、で、は)なら、ボーナスを与付して、ひらがな2文字になるようにする
                 // こちらはいろいろと害が多い(からです⇒朝です、食べさせると青⇒食べ森書がの、など)
