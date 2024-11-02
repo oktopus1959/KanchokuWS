@@ -880,6 +880,8 @@ namespace lattice2 {
 
         std::vector<CandidateString> _candidates;
 
+        std::vector<MString> _bestStack;
+
         bool _prevBS = false;
 
         // 次のストロークをスキップする候補文字列
@@ -926,9 +928,10 @@ namespace lattice2 {
             return _prevBS;
         }
 
-        void clear(bool clearAll) {
+        void clearKbests(bool clearAll) {
             //_LOG_INFOH(L"CALLED: clearAll={}", clearAll);
             _candidates.clear();
+            _bestStack.clear();
             if (clearAll) _kanjiPreferredNextCands.clear();
         }
 
@@ -1163,29 +1166,43 @@ namespace lattice2 {
             _LOG_DETAIL(_T("LEAVE"));
         }
 
-        // 末尾から、指定の長さより以前の部分を確定させる
-        void commitLeaderBeforeTailLen() {
-            if (!_candidates.empty()) {
+        // 指定の打鍵回数分、解の先頭部分が同じなら、それらだけを残す
+        void commitOnlyWithSameLeaderString() {
+            int challengeNum = SETTINGS->challengeNumForSameLeader;
+            if (challengeNum > 0 && !_candidates.empty()) {
                 MString firstStr = _candidates.front().string();
-                if ((int)firstStr.size() > SETTINGS->commitBeforeTailLen) {
-                    MString leaderStr = firstStr.substr(0, firstStr.size() - SETTINGS->commitBeforeTailLen);
-                    std::vector<CandidateString> tempCands;
-                    auto iter = _candidates.begin();
-                    tempCands.push_back(*iter++);
-                    for (; iter != _candidates.end(); ++iter) {
-                        if (utils::startsWith(iter->string(), leaderStr)) {
-                            // 先頭部分が一致する候補だけを残す
-                            tempCands.push_back(*iter);
+                if (_bestStack.empty()) {
+                    _bestStack.push_back(firstStr);
+                } else if (_bestStack.back() != firstStr) {
+                    _bestStack.push_back(firstStr);
+                    if ((int)_bestStack.size() > challengeNum) {
+                        int basePos = (int)_bestStack.size() - challengeNum - 1;
+                        auto baseStr = _bestStack[basePos];
+                        bool sameFlag = true;
+                        for (int i = basePos + 1; sameFlag && i < (int)_bestStack.size(); ++i) {
+                            sameFlag = utils::startsWith(_bestStack[i], baseStr);
+                        }
+                        if (sameFlag) {
+                            _LOG_DETAIL(L"_bestStack.size={}, challengeNum={}, baseStr={}", _bestStack.size(), challengeNum, to_wstr(baseStr));
+                            std::vector<CandidateString> tempCands;
+                            auto iter = _candidates.begin();
+                            tempCands.push_back(*iter++);
+                            for (; iter != _candidates.end(); ++iter) {
+                                if (utils::startsWith(iter->string(), baseStr)) {
+                                    // 先頭部分が一致する候補だけを残す
+                                    tempCands.push_back(*iter);
+                                }
+                            }
+                            _candidates = std::move(tempCands);
                         }
                     }
-                    _candidates = std::move(tempCands);
                 }
             }
         }
 
         // CurrentStroke の候補を削除する
         void removeCurrentStrokeCandidates(std::vector<CandidateString>& newCandidates, int strokeCount) {
-            _LOG_INFOH(L"ENTER: _candidates.size={}, prevBS={}, strokeCount={}", _candidates.size(), _prevBS, strokeCount);
+            _LOG_DETAIL(L"ENTER: _candidates.size={}, prevBS={}, strokeCount={}", _candidates.size(), _prevBS, strokeCount);
             if (!_prevBS) {
                 if (!_candidates.empty()) {
                     const auto& firstCand = _candidates.front();
@@ -1205,7 +1222,7 @@ namespace lattice2 {
                     }
                 }
             }
-            _LOG_INFOH(L"LEAVE: {} candidates", newCandidates.size());
+            _LOG_DETAIL(L"LEAVE: {} candidates", newCandidates.size());
         }
 
         //// Strokeを一つ進める
@@ -1288,10 +1305,8 @@ namespace lattice2 {
             //if (!_candidates.empty()) {
             //    if (isKanjiKatakanaConsecutive(_candidates.front())) selectFirst();
             //}
-#if 0
-            // 末尾から、指定の長さより以前の部分を確定させる
-            commitLeaderBeforeTailLen();
-#endif
+            // 指定の打鍵回数分、解の先頭部分が同じなら、それらだけを残す
+            commitOnlyWithSameLeaderString();
             _LOG_DETAIL(_T("LEAVE"));
         }
 
@@ -1456,14 +1471,14 @@ namespace lattice2 {
             _LOG_DETAIL(_T("CALLED"));
             _startStrokeCount = 0;
             _prevOutputStr.clear();
-            _kBestList.clear(true);
+            _kBestList.clearKbests(true);
         }
 
         void clear() override {
             _LOG_DETAIL(_T("CALLED"));
             _startStrokeCount = 0;
             _prevOutputStr.clear();
-            _kBestList.clear(utils::diffTime(_kanjiPreferredSettingDt) >= 3.0);     // 前回の設定時刻から３秒以上経過していたらクリアできる
+            _kBestList.clearKbests(utils::diffTime(_kanjiPreferredSettingDt) >= 3.0);     // 前回の設定時刻から３秒以上経過していたらクリアできる
         }
 
         void removeOtherThanKBest() override {

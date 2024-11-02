@@ -124,7 +124,7 @@ void Settings::SetValues(const std::map<String, String>& dict) {
     SET_BOOL_VALUE(multiStreamMode);
     SET_BOOL_VALUE(collectOnlineNgram);
     SET_BOOL_VALUE(useMorphAnalyzer);
-    SET_INT_VALUE(commitBeforeTailLen);
+    SET_INT_VALUE(challengeNumForSameLeader);
     SET_INT_VALUE(kanjiNoKanjiBonus);
     SET_INT_VALUE(onlineTrigramBonusFactor);
     SET_INT_VALUE(onlineTrigramTier1Num);

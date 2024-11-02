@@ -165,8 +165,8 @@ namespace KanchokuWS
         /// <summary>形態素解析器を使用する</summary>
         public static bool UseMorphAnalyzer { get; set; }
 
-        /// <summary>末尾から、ここで設定した長さより前の部分を確定させる</summary>
-        public static int CommitBeforeTailLen { get; set; }
+        /// <summary>解の先頭部分が同じならそれらだけを残すようにするための、チャレンジ打鍵数</summary>
+        public static int ChallengeNumForSameLeader { get; set; }
 
         /// <summary>「漢字+の+漢字」のような場合に与えるボーナス</summary>
         public static int KanjiNoKanjiBonus { get; set; }
@@ -1700,7 +1700,7 @@ namespace KanchokuWS
 
             CollectOnlineNgram = addDecoderSetting("collectOnlineNgram", true);                 // Online Ngram 情報を収集する
             UseMorphAnalyzer = addDecoderSetting("useMorphAnalyzer", true);                     // 形態素解析器を使用する
-            CommitBeforeTailLen = addDecoderSetting("commitBeforeTailLen", 4);                  // 末尾から、ここで設定した長さより前の部分を確定させる
+            ChallengeNumForSameLeader = addDecoderSetting("challengeNumForSameLeader", 4);      // 解の先頭部分が同じならそれらだけを残すようにするための、チャレンジ打鍵数
             KanjiNoKanjiBonus = addDecoderSetting("kanjiNoKanjiBonus", 1500);                   // 「漢字+の+漢字」のような場合に与えるボーナス
             OnlineTrigramBonusFactor = addDecoderSetting("onlineTrigramBonusFactor", 100);      // Online 3gram のカウントからボーナス値を算出する際の係数
             OnlineTrigramTier1Num = addDecoderSetting("onlineTrigramTier1Num", 5);              // Online 3gram の Tier1 の数

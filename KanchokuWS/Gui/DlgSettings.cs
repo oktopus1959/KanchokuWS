@@ -1817,7 +1817,7 @@ namespace KanchokuWS.Gui
         {
             checkBox_collectOnlineNgram.Checked = Settings.CollectOnlineNgram;
             checkBox_useMorphAnalyzer.Checked = Settings.UseMorphAnalyzer;
-            textBox_commitBeforeTailLen.Text = $"{Settings.CommitBeforeTailLen}";
+            textBox_challengeNumForSameLeader.Text = $"{Settings.ChallengeNumForSameLeader}";
             textBox_onlineTrigramBonusFactor.Text = $"{Settings.OnlineTrigramBonusFactor}";
             textBox_onlineTrigramTier1Num.Text = $"{Settings.OnlineTrigramTier1Num}";
             textBox_onlineTrigramTier2Num.Text = $"{Settings.OnlineTrigramTier2Num}";
@@ -1831,7 +1831,7 @@ namespace KanchokuWS.Gui
 
             checkerFusion.Add(checkBox_collectOnlineNgram);
             checkerFusion.Add(checkBox_useMorphAnalyzer);
-            checkerFusion.Add(textBox_commitBeforeTailLen);
+            checkerFusion.Add(textBox_challengeNumForSameLeader);
             checkerFusion.Add(textBox_onlineTrigramBonusFactor);
             checkerFusion.Add(textBox_onlineTrigramTier1Num);
             checkerFusion.Add(textBox_onlineTrigramTier2Num);
@@ -1852,7 +1852,7 @@ namespace KanchokuWS.Gui
 
             Settings.SetUserIni("collectOnlineNgram", checkBox_collectOnlineNgram.Checked);
             Settings.SetUserIni("useMorphAnalyzer", checkBox_useMorphAnalyzer.Checked);
-            Settings.SetUserIni("commitBeforeTailLen", textBox_commitBeforeTailLen.Text);
+            Settings.SetUserIni("challengeNumForSameLeader", textBox_challengeNumForSameLeader.Text);
             Settings.SetUserIni("onlineTrigramBonusFactor", textBox_onlineTrigramBonusFactor.Text);
             Settings.SetUserIni("onlineTrigramTier1Num", textBox_onlineTrigramTier1Num.Text);
             Settings.SetUserIni("onlineTrigramTier2Num", textBox_onlineTrigramTier2Num.Text);

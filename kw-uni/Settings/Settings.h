@@ -104,7 +104,7 @@ struct Settings {
 
     bool collectOnlineNgram = true;         // Online Ngram 情報を収集する
     bool useMorphAnalyzer = true;           // Online Ngram 情報を収集する
-    int commitBeforeTailLen = 4;            // 末尾から、ここで設定した長さより前の部分を確定させる
+    int challengeNumForSameLeader = 4;      // 解の先頭部分が同じならそれらだけを残すようにするための、チャレンジ打鍵数
     int kanjiNoKanjiBonus = 1500;           // 「漢字+の+漢字」のような場合に与えるボーナス
     String mergerCandidateFile;             // 解候補ログファイル
     int onlineTrigramBonusFactor = 100;     // Online 3gram のカウントからボーナス値を算出する際の係数
