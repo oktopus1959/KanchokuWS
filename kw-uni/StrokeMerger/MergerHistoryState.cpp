@@ -12,6 +12,7 @@
 #include "State.h"
 //#include "OutputStack.h"
 //#include "StrokeHelp.h"
+#include "DeckeyUtil.h"
 
 #include "Mazegaki/Mazegaki.h"
 #include "BushuComp/BushuComp.h"
@@ -536,7 +537,7 @@ namespace {
                         break;
                     }
                 } else {
-                    if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END && (deckey < ORDERED_COMBO_DECKEY_START || deckey >= ORDERED_COMBO_DECKEY_START + PLANE_DECKEY_NUM)) {
+                    if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END /* && !DeckeyUtil::is_ordered_combo(deckey)*/) {
                         // 順序あり以外の同時打鍵の始まりなので、いったん streamList はクリア
                         // 順序あり同時打鍵は、2ストロークの2打鍵目となることあり; 「使ら」)
                         // 同時打鍵中は、処理を分岐させない
@@ -563,6 +564,10 @@ namespace {
                     _LOG_DEBUGH(_T("streamList1: doDeckeyPreProc"));
                     _streamList1.HandleDeckeyProc(StrokeTableNode::RootStrokeNode1.get(), deckey, _comboStrokeCount);
                     _LOG_DEBUGH(_T("streamList2: doDeckeyPreProc"));
+                    //// 漢直側に対しては、順序あり同時打鍵を通常面として扱う
+                    //// かな配列側で「い→ら」⇒「いう」が順序ありで定義されている場合に、「大使ら」をロールオーバーで打鍵しても「使」の2ストローク目を通常面として扱える。
+                    //// また、漢直側で「い→ら」⇒「運」を順序ありで再定義する必要もなくなる
+                    //_streamList2.HandleDeckeyProc(StrokeTableNode::RootStrokeNode2.get(), DeckeyUtil::unshiftIfOrdered(deckey), _comboStrokeCount);
                     _streamList2.HandleDeckeyProc(StrokeTableNode::RootStrokeNode2.get(), deckey, _comboStrokeCount);
                     if (_comboStrokeCount > 0) ++_comboStrokeCount;     // 同時打鍵で始まった時だけ
                     if (deckey < SHIFT_DECKEY_START) {

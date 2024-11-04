@@ -318,6 +318,9 @@
     <ClInclude Include="E:\Dev\Cpp\llama.cpp\examples\LlamaLoss\LlamaLoss.h">
       <Filter>ヘッダー ファイル\Llama</Filter>
     </ClInclude>
+    <ClInclude Include="DeckeyUtil.h">
+      <Filter>ヘッダー ファイル\KeysAndChars</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

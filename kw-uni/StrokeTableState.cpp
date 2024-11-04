@@ -12,6 +12,7 @@
 #include "KeysAndChars/MyPrevChar.h"
 #include "KeysAndChars/Eisu.h"
 
+#include "DeckeyUtil.h"
 #include "DeckeyToChars.h"
 //#include "History/HistoryResidentState.h"
 
@@ -118,12 +119,13 @@ namespace {
             //    LOG_DEBUGH(_T("UNSHIFT_DECKEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
             //}
 #else
-            if (!myNode()->isRootStrokeTableNode() && !IsRootKeyCombination() && deckey >= ORDERED_COMBO_DECKEY_START && deckey < ORDERED_COMBO_DECKEY_START + PLANE_DECKEY_NUM) {
-                // 自身がRootStrokeNodeでなく、かつRootStrokeKeyが同時打鍵キーでもなく、第2キーが順序ありの同時打鍵なら通常面に落としこむ
-                // かな配列側で「い→ら」⇒「いう」が順序ありで定義されている場合に、「大使ら」をロールオーバーで打鍵しても「使」の2ストローク目を通常面として扱える
-                deckey = UNSHIFT_DECKEY(deckey);
-                LOG_DEBUGH(_T("UNSHIFT_DECKEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
-            }
+            //if (!myNode()->isRootStrokeTableNode() && !IsRootKeyCombination() && DeckeyUtil::is_ordered_combo(deckey)) {
+            //    // 自身がRootStrokeNodeでなく、かつRootStrokeKeyが同時打鍵キーでもなく、第2キーが順序ありの同時打鍵なら通常面に落としこむ。
+            //    // かな配列側で「い→ら」⇒「いう」が順序ありで定義されている場合に、「大使ら」をロールオーバーで打鍵しても「使」の2ストローク目を通常面として扱える。
+            //    // また、漢直側で「い→ら」⇒「運」を順序ありで再定義する必要もなくなる
+            //    deckey = UNSHIFT_DECKEY(deckey);
+            //    LOG_DEBUGH(_T("UNSHIFT_DECKEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
+            //}
 #endif
             if (STATE_COMMON->IsDecodeKeyboardCharMode()) {
                 // キーボードフェイス文字を返すモード

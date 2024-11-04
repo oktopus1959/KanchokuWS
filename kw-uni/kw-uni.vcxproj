@@ -187,6 +187,7 @@
     <ClInclude Include="BushuComp\BushuDic.h" />
     <ClInclude Include="BushuComp\BushuAssoc.h" />
     <ClInclude Include="BushuComp\BushuAssocDic.h" />
+    <ClInclude Include="DeckeyUtil.h" />
     <ClInclude Include="DyMazin\DymazinBridge.h" />
     <ClInclude Include="E:\Dev\Cpp\llama.cpp\examples\LlamaLoss\LlamaLoss.h" />
     <ClInclude Include="EscapeNode.h" />
