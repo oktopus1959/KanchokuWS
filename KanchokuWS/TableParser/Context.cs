@@ -946,7 +946,12 @@ namespace KanchokuWS.TableParser
 
         // COMBO用のDecKeyの開始位置
         public int comboDeckeyStart {
-            get { return _comboDeckeyStart + (isStackLikeCombo ? DecoderKeys.PLANE_DECKEY_NUM : 0); }
+            get {
+                return
+                    _comboDeckeyStart == DecoderKeys.COMBO_DECKEY_START && isStackLikeCombo ? DecoderKeys.STACKLIKE_COMBO_DECKEY_START :
+                    _comboDeckeyStart == DecoderKeys.COMBO_DECKEY_START && shiftKeyKind == ShiftKeyKind.PrefixSuccessiveShift ? DecoderKeys.ORDERED_COMBO_DECKEY_START :
+                    _comboDeckeyStart;
+            }
         }
         private int _comboDeckeyStart = 0;
 

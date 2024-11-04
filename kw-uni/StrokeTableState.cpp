@@ -109,12 +109,21 @@ namespace {
                 STATE_COMMON->AppendOrigString(myChar);
             }
 #if 0
+            // 漢直・かな融合のとき、漢直の第2シフトがShiftされている場合に、Unshiftする処理をやめた。
+            // ")"を入力したいのに、それが第2シフトとして扱われて漢直側の文字が入力されてしまったりするため
             //if (!myNode()->isRootStrokeTableNode() && !IsRootKeyCombination()) {
             //    // 自身がRootStrokeNodeでなく、かつRootStrokeKeyが同時打鍵キーでなければ通常面に落としこむ
             //    // 同時打鍵の場合は、重複回避のため、第２キーはシフト化されてくる場合がある。その場合は、UNSHIFTしない
             //    deckey = UNSHIFT_DECKEY(deckey);
             //    LOG_DEBUGH(_T("UNSHIFT_DECKEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
             //}
+#else
+            if (!myNode()->isRootStrokeTableNode() && !IsRootKeyCombination() && deckey >= ORDERED_COMBO_DECKEY_START && deckey < ORDERED_COMBO_DECKEY_START + PLANE_DECKEY_NUM) {
+                // 自身がRootStrokeNodeでなく、かつRootStrokeKeyが同時打鍵キーでもなく、第2キーが順序ありの同時打鍵なら通常面に落としこむ
+                // かな配列側で「い→ら」⇒「いう」が順序ありで定義されている場合に、「大使ら」をロールオーバーで打鍵しても「使」の2ストローク目を通常面として扱える
+                deckey = UNSHIFT_DECKEY(deckey);
+                LOG_DEBUGH(_T("UNSHIFT_DECKEY: {}: deckey={:x}H({})"), Name, deckey, deckey);
+            }
 #endif
             if (STATE_COMMON->IsDecodeKeyboardCharMode()) {
                 // キーボードフェイス文字を返すモード

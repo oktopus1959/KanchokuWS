@@ -536,8 +536,9 @@ namespace {
                         break;
                     }
                 } else {
-                    if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END) {
-                        // 同時打鍵の始まりなので、いったん streamList はクリア
+                    if (deckey >= COMBO_DECKEY_START && deckey < COMBO_DECKEY_END && (deckey < ORDERED_COMBO_DECKEY_START || deckey >= ORDERED_COMBO_DECKEY_START + PLANE_DECKEY_NUM)) {
+                        // 順序あり以外の同時打鍵の始まりなので、いったん streamList はクリア
+                        // 順序あり同時打鍵は、2ストロークの2打鍵目となることあり; 「使ら」)
                         // 同時打鍵中は、処理を分岐させない
                         _streamList1.Clear();
                         _streamList2.Clear();
